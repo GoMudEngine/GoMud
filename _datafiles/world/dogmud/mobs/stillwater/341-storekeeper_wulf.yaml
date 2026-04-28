@@ -42,32 +42,32 @@ character:
     willpower:
       training: 5
   shop:
-    # Existing tools/lantern/inn items
+    # Existing tools/lantern/inn items (preserve original quantities + prices)
     - itemid: 32
-      quantity: 0
-      quantitymax: 0
-      price: 0
+      quantity: 2
+      quantitymax: 5
+      price: 1
     - itemid: 40038    # oil lantern
-      quantity: 0
-      quantitymax: 0
+      quantity: 2
+      quantitymax: 5
       price: 5
     - itemid: 30021
-      quantity: 0
-      quantitymax: 0
-      price: 4
-    # Base mats (general goods)
-    - itemid: 40015    # wild vegetables
-      quantity: 0
-      quantitymax: 0
+      quantity: 3
+      quantitymax: 8
       price: 2
+    # Base mats (general goods) — preserve Wulf's pre-3.0b stocking
+    - itemid: 40015    # wild vegetables
+      quantity: 5
+      quantitymax: 10
+      price: 1
     - itemid: 40016    # water flask
-      quantity: 0
-      quantitymax: 0
+      quantity: 5
+      quantitymax: 10
       price: 1
     - itemid: 40017    # salt pouch
-      quantity: 0
-      quantitymax: 0
-      price: 1
+      quantity: 3
+      quantitymax: 8
+      price: 2
     - itemid: 40003    # wooden plank
       quantity: 0
       quantitymax: 0

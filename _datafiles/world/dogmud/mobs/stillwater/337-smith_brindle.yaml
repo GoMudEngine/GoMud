@@ -93,8 +93,8 @@ character:
       quantity: 0
       quantitymax: 0
       price: 4
-    # Existing tool item
+    # Existing tool item (preserve original quantities + price)
     - itemid: 32
-      quantity: 0
-      quantitymax: 0
-      price: 0
+      quantity: 1
+      quantitymax: 3
+      price: 1
