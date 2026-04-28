@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -67,17 +68,36 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 	char := actor.GetCharacter()
 	room := actor.GetRoom()
 
+	// TEMP DEBUG (Stage 3.0d smoke): trace fold-recall casts end-to-end so we
+	// can see which gate is failing for Edrin. Remove after smoke confirms.
+	debug := !actor.IsPlayer() && (spellName == "fold-recall" || spellName == "fold-anchor")
+	if debug {
+		mudlog.Info("[3.0d-debug] InitiateCast entry",
+			"actor", actor.GetName(),
+			"spellName", spellName,
+			"targetName", targetName,
+			"hasCastingState", char.CastingState != nil,
+			"conviction", char.Conviction,
+		)
+	}
+
 	// 1. Spell lookup — by exact ID first, then display-name prefix.
 	spellInfo := spells.GetSpell(spellName)
 	if spellInfo == nil {
 		spellInfo = spells.FindSpellByName(spellName)
 	}
 	if spellInfo == nil {
+		if debug {
+			mudlog.Info("[3.0d-debug] InitiateCast EXIT: invalid spell", "actor", actor.GetName(), "spellName", spellName)
+		}
 		return CastResult{InvalidSpell: true}
 	}
 
 	// 2. Already casting?
 	if char.CastingState != nil {
+		if debug {
+			mudlog.Info("[3.0d-debug] InitiateCast EXIT: already casting", "actor", actor.GetName())
+		}
 		return CastResult{SpellInfo: spellInfo, AlreadyCasting: true}
 	}
 
@@ -253,6 +273,9 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 	// 3a. Harm spells (single/multi) require at least one resolved target.
 	if spellInfo.Type == spells.HarmSingle || spellInfo.Type == spells.HarmMulti {
 		if len(targetUserIds) == 0 && len(targetMobInstanceIds) == 0 {
+			if debug {
+				mudlog.Info("[3.0d-debug] InitiateCast EXIT: no target", "actor", actor.GetName())
+			}
 			return CastResult{SpellInfo: spellInfo, NoTarget: true}
 		}
 	}
@@ -261,7 +284,18 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 	// Applied AFTER target resolution so invalid targets don't waste it.
 	cfg := configs.GetBalanceConfig()
 	if !char.TryCooldown(`special-move`, fmt.Sprintf(`%d rounds`, cfg.SpecialMoveCooldown)) {
+		if debug {
+			mudlog.Info("[3.0d-debug] InitiateCast EXIT: on cooldown", "actor", actor.GetName(), "cooldown_rounds", cfg.SpecialMoveCooldown)
+		}
 		return CastResult{SpellInfo: spellInfo, OnCooldown: true}
+	}
+	if debug {
+		mudlog.Info("[3.0d-debug] InitiateCast SUCCESS — CastingState built",
+			"actor", actor.GetName(),
+			"spellId", spellInfo.SpellId,
+			"foldsNeeded", characters.NextPowerOfTwo(spellInfo.BaseFolds),
+			"totalCost", spellInfo.Cost,
+		)
 	}
 
 	// 5. Fold calculation — school-aware stat/skill selection.
