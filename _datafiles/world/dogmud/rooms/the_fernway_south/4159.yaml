@@ -9,7 +9,7 @@ description: >
   shoulders drop. The <ansi fg="itemname">meadow-grass</ansi>
   runs knee-high at the edges of the clearing, pale-seeded
   and bowing in any wind that finds the gap, but close to the
-  ground a network of <ansi fg="itemname">hare-path</ansi>s
+  ground a network of <ansi fg="itemname">hare-paths</ansi>
   threads through the cover — low cropped passages through
   the grass, packed by small fast feet into hard smooth
   channels. The earth inside each run is cool and damp even
@@ -34,6 +34,12 @@ nouns:
     kept it cropped short and tight; only the margin stands
     tall.
   hare-path: |
+    A network of low cropped passages threads the grass from
+    every direction — the work of small feet over a long time,
+    the earth inside each run packed hard and smooth. Two or
+    three of the runs converge near the meadow's centre
+    before splitting again toward the treeline.
+  hare-paths: |
     A network of low cropped passages threads the grass from
     every direction — the work of small feet over a long time,
     the earth inside each run packed hard and smooth. Two or

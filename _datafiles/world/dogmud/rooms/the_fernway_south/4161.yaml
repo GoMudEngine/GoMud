@@ -11,7 +11,7 @@ description: >
   of warm sap over the cooler must of the forest floor. Along
   the nearest <ansi fg="itemname">pine-trunk</ansi> a long
   smear of old pitch has run and hardened, and close to eye
-  level a half-dozen <ansi fg="itemname">pitch-bead</ansi>s
+  level a half-dozen <ansi fg="itemname">pitch-beads</ansi>
   cling to the bark like amber drops — old wounds from a lost
   branch or a beetle's work, crystallized to something almost
   clear. Near the stand's interior, one trunk carries a
@@ -36,6 +36,12 @@ nouns:
     and wept with old pitch wherever a branch has dropped or
     a beetle found its way in.
   pitch-bead: |
+    Hardened amber-gold beads of pine pitch cling to the
+    bark — the tree's old wounds sealed and crystallized,
+    some nearly clear and some clouded with bark-dust and
+    trapped insect parts. Smiths use the fresh-running
+    kind; alchemists prize the aged.
+  pitch-beads: |
     Hardened amber-gold beads of pine pitch cling to the
     bark — the tree's old wounds sealed and crystallized,
     some nearly clear and some clouded with bark-dust and
