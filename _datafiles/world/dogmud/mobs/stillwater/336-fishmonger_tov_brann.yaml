@@ -41,11 +41,21 @@ character:
     perception:
       training: 6
   shop:
-    - itemid: 40058
-      quantity: 5
-      quantitymax: 10
-      price: 10
-    - itemid: 40014
-      quantity: 5
-      quantitymax: 10
+    # Stillwater unique fish
+    - itemid: 40058    # freshwater clam
+      quantity: 0
+      quantitymax: 0
+      price: 4
+    - itemid: 40051    # skitter-shrimp shell
+      quantity: 0
+      quantitymax: 0
+      price: 8
+    # Base meat
+    - itemid: 40014    # raw meat
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 40017    # salt pouch
+      quantity: 0
+      quantitymax: 0
       price: 1
