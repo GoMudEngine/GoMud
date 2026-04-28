@@ -51,7 +51,7 @@ SOP including the `behavior_archetype` priority order.
 | `itemdropchance` | int | no | Percent chance (0–100) to drop carried items on death. |
 | `statpool` | int | no | Stat points distributed across stats on spawn (weighted by archetype). |
 | `archetype` | string | no | Stat distribution archetype: `"fighting"` (80% physical), `"casting"` (80% mental), or `""` (even). |
-| `groups` | list | no | Group membership (e.g. `[rats, animal]`). Used for teamwork and hates logic. |
+| `groups` | list | no | Group membership (e.g. `[rats, animal]`). Used for teamwork and hates logic, and drives corpse salvage returns (see `internal/crafting/corpse_salvage.go`). |
 | `hates` | list | no | Group names or species this mob will attack on sight. |
 | `buffids` | list | no | Buff IDs always applied when mob spawns. |
 | `questflags` | list | no | Quest flag strings set on this mob. |

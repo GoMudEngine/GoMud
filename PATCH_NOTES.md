@@ -1,5 +1,27 @@
 # DOGMud Patch Notes
 
+## 2026-04-28 — Stage 3.0e: Corpse Salvage (dev only)
+
+**Note:** Dev-only landing. The full economy stack ships to prod (`master`)
+as a coherent update once Stage 3.4 lands.
+
+- `salvage <corpse>` now works on room-resident corpses, not just
+  inventory items. Animal-group mobs yield leather strip + sinew;
+  humanoid-group mobs yield cloth strip + leather strip. Each material
+  rolls independently against the salvage skill curve. Salvage kit
+  required (sold by Fence Dealer Siv, 1g).
+- The corpse is consumed on completion (mirrors tagged-item salvage
+  behavior — the activity has cost regardless of roll outcome). If the
+  activity is interrupted (combat, movement) the corpse stays untouched.
+- Added **sinew** (40068), a tough animal-tendon mat sourced from
+  corpse salvage on animals. Wired into 2 existing recipes: tailoring's
+  Artisan's Satchel (heavy-duty seam binding) and blacksmithing's
+  Lake-Iron Hook-Spear (haft lashing).
+- 40002 leather strip and 40007 cloth strip reclassified in the audit
+  matrix from "Defer to 3.0e" → "Mid-tier overlap (corpse-salvage
+  sourced)". Source pipeline now decided. Vendor inventories continue
+  to NOT stock these mats — corpse salvage is the v1 source.
+
 ## 2026-04-28 — Stage 3.0b: Material Region Split (dev only)
 
 **Note:** This is a dev-only landing. The full economy stack (Stages

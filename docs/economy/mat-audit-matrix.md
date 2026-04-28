@@ -32,12 +32,12 @@
 | ID | Name | Bucket | Native source | Notes |
 |---|---|---|---|---|
 | 40001 | iron ingot | Base | universal | Smithing feedstock |
-| 40002 | leather strip | Defer to 3.0e | (TBD by 3.0e) | Currently stocked at multiple vendors; reorganize when corpse salvage lands |
+| 40002 | leather strip | Mid-tier overlap | corpse-salvage sourced | Reclassified by 3.0e: dropped by salvaging animal- and humanoid-group corpses |
 | 40003 | wooden plank | Base | universal | |
 | 40004 | healer's root | Mid-tier overlap | Thornwall + Fernway alchemy | Currently stocked at Thornwall apothecary only; expand to Stillwater apothecary |
 | 40005 | bitter thistle | Mid-tier overlap | Thornwall + Fernway alchemy | |
 | 40006 | glass vial | Base | universal | Alchemy infrastructure |
-| 40007 | cloth strip | Defer to 3.0e | (TBD by 3.0e) | |
+| 40007 | cloth strip | Mid-tier overlap | corpse-salvage sourced | Reclassified by 3.0e: dropped by salvaging humanoid-group corpses |
 | 40008 | spore sac | Mid-tier overlap | Fernway + Labyrinth | Chrysalis-cave fauna; alchemy use; not is_component (holdable prop) — flag for 3.0e reclassification if recipe demand added |
 | 40009 | dustwalk herb | Mid-tier overlap | Dustwalk Road + Fernway | Grows in dry creek beds along Dustwalk Road; Thornwall proximity |
 | 40010 | Chrysalis Core | Thornwall | in-shop (Vael) | |
@@ -98,6 +98,7 @@
 | **40065** | **beeswax** | **Fernway** | **foraged in Fernway** | **NEW; alchemy demand (tailoring deferred to 3.0e)** |
 | **40066** | **blood-moss** | **Fernway** | **foraged in Fernway** | **NEW; alchemy + cooking demand** |
 | **40067** | **pine pitch** | **Fernway** | **foraged in Fernway** | **NEW; alchemy + blacksmithing demand** |
+| **40068** | **sinew** | **Mid-tier overlap** | **corpse-salvage sourced** | **NEW (Stage 3.0e); dropped by salvaging animal-group corpses; demand wired into tailoring + blacksmithing** |
 
 ## Bucket summary
 
@@ -107,14 +108,14 @@
 | Stillwater | 6 | 40051, 40053, 40056, 40057, 40058, 40059 |
 | Thornwall | 13 | 40010, 40011, 40018, 40021, 40022, 40023, 40024, 40025, 40026, 40027, 40028, 40029, 40030 |
 | Fernway | 8 | 40046, 40049, 40062, 40063, 40064, 40065, 40066, 40067 |
-| Mid-tier overlap | 8 | 40004, 40005, 40008, 40009, 40020, 40047, 40048, 40050 |
-| Defer to 3.0e | 4 | 40002, 40007, 40052, 40055 |
+| Mid-tier overlap | 11 | 40004, 40005, 40008, 40009, 40020, 40047, 40048, 40050, 40002, 40007, 40068 |
+| Defer to 3.0e | 2 | 40052, 40055 |
 | Quest/specialty | 15 | 40031, 40032, 40033, 40034, 40035, 40036, 40037, 40038, 40039, 40040, 40041, 40042, 40054, 40060, 40061 |
 
-> Row count: 67 total. 40001-40061 = 61 existing mats; 40062-40067 = 6
-> new Fernway mats (created in Tasks 2-7 of this plan). All 67 rows
-> appear in the audit table above, including 15 quest/specialty items
-> that are out of the supply pipeline.
+> Row count: 68 total. 40001-40067 = 67 existing mats; 40068 added by
+> Stage 3.0e (corpse salvage). All 68 rows appear in the audit table
+> above, including 15 quest/specialty items that are out of the supply
+> pipeline.
 
 ## Vendor pair pattern
 
