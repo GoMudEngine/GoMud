@@ -1,5 +1,33 @@
 # DOGMud Patch Notes
 
+## 2026-04-28 — Stage 3.0b: Material Region Split (dev only)
+
+**Note:** This is a dev-only landing. The full economy stack (Stages
+3.0b through 3.4) sits unmerged on the `development` branch and ships
+to prod (`master`) as a coherent update once Stage 3.4 lands.
+
+- Added 6 new Fernway forest materials: oak bark (40062), shadowcap
+  mushroom (40063), wild hare meat (40064), beeswax (40065), blood-moss
+  (40066), pine pitch (40067). Each consumed in 1-2 mid/high-tier
+  recipes spanning at least 2 craft schools, giving forager-gathered
+  Fernway mats real demand once Stage 3.1 ships. (Beeswax tailoring
+  recipe wiring deferred to Stage 3.0e corpse salvage.)
+- New audit matrix at `docs/economy/mat-audit-matrix.md` classifies
+  all 67 raw materials into regional supply buckets (Stillwater,
+  Thornwall, Fernway, base, mid-tier overlap, deferred-to-3.0e,
+  quest/specialty). This is the durable artifact that subsequent
+  stages (foragers, corpse salvage, real item transfer) consume.
+- Reshaped vendor inventories across the 17 caravan-served vendors
+  into mirrored same-craft pairs. Same-craft Stillwater + Thornwall
+  vendors now stock the same mat slot lists, with regional pricing
+  asymmetry reflecting the caravan markup (e.g., lake mint 10g at
+  Stillwater Apothecary Ilsa, 15g at Thornwall Apothecary Voss).
+  Cloth/leather/cord/sinew slots dropped pending Stage 3.0e (corpse
+  salvage); the audit matrix flags them for 3.0e to wire properly.
+- ~12 mid/high-tier recipes updated to wire demand for the new
+  Fernway mats. No new recipes invented; existing recipe corpus
+  expanded with one new ingredient slot each.
+
 ## 2026-04-27 — Stage 2: Thornwall ↔ Stillwater Caravan System
 
 - Added the **Thornwall ↔ Stillwater caravan**: a three-NPC delivery
