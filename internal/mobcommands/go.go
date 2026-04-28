@@ -228,6 +228,13 @@ func Go(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		// re-issued on each member in the same room). Without this,
 		// follower mobs lag many rounds behind because they only re-target
 		// via the polling party_follow_leader btree action.
+		//
+		// Skip in-combat followers: a follower with non-nil Aggro is
+		// engaged with a target. Following the leader out of the room
+		// would break combat and let the attacker disengage. The leader's
+		// caravan_step will halt for the combat (party-in-combat check)
+		// so the leader shouldn't be moving anyway, but defensive in case
+		// a path step from a previous tick is in flight.
 		if p := parties.GetByMobInstanceId(mob.InstanceId); p != nil {
 			if p.Leader != nil && p.Leader.GetMobInstanceId() == mob.InstanceId {
 				for _, member := range p.Members {
@@ -241,6 +248,10 @@ func Go(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					}
 					// Only follow if the member is in the leader's old room.
 					if memberMob.Character.RoomId != room.RoomId {
+						continue
+					}
+					// Don't drag in-combat members out of their fight.
+					if memberMob.Character.Aggro != nil {
 						continue
 					}
 					memberMob.Command(exitName)

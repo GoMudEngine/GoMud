@@ -19,6 +19,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -113,7 +114,7 @@ func tickTransit(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Resu
 	if route == nil {
 		return Failure
 	}
-	if hostilesInRoom(mob, ctx.RoomId) {
+	if hostilesInRoom(mob, ctx.RoomId) || anyPartyMemberInCombat(ctx.InstanceId) {
 		return Failure
 	}
 	if ctx.RoomId == route.ArriveAtRoomId {
@@ -135,7 +136,7 @@ func tickRoute(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result
 	if route == nil {
 		return Failure
 	}
-	if hostilesInRoom(mob, ctx.RoomId) {
+	if hostilesInRoom(mob, ctx.RoomId) || anyPartyMemberInCombat(ctx.InstanceId) {
 		return Failure
 	}
 	idxStr := ctx.MobState.GetString("caravan_route_index")
@@ -188,6 +189,23 @@ func hostilesInRoom(mob *mobs.Mob, roomId int) bool {
 			continue
 		}
 		if mob.HatesMob(other) {
+			return true
+		}
+	}
+	return false
+}
+
+// anyPartyMemberInCombat reports whether any member of the caller's
+// party currently has aggro set. Used to keep the caravan leader from
+// walking away while a follower is mid-fight in another room.
+func anyPartyMemberInCombat(callerInstId int) bool {
+	p := parties.GetByMobInstanceId(callerInstId)
+	if p == nil {
+		return false
+	}
+	for _, m := range p.Members {
+		c := m.GetCharacter()
+		if c != nil && c.Aggro != nil {
 			return true
 		}
 	}
