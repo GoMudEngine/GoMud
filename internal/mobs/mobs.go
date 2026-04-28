@@ -77,6 +77,7 @@ type Mob struct {
 	LastIdleCommand uint8    `yaml:"-"` // Track what hte last used idlecommand was
 	BoredomCounter  uint8    `yaml:"-"` // how many rounds have passed since this mob has seen a player
 	Groups          []string // What group do they identify with? Helps with teamwork
+	FoldAnchorRoom  int      `yaml:"fold_anchor_room,omitempty"` // Spawn-time fold-recall anchor (room ID)
 	// Pack-combat routine (v2-ready — see docs/superpowers/specs/2026-04-22-pack-tactics-revamp-design.md).
 	// Freeform string compared with equality to other mobs' Routine for pack
 	// identification. Mobs without a routine don't participate in packs.
