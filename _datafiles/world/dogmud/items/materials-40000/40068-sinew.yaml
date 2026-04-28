@@ -1,0 +1,15 @@
+itemid: 40068
+name: sinew
+namesimple: sinew
+description: A length of dried tendon stripped clean from an
+  animal carcass and stretched between two pegs to cure. Tough
+  enough to bind a haft against generations of use; supple
+  enough to draw a hunting bow without splintering. Sewers
+  reach for it when a needle and thread won't hold the seam
+  through a hard winter.
+type: object
+subtype: mundane
+component_tag: sinew
+weight: 0.05
+value: 25
+is_component: true
