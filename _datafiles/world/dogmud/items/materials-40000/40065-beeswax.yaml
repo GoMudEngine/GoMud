@@ -1,0 +1,15 @@
+itemid: 40065
+name: beeswax
+namesimple: wax
+description: A pale yellow chunk of comb wax rendered down from
+  a Fernway hollow-tree hive, still faintly honey-scented.
+  Alchemists use it to seal potion bottles against air and
+  spoilage; tailors melt it into cloth weave to shed water.
+  Soft enough to thumb but tough enough to hold a seal under
+  hard travel.
+type: object
+subtype: mundane
+component_tag: beeswax
+weight: 0.1
+value: 30
+is_component: true

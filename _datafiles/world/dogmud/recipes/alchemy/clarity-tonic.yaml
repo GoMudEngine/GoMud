@@ -9,6 +9,8 @@ ingredients:
     quantity: 1
   - item_tag: bitter-thistle
     quantity: 1
+  - item_tag: beeswax
+    quantity: 1
   - item_tag: bottle
     quantity: 1
 output:
