@@ -62,3 +62,6 @@ idlemessages:
 - a marsh-rat appears briefly at a trail-mouth, freezes, and is gone
 - ''
 - the moss springs back where you lift your foot
+spawninfo:
+- mobid: 367
+  cooldown: 300 rounds

@@ -68,3 +68,6 @@ idlemessages:
 - a shrimp-shell drifts up from the sand and rocks slowly
 - ''
 - something dark moves under the water-weeds and is still again
+spawninfo:
+- mobid: 369
+  cooldown: 1200 rounds

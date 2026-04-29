@@ -69,3 +69,6 @@ idlemessages:
 - iridescence flashes briefly as a dragonfly turns
 - ''
 - two dragonflies tangle briefly over territory and separate
+spawninfo:
+- mobid: 368
+  cooldown: 600 rounds

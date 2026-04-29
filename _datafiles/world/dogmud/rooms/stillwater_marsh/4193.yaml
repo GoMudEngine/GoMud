@@ -66,3 +66,6 @@ idlemessages:
 - something heavy moves briefly under a slate stone
 - ''
 - the reptile-smell strengthens briefly and is gone
+spawninfo:
+- mobid: 370
+  cooldown: 1800 rounds
