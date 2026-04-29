@@ -1,0 +1,68 @@
+roomid: 4193
+zone: Stillwater Marsh
+title: Adder Den
+description: >
+  A low hollow west of Dragonfly Glade where a rim of dark
+  flat <ansi fg="itemname">slate-rim</ansi> stone rises from
+  the bog, the only rock in this part of the marsh, holding
+  warmth long after the surrounding water cools. The smell
+  reaches you before anything else — a heavy reptile scent
+  that sits low to the ground and does not dissipate. Shed
+  <ansi fg="itemname">slough-skins</ansi> lie on the flat
+  stones, translucent and papery, the fine scale-pattern of
+  bog adder visible in relief. A scattered
+  <ansi fg="itemname">bone-pile</ansi> at the hollow's
+  centre marks the adder's hunting: small rat ribs, frog
+  skulls, the remains of many meals picked entirely clean.
+  The largest stone in the rim serves as a
+  <ansi fg="itemname">basking-rock</ansi>, polished smooth
+  by years of use and faintly oily where scales have passed
+  over it again and again.
+biome: water
+coord:
+  x: -23
+  y: -2
+  z: 0
+exits:
+  east:
+    roomid: 4192
+nouns:
+  slate-rim: |
+    A low rim of dark flat slate-stones rising from the bog
+    around the hollow — the only stone in this part of the
+    marsh, weathered to a dull warm-grey. The stones hold
+    heat well; on a clear afternoon they are noticeably
+    warmer than the surrounding peat.
+  slough-skin: |
+    A papery shed snake-skin on the stones — translucent
+    and intricate, the scale-pattern visible in fine relief.
+    Bog adder, moulted here in safety. Several seasons'
+    worth lie scattered across the rim.
+  slough-skins: |
+    Papery shed snake-skins on the stones — translucent
+    and intricate, the scale-pattern visible in fine relief.
+    Bog adder, moulted here in safety. Several seasons'
+    worth lie scattered across the rim.
+  bone-pile: |
+    Small bones scattered at the hollow's centre — rat
+    ribs, frog skulls, the remains of the adder's hunting.
+    Every bone is picked entirely clean. The pile has
+    accumulated over a long time; the den has been in
+    use for seasons.
+  basking-rock: |
+    The largest flat slate stone in the rim, polished
+    smooth by years of use — the adder's preferred
+    sun-station. An oily sheen marks where the snake's
+    scales have crossed it repeatedly. Approach the stone
+    carefully.
+  basking-rocks: |
+    The flat slate stones of the rim, the largest of which
+    is polished smooth by years of use — the adder's
+    preferred sun-station. An oily sheen marks where the
+    snake's scales have crossed it repeatedly.
+idlemessages:
+- a slough-skin rustles in a passing breeze
+- ''
+- something heavy moves briefly under a slate stone
+- ''
+- the reptile-smell strengthens briefly and is gone

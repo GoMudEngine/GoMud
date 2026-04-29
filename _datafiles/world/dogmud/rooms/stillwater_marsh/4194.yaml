@@ -1,0 +1,63 @@
+roomid: 4194
+zone: Stillwater Marsh
+title: Bog Edge
+description: >
+  South of Dragonfly Glade the marsh shifts character
+  without warning — the standing water gives way to
+  <ansi fg="itemname">bog</ansi>, acidic and quaking, a
+  different world underfoot from the open pond-marsh to
+  the north. Every step on the
+  <ansi fg="itemname">quaking-ground</ansi> sends a slight
+  tremor through the living mat; the whole surface moves
+  together as one piece. Water shows in every depression as
+  a dark tea-coloured pool — the
+  <ansi fg="itemname">acid-water</ansi> of true bog, stained
+  by the sphagnum and undrinkable, famously preserving
+  anything that sinks into it. A thick
+  <ansi fg="itemname">sphagnum-carpet</ansi> dominates the
+  ground in every direction, deeper and wetter than the
+  moss at the hummock — bright green at the surface, darker
+  beneath, holding water like a soaked cloth. The south
+  carries a different air, somehow drier.
+biome: water
+coord:
+  x: -22
+  y: -3
+  z: 0
+exits:
+  north:
+    roomid: 4192
+  south:
+    roomid: 4195
+nouns:
+  bog: |
+    True bog underfoot now — acidic, still, very different
+    from the alkaline pond-marsh to the north. The plants
+    here shift accordingly: cotton-grass, low cranberry,
+    sphagnum dominant where the reeds thin out. The bog
+    has its own smell, different from the marsh: darker
+    and older.
+  quaking-ground: |
+    The ground trembles slightly with every step — the bog
+    is a thick floating mat of living plant matter over
+    deeper water, and your weight moves the whole mat as
+    one piece. Step too far from the firm edge and the
+    mat could open. The foragers test ahead with a pole.
+  acid-water: |
+    Tea-coloured water shows in every depression — strongly
+    acidic from the sphagnum, undrinkable but famously
+    preservative. Things lost in true bog do not rot; they
+    survive for centuries, which is why the foragers are
+    careful about what they drop here.
+  sphagnum-carpet: |
+    Thick sphagnum-moss carpet covers the bog surface,
+    deeper here than at the Mossy Hummock — bright green
+    at the surface, darker and more compacted beneath,
+    holding water like a saturated cloth. Step into it and
+    cold water wells up around the boot.
+idlemessages:
+- the ground trembles briefly under your weight and stills
+- ''
+- a small white moth lifts from the sphagnum and lands again
+- ''
+- the wind off the south carries a different smell — drier

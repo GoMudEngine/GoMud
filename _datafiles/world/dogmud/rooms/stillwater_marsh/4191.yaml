@@ -1,0 +1,64 @@
+roomid: 4191
+zone: Stillwater Marsh
+title: Mossy Hummock
+description: >
+  South of the Iron Seep the marsh lifts briefly into a
+  <ansi fg="itemname">hummock</ansi> — a low mound of
+  compressed peat rising a hand's height above the standing
+  water, a few paces of dryish ground among the reeds.
+  Thick <ansi fg="itemname">sphagnum-moss</ansi> carpets
+  every surface, a vivid green underfoot after the dark
+  water, soft and slightly spongy under the boot. Scattered
+  across the moss are small dark
+  <ansi fg="itemname">droppings</ansi> where the marsh-rats
+  nest above the waterline — they have used this hummock for
+  longer than anyone can say. A network of packed
+  <ansi fg="itemname">rat-trails</ansi> leads away in every
+  direction, tiny worn paths in the moss where small feet
+  have gone back and forth through all weather.
+biome: water
+coord:
+  x: -21
+  y: -2
+  z: 0
+exits:
+  north:
+    roomid: 4187
+  south:
+    roomid: 4196
+  west:
+    roomid: 4192
+nouns:
+  hummock: |
+    A small raised mound of peat-and-moss perhaps twice a
+    person's stride across, rising a hand's height above the
+    surrounding water — the closest thing to dry ground in
+    this part of the marsh. The peat underneath is old and
+    firm; foragers sometimes eat lunch here to escape the
+    water.
+  sphagnum-moss: |
+    Bright green sphagnum moss carpets the hummock in every
+    direction — soft enough to sit on, holding water like a
+    sponge. Healers prize it for wound-dressing: it is
+    naturally clean and its acidity discourages rot.
+  droppings: |
+    Small dark marsh-rat droppings scatter the hummock's
+    surface — the rats nest here above the standing water,
+    using the dry peat as a base between their runs into
+    the surrounding marsh.
+  rat-trail: |
+    A small worn path pressed into the sphagnum by
+    countless small fast feet — the marsh-rats travel the
+    same routes through the cover day after day until the
+    paths are packed smooth.
+  rat-trails: |
+    Small worn paths pressed into the sphagnum by countless
+    small fast feet — the marsh-rats travel the same routes
+    through the cover day after day until the paths are
+    packed smooth.
+idlemessages:
+- something small rustles in the moss at the hummock-edge
+- ''
+- a marsh-rat appears briefly at a trail-mouth, freezes, and is gone
+- ''
+- the moss springs back where you lift your foot
