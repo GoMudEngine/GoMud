@@ -1,0 +1,18 @@
+description: Smoke-test Stage 3.0e corpse salvage end-to-end
+goals:
+  - Confirm `salvage` command help works and you have the `salvage` skill (check `skills`)
+  - Find or buy a salvage kit from Fence Dealer Siv (Thornwall, ~1g) — `give 1 gold siv` or `buy salvage kit`
+  - Travel to a zone with animal-group mobs (Ashwick wild dogs, timber wolves, Stillwater area). Kill one. Confirm a corpse appears in the room (`look`).
+  - Run `salvage corpse` (or `salvage <mobname>`). Confirm yellow "begin carefully working over..." message and a multi-round activity. On completion, confirm green message recovering some leather-strip and possibly sinew, and that the corpse DISAPPEARS from the room (`look`).
+  - Travel to dustwalk_road or any humanoid-group mob (bandits). Kill one. `salvage corpse` — confirm cloth-strip and possibly leather-strip recovered, corpse removed.
+  - Find a mob whose groups don't include `animal` or `humanoid` (chrysalis-touched in Thornwall sewers, or any spore/insect/elemental mob). Kill it. Try `salvage corpse` — confirm RED message "There's nothing useful to recover here" and that the corpse STAYS in the room (activity does NOT start).
+  - Test interruption — kill an animal mob, run `salvage corpse`, then `north` (or any movement) BEFORE the activity completes. Confirm salvage cancels and corpse is still in the room when you walk back.
+  - Test missing kit — drop your salvage kit (`drop kit`), kill an animal, try `salvage corpse`. Confirm RED "You need a salvage kit to skin a corpse" and no activity starts. Pick the kit back up.
+  - Confirm `recipes` lists Artisan's Satchel and Lake-Iron Hook-Spear with sinew in the ingredient list. (Use `recipe artisans-satchel` or similar if the lookup command exists.)
+  - Bonus: salvage 5+ corpses in a row. Note whether your salvage skill ever progresses (existing OnSkillUse path; not deterministic — observation only).
+notes:
+  - Server runs locally at localhost:55555. Has been freshly booted with the Stage 3.0e changes.
+  - Use the `set charset` ASCII setting per the test-mud SOP.
+  - If you can't find a salvage kit, check `Fence Dealer Siv` in Thornwall — that's the canonical source.
+  - The `groups` field is on each mob's YAML (not visible in-game). Use the canonical examples: animal = wild dog, timber wolf; humanoid = bandit; no-match = chrysalis-touched mobs in Thornwall sewers.
+  - Report each of the 8 main goals as PASS / FAIL / BLOCKED with details.
