@@ -32,6 +32,8 @@ spec is fully independent of stages 2-4 (they consume Stage 1 primitives).
 - Combat system already actor-aware via `actions.Actor` (see `internal/actions/actor.go`)
 - Existing `actions.Actor` interface provides `GetUserId()` (player or 0) and `GetMobInstanceId()` (mob or 0) for disambiguation
 
+**Architecture footnote (added 2026-04-27 during Task 2):** `internal/actions` already imports `internal/parties` (cast.go and sneak.go call `parties.Get(...)` for combat/sneak coordination). This means `internal/parties` cannot import `internal/actions` — that would be an import cycle. We resolve this in the spirit of Approach 1 (Actor-everywhere) by defining minimal local interfaces in the parties package that match the subset of `actions.Actor` methods each operation needs (e.g., `actorIdentity` for ActorKey lookup; a wider `partyActor` for full Party operations). Go's structural typing means any `actions.Actor` satisfies these local interfaces without an explicit cast. Externally, callers still pass `actions.Actor` values; internally, parties uses the local interface name. End state is functionally identical to the spec's stated Approach 1 — we just declare the interface locally instead of importing it.
+
 **What Stage 1 changes:**
 
 ```
