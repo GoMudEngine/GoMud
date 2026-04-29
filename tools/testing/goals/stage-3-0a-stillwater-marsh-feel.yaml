@@ -1,0 +1,29 @@
+description: Explore the new Stillwater Marsh zone — voice, layout, wildlife
+goals:
+  - Confirm where you spawn — `look` first thing. If you're in Marsh Track (room 4177, Stillwater Marsh), you're at the entry. If you're elsewhere, the engine had a cached player session — log out and back in, or walk to 4177 via Stillwater Mill Creek Footbridge (4133) → west.
+  - Walk every one of the 20 rooms in the zone (4177-4196). Note any prose typos, broken ANSI tags (literal `<ansi fg="...">` text bleeding through is a BUG), or voice-mismatches with the existing Stillwater wetland style (reference 4141 Sluice Pond).
+  - Critical regression check — the **plural ANSI tag bug** caught in 3.0c (commit 0907023e). Try `look <noun>` for plural-form highlighted words you see (reeds, trail-boards, tussocks, water-tracks, clam-beds, clam-shells, slough-skins, basking-rocks, dragonflies, sundews, rat-trails, water-weeds, rust-stains, mussels, waxberries, willows, cattails, pilgrim-stones, flat-stones, reed-beds). Every one should resolve. If any returns "Look at what???", that's a BUG — note the room.
+  - **Tagged-word coverage check** — for each room, look at every word highlighted in the description. Try `look <word>` on it. Every highlighted word should resolve to a definition. If any fails, that's a BUG (this caught a `board-trail` gap at 4183 during T3 spec review — patched in 8718cb23, but worth verifying live).
+  - Pay special attention to room 4195 Far Bog Heart — its biome is `plains`, the only non-water room in the zone. Confirm description matches (upland-shoulder transition, pale grass, south-horizon view to the steppe).
+  - Test the 4-way central hub at room 4184 Heron Marsh — confirm 3 exits (e to Cattail Bend, w to Otter Slide, s to Shrimp Shallows). Walk each branch.
+  - Test the 4-way south hub at room 4192 Dragonfly Glade — 4 exits (n/s/e/w connecting to Shrimp Shallows / Bog Edge / Mossy Hummock / Adder Den).
+  - Try to encounter each of the 5 mob spawns. They have cooldowns so some may not appear immediately:
+      • 4185 Otter Slide — river otter (mob 366), prey/flees, **species 24 mustelid** (first non-badger mustelid)
+      • 4188 Shrimp Shallows — snapping turtle (mob 369), passive but hits hard if engaged
+      • 4189 Sundew Hollow — marsh rat (mob 367), prey/flees
+      • 4191 Mossy Hummock — marsh rat (mob 367), prey/flees (twin spawn)
+      • 4192 Dragonfly Glade — dragonfly swarm (mob 368), passive
+      • 4193 Adder Den — bog adder (mob 370), HOSTILE on sight + hates [rodent]
+  - **Critical wildlife test** — verify the **adder-vs-rat emergent dynamic**. The adder has `hostile: false` to player NO wait, the adder is `hostile: true` (will attack you on sight) AND `hates: [rodent]`. So it'll engage either you OR a marsh rat, whichever it sees first. To witness rat-hunting: stand near 4192 Dragonfly Glade or 4189 Sundew Hollow when both an adder (4193) and a marsh rat (4189 or 4191) are alive. If the adder wanders to where a rat is, they should fight without your help.
+  - Verify the **adder DOES attack you on sight**. Walk into Adder Den (4172... wait, 4193). Expect immediate combat. Save this for last (you may die — adder has dex 20 + perception 18). Smoketester is well-geared but be careful.
+  - Verify **otter does NOT attack you** — walk into Otter Slide (4185) when otter is present. Stand. Confirm no aggro. The otter is prey archetype; it should flee.
+  - Test the boundary edit — from Marsh Track (4177), `east` should put you in Mill Creek Footbridge (4133, Stillwater). Confirm. Then go `west` back into Marsh Track. Confirm round-trip works.
+  - Verify the cartesian / map renders cleanly. Run `map` from a few rooms in the zone — confirm the 20 rooms display in a coherent layout: north spur (Marsh Track → Mill Creek Source → Spring Pool), west spur (Cattail Verge → Reed Beds → Willow Grove), hub row (Cattail Bend / Heron Marsh / Otter Slide / Clam Beds), forage row (Iron Seep / Shrimp Shallows / Sundew Hollow / Black Pool), south cluster (Mossy Hummock / Dragonfly Glade / Adder Den / Bog Edge / Far Bog Heart / Hidden Spring). No overlap with neighboring Stillwater rooms.
+  - Note any forage drops. Killing the otter should drop freshwater clam (40058). Killing the marsh rat should drop wild hare meat (40064). Adder, swarm, turtle drop nothing.
+
+notes:
+  - Server runs locally at localhost:55555. Stage 3.0a shipped 9 commits ending 79156eea. Smoketester's roomid was edited to 4177 (Marsh Track); if the server hasn't reloaded the player YAML since the edit, the smoketester is still wherever they last logged out (4167 Deer Browse in Fernway South) and you'll need to walk west.
+  - Use `set charset` first to get ASCII per the SOP.
+  - Movement is north/south/east/west. Terminal rooms (4180, 4182, 4186, 4190, 4193, 4195, 4196) have only one exit each; trying others should give a normal "you can't go that way" rebuff.
+  - Report every PASS / FAIL / BLOCKED + any wordcraft issues. Voice should match the existing Stillwater wetland files (4141 Sluice Pond is the closest precedent; also reference 4143 Tailor's Cottage for indoor Stillwater style).
+  - The 5 mobs are named: river otter, marsh rat, dragonfly swarm, snapping turtle, bog adder. Use those names for `attack <mob>` and `look <mob>`.
