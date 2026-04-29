@@ -29,6 +29,11 @@ exits:
   south:
     roomid: 4188
 nouns:
+  reed-trails: |
+    The narrow trails through the reed-beds east of here — the same
+    board-and-mud paths that brought you in through Cattail Bend.
+    From the open pond they read as dark gaps in a wall of green,
+    closing off any view back the way you came.
   open-pond: |
     A wide shallow pond perhaps thirty paces across, the water
     clear enough to see the pale-weed mat on the bottom and small

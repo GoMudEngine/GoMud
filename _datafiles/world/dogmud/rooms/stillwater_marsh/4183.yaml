@@ -28,6 +28,16 @@ exits:
   west:
     roomid: 4184
 nouns:
+  seed-heads: |
+    The cattail seed-heads at the bend are older than those at the
+    Cattail Verge to the north — many already split and shedding
+    white fluff that drifts onto the boards and the water-surface
+    in slow drifts.
+  peat-shadow: |
+    The shadow the boardwalk casts on the dark peat-water is itself
+    nearly black — light absorbs into the peat-stained water rather
+    than reflecting from it, so the trail's shadow reads as a deeper
+    band of darkness in already-dark water.
   board-trail: |
     Split-cedar boards laid two-wide across the soft marsh ground —
     the same board-trail that begins at the entry; here it bends

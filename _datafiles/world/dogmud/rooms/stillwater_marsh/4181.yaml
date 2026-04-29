@@ -31,6 +31,11 @@ exits:
   west:
     roomid: 4182
 nouns:
+  reed-wall: |
+    The reed-bed presses in tight enough on both sides of the
+    trail that it reads as a wall of green — visually solid
+    despite being a thousand individual stems, swaying in any
+    breeze and giving up nothing of what lies beyond.
   reed-bed: |
     The largest single stand of reeds in the zone — perhaps an
     acre of head-high marsh-reed pressing in on the trail from

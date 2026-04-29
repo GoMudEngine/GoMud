@@ -27,6 +27,11 @@ exits:
   south:
     roomid: 4191
 nouns:
+  iron-tang: |
+    The faint metallic smell that hangs over the seep — strong
+    enough to notice from several paces away when the wind is
+    still, fading at the edges of the room. Smiths know it; so
+    do the foragers who work the lake-iron beds.
   iron-seep: |
     A broad slow seep where mineral-rich water rises through the
     marsh peat and spreads across a low shelf of stone before
