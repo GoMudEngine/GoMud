@@ -1,0 +1,41 @@
+mobid: 367
+zone: Stillwater Marsh
+behavior_archetype: prey
+archetype: fighting
+statpool: 20
+itemdropchance: 50
+hostile: false
+charm_immune: false
+maxwander: 4
+groups:
+  - animal
+  - rodent
+  - prey
+items:
+  - itemid: 40064
+idlecommands:
+  - 'emote freezes at a trail-mouth, ears twitching'
+  - ''
+  - 'emote scuttles a few paces and stops'
+  - ''
+  - 'emote nibbles at a sphagnum-shoot quickly'
+  - ''
+activitylevel: 35
+character:
+  name: marsh rat
+  description: |
+    A small grey-brown marsh rat, wet-furred and quick, with
+    bright black eyes and a pink scaly tail. It freezes at your
+    approach and weighs whether you are a problem.
+  speciesid: 10
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 5
+    dexterity:
+      training: 18
+    perception:
+      training: 15
+    vitality:
+      training: 6
