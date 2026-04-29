@@ -1,0 +1,77 @@
+roomid: 4189
+zone: Stillwater Marsh
+title: Sundew Hollow
+description: >
+  The marsh floor rises here to a low hollow of slightly drier
+  peat — a <ansi fg="itemname">rim</ansi> of firm ground above
+  the surrounding water, barely ankle-high but enough to keep
+  the worst of the standing water out. The hollow's wet peat
+  is colonized entirely by <ansi fg="itemname">sundews</ansi>
+  — flat red-tinged rosettes the size of a coin, each leaf
+  studded with <ansi fg="itemname">dewdrops</ansi> that sparkle
+  in any light and are anything but gentle. Small insect bodies
+  are visible stuck to the leaves all across the mat, each one
+  in some slow stage of digestion. A network of small worn
+  <ansi fg="itemname">rat-runs</ansi> leads in and out through
+  the rim cover — marsh-rats, whose nests make use of the
+  only dryish ground for thirty paces in any direction. The
+  rats themselves stay out of sight but the runs show fresh
+  use, the peat pressed firm where small feet have passed.
+biome: water
+coord:
+  x: -23
+  y: -1
+  z: 0
+exits:
+  north:
+    roomid: 4185
+  east:
+    roomid: 4188
+  west:
+    roomid: 4190
+  south:
+    roomid: 4193
+nouns:
+  sundew: |
+    A small carnivorous sundew plant — flat red-tinged rosette
+    the size of a coin, each leaf armed with sticky dewdrops
+    that catch and hold small insects. The hollow's wet acid
+    peat suits them perfectly; they cover the interior of the
+    rim completely, leaving no bare ground to step on without
+    crushing a plant or two.
+  sundews: |
+    Small carnivorous sundew plants colonize the hollow's wet
+    peat in a continuous mat — flat red-tinged rosettes the
+    size of a coin, each leaf studded with sticky dewdrops.
+    Insects landing on any part of the mat are caught and slowly
+    digested; the hollow smells faintly sweet and faintly wrong.
+  dewdrops: |
+    The sundew-droplets sparkle in any sunlight — sticky and
+    surprisingly tough, deceptively water-like in appearance.
+    They are the trap mechanism for small flies and midges; a
+    finger pressed to one comes away with a thin strand of gum.
+  rat-run: |
+    A small worn path through the rim cover — marsh-rat trail,
+    pressed firm by regular use. The runs lead in and out of
+    the hollow's rim at several points; following one inward
+    usually ends at a nest of dry grass pressed into a nook
+    in the peat.
+  rat-runs: |
+    Small worn paths lead in and out of the hollow's rim at
+    several points — marsh-rat trails, pressed firm by regular
+    use. The rats themselves stay invisible in the cover but
+    the runs show fresh traffic. The foragers know to check
+    the runs for signs of what else has been through here.
+  rim: |
+    A low rim of slightly drier peat surrounds the hollow —
+    barely ankle-high above the surrounding marsh, but enough
+    to make this the closest thing to dry ground for thirty
+    paces in any direction. The marsh-rats nest in it for
+    that reason; the sundews colonize the wet interior it
+    encloses for the same.
+idlemessages:
+- a small fly lands on a sundew and is briefly held
+- ''
+- something small rustles through the rim cover
+- ''
+- dewdrops on a sundew catch the light and sparkle briefly

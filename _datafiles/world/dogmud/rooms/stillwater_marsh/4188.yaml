@@ -1,0 +1,70 @@
+roomid: 4188
+zone: Stillwater Marsh
+title: Shrimp Shallows
+description: >
+  South of Heron Marsh the pond floor rises until the water is
+  knee-deep and clear as glass — a wide stretch of
+  <ansi fg="itemname">shallows</ansi> where the bottom shows as
+  rippled pale sand between dark mats of
+  <ansi fg="itemname">water-weeds</ansi>. Schools of
+  <ansi fg="itemname">skitter-shrimp</ansi> move through the
+  shallows in brief silver flashes, nearly invisible when still,
+  bright when they scatter — their translucent shells catching
+  light for a moment before they find new cover. Shed shells
+  drift up from the sand and rock slowly on the surface. The
+  foragers wade slowly here, harvesting the shells the shrimp
+  leave behind after moulting. Sometimes the dark flat shape
+  of a <ansi fg="itemname">turtle-shape</ansi> rests on the
+  sand-bottom beneath the weeds — a snapping turtle that has
+  learned the shrimp concentrate here, waiting with the patience
+  particular to large reptiles.
+biome: water
+coord:
+  x: -22
+  y: -1
+  z: 0
+exits:
+  north:
+    roomid: 4184
+  south:
+    roomid: 4192
+  east:
+    roomid: 4187
+  west:
+    roomid: 4189
+nouns:
+  shallows: |
+    Clear water perhaps knee-deep, extending in every direction
+    from this hub of the marsh's lower row — the bottom visible
+    as rippled pale sand interspersed with dark weed-mats. The
+    shallows are warm in summer sun and full of life; in winter
+    the water is bracingly cold and the shrimp slower.
+  skitter-shrimp: |
+    Small translucent shrimp dart in flickering schools through
+    the shallows — almost invisible in still water, briefly
+    visible as silver flashes when they move. They moult
+    regularly, leaving behind shed shells that the Stillwater
+    foragers collect; the shells dry well and are traded east
+    for use in dyes and medicines.
+  turtle-shape: |
+    The dark flattened shape of a snapping turtle resting on
+    the sand-bottom beneath the weed-mats — sometimes present,
+    sometimes a tussock instead. Hard to distinguish from above
+    until it moves, which it does without warning. The foragers
+    wade carefully here and give the south edge a wide berth.
+  water-weed: |
+    Strands of dark green water-weed grow in mats from the pale
+    sand — shrimp hide here between forays, the snapping turtle
+    stalks among them. The weed is slick underfoot and a reason
+    to wade slowly.
+  water-weeds: |
+    Strands of dark green water-weed grow in mats from the pale
+    sand — shrimp hide here between forays, the snapping turtle
+    stalks among them. The weed is slick underfoot and a reason
+    to wade slowly.
+idlemessages:
+- a school of skitter-shrimp scatters and re-forms
+- ''
+- a shrimp-shell drifts up from the sand and rocks slowly
+- ''
+- something dark moves under the water-weeds and is still again
