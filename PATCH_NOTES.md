@@ -1,5 +1,34 @@
 # DOGMud Patch Notes
 
+## 2026-04-28 — Stage 3.0a: Stillwater Marsh Zone (dev only)
+
+**Note:** Dev-only landing. The full economy stack ships to prod (`master`)
+as a coherent update once Stage 3.4 lands.
+
+- New 20-room wetland zone west of Stillwater, themed as marsh
+  giving way to upland steppe at the southern terminus. Connects
+  from Mill Creek Footbridge (4133) via a new west exit; terminates
+  at Far Bog Heart (4195, biome: plains) with a one-way view of
+  the Dustwalk beyond.
+- Five new wildlife mobs (366-370): river otter, marsh rat,
+  dragonfly swarm, snapping turtle, bog adder. **Only the bog
+  adder is hostile to players** AND it `hates: [rodent]` — it
+  hunts the marsh-rats in adjacent rooms (mirror of 3.0c's
+  wolf-hates-boar dynamic, but combined with the only-hostile-to-
+  player role into one mob).
+- The river otter is the **first non-badger consumer of the
+  mustelid species** (24) added in Stage 3.0c — validates the
+  species investment.
+- All 6 existing Stillwater forage mats (lake-iron, marsh willow
+  bark, lake mint, freshwater clam, skitter-shrimp shell,
+  Stillwater black pearl) get fresh territory to spawn in. No
+  new mats added.
+- Stage 3.0a is the territory groundwork for Stage 3.1 forager
+  NPCs — the marsh is now big enough for a Stillwater-anchored
+  forager to wander, gather, and recall to depot when injured.
+- Coord map gains 48 Stillwater catch-up rows (the doc was
+  missing all of Stillwater) plus 20 new Stillwater Marsh rows.
+
 ## 2026-04-28 — Stage 3.0c: Fernway South Zone (dev only)
 
 **Note:** Dev-only landing. The full economy stack ships to prod (`master`)

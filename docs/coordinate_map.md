@@ -8,7 +8,7 @@ southwest=X-1/Y-1, up=Z+1, down=Z-1, enter/leave=same position
 
 ## Reachable Rooms by Zone
 
-Total reachable: 304 rooms across multiple zones
+Total reachable: 372 rooms across multiple zones
 
 | Room ID | Zone | Title | X | Y | Z |
 |---------|------|-------|---|---|---|
@@ -235,6 +235,53 @@ Total reachable: 304 rooms across multiple zones
 | 425 | Watchers Crossing | River Bank | -8 | -1 | 0 |
 | 426 | Watchers Crossing | Under the Bridge | -6 | -1 | 0 |
 | 427 | Watchers Crossing | Watchers Crossing, East Road | -5 | 0 | 0 |
+| 4100 | Stillwater | Stillwater Gate, Southern Approach | -18 | 1 | 0 |
+| 4101 | Stillwater | South Approach | -18 | 2 | 0 |
+| 4102 | Stillwater | Lakefront Square | -18 | 3 | 0 |
+| 4103 | Stillwater | The Pike & Lantern | -19 | 3 | 0 |
+| 4104 | Stillwater | The Pike & Lantern, Lodging Loft | -19 | 3 | 0 |
+| 4105 | Stillwater | Tinder & Tackle | -18 | 4 | 0 |
+| 4106 | Stillwater | Brindle's Smithy | -19 | 4 | 0 |
+| 4107 | Stillwater | Coalsmoke Alley | -20 | 4 | 0 |
+| 4108 | Stillwater | Crier's Step | -17 | 3 | 0 |
+| 4109 | Stillwater | North Square | -18 | 5 | 0 |
+| 4110 | Stillwater | Constabulary | -17 | 5 | 0 |
+| 4111 | Stillwater | North Gate | -18 | 6 | 0 |
+| 4112 | Stillwater | Stable Yard | -20 | 3 | 0 |
+| 4113 | Stillwater | Lake-View Promenade | -16 | 3 | 0 |
+| 4114 | Stillwater | Reedy Foreshore | -16 | 2 | 0 |
+| 4115 | Stillwater | Crab-Trap Beach | -15 | 2 | 0 |
+| 4116 | Stillwater | Fishing Docks | -16 | 4 | 0 |
+| 4117 | Stillwater | Net Yard | -16 | 5 | 0 |
+| 4118 | Stillwater | Boat Rental Pier | -15 | 5 | 0 |
+| 4119 | Stillwater | Lakeshore North | -16 | 6 | 0 |
+| 4120 | Stillwater | Lake Path Bend | -15 | 6 | 0 |
+| 4121 | Stillwater | Cave Mouth | -14 | 6 | 0 |
+| 4122 | Stillwater | Temple Approach | -15 | 3 | 0 |
+| 4123 | Stillwater | Temple of Stillwater | -14 | 3 | 0 |
+| 4124 | Stillwater | Temple Garden | -14 | 2 | 0 |
+| 4125 | Stillwater | Healer's Alcove | -14 | 4 | 0 |
+| 4126 | Stillwater | Pearl-Carver's Garret | -14 | 3 | 0 |
+| 4127 | Stillwater | Dripping Antechamber | -14 | 6 | 0 |
+| 4128 | Stillwater | Pool Chamber | -14 | 7 | 0 |
+| 4129 | Stillwater | Submerged Passage | -15 | 7 | 0 |
+| 4130 | Stillwater | Bone Shoals | -15 | 6 | 0 |
+| 4131 | Stillwater | Hollow Sump | -14 | 8 | 0 |
+| 4132 | Stillwater | Cooper's Lane | -19 | 2 | 0 |
+| 4133 | Stillwater | Mill Creek Footbridge | -20 | 1 | 0 |
+| 4134 | Stillwater | The Bakehouse | -19 | 1 | 0 |
+| 4135 | Stillwater | The Watermill | -20 | 2 | 0 |
+| 4136 | Stillwater | Healer's Cottage | -20 | 5 | 0 |
+| 4137 | Stillwater | Ulla's Parlor | -19 | 5 | 0 |
+| 4138 | Stillwater | Uncle's Workshop | -19 | 5 | 0 |
+| 4139 | Stillwater | Tannery Shed | -19 | 6 | 0 |
+| 4140 | Stillwater | Stillwater Cemetery | -21 | 5 | 0 |
+| 4141 | Stillwater | Sluice Pond | -20 | 6 | 0 |
+| 4142 | Stillwater | Travelers' Camp | -19 | 7 | 0 |
+| 4143 | Stillwater | Tailor's Cottage | -20 | 7 | 0 |
+| 4144 | Stillwater | Old Chapel Ruin | -21 | 8 | 0 |
+| 4145 | Stillwater | Wardstone Circle | -20 | 8 | 0 |
+| 4146 | Stillwater | Boat-Builder's Yard | -15 | 4 | 0 |
 | 4147 | The Fernway | Fernway, Eastern Trailhead | -9 | -13 | 0 |
 | 4148 | The Fernway | Stoneford Crossing | -10 | -13 | 0 |
 | 4149 | The Fernway | Twin Oaks Bend | -11 | -13 | 0 |
@@ -265,6 +312,26 @@ Total reachable: 304 rooms across multiple zones
 | 4174 | The Fernway South | Twisted Hawthorn | -14 | -21 | 0 |
 | 4175 | The Fernway South | Steppe Edge | -14 | -22 | 0 |
 | 4176 | The Fernway South | Birdsong Glade | -14 | -20 | 0 |
+| 4177 | Stillwater Marsh | Marsh Track | -21 | 1 | 0 |
+| 4178 | Stillwater Marsh | Cattail Verge | -22 | 1 | 0 |
+| 4179 | Stillwater Marsh | Mill Creek Source | -21 | 2 | 0 |
+| 4180 | Stillwater Marsh | Spring Pool | -21 | 3 | 0 |
+| 4181 | Stillwater Marsh | Reed Beds | -23 | 1 | 0 |
+| 4182 | Stillwater Marsh | Willow Grove | -24 | 1 | 0 |
+| 4183 | Stillwater Marsh | Cattail Bend | -21 | 0 | 0 |
+| 4184 | Stillwater Marsh | Heron Marsh | -22 | 0 | 0 |
+| 4185 | Stillwater Marsh | Otter Slide | -23 | 0 | 0 |
+| 4186 | Stillwater Marsh | Clam Beds | -24 | 0 | 0 |
+| 4187 | Stillwater Marsh | Iron Seep | -21 | -1 | 0 |
+| 4188 | Stillwater Marsh | Shrimp Shallows | -22 | -1 | 0 |
+| 4189 | Stillwater Marsh | Sundew Hollow | -23 | -1 | 0 |
+| 4190 | Stillwater Marsh | Black Pool | -24 | -1 | 0 |
+| 4191 | Stillwater Marsh | Mossy Hummock | -21 | -2 | 0 |
+| 4192 | Stillwater Marsh | Dragonfly Glade | -22 | -2 | 0 |
+| 4193 | Stillwater Marsh | Adder Den | -23 | -2 | 0 |
+| 4194 | Stillwater Marsh | Bog Edge | -22 | -3 | 0 |
+| 4195 | Stillwater Marsh | Far Bog Heart | -22 | -4 | 0 |
+| 4196 | Stillwater Marsh | Hidden Spring | -21 | -3 | 0 |
 | 2001 | World Road | The Northern Road | -10 | 6 | 0 |
 | 4000 | Marches Spur Road | Spur Road, Southern Fork | -8 | -2 | 0 |
 | 4001 | Marches Spur Road | Scrubland Bend | -8 | -3 | 0 |
@@ -446,7 +513,7 @@ Total unreachable: 120 rooms across 6 zones
 
 ## Coordinate Range Summary
 
-- X range: -13 to 18 (width: 32)
+- X range: -24 to 18 (width: 43)
 - Y range: -22 to 11 (height: 34)
 - Z range: -2 to 0 (depth: 3)
 
