@@ -139,7 +139,7 @@ func tickTransit(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Resu
 	if route == nil {
 		return Failure
 	}
-	if hostilesInRoom(mob, ctx.RoomId) || anyPartyMemberInCombat(ctx.InstanceId) {
+	if partyHostilesNearby(ctx.InstanceId) || anyPartyMemberInCombat(ctx.InstanceId) {
 		return Failure
 	}
 	if ctx.RoomId == route.ArriveAtRoomId {
@@ -173,7 +173,7 @@ const fernwayForagerMobId = 373
 // Returns Success while making progress. Returns Failure when at
 // room 4038 dwelling so legacy idle path can fire flavor emotes.
 func tickFernwayPickup(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result {
-	if hostilesInRoom(mob, ctx.RoomId) || anyPartyMemberInCombat(ctx.InstanceId) {
+	if partyHostilesNearby(ctx.InstanceId) || anyPartyMemberInCombat(ctx.InstanceId) {
 		return Failure
 	}
 
@@ -226,7 +226,7 @@ func tickRoute(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result
 	if route == nil {
 		return Failure
 	}
-	if hostilesInRoom(mob, ctx.RoomId) || anyPartyMemberInCombat(ctx.InstanceId) {
+	if partyHostilesNearby(ctx.InstanceId) || anyPartyMemberInCombat(ctx.InstanceId) {
 		return Failure
 	}
 
@@ -304,6 +304,48 @@ func hostilesInRoom(mob *mobs.Mob, roomId int) bool {
 			continue
 		}
 		if mob.HatesMob(other) {
+			return true
+		}
+	}
+	return false
+}
+
+// partyHostilesNearby is the party-wide variant of hostilesInRoom.
+// Pause-the-caravan check: if ANY party member (leader or follower)
+// is in a room with a mob on the caller's hates list, return true.
+//
+// Without this, a follower lagging into a hostile room could be
+// jumped while the leader walks on — the caravan would resume
+// movement because the leader's room is clear, even though the
+// follower is mid-fight or about to die. Stage 3.4 caught this in
+// playtest: lookout aggroed Lars, Lars's btree didn't auto-set
+// his own Aggro back, anyPartyMemberInCombat returned false, and
+// the caravan abandoned him.
+//
+// Solo (no party) callers fall back to checking just their own room.
+func partyHostilesNearby(callerInstId int) bool {
+	caller := mobs.GetInstance(callerInstId)
+	if caller == nil {
+		return false
+	}
+	if len(caller.Hates) == 0 {
+		return false
+	}
+	p := parties.GetByMobInstanceId(callerInstId)
+	if p == nil {
+		return hostilesInRoom(caller, caller.Character.RoomId)
+	}
+	seen := map[int]bool{}
+	for _, m := range p.Members {
+		c := m.GetCharacter()
+		if c == nil {
+			continue
+		}
+		if seen[c.RoomId] {
+			continue
+		}
+		seen[c.RoomId] = true
+		if hostilesInRoom(caller, c.RoomId) {
 			return true
 		}
 	}
