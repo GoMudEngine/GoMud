@@ -292,6 +292,14 @@ func tickForagerRecalling(
 		transitionForager(ctx.MobState, forager.StateResting)
 		return Success
 	}
+	// Don't re-issue the cast every idle tick — re-issuing while a cast
+	// is in progress can reset its progress and trap the forager mid-cast
+	// indefinitely (observed 2026-04-30: Kessa "begins weaving a spell"
+	// repeatedly but never actually teleports). Wait for the active cast
+	// to resolve.
+	if mob.Character.IsCasting() {
+		return Success
+	}
 	mob.Command("cast fold-recall")
 	return Success
 }
