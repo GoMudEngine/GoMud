@@ -105,9 +105,10 @@ hints:
     their feelings? Try out the <ansi fg="command">taunt</ansi>
     special command.
   - >-
-    Healing up slow? Try hanging out in the Sanctum Basin or
-    the Temple in Thornwall. Some rooms are great places to
-    rest.
+    Healing up slow? Some rooms are sanctuaries — temples, certain
+    camps, the Sanctum Basin tutorial — and regenerate health,
+    stamina, and conviction much faster than ordinary rooms. Look
+    for a peaceful description.
   - >-
     Found a mysterious item? Use <ansi fg="command">cast identify</ansi>
     to reveal its properties, or visit a merchant and
