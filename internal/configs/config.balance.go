@@ -321,6 +321,12 @@ type Balance struct {
 	// idles at the meeting point waiting for the caravan before recalling
 	// home with the satchel. Default 150.
 	ForagerWaitTimeoutRounds ConfigInt `yaml:"ForagerWaitTimeoutRounds"`
+
+	// ForagerRestCarryThreshold (Stage 3.4) is the carry-capacity ratio
+	// (0.0-1.0) above which the forager stays resting at home instead of
+	// cycling back to forage. Prevents futile foraging loops when local
+	// vendors are saturated (MaxStock cap reached). Default 0.5.
+	ForagerRestCarryThreshold ConfigFloat `yaml:"ForagerRestCarryThreshold"`
 }
 
 func (b *Balance) Validate() {

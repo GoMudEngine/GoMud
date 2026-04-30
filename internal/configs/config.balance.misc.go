@@ -301,4 +301,7 @@ func (b *Balance) validateMisc() {
 	if b.ForagerWaitTimeoutRounds <= 0 {
 		b.ForagerWaitTimeoutRounds = 150
 	}
+	if b.ForagerRestCarryThreshold <= 0 || b.ForagerRestCarryThreshold > 1.0 {
+		b.ForagerRestCarryThreshold = 0.5
+	}
 }
