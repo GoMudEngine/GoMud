@@ -8,16 +8,24 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/shops"
 )
 
-// VisitVendorsInRoom calls Restock() on every shop-bearing mob in the
-// given room and returns the list of mob names that received a delivery
-// (for room-flavor message generation).
+// VisitVendorsInRoom calls RestockBuckets() on every shop-bearing mob
+// in the given room with the caravan's current load buckets, and
+// returns the list of mob names that received a delivery (for
+// room-flavor message generation).
 //
 // "Shop-bearing" = HasShop() returns true AND the shops package can
-// resolve a shop inventory for (zone, mobId, homeRoomId). A mob with a
-// Shop spec but no registered inventory is silently skipped.
+// resolve a shop inventory for (zone, mobId, homeRoomId). A mob with
+// a Shop spec but no registered inventory is silently skipped. A
+// vendor whose stocked items don't intersect the given buckets simply
+// won't get any restock — no message fires.
+//
+// Empty/nil buckets means no restock attempts; returns nil.
 //
 // Returns nil if the room doesn't exist.
-func VisitVendorsInRoom(roomId int) []string {
+func VisitVendorsInRoom(roomId int, buckets []string) []string {
+	if len(buckets) == 0 {
+		return nil
+	}
 	room := rooms.LoadRoom(roomId)
 	if room == nil {
 		return nil
@@ -32,8 +40,9 @@ func VisitVendorsInRoom(roomId int) []string {
 		if si == nil {
 			continue
 		}
-		si.Restock()
-		visited = append(visited, mob.Character.Name)
+		if si.RestockBuckets(buckets) {
+			visited = append(visited, mob.Character.Name)
+		}
 	}
 	return visited
 }

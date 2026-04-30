@@ -21,7 +21,7 @@ func TestMain(m *testing.M) {
 
 func TestVisitVendorsInRoom_NoRoomReturnsNil(t *testing.T) {
 	// Use a roomid that's guaranteed not to exist.
-	if got := VisitVendorsInRoom(99999999); got != nil {
+	if got := VisitVendorsInRoom(99999999, []string{"stillwater"}); got != nil {
 		t.Errorf("VisitVendorsInRoom(missing) = %v, want nil", got)
 	}
 }
@@ -30,7 +30,7 @@ func TestVisitVendorsInRoom_NoShopMobsReturnsNil(t *testing.T) {
 	cleanup := seedTestRoomWithMobs(t, 7777, "TestZone", []mobs.MobId{1})
 	defer cleanup()
 
-	got := VisitVendorsInRoom(7777)
+	got := VisitVendorsInRoom(7777, []string{"stillwater"})
 	if got != nil {
 		t.Errorf("VisitVendorsInRoom = %v, want nil for room with no shop mobs", got)
 	}
@@ -47,7 +47,7 @@ func TestVisitVendorsInRoom_ShopMobNoInventory(t *testing.T) {
 	cleanup := seedTestRoomWithExistingMobs(t, 7778, "TestZone", []*mobs.Mob{mob})
 	defer cleanup()
 
-	got := VisitVendorsInRoom(7778)
+	got := VisitVendorsInRoom(7778, []string{"stillwater"})
 	if got != nil {
 		t.Errorf("VisitVendorsInRoom = %v, want nil (shop mob present but no inventory registered)",
 			got)

@@ -18,6 +18,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/economy"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -149,7 +150,10 @@ func tickRoute(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result
 	nextRoom := route.VendorStopIds[idx]
 	if ctx.RoomId == nextRoom {
 		// Arrived at this stop — restock + advance index.
-		visited := caravan.VisitVendorsInRoom(nextRoom)
+		// TODO(stage-3.1-task-10): replace economy.AllBuckets() with the
+		// caravan's current caravan_load (set by stillwater/thornwall route
+		// + appended on Fernway pickup).
+		visited := caravan.VisitVendorsInRoom(nextRoom, economy.AllBuckets())
 		if msg := caravan.FormatDeliveryMessage(visited); msg != "" {
 			if r := rooms.LoadRoom(nextRoom); r != nil {
 				r.SendText(msg)

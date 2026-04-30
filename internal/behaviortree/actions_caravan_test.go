@@ -77,9 +77,11 @@ func TestActCaravanStep_AdvancesFromTransitOnArrival(t *testing.T) {
 	fn(nil, ctx)
 
 	got := state.GetString("caravan_state")
-	if got != caravan.StateStillwaterRoute.Name() {
+	// After outbound transit arrives at the depot, it now advances to the
+	// FernwayPickup substate (inserted in the cycle between transit and route).
+	if got != caravan.StateOutboundFernwayPickup.Name() {
 		t.Errorf("after transit arrival, caravan_state = %q, want %q",
-			got, caravan.StateStillwaterRoute.Name())
+			got, caravan.StateOutboundFernwayPickup.Name())
 	}
 }
 
