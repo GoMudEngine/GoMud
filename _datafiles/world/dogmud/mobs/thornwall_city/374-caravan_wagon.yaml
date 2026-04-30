@@ -18,6 +18,7 @@ charm_immune: true
 carry_capacity: 5000
 health_max: 1500
 stamina_max: 9999
+hide_equipment_slots: true
 corpse_name: splintered wagon wreckage
 corpse_description: |
   Shattered timbers and twisted iron bands lie heaped where

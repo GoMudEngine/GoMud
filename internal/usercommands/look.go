@@ -133,8 +133,9 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			}
 
 			invData := map[string]any{
-				`Equipment`: &m.Character.Equipment,
-				`ItemNames`: itemNames,
+				`Equipment`:     &m.Character.Equipment,
+				`ItemNames`:     itemNames,
+				`HideEquipment`: m.HideEquipmentSlots,
 			}
 
 			inventoryTxt, _ := templates.Process("character/inventory-look", invData, user.UserId)

@@ -1,3 +1,4 @@
+{{- if not .HideEquipment -}}
  ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Equipment</ansi> ──────────────────────────────────────────────────────────────┐
 {{ if not .Equipment.Weapon.IsDisabled }}   <ansi fg="yellow">Weapon:     </ansi><ansi fg="itemname">{{ .Equipment.Weapon.NameSimple }}</ansi>
 {{ end -}}
@@ -49,4 +50,5 @@
 {{ end -}}
 {{- if not .Equipment.ComponentBag.IsDisabled }}   <ansi fg="yellow">Components: </ansi><ansi fg="itemname">{{ .Equipment.ComponentBag.NameSimple }}</ansi>
 {{ end }} └────────────────────────────────────────────────────────────────────────────┘
+{{- end }}
  Carrying: {{ $itmCt := len .ItemNames }}{{ if eq $itmCt 0 }}no{{ else if lt $itmCt 4 }}a few{{ else if lt $itmCt 7 }}several{{ else }}lots of{{ end }} objects

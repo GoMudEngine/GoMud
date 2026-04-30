@@ -131,6 +131,7 @@ type Mob struct {
 	CorpseName            string  `yaml:"corpse_name,omitempty"`        // overrides "<Name> corpse" rendering when set
 	CorpseDescription     string  `yaml:"corpse_description,omitempty"` // overrides default corpse look-text when set
 	StockMultiplier       float64 `yaml:"stock_multiplier,omitempty"`   // shop stock-cap scale; default 1.0 (treated as 1.0 by EffectiveMaxStock if unset)
+	HideEquipmentSlots    bool    `yaml:"hide_equipment_slots,omitempty"` // suppresses the Equipment block in look-mob render. For object mobs (wagons, statues) where equipment slots don't make sense.
 
 	PackBonusTotal          int      `yaml:"-"`                                 // Total training points from pack scaling (Stage 38.5.3)
 	PackAlphaId             int      `yaml:"-"`                                 // InstanceId of alpha this mob follows (0 = none)
