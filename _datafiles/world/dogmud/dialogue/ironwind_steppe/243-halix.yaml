@@ -1,0 +1,66 @@
+mobid: 243
+zone: Ironwind Steppe
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Aye. Mind the wind in your face — the dust gets in
+        everywhere. Can I help you?"
+      - "Halix. Quiet enough today, mostly."
+
+  - keywords: ["forage", "gather", "satchel", "work", "doing"]
+    responses:
+      - "Walk the flats and the lower ridge for what the steppes
+        give — sage, hare-meat, the odd creek-stone with iron
+        in it. Take it down to the Thornwall apothecary and the
+        smith. Steady work. The wind makes it lonely but the
+        wind also tells you what is moving and what is not."
+
+  - keywords: ["danger", "wolves", "raptor", "viper", "goblin", "south"]
+    responses:
+      - "Wolves keep to the long flats and the southern coulees.
+        I do not go south of the dry creek. Ridge-raptors I can
+        see coming. Goblin scouts have been spotted in the
+        southern ridge spurs lately — that is a problem for the
+        garrison, not for me. I take what's safe and leave what
+        is not."
+
+  - keywords: ["thornwall", "town", "temple", "deliver"]
+    responses:
+      - "Temple in Thornwall is where I rest between walks. The
+        priests there put up with a forager who comes in dusty.
+        I bring the satchel into town when it's full and trade
+        it to the apothecary and the smith. Steady arrangement,
+        years now."
+
+  - keywords: ["caravan", "stillwater", "east"]
+    responses:
+      - "Caravan handles the Stillwater run. I do not. The
+        wagon's load matches mine well enough, but Marta keeps
+        her own foragers up in the Fernway — Kessa, I think
+        her name is. I have never met her. The flats are wide
+        and we keep our own ground."
+
+  - keywords: ["wind", "ironwind", "weather", "steppe"]
+    responses:
+      - "The wind is the steppe in the end. It moves the grass,
+        the dust, the smell of any fire for miles. After enough
+        years out here you stop arguing with it and start
+        listening to what it is carrying. Today it is carrying
+        nothing in particular. Good day for the work."
+
+  - keywords: [""]
+    responses:
+      - "The wind tells most of what you need to know."
+      - "Stay clear of the southern coulees, friend."
+
+tree:
+  root:
+    text: "Aye. Quiet enough today. Was there something?"
+    hints: "You could ask Halix about his work, the dangers of
+      the steppes, or where he stays."
+
+memory:
+  expiryPeriod: ""

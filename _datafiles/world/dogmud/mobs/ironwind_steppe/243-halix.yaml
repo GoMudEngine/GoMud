@@ -1,0 +1,61 @@
+mobid: 243
+zone: Ironwind Steppe
+archetype: fighting
+behavior_archetype: ""
+statpool: 225
+itemdropchance: 0
+groups:
+  - forager
+hostile: false
+non_combatant: false
+player_attack_immune: true
+maxwander: -1
+activitylevel: 20
+charm_immune: true
+fold_anchor_room: 468
+buffids: []
+idlecommands:
+  - 'emote shades his eyes against the wind and scans the long grass'
+  - ''
+  - 'emote tests the haft of the spear with a small flick of the wrist'
+  - ''
+  - 'emote pulls a strip of dried meat from a pouch and chews it slow'
+  - ''
+character:
+  name: Halix
+  description: |
+    A weathered man past forty, lean and dust-coloured, dressed
+    in layered hides over a long-sleeved linen shirt. His
+    boots and trousers carry the fine grey dust of the steppes
+    in every seam. A short spear rides easy on his shoulder; a
+    broad-bladed steppe-knife hangs at his belt for skinning,
+    and the buckles at his waist are kept oiled against the
+    wind. He has the unhurried watchfulness of someone who has
+    walked these flats long enough to read them like a market
+    notice.
+  speciesid: 1
+  level: 1
+  gold: 35
+  stats:
+    strength:    {training: 35}
+    dexterity:   {training: 35}
+    vitality:    {training: 40}
+    perception:  {training: 45}
+    willpower:   {training: 35}
+    charisma:    {training: 35}
+  spellbook:
+    fold-recall: 25
+  tactics:
+    - trigger: health_below:50
+      action: cast fold-recall
+      priority: 13
+  skills:
+    weapon-combat: 20
+    search:        25
+    salvage:       20
+    spellcasting:  15
+  equipment:
+    weapon:
+      itemid: 10034
+    belt:
+      itemid: 20059
