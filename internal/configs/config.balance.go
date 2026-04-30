@@ -293,6 +293,32 @@ type Balance struct {
 	// CaravanDepotDwellRounds is the number of rounds the caravan rests at
 	// each depot between transit legs. ~360 ≈ 24 min real ≈ half a game day.
 	CaravanDepotDwellRounds ConfigInt `yaml:"CaravanDepotDwellRounds"`
+
+	// FernwayPickupDwellRounds is the dwell time at the Fernway forager
+	// meeting point (North Road 4038) on each transit leg. Default 6.
+	FernwayPickupDwellRounds ConfigInt `yaml:"FernwayPickupDwellRounds"`
+
+	// ── FORAGER SYSTEM (Stage 3.1) ───────────────────────────────────────────
+	// ForagerForageDwellRounds is the rounds between forage attempts in
+	// the forager's territory. Default 8.
+	ForagerForageDwellRounds ConfigInt `yaml:"ForagerForageDwellRounds"`
+
+	// ForagerCarryThresholdPct is the carry-capacity ratio (0.0-1.0) at
+	// which the forager heads home for delivery. Default 0.75.
+	ForagerCarryThresholdPct ConfigFloat `yaml:"ForagerCarryThresholdPct"`
+
+	// ForagerHPRecallThresholdPct is the HP ratio (0.0-1.0) below which
+	// the forager casts fold-recall as an emergency escape. Default 0.50.
+	ForagerHPRecallThresholdPct ConfigFloat `yaml:"ForagerHPRecallThresholdPct"`
+
+	// ForagerHealPotionThresholdPct is the HP ratio (0.0-1.0) below which
+	// the forager auto-drinks a healing salve. Default 0.75.
+	ForagerHealPotionThresholdPct ConfigFloat `yaml:"ForagerHealPotionThresholdPct"`
+
+	// ForagerWaitTimeoutRounds is the maximum rounds the Fernway forager
+	// idles at the meeting point waiting for the caravan before recalling
+	// home with the satchel. Default 150.
+	ForagerWaitTimeoutRounds ConfigInt `yaml:"ForagerWaitTimeoutRounds"`
 }
 
 func (b *Balance) Validate() {

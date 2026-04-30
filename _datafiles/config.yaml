@@ -864,8 +864,30 @@ Balance:
     - "Thornwall City"
 
   # Rounds the caravan rests at each depot between transit legs.
-  # 360 rounds ≈ 24 min real ≈ half an in-game day.
-  CaravanDepotDwellRounds: 360
+  # 720 rounds ≈ 48 min real ≈ a full in-game day. Stage 3.1 doubled
+  # this from 360 to make foragers the day-to-day supply pipeline.
+  CaravanDepotDwellRounds: 720
+
+  # Dwell at the Fernway forager meeting point (North Road 4038) on
+  # each caravan transit leg. Long enough to detect the forager.
+  FernwayPickupDwellRounds: 6
+
+  # ── Forager system (Stage 3.1) ─────────────────────────────────────
+  # Rounds between forage attempts in the forager's territory.
+  ForagerForageDwellRounds: 8
+
+  # Carry-capacity ratio (0-1) at which the forager heads home.
+  ForagerCarryThresholdPct: 0.75
+
+  # HP ratio (0-1) below which the forager casts fold-recall.
+  ForagerHPRecallThresholdPct: 0.50
+
+  # HP ratio (0-1) below which the forager auto-drinks a salve.
+  ForagerHealPotionThresholdPct: 0.75
+
+  # Max rounds the Fernway forager idles at the meeting point waiting
+  # for the caravan before recalling home with the satchel.
+  ForagerWaitTimeoutRounds: 150
 
 ################################################################################
 #
