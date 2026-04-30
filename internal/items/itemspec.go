@@ -274,6 +274,7 @@ type ItemSpec struct {
 	IsBandolier           bool              `yaml:"is_bandolier,omitempty"`            // Belt item that holds potions
 	BandolierCapacity     int               `yaml:"bandolier_capacity,omitempty"`      // Max potions storable in bandolier
 	SalvageReturns        []SalvageReturn   `yaml:"salvage_returns,omitempty"`         // Custom salvage returns for non-crafted items
+	RarityTier            int               `yaml:"rarity_tier,omitempty"`             // Vendor stock cap tier (50/40/30/20/10). Used by shops.EffectiveMaxStock with mob.StockMultiplier. 0 = untiered (quest items, defer-to-3.0e items).
 
 	// YAML-driven use effects — replaces JS onUse/onCommand_use
 	OnUseTrainSkill  string `yaml:"on_use_train_skill,omitempty"`

@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v2"
 )
 
 // seedRegistry populates the global items map with diverse specs for testing.
@@ -1125,4 +1126,31 @@ func TestGetDamage(t *testing.T) {
 	assert.Equal(t, 1, got.Attacks)
 	assert.Equal(t, 30, got.BaseDamage)
 	assert.Equal(t, 7, got.Variance)
+}
+
+func TestItemSpec_RarityTier_YAMLRoundtrip(t *testing.T) {
+	src := `itemid: 99001
+name: test mat
+rarity_tier: 30
+`
+	var spec ItemSpec
+	if err := yaml.Unmarshal([]byte(src), &spec); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if spec.RarityTier != 30 {
+		t.Errorf("RarityTier = %d, want 30", spec.RarityTier)
+	}
+}
+
+func TestItemSpec_RarityTier_DefaultsZero(t *testing.T) {
+	src := `itemid: 99002
+name: untiered
+`
+	var spec ItemSpec
+	if err := yaml.Unmarshal([]byte(src), &spec); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if spec.RarityTier != 0 {
+		t.Errorf("RarityTier = %d, want 0 (unset)", spec.RarityTier)
+	}
 }
