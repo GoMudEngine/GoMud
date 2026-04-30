@@ -35,6 +35,7 @@ nouns:
     several meals.
 spawninfo:
 - mobid: 240
+- mobid: 372        # Halix, Steppe Forager (Stage 3.1)
 idlemessages:
 - The wind moans past the alcove entrance but the interior is still.
 - Sand trickles from a crack in the ceiling, pattering softly.

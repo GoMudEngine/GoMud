@@ -83,7 +83,7 @@ func TestSanctuaryRoomsAssigned(t *testing.T) {
 		name   string
 	}{
 		{371, 4123, "Vella → Stillwater Temple"},
-		{372, 468, "Halix → Thornwall Temple"},
+		{372, 3040, "Halix → Kael's camp (Sheltered Ridge Alcove)"},
 		{373, 4197, "Kessa → Forager's Camp"},
 	}
 	for _, c := range cases {

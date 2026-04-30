@@ -41,7 +41,7 @@ var profiles = map[int]*ForagerProfile{
 		Kind:           KindSteppe,
 		MobId:          372,
 		Name:           "Halix",
-		SanctuaryRoom:  468,
+		SanctuaryRoom:  3040,
 		TerritoryRooms: []int{3000, 3001, 3002, 3003, 3005, 3006, 3015, 3019, 3020, 3021, 3022, 3023, 3024, 3025, 3026, 3027, 3028, 3029},
 		PreyWhitelist:  []int{200 /*steppe rat*/, 201 /*dust crow*/, 213 /*dust hare*/, 234 /*ground squirrel*/, 214 /*sage grouse*/, 231 /*tumble beetle*/},
 		VendorRooms:    []int{464, 470, 471, 475, 480, 481, 482, 483, 507},

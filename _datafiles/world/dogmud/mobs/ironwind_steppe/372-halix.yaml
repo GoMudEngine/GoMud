@@ -12,7 +12,7 @@ player_attack_immune: true
 maxwander: -1
 activitylevel: 20
 charm_immune: true
-fold_anchor_room: 468
+fold_anchor_room: 3040
 buffids: []
 idlecommands:
   - 'emote shades his eyes against the wind and scans the long grass'
