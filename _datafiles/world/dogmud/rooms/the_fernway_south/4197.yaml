@@ -2,8 +2,9 @@ roomid: 4197
 zone: The Fernway South
 title: Forager's Camp
 description: >
-  A small clearing tucked off the bracken trail, sheltered from
-  the wind by a half-circle of old <ansi fg="itemname">pines</ansi>
+  A small clearing tucked off the brook trail just west of the
+  heron pool, sheltered from the wind by a half-circle of old
+  <ansi fg="itemname">pines</ansi>
   whose lower boughs have been cut and tied back to enlarge the
   open ground beneath them. A <ansi fg="itemname">lean-to</ansi>
   of debarked pine and woven cedar stands at the back of the
@@ -19,12 +20,12 @@ description: >
   quietness of a place lived in by one careful hand.
 biome: forest
 coord:
-  x: -15
+  x: -16
   y: -18
   z: 0
 exits:
   east:
-    roomid: 4170
+    roomid: 4165
 nouns:
   lean-to: |
     A practical shelter of debarked pine logs and woven cedar

@@ -26,8 +26,6 @@ exits:
     roomid: 4163
   south:
     roomid: 4171
-  west:
-    roomid: 4197
 nouns:
   bracken-wall: |
     Bracken-fern grown taller than head-height crowds both sides

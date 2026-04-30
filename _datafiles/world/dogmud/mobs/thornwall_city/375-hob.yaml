@@ -22,7 +22,7 @@ idlecommands:
   - ''
 
 character:
-  name: Hob, a dappled-grey draft horse
+  name: Hob
   description: |
     A solid, broad-shouldered draft horse with a patient
     eye, her coat dappled grey going to white at the muzzle.

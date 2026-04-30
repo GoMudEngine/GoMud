@@ -27,6 +27,8 @@ exits:
     roomid: 4164
   south:
     roomid: 4166
+  west:
+    roomid: 4197
 nouns:
   pool: |
     The brook slows here into a shallow pool perhaps three
