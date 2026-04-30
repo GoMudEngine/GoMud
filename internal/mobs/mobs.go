@@ -483,6 +483,7 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 			mob.CarryCapacityOverride,
 		)
 		mob.Character.Health = mob.Character.HealthMax.Value
+		mob.Character.Stamina = mob.Character.StaminaMax.Value
 		mob.Character.Conviction = mob.Character.ConvictionMax.Value
 
 		mob.Character.SetPermaBuffs(mob.BuffIds)
