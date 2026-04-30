@@ -1,0 +1,18 @@
+# Fernway Forager Kessa (366) — Stage 3.1 forager.
+# Drives the per-forager state machine via forager_step.
+
+tree:
+  type: selector
+  children:
+
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: action
+          do: attack
+
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: action
+          do: forager_step

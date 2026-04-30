@@ -1,0 +1,61 @@
+mobid: 366
+zone: The Fernway South
+archetype: fighting
+behavior_archetype: ""
+statpool: 150
+itemdropchance: 0
+groups:
+  - forager
+hostile: false
+non_combatant: false
+player_attack_immune: true
+maxwander: -1
+activitylevel: 20
+charm_immune: true
+fold_anchor_room: 4197
+buffids: []
+idlecommands:
+  - 'emote checks the satchel at her hip and adjusts the strap'
+  - ''
+  - 'emote pauses to listen, head tilted, before moving on'
+  - ''
+  - 'emote runs a finger along the edge of the handaxe at her belt'
+  - ''
+character:
+  name: Kessa
+  description: |
+    A wiry forester woman in her thirties, dressed in oiled
+    leathers gone soft with use over a long-sleeved linen
+    shirt. Her hair is tied back in a practical braid; pine
+    needles cling here and there to the cuffs of her
+    trousers. A leather satchel rides at her hip, marked
+    with the faint dark stains of a season's foraging. She
+    moves through the forest with the unobtrusive
+    economy of someone who does not need to think about
+    where she is putting her feet.
+  speciesid: 1
+  level: 1
+  gold: 30
+  stats:
+    strength:    {training: 25}
+    dexterity:   {training: 28}
+    vitality:    {training: 25}
+    perception:  {training: 30}
+    willpower:   {training: 22}
+    charisma:    {training: 20}
+  spellbook:
+    fold-recall: 25
+  tactics:
+    - trigger: health_below:50
+      action: cast fold-recall
+      priority: 13
+  skills:
+    weapon-combat: 15
+    search:        25
+    salvage:       20
+    spellcasting:  15
+  equipment:
+    weapon:
+      itemid: 10035
+    belt:
+      itemid: 20059

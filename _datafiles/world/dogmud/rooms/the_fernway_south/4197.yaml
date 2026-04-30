@@ -1,0 +1,64 @@
+roomid: 4197
+zone: The Fernway South
+title: Forager's Camp
+description: >
+  A small clearing tucked off the bracken trail, sheltered from
+  the wind by a half-circle of old <ansi fg="itemname">pines</ansi>
+  whose lower boughs have been cut and tied back to enlarge the
+  open ground beneath them. A <ansi fg="itemname">lean-to</ansi>
+  of debarked pine and woven cedar stands at the back of the
+  clearing, open to the south, with a rolled bedding pallet
+  inside. A round <ansi fg="itemname">firepit</ansi> of banked
+  fieldstones sends up a thin steady curl of woodsmoke, a tin
+  kettle resting on a small swing-arm of black iron above the
+  coals. Three hazel-rod
+  <ansi fg="itemname">drying-racks</ansi> stand in a tidy line
+  along the eastern edge of the clearing, hung with strips of
+  hide, bundles of herb, and a half-rendered length of sinew
+  in slow patient curing. The clearing has the unhurried
+  quietness of a place lived in by one careful hand.
+biome: forest
+coord:
+  x: -15
+  y: -18
+  z: 0
+exits:
+  east:
+    roomid: 4170
+nouns:
+  lean-to: |
+    A practical shelter of debarked pine logs and woven cedar
+    boughs, open to the south for warmth from the firepit, with
+    a rolled bedding pallet inside and a row of pegged tools
+    along the back wall — a skinning knife, a smaller scaling
+    knife, a coil of leather cord, a spare pair of moccasins.
+  firepit: |
+    A round of banked fieldstones, the coals carefully managed
+    so the fire never quite goes out and never quite roars. A
+    tin kettle sits on a small swing-arm of black iron above
+    the coals, ready to be swung over for a cup of tea between
+    rounds.
+  drying-racks: |
+    Three drying racks of hazel rods stand in a tidy line, each
+    carrying its own work — strips of rabbit hide on one,
+    bundles of moonpetal and pine pitch on another, a
+    half-rendered length of sinew on the third. The work is
+    methodical and undisturbed.
+  pines: |
+    A half-circle of old pines whose lower boughs have been cut
+    and tied back to enlarge the clear ground beneath them — the
+    pruning is old and well-healed, the trees tall enough that
+    their canopies meet overhead and break the wind on three
+    sides. The clearing is sheltered without being closed-in.
+mutators:
+- mutatorid: sanctuary
+idlemessages:
+- the kettle hisses softly on the firepit
+- ''
+- a strip of hide rocks gently in the breeze on its drying-rack
+- ''
+- a wood-pigeon coos once from somewhere in the pines
+- ''
+- a coal pops in the firepit and settles
+spawninfo:
+- mobid: 366        # Kessa, Fernway Forager (Stage 3.1)
