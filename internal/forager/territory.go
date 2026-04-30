@@ -37,9 +37,9 @@ var profiles = map[int]*ForagerProfile{
 		VendorRooms:    []int{4102, 4103, 4105, 4106, 4125, 4126, 4135, 4143},
 		Buckets:        []string{"stillwater", "base", "overlap"},
 	},
-	243: { // Steppe Forager (Halix)
+	372: { // Steppe Forager (Halix)
 		Kind:           KindSteppe,
-		MobId:          243,
+		MobId:          372,
 		Name:           "Halix",
 		SanctuaryRoom:  468,
 		TerritoryRooms: []int{3000, 3001, 3002, 3003, 3005, 3006, 3015, 3019, 3020, 3021, 3022, 3023, 3024, 3025, 3026, 3027, 3028, 3029},
@@ -47,9 +47,9 @@ var profiles = map[int]*ForagerProfile{
 		VendorRooms:    []int{464, 470, 471, 475, 480, 481, 482, 483, 507},
 		Buckets:        []string{"base", "overlap"},
 	},
-	366: { // Fernway Forager (Kessa)
+	373: { // Fernway Forager (Kessa)
 		Kind:           KindFernway,
-		MobId:          366,
+		MobId:          373,
 		Name:           "Kessa",
 		SanctuaryRoom:  4197, // Forager's Camp (created in Task 14)
 		TerritoryRooms: []int{4157, 4158, 4159, 4160, 4161, 4162, 4163, 4164, 4165, 4166, 4167, 4168, 4169, 4170, 4171, 4172, 4173, 4174, 4175, 4176},
@@ -71,7 +71,7 @@ func ProfileFor(mobId int) *ForagerProfile {
 // CLI) get consistent output.
 func AllProfiles() []*ForagerProfile {
 	out := make([]*ForagerProfile, 0, len(profiles))
-	for _, k := range []int{371, 243, 366} {
+	for _, k := range []int{371, 372, 373} {
 		if p := profiles[k]; p != nil {
 			out = append(out, p)
 		}

@@ -32,7 +32,7 @@ nouns:
     The light they give is steady and warm.
 spawninfo:
 - mobid: 95
-- mobid: 243        # Halix, Steppe Forager (Stage 3.1)
+- mobid: 372        # Halix, Steppe Forager (Stage 3.1)
 idlemessages:
 - Incense smoke curls upward from the altar bowl, vanishing into the vault above.
 - A candle gutters and steadies, sending shadows dancing across the pillars.

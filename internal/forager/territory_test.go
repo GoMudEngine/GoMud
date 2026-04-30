@@ -3,7 +3,7 @@ package forager
 import "testing"
 
 func TestProfileFor_KnownIds(t *testing.T) {
-	cases := []int{371, 243, 366}
+	cases := []int{371, 372, 373}
 	for _, id := range cases {
 		if ProfileFor(id) == nil {
 			t.Errorf("ProfileFor(%d) = nil, want profile", id)
@@ -42,7 +42,7 @@ func TestProfileBucketsNonEmpty(t *testing.T) {
 }
 
 func TestFernwayHasMeetingRoom(t *testing.T) {
-	if ProfileFor(366).MeetingRoom != 4038 {
+	if ProfileFor(373).MeetingRoom != 4038 {
 		t.Error("Fernway forager missing meeting room 4038")
 	}
 }
@@ -51,7 +51,7 @@ func TestMarshAndSteppeNoMeetingRoom(t *testing.T) {
 	if ProfileFor(371).MeetingRoom != 0 {
 		t.Error("Marsh forager should not have meeting room")
 	}
-	if ProfileFor(243).MeetingRoom != 0 {
+	if ProfileFor(372).MeetingRoom != 0 {
 		t.Error("Steppe forager should not have meeting room")
 	}
 }
@@ -60,10 +60,10 @@ func TestVendorRoomsExclusiveToTownForagers(t *testing.T) {
 	if len(ProfileFor(371).VendorRooms) == 0 {
 		t.Error("Marsh forager should have vendor rooms")
 	}
-	if len(ProfileFor(243).VendorRooms) == 0 {
+	if len(ProfileFor(372).VendorRooms) == 0 {
 		t.Error("Steppe forager should have vendor rooms")
 	}
-	if len(ProfileFor(366).VendorRooms) != 0 {
+	if len(ProfileFor(373).VendorRooms) != 0 {
 		t.Error("Fernway forager should not have vendor rooms (caravan handoff)")
 	}
 }
@@ -83,8 +83,8 @@ func TestSanctuaryRoomsAssigned(t *testing.T) {
 		name   string
 	}{
 		{371, 4123, "Vella → Stillwater Temple"},
-		{243, 468, "Halix → Thornwall Temple"},
-		{366, 4197, "Kessa → Forager's Camp"},
+		{372, 468, "Halix → Thornwall Temple"},
+		{373, 4197, "Kessa → Forager's Camp"},
 	}
 	for _, c := range cases {
 		if got := ProfileFor(c.mobId).SanctuaryRoom; got != c.anchor {

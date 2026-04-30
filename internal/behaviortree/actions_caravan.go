@@ -156,7 +156,7 @@ const fernwayMeetingRoomId = 4038
 
 // fernwayForagerMobId is the mob template ID of the Fernway forager
 // that triggers the caravan_load handoff.
-const fernwayForagerMobId = 366
+const fernwayForagerMobId = 373
 
 // tickFernwayPickup: brief dwell at North Road 4038 to detect the
 // Fernway forager and acquire the fernway bucket. Lives between the
@@ -165,9 +165,9 @@ const fernwayForagerMobId = 366
 // Behavior:
 //  1. If not at room 4038 yet, pathto it.
 //  2. On arrival, dwell up to FernwayPickupDwellRounds. On the first
-//     tick at the room, scan for mobId 366 (Fernway forager). If
-//     present, append "fernway" to caravan_load and emit a flavor
-//     message.
+//     tick at the room, scan for the Fernway forager (see
+//     fernwayForagerMobId). If present, append "fernway" to
+//     caravan_load and emit a flavor message.
 //  3. After dwell expires, advance to the next state.
 //
 // Returns Success while making progress. Returns Failure when at
