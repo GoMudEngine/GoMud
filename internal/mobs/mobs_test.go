@@ -1548,3 +1548,66 @@ func TestMob_PlayerAttackImmuneYAMLRoundTrip(t *testing.T) {
 		t.Error("PlayerAttackImmune should default to false when YAML omits the field")
 	}
 }
+
+func TestMob_StageThreeFourOverrides_YAMLRoundtrip(t *testing.T) {
+	src := `mobid: 99001
+zone: Test Zone
+carry_capacity: 5000
+health_max: 1500
+stamina_max: 9999
+corpse_name: splintered wagon wreckage
+corpse_description: |
+  Shattered timbers and twisted iron.
+stock_multiplier: 1.5
+`
+	var m Mob
+	if err := yaml.Unmarshal([]byte(src), &m); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if m.CarryCapacityOverride != 5000 {
+		t.Errorf("CarryCapacityOverride = %v, want 5000", m.CarryCapacityOverride)
+	}
+	if m.HealthMaxOverride != 1500 {
+		t.Errorf("HealthMaxOverride = %d, want 1500", m.HealthMaxOverride)
+	}
+	if m.StaminaMaxOverride != 9999 {
+		t.Errorf("StaminaMaxOverride = %d, want 9999", m.StaminaMaxOverride)
+	}
+	if m.CorpseName != "splintered wagon wreckage" {
+		t.Errorf("CorpseName = %q, want splintered wagon wreckage", m.CorpseName)
+	}
+	if m.CorpseDescription == "" {
+		t.Error("CorpseDescription empty, want non-empty")
+	}
+	if m.StockMultiplier != 1.5 {
+		t.Errorf("StockMultiplier = %v, want 1.5", m.StockMultiplier)
+	}
+}
+
+func TestMob_StageThreeFourOverrides_DefaultsZero(t *testing.T) {
+	src := `mobid: 99002
+zone: Test Zone
+`
+	var m Mob
+	if err := yaml.Unmarshal([]byte(src), &m); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if m.CarryCapacityOverride != 0 {
+		t.Errorf("CarryCapacityOverride default = %v, want 0", m.CarryCapacityOverride)
+	}
+	if m.HealthMaxOverride != 0 {
+		t.Errorf("HealthMaxOverride default = %d, want 0", m.HealthMaxOverride)
+	}
+	if m.StaminaMaxOverride != 0 {
+		t.Errorf("StaminaMaxOverride default = %d, want 0", m.StaminaMaxOverride)
+	}
+	if m.StockMultiplier != 0 {
+		t.Errorf("StockMultiplier default = %v, want 0", m.StockMultiplier)
+	}
+	if m.CorpseName != "" {
+		t.Errorf("CorpseName default = %q, want empty", m.CorpseName)
+	}
+	if m.CorpseDescription != "" {
+		t.Errorf("CorpseDescription default = %q, want empty", m.CorpseDescription)
+	}
+}

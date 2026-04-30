@@ -123,6 +123,15 @@ type Mob struct {
 	CrafterSkill            string   `yaml:"crafterskill,omitempty"`            // Craft skill used (e.g. "blacksmithing")
 	CrafterRecipeIds        []string `yaml:"crafterrecipeids,omitempty"`        // Recipe IDs this mob can craft
 	CrafterRestockMaterials []int    `yaml:"crafterrestockmaterials,omitempty"` // Item IDs restocked periodically
+
+	// ── Stage 3.4: spawn-time overrides for special mobs (wagons, statues, etc.) ──
+	CarryCapacityOverride float64 `yaml:"carry_capacity,omitempty"`     // overrides Strength-derived calc when > 0
+	HealthMaxOverride     int     `yaml:"health_max,omitempty"`         // overrides Vitality-derived calc when > 0
+	StaminaMaxOverride    int     `yaml:"stamina_max,omitempty"`        // overrides default calc when > 0
+	CorpseName            string  `yaml:"corpse_name,omitempty"`        // overrides "<Name> corpse" rendering when set
+	CorpseDescription     string  `yaml:"corpse_description,omitempty"` // overrides default corpse look-text when set
+	StockMultiplier       float64 `yaml:"stock_multiplier,omitempty"`   // shop stock-cap scale; default 1.0 (treated as 1.0 by EffectiveMaxStock if unset)
+
 	PackBonusTotal          int      `yaml:"-"`                                 // Total training points from pack scaling (Stage 38.5.3)
 	PackAlphaId             int      `yaml:"-"`                                 // InstanceId of alpha this mob follows (0 = none)
 	IsPackAlpha             bool     `yaml:"-"`                                 // Whether this mob is currently the pack alpha
