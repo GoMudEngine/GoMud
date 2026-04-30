@@ -58,6 +58,12 @@ SOP including the `behavior_archetype` priority order.
 | `questflags` | list | no | Quest flag strings set on this mob. |
 | `scripttag` | string | no | Tag appended to the script filename. Must match the `.js` file. |
 | `behavior_archetype` | string | no | Filename (without `.yaml`) of an archetype in `_datafiles/world/dogmud/behaviors/archetypes/`. Drives the mob's behavior tree. **Strongly preferred over legacy `aiprofile`/`combatcommands`/`tactic_preset` for new mobs.** See "Behavior Archetypes" below. |
+| `carry_capacity` | float | no | (Stage 3.4) Override Strength-derived carry capacity. Used by special mobs (wagons) where the default formula doesn't fit. Zero = use default calc. |
+| `health_max` | int | no | (Stage 3.4) Override Vitality-derived max HP. Zero = use default calc. |
+| `stamina_max` | int | no | (Stage 3.4) Override default max SP. Zero = use default calc. |
+| `corpse_name` | string | no | (Stage 3.4) Override "<Name> corpse" rendering. Wagon uses "splintered wagon wreckage". Empty = use default. |
+| `corpse_description` | string | no | (Stage 3.4) Override default corpse look-text via `description-corpse` template. Empty = use template. |
+| `stock_multiplier` | float | no | (Stage 3.4) Shop stock-cap scale; default 1.0. EffectiveMaxStock = item.RarityTier × stock_multiplier. Future big-city shops can set > 1.0. |
 | `aiprofile` | string | no | Legacy combat AI profile: `"default"`, `"aggressive"`, `"defensive"`, `"grappler"`, `"brawler"`, `"tactical"`. (legacy — prefer `behavior_archetype`) |
 | `specialmovechance` | int | no | Base % chance to use special moves in combat (0–100). |
 | `tactic_preset` | string | no | Reactive AI preset: `"aggressive_melee"`, `"defensive_caster"`, `"ambusher"`, `"tank"`. See Reactive AI below. (legacy — prefer `behavior_archetype`) |

@@ -31,6 +31,24 @@
 - **Quest/specialty** — Quest items or non-crafting props; not part of
   the supply pipeline
 
+## Rarity tiers (Stage 3.4)
+
+Each classified mat carries a `rarity_tier` (50/40/30/20/10) on its
+ItemSpec YAML, replacing per-vendor `max_stock` entries. EffectiveMaxStock
+= rarity_tier × shopkeeper.stock_multiplier (default 1.0).
+
+| Tier | Cap | Mats | Count |
+|---|---|---|---|
+| **50 — Common** | 50 | All Base bucket (13) + copper wire (40021) + binding paste (40028) | 15 |
+| **40 — Standard** | 40 | All Mid-tier overlap (11) + Hive Fragment (40011), steel ingot (40018), silver wire (40022), polished stone (40024), gem dust (40026), chrysalis setting (40030) | 17 |
+| **30 — Regional** | 30 | Stillwater non-pearl (5) + all Fernway (8) + raw gem (40025) | 14 |
+| **20 — Uncommon** | 20 | Stillwater black pearl (40053), Chrysalis Core (40010), chrysalis shard (40027), mutation catalyst (40029), gold wire (40023) | 5 |
+| **10 — Ultra-rare** | 10 | RESERVED — no current items | 0 |
+
+Quest items and defer-to-3.0e items (40031–40042, 40052, 40054, 40055,
+40060, 40061) intentionally have no rarity_tier — EffectiveMaxStock
+returns 0, loader falls back to legacy hardcoded values.
+
 ## Audit table
 
 | ID | Name | Bucket | Native source | Notes |

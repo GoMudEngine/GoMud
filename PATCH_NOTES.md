@@ -1,5 +1,53 @@
 # DOGMud Patch Notes
 
+## 2026-04-30 — Stage 3.4: Real Item Transfer (dev only)
+
+**Note:** Final stage of the caravan/economy effort. Once this lands
+on `development`, the entire economy stack (Stages 3.0b through 3.4)
+promotes to `master` as a coherent update.
+
+- The caravan now physically hauls items: a new wagon mob (374) with
+  ~5000 carry capacity rides with the caravan party. `look wagon`
+  shows the actual cargo. Two draft horses (Hob 375, Bran 376) pull
+  it. All three are player_attack_immune.
+- Wagon dies if the caravan is wiped at the bandit camp; cargo
+  distributes to bandit inventories (round-robin, capped per bandit's
+  carry capacity), with leftovers as wreckage corpse loot. Players
+  who kill the bandits afterward get the cargo. Wagon corpse renders
+  as "splintered wagon wreckage" with custom description.
+- Vendor stock caps now derive from item `rarity_tier` × shopkeeper
+  `stock_multiplier` (default 1.0). 51 mat YAMLs got rarity_tier set:
+  15 tier-50 (common), 17 tier-40 (standard), 14 tier-30 (regional),
+  5 tier-20 (uncommon — pearl, gold wire, chrysalis core/shard/
+  catalyst). Tier 10 reserved for future ultra-rare content.
+  Future big-city shops can set stock_multiplier > 1.0 for
+  proportionally larger stock.
+- Foragers now physically deliver items from their satchels to vendor
+  inventories (no more abstract RestockBuckets). Items that don't fit
+  stay in the satchel for next vendor / next cycle.
+- New forager rest extension: when carry > 50% on return home,
+  forager stays at sanctuary instead of cycling back out. Prevents
+  futile loops in saturated economies — foragers wait at sanctuary
+  until players consume from vendors and re-open delivery space.
+- Caravan vendor stops are now BIDIRECTIONAL — caravan delivers
+  items it brought AND picks up items the local vendors produce in
+  abundance, hauling them across town. Pickup is gated by `Current
+  >= MaxStock/2` so the caravan doesn't extract from a struggling
+  vendor. Pays off the "wholesalers seeking arbitrage between
+  regions" worldbuilding from the Stage 2 caravan.
+- Chrysalis Core (40010) re-sourced: removed from Aberrant Chrysalis
+  in Sanctum Basin tutorial. Now drops 10% from stone beetle queen
+  (228) and 5% from windscour wyrm (229) in Ironwind Steppe.
+- 6 new mob override fields: carry_capacity, health_max, stamina_max,
+  corpse_name, corpse_description, stock_multiplier.
+- New btree action `distribute_cargo_to_hostiles` for the wagon's
+  death handler.
+- New config knob `ForagerRestCarryThreshold` (default 0.5) for the
+  rest extension.
+- ItemSpec gains `rarity_tier` field. Mob struct gains 6 spawn-time
+  override fields. Corpse rendering honors mob's CorpseName +
+  CorpseDescription overrides.
+
 ## 2026-04-30 — Stage 3.1: Forager NPCs (dev only)
 
 **Note:** Dev-only landing. The full economy stack ships to prod (`master`)
