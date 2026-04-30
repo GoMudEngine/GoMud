@@ -1,0 +1,21 @@
+# Marsh Forager Vella (371) — Stage 3.1 forager.
+# Drives the per-forager state machine via forager_step.
+
+tree:
+  type: selector
+  children:
+
+    # -- On hit: counter-attack (forager_step's HP-emergency check
+    #    will fire on the next idle tick if HP drops below 50%).
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: action
+          do: attack
+
+    # -- Drive the forager state machine.
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: action
+          do: forager_step

@@ -1,0 +1,59 @@
+mobid: 371
+zone: Stillwater Marsh
+archetype: fighting
+behavior_archetype: ""
+statpool: 150
+itemdropchance: 0
+groups:
+  - forager
+hostile: false
+non_combatant: false
+player_attack_immune: true
+maxwander: -1
+activitylevel: 20
+charm_immune: true
+fold_anchor_room: 4123
+buffids: []
+idlecommands:
+  - 'emote checks the satchel at her hip, eyes scanning the reedline'
+  - ''
+  - 'emote tucks a strand of hair behind one ear and squints at the water'
+  - ''
+  - 'emote turns a dried leaf between thumb and forefinger, sniffing at it'
+  - ''
+character:
+  name: Vella
+  description: |
+    A weathered marshfolk woman in her middle years, slight but
+    wiry, dressed in oiled canvas and waxed linen. Mud is set
+    deep in the seams of her boots and the cuffs of her trousers.
+    A leather satchel hangs at her hip, marked with the small
+    smudges of plant resins and fish scales. She moves through
+    the reeds with the careful patience of someone who has done
+    this work since girlhood.
+  speciesid: 1
+  level: 1
+  gold: 30
+  stats:
+    strength:    {training: 25}
+    dexterity:   {training: 25}
+    vitality:    {training: 25}
+    perception:  {training: 30}
+    willpower:   {training: 25}
+    charisma:    {training: 20}
+  spellbook:
+    fold-recall: 25
+  tactics:
+    - trigger: health_below:50
+      action: cast fold-recall
+      priority: 13
+  skills:
+    weapon-combat: 15
+    search:        25
+    salvage:       20
+    spellcasting:  15
+  equipment:
+    weapon:
+      itemid: 10033
+    belt:
+      itemid: 20059

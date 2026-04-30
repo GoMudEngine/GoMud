@@ -89,3 +89,4 @@ idlemessages:
 spawninfo:
 - mobid: 344
   cooldown: 600 rounds
+- mobid: 371        # Vella, Marsh Forager (Stage 3.1)
