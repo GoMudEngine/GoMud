@@ -20,6 +20,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/economy"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -253,9 +254,12 @@ func tickRoute(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result
 	}
 	nextRoom := route.VendorStopIds[idx]
 	if ctx.RoomId == nextRoom {
-		// Arrived at this stop — restock with current load + advance index.
-		visited := caravan.VisitVendorsInRoom(nextRoom, caravanLoadGet(ctx.MobState))
-		if msg := caravan.FormatDeliveryMessage(visited); msg != "" {
+		// Arrived at this stop — transfer items + advance index.
+		// TODO(stage-3.4-task-8): wire up actual wagon mob lookup +
+		// state-derived delivery/pickup buckets.
+		// Task 7 keeps the build green; Task 8 wires the real wagon.
+		delivered, pickedUp := caravan.VisitVendorsInRoom(nextRoom, nil, economy.AllBuckets(), nil)
+		if msg := caravan.FormatVisitMessage(delivered, pickedUp); msg != "" {
 			if r := rooms.LoadRoom(nextRoom); r != nil {
 				r.SendText(msg)
 			}

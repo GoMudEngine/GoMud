@@ -21,8 +21,16 @@ func TestMain(m *testing.M) {
 
 func TestVisitVendorsInRoom_NoRoomReturnsNil(t *testing.T) {
 	// Use a roomid that's guaranteed not to exist.
-	if got := VisitVendorsInRoom(99999999, []string{"stillwater"}); got != nil {
-		t.Errorf("VisitVendorsInRoom(missing) = %v, want nil", got)
+	delivered, pickedUp := VisitVendorsInRoom(99999999, &mobs.Mob{}, []string{"stillwater"}, nil)
+	if delivered != nil || pickedUp != nil {
+		t.Errorf("VisitVendorsInRoom(missing) = (%v, %v), want both nil", delivered, pickedUp)
+	}
+}
+
+func TestVisitVendorsInRoom_NilWagonReturnsNil(t *testing.T) {
+	delivered, pickedUp := VisitVendorsInRoom(7777, nil, []string{"stillwater"}, nil)
+	if delivered != nil || pickedUp != nil {
+		t.Errorf("VisitVendorsInRoom(nil wagon) = (%v, %v), want both nil", delivered, pickedUp)
 	}
 }
 
@@ -30,15 +38,16 @@ func TestVisitVendorsInRoom_NoShopMobsReturnsNil(t *testing.T) {
 	cleanup := seedTestRoomWithMobs(t, 7777, "TestZone", []mobs.MobId{1})
 	defer cleanup()
 
-	got := VisitVendorsInRoom(7777, []string{"stillwater"})
-	if got != nil {
-		t.Errorf("VisitVendorsInRoom = %v, want nil for room with no shop mobs", got)
+	delivered, pickedUp := VisitVendorsInRoom(7777, &mobs.Mob{}, []string{"stillwater"}, nil)
+	if delivered != nil || pickedUp != nil {
+		t.Errorf("VisitVendorsInRoom = (%v, %v), want both nil for room with no shop mobs",
+			delivered, pickedUp)
 	}
 }
 
 // TestVisitVendorsInRoom_ShopMobNoInventory verifies that a shop-bearing
 // mob whose shop inventory is not registered (no save file, no cache) is
-// silently skipped, so VisitVendorsInRoom returns nil rather than
+// silently skipped, so VisitVendorsInRoom returns (nil, nil) rather than
 // crashing. This is the expected behavior per the plan note: in tests,
 // shops.GetShopInventory returns nil because no inventory is registered
 // through the normal load path.
@@ -47,44 +56,55 @@ func TestVisitVendorsInRoom_ShopMobNoInventory(t *testing.T) {
 	cleanup := seedTestRoomWithExistingMobs(t, 7778, "TestZone", []*mobs.Mob{mob})
 	defer cleanup()
 
-	got := VisitVendorsInRoom(7778, []string{"stillwater"})
-	if got != nil {
-		t.Errorf("VisitVendorsInRoom = %v, want nil (shop mob present but no inventory registered)",
-			got)
+	delivered, pickedUp := VisitVendorsInRoom(7778, &mobs.Mob{}, []string{"stillwater"}, nil)
+	if delivered != nil || pickedUp != nil {
+		t.Errorf("VisitVendorsInRoom = (%v, %v), want both nil (shop mob present but no inventory)",
+			delivered, pickedUp)
 	}
 }
 
-// ─── FormatDeliveryMessage ───────────────────────────────────────────────────
+// ─── FormatVisitMessage ──────────────────────────────────────────────────────
 
-func TestFormatDeliveryMessage_EmptyReturnsEmpty(t *testing.T) {
-	if got := FormatDeliveryMessage(nil); got != "" {
-		t.Errorf("FormatDeliveryMessage(nil) = %q, want empty string", got)
+func TestFormatVisitMessage_EmptyReturnsEmpty(t *testing.T) {
+	if got := FormatVisitMessage(nil, nil); got != "" {
+		t.Errorf("FormatVisitMessage(nil, nil) = %q, want empty", got)
 	}
-	if got := FormatDeliveryMessage([]string{}); got != "" {
-		t.Errorf("FormatDeliveryMessage([]) = %q, want empty string", got)
+	if got := FormatVisitMessage([]ItemMove{}, []ItemMove{}); got != "" {
+		t.Errorf("FormatVisitMessage(empty, empty) = %q, want empty", got)
 	}
 }
 
-func TestFormatDeliveryMessage_SingleVendor(t *testing.T) {
-	got := FormatDeliveryMessage([]string{"Ketil"})
+func TestFormatVisitMessage_DeliveryOnly(t *testing.T) {
+	delivered := []ItemMove{{Vendor: "Brindle", ItemName: "iron ingot"}}
+	got := FormatVisitMessage(delivered, nil)
 	if got == "" {
-		t.Error("FormatDeliveryMessage([Ketil]) returned empty, want non-empty")
+		t.Error("FormatVisitMessage(delivery, nil) returned empty")
 	}
-	// Should mention the vendor name.
-	if !contains(got, "Ketil") {
-		t.Errorf("FormatDeliveryMessage single: %q does not contain 'Ketil'", got)
+	if !contains(got, "unloads") {
+		t.Errorf("delivery-only message %q does not match expected wording", got)
 	}
 }
 
-func TestFormatDeliveryMessage_MultipleVendors(t *testing.T) {
-	got := FormatDeliveryMessage([]string{"Ketil", "Marta", "Lars"})
+func TestFormatVisitMessage_PickupOnly(t *testing.T) {
+	pickedUp := []ItemMove{{Vendor: "Brindle", ItemName: "lake-iron nodule"}}
+	got := FormatVisitMessage(nil, pickedUp)
 	if got == "" {
-		t.Error("FormatDeliveryMessage([Ketil,Marta,Lars]) returned empty")
+		t.Error("FormatVisitMessage(nil, pickup) returned empty")
 	}
-	for _, name := range []string{"Ketil", "Marta", "Lars"} {
-		if !contains(got, name) {
-			t.Errorf("FormatDeliveryMessage multi: %q does not contain %q", got, name)
-		}
+	if !contains(got, "loads up") {
+		t.Errorf("pickup-only message %q does not match expected wording", got)
+	}
+}
+
+func TestFormatVisitMessage_BothDeliveryAndPickup(t *testing.T) {
+	delivered := []ItemMove{{Vendor: "Brindle", ItemName: "steel"}}
+	pickedUp := []ItemMove{{Vendor: "Brindle", ItemName: "lake-iron"}}
+	got := FormatVisitMessage(delivered, pickedUp)
+	if got == "" {
+		t.Error("FormatVisitMessage(both) returned empty")
+	}
+	if !contains(got, "trade") {
+		t.Errorf("both message %q does not match expected 'in trade' wording", got)
 	}
 }
 
