@@ -119,6 +119,24 @@ func itoa(n int) string {
 	return strconv.Itoa(n)
 }
 
+func TestCaravanLoadHelpers(t *testing.T) {
+	s := NewBehaviorState()
+	if got := caravanLoadGet(s); got != nil {
+		t.Errorf("empty load = %v, want nil", got)
+	}
+	caravanLoadAppend(s, "stillwater")
+	caravanLoadAppend(s, "fernway")
+	caravanLoadAppend(s, "stillwater") // duplicate — should be no-op
+	got := caravanLoadGet(s)
+	if len(got) != 2 || got[0] != "stillwater" || got[1] != "fernway" {
+		t.Errorf("got %v, want [stillwater fernway]", got)
+	}
+	caravanLoadSet(s, nil)
+	if got := caravanLoadGet(s); got != nil {
+		t.Errorf("after clear got %v, want nil", got)
+	}
+}
+
 // buildCaravanLeaderMob creates a mob instance with the given instanceId in
 // the given room, registers it via SetInstanceForTest, and schedules cleanup.
 // Patterned after makePartyMob in actions_party_test.go.

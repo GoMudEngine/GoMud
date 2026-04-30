@@ -11,19 +11,27 @@ package behaviortree
 //   caravan_state              — current state name (caravan.CaravanState.Name())
 //   caravan_state_started_round — round when current state was entered (uint64)
 //   caravan_route_index        — index into the current Route's VendorStopIds
+//   caravan_load               — comma-joined supply buckets the caravan carries
 
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/configs"
-	"github.com/GoMudEngine/GoMud/internal/economy"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
+
+// caravan_load — comma-joined list of supply buckets the caravan
+// currently carries. Set to ["stillwater"] when entering the
+// stillwater_route, ["thornwall"] when entering the thornwall_route.
+// On a successful Fernway forager handoff at room 4038, "fernway" is
+// appended. Cleared on entry to a depot dwell state.
+const keyCaravanLoad = "caravan_load"
 
 func init() {
 	actionRegistry["caravan_step"] = actCaravanStep
@@ -40,10 +48,15 @@ func actCaravanStep(params map[string]any, ctx *EvalContext) Result {
 
 	cur := readCaravanState(ctx.MobState)
 
-	// Dispatch by category.
+	// Dispatch by category. FernwayPickup must come BEFORE the generic
+	// IsTransitState check because IsFernwayPickupState states also
+	// return true for IsTransitState (Task 9 widened it for RouteForState
+	// lookups) — dispatching here first overrides that.
 	switch {
 	case caravan.IsDwellState(cur):
 		return tickDwell(cur, mob, ctx)
+	case caravan.IsFernwayPickupState(cur):
+		return tickFernwayPickup(cur, mob, ctx)
 	case caravan.IsTransitState(cur):
 		return tickTransit(cur, mob, ctx)
 	case caravan.IsRouteState(cur):
@@ -88,9 +101,20 @@ func transitionTo(s *BehaviorState, next caravan.CaravanState) {
 // to legacy idle (which fires the mob's idlecommands and lookfortrouble).
 // Without this, the caravan crew sits silent at the depot for the entire
 // dwell — no flavor emotes from idlecommands.
+//
+// On the first tick of depot dwell, clears caravan_load so stale bucket
+// data from the previous cycle doesn't bleed into the next one.
 func tickDwell(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result {
 	startedStr := ctx.MobState.GetString("caravan_state_started_round")
 	started, _ := strconv.ParseUint(startedStr, 10, 64)
+
+	// On entry to a depot dwell, clear any leftover caravan_load.
+	// (transitionTo doesn't clear it because the route phase needs
+	// to consume it across multiple ticks.)
+	if util.GetRoundCount() == started {
+		caravanLoadSet(ctx.MobState, nil)
+	}
+
 	dwell := uint64(configs.GetBalanceConfig().CaravanDepotDwellRounds)
 	if util.GetRoundCount() >= started+dwell {
 		transitionTo(ctx.MobState, caravan.AdvanceState(cur))
@@ -126,9 +150,74 @@ func tickTransit(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Resu
 	return Success
 }
 
+// fernwayMeetingRoomId is the North Road room where the caravan pauses
+// to receive the Fernway forager's goods.
+const fernwayMeetingRoomId = 4038
+
+// fernwayForagerMobId is the mob template ID of the Fernway forager
+// that triggers the caravan_load handoff.
+const fernwayForagerMobId = 366
+
+// tickFernwayPickup: brief dwell at North Road 4038 to detect the
+// Fernway forager and acquire the fernway bucket. Lives between the
+// transit and route phases of each cycle.
+//
+// Behavior:
+//  1. If not at room 4038 yet, pathto it.
+//  2. On arrival, dwell up to FernwayPickupDwellRounds. On the first
+//     tick at the room, scan for mobId 366 (Fernway forager). If
+//     present, append "fernway" to caravan_load and emit a flavor
+//     message.
+//  3. After dwell expires, advance to the next state.
+//
+// Returns Success while making progress. Returns Failure when at
+// room 4038 dwelling so legacy idle path can fire flavor emotes.
+func tickFernwayPickup(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result {
+	if hostilesInRoom(mob, ctx.RoomId) || anyPartyMemberInCombat(ctx.InstanceId) {
+		return Failure
+	}
+
+	// Not at meeting point — pathto.
+	if ctx.RoomId != fernwayMeetingRoomId {
+		mob.Command(fmt.Sprintf("pathto %d", fernwayMeetingRoomId))
+		return Success
+	}
+
+	// At meeting point. Check forager presence on the first tick (elapsed==0).
+	// caravan_state_started_round was set by transitionTo when we entered
+	// this state.
+	startedStr := ctx.MobState.GetString("caravan_state_started_round")
+	started, _ := strconv.ParseUint(startedStr, 10, 64)
+	now := util.GetRoundCount()
+	elapsed := now - started
+
+	if elapsed == 0 {
+		if foragerInRoom(ctx.RoomId, fernwayForagerMobId) {
+			caravanLoadAppend(ctx.MobState, "fernway")
+			if r := rooms.LoadRoom(ctx.RoomId); r != nil {
+				r.SendText(`<ansi fg="yellow">A wiry forager hands a satchel up to the caravan; the wagon takes the load and rolls on.</ansi>`)
+			}
+		}
+	}
+
+	// Dwell timer expired — advance to the next state.
+	dwell := uint64(configs.GetBalanceConfig().FernwayPickupDwellRounds)
+	if elapsed >= dwell {
+		transitionTo(ctx.MobState, caravan.AdvanceState(cur))
+		return Success
+	}
+
+	// Still dwelling — let legacy idle path fire flavor.
+	return Failure
+}
+
 // tickRoute: visiting vendor stops in order. On arrival at the next
 // stop, fire VisitVendorsInRoom + emit flavor + advance the index. When
 // all stops done, transition to the depot dwell state.
+//
+// On the first tick of each route phase, appends the destination bucket
+// ("stillwater" or "thornwall") to caravan_load, preserving any "fernway"
+// bucket already appended during the pickup substate.
 //
 // Same hostile-halt as tickTransit: if any hated mob is in the room,
 // stop and let combat resolve before continuing the route.
@@ -140,6 +229,21 @@ func tickRoute(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result
 	if hostilesInRoom(mob, ctx.RoomId) || anyPartyMemberInCombat(ctx.InstanceId) {
 		return Failure
 	}
+
+	// On first tick of this route phase, set the destination bucket.
+	// Fernway (if picked up) was already appended during the pickup
+	// substate — preserve it.
+	startedStr := ctx.MobState.GetString("caravan_state_started_round")
+	started, _ := strconv.ParseUint(startedStr, 10, 64)
+	if util.GetRoundCount() == started {
+		switch cur {
+		case caravan.StateStillwaterRoute:
+			caravanLoadAppend(ctx.MobState, "stillwater")
+		case caravan.StateThornwallRoute:
+			caravanLoadAppend(ctx.MobState, "thornwall")
+		}
+	}
+
 	idxStr := ctx.MobState.GetString("caravan_route_index")
 	idx, _ := strconv.Atoi(idxStr)
 	if idx >= len(route.VendorStopIds) {
@@ -149,11 +253,8 @@ func tickRoute(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result
 	}
 	nextRoom := route.VendorStopIds[idx]
 	if ctx.RoomId == nextRoom {
-		// Arrived at this stop — restock + advance index.
-		// TODO(stage-3.1-task-10): replace economy.AllBuckets() with the
-		// caravan's current caravan_load (set by stillwater/thornwall route
-		// + appended on Fernway pickup).
-		visited := caravan.VisitVendorsInRoom(nextRoom, economy.AllBuckets())
+		// Arrived at this stop — restock with current load + advance index.
+		visited := caravan.VisitVendorsInRoom(nextRoom, caravanLoadGet(ctx.MobState))
 		if msg := caravan.FormatDeliveryMessage(visited); msg != "" {
 			if r := rooms.LoadRoom(nextRoom); r != nil {
 				r.SendText(msg)
@@ -210,6 +311,58 @@ func anyPartyMemberInCombat(callerInstId int) bool {
 	for _, m := range p.Members {
 		c := m.GetCharacter()
 		if c != nil && c.Aggro != nil {
+			return true
+		}
+	}
+	return false
+}
+
+// caravanLoadGet returns the current caravan_load buckets. Returns
+// nil if none are set.
+func caravanLoadGet(s *BehaviorState) []string {
+	raw := s.GetString(keyCaravanLoad)
+	if raw == "" {
+		return nil
+	}
+	return strings.Split(raw, ",")
+}
+
+// caravanLoadSet writes the buckets verbatim, comma-joined. Empty
+// list clears the field.
+func caravanLoadSet(s *BehaviorState, buckets []string) {
+	if len(buckets) == 0 {
+		s.Set(keyCaravanLoad, "")
+		return
+	}
+	s.Set(keyCaravanLoad, strings.Join(buckets, ","))
+}
+
+// caravanLoadAppend adds a bucket if not already present. No-op if
+// already present.
+func caravanLoadAppend(s *BehaviorState, bucket string) {
+	cur := caravanLoadGet(s)
+	for _, b := range cur {
+		if b == bucket {
+			return
+		}
+	}
+	caravanLoadSet(s, append(cur, bucket))
+}
+
+// foragerInRoom reports whether a mob with the given mobId is in
+// the given room. Used by the caravan to detect the Fernway forager
+// at the meeting point.
+func foragerInRoom(roomId, mobId int) bool {
+	room := rooms.LoadRoom(roomId)
+	if room == nil {
+		return false
+	}
+	for _, instId := range room.GetMobs(rooms.FindAll) {
+		m := mobs.GetInstance(instId)
+		if m == nil {
+			continue
+		}
+		if int(m.MobId) == mobId {
 			return true
 		}
 	}
