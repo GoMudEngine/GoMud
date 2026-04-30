@@ -13,3 +13,4 @@ subtype: holdable
 uses: 0
 weight: 0.3
 value: 5
+rarity_tier: 40

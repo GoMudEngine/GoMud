@@ -8,3 +8,4 @@ component_tag: shrimp-chitin
 is_component: true
 weight: 0.05
 value: 5
+rarity_tier: 30

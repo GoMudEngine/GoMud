@@ -9,4 +9,5 @@ subtype: mundane
 component_tag: polished-stone
 weight: 0.1
 value: 2
+rarity_tier: 40
 is_component: true

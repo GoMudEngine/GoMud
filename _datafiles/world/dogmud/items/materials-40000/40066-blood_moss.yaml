@@ -13,4 +13,5 @@ subtype: mundane
 component_tag: blood-moss
 weight: 0.05
 value: 45
+rarity_tier: 30
 is_component: true

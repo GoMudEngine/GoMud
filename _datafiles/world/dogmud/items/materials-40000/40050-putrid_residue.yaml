@@ -10,4 +10,5 @@ subtype: mundane
 component_tag: putrid-residue
 weight: 0.1
 value: 1
+rarity_tier: 40
 is_component: true

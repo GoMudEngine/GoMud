@@ -13,4 +13,5 @@ subtype: mundane
 component_tag: lake-iron-nodule
 weight: 0.4
 value: 60
+rarity_tier: 30
 is_component: true

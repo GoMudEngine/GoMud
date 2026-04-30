@@ -10,4 +10,5 @@ subtype: mundane
 component_tag: dustwalk-herb
 weight: 0.2
 value: 3
+rarity_tier: 40
 is_component: true

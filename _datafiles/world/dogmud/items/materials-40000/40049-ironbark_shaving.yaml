@@ -10,4 +10,5 @@ subtype: mundane
 component_tag: ironbark
 weight: 0.1
 value: 4
+rarity_tier: 30
 is_component: true

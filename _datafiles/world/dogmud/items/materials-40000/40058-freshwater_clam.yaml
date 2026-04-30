@@ -12,4 +12,5 @@ subtype: mundane
 component_tag: freshwater-clam
 weight: 0.2
 value: 15
+rarity_tier: 30
 is_component: true
