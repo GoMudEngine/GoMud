@@ -4,6 +4,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/economy"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"slices"
@@ -55,6 +56,10 @@ func VisitVendorsInRoom(
 			continue
 		}
 
+		// Track whether we mutated this vendor's stock so we only
+		// persist when something actually changed.
+		mutated := false
+
 		// DELIVER pass: wagon → vendor.
 		// Walk wagon items in reverse so RemoveItem is index-safe.
 		if len(deliveryBuckets) > 0 {
@@ -70,6 +75,7 @@ func VisitVendorsInRoom(
 				}
 				wagon.Character.RemoveItem(item)
 				entry.Current++
+				mutated = true
 				delivered = append(delivered, ItemMove{
 					Vendor:   vendor.Character.Name,
 					ItemName: item.DisplayName(),
@@ -106,11 +112,23 @@ func VisitVendorsInRoom(
 						break // wagon at carry cap
 					}
 					entry.Current--
+					mutated = true
 					pickedUp = append(pickedUp, ItemMove{
 						Vendor:   vendor.Character.Name,
 						ItemName: newItem.DisplayName(),
 					})
 				}
+			}
+		}
+
+		// Persist when stock actually changed. Crash-safe: without
+		// this, caravan restocks only persist on graceful shutdown,
+		// so a panic loses an in-flight cycle's deliveries. Non-fatal
+		// on write error — the in-memory state stays live and
+		// graceful shutdown will retry the write.
+		if mutated {
+			if err := shops.SaveShop(vendor.Zone, int(vendor.MobId), vendor.HomeRoomId); err != nil {
+				mudlog.Error("caravan.VisitVendorsInRoom", "vendor", vendor.Character.Name, "error", err)
 			}
 		}
 	}

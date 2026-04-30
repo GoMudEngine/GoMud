@@ -22,6 +22,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -376,6 +377,9 @@ func npcVisitVendorsInRoom(
 		if shop == nil {
 			continue
 		}
+		// Track whether we mutated this vendor's stock so we only
+		// persist when something actually transferred.
+		mutated := false
 		// Walk forager satchel in reverse so RemoveItem is index-safe.
 		for i := len(mob.Character.Items) - 1; i >= 0; i-- {
 			item := mob.Character.Items[i]
@@ -389,11 +393,21 @@ func npcVisitVendorsInRoom(
 			}
 			mob.Character.RemoveItem(item)
 			entry.Current++
+			mutated = true
 			room.SendText(fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi> hands a %s to`+
 					` <ansi fg="mobname">%s</ansi>.`,
 				p.Name, item.DisplayName(), vendor.Character.Name,
 			))
+		}
+		// Persist when stock actually changed. Mirrors the caravan-side
+		// crash-safety pattern in internal/caravan/visit.go — without
+		// this, forager restocks only hit disk on graceful shutdown
+		// and a panic loses an in-flight cycle's deliveries.
+		if mutated {
+			if err := shops.SaveShop(vendor.Zone, int(vendor.MobId), roomId); err != nil {
+				mudlog.Error("forager.npcVisitVendorsInRoom", "forager", p.Name, "vendor", vendor.Character.Name, "error", err)
+			}
 		}
 	}
 }
