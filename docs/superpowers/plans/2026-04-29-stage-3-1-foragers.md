@@ -2075,7 +2075,7 @@ Write `_datafiles/world/dogmud/mutators/sanctuary.yaml`:
 
 ```yaml
 mutatorid: sanctuary
-regen_multiplier: 5.0
+regenmultiplier: 5.0
 descriptionmodifier:
   behavior: append
   text: A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.

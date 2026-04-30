@@ -1,7 +1,6 @@
 package mutators
 
 import (
-	"strings"
 	"testing"
 
 	"gopkg.in/yaml.v2"
@@ -9,7 +8,7 @@ import (
 
 func TestMutatorSpec_RegenMultiplierField(t *testing.T) {
 	src := `mutatorid: test-sanctuary
-regen_multiplier: 5.0
+regenmultiplier: 5.0
 `
 	var spec MutatorSpec
 	if err := yaml.Unmarshal([]byte(src), &spec); err != nil {
@@ -32,5 +31,4 @@ func TestMutatorSpec_RegenMultiplierDefaultsZero(t *testing.T) {
 	if spec.RegenMultiplier != 0 {
 		t.Errorf("RegenMultiplier = %v, want 0 (unset)", spec.RegenMultiplier)
 	}
-	_ = strings.TrimSpace
 }

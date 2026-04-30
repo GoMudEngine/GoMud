@@ -396,7 +396,7 @@ with a room-mutator-driven lookup.
 
 ```yaml
 mutatorid: sanctuary
-regen_multiplier: 5.0
+regenmultiplier: 5.0
 descriptionmodifier:
   behavior: append
   text: A peace that is older than the stones themselves settles
