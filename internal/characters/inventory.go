@@ -8,8 +8,13 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
-// CarryCapacity returns weight capacity in pounds (Strength × config multiplier)
+// CarryCapacity returns weight capacity in pounds. When
+// carryCapacityOverride is set (Stage 3.4 special mobs), returns it
+// directly. Otherwise computes Strength × config multiplier.
 func (c *Character) CarryCapacity() float64 {
+	if c.carryCapacityOverride > 0 {
+		return c.carryCapacityOverride
+	}
 	bal := configs.GetBalanceConfig()
 	return float64(c.Stats.Strength.ValueAdj) * float64(bal.CarryCapacityMultiplier)
 }

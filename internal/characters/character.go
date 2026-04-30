@@ -102,6 +102,10 @@ type Character struct {
 	CraftingState    *CraftingState                 `yaml:"-"` // Active crafting in progress (Stage 13.1). Not persisted.
 	permaBuffIds     []int                          // Buff Id's that are always present for this character
 	userId           int                            // User ID of the character if any
+	// Stage 3.4: spawn-time override for carry capacity. Set via
+	// ApplyMobOverrides for special mobs (wagons). Zero falls through
+	// to the default Strength-derived calc.
+	carryCapacityOverride float64 `yaml:"-"`
 }
 
 func New() *Character {

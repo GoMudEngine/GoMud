@@ -471,6 +471,16 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 			}
 		}
 		mob.Character.Validate()
+		// Stage 3.4: apply override fields from mob YAML if set.
+		// Must run after Validate() (which computes stat-derived
+		// defaults) and before the Health/Conviction assignments
+		// below so the override propagates to current pool values.
+		characters.ApplyMobOverrides(
+			&mob.Character,
+			mob.HealthMaxOverride,
+			mob.StaminaMaxOverride,
+			mob.CarryCapacityOverride,
+		)
 		mob.Character.Health = mob.Character.HealthMax.Value
 		mob.Character.Conviction = mob.Character.ConvictionMax.Value
 
