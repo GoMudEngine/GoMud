@@ -291,7 +291,9 @@ type Balance struct {
 	CaravanServedZones []string `yaml:"CaravanServedZones"`
 
 	// CaravanDepotDwellRounds is the number of rounds the caravan rests at
-	// each depot between transit legs. ~360 ≈ 24 min real ≈ half a game day.
+	// each depot between transit legs. ~720 ≈ 48 min real ≈ a full game
+	// day. Stage 3.1 doubled this from 360 so foragers are the day-to-day
+	// supply pipeline; caravans now arrive about once per game day.
 	CaravanDepotDwellRounds ConfigInt `yaml:"CaravanDepotDwellRounds"`
 
 	// FernwayPickupDwellRounds is the dwell time at the Fernway forager

@@ -278,27 +278,27 @@ func (b *Balance) validateMisc() {
 	if len(b.CaravanServedZones) == 0 {
 		b.CaravanServedZones = []string{"Stillwater", "Thornwall City"}
 	}
-	if b.CaravanDepotDwellRounds == 0 {
+	if b.CaravanDepotDwellRounds <= 0 {
 		b.CaravanDepotDwellRounds = 720
 	}
-	if b.FernwayPickupDwellRounds == 0 {
+	if b.FernwayPickupDwellRounds <= 0 {
 		b.FernwayPickupDwellRounds = 6
 	}
 
 	// ── FORAGER SYSTEM (Stage 3.1) ───────────────────────────────────────────
-	if b.ForagerForageDwellRounds == 0 {
+	if b.ForagerForageDwellRounds <= 0 {
 		b.ForagerForageDwellRounds = 8
 	}
-	if b.ForagerCarryThresholdPct == 0 {
+	if b.ForagerCarryThresholdPct <= 0 || b.ForagerCarryThresholdPct > 1.0 {
 		b.ForagerCarryThresholdPct = 0.75
 	}
-	if b.ForagerHPRecallThresholdPct == 0 {
+	if b.ForagerHPRecallThresholdPct <= 0 || b.ForagerHPRecallThresholdPct > 1.0 {
 		b.ForagerHPRecallThresholdPct = 0.50
 	}
-	if b.ForagerHealPotionThresholdPct == 0 {
+	if b.ForagerHealPotionThresholdPct <= 0 || b.ForagerHealPotionThresholdPct > 1.0 {
 		b.ForagerHealPotionThresholdPct = 0.75
 	}
-	if b.ForagerWaitTimeoutRounds == 0 {
+	if b.ForagerWaitTimeoutRounds <= 0 {
 		b.ForagerWaitTimeoutRounds = 150
 	}
 }
