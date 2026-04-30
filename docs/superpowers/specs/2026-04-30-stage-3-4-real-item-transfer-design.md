@@ -94,10 +94,10 @@ two-pass interaction.
 | CREATE | `_datafiles/world/dogmud/mobs/thornwall_city/374-caravan_wagon.yaml` | Wagon mob |
 | CREATE | `_datafiles/world/dogmud/behaviors/thornwall_city/374-caravan_wagon.yaml` | Wagon btree (passive follower + death handler) |
 | CREATE | `_datafiles/world/dogmud/mobs/thornwall_city/375-pell.yaml` | Draft horse 1 (dappled grey) |
-| CREATE | `_datafiles/world/dogmud/behaviors/thornwall_city/375.yaml` | Pell btree |
+| CREATE | `_datafiles/world/dogmud/behaviors/thornwall_city/375-hob.yaml` | Hob btree |
 | CREATE | `_datafiles/world/dogmud/mobs/thornwall_city/376-brick.yaml` | Draft horse 2 (bay) |
-| CREATE | `_datafiles/world/dogmud/behaviors/thornwall_city/376.yaml` | Brick btree |
-| MODIFY | `_datafiles/world/dogmud/mobs/thornwall_city/357-ketil.yaml` | Update party leader to expect 5 followers (Marta, Lars, wagon, Pell, Brick) |
+| CREATE | `_datafiles/world/dogmud/behaviors/thornwall_city/376-bran.yaml` | Bran btree |
+| MODIFY | `_datafiles/world/dogmud/mobs/thornwall_city/357-ketil.yaml` | Update party leader to expect 5 followers (Marta, Lars, wagon, Hob, Bran) |
 | MODIFY | `_datafiles/world/dogmud/behaviors/thornwall_city/357.yaml` | `party_ensure_npc_party` member list expanded |
 | MODIFY | `_datafiles/world/dogmud/rooms/thornwall_city/465.yaml` | spawninfo gets wagon + 2 horses added |
 | MODIFY | All ~50 mat YAMLs in `items/materials-40000/` | Set `rarity_tier` per the agreed mapping |
@@ -192,11 +192,11 @@ tree:
 
 ## Draft horses
 
-**IDs:** Pell 375, Brick 376. Same Thornwall zone (the caravan is
+**IDs:** Hob 375, Bran 376. Same Thornwall zone (the caravan is
 crewed and stationed there). Identical statline, different cosmetic
 descriptions.
 
-**Pell mob YAML (Brick mirrors with adjusted description):**
+**Hob mob YAML (Bran mirrors with adjusted description):**
 
 ```yaml
 mobid: 375
@@ -216,7 +216,7 @@ maxwander: -1
 activitylevel: 5           # very rare idle emote
 charm_immune: true
 character:
-  name: Pell, a dappled-grey draft horse
+  name: Hob, a dappled-grey draft horse
   description: |
     A solid, broad-shouldered draft horse with a patient
     eye, her coat dappled grey going to white at the
@@ -267,8 +267,8 @@ Thornwall depot room 465's `spawninfo` gains:
 
 ```yaml
 - mobid: 374        # caravan wagon
-- mobid: 375        # Pell, draft horse
-- mobid: 376        # Brick, draft horse
+- mobid: 375        # Hob, draft horse
+- mobid: 376        # Bran, draft horse
 ```
 
 ## Engine override fields (mob struct extensions)
@@ -692,7 +692,7 @@ acquisition path.
 
 ### In-game smoke test
 
-1. Boot. Caravan party at Thornwall depot 465 includes 6 mobs: Ketil, Marta, Lars, wagon, Pell, Brick.
+1. Boot. Caravan party at Thornwall depot 465 includes 6 mobs: Ketil, Marta, Lars, wagon, Hob, Bran.
 2. `look wagon` shows the wagon's description AND `Items: (empty)` initially.
 3. Halix delivers his satchel directly to Thornwall vendors. Confirm Kerra's iron ingot stock increases. Confirm flavor message fires.
 4. Caravan departs Thornwall. Wagon empty until Fernway pickup.
@@ -737,7 +737,7 @@ acquisition path.
 - Exact corpse-rendering integration points for `CorpseName` / `CorpseDescription` overrides — survey the codebase for every "<Character.Name> corpse" string format and adapt each one. Plan task 0 surveys.
 - Whether `EffectiveMaxStock` should also be used for non-caravan-served vendors going forward (could simplify the system long-term) — out of scope for 3.4 but worth a follow-up note.
 - Bandit `HatesAnyGroup` resolution — confirm the existing API on Mob; the Stage 2 spec referenced this method. Plan task confirms.
-- Final names for the draft horses (Pell + Brick are placeholders).
+- Final names for the draft horses (Hob + Bran are placeholders).
 - `ForagerRestCarryThreshold` default value — 0.5 is the spec recommendation; tunable via config.
 
 ## Files affected
@@ -759,11 +759,11 @@ acquisition path.
 | MODIFY | `internal/usercommands/look.go` | Use mob.CorpseDescription when looking at corpse |
 | CREATE | `_datafiles/world/dogmud/mobs/thornwall_city/374-caravan_wagon.yaml` | Wagon mob |
 | CREATE | `_datafiles/world/dogmud/behaviors/thornwall_city/374-caravan_wagon.yaml` | Wagon btree |
-| CREATE | `_datafiles/world/dogmud/mobs/thornwall_city/375-pell.yaml` | Pell horse |
-| CREATE | `_datafiles/world/dogmud/behaviors/thornwall_city/375.yaml` | Pell btree |
-| CREATE | `_datafiles/world/dogmud/mobs/thornwall_city/376-brick.yaml` | Brick horse |
-| CREATE | `_datafiles/world/dogmud/behaviors/thornwall_city/376.yaml` | Brick btree |
-| MODIFY | `_datafiles/world/dogmud/behaviors/thornwall_city/357.yaml` | Update party_ensure_npc_party member list |
+| CREATE | `_datafiles/world/dogmud/mobs/thornwall_city/375-pell.yaml` | Hob horse |
+| CREATE | `_datafiles/world/dogmud/behaviors/thornwall_city/375-hob.yaml` | Hob btree |
+| CREATE | `_datafiles/world/dogmud/mobs/thornwall_city/376-brick.yaml` | Bran horse |
+| CREATE | `_datafiles/world/dogmud/behaviors/thornwall_city/376-bran.yaml` | Bran btree |
+| MODIFY | `_datafiles/world/dogmud/behaviors/thornwall_city/357-ketil.yaml` | Update party_ensure_npc_party member list |
 | MODIFY | `_datafiles/world/dogmud/rooms/thornwall_city/465.yaml` | Add wagon + horse spawninfo |
 | MODIFY | ~50 mat YAMLs in `_datafiles/world/dogmud/items/materials-40000/` | Set `rarity_tier` |
 | MODIFY | 17 caravan-served vendor mob YAMLs | Drop explicit max_stock from each StockEntry |
