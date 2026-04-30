@@ -56,10 +56,11 @@ func actForagerStep(params map[string]any, ctx *EvalContext) Result {
 	cfg := configs.GetBalanceConfig()
 
 	// HP-emergency short-circuit. Any state can drop to Recalling.
+	// The cast itself fires on the next tick via tickForagerRecalling
+	// — no need to issue it here too.
 	if cur != forager.StateRecalling &&
 		hpRatio(mob) <= float64(cfg.ForagerHPRecallThresholdPct) {
 		transitionForager(ctx.MobState, forager.StateRecalling)
-		mob.Command("cast fold-recall")
 		return Success
 	}
 
@@ -201,7 +202,11 @@ func tickForagerForaging(
 	// Wander to a random adjacent territory neighbor.
 	npcWanderTerritoryNeighbor(p, mob, ctx)
 
-	return Success
+	// Return Failure to let the legacy idle path fire lookfortrouble,
+	// which sets aggro on prey wildlife in the room — without that,
+	// the mob_can_safely_engage condition would never have an aggro
+	// target to evaluate. Mirror's the caravan tickDwell pattern.
+	return Failure
 }
 
 func tickForagerTravelingToDropoff(
