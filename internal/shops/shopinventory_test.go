@@ -125,3 +125,57 @@ func TestCanAfford(t *testing.T) {
 	assert.True(t, si.CanAfford(50, 250))
 	assert.False(t, si.CanAfford(100, 250))
 }
+
+func TestRestockBuckets_OnlyFillsMatchingBucket(t *testing.T) {
+	si := &ShopInventory{Stock: []StockEntry{
+		{ItemId: 40001 /*base*/, Current: 0, MaxStock: 5, RestockQty: 5},
+		{ItemId: 40051 /*stillwater*/, Current: 0, MaxStock: 5, RestockQty: 5},
+		{ItemId: 40010 /*thornwall*/, Current: 0, MaxStock: 5, RestockQty: 5},
+	}}
+	refilled := si.RestockBuckets([]string{"stillwater"})
+	assert.True(t, refilled, "expected RestockBuckets to refill at least one slot")
+	assert.Equal(t, 0, si.Stock[0].Current, "base slot refilled but bucket not in list")
+	assert.Equal(t, 5, si.Stock[1].Current, "stillwater slot not refilled")
+	assert.Equal(t, 0, si.Stock[2].Current, "thornwall slot refilled but bucket not in list")
+}
+
+func TestRestockBuckets_MultipleBucketsUnion(t *testing.T) {
+	si := &ShopInventory{Stock: []StockEntry{
+		{ItemId: 40001 /*base*/, Current: 0, MaxStock: 5, RestockQty: 5},
+		{ItemId: 40051 /*stillwater*/, Current: 0, MaxStock: 5, RestockQty: 5},
+		{ItemId: 40046 /*fernway*/, Current: 0, MaxStock: 5, RestockQty: 5},
+	}}
+	si.RestockBuckets([]string{"stillwater", "fernway"})
+	assert.Equal(t, 0, si.Stock[0].Current, "base slot refilled")
+	assert.Equal(t, 5, si.Stock[1].Current, "stillwater not refilled")
+	assert.Equal(t, 5, si.Stock[2].Current, "fernway not refilled")
+}
+
+func TestRestockBuckets_EmptyListNoOp(t *testing.T) {
+	si := &ShopInventory{Stock: []StockEntry{
+		{ItemId: 40001, Current: 0, MaxStock: 5, RestockQty: 5},
+	}}
+	assert.False(t, si.RestockBuckets(nil), "nil bucket list should be no-op")
+	assert.False(t, si.RestockBuckets([]string{}), "empty bucket list should be no-op")
+	assert.Equal(t, 0, si.Stock[0].Current, "entry refilled despite empty bucket list")
+}
+
+func TestRestockBuckets_SkipsZeroRestockQty(t *testing.T) {
+	// Items with RestockQty <= 0 are NPC-crafted, not supply-cart-fed.
+	// RestockBuckets must not touch them even if their bucket is in the list.
+	si := &ShopInventory{Stock: []StockEntry{
+		{ItemId: 40051 /*stillwater*/, Current: 0, MaxStock: 5, RestockQty: 0}, // crafted
+		{ItemId: 40057 /*stillwater*/, Current: 0, MaxStock: 5, RestockQty: 5}, // delivered
+	}}
+	si.RestockBuckets([]string{"stillwater"})
+	assert.Equal(t, 0, si.Stock[0].Current, "zero-RestockQty slot was refilled")
+	assert.Equal(t, 5, si.Stock[1].Current, "normal slot not refilled")
+}
+
+func TestRestockBuckets_RespectsMaxStockCap(t *testing.T) {
+	si := &ShopInventory{Stock: []StockEntry{
+		{ItemId: 40051, Current: 4, MaxStock: 5, RestockQty: 5},
+	}}
+	si.RestockBuckets([]string{"stillwater"})
+	assert.Equal(t, 5, si.Stock[0].Current, "expected capped at MaxStock=5")
+}
