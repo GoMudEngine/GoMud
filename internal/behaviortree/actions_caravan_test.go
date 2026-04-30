@@ -1,12 +1,14 @@
 package behaviortree
 
 import (
+	"reflect"
 	"strconv"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
 
 func TestActCaravanStep_DefaultsToThornwallDwellOnFirstTick(t *testing.T) {
@@ -92,6 +94,18 @@ func TestActCaravanStep_RouteAdvancesIndexAndExitsAfterAllStops(t *testing.T) {
 	lastIdx := len(caravan.OutboundRoute.VendorStopIds) - 1
 	lastRoom := caravan.OutboundRoute.VendorStopIds[lastIdx]
 
+	// Seed the room so findWagonInRoom can call rooms.LoadRoom.
+	cleanRoom := seedTestRoom(t, lastRoom, "test_zone")
+	defer cleanRoom()
+
+	// Register the wagon mob (template 374) in the room so
+	// findWagonInRoom returns a real mob rather than nil.
+	cleanWagon := seedTestMob(t, 374, 7199, lastRoom, "caravan wagon")
+	defer cleanWagon()
+	if r := rooms.LoadRoom(lastRoom); r != nil {
+		r.AddMob(7199)
+	}
+
 	mob := buildCaravanLeaderMob(t, 7103, lastRoom)
 	_ = mob
 	state := NewBehaviorState()
@@ -153,4 +167,31 @@ func buildCaravanLeaderMob(t *testing.T, instanceId int, roomId int) *mobs.Mob {
 	mobs.SetInstanceForTest(instanceId, mob)
 	t.Cleanup(func() { mobs.SetInstanceForTest(instanceId, nil) })
 	return mob
+}
+
+func TestBucketsForRouteState_Stillwater(t *testing.T) {
+	delivery, pickup := bucketsForRouteState(caravan.StateStillwaterRoute)
+	if !reflect.DeepEqual(delivery, []string{"thornwall", "fernway"}) {
+		t.Errorf("Stillwater delivery = %v, want [thornwall fernway]", delivery)
+	}
+	if !reflect.DeepEqual(pickup, []string{"stillwater"}) {
+		t.Errorf("Stillwater pickup = %v, want [stillwater]", pickup)
+	}
+}
+
+func TestBucketsForRouteState_Thornwall(t *testing.T) {
+	delivery, pickup := bucketsForRouteState(caravan.StateThornwallRoute)
+	if !reflect.DeepEqual(delivery, []string{"stillwater", "fernway"}) {
+		t.Errorf("Thornwall delivery = %v, want [stillwater fernway]", delivery)
+	}
+	if !reflect.DeepEqual(pickup, []string{"thornwall"}) {
+		t.Errorf("Thornwall pickup = %v, want [thornwall]", pickup)
+	}
+}
+
+func TestBucketsForRouteState_NonRouteReturnsNil(t *testing.T) {
+	delivery, pickup := bucketsForRouteState(caravan.StateThornwallDwell)
+	if delivery != nil || pickup != nil {
+		t.Errorf("dwell state returned non-nil: %v, %v", delivery, pickup)
+	}
 }

@@ -20,7 +20,6 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/configs"
-	"github.com/GoMudEngine/GoMud/internal/economy"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -255,10 +254,17 @@ func tickRoute(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result
 	nextRoom := route.VendorStopIds[idx]
 	if ctx.RoomId == nextRoom {
 		// Arrived at this stop — transfer items + advance index.
-		// TODO(stage-3.4-task-8): wire up actual wagon mob lookup +
-		// state-derived delivery/pickup buckets.
-		// Task 7 keeps the build green; Task 8 wires the real wagon.
-		delivered, pickedUp := caravan.VisitVendorsInRoom(nextRoom, nil, economy.AllBuckets(), nil)
+		wagon := findWagonInRoom(nextRoom)
+		if wagon == nil {
+			// Wagon not present — caravan is wiped, mid-respawn,
+			// or a follower lagged. Let legacy idle handle this tick;
+			// next tick will retry.
+			return Failure
+		}
+		deliveryBuckets, pickupBuckets := bucketsForRouteState(cur)
+		delivered, pickedUp := caravan.VisitVendorsInRoom(
+			nextRoom, wagon, deliveryBuckets, pickupBuckets,
+		)
 		if msg := caravan.FormatVisitMessage(delivered, pickedUp); msg != "" {
 			if r := rooms.LoadRoom(nextRoom); r != nil {
 				r.SendText(msg)
@@ -351,6 +357,53 @@ func caravanLoadAppend(s *BehaviorState, bucket string) {
 		}
 	}
 	caravanLoadSet(s, append(cur, bucket))
+}
+
+// findWagonInRoom returns the caravan wagon mob (mob 374) if it's
+// in the given room. Returns nil if the wagon isn't there — which
+// happens during the brief windows when followers are catching up,
+// or when the caravan has been wiped and is mid-respawn.
+//
+// Caller decides whether nil is fatal (return Failure to let legacy
+// idle take over) or recoverable (skip this tick).
+func findWagonInRoom(roomId int) *mobs.Mob {
+	const wagonMobId = 374
+	room := rooms.LoadRoom(roomId)
+	if room == nil {
+		return nil
+	}
+	for _, instId := range room.GetMobs(rooms.FindAll) {
+		m := mobs.GetInstance(instId)
+		if m == nil {
+			continue
+		}
+		if int(m.MobId) == wagonMobId {
+			return m
+		}
+	}
+	return nil
+}
+
+// bucketsForRouteState returns the (delivery, pickup) bucket lists
+// for the caravan at a vendor stop in the given route state.
+//
+// Outbound at Stillwater vendors: deliver thornwall + fernway
+// (items the wagon carries from Thornwall + Fernway pickup), pick
+// up stillwater (Stillwater-unique surplus for return trip).
+//
+// Inbound at Thornwall vendors: mirror — deliver stillwater +
+// fernway, pick up thornwall.
+//
+// Other states (dwell, transit, fernway pickup) have no vendor
+// transfer logic, so we return (nil, nil) defensively.
+func bucketsForRouteState(s caravan.CaravanState) (delivery, pickup []string) {
+	switch s {
+	case caravan.StateStillwaterRoute:
+		return []string{"thornwall", "fernway"}, []string{"stillwater"}
+	case caravan.StateThornwallRoute:
+		return []string{"stillwater", "fernway"}, []string{"thornwall"}
+	}
+	return nil, nil
 }
 
 // foragerInRoom reports whether a mob with the given mobId is in
