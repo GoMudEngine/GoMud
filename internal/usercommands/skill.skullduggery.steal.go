@@ -27,13 +27,15 @@ func Steal(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	skillLevel := user.Character.GetSkillLevel(skills.Skullduggery)
 
-	// Requires skullduggery rank 2
+	// Requires skullduggery rank 1 to even see the command. Rank 2
+	// is required for the actual steal — that gate lives inside
+	// stealFromMob/stealFromContainer AFTER target validation, so
+	// immune-mob targets get the canonical rebuff regardless of
+	// the player's skill level (otherwise a rank-1 thief targeting
+	// a forager would see "not advanced enough" — a misleading
+	// hint that the command would work with more skill).
 	if skillLevel < 1 {
 		return false, nil
-	}
-	if skillLevel < 2 {
-		user.SendText("You aren't advanced enough at skullduggery for that.")
-		return true, nil
 	}
 
 	if user.Character.Aggro != nil {
@@ -108,6 +110,15 @@ func stealFromMob(mobInstanceId int, attackerScore float64, rank int,
 
 	if m.IsNonCombatant() || m.PlayerAttackImmune {
 		user.SendText(fmt.Sprintf(`You can't steal from <ansi fg="mobname">%s</ansi>.`, m.Character.Name))
+		return true, nil
+	}
+
+	// Skill rank 2 required for the actual steal mechanic. Checked
+	// AFTER the immune gate above so a low-rank thief targeting an
+	// immune mob gets the immune rebuff (which doesn't imply skill
+	// would help) rather than the skill rebuff (which does).
+	if rank < 2 {
+		user.SendText("You aren't advanced enough at skullduggery for that.")
 		return true, nil
 	}
 
@@ -204,6 +215,14 @@ func stealFromContainer(containerName string, attackerScore float64, rank int,
 	container, ok := room.Containers[containerName]
 	if !ok {
 		user.SendText("You don't see that here.")
+		return true, nil
+	}
+
+	// Skill rank 2 required for the actual steal mechanic. Mirrors
+	// the gate in stealFromMob; checked AFTER target validation so
+	// the rebuff order is consistent.
+	if rank < 2 {
+		user.SendText("You aren't advanced enough at skullduggery for that.")
 		return true, nil
 	}
 
