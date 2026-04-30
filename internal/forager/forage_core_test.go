@@ -1,4 +1,4 @@
-package usercommands
+package forager
 
 import "testing"
 

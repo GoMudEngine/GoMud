@@ -6,11 +6,9 @@ package behaviortree
 // daily cycle (forage → deliver → recall → rest → repeat). Mirrors
 // the caravan_step pattern from actions_caravan.go.
 //
-// Import-cycle note: behaviortree cannot import usercommands (usercommands
-// imports behaviortree). The forage tables and roll logic from
-// usercommands/skill.forage.go are therefore duplicated here under the
-// "npcForage*" names. Any change to the player forage tables must also
-// be reflected here.
+// Forage roll logic and yield tables live in internal/forager/forage_core.go
+// (the leaf forager package), shared by both this file and
+// usercommands/skill.forage.go.
 
 import (
 	"fmt"
@@ -18,7 +16,6 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
-	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -294,75 +291,6 @@ func tickForagerRecalling(
 	return Success
 }
 
-// ── NPC forage helpers ───────────────────────────────────────────────
-//
-// These duplicate the tables from usercommands/skill.forage.go because
-// behaviortree cannot import usercommands (import cycle). Any update to
-// the player forage tables must be mirrored here.
-
-var npcForageDifficulty = map[string]float64{
-	"farmland":  110,
-	"forest":    120,
-	"land":      125,
-	"swamp":     130,
-	"shore":     135,
-	"water":     135,
-	"cave":      135,
-	"mountains": 140,
-	"cliffs":    145,
-}
-
-var npcForageYields = map[string][]int{
-	"forest":    {40004, 40004, 40005, 40005, 40049, 40049},
-	"land":      {40004, 40005, 40049, 40047},
-	"farmland":  {40004, 40004, 40005, 40007},
-	"swamp":     {40005, 40005, 40004, 40055, 40055, 40056, 40057, 40057},
-	"shore":     {40004, 40058},
-	"water":     {40058, 40058, 40058, 40058, 40058, 40059},
-	"mountains": {40001, 40004, 40005, 40020, 40024, 40025},
-	"cliffs":    {40005, 40020, 40024},
-	"cave": {
-		40001, 40001, 40020, 40020, 40005, 40024,
-		40025, 40026, 40027, 40029,
-	},
-}
-
-var npcNightForageYields = map[string][]int{
-	"forest":    {40046},
-	"mountains": {40046},
-	"cave":      {40046},
-	"land":      {40046},
-}
-
-type npcForageResult struct {
-	found  bool
-	itemId int
-}
-
-func npcForageCore(biomeId string, searchScore float64) npcForageResult {
-	yields, ok := npcForageYields[biomeId]
-	if !ok || len(yields) == 0 {
-		return npcForageResult{}
-	}
-	if gametime.IsNight() {
-		if night, hasNight := npcNightForageYields[biomeId]; hasNight {
-			yields = append(append([]int{}, yields...), night...)
-		}
-	}
-	difficulty := npcForageDifficulty[biomeId]
-	if difficulty == 0 {
-		difficulty = 130
-	}
-	roll := dice.RollStat(searchScore)
-	if roll.Value < difficulty {
-		return npcForageResult{}
-	}
-	return npcForageResult{
-		found:  true,
-		itemId: yields[util.Rand(len(yields))],
-	}
-}
-
 func npcAttemptForage(
 	p *forager.ForagerProfile,
 	mob *mobs.Mob,
@@ -380,11 +308,15 @@ func npcAttemptForage(
 	searchScore := float64(mob.Character.Stats.Perception.ValueAdj) +
 		combat.SkillMultiplier(searchRank)*25.0
 
-	result := npcForageCore(biome.BiomeId, searchScore)
-	if !result.found {
+	result := forager.ForageCore(forager.ForageAttempt{
+		Biome:       biome.BiomeId,
+		SearchScore: searchScore,
+		AtNight:     gametime.IsNight(),
+	})
+	if !result.Found {
 		return
 	}
-	item := items.New(result.itemId)
+	item := items.New(result.ItemId)
 	if !item.IsValid() {
 		return
 	}
