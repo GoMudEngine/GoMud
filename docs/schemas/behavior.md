@@ -105,6 +105,14 @@ node.
 | `item_matches` | `item_id` (int) | Event ItemId matches. For `player_give`. |
 | `multiple_enemies` | none | More than one player + charmed mob in room. |
 
+### Forager (Stage 3.1)
+
+| Condition | Params | Description |
+|-----------|--------|-------------|
+| `mob_can_safely_engage` | none | True if the mob's current Aggro target is in its `ForagerProfile.PreyWhitelist`, the target's stat-pool ≤ 60% of the mob's, and the mob's HP ≥ 75%. Used by foragers to gate opportunistic prey engagement. |
+| `mob_inventory_at_threshold` | none | True if mob's carry weight / carry capacity ≥ `Balance.ForagerCarryThresholdPct` (default 0.75). Foragers head home when this fires. |
+| `mob_hp_below_recall_threshold` | none | True if mob's HP ratio ≤ `Balance.ForagerHPRecallThresholdPct` (default 0.50). Foragers cast fold-recall when this fires. |
+
 ### Party (NPC Party System — Stage 1)
 
 | Condition | Params | Description |
@@ -204,7 +212,8 @@ NPC parties coordinate group behavior across multiple mobs (movement, combat tar
 | `party_assist_target` | none | Sets the caller's combat aggro to match the leader's current target. Returns Failure if leader isn't in combat. |
 | `party_flee_to_room` | `room_id` (int) | All party members navigate one step toward `room_id` (typically `party.HomeRoomId`). Triggered by leader-side btree on group-pressure threshold. |
 | `party_at_home_stand` | none | If caller is at `party.HomeRoomId`, sets a `party_standing` BehaviorState flag to suppress flee branches in subsequent btree evaluation. Used at the camp/home for last-stand behavior. |
-| `caravan_step` | none | Drives the Stage 2 caravan state machine. Reads the caller's `MobState["caravan_state"]`, dispatches based on state category (dwell / transit / route), advances state on the right environmental conditions (timer expired / arrival / all stops visited). Used only on the caravan leader; follower btrees use `party_follow_leader` + `party_assist_target`. State persistence keys: `caravan_state`, `caravan_state_started_round`, `caravan_route_index`. |
+| `caravan_step` | none | Drives the Stage 2 caravan state machine. Reads the caller's `MobState["caravan_state"]`, dispatches based on state category (dwell / transit / route / fernway-pickup), advances state on the right environmental conditions (timer expired / arrival / all stops visited). Stage 3.1 added the fernway-pickup substates inside each transit leg, plus `caravan_load` MobState tracking that gates `RestockBuckets` calls at vendors. Used only on the caravan leader; follower btrees use `party_follow_leader` + `party_assist_target`. State persistence keys: `caravan_state`, `caravan_state_started_round`, `caravan_route_index`, `caravan_load`. |
+| `forager_step` | none | Drives the Stage 3.1 forager state machine. Reads the caller's `MobState["forager_state"]`, dispatches per-state (resting / traveling-to-territory / foraging / traveling-to-dropoff / delivering / recalling), advances state on environmental conditions. HP-emergency short-circuit forces `recalling` from any state when HP drops below `Balance.ForagerHPRecallThresholdPct`. Used by the three foragers registered in `internal/forager.profiles` (Vella 371, Halix 243, Kessa 366). State persistence keys: `forager_state`, `forager_state_started_round`, `forager_forage_timer`, `forager_fatigue_timer`, `forager_visit_index`, `forager_wait_timer`. |
 
 **Party events** (fired by party actions or by the `MobDeath_PackFlee` hook):
 

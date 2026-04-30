@@ -8,6 +8,10 @@
 > Classification per spec
 > `docs/superpowers/specs/2026-04-28-mat-region-split-design.md`.
 >
+> **Implementation note:** This matrix is mirrored in
+> `internal/economy/buckets.go`. Drift between the two is caught at
+> test time by `TestBucketMap_AuditMatrixCoverage`.
+>
 > Audited: 2026-04-27. Auditor: Claude (Stage 3.0b).
 
 ## Bucket definitions

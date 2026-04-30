@@ -1,5 +1,77 @@
 # DOGMud Patch Notes
 
+## 2026-04-30 — Stage 3.1: Forager NPCs (dev only)
+
+**Note:** Dev-only landing. The full economy stack ships to prod (`master`)
+as a coherent update once Stage 3.4 lands.
+
+- Three new forager NPCs feed the supply pipeline that 3.0b wired up:
+  - **Vella, the Marsh Forager** (mob 371) anchored to Stillwater
+    Temple Interior (4123). Wanders Stillwater Marsh (rooms
+    4177-4196), engages prey wildlife (marsh rats, dragonfly
+    swarms), salvages corpses, delivers Stillwater + base + overlap
+    mats to the 8 Stillwater vendors directly.
+  - **Halix, the Steppe Forager** (mob 243) anchored to Thornwall
+    Temple Interior (468). Walks the safe northern half of Ironwind
+    Steppe, delivers base + overlap mats to the 9 Thornwall vendors.
+    Statpool 225 (Ironwind is more dangerous than the marsh).
+  - **Kessa, the Fernway Forager** (mob 366) anchored to a new
+    Forager's Camp (room 4197, attached west of 4170 Tangled
+    Bracken). Walks up to North Road 4038 to meet the caravan; the
+    caravan distributes Fernway mats to both towns symmetrically.
+- All three are `player_attack_immune: true` (rebuff like
+  shopkeepers). They engage prey wildlife on a per-forager
+  whitelist, drink a healing salve at HP < 75%, and cast fold-recall
+  at HP < 50%. Each carries a thematic 1H weapon (gaff hook,
+  hunting spear, hand axe) and a leather bandolier with healing
+  salves.
+- New behavior tree primitive `forager_step` drives the per-forager
+  state machine (resting → traveling → foraging → delivering →
+  recalling → loop). Three new conditions support it:
+  `mob_can_safely_engage`, `mob_inventory_at_threshold`,
+  `mob_hp_below_recall_threshold`.
+- New `internal/economy` package mirrors the 3.0b mat-audit-matrix
+  as a Go map. New `RestockBuckets([]string)` shop method gates
+  vendor refills by supply bucket. Foragers and the caravan both
+  use it; only slots whose item-id matches a carried bucket get
+  topped up.
+- **Caravan changes:**
+  - Cycle slowed from ~900 to ~1620 rounds (~2 game days) by
+    bumping `CaravanDepotDwellRounds` from 360 to 720. Foragers
+    are now the day-to-day reliable supply; the caravan feels
+    like a delivery-day event.
+  - Two new substates inside each transit leg
+    (`outbound_fernway_pickup`, `inbound_fernway_pickup`): the
+    caravan dwells briefly at North Road 4038, detects the Fernway
+    forager, and acquires the `fernway` bucket flag.
+  - `caravan_load` MobState tracks which buckets the caravan
+    currently carries. `VisitVendorsInRoom` consumes it, so a
+    Stillwater-only caravan run won't restock Fernway slots.
+- New room mutator `sanctuary` standardizes the "high-regen room"
+  mechanic. Replaces the hardcoded `roomRegenMultiplier` switch in
+  the auto-heal hook. `MutatorSpec` gains a `regenmultiplier float64`
+  field; multipliers stack multiplicatively.
+- Sanctuary mutator wired on:
+  - Thornwall Temple Interior (468) — preserves prior 5x regen
+  - Sanctum Basin tutorial zone (rooms 101-120) — preserves prior
+    5x regen
+  - Stillwater Temple of Stillwater (4123) — gains 5x regen for
+    the first time, supports Vella's recall destination
+  - Forager's Camp (4197) — gains 5x regen, becomes a known safe
+    rest stop in Fernway South
+- Three new low-tier 1H weapons: marsh gaff hook (10033), steppe
+  hunting spear (10034), Fernway handaxe (10035).
+- Six new balance config knobs gate forager behaviour:
+  `FernwayPickupDwellRounds` (6), `ForagerForageDwellRounds` (8),
+  `ForagerCarryThresholdPct` (0.75), `ForagerHPRecallThresholdPct`
+  (0.50), `ForagerHealPotionThresholdPct` (0.75),
+  `ForagerWaitTimeoutRounds` (150).
+- The temple-regen hint generalizes to reference the sanctuary
+  class — temples + camps + tutorial all read as one mechanic.
+- `ForageCore` (Task 6 originally) consolidated to `internal/forager`
+  package so both the player Forage command and the NPC forager
+  routine share one yield-table source of truth.
+
 ## 2026-04-28 — Stage 3.0a: Stillwater Marsh Zone (dev only)
 
 **Note:** Dev-only landing. The full economy stack ships to prod (`master`)

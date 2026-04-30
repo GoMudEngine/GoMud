@@ -52,7 +52,7 @@ _datafiles/world/dogmud/rooms/{zone_folder}/{roomid}.yaml
 | `hidden_nouns` | map | no | Hidden noun objects discovered via search. See Hidden Nouns sub-section below. Marked `instance:"skip"`. |
 | `signs` | list | no | Readable signs. Each has a `title` and `body`. |
 | `skilltraining` | map | no | Skill → `{min: N, max: N}` range. Allows players to train here. |
-| `mutators` | list | no | Mutator tags applied when the room spawns. |
+| `mutators` | list | no | Mutator tags applied when the room spawns. Each entry is `- mutatorid: <tag>`. Mutators can append flavor text, modify regen (`regenmultiplier` field on the mutator spec — e.g. `sanctuary` 5x), apply buffs, or override PvP. See `_datafiles/world/dogmud/mutators/`. |
 
 ### Exit Sub-fields
 
