@@ -12,6 +12,8 @@ coord:
   y: 9
   z: 0
 station: forge
+mutators:
+- mutatorid: sanctuary
 exits:
   west:
     roomid: 108

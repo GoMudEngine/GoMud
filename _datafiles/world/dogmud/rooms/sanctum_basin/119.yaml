@@ -13,6 +13,7 @@ coord:
   z: 0
 mutators:
 - mutatorid: bioluminescent-caves
+- mutatorid: sanctuary
 exits:
   west:
     roomid: 118

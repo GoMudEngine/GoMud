@@ -12,6 +12,8 @@ coord:
   z: 0
 mapsymbol: Y
 maplegend: Training Yard
+mutators:
+- mutatorid: sanctuary
 exits:
   west:
     roomid: 113

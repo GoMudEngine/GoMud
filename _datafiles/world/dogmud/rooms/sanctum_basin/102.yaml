@@ -13,6 +13,8 @@ coord:
   z: 0
 mapsymbol: G
 maplegend: Basin Gate
+mutators:
+- mutatorid: sanctuary
 exits:
   west:
     roomid: 101

@@ -14,6 +14,8 @@ coord:
   z: 0
 mapsymbol: O
 maplegend: Observatory
+mutators:
+- mutatorid: sanctuary
 exits:
   east:
     roomid: 117

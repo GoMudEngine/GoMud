@@ -14,6 +14,7 @@ coord:
   z: 0
 mutators:
 - mutatorid: bioluminescent-caves
+- mutatorid: sanctuary
 mapsymbol: B
 maplegend: Boss Cave
 exits:

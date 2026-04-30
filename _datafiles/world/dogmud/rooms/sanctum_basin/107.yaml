@@ -13,6 +13,8 @@ coord:
   z: 0
 mapsymbol: T
 maplegend: Town Square
+mutators:
+- mutatorid: sanctuary
 exits:
   west:
     roomid: 106
