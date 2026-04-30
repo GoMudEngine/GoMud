@@ -12,10 +12,12 @@ package behaviortree
 
 import (
 	"fmt"
+	"slices"
 	"strconv"
 
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/economy"
 	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -144,6 +146,15 @@ func tickForagerResting(
 	started, _ := strconv.ParseUint(startedStr, 10, 64)
 	dwellElapsed := util.GetRoundCount() >= started+restingDuration
 	if dwellElapsed && mob.Character.Health >= mob.Character.HealthMax.Value {
+		// Stage 3.4: stay home if satchel is still over rest threshold.
+		// Vendors didn't absorb much last cycle; foraging more would just
+		// overflow back to satchel. Narratively: the forager sits at the
+		// sanctuary looking content — the merchants don't need more right now.
+		restThreshold := float64(configs.GetBalanceConfig().ForagerRestCarryThreshold)
+		if carryRatio(mob) > restThreshold {
+			// Continue resting — let legacy idle fire flavor emotes.
+			return Failure
+		}
 		transitionForager(ctx.MobState, forager.StateTravelingToTerritory)
 		return Success
 	}
@@ -259,7 +270,7 @@ func tickForagerDeliveringTown(
 		mob.Command(fmt.Sprintf("pathto %d", target))
 		return Success
 	}
-	npcVisitVendorsInRoom(target, p)
+	npcVisitVendorsInRoom(target, p, mob)
 	ctx.MobState.Set(keyVisitIndex, strconv.Itoa(idx+1))
 	return Success
 }
@@ -340,25 +351,49 @@ func npcAttemptForage(
 		p.Name))
 }
 
-func npcVisitVendorsInRoom(roomId int, p *forager.ForagerProfile) {
+// npcVisitVendorsInRoom (Stage 3.4): physically transfers items from the
+// forager's satchel (mob.Character.Items) into matching vendor stock entries
+// at the given room. Items whose bucket isn't in p.Buckets are skipped.
+// Items that don't fit (vendor at MaxStock, or no matching stock entry)
+// stay in the satchel for the next vendor or next delivery cycle.
+//
+// Replaces the abstract RestockBuckets call from Stage 3.1.
+func npcVisitVendorsInRoom(
+	roomId int,
+	p *forager.ForagerProfile,
+	mob *mobs.Mob,
+) {
 	room := rooms.LoadRoom(roomId)
 	if room == nil {
 		return
 	}
 	for _, instId := range room.GetMobs(rooms.FindAll) {
-		m := mobs.GetInstance(instId)
-		if m == nil || !m.HasShop() {
+		vendor := mobs.GetInstance(instId)
+		if vendor == nil || !vendor.HasShop() {
 			continue
 		}
-		si := shops.GetShopInventory(m.Zone, int(m.MobId), roomId)
-		if si == nil {
+		shop := shops.GetShopInventory(vendor.Zone, int(vendor.MobId), roomId)
+		if shop == nil {
 			continue
 		}
-		if si.RestockBuckets(p.Buckets) {
+		// Walk forager satchel in reverse so RemoveItem is index-safe.
+		for i := len(mob.Character.Items) - 1; i >= 0; i-- {
+			item := mob.Character.Items[i]
+			bucket := economy.BucketFor(item.ItemId)
+			if bucket == "" || !slices.Contains(p.Buckets, bucket) {
+				continue
+			}
+			entry := shop.GetStock(item.ItemId)
+			if entry == nil || entry.Current >= entry.MaxStock {
+				continue
+			}
+			mob.Character.RemoveItem(item)
+			entry.Current++
 			room.SendText(fmt.Sprintf(
-				`<ansi fg="mobname">%s</ansi> lays a satchel of`+
-					` mats on <ansi fg="mobname">%s</ansi>'s counter.`,
-				p.Name, m.Character.Name))
+				`<ansi fg="mobname">%s</ansi> hands a %s to`+
+					` <ansi fg="mobname">%s</ansi>.`,
+				p.Name, item.DisplayName(), vendor.Character.Name,
+			))
 		}
 	}
 }
