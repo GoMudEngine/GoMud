@@ -34,6 +34,9 @@ spawninfo:
 - mobid: 357        # Ketil — caravan master (Stage 2)
 - mobid: 358        # Marta — caravan guard
 - mobid: 359        # Lars — caravan guard
+- mobid: 374        # caravan wagon (Stage 3.4)
+- mobid: 375        # Hob — draft horse (Stage 3.4)
+- mobid: 376        # Bran — draft horse (Stage 3.4)
 idlemessages:
 - A merchant on the platform holds up a bolt of cloth, calling for bids.
 - The crowd shifts and eddies like a slow river, pausing at stalls.

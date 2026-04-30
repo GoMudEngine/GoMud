@@ -1,0 +1,29 @@
+# Caravan wagon (374) — Stage 3.4.
+# Pure follower with a death-handler that distributes cargo to bandits.
+
+tree:
+  type: sequence
+  children:
+
+    # Always: ensure caravan party (idempotent)
+    - type: action
+      do: party_ensure_npc_party
+      leader_mob_id: 357
+      home_room_id: 465
+
+    - type: selector
+      children:
+
+        # On death: distribute cargo to hostile mobs in the room
+        - type: sequence
+          event: mob_death
+          children:
+            - type: action
+              do: distribute_cargo_to_hostiles
+
+        # Default: follow the leader
+        - type: sequence
+          event: mob_idle
+          children:
+            - type: action
+              do: party_follow_leader
