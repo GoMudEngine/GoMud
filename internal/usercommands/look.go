@@ -418,7 +418,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			}
 
 			if c.MobId > 0 {
-				name := c.Character.Name + ` corpse`
+				name := c.DisplayName()
 				if _, ok := mobCorpseLookup[name]; !ok {
 					mobCorpseLookup[name] = idx
 					mobCorpses = append(mobCorpses, name)
@@ -441,11 +441,15 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				corpseColor = `user-corpse`
 			}
 
-			user.SendText(fmt.Sprintf(`You look at the <ansi fg="%s">%s corpse</ansi>.`, corpseColor, corpse.Character.Name))
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking at the <ansi fg="%s">%s corpse</ansi>.`, user.Character.Name, corpseColor, corpse.Character.Name), user.UserId)
+			user.SendText(fmt.Sprintf(`You look at the <ansi fg="%s">%s</ansi>.`, corpseColor, corpse.DisplayName()))
+			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking at the <ansi fg="%s">%s</ansi>.`, user.Character.Name, corpseColor, corpse.DisplayName()), user.UserId)
 
-			descTxt, _ := templates.Process("character/description-corpse", &corpse.Character, user.UserId)
-			user.SendText(descTxt)
+			if corpse.CorpseDescription != "" {
+				user.SendText(corpse.CorpseDescription)
+			} else {
+				descTxt, _ := templates.Process("character/description-corpse", &corpse.Character, user.UserId)
+				user.SendText(descTxt)
+			}
 
 			return true, nil
 

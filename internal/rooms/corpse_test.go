@@ -99,6 +99,28 @@ func TestCorpseUpdate_MultipleCalls(t *testing.T) {
 	assert.True(t, corpse.Prunable, "Corpse should become prunable after sufficient rounds elapsed")
 }
 
+// Stage 3.4: DisplayName helper tests.
+func TestCorpse_DisplayName_CorpseNameOverride(t *testing.T) {
+	c := Corpse{
+		MobId:      374,
+		Character:  characters.Character{Name: "a sturdy oak-and-iron supply wagon"},
+		CorpseName: "splintered wagon wreckage",
+	}
+	if got := c.DisplayName(); got != "splintered wagon wreckage" {
+		t.Errorf("DisplayName() = %q, want \"splintered wagon wreckage\"", got)
+	}
+}
+
+func TestCorpse_DisplayName_DefaultsToCharacterNameCorpse(t *testing.T) {
+	c := Corpse{
+		MobId:     375,
+		Character: characters.Character{Name: "Hob"},
+	}
+	if got := c.DisplayName(); got != "Hob corpse" {
+		t.Errorf("DisplayName() = %q, want \"Hob corpse\"", got)
+	}
+}
+
 // If you want to specifically test or mock the gametime package, you can do so
 // in a separate test or by creating a mock gametime function. This example
 // simply relies on the assumption that gametime.GetDate and its AddPeriod logic

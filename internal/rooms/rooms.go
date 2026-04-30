@@ -226,7 +226,7 @@ func (r *Room) UpdateCorpses(roundNow uint64) {
 		if corpse.Prunable {
 			removeIdx = append(removeIdx, idx)
 			if corpse.MobId > 0 {
-				r.SendText(fmt.Sprintf(`A <ansi fg="mob-corpse">%s corpse</ansi> crumbles to dust.`, corpse.Character.Name))
+				r.SendText(fmt.Sprintf(`A <ansi fg="mob-corpse">%s</ansi> crumbles to dust.`, corpse.DisplayName()))
 			}
 			if corpse.UserId > 0 {
 				r.SendText(fmt.Sprintf(`A <ansi fg="user-corpse">%s corpse</ansi> crumbles to dust.`, corpse.Character.Name))
