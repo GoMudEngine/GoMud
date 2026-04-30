@@ -16,6 +16,7 @@ var userOnlyCommands = map[string]string{
 	"badcommands": "admin",
 	"buff":        "admin",
 	"build":       "admin",
+	"caravan":     "admin",
 	"command":     "admin",
 	"combatstats": "admin",
 	"deafen":      "admin",

@@ -21,6 +21,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -47,6 +48,29 @@ func actCaravanStep(params map[string]any, ctx *EvalContext) Result {
 	}
 
 	cur := readCaravanState(ctx.MobState)
+
+	// Stuck-watchdog: if the caravan has been in its current state far
+	// longer than the longest legitimate phase, reset to ThornwallDwell.
+	// Catches cases where a state never advances (orphaned transit after
+	// restart, permanent hostile detection, etc.). Threshold scales with
+	// configured dwell so non-test configs don't false-positive.
+	startedStr := ctx.MobState.GetString("caravan_state_started_round")
+	started, _ := strconv.ParseUint(startedStr, 10, 64)
+	threshold := uint64(5 * configs.GetBalanceConfig().CaravanDepotDwellRounds)
+	if threshold < 300 {
+		threshold = 300
+	}
+	if started > 0 && util.GetRoundCount() > started+threshold {
+		mudlog.Warn("caravan stuck, auto-resetting state",
+			"currentState", cur.Name(),
+			"startedRound", started,
+			"nowRound", util.GetRoundCount(),
+			"thresholdRounds", threshold,
+			"leaderInstanceId", ctx.InstanceId,
+			"leaderName", mob.Character.Name)
+		resetCaravanState(ctx.MobState)
+		return Failure
+	}
 
 	// Dispatch by category. FernwayPickup must come BEFORE the generic
 	// IsTransitState check because IsFernwayPickupState states also
@@ -92,6 +116,16 @@ func transitionTo(s *BehaviorState, next caravan.CaravanState) {
 	s.Set("caravan_state", next.Name())
 	s.Set("caravan_state_started_round", strconv.FormatUint(util.GetRoundCount(), 10))
 	s.Set("caravan_route_index", "0")
+}
+
+// resetCaravanState clears all per-cycle state and returns the caravan
+// to its canonical starting state (ThornwallDwell). Used by both the
+// auto-watchdog and the admin override.
+func resetCaravanState(s *BehaviorState) {
+	s.Set("caravan_state", caravan.StateThornwallDwell.Name())
+	s.Set("caravan_state_started_round", strconv.FormatUint(util.GetRoundCount(), 10))
+	s.Set("caravan_route_index", "0")
+	caravanLoadSet(s, nil)
 }
 
 // tickDwell: at depot, waiting for the dwell timer to elapse.
