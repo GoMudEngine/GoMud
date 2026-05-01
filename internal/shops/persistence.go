@@ -85,6 +85,7 @@ func RegisterShop(zone string, mobId int, roomId int, template ShopInventory) *S
 
 	// Try loading persisted state first.
 	inv := loadFromDisk(zone, mobId, roomId)
+	needsCraftMigration := false
 	if inv == nil {
 		// Seed from template: set Current to RestockQty for stocked items.
 		seeded := template // copy
@@ -99,8 +100,8 @@ func RegisterShop(zone string, mobId int, roomId int, template ShopInventory) *S
 		}
 		inv = &seeded
 	} else if inv.CraftSupport == "" && template.CraftSupport != "" {
-		// Migrate disk-loaded shop missing the tag.
-		inv.CraftSupport = template.CraftSupport
+		// Flag for migration after cache insert so SaveShop can find the entry.
+		needsCraftMigration = true
 	}
 
 	inv.Zone = zone
@@ -110,6 +111,13 @@ func RegisterShop(zone string, mobId int, roomId int, template ShopInventory) *S
 	shopCacheMu.Lock()
 	shopCache[key] = inv
 	shopCacheMu.Unlock()
+
+	if needsCraftMigration {
+		inv.CraftSupport = template.CraftSupport
+		if err := SaveShop(zone, mobId, roomId); err != nil {
+			mudlog.Warn("RegisterShop CraftSupport migration save", "key", key, "error", err)
+		}
+	}
 
 	return inv
 }

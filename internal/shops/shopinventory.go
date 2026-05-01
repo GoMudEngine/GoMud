@@ -35,12 +35,7 @@ var ValidCraftSupports = []string{
 
 // IsValidCraftSupport reports whether v is one of ValidCraftSupports.
 func IsValidCraftSupport(v string) bool {
-	for _, s := range ValidCraftSupports {
-		if s == v {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(ValidCraftSupports, v)
 }
 
 // StockEntry represents one item type in a shop's inventory.

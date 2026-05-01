@@ -202,6 +202,62 @@ func TestRegisterShop_MigratesEmptyCraftSupport(t *testing.T) {
 	}
 }
 
+func TestRegisterShop_MigratesEmptyCraftSupport_DiskLoadPath(t *testing.T) {
+	const (
+		testZone   = "testzone-diskmigrate"
+		testMobId  = 9002
+		testRoomId = 1
+	)
+
+	// Compute the path the package will use so we can write directly to it.
+	diskPath := shopPath(testZone, testMobId, testRoomId)
+
+	// Cleanup: remove any stale file from a previous run and reset cache.
+	os.Remove(diskPath) //nolint:errcheck // best-effort pre-cleanup
+	ClearCache()
+	t.Cleanup(func() {
+		ClearCache()
+		os.Remove(diskPath) //nolint:errcheck // best-effort post-cleanup
+	})
+
+	// Pre-write a YAML file on disk with craft_support empty — simulates a
+	// shop save that predates the CraftSupport field.
+	onDisk := ShopInventory{
+		Gold:         300,
+		StartingGold: 300,
+		Stock: []StockEntry{
+			{ItemId: 10, RestockQty: 3, MaxStock: 10, Current: 3},
+		},
+		CraftSupport: "", // intentionally empty — the old-format state
+	}
+	require.NoError(t, os.MkdirAll(filepath.Dir(diskPath), 0755))
+	data, err := yaml.Marshal(&onDisk)
+	require.NoError(t, err)
+	require.NoError(t, os.WriteFile(diskPath, data, 0644))
+
+	// ClearCache so RegisterShop is forced down the disk-load path.
+	ClearCache()
+
+	// Register with a template that has CraftSupport set.
+	tmpl := makeTemplate()
+	tmpl.CraftSupport = CraftSupportAlchemy
+	inv := RegisterShop(testZone, testMobId, testRoomId, tmpl)
+
+	require.NotNil(t, inv)
+	assert.Equal(t, CraftSupportAlchemy, inv.CraftSupport,
+		"in-memory CraftSupport should be migrated from template")
+
+	// --- Verify the migration was persisted to disk ---
+	// Reload from disk directly (bypassing cache) to confirm SaveShop was called.
+	raw, err := os.ReadFile(diskPath)
+	require.NoError(t, err, "disk file should still exist after migration")
+
+	var reloaded ShopInventory
+	require.NoError(t, yaml.Unmarshal(raw, &reloaded))
+	assert.Equal(t, CraftSupportAlchemy, reloaded.CraftSupport,
+		"disk YAML must reflect the migrated CraftSupport (not empty)")
+}
+
 func TestIsValidCraftSupport(t *testing.T) {
 	for _, v := range ValidCraftSupports {
 		if !IsValidCraftSupport(v) {
