@@ -1,0 +1,63 @@
+description: |
+  Post-merge regression check for feature/economy-health-dashboard
+  (merged into development 2026-05-01). The dashboard itself is a web
+  admin surface — you can't visit it via telnet — but this merge
+  touched the shops package, mob loader, caravan helper, and main.go
+  ticker. Confirm the underlying systems still behave normally.
+goals:
+  - **Server-boot smoke check.** Run `look` on entry. If you can connect
+    and see your room, the new shops.ValidateShopMobTags startup
+    validator passed (it would have panicked the server otherwise).
+    Also confirm no startup-error spam in the welcome message or initial
+    room banner.
+  - **Shop transaction smoke (4 vendors).** Visit each of these vendors
+    and run `list` to capture stock + prices. Then buy one cheap item
+    you can afford. Confirm the transaction completes and your gold
+    decreases:
+      - Smith Brindle (mob 337, room 4106, Stillwater)
+      - Apothecary Ilsa (mob 338, room 4125, Stillwater)
+      - Storekeeper Wulf (mob 341, room 4105, Stillwater)
+      - Innkeeper Sigrid (mob 333, room 4103, Stillwater)
+    Verify the auto-migration (RegisterShop now stamps craft_support
+    onto the persisted runtime YAML on first transaction) didn't break
+    the buy path.
+  - **Caravan smoke.** Walk to Thornwall depot (room 465) and check if
+    Ketil (357) + the wagon (374) are present. If the caravan is
+    out cycling, camp at Road Fork (4038) for 5 minutes and confirm
+    you see at least one transit message ("the caravan rolls past"
+    style flavor). The caravan helper (caravan.FindWagonInRoom) was
+    promoted from a private behaviortree function — pure refactor,
+    behavior should be identical.
+  - **Forager smoke.** Find Tova (mob 371) in Stillwater — she's
+    typically in Stillwater Marsh territory (rooms 4177-4196) or at
+    her sanctuary (4123). Confirm she's alive and moving. If you can,
+    observe her for 3-5 minutes and note any forage / delivery flavor.
+  - **Verify nothing weird in shop YAML.** After buying from at least
+    one shop, the runtime YAML at
+    `_datafiles/world/dogmud/shops/stillwater/{mobid}-room{roomid}.yaml`
+    should now have a `craft_support:` field stamped by the auto-migration.
+    You CANNOT inspect this file directly (you're a telnet client),
+    but you can sanity-check by buying from the shop again and
+    confirming gold/stock changes work without errors.
+notes:
+  - Time budget: 20-30 min. This is a regression check, not a deep dive.
+  - Server was restarted today (2026-05-01) with the merged
+    feature/economy-health-dashboard code on the development branch.
+    All caravan/forager activity should behave exactly as it did
+    before the merge.
+  - The /admin/economy/ web dashboard itself is verified separately
+    by the human in a browser — your job is to confirm the underlying
+    game-state systems are unchanged by the merge.
+  - **STRICT BOUNDARIES — NEVER edit code, data, config, or YAML
+    files.** You are an observer. If you see a bug, file it in the
+    report under BUG / CONCERN / OBSERVATION sections. Do NOT run any
+    go commands (build, test, run). Do NOT touch any file under
+    `internal/`, `_datafiles/`, `tools/`, or `cmd/`. Your ONLY writes
+    are to the report file under `tools/testing/reports/`.
+  - **Mob IDs to recognize:**
+    - 333 Innkeeper Sigrid, 337 Smith Brindle, 338 Apothecary Ilsa, 341 Storekeeper Wulf
+    - 357 Ketil (caravan leader), 374 caravan wagon
+    - 371 Tova (Marsh forager)
+  - Use `set charset` ASCII per the test-mud SOP.
+  - Don't attack caravan/forager mobs (player_attack_immune). Don't
+    file bugs for ANSI/display artifacts. Don't run sleeps over 2 sec.
