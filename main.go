@@ -1170,8 +1170,41 @@ func loadAllDataFiles(isReload bool) {
 	}); err != nil {
 		mudlog.Warn("shop cache prewarm", "error", err)
 	} else {
-		mudlog.Info("shop cache prewarmed", "count", n)
+		mudlog.Info("shop cache prewarmed (persisted)", "count", n)
 	}
+	// Walk every room's spawninfo and pre-register a shop entry for
+	// each shop-bearing mob's spawn placement that doesn't already
+	// have a persisted YAML. Without this, the dashboard only shows
+	// shops in zones a player has actually visited (since mob spawn
+	// triggers RegisterMobShop, and mobs spawn lazily on room
+	// activation). The mob isn't actually spawned — only the cache
+	// entry is seeded — so this is cheap.
+	templateByMobId := make(map[int]*mobs.Mob, len(allMobTemplates))
+	for _, m := range allMobTemplates {
+		templateByMobId[int(m.MobId)] = m
+	}
+	prewarmedFromSpawn := 0
+	for _, roomId := range rooms.GetAllRoomIds() {
+		room := rooms.LoadRoom(roomId)
+		if room == nil {
+			continue
+		}
+		for _, si := range room.SpawnInfo {
+			if si.MobId == 0 {
+				continue
+			}
+			tmpl := templateByMobId[si.MobId]
+			if tmpl == nil {
+				continue
+			}
+			if !tmpl.HasShop() && !tmpl.IsCrafter() {
+				continue
+			}
+			mobs.PrewarmShopForSpawnPlacement(tmpl, roomId)
+			prewarmedFromSpawn++
+		}
+	}
+	mudlog.Info("shop cache prewarmed (spawninfo)", "count", prewarmedFromSpawn)
 	pets.LoadDataFiles()
 	quests.LoadDataFiles()
 	questengine.LoadDataFiles()

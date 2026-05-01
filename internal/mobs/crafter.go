@@ -88,6 +88,36 @@ func RegisterMobShop(mob *Mob) {
 	shops.RegisterShop(mob.Zone, int(mob.MobId), mob.HomeRoomId, template)
 }
 
+// PrewarmShopForSpawnPlacement pre-registers a shop in the cache for
+// a (mob template, room) placement WITHOUT spawning the actual mob.
+// Used at boot to seed the economy/health dashboard with every shop
+// the world knows about, including ones in zones no player has
+// visited yet.
+//
+// Builds a synthetic *Mob with the template's shop config but the
+// supplied roomId, then delegates to RegisterMobShop. The synthetic
+// mob is discarded after RegisterShop runs — only the cache entry
+// persists. Idempotent: RegisterShop short-circuits on a cache hit
+// (and its existing CraftSupport auto-migration handles the case
+// where a real mob spawn later registers with the same key).
+func PrewarmShopForSpawnPlacement(template *Mob, roomId int) {
+	if template == nil || roomId <= 0 {
+		return
+	}
+	synthetic := Mob{
+		MobId:                   template.MobId,
+		Zone:                    template.Zone,
+		HomeRoomId:              roomId,
+		Crafter:                 template.Crafter,
+		CrafterRestockMaterials: template.CrafterRestockMaterials,
+		CrafterRecipeIds:        template.CrafterRecipeIds,
+		ShopCraftSupport:        template.ShopCraftSupport,
+		StockMultiplier:         template.StockMultiplier,
+	}
+	synthetic.Character.Shop = template.Character.Shop
+	RegisterMobShop(&synthetic)
+}
+
 // TickMobCraft handles autonomous crafting for crafter mobs. Crafting only
 // fires on the material restock tick (every CrafterMaterialRestockRate rounds):
 // materials arrive, and the mob immediately attempts one craft from them.
