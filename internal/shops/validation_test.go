@@ -15,11 +15,11 @@ type fakeMob struct {
 	shopCraftSupport string
 }
 
-func (f fakeMob) GetMobId() int            { return f.mobId }
-func (f fakeMob) GetName() string          { return f.name }
-func (f fakeMob) GetZone() string          { return f.zone }
-func (f fakeMob) HasShop() bool            { return f.hasShop }
-func (f fakeMob) IsCrafter() bool          { return f.isCrafter }
+func (f fakeMob) GetMobId() int               { return f.mobId }
+func (f fakeMob) GetName() string             { return f.name }
+func (f fakeMob) GetZone() string             { return f.zone }
+func (f fakeMob) HasShop() bool               { return f.hasShop }
+func (f fakeMob) IsCrafter() bool             { return f.isCrafter }
 func (f fakeMob) GetShopCraftSupport() string { return f.shopCraftSupport }
 
 func TestValidateShopMobTags_AllValid(t *testing.T) {
