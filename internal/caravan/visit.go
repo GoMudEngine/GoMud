@@ -75,8 +75,6 @@ func VisitVendorsInRoom(
 				}
 				wagon.Character.RemoveItem(item)
 				entry.Current++
-				// TEMP DEBUG: remove after smoke testing
-				mudlog.Info("TRANSFER", "kind", "caravan_deliver", "vendor", vendor.Character.Name, "item", item.DisplayName(), "newStock", entry.Current, "maxStock", entry.MaxStock)
 				mutated = true
 				delivered = append(delivered, ItemMove{
 					Vendor:   vendor.Character.Name,
@@ -114,8 +112,6 @@ func VisitVendorsInRoom(
 						break // wagon at carry cap
 					}
 					entry.Current--
-					// TEMP DEBUG: remove after smoke testing
-					mudlog.Info("TRANSFER", "kind", "caravan_pickup", "vendor", vendor.Character.Name, "item", newItem.DisplayName(), "newStock", entry.Current, "maxStock", entry.MaxStock)
 					mutated = true
 					pickedUp = append(pickedUp, ItemMove{
 						Vendor:   vendor.Character.Name,

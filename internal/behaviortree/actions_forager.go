@@ -346,8 +346,6 @@ func npcAttemptForage(
 		return
 	}
 	mob.Character.StoreItem(item)
-	// TEMP DEBUG: remove after smoke testing
-	mudlog.Info("TRANSFER", "kind", "forager_forage", "forager", p.Name, "item", item.DisplayName(), "roomId", ctx.RoomId)
 	room.SendText(fmt.Sprintf(
 		`<ansi fg="mobname">%s</ansi> stoops over a patch of growth`+
 			` and tucks something into a satchel.`,
@@ -395,8 +393,6 @@ func npcVisitVendorsInRoom(
 			}
 			mob.Character.RemoveItem(item)
 			entry.Current++
-			// TEMP DEBUG: remove after smoke testing
-			mudlog.Info("TRANSFER", "kind", "forager_deliver", "forager", p.Name, "vendor", vendor.Character.Name, "item", item.DisplayName(), "newStock", entry.Current, "maxStock", entry.MaxStock)
 			mutated = true
 			room.SendText(fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi> hands a %s to`+
