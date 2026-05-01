@@ -41,10 +41,15 @@ type deltaSet struct {
 }
 
 func economyAPI(w http.ResponseWriter, r *http.Request) {
+	// Live capture is taken off-tick from the HTTP goroutine; field
+	// reads on cached *ShopInventory entries are eventually-consistent
+	// with concurrent buy/sell mutations on the world tick. Acceptable
+	// for a debug/observability dashboard at hourly+ refresh cadence.
 	cur := health.CaptureSnapshot()
 	metas := health.ListSnapshots()
 
-	// History window: last 168 entries (7 days at 1h cadence).
+	// metas (full list) feeds the delta picker; historyMetas is the
+	// trend-scoring window (last 168 entries = 7 days at 1h cadence).
 	historyMetas := metas
 	if len(historyMetas) > 168 {
 		historyMetas = historyMetas[:168]
@@ -113,5 +118,7 @@ func economySnapshotAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]any{"unix_ts": snap.UnixTs, "manual": true})
+	if err := json.NewEncoder(w).Encode(map[string]any{"unix_ts": snap.UnixTs, "manual": true}); err != nil {
+		mudlog.Error("manual snapshot encode", "error", err)
+	}
 }
