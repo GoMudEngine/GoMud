@@ -327,6 +327,13 @@ type Balance struct {
 	// cycling back to forage. Prevents futile foraging loops when local
 	// vendors are saturated (MaxStock cap reached). Default 0.5.
 	ForagerRestCarryThreshold ConfigFloat `yaml:"ForagerRestCarryThreshold"`
+
+	// ── ECONOMY HEALTH DASHBOARD ─────────────────────────────────────────────
+	EconomySnapshotIntervalHours ConfigInt   `yaml:"EconomySnapshotIntervalHours"` // Wall-clock cadence (default 1)
+	EconomySnapshotRetentionDays ConfigInt   `yaml:"EconomySnapshotRetentionDays"` // Auto-snapshot retention (default 30)
+	EconomyScoreWeightShop       ConfigFloat `yaml:"EconomyScoreWeightShop"`       // Overall-score weight for shops (default 0.6)
+	EconomyScoreWeightCaravan    ConfigFloat `yaml:"EconomyScoreWeightCaravan"`    // (default 0.2)
+	EconomyScoreWeightForager    ConfigFloat `yaml:"EconomyScoreWeightForager"`    // (default 0.2)
 }
 
 func (b *Balance) Validate() {
