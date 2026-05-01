@@ -208,8 +208,12 @@ func tickForagerForaging(
 		ctx.MobState.Set(keyForageTimer, strconv.Itoa(forageT))
 	}
 
-	// Salvage any corpse in current room.
-	mob.Command("salvage corpse")
+	// Salvage any corpse in current room. Guard prevents dispatch noise
+	// in rooms with no corpses; the handler also returns handled=true
+	// silently on no-op, so this is belt-and-suspenders.
+	if salvageRoom := rooms.LoadRoom(ctx.RoomId); salvageRoom != nil && len(salvageRoom.Corpses) > 0 {
+		mob.Command("salvage corpse")
+	}
 
 	// Wander to a random adjacent territory neighbor.
 	npcWanderTerritoryNeighbor(p, mob, ctx)

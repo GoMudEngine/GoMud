@@ -63,6 +63,7 @@ var (
 		"rally":          {Rally, false},
 		"remove":         {Remove, false},
 		"replyto":        {ReplyTo, true},
+		"salvage":        {Salvage, false},
 		"say":            {Say, true},
 		"sayto":          {SayTo, true},
 		"selljunk":       {Selljunk, false},
