@@ -1,5 +1,6 @@
 mobid: 108
 zone: Thornwall City
+craft_support: jewelcrafting
 behavior_archetype: noncombat_shopkeeper
 statpool: 66
 itemdropchance: 0

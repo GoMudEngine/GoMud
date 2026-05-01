@@ -1,5 +1,6 @@
 mobid: 52
 zone: Sanctum Basin
+craft_support: blacksmithing
 archetype: fighting
 statpool: 90
 hostile: false

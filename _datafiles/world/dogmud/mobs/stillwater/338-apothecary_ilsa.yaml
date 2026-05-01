@@ -1,5 +1,6 @@
 mobid: 338
 zone: Stillwater
+craft_support: alchemy
 behavior_archetype: noncombat_shopkeeper
 statpool: 72
 itemdropchance: 0

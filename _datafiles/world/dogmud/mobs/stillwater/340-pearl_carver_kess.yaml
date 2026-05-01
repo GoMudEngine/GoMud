@@ -1,5 +1,6 @@
 mobid: 340
 zone: Stillwater
+craft_support: jewelcrafting
 behavior_archetype: noncombat_shopkeeper
 statpool: 55
 itemdropchance: 0

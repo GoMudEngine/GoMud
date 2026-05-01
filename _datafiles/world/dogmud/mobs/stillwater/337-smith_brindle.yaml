@@ -1,5 +1,6 @@
 mobid: 337
 zone: Stillwater
+craft_support: blacksmithing
 behavior_archetype: noncombat_shopkeeper
 statpool: 100
 itemdropchance: 0

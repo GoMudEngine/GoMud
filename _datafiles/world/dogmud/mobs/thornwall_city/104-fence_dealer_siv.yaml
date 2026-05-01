@@ -1,5 +1,6 @@
 mobid: 104
 zone: Thornwall City
+craft_support: general
 behavior_archetype: noncombat_shopkeeper
 statpool: 150
 itemdropchance: 0

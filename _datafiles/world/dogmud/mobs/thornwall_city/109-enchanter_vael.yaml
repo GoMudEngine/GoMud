@@ -1,5 +1,6 @@
 mobid: 109
 zone: Thornwall City
+craft_support: enchanting
 archetype: casting
 behavior_archetype: noncombat_shopkeeper
 statpool: 54

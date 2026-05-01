@@ -1,5 +1,6 @@
 mobid: 341
 zone: Stillwater
+craft_support: general
 behavior_archetype: noncombat_shopkeeper
 statpool: 65
 itemdropchance: 0

@@ -1,5 +1,6 @@
 mobid: 336
 zone: Stillwater
+craft_support: cooking
 behavior_archetype: noncombat_shopkeeper
 statpool: 58
 itemdropchance: 0
