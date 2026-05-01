@@ -1,0 +1,324 @@
+{{template "header" .}}
+
+<div class="container-fluid">
+    <h1 class="mt-4">Economy Health Dashboard</h1>
+
+    <!-- Five summary cards -->
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <div class="card text-center"><div class="card-body p-2">
+                <h6 class="card-subtitle text-muted">Economy</h6>
+                <h4 id="score-overall" class="card-title mb-0">—</h4>
+            </div></div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center"><div class="card-body p-2">
+                <h6 class="card-subtitle text-muted">Shops</h6>
+                <h4 id="score-shop" class="card-title mb-0">—</h4>
+            </div></div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center"><div class="card-body p-2">
+                <h6 class="card-subtitle text-muted">Caravans</h6>
+                <h4 id="score-caravan" class="card-title mb-0">—</h4>
+            </div></div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center"><div class="card-body p-2">
+                <h6 class="card-subtitle text-muted">Foragers</h6>
+                <h4 id="score-forager" class="card-title mb-0">—</h4>
+            </div></div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center"><div class="card-body p-2">
+                <h6 class="card-subtitle text-muted">Last Snapshot</h6>
+                <span id="last-ts">—</span>
+                <input id="manual-label" type="text" placeholder="(optional label)"
+                       class="form-control form-control-sm d-inline-block ml-2" style="width:auto">
+                <button class="btn btn-sm btn-outline-info ml-2"
+                        onclick="doSnapshot()">Snapshot Now</button>
+            </div></div>
+        </div>
+    </div>
+
+    <!-- Auto-refresh controls -->
+    <div class="row mb-3">
+        <div class="col-auto">
+            <button class="btn btn-sm btn-primary" onclick="fetchData()">Refresh</button>
+            <button id="btn-auto" class="btn btn-sm btn-outline-secondary ml-2"
+                    onclick="toggleAuto()">Auto: OFF</button>
+            <select id="sel-interval" class="custom-select custom-select-sm ml-2"
+                    style="width:auto;display:inline-block;" onchange="updateInterval()">
+                <option value="30" selected>30s</option>
+                <option value="60">60s</option>
+                <option value="120">2m</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Section A: Shopkeepers — by Craft Discipline -->
+    <h3 class="mt-3">Shopkeepers — by Craft Discipline</h3>
+    <table class="table table-sm table-striped">
+        <thead><tr>
+            <th>Discipline</th><th>Shops</th><th>Score</th>
+            <th>Total Gold</th>
+            <th>Δ1h</th><th>Δ6h</th><th>Δ1d</th><th>Δ3d</th><th>Δ1w</th>
+        </tr></thead>
+        <tbody id="tbl-discipline"></tbody>
+    </table>
+
+    <h4 class="mt-3">Per-Shop Detail</h4>
+    <table class="table table-sm table-striped">
+        <thead><tr>
+            <th>Shop</th><th>Discipline</th><th>Score</th>
+            <th>Gold</th>
+            <th>Δ1h</th><th>Δ6h</th><th>Δ1d</th><th>Δ3d</th><th>Δ1w</th>
+            <th>Stock by Bucket</th>
+        </tr></thead>
+        <tbody id="tbl-shops"></tbody>
+    </table>
+
+    <!-- Section B: Caravans -->
+    <h3 class="mt-3">Caravans</h3>
+    <table class="table table-sm table-striped">
+        <thead><tr>
+            <th>Name</th><th>Score</th><th>State</th><th>Time-in-State</th>
+            <th>Room</th><th>Cargo</th>
+            <th>Cycles 1h</th><th>6h</th><th>1d</th><th>3d</th><th>1w</th>
+        </tr></thead>
+        <tbody id="tbl-caravans"></tbody>
+    </table>
+
+    <!-- Section C: Foragers -->
+    <h3 class="mt-3">Foragers</h3>
+    <table class="table table-sm table-striped">
+        <thead><tr>
+            <th>Name</th><th>Score</th><th>Territory</th><th>State</th>
+            <th>Time-in-State</th><th>Room</th><th>Cargo</th>
+            <th>Cycles 1h</th><th>6h</th><th>1d</th><th>3d</th><th>1w</th>
+        </tr></thead>
+        <tbody id="tbl-foragers"></tbody>
+    </table>
+</div>
+
+<script>
+(function() {
+    var autoTimer = null;
+    var autoOn = false;
+
+    var BUCKET_COLORS = {
+        base: "#4e79a7", stillwater: "#76b7b2", thornwall: "#f28e2b",
+        fernway: "#59a14f", overlap: "#bab0ac"
+    };
+
+    function colorScore(v) {
+        if (v < 40) return "text-danger";
+        if (v < 70) return "text-warning";
+        return "text-success";
+    }
+
+    function fmtScore(score, hasScore) {
+        if (!hasScore) return '<span class="text-muted">—</span>';
+        return '<span class="' + colorScore(score) + '">' + score.toFixed(0) + '</span>';
+    }
+
+    function fmtDelta(v) {
+        if (v === 0 || v === undefined) return '<span class="text-muted">0</span>';
+        var sign = v > 0 ? '+' : '';
+        var cls = v > 0 ? 'text-success' : 'text-danger';
+        return '<span class="' + cls + '">' + sign + v + '</span>';
+    }
+
+    function bucketBar(stockEntries, totalCap) {
+        if (!stockEntries || stockEntries.length === 0) return '';
+        var sumByBucket = {};
+        for (var i = 0; i < stockEntries.length; i++) {
+            var e = stockEntries[i];
+            if (!e.bucket) continue;
+            sumByBucket[e.bucket] = (sumByBucket[e.bucket] || 0) + e.current;
+        }
+        var bar = '<div style="display:flex;height:14px;width:140px;">';
+        for (var b in sumByBucket) {
+            var pct = totalCap > 0 ? (sumByBucket[b] / totalCap * 100) : 0;
+            var color = BUCKET_COLORS[b] || "#999";
+            bar += '<div title="' + b + ': ' + sumByBucket[b] + '" ' +
+                'style="width:' + pct.toFixed(0) + '%;background:' + color + '"></div>';
+        }
+        bar += '</div>';
+        return bar;
+    }
+
+    function shopKey(s) { return s.zone + '/' + s.mob_id + '/' + s.room_id; }
+
+    function totalCap(stockEntries) {
+        var s = 0;
+        for (var i = 0; i < (stockEntries || []).length; i++) s += stockEntries[i].max;
+        return s;
+    }
+
+    function totalGold(shops) {
+        var s = 0;
+        for (var i = 0; i < shops.length; i++) s += shops[i].gold;
+        return s;
+    }
+
+    function render(data) {
+        var d = data;
+
+        document.getElementById('score-overall').innerHTML = fmtScore(d.scores.OverallScore, true);
+        document.getElementById('score-shop').innerHTML = fmtScore(d.scores.MeanShop, d.scores.MeanShop > 0);
+        document.getElementById('score-caravan').innerHTML = fmtScore(d.scores.MeanCaravan, d.scores.MeanCaravan > 0);
+        document.getElementById('score-forager').innerHTML = fmtScore(d.scores.MeanForager, d.scores.MeanForager > 0);
+        document.getElementById('last-ts').textContent = d.snapshot.timestamp;
+
+        // Group shops by craft discipline they support.
+        var byDisc = {};
+        for (var i = 0; i < d.snapshot.shops.length; i++) {
+            var s = d.snapshot.shops[i];
+            var disc = s.craft_support || "(uncategorized)";
+            if (!byDisc[disc]) byDisc[disc] = [];
+            byDisc[disc].push(s);
+        }
+        // Render discipline rollup. Stable order: known disciplines
+        // first, then "general", then anything else (which would be
+        // a validation gap).
+        var DISC_ORDER = ['blacksmithing','alchemy','tailoring','cooking',
+                          'jewelcrafting','enchanting','general'];
+        var discHtml = '';
+        var seen = {};
+        var discKeys = [];
+        for (var i = 0; i < DISC_ORDER.length; i++) {
+            if (byDisc[DISC_ORDER[i]]) { discKeys.push(DISC_ORDER[i]); seen[DISC_ORDER[i]] = true; }
+        }
+        Object.keys(byDisc).sort().forEach(function(k){
+            if (!seen[k]) discKeys.push(k);
+        });
+        for (var i = 0; i < discKeys.length; i++) {
+            var disc = discKeys[i];
+            var shops = byDisc[disc];
+            var score = d.scores.PerCraftSupport[disc] || 0;
+            var gold = totalGold(shops);
+            discHtml += '<tr><td>' + disc + '</td><td>' + shops.length + '</td>' +
+                        '<td>' + fmtScore(score, score > 0) + '</td>' +
+                        '<td>' + gold + '</td>';
+            // Sum gold deltas across shops in this discipline.
+            ['1h','6h','1d','3d','1w'].forEach(function(label) {
+                var sum = 0;
+                for (var j = 0; j < shops.length; j++) {
+                    var key = shopKey(shops[j]);
+                    var sd = d.deltas[label] && d.deltas[label].shops[key];
+                    if (sd) sum += sd.GoldDelta;
+                }
+                discHtml += '<td>' + fmtDelta(sum) + '</td>';
+            });
+            discHtml += '</tr>';
+        }
+        document.getElementById('tbl-discipline').innerHTML = discHtml;
+
+        // Render per-shop rows.
+        var shopHtml = '';
+        for (var i = 0; i < d.scores.PerShop.length; i++) {
+            var row = d.scores.PerShop[i];
+            var snap = d.snapshot.shops[i];
+            var key = shopKey(snap);
+            shopHtml += '<tr><td>' + (row.Name || '#'+row.MobId) + '</td>' +
+                        '<td>' + (row.CraftSupport || '—') + '</td>' +
+                        '<td>' + fmtScore(row.Score, row.HasScore) + '</td>' +
+                        '<td>' + snap.gold + '</td>';
+            ['1h','6h','1d','3d','1w'].forEach(function(label) {
+                var sd = d.deltas[label] && d.deltas[label].shops[key];
+                shopHtml += '<td>' + (sd ? fmtDelta(sd.GoldDelta) : '<span class="text-muted">—</span>') + '</td>';
+            });
+            shopHtml += '<td>' + bucketBar(snap.stock, totalCap(snap.stock)) + '</td></tr>';
+        }
+        document.getElementById('tbl-shops').innerHTML = shopHtml;
+
+        // Caravans.
+        var caravanHtml = '';
+        for (var i = 0; i < (d.snapshot.caravans || []).length; i++) {
+            var c = d.snapshot.caravans[i];
+            var sc = d.scores.PerCaravan[i] || {};
+            var bar = bucketBar(
+                Object.keys(c.cargo_by_bucket || {}).map(function(b){ return {bucket:b, current:c.cargo_by_bucket[b]}; }),
+                c.cargo_capacity || 1
+            );
+            caravanHtml += '<tr><td>' + c.name + '</td>' +
+                           '<td>' + fmtScore(sc.Score, sc.HasScore) + '</td>' +
+                           '<td>' + c.state + '</td>' +
+                           '<td>round +' + (d.snapshot.round - c.state_entered_round) + '</td>' +
+                           '<td>' + c.room_id + '</td>' +
+                           '<td>' + bar + ' ' + c.cargo_weight + '/' + c.cargo_capacity + ' lbs' + '</td>' +
+                           '<td colspan="5" class="text-muted">cycles: see scoring</td></tr>';
+        }
+        document.getElementById('tbl-caravans').innerHTML = caravanHtml || '<tr><td colspan="11" class="text-muted">No caravans active.</td></tr>';
+
+        // Foragers.
+        var foragerHtml = '';
+        for (var i = 0; i < (d.snapshot.foragers || []).length; i++) {
+            var f = d.snapshot.foragers[i];
+            var sc = d.scores.PerForager[i] || {};
+            var bar = bucketBar(
+                Object.keys(f.cargo_by_bucket || {}).map(function(b){ return {bucket:b, current:f.cargo_by_bucket[b]}; }),
+                f.cargo_capacity || 1
+            );
+            foragerHtml += '<tr><td>' + f.name + '</td>' +
+                           '<td>' + fmtScore(sc.Score, sc.HasScore) + '</td>' +
+                           '<td>' + (f.territory || '—') + '</td>' +
+                           '<td>' + f.state + '</td>' +
+                           '<td>round +' + (d.snapshot.round - f.state_entered_round) + '</td>' +
+                           '<td>' + f.room_id + '</td>' +
+                           '<td>' + bar + ' ' + f.cargo_weight + '/' + f.cargo_capacity + ' lbs' + '</td>' +
+                           '<td colspan="5" class="text-muted">cycles: see scoring</td></tr>';
+        }
+        document.getElementById('tbl-foragers').innerHTML = foragerHtml || '<tr><td colspan="12" class="text-muted">No foragers active.</td></tr>';
+    }
+
+    window.fetchData = function() {
+        fetch('/admin/api/economy/')
+            .then(function(r){ return r.json(); })
+            .then(render)
+            .catch(function(err){ console.error(err); });
+    };
+
+    window.toggleAuto = function() {
+        autoOn = !autoOn;
+        var btn = document.getElementById('btn-auto');
+        if (autoOn) {
+            btn.textContent = 'Auto: ON';
+            btn.classList.remove('btn-outline-secondary');
+            btn.classList.add('btn-success');
+            startTimer();
+        } else {
+            btn.textContent = 'Auto: OFF';
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-outline-secondary');
+            stopTimer();
+        }
+    };
+
+    window.updateInterval = function() {
+        if (autoOn) { stopTimer(); startTimer(); }
+    };
+
+    function startTimer() {
+        var secs = parseInt(document.getElementById('sel-interval').value, 10);
+        autoTimer = setInterval(fetchData, secs * 1000);
+    }
+    function stopTimer() { if (autoTimer) { clearInterval(autoTimer); autoTimer = null; } }
+
+    window.doSnapshot = function() {
+        var label = document.getElementById('manual-label').value || '';
+        fetch('/admin/api/economy/snapshot?label=' + encodeURIComponent(label), { method: 'POST' })
+            .then(function(r){ return r.json(); })
+            .then(function(d){
+                alert('Snapshot saved: ' + d.unix_ts);
+                fetchData();
+            })
+            .catch(function(err){ alert('Snapshot failed: ' + err); });
+    };
+
+    fetchData();
+})();
+</script>
+
+{{template "footer" .}}
