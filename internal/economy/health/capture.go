@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -206,7 +207,9 @@ func captureForagers() []ForagerSnapshot {
 
 // territoryFor returns the stable string label for a forager's
 // territory, derived from forager.ProfileFor(mobId).Kind. Returns ""
-// for non-foragers or unrecognized profiles.
+// for non-foragers; logs a warning and returns "" for foragers whose
+// Kind isn't yet mapped here (e.g. a new KindXxx added to
+// internal/forager/territory.go without the matching case below).
 func territoryFor(mobId int) string {
 	p := forager.ProfileFor(mobId)
 	if p == nil {
@@ -219,8 +222,12 @@ func territoryFor(mobId int) string {
 		return "thornwall_steppe"
 	case forager.KindFernway:
 		return "fernway"
+	default:
+		mudlog.Warn("economy/health: unmapped ForagerKind in territoryFor",
+			"mobId", mobId, "kind", p.Kind, "remediation",
+			"add a case to territoryFor in internal/economy/health/capture.go")
+		return ""
 	}
-	return ""
 }
 
 // lookupShopMobName resolves a shop's display name by walking live
