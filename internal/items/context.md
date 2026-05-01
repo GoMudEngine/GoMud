@@ -711,3 +711,105 @@ func IsUpgrade(current, candidate ItemSpec) bool
 These functions are intentionally simple (sum-based, not weighted). They
 are only used internally by the NPC craft AI — players never see the raw
 scores.
+
+---
+
+## Rarity Tiers (Stage 3.0e)
+
+Items intended for the living-economy supply pipeline carry a
+`RarityTier` field on their ItemSpec. The tier integer doubles as the
+**per-vendor MaxStock cap** when scaled by the vendor's `StockMultiplier`:
+
+```yaml
+rarity_tier: 50  # caps shop stock at 50 × mob.stock_multiplier
+```
+
+Tier semantics for materials (item IDs 40000+):
+
+| Tier | Meaning         | MaxStock @ mult=1.0 | Examples |
+|------|-----------------|---------------------|----------|
+| 50   | Common          | 50                  | iron ingot, raw meat, wooden plank, glass vial |
+| 40   | Standard        | 40                  | steel ingot, leather strip, healer's root |
+| 30   | Regional        | 30                  | lake-iron nodule, blood-moss, wild hare meat |
+| 20   | Uncommon        | 20                  | gold wire, mutation catalyst, Stillwater pearl |
+| 10   | Rare (reserved) | 10                  | future: legendary materials |
+
+Untiered items (no `rarity_tier`) are quest tokens, lore items, or
+anything that should not flow through the caravan/forager pipeline.
+`shops.EffectiveMaxStock(itemId, mult)` returns 0 for these — callers
+fall back to legacy hardcoded values from the shop YAML.
+
+The mob pointer is intentionally not taken inside `EffectiveMaxStock`
+to avoid an import cycle (mobs imports shops). Callers pass
+`mob.StockMultiplier` directly as a `float64`.
+
+## Pricing Bands (Stage 3.4)
+
+The `value` field on ItemSpec is the **base gold price**. Final shop
+prices are dynamic — `internal/shops/pricing.go` computes a scarcity
+multiplier that swings 0.25x (overstocked) to 5.0x (out of stock):
+
+```
+ratio = current / restock_qty
+ratio >= 3.0          →  0.25x  (PriceFloor)
+ratio == 0            →  5.0x   (PriceCeiling)
+otherwise             →  0.25 + 4.75 × (1 - ratio/3)²
+```
+
+Because the multiplier already encodes scarcity, base values shouldn't
+double-encode rarity — they define a sensible midpoint inside which
+dynamic pricing operates.
+
+Recommended base-value bands by tier (Approach B, applied 2026-04-30):
+
+| Tier | Band       | Notes |
+|------|------------|-------|
+| 50   | 1–3g       | Utility outliers allowed (sealed phial 10g, crystalline decanter 30g — bottles whose aging multiplier is the value) |
+| 40   | 5–25g      | Raw forage 5g, refined commons 8g, drops/alchemy 12g, premium 25g |
+| 30   | 25–75g     | Forage 25–30g, processed 35–50g, drops 50–60g |
+| 20   | 80–500g    | Common drops/refined 80–100g, quest specialties 400–500g |
+
+Effective shop sell price = `ceil(value × ScarcityMultiplier(current, restockQty))`.
+Player buy-back from NPCs applies `BuyRatio` (default 0.50) on top.
+
+## Supply Pipeline: Caravan & Foragers
+
+Materials enter vendor stock via two NPC-driven supply systems:
+
+**Caravan (Stages 3.0–3.4):** A wagon-as-mob with two handlers (Hob,
+Bran) runs a depot loop. At each stop,
+`caravan.VisitVendorsInRoom(roomId, wagon, deliveryBuckets, pickupBuckets)`
+performs a bidirectional vendor stop: deliver wagon items whose bucket
+matches `deliveryBuckets`, then pick up vendor surplus matching
+`pickupBuckets`. Pickup is gated by `entry.Current >= entry.MaxStock/2`
+(don't extract from a starving vendor). Stock changes persist
+immediately via `shops.SaveShop` so a panic mid-cycle doesn't lose
+in-flight deliveries.
+
+**Foragers (Stage 3.1):** Territory-bound forager NPCs (Halix in
+Fernway South, Kessa in Stillwater Marsh) gather mats from their region
+and deliver to the local depot. A behavior-tree state machine drives
+five states: resting → traveling → foraging → delivering → recalling.
+Recall uses fold-recall, gated on `mob.Character.IsCasting()` so the
+cast doesn't reset every idle tick.
+
+**Supply buckets** (see `internal/economy/buckets.go`) group items by
+source territory:
+
+| Bucket       | Source                           |
+|--------------|----------------------------------|
+| `base`       | universal craft staples (iron, leather, thread) |
+| `stillwater` | Stillwater Marsh forage (lake-iron, blood-moss) |
+| `fernway`    | Fernway South forage (moonpetal, ironbark) |
+| `thornwall`  | Thornwall regional drops |
+| `overlap`    | items appearing in multiple territories |
+
+Each shop YAML stock entry implicitly inherits its bucket from
+`economy.BucketFor(itemId)`. Caravan and forager route configurations
+list which buckets to deliver vs. pick up at each stop.
+
+**`mobs.Mob.StockMultiplier`** lets an exceptionally large or small
+vendor scale all MaxStock caps. Default 1.0 means MaxStock = RarityTier
+exactly. Set this on big trading-post mobs (e.g., 2.0 for a major
+depot) or small specialty stalls (e.g., 0.5 for a single-recipe niche
+vendor).
