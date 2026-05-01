@@ -73,10 +73,7 @@ func economyAPI(w http.ResponseWriter, r *http.Request) {
 	for label, off := range offsets {
 		target := now - off
 		// Tolerance: ±50% of the offset, so the picker still works for sparse history.
-		tolerance := off / 2
-		if tolerance < 1800 {
-			tolerance = 1800
-		}
+		tolerance := max(off/2, 1800)
 		meta := health.PickClosestSnapshot(metas, target, tolerance)
 		ds := deltaSet{Shops: map[string]health.ShopDelta{}}
 		if meta != nil {
