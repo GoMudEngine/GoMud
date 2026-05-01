@@ -184,6 +184,20 @@ func ClearCache() {
 	shopCacheMu.Unlock()
 }
 
+// AllShops returns a snapshot of every registered ShopInventory in
+// the cache. The returned slice contains pointers to the cached
+// inventories — callers must not mutate them. Used by the
+// economy/health dashboard for hourly capture.
+func AllShops() []*ShopInventory {
+	shopCacheMu.RLock()
+	defer shopCacheMu.RUnlock()
+	out := make([]*ShopInventory, 0, len(shopCache))
+	for _, inv := range shopCache {
+		out = append(out, inv)
+	}
+	return out
+}
+
 // loadFromDisk reads a shop's YAML save file and returns the parsed
 // ShopInventory. Returns nil if the file does not exist or cannot be parsed.
 func loadFromDisk(zone string, mobId int, roomId int) *ShopInventory {
