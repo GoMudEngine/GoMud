@@ -1,5 +1,6 @@
 mobid: 53
 zone: Sanctum Basin
+craft_support: alchemy
 archetype: casting
 statpool: 120
 hostile: false

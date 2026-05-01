@@ -1,5 +1,6 @@
 mobid: 113
 zone: Thornwall City
+craft_support: tailoring
 behavior_archetype: noncombat_shopkeeper
 statpool: 58
 itemdropchance: 0

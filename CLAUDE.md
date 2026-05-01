@@ -448,10 +448,9 @@ primary stat: Perception, progression multiplier 2.0.
   `SalvageSoftCap` (50).
 - Item is always consumed, even if no materials recovered.
 
-### Stations & Tool
-- Free at the recipe's crafting station (forge, alchemy bench, etc.).
-- Salvage Kit (sold by Fence Dealer Siv, 1g) allows salvage anywhere.
-- Tagged items (non-crafted with `salvage_returns`) require the tool.
+### Stations
+- Salvage works anywhere; no tool required as of 2026-05-01.
+- Skill rank gates yield rate (Perception-based, see formula above).
 
 ### ItemSpec Fields
 - `salvage_returns`: list of `{item_tag, quantity}` for non-crafted items.

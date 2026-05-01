@@ -1,5 +1,6 @@
 mobid: 341
 zone: Stillwater
+craft_support: general
 behavior_archetype: noncombat_shopkeeper
 statpool: 65
 itemdropchance: 0
@@ -43,10 +44,6 @@ character:
       training: 5
   shop:
     # Existing tools/lantern/inn items (preserve original quantities + prices)
-    - itemid: 32
-      quantity: 2
-      quantitymax: 5
-      price: 1
     - itemid: 40038    # oil lantern
       quantity: 2
       quantitymax: 5

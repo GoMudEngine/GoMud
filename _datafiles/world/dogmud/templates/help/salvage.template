@@ -20,13 +20,9 @@ components cannot be broken down.
 
 <ansi fg="yellow">━━━ Where to Salvage ━━━</ansi>
 
-Crafted items can be salvaged for free at the station where
-they were made -- swords at the forge, potions at the alchemy
-bench, cloth at the loom, and so on.
-
-Alternatively, buy a <ansi fg="itemname">salvage kit</ansi> from Fence Dealer Siv
-in Thornwall's back alleys. With the kit in your pack, you
-can salvage anywhere. The kit is consumed on each use.
+Salvage works anywhere -- no tools or crafting station
+required. Just have the item in your backpack and use the
+command.
 
 <ansi fg="yellow">━━━ How It Works ━━━</ansi>
 

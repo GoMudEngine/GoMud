@@ -1,0 +1,25 @@
+description: 2026-05-01 outcome smoke test — verify shop inventories actually fill up + corpse salvage works anywhere with no kit
+goals:
+  - **Baseline inventory** at all 4 forager-served vendors. Visit each, run `list`, copy the FULL output verbatim. Note timestamp.
+      - Smith Brindle (room 4106, Stillwater) — gets Tova deliveries
+      - Apothecary Ilsa (room 4125, Stillwater) — gets Tova deliveries
+      - Blacksmith Kerra (room 470, Thornwall) — gets Halix deliveries
+      - Apothecary Voss (room 471, Thornwall) — gets Halix deliveries
+  - **Mid-session inventory snapshot** — after ~25 minutes of session time, revisit all 4 vendors and capture inventory again. Compute the delta vs baseline. The PRIMARY SUCCESS CRITERION is that lower-tier mat counts (iron ingot, leather strip, healer's root, bitter thistle, etc.) have INCREASED on at least 2 of the 4 vendors. Even one or two additions per vendor is good — we just need to see growth, not full stock.
+  - **Final inventory snapshot** — at end of session (~50 min in), capture all 4 vendors a third time. Compute delta vs both baseline and mid. Note ANY growth. Report which vendors saw growth and which mats moved most.
+  - **Corpse salvage anywhere — primary test.** Travel to Stillwater Marsh (rooms 4177-4196). Find and kill any wildlife mob (marsh rat, dragonfly swarm, river otter, etc. — bog adders bite back, avoid unless you're confident). Run `salvage <corpse>` from the kill room (which is NOT a crafting station). It should work with no error message about salvage kits. Note the result (whether mats came out, what mats, any failure modes). Repeat with a SECOND corpse if convenient. The win condition is salvage runs to completion with no kit-required error.
+  - **Forager activity confirmation** — at any point during the session, visit Halix's home (room 3040, Sheltered Ridge Alcove in Ironwind Steppe) and Tova's home (room 4123, Stillwater Temple Interior). Confirm whether each forager is THERE (in-state resting) or AWAY (out foraging). Either is fine — the bug we're verifying is "Halix stuck at home doing nothing for the entire session," so as long as state changes between visits or you observe an out-state at some point, the room-pin fix is working.
+  - **Caravan presence check (optional)** — peek at Thornwall depot (room 465). If the caravan crew + horses + wagon are all present and idle, fine. If absent, fine (they may be transiting). The relevant outcome here is just: nobody is dead/stuck/wedged. Don't stake out — caravan dwell is back to 720 rounds (~48 min) so a full cycle won't complete in this session window. Don't budget time for caravan tracking.
+notes:
+  - Server is freshly restarted with all 2026-05-01 fixes applied (room-pin, salvage kit removal, non-combatant horses, flee-immune wagon).
+  - Production config: `CaravanDepotDwellRounds: 720`, `ForagerWaitTimeoutRounds: 150`. Foragers are the day-to-day supply pipeline; caravan cycle is too slow to complete in a 60-min test.
+  - **Time budget: up to 60 minutes**. The PRIMARY observation is the 3-vendor-snapshot-pass. The salvage test is a 5-minute side trip. Halix/Tova location check is a 2-minute side trip per forager.
+  - Use `set charset` ASCII per the test-mud SOP.
+  - **Mob IDs to recognize:**
+    - 357 Ketil, 358 Marta, 359 Lars (caravan crew)
+    - 374 caravan wagon, 375 Hob, 376 Bran (caravan animals/cargo)
+    - 371 Tova, 372 Halix, 373 Kessa (foragers)
+    - 367 marsh rat, 368 dragonfly swarm, 366 river otter (good salvage targets in Stillwater Marsh)
+  - **STRICT BOUNDARIES — NEVER edit code, data, config, or YAML files.** You are an OBSERVER. If you see a bug, file it in the report under BUG / CONCERN / OBSERVATION. Even "obvious" fixes circumvent the review pipeline. Do NOT run any go commands. Do NOT touch any file under `internal/`, `_datafiles/`, `tools/`, or `cmd/`. Your ONLY writes are to the report file under `tools/testing/reports/`.
+  - **Don'ts:** don't attack any caravan/forager mob (player_attack_immune). Don't run sleeps over 2 seconds. Don't file bugs for ANSI/display artifacts. Don't start any server processes.
+  - **Inventory capture strategy**: when you `list` at a vendor, copy the full output verbatim (item names + quantities). Don't summarize — verbatim, every time. The diff math depends on it.

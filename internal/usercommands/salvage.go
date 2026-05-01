@@ -80,27 +80,6 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		return true, nil
 	}
 
-	// Station or tool check
-	hasTool := userHasSalvageKit(user)
-	usesKit := false
-
-	if hasSalvageReturns && recipe == nil {
-		// Tagged items always require tool
-		if !hasTool {
-			user.SendText(`<ansi fg="red">You need a salvage kit to break that down.</ansi>`)
-			return true, nil
-		}
-		usesKit = true
-	} else if recipe != nil && recipe.Station != "" && room.Station != recipe.Station {
-		if !hasTool {
-			user.SendText(fmt.Sprintf(
-				`<ansi fg="red">You need a %s to salvage that, or a salvage kit.</ansi>`,
-				strings.ReplaceAll(recipe.Station, "_", " ")))
-			return true, nil
-		}
-		usesKit = true
-	}
-
 	// Calculate rounds based on ingredient gold value
 	bal := configs.GetBalanceConfig()
 	var totalGold int
@@ -116,7 +95,6 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	// Store salvage target info for resolution
 	user.Character.SetMiscData("salvage_item_uuid", itm.UUID.String())
-	user.Character.SetMiscData("salvage_uses_kit", usesKit)
 	user.Character.SetMiscData("salvage_spoiled_potion", isSpoiledPotion)
 
 	// Start multi-round salvage activity using CraftingState
@@ -130,22 +108,6 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		itm.DisplayName()))
 
 	return true, nil
-}
-
-// userHasSalvageKit checks whether the player has a salvage kit in their
-// backpack or component bag.
-func userHasSalvageKit(user *users.UserRecord) bool {
-	for _, itm := range user.Character.Items {
-		if itm.GetSpec().ComponentTag == "salvage-kit" {
-			return true
-		}
-	}
-	for _, itm := range user.Character.ComponentItems {
-		if itm.GetSpec().ComponentTag == "salvage-kit" {
-			return true
-		}
-	}
-	return false
 }
 
 // startCorpseSalvage initiates a corpse salvage activity. Called from
@@ -171,12 +133,6 @@ func startCorpseSalvage(user *users.UserRecord, corpse rooms.Corpse) (bool, erro
 		return true, nil
 	}
 
-	// Salvage kit always required for corpses.
-	if !userHasSalvageKit(user) {
-		user.SendText(`<ansi fg="red">You need a salvage kit to skin a corpse.</ansi>`)
-		return true, nil
-	}
-
 	bal := configs.GetBalanceConfig()
 	totalGold := crafting.CalcSalvageReturnGoldValue(returns)
 	rounds := crafting.CalcSalvageRounds(totalGold,
@@ -188,7 +144,6 @@ func startCorpseSalvage(user *users.UserRecord, corpse rooms.Corpse) (bool, erro
 	// YAML (uint64 can come back coerced).
 	user.Character.SetMiscData("salvage_corpse_round_created", int(corpse.RoundCreated))
 	user.Character.SetMiscData("salvage_corpse_name", corpse.Character.Name)
-	user.Character.SetMiscData("salvage_uses_kit", true)
 
 	user.Character.CraftingState = &characters.CraftingState{
 		RecipeId:    fmt.Sprintf("salvage-corpse:%d", corpse.MobId),

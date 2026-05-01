@@ -13,6 +13,7 @@ player_attack_immune: true
 maxwander: -1
 activitylevel: 0
 charm_immune: true
+pack_flee_immune: true
 
 # Stage 3.4 spawn-time overrides
 carry_capacity: 5000

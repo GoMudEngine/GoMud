@@ -1,5 +1,6 @@
 mobid: 337
 zone: Stillwater
+craft_support: blacksmithing
 behavior_archetype: noncombat_shopkeeper
 statpool: 100
 itemdropchance: 0
@@ -93,8 +94,3 @@ character:
       quantity: 0
       quantitymax: 0
       price: 4
-    # Existing tool item (preserve original quantities + price)
-    - itemid: 32
-      quantity: 1
-      quantitymax: 3
-      price: 1

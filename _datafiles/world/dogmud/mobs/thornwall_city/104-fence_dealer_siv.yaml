@@ -1,5 +1,6 @@
 mobid: 104
 zone: Thornwall City
+craft_support: general
 behavior_archetype: noncombat_shopkeeper
 statpool: 150
 itemdropchance: 0
@@ -46,10 +47,6 @@ character:
       training: 5
   shop:
     # Existing fenced/stolen items (preserve original prices)
-    - itemid: 32
-      quantity: 0
-      quantitymax: 0
-      price: 1
     - itemid: 33
       quantity: 0
       quantitymax: 0

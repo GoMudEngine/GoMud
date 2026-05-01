@@ -1,5 +1,6 @@
 mobid: 97
 zone: Thornwall City
+craft_support: blacksmithing
 archetype: fighting
 behavior_archetype: noncombat_shopkeeper
 statpool: 66

@@ -56,6 +56,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/shops"
+	"github.com/GoMudEngine/GoMud/internal/economy/health"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/suggestions"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -346,6 +348,42 @@ func main() {
 
 	go worldManager.InputWorker(workerShutdownChan, &wg)
 	go worldManager.MainWorker(workerShutdownChan, &wg)
+
+	// Hourly economy-health snapshot capture. Runs while the server is
+	// up; uses workerShutdownChan to halt cleanly. Pruning runs once
+	// per day.
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				mudlog.Error("PANIC", "where", "economy_snapshot_ticker", "error", r)
+			}
+		}()
+		b := configs.GetBalanceConfig()
+		hours := int(b.EconomySnapshotIntervalHours)
+		if hours <= 0 {
+			hours = 1
+		}
+		ticker := time.NewTicker(time.Duration(hours) * time.Hour)
+		defer ticker.Stop()
+		pruneTicker := time.NewTicker(24 * time.Hour)
+		defer pruneTicker.Stop()
+		for {
+			select {
+			case <-workerShutdownChan:
+				return
+			case <-ticker.C:
+				snap := health.CaptureSnapshot()
+				if err := health.WriteSnapshot(snap); err != nil {
+					mudlog.Error("economy snapshot write", "error", err)
+				}
+			case <-pruneTicker.C:
+				retention := int(configs.GetBalanceConfig().EconomySnapshotRetentionDays)
+				if _, err := health.PruneSnapshots(retention); err != nil {
+					mudlog.Error("economy snapshot prune", "error", err)
+				}
+			}
+		}
+	}()
 
 	mudlog.Info("Server Ready", "Time Taken", time.Since(serverStartTime))
 
@@ -1099,6 +1137,74 @@ func loadAllDataFiles(isReload bool) {
 		}
 		return 0, false
 	})
+	allMobTemplates := mobs.AllMobTemplates()
+	adapted := make([]shops.ShopBearingMob, 0, len(allMobTemplates))
+	for _, m := range allMobTemplates {
+		adapted = append(adapted, m)
+	}
+	if err := shops.ValidateShopMobTags(adapted); err != nil {
+		// Cold boot: fail fast — server refuses to start with bad tags.
+		// Reload (`/reload`): the deferred recover() at the top of this
+		// function would swallow a panic into a generic "RELOAD FAILED"
+		// log. Bypass that by handling reload explicitly so the admin
+		// gets a structured error pointing at the offender, plus a
+		// remediation hint. Mob templates may now be in an inconsistent
+		// state — fix the listed YAMLs and reload again.
+		if isReload {
+			mudlog.Error("shops.ValidateShopMobTags failed on reload",
+				"error", err.Error(),
+				"remediation", "fix the listed mob YAMLs (add or correct craft_support:) and run /reload again; mob templates may be inconsistent until then",
+			)
+		} else {
+			panic(fmt.Sprintf("shops.ValidateShopMobTags failed:\n%v", err))
+		}
+	}
+	// Build mob-template zone lookup for shop cache pre-warming.
+	mobZoneByMobId := make(map[int]string, len(allMobTemplates))
+	for _, m := range allMobTemplates {
+		mobZoneByMobId[int(m.MobId)] = m.Zone
+	}
+	if n, err := shops.PrewarmFromPersistedFiles(func(mobId int) (string, bool) {
+		z, ok := mobZoneByMobId[mobId]
+		return z, ok
+	}); err != nil {
+		mudlog.Warn("shop cache prewarm", "error", err)
+	} else {
+		mudlog.Info("shop cache prewarmed (persisted)", "count", n)
+	}
+	// Walk every room's spawninfo and pre-register a shop entry for
+	// each shop-bearing mob's spawn placement that doesn't already
+	// have a persisted YAML. Without this, the dashboard only shows
+	// shops in zones a player has actually visited (since mob spawn
+	// triggers RegisterMobShop, and mobs spawn lazily on room
+	// activation). The mob isn't actually spawned — only the cache
+	// entry is seeded — so this is cheap.
+	templateByMobId := make(map[int]*mobs.Mob, len(allMobTemplates))
+	for _, m := range allMobTemplates {
+		templateByMobId[int(m.MobId)] = m
+	}
+	prewarmedFromSpawn := 0
+	for _, roomId := range rooms.GetAllRoomIds() {
+		room := rooms.LoadRoom(roomId)
+		if room == nil {
+			continue
+		}
+		for _, si := range room.SpawnInfo {
+			if si.MobId == 0 {
+				continue
+			}
+			tmpl := templateByMobId[si.MobId]
+			if tmpl == nil {
+				continue
+			}
+			if !tmpl.HasShop() && !tmpl.IsCrafter() {
+				continue
+			}
+			mobs.PrewarmShopForSpawnPlacement(tmpl, roomId)
+			prewarmedFromSpawn++
+		}
+	}
+	mudlog.Info("shop cache prewarmed (spawninfo)", "count", prewarmedFromSpawn)
 	pets.LoadDataFiles()
 	quests.LoadDataFiles()
 	questengine.LoadDataFiles()

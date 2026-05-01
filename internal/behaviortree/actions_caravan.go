@@ -288,7 +288,7 @@ func tickRoute(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result
 	nextRoom := route.VendorStopIds[idx]
 	if ctx.RoomId == nextRoom {
 		// Arrived at this stop — transfer items + advance index.
-		wagon := findWagonInRoom(nextRoom)
+		wagon := caravan.FindWagonInRoom(nextRoom)
 		if wagon == nil {
 			// Wagon not present — caravan is wiped, mid-respawn,
 			// or a follower lagged. Let legacy idle handle this tick;
@@ -433,31 +433,6 @@ func caravanLoadAppend(s *BehaviorState, bucket string) {
 		}
 	}
 	caravanLoadSet(s, append(cur, bucket))
-}
-
-// findWagonInRoom returns the caravan wagon mob (mob 374) if it's
-// in the given room. Returns nil if the wagon isn't there — which
-// happens during the brief windows when followers are catching up,
-// or when the caravan has been wiped and is mid-respawn.
-//
-// Caller decides whether nil is fatal (return Failure to let legacy
-// idle take over) or recoverable (skip this tick).
-func findWagonInRoom(roomId int) *mobs.Mob {
-	const wagonMobId = 374
-	room := rooms.LoadRoom(roomId)
-	if room == nil {
-		return nil
-	}
-	for _, instId := range room.GetMobs(rooms.FindAll) {
-		m := mobs.GetInstance(instId)
-		if m == nil {
-			continue
-		}
-		if int(m.MobId) == wagonMobId {
-			return m
-		}
-	}
-	return nil
 }
 
 // bucketsForRouteState returns the (delivery, pickup) bucket lists

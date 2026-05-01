@@ -2,8 +2,10 @@ package mobs
 
 import (
 	"fmt"
+	"maps"
 	"math"
 	"os"
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -123,6 +125,7 @@ type Mob struct {
 	CrafterSkill            string   `yaml:"crafterskill,omitempty"`            // Craft skill used (e.g. "blacksmithing")
 	CrafterRecipeIds        []string `yaml:"crafterrecipeids,omitempty"`        // Recipe IDs this mob can craft
 	CrafterRestockMaterials []int    `yaml:"crafterrestockmaterials,omitempty"` // Item IDs restocked periodically
+	ShopCraftSupport        string   `yaml:"craft_support,omitempty"`           // Crafting discipline this shop supports (one of shops.ValidCraftSupports)
 
 	// ── Stage 3.4: spawn-time overrides for special mobs (wagons, statues, etc.) ──
 	CarryCapacityOverride float64 `yaml:"carry_capacity,omitempty"`     // overrides Strength-derived calc when > 0
@@ -248,6 +251,19 @@ func GetAllMobInfo() []Mob {
 	return ret
 }
 
+// AllMobTemplates returns pointers to every loaded mob template. Intended for
+// startup validators that need to inspect template fields without copying.
+// Callers must not mutate the returned pointers.
+func AllMobTemplates() []*Mob {
+	mobsMu.RLock()
+	defer mobsMu.RUnlock()
+	ret := make([]*Mob, 0, len(mobs))
+	for _, m := range mobs {
+		ret = append(ret, m)
+	}
+	return ret
+}
+
 func GetAllMobNames() []string {
 	mobsMu.RLock()
 	defer mobsMu.RUnlock()
@@ -369,16 +385,12 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 		// instance's skills/spellbook would contaminate the template.
 		if mob.Character.Skills != nil {
 			skillsCopy := make(map[string]int, len(mob.Character.Skills))
-			for k, v := range mob.Character.Skills {
-				skillsCopy[k] = v
-			}
+			maps.Copy(skillsCopy, mob.Character.Skills)
 			mob.Character.Skills = skillsCopy
 		}
 		if mob.Character.SpellBook != nil {
 			spellCopy := make(map[string]int, len(mob.Character.SpellBook))
-			for k, v := range mob.Character.SpellBook {
-				spellCopy[k] = v
-			}
+			maps.Copy(spellCopy, mob.Character.SpellBook)
 			mob.Character.SpellBook = spellCopy
 		}
 
@@ -760,6 +772,23 @@ func (m *Mob) HasShop() bool {
 	return len(m.Character.Shop) > 0
 }
 
+// GetMobId satisfies shops.ShopBearingMob — returns the template mob ID as int.
+func (m *Mob) GetMobId() int {
+	return int(m.MobId)
+}
+
+// IsCrafter satisfies shops.ShopBearingMob — returns whether this mob crafts
+// autonomously.
+func (m *Mob) IsCrafter() bool {
+	return m.Crafter
+}
+
+// GetShopCraftSupport satisfies shops.ShopBearingMob — returns the
+// craft_support tag for this mob's shop.
+func (m *Mob) GetShopCraftSupport() string {
+	return m.ShopCraftSupport
+}
+
 func (m *Mob) IsTameable() bool {
 	if m.HasShop() {
 		return false
@@ -809,6 +838,20 @@ func (m *Mob) Despawns() bool {
 		return false
 	}
 	return true
+}
+
+// IsEssential returns true when this mob drives a living-economy system
+// (foragers, caravan crew). Essential mobs persist in their rooms so their
+// BTree state survives unattended periods — the room manager skips unloading
+// rooms that contain them. Memory cost is small: typically fewer than 20
+// rooms pinned across the world at any moment.
+func (m *Mob) IsEssential() bool {
+	for _, g := range m.Groups {
+		if g == "forager" || g == "caravan" {
+			return true
+		}
+	}
+	return false
 }
 
 func (m *Mob) GetSellPrice(item items.Item) int {
@@ -879,13 +922,7 @@ func (m *Mob) GetSellPrice(item items.Item) int {
 }
 
 func (r *Mob) HatesSpecies(raceName string) bool {
-	raceName = strings.ToLower(raceName)
-	for _, hateGroup := range r.Hates {
-		if hateGroup == raceName {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(r.Hates, strings.ToLower(raceName))
 }
 
 func (r *Mob) HatesMob(m *Mob) bool {

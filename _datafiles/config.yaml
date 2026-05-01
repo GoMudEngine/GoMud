@@ -894,6 +894,16 @@ Balance:
   # forage. Prevents futile forage loops when local vendors are saturated.
   ForagerRestCarryThreshold: 0.5
 
+  # ── ECONOMY HEALTH DASHBOARD ────────────────────────────────────────────────
+  # Wall-clock cadence for auto-snapshots (hours). Default 1.
+  EconomySnapshotIntervalHours: 1
+  # Days to retain auto-snapshots before pruning. Default 30.
+  EconomySnapshotRetentionDays: 30
+  # Overall-score component weights (must sum to 1.0 for meaningful scores).
+  EconomyScoreWeightShop: 0.6
+  EconomyScoreWeightCaravan: 0.2
+  EconomyScoreWeightForager: 0.2
+
 ################################################################################
 #
 #   LLM
@@ -1035,8 +1045,8 @@ Network:
   # - MaxIdleSeconds -
   #   How long players can go without any input, before being kicked.
   #   A value of 0 (zero) means never kick inactive players.
-  #   1800 seconds = 30 minutes
-  MaxIdleSeconds: 1800
+  #   18000 seconds = 5 hours (was 1800/30min — bumped 10x for player QoL)
+  MaxIdleSeconds: 18000
   # - TimeoutMods -
   #   Whether Admin/Mod users get timed out when reaching MaxIdleSeconds
   #   If set to false, Admins & Mods never get force disconnected.

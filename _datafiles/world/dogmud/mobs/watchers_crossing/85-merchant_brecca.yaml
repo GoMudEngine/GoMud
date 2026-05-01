@@ -1,5 +1,6 @@
 mobid: 85
 zone: Watchers Crossing
+craft_support: general
 behavior_archetype: noncombat_shopkeeper
 statpool: 100
 itemdropchance: 0
