@@ -1,5 +1,57 @@
 # DOGMud Patch Notes
 
+## 2026-05-01 — Economy Health Dashboard (dev only)
+
+**Note:** New `/admin/economy/` web dashboard for monitoring NPC supply
+chain health. Branch `feature/economy-health-dashboard`, not yet merged
+to development or master.
+
+### Dashboard
+- **`/admin/economy/`** — five score cards (Economy / Shops / Caravans
+  / Foragers / last snapshot), per-discipline rollup of shops grouped
+  by `craft_support:` tag (blacksmithing, alchemy, tailoring, cooking,
+  jewelcrafting, enchanting, general), per-shop detail with stock bars
+  colored by supply bucket, caravan + forager tables with cargo bars
+  in pounds. Auto-refresh 30s/60s/2m. Manual "Snapshot Now" button for
+  ad-hoc before/after comparisons.
+- **Scores:** 0-100 colored red <40 / yellow 40-70 / green >70.
+  Per-shop score weights item fills by `RestockQty`; per-discipline
+  score is the mean of shops in that bucket; caravan/forager scores
+  count Thornwall→Thornwall and Resting→Resting cycles across the
+  last 168 hourly snapshots with a stuck-penalty if a state has been
+  held >5000 rounds. Overall economy score is weighted 0.6/0.2/0.2
+  (shops/caravans/foragers) with renormalization for components with
+  insufficient history.
+- **Hourly snapshot ticker** writes to
+  `_datafiles/economy/snapshots/{unix_ts}.yaml` (gitignored runtime
+  state). Auto-snapshots pruned past 30 days; manual snapshots never
+  pruned.
+- **Delta columns** at 1h / 6h / 1d / 3d / 1w show gold deltas per
+  shop and per discipline against the closest historical snapshot
+  within ±50% tolerance.
+
+### Schema additions
+- **`craft_support:` field** on every shop-bearing mob YAML (22
+  files). One-of-7 valid values: `blacksmithing`, `alchemy`,
+  `tailoring`, `cooking`, `jewelcrafting`, `enchanting`, `general`.
+  Source of truth for the dashboard's discipline rollup.
+- **Startup validator** (`shops.ValidateShopMobTags`) panics if any
+  shop-bearing mob is missing or has an invalid `craft_support:` tag.
+  Server refuses to boot until every shop is categorized.
+- **Persisted shop YAMLs auto-migrate** from the mob template's
+  `craft_support:` value on next boot — no manual edits to the 7
+  existing runtime files in `_datafiles/world/dogmud/shops/`.
+
+### Config knobs (Balance section)
+- `EconomySnapshotIntervalHours` (default 1)
+- `EconomySnapshotRetentionDays` (default 30)
+- `EconomyScoreWeightShop / Caravan / Forager` (defaults 0.6 / 0.2 / 0.2)
+
+### Runbook
+- See `docs/economy/dashboard-runbook.md` for what each card means,
+  how snapshots work, troubleshooting, and the process for adding a
+  new vendor discipline.
+
 ## 2026-04-30 (evening) — Stage 3.4 Hardening + Pricing Pass (dev only)
 
 **Note:** Smoke-test fixes and late-day polish on the Stage 3.4 economy stack. Promotes to `master` with the rest of the economy stack.
