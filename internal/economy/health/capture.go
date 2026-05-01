@@ -1,8 +1,11 @@
 package health
 
 import (
+	"strconv"
 	"time"
 
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
+	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/economy"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/shops"
@@ -56,8 +59,54 @@ func captureShops() []ShopSnapshot {
 	return out
 }
 
-// captureCaravans is implemented in Task 6.
-func captureCaravans() []CaravanSnapshot { return nil }
+// captureCaravans walks every live mob instance and emits one
+// CaravanSnapshot per mob whose BTreeState has a non-empty
+// "caravan_state" key (the convention used by actions_caravan.go).
+// Cargo is read from the wagon mob co-located in the same room.
+func captureCaravans() []CaravanSnapshot {
+	out := []CaravanSnapshot{}
+	for _, instId := range mobs.GetAllMobInstanceIds() {
+		m := mobs.GetInstance(instId)
+		if m == nil {
+			continue
+		}
+		bs, ok := m.BTreeState.(*behaviortree.BehaviorState)
+		if !ok || bs == nil {
+			continue
+		}
+		stateName := bs.GetString("caravan_state")
+		if stateName == "" {
+			continue
+		}
+
+		startedRound, _ := strconv.ParseUint(bs.GetString("caravan_state_started_round"), 10, 64)
+
+		cs := CaravanSnapshot{
+			InstId:            instId,
+			Name:              m.Character.Name,
+			State:             stateName,
+			StateEnteredRound: startedRound,
+			RoomId:            m.Character.RoomId,
+			CargoByBucket:     map[string]int{},
+		}
+
+		// Wagon co-located with the leader is the cargo source.
+		wagon := caravan.FindWagonInRoom(m.Character.RoomId)
+		if wagon != nil {
+			cs.CargoCapacity = int(wagon.Character.CarryCapacity())
+			for _, it := range wagon.Character.Items {
+				bucket := economy.BucketFor(it.ItemId)
+				cs.CargoCount++
+				if bucket != "" {
+					cs.CargoByBucket[bucket]++
+				}
+			}
+		}
+
+		out = append(out, cs)
+	}
+	return out
+}
 
 // captureForagers is implemented in Task 7.
 func captureForagers() []ForagerSnapshot { return nil }
