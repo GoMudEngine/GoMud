@@ -218,7 +218,7 @@ func RoomMaintenance() []int {
 
 		// Consider unloading rooms from memory?
 		if allowedUnloadCt > 0 && !room.IsEphemeral() {
-			if room.lastVisited < unloadRoundThreshold {
+			if room.lastVisited < unloadRoundThreshold && !roomHasEssentialMob(room) {
 				unloadRooms = append(unloadRooms, room)
 				allowedUnloadCt--
 			}
@@ -481,6 +481,15 @@ func removeRoomFromMemory(r *Room) {
 	}
 
 	if len(room.players) > 0 {
+		return
+	}
+
+	// Don't unload rooms that contain essential living-economy mobs (foragers,
+	// caravan crew). Their BTree state lives in the in-memory mob instance —
+	// destroying them resets the state machine and breaks the cycle they're
+	// supposed to be running. Memory cost is small: typically <20 rooms pinned
+	// across the world at any moment.
+	if roomHasEssentialMob(room) {
 		return
 	}
 
@@ -840,4 +849,18 @@ func LoadDataFiles() {
 		panic(pkgerrors.Wrap(err, `filepath: rooms`))
 	}
 
+}
+
+// roomHasEssentialMob returns true if any mob currently in the room is
+// essential (drives a living-economy system such as foragers or caravan crew).
+// Used by RoomMaintenance and removeRoomFromMemory to pin rooms containing
+// these mobs so their in-memory BTree state is never destroyed by the
+// idle-unload cycle.
+func roomHasEssentialMob(r *Room) bool {
+	for _, mobInstanceId := range r.mobs {
+		if m := mobs.GetInstance(mobInstanceId); m != nil && m.IsEssential() {
+			return true
+		}
+	}
+	return false
 }

@@ -811,6 +811,20 @@ func (m *Mob) Despawns() bool {
 	return true
 }
 
+// IsEssential returns true when this mob drives a living-economy system
+// (foragers, caravan crew). Essential mobs persist in their rooms so their
+// BTree state survives unattended periods — the room manager skips unloading
+// rooms that contain them. Memory cost is small: typically fewer than 20
+// rooms pinned across the world at any moment.
+func (m *Mob) IsEssential() bool {
+	for _, g := range m.Groups {
+		if g == "forager" || g == "caravan" {
+			return true
+		}
+	}
+	return false
+}
+
 func (m *Mob) GetSellPrice(item items.Item) int {
 
 	if item.IsSpecial() {
