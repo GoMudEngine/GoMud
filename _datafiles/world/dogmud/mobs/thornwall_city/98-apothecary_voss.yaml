@@ -1,5 +1,6 @@
 mobid: 98
 zone: Thornwall City
+craft_support: alchemy
 archetype: casting
 behavior_archetype: noncombat_shopkeeper
 statpool: 120

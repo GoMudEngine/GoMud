@@ -304,4 +304,21 @@ func (b *Balance) validateMisc() {
 	if b.ForagerRestCarryThreshold <= 0 || b.ForagerRestCarryThreshold > 1.0 {
 		b.ForagerRestCarryThreshold = 0.5
 	}
+
+	// ── ECONOMY HEALTH DASHBOARD ─────────────────────────────────────────────
+	if b.EconomySnapshotIntervalHours <= 0 {
+		b.EconomySnapshotIntervalHours = 1
+	}
+	if b.EconomySnapshotRetentionDays <= 0 {
+		b.EconomySnapshotRetentionDays = 30
+	}
+	if b.EconomyScoreWeightShop <= 0 {
+		b.EconomyScoreWeightShop = 0.6
+	}
+	if b.EconomyScoreWeightCaravan <= 0 {
+		b.EconomyScoreWeightCaravan = 0.2
+	}
+	if b.EconomyScoreWeightForager <= 0 {
+		b.EconomyScoreWeightForager = 0.2
+	}
 }

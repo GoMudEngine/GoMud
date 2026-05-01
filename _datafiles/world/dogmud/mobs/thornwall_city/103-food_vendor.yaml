@@ -1,5 +1,6 @@
 mobid: 103
 zone: Thornwall City
+craft_support: cooking
 behavior_archetype: noncombat_shopkeeper
 statpool: 36
 itemdropchance: 0

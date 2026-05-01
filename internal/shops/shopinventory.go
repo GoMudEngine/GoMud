@@ -6,6 +6,38 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/economy"
 )
 
+// CraftSupport tags a shop with the crafting discipline its stock
+// supports. Single-discipline shops use the matching skill tag;
+// multi-discipline / mixed merchants use "general". Empty is INVALID
+// — a startup validator panics if any shop-bearing mob is missing
+// the tag (see ValidateShopMobTags).
+const (
+	CraftSupportBlacksmithing = "blacksmithing"
+	CraftSupportAlchemy       = "alchemy"
+	CraftSupportTailoring     = "tailoring"
+	CraftSupportCooking       = "cooking"
+	CraftSupportJewelcrafting = "jewelcrafting"
+	CraftSupportEnchanting    = "enchanting"
+	CraftSupportGeneral       = "general"
+)
+
+// ValidCraftSupports is the canonical set. Mirrors the player crafting
+// skills in internal/skills/skills.go plus "general" for mixed shops.
+var ValidCraftSupports = []string{
+	CraftSupportBlacksmithing,
+	CraftSupportAlchemy,
+	CraftSupportTailoring,
+	CraftSupportCooking,
+	CraftSupportJewelcrafting,
+	CraftSupportEnchanting,
+	CraftSupportGeneral,
+}
+
+// IsValidCraftSupport reports whether v is one of ValidCraftSupports.
+func IsValidCraftSupport(v string) bool {
+	return slices.Contains(ValidCraftSupports, v)
+}
+
 // StockEntry represents one item type in a shop's inventory.
 type StockEntry struct {
 	ItemId     int `yaml:"item_id"`
@@ -21,6 +53,7 @@ type ShopInventory struct {
 	LastRestock  uint64       `yaml:"last_restock"`
 	Stock        []StockEntry `yaml:"inventory"`
 	KnownRecipes []string     `yaml:"known_recipes,omitempty"` // Recipes the NPC knows
+	CraftSupport string       `yaml:"craft_support,omitempty"` // Discipline this shop's stock supports — see ValidCraftSupports
 
 	// Location fields (not persisted — set at registration time for save path)
 	Zone   string `yaml:"-"`

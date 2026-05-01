@@ -769,8 +769,8 @@ func TestSnapshot_YAMLRoundTrip(t *testing.T) {
 			{
 				InstId: 42, Name: "Caravan Master Borric",
 				State: "outbound_transit", StateEnteredRound: 12100, RoomId: 1500,
-				CargoCount: 14, CargoCapacity: 30,
-				CargoByBucket: map[string]int{"base": 5, "stillwater": 9},
+				CargoWeight: 850, CargoCapacity: 5000,
+				CargoByBucket: map[string]int{"base": 300, "stillwater": 550},
 			},
 		},
 		Foragers: []ForagerSnapshot{
@@ -778,8 +778,8 @@ func TestSnapshot_YAMLRoundTrip(t *testing.T) {
 				InstId: 88, Name: "Storekeeper Wulf",
 				Territory: "stillwater_marsh",
 				State: "foraging", StateEnteredRound: 12200, RoomId: 4520,
-				CargoCount: 6, CargoCapacity: 12,
-				CargoByBucket: map[string]int{"stillwater": 6},
+				CargoWeight: 14, CargoCapacity: 60,
+				CargoByBucket: map[string]int{"stillwater": 14},
 			},
 		},
 	}
@@ -868,8 +868,8 @@ type CaravanSnapshot struct {
 	State             string         `yaml:"state"               json:"state"`
 	StateEnteredRound uint64         `yaml:"state_entered_round" json:"state_entered_round"`
 	RoomId            int            `yaml:"room_id"             json:"room_id"`
-	CargoCount        int            `yaml:"cargo_count"         json:"cargo_count"`
-	CargoCapacity     int            `yaml:"cargo_capacity"      json:"cargo_capacity"`
+	CargoWeight       int            `yaml:"cargo_weight"        json:"cargo_weight"`   // pounds
+	CargoCapacity     int            `yaml:"cargo_capacity"      json:"cargo_capacity"` // pounds
 	CargoByBucket     map[string]int `yaml:"cargo_by_bucket"     json:"cargo_by_bucket"`
 }
 
@@ -881,8 +881,8 @@ type ForagerSnapshot struct {
 	State             string         `yaml:"state"               json:"state"`
 	StateEnteredRound uint64         `yaml:"state_entered_round" json:"state_entered_round"`
 	RoomId            int            `yaml:"room_id"             json:"room_id"`
-	CargoCount        int            `yaml:"cargo_count"         json:"cargo_count"`
-	CargoCapacity     int            `yaml:"cargo_capacity"      json:"cargo_capacity"`
+	CargoWeight       int            `yaml:"cargo_weight"        json:"cargo_weight"`   // pounds
+	CargoCapacity     int            `yaml:"cargo_capacity"      json:"cargo_capacity"` // pounds
 	CargoByBucket     map[string]int `yaml:"cargo_by_bucket"     json:"cargo_by_bucket"`
 }
 ```
@@ -1268,11 +1268,11 @@ func TestCaptureSnapshot_Caravans(t *testing.T) {
 	if c.StateEnteredRound != 12100 {
 		t.Errorf("state_entered_round: got %d, want 12100", c.StateEnteredRound)
 	}
-	if c.CargoCount != 1 {
-		t.Errorf("cargo_count: got %d, want 1", c.CargoCount)
+	if c.CargoCapacity != 5000 {
+		t.Errorf("cargo_capacity: got %d, want 5000 (override set in fixture)", c.CargoCapacity)
 	}
-	if c.CargoByBucket["base"] != 1 {
-		t.Errorf("cargo_by_bucket[base]: got %d, want 1", c.CargoByBucket["base"])
+	if c.CargoByBucket == nil {
+		t.Error("cargo_by_bucket: got nil map, want initialized map")
 	}
 }
 ```
@@ -1324,15 +1324,23 @@ func captureCaravans() []CaravanSnapshot {
 			CargoByBucket:     map[string]int{},
 		}
 
-		// Wagon co-located with leader is the cargo source.
+		// Wagon co-located with leader is the cargo source. Both
+		// CargoWeight and CargoCapacity are pounds — carry weight is
+		// what actually limits the wagon, so the dashboard's "is the
+		// wagon filling up?" question reads honestly as a weight
+		// ratio. Per-bucket also sums weights, not item counts.
 		wagon := caravan.FindWagonInRoom(m.Character.RoomId)
 		if wagon != nil {
-			cs.CargoCapacity = int(wagon.Character.GetCarryCapacity())
+			cs.CargoWeight = int(wagon.Character.GetCarriedWeight())
+			cs.CargoCapacity = int(wagon.Character.CarryCapacity())
 			for _, it := range wagon.Character.Items {
 				bucket := economy.BucketFor(it.ItemId)
-				cs.CargoCount++
-				if bucket != "" {
-					cs.CargoByBucket[bucket]++
+				if bucket == "" {
+					continue
+				}
+				w := int(it.GetSpec().GetWeight())
+				if w > 0 {
+					cs.CargoByBucket[bucket] += w
 				}
 			}
 		}
@@ -1465,13 +1473,19 @@ func captureForagers() []ForagerSnapshot {
 			StateEnteredRound: startedRound,
 			RoomId:            m.Character.RoomId,
 			CargoByBucket:     map[string]int{},
-			CargoCapacity:     int(m.Character.GetCarryCapacity()), // adapt method name
+			CargoWeight:       int(m.Character.GetCarriedWeight()),
+			CargoCapacity:     int(m.Character.CarryCapacity()),
 		}
+		// Per-bucket: sum item weights by bucket. Skip items with no
+		// bucket or zero weight. Same convention as captureCaravans.
 		for _, it := range m.Character.Items {
 			bucket := economy.BucketFor(it.ItemId)
-			fs.CargoCount++
-			if bucket != "" {
-				fs.CargoByBucket[bucket]++
+			if bucket == "" {
+				continue
+			}
+			w := int(it.GetSpec().GetWeight())
+			if w > 0 {
+				fs.CargoByBucket[bucket] += w
 			}
 		}
 		out = append(out, fs)
@@ -3141,7 +3155,7 @@ Create `_datafiles/html/admin/economy/index.html` modeled on `combatstats/index.
                            '<td>' + c.state + '</td>' +
                            '<td>round +' + (d.snapshot.round - c.state_entered_round) + '</td>' +
                            '<td>' + c.room_id + '</td>' +
-                           '<td>' + bar + ' ' + c.cargo_count + '/' + c.cargo_capacity + '</td>' +
+                           '<td>' + bar + ' ' + c.cargo_weight + '/' + c.cargo_capacity + ' lbs' + '</td>' +
                            '<td colspan="5" class="text-muted">cycles: see scoring</td></tr>';
         }
         document.getElementById('tbl-caravans').innerHTML = caravanHtml || '<tr><td colspan="11" class="text-muted">No caravans active.</td></tr>';
@@ -3161,7 +3175,7 @@ Create `_datafiles/html/admin/economy/index.html` modeled on `combatstats/index.
                            '<td>' + f.state + '</td>' +
                            '<td>round +' + (d.snapshot.round - f.state_entered_round) + '</td>' +
                            '<td>' + f.room_id + '</td>' +
-                           '<td>' + bar + ' ' + f.cargo_count + '/' + f.cargo_capacity + '</td>' +
+                           '<td>' + bar + ' ' + f.cargo_weight + '/' + f.cargo_capacity + ' lbs' + '</td>' +
                            '<td colspan="5" class="text-muted">cycles: see scoring</td></tr>';
         }
         document.getElementById('tbl-foragers').innerHTML = foragerHtml || '<tr><td colspan="12" class="text-muted">No foragers active.</td></tr>';

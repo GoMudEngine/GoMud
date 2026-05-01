@@ -73,12 +73,19 @@ func RegisterShop(zone string, mobId int, roomId int, template ShopInventory) *S
 	shopCacheMu.RLock()
 	if inv, ok := shopCache[key]; ok {
 		shopCacheMu.RUnlock()
+		if inv.CraftSupport == "" && template.CraftSupport != "" {
+			inv.CraftSupport = template.CraftSupport
+			if err := SaveShop(zone, mobId, roomId); err != nil {
+				mudlog.Warn("RegisterShop CraftSupport migration save", "key", key, "error", err)
+			}
+		}
 		return inv
 	}
 	shopCacheMu.RUnlock()
 
 	// Try loading persisted state first.
 	inv := loadFromDisk(zone, mobId, roomId)
+	needsCraftMigration := false
 	if inv == nil {
 		// Seed from template: set Current to RestockQty for stocked items.
 		seeded := template // copy
@@ -92,6 +99,9 @@ func RegisterShop(zone string, mobId int, roomId int, template ShopInventory) *S
 			}
 		}
 		inv = &seeded
+	} else if inv.CraftSupport == "" && template.CraftSupport != "" {
+		// Flag for migration after cache insert so SaveShop can find the entry.
+		needsCraftMigration = true
 	}
 
 	inv.Zone = zone
@@ -101,6 +111,13 @@ func RegisterShop(zone string, mobId int, roomId int, template ShopInventory) *S
 	shopCacheMu.Lock()
 	shopCache[key] = inv
 	shopCacheMu.Unlock()
+
+	if needsCraftMigration {
+		inv.CraftSupport = template.CraftSupport
+		if err := SaveShop(zone, mobId, roomId); err != nil {
+			mudlog.Warn("RegisterShop CraftSupport migration save", "key", key, "error", err)
+		}
+	}
 
 	return inv
 }
@@ -165,6 +182,20 @@ func ClearCache() {
 	shopCacheMu.Lock()
 	shopCache = map[string]*ShopInventory{}
 	shopCacheMu.Unlock()
+}
+
+// AllShops returns a snapshot of every registered ShopInventory in
+// the cache. The returned slice contains pointers to the cached
+// inventories — callers must not mutate them. Used by the
+// economy/health dashboard for hourly capture.
+func AllShops() []*ShopInventory {
+	shopCacheMu.RLock()
+	defer shopCacheMu.RUnlock()
+	out := make([]*ShopInventory, 0, len(shopCache))
+	for _, inv := range shopCache {
+		out = append(out, inv)
+	}
+	return out
 }
 
 // loadFromDisk reads a shop's YAML save file and returns the parsed
