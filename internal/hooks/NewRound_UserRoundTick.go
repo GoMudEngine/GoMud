@@ -485,19 +485,7 @@ func resolveSalvage(user *users.UserRecord, itemIdStr string) {
 
 	// Find the specific item in backpack by UUID
 	uuidStr, _ := user.Character.GetMiscData("salvage_item_uuid").(string)
-	usesKit, _ := user.Character.GetMiscData("salvage_uses_kit").(bool)
 	user.Character.SetMiscData("salvage_item_uuid", nil)
-	user.Character.SetMiscData("salvage_uses_kit", nil)
-
-	// Consume salvage kit if used
-	if usesKit {
-		for _, itm := range user.Character.Items {
-			if itm.GetSpec().ComponentTag == "salvage-kit" {
-				user.Character.RemoveItem(itm)
-				break
-			}
-		}
-	}
 
 	found := false
 	var targetItem items.Item
@@ -585,33 +573,9 @@ func resolveCorpseSalvage(user *users.UserRecord, mobIdStr string) {
 	// Pull stashed corpse identity.
 	roundCreatedInt, _ := user.Character.GetMiscData("salvage_corpse_round_created").(int)
 	corpseName, _ := user.Character.GetMiscData("salvage_corpse_name").(string)
-	usesKit, _ := user.Character.GetMiscData("salvage_uses_kit").(bool)
 	roundCreated := uint64(roundCreatedInt)
 	user.Character.SetMiscData("salvage_corpse_round_created", nil)
 	user.Character.SetMiscData("salvage_corpse_name", nil)
-	user.Character.SetMiscData("salvage_uses_kit", nil)
-
-	// Consume salvage kit (corpses always use the kit). Check Items first,
-	// then ComponentItems — the parser's gate accepts kits from either pool,
-	// so the consumer must too.
-	if usesKit {
-		consumed := false
-		for _, itm := range user.Character.Items {
-			if itm.GetSpec().ComponentTag == "salvage-kit" {
-				user.Character.RemoveItem(itm)
-				consumed = true
-				break
-			}
-		}
-		if !consumed {
-			for _, itm := range user.Character.ComponentItems {
-				if itm.GetSpec().ComponentTag == "salvage-kit" {
-					user.Character.RemoveItem(itm)
-					break
-				}
-			}
-		}
-	}
 
 	room := rooms.LoadRoom(user.Character.RoomId)
 	if room == nil {
