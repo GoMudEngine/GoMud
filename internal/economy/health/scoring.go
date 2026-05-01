@@ -193,3 +193,123 @@ func PerForagerScore(instId int, cur Snapshot, history []*Snapshot) (float64, bo
 	}
 	return score, true
 }
+
+// Scores is the bundle returned by Score(). Each per-entity score
+// has a HasScore flag for "insufficient history" cases.
+type Scores struct {
+	OverallScore float64
+
+	PerShop         []ShopScoreRow
+	PerCraftSupport map[string]float64
+	PerCaravan      []EntityScoreRow
+	PerForager      []EntityScoreRow
+
+	// Component aggregate scores, surfaced as the four Bootstrap cards
+	// at the top of the dashboard.
+	MeanShop    float64
+	MeanCaravan float64
+	MeanForager float64
+}
+
+type ShopScoreRow struct {
+	Zone         string
+	MobId        int
+	RoomId       int
+	Name         string
+	CraftSupport string
+	Score        float64
+	HasScore     bool
+}
+
+type EntityScoreRow struct {
+	InstId   int
+	Name     string
+	Score    float64
+	HasScore bool
+}
+
+// Score is the dashboard's main scoring entry point.
+func Score(cur *Snapshot, history []*Snapshot) Scores {
+	out := Scores{}
+	if cur == nil {
+		return out
+	}
+
+	// Per-shop scores.
+	out.PerShop = make([]ShopScoreRow, 0, len(cur.Shops))
+	var shopSum float64
+	var shopCount int
+	for _, s := range cur.Shops {
+		score, ok := PerShopScoreOpt(s)
+		out.PerShop = append(out.PerShop, ShopScoreRow{
+			Zone: s.Zone, MobId: s.MobId, RoomId: s.RoomId, Name: s.Name,
+			CraftSupport: s.CraftSupport, Score: score, HasScore: ok,
+		})
+		if ok {
+			shopSum += score
+			shopCount++
+		}
+	}
+	if shopCount > 0 {
+		out.MeanShop = shopSum / float64(shopCount)
+	}
+
+	out.PerCraftSupport = PerCraftSupportScores(*cur)
+
+	// Per-caravan / per-forager.
+	out.PerCaravan = make([]EntityScoreRow, 0, len(cur.Caravans))
+	var caravanSum float64
+	var caravanCount int
+	for _, c := range cur.Caravans {
+		score, ok := PerCaravanScore(c.InstId, *cur, history)
+		out.PerCaravan = append(out.PerCaravan, EntityScoreRow{
+			InstId: c.InstId, Name: c.Name, Score: score, HasScore: ok,
+		})
+		if ok {
+			caravanSum += score
+			caravanCount++
+		}
+	}
+	if caravanCount > 0 {
+		out.MeanCaravan = caravanSum / float64(caravanCount)
+	}
+
+	out.PerForager = make([]EntityScoreRow, 0, len(cur.Foragers))
+	var foragerSum float64
+	var foragerCount int
+	for _, f := range cur.Foragers {
+		score, ok := PerForagerScore(f.InstId, *cur, history)
+		out.PerForager = append(out.PerForager, EntityScoreRow{
+			InstId: f.InstId, Name: f.Name, Score: score, HasScore: ok,
+		})
+		if ok {
+			foragerSum += score
+			foragerCount++
+		}
+	}
+	if foragerCount > 0 {
+		out.MeanForager = foragerSum / float64(foragerCount)
+	}
+
+	// Overall: weighted mean. Renormalize over components that have
+	// data (avoids dragging the score to 0 when history is short).
+	const wShop, wCaravan, wForager = 0.6, 0.2, 0.2
+	var wSum, weighted float64
+	if shopCount > 0 {
+		weighted += wShop * out.MeanShop
+		wSum += wShop
+	}
+	if caravanCount > 0 {
+		weighted += wCaravan * out.MeanCaravan
+		wSum += wCaravan
+	}
+	if foragerCount > 0 {
+		weighted += wForager * out.MeanForager
+		wSum += wForager
+	}
+	if wSum > 0 {
+		out.OverallScore = weighted / wSum
+	}
+
+	return out
+}

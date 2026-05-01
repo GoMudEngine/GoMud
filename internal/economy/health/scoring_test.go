@@ -145,3 +145,54 @@ func TestScore_Caravan_StuckPenalty(t *testing.T) {
 		t.Errorf("got %v, want 0 (stuck-penalty clamp)", score)
 	}
 }
+
+func TestScore_OverallWeightsShopsHeaviest(t *testing.T) {
+	cur := health.Snapshot{
+		Shops: []health.ShopSnapshot{
+			{CraftSupport: "blacksmithing", Stock: []health.StockSnapshot{{RestockQty: 1, Current: 5, Max: 10}}}, // 50
+		},
+		Caravans: []health.CaravanSnapshot{{InstId: 1, State: "thornwall_dwell"}},
+		Foragers: []health.ForagerSnapshot{{InstId: 7, State: "resting"}},
+	}
+
+	// Build 24 history entries that yield ~24 caravan cycles and ~24
+	// forager cycles (each entry alternates state). With the default
+	// expected cadence, both score = 100.
+	hist := make([]*health.Snapshot, 0, 24)
+	caravanThornwall := &health.Snapshot{Caravans: []health.CaravanSnapshot{{InstId: 1, State: "thornwall_dwell"}}, Foragers: []health.ForagerSnapshot{{InstId: 7, State: "resting"}}}
+	caravanTransit := &health.Snapshot{Caravans: []health.CaravanSnapshot{{InstId: 1, State: "outbound_transit"}}, Foragers: []health.ForagerSnapshot{{InstId: 7, State: "foraging"}}}
+	for i := 0; i < 24; i++ {
+		if i%2 == 0 {
+			hist = append(hist, caravanThornwall)
+		} else {
+			hist = append(hist, caravanTransit)
+		}
+	}
+
+	scores := health.Score(&cur, hist)
+
+	if scores.PerShop[0].Score != 50 {
+		t.Errorf("PerShop[0]: got %.2f, want 50", scores.PerShop[0].Score)
+	}
+	// With shop=50, caravan~100, forager~100 and weights 0.6/0.2/0.2:
+	// overall = (0.6*50 + 0.2*100 + 0.2*100) / 1.0 = 70.
+	// Allow ±15 for variation in cycle counting against the chosen pattern.
+	if scores.OverallScore < 55 || scores.OverallScore > 85 {
+		t.Errorf("OverallScore: got %.2f, want in [55, 85] (shops weighted heaviest)", scores.OverallScore)
+	}
+	// Shops weighted heaviest sanity: the weighted overall should be pulled
+	// toward MeanShop vs the unweighted mean. Concretely: overall must be
+	// closer to MeanShop than the unweighted mean is to MeanShop.
+	unweightedMean := (scores.MeanShop + scores.MeanCaravan + scores.MeanForager) / 3
+	if abs(scores.OverallScore-scores.MeanShop) >= abs(unweightedMean-scores.MeanShop) {
+		t.Errorf("Overall %.2f not pulled toward MeanShop %.2f vs unweighted mean %.2f — shops aren't weighted heaviest",
+			scores.OverallScore, scores.MeanShop, unweightedMean)
+	}
+}
+
+func abs(x float64) float64 {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
