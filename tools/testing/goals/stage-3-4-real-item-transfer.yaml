@@ -1,0 +1,36 @@
+description: Smoke-test Stage 3.4 real item transfer — wagon, draft horses, bidirectional vendor flow, Chrysalis Core re-source
+goals:
+  - Confirm caravan party at Thornwall depot (room 465 Market Square Center) has 6 mobs at startup. `look` should show: Ketil, Marta, Lars, "a sturdy oak-and-iron supply wagon", Hob (dappled-grey draft horse), Bran (bay draft horse). Player and pre-existing vendors (food vendor, etc.) may also be present.
+  - `look wagon` (or `look supply wagon`) shows the wagon's full description (oak-and-iron freight wagon, tarred canvas roof, ash spokes, brass lantern). Inventory listing should be empty initially OR show whatever the caravan has currently picked up. Confirm the description renders without ANSI bleed.
+  - `look hob` shows Hob's description (dappled-grey draft horse, brass bell on bridle). `look bran` shows Bran's description (bay draft horse, harness oiled, ears flicking). Confirm both NPCs are mob class (not creatures).
+  - **Player-attack rebuff:** `attack wagon`, `attack hob`, `attack bran` — all three should rebuff with the standard "You can't attack X" message (player_attack_immune flag). NO combat should start; no aggro should generate.
+  - Find the caravan in transit (it'll head west toward Stillwater within a couple of minutes given the temp-shortened CaravanDepotDwellRounds=60). Watch for the caravan party walking together as a group — Ketil leading, the wagon and horses moving with them.
+  - Catch the caravan at Stillwater route — `look wagon` mid-route should show items in cargo (Fernway items if Kessa met them at 4038, or Thornwall items they picked up before departing). Verify cargo display works.
+  - **Caravan vendor visit (the bidirectional flow):** When the caravan stops at a Stillwater vendor (e.g., Smith Brindle in room 4106), watch for one of these flavor messages — *"Marta hands a small purse across the counter; the caravan unloads and reloads in trade."* OR *"The caravan crew unloads supplies for the local merchants."* OR *"The caravan crew loads up cargo from the local merchants for the road."* Any of those is PASS.
+  - Run `inventory smith brindle` (or appropriate command to inspect a vendor's stock — try `look stock`, `appraise`, or `list`) before and after a caravan visit. Verify some Stillwater-bucket items (lake-iron nodule, marsh willow bark, etc.) decreased and some Thornwall-bucket items (steel ingot, copper wire, etc.) increased.
+  - **Stock cap test:** `list` or `inventory` from Smith Brindle. With rarity_tier=50 items (iron ingot) the MaxStock should be ~50. With tier 30 items (lake-iron nodule) it should be ~30. With tier 20 (chrysalis goods) it should be ~20. Verify a single high-tier item (e.g., chrysalis core at 20) doesn't have a cap of the old hardcoded 20.
+  - **Forager satchel delivery (Tova):** Catch Tova mid-delivery in Stillwater — she should walk vendor to vendor with messages like *"Tova hands a lake mint to Apothecary Ilsa."* or *"Tova hands a freshwater clam to Innkeeper Sigrid."* (similar pattern). Verify these are real items moving, not abstract restock.
+  - **Wagon brawl (the death + bandit-loot test):** This requires getting the caravan into combat at the bandit camp (room 4052 in north_road). Wait for outbound transit, follow the caravan, observe the brawl. If the caravan loses, watch for the wagon's death — wagon corpse should render as **"splintered wagon wreckage"** (NOT "a sturdy oak-and-iron supply wagon corpse"). Bandits in the room should have wagon items in their inventories. Kill the bandits and confirm cargo recoverable.
+  - **Wagon corpse description:** `look wreckage` (or the appropriate noun from the corpse name) should show the custom corpse description (shattered timbers, twisted iron bands, half-emptied sacks). Confirm ANSI rendering is clean.
+  - **Chrysalis Core drop migration:** Travel to Sanctum Basin tutorial. Find an Aberrant Chrysalis (mob 69). Kill it 5+ times (or use admin commands to spawn/kill rapidly). Confirm Chrysalis Core (40010) NEVER drops. Then travel to Ironwind Steppe and find a stone beetle queen (228). Kill it 5+ times. Confirm Chrysalis Core drops at roughly 10% rate (~1 per 10 kills, statistical so don't expect deterministic).
+  - **Forager rest extension (saturated economy):** Wait long enough that vendors fill up. Eventually the foragers should "stay home" instead of cycling back out. You can spot this by visiting Stillwater Temple (4123) — Tova should be there idle with a satchel of items. The HP/SP regen rate at the Temple is fast (sanctuary mutator, 5x), so check this is also still working from Stage 3.1.
+  - Bonus: visit the Forager's Camp (room 4197 in The Fernway South — west exit from Tangled Bracken 4170). Confirm Kessa is there or moving through her territory. Confirm sanctuary regen is active.
+notes:
+  - Server has been freshly booted with the Stage 3.4 changes.
+  - **Speed-up flag:** `CaravanDepotDwellRounds: 60` and `ForagerWaitTimeoutRounds: 60` are TEMPORARILY reduced (production values are 720 and 150) so the full caravan cycle completes in ~10 min instead of ~108 min. Don't be confused if the caravan moves faster than the spec describes.
+  - Use the `set charset` ASCII setting per the test-mud SOP.
+  - The user is playtesting in parallel — be aware you might see them moving around. Don't follow them; stay focused on the goals.
+  - **Travel paths (from Thornwall starting area):**
+    - West gate → marches_spur_road → north_road → Stillwater (via room 4038 the meeting point + 4109 Stillwater depot)
+    - Sanctum Basin tutorial: south or down depending on starting room. Try `pathto 119` (a tutorial-zone room with mobs) if pathto works.
+    - Ironwind Steppe: east from Thornwall east gate. Stone beetle queen (228) and windscour wyrm (229) are deeper in the cave system — may take exploration to find.
+  - **Mob IDs to recognize:**
+    - 374 caravan wagon
+    - 375 Hob (draft horse)
+    - 376 Bran (draft horse)
+    - 357 Ketil, 358 Marta, 359 Lars (caravan crew)
+    - 371 Tova, 372 Halix, 373 Kessa (foragers)
+    - 69 Aberrant Chrysalis (Sanctum Basin)
+    - 228 stone beetle queen, 229 windscour wyrm (Ironwind Steppe)
+  - **Don'ts:** Don't attack the caravan crew, wagon, horses, or foragers — `player_attack_immune` is the design. Don't follow Kessa to her camp (long path); just verify her presence at the meeting point or in territory.
+  - Report each numbered goal as PASS / FAIL / BLOCKED with details.

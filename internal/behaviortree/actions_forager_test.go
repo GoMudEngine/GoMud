@@ -53,7 +53,7 @@ func TestForagerStep_Registered(t *testing.T) {
 func TestForagerStep_DefaultsToResting(t *testing.T) {
 	fn := LookupAction("forager_step")
 
-	// Mob 371 = Vella (Marsh forager). Sanctuary room = 4123.
+	// Mob 371 = Tova (Marsh forager). Sanctuary room = 4123.
 	mob := buildForagerMob(t, 8200, 371, 4123, 100, 100)
 	_ = mob
 
@@ -195,7 +195,7 @@ func TestForagerStep_RestingNotFullHPStaysResting(t *testing.T) {
 func TestForagerStep_TravelingArrivesInTerritory(t *testing.T) {
 	fn := LookupAction("forager_step")
 
-	// Territory room 4177 is the first room in Vella's TerritoryRooms.
+	// Territory room 4177 is the first room in Tova's TerritoryRooms.
 	mob := buildForagerMob(t, 8205, 371, 4177, 100, 100)
 	_ = mob
 

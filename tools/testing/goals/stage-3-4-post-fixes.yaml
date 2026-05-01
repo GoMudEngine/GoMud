@@ -1,0 +1,29 @@
+description: Stage 3.4 post-fix verification — Halix relocated to 3040 + caravan auto-reset + TRANSFER debug logs shipped today (2026-04-30)
+goals:
+  - Capture **baseline inventory** for 4 representative vendors. Visit each and run `list`. Copy verbatim into a baseline section of the report. Vendors:
+      - Smith Brindle (room 4106, Stillwater)
+      - Apothecary Ilsa (room 4125, Stillwater)
+      - Blacksmith Kerra (room 470, Thornwall)
+      - Apothecary Voss (room 471, Thornwall)
+  - **Verify Halix relocation (PRIORITY)**. The Halix anchor was moved from Thornwall Temple Interior (468) to Sheltered Ridge Alcove (room 3040, Ironwind Steppe), where Hermit Kael also lives. From Thornwall Gate Ward (460), travel west into Thornwall Outskirts, then path to room 3040. Use `pathto 3040` if available, otherwise navigate manually. Run `look` in 3040 and confirm both Halix (mob 372) AND Hermit Kael (mob 240) are present in the same room. Report exactly who is in 3040.
+  - **Verify Halix is NOT in 468**. Travel to room 468 (Thornwall Temple Interior). Confirm only Temple Priest Olen is there — Halix should be ABSENT. Report who is in 468.
+  - **Caravan recovery observation**. The caravan may be in a stuck state from before today's fixes; a stuck-watchdog now auto-resets after ~300 rounds (20 min) on the current test config. Travel to Thornwall depot (room 465). If the 6-mob caravan party (Ketil 357, Marta 358, Lars 359, wagon 374, Hob 375, Bran 376) is present, follow Ketil and observe transit. If absent, camp at Road Fork (room 4038) for up to 25 minutes — the caravan should pass through there as it cycles. Report whether the caravan moved during the observation window.
+  - **At each Stillwater vendor stop**, capture flavor message variants ("unloads supplies for the local merchants" / "loads up cargo from the local merchants for the road" / "hands a small purse across the counter; the caravan unloads and reloads in trade").
+  - **Mid-cycle inventory snapshot**. After observing at least one caravan vendor stop, revisit the 4 baseline vendors and capture stock again. Diff vs baseline — note any items whose Current count changed.
+  - **Forager observation: Tova (Marsh)**. Go to Stillwater Temple Interior (room 4123) and look for Tova (mob 371). If absent, travel to Stillwater Marsh territory (rooms 4177-4196). Watch for forage flavor or delivery messages.
+  - **Forager observation: Kessa (Fernway)**. Forager's Camp is at room 4197 (west of Heron Pool 4165). Confirm Kessa (mob 373) is there or in territory rooms 4157-4176. If she's at Road Fork (4038), watch for caravan handoff message ("A wiry forager hands a satchel up to the caravan; the wagon takes the load and rolls on.").
+  - **Forager observation: Halix (Steppe) — extended**. From room 3040, observe what state Halix is in. Wait 2-3 minutes and note whether he wanders (territory rooms 3000-3029). Watch for forage flavor messages or delivery messages.
+  - **Final inventory snapshot**. After ~40-50 min total observation, capture FINAL inventory of all 4 baseline vendors. Compare to baseline + mid-cycle snapshot. Note any growth (forager-driven or caravan-driven).
+notes:
+  - Server is freshly restarted with all post-fix code. Caravan timing is sped up (CaravanDepotDwellRounds=60, ForagerWaitTimeoutRounds=60).
+  - **Time budget: up to 60 minutes**. The previous tester ran 60 min and the caravan was stuck the whole time. With today's auto-watchdog, expect the caravan to be moving by minute 25 even if it started stuck.
+  - **Follow strategy**: if you find the caravan, `follow ketil` — auto-walks with it. The follow timer was removed last week so you won't get auto-dropped. If you can't find the caravan within 25 min, just camp at the Road Fork or a depot and report.
+  - Use `set charset` ASCII per the test-mud SOP.
+  - **Mob IDs to recognize:**
+    - 240 Hermit Kael (sharing camp 3040 with Halix now)
+    - 357 Ketil, 358 Marta, 359 Lars (caravan crew)
+    - 374 caravan wagon, 375 Hob, 376 Bran (caravan animals/cargo)
+    - 371 Tova, 372 Halix, 373 Kessa (foragers)
+  - **STRICT BOUNDARIES — NEVER edit code, data, config, or YAML files.** You are an observer. If you see a bug, file it in the report under BUG / CONCERN / OBSERVATION sections. Even "obvious" fixes circumvent the review pipeline. Do NOT run any go commands (build, test, run). Do NOT touch any file under `internal/`, `_datafiles/`, `tools/`, or `cmd/`. Your ONLY writes are to the report file under `tools/testing/reports/`.
+  - **Don'ts:** Don't attack any caravan/forager mob (player_attack_immune). Don't run sleeps over 2 seconds. Don't file bugs for ANSI/display artifacts. Don't start any server processes (`go run`).
+  - **Inventory capture strategy**: when you `list` at a vendor, copy the full output verbatim (item names + quantities). Don't summarize — verbatim.

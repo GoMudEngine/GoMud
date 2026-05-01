@@ -1,0 +1,41 @@
+description: Stage 3.4 round-2 — multi-cycle inventory diff to verify forager + caravan item flow
+goals:
+  - Capture **baseline inventory** for 4 representative vendors. Visit each, run `list` (or `inventory <vendor>`) — copy the FULL output verbatim into a baseline section of the report. Vendors:
+      • Smith Brindle (room 4106, Stillwater) — stocks lake-iron, steel ingot, etc.
+      • Apothecary Ilsa (room 4125, Stillwater) — stocks lake mint, marsh willow, herbs
+      • Blacksmith Kerra (room 470, Thornwall) — Thornwall mirror of Brindle
+      • Apothecary Voss (room 471, Thornwall) — Thornwall mirror of Ilsa
+    Note timestamp + each vendor's complete stock list (item name + quantity).
+  - **Cycle 1 — observe outbound**. Travel to Thornwall depot (room 465) and watch for the 6-mob caravan party. When it departs, FOLLOW IT — `follow ketil` so you move with the caravan automatically. The follow timer was just removed (2026-04-30) so you should not get auto-dropped. Track every room transition + every flavor message. Pay special attention at room 4038 (Road Fork) — if Kessa is there, watch for the yellow handoff line (*"A wiry forager hands a satchel up to the caravan; the wagon takes the load and rolls on."*).
+  - **At each Stillwater vendor stop**, capture the flavor message variant emitted by the caravan. The 3 variants are *"unloads supplies for the local merchants"*, *"loads up cargo from the local merchants for the road"*, OR *"hands a small purse across the counter; ... in trade"*. Different stops may emit different variants depending on the wagon's load state vs vendor stock. Record which variant fired at each vendor.
+  - **Mid-cycle inventory snapshot 1**. After the caravan finishes its Stillwater route and starts dwelling at the Stillwater depot (room 4109), revisit the 4 baseline vendors. Capture their stock again. Diff vs baseline:
+      • Stillwater vendors: did Thornwall-bucket items (steel, copper wire, binding paste) increase? Did Stillwater-bucket items (lake-iron, lake mint, etc.) decrease?
+      • Thornwall vendors: too early to expect change (caravan hasn't returned yet)
+  - **Cycle 2 — observe inbound**. Once the caravan starts the inbound transit (heading back to Thornwall), follow it. Confirm wagon is now carrying Stillwater-bucket items (look at the wagon: `look wagon` should show items like lake-iron, lake mint, etc.).
+  - **At each Thornwall vendor stop**, capture flavor message variant.
+  - **Mid-cycle inventory snapshot 2**. After the caravan finishes its Thornwall route and dwells at Thornwall depot (room 465), revisit ALL 4 vendors. Diff vs snapshot 1:
+      • Thornwall vendors: did Stillwater-bucket items appear / increase? Did Thornwall-bucket items decrease?
+      • Stillwater vendors: should see no caravan-driven change since the caravan only delivers TO each town once per direction
+  - **Forager observation: Tova (Marsh)**. Go to Stillwater Temple Interior (room 4123) and look for Tova. Note her current state. Travel to Stillwater Marsh (rooms 4177-4196 area) to find her if she's not at sanctuary. Watch for forage flavor messages or vendor delivery messages (*"Tova hands a lake mint to Apothecary Ilsa"*).
+  - **Forager observation: Halix (Steppe)**. Go to Thornwall Temple Interior (room 468) and look for Halix. Note state. Then travel to Ironwind Steppe (rooms 3000+) to find him. Watch for delivery messages.
+  - **Forager observation: Kessa (Fernway)**. Forager's Camp is now at room 4197 (one west of Heron Pool 4165, which has a new west exit). Verify Kessa's location. If at camp/territory, fine. If at 4038 (Road Fork), wait briefly and watch for caravan handoff message.
+  - **Final inventory snapshot**. After ~60 min of observation (3+ full caravan cycles), capture FINAL inventory of all 4 baseline vendors. Compare to baseline + snapshots 1 & 2. Look for:
+      • **Forager-driven change**: Stillwater vendors gain Stillwater-bucket items over time (Tova delivering). Thornwall vendors gain base+overlap-bucket items (Halix delivering).
+      • **Caravan-driven change**: Stillwater vendors gain Thornwall-bucket items (caravan brought from Thornwall). Thornwall vendors gain Stillwater-bucket items (caravan brought back).
+      • **Both**: any vendor with a Stillwater-bucket slot should see growth from BOTH sources eventually.
+  - **Stock cap verification**: in any final snapshot, confirm no vendor has Current > MaxStock (the cap should be enforced). Confirm visible MaxStock values match the rarity-tier system: tier-50 items (iron ingot, copper wire, binding paste) = 50, tier-40 items (steel ingot, hive fragment, etc.) = 40, tier-30 items (lake-iron, lake mint) = 30, tier-20 items (Chrysalis Core, Stillwater pearl) = 20.
+  - **Bonus — wagon brawl observation**: if you witness the caravan engage the bandits at room 4052, watch carefully. With the new partyHostilesNearby check (just shipped), the caravan should NOT abandon Lars or any other follower mid-fight. Verify all 6 mobs stay in the brawl room until combat resolves OR until the caravan formally wins/loses.
+  - **Bonus — Chrysalis Core migration verification**: kill Aberrant Chrysalis (mob 69) in Sanctum Basin tutorial 5+ times. Confirm 0 Chrysalis Core drops. If you have time, find stone beetle queen (228) in Ironwind Steppe and kill 5+ times — confirm ~10% drop rate of Chrysalis Core.
+notes:
+  - Server is freshly restarted with all Stage 3.4 fixes applied. Caravan timing is sped up (CaravanDepotDwellRounds=60, ForagerWaitTimeoutRounds=60) so cycle is ~10 min instead of ~108 min. You should see 5+ full cycles in 90 min.
+  - **Time budget: up to 90 minutes**. Use it. Inventory deltas need multiple cycles to manifest because vendors start at Current=RestockQty (e.g., 5 lake-iron) and the caravan pickup floor is MaxStock/2 (15). Foragers need ~5 deliveries to push vendors above the floor before caravan pickups can happen.
+  - **Follow strategy is critical**: the previous tester sat at 4038 and missed the handoff (24-sec window vs 45-sec polling cadence). This time, FOLLOW the caravan from depot to depot. Use `follow ketil` — auto-walks with the caravan. The follow timer was removed today so you won't get auto-dropped.
+  - Use the `set charset` ASCII setting per the test-mud SOP.
+  - The user is playtesting in parallel — be aware you might see them. Don't follow them; stay with the caravan.
+  - **Mob IDs to recognize:**
+    - 374 caravan wagon, 375 Hob, 376 Bran (caravan animals/cargo)
+    - 357 Ketil, 358 Marta, 359 Lars (caravan crew)
+    - 371 Tova, 372 Halix, 373 Kessa (foragers)
+    - 69 Aberrant Chrysalis, 228 stone beetle queen, 229 windscour wyrm (Chrysalis Core sources)
+  - **Don'ts:** Don't attack any caravan/forager mob (player_attack_immune). Don't grief the user. Don't run sleeps over 2 seconds. Don't file bugs for ANSI/display artifacts. Don't start any server processes (`go run`) — the user's server is the only one running.
+  - **Inventory output capture strategy**: when you `list` or `inventory` at a vendor, copy the full output verbatim (item names + quantities) into your report. Quantities are what we're diffing. Don't summarize — verbatim.

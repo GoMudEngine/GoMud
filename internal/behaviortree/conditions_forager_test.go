@@ -115,7 +115,7 @@ func TestCondMobCanSafelyEngage_NoAggroFails(t *testing.T) {
 func TestCondMobCanSafelyEngage_NonPreyTargetFails(t *testing.T) {
 	// Create the forager (mob 371) with aggro on a non-prey mob.
 	foragerMob := buildForagerCondMob(t, 8505, 371, 100, 100)
-	// Target mob ID 999 is not on Vella's prey whitelist.
+	// Target mob ID 999 is not on Tova's prey whitelist.
 	targetMob := buildForagerCondMob(t, 8506, 999, 100, 100)
 	_ = targetMob
 

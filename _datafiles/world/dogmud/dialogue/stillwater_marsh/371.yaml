@@ -8,7 +8,7 @@ patterns:
     responses:
       - "Aye -- mind the soft ground here, the reed-mat hides a
         sinkhole or two. What can I do for you?"
-      - "Vella. Good of you to say so."
+      - "Tova. Good of you to say so."
 
   - keywords: ["forage", "gather", "satchel", "work", "doing"]
     responses:
@@ -49,7 +49,7 @@ patterns:
 tree:
   root:
     text: "Aye. Mind the soft ground here. Was there something?"
-    hints: "You could ask Vella about her work, the dangers she
+    hints: "You could ask Tova about her work, the dangers she
       avoids, or where she stays."
 
 memory:
