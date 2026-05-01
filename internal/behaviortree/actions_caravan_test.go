@@ -95,12 +95,12 @@ func TestActCaravanStep_RouteAdvancesIndexAndExitsAfterAllStops(t *testing.T) {
 	lastIdx := len(caravan.OutboundRoute.VendorStopIds) - 1
 	lastRoom := caravan.OutboundRoute.VendorStopIds[lastIdx]
 
-	// Seed the room so findWagonInRoom can call rooms.LoadRoom.
+	// Seed the room so caravan.FindWagonInRoom can call rooms.LoadRoom.
 	cleanRoom := seedTestRoom(t, lastRoom, "test_zone")
 	defer cleanRoom()
 
 	// Register the wagon mob (template 374) in the room so
-	// findWagonInRoom returns a real mob rather than nil.
+	// caravan.FindWagonInRoom returns a real mob rather than nil.
 	cleanWagon := seedTestMob(t, 374, 7199, lastRoom, "caravan wagon")
 	defer cleanWagon()
 	if r := rooms.LoadRoom(lastRoom); r != nil {
