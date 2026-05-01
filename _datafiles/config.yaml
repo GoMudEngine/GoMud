@@ -1045,8 +1045,8 @@ Network:
   # - MaxIdleSeconds -
   #   How long players can go without any input, before being kicked.
   #   A value of 0 (zero) means never kick inactive players.
-  #   1800 seconds = 30 minutes
-  MaxIdleSeconds: 1800
+  #   18000 seconds = 5 hours (was 1800/30min — bumped 10x for player QoL)
+  MaxIdleSeconds: 18000
   # - TimeoutMods -
   #   Whether Admin/Mod users get timed out when reaching MaxIdleSeconds
   #   If set to false, Admins & Mods never get force disconnected.
