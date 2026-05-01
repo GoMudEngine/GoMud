@@ -134,3 +134,68 @@ func TestCaptureSnapshot_Caravans(t *testing.T) {
 		t.Error("cargo_by_bucket: got nil map, want initialized map")
 	}
 }
+
+func TestCaptureSnapshot_Foragers(t *testing.T) {
+	const roomId = 9100
+
+	r := &rooms.Room{
+		RoomId: roomId,
+		Zone:   "TestZone",
+		Title:  "Test Room",
+		Exits:  map[string]exit.RoomExit{},
+	}
+	cleanRoom := rooms.SeedRoomsForTest(
+		map[int]*rooms.Room{roomId: r},
+		map[string]*rooms.ZoneConfig{},
+	)
+	defer cleanRoom()
+
+	// Marsh forager (Tova, mob 371). forager.ProfileFor(371) returns
+	// KindMarsh, which territoryFor() translates to "stillwater_marsh".
+	const marshForagerMobId = 371
+	const foragerInstanceId = 91371
+	forager := &mobs.Mob{
+		MobId:      mobs.MobId(marshForagerMobId),
+		InstanceId: foragerInstanceId,
+		HomeRoomId: roomId,
+		Zone:       "TestZone",
+	}
+	forager.Character.Name = "TestTova"
+	forager.Character.Buffs = buffs.New()
+	forager.Character.RoomId = roomId
+	characters.ApplyMobOverrides(&forager.Character, 0, 0, 60) // 60lb capacity
+	forager.Character.Items = append(forager.Character.Items, items.Item{ItemId: 40051}) // skitter-shrimp shell, "stillwater"
+
+	bs := behaviortree.NewBehaviorState()
+	bs.Set("forager_state", "foraging")
+	bs.Set("forager_state_started_round", strconv.FormatUint(12200, 10))
+	forager.BTreeState = bs
+
+	mobs.SetInstanceForTest(forager.InstanceId, forager)
+	defer mobs.SetInstanceForTest(forager.InstanceId, nil)
+	r.AddMob(forager.InstanceId)
+
+	snap := health.CaptureSnapshot()
+
+	if len(snap.Foragers) != 1 {
+		t.Fatalf("Foragers: got %d, want 1", len(snap.Foragers))
+	}
+	f := snap.Foragers[0]
+	if f.State != "foraging" {
+		t.Errorf("state: got %q, want foraging", f.State)
+	}
+	if f.Territory != "stillwater_marsh" {
+		t.Errorf("territory: got %q, want stillwater_marsh (derived from KindMarsh)", f.Territory)
+	}
+	if f.StateEnteredRound != 12200 {
+		t.Errorf("state_entered_round: got %d, want 12200", f.StateEnteredRound)
+	}
+	if f.CargoCapacity != 60 {
+		t.Errorf("cargo_capacity: got %d, want 60 (override set in fixture)", f.CargoCapacity)
+	}
+	// Item specs aren't loaded in test, so per-item weights resolve to
+	// 0 — only verify structural wiring (CargoByBucket non-nil).
+	if f.CargoByBucket == nil {
+		t.Error("cargo_by_bucket: got nil map, want initialized map")
+	}
+}

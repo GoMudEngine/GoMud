@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/economy"
+	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -115,8 +116,74 @@ func captureCaravans() []CaravanSnapshot {
 	return out
 }
 
-// captureForagers is implemented in Task 7.
-func captureForagers() []ForagerSnapshot { return nil }
+// captureForagers walks every live mob instance and emits one
+// ForagerSnapshot per mob whose BTreeState has a non-empty
+// "forager_state" key. Foragers have no separate wagon — cargo lives
+// on the forager's own Character.Items.
+func captureForagers() []ForagerSnapshot {
+	out := []ForagerSnapshot{}
+	for _, instId := range mobs.GetAllMobInstanceIds() {
+		m := mobs.GetInstance(instId)
+		if m == nil {
+			continue
+		}
+		bs, ok := m.BTreeState.(*behaviortree.BehaviorState)
+		if !ok || bs == nil {
+			continue
+		}
+		stateName := bs.GetString("forager_state")
+		if stateName == "" {
+			continue
+		}
+
+		startedRound, _ := strconv.ParseUint(bs.GetString("forager_state_started_round"), 10, 64)
+
+		fs := ForagerSnapshot{
+			InstId:            instId,
+			Name:              m.Character.Name,
+			Territory:         territoryFor(int(m.MobId)),
+			State:             stateName,
+			StateEnteredRound: startedRound,
+			RoomId:            m.Character.RoomId,
+			CargoByBucket:     map[string]int{},
+			CargoWeight:       int(m.Character.GetCarriedWeight()),
+			CargoCapacity:     int(m.Character.CarryCapacity()),
+		}
+		// Per-bucket: sum item weights by bucket. Skip items with no
+		// bucket or zero weight. Same convention as captureCaravans.
+		for _, it := range m.Character.Items {
+			bucket := economy.BucketFor(it.ItemId)
+			if bucket == "" {
+				continue
+			}
+			w := int(it.GetSpec().GetWeight())
+			if w > 0 {
+				fs.CargoByBucket[bucket] += w
+			}
+		}
+		out = append(out, fs)
+	}
+	return out
+}
+
+// territoryFor returns the stable string label for a forager's
+// territory, derived from forager.ProfileFor(mobId).Kind. Returns ""
+// for non-foragers or unrecognized profiles.
+func territoryFor(mobId int) string {
+	p := forager.ProfileFor(mobId)
+	if p == nil {
+		return ""
+	}
+	switch p.Kind {
+	case forager.KindMarsh:
+		return "stillwater_marsh"
+	case forager.KindSteppe:
+		return "thornwall_steppe"
+	case forager.KindFernway:
+		return "fernway"
+	}
+	return ""
+}
 
 // lookupShopMobName resolves a shop's display name by walking live
 // mob instances for one matching mobId+roomId. Returns "" if the mob
