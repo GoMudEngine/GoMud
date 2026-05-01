@@ -57,6 +57,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/shops"
+	"github.com/GoMudEngine/GoMud/internal/economy/health"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/suggestions"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -347,6 +348,42 @@ func main() {
 
 	go worldManager.InputWorker(workerShutdownChan, &wg)
 	go worldManager.MainWorker(workerShutdownChan, &wg)
+
+	// Hourly economy-health snapshot capture. Runs while the server is
+	// up; uses workerShutdownChan to halt cleanly. Pruning runs once
+	// per day.
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				mudlog.Error("PANIC", "where", "economy_snapshot_ticker", "error", r)
+			}
+		}()
+		b := configs.GetBalanceConfig()
+		hours := int(b.EconomySnapshotIntervalHours)
+		if hours <= 0 {
+			hours = 1
+		}
+		ticker := time.NewTicker(time.Duration(hours) * time.Hour)
+		defer ticker.Stop()
+		pruneTicker := time.NewTicker(24 * time.Hour)
+		defer pruneTicker.Stop()
+		for {
+			select {
+			case <-workerShutdownChan:
+				return
+			case <-ticker.C:
+				snap := health.CaptureSnapshot()
+				if err := health.WriteSnapshot(snap); err != nil {
+					mudlog.Error("economy snapshot write", "error", err)
+				}
+			case <-pruneTicker.C:
+				retention := int(configs.GetBalanceConfig().EconomySnapshotRetentionDays)
+				if _, err := health.PruneSnapshots(retention); err != nil {
+					mudlog.Error("economy snapshot prune", "error", err)
+				}
+			}
+		}
+	}()
 
 	mudlog.Info("Server Ready", "Time Taken", time.Since(serverStartTime))
 
