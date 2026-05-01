@@ -119,9 +119,16 @@ func countStateReturns(history []*Snapshot, target string, lookup func(*Snapshot
 // PerCaravanScore returns (score, true) if there's enough history to
 // compute. Insufficient history (fewer than minHistory entries) returns
 // (_, false). Score = cycleScore - stuckPenalty, clamped to [0, 100].
+//
+// The hardcoded constants below (minHistoryForCycles, stuckThresholdRounds,
+// stuckPenalty) and the per-second cycle cadences (24h for caravans, 8h
+// for foragers) are MVP shortcuts — the design spec calls for these to
+// be config-driven, but the underlying per-state expected durations
+// aren't yet a single tunable knob. See plan Task 10 for context.
+// Tracked in MEMORY.md under "Economy dashboard followups".
 const (
 	minHistoryForCycles  = 24   // ~24 hourly samples = 1 day baseline
-	stuckThresholdRounds = 5000 // any state held longer than this triggers the penalty
+	stuckThresholdRounds = 5000 // any state held longer than this triggers the penalty (MVP fixed)
 	stuckPenalty         = 30   // points deducted when stuck
 )
 
@@ -130,7 +137,7 @@ func PerCaravanScore(instId int, cur Snapshot, history []*Snapshot) (float64, bo
 		return 0, false
 	}
 	cycles := CountCaravanCycles(instId, history)
-	expectedPerWindow := float64(len(history)) / 24.0 // 1 cycle/day default
+	expectedPerWindow := float64(len(history)) / 24.0 // MVP: 1 cycle/day; wire to config later
 	if expectedPerWindow <= 0 {
 		expectedPerWindow = 1
 	}
@@ -163,7 +170,7 @@ func PerForagerScore(instId int, cur Snapshot, history []*Snapshot) (float64, bo
 		return 0, false
 	}
 	cycles := CountForagerCycles(instId, history)
-	expectedPerWindow := float64(len(history)) / 8.0 // ~3 cycles/day
+	expectedPerWindow := float64(len(history)) / 8.0 // MVP: ~3 cycles/day; wire to config later
 	if expectedPerWindow <= 0 {
 		expectedPerWindow = 1
 	}

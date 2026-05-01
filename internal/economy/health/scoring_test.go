@@ -121,3 +121,27 @@ func TestScore_Caravan_InsufficientHistory(t *testing.T) {
 		t.Errorf("got (%v, true), want (_, false) for no history", score)
 	}
 }
+
+func TestScore_Caravan_StuckPenalty(t *testing.T) {
+	// Pin the stuck-penalty branch: a caravan whose state has been held
+	// longer than stuckThresholdRounds (5000) loses 30 points. With 0
+	// completed cycles in history, score is already 0; the penalty just
+	// confirms the clamp doesn't push it negative.
+	hist := make([]*health.Snapshot, 24) // satisfy minHistoryForCycles
+	for i := range hist {
+		hist[i] = &health.Snapshot{}
+	}
+	cur := health.Snapshot{
+		Round: 10000,
+		Caravans: []health.CaravanSnapshot{
+			{InstId: 1, State: "outbound_transit", StateEnteredRound: 1000},
+		},
+	}
+	score, ok := health.PerCaravanScore(1, cur, hist)
+	if !ok {
+		t.Fatal("got (_, false), want (_, true) — sufficient history")
+	}
+	if score != 0 {
+		t.Errorf("got %v, want 0 (stuck-penalty clamp)", score)
+	}
+}
