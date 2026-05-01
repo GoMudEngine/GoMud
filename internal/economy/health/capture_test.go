@@ -40,4 +40,7 @@ func TestCaptureSnapshot_Shops(t *testing.T) {
 	if got.Stock[0].Bucket != "base" {
 		t.Errorf("first stock bucket: got %q, want base", got.Stock[0].Bucket)
 	}
+	if got.Stock[1].Bucket != "stillwater" {
+		t.Errorf("second stock bucket: got %q, want stillwater", got.Stock[1].Bucket)
+	}
 }
