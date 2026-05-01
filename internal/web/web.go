@@ -343,6 +343,17 @@ func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn)) {
 		doBasicAuth(progressionAPI),
 	))
 
+	// Economy Health Admin
+	http.HandleFunc("GET /admin/economy/", RunWithMUDLocked(
+		doBasicAuth(economyIndex),
+	))
+	http.HandleFunc("GET /admin/api/economy/", RunWithMUDLocked(
+		doBasicAuth(economyAPI),
+	))
+	http.HandleFunc("POST /admin/api/economy/snapshot", RunWithMUDLocked(
+		doBasicAuth(economySnapshotAPI),
+	))
+
 	// Room Admin
 	http.HandleFunc("GET /admin/rooms/", RunWithMUDLocked(
 		doBasicAuth(roomsIndex),
