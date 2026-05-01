@@ -1143,7 +1143,21 @@ func loadAllDataFiles(isReload bool) {
 		adapted = append(adapted, m)
 	}
 	if err := shops.ValidateShopMobTags(adapted); err != nil {
-		panic(fmt.Sprintf("shops.ValidateShopMobTags failed:\n%v", err))
+		// Cold boot: fail fast — server refuses to start with bad tags.
+		// Reload (`/reload`): the deferred recover() at the top of this
+		// function would swallow a panic into a generic "RELOAD FAILED"
+		// log. Bypass that by handling reload explicitly so the admin
+		// gets a structured error pointing at the offender, plus a
+		// remediation hint. Mob templates may now be in an inconsistent
+		// state — fix the listed YAMLs and reload again.
+		if isReload {
+			mudlog.Error("shops.ValidateShopMobTags failed on reload",
+				"error", err.Error(),
+				"remediation", "fix the listed mob YAMLs (add or correct craft_support:) and run /reload again; mob templates may be inconsistent until then",
+			)
+		} else {
+			panic(fmt.Sprintf("shops.ValidateShopMobTags failed:\n%v", err))
+		}
 	}
 	// Build mob-template zone lookup for shop cache pre-warming.
 	mobZoneByMobId := make(map[int]string, len(allMobTemplates))

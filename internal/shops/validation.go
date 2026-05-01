@@ -22,7 +22,14 @@ type ShopBearingMob interface {
 // craft_support: tag. The error message lists every offending mob so
 // a single restart surfaces the full set.
 //
-// Callers should panic on non-nil return to fail fast at startup.
+// Caller behavior on non-nil error:
+//   - Cold boot: panic. The server refuses to start with bad tags.
+//   - /reload: log a structured Error with the remediation hint and
+//     keep running. Mob templates may be in an inconsistent state
+//     (the dashboard will show "(uncategorized)" rows for affected
+//     shops) until the admin fixes the YAMLs and reloads again.
+//
+// See main.go::loadAllDataFiles for the actual dispatch.
 func ValidateShopMobTags(mobs []ShopBearingMob) error {
 	type fault struct {
 		mobId int
