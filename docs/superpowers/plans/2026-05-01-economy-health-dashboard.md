@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Ship `/admin/economy/` web dashboard with hourly disk snapshots, health scores per shop / archetype / caravan / forager / overall, and delta columns at 1h/6h/1d/3d/1w.
+**Goal:** Ship `/admin/economy/` web dashboard with hourly disk snapshots, health scores per shop / craft discipline / caravan / forager / overall, and delta columns at 1h/6h/1d/3d/1w. Answers the question "is the NPC economy supporting player crafting?" by rolling shop scores up by the discipline each shop's stock supports.
 
 **Architecture:** New `internal/economy/health/` package owns snapshot capture, persistence, and scoring. A wall-clock ticker in `main.go` writes hourly snapshots to `_datafiles/economy/snapshots/{unix-ts}.yaml` (gitignored). Web layer (`internal/web/admin.economyhealth.go` + HTML template) renders tables and bars from JSON API. Mirrors existing Combat Stats / Progression dashboard pattern.
 
@@ -26,23 +26,29 @@
 - `docs/economy/dashboard-runbook.md` — short note on how to read it
 
 **Modified files:**
-- `internal/shops/shopinventory.go` — add `Archetype string` field
-- `internal/shops/persistence.go` — add `AllShops()` accessor + RegisterShop auto-migration of empty archetype from template
-- `internal/mobs/mobs.go` — add `ShopArchetype string` field on the Mob struct
-- `internal/mobs/crafter.go` — pass `mob.ShopArchetype` into the seeded template
+- `internal/shops/shopinventory.go` — add `CraftSupport string` field + valid-value constants
+- `internal/shops/persistence.go` — add `AllShops()` accessor + RegisterShop auto-migration of empty CraftSupport from template
+- `internal/shops/validation.go` (new) — `ValidateShopMobTags(mobs)` walks all shop-bearing mobs, panics with full list if any lack `craft_support:`
+- `internal/mobs/mobs.go` — add `ShopCraftSupport string` field on the Mob struct
+- `internal/mobs/crafter.go` — pass `mob.ShopCraftSupport` into the seeded template
+- `main.go` — call `shops.ValidateShopMobTags()` after mob load
 - `internal/caravan/visit.go` (or new `internal/caravan/wagon.go`) — expose `WagonMobId` const + `FindWagonInRoom(roomId int)`
 - `internal/behaviortree/actions_caravan.go` — delegate `findWagonInRoom` to `caravan.FindWagonInRoom`
 - `internal/configs/config.balance.go` — add 5 knobs
 - `internal/configs/config.balance.misc.go` — defaults for the new knobs
 - `_datafiles/config.yaml` — surface the new knobs
-- `_datafiles/world/dogmud/mobs/**/*.yaml` (22 files) — add `shop_archetype:` to every mob with a shop or `crafter: true`. Full file list below in Task 2.
+- `_datafiles/world/dogmud/mobs/**/*.yaml` (22 files) — add `craft_support:` to every mob with a shop or `crafter: true`. Full file list below in Task 2.
 - `internal/web/web.go` — register 3 new routes
 - `_datafiles/html/admin/_header.html` — add sidebar entry
 - `main.go` — start hourly snapshot ticker
 - `.gitignore` — exclude `_datafiles/economy/snapshots/`
 - `PATCH_NOTES.md` — describe the dashboard
 
-**Note on backfill:** The 7 files in `_datafiles/world/dogmud/shops/` are persisted *runtime instances* — written when a shop is first transacted on. The full set of shop NPCs is the union of mobs with `character.shop:` and mobs with `crafter: true` (22 mob YAMLs). Archetype lives on the mob YAML so new shops inherit it automatically when they materialize. Existing persisted runtime files are auto-migrated by RegisterShop (Task 1, Step 4): if `loaded.Archetype == ""`, stamp `template.Archetype` onto it.
+**Note on backfill:** The 7 files in `_datafiles/world/dogmud/shops/` are persisted *runtime instances* — written when a shop is first transacted on. The full set of shop NPCs is the union of mobs with `character.shop:` and mobs with `crafter: true` (22 mob YAMLs). The `craft_support:` tag lives on the mob YAML so new shops inherit it automatically when they materialize. Existing persisted runtime files are auto-migrated by RegisterShop (Task 1, Step 4): if `loaded.CraftSupport == ""`, stamp `template.CraftSupport` onto it. Startup validation panics if any shop-bearing mob is missing the tag.
+
+**Tag taxonomy (`craft_support:`).** One value per shop, no lists:
+- `blacksmithing`, `alchemy`, `tailoring`, `cooking`, `jewelcrafting`, `enchanting` — single-discipline shops
+- `general` — multi-discipline / mixed merchants (avoids needing to maintain a list of every craft a general store contributes to)
 
 ---
 
@@ -57,146 +63,172 @@
 
 ---
 
-## Task 1: Plumb `Archetype` from mob template through to ShopInventory
+## Task 1: Plumb `CraftSupport` from mob template through to ShopInventory
 
-The archetype's source of truth is the mob YAML (`shop_archetype:` field). The mob loader copies it onto `mobs.Mob.ShopArchetype`. `crafter.go::registerCrafterShop` stamps it onto the seeded template. `RegisterShop` then auto-migrates any persisted runtime shop whose archetype is empty (covers the 7 existing files without manual edits).
+The CraftSupport tag's source of truth is the mob YAML (`craft_support:` field). The mob loader copies it onto `mobs.Mob.ShopCraftSupport`. `crafter.go::registerCrafterShop` stamps it onto the seeded template. `RegisterShop` then auto-migrates any persisted runtime shop whose tag is empty (covers the 7 existing runtime files without manual edits). A startup validation pass (Task 1.5) panics if any shop-bearing mob lacks a valid tag — no silent fallback.
 
 **Files:**
 - Modify: `internal/shops/shopinventory.go` — add field + constants
-- Modify: `internal/shops/persistence.go` — auto-migrate empty archetype from template
-- Modify: `internal/mobs/mobs.go` — add `ShopArchetype` field
-- Modify: `internal/mobs/crafter.go` — copy mob.ShopArchetype into template
+- Modify: `internal/shops/persistence.go` — auto-migrate empty CraftSupport from template
+- Modify: `internal/mobs/mobs.go` — add `ShopCraftSupport` field
+- Modify: `internal/mobs/crafter.go` — copy mob.ShopCraftSupport into template
 - Test: `internal/shops/persistence_test.go` (append) — auto-migration test
 
-- [ ] **Step 1: Add archetype constants + field on ShopInventory**
+- [ ] **Step 1: Add CraftSupport constants + field on ShopInventory**
 
 Edit `internal/shops/shopinventory.go`. Above `ShopInventory`, add:
 
 ```go
-// Archetype categorizes a vendor for dashboard rollups. Empty is
-// treated as uncategorized and rendered with a yellow warning in the
-// /admin/economy/ dashboard until backfilled on the source mob YAML.
+// CraftSupport tags a shop with the crafting discipline its stock
+// supports. Single-discipline shops use the matching skill tag;
+// multi-discipline / mixed merchants use "general". Empty is INVALID
+// — a startup validator panics if any shop-bearing mob is missing
+// the tag (see ValidateShopMobTags).
 const (
-	ArchetypeGeneral   = "general"
-	ArchetypeSmith     = "smith"
-	ArchetypeInn       = "inn"
-	ArchetypeAlchemist = "alchemist"
+	CraftSupportBlacksmithing = "blacksmithing"
+	CraftSupportAlchemy       = "alchemy"
+	CraftSupportTailoring     = "tailoring"
+	CraftSupportCooking       = "cooking"
+	CraftSupportJewelcrafting = "jewelcrafting"
+	CraftSupportEnchanting    = "enchanting"
+	CraftSupportGeneral       = "general"
 )
 
-// ValidArchetypes is the canonical list. Add new vendor categories
-// here as they appear; see docs/economy/dashboard-runbook.md.
-var ValidArchetypes = []string{
-	ArchetypeGeneral,
-	ArchetypeSmith,
-	ArchetypeInn,
-	ArchetypeAlchemist,
+// ValidCraftSupports is the canonical set. Mirrors the player crafting
+// skills in internal/skills/skills.go plus "general" for mixed shops.
+var ValidCraftSupports = []string{
+	CraftSupportBlacksmithing,
+	CraftSupportAlchemy,
+	CraftSupportTailoring,
+	CraftSupportCooking,
+	CraftSupportJewelcrafting,
+	CraftSupportEnchanting,
+	CraftSupportGeneral,
+}
+
+// IsValidCraftSupport reports whether v is one of ValidCraftSupports.
+func IsValidCraftSupport(v string) bool {
+	for _, s := range ValidCraftSupports {
+		if s == v {
+			return true
+		}
+	}
+	return false
 }
 ```
 
 In the `ShopInventory` struct, add a field after `KnownRecipes`:
 
 ```go
-	Archetype    string       `yaml:"archetype,omitempty"`     // Dashboard rollup category — see ValidArchetypes
+	CraftSupport string `yaml:"craft_support,omitempty"` // Discipline this shop's stock supports — see ValidCraftSupports
 ```
 
-- [ ] **Step 2: Add ShopArchetype field on Mob**
+- [ ] **Step 2: Add ShopCraftSupport field on Mob**
 
-Edit `internal/mobs/mobs.go`. Find the `Mob` struct (around line 72-130). Add a field next to other top-level YAML-loaded mob fields (alphabetize near `Crafter` / `CrafterRestockMaterials` for grouping):
+Edit `internal/mobs/mobs.go`. Find the `Mob` struct (around line 72-130). Add a field next to other top-level YAML-loaded mob fields (near `Crafter` / `CrafterRestockMaterials` for visual grouping):
 
 ```go
-	ShopArchetype string `yaml:"shop_archetype,omitempty"` // Vendor category for /admin/economy/ rollups (general | smith | inn | alchemist)
+	ShopCraftSupport string `yaml:"craft_support,omitempty"` // Crafting discipline this shop supports (one of shops.ValidCraftSupports)
 ```
 
-- [ ] **Step 3: Stamp archetype into the seeded template in crafter.go**
+- [ ] **Step 3: Stamp CraftSupport into the seeded template in crafter.go**
 
-Edit `internal/mobs/crafter.go`. Find the `registerCrafterShop` function (around line 60-87). Locate the `template := shops.ShopInventory{...}` declaration and add the Archetype:
+Edit `internal/mobs/crafter.go`. Find the `registerCrafterShop` function (around line 60-87). Locate the `template := shops.ShopInventory{...}` declaration and add the field:
 
 ```go
 template := shops.ShopInventory{
     // ... existing fields ...
-    Archetype: mob.ShopArchetype,
+    CraftSupport: mob.ShopCraftSupport,
 }
 ```
 
-If `template` is built across multiple lines without a struct literal, just set `template.Archetype = mob.ShopArchetype` on a separate line before the `shops.RegisterShop(...)` call.
+If `template` is built piecemeal (not in a single struct literal), just set `template.CraftSupport = mob.ShopCraftSupport` on a separate line before the `shops.RegisterShop(...)` call.
 
-There may be more than one shop-registration call site (some shop NPCs are registered via a different code path). Search:
+There may be more than one shop-registration call site. Search:
 
 Run: `grep -rn "shops.RegisterShop" internal/`
 
-For every callsite, ensure the template carries the archetype. If there's a separate non-crafter shop registration, copy the same one-line stamp.
+For every callsite, ensure the template carries the tag. If there's a separate non-crafter shop registration, copy the same one-line stamp.
 
-- [ ] **Step 4: Auto-migrate persisted shops with empty archetype**
+- [ ] **Step 4: Auto-migrate persisted shops with empty CraftSupport**
 
-Edit `internal/shops/persistence.go`. Find `RegisterShop` (around line 70). After the disk-load branch, add migration logic so a persisted shop with no archetype inherits the template's value on every boot:
-
-```go
-// At the end of RegisterShop, after `shopCache[key] = inv`, add:
-// Migrate empty archetype from template (covers older persisted shops).
-if inv.Archetype == "" && template.Archetype != "" {
-    inv.Archetype = template.Archetype
-    // Persist the migration so the next boot doesn't repeat it.
-    if err := saveToDisk(zone, mobId, roomId, inv); err != nil {
-        mudlog.Warn("RegisterShop archetype migration save", "key", key, "error", err)
-    }
-}
-```
-
-If the existing function is structured differently, place the migration immediately after `inv` is established (whether from disk or template) and before the function returns.
-
-If `saveToDisk` is not the existing helper name, find it: `grep -n "func.*saveToDisk\|writeShop\|persistShop" internal/shops/persistence.go`. Use whatever the existing write function is called. (The reference is the function called by `SaveShop()`.)
-
-- [ ] **Step 5: Write the failing migration test**
-
-Append to `internal/shops/persistence_test.go`:
-
-```go
-func TestRegisterShop_MigratesEmptyArchetype(t *testing.T) {
-	ClearCache()
-	t.Cleanup(ClearCache)
-
-	// Simulate a persisted shop with no archetype by registering once
-	// without a template archetype, then calling RegisterShop again
-	// with a template that supplies the archetype.
-	tmplNoArch := makeTemplate()
-	tmplNoArch.Archetype = ""
-	inv := RegisterShop("testzone", 9001, 1, tmplNoArch)
-	if inv.Archetype != "" {
-		t.Fatalf("setup precondition: got archetype %q, want \"\"", inv.Archetype)
-	}
-
-	// Second registration with template archetype should migrate.
-	tmplWithArch := makeTemplate()
-	tmplWithArch.Archetype = ArchetypeSmith
-	inv2 := RegisterShop("testzone", 9001, 1, tmplWithArch)
-	if inv2.Archetype != ArchetypeSmith {
-		t.Errorf("got archetype %q after migration, want %q", inv2.Archetype, ArchetypeSmith)
-	}
-}
-```
-
-`makeTemplate()` is the existing test helper in this file — reuse it.
-
-- [ ] **Step 6: Run tests to verify migration test fails (or passes)**
-
-Run: `go test ./internal/shops/ -v -run TestRegisterShop_MigratesEmptyArchetype`
-
-Expected: PASS — the migration logic in Step 4 handles this case. If FAIL, the migration block isn't running on subsequent calls; check the cache short-circuit at the top of RegisterShop and ensure the migration runs even on cache hit.
-
-If RegisterShop short-circuits on cache hit before reaching the migration block, restructure so the migration runs after the cache lookup but before the early return:
+Edit `internal/shops/persistence.go`. Find `RegisterShop` (around line 70). The cache short-circuit at the top of RegisterShop is the migration's danger zone — ensure the migration runs even on cache hit:
 
 ```go
 shopCacheMu.RLock()
 inv, ok := shopCache[key]
 shopCacheMu.RUnlock()
 if ok {
-    if inv.Archetype == "" && template.Archetype != "" {
-        inv.Archetype = template.Archetype
-        // persist
+    if inv.CraftSupport == "" && template.CraftSupport != "" {
+        inv.CraftSupport = template.CraftSupport
+        if err := saveToDisk(zone, mobId, roomId, inv); err != nil {
+            mudlog.Warn("RegisterShop CraftSupport migration save", "key", key, "error", err)
+        }
     }
     return inv
 }
 ```
+
+After the disk-load branch (when `inv` is freshly loaded from YAML or seeded from template), add the same check before storing into cache:
+
+```go
+if inv.CraftSupport == "" && template.CraftSupport != "" {
+    inv.CraftSupport = template.CraftSupport
+    if err := saveToDisk(zone, mobId, roomId, inv); err != nil {
+        mudlog.Warn("RegisterShop CraftSupport migration save", "key", key, "error", err)
+    }
+}
+```
+
+If `saveToDisk` is not the existing helper name, find the actual one: `grep -n "func.*[Ss]ave\|writeShop\|persistShop" internal/shops/persistence.go`. Use whatever the existing function called by `SaveShop()` is named.
+
+- [ ] **Step 5: Write the failing migration test**
+
+Append to `internal/shops/persistence_test.go`:
+
+```go
+func TestRegisterShop_MigratesEmptyCraftSupport(t *testing.T) {
+	ClearCache()
+	t.Cleanup(ClearCache)
+
+	// Seed a cached shop with empty CraftSupport.
+	tmplNoTag := makeTemplate()
+	tmplNoTag.CraftSupport = ""
+	inv := RegisterShop("testzone", 9001, 1, tmplNoTag)
+	if inv.CraftSupport != "" {
+		t.Fatalf("setup precondition: got %q, want \"\"", inv.CraftSupport)
+	}
+
+	// Re-register with a tagged template — should migrate the cached one.
+	tmplWithTag := makeTemplate()
+	tmplWithTag.CraftSupport = CraftSupportBlacksmithing
+	inv2 := RegisterShop("testzone", 9001, 1, tmplWithTag)
+	if inv2.CraftSupport != CraftSupportBlacksmithing {
+		t.Errorf("got %q after migration, want %q", inv2.CraftSupport, CraftSupportBlacksmithing)
+	}
+}
+
+func TestIsValidCraftSupport(t *testing.T) {
+	for _, v := range ValidCraftSupports {
+		if !IsValidCraftSupport(v) {
+			t.Errorf("ValidCraftSupports contains %q but IsValidCraftSupport returns false", v)
+		}
+	}
+	if IsValidCraftSupport("nonsense") {
+		t.Error("IsValidCraftSupport(\"nonsense\") = true, want false")
+	}
+	if IsValidCraftSupport("") {
+		t.Error("IsValidCraftSupport(\"\") = true, want false (empty is INVALID)")
+	}
+}
+```
+
+`makeTemplate()` is the existing test helper in this file — reuse it.
+
+- [ ] **Step 6: Run tests to verify they pass**
+
+Run: `go test ./internal/shops/ -v -run "TestRegisterShop_MigratesEmptyCraftSupport|TestIsValidCraftSupport"`
+Expected: PASS.
 
 - [ ] **Step 7: Run all shop tests for regression**
 
@@ -212,77 +244,301 @@ Expected: clean.
 
 ```bash
 git add internal/shops/shopinventory.go internal/shops/persistence.go internal/shops/persistence_test.go internal/mobs/mobs.go internal/mobs/crafter.go
-git commit -m "feat(shops): plumb Archetype from mob template to ShopInventory
+git commit -m "feat(shops): plumb CraftSupport from mob template to ShopInventory
 
-Adds ShopArchetype on Mob (loaded from mob YAML's shop_archetype:),
-flows through crafter.go's registerCrafterShop into the seeded
-template. RegisterShop auto-migrates any persisted shop whose archetype
-is empty so the 7 existing runtime YAMLs adopt the template value
-on next boot — no manual file edits needed.
+CraftSupport tags a shop with the crafting discipline its stock
+supports — one of {blacksmithing, alchemy, tailoring, cooking,
+jewelcrafting, enchanting, general}. Source of truth is the mob YAML's
+craft_support: field, copied into mobs.Mob.ShopCraftSupport, flowed
+through crafter.go's registerCrafterShop into the seeded template,
+and auto-migrated onto persisted runtime shops by RegisterShop.
+
+Empty is invalid — startup validation in Task 1.5 panics if any
+shop-bearing mob is missing the tag.
 
 Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 ```
 
 ---
 
-## Task 2: Backfill `shop_archetype:` on the 22 mob YAMLs
+## Task 1.5: Startup validation of `craft_support:` tags
 
-The mob YAML is the source of truth — runtime persisted shops auto-migrate from this on next boot (Task 1, Step 4).
+A defensive panic at startup catches any shop-bearing mob that lacks `craft_support:` (or has an invalid value). Without this, a forgotten tag silently lands the shop in the dashboard's "general" bucket — exactly the kind of dataset drift the user wants to prevent.
 
-**Files (all under `_datafiles/world/dogmud/mobs/`):**
-- `north_road/278-haral.yaml`
-- `sanctum_basin/52-korvath.yaml`
-- `sanctum_basin/53-alchemist_yenna.yaml`
-- `sanctum_basin/63-merchant_adela.yaml`
-- `stillwater/333-innkeeper_sigrid.yaml`
-- `stillwater/336-fishmonger_tov_brann.yaml`
-- `stillwater/337-smith_brindle.yaml`
-- `stillwater/338-apothecary_ilsa.yaml`
-- `stillwater/339-weaver_edda.yaml`
-- `stillwater/340-pearl_carver_kess.yaml`
-- `stillwater/341-storekeeper_wulf.yaml`
-- `stillwater/348-miller_bram.yaml`
-- `thornwall_city/103-food_vendor.yaml`
-- `thornwall_city/104-fence_dealer_siv.yaml`
-- `thornwall_city/108-jeweler_tess.yaml`
-- `thornwall_city/109-enchanter_vael.yaml`
-- `thornwall_city/113-weaver_maren.yaml`
-- `thornwall_city/248-tavern_cook_brynn.yaml`
-- `thornwall_city/273-whisper.yaml`
-- `thornwall_city/97-blacksmith_kerra.yaml`
-- `thornwall_city/98-apothecary_voss.yaml`
-- `watchers_crossing/85-merchant_brecca.yaml`
+**Files:**
+- Create: `internal/shops/validation.go`
+- Create: `internal/shops/validation_test.go`
+- Modify: `main.go` — call validator after `mobs.LoadDataFiles()`
 
-This is the union of mobs with `shop:` (under `character:`) and mobs with `crafter: true`.
+- [ ] **Step 1: Write the failing tests**
 
-- [ ] **Step 1: Decide each mob's archetype**
+Create `internal/shops/validation_test.go`:
 
-Open each mob YAML. Pick from `general | smith | inn | alchemist` using the filename and what they sell:
-- Filename contains `smith` / `blacksmith` / `forge` → `smith`
-- Filename contains `inn` / `tavern` / `cook` → `inn`
-- Filename contains `apothecary` / `alchemist` / `herbalist` → `alchemist`
-- Everything else → `general`
+```go
+package shops
 
-Make a quick table on paper (or save to a temp text file) before editing — you'll reference it in the commit message.
+import (
+	"strings"
+	"testing"
+)
 
-Likely mapping (verify by reading filenames):
-- smith: 337-smith_brindle, 97-blacksmith_kerra, 52-korvath (if Korvath is a smith — check mob name)
-- inn: 333-innkeeper_sigrid, 248-tavern_cook_brynn
-- alchemist: 53-alchemist_yenna, 338-apothecary_ilsa, 98-apothecary_voss
-- general: everything else (16 files)
+// fakeMob satisfies the minimal interface ValidateShopMobTags needs.
+// Reuse production type Mob if it's package-importable; this is a
+// stand-in if circular imports prevent that.
+type fakeMob struct {
+	mobId            int
+	name             string
+	zone             string
+	hasShop          bool
+	isCrafter        bool
+	shopCraftSupport string
+}
 
-Verify each by reading the mob YAML if name is ambiguous.
+func (f fakeMob) MobId() int             { return f.mobId }
+func (f fakeMob) Name() string           { return f.name }
+func (f fakeMob) Zone() string           { return f.zone }
+func (f fakeMob) HasShop() bool          { return f.hasShop }
+func (f fakeMob) IsCrafter() bool        { return f.isCrafter }
+func (f fakeMob) ShopCraftSupport() string { return f.shopCraftSupport }
 
-- [ ] **Step 2: Add `shop_archetype:` to each mob YAML**
+func TestValidateShopMobTags_AllValid(t *testing.T) {
+	mobs := []ShopBearingMob{
+		fakeMob{mobId: 1, hasShop: true, shopCraftSupport: CraftSupportBlacksmithing},
+		fakeMob{mobId: 2, isCrafter: true, shopCraftSupport: CraftSupportGeneral},
+	}
+	if err := ValidateShopMobTags(mobs); err != nil {
+		t.Fatalf("expected no error, got: %v", err)
+	}
+}
 
-For each of the 22 mob YAMLs, add `shop_archetype: <value>` as a top-level field (sibling to `mobid:`, `zone:`, etc.). Place it near other shop-related fields like `crafter:` for visual grouping.
+func TestValidateShopMobTags_MissingTag(t *testing.T) {
+	mobs := []ShopBearingMob{
+		fakeMob{mobId: 99, name: "broken", zone: "z", hasShop: true, shopCraftSupport: ""},
+	}
+	err := ValidateShopMobTags(mobs)
+	if err == nil {
+		t.Fatal("expected error for missing tag, got nil")
+	}
+	if !strings.Contains(err.Error(), "99") || !strings.Contains(err.Error(), "broken") {
+		t.Errorf("error should reference the offending mob id and name; got: %v", err)
+	}
+}
+
+func TestValidateShopMobTags_InvalidTag(t *testing.T) {
+	mobs := []ShopBearingMob{
+		fakeMob{mobId: 100, hasShop: true, shopCraftSupport: "knitting"},
+	}
+	err := ValidateShopMobTags(mobs)
+	if err == nil || !strings.Contains(err.Error(), "knitting") {
+		t.Errorf("expected error mentioning invalid tag; got: %v", err)
+	}
+}
+
+func TestValidateShopMobTags_NonShopMobsIgnored(t *testing.T) {
+	mobs := []ShopBearingMob{
+		fakeMob{mobId: 5, hasShop: false, isCrafter: false, shopCraftSupport: ""},
+	}
+	if err := ValidateShopMobTags(mobs); err != nil {
+		t.Fatalf("non-shop mobs should not be validated; got: %v", err)
+	}
+}
+```
+
+- [ ] **Step 2: Run tests to verify they fail**
+
+Run: `go test ./internal/shops/ -v -run TestValidateShopMobTags`
+Expected: FAIL — `ValidateShopMobTags` and `ShopBearingMob` undefined.
+
+- [ ] **Step 3: Implement validator**
+
+Create `internal/shops/validation.go`:
+
+```go
+package shops
+
+import (
+	"fmt"
+	"sort"
+	"strings"
+)
+
+// ShopBearingMob is the minimal interface ValidateShopMobTags needs.
+// Production code wraps mobs.Mob in this interface (see main.go).
+type ShopBearingMob interface {
+	MobId() int
+	Name() string
+	Zone() string
+	HasShop() bool
+	IsCrafter() bool
+	ShopCraftSupport() string
+}
+
+// ValidateShopMobTags walks all candidate mobs and returns a non-nil
+// error if any shop-bearing mob (HasShop or IsCrafter) lacks a valid
+// craft_support: tag. The error message lists every offending mob so
+// a single restart surfaces the full set.
+//
+// Callers should panic on non-nil return to fail fast at startup.
+func ValidateShopMobTags(mobs []ShopBearingMob) error {
+	type fault struct {
+		mobId int
+		name  string
+		zone  string
+		tag   string
+		why   string
+	}
+	var faults []fault
+
+	for _, m := range mobs {
+		if !m.HasShop() && !m.IsCrafter() {
+			continue
+		}
+		tag := m.ShopCraftSupport()
+		if tag == "" {
+			faults = append(faults, fault{m.MobId(), m.Name(), m.Zone(), tag, "missing craft_support:"})
+			continue
+		}
+		if !IsValidCraftSupport(tag) {
+			faults = append(faults, fault{m.MobId(), m.Name(), m.Zone(), tag, "invalid value (not in ValidCraftSupports)"})
+		}
+	}
+
+	if len(faults) == 0 {
+		return nil
+	}
+
+	sort.Slice(faults, func(i, j int) bool { return faults[i].mobId < faults[j].mobId })
+	var b strings.Builder
+	fmt.Fprintf(&b, "shop-bearing mobs with bad craft_support tags (%d):\n", len(faults))
+	for _, f := range faults {
+		fmt.Fprintf(&b, "  - mob %d (%s, zone=%s): %s (got %q)\n", f.mobId, f.name, f.zone, f.why, f.tag)
+	}
+	b.WriteString("Valid values: ")
+	b.WriteString(strings.Join(ValidCraftSupports, ", "))
+	return fmt.Errorf("%s", b.String())
+}
+```
+
+- [ ] **Step 4: Run tests to verify they pass**
+
+Run: `go test ./internal/shops/ -v -run TestValidateShopMobTags`
+Expected: PASS (4 subtests).
+
+- [ ] **Step 5: Wire into main.go after mob load**
+
+Edit `main.go`. Find `mobs.LoadDataFiles()` (search for it). Immediately after it returns successfully, add a validation call. Because `mobs.Mob` lives in another package, wrap it inline in a helper or implement the `ShopBearingMob` interface methods on `*mobs.Mob` directly.
+
+Easiest path: add the methods on `*mobs.Mob` in `internal/mobs/mobs.go`:
+
+```go
+// Methods to satisfy shops.ShopBearingMob — used by startup validation.
+func (m *Mob) HasShop() bool             { return len(m.Character.Shop) > 0 }
+func (m *Mob) IsCrafter() bool           { return m.Crafter }
+// MobId() is already a field-via-method or use direct field access; if
+// the test interface requires a method, add a thin one:
+//   func (m *Mob) GetMobId() int { return int(m.MobId) }
+// and have the interface use GetMobId. Or rename interface methods to
+// match the existing field-access pattern.
+```
+
+Check whether `mobs.Mob.Character.Shop` is the right field for "has a shop." If shops are detected differently (e.g. via `m.Character.Shop != nil` or another flag), use the equivalent. Open `internal/mobs/mobs.go` to confirm before writing.
+
+The interface method names in `validation.go` may need to be adjusted to match what `*mobs.Mob` already exposes. Pick the path of least resistance — if the Mob struct uses field access for `MobId`, change the interface to `GetMobId() int` and add that method.
+
+In `main.go`, after `mobs.LoadDataFiles()`:
+
+```go
+// Validate that every shop-bearing mob declares craft_support:
+allMobs := mobs.AllMobTemplates() // or whatever returns the loaded slice
+adapted := make([]shops.ShopBearingMob, 0, len(allMobs))
+for _, m := range allMobs {
+    adapted = append(adapted, m)
+}
+if err := shops.ValidateShopMobTags(adapted); err != nil {
+    panic(fmt.Sprintf("shops.ValidateShopMobTags failed:\n%v", err))
+}
+```
+
+If `mobs.AllMobTemplates()` doesn't exist, find the existing accessor (search: `grep -n "func.*\[\]\*Mob\|func.*\[\]Mob\b\|allMobs\|mobTemplates" internal/mobs/`). If no public accessor exists, add a tiny one:
+
+```go
+// AllMobTemplates returns every mob template loaded from disk. Used
+// by startup validators (e.g. shops.ValidateShopMobTags).
+func AllMobTemplates() []*Mob {
+    // adapt to the existing template store (mobsByMobId, etc.)
+}
+```
+
+- [ ] **Step 6: Boot the server, expect a clean startup once Task 2 is done**
+
+Run: `go build ./...`
+Expected: clean. Server boot will panic until Task 2 backfills the tags. That's the desired behavior — the panic message will list all 22 mobs that need the tag, which is exactly the worklist for Task 2.
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add internal/shops/validation.go internal/shops/validation_test.go internal/mobs/mobs.go main.go
+git commit -m "feat(shops): startup validation of craft_support tags
+
+Panics if any shop-bearing mob lacks a valid craft_support: tag.
+The panic message lists every offender at once so a single restart
+surfaces the full backfill worklist. Server will refuse to boot
+until Task 2's mob YAML backfill is complete.
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
+```
+
+---
+
+## Task 2: Backfill `craft_support:` on the 22 mob YAMLs
+
+The mob YAML is the source of truth. Crafter mobs have an explicit `crafterskill:` field that maps 1:1 to a craft_support value — those are deterministic. Non-crafter merchants need a judgment call from the engineer based on their stock list. After Task 1.5 ships, the server will refuse to boot until every shop-bearing mob has a valid tag — the panic message lists all 22 and serves as the worklist.
+
+**Mapping (decided up front so this task is mechanical):**
+
+| Mob ID | File | crafterskill | Decision | Reasoning |
+|--------|------|--------------|----------|-----------|
+| 52 | sanctum_basin/52-korvath.yaml | (read file) | (decide) | Inspect mob name + stock |
+| 53 | sanctum_basin/53-alchemist_yenna.yaml | alchemy (likely) | `alchemy` | Apothecary by name |
+| 63 | sanctum_basin/63-merchant_adela.yaml | (none) | `general` | "merchant" = mixed |
+| 85 | watchers_crossing/85-merchant_brecca.yaml | (none) | `general` | "merchant" = mixed |
+| 97 | thornwall_city/97-blacksmith_kerra.yaml | blacksmithing | `blacksmithing` | crafterskill maps |
+| 98 | thornwall_city/98-apothecary_voss.yaml | alchemy | `alchemy` | crafterskill maps |
+| 103 | thornwall_city/103-food_vendor.yaml | (none) | `cooking` | Sells food = supports cooking |
+| 104 | thornwall_city/104-fence_dealer_siv.yaml | (none) | `general` | Fence = mixed loot |
+| 108 | thornwall_city/108-jeweler_tess.yaml | jewelcrafting | `jewelcrafting` | crafterskill maps |
+| 109 | thornwall_city/109-enchanter_vael.yaml | enchanting (likely) | `enchanting` | Inspect to confirm crafterskill |
+| 113 | thornwall_city/113-weaver_maren.yaml | tailoring | `tailoring` | crafterskill maps |
+| 248 | thornwall_city/248-tavern_cook_brynn.yaml | (none/cooking?) | `cooking` | Tavern cook |
+| 273 | thornwall_city/273-whisper.yaml | (read file) | (decide) | Inspect mob name + stock |
+| 278 | north_road/278-haral.yaml | (read file) | (decide) | Inspect mob name + stock |
+| 333 | stillwater/333-innkeeper_sigrid.yaml | (none) | `cooking` | Innkeeper sells food |
+| 336 | stillwater/336-fishmonger_tov_brann.yaml | (none) | `cooking` | Fish = cooking ingredient |
+| 337 | stillwater/337-smith_brindle.yaml | blacksmithing | `blacksmithing` | crafterskill maps |
+| 338 | stillwater/338-apothecary_ilsa.yaml | alchemy | `alchemy` | crafterskill maps |
+| 339 | stillwater/339-weaver_edda.yaml | tailoring | `tailoring` | crafterskill maps |
+| 340 | stillwater/340-pearl_carver_kess.yaml | jewelcrafting | `jewelcrafting` | crafterskill maps |
+| 341 | stillwater/341-storekeeper_wulf.yaml | (none) | `general` | Sells base materials across multiple crafts |
+| 348 | stillwater/348-miller_bram.yaml | (none) | `cooking` | Miller = grain/flour for cooking |
+
+Five mobs marked "inspect" need a quick read by the engineer — open the YAML, look at `name:` and `character.shop:` items + any `crafterrestockmaterials:`, then pick from the same set. Default to `general` when in doubt.
+
+- [ ] **Step 1: Read the five "inspect" mobs and finalize the table**
+
+For each of {52, 109, 273, 278} confirm the decision. (109 should almost certainly be `enchanting` based on the name — verify there's a `crafterskill: enchanting` in the YAML.)
+
+Capture the final table in your scratch notes — it goes into the commit message.
+
+- [ ] **Step 2: Add `craft_support:` to each of the 22 mob YAMLs**
+
+For each mob YAML, add `craft_support: <value>` as a top-level field. Place it just after `zone:` for visual grouping with other shop-related metadata.
 
 Example for `_datafiles/world/dogmud/mobs/stillwater/337-smith_brindle.yaml`:
 
 ```yaml
 mobid: 337
 zone: Stillwater
-shop_archetype: smith     # ← add this
+craft_support: blacksmithing       # ← add this
 behavior_archetype: noncombat_shopkeeper
 statpool: 100
 ...
@@ -291,23 +547,30 @@ statpool: 100
 - [ ] **Step 3: Run mobs package tests**
 
 Run: `go test ./internal/mobs/...`
-Expected: PASS (mob loader accepts the new field; will be silent if it doesn't recognize the YAML key, but Task 1 added the struct field so it should bind).
+Expected: PASS.
 
-- [ ] **Step 4: Boot server, confirm clean startup**
+- [ ] **Step 4: Boot server — should now start cleanly**
 
-Run: `go run main.go` and watch for `mobs.LoadDataFiles() loadedCount=...`.
-Expected: load count unchanged, no parse errors. `Ctrl-C` to stop.
+Run: `go run main.go` and watch the startup logs for `mobs.LoadDataFiles() loadedCount=...` and the validator output. The Task 1.5 panic should NOT fire.
+Expected: clean startup, no panics. `Ctrl-C` to stop.
+
+If the validator still panics, the message lists the offending mob IDs — re-edit them and try again.
 
 - [ ] **Step 5: Commit**
 
 ```bash
 git add _datafiles/world/dogmud/mobs/
-git commit -m "chore(mobs): backfill shop_archetype on 22 shop-bearing mobs
+git commit -m "chore(mobs): backfill craft_support on 22 shop-bearing mobs
 
-Categorizes every mob with a shop or crafter: true into one of
-{general, smith, inn, alchemist}. Persisted runtime shops in
-_datafiles/world/dogmud/shops/ auto-migrate from these values on
-next boot (see RegisterShop migration in feat(shops)... commit).
+Tags every merchant or crafter mob with the crafting discipline its
+stock supports. Crafter mobs derive from existing crafterskill: field
+(blacksmithing, alchemy, tailoring, cooking, jewelcrafting,
+enchanting); non-crafters use 'general' for mixed-stock or the most
+relevant single discipline (e.g. innkeeper -> cooking, food vendor ->
+cooking, fishmonger -> cooking).
+
+Persisted runtime shops in _datafiles/world/dogmud/shops/ auto-migrate
+from these on next boot (RegisterShop migration in earlier commit).
 
 Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 ```
@@ -495,7 +758,7 @@ func TestSnapshot_YAMLRoundTrip(t *testing.T) {
 		Shops: []ShopSnapshot{
 			{
 				Zone: "stillwater", MobId: 341, RoomId: 4105,
-				Name: "Storekeeper Wulf", Archetype: "general",
+				Name: "Storekeeper Wulf", CraftSupport: "general",
 				Gold: 487, StartingGold: 500, LastRestockRound: 12000,
 				Stock: []StockSnapshot{
 					{ItemId: 40001, Bucket: "base", Current: 8, Max: 20, RestockQty: 5},
@@ -582,7 +845,7 @@ type ShopSnapshot struct {
 	MobId            int             `yaml:"mob_id"             json:"mob_id"`
 	RoomId           int             `yaml:"room_id"            json:"room_id"`
 	Name             string          `yaml:"name"               json:"name"`
-	Archetype        string          `yaml:"archetype"          json:"archetype"`
+	CraftSupport     string          `yaml:"craft_support"      json:"craft_support"`
 	Gold             int             `yaml:"gold"               json:"gold"`
 	StartingGold     int             `yaml:"starting_gold"      json:"starting_gold"`
 	LastRestockRound uint64          `yaml:"last_restock_round" json:"last_restock_round"`
@@ -698,7 +961,7 @@ func TestCaptureSnapshot_Shops(t *testing.T) {
 	tmpl := shops.ShopInventory{
 		Gold:         500,
 		StartingGold: 500,
-		Archetype:    shops.ArchetypeGeneral,
+		CraftSupport: shops.CraftSupportGeneral,
 		Stock: []shops.StockEntry{
 			{ItemId: 40001, RestockQty: 5, MaxStock: 20, Current: 8}, // base
 			{ItemId: 40051, RestockQty: 3, MaxStock: 10, Current: 4}, // stillwater
@@ -715,8 +978,8 @@ func TestCaptureSnapshot_Shops(t *testing.T) {
 	if got.MobId != 341 || got.RoomId != 4105 {
 		t.Errorf("location: got %d/%d, want 341/4105", got.MobId, got.RoomId)
 	}
-	if got.Archetype != "general" {
-		t.Errorf("archetype: got %q, want general", got.Archetype)
+	if got.CraftSupport != "general" {
+		t.Errorf("craft_support: got %q, want general", got.CraftSupport)
 	}
 	if len(got.Stock) != 2 {
 		t.Fatalf("stock entries: got %d, want 2", len(got.Stock))
@@ -773,7 +1036,7 @@ func captureShops() []ShopSnapshot {
 			Zone:             inv.Zone,
 			MobId:            inv.MobId,
 			RoomId:           inv.RoomId,
-			Archetype:        inv.Archetype,
+			CraftSupport:     inv.CraftSupport,
 			Gold:             inv.Gold,
 			StartingGold:     inv.StartingGold,
 			LastRestockRound: inv.LastRestock,
@@ -878,7 +1141,7 @@ func captureShops() []ShopSnapshot {
 			Zone:             inv.Zone,
 			MobId:            inv.MobId,
 			RoomId:           inv.RoomId,
-			Archetype:        inv.Archetype,
+			CraftSupport:     inv.CraftSupport,
 			Gold:             inv.Gold,
 			StartingGold:     inv.StartingGold,
 			LastRestockRound: inv.LastRestock,
@@ -1511,7 +1774,7 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 
 ---
 
-## Task 9: Per-shop and per-archetype scoring
+## Task 9: Per-shop and per-discipline scoring
 
 **Files:**
 - Create: `internal/economy/health/scoring.go`
@@ -1552,20 +1815,20 @@ func TestScore_PerShop_NoStockReturnsNil(t *testing.T) {
 	}
 }
 
-func TestScore_PerArchetype_MeanOfShops(t *testing.T) {
+func TestScore_PerCraftSupport_MeanOfShops(t *testing.T) {
 	snap := health.Snapshot{
 		Shops: []health.ShopSnapshot{
-			{Archetype: "smith", Stock: []health.StockSnapshot{{RestockQty: 1, Current: 4, Max: 10}}}, // 40
-			{Archetype: "smith", Stock: []health.StockSnapshot{{RestockQty: 1, Current: 8, Max: 10}}}, // 80
-			{Archetype: "inn", Stock: []health.StockSnapshot{{RestockQty: 1, Current: 5, Max: 10}}},   // 50
+			{CraftSupport: "blacksmithing", Stock: []health.StockSnapshot{{RestockQty: 1, Current: 4, Max: 10}}}, // 40
+			{CraftSupport: "blacksmithing", Stock: []health.StockSnapshot{{RestockQty: 1, Current: 8, Max: 10}}}, // 80
+			{CraftSupport: "cooking", Stock: []health.StockSnapshot{{RestockQty: 1, Current: 5, Max: 10}}},        // 50
 		},
 	}
-	scores := health.PerArchetypeScores(snap)
-	if math.Abs(scores["smith"]-60) > 0.01 {
-		t.Errorf("smith: got %.2f, want 60", scores["smith"])
+	scores := health.PerCraftSupportScores(snap)
+	if math.Abs(scores["blacksmithing"]-60) > 0.01 {
+		t.Errorf("blacksmithing: got %.2f, want 60", scores["blacksmithing"])
 	}
-	if math.Abs(scores["inn"]-50) > 0.01 {
-		t.Errorf("inn: got %.2f, want 50", scores["inn"])
+	if math.Abs(scores["cooking"]-50) > 0.01 {
+		t.Errorf("cooking: got %.2f, want 50", scores["cooking"])
 	}
 }
 ```
@@ -1622,10 +1885,12 @@ func PerShopScoreOpt(s ShopSnapshot) (float64, bool) {
 	return 100 * weightedSum / totalWeight, true
 }
 
-// PerArchetypeScores returns mean per-shop score grouped by archetype.
-// Shops with empty archetype roll into key "" (rendered as
-// "uncategorized" in the UI).
-func PerArchetypeScores(snap Snapshot) map[string]float64 {
+// PerCraftSupportScores returns mean per-shop score grouped by the
+// craft discipline each shop supports. Shops with empty CraftSupport
+// roll into key "" (should never happen in production thanks to
+// startup validation; surfaces clearly in the UI as "(uncategorized)"
+// if it ever does).
+func PerCraftSupportScores(snap Snapshot) map[string]float64 {
 	type bucket struct {
 		sum   float64
 		count int
@@ -1636,10 +1901,10 @@ func PerArchetypeScores(snap Snapshot) map[string]float64 {
 		if !ok {
 			continue
 		}
-		b, exists := buckets[s.Archetype]
+		b, exists := buckets[s.CraftSupport]
 		if !exists {
 			b = &bucket{}
-			buckets[s.Archetype] = b
+			buckets[s.CraftSupport] = b
 		}
 		b.sum += score
 		b.count++
@@ -1663,11 +1928,13 @@ Expected: PASS.
 
 ```bash
 git add internal/economy/health/scoring.go internal/economy/health/scoring_test.go
-git commit -m "feat(economy/health): per-shop and per-archetype scoring
+git commit -m "feat(economy/health): per-shop and per-discipline scoring
 
 Shop score weights item fills by RestockQty so high-throughput items
-dominate. Archetype score is the mean of contained shop scores.
-Empty-stock shops return (_, false) instead of misleading zero.
+dominate. Per-discipline score is the mean of shop scores grouped by
+CraftSupport tag — the answer to 'is the supply chain supporting
+discipline X?'. Empty-stock shops return (_, false) instead of
+misleading zero.
 
 Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 ```
@@ -1887,7 +2154,7 @@ Append to `scoring_test.go`:
 func TestScore_OverallWeightsShopsHeaviest(t *testing.T) {
 	cur := health.Snapshot{
 		Shops: []health.ShopSnapshot{
-			{Archetype: "smith", Stock: []health.StockSnapshot{{RestockQty: 1, Current: 5, Max: 10}}}, // 50
+			{CraftSupport: "blacksmithing", Stock: []health.StockSnapshot{{RestockQty: 1, Current: 5, Max: 10}}}, // 50
 		},
 		Caravans: []health.CaravanSnapshot{{InstId: 1, State: "thornwall_dwell"}},
 		Foragers: []health.ForagerSnapshot{{InstId: 7, State: "resting"}},
@@ -1951,7 +2218,7 @@ type Scores struct {
 	OverallScore float64
 
 	PerShop      []ShopScoreRow
-	PerArchetype map[string]float64
+	PerCraftSupport map[string]float64
 	PerCaravan   []EntityScoreRow
 	PerForager   []EntityScoreRow
 
@@ -1963,13 +2230,13 @@ type Scores struct {
 }
 
 type ShopScoreRow struct {
-	Zone      string
-	MobId     int
-	RoomId    int
-	Name      string
-	Archetype string
-	Score     float64
-	HasScore  bool
+	Zone         string
+	MobId        int
+	RoomId       int
+	Name         string
+	CraftSupport string
+	Score        float64
+	HasScore     bool
 }
 
 type EntityScoreRow struct {
@@ -1994,7 +2261,7 @@ func Score(cur *Snapshot, history []*Snapshot) Scores {
 		score, ok := PerShopScoreOpt(s)
 		out.PerShop = append(out.PerShop, ShopScoreRow{
 			Zone: s.Zone, MobId: s.MobId, RoomId: s.RoomId, Name: s.Name,
-			Archetype: s.Archetype, Score: score, HasScore: ok,
+			CraftSupport: s.CraftSupport, Score: score, HasScore: ok,
 		})
 		if ok {
 			shopSum += score
@@ -2005,7 +2272,7 @@ func Score(cur *Snapshot, history []*Snapshot) Scores {
 		out.MeanShop = shopSum / float64(shopCount)
 	}
 
-	out.PerArchetype = PerArchetypeScores(*cur)
+	out.PerCraftSupport = PerCraftSupportScores(*cur)
 
 	// Per-caravan / per-forager.
 	out.PerCaravan = make([]EntityScoreRow, 0, len(cur.Caravans))
@@ -2683,21 +2950,21 @@ Create `_datafiles/html/admin/economy/index.html` modeled on `combatstats/index.
         </div>
     </div>
 
-    <!-- Section A: Shopkeepers -->
-    <h3 class="mt-3">Shopkeepers — by Archetype</h3>
+    <!-- Section A: Shopkeepers — by Craft Discipline -->
+    <h3 class="mt-3">Shopkeepers — by Craft Discipline</h3>
     <table class="table table-sm table-striped">
         <thead><tr>
-            <th>Archetype</th><th>Shops</th><th>Score</th>
+            <th>Discipline</th><th>Shops</th><th>Score</th>
             <th>Total Gold</th>
             <th>Δ1h</th><th>Δ6h</th><th>Δ1d</th><th>Δ3d</th><th>Δ1w</th>
         </tr></thead>
-        <tbody id="tbl-archetype"></tbody>
+        <tbody id="tbl-discipline"></tbody>
     </table>
 
     <h4 class="mt-3">Per-Shop Detail</h4>
     <table class="table table-sm table-striped">
         <thead><tr>
-            <th>Shop</th><th>Archetype</th><th>Score</th>
+            <th>Shop</th><th>Discipline</th><th>Score</th>
             <th>Gold</th>
             <th>Δ1h</th><th>Δ6h</th><th>Δ1d</th><th>Δ3d</th><th>Δ1w</th>
             <th>Stock by Bucket</th>
@@ -2798,26 +3065,37 @@ Create `_datafiles/html/admin/economy/index.html` modeled on `combatstats/index.
         document.getElementById('score-forager').innerHTML = fmtScore(d.scores.MeanForager, d.scores.MeanForager > 0);
         document.getElementById('last-ts').textContent = d.snapshot.timestamp;
 
-        // Group shops by archetype.
-        var byArch = {};
+        // Group shops by craft discipline they support.
+        var byDisc = {};
         for (var i = 0; i < d.snapshot.shops.length; i++) {
             var s = d.snapshot.shops[i];
-            var a = s.archetype || "(uncategorized)";
-            if (!byArch[a]) byArch[a] = [];
-            byArch[a].push(s);
+            var disc = s.craft_support || "(uncategorized)";
+            if (!byDisc[disc]) byDisc[disc] = [];
+            byDisc[disc].push(s);
         }
-        // Render archetype rollup.
-        var archHtml = '';
-        var archKeys = Object.keys(byArch).sort();
-        for (var i = 0; i < archKeys.length; i++) {
-            var a = archKeys[i];
-            var shops = byArch[a];
-            var score = d.scores.PerArchetype[a] || 0;
+        // Render discipline rollup. Stable order: known disciplines
+        // first, then "general", then anything else (which would be
+        // a validation gap).
+        var DISC_ORDER = ['blacksmithing','alchemy','tailoring','cooking',
+                          'jewelcrafting','enchanting','general'];
+        var discHtml = '';
+        var seen = {};
+        var discKeys = [];
+        for (var i = 0; i < DISC_ORDER.length; i++) {
+            if (byDisc[DISC_ORDER[i]]) { discKeys.push(DISC_ORDER[i]); seen[DISC_ORDER[i]] = true; }
+        }
+        Object.keys(byDisc).sort().forEach(function(k){
+            if (!seen[k]) discKeys.push(k);
+        });
+        for (var i = 0; i < discKeys.length; i++) {
+            var disc = discKeys[i];
+            var shops = byDisc[disc];
+            var score = d.scores.PerCraftSupport[disc] || 0;
             var gold = totalGold(shops);
-            archHtml += '<tr><td>' + a + '</td><td>' + shops.length + '</td>' +
+            discHtml += '<tr><td>' + disc + '</td><td>' + shops.length + '</td>' +
                         '<td>' + fmtScore(score, score > 0) + '</td>' +
                         '<td>' + gold + '</td>';
-            // Sum gold deltas across shops in this archetype.
+            // Sum gold deltas across shops in this discipline.
             ['1h','6h','1d','3d','1w'].forEach(function(label) {
                 var sum = 0;
                 for (var j = 0; j < shops.length; j++) {
@@ -2825,11 +3103,11 @@ Create `_datafiles/html/admin/economy/index.html` modeled on `combatstats/index.
                     var sd = d.deltas[label] && d.deltas[label].shops[key];
                     if (sd) sum += sd.GoldDelta;
                 }
-                archHtml += '<td>' + fmtDelta(sum) + '</td>';
+                discHtml += '<td>' + fmtDelta(sum) + '</td>';
             });
-            archHtml += '</tr>';
+            discHtml += '</tr>';
         }
-        document.getElementById('tbl-archetype').innerHTML = archHtml;
+        document.getElementById('tbl-discipline').innerHTML = discHtml;
 
         // Render per-shop rows.
         var shopHtml = '';
@@ -2838,7 +3116,7 @@ Create `_datafiles/html/admin/economy/index.html` modeled on `combatstats/index.
             var snap = d.snapshot.shops[i];
             var key = shopKey(snap);
             shopHtml += '<tr><td>' + (row.Name || '#'+row.MobId) + '</td>' +
-                        '<td>' + (row.Archetype || '—') + '</td>' +
+                        '<td>' + (row.CraftSupport || '—') + '</td>' +
                         '<td>' + fmtScore(row.Score, row.HasScore) + '</td>' +
                         '<td>' + snap.gold + '</td>';
             ['1h','6h','1d','3d','1w'].forEach(function(label) {
@@ -2944,7 +3222,7 @@ Create `_datafiles/html/admin/economy/index.html` modeled on `combatstats/index.
 
 Run: `go run main.go &` then in a browser go to `http://localhost:<port>/admin/economy/`. The default admin port follows the existing convention — confirm it from `_datafiles/config.yaml`'s `WebPort`.
 
-Expected: page renders. Five score cards show "—" initially (no history). Shop table populated with current shops. Per-archetype rollup populated.
+Expected: page renders. Five score cards show "—" initially (no history). Shop table populated with current shops. Per-discipline rollup populated with one row per discipline that has shops backing it.
 
 `pkill -f "go run main.go"` to stop.
 
@@ -2954,7 +3232,7 @@ Expected: page renders. Five score cards show "—" initially (no history). Shop
 git add _datafiles/html/admin/economy/index.html
 git commit -m "feat(web/admin): economy dashboard HTML template
 
-Renders five summary cards, archetype rollup, per-shop detail with
+Renders five summary cards, per-discipline rollup, per-shop detail with
 bucket-stacked stock bars, caravan and forager tables. Auto-refresh
 30s/60s/2m. Manual snapshot button.
 
@@ -2990,9 +3268,14 @@ URL: `/admin/economy/` (basic auth — same credentials as Combat Stats).
 - **Five score cards** at the top: Economy (overall), Shops, Caravans,
   Foragers, plus the most recent snapshot timestamp and a "Snapshot Now"
   button. Scores are 0-100, colored red <40 / yellow 40-70 / green >70.
-- **Archetype rollup** of shops, then per-shop detail with stock bars
-  colored by supply bucket (blue=base, cyan=stillwater, orange=thornwall,
-  green=fernway, gray=overlap).
+- **Per-discipline rollup** of shops grouped by `craft_support:` tag —
+  one row each for blacksmithing, alchemy, tailoring, cooking,
+  jewelcrafting, enchanting, and general. Then per-shop detail with
+  stock bars colored by supply bucket (blue=base, cyan=stillwater,
+  orange=thornwall, green=fernway, gray=overlap). The discipline
+  rollup is the answer to "is the supply chain supporting player
+  crafting?" — a low score on `alchemy` means alchemists are
+  starving for materials.
 - **Caravan + forager tables** with state, time-in-state, cargo bar,
   per-instance score, and cycle counters.
 
@@ -3016,15 +3299,30 @@ changes.
 - **Empty caravan/forager tables:** confirm the entities are alive.
   Caravan leader is identified by `BTreeState["caravan_state"] != ""`,
   forager by `BTreeState["forager_state"] != ""`.
-- **Shop archetype shows "(uncategorized)":** add `archetype:` to the
-  shop YAML.
+- **Shop discipline shows "(uncategorized)":** the startup validator
+  should have prevented this. If it slipped through, add `craft_support:`
+  to the mob YAML and restart.
 
-## Adding a new vendor archetype
+- **Server panics at boot with "shops.ValidateShopMobTags failed":**
+  the panic message lists every shop-bearing mob missing its
+  `craft_support:` tag. Add the tag to each listed mob YAML and
+  restart. Use `general` for mixed-stock merchants, otherwise pick
+  the matching crafting discipline.
 
-1. Add the constant to `internal/shops/shopinventory.go` (`Archetype<Foo>`)
-   and append to `ValidArchetypes`.
-2. Set `archetype: foo` on the relevant shop YAMLs.
-3. Restart server. Dashboard will roll up the new archetype automatically.
+## Adding a new vendor discipline
+
+The `ValidCraftSupports` list mirrors the player crafting skills in
+`internal/skills/skills.go`. If a new player-facing crafting skill is
+added there:
+
+1. Add a matching constant to `internal/shops/shopinventory.go`
+   (`CraftSupport<Foo>`) and append to `ValidCraftSupports`.
+2. Tag the relevant mobs with `craft_support: foo`.
+3. Restart server — dashboard rolls up the new discipline automatically.
+
+If you just want to subdivide an existing discipline (e.g. split
+`tailoring` into `cloth` + `leather`), prefer keeping the existing
+tag and using the per-shop bucket bar to read the difference.
 ```
 
 - [ ] **Step 3: Update PATCH_NOTES.md**
@@ -3037,8 +3335,9 @@ Edit `PATCH_NOTES.md`. Add a new dated entry at the top (or under the next prod-
 - **Economy Health Dashboard:** new `/admin/economy/` web dashboard
   surfaces shopkeeper, caravan, and forager inventory health. Hourly
   snapshots persist to disk for delta comparisons at 1h / 6h / 1d /
-  3d / 1w. Per-shop, per-archetype, per-caravan, and per-forager
-  scores plus an overall Economy Health score. Manual "Snapshot Now"
+  3d / 1w. Per-shop, per-discipline (blacksmithing/alchemy/tailoring/
+  cooking/jewelcrafting/enchanting/general), per-caravan, and
+  per-forager scores plus an overall Economy Health score. Manual "Snapshot Now"
   for ad-hoc before/after checks.
 ```
 
