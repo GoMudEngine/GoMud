@@ -41,20 +41,24 @@ type StockSnapshot struct {
 }
 
 // CaravanSnapshot captures one caravan-leader instance + its
-// co-located wagon's cargo.
+// co-located wagon's cargo. CargoWeight and CargoCapacity are both
+// in pounds — carry weight is what actually limits the wagon, so the
+// dashboard's "is the wagon filling up?" question reads honestly as
+// a weight ratio. CargoByBucket sums per-item weights by bucket.
 type CaravanSnapshot struct {
 	InstId            int            `yaml:"inst_id"             json:"inst_id"`
 	Name              string         `yaml:"name"                json:"name"`
 	State             string         `yaml:"state"               json:"state"`
 	StateEnteredRound uint64         `yaml:"state_entered_round" json:"state_entered_round"`
 	RoomId            int            `yaml:"room_id"             json:"room_id"`
-	CargoCount        int            `yaml:"cargo_count"         json:"cargo_count"`
-	CargoCapacity     int            `yaml:"cargo_capacity"      json:"cargo_capacity"`
+	CargoWeight       int            `yaml:"cargo_weight"        json:"cargo_weight"`   // pounds
+	CargoCapacity     int            `yaml:"cargo_capacity"      json:"cargo_capacity"` // pounds
 	CargoByBucket     map[string]int `yaml:"cargo_by_bucket"     json:"cargo_by_bucket"`
 }
 
 // ForagerSnapshot captures one forager NPC's state + backpack
-// composition.
+// composition. CargoWeight and CargoCapacity are pounds (same
+// convention as CaravanSnapshot).
 type ForagerSnapshot struct {
 	InstId            int            `yaml:"inst_id"             json:"inst_id"`
 	Name              string         `yaml:"name"                json:"name"`
@@ -62,7 +66,7 @@ type ForagerSnapshot struct {
 	State             string         `yaml:"state"               json:"state"`
 	StateEnteredRound uint64         `yaml:"state_entered_round" json:"state_entered_round"`
 	RoomId            int            `yaml:"room_id"             json:"room_id"`
-	CargoCount        int            `yaml:"cargo_count"         json:"cargo_count"`
-	CargoCapacity     int            `yaml:"cargo_capacity"      json:"cargo_capacity"`
+	CargoWeight       int            `yaml:"cargo_weight"        json:"cargo_weight"`   // pounds
+	CargoCapacity     int            `yaml:"cargo_capacity"      json:"cargo_capacity"` // pounds
 	CargoByBucket     map[string]int `yaml:"cargo_by_bucket"     json:"cargo_by_bucket"`
 }

@@ -91,14 +91,21 @@ func captureCaravans() []CaravanSnapshot {
 		}
 
 		// Wagon co-located with the leader is the cargo source.
+		// Both CargoWeight and CargoCapacity are pounds — that's what
+		// actually limits the wagon, and the dashboard's "is the
+		// wagon filling up?" question reads honestly as a weight ratio.
 		wagon := caravan.FindWagonInRoom(m.Character.RoomId)
 		if wagon != nil {
+			cs.CargoWeight = int(wagon.Character.GetCarriedWeight())
 			cs.CargoCapacity = int(wagon.Character.CarryCapacity())
 			for _, it := range wagon.Character.Items {
 				bucket := economy.BucketFor(it.ItemId)
-				cs.CargoCount++
-				if bucket != "" {
-					cs.CargoByBucket[bucket]++
+				if bucket == "" {
+					continue
+				}
+				w := int(it.GetSpec().GetWeight())
+				if w > 0 {
+					cs.CargoByBucket[bucket] += w
 				}
 			}
 		}

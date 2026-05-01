@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/caravan"
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/economy/health"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -78,9 +79,11 @@ func TestCaptureSnapshot_Caravans(t *testing.T) {
 	wagon.Character.Name = "TestWagon"
 	wagon.Character.Buffs = buffs.New()
 	wagon.Character.RoomId = roomId
-	// Stuff one base-bucket item (iron ingot 40001) into the wagon's
-	// inventory directly. items.New returns ItemId=0 when the item spec
-	// is not loaded in test, so construct the Item literal instead.
+	// Override carry capacity to a known value so CargoCapacity in the
+	// snapshot is deterministic. Item specs aren't loaded in test, so
+	// per-item weights resolve to 0; we only assert the structural
+	// wiring (capacity populated, cargo fields present).
+	characters.ApplyMobOverrides(&wagon.Character, 0, 0, 5000)
 	wagon.Character.Items = append(wagon.Character.Items, items.Item{ItemId: 40001})
 
 	mobs.SetInstanceForTest(wagon.InstanceId, wagon)
@@ -120,10 +123,14 @@ func TestCaptureSnapshot_Caravans(t *testing.T) {
 	if c.StateEnteredRound != 12100 {
 		t.Errorf("state_entered_round: got %d, want 12100", c.StateEnteredRound)
 	}
-	if c.CargoCount != 1 {
-		t.Errorf("cargo_count: got %d, want 1", c.CargoCount)
+	if c.CargoCapacity != 5000 {
+		t.Errorf("cargo_capacity: got %d, want 5000 (override set in fixture)", c.CargoCapacity)
 	}
-	if c.CargoByBucket["base"] != 1 {
-		t.Errorf("cargo_by_bucket[base]: got %d, want 1", c.CargoByBucket["base"])
+	// Item specs aren't loaded in test, so per-item weight resolves
+	// to 0 and CargoWeight + CargoByBucket sums are 0. We only assert
+	// the structural wiring is present (capacity populated, map
+	// non-nil), not specific weight values.
+	if c.CargoByBucket == nil {
+		t.Error("cargo_by_bucket: got nil map, want initialized map")
 	}
 }

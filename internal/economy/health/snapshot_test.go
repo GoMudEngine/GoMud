@@ -27,8 +27,8 @@ func TestSnapshot_YAMLRoundTrip(t *testing.T) {
 			{
 				InstId: 42, Name: "Caravan Master Borric",
 				State: "outbound_transit", StateEnteredRound: 12100, RoomId: 1500,
-				CargoCount: 14, CargoCapacity: 30,
-				CargoByBucket: map[string]int{"base": 5, "stillwater": 9},
+				CargoWeight: 850, CargoCapacity: 5000,
+				CargoByBucket: map[string]int{"base": 300, "stillwater": 550},
 			},
 		},
 		Foragers: []ForagerSnapshot{
@@ -36,8 +36,8 @@ func TestSnapshot_YAMLRoundTrip(t *testing.T) {
 				InstId: 88, Name: "Storekeeper Wulf",
 				Territory: "stillwater_marsh",
 				State: "foraging", StateEnteredRound: 12200, RoomId: 4520,
-				CargoCount: 6, CargoCapacity: 12,
-				CargoByBucket: map[string]int{"stillwater": 6},
+				CargoWeight: 14, CargoCapacity: 60,
+				CargoByBucket: map[string]int{"stillwater": 14},
 			},
 		},
 	}
@@ -61,7 +61,7 @@ func TestSnapshot_YAMLRoundTrip(t *testing.T) {
 	if len(out.Caravans) != 1 || out.Caravans[0].State != "outbound_transit" {
 		t.Errorf("Caravans round-trip mismatch: got %+v", out.Caravans)
 	}
-	if got := out.Foragers[0].CargoByBucket["stillwater"]; got != 6 {
-		t.Errorf("Foragers cargo bucket: got %d, want 6", got)
+	if got := out.Foragers[0].CargoByBucket["stillwater"]; got != 14 {
+		t.Errorf("Foragers cargo bucket: got %d, want 14", got)
 	}
 }
