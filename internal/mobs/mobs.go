@@ -2,8 +2,10 @@ package mobs
 
 import (
 	"fmt"
+	"maps"
 	"math"
 	"os"
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -369,16 +371,12 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 		// instance's skills/spellbook would contaminate the template.
 		if mob.Character.Skills != nil {
 			skillsCopy := make(map[string]int, len(mob.Character.Skills))
-			for k, v := range mob.Character.Skills {
-				skillsCopy[k] = v
-			}
+			maps.Copy(skillsCopy, mob.Character.Skills)
 			mob.Character.Skills = skillsCopy
 		}
 		if mob.Character.SpellBook != nil {
 			spellCopy := make(map[string]int, len(mob.Character.SpellBook))
-			for k, v := range mob.Character.SpellBook {
-				spellCopy[k] = v
-			}
+			maps.Copy(spellCopy, mob.Character.SpellBook)
 			mob.Character.SpellBook = spellCopy
 		}
 
@@ -893,13 +891,7 @@ func (m *Mob) GetSellPrice(item items.Item) int {
 }
 
 func (r *Mob) HatesSpecies(raceName string) bool {
-	raceName = strings.ToLower(raceName)
-	for _, hateGroup := range r.Hates {
-		if hateGroup == raceName {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(r.Hates, strings.ToLower(raceName))
 }
 
 func (r *Mob) HatesMob(m *Mob) bool {
