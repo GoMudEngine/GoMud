@@ -251,6 +251,19 @@ func GetAllMobInfo() []Mob {
 	return ret
 }
 
+// AllMobTemplates returns pointers to every loaded mob template. Intended for
+// startup validators that need to inspect template fields without copying.
+// Callers must not mutate the returned pointers.
+func AllMobTemplates() []*Mob {
+	mobsMu.RLock()
+	defer mobsMu.RUnlock()
+	ret := make([]*Mob, 0, len(mobs))
+	for _, m := range mobs {
+		ret = append(ret, m)
+	}
+	return ret
+}
+
 func GetAllMobNames() []string {
 	mobsMu.RLock()
 	defer mobsMu.RUnlock()
@@ -757,6 +770,23 @@ func (m *Mob) Command(inputTxt string, waitSeconds ...float64) {
 
 func (m *Mob) HasShop() bool {
 	return len(m.Character.Shop) > 0
+}
+
+// GetMobId satisfies shops.ShopBearingMob — returns the template mob ID as int.
+func (m *Mob) GetMobId() int {
+	return int(m.MobId)
+}
+
+// IsCrafter satisfies shops.ShopBearingMob — returns whether this mob crafts
+// autonomously.
+func (m *Mob) IsCrafter() bool {
+	return m.Crafter
+}
+
+// GetShopCraftSupport satisfies shops.ShopBearingMob — returns the
+// craft_support tag for this mob's shop.
+func (m *Mob) GetShopCraftSupport() string {
+	return m.ShopCraftSupport
 }
 
 func (m *Mob) IsTameable() bool {

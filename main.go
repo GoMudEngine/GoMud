@@ -56,6 +56,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/suggestions"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -1099,6 +1100,14 @@ func loadAllDataFiles(isReload bool) {
 		}
 		return 0, false
 	})
+	allMobTemplates := mobs.AllMobTemplates()
+	adapted := make([]shops.ShopBearingMob, 0, len(allMobTemplates))
+	for _, m := range allMobTemplates {
+		adapted = append(adapted, m)
+	}
+	if err := shops.ValidateShopMobTags(adapted); err != nil {
+		panic(fmt.Sprintf("shops.ValidateShopMobTags failed:\n%v", err))
+	}
 	pets.LoadDataFiles()
 	quests.LoadDataFiles()
 	questengine.LoadDataFiles()
