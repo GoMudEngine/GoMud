@@ -84,6 +84,7 @@ func RegisterMobShop(mob *Mob) {
 		})
 	}
 
+	template.CraftSupport = mob.ShopCraftSupport
 	shops.RegisterShop(mob.Zone, int(mob.MobId), mob.HomeRoomId, template)
 }
 

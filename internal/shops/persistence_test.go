@@ -168,6 +168,54 @@ func TestYAML_LocationFieldsNotPersisted(t *testing.T) {
 	assert.NotContains(t, content, "zone")
 }
 
+func TestRegisterShop_MigratesEmptyCraftSupport(t *testing.T) {
+	const (
+		testZone   = "testzone"
+		testMobId  = 9001
+		testRoomId = 1
+	)
+
+	// Remove any stale on-disk artifact from a previous run, then clean up
+	// again when the test finishes (the migration path writes to disk).
+	diskPath := shopPath(testZone, testMobId, testRoomId)
+	os.Remove(diskPath) //nolint:errcheck // best-effort pre-cleanup
+	ClearCache()
+	t.Cleanup(func() {
+		ClearCache()
+		os.Remove(diskPath) //nolint:errcheck // best-effort post-cleanup
+	})
+
+	// Seed a cached shop with empty CraftSupport.
+	tmplNoTag := makeTemplate()
+	tmplNoTag.CraftSupport = ""
+	inv := RegisterShop(testZone, testMobId, testRoomId, tmplNoTag)
+	if inv.CraftSupport != "" {
+		t.Fatalf("setup precondition: got %q, want \"\"", inv.CraftSupport)
+	}
+
+	// Re-register with a tagged template — should migrate the cached one.
+	tmplWithTag := makeTemplate()
+	tmplWithTag.CraftSupport = CraftSupportBlacksmithing
+	inv2 := RegisterShop(testZone, testMobId, testRoomId, tmplWithTag)
+	if inv2.CraftSupport != CraftSupportBlacksmithing {
+		t.Errorf("got %q after migration, want %q", inv2.CraftSupport, CraftSupportBlacksmithing)
+	}
+}
+
+func TestIsValidCraftSupport(t *testing.T) {
+	for _, v := range ValidCraftSupports {
+		if !IsValidCraftSupport(v) {
+			t.Errorf("ValidCraftSupports contains %q but IsValidCraftSupport returns false", v)
+		}
+	}
+	if IsValidCraftSupport("nonsense") {
+		t.Error("IsValidCraftSupport(\"nonsense\") = true, want false")
+	}
+	if IsValidCraftSupport("") {
+		t.Error("IsValidCraftSupport(\"\") = true, want false (empty is INVALID)")
+	}
+}
+
 func TestYAML_PartialLoad_MissingFieldsAreZero(t *testing.T) {
 	// A file written without last_restock or known_recipes should unmarshal
 	// with zero values for those fields.

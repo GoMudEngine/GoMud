@@ -73,6 +73,12 @@ func RegisterShop(zone string, mobId int, roomId int, template ShopInventory) *S
 	shopCacheMu.RLock()
 	if inv, ok := shopCache[key]; ok {
 		shopCacheMu.RUnlock()
+		if inv.CraftSupport == "" && template.CraftSupport != "" {
+			inv.CraftSupport = template.CraftSupport
+			if err := SaveShop(zone, mobId, roomId); err != nil {
+				mudlog.Warn("RegisterShop CraftSupport migration save", "key", key, "error", err)
+			}
+		}
 		return inv
 	}
 	shopCacheMu.RUnlock()
@@ -92,6 +98,9 @@ func RegisterShop(zone string, mobId int, roomId int, template ShopInventory) *S
 			}
 		}
 		inv = &seeded
+	} else if inv.CraftSupport == "" && template.CraftSupport != "" {
+		// Migrate disk-loaded shop missing the tag.
+		inv.CraftSupport = template.CraftSupport
 	}
 
 	inv.Zone = zone

@@ -125,6 +125,7 @@ type Mob struct {
 	CrafterSkill            string   `yaml:"crafterskill,omitempty"`            // Craft skill used (e.g. "blacksmithing")
 	CrafterRecipeIds        []string `yaml:"crafterrecipeids,omitempty"`        // Recipe IDs this mob can craft
 	CrafterRestockMaterials []int    `yaml:"crafterrestockmaterials,omitempty"` // Item IDs restocked periodically
+	ShopCraftSupport        string   `yaml:"craft_support,omitempty"`           // Crafting discipline this shop supports (one of shops.ValidCraftSupports)
 
 	// ── Stage 3.4: spawn-time overrides for special mobs (wagons, statues, etc.) ──
 	CarryCapacityOverride float64 `yaml:"carry_capacity,omitempty"`     // overrides Strength-derived calc when > 0
