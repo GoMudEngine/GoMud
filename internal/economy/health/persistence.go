@@ -75,9 +75,21 @@ type SnapshotMeta struct {
 	ManualLabel string
 }
 
+// manualPeek is the minimal struct needed to read the Manual and
+// ManualLabel fields from a snapshot YAML without deserializing the
+// entire payload (shops + caravans + foragers arrays). Replaces the
+// previous LoadSnapshotFrom call in ListSnapshotsFrom, which caused
+// ~36MB of allocations + 720 full unmarshals per dashboard fetch at
+// 30-day retention.
+type manualPeek struct {
+	Manual      bool   `yaml:"manual"`
+	ManualLabel string `yaml:"manual_label,omitempty"`
+}
+
 // ListSnapshotsFrom returns metas sorted by timestamp descending. The
-// Manual + ManualLabel fields require a one-line peek into each YAML;
-// the cost is small at hourly cadence.
+// Manual + ManualLabel fields are obtained via a lightweight peek into
+// each YAML (manualPeek), reading only those two keys rather than
+// deserializing the full Snapshot.
 func ListSnapshotsFrom(dir string) []SnapshotMeta {
 	entries, err := os.ReadDir(dir)
 	if err != nil {
@@ -94,10 +106,13 @@ func ListSnapshotsFrom(dir string) []SnapshotMeta {
 			continue
 		}
 		meta := SnapshotMeta{UnixTs: ts}
-		// Peek for manual flag — cheap parse of a few keys.
-		if s, err := LoadSnapshotFrom(dir, ts); err == nil && s != nil {
-			meta.Manual = s.Manual
-			meta.ManualLabel = s.ManualLabel
+		// Peek for manual flag — reads only manual + manual_label keys.
+		if data, err := os.ReadFile(filepath.Join(dir, e.Name())); err == nil {
+			var peek manualPeek
+			if err := yaml.Unmarshal(data, &peek); err == nil {
+				meta.Manual = peek.Manual
+				meta.ManualLabel = peek.ManualLabel
+			}
 		}
 		out = append(out, meta)
 	}
