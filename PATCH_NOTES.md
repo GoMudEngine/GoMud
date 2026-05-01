@@ -1,5 +1,22 @@
 # DOGMud Patch Notes
 
+## 2026-05-01 — Mob Aliveness Roadmap (planning)
+
+**Note:** Planning doc only — no engine, content, or config changes.
+
+- **`MOB_ALIVENESS_ROADMAP.md`** added at project root. Long-term plan
+  for making NPCs feel alive: persistent disposition memory, factions,
+  citizenship/justice, NPC schedules, motivations/goals, equipment-
+  awareness, bounty hunting, and mob/player command parity.
+- 39 chunks across 6 phases — Substrate, Tactical fill-in, Routine
+  layer, Strategic layer, Cross-cutting features, Audit & polish — with
+  a progress tracker at the top. Living doc; status updates as chunks
+  ship. Each chunk gets its own spec/plan when picked up.
+- Five MEMORY-tracked items absorbed into the roadmap: peacefulquest →
+  faction system, Companion Phase 5 (mutations), tactics-cast
+  preemption gap, PvM/MvP/PvP/MvM parity gaps, Stillwater town-flavor
+  pass.
+
 ## 2026-05-01 — Economy Health Dashboard
 
 **Note:** New `/admin/economy/` web dashboard for monitoring NPC
