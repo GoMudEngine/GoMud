@@ -84,3 +84,40 @@ func TestScore_PerCraftSupport_MeanOfShops(t *testing.T) {
 		t.Errorf("cooking: got %.2f, want 50", scores["cooking"])
 	}
 }
+
+func TestScore_Caravan_CycleCount(t *testing.T) {
+	// Build a 4-snapshot history that contains exactly one ThornwallDwell→
+	// ThornwallDwell transition.
+	hist := []*health.Snapshot{
+		{Caravans: []health.CaravanSnapshot{{InstId: 1, State: "thornwall_dwell"}}},  // t-3
+		{Caravans: []health.CaravanSnapshot{{InstId: 1, State: "outbound_transit"}}}, // t-2
+		{Caravans: []health.CaravanSnapshot{{InstId: 1, State: "stillwater_dwell"}}}, // t-1
+		{Caravans: []health.CaravanSnapshot{{InstId: 1, State: "thornwall_dwell"}}},  // now
+	}
+	cycles := health.CountCaravanCycles(1, hist)
+	if cycles != 1 {
+		t.Errorf("got %d cycles, want 1", cycles)
+	}
+}
+
+func TestScore_Forager_CycleCount(t *testing.T) {
+	hist := []*health.Snapshot{
+		{Foragers: []health.ForagerSnapshot{{InstId: 7, State: "resting"}}},
+		{Foragers: []health.ForagerSnapshot{{InstId: 7, State: "foraging"}}},
+		{Foragers: []health.ForagerSnapshot{{InstId: 7, State: "resting"}}},
+		{Foragers: []health.ForagerSnapshot{{InstId: 7, State: "foraging"}}},
+		{Foragers: []health.ForagerSnapshot{{InstId: 7, State: "resting"}}},
+	}
+	cycles := health.CountForagerCycles(7, hist)
+	if cycles != 2 {
+		t.Errorf("got %d cycles, want 2", cycles)
+	}
+}
+
+func TestScore_Caravan_InsufficientHistory(t *testing.T) {
+	cur := health.Snapshot{Caravans: []health.CaravanSnapshot{{InstId: 1, State: "thornwall_dwell"}}}
+	score, ok := health.PerCaravanScore(1, cur, nil) // no history
+	if ok {
+		t.Errorf("got (%v, true), want (_, false) for no history", score)
+	}
+}

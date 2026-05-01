@@ -72,3 +72,117 @@ func PerCraftSupportScores(snap Snapshot) map[string]float64 {
 	}
 	return out
 }
+
+// CountCaravanCycles returns the number of ThornwallDwell→ThornwallDwell
+// cycles for instId across history. History must be ordered oldest→
+// newest. A cycle is one entry into thornwall_dwell preceded by a
+// non-thornwall_dwell state.
+func CountCaravanCycles(instId int, history []*Snapshot) int {
+	return countStateReturns(history, "thornwall_dwell", func(s *Snapshot) string {
+		for _, c := range s.Caravans {
+			if c.InstId == instId {
+				return c.State
+			}
+		}
+		return ""
+	})
+}
+
+// CountForagerCycles returns the number of Resting→Resting transitions
+// for instId across history.
+func CountForagerCycles(instId int, history []*Snapshot) int {
+	return countStateReturns(history, "resting", func(s *Snapshot) string {
+		for _, f := range s.Foragers {
+			if f.InstId == instId {
+				return f.State
+			}
+		}
+		return ""
+	})
+}
+
+func countStateReturns(history []*Snapshot, target string, lookup func(*Snapshot) string) int {
+	cycles := 0
+	prev := ""
+	for _, s := range history {
+		cur := lookup(s)
+		if cur == target && prev != "" && prev != target {
+			cycles++
+		}
+		if cur != "" {
+			prev = cur
+		}
+	}
+	return cycles
+}
+
+// PerCaravanScore returns (score, true) if there's enough history to
+// compute. Insufficient history (fewer than minHistory entries) returns
+// (_, false). Score = cycleScore - stuckPenalty, clamped to [0, 100].
+const (
+	minHistoryForCycles  = 24   // ~24 hourly samples = 1 day baseline
+	stuckThresholdRounds = 5000 // any state held longer than this triggers the penalty
+	stuckPenalty         = 30   // points deducted when stuck
+)
+
+func PerCaravanScore(instId int, cur Snapshot, history []*Snapshot) (float64, bool) {
+	if len(history) < minHistoryForCycles {
+		return 0, false
+	}
+	cycles := CountCaravanCycles(instId, history)
+	expectedPerWindow := float64(len(history)) / 24.0 // 1 cycle/day default
+	if expectedPerWindow <= 0 {
+		expectedPerWindow = 1
+	}
+	score := 100 * float64(cycles) / expectedPerWindow
+	if score > 100 {
+		score = 100
+	}
+
+	// Stuck penalty: any caravan whose current state has been held
+	// longer than stuckThresholdRounds loses points.
+	for _, c := range cur.Caravans {
+		if c.InstId == instId && c.StateEnteredRound > 0 {
+			if cur.Round > c.StateEnteredRound &&
+				cur.Round-c.StateEnteredRound > stuckThresholdRounds {
+				score -= stuckPenalty
+			}
+			break
+		}
+	}
+	if score < 0 {
+		score = 0
+	}
+	return score, true
+}
+
+// PerForagerScore mirrors PerCaravanScore for foragers (Resting→Resting
+// cycle counting + same stuck-penalty logic).
+func PerForagerScore(instId int, cur Snapshot, history []*Snapshot) (float64, bool) {
+	if len(history) < minHistoryForCycles {
+		return 0, false
+	}
+	cycles := CountForagerCycles(instId, history)
+	expectedPerWindow := float64(len(history)) / 8.0 // ~3 cycles/day
+	if expectedPerWindow <= 0 {
+		expectedPerWindow = 1
+	}
+	score := 100 * float64(cycles) / expectedPerWindow
+	if score > 100 {
+		score = 100
+	}
+
+	for _, f := range cur.Foragers {
+		if f.InstId == instId && f.StateEnteredRound > 0 {
+			if cur.Round > f.StateEnteredRound &&
+				cur.Round-f.StateEnteredRound > stuckThresholdRounds {
+				score -= stuckPenalty
+			}
+			break
+		}
+	}
+	if score < 0 {
+		score = 0
+	}
+	return score, true
+}
