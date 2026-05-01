@@ -1,5 +1,35 @@
 # DOGMud Patch Notes
 
+## 2026-04-30 (evening) — Stage 3.4 Hardening + Pricing Pass (dev only)
+
+**Note:** Smoke-test fixes and late-day polish on the Stage 3.4 economy stack. Promotes to `master` with the rest of the economy stack.
+
+### Forager fixes
+- **Halix anchor moved** from Thornwall Temple Interior (468) to Sheltered Ridge Alcove (3040) where Hermit Kael also camps. The original anchor put a Steppe forager in city center with forage range one zone away — round-trip walks blew through state-machine timeouts. The Steppe-side anchor matches Tova's and Kessa's pattern (anchor near forage range; walk into town only to deliver).
+- **Forager Vella renamed to Tova** (mob 371, Stillwater Marsh). Disambiguates `look vella` from the long-running Mistress Vella Thorne (mob 355, Stillwater town).
+- **Forager state machine no longer re-issues `fold-recall`** while already casting — was resetting cast progress every idle tick.
+
+### Caravan hardening
+- **Auto-reset watchdog at the top of every caravan tick.** If the caravan has been stuck in a single state longer than 5× the configured dwell (floor 300 rounds), state resets to `ThornwallDwell` with a `mudlog.Warn` entry. Recovers from orphaned-state corruption after restarts or unusual party deaths without admin intervention.
+- **New admin command `caravan reset [<instanceId>]`** — manual reset for one caravan leader (numeric arg) or every caravan leader (no arg).
+- **Party-aware hostile check** stops the caravan from abandoning members. Previously the leader's `hostilesInRoom` only checked the leader's room — a follower fighting alone in a different room got left behind. The new `partyHostilesNearby` walks every party member's room.
+- **Shop persistence after caravan + forager visits.** Stock changes now persist to disk inside `VisitVendorsInRoom` (was in-memory only — a panic lost an in-flight cycle's deliveries).
+- **Wagon equipment slots suppressed.** New `hide_equipment_slots: true` flag on the Mob struct hides the empty Equipment block in `look mob` for entities like the wagon that don't wear gear.
+- **Boot panic fix:** wagon name shortened to match its YAML filename per the engine's `ConvertForFilename(name)` convention.
+
+### Pricing + accessibility
+- **Pricing pass on 26 mat YAMLs (Approach B)** — rarity-tier-aligned base values. The dynamic shop multiplier already does most rarity work via scarcity (0.25×–5.0× swing); base values now sit at band midpoints rather than encoding rarity twice. Bands: tier-50 = 1–3g (commodities), tier-40 = 5–25g (standard), tier-30 = 25–75g (regional), tier-20 = 80–500g (uncommon). Biggest corrections: Hive Fragment 500→25g (was tier-20-priced but tier-40-tagged), chrysalis_shard 6→80g, gold_wire 8→80g, mutation_catalyst 10→100g, ironbark_shaving 4→25g, raw_gem 5→25g. Stillwater pearl + Chrysalis Core unchanged at 400/500.
+- **Starting player gold bumped 25 → 250.** With the new mat prices, a fresh character couldn't afford even one mid-tier craft attempt; 250g lets them try.
+
+### Other small fixes
+- **Companion spawn stamina:** previous spawn path set Health and Conviction to max but never set Stamina, so companions spawned at 0 SP and were immediately stamina-broken.
+- **Steal gate ordering:** `skullduggery.steal` skill-rank check moved AFTER target validation. Stealing from a `player_attack_immune` mob now surfaces the immune rebuff first instead of the misleading "not advanced enough" rebuff.
+- **Mob.Cast diagnostics:** surfaces `InitiateCast`'s silent early-exit reasons (AlreadyCasting / OnCooldown / InvalidSpell / NoTarget) at debug level. Caught by smoke test as a tactics-cast preemption gap (logged as followup).
+- **Follow auto-timer removed.** The 10-min auto-expiry in `modules/follow` dropped follow with no in-fiction reason. Teleport drops, death drops, and explicit `follow stop` still apply.
+
+### Developer docs
+- `internal/items/context.md` gains three new sections (Rarity Tiers, Pricing Bands, Supply Pipeline) so the items package's developer doc reflects the post-3.4 economy.
+
 ## 2026-04-30 — Stage 3.4: Real Item Transfer (dev only)
 
 **Note:** Final stage of the caravan/economy effort. Once this lands
