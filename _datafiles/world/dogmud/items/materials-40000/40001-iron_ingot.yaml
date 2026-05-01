@@ -6,6 +6,6 @@ type: object
 subtype: mundane
 component_tag: iron-ingot
 weight: 0.1
-value: 1
+value: 2
 rarity_tier: 50
 is_component: true

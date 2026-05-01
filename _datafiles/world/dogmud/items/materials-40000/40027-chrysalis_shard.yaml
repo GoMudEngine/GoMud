@@ -7,6 +7,6 @@ type: object
 subtype: mundane
 component_tag: chrysalis-shard
 weight: 0.2
-value: 6
+value: 80
 rarity_tier: 20
 is_component: true

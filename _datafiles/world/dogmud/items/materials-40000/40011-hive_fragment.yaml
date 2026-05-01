@@ -6,6 +6,6 @@ type: object
 uses: 0
 weight: 1.5
 component_tag: hive-fragment
-value: 500
+value: 25
 rarity_tier: 40
 is_component: true

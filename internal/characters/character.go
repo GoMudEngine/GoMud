@@ -118,7 +118,7 @@ func New() *Character {
 		Health:         startingHealth,
 		HealthMax:      stats.StatInfo{Base: 1},
 		Skills:         initAllSkills(),
-		Gold:           25,
+		Gold:           250,
 		Bank:           100,
 		// Starting spells — attack, utility light for dark zones, and
 		// basic item inspection so new players can evaluate drops.

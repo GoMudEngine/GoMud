@@ -11,6 +11,6 @@ type: object
 subtype: mundane
 component_tag: marsh-willow-bark
 weight: 0.1
-value: 15
+value: 25
 rarity_tier: 30
 is_component: true

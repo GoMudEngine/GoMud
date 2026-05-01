@@ -9,6 +9,6 @@ type: object
 subtype: mundane
 component_tag: moonpetal
 weight: 0.05
-value: 8
+value: 30
 rarity_tier: 30
 is_component: true
