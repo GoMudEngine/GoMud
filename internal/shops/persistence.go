@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strconv"
 	"sync"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -196,6 +198,101 @@ func AllShops() []*ShopInventory {
 		out = append(out, inv)
 	}
 	return out
+}
+
+// shopFileRe matches filenames of the form "{mobid}-room{roomid}.yaml" and
+// captures the two integer parts.
+var shopFileRe = regexp.MustCompile(`^(\d+)-room(\d+)\.yaml$`)
+
+// PrewarmFromPersistedFilesIn loads every persisted shop YAML found under
+// baseDir/{zone}/*.yaml into the shop cache. It calls zoneLookup(mobId) to
+// resolve the canonical (un-sanitized) zone string — the YAML files do not
+// store Zone because that field is tagged yaml:"-". Entries whose mobId is
+// not in zoneLookup are skipped (logged as a warning).
+//
+// This variant is the testable entrypoint; production code calls
+// PrewarmFromPersistedFiles which binds the real paths and lookup.
+func PrewarmFromPersistedFilesIn(baseDir string, zoneLookup func(mobId int) (string, bool)) (int, error) {
+	zoneDirs, err := os.ReadDir(baseDir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return 0, nil // no shops persisted yet — not an error
+		}
+		return 0, fmt.Errorf("shops.PrewarmFromPersistedFilesIn: readdir %q: %w", baseDir, err)
+	}
+
+	loaded := 0
+	for _, zd := range zoneDirs {
+		if !zd.IsDir() {
+			continue
+		}
+		zoneDir := filepath.Join(baseDir, zd.Name())
+		files, err := os.ReadDir(zoneDir)
+		if err != nil {
+			mudlog.Warn("shops.PrewarmFromPersistedFilesIn: readdir zone", "zone", zd.Name(), "error", err)
+			continue
+		}
+		for _, f := range files {
+			if f.IsDir() {
+				continue
+			}
+			m := shopFileRe.FindStringSubmatch(f.Name())
+			if m == nil {
+				continue
+			}
+			mobId, _ := strconv.Atoi(m[1])
+			roomId, _ := strconv.Atoi(m[2])
+
+			zone, ok := zoneLookup(mobId)
+			if !ok {
+				mudlog.Warn("shops.PrewarmFromPersistedFilesIn: no mob template for shop file",
+					"file", f.Name(), "mobId", mobId)
+				continue
+			}
+
+			key := shopKey(zone, mobId, roomId)
+			shopCacheMu.RLock()
+			_, already := shopCache[key]
+			shopCacheMu.RUnlock()
+			if already {
+				continue
+			}
+
+			// Read directly from baseDir — avoids the configs dependency
+			// in loadFromDisk (which uses the production shopPath).
+			filePath := filepath.Join(zoneDir, f.Name())
+			raw, readErr := os.ReadFile(filePath)
+			if readErr != nil {
+				mudlog.Warn("shops.PrewarmFromPersistedFilesIn: read file", "path", filePath, "error", readErr)
+				continue
+			}
+			var inv ShopInventory
+			if unmarshalErr := yaml.Unmarshal(raw, &inv); unmarshalErr != nil {
+				mudlog.Warn("shops.PrewarmFromPersistedFilesIn: unmarshal", "path", filePath, "error", unmarshalErr)
+				continue
+			}
+			inv.Zone = zone
+			inv.MobId = mobId
+			inv.RoomId = roomId
+
+			shopCacheMu.Lock()
+			shopCache[key] = &inv
+			shopCacheMu.Unlock()
+			loaded++
+		}
+	}
+	return loaded, nil
+}
+
+// PrewarmFromPersistedFiles is the production wrapper for
+// PrewarmFromPersistedFilesIn. It resolves the data-files path and builds a
+// mob-template zone lookup from mobs.AllMobTemplates(). Call after
+// mobs.LoadDataFiles().
+func PrewarmFromPersistedFiles(mobZoneLookup func(mobId int) (string, bool)) (int, error) {
+	baseDir := util.FilePath(
+		configs.GetFilePathsConfig().DataFiles.String(), `/`, `shops`,
+	)
+	return PrewarmFromPersistedFilesIn(baseDir, mobZoneLookup)
 }
 
 // loadFromDisk reads a shop's YAML save file and returns the parsed

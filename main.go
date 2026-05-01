@@ -1145,6 +1145,19 @@ func loadAllDataFiles(isReload bool) {
 	if err := shops.ValidateShopMobTags(adapted); err != nil {
 		panic(fmt.Sprintf("shops.ValidateShopMobTags failed:\n%v", err))
 	}
+	// Build mob-template zone lookup for shop cache pre-warming.
+	mobZoneByMobId := make(map[int]string, len(allMobTemplates))
+	for _, m := range allMobTemplates {
+		mobZoneByMobId[int(m.MobId)] = m.Zone
+	}
+	if n, err := shops.PrewarmFromPersistedFiles(func(mobId int) (string, bool) {
+		z, ok := mobZoneByMobId[mobId]
+		return z, ok
+	}); err != nil {
+		mudlog.Warn("shop cache prewarm", "error", err)
+	} else {
+		mudlog.Info("shop cache prewarmed", "count", n)
+	}
 	pets.LoadDataFiles()
 	quests.LoadDataFiles()
 	questengine.LoadDataFiles()
