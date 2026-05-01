@@ -265,7 +265,7 @@
                            '<td>' + fmtScore(sc.Score, sc.HasScore) + '</td>' +
                            '<td>' + (f.territory || '—') + '</td>' +
                            '<td>' + f.state + '</td>' +
-                           '<td>round +' + (d.snapshot.round - f.state_entered_round) + '</td>' +
+                           '<td>' + (f.state === '(not active)' ? '&mdash;' : 'round +' + (d.snapshot.round - f.state_entered_round)) + '</td>' +
                            '<td>' + f.room_id + '</td>' +
                            '<td>' + bar + ' ' + f.cargo_weight + '/' + f.cargo_capacity + ' lbs' + '</td>' +
                            '<td colspan="5" class="text-muted">cycles: see scoring</td></tr>';

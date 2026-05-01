@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/economy"
 	"github.com/GoMudEngine/GoMud/internal/forager"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -119,7 +120,13 @@ func captureCaravans() []CaravanSnapshot {
 // captureForagers walks every live mob instance and emits one
 // ForagerSnapshot per mob whose BTreeState has a non-empty
 // "forager_state" key. Foragers have no separate wagon — cargo lives
-// on the forager's own Character.Items.
+// on the forager's own Character.Items (plus ComponentItems and
+// PotionItems if a component bag or bandolier is equipped).
+//
+// After the live pass, a placeholder row (State="(not active)") is
+// appended for each forager profile in forager.AllProfiles() whose
+// mob isn't currently spawned, so the dashboard always shows the full
+// set of 3 foragers.
 func captureForagers() []ForagerSnapshot {
 	out := []ForagerSnapshot{}
 	for _, instId := range mobs.GetAllMobInstanceIds() {
@@ -140,6 +147,7 @@ func captureForagers() []ForagerSnapshot {
 
 		fs := ForagerSnapshot{
 			InstId:            instId,
+			MobId:             int(m.MobId),
 			Name:              m.Character.Name,
 			Territory:         territoryFor(int(m.MobId)),
 			State:             stateName,
@@ -149,20 +157,50 @@ func captureForagers() []ForagerSnapshot {
 			CargoWeight:       int(m.Character.GetCarriedWeight()),
 			CargoCapacity:     int(m.Character.CarryCapacity()),
 		}
-		// Per-bucket: sum item weights by bucket. Skip items with no
+		// Per-bucket: sum item weights across all inventory lists
+		// (backpack + component bag + bandolier). Skip items with no
 		// bucket or zero weight. Same convention as captureCaravans.
-		for _, it := range m.Character.Items {
-			bucket := economy.BucketFor(it.ItemId)
-			if bucket == "" {
-				continue
-			}
-			w := int(it.GetSpec().GetWeight())
-			if w > 0 {
-				fs.CargoByBucket[bucket] += w
+		// Note: captureCaravans only walks wagon.Character.Items because
+		// wagons never equip bags; foragers can (e.g. Halix wields a spear).
+		inventories := [][]items.Item{m.Character.Items, m.Character.ComponentItems, m.Character.PotionItems}
+		for _, list := range inventories {
+			for _, it := range list {
+				bucket := economy.BucketFor(it.ItemId)
+				if bucket == "" {
+					continue
+				}
+				w := int(it.GetSpec().GetWeight())
+				if w > 0 {
+					fs.CargoByBucket[bucket] += w
+				}
 			}
 		}
 		out = append(out, fs)
 	}
+
+	// Emit placeholder rows for profiles whose mob isn't currently live.
+	// This ensures the dashboard always shows all 3 foragers.
+	for _, p := range forager.AllProfiles() {
+		active := false
+		for i := range out {
+			if out[i].MobId == p.MobId {
+				active = true
+				break
+			}
+		}
+		if !active {
+			out = append(out, ForagerSnapshot{
+				InstId:        0,
+				MobId:         p.MobId,
+				Name:          p.Name,
+				Territory:     territoryFor(p.MobId),
+				State:         "(not active)",
+				RoomId:        p.SanctuaryRoom,
+				CargoByBucket: map[string]int{},
+			})
+		}
+	}
+
 	return out
 }
 

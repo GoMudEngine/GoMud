@@ -177,12 +177,25 @@ func TestCaptureSnapshot_Foragers(t *testing.T) {
 
 	snap := health.CaptureSnapshot()
 
-	if len(snap.Foragers) != 1 {
-		t.Fatalf("Foragers: got %d, want 1", len(snap.Foragers))
+	// With pre-population active, we get 1 live row + 2 placeholder rows
+	// (Halix mob 372 + Kessa mob 373 are not spawned in this test fixture).
+	if len(snap.Foragers) != 3 {
+		t.Fatalf("Foragers: got %d, want 3 (1 live + 2 inactive placeholders)", len(snap.Foragers))
 	}
-	f := snap.Foragers[0]
-	if f.State != "foraging" {
-		t.Errorf("state: got %q, want foraging", f.State)
+
+	// Find the live Tova row.
+	var f *health.ForagerSnapshot
+	for i := range snap.Foragers {
+		if snap.Foragers[i].State == "foraging" {
+			f = &snap.Foragers[i]
+			break
+		}
+	}
+	if f == nil {
+		t.Fatal("could not find live forager with state=foraging")
+	}
+	if f.MobId != 371 {
+		t.Errorf("mob_id: got %d, want 371", f.MobId)
 	}
 	if f.Territory != "stillwater_marsh" {
 		t.Errorf("territory: got %q, want stillwater_marsh (derived from KindMarsh)", f.Territory)
@@ -197,5 +210,115 @@ func TestCaptureSnapshot_Foragers(t *testing.T) {
 	// 0 — only verify structural wiring (CargoByBucket non-nil).
 	if f.CargoByBucket == nil {
 		t.Error("cargo_by_bucket: got nil map, want initialized map")
+	}
+
+	// Verify placeholder rows are present for the other two foragers.
+	inactive := 0
+	for _, row := range snap.Foragers {
+		if row.State == "(not active)" {
+			inactive++
+			if row.CargoByBucket == nil {
+				t.Error("placeholder row has nil CargoByBucket")
+			}
+		}
+	}
+	if inactive != 2 {
+		t.Errorf("inactive placeholder rows: got %d, want 2", inactive)
+	}
+}
+
+// TestCaptureSnapshot_Foragers_PrepopulatesInactiveProfiles verifies that
+// when no forager mobs are spawned, CaptureSnapshot still emits 3 rows —
+// one placeholder per forager.AllProfiles() entry.
+func TestCaptureSnapshot_Foragers_PrepopulatesInactiveProfiles(t *testing.T) {
+	// No mob instances registered → all three foragers are inactive.
+	snap := health.CaptureSnapshot()
+
+	if len(snap.Foragers) != 3 {
+		t.Fatalf("Foragers: got %d, want 3 (all placeholders)", len(snap.Foragers))
+	}
+	for _, f := range snap.Foragers {
+		if f.State != "(not active)" {
+			t.Errorf("mob %d: state=%q, want (not active)", f.MobId, f.State)
+		}
+		if f.CargoByBucket == nil {
+			t.Errorf("mob %d: CargoByBucket is nil", f.MobId)
+		}
+	}
+
+	// Verify the three profiles are represented by mob ID.
+	mobIds := map[int]bool{}
+	for _, f := range snap.Foragers {
+		mobIds[f.MobId] = true
+	}
+	for _, want := range []int{371, 372, 373} {
+		if !mobIds[want] {
+			t.Errorf("profile mob %d not found in forager placeholders", want)
+		}
+	}
+}
+
+// TestCaptureSnapshot_Foragers_IncludesEquippedSubInventories verifies that
+// the per-bucket cargo loop iterates ComponentItems and PotionItems in
+// addition to Items. In test, item specs return weight 0, so the loop
+// won't produce non-zero bucket sums; the test asserts no crash (structural
+// wiring) and that CargoByBucket is initialised.
+func TestCaptureSnapshot_Foragers_IncludesEquippedSubInventories(t *testing.T) {
+	const roomId = 9200
+	r := &rooms.Room{
+		RoomId: roomId,
+		Zone:   "TestZone",
+		Title:  "Test Room",
+		Exits:  map[string]exit.RoomExit{},
+	}
+	cleanRoom := rooms.SeedRoomsForTest(
+		map[int]*rooms.Room{roomId: r},
+		map[string]*rooms.ZoneConfig{},
+	)
+	defer cleanRoom()
+
+	const foragerInstanceId = 92371
+	f := &mobs.Mob{
+		MobId:      mobs.MobId(371),
+		InstanceId: foragerInstanceId,
+		HomeRoomId: roomId,
+		Zone:       "TestZone",
+	}
+	f.Character.Name = "TestTova"
+	f.Character.Buffs = buffs.New()
+	f.Character.RoomId = roomId
+	// Populate all three inventory lists with a known-bucket item.
+	f.Character.Items = append(f.Character.Items,
+		items.Item{ItemId: 40051}) // stillwater bucket
+	f.Character.ComponentItems = append(f.Character.ComponentItems,
+		items.Item{ItemId: 40051})
+	f.Character.PotionItems = append(f.Character.PotionItems,
+		items.Item{ItemId: 40051})
+
+	bs := behaviortree.NewBehaviorState()
+	bs.Set("forager_state", "foraging")
+	f.BTreeState = bs
+
+	mobs.SetInstanceForTest(f.InstanceId, f)
+	defer mobs.SetInstanceForTest(f.InstanceId, nil)
+	r.AddMob(f.InstanceId)
+
+	snap := health.CaptureSnapshot()
+
+	// Find the live Tova row.
+	var got *health.ForagerSnapshot
+	for i := range snap.Foragers {
+		if snap.Foragers[i].State == "foraging" {
+			got = &snap.Foragers[i]
+			break
+		}
+	}
+	if got == nil {
+		t.Fatal("live forager not found in snapshot")
+	}
+	// In test, item specs return 0 weight, so sums are 0 — we only
+	// verify the map was initialised (loop didn't panic).
+	if got.CargoByBucket == nil {
+		t.Error("CargoByBucket: got nil, want initialised map")
 	}
 }

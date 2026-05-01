@@ -58,9 +58,12 @@ type CaravanSnapshot struct {
 
 // ForagerSnapshot captures one forager NPC's state + backpack
 // composition. CargoWeight and CargoCapacity are pounds (same
-// convention as CaravanSnapshot).
+// convention as CaravanSnapshot). MobId is included so captureForagers
+// can cross-check live instances against forager.AllProfiles() and emit
+// placeholder rows for foragers that aren't currently spawned.
 type ForagerSnapshot struct {
 	InstId            int            `yaml:"inst_id"             json:"inst_id"`
+	MobId             int            `yaml:"mob_id"             json:"mob_id"`
 	Name              string         `yaml:"name"                json:"name"`
 	Territory         string         `yaml:"territory"           json:"territory"`
 	State             string         `yaml:"state"               json:"state"`
