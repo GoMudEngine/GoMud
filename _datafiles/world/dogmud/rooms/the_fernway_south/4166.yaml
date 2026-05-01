@@ -1,0 +1,57 @@
+roomid: 4166
+zone: The Fernway South
+title: Watercress Bend
+description: >
+  The brook bends sharply here and loses most of its speed,
+  curling into a slow <ansi fg="itemname">eddy</ansi> where
+  the current barely moves and the surface is almost glass.
+  A <ansi fg="itemname">watercress-mat</ansi> floats across
+  most of the eddy, dense and ankle-deep at the bank's
+  edge — the smell of it strong and peppery, the kind of
+  green pungency that sharpens the nose. Along the muddy
+  bank, where the watercress gives way to open ground,
+  patches of dark red-brown
+  <ansi fg="itemname">blood-moss</ansi> carpet the earth
+  in low spreading mats — a dyer's ingredient and an
+  alchemist's staple, found only where the ground stays
+  perpetually wet. The <ansi fg="itemname">soft-mud</ansi>
+  underfoot gives with every step and holds boot-prints
+  clean and deep; the deer-trail does not continue south,
+  and the brook disappears into a thicket of willow-scrub
+  with no path through.
+biome: forest
+coord:
+  x: -15
+  y: -19
+  z: 0
+exits:
+  north:
+    roomid: 4165
+nouns:
+  eddy: |
+    The brook curves and loses its speed here, pooling into
+    a slow side-eddy where the surface barely turns — the
+    kind of still water that collects whatever the current
+    brings down and holds it.
+  watercress-mat: |
+    A dense mat of watercress fills most of the eddy,
+    floating thick at the surface and rooted in the mud
+    below — pungent and peppery, ready to harvest by the
+    handful, the leaves broad and dark green.
+  blood-moss: |
+    Patches of dark red-brown blood-moss spread across the
+    soft mud at the eddy's bank — low and flat, the color
+    of old rust, keeping the soil together where the ground
+    stays wet. Useful to alchemists and dyers both.
+  soft-mud: |
+    The bank here is soft enough that every step leaves a
+    clean deep print, the mud cold and heavy underfoot.
+    The watercress roots hold the soil together where it
+    grows, but beyond the mat's edge the ground is bare
+    and gives freely.
+idlemessages:
+- the eddy turns slowly, watercress drifting
+- ''
+- a frog plops into the slow water from the bank
+- ''
+- a watercress leaf detaches and joins the slow circle

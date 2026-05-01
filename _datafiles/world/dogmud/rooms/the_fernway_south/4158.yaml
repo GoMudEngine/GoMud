@@ -1,0 +1,61 @@
+roomid: 4158
+zone: The Fernway South
+title: Beewood Hollow
+description: >
+  The trail west of Briar Tangle opens without warning into
+  a sunlit hollow where the canopy pulls back and the sky
+  shows clear overhead. The warmth of the open patch is
+  immediate and real. An old oak at the hollow's centre has
+  a wax-darkened hollow a body's-length up its trunk — the
+  <ansi fg="itemname">bee-tree</ansi> — and a steady traffic
+  of honeybees comes and goes from its lip in a low constant
+  stream. The air here carries a fat wax-warmth and the thin
+  clean edge of honey — not sweet exactly, but close to it.
+  A loose drift of the <ansi fg="itemname">swarm</ansi> hangs
+  around the upper branches, wholly absorbed, paying no
+  attention to the ground below. The
+  <ansi fg="itemname">honeycomb</ansi> is just visible at the
+  hollow's lip, darkened with years of old wax. The
+  <ansi fg="itemname">sun-patch</ansi> at the hollow's centre
+  is warm enough to stand in; the bees are drawn to it as
+  much as to the oak.
+biome: forest
+coord:
+  x: -15
+  y: -15
+  z: 0
+exits:
+  east:
+    roomid: 4157
+nouns:
+  bee-tree: |
+    A broad old oak whose hollow, a body's-length up the
+    trunk, has been occupied long enough that the bark around
+    the entry is dark with old wax and propolis. Bees come
+    and go in a steady unbroken stream, each departure
+    purposeful, each return loaded.
+  swarm: |
+    Hundreds of honeybees work the air around the tree and
+    the hollow's flowering edges, wholly absorbed in the
+    business of the hive. They take no particular notice of
+    anything below; the work is everything.
+  honeycomb: |
+    The honeycomb is just visible at the lip of the bee-tree's
+    hollow — darkened with layers of old wax, the cells
+    packed close. The outermost edge is open to the air and
+    the colour of dark amber.
+  sun-patch: |
+    A clear break in the canopy opens the hollow's centre to
+    open sky, and the ground there is noticeably warmer than
+    the shaded forest floor around it. The bees work the
+    sun-patch's edge as much as the tree, gathering from the
+    low clover that grows where the light reaches.
+idlemessages:
+- a single bee hovers in front of you, then is gone
+- ''
+- the hum of the swarm rises and falls
+- ''
+- a wax-flake drifts down and lands on the leaf litter
+spawninfo:
+- mobid: 362
+  cooldown: 600 rounds

@@ -11,6 +11,8 @@ ingredients:
     quantity: 1
   - item_tag: healers-root
     quantity: 2
+  - item_tag: wild-hare-meat
+    quantity: 1
   - item_tag: bottle
     quantity: 1
 output:

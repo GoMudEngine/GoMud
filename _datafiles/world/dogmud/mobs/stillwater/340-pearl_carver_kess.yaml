@@ -57,19 +57,43 @@ character:
     willpower:
       training: 5
   shop:
-    - itemid: 40022
+    # Stillwater unique (forager-fed)
+    - itemid: 40053    # Stillwater black pearl
       quantity: 0
       quantitymax: 0
-      price: 5
-    - itemid: 40019
+      price: 400
+    # Thornwall refined jewelcraft (caravan-fed from Tess)
+    - itemid: 40021    # copper wire
       quantity: 0
       quantitymax: 0
-      price: 3
-    - itemid: 40024
+      price: 12
+    - itemid: 40022    # silver wire
       quantity: 0
       quantitymax: 0
-      price: 2
-    - itemid: 40053
-      quantity: 1
-      quantitymax: 2
+      price: 25
+    - itemid: 40023    # gold wire
+      quantity: 0
+      quantitymax: 0
+      price: 60
+    - itemid: 40024    # polished stone
+      quantity: 0
+      quantitymax: 0
+      price: 8
+    - itemid: 40025    # raw gem
+      quantity: 0
+      quantitymax: 0
       price: 40
+    - itemid: 40026    # gem dust
+      quantity: 0
+      quantitymax: 0
+      price: 6
+    # Thornwall chrysalis (caravan-fed from Vael)
+    - itemid: 40030    # chrysalis setting
+      quantity: 0
+      quantitymax: 0
+      price: 90
+    # Base jewelcraft
+    - itemid: 40019    # chain link
+      quantity: 0
+      quantitymax: 0
+      price: 4

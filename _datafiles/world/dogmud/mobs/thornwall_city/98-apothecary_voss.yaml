@@ -77,31 +77,60 @@ character:
     charisma:
       training: -5
   shop:
-    - itemid: 40004
+    # Thornwall chrysalis (in-shop crafted)
+    - itemid: 40010    # Chrysalis Core
       quantity: 0
       quantitymax: 0
-      price: 2
-    - itemid: 40005
+      price: 80
+    - itemid: 40029    # mutation catalyst
       quantity: 0
       quantitymax: 0
-      price: 2
-    - itemid: 40006
+      price: 60
+    # Stillwater unique (caravan-fed from Ilsa)
+    - itemid: 40056    # marsh willow bark
       quantity: 0
       quantitymax: 0
-      price: 3
-    - itemid: 40007
+      price: 18
+    - itemid: 40057    # lake mint
       quantity: 0
       quantitymax: 0
-      price: 1
-    - itemid: 40009
+      price: 15
+    # Fernway forest (caravan-fed)
+    - itemid: 40062    # oak bark
       quantity: 0
       quantitymax: 0
-      price: 4
-    - itemid: 40043
+      price: 35
+    - itemid: 40063    # shadowcap mushroom
       quantity: 0
       quantitymax: 0
-      price: 1
-    - itemid: 40010
+      price: 40
+    - itemid: 40065    # beeswax
+      quantity: 0
+      quantitymax: 0
+      price: 30
+    - itemid: 40066    # blood-moss
+      quantity: 0
+      quantitymax: 0
+      price: 45
+    # Mid-tier overlap alchemy
+    - itemid: 40004    # healer's root
       quantity: 0
       quantitymax: 0
       price: 5
+    - itemid: 40005    # bitter thistle
+      quantity: 0
+      quantitymax: 0
+      price: 5
+    - itemid: 40009    # dustwalk herb
+      quantity: 0
+      quantitymax: 0
+      price: 8
+    # Base alchemy infrastructure
+    - itemid: 40006    # glass vial
+      quantity: 0
+      quantitymax: 0
+      price: 1
+    - itemid: 40043    # clay flask
+      quantity: 0
+      quantitymax: 0
+      price: 1

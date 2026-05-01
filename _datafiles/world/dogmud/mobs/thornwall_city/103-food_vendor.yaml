@@ -29,6 +29,7 @@ character:
   level: 1
   gold: 500
   shop:
+    # Existing prepared foods
     - itemid: 30022
       quantity: 0
       quantitymax: 0
@@ -36,7 +37,7 @@ character:
     - itemid: 30023
       quantity: 0
       quantitymax: 0
-      price: 5
+      price: 4
     - itemid: 30024
       quantity: 0
       quantitymax: 0
@@ -44,7 +45,30 @@ character:
     - itemid: 30021
       quantity: 0
       quantitymax: 0
+      price: 4
+    # Stillwater unique (caravan-fed from Tov Brann / Sigrid)
+    - itemid: 40058    # freshwater clam
+      quantity: 0
+      quantitymax: 0
+      price: 8
+    # Fernway cooking (caravan-fed)
+    - itemid: 40063    # shadowcap mushroom
+      quantity: 0
+      quantitymax: 0
+      price: 40
+    - itemid: 40064    # wild hare meat
+      quantity: 0
+      quantitymax: 0
+      price: 50
+    # Base cooking
+    - itemid: 40014    # raw meat
+      quantity: 0
+      quantitymax: 0
       price: 3
+    - itemid: 40015    # wild vegetables
+      quantity: 0
+      quantitymax: 0
+      price: 2
   stats:
     charisma:
       training: 8

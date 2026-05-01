@@ -51,16 +51,20 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 		}
 	}
 
-	// Non-crafter merchant restock (supply cart delivery for regular shops)
-	if mobs.TickMobShopRestock(mob) {
-		if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
-			msgs := []string{
-				`A supply cart pulls up outside. <ansi fg="mobname">%s</ansi> sorts through a fresh delivery.`,
-				`<ansi fg="mobname">%s</ansi> unpacks a crate of supplies and restocks the shelves.`,
-				`A runner drops off a bundle of goods. <ansi fg="mobname">%s</ansi> checks the contents and nods.`,
+	// Non-crafter merchant restock (supply cart delivery for regular shops).
+	// Stage 2 caravan: vendors in caravan-served zones skip the per-mob
+	// restock tick — they restock only when the caravan visits.
+	if !configs.GetBalanceConfig().IsCaravanServedZone(mob.Zone) {
+		if mobs.TickMobShopRestock(mob) {
+			if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
+				msgs := []string{
+					`A supply cart pulls up outside. <ansi fg="mobname">%s</ansi> sorts through a fresh delivery.`,
+					`<ansi fg="mobname">%s</ansi> unpacks a crate of supplies and restocks the shelves.`,
+					`A runner drops off a bundle of goods. <ansi fg="mobname">%s</ansi> checks the contents and nods.`,
+				}
+				msg := fmt.Sprintf(msgs[util.Rand(len(msgs))], mob.Character.Name)
+				sendVisualRoomText(room, msg)
 			}
-			msg := fmt.Sprintf(msgs[util.Rand(len(msgs))], mob.Character.Name)
-			sendVisualRoomText(room, msg)
 		}
 	}
 

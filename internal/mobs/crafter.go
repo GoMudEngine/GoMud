@@ -49,6 +49,15 @@ func RegisterMobShop(mob *Mob) {
 
 	seen := map[int]bool{}
 
+	// Helper: derive MaxStock from rarity tier × mob multiplier; fall
+	// back to the legacy constant when the item has no rarity_tier.
+	maxStock := func(itemId, fallback int) int {
+		if got := shops.EffectiveMaxStock(itemId, mob.StockMultiplier); got > 0 {
+			return got
+		}
+		return fallback
+	}
+
 	// Seed from legacy shop items (unlimited stock → restocked each cycle).
 	for _, si := range mob.Character.Shop {
 		if si.ItemId <= 0 || seen[si.ItemId] {
@@ -58,7 +67,7 @@ func RegisterMobShop(mob *Mob) {
 		template.Stock = append(template.Stock, shops.StockEntry{
 			ItemId:     si.ItemId,
 			RestockQty: 5,
-			MaxStock:   20,
+			MaxStock:   maxStock(si.ItemId, 20),
 		})
 	}
 
@@ -71,7 +80,7 @@ func RegisterMobShop(mob *Mob) {
 		template.Stock = append(template.Stock, shops.StockEntry{
 			ItemId:     itemId,
 			RestockQty: 3,
-			MaxStock:   10,
+			MaxStock:   maxStock(itemId, 10),
 		})
 	}
 
@@ -148,8 +157,12 @@ func TickMobCraft(mob *Mob) *CraftResult {
 	shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId)
 
 	if shopInv != nil {
-		// Supply cart delivery
-		restocked := shopInv.Restock()
+		// Supply cart delivery — suppressed for caravan-served zones.
+		// Caravan events deliver materials instead; crafting itself continues.
+		restocked := false
+		if !b.IsCaravanServedZone(mob.Zone) {
+			restocked = shopInv.Restock()
+		}
 
 		cfg := shops.DefaultPricingConfig()
 		reserve := 1 // Keep at least 1 of each ingredient in stock
@@ -214,11 +227,13 @@ func TickMobCraft(mob *Mob) *CraftResult {
 	}
 
 	// ── Legacy path (no ShopInventory) ────────────────────────────────────
-	// Restock materials into backpack
-	for _, itemId := range mob.CrafterRestockMaterials {
-		itm := items.New(itemId)
-		if itm.ItemId > 0 {
-			mob.Character.StoreItem(itm)
+	// Restock materials into backpack — suppressed for caravan-served zones.
+	if !b.IsCaravanServedZone(mob.Zone) {
+		for _, itemId := range mob.CrafterRestockMaterials {
+			itm := items.New(itemId)
+			if itm.ItemId > 0 {
+				mob.Character.StoreItem(itm)
+			}
 		}
 	}
 

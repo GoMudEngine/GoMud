@@ -1,0 +1,59 @@
+roomid: 4165
+zone: The Fernway South
+title: Heron Pool
+description: >
+  The brook widens here where the ground levels and slows the
+  current, spreading into a shallow <ansi fg="itemname">pool</ansi>
+  three or four paces across, the water clear enough that the
+  pale sandy bottom is visible in every part of it. Stands of
+  <ansi fg="itemname">reeds</ansi> crowd both banks, their
+  tips well above head-height and their bases lost in the
+  soft mud where the water meets the shore. Small silver
+  <ansi fg="itemname">minnows</ansi> move in schools near
+  the reedy margins, hanging almost motionless against the
+  current and then wheeling away as one. At the pool's
+  southern edge, pressed into the soft mud in a single
+  deliberate line, a set of
+  <ansi fg="itemname">heron-track</ansi> prints runs to the
+  water and stops — three-toed, wide-spaced, and recent
+  enough that they have not yet filled with water.
+biome: forest
+coord:
+  x: -15
+  y: -18
+  z: 0
+exits:
+  north:
+    roomid: 4164
+  south:
+    roomid: 4166
+  west:
+    roomid: 4197
+nouns:
+  pool: |
+    The brook slows here into a shallow pool perhaps three
+    paces across — the current barely perceptible, the
+    bottom pale and sandy and visible in every part, the
+    water cold and perfectly clear.
+  reeds: |
+    Marsh-reeds crowd both banks in dense stands, their
+    bases in the soft mud and their tips well above head
+    height — close-packed enough to conceal a patient
+    heron from anything not looking carefully.
+  minnows: |
+    Small silver fish hang in loose schools near the reedy
+    margins, almost motionless against the current, and
+    then flash away all at once at a shadow or a sound
+    before slowly drifting back.
+  heron-track: |
+    A single line of three-toed prints in the soft mud
+    at the pool's southern edge — each impression wide-
+    spaced and deliberate, the stride of a bird in no
+    hurry. Recent enough that they have not filled with
+    water.
+idlemessages:
+- minnows scatter and re-form in the pool
+- ''
+- a reed bends in a passing breeze
+- ''
+- somewhere distant, the rough croak of a heron

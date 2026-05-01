@@ -1,0 +1,71 @@
+roomid: 4161
+zone: The Fernway South
+title: Pine Stand
+description: >
+  East of the burn scar the oaks give way without ceremony to
+  a close stand of tall straight pines, the ground beneath
+  them bare of undergrowth and carpeted instead with the
+  <ansi fg="itemname">needle-carpet</ansi> — a dry, ankle-deep
+  layer that mutes every footfall to nothing. The air shifts
+  the moment you step in: resinous and sharp, the sweetness
+  of warm sap over the cooler must of the forest floor. Along
+  the nearest <ansi fg="itemname">pine-trunk</ansi> a long
+  smear of old pitch has run and hardened, and close to eye
+  level a half-dozen <ansi fg="itemname">pitch-beads</ansi>
+  cling to the bark like amber drops — old wounds from a lost
+  branch or a beetle's work, crystallized to something almost
+  clear. Near the stand's interior, one trunk carries a
+  different kind of mark: a long scrape at shoulder-height and
+  a single tuft of grey-brown fur caught in the rough bark —
+  the <ansi fg="itemname">wolf-sign</ansi> of something large
+  that uses this stand for its own reasons. The pines hold
+  their quiet around it.
+biome: forest
+coord:
+  x: -13
+  y: -16
+  z: 0
+exits:
+  west:
+    roomid: 4160
+nouns:
+  pine-trunk: |
+    Tall and straight-boled, the pines here have shed their
+    lower branches long ago and rise clean to a crown thirty
+    feet up. The bark is thick, scaly in reddish-grey plates,
+    and wept with old pitch wherever a branch has dropped or
+    a beetle found its way in.
+  pitch-bead: |
+    Hardened amber-gold beads of pine pitch cling to the
+    bark — the tree's old wounds sealed and crystallized,
+    some nearly clear and some clouded with bark-dust and
+    trapped insect parts. Smiths use the fresh-running
+    kind; alchemists prize the aged.
+  pitch-beads: |
+    Hardened amber-gold beads of pine pitch cling to the
+    bark — the tree's old wounds sealed and crystallized,
+    some nearly clear and some clouded with bark-dust and
+    trapped insect parts. Smiths use the fresh-running
+    kind; alchemists prize the aged.
+  needle-carpet: |
+    Years of fallen pine needles lie ankle-deep and
+    surprisingly dry beneath the stand's canopy — the
+    pines shed enough water to keep the ground below
+    almost parched. The carpet mutes footsteps
+    completely and releases a faint resin-smell when
+    pressed underfoot.
+  wolf-sign: |
+    A long scrape runs across the bark of one of the inner
+    pines at shoulder-height, the kind made by a large
+    animal marking territory — or stretching. A single
+    tuft of coarse grey fur is snagged in the rougher
+    bark below it, still soft, not old.
+idlemessages:
+- a pine needle drifts down
+- ''
+- somewhere distant, a deep cough that is not a deer
+- ''
+- the wind moves through the pines with a low whisper
+spawninfo:
+- mobid: 364
+  cooldown: 1200 rounds

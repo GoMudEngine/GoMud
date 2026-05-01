@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -219,6 +220,44 @@ func Go(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 		room.PlaySound(`room-exit`, `movement`)
 		destRoom.PlaySound(`room-enter`, `movement`)
+
+		// NPC party coupled movement: if this mob is leading an NPC party,
+		// queue the same exit command on every party-member mob still in
+		// the old room. Mirrors the player-party follow logic in
+		// internal/usercommands/go.go (a leader's movement command is
+		// re-issued on each member in the same room). Without this,
+		// follower mobs lag many rounds behind because they only re-target
+		// via the polling party_follow_leader btree action.
+		//
+		// Skip in-combat followers: a follower with non-nil Aggro is
+		// engaged with a target. Following the leader out of the room
+		// would break combat and let the attacker disengage. The leader's
+		// caravan_step will halt for the combat (party-in-combat check)
+		// so the leader shouldn't be moving anyway, but defensive in case
+		// a path step from a previous tick is in flight.
+		if p := parties.GetByMobInstanceId(mob.InstanceId); p != nil {
+			if p.Leader != nil && p.Leader.GetMobInstanceId() == mob.InstanceId {
+				for _, member := range p.Members {
+					memberInstId := member.GetMobInstanceId()
+					if memberInstId == 0 || memberInstId == mob.InstanceId {
+						continue
+					}
+					memberMob := mobs.GetInstance(memberInstId)
+					if memberMob == nil {
+						continue
+					}
+					// Only follow if the member is in the leader's old room.
+					if memberMob.Character.RoomId != room.RoomId {
+						continue
+					}
+					// Don't drag in-combat members out of their fight.
+					if memberMob.Character.Aggro != nil {
+						continue
+					}
+					memberMob.Command(exitName)
+				}
+			}
+		}
 
 		// We want the `waypoint` onPath event triggered right after they enter the room.
 		if currentStep := mob.Path.Current(); currentStep != nil && currentStep.Waypoint() {

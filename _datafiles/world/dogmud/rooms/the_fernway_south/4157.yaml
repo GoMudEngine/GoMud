@@ -1,0 +1,64 @@
+roomid: 4157
+zone: The Fernway South
+title: Briar Tangle
+description: >
+  South of Fox Den the earth-track narrows and the canopy
+  tightens, and the path's shoulders are overtaken by old
+  <ansi fg="itemname">bramble</ansi> — chest-high in places,
+  grey-stemmed and thorn-heavy, closing in from both sides
+  until the trail is barely a body's width. A storm or two
+  ago something large came down across the path and the
+  <ansi fg="itemname">thorn-windfall</ansi> was never cleared;
+  it lies half-rotted and still snagged with last year's
+  leaves, forcing a sideways step around it. The
+  <ansi fg="itemname">deer-track</ansi> that runs beneath the
+  bramble is packed firm and smooth — deer pass here far more
+  often than people do. A smell of damp
+  <ansi fg="itemname">leaf-litter</ansi> rises from the ground
+  where the bramble has sheltered last autumn's fall from any
+  wind, ankle-deep and brown and curl-edged.
+biome: forest
+coord:
+  x: -14
+  y: -15
+  z: 0
+exits:
+  north:
+    roomid: 4156
+    zone: The Fernway
+  south:
+    roomid: 4160
+  east:
+    roomid: 4159
+  west:
+    roomid: 4158
+nouns:
+  bramble: |
+    Old grey-stemmed bramble lines both shoulders of the
+    path, the canes thick as a finger and set with curved
+    thorns that catch at sleeves and pack-straps. It is
+    densest along the eastern shoulder where the canopy
+    break lets in enough light for it to reach chest-height.
+  thorn-windfall: |
+    A storm-fallen bough — thorny-stemmed and once substantial
+    — lies across the path, its bark long gone and the wood
+    beginning to soften. Last year's leaves are still caught
+    in its branches, brown and papery, and the thorn-hooks
+    still work on anything that brushes them.
+  deer-track: |
+    Beneath the bramble overhang the earth is packed hard and
+    smooth by long use — a deer-trail that predates the path
+    itself by the look of it. Fresh split-hoof prints in a soft
+    patch near the windfall suggest the animals pass at night,
+    regular as any road.
+  leaf-litter: |
+    Last autumn's leaves have settled ankle-deep in the shelter
+    the bramble provides, brown and curl-edged and damp
+    underneath. The smell is of slow cold decay — not
+    unpleasant, just the forest floor doing its work.
+idlemessages:
+- a wren flushes from the bramble and is gone
+- ''
+- somewhere ahead, a fox barks once
+- ''
+- a snagged twig breaks under settling weight

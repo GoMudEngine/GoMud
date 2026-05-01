@@ -9,5 +9,6 @@ subtype: mundane
 component_tag: bottle
 weight: 0.2
 value: 1
+rarity_tier: 50
 is_component: true
 bottle_aging_multiplier: 3.0

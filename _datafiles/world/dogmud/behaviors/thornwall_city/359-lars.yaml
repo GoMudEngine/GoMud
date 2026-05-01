@@ -1,0 +1,34 @@
+# Caravan guard Lars (359) -- follower of Ketil.
+# Same shape as Marta's btree.
+
+tree:
+  type: sequence
+  children:
+
+    - type: action
+      do: party_ensure_npc_party
+      leader_mob_id: 357
+      home_room_id: 465
+
+    - type: selector
+      children:
+
+        - type: sequence
+          event: mob_idle
+          children:
+            - type: condition
+              check: party_in_combat
+            - type: action
+              do: party_assist_target
+
+        - type: sequence
+          event: mob_idle
+          children:
+            - type: action
+              do: party_follow_leader
+
+        - type: sequence
+          event: mob_hurt
+          children:
+            - type: action
+              do: attack

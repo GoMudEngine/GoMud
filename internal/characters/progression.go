@@ -112,9 +112,8 @@ func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMul
 	threshold := int(chance * 10000)
 	roll := util.Rand(10000)
 
-	mudlog.Debug("Progression", "check", "skill", "skill", skillName, "rank", virtualRank, "chance", fmt.Sprintf("%.2f%%", chance*100), "roll", roll, "threshold", threshold, "character", c.Name)
-
 	if roll < threshold {
+		mudlog.Debug("Progression", "check", "skill", "result", "PROGRESS", "skill", skillName, "rank", virtualRank, "chance", fmt.Sprintf("%.2f%%", chance*100), "roll", roll, "threshold", threshold, "character", c.Name)
 		actualSkill := resolveSkillName(skillName)
 
 		if skills.SkillExists(actualSkill) {
@@ -177,9 +176,8 @@ func (c *Character) CheckStatProgression(statName string, userId int, bonusMulti
 	threshold := int(chance * 10000)
 	roll := util.Rand(10000)
 
-	mudlog.Debug("Progression", "check", "stat", "stat", statName, "rank", virtualRank, "chance", fmt.Sprintf("%.2f%%", chance*100), "roll", roll, "threshold", threshold, "character", c.Name)
-
 	if roll < threshold {
+		mudlog.Debug("Progression", "check", "stat", "result", "PROGRESS", "stat", statName, "rank", virtualRank, "chance", fmt.Sprintf("%.2f%%", chance*100), "roll", roll, "threshold", threshold, "character", c.Name)
 		if c.IncreaseStat(statName, 1) {
 			if userId > 0 {
 				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="yellow">%s</ansi> grows stronger! <ansi fg="magenta">***</ansi>`, statName)
@@ -375,11 +373,10 @@ func (c *Character) CheckRegenProgression(statName string, userId int, chance fl
 	threshold := int(chance * 10000)
 	roll := util.Rand(10000)
 
-	mudlog.Debug("Progression", "check", "regen_stat", "stat", statName,
-		"chance", fmt.Sprintf("%.4f%%", chance*100),
-		"roll", roll, "threshold", threshold, "character", c.Name)
-
 	if roll < threshold {
+		mudlog.Debug("Progression", "check", "regen_stat", "result", "PROGRESS", "stat", statName,
+			"chance", fmt.Sprintf("%.4f%%", chance*100),
+			"roll", roll, "threshold", threshold, "character", c.Name)
 		if c.IncreaseStat(statName, 1) {
 			if userId > 0 {
 				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="yellow">%s</ansi> grows stronger! <ansi fg="magenta">***</ansi>`, statName)

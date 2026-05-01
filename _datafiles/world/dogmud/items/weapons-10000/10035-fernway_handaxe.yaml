@@ -1,0 +1,24 @@
+itemid: 10035
+name: Fernway handaxe
+namesimple: handaxe
+description: >
+  A short woodcutter's handaxe with a forged iron head and a
+  hickory haft about the length of a forearm, the helve worn
+  smooth and a little oily from years of use. The blade is kept
+  ground to a working edge — keen enough to cut a foraging stake
+  in two strokes, heavy enough to drop a feral hare or break a
+  badger's spine without fuss. A leather thong looped through
+  the butt-cap lets it ride at the hip without snagging.
+type: weapon
+hands: 1
+subtype: slashing
+weight: 3.0
+speedmultiplier: 0.90
+staminacost: 6
+grapplemodifier: -1.0
+damage:
+  basedamage: 5
+  variance: 2
+damage_multiplier: 0.75
+parryrating: 5
+value: 22

@@ -41,7 +41,17 @@ character:
     perception:
       training: 5
   shop:
-    - itemid: 40015
-      quantity: 5
-      quantitymax: 12
+    # Base cooking
+    - itemid: 40015    # wild vegetables
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40017    # salt pouch
+      quantity: 0
+      quantitymax: 0
       price: 1
+    # Fernway cooking (caravan-fed)
+    - itemid: 40066    # blood-moss
+      quantity: 0
+      quantitymax: 0
+      price: 45

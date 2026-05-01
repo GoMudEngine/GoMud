@@ -143,7 +143,7 @@ func ExecuteShoot(actor Actor, rest string) ShootResult {
 			}
 		}
 
-		if m.IsNonCombatant() {
+		if m.IsNonCombatant() || m.PlayerAttackImmune {
 			return ShootResult{
 				ExitName:            exitName,
 				TargetName:          m.Character.Name,

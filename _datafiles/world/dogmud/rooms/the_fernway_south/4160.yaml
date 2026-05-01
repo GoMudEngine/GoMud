@@ -1,0 +1,67 @@
+roomid: 4160
+zone: The Fernway South
+title: Old Burn Scar
+description: >
+  The trail south of Briar Tangle opens abruptly where the canopy
+  burned away years ago, and the light here is broad and flat —
+  startling after the tangle's shade. The
+  <ansi fg="itemname">burn-scar</ansi> itself is still legible in
+  the charred faces of old stumps and the black streaks up the
+  surviving oaks, though the fire was long enough ago that moss
+  has softened the worst of it. Across the clearing,
+  <ansi fg="itemname">downed-timber</ansi> from trees that fell
+  in the heat lies in long grey rolls, half-rotted and bright with
+  patches of pale-capped <ansi fg="itemname">mushrooms</ansi>
+  running the full length of the damper undersides. A faint char
+  smell persists on still days, old and dry, less a burning than
+  a memory of one. Competing <ansi fg="itemname">saplings</ansi>
+  — oak and birch both — crowd the gap with the urgency of things
+  that know the light won't last. A woodpecker works somewhere
+  in the standing timber at the clearing's edge, steady and
+  unhurried.
+biome: forest
+coord:
+  x: -14
+  y: -16
+  z: 0
+exits:
+  north:
+    roomid: 4157
+  south:
+    roomid: 4163
+  east:
+    roomid: 4161
+  west:
+    roomid: 4162
+nouns:
+  burn-scar: |
+    The blackened stumps and char-streaked oaks that mark the
+    old fire's reach are still clear if you know what you're
+    looking at — dark wedges low on the bark where the heat
+    climbed, and a few standing deadwood spars too burnt to
+    host a beetle. The years have softened it; moss runs
+    across the charred faces and the smell is almost gone.
+  downed-timber: |
+    Long grey logs lie across the clearing at the angles they
+    fell, the bark long since gone and the wood going punky
+    in patches where the ground is wet beneath them. Where
+    the surface is still firm the grain is raised and smooth
+    as old bone.
+  mushrooms: |
+    Pale-capped fungi run in clusters along the logs'
+    damp undersides — shadowcaps mostly, with the cream-white
+    gills and faint grey caps common in this kind of rotting
+    pine and oak. A few stockier, darker-capped species among
+    them that a careful forager would leave alone.
+  saplings: |
+    Young oaks and white birches have come up fast in the
+    open light, some already shoulder-high, their canopy
+    still too thin and scattered to shade out the competition
+    below. In another decade they will close the gap; for now
+    they race each other for the sky.
+idlemessages:
+- a woodpecker drums briefly somewhere east
+- ''
+- a chunk of soft wood crumbles off a downed log
+- ''
+- warm sunlight shifts across the burn-scar as the canopy moves

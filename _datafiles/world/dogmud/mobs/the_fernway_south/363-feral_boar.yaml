@@ -1,0 +1,40 @@
+mobid: 363
+zone: The Fernway South
+behavior_archetype: combat_passive
+archetype: fighting
+statpool: 90
+itemdropchance: 80
+hostile: false
+charm_immune: false
+maxwander: 2
+groups:
+  - animal
+  - boar
+items:
+  - itemid: 40068
+idlecommands:
+  - 'emote roots in the wallow mud with its snout'
+  - ''
+  - 'emote scratches its flank against the wallow tree'
+  - ''
+  - 'emote grunts low and continues rooting'
+  - ''
+activitylevel: 20
+character:
+  name: feral boar
+  description: |
+    A wild forest pig, big-shouldered and grey-bristled, snout
+    caked with the wallow mud. It watches you with small mean
+    eyes and continues working at the mud. Don't startle it.
+  speciesid: 6
+  level: 4
+  gold: 0
+  stats:
+    strength:
+      training: 18
+    dexterity:
+      training: 8
+    perception:
+      training: 10
+    vitality:
+      training: 20

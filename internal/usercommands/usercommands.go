@@ -68,6 +68,7 @@ var (
 		`build`:       {Build, false, true, true}, // Admin only
 		`buff`:        {Buff, false, true, true},  // Admin only
 		`buy`:{Buy, false, true, false},
+		`caravan`:     {Caravan, true, true, true}, // Admin only
 		`cancel`:      {Cancel, true, true, false},
 		`cast`:        {Cast, false, true, false},
 		`combatstats`: {CombatStats, true, true, true}, // Admin only

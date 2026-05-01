@@ -1,5 +1,11 @@
 package shops
 
+import (
+	"slices"
+
+	"github.com/GoMudEngine/GoMud/internal/economy"
+)
+
 // StockEntry represents one item type in a shop's inventory.
 type StockEntry struct {
 	ItemId     int `yaml:"item_id"`
@@ -73,6 +79,43 @@ func (si *ShopInventory) Restock() bool {
 	for i := range si.Stock {
 		e := &si.Stock[i]
 		if e.RestockQty <= 0 {
+			continue
+		}
+		room := e.MaxStock - e.Current
+		if room <= 0 {
+			continue
+		}
+		add := e.RestockQty
+		if add > room {
+			add = room
+		}
+		e.Current += add
+		restocked = true
+	}
+	return restocked
+}
+
+// RestockBuckets is like Restock(), but only tops up entries whose
+// item-id falls in one of the given supply buckets. Used by foragers
+// (always one bucket per call — their region's) and the caravan (one
+// or two buckets per call, based on caravan_load).
+//
+// As with Restock(), entries with RestockQty <= 0 (NPC-crafted items)
+// are skipped — those don't come from the supply cart.
+//
+// Returns true if any stock was added. nil/empty buckets is a no-op.
+func (si *ShopInventory) RestockBuckets(buckets []string) bool {
+	if len(buckets) == 0 {
+		return false
+	}
+	restocked := false
+	for i := range si.Stock {
+		e := &si.Stock[i]
+		if e.RestockQty <= 0 {
+			continue
+		}
+		bucket := economy.BucketFor(e.ItemId)
+		if bucket == "" || !slices.Contains(buckets, bucket) {
 			continue
 		}
 		room := e.MaxStock - e.Current

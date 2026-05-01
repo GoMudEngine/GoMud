@@ -1,0 +1,41 @@
+mobid: 362
+zone: The Fernway South
+behavior_archetype: combat_passive
+archetype: fighting
+statpool: 15
+itemdropchance: 50
+hostile: false
+charm_immune: true
+maxwander: 0
+groups:
+  - animal
+  - insectoid
+  - swarm
+items:
+  - itemid: 40065
+idlecommands:
+  - "emote works the bee-tree's hollow in steady traffic"
+  - ''
+  - 'emote returns to the hollow heavy with pollen'
+  - ''
+activitylevel: 50
+character:
+  name: honey bees
+  description: |
+    A working swarm of wild honeybees — hundreds of small
+    industrious bodies in steady traffic between the bee-tree
+    and the meadow. Approached calmly they ignore you. Disturb
+    the swarm and you will not enjoy the next minute of your
+    life.
+  speciesid: 12
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 4
+    dexterity:
+      training: 14
+    perception:
+      training: 12
+    vitality:
+      training: 10

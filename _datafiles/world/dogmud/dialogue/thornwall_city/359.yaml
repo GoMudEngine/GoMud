@@ -1,0 +1,23 @@
+mobid: 359
+zone: Thornwall City
+
+patterns:
+  - keywords: [hello, hi, greetings, hail]
+    responses:
+      - 'Hey.'
+
+  - keywords: [bow, weapon, arrow]
+    responses:
+      - 'Yew. Cured slow. The bowyer up in Stillwater knows his trade. Not pretty, but it shoots true.'
+
+  - keywords: [bandit, bandits, road]
+    responses:
+      - 'I see them before they see us. After that it is just arithmetic.'
+
+  - keywords: [ketil, marta, crew]
+    responses:
+      - 'Good people. Run a tight wagon. I get paid on time.'
+
+  - keywords: [""]
+    responses:
+      - 'Hm.'

@@ -1,0 +1,56 @@
+mobid: 371
+zone: Stillwater Marsh
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Aye -- mind the soft ground here, the reed-mat hides a
+        sinkhole or two. What can I do for you?"
+      - "Tova. Good of you to say so."
+
+  - keywords: ["forage", "gather", "satchel", "work", "doing"]
+    responses:
+      - "I gather what the marsh gives -- mint, willow-bark, the
+        odd lake-iron nodule when the bottom-mud throws one up.
+        The town apothecary takes most of it. The smith takes the
+        rest. It is honest work and the marsh does not begrudge
+        it, which is more than you can say for some places I
+        could name."
+
+  - keywords: ["danger", "rats", "snake", "adder", "turtle", "otter"]
+    responses:
+      - "Marsh-rats are no trouble, dragonflies less. The river-otters
+        and the snapping turtles I leave alone -- they know the
+        deep channels better than I do, and they hold a grudge.
+        The bog-adder I avoid on principle. If I cannot manage,
+        I have a way home."
+
+  - keywords: ["stillwater", "town", "temple", "deliver"]
+    responses:
+      - "I winter at the temple in town -- the priests do not mind
+        a forager warming a corner pew on cold nights, and the
+        font-water keeps my tools from rusting. I bring the
+        satchel into town when it is full and the merchants who
+        want my work know where to find me."
+
+  - keywords: ["caravan", "thornwall", "north road"]
+    responses:
+      - "I do not go up to the north road. Caravan handles
+        Thornwall trade. The bandits up that way are not my
+        problem and I would like to keep it that way."
+
+  - keywords: [""]
+    responses:
+      - "Mind the soft ground."
+      - "The reeds hide more than they show."
+
+tree:
+  root:
+    text: "Aye. Mind the soft ground here. Was there something?"
+    hints: "You could ask Tova about her work, the dangers she
+      avoids, or where she stays."
+
+memory:
+  expiryPeriod: ""

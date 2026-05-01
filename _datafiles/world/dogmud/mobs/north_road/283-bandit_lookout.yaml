@@ -5,7 +5,7 @@ behavior_archetype: lookout
 routine: watch_north_road
 routine_links:
   - bandit_camp_guard
-statpool: 140
+statpool: 100
 itemdropchance: 30
 items:
   - itemid: 53
@@ -16,6 +16,8 @@ maxwander: 1
 groups:
   - humanoid
   - bandit
+hates:
+  - caravan
 idlecommands:
   - 'emote leans against a tree, watching the road with practiced indifference'
   - ''

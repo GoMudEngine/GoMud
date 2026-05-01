@@ -1,0 +1,25 @@
+itemid: 10033
+name: marsh gaff hook
+namesimple: gaff hook
+description: >
+  A short-shafted lake-fisher's gaff with a back-curving steel hook
+  set into a worn ash handle, the wood darkened and oil-cured by
+  decades of marsh damp. The hook's point is kept needle-bright
+  with a small whetstone in the satchel-pocket of every forager
+  who carries one. It is a working tool first — for landing a
+  large pike or pulling a sunken trap up from the lake-bottom —
+  but the hook bites a marsh rat or a bog adder cleanly enough
+  when the work calls for it.
+type: weapon
+hands: 1
+subtype: piercing
+weight: 2.5
+speedmultiplier: 0.95
+staminacost: 5
+grapplemodifier: -1.5
+damage:
+  basedamage: 4
+  variance: 1
+damage_multiplier: 0.55
+parryrating: 4
+value: 18

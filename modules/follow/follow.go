@@ -394,14 +394,15 @@ func (f *FollowModule) followUserCommand(rest string, user *users.UserRecord, ro
 
 	if len(args) > 1 {
 		followEndRound = gd.AddPeriod(strings.Join(args[1:], ` `))
-	} else if followPeriod, ok := f.plug.Config.Get(`DefaultFollowPeriod`).(string); ok {
+	} else if followPeriod, ok := f.plug.Config.Get(`DefaultFollowPeriod`).(string); ok && followPeriod != `` {
 		followEndRound = gd.AddPeriod(followPeriod)
 	}
 
-	// in case something went wrong, we still want to cap it.
-	if followEndRound <= util.GetRoundCount() {
-		followEndRound = gd.AddPeriod(`5 real minutes`)
-	}
+	// followEndRound == 0 means "no expiry" — startFollow skips the
+	// followLimits entry, and follow ends only on teleport, death, or
+	// explicit `follow stop`. The legacy 5-minute safety-net cap was
+	// removed 2026-04-30 (Stage 3.4 era) — annoying mid-walk drops with
+	// no in-fiction trigger weren't worth the implementation defense.
 
 	userId, mobInstId := 0, 0
 	if len(followTargetName) > 0 {
@@ -519,14 +520,15 @@ func (f *FollowModule) followMobCommand(rest string, mob *mobs.Mob, room *rooms.
 
 	if len(args) > 1 {
 		followEndRound = gd.AddPeriod(strings.Join(args[1:], ` `))
-	} else if followPeriod, ok := f.plug.Config.Get(`DefaultFollowPeriod`).(string); ok {
+	} else if followPeriod, ok := f.plug.Config.Get(`DefaultFollowPeriod`).(string); ok && followPeriod != `` {
 		followEndRound = gd.AddPeriod(followPeriod)
 	}
 
-	// in case something went wrong, we still want to cap it.
-	if followEndRound <= util.GetRoundCount() {
-		followEndRound = gd.AddPeriod(`5 real minutes`)
-	}
+	// followEndRound == 0 means "no expiry" — startFollow skips the
+	// followLimits entry, and follow ends only on teleport, death, or
+	// explicit `follow stop`. The legacy 5-minute safety-net cap was
+	// removed 2026-04-30 (Stage 3.4 era) — annoying mid-walk drops with
+	// no in-fiction trigger weren't worth the implementation defense.
 
 	userId, mobInstId := 0, 0
 	if len(followTargetName) > 0 {

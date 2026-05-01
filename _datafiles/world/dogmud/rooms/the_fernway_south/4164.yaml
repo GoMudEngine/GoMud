@@ -1,0 +1,56 @@
+roomid: 4164
+zone: The Fernway South
+title: Brook Rise
+description: >
+  The deer-track west from Twin Beech Glade drops suddenly into
+  a small hollow where the sound changes — the dry forest hush
+  replaced by the quiet, constant voice of moving water. A
+  <ansi fg="itemname">brook</ansi> rises here from a moss-rimmed
+  crack in the bedrock, clear and cold, running a few paces
+  south before it disappears into the leaf-litter. The air
+  above the <ansi fg="itemname">spring-pool</ansi> is cooler
+  than the surrounding wood by several degrees, and a faint
+  mineral smell comes off the stone where the water emerges.
+  Every exposed rock at the source is mantled in bright
+  <ansi fg="itemname">moss</ansi> — deep sphagnum that holds
+  the moisture and keeps the hollow damp even in dry weather.
+  At the pool's edge, where the overflow spreads before it
+  gathers itself south, a thick stand of
+  <ansi fg="itemname">watercress</ansi> grows dense and
+  peppery-scented, the first herb-territory in the valley.
+biome: forest
+coord:
+  x: -15
+  y: -17
+  z: 0
+exits:
+  east:
+    roomid: 4163
+  south:
+    roomid: 4165
+nouns:
+  brook: |
+    The brook rises clear from a moss-rimmed crack in the
+    bedrock, no wider than a forearm's span, and runs south
+    through the hollow with the unhurried purpose of water
+    that has always gone this way.
+  spring-pool: |
+    A small clear pool collects at the brook's source, no
+    deeper than a forearm and cold enough to numb the hand
+    in seconds — the stone below is pale and faintly sandy,
+    every grain visible.
+  moss: |
+    Bright green sphagnum carpets every rock at the spring,
+    packed so dense and moist it gives like a sponge underfoot
+    — the kind of moss that holds water for hours after rain
+    has stopped.
+  watercress: |
+    Watercress crowds the pool's overflow-edge in a thick,
+    ankle-high mat — pungent and peppery, easy to harvest by
+    the handful, and a clear sign that the brook runs clean.
+idlemessages:
+- a small leaf drifts on the brook and is carried south
+- ''
+- water-sound steady in the background
+- ''
+- a bubble rises from the spring-pool and breaks

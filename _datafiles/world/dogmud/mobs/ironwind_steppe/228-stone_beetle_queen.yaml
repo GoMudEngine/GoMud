@@ -3,7 +3,7 @@ zone: Ironwind Steppe
 behavior_archetype: leader
 routine: cave_pack_ironwind
 statpool: 220
-itemdropchance: 30
+itemdropchance: 10
 hostile: true
 maxwander: 1
 groups:
@@ -27,6 +27,8 @@ tactical_discipline: 0.55
 tactic_preset: tank
 character:
   name: stone beetle queen
+  items:
+    - itemid: 40010   # Chrysalis Core (Stage 3.4 — re-sourced from Aberrant Chrysalis)
   description: |
     An enormous beetle the size of a pony, her carapace thick
     and ridged like castle fortifications. The stone beetle queen

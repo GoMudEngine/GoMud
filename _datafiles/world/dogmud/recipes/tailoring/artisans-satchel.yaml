@@ -13,8 +13,10 @@ ingredients:
     quantity: 2
   - item_tag: bone-needle
     quantity: 1
+  - item_tag: sinew
+    quantity: 1
 output:
   item_id: 30034
   quantity: 1
-success_message: "You stitch padded dividers into a leather satchel and fit a brass clasp. An artisan's satchel!"
+success_message: "You stitch padded dividers into a leather satchel and fit a brass clasp, lashing the seams with sinew for a hard-wearing finish. An artisan's satchel!"
 failure_message: "The dividers won't sit straight and the clasp warps. The materials are wasted."

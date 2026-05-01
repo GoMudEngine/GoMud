@@ -1,0 +1,73 @@
+roomid: 4184
+zone: Stillwater Marsh
+title: Heron Marsh
+description: >
+  The reed-trails open suddenly into a wide shallow
+  <ansi fg="itemname">open-pond</ansi> — thirty paces across, the
+  water clear enough to see pale weed bowing on the bottom where
+  the current barely moves. It is the first real open sky in the
+  zone; the long sightlines feel strange after the closed trails
+  east of here. Round grass
+  <ansi fg="itemname">tussocks</ansi> rise from the shallows like
+  small green islands, each one a private platform for whatever is
+  using it. The <ansi fg="itemname">sky-reflection</ansi> on the
+  pond's surface is near-perfect when the wind drops, clouds in
+  the water indistinguishable from clouds above. A set of fresh
+  three-toed <ansi fg="itemname">heron-track</ansi> marks the
+  east mud edge — the grey heron works this pond, though whether
+  it is here today is another matter.
+biome: water
+coord:
+  x: -22
+  y: 0
+  z: 0
+exits:
+  east:
+    roomid: 4183
+  west:
+    roomid: 4185
+  south:
+    roomid: 4188
+nouns:
+  reed-trails: |
+    The narrow trails through the reed-beds east of here — the same
+    board-and-mud paths that brought you in through Cattail Bend.
+    From the open pond they read as dark gaps in a wall of green,
+    closing off any view back the way you came.
+  open-pond: |
+    A wide shallow pond perhaps thirty paces across, the water
+    clear enough to see the pale-weed mat on the bottom and small
+    fish holding in the current. This is the first real open water
+    in the zone — the cattails and reed-trails east of here leave
+    no room for a view. The pond feeds west to where Otter Slide
+    meets the bank and drains slowly south toward the Black Pool.
+  tussock: |
+    Round grass-tussocks rise from the pond's shallow bottom like
+    small green islands — a heron's stalking ground, a frog's
+    hideaway, a useful landmark when the reflection fools the eye.
+    Each tussock is a tight knot of sedge-grass, the stems dense
+    enough to stand on if you do not mind wet boots.
+  tussocks: |
+    Round grass-tussocks rise from the pond's shallow bottom like
+    small green islands — a heron's stalking ground, a frog's
+    hideaway, a useful landmark when the reflection fools the eye.
+    Each tussock is a tight knot of sedge-grass, the stems dense
+    enough to stand on if you do not mind wet boots.
+  heron-track: |
+    Three-toed prints mark the soft mud at the pond's east edge,
+    each toe pressed clean and deep — fresh enough they have not
+    filled with water yet. The grey heron is a regular visitor
+    here and fishes the shallows near the tussocks. Whether it
+    is working the pond at this moment is a separate question.
+  sky-reflection: |
+    When the wind drops the pond's surface becomes a near-perfect
+    mirror — clouds in the water the same shade and shape as
+    clouds above, the tussocks reflected upside-down between them.
+    A passing reed-warbler moving across the surface belongs to two
+    skies at once until a ripple breaks it apart.
+idlemessages:
+- a heron call drifts across the pond from somewhere unseen
+- ''
+- a fish-ring expands silently from the shallows and fades
+- ''
+- a tussock bends as something small moves across it

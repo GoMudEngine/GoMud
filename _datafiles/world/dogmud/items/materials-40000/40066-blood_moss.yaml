@@ -1,0 +1,17 @@
+itemid: 40066
+name: blood-moss
+namesimple: moss
+description: A clump of dark red moss that grows on the north
+  faces of Fernway boulders, where the air stays damp. Pressed
+  to a wound it stops bleeding fast; alchemists fold it into
+  combat tonics for the same reason. Cooks who know it use
+  small pinches to thicken stews — the moss releases a savory
+  weight that holds up under a long simmer. The taste raw is
+  flat and earthen, almost like wet stone.
+type: object
+subtype: mundane
+component_tag: blood-moss
+weight: 0.05
+value: 45
+rarity_tier: 30
+is_component: true

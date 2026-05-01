@@ -1,0 +1,23 @@
+mobid: 358
+zone: Thornwall City
+
+patterns:
+  - keywords: [hello, hi, greetings, hail]
+    responses:
+      - 'Hey.'
+
+  - keywords: [hammer, weapon, fight]
+    responses:
+      - 'Old girl has seen things. Most folk who look at her think twice. The ones who do not think at all stop thinking soon enough.'
+
+  - keywords: [bandit, bandits, road]
+    responses:
+      - 'Same crew, every run. They never seem to learn. Suits me. Keeps me in practice.'
+
+  - keywords: [ketil, lars, crew]
+    responses:
+      - 'Boss is steady. Lars hits what he aims at. Would not run with anyone else.'
+
+  - keywords: [""]
+    responses:
+      - 'Hm.'

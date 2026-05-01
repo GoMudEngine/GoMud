@@ -66,19 +66,35 @@ character:
     perception:
       training: 5
   shop:
-    - itemid: 40001
+    # Thornwall refined (in-shop crafted)
+    - itemid: 40018    # steel ingot
+      quantity: 0
+      quantitymax: 0
+      price: 25
+    # Stillwater unique (caravan-fed from Brindle)
+    - itemid: 40059    # lake-iron nodule
+      quantity: 0
+      quantitymax: 0
+      price: 14
+    # Fernway forest (caravan-fed)
+    - itemid: 40067    # pine pitch
+      quantity: 0
+      quantitymax: 0
+      price: 35
+    # Base smithing
+    - itemid: 40001    # iron ingot
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 40003    # wooden plank
       quantity: 0
       quantitymax: 0
       price: 2
-    - itemid: 40020
+    - itemid: 40019    # chain link
       quantity: 0
       quantitymax: 0
-      price: 2
-    - itemid: 40002
+      price: 4
+    - itemid: 40020    # coal dust
       quantity: 0
       quantitymax: 0
-      price: 2
-    - itemid: 40003
-      quantity: 0
-      quantitymax: 0
-      price: 2
+      price: 4

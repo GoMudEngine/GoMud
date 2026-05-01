@@ -1,0 +1,16 @@
+itemid: 40064
+name: wild hare meat
+namesimple: hare
+description: Lean, dark meat from a hare snared in the Fernway
+  underbrush, properly bled and dressed. Cooks consider it
+  superior to penned rabbit for its depth of flavor; alchemists
+  render the fat into a clean carrier base for salves and
+  ointments where domesticated lard is too soft. The lean cuts
+  toughen if cooked too fast — long simmers reward patience.
+type: object
+subtype: mundane
+component_tag: wild-hare-meat
+weight: 0.4
+value: 50
+rarity_tier: 30
+is_component: true

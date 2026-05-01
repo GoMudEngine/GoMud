@@ -1,0 +1,6 @@
+mutatorid: sanctuary
+regenmultiplier: 5.0
+descriptionmodifier:
+  behavior: append
+  text: A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+  colorpattern: pearl

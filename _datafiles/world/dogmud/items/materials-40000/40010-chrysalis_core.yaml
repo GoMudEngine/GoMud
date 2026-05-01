@@ -7,4 +7,5 @@ uses: 0
 weight: 2.0
 component_tag: chrysalis-core
 value: 500
+rarity_tier: 20
 is_component: true

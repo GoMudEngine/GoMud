@@ -3,7 +3,7 @@ zone: North Road
 archetype: fighting
 behavior_archetype: generic_fighter
 routine: bandit_camp_guard
-statpool: 200
+statpool: 150
 itemdropchance: 25
 items:
   - itemid: 20068
@@ -14,6 +14,8 @@ maxwander: 0
 groups:
   - humanoid
   - bandit
+hates:
+  - caravan
 idlecommands:
   - 'emote runs a whetstone along a sword blade with slow, deliberate strokes'
   - ''

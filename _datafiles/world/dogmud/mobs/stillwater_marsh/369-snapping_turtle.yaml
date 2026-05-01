@@ -1,0 +1,38 @@
+mobid: 369
+zone: Stillwater Marsh
+behavior_archetype: combat_passive
+archetype: fighting
+statpool: 80
+itemdropchance: 0
+hostile: false
+charm_immune: false
+maxwander: 1
+groups:
+  - animal
+  - reptile
+idlecommands:
+  - 'emote drifts slowly across the sand-bottom, half-buried'
+  - ''
+  - 'emote snaps once at a passing skitter-shrimp'
+  - ''
+  - 'emote settles deeper into the weed and is still'
+  - ''
+activitylevel: 15
+character:
+  name: snapping turtle
+  description: |
+    A heavy snapping turtle on the sand-bottom — shell the size
+    of a cart-wheel, wide-jawed, the head and clawed limbs drawn
+    back when you watch it. It is older than you. Don't bother it.
+  speciesid: 21
+  level: 4
+  gold: 0
+  stats:
+    strength:
+      training: 18
+    dexterity:
+      training: 6
+    perception:
+      training: 12
+    vitality:
+      training: 22

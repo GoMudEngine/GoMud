@@ -69,6 +69,7 @@ type MutatorSpec struct {
 	DecayRate     string                   `yaml:"decayrate,omitempty"`     // how long until it is gone
 	RespawnRate   string                   `yaml:"respawnrate,omitempty"`   // daily, weekly, 1 day, 3 day, monthly, etc.
 	LightMod      int                      `yaml:"lightmod,omitempty"`      //  -2 to 2 (change). If result is 0 = none. 1 = can see this room. 2 = can see this room and all exits
+	RegenMultiplier float64                `yaml:"regenmultiplier,omitempty"` // multiplies HP/SP/CP regen for any actor in the room (1.0 / 0 = no bonus)
 	Exits         map[string]exit.RoomExit `yaml:"exits,omitempty"`         // name/roomId pairs of exits only available while mutator is live.
 	Pvp           PvpOverride              `yaml:"pvp,omitempty"`           // optionally force room pvp attributes.
 }

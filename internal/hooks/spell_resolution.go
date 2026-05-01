@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
@@ -199,10 +200,10 @@ func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData
 	if !castFumbled {
 		switch cs.SpellId {
 		case "fold-anchor":
-			resolveFoldAnchor(user)
+			resolveFoldAnchor(actions.NewUserActorInRoom(user, room))
 			return
 		case "fold-recall":
-			resolveFoldRecall(user)
+			resolveFoldRecall(actions.NewUserActorInRoom(user, room))
 			return
 		case "purge-affliction":
 			if len(cs.TargetUserIds) > 0 {
@@ -842,6 +843,22 @@ func consumeSpellComponent(user *users.UserRecord, tag string) {
 //   - No onMagic script, no component consumption.
 //   - Per-target helpers are entirely separate from the player equivalents.
 func resolveMobSpell(mob *mobs.Mob, cs *characters.CastingState, spellData *spells.SpellData, room *rooms.Room) {
+	// Go spell hooks — dispatch position-mutating / non-target spells before
+	// the type-based effect routing below. Mirrors the player path in
+	// resolveSpell. Stage 3.0d.
+	switch cs.SpellId {
+	case "fold-anchor":
+		resolveFoldAnchor(actions.NewMobActorInRoom(mob, room))
+		return
+	case "fold-recall":
+		actor := actions.NewMobActorInRoom(mob, room)
+		if !validateFoldRecall(actor) {
+			return
+		}
+		resolveFoldRecall(actor)
+		return
+	}
+
 	skillLevel := mob.Character.GetSkillLevel(skills.Spellcasting)
 	spellAttack := characters.CalcSpellAttack(mob.Character.Stats.Willpower.ValueAdj, skillLevel)
 	magnitude := spellData.EffectMagnitude

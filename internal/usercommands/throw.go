@@ -111,8 +111,8 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			continue
 		}
 
-		// Skip non-combatants
-		if mob.IsNonCombatant() {
+		// Skip non-combatants and player-attack-immune mobs
+		if mob.IsNonCombatant() || mob.PlayerAttackImmune {
 			continue
 		}
 

@@ -3,32 +3,39 @@ package hooks
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
-// validateFoldRecall is called during the onCast phase. Returns false to abort.
-func validateFoldRecall(user *users.UserRecord) bool {
-	currentRoomId := user.Character.RoomId
+// validateFoldRecall is called during the onCast phase. Returns false to
+// abort the spell.
+func validateFoldRecall(actor actions.Actor) bool {
+	char := actor.GetCharacter()
+	if char == nil {
+		return false
+	}
+	currentRoomId := char.RoomId
 
-	// Check if recall is blocked in this room (instanced zones with allow_recall: false)
+	// Check if recall is blocked in the current room (instanced zones with
+	// allow_recall: false).
 	if currentRoom := rooms.LoadRoom(currentRoomId); currentRoom != nil {
 		if blocked, ok := currentRoom.GetTempData("allow_recall").(bool); ok && !blocked {
-			user.SendText("Something about this place prevents you from recalling.")
+			actor.SendText("Something about this place prevents you from recalling.")
 			return false
 		}
 	}
 
-	anchorRoom := getMiscDataInt(user, "fold-anchor-room")
+	anchorRoom := getMiscDataInt(char, "fold-anchor-room")
 	if anchorRoom <= 0 {
-		user.SendText(`You reach for the Veil, but there is no anchor to ` +
+		actor.SendText(`You reach for the Veil, but there is no anchor to ` +
 			`pull you. Set one first with ` +
 			`<ansi fg="command">cast fold-anchor</ansi>.`)
 		return false
 	}
 
 	if anchorRoom == currentRoomId {
-		user.SendText("You are already standing on your anchor.")
+		actor.SendText("You are already standing on your anchor.")
 		return false
 	}
 
@@ -36,42 +43,79 @@ func validateFoldRecall(user *users.UserRecord) bool {
 }
 
 // resolveFoldRecall is called during the onMagic phase.
-func resolveFoldRecall(user *users.UserRecord) {
-	anchorRoom := getMiscDataInt(user, "fold-anchor-room")
-	currentRoomId := user.Character.RoomId
+func resolveFoldRecall(actor actions.Actor) {
+	char := actor.GetCharacter()
+	if char == nil {
+		return
+	}
+	anchorRoom := getMiscDataInt(char, "fold-anchor-room")
+	currentRoomId := char.RoomId
 
 	if anchorRoom <= 0 || anchorRoom == currentRoomId {
-		user.SendText("The fold collapses — no valid anchor found.")
+		actor.SendText("The fold collapses — no valid anchor found.")
 		return
 	}
 
-	// Clear combat state before teleporting
-	user.Character.EndAggro()
+	// Clear combat state before teleporting.
+	char.EndAggro()
 
-	// Send departure text to current room
-	if room := rooms.LoadRoom(currentRoomId); room != nil {
-		room.SendText(fmt.Sprintf(
+	// Move the actor first; only broadcast on success so a failed teleport
+	// doesn't leave the departure room thinking the actor vanished.
+	if !teleportActor(actor, anchorRoom) {
+		actor.SendText("The fold collapses — no valid anchor found.")
+		return
+	}
+
+	// Departure broadcast on the room the actor LEFT (use the snapshotted
+	// currentRoomId — char.RoomId has been updated by teleport).
+	if oldRoom := rooms.LoadRoom(currentRoomId); oldRoom != nil {
+		oldRoom.SendText(fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> folds through the Veil and vanishes!`,
-			user.Character.Name), user.UserId)
+			actor.GetName()), actor.GetUserId())
 	}
 
-	// Move to anchor room
-	rooms.MoveToRoom(user.UserId, anchorRoom)
+	actor.SendText("You fold through the Veil and arrive at your anchor point!")
 
-	user.SendText("You fold through the Veil and arrive at your anchor point!")
-
-	// Send arrival text to destination room (user is now there)
-	if room := rooms.LoadRoom(anchorRoom); room != nil {
-		room.SendText(fmt.Sprintf(
+	// Arrival broadcast on the new room.
+	if newRoom := rooms.LoadRoom(anchorRoom); newRoom != nil {
+		newRoom.SendText(fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> folds through the Veil and appears!`,
-			user.Character.Name), user.UserId)
+			actor.GetName()), actor.GetUserId())
 	}
+}
+
+// teleportActor moves the actor to the destination room. For players this
+// goes through rooms.MoveToRoom (handles cross-zone bookkeeping). For mobs
+// it manipulates room membership directly. Returns false if the destination
+// room can't be loaded.
+func teleportActor(actor actions.Actor, toRoomId int) bool {
+	if actor.IsPlayer() {
+		// Players: existing helper handles the cross-zone case.
+		if err := rooms.MoveToRoom(actor.GetUserId(), toRoomId); err != nil {
+			return false
+		}
+		return true
+	}
+
+	// Mobs: manual room membership update.
+	char := actor.GetCharacter()
+	fromRoom := rooms.LoadRoom(char.RoomId)
+	toRoom := rooms.LoadRoom(toRoomId)
+	if toRoom == nil {
+		return false
+	}
+	instId := actor.GetMobInstanceId()
+	if fromRoom != nil {
+		fromRoom.RemoveMob(instId)
+	}
+	toRoom.AddMob(instId) // AddMob sets mob.Character.RoomId internally (rooms.go:827)
+	return true
 }
 
 // getMiscDataInt retrieves an integer stored in MiscData, handling both int
 // and float64 (the latter can occur after YAML round-trips).
-func getMiscDataInt(user *users.UserRecord, key string) int {
-	val := user.Character.GetMiscData(key)
+func getMiscDataInt(char *characters.Character, key string) int {
+	val := char.GetMiscData(key)
 	if val == nil {
 		return 0
 	}

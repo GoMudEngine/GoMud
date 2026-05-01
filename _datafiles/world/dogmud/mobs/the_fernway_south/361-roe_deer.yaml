@@ -1,0 +1,42 @@
+mobid: 361
+zone: The Fernway South
+behavior_archetype: prey
+archetype: fighting
+statpool: 60
+itemdropchance: 60
+hostile: false
+charm_immune: false
+maxwander: 4
+groups:
+  - animal
+  - deer
+  - prey
+items:
+  - itemid: 40064
+idlecommands:
+  - 'emote lifts its head from browse, ears swivelling'
+  - ''
+  - 'emote takes two careful steps and stops'
+  - ''
+  - 'emote crops a low birch-leaf and chews slowly'
+  - ''
+activitylevel: 25
+character:
+  name: roe deer
+  description: |
+    A small deer of the forest interior — neat, reddish-brown in
+    summer coat, with a pale rump-patch and large ears. It stops
+    moving when you do, and watches you with the absolute
+    stillness of an animal that has learned humans bring no good.
+  speciesid: 7
+  level: 2
+  gold: 0
+  stats:
+    strength:
+      training: 10
+    dexterity:
+      training: 16
+    perception:
+      training: 14
+    vitality:
+      training: 12

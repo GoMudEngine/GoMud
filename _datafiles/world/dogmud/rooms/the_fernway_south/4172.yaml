@@ -1,0 +1,59 @@
+roomid: 4172
+zone: The Fernway South
+title: Badger Sett
+description: >
+  The <ansi fg="itemname">badger-musk</ansi> reaches you before
+  the sett does — a heavy, close animal smell that warns off
+  everything with the sense to heed it. The trail west of the
+  Twisted Hawthorn ends at a steep earth-bank a body's height
+  tall, and the entire face of it is riddled with the dark
+  mouths of the <ansi fg="itemname">sett</ansi>. The ground
+  before the bank is bare-trodden earth, worn flat by the
+  passage of heavy low bodies over many seasons. At several
+  <ansi fg="itemname">burrow-entry</ansi> openings the earth
+  is freshly turned, the dark soil heaped at the threshold
+  like a small doorstep. A scatter of small
+  <ansi fg="itemname">bone-pile</ansi> lies at the largest
+  entry — rabbit bones, hare, something smaller — the leavings
+  of recent meals dragged from hunting elsewhere. There is no
+  trail beyond the sett; the bank and the dense cover behind
+  it mark the end of the way west.
+biome: forest
+coord:
+  x: -15
+  y: -21
+  z: 0
+exits:
+  east:
+    roomid: 4174
+nouns:
+  sett: |
+    A steep earth-bank a body's height tall, riddled with the
+    dark mouths of badger burrows — a long-established sett,
+    the kind that has been occupied by successive generations
+    of animals for more years than the trees nearby. The bank
+    face is alive with excavated tunnels.
+  burrow-entry: |
+    Several burrow entries in the bank, all well-trodden, the
+    largest big enough to crawl into if you had no better
+    judgment. Fresh earth heaped at the thresholds shows recent
+    digging — the sett is active and being maintained.
+  badger-musk: |
+    A heavy musky smell hangs over the sett, the kind of
+    territorial warning every other forest animal recognizes.
+    It gets stronger the closer you approach the bank. Not
+    dangerous to smell — just unmistakably a warning.
+  bone-pile: |
+    Small bones lie scattered at the burrow entries — rabbit,
+    hare, vole, a few bird-bones — the leavings of the sett's
+    residents dragged in from the surrounding forest. Nothing
+    wasted; nothing left in one piece.
+idlemessages:
+- a bone is briefly visible at a burrow mouth, then withdrawn
+- ''
+- the badger-musk gets briefly stronger
+- ''
+- something heavy moves in the burrow nearest the trail
+spawninfo:
+- mobid: 365
+  cooldown: 1800 rounds

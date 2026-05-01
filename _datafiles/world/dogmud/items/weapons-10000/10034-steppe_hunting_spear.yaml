@@ -1,0 +1,25 @@
+itemid: 10034
+name: steppe hunting spear
+namesimple: hunting spear
+description: >
+  A light hunting spear with a leaf-shaped iron head and a
+  shoulder-high shaft of seasoned hawthorn, the grip wrapped in
+  rawhide that has been worn supple by long use. It is balanced
+  for a thrust at running prey rather than a soldier's set —
+  shorter and lighter than a garrison weapon, the haft polished
+  to a satin sheen by miles of carrying. A cap of dust-coloured
+  felt covers the head when sheathed against the wind, kept in
+  place by a leather thong.
+type: weapon
+hands: 1
+subtype: piercing
+weight: 3.5
+speedmultiplier: 0.85
+staminacost: 6
+grapplemodifier: -2.0
+damage:
+  basedamage: 5
+  variance: 2
+damage_multiplier: 0.70
+parryrating: 6
+value: 25

@@ -77,6 +77,7 @@ type Mob struct {
 	LastIdleCommand uint8    `yaml:"-"` // Track what hte last used idlecommand was
 	BoredomCounter  uint8    `yaml:"-"` // how many rounds have passed since this mob has seen a player
 	Groups          []string // What group do they identify with? Helps with teamwork
+	FoldAnchorRoom  int      `yaml:"fold_anchor_room,omitempty"` // Spawn-time fold-recall anchor (room ID)
 	// Pack-combat routine (v2-ready — see docs/superpowers/specs/2026-04-22-pack-tactics-revamp-design.md).
 	// Freeform string compared with equality to other mobs' Routine for pack
 	// identification. Mobs without a routine don't participate in packs.
@@ -116,11 +117,22 @@ type Mob struct {
 	MutationChance int             `yaml:"mutationchance,omitempty"`      // % chance to gain 1 random bonus mutation on spawn (Phase 24.3)
 	CharmImmune             bool     `yaml:"charm_immune,omitempty"`            // If true, charm spells cannot affect this mob
 	NonCombatant            bool     `yaml:"non_combatant,omitempty"`           // If true, cannot be attacked, stolen from, or aggroed
+	PlayerAttackImmune      bool     `yaml:"player_attack_immune,omitempty"`    // If true, players cannot attack this mob (but mob can still fight)
 	BuysGeneral             bool     `yaml:"buys_general,omitempty"`            // Whether this merchant buys misc goods
 	Crafter                 bool     `yaml:"crafter,omitempty"`                 // Whether this mob crafts autonomously (Stage 38.5.4)
 	CrafterSkill            string   `yaml:"crafterskill,omitempty"`            // Craft skill used (e.g. "blacksmithing")
 	CrafterRecipeIds        []string `yaml:"crafterrecipeids,omitempty"`        // Recipe IDs this mob can craft
 	CrafterRestockMaterials []int    `yaml:"crafterrestockmaterials,omitempty"` // Item IDs restocked periodically
+
+	// ── Stage 3.4: spawn-time overrides for special mobs (wagons, statues, etc.) ──
+	CarryCapacityOverride float64 `yaml:"carry_capacity,omitempty"`     // overrides Strength-derived calc when > 0
+	HealthMaxOverride     int     `yaml:"health_max,omitempty"`         // overrides Vitality-derived calc when > 0
+	StaminaMaxOverride    int     `yaml:"stamina_max,omitempty"`        // overrides default calc when > 0
+	CorpseName            string  `yaml:"corpse_name,omitempty"`        // overrides "<Name> corpse" rendering when set
+	CorpseDescription     string  `yaml:"corpse_description,omitempty"` // overrides default corpse look-text when set
+	StockMultiplier       float64 `yaml:"stock_multiplier,omitempty"`   // shop stock-cap scale; default 1.0 (treated as 1.0 by EffectiveMaxStock if unset)
+	HideEquipmentSlots    bool    `yaml:"hide_equipment_slots,omitempty"` // suppresses the Equipment block in look-mob render. For object mobs (wagons, statues) where equipment slots don't make sense.
+
 	PackBonusTotal          int      `yaml:"-"`                                 // Total training points from pack scaling (Stage 38.5.3)
 	PackAlphaId             int      `yaml:"-"`                                 // InstanceId of alpha this mob follows (0 = none)
 	IsPackAlpha             bool     `yaml:"-"`                                 // Whether this mob is currently the pack alpha
@@ -460,7 +472,18 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 			}
 		}
 		mob.Character.Validate()
+		// Stage 3.4: apply override fields from mob YAML if set.
+		// Must run after Validate() (which computes stat-derived
+		// defaults) and before the Health/Conviction assignments
+		// below so the override propagates to current pool values.
+		characters.ApplyMobOverrides(
+			&mob.Character,
+			mob.HealthMaxOverride,
+			mob.StaminaMaxOverride,
+			mob.CarryCapacityOverride,
+		)
 		mob.Character.Health = mob.Character.HealthMax.Value
+		mob.Character.Stamina = mob.Character.StaminaMax.Value
 		mob.Character.Conviction = mob.Character.ConvictionMax.Value
 
 		mob.Character.SetPermaBuffs(mob.BuffIds)
@@ -539,6 +562,9 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 		mob.Validate()
 		mob.Character.Validate(true)
 
+		// Stage 3.0d: pre-stamp fold-recall anchor if the YAML template set one.
+		stampFoldAnchor(&mob.Character, m.FoldAnchorRoom)
+
 		// Register the mob's shop with the living economy system if applicable.
 		// Must happen after HomeRoomId and Zone are set (they key the shop store).
 		RegisterMobShop(&mob)
@@ -551,6 +577,17 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 		return &mob
 	}
 	return nil
+}
+
+// stampFoldAnchor pre-stamps a mob's fold-recall anchor in MiscData. Called
+// from newMobByIdInternal at spawn time. No-op when anchorRoom <= 0 so the
+// default YAML value (omitted field) doesn't create a spurious anchor at
+// room 0. Stage 3.0d.
+func stampFoldAnchor(c *characters.Character, anchorRoom int) {
+	if anchorRoom <= 0 {
+		return
+	}
+	c.SetMiscData("fold-anchor-room", anchorRoom)
 }
 
 func GetMobSpec(mobId MobId) *Mob {

@@ -247,6 +247,25 @@ func TestCalcFoldConvictionCost_Basic(t *testing.T) {
 	assert.Equal(t, 5, cost, "2/4 of total 10 = 5")
 }
 
+// TestHandleIdleMobs_SuppressesRestockInCaravanServedZones verifies that the
+// balance config correctly identifies caravan-served zones. The actual
+// suppression path (TickMobShopRestock not called for served zones) is
+// a one-line guard in MobIdle_HandleIdleMobs.go; end-to-end behavior is
+// verified by the Task 15 smoke test. This test confirms the helper is
+// callable from the hooks package and returns the correct value for both
+// a served zone and a non-served zone.
+func TestHandleIdleMobs_SuppressesRestockInCaravanServedZones(t *testing.T) {
+	cfg := configs.GetBalanceConfig()
+
+	// Stillwater is in the default CaravanServedZones list.
+	require.True(t, cfg.IsCaravanServedZone("Stillwater"),
+		"Stillwater must be in CaravanServedZones so idle handler skips restock")
+
+	// A normal zone must NOT be identified as caravan-served.
+	require.False(t, cfg.IsCaravanServedZone("TestZone"),
+		"TestZone must not appear in CaravanServedZones")
+}
+
 func TestCalcFoldConvictionCost_MinimumOne(t *testing.T) {
 	cs := &characters.CastingState{
 		TotalConvictionCost: 1,

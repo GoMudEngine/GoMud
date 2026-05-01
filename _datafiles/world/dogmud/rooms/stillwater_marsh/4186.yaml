@@ -1,0 +1,74 @@
+roomid: 4186
+zone: Stillwater Marsh
+title: Clam Beds
+description: >
+  West of the otter bank the marsh shallows out entirely, the
+  dark peat-water thinning to a hand's depth over pale
+  <ansi fg="itemname">sand-bottom</ansi> — an unusual colour for
+  the interior, fine and almost white, washed in over centuries
+  from some upstream source. The
+  <ansi fg="itemname">clam-beds</ansi> begin where the sand
+  starts, the bottom dimpled all across with the small ridges of
+  buried freshwater clams pressing up from below. Empty
+  <ansi fg="itemname">clam-shells</ansi> lie at the bed's
+  high-water edge in pale grey-blue drifts, the size of a
+  thumbnail to the size of a palm. Three-toed
+  <ansi fg="itemname">egret-track</ansi> crosses the wet sand
+  near the southern edge, smaller and more delicate than the
+  heron prints east — a snowy egret, working the shallows for
+  small fish. This is the quietest corner of the marsh; the
+  reeds do not reach this far west and the open sky is wide here.
+biome: water
+coord:
+  x: -24
+  y: 0
+  z: 0
+exits:
+  east:
+    roomid: 4185
+  south:
+    roomid: 4190
+nouns:
+  clam-bed: |
+    A wide flat bed of soft sand under a hand's depth of clear
+    water, dimpled all across with the small ridges of buried
+    freshwater clams pressing up from below. The clams are
+    numerous enough that careful wading is worth it — a practiced
+    forager can fill a pack-basket in a short morning here.
+  clam-beds: |
+    A wide flat bed of soft sand under a hand's depth of clear
+    water, dimpled all across with the small ridges of buried
+    freshwater clams pressing up from below. The clams are
+    numerous enough that careful wading is worth it — a practiced
+    forager can fill a pack-basket in a short morning here.
+  sand-bottom: |
+    Fine pale sand, almost white, an unusual colour for the marsh
+    interior where everything else is dark peat and silt. The
+    foragers say it was washed down from somewhere upstream,
+    accumulating over generations in this hollow where the current
+    loses its energy. The texture is silky underfoot, firm enough
+    to stand on without sinking.
+  clam-shell: |
+    Empty clam-shells lie in drifts at the bed's high-water edge
+    — pale grey-blue, from thumbnail-size to the size of an open
+    palm. The mussel-shells among them are prized by the carver
+    in Stillwater for buttons and inlays; a pocketful is worth
+    bringing back when gathering clams.
+  clam-shells: |
+    Empty clam-shells lie in drifts at the bed's high-water edge
+    — pale grey-blue, from thumbnail-size to the size of an open
+    palm. The mussel-shells among them are prized by the carver
+    in Stillwater for buttons and inlays; a pocketful is worth
+    bringing back when gathering clams.
+  egret-track: |
+    Three-toed bird-tracks mark the wet sand near the southern
+    edge — smaller and more delicate than the heron prints at
+    Heron Marsh, each toe as thin as a reed-stem. A snowy egret
+    works this bed regularly, taking small fish in the shallows.
+    The prints are still filling slowly with water.
+idlemessages:
+- a clam ejects a small spurt of water that breaks the surface
+- ''
+- an egret-track at the sand's edge fills slowly and is gone
+- ''
+- a single bubble rises from the sand-bottom and breaks

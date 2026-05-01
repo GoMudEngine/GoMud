@@ -1,0 +1,44 @@
+mobid: 376
+zone: Thornwall City
+archetype: fighting
+behavior_archetype: ""
+statpool: 110
+itemdropchance: 0
+groups:
+  - caravan
+  - merchant_train
+  - animal
+hostile: false
+non_combatant: false
+player_attack_immune: true
+maxwander: -1
+activitylevel: 5
+charm_immune: true
+
+idlecommands:
+  - 'emote tosses his head, ears flicking forward'
+  - ''
+  - 'emote paws at the dirt, restless'
+  - ''
+
+character:
+  name: Bran
+  description: |
+    A heavy-shouldered draft horse, his coat rich bay going
+    to black at the legs and mane. Younger than Hob and a
+    little restless, his ears flick at every sound on the
+    road. The harness across his chest matches Hob's — good
+    leather, oiled. His hooves are blacked and shod.
+    A small brass bell hangs from his bridle.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    strength: {training: 35}
+    dexterity: {training: 18}
+    vitality: {training: 28}
+    perception: {training: 16}
+    willpower: {training: 8}
+    charisma: {training: 5}
+  skills:
+    weapon-combat: 5

@@ -1,0 +1,28 @@
+description: Smoke-test Stage 3.1 forager NPCs + sanctuary mutator + caravan extension
+goals:
+  - Confirm Marsh Forager Tova spawns at Stillwater Temple Interior (room 4123). Travel there and `look`. Tova should be visible alongside the existing temple priest. `look tova` should show a short description (weathered marshfolk woman, leather satchel).
+  - Confirm Steppe Forager Halix spawns at Thornwall Temple Interior (room 468). Travel there and `look`. Halix should be visible. `look halix` should show his description (lean dust-colored steppe-walker, hunting spear).
+  - Confirm Fernway Forager Kessa spawns at the new Forager's Camp (room 4197). Travel from Thornwall to Fernway South — path is roughly Thornwall west gate → marches_spur_road → Fernway → Fernway South. From the southern Fernway South spine (room 4170 Tangled Bracken), there should be a new WEST exit to the Forager's Camp. Confirm the camp room loads cleanly with its lean-to / firepit / drying-racks description.
+  - Confirm the sanctuary mutator's description-modifier text appears at all four sanctuary rooms. At Thornwall Temple Interior (468), Stillwater Temple of Stillwater (4123), Sanctum Basin tutorial rooms (any of 101-120), and Forager's Camp (4197), the room description should include "A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply." (or similar — pearl-colored append text). Spot-check 3 of these 4 sanctuary rooms.
+  - Confirm sanctuary regen is faster than ordinary rooms. Take some damage somewhere (find a wandering hostile mob, take a few hits, then break combat). Sit in a non-sanctuary room for 30 seconds and note the HP pip movement. Then walk to Thornwall Temple Interior (468) and sit there — HP should regen NOTICEABLY faster (target ~5x). Observation only; no exact numbers needed.
+  - **Player-attack rebuff:** Try `attack tova` at Stillwater Temple. Confirm rebuff message ("You can't attack Tova" or similar) and NO aggro generated. Tova should not become hostile, should not enter combat, should not flee. Repeat for Halix and Kessa. All three should be unattackable.
+  - Try `steal tova` (or `steal from tova`). Confirm same rebuff message — the player_attack_immune flag covers steal too. Repeat for Halix and Kessa.
+  - Try `bash tova`, `kick tova`, `trip tova`. All should rebuff without entering combat. (One of these is enough to verify — they all use the same player_attack_immune gate.)
+  - **Forager dialogue:** Run `ask tova forage` (or similar trigger keywords from the dialogue patterns: forage, satchel, marsh, danger). Confirm she responds with the dialogue lines about her work, what she avoids, where she winters. Repeat for Halix (`ask halix work`) and Kessa (`ask kessa caravan`). Light dialogue — 6-10 patterns each.
+  - **Forager state machine — observe what you can:** The full forage→deliver→recall cycle takes ~400+ rounds (~30 min real), so don't try to watch a full loop. Instead, sit in Tova's home (Stillwater Temple) for ~5 minutes, then re-check the room. After resting at sanctuary she should depart. If she's gone from 4123, that's the `traveling_to_territory` state firing — PASS. If she walks across the room or you see her in an adjacent room, that's also evidence the state machine is active.
+  - **Forager-emergency check (optional, if time permits):** Find Tova mid-territory in Stillwater Marsh (rooms 4177-4196) — you might see her foraging emote ("Tova stoops over a patch of growth and tucks something into a satchel"). If you spot her, confirm she's wandering and not stuck. Don't try to harm her — player_attack_immune blocks it anyway.
+  - **Forager's Camp as a sanctuary for players:** Sit in room 4197 (Forager's Camp) low on HP. Confirm 5x regen kicks in. The camp is a deliberate positive externality for players who need a safe rest stop in Fernway South.
+  - **Caravan continuity check:** The Stage 2 caravan should still work. Visit Thornwall depot (room 465 Market Square Center) and confirm Ketil + Marta + Lars are there during a dwell phase. Or catch them mid-transit. Don't try to attack them — they're player_attack_immune too.
+  - Bonus: try `look fernway forager's camp` from room 4170 Tangled Bracken to see the room title in the exit list. Confirm the new west exit shows.
+notes:
+  - Server runs locally at localhost:55555. Has been freshly booted with the Stage 3.1 changes.
+  - Use the `set charset` ASCII setting per the test-mud SOP.
+  - The user is playtesting in parallel — be aware you might see them moving around. Don't follow them; stay focused on the goals.
+  - Travel paths from Thornwall:
+    - To Stillwater (Tova): west gate → marches_spur_road → north_road → Stillwater (room 4109 = North Square). Then south to 4123 Temple of Stillwater. Path may take 10-20 rooms.
+    - To Fernway South (Kessa): west gate → marches_spur_road → Fernway → Fernway South. Camp is at 4197, accessed west from 4170 Tangled Bracken.
+    - Halix is right at home — Thornwall Temple Interior is room 468, just north of 467 Temple District in Thornwall.
+  - Forager mob IDs (after the 2026-04-30 renumber fix): Tova 371 (Stillwater Marsh zone), Halix 372 (Ironwind Steppe zone), Kessa 373 (The Fernway South zone).
+  - Sanctuary mutator id is `sanctuary` (5x regen). Description-modifier append text should be visible in `look` output in any sanctuary room.
+  - Don't wait around for full forage cycles — they're slow. Use direct `look` and movement checks for observable evidence, plus the sit-and-wait test for the resting → traveling transition.
+  - Report each numbered goal as PASS / FAIL / BLOCKED with details.

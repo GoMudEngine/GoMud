@@ -12,6 +12,8 @@ coord:
   y: 10
   z: 0
 station: alchemy_bench
+mutators:
+- mutatorid: sanctuary
 exits:
   east:
     roomid: 112

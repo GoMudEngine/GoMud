@@ -1,0 +1,71 @@
+roomid: 4190
+zone: Stillwater Marsh
+title: Black Pool
+description: >
+  North of the Clam Beds the marsh floor drops without warning
+  into a small deep hollow — the <ansi fg="itemname">black-pool</ansi>,
+  perhaps three paces across, its <ansi fg="itemname">dark-water</ansi>
+  the colour of strong tea and its bottom invisible regardless of
+  the light above. Cool air rises off the surface even in summer,
+  a degree or two colder than the surrounding marsh. The
+  <ansi fg="itemname">peat-rim</ansi> at the pool's edge is thick
+  and soft — foragers work it from the rim with long poles, reaching
+  down to where they believe the bottom to be. Somewhere in the
+  depths there is a <ansi fg="itemname">mussel-bed</ansi>, visible
+  only as a darker patch in the dark water when the angle is right —
+  the particular freshwater mussels that occasionally produce the
+  Stillwater black pearl, rare enough that a single find changes a
+  forager's season entirely.
+biome: water
+coord:
+  x: -24
+  y: -1
+  z: 0
+exits:
+  north:
+    roomid: 4186
+  east:
+    roomid: 4189
+nouns:
+  black-pool: |
+    A small deep pool perhaps three paces across, cut into the
+    marsh floor in a hollow of black peat. The water is dark
+    with peat-stain and the bottom is invisible even in bright
+    midday light — far deeper than the shallow marsh surrounding
+    it suggests it could be. The pool has no obvious inlet or
+    outlet; it simply exists, cold and still and deeper than
+    it has any right to be.
+  dark-water: |
+    Water the colour of strong tea — stained by the surrounding
+    peat, absorbing light rather than reflecting it. Not unsafe
+    to drink in small amounts but not appealing; the foragers
+    who work this pool by habit still fill their flasks from
+    Heron Marsh. The surface is almost perfectly still; only
+    the occasional bubble disturbs it.
+  mussel-bed: |
+    A bed of freshwater mussels on the pool's bottom, visible
+    only as a slightly darker patch in the dark water when the
+    light is exactly right. These mussels occasionally produce
+    the Stillwater black pearl — a small smooth sphere, dark as
+    the water they form in, worth considerably more than their
+    weight to the right buyer. Finding one requires patience
+    and a long pole.
+  mussels: |
+    Freshwater mussels on the pool's dark bottom, the source
+    of the Stillwater black pearl when conditions within the
+    shell are right — which is rare. Most mussels here produce
+    nothing of note; the pearls form perhaps once a season,
+    in one mussel in ten, and there is no way to know which
+    one without opening them all.
+  peat-rim: |
+    Thick black peat forms the pool's rim — soft enough to
+    sink into if you step wrong, which would put you in the
+    water fast. The foragers know to kneel at the firmest
+    point and reach with poles rather than leaning over the
+    edge. The peat smells of deep time and cold water.
+idlemessages:
+- a single small bubble breaks the dark surface and is gone
+- ''
+- cool air rises off the pool and chills the skin
+- ''
+- something deep in the pool moves; the surface trembles, then stills

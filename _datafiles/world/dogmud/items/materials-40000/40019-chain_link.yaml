@@ -8,4 +8,5 @@ subtype: mundane
 component_tag: chain-link
 weight: 0.1
 value: 2
+rarity_tier: 50
 is_component: true

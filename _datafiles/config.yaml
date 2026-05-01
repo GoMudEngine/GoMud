@@ -63,7 +63,7 @@ Server:
   - checkclient
   # - Motd -
   #   Message of the day. This is displayed when the motd command is run.
-  Motd: '{{ t "NEW ZONE — STILLWATER: A lakeside trading town opens north of Ashwick via the new Fernway road. 47 rooms across town center, lakeshore, temple, caves, and west residential quarter. All seven crafting stations on-site. Brave the cave dungeon for a meaningful boss fight if you have the kit.\nTWO NEW QUESTS: Constable Drunn has posted a bounty on the lake-cave creatures (escalating tiers, partial vs full reward paths). Ulla in her parlor needs help going through her late husband''s things — a slower lore quest with an ending that pays off the spiral motif scattered across town and the ruins to the west.\nNOVEL POLISHED: \"What the Moons Keep\" got a full V3 adversarial-review polish pass — voice consistency, verbal-tic sweep, continuity fixes, tightened prose throughout.\nNovel: https://github.com/pruuk/DOGMud/blob/master/what_the_moons_keep.md\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
+  Motd: '{{ t "LIVING TRADE NETWORK — A six-mob caravan now physically hauls goods between Thornwall and Stillwater (`look wagon` to see what''s on board). Three foragers gather raw materials in the wild and deliver to local shops: Tova in Stillwater Marsh, Halix in Ironwind Steppe, Kessa in the Fernway.\nDYNAMIC SHOP ECONOMY — Vendor prices flex with stock: 0.25x when overstocked, up to 5x when nearly empty. Stock caps now scale with item rarity (tier-50 commodities cap at 50, tier-20 specialties at 20). New characters start with 250 gold so they can try a mid-tier craft.\nTWO NEW WILDERNESS ZONES — Fernway South (south from Fox Den) and Stillwater Marsh (west from Mill Creek Footbridge). 40 rooms of forage country, mostly peaceful but watch for forest badgers and bog adders.\nQOL — Corpse salvage yields cloth, leather, sinew. Sanctuary mutator gives 5x regen at temples and foragers'' camps. Foragers fold-recall to sanctuary when wounded.\nNovel: https://github.com/pruuk/DOGMud/blob/master/what_the_moons_keep.md\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
   # - NextRoomID -
   # This number is auto-updated to the highest number of rooms in the game.
   #   If creating your own rooms but don't want to risk an update conflicting,
@@ -854,6 +854,45 @@ Balance:
   # ── MANIFESTATION / COMPANION SCALING ──────────────────────────────────────
   ManifestStatScaleChaFactor: 150    # Charisma divisor — stronger Cha contribution to companion pools
   ManifestStatScaleSkillFactor: 0.02 # Manifestation skill additive factor per rank
+
+  # ── CARAVAN SYSTEM ───────────────────────────────────────────────────────────
+  # Zones whose vendors restock on caravan visit only (per-mob
+  # TickMobShopRestock is suppressed). Vendors in zones not listed here
+  # keep the legacy auto-restock tick.
+  CaravanServedZones:
+    - "Stillwater"
+    - "Thornwall City"
+
+  # Rounds the caravan rests at each depot between transit legs.
+  # 720 rounds ≈ 48 min real ≈ a full in-game day. Stage 3.1 doubled
+  # this from 360 to make foragers the day-to-day supply pipeline.
+  CaravanDepotDwellRounds: 720
+
+  # Dwell at the Fernway forager meeting point (North Road 4038) on
+  # each caravan transit leg. Long enough to detect the forager.
+  FernwayPickupDwellRounds: 6
+
+  # ── Forager system (Stage 3.1) ─────────────────────────────────────
+  # Rounds between forage attempts in the forager's territory.
+  ForagerForageDwellRounds: 8
+
+  # Carry-capacity ratio (0-1) at which the forager heads home.
+  ForagerCarryThresholdPct: 0.75
+
+  # HP ratio (0-1) below which the forager casts fold-recall.
+  ForagerHPRecallThresholdPct: 0.50
+
+  # HP ratio (0-1) below which the forager auto-drinks a salve.
+  ForagerHealPotionThresholdPct: 0.75
+
+  # Max rounds the Fernway forager idles at the meeting point waiting
+  # for the caravan before recalling home with the satchel.
+  ForagerWaitTimeoutRounds: 150
+
+  # Stage 3.4: when forager's carry-capacity ratio exceeds this value at
+  # her sanctuary (home), she stays resting instead of cycling back to
+  # forage. Prevents futile forage loops when local vendors are saturated.
+  ForagerRestCarryThreshold: 0.5
 
 ################################################################################
 #

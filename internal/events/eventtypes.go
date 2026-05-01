@@ -372,3 +372,28 @@ type MobAISignal struct {
 }
 
 func (m MobAISignal) Type() string { return "MobAISignal" }
+
+// PartyHelpRequested is fired when a party member calls for help via
+// the party_call_help behavior tree action. Other party members'
+// behavior trees can listen for this event to navigate to the
+// rally room.
+type PartyHelpRequested struct {
+	PartyId        int  // internal numeric ID; see parties.Party.PartyIdInternal()
+	CallerActorId  int  // user or mob instance ID; interpret via CallerIsPlayer
+	CallerIsPlayer bool
+	RallyRoomId    int
+}
+
+func (p PartyHelpRequested) Type() string { return "PartyHelpRequested" }
+
+// PartyDissolved is fired when a party's leader dies or the party is
+// explicitly disbanded. Member behavior trees can listen for this to
+// react ("morale break" emote, panic flee, etc.) before reverting to
+// solo behavior.
+type PartyDissolved struct {
+	PartyId        int
+	Reason         string // "leader_died" | "disbanded" | "all_dead"
+	MemberActorIds []int
+}
+
+func (p PartyDissolved) Type() string { return "PartyDissolved" }

@@ -1,0 +1,56 @@
+roomid: 4175
+zone: The Fernway South
+title: Steppe Edge
+description: >
+  The trees give out abruptly here. One step the canopy is
+  overhead; the next it is not, and the sky opens in all its
+  width for the first time since entering the forest. The
+  <ansi fg="itemname">steppe</ansi> begins at the treeline and
+  runs south without interruption — treeless, windswept, a
+  pale expanse of <ansi fg="itemname">pale-grass</ansi> and
+  <ansi fg="itemname">scoured-stones</ansi> under a sky that
+  feels very large after the close green of the wood. A
+  constant south wind presses steadily against the face,
+  drier and colder than the forest air, smelling of distance
+  and old grass. The <ansi fg="itemname">south-horizon</ansi>
+  is unbroken — a long pale line where the steppe meets the
+  sky, the Dustwalk somewhere out beyond it. You do not go
+  that way today. Behind you the forest stands in a dark wall;
+  ahead, the world simply opens and keeps opening.
+biome: plains
+coord:
+  x: -14
+  y: -22
+  z: 0
+exits:
+  north:
+    roomid: 4174
+nouns:
+  steppe: |
+    The land south of the treeline is steppe — open, treeless,
+    wind-scoured grass and stone stretching to the horizon under
+    a wide pale sky. Nothing slows the wind. Nothing breaks the
+    sightline. It is a different kind of world from the forest
+    at your back.
+  pale-grass: |
+    Knee-high pale tan grass bends and rises in the constant
+    south wind, the blades moving in long even waves like the
+    surface of slow water. It feels wilder and older than
+    forest grass — adapted to exposure, not shelter.
+  scoured-stones: |
+    Round stones scatter the steppe ground in all directions,
+    weathered smooth by the wind over a long time. They sit
+    in the grass without pattern — tumbled by water once,
+    worn round by air since. Nothing to stop them rolling
+    out here; nothing to catch them.
+  south-horizon: |
+    The horizon south is unbroken — a long pale line where
+    the steppe meets the sky. The Dustwalk lies somewhere out
+    there beyond sight. You do not go that way today; the
+    forest path behind you leads back to safety.
+idlemessages:
+- south wind moves the pale-grass in long even waves
+- ''
+- a hawk wheels far to the south, very high
+- ''
+- a single dry tumble-stem rolls past in the wind

@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
@@ -38,7 +39,37 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	result := actions.InitiateCast(actor, spellName, spellArg)
 
 	if !result.Initiated {
-		// Any early exit (invalid spell, no target, cooldown) — silently bail.
+		// Surface the early-exit reason at debug level so tactics-cast
+		// races (higher-priority cast losing CastingState slot to a
+		// lower-priority one queued in the same tick) can be diagnosed.
+		// See project_tactics_cast_preemption.md.
+		switch {
+		case result.AlreadyCasting:
+			inProgress := ""
+			if mob.Character.CastingState != nil {
+				inProgress = mob.Character.CastingState.SpellId
+			}
+			mudlog.Debug("mob.Cast",
+				"mob", mob.Character.Name,
+				"requested_spell", spellName,
+				"reason", "already casting",
+				"in_progress", inProgress)
+		case result.OnCooldown:
+			mudlog.Debug("mob.Cast",
+				"mob", mob.Character.Name,
+				"requested_spell", spellName,
+				"reason", "on cooldown")
+		case result.InvalidSpell:
+			mudlog.Debug("mob.Cast",
+				"mob", mob.Character.Name,
+				"requested_spell", spellName,
+				"reason", "invalid spell")
+		case result.NoTarget:
+			mudlog.Debug("mob.Cast",
+				"mob", mob.Character.Name,
+				"requested_spell", spellName,
+				"reason", "no target")
+		}
 		return true, nil
 	}
 

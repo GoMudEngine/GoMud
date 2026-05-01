@@ -42,17 +42,28 @@ SOP including the `behavior_archetype` priority order.
 | `mobid` | int | **yes** | Unique integer. Must match filename. |
 | `zone` | string | **yes** | Display name of the zone (e.g. `"Sanctum Basin"`). |
 | `hostile` | bool | no | Whether this mob attacks players on sight. Default: false. |
+| `non_combatant` | bool | no | When true, mob cannot be attacked or stolen from — same gate that protects shopkeepers. Mob also won't aggro on player entry. Default: false. |
+| `player_attack_immune` | bool | no | When true, mob rebuffs player-originated attacks (attack/bash/grapple/kick/shoot/taunt/throw/trip and steal) with a "you can't attack" message — like `non_combatant` — but still participates in mob-vs-mob combat. Used by caravan crew, who fight bandits but cannot be attacked by players. Default: false. |
+| `charm_immune` | bool | no | Mob cannot be charmed (resists charm spells/effects). Default: false. |
+| `pack_flee_immune` | bool | no | Mob does not flee when a packmate dies (overrides species-based pack flee). Default: false. |
 | `maxwander` | int | no | Max rooms the mob will wander from its home room. 0 = stationary. |
 | `activitylevel` | int | no | 1–100. How often the mob executes idle commands. Higher = more active. |
 | `itemdropchance` | int | no | Percent chance (0–100) to drop carried items on death. |
 | `statpool` | int | no | Stat points distributed across stats on spawn (weighted by archetype). |
 | `archetype` | string | no | Stat distribution archetype: `"fighting"` (80% physical), `"casting"` (80% mental), or `""` (even). |
-| `groups` | list | no | Group membership (e.g. `[rats, animal]`). Used for teamwork and hates logic. |
+| `groups` | list | no | Group membership (e.g. `[rats, animal]`). Used for teamwork and hates logic, and drives corpse salvage returns (see `internal/crafting/corpse_salvage.go`). |
+| `fold_anchor_room` | int | no | Room ID stamped into `MiscData["fold-anchor-room"]` at spawn. Lets the mob `cast fold-recall` to that room without first casting `fold-anchor`. Resolver: `internal/hooks/spell_foldrecall.go`. Used by hermit Old Edrin (Stage 3.0d), caravan crew (Stage 2), and the three Stage 3.1 foragers. |
 | `hates` | list | no | Group names or species this mob will attack on sight. |
 | `buffids` | list | no | Buff IDs always applied when mob spawns. |
 | `questflags` | list | no | Quest flag strings set on this mob. |
 | `scripttag` | string | no | Tag appended to the script filename. Must match the `.js` file. |
 | `behavior_archetype` | string | no | Filename (without `.yaml`) of an archetype in `_datafiles/world/dogmud/behaviors/archetypes/`. Drives the mob's behavior tree. **Strongly preferred over legacy `aiprofile`/`combatcommands`/`tactic_preset` for new mobs.** See "Behavior Archetypes" below. |
+| `carry_capacity` | float | no | (Stage 3.4) Override Strength-derived carry capacity. Used by special mobs (wagons) where the default formula doesn't fit. Zero = use default calc. |
+| `health_max` | int | no | (Stage 3.4) Override Vitality-derived max HP. Zero = use default calc. |
+| `stamina_max` | int | no | (Stage 3.4) Override default max SP. Zero = use default calc. |
+| `corpse_name` | string | no | (Stage 3.4) Override "<Name> corpse" rendering. Wagon uses "splintered wagon wreckage". Empty = use default. |
+| `corpse_description` | string | no | (Stage 3.4) Override default corpse look-text via `description-corpse` template. Empty = use template. |
+| `stock_multiplier` | float | no | (Stage 3.4) Shop stock-cap scale; default 1.0. EffectiveMaxStock = item.RarityTier × stock_multiplier. Future big-city shops can set > 1.0. |
 | `aiprofile` | string | no | Legacy combat AI profile: `"default"`, `"aggressive"`, `"defensive"`, `"grappler"`, `"brawler"`, `"tactical"`. (legacy — prefer `behavior_archetype`) |
 | `specialmovechance` | int | no | Base % chance to use special moves in combat (0–100). |
 | `tactic_preset` | string | no | Reactive AI preset: `"aggressive_melee"`, `"defensive_caster"`, `"ambusher"`, `"tank"`. See Reactive AI below. (legacy — prefer `behavior_archetype`) |

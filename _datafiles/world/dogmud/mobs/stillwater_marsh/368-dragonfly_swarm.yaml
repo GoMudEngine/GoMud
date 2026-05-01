@@ -1,0 +1,37 @@
+mobid: 368
+zone: Stillwater Marsh
+behavior_archetype: combat_passive
+archetype: fighting
+statpool: 18
+itemdropchance: 0
+hostile: false
+charm_immune: true
+maxwander: 0
+groups:
+  - animal
+  - insectoid
+  - swarm
+idlecommands:
+  - 'emote intercepts something tiny mid-air with a quiet click'
+  - ''
+  - 'emote turns in formation over the hunt-pool'
+  - ''
+activitylevel: 50
+character:
+  name: dragonfly swarm
+  description: |
+    A working swarm of dragonflies — perhaps two dozen large
+    iridescent bodies in coordinated patrol over the small
+    pool. They ignore you unless you make a problem of yourself.
+  speciesid: 12
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 4
+    dexterity:
+      training: 16
+    perception:
+      training: 14
+    vitality:
+      training: 10

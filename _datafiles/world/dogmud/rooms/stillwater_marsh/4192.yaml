@@ -1,0 +1,74 @@
+roomid: 4192
+zone: Stillwater Marsh
+title: Dragonfly Glade
+description: >
+  A small open clearing in the marsh where the reeds pull
+  back around a still shallow pool, leaving a pocket of
+  open air above dark water. The pocket belongs to the
+  <ansi fg="itemname">dragonflies</ansi> — more here than
+  anywhere else in the marsh, hunting in constant low
+  arcs over the surface, their wings carrying a continuous
+  fine buzz that underlies everything else. The
+  <ansi fg="itemname">iridescence</ansi> of their bodies
+  catches whatever light filters through the clouds above:
+  metallic blue, copper, dark green, shifting angle to
+  angle. They work the <ansi fg="itemname">hunt-pool</ansi>
+  as precise territory, intercepting anything small that
+  crosses the open water. The
+  <ansi fg="itemname">mosquito-thinning</ansi> is immediate
+  and noticeable — the biting is lighter here than anywhere
+  else in the zone, a welcome relief.
+biome: water
+coord:
+  x: -22
+  y: -2
+  z: 0
+exits:
+  north:
+    roomid: 4188
+  east:
+    roomid: 4191
+  west:
+    roomid: 4193
+  south:
+    roomid: 4194
+nouns:
+  dragonfly: |
+    A large dragonfly working the pool — body the length of
+    a finger, wings clear and shimmering, colours metallic
+    blue and copper and dark green depending on the angle.
+    It moves with bursts of speed and abrupt stops,
+    repositioning mid-air without apparent effort.
+  dragonflies: |
+    Large dragonflies work the pool in overlapping arcs —
+    body the length of a finger, wings clear and shimmering,
+    colours metallic blue and copper and dark green depending
+    on the angle. They move with bursts of speed and abrupt
+    stops, repositioning mid-air without apparent effort.
+  iridescence: |
+    The dragonflies catch the light in brief metallic
+    flashes — blue from one angle, green from another,
+    copper at the edge of vision as they turn. The glade
+    is brighter for them; the colours are richer than the
+    surrounding grey-green marsh.
+  hunt-pool: |
+    A small still pool the dragonflies claim as territory —
+    shallow and clear, weeds visible on the bottom, open
+    water above. Any small flying insect that crosses the
+    pool is taken almost before it registers. The pool
+    itself is calm; the air above it is not.
+  mosquito-thinning: |
+    The mosquitoes are noticeably scarcer here than in the
+    surrounding marsh — the dragonflies eat them throughout
+    the day. The relief is immediate on entering the glade.
+    Foragers know to rest here when the biting elsewhere
+    becomes oppressive.
+idlemessages:
+- a dragonfly intercepts something tiny mid-air with a small click
+- ''
+- iridescence flashes briefly as a dragonfly turns
+- ''
+- two dragonflies tangle briefly over territory and separate
+spawninfo:
+- mobid: 368
+  cooldown: 600 rounds

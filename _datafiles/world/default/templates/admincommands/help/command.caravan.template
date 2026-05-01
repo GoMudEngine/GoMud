@@ -1,0 +1,12 @@
+The <ansi fg="command">caravan</ansi> command provides admin control over the caravan
+state machine.
+
+<ansi fg="command">caravan reset</ansi>
+Reset every active caravan leader in the world back to the starting
+ThornwallDwell state. Use this to recover from stuck states caused by
+server restarts mid-cycle or permanent hostile detection.
+
+<ansi fg="command">caravan reset [instanceId]</ansi>
+Reset a single caravan leader by mob instance ID. Useful when only one
+leader is stuck and a world-wide reset would be disruptive.
+

@@ -11,6 +11,8 @@ ingredients:
     quantity: 2
   - item_tag: hive-fragment
     quantity: 1
+  - item_tag: pine-pitch
+    quantity: 1
   - item_tag: bottle
     quantity: 1
 output:

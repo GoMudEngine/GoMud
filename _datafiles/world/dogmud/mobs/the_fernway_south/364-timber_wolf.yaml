@@ -1,0 +1,42 @@
+mobid: 364
+zone: The Fernway South
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 80
+itemdropchance: 0
+hostile: false
+charm_immune: false
+maxwander: 5
+groups:
+  - animal
+  - canine
+  - predator
+hates:
+  - boar
+idlecommands:
+  - 'emote pads silently between the pine trunks, scenting'
+  - ''
+  - 'emote lifts its muzzle and tests the wind'
+  - ''
+  - 'emote stops and listens, head cocked'
+  - ''
+activitylevel: 30
+character:
+  name: timber wolf
+  description: |
+    A lone grey timber wolf, lean and tall-shouldered, moving
+    through the pine stand like it belongs to the trees. It
+    does not look at you the way it looks at smaller things.
+    Whatever it came south for, it isn't you.
+  speciesid: 2
+  level: 5
+  gold: 0
+  stats:
+    strength:
+      training: 14
+    dexterity:
+      training: 16
+    perception:
+      training: 18
+    vitality:
+      training: 14

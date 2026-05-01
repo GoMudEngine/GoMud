@@ -24,6 +24,8 @@ coord:
   x: -14
   y: 3
   z: 0
+mutators:
+- mutatorid: sanctuary
 exits:
   west:
     roomid: 4122
@@ -87,3 +89,4 @@ idlemessages:
 spawninfo:
 - mobid: 344
   cooldown: 600 rounds
+- mobid: 371        # Tova, Marsh Forager (Stage 3.1)

@@ -240,10 +240,12 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	if config.Death.CorpsesEnabled {
 		room.AddCorpse(rooms.Corpse{
-			MobId:        int(mob.MobId),
-			Character:    mob.Character,
-			RoundCreated: currentRound,
-			WasCharmed:   mob.Character.IsCharmed() || mob.Character.EverCharmed,
+			MobId:             int(mob.MobId),
+			Character:         mob.Character,
+			RoundCreated:      currentRound,
+			WasCharmed:        mob.Character.IsCharmed() || mob.Character.EverCharmed,
+			CorpseName:        mob.CorpseName,
+			CorpseDescription: mob.CorpseDescription,
 		})
 	}
 

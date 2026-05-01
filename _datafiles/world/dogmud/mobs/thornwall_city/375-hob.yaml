@@ -1,0 +1,44 @@
+mobid: 375
+zone: Thornwall City
+archetype: fighting
+behavior_archetype: ""
+statpool: 110
+itemdropchance: 0
+groups:
+  - caravan
+  - merchant_train
+  - animal
+hostile: false
+non_combatant: false
+player_attack_immune: true
+maxwander: -1
+activitylevel: 5
+charm_immune: true
+
+idlecommands:
+  - 'emote stamps a hoof and shakes her mane'
+  - ''
+  - 'emote nuzzles at the wagon-tongue, looking for handouts'
+  - ''
+
+character:
+  name: Hob
+  description: |
+    A solid, broad-shouldered draft horse with a patient
+    eye, her coat dappled grey going to white at the muzzle.
+    Her hooves are heavy with iron shoes, recently reset.
+    The harness across her chest is good leather, oiled and
+    supple. A small brass bell hangs from her bridle —
+    silent at rest, soft at a walk.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    strength: {training: 35}
+    dexterity: {training: 15}
+    vitality: {training: 30}
+    perception: {training: 15}
+    willpower: {training: 10}
+    charisma: {training: 5}
+  skills:
+    weapon-combat: 5

@@ -1,0 +1,63 @@
+roomid: 4174
+zone: The Fernway South
+title: Twisted Hawthorn
+description: >
+  The forest thins here to a last junction before the trees
+  give out entirely, dominated by a single old
+  <ansi fg="itemname">hawthorn</ansi> shaped by years of
+  prevailing wind into a permanent south-leaning lean — the
+  branches all bent the same way, as though the tree has been
+  pressing into the wind for so long it has forgotten how to
+  grow upright. Dark red <ansi fg="itemname">haws</ansi> hang
+  in dense clusters from every branch end. For the first time
+  in the zone the <ansi fg="itemname">south-wind</ansi> is
+  felt rather than merely guessed at — a real dry breeze
+  coming from below the treeline, carrying with it the first
+  faint smell of open grass instead of leaf-mold. The
+  <ansi fg="itemname">drying-soil</ansi> underfoot is noticeably
+  sandier than the deep leaf-litter of the northern wood; the
+  steppe is close. Trails branch west toward the earth-bank,
+  east toward a pocket of wildflowers, and south toward open
+  ground.
+biome: forest
+coord:
+  x: -14
+  y: -21
+  z: 0
+exits:
+  north:
+    roomid: 4176
+  south:
+    roomid: 4175
+  east:
+    roomid: 4173
+  west:
+    roomid: 4172
+nouns:
+  hawthorn: |
+    A single old hawthorn, shaped by years of south wind into
+    a permanent lean. The branches are dense with thorns and
+    clustered red haws — the tree looks battered and stubborn,
+    survivor of whatever weather comes up from the open steppe
+    to the south.
+  haws: |
+    Dark red haws — small thorn-tree berries — cluster thickly
+    on every branch end, heavy enough to bow the twigs. Cooked
+    or pressed they yield jam, syrup, or medicine; eaten raw
+    they are mealy and faintly bitter.
+  south-wind: |
+    The first real wind in the zone, coming from the south
+    past the hawthorn — drier than the forest air and carrying
+    a hint of grass-smell from the open steppe beyond the
+    trees. It moves intermittently, not a constant breeze.
+  drying-soil: |
+    The soil underfoot is noticeably drier and sandier than
+    the leaf-litter of the deeper forest — a sign the woodland
+    is giving ground to the steppe. The top layer crumbles
+    instead of compressing underfoot.
+idlemessages:
+- south wind moves the hawthorn briefly
+- ''
+- a haw drops and rolls a step before stopping
+- ''
+- dust kicks up in a small swirl from the south

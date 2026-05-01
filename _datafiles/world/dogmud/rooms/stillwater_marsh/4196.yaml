@@ -1,0 +1,67 @@
+roomid: 4196
+zone: Stillwater Marsh
+title: Hidden Spring
+description: >
+  A small pocket south of Mossy Hummock where the bog-rim
+  dips around a clear rising source — the
+  <ansi fg="itemname">hidden-spring</ansi>, perhaps a
+  forearm deep at the source, cold water rising visibly
+  from a fissure in dark stone below the surface. The
+  foragers know it; few others do. Low
+  <ansi fg="itemname">waxberries</ansi> cluster at the
+  rim in grey-blue bunches, faintly sweet, a small reward
+  for anyone who finds the pocket. A stand of
+  <ansi fg="itemname">bog-myrtle</ansi> surrounds the
+  spring's edge, releasing a sweet aromatic smell when
+  brushed that carries on even the lightest air — the
+  Stillwater brewer uses the leaves in a particular
+  season ale. The <ansi fg="itemname">pocket-pool</ansi>
+  itself is small, perhaps two paces across at most,
+  easy to walk past in the reeds if you do not know
+  to look.
+biome: water
+coord:
+  x: -21
+  y: -3
+  z: 0
+exits:
+  north:
+    roomid: 4191
+nouns:
+  hidden-spring: |
+    A small clear spring rising silently in a pocket of
+    bog-rim — perhaps a forearm deep at the source, the
+    water visibly rising from a fissure in dark stone
+    below. Cold and pure where the surrounding bog water
+    is dark and acidic. The foragers fill their flasks
+    here rather than at the black-pool.
+  waxberry: |
+    A low waxberry shrub at the spring's edge — small
+    grey-blue waxy berries clustered at the branch-tips,
+    edible and faintly sweet. A forager's reward for
+    finding the pocket; the berries do not grow farther
+    north in the wetter marsh.
+  waxberries: |
+    Low waxberry shrubs at the spring's edge — small
+    grey-blue waxy berries clustered at the branch-tips,
+    edible and faintly sweet. A forager's reward for
+    finding the pocket; the berries do not grow farther
+    north in the wetter marsh.
+  bog-myrtle: |
+    A stand of bog-myrtle around the spring's edge,
+    releasing a sweet aromatic smell when the leaves are
+    brushed — used by the Stillwater brewer to flavour
+    a particular season ale, and by the healer to ease
+    the itching of bug-bites.
+  pocket-pool: |
+    The small pool the spring forms at its source — perhaps
+    two paces across at most, easy to miss in the reeds.
+    Much smaller than the deeper Spring Pool to the north,
+    and easier to overlook. The water is clear and still,
+    the bottom visible as dark fissured stone.
+idlemessages:
+- a single bubble rises silently in the pocket-pool
+- ''
+- a waxberry detaches and floats slowly across the surface
+- ''
+- bog-myrtle releases a faint sweet smell when the wind moves

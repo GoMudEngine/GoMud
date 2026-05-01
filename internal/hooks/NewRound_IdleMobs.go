@@ -111,6 +111,18 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 					if exitInfo, ok := room.Exits[nextStep.ExitName()]; ok {
 						if exitInfo.RoomId == nextStep.RoomId() {
 							mob.Command(nextStep.ExitName())
+							// Stage 2 caravan: pace caravan crews a shade
+							// slower than default mob walking. The noop
+							// pushes lastCommandTurn forward so the next
+							// path step waits ~1.5s. ~1 step per 5.5s real
+							// instead of per 4s — visible in flavor without
+							// being painful.
+							for _, g := range mob.Groups {
+								if g == "caravan" {
+									mob.Command("noop", 1.5)
+									break
+								}
+							}
 							continue
 						}
 					}

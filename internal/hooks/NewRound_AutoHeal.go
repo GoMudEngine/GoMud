@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
+	"github.com/GoMudEngine/GoMud/internal/mutators"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -40,7 +41,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			continue
 		}
 
-		regenMultiplier := roomRegenMultiplier(user.Character.RoomId)
+		regenMultiplier := roomRegenMultiplier(rooms.LoadRoom(user.Character.RoomId))
 
 		inCombat := user.Character.Aggro != nil
 		healthStart := user.Character.Health
@@ -263,7 +264,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 		}
 
 		mobInCombat := mob.Character.Aggro != nil
-		mobRegenMult := roomRegenMultiplier(mob.Character.RoomId)
+		mobRegenMult := roomRegenMultiplier(rooms.LoadRoom(mob.Character.RoomId))
 
 		// Health regen (out of combat only, unless heal-spell ConditionRegen)
 		if !mobInCombat {
@@ -368,20 +369,33 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 	return events.Continue
 }
 
+// regenMultFromSpecs returns the regen multiplier resulting from a set
+// of mutator specs. Specs with RegenMultiplier > 0 contribute;
+// multiple specs stack multiplicatively. Used by roomRegenMultiplier
+// after iterating a room's active mutators.
+func regenMultFromSpecs(specs ...*mutators.MutatorSpec) float64 {
+	mult := 1.0
+	for _, spec := range specs {
+		if spec == nil || spec.RegenMultiplier <= 0 {
+			continue
+		}
+		mult *= spec.RegenMultiplier
+	}
+	return mult
+}
+
 // roomRegenMultiplier returns the regen multiplier applied to HP/SP/CP
 // regen for any actor (player or mob) in the given room. 1.0 means no
-// bonus. Special rooms (testing arena entrance, tutorial zone, Thornwall
-// Temple) boost regen. Applied AFTER all other regen modifiers.
-func roomRegenMultiplier(roomId int) float64 {
-	const testingArenaEntrance = 200
-
-	switch {
-	case roomId == testingArenaEntrance:
-		return 10.0 // Fast regen for testing
-	case roomId >= 101 && roomId <= 120:
-		return 5.0 // Sanctum Basin tutorial zone
-	case roomId == 468:
-		return 5.0 // Thornwall Temple (players AND companions)
+// bonus. Sourced from the room's active mutators — any mutator with
+// RegenMultiplier > 0 contributes; multiple stack multiplicatively.
+// Replaces the Stage 2-era hardcoded room-id switch.
+func roomRegenMultiplier(room *rooms.Room) float64 {
+	if room == nil {
+		return 1.0
 	}
-	return 1.0
+	var specs []*mutators.MutatorSpec
+	for mut := range room.ActiveMutators {
+		specs = append(specs, mut.GetSpec())
+	}
+	return regenMultFromSpecs(specs...)
 }

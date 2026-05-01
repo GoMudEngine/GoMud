@@ -4,67 +4,22 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/combat"
-	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
-	"github.com/GoMudEngine/GoMud/internal/questengine"
+	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
-	"github.com/GoMudEngine/GoMud/internal/util"
 )
-
-// forageDifficulty maps biome IDs to gaussian roll difficulty targets.
-// Lower values are easier to forage in.
-var forageDifficulty = map[string]float64{
-	"farmland":  110,
-	"forest":    120,
-	"land":      125,
-	"swamp":     130,
-	"shore":     135,
-	"water":     135,
-	"cave":      135,
-	"mountains": 140,
-	"cliffs":    145,
-}
-
-// forageYields maps biome IDs to lists of item IDs that can be found.
-// Duplicate entries increase the probability of that item appearing.
-var forageYields = map[string][]int{
-	"forest":    {40004, 40004, 40005, 40005, 40049, 40049},
-	"land":      {40004, 40005, 40049, 40047},
-	"farmland":  {40004, 40004, 40005, 40007},
-	"swamp":     {40005, 40005, 40004, 40055, 40055, 40056, 40057, 40057},
-	"shore":     {40004, 40058},
-	"water":     {40058, 40058, 40058, 40058, 40058, 40059},
-	"mountains": {40001, 40004, 40005, 40020, 40024, 40025},
-	"cliffs":    {40005, 40020, 40024},
-	"cave":      {40001, 40001, 40020, 40020, 40005, 40024, 40025, 40026, 40027, 40029},
-}
-
-// nightForageYields are appended to the yield table when it's night.
-var nightForageYields = map[string][]int{
-	"forest":    {40046},
-	"mountains": {40046},
-	"cave":      {40046},
-	"land":      {40046},
-}
 
 func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	biome := room.GetBiome()
-	yields, ok := forageYields[biome.BiomeId]
-	if !ok || len(yields) == 0 {
+	if _, ok := forager.ForageYields[biome.BiomeId]; !ok {
 		user.SendText(`There is nothing here worth foraging. Try an outdoor area.`)
 		return true, nil
-	}
-
-	// Moonpetal only appears at night
-	if gametime.IsNight() {
-		if nightYields, hasNight := nightForageYields[biome.BiomeId]; hasNight {
-			yields = append(append([]int{}, yields...), nightYields...)
-		}
 	}
 
 	if !user.Character.TryCooldown(`forage`, "6 rounds") {
@@ -77,12 +32,6 @@ func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	searchRank := user.Character.GetSkillLevel(skills.Search)
 	searchScore := float64(user.Character.Stats.Perception.ValueAdj) + combat.SkillMultiplier(searchRank)*25.0
 
-	difficulty := forageDifficulty[biome.BiomeId]
-	if difficulty == 0 {
-		difficulty = 130 // fallback for unknown biomes
-	}
-
-	// Quest engine: command notification
 	bridge := questengine.NewGameBridge(user, room.RoomId)
 	questengine.GetEngine().Notify("command", questengine.EventDetails{
 		UserId:  user.UserId,
@@ -96,14 +45,18 @@ func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		user.UserId,
 	)
 
-	roll := dice.RollStat(searchScore)
-	if roll.Value < difficulty {
+	result := forager.ForageCore(forager.ForageAttempt{
+		Biome:       biome.BiomeId,
+		SearchScore: searchScore,
+		AtNight:     gametime.IsNight(),
+	})
+
+	if !result.Found {
 		user.SendText(`You find nothing of use this time.`)
 		return true, nil
 	}
 
-	itemId := yields[util.Rand(len(yields))]
-	newItem := items.New(itemId)
+	newItem := items.New(result.ItemId)
 	if !newItem.IsValid() {
 		user.SendText(`You find something, but it crumbles in your hands.`)
 		return true, nil

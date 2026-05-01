@@ -16,6 +16,8 @@ coord:
   z: 0
 mapsymbol: A
 maplegend: Academy Hall
+mutators:
+- mutatorid: sanctuary
 exits:
   west:
     roomid: 112

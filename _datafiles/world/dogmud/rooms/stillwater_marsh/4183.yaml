@@ -1,0 +1,85 @@
+roomid: 4183
+zone: Stillwater Marsh
+title: Cattail Bend
+description: >
+  South of Marsh Track the <ansi fg="itemname">board-trail</ansi>
+  swings sharply west here, forced around a dense stand of
+  <ansi fg="itemname">cattails</ansi> whose seed-heads are already
+  breaking open — white fluff drifting low across the planks in
+  any breath of air. The air is heavier here than at the entry,
+  closer and wetter, as though the marsh has been holding it still
+  all morning. Off the trail's east edge a pair of shallow
+  <ansi fg="itemname">frog-spawn</ansi> pools sit motionless in
+  the peat-shadow, the jelly mass so thick it almost crowds the
+  surface. The <ansi fg="itemname">trail-boards</ansi> at the
+  bend are older than those north of here — warped and pale,
+  lifted a finger's breadth at one end where the peat has
+  shifted under them, but still sound enough to cross.
+biome: water
+coord:
+  x: -21
+  y: 0
+  z: 0
+exits:
+  north:
+    roomid: 4177
+  south:
+    roomid: 4187
+  west:
+    roomid: 4184
+nouns:
+  seed-heads: |
+    The cattail seed-heads at the bend are older than those at the
+    Cattail Verge to the north — many already split and shedding
+    white fluff that drifts onto the boards and the water-surface
+    in slow drifts.
+  peat-shadow: |
+    The shadow the boardwalk casts on the dark peat-water is itself
+    nearly black — light absorbs into the peat-stained water rather
+    than reflecting from it, so the trail's shadow reads as a deeper
+    band of darkness in already-dark water.
+  board-trail: |
+    Split-cedar boards laid two-wide across the soft marsh ground —
+    the same board-trail that begins at the entry; here it bends
+    sharply west to skirt the cattail stand. A few of the boards
+    at the bend itself are warped or pulled.
+  bend: |
+    The trail makes a sharp swing west here, pressed around a dense
+    stand of cattails that extends too far into the water to go
+    straight. From the bend you can see the open water of Heron
+    Marsh just a short distance west, the first real widening in
+    the zone.
+  cattail: |
+    A second stand of cattails here, less uniform than the Cattail
+    Verge to the north — the seed-heads are older and many have
+    already split, shedding white fluff that settles on the trail
+    and on the water's surface in small drifts. The stalks are
+    shorter here, knee-to-waist height rather than head-high.
+  cattails: |
+    A second stand of cattails here, less uniform than the Cattail
+    Verge to the north — the seed-heads are older and many have
+    already split, shedding white fluff that settles on the trail
+    and on the water's surface in small drifts. The stalks are
+    shorter here, knee-to-waist height rather than head-high.
+  frog-spawn: |
+    Two shallow pools off the trail's east edge hold overlapping
+    masses of frog-spawn — clear jelly dimpled with dark spots,
+    dozens of egg-masses piled together in the still water. The
+    bullfrogs have been busy this season; the pools are thick with
+    it, and the smell is faintly sweet and faintly wrong.
+  trail-board: |
+    The boards at the bend are the oldest section of the boardwalk
+    — pale and warped, replaced piece by piece over the years when
+    they rotted through. One end has lifted from the peat underneath,
+    rocking slightly underfoot, but the plank itself holds.
+  trail-boards: |
+    The boards at the bend are the oldest section of the boardwalk
+    — pale and warped, replaced piece by piece over the years when
+    they rotted through. One end has lifted from the peat underneath,
+    rocking slightly underfoot, but the plank itself holds.
+idlemessages:
+- a frog plops from the trail-edge into the still water
+- ''
+- a cattail-head pops audibly somewhere south, shedding white fluff
+- ''
+- the boards groan slightly as you cross the bend

@@ -24,6 +24,9 @@ exits:
     roomid: 4135
   east:
     roomid: 4134
+  west:
+    roomid: 4177
+    zone: Stillwater Marsh
 nouns:
   footbridge: A narrow timber footbridge three planks
     wide, the deck dark with old water and the

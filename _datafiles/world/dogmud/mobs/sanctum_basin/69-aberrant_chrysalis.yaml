@@ -24,8 +24,6 @@ character:
   speciesid: 23
   level: 6
   gold: 10
-  items:
-    - itemid: 40010
   stats:
     strength:
       training: 4

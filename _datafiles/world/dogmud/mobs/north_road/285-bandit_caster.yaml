@@ -3,7 +3,7 @@ zone: North Road
 archetype: casting
 behavior_archetype: support_caster
 routine: bandit_camp_guard
-statpool: 160
+statpool: 120
 itemdropchance: 20
 hostile: true
 pack_flee_immune: true
@@ -11,6 +11,8 @@ maxwander: 0
 groups:
   - humanoid
   - bandit
+hates:
+  - caravan
 idlecommands:
   - 'emote traces patterns in the dirt with the tip of a finger, then wipes them away'
   - ''

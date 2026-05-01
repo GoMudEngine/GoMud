@@ -1,0 +1,60 @@
+mobid: 373
+zone: The Fernway South
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Aye. Quiet morning, mostly. Was there something?"
+      - "Kessa. Good of you to stop by the camp."
+
+  - keywords: ["forage", "gather", "satchel", "work", "doing"]
+    responses:
+      - "Forage these woods for the things the towns can't grow
+        in their own gardens — moonpetal, oak-bark, pine-pitch,
+        the odd bundle of shadowcap when the season turns. The
+        caravan picks up what I gather when it passes; I don't
+        haul it through the bandits myself."
+
+  - keywords: ["caravan", "north road", "meeting", "delivery"]
+    responses:
+      - "I walk up to the road when the satchel is heavy and wait
+        the wagon out. Marta knows my face and the load goes
+        north or south depending which way she's rolling. It's
+        a fair arrangement. The caravan's escort fights the
+        bandits so I don't have to."
+
+  - keywords: ["camp", "home", "lean-to", "fire"]
+    responses:
+      - "I built the camp out a couple of seasons back, off the
+        bracken trail where the wind breaks well. The fire
+        keeps. The pines mind their own business. It suits me."
+
+  - keywords: ["danger", "wolves", "boar", "badger", "deer"]
+    responses:
+      - "Hares I take. Bees too, if the comb's worth it. Boars,
+        wolves, the badger sett to the south — I leave alone.
+        I have a way home that does not depend on outrunning
+        them."
+
+  - keywords: ["thornwall", "stillwater", "town"]
+    responses:
+      - "Don't go to either much. Both apothecaries pay fair
+        rates for what I bring; both get it through the
+        caravan. Keeps me out of the towns and them out of
+        my woods."
+
+  - keywords: [""]
+    responses:
+      - "The kettle's on, if you're thirsty."
+      - "Mind the bracken — it gets heavy on the elbows."
+
+tree:
+  root:
+    text: "Aye. Quiet morning. Was there something?"
+    hints: "You could ask Kessa about her work, the caravan
+      arrangement, or her camp."
+
+memory:
+  expiryPeriod: ""

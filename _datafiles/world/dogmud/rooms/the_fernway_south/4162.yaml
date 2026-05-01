@@ -1,0 +1,62 @@
+roomid: 4162
+zone: The Fernway South
+title: Boar Wallow
+description: >
+  The ground west of the burn scar drops into a shallow hollow
+  where the soil stays wet long after rain, and something has
+  taken full advantage of that fact. The
+  <ansi fg="itemname">wallow-mud</ansi> at the hollow's lowest
+  point is churned grey-brown and knee-deep in the centre,
+  stinking faintly of pig and old wet earth. The
+  <ansi fg="itemname">hoof-prints</ansi> around the wallow's
+  edge are cloven and deep-set in the softer ground, some of
+  them fresh enough that the rim is still sharp. An old oak
+  at the hollow's edge wears a long polished patch at boar-
+  shoulder height — the <ansi fg="itemname">scratching-tree</ansi>,
+  its bark smooth and dark where years of coarse-haired backs
+  have worked against it. A persistent low cloud of small
+  <ansi fg="itemname">flies</ansi> hangs over the wallow;
+  brushed away, they return without hurry. Whether the pigs
+  themselves are here or gone, the hollow is unmistakably
+  theirs.
+biome: forest
+coord:
+  x: -15
+  y: -16
+  z: 0
+exits:
+  east:
+    roomid: 4160
+nouns:
+  wallow-mud: |
+    Grey-brown and thick, the mud at the hollow's centre
+    is churned to a soft paste by repeated use — it holds
+    prints for days and smells of wet earth and pig both
+    at once. The deepest part would take a boot to the
+    knee without much argument.
+  hoof-prints: |
+    Cloven-hoof prints ring the wallow in the softer earth
+    around its edge — overlapping, various sizes, some older
+    and softened and some recent enough that the pressed rim
+    is still standing. At least two animals, by the spread
+    of the tracks.
+  scratching-tree: |
+    An old oak at the hollow's south edge has had its bark
+    polished smooth at boar-shoulder height, the surface
+    darkened and worn shiny by years of animals rubbing
+    their backs against it. Long coarse hairs are caught
+    in the few rough patches that remain.
+  flies: |
+    A loose cloud of small dark flies works the air above
+    the wallow, drawn by the smell and the standing water.
+    They take no particular notice of anything; brushed
+    away they drift back without apparent annoyance.
+idlemessages:
+- a fly lands and is brushed off
+- ''
+- a distant grunt from the brush
+- ''
+- bubbles rise and pop in the wallow mud
+spawninfo:
+- mobid: 363
+  cooldown: 900 rounds

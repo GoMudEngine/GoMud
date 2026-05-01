@@ -1,0 +1,57 @@
+roomid: 4173
+zone: The Fernway South
+title: Foxglove Clearing
+description: >
+  The trail east of the Twisted Hawthorn opens into a small
+  wildflower meadow where tall <ansi fg="itemname">foxglove</ansi>
+  spikes dominate the center of the clearing — head-high,
+  deep purple shading to near-white at the throat, each
+  <ansi fg="itemname">flower-spike</ansi> hung with a column
+  of thimble-shaped blooms. The smell here is pleasantly
+  floral, a light sweetness over green grass, entirely unlike
+  the forest floor to the north. Heavy fuzzy
+  <ansi fg="itemname">bumblebees</ansi> work the foxgloves
+  methodically, half-disappearing into each thimble flower
+  in turn and emerging again dusted pale. The clearing holds
+  <ansi fg="itemname">sun-warmth</ansi> well into the afternoon,
+  the direct light collecting between the foxglove spikes and
+  warming the ground underfoot — a place to stand still and
+  feel the day. There is no trail beyond the clearing's edge;
+  dense cover marks the end of the way east.
+biome: forest
+coord:
+  x: -13
+  y: -21
+  z: 0
+exits:
+  west:
+    roomid: 4174
+nouns:
+  foxglove: |
+    Foxgloves stand head-high in the clearing's center, tall
+    purple-pink spikes beautiful and famously poisonous — every
+    part of the plant toxic enough that animals who know better
+    avoid it. The color deepens from near-white at the throat
+    to dark purple at the outer petal edges.
+  flower-spike: |
+    Each foxglove sends up one or two tall flower-spikes laden
+    with thimble-shaped blooms arranged in a long column, the
+    lowest flowers fully open and the uppermost still tight buds.
+    The spikes sway gently even in light air.
+  bumblebees: |
+    Heavy fuzzy bumblebees move slowly from flower to flower,
+    half-disappearing into each thimble in turn and emerging
+    dusted pale with pollen. They move without urgency, the
+    methodical pace of creatures doing exactly what they came
+    here to do.
+  sun-warmth: |
+    The clearing catches direct afternoon sun and holds it —
+    a warmth that settles between the foxglove spikes and
+    collects in the still air. It is a comfortable place to
+    rest; the warmth is real and the smell is pleasant.
+idlemessages:
+- a bumblebee emerges from a foxglove and lands on the next one
+- ''
+- a foxglove spike sways under a bumblebee landing
+- ''
+- the sun-warmth holds steady through the afternoon

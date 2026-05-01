@@ -1,5 +1,322 @@
 # DOGMud Patch Notes
 
+## 2026-04-30 (evening) — Stage 3.4 Hardening + Pricing Pass (dev only)
+
+**Note:** Smoke-test fixes and late-day polish on the Stage 3.4 economy stack. Promotes to `master` with the rest of the economy stack.
+
+### Forager fixes
+- **Halix anchor moved** from Thornwall Temple Interior (468) to Sheltered Ridge Alcove (3040) where Hermit Kael also camps. The original anchor put a Steppe forager in city center with forage range one zone away — round-trip walks blew through state-machine timeouts. The Steppe-side anchor matches Tova's and Kessa's pattern (anchor near forage range; walk into town only to deliver).
+- **Forager Vella renamed to Tova** (mob 371, Stillwater Marsh). Disambiguates `look vella` from the long-running Mistress Vella Thorne (mob 355, Stillwater town).
+- **Forager state machine no longer re-issues `fold-recall`** while already casting — was resetting cast progress every idle tick.
+
+### Caravan hardening
+- **Auto-reset watchdog at the top of every caravan tick.** If the caravan has been stuck in a single state longer than 5× the configured dwell (floor 300 rounds), state resets to `ThornwallDwell` with a `mudlog.Warn` entry. Recovers from orphaned-state corruption after restarts or unusual party deaths without admin intervention.
+- **New admin command `caravan reset [<instanceId>]`** — manual reset for one caravan leader (numeric arg) or every caravan leader (no arg).
+- **Party-aware hostile check** stops the caravan from abandoning members. Previously the leader's `hostilesInRoom` only checked the leader's room — a follower fighting alone in a different room got left behind. The new `partyHostilesNearby` walks every party member's room.
+- **Shop persistence after caravan + forager visits.** Stock changes now persist to disk inside `VisitVendorsInRoom` (was in-memory only — a panic lost an in-flight cycle's deliveries).
+- **Wagon equipment slots suppressed.** New `hide_equipment_slots: true` flag on the Mob struct hides the empty Equipment block in `look mob` for entities like the wagon that don't wear gear.
+- **Boot panic fix:** wagon name shortened to match its YAML filename per the engine's `ConvertForFilename(name)` convention.
+
+### Pricing + accessibility
+- **Pricing pass on 26 mat YAMLs (Approach B)** — rarity-tier-aligned base values. The dynamic shop multiplier already does most rarity work via scarcity (0.25×–5.0× swing); base values now sit at band midpoints rather than encoding rarity twice. Bands: tier-50 = 1–3g (commodities), tier-40 = 5–25g (standard), tier-30 = 25–75g (regional), tier-20 = 80–500g (uncommon). Biggest corrections: Hive Fragment 500→25g (was tier-20-priced but tier-40-tagged), chrysalis_shard 6→80g, gold_wire 8→80g, mutation_catalyst 10→100g, ironbark_shaving 4→25g, raw_gem 5→25g. Stillwater pearl + Chrysalis Core unchanged at 400/500.
+- **Starting player gold bumped 25 → 250.** With the new mat prices, a fresh character couldn't afford even one mid-tier craft attempt; 250g lets them try.
+
+### Other small fixes
+- **Companion spawn stamina:** previous spawn path set Health and Conviction to max but never set Stamina, so companions spawned at 0 SP and were immediately stamina-broken.
+- **Steal gate ordering:** `skullduggery.steal` skill-rank check moved AFTER target validation. Stealing from a `player_attack_immune` mob now surfaces the immune rebuff first instead of the misleading "not advanced enough" rebuff.
+- **Mob.Cast diagnostics:** surfaces `InitiateCast`'s silent early-exit reasons (AlreadyCasting / OnCooldown / InvalidSpell / NoTarget) at debug level. Caught by smoke test as a tactics-cast preemption gap (logged as followup).
+- **Follow auto-timer removed.** The 10-min auto-expiry in `modules/follow` dropped follow with no in-fiction reason. Teleport drops, death drops, and explicit `follow stop` still apply.
+
+### Developer docs
+- `internal/items/context.md` gains three new sections (Rarity Tiers, Pricing Bands, Supply Pipeline) so the items package's developer doc reflects the post-3.4 economy.
+
+## 2026-04-30 — Stage 3.4: Real Item Transfer (dev only)
+
+**Note:** Final stage of the caravan/economy effort. Once this lands
+on `development`, the entire economy stack (Stages 3.0b through 3.4)
+promotes to `master` as a coherent update.
+
+- The caravan now physically hauls items: a new wagon mob (374) with
+  ~5000 carry capacity rides with the caravan party. `look wagon`
+  shows the actual cargo. Two draft horses (Hob 375, Bran 376) pull
+  it. All three are player_attack_immune.
+- Wagon dies if the caravan is wiped at the bandit camp; cargo
+  distributes to bandit inventories (round-robin, capped per bandit's
+  carry capacity), with leftovers as wreckage corpse loot. Players
+  who kill the bandits afterward get the cargo. Wagon corpse renders
+  as "splintered wagon wreckage" with custom description.
+- Vendor stock caps now derive from item `rarity_tier` × shopkeeper
+  `stock_multiplier` (default 1.0). 51 mat YAMLs got rarity_tier set:
+  15 tier-50 (common), 17 tier-40 (standard), 14 tier-30 (regional),
+  5 tier-20 (uncommon — pearl, gold wire, chrysalis core/shard/
+  catalyst). Tier 10 reserved for future ultra-rare content.
+  Future big-city shops can set stock_multiplier > 1.0 for
+  proportionally larger stock.
+- Foragers now physically deliver items from their satchels to vendor
+  inventories (no more abstract RestockBuckets). Items that don't fit
+  stay in the satchel for next vendor / next cycle.
+- New forager rest extension: when carry > 50% on return home,
+  forager stays at sanctuary instead of cycling back out. Prevents
+  futile loops in saturated economies — foragers wait at sanctuary
+  until players consume from vendors and re-open delivery space.
+- Caravan vendor stops are now BIDIRECTIONAL — caravan delivers
+  items it brought AND picks up items the local vendors produce in
+  abundance, hauling them across town. Pickup is gated by `Current
+  >= MaxStock/2` so the caravan doesn't extract from a struggling
+  vendor. Pays off the "wholesalers seeking arbitrage between
+  regions" worldbuilding from the Stage 2 caravan.
+- Chrysalis Core (40010) re-sourced: removed from Aberrant Chrysalis
+  in Sanctum Basin tutorial. Now drops 10% from stone beetle queen
+  (228) and 5% from windscour wyrm (229) in Ironwind Steppe.
+- 6 new mob override fields: carry_capacity, health_max, stamina_max,
+  corpse_name, corpse_description, stock_multiplier.
+- New btree action `distribute_cargo_to_hostiles` for the wagon's
+  death handler.
+- New config knob `ForagerRestCarryThreshold` (default 0.5) for the
+  rest extension.
+- ItemSpec gains `rarity_tier` field. Mob struct gains 6 spawn-time
+  override fields. Corpse rendering honors mob's CorpseName +
+  CorpseDescription overrides.
+
+## 2026-04-30 — Stage 3.1: Forager NPCs (dev only)
+
+**Note:** Dev-only landing. The full economy stack ships to prod (`master`)
+as a coherent update once Stage 3.4 lands.
+
+- Three new forager NPCs feed the supply pipeline that 3.0b wired up:
+  - **Vella, the Marsh Forager** (mob 371) anchored to Stillwater
+    Temple Interior (4123). Wanders Stillwater Marsh (rooms
+    4177-4196), engages prey wildlife (marsh rats, dragonfly
+    swarms), salvages corpses, delivers Stillwater + base + overlap
+    mats to the 8 Stillwater vendors directly.
+  - **Halix, the Steppe Forager** (mob 243) anchored to Thornwall
+    Temple Interior (468). Walks the safe northern half of Ironwind
+    Steppe, delivers base + overlap mats to the 9 Thornwall vendors.
+    Statpool 225 (Ironwind is more dangerous than the marsh).
+  - **Kessa, the Fernway Forager** (mob 366) anchored to a new
+    Forager's Camp (room 4197, attached west of 4170 Tangled
+    Bracken). Walks up to North Road 4038 to meet the caravan; the
+    caravan distributes Fernway mats to both towns symmetrically.
+- All three are `player_attack_immune: true` (rebuff like
+  shopkeepers). They engage prey wildlife on a per-forager
+  whitelist, drink a healing salve at HP < 75%, and cast fold-recall
+  at HP < 50%. Each carries a thematic 1H weapon (gaff hook,
+  hunting spear, hand axe) and a leather bandolier with healing
+  salves.
+- New behavior tree primitive `forager_step` drives the per-forager
+  state machine (resting → traveling → foraging → delivering →
+  recalling → loop). Three new conditions support it:
+  `mob_can_safely_engage`, `mob_inventory_at_threshold`,
+  `mob_hp_below_recall_threshold`.
+- New `internal/economy` package mirrors the 3.0b mat-audit-matrix
+  as a Go map. New `RestockBuckets([]string)` shop method gates
+  vendor refills by supply bucket. Foragers and the caravan both
+  use it; only slots whose item-id matches a carried bucket get
+  topped up.
+- **Caravan changes:**
+  - Cycle slowed from ~900 to ~1620 rounds (~2 game days) by
+    bumping `CaravanDepotDwellRounds` from 360 to 720. Foragers
+    are now the day-to-day reliable supply; the caravan feels
+    like a delivery-day event.
+  - Two new substates inside each transit leg
+    (`outbound_fernway_pickup`, `inbound_fernway_pickup`): the
+    caravan dwells briefly at North Road 4038, detects the Fernway
+    forager, and acquires the `fernway` bucket flag.
+  - `caravan_load` MobState tracks which buckets the caravan
+    currently carries. `VisitVendorsInRoom` consumes it, so a
+    Stillwater-only caravan run won't restock Fernway slots.
+- New room mutator `sanctuary` standardizes the "high-regen room"
+  mechanic. Replaces the hardcoded `roomRegenMultiplier` switch in
+  the auto-heal hook. `MutatorSpec` gains a `regenmultiplier float64`
+  field; multipliers stack multiplicatively.
+- Sanctuary mutator wired on:
+  - Thornwall Temple Interior (468) — preserves prior 5x regen
+  - Sanctum Basin tutorial zone (rooms 101-120) — preserves prior
+    5x regen
+  - Stillwater Temple of Stillwater (4123) — gains 5x regen for
+    the first time, supports Vella's recall destination
+  - Forager's Camp (4197) — gains 5x regen, becomes a known safe
+    rest stop in Fernway South
+- Three new low-tier 1H weapons: marsh gaff hook (10033), steppe
+  hunting spear (10034), Fernway handaxe (10035).
+- Six new balance config knobs gate forager behaviour:
+  `FernwayPickupDwellRounds` (6), `ForagerForageDwellRounds` (8),
+  `ForagerCarryThresholdPct` (0.75), `ForagerHPRecallThresholdPct`
+  (0.50), `ForagerHealPotionThresholdPct` (0.75),
+  `ForagerWaitTimeoutRounds` (150).
+- The temple-regen hint generalizes to reference the sanctuary
+  class — temples + camps + tutorial all read as one mechanic.
+- `ForageCore` (Task 6 originally) consolidated to `internal/forager`
+  package so both the player Forage command and the NPC forager
+  routine share one yield-table source of truth.
+
+## 2026-04-28 — Stage 3.0a: Stillwater Marsh Zone (dev only)
+
+**Note:** Dev-only landing. The full economy stack ships to prod (`master`)
+as a coherent update once Stage 3.4 lands.
+
+- New 20-room wetland zone west of Stillwater, themed as marsh
+  giving way to upland steppe at the southern terminus. Connects
+  from Mill Creek Footbridge (4133) via a new west exit; terminates
+  at Far Bog Heart (4195, biome: plains) with a one-way view of
+  the Dustwalk beyond.
+- Five new wildlife mobs (366-370): river otter, marsh rat,
+  dragonfly swarm, snapping turtle, bog adder. **Only the bog
+  adder is hostile to players** AND it `hates: [rodent]` — it
+  hunts the marsh-rats in adjacent rooms (mirror of 3.0c's
+  wolf-hates-boar dynamic, but combined with the only-hostile-to-
+  player role into one mob).
+- The river otter is the **first non-badger consumer of the
+  mustelid species** (24) added in Stage 3.0c — validates the
+  species investment.
+- All 6 existing Stillwater forage mats (lake-iron, marsh willow
+  bark, lake mint, freshwater clam, skitter-shrimp shell,
+  Stillwater black pearl) get fresh territory to spawn in. No
+  new mats added.
+- Stage 3.0a is the territory groundwork for Stage 3.1 forager
+  NPCs — the marsh is now big enough for a Stillwater-anchored
+  forager to wander, gather, and recall to depot when injured.
+- Coord map gains 48 Stillwater catch-up rows (the doc was
+  missing all of Stillwater) plus 20 new Stillwater Marsh rows.
+
+## 2026-04-28 — Stage 3.0c: Fernway South Zone (dev only)
+
+**Note:** Dev-only landing. The full economy stack ships to prod (`master`)
+as a coherent update once Stage 3.4 lands.
+
+- New 20-room zone south of the existing Fernway, themed as deep
+  forest tapering to the steppe edge. Connects from Fox Den (4156)
+  via a new south exit; terminates at Steppe Edge (4175, biome:
+  plains) with a one-way view of the Dustwalk beyond.
+- New mustelid species (24) — fills a real gap in the species set
+  (we had rodent and canine but nothing for badgers, weasels,
+  otters). First consumer is the forest badger; future zones with
+  otters or weasels reuse immediately.
+- Six new wildlife mobs (360-365): wild hare, roe deer, honey bees,
+  feral boar, timber wolf, forest badger. Only the badger is
+  hostile to players — the rest are atmosphere or forage support.
+  Wolf is `hostile: false` but `hates: [boar]` — emergent
+  intra-zone hunt dynamic where the wolf may engage boars without
+  threatening the player.
+- The 6 existing Fernway forage mats (oak bark, shadowcap mushroom,
+  wild hare meat, beeswax, blood-moss, pine pitch from 3.0b) gain
+  fresh territory to spawn in. No new mats added.
+- Stage 3.0c is the territory groundwork for Stage 3.1 forager
+  NPCs — the forest is now big enough for a Fernway-based forager
+  to wander, gather, and recall to depot when injured.
+
+## 2026-04-28 — Stage 3.0d: NPC Fold-Recall (dev only)
+
+**Note:** Dev-only landing. The full economy stack ships to prod (`master`)
+as a coherent update once Stage 3.4 lands.
+
+- `fold-anchor` and `fold-recall` resolvers now accept `actions.Actor`
+  rather than `*users.UserRecord`. Mobs can cast both spells via the
+  existing tactics dispatcher and the new Go-hook switch in
+  `resolveMobSpell`. Player behavior is unchanged.
+- New mob YAML field `fold_anchor_room: <roomId>` pre-stamps a mob's
+  fold-recall anchor at spawn. The runtime is then identical to a
+  player who already cast `fold-anchor`.
+- Old Edrin (mob 275) gets `fold-recall` as a panic spell at
+  `health_below:30` priority above his existing flee — he recalls to
+  the cluttered back room (4037) when injured. Useful smoke-test rig
+  for the new pipeline.
+- Caravan crew Ketil/Marta/Lars (mobs 357-359) get the same treatment
+  with anchor at the Thornwall Market Square depot (465). Wipe
+  insurance for the bandit camp ambush — if their HP drops they
+  recall instead of dying, keeping the restock service running.
+- Stage 3.0d does NOT add forager NPCs or logistic recall triggers
+  (e.g., `inventory_full → cast fold-recall`). Those are Stage 3.1's
+  job. Caravan recall is individual, not group-aware: each crew
+  member recalls on their own panic threshold.
+
+## 2026-04-28 — Stage 3.0e: Corpse Salvage (dev only)
+
+**Note:** Dev-only landing. The full economy stack ships to prod (`master`)
+as a coherent update once Stage 3.4 lands.
+
+- `salvage <corpse>` now works on room-resident corpses, not just
+  inventory items. Animal-group mobs yield leather strip + sinew;
+  humanoid-group mobs yield cloth strip + leather strip. Each material
+  rolls independently against the salvage skill curve. Salvage kit
+  required (sold by Fence Dealer Siv, 1g).
+- The corpse is consumed on completion (mirrors tagged-item salvage
+  behavior — the activity has cost regardless of roll outcome). If the
+  activity is interrupted (combat, movement) the corpse stays untouched.
+- Added **sinew** (40068), a tough animal-tendon mat sourced from
+  corpse salvage on animals. Wired into 2 existing recipes: tailoring's
+  Artisan's Satchel (heavy-duty seam binding) and blacksmithing's
+  Lake-Iron Hook-Spear (haft lashing).
+- 40002 leather strip and 40007 cloth strip reclassified in the audit
+  matrix from "Defer to 3.0e" → "Mid-tier overlap (corpse-salvage
+  sourced)". Source pipeline now decided. Vendor inventories continue
+  to NOT stock these mats — corpse salvage is the v1 source.
+
+## 2026-04-28 — Stage 3.0b: Material Region Split (dev only)
+
+**Note:** This is a dev-only landing. The full economy stack (Stages
+3.0b through 3.4) sits unmerged on the `development` branch and ships
+to prod (`master`) as a coherent update once Stage 3.4 lands.
+
+- Added 6 new Fernway forest materials: oak bark (40062), shadowcap
+  mushroom (40063), wild hare meat (40064), beeswax (40065), blood-moss
+  (40066), pine pitch (40067). Each consumed in 1-2 mid/high-tier
+  recipes spanning at least 2 craft schools, giving forager-gathered
+  Fernway mats real demand once Stage 3.1 ships. (Beeswax tailoring
+  recipe wiring deferred to Stage 3.0e corpse salvage.)
+- New audit matrix at `docs/economy/mat-audit-matrix.md` classifies
+  all 67 raw materials into regional supply buckets (Stillwater,
+  Thornwall, Fernway, base, mid-tier overlap, deferred-to-3.0e,
+  quest/specialty). This is the durable artifact that subsequent
+  stages (foragers, corpse salvage, real item transfer) consume.
+- Reshaped vendor inventories across the 17 caravan-served vendors
+  into mirrored same-craft pairs. Same-craft Stillwater + Thornwall
+  vendors now stock the same mat slot lists, with regional pricing
+  asymmetry reflecting the caravan markup (e.g., lake mint 10g at
+  Stillwater Apothecary Ilsa, 15g at Thornwall Apothecary Voss).
+  Cloth/leather/cord/sinew slots dropped pending Stage 3.0e (corpse
+  salvage); the audit matrix flags them for 3.0e to wire properly.
+- ~12 mid/high-tier recipes updated to wire demand for the new
+  Fernway mats. No new recipes invented; existing recipe corpus
+  expanded with one new ingredient slot each.
+
+## 2026-04-27 — Stage 2: Thornwall ↔ Stillwater Caravan System
+
+- Added the **Thornwall ↔ Stillwater caravan**: a three-NPC delivery
+  crew (Ketil, Marta, Lars) that runs a continuous loop visiting every
+  vendor in both towns and triggering restock on arrival. Cycle takes
+  roughly **one in-game day** (~1 hour real time). The caravan rests at
+  the Thornwall Market Square depot, departs for Stillwater, visits
+  each Stillwater vendor in order, rests at Stillwater's North Square,
+  returns to Thornwall, visits each Thornwall vendor, then loops.
+- Vendor mobs in caravan-served zones (Stillwater, Thornwall City) **no
+  longer auto-restock** on a per-mob timer — they restock only when the
+  caravan visits. Vendors in non-served zones (Watchers Crossing,
+  Sanctum Basin, etc.) keep the legacy auto-restock unchanged. Both the
+  non-crafter merchant tick and the crafter material tick respect the
+  served-zone gate.
+- The caravan crew can be examined and talked to but **cannot be
+  attacked by players** — same rebuff as a shopkeeper. Wired into
+  attack/bash/grapple/kick/shoot/taunt/throw/trip and steal commands
+  via a new `Mob.PlayerAttackImmune` flag. Caravan crew will fight
+  bandits along the road and have been statted to win.
+- **Bandit pack at the North Road camp** (lookout, fighter, caster,
+  Soren) detuned by ~25–30% across the board so the road is challenging
+  but passable for solo and small-group players. The pack also picks
+  up `hates: caravan` so they engage the caravan when it passes through
+  4052 — every cycle the brawl plays out, the bandits respawn for the
+  next pass.
+- **New `caravan_step` btree action** drives the cycle (`internal/caravan`
+  package owns route data + state machine; `actions_caravan.go` wires
+  it into the behavior tree).
+- **New config knobs** (`Balance.CaravanServedZones`,
+  `Balance.CaravanDepotDwellRounds`) so cadence and zone coverage are
+  tunable live.
+- **`lookfortrouble` mob command extended** to scan for hostile mobs by
+  group hate (in addition to the existing player + species-hate scans).
+  Bandits with `hates: [caravan]` aggro on caravan-group mobs in their
+  room.
+
 ## 2026-04-25 (late evening) — Stillwater Zone + Two Quests + Town Flavor + Engine Polish
 
 ### New Zone — Stillwater (Zone 2.2)

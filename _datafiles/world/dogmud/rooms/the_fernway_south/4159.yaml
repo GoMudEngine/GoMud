@@ -1,0 +1,67 @@
+roomid: 4159
+zone: The Fernway South
+title: Hare-Run Meadow
+description: >
+  The forest opens east of Briar Tangle into a small grass-
+  edged meadow where the canopy steps back and the sky
+  appears overhead for the first time since Foxglade — a
+  proper <ansi fg="itemname">open-sky</ansi> that makes the
+  shoulders drop. The <ansi fg="itemname">meadow-grass</ansi>
+  runs knee-high at the edges of the clearing, pale-seeded
+  and bowing in any wind that finds the gap, but close to the
+  ground a network of <ansi fg="itemname">hare-paths</ansi>
+  threads through the cover — low cropped passages through
+  the grass, packed by small fast feet into hard smooth
+  channels. The earth inside each run is cool and damp even
+  in dry weather, the soil finely patterned with tiny
+  prints. Fresh <ansi fg="itemname">droppings</ansi> lie in
+  small clusters along the path edges — the meadow is in
+  constant use, even if the hares themselves are keeping out
+  of sight.
+biome: forest
+coord:
+  x: -13
+  y: -15
+  z: 0
+exits:
+  west:
+    roomid: 4157
+nouns:
+  meadow-grass: |
+    Pale-seeded meadow grass runs knee-high at the clearing's
+    edge, the stems long and loose and bowing with any
+    movement of air. Close to the ground the hare-paths have
+    kept it cropped short and tight; only the margin stands
+    tall.
+  hare-path: |
+    A network of low cropped passages threads the grass from
+    every direction — the work of small feet over a long time,
+    the earth inside each run packed hard and smooth. Two or
+    three of the runs converge near the meadow's centre
+    before splitting again toward the treeline.
+  hare-paths: |
+    A network of low cropped passages threads the grass from
+    every direction — the work of small feet over a long time,
+    the earth inside each run packed hard and smooth. Two or
+    three of the runs converge near the meadow's centre
+    before splitting again toward the treeline.
+  droppings: |
+    Small round hare droppings cluster along the path edges
+    in the fresh-deposited way that means the animals passed
+    recently. A few are placed with the pointed deliberateness
+    of a territorial marker; most are simply dropped mid-run.
+  open-sky: |
+    The first real break in the canopy since the forest closed
+    in north of Fox Den — wide enough to show a proper stretch
+    of sky and to let the light come in flat and whole rather
+    than filtered through leaves. A hawk's thermal might use
+    this gap; their shadows cross it often enough.
+idlemessages:
+- a hare freezes briefly at the meadow edge, then bolts
+- ''
+- meadow grass bends in a passing wind
+- ''
+- a hawk shadow crosses the open patch
+spawninfo:
+- mobid: 360
+  cooldown: 300 rounds

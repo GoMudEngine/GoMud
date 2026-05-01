@@ -47,6 +47,7 @@ character:
     dexterity:
       training: 8
   shop:
+    # Existing info/contraband items (preserve original prices)
     - itemid: 33
       quantity: 0
       quantitymax: 0
@@ -59,3 +60,8 @@ character:
       quantity: 0
       quantitymax: 0
       price: 30
+    # Base
+    - itemid: 40038    # oil lantern
+      quantity: 0
+      quantitymax: 0
+      price: 5

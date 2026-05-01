@@ -1,0 +1,42 @@
+mobid: 366
+zone: Stillwater Marsh
+behavior_archetype: prey
+archetype: fighting
+statpool: 35
+itemdropchance: 50
+hostile: false
+charm_immune: false
+maxwander: 4
+groups:
+  - animal
+  - mustelid
+  - prey
+items:
+  - itemid: 40058
+idlecommands:
+  - 'emote slides down the slick mud slide and into the water'
+  - ''
+  - 'emote surfaces briefly, watches you, dives again'
+  - ''
+  - 'emote pops a clam open on its chest and works at it'
+  - ''
+activitylevel: 35
+character:
+  name: river otter
+  description: |
+    A sleek brown river otter, half in the water and half out,
+    quick-eyed and quick to the slide if you get too close. It
+    holds a clam-shell in its forepaws and watches you steadily
+    while it works at it.
+  speciesid: 24
+  level: 2
+  gold: 0
+  stats:
+    strength:
+      training: 8
+    dexterity:
+      training: 18
+    perception:
+      training: 16
+    vitality:
+      training: 8

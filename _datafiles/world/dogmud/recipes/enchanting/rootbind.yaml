@@ -11,6 +11,8 @@ ingredients:
     quantity: 2
   - item_tag: healers-root
     quantity: 1
+  - item_tag: oak-bark
+    quantity: 1
 output:
   item_id: 0
   quantity: 0

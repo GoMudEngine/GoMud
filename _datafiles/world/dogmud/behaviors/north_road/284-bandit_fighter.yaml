@@ -1,0 +1,48 @@
+# Bandit Fighter (284) — NPC party smoke-test consumer
+# Leader = Soren (mob 286). Home = Bandit Camp (room 4052).
+#
+# Camps in room 4052. Responds to the lookout's call for help.
+# In combat it assists the leader's target. At the home camp it
+# stands its ground.
+#
+# Top-level sequence so the always-Success party_ensure_npc_party step
+# does not short-circuit the selector beneath it. Help-response runs
+# BEFORE at-home-stand so a help call pulls camp mobs out of the camp.
+
+tree:
+  type: sequence
+  children:
+
+    # ── Always: ensure party membership (idempotent) ──────────────────
+    - type: action
+      do: party_ensure_npc_party
+      leader_mob_id: 286
+      home_room_id: 4052
+
+    - type: selector
+      children:
+
+        # ── COMBAT (mob_idle): assist the leader's target ─────────────
+        - type: sequence
+          event: mob_idle
+          children:
+            - type: condition
+              check: party_in_combat
+            - type: action
+              do: party_assist_target
+
+        # ── OUT OF COMBAT: respond to help if called ──────────────────
+        - type: sequence
+          event: mob_idle
+          children:
+            - type: action
+              do: party_respond_to_help
+
+        # ── HOME ROOM (mob_idle): hold the camp, suppress flee ────────
+        - type: sequence
+          event: mob_idle
+          children:
+            - type: condition
+              check: party_at_home
+            - type: action
+              do: party_at_home_stand

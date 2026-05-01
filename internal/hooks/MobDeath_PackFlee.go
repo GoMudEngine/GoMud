@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
 
@@ -14,6 +15,32 @@ func PackFlee(e events.Event) events.ListenerReturn {
 	evt, ok := e.(events.MobDeath)
 	if !ok {
 		return events.Continue
+	}
+
+	// Stage 1 NPC party system: if the dead mob was a party leader,
+	// dissolve the party (which fires PartyDissolved event for member
+	// btrees to react). This supersedes the species-based pack flee
+	// for that case — the dissolution handler is responsible for any
+	// post-leader-death behavior.
+	if p := parties.GetByMobInstanceId(evt.InstanceId); p != nil {
+		// If the dead mob raised the active help call, clear it so any
+		// in-flight responders stop trekking to the now-empty rally room.
+		// This runs BEFORE leader-dissolution so it fires whether the
+		// caller was the leader or a regular member.
+		if p.HelpCallerInstanceId == evt.InstanceId {
+			p.HelpRoomId = 0
+			p.HelpCallerInstanceId = 0
+		}
+		if p.Leader != nil && p.Leader.GetMobInstanceId() == evt.InstanceId {
+			p.Dissolve("leader_died")
+			return events.Continue
+		}
+		// Non-leader member died — remove them from party state but
+		// let the existing species-based pack-flee logic still fire.
+		// The party continues with remaining members; the leader's
+		// btree handles any tactical retreat decisions.
+		p.RemoveActorByMobInstanceId(evt.InstanceId)
+		// fall through to species-based pack-flee logic
 	}
 
 	// Load the dead mob's spec to get its species

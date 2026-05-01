@@ -1,0 +1,42 @@
+mobid: 370
+zone: Stillwater Marsh
+behavior_archetype: ambusher
+archetype: fighting
+statpool: 60
+itemdropchance: 0
+hostile: true
+charm_immune: false
+maxwander: 3
+groups:
+  - animal
+  - serpent
+  - predator
+hates:
+  - rodent
+idlecommands:
+  - 'emote suns itself on a basking-rock with eyes half-lidded'
+  - ''
+  - 'emote tongues the air, testing for prey'
+  - ''
+  - 'emote slips silently into the slate-rim shadows'
+  - ''
+activitylevel: 25
+character:
+  name: bog adder
+  description: |
+    A bog adder coiled on the warm slate, dark zig-zag pattern
+    along its grey back, head broad and triangular. Its tongue
+    flicks once. Its yellow eyes are fixed on you and the coiled
+    body has begun to shift. This is going to bite.
+  speciesid: 8
+  level: 4
+  gold: 0
+  stats:
+    strength:
+      training: 10
+    dexterity:
+      training: 20
+    perception:
+      training: 18
+    vitality:
+      training: 12

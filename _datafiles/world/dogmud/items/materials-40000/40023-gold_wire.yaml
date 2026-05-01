@@ -7,5 +7,6 @@ type: object
 subtype: mundane
 component_tag: gold-wire
 weight: 0.1
-value: 8
+value: 80
+rarity_tier: 20
 is_component: true

@@ -3,7 +3,7 @@ zone: Ironwind Steppe
 behavior_archetype: generic_fighter
 routine: cave_pack_ironwind
 statpool: 250
-itemdropchance: 40
+itemdropchance: 5
 hostile: true
 maxwander: 1
 groups:
@@ -32,6 +32,8 @@ tactics:
     priority: 8
 character:
   name: windscour wyrm
+  items:
+    - itemid: 40010   # Chrysalis Core (Stage 3.4 — apex-tier rare drop)
   description: |
     The undisputed lord of the Windscour Caves -- a serpentine
     creature of enormous size, its body thick as a tree trunk and

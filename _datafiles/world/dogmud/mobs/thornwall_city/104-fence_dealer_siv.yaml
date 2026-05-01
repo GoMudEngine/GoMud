@@ -45,6 +45,7 @@ character:
     charisma:
       training: 5
   shop:
+    # Existing fenced/stolen items (preserve original prices)
     - itemid: 32
       quantity: 0
       quantitymax: 0
@@ -57,3 +58,12 @@ character:
       quantity: 0
       quantitymax: 0
       price: 30
+    # Base general goods
+    - itemid: 40003    # wooden plank
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40038    # oil lantern
+      quantity: 0
+      quantitymax: 0
+      price: 5

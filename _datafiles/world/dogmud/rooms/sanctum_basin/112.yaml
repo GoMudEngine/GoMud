@@ -10,6 +10,8 @@ coord:
   x: -10
   y: 10
   z: 0
+mutators:
+- mutatorid: sanctuary
 exits:
   west:
     roomid: 111

@@ -1,0 +1,67 @@
+roomid: 4169
+zone: The Fernway South
+title: Salt Lick
+description: >
+  The deer ridge ends here at a low depression in the earth
+  where the ground has been worked smooth by generations of
+  tongues — a natural <ansi fg="itemname">lick</ansi> a few
+  paces across, the surface dark and bare and faintly gleaming
+  where the soil has been polished flat. The air carries a
+  faint iron-salt tang from the
+  <ansi fg="itemname">mineral-seep</ansi> beneath, a slow
+  underground weep that brings salt and trace minerals to the
+  surface and keeps this patch perpetually damp even in dry
+  weather. The deer-sign is thickest here of any place on the
+  ridge — <ansi fg="itemname">deer-trails</ansi> converge on
+  the lick from every compass point, worn to bare earth by
+  small regular feet, the trails narrow and purposeful. At
+  the lick's edge, <ansi fg="itemname">lick-marks</ansi>
+  groove the surface where the same worn channels have been
+  worked at by tongues for so many years the earth shows
+  the shape of them, long smooth depressions in the dark
+  ground. There is no path further south; the cover closes
+  in thick and trackless beyond the lick's far edge.
+biome: forest
+coord:
+  x: -13
+  y: -19
+  z: 0
+exits:
+  north:
+    roomid: 4168
+nouns:
+  lick: |
+    A natural salt lick — a bare patch of dark earth a
+    few paces across, licked smooth and faintly gleaming
+    by generations of deer tongues. The surface is damp
+    underfoot and gives slightly, the soil packed dense
+    by years of small hooves gathering here.
+  mineral-seep: |
+    The ground here tastes faintly of salt and iron
+    where the soil is damp — a slow underground mineral
+    seep that brings trace salts to the surface year-
+    round, keeping the patch wet and drawing deer even
+    when salt is scarce elsewhere in the forest.
+  deer-trails: |
+    Narrow worn trails converge on the lick from every
+    direction, the earth beaten bare by small regular
+    feet — a network of purposeful paths through the
+    surrounding cover, each one running straight to the
+    lick as if the route has been memorized across
+    generations.
+  lick-marks: |
+    Long grooved channels in the dark earth at the
+    lick's edge show where tongues have worked the same
+    spots for years — smooth depressions worn into the
+    surface, the grain of the soil polished in the
+    direction of each stroke, older and deeper at the
+    center of the lick.
+idlemessages:
+- a doe and her fawn appear at the lick edge, then are gone
+- ''
+- the iron-salt tang on the air is briefly stronger
+- ''
+- a beetle scuttles across the bare earth of the lick
+spawninfo:
+- mobid: 361
+  cooldown: 600 rounds

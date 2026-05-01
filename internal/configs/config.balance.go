@@ -283,6 +283,50 @@ type Balance struct {
 
 	// ── INSTANCES ────────────────────────────────────────────────────────────
 	InstanceStatPoolCap ConfigInt `yaml:"InstanceStatPoolCap"` // Max stat pool per mob in instances (default 50000, 0=uncapped)
+
+	// ── CARAVAN SYSTEM ───────────────────────────────────────────────────────
+	// CaravanServedZones lists zone display names whose vendor mobs do NOT
+	// auto-restock — they restock only on caravan visit. Mobs in zones not
+	// in this list keep the legacy per-mob restock tick.
+	CaravanServedZones []string `yaml:"CaravanServedZones"`
+
+	// CaravanDepotDwellRounds is the number of rounds the caravan rests at
+	// each depot between transit legs. ~720 ≈ 48 min real ≈ a full game
+	// day. Stage 3.1 doubled this from 360 so foragers are the day-to-day
+	// supply pipeline; caravans now arrive about once per game day.
+	CaravanDepotDwellRounds ConfigInt `yaml:"CaravanDepotDwellRounds"`
+
+	// FernwayPickupDwellRounds is the dwell time at the Fernway forager
+	// meeting point (North Road 4038) on each transit leg. Default 6.
+	FernwayPickupDwellRounds ConfigInt `yaml:"FernwayPickupDwellRounds"`
+
+	// ── FORAGER SYSTEM (Stage 3.1) ───────────────────────────────────────────
+	// ForagerForageDwellRounds is the rounds between forage attempts in
+	// the forager's territory. Default 8.
+	ForagerForageDwellRounds ConfigInt `yaml:"ForagerForageDwellRounds"`
+
+	// ForagerCarryThresholdPct is the carry-capacity ratio (0.0-1.0) at
+	// which the forager heads home for delivery. Default 0.75.
+	ForagerCarryThresholdPct ConfigFloat `yaml:"ForagerCarryThresholdPct"`
+
+	// ForagerHPRecallThresholdPct is the HP ratio (0.0-1.0) below which
+	// the forager casts fold-recall as an emergency escape. Default 0.50.
+	ForagerHPRecallThresholdPct ConfigFloat `yaml:"ForagerHPRecallThresholdPct"`
+
+	// ForagerHealPotionThresholdPct is the HP ratio (0.0-1.0) below which
+	// the forager auto-drinks a healing salve. Default 0.75.
+	ForagerHealPotionThresholdPct ConfigFloat `yaml:"ForagerHealPotionThresholdPct"`
+
+	// ForagerWaitTimeoutRounds is the maximum rounds the Fernway forager
+	// idles at the meeting point waiting for the caravan before recalling
+	// home with the satchel. Default 150.
+	ForagerWaitTimeoutRounds ConfigInt `yaml:"ForagerWaitTimeoutRounds"`
+
+	// ForagerRestCarryThreshold (Stage 3.4) is the carry-capacity ratio
+	// (0.0-1.0) above which the forager stays resting at home instead of
+	// cycling back to forage. Prevents futile foraging loops when local
+	// vendors are saturated (MaxStock cap reached). Default 0.5.
+	ForagerRestCarryThreshold ConfigFloat `yaml:"ForagerRestCarryThreshold"`
 }
 
 func (b *Balance) Validate() {
@@ -325,4 +369,16 @@ func (b *Balance) GetSkillProgressionMultiplier(skillName string) (float64, bool
 		}
 	}
 	return 0, false
+}
+
+// IsCaravanServedZone reports whether the named zone is in the
+// CaravanServedZones list. Case-sensitive — match the zone display
+// name exactly.
+func (b Balance) IsCaravanServedZone(zone string) bool {
+	for _, z := range b.CaravanServedZones {
+		if z == zone {
+			return true
+		}
+	}
+	return false
 }

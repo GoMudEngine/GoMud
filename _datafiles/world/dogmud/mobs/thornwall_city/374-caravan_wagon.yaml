@@ -1,0 +1,53 @@
+mobid: 374
+zone: Thornwall City
+archetype: ""
+behavior_archetype: ""
+statpool: 100
+itemdropchance: 100
+groups:
+  - caravan
+  - merchant_train
+hostile: false
+non_combatant: false
+player_attack_immune: true
+maxwander: -1
+activitylevel: 0
+charm_immune: true
+
+# Stage 3.4 spawn-time overrides
+carry_capacity: 5000
+health_max: 1500
+stamina_max: 9999
+hide_equipment_slots: true
+corpse_name: splintered wagon wreckage
+corpse_description: |
+  Shattered timbers and twisted iron bands lie heaped where
+  the supply wagon once stood, the canvas roof torn loose
+  and trampled into the dirt. The driver's bench has split
+  clean in two; the iron lantern is bent beyond use.
+  Scattered among the wreckage, broken crates and split
+  sacks lie half-emptied — though the bandits did their
+  best to take what they could carry.
+
+character:
+  name: caravan wagon
+  description: |
+    A hardwood freight wagon, broad-bedded and shoulder-high,
+    its frame banded with cold-forged iron. The bed is roofed
+    in tarred canvas stretched tight over hoop-frames, the
+    canvas weatherbeaten and patched in three places along
+    the seams. A pair of leather-padded yokes at the front
+    rig the wagon to its draft team. The wagon's right rear
+    wheel has been reset twice — the new spokes are paler
+    than the rest. A small iron lantern hangs at the
+    driver's bench, unlit by day.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    vitality: {training: 60}
+    strength: {training: 10}
+    dexterity: {training: 10}
+    perception: {training: 5}
+    willpower: {training: 5}
+    charisma: {training: 10}
