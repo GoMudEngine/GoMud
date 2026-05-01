@@ -184,15 +184,9 @@ func TestScore_OverallWeightsShopsHeaviest(t *testing.T) {
 	// toward MeanShop vs the unweighted mean. Concretely: overall must be
 	// closer to MeanShop than the unweighted mean is to MeanShop.
 	unweightedMean := (scores.MeanShop + scores.MeanCaravan + scores.MeanForager) / 3
-	if abs(scores.OverallScore-scores.MeanShop) >= abs(unweightedMean-scores.MeanShop) {
+	if math.Abs(scores.OverallScore-scores.MeanShop) >= math.Abs(unweightedMean-scores.MeanShop) {
 		t.Errorf("Overall %.2f not pulled toward MeanShop %.2f vs unweighted mean %.2f — shops aren't weighted heaviest",
 			scores.OverallScore, scores.MeanShop, unweightedMean)
 	}
 }
 
-func abs(x float64) float64 {
-	if x < 0 {
-		return -x
-	}
-	return x
-}
