@@ -179,20 +179,9 @@
             if (!byDisc[disc]) byDisc[disc] = [];
             byDisc[disc].push(s);
         }
-        // Render discipline rollup. Stable order: known disciplines
-        // first, then "general", then anything else (which would be
-        // a validation gap).
-        var DISC_ORDER = ['blacksmithing','alchemy','tailoring','cooking',
-                          'jewelcrafting','enchanting','general'];
+        // Render discipline rollup, alphabetical by discipline name.
+        var discKeys = Object.keys(byDisc).sort();
         var discHtml = '';
-        var seen = {};
-        var discKeys = [];
-        for (var i = 0; i < DISC_ORDER.length; i++) {
-            if (byDisc[DISC_ORDER[i]]) { discKeys.push(DISC_ORDER[i]); seen[DISC_ORDER[i]] = true; }
-        }
-        Object.keys(byDisc).sort().forEach(function(k){
-            if (!seen[k]) discKeys.push(k);
-        });
         for (var i = 0; i < discKeys.length; i++) {
             var disc = discKeys[i];
             var shops = byDisc[disc];
@@ -215,11 +204,20 @@
         }
         document.getElementById('tbl-discipline').innerHTML = discHtml;
 
-        // Render per-shop rows.
+        // Render per-shop rows, alphabetical by name (fall back to
+        // mobId for un-spawned shops with no Name yet).
+        var shopPairs = d.snapshot.shops.map(function(s, i) {
+            return { snap: s, row: d.scores.PerShop[i] };
+        });
+        shopPairs.sort(function(a, b) {
+            var an = a.row.Name || ('#' + a.row.MobId);
+            var bn = b.row.Name || ('#' + b.row.MobId);
+            return an.localeCompare(bn);
+        });
         var shopHtml = '';
-        for (var i = 0; i < d.scores.PerShop.length; i++) {
-            var row = d.scores.PerShop[i];
-            var snap = d.snapshot.shops[i];
+        for (var i = 0; i < shopPairs.length; i++) {
+            var row = shopPairs[i].row;
+            var snap = shopPairs[i].snap;
             var key = shopKey(snap);
             shopHtml += '<tr><td>' + (row.Name || '#'+row.MobId) + '</td>' +
                         '<td>' + (row.CraftSupport || '—') + '</td>' +
@@ -233,11 +231,17 @@
         }
         document.getElementById('tbl-shops').innerHTML = shopHtml;
 
-        // Caravans.
+        // Caravans, alphabetical by name.
+        var caravanPairs = (d.snapshot.caravans || []).map(function(c, i) {
+            return { snap: c, score: d.scores.PerCaravan[i] || {} };
+        });
+        caravanPairs.sort(function(a, b) {
+            return (a.snap.name || '').localeCompare(b.snap.name || '');
+        });
         var caravanHtml = '';
-        for (var i = 0; i < (d.snapshot.caravans || []).length; i++) {
-            var c = d.snapshot.caravans[i];
-            var sc = d.scores.PerCaravan[i] || {};
+        for (var i = 0; i < caravanPairs.length; i++) {
+            var c = caravanPairs[i].snap;
+            var sc = caravanPairs[i].score;
             var bar = bucketBar(
                 Object.keys(c.cargo_by_bucket || {}).map(function(b){ return {bucket:b, current:c.cargo_by_bucket[b]}; }),
                 c.cargo_capacity || 1
@@ -252,11 +256,17 @@
         }
         document.getElementById('tbl-caravans').innerHTML = caravanHtml || '<tr><td colspan="11" class="text-muted">No caravans active.</td></tr>';
 
-        // Foragers.
+        // Foragers, alphabetical by name.
+        var foragerPairs = (d.snapshot.foragers || []).map(function(f, i) {
+            return { snap: f, score: d.scores.PerForager[i] || {} };
+        });
+        foragerPairs.sort(function(a, b) {
+            return (a.snap.name || '').localeCompare(b.snap.name || '');
+        });
         var foragerHtml = '';
-        for (var i = 0; i < (d.snapshot.foragers || []).length; i++) {
-            var f = d.snapshot.foragers[i];
-            var sc = d.scores.PerForager[i] || {};
+        for (var i = 0; i < foragerPairs.length; i++) {
+            var f = foragerPairs[i].snap;
+            var sc = foragerPairs[i].score;
             var bar = bucketBar(
                 Object.keys(f.cargo_by_bucket || {}).map(function(b){ return {bucket:b, current:f.cargo_by_bucket[b]}; }),
                 f.cargo_capacity || 1
