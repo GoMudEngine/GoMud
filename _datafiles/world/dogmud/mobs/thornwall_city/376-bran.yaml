@@ -9,7 +9,7 @@ groups:
   - merchant_train
   - animal
 hostile: false
-non_combatant: false
+non_combatant: true
 player_attack_immune: true
 maxwander: -1
 activitylevel: 5
