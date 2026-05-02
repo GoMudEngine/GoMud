@@ -5,8 +5,8 @@ import "testing"
 func TestBalanceConfig_CaravanDefaults(t *testing.T) {
 	cfg := &Balance{}
 	cfg.Validate()
-	if cfg.CaravanDepotDwellRounds != 720 {
-		t.Errorf("CaravanDepotDwellRounds default = %d, want 720", cfg.CaravanDepotDwellRounds)
+	if cfg.CaravanDepotDwellRounds != 360 {
+		t.Errorf("CaravanDepotDwellRounds default = %d, want 360", cfg.CaravanDepotDwellRounds)
 	}
 	if len(cfg.CaravanServedZones) == 0 {
 		t.Error("CaravanServedZones default should not be empty")

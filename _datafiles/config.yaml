@@ -864,9 +864,10 @@ Balance:
     - "Thornwall City"
 
   # Rounds the caravan rests at each depot between transit legs.
-  # 720 rounds ≈ 48 min real ≈ a full in-game day. Stage 3.1 doubled
-  # this from 360 to make foragers the day-to-day supply pipeline.
-  CaravanDepotDwellRounds: 720
+  # 360 rounds ≈ 24 min real ≈ a half-game-day. Halved from 720 on
+  # 2026-05-02 — foragers are the day-to-day pipeline regardless,
+  # and a more visible caravan beats a more realistic one.
+  CaravanDepotDwellRounds: 360
 
   # Dwell at the Fernway forager meeting point (North Road 4038) on
   # each caravan transit leg. Long enough to detect the forager.

@@ -279,7 +279,7 @@ func (b *Balance) validateMisc() {
 		b.CaravanServedZones = []string{"Stillwater", "Thornwall City"}
 	}
 	if b.CaravanDepotDwellRounds <= 0 {
-		b.CaravanDepotDwellRounds = 720
+		b.CaravanDepotDwellRounds = 360
 	}
 	if b.FernwayPickupDwellRounds <= 0 {
 		b.FernwayPickupDwellRounds = 6
