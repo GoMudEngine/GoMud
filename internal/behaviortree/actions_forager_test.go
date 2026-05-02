@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
-	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/gamelock"
@@ -405,8 +404,7 @@ func TestTickForagerDeliveringFernway_DumpsIntoSealedCrate(t *testing.T) {
 		MobState:   state,
 	}
 
-	cfg := configs.GetBalanceConfig()
-	res := tickForagerDeliveringFernway(p, mob, ctx, cfg)
+	res := tickForagerDeliveringFernway(p, mob, ctx)
 	if res != Success {
 		t.Fatalf("tickForagerDeliveringFernway = %v, want Success", res)
 	}

@@ -257,8 +257,9 @@ func tickForagerDelivering(
 	ctx *EvalContext,
 	cfg configs.Balance,
 ) Result {
+	_ = cfg // dispatch-only; town path doesn't need it post-3.4 wait removal
 	if p.Kind == forager.KindFernway {
-		return tickForagerDeliveringFernway(p, mob, ctx, cfg)
+		return tickForagerDeliveringFernway(p, mob, ctx)
 	}
 	return tickForagerDeliveringTown(p, mob, ctx)
 }
@@ -287,7 +288,6 @@ func tickForagerDeliveringFernway(
 	p *forager.ForagerProfile,
 	mob *mobs.Mob,
 	ctx *EvalContext,
-	cfg configs.Balance,
 ) Result {
 	if ctx.RoomId != p.MeetingRoom {
 		mob.Command(fmt.Sprintf("pathto %d", p.MeetingRoom))
