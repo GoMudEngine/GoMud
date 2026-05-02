@@ -94,7 +94,7 @@ func KeyRing(rest string, user *users.UserRecord, room *rooms.Room, flags events
 			exitName, _ := room.FindExitByName(lockId)
 			exitInfo := room.Exits[exitName]
 
-			actualSequence := util.GetLockSequence(lockId, int(exitInfo.Lock.Difficulty), cfgSeed)
+			actualSequence := util.GetLockSequence(lockId, int(exitInfo.Lock.Difficulty), cfgSeed, exitInfo.Lock.RotationSeed)
 			diff := len(actualSequence) - len(sequence)/2
 			if diff > 0 {
 				complete = false

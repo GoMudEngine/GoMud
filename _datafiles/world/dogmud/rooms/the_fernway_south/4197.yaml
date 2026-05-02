@@ -17,7 +17,9 @@ description: >
   along the eastern edge of the clearing, hung with strips of
   hide, bundles of herb, and a half-rendered length of sinew
   in slow patient curing. The clearing has the unhurried
-  quietness of a place lived in by one careful hand.
+  quietness of a place lived in by one careful hand. A small
+  ironbound <ansi fg="itemname">lockbox</ansi> sits tucked
+  beneath the lean-to's bedding pallet.
 biome: forest
 coord:
   x: -16
@@ -51,6 +53,11 @@ nouns:
     pruning is old and well-healed, the trees tall enough that
     their canopies meet overhead and break the wind on three
     sides. The clearing is sheltered without being closed-in.
+  lockbox: |
+    A small ironbound lockbox tucked beneath the lean-to's
+    bedding pallet — Kessa the fernway forager's, a hand-cut
+    hardwood box with a brass hasp and a lock worn smooth
+    from patient use. She keeps the surplus of her cycles here.
 mutators:
 - mutatorid: sanctuary
 idlemessages:
@@ -63,3 +70,10 @@ idlemessages:
 - a coal pops in the firepit and settles
 spawninfo:
 - mobid: 373        # Kessa, Fernway Forager (Stage 3.1)
+containers:
+  lockbox:
+    lock:
+      difficulty: 10
+      relockinterval: 24 hours
+      rotationseed: 1
+    items: []

@@ -1,5 +1,73 @@
 # DOGMud Patch Notes
 
+## 2026-05-02 — Forager + Caravan Followup
+
+Five fixes in the now-shipped forager + caravan stack, plus a caravan-cadence
+tweak.
+
+### Bug fixes
+- **Whisper off the caravan rotation.** Room 507 (The Listening Post) is
+  Whisper's quest-only spot in the locked, trapped, phantom-guarded section
+  of Thornwall — never a standard merchant. Previously the caravan tried to
+  restock her on every Thornwall pass. She's now removed from
+  `thornwallVendorRooms`.
+- **System NPCs spawn at boot.** Caravan master (room 4042) and the three
+  foragers (Tova/4123, Halix/3040, Kessa/4197) now have `room.Prepare(false)`
+  fired against their anchor rooms during the boot data-file load. Previously
+  these mobs only spawned the first time a player walked into the room — and
+  forager anchors are wilderness, so they could go offline indefinitely. The
+  `/admin/economy/` dashboard's "(not active)" forager rows are gone after a
+  clean boot.
+- **Foragers no longer deadlock at sanctuary.** Stage 3.4's carry-ratio
+  rest-extension would park a forager forever if vendors were saturated and
+  her satchel never drained. Foragers now dump satchel surplus into a new
+  per-sanctuary lockbox container on Recall arrival, so the satchel always
+  empties between cycles. The carry-ratio gate is retained as a backstop for
+  the lockbox-full case.
+- **Kessa actually delivers to the caravan.** The previous mechanism required
+  Kessa and the caravan to coincide at North Road 4038 in the same dwell
+  window, which never happened reliably. New mechanism: Kessa drops her
+  fernway-bucket items into a persistent **shipping crate** at 4038 and
+  heads home; the caravan drains the crate into its wagon on its next
+  pass. No timing dependency. The flag-based `caravan_load` mechanism is
+  deleted entirely — real items now move through the wagon (Stage 3.4
+  vendor-restock path).
+
+### Content
+- **Sanctuary lockboxes** at the three forager anchor rooms (4123 Stillwater
+  Temple, 3040 Ironwind Steppe, 4197 Forager's Camp). Difficulty-10 lock,
+  500-item capacity, fresh combination each forager cycle (the lock's
+  `RotationSeed` bumps on every dump, invalidating any cached keyring
+  entries). Players who pick the lockbox get the forager's surplus
+  materials but must redo the picklock minigame each cycle.
+- **Roadside shipping crate** at North Road 4038 (`crates/4038-fernway_shipment.yaml`).
+  Visible to players as a noun, but every interaction (`get`, `look in`,
+  `put`, `picklock`, `lock`) returns flavor text — only the caravan and
+  Kessa modify it via state-machine code.
+
+### Tuning
+- **`CaravanDepotDwellRounds: 720 → 360`.** Halved. Foragers now run from
+  boot and never deadlock, so they dominate day-to-day throughput regardless
+  of caravan cadence. Halving the depot dwell roughly doubles caravan
+  visibility in each town — event-style deliveries beat once-per-day realism
+  here.
+- **New config knob `ForagerLockboxCapacity` (default 500).** Caps the
+  per-forager sanctuary lockbox; if a player goes a long time without
+  picking a forager's lockbox open, the box can saturate and the forager
+  reverts to rest-extension behavior until space opens up.
+
+### Engine
+- **`gamelock.Lock.RotationSeed`** added. `SetLocked()` bumps it. When >0,
+  it's mixed into the `util.GetLockSequence` hash so a re-locked container
+  produces a new combination — invalidating any cached keyring entry.
+  Default 0 keeps every existing lock's combination unchanged.
+- **New package `internal/sealedcrate/`.** Player-untouchable, room-bound,
+  capacity-bounded delivery container. Persists at
+  `_datafiles/world/dogmud/crates/<roomid>-<label>.yaml`. Mutated only by
+  forager + caravan tick functions; all player commands short-circuit.
+- **`Room.SealedCrate`** field + `Room.AttachSealedCrate` + boot loader at
+  `main.go` end of `loadAllDataFiles`.
+
 ## 2026-05-01 — Mob Aliveness Roadmap (planning)
 
 **Note:** Planning doc only — no engine, content, or config changes.

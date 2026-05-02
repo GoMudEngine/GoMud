@@ -36,7 +36,6 @@ var thornwallVendorRooms = []int{
 	481, // tavern cook Brynn
 	482, // jeweler Tess
 	483, // enchanter Vael
-	507, // Whisper
 }
 
 // Route is one leg of the caravan cycle.

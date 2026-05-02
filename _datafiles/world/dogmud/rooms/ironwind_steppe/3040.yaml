@@ -7,7 +7,9 @@ description: A natural alcove in the ridge's eastern face, sheltered
   smoke. Someone has camped here before -- there are the remains
   of a fire ring, a few scattered bones from cooked meals, and
   scratched marks on the wall that might be tallies or crude maps.
-  The space is dry, sheltered, and defensible.
+  The space is dry, sheltered, and defensible. A travel-worn
+  <ansi fg="itemname">lockbox</ansi> is wedged into a crack
+  near the back wall, half-hidden by the overhang's shadow.
 biome: cliffs
 coord:
   x: 16
@@ -33,9 +35,20 @@ nouns:
     Charred bone fragments and a few rusty nail heads lie in the
     debris. Whoever camped here was here long enough to eat
     several meals.
+  lockbox: A travel-worn lockbox bound in waxed leather and iron
+    strapwork — Halix the steppe forager's, secured against
+    weather and wandering hands alike. The latch is well-oiled
+    but the keyway shows the faint scratch-marks of long use.
 spawninfo:
 - mobid: 240
 - mobid: 372        # Halix, Steppe Forager (Stage 3.1)
+containers:
+  lockbox:
+    lock:
+      difficulty: 10
+      relockinterval: 24 hours
+      rotationseed: 1
+    items: []
 idlemessages:
 - The wind moans past the alcove entrance but the interior is still.
 - Sand trickles from a crack in the ceiling, pattering softly.

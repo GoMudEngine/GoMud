@@ -52,3 +52,11 @@ func TestRoute_OutboundAndInboundOpposite(t *testing.T) {
 			InboundRoute.ArriveAtRoomId, OutboundRoute.DepartFromRoomId)
 	}
 }
+
+func TestThornwallVendorRoomsExcludesWhisper(t *testing.T) {
+	for _, r := range thornwallVendorRooms {
+		if r == 507 {
+			t.Fatalf("thornwallVendorRooms still includes 507 (Whisper); she's off-route in the phantom's zone and should not be on the caravan rotation")
+		}
+	}
+}

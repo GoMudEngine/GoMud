@@ -24,6 +24,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -77,7 +78,7 @@ func actForagerStep(params map[string]any, ctx *EvalContext) Result {
 	case forager.StateTravelingToDropoff:
 		return tickForagerTravelingToDropoff(profile, mob, ctx)
 	case forager.StateDelivering:
-		return tickForagerDelivering(profile, mob, ctx, cfg)
+		return tickForagerDelivering(profile, mob, ctx)
 	case forager.StateRecalling:
 		return tickForagerRecalling(profile, mob, ctx)
 	}
@@ -147,13 +148,15 @@ func tickForagerResting(
 	started, _ := strconv.ParseUint(startedStr, 10, 64)
 	dwellElapsed := util.GetRoundCount() >= started+restingDuration
 	if dwellElapsed && mob.Character.Health >= mob.Character.HealthMax.Value {
-		// Stage 3.4: stay home if satchel is still over rest threshold.
-		// Vendors didn't absorb much last cycle; foraging more would just
-		// overflow back to satchel. Narratively: the forager sits at the
-		// sanctuary looking content — the merchants don't need more right now.
+		// 2026-05-02: Stage 3.4 carry-ratio gate retained as a
+		// BACKSTOP. The primary deadlock-avoidance mechanism is now
+		// dumpSatchelToLockbox in tickForagerRecalling, which empties
+		// the satchel on arrival. The carry-ratio check is only
+		// reached when the lockbox itself was full and surplus
+		// stayed in the satchel — in that case, continue resting
+		// until the player picks the lockbox open and frees space.
 		restThreshold := float64(configs.GetBalanceConfig().ForagerRestCarryThreshold)
 		if carryRatio(mob) > restThreshold {
-			// Continue resting — let legacy idle fire flavor emotes.
 			return Failure
 		}
 		transitionForager(ctx.MobState, forager.StateTravelingToTerritory)
@@ -252,10 +255,9 @@ func tickForagerDelivering(
 	p *forager.ForagerProfile,
 	mob *mobs.Mob,
 	ctx *EvalContext,
-	cfg configs.Balance,
 ) Result {
 	if p.Kind == forager.KindFernway {
-		return tickForagerDeliveringFernway(p, mob, ctx, cfg)
+		return tickForagerDeliveringFernway(p, mob, ctx)
 	}
 	return tickForagerDeliveringTown(p, mob, ctx)
 }
@@ -284,19 +286,68 @@ func tickForagerDeliveringFernway(
 	p *forager.ForagerProfile,
 	mob *mobs.Mob,
 	ctx *EvalContext,
-	cfg configs.Balance,
 ) Result {
 	if ctx.RoomId != p.MeetingRoom {
 		mob.Command(fmt.Sprintf("pathto %d", p.MeetingRoom))
 		return Success
 	}
-	waitT := getIntFromState(ctx.MobState, keyWaitTimer) + 1
-	ctx.MobState.Set(keyWaitTimer, strconv.Itoa(waitT))
-	if waitT >= int(cfg.ForagerWaitTimeoutRounds) {
-		transitionForager(ctx.MobState, forager.StateRecalling)
-		return Success
+	// Arrived at meeting room. Dump fernway-bucket items into the
+	// sealed crate — Kessa drops the load and turns for home, no
+	// wait for the caravan to coincide.
+	room := rooms.LoadRoom(ctx.RoomId)
+	if dumped := dumpFernwayLoadIntoCrate(p, mob, room); dumped > 0 {
+		persistCrate(ctx.RoomId, room.SealedCrate)
+		room.SendText(fmt.Sprintf(
+			`<ansi fg="mobname">%s</ansi> hauls a satchel up to the crate, latches it shut, and turns for home.`,
+			p.Name))
 	}
+	// Always advance to Recalling — no more 150-round wait timer.
+	transitionForager(ctx.MobState, forager.StateRecalling)
 	return Success
+}
+
+// dumpFernwayLoadIntoCrate transfers fernway-bucket items from the
+// forager's satchel into the room's sealed crate (in-memory only —
+// persistence is the caller's responsibility). Returns the number
+// of items dumped. Returns 0 if the room has no SealedCrate or the
+// crate is full before any items match.
+func dumpFernwayLoadIntoCrate(
+	p *forager.ForagerProfile,
+	mob *mobs.Mob,
+	room *rooms.Room,
+) int {
+	if room == nil || room.SealedCrate == nil {
+		return 0
+	}
+	crate := room.SealedCrate
+	dumped := 0
+	for i := len(mob.Character.Items) - 1; i >= 0; i-- {
+		item := mob.Character.Items[i]
+		bucket := economy.BucketFor(item.ItemId)
+		if !slices.Contains(p.Buckets, bucket) {
+			continue
+		}
+		if !crate.Add(item) {
+			break // crate full
+		}
+		mob.Character.RemoveItem(item)
+		dumped++
+	}
+	return dumped
+}
+
+// persistCrate writes the crate's current state to its YAML file at
+// <DataFiles>/crates/<roomid>-fernway_shipment.yaml.
+// Errors are logged but not surfaced — persistence is best-effort
+// crash-safety, not a correctness requirement.
+func persistCrate(roomId int, c *sealedcrate.Crate) {
+	path := util.FilePath(
+		configs.GetConfig().FilePaths.DataFiles.String(),
+		fmt.Sprintf("/crates/%d-fernway_shipment.yaml", roomId),
+	)
+	if err := sealedcrate.SaveTo(path, c); err != nil {
+		mudlog.Error("forager.persistCrate", "roomId", roomId, "error", err)
+	}
 }
 
 func tickForagerRecalling(
@@ -305,14 +356,19 @@ func tickForagerRecalling(
 	ctx *EvalContext,
 ) Result {
 	if ctx.RoomId == p.SanctuaryRoom {
+		// Dump remaining satchel into the sanctuary lockbox before
+		// resting. Surplus accumulates in the lockbox where players
+		// can pick to retrieve it; the cycle resumes immediately
+		// regardless of vendor saturation.
+		dumpSatchelToLockbox(mob, ctx)
 		transitionForager(ctx.MobState, forager.StateResting)
 		return Success
 	}
-	// Don't re-issue the cast every idle tick — re-issuing while a cast
-	// is in progress can reset its progress and trap the forager mid-cast
-	// indefinitely (observed 2026-04-30: Kessa "begins weaving a spell"
-	// repeatedly but never actually teleports). Wait for the active cast
-	// to resolve.
+	// Don't re-issue the cast every idle tick — re-issuing while a
+	// cast is in progress can reset its progress and trap the forager
+	// mid-cast indefinitely (observed 2026-04-30: Kessa "begins
+	// weaving a spell" repeatedly but never actually teleports).
+	// Wait for the active cast to resolve.
 	if mob.Character.IsCasting() {
 		return Success
 	}
@@ -354,6 +410,55 @@ func npcAttemptForage(
 		`<ansi fg="mobname">%s</ansi> stoops over a patch of growth`+
 			` and tucks something into a satchel.`,
 		p.Name))
+}
+
+// dumpSatchelToLockbox transfers every item in the forager's satchel
+// into the room's "lockbox" container, then bumps the lockbox lock's
+// RotationSeed so existing player keyring entries become invalid.
+// If the room has no lockbox container or the lockbox is full
+// (>= ForagerLockboxCapacity), items remain in the satchel and the
+// caller falls back to the legacy rest-extension behavior.
+//
+// Returns true if any items were dumped.
+func dumpSatchelToLockbox(mob *mobs.Mob, ctx *EvalContext) bool {
+	room := rooms.LoadRoom(ctx.RoomId)
+	if room == nil {
+		return false
+	}
+	box, ok := room.Containers["lockbox"]
+	if !ok {
+		return false
+	}
+	cap := configs.GetBalanceConfig().ForagerLockboxCapacity
+	if cap <= 0 {
+		cap = 500
+	}
+	dumped := false
+	stalledFull := false
+	// Walk satchel in reverse so index shifts from RemoveItem stay valid.
+	for i := len(mob.Character.Items) - 1; i >= 0; i-- {
+		if len(box.Items) >= int(cap) {
+			stalledFull = true
+			break
+		}
+		item := mob.Character.Items[i]
+		mob.Character.RemoveItem(item)
+		box.AddItem(item)
+		dumped = true
+	}
+	if stalledFull {
+		// Surface so ops can diagnose foragers stuck in rest-extension.
+		// The carry-ratio backstop in tickForagerResting will park the
+		// forager until a player picks the lockbox open.
+		mudlog.Debug("forager.dumpSatchelToLockbox: lockbox full",
+			"roomId", ctx.RoomId, "capacity", cap, "satchelRemaining", len(mob.Character.Items))
+	}
+	if dumped {
+		box.Lock.SetLocked() // bumps RotationSeed
+		room.Containers["lockbox"] = box
+		room.SendText(`<ansi fg="yellow">A latch clicks shut from somewhere in the sanctuary.</ansi>`)
+	}
+	return dumped
 }
 
 // npcVisitVendorsInRoom (Stage 3.4): physically transfers items from the

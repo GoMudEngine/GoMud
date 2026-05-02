@@ -20,6 +20,11 @@ func Lock(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
+	if room.MatchesSealedCrate(strings.ToLower(args[0])) {
+		user.SendText(`The shipping crate is already sealed.`)
+		return true, nil
+	}
+
 	containerName := room.FindContainerByName(args[0])
 	if containerName != `` {
 		if c, exists := room.Containers[containerName]; exists && c.Hidden {
