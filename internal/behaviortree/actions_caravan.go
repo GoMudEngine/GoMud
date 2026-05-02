@@ -22,6 +22,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -203,20 +204,8 @@ func tickFernwayPickup(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext
 		if r != nil && r.SealedCrate != nil {
 			wagon := findCaravanWagon(ctx.InstanceId)
 			if wagon != nil {
-				drained := r.SealedCrate.DrainAll()
-				stored := 0
-				for _, it := range drained {
-					// StoreItem returns false when the wagon is over
-					// carry capacity. Put rejected items back so they
-					// stay safe in the crate for the next pickup
-					// rather than silently vanishing.
-					if wagon.Character.StoreItem(it) {
-						stored++
-					} else {
-						r.SealedCrate.Add(it)
-					}
-				}
-				if stored > 0 || (len(drained) > 0 && stored < len(drained)) {
+				stored, rejected := drainCrateIntoWagon(r.SealedCrate, wagon)
+				if stored > 0 || rejected > 0 {
 					persistCrate(ctx.RoomId, r.SealedCrate)
 				}
 				if stored > 0 {
@@ -225,12 +214,11 @@ func tickFernwayPickup(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext
 							` and loads its contents into the wagon — %d %s in all.</ansi>`,
 						stored, caravanPluralize("crate-load", stored)))
 				}
-				if stored < len(drained) {
+				if rejected > 0 {
 					mudlog.Warn("caravan.tickFernwayPickup: wagon refused some items",
 						"roomId", ctx.RoomId,
-						"drained", len(drained),
 						"stored", stored,
-						"returnedToCrate", len(drained)-stored)
+						"returnedToCrate", rejected)
 				}
 			}
 		}
@@ -414,6 +402,26 @@ func caravanPluralize(word string, n int) string {
 		return word
 	}
 	return word + "s"
+}
+
+// drainCrateIntoWagon transfers as many items as possible from crate
+// into the wagon's inventory. Items the wagon refuses (StoreItem
+// returns false — typically over carry capacity) are returned to
+// the crate so they stay safe for the next pickup rather than
+// silently vanishing. Returns (stored, rejected). The crate is
+// left in a coherent state in either branch; persistence is the
+// caller's responsibility.
+func drainCrateIntoWagon(crate *sealedcrate.Crate, wagon *mobs.Mob) (stored, rejected int) {
+	drained := crate.DrainAll()
+	for _, it := range drained {
+		if wagon.Character.StoreItem(it) {
+			stored++
+		} else {
+			crate.Add(it)
+			rejected++
+		}
+	}
+	return stored, rejected
 }
 
 // bucketsForRouteState returns the (delivery, pickup) bucket lists

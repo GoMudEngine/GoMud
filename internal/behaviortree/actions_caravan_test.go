@@ -394,6 +394,61 @@ func TestSealedCrateDrainLogic(t *testing.T) {
 	}
 }
 
+// TestDrainCrateIntoWagon_ReturnsRejectedItems pins the data-loss
+// safety logic added during the Task 15 code-quality review pass:
+// when the wagon refuses an item (StoreItem returns false), the item
+// must go back into the crate, not be silently dropped. We force a
+// rejection by handing StoreItem an items.Item with ItemId 0 — its
+// own first-line guard rejects that, no carry-capacity setup needed.
+func TestDrainCrateIntoWagon_ReturnsRejectedItems(t *testing.T) {
+	crate := sealedcrate.New(fernwayMeetingRoomId, 2000)
+	// Two real items + one zero-id item that StoreItem will reject.
+	crate.Add(items.Item{ItemId: 40046})
+	crate.Add(items.Item{ItemId: 0}) // will be rejected
+	crate.Add(items.Item{ItemId: 40049})
+
+	wagon := buildCaravanWagonMob(t, 7301, fernwayMeetingRoomId)
+
+	stored, rejected := drainCrateIntoWagon(crate, wagon)
+
+	if stored != 2 {
+		t.Errorf("stored = %d, want 2", stored)
+	}
+	if rejected != 1 {
+		t.Errorf("rejected = %d, want 1", rejected)
+	}
+	// The rejected item must be back in the crate, not lost.
+	if crate.Len() != 1 {
+		t.Errorf("crate.Len() after partial drain = %d, want 1 (rejected item)", crate.Len())
+	}
+	// The wagon must hold exactly the two accepted items.
+	if got := len(wagon.Character.Items); got != 2 {
+		t.Errorf("wagon item count = %d, want 2", got)
+	}
+}
+
+// TestDrainCrateIntoWagon_AllAccepted is the happy-path mirror —
+// every item lands in the wagon, none returned to the crate.
+func TestDrainCrateIntoWagon_AllAccepted(t *testing.T) {
+	crate := sealedcrate.New(fernwayMeetingRoomId, 2000)
+	crate.Add(items.Item{ItemId: 40046})
+	crate.Add(items.Item{ItemId: 40049})
+
+	wagon := buildCaravanWagonMob(t, 7302, fernwayMeetingRoomId)
+
+	stored, rejected := drainCrateIntoWagon(crate, wagon)
+
+	if stored != 2 {
+		t.Errorf("stored = %d, want 2", stored)
+	}
+	if rejected != 0 {
+		t.Errorf("rejected = %d, want 0", rejected)
+	}
+	if crate.Len() != 0 {
+		t.Errorf("crate.Len() after full drain = %d, want 0", crate.Len())
+	}
+}
+
 // buildCaravanWagonMob creates a wagon mob instance (mobId 374) for tests.
 func buildCaravanWagonMob(t *testing.T, instanceId int, roomId int) *mobs.Mob {
 	t.Helper()
