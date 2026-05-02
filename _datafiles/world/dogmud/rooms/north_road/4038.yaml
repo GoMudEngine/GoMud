@@ -9,7 +9,9 @@ description: >
   back toward the hamlet. Wagon ruts cut deep grooves in the
   mud — heavier traffic than anything on the spur road. The
   air smells of turned earth and woodsmoke from a farmstead
-  somewhere downwind.
+  somewhere downwind. A heavy iron-banded <ansi
+  fg="itemname">crate</ansi> sits in the lee of the crossroads
+  marker, sealed with a caravan's burned-in mark.
 biome: farmland
 coord:
   x: -16
@@ -33,6 +35,11 @@ nouns:
     The heaviest traffic runs north-south. A few lighter tracks
     branch east toward Ashwick. Mixed in with the wheel marks are
     hoofprints — patrol horses, by the spacing.
+  crate: |
+    A heavy iron-banded oak shipping crate, its lid latched shut
+    and its flanks burned with a caravan's seal. Foragers from the
+    Fernway leave loads in it for the caravan to collect; the seal
+    opens only to the caravan's hand.
 idlemessages:
 - A cold gust funnels down the highway, carrying the smell of
   distant rain.

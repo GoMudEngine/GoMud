@@ -328,6 +328,12 @@ type Balance struct {
 	// vendors are saturated (MaxStock cap reached). Default 0.5.
 	ForagerRestCarryThreshold ConfigFloat `yaml:"ForagerRestCarryThreshold"`
 
+	// ForagerLockboxCapacity caps how many items a sanctuary lockbox
+	// can hold. When the box is full, the forager falls back to the
+	// Stage 3.4 rest-extension behavior until a player picks the box
+	// open and clears space.
+	ForagerLockboxCapacity ConfigInt `yaml:"ForagerLockboxCapacity"`
+
 	// ── ECONOMY HEALTH DASHBOARD ─────────────────────────────────────────────
 	EconomySnapshotIntervalHours ConfigInt   `yaml:"EconomySnapshotIntervalHours"` // Wall-clock cadence (default 1)
 	EconomySnapshotRetentionDays ConfigInt   `yaml:"EconomySnapshotRetentionDays"` // Auto-snapshot retention (default 30)

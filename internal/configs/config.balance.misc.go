@@ -279,7 +279,7 @@ func (b *Balance) validateMisc() {
 		b.CaravanServedZones = []string{"Stillwater", "Thornwall City"}
 	}
 	if b.CaravanDepotDwellRounds <= 0 {
-		b.CaravanDepotDwellRounds = 720
+		b.CaravanDepotDwellRounds = 360
 	}
 	if b.FernwayPickupDwellRounds <= 0 {
 		b.FernwayPickupDwellRounds = 6
@@ -303,6 +303,9 @@ func (b *Balance) validateMisc() {
 	}
 	if b.ForagerRestCarryThreshold <= 0 || b.ForagerRestCarryThreshold > 1.0 {
 		b.ForagerRestCarryThreshold = 0.5
+	}
+	if b.ForagerLockboxCapacity <= 0 {
+		b.ForagerLockboxCapacity = 500
 	}
 
 	// ── ECONOMY HEALTH DASHBOARD ─────────────────────────────────────────────

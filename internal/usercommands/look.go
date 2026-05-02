@@ -147,6 +147,13 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 	// fall through to container / noun / pet lookup branches below
 
+	if room.MatchesSealedCrate(strings.ToLower(lookAt)) {
+		user.SendText(`A heavy iron-banded shipping crate sits at the roadside, its lid` +
+			` latched shut and its sides marked with the caravan's burned-in seal.` +
+			` The wood is weather-stained and the latch is recently oiled.`)
+		return true, nil
+	}
+
 	containerName := room.FindContainerByName(lookAt)
 	if containerName != `` {
 		if container, exists := room.Containers[containerName]; exists && container.Hidden {

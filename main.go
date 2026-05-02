@@ -56,6 +56,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/economy/health"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -87,6 +88,17 @@ var (
 	// Start a pool of worker goroutines
 	wg sync.WaitGroup
 )
+
+// systemNPCAnchorRooms is the explicit list of rooms whose spawninfo
+// must fire at boot rather than on first player visit. These rooms
+// host long-running system NPCs (caravan master, foragers) whose
+// state machines must run continuously regardless of player presence.
+var systemNPCAnchorRooms = []int{
+	465,  // Thornwall depot — Ketil 357 (caravan master) + wagon 374 + Hob 375 + Bran 376
+	4123, // Stillwater Temple — Tova, Marsh forager 371
+	3040, // Ironwind Steppe sanctuary — Halix, Steppe forager 372
+	4197, // Forager's Camp, Fernway South — Kessa, Fernway forager 373
+}
 
 func main() {
 
@@ -1211,6 +1223,57 @@ func loadAllDataFiles(isReload bool) {
 	templates.LoadAliases(plugins.GetPluginRegistry())
 	keywords.LoadAliases(plugins.GetPluginRegistry())
 	mutators.LoadDataFiles()
+
+	// Force-spawn long-running system NPCs at boot. The shop prewarm
+	// above seeds shop cache entries from spawninfo but does NOT call
+	// room.Prepare(), so the actual mob instances would otherwise only
+	// be created when a player walks into the room. For caravan +
+	// forager NPCs anchored in low-traffic rooms, that means their
+	// state machines never start.
+	// NOTE: must come after mutators.LoadDataFiles() — Prepare() calls
+	// r.Mutators.Update() which dereferences mutator definitions.
+	preparedAnchors := 0
+	for _, roomId := range systemNPCAnchorRooms {
+		room := rooms.LoadRoom(roomId)
+		if room == nil {
+			mudlog.Warn("system anchor room not found", "roomId", roomId)
+			continue
+		}
+		room.Prepare(false)
+		preparedAnchors++
+	}
+	mudlog.Info("system NPC anchor rooms prepared", "count", preparedAnchors)
+
+	// Load sealed crates from disk and attach them to their rooms.
+	// The crates/ directory mirrors shops/ — one YAML per crate,
+	// named "<roomid>-<label>.yaml". Missing directory means no
+	// crates exist yet, which is fine.
+	crateDir := util.FilePath(configs.GetFilePathsConfig().DataFiles.String(), `/crates`)
+	if entries, err := os.ReadDir(crateDir); err == nil {
+		loadedCrates := 0
+		for _, e := range entries {
+			if e.IsDir() || !strings.HasSuffix(e.Name(), ".yaml") {
+				continue
+			}
+			path := util.FilePath(crateDir, `/`, e.Name())
+			c, err := sealedcrate.LoadFrom(path)
+			if err != nil {
+				mudlog.Warn("sealedcrate load", "path", path, "error", err)
+				continue
+			}
+			room := rooms.LoadRoom(c.RoomId())
+			if room == nil {
+				mudlog.Warn("sealedcrate room missing", "roomId", c.RoomId(), "path", path)
+				continue
+			}
+			room.AttachSealedCrate(c)
+			loadedCrates++
+		}
+		mudlog.Info("sealed crates loaded", "count", loadedCrates)
+	} else if !os.IsNotExist(err) {
+		mudlog.Warn("sealedcrate dir scan", "dir", crateDir, "error", err)
+	}
+
 	colorpatterns.LoadColorPatterns()
 	combat.LoadTauntMessageFiles()
 	audio.LoadAudioConfig()

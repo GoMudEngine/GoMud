@@ -653,7 +653,7 @@ func TestGetLockSequence(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := GetLockSequence(tt.lockIdentifier, tt.difficulty, tt.seed)
+			got := GetLockSequence(tt.lockIdentifier, tt.difficulty, tt.seed, 0)
 			if len(got) != tt.wantLength {
 				t.Errorf("GetLockSequence(%q, %d, %q) length = %d; want %d",
 					tt.lockIdentifier, tt.difficulty, tt.seed, len(got), tt.wantLength)
@@ -668,12 +668,40 @@ func TestGetLockSequence(t *testing.T) {
 
 	// Additional check: repeated calls with the same parameters should return the same sequence.
 	t.Run("DeterministicCheck", func(t *testing.T) {
-		first := GetLockSequence("Lock", 4, "Seed")
-		second := GetLockSequence("Lock", 4, "Seed")
+		first := GetLockSequence("Lock", 4, "Seed", 0)
+		second := GetLockSequence("Lock", 4, "Seed", 0)
 		if first != second {
 			t.Errorf("Expected repeated calls to match, but got %q != %q", first, second)
 		}
 	})
+}
+
+func TestGetLockSequence_RotationBackCompat(t *testing.T) {
+	// Rotation 0 must produce the same sequence the function used to,
+	// so existing keyring entries stay valid for non-rotating locks.
+	base := GetLockSequence("Lock", 4, "Seed", 0)
+	if len(base) != 4 {
+		t.Fatalf("base length = %d, want 4", len(base))
+	}
+	for _, c := range base {
+		if c != 'U' && c != 'D' {
+			t.Fatalf("base contains non-U/D char %q", c)
+		}
+	}
+}
+
+func TestGetLockSequence_RotationChangesOutput(t *testing.T) {
+	base := GetLockSequence("Lock", 8, "Seed", 0)
+	rotated := GetLockSequence("Lock", 8, "Seed", 1)
+	if base == rotated {
+		t.Fatalf("rotation 1 produced the same sequence as rotation 0 (%q); rotation must change output", base)
+	}
+
+	// Different rotation values produce different sequences.
+	r2 := GetLockSequence("Lock", 8, "Seed", 2)
+	if rotated == r2 {
+		t.Fatalf("rotation 1 and rotation 2 produced the same sequence (%q); rotation must change output", rotated)
+	}
 }
 
 // TestCompressDecompress round-trips data through gzip.
