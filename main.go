@@ -56,6 +56,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/economy/health"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -1242,6 +1243,36 @@ func loadAllDataFiles(isReload bool) {
 		preparedAnchors++
 	}
 	mudlog.Info("system NPC anchor rooms prepared", "count", preparedAnchors)
+
+	// Load sealed crates from disk and attach them to their rooms.
+	// The crates/ directory mirrors shops/ — one YAML per crate,
+	// named "<roomid>-<label>.yaml". Missing directory means no
+	// crates exist yet, which is fine.
+	crateDir := util.FilePath(configs.GetFilePathsConfig().DataFiles.String(), `/world/dogmud/crates`)
+	if entries, err := os.ReadDir(crateDir); err == nil {
+		loadedCrates := 0
+		for _, e := range entries {
+			if e.IsDir() || !strings.HasSuffix(e.Name(), ".yaml") {
+				continue
+			}
+			path := util.FilePath(crateDir, `/`, e.Name())
+			c, err := sealedcrate.LoadFrom(path)
+			if err != nil {
+				mudlog.Warn("sealedcrate load", "path", path, "error", err)
+				continue
+			}
+			room := rooms.LoadRoom(c.RoomId())
+			if room == nil {
+				mudlog.Warn("sealedcrate room missing", "roomId", c.RoomId(), "path", path)
+				continue
+			}
+			room.AttachSealedCrate(c)
+			loadedCrates++
+		}
+		mudlog.Info("sealed crates loaded", "count", loadedCrates)
+	} else if !os.IsNotExist(err) {
+		mudlog.Warn("sealedcrate dir scan", "dir", crateDir, "error", err)
+	}
 
 	colorpatterns.LoadColorPatterns()
 	combat.LoadTauntMessageFiles()

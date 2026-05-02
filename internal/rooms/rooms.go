@@ -17,6 +17,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutators"
+	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -100,6 +101,7 @@ type Room struct {
 	Mutators          mutators.MutatorList              `yaml:"mutators,omitempty"`                  // mutators this room spawns with.
 	Pvp               bool                              `yaml:"pvp,omitempty" instance:"skip"`       // if config pvp is set to `limited`, uses this value
 	Station           string                            `yaml:"station,omitempty" instance:"skip"`   // Crafting station type present in this room (Stage 13.1)
+	SealedCrate       *sealedcrate.Crate                `yaml:"-"`                                   // Player-untouchable delivery crate; populated at boot from _datafiles/world/dogmud/crates/<roomid>-*.yaml. Nil for rooms with no crate.
 	// Unexported/private
 	players       []int                          // list of user IDs currently in the room
 	mobs          []int                          // list of mob instance IDs currently in the room. Does not get saved.
@@ -2422,4 +2424,10 @@ func (r *Room) CanPvp(attUser *users.UserRecord, defUser *users.UserRecord) erro
 	}
 
 	return nil
+}
+
+// AttachSealedCrate binds a sealed crate to this room. Used by the
+// boot loader; subsequent reads come via Room.SealedCrate.
+func (r *Room) AttachSealedCrate(c *sealedcrate.Crate) {
+	r.SealedCrate = c
 }
