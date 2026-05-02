@@ -16,7 +16,9 @@ description: >
   narrow plank <ansi fg="itemname">stair</ansi> climbs the
   southern wall to a small upper room. A side door north
   leads into the healer's alcove; a door south opens onto
-  the herb garden behind.
+  the herb garden behind. A worn iron-banded
+  <ansi fg="itemname">lockbox</ansi> sits half-hidden
+  behind one of the altar's flanking columns.
 biome: city
 mapsymbol: '+'
 maplegend: Temple
@@ -80,6 +82,12 @@ nouns:
     for as long as anyone remembers, and that the
     present building sits where it does because the
     spring sat there first.
+  lockbox: A sturdy iron-banded oak lockbox tucked
+    behind one of the altar's flanking columns —
+    Tova the marsh forager's, by some long-standing
+    arrangement with the temple. The lid latches
+    flush, the hasp worn smooth from years of
+    careful keying.
 idlemessages:
 - The font's overflow runs in its steady soft sheet, the same sound it has always made.
 - A candle on the altar gutters once and recovers.
@@ -90,3 +98,10 @@ spawninfo:
 - mobid: 344
   cooldown: 600 rounds
 - mobid: 371        # Tova, Marsh Forager (Stage 3.1)
+containers:
+  lockbox:
+    lock:
+      difficulty: 10
+      relockinterval: 24 hours
+      rotationseed: 1
+    items: []
