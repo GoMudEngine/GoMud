@@ -385,15 +385,24 @@ func dumpSatchelToLockbox(mob *mobs.Mob, ctx *EvalContext) bool {
 		cap = 500
 	}
 	dumped := false
+	stalledFull := false
 	// Walk satchel in reverse so index shifts from RemoveItem stay valid.
 	for i := len(mob.Character.Items) - 1; i >= 0; i-- {
 		if len(box.Items) >= int(cap) {
+			stalledFull = true
 			break
 		}
 		item := mob.Character.Items[i]
 		mob.Character.RemoveItem(item)
 		box.AddItem(item)
 		dumped = true
+	}
+	if stalledFull {
+		// Surface so ops can diagnose foragers stuck in rest-extension.
+		// The carry-ratio backstop in tickForagerResting will park the
+		// forager until a player picks the lockbox open.
+		mudlog.Debug("forager.dumpSatchelToLockbox: lockbox full",
+			"roomId", ctx.RoomId, "capacity", cap, "satchelRemaining", len(mob.Character.Items))
 	}
 	if dumped {
 		box.Lock.SetLocked() // bumps RotationSeed
