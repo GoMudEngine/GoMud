@@ -450,6 +450,11 @@ func GetLockSequence(lockIdentifier string, difficulty int, seed string, rotatio
 
 	// Generate the hash. Rotation 0 keeps the original input, so
 	// existing locks keep their existing sequence.
+	//
+	// Invariant: lockIdentifier must not contain ':'. Current IDs
+	// are "<roomId>-<containerOrExitName>" (e.g. "4038-lockbox");
+	// names come from YAML keys which use [a-z0-9_-]. The ':'
+	// delimiter for rotation is collision-safe under that invariant.
 	hashInput := strings.ToLower(lockIdentifier + seed)
 	if rotation > 0 {
 		hashInput = hashInput + ":" + strconv.FormatUint(rotation, 10)
