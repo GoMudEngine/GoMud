@@ -49,31 +49,34 @@ func TestCrate_RoomIdAndCapacity(t *testing.T) {
 }
 
 func TestCrate_SnapshotIsIndependent(t *testing.T) {
+	// Use literal items.Item with ItemId set directly — the standalone
+	// sealedcrate test binary doesn't load item-spec data files, so
+	// items.New(id) would return a zero-valued struct.
 	c := New(4038, 100)
-	c.Add(items.New(40021))
-	c.Add(items.New(40028))
+	c.Add(items.Item{ItemId: 40021})
+	c.Add(items.Item{ItemId: 40028})
 
 	snap := c.Snapshot()
 	if len(snap) != 2 {
 		t.Fatalf("Snapshot len = %d, want 2", len(snap))
 	}
 	// Mutating the returned slice must not affect the crate.
-	snap[0] = items.Item{}
+	snap[0] = items.Item{ItemId: 9999}
 	if c.Len() != 2 {
 		t.Errorf("crate Len after snap mutation = %d, want 2", c.Len())
 	}
 	if c.Snapshot()[0].ItemId != 40021 {
-		t.Errorf("crate item 0 was mutated via snap")
+		t.Errorf("crate item 0 was mutated via snap (got ItemId %d, want 40021)", c.Snapshot()[0].ItemId)
 	}
 }
 
 func TestCrate_SetItemsForLoad(t *testing.T) {
 	c := New(4038, 100)
-	c.Add(items.New(40021)) // pre-load state, will be replaced
+	c.Add(items.Item{ItemId: 40021}) // pre-load state, will be replaced
 	c.SetItemsForLoad([]items.Item{
-		items.New(40050),
-		items.New(40051),
-		items.New(40053),
+		{ItemId: 40050},
+		{ItemId: 40051},
+		{ItemId: 40053},
 	})
 	if c.Len() != 3 {
 		t.Errorf("Len after SetItemsForLoad = %d, want 3", c.Len())
