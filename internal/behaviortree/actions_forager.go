@@ -78,7 +78,7 @@ func actForagerStep(params map[string]any, ctx *EvalContext) Result {
 	case forager.StateTravelingToDropoff:
 		return tickForagerTravelingToDropoff(profile, mob, ctx)
 	case forager.StateDelivering:
-		return tickForagerDelivering(profile, mob, ctx, cfg)
+		return tickForagerDelivering(profile, mob, ctx)
 	case forager.StateRecalling:
 		return tickForagerRecalling(profile, mob, ctx)
 	}
@@ -255,9 +255,7 @@ func tickForagerDelivering(
 	p *forager.ForagerProfile,
 	mob *mobs.Mob,
 	ctx *EvalContext,
-	cfg configs.Balance,
 ) Result {
-	_ = cfg // dispatch-only; town path doesn't need it post-3.4 wait removal
 	if p.Kind == forager.KindFernway {
 		return tickForagerDeliveringFernway(p, mob, ctx)
 	}
