@@ -39,6 +39,7 @@ func TestBalanceConfig_ForagerDefaults(t *testing.T) {
 		{"ForagerHealPotionThresholdPct", cfg.ForagerHealPotionThresholdPct, ConfigFloat(0.75)},
 		{"ForagerWaitTimeoutRounds", cfg.ForagerWaitTimeoutRounds, ConfigInt(150)},
 		{"ForagerRestCarryThreshold", cfg.ForagerRestCarryThreshold, ConfigFloat(0.5)},
+		{"ForagerLockboxCapacity", cfg.ForagerLockboxCapacity, ConfigInt(500)},
 	}
 	for _, c := range cases {
 		if c.got != c.want {

@@ -147,13 +147,15 @@ func tickForagerResting(
 	started, _ := strconv.ParseUint(startedStr, 10, 64)
 	dwellElapsed := util.GetRoundCount() >= started+restingDuration
 	if dwellElapsed && mob.Character.Health >= mob.Character.HealthMax.Value {
-		// Stage 3.4: stay home if satchel is still over rest threshold.
-		// Vendors didn't absorb much last cycle; foraging more would just
-		// overflow back to satchel. Narratively: the forager sits at the
-		// sanctuary looking content — the merchants don't need more right now.
+		// 2026-05-02: Stage 3.4 carry-ratio gate retained as a
+		// BACKSTOP. The primary deadlock-avoidance mechanism is now
+		// dumpSatchelToLockbox in tickForagerRecalling, which empties
+		// the satchel on arrival. The carry-ratio check is only
+		// reached when the lockbox itself was full and surplus
+		// stayed in the satchel — in that case, continue resting
+		// until the player picks the lockbox open and frees space.
 		restThreshold := float64(configs.GetBalanceConfig().ForagerRestCarryThreshold)
 		if carryRatio(mob) > restThreshold {
-			// Continue resting — let legacy idle fire flavor emotes.
 			return Failure
 		}
 		transitionForager(ctx.MobState, forager.StateTravelingToTerritory)
@@ -305,14 +307,19 @@ func tickForagerRecalling(
 	ctx *EvalContext,
 ) Result {
 	if ctx.RoomId == p.SanctuaryRoom {
+		// Dump remaining satchel into the sanctuary lockbox before
+		// resting. Surplus accumulates in the lockbox where players
+		// can pick to retrieve it; the cycle resumes immediately
+		// regardless of vendor saturation.
+		dumpSatchelToLockbox(mob, ctx)
 		transitionForager(ctx.MobState, forager.StateResting)
 		return Success
 	}
-	// Don't re-issue the cast every idle tick — re-issuing while a cast
-	// is in progress can reset its progress and trap the forager mid-cast
-	// indefinitely (observed 2026-04-30: Kessa "begins weaving a spell"
-	// repeatedly but never actually teleports). Wait for the active cast
-	// to resolve.
+	// Don't re-issue the cast every idle tick — re-issuing while a
+	// cast is in progress can reset its progress and trap the forager
+	// mid-cast indefinitely (observed 2026-04-30: Kessa "begins
+	// weaving a spell" repeatedly but never actually teleports).
+	// Wait for the active cast to resolve.
 	if mob.Character.IsCasting() {
 		return Success
 	}
@@ -354,6 +361,46 @@ func npcAttemptForage(
 		`<ansi fg="mobname">%s</ansi> stoops over a patch of growth`+
 			` and tucks something into a satchel.`,
 		p.Name))
+}
+
+// dumpSatchelToLockbox transfers every item in the forager's satchel
+// into the room's "lockbox" container, then bumps the lockbox lock's
+// RotationSeed so existing player keyring entries become invalid.
+// If the room has no lockbox container or the lockbox is full
+// (>= ForagerLockboxCapacity), items remain in the satchel and the
+// caller falls back to the legacy rest-extension behavior.
+//
+// Returns true if any items were dumped.
+func dumpSatchelToLockbox(mob *mobs.Mob, ctx *EvalContext) bool {
+	room := rooms.LoadRoom(ctx.RoomId)
+	if room == nil {
+		return false
+	}
+	box, ok := room.Containers["lockbox"]
+	if !ok {
+		return false
+	}
+	cap := configs.GetBalanceConfig().ForagerLockboxCapacity
+	if cap <= 0 {
+		cap = 500
+	}
+	dumped := false
+	// Walk satchel in reverse so index shifts from RemoveItem stay valid.
+	for i := len(mob.Character.Items) - 1; i >= 0; i-- {
+		if len(box.Items) >= int(cap) {
+			break
+		}
+		item := mob.Character.Items[i]
+		mob.Character.RemoveItem(item)
+		box.AddItem(item)
+		dumped = true
+	}
+	if dumped {
+		box.Lock.SetLocked() // bumps RotationSeed
+		room.Containers["lockbox"] = box
+		room.SendText(`<ansi fg="yellow">A latch clicks shut from somewhere in the sanctuary.</ansi>`)
+	}
+	return dumped
 }
 
 // npcVisitVendorsInRoom (Stage 3.4): physically transfers items from the

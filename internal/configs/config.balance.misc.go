@@ -304,6 +304,9 @@ func (b *Balance) validateMisc() {
 	if b.ForagerRestCarryThreshold <= 0 || b.ForagerRestCarryThreshold > 1.0 {
 		b.ForagerRestCarryThreshold = 0.5
 	}
+	if b.ForagerLockboxCapacity <= 0 {
+		b.ForagerLockboxCapacity = 500
+	}
 
 	// ── ECONOMY HEALTH DASHBOARD ─────────────────────────────────────────────
 	if b.EconomySnapshotIntervalHours <= 0 {

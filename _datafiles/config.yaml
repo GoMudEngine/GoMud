@@ -895,6 +895,10 @@ Balance:
   # forage. Prevents futile forage loops when local vendors are saturated.
   ForagerRestCarryThreshold: 0.5
 
+  # Sanctuary lockbox capacity (per forager). When full, the forager
+  # falls back to rest-extension behavior until a player clears space.
+  ForagerLockboxCapacity: 500
+
   # ── ECONOMY HEALTH DASHBOARD ────────────────────────────────────────────────
   # Wall-clock cadence for auto-snapshots (hours). Default 1.
   EconomySnapshotIntervalHours: 1
