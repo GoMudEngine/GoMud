@@ -47,3 +47,39 @@ func TestCrate_RoomIdAndCapacity(t *testing.T) {
 		t.Errorf("Capacity = %d, want 2000", c.Capacity())
 	}
 }
+
+func TestCrate_SnapshotIsIndependent(t *testing.T) {
+	c := New(4038, 100)
+	c.Add(items.New(40021))
+	c.Add(items.New(40028))
+
+	snap := c.Snapshot()
+	if len(snap) != 2 {
+		t.Fatalf("Snapshot len = %d, want 2", len(snap))
+	}
+	// Mutating the returned slice must not affect the crate.
+	snap[0] = items.Item{}
+	if c.Len() != 2 {
+		t.Errorf("crate Len after snap mutation = %d, want 2", c.Len())
+	}
+	if c.Snapshot()[0].ItemId != 40021 {
+		t.Errorf("crate item 0 was mutated via snap")
+	}
+}
+
+func TestCrate_SetItemsForLoad(t *testing.T) {
+	c := New(4038, 100)
+	c.Add(items.New(40021)) // pre-load state, will be replaced
+	c.SetItemsForLoad([]items.Item{
+		items.New(40050),
+		items.New(40051),
+		items.New(40053),
+	})
+	if c.Len() != 3 {
+		t.Errorf("Len after SetItemsForLoad = %d, want 3", c.Len())
+	}
+	drained := c.DrainAll()
+	if len(drained) != 3 || drained[0].ItemId != 40050 {
+		t.Errorf("DrainAll after SetItemsForLoad mismatch: %+v", drained)
+	}
+}
