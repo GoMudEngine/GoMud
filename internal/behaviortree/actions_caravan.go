@@ -204,15 +204,33 @@ func tickFernwayPickup(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext
 			wagon := findCaravanWagon(ctx.InstanceId)
 			if wagon != nil {
 				drained := r.SealedCrate.DrainAll()
+				stored := 0
 				for _, it := range drained {
-					wagon.Character.StoreItem(it)
+					// StoreItem returns false when the wagon is over
+					// carry capacity. Put rejected items back so they
+					// stay safe in the crate for the next pickup
+					// rather than silently vanishing.
+					if wagon.Character.StoreItem(it) {
+						stored++
+					} else {
+						r.SealedCrate.Add(it)
+					}
 				}
-				if len(drained) > 0 {
+				if stored > 0 || (len(drained) > 0 && stored < len(drained)) {
 					persistCrate(ctx.RoomId, r.SealedCrate)
+				}
+				if stored > 0 {
 					r.SendText(fmt.Sprintf(
 						`<ansi fg="yellow">The caravan pulls up to the roadside crate, breaks the seal,`+
 							` and loads its contents into the wagon — %d %s in all.</ansi>`,
-						len(drained), caravanPluralize("crate-load", len(drained))))
+						stored, caravanPluralize("crate-load", stored)))
+				}
+				if stored < len(drained) {
+					mudlog.Warn("caravan.tickFernwayPickup: wagon refused some items",
+						"roomId", ctx.RoomId,
+						"drained", len(drained),
+						"stored", stored,
+						"returnedToCrate", len(drained)-stored)
 				}
 			}
 		}
