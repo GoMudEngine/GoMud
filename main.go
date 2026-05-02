@@ -88,6 +88,17 @@ var (
 	wg sync.WaitGroup
 )
 
+// systemNPCAnchorRooms is the explicit list of rooms whose spawninfo
+// must fire at boot rather than on first player visit. These rooms
+// host long-running system NPCs (caravan master, foragers) whose
+// state machines must run continuously regardless of player presence.
+var systemNPCAnchorRooms = []int{
+	4042, // North Road Crossroads Village Square — caravan master 281
+	4123, // Stillwater Temple — Tova, Marsh forager 371
+	3040, // Ironwind Steppe sanctuary — Halix, Steppe forager 372
+	4197, // Forager's Camp, Fernway South — Kessa, Fernway forager 373
+}
+
 func main() {
 
 	serverStartTime := time.Now()
@@ -1211,6 +1222,27 @@ func loadAllDataFiles(isReload bool) {
 	templates.LoadAliases(plugins.GetPluginRegistry())
 	keywords.LoadAliases(plugins.GetPluginRegistry())
 	mutators.LoadDataFiles()
+
+	// Force-spawn long-running system NPCs at boot. The shop prewarm
+	// above seeds shop cache entries from spawninfo but does NOT call
+	// room.Prepare(), so the actual mob instances would otherwise only
+	// be created when a player walks into the room. For caravan +
+	// forager NPCs anchored in low-traffic rooms, that means their
+	// state machines never start.
+	// NOTE: must come after mutators.LoadDataFiles() — Prepare() calls
+	// r.Mutators.Update() which dereferences mutator definitions.
+	preparedAnchors := 0
+	for _, roomId := range systemNPCAnchorRooms {
+		room := rooms.LoadRoom(roomId)
+		if room == nil {
+			mudlog.Warn("system anchor room not found", "roomId", roomId)
+			continue
+		}
+		room.Prepare(false)
+		preparedAnchors++
+	}
+	mudlog.Info("system NPC anchor rooms prepared", "count", preparedAnchors)
+
 	colorpatterns.LoadColorPatterns()
 	combat.LoadTauntMessageFiles()
 	audio.LoadAudioConfig()
