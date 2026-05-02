@@ -1248,7 +1248,7 @@ func loadAllDataFiles(isReload bool) {
 	// The crates/ directory mirrors shops/ — one YAML per crate,
 	// named "<roomid>-<label>.yaml". Missing directory means no
 	// crates exist yet, which is fine.
-	crateDir := util.FilePath(configs.GetFilePathsConfig().DataFiles.String(), `/world/dogmud/crates`)
+	crateDir := util.FilePath(configs.GetFilePathsConfig().DataFiles.String(), `/crates`)
 	if entries, err := os.ReadDir(crateDir); err == nil {
 		loadedCrates := 0
 		for _, e := range entries {
