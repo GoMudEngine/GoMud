@@ -91,7 +91,7 @@ func (c *Character) FindKeyInBackpack(lockId string) (items.Item, bool) {
 
 func (c *Character) HasKey(lockId string, difficulty int) (hasKey bool, hasSequence bool) {
 
-	sequence := util.GetLockSequence(lockId, difficulty, string(configs.GetServerConfig().Seed))
+	sequence := util.GetLockSequence(lockId, difficulty, string(configs.GetServerConfig().Seed), 0)
 
 	// Check whether they ahve a key for this lock
 	return c.GetKey(`key-`+lockId) != ``, c.GetKey(lockId) == sequence

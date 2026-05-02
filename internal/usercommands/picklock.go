@@ -45,6 +45,7 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 	lockId := ``
 	lockStrength := 0
 	lockTrap := []int{}
+	lockRotation := uint64(0)
 
 	containerName := room.FindContainerByName(args[0])
 	if containerName != `` {
@@ -73,6 +74,7 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 		args = args[1:]
 		lockStrength = int(container.Lock.Difficulty)
 		lockTrap = container.Lock.TrapBuffIds
+		lockRotation = container.Lock.RotationSeed
 		lockId = fmt.Sprintf(`%d-%s`, room.RoomId, containerName)
 
 	} else if exitName != `` {
@@ -94,6 +96,7 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 		lockStrength = int(exitInfo.Lock.Difficulty)
 		lockTrap = exitInfo.Lock.TrapBuffIds
+		lockRotation = exitInfo.Lock.RotationSeed
 		lockId = fmt.Sprintf(`%d-%s`, room.RoomId, exitName)
 
 	} else {
@@ -107,7 +110,7 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 	//
 	keyring_sequence := user.Character.GetKey(lockId)
 
-	sequence := util.GetLockSequence(lockId, lockStrength, string(configs.GetServerConfig().Seed))
+	sequence := util.GetLockSequence(lockId, lockStrength, string(configs.GetServerConfig().Seed), lockRotation)
 
 	// Calculate any presolve from buffs, gear, pet perks, etc.
 	if len(keyring_sequence) == 0 {
