@@ -5,12 +5,14 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/gamelock"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -352,5 +354,78 @@ func TestTickForagerRecalling_DumpsSurplusIntoLockbox(t *testing.T) {
 		t.Errorf("forager_state = %q, want %q",
 			state.GetString(keyForagerState),
 			forager.StateResting.Name())
+	}
+}
+
+// TestTickForagerDeliveringFernway_DumpsIntoSealedCrate verifies that Kessa
+// (mob 373) dumps all fernway-bucket items from her satchel into the room's
+// SealedCrate when she arrives at the meeting room, and immediately
+// transitions to Recalling — no 150-round wait timer.
+func TestTickForagerDeliveringFernway_DumpsIntoSealedCrate(t *testing.T) {
+	const meetingRoom = 4038
+
+	// Build a synthetic room with an attached sealed crate.
+	crate := sealedcrate.New(meetingRoom, 2000)
+	testRoom := &rooms.Room{
+		RoomId: meetingRoom,
+		Zone:   "North Road",
+		Exits:  map[string]exit.RoomExit{},
+	}
+	testRoom.AttachSealedCrate(crate)
+
+	cleanRooms := rooms.SeedRoomsForTest(
+		map[int]*rooms.Room{meetingRoom: testRoom},
+		map[string]*rooms.ZoneConfig{},
+	)
+	defer cleanRooms()
+
+	// Mob 373 = Kessa (Fernway forager). Meeting room = 4038.
+	mob := buildForagerMob(t, 8220, 373, meetingRoom, 100, 100)
+
+	// Stash fernway-bucket items directly in the satchel. Use item
+	// literals because standalone tests don't load spec data files.
+	// 40046 = moonpetal, 40049 = ironbark shaving — both in "fernway"
+	// bucket per internal/economy/buckets.go.
+	mob.Character.Items = append(mob.Character.Items,
+		items.Item{ItemId: 40046},
+		items.Item{ItemId: 40049},
+	)
+
+	p := forager.ProfileFor(373)
+	if p == nil {
+		t.Fatal("no forager profile for mob 373")
+	}
+
+	state := NewBehaviorState()
+	state.Set(keyForagerState, forager.StateDelivering.Name())
+
+	ctx := &EvalContext{
+		InstanceId: 8220,
+		RoomId:     meetingRoom,
+		MobState:   state,
+	}
+
+	cfg := configs.GetBalanceConfig()
+	res := tickForagerDeliveringFernway(p, mob, ctx, cfg)
+	if res != Success {
+		t.Fatalf("tickForagerDeliveringFernway = %v, want Success", res)
+	}
+
+	// All fernway-bucket items should have been dumped into the crate.
+	if crate.Len() != 2 {
+		t.Errorf("crate.Len() after dump = %d, want 2", crate.Len())
+	}
+
+	// Satchel should be empty.
+	if len(mob.Character.Items) != 0 {
+		t.Errorf("satchel after dump = %d items, want 0",
+			len(mob.Character.Items))
+	}
+
+	// State must have transitioned to Recalling — no wait timer.
+	if state.GetString(keyForagerState) != forager.StateRecalling.Name() {
+		t.Errorf("forager_state = %q, want %q",
+			state.GetString(keyForagerState),
+			forager.StateRecalling.Name())
 	}
 }

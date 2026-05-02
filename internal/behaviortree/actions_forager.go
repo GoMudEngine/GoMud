@@ -24,6 +24,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -292,13 +293,63 @@ func tickForagerDeliveringFernway(
 		mob.Command(fmt.Sprintf("pathto %d", p.MeetingRoom))
 		return Success
 	}
-	waitT := getIntFromState(ctx.MobState, keyWaitTimer) + 1
-	ctx.MobState.Set(keyWaitTimer, strconv.Itoa(waitT))
-	if waitT >= int(cfg.ForagerWaitTimeoutRounds) {
-		transitionForager(ctx.MobState, forager.StateRecalling)
-		return Success
+	// Arrived at meeting room. Dump fernway-bucket items into the
+	// sealed crate — Kessa drops the load and turns for home, no
+	// wait for the caravan to coincide.
+	room := rooms.LoadRoom(ctx.RoomId)
+	if dumped := dumpFernwayLoadIntoCrate(p, mob, room); dumped > 0 {
+		persistCrate(ctx.RoomId, room.SealedCrate)
+		room.SendText(fmt.Sprintf(
+			`<ansi fg="mobname">%s</ansi> hauls a satchel up to the crate, latches it shut, and turns for home.`,
+			p.Name))
 	}
+	// Always advance to Recalling — no more 150-round wait timer.
+	transitionForager(ctx.MobState, forager.StateRecalling)
 	return Success
+}
+
+// dumpFernwayLoadIntoCrate transfers fernway-bucket items from the
+// forager's satchel into the room's sealed crate (in-memory only —
+// persistence is the caller's responsibility). Returns the number
+// of items dumped. Returns 0 if the room has no SealedCrate or the
+// crate is full before any items match.
+func dumpFernwayLoadIntoCrate(
+	p *forager.ForagerProfile,
+	mob *mobs.Mob,
+	room *rooms.Room,
+) int {
+	if room == nil || room.SealedCrate == nil {
+		return 0
+	}
+	crate := room.SealedCrate
+	dumped := 0
+	for i := len(mob.Character.Items) - 1; i >= 0; i-- {
+		item := mob.Character.Items[i]
+		bucket := economy.BucketFor(item.ItemId)
+		if !slices.Contains(p.Buckets, bucket) {
+			continue
+		}
+		if !crate.Add(item) {
+			break // crate full
+		}
+		mob.Character.RemoveItem(item)
+		dumped++
+	}
+	return dumped
+}
+
+// persistCrate writes the crate's current state to its YAML file at
+// <DataFiles>/crates/<roomid>-fernway_shipment.yaml.
+// Errors are logged but not surfaced — persistence is best-effort
+// crash-safety, not a correctness requirement.
+func persistCrate(roomId int, c *sealedcrate.Crate) {
+	path := util.FilePath(
+		configs.GetConfig().FilePaths.DataFiles.String(),
+		fmt.Sprintf("/crates/%d-fernway_shipment.yaml", roomId),
+	)
+	if err := sealedcrate.SaveTo(path, c); err != nil {
+		mudlog.Error("forager.persistCrate", "roomId", roomId, "error", err)
+	}
 }
 
 func tickForagerRecalling(
