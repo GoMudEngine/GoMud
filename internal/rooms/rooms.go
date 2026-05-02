@@ -2431,3 +2431,14 @@ func (r *Room) CanPvp(attUser *users.UserRecord, defUser *users.UserRecord) erro
 func (r *Room) AttachSealedCrate(c *sealedcrate.Crate) {
 	r.SealedCrate = c
 }
+
+// MatchesSealedCrate returns true if the given user-typed noun
+// matches the room's sealed crate (if any). Used by player command
+// shims to short-circuit interaction.
+func (r *Room) MatchesSealedCrate(noun string) bool {
+	if r.SealedCrate == nil {
+		return false
+	}
+	n := strings.ToLower(noun)
+	return n == "crate" || n == "shipping crate" || n == "sealed crate"
+}

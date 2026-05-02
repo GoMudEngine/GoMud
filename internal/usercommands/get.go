@@ -28,6 +28,12 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		return true, nil
 	}
 
+	// Sealed crate short-circuit — players can't `get` from it.
+	if len(args) > 0 && room.MatchesSealedCrate(strings.ToLower(args[len(args)-1])) {
+		user.SendText(`The shipping crate is sealed and bound for the caravan; you can't get into it.`)
+		return true, nil
+	}
+
 	if args[0] == "all" {
 
 		// get all bag/case/pouch — move everything from component bag to backpack

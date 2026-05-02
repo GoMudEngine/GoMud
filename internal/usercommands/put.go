@@ -30,6 +30,11 @@ func Put(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		}
 		nameSearch = args[i] + nameSearch
 
+		if room.MatchesSealedCrate(nameSearch) {
+			user.SendText(`The shipping crate is sealed; the caravan only lets through what they put in themselves.`)
+			return true, nil
+		}
+
 		containerName = room.FindContainerByName(nameSearch)
 		if containerName != `` {
 			if c, exists := room.Containers[containerName]; exists && c.Hidden {
