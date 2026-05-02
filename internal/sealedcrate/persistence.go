@@ -41,7 +41,9 @@ func SaveTo(path string, c *Crate) error {
 func LoadFrom(path string) (*Crate, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, err
+		// %w preserves the chain so callers can still use
+		// errors.Is(err, os.ErrNotExist).
+		return nil, fmt.Errorf("sealedcrate.LoadFrom: read: %w", err)
 	}
 	var payload cratePayload
 	if err := yaml.Unmarshal(data, &payload); err != nil {

@@ -1,6 +1,7 @@
 package sealedcrate
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"testing"
@@ -38,7 +39,11 @@ func TestLoadMissingFileReturnsError(t *testing.T) {
 	tmp := t.TempDir()
 	_, err := LoadFrom(filepath.Join(tmp, "does-not-exist.yaml"))
 	if err == nil {
-		t.Errorf("expected error for missing file, got nil")
+		t.Fatalf("expected error for missing file, got nil")
 	}
-	_ = os.Stat // keep import; harmless
+	// Wrap chain must preserve os.ErrNotExist so callers can detect
+	// "no such file" via errors.Is.
+	if !errors.Is(err, os.ErrNotExist) {
+		t.Errorf("expected wrapped os.ErrNotExist, got %v", err)
+	}
 }
