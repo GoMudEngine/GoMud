@@ -94,7 +94,7 @@ var (
 // host long-running system NPCs (caravan master, foragers) whose
 // state machines must run continuously regardless of player presence.
 var systemNPCAnchorRooms = []int{
-	4042, // North Road Crossroads Village Square — caravan master 281
+	465,  // Thornwall depot — Ketil 357 (caravan master) + wagon 374 + Hob 375 + Bran 376
 	4123, // Stillwater Temple — Tova, Marsh forager 371
 	3040, // Ironwind Steppe sanctuary — Halix, Steppe forager 372
 	4197, // Forager's Camp, Fernway South — Kessa, Fernway forager 373
