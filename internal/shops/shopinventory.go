@@ -38,6 +38,23 @@ func IsValidCraftSupport(v string) bool {
 	return slices.Contains(ValidCraftSupports, v)
 }
 
+// ValidVendorCategories is the canonical set of values that may appear in
+// ItemSpec.VendorCategories. Mirrors ValidCraftSupports MINUS "general"
+// — items belong to discipline(s); general stores accept everything.
+var ValidVendorCategories = []string{
+	CraftSupportBlacksmithing,
+	CraftSupportAlchemy,
+	CraftSupportTailoring,
+	CraftSupportCooking,
+	CraftSupportJewelcrafting,
+	CraftSupportEnchanting,
+}
+
+// IsValidVendorCategory reports whether v is one of ValidVendorCategories.
+func IsValidVendorCategory(v string) bool {
+	return slices.Contains(ValidVendorCategories, v)
+}
+
 // StockEntry represents one item type in a shop's inventory.
 type StockEntry struct {
 	ItemId     int `yaml:"item_id"`

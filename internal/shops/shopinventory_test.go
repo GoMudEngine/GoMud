@@ -179,3 +179,25 @@ func TestRestockBuckets_RespectsMaxStockCap(t *testing.T) {
 	si.RestockBuckets([]string{"stillwater"})
 	assert.Equal(t, 5, si.Stock[0].Current, "expected capped at MaxStock=5")
 }
+
+func TestIsValidVendorCategory(t *testing.T) {
+	tests := []struct {
+		in   string
+		want bool
+	}{
+		{"alchemy", true},
+		{"blacksmithing", true},
+		{"jewelcrafting", true},
+		{"tailoring", true},
+		{"cooking", true},
+		{"enchanting", true},
+		{"general", false}, // general is a vendor type, not an item tag
+		{"", false},
+		{"unknown", false},
+	}
+	for _, tt := range tests {
+		if got := IsValidVendorCategory(tt.in); got != tt.want {
+			t.Errorf("IsValidVendorCategory(%q) = %v, want %v", tt.in, got, tt.want)
+		}
+	}
+}
