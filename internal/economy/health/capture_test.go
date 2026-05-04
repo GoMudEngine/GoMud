@@ -227,6 +227,70 @@ func TestCaptureSnapshot_Foragers(t *testing.T) {
 	}
 }
 
+// TestLookupShopMobName_FallsBackToTemplate verifies that when a shop's
+// NPC isn't currently spawned as a live instance, the Name field in the
+// ShopSnapshot falls back to the mob template (which is always loaded at
+// boot) and returns the shopkeeper's name. This prevents the dashboard
+// from rendering "#<mobId>" when a merchant is offline.
+func TestLookupShopMobName_FallsBackToTemplate(t *testing.T) {
+	shops.ClearCache()
+	t.Cleanup(shops.ClearCache)
+
+	// Seed a test mob template (mobId 999) with a known name.
+	// No live instance is spawned, so lookupShopMobName must fall back.
+	testMobId := 999
+	testMobName := "Test Merchant"
+	testRoomId := 9999
+
+	testMob := &mobs.Mob{
+		MobId:         mobs.MobId(testMobId),
+		Zone:          "TestZone",
+		StatPool:      100,
+		ActivityLevel: 50,
+		Character: characters.Character{
+			Name:      testMobName,
+			SpeciesId: 1,
+		},
+	}
+	// Seed mobs with the template only (no instances).
+	cleanup := mobs.SeedMobsForTest(
+		map[int]*mobs.Mob{testMobId: testMob},
+		map[int]*mobs.Mob{}, // no live instances
+	)
+	t.Cleanup(cleanup)
+
+	// Register a shop for the test mob with no live instance.
+	tmpl := shops.ShopInventory{
+		Gold:         500,
+		StartingGold: 500,
+		CraftSupport: shops.CraftSupportGeneral,
+		Stock: []shops.StockEntry{
+			{ItemId: 40001, RestockQty: 5, MaxStock: 20, Current: 8},
+		},
+	}
+	shops.RegisterShop("testzone", testMobId, testRoomId, tmpl)
+
+	snap := health.CaptureSnapshot()
+
+	if len(snap.Shops) != 1 {
+		t.Fatalf("Shops: got %d, want 1", len(snap.Shops))
+	}
+	got := snap.Shops[0]
+	if got.MobId != testMobId {
+		t.Errorf("MobId: got %d, want %d", got.MobId, testMobId)
+	}
+	if got.RoomId != testRoomId {
+		t.Errorf("RoomId: got %d, want %d", got.RoomId, testRoomId)
+	}
+	// Name should fall back to template.
+	if got.Name == "" {
+		t.Fatalf("Name: got empty, expected template name %q", testMobName)
+	}
+	if got.Name != testMobName {
+		t.Errorf("Name: got %q, want %q (from template)", got.Name, testMobName)
+	}
+}
+
 // TestCaptureSnapshot_Foragers_PrepopulatesInactiveProfiles verifies that
 // when no forager mobs are spawned, CaptureSnapshot still emits 3 rows —
 // one placeholder per forager.AllProfiles() entry.

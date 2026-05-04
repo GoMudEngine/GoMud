@@ -231,9 +231,9 @@ func territoryFor(mobId int) string {
 }
 
 // lookupShopMobName resolves a shop's display name by walking live
-// mob instances for one matching mobId+roomId. Returns "" if the mob
-// is not currently spawned (shouldn't happen for registered shops, but
-// gracefully degrades).
+// mob instances for one matching mobId+roomId. If the mob is not
+// currently spawned, falls back to the mob template (always loaded at
+// boot). Returns "" only if neither live instance nor template exists.
 func lookupShopMobName(mobId, roomId int) string {
 	for _, instId := range mobs.GetAllMobInstanceIds() {
 		m := mobs.GetInstance(instId)
@@ -243,6 +243,10 @@ func lookupShopMobName(mobId, roomId int) string {
 		if int(m.MobId) == mobId && m.HomeRoomId == roomId {
 			return m.Character.Name
 		}
+	}
+	// Fallback: template (always loaded at boot).
+	if t := mobs.GetMobSpec(mobs.MobId(mobId)); t != nil {
+		return t.Character.Name
 	}
 	return ""
 }
