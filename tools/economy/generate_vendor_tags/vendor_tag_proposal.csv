@@ -1,0 +1,249 @@
+item_id,name,type,subtype,component_tag,value,questtoken,current_tags,proposed_tags,needs_review,provenance
+1,note,readable,blobcontent,,0,,,,,
+10,light weighted stone,object,mundane,stone,0,,,,,
+11,medium weighted stone,object,mundane,stone,0,,,,,
+12,heavy weighted stone,object,mundane,stone,0,,,,,
+13,mosaic map,object,mundane,,5,,,,YES,
+14,bone totem,object,holdable,,0,,,,,
+15,chieftain cache key,key,holdable,,0,,,,,
+16,bandit's purse,object,holdable,,0,,,,,
+17,road token,object,holdable,,0,,,,,
+18,toll receipt,object,holdable,,0,,,,,
+19,river stone,object,holdable,,1,,,,YES,
+20,inn token,object,holdable,,0,,,,,
+21,crossing ledger,object,holdable,,0,,,,,
+22,eviction notice,object,holdable,,0,,,,,
+23,thornwall pass,object,holdable,,0,,,,,
+24,pest sample,object,holdable,,0,,,,,
+25,city tax receipt,object,holdable,,0,,,,,
+26,bridge repair authorization,object,holdable,,0,,,,,
+27,temple incense,object,holdable,,2,,,,YES,
+28,tavern meal token,object,holdable,,0,,,,,
+29,tithe ledger,object,holdable,,0,,,,,
+30,protection notice,object,holdable,,0,,,,,
+31,maintenance report,object,holdable,,0,,,,,
+32,Salvage Kit,object,,salvage-kit,1,,,,YES,
+33,iron lockpicks,lockpicks,,,5,,,,YES,
+34,steel lockpicks,lockpicks,,,15,,,blacksmithing,,output of blacksmithing recipe steel-lockpicks
+35,master lockpicks,lockpicks,,,50,,,jewelcrafting,,output of jewelcrafting recipe master-lockpicks
+36,basic disarm kit,object,,,30,,,,YES,
+37,reinforced disarm kit,object,,,45,,,blacksmithing,,output of blacksmithing recipe reinforced-disarm-kit
+38,precision disarm kit,object,,,80,,,jewelcrafting,,output of jewelcrafting recipe precision-disarm-kit
+50,carved wooden bird,object,mundane,,0,,,,,
+51,letter of introduction,object,mundane,,0,,,,,
+52,sealed crate,object,mundane,,50,,,,YES,
+53,lockpick set,object,mundane,,12,,,,YES,
+54,Soren's iron pin,object,mundane,,0,,,,,
+10001,sharp stick,weapon,bludgeoning,,1,,,blacksmithing,,weapon → blacksmithing
+10002,practice sword,weapon,slashing,,0,,,,,
+10003,arena blade,weapon,slashing,,0,,,,,
+10004,training bow,weapon,shooting,,0,,,,,
+10005,training dagger,weapon,stabbing,,0,,,,,
+10006,iron longsword,weapon,slashing,,0,,,,,
+10007,heavy greatsword,weapon,slashing,,0,,,,,
+10008,steel warhammer,weapon,bludgeoning,,0,,,,,
+10009,iron dagger,weapon,stabbing,,15,,,blacksmithing,,output of blacksmithing recipe iron-dagger
+10010,crude bone club,weapon,bludgeoning,,0,,,,,
+10011,flint spear,weapon,piercing,,0,,,,,
+10012,obsidian knife,weapon,slashing,,0,,,,,
+10013,thornwall steel dagger,weapon,stabbing,,30,,,blacksmithing,,weapon → blacksmithing
+10014,iron short sword,weapon,slashing,,18,,,blacksmithing,,output of blacksmithing recipe iron-short-sword
+10015,steel longsword,weapon,slashing,,35,,,blacksmithing,,output of blacksmithing recipe steel-longsword
+10016,willow wand,weapon,wand,,40,,,enchanting,,weapon subtype wand → enchanting
+10017,iron sceptre,weapon,sceptre,,55,,,enchanting,,weapon subtype sceptre → enchanting
+10018,oak staff,weapon,staff,,70,,,enchanting,,weapon subtype staff → enchanting
+10019,iron spear,weapon,piercing,,15,,,blacksmithing,,weapon → blacksmithing
+10020,walking staff,weapon,bludgeoning,,3,,,blacksmithing,,weapon → blacksmithing
+10021,crude short blade,weapon,slashing,,4,,,blacksmithing,,weapon → blacksmithing
+10022,sharpened bone,weapon,stabbing,,0,,,,,
+10023,smuggler's short blade,weapon,piercing,,12,,,blacksmithing,,weapon → blacksmithing
+10024,chrysalis knuckles,weapon,fist,,40,,,blacksmithing,,weapon → blacksmithing
+10025,Edrin's gnarled staff,weapon,staff,,200,,,enchanting,,weapon subtype staff → enchanting
+10026,bandit's longsword,weapon,slashing,,35,,,blacksmithing,,weapon → blacksmithing
+10027,earthshaker warhammer,weapon,bludgeoning,,80,,,blacksmithing,,weapon → blacksmithing
+10028,champion mace,weapon,bludgeoning,,65,,,blacksmithing,,weapon → blacksmithing
+10029,crystal sceptre,weapon,sceptre,,80,,,enchanting,,weapon subtype sceptre → enchanting
+10030,wind scimitar,weapon,slashing,,70,,,blacksmithing,,weapon → blacksmithing
+10031,lake-iron hook-spear,weapon,piercing,,60,,,blacksmithing,,output of blacksmithing recipe lake-iron-hook-spear
+10032,Elgar's hook-spear,weapon,piercing,,250,,,blacksmithing,,weapon → blacksmithing
+10033,marsh gaff hook,weapon,piercing,,18,,,blacksmithing,,weapon → blacksmithing
+10034,steppe hunting spear,weapon,piercing,,25,,,blacksmithing,,weapon → blacksmithing
+10035,Fernway handaxe,weapon,slashing,,22,,,blacksmithing,,weapon → blacksmithing
+20002,cape,back,wearable,,0,,,,,
+20003,worn boots,feet,wearable,,0,,,,,
+20004,wooden shield,offhand,wearable,,2,,,,YES,
+20005,copper ring,ring,wearable,,0,,,,,
+20006,tattered pants,legs,wearable,,0,,,,,
+20007,rusty pot,head,wearable,,1,,,blacksmithing,,metal armor → blacksmithing
+20008,cotton shirt,body,wearable,,1,,,blacksmithing,,metal armor → blacksmithing
+20009,cloth belt,belt,wearable,,0,,,,,
+20010,iron buckler,offhand,wearable,,12,,,blacksmithing,,output of blacksmithing recipe iron-buckler
+20011,chain shirt,body,wearable,,0,,,,,
+20016,torn gloves,gloves,wearable,,0,,,,,
+20020,linen tunic,body,wearable,,4,,,tailoring,,output of tailoring recipe linen-tunic
+20021,cloth pants,legs,wearable,,4,,,tailoring,,output of tailoring recipe cloth-pants
+20022,leather vest,body,wearable,,10,,,tailoring,,output of tailoring recipe leather-vest
+20023,leather leggings,legs,wearable,,10,,,tailoring,,output of tailoring recipe leather-leggings
+20024,wool cloak,back,wearable,,7,,,tailoring,,output of tailoring recipe wool-cloak
+20025,leather satchel,belt,wearable,,12,,,tailoring,,output of tailoring recipe leather-satchel
+20026,reinforced wooden shield,offhand,wearable,,12,,,blacksmithing,,output of blacksmithing recipe reinforced-wooden-shield
+20027,chainmail vest,body,wearable,,25,,,blacksmithing,,output of blacksmithing recipe chainmail-vest
+20028,steel buckler,offhand,wearable,,22,,,blacksmithing,,output of blacksmithing recipe steel-buckler
+20029,masterwork plate helm,head,wearable,,30,,,blacksmithing,,output of blacksmithing recipe masterwork-plate-helm
+20030,copper ring,ring,wearable,,3,,,jewelcrafting,,output of jewelcrafting recipe copper-ring
+20031,simple pendant,neck,wearable,,5,,,jewelcrafting,,output of jewelcrafting recipe simple-pendant
+20032,polished stone amulet,neck,wearable,,8,,,jewelcrafting,,output of jewelcrafting recipe polished-stone-amulet
+20033,silver ring,ring,wearable,,12,,,jewelcrafting,,output of jewelcrafting recipe silver-ring
+20034,gem-set necklace,neck,wearable,,18,,,jewelcrafting,,output of jewelcrafting recipe gem-set-necklace
+20035,engraved bracelet,wrist,wearable,,15,,,jewelcrafting,,output of jewelcrafting recipe engraved-bracelet
+20036,gold signet ring,ring,wearable,,25,,,jewelcrafting,,output of jewelcrafting recipe gold-signet-ring
+20037,masterwork gem pendant,neck,wearable,,35,,,jewelcrafting,,output of jewelcrafting recipe masterwork-gem-pendant
+20038,stillwater pearl pendant,neck,wearable,,200,,,jewelcrafting,,output of jewelcrafting recipe stillwater-pearl-pendant
+20043,graduation cap,head,wearable,,0,,,,,
+20044,teaching cap,head,wearable,,0,,,,,
+20045,leather apron,body,wearable,,5,,,"blacksmithing,tailoring",,leather armor → blacksmithing+tailoring; leather armor → blacksmithing+tailoring
+20046,simple robes,body,wearable,,8,,,tailoring,,cloth armor → tailoring
+20047,chain coif,head,wearable,,10,,,blacksmithing,,metal armor → blacksmithing
+20048,cured hide scraps,body,wearable,,0,,,,,
+20049,warden's tabard,body,wearable,,8,,,blacksmithing,,metal armor → blacksmithing
+20050,iron chain leggings,legs,wearable,,14,,,blacksmithing,,metal armor → blacksmithing
+20051,iron gauntlets,gloves,wearable,,10,,,blacksmithing,,metal armor → blacksmithing
+20052,sturdy leather boots,feet,wearable,,6,,,"blacksmithing,tailoring",,leather armor → blacksmithing+tailoring; leather armor → blacksmithing+tailoring
+20053,windstone aegis,offhand,wearable,,250,,,,YES,
+20054,leather backpack,back,wearable,,30,,,tailoring,,output of tailoring recipe leather-backpack
+20055,reinforced travel pack,back,wearable,,75,,,tailoring,,output of tailoring recipe reinforced-travel-pack
+20056,weighted tail cap,tail,wearable,,20,,,,YES,
+20057,spiked tail band,tail,wearable,,25,,,,YES,
+20058,bladed tail sheath,tail,wearable,,50,,,,YES,
+20059,leather bandolier,belt,wearable,,15,,,tailoring,,output of tailoring recipe leather-bandolier
+20060,reinforced bandolier,belt,wearable,,35,,,tailoring,,output of tailoring recipe reinforced-bandolier
+20061,chitin spaulders,shoulders,wearable,,35,,,blacksmithing,,metal armor → blacksmithing
+20062,phantom's wraps,gloves,wearable,,30,,,blacksmithing,,metal armor → blacksmithing
+20063,resin-laced bracers,wrist,wearable,,28,,,tailoring,,accessory → tailoring (review)
+20064,silkstep boots,feet,wearable,,32,,,blacksmithing,,metal armor → blacksmithing
+20065,phantom's cowl,head,wearable,,38,,,blacksmithing,,metal armor → blacksmithing
+20066,spellweaver robes,body,wearable,,180,,,tailoring,,cloth armor → tailoring
+20067,Soren's ironbound buckler,offhand,wearable,,80,,,,YES,
+20068,bandit's leather vest,body,wearable,,20,,,"blacksmithing,tailoring",,leather armor → blacksmithing+tailoring; leather armor → blacksmithing+tailoring
+20069,arena tower shield,offhand,wearable,,60,,,,YES,
+20070,arena chain gloves,gloves,wearable,,20,,,blacksmithing,,metal armor → blacksmithing
+20071,arena iron greaves,legs,wearable,,25,,,blacksmithing,,metal armor → blacksmithing
+20072,volcanic plate,body,wearable,,90,,,blacksmithing,,metal armor → blacksmithing
+20073,ice crown,head,wearable,,85,,,blacksmithing,,metal armor → blacksmithing
+20074,mist pauldrons,shoulders,wearable,,75,,,blacksmithing,,metal armor → blacksmithing
+20075,stone ring,ring,wearable,,40,,,jewelcrafting,,jewelry → jewelcrafting
+20076,storm bracer,wrist,wearable,,45,,,tailoring,,accessory → tailoring (review)
+20077,hunter-eel scale vest,body,wearable,,85,,,tailoring,,output of tailoring recipe hunter-eel-scale-vest
+20078,cattail-down cloak,back,wearable,,110,,,tailoring,,output of tailoring recipe cattail-down-cloak
+30001,small red potion,potion,drinkable,,2,,,alchemy,,potion → alchemy
+30012,conviction draught,potion,drinkable,,8,,,alchemy,,potion → alchemy
+30013,fungal ration,food,edible,,2,,,cooking,,food → cooking
+30020,cloth bandage,object,usable,,5,,,tailoring,,output of tailoring recipe cloth-bandage
+30021,trail rations,food,edible,,3,,,cooking,,output of cooking recipe trail-rations
+30022,grilled meat,food,edible,,4,,,cooking,,output of cooking recipe grilled-meat
+30023,hearty stew,food,edible,,5,,,cooking,,output of cooking recipe hearty-stew
+30024,herbal tea,potion,drinkable,,4,,,cooking,,output of cooking recipe herbal-tea
+30025,spiced wine,food,edible,,6,,,cooking,,output of cooking recipe spiced-wine
+30026,energy bread,food,edible,,8,,,cooking,,output of cooking recipe energy-bread
+30027,antidote broth,food,edible,,6,,,cooking,,output of cooking recipe antidote-broth
+30028,minor antidote,potion,drinkable,,6,,,alchemy,,output of alchemy recipe minor-antidote
+30029,clarity tonic,potion,drinkable,,10,,,alchemy,,output of alchemy recipe clarity-tonic
+30030,fire resistance draught,potion,drinkable,,12,,,alchemy,,output of alchemy recipe fire-resistance-draught
+30032,berserker elixir,potion,drinkable,,20,,,alchemy,,potion → alchemy
+30033,component pouch,componentbag,wearable,,25,,,tailoring,,bag → tailoring (review)
+30034,artisan's satchel,componentbag,wearable,,60,,,tailoring,,output of tailoring recipe artisans-satchel
+30035,master's component case,componentbag,wearable,,150,,,tailoring,,output of tailoring recipe masters-component-case
+30036,healing salve,potion,drinkable,,5,,,alchemy,,output of alchemy recipe healing-salve
+30037,stamina tonic,potion,drinkable,,5,,,alchemy,,output of alchemy recipe stamina-tonic
+30038,conviction draught,potion,drinkable,,8,,,alchemy,,output of alchemy recipe conviction-draught
+30039,warrior's brew,potion,drinkable,,15,,,alchemy,,output of alchemy recipe warriors-brew
+30040,preacher's tincture,potion,drinkable,,15,,,alchemy,,output of alchemy recipe preachers-tincture
+30041,windrunner draught,potion,drinkable,,15,,,alchemy,,output of alchemy recipe windrunner-draught
+30042,elixir of renewal,potion,drinkable,,30,,,alchemy,,output of alchemy recipe elixir-of-renewal
+30043,ironhide brew,potion,drinkable,,18,,,alchemy,,output of alchemy recipe ironhide-brew
+30044,mindshield elixir,potion,drinkable,,20,,,alchemy,,output of alchemy recipe mindshield-elixir
+30045,veilguard tonic,potion,drinkable,,20,,,alchemy,,output of alchemy recipe veilguard-tonic
+30046,stone stomach,potion,drinkable,,15,,,alchemy,,output of alchemy recipe stone-stomach
+30047,cat's eye draught,potion,drinkable,,25,,,alchemy,,output of alchemy recipe cats-eye-draught
+30048,swiftfoot essence,potion,drinkable,,28,,,alchemy,,output of alchemy recipe swiftfoot-essence
+30049,berserker elixir,potion,drinkable,,30,,,alchemy,,output of alchemy recipe berserker-elixir
+30050,silver tongue oil,potion,drinkable,,30,,,alchemy,,output of alchemy recipe silver-tongue-oil
+30051,battle trance,potion,drinkable,,35,,,alchemy,,output of alchemy recipe battle-trance
+30052,purging draught,potion,drinkable,,50,,,alchemy,,output of alchemy recipe purging-draught
+30053,essence of growth,potion,drinkable,,60,,,alchemy,,output of alchemy recipe essence-of-growth
+30054,savant's infusion,potion,drinkable,,60,,,alchemy,,output of alchemy recipe savants-infusion
+30055,mutagen brew,potion,drinkable,,80,,,alchemy,,output of alchemy recipe mutagen-brew
+30056,chrysalis catalyst,potion,drinkable,,100,,,alchemy,,output of alchemy recipe chrysalis-catalyst
+30057,flashbang,object,throwable,,35,,,alchemy,,output of alchemy recipe flashbang
+30058,firebomb,object,throwable,,20,,,alchemy,,output of alchemy recipe firebomb
+30059,toxic flask,object,throwable,,18,,,alchemy,,output of alchemy recipe toxic-flask
+30060,lake-tonic of steady hand,potion,drinkable,,18,,,alchemy,,output of alchemy recipe lake-tonic-of-steady-hand
+30061,stillwater lake chowder,food,edible,,12,,,cooking,,output of cooking recipe stillwater-lake-chowder
+40001,iron ingot,object,mundane,iron-ingot,2,,,"blacksmithing,jewelcrafting,tailoring",,ingredient of blacksmithing recipe chain-links; ingredient of blacksmithing recipe chainmail-vest; ingredient of blacksmithing recipe iron-buckler; ingredient of blacksmithing recipe iron-dagger; ingredient of blacksmithing recipe iron-short-sword; ingredient of blacksmithing recipe lake-iron-hook-spear; ingredient of blacksmithing recipe reinforced-disarm-kit; ingredient of blacksmithing recipe reinforced-wooden-shield; ingredient of blacksmithing recipe steel-ingot; ingredient of blacksmithing recipe steel-lockpicks; ingredient of jewelcrafting recipe master-lockpicks; ingredient of jewelcrafting recipe precision-disarm-kit; ingredient of tailoring recipe reinforced-bandolier
+40002,leather strip,object,mundane,leather-strip,8,,,"blacksmithing,tailoring",,ingredient of blacksmithing recipe iron-dagger; ingredient of blacksmithing recipe iron-short-sword; ingredient of blacksmithing recipe lake-iron-hook-spear; ingredient of blacksmithing recipe reinforced-disarm-kit; ingredient of blacksmithing recipe steel-longsword; ingredient of tailoring recipe artisans-satchel; ingredient of tailoring recipe hunter-eel-scale-vest; ingredient of tailoring recipe leather-backpack; ingredient of tailoring recipe leather-bandolier; ingredient of tailoring recipe leather-leggings; ingredient of tailoring recipe leather-satchel; ingredient of tailoring recipe leather-vest; ingredient of tailoring recipe masters-component-case; ingredient of tailoring recipe reinforced-bandolier; ingredient of tailoring recipe reinforced-travel-pack
+40003,wooden plank,object,mundane,wooden-plank,1,,,blacksmithing,,ingredient of blacksmithing recipe iron-buckler; ingredient of blacksmithing recipe reinforced-wooden-shield; ingredient of blacksmithing recipe steel-buckler
+40004,healer's root,object,mundane,healers-root,5,,,"alchemy,cooking,enchanting",,ingredient of alchemy recipe conviction-draught; ingredient of alchemy recipe elixir-of-renewal; ingredient of alchemy recipe essence-of-growth; ingredient of alchemy recipe fire-resistance-draught; ingredient of alchemy recipe healing-salve; ingredient of alchemy recipe ironhide-brew; ingredient of alchemy recipe preachers-tincture; ingredient of alchemy recipe warriors-brew; ingredient of cooking recipe antidote-broth; ingredient of cooking recipe herbal-tea; ingredient of enchanting recipe chitin-brace; ingredient of enchanting recipe honed-edge; ingredient of enchanting recipe rootbind
+40005,bitter thistle,object,mundane,bitter-thistle,5,,,alchemy,,ingredient of alchemy recipe clarity-tonic; ingredient of alchemy recipe conviction-draught; ingredient of alchemy recipe elixir-of-renewal; ingredient of alchemy recipe minor-antidote; ingredient of alchemy recipe stamina-tonic; ingredient of alchemy recipe stone-stomach; ingredient of alchemy recipe veilguard-tonic; ingredient of alchemy recipe warriors-brew; ingredient of alchemy recipe windrunner-draught
+40006,glass vial,object,mundane,bottle,3,,,,YES,
+40007,cloth strip,object,mundane,cloth-strip,5,,,tailoring,,ingredient of tailoring recipe artisans-satchel; ingredient of tailoring recipe cattail-down-cloak; ingredient of tailoring recipe cloth-bandage; ingredient of tailoring recipe cloth-pants; ingredient of tailoring recipe linen-tunic; ingredient of tailoring recipe masters-component-case; ingredient of tailoring recipe reinforced-travel-pack; ingredient of tailoring recipe wool-cloak
+40008,spore sac,object,holdable,,12,,,,YES,
+40009,dustwalk herb,object,mundane,dustwalk-herb,5,,,alchemy,,ingredient of alchemy recipe cats-eye-draught; ingredient of alchemy recipe elixir-of-renewal; ingredient of alchemy recipe fire-resistance-draught; ingredient of alchemy recipe minor-antidote; ingredient of alchemy recipe savants-infusion; ingredient of alchemy recipe silver-tongue-oil; ingredient of alchemy recipe swiftfoot-essence; ingredient of alchemy recipe warriors-brew; ingredient of alchemy recipe windrunner-draught
+40010,Chrysalis Core,object,,chrysalis-core,500,,,alchemy,,ingredient of alchemy recipe battle-trance; ingredient of alchemy recipe berserker-elixir; ingredient of alchemy recipe chrysalis-catalyst; ingredient of alchemy recipe clarity-tonic; ingredient of alchemy recipe elixir-of-renewal; ingredient of alchemy recipe essence-of-growth; ingredient of alchemy recipe flashbang; ingredient of alchemy recipe mindshield-elixir; ingredient of alchemy recipe mutagen-brew; ingredient of alchemy recipe preachers-tincture; ingredient of alchemy recipe purging-draught; ingredient of alchemy recipe savants-infusion; ingredient of alchemy recipe silver-tongue-oil; ingredient of alchemy recipe veilguard-tonic; ingredient of alchemy recipe windrunner-draught
+40011,Hive Fragment,object,,hive-fragment,25,,,alchemy,,ingredient of alchemy recipe berserker-elixir; ingredient of alchemy recipe chrysalis-catalyst; ingredient of alchemy recipe mutagen-brew
+40012,thread spool,object,mundane,thread-spool,1,,,tailoring,,ingredient of tailoring recipe artisans-satchel; ingredient of tailoring recipe cattail-down-cloak; ingredient of tailoring recipe cloth-bandage; ingredient of tailoring recipe cloth-pants; ingredient of tailoring recipe hunter-eel-scale-vest; ingredient of tailoring recipe leather-backpack; ingredient of tailoring recipe leather-bandolier; ingredient of tailoring recipe leather-leggings; ingredient of tailoring recipe leather-satchel; ingredient of tailoring recipe leather-vest; ingredient of tailoring recipe linen-tunic; ingredient of tailoring recipe masters-component-case; ingredient of tailoring recipe reinforced-bandolier; ingredient of tailoring recipe reinforced-travel-pack; ingredient of tailoring recipe wool-cloak
+40013,bone needle,object,mundane,bone-needle,2,,,tailoring,,ingredient of tailoring recipe artisans-satchel; ingredient of tailoring recipe hunter-eel-scale-vest; ingredient of tailoring recipe leather-backpack; ingredient of tailoring recipe leather-bandolier; ingredient of tailoring recipe leather-leggings; ingredient of tailoring recipe leather-satchel; ingredient of tailoring recipe leather-vest; ingredient of tailoring recipe masters-component-case; ingredient of tailoring recipe reinforced-bandolier; ingredient of tailoring recipe reinforced-travel-pack
+40014,raw meat,object,mundane,raw-meat,1,,,cooking,,ingredient of cooking recipe grilled-meat; ingredient of cooking recipe hearty-stew; ingredient of cooking recipe trail-rations
+40015,wild vegetables,object,mundane,wild-vegetables,1,,,cooking,,ingredient of cooking recipe antidote-broth; ingredient of cooking recipe energy-bread; ingredient of cooking recipe hearty-stew; ingredient of cooking recipe spiced-wine; ingredient of cooking recipe stillwater-lake-chowder
+40016,water flask,object,mundane,water-flask,1,,,cooking,,ingredient of cooking recipe antidote-broth; ingredient of cooking recipe energy-bread; ingredient of cooking recipe hearty-stew; ingredient of cooking recipe herbal-tea; ingredient of cooking recipe spiced-wine; ingredient of cooking recipe stillwater-lake-chowder
+40017,salt pouch,object,mundane,salt-pouch,1,,,"alchemy,cooking",,ingredient of alchemy recipe flashbang; ingredient of cooking recipe energy-bread; ingredient of cooking recipe grilled-meat; ingredient of cooking recipe spiced-wine; ingredient of cooking recipe trail-rations
+40018,steel ingot,object,mundane,steel-ingot,8,,,blacksmithing,,ingredient of blacksmithing recipe masterwork-plate-helm; ingredient of blacksmithing recipe reinforced-disarm-kit; ingredient of blacksmithing recipe steel-buckler; output of blacksmithing recipe steel-ingot; ingredient of blacksmithing recipe steel-longsword
+40019,chain link,object,mundane,chain-link,2,,,"blacksmithing,jewelcrafting",,output of blacksmithing recipe chain-links; ingredient of blacksmithing recipe chainmail-vest; ingredient of jewelcrafting recipe stillwater-pearl-pendant
+40020,coal dust,object,mundane,coal-dust,5,,,"alchemy,blacksmithing",,ingredient of alchemy recipe firebomb; ingredient of blacksmithing recipe masterwork-plate-helm; ingredient of blacksmithing recipe steel-ingot
+40021,copper wire,object,mundane,copper-wire,2,,,jewelcrafting,,ingredient of jewelcrafting recipe chrysalis-setting; ingredient of jewelcrafting recipe copper-ring; ingredient of jewelcrafting recipe polished-stone-amulet; ingredient of jewelcrafting recipe sealed-phial; ingredient of jewelcrafting recipe simple-pendant
+40022,silver wire,object,mundane,silver-wire,8,,,jewelcrafting,,ingredient of jewelcrafting recipe engraved-bracelet; ingredient of jewelcrafting recipe gem-set-necklace; ingredient of jewelcrafting recipe master-lockpicks; ingredient of jewelcrafting recipe precision-disarm-kit; ingredient of jewelcrafting recipe silver-ring; ingredient of jewelcrafting recipe stillwater-pearl-pendant
+40023,gold wire,object,mundane,gold-wire,80,,,jewelcrafting,,ingredient of jewelcrafting recipe gold-signet-ring; ingredient of jewelcrafting recipe masterwork-gem-pendant
+40024,polished stone,object,mundane,polished-stone,8,,,jewelcrafting,,ingredient of jewelcrafting recipe polished-stone-amulet; ingredient of jewelcrafting recipe simple-pendant
+40025,raw gem,object,mundane,raw-gem,25,,,jewelcrafting,,ingredient of jewelcrafting recipe crystalline-decanter; ingredient of jewelcrafting recipe gem-set-necklace; ingredient of jewelcrafting recipe masterwork-gem-pendant
+40026,gem dust,object,mundane,gem-dust,8,,,jewelcrafting,,ingredient of jewelcrafting recipe copper-ring; ingredient of jewelcrafting recipe engraved-bracelet; ingredient of jewelcrafting recipe gold-signet-ring; ingredient of jewelcrafting recipe master-lockpicks; ingredient of jewelcrafting recipe precision-disarm-kit; ingredient of jewelcrafting recipe silver-ring
+40027,chrysalis shard,object,mundane,chrysalis-shard,80,,,jewelcrafting,,ingredient of jewelcrafting recipe chrysalis-setting; ingredient of jewelcrafting recipe crystalline-decanter; ingredient of jewelcrafting recipe sealed-phial
+40028,binding paste,object,mundane,binding-paste,3,,,"blacksmithing,enchanting,jewelcrafting",,ingredient of blacksmithing recipe reinforced-disarm-kit; ingredient of blacksmithing recipe steel-lockpicks; ingredient of enchanting recipe carapace-ward; ingredient of enchanting recipe chitin-brace; ingredient of enchanting recipe chrysalis-bond; ingredient of enchanting recipe chrysalis-sight; ingredient of enchanting recipe chrysalis-stride; ingredient of enchanting recipe drowned-veil; ingredient of enchanting recipe honed-edge; ingredient of enchanting recipe hungering-touch; ingredient of enchanting recipe ironblood; ingredient of enchanting recipe mindweave; ingredient of enchanting recipe predators-instinct; ingredient of enchanting recipe rootbind; ingredient of enchanting recipe rootwalker; ingredient of enchanting recipe serpents-edge; ingredient of enchanting recipe shadowweave; ingredient of enchanting recipe spore-mantle; ingredient of enchanting recipe sporeweave; ingredient of enchanting recipe thornguard; ingredient of enchanting recipe venomgrip; ingredient of jewelcrafting recipe precision-disarm-kit
+40029,mutation catalyst,object,mundane,mutation-catalyst,100,,,enchanting,,ingredient of enchanting recipe carapace-ward; ingredient of enchanting recipe chrysalis-bond; ingredient of enchanting recipe chrysalis-sight; ingredient of enchanting recipe chrysalis-stride; ingredient of enchanting recipe hungering-touch; ingredient of enchanting recipe ironblood; ingredient of enchanting recipe mindweave; ingredient of enchanting recipe predators-instinct; ingredient of enchanting recipe serpents-edge; ingredient of enchanting recipe shadowweave; ingredient of enchanting recipe spore-mantle; ingredient of enchanting recipe sporeweave; ingredient of enchanting recipe thornguard; ingredient of enchanting recipe venomgrip
+40030,chrysalis setting,object,mundane,chrysalis-setting,12,,,"enchanting,jewelcrafting",,ingredient of enchanting recipe carapace-ward; ingredient of enchanting recipe chrysalis-bond; ingredient of enchanting recipe chrysalis-sight; ingredient of enchanting recipe chrysalis-stride; ingredient of enchanting recipe drowned-veil; ingredient of enchanting recipe hungering-touch; ingredient of enchanting recipe ironblood; ingredient of enchanting recipe mindweave; ingredient of enchanting recipe predators-instinct; ingredient of enchanting recipe rootwalker; ingredient of enchanting recipe serpents-edge; ingredient of enchanting recipe shadowweave; ingredient of enchanting recipe spore-mantle; ingredient of enchanting recipe sporeweave; ingredient of enchanting recipe thornguard; ingredient of enchanting recipe venomgrip; output of jewelcrafting recipe chrysalis-setting
+40031,spirit fetish,object,mundane,steppe-spirit,50,,,,YES,
+40032,windstone sample,object,mundane,,0,,,,,
+40033,carved wolf totem,object,mundane,,0,,,,,
+40034,strongbox key,key,mundane,,0,,,,,
+40035,tally stick,object,mundane,,0,14-explore,,,,
+40036,bribe ledger,object,mundane,,0,,,,,
+40037,guard captain's commendation,object,mundane,,0,,,,,
+40038,oil lantern,object,mundane,,1,,,,YES,
+40039,freight crate,object,holdable,,0,,,,,
+40040,forest herbs,object,holdable,,0,,,,,
+40041,creased letter,object,holdable,,0,,,,,
+40042,herbalism recipe page,object,usable,,0,,,,,
+40043,clay flask,object,mundane,bottle,1,,,,YES,
+40044,sealed phial,object,mundane,bottle,10,,,jewelcrafting,,output of jewelcrafting recipe sealed-phial
+40045,crystalline decanter,object,mundane,bottle,30,,,"alchemy,jewelcrafting",,ingredient of alchemy recipe battle-trance; ingredient of alchemy recipe berserker-elixir; ingredient of alchemy recipe cats-eye-draught; ingredient of alchemy recipe chrysalis-catalyst; ingredient of alchemy recipe clarity-tonic; ingredient of alchemy recipe conviction-draught; ingredient of alchemy recipe elixir-of-renewal; ingredient of alchemy recipe essence-of-growth; ingredient of alchemy recipe fire-resistance-draught; ingredient of alchemy recipe firebomb; ingredient of alchemy recipe flashbang; ingredient of alchemy recipe healing-salve; ingredient of alchemy recipe ironhide-brew; ingredient of alchemy recipe lake-tonic-of-steady-hand; ingredient of alchemy recipe mindshield-elixir; ingredient of alchemy recipe minor-antidote; ingredient of alchemy recipe mutagen-brew; ingredient of alchemy recipe preachers-tincture; ingredient of alchemy recipe purging-draught; ingredient of alchemy recipe savants-infusion; ingredient of alchemy recipe silver-tongue-oil; ingredient of alchemy recipe stamina-tonic; ingredient of alchemy recipe stone-stomach; ingredient of alchemy recipe swiftfoot-essence; ingredient of alchemy recipe toxic-flask; ingredient of alchemy recipe veilguard-tonic; ingredient of alchemy recipe warriors-brew; ingredient of alchemy recipe windrunner-draught; ingredient of jewelcrafting recipe crystalline-decanter; output of jewelcrafting recipe crystalline-decanter; ingredient of jewelcrafting recipe sealed-phial
+40046,moonpetal,object,mundane,moonpetal,30,,,alchemy,,ingredient of alchemy recipe battle-trance; ingredient of alchemy recipe cats-eye-draught; ingredient of alchemy recipe chrysalis-catalyst; ingredient of alchemy recipe essence-of-growth; ingredient of alchemy recipe mindshield-elixir; ingredient of alchemy recipe savants-infusion; ingredient of alchemy recipe silver-tongue-oil; ingredient of alchemy recipe swiftfoot-essence
+40047,veilbloom petal,object,mundane,veilbloom,25,,,alchemy,,ingredient of alchemy recipe chrysalis-catalyst; ingredient of alchemy recipe mutagen-brew; ingredient of alchemy recipe purging-draught
+40048,serpent venom sac,object,mundane,venom-sac,12,,,alchemy,,ingredient of alchemy recipe berserker-elixir; ingredient of alchemy recipe purging-draught; ingredient of alchemy recipe stone-stomach; ingredient of alchemy recipe toxic-flask
+40049,ironbark shaving,object,mundane,ironbark,25,,,alchemy,,ingredient of alchemy recipe battle-trance; ingredient of alchemy recipe ironhide-brew
+40050,putrid residue,object,mundane,putrid-residue,8,,,alchemy,,ingredient of alchemy recipe firebomb; ingredient of alchemy recipe flashbang; ingredient of alchemy recipe toxic-flask
+40051,skitter-shrimp shell,object,mundane,shrimp-chitin,25,,,,YES,
+40052,drowned-hunter hide,object,mundane,hunter-eel-hide,40,,,tailoring,,ingredient of tailoring recipe hunter-eel-scale-vest
+40053,Stillwater black pearl,object,mundane,stillwater-pearl,400,,,"enchanting,jewelcrafting",,ingredient of enchanting recipe drowned-veil; ingredient of jewelcrafting recipe stillwater-pearl-pendant
+40054,leviathan-tooth trophy,object,mundane,,175,,,,YES,
+40055,cattail down,object,mundane,cattail-down,10,,,tailoring,,ingredient of tailoring recipe cattail-down-cloak
+40056,marsh willow bark,object,mundane,marsh-willow-bark,25,,,alchemy,,ingredient of alchemy recipe lake-tonic-of-steady-hand
+40057,lake mint,object,mundane,lake-mint,25,,,"alchemy,cooking",,ingredient of alchemy recipe lake-tonic-of-steady-hand; ingredient of cooking recipe stillwater-lake-chowder
+40058,freshwater clam,object,mundane,freshwater-clam,25,,,cooking,,ingredient of cooking recipe stillwater-lake-chowder
+40059,lake-iron nodule,object,mundane,lake-iron-nodule,60,,,blacksmithing,,ingredient of blacksmithing recipe lake-iron-hook-spear
+40060,Elgar's carved kingfisher,object,mundane,,0,,,,,
+40061,Elgar's last journal entry,object,mundane,,0,,,,,
+40062,oak bark,object,mundane,oak-bark,35,,,"alchemy,enchanting",,ingredient of alchemy recipe fire-resistance-draught; ingredient of enchanting recipe rootbind
+40063,shadowcap mushroom,object,mundane,shadowcap,40,,,"alchemy,cooking",,ingredient of alchemy recipe mindshield-elixir; ingredient of cooking recipe herbal-tea
+40064,wild hare meat,object,mundane,wild-hare-meat,50,,,"alchemy,cooking",,ingredient of alchemy recipe essence-of-growth; ingredient of cooking recipe hearty-stew
+40065,beeswax,object,mundane,beeswax,30,,,alchemy,,ingredient of alchemy recipe clarity-tonic
+40066,blood-moss,object,mundane,blood-moss,45,,,"alchemy,cooking",,ingredient of alchemy recipe battle-trance; ingredient of cooking recipe stillwater-lake-chowder
+40067,pine pitch,object,mundane,pine-pitch,35,,,"alchemy,blacksmithing",,ingredient of alchemy recipe mutagen-brew; ingredient of blacksmithing recipe steel-ingot
+40068,sinew,object,mundane,sinew,25,,,"blacksmithing,tailoring",,ingredient of blacksmithing recipe lake-iron-hook-spear; ingredient of tailoring recipe artisans-satchel
