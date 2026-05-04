@@ -14,7 +14,7 @@
 
 1. **Phase 1** — Name template fallback (single small fix, can ship first).
 2. **Phase 2** — ItemSpec field + valid-categories helpers.
-3. **Phase 3** — Item tagging sweep (per discipline, separately committed).
+3. **Phase 3** — Item tagging via CSV-driven sweep (proposal generator → human review → mechanical apply, separately committed per discipline).
 4. **Phase 4** — Validators (item tags + recipe ingredient tags), wired to boot.
 5. **Phase 5** — Buy rule rewrite (TDD).
 6. **Phase 6** — Per-vendor cuts (6 mob YAMLs).
@@ -300,192 +300,439 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 
 ---
 
-## Phase 3: Item tagging sweep (per discipline)
+## Phase 3: Item tagging sweep (CSV-driven)
 
-Each task in this phase tags one batch of items, commits, and moves to the next. Validation in Phase 4 will catch any miss.
+The tagging work is done in two parts: (1) a one-shot Go script generates a `vendor_tag_proposal.csv` mapping every item to a proposed tag set, derived deterministically from recipe walks + type heuristics; (2) a human reviews and corrects the CSV; (3) subagent applies the CSV to YAMLs in per-discipline commits.
 
-### Task 3.1: Tag alchemy raw mats
+This shifts judgment to a single auditable artifact and makes the YAML edits purely mechanical.
+
+### Task 3.0: Build the tag-proposal generator script
 
 **Files:**
-- Modify: every alchemy-relevant material YAML in `_datafiles/world/dogmud/items/materials-40000/`
+- Create: `tools/economy/generate_vendor_tags/main.go`
+- Output: `tools/economy/generate_vendor_tags/vendor_tag_proposal.csv`
 
-- [ ] **Step 1: List all alchemy ingredients used in recipes**
+- [ ] **Step 1: Create the script directory + skeleton**
 
-Run:
 ```bash
-grep -rh "item_tag:" _datafiles/world/dogmud/recipes/alchemy/ | sort -u
+mkdir -p tools/economy/generate_vendor_tags
 ```
-Record the list — these are the canonical alchemy component_tags.
 
-- [ ] **Step 2: For each tag, find the matching item YAML**
+- [ ] **Step 2: Write the script**
 
-Run:
+Create `tools/economy/generate_vendor_tags/main.go`:
+
+```go
+// Walks all recipe YAMLs and item YAMLs to produce a deterministic
+// proposal of vendor_categories per item. Output: a CSV the human
+// reviews before the subagent applies it to YAMLs.
+//
+// Run:
+//   go run tools/economy/generate_vendor_tags/main.go
+//
+// Output: tools/economy/generate_vendor_tags/vendor_tag_proposal.csv
+package main
+
+import (
+    "encoding/csv"
+    "fmt"
+    "os"
+    "path/filepath"
+    "sort"
+    "strings"
+
+    "gopkg.in/yaml.v2"
+)
+
+const (
+    itemsDir   = "_datafiles/world/dogmud/items"
+    recipesDir = "_datafiles/world/dogmud/recipes"
+    outPath    = "tools/economy/generate_vendor_tags/vendor_tag_proposal.csv"
+)
+
+type itemYAML struct {
+    ItemId           int      `yaml:"itemid"`
+    Name             string   `yaml:"name"`
+    Type             string   `yaml:"type"`
+    Subtype          string   `yaml:"subtype"`
+    Value            int      `yaml:"value"`
+    QuestToken       string   `yaml:"questtoken"`
+    ComponentTag     string   `yaml:"component_tag"`
+    IsComponent      bool     `yaml:"is_component"`
+    VendorCategories []string `yaml:"vendor_categories"`
+}
+
+type recipeYAML struct {
+    Id          string `yaml:"id"`
+    Skill       string `yaml:"skill"`
+    Ingredients []struct {
+        ItemTag  string `yaml:"item_tag"`
+        Quantity int    `yaml:"quantity"`
+    } `yaml:"ingredients"`
+    Output struct {
+        ItemId int `yaml:"item_id"`
+    } `yaml:"output"`
+}
+
+func main() {
+    items, err := loadAllItems()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "load items: %v\n", err)
+        os.Exit(1)
+    }
+    recipes, err := loadAllRecipes()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "load recipes: %v\n", err)
+        os.Exit(1)
+    }
+
+    // Build component_tag → item lookup for resolving recipe ingredients.
+    byCompTag := map[string]*itemYAML{}
+    for i := range items {
+        if items[i].ComponentTag != "" {
+            byCompTag[items[i].ComponentTag] = &items[i]
+        }
+    }
+
+    // proposal[itemId] = set(disciplines)
+    proposal := map[int]map[string]bool{}
+    source := map[int][]string{} // human-readable provenance
+
+    addTag := func(itemId int, disc, why string) {
+        if proposal[itemId] == nil {
+            proposal[itemId] = map[string]bool{}
+        }
+        proposal[itemId][disc] = true
+        source[itemId] = append(source[itemId], why)
+    }
+
+    // ── Pass 1: ingredient walk ────────────────────────────────
+    for _, r := range recipes {
+        for _, ing := range r.Ingredients {
+            it, ok := byCompTag[ing.ItemTag]
+            if !ok {
+                continue // ghost tag — caller will surface as warning later
+            }
+            addTag(it.ItemId, r.Skill, fmt.Sprintf("ingredient of %s recipe %s", r.Skill, r.Id))
+        }
+        if r.Output.ItemId > 0 {
+            addTag(r.Output.ItemId, r.Skill, fmt.Sprintf("output of %s recipe %s", r.Skill, r.Id))
+        }
+    }
+
+    // ── Pass 2: type-based heuristics for finished goods ───────
+    for i := range items {
+        it := &items[i]
+        if it.Value <= 0 || it.QuestToken != "" {
+            continue
+        }
+        // Skip if already covered by recipe pass.
+        if proposal[it.ItemId] != nil && len(proposal[it.ItemId]) > 0 {
+            continue
+        }
+        switch strings.ToLower(it.Type) {
+        case "weapon":
+            switch strings.ToLower(it.Subtype) {
+            case "wand", "sceptre", "staff":
+                addTag(it.ItemId, "enchanting", "weapon subtype "+it.Subtype+" → enchanting")
+            default:
+                addTag(it.ItemId, "blacksmithing", "weapon → blacksmithing")
+            }
+        case "head", "body", "legs", "feet", "gloves", "shoulders":
+            // Metal vs cloth vs leather — heuristic on subtype/name.
+            n := strings.ToLower(it.Name)
+            sub := strings.ToLower(it.Subtype)
+            switch {
+            case strings.Contains(n, "leather") || sub == "leather":
+                addTag(it.ItemId, "blacksmithing", "leather armor → blacksmithing+tailoring")
+                addTag(it.ItemId, "tailoring", "leather armor → blacksmithing+tailoring")
+            case strings.Contains(n, "cloth") || strings.Contains(n, "robe") ||
+                strings.Contains(n, "hood") || strings.Contains(n, "linen") ||
+                sub == "cloth":
+                addTag(it.ItemId, "tailoring", "cloth armor → tailoring")
+            default:
+                addTag(it.ItemId, "blacksmithing", "metal armor → blacksmithing")
+            }
+        case "neck", "ring":
+            addTag(it.ItemId, "jewelcrafting", "jewelry → jewelcrafting")
+        case "back", "belt", "wrist":
+            addTag(it.ItemId, "tailoring", "accessory → tailoring (review)")
+        case "potion":
+            addTag(it.ItemId, "alchemy", "potion → alchemy")
+        case "food":
+            addTag(it.ItemId, "cooking", "food → cooking")
+        case "scroll":
+            addTag(it.ItemId, "enchanting", "scroll → enchanting")
+        case "componentbag", "container":
+            addTag(it.ItemId, "tailoring", "bag → tailoring (review)")
+        case "object":
+            // Can't infer — leave for human review (CSV row will show empty proposal).
+        }
+    }
+
+    // ── Emit CSV ───────────────────────────────────────────────
+    if err := os.MkdirAll(filepath.Dir(outPath), 0755); err != nil {
+        fmt.Fprintf(os.Stderr, "mkdir: %v\n", err)
+        os.Exit(1)
+    }
+    f, err := os.Create(outPath)
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "create csv: %v\n", err)
+        os.Exit(1)
+    }
+    defer f.Close()
+    w := csv.NewWriter(f)
+    defer w.Flush()
+
+    _ = w.Write([]string{
+        "item_id", "name", "type", "subtype", "component_tag",
+        "value", "questtoken", "current_tags", "proposed_tags",
+        "needs_review", "provenance",
+    })
+
+    sort.Slice(items, func(i, j int) bool { return items[i].ItemId < items[j].ItemId })
+    for _, it := range items {
+        var proposed []string
+        for d := range proposal[it.ItemId] {
+            proposed = append(proposed, d)
+        }
+        sort.Strings(proposed)
+
+        needsReview := ""
+        if it.Value > 0 && it.QuestToken == "" && len(proposed) == 0 {
+            needsReview = "YES"
+        }
+
+        _ = w.Write([]string{
+            fmt.Sprintf("%d", it.ItemId),
+            it.Name,
+            it.Type,
+            it.Subtype,
+            it.ComponentTag,
+            fmt.Sprintf("%d", it.Value),
+            it.QuestToken,
+            strings.Join(it.VendorCategories, ","),
+            strings.Join(proposed, ","),
+            needsReview,
+            strings.Join(source[it.ItemId], "; "),
+        })
+    }
+
+    fmt.Printf("Wrote %s with %d rows.\n", outPath, len(items))
+}
+
+func loadAllItems() ([]itemYAML, error) {
+    var items []itemYAML
+    err := filepath.Walk(itemsDir, func(path string, info os.FileInfo, err error) error {
+        if err != nil {
+            return err
+        }
+        if info.IsDir() || !strings.HasSuffix(path, ".yaml") {
+            return nil
+        }
+        raw, err := os.ReadFile(path)
+        if err != nil {
+            return err
+        }
+        var it itemYAML
+        if err := yaml.Unmarshal(raw, &it); err != nil {
+            fmt.Fprintf(os.Stderr, "WARN: parse %s: %v\n", path, err)
+            return nil
+        }
+        if it.ItemId > 0 {
+            items = append(items, it)
+        }
+        return nil
+    })
+    return items, err
+}
+
+func loadAllRecipes() ([]recipeYAML, error) {
+    var recipes []recipeYAML
+    err := filepath.Walk(recipesDir, func(path string, info os.FileInfo, err error) error {
+        if err != nil {
+            return err
+        }
+        if info.IsDir() || !strings.HasSuffix(path, ".yaml") {
+            return nil
+        }
+        raw, err := os.ReadFile(path)
+        if err != nil {
+            return err
+        }
+        var r recipeYAML
+        if err := yaml.Unmarshal(raw, &r); err != nil {
+            fmt.Fprintf(os.Stderr, "WARN: parse %s: %v\n", path, err)
+            return nil
+        }
+        if r.Id != "" && r.Skill != "" {
+            recipes = append(recipes, r)
+        }
+        return nil
+    })
+    return recipes, err
+}
+```
+
+- [ ] **Step 3: Run the script**
+
 ```bash
-grep -l "component_tag: <tag>" _datafiles/world/dogmud/items/materials-40000/
+go run tools/economy/generate_vendor_tags/main.go
 ```
-For each tag from Step 1, identify the item file.
+Expected: `Wrote tools/economy/generate_vendor_tags/vendor_tag_proposal.csv with NNN rows.` (one row per item).
 
-- [ ] **Step 3: Add `vendor_categories: [alchemy]` to each alchemy material**
+- [ ] **Step 4: Spot-check the CSV**
 
-For an item like `40057-lake_mint.yaml`, add (or merge with existing if cross-discipline):
+```bash
+# Check a known cross-cutting mat — iron ingot should appear in
+# multiple disciplines if any blacksmithing+jewelcrafting recipes
+# both use it.
+grep "^40001," tools/economy/generate_vendor_tags/vendor_tag_proposal.csv
+
+# Check Lake Mint — should show "alchemy" only.
+grep "^40057," tools/economy/generate_vendor_tags/vendor_tag_proposal.csv
+
+# Spot any "needs_review = YES" rows (no proposal generated).
+awk -F',' '$10 == "YES"' tools/economy/generate_vendor_tags/vendor_tag_proposal.csv | head -20
+```
+
+- [ ] **Step 5: Commit the script + the generated CSV**
+
+```bash
+git add tools/economy/generate_vendor_tags/
+git commit -m "tools(economy): add vendor-tag proposal generator
+
+Walks recipes (every ingredient + every output) and applies type-based
+heuristics for finished goods to produce a deterministic CSV proposal
+of vendor_categories per item. Auditable artifact for the tagging
+sweep — humans review + correct, then subagent applies mechanically.
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
+```
+
+### Task 3.0a: Human review of proposal CSV
+
+**This task does not run code — it's a checkpoint for the operator (you).**
+
+- [ ] **Step 1: Open the CSV and audit `needs_review = YES` rows**
+
+```bash
+awk -F',' '$10 == "YES" {print}' tools/economy/generate_vendor_tags/vendor_tag_proposal.csv
+```
+
+For each row, decide:
+- Quest item / lore prop with no value → confirm `value: 0` or `questtoken: ...` is set in the YAML, leave proposal empty.
+- Real salable item missing a tag → manually fill `proposed_tags` column.
+
+- [ ] **Step 2: Audit cross-cutting mats for completeness**
+
+Look at the proposed_tags column for these specific item IDs and verify the multi-tag set looks correct:
+- `40001 iron ingot` — should contain at least `blacksmithing`. Check if jewelcrafting recipes use it (via the provenance column).
+- `40002 leather strip` — should contain `blacksmithing, tailoring` if both disciplines have leather recipes.
+- `40012 thread spool` — likely `tailoring`; check if blacksmithing/jewelcrafting use it.
+- `40065 beeswax` — likely `alchemy, cooking`; verify provenance.
+- `40053 Stillwater black pearl` — likely `alchemy, jewelcrafting`.
+
+For any that look wrong, edit the `proposed_tags` column directly.
+
+- [ ] **Step 3: Audit type-heuristic guesses (for finished goods with no recipe)**
+
+Specifically eyeball:
+- Wands/sceptres/staves — proposal says `enchanting`. Confirm with your design intent.
+- Leather armor — proposal says `blacksmithing, tailoring`. Confirm.
+- Backpacks / belts / wrists / cloaks — proposal says `tailoring (review)`. Confirm or correct.
+- Component bags — proposal says `tailoring (review)`. Confirm.
+
+- [ ] **Step 4: Commit the corrected CSV**
+
+```bash
+git add tools/economy/generate_vendor_tags/vendor_tag_proposal.csv
+git commit -m "content(economy): manual corrections to vendor tag proposal
+
+Reviewed needs_review rows + cross-cutting mats. Final proposal
+ready for mechanical application to item YAMLs.
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
+```
+
+### Task 3.1: Apply CSV proposal to item YAMLs (per discipline)
+
+**Files:**
+- Modify: every item YAML in `_datafiles/world/dogmud/items/` whose CSV row has a non-empty `proposed_tags`.
+- Read-only: `tools/economy/generate_vendor_tags/vendor_tag_proposal.csv`.
+
+For this task the subagent reads the CSV row-by-row and applies tags to each item YAML. To keep diffs reviewable, commits are split per discipline — six commits, mechanical:
+
+- [ ] **Step 1: Build a per-item tag list from the CSV**
+
+```bash
+# Sanity-check tag set per discipline.
+for d in alchemy blacksmithing tailoring cooking jewelcrafting enchanting; do
+    echo "=== $d ==="
+    awk -F',' -v d="$d" 'NR>1 && index($9, d) > 0 {print $1, $2}' \
+        tools/economy/generate_vendor_tags/vendor_tag_proposal.csv | head -10
+done
+```
+
+Confirm each list is non-empty and the items match expectations.
+
+- [ ] **Step 2: Apply tags — alchemy commit**
+
+For every CSV row where `proposed_tags` contains `alchemy`:
+1. Locate the YAML by `item_id`. Check both possible filenames:
+   - `_datafiles/world/dogmud/items/materials-40000/<itemid>-*.yaml`
+   - `_datafiles/world/dogmud/items/consumables-30000/<itemid>-*.yaml`
+   - `_datafiles/world/dogmud/items/other-0/<itemid>-*.yaml`
+2. Read the YAML.
+3. If `vendor_categories:` already exists, MERGE — add `alchemy` if not already present, keep all existing entries.
+4. If absent, add the full `proposed_tags` set as a YAML list (sorted alphabetically).
+
+Example YAML edit for a multi-tag mat (`40065 beeswax`, proposal `alchemy,cooking`):
 
 ```yaml
 vendor_categories:
 - alchemy
+- cooking
 ```
 
-Apply to (canonical alchemy mats from `mat-audit-matrix.md` + recipe walk):
-- 40004 (healer's root), 40005 (bitter thistle), 40006 (glass vial), 40010 (Chrysalis Core), 40028 (binding paste), 40029 (mutation catalyst), 40043 (clay flask), 40044 (sealed phial), 40045 (crystalline decanter), 40046 (moonpetal), 40047 (veilbloom petal), 40048 (serpent venom sac), 40049 (ironbark shaving — also tailoring? confirm via recipes), 40050 (putrid residue), 40051 (skitter-shrimp shell), 40053 (Stillwater black pearl — also jewelcrafting), 40055 (oil of spore?), 40056 (marsh willow bark), 40057 (lake mint), 40058 (freshwater clam), 40059 (lake-iron nodule), 40062 (oak bark), 40063 (shadowcap mushroom), 40064 (wild hare meat — also cooking?), 40065 (beeswax), 40066 (blood-moss), 40067 (pine pitch).
+- [ ] **Step 3: Boot-smoke + commit alchemy batch**
 
-For mats used in multiple disciplines, list all applicable disciplines now (saves a second sweep later).
+```bash
+go build ./...
+git add _datafiles/world/dogmud/items/
+git commit -m "content(items): apply alchemy vendor_categories from CSV proposal
 
-- [ ] **Step 4: Boot-smoke that nothing parses broken**
+Mechanical application of vendor_tag_proposal.csv rows tagged with
+alchemy. Cross-cutting mats (e.g., beeswax) get all their disciplines
+in this commit since the CSV merges multi-tag entries.
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
+```
+
+- [ ] **Step 4–8: Repeat Steps 2–3 for blacksmithing, then tailoring, then cooking, then jewelcrafting, then enchanting.**
+
+Each commit message: `content(items): apply <discipline> vendor_categories from CSV proposal`.
+
+For items already tagged in the alchemy commit (cross-cutting mats), the per-discipline commit will see no diff and skip the file — that's expected.
+
+- [ ] **Step 9: Final boot-smoke**
 
 ```bash
 go build ./...
 ```
-Expected: clean build (no validators yet — just YAML round-trip stability).
+Expected: clean build.
 
-- [ ] **Step 5: Commit**
-
-```bash
-git add _datafiles/world/dogmud/items/materials-40000/
-git commit -m "content(items): tag alchemy materials with vendor_categories
-
-Walks all alchemy recipes; tags each ingredient material with its
-discipline (or disciplines, for cross-cutting mats like ironbark).
-Step 1 of the per-discipline tagging sweep.
-
-Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
-```
-
-### Task 3.2: Tag blacksmithing raw mats
-
-Same pattern as 3.1 but using `_datafiles/world/dogmud/recipes/blacksmithing/`. Likely items: 40001 (iron ingot), 40018 (steel ingot), 40019 (chain link), 40020 (coal dust), 40002 (leather strip — also tailoring), 40068 (sinew — also tailoring), 40013 (bone needle — possibly also tailoring), 40012 (thread spool — also tailoring).
-
-- [ ] Step 1-5 mirror 3.1 with blacksmithing recipes.
-- [ ] Commit message: `content(items): tag blacksmithing materials with vendor_categories`.
-
-### Task 3.3: Tag jewelcrafting raw mats
-
-`_datafiles/world/dogmud/recipes/jewelcrafting/`. Likely items: 40021 (copper wire), 40022 (silver wire), 40023 (gold wire), 40024 (polished stone), 40025 (raw gem), 40026 (gem dust), 40030 (chrysalis setting), 40027 (chrysalis shard), 40053 (Stillwater black pearl), 40001 (iron ingot — possibly also).
-
-- [ ] Step 1-5 mirror 3.1.
-- [ ] Commit message: `content(items): tag jewelcrafting materials with vendor_categories`.
-
-### Task 3.4: Tag tailoring raw mats
-
-`_datafiles/world/dogmud/recipes/tailoring/`. Likely items: 40007 (cloth strip), 40012 (thread spool), 40013 (bone needle), 40002 (leather strip), 40068 (sinew), and any new tailoring-specific items.
-
-- [ ] Step 1-5 mirror 3.1.
-- [ ] Commit message: `content(items): tag tailoring materials with vendor_categories`.
-
-### Task 3.5: Tag cooking raw mats
-
-`_datafiles/world/dogmud/recipes/cooking/`. Likely items: 40014 (raw meat), 40015 (wild vegetables), 40016 (water flask), 40017 (salt pouch), 40058 (freshwater clam), 40064 (wild hare meat), 40065 (beeswax — also alchemy).
-
-- [ ] Step 1-5 mirror 3.1.
-- [ ] Commit message: `content(items): tag cooking materials with vendor_categories`.
-
-### Task 3.6: Tag enchanting raw mats
-
-`_datafiles/world/dogmud/recipes/enchanting/`. Walk recipe dir to identify ingredients.
-
-- [ ] Step 1-5 mirror 3.1.
-- [ ] Commit message: `content(items): tag enchanting materials with vendor_categories`.
-
-### Task 3.7: Tag finished goods (weapons)
-
-**Files:** `_datafiles/world/dogmud/items/weapons-10000/*.yaml` (35 files).
-
-- [ ] **Step 1: Add `vendor_categories: [blacksmithing]` to all weapon YAMLs.**
-
-Bows, crossbows are also blacksmithing? Confirm with recipe walk. Wands/sceptres/staves may be enchanting. For each weapon, decide based on item type/subtype:
-- swords, axes, daggers, maces, spears, hammers, shields, bows, crossbows → `[blacksmithing]`
-- wands, sceptres, staves → `[enchanting]` (review carefully — these may be alchemy or jewelcrafting depending on lore)
-
-- [ ] **Step 2: Boot-smoke.**
+- [ ] **Step 10: Verify completeness**
 
 ```bash
-go build ./...
+# Count items with no vendor_categories that aren't quest items / zero-value:
+go run tools/economy/generate_vendor_tags/main.go
+awk -F',' '$10 == "YES" && $9 == ""' \
+    tools/economy/generate_vendor_tags/vendor_tag_proposal.csv | wc -l
 ```
+Expected: 0 rows (every salable item now has a proposal AND was applied).
 
-- [ ] **Step 3: Commit.**
-
-```bash
-git add _datafiles/world/dogmud/items/weapons-10000/
-git commit -m "content(items): tag weapons with vendor_categories
-
-Blacksmithing for melee + ranged; enchanting for wand/sceptre/staff.
-
-Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
-```
-
-### Task 3.8: Tag finished goods (armor)
-
-**Files:** `_datafiles/world/dogmud/items/armor-20000/*.yaml` (13 files).
-
-- [ ] **Step 1: For each armor item, decide tag based on material/subtype.**
-
-- Metal armor (helms, plates, gauntlets, greaves) → `[blacksmithing]`
-- Cloth armor (robes, hoods) → `[tailoring]`
-- Leather armor → `[blacksmithing, tailoring]` (cross-cutting; tanners + smiths both work leather historically)
-
-- [ ] **Step 2: Boot-smoke + commit.**
-
-```bash
-git add _datafiles/world/dogmud/items/armor-20000/
-git commit -m "content(items): tag armor with vendor_categories
-
-Metal armor → blacksmithing. Cloth → tailoring. Leather → both.
-
-Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
-```
-
-### Task 3.9: Tag finished goods (consumables)
-
-**Files:** `_datafiles/world/dogmud/items/consumables-30000/*.yaml` (44 files).
-
-- [ ] **Step 1: For each consumable, decide tag.**
-
-- Potions → `[alchemy]`
-- Food → `[cooking]`
-- Scrolls → `[enchanting]`
-- Other (e.g., grenades) → review spec / existing recipe
-
-- [ ] **Step 2: Boot-smoke + commit.**
-
-```bash
-git add _datafiles/world/dogmud/items/consumables-30000/
-git commit -m "content(items): tag consumables with vendor_categories
-
-Potions → alchemy. Food → cooking. Scrolls → enchanting.
-
-Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
-```
-
-### Task 3.10: Tag remaining items (other-0)
-
-**Files:** `_datafiles/world/dogmud/items/other-0/*.yaml` (35 files).
-
-- [ ] **Step 1: For each item, decide:**
-
-- Quest items (`questtoken: ...` set) → leave empty.
-- Holdable props with no value or `value: 0` → leave empty.
-- Anything else with a clear discipline mapping → tag.
-- Genuinely uncategorizable (tools? lockpicks?) → tag the most plausible single discipline (lockpicks → blacksmithing).
-
-- [ ] **Step 2: Boot-smoke + commit.**
-
-```bash
-git add _datafiles/world/dogmud/items/other-0/
-git commit -m "content(items): tag remaining items with vendor_categories
-
-Quest items left untagged (rejected by buy rule via QuestToken
-check). Tools and misc gear get plausible single-discipline tags.
-
-Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
-```
+If non-zero, the CSV review missed something or the application missed an item — investigate and fix.
 
 ---
 
