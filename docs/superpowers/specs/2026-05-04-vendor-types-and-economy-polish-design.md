@@ -258,17 +258,37 @@ balance config knob (no new field).
 | 340   | Kess              | Stillwater         | jewelcrafting | 1000         |
 | 341   | Wulf              | Stillwater         | general    | 5000            |
 
-**Boot-time migration.** In `RegisterShop` (or a new
-`migrateStartingGold` called from boot), if the loaded shop has the OLD
-default starting gold value (500), bump:
-- `craft_support == general` → `starting_gold = 5000`
-- any specialist craft_support → `starting_gold = 1000`
+**One-time hard reset of existing shop save files.** This change is
+big enough — new buy rule, new tag system, new gold defaults, new stock
+seeding — that piecemeal migration is risky and would leave shops in
+half-old / half-new states. Instead:
 
-If the existing `starting_gold` is anything else (e.g., `200` on Ilsa
-today, or a manually set value), it's left alone — the migration only
-catches shops that were created with the old defaults. Manual overrides
-in existing YAMLs (`gold: 200` on Ilsa) get reviewed and bumped during
-the audit pass.
+- Delete the entire `_datafiles/world/dogmud/shops/` directory at the
+  start of the implementation work. (Shops re-seed from mob templates on
+  first boot via the existing `RegisterShop → loadFromDisk == nil → seed
+  from template` path.)
+- For the cut shopkeepers (Korvath, Yenna, Sigrid, Haral, Whisper, Bram),
+  this also serves as their save-file cleanup since the entire dir is
+  going away.
+- Players lose any current shop economic state (NPC gold drift, current
+  stock levels) — acceptable cost for a clean reset, since prod has been
+  exercising these systems for less than two weeks and current state is
+  unstable / heavily skewed by the bugs we're fixing.
+- After the wipe, every shop boots fresh with: `starting_gold` per the
+  table above (1000 specialist / 5000 general), `Stock` populated from
+  the mob template's `crafterrestockmaterials` and `shop` lists,
+  `LastRestock = 0`.
+
+**No conditional migration logic** — the wipe-and-reseed is simpler,
+more predictable, and avoids edge cases where a shop with manually set
+`starting_gold: 200` (e.g., Ilsa today) ends up between worlds.
+
+The same hard-reset principle applies to the **new** persistence
+directories — there's nothing to migrate there yet:
+- `_datafiles/world/dogmud/foragers/` — created fresh, populated as
+  foragers tick.
+- `_datafiles/world/dogmud/caravans/` — created fresh, populated as
+  caravans tick.
 
 **Settlement-tier pattern (memory for content design):**
 - Small village / roadside inn: 1 general store, optionally 1 specialist.
@@ -637,12 +657,39 @@ item's `vendor_categories`. Cold boot panic on mismatches.
 
 Identical mirrored tests in `internal/caravans/throughput_test.go`.
 
-### Per-shop migration
+### Fresh-seed integrity (replaces old migration tests)
 
 `internal/shops/persistence_test.go`:
-- `TestStartingGoldMigration_SpecialistBumpsTo1000`
-- `TestStartingGoldMigration_GeneralBumpsTo5000`
-- `TestStartingGoldMigration_LeavesCustomValuesAlone`
+- `TestRegisterShop_SeedsStartingGoldFromTemplate` — fresh shop with no
+  save file picks up `starting_gold` from the mob template.
+- `TestRegisterShop_SeedsStockFromCrafterRestockMaterials` — stock
+  entries are created with `RestockQty` and `Current` matching the
+  template seed convention.
+- `TestRegisterShop_LoadsExistingSaveFile` — once a save file exists,
+  it's loaded verbatim (the wipe is a one-time content op, not a
+  per-boot behavior).
+
+### New-character tutorial smoke (no regression in Sanctum Basin)
+
+A `feel-tester` AI run from a **fresh character account** must complete
+the Sanctum Basin tutorial chain end-to-end after this change ships.
+Ensures vendor-rule + gold-default + cut-shopkeeper changes haven't
+broken the new-player path. Specifically:
+
+- Character creation completes.
+- Chrysalis Priest mutation step works (Korvath / Yenna are still
+  reachable, dialogue works, attack-immune holds).
+- Adela still sells starter gear at expected prices.
+- Combat trainer step completes.
+- Player can leave Sanctum Basin (find Stillwater or Thornwall) with
+  reasonable gold remaining.
+
+A new goal file lives at
+`tools/testing/goals/vendor-economy-polish-tutorial-regression.yaml`
+that an admin runs against local before promoting to prod. This is a
+content / UX safety check on top of the unit suite — the unit suite
+proves the rule is correct, the smoke test proves the rule doesn't
+strand new players.
 
 ### Boot smoke (per CLAUDE.md pre-push SOP)
 
@@ -660,9 +707,14 @@ Server must boot cleanly past datafile loading. Watch for:
 
 - **Item tag sweep is large.** Mitigated by per-discipline commits with
   validation enabled — boot fails fast on any miss.
-- **Migration could double-bump on second boot.** The migration looks for
-  `starting_gold == 500` exactly; new defaults are 1000 and 5000 so a
-  second boot finds nothing to migrate.
+- **One-time wipe loses live shop state.** Acceptable cost — the bugs
+  we're fixing have skewed current state heavily, and the systems are <2
+  weeks old in prod. The wipe is documented in PATCH_NOTES; no players
+  permanently lose anything (their personal gold and inventories are
+  untouched).
+- **Tutorial regression risk.** Mitigated by the fresh-character feel-tester
+  AI run before any prod push (see test §6.5). If the run can't get out
+  of Sanctum Basin, ship is blocked.
 - **Removed gear-upgrade rule could regress an existing test player flow.**
   Mitigated by the regression test in §6.3 (gear-upgrade scenarios assert
   reject), and shopkeepers were never wearing what they bought anyway.
