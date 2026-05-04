@@ -1154,3 +1154,32 @@ name: untiered
 		t.Errorf("RarityTier = %d, want 0 (unset)", spec.RarityTier)
 	}
 }
+
+func TestItemSpec_VendorCategories_YAMLRoundtrip(t *testing.T) {
+	yamlInput := `itemid: 99999
+name: test item
+type: object
+vendor_categories:
+- alchemy
+- jewelcrafting
+`
+	var spec ItemSpec
+	if err := yaml.Unmarshal([]byte(yamlInput), &spec); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if len(spec.VendorCategories) != 2 ||
+		spec.VendorCategories[0] != "alchemy" ||
+		spec.VendorCategories[1] != "jewelcrafting" {
+		t.Errorf("VendorCategories = %v, want [alchemy jewelcrafting]", spec.VendorCategories)
+	}
+}
+
+func TestItemSpec_VendorCategories_DefaultsEmpty(t *testing.T) {
+	var spec ItemSpec
+	if err := yaml.Unmarshal([]byte("itemid: 1\nname: x\n"), &spec); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if len(spec.VendorCategories) != 0 {
+		t.Errorf("VendorCategories = %v, want empty", spec.VendorCategories)
+	}
+}
