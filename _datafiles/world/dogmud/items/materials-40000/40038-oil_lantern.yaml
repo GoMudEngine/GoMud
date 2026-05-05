@@ -8,3 +8,5 @@ type: object
 subtype: mundane
 weight: 0.1
 value: 1
+vendor_categories:
+  - blacksmithing

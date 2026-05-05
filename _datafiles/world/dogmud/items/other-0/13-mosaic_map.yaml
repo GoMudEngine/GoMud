@@ -9,4 +9,4 @@ type: object
 subtype: mundane
 weight: 0.1
 uses: 0
-value: 5
+value: 0

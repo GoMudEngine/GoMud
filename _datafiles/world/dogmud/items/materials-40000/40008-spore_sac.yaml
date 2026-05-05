@@ -14,3 +14,5 @@ uses: 0
 weight: 0.3
 value: 12
 rarity_tier: 40
+vendor_categories:
+  - alchemy

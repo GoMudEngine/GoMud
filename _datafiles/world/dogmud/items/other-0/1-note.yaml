@@ -4,3 +4,4 @@ namesimple: paper
 description: The scribbling on the note has been worn away and can no longer be read.
 type: readable
 subtype: blobcontent
+value: 0

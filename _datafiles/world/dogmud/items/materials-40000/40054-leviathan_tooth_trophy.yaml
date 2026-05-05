@@ -6,3 +6,5 @@ type: object
 subtype: mundane
 weight: 0.4
 value: 175
+vendor_categories:
+  - jewelcrafting

@@ -10,3 +10,4 @@ type: key
 subtype: holdable
 uses: 0
 weight: 0.2
+value: 0
