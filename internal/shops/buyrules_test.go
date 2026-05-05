@@ -116,6 +116,48 @@ func TestBuyRules_GeneralStoreRejectsUntagged(t *testing.T) {
 	assert.Equal(t, 0, offer.Price, "general store still requires items to carry a tag")
 }
 
+func TestBuyRules_UnstockedItem_FlatPrice(t *testing.T) {
+	// Regression for the 2026-05-04 hotfix: vendors used to price
+	// items they don't normally stock at the 5x scarcity ceiling
+	// (current=0, restock=1 → ratio=0 → PriceCeiling=5.0), which
+	// could push the offer above the gold reserve and self-reject.
+	// New rule: unstocked items get flat value × BuyRatio.
+	item := makeItem(items.ItemSpec{
+		ItemId:           100,
+		Value:            60, // arena tower shield-tier value
+		Type:             items.Offhand,
+		VendorCategories: []string{"blacksmithing"},
+	})
+	shop := baseShop()
+	shop.CraftSupport = CraftSupportBlacksmithing
+	// Empty stock list → item is unstocked.
+	cfg := DefaultPricingConfig()
+	offer := EvaluateBuyRules(item, shop, "", false, cfg, nil)
+	expected := int(60 * cfg.BuyRatio)
+	assert.Equal(t, expected, offer.Price,
+		"unstocked items should price at flat value × BuyRatio, not the 5x scarcity ceiling")
+}
+
+func TestBuyRules_StockedItem_StillUsesScarcity(t *testing.T) {
+	// Companion to TestBuyRules_UnstockedItem_FlatPrice: confirms
+	// stocked items still get the dynamic scarcity multiplier.
+	item := makeItem(items.ItemSpec{
+		ItemId:           100,
+		Value:            20,
+		Type:             items.Object,
+		VendorCategories: []string{"alchemy"},
+	})
+	shop := baseShop()
+	shop.CraftSupport = CraftSupportAlchemy
+	// Out-of-stock entry → expect higher-than-flat price (scarcity > 1).
+	shop.Stock = []StockEntry{{ItemId: 100, RestockQty: 5, MaxStock: 20, Current: 0}}
+	cfg := DefaultPricingConfig()
+	offer := EvaluateBuyRules(item, shop, "", false, cfg, nil)
+	flat := int(20 * cfg.BuyRatio)
+	assert.Greater(t, offer.Price, flat,
+		"stocked but empty entries should get scarcity-bonus pricing above flat")
+}
+
 func TestBuyRules_AtMaxStockRejected(t *testing.T) {
 	item := makeItem(items.ItemSpec{
 		ItemId:           100,

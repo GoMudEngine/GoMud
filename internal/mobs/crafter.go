@@ -39,7 +39,15 @@ func RegisterMobShop(mob *Mob) {
 		return
 	}
 
-	const startingGold = 500
+	// Seed gold from the mob's YAML (mob.Character.Gold). Apply a 500g
+	// floor so any merchant has meaningful purchasing power even if a
+	// content edit accidentally drops it to zero. Per spec section 3
+	// (per-vendor audit), specialists set 1000g and generals set 5000g
+	// in their YAMLs — this is what flows through to StartingGold.
+	startingGold := mob.Character.Gold
+	if startingGold < 500 {
+		startingGold = 500
+	}
 
 	template := shops.ShopInventory{
 		Gold:         startingGold,

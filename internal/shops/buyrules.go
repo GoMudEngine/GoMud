@@ -60,15 +60,31 @@ func EvaluateBuyRules(
 		return BuyOffer{}
 	}
 
-	// Compute price.
-	current, restock := 0, 1
-	if entry := shopInv.GetStock(spec.ItemId); entry != nil {
-		current = entry.Current
+	// Compute price. Two paths:
+	//   - Item is in the shop's stock list → use full dynamic pricing
+	//     (scarcity multiplier from current vs RestockQty).
+	//   - Item is NOT in the stock list → flat value × BuyRatio. The
+	//     scarcity concept only makes sense for items the shop actively
+	//     stocks; one-off offhand items shouldn't trigger the 5×
+	//     PriceCeiling, which would push the price above the gold
+	//     reserve and self-reject. (Issue caught 2026-05-04 — Maren
+	//     rejecting cattail cloak, Kerra rejecting arena tower shield.)
+	var price int
+	entry := shopInv.GetStock(spec.ItemId)
+	if entry != nil {
+		current := entry.Current
+		restock := 1
 		if entry.RestockQty > 0 {
 			restock = entry.RestockQty
 		}
+		price = CalcBuyPrice(spec.Value, current, restock, cfg)
+	} else {
+		flat := int(float64(spec.Value) * cfg.BuyRatio)
+		if flat < 1 {
+			flat = 1
+		}
+		price = flat
 	}
-	price := CalcBuyPrice(spec.Value, current, restock, cfg)
 
 	// Gold-reserve gate.
 	b := configs.GetBalanceConfig()
