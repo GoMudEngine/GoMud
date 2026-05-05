@@ -13,4 +13,5 @@ rarity_tier: 50
 is_component: true
 vendor_categories:
 - alchemy
+- jewelcrafting
 bottle_aging_multiplier: 3.0
