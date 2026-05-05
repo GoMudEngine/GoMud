@@ -44,7 +44,8 @@ func ValidateRecipeIngredientTags(
 		for _, ing := range r.Ingredients {
 			spec, ok := byTag[ing.ItemTag]
 			if !ok {
-				mudlog.Warn("recipe ingredient has no canonical item",
+				mudlog.Warn("crafting.ValidateRecipeIngredientTags",
+					"warning", "recipe ingredient has no canonical item",
 					"recipe", id, "itemTag", ing.ItemTag)
 				continue
 			}
