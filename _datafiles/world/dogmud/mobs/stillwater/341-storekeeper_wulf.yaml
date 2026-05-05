@@ -34,7 +34,7 @@ character:
     and there is a cat asleep behind the counter that he swears keeps the
     mice out.
   speciesid: 1
-  gold: 400
+  gold: 5000
   stats:
     charisma:
       training: 8
