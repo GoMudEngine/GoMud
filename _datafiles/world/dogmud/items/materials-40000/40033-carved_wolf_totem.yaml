@@ -1,5 +1,6 @@
 itemid: 40033
 name: carved wolf totem
+not_salable: true
 namesimple: totem
 description: A small totem carved from steppe cedar, depicting a wolf
   mid-howl. Leather cord wraps the base. It smells of sage and old

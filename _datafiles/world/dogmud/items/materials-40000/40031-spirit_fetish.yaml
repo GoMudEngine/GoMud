@@ -1,5 +1,6 @@
 itemid: 40031
 name: spirit fetish
+not_salable: true
 namesimple: fetish
 description: A small bundle of steppe grass, wolf fur, and windstone dust
   bound with sinew. It thrums with spiritual energy when held, warm

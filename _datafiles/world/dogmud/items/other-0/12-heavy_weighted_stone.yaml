@@ -1,5 +1,6 @@
 itemid: 12
 name: heavy weighted stone
+not_salable: true
 namesimple: stone
 description: A large training stone. Carrying a full sack of these will severely
   test your combat ability while heavily encumbered.

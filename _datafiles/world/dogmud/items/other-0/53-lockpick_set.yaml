@@ -1,5 +1,6 @@
 itemid: 53
 name: lockpick set
+not_salable: true
 namesimple: lockpicks
 description: >
   A leather roll containing a set of slender metal picks, each

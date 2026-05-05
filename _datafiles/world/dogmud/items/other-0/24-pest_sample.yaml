@@ -1,5 +1,6 @@
 itemid: 24
 name: pest sample
+not_salable: true
 namesimple: sample
 description: The body of a crop pest, wrapped in a scrap of burlap. The rodent is
   about the size of a cat, with coarse brown fur and oversized orange-stained teeth.

@@ -1,5 +1,6 @@
 itemid: 21
 name: crossing ledger
+not_salable: true
 namesimple: ledger
 description: A heavy leather-bound book filled with columns of dates, names, and
   payment amounts in a meticulous hand. The ledger records every toll collected at

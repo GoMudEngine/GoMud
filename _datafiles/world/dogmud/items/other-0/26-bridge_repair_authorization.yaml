@@ -1,5 +1,6 @@
 itemid: 26
 name: bridge repair authorization
+not_salable: true
 namesimple: authorization
 description: A formal document from the Thornwall Magistrate's office, authorizing
   the collection of bridge maintenance fees at Watchers Crossing. The authorization

@@ -1,5 +1,6 @@
 itemid: 22
 name: eviction notice
+not_salable: true
 namesimple: notice
 description: An official document on heavy parchment, stamped with the seal of the
   Thornwall Tax Authority. It orders the dispossession of one Gareth Millward for
