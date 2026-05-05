@@ -5,3 +5,5 @@ type: head
 subtype: wearable
 magical_mitigation: 1
 conviction_mitigation: 2
+vendor_categories:
+- tailoring
