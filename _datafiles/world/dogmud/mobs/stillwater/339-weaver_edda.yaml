@@ -57,7 +57,7 @@ character:
     frame in some stage of completion. She is not Maren of Thornwall, and
     she knows it; her work is simpler, but it lasts.
   speciesid: 1
-  gold: 200
+  gold: 1000
   skills:
     tailoring: 12
   stats:

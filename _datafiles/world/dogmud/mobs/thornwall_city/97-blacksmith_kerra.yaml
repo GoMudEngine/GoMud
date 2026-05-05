@@ -49,7 +49,7 @@ character:
     work, and people who do not waste her time.
   speciesid: 1
   level: 1
-  gold: 500
+  gold: 1000
   equipment:
     weapon:
       itemid: 10008

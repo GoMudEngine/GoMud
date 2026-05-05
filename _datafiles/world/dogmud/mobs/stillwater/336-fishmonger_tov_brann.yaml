@@ -33,7 +33,7 @@ character:
     morning haul. Business is thin lately, with half the nets coming
     back torn.
   speciesid: 1
-  gold: 150
+  gold: 1000
   stats:
     dexterity:
       training: 10

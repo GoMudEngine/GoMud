@@ -50,7 +50,7 @@ character:
     last.
   speciesid: 1
   level: 1
-  gold: 500
+  gold: 1000
   skills:
     tailoring: 12
   stats:
