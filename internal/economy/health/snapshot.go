@@ -29,6 +29,7 @@ type ShopSnapshot struct {
 	StartingGold     int             `yaml:"starting_gold"      json:"starting_gold"`
 	LastRestockRound uint64          `yaml:"last_restock_round" json:"last_restock_round"`
 	Stock            []StockSnapshot `yaml:"stock"              json:"stock"`
+	StockScore       float64         `yaml:"stock_score"        json:"stock_score"` // sum(Current) / sum(MaxStock); 0..1
 }
 
 // StockSnapshot is a per-item entry. Bucket comes from economy.BucketFor().
@@ -54,6 +55,7 @@ type CaravanSnapshot struct {
 	CargoWeight       int            `yaml:"cargo_weight"        json:"cargo_weight"`   // pounds
 	CargoCapacity     int            `yaml:"cargo_capacity"      json:"cargo_capacity"` // pounds
 	CargoByBucket     map[string]int `yaml:"cargo_by_bucket"     json:"cargo_by_bucket"`
+	DeliveriesByTier  map[int]int    `yaml:"deliveries_by_tier"  json:"deliveries_by_tier"`
 }
 
 // ForagerSnapshot captures one forager NPC's state + backpack
@@ -73,4 +75,5 @@ type ForagerSnapshot struct {
 	CargoWeight       int            `yaml:"cargo_weight"        json:"cargo_weight"`   // pounds
 	CargoCapacity     int            `yaml:"cargo_capacity"      json:"cargo_capacity"` // pounds
 	CargoByBucket     map[string]int `yaml:"cargo_by_bucket"     json:"cargo_by_bucket"`
+	DeliveriesByTier  map[int]int    `yaml:"deliveries_by_tier"  json:"deliveries_by_tier"`
 }

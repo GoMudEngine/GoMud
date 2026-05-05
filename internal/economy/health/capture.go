@@ -57,6 +57,15 @@ func captureShops() []ShopSnapshot {
 				RestockQty: e.RestockQty,
 			})
 		}
+		// Compute StockScore: sum(Current) / sum(MaxStock)
+		total, capacity := 0, 0
+		for _, e := range ss.Stock {
+			total += e.Current
+			capacity += e.Max
+		}
+		if capacity > 0 {
+			ss.StockScore = float64(total) / float64(capacity)
+		}
 		out = append(out, ss)
 	}
 	return out
@@ -110,6 +119,15 @@ func captureCaravans() []CaravanSnapshot {
 				if w > 0 {
 					cs.CargoByBucket[bucket] += w
 				}
+			}
+		}
+
+		// Populate DeliveriesByTier from caravan throughput.
+		tp := caravan.GetThroughput(m.Character.Zone, instId)
+		if tp != nil && tp.DeliveriesByTier != nil {
+			cs.DeliveriesByTier = map[int]int{}
+			for tier, count := range tp.DeliveriesByTier {
+				cs.DeliveriesByTier[tier] = count
 			}
 		}
 
@@ -215,6 +233,14 @@ func captureForagers() []ForagerSnapshot {
 				if w > 0 {
 					fs.CargoByBucket[bucket] += w
 				}
+			}
+		}
+		// Populate DeliveriesByTier from forager throughput.
+		tp := forager.GetThroughput(m.Character.Zone, p.MobId)
+		if tp != nil && tp.DeliveriesByTier != nil {
+			fs.DeliveriesByTier = map[int]int{}
+			for tier, count := range tp.DeliveriesByTier {
+				fs.DeliveriesByTier[tier] = count
 			}
 		}
 		out = append(out, fs)

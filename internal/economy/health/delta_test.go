@@ -82,3 +82,106 @@ func TestComputeShopDelta_GoldAndStock(t *testing.T) {
 		t.Errorf("base bucket: got %d, want -3", d.BucketDeltas["base"])
 	}
 }
+
+func TestStockScoreDelta_Computation(t *testing.T) {
+	now := health.ShopSnapshot{
+		Stock: []health.StockSnapshot{
+			{Current: 10, Max: 20},
+			{Current: 5, Max: 10},
+		},
+		StockScore: 0.5, // 15/30 = 0.5 (50%)
+	}
+	old := health.ShopSnapshot{StockScore: 0.3}
+	d := health.ComputeShopDelta(now, &old)
+	if d.StockScoreDelta != 20 {
+		t.Errorf("StockScoreDelta = %d, want 20 (50%% - 30%% = 20pp)", d.StockScoreDelta)
+	}
+}
+
+func TestComputeForagerDelta_BasicCounts(t *testing.T) {
+	now := health.ForagerSnapshot{
+		DeliveriesByTier: map[int]int{50: 100, 40: 50, 30: 10},
+		StuckRounds:      200,
+	}
+	old := health.ForagerSnapshot{
+		DeliveriesByTier: map[int]int{50: 80, 40: 30},
+		StuckRounds:      50,
+	}
+	d := health.ComputeForagerDelta(now, &old)
+	if d.DeliveriesByTierDelta[50] != 20 {
+		t.Errorf("tier 50: got %d, want 20", d.DeliveriesByTierDelta[50])
+	}
+	if d.DeliveriesByTierDelta[40] != 20 {
+		t.Errorf("tier 40: got %d, want 20", d.DeliveriesByTierDelta[40])
+	}
+	if d.DeliveriesByTierDelta[30] != 10 {
+		t.Errorf("tier 30: got %d, want 10 (new tier)", d.DeliveriesByTierDelta[30])
+	}
+	if d.StuckRoundsDelta != 150 {
+		t.Errorf("StuckRoundsDelta: got %d, want 150", d.StuckRoundsDelta)
+	}
+}
+
+func TestComputeCaravanDelta_BasicCounts(t *testing.T) {
+	now := health.CaravanSnapshot{
+		DeliveriesByTier: map[int]int{50: 30, 40: 15},
+	}
+	old := health.CaravanSnapshot{
+		DeliveriesByTier: map[int]int{50: 20},
+	}
+	d := health.ComputeCaravanDelta(now, &old)
+	if d.DeliveriesByTierDelta[50] != 10 {
+		t.Errorf("tier 50: got %d, want 10", d.DeliveriesByTierDelta[50])
+	}
+	if d.DeliveriesByTierDelta[40] != 15 {
+		t.Errorf("tier 40: got %d, want 15", d.DeliveriesByTierDelta[40])
+	}
+}
+
+func TestComputeForagerDelta_NilOldReturnsEmptyDelta(t *testing.T) {
+	now := health.ForagerSnapshot{
+		DeliveriesByTier: map[int]int{50: 5},
+		StuckRounds:      100,
+	}
+	d := health.ComputeForagerDelta(now, nil)
+	if len(d.DeliveriesByTierDelta) != 0 {
+		t.Errorf("expected empty delta map for nil old, got %v", d.DeliveriesByTierDelta)
+	}
+	if d.StuckRoundsDelta != 0 {
+		t.Errorf("expected 0 StuckRoundsDelta for nil old, got %d", d.StuckRoundsDelta)
+	}
+}
+
+func TestFindForagerInSnapshot(t *testing.T) {
+	snap := &health.Snapshot{
+		Foragers: []health.ForagerSnapshot{
+			{MobId: 101, Name: "Alice"},
+			{MobId: 102, Name: "Bob"},
+		},
+	}
+	f := health.FindForagerInSnapshot(snap, 102)
+	if f == nil || f.Name != "Bob" {
+		t.Errorf("FindForagerInSnapshot(102) failed")
+	}
+	f = health.FindForagerInSnapshot(snap, 999)
+	if f != nil {
+		t.Errorf("FindForagerInSnapshot(999) should return nil")
+	}
+}
+
+func TestFindCaravanInSnapshot(t *testing.T) {
+	snap := &health.Snapshot{
+		Caravans: []health.CaravanSnapshot{
+			{InstId: 1001, Name: "Caravan A"},
+			{InstId: 1002, Name: "Caravan B"},
+		},
+	}
+	c := health.FindCaravanInSnapshot(snap, 1002)
+	if c == nil || c.Name != "Caravan B" {
+		t.Errorf("FindCaravanInSnapshot(1002) failed")
+	}
+	c = health.FindCaravanInSnapshot(snap, 9999)
+	if c != nil {
+		t.Errorf("FindCaravanInSnapshot(9999) should return nil")
+	}
+}
