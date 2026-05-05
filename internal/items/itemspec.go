@@ -422,6 +422,16 @@ func GetAllItemSpecs() []ItemSpec {
 	return itemSpecs
 }
 
+// GetAllItemSpecsMap returns all item specs as a map keyed by item ID.
+// The returned pointers reference cached specs — callers must not mutate.
+func GetAllItemSpecsMap() map[int]*ItemSpec {
+	out := make(map[int]*ItemSpec, len(items))
+	for id, s := range items {
+		out[id] = s
+	}
+	return out
+}
+
 func GetAllItemNames() []string {
 
 	itemNames := []string{}

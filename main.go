@@ -1171,6 +1171,32 @@ func loadAllDataFiles(isReload bool) {
 			panic(fmt.Sprintf("shops.ValidateShopMobTags failed:\n%v", err))
 		}
 	}
+
+	// Validate item vendor_categories tags.
+	allItemSpecs := items.GetAllItemSpecsMap()
+	if err := items.ValidateVendorCategories(allItemSpecs, shops.ValidVendorCategories); err != nil {
+		if isReload {
+			mudlog.Error("items.ValidateVendorCategories failed on reload",
+				"error", err.Error(),
+				"remediation", "fix the listed item YAMLs (add or correct vendor_categories:) and run /reload again; item data may be inconsistent until then",
+			)
+		} else {
+			panic(fmt.Sprintf("items.ValidateVendorCategories failed:\n%v", err))
+		}
+	}
+
+	// Validate recipe ingredients carry the recipe's discipline tag.
+	if err := crafting.ValidateRecipeIngredientTags(crafting.GetAll(), allItemSpecs); err != nil {
+		if isReload {
+			mudlog.Error("crafting.ValidateRecipeIngredientTags failed on reload",
+				"error", err.Error(),
+				"remediation", "fix the listed item YAMLs (add the recipe's skill to vendor_categories) and run /reload again",
+			)
+		} else {
+			panic(fmt.Sprintf("crafting.ValidateRecipeIngredientTags failed:\n%v", err))
+		}
+	}
+
 	// Build mob-template zone lookup for shop cache pre-warming.
 	mobZoneByMobId := make(map[int]string, len(allMobTemplates))
 	for _, m := range allMobTemplates {
