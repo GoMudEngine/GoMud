@@ -123,6 +123,7 @@ func PrewarmShopForSpawnPlacement(template *Mob, roomId int) {
 		StockMultiplier:         template.StockMultiplier,
 	}
 	synthetic.Character.Shop = template.Character.Shop
+	synthetic.Character.Gold = template.Character.Gold
 	RegisterMobShop(&synthetic)
 }
 
