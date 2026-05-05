@@ -9,7 +9,7 @@ import (
 
 // ValidateVendorCategories panics-style validator for ItemSpec.VendorCategories
 // integrity. Returns a non-nil error listing every offending item if any:
-//   - has Value > 0 AND empty QuestToken AND empty VendorCategories, OR
+//   - has NotSalable=false AND empty QuestToken AND empty VendorCategories, OR
 //   - carries a VendorCategories value not present in validCategories.
 //
 // Caller behavior on non-nil error:
@@ -27,8 +27,8 @@ func ValidateVendorCategories(specs map[int]*ItemSpec, validCategories []string)
 		if spec == nil {
 			continue
 		}
-		// Skip non-salable items.
-		if spec.Value <= 0 {
+		// Skip non-economy items.
+		if spec.NotSalable {
 			continue
 		}
 		if spec.QuestToken != "" {

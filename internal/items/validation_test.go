@@ -28,13 +28,13 @@ func TestValidateVendorCategories_AllowsQuestItem(t *testing.T) {
 	}
 }
 
-func TestValidateVendorCategories_AllowsZeroValueItem(t *testing.T) {
+func TestValidateVendorCategories_AllowsNotSalableItem(t *testing.T) {
 	specs := map[int]*ItemSpec{
-		1: {ItemId: 1, Name: "prop", Value: 0},
+		1: {ItemId: 1, Name: "prop", NotSalable: true},
 	}
 	err := ValidateVendorCategories(specs, []string{"alchemy"})
 	if err != nil {
-		t.Errorf("zero-value items should be skipped: %v", err)
+		t.Errorf("not_salable items should be skipped: %v", err)
 	}
 }
 

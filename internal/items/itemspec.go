@@ -276,6 +276,7 @@ type ItemSpec struct {
 	SalvageReturns        []SalvageReturn   `yaml:"salvage_returns,omitempty"`         // Custom salvage returns for non-crafted items
 	RarityTier            int               `yaml:"rarity_tier,omitempty"`             // Vendor stock cap tier (50/40/30/20/10). Used by shops.EffectiveMaxStock with mob.StockMultiplier. 0 = untiered (quest items, defer-to-3.0e items).
 	VendorCategories      []string          `yaml:"vendor_categories,omitempty"`       // Disciplines that buy/sell this item; mirrors shops.ValidCraftSupports minus "general"
+	NotSalable            bool              `yaml:"not_salable,omitempty"`             // True for lore / flavor / legacy items excluded from vendor economy validation
 
 	// YAML-driven use effects — replaces JS onUse/onCommand_use
 	OnUseTrainSkill  string `yaml:"on_use_train_skill,omitempty"`
