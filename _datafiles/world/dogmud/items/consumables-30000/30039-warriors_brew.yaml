@@ -1,5 +1,7 @@
 itemid: 30039
 name: warrior's brew
+vendor_categories:
+- alchemy
 namesimple: brew
 description: A rust-colored brew that smells of iron and
   earth. It warms the blood and loosens tired muscles.

@@ -1,5 +1,7 @@
 itemid: 20071
 name: arena iron greaves
+vendor_categories:
+- blacksmithing
 namesimple: greaves
 description: >-
   Solid iron plate formed to protect the shins and thighs, worn

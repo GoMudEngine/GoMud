@@ -1,5 +1,6 @@
 itemid: 17
 name: road token
+not_salable: true
 namesimple: token
 description: A flat disc of fired clay, stamped with the eye-and-tower seal of the
   road wardens. It marks the bearer as someone who has rendered service to the wardens

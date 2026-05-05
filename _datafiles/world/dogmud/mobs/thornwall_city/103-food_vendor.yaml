@@ -28,7 +28,7 @@ character:
     of her regulars by name and order.
   speciesid: 1
   level: 1
-  gold: 500
+  gold: 1000
   shop:
     # Existing prepared foods
     - itemid: 30022

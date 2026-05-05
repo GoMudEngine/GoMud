@@ -1,6 +1,5 @@
 mobid: 53
 zone: Sanctum Basin
-craft_support: alchemy
 archetype: casting
 statpool: 120
 hostile: false
@@ -96,28 +95,3 @@ character:
   speciesid: 1
   level: 3
   gold: 200
-  shop:
-    - itemid: 40004
-      quantity: 0
-      quantitymax: 0
-      price: 2
-    - itemid: 40005
-      quantity: 0
-      quantitymax: 0
-      price: 2
-    - itemid: 40043
-      quantity: 0
-      quantitymax: 0
-      price: 1
-    - itemid: 40007
-      quantity: 0
-      quantitymax: 0
-      price: 2
-    - itemid: 40010
-      quantity: 0
-      quantitymax: 0
-      price: 5
-    - itemid: 30036
-      quantity: 0
-      quantitymax: 0
-      price: 10

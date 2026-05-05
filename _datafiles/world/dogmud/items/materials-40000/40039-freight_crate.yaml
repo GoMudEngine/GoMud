@@ -1,5 +1,6 @@
 itemid: 40039
 name: freight crate
+not_salable: true
 namesimple: crate
 description: A sturdy wooden crate bound with iron straps, the
   kind used for road freight between trading posts. Stenciled

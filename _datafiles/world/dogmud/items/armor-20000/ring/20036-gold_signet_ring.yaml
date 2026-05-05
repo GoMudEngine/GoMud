@@ -1,5 +1,7 @@
 itemid: 20036
 name: gold signet ring
+vendor_categories:
+- jewelcrafting
 namesimple: ring
 description: A heavy ring of hammered gold, its flat face engraved with an
   intricate crest picked out in gem dust. It radiates quiet authority --

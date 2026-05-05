@@ -1,5 +1,7 @@
 itemid: 30038
 name: conviction draught
+vendor_categories:
+- alchemy
 namesimple: draught
 description: A bittersweet blend of root and thistle. It
   steadies the mind and renews purpose.

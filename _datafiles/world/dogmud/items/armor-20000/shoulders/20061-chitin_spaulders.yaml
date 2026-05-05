@@ -1,5 +1,7 @@
 itemid: 20061
 name: chitin spaulders
+vendor_categories:
+- blacksmithing
 namesimple: spaulders
 description: >-
   Overlapping plates of chrysalis chitin layered across a leather

@@ -1,5 +1,7 @@
 itemid: 20049
 name: warden's tabard
+vendor_categories:
+- blacksmithing
 namesimple: tabard
 description: A sleeveless surcoat of thick canvas worn over light armor,
   dyed in muted earth tones and marked with the local warden's sigil. It adds

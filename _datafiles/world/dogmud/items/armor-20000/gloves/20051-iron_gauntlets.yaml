@@ -1,5 +1,7 @@
 itemid: 20051
 name: iron gauntlets
+vendor_categories:
+- blacksmithing
 namesimple: gauntlets
 description: Heavy gauntlets of riveted iron plates over a leather frame.
   They protect the hands and wrists well, though fine manipulation suffers

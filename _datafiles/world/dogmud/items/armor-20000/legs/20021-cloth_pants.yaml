@@ -1,5 +1,7 @@
 itemid: 20021
 name: cloth pants
+vendor_categories:
+- tailoring
 namesimple: pants
 description: Loose-fitting trousers sewn from plain linen. They breathe well
   in warm weather and offer modest protection from thorns and rough terrain.

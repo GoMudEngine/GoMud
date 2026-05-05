@@ -1,5 +1,7 @@
 itemid: 30022
 name: grilled meat
+vendor_categories:
+- cooking
 namesimple: meat
 description: |
   A thick cut of game meat seared over open flame and rubbed with coarse

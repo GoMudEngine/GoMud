@@ -1,5 +1,8 @@
 itemid: 20045
 name: leather apron
+vendor_categories:
+- blacksmithing
+- tailoring
 namesimple: apron
 description: A thick leather apron, scarred and darkened by sparks and heat.
   It covers the chest and thighs and turns aside the odd flying ember or

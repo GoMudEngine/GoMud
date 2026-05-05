@@ -9,3 +9,5 @@ magical_mitigation: 1
 conviction_mitigation: 1
 statmods:
   perception: 1
+vendor_categories:
+- tailoring

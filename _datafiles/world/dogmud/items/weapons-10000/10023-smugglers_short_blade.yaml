@@ -1,5 +1,7 @@
 itemid: 10023
 name: smuggler's short blade
+vendor_categories:
+- blacksmithing
 namesimple: blade
 description: A well-balanced dagger with a blackened blade and a grip
   wrapped in dark cord. The edge is honed to a razor finish -- this is

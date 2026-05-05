@@ -1,7 +1,7 @@
 package shops
 
 import (
-	"github.com/GoMudEngine/GoMud/internal/crafting"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -12,22 +12,24 @@ type BuyOffer struct {
 	Reason string // "craft_material", "potion", "general", ""
 }
 
-// EvaluateBuyRules determines what a ShopInventory-backed merchant will pay
-// for an item offered by a player. Rules are checked in priority order:
+// EvaluateBuyRules returns what an NPC will pay for an item offered by
+// a player. Single-rule tag-overlap with overstock and gold-reserve gates.
 //
-//  1. Quest items — always rejected.
-//  2. Craft materials — if the NPC has a crafter skill and the item has a
-//     component tag, offer a dynamic buy price. Skip if at max stock.
-//  3. Gear upgrade — if the item is an equipment upgrade over what the NPC
-//     currently wears (or fills an empty slot), offer buy-ratio price.
-//  4. Potions — if the item is a potion, reject declining or spoiled items.
-//     Accept others at a dynamic buy price.
-//  5. General goods — if buysGeneral is true, offer 25% of base value.
+// Reject conditions, in order:
+//  1. Item has no ItemSpec or carries a QuestToken.
+//  2. Item is a potion in PhaseDeclining or PhaseSpoiled.
+//  3. Item has no vendor_categories tags.
+//  4. Vendor's craft_support doesn't accept any of the item's tags.
+//  5. Vendor is at MaxStock for this item ("48 iron ores" overstock cap).
+//  6. Vendor can't afford the buy price without dropping below
+//     shopInv.GoldReserve(BalanceConfig.ShopGoldReserveRatio) — defaults
+//     to 0.50 when the config knob is unset.
 //
-// Returns an empty BuyOffer (Price == 0) when the NPC refuses the item.
+// Otherwise returns a BuyOffer with dynamic price from CalcBuyPrice.
 //
-// wornItems is the NPC's currently equipped items (pass nil to skip the
-// gear-upgrade rule).
+// crafterSkill, buysGeneral, wornItems are unused in the new logic but
+// kept in the signature for back-compat with the call site in
+// internal/usercommands/sell.go.
 func EvaluateBuyRules(
 	item items.Item,
 	shopInv *ShopInventory,
@@ -37,182 +39,94 @@ func EvaluateBuyRules(
 	wornItems []items.Item,
 ) BuyOffer {
 	spec := item.GetSpec()
-	if spec.ItemId < 1 {
+	if spec.ItemId < 1 || spec.QuestToken != "" {
 		return BuyOffer{}
 	}
 
-	// Rule 1: Quest items are never bought.
-	if spec.QuestToken != "" {
+	if spec.Type == items.Potion && isPotionDeclining(item, &spec) {
 		return BuyOffer{}
 	}
 
-	// Rule 2: Craft materials — buy if this component is used by any of the
-	// NPC's known recipes (ingredient tag matches). This prevents cross-
-	// profession buying while still accepting materials beyond the seed
-	// stock list (e.g., steel ingots for a blacksmith with steel recipes).
-	if crafterSkill != "" && spec.ComponentTag != "" && usesComponent(shopInv, spec.ItemId, spec.ComponentTag) {
-		entry := shopInv.GetStock(spec.ItemId)
-		if entry != nil && entry.MaxStock > 0 && entry.Current >= entry.MaxStock {
-			// Already at capacity — skip this rule, fall through.
-		} else {
-			current := 0
-			restock := 1
-			if entry != nil {
-				current = entry.Current
-				if entry.RestockQty > 0 {
-					restock = entry.RestockQty
-				}
-			}
-			price := CalcBuyPrice(spec.Value, current, restock, cfg)
-			return BuyOffer{Price: price, Reason: "craft_material"}
-		}
+	if len(spec.VendorCategories) == 0 {
+		return BuyOffer{}
+	}
+	if !vendorAcceptsAny(shopInv.CraftSupport, spec.VendorCategories) {
+		return BuyOffer{}
 	}
 
-	// Rule 3: Gear upgrade — NPC wants equipment that improves their loadout.
-	// Pass wornItems == nil to skip this rule entirely.
-	// For paired slots (ring, wrist), checks all slots of that type: an
-	// empty second slot counts as an upgrade opportunity.
-	if wornItems != nil && isEquipType(spec.Type) {
-		isUpgrade := false
-		hasEmptySlot := false
-		hasSlotAtAll := false
-		candidatePower := items.ItemPower(spec)
-
-		for _, worn := range wornItems {
-			wornSpec := worn.GetSpec()
-			if wornSpec.Type != spec.Type {
-				continue
-			}
-			hasSlotAtAll = true
-			if worn.ItemId == 0 {
-				// Empty slot marker (from GetAllItemsWithEmptySlots).
-				hasEmptySlot = true
-				continue
-			}
-			if items.IsUpgrade(wornSpec, spec) {
-				isUpgrade = true
-				break
-			}
-		}
-
-		// No items of this type at all = empty slot. Or explicit empty marker.
-		if !isUpgrade && (!hasSlotAtAll || hasEmptySlot) && candidatePower > 0 {
-			isUpgrade = true
-		}
-
-		if isUpgrade {
-			price := int(float64(spec.Value) * cfg.BuyRatio)
-			if price < 1 {
-				price = 1
-			}
-			return BuyOffer{Price: price, Reason: "gear_upgrade"}
-		}
+	// Overstock cap.
+	if entry := shopInv.GetStock(spec.ItemId); entry != nil &&
+		entry.MaxStock > 0 && entry.Current >= entry.MaxStock {
+		return BuyOffer{}
 	}
 
-	// Rule 4: Potions — buy potions unless the NPC crafts them.
-	if spec.Type == items.Potion && !canCraftItem(shopInv, spec.ItemId) {
-		if spec.Aging.HasAging() && item.CraftedRound > 0 {
-			currentRound := util.GetRoundCount()
-			var elapsed uint64
-			if currentRound >= item.CraftedRound {
-				elapsed = currentRound - item.CraftedRound
-			}
-			bottleMult := item.BottleMultiplier
-			if bottleMult <= 0 {
-				bottleMult = spec.BottleAgingMultiplier
-			}
-			effectiveSpeed := items.CalcEffectiveAgingSpeed(bottleMult, item.CraftSkill)
-			phase, _ := items.GetAgingPhase(elapsed, spec.Aging, effectiveSpeed)
-			if phase == items.PhaseDeclining || phase == items.PhaseSpoiled {
-				return BuyOffer{}
-			}
+	// Compute price.
+	current, restock := 0, 1
+	if entry := shopInv.GetStock(spec.ItemId); entry != nil {
+		current = entry.Current
+		if entry.RestockQty > 0 {
+			restock = entry.RestockQty
 		}
+	}
+	price := CalcBuyPrice(spec.Value, current, restock, cfg)
 
-		entry := shopInv.GetStock(spec.ItemId)
-		current := 0
-		restock := 1
-		if entry != nil {
-			current = entry.Current
-			if entry.RestockQty > 0 {
-				restock = entry.RestockQty
-			}
-		}
-		price := CalcBuyPrice(spec.Value, current, restock, cfg)
-		return BuyOffer{Price: price, Reason: "potion"}
+	// Gold-reserve gate.
+	b := configs.GetBalanceConfig()
+	reserveRatio := float64(b.ShopGoldReserveRatio)
+	if reserveRatio <= 0 {
+		reserveRatio = 0.50 // fallback default
+	}
+	reserve := shopInv.GoldReserve(reserveRatio)
+	if !shopInv.CanAfford(price, reserve) {
+		return BuyOffer{}
 	}
 
-	// Rule 5: General goods.
-	if buysGeneral {
-		price := int(float64(spec.Value) * 0.25)
-		if price < 1 {
-			price = 1
-		}
-		return BuyOffer{Price: price, Reason: "general"}
-	}
-
-	return BuyOffer{}
+	return BuyOffer{Price: price, Reason: pickReason(&spec)}
 }
 
-// canCraftItem returns true if any of the shop's known recipes produces the
-// given item as output. Used to prevent NPCs from buying items they craft.
-func canCraftItem(shopInv *ShopInventory, itemId int) bool {
-	if shopInv == nil || itemId <= 0 {
-		return false
+// vendorAcceptsAny returns true if craftSupport is "general", or any
+// of the item's tags matches craftSupport.
+func vendorAcceptsAny(craftSupport string, itemTags []string) bool {
+	if craftSupport == CraftSupportGeneral {
+		return true
 	}
-	for _, recipeId := range shopInv.KnownRecipes {
-		recipe := crafting.GetRecipe(recipeId)
-		if recipe != nil && recipe.Output.ItemId == itemId {
+	for _, t := range itemTags {
+		if t == craftSupport {
 			return true
 		}
 	}
 	return false
 }
 
-// usesComponent returns true if the NPC has a use for this component:
-// either a known recipe uses it as an ingredient, or the item is already
-// in the shop's stock list. This prevents cross-profession buying while
-// accepting materials beyond the seed stock (e.g., steel ingots for a
-// blacksmith who learns steel recipes).
-func usesComponent(shopInv *ShopInventory, itemId int, componentTag string) bool {
-	if shopInv == nil {
-		return false
+// pickReason returns the legacy Reason string for back-compat with
+// any caller that inspects it (the sell command does, for flavor text).
+func pickReason(spec *items.ItemSpec) string {
+	if spec.Type == items.Potion {
+		return "potion"
 	}
-	// Check if the item is already in the stock list by ID.
-	if itemId > 0 && shopInv.GetStock(itemId) != nil {
-		return true
+	if spec.IsComponent {
+		return "craft_material"
 	}
-	// Check known recipes for ingredient tag match.
-	for _, recipeId := range shopInv.KnownRecipes {
-		recipe := crafting.GetRecipe(recipeId)
-		if recipe == nil {
-			continue
-		}
-		for _, ing := range recipe.Ingredients {
-			if ing.ItemTag == componentTag {
-				return true
-			}
-		}
-	}
-	// Check stock list by component tag (for restock mats not in recipes).
-	for _, entry := range shopInv.Stock {
-		matSpec := items.GetItemSpec(entry.ItemId)
-		if matSpec != nil && matSpec.ComponentTag == componentTag {
-			return true
-		}
-	}
-	return false
+	return "general"
 }
 
-// isEquipType returns true for item types that represent wearable/wieldable
-// equipment slots — the kinds of items an NPC would consider as a personal
-// gear upgrade.
-func isEquipType(t items.ItemType) bool {
-	switch t {
-	case items.Weapon, items.Offhand, items.Head, items.Neck,
-		items.Body, items.Belt, items.Gloves, items.Ring,
-		items.Wrist, items.Back, items.Shoulders, items.Legs,
-		items.Feet, items.Tail:
-		return true
+// isPotionDeclining reports whether a potion's aging phase is Declining
+// or Spoiled — those should never be bought (potions whose magic has
+// faded or gone toxic).
+func isPotionDeclining(item items.Item, spec *items.ItemSpec) bool {
+	if !spec.Aging.HasAging() || item.CraftedRound == 0 {
+		return false
 	}
-	return false
+	currentRound := util.GetRoundCount()
+	var elapsed uint64
+	if currentRound >= item.CraftedRound {
+		elapsed = currentRound - item.CraftedRound
+	}
+	bottleMult := item.BottleMultiplier
+	if bottleMult <= 0 {
+		bottleMult = spec.BottleAgingMultiplier
+	}
+	effectiveSpeed := items.CalcEffectiveAgingSpeed(bottleMult, item.CraftSkill)
+	phase, _ := items.GetAgingPhase(elapsed, spec.Aging, effectiveSpeed)
+	return phase == items.PhaseDeclining || phase == items.PhaseSpoiled
 }

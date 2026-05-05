@@ -1,5 +1,7 @@
 itemid: 20005
 name: copper ring
+vendor_categories:
+- jewelcrafting
 namesimple: ring
 description: A cheap ring.
 type: ring

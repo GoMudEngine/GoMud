@@ -1,5 +1,7 @@
 itemid: 20008
 name: cotton shirt
+vendor_categories:
+- tailoring
 namesimple: shirt
 description: Surprisingly clean.
 type: body

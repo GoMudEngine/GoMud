@@ -15,3 +15,5 @@ weight: 0.4
 value: 60
 rarity_tier: 30
 is_component: true
+vendor_categories:
+- blacksmithing

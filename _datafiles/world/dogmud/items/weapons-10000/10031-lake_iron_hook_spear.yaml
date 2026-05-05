@@ -1,5 +1,7 @@
 itemid: 10031
 name: lake-iron hook-spear
+vendor_categories:
+- blacksmithing
 namesimple: spear
 description: A long-shafted spear forged from refined lake-iron, the
   head broad and leaf-shaped with a back-curving hook welded to the

@@ -1,5 +1,6 @@
 itemid: 40041
 name: creased letter
+not_salable: true
 namesimple: letter
 description: A letter written in a careful hand on paper that has
   been folded and unfolded many times. The ink is faded but

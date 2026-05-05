@@ -1,5 +1,6 @@
 itemid: 14
 name: bone totem
+not_salable: true
 namesimple: totem
 description: |
   A small figure twisted from bone and sinew, no larger than a closed

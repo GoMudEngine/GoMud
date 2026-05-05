@@ -1,5 +1,6 @@
 itemid: 28
 name: tavern meal token
+not_salable: true
 namesimple: token
 description: A small wooden disc branded with the sign of the Drowning Post -- a fence
   post in rising water. Good for one meal and a mug of ale at Marek's tavern. The

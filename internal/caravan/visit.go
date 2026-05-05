@@ -76,6 +76,11 @@ func VisitVendorsInRoom(
 				wagon.Character.RemoveItem(item)
 				entry.Current++
 				mutated = true
+				// Increment throughput counter for delivery tracking.
+				spec := items.GetItemSpec(item.ItemId)
+				if spec != nil && spec.RarityTier > 0 {
+					IncrementDelivery(wagon.Zone, int(wagon.MobId), spec.RarityTier)
+				}
 				delivered = append(delivered, ItemMove{
 					Vendor:   vendor.Character.Name,
 					ItemName: item.DisplayName(),
@@ -129,6 +134,9 @@ func VisitVendorsInRoom(
 		if mutated {
 			if err := shops.SaveShop(vendor.Zone, int(vendor.MobId), vendor.HomeRoomId); err != nil {
 				mudlog.Error("caravan.VisitVendorsInRoom", "vendor", vendor.Character.Name, "error", err)
+			}
+			if err := SaveThroughput(wagon.Zone, int(wagon.MobId)); err != nil {
+				mudlog.Error("caravan.SaveThroughput", "wagon", wagon.Character.Name, "error", err)
 			}
 		}
 	}

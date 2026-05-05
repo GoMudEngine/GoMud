@@ -1,5 +1,7 @@
 itemid: 10014
 name: iron short sword
+vendor_categories:
+- blacksmithing
 namesimple: sword
 description: A broad-bladed short sword of hammered iron. The compact blade is
   quick to draw and easy to wield in tight spaces.

@@ -11,3 +11,5 @@ weight: 0.3
 value: 100
 rarity_tier: 20
 is_component: true
+vendor_categories:
+- enchanting

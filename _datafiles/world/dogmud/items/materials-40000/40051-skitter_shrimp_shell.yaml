@@ -6,6 +6,8 @@ type: object
 subtype: mundane
 component_tag: shrimp-chitin
 is_component: true
+vendor_categories:
+- jewelcrafting
 weight: 0.05
 value: 25
 rarity_tier: 30

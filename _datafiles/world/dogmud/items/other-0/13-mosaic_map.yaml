@@ -1,5 +1,6 @@
 itemid: 13
 name: mosaic map
+not_salable: true
 namesimple: mosaic
 description: A large map of the Windward Marches has been inlaid directly into the
   floor in coloured stone -- settlements picked out in pale marble, roads in dark

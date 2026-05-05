@@ -1,5 +1,7 @@
 itemid: 20070
 name: arena chain gloves
+vendor_categories:
+- blacksmithing
 namesimple: gloves
 description: >-
   Close-fitted gloves of interlocked iron rings over a thin

@@ -14,3 +14,6 @@ weight: 0.05
 value: 25
 rarity_tier: 30
 is_component: true
+vendor_categories:
+- alchemy
+- cooking

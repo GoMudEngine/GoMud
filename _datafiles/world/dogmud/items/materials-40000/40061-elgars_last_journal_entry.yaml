@@ -1,5 +1,6 @@
 itemid: 40061
 name: Elgar's last journal entry
+not_salable: true
 namesimple: journal
 description: A single folded sheet of grey paper, water-stained at
   one corner, written in a careful hand that pressed harder as the

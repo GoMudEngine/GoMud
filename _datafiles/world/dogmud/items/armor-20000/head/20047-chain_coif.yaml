@@ -1,5 +1,7 @@
 itemid: 20047
 name: chain coif
+vendor_categories:
+- blacksmithing
 namesimple: coif
 description: A hood of interlocking iron rings that drapes over the head and
   shoulders, protecting the skull and neck from slashing blows. Standard issue

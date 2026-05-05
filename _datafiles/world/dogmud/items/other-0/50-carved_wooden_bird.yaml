@@ -1,5 +1,6 @@
 itemid: 50
 name: carved wooden bird
+not_salable: true
 namesimple: bird
 description: >
   A small wooden bird, roughly but carefully carved. Its wings

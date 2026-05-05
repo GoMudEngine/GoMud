@@ -1,5 +1,7 @@
 itemid: 10017
 name: iron sceptre
+vendor_categories:
+- enchanting
 namesimple: sceptre
 description: A short rod of black iron crowned with a faceted crystal that
   pulses with a dull inner light. Heavier than a wand, it serves adequately

@@ -1,5 +1,7 @@
 itemid: 20016
 name: torn gloves
+vendor_categories:
+- tailoring
 namesimple: gloves
 description: The gloves are in terrible shape.
 type: gloves

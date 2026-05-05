@@ -1,5 +1,7 @@
 itemid: 10012
 name: obsidian knife
+vendor_categories:
+- blacksmithing
 namesimple: knife
 description: |
   A blade of knapped obsidian, volcanic glass worked to an edge finer

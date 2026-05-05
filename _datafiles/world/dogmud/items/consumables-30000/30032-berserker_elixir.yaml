@@ -1,5 +1,7 @@
 itemid: 30032
 name: berserker elixir
+vendor_categories:
+- alchemy
 namesimple: elixir
 description: A dark, viscous liquid that reeks of iron and crushed insects. It
   floods the drinker with savage strength at the cost of

@@ -1,5 +1,7 @@
 itemid: 30013
 name: fungal ration
+vendor_categories:
+- cooking
 namesimple: ration
 description: |
   A dense cake of dried fungus pressed into a flat disc and wrapped in

@@ -1,5 +1,7 @@
 itemid: 20009
 name: cloth belt
+vendor_categories:
+- tailoring
 namesimple: belt
 description: Just enough to hold your pants up.
 type: belt

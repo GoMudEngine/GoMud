@@ -1,5 +1,7 @@
 itemid: 20028
 name: steel buckler
+vendor_categories:
+- blacksmithing
 namesimple: buckler
 description: A compact buckler of polished steel. Lighter and tougher than iron,
   it deflects blows with surprising ease.

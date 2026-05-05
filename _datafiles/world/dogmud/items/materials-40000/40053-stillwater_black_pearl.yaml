@@ -6,6 +6,9 @@ type: object
 subtype: mundane
 component_tag: stillwater-pearl
 is_component: true
+vendor_categories:
+- enchanting
+- jewelcrafting
 weight: 0.02
 value: 400
 rarity_tier: 20

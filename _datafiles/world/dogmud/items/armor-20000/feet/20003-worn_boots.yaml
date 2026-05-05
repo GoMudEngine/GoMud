@@ -1,5 +1,7 @@
 itemid: 20003
 name: worn boots
+vendor_categories:
+- tailoring
 namesimple: boots
 description: Boots well past their usefulness.
 type: feet

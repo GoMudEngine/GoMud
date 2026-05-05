@@ -1,5 +1,6 @@
 itemid: 10
 name: light weighted stone
+not_salable: true
 namesimple: stone
 description: A small smooth stone used for training. Carry several of these to practice
   fighting while encumbered.

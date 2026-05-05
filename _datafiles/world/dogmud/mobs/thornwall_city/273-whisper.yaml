@@ -1,6 +1,5 @@
 mobid: 273
 zone: Thornwall City
-craft_support: general
 behavior_archetype: noncombat_shopkeeper
 statpool: 80
 itemdropchance: 0
@@ -47,22 +46,3 @@ character:
       training: 10
     dexterity:
       training: 8
-  shop:
-    # Existing info/contraband items (preserve original prices)
-    - itemid: 33
-      quantity: 0
-      quantitymax: 0
-      price: 5
-    - itemid: 34
-      quantity: 0
-      quantitymax: 0
-      price: 20
-    - itemid: 36
-      quantity: 0
-      quantitymax: 0
-      price: 30
-    # Base
-    - itemid: 40038    # oil lantern
-      quantity: 0
-      quantitymax: 0
-      price: 5

@@ -1,8 +1,8 @@
 id: master-lockpicks
 name: Master Lockpicks
-skill: jewelcrafting
+skill: blacksmithing
 skill_minimum: 20
-station: jeweler_bench
+station: forge
 time_rounds: 5
 ingredients:
   - item_tag: silver-wire

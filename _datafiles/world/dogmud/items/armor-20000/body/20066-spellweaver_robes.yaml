@@ -1,5 +1,7 @@
 itemid: 20066
 name: spellweaver robes
+vendor_categories:
+- tailoring
 namesimple: robes
 description: >
   Robes of layered silk and linen, threadbare at the cuffs and

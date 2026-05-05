@@ -1,5 +1,6 @@
 itemid: 29
 name: tithe ledger
+not_salable: true
 namesimple: ledger
 description: A slim leather-bound book containing the temple's tithe records -- who
   paid, how much, and when. A careful examination reveals discrepancies on both sides.

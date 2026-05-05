@@ -1,5 +1,7 @@
 itemid: 40060
 name: Elgar's carved kingfisher
+vendor_categories:
+- blacksmithing
 namesimple: kingfisher
 description: A small carved kingfisher in dark close-grained wood,
   perhaps a hand long from beak to tail-tip. The carving captures

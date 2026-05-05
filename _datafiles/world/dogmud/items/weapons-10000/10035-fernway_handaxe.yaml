@@ -1,5 +1,7 @@
 itemid: 10035
 name: Fernway handaxe
+vendor_categories:
+- blacksmithing
 namesimple: handaxe
 description: >
   A short woodcutter's handaxe with a forged iron head and a

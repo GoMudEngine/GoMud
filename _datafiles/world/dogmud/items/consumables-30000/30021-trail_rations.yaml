@@ -1,5 +1,7 @@
 itemid: 30021
 name: trail rations
+vendor_categories:
+- cooking
 namesimple: rations
 description: |
   A bundle of salted meat strips wrapped in a scrap of oiled cloth. The

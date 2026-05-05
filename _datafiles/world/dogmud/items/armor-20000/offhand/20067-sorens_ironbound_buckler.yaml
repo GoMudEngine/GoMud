@@ -1,5 +1,7 @@
 itemid: 20067
 name: Soren's ironbound buckler
+vendor_categories:
+- blacksmithing
 namesimple: buckler
 description: >
   A round buckler of layered hardwood, its rim reinforced with

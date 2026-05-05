@@ -1,5 +1,7 @@
 itemid: 20035
 name: engraved bracelet
+vendor_categories:
+- jewelcrafting
 namesimple: bracelet
 description: A wide silver band engraved with flowing geometric patterns and
   dusted with crushed gemstone. It sits snug against the wrist, and the

@@ -1,5 +1,7 @@
 itemid: 20002
 name: cape
+vendor_categories:
+- tailoring
 description: A plain cape that protects (poorly) from the elements.
 type: back
 subtype: wearable

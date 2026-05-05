@@ -1,5 +1,7 @@
 itemid: 30057
 name: flashbang
+vendor_categories:
+- alchemy
 namesimple: flashbang
 description: >-
   A small glass sphere filled with a volatile mixture that

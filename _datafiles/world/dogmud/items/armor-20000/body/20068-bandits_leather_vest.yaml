@@ -1,5 +1,7 @@
 itemid: 20068
 name: bandit's leather vest
+vendor_categories:
+- tailoring
 namesimple: vest
 description: >
   A vest of boiled leather, darkened with use and patched in

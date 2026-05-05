@@ -1,5 +1,6 @@
 itemid: 18
 name: toll receipt
+not_salable: true
 namesimple: receipt
 description: A small slip of parchment stamped with a warden's seal in red ink. It
   records the date, the amount paid, and the direction of travel. The handwriting is

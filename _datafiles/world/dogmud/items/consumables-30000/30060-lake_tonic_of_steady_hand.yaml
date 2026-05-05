@@ -1,5 +1,7 @@
 itemid: 30060
 name: lake-tonic of steady hand
+vendor_categories:
+- alchemy
 namesimple: tonic
 description: A pale green tonic that smells sharply of lake-mint
   and willow bark. A sip and the small tremors of fatigue and

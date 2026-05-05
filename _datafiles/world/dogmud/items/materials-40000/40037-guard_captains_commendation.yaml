@@ -1,5 +1,6 @@
 itemid: 40037
 name: guard captain's commendation
+not_salable: true
 namesimple: commendation
 description: A folded parchment bearing the seal of the Thornwall City
   Watch. It commends the bearer for service to the city in disrupting

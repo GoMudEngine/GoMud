@@ -1,5 +1,7 @@
 itemid: 35
 name: master lockpicks
+vendor_categories:
+- blacksmithing
 namesimple: lockpicks
 description: >-
   A slim leather case holding a full set of silver-tipped picks,

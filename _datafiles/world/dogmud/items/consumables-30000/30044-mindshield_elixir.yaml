@@ -1,5 +1,7 @@
 itemid: 30044
 name: mindshield elixir
+vendor_categories:
+- alchemy
 namesimple: elixir
 description: A silvery liquid that smells of moonpetal
   and chrysalis. It coats your thoughts like armor.

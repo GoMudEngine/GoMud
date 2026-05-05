@@ -1,5 +1,7 @@
 itemid: 30051
 name: battle trance
+vendor_categories:
+- alchemy
 namesimple: draught
 description: A pitch-black liquid that seems to drink the
   light. After consuming it, every attack aimed at you

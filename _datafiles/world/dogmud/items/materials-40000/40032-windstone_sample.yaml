@@ -1,5 +1,6 @@
 itemid: 40032
 name: windstone sample
+not_salable: true
 namesimple: sample
 description: A chunk of pale blue crystal veined with white. It hums
   faintly when held, warm to the touch despite its glassy surface.

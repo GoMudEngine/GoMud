@@ -1,5 +1,7 @@
 itemid: 40042
 name: herbalism recipe page
+vendor_categories:
+- alchemy
 namesimple: recipe
 description: A single page torn from a notebook, covered in
   neat handwriting -- the careful script of someone young who

@@ -1,5 +1,7 @@
 itemid: 30058
 name: firebomb
+vendor_categories:
+- alchemy
 namesimple: firebomb
 description: >-
   A sealed flask of unstable alchemical reagents that

@@ -1,5 +1,6 @@
 itemid: 25
 name: city tax receipt
+not_salable: true
 namesimple: receipt
 description: An official receipt from the Thornwall Tax Authority, stamped with the
   city seal and signed by an assessor. It confirms payment of municipal taxes for a

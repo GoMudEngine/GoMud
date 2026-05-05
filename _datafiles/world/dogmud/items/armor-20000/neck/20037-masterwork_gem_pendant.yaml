@@ -1,5 +1,7 @@
 itemid: 20037
 name: masterwork gem pendant
+vendor_categories:
+- jewelcrafting
 namesimple: pendant
 description: Two large gems are set in an elaborate gold wire frame, their facets
   cut with exacting precision. The pendant rests heavily against the

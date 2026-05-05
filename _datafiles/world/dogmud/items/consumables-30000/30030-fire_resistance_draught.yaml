@@ -1,5 +1,7 @@
 itemid: 30030
 name: fire resistance draught
+vendor_categories:
+- alchemy
 namesimple: draught
 description: A thick, reddish draught that coats the throat with a cooling
   sensation. It fortifies the body against searing heat.

@@ -1,5 +1,7 @@
 itemid: 30027
 name: antidote broth
+vendor_categories:
+- cooking
 namesimple: broth
 description: |
   A thin greenish broth simmered from wild vegetables and healer's root.

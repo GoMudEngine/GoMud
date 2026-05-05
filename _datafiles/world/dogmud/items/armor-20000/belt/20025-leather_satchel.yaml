@@ -1,5 +1,7 @@
 itemid: 20025
 name: leather satchel
+vendor_categories:
+- tailoring
 namesimple: satchel
 description: A sturdy pouch of stitched leather with a wide strap, worn at the
   hip. It holds small items securely and keeps your hands free for more

@@ -1,5 +1,6 @@
 itemid: 15
 name: chieftain cache key
+not_salable: true
 namesimple: key
 description: |
   A flat piece of shaped bone, notched along one edge in a pattern that

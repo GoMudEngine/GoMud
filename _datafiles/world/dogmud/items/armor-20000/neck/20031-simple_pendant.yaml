@@ -1,5 +1,7 @@
 itemid: 20031
 name: simple pendant
+vendor_categories:
+- jewelcrafting
 namesimple: pendant
 description: A smooth polished stone hangs from a loop of copper wire, resting
   against the chest. The stone has a faint translucence that seems to

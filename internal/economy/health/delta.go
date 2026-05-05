@@ -27,8 +27,20 @@ func PickClosestSnapshot(metas []SnapshotMeta, target int64, toleranceSeconds in
 // ShopDelta is the per-shop delta vs a comparison snapshot. Bucket
 // deltas are sums of per-bucket Current values (this snapshot − old).
 type ShopDelta struct {
-	GoldDelta    int
-	BucketDeltas map[string]int
+	GoldDelta       int
+	BucketDeltas    map[string]int
+	StockScoreDelta int `json:"stock_score_delta"` // percentage points (now - old) × 100, integer
+}
+
+// ForagerDelta captures per-forager changes between snapshots.
+type ForagerDelta struct {
+	DeliveriesByTierDelta map[int]int
+	StuckRoundsDelta      int64
+}
+
+// CaravanDelta captures per-caravan changes between snapshots.
+type CaravanDelta struct {
+	DeliveriesByTierDelta map[int]int
 }
 
 // ComputeShopDelta returns the shop's delta against old. If old is
@@ -61,6 +73,8 @@ func ComputeShopDelta(now ShopSnapshot, old *ShopSnapshot) ShopDelta {
 			d.BucketDeltas[b] = -n
 		}
 	}
+
+	d.StockScoreDelta = int((now.StockScore - old.StockScore) * 100)
 	return d
 }
 
@@ -76,4 +90,69 @@ func FindShopInSnapshot(s *Snapshot, zone string, mobId, roomId int) *ShopSnapsh
 		}
 	}
 	return nil
+}
+
+// FindForagerInSnapshot returns a pointer to the matching forager in s,
+// or nil if absent. Match key is MobId.
+func FindForagerInSnapshot(s *Snapshot, mobId int) *ForagerSnapshot {
+	if s == nil {
+		return nil
+	}
+	for i := range s.Foragers {
+		if s.Foragers[i].MobId == mobId {
+			return &s.Foragers[i]
+		}
+	}
+	return nil
+}
+
+// FindCaravanInSnapshot returns a pointer to the matching caravan in s,
+// or nil if absent. Match key is InstId.
+func FindCaravanInSnapshot(s *Snapshot, instId int) *CaravanSnapshot {
+	if s == nil {
+		return nil
+	}
+	for i := range s.Caravans {
+		if s.Caravans[i].InstId == instId {
+			return &s.Caravans[i]
+		}
+	}
+	return nil
+}
+
+// ComputeForagerDelta returns the forager's delta against old. If old is
+// nil, returns a zero-value delta with empty DeliveriesByTierDelta.
+func ComputeForagerDelta(now ForagerSnapshot, old *ForagerSnapshot) ForagerDelta {
+	d := ForagerDelta{DeliveriesByTierDelta: map[int]int{}}
+	if old == nil {
+		return d
+	}
+	for tier, count := range now.DeliveriesByTier {
+		d.DeliveriesByTierDelta[tier] = count - old.DeliveriesByTier[tier]
+	}
+	for tier, count := range old.DeliveriesByTier {
+		if _, seen := now.DeliveriesByTier[tier]; !seen {
+			d.DeliveriesByTierDelta[tier] = -count
+		}
+	}
+	d.StuckRoundsDelta = int64(now.StuckRounds) - int64(old.StuckRounds)
+	return d
+}
+
+// ComputeCaravanDelta returns the caravan's delta against old. If old is
+// nil, returns a zero-value delta with empty DeliveriesByTierDelta.
+func ComputeCaravanDelta(now CaravanSnapshot, old *CaravanSnapshot) CaravanDelta {
+	d := CaravanDelta{DeliveriesByTierDelta: map[int]int{}}
+	if old == nil {
+		return d
+	}
+	for tier, count := range now.DeliveriesByTier {
+		d.DeliveriesByTierDelta[tier] = count - old.DeliveriesByTier[tier]
+	}
+	for tier, count := range old.DeliveriesByTier {
+		if _, seen := now.DeliveriesByTier[tier]; !seen {
+			d.DeliveriesByTierDelta[tier] = -count
+		}
+	}
+	return d
 }

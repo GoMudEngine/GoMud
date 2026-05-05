@@ -1,5 +1,7 @@
 itemid: 20011
 name: chain shirt
+vendor_categories:
+- blacksmithing
 namesimple: chainmail
 description: A shirt of interlocking iron rings that provides solid protection without
   sacrificing too much mobility. The links are tightly woven and well-maintained.
