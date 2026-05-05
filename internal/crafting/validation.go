@@ -7,13 +7,15 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 )
 
 // ValidateRecipeIngredientTags ensures every recipe ingredient resolves
 // to an item carrying the recipe's Skill in its VendorCategories list.
 // Ingredients with no canonical item (no ItemSpec has matching
-// ComponentTag) are silently skipped — those are legitimate "raw concept"
-// tags (e.g., a flavor recipe that hasn't been wired to a specific item).
+// ComponentTag) are logged as a warning but don't error — those are
+// legitimate "raw concept" tags (e.g., a flavor recipe that hasn't
+// been wired to a specific item).
 func ValidateRecipeIngredientTags(
 	recipes map[string]*RecipeSpec,
 	specs map[int]*items.ItemSpec,
@@ -42,8 +44,8 @@ func ValidateRecipeIngredientTags(
 		for _, ing := range r.Ingredients {
 			spec, ok := byTag[ing.ItemTag]
 			if !ok {
-				// Recipe references a tag with no canonical item.
-				// This is allowed — recipes can have "raw concept" tags.
+				mudlog.Warn("recipe ingredient has no canonical item",
+					"recipe", id, "itemTag", ing.ItemTag)
 				continue
 			}
 			if !slices.Contains(spec.VendorCategories, r.Skill) {
