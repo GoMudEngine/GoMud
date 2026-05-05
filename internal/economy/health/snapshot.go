@@ -68,6 +68,7 @@ type ForagerSnapshot struct {
 	Territory         string         `yaml:"territory"           json:"territory"`
 	State             string         `yaml:"state"               json:"state"`
 	StateEnteredRound uint64         `yaml:"state_entered_round" json:"state_entered_round"`
+	StuckRounds       uint64         `yaml:"stuck_rounds"        json:"stuck_rounds"`       // currentRound - state_entered_round; 0 for despawned/idle rows
 	RoomId            int            `yaml:"room_id"             json:"room_id"`
 	CargoWeight       int            `yaml:"cargo_weight"        json:"cargo_weight"`   // pounds
 	CargoCapacity     int            `yaml:"cargo_capacity"      json:"cargo_capacity"` // pounds

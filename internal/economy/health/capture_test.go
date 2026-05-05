@@ -1,6 +1,7 @@
 package health_test
 
 import (
+	"os"
 	"strconv"
 	"testing"
 
@@ -12,9 +13,15 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 )
+
+func TestMain(m *testing.M) {
+	mudlog.SetupLogger(nil, "", "", false)
+	os.Exit(m.Run())
+}
 
 func TestCaptureSnapshot_Shops(t *testing.T) {
 	shops.ClearCache()
@@ -215,7 +222,7 @@ func TestCaptureSnapshot_Foragers(t *testing.T) {
 	// Verify placeholder rows are present for the other two foragers.
 	inactive := 0
 	for _, row := range snap.Foragers {
-		if row.State == "(not active)" {
+		if row.State == "(despawned)" {
 			inactive++
 			if row.CargoByBucket == nil {
 				t.Error("placeholder row has nil CargoByBucket")
@@ -223,7 +230,7 @@ func TestCaptureSnapshot_Foragers(t *testing.T) {
 		}
 	}
 	if inactive != 2 {
-		t.Errorf("inactive placeholder rows: got %d, want 2", inactive)
+		t.Errorf("despawned placeholder rows: got %d, want 2", inactive)
 	}
 }
 
@@ -293,17 +300,17 @@ func TestLookupShopMobName_FallsBackToTemplate(t *testing.T) {
 
 // TestCaptureSnapshot_Foragers_PrepopulatesInactiveProfiles verifies that
 // when no forager mobs are spawned, CaptureSnapshot still emits 3 rows —
-// one placeholder per forager.AllProfiles() entry.
+// one placeholder per forager.AllProfiles() entry, all with state=(despawned).
 func TestCaptureSnapshot_Foragers_PrepopulatesInactiveProfiles(t *testing.T) {
-	// No mob instances registered → all three foragers are inactive.
+	// No mob instances registered → all three foragers are despawned.
 	snap := health.CaptureSnapshot()
 
 	if len(snap.Foragers) != 3 {
 		t.Fatalf("Foragers: got %d, want 3 (all placeholders)", len(snap.Foragers))
 	}
 	for _, f := range snap.Foragers {
-		if f.State != "(not active)" {
-			t.Errorf("mob %d: state=%q, want (not active)", f.MobId, f.State)
+		if f.State != "(despawned)" {
+			t.Errorf("mob %d: state=%q, want (despawned)", f.MobId, f.State)
 		}
 		if f.CargoByBucket == nil {
 			t.Errorf("mob %d: CargoByBucket is nil", f.MobId)
@@ -384,5 +391,85 @@ func TestCaptureSnapshot_Foragers_IncludesEquippedSubInventories(t *testing.T) {
 	// verify the map was initialised (loop didn't panic).
 	if got.CargoByBucket == nil {
 		t.Error("CargoByBucket: got nil, want initialised map")
+	}
+}
+
+// TestCaptureForagers_DistinguishesDespawnedFromIdle verifies that
+// captureForagers emits distinct State strings for despawned mobs
+// (no live instance) vs idle mobs (live instance, empty BTreeState).
+func TestCaptureForagers_DistinguishesDespawnedFromIdle(t *testing.T) {
+	const roomId = 9300
+	r := &rooms.Room{
+		RoomId: roomId,
+		Zone:   "TestZone",
+		Title:  "Test Room",
+		Exits:  map[string]exit.RoomExit{},
+	}
+	cleanRoom := rooms.SeedRoomsForTest(
+		map[int]*rooms.Room{roomId: r},
+		map[string]*rooms.ZoneConfig{},
+	)
+	defer cleanRoom()
+
+	// Spawn Tova (mob 371, marsh forager) with empty BTreeState —
+	// this tests the "idle, no state" path.
+	const tovaInstanceId = 93371
+	tova := &mobs.Mob{
+		MobId:      mobs.MobId(371),
+		InstanceId: tovaInstanceId,
+		HomeRoomId: roomId,
+		Zone:       "TestZone",
+	}
+	tova.Character.Name = "Tova"
+	tova.Character.Buffs = buffs.New()
+	tova.Character.RoomId = roomId
+	// Empty BTreeState; this will trigger the "(idle, no state)" path.
+	tova.BTreeState = behaviortree.NewBehaviorState()
+
+	mobs.SetInstanceForTest(tova.InstanceId, tova)
+	defer mobs.SetInstanceForTest(tova.InstanceId, nil)
+	r.AddMob(tova.InstanceId)
+
+	// Halix (mob 372) and Kessa (mob 373) are NOT spawned — tests "(despawned)" path.
+
+	snap := health.CaptureSnapshot()
+
+	// Verify we have all 3 foragers in the snapshot.
+	if len(snap.Foragers) != 3 {
+		t.Fatalf("Foragers: got %d, want 3", len(snap.Foragers))
+	}
+
+	// Count despawned and idle rows.
+	despawnedCount := 0
+	idleCount := 0
+	var idle *health.ForagerSnapshot
+	for i := range snap.Foragers {
+		switch snap.Foragers[i].State {
+		case "(despawned)":
+			despawnedCount++
+		case "(idle, no state)":
+			idleCount++
+			idle = &snap.Foragers[i]
+		}
+	}
+
+	if despawnedCount != 2 {
+		t.Errorf("despawned rows: got %d, want 2 (Halix + Kessa not spawned)", despawnedCount)
+	}
+	if idleCount != 1 {
+		t.Errorf("idle rows: got %d, want 1 (Tova spawned with empty BTreeState)", idleCount)
+	}
+
+	// Verify idle row is Tova with the right properties.
+	if idle != nil {
+		if idle.MobId != 371 {
+			t.Errorf("idle mobId: got %d, want 371 (Tova)", idle.MobId)
+		}
+		if idle.InstId != tovaInstanceId {
+			t.Errorf("idle instId: got %d, want %d", idle.InstId, tovaInstanceId)
+		}
+		if idle.CargoByBucket == nil {
+			t.Error("idle CargoByBucket: got nil, want initialized map")
+		}
 	}
 }

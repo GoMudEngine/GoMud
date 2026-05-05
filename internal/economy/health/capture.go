@@ -118,51 +118,92 @@ func captureCaravans() []CaravanSnapshot {
 	return out
 }
 
-// captureForagers walks every live mob instance and emits one
-// ForagerSnapshot per mob whose BTreeState has a non-empty
-// "forager_state" key. Foragers have no separate wagon — cargo lives
-// on the forager's own Character.Items (plus ComponentItems and
-// PotionItems if a component bag or bandolier is equipped).
-//
-// After the live pass, a placeholder row (State="(not active)") is
-// appended for each forager profile in forager.AllProfiles() whose
-// mob isn't currently spawned, so the dashboard always shows the full
-// set of 3 foragers.
+// captureForagers walks forager.AllProfiles() and, for each profile,
+// checks if a live mob instance exists. Emits distinct State strings
+// to distinguish despawned (no live mob) from idle-no-state (live mob
+// but empty BTreeState). For live mobs with valid forager_state, emits
+// the full state snapshot including StuckRounds.
 func captureForagers() []ForagerSnapshot {
 	out := []ForagerSnapshot{}
+
+	// Build lookup: mobId → live mob instance.
+	liveByMobId := map[int]*mobs.Mob{}
 	for _, instId := range mobs.GetAllMobInstanceIds() {
 		m := mobs.GetInstance(instId)
 		if m == nil {
 			continue
 		}
+		if forager.ProfileFor(int(m.MobId)) == nil {
+			continue
+		}
+		liveByMobId[int(m.MobId)] = m
+	}
+
+	now := util.GetRoundCount()
+
+	for _, p := range forager.AllProfiles() {
+		m, alive := liveByMobId[p.MobId]
+		if !alive {
+			out = append(out, ForagerSnapshot{
+				MobId:         p.MobId,
+				Name:          p.Name,
+				Territory:     territoryFor(p.MobId),
+				State:         "(despawned)",
+				RoomId:        p.SanctuaryRoom,
+				CargoByBucket: map[string]int{},
+			})
+			continue
+		}
+
 		bs, ok := m.BTreeState.(*behaviortree.BehaviorState)
 		if !ok || bs == nil {
+			out = append(out, ForagerSnapshot{
+				InstId:        m.InstanceId,
+				MobId:         p.MobId,
+				Name:          p.Name,
+				Territory:     territoryFor(p.MobId),
+				State:         "(idle, no state)",
+				RoomId:        m.Character.RoomId,
+				CargoByBucket: map[string]int{},
+			})
 			continue
 		}
 		stateName := bs.GetString("forager_state")
 		if stateName == "" {
+			mudlog.Warn("economy/health.captureForagers",
+				"warning", "forager state missing on live mob",
+				"mobId", p.MobId, "name", p.Name, "roomId", m.Character.RoomId)
+			out = append(out, ForagerSnapshot{
+				InstId:        m.InstanceId,
+				MobId:         p.MobId,
+				Name:          p.Name,
+				Territory:     territoryFor(p.MobId),
+				State:         "(idle, no state)",
+				RoomId:        m.Character.RoomId,
+				CargoByBucket: map[string]int{},
+			})
 			continue
 		}
 
 		startedRound, _ := strconv.ParseUint(bs.GetString("forager_state_started_round"), 10, 64)
+		var stuck uint64
+		if now > startedRound {
+			stuck = now - startedRound
+		}
 
 		fs := ForagerSnapshot{
-			InstId:            instId,
-			MobId:             int(m.MobId),
+			InstId:            m.InstanceId,
+			MobId:             p.MobId,
 			Name:              m.Character.Name,
-			Territory:         territoryFor(int(m.MobId)),
+			Territory:         territoryFor(p.MobId),
 			State:             stateName,
 			StateEnteredRound: startedRound,
+			StuckRounds:       stuck,
 			RoomId:            m.Character.RoomId,
 			CargoByBucket:     map[string]int{},
 			CargoWeight:       int(m.Character.GetCarriedWeight()),
 			CargoCapacity:     int(m.Character.CarryCapacity()),
 		}
-		// Per-bucket: sum item weights across all inventory lists
-		// (backpack + component bag + bandolier). Skip items with no
-		// bucket or zero weight. Same convention as captureCaravans.
-		// Note: captureCaravans only walks wagon.Character.Items because
-		// wagons never equip bags; foragers can (e.g. Halix wields a spear).
 		inventories := [][]items.Item{m.Character.Items, m.Character.ComponentItems, m.Character.PotionItems}
 		for _, list := range inventories {
 			for _, it := range list {
@@ -178,30 +219,6 @@ func captureForagers() []ForagerSnapshot {
 		}
 		out = append(out, fs)
 	}
-
-	// Emit placeholder rows for profiles whose mob isn't currently live.
-	// This ensures the dashboard always shows all 3 foragers.
-	for _, p := range forager.AllProfiles() {
-		active := false
-		for i := range out {
-			if out[i].MobId == p.MobId {
-				active = true
-				break
-			}
-		}
-		if !active {
-			out = append(out, ForagerSnapshot{
-				InstId:        0,
-				MobId:         p.MobId,
-				Name:          p.Name,
-				Territory:     territoryFor(p.MobId),
-				State:         "(not active)",
-				RoomId:        p.SanctuaryRoom,
-				CargoByBucket: map[string]int{},
-			})
-		}
-	}
-
 	return out
 }
 
