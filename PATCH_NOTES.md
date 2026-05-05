@@ -1,5 +1,46 @@
 # DOGMud Patch Notes
 
+## 2026-05-04 — Vendor Polish Hotfix
+
+Two post-merge fixes caught during smoke testing the same day.
+
+### Bug fixes
+
+- **Shopkeepers re-seeding at 500g instead of YAML values.** Three
+  layers of bug:
+  - `RegisterMobShop` hardcoded `startingGold = 500`, ignoring
+    `mob.Character.Gold` from the YAML — Phase 7's bumps to 1000g
+    specialist / 5000g general never flowed through.
+  - `PrewarmShopForSpawnPlacement` (which runs at boot for every shop
+    placement before real mobs spawn) built a synthetic Mob without
+    forwarding `Gold`, so even after the first fix the prewarm path
+    re-floored everything to 500g.
+  - Persisted shop YAMLs from the buggy boot survived a server
+    restart; only a fresh wipe of `_datafiles/world/dogmud/shops/`
+    forces re-seed from the (now-correct) seeding code.
+
+  Specialists now correctly seed at 1000g, generals at 5000g.
+
+- **Vendors rejecting tagged items they should buy** (Maren refusing
+  cattail cloak, Kerra refusing arena tower shield). `EvaluateBuyRules`
+  was pricing items not in the vendor's stock list at the 5× scarcity
+  ceiling (`current=0, restock=1` → ratio 0 → `PriceCeiling = 5.0`),
+  pushing the buy offer above the gold-reserve floor and self-rejecting.
+  Now: stocked items still get full dynamic scarcity pricing; unstocked
+  items use flat `value × BuyRatio`. Opportunistic vendor buys work
+  regardless of whether the shop normally stocks the item.
+
+### Deploy step
+
+Wipe the shop save directory on prod **before restarting** so the
+gold reseeds from the new code path:
+
+```bash
+./tools/economy/wipe_shop_state.sh
+```
+
+Players' personal gold and inventories are untouched.
+
 ## 2026-05-04 — Vendor Types & Economy Polish
 
 Big economy overhaul. Buy rule rewrite, per-vendor audit, tier-50/40
