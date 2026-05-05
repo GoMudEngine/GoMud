@@ -11,22 +11,28 @@ import (
 )
 
 // ValidateRecipeIngredientTags ensures every recipe ingredient resolves
-// to an item carrying the recipe's Skill in its VendorCategories list.
-// Ingredients with no canonical item (no ItemSpec has matching
-// ComponentTag) are logged as a warning but don't error — those are
-// legitimate "raw concept" tags (e.g., a flavor recipe that hasn't
-// been wired to a specific item).
+// to AT LEAST ONE item carrying the recipe's Skill in its
+// VendorCategories list. Multiple items can share a ComponentTag
+// (e.g. four different bottle items all tagged "bottle"); the recipe
+// validates as long as some item with that tag is sourceable from the
+// recipe's discipline. Ingredients with no canonical item (no ItemSpec
+// has matching ComponentTag) are logged as a warning but don't error
+// — those are legitimate "raw concept" tags (e.g. a flavor recipe that
+// hasn't been wired to a specific item).
 func ValidateRecipeIngredientTags(
 	recipes map[string]*RecipeSpec,
 	specs map[int]*items.ItemSpec,
 ) error {
-	// Index items by ComponentTag.
-	byTag := map[string]*items.ItemSpec{}
+	// Index items by ComponentTag — collect ALL items per tag, not just one.
+	// Map iteration order in Go is randomized, so single-item indexing
+	// caused intermittent boot panics whenever an alchemy-only bottle won
+	// the slot for a recipe that needed a jewelcrafting-tagged bottle.
+	byTag := map[string][]*items.ItemSpec{}
 	for _, s := range specs {
 		if s == nil || s.ComponentTag == "" {
 			continue
 		}
-		byTag[s.ComponentTag] = s
+		byTag[s.ComponentTag] = append(byTag[s.ComponentTag], s)
 	}
 
 	type fault struct {
@@ -42,20 +48,31 @@ func ValidateRecipeIngredientTags(
 			continue
 		}
 		for _, ing := range r.Ingredients {
-			spec, ok := byTag[ing.ItemTag]
+			candidates, ok := byTag[ing.ItemTag]
 			if !ok {
 				mudlog.Warn("crafting.ValidateRecipeIngredientTags",
 					"warning", "recipe ingredient has no canonical item",
 					"recipe", id, "itemTag", ing.ItemTag)
 				continue
 			}
-			if !slices.Contains(spec.VendorCategories, r.Skill) {
+			matched := false
+			for _, spec := range candidates {
+				if slices.Contains(spec.VendorCategories, r.Skill) {
+					matched = true
+					break
+				}
+			}
+			if !matched {
+				names := make([]string, 0, len(candidates))
+				for _, spec := range candidates {
+					names = append(names, fmt.Sprintf("%d (%q)", spec.ItemId, spec.Name))
+				}
 				faults = append(faults, fault{
 					recipeId: id,
 					itemTag:  ing.ItemTag,
 					skill:    r.Skill,
-					why: fmt.Sprintf("item %d (%q) missing %q in vendor_categories",
-						spec.ItemId, spec.Name, r.Skill),
+					why: fmt.Sprintf("no item with tag %q has %q in vendor_categories; candidates: %s",
+						ing.ItemTag, r.Skill, strings.Join(names, ", ")),
 				})
 			}
 		}
