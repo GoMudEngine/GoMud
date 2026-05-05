@@ -71,6 +71,7 @@ func ItemTypes() []ItemTypeInfo {
 		{string(Gemstone), `This is a gemstone.`, 0, 0, 9999},
 		{string(Lockpicks), `This allows use of the picklock skill.`, 0, 0, 9999},
 		{string(Botanical), `This is an herb.`, 0, 30000, 39999},
+		{string(Ammo), `This is ranged ammo (arrows, bolts, etc.).`, 0, 0, 9999},
 	}
 }
 
@@ -137,6 +138,7 @@ const (
 	Lockpicks ItemType = "lockpicks" // Used for lockpicking
 	Botanical ItemType = "botanical" // A plant, herb, etc.
 	Service   ItemType = "service"   // Possibly a ticket,action, or favor being purchased
+	Ammo      ItemType = "ammo"      // Ranged ammo (arrows, bolts) — forward-declared for ranged combat
 
 	// Subtypes for wearables
 	Wearable  ItemSubType = "wearable"
