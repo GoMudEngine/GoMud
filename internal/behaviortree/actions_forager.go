@@ -524,6 +524,11 @@ func npcVisitVendorsInRoom(
 			mob.Character.RemoveItem(item)
 			entry.Current++
 			mutated = true
+			// Increment throughput counter for delivery tracking.
+			spec := items.GetItemSpec(item.ItemId)
+			if spec != nil && spec.RarityTier > 0 {
+				forager.IncrementDelivery(mob.Zone, int(mob.MobId), spec.RarityTier)
+			}
 			room.SendText(fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi> hands a %s to`+
 					` <ansi fg="mobname">%s</ansi>.`,
@@ -537,6 +542,9 @@ func npcVisitVendorsInRoom(
 		if mutated {
 			if err := shops.SaveShop(vendor.Zone, int(vendor.MobId), roomId); err != nil {
 				mudlog.Error("forager.npcVisitVendorsInRoom", "forager", p.Name, "vendor", vendor.Character.Name, "error", err)
+			}
+			if err := forager.SaveThroughput(mob.Zone, int(mob.MobId)); err != nil {
+				mudlog.Error("forager.SaveThroughput", "forager", p.Name, "error", err)
 			}
 		}
 	}

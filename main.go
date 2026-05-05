@@ -22,6 +22,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/audio"
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
 	"github.com/GoMudEngine/GoMud/internal/combat"
@@ -29,6 +30,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/flags"
+	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/hooks"
 	"github.com/GoMudEngine/GoMud/internal/inputhandlers"
@@ -435,6 +437,10 @@ func main() {
 
 	// Final plugin save before shutting down
 	plugins.Save()
+
+	// Final throughput saves before shutting down
+	forager.SaveAllThroughputs()
+	caravan.SaveAllThroughputs()
 
 	// Just a goroutine that spins its wheels until the program shuts down")
 	go func() {
@@ -1209,6 +1215,16 @@ func loadAllDataFiles(isReload bool) {
 		mudlog.Warn("shop cache prewarm", "error", err)
 	} else {
 		mudlog.Info("shop cache prewarmed (persisted)", "count", n)
+	}
+	if n, err := forager.PrewarmThroughputFromPersistedFiles(); err != nil {
+		mudlog.Error("forager.PrewarmThroughputFromPersistedFiles", "error", err)
+	} else {
+		mudlog.Info("forager.PrewarmThroughputFromPersistedFiles", "loaded", n)
+	}
+	if n, err := caravan.PrewarmThroughputFromPersistedFiles(); err != nil {
+		mudlog.Error("caravan.PrewarmThroughputFromPersistedFiles", "error", err)
+	} else {
+		mudlog.Info("caravan.PrewarmThroughputFromPersistedFiles", "loaded", n)
 	}
 	// Walk every room's spawninfo and pre-register a shop entry for
 	// each shop-bearing mob's spawn placement that doesn't already
