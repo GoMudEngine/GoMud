@@ -547,11 +547,9 @@ func (i *ItemSpec) Validate() error {
 		i.Damage.FormatDiceRoll()
 	}
 
-	// DO NOT auto-calculate value. Items must explicitly set value in YAML.
-	// Zero (default) means unsalable (skips vendor validator).
-	// This allows us to distinguish between "not meant to sell" (value: 0)
-	// and "no value specified" (use explicit value in YAML).
-	// Removed condition: if i.Value < 1 { i.AutoCalculateValue() }
+	if i.Value < 1 {
+		i.AutoCalculateValue()
+	}
 
 	return nil
 }

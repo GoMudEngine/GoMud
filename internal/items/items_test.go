@@ -917,10 +917,10 @@ func TestItemSpec_Validate(t *testing.T) {
 		assert.Equal(t, "Test Sword", spec.NameSimple, "should default NameSimple to Name")
 	})
 
-	t.Run("preserve explicit zero value", func(t *testing.T) {
+	t.Run("auto calculate value", func(t *testing.T) {
 		spec := &ItemSpec{Type: Weapon, Name: "Test", Value: 0}
 		spec.Validate()
-		assert.Equal(t, 0, spec.Value, "should preserve explicit zero value (not salable)")
+		assert.True(t, spec.Value > 0, "should auto calculate value")
 	})
 }
 

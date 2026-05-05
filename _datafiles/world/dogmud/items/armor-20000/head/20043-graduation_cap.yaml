@@ -3,8 +3,6 @@ name: graduation cap
 description: A special hat signifying that you've completed the tutorial.
 type: head
 subtype: wearable
-vendor_categories:
-  - tailoring
 damagereduction: 1
 physical_mitigation: 1
 magical_mitigation: 1

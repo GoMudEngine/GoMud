@@ -10,4 +10,4 @@ type: object
 subtype: holdable
 uses: 1
 weight: 0.2
-value: 0
+value: 2
