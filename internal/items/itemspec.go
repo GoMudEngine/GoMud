@@ -616,3 +616,12 @@ func LoadDataFiles() {
 	mudlog.Info("itemspec.LoadDataFiles()", "itemLoadedCount", len(items), "attackMessageCount", len(attackMessages), "defenseMessageCount", len(defenseMessages), "Time Taken", time.Since(start))
 
 }
+
+// RegisterTestItemSpec is a test-only helper that registers an ItemSpec
+// in the global items registry. Used for unit tests that need GetItemSpec()
+// to return a spec. The spec is persisted across tests in the same run.
+func RegisterTestItemSpec(spec *ItemSpec) {
+	if spec.ItemId > 0 {
+		items[spec.ItemId] = spec
+	}
+}
