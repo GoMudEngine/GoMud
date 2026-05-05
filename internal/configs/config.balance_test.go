@@ -40,6 +40,7 @@ func TestBalanceConfig_ForagerDefaults(t *testing.T) {
 		{"ForagerWaitTimeoutRounds", cfg.ForagerWaitTimeoutRounds, ConfigInt(150)},
 		{"ForagerRestCarryThreshold", cfg.ForagerRestCarryThreshold, ConfigFloat(0.5)},
 		{"ForagerLockboxCapacity", cfg.ForagerLockboxCapacity, ConfigInt(500)},
+		{"ForagerStuckThresholdRounds", cfg.ForagerStuckThresholdRounds, ConfigInt(600)},
 	}
 	for _, c := range cases {
 		if c.got != c.want {
