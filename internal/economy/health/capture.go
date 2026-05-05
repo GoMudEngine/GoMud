@@ -52,6 +52,7 @@ func captureShops() []ShopSnapshot {
 			ss.Stock = append(ss.Stock, StockSnapshot{
 				ItemId:     e.ItemId,
 				Bucket:     economy.BucketFor(e.ItemId),
+				Tier:       getRarityTier(e.ItemId),
 				Current:    e.Current,
 				Max:        e.MaxStock,
 				RestockQty: e.RestockQty,
@@ -292,4 +293,14 @@ func lookupShopMobName(mobId, roomId int) string {
 		return t.Character.Name
 	}
 	return ""
+}
+
+// getRarityTier returns the rarity tier of an item from its ItemSpec.
+// Returns 0 if the spec doesn't exist.
+func getRarityTier(itemId int) int {
+	spec := items.GetItemSpec(itemId)
+	if spec == nil {
+		return 0
+	}
+	return spec.RarityTier
 }

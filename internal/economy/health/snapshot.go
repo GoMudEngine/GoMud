@@ -33,9 +33,11 @@ type ShopSnapshot struct {
 }
 
 // StockSnapshot is a per-item entry. Bucket comes from economy.BucketFor().
+// Tier is the item's rarity tier from items.GetItemSpec().RarityTier.
 type StockSnapshot struct {
 	ItemId     int    `yaml:"item_id"     json:"item_id"`
 	Bucket     string `yaml:"bucket"      json:"bucket"`
+	Tier       int    `yaml:"tier"        json:"tier"`
 	Current    int    `yaml:"current"     json:"current"`
 	Max        int    `yaml:"max"         json:"max"`
 	RestockQty int    `yaml:"restock_qty" json:"restock_qty"`
