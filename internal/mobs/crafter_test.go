@@ -61,6 +61,35 @@ func TestRegisterMobShop_SeedsStartingGoldFromYAML(t *testing.T) {
 	assert.Equal(t, 1000, inv.Gold, "current gold should match starting gold on fresh seed")
 }
 
+// TestPrewarmShopForSpawnPlacement_ForwardsGold pins the gold-forwarding
+// in the synthetic Mob. The prewarm path runs at boot for every shop
+// placement before the real mob spawns, so if it drops Gold the floor
+// (500) wins everywhere — exactly what happened in prod after the
+// 2026-05-04 hotfix landed but before this second-pass fix.
+func TestPrewarmShopForSpawnPlacement_ForwardsGold(t *testing.T) {
+	defer shops.ClearCache()
+
+	template := &Mob{
+		MobId: 9003,
+		Zone:  "TestZone",
+		Character: characters.Character{
+			Name: "test general",
+			Gold: 5000,
+			Shop: characters.Shop{},
+		},
+		Crafter:                 true,
+		CrafterRestockMaterials: []int{1},
+		ShopCraftSupport:        "general",
+	}
+
+	PrewarmShopForSpawnPlacement(template, 99)
+
+	inv := shops.GetShopInventory(template.Zone, int(template.MobId), 99)
+	require.NotNil(t, inv, "prewarm should register the shop")
+	assert.Equal(t, 5000, inv.StartingGold,
+		"general-store gold from the template's YAML must flow through prewarm path, not get lost in the synthetic Mob")
+}
+
 // TestRegisterMobShop_AppliesGoldFloor pins the floor: if a content
 // edit accidentally drops a mob's gold below 500, the seeder bumps
 // it back up so the merchant has meaningful purchasing power.
