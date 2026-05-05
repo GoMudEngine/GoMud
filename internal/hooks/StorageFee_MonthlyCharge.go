@@ -2,14 +2,12 @@ package hooks
 
 import (
 	"fmt"
-	"math"
 	"sort"
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
-	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -33,8 +31,12 @@ func CheckStorageFees(e events.Event) events.ListenerReturn {
 // Safe to call multiple times — uses StorageFeeLastMonth to prevent
 // double-charging. Called from the round tick for online users and
 // from the login path for returning offline users.
+//
+// Billing is per-slot (stack), not per-unit. A stack of 50 iron ore
+// in one slot costs 1g, not 50g. Forfeiture drops the cheapest whole
+// slot(s) (by spec.Value × Count) until the shortfall is covered.
 func ChargeStorageFee(u *users.UserRecord, currentMonth int) {
-	if u.ItemStorage.Items == nil || len(u.ItemStorage.Items) == 0 {
+	if u.ItemStorage.SlotCount() == 0 {
 		u.Character.StorageFeeLastMonth = currentMonth
 		return
 	}
@@ -43,14 +45,14 @@ func ChargeStorageFee(u *users.UserRecord, currentMonth int) {
 		return // Already charged this month
 	}
 
-	feePerItem := int(configs.GetBalanceConfig().StorageFeePerItem)
-	if feePerItem <= 0 {
+	feePerSlot := int(configs.GetBalanceConfig().StorageFeePerItem)
+	if feePerSlot <= 0 {
 		u.Character.StorageFeeLastMonth = currentMonth
 		return
 	}
 
-	itemCount := len(u.ItemStorage.Items)
-	fee := itemCount * feePerItem
+	slotCount := u.ItemStorage.SlotCount()
+	fee := slotCount * feePerSlot
 
 	if u.Character.Bank >= fee {
 		// Can pay in full
@@ -61,11 +63,12 @@ func ChargeStorageFee(u *users.UserRecord, currentMonth int) {
 		if u.Character.Bank < fee {
 			msg := fmt.Sprintf(
 				"Thornwall Bank Notice: Your monthly storage fee of "+
-					"%dg has been collected. You have %dg remaining "+
-					"in your account. Next month's fee will be %dg "+
-					"-- please deposit additional gold or retrieve "+
-					"items to avoid forfeiture.",
-				fee, u.Character.Bank, fee)
+					"%dg has been collected (%d slot(s) at %dg/slot). "+
+					"You have %dg remaining in your account. Next "+
+					"month's fee will be %dg -- please deposit "+
+					"additional gold or retrieve items to avoid "+
+					"forfeiture.",
+				fee, slotCount, feePerSlot, u.Character.Bank, fee)
 			u.Inbox.Add(users.Message{
 				FromName: "Thornwall Bank",
 				Message:  msg,
@@ -75,50 +78,57 @@ func ChargeStorageFee(u *users.UserRecord, currentMonth int) {
 		return
 	}
 
-	// Cannot pay in full — deduct what they have, forfeit cheapest items
+	// Cannot pay in full — deduct what they have, forfeit cheapest stacks
 	available := u.Character.Bank
 	u.Character.Bank = 0
 	shortfall := fee - available
 
-	// How many items must be forfeited to cover the shortfall
-	itemsToRemove := int(math.Ceil(float64(shortfall) / float64(feePerItem)))
-	if itemsToRemove > len(u.ItemStorage.Items) {
-		itemsToRemove = len(u.ItemStorage.Items)
-	}
-
-	// Sort by gold value ascending (cheapest first)
-	type valuedItem struct {
+	// Sort slots by per-stack value (spec.Value × Count) ascending — cheapest first
+	type valuedSlot struct {
 		idx   int
 		value int
-		item  items.Item
+		name  string
 	}
-	valued := make([]valuedItem, len(u.ItemStorage.Items))
-	for i, itm := range u.ItemStorage.Items {
-		spec := itm.GetSpec()
-		valued[i] = valuedItem{idx: i, value: spec.Value, item: itm}
+
+	slots := u.ItemStorage.GetSlots()
+	valued := make([]valuedSlot, len(slots))
+	for i, slot := range slots {
+		spec := slot.Item.GetSpec()
+		stackValue := spec.Value * slot.Count
+		var displayName string
+		if slot.Count > 1 {
+			displayName = fmt.Sprintf("a stack of %d %s", slot.Count, slot.Item.Name())
+		} else {
+			displayName = slot.Item.DisplayName()
+		}
+		valued[i] = valuedSlot{idx: i, value: stackValue, name: displayName}
 	}
 	sort.Slice(valued, func(a, b int) bool {
 		return valued[a].value < valued[b].value
 	})
 
-	// Forfeit the cheapest items
-	forfeited := make([]string, 0, itemsToRemove)
-	removeSet := make(map[int]bool, itemsToRemove)
-	for i := 0; i < itemsToRemove && i < len(valued); i++ {
-		forfeited = append(forfeited, valued[i].item.DisplayName())
-		removeSet[valued[i].idx] = true
+	// Forfeit whole slots until shortfall is covered (no partial-stack peeling)
+	forfeited := []string{}
+	removeIdxs := map[int]bool{}
+	goldCovered := 0
+
+	for _, vs := range valued {
+		if goldCovered >= shortfall {
+			break
+		}
+		forfeited = append(forfeited, vs.name)
+		removeIdxs[vs.idx] = true
+		goldCovered += feePerSlot // each forfeited slot covers 1 fee unit
 	}
 
-	// Rebuild storage without forfeited items
-	kept := make([]items.Item, 0, len(u.ItemStorage.Items)-len(removeSet))
-	for i, itm := range u.ItemStorage.Items {
-		if !removeSet[i] {
-			kept = append(kept, itm)
+	// Remove forfeited slots in reverse order to preserve indices
+	for i := len(slots) - 1; i >= 0; i-- {
+		if removeIdxs[i] {
+			u.ItemStorage.RemoveSlot(i)
 		}
 	}
-	u.ItemStorage.Items = kept
 
-	// Send forfeiture notice
+	// Build the item list string for the inbox notice
 	itemList := ""
 	for i, name := range forfeited {
 		if i > 0 {
@@ -126,11 +136,12 @@ func ChargeStorageFee(u *users.UserRecord, currentMonth int) {
 		}
 		itemList += name
 	}
-	remaining := len(u.ItemStorage.Items)
+
+	remaining := u.ItemStorage.SlotCount()
 	msg := fmt.Sprintf(
 		"Thornwall Bank Notice: Insufficient funds for storage "+
-			"fees. The following items were forfeited: %s. Your "+
-			"remaining %d items are secure.",
+			"fees. The following were forfeited: %s. Your "+
+			"remaining %d slot(s) are secure.",
 		itemList, remaining)
 	u.Inbox.Add(users.Message{
 		FromName: "Thornwall Bank",
