@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -219,4 +220,43 @@ func TestBuyRules_PotionWithAging_NoCraftedRound_Accepted(t *testing.T) {
 	shop.CraftSupport = CraftSupportAlchemy
 	offer := EvaluateBuyRules(item, shop, "", false, DefaultPricingConfig(), nil)
 	assert.Greater(t, offer.Price, 0, "potion with no craft round should be accepted")
+}
+
+func TestBuyRules_DecliningPotion_Rejected(t *testing.T) {
+	// Set up an aging potion that's reached the Declining phase.
+	// Aging triggers when CraftedRound is set, the spec has aging
+	// thresholds, and the elapsed time × effective speed exceeds
+	// the DecayRounds threshold.
+	spec := items.ItemSpec{
+		ItemId:                200,
+		Value:                 50,
+		Type:                  items.Potion,
+		VendorCategories:      []string{"alchemy"},
+		BottleAgingMultiplier: 1.0,
+		Aging: items.AgingThresholds{
+			FermentRounds: 10,
+			PeakRounds:    20,
+			DecayRounds:   30, // Declining phase starts here
+			SpoilRounds:   60,
+		},
+	}
+	// CraftedRound far in the past so we're well into Declining.
+	item := items.Item{
+		ItemId:       spec.ItemId,
+		Spec:         &spec,
+		CraftedRound: 1, // ancient
+		BottleMultiplier: 1.0,
+	}
+	// Set round count high enough to be in Declining phase.
+	// elapsed = current - crafted = 100 - 1 = 99
+	// decay threshold = 30, spoil threshold = 60
+	// Since 60 < 99 < 60, we're in Declining (elapsed >= decay && elapsed < spoil is false, so we check > 60)
+	// Actually, 99 > 60, so we hit PhaseSpoiled. Let's adjust:
+	// We want 30 < elapsed < 60 for Declining. Set crafted=50, current=80: elapsed=30 (not in Declining yet)
+	// Set crafted=1, current=50: elapsed=49, which is > 30 and < 60, so Declining!
+	util.SetRoundCountForTest(50)
+	shop := baseShop()
+	shop.CraftSupport = CraftSupportAlchemy
+	offer := EvaluateBuyRules(item, shop, "", false, DefaultPricingConfig(), nil)
+	assert.Equal(t, 0, offer.Price, "declining potion must be rejected even with matching tag")
 }

@@ -22,7 +22,8 @@ type BuyOffer struct {
 //  4. Vendor's craft_support doesn't accept any of the item's tags.
 //  5. Vendor is at MaxStock for this item ("48 iron ores" overstock cap).
 //  6. Vendor can't afford the buy price without dropping below
-//     GoldReserve(cfg.GoldReserveRatio).
+//     shopInv.GoldReserve(BalanceConfig.ShopGoldReserveRatio) — defaults
+//     to 0.50 when the config knob is unset.
 //
 // Otherwise returns a BuyOffer with dynamic price from CalcBuyPrice.
 //
