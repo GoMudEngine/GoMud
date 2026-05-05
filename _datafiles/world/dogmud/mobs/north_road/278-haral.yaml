@@ -1,6 +1,5 @@
 mobid: 278
 zone: North Road
-craft_support: cooking
 behavior_archetype: noncombat_shopkeeper
 statpool: 80
 itemdropchance: 0
@@ -29,11 +28,6 @@ character:
   speciesid: 1
   level: 1
   gold: 50
-  shop:
-    - itemid: 30021
-      price: 3
-    - itemid: 30022
-      price: 5
   stats:
     strength:
       training: 10
