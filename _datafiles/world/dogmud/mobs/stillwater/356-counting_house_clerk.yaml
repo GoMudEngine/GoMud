@@ -1,0 +1,43 @@
+mobid: 356
+zone: Stillwater
+behavior_archetype: noncombat_questgiver
+statpool: 80
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote draws a careful line beneath a column of figures
+    and sets the pen down to check the sum'
+  - ''
+  - 'emote slots a rolled document into a pigeonhole and
+    presses the wax seal flat with one thumb'
+  - ''
+  - 'emote opens the strongbox briefly, counts something
+    without removing it, and closes it again'
+  - ''
+  - 'emote makes a small notation in the margin of the ledger,
+    initials it, and blows it dry'
+  - ''
+activitylevel: 12
+character:
+  name: counting house clerk
+  description: |
+    A slight, watchful person in a coat of plain dark wool,
+    ink-stained at the right cuff and the left forefinger
+    where the pen rests. The counting house clerk works with
+    the unhurried precision of someone who has learned that
+    a single misplaced figure can ruin a fisherman's season
+    or sink a ship-loan. A cord around their neck disappears
+    beneath the coat -- the strongbox key, worn close and
+    never mentioned. They know the name of every account in
+    those pigeonholes, the weight of every pearl-lot that
+    has passed across this counter, and roughly how much
+    each of Stillwater's boat-owners owes and to whom.
+    They do not share this knowledge, but they do not
+    pretend not to have it either.
+  speciesid: 1
+  level: 1
