@@ -11,3 +11,7 @@ weight: 0.1
 value: 3
 rarity_tier: 50
 is_component: true
+vendor_categories:
+- blacksmithing
+- enchanting
+- jewelcrafting

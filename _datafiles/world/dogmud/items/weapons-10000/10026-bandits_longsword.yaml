@@ -1,5 +1,7 @@
 itemid: 10026
 name: bandit's longsword
+vendor_categories:
+- blacksmithing
 namesimple: longsword
 description: >
   A longsword with a nicked blade and a hilt wrapped in stained

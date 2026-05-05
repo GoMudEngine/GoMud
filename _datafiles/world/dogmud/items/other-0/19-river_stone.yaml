@@ -1,5 +1,6 @@
 itemid: 19
 name: river stone
+not_salable: true
 namesimple: stone
 description: A smooth, flat stone from the riverbed, worn to a perfect oval by
   centuries of current. It is cool to the touch and fits neatly in the palm. The

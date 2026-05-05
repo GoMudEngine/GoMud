@@ -1,5 +1,7 @@
 itemid: 10030
 name: wind scimitar
+vendor_categories:
+- blacksmithing
 namesimple: scimitar
 description: >-
   A curved blade of compressed air made solid — semi-translucent,

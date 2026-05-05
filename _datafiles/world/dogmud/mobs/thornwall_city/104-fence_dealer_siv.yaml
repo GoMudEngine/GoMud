@@ -32,7 +32,7 @@ character:
     and absolutely disinterested in your reasons for selling.
   speciesid: 1
   level: 1
-  gold: 500
+  gold: 5000
   equipment:
     weapon:
       itemid: 10009

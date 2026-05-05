@@ -1,5 +1,7 @@
 itemid: 20033
 name: silver ring
+vendor_categories:
+- jewelcrafting
 namesimple: ring
 description: A slender silver band with a mirror-bright finish. Tiny gem dust
   particles are fused along the outer edge, giving it a subtle sparkle

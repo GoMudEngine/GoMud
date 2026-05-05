@@ -1,5 +1,7 @@
 itemid: 30012
 name: conviction draught
+vendor_categories:
+- alchemy
 namesimple: draught
 description: A sharp-smelling brew the color of dark honey. It makes the mind feel
   awake and certain of itself.

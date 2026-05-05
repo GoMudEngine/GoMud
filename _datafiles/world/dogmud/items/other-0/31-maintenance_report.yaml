@@ -1,5 +1,6 @@
 itemid: 31
 name: maintenance report
+not_salable: true
 namesimple: report
 description: A thick sheaf of papers bound with twine, covered in precise handwriting.
   Detailed sketches of stress cracks, measurements of mortar degradation, and

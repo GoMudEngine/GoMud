@@ -1,5 +1,6 @@
 itemid: 23
 name: thornwall pass
+not_salable: true
 namesimple: pass
 description: A folded card of stiff parchment, stamped with the Thornwall city crest
   and signed by a gate officer. It identifies the bearer as a person with legitimate

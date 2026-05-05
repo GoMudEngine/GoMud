@@ -1,5 +1,6 @@
 itemid: 40036
 name: bribe ledger
+not_salable: true
 namesimple: ledger
 description: A slim leather journal filled with columns of names, dates,
   and amounts. The handwriting is meticulous. Several entries name city

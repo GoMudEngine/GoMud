@@ -1,5 +1,7 @@
 itemid: 20075
 name: stone ring
+vendor_categories:
+- jewelcrafting
 namesimple: ring
 description: >-
   A thick band of smoothed granite worn featureless by elemental

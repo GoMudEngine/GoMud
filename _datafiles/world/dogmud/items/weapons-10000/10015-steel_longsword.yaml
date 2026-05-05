@@ -1,5 +1,7 @@
 itemid: 10015
 name: steel longsword
+vendor_categories:
+- blacksmithing
 namesimple: longsword
 description: A finely forged steel longsword with a keen edge and balanced hilt.
   The blade catches the light with a cold gleam.

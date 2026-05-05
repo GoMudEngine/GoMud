@@ -1,5 +1,7 @@
 itemid: 10028
 name: champion mace
+vendor_categories:
+- blacksmithing
 namesimple: mace
 description: >-
   A brutal mace of blackened iron, its flanged head dented and

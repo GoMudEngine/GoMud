@@ -1,5 +1,7 @@
 itemid: 30048
 name: swiftfoot essence
+vendor_categories:
+- alchemy
 namesimple: essence
 description: An almost weightless liquid that evaporates
   on contact with your tongue. The world seems to slow

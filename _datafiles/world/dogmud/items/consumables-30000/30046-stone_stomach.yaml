@@ -1,5 +1,7 @@
 itemid: 30046
 name: stone stomach
+vendor_categories:
+- alchemy
 namesimple: elixir
 description: A viscous grey draught that coats your
   insides like mortar. Nothing can turn your stomach

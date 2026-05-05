@@ -36,8 +36,10 @@ type economyAPIResponse struct {
 }
 
 type deltaSet struct {
-	UnixTs int64                       `json:"unix_ts,omitempty"`
-	Shops  map[string]health.ShopDelta `json:"shops"` // key "{zone}/{mobId}/{roomId}"
+	UnixTs   int64                          `json:"unix_ts,omitempty"`
+	Shops    map[string]health.ShopDelta    `json:"shops"`     // key "{zone}/{mobId}/{roomId}"
+	Foragers map[string]health.ForagerDelta `json:"foragers"`  // key is mobId as string
+	Caravans map[string]health.CaravanDelta `json:"caravans"`  // key is instId as string
 }
 
 func economyAPI(w http.ResponseWriter, r *http.Request) {
@@ -80,7 +82,11 @@ func economyAPI(w http.ResponseWriter, r *http.Request) {
 		// Tolerance: ±50% of the offset, so the picker still works for sparse history.
 		tolerance := max(off/2, 1800)
 		meta := health.PickClosestSnapshot(metas, target, tolerance)
-		ds := deltaSet{Shops: map[string]health.ShopDelta{}}
+		ds := deltaSet{
+			Shops:    map[string]health.ShopDelta{},
+			Foragers: map[string]health.ForagerDelta{},
+			Caravans: map[string]health.CaravanDelta{},
+		}
 		if meta != nil {
 			ds.UnixTs = meta.UnixTs
 			old, err := health.LoadSnapshot(meta.UnixTs)
@@ -89,6 +95,16 @@ func economyAPI(w http.ResponseWriter, r *http.Request) {
 					oldShop := health.FindShopInSnapshot(old, s.Zone, s.MobId, s.RoomId)
 					key := fmt.Sprintf("%s/%d/%d", s.Zone, s.MobId, s.RoomId)
 					ds.Shops[key] = health.ComputeShopDelta(s, oldShop)
+				}
+				for _, f := range cur.Foragers {
+					oldF := health.FindForagerInSnapshot(old, f.MobId)
+					key := fmt.Sprintf("%d", f.MobId)
+					ds.Foragers[key] = health.ComputeForagerDelta(f, oldF)
+				}
+				for _, c := range cur.Caravans {
+					oldC := health.FindCaravanInSnapshot(old, c.InstId)
+					key := fmt.Sprintf("%d", c.InstId)
+					ds.Caravans[key] = health.ComputeCaravanDelta(c, oldC)
 				}
 			}
 		}

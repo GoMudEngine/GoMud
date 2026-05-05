@@ -1,5 +1,7 @@
 itemid: 10001
 name: sharp stick
+vendor_categories:
+- blacksmithing
 namesimple: stick
 description: It looks kinda sticky.
 type: weapon

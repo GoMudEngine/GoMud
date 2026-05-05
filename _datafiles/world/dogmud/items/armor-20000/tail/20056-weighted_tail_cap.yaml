@@ -1,5 +1,7 @@
 itemid: 20056
 name: weighted tail cap
+vendor_categories:
+- blacksmithing
 namesimple: tail cap
 description: A leather-wrapped iron weight that straps to the end of a
   tail. The added mass turns a sweep into a devastating blow.

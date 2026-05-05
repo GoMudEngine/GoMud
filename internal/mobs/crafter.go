@@ -188,10 +188,12 @@ func TickMobCraft(mob *Mob) *CraftResult {
 	shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId)
 
 	if shopInv != nil {
-		// Supply cart delivery — suppressed for caravan-served zones.
-		// Caravan events deliver materials instead; crafting itself continues.
-		restocked := false
-		if !b.IsCaravanServedZone(mob.Zone) {
+		// Supply cart delivery — baseline tier-50/40 restock in caravan-served zones,
+		// full restock elsewhere. Caravan/forager events deliver rarer tiers.
+		var restocked bool
+		if b.IsCaravanServedZone(mob.Zone) {
+			restocked = shopInv.RestockBaselineTiers()
+		} else {
 			restocked = shopInv.Restock()
 		}
 

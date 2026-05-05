@@ -22,6 +22,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/audio"
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
 	"github.com/GoMudEngine/GoMud/internal/combat"
@@ -29,6 +30,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/flags"
+	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/hooks"
 	"github.com/GoMudEngine/GoMud/internal/inputhandlers"
@@ -435,6 +437,10 @@ func main() {
 
 	// Final plugin save before shutting down
 	plugins.Save()
+
+	// Final throughput saves before shutting down
+	forager.SaveAllThroughputs()
+	caravan.SaveAllThroughputs()
 
 	// Just a goroutine that spins its wheels until the program shuts down")
 	go func() {
@@ -1171,6 +1177,32 @@ func loadAllDataFiles(isReload bool) {
 			panic(fmt.Sprintf("shops.ValidateShopMobTags failed:\n%v", err))
 		}
 	}
+
+	// Validate item vendor_categories tags.
+	allItemSpecs := items.GetAllItemSpecsMap()
+	if err := items.ValidateVendorCategories(allItemSpecs, shops.ValidVendorCategories); err != nil {
+		if isReload {
+			mudlog.Error("items.ValidateVendorCategories failed on reload",
+				"error", err.Error(),
+				"remediation", "fix the listed item YAMLs (add or correct vendor_categories:) and run /reload again; item data may be inconsistent until then",
+			)
+		} else {
+			panic(fmt.Sprintf("items.ValidateVendorCategories failed:\n%v", err))
+		}
+	}
+
+	// Validate recipe ingredients carry the recipe's discipline tag.
+	if err := crafting.ValidateRecipeIngredientTags(crafting.GetAll(), allItemSpecs); err != nil {
+		if isReload {
+			mudlog.Error("crafting.ValidateRecipeIngredientTags failed on reload",
+				"error", err.Error(),
+				"remediation", "fix the listed item YAMLs (add the recipe's skill to vendor_categories) and run /reload again",
+			)
+		} else {
+			panic(fmt.Sprintf("crafting.ValidateRecipeIngredientTags failed:\n%v", err))
+		}
+	}
+
 	// Build mob-template zone lookup for shop cache pre-warming.
 	mobZoneByMobId := make(map[int]string, len(allMobTemplates))
 	for _, m := range allMobTemplates {
@@ -1183,6 +1215,16 @@ func loadAllDataFiles(isReload bool) {
 		mudlog.Warn("shop cache prewarm", "error", err)
 	} else {
 		mudlog.Info("shop cache prewarmed (persisted)", "count", n)
+	}
+	if n, err := forager.PrewarmThroughputFromPersistedFiles(); err != nil {
+		mudlog.Error("forager.PrewarmThroughputFromPersistedFiles", "error", err)
+	} else {
+		mudlog.Info("forager.PrewarmThroughputFromPersistedFiles", "loaded", n)
+	}
+	if n, err := caravan.PrewarmThroughputFromPersistedFiles(); err != nil {
+		mudlog.Error("caravan.PrewarmThroughputFromPersistedFiles", "error", err)
+	} else {
+		mudlog.Info("caravan.PrewarmThroughputFromPersistedFiles", "loaded", n)
 	}
 	// Walk every room's spawninfo and pre-register a shop entry for
 	// each shop-bearing mob's spawn placement that doesn't already

@@ -62,7 +62,7 @@
         <thead><tr>
             <th>Discipline</th><th>Shops</th><th>Score</th>
             <th>Total Gold</th>
-            <th>Δ1h</th><th>Δ6h</th><th>Δ1d</th><th>Δ3d</th><th>Δ1w</th>
+            <th>Δ1h (pp)</th><th>Δ6h (pp)</th><th>Δ1d (pp)</th><th>Δ3d (pp)</th><th>Δ1w (pp)</th>
         </tr></thead>
         <tbody id="tbl-discipline"></tbody>
     </table>
@@ -72,8 +72,8 @@
         <thead><tr>
             <th>Shop</th><th>Discipline</th><th>Score</th>
             <th>Gold</th>
-            <th>Δ1h</th><th>Δ6h</th><th>Δ1d</th><th>Δ3d</th><th>Δ1w</th>
-            <th>Stock by Bucket</th>
+            <th>Δ1h (pp)</th><th>Δ6h (pp)</th><th>Δ1d (pp)</th><th>Δ3d (pp)</th><th>Δ1w (pp)</th>
+            <th>Stock by Tier</th>
         </tr></thead>
         <tbody id="tbl-shops"></tbody>
     </table>
@@ -100,6 +100,16 @@
         <tbody id="tbl-foragers"></tbody>
     </table>
 </div>
+
+<style>
+.tier-50 { background: #9aa0a6; }
+.tier-40 { background: #5fb878; }
+.tier-30 { background: #5b9dd9; }
+.tier-20 { background: #a979e8; }
+.tier-10 { background: #d4a73a; }
+.bar-container { display: flex; height: 14px; width: 140px; }
+.bar-segment { min-width: 1px; }
+</style>
 
 <script>
 (function() {
@@ -148,6 +158,35 @@
         return bar;
     }
 
+    function tierBar(stockEntries, totalCap) {
+        var byTier = {50:0, 40:0, 30:0, 20:0, 10:0};
+        for (var i = 0; i < (stockEntries || []).length; i++) {
+            var t = stockEntries[i].tier;
+            if (byTier[t] !== undefined) byTier[t] += stockEntries[i].current;
+        }
+        var html = '<div class="bar-container">';
+        [50, 40, 30, 20, 10].forEach(function(t) {
+            var pct = totalCap > 0 ? (byTier[t] / totalCap) * 100 : 0;
+            html += '<div class="bar-segment tier-' + t + '" style="width:' + pct + '%"></div>';
+        });
+        html += '</div>';
+        return html;
+    }
+
+    function tierBarFromDelta(delta) {
+        if (!delta) return '<span class="text-muted">no data</span>';
+        var total = 0;
+        for (var k in delta) total += Math.abs(delta[k] || 0);
+        if (total === 0) return '<span class="text-muted">no movement</span>';
+        var html = '<div class="bar-container">';
+        [50, 40, 30, 20, 10].forEach(function(t) {
+            var pct = total > 0 ? ((delta[t] || 0) / total) * 100 : 0;
+            html += '<div class="bar-segment tier-' + t + '" style="width:' + pct + '%"></div>';
+        });
+        html += '</div>';
+        return html + ' <span class="text-muted">(' + total + ' items)</span>';
+    }
+
     function shopKey(s) { return s.zone + '/' + s.mob_id + '/' + s.room_id; }
 
     function totalCap(stockEntries) {
@@ -190,15 +229,16 @@
             discHtml += '<tr><td>' + disc + '</td><td>' + shops.length + '</td>' +
                         '<td>' + fmtScore(score, score > 0) + '</td>' +
                         '<td>' + gold + '</td>';
-            // Sum gold deltas across shops in this discipline.
+            // Average stock-score deltas across shops in this discipline.
             ['1h','6h','1d','3d','1w'].forEach(function(label) {
-                var sum = 0;
+                var sumPP = 0, n = 0;
                 for (var j = 0; j < shops.length; j++) {
                     var key = shopKey(shops[j]);
                     var sd = d.deltas[label] && d.deltas[label].shops[key];
-                    if (sd) sum += sd.GoldDelta;
+                    if (sd) { sumPP += sd.StockScoreDelta; n++; }
                 }
-                discHtml += '<td>' + fmtDelta(sum) + '</td>';
+                var avg = n > 0 ? Math.round(sumPP / n) : 0;
+                discHtml += '<td>' + (avg > 0 ? '+' : '') + avg + 'pp</td>';
             });
             discHtml += '</tr>';
         }
@@ -225,9 +265,16 @@
                         '<td>' + snap.gold + '</td>';
             ['1h','6h','1d','3d','1w'].forEach(function(label) {
                 var sd = d.deltas[label] && d.deltas[label].shops[key];
-                shopHtml += '<td>' + (sd ? fmtDelta(sd.GoldDelta) : '<span class="text-muted">—</span>') + '</td>';
+                var deltaText;
+                if (sd) {
+                    var dpp = sd.StockScoreDelta;
+                    deltaText = (dpp > 0 ? '+' : '') + dpp + 'pp';
+                } else {
+                    deltaText = '<span class="text-muted">—</span>';
+                }
+                shopHtml += '<td>' + deltaText + '</td>';
             });
-            shopHtml += '<td>' + bucketBar(snap.stock, totalCap(snap.stock)) + '</td></tr>';
+            shopHtml += '<td>' + tierBar(snap.stock, totalCap(snap.stock)) + '</td></tr>';
         }
         document.getElementById('tbl-shops').innerHTML = shopHtml;
 
@@ -246,13 +293,14 @@
                 Object.keys(c.cargo_by_bucket || {}).map(function(b){ return {bucket:b, current:c.cargo_by_bucket[b]}; }),
                 c.cargo_capacity || 1
             );
+            var cd = d.deltas['1d'] && d.deltas['1d'].caravans && d.deltas['1d'].caravans[c.inst_id];
             caravanHtml += '<tr><td>' + c.name + '</td>' +
                            '<td>' + fmtScore(sc.Score, sc.HasScore) + '</td>' +
                            '<td>' + c.state + '</td>' +
                            '<td>round +' + (d.snapshot.round - c.state_entered_round) + '</td>' +
                            '<td>' + c.room_id + '</td>' +
                            '<td>' + bar + ' ' + c.cargo_weight + '/' + c.cargo_capacity + ' lbs' + '</td>' +
-                           '<td colspan="5" class="text-muted">cycles: see scoring</td></tr>';
+                           '<td colspan="5">' + tierBarFromDelta(cd ? cd.DeliveriesByTierDelta : null) + '</td></tr>';
         }
         document.getElementById('tbl-caravans').innerHTML = caravanHtml || '<tr><td colspan="11" class="text-muted">No caravans active.</td></tr>';
 
@@ -271,6 +319,7 @@
                 Object.keys(f.cargo_by_bucket || {}).map(function(b){ return {bucket:b, current:f.cargo_by_bucket[b]}; }),
                 f.cargo_capacity || 1
             );
+            var fd = d.deltas['1d'] && d.deltas['1d'].foragers && d.deltas['1d'].foragers[f.mob_id];
             foragerHtml += '<tr><td>' + f.name + '</td>' +
                            '<td>' + fmtScore(sc.Score, sc.HasScore) + '</td>' +
                            '<td>' + (f.territory || '—') + '</td>' +
@@ -278,7 +327,7 @@
                            '<td>' + (f.state === '(not active)' ? '&mdash;' : 'round +' + (d.snapshot.round - f.state_entered_round)) + '</td>' +
                            '<td>' + f.room_id + '</td>' +
                            '<td>' + bar + ' ' + f.cargo_weight + '/' + f.cargo_capacity + ' lbs' + '</td>' +
-                           '<td colspan="5" class="text-muted">cycles: see scoring</td></tr>';
+                           '<td colspan="5">' + tierBarFromDelta(fd ? fd.DeliveriesByTierDelta : null) + '</td></tr>';
         }
         document.getElementById('tbl-foragers').innerHTML = foragerHtml || '<tr><td colspan="12" class="text-muted">No foragers active.</td></tr>';
     }

@@ -1,5 +1,7 @@
 itemid: 20046
 name: simple robes
+vendor_categories:
+- tailoring
 namesimple: robes
 description: Loose-fitting robes of undyed linen, hemmed at the wrist and
   ankle. They offer little physical protection but the layered cloth carries

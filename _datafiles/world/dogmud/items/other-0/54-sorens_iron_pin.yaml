@@ -1,5 +1,6 @@
 itemid: 54
 name: Soren's iron pin
+not_salable: true
 namesimple: pin
 description: >
   A small iron pin in the shape of a crossed-swords emblem,

@@ -1,5 +1,142 @@
 # DOGMud Patch Notes
 
+## 2026-05-04 — Vendor Types & Economy Polish
+
+Big economy overhaul. Buy rule rewrite, per-vendor audit, tier-50/40
+baseline restock layered onto caravan/forager flow, forager stuck-state
+watchdog, dashboard rework with stock-score-delta + per-rarity-tier
+throughput bars.
+
+### Vendor system overhaul
+
+- **Item-side `vendor_categories` tag.** Every salable item now carries
+  one or more discipline tags (`alchemy`, `blacksmithing`, `cooking`,
+  `enchanting`, `jewelcrafting`, `tailoring`). Cross-cutting mats like
+  iron ingot are multi-tagged (`[blacksmithing, jewelcrafting,
+  tailoring]`). Lore / flavor / removed-from-game items get
+  `not_salable: true` instead of relying on value gymnastics.
+
+- **New buy rule.** Single-rule tag-overlap replaces the old 5-rule
+  chain (quest / craft-material recipe-walk / gear-upgrade / potion /
+  general-fallback). Reject conditions in order: quest item, declining
+  potion, untagged item, vendor's `craft_support` doesn't match any of
+  the item's tags, vendor at MaxStock, or buying drops below gold
+  reserve. Removes ~80 lines of rule-helper code.
+
+- **No more gear-upgrade purchases.** Specialist shopkeepers no longer
+  buy random equipment — they're non-combatants who never wore what
+  they bought anyway. The behavior was vestigial.
+
+- **Apothecary Ilsa now buys all alchemy mats.** Previously the
+  recipe-walk gating rejected mats not in her specific recipe list.
+  The new tag-overlap rule accepts every alchemy-tagged item.
+
+### Per-vendor audit
+
+- **6 NPCs reframed as questgivers / flavor mobs:**
+  Korvath (52), Yenna (53), Sigrid (333), Haral (278), Whisper (273),
+  Bram (348). Stripped `crafter` / `crafterskill` /
+  `crafterrecipeids` / `crafterrestockmaterials` / `craft_support` /
+  `shop` fields. Korvath + Yenna keep `non_combatant: true` for
+  questline integrity. Bram drops the `noncombat_shopkeeper`
+  archetype entirely.
+
+- **Specialist shopkeeper gold bumped to 1000g** (was 200/300/500
+  variable). 12 NPCs: Kerra, Voss, Thornwall food vendor, Tess, Vael,
+  Maren, Brynn, Tov Brann, Brindle, Ilsa, Edda, Kess.
+
+- **General store gold bumped to 5000g** (was 400/500). 4 NPCs:
+  Adela, Brecca, Siv (fence), Wulf.
+
+### Restock pacing
+
+- **Tier-50 and tier-40 mats now refill at every shop** on the
+  existing crafter tick. Caravan-served zones (Stillwater, Thornwall)
+  used to fully suppress that path, leaving common mats reliant on
+  caravan/forager throughput. Now baseline tier-50/40 supply layers
+  on top, while rarer tiers (30/20/10) still flow through caravan +
+  forager exclusively.
+
+### Forager reliability
+
+- **Stuck-state watchdog.** Foragers wedged in any state for more
+  than `ForagerStuckThresholdRounds` (default 600) get force-reset
+  to Recalling — they head home, dump satchel into the lockbox, and
+  re-cycle. Logs a `Warn` on every reset. Should end the periodic
+  Halix "(not active)" mystery.
+
+- **Dashboard distinguishes despawned vs idle.** A forager whose
+  mob isn't currently spawned shows `(despawned)`; a live mob with
+  empty BTreeState shows `(idle, no state)` plus a structured Warn
+  log. Adds `StuckRounds` field for at-a-glance stuck detection.
+
+### Dashboard rework
+
+- **Stock-score-delta replaces gold-delta** in the per-window
+  columns (1h/6h/1d/3d/1w). Each shop's `StockScore` is
+  `sum(Current) / sum(MaxStock)`; the column shows the change in
+  percentage points between snapshots. Gold value still visible as a
+  static column.
+
+- **Tier-color bars replace bucket-color bars.** Five tier classes:
+  50 (grey), 40 (green), 30 (blue), 20 (purple), 10 (gold). Applied
+  to shop stock bars and to new caravan/forager throughput rows.
+
+- **Per-rarity-tier throughput bars** for caravan + forager. Each
+  delivery to a destination shop bumps a per-tier counter on the
+  corresponding mob; dashboard renders the window-delta as a
+  proportion-stacked tier bar. Caravan pickups don't count — only
+  destination drop-offs.
+
+- **Names work for un-spawned shopkeepers.** When the NPC isn't
+  currently in the world, the dashboard now falls back to the mob
+  template's name instead of showing `#<mobId>`.
+
+### Persistence
+
+- **Two new gitignored runtime directories:**
+  `_datafiles/world/dogmud/foragers/<zone>/<mobId>.yaml` and
+  `_datafiles/world/dogmud/caravans/<zone>/<mobId>.yaml`. Track
+  cumulative `DeliveriesByTier` counters across reboots. Boot
+  prewarm + graceful-shutdown save mirror the shops/ pattern.
+
+- **`NotSalable bool` field on ItemSpec.** Replaces the brittle
+  "Value <= 0" skip in the vendor validator with an explicit opt-out.
+  38 lore / flavor / legacy items got `not_salable: true`.
+
+### Manual deploy step
+
+⚠️ **Before starting the new server on prod**, wipe the persisted
+shop save state so shops re-seed fresh from the new mob templates:
+
+```bash
+./tools/economy/wipe_shop_state.sh
+```
+
+Or directly: `rm -rf _datafiles/world/dogmud/shops/`. Players' personal
+gold and inventories are untouched — only NPC shop state (gold drift,
+current stock levels, last-restock round) is reset.
+
+### Migrations
+
+- **Recipe discipline shuffle.** `master-lockpicks` moved from
+  jewelcrafting → blacksmithing; `reinforced-disarm-kit` moved from
+  blacksmithing → jewelcrafting. Players who learned either recipe
+  under the OLD discipline get their NEW-discipline skill bumped to
+  the recipe's minimum (20 for master-lockpicks, 15 for
+  reinforced-disarm-kit) so they don't lose craft access. One-shot,
+  gated by misc-data key.
+
+### Validators
+
+- **`items.ValidateVendorCategories`** — boot-time check that every
+  salable item carries a valid `vendor_categories` value. Cold boot
+  panics on offending items; reload logs structured Error.
+
+- **`crafting.ValidateRecipeIngredientTags`** — ensures every recipe
+  ingredient resolves to an item carrying the recipe's discipline.
+  Catches typos like `item_tag: lake-mintt` at boot.
+
 ## 2026-05-02 — Forager + Caravan Followup
 
 Five fixes in the now-shipped forager + caravan stack, plus a caravan-cadence

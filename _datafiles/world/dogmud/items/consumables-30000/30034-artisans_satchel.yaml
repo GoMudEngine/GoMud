@@ -1,5 +1,7 @@
 itemid: 30034
 name: artisan's satchel
+vendor_categories:
+- tailoring
 namesimple: satchel
 description: A well-organized leather satchel with padded dividers and
   individual slots for delicate components. A brass clasp keeps

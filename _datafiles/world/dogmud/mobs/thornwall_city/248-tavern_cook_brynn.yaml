@@ -29,7 +29,7 @@ character:
     behind one ear like a carpenter's pencil.
   speciesid: 1
   level: 1
-  gold: 500
+  gold: 1000
   stats:
     vitality:
       training: 5

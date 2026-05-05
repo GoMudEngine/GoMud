@@ -30,7 +30,7 @@ character:
     toll that is strangling trade at the crossing.
   speciesid: 1
   level: 1
-  gold: 500
+  gold: 5000
   shop:
     - itemid: 30001
       quantity: 0

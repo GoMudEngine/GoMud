@@ -1,5 +1,7 @@
 itemid: 37
 name: reinforced disarm kit
+vendor_categories:
+- jewelcrafting
 namesimple: disarm kit
 description: >-
   A hardened case holding tempered wire snips, a jointed probe,

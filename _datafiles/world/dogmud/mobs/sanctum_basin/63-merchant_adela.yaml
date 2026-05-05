@@ -96,7 +96,7 @@ character:
     might need. She has a gift for sizing up a customer in two seconds flat.'
   speciesid: 1
   level: 1
-  gold: 500
+  gold: 5000
   shop:
     - itemid: 10001
       quantity: 0

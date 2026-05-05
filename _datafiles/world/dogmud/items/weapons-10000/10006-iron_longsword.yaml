@@ -1,5 +1,7 @@
 itemid: 10006
 name: iron longsword
+vendor_categories:
+- blacksmithing
 namesimple: longsword
 description: A sturdy iron longsword with a leather-wrapped hilt. The blade shows
   signs of use but remains sharp and serviceable.

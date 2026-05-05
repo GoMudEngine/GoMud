@@ -1,5 +1,7 @@
 itemid: 30026
 name: energy bread
+vendor_categories:
+- cooking
 namesimple: bread
 description: |
   A dense loaf of flatbread baked from ground wild vegetables, water,

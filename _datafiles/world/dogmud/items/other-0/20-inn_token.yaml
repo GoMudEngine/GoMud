@@ -1,5 +1,6 @@
 itemid: 20
 name: inn token
+not_salable: true
 namesimple: token
 description: A wooden disc about the size of a large coin, branded with the mark of
   the Crossing Inn -- a simple bridge arch over wavy lines. Tolva issues these to

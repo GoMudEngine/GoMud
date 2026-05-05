@@ -1,5 +1,7 @@
 itemid: 30041
 name: windrunner draught
+vendor_categories:
+- alchemy
 namesimple: draught
 description: A light, almost effervescent draught. The
   scent alone makes you want to take a deep breath.

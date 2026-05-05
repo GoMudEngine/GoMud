@@ -1,5 +1,7 @@
 itemid: 10033
 name: marsh gaff hook
+vendor_categories:
+- blacksmithing
 namesimple: gaff hook
 description: >
   A short-shafted lake-fisher's gaff with a back-curving steel hook

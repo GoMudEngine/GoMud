@@ -1,5 +1,7 @@
 itemid: 10032
 name: Elgar's hook-spear
+vendor_categories:
+- blacksmithing
 namesimple: spear
 description: >-
   A long-shafted hook-spear of refined lake-iron, finished by hands

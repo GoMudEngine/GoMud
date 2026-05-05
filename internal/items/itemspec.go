@@ -275,6 +275,8 @@ type ItemSpec struct {
 	BandolierCapacity     int               `yaml:"bandolier_capacity,omitempty"`      // Max potions storable in bandolier
 	SalvageReturns        []SalvageReturn   `yaml:"salvage_returns,omitempty"`         // Custom salvage returns for non-crafted items
 	RarityTier            int               `yaml:"rarity_tier,omitempty"`             // Vendor stock cap tier (50/40/30/20/10). Used by shops.EffectiveMaxStock with mob.StockMultiplier. 0 = untiered (quest items, defer-to-3.0e items).
+	VendorCategories      []string          `yaml:"vendor_categories,omitempty"`       // Disciplines that buy/sell this item; mirrors shops.ValidCraftSupports minus "general"
+	NotSalable            bool              `yaml:"not_salable,omitempty"`             // True for lore / flavor / legacy items excluded from vendor economy validation
 
 	// YAML-driven use effects — replaces JS onUse/onCommand_use
 	OnUseTrainSkill  string `yaml:"on_use_train_skill,omitempty"`
@@ -419,6 +421,16 @@ func GetAllItemSpecs() []ItemSpec {
 		itemSpecs = append(itemSpecs, *item)
 	}
 	return itemSpecs
+}
+
+// GetAllItemSpecsMap returns all item specs as a map keyed by item ID.
+// The returned pointers reference cached specs — callers must not mutate.
+func GetAllItemSpecsMap() map[int]*ItemSpec {
+	out := make(map[int]*ItemSpec, len(items))
+	for id, s := range items {
+		out[id] = s
+	}
+	return out
 }
 
 func GetAllItemNames() []string {
@@ -603,4 +615,13 @@ func LoadDataFiles() {
 
 	mudlog.Info("itemspec.LoadDataFiles()", "itemLoadedCount", len(items), "attackMessageCount", len(attackMessages), "defenseMessageCount", len(defenseMessages), "Time Taken", time.Since(start))
 
+}
+
+// RegisterTestItemSpec is a test-only helper that registers an ItemSpec
+// in the global items registry. Used for unit tests that need GetItemSpec()
+// to return a spec. The spec is persisted across tests in the same run.
+func RegisterTestItemSpec(spec *ItemSpec) {
+	if spec.ItemId > 0 {
+		items[spec.ItemId] = spec
+	}
 }

@@ -1,5 +1,7 @@
 itemid: 20050
 name: iron chain leggings
+vendor_categories:
+- blacksmithing
 namesimple: leggings
 description: Leggings of linked iron rings sewn onto a leather backing. They
   cover the thighs and shins well and move with the wearer, though the weight

@@ -1,5 +1,7 @@
 itemid: 20023
 name: leather leggings
+vendor_categories:
+- tailoring
 namesimple: leggings
 description: Snug leggings of tanned hide, laced tight along the outer seam.
   They protect the thighs and shins without restricting movement too badly.

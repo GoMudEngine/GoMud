@@ -1,5 +1,7 @@
 itemid: 30036
 name: healing salve
+vendor_categories:
+- alchemy
 namesimple: salve
 description: A thick paste of healer's root sealed in a
   bottle. The warmth it gives off suggests it will mend

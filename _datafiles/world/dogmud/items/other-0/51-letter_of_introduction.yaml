@@ -1,5 +1,6 @@
 itemid: 51
 name: letter of introduction
+not_salable: true
 namesimple: letter
 description: >
   A folded parchment sealed with a blob of brown wax bearing

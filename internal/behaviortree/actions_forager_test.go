@@ -427,3 +427,75 @@ func TestTickForagerDeliveringFernway_DumpsIntoSealedCrate(t *testing.T) {
 			forager.StateRecalling.Name())
 	}
 }
+
+// TestForagerWatchdog_ResetsStuckMobToRecalling verifies that when a
+// forager has been in the same state for longer than the threshold,
+// the watchdog fires and transitions to Recalling.
+func TestForagerWatchdog_ResetsStuckMobToRecalling(t *testing.T) {
+	fn := LookupAction("forager_step")
+
+	// Mob 371 = Tova (Marsh forager). Sanctuary room = 4123.
+	mob := buildForagerMob(t, 8230, 371, 4123, 100, 100)
+	_ = mob
+
+	state := NewBehaviorState()
+	state.Set(keyForagerState, forager.StateResting.Name())
+	// Set started_round to 1 (far in the past). With a threshold of 600,
+	// any current round > 601 will trigger the watchdog.
+	// Since test round count is likely > 1, and current will be > 600,
+	// the watchdog should fire.
+	state.Set(keyStateStartedRound, "1")
+
+	ctx := &EvalContext{
+		InstanceId: 8230,
+		RoomId:     4123, // sanctuary
+		MobState:   state,
+	}
+	result := fn(nil, ctx)
+	// If watchdog fires, it should return Success (and transition to Recalling).
+	// If watchdog doesn't fire, normal state handling proceeds (likely Failure
+	// if HP is not full or dwell hasn't elapsed).
+	if result != Success {
+		t.Logf("watchdog reset: got result %v (expected Success if watchdog fired)", result)
+	}
+	got := state.GetString(keyForagerState)
+	// The watchdog should have transitioned to Recalling.
+	if got != forager.StateRecalling.Name() {
+		t.Errorf("watchdog reset: forager_state = %q, want %q (watchdog did not fire)",
+			got, forager.StateRecalling.Name())
+	}
+}
+
+// TestForagerWatchdog_DoesNotResetActiveForager verifies that a forager
+// with a recent state_started_round (within the threshold) is not reset.
+func TestForagerWatchdog_DoesNotResetActiveForager(t *testing.T) {
+	fn := LookupAction("forager_step")
+
+	// Mob 371 = Tova (Marsh forager).
+	mob := buildForagerMob(t, 8231, 371, 4177, 100, 100)
+	_ = mob
+
+	state := NewBehaviorState()
+	state.Set(keyForagerState, forager.StateForaging.Name())
+	// Set started_round to current round (or just a few rounds ago),
+	// well within the 600-round threshold.
+	started := util.GetRoundCount() - 50 // 50 rounds ago
+	state.Set(keyStateStartedRound, strconv.FormatUint(started, 10))
+
+	ctx := &EvalContext{
+		InstanceId: 8231,
+		RoomId:     4177,
+		MobState:   state,
+	}
+	result := fn(nil, ctx)
+	// Foraging at 4177 should advance (successful forage attempt or
+	// successful action), so Success is expected.
+	if result != Success && result != Failure {
+		t.Logf("result = %v (Success or Failure both acceptable)", result)
+	}
+	got := state.GetString(keyForagerState)
+	if got != forager.StateForaging.Name() {
+		t.Errorf("active forager: forager_state = %q, want %q (unchanged)",
+			got, forager.StateForaging.Name())
+	}
+}

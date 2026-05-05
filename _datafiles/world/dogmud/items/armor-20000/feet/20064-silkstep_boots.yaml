@@ -1,5 +1,7 @@
 itemid: 20064
 name: silkstep boots
+vendor_categories:
+- tailoring
 namesimple: boots
 description: >-
   Boots soled with layered chrysalis silk, compressed and cured

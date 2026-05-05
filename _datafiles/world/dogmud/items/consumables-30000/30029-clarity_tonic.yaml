@@ -1,5 +1,7 @@
 itemid: 30029
 name: clarity tonic
+vendor_categories:
+- alchemy
 namesimple: tonic
 description: A pale, shimmering liquid that tingles on the tongue. It sharpens
   the mind and steadies the will.

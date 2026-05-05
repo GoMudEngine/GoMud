@@ -1,5 +1,7 @@
 itemid: 20052
 name: sturdy leather boots
+vendor_categories:
+- tailoring
 namesimple: boots
 description: Well-made boots of thick cowhide, double-stitched at the seams
   and soled with layered leather. They protect the feet and lower shins and

@@ -1,5 +1,7 @@
 itemid: 20069
 name: arena tower shield
+vendor_categories:
+- blacksmithing
 namesimple: shield
 description: >-
   A full-length tower shield of banded iron over hardwood, wide

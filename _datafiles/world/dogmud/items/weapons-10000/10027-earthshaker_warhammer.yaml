@@ -1,5 +1,7 @@
 itemid: 10027
 name: earthshaker warhammer
+vendor_categories:
+- blacksmithing
 namesimple: warhammer
 description: >-
   A colossal warhammer hewn from fused volcanic stone, its

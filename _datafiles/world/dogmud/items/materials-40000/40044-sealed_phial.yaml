@@ -11,4 +11,7 @@ weight: 0.1
 value: 10
 rarity_tier: 50
 is_component: true
+vendor_categories:
+- alchemy
+- jewelcrafting
 bottle_aging_multiplier: 0.5

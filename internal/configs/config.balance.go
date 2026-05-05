@@ -334,6 +334,12 @@ type Balance struct {
 	// open and clears space.
 	ForagerLockboxCapacity ConfigInt `yaml:"ForagerLockboxCapacity"`
 
+	// ForagerStuckThresholdRounds is the watchdog timeout. If a forager
+	// sits in the same state for more than this many rounds, it is
+	// force-reset to Recalling so it heads home, dumps satchel, and
+	// re-cycles. Logs a Warn on reset for ops visibility.
+	ForagerStuckThresholdRounds ConfigInt `yaml:"ForagerStuckThresholdRounds"`
+
 	// ── ECONOMY HEALTH DASHBOARD ─────────────────────────────────────────────
 	EconomySnapshotIntervalHours ConfigInt   `yaml:"EconomySnapshotIntervalHours"` // Wall-clock cadence (default 1)
 	EconomySnapshotRetentionDays ConfigInt   `yaml:"EconomySnapshotRetentionDays"` // Auto-snapshot retention (default 30)

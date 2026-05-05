@@ -1,5 +1,7 @@
 itemid: 10008
 name: steel warhammer
+vendor_categories:
+- blacksmithing
 namesimple: warhammer
 description: A one-handed warhammer with a steel head and reinforced haft. The weight
   of the hammerhead makes it slower but powerful.

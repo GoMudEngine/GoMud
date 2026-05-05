@@ -1,5 +1,6 @@
 itemid: 52
 name: sealed crate
+not_salable: true
 namesimple: crate
 description: >
   A wooden crate bound with iron bands, sealed with a wax stamp

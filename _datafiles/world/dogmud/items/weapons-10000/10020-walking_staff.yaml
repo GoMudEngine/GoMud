@@ -1,5 +1,7 @@
 itemid: 10020
 name: walking staff
+vendor_categories:
+- blacksmithing
 namesimple: staff
 description: A tall hardwood staff, worn smooth by years of use on the road.
   It serves well as a walking aid and can deliver a solid crack in a pinch,

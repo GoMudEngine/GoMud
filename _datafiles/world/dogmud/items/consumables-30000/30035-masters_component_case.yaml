@@ -1,5 +1,7 @@
 itemid: 30035
 name: master's component case
+vendor_categories:
+- tailoring
 namesimple: case
 description: A rigid case of boiled leather and bone reinforcement,
   lined with silk and divided into dozens of labeled compartments.

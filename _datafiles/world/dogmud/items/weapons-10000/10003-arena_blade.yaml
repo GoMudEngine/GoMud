@@ -1,5 +1,7 @@
 itemid: 10003
 name: arena blade
+vendor_categories:
+- blacksmithing
 namesimple: blade
 description: A finely honed longsword bearing the arena's crest on its crossguard. Its
   balance is superb, and the edge gleams with deadly sharpness.

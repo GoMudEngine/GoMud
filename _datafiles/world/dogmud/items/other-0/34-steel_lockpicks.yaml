@@ -1,5 +1,7 @@
 itemid: 34
 name: steel lockpicks
+vendor_categories:
+- blacksmithing
 namesimple: lockpicks
 description: >-
   A compact roll of steel picks and a tension wrench, each ground

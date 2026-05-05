@@ -1,5 +1,7 @@
 itemid: 30052
 name: purging draught
+vendor_categories:
+- alchemy
 namesimple: draught
 description: A violently acrid concoction of veilbloom
   and venom. It purges everything -- potions, toxicity,

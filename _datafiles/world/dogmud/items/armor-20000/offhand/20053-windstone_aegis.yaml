@@ -1,5 +1,7 @@
 itemid: 20053
 name: windstone aegis
+vendor_categories:
+- blacksmithing
 namesimple: aegis
 description: A round shield carved from a single slab of windstone crystal.
   Pale blue veins pulse with captured steppe energy. The surface is cool

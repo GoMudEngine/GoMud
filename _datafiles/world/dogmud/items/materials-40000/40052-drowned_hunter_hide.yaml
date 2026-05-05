@@ -6,5 +6,7 @@ type: object
 subtype: mundane
 component_tag: hunter-eel-hide
 is_component: true
+vendor_categories:
+- tailoring
 weight: 0.5
 value: 40

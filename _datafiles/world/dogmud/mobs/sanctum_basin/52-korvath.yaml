@@ -1,6 +1,5 @@
 mobid: 52
 zone: Sanctum Basin
-craft_support: blacksmithing
 archetype: fighting
 statpool: 90
 hostile: false
@@ -99,12 +98,3 @@ character:
       itemid: 20045
     feet:
       itemid: 20052
-  shop:
-    - itemid: 40001
-      quantity: 0
-      quantitymax: 0
-      price: 2
-    - itemid: 40020
-      quantity: 0
-      quantitymax: 0
-      price: 2

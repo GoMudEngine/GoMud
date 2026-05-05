@@ -1,5 +1,7 @@
 itemid: 10024
 name: chrysalis knuckles
+vendor_categories:
+- blacksmithing
 namesimple: knuckles
 description: >-
   Hardened nodes of chrysalis chitin mounted over a leather

@@ -1,5 +1,7 @@
 itemid: 20055
 name: reinforced travel pack
+vendor_categories:
+- tailoring
 namesimple: pack
 description: A masterwork travel pack of layered leather and canvas,
   with an internal frame of bent bone stays. The construction

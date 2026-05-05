@@ -1,5 +1,7 @@
 itemid: 10021
 name: crude short blade
+vendor_categories:
+- blacksmithing
 namesimple: blade
 description: A short length of scavenged metal, crudely ground to an edge and
   wrapped in strips of cloth at the tang. It cuts well enough but will not last

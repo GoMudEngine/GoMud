@@ -14,3 +14,6 @@ weight: 0.05
 value: 25
 rarity_tier: 40
 is_component: true
+vendor_categories:
+- blacksmithing
+- tailoring

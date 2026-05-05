@@ -228,3 +228,35 @@ func (c *Character) MigrateChrysalisAidRemoved() {
 	delete(c.SpellBook, "chrysalis-aid")
 	c.SetMiscData(migrationKey, "1")
 }
+
+// MigrateRecipeDisciplineShuffle handles the 2026-05-04 reclassification
+// of two recipes that moved between crafting disciplines:
+//   - master-lockpicks: jewelcrafting → blacksmithing
+//   - reinforced-disarm-kit: blacksmithing → jewelcrafting
+//
+// The recipe IDs are unchanged, so KnownRecipes still references them
+// correctly. But because each recipe now gates on a different skill,
+// players who learned a recipe under the OLD discipline could lose
+// craft access if their NEW discipline rank is below the recipe's
+// skill_minimum. This migration bumps the relevant skill to the recipe
+// minimum (or leaves higher ranks alone) for any character that knows
+// the affected recipe.
+//
+// Runs once per character.
+func (c *Character) MigrateRecipeDisciplineShuffle() {
+	const migrationKey = "migration-recipe-discipline-shuffle-2026-05-04"
+	if c.GetMiscData(migrationKey) != nil {
+		return
+	}
+
+	if c.KnownRecipes != nil {
+		if _, ok := c.KnownRecipes["master-lockpicks"]; ok {
+			c.TrainSkill("blacksmithing", 20)
+		}
+		if _, ok := c.KnownRecipes["reinforced-disarm-kit"]; ok {
+			c.TrainSkill("jewelcrafting", 15)
+		}
+	}
+
+	c.SetMiscData(migrationKey, "1")
+}

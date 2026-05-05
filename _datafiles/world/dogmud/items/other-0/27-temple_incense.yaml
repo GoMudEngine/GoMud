@@ -1,5 +1,6 @@
 itemid: 27
 name: temple incense
+not_salable: true
 namesimple: incense
 description: A cone of pressed incense from Thornwall's temple, made from a blend of
   sandalwood, myrrh, and local herbs. When burned, it produces a thick, fragrant

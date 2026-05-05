@@ -1,5 +1,7 @@
 itemid: 20074
 name: mist pauldrons
+vendor_categories:
+- blacksmithing
 namesimple: pauldrons
 description: >-
   Pauldrons of condensed elemental mist, solid enough to wear

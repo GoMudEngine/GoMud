@@ -3,6 +3,7 @@ package shops
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -178,4 +179,102 @@ func TestRestockBuckets_RespectsMaxStockCap(t *testing.T) {
 	}}
 	si.RestockBuckets([]string{"stillwater"})
 	assert.Equal(t, 5, si.Stock[0].Current, "expected capped at MaxStock=5")
+}
+
+func TestRestockBaselineTiers_TopsUpTier50And40(t *testing.T) {
+	// Register test items with specific rarity tiers.
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: 1, RarityTier: 50})
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: 2, RarityTier: 40})
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: 3, RarityTier: 30})
+
+	si := &ShopInventory{
+		Stock: []StockEntry{
+			{ItemId: 1, RestockQty: 5, MaxStock: 50, Current: 10},
+			{ItemId: 2, RestockQty: 5, MaxStock: 40, Current: 10},
+			{ItemId: 3, RestockQty: 5, MaxStock: 30, Current: 10},
+		},
+	}
+	if !si.RestockBaselineTiers() {
+		t.Errorf("expected restocked=true")
+	}
+	if si.Stock[0].Current != 15 {
+		t.Errorf("tier-50 entry: Current = %d, want 15", si.Stock[0].Current)
+	}
+	if si.Stock[1].Current != 15 {
+		t.Errorf("tier-40 entry: Current = %d, want 15", si.Stock[1].Current)
+	}
+	if si.Stock[2].Current != 10 {
+		t.Errorf("tier-30 entry should not restock: Current = %d, want 10", si.Stock[2].Current)
+	}
+}
+
+func TestRestockBaselineTiers_SkipsCrafterEntries(t *testing.T) {
+	// Items with RestockQty <= 0 (NPC-crafted) are always skipped.
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: 10, RarityTier: 50})
+
+	si := &ShopInventory{
+		Stock: []StockEntry{
+			{ItemId: 10, RestockQty: 0, MaxStock: 50, Current: 0},
+		},
+	}
+	if si.RestockBaselineTiers() {
+		t.Errorf("RestockQty=0 entry should not restock")
+	}
+	if si.Stock[0].Current != 0 {
+		t.Errorf("Current changed unexpectedly: %d", si.Stock[0].Current)
+	}
+}
+
+func TestRestockBaselineTiers_SkipsAtCap(t *testing.T) {
+	// Entries already at MaxStock are skipped.
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: 11, RarityTier: 50})
+
+	si := &ShopInventory{
+		Stock: []StockEntry{
+			{ItemId: 11, RestockQty: 5, MaxStock: 50, Current: 50},
+		},
+	}
+	if si.RestockBaselineTiers() {
+		t.Errorf("at-cap entry should not restock")
+	}
+	if si.Stock[0].Current != 50 {
+		t.Errorf("Current = %d, want 50", si.Stock[0].Current)
+	}
+}
+
+func TestRestockBaselineTiers_CapsAtMaxStock(t *testing.T) {
+	// When RestockQty would exceed remaining room, cap at MaxStock.
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: 12, RarityTier: 50})
+
+	si := &ShopInventory{
+		Stock: []StockEntry{
+			{ItemId: 12, RestockQty: 10, MaxStock: 50, Current: 47},
+		},
+	}
+	si.RestockBaselineTiers()
+	if si.Stock[0].Current != 50 {
+		t.Errorf("should cap at MaxStock: Current = %d, want 50", si.Stock[0].Current)
+	}
+}
+
+func TestIsValidVendorCategory(t *testing.T) {
+	tests := []struct {
+		in   string
+		want bool
+	}{
+		{"alchemy", true},
+		{"blacksmithing", true},
+		{"jewelcrafting", true},
+		{"tailoring", true},
+		{"cooking", true},
+		{"enchanting", true},
+		{"general", false}, // general is a vendor type, not an item tag
+		{"", false},
+		{"unknown", false},
+	}
+	for _, tt := range tests {
+		if got := IsValidVendorCategory(tt.in); got != tt.want {
+			t.Errorf("IsValidVendorCategory(%q) = %v, want %v", tt.in, got, tt.want)
+		}
+	}
 }

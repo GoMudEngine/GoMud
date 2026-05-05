@@ -68,6 +68,27 @@ func actForagerStep(params map[string]any, ctx *EvalContext) Result {
 		return Success
 	}
 
+	// Stuck-state watchdog. If the forager has been sitting in one state
+	// longer than the threshold, force-reset to Recalling so it heads
+	// home, dumps satchel, and re-cycles. Logs a Warn for ops visibility.
+	{
+		startedStr := ctx.MobState.GetString(keyStateStartedRound)
+		started, _ := strconv.ParseUint(startedStr, 10, 64)
+		threshold := uint64(cfg.ForagerStuckThresholdRounds)
+		now := util.GetRoundCount()
+		// Guard against unsigned underflow when started has somehow ended
+		// up in the future (clock-skew, replay, fresh-init race).
+		if started > 0 && threshold > 0 && now > started &&
+			now-started > threshold {
+			mudlog.Warn("forager watchdog: stuck state, force-resetting to recalling",
+				"mobId", mob.MobId, "name", profile.Name,
+				"state", ctx.MobState.GetString(keyForagerState),
+				"stuckRounds", now-started)
+			transitionForager(ctx.MobState, forager.StateRecalling)
+			return Success
+		}
+	}
+
 	switch cur {
 	case forager.StateResting:
 		return tickForagerResting(profile, mob, ctx)
@@ -503,6 +524,11 @@ func npcVisitVendorsInRoom(
 			mob.Character.RemoveItem(item)
 			entry.Current++
 			mutated = true
+			// Increment throughput counter for delivery tracking.
+			spec := items.GetItemSpec(item.ItemId)
+			if spec != nil && spec.RarityTier > 0 {
+				forager.IncrementDelivery(mob.Zone, int(mob.MobId), spec.RarityTier)
+			}
 			room.SendText(fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi> hands a %s to`+
 					` <ansi fg="mobname">%s</ansi>.`,
@@ -516,6 +542,9 @@ func npcVisitVendorsInRoom(
 		if mutated {
 			if err := shops.SaveShop(vendor.Zone, int(vendor.MobId), roomId); err != nil {
 				mudlog.Error("forager.npcVisitVendorsInRoom", "forager", p.Name, "vendor", vendor.Character.Name, "error", err)
+			}
+			if err := forager.SaveThroughput(mob.Zone, int(mob.MobId)); err != nil {
+				mudlog.Error("forager.SaveThroughput", "forager", p.Name, "error", err)
 			}
 		}
 	}

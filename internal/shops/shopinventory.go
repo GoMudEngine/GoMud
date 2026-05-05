@@ -4,6 +4,7 @@ import (
 	"slices"
 
 	"github.com/GoMudEngine/GoMud/internal/economy"
+	"github.com/GoMudEngine/GoMud/internal/items"
 )
 
 // CraftSupport tags a shop with the crafting discipline its stock
@@ -36,6 +37,23 @@ var ValidCraftSupports = []string{
 // IsValidCraftSupport reports whether v is one of ValidCraftSupports.
 func IsValidCraftSupport(v string) bool {
 	return slices.Contains(ValidCraftSupports, v)
+}
+
+// ValidVendorCategories is the canonical set of values that may appear in
+// ItemSpec.VendorCategories. Mirrors ValidCraftSupports MINUS "general"
+// — items belong to discipline(s); general stores accept everything.
+var ValidVendorCategories = []string{
+	CraftSupportBlacksmithing,
+	CraftSupportAlchemy,
+	CraftSupportTailoring,
+	CraftSupportCooking,
+	CraftSupportJewelcrafting,
+	CraftSupportEnchanting,
+}
+
+// IsValidVendorCategory reports whether v is one of ValidVendorCategories.
+func IsValidVendorCategory(v string) bool {
+	return slices.Contains(ValidVendorCategories, v)
 }
 
 // StockEntry represents one item type in a shop's inventory.
@@ -169,6 +187,43 @@ func (si *ShopInventory) RestockBuckets(buckets []string) bool {
 // from discretionary purchases (gear upgrades).
 func (si *ShopInventory) GoldReserve(ratio float64) int {
 	return int(float64(si.StartingGold) * ratio)
+}
+
+// RestockBaselineTiers tops up StockEntries whose item carries
+// rarity_tier 50 or 40, by RestockQty per call (capped at MaxStock).
+// Skips entries with RestockQty <= 0 (NPC-crafted, untouched).
+// Returns true if any stock was added.
+//
+// Used in caravan-served zones to layer baseline supply on top of
+// caravan/forager deliveries — common mats (tiers 50/40) refill via
+// this method on the existing crafter tick, while rarer mats (30/20/10)
+// remain dependent on caravan/forager flow.
+func (si *ShopInventory) RestockBaselineTiers() bool {
+	restocked := false
+	for i := range si.Stock {
+		e := &si.Stock[i]
+		if e.RestockQty <= 0 {
+			continue
+		}
+		spec := items.GetItemSpec(e.ItemId)
+		if spec == nil {
+			continue
+		}
+		if spec.RarityTier != 50 && spec.RarityTier != 40 {
+			continue
+		}
+		room := e.MaxStock - e.Current
+		if room <= 0 {
+			continue
+		}
+		add := e.RestockQty
+		if add > room {
+			add = room
+		}
+		e.Current += add
+		restocked = true
+	}
+	return restocked
 }
 
 // CanAfford returns true if spending amount would not drop below

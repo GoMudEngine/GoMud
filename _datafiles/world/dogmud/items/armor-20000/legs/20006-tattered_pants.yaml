@@ -1,5 +1,7 @@
 itemid: 20006
 name: tattered pants
+vendor_categories:
+- tailoring
 namesimple: pants
 description: A pair of poorly held together pants.
 type: legs

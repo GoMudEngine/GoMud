@@ -1,5 +1,6 @@
 itemid: 30
 name: protection notice
+not_salable: true
 namesimple: notice
 description: A folded piece of cheap paper, unsigned, delivered under a door. The
   message is brief and unambiguous -- a demand for regular payment in exchange for

@@ -1,5 +1,7 @@
 itemid: 30056
 name: chrysalis catalyst
+vendor_categories:
+- alchemy
 namesimple: catalyst
 description: A dense, luminous liquid saturated with
   chrysalis energy. It hums against the glass.

@@ -1,5 +1,7 @@
 itemid: 30045
 name: veilguard tonic
+vendor_categories:
+- alchemy
 namesimple: tonic
 description: A cloudy, bitter tonic. The aftertaste
   lingers, but it blunts the sting of words meant to

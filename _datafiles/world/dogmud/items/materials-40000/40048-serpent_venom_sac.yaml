@@ -12,3 +12,5 @@ weight: 0.1
 value: 12
 rarity_tier: 40
 is_component: true
+vendor_categories:
+- alchemy

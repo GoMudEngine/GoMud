@@ -1,5 +1,7 @@
 itemid: 20029
 name: masterwork plate helm
+vendor_categories:
+- blacksmithing
 namesimple: helm
 description: A full-faced helm of thick steel plate, shaped by a master smith.
   It offers excellent protection at the cost of slightly

@@ -1,5 +1,7 @@
 itemid: 30025
 name: spiced wine
+vendor_categories:
+- cooking
 namesimple: wine
 description: |
   A small flask of dark wine mulled with wild herbs and a generous pinch

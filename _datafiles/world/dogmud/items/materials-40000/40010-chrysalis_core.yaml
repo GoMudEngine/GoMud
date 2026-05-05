@@ -9,3 +9,5 @@ component_tag: chrysalis-core
 value: 500
 rarity_tier: 20
 is_component: true
+vendor_categories:
+- alchemy
