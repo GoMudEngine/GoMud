@@ -1,5 +1,7 @@
 itemid: 30033
 name: component pouch
+vendor_categories:
+- tailoring
 namesimple: pouch
 description: A sturdy leather pouch with multiple compartments, each lined
   with soft cloth to protect delicate materials. The drawstring cinches

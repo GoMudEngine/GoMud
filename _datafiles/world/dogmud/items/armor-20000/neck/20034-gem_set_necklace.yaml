@@ -1,5 +1,7 @@
 itemid: 20034
 name: gem-set necklace
+vendor_categories:
+- jewelcrafting
 namesimple: necklace
 description: A raw gem hangs in a cradle of twisted silver wire, facets catching
   every scrap of light. The stone seems to hum faintly when held close,

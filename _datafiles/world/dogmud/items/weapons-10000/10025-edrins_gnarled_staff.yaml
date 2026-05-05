@@ -1,5 +1,7 @@
 itemid: 10025
 name: Edrin's gnarled staff
+vendor_categories:
+- blacksmithing
 namesimple: staff
 description: >
   A length of ancient hardwood so twisted by age and chrysalis

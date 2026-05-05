@@ -1,5 +1,7 @@
 itemid: 30054
 name: savant's infusion
+vendor_categories:
+- alchemy
 namesimple: infusion
 description: An amber liquid flecked with crystallized
   chrysalis. Knowledge seems to settle faster after

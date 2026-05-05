@@ -1,5 +1,7 @@
 itemid: 30040
 name: preacher's tincture
+vendor_categories:
+- alchemy
 namesimple: tincture
 description: A pale golden liquid that seems to glow
   faintly. It smells of healer's root and something

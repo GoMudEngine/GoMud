@@ -1,5 +1,7 @@
 itemid: 30053
 name: essence of growth
+vendor_categories:
+- alchemy
 namesimple: essence
 description: A deep green elixir that pulses with
   vitality. Your muscles twitch as though remembering

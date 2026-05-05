@@ -1,5 +1,7 @@
 itemid: 20026
 name: reinforced wooden shield
+vendor_categories:
+- blacksmithing
 namesimple: shield
 description: A sturdy wooden shield banded with iron strips. The reinforcement
   adds weight but makes it far more durable than bare wood.

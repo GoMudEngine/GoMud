@@ -1,5 +1,7 @@
 itemid: 38
 name: precision disarm kit
+vendor_categories:
+- jewelcrafting
 namesimple: disarm kit
 description: >-
   A jeweler's-quality case with micro-tipped probes, hair-gauge

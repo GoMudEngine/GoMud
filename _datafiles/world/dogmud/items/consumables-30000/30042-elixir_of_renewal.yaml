@@ -1,5 +1,7 @@
 itemid: 30042
 name: elixir of renewal
+vendor_categories:
+- alchemy
 namesimple: elixir
 description: A prismatic liquid that shifts color as it
   catches the light. It smells like the first morning

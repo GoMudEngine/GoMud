@@ -1,5 +1,7 @@
 itemid: 10018
 name: oak staff
+vendor_categories:
+- enchanting
 namesimple: staff
 description: A sturdy length of gnarled oak, iron-shod at both ends and
   carved with faded sigils along its shaft. Two-handed and heavy, it makes

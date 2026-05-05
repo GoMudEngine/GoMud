@@ -1,5 +1,7 @@
 itemid: 20060
 name: reinforced bandolier
+vendor_categories:
+- tailoring
 namesimple: bandolier
 description: A heavy-duty bandolier of layered leather and
   iron clasps, capable of holding a full complement of

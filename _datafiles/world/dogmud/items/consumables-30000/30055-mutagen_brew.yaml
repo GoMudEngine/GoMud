@@ -1,5 +1,7 @@
 itemid: 30055
 name: mutagen brew
+vendor_categories:
+- alchemy
 namesimple: brew
 description: A shifting, iridescent brew that never looks
   the same colour twice. It tastes like change.

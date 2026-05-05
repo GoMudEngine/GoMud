@@ -1,5 +1,7 @@
 itemid: 10034
 name: steppe hunting spear
+vendor_categories:
+- blacksmithing
 namesimple: hunting spear
 description: >
   A light hunting spear with a leaf-shaped iron head and a

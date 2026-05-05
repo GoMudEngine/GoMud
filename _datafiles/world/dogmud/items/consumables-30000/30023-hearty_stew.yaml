@@ -1,5 +1,7 @@
 itemid: 30023
 name: hearty stew
+vendor_categories:
+- cooking
 namesimple: stew
 description: |
   A clay bowl of thick stew, chunks of meat and wild vegetables swimming

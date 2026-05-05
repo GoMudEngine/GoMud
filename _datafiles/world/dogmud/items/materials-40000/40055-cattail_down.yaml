@@ -12,3 +12,5 @@ component_tag: cattail-down
 weight: 0.1
 value: 10
 is_component: true
+vendor_categories:
+- tailoring

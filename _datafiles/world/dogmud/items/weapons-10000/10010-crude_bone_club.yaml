@@ -1,5 +1,7 @@
 itemid: 10010
 name: crude bone club
+vendor_categories:
+- blacksmithing
 namesimple: club
 description: |
   A femur bone -- too large to be from any tunnel creature -- lashed

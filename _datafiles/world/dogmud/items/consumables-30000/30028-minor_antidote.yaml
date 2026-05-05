@@ -1,5 +1,7 @@
 itemid: 30028
 name: minor antidote
+vendor_categories:
+- alchemy
 namesimple: antidote
 description: A murky draught that smells of bitter herbs and earth. It purges
   mild toxins from the body.

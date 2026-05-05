@@ -1,5 +1,7 @@
 itemid: 20004
 name: wooden shield
+vendor_categories:
+- blacksmithing
 namesimple: shield
 description: A simple wooden shield.
 type: offhand

@@ -1,5 +1,7 @@
 itemid: 30024
 name: herbal tea
+vendor_categories:
+- cooking
 namesimple: tea
 description: |
   A small clay cup of pale green tea brewed from steeped healer's root.

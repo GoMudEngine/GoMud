@@ -1,5 +1,7 @@
 itemid: 30050
 name: silver tongue oil
+vendor_categories:
+- alchemy
 namesimple: oil
 description: An opalescent oil with a faint floral scent.
   Words feel sharper and more persuasive after a sip.

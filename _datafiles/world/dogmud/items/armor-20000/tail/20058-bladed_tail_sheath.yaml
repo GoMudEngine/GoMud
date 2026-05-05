@@ -1,5 +1,7 @@
 itemid: 20058
 name: bladed tail sheath
+vendor_categories:
+- blacksmithing
 namesimple: tail sheath
 description: A fitted sheath of hardened leather with a curved blade
   mounted at the tip. The best of both worlds -- more damage and

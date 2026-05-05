@@ -1,5 +1,7 @@
 itemid: 20032
 name: polished stone amulet
+vendor_categories:
+- jewelcrafting
 namesimple: amulet
 description: Two polished stones are set in a copper frame, bound together with
   fine wire into a heavy amulet. The stones pulse with a faint warmth

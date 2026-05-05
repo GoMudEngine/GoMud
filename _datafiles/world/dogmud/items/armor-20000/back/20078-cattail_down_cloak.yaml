@@ -1,5 +1,7 @@
 itemid: 20078
 name: cattail-down cloak
+vendor_categories:
+- tailoring
 namesimple: cloak
 description: A long quilted cloak of close-woven linen lined with
   loose cattail down, finished with a horn toggle and a soft hood.

@@ -1,5 +1,7 @@
 itemid: 10016
 name: willow wand
+vendor_categories:
+- enchanting
 namesimple: wand
 description: A slender wand carved from pale willow wood, its tip faintly
   humming with residual magical energy. It feels almost weightless in hand,

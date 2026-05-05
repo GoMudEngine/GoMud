@@ -1,5 +1,7 @@
 itemid: 20063
 name: resin-laced bracers
+vendor_categories:
+- tailoring
 namesimple: bracers
 description: >-
   Supple leather bracers threaded through with chrysalis resin,

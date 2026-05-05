@@ -1,5 +1,7 @@
 itemid: 30059
 name: toxic flask
+vendor_categories:
+- alchemy
 namesimple: flask
 description: >-
   A thin-walled vial of concentrated poison that shatters

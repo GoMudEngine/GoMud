@@ -1,5 +1,7 @@
 itemid: 30037
 name: stamina tonic
+vendor_categories:
+- alchemy
 namesimple: tonic
 description: A sharp-smelling tonic brewed from bitter
   thistle. One sip and your fatigue starts to lift.

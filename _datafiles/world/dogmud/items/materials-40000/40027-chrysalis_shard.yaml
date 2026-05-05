@@ -10,3 +10,5 @@ weight: 0.2
 value: 80
 rarity_tier: 20
 is_component: true
+vendor_categories:
+- jewelcrafting

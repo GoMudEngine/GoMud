@@ -1,5 +1,7 @@
 itemid: 10013
 name: thornwall steel dagger
+vendor_categories:
+- blacksmithing
 namesimple: dagger
 description: A well-crafted dagger of Thornwall steel, its blade ground to a fine
   edge and fitted with a hardwood grip wrapped in oiled leather. The steel has a

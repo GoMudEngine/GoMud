@@ -1,5 +1,7 @@
 itemid: 10007
 name: heavy greatsword
+vendor_categories:
+- blacksmithing
 namesimple: greatsword
 description: A massive two-handed sword with a wide, thick blade. It requires both
   hands to wield but delivers devastating blows.

@@ -1,5 +1,7 @@
 itemid: 20077
 name: hunter-eel scale vest
+vendor_categories:
+- tailoring
 namesimple: vest
 description: >-
   A close-fitting vest of overlapping scales taken from a drowned

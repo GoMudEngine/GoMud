@@ -1,5 +1,8 @@
 itemid: 20048
 name: cured hide scraps
+vendor_categories:
+- blacksmithing
+- tailoring
 namesimple: hide
 description: Irregular pieces of cured animal hide lashed together with sinew
   into a crude vest. It smells foul and fits poorly but absorbs some of the

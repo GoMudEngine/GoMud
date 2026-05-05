@@ -1,5 +1,7 @@
 itemid: 20010
 name: iron buckler
+vendor_categories:
+- blacksmithing
 namesimple: buckler
 description: A small, round shield of hammered iron. Its face is dented from blocking
   countless blows, but the metal holds firm.

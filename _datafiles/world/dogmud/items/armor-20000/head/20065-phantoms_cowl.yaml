@@ -1,5 +1,7 @@
 itemid: 20065
 name: phantom's cowl
+vendor_categories:
+- tailoring
 namesimple: cowl
 description: >-
   A close-fitting hood woven from chrysalis thread, the weave so

@@ -1,5 +1,7 @@
 itemid: 30049
 name: berserker elixir
+vendor_categories:
+- alchemy
 namesimple: elixir
 description: A blood-red elixir that burns going down.
   Rage builds behind your eyes before the bottle leaves

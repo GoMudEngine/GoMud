@@ -1,5 +1,7 @@
 itemid: 20057
 name: spiked tail band
+vendor_categories:
+- blacksmithing
 namesimple: tail band
 description: A leather band studded with short iron spikes, fitted around
   the tail. Each sweep rakes across the target, making it much harder

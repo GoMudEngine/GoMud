@@ -1,5 +1,7 @@
 itemid: 20054
 name: leather backpack
+vendor_categories:
+- tailoring
 namesimple: backpack
 description: A rugged leather backpack with wide straps and reinforced
   stitching. Multiple buckled compartments distribute weight evenly

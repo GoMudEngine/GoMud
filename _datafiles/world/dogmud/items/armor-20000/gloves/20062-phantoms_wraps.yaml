@@ -1,5 +1,7 @@
 itemid: 20062
 name: phantom's wraps
+vendor_categories:
+- tailoring
 namesimple: wraps
 description: >-
   Lengths of chrysalis membrane wound tightly around the hands and

@@ -1,5 +1,7 @@
 itemid: 30043
 name: ironhide brew
+vendor_categories:
+- alchemy
 namesimple: brew
 description: A dark, gritty brew flecked with ironbark.
   It tastes like licking a forge, but your skin hardens

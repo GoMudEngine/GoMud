@@ -1,5 +1,7 @@
 itemid: 20072
 name: volcanic plate
+vendor_categories:
+- blacksmithing
 namesimple: plate
 description: >-
   A breastplate of fused basalt and cooled magma, its surface

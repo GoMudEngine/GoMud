@@ -1,5 +1,7 @@
 itemid: 40040
 name: forest herbs
+vendor_categories:
+- alchemy
 namesimple: herbs
 description: A bundle of fresh medicinal herbs gathered from a
   forest clearing -- feverfew, bitter-thistle, and healers-root,

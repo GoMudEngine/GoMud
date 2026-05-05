@@ -1,5 +1,7 @@
 itemid: 10019
 name: iron spear
+vendor_categories:
+- blacksmithing
 namesimple: spear
 description: A regulation spear issued to city garrison troops. The iron head
   is leaf-shaped and well-honed, mounted on an ash shaft wrapped in leather at

@@ -1,5 +1,7 @@
 itemid: 10022
 name: sharpened bone
+vendor_categories:
+- blacksmithing
 namesimple: bone
 description: A slender bone -- perhaps a rib from some large tunnel creature --
   filed to a wicked point at one end. Crude but sharp enough to pierce hide

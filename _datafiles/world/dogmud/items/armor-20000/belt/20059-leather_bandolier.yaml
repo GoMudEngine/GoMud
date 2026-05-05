@@ -1,5 +1,7 @@
 itemid: 20059
 name: leather bandolier
+vendor_categories:
+- tailoring
 namesimple: bandolier
 description: A wide leather belt fitted with loops and pockets
   designed to hold small bottles and vials. It trades the

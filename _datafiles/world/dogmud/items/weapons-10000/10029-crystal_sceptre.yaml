@@ -1,5 +1,7 @@
 itemid: 10029
 name: crystal sceptre
+vendor_categories:
+- blacksmithing
 namesimple: sceptre
 description: >-
   A sceptre of pale blue crystal that tapers to a faceted point,

@@ -1,5 +1,7 @@
 itemid: 20038
 name: stillwater pearl pendant
+vendor_categories:
+- jewelcrafting
 namesimple: pendant
 description: >-
   A small dark pearl from the Stillwater lake caves set in a

@@ -1,5 +1,7 @@
 itemid: 30001
 name: small red potion
+vendor_categories:
+- alchemy
 namesimple: bottle
 description: A small red potion... you COULD drink it...
 type: potion
