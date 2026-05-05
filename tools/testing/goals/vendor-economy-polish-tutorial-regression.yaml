@@ -1,0 +1,27 @@
+description: Tutorial regression smoke for the vendor-types-economy-polish branch. Ship-gate before prod push. Run from a FRESH character account so we exercise the new-player path through Sanctum Basin end-to-end. The vendor + buy-rule + cut-shopkeeper + gold-default changes shouldn't have broken the tutorial — this run proves it.
+goals:
+  - Create a fresh character. Stat allocation doesn't matter; pick anything and complete creation.
+  - Confirm spawn at the Sanctum Basin starter room. Look around — read the room description and any NPCs visible.
+  - Reach the Chrysalis Priest (Korvath, mob 52). Try `ask korvath quest` or whatever trigger the dialogue uses. Confirm he responds with normal questgiver dialogue and grants the mutation step. The buyer/seller fields were stripped from him in this branch — the dialogue must still work.
+  - **Try `attack korvath` and `steal korvath`.** Both must rebuff with a "you can't attack" / "you can't steal" message. Korvath has `non_combatant: true` which alone gates both via `||` checks in the codebase. PASS if rebuffed; FAIL if combat starts or stealing succeeds.
+  - Continue the tutorial. Reach the Mutation step / Yenna (mob 53). Same dialogue + attack/steal rebuff check as Korvath.
+  - Reach Merchant Adela (mob 63, room 108). She is the Sanctum Basin general store. Run `list` (or whatever the shop-browse command is). Confirm she has buyable items — at minimum a starter weapon, starter armor, and a small healing potion. Her starting gold is now 5000 (general store baseline).
+  - Buy at least one starter weapon from Adela. Equip it (`wield <name>` or similar). Confirm equipped.
+  - Sell something back to Adela (any tagged item — even what you just bought). The new buy rule should accept it because she's a general store and accepts any tagged item. PASS if the sell succeeds; FAIL if she rejects everything.
+  - Reach the Combat Trainer step. Engage the training dummy / mob and defeat it. Standard tutorial flow.
+  - Leave Sanctum Basin via the road to Stillwater or Thornwall. Note the path you take.
+  - At the end, check your gold. Confirm non-zero — you shouldn't be flat broke after the tutorial. If you're at 0g, something in the buy/sell pipeline is broken.
+  - Bonus check — visit Stillwater. Find Apothecary Ilsa (mob 338). Try selling her some basic alchemy mat (e.g., bitter thistle, healer's root, glass vial). The new buy rule should accept ALL alchemy-tagged mats now, including ones not in her recipe list. PASS if she buys; FAIL if she rejects an obviously-alchemy item.
+  - Bonus check — visit Stillwater Smith Brindle (mob 337). Try selling him a piece of leather strip (item 40002, tagged blacksmithing+jewelcrafting+tailoring). He should buy it (blacksmithing matches one of the multi-tags).
+notes:
+  - Run as a NEW character — character creation flow needs to work. Old test characters bypass the tutorial and miss the regression surface area.
+  - Use the `set charset` ASCII setting per test-mud SOP.
+  - Server runs locally. Confirm `compose.yml` or local boot beforehand.
+  - DO NOT modify code. Observe and report only. If something looks broken, capture the exact dialogue / error message and the room ID where it happened.
+  - Failure conditions that block prod push:
+    - Korvath or Yenna become attackable / stealable.
+    - Adela has no buyable starter gear.
+    - Player ends Sanctum Basin tutorial with 0 gold.
+    - Any NPC throws a dialogue error / parser crash.
+    - Bonus checks (Ilsa / Brindle) reject obviously-tagged items.
+  - Report each numbered goal as PASS / FAIL / BLOCKED with details. ~15-20 minutes wall-clock.
