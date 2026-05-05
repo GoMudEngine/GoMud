@@ -899,6 +899,12 @@ Balance:
   # falls back to rest-extension behavior until a player clears space.
   ForagerLockboxCapacity: 500
 
+  # - ForagerStuckThresholdRounds -
+  # Forager watchdog: if a forager has been in the same state for more
+  # than this many rounds, force-reset the state to Recalling so it
+  # heads home, dumps satchel, and re-cycles. Logs a warning on reset.
+  ForagerStuckThresholdRounds: 600
+
   # ── ECONOMY HEALTH DASHBOARD ────────────────────────────────────────────────
   # Wall-clock cadence for auto-snapshots (hours). Default 1.
   EconomySnapshotIntervalHours: 1

@@ -307,6 +307,9 @@ func (b *Balance) validateMisc() {
 	if b.ForagerLockboxCapacity <= 0 {
 		b.ForagerLockboxCapacity = 500
 	}
+	if b.ForagerStuckThresholdRounds <= 0 {
+		b.ForagerStuckThresholdRounds = 600
+	}
 
 	// ── ECONOMY HEALTH DASHBOARD ─────────────────────────────────────────────
 	if b.EconomySnapshotIntervalHours <= 0 {
