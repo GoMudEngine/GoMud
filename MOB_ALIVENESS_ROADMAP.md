@@ -75,7 +75,7 @@ should always agree.
 
 | Chunk | Phase | Title | Size | Depends on | Status |
 |-------|-------|-------|------|-----------|--------|
-| 1.1 | Substrate | Persistent NPC opinion store | M | — | Not started |
+| 1.1 | Substrate | Persistent NPC opinion store | M | — | Done |
 | 1.2 | Substrate | Faction system | L | 1.1 | Not started |
 | 1.3 | Substrate | Crime/wanted state | M | 1.2 | Not started |
 | 1.4 | Substrate | NPC knowledge model | M | 1.1 | Not started |
@@ -115,7 +115,7 @@ should always agree.
 | 6.5 | Polish | Content pass — broader rollout | XL | 6.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 0 / 39 done • 0 in progress • 39 not started.
+**Roll-up:** 1 / 39 done • 0 in progress • 38 not started.
 
 ---
 
@@ -124,13 +124,14 @@ should always agree.
 State primitives the rest of the layers read from and write to.
 
 ### 1.1 Persistent NPC opinion store
-**Status:** Not started • **Size:** M
+**Status:** Done (2026-05-06) • **Size:** M
 
 - **Goal:** Per-NPC × per-player disposition score that persists across spawns, deaths, and server restarts.
 - **In:** Storage schema, read/write API, decay rules, admin debug command, integration points for combat/dialogue/quest systems to mutate scores.
 - **Out:** Player-facing visibility (deferred), per-faction roll-up (covered by 1.2).
 - **Depends on:** —
 - **Why:** Foundation. Without this, "the merchant remembers you cheated him last week" is impossible. Underlies most of Phase 4 and Phase 5.
+- **Shipped:** `internal/opinions/` package with signed-scalar score [-100, +100], per-NPC YAML at `_datafiles/world/dogmud/opinions/{mobId}-{namesimple}.yaml`, lazy decay toward per-NPC default, public API (Get/Set/Bump/TierFor), admin command `opinion show/set/bump/reset`, helpfile, combat hookup on first-aggression in `attack`/`target`. Spec at `docs/superpowers/specs/2026-05-06-mob-aliveness-1.1-opinion-store-design.md`, plan at `docs/superpowers/plans/2026-05-06-mob-aliveness-1.1-opinion-store.md`.
 
 ### 1.2 Faction system
 **Status:** Not started • **Size:** L
