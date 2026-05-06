@@ -74,6 +74,7 @@ func captureShops() []ShopSnapshot {
 		ss.SalesCount = inv.SalesCount
 		ss.BuysCount = inv.BuysCount
 		ss.RestockCount = inv.RestockCount
+		ss.ConsumedByCrafterCount = inv.ConsumedByCrafterCount
 		if len(inv.StockEvents) > 0 {
 			ss.StockEvents = make(map[int][]StockEvent, len(inv.StockEvents))
 			for k, v := range inv.StockEvents {
