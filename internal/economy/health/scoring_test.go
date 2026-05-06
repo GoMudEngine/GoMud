@@ -420,6 +420,60 @@ func TestLogisticsHealth_HealthyComposite(t *testing.T) {
 	}
 }
 
+// ─── InputRateByZone and RoundsPerGameHour tests ─────────────────────────────
+
+func TestScoreWithConfig_InputRateByZone_PopulatedPerZone(t *testing.T) {
+	// A snapshot with two shops in "testzone" and no foragers.
+	// InputRateByZone should have an entry for "testzone".
+	cur := &health.Snapshot{
+		Round: roundsForDays(2),
+		Shops: []health.ShopSnapshot{
+			{Zone: "testzone", CraftSupport: "blacksmithing",
+				RestockCount: 20,
+				Stock:        []health.StockSnapshot{{ItemId: 1, Tier: 50, RestockQty: 1, Current: 5, Max: 10}}},
+			{Zone: "testzone", CraftSupport: "blacksmithing",
+				RestockCount: 10,
+				Stock:        []health.StockSnapshot{{ItemId: 2, Tier: 40, RestockQty: 1, Current: 3, Max: 10}}},
+		},
+	}
+	prev := &health.Snapshot{
+		Round: roundsForDays(1),
+		Shops: []health.ShopSnapshot{
+			{Zone: "testzone", MobId: 0, RestockCount: 0},
+			{Zone: "testzone", MobId: 0, RestockCount: 0},
+		},
+	}
+	scores := health.ScoreWithConfig(cur, []*health.Snapshot{prev, cur}, testScoringCfg)
+	if scores.InputRateByZone == nil {
+		t.Fatal("InputRateByZone is nil")
+	}
+	row, ok := scores.InputRateByZone["testzone"]
+	if !ok {
+		t.Fatalf("InputRateByZone missing key 'testzone'; keys: %v",
+			func() []string {
+				var k []string
+				for z := range scores.InputRateByZone {
+					k = append(k, z)
+				}
+				return k
+			}())
+	}
+	if row.Score < 0 || row.Score > 100 {
+		t.Errorf("InputRateByZone[testzone].Score = %.1f, want 0..100", row.Score)
+	}
+}
+
+func TestScoreWithConfig_RoundsPerGameHour_ExposedInScores(t *testing.T) {
+	// RoundsPerGameHour must be copied from cfg into the Scores struct
+	// so the dashboard JS can use it for fmtTtR without hardcoding.
+	cur := &health.Snapshot{}
+	scores := health.ScoreWithConfig(cur, nil, testScoringCfg)
+	if scores.RoundsPerGameHour != testScoringCfg.RoundsPerGameHour {
+		t.Errorf("RoundsPerGameHour: got %d, want %d",
+			scores.RoundsPerGameHour, testScoringCfg.RoundsPerGameHour)
+	}
+}
+
 // ─── ShopGoldScore tests ──────────────────────────────────────────────────────
 
 func TestShopGoldScore(t *testing.T) {
