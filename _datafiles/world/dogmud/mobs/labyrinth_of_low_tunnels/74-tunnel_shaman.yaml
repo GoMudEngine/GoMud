@@ -8,6 +8,7 @@ charm_immune: true
 maxwander: 0
 buffids: [29]
 groups:
+  - warren
   - humanoid
   - mutant
 idlecommands:
