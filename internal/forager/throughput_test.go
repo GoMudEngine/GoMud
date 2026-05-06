@@ -84,6 +84,62 @@ func TestForager_LbsDelivered_IgnoresZero(t *testing.T) {
 	}
 }
 
+// TestPrewarm_KeysCacheByDisplayZoneNotDirName covers the regression
+// where prewarmThroughputFrom keyed the cache by the snake_case
+// directory name (e.g. "stillwater_marsh") while the YAML's zone
+// field stored the display form ("Stillwater Marsh"). Result: cache
+// key mismatch, SaveAllThroughputs failed with "no cached entry"
+// errors at shutdown for every prewarmed entry.
+func TestPrewarm_KeysCacheByDisplayZoneNotDirName(t *testing.T) {
+	ClearThroughputCache()
+	tmpDir := t.TempDir()
+	SetThroughputBaseDirForTest(tmpDir)
+	defer SetThroughputBaseDirForTest("")
+
+	// Write a forager YAML at <tmp>/stillwater_marsh/371.yaml whose
+	// zone field stores the display form. This mirrors what the live
+	// engine produces when a runtime caller passes mob.Zone.
+	zoneDir := filepath.Join(tmpDir, "stillwater_marsh")
+	if err := os.MkdirAll(zoneDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	yamlBody := []byte(
+		"mob_id: 371\n" +
+			"zone: Stillwater Marsh\n" +
+			"deliveries_by_tier:\n  50: 7\n" +
+			"last_updated_round: 100\n" +
+			"lbs_delivered: 42\n",
+	)
+	if err := os.WriteFile(filepath.Join(zoneDir, "371.yaml"), yamlBody, 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	loaded, err := prewarmThroughputFrom(tmpDir)
+	if err != nil {
+		t.Fatalf("prewarm: %v", err)
+	}
+	if loaded != 1 {
+		t.Errorf("loaded = %d, want 1", loaded)
+	}
+
+	// SaveAllThroughputs must not error — the cache key built from
+	// tp.Zone (display form) must match the key the prewarm stored.
+	// The prior bug surfaced as a "no cached entry" error here.
+	if err := SaveThroughput("Stillwater Marsh", 371); err != nil {
+		t.Errorf("SaveThroughput by display name: %v", err)
+	}
+
+	// Runtime callers using mob.Zone (display) should see the
+	// prewarmed entry, not create a duplicate.
+	tp := GetThroughput("Stillwater Marsh", 371)
+	if tp.DeliveriesByTier[50] != 7 {
+		t.Errorf("prewarmed tier-50 not surfaced: got %v", tp.DeliveriesByTier)
+	}
+	if tp.LbsDelivered != 42 {
+		t.Errorf("prewarmed LbsDelivered not surfaced: got %d", tp.LbsDelivered)
+	}
+}
+
 func TestThroughput_TwoDifferentMobs(t *testing.T) {
 	ClearThroughputCache()
 	IncrementDelivery("zone_a", 100, 50)

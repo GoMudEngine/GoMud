@@ -207,12 +207,17 @@ func prewarmThroughputFrom(baseDir string) (int, error) {
 				continue
 			}
 			mobId, _ := strconv.Atoi(m[1])
-			zone := zd.Name()
-			tp := loadThroughputFromDisk(zone, mobId)
+			zoneDir := zd.Name()
+			tp := loadThroughputFromDisk(zoneDir, mobId)
 			if tp == nil {
 				continue
 			}
-			key := throughputKey(zone, mobId)
+			// Cache key uses tp.Zone (display-name, e.g. "Thornwall City")
+			// not the directory name (snake_case, e.g. "thornwall_city").
+			// Runtime callers index by wagon.Zone which is the display
+			// form. Keying by zoneDir would create a phantom entry that
+			// SaveAllThroughputs can't round-trip via SaveThroughput.
+			key := throughputKey(tp.Zone, mobId)
 			throughputMu.Lock()
 			throughputCache[key] = tp
 			throughputMu.Unlock()
