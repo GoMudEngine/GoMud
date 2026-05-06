@@ -272,7 +272,7 @@ func TickMobCraft(mob *Mob) *CraftResult {
 
 		// ── Priority 1: Self-gear upgrade ──────────────────────────────────
 		if selfRecipe := pickSelfGearRecipe(mob, recipeIds, shopInv, reservePct); selfRecipe != nil {
-			return tagRestock(executeCraft(mob, selfRecipe, true, shopInv))
+			return tagRestock(executeCraft(mob, selfRecipe, shopInv))
 		}
 
 		// ── Priority 2: Profitable craft ──────────────────────────────────
@@ -280,7 +280,7 @@ func TickMobCraft(mob *Mob) *CraftResult {
 		if craftDecision != nil {
 			recipe := crafting.GetRecipe(craftDecision.RecipeId)
 			if recipe != nil {
-				return tagRestock(executeCraft(mob, recipe, false, shopInv))
+				return tagRestock(executeCraft(mob, recipe, shopInv))
 			}
 		}
 
@@ -414,7 +414,7 @@ func pickSelfGearRecipe(mob *Mob, recipeIds []string, shopInv *shops.ShopInvento
 
 // executeCraft performs a craft attempt using ShopInventory for material
 // tracking. On success, the output is added directly to shopInv stock.
-func executeCraft(mob *Mob, recipe *crafting.RecipeSpec, forSelf bool, shopInv *shops.ShopInventory) *CraftResult {
+func executeCraft(mob *Mob, recipe *crafting.RecipeSpec, shopInv *shops.ShopInventory) *CraftResult {
 	round := util.GetRoundCount()
 
 	// Consume ingredients from shop stock (round-aware so depletion events
@@ -440,17 +440,15 @@ func executeCraft(mob *Mob, recipe *crafting.RecipeSpec, forSelf bool, shopInv *
 
 	if util.Rand(100) < chance {
 		result.Success = true
-		if forSelf {
-			// Equip the crafted item directly
-			if recipe.Output.ItemId > 0 {
-				itm := items.New(recipe.Output.ItemId)
-				if itm.ItemId > 0 {
-					mob.Character.StoreItem(itm)
-				}
-			}
-		} else if recipe.Output.ItemId > 0 {
-			// Round-aware so refill events fire when previously-depleted
-			// output slots are restocked by a craft (fixes Kerra TtR scoring).
+		if recipe.Output.ItemId > 0 {
+			// All crafts land in shop stock — including gear-upgrade
+			// crafts. The Priority-1 selector (pickSelfGearRecipe)
+			// still fires preferentially for player-relevant gear even
+			// when narrowly unprofitable, ensuring shopkeepers stock
+			// daggers/bucklers/etc.; routing those to the shop instead
+			// of the mob's backpack makes them buyable. Round-aware so
+			// refill events fire when previously-depleted output slots
+			// are restocked by a craft (Kerra TtR scoring).
 			for i := 0; i < recipe.Output.Quantity; i++ {
 				shopInv.AddStockAtRound(recipe.Output.ItemId, 1, round)
 			}
