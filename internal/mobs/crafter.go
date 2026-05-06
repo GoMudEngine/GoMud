@@ -186,33 +186,43 @@ func TickMobCraft(mob *Mob) *CraftResult {
 
 	roundCount := util.GetRoundCount()
 
-	// Initialize restock timer on first call
-	restockRate := uint64(b.CrafterMaterialRestockRate)
-	if restockRate == 0 {
-		return nil
-	}
-	if mob.crafterLastRestockRound == 0 {
-		mob.crafterLastRestockRound = roundCount
-		return nil
-	}
-
-	// Only act on the restock tick
-	if roundCount-mob.crafterLastRestockRound < restockRate {
-		return nil
-	}
-	mob.crafterLastRestockRound = roundCount
-
 	// ── ShopInventory path ─────────────────────────────────────────────────
 	shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId)
 
 	if shopInv != nil {
-		// Supply cart delivery — baseline tier-50/40 restock in caravan-served zones,
-		// full restock elsewhere. Caravan/forager events deliver rarer tiers.
-		var restocked bool
-		if b.IsCaravanServedZone(mob.Zone) {
-			restocked = shopInv.RestockBaselineTiers()
-		} else {
-			restocked = shopInv.Restock()
+		if shopInv.LastRestockByTier == nil {
+			shopInv.LastRestockByTier = map[int]uint64{}
+		}
+
+		roundsPerHour := uint64(configs.GetTimingConfig().RoundsPerDay) / 24
+		restocked := false
+		for _, tier := range []int{50, 40, 30, 20, 10} {
+			hours := shops.RestockCadenceHours(b, tier)
+			if hours <= 0 {
+				continue
+			}
+			cadence := uint64(hours) * roundsPerHour
+			last := shopInv.LastRestockByTier[tier]
+			if last == 0 {
+				shopInv.LastRestockByTier[tier] = roundCount
+				continue
+			}
+			if roundCount-last < cadence {
+				continue
+			}
+			shopInv.LastRestockByTier[tier] = roundCount
+			if b.IsCaravanServedZone(mob.Zone) && (tier == 50 || tier == 40) {
+				// Caravan-served: foragers/caravans handle 30/20/10. Per-tier
+				// ticker only fires on baseline tiers in those zones, leaving
+				// rarer tiers to their natural input paths.
+				if shopInv.RestockTier(tier) {
+					restocked = true
+				}
+			} else if !b.IsCaravanServedZone(mob.Zone) {
+				if shopInv.RestockTier(tier) {
+					restocked = true
+				}
+			}
 		}
 
 		cfg := shops.DefaultPricingConfig()
