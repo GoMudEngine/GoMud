@@ -126,6 +126,7 @@ var (
 		`noop`:        {Noop, true, true, false},
 		`offer`:       {Offer, false, true, false},
 		`online`:      {Online, true, true, false},
+		`opinion`:     {Opinion, true, true, true}, // Admin only
 		`party`:       {Party, true, true, false},
 		`pacifism-aura`: {PacifismAura, false, true, false},
 		`password`:    {Password, true, true, false},

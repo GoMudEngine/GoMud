@@ -189,3 +189,43 @@ func Bump(mobId int, userId int, delta int) {
 func TierFor(mobId int, userId int) Tier {
 	return TierOf(Get(mobId, userId))
 }
+
+// Row is one (mobId, userId) opinion entry, decay-adjusted to "now".
+// Used by admin reporting; not part of the everyday API.
+type Row struct {
+	MobId            int
+	MobName          string
+	Score            int
+	LastUpdatedRound uint64
+}
+
+// AllRowsForUser returns every cached row that mentions the given
+// userId. Walks only the in-memory cache — does not load from disk
+// or trigger lazy initialization. Decay is applied so admins see
+// the same value players' NPC behavior would.
+func AllRowsForUser(userId int) []Row {
+	opinionCacheMu.RLock()
+	defer opinionCacheMu.RUnlock()
+	out := make([]Row, 0)
+	now := currentRound()
+	hl := currentHalfLife()
+	for mobId, mo := range opinionCache {
+		op, has := mo.Opinions[userId]
+		if !has {
+			continue
+		}
+		name, _, ok := resolveTemplate(mobId)
+		if !ok {
+			name = "?"
+		}
+		score := decayedScore(op.Score, mo.DefaultDisposition,
+			op.LastUpdatedRound, now, hl)
+		out = append(out, Row{
+			MobId:            mobId,
+			MobName:          name,
+			Score:            score,
+			LastUpdatedRound: op.LastUpdatedRound,
+		})
+	}
+	return out
+}

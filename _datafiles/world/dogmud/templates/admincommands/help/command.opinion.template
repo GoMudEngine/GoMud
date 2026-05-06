@@ -1,0 +1,40 @@
+The <ansi fg="command">opinion</ansi> command inspects and adjusts the
+per-NPC disposition scores that drive aggro, dialogue
+gating, and shop pricing.
+
+<ansi fg="yellow-bold">Usage:</ansi>
+
+<ansi fg="command">opinion show <playerName></ansi>
+  List every NPC that holds a non-default opinion of
+  the named player, sorted worst to best. Shows the
+  decay-adjusted score, tier, and rounds since last bump.
+
+<ansi fg="command">opinion show <mobName|mobId> <playerName></ansi>
+  Show one NPC's current opinion of one player.
+
+<ansi fg="command">opinion set <mobName|mobId> <playerName> <score></ansi>
+  Assign an absolute score (-100 to +100).
+
+<ansi fg="command">opinion bump <mobName|mobId> <playerName> <delta></ansi>
+  Add delta to the current (decay-adjusted) score.
+  Positive = warmer, negative = colder.
+
+<ansi fg="command">opinion reset <mobName|mobId> <playerName></ansi>
+  Reset score to the mob template's default disposition.
+
+<ansi fg="yellow-bold">Mob identifier:</ansi>
+  Numeric mob ID (e.g. <ansi fg="cyan">1</ansi>) or namesimple
+  (e.g. <ansi fg="cyan">skeleton</ansi>, <ansi fg="cyan">stillwater_smith</ansi>).
+
+<ansi fg="yellow-bold">Tier thresholds:</ansi>
+  Hostile (<= -50)  Cold (-49..-15)  Neutral (-14..+14)
+  Warm (+15..+49)   Friendly (>= +50)
+
+<ansi fg="yellow-bold">Notes:</ansi>
+  - Scores decay toward the mob's default disposition
+    each half-life. The show command displays the
+    already-decayed value so you see exactly what the
+    engine sees.
+  - Changes persist immediately to disk.
+  - <ansi fg="command">set</ansi> and <ansi fg="command">bump</ansi> stamp a fresh round
+    timestamp, resetting the decay clock.
