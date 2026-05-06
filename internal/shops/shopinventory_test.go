@@ -5,7 +5,13 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v2"
 )
+
+// yamlMarshal / yamlUnmarshal are thin wrappers used by round-trip tests
+// in this file so we reference the same library the production code uses.
+var yamlMarshal = yaml.Marshal
+var yamlUnmarshal = yaml.Unmarshal
 
 // Test fixture item IDs for RestockTier tests.
 const (
@@ -359,6 +365,33 @@ func TestAddStock_NoEventIfNotDepleted(t *testing.T) {
 	si.AddStockAtRound(100, 5, 1500)
 	if len(si.StockEvents[100]) != 0 {
 		t.Errorf("no event expected when item wasn't fully depleted, got %d", len(si.StockEvents[100]))
+	}
+}
+
+// TestShopInventory_ConsumedByCrafterCount_DefaultsZero verifies the new
+// counter field initialises to zero on a fresh ShopInventory value.
+func TestShopInventory_ConsumedByCrafterCount_DefaultsZero(t *testing.T) {
+	si := &ShopInventory{}
+	if si.ConsumedByCrafterCount != 0 {
+		t.Errorf("default ConsumedByCrafterCount = %d, want 0", si.ConsumedByCrafterCount)
+	}
+}
+
+// TestShopInventory_ConsumedByCrafterCount_IncrementAndRoundTrip verifies
+// that the counter can be set and is preserved through a YAML round-trip
+// (the yaml tag must match and omitempty must not suppress non-zero values).
+func TestShopInventory_ConsumedByCrafterCount_IncrementAndRoundTrip(t *testing.T) {
+	si := &ShopInventory{ConsumedByCrafterCount: 7}
+	data, err := yamlMarshal(si)
+	if err != nil {
+		t.Fatalf("yaml.Marshal: %v", err)
+	}
+	var got ShopInventory
+	if err := yamlUnmarshal(data, &got); err != nil {
+		t.Fatalf("yaml.Unmarshal: %v", err)
+	}
+	if got.ConsumedByCrafterCount != 7 {
+		t.Errorf("ConsumedByCrafterCount after round-trip = %d, want 7", got.ConsumedByCrafterCount)
 	}
 }
 

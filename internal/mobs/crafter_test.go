@@ -5,10 +5,145 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/crafting"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+// ── Crafter test helpers ──────────────────────────────────────────────────────
+
+// forceCraftSuccess overrides crafting config so CalcSuccessChance returns
+// 100, guaranteeing util.Rand(100) < 100 is always true. Restores on cleanup.
+func forceCraftSuccess(t *testing.T) {
+	t.Helper()
+	prev := configs.GetBalanceConfig()
+	configs.AddOverlayOverrides(map[string]any{
+		"Balance.CraftingBaseSuccessChance": 100,
+		"Balance.CraftingMaxSuccessChance":  100,
+	})
+	t.Cleanup(func() {
+		configs.AddOverlayOverrides(map[string]any{
+			"Balance.CraftingBaseSuccessChance": int(prev.CraftingBaseSuccessChance),
+			"Balance.CraftingMaxSuccessChance":  int(prev.CraftingMaxSuccessChance),
+		})
+	})
+}
+
+// forceCraftFailure overrides crafting config so CalcSuccessChance returns 0,
+// guaranteeing util.Rand(100) < 0 is always false. Restores on cleanup.
+func forceCraftFailure(t *testing.T) {
+	t.Helper()
+	prev := configs.GetBalanceConfig()
+	configs.AddOverlayOverrides(map[string]any{
+		"Balance.CraftingMinSuccessChance": 0,
+		"Balance.CraftingMaxSuccessChance": 0,
+	})
+	t.Cleanup(func() {
+		configs.AddOverlayOverrides(map[string]any{
+			"Balance.CraftingMinSuccessChance": int(prev.CraftingMinSuccessChance),
+			"Balance.CraftingMaxSuccessChance": int(prev.CraftingMaxSuccessChance),
+		})
+	})
+}
+
+// stubSaveShop replaces saveShopFn with a no-op that counts calls and
+// returns nil. Restores the original on t.Cleanup and returns a pointer
+// to the call count so tests can assert on it.
+func stubSaveShop(t *testing.T) *int {
+	t.Helper()
+	orig := saveShopFn
+	count := 0
+	saveShopFn = func(zone string, mobId int, roomId int) error {
+		count++
+		return nil
+	}
+	t.Cleanup(func() { saveShopFn = orig })
+	return &count
+}
+
+// makeCrafterMob returns a minimal Mob suitable for executeCraft tests.
+func makeCrafterMob() *Mob {
+	return &Mob{
+		MobId:      MobId(9999),
+		Zone:       "test_zone",
+		HomeRoomId: 1,
+		Crafter:    true,
+		Character: characters.Character{
+			Name: "Test Crafter",
+		},
+	}
+}
+
+// testRecipeID is used across executeCraft regression tests.
+const testRecipeID = "test-crafter-recipe"
+
+// ingredientTag and ingredientItemID are the component tag / item ID used as
+// the recipe ingredient across all executeCraft tests.
+const (
+	crafterTestIngredientTag = "crafter-test-mat"
+	crafterTestIngredientID  = 88001
+	crafterTestOutputID      = 88002
+)
+
+// registerCrafterTestItems registers the minimal ItemSpecs needed by the
+// executeCraft tests. Safe to call multiple times.
+func registerCrafterTestItems() {
+	items.RegisterTestItemSpec(&items.ItemSpec{
+		ItemId:       crafterTestIngredientID,
+		Name:         "Test Material",
+		ComponentTag: crafterTestIngredientTag,
+	})
+	items.RegisterTestItemSpec(&items.ItemSpec{
+		ItemId: crafterTestOutputID,
+		Name:   "Test Output Item",
+	})
+}
+
+// registerCrafterTestRecipe registers the test recipe with 2 units of
+// crafterTestIngredientTag → 1 crafterTestOutputID.
+func registerCrafterTestRecipe() *crafting.RecipeSpec {
+	recipe := &crafting.RecipeSpec{
+		RecipeId:     testRecipeID,
+		Name:         "Test Recipe",
+		Skill:        "blacksmithing",
+		SkillMinimum: 0,
+		Ingredients: []crafting.RecipeIngredient{
+			{ItemTag: crafterTestIngredientTag, Quantity: 2},
+		},
+		Output: crafting.RecipeOutput{ItemId: crafterTestOutputID, Quantity: 1},
+	}
+	crafting.RegisterRecipeForTest(recipe)
+	return recipe
+}
+
+// newShopWithIngredients returns a freshly-registered ShopInventory that
+// contains `qty` units of the test ingredient and is in the cache.
+//
+// RegisterShop seeds Current from RestockQty for supply-cart items and
+// zeros it for crafted items (RestockQty=0). To bypass that seeding we
+// register with RestockQty=qty (non-zero so RegisterShop seeds Current=qty),
+// then set RestockQty back to 0 to reflect crafter-item semantics.
+func newShopWithIngredients(qty int) *shops.ShopInventory {
+	shops.ClearCache()
+	inv := shops.RegisterShop("test_zone", 9999, 1, shops.ShopInventory{
+		Gold:         500,
+		StartingGold: 500,
+		Stock: []shops.StockEntry{
+			// Use RestockQty=qty so RegisterShop seeds Current=qty.
+			{ItemId: crafterTestIngredientID, RestockQty: qty, MaxStock: 20},
+		},
+	})
+	// Reset RestockQty to 0 so the entry behaves as a crafter-sourced item
+	// (supply cart doesn't refill it, only crafting does).
+	if e := inv.GetStock(crafterTestIngredientID); e != nil {
+		e.RestockQty = 0
+	}
+	return inv
+}
+
+// ── executeCraft regression tests ────────────────────────────────────────────
 
 // TestTickMobCraft_SuppressesRestockInCaravanServedZones verifies that the
 // balance config correctly identifies caravan-served zones, confirming the
@@ -115,4 +250,169 @@ func TestRegisterMobShop_AppliesGoldFloor(t *testing.T) {
 	inv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId)
 	require.NotNil(t, inv)
 	assert.Equal(t, 500, inv.StartingGold, "values < 500 must floor up to 500")
+}
+
+// ── executeCraft regression tests ────────────────────────────────────────────
+// These tests are the load-bearing regression suite for the crafter-consumption
+// tracking fix. Each one will fail immediately if a future refactor reverts to
+// the round-naive RemoveStock/AddStock path or drops the SaveShop call.
+
+// TestExecuteCraft_ConsumesIngredientsViaRoundAwareRemove is THE regression
+// check for bug #1: crafter-caused depletion must push CurrentDepletion so the
+// dashboard's TtR scoring can see it.
+func TestExecuteCraft_ConsumesIngredientsViaRoundAwareRemove(t *testing.T) {
+	registerCrafterTestItems()
+	recipe := registerCrafterTestRecipe()
+	shopInv := newShopWithIngredients(2)
+	_ = stubSaveShop(t)
+
+	mob := makeCrafterMob()
+
+	// Run executeCraft (success or failure doesn't matter for ingredient consumption).
+	executeCraft(mob, recipe, false, shopInv)
+
+	// Ingredient stock should be zero.
+	entry := shopInv.GetStock(crafterTestIngredientID)
+	require.NotNil(t, entry, "ingredient entry must exist after craft")
+	assert.Equal(t, 0, entry.Current,
+		"ingredient stock must reach 0 after craft consumes 2 of 2")
+
+	// THE regression check: CurrentDepletion must be set, proving RemoveStockAtRound
+	// was used. If someone switches back to RemoveStock (round=0), this map stays
+	// empty and this assertion fires.
+	depRound, marked := shopInv.CurrentDepletion[crafterTestIngredientID]
+	assert.True(t, marked,
+		"CurrentDepletion[ingredientID] must be set — crafter depletion must be round-aware")
+	assert.Greater(t, depRound, uint64(0),
+		"depleted round must be > 0 (got 0 means round-naive RemoveStock was called)")
+
+	// Counter check: undercounting bugs surface here.
+	assert.Equal(t, 2, shopInv.ConsumedByCrafterCount,
+		"ConsumedByCrafterCount must equal the actual units consumed (2)")
+}
+
+// TestExecuteCraft_SuccessAddsOutputViaRoundAwareAdd is THE regression check
+// for bug #2: craft output must push a completed StockEvent when the output
+// slot was previously depleted (Kerra's longsword bug).
+func TestExecuteCraft_SuccessAddsOutputViaRoundAwareAdd(t *testing.T) {
+	registerCrafterTestItems()
+	recipe := registerCrafterTestRecipe()
+	_ = stubSaveShop(t)
+	forceCraftSuccess(t)
+
+	// Pre-condition: output slot depleted and marked.
+	shops.ClearCache()
+	shopInv := shops.RegisterShop("test_zone", 9999, 1, shops.ShopInventory{
+		Gold:         500,
+		StartingGold: 500,
+		Stock: []shops.StockEntry{
+			{ItemId: crafterTestIngredientID, RestockQty: 0, MaxStock: 20, Current: 2},
+			{ItemId: crafterTestOutputID, RestockQty: 0, MaxStock: 10, Current: 0},
+		},
+	})
+	// Mark the output as currently depleted (round 500) — simulates it having
+	// sold out before the crafter had a chance to make more.
+	if shopInv.CurrentDepletion == nil {
+		shopInv.CurrentDepletion = map[int]uint64{}
+	}
+	shopInv.CurrentDepletion[crafterTestOutputID] = 500
+
+	mob := makeCrafterMob()
+	executeCraft(mob, recipe, false, shopInv)
+
+	// Output must be present.
+	outEntry := shopInv.GetStock(crafterTestOutputID)
+	require.NotNil(t, outEntry, "output StockEntry must exist after craft")
+	assert.GreaterOrEqual(t, outEntry.Current, 1,
+		"output stock must be >= 1 after successful craft")
+
+	// THE regression check: CurrentDepletion for the output must be cleared,
+	// and a completed StockEvent must have been pushed. If someone switches back
+	// to AddStock (round=0), StockEvents stays empty and this fires.
+	_, stillDepleted := shopInv.CurrentDepletion[crafterTestOutputID]
+	assert.False(t, stillDepleted,
+		"CurrentDepletion[outputID] must be cleared after craft refilled the slot")
+
+	events := shopInv.StockEvents[crafterTestOutputID]
+	require.NotEmpty(t, events,
+		"StockEvents[outputID] must have at least one completed event — AddStockAtRound must have been used")
+	assert.Greater(t, events[0].RefilledRound, uint64(0),
+		"completed StockEvent must have RefilledRound > 0")
+}
+
+// TestExecuteCraft_SuccessCallsSaveShop verifies that executeCraft calls the
+// save hook after a successful craft. Persistence is required for freshly-
+// crafted items to survive a server restart.
+func TestExecuteCraft_SuccessCallsSaveShop(t *testing.T) {
+	registerCrafterTestItems()
+	recipe := registerCrafterTestRecipe()
+	shopInv := newShopWithIngredients(2)
+	forceCraftSuccess(t)
+	saveCount := stubSaveShop(t)
+
+	mob := makeCrafterMob()
+	executeCraft(mob, recipe, false, shopInv)
+
+	assert.Equal(t, 1, *saveCount,
+		"executeCraft must call SaveShop exactly once after a successful craft")
+}
+
+// TestExecuteCraft_FailureStillConsumesIngredients verifies that even a
+// failed craft burns its materials and increments ConsumedByCrafterCount.
+func TestExecuteCraft_FailureStillConsumesIngredients(t *testing.T) {
+	registerCrafterTestItems()
+	recipe := registerCrafterTestRecipe()
+	shopInv := newShopWithIngredients(2)
+	_ = stubSaveShop(t)
+	forceCraftFailure(t)
+
+	mob := makeCrafterMob()
+	result := executeCraft(mob, recipe, false, shopInv)
+
+	assert.False(t, result.Success, "craft must have failed with forced-failure config")
+
+	entry := shopInv.GetStock(crafterTestIngredientID)
+	require.NotNil(t, entry)
+	assert.Equal(t, 0, entry.Current,
+		"failed craft must still consume ingredients (Current must reach 0)")
+
+	assert.Equal(t, 2, shopInv.ConsumedByCrafterCount,
+		"ConsumedByCrafterCount must reflect consumption even on failure")
+}
+
+// TestExecuteCraft_OutputItemFreshlyCreated is the direct regression test for
+// the Kerra "craft success not in shop list" bug. When the output item has no
+// pre-existing StockEntry, executeCraft must create one and GetStock must
+// return a non-nil entry with Current >= 1 after a successful craft.
+func TestExecuteCraft_OutputItemFreshlyCreated(t *testing.T) {
+	registerCrafterTestItems()
+	recipe := registerCrafterTestRecipe()
+	_ = stubSaveShop(t)
+	forceCraftSuccess(t)
+
+	// Shop has ONLY the ingredient — no StockEntry for the output at all.
+	shops.ClearCache()
+	shopInv := shops.RegisterShop("test_zone", 9999, 1, shops.ShopInventory{
+		Gold:         500,
+		StartingGold: 500,
+		Stock: []shops.StockEntry{
+			{ItemId: crafterTestIngredientID, RestockQty: 0, MaxStock: 20, Current: 2},
+		},
+	})
+
+	// Verify pre-condition: output entry doesn't exist yet.
+	require.Nil(t, shopInv.GetStock(crafterTestOutputID),
+		"pre-condition: output item must not be in stock before craft")
+
+	mob := makeCrafterMob()
+	result := executeCraft(mob, recipe, false, shopInv)
+
+	require.True(t, result.Success, "craft must succeed with forced-success config")
+
+	// THE Kerra regression check: GetStock must find the entry.
+	outEntry := shopInv.GetStock(crafterTestOutputID)
+	require.NotNil(t, outEntry,
+		"GetStock(outputID) must be non-nil — AddStockAtRound must create the entry when missing")
+	assert.GreaterOrEqual(t, outEntry.Current, 1,
+		"newly-created output StockEntry must have Current >= 1")
 }
