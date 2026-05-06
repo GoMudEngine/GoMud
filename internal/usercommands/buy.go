@@ -768,12 +768,13 @@ func tryPurchaseFromInventory(request string, user *users.UserRecord, room *room
 	}
 
 	// Deduct stock
-	if shopInv.RemoveStock(matched.entry.ItemId, 1) == 0 {
+	if shopInv.RemoveStockAtRound(matched.entry.ItemId, 1, util.GetRoundCount()) == 0 {
 		if shopMob != nil {
 			shopMob.Command(`say I don't have that item right now.`)
 		}
 		return false
 	}
+	shopInv.SalesCount++
 
 	// Transfer gold
 	events.AddToQueue(events.EquipmentChange{

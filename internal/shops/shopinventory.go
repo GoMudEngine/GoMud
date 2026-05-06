@@ -56,6 +56,15 @@ func IsValidVendorCategory(v string) bool {
 	return slices.Contains(ValidVendorCategories, v)
 }
 
+// StockEvent records one depletion→refill cycle for a single item.
+// DepletedRound is the round Current dropped to 0; RefilledRound is
+// the round Current returned > 0. RefilledRound = 0 means the
+// event is still ongoing (item currently depleted).
+type StockEvent struct {
+	DepletedRound uint64 `yaml:"depleted_round"`
+	RefilledRound uint64 `yaml:"refilled_round"`
+}
+
 // StockEntry represents one item type in a shop's inventory.
 type StockEntry struct {
 	ItemId     int `yaml:"item_id"`
@@ -72,6 +81,35 @@ type ShopInventory struct {
 	Stock        []StockEntry `yaml:"inventory"`
 	KnownRecipes []string     `yaml:"known_recipes,omitempty"` // Recipes the NPC knows
 	CraftSupport string       `yaml:"craft_support,omitempty"` // Discipline this shop's stock supports — see ValidCraftSupports
+
+	// LastRestockByTier records the round of the most recent restock
+	// per rarity tier. Replaces the single LastRestock for the
+	// per-tier cadence model. Persisted; zero value for a tier means
+	// "never restocked at this tier yet" — callers initialize to
+	// currentRound on first encounter.
+	LastRestockByTier map[int]uint64 `yaml:"last_restock_by_tier,omitempty"`
+
+	// SalesCount is the cumulative number of items the shop has sold
+	// to players. Drives the throughput score's "items moved" axis.
+	SalesCount int `yaml:"sales_count,omitempty"`
+
+	// BuysCount is the cumulative number of items the shop has bought
+	// FROM players.
+	BuysCount int `yaml:"buys_count,omitempty"`
+
+	// RestockCount is the cumulative number of items added to stock
+	// via fired restock cycles (not foragers/caravans/player sales).
+	// Drives input rate scoring.
+	RestockCount int `yaml:"restock_count,omitempty"`
+
+	// StockEvents holds completed depletion→refill events per item,
+	// rolling 7-game-day window. Drives Time-to-Refill (TtR) scoring.
+	StockEvents map[int][]StockEvent `yaml:"stock_events,omitempty"`
+
+	// CurrentDepletion records the round each item went to 0 and is
+	// still depleted. Cleared when the item refills (event pushed to
+	// StockEvents). Items not present here are not currently depleted.
+	CurrentDepletion map[int]uint64 `yaml:"current_depletion,omitempty"`
 
 	// Location fields (not persisted — set at registration time for save path)
 	Zone   string `yaml:"-"`
@@ -90,9 +128,18 @@ func (si *ShopInventory) GetStock(itemId int) *StockEntry {
 }
 
 // AddStock increases current stock for an item, capped at MaxStock.
-// If the item isn't in the stock list, it's added as a temporary entry
-// (RestockQty=0, MaxStock=20).
+// Use AddStockAtRound when you want depletion-event tracking
+// (Phase-2 throughput scoring).
 func (si *ShopInventory) AddStock(itemId int, qty int) {
+	si.AddStockAtRound(itemId, qty, 0)
+}
+
+// AddStockAtRound is the round-aware variant: when round > 0 and the
+// item is currently depleted (Current was 0 before this call), push
+// a completed StockEvent into history and clear CurrentDepletion.
+// round = 0 means "don't track" (used by Phase-2-naive callers
+// that don't have a round handy).
+func (si *ShopInventory) AddStockAtRound(itemId int, qty int, round uint64) {
 	entry := si.GetStock(itemId)
 	if entry == nil {
 		si.Stock = append(si.Stock, StockEntry{
@@ -103,14 +150,38 @@ func (si *ShopInventory) AddStock(itemId int, qty int) {
 		})
 		entry = &si.Stock[len(si.Stock)-1]
 	}
+	wasDepleted := entry.Current == 0
 	entry.Current += qty
 	if entry.Current > entry.MaxStock {
 		entry.Current = entry.MaxStock
 	}
+	if !wasDepleted || qty <= 0 || round == 0 {
+		return
+	}
+	depRound, ok := si.CurrentDepletion[itemId]
+	if !ok {
+		return
+	}
+	if si.StockEvents == nil {
+		si.StockEvents = map[int][]StockEvent{}
+	}
+	si.StockEvents[itemId] = append(si.StockEvents[itemId], StockEvent{
+		DepletedRound: depRound,
+		RefilledRound: round,
+	})
+	delete(si.CurrentDepletion, itemId)
 }
 
-// RemoveStock decreases current stock by qty. Returns actual amount removed.
+// RemoveStock decreases current stock by qty. Returns actual amount
+// removed.
 func (si *ShopInventory) RemoveStock(itemId int, qty int) int {
+	return si.RemoveStockAtRound(itemId, qty, 0)
+}
+
+// RemoveStockAtRound is the round-aware variant: when round > 0 and
+// the removal causes Current to hit 0, mark CurrentDepletion[itemId]
+// = round so a later AddStockAtRound can produce a completed event.
+func (si *ShopInventory) RemoveStockAtRound(itemId int, qty int, round uint64) int {
 	entry := si.GetStock(itemId)
 	if entry == nil || entry.Current <= 0 {
 		return 0
@@ -120,6 +191,14 @@ func (si *ShopInventory) RemoveStock(itemId int, qty int) int {
 		removed = entry.Current
 	}
 	entry.Current -= removed
+	if entry.Current == 0 && round > 0 {
+		if si.CurrentDepletion == nil {
+			si.CurrentDepletion = map[int]uint64{}
+		}
+		if _, exists := si.CurrentDepletion[itemId]; !exists {
+			si.CurrentDepletion[itemId] = round
+		}
+	}
 	return removed
 }
 
@@ -141,6 +220,7 @@ func (si *ShopInventory) Restock() bool {
 			add = room
 		}
 		e.Current += add
+		si.RestockCount += add
 		restocked = true
 	}
 	return restocked
@@ -178,6 +258,7 @@ func (si *ShopInventory) RestockBuckets(buckets []string) bool {
 			add = room
 		}
 		e.Current += add
+		si.RestockCount += add
 		restocked = true
 	}
 	return restocked
@@ -221,6 +302,41 @@ func (si *ShopInventory) RestockBaselineTiers() bool {
 			add = room
 		}
 		e.Current += add
+		si.RestockCount += add
+		restocked = true
+	}
+	return restocked
+}
+
+// RestockTier tops up StockEntries whose item carries the given
+// rarity_tier, by RestockQty per call (capped at MaxStock). Skips
+// entries with RestockQty <= 0 (NPC-crafted items don't restock).
+// Returns true if any stock was added.
+//
+// Replaces the all-or-nothing Restock() / RestockBaselineTiers()
+// approach with per-tier granularity, enabling per-rarity-tier
+// cadences (commons restock often, rares rarely).
+func (si *ShopInventory) RestockTier(rarityTier int) bool {
+	restocked := false
+	for i := range si.Stock {
+		e := &si.Stock[i]
+		if e.RestockQty <= 0 {
+			continue
+		}
+		spec := items.GetItemSpec(e.ItemId)
+		if spec == nil || spec.RarityTier != rarityTier {
+			continue
+		}
+		room := e.MaxStock - e.Current
+		if room <= 0 {
+			continue
+		}
+		add := e.RestockQty
+		if add > room {
+			add = room
+		}
+		e.Current += add
+		si.RestockCount += add
 		restocked = true
 	}
 	return restocked

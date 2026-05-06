@@ -1,5 +1,62 @@
 # DOGMud Patch Notes
 
+## 2026-05-05 — Economy Scoring Refactor
+
+Five-axis economy health scoring replacing the single weighted-fill score
+on the admin dashboard. Spec at
+`docs/superpowers/specs/2026-05-05-economy-scoring-refactor-design.md`,
+plan at `docs/superpowers/plans/2026-05-05-economy-scoring-refactor.md`.
+
+### What changed
+
+- **Five score axes** — Stock, Throughput, Input Rate, Logistics Health,
+  Shop Gold — each answering a different question. Old `PerShopScore` is
+  retained as `StockScore` (just renamed in the dashboard).
+- **Throughput score** measures Time-to-Refill (TtR): the player-facing
+  "how long does iron ore stay out of stock" experience, weighted heavily
+  toward common materials so crafting-grind viability drives the score.
+- **Input rate score** measures items entering the supply per game-day
+  (forager deliveries + restock cycles), per zone, against an
+  auto-derived target.
+- **Logistics health** for caravans and foragers is now a composite of
+  cycle rate and cargo flow with hard multipliers for stuck (×0.4) and
+  despawned (×0). Halix-despawning and Kessa-stuck failure modes now
+  read near-zero on the dashboard instead of moderate.
+- **Shop gold score** surfaces merchant liquidity: a merchant with no
+  gold can't buy from players, which was previously invisible.
+- **Per-rarity-tier restock cadence** replaces the single global ticker.
+  Commons (tier 50) refill every 1 game-hour; rares (tier 10) every 5
+  game-days as a slow backstop above forager/sale input.
+
+### Data layer
+
+- New persistent counters on `ShopInventory`: `SalesCount`, `BuysCount`,
+  `RestockCount`, `StockEvents` (rolling 7-game-day window),
+  `CurrentDepletion`. Drives TtR scoring.
+- `LbsDelivered` cumulative counter on caravans and foragers. Drives
+  logistics cargo-flow scoring.
+- All zero-default; existing shop YAMLs and snapshots load cleanly with
+  no migration step.
+
+### Dashboard
+
+- 5-card top row: Overall, Stock, Input, Throughput, Shop Gold.
+- New Throughput table: per-shop TtR by tier band, per-window medians.
+- New Input Rate table: per-zone rate with source breakdown
+  (forager / restock) and tier mix.
+- Logistics panels gain Multiplier and Lbs Delivered columns.
+- Stock table relabeled and gold-score column added; noisy
+  per-window stock-score-delta cells removed.
+
+### Configuration
+
+New `Balance` knobs (all overridable in `_datafiles/config.yaml`):
+`RestockCadenceTier{50,40,30,20}Hours`, `RestockCadenceTier10Days`,
+`TtRTargetTier{50,40,30}Hours`, `TtRTargetTier{20,10}Days`,
+`TtRWindowGameDays`, `LogisticsStuckRounds`, `LogisticsStuckMultiplier`,
+`ScoreWeight{Stock,Input,Throughput,ShopGold}`. Defaults set in code so
+old config files continue to load.
+
 ## 2026-05-04 — Vendor Polish Hotfix
 
 Two post-merge fixes caught during smoke testing the same day.

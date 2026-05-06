@@ -30,17 +30,26 @@ type ShopDelta struct {
 	GoldDelta       int
 	BucketDeltas    map[string]int
 	StockScoreDelta int `json:"stock_score_delta"` // percentage points (now - old) × 100, integer
+
+	// Phase-4 counter deltas — set by ComputeShopDelta when both
+	// snapshots have data. Zero when the old snapshot predates Phase 2.
+	SalesDelta    int    // cumulative sales delta over window
+	BuysDelta     int    // cumulative buys delta over window
+	RestocksDelta int    // cumulative restocks delta over window
+	MedianTtR     uint64 // median TtR (rounds) for events completed in this window
 }
 
 // ForagerDelta captures per-forager changes between snapshots.
 type ForagerDelta struct {
 	DeliveriesByTierDelta map[int]int
 	StuckRoundsDelta      int64
+	LbsDeliveredDelta     uint64 `json:"lbs_delivered_delta"`
 }
 
 // CaravanDelta captures per-caravan changes between snapshots.
 type CaravanDelta struct {
 	DeliveriesByTierDelta map[int]int
+	LbsDeliveredDelta     uint64 `json:"lbs_delivered_delta"`
 }
 
 // ComputeShopDelta returns the shop's delta against old. If old is
@@ -75,7 +84,56 @@ func ComputeShopDelta(now ShopSnapshot, old *ShopSnapshot) ShopDelta {
 	}
 
 	d.StockScoreDelta = int((now.StockScore - old.StockScore) * 100)
+
+	// Counter deltas: always non-negative (counters only increment).
+	salesDelta := now.SalesCount - old.SalesCount
+	if salesDelta > 0 {
+		d.SalesDelta = salesDelta
+	}
+	buysDelta := now.BuysCount - old.BuysCount
+	if buysDelta > 0 {
+		d.BuysDelta = buysDelta
+	}
+	restocksDelta := now.RestockCount - old.RestockCount
+	if restocksDelta > 0 {
+		d.RestocksDelta = restocksDelta
+	}
+
+	// MedianTtR: median of TtR durations for StockEvents whose
+	// RefilledRound falls strictly after old.Round (the game-round
+	// recorded on the old snapshot). If old.Round is 0 (pre-Phase-4
+	// snapshot that lacked the field) we skip.
+	if old.Round > 0 {
+		d.MedianTtR = computeMedianTtR(now, old.Round)
+	}
+
 	return d
+}
+
+// computeMedianTtR collects TtR durations (RefilledRound - DepletedRound)
+// for all StockEvents across all items where RefilledRound > windowStart,
+// then returns the median. Returns 0 if there are no qualifying events.
+func computeMedianTtR(snap ShopSnapshot, windowStart uint64) uint64 {
+	var durations []uint64
+	for _, evts := range snap.StockEvents {
+		for _, ev := range evts {
+			if ev.RefilledRound == 0 {
+				continue // event still open (currently depleted)
+			}
+			if ev.RefilledRound <= windowStart {
+				continue // event completed before the window
+			}
+			if ev.RefilledRound > ev.DepletedRound {
+				durations = append(durations, ev.RefilledRound-ev.DepletedRound)
+			}
+		}
+	}
+	if len(durations) == 0 {
+		return 0
+	}
+	// Sort to find the median.
+	sortUint64s(durations)
+	return durations[len(durations)/2]
 }
 
 // FindShopInSnapshot returns a pointer to the matching shop in s, or
@@ -136,6 +194,11 @@ func ComputeForagerDelta(now ForagerSnapshot, old *ForagerSnapshot) ForagerDelta
 		}
 	}
 	d.StuckRoundsDelta = int64(now.StuckRounds) - int64(old.StuckRounds)
+	// Guard against uint64 underflow (cumulative counter may wrap if
+	// a forager is replaced between snapshots).
+	if now.LbsDelivered >= old.LbsDelivered {
+		d.LbsDeliveredDelta = now.LbsDelivered - old.LbsDelivered
+	}
 	return d
 }
 
@@ -153,6 +216,11 @@ func ComputeCaravanDelta(now CaravanSnapshot, old *CaravanSnapshot) CaravanDelta
 		if _, seen := now.DeliveriesByTier[tier]; !seen {
 			d.DeliveriesByTierDelta[tier] = -count
 		}
+	}
+	// Guard against uint64 underflow (cumulative counter may wrap if
+	// a caravan is replaced between snapshots).
+	if now.LbsDelivered >= old.LbsDelivered {
+		d.LbsDeliveredDelta = now.LbsDelivered - old.LbsDelivered
 	}
 	return d
 }

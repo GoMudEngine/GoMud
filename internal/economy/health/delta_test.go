@@ -185,3 +185,123 @@ func TestFindCaravanInSnapshot(t *testing.T) {
 		t.Errorf("FindCaravanInSnapshot(9999) should return nil")
 	}
 }
+
+func TestComputeShopDelta_SalesAndBuysAndRestocks(t *testing.T) {
+	now := health.ShopSnapshot{
+		Zone: "z", MobId: 1, RoomId: 1,
+		SalesCount:   50,
+		BuysCount:    20,
+		RestockCount: 15,
+		Round:        2000,
+	}
+	old := health.ShopSnapshot{
+		Zone: "z", MobId: 1, RoomId: 1,
+		SalesCount:   30,
+		BuysCount:    10,
+		RestockCount: 5,
+		Round:        1000,
+	}
+	d := health.ComputeShopDelta(now, &old)
+	if d.SalesDelta != 20 {
+		t.Errorf("SalesDelta: got %d, want 20", d.SalesDelta)
+	}
+	if d.BuysDelta != 10 {
+		t.Errorf("BuysDelta: got %d, want 10", d.BuysDelta)
+	}
+	if d.RestocksDelta != 10 {
+		t.Errorf("RestocksDelta: got %d, want 10", d.RestocksDelta)
+	}
+}
+
+func TestComputeShopDelta_MedianTtR(t *testing.T) {
+	// Three completed events with TtR values of 100, 200, 300 rounds.
+	// All have RefilledRound > old.Round (1000), so all qualify.
+	// Median of [100, 200, 300] = 200 (middle of sorted).
+	now := health.ShopSnapshot{
+		Zone: "z", MobId: 1, RoomId: 1,
+		Round: 2000,
+		StockEvents: map[int][]health.StockEvent{
+			101: {
+				{DepletedRound: 1100, RefilledRound: 1200}, // TtR=100
+				{DepletedRound: 1300, RefilledRound: 1500}, // TtR=200
+				{DepletedRound: 1600, RefilledRound: 1900}, // TtR=300
+			},
+		},
+	}
+	old := health.ShopSnapshot{
+		Zone: "z", MobId: 1, RoomId: 1,
+		Round: 1000,
+	}
+	d := health.ComputeShopDelta(now, &old)
+	if d.MedianTtR != 200 {
+		t.Errorf("MedianTtR: got %d, want 200", d.MedianTtR)
+	}
+}
+
+func TestComputeShopDelta_MedianTtR_FiltersOldEvents(t *testing.T) {
+	// One event completed before old.Round, one after. Only the newer
+	// one should contribute. Median of [300] = 300.
+	now := health.ShopSnapshot{
+		Zone: "z", MobId: 1, RoomId: 1,
+		Round: 2000,
+		StockEvents: map[int][]health.StockEvent{
+			101: {
+				{DepletedRound: 500, RefilledRound: 800},   // before old.Round(1000) → excluded
+				{DepletedRound: 1200, RefilledRound: 1500}, // TtR=300, after old.Round → included
+			},
+		},
+	}
+	old := health.ShopSnapshot{
+		Zone: "z", MobId: 1, RoomId: 1,
+		Round: 1000,
+	}
+	d := health.ComputeShopDelta(now, &old)
+	if d.MedianTtR != 300 {
+		t.Errorf("MedianTtR: got %d, want 300", d.MedianTtR)
+	}
+}
+
+func TestComputeShopDelta_NilOldReturnsZeroDeltas(t *testing.T) {
+	now := health.ShopSnapshot{
+		Zone: "z", MobId: 1, RoomId: 1, SalesCount: 10, BuysCount: 5,
+	}
+	d := health.ComputeShopDelta(now, nil)
+	if d.SalesDelta != 0 || d.BuysDelta != 0 || d.RestocksDelta != 0 || d.MedianTtR != 0 {
+		t.Errorf("nil old: expected zero counter deltas, got sales=%d buys=%d restocks=%d ttr=%d",
+			d.SalesDelta, d.BuysDelta, d.RestocksDelta, d.MedianTtR)
+	}
+}
+
+func TestComputeCaravanDelta_LbsDelivered(t *testing.T) {
+	now := health.CaravanSnapshot{
+		InstId:       1001,
+		LbsDelivered: 500,
+		DeliveriesByTier: map[int]int{50: 10},
+	}
+	old := health.CaravanSnapshot{
+		InstId:       1001,
+		LbsDelivered: 200,
+		DeliveriesByTier: map[int]int{50: 5},
+	}
+	d := health.ComputeCaravanDelta(now, &old)
+	if d.LbsDeliveredDelta != 300 {
+		t.Errorf("LbsDeliveredDelta: got %d, want 300", d.LbsDeliveredDelta)
+	}
+}
+
+func TestComputeForagerDelta_LbsDelivered(t *testing.T) {
+	now := health.ForagerSnapshot{
+		MobId:        201,
+		LbsDelivered: 750,
+		DeliveriesByTier: map[int]int{50: 20},
+	}
+	old := health.ForagerSnapshot{
+		MobId:        201,
+		LbsDelivered: 400,
+		DeliveriesByTier: map[int]int{50: 12},
+	}
+	d := health.ComputeForagerDelta(now, &old)
+	if d.LbsDeliveredDelta != 350 {
+		t.Errorf("LbsDeliveredDelta: got %d, want 350", d.LbsDeliveredDelta)
+	}
+}

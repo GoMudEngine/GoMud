@@ -670,6 +670,15 @@ Balance:
   StorageFeePerItem: 1               # Gold charged per stored item per game month
 
   # ── CRAFTER MOBS ─────────────────────────────────────────────────────────
+  # Per-rarity-tier restock cadences (game-time). Replaces the single
+  # CrafterMaterialRestockRate. Common items refill quickly so
+  # crafting grinders have stock; rare items refill slowly as a
+  # backstop above forager/player-sale input.
+  RestockCadenceTier50Hours: 1   # game-hours
+  RestockCadenceTier40Hours: 2
+  RestockCadenceTier30Hours: 6
+  RestockCadenceTier20Hours: 24
+  RestockCadenceTier10Days:  5   # game-days
   CrafterEnabled: true            # Enable mob autonomous crafting
   CrafterMaterialRestockRate: 75  # Rounds between restock/craft ticks (~5 min)
 
@@ -914,6 +923,24 @@ Balance:
   EconomyScoreWeightShop: 0.6
   EconomyScoreWeightCaravan: 0.2
   EconomyScoreWeightForager: 0.2
+
+  # Economy scoring — TtR targets per rarity tier (game-time)
+  TtRTargetTier50Hours: 3
+  TtRTargetTier40Hours: 6
+  TtRTargetTier30Hours: 18
+  TtRTargetTier20Days:  3
+  TtRTargetTier10Days:  7
+  TtRWindowGameDays:    7
+
+  # Logistics health scoring
+  LogisticsStuckRounds:     3000
+  LogisticsStuckMultiplier: 0.4
+
+  # Five-axis overall score blend (must sum to 1.0)
+  ScoreWeightStock:      0.40
+  ScoreWeightInput:      0.30
+  ScoreWeightThroughput: 0.20
+  ScoreWeightShopGold:   0.10
 
 ################################################################################
 #
