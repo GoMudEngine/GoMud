@@ -223,6 +223,7 @@ func (si *ShopInventory) Restock() bool {
 			add = room
 		}
 		e.Current += add
+		si.RestockCount += add
 		restocked = true
 	}
 	return restocked
@@ -260,6 +261,7 @@ func (si *ShopInventory) RestockBuckets(buckets []string) bool {
 			add = room
 		}
 		e.Current += add
+		si.RestockCount += add
 		restocked = true
 	}
 	return restocked
@@ -303,6 +305,7 @@ func (si *ShopInventory) RestockBaselineTiers() bool {
 			add = room
 		}
 		e.Current += add
+		si.RestockCount += add
 		restocked = true
 	}
 	return restocked
@@ -336,6 +339,7 @@ func (si *ShopInventory) RestockTier(rarityTier int) bool {
 			add = room
 		}
 		e.Current += add
+		si.RestockCount += add
 		restocked = true
 	}
 	return restocked

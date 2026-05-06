@@ -299,6 +299,17 @@ func TestRestockTier_OnlyTopsUpMatchingTier(t *testing.T) {
 	}
 }
 
+func TestRestockTier_IncrementsRestockCount(t *testing.T) {
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: testTier50ItemA, RarityTier: 50})
+	si := &ShopInventory{
+		Stock: []StockEntry{{ItemId: testTier50ItemA, RestockQty: 5, MaxStock: 10, Current: 5}},
+	}
+	si.RestockTier(50)
+	if si.RestockCount != 5 {
+		t.Errorf("RestockCount = %d, want 5", si.RestockCount)
+	}
+}
+
 func TestRemoveStock_MarksDepletionWhenHittingZero(t *testing.T) {
 	si := &ShopInventory{
 		Stock: []StockEntry{{ItemId: 100, RestockQty: 5, MaxStock: 10, Current: 3}},
