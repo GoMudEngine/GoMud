@@ -287,6 +287,11 @@ type Balance struct {
 	ShopPriceCeiling       ConfigFloat `yaml:"ShopPriceCeiling,omitempty"`       // Maximum scarcity multiplier when stock is zero (default 5.0)
 	ShopAbundanceThreshold ConfigFloat `yaml:"ShopAbundanceThreshold,omitempty"` // Stock/restock ratio at which price hits the floor (default 3.0)
 	ShopMaterialReserve    ConfigInt   `yaml:"ShopMaterialReserve,omitempty"`    // Units of each material a crafter mob reserves before selling (default 1)
+	// CrafterIngredientReservePct is the fraction of an ingredient's
+	// MaxStock the crafter mob keeps in reserve when deciding whether to
+	// craft. Prevents the crafter from consuming its own stock to a level
+	// where players can't buy. Per-ingredient check, floor of 1.
+	CrafterIngredientReservePct ConfigFloat `yaml:"CrafterIngredientReservePct"` // Fraction of MaxStock kept as reserve (default 0.25)
 	ShopGoldReserveRatio   ConfigFloat `yaml:"ShopGoldReserveRatio,omitempty"`   // Fraction of gold pool a shop keeps in reserve before buying (default 0.50)
 	BarterMaxDiscount      ConfigFloat `yaml:"BarterMaxDiscount,omitempty"`      // Max fractional price reduction a player can get via bartering (default 0.15)
 	BarterMaxBonus         ConfigFloat `yaml:"BarterMaxBonus,omitempty"`         // Max fractional sell-price bonus a player can get via bartering (default 0.15)

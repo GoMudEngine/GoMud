@@ -252,6 +252,146 @@ func TestRegisterMobShop_AppliesGoldFloor(t *testing.T) {
 	assert.Equal(t, 500, inv.StartingGold, "values < 500 must floor up to 500")
 }
 
+// newShopWithStock registers a shop where the test ingredient has the given
+// Current and MaxStock, allowing reserve-floor tests to control both.
+// RestockQty is set to current for seeding, then zeroed to reflect crafter
+// semantics (supply cart never refills).
+func newShopWithStock(current, maxStock int) *shops.ShopInventory {
+	shops.ClearCache()
+	inv := shops.RegisterShop("test_zone", 9999, 1, shops.ShopInventory{
+		Gold:         500,
+		StartingGold: 500,
+		Stock: []shops.StockEntry{
+			{ItemId: crafterTestIngredientID, RestockQty: current, MaxStock: maxStock},
+		},
+	})
+	if e := inv.GetStock(crafterTestIngredientID); e != nil {
+		e.RestockQty = 0
+	}
+	return inv
+}
+
+// ── reserve-floor regression tests ────────────────────────────────────────────
+// These five tests pin the CrafterIngredientReservePct behavior introduced to
+// prevent crafter mobs from draining their own ingredient stock to a single
+// unit and leaving players unable to buy.
+//
+// All tests exercise HasMaterialsWithReservePct directly — the function that
+// holds the per-ingredient reserve check in the shop decision path.
+
+// makeReserveRecipe builds a minimal single-ingredient recipe for reserve tests.
+func makeReserveRecipe(ingTag string, ingQty int) *crafting.RecipeSpec {
+	return &crafting.RecipeSpec{
+		RecipeId: "reserve-test-recipe",
+		Name:     "Reserve Test Recipe",
+		Skill:    "blacksmithing",
+		Ingredients: []crafting.RecipeIngredient{
+			{ItemTag: ingTag, Quantity: ingQty},
+		},
+		Output: crafting.RecipeOutput{ItemId: crafterTestOutputID, Quantity: 1},
+	}
+}
+
+// makeReserveShop builds a ShopInventory with a single stock entry at the
+// specified Current / MaxStock — bypassing RegisterShop disk/cache logic.
+func makeReserveShop(current, maxStock int) *shops.ShopInventory {
+	return &shops.ShopInventory{
+		Stock: []shops.StockEntry{
+			{ItemId: crafterTestIngredientID, RestockQty: 0, MaxStock: maxStock, Current: current},
+		},
+	}
+}
+
+// TestReserveFloor_BlocksWhenBelowReserve verifies that HasMaterialsWithReservePct
+// returns false when consuming would drop stock below MaxStock×ReservePct.
+// MaxStock=20, Current=7, recipe needs 3, reserve=25%×20=5: 7-3=4 < 5 → blocked.
+func TestReserveFloor_BlocksWhenBelowReserve(t *testing.T) {
+	registerCrafterTestItems()
+	recipe := makeReserveRecipe(crafterTestIngredientTag, 3)
+	inv := makeReserveShop(7, 20)
+
+	if shops.HasMaterialsWithReservePct(recipe, inv, 0.25) {
+		t.Error("expected false when consuming 3 from Current=7 would drop to 4, below reserve=5")
+	}
+}
+
+// TestReserveFloor_AllowsAtExactFloor verifies that HasMaterialsWithReservePct
+// returns true when consuming leaves stock exactly at the reserve.
+// MaxStock=20, Current=8, recipe needs 3, reserve=5: 8-3=5 = reserve → allowed.
+func TestReserveFloor_AllowsAtExactFloor(t *testing.T) {
+	registerCrafterTestItems()
+	recipe := makeReserveRecipe(crafterTestIngredientTag, 3)
+	inv := makeReserveShop(8, 20)
+
+	if !shops.HasMaterialsWithReservePct(recipe, inv, 0.25) {
+		t.Error("expected true when consuming 3 from Current=8 leaves exactly reserve=5")
+	}
+}
+
+// TestReserveFloor_HardFloorOfOneWithSmallMaxStock verifies that with a very
+// small MaxStock, 25% of 2 = 0.5 → int(0.5)=0 → floor bumps to 1.
+// MaxStock=2, Current=2, recipe needs 1: reserve=max(1,0)=1, 2-1=1 >= 1 → allowed.
+func TestReserveFloor_HardFloorOfOneWithSmallMaxStock(t *testing.T) {
+	registerCrafterTestItems()
+	recipe := makeReserveRecipe(crafterTestIngredientTag, 1)
+	inv := makeReserveShop(2, 2)
+
+	if !shops.HasMaterialsWithReservePct(recipe, inv, 0.25) {
+		t.Error("expected true when hard floor of 1 still allows craft (Current=2, needs 1, reserve=1)")
+	}
+}
+
+// TestReserveFloor_BelowHardFloor verifies that MaxStock=2, Current=1,
+// recipe needs 1: 1-1=0 < reserve=1 (hard floor) → blocked.
+func TestReserveFloor_BelowHardFloor(t *testing.T) {
+	registerCrafterTestItems()
+	recipe := makeReserveRecipe(crafterTestIngredientTag, 1)
+	inv := makeReserveShop(1, 2)
+
+	if shops.HasMaterialsWithReservePct(recipe, inv, 0.25) {
+		t.Error("expected false when Current=1, needs 1, reserve=1 → would drop to 0 < floor")
+	}
+}
+
+// TestReserveFloor_PerIngredientCheck verifies that a recipe is blocked if ANY
+// ingredient would drop below its reserve, even when others are fine.
+func TestReserveFloor_PerIngredientCheck(t *testing.T) {
+	const crafterTestIngredientID2 = 88003
+	const crafterTestIngredientTag2 = "crafter-test-mat-2"
+
+	items.RegisterTestItemSpec(&items.ItemSpec{
+		ItemId:       crafterTestIngredientID2,
+		Name:         "Test Material 2",
+		ComponentTag: crafterTestIngredientTag2,
+	})
+	registerCrafterTestItems()
+
+	// Two-ingredient recipe: 2 of mat1 + 2 of mat2 → output
+	recipe := &crafting.RecipeSpec{
+		RecipeId: "reserve-test-two-ing",
+		Name:     "Two-Ingredient Reserve Test",
+		Skill:    "blacksmithing",
+		Ingredients: []crafting.RecipeIngredient{
+			{ItemTag: crafterTestIngredientTag, Quantity: 2},
+			{ItemTag: crafterTestIngredientTag2, Quantity: 2},
+		},
+		Output: crafting.RecipeOutput{ItemId: crafterTestOutputID, Quantity: 1},
+	}
+
+	inv := &shops.ShopInventory{
+		Stock: []shops.StockEntry{
+			// mat1: MaxStock=20, Current=8 → reserve=5, 8-2=6 >= 5 → OK
+			{ItemId: crafterTestIngredientID, RestockQty: 0, MaxStock: 20, Current: 8},
+			// mat2: MaxStock=20, Current=6 → reserve=5, 6-2=4 < 5 → BLOCKED
+			{ItemId: crafterTestIngredientID2, RestockQty: 0, MaxStock: 20, Current: 6},
+		},
+	}
+
+	if shops.HasMaterialsWithReservePct(recipe, inv, 0.25) {
+		t.Error("expected false when second ingredient (mat2) would drop below reserve floor")
+	}
+}
+
 // ── executeCraft regression tests ────────────────────────────────────────────
 // These tests are the load-bearing regression suite for the crafter-consumption
 // tracking fix. Each one will fail immediately if a future refactor reverts to

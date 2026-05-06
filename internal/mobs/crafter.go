@@ -253,7 +253,11 @@ func TickMobCraft(mob *Mob) *CraftResult {
 		}
 
 		cfg := shops.DefaultPricingConfig()
-		reserve := 1 // Keep at least 1 of each ingredient in stock
+		// Per-ingredient reserve: the crafter will not consume an ingredient
+		// if doing so would drop its stock below MaxStock×reservePct (floor 1).
+		// This keeps at least 25% (by default) of each ingredient available
+		// for players to buy rather than draining the shop to a single unit.
+		reservePct := float64(b.CrafterIngredientReservePct)
 
 		// Build full recipe list: mob's known recipes + shop's known recipes
 		recipeIds := mergeRecipeIds(mob.CrafterRecipeIds, shopInv.KnownRecipes)
@@ -267,12 +271,12 @@ func TickMobCraft(mob *Mob) *CraftResult {
 		}
 
 		// ── Priority 1: Self-gear upgrade ──────────────────────────────────
-		if selfRecipe := pickSelfGearRecipe(mob, recipeIds, shopInv, reserve); selfRecipe != nil {
+		if selfRecipe := pickSelfGearRecipe(mob, recipeIds, shopInv, reservePct); selfRecipe != nil {
 			return tagRestock(executeCraft(mob, selfRecipe, true, shopInv))
 		}
 
 		// ── Priority 2: Profitable craft ──────────────────────────────────
-		craftDecision := shops.EvaluateCraftOptions(recipeIds, shopInv, cfg, reserve)
+		craftDecision := shops.EvaluateCraftOptions(recipeIds, shopInv, cfg, reservePct)
 		if craftDecision != nil {
 			recipe := crafting.GetRecipe(craftDecision.RecipeId)
 			if recipe != nil {
@@ -358,7 +362,8 @@ func mergeRecipeIds(a, b []string) []string {
 
 // pickSelfGearRecipe finds a recipe whose output is an equipment upgrade for
 // the mob. Returns nil if no upgrade recipe is craftable with current stock.
-func pickSelfGearRecipe(mob *Mob, recipeIds []string, shopInv *shops.ShopInventory, reserve int) *crafting.RecipeSpec {
+// reservePct is the per-ingredient reserve fraction; see HasMaterialsWithReservePct.
+func pickSelfGearRecipe(mob *Mob, recipeIds []string, shopInv *shops.ShopInventory, reservePct float64) *crafting.RecipeSpec {
 	wornItems := mob.Character.Equipment.GetAllItems()
 
 	for _, recipeId := range recipeIds {
@@ -398,7 +403,7 @@ func pickSelfGearRecipe(mob *Mob, recipeIds []string, shopInv *shops.ShopInvento
 		}
 
 		// Check materials are available (backpack for legacy; shopInv for shop path)
-		if !shops.HasMaterialsWithReserve(recipe, shopInv, reserve) {
+		if !shops.HasMaterialsWithReservePct(recipe, shopInv, reservePct) {
 			continue
 		}
 
