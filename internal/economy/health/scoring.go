@@ -426,7 +426,7 @@ func zoneInputTarget(zone string, cur *Snapshot, cfg ScoringConfig) float64 {
 			continue
 		}
 		// Only count active foragers.
-		if f.State == "(despawned)" || f.State == "(not active)" {
+		if isDespawnedState(f.State) {
 			continue
 		}
 		// Territory zone matching: check if territory starts with zone prefix.
@@ -649,15 +649,27 @@ type EntityScoreRow struct {
 	HasScore bool
 }
 
-// Score is the dashboard's main scoring entry point. It builds a
-// ScoringConfig once and threads it through all five score axes.
+// isDespawnedState returns true for entity states that indicate the
+// caravan/forager is not active in the world. Covers the current
+// canonical "(despawned)" string and the legacy "(not active)" used
+// by snapshots captured before Phase 2.
+func isDespawnedState(s string) bool {
+	return s == "(despawned)" || s == "(not active)"
+}
+
+// Score is the dashboard's main scoring entry point. Reads the live
+// balance config; tests should call ScoreWithConfig directly.
 func Score(cur *Snapshot, history []*Snapshot) Scores {
+	return ScoreWithConfig(cur, history, ScoringConfigFromBalance())
+}
+
+// ScoreWithConfig is the test-friendly variant. All math reads cfg
+// rather than the global config.
+func ScoreWithConfig(cur *Snapshot, history []*Snapshot, cfg ScoringConfig) Scores {
 	out := Scores{}
 	if cur == nil {
 		return out
 	}
-
-	cfg := ScoringConfigFromBalance()
 
 	// ── Per-shop: stock, throughput, gold ───────────────────────────────────
 	out.PerShop = make([]ShopScoreRow, 0, len(cur.Shops))
@@ -745,7 +757,7 @@ func Score(cur *Snapshot, history []*Snapshot) Scores {
 			c.StateEnteredRound > 0 &&
 			cur.Round-c.StateEnteredRound > cfg.LogisticsStuckRounds
 
-		despawned := c.State == "(not active)" || c.State == "(despawned)"
+		despawned := isDespawnedState(c.State)
 
 		args := LogisticsArgs{
 			Cycles:         cycles,
@@ -798,7 +810,7 @@ func Score(cur *Snapshot, history []*Snapshot) Scores {
 			f.StateEnteredRound > 0 &&
 			cur.Round-f.StateEnteredRound > cfg.LogisticsStuckRounds
 
-		despawned := f.State == "(despawned)" || f.State == "(not active)"
+		despawned := isDespawnedState(f.State)
 
 		args := LogisticsArgs{
 			Cycles:         cycles,
