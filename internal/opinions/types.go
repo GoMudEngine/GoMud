@@ -17,9 +17,9 @@ type Opinion struct {
 //
 // All instances of a mob template share this table.
 type MobOpinions struct {
-	MobId              int               `yaml:"mob_id"`
-	DefaultDisposition int               `yaml:"default_disposition"`
-	Opinions           map[int]*Opinion  `yaml:"opinions"` // userId → opinion
+	MobId              int              `yaml:"mob_id"`
+	DefaultDisposition int              `yaml:"default_disposition"`
+	Opinions           map[int]*Opinion `yaml:"opinions"` // userId → opinion
 }
 
 // Tier is a banded view of the disposition score, for consumers
