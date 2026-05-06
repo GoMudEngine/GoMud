@@ -224,46 +224,66 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 
 	}
 
-	// Build stack keys and group identical items
+	// Build stack keys and group identical items.
+	// Two items share a display row iff items.SameStack returns true AND
+	// they share the same spoiled status (so spoiled potions don't merge
+	// with fresh ones).
 	type stackEntry struct {
 		name          string
 		nameFormatted string
 		count         int
+		representative items.Item // first item seen for this stack key
+		spoiled        bool
 	}
 	stackOrder := []string{}
 	stacks := map[string]*stackEntry{}
 
 	alchSkill := user.Character.GetSkillLevel(skills.Alchemy)
 
+	isSpoiledItem := func(itm items.Item) bool {
+		iSpec := itm.GetSpec()
+		if alchSkill < 6 || !iSpec.Aging.HasAging() || itm.CraftedRound == 0 {
+			return false
+		}
+		elapsed := util.GetRoundCount() - itm.CraftedRound
+		bMult := itm.BottleMultiplier
+		if bMult <= 0 {
+			bMult = iSpec.BottleAgingMultiplier
+		}
+		effSpeed := items.CalcEffectiveAgingSpeed(bMult, itm.CraftSkill)
+		phase, _ := items.GetAgingPhase(elapsed, iSpec.Aging, effSpeed)
+		return phase == items.PhaseSpoiled
+	}
+
 	for _, item := range itemList {
 		iSpec := item.GetSpec()
+		isSpoiled := isSpoiledItem(item)
 
-		// Check if this potion is spoiled (for alchemy skill 6+ players)
-		isSpoiled := false
-		if alchSkill >= 6 && iSpec.Aging.HasAging() && item.CraftedRound > 0 {
-			elapsed := util.GetRoundCount() - item.CraftedRound
-			bMult := item.BottleMultiplier
-			if bMult <= 0 {
-				bMult = iSpec.BottleAgingMultiplier
+		// Look for an existing stack that this item can join.
+		// We walk stackOrder to maintain insertion order, and check
+		// items.SameStack + spoiled-flag agreement.
+		merged := false
+		for _, key := range stackOrder {
+			entry := stacks[key]
+			if entry.spoiled == isSpoiled && items.SameStack(entry.representative, item) {
+				entry.count++
+				merged = true
+				break
 			}
-			effSpeed := items.CalcEffectiveAgingSpeed(bMult, item.CraftSkill)
-			phase, _ := items.GetAgingPhase(elapsed, iSpec.Aging, effSpeed)
-			isSpoiled = phase == items.PhaseSpoiled
 		}
-
-		// Stack key: ItemId + uses + spoiled flag.
-		// Enchant state is intentionally excluded — differently enchanted
-		// copies of the same item stack together. Players inspect individual
-		// copies via look/identify with #N disambiguation.
-		spoiledTag := ""
-		if isSpoiled {
-			spoiledTag = "|spoiled"
-		}
-		stackKey := fmt.Sprintf("%d|%d%s", item.ItemId, item.Uses, spoiledTag)
-
-		if entry, exists := stacks[stackKey]; exists {
-			entry.count++
+		if merged {
 			continue
+		}
+
+		// New stack entry.
+		stackKey := fmt.Sprintf("%d|%d|%d|%v", item.ItemId, item.Uses, item.EnchantTier, isSpoiled)
+		// Disambiguate duplicate keys from distinct items (e.g. different
+		// BottleMultiplier values with the same ItemId/Uses/EnchantTier).
+		for {
+			if _, exists := stacks[stackKey]; !exists {
+				break
+			}
+			stackKey += "|x"
 		}
 
 		// Use base name for stacked display — enchant adjectives are
@@ -281,7 +301,13 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 			}
 		}
 
-		stacks[stackKey] = &stackEntry{name: iName, nameFormatted: iNameFormatted, count: 1}
+		stacks[stackKey] = &stackEntry{
+			name:           iName,
+			nameFormatted:  iNameFormatted,
+			count:          1,
+			representative: item,
+			spoiled:        isSpoiled,
+		}
 		stackOrder = append(stackOrder, stackKey)
 	}
 
@@ -306,12 +332,21 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 	for _, item := range user.Character.ComponentItems {
 		iSpec := item.GetSpec()
 
-		stackKey := fmt.Sprintf("%d|%s|%d|%d", item.ItemId, item.EnchantType, item.EnchantTier, item.Uses)
-
-		if entry, exists := compStacks[stackKey]; exists {
-			entry.count++
+		// Find an existing matching stack using SameStack.
+		merged := false
+		for _, key := range compStackOrder {
+			entry := compStacks[key]
+			if items.SameStack(entry.representative, item) {
+				entry.count++
+				merged = true
+				break
+			}
+		}
+		if merged {
 			continue
 		}
+
+		stackKey := fmt.Sprintf("%d|%d|%d|%d", item.ItemId, item.Uses, item.EnchantTier, len(compStackOrder))
 
 		iName := item.Name()
 		iNameFormatted := fmt.Sprintf(`<ansi fg="itemname">%s</ansi>`, item.DisplayName())
@@ -323,7 +358,12 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 			}
 		}
 
-		compStacks[stackKey] = &stackEntry{name: iName, nameFormatted: iNameFormatted, count: 1}
+		compStacks[stackKey] = &stackEntry{
+			name:           iName,
+			nameFormatted:  iNameFormatted,
+			count:          1,
+			representative: item,
+		}
 		compStackOrder = append(compStackOrder, stackKey)
 	}
 
@@ -346,31 +386,23 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 	potStacks := map[string]*stackEntry{}
 
 	for _, item := range user.Character.PotionItems {
-		iSpec := item.GetSpec()
+		isSpoiled := isSpoiledItem(item)
 
-		// Check if spoiled (for alchemy skill 6+ players)
-		isSpoiled := false
-		if alchSkill >= 6 && iSpec.Aging.HasAging() && item.CraftedRound > 0 {
-			elapsed := util.GetRoundCount() - item.CraftedRound
-			bMult := item.BottleMultiplier
-			if bMult <= 0 {
-				bMult = iSpec.BottleAgingMultiplier
+		// Find an existing matching stack using SameStack + spoiled agreement.
+		merged := false
+		for _, key := range potStackOrder {
+			entry := potStacks[key]
+			if entry.spoiled == isSpoiled && items.SameStack(entry.representative, item) {
+				entry.count++
+				merged = true
+				break
 			}
-			effSpeed := items.CalcEffectiveAgingSpeed(bMult, item.CraftSkill)
-			phase, _ := items.GetAgingPhase(elapsed, iSpec.Aging, effSpeed)
-			isSpoiled = phase == items.PhaseSpoiled
 		}
-
-		spoiledTag := ""
-		if isSpoiled {
-			spoiledTag = "|spoiled"
-		}
-		stackKey := fmt.Sprintf("%d|%s|%d|%d%s", item.ItemId, item.EnchantType, item.EnchantTier, item.Uses, spoiledTag)
-
-		if entry, exists := potStacks[stackKey]; exists {
-			entry.count++
+		if merged {
 			continue
 		}
+
+		stackKey := fmt.Sprintf("%d|%d|%d|%v|%d", item.ItemId, item.Uses, item.EnchantTier, isSpoiled, len(potStackOrder))
 
 		iName := item.Name()
 		iNameFormatted := fmt.Sprintf(`<ansi fg="itemname">%s</ansi>`, item.DisplayName())
@@ -380,7 +412,13 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 			iNameFormatted = fmt.Sprintf(`<ansi fg="8">%s (turned)</ansi>`, item.DisplayName())
 		}
 
-		potStacks[stackKey] = &stackEntry{name: iName, nameFormatted: iNameFormatted, count: 1}
+		potStacks[stackKey] = &stackEntry{
+			name:           iName,
+			nameFormatted:  iNameFormatted,
+			count:          1,
+			representative: item,
+			spoiled:        isSpoiled,
+		}
 		potStackOrder = append(potStackOrder, stackKey)
 	}
 

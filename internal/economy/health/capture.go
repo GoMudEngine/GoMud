@@ -34,6 +34,7 @@ func CaptureSnapshot() Snapshot {
 }
 
 func captureShops() []ShopSnapshot {
+	currentRound := util.GetRoundCount()
 	all := shops.AllShops()
 	out := make([]ShopSnapshot, 0, len(all))
 	for _, inv := range all {
@@ -45,6 +46,7 @@ func captureShops() []ShopSnapshot {
 			Gold:             inv.Gold,
 			StartingGold:     inv.StartingGold,
 			LastRestockRound: inv.LastRestock,
+			Round:            currentRound,
 			Stock:            make([]StockSnapshot, 0, len(inv.Stock)),
 			Name:             lookupShopMobName(inv.MobId, inv.RoomId),
 		}
@@ -67,9 +69,91 @@ func captureShops() []ShopSnapshot {
 		if capacity > 0 {
 			ss.StockScore = float64(total) / float64(capacity)
 		}
+
+		// Copy new Phase-2 counters.
+		ss.SalesCount = inv.SalesCount
+		ss.BuysCount = inv.BuysCount
+		ss.RestockCount = inv.RestockCount
+		ss.ConsumedByCrafterCount = inv.ConsumedByCrafterCount
+		if len(inv.StockEvents) > 0 {
+			ss.StockEvents = make(map[int][]StockEvent, len(inv.StockEvents))
+			for k, v := range inv.StockEvents {
+				cp := make([]StockEvent, len(v))
+				for i, e := range v {
+					cp[i] = StockEvent{
+						DepletedRound: e.DepletedRound,
+						RefilledRound: e.RefilledRound,
+					}
+				}
+				ss.StockEvents[k] = cp
+			}
+		}
+		if len(inv.CurrentDepletion) > 0 {
+			ss.CurrentDepletion = make(map[int]uint64, len(inv.CurrentDepletion))
+			for k, v := range inv.CurrentDepletion {
+				ss.CurrentDepletion[k] = v
+			}
+		}
+
+		// Phase-4: compute per-tier median TtR and currently-depleted count.
+		ss.MedianTtRCommons = computeMedianTtRForTiers(ss, currentRound, true)
+		ss.MedianTtRRares = computeMedianTtRForTiers(ss, currentRound, false)
+		ss.CurrentlyDepletedCount = len(ss.CurrentDepletion)
+
 		out = append(out, ss)
 	}
 	return out
+}
+
+// computeMedianTtRForTiers computes the median TtR (in rounds) from
+// StockEvents for items whose rarity tier qualifies:
+//   - commons=true:  tier >= 40 (tier-50 and tier-40 items)
+//   - commons=false: tier <= 20 (tier-20 and tier-10 items; tier-30 excluded)
+//
+// Currently-depleted items contribute their ongoing duration as a
+// partial event. Returns 0 if there are no qualifying events.
+func computeMedianTtRForTiers(snap ShopSnapshot, currentRound uint64, commons bool) uint64 {
+	// Build a set of qualifying item IDs from the stock list.
+	qualifying := map[int]bool{}
+	for _, e := range snap.Stock {
+		if commons && e.Tier >= 40 {
+			qualifying[e.ItemId] = true
+		} else if !commons && e.Tier <= 20 {
+			qualifying[e.ItemId] = true
+		}
+	}
+	if len(qualifying) == 0 {
+		return 0
+	}
+
+	var durations []uint64
+	for itemId, evts := range snap.StockEvents {
+		if !qualifying[itemId] {
+			continue
+		}
+		for _, ev := range evts {
+			if ev.RefilledRound == 0 {
+				continue // still open; handled via CurrentDepletion below
+			}
+			if ev.RefilledRound > ev.DepletedRound {
+				durations = append(durations, ev.RefilledRound-ev.DepletedRound)
+			}
+		}
+	}
+	// Currently-depleted items contribute ongoing duration.
+	for itemId, depRound := range snap.CurrentDepletion {
+		if !qualifying[itemId] {
+			continue
+		}
+		if currentRound > depRound {
+			durations = append(durations, currentRound-depRound)
+		}
+	}
+	if len(durations) == 0 {
+		return 0
+	}
+	sortUint64s(durations)
+	return durations[len(durations)/2]
 }
 
 // captureCaravans walks every live mob instance and emits one
@@ -123,12 +207,15 @@ func captureCaravans() []CaravanSnapshot {
 			}
 		}
 
-		// Populate DeliveriesByTier from caravan throughput.
+		// Populate DeliveriesByTier and LbsDelivered from caravan throughput.
 		tp := caravan.GetThroughput(m.Character.Zone, instId)
-		if tp != nil && tp.DeliveriesByTier != nil {
-			cs.DeliveriesByTier = map[int]int{}
-			for tier, count := range tp.DeliveriesByTier {
-				cs.DeliveriesByTier[tier] = count
+		if tp != nil {
+			cs.LbsDelivered = tp.LbsDelivered
+			if tp.DeliveriesByTier != nil {
+				cs.DeliveriesByTier = map[int]int{}
+				for tier, count := range tp.DeliveriesByTier {
+					cs.DeliveriesByTier[tier] = count
+				}
 			}
 		}
 
@@ -236,12 +323,15 @@ func captureForagers() []ForagerSnapshot {
 				}
 			}
 		}
-		// Populate DeliveriesByTier from forager throughput.
+		// Populate DeliveriesByTier and LbsDelivered from forager throughput.
 		tp := forager.GetThroughput(m.Character.Zone, p.MobId)
-		if tp != nil && tp.DeliveriesByTier != nil {
-			fs.DeliveriesByTier = map[int]int{}
-			for tier, count := range tp.DeliveriesByTier {
-				fs.DeliveriesByTier[tier] = count
+		if tp != nil {
+			fs.LbsDelivered = tp.LbsDelivered
+			if tp.DeliveriesByTier != nil {
+				fs.DeliveriesByTier = map[int]int{}
+				for tier, count := range tp.DeliveriesByTier {
+					fs.DeliveriesByTier[tier] = count
+				}
 			}
 		}
 		out = append(out, fs)

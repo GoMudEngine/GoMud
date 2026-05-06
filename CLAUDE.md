@@ -161,6 +161,41 @@ All HP/SP/CP regeneration is **percentage-of-max** — never flat values.
 - **Heal buffs** that heal should compute `floor(poolMax * fraction)` — never flat dice for healing
 - NPCs regen health (out of combat), stamina (1/4 in combat), and conviction every tick
 
+## ID Inventory & Collision Prevention
+**Always run `python tools/id_inventory.py` before creating a new YAML.**
+The script walks the world data tree and reports per-zone ID ranges,
+gaps, and the next free ID per type (rooms / mobs / items / behaviors /
+buffs / quests / dialogue). Filename-only parser, no YAML library
+needed.
+
+Common invocations:
+- `python tools/id_inventory.py --zone stillwater` — focus one zone
+- `python tools/id_inventory.py --type rooms` — focus one type
+- `python tools/id_inventory.py --alloc rooms 20` — reserve a 20-ID
+  block past the global max, for parallel subagent dispatch
+
+**Parallel content-creation strategy.** When dispatching multiple
+content-creation subagents in parallel (`/new-room`, `/new-mob`,
+`/new-item`, etc.), they will otherwise scan the filesystem at the
+same time, see the same "next free ID," and collide. Two options:
+
+1. **Sequential dispatch (default).** Run content-creation subagents
+   one at a time. Slower wall-clock but zero collision risk. Use this
+   unless wall-time genuinely matters.
+
+2. **Pre-allocated ID blocks.** When parallelism is worth the
+   complexity:
+   - For each parallel agent, run `id_inventory.py --alloc <type>
+     <count>` to reserve a contiguous block.
+   - Embed the assigned range in that agent's dispatch prompt
+     verbatim ("use rooms IDs in 5101-5120").
+   - Each agent picks IDs only from its assigned block. The blocks
+     don't overlap by construction.
+   - After merge, run the script once more as a detection pass.
+
+Code-only subagents (no YAML creation) can always run in parallel —
+this only matters for content tasks.
+
 ## Data File Naming Convention
 Before creating any new data file, verify the expected filename from the loader's `Filepath()` method:
 - **Zone folder names must use underscores, not hyphens.** The engine derives the expected path by calling `ConvertForFilename()` on the zone's display name (e.g., `"Sanctum Basin"` → folder `sanctum_basin/`). A mismatch causes a startup panic: `filesystem path "..." did not end in Filepath() "..."`. This applies to both `rooms/` and `mobs/` subdirectories.

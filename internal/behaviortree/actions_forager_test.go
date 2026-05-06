@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/gamelock"
@@ -146,7 +148,7 @@ func TestForagerStep_RestingFullHPAdvances(t *testing.T) {
 	// Force it past restingDuration by setting started to a round far in
 	// the past.
 	state.Set(keyStateStartedRound,
-		strconv.FormatUint(util.GetRoundCount()-restingDuration-1, 10))
+		strconv.FormatUint(util.GetRoundCount()-uint64(configs.GetBalanceConfig().ForagerRestDurationRounds)-1, 10))
 
 	ctx := &EvalContext{
 		InstanceId: 8203,
@@ -176,7 +178,7 @@ func TestForagerStep_RestingNotFullHPStaysResting(t *testing.T) {
 	state := NewBehaviorState()
 	state.Set(keyForagerState, forager.StateResting.Name())
 	state.Set(keyStateStartedRound,
-		strconv.FormatUint(util.GetRoundCount()-restingDuration-1, 10))
+		strconv.FormatUint(util.GetRoundCount()-uint64(configs.GetBalanceConfig().ForagerRestDurationRounds)-1, 10))
 
 	ctx := &EvalContext{
 		InstanceId: 8204,
@@ -497,5 +499,147 @@ func TestForagerWatchdog_DoesNotResetActiveForager(t *testing.T) {
 	if got != forager.StateForaging.Name() {
 		t.Errorf("active forager: forager_state = %q, want %q (unchanged)",
 			got, forager.StateForaging.Name())
+	}
+}
+
+// TestTickForagerRecalling_TeleportsDirectly verifies that tickForagerRecalling
+// teleports the mob to its anchor room without going through the fold-cast system,
+// clears any stale CastingState, and leaves the forager_state still in
+// "recalling" (the at-sanctuary path handles the resting transition on the
+// next tick).
+func TestTickForagerRecalling_TeleportsDirectly(t *testing.T) {
+	const (
+		territoryRoom = 4177 // somewhere in Tova's territory (not sanctuary)
+		sanctuaryRoom = 4123 // Tova's sanctuary
+	)
+
+	// Build two rooms: the forager's current location and the anchor destination.
+	testRooms := map[int]*rooms.Room{
+		territoryRoom: {
+			RoomId: territoryRoom,
+			Zone:   "stillwater",
+			Title:  "Marsh Territory",
+			Exits:  map[string]exit.RoomExit{},
+		},
+		sanctuaryRoom: {
+			RoomId: sanctuaryRoom,
+			Zone:   "stillwater",
+			Title:  "Stillwater Temple Sanctuary",
+			Exits:  map[string]exit.RoomExit{},
+		},
+	}
+	cleanRooms := rooms.SeedRoomsForTest(testRooms, map[string]*rooms.ZoneConfig{})
+	defer cleanRooms()
+
+	// Mob 371 = Tova (Marsh forager). Start her in the territory room.
+	mob := buildForagerMob(t, 8240, 371, territoryRoom, 100, 100)
+
+	// Pre-set a stale CastingState to simulate the previously-stuck state.
+	mob.Character.CastingState = &characters.CastingState{SpellId: "fold-recall"}
+
+	// Set the fold-anchor-room in MiscData (matches Tova's sanctuary).
+	mob.Character.SetMiscData("fold-anchor-room", sanctuaryRoom)
+
+	// Register mob in the territory room's mob list so RemoveMob works.
+	rooms.LoadRoom(territoryRoom).AddMob(mob.InstanceId)
+
+	p := forager.ProfileFor(371)
+	if p == nil {
+		t.Fatal("no forager profile for mob 371")
+	}
+
+	state := NewBehaviorState()
+	state.Set(keyForagerState, forager.StateRecalling.Name())
+
+	ctx := &EvalContext{
+		InstanceId: 8240,
+		RoomId:     territoryRoom,
+		MobState:   state,
+	}
+
+	res := tickForagerRecalling(p, mob, ctx)
+	if res != Success {
+		t.Fatalf("tickForagerRecalling = %v, want Success", res)
+	}
+
+	// Mob should now be at the sanctuary room.
+	if mob.Character.RoomId != sanctuaryRoom {
+		t.Errorf("after teleport: mob.Character.RoomId = %d, want %d",
+			mob.Character.RoomId, sanctuaryRoom)
+	}
+
+	// Stale CastingState must have been cleared.
+	if mob.Character.CastingState != nil {
+		t.Errorf("CastingState = %+v, want nil (stale cast not cleared)",
+			mob.Character.CastingState)
+	}
+
+	// State should still be "recalling" — the sanctuary path fires on the
+	// next tick, not this one.
+	if got := state.GetString(keyForagerState); got != forager.StateRecalling.Name() {
+		t.Errorf("forager_state = %q, want %q (premature state transition)",
+			got, forager.StateRecalling.Name())
+	}
+}
+
+// TestTickForagerRecalling_AtSanctuaryTransitionsToResting verifies the
+// at-sanctuary path: forager in Recalling state with cargo arrives at her
+// sanctuary, dumps satchel, and transitions to Resting.
+func TestTickForagerRecalling_AtSanctuaryTransitionsToResting(t *testing.T) {
+	const sanctuaryRoom = 4123
+
+	testRoom := &rooms.Room{
+		RoomId: sanctuaryRoom,
+		Zone:   "stillwater",
+		Title:  "Stillwater Temple Sanctuary",
+		Exits:  map[string]exit.RoomExit{},
+		Containers: map[string]rooms.Container{
+			"lockbox": {
+				Lock: gamelock.Lock{
+					Difficulty:   3,
+					RotationSeed: 1,
+				},
+			},
+		},
+	}
+	cleanRooms := rooms.SeedRoomsForTest(
+		map[int]*rooms.Room{sanctuaryRoom: testRoom},
+		map[string]*rooms.ZoneConfig{},
+	)
+	defer cleanRooms()
+
+	// Mob 371 = Tova (Marsh forager). Already at sanctuary.
+	mob := buildForagerMob(t, 8241, 371, sanctuaryRoom, 100, 100)
+
+	// Give her one item in her satchel.
+	mob.Character.Items = append(mob.Character.Items, items.New(40021))
+
+	p := forager.ProfileFor(371)
+	if p == nil {
+		t.Fatal("no forager profile for mob 371")
+	}
+
+	state := NewBehaviorState()
+	state.Set(keyForagerState, forager.StateRecalling.Name())
+
+	ctx := &EvalContext{
+		InstanceId: 8241,
+		RoomId:     sanctuaryRoom,
+		MobState:   state,
+	}
+
+	res := tickForagerRecalling(p, mob, ctx)
+	if res != Success {
+		t.Fatalf("tickForagerRecalling = %v, want Success", res)
+	}
+
+	// State should have transitioned to Resting.
+	if got := state.GetString(keyForagerState); got != forager.StateResting.Name() {
+		t.Errorf("forager_state = %q, want %q", got, forager.StateResting.Name())
+	}
+
+	// Satchel should be empty (dumped to lockbox).
+	if len(mob.Character.Items) != 0 {
+		t.Errorf("satchel after dump = %d items, want 0", len(mob.Character.Items))
 	}
 }

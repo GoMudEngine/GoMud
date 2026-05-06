@@ -3,38 +3,49 @@
 <div class="container-fluid">
     <h1 class="mt-4">Economy Health Dashboard</h1>
 
-    <!-- Five summary cards -->
-    <div class="row mb-3">
+    <!-- Five summary cards: Overall / Stock / Input / Throughput / Shop Gold -->
+    <div class="row mb-2">
         <div class="col-md-2">
             <div class="card text-center"><div class="card-body p-2">
-                <h6 class="card-subtitle text-muted">Economy</h6>
+                <h6 class="card-subtitle text-muted">Overall</h6>
                 <h4 id="score-overall" class="card-title mb-0">—</h4>
             </div></div>
         </div>
         <div class="col-md-2">
             <div class="card text-center"><div class="card-body p-2">
-                <h6 class="card-subtitle text-muted">Shops</h6>
-                <h4 id="score-shop" class="card-title mb-0">—</h4>
+                <h6 class="card-subtitle text-muted">Stock</h6>
+                <h4 id="score-stock" class="card-title mb-0">—</h4>
             </div></div>
         </div>
         <div class="col-md-2">
             <div class="card text-center"><div class="card-body p-2">
-                <h6 class="card-subtitle text-muted">Caravans</h6>
-                <h4 id="score-caravan" class="card-title mb-0">—</h4>
+                <h6 class="card-subtitle text-muted">Input</h6>
+                <h4 id="score-input" class="card-title mb-0">—</h4>
             </div></div>
         </div>
         <div class="col-md-2">
             <div class="card text-center"><div class="card-body p-2">
-                <h6 class="card-subtitle text-muted">Foragers</h6>
-                <h4 id="score-forager" class="card-title mb-0">—</h4>
+                <h6 class="card-subtitle text-muted">Throughput</h6>
+                <h4 id="score-throughput" class="card-title mb-0">—</h4>
             </div></div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-2">
             <div class="card text-center"><div class="card-body p-2">
-                <h6 class="card-subtitle text-muted">Last Snapshot</h6>
-                <span id="last-ts">—</span>
+                <h6 class="card-subtitle text-muted">Shop Gold</h6>
+                <h4 id="score-gold" class="card-title mb-0">—</h4>
+            </div></div>
+        </div>
+    </div>
+
+    <!-- Secondary row: snapshot controls -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="card"><div class="card-body p-2">
+                <h6 class="card-subtitle text-muted d-inline">Last Snapshot</h6>
+                <span id="last-ts" class="ml-2">—</span>
                 <input id="manual-label" type="text" placeholder="(optional label)"
-                       class="form-control form-control-sm d-inline-block ml-2" style="width:auto">
+                       class="form-control form-control-sm d-inline-block ml-2"
+                       style="width:auto">
                 <button class="btn btn-sm btn-outline-info ml-2"
                         onclick="doSnapshot()">Snapshot Now</button>
             </div></div>
@@ -60,9 +71,8 @@
     <h3 class="mt-3">Shopkeepers — by Craft Discipline</h3>
     <table class="table table-sm table-striped">
         <thead><tr>
-            <th>Discipline</th><th>Shops</th><th>Score</th>
+            <th>Discipline</th><th>Shops</th><th>Stock Score</th>
             <th>Total Gold</th>
-            <th>Δ1h (pp)</th><th>Δ6h (pp)</th><th>Δ1d (pp)</th><th>Δ3d (pp)</th><th>Δ1w (pp)</th>
         </tr></thead>
         <tbody id="tbl-discipline"></tbody>
     </table>
@@ -70,12 +80,34 @@
     <h4 class="mt-3">Per-Shop Detail</h4>
     <table class="table table-sm table-striped">
         <thead><tr>
-            <th>Shop</th><th>Discipline</th><th>Score</th>
-            <th>Gold</th>
-            <th>Δ1h (pp)</th><th>Δ6h (pp)</th><th>Δ1d (pp)</th><th>Δ3d (pp)</th><th>Δ1w (pp)</th>
+            <th>Shop</th><th>Discipline</th><th>Stock Score</th>
+            <th>Gold Score</th><th>Gold</th>
             <th>Stock by Tier</th>
         </tr></thead>
         <tbody id="tbl-shops"></tbody>
+    </table>
+
+    <!-- Section A2: Throughput — Time-to-Refill -->
+    <h4 class="mt-3">Throughput — Time-to-Refill</h4>
+    <table class="table table-sm table-striped">
+        <thead><tr>
+            <th>Shop</th><th>Score</th>
+            <th>TtR (commons)</th><th>TtR (rares)</th>
+            <th>Depleted now</th>
+            <th>1h</th><th>6h</th><th>1d</th><th>3d</th><th>1w</th>
+        </tr></thead>
+        <tbody id="tbl-throughput"></tbody>
+    </table>
+
+    <!-- Section A3: Input Rate — items/day per zone -->
+    <h4 class="mt-3">Input Rate — items/day per zone</h4>
+    <table class="table table-sm table-striped">
+        <thead><tr>
+            <th>Zone</th><th>Score</th>
+            <th>Items/day (in)</th><th>From foragers</th>
+            <th>From restock</th><th>Tier mix</th>
+        </tr></thead>
+        <tbody id="tbl-input"></tbody>
     </table>
 
     <!-- Section B: Caravans -->
@@ -83,7 +115,7 @@
     <table class="table table-sm table-striped">
         <thead><tr>
             <th>Name</th><th>Score</th><th>State</th><th>Time-in-State</th>
-            <th>Room</th><th>Cargo</th>
+            <th>Room</th><th>Cargo</th><th>Multiplier</th><th>Lbs Delivered</th>
             <th>Cycles 1h</th><th>6h</th><th>1d</th><th>3d</th><th>1w</th>
         </tr></thead>
         <tbody id="tbl-caravans"></tbody>
@@ -95,6 +127,7 @@
         <thead><tr>
             <th>Name</th><th>Score</th><th>Territory</th><th>State</th>
             <th>Time-in-State</th><th>Room</th><th>Cargo</th>
+            <th>Multiplier</th><th>Lbs Delivered</th>
             <th>Cycles 1h</th><th>6h</th><th>1d</th><th>3d</th><th>1w</th>
         </tr></thead>
         <tbody id="tbl-foragers"></tbody>
@@ -201,13 +234,47 @@
         return s;
     }
 
+    // fmtTtR converts a round count to a human-readable time string.
+    // Uses RoundsPerGameHour from the API (d.scores.RoundsPerGameHour)
+    // when available; falls back to 600 for pre-Phase-4 responses.
+    var _rph = 0; // set from API on each render
+    function fmtTtR(rounds) {
+        if (!rounds || rounds <= 0) return '—';
+        var rph = _rph > 0 ? _rph : 600;
+        var hours = rounds / rph;
+        if (hours < 1) return Math.round(hours * 60) + 'min';
+        if (hours < 24) return hours.toFixed(1) + 'h';
+        return (hours / 24).toFixed(1) + 'd';
+    }
+
+    // multText returns a human-readable string describing the logistics
+    // multiplier currently active for a caravan or forager snapshot.
+    var _stuckThreshold = 3000; // matches LogisticsStuckRounds config default; updated on each render
+    function multText(snap) {
+        if (snap.state === '(despawned)' || snap.state === '(not active)') {
+            return '<span class="text-danger">despawned</span>';
+        }
+        if (snap.stuck_rounds && snap.stuck_rounds > _stuckThreshold) {
+            return '<span class="text-warning">stuck (&times;0.4)</span>';
+        }
+        return '&mdash;';
+    }
+
     function render(data) {
         var d = data;
 
+        // Capture RoundsPerGameHour and LogisticsStuckRounds from API so
+        // fmtTtR and multText use live server config values.
+        _rph = (d.scores && d.scores.RoundsPerGameHour) ? d.scores.RoundsPerGameHour : 0;
+        if (d.scores && d.scores.LogisticsStuckRounds) {
+            _stuckThreshold = d.scores.LogisticsStuckRounds;
+        }
+
         document.getElementById('score-overall').innerHTML = fmtScore(d.scores.OverallScore, true);
-        document.getElementById('score-shop').innerHTML = fmtScore(d.scores.MeanShop, d.scores.MeanShop > 0);
-        document.getElementById('score-caravan').innerHTML = fmtScore(d.scores.MeanCaravan, d.scores.MeanCaravan > 0);
-        document.getElementById('score-forager').innerHTML = fmtScore(d.scores.MeanForager, d.scores.MeanForager > 0);
+        document.getElementById('score-stock').innerHTML = fmtScore(d.scores.MeanStock, d.scores.MeanStock > 0);
+        document.getElementById('score-input').innerHTML = fmtScore(d.scores.MeanInput, d.scores.MeanInput > 0);
+        document.getElementById('score-throughput').innerHTML = fmtScore(d.scores.MeanThroughput, d.scores.MeanThroughput > 0);
+        document.getElementById('score-gold').innerHTML = fmtScore(d.scores.MeanShopGold, d.scores.MeanShopGold > 0);
         document.getElementById('last-ts').textContent = d.snapshot.timestamp;
 
         // Group shops by craft discipline they support.
@@ -228,19 +295,7 @@
             var gold = totalGold(shops);
             discHtml += '<tr><td>' + disc + '</td><td>' + shops.length + '</td>' +
                         '<td>' + fmtScore(score, score > 0) + '</td>' +
-                        '<td>' + gold + '</td>';
-            // Average stock-score deltas across shops in this discipline.
-            ['1h','6h','1d','3d','1w'].forEach(function(label) {
-                var sumPP = 0, n = 0;
-                for (var j = 0; j < shops.length; j++) {
-                    var key = shopKey(shops[j]);
-                    var sd = d.deltas[label] && d.deltas[label].shops[key];
-                    if (sd) { sumPP += sd.StockScoreDelta; n++; }
-                }
-                var avg = n > 0 ? Math.round(sumPP / n) : 0;
-                discHtml += '<td>' + (avg > 0 ? '+' : '') + avg + 'pp</td>';
-            });
-            discHtml += '</tr>';
+                        '<td>' + gold + '</td></tr>';
         }
         document.getElementById('tbl-discipline').innerHTML = discHtml;
 
@@ -258,25 +313,70 @@
         for (var i = 0; i < shopPairs.length; i++) {
             var row = shopPairs[i].row;
             var snap = shopPairs[i].snap;
-            var key = shopKey(snap);
             shopHtml += '<tr><td>' + (row.Name || '#'+row.MobId) + '</td>' +
                         '<td>' + (row.CraftSupport || '—') + '</td>' +
-                        '<td>' + fmtScore(row.Score, row.HasScore) + '</td>' +
-                        '<td>' + snap.gold + '</td>';
-            ['1h','6h','1d','3d','1w'].forEach(function(label) {
-                var sd = d.deltas[label] && d.deltas[label].shops[key];
-                var deltaText;
-                if (sd) {
-                    var dpp = sd.StockScoreDelta;
-                    deltaText = (dpp > 0 ? '+' : '') + dpp + 'pp';
-                } else {
-                    deltaText = '<span class="text-muted">—</span>';
-                }
-                shopHtml += '<td>' + deltaText + '</td>';
-            });
-            shopHtml += '<td>' + tierBar(snap.stock, totalCap(snap.stock)) + '</td></tr>';
+                        '<td>' + fmtScore(row.StockScore, row.HasScore) + '</td>' +
+                        '<td>' + fmtScore(row.GoldScore, true) + '</td>' +
+                        '<td>' + snap.gold + '</td>' +
+                        '<td>' + tierBar(snap.stock, totalCap(snap.stock)) + '</td></tr>';
         }
         document.getElementById('tbl-shops').innerHTML = shopHtml;
+
+        // Throughput table — Time-to-Refill per shop.
+        var thruHtml = '';
+        for (var i = 0; i < shopPairs.length; i++) {
+            var row = shopPairs[i].row;
+            var snap = shopPairs[i].snap;
+            var key = shopKey(snap);
+            var depCnt = snap.currently_depleted_count || 0;
+            var depCell = depCnt > 0
+                ? '<span class="text-danger">' + depCnt + '</span>'
+                : '0';
+            thruHtml += '<tr><td>' + (row.Name || '#'+row.MobId) + '</td>' +
+                        '<td>' + fmtScore(row.ThroughputScore, true) + '</td>' +
+                        '<td>' + fmtTtR(snap.median_ttr_commons) + '</td>' +
+                        '<td>' + fmtTtR(snap.median_ttr_rares) + '</td>' +
+                        '<td>' + depCell + '</td>';
+            ['1h','6h','1d','3d','1w'].forEach(function(label) {
+                var sd = d.deltas[label] && d.deltas[label].shops[key];
+                thruHtml += '<td>' + fmtTtR(sd ? sd.MedianTtR : 0) + '</td>';
+            });
+            thruHtml += '</tr>';
+        }
+        document.getElementById('tbl-throughput').innerHTML =
+            thruHtml || '<tr><td colspan="10" class="text-muted">No shops.</td></tr>';
+
+        // Input rate table — items/day per zone.
+        var inputHtml = '';
+        var zoneRates = d.scores.InputRateByZone || {};
+        var zoneKeys = Object.keys(zoneRates).sort();
+        for (var i = 0; i < zoneKeys.length; i++) {
+            var zone = zoneKeys[i];
+            var zr = zoneRates[zone];
+            // Build a compact tier-mix string.
+            var tierMixStr = '';
+            if (zr.tier_mix) {
+                var tiers = [50, 40, 30, 20, 10];
+                var parts = [];
+                for (var ti = 0; ti < tiers.length; ti++) {
+                    var t = tiers[ti];
+                    if (zr.tier_mix[t]) {
+                        parts.push('T' + t + ':' + Math.round(zr.tier_mix[t]));
+                    }
+                }
+                tierMixStr = parts.join(' ');
+            }
+            inputHtml += '<tr>' +
+                '<td>' + zone + '</td>' +
+                '<td>' + fmtScore(zr.score, true) + '</td>' +
+                '<td>' + (zr.items_per_day || 0).toFixed(1) + '</td>' +
+                '<td>' + (zr.from_foragers || 0).toFixed(0) + '</td>' +
+                '<td>' + (zr.from_restock || 0).toFixed(0) + '</td>' +
+                '<td><small>' + (tierMixStr || '—') + '</small></td>' +
+                '</tr>';
+        }
+        document.getElementById('tbl-input').innerHTML =
+            inputHtml || '<tr><td colspan="6" class="text-muted">No zone data.</td></tr>';
 
         // Caravans, alphabetical by name.
         var caravanPairs = (d.snapshot.caravans || []).map(function(c, i) {
@@ -300,9 +400,11 @@
                            '<td>round +' + (d.snapshot.round - c.state_entered_round) + '</td>' +
                            '<td>' + c.room_id + '</td>' +
                            '<td>' + bar + ' ' + c.cargo_weight + '/' + c.cargo_capacity + ' lbs' + '</td>' +
+                           '<td>' + multText(c) + '</td>' +
+                           '<td>' + (c.lbs_delivered || 0) + '</td>' +
                            '<td colspan="5">' + tierBarFromDelta(cd ? cd.DeliveriesByTierDelta : null) + '</td></tr>';
         }
-        document.getElementById('tbl-caravans').innerHTML = caravanHtml || '<tr><td colspan="11" class="text-muted">No caravans active.</td></tr>';
+        document.getElementById('tbl-caravans').innerHTML = caravanHtml || '<tr><td colspan="13" class="text-muted">No caravans active.</td></tr>';
 
         // Foragers, alphabetical by name.
         var foragerPairs = (d.snapshot.foragers || []).map(function(f, i) {
@@ -320,16 +422,19 @@
                 f.cargo_capacity || 1
             );
             var fd = d.deltas['1d'] && d.deltas['1d'].foragers && d.deltas['1d'].foragers[f.mob_id];
+            var isDespawned = f.state === '(despawned)' || f.state === '(not active)';
             foragerHtml += '<tr><td>' + f.name + '</td>' +
                            '<td>' + fmtScore(sc.Score, sc.HasScore) + '</td>' +
                            '<td>' + (f.territory || '—') + '</td>' +
                            '<td>' + f.state + '</td>' +
-                           '<td>' + (f.state === '(not active)' ? '&mdash;' : 'round +' + (d.snapshot.round - f.state_entered_round)) + '</td>' +
+                           '<td>' + (isDespawned ? '&mdash;' : 'round +' + (d.snapshot.round - f.state_entered_round)) + '</td>' +
                            '<td>' + f.room_id + '</td>' +
                            '<td>' + bar + ' ' + f.cargo_weight + '/' + f.cargo_capacity + ' lbs' + '</td>' +
+                           '<td>' + multText(f) + '</td>' +
+                           '<td>' + (f.lbs_delivered || 0) + '</td>' +
                            '<td colspan="5">' + tierBarFromDelta(fd ? fd.DeliveriesByTierDelta : null) + '</td></tr>';
         }
-        document.getElementById('tbl-foragers').innerHTML = foragerHtml || '<tr><td colspan="12" class="text-muted">No foragers active.</td></tr>';
+        document.getElementById('tbl-foragers').innerHTML = foragerHtml || '<tr><td colspan="14" class="text-muted">No foragers active.</td></tr>';
     }
 
     window.fetchData = function() {

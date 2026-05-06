@@ -24,10 +24,11 @@ the bank has no item limit.
 
 <ansi fg="yellow">Storage Fees: </ansi>
 
-The bank charges a monthly fee of 1 gold per stored item,
-deducted automatically from your bank balance. If you
-cannot cover the fee, the bank will forfeit your least
-valuable items first and notify you via
+The bank charges a monthly fee of 1 gold per storage slot.
+Stackable items (components, potions, food, grenades) share
+a single slot regardless of quantity, so 50 iron ore costs
+the same as 1. If you cannot cover the fee, the bank will
+forfeit your least valuable stacks first and notify you via
 <ansi fg="command">inbox</ansi>. Keep gold deposited to
 cover your storage costs.
 

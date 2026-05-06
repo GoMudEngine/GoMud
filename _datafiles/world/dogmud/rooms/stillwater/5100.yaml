@@ -1,0 +1,85 @@
+roomid: 5100
+zone: Stillwater
+title: The Counting House
+description: >
+  A low building of pale lake-stone squeezed into the lane
+  between the general store and the constabulary road, its
+  narrow facade marked by a single carved
+  <ansi fg="itemname">anchor-and-scales</ansi> above the
+  door. Inside, the room is small and deliberate — a
+  scarred <ansi fg="itemname">counter</ansi> of dark pine
+  spans the width of the space, and behind it a
+  floor-to-ceiling <ansi fg="itemname">rack</ansi> of
+  pigeonholes holds folded documents secured with cord and
+  wax. Most of the seals visible from the public side are
+  inked with the silhouette of a pearl in an open shell.
+  The air smells of beeswax, old paper, and the faint
+  brine that always finds its way inland when the lake
+  wind shifts. A heavy
+  <ansi fg="itemname">strongbox</ansi> of lake-iron sits
+  bolted low to the floor behind the counter, and a
+  ledger the size of a small door lies open on the
+  writing slope beside it. This is the town's bank -- not
+  vaulted marble but a working counting house, built for
+  fishing skiffs and pearl merchants, not emperors.
+biome: city
+isbank: true
+isstorage: true
+storagecapacity: 1000
+coord:
+  x: -17
+  y: 4
+  z: 0
+exits:
+  west:
+    roomid: 4105
+nouns:
+  counter: A long counter of dark pine, the public face
+    worn smooth by elbows and the backs of hands over
+    many seasons. A small brass
+    <ansi fg="itemname">bell</ansi> sits at one end for
+    summoning attention; a shallow groove along the far
+    edge is where the clerk rests a pen between entries.
+    The surface nearest the ledger is stained faintly
+    with old ink that no amount of sanding has fully
+    lifted.
+  rack: A floor-to-ceiling array of narrow pigeonholes
+    behind the counter, every slot holding a folded
+    document tied with waxed cord. Most seals bear the
+    counting house's mark -- a pearl in an open shell
+    pressed into brown wax. A few are older, their wax
+    gone dark with age. At the very top, a row of slate
+    tags names the groupings -- MOORAGE, CATCH BONDS,
+    PEARL ACCOUNTS, SHIP LETTERS, and one small slot
+    with no label at all.
+  strongbox: A heavy coffer of lake-iron, squat and
+    wide, its base bolted through the flooring into
+    the stone slab below. The lock takes a long-shank
+    key the clerk wears on a cord beneath their coat.
+    The iron is pitted from the lake air but sounds
+    very solid when a knuckle taps it.
+  ledger: An enormous ledger lying open on the writing
+    slope, its pages dense with columns of figures in
+    several different hands across several seasons. The
+    current entries are neat and small. Pearl prices,
+    skiff-loan payments, a few larger entries in red
+    ink that carry no names -- only account numbers.
+    The oldest pages at the back are water-stained and
+    the ink has faded to the colour of marsh water.
+  anchor and scales: A carved wood panel above the
+    door, painted once and now weathered to bare grain
+    in patches. It shows a ship's anchor crossed with
+    a merchant's beam-balance -- the traditional sign
+    of a counting house in any harbor town. Someone
+    has scratched a small pearl into the anchor's ring
+    in fresher work, local amendment.
+spawninfo:
+- mobid: 356
+  message: The counting house clerk looks up from the ledger.
+  respawnrate: 2 real minutes
+idlemessages:
+- The clerk turns a page of the ledger with practised care, smoothing the crease.
+- A wax seal cracks as a document is folded and slotted into its pigeonhole.
+- The strongbox settles with a low metallic tick as the building shifts in the lake wind.
+- The clerk dips a pen, pauses to calculate, and makes a single small entry.
+- Through the narrow window, the smell of the lake briefly sharpens -- tide-turn.

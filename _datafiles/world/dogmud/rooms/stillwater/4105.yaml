@@ -27,6 +27,8 @@ exits:
     roomid: 4109
   west:
     roomid: 4106
+  east:
+    roomid: 5100
 nouns:
   tackle: A wall of fishing gear hung on iron pegs from
     floor to ceiling — hooks of half a dozen gauges sorted

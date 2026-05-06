@@ -65,6 +65,25 @@ func TestThroughput_SaveLoadRoundtrip(t *testing.T) {
 	}
 }
 
+func TestCaravan_LbsDeliveredAccumulates(t *testing.T) {
+	ClearThroughputCache()
+	AddLbsDelivered("test_zone", 372, 150)
+	AddLbsDelivered("test_zone", 372, 75)
+	tp := GetThroughput("test_zone", 372)
+	if tp.LbsDelivered != 225 {
+		t.Errorf("LbsDelivered = %d, want 225", tp.LbsDelivered)
+	}
+}
+
+func TestCaravan_LbsDelivered_IgnoresZero(t *testing.T) {
+	ClearThroughputCache()
+	AddLbsDelivered("test_zone", 372, 0)
+	tp := GetThroughput("test_zone", 372)
+	if tp.LbsDelivered != 0 {
+		t.Errorf("zero lbs should not increment: got %d", tp.LbsDelivered)
+	}
+}
+
 func TestThroughput_TwoDifferentMobs(t *testing.T) {
 	ClearThroughputCache()
 	IncrementDelivery("zone_a", 100, 50)

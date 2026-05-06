@@ -1286,6 +1286,37 @@ func loadAllDataFiles(isReload bool) {
 	}
 	mudlog.Info("system NPC anchor rooms prepared", "count", preparedAnchors)
 
+	// Eager-spawn all rooms whose SpawnInfo references a shop-bearing mob.
+	// Without this, shopkeeper mobs in unvisited zones are never instantiated,
+	// so TickMobShopRestock, TickMobCraft, and caravan/forager deliveries all
+	// no-op because there is no live mob instance in the room to receive them.
+	// The existing Despawns()/IsEssential() guards keep shop mobs alive once
+	// spawned. systemNPCAnchorRooms rooms were already Prepare'd above; the
+	// duplicate Prepare call is safe (Prepare is idempotent for present mobs).
+	mudlog.Info("BOOT", "msg", "eager-spawning shop-bearing rooms")
+	shopRoomsScanned := 0
+	shopRoomsPrepared := 0
+	for _, roomId := range rooms.GetAllRoomIds() {
+		room := rooms.LoadRoom(roomId)
+		if room == nil {
+			continue
+		}
+		shopRoomsScanned++
+		for _, si := range room.SpawnInfo {
+			if si.MobId <= 0 {
+				continue
+			}
+			tmpl := mobs.GetMobSpec(mobs.MobId(si.MobId))
+			if tmpl != nil && tmpl.HasShop() {
+				room.Prepare(false)
+				shopRoomsPrepared++
+				break
+			}
+		}
+	}
+	mudlog.Info("BOOT", "msg", "eager-spawned shop-bearing rooms",
+		"preparedCount", shopRoomsPrepared, "totalRoomsScanned", shopRoomsScanned)
+
 	// Load sealed crates from disk and attach them to their rooms.
 	// The crates/ directory mirrors shops/ — one YAML per crate,
 	// named "<roomid>-<label>.yaml". Missing directory means no

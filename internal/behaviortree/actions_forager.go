@@ -12,6 +12,7 @@ package behaviortree
 
 import (
 	"fmt"
+	"math"
 	"slices"
 	"strconv"
 
@@ -153,7 +154,6 @@ func hpRatio(mob *mobs.Mob) float64 {
 // to the legacy idle path (idlecommands + lookfortrouble), matching
 // the caravan_step pattern.
 
-const restingDuration uint64 = 120
 
 func tickForagerResting(
 	p *forager.ForagerProfile,
@@ -167,7 +167,8 @@ func tickForagerResting(
 	}
 	startedStr := ctx.MobState.GetString(keyStateStartedRound)
 	started, _ := strconv.ParseUint(startedStr, 10, 64)
-	dwellElapsed := util.GetRoundCount() >= started+restingDuration
+	restDuration := uint64(configs.GetBalanceConfig().ForagerRestDurationRounds)
+	dwellElapsed := util.GetRoundCount() >= started+restDuration
 	if dwellElapsed && mob.Character.Health >= mob.Character.HealthMax.Value {
 		// 2026-05-02: Stage 3.4 carry-ratio gate retained as a
 		// BACKSTOP. The primary deadlock-avoidance mechanism is now
@@ -385,15 +386,33 @@ func tickForagerRecalling(
 		transitionForager(ctx.MobState, forager.StateResting)
 		return Success
 	}
-	// Don't re-issue the cast every idle tick — re-issuing while a
-	// cast is in progress can reset its progress and trap the forager
-	// mid-cast indefinitely (observed 2026-04-30: Kessa "begins
-	// weaving a spell" repeatedly but never actually teleports).
-	// Wait for the active cast to resolve.
-	if mob.Character.IsCasting() {
-		return Success
+
+	// Teleport directly to anchor rather than issuing "cast fold-recall".
+	// The fold-cast system only advances casts inside the combat loop
+	// (gated on mob.Character.Aggro != nil), so foragers recalling
+	// outside combat would be permanently stuck with IsCasting()=true
+	// and never actually move. Direct room manipulation mirrors exactly
+	// what resolveFoldRecall does internally for mobs.
+	anchorRoomId := getMiscDataIntForager(mob, "fold-anchor-room")
+	if anchorRoomId <= 0 {
+		// No anchor set in MiscData — fall back to the profile sanctuary.
+		anchorRoomId = p.SanctuaryRoom
 	}
-	mob.Command("cast fold-recall")
+	if anchorRoomId > 0 && anchorRoomId != ctx.RoomId {
+		fromRoom := rooms.LoadRoom(ctx.RoomId)
+		toRoom := rooms.LoadRoom(anchorRoomId)
+		if toRoom != nil {
+			mob.Character.EndAggro()
+			mob.Character.CastingState = nil // clear any stale cast
+			if fromRoom != nil {
+				fromRoom.RemoveMob(mob.InstanceId)
+			}
+			toRoom.AddMob(mob.InstanceId) // sets mob.Character.RoomId internally
+		}
+	}
+	// Don't transition state here — the next tick will see
+	// ctx.RoomId == p.SanctuaryRoom and run the at-sanctuary path
+	// (dump satchel → transition to resting).
 	return Success
 }
 
@@ -524,10 +543,13 @@ func npcVisitVendorsInRoom(
 			mob.Character.RemoveItem(item)
 			entry.Current++
 			mutated = true
-			// Increment throughput counter for delivery tracking.
+			// Increment throughput counters for delivery tracking.
 			spec := items.GetItemSpec(item.ItemId)
-			if spec != nil && spec.RarityTier > 0 {
-				forager.IncrementDelivery(mob.Zone, int(mob.MobId), spec.RarityTier)
+			if spec != nil {
+				if spec.RarityTier > 0 {
+					forager.IncrementDelivery(mob.Zone, int(mob.MobId), spec.RarityTier)
+				}
+				forager.AddLbsDelivered(mob.Zone, int(mob.MobId), uint64(math.Round(spec.Weight)))
 			}
 			room.SendText(fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi> hands a %s to`+
@@ -599,4 +621,23 @@ func carryRatio(mob *mobs.Mob) float64 {
 		return 0
 	}
 	return mob.Character.GetCarriedWeight() / cap
+}
+
+// getMiscDataIntForager retrieves an integer from a mob's MiscData map,
+// handling both int and float64 types (float64 can appear after YAML
+// round-trips). Returns 0 if the key is absent or the type is
+// unrecognized. Mirrors hooks.getMiscDataInt without importing that
+// package (which would create an import cycle).
+func getMiscDataIntForager(mob *mobs.Mob, key string) int {
+	val := mob.Character.GetMiscData(key)
+	if val == nil {
+		return 0
+	}
+	switch v := val.(type) {
+	case int:
+		return v
+	case float64:
+		return int(v)
+	}
+	return 0
 }

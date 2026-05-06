@@ -638,50 +638,167 @@ func TestUserRecord_TryCommandAlias(t *testing.T) {
 
 // ─── Storage ───────────────────────────────────────────────────────────────
 
+// registerTestSpec is a test helper that installs a minimal ItemSpec into the
+// global items registry so that GetSpec() calls resolve correctly.
+func registerTestSpec(id int, typ items.ItemType, isComponent bool) {
+	items.RegisterTestItemSpec(&items.ItemSpec{
+		ItemId:      id,
+		Name:        strconv.Itoa(id),
+		Type:        typ,
+		IsComponent: isComponent,
+		Value:       10,
+	})
+}
+
 func TestStorage_GetItems(t *testing.T) {
-	s := &Storage{Items: []items.Item{{ItemId: 1}, {ItemId: 2}}}
+	// New shape: items live in Slots.
+	s := &Storage{
+		Slots: []StorageSlot{
+			{Item: items.Item{ItemId: 1}, Count: 1},
+			{Item: items.Item{ItemId: 2}, Count: 1},
+		},
+	}
 	got := s.GetItems()
 	assert.Len(t, got, 2)
+}
 
-	// Verify it returns a copy
-	got[0].ItemId = 999
-	assert.Equal(t, 1, s.Items[0].ItemId)
+func TestStorage_GetItems_ExpandsCount(t *testing.T) {
+	registerTestSpec(10, items.Object, true) // component — stackable
+	s := &Storage{}
+	s.AddItem(items.Item{ItemId: 10})
+	s.AddItem(items.Item{ItemId: 10})
+	s.AddItem(items.Item{ItemId: 10})
+	assert.Equal(t, 1, s.SlotCount(), "three identical components should fold into one slot")
+	got := s.GetItems()
+	assert.Len(t, got, 3, "GetItems should expand the stack to 3 individual items")
 }
 
 func TestStorage_AddItem(t *testing.T) {
-	s := &Storage{}
+	registerTestSpec(1, items.Weapon, false)  // non-stackable
+	registerTestSpec(2, items.Object, true)   // component — stackable
 
-	t.Run("add valid item", func(t *testing.T) {
+	t.Run("add valid non-stackable item", func(t *testing.T) {
+		s := &Storage{}
 		ok := s.AddItem(items.Item{ItemId: 1})
 		assert.True(t, ok)
-		assert.Len(t, s.Items, 1)
+		assert.Equal(t, 1, s.SlotCount())
 	})
 
 	t.Run("reject zero item", func(t *testing.T) {
+		s := &Storage{}
 		ok := s.AddItem(items.Item{ItemId: 0})
 		assert.False(t, ok)
 	})
 
 	t.Run("reject negative item", func(t *testing.T) {
+		s := &Storage{}
 		ok := s.AddItem(items.Item{ItemId: -1})
 		assert.False(t, ok)
+	})
+
+	t.Run("stackable components fold into one slot", func(t *testing.T) {
+		s := &Storage{}
+		s.AddItem(items.Item{ItemId: 2})
+		s.AddItem(items.Item{ItemId: 2})
+		assert.Equal(t, 1, s.SlotCount())
+		assert.Equal(t, 2, s.Slots[0].Count)
+	})
+
+	t.Run("non-stackable weapon never folds", func(t *testing.T) {
+		s := &Storage{}
+		s.AddItem(items.Item{ItemId: 1})
+		s.AddItem(items.Item{ItemId: 1})
+		assert.Equal(t, 2, s.SlotCount())
 	})
 }
 
 func TestStorage_RemoveItem(t *testing.T) {
-	uuid1 := [16]byte{1}
-	s := &Storage{Items: []items.Item{{ItemId: 1, UUID: uuid1}}}
+	registerTestSpec(1, items.Weapon, false) // non-stackable
+	registerTestSpec(3, items.Object, true)  // stackable component
 
-	t.Run("remove existing", func(t *testing.T) {
+	uuid1 := [16]byte{1}
+
+	t.Run("remove existing non-stackable by UUID", func(t *testing.T) {
+		s := &Storage{
+			Slots: []StorageSlot{{Item: items.Item{ItemId: 1, UUID: uuid1}, Count: 1}},
+		}
 		ok := s.RemoveItem(items.Item{ItemId: 1, UUID: uuid1})
 		assert.True(t, ok)
-		assert.Len(t, s.Items, 0)
+		assert.Equal(t, 0, s.SlotCount())
 	})
 
 	t.Run("remove nonexistent", func(t *testing.T) {
+		s := &Storage{}
 		ok := s.RemoveItem(items.Item{ItemId: 999})
 		assert.False(t, ok)
 	})
+
+	t.Run("remove one from stack decrements count", func(t *testing.T) {
+		s := &Storage{}
+		s.AddItem(items.Item{ItemId: 3})
+		s.AddItem(items.Item{ItemId: 3})
+		s.AddItem(items.Item{ItemId: 3})
+		assert.Equal(t, 3, s.Slots[0].Count)
+		ok := s.RemoveItem(items.Item{ItemId: 3})
+		assert.True(t, ok)
+		assert.Equal(t, 2, s.Slots[0].Count)
+	})
+
+	t.Run("remove last item in stack drops slot", func(t *testing.T) {
+		s := &Storage{}
+		s.AddItem(items.Item{ItemId: 3})
+		ok := s.RemoveItem(items.Item{ItemId: 3})
+		assert.True(t, ok)
+		assert.Equal(t, 0, s.SlotCount())
+	})
+}
+
+func TestStorage_MigrateSlots(t *testing.T) {
+	registerTestSpec(5, items.Object, true)  // stackable component (iron ore analogue)
+	registerTestSpec(6, items.Weapon, false) // non-stackable sword
+
+	s := &Storage{
+		Items: []items.Item{
+			{ItemId: 5},
+			{ItemId: 5},
+			{ItemId: 5},
+			{ItemId: 6},
+		},
+	}
+
+	changed := s.MigrateStorageSlots()
+	assert.True(t, changed, "migration should report it ran")
+	assert.Nil(t, s.Items, "legacy Items should be cleared after migration")
+
+	// 3 iron-ore + 1 sword → 2 slots
+	assert.Equal(t, 2, s.SlotCount())
+
+	// Iron ore slot has Count 3
+	found := false
+	for _, slot := range s.Slots {
+		if slot.Item.ItemId == 5 {
+			assert.Equal(t, 3, slot.Count)
+			found = true
+		}
+	}
+	assert.True(t, found, "should have a slot for the stackable component")
+
+	// Sword slot has Count 1
+	foundSword := false
+	for _, slot := range s.Slots {
+		if slot.Item.ItemId == 6 {
+			assert.Equal(t, 1, slot.Count)
+			foundSword = true
+		}
+	}
+	assert.True(t, foundSword, "should have a slot for the sword")
+}
+
+func TestStorage_MigrateSlots_Idempotent(t *testing.T) {
+	s := &Storage{Slots: []StorageSlot{{Item: items.Item{ItemId: 1}, Count: 1}}}
+	changed := s.MigrateStorageSlots()
+	assert.False(t, changed, "migration should be no-op when Items is nil")
+	assert.Equal(t, 1, s.SlotCount())
 }
 
 func TestStorage_FindItem(t *testing.T) {

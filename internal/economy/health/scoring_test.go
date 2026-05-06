@@ -7,6 +7,44 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/economy/health"
 )
 
+// testScoringCfg is a minimal ScoringConfig with spec-default TtR targets
+// and a fixed RoundsPerGameHour=10 for deterministic test math.
+var testScoringCfg = health.ScoringConfig{
+	RoundsPerGameHour:         10,
+	TtRTargetTier50Hours:      3,
+	TtRTargetTier40Hours:      6,
+	TtRTargetTier30Hours:      18,
+	TtRTargetTier20Days:       3,
+	TtRTargetTier10Days:       7,
+	TtRWindowGameDays:         7,
+	LogisticsStuckRounds:      3000,
+	LogisticsStuckMultiplier:  0.4,
+	ScoreWeightStock:          0.40,
+	ScoreWeightInput:          0.30,
+	ScoreWeightThroughput:     0.20,
+	ScoreWeightShopGold:       0.10,
+	RestockCadenceTier50Hours: 1,
+	RestockCadenceTier40Hours: 2,
+	RestockCadenceTier30Hours: 6,
+	RestockCadenceTier20Hours: 24,
+	RestockCadenceTier10Days:  5,
+}
+
+// roundsForHours converts game-hours to rounds using testScoringCfg.
+func roundsForHours(h int) uint64 {
+	return uint64(h) * testScoringCfg.RoundsPerGameHour
+}
+
+// roundsForDays converts game-days to rounds using testScoringCfg.
+func roundsForDays(d int) uint64 {
+	return uint64(d) * 24 * testScoringCfg.RoundsPerGameHour
+}
+
+// floatNear returns true if a and b are within tol of each other.
+func floatNear(a, b, tol float64) bool {
+	return math.Abs(a-b) <= tol
+}
+
 func TestScore_PerShop_WeightedByRestockQty(t *testing.T) {
 	shop := health.ShopSnapshot{
 		Stock: []health.StockSnapshot{
@@ -147,17 +185,27 @@ func TestScore_Caravan_StuckPenalty(t *testing.T) {
 }
 
 func TestScore_OverallWeightsShopsHeaviest(t *testing.T) {
+	// Five-axis formula: overall = weighted(stock + throughput + input + gold),
+	// logistics NOT blended in. With a single 50%-stocked shop and no history
+	// (using testScoringCfg weights):
+	//   MeanStock      = 50   (5/10 fill)
+	//   MeanThroughput = 100  (no depletion events → "always available")
+	//   MeanShopGold   = 100  (startingGold=0 → no-penalize path)
+	//   MeanInput      = 100  (bootstrap — cur.Round=0, roundsPerDay=240 → no prev)
+	// Weights: Stock=0.40, Input=0.30, Throughput=0.20, ShopGold=0.10, sum=1.0
+	// OverallScore = (0.40*50 + 0.20*100 + 0.30*100 + 0.10*100) / 1.0 = 80
+	const expectedOverall = 80.0
+
 	cur := health.Snapshot{
 		Shops: []health.ShopSnapshot{
-			{CraftSupport: "blacksmithing", Stock: []health.StockSnapshot{{RestockQty: 1, Current: 5, Max: 10}}}, // 50
+			{Zone: "blacksmithing_zone", CraftSupport: "blacksmithing",
+				Stock: []health.StockSnapshot{{ItemId: 1, Tier: 50, RestockQty: 1, Current: 5, Max: 10}}},
 		},
 		Caravans: []health.CaravanSnapshot{{InstId: 1, State: "thornwall_dwell"}},
 		Foragers: []health.ForagerSnapshot{{InstId: 7, State: "resting"}},
 	}
 
-	// Build 24 history entries that yield ~24 caravan cycles and ~24
-	// forager cycles (each entry alternates state). With the default
-	// expected cadence, both score = 100.
+	// Build 24 history entries (satisfies minHistoryForCycles).
 	hist := make([]*health.Snapshot, 0, 24)
 	caravanThornwall := &health.Snapshot{Caravans: []health.CaravanSnapshot{{InstId: 1, State: "thornwall_dwell"}}, Foragers: []health.ForagerSnapshot{{InstId: 7, State: "resting"}}}
 	caravanTransit := &health.Snapshot{Caravans: []health.CaravanSnapshot{{InstId: 1, State: "outbound_transit"}}, Foragers: []health.ForagerSnapshot{{InstId: 7, State: "foraging"}}}
@@ -169,24 +217,281 @@ func TestScore_OverallWeightsShopsHeaviest(t *testing.T) {
 		}
 	}
 
-	scores := health.Score(&cur, hist)
+	// Use ScoreWithConfig so the test exercises testScoringCfg, not the live
+	// global balance config. This is the test-isolation fix from Phase 3 review.
+	scores := health.ScoreWithConfig(&cur, hist, testScoringCfg)
 
-	if scores.PerShop[0].Score != 50 {
-		t.Errorf("PerShop[0]: got %.2f, want 50", scores.PerShop[0].Score)
+	// MeanShop is back-compat alias for MeanStock.
+	if math.Abs(scores.MeanShop-scores.MeanStock) > 0.01 {
+		t.Errorf("MeanShop %.2f != MeanStock %.2f — back-compat alias broken", scores.MeanShop, scores.MeanStock)
 	}
-	// With shop=50, caravan~100, forager~100 and weights 0.6/0.2/0.2:
-	// overall = (0.6*50 + 0.2*100 + 0.2*100) / 1.0 = 70.
-	// Allow ±15 for variation in cycle counting against the chosen pattern.
-	if scores.OverallScore < 55 || scores.OverallScore > 85 {
-		t.Errorf("OverallScore: got %.2f, want in [55, 85] (shops weighted heaviest)", scores.OverallScore)
+	if math.Abs(scores.MeanStock-50) > 0.5 {
+		t.Errorf("MeanStock: got %.2f, want ~50", scores.MeanStock)
 	}
-	// Shops weighted heaviest sanity: the weighted overall should be pulled
-	// toward MeanShop vs the unweighted mean. Concretely: overall must be
-	// closer to MeanShop than the unweighted mean is to MeanShop.
-	unweightedMean := (scores.MeanShop + scores.MeanCaravan + scores.MeanForager) / 3
-	if math.Abs(scores.OverallScore-scores.MeanShop) >= math.Abs(unweightedMean-scores.MeanShop) {
-		t.Errorf("Overall %.2f not pulled toward MeanShop %.2f vs unweighted mean %.2f — shops aren't weighted heaviest",
-			scores.OverallScore, scores.MeanShop, unweightedMean)
+	// Assert against the exact predicted value (±1 point tolerance).
+	if !floatNear(scores.OverallScore, expectedOverall, 1.0) {
+		t.Errorf("OverallScore: got %.2f, want %.2f ±1 (0.40*50 + 0.20*100 + 0.30*100 + 0.10*100)",
+			scores.OverallScore, expectedOverall)
+	}
+	// PerShop rows carry individual scores.
+	if scores.PerShop[0].Score < 49 || scores.PerShop[0].Score > 51 {
+		t.Errorf("PerShop[0].Score: got %.2f, want ~50", scores.PerShop[0].Score)
+	}
+}
+
+// ─── ThroughputScore tests ────────────────────────────────────────────────────
+
+func TestThroughputScore_NoEventsEverIsHundred(t *testing.T) {
+	// A shop with stock but no depletion history reads as "always
+	// available" — score 100.
+	snap := health.ShopSnapshot{
+		Stock: []health.StockSnapshot{
+			{ItemId: 100, Tier: 50, Current: 5, Max: 10},
+		},
+	}
+	got := health.ThroughputScore(snap, 1000, testScoringCfg)
+	if got < 99 {
+		t.Errorf("no-history shop = %.1f, want ~100", got)
+	}
+}
+
+func TestThroughputScore_FastRefillIsHundred(t *testing.T) {
+	// One tier-50 item, ttr = 1h, target = 3h → score >=95.
+	snap := health.ShopSnapshot{
+		Stock: []health.StockSnapshot{{ItemId: 100, Tier: 50, Current: 5, Max: 10}},
+		StockEvents: map[int][]health.StockEvent{
+			100: {{DepletedRound: 1000, RefilledRound: 1000 + roundsForHours(1)}},
+		},
+	}
+	got := health.ThroughputScore(snap, 9999, testScoringCfg)
+	if got < 95 {
+		t.Errorf("1h ttr vs 3h target = %.1f, want >=95", got)
+	}
+}
+
+func TestThroughputScore_SlowRefillIsLow(t *testing.T) {
+	// tier-50 item, ttr = 6h, target = 3h → score should be near 0.
+	// currentRound must be within the 7-day window so the event is included.
+	// Event: depleted=1000, refilled=1060 (6h later at 10 rounds/hr).
+	// Window = 7*24*10 = 1680 rounds. Use currentRound=2000 so
+	// windowStart=320 and refilled=1060 >= 320 (event in window).
+	snap := health.ShopSnapshot{
+		Stock: []health.StockSnapshot{{ItemId: 100, Tier: 50, Current: 0, Max: 10}},
+		StockEvents: map[int][]health.StockEvent{
+			100: {{DepletedRound: 1000, RefilledRound: 1000 + roundsForHours(6)}},
+		},
+	}
+	got := health.ThroughputScore(snap, 2000, testScoringCfg)
+	if got > 5 {
+		t.Errorf("6h ttr vs 3h target = %.1f, want <=5", got)
+	}
+}
+
+func TestThroughputScore_CurrentlyDepletedDragsScore(t *testing.T) {
+	// item depleted, no completed events; ongoing 4h-and-counting
+	// should drag score below 35 for tier-50.
+	snap := health.ShopSnapshot{
+		Stock:            []health.StockSnapshot{{ItemId: 100, Tier: 50, Current: 0, Max: 10}},
+		CurrentDepletion: map[int]uint64{100: 1000},
+	}
+	now := uint64(1000) + roundsForHours(4)
+	got := health.ThroughputScore(snap, now, testScoringCfg)
+	if got > 35 {
+		t.Errorf("ongoing 4h depletion vs 3h target tier-50 = %.1f, want <=35", got)
+	}
+}
+
+// ─── InputRateScore tests ─────────────────────────────────────────────────────
+
+func TestInputRateScore_BootstrapNoHistory(t *testing.T) {
+	// Empty zone with no input → score 100 (bootstrap).
+	got := health.InputRateScore("stillwater", &health.Snapshot{}, []*health.Snapshot{}, testScoringCfg)
+	if got < 99 {
+		t.Errorf("empty bootstrap = %.1f, want ~100", got)
+	}
+}
+
+func TestInputRateScore_LowInputIsLow(t *testing.T) {
+	// Snapshot history shows 1 day passing with very few items in.
+	cur := &health.Snapshot{
+		Round: roundsForDays(2),
+		Shops: []health.ShopSnapshot{
+			{Zone: "stillwater", RestockCount: 5,
+				Stock: []health.StockSnapshot{{ItemId: 1, Tier: 50, Current: 5, Max: 10}}},
+		},
+	}
+	prev := &health.Snapshot{
+		Round: roundsForDays(1),
+		Shops: []health.ShopSnapshot{
+			{Zone: "stillwater", RestockCount: 0,
+				Stock: []health.StockSnapshot{{ItemId: 1, Tier: 50, Current: 5, Max: 10}}},
+		},
+	}
+	got := health.InputRateScore("stillwater", cur, []*health.Snapshot{prev, cur}, testScoringCfg)
+	if got > 30 {
+		t.Errorf("low input = %.1f, want <=30", got)
+	}
+}
+
+func TestInputRateScore_HighInputIsHigh(t *testing.T) {
+	// Healthy zone: one game-day has elapsed, shops restocked frequently,
+	// and a forager made deliveries.  Score should reach >=80.
+	//
+	// testScoringCfg: RoundsPerGameHour=10 → roundsPerDay=240.
+	// Tier-50 cadence=1h → target contribution per item = 24/1 * 50 = 1200/day.
+	// We place 1 shop with 1 tier-50 item.  delta restocks = 30 (30 cycles in
+	// one game-day is plausible for a busy common-goods vendor).
+	// inputWeighted = 30 * 50 = 1500   (shop contribution)
+	// A forager with CargoCapacity=10 in the zone contributes
+	//   target += 3 * 10 * 30/100 = 9 (to target, not to actual deliveries)
+	// For deliveries: tier-50, 24 actual deliveries → +24*50 = 1200.
+	//
+	// target = 1200 (shop) + 9 (forager passive target) = 1209
+	// actual = 1500 (shop restocks) + 1200 (forager deliveries) = 2700
+	// score  = min(100, 2700/1209*100) = 100
+	//
+	// Even with the forager target contribution, actual easily exceeds it.
+	// Assert >=80 to tolerate slight rounding in zoneInputTarget.
+
+	prevRound := roundsForDays(1)
+	curRound := roundsForDays(2)
+
+	cur := &health.Snapshot{
+		Round: curRound,
+		Shops: []health.ShopSnapshot{
+			{Zone: "stillwater", MobId: 1, RestockCount: 30,
+				Stock: []health.StockSnapshot{{ItemId: 1, Tier: 50, Current: 5, Max: 10}}},
+		},
+		Foragers: []health.ForagerSnapshot{
+			{MobId: 99, Territory: "stillwater", CargoCapacity: 10,
+				State: "resting",
+				DeliveriesByTier: map[int]int{50: 24}},
+		},
+	}
+	prev := &health.Snapshot{
+		Round: prevRound,
+		Shops: []health.ShopSnapshot{
+			{Zone: "stillwater", MobId: 1, RestockCount: 0,
+				Stock: []health.StockSnapshot{{ItemId: 1, Tier: 50, Current: 5, Max: 10}}},
+		},
+		Foragers: []health.ForagerSnapshot{
+			{MobId: 99, Territory: "stillwater", CargoCapacity: 10,
+				State: "resting",
+				DeliveriesByTier: map[int]int{50: 0}},
+		},
+	}
+
+	got := health.InputRateScore("stillwater", cur, []*health.Snapshot{prev, cur}, testScoringCfg)
+	if got < 80 {
+		t.Errorf("high-input healthy zone = %.1f, want >=80", got)
+	}
+}
+
+// ─── LogisticsHealth tests ────────────────────────────────────────────────────
+
+func TestLogisticsHealth_DespawnedIsZero(t *testing.T) {
+	got := health.LogisticsHealth(health.LogisticsArgs{Despawned: true}, testScoringCfg)
+	if got != 0 {
+		t.Errorf("despawned = %.1f, want 0", got)
+	}
+}
+
+func TestLogisticsHealth_StuckMultiplier(t *testing.T) {
+	args := health.LogisticsArgs{
+		Cycles: 1, ExpectedCycles: 1,
+		LbsDelivered: 5000, TargetLbs: 5000,
+		Stuck: true,
+	}
+	got := health.LogisticsHealth(args, testScoringCfg)
+	// base = 100; stuck multiplier 0.4 → 40
+	if got < 38 || got > 42 {
+		t.Errorf("stuck-with-perfect-flow = %.1f, want ~40", got)
+	}
+}
+
+func TestLogisticsHealth_HealthyComposite(t *testing.T) {
+	args := health.LogisticsArgs{
+		Cycles: 1, ExpectedCycles: 1,
+		LbsDelivered: 5000, TargetLbs: 5000,
+	}
+	got := health.LogisticsHealth(args, testScoringCfg)
+	if got < 99 {
+		t.Errorf("perfect = %.1f, want ~100", got)
+	}
+}
+
+// ─── InputRateByZone and RoundsPerGameHour tests ─────────────────────────────
+
+func TestScoreWithConfig_InputRateByZone_PopulatedPerZone(t *testing.T) {
+	// A snapshot with two shops in "testzone" and no foragers.
+	// InputRateByZone should have an entry for "testzone".
+	cur := &health.Snapshot{
+		Round: roundsForDays(2),
+		Shops: []health.ShopSnapshot{
+			{Zone: "testzone", CraftSupport: "blacksmithing",
+				RestockCount: 20,
+				Stock:        []health.StockSnapshot{{ItemId: 1, Tier: 50, RestockQty: 1, Current: 5, Max: 10}}},
+			{Zone: "testzone", CraftSupport: "blacksmithing",
+				RestockCount: 10,
+				Stock:        []health.StockSnapshot{{ItemId: 2, Tier: 40, RestockQty: 1, Current: 3, Max: 10}}},
+		},
+	}
+	prev := &health.Snapshot{
+		Round: roundsForDays(1),
+		Shops: []health.ShopSnapshot{
+			{Zone: "testzone", MobId: 0, RestockCount: 0},
+			{Zone: "testzone", MobId: 0, RestockCount: 0},
+		},
+	}
+	scores := health.ScoreWithConfig(cur, []*health.Snapshot{prev, cur}, testScoringCfg)
+	if scores.InputRateByZone == nil {
+		t.Fatal("InputRateByZone is nil")
+	}
+	row, ok := scores.InputRateByZone["testzone"]
+	if !ok {
+		t.Fatalf("InputRateByZone missing key 'testzone'; keys: %v",
+			func() []string {
+				var k []string
+				for z := range scores.InputRateByZone {
+					k = append(k, z)
+				}
+				return k
+			}())
+	}
+	if row.Score < 0 || row.Score > 100 {
+		t.Errorf("InputRateByZone[testzone].Score = %.1f, want 0..100", row.Score)
+	}
+}
+
+func TestScoreWithConfig_RoundsPerGameHour_ExposedInScores(t *testing.T) {
+	// RoundsPerGameHour must be copied from cfg into the Scores struct
+	// so the dashboard JS can use it for fmtTtR without hardcoding.
+	cur := &health.Snapshot{}
+	scores := health.ScoreWithConfig(cur, nil, testScoringCfg)
+	if scores.RoundsPerGameHour != testScoringCfg.RoundsPerGameHour {
+		t.Errorf("RoundsPerGameHour: got %d, want %d",
+			scores.RoundsPerGameHour, testScoringCfg.RoundsPerGameHour)
+	}
+}
+
+// ─── ShopGoldScore tests ──────────────────────────────────────────────────────
+
+func TestShopGoldScore(t *testing.T) {
+	cases := []struct {
+		gold, starting int
+		want           float64
+	}{
+		{0, 500, 0},
+		{250, 500, 33.3},
+		{500, 500, 66.6},
+		{750, 500, 100},
+		{1000, 500, 100}, // capped at 1.5×
+	}
+	for _, c := range cases {
+		got := health.ShopGoldScore(health.ShopSnapshot{Gold: c.gold, StartingGold: c.starting})
+		if !floatNear(got, c.want, 1.0) {
+			t.Errorf("gold=%d/start=%d: got %.1f, want %.1f", c.gold, c.starting, got, c.want)
+		}
 	}
 }
 

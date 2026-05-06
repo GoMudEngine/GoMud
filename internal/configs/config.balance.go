@@ -247,9 +247,23 @@ type Balance struct {
 	PackScatterRounds  ConfigInt  `yaml:"PackScatterRounds"`  // Rounds mobs skip wandering after alpha death (default 2)
 
 	// ── CRAFTER MOBS ─────────────────────────────────────────────────────────
-	CrafterEnabled              ConfigBool `yaml:"CrafterEnabled"`              // Enable mob autonomous crafting (default true)
-	CrafterMaterialRestockRate  ConfigInt  `yaml:"CrafterMaterialRestockRate"`  // Rounds between material restocks and craft attempts (default 200)
-	CrafterRareThreshold        ConfigInt  `yaml:"CrafterRareThreshold"`        // SkillMinimum at or above which a craft is considered rare (default 3)
+	CrafterEnabled       ConfigBool `yaml:"CrafterEnabled"`       // Enable mob autonomous crafting (default true)
+	CrafterRareThreshold ConfigInt  `yaml:"CrafterRareThreshold"` // SkillMinimum at or above which a craft is considered rare (default 3)
+
+	// Deprecated: replaced by RestockCadenceTier{50,40,30,20,10}*. Kept
+	// only so old config.yaml files load without error. Remove after
+	// one deploy cycle.
+	CrafterMaterialRestockRate ConfigInt `yaml:"CrafterMaterialRestockRate"`
+
+	// Per-rarity-tier restock cadences (game-time hours). Replaces the
+	// single CrafterMaterialRestockRate. Higher rarity tiers (= more
+	// common) fire faster; lower tiers (= rarer) fire slowly as a
+	// backstop on top of forager / player-sale input.
+	RestockCadenceTier50Hours ConfigInt `yaml:"RestockCadenceTier50Hours"`
+	RestockCadenceTier40Hours ConfigInt `yaml:"RestockCadenceTier40Hours"`
+	RestockCadenceTier30Hours ConfigInt `yaml:"RestockCadenceTier30Hours"`
+	RestockCadenceTier20Hours ConfigInt `yaml:"RestockCadenceTier20Hours"`
+	RestockCadenceTier10Days  ConfigInt `yaml:"RestockCadenceTier10Days"`
 
 	// ── GOSSIP SYSTEM ────────────────────────────────────────────────────────
 	GossipIntervalRounds ConfigInt `yaml:"GossipIntervalRounds"` // Rounds between gossip broadcasts for "gossiper" group mobs (default 75)
@@ -273,6 +287,11 @@ type Balance struct {
 	ShopPriceCeiling       ConfigFloat `yaml:"ShopPriceCeiling,omitempty"`       // Maximum scarcity multiplier when stock is zero (default 5.0)
 	ShopAbundanceThreshold ConfigFloat `yaml:"ShopAbundanceThreshold,omitempty"` // Stock/restock ratio at which price hits the floor (default 3.0)
 	ShopMaterialReserve    ConfigInt   `yaml:"ShopMaterialReserve,omitempty"`    // Units of each material a crafter mob reserves before selling (default 1)
+	// CrafterIngredientReservePct is the fraction of an ingredient's
+	// MaxStock the crafter mob keeps in reserve when deciding whether to
+	// craft. Prevents the crafter from consuming its own stock to a level
+	// where players can't buy. Per-ingredient check, floor of 1.
+	CrafterIngredientReservePct ConfigFloat `yaml:"CrafterIngredientReservePct"` // Fraction of MaxStock kept as reserve (default 0.25)
 	ShopGoldReserveRatio   ConfigFloat `yaml:"ShopGoldReserveRatio,omitempty"`   // Fraction of gold pool a shop keeps in reserve before buying (default 0.50)
 	BarterMaxDiscount      ConfigFloat `yaml:"BarterMaxDiscount,omitempty"`      // Max fractional price reduction a player can get via bartering (default 0.15)
 	BarterMaxBonus         ConfigFloat `yaml:"BarterMaxBonus,omitempty"`         // Max fractional sell-price bonus a player can get via bartering (default 0.15)
@@ -328,6 +347,13 @@ type Balance struct {
 	// vendors are saturated (MaxStock cap reached). Default 0.5.
 	ForagerRestCarryThreshold ConfigFloat `yaml:"ForagerRestCarryThreshold"`
 
+	// ForagerRestDurationRounds is how long a forager stays at sanctuary
+	// before re-entering the territory. Gated by HP-full and carry-ratio
+	// checks too, so the actual rest can be longer if the forager
+	// arrived hurt or over-encumbered. Default 40 rounds (~3 real
+	// minutes / ~1 game-hour at the default round cadence).
+	ForagerRestDurationRounds ConfigInt `yaml:"ForagerRestDurationRounds"`
+
 	// ForagerLockboxCapacity caps how many items a sanctuary lockbox
 	// can hold. When the box is full, the forager falls back to the
 	// Stage 3.4 rest-extension behavior until a player picks the box
@@ -346,6 +372,37 @@ type Balance struct {
 	EconomyScoreWeightShop       ConfigFloat `yaml:"EconomyScoreWeightShop"`       // Overall-score weight for shops (default 0.6)
 	EconomyScoreWeightCaravan    ConfigFloat `yaml:"EconomyScoreWeightCaravan"`    // (default 0.2)
 	EconomyScoreWeightForager    ConfigFloat `yaml:"EconomyScoreWeightForager"`    // (default 0.2)
+
+	// ── ECONOMY SCORING — TtR TARGETS ────────────────────────────────────────
+	// Time-to-Refill targets per rarity tier (game-time). Throughput score
+	// penalizes items that take longer than their tier's target to refill.
+	// Tier 50 (common) should refill in ~3 game-hours; tier 10 (rare) in ~7 game-days.
+	TtRTargetTier50Hours ConfigInt `yaml:"TtRTargetTier50Hours"`
+	TtRTargetTier40Hours ConfigInt `yaml:"TtRTargetTier40Hours"`
+	TtRTargetTier30Hours ConfigInt `yaml:"TtRTargetTier30Hours"`
+	TtRTargetTier20Days  ConfigInt `yaml:"TtRTargetTier20Days"`
+	TtRTargetTier10Days  ConfigInt `yaml:"TtRTargetTier10Days"`
+
+	// TtRWindowGameDays is the rolling window of completed depletion→refill
+	// events used by ThroughputScore (default 7 game-days).
+	TtRWindowGameDays ConfigInt `yaml:"TtRWindowGameDays"`
+
+	// ── ECONOMY SCORING — LOGISTICS ──────────────────────────────────────────
+	// LogisticsStuckRounds is the round count after which a caravan or forager
+	// is considered stuck; the stuck multiplier is applied to its health score.
+	// Default 3000 (more aggressive than the MVP 5000).
+	LogisticsStuckRounds     ConfigInt   `yaml:"LogisticsStuckRounds"`
+	// LogisticsStuckMultiplier scales the base logistics score when stuck
+	// (default 0.4 — a stuck entity reads ~40% of its healthy score).
+	LogisticsStuckMultiplier ConfigFloat `yaml:"LogisticsStuckMultiplier"`
+
+	// ── ECONOMY SCORING — OVERALL BLEND ─────────────────────────────────────
+	// Weights for the five-axis OverallScore blend. Must sum to 1.0.
+	// Logistics is not blended here; it is displayed as a standalone panel.
+	ScoreWeightStock      ConfigFloat `yaml:"ScoreWeightStock"`
+	ScoreWeightInput      ConfigFloat `yaml:"ScoreWeightInput"`
+	ScoreWeightThroughput ConfigFloat `yaml:"ScoreWeightThroughput"`
+	ScoreWeightShopGold   ConfigFloat `yaml:"ScoreWeightShopGold"`
 }
 
 func (b *Balance) Validate() {

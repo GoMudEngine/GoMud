@@ -257,6 +257,16 @@ func IsEnchantingRecipe(recipe *RecipeSpec) bool {
 	return recipe.EnchantType != "" && recipe.TargetType != ""
 }
 
+// RegisterRecipeForTest injects a RecipeSpec into the global registry for
+// unit tests that need GetRecipe() to return a spec without loading YAML
+// files from disk. The entry persists for the lifetime of the test binary.
+func RegisterRecipeForTest(spec *RecipeSpec) {
+	if allRecipes == nil {
+		allRecipes = map[string]*RecipeSpec{}
+	}
+	allRecipes[spec.RecipeId] = spec
+}
+
 // CalcSuccessChance returns the crafting success percentage clamped to
 // [CraftingMinSuccessChance, CraftingMaxSuccessChance].
 // Formula: clamp(base + (skillLevel - skillMinimum) * bonusPerLevel, min, max)

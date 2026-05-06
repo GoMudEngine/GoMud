@@ -5,6 +5,19 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v2"
+)
+
+// yamlMarshal / yamlUnmarshal are thin wrappers used by round-trip tests
+// in this file so we reference the same library the production code uses.
+var yamlMarshal = yaml.Marshal
+var yamlUnmarshal = yaml.Unmarshal
+
+// Test fixture item IDs for RestockTier tests.
+const (
+	testTier50ItemA = 501
+	testTier50ItemB = 502
+	testTier30Item  = 503
 )
 
 func TestGetStock_Found(t *testing.T) {
@@ -254,6 +267,165 @@ func TestRestockBaselineTiers_CapsAtMaxStock(t *testing.T) {
 	si.RestockBaselineTiers()
 	if si.Stock[0].Current != 50 {
 		t.Errorf("should cap at MaxStock: Current = %d, want 50", si.Stock[0].Current)
+	}
+}
+
+// TestRestockTier_UnratedItemDefaultsToTier50 covers the regression
+// where pre-tier-system content (tutorial gear like Adela's stock)
+// has no rarity_tier set on its YAML, defaults to RarityTier=0, and
+// would otherwise be invisible to every per-tier ticker. The fallback
+// treats unrated items as tier 50 so they restock on the common
+// cadence — the safe default that keeps tutorial-gear shops working.
+func TestRestockTier_UnratedItemDefaultsToTier50(t *testing.T) {
+	const unratedItem = 999081
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: unratedItem, RarityTier: 0})
+
+	si := &ShopInventory{
+		Stock: []StockEntry{
+			{ItemId: unratedItem, RestockQty: 5, MaxStock: 10, Current: 0},
+		},
+	}
+
+	// Tier-50 ticker should pick it up (defaulted from 0).
+	if !si.RestockTier(50) {
+		t.Errorf("expected unrated item to be restocked by tier-50 ticker")
+	}
+	if si.Stock[0].Current != 5 {
+		t.Errorf("unrated item current after tier-50 restock: got %d, want 5", si.Stock[0].Current)
+	}
+
+	// Tier-40 ticker should NOT pick it up (defaulted to 50, not 40).
+	si.Stock[0].Current = 0
+	if si.RestockTier(40) {
+		t.Errorf("tier-40 ticker should not affect unrated (default-50) item")
+	}
+	if si.Stock[0].Current != 0 {
+		t.Errorf("unrated item current after tier-40 ticker: got %d, want 0", si.Stock[0].Current)
+	}
+}
+
+func TestRestockTier_OnlyTopsUpMatchingTier(t *testing.T) {
+	// Register test items with specific rarity tiers.
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: testTier50ItemA, RarityTier: 50})
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: testTier50ItemB, RarityTier: 50})
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: testTier30Item, RarityTier: 30})
+
+	// Arrange: shop has one tier-50 item half-empty, one tier-30
+	// item half-empty, one tier-50 item already full.
+	// Both tier-50s have RestockQty=5, MaxStock=10.
+	// Tier-30 has RestockQty=5, MaxStock=10.
+	si := &ShopInventory{
+		Stock: []StockEntry{
+			{ItemId: testTier50ItemA, RestockQty: 5, MaxStock: 10, Current: 5},
+			{ItemId: testTier30Item, RestockQty: 5, MaxStock: 10, Current: 5},
+			{ItemId: testTier50ItemB, RestockQty: 5, MaxStock: 10, Current: 10},
+		},
+	}
+	// Act: restock tier 50 only.
+	added := si.RestockTier(50)
+	// Assert: tier-50 half-empty filled, tier-30 untouched, tier-50
+	// already-full untouched. Returns true (something added).
+	if !added {
+		t.Errorf("expected RestockTier to return true")
+	}
+	if si.Stock[0].Current != 10 {
+		t.Errorf("tier-50 half-empty: got %d, want 10", si.Stock[0].Current)
+	}
+	if si.Stock[1].Current != 5 {
+		t.Errorf("tier-30 should be untouched: got %d", si.Stock[1].Current)
+	}
+	if si.Stock[2].Current != 10 {
+		t.Errorf("tier-50 full should be untouched: got %d", si.Stock[2].Current)
+	}
+}
+
+func TestRestockTier_IncrementsRestockCount(t *testing.T) {
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: testTier50ItemA, RarityTier: 50})
+	si := &ShopInventory{
+		Stock: []StockEntry{{ItemId: testTier50ItemA, RestockQty: 5, MaxStock: 10, Current: 5}},
+	}
+	si.RestockTier(50)
+	if si.RestockCount != 5 {
+		t.Errorf("RestockCount = %d, want 5", si.RestockCount)
+	}
+}
+
+func TestRemoveStock_MarksDepletionWhenHittingZero(t *testing.T) {
+	si := &ShopInventory{
+		Stock: []StockEntry{{ItemId: 100, RestockQty: 5, MaxStock: 10, Current: 3}},
+	}
+	si.RemoveStockAtRound(100, 3, 2000)
+	got, ok := si.CurrentDepletion[100]
+	if !ok {
+		t.Fatalf("expected CurrentDepletion[100] to be set")
+	}
+	if got != 2000 {
+		t.Errorf("CurrentDepletion[100] = %d, want 2000", got)
+	}
+}
+
+func TestRemoveStock_NoMarkIfNotZero(t *testing.T) {
+	si := &ShopInventory{
+		Stock: []StockEntry{{ItemId: 100, RestockQty: 5, MaxStock: 10, Current: 5}},
+	}
+	si.RemoveStockAtRound(100, 2, 2000)
+	if _, ok := si.CurrentDepletion[100]; ok {
+		t.Errorf("CurrentDepletion[100] should not be set when stock > 0")
+	}
+}
+
+func TestAddStock_PushesStockEventOnRefill(t *testing.T) {
+	si := &ShopInventory{
+		Stock:            []StockEntry{{ItemId: 100, RestockQty: 5, MaxStock: 10, Current: 0}},
+		CurrentDepletion: map[int]uint64{100: 1000},
+	}
+	si.AddStockAtRound(100, 5, 1500)
+	if len(si.StockEvents[100]) != 1 {
+		t.Fatalf("expected 1 stock event, got %d", len(si.StockEvents[100]))
+	}
+	ev := si.StockEvents[100][0]
+	if ev.DepletedRound != 1000 || ev.RefilledRound != 1500 {
+		t.Errorf("event = %+v, want {1000, 1500}", ev)
+	}
+	if _, still := si.CurrentDepletion[100]; still {
+		t.Errorf("CurrentDepletion[100] should be cleared")
+	}
+}
+
+func TestAddStock_NoEventIfNotDepleted(t *testing.T) {
+	si := &ShopInventory{
+		Stock: []StockEntry{{ItemId: 100, RestockQty: 5, MaxStock: 10, Current: 3}},
+	}
+	si.AddStockAtRound(100, 5, 1500)
+	if len(si.StockEvents[100]) != 0 {
+		t.Errorf("no event expected when item wasn't fully depleted, got %d", len(si.StockEvents[100]))
+	}
+}
+
+// TestShopInventory_ConsumedByCrafterCount_DefaultsZero verifies the new
+// counter field initialises to zero on a fresh ShopInventory value.
+func TestShopInventory_ConsumedByCrafterCount_DefaultsZero(t *testing.T) {
+	si := &ShopInventory{}
+	if si.ConsumedByCrafterCount != 0 {
+		t.Errorf("default ConsumedByCrafterCount = %d, want 0", si.ConsumedByCrafterCount)
+	}
+}
+
+// TestShopInventory_ConsumedByCrafterCount_IncrementAndRoundTrip verifies
+// that the counter can be set and is preserved through a YAML round-trip
+// (the yaml tag must match and omitempty must not suppress non-zero values).
+func TestShopInventory_ConsumedByCrafterCount_IncrementAndRoundTrip(t *testing.T) {
+	si := &ShopInventory{ConsumedByCrafterCount: 7}
+	data, err := yamlMarshal(si)
+	if err != nil {
+		t.Fatalf("yaml.Marshal: %v", err)
+	}
+	var got ShopInventory
+	if err := yamlUnmarshal(data, &got); err != nil {
+		t.Fatalf("yaml.Unmarshal: %v", err)
+	}
+	if got.ConsumedByCrafterCount != 7 {
+		t.Errorf("ConsumedByCrafterCount after round-trip = %d, want 7", got.ConsumedByCrafterCount)
 	}
 }
 

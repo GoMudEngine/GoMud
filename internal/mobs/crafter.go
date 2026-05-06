@@ -4,10 +4,18 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
+
+// saveShopFn is the shop-persistence hook used by executeCraft and the
+// salvage path. Tests override this variable to avoid disk I/O while
+// still asserting that persistence is called after a craft or salvage.
+var saveShopFn = func(zone string, mobId int, roomId int) error {
+	return shops.SaveShop(zone, mobId, roomId)
+}
 
 // CraftResult describes the outcome of a crafter mob's tick, so the calling
 // hook can emit room messages and world events without import cycles.
@@ -127,42 +135,61 @@ func PrewarmShopForSpawnPlacement(template *Mob, roomId int) {
 	RegisterMobShop(&synthetic)
 }
 
-// TickMobCraft handles autonomous crafting for crafter mobs. Crafting only
-// fires on the material restock tick (every CrafterMaterialRestockRate rounds):
-// materials arrive, and the mob immediately attempts one craft from them.
-// Returns a non-nil CraftResult only when a craft is attempted.
-// TickMobShopRestock handles periodic supply-cart restocking for non-crafter
-// merchant mobs that have a registered ShopInventory. Returns true if any
-// stock was added. Crafter mobs are handled by TickMobCraft instead.
+// TickMobShopRestock fires per-tier restock cycles based on each
+// rarity tier's configured cadence. A shop with stock entries across
+// multiple tiers sees fast cycles for commons (tier 50) and slow
+// cycles for rares (tier 10), matching the per-tier cadence config.
+//
+// Returns true if any tier fired this tick.
 func TickMobShopRestock(mob *Mob) bool {
 	if mob.Crafter {
-		return false // Crafter restock is handled in TickMobCraft
+		return false // crafters use TickMobCraft path
 	}
-
 	shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId)
 	if shopInv == nil {
 		return false
 	}
+	if shopInv.LastRestockByTier == nil {
+		shopInv.LastRestockByTier = map[int]uint64{}
+	}
 
 	b := configs.GetBalanceConfig()
 	roundCount := util.GetRoundCount()
+	// Integer division: RoundsPerDay is typically not divisible by 24
+	// (e.g., 900/24=37, truncating from 37.5). The sub-round-per-hour
+	// drift is negligible (<2% cadence error even at tier-10).
+	roundsPerHour := uint64(configs.GetTimingConfig().RoundsPerDay) / 24
 
-	restockRate := uint64(b.CrafterMaterialRestockRate)
-	if restockRate == 0 {
-		return false
+	anyFired := false
+	for _, tier := range []int{50, 40, 30, 20, 10} {
+		hours := shops.RestockCadenceHours(b, tier)
+		if hours <= 0 {
+			continue
+		}
+		cadence := uint64(hours) * roundsPerHour
+		last := shopInv.LastRestockByTier[tier]
+		if last == 0 {
+			shopInv.LastRestockByTier[tier] = roundCount
+			continue
+		}
+		if roundCount-last < cadence {
+			continue
+		}
+		shopInv.LastRestockByTier[tier] = roundCount
+		if shopInv.RestockTier(tier) {
+			anyFired = true
+		}
 	}
-	if mob.crafterLastRestockRound == 0 {
-		mob.crafterLastRestockRound = roundCount
-		return false
-	}
-	if roundCount-mob.crafterLastRestockRound < restockRate {
-		return false
-	}
-	mob.crafterLastRestockRound = roundCount
-
-	return shopInv.Restock()
+	return anyFired
 }
 
+// TickMobCraft fires on every crafter mob idle tick. Per-tier
+// restock cadences gate actual stock additions (commons hourly,
+// rares every 5 days), but recipe evaluation and salvage logic
+// run on every tick so the crafter can react to depletion quickly.
+// Returns a CraftResult summarizing what (if anything) the crafter
+// did on this tick. Returns nil when the mob is not a crafter, the
+// crafting feature is disabled, or the mob is in combat.
 func TickMobCraft(mob *Mob) *CraftResult {
 	if !mob.Crafter {
 		return nil
@@ -176,38 +203,61 @@ func TickMobCraft(mob *Mob) *CraftResult {
 	}
 
 	roundCount := util.GetRoundCount()
-
-	// Initialize restock timer on first call
-	restockRate := uint64(b.CrafterMaterialRestockRate)
-	if restockRate == 0 {
-		return nil
-	}
-	if mob.crafterLastRestockRound == 0 {
-		mob.crafterLastRestockRound = roundCount
-		return nil
-	}
-
-	// Only act on the restock tick
-	if roundCount-mob.crafterLastRestockRound < restockRate {
-		return nil
-	}
-	mob.crafterLastRestockRound = roundCount
+	// Integer division: RoundsPerDay is typically not divisible by 24
+	// (e.g., 900/24=37, truncating from 37.5). The sub-round-per-hour
+	// drift is negligible (<2% cadence error even at tier-10).
+	roundsPerHour := uint64(configs.GetTimingConfig().RoundsPerDay) / 24
 
 	// ── ShopInventory path ─────────────────────────────────────────────────
 	shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId)
 
 	if shopInv != nil {
-		// Supply cart delivery — baseline tier-50/40 restock in caravan-served zones,
-		// full restock elsewhere. Caravan/forager events deliver rarer tiers.
-		var restocked bool
-		if b.IsCaravanServedZone(mob.Zone) {
-			restocked = shopInv.RestockBaselineTiers()
-		} else {
-			restocked = shopInv.Restock()
+		if shopInv.LastRestockByTier == nil {
+			shopInv.LastRestockByTier = map[int]uint64{}
+		}
+
+		caravanServed := b.IsCaravanServedZone(mob.Zone)
+		restocked := false
+		for _, tier := range []int{50, 40, 30, 20, 10} {
+			hours := shops.RestockCadenceHours(b, tier)
+			if hours <= 0 {
+				continue
+			}
+			cadence := uint64(hours) * roundsPerHour
+			last := shopInv.LastRestockByTier[tier]
+			if last == 0 {
+				shopInv.LastRestockByTier[tier] = roundCount
+				continue
+			}
+			if roundCount-last < cadence {
+				continue
+			}
+			shopInv.LastRestockByTier[tier] = roundCount
+			if caravanServed {
+				if tier == 50 || tier == 40 {
+					// Caravan-served zones: common tiers (50/40) still refill via
+					// the ticker as a baseline. Rarer tiers (30/20/10) depend on
+					// caravan/forager deliveries — the ticker advances their
+					// timestamp above to prevent drift if zone-status changes,
+					// but does not add stock here.
+					if shopInv.RestockTier(tier) {
+						restocked = true
+					}
+				}
+				// Intentional no-op for tiers 30/20/10 in caravan-served zones.
+			} else {
+				if shopInv.RestockTier(tier) {
+					restocked = true
+				}
+			}
 		}
 
 		cfg := shops.DefaultPricingConfig()
-		reserve := 1 // Keep at least 1 of each ingredient in stock
+		// Per-ingredient reserve: the crafter will not consume an ingredient
+		// if doing so would drop its stock below MaxStock×reservePct (floor 1).
+		// This keeps at least 25% (by default) of each ingredient available
+		// for players to buy rather than draining the shop to a single unit.
+		reservePct := float64(b.CrafterIngredientReservePct)
 
 		// Build full recipe list: mob's known recipes + shop's known recipes
 		recipeIds := mergeRecipeIds(mob.CrafterRecipeIds, shopInv.KnownRecipes)
@@ -221,12 +271,12 @@ func TickMobCraft(mob *Mob) *CraftResult {
 		}
 
 		// ── Priority 1: Self-gear upgrade ──────────────────────────────────
-		if selfRecipe := pickSelfGearRecipe(mob, recipeIds, shopInv, reserve); selfRecipe != nil {
+		if selfRecipe := pickSelfGearRecipe(mob, recipeIds, shopInv, reservePct); selfRecipe != nil {
 			return tagRestock(executeCraft(mob, selfRecipe, true, shopInv))
 		}
 
 		// ── Priority 2: Profitable craft ──────────────────────────────────
-		craftDecision := shops.EvaluateCraftOptions(recipeIds, shopInv, cfg, reserve)
+		craftDecision := shops.EvaluateCraftOptions(recipeIds, shopInv, cfg, reservePct)
 		if craftDecision != nil {
 			recipe := crafting.GetRecipe(craftDecision.RecipeId)
 			if recipe != nil {
@@ -237,15 +287,18 @@ func TickMobCraft(mob *Mob) *CraftResult {
 		// ── Priority 3: Profitable salvage ────────────────────────────────
 		salvageDecision := shops.EvaluateSalvageOptions(shopInv, cfg)
 		if salvageDecision != nil {
-			shopInv.RemoveStock(salvageDecision.ItemId, 1)
+			shopInv.RemoveStockAtRound(salvageDecision.ItemId, 1, util.GetRoundCount())
 			spec := items.GetItemSpec(salvageDecision.ItemId)
 			if spec != nil {
 				for _, ret := range spec.SalvageReturns {
 					matSpec := items.FindSpecByComponentTag(ret.ItemTag)
 					if matSpec != nil {
-						shopInv.AddStock(matSpec.ItemId, ret.Quantity)
+						shopInv.AddStockAtRound(matSpec.ItemId, ret.Quantity, util.GetRoundCount())
 					}
 				}
+			}
+			if err := saveShopFn(mob.Zone, int(mob.MobId), mob.HomeRoomId); err != nil {
+				mudlog.Warn("TickMobCraft salvage save", "mob", mob.Character.Name, "error", err)
 			}
 			return &CraftResult{
 				Success:      true,
@@ -309,7 +362,8 @@ func mergeRecipeIds(a, b []string) []string {
 
 // pickSelfGearRecipe finds a recipe whose output is an equipment upgrade for
 // the mob. Returns nil if no upgrade recipe is craftable with current stock.
-func pickSelfGearRecipe(mob *Mob, recipeIds []string, shopInv *shops.ShopInventory, reserve int) *crafting.RecipeSpec {
+// reservePct is the per-ingredient reserve fraction; see HasMaterialsWithReservePct.
+func pickSelfGearRecipe(mob *Mob, recipeIds []string, shopInv *shops.ShopInventory, reservePct float64) *crafting.RecipeSpec {
 	wornItems := mob.Character.Equipment.GetAllItems()
 
 	for _, recipeId := range recipeIds {
@@ -349,7 +403,7 @@ func pickSelfGearRecipe(mob *Mob, recipeIds []string, shopInv *shops.ShopInvento
 		}
 
 		// Check materials are available (backpack for legacy; shopInv for shop path)
-		if !shops.HasMaterialsWithReserve(recipe, shopInv, reserve) {
+		if !shops.HasMaterialsWithReservePct(recipe, shopInv, reservePct) {
 			continue
 		}
 
@@ -361,11 +415,15 @@ func pickSelfGearRecipe(mob *Mob, recipeIds []string, shopInv *shops.ShopInvento
 // executeCraft performs a craft attempt using ShopInventory for material
 // tracking. On success, the output is added directly to shopInv stock.
 func executeCraft(mob *Mob, recipe *crafting.RecipeSpec, forSelf bool, shopInv *shops.ShopInventory) *CraftResult {
-	// Consume ingredients from shop stock
+	round := util.GetRoundCount()
+
+	// Consume ingredients from shop stock (round-aware so depletion events
+	// fire and the dashboard's throughput scoring can see crafter demand).
 	for _, ing := range recipe.Ingredients {
 		spec := items.FindSpecByComponentTag(ing.ItemTag)
 		if spec != nil {
-			shopInv.RemoveStock(spec.ItemId, ing.Quantity)
+			removed := shopInv.RemoveStockAtRound(spec.ItemId, ing.Quantity, round)
+			shopInv.ConsumedByCrafterCount += removed
 		}
 	}
 
@@ -391,11 +449,22 @@ func executeCraft(mob *Mob, recipe *crafting.RecipeSpec, forSelf bool, shopInv *
 				}
 			}
 		} else if recipe.Output.ItemId > 0 {
+			// Round-aware so refill events fire when previously-depleted
+			// output slots are restocked by a craft (fixes Kerra TtR scoring).
 			for i := 0; i < recipe.Output.Quantity; i++ {
-				shopInv.AddStock(recipe.Output.ItemId, 1)
+				shopInv.AddStockAtRound(recipe.Output.ItemId, 1, round)
 			}
 		}
 		mob.Character.OnSkillUse(recipe.Skill, 0)
+	}
+
+	// Persist shop state after any craft attempt (success or failure both
+	// consume ingredients; failing to save loses that consumption and any
+	// output that was added this tick).
+	if shopInv != nil {
+		if err := saveShopFn(mob.Zone, int(mob.MobId), mob.HomeRoomId); err != nil {
+			mudlog.Warn("executeCraft save", "mob", mob.Character.Name, "error", err)
+		}
 	}
 
 	return result
