@@ -27,6 +27,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/flags"
@@ -1155,6 +1156,15 @@ func loadAllDataFiles(isReload bool) {
 		}
 		return 0, false
 	})
+
+	// Faction definitions: load eagerly so consumer code (combat
+	// hooks, quest engine, btree) can query factions by id without
+	// per-call disk lookups. Validates allies/enemies references —
+	// panics on unknown reference.
+	if err := factions.LoadAllDefinitions(); err != nil {
+		mudlog.Error("factions.LoadAllDefinitions", "error", err)
+	}
+
 	allMobTemplates := mobs.AllMobTemplates()
 	adapted := make([]shops.ShopBearingMob, 0, len(allMobTemplates))
 	for _, m := range allMobTemplates {

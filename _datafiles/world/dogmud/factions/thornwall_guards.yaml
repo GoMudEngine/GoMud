@@ -1,0 +1,9 @@
+faction_id: thornwall_guards
+display_name: "Thornwall Guards"
+description: |
+  The city watch of Thornwall. They keep the streets safe and the
+  gates manned. Indifferent to strangers; hostile to enemies of
+  the city.
+default_rep: 0
+allies: []
+enemies: [warren]

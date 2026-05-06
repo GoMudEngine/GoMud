@@ -7,6 +7,8 @@ _datafiles/**/plugin-data/*
 **/rooms.instances
 **/mobs.instances
 _datafiles/**/shops
+# Runtime faction rep state — not committed
+_datafiles/**/factions.rep
 .worktrees/
 tools/testing/reports/*.md
 vendor/

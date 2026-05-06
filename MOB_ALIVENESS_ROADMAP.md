@@ -76,7 +76,7 @@ should always agree.
 | Chunk | Phase | Title | Size | Depends on | Status |
 |-------|-------|-------|------|-----------|--------|
 | 1.1 | Substrate | Persistent NPC opinion store | M | — | Done |
-| 1.2 | Substrate | Faction system | L | 1.1 | Not started |
+| 1.2 | Substrate | Faction system | L | 1.1 | In progress |
 | 1.3 | Substrate | Crime/wanted state | M | 1.2 | Not started |
 | 1.4 | Substrate | NPC knowledge model | M | 1.1 | Not started |
 | 1.5 | Substrate | Bounty state | S | 1.2 | Not started |
@@ -113,9 +113,10 @@ should always agree.
 | 6.3 | Polish | Per-zone tuning (1–2 zones) | M | 6.1 | Not started |
 | 6.4 | Polish | Performance review (initial) | S | 6.3 | Not started |
 | 6.5 | Polish | Content pass — broader rollout | XL | 6.3 | Not started |
+| 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 1 / 39 done • 0 in progress • 38 not started.
+**Roll-up:** 1 / 40 done • 1 in progress • 38 not started.
 
 ---
 
@@ -499,6 +500,25 @@ Validate the framework against real content, then scale.
 - **Out:** —
 - **Depends on:** 6.3
 - **Why:** Scaling the formula across the world. The "and now actually populate it" step.
+
+### 6.5a Faction definitions content pass
+**Status:** Not started • **Size:** M
+
+- **Goal:** Author the rest of the world's factions on top of the
+  1.2/1.3 substrate.
+- **In:** YAML faction definitions for bandits, warden, ironwind
+  shaman, Sanctum Basin guards, Dustwalk caravans, Stillwater
+  militia & citizens, etc. Tag remaining faction-relevant mobs
+  with their `groups: [<faction_id>]`. Define ally/enemy graphs
+  across the full set. Surface any schema gaps the substrate
+  didn't anticipate.
+- **Out:** Per-faction quests (own content chunk).
+- **Depends on:** 1.2, 1.3
+- **Why:** 1.2 ships substrate + warren + thornwall_guards. 1.3
+  adds thornwall_citizens + alliance-aware guard logic. Bulk
+  authoring the rest now would risk schema churn — better to
+  validate the substrate against two reference factions, then
+  bulk-author once the pattern is settled.
 
 ### 6.6 Performance re-review
 **Status:** Not started • **Size:** S

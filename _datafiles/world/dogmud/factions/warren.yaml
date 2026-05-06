@@ -1,0 +1,9 @@
+faction_id: warren
+display_name: "The Warren"
+description: |
+  A coalition of warren scouts, warriors, and the tunnel shaman that
+  have carved out territory in the Labyrinth of Low Tunnels.
+  Surface-dwellers are mistrusted on sight.
+default_rep: -25
+allies: []
+enemies: [thornwall_guards]

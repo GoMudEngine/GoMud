@@ -10,6 +10,7 @@ maxwander: 0
 groups:
   - humanoid
   - guard
+  - thornwall_guards
 idlecommands:
   - 'emote reviews a duty roster, making corrections with a quill'
   - 'emote drums fingers on the table, studying an incident report'
