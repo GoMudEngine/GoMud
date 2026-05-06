@@ -1,5 +1,94 @@
 package health
 
+import "github.com/GoMudEngine/GoMud/internal/configs"
+
+// ScoringConfig is a small DI shim around the global balance config.
+// Passing it explicitly to score functions keeps the math testable
+// without spinning up the full game state (no global config reads
+// inside the score functions themselves).
+type ScoringConfig struct {
+	// Integer division: RoundsPerDay is typically not divisible by 24.
+	// Use RoundsPerDay/24 — the same truncation pattern as crafter.go.
+	RoundsPerGameHour uint64
+
+	// TtR targets per rarity tier.
+	TtRTargetTier50Hours int
+	TtRTargetTier40Hours int
+	TtRTargetTier30Hours int
+	TtRTargetTier20Days  int
+	TtRTargetTier10Days  int
+
+	// Rolling window for TtR history (game-days).
+	TtRWindowGameDays int
+
+	// Logistics health tunables.
+	LogisticsStuckRounds     uint64
+	LogisticsStuckMultiplier float64
+
+	// Five-axis overall blend weights.
+	ScoreWeightStock      float64
+	ScoreWeightInput      float64
+	ScoreWeightThroughput float64
+	ScoreWeightShopGold   float64
+
+	// Restock cadence per tier (hours). Used to derive InputRateScore
+	// zone targets (expected_restocks_per_day = 24/cadence).
+	RestockCadenceTier50Hours int
+	RestockCadenceTier40Hours int
+	RestockCadenceTier30Hours int
+	RestockCadenceTier20Hours int
+	RestockCadenceTier10Days  int // stored as days; multiply ×24 for hours
+}
+
+// ScoringConfigFromBalance builds a ScoringConfig from the live global
+// balance + timing configs. Called once at the top of Score() so all
+// score functions receive a consistent snapshot of config values.
+func ScoringConfigFromBalance() ScoringConfig {
+	b := configs.GetBalanceConfig()
+	t := configs.GetTimingConfig()
+	// Integer division: RoundsPerDay is typically not divisible by 24.
+	// Truncation is fine; a few rounds' error per hour is inconsequential
+	// for scoring. Matches the same pattern used in crafter.go.
+	rph := uint64(t.RoundsPerDay) / 24
+	if rph == 0 {
+		rph = 1
+	}
+	return ScoringConfig{
+		RoundsPerGameHour:         rph,
+		TtRTargetTier50Hours:      int(b.TtRTargetTier50Hours),
+		TtRTargetTier40Hours:      int(b.TtRTargetTier40Hours),
+		TtRTargetTier30Hours:      int(b.TtRTargetTier30Hours),
+		TtRTargetTier20Days:       int(b.TtRTargetTier20Days),
+		TtRTargetTier10Days:       int(b.TtRTargetTier10Days),
+		TtRWindowGameDays:         int(b.TtRWindowGameDays),
+		LogisticsStuckRounds:      uint64(b.LogisticsStuckRounds),
+		LogisticsStuckMultiplier:  float64(b.LogisticsStuckMultiplier),
+		ScoreWeightStock:          float64(b.ScoreWeightStock),
+		ScoreWeightInput:          float64(b.ScoreWeightInput),
+		ScoreWeightThroughput:     float64(b.ScoreWeightThroughput),
+		ScoreWeightShopGold:       float64(b.ScoreWeightShopGold),
+		RestockCadenceTier50Hours: int(b.RestockCadenceTier50Hours),
+		RestockCadenceTier40Hours: int(b.RestockCadenceTier40Hours),
+		RestockCadenceTier30Hours: int(b.RestockCadenceTier30Hours),
+		RestockCadenceTier20Hours: int(b.RestockCadenceTier20Hours),
+		RestockCadenceTier10Days:  int(b.RestockCadenceTier10Days),
+	}
+}
+
+// StockScore returns the per-shop weighted-fill-percentage. This is the
+// dashboard's "Stock Score" — answers "is there material on the shelves
+// right now?" Identical to the historical PerShopScore (kept as alias).
+func StockScore(s ShopSnapshot) float64 {
+	v, _ := StockScoreOpt(s)
+	return v
+}
+
+// StockScoreOpt is the option-returning variant used when callers need
+// to distinguish "no signal" from "0%."
+func StockScoreOpt(s ShopSnapshot) (float64, bool) {
+	return PerShopScoreOpt(s)
+}
+
 // PerShopScore returns a 0-100 health score for one shop, weighted by
 // RestockQty. Shops with no stock entries return 0; callers that want
 // to distinguish "no data" from "zero" should use PerShopScoreOpt.
