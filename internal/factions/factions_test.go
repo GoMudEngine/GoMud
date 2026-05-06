@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/opinions"
 )
 
@@ -120,4 +122,74 @@ func TestTierFor(t *testing.T) {
 	if got := TierFor("warren", 17); got != opinions.TierWarm {
 		t.Errorf("after Set 25, TierFor = %v, want Warm", got)
 	}
+}
+
+func TestFactionsForMob_OnlyReturnsDefinedFactions(t *testing.T) {
+	setupTestFaction(t, "warren", 0)
+
+	mob := &mobs.Mob{
+		Groups: []string{"humanoid", "warren", "undocumented_group"},
+	}
+	got := FactionsForMob(mob)
+	if len(got) != 1 || got[0] != "warren" {
+		t.Errorf("FactionsForMob = %v, want [warren]", got)
+	}
+}
+
+func TestFactionsForMob_EmptyForNoMatches(t *testing.T) {
+	setupTestFaction(t, "warren", 0)
+	mob := &mobs.Mob{Groups: []string{"humanoid", "undead"}}
+	if got := FactionsForMob(mob); len(got) != 0 {
+		t.Errorf("FactionsForMob = %v, want []", got)
+	}
+}
+
+func TestIsPeacefulToward_FalseAtNeutral(t *testing.T) {
+	setupTestFaction(t, "warren", 0)
+	mob := &mobs.Mob{Groups: []string{"warren"}}
+	if IsPeacefulToward(mob, 17) {
+		t.Errorf("IsPeacefulToward at default 0 should be false (Neutral tier)")
+	}
+}
+
+func TestIsPeacefulToward_TrueAtWarmTier(t *testing.T) {
+	setupTestFaction(t, "warren", 0)
+	SetRep("warren", 17, 30)
+	mob := &mobs.Mob{Groups: []string{"warren"}}
+	if !IsPeacefulToward(mob, 17) {
+		t.Errorf("IsPeacefulToward at rep 30 (Warm) should be true")
+	}
+}
+
+func TestIsPeacefulToward_AnyMatchingFactionTriggers(t *testing.T) {
+	setupTestFaction(t, "warren", 0)
+	// Set up a second faction inline.
+	dir := os.Getenv("DOGMUD_FACTIONS_DIR_OVERRIDE")
+	if err := os.WriteFile(filepath.Join(dir, "thornwall_guards.yaml"),
+		[]byte(`faction_id: thornwall_guards
+display_name: "Thornwall Guards"
+description: "x"
+default_rep: 0
+allies: []
+enemies: []
+`), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := LoadAllDefinitions(); err != nil {
+		t.Fatal(err)
+	}
+	SetRep("warren", 17, 30) // Warm with warren only
+	mob := &mobs.Mob{Groups: []string{"warren", "thornwall_guards"}}
+	if !IsPeacefulToward(mob, 17) {
+		t.Errorf("IsPeacefulToward should be true if any defined faction is Warm+")
+	}
+}
+
+func TestIsPeacefulToward_FalseWhenMobHasNoDefinedFactions(t *testing.T) {
+	setupTestFaction(t, "warren", 0)
+	mob := &mobs.Mob{Groups: []string{"humanoid"}}
+	if IsPeacefulToward(mob, 17) {
+		t.Errorf("IsPeacefulToward with no defined factions should be false")
+	}
+	_ = characters.Character{} // keep import alive
 }

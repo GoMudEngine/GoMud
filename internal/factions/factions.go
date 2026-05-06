@@ -1,6 +1,7 @@
 package factions
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/opinions"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -141,4 +142,33 @@ func clampRep(r int) int {
 		return RepMax
 	}
 	return r
+}
+
+// FactionsForMob returns the subset of mob.Groups that have
+// definition files. Used by combat hookup (which factions get
+// bumped on death) and by IsPeacefulToward.
+func FactionsForMob(mob *mobs.Mob) []string {
+	if mob == nil {
+		return nil
+	}
+	out := make([]string, 0)
+	for _, g := range mob.Groups {
+		if GetDefinition(g) != nil {
+			out = append(out, g)
+		}
+	}
+	return out
+}
+
+// IsPeacefulToward returns true when the player has TierWarm or
+// higher with at least one of the mob's defined factions. Used by
+// lookfortrouble.go and behaviortree/actions_party.go to gate
+// whether the mob initiates combat.
+func IsPeacefulToward(mob *mobs.Mob, userId int) bool {
+	for _, fid := range FactionsForMob(mob) {
+		if TierFor(fid, userId) >= opinions.TierWarm {
+			return true
+		}
+	}
+	return false
 }
