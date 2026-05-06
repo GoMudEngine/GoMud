@@ -21,6 +21,11 @@ var (
 	// so we can reconstruct the path when persisting again without
 	// re-reading the mob template.
 	nameByMobId = map[int]string{}
+	// saveMu serializes file I/O so concurrent Set/Bump on the same
+	// mob don't trigger Windows ERROR_SHARING_VIOLATION on overlapping
+	// os.WriteFile calls. Held only during marshal + write — never
+	// held across cache mutations.
+	saveMu sync.Mutex
 )
 
 // opinionsBaseDir returns the directory that holds opinion files.
@@ -63,21 +68,32 @@ func loadFromDisk(mobId int, namesimple string) *MobOpinions {
 // saveToDisk persists the cached MobOpinions for mobId to the
 // configured opinions directory. Returns an error if the cache is
 // missing the entry or the write fails.
+//
+// File I/O is serialized through saveMu so concurrent callers
+// (e.g., parallel Bumps on the same mob) don't race on
+// os.WriteFile, which Windows treats as a sharing violation.
 func saveToDisk(mobId int, namesimple string) error {
+	saveMu.Lock()
+	defer saveMu.Unlock()
+
+	// Re-acquire the cache RLock for the marshal so the snapshot
+	// is consistent with any Bumps that completed between the
+	// caller's release of opinionCacheMu and our acquisition here.
 	opinionCacheMu.RLock()
 	mo, ok := opinionCache[mobId]
-	opinionCacheMu.RUnlock()
 	if !ok {
+		opinionCacheMu.RUnlock()
 		return fmt.Errorf("opinions.saveToDisk: no cached entry for mobId=%d", mobId)
+	}
+	bytes, err := yaml.Marshal(mo)
+	opinionCacheMu.RUnlock()
+	if err != nil {
+		return fmt.Errorf("opinions.saveToDisk: marshal: %w", err)
 	}
 
 	path := opinionPath(mobId, namesimple)
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 		return fmt.Errorf("opinions.saveToDisk: mkdir %s: %w", filepath.Dir(path), err)
-	}
-	bytes, err := yaml.Marshal(mo)
-	if err != nil {
-		return fmt.Errorf("opinions.saveToDisk: marshal: %w", err)
 	}
 	if err := os.WriteFile(path, bytes, 0644); err != nil {
 		return fmt.Errorf("opinions.saveToDisk: write %s: %w", path, err)
