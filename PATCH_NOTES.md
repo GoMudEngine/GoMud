@@ -1,5 +1,20 @@
 # DOGMud Patch Notes
 
+## 2026-05-06 — Crafter output routes to shop
+
+Hotfix for a regression where crafter mobs' gear-grade crafts (iron
+daggers, bucklers, leather armor — anything with combat stats)
+landed in the mob's backpack instead of shop stock. Players saw
+only the sub-component crafts (steel ingots, etc.) in the shop list.
+Cause: the Priority-1 self-gear-upgrade selector flagged gear-grade
+recipes as "upgrades" for the mob whenever an equipment slot was
+empty, which is most slots on a shopkeeper crafter like Kerra. The
+craft success path then routed to `mob.Character.StoreItem` rather
+than `shopInv.AddStockAtRound`. Fix: all crafted output now lands
+in shop stock regardless of craft selection priority. Priority-1
+still triggers gear-grade crafts even when narrowly unprofitable
+(so shops carry actual weapons/armor, not just intermediates).
+
 ## 2026-05-05 — Economy Scoring Refactor
 
 Five-axis economy health scoring replacing the single weighted-fill score

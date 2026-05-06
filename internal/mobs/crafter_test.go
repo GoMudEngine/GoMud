@@ -409,7 +409,7 @@ func TestExecuteCraft_ConsumesIngredientsViaRoundAwareRemove(t *testing.T) {
 	mob := makeCrafterMob()
 
 	// Run executeCraft (success or failure doesn't matter for ingredient consumption).
-	executeCraft(mob, recipe, false, shopInv)
+	executeCraft(mob, recipe, shopInv)
 
 	// Ingredient stock should be zero.
 	entry := shopInv.GetStock(crafterTestIngredientID)
@@ -458,7 +458,7 @@ func TestExecuteCraft_SuccessAddsOutputViaRoundAwareAdd(t *testing.T) {
 	shopInv.CurrentDepletion[crafterTestOutputID] = 500
 
 	mob := makeCrafterMob()
-	executeCraft(mob, recipe, false, shopInv)
+	executeCraft(mob, recipe, shopInv)
 
 	// Output must be present.
 	outEntry := shopInv.GetStock(crafterTestOutputID)
@@ -491,7 +491,7 @@ func TestExecuteCraft_SuccessCallsSaveShop(t *testing.T) {
 	saveCount := stubSaveShop(t)
 
 	mob := makeCrafterMob()
-	executeCraft(mob, recipe, false, shopInv)
+	executeCraft(mob, recipe, shopInv)
 
 	assert.Equal(t, 1, *saveCount,
 		"executeCraft must call SaveShop exactly once after a successful craft")
@@ -507,7 +507,7 @@ func TestExecuteCraft_FailureStillConsumesIngredients(t *testing.T) {
 	forceCraftFailure(t)
 
 	mob := makeCrafterMob()
-	result := executeCraft(mob, recipe, false, shopInv)
+	result := executeCraft(mob, recipe, shopInv)
 
 	assert.False(t, result.Success, "craft must have failed with forced-failure config")
 
@@ -545,7 +545,7 @@ func TestExecuteCraft_OutputItemFreshlyCreated(t *testing.T) {
 		"pre-condition: output item must not be in stock before craft")
 
 	mob := makeCrafterMob()
-	result := executeCraft(mob, recipe, false, shopInv)
+	result := executeCraft(mob, recipe, shopInv)
 
 	require.True(t, result.Success, "craft must succeed with forced-success config")
 
@@ -555,4 +555,38 @@ func TestExecuteCraft_OutputItemFreshlyCreated(t *testing.T) {
 		"GetStock(outputID) must be non-nil — AddStockAtRound must create the entry when missing")
 	assert.GreaterOrEqual(t, outEntry.Current, 1,
 		"newly-created output StockEntry must have Current >= 1")
+}
+
+// TestExecuteCraft_SuccessAlwaysRoutesToShop is the regression for the
+// 2026-05-06 fix: Priority-1 self-gear-upgrade crafts (recipes where
+// pickSelfGearRecipe flagged the output as an upgrade for the mob)
+// previously called mob.Character.StoreItem(itm), routing the output
+// to the mob's inventory rather than the shop. Iron daggers, bucklers,
+// and other gear-grade items never reached the shop list. The fix:
+// executeCraft always routes output to shopInv.Stock regardless of
+// the craft selection priority.
+func TestExecuteCraft_SuccessAlwaysRoutesToShop(t *testing.T) {
+	registerCrafterTestItems()
+	recipe := registerCrafterTestRecipe()
+	shopInv := newShopWithIngredients(2)
+	_ = stubSaveShop(t)
+	forceCraftSuccess(t)
+
+	mob := makeCrafterMob()
+	preInventoryCount := len(mob.Character.Items)
+
+	result := executeCraft(mob, recipe, shopInv)
+	require.True(t, result.Success)
+
+	// Output must be in shop stock.
+	outEntry := shopInv.GetStock(crafterTestOutputID)
+	require.NotNil(t, outEntry,
+		"output must land in shopInv.Stock, not mob inventory")
+	assert.GreaterOrEqual(t, outEntry.Current, 1)
+
+	// Mob's backpack count must be unchanged — output must NOT have
+	// gone to mob.Character.StoreItem.
+	assert.Equal(t, preInventoryCount, len(mob.Character.Items),
+		"output must not be stored in mob's inventory; that was the Kerra "+
+			"regression where gear-grade crafts disappeared from the shop")
 }
