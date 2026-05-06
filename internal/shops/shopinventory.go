@@ -175,8 +175,16 @@ func (si *ShopInventory) AddStockAtRound(itemId int, qty int, round uint64) {
 	delete(si.CurrentDepletion, itemId)
 }
 
-// RemoveStock decreases current stock by qty. Returns actual amount removed.
+// RemoveStock decreases current stock by qty. Returns actual amount
+// removed.
 func (si *ShopInventory) RemoveStock(itemId int, qty int) int {
+	return si.RemoveStockAtRound(itemId, qty, 0)
+}
+
+// RemoveStockAtRound is the round-aware variant: when round > 0 and
+// the removal causes Current to hit 0, mark CurrentDepletion[itemId]
+// = round so a later AddStockAtRound can produce a completed event.
+func (si *ShopInventory) RemoveStockAtRound(itemId int, qty int, round uint64) int {
 	entry := si.GetStock(itemId)
 	if entry == nil || entry.Current <= 0 {
 		return 0
@@ -186,6 +194,14 @@ func (si *ShopInventory) RemoveStock(itemId int, qty int) int {
 		removed = entry.Current
 	}
 	entry.Current -= removed
+	if entry.Current == 0 && round > 0 {
+		if si.CurrentDepletion == nil {
+			si.CurrentDepletion = map[int]uint64{}
+		}
+		if _, exists := si.CurrentDepletion[itemId]; !exists {
+			si.CurrentDepletion[itemId] = round
+		}
+	}
 	return removed
 }
 

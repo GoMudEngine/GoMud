@@ -299,6 +299,30 @@ func TestRestockTier_OnlyTopsUpMatchingTier(t *testing.T) {
 	}
 }
 
+func TestRemoveStock_MarksDepletionWhenHittingZero(t *testing.T) {
+	si := &ShopInventory{
+		Stock: []StockEntry{{ItemId: 100, RestockQty: 5, MaxStock: 10, Current: 3}},
+	}
+	si.RemoveStockAtRound(100, 3, 2000)
+	got, ok := si.CurrentDepletion[100]
+	if !ok {
+		t.Fatalf("expected CurrentDepletion[100] to be set")
+	}
+	if got != 2000 {
+		t.Errorf("CurrentDepletion[100] = %d, want 2000", got)
+	}
+}
+
+func TestRemoveStock_NoMarkIfNotZero(t *testing.T) {
+	si := &ShopInventory{
+		Stock: []StockEntry{{ItemId: 100, RestockQty: 5, MaxStock: 10, Current: 5}},
+	}
+	si.RemoveStockAtRound(100, 2, 2000)
+	if _, ok := si.CurrentDepletion[100]; ok {
+		t.Errorf("CurrentDepletion[100] should not be set when stock > 0")
+	}
+}
+
 func TestAddStock_PushesStockEventOnRefill(t *testing.T) {
 	si := &ShopInventory{
 		Stock:            []StockEntry{{ItemId: 100, RestockQty: 5, MaxStock: 10, Current: 0}},
