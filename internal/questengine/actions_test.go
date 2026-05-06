@@ -6,6 +6,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// BumpRepCall records a single BumpRep call for test assertions.
+type BumpRepCall struct {
+	Faction string
+	Delta   int
+}
+
 // mockActionContext tracks all actions executed for test assertions.
 type mockActionContext struct {
 	granted       []string
@@ -23,6 +29,7 @@ type mockActionContext struct {
 	unlockedExits []ExitLock
 	npcSays       []NpcSayDef
 	sequences     []SequenceDef
+	bumpedRep     []BumpRepCall
 	userId        int
 }
 
@@ -30,15 +37,19 @@ func newMockActionContext(userId int) *mockActionContext {
 	return &mockActionContext{userId: userId}
 }
 
-func (m *mockActionContext) GrantQuest(token string)            { m.granted = append(m.granted, token) }
-func (m *mockActionContext) ConsumeItem(itemId int)             { m.consumedItems = append(m.consumedItems, itemId) }
-func (m *mockActionContext) GiveItem(itemId int)                { m.givenItems = append(m.givenItems, itemId) }
-func (m *mockActionContext) GiveGold(amount int)                { m.givenGold += amount }
-func (m *mockActionContext) SendText(text string)               { m.sentTexts = append(m.sentTexts, text) }
-func (m *mockActionContext) RoomText(text string)               { m.roomTexts = append(m.roomTexts, text) }
-func (m *mockActionContext) SpawnMob(s SpawnDef)                { m.spawnedMobs = append(m.spawnedMobs, s) }
-func (m *mockActionContext) SpawnItem(s SpawnDef)               { m.spawnedItems = append(m.spawnedItems, s) }
-func (m *mockActionContext) TeachSpell(spellId string)          { m.taughtSpells = append(m.taughtSpells, spellId) }
+func (m *mockActionContext) GrantQuest(token string) { m.granted = append(m.granted, token) }
+func (m *mockActionContext) ConsumeItem(itemId int) {
+	m.consumedItems = append(m.consumedItems, itemId)
+}
+func (m *mockActionContext) GiveItem(itemId int)  { m.givenItems = append(m.givenItems, itemId) }
+func (m *mockActionContext) GiveGold(amount int)  { m.givenGold += amount }
+func (m *mockActionContext) SendText(text string) { m.sentTexts = append(m.sentTexts, text) }
+func (m *mockActionContext) RoomText(text string) { m.roomTexts = append(m.roomTexts, text) }
+func (m *mockActionContext) SpawnMob(s SpawnDef)  { m.spawnedMobs = append(m.spawnedMobs, s) }
+func (m *mockActionContext) SpawnItem(s SpawnDef) { m.spawnedItems = append(m.spawnedItems, s) }
+func (m *mockActionContext) TeachSpell(spellId string) {
+	m.taughtSpells = append(m.taughtSpells, spellId)
+}
 func (m *mockActionContext) TrainSkill(skill string, level int) {}
 func (m *mockActionContext) ApplyBuff(b BuffDef)                { m.appliedBuffs = append(m.appliedBuffs, b) }
 func (m *mockActionContext) Teleport(roomId int)                { m.teleported = roomId }
@@ -46,9 +57,12 @@ func (m *mockActionContext) LockExits(e ExitLock)               { m.lockedExits 
 func (m *mockActionContext) UnlockExits(e ExitLock)             { m.unlockedExits = append(m.unlockedExits, e) }
 func (m *mockActionContext) QueueNpcSay(n NpcSayDef)            { m.npcSays = append(m.npcSays, n) }
 func (m *mockActionContext) QueueSequence(s SequenceDef)        { m.sequences = append(m.sequences, s) }
-func (m *mockActionContext) GiveMutation()                          {}
-func (m *mockActionContext) SetQuestFlag(key, value string)         {}
-func (m *mockActionContext) GetUserId() int                         { return m.userId }
+func (m *mockActionContext) GiveMutation()                      {}
+func (m *mockActionContext) SetQuestFlag(key, value string)     {}
+func (m *mockActionContext) BumpRep(factionId string, delta int) {
+	m.bumpedRep = append(m.bumpedRep, BumpRepCall{Faction: factionId, Delta: delta})
+}
+func (m *mockActionContext) GetUserId() int { return m.userId }
 
 func TestExecuteAction_Grant(t *testing.T) {
 	ctx := newMockActionContext(1)
@@ -136,4 +150,12 @@ func TestExecuteAction_MultipleActions(t *testing.T) {
 	assert.Equal(t, []string{"3-start"}, ctx.granted)
 	assert.Equal(t, 25, ctx.givenGold)
 	assert.Equal(t, []string{"Quest started!"}, ctx.sentTexts)
+}
+
+func TestExecuteAction_BumpRep(t *testing.T) {
+	ctx := newMockActionContext(17)
+	a := ActionDef{BumpRep: &BumpRepDef{Faction: "warren", Delta: 30}}
+	err := ExecuteAction(a, ctx)
+	assert.NoError(t, err)
+	assert.Equal(t, []BumpRepCall{{Faction: "warren", Delta: 30}}, ctx.bumpedRep)
 }

@@ -5,13 +5,14 @@ import (
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/quests"
-	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -232,6 +233,13 @@ func (b *GameBridge) UnlockExits(e ExitLock) {
 // SetQuestFlag sets a quest flag on the player's character.
 func (b *GameBridge) SetQuestFlag(key, value string) {
 	b.user.Character.SetQuestFlag(key, value)
+}
+
+// BumpRep delegates to the factions package using this bridge's
+// user as the rep target. No-op if the faction is unknown
+// (factions.BumpRep handles that internally with a Warn log).
+func (b *GameBridge) BumpRep(factionId string, delta int) {
+	factions.BumpRep(factionId, b.user.UserId, delta)
 }
 
 // QueueNpcSay finds the mob in the room and makes it say each line.

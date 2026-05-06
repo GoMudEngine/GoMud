@@ -23,6 +23,7 @@ type ActionContext interface {
 	QueueSequence(s SequenceDef)
 	GiveMutation()
 	SetQuestFlag(key, value string)
+	BumpRep(factionId string, delta int)
 	GetUserId() int
 }
 
@@ -109,6 +110,11 @@ func ExecuteAction(a ActionDef, ctx ActionContext) error {
 	if a.SetFlag != nil {
 		LogVerboseF(ctx.GetUserId(), "set quest flag %s=%s", a.SetFlag.Key, a.SetFlag.Value)
 		ctx.SetQuestFlag(a.SetFlag.Key, a.SetFlag.Value)
+		return nil
+	}
+	if a.BumpRep != nil {
+		LogVerboseF(ctx.GetUserId(), "bump_rep %s %+d", a.BumpRep.Faction, a.BumpRep.Delta)
+		ctx.BumpRep(a.BumpRep.Faction, a.BumpRep.Delta)
 		return nil
 	}
 	if a.Sequence != nil {
