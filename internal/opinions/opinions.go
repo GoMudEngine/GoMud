@@ -115,7 +115,10 @@ func loadOrLazyInit(mobId int) (*MobOpinions, string, bool) {
 
 // Get returns the (decay-adjusted) score this NPC has of the given
 // user. Returns the NPC's default disposition if no row exists.
-// Pure read — does not mutate cache, does not write to disk.
+// Does not mutate the score or write to disk; lazy cache priming
+// may occur on first access for a mobId (an empty MobOpinions is
+// inserted into the cache, but no opinion row is added and no file
+// is created).
 func Get(mobId int, userId int) int {
 	mo, _, ok := loadOrLazyInit(mobId)
 	if !ok {
