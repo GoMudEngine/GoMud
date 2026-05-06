@@ -924,6 +924,24 @@ Balance:
   EconomyScoreWeightCaravan: 0.2
   EconomyScoreWeightForager: 0.2
 
+  # Economy scoring — TtR targets per rarity tier (game-time)
+  TtRTargetTier50Hours: 3
+  TtRTargetTier40Hours: 6
+  TtRTargetTier30Hours: 18
+  TtRTargetTier20Days:  3
+  TtRTargetTier10Days:  7
+  TtRWindowGameDays:    7
+
+  # Logistics health scoring
+  LogisticsStuckRounds:     3000
+  LogisticsStuckMultiplier: 0.4
+
+  # Five-axis overall score blend (must sum to 1.0)
+  ScoreWeightStock:      0.40
+  ScoreWeightInput:      0.30
+  ScoreWeightThroughput: 0.20
+  ScoreWeightShopGold:   0.10
+
 ################################################################################
 #
 #   LLM

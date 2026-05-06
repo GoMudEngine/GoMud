@@ -360,6 +360,37 @@ type Balance struct {
 	EconomyScoreWeightShop       ConfigFloat `yaml:"EconomyScoreWeightShop"`       // Overall-score weight for shops (default 0.6)
 	EconomyScoreWeightCaravan    ConfigFloat `yaml:"EconomyScoreWeightCaravan"`    // (default 0.2)
 	EconomyScoreWeightForager    ConfigFloat `yaml:"EconomyScoreWeightForager"`    // (default 0.2)
+
+	// ── ECONOMY SCORING — TtR TARGETS ────────────────────────────────────────
+	// Time-to-Refill targets per rarity tier (game-time). Throughput score
+	// penalizes items that take longer than their tier's target to refill.
+	// Tier 50 (common) should refill in ~3 game-hours; tier 10 (rare) in ~7 game-days.
+	TtRTargetTier50Hours ConfigInt `yaml:"TtRTargetTier50Hours"`
+	TtRTargetTier40Hours ConfigInt `yaml:"TtRTargetTier40Hours"`
+	TtRTargetTier30Hours ConfigInt `yaml:"TtRTargetTier30Hours"`
+	TtRTargetTier20Days  ConfigInt `yaml:"TtRTargetTier20Days"`
+	TtRTargetTier10Days  ConfigInt `yaml:"TtRTargetTier10Days"`
+
+	// TtRWindowGameDays is the rolling window of completed depletion→refill
+	// events used by ThroughputScore (default 7 game-days).
+	TtRWindowGameDays ConfigInt `yaml:"TtRWindowGameDays"`
+
+	// ── ECONOMY SCORING — LOGISTICS ──────────────────────────────────────────
+	// LogisticsStuckRounds is the round count after which a caravan or forager
+	// is considered stuck; the stuck multiplier is applied to its health score.
+	// Default 3000 (more aggressive than the MVP 5000).
+	LogisticsStuckRounds     ConfigInt   `yaml:"LogisticsStuckRounds"`
+	// LogisticsStuckMultiplier scales the base logistics score when stuck
+	// (default 0.4 — a stuck entity reads ~40% of its healthy score).
+	LogisticsStuckMultiplier ConfigFloat `yaml:"LogisticsStuckMultiplier"`
+
+	// ── ECONOMY SCORING — OVERALL BLEND ─────────────────────────────────────
+	// Weights for the five-axis OverallScore blend. Must sum to 1.0.
+	// Logistics is not blended here; it is displayed as a standalone panel.
+	ScoreWeightStock      ConfigFloat `yaml:"ScoreWeightStock"`
+	ScoreWeightInput      ConfigFloat `yaml:"ScoreWeightInput"`
+	ScoreWeightThroughput ConfigFloat `yaml:"ScoreWeightThroughput"`
+	ScoreWeightShopGold   ConfigFloat `yaml:"ScoreWeightShopGold"`
 }
 
 func (b *Balance) Validate() {

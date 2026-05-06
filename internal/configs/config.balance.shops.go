@@ -85,4 +85,42 @@ func (b *Balance) validateShops() {
 	if b.RecipeDiscoveryDecayRate <= 0 {
 		b.RecipeDiscoveryDecayRate = 0.1
 	}
+
+	// ── ECONOMY SCORING ───────────────────────────────────────────────────────
+	if b.TtRTargetTier50Hours == 0 {
+		b.TtRTargetTier50Hours = 3
+	}
+	if b.TtRTargetTier40Hours == 0 {
+		b.TtRTargetTier40Hours = 6
+	}
+	if b.TtRTargetTier30Hours == 0 {
+		b.TtRTargetTier30Hours = 18
+	}
+	if b.TtRTargetTier20Days == 0 {
+		b.TtRTargetTier20Days = 3
+	}
+	if b.TtRTargetTier10Days == 0 {
+		b.TtRTargetTier10Days = 7
+	}
+	if b.TtRWindowGameDays == 0 {
+		b.TtRWindowGameDays = 7
+	}
+	if b.LogisticsStuckRounds == 0 {
+		b.LogisticsStuckRounds = 3000
+	}
+	if b.LogisticsStuckMultiplier == 0 {
+		b.LogisticsStuckMultiplier = 0.4
+	}
+	if b.ScoreWeightStock == 0 {
+		b.ScoreWeightStock = 0.40
+	}
+	if b.ScoreWeightInput == 0 {
+		b.ScoreWeightInput = 0.30
+	}
+	if b.ScoreWeightThroughput == 0 {
+		b.ScoreWeightThroughput = 0.20
+	}
+	if b.ScoreWeightShopGold == 0 {
+		b.ScoreWeightShopGold = 0.10
+	}
 }
