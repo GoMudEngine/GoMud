@@ -7,7 +7,7 @@ itemdropchance: 0
 groups:
   - forager
 hostile: false
-non_combatant: false
+non_combatant: true
 player_attack_immune: true
 maxwander: -1
 activitylevel: 20
