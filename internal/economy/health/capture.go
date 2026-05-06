@@ -151,23 +151,8 @@ func computeMedianTtRForTiers(snap ShopSnapshot, currentRound uint64, commons bo
 	if len(durations) == 0 {
 		return 0
 	}
-	sortUint64Capture(durations)
+	sortUint64s(durations)
 	return durations[len(durations)/2]
-}
-
-// sortUint64Capture is a simple insertion sort for small slices (median
-// helper for capture.go; kept separate from delta.go to avoid package
-// naming confusion in tests).
-func sortUint64Capture(s []uint64) {
-	for i := 1; i < len(s); i++ {
-		key := s[i]
-		j := i - 1
-		for j >= 0 && s[j] > key {
-			s[j+1] = s[j]
-			j--
-		}
-		s[j+1] = key
-	}
 }
 
 // captureCaravans walks every live mob instance and emits one

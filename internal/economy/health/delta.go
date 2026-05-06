@@ -33,9 +33,9 @@ type ShopDelta struct {
 
 	// Phase-4 counter deltas — set by ComputeShopDelta when both
 	// snapshots have data. Zero when the old snapshot predates Phase 2.
-	SalesDelta    int    `json:"sales_delta"`
-	BuysDelta     int    `json:"buys_delta"`
-	RestocksDelta int    `json:"restocks_delta"`
+	SalesDelta    int    // cumulative sales delta over window
+	BuysDelta     int    // cumulative buys delta over window
+	RestocksDelta int    // cumulative restocks delta over window
 	MedianTtR     uint64 // median TtR (rounds) for events completed in this window
 }
 
@@ -132,22 +132,8 @@ func computeMedianTtR(snap ShopSnapshot, windowStart uint64) uint64 {
 		return 0
 	}
 	// Sort to find the median.
-	sortUint64(durations)
+	sortUint64s(durations)
 	return durations[len(durations)/2]
-}
-
-// sortUint64 is a simple insertion sort for small slices (TtR events
-// per shop are typically <20; no need for a full sort import).
-func sortUint64(s []uint64) {
-	for i := 1; i < len(s); i++ {
-		key := s[i]
-		j := i - 1
-		for j >= 0 && s[j] > key {
-			s[j+1] = s[j]
-			j--
-		}
-		s[j+1] = key
-	}
 }
 
 // FindShopInSnapshot returns a pointer to the matching shop in s, or

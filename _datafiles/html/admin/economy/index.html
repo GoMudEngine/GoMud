@@ -249,7 +249,7 @@
 
     // multText returns a human-readable string describing the logistics
     // multiplier currently active for a caravan or forager snapshot.
-    var _stuckThreshold = 3000; // default; overrideable from API meta
+    var _stuckThreshold = 3000; // matches LogisticsStuckRounds config default; updated on each render
     function multText(snap) {
         if (snap.state === '(despawned)' || snap.state === '(not active)') {
             return '<span class="text-danger">despawned</span>';
@@ -263,8 +263,12 @@
     function render(data) {
         var d = data;
 
-        // Capture RoundsPerGameHour from API so fmtTtR uses server value.
+        // Capture RoundsPerGameHour and LogisticsStuckRounds from API so
+        // fmtTtR and multText use live server config values.
         _rph = (d.scores && d.scores.RoundsPerGameHour) ? d.scores.RoundsPerGameHour : 0;
+        if (d.scores && d.scores.LogisticsStuckRounds) {
+            _stuckThreshold = d.scores.LogisticsStuckRounds;
+        }
 
         document.getElementById('score-overall').innerHTML = fmtScore(d.scores.OverallScore, true);
         document.getElementById('score-stock').innerHTML = fmtScore(d.scores.MeanStock, d.scores.MeanStock > 0);

@@ -541,7 +541,7 @@ func InputRateScore(zone string, cur *Snapshot, history []*Snapshot, cfg Scoring
 func buildInputRateRow(zone string, score float64, cur *Snapshot, history []*Snapshot, cfg ScoringConfig) InputRateRow {
 	row := InputRateRow{
 		Score:   score,
-		TierMix: map[int]int{},
+		TierMix: map[int]float64{},
 	}
 	if cur == nil || len(history) < 2 {
 		return row
@@ -582,10 +582,12 @@ func buildInputRateRow(zone string, score float64, cur *Snapshot, history []*Sna
 		mt := meanRarityTier(s.Stock)
 		restockWeighted += float64(delta) * float64(mt)
 		row.ItemsPerDay += float64(delta)
-		// Tier mix: count restocked items by tier
+		// Tier mix: distribute restock delta across items proportionally.
+		// Use float64 to avoid integer-division loss when delta doesn't
+		// divide evenly into the item count (e.g. 10 restocks / 7 items).
 		for _, e := range s.Stock {
 			if e.Tier > 0 {
-				row.TierMix[e.Tier] += delta / max1(len(s.Stock))
+				row.TierMix[e.Tier] += float64(delta) / float64(max1(len(s.Stock)))
 			}
 		}
 	}
@@ -611,7 +613,7 @@ func buildInputRateRow(zone string, score float64, cur *Snapshot, history []*Sna
 			}
 			foragerWeighted += float64(d) * float64(tier)
 			row.ItemsPerDay += float64(d)
-			row.TierMix[tier] += d
+			row.TierMix[tier] += float64(d)
 		}
 	}
 	row.FromForagers = foragerWeighted
@@ -702,11 +704,11 @@ func ShopGoldScore(s ShopSnapshot) float64 {
 // InputRateRow holds per-zone input-rate breakdown for the dashboard
 // input rate table.
 type InputRateRow struct {
-	Score        float64     `json:"score"`
-	ItemsPerDay  float64     `json:"items_per_day"`
-	FromForagers float64     `json:"from_foragers"`
-	FromRestock  float64     `json:"from_restock"`
-	TierMix      map[int]int `json:"tier_mix"` // tier → item count
+	Score        float64          `json:"score"`
+	ItemsPerDay  float64          `json:"items_per_day"`
+	FromForagers float64          `json:"from_foragers"`
+	FromRestock  float64          `json:"from_restock"`
+	TierMix      map[int]float64  `json:"tier_mix"` // tier → fractional item count (round at display)
 }
 
 // Scores is the bundle returned by Score(). Each per-entity score
@@ -733,6 +735,11 @@ type Scores struct {
 	// so the dashboard JS can convert round counts to human time without
 	// hardcoding game-time math.
 	RoundsPerGameHour uint64 `json:"RoundsPerGameHour"`
+
+	// LogisticsStuckRounds is the config threshold (in game rounds) above
+	// which a caravan or forager is considered "stuck". Exposed here so the
+	// dashboard JS can use the live value instead of a hardcoded constant.
+	LogisticsStuckRounds uint64 `json:"LogisticsStuckRounds"`
 
 	// Back-compat aliases — legacy dashboard JS and tests reference
 	// MeanShop/MeanCaravan/MeanForager; keep them until Phase 4 lands.
@@ -778,7 +785,10 @@ func Score(cur *Snapshot, history []*Snapshot) Scores {
 // ScoreWithConfig is the test-friendly variant. All math reads cfg
 // rather than the global config.
 func ScoreWithConfig(cur *Snapshot, history []*Snapshot, cfg ScoringConfig) Scores {
-	out := Scores{RoundsPerGameHour: cfg.RoundsPerGameHour}
+	out := Scores{
+		RoundsPerGameHour:    cfg.RoundsPerGameHour,
+		LogisticsStuckRounds: cfg.LogisticsStuckRounds,
+	}
 	if cur == nil {
 		return out
 	}
