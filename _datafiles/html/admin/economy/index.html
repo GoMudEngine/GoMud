@@ -3,38 +3,49 @@
 <div class="container-fluid">
     <h1 class="mt-4">Economy Health Dashboard</h1>
 
-    <!-- Five summary cards -->
-    <div class="row mb-3">
+    <!-- Five summary cards: Overall / Stock / Input / Throughput / Shop Gold -->
+    <div class="row mb-2">
         <div class="col-md-2">
             <div class="card text-center"><div class="card-body p-2">
-                <h6 class="card-subtitle text-muted">Economy</h6>
+                <h6 class="card-subtitle text-muted">Overall</h6>
                 <h4 id="score-overall" class="card-title mb-0">—</h4>
             </div></div>
         </div>
         <div class="col-md-2">
             <div class="card text-center"><div class="card-body p-2">
-                <h6 class="card-subtitle text-muted">Shops</h6>
-                <h4 id="score-shop" class="card-title mb-0">—</h4>
+                <h6 class="card-subtitle text-muted">Stock</h6>
+                <h4 id="score-stock" class="card-title mb-0">—</h4>
             </div></div>
         </div>
         <div class="col-md-2">
             <div class="card text-center"><div class="card-body p-2">
-                <h6 class="card-subtitle text-muted">Caravans</h6>
-                <h4 id="score-caravan" class="card-title mb-0">—</h4>
+                <h6 class="card-subtitle text-muted">Input</h6>
+                <h4 id="score-input" class="card-title mb-0">—</h4>
             </div></div>
         </div>
         <div class="col-md-2">
             <div class="card text-center"><div class="card-body p-2">
-                <h6 class="card-subtitle text-muted">Foragers</h6>
-                <h4 id="score-forager" class="card-title mb-0">—</h4>
+                <h6 class="card-subtitle text-muted">Throughput</h6>
+                <h4 id="score-throughput" class="card-title mb-0">—</h4>
             </div></div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-2">
             <div class="card text-center"><div class="card-body p-2">
-                <h6 class="card-subtitle text-muted">Last Snapshot</h6>
-                <span id="last-ts">—</span>
+                <h6 class="card-subtitle text-muted">Shop Gold</h6>
+                <h4 id="score-gold" class="card-title mb-0">—</h4>
+            </div></div>
+        </div>
+    </div>
+
+    <!-- Secondary row: snapshot controls -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="card"><div class="card-body p-2">
+                <h6 class="card-subtitle text-muted d-inline">Last Snapshot</h6>
+                <span id="last-ts" class="ml-2">—</span>
                 <input id="manual-label" type="text" placeholder="(optional label)"
-                       class="form-control form-control-sm d-inline-block ml-2" style="width:auto">
+                       class="form-control form-control-sm d-inline-block ml-2"
+                       style="width:auto">
                 <button class="btn btn-sm btn-outline-info ml-2"
                         onclick="doSnapshot()">Snapshot Now</button>
             </div></div>
@@ -205,9 +216,10 @@
         var d = data;
 
         document.getElementById('score-overall').innerHTML = fmtScore(d.scores.OverallScore, true);
-        document.getElementById('score-shop').innerHTML = fmtScore(d.scores.MeanShop, d.scores.MeanShop > 0);
-        document.getElementById('score-caravan').innerHTML = fmtScore(d.scores.MeanCaravan, d.scores.MeanCaravan > 0);
-        document.getElementById('score-forager').innerHTML = fmtScore(d.scores.MeanForager, d.scores.MeanForager > 0);
+        document.getElementById('score-stock').innerHTML = fmtScore(d.scores.MeanStock, d.scores.MeanStock > 0);
+        document.getElementById('score-input').innerHTML = fmtScore(d.scores.MeanInput, d.scores.MeanInput > 0);
+        document.getElementById('score-throughput').innerHTML = fmtScore(d.scores.MeanThroughput, d.scores.MeanThroughput > 0);
+        document.getElementById('score-gold').innerHTML = fmtScore(d.scores.MeanShopGold, d.scores.MeanShopGold > 0);
         document.getElementById('last-ts').textContent = d.snapshot.timestamp;
 
         // Group shops by craft discipline they support.
