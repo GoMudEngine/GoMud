@@ -524,10 +524,13 @@ func npcVisitVendorsInRoom(
 			mob.Character.RemoveItem(item)
 			entry.Current++
 			mutated = true
-			// Increment throughput counter for delivery tracking.
+			// Increment throughput counters for delivery tracking.
 			spec := items.GetItemSpec(item.ItemId)
-			if spec != nil && spec.RarityTier > 0 {
-				forager.IncrementDelivery(mob.Zone, int(mob.MobId), spec.RarityTier)
+			if spec != nil {
+				if spec.RarityTier > 0 {
+					forager.IncrementDelivery(mob.Zone, int(mob.MobId), spec.RarityTier)
+				}
+				forager.AddLbsDelivered(mob.Zone, int(mob.MobId), uint64(spec.Weight))
 			}
 			room.SendText(fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi> hands a %s to`+

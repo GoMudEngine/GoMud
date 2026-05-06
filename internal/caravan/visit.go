@@ -76,10 +76,13 @@ func VisitVendorsInRoom(
 				wagon.Character.RemoveItem(item)
 				entry.Current++
 				mutated = true
-				// Increment throughput counter for delivery tracking.
+				// Increment throughput counters for delivery tracking.
 				spec := items.GetItemSpec(item.ItemId)
-				if spec != nil && spec.RarityTier > 0 {
-					IncrementDelivery(wagon.Zone, int(wagon.MobId), spec.RarityTier)
+				if spec != nil {
+					if spec.RarityTier > 0 {
+						IncrementDelivery(wagon.Zone, int(wagon.MobId), spec.RarityTier)
+					}
+					AddLbsDelivered(wagon.Zone, int(wagon.MobId), uint64(spec.Weight))
 				}
 				delivered = append(delivered, ItemMove{
 					Vendor:   vendor.Character.Name,

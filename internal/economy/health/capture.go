@@ -150,12 +150,14 @@ func captureCaravans() []CaravanSnapshot {
 
 		// Populate DeliveriesByTier and LbsDelivered from caravan throughput.
 		tp := caravan.GetThroughput(m.Character.Zone, instId)
-		if tp != nil && tp.DeliveriesByTier != nil {
-			cs.DeliveriesByTier = map[int]int{}
-			for tier, count := range tp.DeliveriesByTier {
-				cs.DeliveriesByTier[tier] = count
-			}
+		if tp != nil {
 			cs.LbsDelivered = tp.LbsDelivered
+			if tp.DeliveriesByTier != nil {
+				cs.DeliveriesByTier = map[int]int{}
+				for tier, count := range tp.DeliveriesByTier {
+					cs.DeliveriesByTier[tier] = count
+				}
+			}
 		}
 
 		out = append(out, cs)
@@ -264,12 +266,14 @@ func captureForagers() []ForagerSnapshot {
 		}
 		// Populate DeliveriesByTier and LbsDelivered from forager throughput.
 		tp := forager.GetThroughput(m.Character.Zone, p.MobId)
-		if tp != nil && tp.DeliveriesByTier != nil {
-			fs.DeliveriesByTier = map[int]int{}
-			for tier, count := range tp.DeliveriesByTier {
-				fs.DeliveriesByTier[tier] = count
-			}
+		if tp != nil {
 			fs.LbsDelivered = tp.LbsDelivered
+			if tp.DeliveriesByTier != nil {
+				fs.DeliveriesByTier = map[int]int{}
+				for tier, count := range tp.DeliveriesByTier {
+					fs.DeliveriesByTier[tier] = count
+				}
+			}
 		}
 		out = append(out, fs)
 	}
