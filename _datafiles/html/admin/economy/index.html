@@ -361,7 +361,7 @@
                 for (var ti = 0; ti < tiers.length; ti++) {
                     var t = tiers[ti];
                     if (zr.tier_mix[t]) {
-                        parts.push('T' + t + ':' + zr.tier_mix[t]);
+                        parts.push('T' + t + ':' + Math.round(zr.tier_mix[t]));
                     }
                 }
                 tierMixStr = parts.join(' ');
