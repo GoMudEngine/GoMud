@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/opinions"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -196,7 +197,19 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				}
 			}
 
+			// Detect "fresh aggression" before SetAggro overwrites prior state:
+			// either no prior aggro, or aggro on a different target.
+			isFreshAggro := user.Character.Aggro == nil ||
+				user.Character.Aggro.MobInstanceId != attackMobInstanceId
+
 			user.Character.SetAggro(0, attackMobInstanceId, characters.DefaultAttack)
+
+			if isFreshAggro {
+				if mob := mobs.GetInstance(attackMobInstanceId); mob != nil {
+					opinions.Bump(int(mob.MobId), user.UserId,
+						int(configs.GetBalanceConfig().OpinionAttackBump))
+				}
+			}
 
 			user.SendText(
 				fmt.Sprintf(`You prepare to enter into mortal combat with %s.`, mName),

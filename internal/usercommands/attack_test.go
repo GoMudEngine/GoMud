@@ -5,7 +5,9 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/opinions"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/stretchr/testify/assert"
 )
@@ -83,4 +85,93 @@ func TestAttack_NonCombatantFiresEventOnce_ThenDedupes(t *testing.T) {
 	util.SetRoundCountForTest(101)
 	mobs.FireAttackRejected(mob, 42)
 	assert.Equal(t, 2, fireCount, "call in a new round should fire again")
+}
+
+func TestAttackBumpsOpinion(t *testing.T) {
+	cleanup := seedAllRegistries()
+	defer cleanup()
+
+	dir := t.TempDir()
+	t.Setenv("DOGMUD_OPINIONS_DIR_OVERRIDE", dir)
+	opinions.ClearCache()
+
+	user, room := getTestUserAndRoom(t)
+
+	// Seed a fresh attackable mob instance backed by template mobId=1 (Skeleton).
+	target := &mobs.Mob{
+		MobId:      1,
+		InstanceId: 250,
+		HomeRoomId: 1,
+		Hostile:    false,
+		Character: characters.Character{
+			Name:      "Skeleton",
+			RoomId:    1,
+			Health:    50,
+			Buffs:     buffs.New(),
+			Cooldowns: map[string]int{},
+		},
+	}
+	target.Character.HealthMax.Value = 100
+	mobs.SetInstanceForTest(250, target)
+	defer mobs.SetInstanceForTest(250, nil)
+	room.AddMob(250)
+	defer room.RemoveMob(250)
+
+	// Sanity: opinion starts at default (0 for unconfigured mob 1).
+	if got := opinions.Get(1, user.UserId); got != 0 {
+		t.Fatalf("pre-attack opinion = %d, want 0", got)
+	}
+
+	handled, err := Attack("#250", user, room, 0)
+	assert.True(t, handled)
+	assert.NoError(t, err)
+
+	want := int(configs.GetBalanceConfig().OpinionAttackBump)
+	if got := opinions.Get(1, user.UserId); got != want {
+		t.Errorf("post-attack opinion = %d, want %d", got, want)
+	}
+}
+
+func TestAttackOnSameTargetDoesNotDoubleBump(t *testing.T) {
+	cleanup := seedAllRegistries()
+	defer cleanup()
+
+	dir := t.TempDir()
+	t.Setenv("DOGMUD_OPINIONS_DIR_OVERRIDE", dir)
+	opinions.ClearCache()
+
+	user, room := getTestUserAndRoom(t)
+
+	target := &mobs.Mob{
+		MobId:      1,
+		InstanceId: 251,
+		HomeRoomId: 1,
+		Hostile:    false,
+		Character: characters.Character{
+			Name:      "Skeleton",
+			RoomId:    1,
+			Health:    50,
+			Buffs:     buffs.New(),
+			Cooldowns: map[string]int{},
+		},
+	}
+	target.Character.HealthMax.Value = 100
+	mobs.SetInstanceForTest(251, target)
+	defer mobs.SetInstanceForTest(251, nil)
+	room.AddMob(251)
+	defer room.RemoveMob(251)
+
+	if _, err := Attack("#251", user, room, 0); err != nil {
+		t.Fatalf("first Attack: %v", err)
+	}
+	first := opinions.Get(1, user.UserId)
+
+	// Second invocation — already aggroed on same target, should be a no-op.
+	if _, err := Attack("#251", user, room, 0); err != nil {
+		t.Fatalf("second Attack: %v", err)
+	}
+	second := opinions.Get(1, user.UserId)
+	if second != first {
+		t.Errorf("re-attack opinion changed: was %d, now %d (want stable)", first, second)
+	}
 }
