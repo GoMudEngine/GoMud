@@ -299,6 +299,34 @@ func TestRestockTier_OnlyTopsUpMatchingTier(t *testing.T) {
 	}
 }
 
+func TestAddStock_PushesStockEventOnRefill(t *testing.T) {
+	si := &ShopInventory{
+		Stock:            []StockEntry{{ItemId: 100, RestockQty: 5, MaxStock: 10, Current: 0}},
+		CurrentDepletion: map[int]uint64{100: 1000},
+	}
+	si.AddStockAtRound(100, 5, 1500)
+	if len(si.StockEvents[100]) != 1 {
+		t.Fatalf("expected 1 stock event, got %d", len(si.StockEvents[100]))
+	}
+	ev := si.StockEvents[100][0]
+	if ev.DepletedRound != 1000 || ev.RefilledRound != 1500 {
+		t.Errorf("event = %+v, want {1000, 1500}", ev)
+	}
+	if _, still := si.CurrentDepletion[100]; still {
+		t.Errorf("CurrentDepletion[100] should be cleared")
+	}
+}
+
+func TestAddStock_NoEventIfNotDepleted(t *testing.T) {
+	si := &ShopInventory{
+		Stock: []StockEntry{{ItemId: 100, RestockQty: 5, MaxStock: 10, Current: 3}},
+	}
+	si.AddStockAtRound(100, 5, 1500)
+	if len(si.StockEvents[100]) != 0 {
+		t.Errorf("no event expected when item wasn't fully depleted, got %d", len(si.StockEvents[100]))
+	}
+}
+
 func TestIsValidVendorCategory(t *testing.T) {
 	tests := []struct {
 		in   string

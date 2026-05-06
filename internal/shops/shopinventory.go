@@ -128,9 +128,18 @@ func (si *ShopInventory) GetStock(itemId int) *StockEntry {
 }
 
 // AddStock increases current stock for an item, capped at MaxStock.
-// If the item isn't in the stock list, it's added as a temporary entry
-// (RestockQty=0, MaxStock=20).
+// Use AddStockAtRound when you want depletion-event tracking
+// (Phase-2 throughput scoring).
 func (si *ShopInventory) AddStock(itemId int, qty int) {
+	si.AddStockAtRound(itemId, qty, 0)
+}
+
+// AddStockAtRound is the round-aware variant: when round > 0 and the
+// item is currently depleted (Current was 0 before this call), push
+// a completed StockEvent into history and clear CurrentDepletion.
+// round = 0 means "don't track" (used by Phase-2-naive callers
+// that don't have a round handy).
+func (si *ShopInventory) AddStockAtRound(itemId int, qty int, round uint64) {
 	entry := si.GetStock(itemId)
 	if entry == nil {
 		si.Stock = append(si.Stock, StockEntry{
@@ -141,10 +150,29 @@ func (si *ShopInventory) AddStock(itemId int, qty int) {
 		})
 		entry = &si.Stock[len(si.Stock)-1]
 	}
+	wasDepleted := entry.Current == 0
 	entry.Current += qty
 	if entry.Current > entry.MaxStock {
 		entry.Current = entry.MaxStock
 	}
+	if !wasDepleted || qty <= 0 || round == 0 {
+		return
+	}
+	if si.CurrentDepletion == nil {
+		return
+	}
+	depRound, ok := si.CurrentDepletion[itemId]
+	if !ok {
+		return
+	}
+	if si.StockEvents == nil {
+		si.StockEvents = map[int][]StockEvent{}
+	}
+	si.StockEvents[itemId] = append(si.StockEvents[itemId], StockEvent{
+		DepletedRound: depRound,
+		RefilledRound: round,
+	})
+	delete(si.CurrentDepletion, itemId)
 }
 
 // RemoveStock decreases current stock by qty. Returns actual amount removed.
