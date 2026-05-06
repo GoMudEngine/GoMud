@@ -565,6 +565,57 @@ This entry commits with the spec.
   (verified visually in startup logs).
 - Booting the server with the new factions loads definitions
   without panicking on ally/enemy references.
+- **End-to-end warren-quest path with the smoketester account**
+  (manual verification, full migration loop):
+
+  Pre-test setup (edit `_datafiles/world/dogmud/users/17.yaml`,
+  the smoketester account at userId 17):
+  1. Wipe any existing quest 2 progress: remove tokens
+     `2-start` and `2-end` from the character's quest token list
+     if present (the migration would otherwise lazy-seed warren
+     rep on boot and skip the actual quest path we want to
+     exercise).
+  2. Clear any existing warren rep entry from
+     `_datafiles/world/dogmud/factions.rep/warren.yaml` for
+     userId 17 (or just delete the file — it will lazy-recreate).
+  3. Set `roomid: 300` (Narrow Descent — one room up from the
+     shaman in room 301 / Low Junction). Forces the tester to
+     `go down` to reach the shaman, exercising the corridor.
+  4. Add item 30036 (healing salve) to the character's inventory.
+  5. Grant the `chrysalis-glow` spell to the character (the
+     labyrinth is dark; without it the tester won't be able to
+     read room descriptions or see the shaman).
+
+  Test sequence (in-game commands, executed manually as the
+  smoketester):
+  1. `cast chrysalis-glow` — confirm the room becomes visible.
+  2. `down` — move into Low Junction (room 301).
+  3. `look shaman` — confirm the shaman (mobId 74) is present and
+     visible.
+  4. `give healing salve to shaman` — should fire the quest 2
+     end-step trigger, including the new `bump_rep: warren +30`
+     action.
+  5. Verify the chieftain's reward message ("the chieftain
+     inclines its heavy head…") fires.
+
+  Verification (admin commands, executed manually as an admin
+  account, e.g. Megalomania at userId 1):
+  1. `faction show smoketester` — should show warren at +30
+     (Warm tier).
+  2. Walk a warren scout (mobId 72) into the smoketester's room
+     (or move the smoketester to a scout's room) — confirm the
+     scout does NOT aggro (the new `IsPeacefulToward` gate
+     resolves true at TierWarm).
+  3. `attack scout` (using the smoketester) — confirm the kill
+     bumps warren rep downward by `FactionMemberKillRep` (-10),
+     leaving the smoketester at +20 and still Warm.
+  4. Repeat the kill until rep saturates below TierWarm — confirm
+     subsequent scouts now aggro on sight.
+
+  Cleanup:
+  1. Kill the running server process per the SOP.
+  2. Reset the smoketester character file to a known baseline if
+     it'll be reused for other smoke tests.
 
 ## Non-functional requirements
 
