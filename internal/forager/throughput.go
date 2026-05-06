@@ -97,7 +97,7 @@ func IncrementDelivery(zone string, mobId int, rarityTier int) {
 }
 
 // AddLbsDelivered increments LbsDelivered by lbs and updates
-// LastUpdatedRound. lbs <= 0 is silently ignored.
+// LastUpdatedRound. lbs == 0 is a no-op.
 // Caller is responsible for calling SaveThroughput when convenient.
 func AddLbsDelivered(zone string, mobId int, lbs uint64) {
 	if lbs == 0 {

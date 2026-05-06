@@ -12,6 +12,7 @@ package behaviortree
 
 import (
 	"fmt"
+	"math"
 	"slices"
 	"strconv"
 
@@ -530,7 +531,7 @@ func npcVisitVendorsInRoom(
 				if spec.RarityTier > 0 {
 					forager.IncrementDelivery(mob.Zone, int(mob.MobId), spec.RarityTier)
 				}
-				forager.AddLbsDelivered(mob.Zone, int(mob.MobId), uint64(spec.Weight))
+				forager.AddLbsDelivered(mob.Zone, int(mob.MobId), uint64(math.Round(spec.Weight)))
 			}
 			room.SendText(fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi> hands a %s to`+

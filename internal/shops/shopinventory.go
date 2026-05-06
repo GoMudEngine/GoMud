@@ -158,9 +158,6 @@ func (si *ShopInventory) AddStockAtRound(itemId int, qty int, round uint64) {
 	if !wasDepleted || qty <= 0 || round == 0 {
 		return
 	}
-	if si.CurrentDepletion == nil {
-		return
-	}
 	depRound, ok := si.CurrentDepletion[itemId]
 	if !ok {
 		return

@@ -124,6 +124,9 @@ func trySellOne(itemName string, user *users.UserRecord, room *rooms.Room,
 
 	// Update stock or equip.
 	if shopInv != nil {
+		// One buy transaction has committed — count it regardless of
+		// which sub-path (wear / stock / non-upgrade) handles the item.
+		shopInv.BuysCount++
 		if buyReason == "gear_upgrade" {
 			newItem := items.New(item.ItemId)
 			if newItem.ItemId > 0 {
@@ -140,15 +143,12 @@ func trySellOne(itemName string, user *users.UserRecord, room *rooms.Room,
 					)
 				} else {
 					shopInv.AddStockAtRound(item.ItemId, 1, util.GetRoundCount())
-					shopInv.BuysCount++
 				}
 			} else {
 				shopInv.AddStockAtRound(item.ItemId, 1, util.GetRoundCount())
-				shopInv.BuysCount++
 			}
 		} else {
 			shopInv.AddStockAtRound(item.ItemId, 1, util.GetRoundCount())
-			shopInv.BuysCount++
 		}
 		if err := shops.SaveShop(mob.Zone, int(mob.MobId), mob.HomeRoomId); err != nil {
 			mudlog.Error("SELL", "msg", "SaveShop failed", "error", err)
