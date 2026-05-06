@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // sellFindItem searches backpack → potions → components for a matching item.
@@ -130,7 +131,7 @@ func trySellOne(itemName string, user *users.UserRecord, room *rooms.Room,
 				if wore {
 					for _, old := range returnedItems {
 						if old.ItemId > 0 {
-							shopInv.AddStock(old.ItemId, 1)
+							shopInv.AddStockAtRound(old.ItemId, 1, util.GetRoundCount())
 						}
 					}
 					room.SendTextVisual(
@@ -138,13 +139,16 @@ func trySellOne(itemName string, user *users.UserRecord, room *rooms.Room,
 						user.UserId,
 					)
 				} else {
-					shopInv.AddStock(item.ItemId, 1)
+					shopInv.AddStockAtRound(item.ItemId, 1, util.GetRoundCount())
+					shopInv.BuysCount++
 				}
 			} else {
-				shopInv.AddStock(item.ItemId, 1)
+				shopInv.AddStockAtRound(item.ItemId, 1, util.GetRoundCount())
+				shopInv.BuysCount++
 			}
 		} else {
-			shopInv.AddStock(item.ItemId, 1)
+			shopInv.AddStockAtRound(item.ItemId, 1, util.GetRoundCount())
+			shopInv.BuysCount++
 		}
 		if err := shops.SaveShop(mob.Zone, int(mob.MobId), mob.HomeRoomId); err != nil {
 			mudlog.Error("SELL", "msg", "SaveShop failed", "error", err)
