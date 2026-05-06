@@ -73,6 +73,13 @@ type ShopInventory struct {
 	KnownRecipes []string     `yaml:"known_recipes,omitempty"` // Recipes the NPC knows
 	CraftSupport string       `yaml:"craft_support,omitempty"` // Discipline this shop's stock supports — see ValidCraftSupports
 
+	// LastRestockByTier records the round of the most recent restock
+	// per rarity tier. Replaces the single LastRestock for the
+	// per-tier cadence model. Persisted; zero value for a tier means
+	// "never restocked at this tier yet" — callers initialize to
+	// currentRound on first encounter.
+	LastRestockByTier map[int]uint64 `yaml:"last_restock_by_tier,omitempty"`
+
 	// Location fields (not persisted — set at registration time for save path)
 	Zone   string `yaml:"-"`
 	MobId  int    `yaml:"-"`
