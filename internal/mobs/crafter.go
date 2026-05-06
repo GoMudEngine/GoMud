@@ -127,40 +127,49 @@ func PrewarmShopForSpawnPlacement(template *Mob, roomId int) {
 	RegisterMobShop(&synthetic)
 }
 
-// TickMobCraft handles autonomous crafting for crafter mobs. Crafting only
-// fires on the material restock tick (every CrafterMaterialRestockRate rounds):
-// materials arrive, and the mob immediately attempts one craft from them.
-// Returns a non-nil CraftResult only when a craft is attempted.
-// TickMobShopRestock handles periodic supply-cart restocking for non-crafter
-// merchant mobs that have a registered ShopInventory. Returns true if any
-// stock was added. Crafter mobs are handled by TickMobCraft instead.
+// TickMobShopRestock fires per-tier restock cycles based on each
+// rarity tier's configured cadence. A shop with stock entries across
+// multiple tiers sees fast cycles for commons (tier 50) and slow
+// cycles for rares (tier 10), matching the per-tier cadence config.
+//
+// Returns true if any tier fired this tick.
 func TickMobShopRestock(mob *Mob) bool {
 	if mob.Crafter {
-		return false // Crafter restock is handled in TickMobCraft
+		return false // crafters use TickMobCraft path
 	}
-
 	shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId)
 	if shopInv == nil {
 		return false
 	}
+	if shopInv.LastRestockByTier == nil {
+		shopInv.LastRestockByTier = map[int]uint64{}
+	}
 
 	b := configs.GetBalanceConfig()
 	roundCount := util.GetRoundCount()
+	roundsPerHour := uint64(configs.GetTimingConfig().RoundsPerDay) / 24
 
-	restockRate := uint64(b.CrafterMaterialRestockRate)
-	if restockRate == 0 {
-		return false
+	anyFired := false
+	for _, tier := range []int{50, 40, 30, 20, 10} {
+		hours := shops.RestockCadenceHours(b, tier)
+		if hours <= 0 {
+			continue
+		}
+		cadence := uint64(hours) * roundsPerHour
+		last := shopInv.LastRestockByTier[tier]
+		if last == 0 {
+			shopInv.LastRestockByTier[tier] = roundCount
+			continue
+		}
+		if roundCount-last < cadence {
+			continue
+		}
+		shopInv.LastRestockByTier[tier] = roundCount
+		if shopInv.RestockTier(tier) {
+			anyFired = true
+		}
 	}
-	if mob.crafterLastRestockRound == 0 {
-		mob.crafterLastRestockRound = roundCount
-		return false
-	}
-	if roundCount-mob.crafterLastRestockRound < restockRate {
-		return false
-	}
-	mob.crafterLastRestockRound = roundCount
-
-	return shopInv.Restock()
+	return anyFired
 }
 
 func TickMobCraft(mob *Mob) *CraftResult {

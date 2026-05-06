@@ -11,7 +11,7 @@ func TestRestockCadenceRounds_PerTier(t *testing.T) {
 	// rounds-per-real-second; game-time uses the configured GameDay
 	// multiplier. The test isolates the math by stubbing those
 	// values and asserting the conversion.
-	b := &configs.Balance{
+	b := configs.Balance{
 		RestockCadenceTier50Hours: 1,
 		RestockCadenceTier40Hours: 2,
 		RestockCadenceTier30Hours: 6,
@@ -37,7 +37,7 @@ func TestRestockCadenceRounds_PerTier(t *testing.T) {
 }
 
 func TestRestockCadenceHours_UnknownTier(t *testing.T) {
-	b := &configs.Balance{RestockCadenceTier50Hours: 1}
+	b := configs.Balance{RestockCadenceTier50Hours: 1}
 	got := RestockCadenceHours(b, 999)
 	if got != 0 {
 		t.Errorf("unknown tier: got %d, want 0 (sentinel for skip)", got)

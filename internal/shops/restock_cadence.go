@@ -6,7 +6,7 @@ import "github.com/GoMudEngine/GoMud/internal/configs"
 // RestockCadenceHours returns the configured restock period for the
 // given rarity tier, in game-time hours. Returns 0 for unrecognized
 // tiers — callers treat 0 as "no scheduled restock".
-func RestockCadenceHours(b *configs.Balance, rarityTier int) int {
+func RestockCadenceHours(b configs.Balance, rarityTier int) int {
 	switch rarityTier {
 	case 50:
 		return int(b.RestockCadenceTier50Hours)
