@@ -247,9 +247,13 @@ type Balance struct {
 	PackScatterRounds  ConfigInt  `yaml:"PackScatterRounds"`  // Rounds mobs skip wandering after alpha death (default 2)
 
 	// ── CRAFTER MOBS ─────────────────────────────────────────────────────────
-	CrafterEnabled              ConfigBool `yaml:"CrafterEnabled"`              // Enable mob autonomous crafting (default true)
-	CrafterMaterialRestockRate  ConfigInt  `yaml:"CrafterMaterialRestockRate"`  // Rounds between material restocks and craft attempts (default 200)
-	CrafterRareThreshold        ConfigInt  `yaml:"CrafterRareThreshold"`        // SkillMinimum at or above which a craft is considered rare (default 3)
+	CrafterEnabled       ConfigBool `yaml:"CrafterEnabled"`       // Enable mob autonomous crafting (default true)
+	CrafterRareThreshold ConfigInt  `yaml:"CrafterRareThreshold"` // SkillMinimum at or above which a craft is considered rare (default 3)
+
+	// Deprecated: replaced by RestockCadenceTier{50,40,30,20,10}*. Kept
+	// only so old config.yaml files load without error. Remove after
+	// one deploy cycle.
+	CrafterMaterialRestockRate ConfigInt `yaml:"CrafterMaterialRestockRate"`
 
 	// Per-rarity-tier restock cadences (game-time hours). Replaces the
 	// single CrafterMaterialRestockRate. Higher rarity tiers (= more
