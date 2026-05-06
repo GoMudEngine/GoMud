@@ -56,6 +56,15 @@ func IsValidVendorCategory(v string) bool {
 	return slices.Contains(ValidVendorCategories, v)
 }
 
+// StockEvent records one depletion→refill cycle for a single item.
+// DepletedRound is the round Current dropped to 0; RefilledRound is
+// the round Current returned > 0. RefilledRound = 0 means the
+// event is still ongoing (item currently depleted).
+type StockEvent struct {
+	DepletedRound uint64 `yaml:"depleted_round"`
+	RefilledRound uint64 `yaml:"refilled_round"`
+}
+
 // StockEntry represents one item type in a shop's inventory.
 type StockEntry struct {
 	ItemId     int `yaml:"item_id"`
@@ -79,6 +88,28 @@ type ShopInventory struct {
 	// "never restocked at this tier yet" — callers initialize to
 	// currentRound on first encounter.
 	LastRestockByTier map[int]uint64 `yaml:"last_restock_by_tier,omitempty"`
+
+	// SalesCount is the cumulative number of items the shop has sold
+	// to players. Drives the throughput score's "items moved" axis.
+	SalesCount int `yaml:"sales_count,omitempty"`
+
+	// BuysCount is the cumulative number of items the shop has bought
+	// FROM players.
+	BuysCount int `yaml:"buys_count,omitempty"`
+
+	// RestockCount is the cumulative number of items added to stock
+	// via fired restock cycles (not foragers/caravans/player sales).
+	// Drives input rate scoring.
+	RestockCount int `yaml:"restock_count,omitempty"`
+
+	// StockEvents holds completed depletion→refill events per item,
+	// rolling 7-game-day window. Drives Time-to-Refill (TtR) scoring.
+	StockEvents map[int][]StockEvent `yaml:"stock_events,omitempty"`
+
+	// CurrentDepletion records the round each item went to 0 and is
+	// still depleted. Cleared when the item refills (event pushed to
+	// StockEvents). Items not present here are not currently depleted.
+	CurrentDepletion map[int]uint64 `yaml:"current_depletion,omitempty"`
 
 	// Location fields (not persisted — set at registration time for save path)
 	Zone   string `yaml:"-"`
