@@ -226,6 +226,39 @@ func (si *ShopInventory) RestockBaselineTiers() bool {
 	return restocked
 }
 
+// RestockTier tops up StockEntries whose item carries the given
+// rarity_tier, by RestockQty per call (capped at MaxStock). Skips
+// entries with RestockQty <= 0 (NPC-crafted items don't restock).
+// Returns true if any stock was added.
+//
+// Replaces the all-or-nothing Restock() / RestockBaselineTiers()
+// approach with per-tier granularity, enabling per-rarity-tier
+// cadences (commons restock often, rares rarely).
+func (si *ShopInventory) RestockTier(rarityTier int) bool {
+	restocked := false
+	for i := range si.Stock {
+		e := &si.Stock[i]
+		if e.RestockQty <= 0 {
+			continue
+		}
+		spec := items.GetItemSpec(e.ItemId)
+		if spec == nil || spec.RarityTier != rarityTier {
+			continue
+		}
+		room := e.MaxStock - e.Current
+		if room <= 0 {
+			continue
+		}
+		add := e.RestockQty
+		if add > room {
+			add = room
+		}
+		e.Current += add
+		restocked = true
+	}
+	return restocked
+}
+
 // CanAfford returns true if spending amount would not drop below
 // the given reserve floor.
 func (si *ShopInventory) CanAfford(amount int, reserveFloor int) bool {

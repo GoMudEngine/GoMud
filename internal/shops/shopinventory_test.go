@@ -7,6 +7,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// Test fixture item IDs for RestockTier tests.
+const (
+	testTier50ItemA = 501
+	testTier50ItemB = 502
+	testTier30Item  = 503
+)
+
 func TestGetStock_Found(t *testing.T) {
 	si := &ShopInventory{
 		Stock: []StockEntry{
@@ -254,6 +261,41 @@ func TestRestockBaselineTiers_CapsAtMaxStock(t *testing.T) {
 	si.RestockBaselineTiers()
 	if si.Stock[0].Current != 50 {
 		t.Errorf("should cap at MaxStock: Current = %d, want 50", si.Stock[0].Current)
+	}
+}
+
+func TestRestockTier_OnlyTopsUpMatchingTier(t *testing.T) {
+	// Register test items with specific rarity tiers.
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: testTier50ItemA, RarityTier: 50})
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: testTier50ItemB, RarityTier: 50})
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: testTier30Item, RarityTier: 30})
+
+	// Arrange: shop has one tier-50 item half-empty, one tier-30
+	// item half-empty, one tier-50 item already full.
+	// Both tier-50s have RestockQty=5, MaxStock=10.
+	// Tier-30 has RestockQty=5, MaxStock=10.
+	si := &ShopInventory{
+		Stock: []StockEntry{
+			{ItemId: testTier50ItemA, RestockQty: 5, MaxStock: 10, Current: 5},
+			{ItemId: testTier30Item, RestockQty: 5, MaxStock: 10, Current: 5},
+			{ItemId: testTier50ItemB, RestockQty: 5, MaxStock: 10, Current: 10},
+		},
+	}
+	// Act: restock tier 50 only.
+	added := si.RestockTier(50)
+	// Assert: tier-50 half-empty filled, tier-30 untouched, tier-50
+	// already-full untouched. Returns true (something added).
+	if !added {
+		t.Errorf("expected RestockTier to return true")
+	}
+	if si.Stock[0].Current != 10 {
+		t.Errorf("tier-50 half-empty: got %d, want 10", si.Stock[0].Current)
+	}
+	if si.Stock[1].Current != 5 {
+		t.Errorf("tier-30 should be untouched: got %d", si.Stock[1].Current)
+	}
+	if si.Stock[2].Current != 10 {
+		t.Errorf("tier-50 full should be untouched: got %d", si.Stock[2].Current)
 	}
 }
 
