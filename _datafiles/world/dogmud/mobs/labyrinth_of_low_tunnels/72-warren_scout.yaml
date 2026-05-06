@@ -5,7 +5,6 @@ behavior_archetype: lookout
 statpool: 8
 itemdropchance: 10
 hostile: true
-peacefulquest: "2-end"
 maxwander: 2
 buffids: [9, 29]
 groups:

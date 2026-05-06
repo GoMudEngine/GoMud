@@ -75,7 +75,6 @@ type Mob struct {
 	HomeRoomId      int      `yaml:"-"`
 	Hostile         bool     // whether they attack on sight
 	PackFleeImmune  bool     `yaml:"pack_flee_immune,omitempty"` // if true, won't flee when packmates die
-	PeacefulQuest   string   `yaml:"peacefulquest,omitempty"`    // if set, mob won't attack players who have this quest token
 	LastIdleCommand uint8    `yaml:"-"`                          // Track what hte last used idlecommand was
 	BoredomCounter  uint8    `yaml:"-"`                          // how many rounds have passed since this mob has seen a player
 	Groups          []string // What group do they identify with? Helps with teamwork
