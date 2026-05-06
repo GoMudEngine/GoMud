@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -192,4 +193,32 @@ func TestIsPeacefulToward_FalseWhenMobHasNoDefinedFactions(t *testing.T) {
 		t.Errorf("IsPeacefulToward with no defined factions should be false")
 	}
 	_ = characters.Character{} // keep import alive
+}
+
+func TestParallelBumpsConverge(t *testing.T) {
+	setupTestFaction(t, "warren", 0)
+
+	const goroutines = 10
+	const bumpsPer = 100
+	const delta = 1
+
+	var wg sync.WaitGroup
+	for i := 0; i < goroutines; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for j := 0; j < bumpsPer; j++ {
+				BumpRep("warren", 17, delta)
+			}
+		}()
+	}
+	wg.Wait()
+
+	want := goroutines * bumpsPer
+	if want > RepMax {
+		want = RepMax
+	}
+	if got := GetRep("warren", 17); got != want {
+		t.Errorf("after %d parallel bumps: got %d, want %d", goroutines*bumpsPer, got, want)
+	}
 }
