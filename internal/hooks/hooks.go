@@ -88,6 +88,9 @@ func RegisterListeners() {
 	// Mob death: companion cleanup (remove from owner's list + notify)
 	events.RegisterListener(events.MobDeath{}, CompanionCleanup)
 
+	// Mob death: faction rep bump for damagers + same-room party members
+	events.RegisterListener(events.MobDeath{}, MobDeathFactionRep)
+
 	// Skill use: quest engine notifications
 	events.RegisterListener(events.SkillUsed{}, SkillUseQuestNotify)
 
