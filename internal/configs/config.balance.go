@@ -251,6 +251,16 @@ type Balance struct {
 	CrafterMaterialRestockRate  ConfigInt  `yaml:"CrafterMaterialRestockRate"`  // Rounds between material restocks and craft attempts (default 200)
 	CrafterRareThreshold        ConfigInt  `yaml:"CrafterRareThreshold"`        // SkillMinimum at or above which a craft is considered rare (default 3)
 
+	// Per-rarity-tier restock cadences (game-time hours). Replaces the
+	// single CrafterMaterialRestockRate. Higher rarity tiers (= more
+	// common) fire faster; lower tiers (= rarer) fire slowly as a
+	// backstop on top of forager / player-sale input.
+	RestockCadenceTier50Hours ConfigInt `yaml:"RestockCadenceTier50Hours"`
+	RestockCadenceTier40Hours ConfigInt `yaml:"RestockCadenceTier40Hours"`
+	RestockCadenceTier30Hours ConfigInt `yaml:"RestockCadenceTier30Hours"`
+	RestockCadenceTier20Hours ConfigInt `yaml:"RestockCadenceTier20Hours"`
+	RestockCadenceTier10Days  ConfigInt `yaml:"RestockCadenceTier10Days"`
+
 	// ── GOSSIP SYSTEM ────────────────────────────────────────────────────────
 	GossipIntervalRounds ConfigInt `yaml:"GossipIntervalRounds"` // Rounds between gossip broadcasts for "gossiper" group mobs (default 75)
 

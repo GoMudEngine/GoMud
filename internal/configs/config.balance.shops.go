@@ -43,6 +43,21 @@ func (b *Balance) validateShops() {
 	if b.CrafterRareThreshold < 1 {
 		b.CrafterRareThreshold = 3
 	}
+	if b.RestockCadenceTier50Hours == 0 {
+		b.RestockCadenceTier50Hours = 1
+	}
+	if b.RestockCadenceTier40Hours == 0 {
+		b.RestockCadenceTier40Hours = 2
+	}
+	if b.RestockCadenceTier30Hours == 0 {
+		b.RestockCadenceTier30Hours = 6
+	}
+	if b.RestockCadenceTier20Hours == 0 {
+		b.RestockCadenceTier20Hours = 24
+	}
+	if b.RestockCadenceTier10Days == 0 {
+		b.RestockCadenceTier10Days = 5
+	}
 
 	// ── CRAFTING ──────────────────────────────────────────────────────────────
 	if b.CraftingBaseSuccessChance <= 0 || b.CraftingBaseSuccessChance > 100 {
