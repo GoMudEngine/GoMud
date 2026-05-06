@@ -115,7 +115,7 @@
     <table class="table table-sm table-striped">
         <thead><tr>
             <th>Name</th><th>Score</th><th>State</th><th>Time-in-State</th>
-            <th>Room</th><th>Cargo</th>
+            <th>Room</th><th>Cargo</th><th>Multiplier</th><th>Lbs Delivered</th>
             <th>Cycles 1h</th><th>6h</th><th>1d</th><th>3d</th><th>1w</th>
         </tr></thead>
         <tbody id="tbl-caravans"></tbody>
@@ -127,6 +127,7 @@
         <thead><tr>
             <th>Name</th><th>Score</th><th>Territory</th><th>State</th>
             <th>Time-in-State</th><th>Room</th><th>Cargo</th>
+            <th>Multiplier</th><th>Lbs Delivered</th>
             <th>Cycles 1h</th><th>6h</th><th>1d</th><th>3d</th><th>1w</th>
         </tr></thead>
         <tbody id="tbl-foragers"></tbody>
@@ -395,9 +396,11 @@
                            '<td>round +' + (d.snapshot.round - c.state_entered_round) + '</td>' +
                            '<td>' + c.room_id + '</td>' +
                            '<td>' + bar + ' ' + c.cargo_weight + '/' + c.cargo_capacity + ' lbs' + '</td>' +
+                           '<td>' + multText(c) + '</td>' +
+                           '<td>' + (c.lbs_delivered || 0) + '</td>' +
                            '<td colspan="5">' + tierBarFromDelta(cd ? cd.DeliveriesByTierDelta : null) + '</td></tr>';
         }
-        document.getElementById('tbl-caravans').innerHTML = caravanHtml || '<tr><td colspan="11" class="text-muted">No caravans active.</td></tr>';
+        document.getElementById('tbl-caravans').innerHTML = caravanHtml || '<tr><td colspan="13" class="text-muted">No caravans active.</td></tr>';
 
         // Foragers, alphabetical by name.
         var foragerPairs = (d.snapshot.foragers || []).map(function(f, i) {
@@ -415,16 +418,19 @@
                 f.cargo_capacity || 1
             );
             var fd = d.deltas['1d'] && d.deltas['1d'].foragers && d.deltas['1d'].foragers[f.mob_id];
+            var isDespawned = f.state === '(despawned)' || f.state === '(not active)';
             foragerHtml += '<tr><td>' + f.name + '</td>' +
                            '<td>' + fmtScore(sc.Score, sc.HasScore) + '</td>' +
                            '<td>' + (f.territory || '—') + '</td>' +
                            '<td>' + f.state + '</td>' +
-                           '<td>' + (f.state === '(not active)' ? '&mdash;' : 'round +' + (d.snapshot.round - f.state_entered_round)) + '</td>' +
+                           '<td>' + (isDespawned ? '&mdash;' : 'round +' + (d.snapshot.round - f.state_entered_round)) + '</td>' +
                            '<td>' + f.room_id + '</td>' +
                            '<td>' + bar + ' ' + f.cargo_weight + '/' + f.cargo_capacity + ' lbs' + '</td>' +
+                           '<td>' + multText(f) + '</td>' +
+                           '<td>' + (f.lbs_delivered || 0) + '</td>' +
                            '<td colspan="5">' + tierBarFromDelta(fd ? fd.DeliveriesByTierDelta : null) + '</td></tr>';
         }
-        document.getElementById('tbl-foragers').innerHTML = foragerHtml || '<tr><td colspan="12" class="text-muted">No foragers active.</td></tr>';
+        document.getElementById('tbl-foragers').innerHTML = foragerHtml || '<tr><td colspan="14" class="text-muted">No foragers active.</td></tr>';
     }
 
     window.fetchData = function() {
