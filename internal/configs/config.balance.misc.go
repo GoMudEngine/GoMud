@@ -338,4 +338,9 @@ func (b *Balance) validateMisc() {
 	if b.DispositionDecayHalfLifeRounds == 0 {
 		b.DispositionDecayHalfLifeRounds = 100000
 	}
+
+	// ── FACTIONS ─────────────────────────────────────────────────────────────
+	if b.FactionMemberKillRep == 0 {
+		b.FactionMemberKillRep = -10
+	}
 }

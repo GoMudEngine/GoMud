@@ -407,6 +407,9 @@ type Balance struct {
 	// ── OPINIONS / DISPOSITION ───────────────────────────────────────────────
 	OpinionAttackBump              ConfigInt `yaml:"OpinionAttackBump"`              // Disposition delta when a player initiates aggression on a mob (default -15)
 	DispositionDecayHalfLifeRounds ConfigInt `yaml:"DispositionDecayHalfLifeRounds"` // Rounds for one half-life of disposition decay toward default (default 100000; 0 disables decay)
+
+	// ── FACTIONS ─────────────────────────────────────────────────────────────
+	FactionMemberKillRep ConfigInt `yaml:"FactionMemberKillRep"` // Rep delta when a player kills a member of a defined faction (default -10)
 }
 
 func (b *Balance) Validate() {
