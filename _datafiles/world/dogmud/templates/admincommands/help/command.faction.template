@@ -1,0 +1,36 @@
+The <ansi fg="command">faction</ansi> command inspects and adjusts
+per-player reputation with each loaded faction.
+
+<ansi fg="yellow-bold">Usage:</ansi>
+
+<ansi fg="command">faction list</ansi>
+  List every loaded faction with its display name, default rep,
+  and ally/enemy lists.
+
+<ansi fg="command">faction show <playerName></ansi>
+  List every faction that holds a non-default rep for the named
+  player, sorted worst to best.
+
+<ansi fg="command">faction show <factionId> <playerName></ansi>
+  Show one specific (faction x player) row.
+
+<ansi fg="command">faction set <factionId> <playerName> <rep></ansi>
+  Assign an absolute rep (-100 to +100).
+
+<ansi fg="command">faction bump <factionId> <playerName> <delta></ansi>
+  Add delta to the current rep. Positive = warmer.
+
+<ansi fg="command">faction reset <factionId> <playerName></ansi>
+  Reset rep to the faction's default.
+
+<ansi fg="yellow-bold">Tier thresholds:</ansi>
+  Hostile (<= -50)  Cold (-49..-15)  Neutral (-14..+14)
+  Warm (+15..+49)   Friendly (>= +50)
+
+<ansi fg="yellow-bold">Notes:</ansi>
+  - Faction rep does NOT decay (unlike per-NPC opinion). It is
+    institutional memory.
+  - Changes persist immediately to disk under
+    _datafiles/world/dogmud/factions.rep/<faction>.yaml.
+  - Players never see numeric rep -- relationships surface
+    through dialogue, NPC behavior, and fiction.
