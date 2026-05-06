@@ -67,6 +67,31 @@ func captureShops() []ShopSnapshot {
 		if capacity > 0 {
 			ss.StockScore = float64(total) / float64(capacity)
 		}
+
+		// Copy new Phase-2 counters.
+		ss.SalesCount = inv.SalesCount
+		ss.BuysCount = inv.BuysCount
+		ss.RestockCount = inv.RestockCount
+		if len(inv.StockEvents) > 0 {
+			ss.StockEvents = make(map[int][]StockEvent, len(inv.StockEvents))
+			for k, v := range inv.StockEvents {
+				cp := make([]StockEvent, len(v))
+				for i, e := range v {
+					cp[i] = StockEvent{
+						DepletedRound: e.DepletedRound,
+						RefilledRound: e.RefilledRound,
+					}
+				}
+				ss.StockEvents[k] = cp
+			}
+		}
+		if len(inv.CurrentDepletion) > 0 {
+			ss.CurrentDepletion = make(map[int]uint64, len(inv.CurrentDepletion))
+			for k, v := range inv.CurrentDepletion {
+				ss.CurrentDepletion[k] = v
+			}
+		}
+
 		out = append(out, ss)
 	}
 	return out
@@ -123,13 +148,14 @@ func captureCaravans() []CaravanSnapshot {
 			}
 		}
 
-		// Populate DeliveriesByTier from caravan throughput.
+		// Populate DeliveriesByTier and LbsDelivered from caravan throughput.
 		tp := caravan.GetThroughput(m.Character.Zone, instId)
 		if tp != nil && tp.DeliveriesByTier != nil {
 			cs.DeliveriesByTier = map[int]int{}
 			for tier, count := range tp.DeliveriesByTier {
 				cs.DeliveriesByTier[tier] = count
 			}
+			cs.LbsDelivered = tp.LbsDelivered
 		}
 
 		out = append(out, cs)
@@ -236,13 +262,14 @@ func captureForagers() []ForagerSnapshot {
 				}
 			}
 		}
-		// Populate DeliveriesByTier from forager throughput.
+		// Populate DeliveriesByTier and LbsDelivered from forager throughput.
 		tp := forager.GetThroughput(m.Character.Zone, p.MobId)
 		if tp != nil && tp.DeliveriesByTier != nil {
 			fs.DeliveriesByTier = map[int]int{}
 			for tier, count := range tp.DeliveriesByTier {
 				fs.DeliveriesByTier[tier] = count
 			}
+			fs.LbsDelivered = tp.LbsDelivered
 		}
 		out = append(out, fs)
 	}

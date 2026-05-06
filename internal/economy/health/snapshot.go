@@ -18,6 +18,14 @@ type Snapshot struct {
 	Foragers []ForagerSnapshot `yaml:"foragers" json:"foragers"`
 }
 
+// StockEvent mirrors shops.StockEvent for snapshot serialization.
+// DepletedRound is when Current dropped to 0; RefilledRound is when
+// it returned > 0 (0 = event still open / item still depleted).
+type StockEvent struct {
+	DepletedRound uint64 `yaml:"depleted_round" json:"depleted_round"`
+	RefilledRound uint64 `yaml:"refilled_round" json:"refilled_round"`
+}
+
 // ShopSnapshot captures one merchant's economic state.
 type ShopSnapshot struct {
 	Zone             string          `yaml:"zone"               json:"zone"`
@@ -30,6 +38,12 @@ type ShopSnapshot struct {
 	LastRestockRound uint64          `yaml:"last_restock_round" json:"last_restock_round"`
 	Stock            []StockSnapshot `yaml:"stock"              json:"stock"`
 	StockScore       float64         `yaml:"stock_score"        json:"stock_score"` // sum(Current) / sum(MaxStock); 0..1
+
+	SalesCount       int                  `yaml:"sales_count"        json:"sales_count"`
+	BuysCount        int                  `yaml:"buys_count"         json:"buys_count"`
+	RestockCount     int                  `yaml:"restock_count"      json:"restock_count"`
+	StockEvents      map[int][]StockEvent `yaml:"stock_events"       json:"stock_events"`
+	CurrentDepletion map[int]uint64       `yaml:"current_depletion"  json:"current_depletion"`
 }
 
 // StockSnapshot is a per-item entry. Bucket comes from economy.BucketFor().
@@ -58,6 +72,7 @@ type CaravanSnapshot struct {
 	CargoCapacity     int            `yaml:"cargo_capacity"      json:"cargo_capacity"` // pounds
 	CargoByBucket     map[string]int `yaml:"cargo_by_bucket"     json:"cargo_by_bucket"`
 	DeliveriesByTier  map[int]int    `yaml:"deliveries_by_tier"  json:"deliveries_by_tier"`
+	LbsDelivered      uint64         `yaml:"lbs_delivered"       json:"lbs_delivered"`
 }
 
 // ForagerSnapshot captures one forager NPC's state + backpack
@@ -78,4 +93,5 @@ type ForagerSnapshot struct {
 	CargoCapacity     int            `yaml:"cargo_capacity"      json:"cargo_capacity"` // pounds
 	CargoByBucket     map[string]int `yaml:"cargo_by_bucket"     json:"cargo_by_bucket"`
 	DeliveriesByTier  map[int]int    `yaml:"deliveries_by_tier"  json:"deliveries_by_tier"`
+	LbsDelivered      uint64         `yaml:"lbs_delivered"       json:"lbs_delivered"`
 }
