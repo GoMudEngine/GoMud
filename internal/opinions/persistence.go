@@ -36,7 +36,7 @@ func opinionsBaseDir() string {
 		return override
 	}
 	return util.FilePath(
-		configs.GetFilePathsConfig().DataFiles.String(), `/`, `world`, `/`, `dogmud`, `/`, `opinions`,
+		configs.GetFilePathsConfig().DataFiles.String(), `/`, `opinions`,
 	)
 }
 
