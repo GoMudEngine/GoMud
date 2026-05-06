@@ -403,6 +403,10 @@ type Balance struct {
 	ScoreWeightInput      ConfigFloat `yaml:"ScoreWeightInput"`
 	ScoreWeightThroughput ConfigFloat `yaml:"ScoreWeightThroughput"`
 	ScoreWeightShopGold   ConfigFloat `yaml:"ScoreWeightShopGold"`
+
+	// ── OPINIONS / DISPOSITION ───────────────────────────────────────────────
+	OpinionAttackBump              ConfigInt `yaml:"OpinionAttackBump"`              // Disposition delta when a player initiates aggression on a mob (default -15)
+	DispositionDecayHalfLifeRounds ConfigInt `yaml:"DispositionDecayHalfLifeRounds"` // Rounds for one half-life of disposition decay toward default (default 100000; 0 disables decay)
 }
 
 func (b *Balance) Validate() {

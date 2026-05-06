@@ -330,4 +330,12 @@ func (b *Balance) validateMisc() {
 	if b.EconomyScoreWeightForager <= 0 {
 		b.EconomyScoreWeightForager = 0.2
 	}
+
+	// ── OPINIONS / DISPOSITION ───────────────────────────────────────────────
+	if b.OpinionAttackBump == 0 {
+		b.OpinionAttackBump = -15
+	}
+	if b.DispositionDecayHalfLifeRounds == 0 {
+		b.DispositionDecayHalfLifeRounds = 100000
+	}
 }
