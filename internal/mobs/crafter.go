@@ -147,6 +147,9 @@ func TickMobShopRestock(mob *Mob) bool {
 
 	b := configs.GetBalanceConfig()
 	roundCount := util.GetRoundCount()
+	// Integer division: RoundsPerDay is typically not divisible by 24
+	// (e.g., 900/24=37, truncating from 37.5). The sub-round-per-hour
+	// drift is negligible (<2% cadence error even at tier-10).
 	roundsPerHour := uint64(configs.GetTimingConfig().RoundsPerDay) / 24
 
 	anyFired := false
@@ -172,6 +175,13 @@ func TickMobShopRestock(mob *Mob) bool {
 	return anyFired
 }
 
+// TickMobCraft fires on every crafter mob idle tick. Per-tier
+// restock cadences gate actual stock additions (commons hourly,
+// rares every 5 days), but recipe evaluation and salvage logic
+// run on every tick so the crafter can react to depletion quickly.
+// Returns a CraftResult summarizing what (if anything) the crafter
+// did on this tick. Returns nil when the mob is not a crafter, the
+// crafting feature is disabled, or the mob is in combat.
 func TickMobCraft(mob *Mob) *CraftResult {
 	if !mob.Crafter {
 		return nil
@@ -185,6 +195,10 @@ func TickMobCraft(mob *Mob) *CraftResult {
 	}
 
 	roundCount := util.GetRoundCount()
+	// Integer division: RoundsPerDay is typically not divisible by 24
+	// (e.g., 900/24=37, truncating from 37.5). The sub-round-per-hour
+	// drift is negligible (<2% cadence error even at tier-10).
+	roundsPerHour := uint64(configs.GetTimingConfig().RoundsPerDay) / 24
 
 	// ── ShopInventory path ─────────────────────────────────────────────────
 	shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId)
@@ -194,7 +208,7 @@ func TickMobCraft(mob *Mob) *CraftResult {
 			shopInv.LastRestockByTier = map[int]uint64{}
 		}
 
-		roundsPerHour := uint64(configs.GetTimingConfig().RoundsPerDay) / 24
+		caravanServed := b.IsCaravanServedZone(mob.Zone)
 		restocked := false
 		for _, tier := range []int{50, 40, 30, 20, 10} {
 			hours := shops.RestockCadenceHours(b, tier)
@@ -211,14 +225,19 @@ func TickMobCraft(mob *Mob) *CraftResult {
 				continue
 			}
 			shopInv.LastRestockByTier[tier] = roundCount
-			if b.IsCaravanServedZone(mob.Zone) && (tier == 50 || tier == 40) {
-				// Caravan-served: foragers/caravans handle 30/20/10. Per-tier
-				// ticker only fires on baseline tiers in those zones, leaving
-				// rarer tiers to their natural input paths.
-				if shopInv.RestockTier(tier) {
-					restocked = true
+			if caravanServed {
+				if tier == 50 || tier == 40 {
+					// Caravan-served zones: common tiers (50/40) still refill via
+					// the ticker as a baseline. Rarer tiers (30/20/10) depend on
+					// caravan/forager deliveries — the ticker advances their
+					// timestamp above to prevent drift if zone-status changes,
+					// but does not add stock here.
+					if shopInv.RestockTier(tier) {
+						restocked = true
+					}
 				}
-			} else if !b.IsCaravanServedZone(mob.Zone) {
+				// Intentional no-op for tiers 30/20/10 in caravan-served zones.
+			} else {
 				if shopInv.RestockTier(tier) {
 					restocked = true
 				}
