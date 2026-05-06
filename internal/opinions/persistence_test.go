@@ -78,3 +78,31 @@ func TestLoadFromDiskCorruptYAMLReturnsNil(t *testing.T) {
 		t.Errorf("loadFromDisk on corrupt YAML = %+v, want nil", got)
 	}
 }
+
+func TestRestartPreservesOpinionWithDecay(t *testing.T) {
+	dir := t.TempDir()
+	t.Setenv("DOGMUD_OPINIONS_DIR_OVERRIDE", dir)
+	ClearCache()
+
+	defaultProviderForTest = func(mobId int) (string, int, bool) { return "lars", 0, true }
+	t.Cleanup(func() { defaultProviderForTest = nil })
+
+	halfLifeForTest = func() uint64 { return 100 }
+	t.Cleanup(func() { halfLifeForTest = nil })
+
+	roundForTest = func() uint64 { return 1000 }
+	Bump(41, 17, -50)
+
+	// Simulate restart: drop cache, leave file on disk.
+	ClearCache()
+
+	// "Restart" — round count advances by five half-lives.
+	roundForTest = func() uint64 { return 1500 }
+	t.Cleanup(func() { roundForTest = nil })
+
+	got := Get(41, 17)
+	// -50 decayed by 5 toward 0 → -45.
+	if got != -45 {
+		t.Errorf("post-restart Get = %d, want -45 (anchored read with decay)", got)
+	}
+}
