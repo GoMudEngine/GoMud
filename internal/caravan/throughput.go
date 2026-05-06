@@ -22,6 +22,10 @@ type Throughput struct {
 	Zone             string      `yaml:"zone"`
 	DeliveriesByTier map[int]int `yaml:"deliveries_by_tier"`
 	LastUpdatedRound uint64      `yaml:"last_updated_round"`
+	// LbsDelivered is the cumulative pounds of cargo this caravan has
+	// delivered to shops over its lifetime. Drives logistics health
+	// scoring (cargo_score axis).
+	LbsDelivered uint64 `yaml:"lbs_delivered,omitempty"`
 }
 
 var (
@@ -88,6 +92,20 @@ func IncrementDelivery(zone string, mobId int, rarityTier int) {
 		tp.DeliveriesByTier = map[int]int{}
 	}
 	tp.DeliveriesByTier[rarityTier]++
+	tp.LastUpdatedRound = util.GetRoundCount()
+	throughputMu.Unlock()
+}
+
+// AddLbsDelivered increments LbsDelivered by lbs and updates
+// LastUpdatedRound. lbs <= 0 is silently ignored.
+// Caller is responsible for calling SaveThroughput when convenient.
+func AddLbsDelivered(zone string, mobId int, lbs uint64) {
+	if lbs == 0 {
+		return
+	}
+	tp := GetThroughput(zone, mobId)
+	throughputMu.Lock()
+	tp.LbsDelivered += lbs
 	tp.LastUpdatedRound = util.GetRoundCount()
 	throughputMu.Unlock()
 }
