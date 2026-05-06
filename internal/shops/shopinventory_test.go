@@ -270,6 +270,40 @@ func TestRestockBaselineTiers_CapsAtMaxStock(t *testing.T) {
 	}
 }
 
+// TestRestockTier_UnratedItemDefaultsToTier50 covers the regression
+// where pre-tier-system content (tutorial gear like Adela's stock)
+// has no rarity_tier set on its YAML, defaults to RarityTier=0, and
+// would otherwise be invisible to every per-tier ticker. The fallback
+// treats unrated items as tier 50 so they restock on the common
+// cadence — the safe default that keeps tutorial-gear shops working.
+func TestRestockTier_UnratedItemDefaultsToTier50(t *testing.T) {
+	const unratedItem = 999081
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: unratedItem, RarityTier: 0})
+
+	si := &ShopInventory{
+		Stock: []StockEntry{
+			{ItemId: unratedItem, RestockQty: 5, MaxStock: 10, Current: 0},
+		},
+	}
+
+	// Tier-50 ticker should pick it up (defaulted from 0).
+	if !si.RestockTier(50) {
+		t.Errorf("expected unrated item to be restocked by tier-50 ticker")
+	}
+	if si.Stock[0].Current != 5 {
+		t.Errorf("unrated item current after tier-50 restock: got %d, want 5", si.Stock[0].Current)
+	}
+
+	// Tier-40 ticker should NOT pick it up (defaulted to 50, not 40).
+	si.Stock[0].Current = 0
+	if si.RestockTier(40) {
+		t.Errorf("tier-40 ticker should not affect unrated (default-50) item")
+	}
+	if si.Stock[0].Current != 0 {
+		t.Errorf("unrated item current after tier-40 ticker: got %d, want 0", si.Stock[0].Current)
+	}
+}
+
 func TestRestockTier_OnlyTopsUpMatchingTier(t *testing.T) {
 	// Register test items with specific rarity tiers.
 	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: testTier50ItemA, RarityTier: 50})

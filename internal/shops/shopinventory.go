@@ -331,7 +331,18 @@ func (si *ShopInventory) RestockTier(rarityTier int) bool {
 			continue
 		}
 		spec := items.GetItemSpec(e.ItemId)
-		if spec == nil || spec.RarityTier != rarityTier {
+		if spec == nil {
+			continue
+		}
+		// Items without an explicit rarity_tier (typically pre-tier-system
+		// content like tutorial gear) default to tier 50 for restock
+		// purposes — otherwise they'd never be picked up by any per-tier
+		// ticker (the Phase-1 ticker only iterates 50/40/30/20/10).
+		itemTier := spec.RarityTier
+		if itemTier == 0 {
+			itemTier = 50
+		}
+		if itemTier != rarityTier {
 			continue
 		}
 		room := e.MaxStock - e.Current
