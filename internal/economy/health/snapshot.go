@@ -44,11 +44,12 @@ type ShopSnapshot struct {
 	// without requiring the caller to carry the parent snapshot.
 	Round uint64 `yaml:"round,omitempty" json:"round,omitempty"`
 
-	SalesCount       int                  `yaml:"sales_count"        json:"sales_count"`
-	BuysCount        int                  `yaml:"buys_count"         json:"buys_count"`
-	RestockCount     int                  `yaml:"restock_count"      json:"restock_count"`
-	StockEvents      map[int][]StockEvent `yaml:"stock_events"       json:"stock_events"`
-	CurrentDepletion map[int]uint64       `yaml:"current_depletion"  json:"current_depletion"`
+	SalesCount             int                  `yaml:"sales_count"               json:"sales_count"`
+	BuysCount              int                  `yaml:"buys_count"                json:"buys_count"`
+	RestockCount           int                  `yaml:"restock_count"             json:"restock_count"`
+	ConsumedByCrafterCount int                  `yaml:"consumed_by_crafter_count" json:"consumed_by_crafter_count"`
+	StockEvents            map[int][]StockEvent `yaml:"stock_events"              json:"stock_events"`
+	CurrentDepletion       map[int]uint64       `yaml:"current_depletion"         json:"current_depletion"`
 
 	// Phase-4 computed fields (populated in captureShops, sent to dashboard JS).
 	MedianTtRCommons       uint64 `yaml:"median_ttr_commons,omitempty"       json:"median_ttr_commons"`

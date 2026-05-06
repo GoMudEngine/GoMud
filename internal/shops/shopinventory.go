@@ -102,6 +102,13 @@ type ShopInventory struct {
 	// Drives input rate scoring.
 	RestockCount int `yaml:"restock_count,omitempty"`
 
+	// ConsumedByCrafterCount is the cumulative number of items the
+	// shop's crafter NPC has consumed as ingredients to produce other
+	// items. Distinct from BuysCount (player-driven inflow) and from
+	// "items destroyed in failed crafts" — this counts only material
+	// consumption by the crafter mob's own work (success or failure).
+	ConsumedByCrafterCount int `yaml:"consumed_by_crafter_count,omitempty"`
+
 	// StockEvents holds completed depletion→refill events per item,
 	// rolling 7-game-day window. Drives Time-to-Refill (TtR) scoring.
 	StockEvents map[int][]StockEvent `yaml:"stock_events,omitempty"`

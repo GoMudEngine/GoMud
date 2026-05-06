@@ -98,14 +98,47 @@ func HasMaterialsWithReserve(recipe *crafting.RecipeSpec, shopInv *ShopInventory
 	return true
 }
 
+// HasMaterialsWithReservePct returns true if shopInv contains all ingredients
+// for recipe while keeping a per-ingredient reserve floor of
+// max(1, int(MaxStock * reservePct)) units of each ingredient in stock.
+// This prevents the crafter from draining its own supply to a level where
+// players cannot buy.
+func HasMaterialsWithReservePct(recipe *crafting.RecipeSpec, shopInv *ShopInventory, reservePct float64) bool {
+	if shopInv == nil || recipe == nil {
+		return false
+	}
+	for _, ing := range recipe.Ingredients {
+		spec := items.FindSpecByComponentTag(ing.ItemTag)
+		if spec == nil {
+			return false
+		}
+		entry := shopInv.GetStock(spec.ItemId)
+		if entry == nil {
+			return false
+		}
+		reserve := int(float64(entry.MaxStock) * reservePct)
+		if reserve < 1 {
+			reserve = 1
+		}
+		available := entry.Current - reserve
+		if available < ing.Quantity {
+			return false
+		}
+	}
+	return true
+}
+
 // EvaluateCraftOptions scores all profitable craft recipes and returns the
 // most profitable one. Returns nil if no recipe is worth crafting.
 //
 // A recipe is skipped if:
 //   - Output item is at max_stock
-//   - Materials are insufficient (respecting reserve)
+//   - Materials are insufficient (respecting reservePct floor)
 //   - Product value does not exceed material cost (not profitable)
-func EvaluateCraftOptions(recipes []string, shopInv *ShopInventory, cfg PricingConfig, reserve int) *CraftDecision {
+//
+// reservePct is the fraction of each ingredient's MaxStock to keep in
+// reserve. The per-ingredient reserve is max(1, int(MaxStock * reservePct)).
+func EvaluateCraftOptions(recipes []string, shopInv *ShopInventory, cfg PricingConfig, reservePct float64) *CraftDecision {
 	if shopInv == nil {
 		return nil
 	}
@@ -128,8 +161,8 @@ func EvaluateCraftOptions(recipes []string, shopInv *ShopInventory, cfg PricingC
 			continue
 		}
 
-		// Skip if materials are insufficient (with reserve)
-		if !HasMaterialsWithReserve(recipe, shopInv, reserve) {
+		// Skip if materials are insufficient (with per-ingredient reserve)
+		if !HasMaterialsWithReservePct(recipe, shopInv, reservePct) {
 			continue
 		}
 

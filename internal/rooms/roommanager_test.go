@@ -3,6 +3,7 @@ package rooms
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/stretchr/testify/assert"
@@ -124,5 +125,79 @@ func TestIsEssential(t *testing.T) {
 		got := m.IsEssential()
 		assert.Equal(t, tc.want, got,
 			"IsEssential() wrong for groups %v", tc.groups)
+	}
+}
+
+// TestIsEssential_ShopMob confirms that a mob with a non-empty Shop is
+// considered essential regardless of its Groups, so shopkeepers in unvisited
+// zones survive the idle-unload cycle.
+func TestIsEssential_ShopMob(t *testing.T) {
+	shopMob := &mobs.Mob{
+		Character: characters.Character{
+			Shop: characters.Shop{
+				{ItemId: 1, Quantity: 10},
+			},
+		},
+	}
+	assert.True(t, shopMob.IsEssential(),
+		"a mob with a shop must be essential")
+
+	// A mob with no shop entries should remain non-essential (control case).
+	emptyMob := &mobs.Mob{}
+	assert.False(t, emptyMob.IsEssential(),
+		"a mob with no shop must not be essential by default")
+}
+
+// TestRoomHasEssentialMob_ShopMobPinsRoom verifies that a room containing a
+// shopkeeper mob is pinned from unload (roomHasEssentialMob returns true) and
+// is not destroyed by removeRoomFromMemory.
+func TestRoomHasEssentialMob_ShopMobPinsRoom(t *testing.T) {
+	cleanupMobs := mobs.SeedMobsForTest(map[int]*mobs.Mob{}, map[int]*mobs.Mob{})
+	defer cleanupMobs()
+
+	shopkeeperMob := &mobs.Mob{
+		Character: characters.Character{
+			Shop: characters.Shop{
+				{ItemId: 5, Quantity: 3},
+			},
+		},
+	}
+	const shopInstId = 3001
+	mobs.SetInstanceForTest(shopInstId, shopkeeperMob)
+
+	cleanupRooms := SeedRoomsForTest(
+		map[int]*Room{
+			9003: {
+				RoomId:      9003,
+				Zone:        "TestZone",
+				Title:       "Market Stall",
+				Description: "A vendor's stall.",
+				mobs:        []int{shopInstId},
+				// lastVisited far in the past — would normally trigger unload.
+				lastVisited: 0,
+			},
+		},
+		map[string]*ZoneConfig{
+			"TestZone": {Name: "TestZone", RoomId: 9003, RoomIds: map[int]struct{}{9003: {}}},
+		},
+	)
+	defer cleanupRooms()
+
+	r := roomManager.rooms[9003]
+	assert.True(t, roomHasEssentialMob(r),
+		"room with a shopkeeper mob should be essential")
+
+	// removeRoomFromMemory must not evict it.
+	removeRoomFromMemory(r)
+	_, stillLoaded := roomManager.rooms[9003]
+	assert.True(t, stillLoaded,
+		"removeRoomFromMemory must not unload a room containing a shopkeeper mob")
+
+	// RoomMaintenance must also skip it.
+	util.SetRoundCount(10000)
+	removed := RoomMaintenance()
+	for _, id := range removed {
+		assert.NotEqual(t, 9003, id,
+			"RoomMaintenance must not unload a room containing a shopkeeper mob")
 	}
 }

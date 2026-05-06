@@ -662,6 +662,11 @@ Balance:
   ShopPriceCeiling: 5.0         # Maximum scarcity multiplier (out of stock)
   ShopAbundanceThreshold: 3.0   # Stock/restock ratio where price hits floor
   ShopMaterialReserve: 1        # Units a crafter reserves per material before selling
+  # Per-ingredient stock-reserve floor for crafter mobs. The crafter will
+  # not consume an ingredient if doing so would drop its current stock below
+  # MaxStock × CrafterIngredientReservePct (or 1, whichever is higher).
+  # Default 0.25 keeps at least 25% of each ingredient available for players.
+  CrafterIngredientReservePct: 0.25
   ShopGoldReserveRatio: 0.50    # Fraction of gold pool kept in reserve before buying
   BarterMaxDiscount: 0.15       # Max fractional buy-price discount from bartering
   BarterMaxBonus: 0.15          # Max fractional sell-price bonus from bartering

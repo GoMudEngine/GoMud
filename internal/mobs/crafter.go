@@ -4,10 +4,18 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
+
+// saveShopFn is the shop-persistence hook used by executeCraft and the
+// salvage path. Tests override this variable to avoid disk I/O while
+// still asserting that persistence is called after a craft or salvage.
+var saveShopFn = func(zone string, mobId int, roomId int) error {
+	return shops.SaveShop(zone, mobId, roomId)
+}
 
 // CraftResult describes the outcome of a crafter mob's tick, so the calling
 // hook can emit room messages and world events without import cycles.
@@ -245,7 +253,11 @@ func TickMobCraft(mob *Mob) *CraftResult {
 		}
 
 		cfg := shops.DefaultPricingConfig()
-		reserve := 1 // Keep at least 1 of each ingredient in stock
+		// Per-ingredient reserve: the crafter will not consume an ingredient
+		// if doing so would drop its stock below MaxStock×reservePct (floor 1).
+		// This keeps at least 25% (by default) of each ingredient available
+		// for players to buy rather than draining the shop to a single unit.
+		reservePct := float64(b.CrafterIngredientReservePct)
 
 		// Build full recipe list: mob's known recipes + shop's known recipes
 		recipeIds := mergeRecipeIds(mob.CrafterRecipeIds, shopInv.KnownRecipes)
@@ -259,12 +271,12 @@ func TickMobCraft(mob *Mob) *CraftResult {
 		}
 
 		// ── Priority 1: Self-gear upgrade ──────────────────────────────────
-		if selfRecipe := pickSelfGearRecipe(mob, recipeIds, shopInv, reserve); selfRecipe != nil {
+		if selfRecipe := pickSelfGearRecipe(mob, recipeIds, shopInv, reservePct); selfRecipe != nil {
 			return tagRestock(executeCraft(mob, selfRecipe, true, shopInv))
 		}
 
 		// ── Priority 2: Profitable craft ──────────────────────────────────
-		craftDecision := shops.EvaluateCraftOptions(recipeIds, shopInv, cfg, reserve)
+		craftDecision := shops.EvaluateCraftOptions(recipeIds, shopInv, cfg, reservePct)
 		if craftDecision != nil {
 			recipe := crafting.GetRecipe(craftDecision.RecipeId)
 			if recipe != nil {
@@ -275,15 +287,18 @@ func TickMobCraft(mob *Mob) *CraftResult {
 		// ── Priority 3: Profitable salvage ────────────────────────────────
 		salvageDecision := shops.EvaluateSalvageOptions(shopInv, cfg)
 		if salvageDecision != nil {
-			shopInv.RemoveStock(salvageDecision.ItemId, 1)
+			shopInv.RemoveStockAtRound(salvageDecision.ItemId, 1, util.GetRoundCount())
 			spec := items.GetItemSpec(salvageDecision.ItemId)
 			if spec != nil {
 				for _, ret := range spec.SalvageReturns {
 					matSpec := items.FindSpecByComponentTag(ret.ItemTag)
 					if matSpec != nil {
-						shopInv.AddStock(matSpec.ItemId, ret.Quantity)
+						shopInv.AddStockAtRound(matSpec.ItemId, ret.Quantity, util.GetRoundCount())
 					}
 				}
+			}
+			if err := saveShopFn(mob.Zone, int(mob.MobId), mob.HomeRoomId); err != nil {
+				mudlog.Warn("TickMobCraft salvage save", "mob", mob.Character.Name, "error", err)
 			}
 			return &CraftResult{
 				Success:      true,
@@ -347,7 +362,8 @@ func mergeRecipeIds(a, b []string) []string {
 
 // pickSelfGearRecipe finds a recipe whose output is an equipment upgrade for
 // the mob. Returns nil if no upgrade recipe is craftable with current stock.
-func pickSelfGearRecipe(mob *Mob, recipeIds []string, shopInv *shops.ShopInventory, reserve int) *crafting.RecipeSpec {
+// reservePct is the per-ingredient reserve fraction; see HasMaterialsWithReservePct.
+func pickSelfGearRecipe(mob *Mob, recipeIds []string, shopInv *shops.ShopInventory, reservePct float64) *crafting.RecipeSpec {
 	wornItems := mob.Character.Equipment.GetAllItems()
 
 	for _, recipeId := range recipeIds {
@@ -387,7 +403,7 @@ func pickSelfGearRecipe(mob *Mob, recipeIds []string, shopInv *shops.ShopInvento
 		}
 
 		// Check materials are available (backpack for legacy; shopInv for shop path)
-		if !shops.HasMaterialsWithReserve(recipe, shopInv, reserve) {
+		if !shops.HasMaterialsWithReservePct(recipe, shopInv, reservePct) {
 			continue
 		}
 
@@ -399,11 +415,15 @@ func pickSelfGearRecipe(mob *Mob, recipeIds []string, shopInv *shops.ShopInvento
 // executeCraft performs a craft attempt using ShopInventory for material
 // tracking. On success, the output is added directly to shopInv stock.
 func executeCraft(mob *Mob, recipe *crafting.RecipeSpec, forSelf bool, shopInv *shops.ShopInventory) *CraftResult {
-	// Consume ingredients from shop stock
+	round := util.GetRoundCount()
+
+	// Consume ingredients from shop stock (round-aware so depletion events
+	// fire and the dashboard's throughput scoring can see crafter demand).
 	for _, ing := range recipe.Ingredients {
 		spec := items.FindSpecByComponentTag(ing.ItemTag)
 		if spec != nil {
-			shopInv.RemoveStock(spec.ItemId, ing.Quantity)
+			removed := shopInv.RemoveStockAtRound(spec.ItemId, ing.Quantity, round)
+			shopInv.ConsumedByCrafterCount += removed
 		}
 	}
 
@@ -429,11 +449,22 @@ func executeCraft(mob *Mob, recipe *crafting.RecipeSpec, forSelf bool, shopInv *
 				}
 			}
 		} else if recipe.Output.ItemId > 0 {
+			// Round-aware so refill events fire when previously-depleted
+			// output slots are restocked by a craft (fixes Kerra TtR scoring).
 			for i := 0; i < recipe.Output.Quantity; i++ {
-				shopInv.AddStock(recipe.Output.ItemId, 1)
+				shopInv.AddStockAtRound(recipe.Output.ItemId, 1, round)
 			}
 		}
 		mob.Character.OnSkillUse(recipe.Skill, 0)
+	}
+
+	// Persist shop state after any craft attempt (success or failure both
+	// consume ingredients; failing to save loses that consumption and any
+	// output that was added this tick).
+	if shopInv != nil {
+		if err := saveShopFn(mob.Zone, int(mob.MobId), mob.HomeRoomId); err != nil {
+			mudlog.Warn("executeCraft save", "mob", mob.Character.Name, "error", err)
+		}
 	}
 
 	return result
