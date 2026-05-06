@@ -1,6 +1,9 @@
 package opinions
 
-import "testing"
+import (
+	"os"
+	"testing"
+)
 
 func TestTierOf(t *testing.T) {
 	cases := []struct {
@@ -94,5 +97,132 @@ func TestClampScore(t *testing.T) {
 		if got := clampScore(c.in); got != c.want {
 			t.Errorf("clampScore(%d) = %d, want %d", c.in, got, c.want)
 		}
+	}
+}
+
+func TestGetReturnsDefaultWhenNoFile(t *testing.T) {
+	dir := t.TempDir()
+	t.Setenv("DOGMUD_OPINIONS_DIR_OVERRIDE", dir)
+	ClearCache()
+	defaultProviderForTest = func(mobId int) (string, int, bool) {
+		if mobId == 41 {
+			return "lars", 7, true
+		}
+		return "", 0, false
+	}
+	t.Cleanup(func() { defaultProviderForTest = nil })
+
+	if got := Get(41, 17); got != 7 {
+		t.Errorf("Get with no file = %d, want 7 (template default)", got)
+	}
+}
+
+func TestSetWritesAndPersists(t *testing.T) {
+	dir := t.TempDir()
+	t.Setenv("DOGMUD_OPINIONS_DIR_OVERRIDE", dir)
+	ClearCache()
+	defaultProviderForTest = func(mobId int) (string, int, bool) { return "lars", 0, true }
+	t.Cleanup(func() { defaultProviderForTest = nil })
+	roundForTest = func() uint64 { return 1000 }
+	t.Cleanup(func() { roundForTest = nil })
+
+	Set(41, 17, -75)
+	if got := Get(41, 17); got != -75 {
+		t.Errorf("Get after Set = %d, want -75", got)
+	}
+
+	// Drop cache, reload from disk.
+	ClearCache()
+	if got := Get(41, 17); got != -75 {
+		t.Errorf("Get after restart-equivalent = %d, want -75 (persistence)", got)
+	}
+}
+
+func TestSetClampsToRange(t *testing.T) {
+	dir := t.TempDir()
+	t.Setenv("DOGMUD_OPINIONS_DIR_OVERRIDE", dir)
+	ClearCache()
+	defaultProviderForTest = func(mobId int) (string, int, bool) { return "lars", 0, true }
+	t.Cleanup(func() { defaultProviderForTest = nil })
+	roundForTest = func() uint64 { return 1000 }
+	t.Cleanup(func() { roundForTest = nil })
+
+	Set(41, 17, -500)
+	if got := Get(41, 17); got != -100 {
+		t.Errorf("Set(-500) → Get = %d, want -100", got)
+	}
+	Set(41, 17, 500)
+	if got := Get(41, 17); got != 100 {
+		t.Errorf("Set(500) → Get = %d, want 100", got)
+	}
+}
+
+func TestBumpStartsFromDefaultWhenNoRow(t *testing.T) {
+	dir := t.TempDir()
+	t.Setenv("DOGMUD_OPINIONS_DIR_OVERRIDE", dir)
+	ClearCache()
+	defaultProviderForTest = func(mobId int) (string, int, bool) { return "lars", 5, true }
+	t.Cleanup(func() { defaultProviderForTest = nil })
+	roundForTest = func() uint64 { return 1000 }
+	t.Cleanup(func() { roundForTest = nil })
+
+	Bump(41, 17, -20)
+	// Starting from default (5), bumped by -20, expected -15.
+	if got := Get(41, 17); got != -15 {
+		t.Errorf("Get after first Bump = %d, want -15", got)
+	}
+}
+
+func TestBumpDecaysBeforeApplying(t *testing.T) {
+	dir := t.TempDir()
+	t.Setenv("DOGMUD_OPINIONS_DIR_OVERRIDE", dir)
+	ClearCache()
+	defaultProviderForTest = func(mobId int) (string, int, bool) { return "lars", 0, true }
+	t.Cleanup(func() { defaultProviderForTest = nil })
+
+	roundForTest = func() uint64 { return 1000 }
+	Set(41, 17, -50)
+
+	// Override decay half-life via test-only seam, then advance round.
+	halfLifeForTest = func() uint64 { return 100 }
+	t.Cleanup(func() { halfLifeForTest = nil })
+	roundForTest = func() uint64 { return 1500 } // five half-lives
+	t.Cleanup(func() { roundForTest = nil })
+
+	Bump(41, 17, -10)
+	// -50 decayed by 5 toward 0 = -45, then bumped by -10 = -55.
+	if got := Get(41, 17); got != -55 {
+		t.Errorf("Bump after decay = %d, want -55", got)
+	}
+}
+
+func TestGetWithoutRowDoesNotCreateRow(t *testing.T) {
+	dir := t.TempDir()
+	t.Setenv("DOGMUD_OPINIONS_DIR_OVERRIDE", dir)
+	ClearCache()
+	defaultProviderForTest = func(mobId int) (string, int, bool) { return "lars", 5, true }
+	t.Cleanup(func() { defaultProviderForTest = nil })
+
+	_ = Get(41, 17)
+
+	// File should not exist — Get is read-only when there's no data.
+	path := opinionPath(41, "lars")
+	if _, err := os.Stat(path); err == nil {
+		t.Errorf("Get created file %q — should not have", path)
+	}
+}
+
+func TestTierFor(t *testing.T) {
+	dir := t.TempDir()
+	t.Setenv("DOGMUD_OPINIONS_DIR_OVERRIDE", dir)
+	ClearCache()
+	defaultProviderForTest = func(mobId int) (string, int, bool) { return "lars", 0, true }
+	t.Cleanup(func() { defaultProviderForTest = nil })
+	roundForTest = func() uint64 { return 1000 }
+	t.Cleanup(func() { roundForTest = nil })
+
+	Set(41, 17, -60)
+	if got := TierFor(41, 17); got != TierHostile {
+		t.Errorf("TierFor after Set(-60) = %v, want Hostile", got)
 	}
 }
