@@ -57,6 +57,86 @@ New `Balance` knobs (all overridable in `_datafiles/config.yaml`):
 `ScoreWeight{Stock,Input,Throughput,ShopGold}`. Defaults set in code so
 old config files continue to load.
 
+### Smoke-test follow-ups
+
+Same-day fixes that surfaced once the new dashboard had eyes on
+zone-by-zone health:
+
+- **Eager-spawn shop-bearing rooms at boot.** Shopkeeper mobs in zones
+  without players were never instantiated — only the explicit
+  `systemNPCAnchorRooms` list (foragers + caravan) got pre-spawned.
+  Result: Stillwater, Sanctum Basin, Watchers Crossing showed flat
+  zero on the input rate dashboard because no `MobIdle` ticks ever
+  fired for their shopkeepers. `main.go` now scans every loaded room
+  at boot and `Prepare()`s any with `HasShop()` spawninfo.
+  `IsEssential()` extended so shop-bearing rooms aren't unloaded by
+  `RoomMaintenance`.
+
+- **Crafter consumption tracking.** Crafter mobs now use round-aware
+  `RemoveStockAtRound` / `AddStockAtRound` so their consumption
+  marks `CurrentDepletion` and refills push `StockEvent`s — the
+  TtR throughput score sees crafter-caused depletions instead of
+  only player buys. New `ConsumedByCrafterCount` counter on
+  `ShopInventory` captures per-shop crafter outflow. `SaveShop` is
+  called after successful crafts (and salvage) so freshly-crafted
+  output items survive server restart.
+
+- **Per-ingredient stock-reserve floor.** Crafter mobs no longer
+  drain their own ingredient stock to a single unit. New
+  `CrafterIngredientReservePct` config knob (default 0.25) keeps
+  at least 25% of `MaxStock` of each ingredient available for
+  player purchase. Per-ingredient check, hard floor of 1 for tiny
+  `MaxStock` cases.
+
+- **Unrated-item tier-50 fallback.** 145 of 213 weapons / armor /
+  consumables predate the rarity_tier system and have no tier
+  field — they were invisible to the new per-tier `RestockTier`
+  ticker. `RestockTier` now defaults `RarityTier == 0` to 50
+  (commons, hourly cadence). Tutorial NPCs (Adela's tutorial gear)
+  restock again. Per-tier audit + tagging tracked as a follow-up.
+
+- **Forager fixes.**
+  - Halix marked `non_combatant: true` so hostile steppe mobs can't
+    aggro. He was dying mid-cast-fold-recall to goblin/wolf hits;
+    death calls `Suicide` which permanently destroys the instance.
+  - Kessa & Tova got a direct-teleport recall replacing
+    `cast fold-recall`. The fold-cast machinery only advances
+    inside the combat loop, so foragers recalling outside combat
+    set `CastingState` and froze forever. Direct teleport bypasses
+    the cast system entirely.
+  - `ForagerRestDurationRounds` exposed as a config knob (default
+    40 rounds, down from a hardcoded 120) for cycle-pacing tuning.
+
+- **Prewarm zone-key fix.** `prewarmThroughputFromPersistedFiles`
+  for both forager and caravan keyed the cache by snake_case
+  directory name while runtime callers use display-name zone via
+  `mob.Zone`. Result: phantom duplicate cache entries and
+  `SaveAllThroughputs: no cached entry` errors on every shutdown.
+  Prewarm now keys by the YAML's `zone:` field (display form) so
+  prewarmed and runtime entries share a key.
+
+- **Validator fix for shared component tags.** `ValidateRecipeIngredientTags`
+  picked one arbitrary item per `ComponentTag` for validation.
+  Map iteration is randomized in Go, so when multiple items shared
+  a tag (four bottles all tagged `bottle`), boot intermittently
+  panicked if the chosen item lacked the recipe's discipline.
+  Validator now checks "at least one item with this tag has the
+  discipline" — eliminates the boot-roulette panic.
+
+- **Stillwater bank.** Town tier-1 settlement now has a counting
+  house bank with NPC clerk (mob 356, room 5100). Tutorial-style
+  bank flavor matching the existing Thornwall bank pattern.
+
+- **Multi-quantity sell** (`sell 5 iron-ore`, `sell all iron-ore`,
+  `sell all.iron-ore`) mirroring the existing multi-buy parser.
+  Bare `sell all` with no item rejected as too easy to fat-finger.
+
+- **Bank storage stacking.** Stackable items (components, food,
+  drink, potions, grenades, ammo) now consume one slot per stack
+  in the player's bank instead of one slot per unit. Lazy on-load
+  migration of legacy `Items []Item` into the new `Slots
+  []StorageSlot` shape. Storage fees billed per slot. No flag day.
+
 ## 2026-05-04 — Vendor Polish Hotfix
 
 Two post-merge fixes caught during smoke testing the same day.
