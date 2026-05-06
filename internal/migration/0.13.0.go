@@ -103,9 +103,9 @@ func migrate_SeedWarrenRepFromQuestToken() error {
 			continue
 		}
 
-		factions.BumpRep("warren", userId, 30)
+		factions.BumpRep("warren", userId, 50)
 		mudlog.Info("Migration 0.13.0", "file", userFilePath,
-			"message", fmt.Sprintf("seeded warren rep +30 for userId %d", userId))
+			"message", fmt.Sprintf("seeded warren rep +50 for userId %d", userId))
 	}
 
 	mudlog.Info("Migration 0.13.0", "message", "Warren rep seeding complete!")

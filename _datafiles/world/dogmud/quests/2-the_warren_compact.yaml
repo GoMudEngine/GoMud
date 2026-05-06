@@ -36,7 +36,7 @@ triggers:
       missing: [2-end]
     actions:
       - grant: 2-end
-      - bump_rep: {faction: warren, delta: 30}
+      - bump_rep: {faction: warren, delta: 50}
       - npc_say:
           mob: 74
           lines:
