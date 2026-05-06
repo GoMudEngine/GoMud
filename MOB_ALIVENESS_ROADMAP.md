@@ -135,7 +135,7 @@ State primitives the rest of the layers read from and write to.
 - **Shipped:** `internal/opinions/` package with signed-scalar score [-100, +100], per-NPC YAML at `_datafiles/world/dogmud/opinions/{mobId}-{namesimple}.yaml`, lazy decay toward per-NPC default, public API (Get/Set/Bump/TierFor), admin command `opinion show/set/bump/reset`, helpfile, combat hookup on first-aggression in `attack`/`target`. Spec at `docs/superpowers/specs/2026-05-06-mob-aliveness-1.1-opinion-store-design.md`, plan at `docs/superpowers/plans/2026-05-06-mob-aliveness-1.1-opinion-store.md`.
 
 ### 1.2 Faction system
-**Status:** Not started • **Size:** L
+**Status:** In progress • **Size:** L
 
 - **Goal:** Faction definitions, NPC membership, per-player reputation per faction.
 - **In:** Faction YAML, NPC `faction` field, per-player rep store, rep-change API, faction-vs-faction relations (allies/enemies), admin inspection commands.
