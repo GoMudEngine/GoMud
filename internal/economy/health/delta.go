@@ -36,7 +36,7 @@ type ShopDelta struct {
 	SalesDelta    int    `json:"sales_delta"`
 	BuysDelta     int    `json:"buys_delta"`
 	RestocksDelta int    `json:"restocks_delta"`
-	MedianTtR     uint64 `json:"median_ttr"` // median TtR (rounds) for events completed in this window
+	MedianTtR     uint64 // median TtR (rounds) for events completed in this window
 }
 
 // ForagerDelta captures per-forager changes between snapshots.
