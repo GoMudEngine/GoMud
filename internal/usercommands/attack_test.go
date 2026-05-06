@@ -175,3 +175,77 @@ func TestAttackOnSameTargetDoesNotDoubleBump(t *testing.T) {
 		t.Errorf("re-attack opinion changed: was %d, now %d (want stable)", first, second)
 	}
 }
+
+// TestTargetSwitchBumpsNewMobOpinion verifies that switching combat
+// targets via `attack #other` (which delegates to Target) also fires
+// a fresh-aggression bump against the new mob's template. Without
+// this hook, a player attacking mob A then switching to mob B would
+// only bump A's opinion of them, not B's — an asymmetry the substrate
+// shouldn't allow.
+func TestTargetSwitchBumpsNewMobOpinion(t *testing.T) {
+	cleanup := seedAllRegistries()
+	defer cleanup()
+
+	dir := t.TempDir()
+	t.Setenv("DOGMUD_OPINIONS_DIR_OVERRIDE", dir)
+	opinions.ClearCache()
+
+	user, room := getTestUserAndRoom(t)
+
+	// Two mobs, different templates: Skeleton (mobId 1) and Merchant (mobId 2).
+	mobA := &mobs.Mob{
+		MobId:      1,
+		InstanceId: 260,
+		HomeRoomId: 1,
+		Character: characters.Character{
+			Name: "Skeleton", RoomId: 1, Health: 50,
+			Buffs: buffs.New(), Cooldowns: map[string]int{},
+		},
+	}
+	mobA.Character.HealthMax.Value = 100
+	mobs.SetInstanceForTest(260, mobA)
+	defer mobs.SetInstanceForTest(260, nil)
+	room.AddMob(260)
+	defer room.RemoveMob(260)
+
+	mobB := &mobs.Mob{
+		MobId:      2,
+		InstanceId: 261,
+		HomeRoomId: 1,
+		Character: characters.Character{
+			Name: "Merchant", RoomId: 1, Health: 50,
+			Buffs: buffs.New(), Cooldowns: map[string]int{},
+		},
+	}
+	mobB.Character.HealthMax.Value = 100
+	mobs.SetInstanceForTest(261, mobB)
+	defer mobs.SetInstanceForTest(261, nil)
+	room.AddMob(261)
+	defer room.RemoveMob(261)
+
+	// Attack mobA first — bumps Skeleton (mobId 1).
+	if _, err := Attack("#260", user, room, 0); err != nil {
+		t.Fatalf("first Attack: %v", err)
+	}
+	bump := int(configs.GetBalanceConfig().OpinionAttackBump)
+	if got := opinions.Get(1, user.UserId); got != bump {
+		t.Fatalf("after attack on Skeleton, Get(1) = %d, want %d", got, bump)
+	}
+
+	// Kill mobA so the target switch goes through the free-switch path
+	// (no skill roll). We're testing the opinion bump, not the switch logic.
+	mobA.Character.Health = 0
+
+	// Attack mobB — delegates to Target (already aggroed on mobA), which
+	// should bump Merchant (mobId 2).
+	if _, err := Attack("#261", user, room, 0); err != nil {
+		t.Fatalf("target-switch Attack: %v", err)
+	}
+	if got := opinions.Get(2, user.UserId); got != bump {
+		t.Errorf("after switch to Merchant, Get(2) = %d, want %d", got, bump)
+	}
+	// And mobA's opinion is unchanged — the switch shouldn't double-bump A.
+	if got := opinions.Get(1, user.UserId); got != bump {
+		t.Errorf("after switch, Skeleton opinion changed unexpectedly: %d, want %d", got, bump)
+	}
+}

@@ -6,13 +6,31 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/opinions"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
+
+// bumpOpinionOnTargetSwitch records a fresh aggression event on the
+// new target when switching combat targets. Mirrors the hook in
+// attack.go so all "the player initiated combat with this mob"
+// paths feed the same substrate.
+func bumpOpinionOnTargetSwitch(userId, newMobInstanceId, oldMobInstanceId int) {
+	if newMobInstanceId == 0 || newMobInstanceId == oldMobInstanceId {
+		return
+	}
+	mob := mobs.GetInstance(newMobInstanceId)
+	if mob == nil {
+		return
+	}
+	opinions.Bump(int(mob.MobId), userId,
+		int(configs.GetBalanceConfig().OpinionAttackBump))
+}
 
 func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
@@ -120,6 +138,7 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	if currentTargetGone {
 		aggroType := user.Character.Aggro.Type
+		bumpOpinionOnTargetSwitch(user.UserId, newTargetMobInstanceId, currentTargetMobId)
 		user.Character.SetAggro(newTargetPlayerId, newTargetMobInstanceId, aggroType)
 
 		if newTargetMobInstanceId > 0 {
@@ -146,6 +165,7 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		aggroType := user.Character.Aggro.Type
 
 		// Switch to new target with 1 round wait (cost of repositioning)
+		bumpOpinionOnTargetSwitch(user.UserId, newTargetMobInstanceId, currentTargetMobId)
 		user.Character.SetAggro(newTargetPlayerId, newTargetMobInstanceId, aggroType, 1)
 
 		if newTargetMobInstanceId > 0 {
