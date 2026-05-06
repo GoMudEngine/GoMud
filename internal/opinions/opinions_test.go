@@ -2,6 +2,7 @@ package opinions
 
 import (
 	"os"
+	"sync"
 	"testing"
 )
 
@@ -224,5 +225,40 @@ func TestTierFor(t *testing.T) {
 	Set(41, 17, -60)
 	if got := TierFor(41, 17); got != TierHostile {
 		t.Errorf("TierFor after Set(-60) = %v, want Hostile", got)
+	}
+}
+
+func TestParallelBumpsConverge(t *testing.T) {
+	dir := t.TempDir()
+	t.Setenv("DOGMUD_OPINIONS_DIR_OVERRIDE", dir)
+	ClearCache()
+	defaultProviderForTest = func(mobId int) (string, int, bool) { return "lars", 0, true }
+	t.Cleanup(func() { defaultProviderForTest = nil })
+	roundForTest = func() uint64 { return 1000 }
+	t.Cleanup(func() { roundForTest = nil })
+
+	const goroutines = 10
+	const bumpsPer = 100
+	const delta = 1
+
+	var wg sync.WaitGroup
+	for i := 0; i < goroutines; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for j := 0; j < bumpsPer; j++ {
+				Bump(41, 17, delta)
+			}
+		}()
+	}
+	wg.Wait()
+
+	// Every Bump adds 1; total expected is min(clamp, total).
+	want := goroutines * bumpsPer
+	if want > ScoreMax {
+		want = ScoreMax
+	}
+	if got := Get(41, 17); got != want {
+		t.Errorf("after %d parallel bumps: got %d, want %d", goroutines*bumpsPer, got, want)
 	}
 }
