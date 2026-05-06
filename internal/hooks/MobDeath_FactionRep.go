@@ -28,12 +28,15 @@ func MobDeathFactionRep(e events.Event) events.ListenerReturn {
 		return events.Continue
 	}
 
-	mob := mobs.GetInstance(evt.InstanceId)
-	if mob == nil {
+	// Use the mob TEMPLATE — the instance is destroyed by the time
+	// this queued event fires (suicide.go calls DestroyInstance after
+	// queuing MobDeath). Templates carry the Groups field too.
+	spec := mobs.GetMobSpec(mobs.MobId(evt.MobId))
+	if spec == nil {
 		return events.Continue
 	}
 
-	factionIds := factions.FactionsForMob(mob)
+	factionIds := factions.FactionsForMob(spec)
 	if len(factionIds) == 0 {
 		return events.Continue
 	}

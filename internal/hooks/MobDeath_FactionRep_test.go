@@ -53,8 +53,8 @@ func TestMobDeathFactionRep_BumpsForDamager(t *testing.T) {
 			Buffs:  buffs.New(),
 		},
 	}
-	mobs.SetInstanceForTest(200, mob)
-	defer mobs.SetInstanceForTest(200, nil)
+	cleanup := mobs.SeedMobsForTest(map[int]*mobs.Mob{72: mob}, map[int]*mobs.Mob{200: mob})
+	defer cleanup()
 
 	evt := events.MobDeath{
 		MobId:        72,
@@ -79,8 +79,8 @@ func TestMobDeathFactionRep_NoFactionsNoChange(t *testing.T) {
 		Groups:     []string{"humanoid"}, // no defined faction
 		Character:  characters.Character{Name: "x", RoomId: 301, Buffs: buffs.New()},
 	}
-	mobs.SetInstanceForTest(201, mob)
-	defer mobs.SetInstanceForTest(201, nil)
+	cleanup := mobs.SeedMobsForTest(map[int]*mobs.Mob{999: mob}, map[int]*mobs.Mob{201: mob})
+	defer cleanup()
 
 	evt := events.MobDeath{
 		MobId:        999,
@@ -104,8 +104,8 @@ func TestMobDeathFactionRep_NoPlayersNoChange(t *testing.T) {
 		Groups:     []string{"warren"},
 		Character:  characters.Character{Name: "scout", RoomId: 301, Buffs: buffs.New()},
 	}
-	mobs.SetInstanceForTest(202, mob)
-	defer mobs.SetInstanceForTest(202, nil)
+	cleanup := mobs.SeedMobsForTest(map[int]*mobs.Mob{72: mob}, map[int]*mobs.Mob{202: mob})
+	defer cleanup()
 
 	evt := events.MobDeath{
 		MobId:        72,
