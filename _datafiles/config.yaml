@@ -670,6 +670,15 @@ Balance:
   StorageFeePerItem: 1               # Gold charged per stored item per game month
 
   # ── CRAFTER MOBS ─────────────────────────────────────────────────────────
+  # Per-rarity-tier restock cadences (game-time). Replaces the single
+  # CrafterMaterialRestockRate. Common items refill quickly so
+  # crafting grinders have stock; rare items refill slowly as a
+  # backstop above forager/player-sale input.
+  RestockCadenceTier50Hours: 1   # game-hours
+  RestockCadenceTier40Hours: 2
+  RestockCadenceTier30Hours: 6
+  RestockCadenceTier20Hours: 24
+  RestockCadenceTier10Days:  5   # game-days
   CrafterEnabled: true            # Enable mob autonomous crafting
   CrafterMaterialRestockRate: 75  # Rounds between restock/craft ticks (~5 min)
 
