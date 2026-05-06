@@ -15,3 +15,14 @@ func TierOf(score int) Tier {
 		return TierFriendly
 	}
 }
+
+// clampScore restricts a score to the [ScoreMin, ScoreMax] window.
+func clampScore(s int) int {
+	if s < ScoreMin {
+		return ScoreMin
+	}
+	if s > ScoreMax {
+		return ScoreMax
+	}
+	return s
+}

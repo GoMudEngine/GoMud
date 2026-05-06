@@ -79,3 +79,20 @@ func TestDecayedScore(t *testing.T) {
 		})
 	}
 }
+
+func TestClampScore(t *testing.T) {
+	cases := []struct{ in, want int }{
+		{-200, -100},
+		{-100, -100},
+		{-50, -50},
+		{0, 0},
+		{50, 50},
+		{100, 100},
+		{200, 100},
+	}
+	for _, c := range cases {
+		if got := clampScore(c.in); got != c.want {
+			t.Errorf("clampScore(%d) = %d, want %d", c.in, got, c.want)
+		}
+	}
+}
