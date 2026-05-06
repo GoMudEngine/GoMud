@@ -34,6 +34,7 @@ func CaptureSnapshot() Snapshot {
 }
 
 func captureShops() []ShopSnapshot {
+	currentRound := util.GetRoundCount()
 	all := shops.AllShops()
 	out := make([]ShopSnapshot, 0, len(all))
 	for _, inv := range all {
@@ -45,6 +46,7 @@ func captureShops() []ShopSnapshot {
 			Gold:             inv.Gold,
 			StartingGold:     inv.StartingGold,
 			LastRestockRound: inv.LastRestock,
+			Round:            currentRound,
 			Stock:            make([]StockSnapshot, 0, len(inv.Stock)),
 			Name:             lookupShopMobName(inv.MobId, inv.RoomId),
 		}
@@ -92,9 +94,80 @@ func captureShops() []ShopSnapshot {
 			}
 		}
 
+		// Phase-4: compute per-tier median TtR and currently-depleted count.
+		ss.MedianTtRCommons = computeMedianTtRForTiers(ss, currentRound, true)
+		ss.MedianTtRRares = computeMedianTtRForTiers(ss, currentRound, false)
+		ss.CurrentlyDepletedCount = len(ss.CurrentDepletion)
+
 		out = append(out, ss)
 	}
 	return out
+}
+
+// computeMedianTtRForTiers computes the median TtR (in rounds) from
+// StockEvents for items whose rarity tier qualifies:
+//   - commons=true:  tier >= 40 (tier-50 and tier-40 items)
+//   - commons=false: tier <= 20 (tier-20 and tier-10 items; tier-30 excluded)
+//
+// Currently-depleted items contribute their ongoing duration as a
+// partial event. Returns 0 if there are no qualifying events.
+func computeMedianTtRForTiers(snap ShopSnapshot, currentRound uint64, commons bool) uint64 {
+	// Build a set of qualifying item IDs from the stock list.
+	qualifying := map[int]bool{}
+	for _, e := range snap.Stock {
+		if commons && e.Tier >= 40 {
+			qualifying[e.ItemId] = true
+		} else if !commons && e.Tier <= 20 {
+			qualifying[e.ItemId] = true
+		}
+	}
+	if len(qualifying) == 0 {
+		return 0
+	}
+
+	var durations []uint64
+	for itemId, evts := range snap.StockEvents {
+		if !qualifying[itemId] {
+			continue
+		}
+		for _, ev := range evts {
+			if ev.RefilledRound == 0 {
+				continue // still open; handled via CurrentDepletion below
+			}
+			if ev.RefilledRound > ev.DepletedRound {
+				durations = append(durations, ev.RefilledRound-ev.DepletedRound)
+			}
+		}
+	}
+	// Currently-depleted items contribute ongoing duration.
+	for itemId, depRound := range snap.CurrentDepletion {
+		if !qualifying[itemId] {
+			continue
+		}
+		if currentRound > depRound {
+			durations = append(durations, currentRound-depRound)
+		}
+	}
+	if len(durations) == 0 {
+		return 0
+	}
+	sortUint64Capture(durations)
+	return durations[len(durations)/2]
+}
+
+// sortUint64Capture is a simple insertion sort for small slices (median
+// helper for capture.go; kept separate from delta.go to avoid package
+// naming confusion in tests).
+func sortUint64Capture(s []uint64) {
+	for i := 1; i < len(s); i++ {
+		key := s[i]
+		j := i - 1
+		for j >= 0 && s[j] > key {
+			s[j+1] = s[j]
+			j--
+		}
+		s[j+1] = key
+	}
 }
 
 // captureCaravans walks every live mob instance and emits one

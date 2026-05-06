@@ -39,11 +39,21 @@ type ShopSnapshot struct {
 	Stock            []StockSnapshot `yaml:"stock"              json:"stock"`
 	StockScore       float64         `yaml:"stock_score"        json:"stock_score"` // sum(Current) / sum(MaxStock); 0..1
 
+	// Round is copied from the parent Snapshot.Round at capture time.
+	// Used by ComputeShopDelta to determine the delta window lower bound
+	// without requiring the caller to carry the parent snapshot.
+	Round uint64 `yaml:"round,omitempty" json:"round,omitempty"`
+
 	SalesCount       int                  `yaml:"sales_count"        json:"sales_count"`
 	BuysCount        int                  `yaml:"buys_count"         json:"buys_count"`
 	RestockCount     int                  `yaml:"restock_count"      json:"restock_count"`
 	StockEvents      map[int][]StockEvent `yaml:"stock_events"       json:"stock_events"`
 	CurrentDepletion map[int]uint64       `yaml:"current_depletion"  json:"current_depletion"`
+
+	// Phase-4 computed fields (populated in captureShops, sent to dashboard JS).
+	MedianTtRCommons       uint64 `yaml:"median_ttr_commons,omitempty"       json:"median_ttr_commons"`
+	MedianTtRRares         uint64 `yaml:"median_ttr_rares,omitempty"         json:"median_ttr_rares"`
+	CurrentlyDepletedCount int    `yaml:"currently_depleted_count,omitempty" json:"currently_depleted_count"`
 }
 
 // StockSnapshot is a per-item entry. Bucket comes from economy.BucketFor().

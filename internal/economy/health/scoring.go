@@ -535,6 +535,99 @@ func InputRateScore(zone string, cur *Snapshot, history []*Snapshot, cfg Scoring
 	return score
 }
 
+// buildInputRateRow computes the per-zone InputRateRow for the dashboard
+// input rate table. It re-uses the same window logic as InputRateScore
+// so the breakdown numbers are consistent with the score.
+func buildInputRateRow(zone string, score float64, cur *Snapshot, history []*Snapshot, cfg ScoringConfig) InputRateRow {
+	row := InputRateRow{
+		Score:   score,
+		TierMix: map[int]int{},
+	}
+	if cur == nil || len(history) < 2 {
+		return row
+	}
+	roundsPerDay := uint64(24) * cfg.RoundsPerGameHour
+	if cur.Round < roundsPerDay {
+		return row
+	}
+	cutoff := cur.Round - roundsPerDay
+	var prev *Snapshot
+	for i := len(history) - 1; i >= 0; i-- {
+		if history[i].Round <= cutoff {
+			prev = history[i]
+			break
+		}
+	}
+	if prev == nil {
+		return row
+	}
+
+	// Restock contribution.
+	var restockWeighted float64
+	for _, s := range cur.Shops {
+		if s.Zone != zone {
+			continue
+		}
+		var prevRestock int
+		for _, p := range prev.Shops {
+			if p.Zone == s.Zone && p.MobId == s.MobId {
+				prevRestock = p.RestockCount
+				break
+			}
+		}
+		delta := s.RestockCount - prevRestock
+		if delta < 0 {
+			delta = 0
+		}
+		mt := meanRarityTier(s.Stock)
+		restockWeighted += float64(delta) * float64(mt)
+		row.ItemsPerDay += float64(delta)
+		// Tier mix: count restocked items by tier
+		for _, e := range s.Stock {
+			if e.Tier > 0 {
+				row.TierMix[e.Tier] += delta / max1(len(s.Stock))
+			}
+		}
+	}
+	row.FromRestock = restockWeighted
+
+	// Forager contribution.
+	var foragerWeighted float64
+	for _, f := range cur.Foragers {
+		if !territoryMatchesZone(f.Territory, zone) {
+			continue
+		}
+		var prevDeliv map[int]int
+		for _, p := range prev.Foragers {
+			if p.MobId == f.MobId {
+				prevDeliv = p.DeliveriesByTier
+				break
+			}
+		}
+		for tier, n := range f.DeliveriesByTier {
+			d := n - prevDeliv[tier]
+			if d < 0 {
+				d = 0
+			}
+			foragerWeighted += float64(d) * float64(tier)
+			row.ItemsPerDay += float64(d)
+			row.TierMix[tier] += d
+		}
+	}
+	row.FromForagers = foragerWeighted
+
+	return row
+}
+
+// max1 returns the maximum of n and 1, used to avoid divide-by-zero
+// when distributing restock counts across items in a shop.
+func max1(n int) int {
+	if n < 1 {
+		return 1
+	}
+	return n
+}
+
 // ── LogisticsHealth ─────────────────────────────────────────────────────────
 
 // LogisticsArgs is the input bundle for LogisticsHealth, decoupled from
@@ -606,6 +699,16 @@ func ShopGoldScore(s ShopSnapshot) float64 {
 
 // ── Scores struct and Score() ────────────────────────────────────────────────
 
+// InputRateRow holds per-zone input-rate breakdown for the dashboard
+// input rate table.
+type InputRateRow struct {
+	Score        float64     `json:"score"`
+	ItemsPerDay  float64     `json:"items_per_day"`
+	FromForagers float64     `json:"from_foragers"`
+	FromRestock  float64     `json:"from_restock"`
+	TierMix      map[int]int `json:"tier_mix"` // tier → item count
+}
+
 // Scores is the bundle returned by Score(). Each per-entity score
 // has a HasScore flag for "insufficient history" cases.
 type Scores struct {
@@ -621,6 +724,15 @@ type Scores struct {
 	MeanThroughput float64
 	MeanInput      float64
 	MeanShopGold   float64
+
+	// InputRateByZone holds the per-zone input-rate breakdown for the
+	// dashboard's input rate table. Keys are zone names.
+	InputRateByZone map[string]InputRateRow `json:"InputRateByZone,omitempty"`
+
+	// RoundsPerGameHour exposes the server's time conversion constant
+	// so the dashboard JS can convert round counts to human time without
+	// hardcoding game-time math.
+	RoundsPerGameHour uint64 `json:"RoundsPerGameHour"`
 
 	// Back-compat aliases — legacy dashboard JS and tests reference
 	// MeanShop/MeanCaravan/MeanForager; keep them until Phase 4 lands.
@@ -666,7 +778,7 @@ func Score(cur *Snapshot, history []*Snapshot) Scores {
 // ScoreWithConfig is the test-friendly variant. All math reads cfg
 // rather than the global config.
 func ScoreWithConfig(cur *Snapshot, history []*Snapshot, cfg ScoringConfig) Scores {
-	out := Scores{}
+	out := Scores{RoundsPerGameHour: cfg.RoundsPerGameHour}
 	if cur == nil {
 		return out
 	}
@@ -718,10 +830,14 @@ func ScoreWithConfig(cur *Snapshot, history []*Snapshot, cfg ScoringConfig) Scor
 	}
 	var inputSum float64
 	var inputZones int
+	out.InputRateByZone = make(map[string]InputRateRow, len(zoneSet))
 	for zone := range zoneSet {
 		score := InputRateScore(zone, cur, history, cfg)
 		inputSum += score
 		inputZones++
+		// Build per-zone breakdown for the input rate table.
+		row := buildInputRateRow(zone, score, cur, history, cfg)
+		out.InputRateByZone[zone] = row
 	}
 	if inputZones > 0 {
 		out.MeanInput = inputSum / float64(inputZones)
