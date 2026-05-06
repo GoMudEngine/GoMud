@@ -71,9 +71,8 @@
     <h3 class="mt-3">Shopkeepers — by Craft Discipline</h3>
     <table class="table table-sm table-striped">
         <thead><tr>
-            <th>Discipline</th><th>Shops</th><th>Score</th>
+            <th>Discipline</th><th>Shops</th><th>Stock Score</th>
             <th>Total Gold</th>
-            <th>Δ1h (pp)</th><th>Δ6h (pp)</th><th>Δ1d (pp)</th><th>Δ3d (pp)</th><th>Δ1w (pp)</th>
         </tr></thead>
         <tbody id="tbl-discipline"></tbody>
     </table>
@@ -81,9 +80,8 @@
     <h4 class="mt-3">Per-Shop Detail</h4>
     <table class="table table-sm table-striped">
         <thead><tr>
-            <th>Shop</th><th>Discipline</th><th>Score</th>
-            <th>Gold</th>
-            <th>Δ1h (pp)</th><th>Δ6h (pp)</th><th>Δ1d (pp)</th><th>Δ3d (pp)</th><th>Δ1w (pp)</th>
+            <th>Shop</th><th>Discipline</th><th>Stock Score</th>
+            <th>Gold Score</th><th>Gold</th>
             <th>Stock by Tier</th>
         </tr></thead>
         <tbody id="tbl-shops"></tbody>
@@ -240,19 +238,7 @@
             var gold = totalGold(shops);
             discHtml += '<tr><td>' + disc + '</td><td>' + shops.length + '</td>' +
                         '<td>' + fmtScore(score, score > 0) + '</td>' +
-                        '<td>' + gold + '</td>';
-            // Average stock-score deltas across shops in this discipline.
-            ['1h','6h','1d','3d','1w'].forEach(function(label) {
-                var sumPP = 0, n = 0;
-                for (var j = 0; j < shops.length; j++) {
-                    var key = shopKey(shops[j]);
-                    var sd = d.deltas[label] && d.deltas[label].shops[key];
-                    if (sd) { sumPP += sd.StockScoreDelta; n++; }
-                }
-                var avg = n > 0 ? Math.round(sumPP / n) : 0;
-                discHtml += '<td>' + (avg > 0 ? '+' : '') + avg + 'pp</td>';
-            });
-            discHtml += '</tr>';
+                        '<td>' + gold + '</td></tr>';
         }
         document.getElementById('tbl-discipline').innerHTML = discHtml;
 
@@ -270,23 +256,12 @@
         for (var i = 0; i < shopPairs.length; i++) {
             var row = shopPairs[i].row;
             var snap = shopPairs[i].snap;
-            var key = shopKey(snap);
             shopHtml += '<tr><td>' + (row.Name || '#'+row.MobId) + '</td>' +
                         '<td>' + (row.CraftSupport || '—') + '</td>' +
-                        '<td>' + fmtScore(row.Score, row.HasScore) + '</td>' +
-                        '<td>' + snap.gold + '</td>';
-            ['1h','6h','1d','3d','1w'].forEach(function(label) {
-                var sd = d.deltas[label] && d.deltas[label].shops[key];
-                var deltaText;
-                if (sd) {
-                    var dpp = sd.StockScoreDelta;
-                    deltaText = (dpp > 0 ? '+' : '') + dpp + 'pp';
-                } else {
-                    deltaText = '<span class="text-muted">—</span>';
-                }
-                shopHtml += '<td>' + deltaText + '</td>';
-            });
-            shopHtml += '<td>' + tierBar(snap.stock, totalCap(snap.stock)) + '</td></tr>';
+                        '<td>' + fmtScore(row.StockScore, row.HasScore) + '</td>' +
+                        '<td>' + fmtScore(row.GoldScore, true) + '</td>' +
+                        '<td>' + snap.gold + '</td>' +
+                        '<td>' + tierBar(snap.stock, totalCap(snap.stock)) + '</td></tr>';
         }
         document.getElementById('tbl-shops').innerHTML = shopHtml;
 
