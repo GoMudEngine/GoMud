@@ -87,6 +87,29 @@
         <tbody id="tbl-shops"></tbody>
     </table>
 
+    <!-- Section A2: Throughput — Time-to-Refill -->
+    <h4 class="mt-3">Throughput — Time-to-Refill</h4>
+    <table class="table table-sm table-striped">
+        <thead><tr>
+            <th>Shop</th><th>Score</th>
+            <th>TtR (commons)</th><th>TtR (rares)</th>
+            <th>Depleted now</th>
+            <th>1h</th><th>6h</th><th>1d</th><th>3d</th><th>1w</th>
+        </tr></thead>
+        <tbody id="tbl-throughput"></tbody>
+    </table>
+
+    <!-- Section A3: Input Rate — items/day per zone -->
+    <h4 class="mt-3">Input Rate — items/day per zone</h4>
+    <table class="table table-sm table-striped">
+        <thead><tr>
+            <th>Zone</th><th>Score</th>
+            <th>Items/day (in)</th><th>From foragers</th>
+            <th>From restock</th><th>Tier mix</th>
+        </tr></thead>
+        <tbody id="tbl-input"></tbody>
+    </table>
+
     <!-- Section B: Caravans -->
     <h3 class="mt-3">Caravans</h3>
     <table class="table table-sm table-striped">
@@ -210,8 +233,37 @@
         return s;
     }
 
+    // fmtTtR converts a round count to a human-readable time string.
+    // Uses RoundsPerGameHour from the API (d.scores.RoundsPerGameHour)
+    // when available; falls back to 600 for pre-Phase-4 responses.
+    var _rph = 0; // set from API on each render
+    function fmtTtR(rounds) {
+        if (!rounds || rounds <= 0) return '—';
+        var rph = _rph > 0 ? _rph : 600;
+        var hours = rounds / rph;
+        if (hours < 1) return Math.round(hours * 60) + 'min';
+        if (hours < 24) return hours.toFixed(1) + 'h';
+        return (hours / 24).toFixed(1) + 'd';
+    }
+
+    // multText returns a human-readable string describing the logistics
+    // multiplier currently active for a caravan or forager snapshot.
+    var _stuckThreshold = 3000; // default; overrideable from API meta
+    function multText(snap) {
+        if (snap.state === '(despawned)' || snap.state === '(not active)') {
+            return '<span class="text-danger">despawned</span>';
+        }
+        if (snap.stuck_rounds && snap.stuck_rounds > _stuckThreshold) {
+            return '<span class="text-warning">stuck (&times;0.4)</span>';
+        }
+        return '&mdash;';
+    }
+
     function render(data) {
         var d = data;
+
+        // Capture RoundsPerGameHour from API so fmtTtR uses server value.
+        _rph = (d.scores && d.scores.RoundsPerGameHour) ? d.scores.RoundsPerGameHour : 0;
 
         document.getElementById('score-overall').innerHTML = fmtScore(d.scores.OverallScore, true);
         document.getElementById('score-stock').innerHTML = fmtScore(d.scores.MeanStock, d.scores.MeanStock > 0);
@@ -264,6 +316,62 @@
                         '<td>' + tierBar(snap.stock, totalCap(snap.stock)) + '</td></tr>';
         }
         document.getElementById('tbl-shops').innerHTML = shopHtml;
+
+        // Throughput table — Time-to-Refill per shop.
+        var thruHtml = '';
+        for (var i = 0; i < shopPairs.length; i++) {
+            var row = shopPairs[i].row;
+            var snap = shopPairs[i].snap;
+            var key = shopKey(snap);
+            var depCnt = snap.currently_depleted_count || 0;
+            var depCell = depCnt > 0
+                ? '<span class="text-danger">' + depCnt + '</span>'
+                : '0';
+            thruHtml += '<tr><td>' + (row.Name || '#'+row.MobId) + '</td>' +
+                        '<td>' + fmtScore(row.ThroughputScore, true) + '</td>' +
+                        '<td>' + fmtTtR(snap.median_ttr_commons) + '</td>' +
+                        '<td>' + fmtTtR(snap.median_ttr_rares) + '</td>' +
+                        '<td>' + depCell + '</td>';
+            ['1h','6h','1d','3d','1w'].forEach(function(label) {
+                var sd = d.deltas[label] && d.deltas[label].shops[key];
+                thruHtml += '<td>' + fmtTtR(sd ? sd.MedianTtR : 0) + '</td>';
+            });
+            thruHtml += '</tr>';
+        }
+        document.getElementById('tbl-throughput').innerHTML =
+            thruHtml || '<tr><td colspan="10" class="text-muted">No shops.</td></tr>';
+
+        // Input rate table — items/day per zone.
+        var inputHtml = '';
+        var zoneRates = d.scores.InputRateByZone || {};
+        var zoneKeys = Object.keys(zoneRates).sort();
+        for (var i = 0; i < zoneKeys.length; i++) {
+            var zone = zoneKeys[i];
+            var zr = zoneRates[zone];
+            // Build a compact tier-mix string.
+            var tierMixStr = '';
+            if (zr.tier_mix) {
+                var tiers = [50, 40, 30, 20, 10];
+                var parts = [];
+                for (var ti = 0; ti < tiers.length; ti++) {
+                    var t = tiers[ti];
+                    if (zr.tier_mix[t]) {
+                        parts.push('T' + t + ':' + zr.tier_mix[t]);
+                    }
+                }
+                tierMixStr = parts.join(' ');
+            }
+            inputHtml += '<tr>' +
+                '<td>' + zone + '</td>' +
+                '<td>' + fmtScore(zr.score, true) + '</td>' +
+                '<td>' + (zr.items_per_day || 0).toFixed(1) + '</td>' +
+                '<td>' + (zr.from_foragers || 0).toFixed(0) + '</td>' +
+                '<td>' + (zr.from_restock || 0).toFixed(0) + '</td>' +
+                '<td><small>' + (tierMixStr || '—') + '</small></td>' +
+                '</tr>';
+        }
+        document.getElementById('tbl-input').innerHTML =
+            inputHtml || '<tr><td colspan="6" class="text-muted">No zone data.</td></tr>';
 
         // Caravans, alphabetical by name.
         var caravanPairs = (d.snapshot.caravans || []).map(function(c, i) {
