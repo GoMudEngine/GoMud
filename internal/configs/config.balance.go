@@ -347,6 +347,13 @@ type Balance struct {
 	// vendors are saturated (MaxStock cap reached). Default 0.5.
 	ForagerRestCarryThreshold ConfigFloat `yaml:"ForagerRestCarryThreshold"`
 
+	// ForagerRestDurationRounds is how long a forager stays at sanctuary
+	// before re-entering the territory. Gated by HP-full and carry-ratio
+	// checks too, so the actual rest can be longer if the forager
+	// arrived hurt or over-encumbered. Default 40 rounds (~3 real
+	// minutes / ~1 game-hour at the default round cadence).
+	ForagerRestDurationRounds ConfigInt `yaml:"ForagerRestDurationRounds"`
+
 	// ForagerLockboxCapacity caps how many items a sanctuary lockbox
 	// can hold. When the box is full, the forager falls back to the
 	// Stage 3.4 rest-extension behavior until a player picks the box

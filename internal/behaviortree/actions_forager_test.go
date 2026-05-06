@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/gamelock"
@@ -147,7 +148,7 @@ func TestForagerStep_RestingFullHPAdvances(t *testing.T) {
 	// Force it past restingDuration by setting started to a round far in
 	// the past.
 	state.Set(keyStateStartedRound,
-		strconv.FormatUint(util.GetRoundCount()-restingDuration-1, 10))
+		strconv.FormatUint(util.GetRoundCount()-uint64(configs.GetBalanceConfig().ForagerRestDurationRounds)-1, 10))
 
 	ctx := &EvalContext{
 		InstanceId: 8203,
@@ -177,7 +178,7 @@ func TestForagerStep_RestingNotFullHPStaysResting(t *testing.T) {
 	state := NewBehaviorState()
 	state.Set(keyForagerState, forager.StateResting.Name())
 	state.Set(keyStateStartedRound,
-		strconv.FormatUint(util.GetRoundCount()-restingDuration-1, 10))
+		strconv.FormatUint(util.GetRoundCount()-uint64(configs.GetBalanceConfig().ForagerRestDurationRounds)-1, 10))
 
 	ctx := &EvalContext{
 		InstanceId: 8204,

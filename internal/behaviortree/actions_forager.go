@@ -154,7 +154,6 @@ func hpRatio(mob *mobs.Mob) float64 {
 // to the legacy idle path (idlecommands + lookfortrouble), matching
 // the caravan_step pattern.
 
-const restingDuration uint64 = 120
 
 func tickForagerResting(
 	p *forager.ForagerProfile,
@@ -168,7 +167,8 @@ func tickForagerResting(
 	}
 	startedStr := ctx.MobState.GetString(keyStateStartedRound)
 	started, _ := strconv.ParseUint(startedStr, 10, 64)
-	dwellElapsed := util.GetRoundCount() >= started+restingDuration
+	restDuration := uint64(configs.GetBalanceConfig().ForagerRestDurationRounds)
+	dwellElapsed := util.GetRoundCount() >= started+restDuration
 	if dwellElapsed && mob.Character.Health >= mob.Character.HealthMax.Value {
 		// 2026-05-02: Stage 3.4 carry-ratio gate retained as a
 		// BACKSTOP. The primary deadlock-avoidance mechanism is now
