@@ -27,7 +27,7 @@ func repBaseDir() string {
 		return override
 	}
 	return util.FilePath(
-		configs.GetFilePathsConfig().DataFiles.String(), `/`, `world`, `/`, `dogmud`, `/`, `factions.rep`,
+		configs.GetFilePathsConfig().DataFiles.String(), `/`, `factions.rep`,
 	)
 }
 

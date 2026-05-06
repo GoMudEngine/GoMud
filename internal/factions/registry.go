@@ -26,7 +26,7 @@ func definitionsBaseDir() string {
 		return override
 	}
 	return util.FilePath(
-		configs.GetFilePathsConfig().DataFiles.String(), `/`, `world`, `/`, `dogmud`, `/`, `factions`,
+		configs.GetFilePathsConfig().DataFiles.String(), `/`, `factions`,
 	)
 }
 

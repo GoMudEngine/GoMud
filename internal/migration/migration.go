@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/version"
 )
 
@@ -43,6 +44,22 @@ func doAllMigrations(lastConfigVersion version.Version) error {
 	if lastConfigVersion.IsOlderThan(version.New(0, 12, 0)) {
 
 		if err := migrate_RaceToSpecies(); err != nil {
+			return err
+		}
+
+	}
+
+	// 0.12.0 -> 0.13.0
+	if lastConfigVersion.IsOlderThan(version.New(0, 13, 0)) {
+
+		// Migrations run BEFORE main.go's data-load block, so
+		// factions.LoadAllDefinitions() has not yet been called.
+		// Load now so the rep-seeding can resolve the warren faction.
+		if err := factions.LoadAllDefinitions(); err != nil {
+			return err
+		}
+
+		if err := migrate_SeedWarrenRepFromQuestToken(); err != nil {
 			return err
 		}
 
