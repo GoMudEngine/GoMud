@@ -386,15 +386,33 @@ func tickForagerRecalling(
 		transitionForager(ctx.MobState, forager.StateResting)
 		return Success
 	}
-	// Don't re-issue the cast every idle tick — re-issuing while a
-	// cast is in progress can reset its progress and trap the forager
-	// mid-cast indefinitely (observed 2026-04-30: Kessa "begins
-	// weaving a spell" repeatedly but never actually teleports).
-	// Wait for the active cast to resolve.
-	if mob.Character.IsCasting() {
-		return Success
+
+	// Teleport directly to anchor rather than issuing "cast fold-recall".
+	// The fold-cast system only advances casts inside the combat loop
+	// (gated on mob.Character.Aggro != nil), so foragers recalling
+	// outside combat would be permanently stuck with IsCasting()=true
+	// and never actually move. Direct room manipulation mirrors exactly
+	// what resolveFoldRecall does internally for mobs.
+	anchorRoomId := getMiscDataIntForager(mob, "fold-anchor-room")
+	if anchorRoomId <= 0 {
+		// No anchor set in MiscData — fall back to the profile sanctuary.
+		anchorRoomId = p.SanctuaryRoom
 	}
-	mob.Command("cast fold-recall")
+	if anchorRoomId > 0 && anchorRoomId != ctx.RoomId {
+		fromRoom := rooms.LoadRoom(ctx.RoomId)
+		toRoom := rooms.LoadRoom(anchorRoomId)
+		if toRoom != nil {
+			mob.Character.EndAggro()
+			mob.Character.CastingState = nil // clear any stale cast
+			if fromRoom != nil {
+				fromRoom.RemoveMob(mob.InstanceId)
+			}
+			toRoom.AddMob(mob.InstanceId) // sets mob.Character.RoomId internally
+		}
+	}
+	// Don't transition state here — the next tick will see
+	// ctx.RoomId == p.SanctuaryRoom and run the at-sanctuary path
+	// (dump satchel → transition to resting).
 	return Success
 }
 
@@ -603,4 +621,23 @@ func carryRatio(mob *mobs.Mob) float64 {
 		return 0
 	}
 	return mob.Character.GetCarriedWeight() / cap
+}
+
+// getMiscDataIntForager retrieves an integer from a mob's MiscData map,
+// handling both int and float64 types (float64 can appear after YAML
+// round-trips). Returns 0 if the key is absent or the type is
+// unrecognized. Mirrors hooks.getMiscDataInt without importing that
+// package (which would create an import cycle).
+func getMiscDataIntForager(mob *mobs.Mob, key string) int {
+	val := mob.Character.GetMiscData(key)
+	if val == nil {
+		return 0
+	}
+	switch v := val.(type) {
+	case int:
+		return v
+	case float64:
+		return int(v)
+	}
+	return 0
 }
