@@ -11,6 +11,7 @@ groups:
   - humanoid
   - guard
   - thornwall_guards
+  - thornwall_citizens
 idlecommands:
   - 'emote adjusts the spear resting against her shoulder'
   - 'emote scans the approaching road with a practiced eye'
