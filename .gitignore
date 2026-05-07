@@ -9,6 +9,8 @@ _datafiles/**/plugin-data/*
 _datafiles/**/shops
 # Runtime faction rep state — not committed
 _datafiles/**/factions.rep
+# Runtime crime log state — not committed
+_datafiles/**/factions.crimes
 .worktrees/
 tools/testing/reports/*.md
 vendor/

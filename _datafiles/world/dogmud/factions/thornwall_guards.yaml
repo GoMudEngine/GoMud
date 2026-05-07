@@ -5,5 +5,5 @@ description: |
   gates manned. Indifferent to strangers; hostile to enemies of
   the city.
 default_rep: 0
-allies: []
+allies: [thornwall_citizens]
 enemies: [warren]
