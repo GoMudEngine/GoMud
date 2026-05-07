@@ -270,3 +270,60 @@ func TestWitnessesInRoom_VictimIncludedWhenNotExcluded(t *testing.T) {
 		t.Errorf("WitnessesInRoom = %v, want [300] (victim self-witness)", got)
 	}
 }
+
+func TestFindRecentAssault_ReturnsMatch(t *testing.T) {
+	setupTestCrimes(t)
+	victim := &mobs.Mob{MobId: 100}
+
+	roundForTest = func() uint64 { return 1000 }
+	Record([]string{"f"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z")
+
+	got := FindRecentAssault("f", 17, 100)
+	if got == nil || got.Id != 1 || got.Kind != KindAssault {
+		t.Errorf("FindRecentAssault: %+v", got)
+	}
+}
+
+func TestFindRecentAssault_NilWhenOutsideWindow(t *testing.T) {
+	setupTestCrimes(t)
+	victim := &mobs.Mob{MobId: 100}
+
+	roundForTest = func() uint64 { return 1000 }
+	Record([]string{"f"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z")
+
+	roundForTest = func() uint64 { return 2000 } // 1000 rounds later
+	if got := FindRecentAssault("f", 17, 100); got != nil {
+		t.Errorf("expected nil for out-of-window; got %+v", got)
+	}
+}
+
+func TestFindRecentAssault_NilWhenResolved(t *testing.T) {
+	setupTestCrimes(t)
+	victim := &mobs.Mob{MobId: 100}
+	Record([]string{"f"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z")
+	Resolve("f", 1, "fine")
+
+	if got := FindRecentAssault("f", 17, 100); got != nil {
+		t.Errorf("expected nil for resolved assault; got %+v", got)
+	}
+}
+
+func TestFindRecentAssault_NilWhenAlreadyMurder(t *testing.T) {
+	setupTestCrimes(t)
+	victim := &mobs.Mob{MobId: 100}
+	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z")
+
+	if got := FindRecentAssault("f", 17, 100); got != nil {
+		t.Errorf("FindRecentAssault should ignore murder rows; got %+v", got)
+	}
+}
+
+func TestFindRecentAssault_NilWhenWrongPlayer(t *testing.T) {
+	setupTestCrimes(t)
+	victim := &mobs.Mob{MobId: 100}
+	Record([]string{"f"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 99}, victim, 250, 467, "z")
+
+	if got := FindRecentAssault("f", 17, 100); got != nil {
+		t.Errorf("FindRecentAssault wrong player: %+v", got)
+	}
+}

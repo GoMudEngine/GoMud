@@ -202,3 +202,41 @@ func IdentifiedPerp(userId int, witnesses []int) Perpetrator {
 	}
 	return Perpetrator{Type: PerpPlayer, Id: userId}
 }
+
+// FindRecentAssault returns the most recent unresolved assault
+// crime committed by `userId` against `factionId` within
+// `lookbackRounds`. Used by the combat-death hookup to upgrade
+// in place when a fight escalates from assault to murder.
+//
+// Returns nil if no match. Murder rows and resolved rows are
+// ignored. Searches in reverse order so the most recent matching
+// assault wins.
+func FindRecentAssault(factionId string, userId int, lookbackRounds uint64) *Crime {
+	fc := loadOrLazyInit(factionId)
+	now := currentRound()
+	if now < lookbackRounds {
+		// avoid uint underflow
+		lookbackRounds = now
+	}
+	cutoff := now - lookbackRounds
+
+	crimeCacheMu.RLock()
+	defer crimeCacheMu.RUnlock()
+	for i := len(fc.Crimes) - 1; i >= 0; i-- {
+		c := fc.Crimes[i]
+		if c.Kind != KindAssault {
+			continue
+		}
+		if c.ResolvedRound != 0 {
+			continue
+		}
+		if c.Perpetrator.Type != PerpPlayer || c.Perpetrator.Id != userId {
+			continue
+		}
+		if c.Round < cutoff {
+			break // log is append-order, anything older is older
+		}
+		return c
+	}
+	return nil
+}
