@@ -1,8 +1,10 @@
 package crimes
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -153,4 +155,50 @@ func AllForPlayer(userId int, includeResolved bool) []*Crime {
 		}
 	}
 	return out
+}
+
+// WitnessesInRoom returns the list of mob instance IDs in the
+// given room whose mob template's Groups overlap any of factionIds.
+// Pass excludeInstanceId = victim's instance for murder (victim is
+// dead, not a self-witness); pass 0 for assault and theft (victim
+// is alive and a self-witness).
+func WitnessesInRoom(factionIds []string, room *rooms.Room, excludeInstanceId int) []int {
+	if room == nil || len(factionIds) == 0 {
+		return nil
+	}
+	wantSet := make(map[string]struct{}, len(factionIds))
+	for _, fid := range factionIds {
+		wantSet[fid] = struct{}{}
+	}
+
+	out := make([]int, 0)
+	for _, instId := range room.GetMobs() {
+		if instId == excludeInstanceId {
+			continue
+		}
+		mob := mobs.GetInstance(instId)
+		if mob == nil {
+			continue
+		}
+		// FactionsForMob would re-walk the registry; we just need
+		// "does mob.Groups overlap factionIds" — cheap to do inline.
+		for _, g := range mob.Groups {
+			if _, hit := wantSet[g]; hit {
+				if factions.GetDefinition(g) != nil {
+					out = append(out, instId)
+					break
+				}
+			}
+		}
+	}
+	return out
+}
+
+// IdentifiedPerp returns PerpPlayer if witnesses is non-empty,
+// otherwise PerpUnknown.
+func IdentifiedPerp(userId int, witnesses []int) Perpetrator {
+	if len(witnesses) == 0 {
+		return Perpetrator{Type: PerpUnknown}
+	}
+	return Perpetrator{Type: PerpPlayer, Id: userId}
 }

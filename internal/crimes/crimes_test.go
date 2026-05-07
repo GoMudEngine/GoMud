@@ -1,10 +1,14 @@
 package crimes
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
 
 func setupTestCrimes(t *testing.T) {
@@ -184,5 +188,85 @@ func TestPerpTypeConstants(t *testing.T) {
 	}
 	if PerpUnknown != "unknown" {
 		t.Errorf("PerpUnknown = %q, want unknown", PerpUnknown)
+	}
+}
+
+func setupFactionsForCrimesTest(t *testing.T) {
+	t.Helper()
+	t.Setenv("DOGMUD_FACTIONS_DIR_OVERRIDE", t.TempDir())
+	t.Setenv("DOGMUD_FACTIONS_REP_DIR_OVERRIDE", t.TempDir())
+	dir := os.Getenv("DOGMUD_FACTIONS_DIR_OVERRIDE")
+	body := `faction_id: thornwall_citizens
+display_name: "Thornwall Citizenry"
+description: "x"
+default_rep: 0
+allies: []
+enemies: []
+`
+	if err := os.WriteFile(filepath.Join(dir, "thornwall_citizens.yaml"), []byte(body), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := factions.LoadAllDefinitions(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestIdentifiedPerp_EmptyWitnessesIsUnknown(t *testing.T) {
+	got := IdentifiedPerp(17, []int{})
+	if got.Type != PerpUnknown {
+		t.Errorf("empty witnesses: got type %q, want unknown", got.Type)
+	}
+}
+
+func TestIdentifiedPerp_NonEmptyIsPlayer(t *testing.T) {
+	got := IdentifiedPerp(17, []int{42})
+	if got.Type != PerpPlayer || got.Id != 17 {
+		t.Errorf("got %+v, want {player, 17}", got)
+	}
+}
+
+func TestWitnessesInRoom_FiltersByFactionGroup(t *testing.T) {
+	setupTestCrimes(t)
+	setupFactionsForCrimesTest(t)
+
+	// Build a fake room with three mob instances:
+	//   100 — a citizen (faction member, witness)
+	//   200 — humanoid only (not a witness)
+	//   300 — citizen but the dead victim (excluded)
+	room := &rooms.Room{RoomId: 467}
+	citizen := &mobs.Mob{MobId: 100, InstanceId: 100, Groups: []string{"thornwall_citizens"}}
+	otherMob := &mobs.Mob{MobId: 999, InstanceId: 200, Groups: []string{"humanoid"}}
+	victim := &mobs.Mob{MobId: 102, InstanceId: 300, Groups: []string{"thornwall_citizens"}}
+
+	mobs.SetInstanceForTest(100, citizen)
+	defer mobs.SetInstanceForTest(100, nil)
+	mobs.SetInstanceForTest(200, otherMob)
+	defer mobs.SetInstanceForTest(200, nil)
+	mobs.SetInstanceForTest(300, victim)
+	defer mobs.SetInstanceForTest(300, nil)
+
+	room.AddMob(100)
+	room.AddMob(200)
+	room.AddMob(300)
+
+	got := WitnessesInRoom([]string{"thornwall_citizens"}, room, 300)
+	if len(got) != 1 || got[0] != 100 {
+		t.Errorf("WitnessesInRoom = %v, want [100]", got)
+	}
+}
+
+func TestWitnessesInRoom_VictimIncludedWhenNotExcluded(t *testing.T) {
+	setupTestCrimes(t)
+	setupFactionsForCrimesTest(t)
+
+	room := &rooms.Room{RoomId: 467}
+	victim := &mobs.Mob{MobId: 100, InstanceId: 300, Groups: []string{"thornwall_citizens"}}
+	mobs.SetInstanceForTest(300, victim)
+	defer mobs.SetInstanceForTest(300, nil)
+	room.AddMob(300)
+
+	got := WitnessesInRoom([]string{"thornwall_citizens"}, room, 0) // assault: include victim
+	if len(got) != 1 || got[0] != 300 {
+		t.Errorf("WitnessesInRoom = %v, want [300] (victim self-witness)", got)
 	}
 }
