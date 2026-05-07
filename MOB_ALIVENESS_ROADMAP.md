@@ -77,7 +77,7 @@ should always agree.
 |-------|-------|-------|------|-----------|--------|
 | 1.1 | Substrate | Persistent NPC opinion store | M | — | Done |
 | 1.2 | Substrate | Faction system | L | 1.1 | Done |
-| 1.3 | Substrate | Crime/wanted state | M | 1.2 | In progress |
+| 1.3 | Substrate | Crime/wanted state | M | 1.2 | Done |
 | 1.4 | Substrate | NPC knowledge model | M | 1.1 | Not started |
 | 1.5 | Substrate | Bounty state | S | 1.2 | Not started |
 | 1.6 | Substrate | NPC-to-NPC relationships | M | — | Not started |
@@ -116,7 +116,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 2 / 40 done • 1 in progress • 37 not started.
+**Roll-up:** 3 / 40 done • 0 in progress • 37 not started.
 
 ---
 
@@ -145,13 +145,14 @@ State primitives the rest of the layers read from and write to.
 - **Shipped:** `internal/factions/` package with signed-scalar rep [-100, +100], no decay, per-faction default rep. Definition YAMLs at `_datafiles/world/dogmud/factions/{slug}.yaml` (committed); rep state at `_datafiles/world/dogmud/factions.rep/{slug}.yaml` (gitignored). Public API (GetRep/SetRep/BumpRep/TierFor + FactionsForMob/IsPeacefulToward), reuses `opinions.Tier` for banding. New quest engine `bump_rep` action. Combat hookup `MobDeath_FactionRep` bumps killer + same-room party members. Admin command `faction list/show/set/bump/reset` + helpfile. Two authored factions: warren (default -25, enemies thornwall_guards) and thornwall_guards (default 0, narrow guards-only — broader thornwall_citizens deferred to chunk 1.3 alongside crime/wanted state). `peacefulquest` field deleted from Mob struct after Migration 0.13.0 seeded warren rep at +30 for live players holding the legacy `2-end` quest token. Quest 2 (The Warren Compact) now fires `bump_rep: warren +30` on completion. Smoke-boot verified: migration ran cleanly, faction definitions load without panic on ally/enemy validation, rep file persists. **Manual in-game smoke test (smoketester walking through quest 2 end-to-end) deferred to user verification per the spec's smoke-test section.** Fixed a latent path bug from chunk 1.1 — `opinions.opinionsBaseDir` and `factions.*BaseDir` were treating `DataFiles` as if it didn't already include `/world/dogmud`, which it does. Roadmap chunk 6.5a added for the broader faction content pass. Spec at `docs/superpowers/specs/2026-05-06-mob-aliveness-1.2-faction-system-design.md`, plan at `docs/superpowers/plans/2026-05-06-mob-aliveness-1.2-faction-system.md`.
 
 ### 1.3 Crime/wanted state
-**Status:** In progress • **Size:** M
+**Status:** Done (2026-05-06) • **Size:** M
 
 - **Goal:** Per-player log of unresolved crimes (theft, assault, murder) keyed by zone or faction.
 - **In:** Crime types, witness tracking, zone/faction scoping, expiry rules, query API, admin debug.
 - **Out:** Guard reactions — that's 5.1.
 - **Depends on:** 1.2
 - **Why:** "I assaulted a Stillwater citizen — Stillwater knows it" requires this data. Town justice and bounty hunting both consume it.
+- **Shipped:** `internal/crimes/` package storing per-faction murder/assault/theft logs at `_datafiles/world/dogmud/factions.crimes/{slug}.yaml` (gitignored). Witness-required model: faction-aligned mob in the room identifies the perpetrator; lone acts record `perp: unknown` with no rep impact. Public API: Record, Resolve, FindRecentAssault, AllForFaction, AllForPlayer, PruneStale, WitnessesInRoom, IdentifiedPerp, UpgradeAssaultToMurder. Crime-aware combat hookups: `MobDeath_FactionRep` rewritten to consult crime log + apply per-kind rep deltas (CrimeRepDeltaMurder -25, Assault -10, Theft -5); first-aggression in `attack`/`target` records assault crime alongside chunk 1.2 opinion bump; failed-steal records theft crime. Each fight yields ONE crime (assault upgrades in-place to murder on death). 365-day game-time stale safety net via PruneStale (Balance.CrimeStaleAfterRounds = 7,884,000). Authored `thornwall_citizens` faction (deferred from 1.2) — 20 named civilians + 3 guards via multi-faction membership. New admin command `crime list/show/resolve/prune-stale` + helpfile. Bonus fix during T7: caught a real `loadOrLazyInit` race condition (concurrent goroutines on uncached faction could lose records — saw 491/500 before fix); fixed via double-check-lock pattern. Spec at `docs/superpowers/specs/2026-05-06-mob-aliveness-1.3-crime-wanted-design.md`, plan at `docs/superpowers/plans/2026-05-06-mob-aliveness-1.3-crime-wanted.md`.
 
 ### 1.4 NPC knowledge model
 **Status:** Not started • **Size:** M
