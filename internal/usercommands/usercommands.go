@@ -73,6 +73,7 @@ var (
 		`cast`:            {Cast, false, true, false},
 		`combatstats`:     {CombatStats, true, true, true}, // Admin only
 		`craft`:           {Craft, false, false, false},    // Can't start crafting in combat
+		`crime`:           {Crime, true, true, true},       // Admin only
 		`cooldowns`:       {Cooldowns, true, true, false},
 		`command`:         {Command, false, true, true}, // Admin only
 		`conditions`:      {Conditions, true, true, false},
