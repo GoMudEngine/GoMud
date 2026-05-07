@@ -8,8 +8,10 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/crimes"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -201,6 +203,20 @@ func stealFromMob(mobInstanceId int, attackerScore float64, rank int,
 		)
 
 		user.Character.CancelBuffsWithFlag(buffs.Hidden)
+
+		// chunk 1.3: record theft crime on faction-aligned victim
+		if factionIds := factions.FactionsForMob(m); len(factionIds) > 0 {
+			witnesses := crimes.WitnessesInRoom(factionIds, room, 0)
+			perp := crimes.IdentifiedPerp(user.UserId, witnesses)
+			delta := int(configs.GetBalanceConfig().CrimeRepDeltaTheft)
+			for _, fid := range factionIds {
+				crimes.Record([]string{fid}, crimes.KindTheft, perp,
+					m, m.InstanceId, room.RoomId, m.Character.Zone)
+				if perp.Type == crimes.PerpPlayer {
+					factions.BumpRep(fid, user.UserId, delta)
+				}
+			}
+		}
 
 		m.Command(fmt.Sprintf(`attack @%d`, user.UserId))
 	}
