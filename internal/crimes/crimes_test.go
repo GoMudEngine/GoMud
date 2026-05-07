@@ -395,6 +395,47 @@ func TestPruneStaleSkipsAlreadyResolved(t *testing.T) {
 	}
 }
 
+func TestUpgradeAssaultToMurder(t *testing.T) {
+	setupTestCrimes(t)
+	victim := &mobs.Mob{MobId: 100}
+
+	roundForTest = func() uint64 { return 1000 }
+	Record([]string{"f"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z")
+
+	roundForTest = func() uint64 { return 1100 }
+	UpgradeAssaultToMurder("f", 1,
+		Perpetrator{Type: PerpPlayer, Id: 17},
+		251, 468, "newzone")
+
+	got := AllForFaction("f", true)
+	if len(got) != 1 {
+		t.Fatalf("expected 1 row")
+	}
+	c := got[0]
+	if c.Kind != KindMurder {
+		t.Errorf("kind = %s, want murder", c.Kind)
+	}
+	if c.Round != 1100 || c.RoomId != 468 || c.Zone != "newzone" || c.VictimInstanceId != 251 {
+		t.Errorf("metadata not refreshed: %+v", c)
+	}
+}
+
+func TestUpgradeAssaultToMurder_NoOpOnNonAssault(t *testing.T) {
+	setupTestCrimes(t)
+	victim := &mobs.Mob{MobId: 100}
+
+	roundForTest = func() uint64 { return 1000 }
+	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z")
+
+	roundForTest = func() uint64 { return 1100 }
+	UpgradeAssaultToMurder("f", 1, Perpetrator{Type: PerpPlayer, Id: 17}, 251, 468, "newzone")
+
+	got := AllForFaction("f", true)
+	if got[0].Round != 1000 || got[0].RoomId != 467 {
+		t.Errorf("non-assault row was mutated: %+v", got[0])
+	}
+}
+
 func TestParallelRecordsConverge(t *testing.T) {
 	setupTestCrimes(t)
 	victim := &mobs.Mob{MobId: 100}

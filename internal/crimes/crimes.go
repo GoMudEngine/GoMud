@@ -266,6 +266,52 @@ func FindRecentAssault(factionId string, userId int, lookbackRounds uint64) *Cri
 	return nil
 }
 
+// UpgradeAssaultToMurder mutates an existing assault crime row to
+// kind=murder, refreshing perpetrator + room + round to the death
+// event. Idempotent — a no-op if the crime is already not an
+// assault. Persists synchronously.
+//
+// Used by MobDeath_FactionRep when a fight that opened with an
+// assault record ends in death; preferred over inserting a second
+// row so each fight produces ONE crime per faction.
+func UpgradeAssaultToMurder(
+	factionId string,
+	crimeId int,
+	perp Perpetrator,
+	instanceId int,
+	roomId int,
+	zone string,
+) {
+	fc := loadOrLazyInit(factionId)
+	now := currentRound()
+
+	crimeCacheMu.Lock()
+	mutated := false
+	for _, c := range fc.Crimes {
+		if c.Id != crimeId {
+			continue
+		}
+		if c.Kind != KindAssault {
+			break // already murder or something else; no-op
+		}
+		c.Kind = KindMurder
+		c.Perpetrator = perp
+		c.RoomId = roomId
+		c.Round = now
+		c.VictimInstanceId = instanceId
+		c.Zone = zone
+		mutated = true
+		break
+	}
+	crimeCacheMu.Unlock()
+
+	if mutated {
+		if err := saveCrimesToDisk(factionId); err != nil {
+			mudlog.Warn("crimes.UpgradeAssaultToMurder: saveCrimesToDisk", "factionId", factionId, "crimeId", crimeId, "error", err)
+		}
+	}
+}
+
 // PruneStale resolves all unresolved crimes older than
 // Balance.CrimeStaleAfterRounds with reason "stale". Returns the
 // number of rows resolved. Persists once per call (not once per
