@@ -3,6 +3,7 @@ package crimes
 import (
 	"os"
 	"path/filepath"
+	"sync"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -391,5 +392,47 @@ func TestPruneStaleSkipsAlreadyResolved(t *testing.T) {
 	got := AllForFaction("f", true)
 	if got[0].ResolvedBy != "fine" {
 		t.Errorf("PruneStale overwrote existing resolved_by: %+v", got[0])
+	}
+}
+
+func TestParallelRecordsConverge(t *testing.T) {
+	setupTestCrimes(t)
+	victim := &mobs.Mob{MobId: 100}
+
+	const goroutines = 10
+	const recordsPer = 50
+
+	var wg sync.WaitGroup
+	for i := 0; i < goroutines; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for j := 0; j < recordsPer; j++ {
+				Record([]string{"f"}, KindAssault,
+					Perpetrator{Type: PerpPlayer, Id: 17},
+					victim, 250, 467, "z")
+			}
+		}()
+	}
+	wg.Wait()
+
+	got := AllForFaction("f", false)
+	want := goroutines * recordsPer
+	if len(got) != want {
+		t.Errorf("after parallel records: %d rows, want %d", len(got), want)
+	}
+
+	// IDs must be unique 1..want.
+	seen := make(map[int]bool, want)
+	for _, c := range got {
+		if seen[c.Id] {
+			t.Errorf("duplicate id %d", c.Id)
+		}
+		seen[c.Id] = true
+	}
+	for i := 1; i <= want; i++ {
+		if !seen[i] {
+			t.Errorf("missing id %d", i)
+		}
 	}
 }

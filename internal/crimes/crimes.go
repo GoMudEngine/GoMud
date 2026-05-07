@@ -47,6 +47,12 @@ func loadOrLazyInit(factionId string) *FactionCrimes {
 
 	if fc := loadCrimesFromDisk(factionId); fc != nil {
 		crimeCacheMu.Lock()
+		// Recheck after acquiring write lock; another goroutine may
+		// have loaded concurrently.
+		if cached, ok := crimeCache[factionId]; ok {
+			crimeCacheMu.Unlock()
+			return cached
+		}
 		crimeCache[factionId] = fc
 		crimeCacheMu.Unlock()
 		return fc
@@ -58,6 +64,12 @@ func loadOrLazyInit(factionId string) *FactionCrimes {
 		nextId:    1,
 	}
 	crimeCacheMu.Lock()
+	// Recheck after acquiring write lock; another goroutine may have
+	// created and cached a new entry.
+	if cached, ok := crimeCache[factionId]; ok {
+		crimeCacheMu.Unlock()
+		return cached
+	}
 	crimeCache[factionId] = fc
 	crimeCacheMu.Unlock()
 	return fc
