@@ -9,6 +9,7 @@ maxwander: 0
 groups:
   - humanoid
   - innkeeper
+  - thornwall_citizens
 idlecommands:
   - 'emote polishes a mug with a cloth, eyes on the room'
   - 'emote slides a drink across the bar without being asked'

@@ -9,6 +9,7 @@ maxwander: 0
 groups:
   - humanoid
   - gossiper
+  - thornwall_citizens
 idlecommands:
   - 'emote sits perfectly still, watching the room with pale, unblinking eyes'
   - ''

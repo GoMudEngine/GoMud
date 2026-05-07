@@ -12,6 +12,7 @@ maxwander: 0
 groups:
   - humanoid
   - merchant
+  - thornwall_citizens
 idlecommands:
   - 'emote grinds something in a mortar with small, precise movements'
   - 'emote holds a bottle up to the light, examining the colour of its contents'
