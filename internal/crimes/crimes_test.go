@@ -327,3 +327,69 @@ func TestFindRecentAssault_NilWhenWrongPlayer(t *testing.T) {
 		t.Errorf("FindRecentAssault wrong player: %+v", got)
 	}
 }
+
+func TestPruneStaleResolvesOldUnresolvedRows(t *testing.T) {
+	setupTestCrimes(t)
+	victim := &mobs.Mob{MobId: 100}
+
+	staleAfterForTest = func() uint64 { return 500 }
+	t.Cleanup(func() { staleAfterForTest = nil })
+
+	roundForTest = func() uint64 { return 1000 }
+	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z") // id 1, round 1000
+	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 251, 468, "z") // id 2, round 1000
+
+	roundForTest = func() uint64 { return 1600 } // 600 rounds later — past 500-round threshold
+	count := PruneStale("f")
+	if count != 2 {
+		t.Errorf("PruneStale snapped %d rows, want 2", count)
+	}
+	got := AllForFaction("f", true)
+	for _, c := range got {
+		if c.ResolvedRound == 0 || c.ResolvedBy != "stale" {
+			t.Errorf("crime %d not snapped: %+v", c.Id, c)
+		}
+	}
+}
+
+func TestPruneStaleSkipsRecentRows(t *testing.T) {
+	setupTestCrimes(t)
+	victim := &mobs.Mob{MobId: 100}
+
+	staleAfterForTest = func() uint64 { return 500 }
+	t.Cleanup(func() { staleAfterForTest = nil })
+
+	roundForTest = func() uint64 { return 1000 }
+	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z")
+
+	roundForTest = func() uint64 { return 1100 } // 100 rounds later — within threshold
+	count := PruneStale("f")
+	if count != 0 {
+		t.Errorf("PruneStale snapped %d rows, want 0", count)
+	}
+	if got := AllForFaction("f", false); len(got) != 1 {
+		t.Errorf("recent crime should still be unresolved: %+v", got)
+	}
+}
+
+func TestPruneStaleSkipsAlreadyResolved(t *testing.T) {
+	setupTestCrimes(t)
+	victim := &mobs.Mob{MobId: 100}
+
+	staleAfterForTest = func() uint64 { return 500 }
+	t.Cleanup(func() { staleAfterForTest = nil })
+
+	roundForTest = func() uint64 { return 1000 }
+	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z")
+	Resolve("f", 1, "fine")
+
+	roundForTest = func() uint64 { return 1600 }
+	count := PruneStale("f")
+	if count != 0 {
+		t.Errorf("PruneStale should skip already-resolved rows; got %d", count)
+	}
+	got := AllForFaction("f", true)
+	if got[0].ResolvedBy != "fine" {
+		t.Errorf("PruneStale overwrote existing resolved_by: %+v", got[0])
+	}
+}

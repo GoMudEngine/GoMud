@@ -12,11 +12,26 @@ import (
 // never sets this.
 var roundForTest func() uint64
 
+// staleAfterForTest overrides Balance.CrimeStaleAfterRounds for
+// tests. Production never sets this. T8 adds the production
+// config field; until then, currentStaleAfter() returns 0 in
+// production (PruneStale is a no-op without the test seam).
+var staleAfterForTest func() uint64
+
 func currentRound() uint64 {
 	if roundForTest != nil {
 		return roundForTest()
 	}
 	return util.GetRoundCount()
+}
+
+func currentStaleAfter() uint64 {
+	if staleAfterForTest != nil {
+		return staleAfterForTest()
+	}
+	// T8 wires this to configs.GetBalanceConfig().CrimeStaleAfterRounds.
+	// Until then, production returns 0 (PruneStale early-returns).
+	return 0
 }
 
 // loadOrLazyInit returns the cached *FactionCrimes for factionId,
@@ -239,4 +254,44 @@ func FindRecentAssault(factionId string, userId int, lookbackRounds uint64) *Cri
 		return c
 	}
 	return nil
+}
+
+// PruneStale resolves all unresolved crimes older than
+// Balance.CrimeStaleAfterRounds with reason "stale". Returns the
+// number of rows resolved. Persists once per call (not once per
+// row) by mutating in-cache then calling saveCrimesToDisk after
+// the loop.
+//
+// Safety net for indefinite-storage growth — primary expiry is
+// consumer-driven (town justice fines, redemption quests).
+func PruneStale(factionId string) int {
+	fc := loadOrLazyInit(factionId)
+	now := currentRound()
+	threshold := currentStaleAfter()
+	if threshold == 0 || now < threshold {
+		return 0
+	}
+	cutoff := now - threshold
+
+	crimeCacheMu.Lock()
+	count := 0
+	for _, c := range fc.Crimes {
+		if c.ResolvedRound != 0 {
+			continue
+		}
+		if c.Round >= cutoff {
+			continue
+		}
+		c.ResolvedRound = now
+		c.ResolvedBy = "stale"
+		count++
+	}
+	crimeCacheMu.Unlock()
+
+	if count > 0 {
+		if err := saveCrimesToDisk(factionId); err != nil {
+			mudlog.Warn("crimes.PruneStale: saveCrimesToDisk", "factionId", factionId, "error", err)
+		}
+	}
+	return count
 }
