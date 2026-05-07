@@ -1,6 +1,7 @@
 package crimes
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -13,9 +14,8 @@ import (
 var roundForTest func() uint64
 
 // staleAfterForTest overrides Balance.CrimeStaleAfterRounds for
-// tests. Production never sets this. T8 adds the production
-// config field; until then, currentStaleAfter() returns 0 in
-// production (PruneStale is a no-op without the test seam).
+// tests. Production never sets this — production reads from the
+// config knob.
 var staleAfterForTest func() uint64
 
 func currentRound() uint64 {
@@ -29,9 +29,7 @@ func currentStaleAfter() uint64 {
 	if staleAfterForTest != nil {
 		return staleAfterForTest()
 	}
-	// T8 wires this to configs.GetBalanceConfig().CrimeStaleAfterRounds.
-	// Until then, production returns 0 (PruneStale early-returns).
-	return 0
+	return uint64(configs.GetBalanceConfig().CrimeStaleAfterRounds)
 }
 
 // loadOrLazyInit returns the cached *FactionCrimes for factionId,

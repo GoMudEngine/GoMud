@@ -409,7 +409,11 @@ type Balance struct {
 	DispositionDecayHalfLifeRounds ConfigInt `yaml:"DispositionDecayHalfLifeRounds"` // Rounds for one half-life of disposition decay toward default (default 100000; 0 disables decay)
 
 	// ── FACTIONS ─────────────────────────────────────────────────────────────
-	FactionMemberKillRep ConfigInt `yaml:"FactionMemberKillRep"` // Rep delta when a player kills a member of a defined faction (default -10)
+	FactionMemberKillRep   ConfigInt `yaml:"FactionMemberKillRep"`   // Rep delta when a player kills a member of a defined faction (default -10) — DEPRECATED, retained for any non-citizen faction fallback path. Citizen factions use CrimeRepDeltaMurder via internal/crimes.
+	CrimeRepDeltaMurder    ConfigInt `yaml:"CrimeRepDeltaMurder"`    // Rep delta on murder crime with identified perpetrator (default -25)
+	CrimeRepDeltaAssault   ConfigInt `yaml:"CrimeRepDeltaAssault"`   // Rep delta on assault crime with identified perpetrator (default -10)
+	CrimeRepDeltaTheft     ConfigInt `yaml:"CrimeRepDeltaTheft"`     // Rep delta on theft crime with identified perpetrator (default -5)
+	CrimeStaleAfterRounds  ConfigInt `yaml:"CrimeStaleAfterRounds"`  // Rounds after which an unresolved crime is auto-snapped to stale (default 7884000 — ~365 game-days at 4-second rounds)
 }
 
 func (b *Balance) Validate() {

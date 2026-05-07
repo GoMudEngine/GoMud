@@ -343,4 +343,16 @@ func (b *Balance) validateMisc() {
 	if b.FactionMemberKillRep == 0 {
 		b.FactionMemberKillRep = -10
 	}
+	if b.CrimeRepDeltaMurder == 0 {
+		b.CrimeRepDeltaMurder = -25
+	}
+	if b.CrimeRepDeltaAssault == 0 {
+		b.CrimeRepDeltaAssault = -10
+	}
+	if b.CrimeRepDeltaTheft == 0 {
+		b.CrimeRepDeltaTheft = -5
+	}
+	if b.CrimeStaleAfterRounds == 0 {
+		b.CrimeStaleAfterRounds = 7884000 // ~365 game-days at 4-second rounds
+	}
 }
