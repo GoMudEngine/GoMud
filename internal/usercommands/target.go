@@ -20,7 +20,7 @@ import (
 // new target when switching combat targets. Mirrors the hook in
 // attack.go so all "the player initiated combat with this mob"
 // paths feed the same substrate.
-func bumpOpinionOnTargetSwitch(userId, newMobInstanceId, oldMobInstanceId int) {
+func bumpOpinionOnTargetSwitch(user *users.UserRecord, room *rooms.Room, newMobInstanceId, oldMobInstanceId int) {
 	if newMobInstanceId == 0 || newMobInstanceId == oldMobInstanceId {
 		return
 	}
@@ -28,8 +28,11 @@ func bumpOpinionOnTargetSwitch(userId, newMobInstanceId, oldMobInstanceId int) {
 	if mob == nil {
 		return
 	}
-	opinions.Bump(int(mob.MobId), userId,
+	// chunk 1.1: per-NPC opinion bump
+	opinions.Bump(int(mob.MobId), user.UserId,
 		int(configs.GetBalanceConfig().OpinionAttackBump))
+	// chunk 1.3: assault crime + faction rep
+	recordAssaultCrime(user, mob, room)
 }
 
 func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -138,7 +141,7 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	if currentTargetGone {
 		aggroType := user.Character.Aggro.Type
-		bumpOpinionOnTargetSwitch(user.UserId, newTargetMobInstanceId, currentTargetMobId)
+		bumpOpinionOnTargetSwitch(user, room, newTargetMobInstanceId, currentTargetMobId)
 		user.Character.SetAggro(newTargetPlayerId, newTargetMobInstanceId, aggroType)
 
 		if newTargetMobInstanceId > 0 {
@@ -165,7 +168,7 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		aggroType := user.Character.Aggro.Type
 
 		// Switch to new target with 1 round wait (cost of repositioning)
-		bumpOpinionOnTargetSwitch(user.UserId, newTargetMobInstanceId, currentTargetMobId)
+		bumpOpinionOnTargetSwitch(user, room, newTargetMobInstanceId, currentTargetMobId)
 		user.Character.SetAggro(newTargetPlayerId, newTargetMobInstanceId, aggroType, 1)
 
 		if newTargetMobInstanceId > 0 {

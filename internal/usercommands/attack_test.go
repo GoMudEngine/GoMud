@@ -1,11 +1,15 @@
 package usercommands
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/crimes"
+	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/opinions"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -247,5 +251,74 @@ func TestTargetSwitchBumpsNewMobOpinion(t *testing.T) {
 	// And mobA's opinion is unchanged — the switch shouldn't double-bump A.
 	if got := opinions.Get(1, user.UserId); got != bump {
 		t.Errorf("after switch, Skeleton opinion changed unexpectedly: %d, want %d", got, bump)
+	}
+}
+
+func TestAttackRecordsAssaultCrimeOnFactionMob(t *testing.T) {
+	cleanup := seedAllRegistries()
+	defer cleanup()
+
+	dir := t.TempDir()
+	t.Setenv("DOGMUD_FACTIONS_DIR_OVERRIDE", dir)
+	t.Setenv("DOGMUD_FACTIONS_REP_DIR_OVERRIDE", t.TempDir())
+	t.Setenv("DOGMUD_FACTIONS_CRIMES_DIR_OVERRIDE", t.TempDir())
+	if err := os.WriteFile(filepath.Join(dir, "thornwall_citizens.yaml"),
+		[]byte(`faction_id: thornwall_citizens
+display_name: "Citizens"
+description: "x"
+default_rep: 0
+allies: []
+enemies: []
+`), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := factions.LoadAllDefinitions(); err != nil {
+		t.Fatal(err)
+	}
+	factions.ClearCache()
+	crimes.ClearCache()
+	opinions.ClearCache()
+
+	user, room := getTestUserAndRoom(t)
+
+	// Seed a citizen mob in the room.
+	target := &mobs.Mob{
+		MobId:      100,
+		InstanceId: 300,
+		HomeRoomId: 1,
+		Hostile:    false,
+		Groups:     []string{"thornwall_citizens"},
+		Character: characters.Character{
+			Name:      "city beggar",
+			RoomId:    1,
+			Health:    50,
+			Buffs:     buffs.New(),
+			Cooldowns: map[string]int{},
+		},
+	}
+	target.Character.HealthMax.Value = 100
+	mobs.SetInstanceForTest(300, target)
+	defer mobs.SetInstanceForTest(300, nil)
+	room.AddMob(300)
+	defer room.RemoveMob(300)
+
+	if _, err := Attack("#300", user, room, 0); err != nil {
+		t.Fatalf("Attack: %v", err)
+	}
+
+	got := crimes.AllForFaction("thornwall_citizens", false)
+	if len(got) != 1 {
+		t.Fatalf("expected 1 assault crime, got %d", len(got))
+	}
+	if got[0].Kind != crimes.KindAssault {
+		t.Errorf("kind: %s", got[0].Kind)
+	}
+	if got[0].Perpetrator.Type != crimes.PerpPlayer || got[0].Perpetrator.Id != user.UserId {
+		t.Errorf("perpetrator: %+v", got[0].Perpetrator)
+	}
+
+	wantRep := int(configs.GetBalanceConfig().CrimeRepDeltaAssault)
+	if rep := factions.GetRep("thornwall_citizens", user.UserId); rep != wantRep {
+		t.Errorf("rep: %d, want %d", rep, wantRep)
 	}
 }

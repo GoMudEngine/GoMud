@@ -7,7 +7,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/crimes"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/opinions"
 	"github.com/GoMudEngine/GoMud/internal/parties"
@@ -206,8 +208,11 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			if isFreshAggro {
 				if mob := mobs.GetInstance(attackMobInstanceId); mob != nil {
+					// Per-NPC opinion (chunk 1.1).
 					opinions.Bump(int(mob.MobId), user.UserId,
 						int(configs.GetBalanceConfig().OpinionAttackBump))
+					// Per-faction crime + rep (chunk 1.3).
+					recordAssaultCrime(user, mob, room)
 				}
 			}
 
@@ -309,4 +314,25 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	return true, nil
+}
+
+// recordAssaultCrime records an assault crime against each defined
+// faction the mob belongs to, and bumps player rep with each
+// (only when perpetrator identified). Shared between attack.go and
+// target.go's bumpOpinionOnTargetSwitch.
+func recordAssaultCrime(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room) {
+	factionIds := factions.FactionsForMob(mob)
+	if len(factionIds) == 0 {
+		return
+	}
+	witnesses := crimes.WitnessesInRoom(factionIds, room, 0)
+	perp := crimes.IdentifiedPerp(user.UserId, witnesses)
+	delta := int(configs.GetBalanceConfig().CrimeRepDeltaAssault)
+	for _, fid := range factionIds {
+		crimes.Record([]string{fid}, crimes.KindAssault, perp,
+			mob, mob.InstanceId, room.RoomId, mob.Character.Zone)
+		if perp.Type == crimes.PerpPlayer {
+			factions.BumpRep(fid, user.UserId, delta)
+		}
+	}
 }
