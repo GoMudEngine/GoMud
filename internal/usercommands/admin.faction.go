@@ -106,7 +106,7 @@ func factionShow(args []string, user *users.UserRecord) (bool, error) {
 }
 
 func factionShowAllForUser(playerName string, user *users.UserRecord) (bool, error) {
-	target := users.GetByCharacterName(playerName)
+	target := users.GetByCharacterNameOrLoad(playerName)
 	if target == nil {
 		user.SendText(fmt.Sprintf("No such player: %s\r\n", playerName))
 		return true, nil
@@ -149,7 +149,7 @@ func factionShowOne(factionId, playerName string, user *users.UserRecord) (bool,
 		user.SendText(fmt.Sprintf("Unknown faction: %s\r\n", factionId))
 		return true, nil
 	}
-	target := users.GetByCharacterName(playerName)
+	target := users.GetByCharacterNameOrLoad(playerName)
 	if target == nil {
 		user.SendText(fmt.Sprintf("No such player: %s\r\n", playerName))
 		return true, nil
@@ -182,7 +182,7 @@ func factionMutate(args []string, user *users.UserRecord, mode factionMutateMode
 		user.SendText(fmt.Sprintf("Unknown faction: %s\r\n", factionId))
 		return true, nil
 	}
-	target := users.GetByCharacterName(args[1])
+	target := users.GetByCharacterNameOrLoad(args[1])
 	if target == nil {
 		user.SendText(fmt.Sprintf("No such player: %s\r\n", args[1]))
 		return true, nil

@@ -122,7 +122,7 @@ func crimeShow(args []string, user *users.UserRecord, includeResolved bool) (boo
 		crimeShowUsage(user)
 		return true, nil
 	}
-	target := users.GetByCharacterName(args[0])
+	target := users.GetByCharacterNameOrLoad(args[0])
 	if target == nil {
 		user.SendText(fmt.Sprintf("No such player: %s\r\n", args[0]))
 		return true, nil
