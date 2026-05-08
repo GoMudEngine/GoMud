@@ -76,6 +76,12 @@ func loadOrLazyInit(factionId string) *FactionCrimes {
 // Record creates a new crime row on each affected faction's log.
 // Returns the new crime IDs (parallel to factionIds order).
 // Persists synchronously per-faction.
+//
+// hadExternalWitness should be true when, at the time of recording,
+// at least one non-victim faction-aligned mob was present in the room.
+// For murder-only paths (no prior assault) and non-assault crimes pass
+// false; the field is only meaningful on assault rows that may later be
+// upgraded to murder.
 func Record(
 	factionIds []string,
 	kind Kind,
@@ -84,6 +90,7 @@ func Record(
 	instanceId int,
 	roomId int,
 	zone string,
+	hadExternalWitness bool,
 ) []int {
 	if victim == nil || len(factionIds) == 0 {
 		return nil
@@ -96,14 +103,15 @@ func Record(
 
 		crimeCacheMu.Lock()
 		c := &Crime{
-			Id:               fc.nextId,
-			Kind:             kind,
-			Zone:             zone,
-			RoomId:           roomId,
-			Round:            now,
-			VictimMobId:      int(victim.MobId),
-			VictimInstanceId: instanceId,
-			Perpetrator:      perp,
+			Id:                 fc.nextId,
+			Kind:               kind,
+			Zone:               zone,
+			RoomId:             roomId,
+			Round:              now,
+			VictimMobId:        int(victim.MobId),
+			VictimInstanceId:   instanceId,
+			Perpetrator:        perp,
+			HadExternalWitness: hadExternalWitness,
 		}
 		fc.nextId++
 		fc.Crimes = append(fc.Crimes, c)
@@ -267,9 +275,16 @@ func FindRecentAssault(factionId string, userId int, lookbackRounds uint64) *Cri
 }
 
 // UpgradeAssaultToMurder mutates an existing assault crime row to
-// kind=murder, refreshing perpetrator + room + round to the death
-// event. Idempotent — a no-op if the crime is already not an
-// assault. Persists synchronously.
+// kind=murder, refreshing room + round to the death event. Idempotent
+// — a no-op if the crime is already not an assault. Persists
+// synchronously.
+//
+// preserveExistingPerp controls perpetrator handling:
+//   - false: overwrite the perp field with the supplied perp value.
+//   - true:  keep the perpetrator that was recorded at assault time
+//     (used when the assault was externally witnessed but the kill
+//     itself had no witnesses — the identity persists but no new
+//     witness confirmed the killing blow).
 //
 // Used by MobDeath_FactionRep when a fight that opened with an
 // assault record ends in death; preferred over inserting a second
@@ -281,6 +296,7 @@ func UpgradeAssaultToMurder(
 	instanceId int,
 	roomId int,
 	zone string,
+	preserveExistingPerp bool,
 ) {
 	fc := loadOrLazyInit(factionId)
 	now := currentRound()
@@ -295,7 +311,9 @@ func UpgradeAssaultToMurder(
 			break // already murder or something else; no-op
 		}
 		c.Kind = KindMurder
-		c.Perpetrator = perp
+		if !preserveExistingPerp {
+			c.Perpetrator = perp
+		}
 		c.RoomId = roomId
 		c.Round = now
 		c.VictimInstanceId = instanceId

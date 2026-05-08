@@ -42,6 +42,11 @@ type Crime struct {
 	Perpetrator      Perpetrator `yaml:"perpetrator"`
 	ResolvedRound    uint64      `yaml:"resolved_round"`
 	ResolvedBy       string      `yaml:"resolved_by"`
+	// HadExternalWitness is true when, at recording time, at least one
+	// non-victim faction-aligned mob was present. Sticky: once true it
+	// persists through UpgradeAssaultToMurder so the murder branch can
+	// determine whether the original assault was externally identified.
+	HadExternalWitness bool `yaml:"had_external_witness,omitempty"`
 }
 
 // FactionCrimes is one faction's full crime log. Persisted to

@@ -229,11 +229,12 @@ func TestMobDeathFactionRep_UpgradesAssaultToMurder(t *testing.T) {
 	defer cleanupMobs()
 	room.AddMob(201)
 
-	// Pre-seed an assault row (as if the first-aggression hook fired).
+	// Pre-seed an assault row with hadExternalWitness=true (witness
+	// was present at first aggression).
 	assaultVictim := &mobs.Mob{MobId: 100}
 	crimes.Record([]string{"thornwall_citizens"}, crimes.KindAssault,
 		crimes.Perpetrator{Type: crimes.PerpPlayer, Id: 17},
-		assaultVictim, 200, roomId, "Thornwall City")
+		assaultVictim, 200, roomId, "Thornwall City", true)
 	// Apply the assault delta so we can track the incremental.
 	cfg := configs.GetBalanceConfig()
 	factions.BumpRep("thornwall_citizens", 17, int(cfg.CrimeRepDeltaAssault))
@@ -320,6 +321,172 @@ func TestMobDeathFactionRep_NoPlayersNoChange(t *testing.T) {
 
 	if got := crimes.AllForFaction("thornwall_citizens", true); len(got) != 0 {
 		t.Errorf("crime recorded with no damager: %+v", got)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Four-case upgrade tests (chunk 1.3 lone-murder fix)
+// ---------------------------------------------------------------------------
+
+// TestMobDeathFactionRep_CaseA_ExternalWitnessAtBoth verifies that when
+// witnesses are present at both assault-time (HadExternalWitness=true)
+// and murder-time (witnesses in room), the perp is identified and the
+// incremental delta is applied.
+func TestMobDeathFactionRep_CaseA_ExternalWitnessAtBoth(t *testing.T) {
+	setupFactionsForHookTest(t)
+	cfg := configs.GetBalanceConfig()
+
+	const roomId = 467
+	room, cleanupRoom := seedHookRoom(t, roomId)
+	defer cleanupRoom()
+
+	// Witness present at murder time.
+	witnessSpec, witnessInst := makeCitizenMob(101, 201, roomId, "city guard")
+	victimSpec, victimInst := makeCitizenMob(100, 200, roomId, "victim")
+	cleanupMobs := mobs.SeedMobsForTest(
+		map[int]*mobs.Mob{100: victimSpec, 101: witnessSpec},
+		map[int]*mobs.Mob{200: victimInst, 201: witnessInst},
+	)
+	defer cleanupMobs()
+	room.AddMob(201)
+
+	// Pre-seed assault with HadExternalWitness=true.
+	assaultVictim := &mobs.Mob{MobId: 100}
+	crimes.Record([]string{"thornwall_citizens"}, crimes.KindAssault,
+		crimes.Perpetrator{Type: crimes.PerpPlayer, Id: 17},
+		assaultVictim, 200, roomId, "Thornwall City", true)
+	factions.BumpRep("thornwall_citizens", 17, int(cfg.CrimeRepDeltaAssault))
+	repAfterAssault := factions.GetRep("thornwall_citizens", 17)
+
+	evt := events.MobDeath{
+		MobId: 100, InstanceId: 200, RoomId: roomId,
+		PlayerDamage: map[int]int{17: 50},
+	}
+	MobDeathFactionRep(evt)
+
+	got := crimes.AllForFaction("thornwall_citizens", true)
+	if len(got) != 1 {
+		t.Fatalf("CaseA: expected 1 crime, got %d", len(got))
+	}
+	c := got[0]
+	if c.Kind != crimes.KindMurder {
+		t.Errorf("CaseA: kind = %s, want murder", c.Kind)
+	}
+	if c.Perpetrator.Type != crimes.PerpPlayer || c.Perpetrator.Id != 17 {
+		t.Errorf("CaseA: perpetrator = %+v, want {player, 17}", c.Perpetrator)
+	}
+	wantDelta := int(cfg.CrimeRepDeltaMurder) - int(cfg.CrimeRepDeltaAssault)
+	wantRep := repAfterAssault + wantDelta
+	if rep := factions.GetRep("thornwall_citizens", 17); rep != wantRep {
+		t.Errorf("CaseA: rep = %d, want %d", rep, wantRep)
+	}
+}
+
+// TestMobDeathFactionRep_CaseB_ExternalAssaultButLoneKill verifies that
+// when the assault was externally witnessed but no witnesses are present
+// at the murder, the existing identified perp is preserved with no
+// additional rep delta.
+func TestMobDeathFactionRep_CaseB_ExternalAssaultButLoneKill(t *testing.T) {
+	setupFactionsForHookTest(t)
+	cfg := configs.GetBalanceConfig()
+
+	const roomId = 467
+	room, cleanupRoom := seedHookRoom(t, roomId)
+	defer cleanupRoom()
+	_ = room // no witnesses at murder time
+
+	victimSpec, victimInst := makeCitizenMob(100, 200, roomId, "victim")
+	cleanupMobs := mobs.SeedMobsForTest(
+		map[int]*mobs.Mob{100: victimSpec},
+		map[int]*mobs.Mob{200: victimInst},
+	)
+	defer cleanupMobs()
+
+	// Pre-seed assault with HadExternalWitness=true (was externally seen).
+	assaultVictim := &mobs.Mob{MobId: 100}
+	crimes.Record([]string{"thornwall_citizens"}, crimes.KindAssault,
+		crimes.Perpetrator{Type: crimes.PerpPlayer, Id: 17},
+		assaultVictim, 200, roomId, "Thornwall City", true)
+	factions.BumpRep("thornwall_citizens", 17, int(cfg.CrimeRepDeltaAssault))
+	repAfterAssault := factions.GetRep("thornwall_citizens", 17)
+
+	evt := events.MobDeath{
+		MobId: 100, InstanceId: 200, RoomId: roomId,
+		PlayerDamage: map[int]int{17: 50},
+	}
+	MobDeathFactionRep(evt)
+
+	got := crimes.AllForFaction("thornwall_citizens", true)
+	if len(got) != 1 {
+		t.Fatalf("CaseB: expected 1 crime, got %d", len(got))
+	}
+	c := got[0]
+	if c.Kind != crimes.KindMurder {
+		t.Errorf("CaseB: kind = %s, want murder", c.Kind)
+	}
+	// Perp must remain the player from the assault record.
+	if c.Perpetrator.Type != crimes.PerpPlayer || c.Perpetrator.Id != 17 {
+		t.Errorf("CaseB: perpetrator = %+v, want {player, 17}", c.Perpetrator)
+	}
+	// No additional rep delta — rep stays at assault level.
+	if rep := factions.GetRep("thornwall_citizens", 17); rep != repAfterAssault {
+		t.Errorf("CaseB: rep = %d, want %d (no increment)", rep, repAfterAssault)
+	}
+}
+
+// TestMobDeathFactionRep_CaseC_LoneAssaultLoneMurder verifies the bug fix:
+// lone assault (victim self-witness only) → lone murder → perp becomes
+// unknown and the assault rep delta is refunded.
+func TestMobDeathFactionRep_CaseC_LoneAssaultLoneMurder(t *testing.T) {
+	setupFactionsForHookTest(t)
+	cfg := configs.GetBalanceConfig()
+
+	const roomId = 467
+	room, cleanupRoom := seedHookRoom(t, roomId)
+	defer cleanupRoom()
+	_ = room // no witnesses at murder time
+
+	victimSpec, victimInst := makeCitizenMob(100, 200, roomId, "victim")
+	cleanupMobs := mobs.SeedMobsForTest(
+		map[int]*mobs.Mob{100: victimSpec},
+		map[int]*mobs.Mob{200: victimInst},
+	)
+	defer cleanupMobs()
+
+	// Pre-seed assault with HadExternalWitness=false (victim self-witness only).
+	assaultVictim := &mobs.Mob{MobId: 100}
+	crimes.Record([]string{"thornwall_citizens"}, crimes.KindAssault,
+		crimes.Perpetrator{Type: crimes.PerpPlayer, Id: 17},
+		assaultVictim, 200, roomId, "Thornwall City", false)
+	factions.BumpRep("thornwall_citizens", 17, int(cfg.CrimeRepDeltaAssault))
+	// Rep after lone assault: should be deltaAssault (negative).
+	repAfterAssault := factions.GetRep("thornwall_citizens", 17)
+
+	evt := events.MobDeath{
+		MobId: 100, InstanceId: 200, RoomId: roomId,
+		PlayerDamage: map[int]int{17: 50},
+	}
+	MobDeathFactionRep(evt)
+
+	got := crimes.AllForFaction("thornwall_citizens", true)
+	if len(got) != 1 {
+		t.Fatalf("CaseC: expected 1 crime (upgraded), got %d", len(got))
+	}
+	c := got[0]
+	if c.Kind != crimes.KindMurder {
+		t.Errorf("CaseC: kind = %s, want murder", c.Kind)
+	}
+	// Perp must now be unknown — victim is dead, no survivor to identify killer.
+	if c.Perpetrator.Type != crimes.PerpUnknown {
+		t.Errorf("CaseC: perpetrator = %+v, want {unknown}", c.Perpetrator)
+	}
+	// Rep must be refunded back to 0 (assault delta cancelled out).
+	wantRep := repAfterAssault - int(cfg.CrimeRepDeltaAssault) // refund = negate delta
+	if rep := factions.GetRep("thornwall_citizens", 17); rep != wantRep {
+		t.Errorf("CaseC: rep = %d, want %d (refunded to zero)", rep, wantRep)
+	}
+	if wantRep != 0 {
+		t.Errorf("CaseC: expected wantRep=0 for clean-start test, got %d", wantRep)
 	}
 }
 

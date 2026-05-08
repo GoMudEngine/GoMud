@@ -58,7 +58,7 @@ func TestAdminCrime_ListAfterRecord(t *testing.T) {
 	victim := &mobs.Mob{MobId: 100, Character: characters.Character{Name: "city beggar"}}
 	crimes.Record([]string{"thornwall_citizens"}, crimes.KindMurder,
 		crimes.Perpetrator{Type: crimes.PerpPlayer, Id: target.UserId},
-		victim, 250, 467, "Thornwall City")
+		victim, 250, 467, "Thornwall City", false)
 
 	if _, err := Crime("list thornwall_citizens", admin, room, 0); err != nil {
 		t.Fatal(err)
@@ -76,7 +76,7 @@ func TestAdminCrime_Show(t *testing.T) {
 	victim := &mobs.Mob{MobId: 100, Character: characters.Character{Name: "city beggar"}}
 	crimes.Record([]string{"thornwall_citizens"}, crimes.KindAssault,
 		crimes.Perpetrator{Type: crimes.PerpPlayer, Id: target.UserId},
-		victim, 250, 467, "Thornwall City")
+		victim, 250, 467, "Thornwall City", false)
 
 	if _, err := Crime("show "+target.Character.Name, admin, room, 0); err != nil {
 		t.Fatal(err)
@@ -93,7 +93,7 @@ func TestAdminCrime_Resolve(t *testing.T) {
 	victim := &mobs.Mob{MobId: 100, Character: characters.Character{Name: "city beggar"}}
 	ids := crimes.Record([]string{"thornwall_citizens"}, crimes.KindMurder,
 		crimes.Perpetrator{Type: crimes.PerpPlayer, Id: 17},
-		victim, 250, 467, "Thornwall City")
+		victim, 250, 467, "Thornwall City", false)
 
 	cmd := "resolve thornwall_citizens " + strconv.Itoa(ids[0]) + " fine paid"
 	if _, err := Crime(cmd, admin, room, 0); err != nil {

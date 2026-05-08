@@ -64,24 +64,57 @@ func MobDeathFactionRep(e events.Event) events.ListenerReturn {
 	deltaMurder := int(cfg.CrimeRepDeltaMurder)
 	deltaAssault := int(cfg.CrimeRepDeltaAssault)
 
+	currentExternal := len(witnesses) > 0
+
 	for userId := range toBump {
 		perp := crimes.IdentifiedPerp(userId, witnesses)
 		for _, fid := range factionIds {
 			// Upgrade-in-place if a recent unresolved assault exists.
 			if assault := crimes.FindRecentAssault(fid, userId, 100); assault != nil {
-				crimes.UpgradeAssaultToMurder(fid, assault.Id, perp,
-					evt.InstanceId, evt.RoomId, spec.Zone)
-				if perp.Type == crimes.PerpPlayer {
-					// Already paid deltaAssault at first-aggression; pay
-					// the difference now.
-					factions.BumpRep(fid, userId, deltaMurder-deltaAssault)
+				// Four-case model for assault → murder upgrade:
+				//
+				// Case A — external witness now: upgrade perp to
+				//   identified, pay incremental delta.
+				// Case B — no external witness now, but assault WAS
+				//   externally witnessed: keep the existing identified
+				//   perp (assault was seen), no additional rep delta
+				//   (no one saw the killing blow).
+				// Case C — no external witness now AND assault had no
+				//   external witness (lone assault → lone murder): set
+				//   perp=unknown and REFUND the assault rep delta.
+				if currentExternal {
+					// Case A: full identification path.
+					crimes.UpgradeAssaultToMurder(fid, assault.Id, perp,
+						evt.InstanceId, evt.RoomId, spec.Zone, false)
+					if perp.Type == crimes.PerpPlayer {
+						// Pay the incremental difference (assault already paid).
+						factions.BumpRep(fid, userId, deltaMurder-deltaAssault)
+					}
+				} else if assault.HadExternalWitness {
+					// Case B: assault was identified, kill was not witnessed.
+					// Preserve the existing perp; no new rep impact.
+					crimes.UpgradeAssaultToMurder(fid, assault.Id,
+						crimes.Perpetrator{}, // ignored: preserveExistingPerp=true
+						evt.InstanceId, evt.RoomId, spec.Zone, true)
+					// No additional rep bump.
+				} else {
+					// Case C: lone assault → lone murder. Nobody survives
+					// to identify the killer. Set perp=unknown and refund
+					// the assault rep delta.
+					crimes.UpgradeAssaultToMurder(fid, assault.Id,
+						crimes.Perpetrator{Type: crimes.PerpUnknown},
+						evt.InstanceId, evt.RoomId, spec.Zone, false)
+					// deltaAssault is negative (e.g. -10); negate to refund.
+					factions.BumpRep(fid, userId, -deltaAssault)
 				}
 				continue
 			}
 
-			// Fresh murder record.
+			// Fresh murder record (no prior assault row).
+			// hadExternalWitness is false — this is a direct murder,
+			// not an assault-that-escalated.
 			crimes.Record([]string{fid}, crimes.KindMurder, perp,
-				spec, evt.InstanceId, evt.RoomId, spec.Zone)
+				spec, evt.InstanceId, evt.RoomId, spec.Zone, false)
 			if perp.Type == crimes.PerpPlayer {
 				factions.BumpRep(fid, userId, deltaMurder)
 			}

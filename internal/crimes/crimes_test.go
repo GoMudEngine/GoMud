@@ -28,7 +28,7 @@ func TestRecordReturnsIdAndPersists(t *testing.T) {
 		[]string{"thornwall_citizens"},
 		KindMurder,
 		Perpetrator{Type: PerpPlayer, Id: 17},
-		victim, 250, 467, "Thornwall City",
+		victim, 250, 467, "Thornwall City", false,
 	)
 	if len(ids) != 1 || ids[0] != 1 {
 		t.Errorf("Record returned %v, want [1]", ids)
@@ -58,7 +58,7 @@ func TestRecordMonotonicIds(t *testing.T) {
 	victim := &mobs.Mob{MobId: 100}
 	for i := 0; i < 5; i++ {
 		Record([]string{"f"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 17},
-			victim, 250, 467, "z")
+			victim, 250, 467, "z", false)
 	}
 	got := AllForFaction("f", false)
 	for i, c := range got {
@@ -75,7 +75,7 @@ func TestRecordMultipleFactions(t *testing.T) {
 		[]string{"thornwall_guards", "thornwall_citizens"},
 		KindMurder,
 		Perpetrator{Type: PerpPlayer, Id: 17},
-		victim, 251, 467, "Thornwall City",
+		victim, 251, 467, "Thornwall City", false,
 	)
 	if len(ids) != 2 {
 		t.Errorf("Record on 2 factions returned %d ids, want 2", len(ids))
@@ -92,7 +92,7 @@ func TestResolveMarksRow(t *testing.T) {
 	setupTestCrimes(t)
 	victim := &mobs.Mob{MobId: 100}
 	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17},
-		victim, 250, 467, "z")
+		victim, 250, 467, "z", false)
 
 	roundForTest = func() uint64 { return 2000 }
 	Resolve("f", 1, "fine paid")
@@ -110,7 +110,7 @@ func TestResolveIdempotent(t *testing.T) {
 	setupTestCrimes(t)
 	victim := &mobs.Mob{MobId: 100}
 	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17},
-		victim, 250, 467, "z")
+		victim, 250, 467, "z", false)
 	Resolve("f", 1, "fine paid")
 	roundForTest = func() uint64 { return 9999 }
 	Resolve("f", 1, "another reason")
@@ -127,9 +127,9 @@ func TestAllForFactionFiltersResolved(t *testing.T) {
 	setupTestCrimes(t)
 	victim := &mobs.Mob{MobId: 100}
 	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17},
-		victim, 250, 467, "z")
+		victim, 250, 467, "z", false)
 	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17},
-		victim, 251, 468, "z")
+		victim, 251, 468, "z", false)
 	Resolve("f", 1, "fine")
 
 	if got := AllForFaction("f", false); len(got) != 1 || got[0].Id != 2 {
@@ -144,11 +144,11 @@ func TestAllForPlayer(t *testing.T) {
 	setupTestCrimes(t)
 	victim := &mobs.Mob{MobId: 100}
 	Record([]string{"a"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17},
-		victim, 250, 467, "z")
+		victim, 250, 467, "z", false)
 	Record([]string{"b"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 17},
-		victim, 250, 468, "z")
+		victim, 250, 468, "z", false)
 	Record([]string{"a"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 99},
-		victim, 251, 469, "z") // different player
+		victim, 251, 469, "z", false) // different player
 
 	got := AllForPlayer(17, false)
 	if len(got) != 2 {
@@ -164,7 +164,7 @@ func TestAllForPlayerExcludesUnknownPerp(t *testing.T) {
 	setupTestCrimes(t)
 	victim := &mobs.Mob{MobId: 100}
 	Record([]string{"a"}, KindMurder, Perpetrator{Type: PerpUnknown},
-		victim, 250, 467, "z")
+		victim, 250, 467, "z", false)
 	got := AllForPlayer(17, false)
 	if len(got) != 0 {
 		t.Errorf("unknown-perp crime should not appear in AllForPlayer: %+v", got)
@@ -277,7 +277,7 @@ func TestFindRecentAssault_ReturnsMatch(t *testing.T) {
 	victim := &mobs.Mob{MobId: 100}
 
 	roundForTest = func() uint64 { return 1000 }
-	Record([]string{"f"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z")
+	Record([]string{"f"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z", false)
 
 	got := FindRecentAssault("f", 17, 100)
 	if got == nil || got.Id != 1 || got.Kind != KindAssault {
@@ -290,7 +290,7 @@ func TestFindRecentAssault_NilWhenOutsideWindow(t *testing.T) {
 	victim := &mobs.Mob{MobId: 100}
 
 	roundForTest = func() uint64 { return 1000 }
-	Record([]string{"f"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z")
+	Record([]string{"f"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z", false)
 
 	roundForTest = func() uint64 { return 2000 } // 1000 rounds later
 	if got := FindRecentAssault("f", 17, 100); got != nil {
@@ -301,7 +301,7 @@ func TestFindRecentAssault_NilWhenOutsideWindow(t *testing.T) {
 func TestFindRecentAssault_NilWhenResolved(t *testing.T) {
 	setupTestCrimes(t)
 	victim := &mobs.Mob{MobId: 100}
-	Record([]string{"f"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z")
+	Record([]string{"f"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z", false)
 	Resolve("f", 1, "fine")
 
 	if got := FindRecentAssault("f", 17, 100); got != nil {
@@ -312,7 +312,7 @@ func TestFindRecentAssault_NilWhenResolved(t *testing.T) {
 func TestFindRecentAssault_NilWhenAlreadyMurder(t *testing.T) {
 	setupTestCrimes(t)
 	victim := &mobs.Mob{MobId: 100}
-	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z")
+	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z", false)
 
 	if got := FindRecentAssault("f", 17, 100); got != nil {
 		t.Errorf("FindRecentAssault should ignore murder rows; got %+v", got)
@@ -322,7 +322,7 @@ func TestFindRecentAssault_NilWhenAlreadyMurder(t *testing.T) {
 func TestFindRecentAssault_NilWhenWrongPlayer(t *testing.T) {
 	setupTestCrimes(t)
 	victim := &mobs.Mob{MobId: 100}
-	Record([]string{"f"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 99}, victim, 250, 467, "z")
+	Record([]string{"f"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 99}, victim, 250, 467, "z", false)
 
 	if got := FindRecentAssault("f", 17, 100); got != nil {
 		t.Errorf("FindRecentAssault wrong player: %+v", got)
@@ -337,8 +337,8 @@ func TestPruneStaleResolvesOldUnresolvedRows(t *testing.T) {
 	t.Cleanup(func() { staleAfterForTest = nil })
 
 	roundForTest = func() uint64 { return 1000 }
-	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z") // id 1, round 1000
-	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 251, 468, "z") // id 2, round 1000
+	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z", false) // id 1, round 1000
+	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 251, 468, "z", false) // id 2, round 1000
 
 	roundForTest = func() uint64 { return 1600 } // 600 rounds later — past 500-round threshold
 	count := PruneStale("f")
@@ -361,7 +361,7 @@ func TestPruneStaleSkipsRecentRows(t *testing.T) {
 	t.Cleanup(func() { staleAfterForTest = nil })
 
 	roundForTest = func() uint64 { return 1000 }
-	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z")
+	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z", false)
 
 	roundForTest = func() uint64 { return 1100 } // 100 rounds later — within threshold
 	count := PruneStale("f")
@@ -381,7 +381,7 @@ func TestPruneStaleSkipsAlreadyResolved(t *testing.T) {
 	t.Cleanup(func() { staleAfterForTest = nil })
 
 	roundForTest = func() uint64 { return 1000 }
-	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z")
+	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z", false)
 	Resolve("f", 1, "fine")
 
 	roundForTest = func() uint64 { return 1600 }
@@ -400,12 +400,12 @@ func TestUpgradeAssaultToMurder(t *testing.T) {
 	victim := &mobs.Mob{MobId: 100}
 
 	roundForTest = func() uint64 { return 1000 }
-	Record([]string{"f"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z")
+	Record([]string{"f"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z", false)
 
 	roundForTest = func() uint64 { return 1100 }
 	UpgradeAssaultToMurder("f", 1,
 		Perpetrator{Type: PerpPlayer, Id: 17},
-		251, 468, "newzone")
+		251, 468, "newzone", false)
 
 	got := AllForFaction("f", true)
 	if len(got) != 1 {
@@ -425,14 +425,126 @@ func TestUpgradeAssaultToMurder_NoOpOnNonAssault(t *testing.T) {
 	victim := &mobs.Mob{MobId: 100}
 
 	roundForTest = func() uint64 { return 1000 }
-	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z")
+	Record([]string{"f"}, KindMurder, Perpetrator{Type: PerpPlayer, Id: 17}, victim, 250, 467, "z", false)
 
 	roundForTest = func() uint64 { return 1100 }
-	UpgradeAssaultToMurder("f", 1, Perpetrator{Type: PerpPlayer, Id: 17}, 251, 468, "newzone")
+	UpgradeAssaultToMurder("f", 1, Perpetrator{Type: PerpPlayer, Id: 17}, 251, 468, "newzone", false)
 
 	got := AllForFaction("f", true)
 	if got[0].Round != 1000 || got[0].RoomId != 467 {
 		t.Errorf("non-assault row was mutated: %+v", got[0])
+	}
+}
+
+// TestRecordHadExternalWitness_PersistsAndRoundTrips verifies that
+// HadExternalWitness=true is saved to disk and reloaded correctly.
+func TestRecordHadExternalWitness_PersistsAndRoundTrips(t *testing.T) {
+	setupTestCrimes(t)
+	victim := &mobs.Mob{MobId: 100}
+
+	Record([]string{"f"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 17},
+		victim, 250, 467, "z", true) // hadExternalWitness=true
+
+	got := AllForFaction("f", false)
+	if len(got) != 1 {
+		t.Fatalf("expected 1 crime, got %d", len(got))
+	}
+	if !got[0].HadExternalWitness {
+		t.Errorf("HadExternalWitness should be true: %+v", got[0])
+	}
+
+	// Drop cache, reload from disk — flag must survive round-trip.
+	ClearCache()
+	got = AllForFaction("f", false)
+	if len(got) != 1 {
+		t.Fatalf("after reload: expected 1 crime")
+	}
+	if !got[0].HadExternalWitness {
+		t.Errorf("HadExternalWitness lost on reload: %+v", got[0])
+	}
+}
+
+// TestRecordHadExternalWitness_FalseByDefault verifies that omitting
+// the flag (false) doesn't persist a spurious true value.
+func TestRecordHadExternalWitness_FalseByDefault(t *testing.T) {
+	setupTestCrimes(t)
+	victim := &mobs.Mob{MobId: 100}
+
+	Record([]string{"f"}, KindAssault, Perpetrator{Type: PerpPlayer, Id: 17},
+		victim, 250, 467, "z", false)
+
+	got := AllForFaction("f", false)
+	if len(got) != 1 {
+		t.Fatalf("expected 1 crime, got %d", len(got))
+	}
+	if got[0].HadExternalWitness {
+		t.Errorf("HadExternalWitness should be false: %+v", got[0])
+	}
+
+	// Reload from disk — zero value must be preserved.
+	ClearCache()
+	got = AllForFaction("f", false)
+	if got[0].HadExternalWitness {
+		t.Errorf("HadExternalWitness wrongly set after reload: %+v", got[0])
+	}
+}
+
+// TestUpgradeAssaultToMurder_PreserveExistingPerp verifies that
+// preserveExistingPerp=true leaves the perp from the assault row
+// intact while still upgrading kind + metadata.
+func TestUpgradeAssaultToMurder_PreserveExistingPerp(t *testing.T) {
+	setupTestCrimes(t)
+	victim := &mobs.Mob{MobId: 100}
+
+	roundForTest = func() uint64 { return 1000 }
+	Record([]string{"f"}, KindAssault,
+		Perpetrator{Type: PerpPlayer, Id: 17},
+		victim, 250, 467, "z", true)
+
+	roundForTest = func() uint64 { return 1100 }
+	// Pass a different perp — it should be ignored because
+	// preserveExistingPerp=true.
+	UpgradeAssaultToMurder("f", 1,
+		Perpetrator{Type: PerpUnknown}, // would overwrite if preserveExistingPerp=false
+		251, 468, "newzone", true)
+
+	got := AllForFaction("f", true)
+	if len(got) != 1 {
+		t.Fatalf("expected 1 row, got %d", len(got))
+	}
+	c := got[0]
+	if c.Kind != KindMurder {
+		t.Errorf("kind = %s, want murder", c.Kind)
+	}
+	// Perp from assault must be preserved.
+	if c.Perpetrator.Type != PerpPlayer || c.Perpetrator.Id != 17 {
+		t.Errorf("perp overwritten: %+v, want {player, 17}", c.Perpetrator)
+	}
+	// Metadata refreshed.
+	if c.Round != 1100 || c.RoomId != 468 || c.Zone != "newzone" {
+		t.Errorf("metadata not refreshed: %+v", c)
+	}
+}
+
+// TestUpgradeAssaultToMurder_OverwritePerp verifies that
+// preserveExistingPerp=false replaces the perp field.
+func TestUpgradeAssaultToMurder_OverwritePerp(t *testing.T) {
+	setupTestCrimes(t)
+	victim := &mobs.Mob{MobId: 100}
+
+	roundForTest = func() uint64 { return 1000 }
+	Record([]string{"f"}, KindAssault,
+		Perpetrator{Type: PerpPlayer, Id: 17},
+		victim, 250, 467, "z", false)
+
+	roundForTest = func() uint64 { return 1100 }
+	UpgradeAssaultToMurder("f", 1,
+		Perpetrator{Type: PerpUnknown},
+		251, 468, "newzone", false)
+
+	got := AllForFaction("f", true)
+	if got[0].Perpetrator.Type != PerpUnknown {
+		t.Errorf("perp not overwritten: %+v", got[0].Perpetrator)
 	}
 }
 
@@ -451,7 +563,7 @@ func TestParallelRecordsConverge(t *testing.T) {
 			for j := 0; j < recordsPer; j++ {
 				Record([]string{"f"}, KindAssault,
 					Perpetrator{Type: PerpPlayer, Id: 17},
-					victim, 250, 467, "z")
+					victim, 250, 467, "z", false)
 			}
 		}()
 	}

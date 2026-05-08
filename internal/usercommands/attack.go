@@ -325,12 +325,19 @@ func recordAssaultCrime(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room)
 	if len(factionIds) == 0 {
 		return
 	}
+	// All witnesses including the victim (excludeInstanceId=0) drive
+	// perp/rep determination (victim is alive and a self-witness).
 	witnesses := crimes.WitnessesInRoom(factionIds, room, 0)
 	perp := crimes.IdentifiedPerp(user.UserId, witnesses)
+	// External witnesses: same call but exclude the victim — used to
+	// set HadExternalWitness so the murder-upgrade path knows whether
+	// the assault was seen by someone other than the victim.
+	externalWitnesses := crimes.WitnessesInRoom(factionIds, room, mob.InstanceId)
+	hadExternal := len(externalWitnesses) > 0
 	delta := int(configs.GetBalanceConfig().CrimeRepDeltaAssault)
 	for _, fid := range factionIds {
 		crimes.Record([]string{fid}, crimes.KindAssault, perp,
-			mob, mob.InstanceId, room.RoomId, mob.Character.Zone)
+			mob, mob.InstanceId, room.RoomId, mob.Character.Zone, hadExternal)
 		if perp.Type == crimes.PerpPlayer {
 			factions.BumpRep(fid, user.UserId, delta)
 		}

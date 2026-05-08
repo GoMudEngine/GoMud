@@ -206,12 +206,16 @@ func stealFromMob(mobInstanceId int, attackerScore float64, rank int,
 
 		// chunk 1.3: record theft crime on faction-aligned victim
 		if factionIds := factions.FactionsForMob(m); len(factionIds) > 0 {
+			// All witnesses including the victim (excludeInstanceId=0).
 			witnesses := crimes.WitnessesInRoom(factionIds, room, 0)
 			perp := crimes.IdentifiedPerp(user.UserId, witnesses)
+			// External witnesses (excluding victim) for HadExternalWitness.
+			externalWitnesses := crimes.WitnessesInRoom(factionIds, room, m.InstanceId)
+			hadExternal := len(externalWitnesses) > 0
 			delta := int(configs.GetBalanceConfig().CrimeRepDeltaTheft)
 			for _, fid := range factionIds {
 				crimes.Record([]string{fid}, crimes.KindTheft, perp,
-					m, m.InstanceId, room.RoomId, m.Character.Zone)
+					m, m.InstanceId, room.RoomId, m.Character.Zone, hadExternal)
 				if perp.Type == crimes.PerpPlayer {
 					factions.BumpRep(fid, user.UserId, delta)
 				}
