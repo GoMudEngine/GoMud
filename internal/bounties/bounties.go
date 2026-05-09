@@ -236,3 +236,33 @@ func PruneExpired() int {
 	}
 	return count
 }
+
+// TryClaim records a claim on the given bounty. Returns (bounty, true)
+// on success (status was open, now claimed). Returns (nil, false) if
+// the bounty was already non-open.
+func TryClaim(bountyId int, claimer knowledge.Subject) (*Bounty, bool) {
+	r := loadOrLazyInit()
+	now := currentRound()
+
+	registryMu.Lock()
+	var claimed *Bounty
+	for _, b := range r.Bounties {
+		if b.Id == bountyId && b.Status == StatusOpen {
+			b.Status = StatusClaimed
+			b.ClaimedBy = claimer
+			b.ClaimedRound = now
+			claimed = b
+			break
+		}
+	}
+	registryMu.Unlock()
+
+	if claimed == nil {
+		return nil, false
+	}
+
+	if err := saveRegistry(r); err != nil {
+		mudlog.Warn("bounties.TryClaim: save failed", "id", bountyId, "error", err)
+	}
+	return claimed, true
+}

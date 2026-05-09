@@ -172,3 +172,47 @@ func TestPruneExpired(t *testing.T) {
 		t.Errorf("idC should still be open (future expiry)")
 	}
 }
+
+func TestTryClaim_HappyPath(t *testing.T) {
+	resetCache()
+	defer func() { roundForTest = nil; statpoolForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+	statpoolForTest = func(_ knowledge.Subject) int { return 600 }
+
+	id, _ := Declare(FactionIssuer("thornwall_guards"),
+		knowledge.MobSubject(101), ConditionKill, 1000, DeclareOpts{})
+
+	roundForTest = func() uint64 { return 200 }
+	b, ok := TryClaim(id, knowledge.PlayerSubject(17))
+	if !ok {
+		t.Fatalf("TryClaim should have succeeded")
+	}
+	if b.Status != StatusClaimed {
+		t.Errorf("status should be claimed, got %s", b.Status)
+	}
+	if b.ClaimedBy != knowledge.PlayerSubject(17) {
+		t.Errorf("ClaimedBy mismatch: %+v", b.ClaimedBy)
+	}
+	if b.ClaimedRound != 200 {
+		t.Errorf("ClaimedRound mismatch: %d", b.ClaimedRound)
+	}
+}
+
+func TestTryClaim_AlreadyClaimedReturnsFalse(t *testing.T) {
+	resetCache()
+	defer func() { roundForTest = nil; statpoolForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+	statpoolForTest = func(_ knowledge.Subject) int { return 600 }
+
+	id, _ := Declare(FactionIssuer("thornwall_guards"),
+		knowledge.MobSubject(101), ConditionKill, 1000, DeclareOpts{})
+
+	TryClaim(id, knowledge.PlayerSubject(17))
+	b, ok := TryClaim(id, knowledge.PlayerSubject(99))
+	if ok {
+		t.Errorf("second TryClaim should have returned false")
+	}
+	if b != nil {
+		t.Errorf("second TryClaim should have returned nil bounty")
+	}
+}
