@@ -90,6 +90,7 @@ type ActionDef struct {
 	SetFlag      *QuestFlagAction `yaml:"set_flag,omitempty"`
 	Sequence     *SequenceDef     `yaml:"sequence,omitempty"`
 	BumpRep      *BumpRepDef      `yaml:"bump_rep,omitempty"`
+	DeclareBounty *DeclareBountyDef `yaml:"declare_bounty,omitempty"`
 }
 
 // BumpRepDef parameters for the bump_rep action: which faction
@@ -97,6 +98,28 @@ type ActionDef struct {
 type BumpRepDef struct {
 	Faction string `yaml:"faction"`
 	Delta   int    `yaml:"delta"`
+}
+
+// DeclareBountyDef parameters for the declare_bounty action.
+// Either TargetPlayer (auto-fill with quest holder) OR explicit
+// Target.Type+Target.Id must be set. Issuer mirrors the bounties
+// package's tagged form; type=quest with id="<self>" auto-fills
+// with the current quest id.
+type DeclareBountyDef struct {
+	Issuer struct {
+		Type string `yaml:"type"` // "faction" | "quest" | "npc"
+		Id   string `yaml:"id"`
+	} `yaml:"issuer"`
+	TargetPlayer bool `yaml:"target_player,omitempty"`
+	Target       *struct {
+		Type string `yaml:"type"` // "player" | "mob"
+		Id   int    `yaml:"id"`
+	} `yaml:"target,omitempty"`
+	Condition    string `yaml:"condition"`            // "kill"
+	ExpiryRounds uint64 `yaml:"expiry_rounds,omitempty"`
+	GoldOverride int    `yaml:"gold_override,omitempty"`
+	RepOverride  int    `yaml:"rep_override,omitempty"`
+	Reason       string `yaml:"reason,omitempty"`
 }
 
 type QuestFlagAction struct {
