@@ -78,7 +78,7 @@ should always agree.
 | 1.1 | Substrate | Persistent NPC opinion store | M | — | Done |
 | 1.2 | Substrate | Faction system | L | 1.1 | Done |
 | 1.3 | Substrate | Crime/wanted state | M | 1.2 | Done |
-| 1.4 | Substrate | NPC knowledge model | M | 1.1 | Not started |
+| 1.4 | Substrate | NPC knowledge model | M | 1.1 | Done |
 | 1.5 | Substrate | Bounty state | S | 1.2 | Not started |
 | 1.6 | Substrate | NPC-to-NPC relationships | M | — | Not started |
 | 1.7 | Substrate | World-model facts | M | 1.4 | Not started |
@@ -116,7 +116,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 3 / 40 done • 0 in progress • 37 not started.
+**Roll-up:** 4 / 40 done • 0 in progress • 36 not started.
 
 ---
 
@@ -155,13 +155,14 @@ State primitives the rest of the layers read from and write to.
 - **Shipped:** `internal/crimes/` package storing per-faction murder/assault/theft logs at `_datafiles/world/dogmud/factions.crimes/{slug}.yaml` (gitignored). Witness-required model: faction-aligned mob in the room identifies the perpetrator; lone acts record `perp: unknown` with no rep impact. Public API: Record, Resolve, FindRecentAssault, AllForFaction, AllForPlayer, PruneStale, WitnessesInRoom, IdentifiedPerp, UpgradeAssaultToMurder. Crime-aware combat hookups: `MobDeath_FactionRep` rewritten to consult crime log + apply per-kind rep deltas (CrimeRepDeltaMurder -25, Assault -10, Theft -5); first-aggression in `attack`/`target` records assault crime alongside chunk 1.2 opinion bump; failed-steal records theft crime. Each fight yields ONE crime (assault upgrades in-place to murder on death). 365-day game-time stale safety net via PruneStale (Balance.CrimeStaleAfterRounds = 7,884,000). Authored `thornwall_citizens` faction (deferred from 1.2) — 20 named civilians + 3 guards via multi-faction membership. New admin command `crime list/show/resolve/prune-stale` + helpfile. Bonus fix during T7: caught a real `loadOrLazyInit` race condition (concurrent goroutines on uncached faction could lose records — saw 491/500 before fix); fixed via double-check-lock pattern. Spec at `docs/superpowers/specs/2026-05-06-mob-aliveness-1.3-crime-wanted-design.md`, plan at `docs/superpowers/plans/2026-05-06-mob-aliveness-1.3-crime-wanted.md`.
 
 ### 1.4 NPC knowledge model
-**Status:** Not started • **Size:** M
+**Status:** Done (2026-05-09) • **Size:** M
 
 - **Goal:** What facts does this NPC know about player X — name learned, last-seen room, deeds witnessed, items seen carried.
 - **In:** Knowledge schema, learn/forget API, perception-gated learning (NPCs only learn what they witness or are told), query API for tactical/strategic layers.
 - **Out:** World-level facts (1.7).
 - **Depends on:** 1.1
 - **Why:** Lets an NPC say "I saw you with the bandit chief's coat — turn it in." Without this, NPCs are amnesiacs even if 1.1 tells them their feeling.
+- **Shipped:** `internal/knowledge/` package storing per-observer-NPC YAML at `_datafiles/world/dogmud/knowledge/{mobId}-{namesimple}.yaml` (gitignored). Polymorphic subject (`{type, id}` for player or mob template), source/confidence tier on every record, per-fact decay rules, NPC-on-NPC supported. v1 fact types: identity (HasMet + NameLearned), location (LastSeen + bounded observation log capped at `KnowledgeObservationLogMax = 32`), routine (FrequentedRooms top-K query), deeds-witnessed (crime row IDs, lazy-filtered against 1.3 on read via WitnessedCrimes). Auto-write triggers v1: forager/caravan room change (new hook listener `MobRoomChange_KnowledgeObservers` wraps `knowledge.RecordRoutineObservers`; archetype discriminators `forager.IsForagerMob` and `caravan.IsCaravanMob` added) and 1.3 crime witnessing (three call-site additions in attack.go, MobDeath_FactionRep.go, skullduggery steal). Explicit `Forget` / `ForgetFact` API for amnesia consumers. New admin command `knowledge show/forget/frequented` + helpfile. No cross-substrate cascade in v1 (documented as a deferred decision pending amnesia spell consumer). Spec at `docs/superpowers/specs/2026-05-09-mob-aliveness-1.4-knowledge-model-design.md`, plan at `docs/superpowers/plans/2026-05-09-mob-aliveness-1.4-knowledge-model.md`.
 
 ### 1.5 Bounty state
 **Status:** Not started • **Size:** S
