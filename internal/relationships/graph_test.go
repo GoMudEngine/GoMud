@@ -80,3 +80,89 @@ func edgesOf(mobId int) []Relation {
 	copy(out, graph[mobId])
 	return out
 }
+
+func TestLoadFromMobs_HappyPath(t *testing.T) {
+	resetGraph()
+	LoadFromMobs([]MobEdges{
+		{MobId: 95, Edges: []EdgeInput{
+			{To: 96, Type: TypeFriend, Subtype: "drinking-companion"},
+			{To: 117, Type: TypeFamily, Subtype: "niece"},
+			{To: 248, Type: TypeEmployer, Subtype: "priest-handyman"},
+		}},
+		{MobId: 96, Edges: []EdgeInput{}}, // mob with no relationships
+	}, alwaysValid)
+
+	if got := len(edgesOf(95)); got != 3 {
+		t.Errorf("95 should have 3 edges, got %d", got)
+	}
+	// 96 mirror of 95's friend edge.
+	if got := edgesOf(96); len(got) != 1 || got[0].Other != 95 || got[0].Type != TypeFriend {
+		t.Errorf("96 mirror: %v", got)
+	}
+	// 248 mirror as employee.
+	if got := edgesOf(248); len(got) != 1 || got[0].Other != 95 || got[0].Type != TypeEmployee {
+		t.Errorf("248 mirror: %v", got)
+	}
+}
+
+func TestLoadFromMobs_UnknownTargetSkipped(t *testing.T) {
+	resetGraph()
+	// Mob 99 doesn't exist (validate returns false).
+	validate := func(id int) bool { return id == 95 }
+	LoadFromMobs([]MobEdges{
+		{MobId: 95, Edges: []EdgeInput{
+			{To: 99, Type: TypeFriend},
+		}},
+	}, validate)
+
+	if got := len(edgesOf(95)); got != 0 {
+		t.Errorf("edge to unknown mob should be skipped, got %d edges", got)
+	}
+}
+
+func TestLoadFromMobs_SelfEdgeSkipped(t *testing.T) {
+	resetGraph()
+	LoadFromMobs([]MobEdges{
+		{MobId: 95, Edges: []EdgeInput{
+			{To: 95, Type: TypeFriend},
+		}},
+	}, alwaysValid)
+
+	if got := len(edgesOf(95)); got != 0 {
+		t.Errorf("self-edge should be skipped, got %d edges", got)
+	}
+}
+
+func TestLoadFromMobs_UnknownTypeSkipped(t *testing.T) {
+	resetGraph()
+	LoadFromMobs([]MobEdges{
+		{MobId: 95, Edges: []EdgeInput{
+			{To: 96, Type: Type("nonsense")},
+		}},
+	}, alwaysValid)
+
+	if got := len(edgesOf(95)); got != 0 {
+		t.Errorf("unknown-type edge should be skipped, got %d", got)
+	}
+}
+
+func TestLoadFromMobs_DuplicateEdgesDeduped(t *testing.T) {
+	resetGraph()
+	LoadFromMobs([]MobEdges{
+		{MobId: 95, Edges: []EdgeInput{
+			{To: 96, Type: TypeFriend, Subtype: "first"},
+			{To: 96, Type: TypeFriend, Subtype: "second"},
+		}},
+	}, alwaysValid)
+
+	got := edgesOf(95)
+	if len(got) != 1 {
+		t.Errorf("duplicate edges should dedupe, got %d", len(got))
+	}
+	if got[0].Subtype != "first" {
+		t.Errorf("first declaration wins for subtype, got %q", got[0].Subtype)
+	}
+}
+
+// alwaysValid is a test helper that approves every mob id.
+func alwaysValid(int) bool { return true }
