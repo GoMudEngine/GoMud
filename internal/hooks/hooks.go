@@ -92,6 +92,9 @@ func RegisterListeners() {
 	// Mob death: faction rep bump for damagers + same-room party members
 	events.RegisterListener(events.MobDeath{}, MobDeathFactionRep)
 
+	// Mob death: auto-claim open bounties targeting the dead mob
+	events.RegisterListener(events.MobDeath{}, MobDeathBountyClaim)
+
 	// Skill use: quest engine notifications
 	events.RegisterListener(events.SkillUsed{}, SkillUseQuestNotify)
 
