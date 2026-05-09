@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/crimes"
 	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -327,5 +328,52 @@ func TestWitnessedCrimes_EmptyWhenNoCrimesWitnessed(t *testing.T) {
 	got := WitnessedCrimes(599, PlayerSubject(8889))
 	if got != nil {
 		t.Errorf("expected nil for subject with no witnessed crimes, got %v", got)
+	}
+}
+
+func TestRoutineObservers_WritesForOthers(t *testing.T) {
+	resetCache()
+	defer func() { roundForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+
+	// Set up a room with three mobs: a moving forager (template id 50),
+	// a citizen observer (template id 99), a guard observer (template id 92).
+	room := rooms.LoadRoom(1)
+	if room == nil {
+		t.Skip("test fixture room missing")
+	}
+	movingInst := 1001
+	observer1Inst := 1002
+	observer2Inst := 1003
+
+	moving := mobs.NewMobByIdFresh(50, 0)
+	observer1 := mobs.NewMobByIdFresh(99, 0)
+	observer2 := mobs.NewMobByIdFresh(92, 0)
+	if moving == nil || observer1 == nil || observer2 == nil {
+		t.Skip("test fixture mob templates 50/99/92 not registered")
+	}
+	moving.InstanceId = movingInst
+	observer1.InstanceId = observer1Inst
+	observer2.InstanceId = observer2Inst
+
+	room.AddMob(movingInst)
+	room.AddMob(observer1Inst)
+	room.AddMob(observer2Inst)
+	defer func() {
+		room.RemoveMob(movingInst)
+		room.RemoveMob(observer1Inst)
+		room.RemoveMob(observer2Inst)
+	}()
+
+	RecordRoutineObservers(movingInst, 50, room)
+
+	if Get(99, MobSubject(50)) == nil {
+		t.Errorf("observer 99 should have a record about moving mob 50")
+	}
+	if Get(92, MobSubject(50)) == nil {
+		t.Errorf("observer 92 should have a record about moving mob 50")
+	}
+	if Get(50, MobSubject(50)) != nil {
+		t.Errorf("moving mob should not record itself")
 	}
 }

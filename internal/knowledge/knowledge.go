@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -338,4 +339,25 @@ func AllObserversOfPlayer(userId int) []int {
 		}
 	}
 	return out
+}
+
+// RecordRoutineObservers writes a knowledge observation for every other
+// NPC mob currently in the room, treating the moving entity as the
+// subject. Used by the forager/caravan room-change hook.
+func RecordRoutineObservers(movingInstanceId int, movingTemplateId int, room *rooms.Room) {
+	if room == nil {
+		return
+	}
+	subject := MobSubject(movingTemplateId)
+	for _, otherInstId := range room.GetMobs() {
+		if otherInstId == movingInstanceId {
+			continue
+		}
+		other := mobs.GetInstance(otherInstId)
+		if other == nil {
+			continue
+		}
+		RecordObservation(int(other.MobId), subject, room.RoomId)
+		RecordMet(int(other.MobId), subject, room.RoomId, SourceWitnessed)
+	}
 }
