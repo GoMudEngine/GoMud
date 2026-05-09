@@ -6,8 +6,9 @@ description: The city guard barracks is a solid stone building near the western 
   is a combination of duty room, armoury, and holding cells -- a long wooden table
   dominates the center, covered with duty rosters, incident reports, and the remains
   of someone's lunch. Weapon racks line the walls, holding spears, short swords, and
-  a few crossbows. Iron-barred cells occupy the far end, currently empty. The air
-  smells of metal polish and stale bread.
+  a few crossbows. Iron-barred cells occupy the far end, currently empty. A
+  weathered bounty board stands beside the wall, papered with wanted notices. The
+  air smells of metal polish and stale bread.
 biome: city
 coord:
   x: 0
@@ -27,6 +28,10 @@ nouns:
   cells: Three iron-barred cells at the back of the room, each barely large enough
     for a cot and a bucket. They are empty now, their doors standing open. Scratches
     and stains on the walls suggest they see regular use.
+  bounty board: A weather-worn corkboard stands beside the wall, papered with wanted
+    notices and contract slips, recent ones still clean, older ones curling at the
+    edges. Anyone with the will to read them can run "bounty list" anywhere in town
+    to see what's open.
 spawninfo:
 - mobid: 94
 idlemessages:
