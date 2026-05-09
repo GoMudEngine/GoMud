@@ -18,6 +18,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/llm"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
+	"github.com/GoMudEngine/GoMud/internal/relationships"
 	"gopkg.in/yaml.v2"
 
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
@@ -63,6 +64,15 @@ type MobForHire struct {
 	Quantity int
 }
 type MobId int // Creating a custom type to help prevent confusion over MobId and MobInstanceId
+
+// RelationshipYAMLEntry is the per-edge authoring shape on a mob
+// template's `relationships:` field. Consumed by the relationships
+// package at startup.
+type RelationshipYAMLEntry struct {
+	To      int    `yaml:"to"`
+	Type    string `yaml:"type"`
+	Subtype string `yaml:"subtype,omitempty"`
+}
 
 type Mob struct {
 	MobId           MobId
@@ -148,6 +158,7 @@ type Mob struct {
 	Path                    PathQueue        `yaml:"-"` // a pre-calculated path the mob is following.
 	lastCommandTurn         uint64           // The last turn a command was scheduled for
 	playersAttacked         map[int]struct{} // all players this mob has attacked at some point
+	Relationships           []RelationshipYAMLEntry `yaml:"relationships,omitempty"` // Authored relationship edges; consumed by relationships.LoadFromMobs at startup.
 }
 
 func MobInstanceExists(instanceId int) bool {
@@ -1122,6 +1133,35 @@ func LoadDataFiles() {
 	mobNameCacheMu.Unlock()
 
 	mudlog.Info("mobs.LoadDataFiles()", "loadedCount", len(tmpMobs), "Time Taken", time.Since(start))
+
+	// Populate the relationships graph from authored YAML edges.
+	mobsMu.RLock()
+	edges := make([]relationships.MobEdges, 0, len(mobs))
+	for id, spec := range mobs {
+		if len(spec.Relationships) == 0 {
+			continue
+		}
+		conv := make([]relationships.EdgeInput, 0, len(spec.Relationships))
+		for _, e := range spec.Relationships {
+			conv = append(conv, relationships.EdgeInput{
+				To:      e.To,
+				Type:    relationships.Type(e.Type),
+				Subtype: e.Subtype,
+			})
+		}
+		edges = append(edges, relationships.MobEdges{
+			MobId: id,
+			Edges: conv,
+		})
+	}
+	mobsMu.RUnlock()
+
+	relationships.LoadFromMobs(edges, func(mobId int) bool {
+		mobsMu.RLock()
+		defer mobsMu.RUnlock()
+		_, ok := mobs[mobId]
+		return ok
+	})
 
 }
 
