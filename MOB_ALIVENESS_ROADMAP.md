@@ -79,7 +79,7 @@ should always agree.
 | 1.2 | Substrate | Faction system | L | 1.1 | Done |
 | 1.3 | Substrate | Crime/wanted state | M | 1.2 | Done |
 | 1.4 | Substrate | NPC knowledge model | M | 1.1 | Done |
-| 1.5 | Substrate | Bounty state | S | 1.2 | Not started |
+| 1.5 | Substrate | Bounty state | S | 1.2 | Done |
 | 1.6 | Substrate | NPC-to-NPC relationships | M | — | Not started |
 | 1.7 | Substrate | World-model facts | M | 1.4 | Not started |
 | 2.1 | Tactical | Mob `buy` command | M | — | Not started |
@@ -116,7 +116,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 4 / 40 done • 0 in progress • 36 not started.
+**Roll-up:** 5 / 40 done • 0 in progress • 35 not started.
 
 ---
 
@@ -165,13 +165,14 @@ State primitives the rest of the layers read from and write to.
 - **Shipped:** `internal/knowledge/` package storing per-observer-NPC YAML at `_datafiles/world/dogmud/knowledge/{mobId}-{namesimple}.yaml` (gitignored). Polymorphic subject (`{type, id}` for player or mob template), source/confidence tier on every record, per-fact decay rules, NPC-on-NPC supported. v1 fact types: identity (HasMet + NameLearned), location (LastSeen + bounded observation log capped at `KnowledgeObservationLogMax = 32`), routine (FrequentedRooms top-K query), deeds-witnessed (crime row IDs, lazy-filtered against 1.3 on read via WitnessedCrimes). Auto-write triggers v1: forager/caravan room change (new hook listener `MobRoomChange_KnowledgeObservers` wraps `knowledge.RecordRoutineObservers`; archetype discriminators `forager.IsForagerMob` and `caravan.IsCaravanMob` added) and 1.3 crime witnessing (three call-site additions in attack.go, MobDeath_FactionRep.go, skullduggery steal). Explicit `Forget` / `ForgetFact` API for amnesia consumers. New admin command `knowledge show/forget/frequented` + helpfile. No cross-substrate cascade in v1 (documented as a deferred decision pending amnesia spell consumer). Spec at `docs/superpowers/specs/2026-05-09-mob-aliveness-1.4-knowledge-model-design.md`, plan at `docs/superpowers/plans/2026-05-09-mob-aliveness-1.4-knowledge-model.md`.
 
 ### 1.5 Bounty state
-**Status:** Not started • **Size:** S
+**Status:** Done (2026-05-09) • **Size:** S
 
 - **Goal:** Declared bounties (payer, target, reward, conditions, expiry) queryable by mobs and players.
 - **In:** Bounty data structure, declaration API (faction-driven, quest-driven, NPC-driven), claim/resolution API, admin commands.
 - **Out:** Bounty board UI for players (could be a follow-on player-facing affordance), bounty hunter behavior (5.2).
 - **Depends on:** 1.2
 - **Why:** Enables 5.2 bounty hunting, escalation in town justice, faction-driven contracts.
+- **Shipped:** `internal/bounties/` package storing per-bounty registry at `_datafiles/world/dogmud/bounties.yaml` (gitignored). Polymorphic target via `knowledge.Subject` (player or mob template); three issuer types (faction, quest, npc). Reward auto-computes from target statpool — `gold = floor(statpool × BountyGoldDefaultMultiplier)` (default 0.5, floor 50) and `rep = max(1, floor(statpool / 100))`, both stored on the row at declaration with declarer override available via `DeclareOpts`. Auto-claim hook `MobDeath_BountyClaim` fires on mob death — highest-damager wins (companion damage already rolls up via `combat.go`'s charmed-userId path), gold transferred to character, faction rep bumped when issuer is a faction. Quest engine `declare_bounty` action wires the substrate into quest content. Single `bounty` command with role-gated subcommands: list/show available to all players (filter by mob/player/<faction-slug>), declare/withdraw/prune-expired admin-only. Admin helpfile + player helpfile. Two physical bounty boards as flavor nouns (Thornwall Guard Barracks 473, Stillwater Constabulary 4110) — discovery via `look bounty board`; data flow via the universal command. Withdraw + expiry semantics; non-open rows preserved for audit. Spec at `docs/superpowers/specs/2026-05-09-mob-aliveness-1.5-bounty-state-design.md`, plan at `docs/superpowers/plans/2026-05-09-mob-aliveness-1.5-bounty-state.md`.
 
 ### 1.6 NPC-to-NPC relationships
 **Status:** Not started • **Size:** M
