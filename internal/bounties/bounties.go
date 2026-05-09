@@ -266,3 +266,69 @@ func TryClaim(bountyId int, claimer knowledge.Subject) (*Bounty, bool) {
 	}
 	return claimed, true
 }
+
+// AllOpen returns all bounties with status=open.
+func AllOpen() []*Bounty {
+	r := loadOrLazyInit()
+	registryMu.RLock()
+	defer registryMu.RUnlock()
+	out := make([]*Bounty, 0)
+	for _, b := range r.Bounties {
+		if b.Status == StatusOpen {
+			out = append(out, b)
+		}
+	}
+	return out
+}
+
+// OpenForTarget returns all bounties with status=open targeting the given subject.
+func OpenForTarget(target knowledge.Subject) []*Bounty {
+	r := loadOrLazyInit()
+	registryMu.RLock()
+	defer registryMu.RUnlock()
+	out := make([]*Bounty, 0)
+	for _, b := range r.Bounties {
+		if b.Status == StatusOpen && b.Target == target {
+			out = append(out, b)
+		}
+	}
+	return out
+}
+
+// OpenForIssuer returns all bounties with status=open issued by the given issuer.
+func OpenForIssuer(issuer Issuer) []*Bounty {
+	r := loadOrLazyInit()
+	registryMu.RLock()
+	defer registryMu.RUnlock()
+	out := make([]*Bounty, 0)
+	for _, b := range r.Bounties {
+		if b.Status == StatusOpen && b.Issuer == issuer {
+			out = append(out, b)
+		}
+	}
+	return out
+}
+
+// OpenAgainstPlayer is a convenience wrapper for OpenForTarget(PlayerSubject(userId)).
+func OpenAgainstPlayer(userId int) []*Bounty {
+	return OpenForTarget(knowledge.PlayerSubject(userId))
+}
+
+// AllForTarget returns all bounties targeting the given subject. If includeNonOpen is false,
+// only status=open bounties are included. If true, all statuses are included.
+func AllForTarget(target knowledge.Subject, includeNonOpen bool) []*Bounty {
+	r := loadOrLazyInit()
+	registryMu.RLock()
+	defer registryMu.RUnlock()
+	out := make([]*Bounty, 0)
+	for _, b := range r.Bounties {
+		if b.Target != target {
+			continue
+		}
+		if !includeNonOpen && b.Status != StatusOpen {
+			continue
+		}
+		out = append(out, b)
+	}
+	return out
+}

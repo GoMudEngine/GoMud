@@ -1,8 +1,11 @@
 package bounties
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/knowledge"
 )
 
@@ -215,4 +218,59 @@ func TestTryClaim_AlreadyClaimedReturnsFalse(t *testing.T) {
 	if b != nil {
 		t.Errorf("second TryClaim should have returned nil bounty")
 	}
+}
+
+func TestReadAPI(t *testing.T) {
+	// Clean the bounties file to start fresh (other tests accumulate entries)
+	bounitiesPath := filepath.Join(string(configs.GetFilePathsConfig().DataFiles), "world", "dogmud", "bounties.yaml")
+	os.Remove(bounitiesPath)
+
+	resetCache()
+	defer func() { roundForTest = nil; statpoolForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+	statpoolForTest = func(_ knowledge.Subject) int { return 600 }
+
+	idA, _ := Declare(FactionIssuer("thornwall_guards"),
+		knowledge.PlayerSubject(17), ConditionKill, 1000, DeclareOpts{})
+	idB, _ := Declare(FactionIssuer("thornwall_citizens"),
+		knowledge.PlayerSubject(17), ConditionKill, 1000, DeclareOpts{})
+	idC, _ := Declare(FactionIssuer("thornwall_guards"),
+		knowledge.MobSubject(101), ConditionKill, 1000, DeclareOpts{})
+	Withdraw(idC)
+
+	// AllOpen returns A and B (C is withdrawn).
+	open := AllOpen()
+	if len(open) != 2 {
+		t.Errorf("AllOpen: got %d, want 2", len(open))
+	}
+
+	// OpenForTarget(player 17) returns A and B.
+	tgt := OpenForTarget(knowledge.PlayerSubject(17))
+	if len(tgt) != 2 {
+		t.Errorf("OpenForTarget: got %d, want 2", len(tgt))
+	}
+
+	// OpenForIssuer(thornwall_guards) returns only A (C withdrawn).
+	iss := OpenForIssuer(FactionIssuer("thornwall_guards"))
+	if len(iss) != 1 || iss[0].Id != idA {
+		t.Errorf("OpenForIssuer: got %v", iss)
+	}
+
+	// OpenAgainstPlayer convenience.
+	pl := OpenAgainstPlayer(17)
+	if len(pl) != 2 {
+		t.Errorf("OpenAgainstPlayer: got %d, want 2", len(pl))
+	}
+
+	// AllForTarget with includeNonOpen=true sees the withdrawn one.
+	all := AllForTarget(knowledge.MobSubject(101), true)
+	if len(all) != 1 || all[0].Id != idC {
+		t.Errorf("AllForTarget(include): got %v", all)
+	}
+	open101 := AllForTarget(knowledge.MobSubject(101), false)
+	if len(open101) != 0 {
+		t.Errorf("AllForTarget(open only): got %v", open101)
+	}
+
+	_ = idB
 }
