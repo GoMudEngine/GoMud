@@ -360,4 +360,12 @@ func (b *Balance) validateMisc() {
 	if b.KnowledgeObservationLogMax <= 0 {
 		b.KnowledgeObservationLogMax = 32
 	}
+
+	// ── BOUNTIES ────────────────────────────────────────────────────────
+	if b.BountyGoldDefaultMultiplier <= 0 {
+		b.BountyGoldDefaultMultiplier = 0.5
+	}
+	if b.BountyGoldFloor <= 0 {
+		b.BountyGoldFloor = 50
+	}
 }

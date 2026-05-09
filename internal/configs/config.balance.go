@@ -415,6 +415,10 @@ type Balance struct {
 	CrimeRepDeltaTheft     ConfigInt `yaml:"CrimeRepDeltaTheft"`     // Rep delta on theft crime with identified perpetrator (default -5)
 	CrimeStaleAfterRounds           ConfigInt `yaml:"CrimeStaleAfterRounds"`           // Rounds after which an unresolved crime is auto-snapped to stale (default 7884000 — ~365 game-days at 4-second rounds)
 	KnowledgeObservationLogMax      ConfigInt `yaml:"KnowledgeObservationLogMax"`      // Max observation log entries per record (FIFO) (default 32)
+
+	// ── BOUNTIES ────────────────────────────────────────────────────────────
+	BountyGoldDefaultMultiplier ConfigFloat `yaml:"BountyGoldDefaultMultiplier"` // Multiplier on statpool for default gold reward (default 0.5)
+	BountyGoldFloor             ConfigInt   `yaml:"BountyGoldFloor"`             // Minimum gold floor for any bounty (default 50)
 }
 
 func (b *Balance) Validate() {
