@@ -120,3 +120,55 @@ func TestDeclare_Overrides(t *testing.T) {
 		t.Errorf("reason not stored: %q", b.DeclaredReason)
 	}
 }
+
+func TestWithdraw(t *testing.T) {
+	resetCache()
+	defer func() { roundForTest = nil; statpoolForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+	statpoolForTest = func(_ knowledge.Subject) int { return 600 }
+
+	id, _ := Declare(FactionIssuer("thornwall_guards"),
+		knowledge.PlayerSubject(17), ConditionKill, 1000, DeclareOpts{})
+
+	Withdraw(id)
+	b := Get(id)
+	if b.Status != StatusWithdrawn {
+		t.Errorf("expected withdrawn, got %s", b.Status)
+	}
+
+	// Idempotent on already-withdrawn.
+	Withdraw(id)
+	b = Get(id)
+	if b.Status != StatusWithdrawn {
+		t.Errorf("status should still be withdrawn: %s", b.Status)
+	}
+}
+
+func TestPruneExpired(t *testing.T) {
+	resetCache()
+	defer func() { roundForTest = nil; statpoolForTest = nil }()
+	statpoolForTest = func(_ knowledge.Subject) int { return 600 }
+
+	roundForTest = func() uint64 { return 100 }
+	idA, _ := Declare(FactionIssuer("thornwall_guards"),
+		knowledge.PlayerSubject(17), ConditionKill, 200, DeclareOpts{}) // expires at 200
+	idB, _ := Declare(FactionIssuer("thornwall_guards"),
+		knowledge.PlayerSubject(18), ConditionKill, 0, DeclareOpts{})   // never expires
+	idC, _ := Declare(FactionIssuer("thornwall_guards"),
+		knowledge.PlayerSubject(19), ConditionKill, 5000, DeclareOpts{}) // far future
+
+	roundForTest = func() uint64 { return 300 }
+	count := PruneExpired()
+	if count != 1 {
+		t.Errorf("expected 1 pruned (idA), got %d", count)
+	}
+	if Get(idA).Status != StatusExpired {
+		t.Errorf("idA should be expired")
+	}
+	if Get(idB).Status != StatusOpen {
+		t.Errorf("idB should still be open (never expires)")
+	}
+	if Get(idC).Status != StatusOpen {
+		t.Errorf("idC should still be open (future expiry)")
+	}
+}

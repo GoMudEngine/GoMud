@@ -160,3 +160,79 @@ func Get(bountyId int) *Bounty {
 	}
 	return nil
 }
+
+// Withdraw transitions an open bounty to withdrawn status. Idempotent on
+// already-withdrawn bounties.
+func Withdraw(bountyId int) {
+	r := loadOrLazyInit()
+
+	registryMu.Lock()
+	mutated := false
+	for _, b := range r.Bounties {
+		if b.Id == bountyId && b.Status == StatusOpen {
+			b.Status = StatusWithdrawn
+			mutated = true
+			break
+		}
+	}
+	registryMu.Unlock()
+
+	if mutated {
+		if err := saveRegistry(r); err != nil {
+			mudlog.Warn("bounties.Withdraw: save failed", "id", bountyId, "error", err)
+		}
+	}
+}
+
+// MarkExpired transitions an open bounty to expired status. Idempotent on
+// already-expired bounties.
+func MarkExpired(bountyId int) {
+	r := loadOrLazyInit()
+
+	registryMu.Lock()
+	mutated := false
+	for _, b := range r.Bounties {
+		if b.Id == bountyId && b.Status == StatusOpen {
+			b.Status = StatusExpired
+			mutated = true
+			break
+		}
+	}
+	registryMu.Unlock()
+
+	if mutated {
+		if err := saveRegistry(r); err != nil {
+			mudlog.Warn("bounties.MarkExpired: save failed", "id", bountyId, "error", err)
+		}
+	}
+}
+
+// PruneExpired walks open bounties and flips any past their expiry
+// round to status=expired. Returns the count flipped.
+func PruneExpired() int {
+	r := loadOrLazyInit()
+	now := currentRound()
+
+	registryMu.Lock()
+	count := 0
+	for _, b := range r.Bounties {
+		if b.Status != StatusOpen {
+			continue
+		}
+		if b.ExpiryRound == 0 {
+			continue // never expires
+		}
+		if b.ExpiryRound <= now {
+			b.Status = StatusExpired
+			count++
+		}
+	}
+	registryMu.Unlock()
+
+	if count > 0 {
+		if err := saveRegistry(r); err != nil {
+			mudlog.Warn("bounties.PruneExpired: save failed", "error", err)
+		}
+	}
+	return count
+}
