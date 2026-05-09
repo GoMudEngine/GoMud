@@ -2,6 +2,7 @@ package bounties
 
 import (
 	"os"
+	"sync"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/knowledge"
@@ -64,5 +65,30 @@ func TestLoadMissingFileReturnsNil(t *testing.T) {
 	resetCache()
 	if loadRegistryFromDisk() != nil {
 		t.Errorf("expected nil for missing file")
+	}
+}
+
+func TestLoadOrLazyInitConcurrent(t *testing.T) {
+	resetCache()
+	const N = 50
+	var wg sync.WaitGroup
+	var seen [N]*Registry
+	for i := 0; i < N; i++ {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			seen[i] = loadOrLazyInit()
+		}(i)
+	}
+	wg.Wait()
+
+	first := seen[0]
+	if first == nil {
+		t.Fatalf("nil result from loadOrLazyInit")
+	}
+	for i := 1; i < N; i++ {
+		if seen[i] != first {
+			t.Errorf("goroutine %d got different pointer than goroutine 0", i)
+		}
 	}
 }

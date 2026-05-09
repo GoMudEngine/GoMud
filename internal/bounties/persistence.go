@@ -61,3 +61,43 @@ func loadRegistryFromDisk() *Registry {
 	}
 	return r
 }
+
+// loadOrLazyInit returns the cached *Registry, loading from disk on
+// first access. If neither cache nor disk has data, an empty
+// Registry is created and cached. Mirrors the chunk 1.3 / 1.4
+// double-check-lock pattern.
+func loadOrLazyInit() *Registry {
+	registryMu.RLock()
+	if registry != nil {
+		r := registry
+		registryMu.RUnlock()
+		return r
+	}
+	registryMu.RUnlock()
+
+	if r := loadRegistryFromDisk(); r != nil {
+		registryMu.Lock()
+		if registry != nil {
+			cached := registry
+			registryMu.Unlock()
+			return cached
+		}
+		registry = r
+		registryMu.Unlock()
+		return r
+	}
+
+	r := &Registry{
+		NextId:   1,
+		Bounties: []*Bounty{},
+	}
+	registryMu.Lock()
+	if registry != nil {
+		cached := registry
+		registryMu.Unlock()
+		return cached
+	}
+	registry = r
+	registryMu.Unlock()
+	return r
+}
