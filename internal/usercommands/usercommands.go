@@ -108,6 +108,7 @@ var (
 		`stomp`:           {Kick, false, true, false},
 		`knee`:            {Kick, false, true, false},
 		`killstats`:       {Killstats, true, true, false},
+		`bounty`:          {Bounty, true, true, true},   // Admin only
 		`knowledge`:       {Knowledge, true, true, true}, // Admin only
 		`history`:         {History, true, true, false},
 		`inbox`:           {Inbox, true, true, false},

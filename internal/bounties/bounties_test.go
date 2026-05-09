@@ -220,6 +220,27 @@ func TestTryClaim_AlreadyClaimedReturnsFalse(t *testing.T) {
 	}
 }
 
+func TestAllRows_IncludesNonOpen(t *testing.T) {
+	bounitiesPath := filepath.Join(string(configs.GetFilePathsConfig().DataFiles), "world", "dogmud", "bounties.yaml")
+	os.Remove(bounitiesPath)
+	resetCache()
+	defer func() { roundForTest = nil; statpoolForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+	statpoolForTest = func(_ knowledge.Subject) int { return 600 }
+
+	idA, _ := Declare(FactionIssuer("thornwall_guards"),
+		knowledge.MobSubject(101), ConditionKill, 1000, DeclareOpts{})
+	idB, _ := Declare(FactionIssuer("thornwall_guards"),
+		knowledge.MobSubject(102), ConditionKill, 1000, DeclareOpts{})
+	Withdraw(idB)
+
+	rows := AllRows()
+	if len(rows) != 2 {
+		t.Errorf("expected 2 rows, got %d", len(rows))
+	}
+	_ = idA
+}
+
 func TestReadAPI(t *testing.T) {
 	// Clean the bounties file to start fresh (other tests accumulate entries)
 	bounitiesPath := filepath.Join(string(configs.GetFilePathsConfig().DataFiles), "world", "dogmud", "bounties.yaml")

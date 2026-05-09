@@ -314,6 +314,17 @@ func OpenAgainstPlayer(userId int) []*Bounty {
 	return OpenForTarget(knowledge.PlayerSubject(userId))
 }
 
+// AllRows returns a snapshot of every row in the registry,
+// regardless of status. Used by the admin --all listing.
+func AllRows() []*Bounty {
+	r := loadOrLazyInit()
+	registryMu.RLock()
+	defer registryMu.RUnlock()
+	out := make([]*Bounty, len(r.Bounties))
+	copy(out, r.Bounties)
+	return out
+}
+
 // AllForTarget returns all bounties targeting the given subject. If includeNonOpen is false,
 // only status=open bounties are included. If true, all statuses are included.
 func AllForTarget(target knowledge.Subject, includeNonOpen bool) []*Bounty {
