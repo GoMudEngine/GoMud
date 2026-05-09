@@ -1,0 +1,19 @@
+<ansi fg="white-bold">relationship</ansi> — inspect and manipulate the mob-to-mob graph
+
+  <ansi fg="cyan">relationship show</ansi> <ansi fg="yellow"><mobId></ansi>
+    List all edges for an NPC (numeric mob template id).
+
+  <ansi fg="cyan">relationship between</ansi> <ansi fg="yellow"><mobIdA> <mobIdB></ansi>
+    Show edges connecting the two mobs (both directions).
+
+  <ansi fg="cyan">relationship add</ansi> <ansi fg="yellow"><mobIdA> <mobIdB> <type> [subtype]</ansi>
+    Runtime add (in-memory only — lost on server restart).
+    <type> ∈ family | friend | rival | lover | employer | employee
+    Symmetric types auto-mirror; employer auto-creates employee
+    on the other side.
+
+  <ansi fg="cyan">relationship remove</ansi> <ansi fg="yellow"><mobIdA> <mobIdB> <type></ansi>
+    Drop the edge and its mirror.
+
+  <ansi fg="cyan">relationship list</ansi>
+    Dump every edge in the graph (debug).
