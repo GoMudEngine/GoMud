@@ -413,7 +413,8 @@ type Balance struct {
 	CrimeRepDeltaMurder    ConfigInt `yaml:"CrimeRepDeltaMurder"`    // Rep delta on murder crime with identified perpetrator (default -25)
 	CrimeRepDeltaAssault   ConfigInt `yaml:"CrimeRepDeltaAssault"`   // Rep delta on assault crime with identified perpetrator (default -10)
 	CrimeRepDeltaTheft     ConfigInt `yaml:"CrimeRepDeltaTheft"`     // Rep delta on theft crime with identified perpetrator (default -5)
-	CrimeStaleAfterRounds  ConfigInt `yaml:"CrimeStaleAfterRounds"`  // Rounds after which an unresolved crime is auto-snapped to stale (default 7884000 — ~365 game-days at 4-second rounds)
+	CrimeStaleAfterRounds           ConfigInt `yaml:"CrimeStaleAfterRounds"`           // Rounds after which an unresolved crime is auto-snapped to stale (default 7884000 — ~365 game-days at 4-second rounds)
+	KnowledgeObservationLogMax      ConfigInt `yaml:"KnowledgeObservationLogMax"`      // Max observation log entries per record (FIFO) (default 32)
 }
 
 func (b *Balance) Validate() {

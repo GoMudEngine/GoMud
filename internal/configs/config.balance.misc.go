@@ -355,4 +355,9 @@ func (b *Balance) validateMisc() {
 	if b.CrimeStaleAfterRounds == 0 {
 		b.CrimeStaleAfterRounds = 7884000 // ~365 game-days at 4-second rounds
 	}
+
+	// ── KNOWLEDGE ──────────────────────────────────────────────────────────
+	if b.KnowledgeObservationLogMax <= 0 {
+		b.KnowledgeObservationLogMax = 32
+	}
 }

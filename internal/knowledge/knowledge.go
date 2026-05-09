@@ -1,6 +1,7 @@
 package knowledge
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -69,4 +70,58 @@ func Get(observerMobId int, subject Subject) *Record {
 	knowledgeCacheMu.RLock()
 	defer knowledgeCacheMu.RUnlock()
 	return findRecord(fc, subject)
+}
+
+// Test-only override for the observation log max size.
+var observationLogMaxForTest func() int
+
+func observationLogMax() int {
+	if observationLogMaxForTest != nil {
+		return observationLogMaxForTest()
+	}
+	return int(configs.GetBalanceConfig().KnowledgeObservationLogMax)
+}
+
+func RecordObservation(observerMobId int, subject Subject, room int) {
+	fc := loadOrLazyInit(observerMobId, observerNameFor(observerMobId))
+	now := currentRound()
+	maxLog := observationLogMax()
+
+	knowledgeCacheMu.Lock()
+	r := findRecord(fc, subject)
+	if r == nil {
+		r = &Record{
+			Subject:      subject,
+			HasMet:       true,
+			Source:       SourceWitnessed,
+			Confidence:   ConfidenceHigh,
+			LearnedRound: now,
+		}
+		fc.Records = append(fc.Records, r)
+	}
+
+	// Same-round dedup at tail.
+	if n := len(r.Observations); n > 0 {
+		tail := r.Observations[n-1]
+		if tail.Room == room && tail.Round == now {
+			r.LastSeenRoom = room
+			r.LastSeenRound = now
+			r.LastUpdatedRound = now
+			knowledgeCacheMu.Unlock()
+			return
+		}
+	}
+
+	r.Observations = append(r.Observations, Observation{Room: room, Round: now})
+	if maxLog > 0 && len(r.Observations) > maxLog {
+		r.Observations = r.Observations[len(r.Observations)-maxLog:]
+	}
+	r.LastSeenRoom = room
+	r.LastSeenRound = now
+	r.LastUpdatedRound = now
+	knowledgeCacheMu.Unlock()
+
+	if err := saveObserverFile(fc); err != nil {
+		mudlog.Warn("knowledge.RecordObservation: save failed", "observer", observerMobId, "error", err)
+	}
 }

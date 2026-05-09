@@ -45,3 +45,47 @@ func TestRecordMet_FreshThenIdempotent(t *testing.T) {
 		t.Errorf("LastSeenRound should update: got %d", r.LastSeenRound)
 	}
 }
+
+func TestRecordObservation_BoundedFIFO(t *testing.T) {
+	resetCache()
+	defer func() { roundForTest = nil; observationLogMaxForTest = nil }()
+	r := uint64(1000)
+	roundForTest = func() uint64 { r++; return r }
+
+	// Force a small bound for the test.
+	observationLogMaxForTest = func() int { return 4 }
+
+	for i := 1; i <= 6; i++ {
+		RecordObservation(99, PlayerSubject(17), 100+i)
+	}
+
+	rec := Get(99, PlayerSubject(17))
+	if rec == nil {
+		t.Fatalf("expected record")
+	}
+	if len(rec.Observations) != 4 {
+		t.Fatalf("expected bounded log of 4, got %d", len(rec.Observations))
+	}
+	// Should hold the LAST 4 entries (rooms 103..106).
+	wantRooms := []int{103, 104, 105, 106}
+	for i, o := range rec.Observations {
+		if o.Room != wantRooms[i] {
+			t.Errorf("entry %d: room %d, want %d", i, o.Room, wantRooms[i])
+		}
+	}
+}
+
+func TestRecordObservation_SameRoundDedup(t *testing.T) {
+	resetCache()
+	defer func() { roundForTest = nil }()
+	roundForTest = func() uint64 { return 500 }
+
+	// Use different observer ID to avoid file pollution from previous test.
+	RecordObservation(98, PlayerSubject(17), 462)
+	RecordObservation(98, PlayerSubject(17), 462) // same room+round
+
+	rec := Get(98, PlayerSubject(17))
+	if len(rec.Observations) != 1 {
+		t.Errorf("expected dedup at same round, got %d entries", len(rec.Observations))
+	}
+}
