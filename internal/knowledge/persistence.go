@@ -64,3 +64,41 @@ func loadObserverFileFromDisk(mobId int, mobName string) *ObserverFile {
 	}
 	return fc
 }
+
+// loadOrLazyInit returns the cached *ObserverFile for the given observer
+// mob id, loading from disk on first access. If neither cache nor disk
+// has data, an empty ObserverFile is created and cached. Mirrors the
+// chunk 1.3 double-check-lock pattern.
+func loadOrLazyInit(mobId int, mobName string) *ObserverFile {
+	knowledgeCacheMu.RLock()
+	if fc, ok := knowledgeCache[mobId]; ok {
+		knowledgeCacheMu.RUnlock()
+		return fc
+	}
+	knowledgeCacheMu.RUnlock()
+
+	if fc := loadObserverFileFromDisk(mobId, mobName); fc != nil {
+		knowledgeCacheMu.Lock()
+		if cached, ok := knowledgeCache[mobId]; ok {
+			knowledgeCacheMu.Unlock()
+			return cached
+		}
+		knowledgeCache[mobId] = fc
+		knowledgeCacheMu.Unlock()
+		return fc
+	}
+
+	fc := &ObserverFile{
+		ObserverMobId: mobId,
+		ObserverName:  mobName,
+		Records:       []*Record{},
+	}
+	knowledgeCacheMu.Lock()
+	if cached, ok := knowledgeCache[mobId]; ok {
+		knowledgeCacheMu.Unlock()
+		return cached
+	}
+	knowledgeCache[mobId] = fc
+	knowledgeCacheMu.Unlock()
+	return fc
+}
