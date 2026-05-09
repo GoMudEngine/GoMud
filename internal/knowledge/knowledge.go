@@ -4,6 +4,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crimes"
 	"github.com/GoMudEngine/GoMud/internal/factions"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -29,13 +30,12 @@ func findRecord(fc *ObserverFile, subject Subject) *Record {
 	return nil
 }
 
-// observerNameFor looks up the mob template name for filename purposes. If
-// the lookup fails, returns "" — saveObserverFile tolerates blank names.
-// Implementations may use mobs.GetMobSpec(mobs.MobId(id)).Name; this helper
-// keeps the persistence layer decoupled from mobs imports.
+// observerNameFor returns the mob template's display name for filename
+// purposes. Tests can override via `observerNameFor = func(int) string {...}`.
 var observerNameFor = func(mobId int) string {
-	// In production this will be wired in init() or via a setter; for tests
-	// we can override directly.
+	if spec := mobs.GetMobSpec(mobs.MobId(mobId)); spec != nil {
+		return spec.Character.Name
+	}
 	return ""
 }
 
@@ -303,6 +303,38 @@ func WitnessedCrimes(observerMobId int, subject Subject) []WitnessedCrime {
 				Kind:          c.Kind,
 				ResolvedRound: c.ResolvedRound,
 			})
+		}
+	}
+	return out
+}
+
+// AllForObserver returns a snapshot copy of every record this observer
+// holds. Returns nil if the observer has no records.
+func AllForObserver(observerMobId int) []*Record {
+	fc := loadOrLazyInit(observerMobId, observerNameFor(observerMobId))
+	knowledgeCacheMu.RLock()
+	defer knowledgeCacheMu.RUnlock()
+	if len(fc.Records) == 0 {
+		return nil
+	}
+	out := make([]*Record, len(fc.Records))
+	copy(out, fc.Records)
+	return out
+}
+
+// AllObserversOfPlayer returns the in-memory observer mob IDs that hold
+// any record about this player. Best-effort: walks only loaded files.
+func AllObserversOfPlayer(userId int) []int {
+	subj := PlayerSubject(userId)
+	knowledgeCacheMu.RLock()
+	defer knowledgeCacheMu.RUnlock()
+	out := make([]int, 0)
+	for mobId, fc := range knowledgeCache {
+		for _, r := range fc.Records {
+			if r.Subject == subj {
+				out = append(out, mobId)
+				break
+			}
 		}
 	}
 	return out
