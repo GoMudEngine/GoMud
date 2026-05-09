@@ -121,3 +121,53 @@ func AllRelations() []OwnedRelation {
 	})
 	return out
 }
+
+// Add appends an edge with auto-mirror. No-op if identical edge
+// already exists. In-memory only — no persistence v1.
+func Add(a, b int, t Type, subtype string) {
+	graphMu.Lock()
+	defer graphMu.Unlock()
+	if hasEdge(a, b, t) {
+		return
+	}
+	graph[a] = append(graph[a], Relation{Other: b, Type: t, Subtype: subtype})
+	mirrorType := InverseType(t)
+	if !hasEdge(b, a, mirrorType) {
+		graph[b] = append(graph[b], Relation{Other: a, Type: mirrorType})
+	}
+}
+
+// Remove drops an edge and its mirror.
+func Remove(a, b int, t Type) {
+	graphMu.Lock()
+	defer graphMu.Unlock()
+	graph[a] = removeEdge(graph[a], b, t)
+	graph[b] = removeEdge(graph[b], a, InverseType(t))
+}
+
+// removeEdge filters out matching (Other, Type) entries. Caller
+// must hold graphMu (write lock).
+func removeEdge(edges []Relation, other int, t Type) []Relation {
+	out := edges[:0]
+	for _, r := range edges {
+		if r.Other == other && r.Type == t {
+			continue
+		}
+		out = append(out, r)
+	}
+	return out
+}
+
+// ChangeType atomically removes (a→b oldType) and adds (a→b newType
+// + subtype). Mirror also flips.
+func ChangeType(a, b int, oldType, newType Type, newSubtype string) {
+	graphMu.Lock()
+	defer graphMu.Unlock()
+	graph[a] = removeEdge(graph[a], b, oldType)
+	graph[b] = removeEdge(graph[b], a, InverseType(oldType))
+	graph[a] = append(graph[a], Relation{Other: b, Type: newType, Subtype: newSubtype})
+	mirrorType := InverseType(newType)
+	if !hasEdge(b, a, mirrorType) {
+		graph[b] = append(graph[b], Relation{Other: a, Type: mirrorType})
+	}
+}

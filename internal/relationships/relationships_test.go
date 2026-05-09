@@ -95,3 +95,63 @@ func TestAllRelations(t *testing.T) {
 		t.Errorf("AllRelations: got %d, want 8", len(all))
 	}
 }
+
+func TestAdd(t *testing.T) {
+	resetGraph()
+	Add(95, 96, TypeFriend, "new-friend")
+
+	if !AreRelated(95, 96) {
+		t.Errorf("after Add, 95 and 96 should be related")
+	}
+	if got := edgesOf(96); len(got) != 1 || got[0].Type != TypeFriend {
+		t.Errorf("auto-mirror missing on 96: %v", got)
+	}
+
+	// Add of identical edge is no-op.
+	Add(95, 96, TypeFriend, "different-subtype")
+	if got := len(edgesOf(95)); got != 1 {
+		t.Errorf("duplicate Add should be no-op: %d edges", got)
+	}
+}
+
+func TestAdd_Asymmetric(t *testing.T) {
+	resetGraph()
+	Add(95, 248, TypeEmployer, "")
+	if got := edgesOf(95); got[0].Type != TypeEmployer {
+		t.Errorf("95 should have employer edge")
+	}
+	if got := edgesOf(248); got[0].Type != TypeEmployee {
+		t.Errorf("248 should have employee mirror")
+	}
+}
+
+func TestRemove(t *testing.T) {
+	resetGraph()
+	Add(95, 96, TypeFriend, "")
+	Remove(95, 96, TypeFriend)
+	if AreRelated(95, 96) {
+		t.Errorf("after Remove, 95 and 96 should not be related")
+	}
+	// Mirror removed too.
+	if len(edgesOf(96)) != 0 {
+		t.Errorf("mirror should be removed too")
+	}
+}
+
+func TestChangeType(t *testing.T) {
+	resetGraph()
+	Add(95, 96, TypeFriend, "")
+	ChangeType(95, 96, TypeFriend, TypeRival, "fell-out")
+
+	rels := RelationsBetween(95, 96)
+	if len(rels) != 1 || rels[0].Type != TypeRival {
+		t.Errorf("after ChangeType: %v", rels)
+	}
+	if rels[0].Subtype != "fell-out" {
+		t.Errorf("subtype: %q", rels[0].Subtype)
+	}
+	// Mirror also changed.
+	if mrels := RelationsBetween(96, 95); mrels[0].Type != TypeRival {
+		t.Errorf("mirror: %s", mrels[0].Type)
+	}
+}
