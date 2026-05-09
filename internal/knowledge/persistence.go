@@ -38,7 +38,12 @@ func saveObserverFile(fc *ObserverFile) error {
 	}
 	path := observerFilePath(fc.ObserverMobId, fc.ObserverName)
 
+	// Hold the cache read-lock around Marshal so another goroutine mutating
+	// fc.Records under knowledgeCacheMu doesn't race the serialization.
+	// Mirrors internal/crimes/persistence.go saveCrimesToDisk pattern.
+	knowledgeCacheMu.RLock()
 	out, err := yaml.Marshal(fc)
+	knowledgeCacheMu.RUnlock()
 	if err != nil {
 		return fmt.Errorf("marshal observer file %d: %w", fc.ObserverMobId, err)
 	}

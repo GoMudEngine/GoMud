@@ -11,6 +11,10 @@ _datafiles/**/shops
 _datafiles/**/factions.rep
 # Runtime crime log state — not committed
 _datafiles/**/factions.crimes
+# Runtime NPC knowledge state — not committed
+_datafiles/**/knowledge/
+# Runtime NPC opinion state — not committed
+_datafiles/**/opinions/
 .worktrees/
 tools/testing/reports/*.md
 vendor/

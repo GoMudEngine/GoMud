@@ -186,6 +186,30 @@ func TestForgetFact(t *testing.T) {
 	}
 }
 
+func TestForgetFact_UnknownIsNoOp(t *testing.T) {
+	resetCache()
+	defer func() { roundForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+
+	// Use fresh observer ID 700 to avoid disk leakage from earlier tests.
+	RecordMet(700, PlayerSubject(17), 462, SourceWitnessed)
+	RecordName(700, PlayerSubject(17), "Bob", SourceWitnessed)
+
+	// Calling ForgetFact with an unrecognised key must be a no-op.
+	ForgetFact(700, PlayerSubject(17), "bogus")
+
+	r := Get(700, PlayerSubject(17))
+	if r == nil {
+		t.Fatalf("record should still exist after ForgetFact with unknown key")
+	}
+	if r.NameLearned != "Bob" {
+		t.Errorf("NameLearned should be unchanged: got %q", r.NameLearned)
+	}
+	if !r.HasMet {
+		t.Errorf("HasMet should be unchanged after no-op ForgetFact")
+	}
+}
+
 func TestReadAPIs(t *testing.T) {
 	resetCache()
 	defer func() { roundForTest = nil }()

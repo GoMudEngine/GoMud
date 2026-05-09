@@ -99,9 +99,9 @@ func MobDeathFactionRep(e events.Event) events.ListenerReturn {
 						crimes.Perpetrator{}, // ignored: preserveExistingPerp=true
 						evt.InstanceId, evt.RoomId, spec.Zone, true)
 					// No additional rep bump.
-					// Use the assault's preserved player perp for knowledge writes,
-					// not the current (possibly unknown) perp variable.
-					writeKnowledgeForWitnesses(witnesses, assault.Perpetrator, []int{assault.Id}, evt.RoomId)
+					// No knowledge writes: witnesses is empty (currentExternal==false),
+					// so any call here would be a no-op. The assault-time knowledge
+					// writes from T15 already covered everyone who saw the first blow.
 				} else {
 					// Case C: lone assault → lone murder. Nobody survives
 					// to identify the killer. Set perp=unknown and refund
@@ -111,9 +111,10 @@ func MobDeathFactionRep(e events.Event) events.ListenerReturn {
 						evt.InstanceId, evt.RoomId, spec.Zone, false)
 					// deltaAssault is negative (e.g. -10); negate to refund.
 					factions.BumpRep(fid, userId, -deltaAssault)
-					// perp.Type == PerpUnknown here; writeKnowledgeForWitnesses
-					// will no-op via its early-return guard.
-					writeKnowledgeForWitnesses(witnesses, perp, []int{assault.Id}, evt.RoomId)
+					// No knowledge writes: witnesses is empty (currentExternal==false).
+					// Perp is PerpUnknown so writeKnowledgeForWitnesses would early-return
+					// anyway; remove the call to avoid misleading "what does this do?"
+					// confusion during future reads.
 				}
 				continue
 			}

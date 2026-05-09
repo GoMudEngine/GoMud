@@ -189,6 +189,12 @@ func RecordCrimeWitnessed(observerMobId int, subject Subject, crimeId int) {
 	}
 }
 
+// Forget removes the entire record for subject from this observer's file.
+// Intentional no-cascade: forgetting knowledge does NOT automatically
+// cascade to opinion (1.1) or reputation (1.2/1.3) state. Those systems
+// track faction-level trust derived from witnessed behaviour over time,
+// not individual memory. Amnesia spells are the natural future moment to
+// revisit cascade. See docs/superpowers/specs/2026-05-09-mob-aliveness-1.4-knowledge-model-design.md.
 func Forget(observerMobId int, subject Subject) {
 	fc := loadOrLazyInit(observerMobId, observerNameFor(observerMobId))
 
@@ -210,6 +216,9 @@ func Forget(observerMobId int, subject Subject) {
 	}
 }
 
+// ForgetFact clears a single field ("name", "observations", or "crimes")
+// from the record without removing the record itself. Unknown fact keys
+// are a no-op. Same no-cascade policy as Forget — see comment above.
 func ForgetFact(observerMobId int, subject Subject, fact string) {
 	fc := loadOrLazyInit(observerMobId, observerNameFor(observerMobId))
 	now := currentRound()
