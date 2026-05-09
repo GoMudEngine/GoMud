@@ -1,0 +1,38 @@
+The <ansi fg="command">knowledge</ansi> command inspects and manipulates NPC
+knowledge records written by the chunk-1.4 knowledge substrate.
+
+<ansi fg="yellow-bold">Usage:</ansi>
+
+<ansi fg="command">knowledge show <mobId></ansi>
+  List all knowledge records held by this observer NPC, sorted by
+  most-recently-seen first.
+
+<ansi fg="command">knowledge show <mobId> <playerName></ansi>
+  Show this observer's full knowledge record for one player —
+  HasMet, name, source, confidence, last-seen room, and any
+  witnessed crimes.
+
+<ansi fg="command">knowledge show <mobId> mob <targetId></ansi>
+  Same as above, but for an NPC target (numeric template id).
+
+<ansi fg="command">knowledge frequented <mobId> <playerName> [topK]</ansi>
+  List the top-K rooms where this observer has seen the player,
+  tallied from the bounded observation log. Default topK is 5.
+
+<ansi fg="command">knowledge forget <mobId> <playerName></ansi>
+  Drop the entire knowledge record for that player from this
+  observer's file.
+
+<ansi fg="command">knowledge forget <mobId> <playerName> <fact></ansi>
+  Drop a single fact from the record. Valid facts:
+    name         — clear the learned name
+    observations — clear the observation log
+    crimes       — clear witnessed crime ids
+
+<ansi fg="yellow-bold">Notes:</ansi>
+  - <mobId> accepts a numeric template id or a mob name
+    (matched via ConvertForFilename, e.g. "lars" or "smith").
+  - Storage: _datafiles/world/dogmud/knowledge/<mobId>-<name>.yaml
+    (gitignored runtime state).
+  - Forget is immediate and persisted to disk; reloading the server
+    will not restore forgotten records.
