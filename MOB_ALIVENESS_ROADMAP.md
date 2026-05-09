@@ -569,3 +569,8 @@ Recorded so we don't forget, but not part of this roadmap:
 - **Removing chunks:** Mark `Cancelled` rather than deleting, with a one-line reason. Helps future-you remember what was considered and why it was dropped.
 - **Per-chunk specs and plans:** Each chunk gets its own `docs/superpowers/specs/YYYY-MM-DD-<chunk-id>-design.md` and corresponding plan when picked up.
 - **MEMORY.md sync:** When a MEMORY-absorbed chunk ships, remove its MEMORY entry. When a brand-new chunk ships, add a note in COMPLETED.md.
+- **`context.md` is required per chunk.** Every chunk that creates a new `internal/<package>/` directory MUST ship a `context.md` documenting the package, in the established DOGMud style. Chunks that meaningfully modify an existing package (extend its API surface, add new files, reshape its data model) MUST update the existing `context.md` to match. Style references — copy the section structure from one of these:
+  - `internal/badinputtracker/context.md` (~170 lines) — small, single-responsibility package
+  - `internal/clans/context.md` (~190 lines) — medium, multi-file package
+  - `internal/buffs/context.md` (~700 lines) — large, deeply-integrated package
+  Required sections: Overview, Key Components (file map), Key Functions (signatures + behavior), Global State (if any), Data Structure Design (schemas + YAML shapes), Integration Notes (which packages consume / are consumed by), and Testing Notes. Aliveness chunks 1.1–1.5 missed this; they're being backfilled in chunk 1.6's plan.
