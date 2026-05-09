@@ -185,3 +185,54 @@ func RecordCrimeWitnessed(observerMobId int, subject Subject, crimeId int) {
 		mudlog.Warn("knowledge.RecordCrimeWitnessed: save failed", "observer", observerMobId, "error", err)
 	}
 }
+
+func Forget(observerMobId int, subject Subject) {
+	fc := loadOrLazyInit(observerMobId, observerNameFor(observerMobId))
+
+	knowledgeCacheMu.Lock()
+	mutated := false
+	for i, r := range fc.Records {
+		if r.Subject == subject {
+			fc.Records = append(fc.Records[:i], fc.Records[i+1:]...)
+			mutated = true
+			break
+		}
+	}
+	knowledgeCacheMu.Unlock()
+
+	if mutated {
+		if err := saveObserverFile(fc); err != nil {
+			mudlog.Warn("knowledge.Forget: save failed", "observer", observerMobId, "error", err)
+		}
+	}
+}
+
+func ForgetFact(observerMobId int, subject Subject, fact string) {
+	fc := loadOrLazyInit(observerMobId, observerNameFor(observerMobId))
+	now := currentRound()
+
+	knowledgeCacheMu.Lock()
+	r := findRecord(fc, subject)
+	if r == nil {
+		knowledgeCacheMu.Unlock()
+		return
+	}
+	switch fact {
+	case "name":
+		r.NameLearned = ""
+	case "observations":
+		r.Observations = nil
+	case "crimes":
+		r.CrimesWitnessed = nil
+	default:
+		// Unknown fact: no-op.
+		knowledgeCacheMu.Unlock()
+		return
+	}
+	r.LastUpdatedRound = now
+	knowledgeCacheMu.Unlock()
+
+	if err := saveObserverFile(fc); err != nil {
+		mudlog.Warn("knowledge.ForgetFact: save failed", "observer", observerMobId, "error", err)
+	}
+}

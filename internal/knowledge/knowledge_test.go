@@ -128,3 +128,53 @@ func TestRecordCrimeWitnessed_Dedup(t *testing.T) {
 		}
 	}
 }
+
+func TestForget_DropsRecord(t *testing.T) {
+	resetCache()
+	defer func() { roundForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+
+	RecordMet(99, PlayerSubject(17), 462, SourceWitnessed)
+	RecordMet(99, PlayerSubject(18), 463, SourceWitnessed)
+
+	Forget(99, PlayerSubject(17))
+
+	if Get(99, PlayerSubject(17)) != nil {
+		t.Errorf("Forget did not drop record for subject 17")
+	}
+	if Get(99, PlayerSubject(18)) == nil {
+		t.Errorf("Forget should have left subject 18 alone")
+	}
+}
+
+func TestForgetFact(t *testing.T) {
+	resetCache()
+	defer func() { roundForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+
+	RecordMet(99, PlayerSubject(17), 462, SourceWitnessed)
+	RecordName(99, PlayerSubject(17), "Bob", SourceWitnessed)
+	RecordObservation(99, PlayerSubject(17), 463)
+	RecordCrimeWitnessed(99, PlayerSubject(17), 5)
+
+	ForgetFact(99, PlayerSubject(17), "name")
+	r := Get(99, PlayerSubject(17))
+	if r.NameLearned != "" {
+		t.Errorf("expected name cleared, got %q", r.NameLearned)
+	}
+	if len(r.Observations) == 0 || len(r.CrimesWitnessed) == 0 {
+		t.Errorf("ForgetFact name should not touch observations/crimes")
+	}
+
+	ForgetFact(99, PlayerSubject(17), "observations")
+	r = Get(99, PlayerSubject(17))
+	if len(r.Observations) != 0 {
+		t.Errorf("expected observations cleared, got %d", len(r.Observations))
+	}
+
+	ForgetFact(99, PlayerSubject(17), "crimes")
+	r = Get(99, PlayerSubject(17))
+	if len(r.CrimesWitnessed) != 0 {
+		t.Errorf("expected crimes cleared, got %d", len(r.CrimesWitnessed))
+	}
+}
