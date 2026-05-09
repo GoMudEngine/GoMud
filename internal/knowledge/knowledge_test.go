@@ -178,3 +178,33 @@ func TestForgetFact(t *testing.T) {
 		t.Errorf("expected crimes cleared, got %d", len(r.CrimesWitnessed))
 	}
 }
+
+func TestReadAPIs(t *testing.T) {
+	resetCache()
+	defer func() { roundForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+
+	// Use fresh observer ID 299 to avoid disk interference from prior tests.
+	if HasMet(299, PlayerSubject(17)) {
+		t.Errorf("HasMet should be false for unknown subject")
+	}
+	if _, ok := NameOf(299, PlayerSubject(17)); ok {
+		t.Errorf("NameOf should return ok=false for unknown")
+	}
+	if _, _, ok := LastSeen(299, PlayerSubject(17)); ok {
+		t.Errorf("LastSeen should return ok=false for unknown")
+	}
+
+	RecordMet(299, PlayerSubject(17), 462, SourceWitnessed)
+	RecordName(299, PlayerSubject(17), "Bob", SourceWitnessed)
+
+	if !HasMet(299, PlayerSubject(17)) {
+		t.Errorf("HasMet should be true after RecordMet")
+	}
+	if name, ok := NameOf(299, PlayerSubject(17)); !ok || name != "Bob" {
+		t.Errorf("NameOf: got %q ok=%v", name, ok)
+	}
+	if room, round, ok := LastSeen(299, PlayerSubject(17)); !ok || room != 462 || round != 100 {
+		t.Errorf("LastSeen: got room=%d round=%d ok=%v", room, round, ok)
+	}
+}

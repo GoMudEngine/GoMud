@@ -236,3 +236,24 @@ func ForgetFact(observerMobId int, subject Subject, fact string) {
 		mudlog.Warn("knowledge.ForgetFact: save failed", "observer", observerMobId, "error", err)
 	}
 }
+
+func HasMet(observerMobId int, subject Subject) bool {
+	r := Get(observerMobId, subject)
+	return r != nil && r.HasMet
+}
+
+func NameOf(observerMobId int, subject Subject) (string, bool) {
+	r := Get(observerMobId, subject)
+	if r == nil || r.NameLearned == "" {
+		return "", false
+	}
+	return r.NameLearned, true
+}
+
+func LastSeen(observerMobId int, subject Subject) (int, uint64, bool) {
+	r := Get(observerMobId, subject)
+	if r == nil || r.LastSeenRound == 0 {
+		return 0, 0, false
+	}
+	return r.LastSeenRoom, r.LastSeenRound, true
+}
