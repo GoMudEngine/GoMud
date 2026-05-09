@@ -2,6 +2,8 @@ package knowledge
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/crimes"
+	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -256,4 +258,52 @@ func LastSeen(observerMobId int, subject Subject) (int, uint64, bool) {
 		return 0, 0, false
 	}
 	return r.LastSeenRoom, r.LastSeenRound, true
+}
+
+// WitnessedCrime is the joined view of one crime ID from the knowledge
+// layer enriched with live data from the 1.3 crimes substrate.
+type WitnessedCrime struct {
+	CrimeId       int
+	Kind          crimes.Kind
+	ResolvedRound uint64
+}
+
+// WitnessedCrimes returns the joined view of this observer's witnessed
+// crime IDs against the 1.3 substrate. Lazy-filter-on-read: callers
+// see all referenced crimes plus their current resolved status, and
+// decide whether to surface stale entries.
+//
+// The 1.3 lookup walks all known factions because the knowledge layer
+// doesn't store which faction the crime belongs to. For v1 this is
+// fine — the underlying crimes.AllForFaction call walks an in-memory
+// cache. If this becomes hot, a follow-on can store the faction id
+// alongside the crime id on the knowledge record.
+func WitnessedCrimes(observerMobId int, subject Subject) []WitnessedCrime {
+	r := Get(observerMobId, subject)
+	if r == nil || len(r.CrimesWitnessed) == 0 {
+		return nil
+	}
+	want := make(map[int]bool, len(r.CrimesWitnessed))
+	for _, id := range r.CrimesWitnessed {
+		want[id] = true
+	}
+
+	out := make([]WitnessedCrime, 0, len(r.CrimesWitnessed))
+	seen := make(map[int]bool, len(r.CrimesWitnessed))
+
+	// Walk every loaded faction's crimes, keeping rows whose IDs we know.
+	for _, def := range factions.AllDefinitions() {
+		for _, c := range crimes.AllForFaction(def.FactionId, true /*includeResolved*/) {
+			if !want[c.Id] || seen[c.Id] {
+				continue
+			}
+			seen[c.Id] = true
+			out = append(out, WitnessedCrime{
+				CrimeId:       c.Id,
+				Kind:          c.Kind,
+				ResolvedRound: c.ResolvedRound,
+			})
+		}
+	}
+	return out
 }

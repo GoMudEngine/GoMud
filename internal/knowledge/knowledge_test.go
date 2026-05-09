@@ -1,8 +1,14 @@
 package knowledge
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/crimes"
+	"github.com/GoMudEngine/GoMud/internal/factions"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -206,5 +212,120 @@ func TestReadAPIs(t *testing.T) {
 	}
 	if room, round, ok := LastSeen(299, PlayerSubject(17)); !ok || room != 462 || round != 100 {
 		t.Errorf("LastSeen: got room=%d round=%d ok=%v", room, round, ok)
+	}
+}
+
+// setupFactionsAndCrimesForTest seeds one faction definition (thornwall_citizens)
+// into the factions registry and redirects the crimes persistence to a temp dir,
+// so WitnessedCrimes tests can exercise the full cross-package join without
+// touching real data files.
+func setupFactionsAndCrimesForTest(t *testing.T) {
+	t.Helper()
+
+	// Point faction definitions at a temp dir with one fixture file.
+	facDir := t.TempDir()
+	t.Setenv("DOGMUD_FACTIONS_DIR_OVERRIDE", facDir)
+
+	body := `faction_id: thornwall_citizens
+display_name: "Thornwall Citizenry"
+description: "Citizens of Thornwall."
+default_rep: 0
+allies: []
+enemies: []
+`
+	if err := os.WriteFile(filepath.Join(facDir, "thornwall_citizens.yaml"), []byte(body), 0644); err != nil {
+		t.Fatalf("write faction fixture: %v", err)
+	}
+	if err := factions.LoadAllDefinitions(); err != nil {
+		t.Fatalf("LoadAllDefinitions: %v", err)
+	}
+
+	// Redirect crimes persistence to a separate temp dir.
+	t.Setenv("DOGMUD_FACTIONS_CRIMES_DIR_OVERRIDE", t.TempDir())
+	crimes.ClearCache()
+	t.Cleanup(func() { crimes.ClearCache() })
+}
+
+func TestWitnessedCrimes_LazyJoin(t *testing.T) {
+	resetCache()
+	defer func() { roundForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+
+	setupFactionsAndCrimesForTest(t)
+
+	// Seed 1.3 with two crimes: one unresolved, one resolved.
+	// Use fresh observer/player IDs (599, 9917) to avoid disk interference.
+	victim := &mobs.Mob{MobId: 100, Character: characters.Character{Name: "city guard"}}
+	ids := crimes.Record([]string{"thornwall_citizens"},
+		crimes.KindAssault,
+		crimes.Perpetrator{Type: crimes.PerpPlayer, Id: 9917},
+		victim, 1, 462, "Thornwall City", false)
+	if len(ids) != 1 {
+		t.Fatalf("expected 1 crime id, got %d", len(ids))
+	}
+	crimeIdA := ids[0]
+
+	ids = crimes.Record([]string{"thornwall_citizens"},
+		crimes.KindMurder,
+		crimes.Perpetrator{Type: crimes.PerpPlayer, Id: 9917},
+		victim, 2, 463, "Thornwall City", false)
+	if len(ids) != 1 {
+		t.Fatalf("expected 1 crime id from second record, got %d", len(ids))
+	}
+	crimeIdB := ids[0]
+	crimes.Resolve("thornwall_citizens", crimeIdB, "fine_paid")
+
+	// Knowledge layer references both crimes.
+	RecordCrimeWitnessed(599, PlayerSubject(9917), crimeIdA)
+	RecordCrimeWitnessed(599, PlayerSubject(9917), crimeIdB)
+
+	got := WitnessedCrimes(599, PlayerSubject(9917))
+	if len(got) != 2 {
+		t.Fatalf("expected 2 crimes returned, got %d", len(got))
+	}
+	for _, w := range got {
+		switch w.CrimeId {
+		case crimeIdA:
+			if w.ResolvedRound != 0 {
+				t.Errorf("crime %d should be unresolved (ResolvedRound=%d)", w.CrimeId, w.ResolvedRound)
+			}
+			if w.Kind != crimes.KindAssault {
+				t.Errorf("crime %d: Kind=%q, want assault", w.CrimeId, w.Kind)
+			}
+		case crimeIdB:
+			if w.ResolvedRound == 0 {
+				t.Errorf("crime %d should be resolved", w.CrimeId)
+			}
+			if w.Kind != crimes.KindMurder {
+				t.Errorf("crime %d: Kind=%q, want murder", w.CrimeId, w.Kind)
+			}
+		default:
+			t.Errorf("unexpected crime id %d", w.CrimeId)
+		}
+	}
+}
+
+func TestWitnessedCrimes_NilWhenNoRecord(t *testing.T) {
+	resetCache()
+	defer func() { roundForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+
+	// Observer 599 has no record for this subject at all.
+	got := WitnessedCrimes(599, PlayerSubject(8888))
+	if got != nil {
+		t.Errorf("expected nil for unknown observer/subject, got %v", got)
+	}
+}
+
+func TestWitnessedCrimes_EmptyWhenNoCrimesWitnessed(t *testing.T) {
+	resetCache()
+	defer func() { roundForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+
+	// Record met but no crimes.
+	RecordMet(599, PlayerSubject(8889), 462, SourceWitnessed)
+	got := WitnessedCrimes(599, PlayerSubject(8889))
+	if got != nil {
+		t.Errorf("expected nil for subject with no witnessed crimes, got %v", got)
 	}
 }
