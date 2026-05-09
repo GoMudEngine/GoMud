@@ -89,3 +89,42 @@ func TestRecordObservation_SameRoundDedup(t *testing.T) {
 		t.Errorf("expected dedup at same round, got %d entries", len(rec.Observations))
 	}
 }
+
+func TestRecordName(t *testing.T) {
+	resetCache()
+	defer func() { roundForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+
+	RecordName(99, PlayerSubject(17), "Bob", SourceWitnessed)
+	r := Get(99, PlayerSubject(17))
+	if r.NameLearned != "Bob" {
+		t.Errorf("name not set: got %q", r.NameLearned)
+	}
+
+	// Idempotent on same value.
+	RecordName(99, PlayerSubject(17), "Bob", SourceWitnessed)
+	if r.NameLearned != "Bob" {
+		t.Errorf("name corrupted on re-write: %q", r.NameLearned)
+	}
+}
+
+func TestRecordCrimeWitnessed_Dedup(t *testing.T) {
+	resetCache()
+	defer func() { roundForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+
+	RecordCrimeWitnessed(99, PlayerSubject(17), 5)
+	RecordCrimeWitnessed(99, PlayerSubject(17), 7)
+	RecordCrimeWitnessed(99, PlayerSubject(17), 5) // duplicate
+
+	r := Get(99, PlayerSubject(17))
+	if len(r.CrimesWitnessed) != 2 {
+		t.Errorf("expected dedup, got %v", r.CrimesWitnessed)
+	}
+	want := map[int]bool{5: true, 7: true}
+	for _, id := range r.CrimesWitnessed {
+		if !want[id] {
+			t.Errorf("unexpected crime id %d", id)
+		}
+	}
+}

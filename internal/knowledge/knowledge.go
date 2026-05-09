@@ -125,3 +125,63 @@ func RecordObservation(observerMobId int, subject Subject, room int) {
 		mudlog.Warn("knowledge.RecordObservation: save failed", "observer", observerMobId, "error", err)
 	}
 }
+
+func RecordName(observerMobId int, subject Subject, name string, source Source) {
+	fc := loadOrLazyInit(observerMobId, observerNameFor(observerMobId))
+	now := currentRound()
+
+	knowledgeCacheMu.Lock()
+	r := findRecord(fc, subject)
+	if r == nil {
+		r = &Record{
+			Subject:      subject,
+			HasMet:       true,
+			Source:       source,
+			Confidence:   ConfidenceHigh,
+			LearnedRound: now,
+		}
+		fc.Records = append(fc.Records, r)
+	}
+	if r.NameLearned == name {
+		knowledgeCacheMu.Unlock()
+		return
+	}
+	r.NameLearned = name
+	r.LastUpdatedRound = now
+	knowledgeCacheMu.Unlock()
+
+	if err := saveObserverFile(fc); err != nil {
+		mudlog.Warn("knowledge.RecordName: save failed", "observer", observerMobId, "error", err)
+	}
+}
+
+func RecordCrimeWitnessed(observerMobId int, subject Subject, crimeId int) {
+	fc := loadOrLazyInit(observerMobId, observerNameFor(observerMobId))
+	now := currentRound()
+
+	knowledgeCacheMu.Lock()
+	r := findRecord(fc, subject)
+	if r == nil {
+		r = &Record{
+			Subject:      subject,
+			HasMet:       true,
+			Source:       SourceWitnessed,
+			Confidence:   ConfidenceHigh,
+			LearnedRound: now,
+		}
+		fc.Records = append(fc.Records, r)
+	}
+	for _, existing := range r.CrimesWitnessed {
+		if existing == crimeId {
+			knowledgeCacheMu.Unlock()
+			return
+		}
+	}
+	r.CrimesWitnessed = append(r.CrimesWitnessed, crimeId)
+	r.LastUpdatedRound = now
+	knowledgeCacheMu.Unlock()
+
+	if err := saveObserverFile(fc); err != nil {
+		mudlog.Warn("knowledge.RecordCrimeWitnessed: save failed", "observer", observerMobId, "error", err)
+	}
+}
