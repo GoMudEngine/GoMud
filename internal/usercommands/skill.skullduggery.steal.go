@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/factions"
+	"github.com/GoMudEngine/GoMud/internal/knowledge"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -214,10 +215,24 @@ func stealFromMob(mobInstanceId int, attackerScore float64, rank int,
 			hadExternal := len(externalWitnesses) > 0
 			delta := int(configs.GetBalanceConfig().CrimeRepDeltaTheft)
 			for _, fid := range factionIds {
-				crimes.Record([]string{fid}, crimes.KindTheft, perp,
+				crimeIds := crimes.Record([]string{fid}, crimes.KindTheft, perp,
 					m, m.InstanceId, room.RoomId, m.Character.Zone, hadExternal)
 				if perp.Type == crimes.PerpPlayer {
 					factions.BumpRep(fid, user.UserId, delta)
+					// Knowledge: each witness records the player as the perp of
+					// these crimes.
+					subject := knowledge.PlayerSubject(user.UserId)
+					for _, witnessInstId := range witnesses {
+						w := mobs.GetInstance(witnessInstId)
+						if w == nil {
+							continue
+						}
+						for _, crimeId := range crimeIds {
+							knowledge.RecordCrimeWitnessed(int(w.MobId), subject, crimeId)
+						}
+						knowledge.RecordMet(int(w.MobId), subject, room.RoomId,
+							knowledge.SourceWitnessed)
+					}
 				}
 			}
 		}
