@@ -21,9 +21,14 @@ import (
  */
 
 func Bounty(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+	isAdmin := user.HasRolePermission("bounty", true)
 	args := strings.Fields(rest)
 	if len(args) == 0 {
-		bountyAdminUsage(user)
+		if isAdmin {
+			bountyAdminUsage(user)
+		} else {
+			bountyUserUsage(user)
+		}
 		return true, nil
 	}
 	switch strings.ToLower(args[0]) {
@@ -31,16 +36,28 @@ func Bounty(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return bountyAdminList(args[1:], user)
 	case "show":
 		return bountyAdminShow(args[1:], user)
-	case "declare":
-		return bountyAdminDeclare(args[1:], user)
-	case "withdraw":
-		return bountyAdminWithdraw(args[1:], user)
-	case "prune-expired":
-		return bountyAdminPrune(user)
+	case "declare", "withdraw", "prune-expired":
+		if !isAdmin {
+			user.SendText("That subcommand is admin-only.\r\n")
+			return true, nil
+		}
+		switch strings.ToLower(args[0]) {
+		case "declare":
+			return bountyAdminDeclare(args[1:], user)
+		case "withdraw":
+			return bountyAdminWithdraw(args[1:], user)
+		case "prune-expired":
+			return bountyAdminPrune(user)
+		}
 	default:
-		bountyAdminUsage(user)
+		if isAdmin {
+			bountyAdminUsage(user)
+		} else {
+			bountyUserUsage(user)
+		}
 		return true, nil
 	}
+	return true, nil
 }
 
 func bountyAdminUsage(user *users.UserRecord) {
@@ -50,7 +67,7 @@ func bountyAdminUsage(user *users.UserRecord) {
 	}
 	user.SendText(
 		"Usage:\r\n" +
-			"  bounty list [--all]\r\n" +
+			"  bounty list [--all] [filter]\r\n" +
 			"  bounty show <id>\r\n" +
 			"  bounty declare <issuer-spec> <target-spec> [--gold N] [--rep N] [--expiry-rounds N] [--reason \"...\"]\r\n" +
 			"  bounty withdraw <id>\r\n" +
@@ -60,11 +77,30 @@ func bountyAdminUsage(user *users.UserRecord) {
 	)
 }
 
+func bountyUserUsage(user *users.UserRecord) {
+	if out, err := templates.Process("help/bounty", nil, user.UserId); err == nil && strings.TrimSpace(out) != "" {
+		user.SendText(out)
+		return
+	}
+	user.SendText(
+		"Usage:\r\n" +
+			"  bounty list [filter]\r\n" +
+			"  bounty show <id>\r\n" +
+			"\r\n" +
+			"Filter: mob, player, or a faction name (e.g. thornwall_guards)\r\n",
+	)
+}
+
 func bountyAdminList(args []string, user *users.UserRecord) (bool, error) {
 	includeNonOpen := false
+	filterStr := ""
 	for _, a := range args {
 		if a == "--all" {
 			includeNonOpen = true
+			continue
+		}
+		if filterStr == "" && !strings.HasPrefix(a, "--") {
+			filterStr = strings.ToLower(a)
 		}
 	}
 	var rows []*bounties.Bounty
@@ -72,6 +108,22 @@ func bountyAdminList(args []string, user *users.UserRecord) (bool, error) {
 		rows = bounties.AllRows()
 	} else {
 		rows = bounties.AllOpen()
+	}
+	if filterStr != "" {
+		filtered := make([]*bounties.Bounty, 0, len(rows))
+		for _, r := range rows {
+			switch filterStr {
+			case "mob", "player":
+				if string(r.Target.Type) == filterStr {
+					filtered = append(filtered, r)
+				}
+			default:
+				if r.Issuer.Type == bounties.IssuerFaction && r.Issuer.Id == filterStr {
+					filtered = append(filtered, r)
+				}
+			}
+		}
+		rows = filtered
 	}
 	if len(rows) == 0 {
 		user.SendText("No bounties.\r\n")
@@ -98,7 +150,11 @@ func bountyAdminList(args []string, user *users.UserRecord) (bool, error) {
 
 func bountyAdminShow(args []string, user *users.UserRecord) (bool, error) {
 	if len(args) < 1 {
-		bountyAdminUsage(user)
+		if user.HasRolePermission("bounty", true) {
+			bountyAdminUsage(user)
+		} else {
+			bountyUserUsage(user)
+		}
 		return true, nil
 	}
 	id, err := strconv.Atoi(args[0])
