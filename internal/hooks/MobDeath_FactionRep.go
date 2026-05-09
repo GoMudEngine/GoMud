@@ -5,6 +5,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/crimes"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/factions"
+	"github.com/GoMudEngine/GoMud/internal/knowledge"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -90,6 +91,7 @@ func MobDeathFactionRep(e events.Event) events.ListenerReturn {
 						// Pay the incremental difference (assault already paid).
 						factions.BumpRep(fid, userId, deltaMurder-deltaAssault)
 					}
+					writeKnowledgeForWitnesses(witnesses, perp, []int{assault.Id}, evt.RoomId)
 				} else if assault.HadExternalWitness {
 					// Case B: assault was identified, kill was not witnessed.
 					// Preserve the existing perp; no new rep impact.
@@ -97,6 +99,9 @@ func MobDeathFactionRep(e events.Event) events.ListenerReturn {
 						crimes.Perpetrator{}, // ignored: preserveExistingPerp=true
 						evt.InstanceId, evt.RoomId, spec.Zone, true)
 					// No additional rep bump.
+					// Use the assault's preserved player perp for knowledge writes,
+					// not the current (possibly unknown) perp variable.
+					writeKnowledgeForWitnesses(witnesses, assault.Perpetrator, []int{assault.Id}, evt.RoomId)
 				} else {
 					// Case C: lone assault → lone murder. Nobody survives
 					// to identify the killer. Set perp=unknown and refund
@@ -106,6 +111,9 @@ func MobDeathFactionRep(e events.Event) events.ListenerReturn {
 						evt.InstanceId, evt.RoomId, spec.Zone, false)
 					// deltaAssault is negative (e.g. -10); negate to refund.
 					factions.BumpRep(fid, userId, -deltaAssault)
+					// perp.Type == PerpUnknown here; writeKnowledgeForWitnesses
+					// will no-op via its early-return guard.
+					writeKnowledgeForWitnesses(witnesses, perp, []int{assault.Id}, evt.RoomId)
 				}
 				continue
 			}
@@ -113,15 +121,37 @@ func MobDeathFactionRep(e events.Event) events.ListenerReturn {
 			// Fresh murder record (no prior assault row).
 			// hadExternalWitness is false — this is a direct murder,
 			// not an assault-that-escalated.
-			crimes.Record([]string{fid}, crimes.KindMurder, perp,
+			crimeIds := crimes.Record([]string{fid}, crimes.KindMurder, perp,
 				spec, evt.InstanceId, evt.RoomId, spec.Zone, false)
 			if perp.Type == crimes.PerpPlayer {
 				factions.BumpRep(fid, userId, deltaMurder)
 			}
+			writeKnowledgeForWitnesses(witnesses, perp, crimeIds, evt.RoomId)
 		}
 	}
 
 	return events.Continue
+}
+
+// writeKnowledgeForWitnesses writes a knowledge record for each witness
+// linking them to the given crime IDs and the player perp. Skips when
+// perp is not a player (e.g. PerpUnknown in Case C).
+func writeKnowledgeForWitnesses(witnesses []int, perp crimes.Perpetrator,
+	crimeIds []int, roomId int) {
+	if perp.Type != crimes.PerpPlayer {
+		return
+	}
+	subject := knowledge.PlayerSubject(perp.Id)
+	for _, witnessInstId := range witnesses {
+		w := mobs.GetInstance(witnessInstId)
+		if w == nil {
+			continue
+		}
+		for _, crimeId := range crimeIds {
+			knowledge.RecordCrimeWitnessed(int(w.MobId), subject, crimeId)
+		}
+		knowledge.RecordMet(int(w.MobId), subject, roomId, knowledge.SourceWitnessed)
+	}
 }
 
 // buildKillerSet returns the set of userIds who participated in the
