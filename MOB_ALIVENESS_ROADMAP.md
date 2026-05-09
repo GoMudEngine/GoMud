@@ -80,7 +80,7 @@ should always agree.
 | 1.3 | Substrate | Crime/wanted state | M | 1.2 | Done |
 | 1.4 | Substrate | NPC knowledge model | M | 1.1 | Done |
 | 1.5 | Substrate | Bounty state | S | 1.2 | Done |
-| 1.6 | Substrate | NPC-to-NPC relationships | M | — | Not started |
+| 1.6 | Substrate | NPC-to-NPC relationships | M | — | Done |
 | 1.7 | Substrate | World-model facts | M | 1.4 | Not started |
 | 2.1 | Tactical | Mob `buy` command | M | — | Not started |
 | 2.2 | Tactical | Item-comparison primitive | M | — | Not started |
@@ -116,7 +116,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 5 / 40 done • 0 in progress • 35 not started.
+**Roll-up:** 6 / 40 done • 0 in progress • 34 not started.
 
 ---
 
@@ -175,13 +175,14 @@ State primitives the rest of the layers read from and write to.
 - **Shipped:** `internal/bounties/` package storing per-bounty registry at `_datafiles/world/dogmud/bounties.yaml` (gitignored). Polymorphic target via `knowledge.Subject` (player or mob template); three issuer types (faction, quest, npc). Reward auto-computes from target statpool — `gold = floor(statpool × BountyGoldDefaultMultiplier)` (default 0.5, floor 50) and `rep = max(1, floor(statpool / 100))`, both stored on the row at declaration with declarer override available via `DeclareOpts`. Auto-claim hook `MobDeath_BountyClaim` fires on mob death — highest-damager wins (companion damage already rolls up via `combat.go`'s charmed-userId path), gold transferred to character, faction rep bumped when issuer is a faction. Quest engine `declare_bounty` action wires the substrate into quest content. Single `bounty` command with role-gated subcommands: list/show available to all players (filter by mob/player/<faction-slug>), declare/withdraw/prune-expired admin-only. Admin helpfile + player helpfile. Two physical bounty boards as flavor nouns (Thornwall Guard Barracks 473, Stillwater Constabulary 4110) — discovery via `look bounty board`; data flow via the universal command. Withdraw + expiry semantics; non-open rows preserved for audit. Spec at `docs/superpowers/specs/2026-05-09-mob-aliveness-1.5-bounty-state-design.md`, plan at `docs/superpowers/plans/2026-05-09-mob-aliveness-1.5-bounty-state.md`.
 
 ### 1.6 NPC-to-NPC relationships
-**Status:** Not started • **Size:** M
+**Status:** Done (2026-05-09) • **Size:** M
 
 - **Goal:** Kinship and friendship graph between NPCs (Voss is Lars's brother; Marta is the smith's wife).
 - **In:** Relationship types (family, friend, rival, lover, employer/employee), per-NPC relationship list, query API, mutation API.
 - **Out:** Relationship change as a player-facing mechanic (a romance system is way out of scope).
 - **Depends on:** —
 - **Why:** Killing one NPC seeds revenge goals in their kin. The world starts to feel woven, not flat.
+- **Shipped:** `internal/relationships/` package storing the in-memory mob-to-mob relationship graph. Source of truth: each mob template's YAML gains an optional `relationships:` field with `to`, `type`, `subtype`. Six types (family, friend, rival, lover, employer, employee); engine auto-mirrors symmetric (same-type reverse) and asymmetric (employer ↔ employee) at load time. Subtype is per-side flavor. Permissive validation — unknown ids, self-edges, unknown types, conflicts all warn-not-panic. Public API: `RelationsOf`, `RelationsOfType`, `KinOf`, `AlliesOf`, `RivalsOf`, `RelationsBetween`, `AreRelated`, `EmployerOf`, `EmployedBy`, `AllRelations`, plus mutation `Add`/`Remove`/`ChangeType` (in-memory only v1; persistence overlay deferred). Loader hook in `mobs.LoadDataFiles` flattens mob templates into `LoadFromMobs(edges, validateMobId)` post-load. Admin command `relationship show/between/add/remove/list` + helpfile. **Backfilled `context.md` for chunks 1.1–1.5** plus authored fresh one for 1.6, per the new aliveness roadmap maintenance rule. Spec at `docs/superpowers/specs/2026-05-09-mob-aliveness-1.6-npc-relationships-design.md`, plan at `docs/superpowers/plans/2026-05-09-mob-aliveness-1.6-npc-relationships.md`.
 
 ### 1.7 World-model facts
 **Status:** Not started • **Size:** M
