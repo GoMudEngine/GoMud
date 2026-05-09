@@ -2,6 +2,10 @@ package bounties
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/knowledge"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -51,4 +55,108 @@ func computeDefaultRep(statpool int) int {
 		return 1
 	}
 	return r
+}
+
+// DeclareOpts carries optional overrides for Declare. Zero values mean
+// "use auto-computed defaults".
+type DeclareOpts struct {
+	GoldOverride   int
+	RepOverride    int
+	DeclaredReason string
+}
+
+// Test seam: replace statpool lookup in unit tests so no real mob/user
+// fixtures are needed.
+var statpoolForTest func(target knowledge.Subject) int
+
+// statpoolFor resolves the target's effective statpool.
+//
+//   - Mob targets: uses spec.StatPool (the pre-spawn point budget).
+//   - Player targets: sums ValueAdj across all 6 stats for online users.
+//     Offline player lookup is not supported in v1; returns 0, which causes
+//     Declare to fall back to the gold floor and rep floor of 1.
+func statpoolFor(target knowledge.Subject) int {
+	if statpoolForTest != nil {
+		return statpoolForTest(target)
+	}
+	switch target.Type {
+	case knowledge.SubjectMob:
+		spec := mobs.GetMobSpec(mobs.MobId(target.Id))
+		if spec == nil {
+			return 0
+		}
+		return spec.StatPool
+	case knowledge.SubjectPlayer:
+		// Online lookup only. If the player is offline, returns 0 so that
+		// the gold floor (BountyGoldFloor) and rep floor (1) still apply.
+		u := users.GetByUserId(target.Id)
+		if u == nil {
+			return 0
+		}
+		s := u.Character.Stats
+		return s.Strength.ValueAdj +
+			s.Dexterity.ValueAdj +
+			s.Perception.ValueAdj +
+			s.Vitality.ValueAdj +
+			s.Willpower.ValueAdj +
+			s.Charisma.ValueAdj
+	}
+	return 0
+}
+
+// Declare creates a new bounty and persists it. Returns the assigned bounty
+// ID. Rewards are auto-computed from the target's statpool unless overridden
+// via DeclareOpts.
+func Declare(issuer Issuer, target knowledge.Subject, condition Condition,
+	expiryRound uint64, opts DeclareOpts) (int, error) {
+
+	r := loadOrLazyInit()
+	now := currentRound()
+	statpool := statpoolFor(target)
+
+	gold := opts.GoldOverride
+	if gold == 0 {
+		gold = computeDefaultGold(statpool)
+	}
+	rep := opts.RepOverride
+	if rep == 0 {
+		rep = computeDefaultRep(statpool)
+	}
+
+	registryMu.Lock()
+	id := r.NextId
+	r.NextId++
+	b := &Bounty{
+		Id:             id,
+		Issuer:         issuer,
+		Target:         target,
+		GoldReward:     gold,
+		RepReward:      rep,
+		Condition:      condition,
+		DeclaredRound:  now,
+		ExpiryRound:    expiryRound,
+		Status:         StatusOpen,
+		DeclaredReason: opts.DeclaredReason,
+	}
+	r.Bounties = append(r.Bounties, b)
+	registryMu.Unlock()
+
+	if err := saveRegistry(r); err != nil {
+		mudlog.Warn("bounties.Declare: save failed", "id", id, "error", err)
+		return id, err
+	}
+	return id, nil
+}
+
+// Get returns the bounty with the given ID, or nil if not found.
+func Get(bountyId int) *Bounty {
+	r := loadOrLazyInit()
+	registryMu.RLock()
+	defer registryMu.RUnlock()
+	for _, b := range r.Bounties {
+		if b.Id == bountyId {
+			return b
+		}
+	}
+	return nil
 }
