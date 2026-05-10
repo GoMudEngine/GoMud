@@ -134,3 +134,51 @@ func TestRegistryReads(t *testing.T) {
 		t.Errorf("travel tag (withdrawn): %d, want 0 (active only)", got)
 	}
 }
+
+func TestRecordHeardEvent_BoundedFIFO(t *testing.T) {
+	resetCaches()
+	defer func() { roundForTest = nil; heardEventsMaxForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+	heardEventsMaxForTest = func() int { return 4 }
+
+	for i := uint64(1); i <= 6; i++ {
+		RecordHeardEvent(1141, i)
+	}
+	a := loadOrLazyInitAwareness(1141, "")
+	if len(a.HeardEvents) != 4 {
+		t.Fatalf("expected 4 entries, got %d", len(a.HeardEvents))
+	}
+	want := []uint64{3, 4, 5, 6}
+	for i, e := range a.HeardEvents {
+		if e != want[i] {
+			t.Errorf("entry %d: got %d, want %d", i, e, want[i])
+		}
+	}
+}
+
+func TestHeardEvent(t *testing.T) {
+	resetCaches()
+	defer func() { roundForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+
+	if HeardEvent(1142, 42) {
+		t.Errorf("HeardEvent should be false for unknown")
+	}
+	RecordHeardEvent(1142, 42)
+	if !HeardEvent(1142, 42) {
+		t.Errorf("HeardEvent should be true after Record")
+	}
+}
+
+func TestRecordHeardEvent_DedupSameId(t *testing.T) {
+	resetCaches()
+	defer func() { roundForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+
+	RecordHeardEvent(1143, 42)
+	RecordHeardEvent(1143, 42) // duplicate
+	a := loadOrLazyInitAwareness(1143, "")
+	if len(a.HeardEvents) != 1 {
+		t.Errorf("duplicate event id should dedupe, got %d", len(a.HeardEvents))
+	}
+}

@@ -216,3 +216,60 @@ func AllRows() []*Fact {
 	copy(out, r.Facts)
 	return out
 }
+
+// Test seam for bounded FIFO cap.
+var heardEventsMaxForTest func() int
+
+func effectiveHeardEventsMax() int {
+	if heardEventsMaxForTest != nil {
+		return heardEventsMaxForTest()
+	}
+	return heardEventsMax()
+}
+
+// RecordHeardEvent appends an event id to the observer's heard_events
+// FIFO. Bounded; oldest entries fall off when over cap. Dedups: if
+// the eventId is already in the list, no-op.
+func RecordHeardEvent(observerMobId int, eventId uint64) {
+	a := loadOrLazyInitAwareness(observerMobId, observerNameFor(observerMobId))
+	now := currentRound()
+	maxLog := effectiveHeardEventsMax()
+
+	awarenessCacheMu.Lock()
+	for _, e := range a.HeardEvents {
+		if e == eventId {
+			awarenessCacheMu.Unlock()
+			return
+		}
+	}
+	a.HeardEvents = append(a.HeardEvents, eventId)
+	if maxLog > 0 && len(a.HeardEvents) > maxLog {
+		a.HeardEvents = a.HeardEvents[len(a.HeardEvents)-maxLog:]
+	}
+	a.LastUpdatedRound = now
+	awarenessCacheMu.Unlock()
+
+	if err := saveAwareness(a); err != nil {
+		mudlog.Warn("facts.RecordHeardEvent: save failed", "observer", observerMobId, "error", err)
+	}
+}
+
+// HeardEvent reports whether the observer has gossiped about this event.
+func HeardEvent(observerMobId int, eventId uint64) bool {
+	a := loadOrLazyInitAwareness(observerMobId, observerNameFor(observerMobId))
+	awarenessCacheMu.RLock()
+	defer awarenessCacheMu.RUnlock()
+	for _, e := range a.HeardEvents {
+		if e == eventId {
+			return true
+		}
+	}
+	return false
+}
+
+// observerNameFor looks up the mob template name for filename
+// purposes. Stub returns empty string by default; T11 wires it
+// to a real lookup.
+var observerNameFor = func(mobId int) string {
+	return ""
+}
