@@ -20,7 +20,7 @@ func currentRound() uint64 {
 }
 
 func heardEventsMax() int {
-	return configs.GetBalanceConfig().FactsHeardEventsMax
+	return int(configs.GetBalanceConfig().FactsHeardEventsMax)
 }
 
 type DeclareOpts struct {
@@ -152,6 +152,21 @@ func WithdrawAllBoundTo(mobTemplateId int) int {
 	}
 	r := loadOrLazyInitRegistry()
 
+	// Cheap RLock scan — bail out early if nothing matches.
+	registryMu.RLock()
+	hasMatch := false
+	for _, f := range r.Facts {
+		if f.Status == StatusActive && f.WithdrawOnRespawnOf == mobTemplateId {
+			hasMatch = true
+			break
+		}
+	}
+	registryMu.RUnlock()
+	if !hasMatch {
+		return 0
+	}
+
+	// Re-scan under write lock and apply.
 	registryMu.Lock()
 	count := 0
 	for _, f := range r.Facts {
@@ -419,6 +434,10 @@ func LoadFromMobs(seeds []MobAwarenessSeed, nameLookup func(mobId int) string) {
 			continue
 		}
 		for _, factId := range s.KnowsFacts {
+			if GetFact(factId) == nil {
+				mudlog.Warn("facts.LoadFromMobs: unknown fact id in knows_facts; recording anyway",
+					"mobId", s.MobId, "factId", factId)
+			}
 			RecordKnowsFact(s.MobId, factId, SourceWitnessed)
 		}
 	}

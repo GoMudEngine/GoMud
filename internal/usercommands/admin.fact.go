@@ -187,8 +187,9 @@ func factDeclare(rest string, user *users.UserRecord) (bool, error) {
 		case "--expiry-rounds":
 			i++
 			if i < len(args) {
-				if v, err := strconv.ParseUint(args[i], 10, 64); err == nil {
+				if v, err := strconv.ParseUint(args[i], 10, 64); err == nil && v > 0 {
 					// Convert relative rounds to absolute expiry.
+					// v == 0 means "never expire" — leave ExpiryRound as 0.
 					opts.ExpiryRound = util.GetRoundCount() + v
 				}
 			}

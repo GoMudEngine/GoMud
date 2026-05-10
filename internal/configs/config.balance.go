@@ -421,7 +421,7 @@ type Balance struct {
 	BountyGoldFloor             ConfigInt   `yaml:"BountyGoldFloor"`             // Minimum gold floor for any bounty (default 50)
 
 	// ── FACTS & EVENTS ──────────────────────────────────────────────────────
-	FactsHeardEventsMax int `yaml:"facts_heard_events_max"` // Max facts_heard events per mobs instance (default 32)
+	FactsHeardEventsMax ConfigInt `yaml:"FactsHeardEventsMax"` // Max facts_heard events per mobs instance (default 32)
 }
 
 func (b *Balance) Validate() {

@@ -35,7 +35,7 @@ The `internal/facts` package maintains a central registry of world facts and per
 - **AllRows() \[\]\*Fact**: Returns every fact regardless of status. Admin/debug only.
 
 ### Awareness Write API
-- **RecordHeardEvent(observerMobId int, eventId uint64)**: Appends an event id to the observer's heard_events FIFO. Bounded to `FactsHeardEventsMax` (default 20); oldest entries fall off when over cap. Deduplicates: no-op if eventId is already in the list. Lazy-loads or creates observer awareness. Persists synchronously.
+- **RecordHeardEvent(observerMobId int, eventId uint64)**: Appends an event id to the observer's heard_events FIFO. Bounded to `FactsHeardEventsMax` (default 32); oldest entries fall off when over cap. Deduplicates: no-op if eventId is already in the list. Lazy-loads or creates observer awareness. Persists synchronously.
 - **RecordKnowsFact(observerMobId int, factId string, source Source)**: Records that the observer knows a fact and how they learned it. Creates observer record if missing. Idempotent — if the factId is already in the known list, no-op (existing Source and LearnedRound are preserved). Stamps `LastUpdatedRound` on change. Persists synchronously.
 - **ForgetFact(observerMobId int, factId string)**: Removes a single fact from the observer's known list. Idempotent — no-op if the fact was not known. Stamps `LastUpdatedRound`. Persists synchronously.
 - **ForgetAll(observerMobId int)**: Clears all awareness (heard events + known facts) for an observer. Stamps `LastUpdatedRound`. Persists synchronously.

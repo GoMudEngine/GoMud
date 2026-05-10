@@ -28,7 +28,7 @@ func TestMain(m *testing.M) {
 	}()
 
 	// Create the facts directory structure
-	factsDir := filepath.Join(tmp, "world", "dogmud", "facts.awareness")
+	factsDir := filepath.Join(tmp, "facts.awareness")
 	if err := os.MkdirAll(factsDir, 0o755); err != nil {
 		os.Exit(1)
 	}

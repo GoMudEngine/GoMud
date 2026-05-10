@@ -22,12 +22,12 @@ var (
 )
 
 func registryFilePath() string {
-	return filepath.Join(string(configs.GetFilePathsConfig().DataFiles), "world", "dogmud", "facts.yaml")
+	return filepath.Join(string(configs.GetFilePathsConfig().DataFiles), "facts.yaml")
 }
 
 func awarenessFilePath(mobId int, mobName string) string {
 	return filepath.Join(string(configs.GetFilePathsConfig().DataFiles),
-		"world", "dogmud", "facts.awareness",
+		"facts.awareness",
 		fmt.Sprintf("%d-%s.yaml", mobId, util.ConvertForFilename(mobName)))
 }
 
@@ -154,6 +154,17 @@ func loadOrLazyInitRegistry() *Registry {
 	registryMu.RUnlock()
 
 	if r := loadRegistryFromDisk(); r != nil {
+		// Normalize hand-edited entries: empty status defaults to active,
+		// zero declared_round filled in with current round at first load.
+		now := currentRound()
+		for _, f := range r.Facts {
+			if f.Status == "" {
+				f.Status = StatusActive
+			}
+			if f.DeclaredRound == 0 {
+				f.DeclaredRound = now
+			}
+		}
 		registryMu.Lock()
 		if registry != nil {
 			cached := registry

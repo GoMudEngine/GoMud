@@ -370,7 +370,7 @@ func (b *Balance) validateMisc() {
 	}
 
 	// ── FACTS & EVENTS ──────────────────────────────────────────────────────
-	if b.FactsHeardEventsMax == 0 {
+	if b.FactsHeardEventsMax <= 0 {
 		b.FactsHeardEventsMax = 32
 	}
 }
