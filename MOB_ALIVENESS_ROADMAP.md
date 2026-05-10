@@ -81,7 +81,7 @@ should always agree.
 | 1.4 | Substrate | NPC knowledge model | M | 1.1 | Done |
 | 1.5 | Substrate | Bounty state | S | 1.2 | Done |
 | 1.6 | Substrate | NPC-to-NPC relationships | M | — | Done |
-| 1.7 | Substrate | World-model facts | M | 1.4 | Not started |
+| 1.7 | Substrate | World-model facts | M | 1.4 | Done |
 | 2.1 | Tactical | Mob `buy` command | M | — | Not started |
 | 2.2 | Tactical | Item-comparison primitive | M | — | Not started |
 | 2.3 | Tactical | Equip-if-better behavior | S | 2.2 | Not started |
@@ -116,7 +116,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 6 / 40 done • 0 in progress • 34 not started.
+**Roll-up:** 7 / 40 done • 0 in progress • 33 not started.
 
 ---
 
@@ -185,13 +185,16 @@ State primitives the rest of the layers read from and write to.
 - **Shipped:** `internal/relationships/` package storing the in-memory mob-to-mob relationship graph. Source of truth: each mob template's YAML gains an optional `relationships:` field with `to`, `type`, `subtype`. Six types (family, friend, rival, lover, employer, employee); engine auto-mirrors symmetric (same-type reverse) and asymmetric (employer ↔ employee) at load time. Subtype is per-side flavor. Permissive validation — unknown ids, self-edges, unknown types, conflicts all warn-not-panic. Public API: `RelationsOf`, `RelationsOfType`, `KinOf`, `AlliesOf`, `RivalsOf`, `RelationsBetween`, `AreRelated`, `EmployerOf`, `EmployedBy`, `AllRelations`, plus mutation `Add`/`Remove`/`ChangeType` (in-memory only v1; persistence overlay deferred). Loader hook in `mobs.LoadDataFiles` flattens mob templates into `LoadFromMobs(edges, validateMobId)` post-load. Admin command `relationship show/between/add/remove/list` + helpfile. **Backfilled `context.md` for chunks 1.1–1.5** plus authored fresh one for 1.6, per the new aliveness roadmap maintenance rule. Spec at `docs/superpowers/specs/2026-05-09-mob-aliveness-1.6-npc-relationships-design.md`, plan at `docs/superpowers/plans/2026-05-09-mob-aliveness-1.6-npc-relationships.md`.
 
 ### 1.7 World-model facts
-**Status:** Not started • **Size:** M
+**Status:** Done (2026-05-09) • **Size:** M
 
 - **Goal:** Zone-level or world-level facts NPCs can "know" (the bridge collapsed, the bandit camp moved, the king is dead).
 - **In:** Fact schema, fact declaration API, NPC awareness-of-fact tracking (some know, some don't), propagation rules (gossip).
 - **Out:** Dynamic fact generation from world events — start with author-declared facts.
 - **Depends on:** 1.4
 - **Why:** Makes the world feel like it has news, rumors, and shared context — not just isolated NPC bubbles.
+- **Shipped:** `internal/facts/` package storing the standing-fact registry at `_datafiles/world/dogmud/facts.yaml` (committed; empty seed) and per-NPC awareness at `_datafiles/world/dogmud/facts.awareness/{mobId}-{namesimple}.yaml` (gitignored). Awareness store is unified — it holds BOTH heard-event ids (bounded FIFO via `FactsHeardEventsMax`, default 32; replaces the in-memory `recentGossipEvents` TempData) AND known-fact ids (persistent). Three withdraw signals: manual `Withdraw`, time-based `expiry_round` + `PruneExpired` sweep, auto via `withdraw_on_respawn_of` field with new `MobRoomChange_FactsAutoWithdraw` listener. Lazy-filter on read for awareness × registry join. Public API: Declare, Withdraw, Expire, PruneExpired, WithdrawAllBoundTo, GetFact, AllActiveFacts, AllFactsByTag, AllRows, RecordHeardEvent, HeardEvent, RecordKnowsFact, KnowsFact, KnownFactsOf, ForgetFact, ForgetAll, AllForObserver, LoadFromMobs. Mob YAML extension: `knows_facts: [factId, ...]` for inline authoring (chunk 1.6 pattern); seeded into awareness at `mobs.LoadDataFiles` post-load. Worldevents gained `Id uint64` field, atomic-counter assigned at `EmitWorldEvent` time. `buildGossipLine` migrated from `recentGossipEvents` TempData to facts substrate; gossip candidate pool extended with known facts (new `fact-default` template family, 70/30 event/fact split when both pools non-empty). Admin command `fact list/show/declare/withdraw/expire/prune-expired/awareness/teach/forget/forget-all` + helpfile. New package context.md authored. Spec at `docs/superpowers/specs/2026-05-09-mob-aliveness-1.7-world-facts-design.md`, plan at `docs/superpowers/plans/2026-05-09-mob-aliveness-1.7-world-facts.md`.
+
+**Phase 1 substrate complete.** All seven Phase 1 chunks shipped: opinions (1.1), factions (1.2), crimes (1.3), knowledge (1.4), bounties (1.5), relationships (1.6), facts (1.7).
 
 ---
 
