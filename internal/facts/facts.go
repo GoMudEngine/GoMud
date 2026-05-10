@@ -273,3 +273,126 @@ func HeardEvent(observerMobId int, eventId uint64) bool {
 var observerNameFor = func(mobId int) string {
 	return ""
 }
+
+// RecordKnowsFact appends a fact-knowledge entry to the observer's
+// known_facts. Idempotent — if the same factId is already present,
+// no-op (existing entry preserved).
+func RecordKnowsFact(observerMobId int, factId string, source Source) {
+	a := loadOrLazyInitAwareness(observerMobId, observerNameFor(observerMobId))
+	now := currentRound()
+
+	awarenessCacheMu.Lock()
+	for _, fk := range a.KnownFacts {
+		if fk.FactId == factId {
+			awarenessCacheMu.Unlock()
+			return // already known; no change
+		}
+	}
+	a.KnownFacts = append(a.KnownFacts, FactKnowledge{
+		FactId:       factId,
+		Source:       source,
+		LearnedRound: now,
+	})
+	a.LastUpdatedRound = now
+	awarenessCacheMu.Unlock()
+
+	if err := saveAwareness(a); err != nil {
+		mudlog.Warn("facts.RecordKnowsFact: save failed", "observer", observerMobId, "factId", factId, "error", err)
+	}
+}
+
+// KnowsFact reports whether the observer has the given fact in their
+// known list, regardless of fact status.
+func KnowsFact(observerMobId int, factId string) bool {
+	a := loadOrLazyInitAwareness(observerMobId, observerNameFor(observerMobId))
+	awarenessCacheMu.RLock()
+	defer awarenessCacheMu.RUnlock()
+	for _, fk := range a.KnownFacts {
+		if fk.FactId == factId {
+			return true
+		}
+	}
+	return false
+}
+
+type KnownFact struct {
+	Fact         *Fact
+	Source       Source
+	LearnedRound uint64
+}
+
+// KnownFactsOf returns the joined view: walks the observer's known
+// fact ids against the active fact registry. Lazy filter — withdrawn
+// or expired facts are skipped.
+func KnownFactsOf(observerMobId int) []KnownFact {
+	a := loadOrLazyInitAwareness(observerMobId, observerNameFor(observerMobId))
+	awarenessCacheMu.RLock()
+	known := make([]FactKnowledge, len(a.KnownFacts))
+	copy(known, a.KnownFacts)
+	awarenessCacheMu.RUnlock()
+
+	out := make([]KnownFact, 0, len(known))
+	for _, fk := range known {
+		f := GetFact(fk.FactId)
+		if f == nil || f.Status != StatusActive {
+			continue
+		}
+		out = append(out, KnownFact{
+			Fact:         f,
+			Source:       fk.Source,
+			LearnedRound: fk.LearnedRound,
+		})
+	}
+	return out
+}
+
+// ForgetFact drops a single fact awareness entry.
+func ForgetFact(observerMobId int, factId string) {
+	a := loadOrLazyInitAwareness(observerMobId, observerNameFor(observerMobId))
+	now := currentRound()
+
+	awarenessCacheMu.Lock()
+	out := a.KnownFacts[:0]
+	mutated := false
+	for _, fk := range a.KnownFacts {
+		if fk.FactId == factId {
+			mutated = true
+			continue
+		}
+		out = append(out, fk)
+	}
+	a.KnownFacts = out
+	if mutated {
+		a.LastUpdatedRound = now
+	}
+	awarenessCacheMu.Unlock()
+
+	if mutated {
+		if err := saveAwareness(a); err != nil {
+			mudlog.Warn("facts.ForgetFact: save failed", "observer", observerMobId, "factId", factId, "error", err)
+		}
+	}
+}
+
+// ForgetAll drops every awareness entry (heard events + known facts)
+// for an observer.
+func ForgetAll(observerMobId int) {
+	a := loadOrLazyInitAwareness(observerMobId, observerNameFor(observerMobId))
+	now := currentRound()
+
+	awarenessCacheMu.Lock()
+	a.HeardEvents = nil
+	a.KnownFacts = nil
+	a.LastUpdatedRound = now
+	awarenessCacheMu.Unlock()
+
+	if err := saveAwareness(a); err != nil {
+		mudlog.Warn("facts.ForgetAll: save failed", "observer", observerMobId, "error", err)
+	}
+}
+
+// AllForObserver returns the raw awareness record for an observer.
+// Used by admin commands.
+func AllForObserver(observerMobId int) *Awareness {
+	return loadOrLazyInitAwareness(observerMobId, observerNameFor(observerMobId))
+}

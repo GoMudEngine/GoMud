@@ -182,3 +182,86 @@ func TestRecordHeardEvent_DedupSameId(t *testing.T) {
 		t.Errorf("duplicate event id should dedupe, got %d", len(a.HeardEvents))
 	}
 }
+
+func TestRecordKnowsFact(t *testing.T) {
+	resetCaches()
+	defer func() { roundForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+
+	Declare("foo", DeclareOpts{Description: "foo"})
+	RecordKnowsFact(1140, "foo", SourceWitnessed)
+
+	if !KnowsFact(1140, "foo") {
+		t.Errorf("KnowsFact should be true")
+	}
+
+	// Idempotent — re-record doesn't dupe.
+	RecordKnowsFact(1140, "foo", SourceWitnessed)
+	a := loadOrLazyInitAwareness(1140, "")
+	if len(a.KnownFacts) != 1 {
+		t.Errorf("re-record should dedupe: %d entries", len(a.KnownFacts))
+	}
+}
+
+func TestKnownFactsOf_LazyFilter(t *testing.T) {
+	resetCaches()
+	defer func() { roundForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+
+	Declare("a", DeclareOpts{Description: "a"})
+	Declare("b", DeclareOpts{Description: "b"})
+	RecordKnowsFact(1144, "a", SourceWitnessed)
+	RecordKnowsFact(1144, "b", SourceTold)
+
+	got := KnownFactsOf(1144)
+	if len(got) != 2 {
+		t.Errorf("KnownFactsOf: %d, want 2", len(got))
+	}
+
+	// Withdraw 'a'; lazy filter excludes it.
+	Withdraw("a")
+	got = KnownFactsOf(1144)
+	if len(got) != 1 {
+		t.Errorf("after Withdraw: %d, want 1", len(got))
+	}
+	if got[0].Fact.Id != "b" {
+		t.Errorf("expected only b: %v", got)
+	}
+}
+
+func TestForgetFact(t *testing.T) {
+	resetCaches()
+	defer func() { roundForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+
+	Declare("a", DeclareOpts{Description: "a"})
+	Declare("b", DeclareOpts{Description: "b"})
+	RecordKnowsFact(1145, "a", SourceWitnessed)
+	RecordKnowsFact(1145, "b", SourceTold)
+
+	ForgetFact(1145, "a")
+	if KnowsFact(1145, "a") {
+		t.Errorf("a should be forgotten")
+	}
+	if !KnowsFact(1145, "b") {
+		t.Errorf("b should still be known")
+	}
+}
+
+func TestForgetAll(t *testing.T) {
+	resetCaches()
+	defer func() { roundForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+
+	Declare("a", DeclareOpts{Description: "a"})
+	RecordKnowsFact(1146, "a", SourceWitnessed)
+	RecordHeardEvent(1146, 42)
+
+	ForgetAll(1146)
+	if KnowsFact(1146, "a") {
+		t.Errorf("known facts should be cleared")
+	}
+	if HeardEvent(1146, 42) {
+		t.Errorf("heard events should be cleared")
+	}
+}
