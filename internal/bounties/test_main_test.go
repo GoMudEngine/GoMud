@@ -2,7 +2,6 @@ package bounties
 
 import (
 	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -31,8 +30,8 @@ func TestMain(m *testing.M) {
 	}()
 
 	// Create the bounties directory structure
-	boountiesDir := filepath.Join(tmp, "world", "dogmud")
-	if err := os.MkdirAll(boountiesDir, 0o755); err != nil {
+	bountiesDir := tmp
+	if err := os.MkdirAll(bountiesDir, 0o755); err != nil {
 		os.Exit(1)
 	}
 

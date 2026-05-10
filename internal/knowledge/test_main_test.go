@@ -31,7 +31,7 @@ func TestMain(m *testing.M) {
 	}()
 
 	// Create the knowledge directory structure
-	knowledgeDir := filepath.Join(tmp, "world", "dogmud", "knowledge")
+	knowledgeDir := filepath.Join(tmp, "knowledge")
 	if err := os.MkdirAll(knowledgeDir, 0o755); err != nil {
 		os.Exit(1)
 	}

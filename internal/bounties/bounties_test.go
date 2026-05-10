@@ -221,7 +221,7 @@ func TestTryClaim_AlreadyClaimedReturnsFalse(t *testing.T) {
 }
 
 func TestAllRows_IncludesNonOpen(t *testing.T) {
-	bounitiesPath := filepath.Join(string(configs.GetFilePathsConfig().DataFiles), "world", "dogmud", "bounties.yaml")
+	bounitiesPath := filepath.Join(string(configs.GetFilePathsConfig().DataFiles), "bounties.yaml")
 	os.Remove(bounitiesPath)
 	resetCache()
 	defer func() { roundForTest = nil; statpoolForTest = nil }()
@@ -243,7 +243,7 @@ func TestAllRows_IncludesNonOpen(t *testing.T) {
 
 func TestReadAPI(t *testing.T) {
 	// Clean the bounties file to start fresh (other tests accumulate entries)
-	bounitiesPath := filepath.Join(string(configs.GetFilePathsConfig().DataFiles), "world", "dogmud", "bounties.yaml")
+	bounitiesPath := filepath.Join(string(configs.GetFilePathsConfig().DataFiles), "bounties.yaml")
 	os.Remove(bounitiesPath)
 
 	resetCache()

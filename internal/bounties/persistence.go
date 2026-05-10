@@ -17,7 +17,7 @@ var (
 )
 
 func registryFilePath() string {
-	return filepath.Join(string(configs.GetFilePathsConfig().DataFiles), "world", "dogmud", "bounties.yaml")
+	return filepath.Join(string(configs.GetFilePathsConfig().DataFiles), "bounties.yaml")
 }
 
 // saveRegistry serializes the registry under cache RLock to ensure

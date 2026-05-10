@@ -18,7 +18,7 @@ var (
 )
 
 func knowledgeBaseDir() string {
-	return filepath.Join(string(configs.GetFilePathsConfig().DataFiles), "world", "dogmud", "knowledge")
+	return filepath.Join(string(configs.GetFilePathsConfig().DataFiles), "knowledge")
 }
 
 // observerFilePath returns the absolute path for the given observer mob template id.
