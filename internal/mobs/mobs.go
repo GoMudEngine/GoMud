@@ -15,6 +15,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/facts"
 	"github.com/GoMudEngine/GoMud/internal/llm"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
@@ -159,6 +160,7 @@ type Mob struct {
 	lastCommandTurn         uint64           // The last turn a command was scheduled for
 	playersAttacked         map[int]struct{} // all players this mob has attacked at some point
 	Relationships           []RelationshipYAMLEntry `yaml:"relationships,omitempty"` // Authored relationship edges; consumed by relationships.LoadFromMobs at startup.
+	KnowsFacts              []string                `yaml:"knows_facts,omitempty"`   // Fact IDs this mob knows at startup; consumed by facts.LoadFromMobs at startup.
 }
 
 func MobInstanceExists(instanceId int) bool {
@@ -1161,6 +1163,30 @@ func LoadDataFiles() {
 		defer mobsMu.RUnlock()
 		_, ok := mobs[mobId]
 		return ok
+	})
+
+	// Seed per-NPC fact awareness from authored knows_facts: declarations.
+	mobsMu.RLock()
+	factSeeds := make([]facts.MobAwarenessSeed, 0, len(mobs))
+	for id, spec := range mobs {
+		if len(spec.KnowsFacts) == 0 {
+			continue
+		}
+		factSeeds = append(factSeeds, facts.MobAwarenessSeed{
+			MobId:      id,
+			MobName:    spec.Character.Name,
+			KnowsFacts: spec.KnowsFacts,
+		})
+	}
+	mobsMu.RUnlock()
+
+	facts.LoadFromMobs(factSeeds, func(mobId int) string {
+		mobsMu.RLock()
+		defer mobsMu.RUnlock()
+		if spec, ok := mobs[mobId]; ok {
+			return spec.Character.Name
+		}
+		return ""
 	})
 
 }

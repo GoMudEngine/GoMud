@@ -396,3 +396,30 @@ func ForgetAll(observerMobId int) {
 func AllForObserver(observerMobId int) *Awareness {
 	return loadOrLazyInitAwareness(observerMobId, observerNameFor(observerMobId))
 }
+
+// MobAwarenessSeed is the per-mob authoring shape: which facts a
+// given template knows at startup.
+type MobAwarenessSeed struct {
+	MobId      int
+	MobName    string
+	KnowsFacts []string
+}
+
+// LoadFromMobs seeds per-NPC awareness records from authored
+// `knows_facts:` declarations on mob YAMLs. Called by mobs.LoadDataFiles
+// after the mob registry is built. Wires the production observerNameFor
+// to a real lookup function, then walks the seeds.
+func LoadFromMobs(seeds []MobAwarenessSeed, nameLookup func(mobId int) string) {
+	if nameLookup != nil {
+		observerNameFor = nameLookup
+	}
+
+	for _, s := range seeds {
+		if len(s.KnowsFacts) == 0 {
+			continue
+		}
+		for _, factId := range s.KnowsFacts {
+			RecordKnowsFact(s.MobId, factId, SourceWitnessed)
+		}
+	}
+}
