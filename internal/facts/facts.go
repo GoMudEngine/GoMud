@@ -172,3 +172,47 @@ func WithdrawAllBoundTo(mobTemplateId int) int {
 	}
 	return count
 }
+
+// AllActiveFacts returns every fact currently in StatusActive.
+func AllActiveFacts() []*Fact {
+	r := loadOrLazyInitRegistry()
+	registryMu.RLock()
+	defer registryMu.RUnlock()
+	out := make([]*Fact, 0)
+	for _, f := range r.Facts {
+		if f.Status == StatusActive {
+			out = append(out, f)
+		}
+	}
+	return out
+}
+
+// AllFactsByTag returns active facts that include the given tag.
+func AllFactsByTag(tag string) []*Fact {
+	r := loadOrLazyInitRegistry()
+	registryMu.RLock()
+	defer registryMu.RUnlock()
+	out := make([]*Fact, 0)
+	for _, f := range r.Facts {
+		if f.Status != StatusActive {
+			continue
+		}
+		for _, t := range f.Tags {
+			if t == tag {
+				out = append(out, f)
+				break
+			}
+		}
+	}
+	return out
+}
+
+// AllRows returns every fact regardless of status. Admin/debug use.
+func AllRows() []*Fact {
+	r := loadOrLazyInitRegistry()
+	registryMu.RLock()
+	defer registryMu.RUnlock()
+	out := make([]*Fact, len(r.Facts))
+	copy(out, r.Facts)
+	return out
+}

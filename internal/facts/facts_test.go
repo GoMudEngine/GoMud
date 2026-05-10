@@ -107,3 +107,30 @@ func TestWithdrawAllBoundTo(t *testing.T) {
 		t.Errorf("c should be active")
 	}
 }
+
+func TestRegistryReads(t *testing.T) {
+	resetCaches()
+	defer func() { roundForTest = nil }()
+	roundForTest = func() uint64 { return 100 }
+
+	Declare("a", DeclareOpts{Description: "a", Tags: []string{"politics"}})
+	Declare("b", DeclareOpts{Description: "b", Tags: []string{"politics", "war"}})
+	Declare("c", DeclareOpts{Description: "c", Tags: []string{"travel"}})
+	Withdraw("c")
+
+	if got := len(AllActiveFacts()); got != 2 {
+		t.Errorf("AllActiveFacts: %d want 2", got)
+	}
+	if got := len(AllRows()); got != 3 {
+		t.Errorf("AllRows: %d want 3", got)
+	}
+	if got := len(AllFactsByTag("politics")); got != 2 {
+		t.Errorf("politics tag count: %d", got)
+	}
+	if got := len(AllFactsByTag("war")); got != 1 {
+		t.Errorf("war tag count: %d", got)
+	}
+	if got := len(AllFactsByTag("travel")); got != 0 {
+		t.Errorf("travel tag (withdrawn): %d, want 0 (active only)", got)
+	}
+}
