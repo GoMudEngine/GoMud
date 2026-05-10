@@ -1,5 +1,81 @@
 # DOGMud Patch Notes
 
+## 2026-05-09 — Phase 1 substrate complete (chunks 1.6 + 1.7)
+
+Two more aliveness substrate chunks shipped on `feature/mob-aliveness-1.3-crimes`,
+closing out **Phase 1** of the MOB_ALIVENESS_ROADMAP (7 / 40 done).
+Branch carries chunks 1.1–1.7; not yet merged to development.
+
+### 1.6 — NPC-to-NPC Relationships
+
+Mob templates now declare a kinship/friendship/rivalry/lover/employer-
+employee graph inline in their YAML. Engine builds an in-memory
+graph at startup with auto-mirror — symmetric edges (family, friend,
+rival, lover) reverse the same type, asymmetric (employer ↔ employee)
+flip. Subtype is per-side flavor ("brother," "wife," "drinking-companion").
+Permissive validation: bad edges warn-not-panic.
+
+- Public API: `RelationsOf`, `RelationsOfType`, `KinOf`, `AlliesOf`,
+  `RivalsOf`, `RelationsBetween`, `AreRelated`, `EmployerOf`,
+  `EmployedBy`, `AllRelations`, plus mutation `Add` / `Remove` /
+  `ChangeType` (in-memory v1; persistence overlay deferred).
+- Admin command `relationship show / between / add / remove / list`
+  + helpfile.
+- Future consumers: 4.5 reactive goal seeding (revenge), 3.6 NPC↔NPC
+  idle conversation.
+
+Spec at `docs/superpowers/specs/2026-05-09-mob-aliveness-1.6-npc-relationships-design.md`,
+plan at `docs/superpowers/plans/2026-05-09-mob-aliveness-1.6-npc-relationships.md`.
+
+### 1.7 — World-Model Facts
+
+Standing-fact registry plus per-NPC awareness store. The
+`recentGossipEvents` TempData that the gossip pipeline used for
+event dedup is now a persistent on-disk awareness file —
+`heard_events` (bounded FIFO via `FactsHeardEventsMax`, default 32)
+sit alongside `known_facts` in the same `facts.awareness/{mobId}.yaml`.
+`buildGossipLine` was migrated; existing event-only output is
+preserved, and known facts now mix into the gossip candidate pool
+(70% events / 30% facts when both pools are populated).
+
+- Three withdraw signals: manual `Withdraw`, time-based
+  `expiry_round` + `PruneExpired` sweep, auto-withdraw via
+  `withdraw_on_respawn_of` field on the fact (new RoomChange
+  listener fires when the bound mob's instance enters a room).
+- Lazy-filter on read for awareness × registry join — withdrawn /
+  expired facts are skipped without active cleanup.
+- Worldevents got a stable `Id uint64` field (atomic-counter at
+  emit time) so awareness can reference events by id.
+- Mob YAML extension: `knows_facts: [factId, ...]` for inline
+  authoring; seeded into awareness at `mobs.LoadDataFiles`.
+- Admin command `fact list / show / declare / withdraw / expire /
+  prune-expired / awareness / teach / forget / forget-all` +
+  helpfile.
+- New `fact-default` gossip template family ("I heard {description}"
+  / "Word is, {description}" / "They say {description}").
+
+Spec at `docs/superpowers/specs/2026-05-09-mob-aliveness-1.7-world-facts-design.md`,
+plan at `docs/superpowers/plans/2026-05-09-mob-aliveness-1.7-world-facts.md`.
+
+### Backfilled `context.md` for chunks 1.1–1.6
+
+Per a new aliveness-roadmap maintenance rule: every chunk that
+creates a new `internal/<package>/` ships a `context.md` in the
+established DOGMud style. Chunks 1.1–1.5 missed this; chunk 1.6's
+plan included the backfill. Now present:
+`internal/{opinions,factions,crimes,knowledge,bounties,relationships,facts}/context.md`.
+
+### Path-doubling fix for chunks 1.4 / 1.5 / 1.7
+
+Chunk 1.7's review caught that knowledge, bounties, and facts
+packages all added `world/dogmud` to a `DataFiles` config that
+already includes it — runtime data was landing at
+`_datafiles/world/dogmud/world/dogmud/{knowledge,bounties.yaml,facts.yaml}`.
+Same bug class that chunk 1.2 fixed for opinions/factions originally.
+All three packages now use the unwrapped path. No data migration
+required since chunks 1.x are feature-branch only and never reached
+prod.
+
 ## 2026-05-06 — Crafter output routes to shop
 
 Hotfix for a regression where crafter mobs' gear-grade crafts (iron
