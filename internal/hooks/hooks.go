@@ -14,6 +14,7 @@ func RegisterListeners() {
 	events.RegisterListener(events.RoomChange{}, LocationMusicChange)
 	events.RegisterListener(events.RoomChange{}, CleanupEphemeralRooms)
 	events.RegisterListener(events.RoomChange{}, MobRoomChangeKnowledgeObservers)
+	events.RegisterListener(events.RoomChange{}, MobRoomChangeFactsAutoWithdraw)
 
 	// NewRound Listeners
 	events.RegisterListener(events.NewRound{}, InactivePlayers)
