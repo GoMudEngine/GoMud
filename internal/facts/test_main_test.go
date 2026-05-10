@@ -36,7 +36,7 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-// resetCaches wipes the in-memory caches between tests so each test starts clean.
+// resetCaches wipes the in-memory caches and disk files between tests so each test starts clean.
 func resetCaches() {
 	registryMu.Lock()
 	registry = nil
@@ -45,4 +45,7 @@ func resetCaches() {
 	awarenessCacheMu.Lock()
 	awarenessCache = make(map[int]*Awareness)
 	awarenessCacheMu.Unlock()
+
+	// Also remove the registry file from disk so subsequent tests start fresh
+	_ = os.Remove(registryFilePath())
 }
