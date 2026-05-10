@@ -368,4 +368,9 @@ func (b *Balance) validateMisc() {
 	if b.BountyGoldFloor <= 0 {
 		b.BountyGoldFloor = 50
 	}
+
+	// ── FACTS & EVENTS ──────────────────────────────────────────────────────
+	if b.FactsHeardEventsMax == 0 {
+		b.FactsHeardEventsMax = 32
+	}
 }

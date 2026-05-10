@@ -419,6 +419,9 @@ type Balance struct {
 	// ── BOUNTIES ────────────────────────────────────────────────────────────
 	BountyGoldDefaultMultiplier ConfigFloat `yaml:"BountyGoldDefaultMultiplier"` // Multiplier on statpool for default gold reward (default 0.5)
 	BountyGoldFloor             ConfigInt   `yaml:"BountyGoldFloor"`             // Minimum gold floor for any bounty (default 50)
+
+	// ── FACTS & EVENTS ──────────────────────────────────────────────────────
+	FactsHeardEventsMax int `yaml:"facts_heard_events_max"` // Max facts_heard events per mobs instance (default 32)
 }
 
 func (b *Balance) Validate() {
