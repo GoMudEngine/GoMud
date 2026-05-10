@@ -93,6 +93,7 @@ var (
 		`emote`:           {Emote, true, true, false},
 		`equip`:           {Equip, false, false, false}, // Can't equip in combat
 		`faction`:         {Faction, true, true, true},  // Admin only
+		`fact`:            {Fact, true, true, true},     // Admin only
 		`flee`:            {Flee, false, true, false},
 		`forage`:          {Forage, false, false, false}, // Can't forage in combat
 		`gearup`:          {Gearup, false, false, false}, // Can't equip in combat
