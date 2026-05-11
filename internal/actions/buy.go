@@ -440,10 +440,10 @@ func tryPurchaseLegacy(buyer Actor, request string, shopMob *mobs.Mob, shopUser 
 	return BuyResult{Reason: BuyReasonNoMatch}
 }
 
-// effectiveRestock returns the normalizer for pricing calculations.
+// EffectiveRestock returns the normalizer for pricing calculations.
 // Materials use RestockQty; crafted goods (RestockQty==0) use half
 // MaxStock.
-func effectiveRestock(entry *shops.StockEntry) int {
+func EffectiveRestock(entry *shops.StockEntry) int {
 	if entry.RestockQty > 0 {
 		return entry.RestockQty
 	}
@@ -483,7 +483,7 @@ func tryPurchaseFromInventory(buyer Actor, request string, shopMob *mobs.Mob, sh
 			continue
 		}
 		spec := itm.GetSpec()
-		restock := effectiveRestock(entry)
+		restock := EffectiveRestock(entry)
 		basePrice := shops.CalcSellPrice(spec.Value, entry.Current, restock, cfg)
 
 		// Bartering discount — works symmetrically for both buyer types.
