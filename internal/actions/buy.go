@@ -9,9 +9,11 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/shops"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -364,10 +366,15 @@ func Buy(buyer Actor, opts BuyOptions) BuyResult {
 			continue
 		}
 
-		// Restock policy: legacy Character.Shop restocks on every
-		// access; ShopInventory does its own restock internally.
 		shopInv := shops.GetShopInventory(shopMob.Zone, int(shopMob.MobId), shopMob.HomeRoomId)
-		if shopInv == nil {
+		if shopInv != nil {
+			result := tryPurchaseFromInventory(buyer, itemRequest, shopMob, shopInv)
+			if result.Success {
+				postSuccessBookkeeping(buyer, shopMob, nil)
+				result.Requested = 1
+				return result
+			}
+		} else {
 			shopMob.Character.Shop.Restock()
 			result := tryPurchaseLegacy(buyer, itemRequest, shopMob, nil)
 			if result.Success {
@@ -376,7 +383,6 @@ func Buy(buyer Actor, opts BuyOptions) BuyResult {
 				return result
 			}
 		}
-		// Task 6 wires the ShopInventory path here.
 	}
 
 	return BuyResult{Reason: BuyReasonNoMatch, Requested: 1}
@@ -432,6 +438,154 @@ func tryPurchaseLegacy(buyer Actor, request string, shopMob *mobs.Mob, shopUser 
 	// Merc/pet sale types are filtered out at catalog build time;
 	// reaching this branch means malformed data.
 	return BuyResult{Reason: BuyReasonNoMatch}
+}
+
+// effectiveRestock returns the normalizer for pricing calculations.
+// Materials use RestockQty; crafted goods (RestockQty==0) use half
+// MaxStock.
+func effectiveRestock(entry *shops.StockEntry) int {
+	if entry.RestockQty > 0 {
+		return entry.RestockQty
+	}
+	norm := entry.MaxStock / 2
+	if norm < 1 {
+		norm = 1
+	}
+	return norm
+}
+
+// tryPurchaseFromInventory attempts a single purchase against a
+// ShopInventory-backed mob merchant. Buff/merc/pet purchases are
+// NOT handled here — ShopInventory only carries items.
+func tryPurchaseFromInventory(buyer Actor, request string, shopMob *mobs.Mob, shopInv *shops.ShopInventory) BuyResult {
+	cfg := shops.PricingConfigFromBalance()
+
+	type invEntry struct {
+		entry     *shops.StockEntry
+		item      items.Item
+		plainName string
+		price     int
+	}
+
+	var available []invEntry
+	var itemNames []string
+	var itemNamesFancy []string
+
+	char := buyer.GetCharacter()
+
+	for i := range shopInv.Stock {
+		entry := &shopInv.Stock[i]
+		if entry.Current <= 0 {
+			continue
+		}
+		itm := items.New(entry.ItemId)
+		if itm.ItemId == 0 {
+			continue
+		}
+		spec := itm.GetSpec()
+		restock := effectiveRestock(entry)
+		basePrice := shops.CalcSellPrice(spec.Value, entry.Current, restock, cfg)
+
+		// Bartering discount — works symmetrically for both buyer types.
+		barterSkill := char.GetSkillLevel(skills.Bartering)
+		if barterSkill > 0 {
+			discount := float64(barterSkill) / 50.0 * 0.15 // max 15% at skill 50
+			basePrice = shops.ApplyBarterSellDiscount(basePrice, discount)
+		}
+
+		available = append(available, invEntry{
+			entry:     entry,
+			item:      itm,
+			plainName: spec.Name,
+			price:     basePrice,
+		})
+		itemNames = append(itemNames, spec.Name)
+		itemNamesFancy = append(itemNamesFancy, itm.DisplayName())
+	}
+
+	match, closeMatch := util.FindMatchIn(request, itemNames...)
+	if match == "" {
+		match = closeMatch
+	}
+	if match == "" {
+		if shopMob != nil {
+			extraSay := ""
+			if len(itemNamesFancy) > 0 {
+				randSelection := util.Rand(len(itemNamesFancy))
+				extraSay = fmt.Sprintf(` Any interest in this <ansi fg="itemname">%s</ansi>?`, itemNamesFancy[randSelection])
+			}
+			shopMob.Command(`say Sorry, I can't offer that right now.` + extraSay)
+		}
+		return BuyResult{Reason: BuyReasonNoMatch}
+	}
+
+	var matched *invEntry
+	for i := range available {
+		if available[i].plainName == match {
+			matched = &available[i]
+			break
+		}
+	}
+	if matched == nil {
+		return BuyResult{Reason: BuyReasonNoMatch}
+	}
+
+	// Encumbrance gate — same pre-side-effect check as the legacy
+	// path, since ShopInventory bypasses validatePurchase.
+	if char.GetCarriedWeight()+matched.item.GetSpec().Weight > char.CarryCapacity() {
+		if buyer.IsPlayer() {
+			buyer.SendText("You can't carry any more.")
+		}
+		return BuyResult{Reason: BuyReasonOverburdened}
+	}
+
+	if matched.entry.Current <= 0 {
+		if shopMob != nil {
+			shopMob.Command(`say I don't have that for sale right now.`)
+		}
+		return BuyResult{Reason: BuyReasonOutOfStock}
+	}
+
+	if char.Gold < matched.price {
+		if shopMob != nil {
+			shopMob.Command(`say You don't have enough gold for that.`)
+		} else if buyer.IsPlayer() {
+			buyer.SendText(`You don't have enough gold for that.`)
+		}
+		return BuyResult{Reason: BuyReasonInsufficientGold}
+	}
+
+	if shopInv.RemoveStockAtRound(matched.entry.ItemId, 1, util.GetRoundCount()) == 0 {
+		if shopMob != nil {
+			shopMob.Command(`say I don't have that item right now.`)
+		}
+		return BuyResult{Reason: BuyReasonOutOfStock}
+	}
+	shopInv.SalesCount++
+
+	if buyer.IsPlayer() {
+		events.AddToQueue(events.EquipmentChange{
+			UserId:     buyer.GetUserId(),
+			GoldChange: -matched.price,
+		})
+	}
+	char.Gold -= matched.price
+	shopInv.Gold += matched.price
+
+	if err := shops.SaveShop(shopInv.Zone, shopInv.MobId, shopInv.RoomId); err != nil {
+		mudlog.Error("PURCHASE", "msg", "SaveShop failed", "error", err)
+	}
+
+	tradeInString := fmt.Sprintf(`<ansi fg="gold">%d gold</ansi>`, matched.price)
+	if matched.price == 0 {
+		tradeInString = "nothing"
+	}
+
+	executePurchaseItem(buyer, shopMob, nil,
+		characters.ShopItem{ItemId: matched.entry.ItemId},
+		matched.price, tradeInString)
+
+	return BuyResult{Success: true, Purchased: 1, SaleType: "item"}
 }
 
 // executePurchaseItem lands a purchased item in the buyer's
