@@ -1,0 +1,34 @@
+mutationid: incorporeal
+name: Incorporeal
+description: |
+  Your form has slipped between planes — flesh, bone, and sinew
+  giving way to something less tangible. Physical attacks struggle
+  to find purchase against your shifting form, but the same
+  ethereality that protects you weakens your constitution. Worn
+  armor and wielded weapons grow less effective the further you
+  drift from the physical world. At the deepest rank, gear becomes
+  ornamental — passing through your form as if it weren't there.
+rarity: 10
+visual: Their form shimmers and grows translucent, edges blurring as if not entirely present.
+conflicts:
+  - extra-arms
+  - extra-legs
+  - clawed-hands
+  - tail
+  - dense-muscles
+  - hollow-bones
+  - healing-gel
+pros:
+  - type: stat_flat
+    target: willpower
+    value: 5
+  - type: physical_defense_bonus
+    target: ""
+    value: 15
+cons:
+  - type: stat_flat
+    target: vitality
+    value: -10
+  - type: gear_effectiveness_loss
+    target: ""
+    value: 0.25
