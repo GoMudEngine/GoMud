@@ -306,8 +306,7 @@ func ItemValueDelta(char *characters.Character, profile WeightProfile, candidate
 
 		netScore := candidateAt - displacedTotal
 
-		// Encumbrance tier penalty: filled in by Task 6.
-		// For now, no encumbrance adjustment.
+		netScore -= encumbranceTierPenalty(char, displaced, candidate, profile)
 
 		rank := canonicalRank(slot)
 
@@ -325,4 +324,55 @@ func ItemValueDelta(char *characters.Character, profile WeightProfile, candidate
 	}
 
 	return best
+}
+
+// encumbranceTier returns a tier index 0..4 from a
+// carryWeight/capacity ratio. Higher index = worse.
+// Thresholds match userrecord.prompt.go:518-527.
+//   0 = light (ratio ≤ 0.25)
+//   1 = moderate (ratio ≤ 0.50)
+//   2 = heavy (ratio ≤ 0.75)
+//   3 = overburdened (ratio ≤ 1.00)
+//   4 = crushed (ratio > 1.00)
+func encumbranceTier(ratio float64) int {
+	switch {
+	case ratio <= 0.25:
+		return 0
+	case ratio <= 0.50:
+		return 1
+	case ratio <= 0.75:
+		return 2
+	case ratio <= 1.00:
+		return 3
+	default:
+		return 4
+	}
+}
+
+// encumbranceTierPenalty returns the score penalty (positive =
+// worse) for crossing tiers in the swap. If the swap reduces
+// the tier (net less weight), the return is negative (a score
+// bonus). Magnitude = profile.EncumbranceTierPenalty × number
+// of tiers crossed.
+func encumbranceTierPenalty(char *characters.Character, displaced []items.Item, candidate items.Item, profile WeightProfile) float64 {
+	capacity := char.CarryCapacity()
+	if capacity <= 0 {
+		return 0
+	}
+
+	currentWeight := char.GetCarriedWeight()
+	weightDelta := candidate.GetSpec().GetWeight()
+	for _, d := range displaced {
+		weightDelta -= d.GetSpec().GetWeight()
+	}
+	newWeight := currentWeight + weightDelta
+
+	preTier := encumbranceTier(currentWeight / capacity)
+	postTier := encumbranceTier(newWeight / capacity)
+
+	tiersCrossed := postTier - preTier
+	if tiersCrossed == 0 {
+		return 0
+	}
+	return float64(tiersCrossed) * profile.EncumbranceTierPenalty
 }
