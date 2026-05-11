@@ -50,6 +50,8 @@ func ItemValueDelta(char *characters.Character, profile WeightProfile,
   candidate items.Item) SwapDelta
 func IsUpgrade(char *characters.Character, profile WeightProfile,
   candidate items.Item) bool
+func CanEquipFromGive(character *characters.Character, behaviorArchetype string) bool
+func CanScanFloorLoot(character *characters.Character, behaviorArchetype string) bool
 ```
 
 ## Score formula (ItemValue)
@@ -147,8 +149,10 @@ type SwapDelta struct {
 - `internal/mobs/crafter.go` — replaced old `items.IsUpgrade`
   call; crafter mobs decide whether to craft a candidate
   upgrade.
-- Future: `internal/behaviortree/` equip-if-better action
-  (chunk 2.3).
+- `internal/mobcommands/gearup.go` (chunk 2.3) — push-equip
+  path; calls `IsUpgrade` and `CanEquipFromGive`.
+- `internal/hooks/mob_equip_best_floor_item.go` (chunk 2.3) —
+  pull-equip orchestrator; calls `ItemValueDelta`.
 - Future: `internal/economy/` or shopping-decision code path
   (chunk 5.3 equipment-aware shopping).
 
@@ -205,3 +209,42 @@ All 25 equipment slots, matching `characters.Equipment` field names:
   even for complex loadouts.
 - No heap allocations during scoring; all computations are
   floating-point math.
+
+## Equip-If-Better Integration (Chunk 2.3)
+
+Two consumer paths use `IsUpgrade` to drive automatic mob gear
+behavior:
+
+**Push (give-equip):** When a player gives a mob an item,
+`internal/mobcommands/gearup.go` calls `IsUpgrade` per backpack
+item and equips upgrades. Non-combat archetypes and animal
+species silently skip via `CanEquipFromGive` (gates via
+`Species.DisabledSlots` containing "Weapon", and non-combat
+archetype list: `noncombat_passive`, `noncombat_questgiver`,
+`noncombat_shopkeeper`, `prey`, `combat_passive`). Charmed mobs
+(companions, mercs) accept pushes from their owner; displaced
+gear drops to the floor so the owner can reclaim it.
+
+**Pull (idle floor-loot scan):** Every idle tick,
+`internal/hooks/MobIdle_HandleIdleMobs.go` calls
+`hooks.EquipBestFloorItem(mob, room)` (lives in the `hooks`
+package — see import-cycle note below). That function scans
+`room.Items`, scores each via `ItemValueDelta`, and equips the
+best positive-scoring upgrade. Combat-state gated. Charmed mobs
+are additionally excluded via `CanScanFloorLoot` (owner has
+dibs on floor loot).
+
+**Incorporeal handling (chunk 2.2a):** Incorporeal mobs are handled
+automatically: their gear scores 0 via
+`mutations.GearEffectivenessMultiplier`, so `IsUpgrade` returns
+false and no swap occurs. No special skip path is needed at the
+eligibility-gate layer.
+
+**Import-cycle note:** The gate helpers (`CanEquipFromGive`,
+`CanScanFloorLoot`) take `(*characters.Character, string)`
+rather than `(*mobs.Mob)` because `mobs` already imports
+`itemvalue` (via `internal/mobs/crafter.go`). For the same
+reason, `EquipBestFloorItem` lives in `internal/hooks/` rather
+than here — it needs `*rooms.Room` (which transitively imports
+`mobs`), and that would close the cycle. Callers pass
+`&mob.Character, mob.BehaviorArchetype`.
