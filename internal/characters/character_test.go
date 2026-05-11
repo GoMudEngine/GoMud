@@ -2496,6 +2496,33 @@ func TestGetConvictionMitigation(t *testing.T) {
 	}
 }
 
+func TestGetPhysicalMitigation_NoIncorporeal_Unchanged(t *testing.T) {
+	c := New()
+	// Empty char (no mutations, no equipment) has no mitigation.
+	got := c.GetPhysicalMitigation()
+	if got != 0.0 {
+		t.Errorf("empty character physical mitigation = %f, want 0.0", got)
+	}
+}
+
+func TestGetMagicalMitigation_NoIncorporeal_Unchanged(t *testing.T) {
+	c := New()
+	// Empty char (no mutations, no equipment) has no mitigation.
+	got := c.GetMagicalMitigation()
+	if got != 0.0 {
+		t.Errorf("empty character magical mitigation = %f, want 0.0", got)
+	}
+}
+
+func TestGetConvictionMitigation_NoIncorporeal_Unchanged(t *testing.T) {
+	c := New()
+	// Empty char (no mutations, no equipment) has no mitigation.
+	got := c.GetConvictionMitigation()
+	if got != 0.0 {
+		t.Errorf("empty character conviction mitigation = %f, want 0.0", got)
+	}
+}
+
 func TestGetDefenseScore(t *testing.T) {
 	t.Run("dodge — dex + unarmed skill", func(t *testing.T) {
 		c := New()
