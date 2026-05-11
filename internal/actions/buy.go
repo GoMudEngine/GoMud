@@ -2,7 +2,6 @@ package actions
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
@@ -10,7 +9,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -336,11 +337,204 @@ func Buy(buyer Actor, opts BuyOptions) BuyResult {
 		return BuyResult{Reason: BuyReasonNoMerchant, Requested: 1}
 	}
 
-	// Task 4 and onwards: per-merchant purchase loop.
-	_ = itemRequest
-	_ = targetUserId
-	_ = targetMobInstanceId
-	_ = strconv.Atoi // placeholder until Task 8
+	// Iterate merchants — players first, then mobs.
+	for _, uid := range merchantPlayers {
+		if targetUserId > 0 && uid != targetUserId {
+			continue
+		}
+		shopUser := users.GetByUserId(uid)
+		if shopUser == nil {
+			continue
+		}
+
+		result := tryPurchaseLegacy(buyer, itemRequest, nil, shopUser)
+		if result.Success {
+			postSuccessBookkeeping(buyer, nil, shopUser)
+			result.Requested = 1
+			return result
+		}
+	}
+
+	for _, miid := range merchantMobs {
+		if targetMobInstanceId > 0 && miid != targetMobInstanceId {
+			continue
+		}
+		shopMob := mobs.GetInstance(miid)
+		if shopMob == nil {
+			continue
+		}
+
+		// Restock policy: legacy Character.Shop restocks on every
+		// access; ShopInventory does its own restock internally.
+		shopInv := shops.GetShopInventory(shopMob.Zone, int(shopMob.MobId), shopMob.HomeRoomId)
+		if shopInv == nil {
+			shopMob.Character.Shop.Restock()
+			result := tryPurchaseLegacy(buyer, itemRequest, shopMob, nil)
+			if result.Success {
+				postSuccessBookkeeping(buyer, shopMob, nil)
+				result.Requested = 1
+				return result
+			}
+		}
+		// Task 6 wires the ShopInventory path here.
+	}
 
 	return BuyResult{Reason: BuyReasonNoMatch, Requested: 1}
+}
+
+// tryPurchaseLegacy attempts a single purchase against a merchant
+// backed by the legacy Character.Shop. Returns the populated
+// BuyResult on either success or failure; non-empty Reason on
+// failure means the outer Buy loop should try the next merchant.
+func tryPurchaseLegacy(buyer Actor, request string, shopMob *mobs.Mob, shopUser *users.UserRecord) BuyResult {
+	var saleItems characters.Shop
+	if shopMob != nil {
+		saleItems = shopMob.Character.Shop.GetInstock()
+	} else if shopUser != nil {
+		saleItems = shopUser.Character.Shop.GetInstock()
+	}
+
+	cat := buildLegacyCatalog(saleItems)
+
+	match, closeMatch := util.FindMatchIn(request, cat.allNames()...)
+	if match == "" {
+		match = closeMatch
+	}
+	if match == "" {
+		if shopMob != nil {
+			extraSay := ""
+			if len(cat.itemNamesFancy) > 0 {
+				randSelection := util.Rand(len(cat.itemNamesFancy))
+				extraSay = fmt.Sprintf(` Any interest in this <ansi fg="itemname">%s</ansi>?`, cat.itemNamesFancy[randSelection])
+			} else if len(cat.buffNames) > 0 {
+				randSelection := util.Rand(len(cat.buffNames))
+				extraSay = fmt.Sprintf(` Maybe you would enjoy this %s enchantment?`, cat.buffNames[randSelection])
+			}
+			shopMob.Command(`say Sorry, I can't offer that right now.`+extraSay, 1)
+		}
+		return BuyResult{Reason: BuyReasonNoMatch}
+	}
+
+	ctx, reason, ok := validatePurchase(buyer, shopMob, shopUser, cat.nameToShopItem[match], cat.itemPrices, cat.buffPrices)
+	if !ok {
+		return BuyResult{Reason: reason}
+	}
+
+	if ctx.matchedShopItem.ItemId > 0 {
+		executePurchaseItem(buyer, shopMob, shopUser, ctx.matchedShopItem, ctx.price, ctx.tradeInString)
+		return BuyResult{Success: true, Purchased: 1, SaleType: "item"}
+	}
+	if ctx.matchedShopItem.BuffId > 0 {
+		executePurchaseBuff(buyer, shopMob, shopUser, ctx.matchedShopItem, ctx.price, ctx.tradeInString)
+		return BuyResult{Success: true, Purchased: 1, SaleType: "buff"}
+	}
+
+	// Merc/pet sale types are filtered out at catalog build time;
+	// reaching this branch means malformed data.
+	return BuyResult{Reason: BuyReasonNoMatch}
+}
+
+// executePurchaseItem lands a purchased item in the buyer's
+// inventory and emits the buyer + room messages.
+func executePurchaseItem(buyer Actor, shopMob *mobs.Mob, shopUser *users.UserRecord, matchedShopItem characters.ShopItem, price int, tradeInString string) {
+	newItm := items.New(matchedShopItem.ItemId)
+
+	if buyer.IsPlayer() {
+		userId := buyer.GetUserId()
+		if u := users.GetByUserId(userId); u != nil {
+			u.PlaySound(`purchase`, `other`)
+		}
+		events.AddToQueue(events.ItemOwnership{
+			UserId: userId,
+			Item:   newItm,
+			Gained: true,
+		})
+	} else {
+		events.AddToQueue(events.ItemOwnership{
+			MobInstanceId: buyer.GetMobInstanceId(),
+			Item:          newItm,
+			Gained:        true,
+		})
+	}
+
+	buyerName := buyer.GetName()
+
+	if shopMob != nil {
+		if buyer.IsPlayer() {
+			if u := users.GetByUserId(buyer.GetUserId()); u != nil {
+				u.EventLog.Add(`shop`, fmt.Sprintf(`Purchased a <ansi fg="itemname">%s</ansi> from <ansi fg="mobname">%s</ansi> for %s`, newItm.DisplayName(), shopMob.Character.Name, tradeInString))
+			}
+		}
+		buyer.SendText(fmt.Sprintf(`You purchase the <ansi fg="itemname">%s</ansi> from <ansi fg="mobname">%s</ansi> for %s.`, newItm.DisplayName(), shopMob.Character.Name, tradeInString))
+		buyer.SendRoomText(fmt.Sprintf(`<ansi fg="username">%s</ansi> purchases the <ansi fg="itemname">%s</ansi> from <ansi fg="mobname">%s</ansi>.`, buyerName, newItm.DisplayName(), shopMob.Character.Name), true)
+	} else if shopUser != nil {
+		if buyer.IsPlayer() {
+			if u := users.GetByUserId(buyer.GetUserId()); u != nil {
+				u.EventLog.Add(`shop`, fmt.Sprintf(`Purchased a <ansi fg="itemname">%s</ansi> from <ansi fg="username">%s</ansi> for %s.`, newItm.DisplayName(), shopUser.Character.Name, tradeInString))
+			}
+		}
+		buyer.SendText(fmt.Sprintf(`You purchase the <ansi fg="itemname">%s</ansi> from <ansi fg="username">%s</ansi> for %s.`, newItm.DisplayName(), shopUser.Character.Name, tradeInString))
+		shopUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> purchased the <ansi fg="itemname">%s</ansi> you were selling for %s.`, buyerName, newItm.DisplayName(), tradeInString))
+		buyer.SendRoomText(fmt.Sprintf(`<ansi fg="username">%s</ansi> purchases the <ansi fg="itemname">%s</ansi> from <ansi fg="username">%s</ansi>.`, buyerName, newItm.DisplayName(), shopUser.Character.Name), true)
+	}
+
+	buyer.GetCharacter().StoreItem(newItm)
+}
+
+// executePurchaseBuff applies the bought buff to the buyer and
+// emits the merchant emote follow-up.
+func executePurchaseBuff(buyer Actor, shopMob *mobs.Mob, shopUser *users.UserRecord, matchedShopItem characters.ShopItem, price int, tradeInString string) {
+	buffSpec := buffs.GetBuffSpec(matchedShopItem.BuffId)
+	buyerName := buyer.GetName()
+
+	if shopMob != nil {
+		if buyer.IsPlayer() {
+			if u := users.GetByUserId(buyer.GetUserId()); u != nil {
+				u.EventLog.Add(`shop`, fmt.Sprintf(`Purchased a <ansi fg="buff">%s</ansi> enchantment from <ansi fg="mobname">%s</ansi> for %s`, buffSpec.Name, shopMob.Character.Name, tradeInString))
+			}
+		}
+		buyer.SendText(fmt.Sprintf(`You pay %s to <ansi fg="mobname">%s</ansi>.`, tradeInString, shopMob.Character.Name))
+		buyer.SendRoomText(fmt.Sprintf(`<ansi fg="username">%s</ansi> pays %s to <ansi fg="mobname">%s</ansi>.`, buyerName, tradeInString, shopMob.Character.Name), true)
+		shopMob.Command(`emote mutters a soft incantation.`, 1)
+	} else if shopUser != nil {
+		if buyer.IsPlayer() {
+			if u := users.GetByUserId(buyer.GetUserId()); u != nil {
+				u.EventLog.Add(`shop`, fmt.Sprintf(`Purchased a <ansi fg="buff">%s</ansi> enchantment from  <ansi fg="username">%s</ansi> for %s`, buffSpec.Name, shopUser.Character.Name, tradeInString))
+			}
+		}
+		buyer.SendText(fmt.Sprintf(`You pay %s to <ansi fg="username">%s</ansi>.`, tradeInString, shopUser.Character.Name))
+		shopUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> pays you %s for an enchantment.`, buyerName, tradeInString))
+		buyer.SendRoomText(fmt.Sprintf(`<ansi fg="username">%s</ansi> pays to <ansi fg="username">%s</ansi> for an enchantment.`, buyerName, shopUser.Character.Name), true)
+		// player-merchant doesn't emote (matches existing behavior).
+	}
+
+	buyer.AddBuff(matchedShopItem.BuffId, "shop")
+
+	if shopMob != nil {
+		shopMob.Command(`say I've done what I can.`, 1)
+	}
+}
+
+// postSuccessBookkeeping runs after any successful purchase: skill
+// progression for the buyer, charisma stat-use on the merchant mob,
+// and quest-engine notification gated by buyer.IsPlayer().
+func postSuccessBookkeeping(buyer Actor, shopMob *mobs.Mob, shopUser *users.UserRecord) {
+	buyer.OnSkillUse("bartering")
+
+	if shopMob != nil {
+		shopMob.Character.OnStatUse("charisma", 0)
+	}
+
+	if buyer.IsPlayer() {
+		userId := buyer.GetUserId()
+		if u := users.GetByUserId(userId); u != nil {
+			room := buyer.GetRoom()
+			bridge := questengine.NewGameBridge(u, room.RoomId)
+			questengine.GetEngine().Notify("command", questengine.EventDetails{
+				UserId:  userId,
+				RoomId:  room.RoomId,
+				Command: "buy",
+			}, bridge, bridge)
+		}
+	}
 }
