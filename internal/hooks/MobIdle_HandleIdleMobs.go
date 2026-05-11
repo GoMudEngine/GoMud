@@ -129,6 +129,12 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 		}
 	}
 
+	// Floor-loot scan: wild non-charmed combat mobs pick up
+	// gear upgrades they find on the room floor (chunk 2.3).
+	if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
+		EquipBestFloorItem(mob, room)
+	}
+
 	// Stage 42.5: Gossiper mob tick — broadcast world event gossip
 	if mobHasGroup(mob, "gossiper") {
 		gossipIntervalRounds := uint64(configs.GetBalanceConfig().GossipIntervalRounds)
