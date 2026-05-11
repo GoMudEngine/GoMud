@@ -2,6 +2,7 @@ package actions
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
@@ -290,9 +291,19 @@ func Buy(buyer Actor, opts BuyOptions) BuyResult {
 		return BuyResult{Reason: BuyReasonNoRequest, Requested: 1}
 	}
 
+	// Parse leading quantity: "buy 5 iron ingot".
+	quantity := 1
+	args0 := strings.SplitN(strings.TrimSpace(req), " ", 2)
+	if len(args0) == 2 {
+		if n, err := strconv.Atoi(args0[0]); err == nil && n >= 1 {
+			quantity = n
+			req = args0[1]
+		}
+	}
+
 	room := buyer.GetRoom()
 	if room == nil {
-		return BuyResult{Reason: BuyReasonNoMerchant, Requested: 1}
+		return BuyResult{Reason: BuyReasonNoMerchant, Requested: quantity}
 	}
 
 	// Parse trailing "from <name>" clause to resolve a specific merchant.
@@ -320,12 +331,12 @@ func Buy(buyer Actor, opts BuyOptions) BuyResult {
 			// check explicitly so we can return BuyReasonSelfTarget.
 			if pId, _ := room.FindByName(mercName); pId == buyer.GetUserId() {
 				buyer.SendText("You can't buy from yourself.")
-				return BuyResult{Reason: BuyReasonSelfTarget, Requested: 1}
+				return BuyResult{Reason: BuyReasonSelfTarget, Requested: quantity}
 			}
 			buyer.SendText("Visit a merchant to purchase objects or services.")
-			return BuyResult{Reason: BuyReasonNoMerchant, Requested: 1}
+			return BuyResult{Reason: BuyReasonNoMerchant, Requested: quantity}
 		} else {
-			return BuyResult{Reason: BuyReasonNoMerchant, Requested: 1}
+			return BuyResult{Reason: BuyReasonNoMerchant, Requested: quantity}
 		}
 	}
 
@@ -336,7 +347,37 @@ func Buy(buyer Actor, opts BuyOptions) BuyResult {
 		if buyer.IsPlayer() {
 			buyer.SendText("Visit a merchant to purchase objects or services.")
 		}
-		return BuyResult{Reason: BuyReasonNoMerchant, Requested: 1}
+		return BuyResult{Reason: BuyReasonNoMerchant, Requested: quantity}
+	}
+
+	// tryMerchant wraps a per-merchant attempt closure to support retries up to quantity.
+	// The closure-passed attempt callback returns the result of a single purchase.
+	// If successful, tryMerchant loops up to quantity times, calling attempt()
+	// for each additional unit purchase.
+	tryMerchant := func(attempt func() BuyResult) (BuyResult, bool) {
+		first := attempt()
+		if !first.Success {
+			return first, false
+		}
+		purchased := 1
+		for purchased < quantity {
+			next := attempt()
+			if !next.Success {
+				break
+			}
+			purchased++
+		}
+		if quantity > 1 && purchased < quantity {
+			if buyer.IsPlayer() {
+				buyer.SendText(fmt.Sprintf(`<ansi fg="yellow">Purchased %d of %d before running short.</ansi>`, purchased, quantity))
+			}
+		}
+		return BuyResult{
+			Success:   true,
+			Purchased: purchased,
+			Requested: quantity,
+			SaleType:  first.SaleType,
+		}, true
 	}
 
 	// Iterate merchants — players first, then mobs.
@@ -348,11 +389,14 @@ func Buy(buyer Actor, opts BuyOptions) BuyResult {
 		if shopUser == nil {
 			continue
 		}
-
-		result := tryPurchaseLegacy(buyer, itemRequest, nil, shopUser)
-		if result.Success {
-			postSuccessBookkeeping(buyer, nil, shopUser)
-			result.Requested = 1
+		result, sold := tryMerchant(func() BuyResult {
+			r := tryPurchaseLegacy(buyer, itemRequest, nil, shopUser)
+			if r.Success {
+				postSuccessBookkeeping(buyer, nil, shopUser)
+			}
+			return r
+		})
+		if sold {
 			return result
 		}
 	}
@@ -368,24 +412,32 @@ func Buy(buyer Actor, opts BuyOptions) BuyResult {
 
 		shopInv := shops.GetShopInventory(shopMob.Zone, int(shopMob.MobId), shopMob.HomeRoomId)
 		if shopInv != nil {
-			result := tryPurchaseFromInventory(buyer, itemRequest, shopMob, shopInv)
-			if result.Success {
-				postSuccessBookkeeping(buyer, shopMob, nil)
-				result.Requested = 1
+			result, sold := tryMerchant(func() BuyResult {
+				r := tryPurchaseFromInventory(buyer, itemRequest, shopMob, shopInv)
+				if r.Success {
+					postSuccessBookkeeping(buyer, shopMob, nil)
+				}
+				return r
+			})
+			if sold {
 				return result
 			}
 		} else {
-			shopMob.Character.Shop.Restock()
-			result := tryPurchaseLegacy(buyer, itemRequest, shopMob, nil)
-			if result.Success {
-				postSuccessBookkeeping(buyer, shopMob, nil)
-				result.Requested = 1
+			result, sold := tryMerchant(func() BuyResult {
+				shopMob.Character.Shop.Restock()
+				r := tryPurchaseLegacy(buyer, itemRequest, shopMob, nil)
+				if r.Success {
+					postSuccessBookkeeping(buyer, shopMob, nil)
+				}
+				return r
+			})
+			if sold {
 				return result
 			}
 		}
 	}
 
-	return BuyResult{Reason: BuyReasonNoMatch, Requested: 1}
+	return BuyResult{Reason: BuyReasonNoMatch, Requested: quantity}
 }
 
 // tryPurchaseLegacy attempts a single purchase against a merchant

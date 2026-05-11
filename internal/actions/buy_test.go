@@ -103,3 +103,19 @@ func TestValidatePurchase_OverburdenedBlocksPreSideEffect(t *testing.T) {
 		t.Errorf("shop stock should not be destocked on overburdened rejection; got %d", saleItem.Quantity)
 	}
 }
+
+func TestBuy_QuantityParse(t *testing.T) {
+	// We can't easily exercise the full purchase path without a shop
+	// fixture; the parsing behavior is observable via Requested even
+	// when the purchase fails for unrelated reasons.
+	room := newEmptyTestRoom(t)
+	mobActor := &MobActor{Room: room}
+
+	result := Buy(mobActor, BuyOptions{Request: "5 iron ingot"})
+	if result.Requested != 5 {
+		t.Errorf("Requested = %d, want 5", result.Requested)
+	}
+	if result.Success {
+		t.Errorf("expected Success=false with no merchant in room")
+	}
+}
