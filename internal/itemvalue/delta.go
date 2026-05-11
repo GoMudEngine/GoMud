@@ -272,3 +272,57 @@ func placementBonus(profile WeightProfile, spec items.ItemSpec, slot SlotName, c
 
 	return bonus
 }
+
+// ItemValueDelta returns the net effect of equipping candidate
+// over char's current loadout under the given profile. Smart
+// slot selection picks the optimal placement. Returns
+// SwapDelta{Score: 0, Slot: "", Displaced: nil} when candidate
+// is not equippable on this character.
+func ItemValueDelta(char *characters.Character, profile WeightProfile, candidate items.Item) SwapDelta {
+	candidateSpec := candidate.GetSpec()
+	candidateRaw := ItemValue(candidateSpec, profile)
+
+	slots := compatibleSlotsFor(candidateSpec, char)
+	if len(slots) == 0 {
+		return SwapDelta{}
+	}
+
+	best := SwapDelta{Slot: "", Displaced: nil}
+	bestSet := false
+	bestRank := -1
+
+	for _, slot := range slots {
+		displaced := displacedItemsForSlot(char, slot, candidateSpec)
+
+		candidateAt := candidateRaw + placementBonus(profile, candidateSpec, slot, char)
+
+		displacedTotal := 0.0
+		for _, d := range displaced {
+			dSpec := d.GetSpec()
+			currentSlot := slotOf(d, char)
+			displacedTotal += ItemValue(dSpec, profile) +
+				placementBonus(profile, dSpec, currentSlot, char)
+		}
+
+		netScore := candidateAt - displacedTotal
+
+		// Encumbrance tier penalty: filled in by Task 6.
+		// For now, no encumbrance adjustment.
+
+		rank := canonicalRank(slot)
+
+		if !bestSet ||
+			netScore > best.Score ||
+			(netScore == best.Score && rank < bestRank) {
+			best = SwapDelta{
+				Score:     netScore,
+				Slot:      slot,
+				Displaced: displaced,
+			}
+			bestRank = rank
+			bestSet = true
+		}
+	}
+
+	return best
+}
