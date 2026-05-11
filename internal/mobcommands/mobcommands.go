@@ -30,6 +30,7 @@ var (
 		"befriend":       {Befriend, false},
 		"break":          {Break, false},
 		"broadcast":      {Broadcast, false},
+		"buy":            {Buy, false},
 		"cast":           {Cast, false},
 		"craft":          {Craft, false},
 		"charge":         {Charge, false},
