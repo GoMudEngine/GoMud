@@ -3,6 +3,7 @@ package itemvalue
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/items"
 )
 
@@ -135,5 +136,15 @@ func TestItemValue_WorkedExample_CursedSword(t *testing.T) {
 	want := 110.5
 	if got != want {
 		t.Errorf("worked example cursed sword: got %f want %f", got, want)
+	}
+}
+
+func TestIsUpgrade_NonEquippableIsNotUpgrade(t *testing.T) {
+	char := &characters.Character{}
+	// items.Item{} has ItemId=0 → not equippable → SwapDelta
+	// returns Score=0 → IsUpgrade returns false.
+	candidate := items.Item{}
+	if IsUpgrade(char, PhysicalBruiser, candidate) {
+		t.Errorf("expected IsUpgrade(empty item) = false")
 	}
 }

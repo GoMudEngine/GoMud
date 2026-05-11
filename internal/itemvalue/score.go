@@ -1,6 +1,7 @@
 package itemvalue
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/items"
 )
 
@@ -38,4 +39,11 @@ func ItemValue(spec items.ItemSpec, profile WeightProfile) float64 {
 	score -= spec.Weight * profile.WeightPenaltyPerLb
 
 	return score
+}
+
+// IsUpgrade is sugar over ItemValueDelta(...).Score > 0. Used
+// by callers that just want the boolean "should I equip this"
+// answer without the SwapDelta detail.
+func IsUpgrade(char *characters.Character, profile WeightProfile, candidate items.Item) bool {
+	return ItemValueDelta(char, profile, candidate).Score > 0
 }
