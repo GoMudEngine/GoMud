@@ -174,7 +174,7 @@ to be loaded; they construct synthetic `ItemSpec` and
 
 ## SlotName Constants
 
-All 21 equipment slots, matching `characters.Equipment` field names:
+All 25 equipment slots, matching `characters.Equipment` field names:
 
 - Weapon slots: `Weapon`, `Offhand`, `ExtraArm1-4`
 - Head/neck/torso: `Head`, `Neck`, `Shoulders`, `Body`, `Back`
