@@ -41,6 +41,7 @@ can type during a fight. Active abilities share the special-move cooldown slot.
   <ansi fg="yellow">Clawed Hands</ansi>         Deadly unarmed attacks; unsettling to others.
   <ansi fg="yellow">Keen Eyes</ansi>            Sharpened perception; coordination suffers.
   <ansi fg="yellow">Iron Constitution</ansi>    Greater maximum health; stamina recovers more slowly.
+  <ansi fg="yellow">Incorporeal</ansi>           Form slips between planes; gear loses effect, harder to hit physically.
   <ansi fg="yellow">Hollow Bones</ansi>         Freed muscle potential; more fragile under punishment.
   <ansi fg="yellow">Adrenaline Surge</ansi>     Devastating power near death; stamina drains faster.
   <ansi fg="yellow">Magical Resistance</ansi>   Incoming spells diminished; casting costs more conviction.
