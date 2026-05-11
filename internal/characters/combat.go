@@ -185,9 +185,15 @@ func (c *Character) GetPhysicalMitigation() float64 {
 	slots := []items.Item{
 		c.Equipment.Weapon, c.Equipment.Offhand,
 		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2,
-		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Body,
-		c.Equipment.Belt, c.Equipment.Gloves, c.Equipment.Ring,
+		c.Equipment.ExtraArm3, c.Equipment.ExtraArm4,
+		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Shoulders,
+		c.Equipment.Body, c.Equipment.Back, c.Equipment.Belt,
+		c.Equipment.Wrist1, c.Equipment.Wrist2,
+		c.Equipment.ExtraWrist1, c.Equipment.ExtraWrist2,
+		c.Equipment.ExtraWrist3, c.Equipment.ExtraWrist4,
+		c.Equipment.Gloves, c.Equipment.Ring, c.Equipment.Ring2,
 		c.Equipment.Legs, c.Equipment.Feet, c.Equipment.Tail,
+		c.Equipment.ComponentBag,
 	}
 	for _, slot := range slots {
 		if slot.ItemId <= 0 {
@@ -218,9 +224,15 @@ func (c *Character) GetMagicalMitigation() float64 {
 	slots := []items.Item{
 		c.Equipment.Weapon, c.Equipment.Offhand,
 		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2,
-		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Body,
-		c.Equipment.Belt, c.Equipment.Gloves, c.Equipment.Ring,
+		c.Equipment.ExtraArm3, c.Equipment.ExtraArm4,
+		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Shoulders,
+		c.Equipment.Body, c.Equipment.Back, c.Equipment.Belt,
+		c.Equipment.Wrist1, c.Equipment.Wrist2,
+		c.Equipment.ExtraWrist1, c.Equipment.ExtraWrist2,
+		c.Equipment.ExtraWrist3, c.Equipment.ExtraWrist4,
+		c.Equipment.Gloves, c.Equipment.Ring, c.Equipment.Ring2,
 		c.Equipment.Legs, c.Equipment.Feet, c.Equipment.Tail,
+		c.Equipment.ComponentBag,
 	}
 	for _, slot := range slots {
 		if slot.ItemId <= 0 {
@@ -251,9 +263,15 @@ func (c *Character) GetConvictionMitigation() float64 {
 	slots := []items.Item{
 		c.Equipment.Weapon, c.Equipment.Offhand,
 		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2,
-		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Body,
-		c.Equipment.Belt, c.Equipment.Gloves, c.Equipment.Ring,
+		c.Equipment.ExtraArm3, c.Equipment.ExtraArm4,
+		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Shoulders,
+		c.Equipment.Body, c.Equipment.Back, c.Equipment.Belt,
+		c.Equipment.Wrist1, c.Equipment.Wrist2,
+		c.Equipment.ExtraWrist1, c.Equipment.ExtraWrist2,
+		c.Equipment.ExtraWrist3, c.Equipment.ExtraWrist4,
+		c.Equipment.Gloves, c.Equipment.Ring, c.Equipment.Ring2,
 		c.Equipment.Legs, c.Equipment.Feet, c.Equipment.Tail,
+		c.Equipment.ComponentBag,
 	}
 	for _, slot := range slots {
 		if slot.ItemId <= 0 {
