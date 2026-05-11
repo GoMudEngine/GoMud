@@ -536,3 +536,55 @@ func IsAdrenalSurgeActive(owned map[string]int, currentHP, maxHP int) bool {
 	}
 	return currentHP*4 < maxHP
 }
+
+// ─── Stage 2.2a: Incorporeal mutation helpers ────────────────────────────────
+
+// GetGearEffectivenessLoss returns the total fraction (0.0–1.0)
+// by which all equipment effects (stat mods, weapon damage,
+// mitigation values) should be reduced for this character.
+// Computed with RAW level multiplication — does NOT call
+// LevelMultiplier. This produces a linear progression across
+// ranks 1-4 of 0.25/0.50/0.75/1.00, matching the design intent
+// for percentage-loss effects. Clamped to [0.0, 1.0].
+func GetGearEffectivenessLoss(owned map[string]int) float64 {
+	loss := 0.0
+	for id, level := range owned {
+		spec := GetMutation(id)
+		if spec == nil {
+			continue
+		}
+		// Either side of the pros/cons split can declare this
+		// effect; the type name implies a downside but we sum
+		// both for completeness.
+		for _, c := range spec.Cons {
+			if c.Type == "gear_effectiveness_loss" {
+				loss += c.Value * float64(level)
+			}
+		}
+		for _, p := range spec.Pros {
+			if p.Type == "gear_effectiveness_loss" {
+				loss += p.Value * float64(level)
+			}
+		}
+	}
+	if loss < 0 {
+		loss = 0
+	} else if loss > 1 {
+		loss = 1
+	}
+	return loss
+}
+
+// GearEffectivenessMultiplier returns the multiplier consumers
+// apply to gear-derived values (1.0 = full effectiveness, 0.0 = none).
+// Convenience wrapper over GetGearEffectivenessLoss.
+func GearEffectivenessMultiplier(owned map[string]int) float64 {
+	return 1.0 - GetGearEffectivenessLoss(owned)
+}
+
+// GetPhysicalDefenseBonus returns the total bonus added to the
+// defender's roll margin for physical-channel attacks. Uses
+// standard LevelMultiplier scaling.
+func GetPhysicalDefenseBonus(owned map[string]int) float64 {
+	return sumEffects(owned, "physical_defense_bonus", "")
+}

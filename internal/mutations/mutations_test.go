@@ -710,6 +710,126 @@ func TestRarityBonus_Calculation(t *testing.T) {
 	}
 }
 
+// ─── Stage 2.2a: Incorporeal mutation tests ──────────────────────────────────
+
+func TestGetGearEffectivenessLoss_PerRank(t *testing.T) {
+	prev := allMutations
+	defer func() { allMutations = prev }()
+	allMutations = map[string]*MutationSpec{
+		"test-incorporeal": {
+			MutationId: "test-incorporeal",
+			Name:       "Test Incorporeal",
+			Rarity:     10,
+			Cons: []MutationEffect{
+				{Type: "gear_effectiveness_loss", Target: "", Value: 0.25},
+			},
+		},
+	}
+
+	cases := []struct {
+		level int
+		want  float64
+	}{
+		{1, 0.25},
+		{2, 0.50},
+		{3, 0.75},
+		{4, 1.00},
+	}
+	for _, c := range cases {
+		owned := map[string]int{"test-incorporeal": c.level}
+		got := GetGearEffectivenessLoss(owned)
+		if got != c.want {
+			t.Errorf("level %d: got %.2f, want %.2f", c.level, got, c.want)
+		}
+	}
+}
+
+func TestGetGearEffectivenessLoss_Clamping(t *testing.T) {
+	prev := allMutations
+	defer func() { allMutations = prev }()
+	allMutations = map[string]*MutationSpec{
+		"a": {
+			MutationId: "a", Name: "A", Rarity: 1,
+			Cons: []MutationEffect{
+				{Type: "gear_effectiveness_loss", Value: 0.50},
+			},
+		},
+		"b": {
+			MutationId: "b", Name: "B", Rarity: 1,
+			Cons: []MutationEffect{
+				{Type: "gear_effectiveness_loss", Value: 0.50},
+			},
+		},
+	}
+	// Two sources each at level 2 → 0.50×2 + 0.50×2 = 2.0 → clamped to 1.0
+	owned := map[string]int{"a": 2, "b": 2}
+	got := GetGearEffectivenessLoss(owned)
+	if got != 1.0 {
+		t.Errorf("expected clamp to 1.0, got %.2f", got)
+	}
+}
+
+func TestGetGearEffectivenessLoss_NoEffect(t *testing.T) {
+	got := GetGearEffectivenessLoss(map[string]int{})
+	if got != 0.0 {
+		t.Errorf("expected 0.0 for empty owned, got %.2f", got)
+	}
+}
+
+func TestGearEffectivenessMultiplier_Inverts(t *testing.T) {
+	prev := allMutations
+	defer func() { allMutations = prev }()
+	allMutations = map[string]*MutationSpec{
+		"x": {
+			MutationId: "x", Name: "X", Rarity: 1,
+			Cons: []MutationEffect{
+				{Type: "gear_effectiveness_loss", Value: 0.25},
+			},
+		},
+	}
+	for level := 0; level <= 4; level++ {
+		owned := map[string]int{}
+		if level > 0 {
+			owned["x"] = level
+		}
+		mul := GearEffectivenessMultiplier(owned)
+		loss := GetGearEffectivenessLoss(owned)
+		if mul+loss != 1.0 {
+			t.Errorf("level %d: mul %.2f + loss %.2f != 1.0", level, mul, loss)
+		}
+	}
+}
+
+func TestGetPhysicalDefenseBonus_PerRank(t *testing.T) {
+	prev := allMutations
+	defer func() { allMutations = prev }()
+	allMutations = map[string]*MutationSpec{
+		"y": {
+			MutationId: "y", Name: "Y", Rarity: 1,
+			Pros: []MutationEffect{
+				{Type: "physical_defense_bonus", Value: 15},
+			},
+		},
+	}
+	// LevelMultiplier curve: 1.0/1.5/2.0/2.5
+	cases := []struct {
+		level int
+		want  float64
+	}{
+		{1, 15.0},
+		{2, 22.5},
+		{3, 30.0},
+		{4, 37.5},
+	}
+	for _, c := range cases {
+		owned := map[string]int{"y": c.level}
+		got := GetPhysicalDefenseBonus(owned)
+		if got != c.want {
+			t.Errorf("level %d: got %.2f, want %.2f", c.level, got, c.want)
+		}
+	}
+}
+
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
 func abs(x float64) float64 {
