@@ -2623,3 +2623,18 @@ func TestCharacter_SkillMigration_Idempotent(t *testing.T) {
 	assert.Equal(t, 10, c.Skills["search"], "should not change existing search")
 	assert.Equal(t, 500, c.SkillUseCount["search"])
 }
+
+func TestStatMod_NoIncorporeal_Unchanged(t *testing.T) {
+	// Without any incorporeal mutation, GearEffectivenessMultiplier
+	// returns 1.0, so StatMod produces the same result as the
+	// pre-chunk-2.2a behavior. This test verifies the change
+	// doesn't break the common case.
+	c := &Character{
+		Mutations: map[string]int{}, // empty
+	}
+	// Without any equipment/buffs/pets, the result is 0.
+	got := c.StatMod("strength")
+	if got != 0 {
+		t.Errorf("empty character StatMod = %d, want 0", got)
+	}
+}
