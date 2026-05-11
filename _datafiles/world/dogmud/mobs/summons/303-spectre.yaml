@@ -10,6 +10,8 @@ maxwander: 0
 groups:
   - summon
   - undead
+mutations:
+  incorporeal: 4
 idlecommands:
   - 'emote radiates a cold stillness that makes the air feel thicker'
   - ''

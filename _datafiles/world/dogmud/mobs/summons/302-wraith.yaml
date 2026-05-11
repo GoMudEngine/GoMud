@@ -10,6 +10,8 @@ maxwander: 0
 groups:
   - summon
   - undead
+mutations:
+  incorporeal: 4
 idlecommands:
   - 'emote hovers a hand-span off the ground, trailing wisps of cold shadow'
   - ''

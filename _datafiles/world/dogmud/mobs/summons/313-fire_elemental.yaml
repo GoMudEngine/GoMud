@@ -9,6 +9,8 @@ maxwander: 0
 groups:
   - summon
   - elemental
+mutations:
+  incorporeal: 4
 idlecommands:
   - 'emote crackles softly, throwing dancing shadows across the room'
   - ''

@@ -7,6 +7,8 @@ statpool: 4
 hostile: true
 groups:
   - elemental
+mutations:
+  incorporeal: 4
 activitylevel: 30
 tactic_preset: caster_backline
 tactical_discipline: 0.95
