@@ -56,6 +56,8 @@ Legacy `pro`/`con` single-effect fields are automatically migrated into the
 | `stat_progression_multiplier` | `character.CheckStatProgression()` | Scale stat gain chance |
 | `flag` | various | Grant a permanent flag (nightvision, lightsource, hidden, see-hidden) |
 | `health_regen_if_lit` | `hooks/UserRoundTick` | HP regen only in lit rooms |
+| `gear_effectiveness_loss` | `character.StatMod()`, `itemvalue.ItemValueDelta()` | Percentage loss (0–1.0) applied to all gear-derived values; summed across owned mutations. **Special carve-out: uses raw level multiplication (ranks 1–4 = 0.25/0.50/0.75/1.00), NOT `LevelMultiplier`**. Reason: percentage-loss effects need linear scaling so rank 4 = exactly 100% loss. Consumers apply `(1.0 - loss)` multiplier. Clamped to [0.0, 1.0]. |
+| `physical_defense_bonus` | `combat.calculateCombat()` | Flat additive bonus to defender's roll margin for physical-channel attacks; summed across mutations. Uses standard `LevelMultiplier` scaling. |
 
 ### Active Abilities (Phase 24.5)
 
@@ -102,6 +104,17 @@ checks both directions:
 - Each owned mutation's conflicts list vs candidate
 
 Conflicting mutations are excluded from `GetWeightedPool()` during acquisition.
+
+### Helper Functions
+
+```go
+// Gear effectiveness loss (chunk 2.2a — Incorporeal mutation)
+GetGearEffectivenessLoss(owned map[string]int) float64   // Sum loss across owned
+GearEffectivenessMultiplier(owned map[string]int) float64 // Convenience: (1.0 - loss)
+
+// Physical defense bonus (chunk 2.2a — Incorporeal mutation)
+GetPhysicalDefenseBonus(owned map[string]int) float64 // Sum bonus across owned
+```
 
 ### Registry
 

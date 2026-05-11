@@ -79,11 +79,22 @@ Negative stat mods penalize (cursed items score below zero).
    - Determine displaced items via `displacedItemsForSlot`.
    - Score displaced items symmetrically (their current-slot
      bonuses included).
+   - **Apply gear-effectiveness multiplier** (chunk 2.2a): multiply
+     both candidate's raw score AND each displaced item's
+     `(ItemValue + placementBonus)` by
+     `mutations.GearEffectivenessMultiplier(char.Mutations)`.
+     Placement bonuses on the candidate side are NOT scaled
+     (playstyle synergies, not gear-derived).
    - Subtract encumbrance tier penalty if the swap crosses a
      carry-weight tier.
 3. Pick the slot with highest net score. Tiebreaker: canonical
    slot order (Weapon < Offhand < ... ).
 4. Return `SwapDelta{Score, Slot, Displaced}`.
+
+**Incorporeal (rank 4) special case:** When `GearEffectivenessMultiplier`
+is 0.0 (all gear scores to 0), `ItemValueDelta` naturally returns
+`Score <= 0` for any candidate, and chunk 2.3's equip-if-better
+behavior tree action skips the swap. No hardcoded special path needed.
 
 ## Profiles
 
