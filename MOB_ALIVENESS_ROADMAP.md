@@ -83,7 +83,7 @@ should always agree.
 | 1.6 | Substrate | NPC-to-NPC relationships | M | — | Done |
 | 1.7 | Substrate | World-model facts | M | 1.4 | Done |
 | 2.1 | Tactical | Mob `buy` command | M | — | Done |
-| 2.2 | Tactical | Item-comparison primitive | M | — | Not started |
+| 2.2 | Tactical | Item-comparison primitive | M | — | Done |
 | 2.3 | Tactical | Equip-if-better behavior | S | 2.2 | Not started |
 | 2.4 | Tactical | Mob `appraise` / `assess` | S | 2.2 | Not started |
 | 2.5 | Tactical | Mutations on mobs | L | — | Not started |
@@ -116,7 +116,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 8 / 40 done • 0 in progress • 32 not started.
+**Roll-up:** 9 / 40 done • 0 in progress • 31 not started.
 
 ---
 
@@ -214,13 +214,40 @@ Build vocabulary before the planner.
 - **Shipped:** Consolidated `actions.Buy(buyer Actor, opts BuyOptions) BuyResult` lifted from `internal/usercommands/buy.go` into the shared `actions` package. Player wrapper at `internal/usercommands/buy.go` collapses to ~22 lines (~830 lines deleted); new mob wrapper at `internal/mobcommands/buy.go` (~20 lines) registered in the `mobCommands` map. Both shop backends supported symmetrically — legacy `Character.Shop` (with `Restock()` on access + the `+1` merchant-gold cheat preserved) and `ShopInventory` (dynamic pricing, persistence, bartering discount up to 15% at skill 50). Sale types limited to items + buffs; merc and pet paths dropped entirely (no current shop YAML sells either; `executePurchaseMerc` / `executePurchasePet` deleted). New pre-side-effect carry-capacity gate in `validatePurchase` closes a pre-existing player-side gap: `char.GetCarriedWeight() + newItem.GetSpec().Weight > char.CarryCapacity()` blocks the purchase before destock or gold deduction. Quest-engine `command:buy` notification gated by `buyer.IsPlayer()`. Mob bartering progression falls out naturally via the symmetric `OnSkillUse("bartering")` call. Quantity (`buy N <item>`) and `from <merchant>` syntax work on both wrappers. `EffectiveRestock` exported from actions package because `internal/usercommands/list.go` shared the helper. Unit tests cover empty-request, no-merchant, encumbrance-gate-pre-side-effect, catalog merc/pet filtering, quantity parsing; full purchase-flow integration testing deferred to the broader aliveness-effort manual smoke. Smoke verified at build level: `go build` clean, all 47 packages pass tests, server boots cleanly past data-file load with 225 mobs / 248 items / 21 quests. Spec at `docs/superpowers/specs/2026-05-11-mob-aliveness-2.1-mob-buy-command-design.md`, plan at `docs/superpowers/plans/2026-05-11-mob-aliveness-2.1-mob-buy-command.md`.
 
 ### 2.2 Item-comparison primitive
-**Status:** Not started • **Size:** M
+**Status:** Done (2026-05-11) • **Size:** M
 
 - **Goal:** Callable function: "is item A an upgrade over item B for this mob?"
 - **In:** Multi-axis comparison (damage, mitigation, weight, slot conflicts, archetype-fit), per-archetype weighting, returns a score so callers can rank a list.
 - **Out:** Action — that's 2.3.
 - **Depends on:** —
 - **Why:** Underlies all "smart equipping" and "smart shopping." Without it, mobs can't tell good gear from bad.
+
+- **Shipped:** New `internal/itemvalue/` package with two-tier
+  API. Pure `ItemValue(spec, profile) float64` for catalog
+  ranking (used by chunk 5.3 equipment-aware shopping). Mob-
+  aware `ItemValueDelta(char, profile, candidate) SwapDelta`
+  for swap decisions with smart slot selection (rings pick the
+  weaker occupant; 1H weapons compare Weapon vs Offhand
+  placements; 2H weapons displace both Weapon and Offhand).
+  Symmetric bonus application (`DualWieldBonus`, `ShieldBonus`,
+  `TwoHandedBonus`); `DualWieldBonus` conditional on the pre-
+  swap main hand holding a 1H weapon (no synergy without a
+  partner). Encumbrance tier penalty applied per-tier crossed
+  (thresholds 0.25/0.50/0.75/1.00 matching userrecord prompt
+  rendering). Six named weight profiles (`PhysicalBruiser`,
+  `PhysicalTank`, `Stealth`, `MagicalPure`, `MagicalSupport`,
+  `Neutral`) derived via `ProfileFor(stat, behavior)` —
+  `BehaviorArchetype` primary, `Archetype` fallback. New
+  `IsUpgrade(char, profile, candidate) bool` convenience
+  wrapper. Deleted v0 helpers `items.ItemPower` and
+  `items.IsUpgrade`; migrated sole caller `mobs/crafter.go`
+  to the new API (~200 lines net deleted). Skill mods on item
+  instances flagged as out of scope (instance-zone loot
+  affixes carry +skill mods that the spec.StatMods view
+  doesn't currently surface). Spec at
+  `docs/superpowers/specs/2026-05-11-mob-aliveness-2.2-item-comparison-primitive-design.md`,
+  plan at
+  `docs/superpowers/plans/2026-05-11-mob-aliveness-2.2-item-comparison-primitive.md`.
 
 ### 2.3 Equip-if-better behavior
 **Status:** Not started • **Size:** S
