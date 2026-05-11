@@ -32,14 +32,32 @@ func Gearup(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 		if found {
 			if itemvalue.IsUpgrade(&mob.Character, profile, matchItem) {
+				isCharmed := mob.Character.IsCharmed()
+				var oldEquipped []items.Item
+				if isCharmed {
+					oldEquipped = mob.Character.Equipment.GetAllItems()
+				}
+
 				mob.Command(fmt.Sprintf(`wear !%d`, matchItem.ItemId))
 
-				// If charmed, drop any displaced items so the owner can reclaim them.
-				if mob.Character.IsCharmed() {
-					// EquipItem handles displacement, so we need to check what was
-					// actually displaced by looking at what's not still in backpack.
-					// Simpler approach: use wear command which handles this internally.
-					// The wear command will drop to floor for charmed mobs if needed.
+				// If charmed, drop any displaced items so the owner can reclaim.
+				if isCharmed {
+					newEquipped := mob.Character.Equipment.GetAllItems()
+					for _, oldItm := range oldEquipped {
+						if oldItm.ItemId < 1 {
+							continue
+						}
+						stillEquipped := false
+						for _, newItm := range newEquipped {
+							if oldItm.ItemId == newItm.ItemId {
+								stillEquipped = true
+								break
+							}
+						}
+						if !stillEquipped {
+							mob.Command(fmt.Sprintf(`drop !%d`, oldItm.ItemId))
+						}
+					}
 				}
 			}
 		}
