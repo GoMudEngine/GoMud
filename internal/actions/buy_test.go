@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
 
 func TestBuy_EmptyRequest(t *testing.T) {
@@ -34,5 +35,23 @@ func TestBuildLegacyCatalog_SkipsMercAndPet(t *testing.T) {
 	}
 	if _, ok := cat.nameToShopItem["kitten"]; ok {
 		t.Errorf("pet PetType should not appear in nameToShopItem")
+	}
+}
+
+func newEmptyTestRoom(t *testing.T) *rooms.Room {
+	t.Helper()
+	r := &rooms.Room{RoomId: 99999}
+	return r
+}
+
+func TestBuy_NoMerchant(t *testing.T) {
+	room := newEmptyTestRoom(t)
+	mobActor := &MobActor{Room: room} // no User, no Mob — only Room matters
+	result := Buy(mobActor, BuyOptions{Request: "iron ingot"})
+	if result.Success {
+		t.Errorf("expected Success=false with no merchant in room")
+	}
+	if result.Reason != BuyReasonNoMerchant {
+		t.Errorf("Reason = %q, want %q", result.Reason, BuyReasonNoMerchant)
 	}
 }

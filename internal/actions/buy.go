@@ -1,10 +1,14 @@
 package actions
 
 import (
+	"strconv"
+	"strings"
+
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // BuyOptions controls how a purchase is attempted.
@@ -117,10 +121,65 @@ func (c *legacyShopCatalog) allNames() []string {
 // Buy executes a purchase on behalf of buyer. See package context for
 // the full flow.
 func Buy(buyer Actor, opts BuyOptions) BuyResult {
-	if opts.Request == "" {
-		return BuyResult{Reason: BuyReasonNoRequest}
+	req := strings.TrimSpace(opts.Request)
+	if req == "" {
+		return BuyResult{Reason: BuyReasonNoRequest, Requested: 1}
 	}
 
-	_ = rooms.FindMerchant // placeholder import use
-	return BuyResult{Reason: BuyReasonNoRequest}
+	room := buyer.GetRoom()
+	if room == nil {
+		return BuyResult{Reason: BuyReasonNoMerchant, Requested: 1}
+	}
+
+	// Parse trailing "from <name>" clause to resolve a specific merchant.
+	itemRequest := req
+	targetUserId := opts.TargetMerchantUserId
+	targetMobInstanceId := opts.TargetMerchantMobInstanceId
+
+	args := util.SplitButRespectQuotes(strings.ToLower(req))
+	if len(args) >= 3 && args[len(args)-2] == "from" {
+		mercName := args[len(args)-1]
+		exclude := ResolveTargetOptions{}
+		if buyer.IsPlayer() {
+			exclude.ExcludeUserId = buyer.GetUserId()
+		}
+		target, terr := ResolveTargetActor(room, mercName, exclude)
+		if terr == nil {
+			if target.IsPlayer() {
+				targetUserId = target.(*UserActor).User.UserId
+			} else {
+				targetMobInstanceId = target.(*MobActor).Mob.InstanceId
+			}
+			itemRequest = strings.Join(args[:len(args)-2], " ")
+		} else if buyer.IsPlayer() {
+			// Self-targeting collapses to NotFound under ExcludeUserId;
+			// check explicitly so we can return BuyReasonSelfTarget.
+			if pId, _ := room.FindByName(mercName); pId == buyer.GetUserId() {
+				buyer.SendText("You can't buy from yourself.")
+				return BuyResult{Reason: BuyReasonSelfTarget, Requested: 1}
+			}
+			buyer.SendText("Visit a merchant to purchase objects or services.")
+			return BuyResult{Reason: BuyReasonNoMerchant, Requested: 1}
+		} else {
+			return BuyResult{Reason: BuyReasonNoMerchant, Requested: 1}
+		}
+	}
+
+	merchantPlayers := room.GetPlayers(rooms.FindMerchant)
+	merchantMobs := room.GetMobs(rooms.FindMerchant)
+
+	if len(merchantPlayers) == 0 && len(merchantMobs) == 0 {
+		if buyer.IsPlayer() {
+			buyer.SendText("Visit a merchant to purchase objects or services.")
+		}
+		return BuyResult{Reason: BuyReasonNoMerchant, Requested: 1}
+	}
+
+	// Task 4 and onwards: per-merchant purchase loop.
+	_ = itemRequest
+	_ = targetUserId
+	_ = targetMobInstanceId
+	_ = strconv.Atoi // placeholder until Task 8
+
+	return BuyResult{Reason: BuyReasonNoMatch, Requested: 1}
 }
