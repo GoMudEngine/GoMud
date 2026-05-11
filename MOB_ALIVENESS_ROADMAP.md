@@ -84,6 +84,7 @@ should always agree.
 | 1.7 | Substrate | World-model facts | M | 1.4 | Done |
 | 2.1 | Tactical | Mob `buy` command | M | — | Done |
 | 2.2 | Tactical | Item-comparison primitive | M | — | Done |
+| 2.2a | Tactical | Incorporeal mutation | M | — | Done |
 | 2.3 | Tactical | Equip-if-better behavior | S | 2.2 | Not started |
 | 2.4 | Tactical | Mob `appraise` / `assess` | S | 2.2 | Not started |
 | 2.5 | Tactical | Mutations on mobs | L | — | Not started |
@@ -116,7 +117,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 9 / 40 done • 0 in progress • 31 not started.
+**Roll-up:** 10 / 41 done • 0 in progress • 31 not started.
 
 ---
 
@@ -248,6 +249,55 @@ Build vocabulary before the planner.
   `docs/superpowers/specs/2026-05-11-mob-aliveness-2.2-item-comparison-primitive-design.md`,
   plan at
   `docs/superpowers/plans/2026-05-11-mob-aliveness-2.2-item-comparison-primitive.md`.
+
+### 2.2a Incorporeal mutation
+**Status:** Done (2026-05-11) • **Size:** M
+
+- **Goal:** Model ethereal beings (wraiths, spectres, fire and
+  air elementals, elemental queen) as a new rarest mutation
+  (`incorporeal`) with four ranks scaling gear effectiveness
+  loss + physical defense bonus + stat shifts.
+- **In:** Mutation YAML, two new effect types
+  (`gear_effectiveness_loss`, `physical_defense_bonus`), five
+  consumer-site integrations (stat aggregation, three
+  mitigation getters, weapon damage, spell damage, defense
+  resolution, itemvalue scoring), mob YAML tagging on five
+  templates, helpfile + per-mutation help template +
+  context.md updates.
+- **Out:** Per-rank tuning beyond starting values, player
+  acquisition trigger beyond rarity weighting, earth/water
+  elemental tagging.
+- **Depends on:** —
+- **Why:** Chunk 2.3 (equip-if-better) needs a gate to skip
+  ethereal mobs/players. Soft-scaling via itemvalue scoring
+  is cleaner than a hardcoded skip path. Also unblocks future
+  "incorporeal player" progression goals.
+- **Shipped:** New `_datafiles/world/dogmud/mutations/incorporeal.yaml`
+  with rarity 10 + conflict list (seven body-dependent
+  mutations). New `GetGearEffectivenessLoss`,
+  `GearEffectivenessMultiplier`, `GetPhysicalDefenseBonus`
+  helpers in `internal/mutations/mutations.go` —
+  `gear_effectiveness_loss` uses raw level multiplication
+  (linear 0.25/0.50/0.75/1.00 across ranks), the carve-out
+  documented in `internal/mutations/context.md`. Five
+  integration sites: `character.go` (StatMod scales Equipment
+  portion + three Get*Mitigation methods separate gear from
+  non-gear with the slot list completed during this chunk
+  — previously missing Shoulders, Back, Wrist1/2, ExtraWrist1-4,
+  Ring2, ExtraArm3-4, ComponentBag), `combat_helpers.go`
+  (buildWeaponSetup applies multiplier to weaponDmgMult;
+  best-of-all defense resolution adds physical_defense_bonus
+  for physical-channel attacks), `calculations.go` (spell
+  damage gear contributions scaled at 4 sites including buff
+  tick-pool scaling), `itemvalue/delta.go` (ItemValueDelta
+  applies multiplier to candidate + displaced totals). Five
+  mob templates tagged with `mutations: { incorporeal: 4 }`
+  (wraith, spectre, fire elemental, air elemental, elemental
+  queen). Helpfile + dedicated per-mutation help template +
+  three context.md files updated. Spec at
+  `docs/superpowers/specs/2026-05-11-mob-aliveness-2.2a-incorporeal-mutation-design.md`,
+  plan at
+  `docs/superpowers/plans/2026-05-11-mob-aliveness-2.2a-incorporeal-mutation.md`.
 
 ### 2.3 Equip-if-better behavior
 **Status:** Not started • **Size:** S
