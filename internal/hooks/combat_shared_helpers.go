@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -33,10 +34,11 @@ func calcSpellDamageForCharacter(spellData *spells.SpellData, caster *characters
 		skillLevel := caster.GetSkillLevel(skills.Spellcasting)
 		rawDmg := combat.CalcRawDamage(caster.Stats.Willpower.ValueAdj, skillLevel, spellData.DamageMultiplier, combat.ChannelMagical)
 
-		// Apply weapon spell damage multiplier (caster weapons)
+		// Apply weapon spell damage multiplier (caster weapons), scaled
+		// by gear-effectiveness for incorporeal casters.
 		if caster.Equipment.Weapon.ItemId > 0 {
 			if sdm := caster.Equipment.Weapon.GetSpec().SpellDamageMultiplier; sdm > 0 {
-				rawDmg *= sdm
+				rawDmg *= sdm * mutations.GearEffectivenessMultiplier(caster.Mutations)
 			}
 		}
 
@@ -165,15 +167,15 @@ type CritEffectResult struct {
 	RiposteDamage int
 	RiposteMaxHP  int
 	// Dodge crit → auto-trip (ignores cooldown)
-	AutoTrip      bool
-	TripResult    combat.SkillMoveResult
+	AutoTrip   bool
+	TripResult combat.SkillMoveResult
 	// Block crit → auto-bash (ignores cooldown)
-	AutoBash      bool
-	BashResult    combat.SkillMoveResult
+	AutoBash   bool
+	BashResult combat.SkillMoveResult
 	// Messages for all crit effects
-	DefenderMsg   string
-	AttackerMsg   string
-	RoomMsg       string
+	DefenderMsg string
+	AttackerMsg string
+	RoomMsg     string
 }
 
 // applyCritEffects processes parry/dodge/block crit effects for any combat
@@ -385,9 +387,9 @@ type FoldRoundResult struct {
 	CastComplete bool // folds complete; caller should resolve the spell
 
 	// Values the caller needs for messaging / resolution.
-	FoldDelta      int                  // folds simulated this round
-	ConvictionCost int                  // CP deducted from caster this round
-	SpellData      *spells.SpellData    // non-nil when SpellDataMissing==false
+	FoldDelta      int                      // folds simulated this round
+	ConvictionCost int                      // CP deducted from caster this round
+	SpellData      *spells.SpellData        // non-nil when SpellDataMissing==false
 	CastingState   *characters.CastingState // same pointer as char.CastingState
 }
 
