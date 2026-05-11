@@ -254,7 +254,8 @@ func buildWeaponSetup(sourceChar *characters.Character, targetChar *characters.C
 		// Racial bonus
 		ws.baseDmg += float64(weapon.StatMod(string(statmods.RacialBonusPrefix) + strings.ToLower(targetChar.Species())))
 
-		ws.weaponDmgMult = itemSpec.DamageMultiplier
+		gearMul := mutations.GearEffectivenessMultiplier(sourceChar.Mutations)
+		ws.weaponDmgMult = itemSpec.DamageMultiplier * gearMul
 		if ws.weaponDmgMult <= 0 {
 			ws.weaponDmgMult = float64(bal.UnarmedDamageMultiplier)
 		}
