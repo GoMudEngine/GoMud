@@ -85,7 +85,7 @@ should always agree.
 | 2.1 | Tactical | Mob `buy` command | M | — | Done |
 | 2.2 | Tactical | Item-comparison primitive | M | — | Done |
 | 2.2a | Tactical | Incorporeal mutation | M | — | Done |
-| 2.3 | Tactical | Equip-if-better behavior | S | 2.2 | Not started |
+| 2.3 | Tactical | Equip-if-better behavior | S | 2.2 | Done |
 | 2.4 | Tactical | Mob `appraise` / `assess` | S | 2.2 | Not started |
 | 2.5 | Tactical | Mutations on mobs | L | — | Not started |
 | 2.6 | Tactical | Tactics-cast preemption fix | S | — | Not started |
@@ -117,7 +117,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 10 / 41 done • 0 in progress • 31 not started.
+**Roll-up:** 11 / 41 done • 0 in progress • 30 not started.
 
 ---
 
@@ -300,13 +300,32 @@ Build vocabulary before the planner.
   `docs/superpowers/plans/2026-05-11-mob-aliveness-2.2a-incorporeal-mutation.md`.
 
 ### 2.3 Equip-if-better behavior
-**Status:** Not started • **Size:** S
+**Status:** Done (2026-05-11) • **Size:** S
 
 - **Goal:** Tactical behavior: on loot pickup or item-give, evaluate and equip if it beats the current slot occupant.
 - **In:** Btree action, per-archetype configurable, emits emote when swapping.
 - **Out:** —
 - **Depends on:** 2.2
 - **Why:** "I gave the bandit a steel sword and he's still using a club" → fixed.
+- **Shipped:** Two gate helpers in `internal/itemvalue/equip_eligibility.go`:
+  `CanEquipFromGive` (skips animal species via `Species.DisabledSlots`
+  + non-combat archetypes) and `CanScanFloorLoot` (above + charmed-
+  status). New `EquipBestFloorItem(mob, room) bool` lives in
+  `internal/hooks/mob_equip_best_floor_item.go` (not in `itemvalue`
+  — would close an import cycle through rooms→mobs→itemvalue) and
+  is wired into `internal/hooks/MobIdle_HandleIdleMobs.go`. Existing
+  `internal/mobcommands/gearup.go` rewritten to use `itemvalue.IsUpgrade`
+  instead of the gold-value heuristic; PermaGear / charmed-drop /
+  emote phrasing all preserved (charmed-drop logic now applied to
+  both the specific-item and bare-gearup paths). Push and pull
+  broadcast emotes are distinct ("puts on" / "wields" for push;
+  "picks up X and dons it" / "wields it" for pull). Incorporeal
+  mobs (chunk 2.2a) skip naturally via gear-effectiveness scoring
+  — no special path. Per-archetype configurability is satisfied by
+  chunk 2.2's WeightProfile system (no new knobs). Spec at
+  `docs/superpowers/specs/2026-05-11-mob-aliveness-2.3-equip-if-better-design.md`,
+  plan at
+  `docs/superpowers/plans/2026-05-11-mob-aliveness-2.3-equip-if-better.md`.
 
 ### 2.4 Mob `appraise` / `assess`
 **Status:** Not started • **Size:** S
