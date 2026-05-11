@@ -82,7 +82,7 @@ should always agree.
 | 1.5 | Substrate | Bounty state | S | 1.2 | Done |
 | 1.6 | Substrate | NPC-to-NPC relationships | M | — | Done |
 | 1.7 | Substrate | World-model facts | M | 1.4 | Done |
-| 2.1 | Tactical | Mob `buy` command | M | — | Not started |
+| 2.1 | Tactical | Mob `buy` command | M | — | Done |
 | 2.2 | Tactical | Item-comparison primitive | M | — | Not started |
 | 2.3 | Tactical | Equip-if-better behavior | S | 2.2 | Not started |
 | 2.4 | Tactical | Mob `appraise` / `assess` | S | 2.2 | Not started |
@@ -116,7 +116,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 7 / 40 done • 0 in progress • 33 not started.
+**Roll-up:** 8 / 40 done • 0 in progress • 32 not started.
 
 ---
 
@@ -204,13 +204,14 @@ Verbs and behavior-tree gaps that the strategic layer will need to dispatch.
 Build vocabulary before the planner.
 
 ### 2.1 Mob `buy` command
-**Status:** Not started • **Size:** M
+**Status:** Done (2026-05-11) • **Size:** M
 
 - **Goal:** Mobs can purchase from shops, including disambiguation, gold checks, carry capacity.
 - **In:** Mobcommand `buy`, integration with existing shop pricing/stock, restocking interaction with NPC-buyer behavior.
 - **Out:** Decision logic for *what* to buy — that lives in tactical/strategic.
 - **Depends on:** —
 - **Why:** Strategic-layer "save up for armor" is impossible without this verb.
+- **Shipped:** Consolidated `actions.Buy(buyer Actor, opts BuyOptions) BuyResult` lifted from `internal/usercommands/buy.go` into the shared `actions` package. Player wrapper at `internal/usercommands/buy.go` collapses to ~22 lines (~830 lines deleted); new mob wrapper at `internal/mobcommands/buy.go` (~20 lines) registered in the `mobCommands` map. Both shop backends supported symmetrically — legacy `Character.Shop` (with `Restock()` on access + the `+1` merchant-gold cheat preserved) and `ShopInventory` (dynamic pricing, persistence, bartering discount up to 15% at skill 50). Sale types limited to items + buffs; merc and pet paths dropped entirely (no current shop YAML sells either; `executePurchaseMerc` / `executePurchasePet` deleted). New pre-side-effect carry-capacity gate in `validatePurchase` closes a pre-existing player-side gap: `char.GetCarriedWeight() + newItem.GetSpec().Weight > char.CarryCapacity()` blocks the purchase before destock or gold deduction. Quest-engine `command:buy` notification gated by `buyer.IsPlayer()`. Mob bartering progression falls out naturally via the symmetric `OnSkillUse("bartering")` call. Quantity (`buy N <item>`) and `from <merchant>` syntax work on both wrappers. `EffectiveRestock` exported from actions package because `internal/usercommands/list.go` shared the helper. Unit tests cover empty-request, no-merchant, encumbrance-gate-pre-side-effect, catalog merc/pet filtering, quantity parsing; full purchase-flow integration testing deferred to the broader aliveness-effort manual smoke. Smoke verified at build level: `go build` clean, all 47 packages pass tests, server boots cleanly past data-file load with 225 mobs / 248 items / 21 quests. Spec at `docs/superpowers/specs/2026-05-11-mob-aliveness-2.1-mob-buy-command-design.md`, plan at `docs/superpowers/plans/2026-05-11-mob-aliveness-2.1-mob-buy-command.md`.
 
 ### 2.2 Item-comparison primitive
 **Status:** Not started • **Size:** M
