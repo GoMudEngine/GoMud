@@ -522,6 +522,11 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 			defenseScore *= float64(bal.DarknessCombatPenalty)
 		}
 
+		// Incorporeal mutation: physical defense bonus (channel-scoped
+		// to physical attacks; this function only handles physical
+		// swings — spells use a different resolution path).
+		defenseScore += mutations.GetPhysicalDefenseBonus(targetChar.Mutations)
+
 		// Roll this defense against the single attack roll
 		defenseRoll := dice.Roll(defenseScore, atkStdDev)
 
