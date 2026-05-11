@@ -282,6 +282,13 @@ func ItemValueDelta(char *characters.Character, profile WeightProfile, candidate
 	candidateSpec := candidate.GetSpec()
 	candidateRaw := ItemValue(candidateSpec, profile)
 
+	// Apply gear-effectiveness multiplier from char's mutations.
+	// Incorporeal characters see all gear values scaled toward
+	// zero, so equip-if-better naturally returns false at high
+	// incorporeal ranks.
+	gearMul := mutations.GearEffectivenessMultiplier(char.Mutations)
+	candidateRaw *= gearMul
+
 	slots := compatibleSlotsFor(candidateSpec, char)
 	if len(slots) == 0 {
 		return SwapDelta{}
@@ -300,8 +307,8 @@ func ItemValueDelta(char *characters.Character, profile WeightProfile, candidate
 		for _, d := range displaced {
 			dSpec := d.GetSpec()
 			currentSlot := slotOf(d, char)
-			displacedTotal += ItemValue(dSpec, profile) +
-				placementBonus(profile, dSpec, currentSlot, char)
+			displacedTotal += (ItemValue(dSpec, profile) +
+				placementBonus(profile, dSpec, currentSlot, char)) * gearMul
 		}
 
 		netScore := candidateAt - displacedTotal

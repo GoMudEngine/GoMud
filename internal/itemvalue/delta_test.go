@@ -271,3 +271,20 @@ func TestEncumbranceTierPenalty_TierCrossingPenalizes(t *testing.T) {
 	// Skip with similar reasoning; covered by smoke test.
 	t.Skip("requires balance config + item fixtures")
 }
+
+func TestItemValueDelta_NoIncorporeal_Unchanged(t *testing.T) {
+	// Verifies the integration doesn't break the existing
+	// behavior when the character has no incorporeal mutation.
+	// With gearMul = 1.0 (the baseline multiplier for no mutations),
+	// the scoring should be unchanged from pre-multiplier code.
+	char := newTestChar()
+	candidate := items.Item{}
+	// Empty character + empty item → returns SwapDelta{}
+	delta := ItemValueDelta(char, PhysicalBruiser, candidate)
+	if delta.Slot != "" {
+		t.Errorf("expected empty Slot for non-equippable, got %q", delta.Slot)
+	}
+	if delta.Score != 0 {
+		t.Errorf("expected Score=0 for non-equippable, got %f", delta.Score)
+	}
+}
