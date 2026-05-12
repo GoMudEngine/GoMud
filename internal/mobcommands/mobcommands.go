@@ -35,6 +35,7 @@ var (
 		"craft":          {Craft, false},
 		"charge":         {Charge, false},
 		"consume":        {Consume, false},
+		"consider":       {Consider, false},
 		"converse":       {Converse, false},
 		"callforhelp":    {CallForHelp, false},
 		"despawn":        {Despawn, false},
