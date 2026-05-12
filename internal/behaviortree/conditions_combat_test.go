@@ -3,6 +3,7 @@ package behaviortree
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 )
@@ -98,5 +99,36 @@ func TestTargetPowerRatio_AggroFallback(t *testing.T) {
 	ctx := &EvalContext{InstanceId: 105, RoomId: 1} // no Event.UserId
 	if r := condTargetPowerRatioAbove(map[string]any{"value": 1.0}, ctx); r != Success {
 		t.Errorf("expected Success via Aggro fallback, got %v", r)
+	}
+}
+
+func TestTargetPowerRatio_AggroMobFallback(t *testing.T) {
+	cleanRoom := seedTestRoom(t, 1, "TestZone")
+	defer cleanRoom()
+
+	// Seed two mobs in one call — seedTestMob is single-mob and would clobber.
+	specs := map[int]*mobs.Mob{
+		5:  {MobId: mobs.MobId(5), Character: characters.Character{Name: "StrongMob", Buffs: buffs.New()}},
+		10: {MobId: mobs.MobId(10), Character: characters.Character{Name: "WeakTargetMob", Buffs: buffs.New()}},
+	}
+	instances := map[int]*mobs.Mob{
+		105: {MobId: mobs.MobId(5), InstanceId: 105, HomeRoomId: 1,
+			Character: characters.Character{Name: "StrongMob", Buffs: buffs.New()}},
+		110: {MobId: mobs.MobId(10), InstanceId: 110, HomeRoomId: 1,
+			Character: characters.Character{Name: "WeakTargetMob", Buffs: buffs.New()}},
+	}
+	cleanMobs := mobs.SeedMobsForTest(specs, instances)
+	defer cleanMobs()
+
+	strong := mobs.GetInstance(105)
+	strong.Character.HealthMax.Value = 5000
+	strong.Character.Stats.Strength.ValueAdj = 500
+
+	// Aggro on mob 110 — no Event.UserId, no Aggro.UserId.
+	strong.Character.Aggro = &characters.Aggro{MobInstanceId: 110}
+
+	ctx := &EvalContext{InstanceId: 105, RoomId: 1} // no Event.UserId
+	if r := condTargetPowerRatioAbove(map[string]any{"value": 1.0}, ctx); r != Success {
+		t.Errorf("expected Success via Aggro.MobInstanceId fallback, got %v", r)
 	}
 }

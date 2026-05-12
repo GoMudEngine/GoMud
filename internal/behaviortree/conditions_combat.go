@@ -61,8 +61,8 @@ func targetPowerRatioCompare(params map[string]any, ctx *EvalContext, above bool
 // resolveTargetPower returns the PowerScore of the contextual
 // target, with fallback chain:
 //  1. ctx.Event.UserId → player
-//  2. mob.Character.Aggro.UserId → player
-//  3. mob.Character.Aggro.MobInstanceId → mob
+//  2. mob.Character.Aggro.MobInstanceId → mob
+//  3. mob.Character.Aggro.UserId → player
 //
 // Returns (0, false) when no target resolvable.
 func resolveTargetPower(mob *mobs.Mob, ctx *EvalContext) (float64, bool) {
@@ -71,15 +71,17 @@ func resolveTargetPower(mob *mobs.Mob, ctx *EvalContext) (float64, bool) {
 			return combat.PowerScore(*u.Character), true
 		}
 	}
+	// Aggro fallback: matches actions.ResolveAggroTarget priority —
+	// mob target before player target when both fields are set.
 	if mob.Character.Aggro != nil {
-		if mob.Character.Aggro.UserId > 0 {
-			if u := users.GetByUserId(mob.Character.Aggro.UserId); u != nil {
-				return combat.PowerScore(*u.Character), true
-			}
-		}
 		if mob.Character.Aggro.MobInstanceId > 0 {
 			if m := mobs.GetInstance(mob.Character.Aggro.MobInstanceId); m != nil {
 				return combat.PowerScore(m.Character), true
+			}
+		}
+		if mob.Character.Aggro.UserId > 0 {
+			if u := users.GetByUserId(mob.Character.Aggro.UserId); u != nil {
+				return combat.PowerScore(*u.Character), true
 			}
 		}
 	}
