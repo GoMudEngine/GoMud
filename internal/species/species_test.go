@@ -35,6 +35,13 @@ func TestHasBodyPart_AbsentTag(t *testing.T) {
 	}
 }
 
+func TestHasBodyPart_NilReceiver_FailOpen(t *testing.T) {
+	var s *Species // nil receiver
+	if !s.HasBodyPart("arms") {
+		t.Error("nil receiver should fail-open (return true)")
+	}
+}
+
 func TestHasAllBodyParts_EmptyRequirements(t *testing.T) {
 	s := &Species{BodyParts: []string{"arms"}}
 	if !s.HasAllBodyParts(nil) {
