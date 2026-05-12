@@ -88,7 +88,7 @@ should always agree.
 | 2.3 | Tactical | Equip-if-better behavior | S | 2.2 | Done |
 | 2.4 | Tactical | Mob `consider` + threat-aware behaviors | S | 2.2 | Done |
 | 2.5 | Tactical | Mutations on mobs | L | — | Done |
-| 2.6 | Tactical | Tactics-cast preemption fix | S | — | Not started |
+| 2.6 | Tactical | Sunset legacy tactics engine | L | — | Done |
 | 2.7 | Tactical | Mob skullduggery suite | M | — | Not started |
 | 2.8 | Tactical | Mob scout / track / scan | S | — | Not started |
 | 2.9 | Tactical | Mob `forage` as a command | S | — | Not started |
@@ -117,7 +117,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 13 / 41 done • 0 in progress • 28 not started.
+**Roll-up:** 14 / 41 done • 0 in progress • 27 not started.
 
 ---
 
@@ -347,14 +347,15 @@ Build vocabulary before the planner.
 - **Why:** Closes a major parity gap. Mutated mobs are a content lever for novel encounters. (Absorbed from MEMORY.md — Companion Phase 5.)
 - **Shipped:** Body-plan gating model — `Species.BodyParts []string` from a canonical seven-tag set (`arms, hands, legs, eyes, mouth, skin, tail`); `MutationSpec.RequiresBodyParts []string` replaces the old `RequiresArms bool`. Three gating sites updated: random-roll pool (`GetWeightedPool` signature changed to take species), curated `SpawnMutations` path (latent bug fix — was applying unconditionally), and mid-game mutation grants (5 call sites across user round tick, behavior tree action, quest engine bridge, login, and mob spawn). `Character.ApplyIntrinsicMutations(species)` merges species intrinsics additively into the character's mutation map at init time, cap-aware via `MutationMaxRank = 4`. Migration covered all 35 existing species (skip dummy 19, orb 20) + 4 new elemental species (sand 41, storm 42, ice 43, smoke 44). 17 mutation YAMLs gained `requires_body_parts:` declarations. 5 mob YAMLs in `instance_planar_oasis/` repointed: king kept on magma + added `mutations: { large: 1 }` override, queen moved to new ice species (dropping her chunk-2.2a `incorporeal: 4` override since her crystal/water form is corporeal), prince moved to new smoke species. Redundant `mutations: { incorporeal: 4 }` overrides on 4 summons mobs (wraith, spectre, fire, air) cleaned up — incorporeal is now intrinsic on the species. Boot-time validation panics on unknown body-part tags or unknown mutation ids in intrinsic_mutations. Helpfiles updated to document body-plan gating in player-facing terms (mutations.template, species.template, 17 per-mutation templates each got a "Requires:" line). Spec at `docs/superpowers/specs/2026-05-12-mob-aliveness-2.5-mutations-on-mobs-design.md`, plan at `docs/superpowers/plans/2026-05-12-mob-aliveness-2.5-mutations-on-mobs.md`.
 
-### 2.6 Tactics-cast preemption fix
-**Status:** Not started • **Size:** S
+### 2.6 Sunset legacy tactics engine
+**Status:** Done (2026-05-12) • **Size:** L
 
-- **Goal:** Resolve the existing bug where higher-priority cast tactics lose `CastingState` to lower-priority casts that started in the same combat tick.
-- **In:** Surface `AlreadyCasting` / `OnCooldown` exits in `mobcommands/cast.go`; reorder tactic resolution.
-- **Out:** —
+- **Goal:** Delete the legacy `internal/mobai/` tactics engine and migrate all 44 tactic-using mobs to the behavior tree (btree) system.
+- **In:** Reframed from the original "fix the Edrin priority race" band-aid into the structural fix. Btree now the single mob-behavior substrate. Five existing archetypes gain a shared panic-flee branch (generic_fighter, predator, leader, lookout, tank_taunter). tank_taunter additionally gets a call_for_help branch (absorbing the `tank` preset); ambusher gets a target_casting→trip branch (absorbing the `ambusher` preset). One new `defensive_caster` archetype absorbs 4 mobs from the old `defensive_caster` and `caster_backline` presets. Five per-boss archetypes for named encounter mobs (Edrin, Sylara, Rhett, Soren, Chrysalis Phantom) preserve their unique spell rotations.
+- **Out:** Boss encounter tuning (faithful translation only); generic-mob inline-tactic preservation beyond what the augmented archetypes cover (acceptable loss).
 - **Depends on:** —
-- **Why:** Smarter mobs are useless if their tactics get clobbered. (Absorbed from MEMORY.md.)
+- **Why:** Eliminated the dual-system architectural smell. The original Edrin priority-race bug became structurally impossible (btree selectors are inherently priority-ordered, no async reaction queue racing `InitiateCast`). ~1,144 net lines of legacy code deleted.
+- **Shipped:** Zero new btree primitives (mob_has_buff + invert decorator covers missing_buff). 6 new archetypes (defensive_caster + 5 boss). 5 archetype augmentations. 44 mob YAML migrations (24 preset-only + 5 named bosses + 9 generic inline-tactics). Engine deletion: `internal/mobai/` directory entirely removed (10 files including tactics.go, reactor.go, actions.go, types.go, memory.go, triggers.go and tests). `CombatMemory` substrate migrated to `internal/mobs/combat_memory.go` (it was used outside the tactics engine for grudge tracking). Mob struct fields `Tactics`, `TacticPreset`, `ReactionDelay`, `TacticalDiscipline` removed. Hook callers in `internal/hooks/` cleaned (MobAI_Reactor.go deleted entirely). `internal/mobs/context.md` + `internal/behaviortree/context.md` updated. `project_tactics_cast_preemption.md` MEMORY entry deleted. **Known follow-up:** Edrin/Sylara's conviction-ward opening cast lacks a self-gate because conviction-ward is a shield spell (no buff_id). Bosses re-cast wastefully after shield expires; behavior is not broken, just wasteful. Polish item for a future tuning pass. Spec at `docs/superpowers/specs/2026-05-12-mob-aliveness-2.6-sunset-tactics-engine-design.md`, plan at `docs/superpowers/plans/2026-05-12-mob-aliveness-2.6-sunset-tactics-engine.md`.
 
 ### 2.7 Mob skullduggery suite
 **Status:** Not started • **Size:** M
