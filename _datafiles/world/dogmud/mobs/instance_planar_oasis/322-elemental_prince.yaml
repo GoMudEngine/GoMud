@@ -8,8 +8,6 @@ hostile: true
 groups:
   - elemental
 activitylevel: 30
-tactic_preset: aggressive_melee
-tactical_discipline: 0.85
 combatcommands:
   - 'emote flickers and strikes from an impossible angle'
   - ''

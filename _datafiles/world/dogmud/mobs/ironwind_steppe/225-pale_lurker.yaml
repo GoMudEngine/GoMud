@@ -20,13 +20,6 @@ idlecommands:
   - ''
   - 'emote opens a wide, pale mouth in a silent yawn'
 activitylevel: 10
-reaction_delay: 0.8
-tactical_discipline: 0.60
-tactic_preset: ambusher
-tactics:
-  - trigger: health_below:25
-    action: flee
-    priority: 11
 combatcommands:
   - ''
   - ''

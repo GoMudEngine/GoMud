@@ -9,8 +9,6 @@ groups:
   - elemental
 spawnmutations: [large]
 activitylevel: 30
-tactic_preset: aggressive_melee
-tactical_discipline: 0.90
 combatcommands:
   - 'emote brings both fists down in a thunderous overhead strike'
   - ''
