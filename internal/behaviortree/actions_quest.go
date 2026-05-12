@@ -9,6 +9,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -47,7 +48,8 @@ func actGrantMutation(params map[string]any, ctx *EvalContext) Result {
 	if user == nil {
 		return Failure
 	}
-	pool := mutations.GetWeightedPool(user.Character.Mutations, nil)
+	sp := species.GetSpecies(user.Character.SpeciesId)
+	pool := mutations.GetWeightedPool(user.Character.Mutations, sp)
 	if len(pool) == 0 {
 		return Success // no mutations available, but not an error
 	}

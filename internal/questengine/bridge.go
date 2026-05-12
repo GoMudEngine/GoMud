@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -247,7 +248,8 @@ func (b *GameBridge) GiveMutation() {
 	if b.user.Character.Mutations == nil {
 		b.user.Character.Mutations = make(map[string]int)
 	}
-	pool := mutations.GetWeightedPool(b.user.Character.Mutations, nil)
+	sp := species.GetSpecies(b.user.Character.SpeciesId)
+	pool := mutations.GetWeightedPool(b.user.Character.Mutations, sp)
 	if len(pool) == 0 {
 		return
 	}
