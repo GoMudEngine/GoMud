@@ -86,7 +86,7 @@ should always agree.
 | 2.2 | Tactical | Item-comparison primitive | M | — | Done |
 | 2.2a | Tactical | Incorporeal mutation | M | — | Done |
 | 2.3 | Tactical | Equip-if-better behavior | S | 2.2 | Done |
-| 2.4 | Tactical | Mob `appraise` / `assess` | S | 2.2 | Not started |
+| 2.4 | Tactical | Mob `consider` + threat-aware behaviors | S | 2.2 | Done |
 | 2.5 | Tactical | Mutations on mobs | L | — | Not started |
 | 2.6 | Tactical | Tactics-cast preemption fix | S | — | Not started |
 | 2.7 | Tactical | Mob skullduggery suite | M | — | Not started |
@@ -117,7 +117,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 11 / 41 done • 0 in progress • 30 not started.
+**Roll-up:** 12 / 41 done • 0 in progress • 29 not started.
 
 ---
 
@@ -327,14 +327,15 @@ Build vocabulary before the planner.
   plan at
   `docs/superpowers/plans/2026-05-11-mob-aliveness-2.3-equip-if-better.md`.
 
-### 2.4 Mob `appraise` / `assess`
-**Status:** Not started • **Size:** S
+### 2.4 Mob `consider` + threat-aware behaviors
+**Status:** Done (2026-05-12) • **Size:** S
 
-- **Goal:** Mobs can assess players (combat capability, equipped gear quality) and items.
-- **In:** Mobcommand wrappers around existing player commands, callable from btree.
-- **Out:** —
-- **Depends on:** 2.2 (for item assessment)
-- **Why:** Lets NPCs decide to flee a strong player or covet a player's weapon.
+- **Goal:** Mobs size up combat threats the same way players do; reactive (lookout-only-ambushes-weaker-players) and opportunistic (predator-engages-weaker-prey) behaviors unlocked.
+- **In:** Actor-pattern consolidation of `consider` into `actions.Consider(actor, target) ConsiderResult` shared by player + mob wrappers (`internal/usercommands/consider.go` thinned, `internal/mobcommands/consider.go` added). Two btree primitives: `target_power_ratio_above`/`_below` condition (in new `conditions_combat.go`) and `target_weakest_mob_in_room` action (added to `actions_combat.go`). Demo wiring: lookout archetype gains `player_enter`→ambush-if-stronger branch; new `predator` archetype copies generic_fighter and adds a leading `mob_idle` predation branch; three ironwind wolf YAMLs (steppe/young/scarred) flip to predator (alpha kept as `leader` to preserve its rally/warcry pack-leader behavior — a `predator_leader` hybrid is logged as future work).
+- **Out:** Player gear-coveting (players don't drop gear so no use case); `appraise` mobcommand (player command is obsoleted by identify spell); `combat.PowerScore` math changes (audit confirmed gear is already reflected through `ValueAdj`/`Get*Mitigation` pipes; the audit deliverable is a documentation section in `internal/combat/context.md`).
+- **Depends on:** 2.2 (item-comparison primitive contributed conceptually but PowerScore-based assessment uses existing combat infrastructure).
+- **Why:** Reactive lookouts that don't suicide-ambush strong players. Opportunistic predators that go after weaker prey. Foundation for chunk 2.6 (tactics-cast preemption — power-ratio gating offensive vs. defensive cast selection) and 5.2 (bounty hunting — bounty hunters need to assess wanted targets).
+- **Shipped:** `internal/actions/consider.go` — `Consider(actor, target) ConsiderResult` with prediction text emission via `actor.SendText` (MobActor no-op preserves silent compute path). Player + mob wrappers each ~15 lines. Btree primitives in `conditions_combat.go` and `actions_combat.go` (new function alongside existing entries). Target resolution chain: `Event.UserId` → `Aggro.MobInstanceId` → `Aggro.UserId` (matches `actions.ResolveAggroTarget` convention). `mob.HatesMob(other)` predicate gates predation — covers faction/pack-awareness without coupling to 1.2 substrate. Lookout `player_enter` branch with `target_power_ratio_above: 1.0` ambush gate. Predator archetype `ratio_below: 0.85` predation ceiling. PowerScore audit section added to `internal/combat/context.md`. Spec at `docs/superpowers/specs/2026-05-12-mob-aliveness-2.4-mob-consider-design.md`, plan at `docs/superpowers/plans/2026-05-12-mob-aliveness-2.4-mob-consider.md`.
 
 ### 2.5 Mutations on mobs
 **Status:** Not started • **Size:** L
