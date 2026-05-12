@@ -9,8 +9,6 @@ maxwander: 0
 groups:
   - summon
   - elemental
-mutations:
-  incorporeal: 4
 idlecommands:
   - 'emote spins in a lazy eddy, dust motes trailing in its wake'
   - ''
