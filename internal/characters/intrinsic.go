@@ -4,10 +4,15 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/species"
 )
 
+// MutationMaxRank is the absolute cap for any mutation rank, matching
+// the chunk-2.2a convention (incorporeal 1-4, extra-arms 1-4, etc.).
+// Future mutations exceeding rank 4 will require adding a MaxRank
+// field to MutationSpec and consulting it here.
+const MutationMaxRank = 4
+
 // ApplyIntrinsicMutations merges the species's intrinsic mutations
 // additively into the character's Mutations map. Cap-aware: each
-// combined rank is clamped to the mutation's max rank (default cap = 4,
-// matching the chunk-2.2a convention for ranked mutations).
+// combined rank is clamped to MutationMaxRank.
 //
 // Called from mob spawn AND player creation after all other
 // mutation logic (curated SpawnMutations from YAML + random
@@ -20,11 +25,10 @@ func (c *Character) ApplyIntrinsicMutations(sp *species.Species) {
 	if c.Mutations == nil {
 		c.Mutations = make(map[string]int)
 	}
-	cap := 4 // default cap matches the chunk-2.2a convention; no per-mutation max field exists
 	for id, intrinsicRank := range sp.IntrinsicMutations {
 		combined := c.Mutations[id] + intrinsicRank
-		if combined > cap {
-			combined = cap
+		if combined > MutationMaxRank {
+			combined = MutationMaxRank
 		}
 		c.Mutations[id] = combined
 	}
