@@ -1,7 +1,7 @@
 mobid: 275
 zone: Marches Spur Road
 buffids: [52, 61]
-archetype: casting
+behavior_archetype: boss_edrin
 statpool: 500
 spawnmutations: [regenerative-tissue, magical-resistance, psychic-resistance, thick-hide, brazen-resolve]
 itemdropchance: 10
@@ -31,33 +31,6 @@ combatcommands:
   - 'emote flicks his staff and light bends around him like heat shimmer'
   - ''
 activitylevel: 50
-reaction_delay: 1.0
-tactical_discipline: 0.85
-tactics:
-  - trigger: health_below:30
-    action: cast fold-recall
-    priority: 13
-  - trigger: health_below:25
-    action: flee
-    priority: 12
-  - trigger: health_below:50
-    action: cast heal
-    priority: 11
-  - trigger: combat_start
-    action: cast conviction-ward
-    priority: 10
-  - trigger: target_casting
-    action: cast mind-spike
-    priority: 9
-  - trigger: multiple_targets
-    action: cast hemorrhagic-burst
-    priority: 8
-  # Fallback: keep casting offensive spells on any single-target round.
-  # Without this, combat_start fires once and Edrin just watches the
-  # rest of the fight — see project_edrin_summon_on_entry.md.
-  - trigger: single_target
-    action: cast pyretic-surge
-    priority: 5
 character:
   name: Old Edrin
   description: |

@@ -1,6 +1,5 @@
 mobid: 80
 zone: Dustwalk Road
-archetype: fighting
 behavior_archetype: generic_fighter
 routine: dustwalk_bandit_camp
 statpool: 10
@@ -22,12 +21,6 @@ combatcommands:
   - 'emote spits and snarls, circling for an opening'
   - ''
 activitylevel: 25
-reaction_delay: 1.5
-tactical_discipline: 0.25
-tactics:
-  - trigger: health_below:30
-    action: flee
-    priority: 10
 character:
   name: dustwalk bandit
   description: |

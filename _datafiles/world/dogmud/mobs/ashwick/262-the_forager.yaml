@@ -15,15 +15,6 @@ idlecommands:
   - 'emote sits very still, listening to the forest'
   - ''
 activitylevel: 12
-reaction_delay: 1.0
-tactical_discipline: 0.50
-tactics:
-  - trigger: health_below:30
-    action: flee
-    priority: 10
-  - trigger: no_aggro
-    action: hide
-    priority: 9
 character:
   name: the forager
   description: |
