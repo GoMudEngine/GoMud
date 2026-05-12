@@ -1,0 +1,84 @@
+# predator archetype
+#
+# Opportunistic hunter. On idle ticks, scans the room for a
+# weaker mob it would normally prey on (via mob.HatesMob —
+# uses the YAML `hates:` list and same-species skip) and
+# engages. Otherwise inherits the full generic_fighter combat
+# behavior — packmate response, callforhelp navigation, and
+# the per-round combat cascade (interrupt casts, kick prone/
+# clinched, bash, grapple lone targets, trip).
+#
+# Faction/pack awareness comes from `hates:`; wolves with
+# `hates: [boar, rodent]` will prey on boars and rats but
+# never fellow canines. A mob with an empty `hates:` list
+# effectively never opportunistically engages — the
+# `target_weakest_mob_in_room` action will Failure-out.
+#
+# Example users: steppe wolves, alpha wolf, scarred wolf,
+# young wolf. Distinguished from `generic_fighter` by the
+# leading mob_idle predation branch.
+#
+# Spec: docs/superpowers/specs/2026-05-12-mob-aliveness-2.4-mob-consider-design.md
+
+tree:
+  type: selector
+  children:
+    # NEW: opportunistic predation on idle ticks. Selector
+    # short-circuits on Success; if a weaker hated mob is in
+    # the room, Aggro is set and the next tick's
+    # mob_combat_round fires the cascade below.
+    - type: action
+      event: mob_idle
+      do: target_weakest_mob_in_room
+      ratio_below: 0.85
+
+    # ── Below: verbatim copy of generic_fighter.yaml ─────
+
+    # packmate_hurt: engage the attacker.
+    - type: action
+      event: packmate_hurt
+      do: attack
+
+    # heard_callforhelp: navigate toward an adjacent caller.
+    - type: action
+      event: heard_callforhelp
+      do: go_to_caller_room
+
+    # mob_combat_round: original combat cascade.
+    - type: selector
+      event: mob_combat_round
+      children:
+        - type: sequence
+          children:
+            - type: condition
+              check: target_is_casting
+            - type: action
+              do: command_best_of
+              cmds: [bash, trip]
+
+        - type: sequence
+          children:
+            - type: condition
+              check: target_not_standing
+            - type: action
+              do: command_best_of
+              cmds: [kick]
+
+        - type: action
+          do: command_best_of
+          cmds: [bash]
+
+        - type: sequence
+          children:
+            - type: decorator
+              mod: invert
+              child:
+                type: condition
+                check: multiple_enemies
+            - type: action
+              do: command_best_of
+              cmds: [grapple]
+
+        - type: action
+          do: command_best_of
+          cmds: [trip]
