@@ -22,12 +22,12 @@ type helpCallerActor struct {
 	name          string
 }
 
-func (h *helpCallerActor) IsPlayer() bool                            { return false }
-func (h *helpCallerActor) GetUserId() int                            { return 0 }
-func (h *helpCallerActor) GetMobInstanceId() int                     { return h.mobInstanceId }
-func (h *helpCallerActor) GetCharacter() *characters.Character       { return nil }
-func (h *helpCallerActor) GetRoom() *rooms.Room                      { return nil }
-func (h *helpCallerActor) GetName() string                           { return h.name }
+func (h *helpCallerActor) IsPlayer() bool                      { return false }
+func (h *helpCallerActor) GetUserId() int                      { return 0 }
+func (h *helpCallerActor) GetMobInstanceId() int               { return h.mobInstanceId }
+func (h *helpCallerActor) GetCharacter() *characters.Character { return nil }
+func (h *helpCallerActor) GetRoom() *rooms.Room                { return nil }
+func (h *helpCallerActor) GetName() string                     { return h.name }
 
 // ─── Bleed DoT in AutoHeal ─────────────────────────────────────────────────
 

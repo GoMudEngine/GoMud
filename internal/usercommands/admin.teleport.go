@@ -94,7 +94,6 @@ func Teleport(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 		} else {
 
-
 			user.SendText(fmt.Sprintf("Moved to room %d.", gotoRoomId))
 
 			gotoRoom := rooms.LoadRoom(gotoRoomId)

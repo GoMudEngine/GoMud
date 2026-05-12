@@ -251,3 +251,28 @@ func (s *Species) HasAllBodyParts(required []string) bool {
 	}
 	return true
 }
+
+// ValidateBodyPartTags scans all loaded species and panics on any
+// unknown body-part tag or unknown intrinsic mutation id. Called
+// from main after species + mutations are loaded.
+//
+// mutationIdExists is a callback for cross-package lookup — pass
+// mutations.HasSpec or equivalent.
+func ValidateBodyPartTags(mutationIdExists func(id string) bool) {
+	for _, sp := range allSpecies {
+		for _, tag := range sp.BodyParts {
+			if !IsCanonicalBodyPart(tag) {
+				panic(fmt.Sprintf(
+					"species %q (id %d): unknown body_part tag %q (canonical: %v)",
+					sp.Name, sp.SpeciesId, tag, CanonicalBodyParts))
+			}
+		}
+		for id := range sp.IntrinsicMutations {
+			if !mutationIdExists(id) {
+				panic(fmt.Sprintf(
+					"species %q (id %d): unknown mutation id in intrinsic_mutations: %q",
+					sp.Name, sp.SpeciesId, id))
+			}
+		}
+	}
+}

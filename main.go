@@ -1150,6 +1150,12 @@ func loadAllDataFiles(isReload bool) {
 	items.LoadDataFiles()
 	species.LoadDataFiles()
 	mobs.LoadDataFiles()
+
+	// Cross-reference validation: body-part tags and intrinsic
+	// mutation references must be coherent.
+	mutations.ValidateBodyPartTags()
+	species.ValidateBodyPartTags(mutations.HasSpec)
+
 	mobs.AuditMobNameCollisions(func(name string) (int, bool) {
 		if userId, _ := users.CharacterNameSearch(name); userId > 0 {
 			return userId, true

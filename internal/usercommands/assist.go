@@ -12,7 +12,8 @@ import (
 
 // Assist attacks whatever a party member is currently fighting.
 // Usage: assist          — assist party leader
-//        assist <name>   — assist a specific party member
+//
+//	assist <name>   — assist a specific party member
 func Assist(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	partyInfo := parties.Get(user.UserId)

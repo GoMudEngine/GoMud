@@ -105,17 +105,17 @@ func Title(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	type TitleDisplay struct {
-		FullTitle    string
-		MutTier     string
-		MutLoad     string
-		SkillTier   string
-		SkillPct    string
-		Archetype   string
-		TopStats    []statBar
+		FullTitle string
+		MutTier   string
+		MutLoad   string
+		SkillTier string
+		SkillPct  string
+		Archetype string
+		TopStats  []statBar
 	}
 
 	data := TitleDisplay{
-		FullTitle:  fullTitle,
+		FullTitle: fullTitle,
 		MutTier:   mutTierDisplay,
 		MutLoad:   mutLoadDesc,
 		SkillTier: skillTier,

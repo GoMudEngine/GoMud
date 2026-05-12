@@ -24,10 +24,10 @@ func newFullMockPlayer(roomId int) *fullMockPlayer {
 	}
 }
 
-func (p *fullMockPlayer) HasQuest(token string) bool        { return p.quests[token] }
-func (p *fullMockPlayer) HasItem(itemId int) bool           { return p.items[itemId] }
-func (p *fullMockPlayer) GetRoomId() int                    { return p.roomId }
-func (p *fullMockPlayer) GetQuestFlag(key string) string    { return p.flags[key] }
+func (p *fullMockPlayer) HasQuest(token string) bool     { return p.quests[token] }
+func (p *fullMockPlayer) HasItem(itemId int) bool        { return p.items[itemId] }
+func (p *fullMockPlayer) GetRoomId() int                 { return p.roomId }
+func (p *fullMockPlayer) GetQuestFlag(key string) string { return p.flags[key] }
 
 // fullMockActionContext wraps mockActionContext but mutates the player's state
 // on GrantQuest, ConsumeItem, and GiveItem so chained evaluation works.

@@ -77,8 +77,8 @@ func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	events.AddToQueue(events.SkillUsed{
-		UserId: user.UserId,
-		Skill:  skills.Skullduggery,
+		UserId:  user.UserId,
+		Skill:   skills.Skullduggery,
 		Details: `sneak`,
 	})
 

@@ -871,4 +871,3 @@ func handlePartyAutoAttack(mob *mobs.Mob, defUser *users.UserRecord) {
 		}
 	}
 }
-

@@ -300,4 +300,3 @@ func validateCompanionName(name string) error {
 	}
 	return nil
 }
-

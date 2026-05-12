@@ -1,0 +1,134 @@
+description: |
+  Smoke test for chunk 1.4 (NPC knowledge model). The substrate
+  records per-NPC × per-subject knowledge — identity (has-met +
+  name learned), location (last-seen + bounded observation log),
+  routine (frequented-rooms via observations), and deeds-witnessed
+  (1.3 crime row IDs).
+
+  v1 auto-write triggers:
+  (1) forager/caravan room change — every other NPC mob in the
+      destination room records an observation of the moving entity.
+  (2) crime witnessing — when 1.3 records a crime with a player
+      perpetrator, every witness mob records the crime ID in their
+      knowledge of that player.
+
+  The forager/caravan trigger is admin-verifiable only (the player
+  doesn't need to do anything; the auto-write fires whenever a
+  forager or caravan moves through a populated room). The crime
+  trigger is what we drive from the player side in this smoke.
+
+  PRE-TEST SETUP (already arranged by the controller — verify
+  on login):
+  - Smoketester is in Thornwall City. Combatant citizens to use
+    as targets: city_beggar (mob 100), street_performer (mob 101),
+    records_clerk_pell (mob 99), old_fen / old_gobb / old_wrex
+    (114-116), barmaid_dal (117), tavern_keeper_marek (96).
+    DO NOT target merchant (102) or food_vendor (103) — those are
+    non_combatant and your attack is rejected before any crime
+    fires.
+  - Skullduggery starts at rank 1. Bring it to rank 2 yourself
+    before goal 4 by spamming `sneak` near NPCs (~30-60 attempts).
+  - Crime + faction state may NOT be fresh (chunk 1.3 smoke ran
+    before this). Don't rely on rep being at zero; rely on
+    DELTAS — i.e., did `knowledge show <witness>` gain a record
+    after the act?
+
+  Note: you are NOT an admin. Where goals reference admin commands,
+  flag them in your report under "Admin commands needed" — the
+  controller will run them.
+
+goals:
+  # ── 0. Login + orientation ────────────────────────────────────
+  - Log in as smoketester (port 55555, host localhost). Run
+    `set charset` to switch to ASCII. Run `look` to confirm your
+    starting room and which mobs are visible. Run `inventory` and
+    note your weapon (should be wielded already).
+
+  # ── 1. Witnessed assault → knowledge write ───────────────────
+  - Find a room with a combatant citizen (use the list above) AND
+    another faction-aligned mob present (a guard, or another
+    citizen). Run `attack <citizen>`. The first-aggression hook
+    records an assault crime; the witness's knowledge of you
+    gains the crime ID via the new T15 integration.
+
+    After the attack, immediately flee or de-aggro so the victim
+    survives (don't kill them yet — that's goal 2). Note the room
+    id, the citizen's name, and the bystander witness's name.
+
+    Request admin to run:
+      knowledge show <bystander-mob-id> smoketester
+      crime list thornwall_citizens
+    EXPECTED:
+      - The bystander has a knowledge record about smoketester
+        with HasMet: true, Source: witnessed, the new assault
+        crime ID in CrimesWitnessed.
+      - The crime list shows the assault row.
+
+  # ── 2. Continue to murder → upgrade preserves knowledge ──────
+  - Return to the same room (or wherever the citizen is now) and
+    finish them. The MobDeath hook upgrades the assault row in-
+    place to murder; T16 writes knowledge for current witnesses
+    (Case A — external witness present at the kill).
+
+    Request admin to run:
+      knowledge show <bystander-mob-id> smoketester
+      crime list thornwall_citizens
+    EXPECTED:
+      - Same crime ID still on the bystander's
+        knowledge.crimes_witnessed list (upgrade-in-place keeps
+        the ID).
+      - Crime row is now kind=murder, perp=smoketester.
+
+  # ── 3. Lone act → no knowledge write (perp=unknown) ─────────
+  - Walk to a room with a single combatant citizen and confirm
+    no other thornwall_citizens / thornwall_guards mobs are
+    present. Suggested target: street_performer (101) in a side
+    room. Attack and kill them.
+
+    Under chunk 1.3's lone-murder logic the assault row is
+    refunded and the row's perp becomes unknown. T16's knowledge
+    helper has an early-return when perp != PerpPlayer, so NO
+    knowledge writes should fire for this kill.
+
+    Request admin to run:
+      knowledge show smoketester  (lists every observer NPC who
+                                   knows about smoketester)
+      crime list thornwall_citizens
+    EXPECTED:
+      - No NEW knowledge records for smoketester from this kill.
+        (Previous records from goal 1/2 stay.)
+      - A new crime row, kind=murder, perp=unknown.
+
+  # ── 3.5. Rank up skullduggery to 2 ──────────────────────────
+  - Run `skills` and confirm skullduggery rank. If still 1, move
+    to a room with 2-3 NPCs and spam `sneak` until it ticks to 2.
+    Use-based progression is probabilistic; allow ~30-60 attempts.
+    If stuck above 60 attempts, note it and skip goal 4.
+
+  # ── 4. Failed steal → theft knowledge write ─────────────────
+  - Find a live combatant citizen (not a non_combatant
+    shopkeeper). Run `steal <citizen>`. With skullduggery rank 2,
+    it'll fail most of the time — the failure path records a
+    theft crime AND writes knowledge per witness via T17.
+
+    If it succeeds, try a different target until you get a
+    failure.
+
+    Request admin to run:
+      knowledge show <victim-mob-id> smoketester
+      crime list thornwall_citizens
+    EXPECTED:
+      - The victim's knowledge of smoketester now includes the
+        new theft crime ID.
+      - A new theft row in the crime list.
+
+  # ── 5. Final summary ────────────────────────────────────────
+  - Write a 1-paragraph "Smoke verdict" at the top of your report.
+    Did the knowledge substrate fire on the expected paths
+    (assault, murder upgrade, theft)? Did it correctly skip on
+    the lone-perp path? Note any anomalies.
+
+  # ── 6. Report admin requests ────────────────────────────────
+  - At the end of your report, list ALL admin commands you would
+    have wanted to run, grouped by goal. The controller will
+    execute them and verify state.

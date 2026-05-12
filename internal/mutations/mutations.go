@@ -596,3 +596,24 @@ func GearEffectivenessMultiplier(owned map[string]int) float64 {
 func GetPhysicalDefenseBonus(owned map[string]int) float64 {
 	return sumEffects(owned, "physical_defense_bonus", "")
 }
+
+// HasSpec returns true if a mutation with the given id is loaded.
+// Used by cross-package validation.
+func HasSpec(id string) bool {
+	_, ok := allMutations[id]
+	return ok
+}
+
+// ValidateBodyPartTags scans all loaded mutation specs and panics
+// on any unknown body-part tag in RequiresBodyParts.
+func ValidateBodyPartTags() {
+	for _, spec := range allMutations {
+		for _, tag := range spec.RequiresBodyParts {
+			if !species.IsCanonicalBodyPart(tag) {
+				panic(fmt.Sprintf(
+					"mutation %q: unknown requires_body_parts tag %q (canonical: %v)",
+					spec.MutationId, tag, species.CanonicalBodyParts))
+			}
+		}
+	}
+}

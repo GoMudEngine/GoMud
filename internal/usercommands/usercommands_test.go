@@ -377,7 +377,6 @@ func TestInventory(t *testing.T) {
 	})
 }
 
-
 func TestKillstats(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
@@ -1534,7 +1533,6 @@ func TestUnlock(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-
 // ─── Search ─────────────────────────────────────────────────────────────────
 
 func TestSearch(t *testing.T) {
@@ -2250,7 +2248,6 @@ func TestCharacter(t *testing.T) {
 	})
 }
 
-
 func TestCraft(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
@@ -2938,7 +2935,6 @@ func TestQuestsWithData(t *testing.T) {
 		assert.NoError(t, err)
 	})
 }
-
 
 // ─── Deeper Coverage: Spells with spell data ────────────────────────────────
 
@@ -3655,7 +3651,6 @@ func TestMacrosWithData(t *testing.T) {
 		assert.NoError(t, err)
 	})
 }
-
 
 // ─── Deeper Coverage: Whisper branches ──────────────────────────────────────
 
@@ -5824,7 +5819,6 @@ func TestAdminBuildDeep(t *testing.T) {
 	})
 }
 
-
 // ─── Set deeper branches ───────────────────────────────────────────────────
 
 func TestSetWimpyBranch(t *testing.T) {
@@ -6525,7 +6519,6 @@ func TestGetLockRender(t *testing.T) {
 	})
 }
 
-
 // ─── Deeper admin.buff ──────────────────────────────────────────────────────
 
 func TestAdminBuffMoreBranches(t *testing.T) {
@@ -6582,7 +6575,6 @@ func TestWhoDeeper(t *testing.T) {
 	})
 }
 
-
 // ─── Storage command ────────────────────────────────────────────────────────
 
 func TestStorageBranches(t *testing.T) {
@@ -6606,7 +6598,6 @@ func TestStorageBranches(t *testing.T) {
 		room.IsStorage = false
 	})
 }
-
 
 // ─── Target command ─────────────────────────────────────────────────────────
 

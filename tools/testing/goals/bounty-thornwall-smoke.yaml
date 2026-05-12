@@ -1,0 +1,105 @@
+description: |
+  Smoke test for chunk 1.5 (bounty state). The substrate stores
+  declared bounties (issuer, target, reward, condition, expiry) in
+  a single registry at `_datafiles/world/dogmud/bounties.yaml`.
+  Player command `bounty list/show` shows open bounties; admin
+  command `bounty declare/withdraw/prune-expired` adds the
+  mutation surface. Auto-claim fires on MobDeath: gold + faction
+  rep are paid out to the highest damager.
+
+  Two physical bounty boards: Thornwall Guard Barracks (room 473)
+  and Stillwater Constabulary (room 4110). They're flavor nouns —
+  `look bounty board` shows description text + a hint to use the
+  `bounty list` command. The actual data lives in the registry.
+
+  PRE-TEST SETUP (verify on login):
+  - Smoketester is in Thornwall City. Combatant citizens to use
+    as bounty targets: city_beggar (mob 100), street_performer
+    (mob 101), records_clerk_pell (mob 99), old_fen / old_gobb /
+    old_wrex (114-116), barmaid_dal (117).
+  - Admin should pre-declare at least one bounty before the test
+    run so goal 1 has something to find. Suggested:
+      bounty declare faction:thornwall_guards mob:101 --reason "Disturbing the peace"
+    (Default gold/rep auto-compute from the mob's statpool.)
+
+  Note: you are NOT an admin. Where goals reference admin
+  commands, flag them under "Admin commands needed" in the report.
+
+goals:
+  # ── 0. Login + orientation ────────────────────────────────────
+  - Log in as smoketester (port 55555, host localhost). Run
+    `set charset` to switch to ASCII. Run `look` to confirm your
+    starting room. Run `inventory` and note your starting gold
+    (record this number — you'll compare against it after a kill).
+
+  # ── 1. Player bounty list shows open bounties ────────────────
+  - Run `bounty list`. The pre-declared bounty should appear in
+    the table, with columns: ID, Issuer, Target, Gold, Rep,
+    Reason. Confirm:
+      - The mob 101 bounty is visible.
+      - The "Reason" column shows "Disturbing the peace" (or
+        whatever flavor text the admin used).
+      - The "Issuer" column shows "faction:thornwall_guards" or
+        equivalent.
+    Note the bounty's ID and the gold amount.
+
+  # ── 2. Bounty show formats correctly ─────────────────────────
+  - Run `bounty show <id>` with the ID from goal 1. Output should
+    include: issuer, target, reward (gold + rep), condition,
+    declared round, expiry, declared reason. Confirm the gold
+    amount matches what `bounty list` showed.
+
+  # ── 3. Visit Thornwall bounty board ──────────────────────────
+  - Travel to Thornwall Guard Barracks (room 473). When you
+    arrive, run `look bounty board`. The flavor text should
+    mention wanted notices and hint at the `bounty list`
+    command. Note: this is purely flavor — the board doesn't
+    drive the data; the data flows through the universal
+    command.
+
+  # ── 4. Travel to Stillwater bounty board ─────────────────────
+  - Travel to Stillwater Constabulary (room 4110). If you don't
+    know the route, ask in the report which exits to take. Run
+    `look bounty board` — same flavor surface, slightly
+    different text per the room author.
+
+    If travel between zones is too long, note it as a blocker and
+    skip — the substrate verification doesn't depend on visiting
+    both boards.
+
+  # ── 5. Kill the bounty target → auto-claim + payout ──────────
+  - Return to Thornwall City and find the street_performer (mob
+    101). Attack and kill them. The MobDeath_BountyClaim hook
+    should fire: you should receive a "You collect a bounty: Xg."
+    system message AND your gold should increase by the bounty's
+    reward amount (the gold from goal 1).
+
+    Confirm:
+      - You see the bounty-collection message.
+      - Your gold went up by approximately the bounty amount.
+        (Use `inventory` to check — the line "You have N gold."
+        or similar.)
+
+  # ── 6. Bounty list shows it gone ─────────────────────────────
+  - Run `bounty list` again. The bounty from goal 1 should NO
+    LONGER appear (it's been claimed; only open bounties show in
+    the default view).
+
+  # ── 7. Final summary ────────────────────────────────────────
+  - Write a 1-paragraph "Smoke verdict" at the top of your
+    report. Did the substrate fire on the auto-claim path? Did
+    gold + system message land? Did the bounty disappear from
+    `bounty list` after the kill? Did the boards render flavor
+    correctly?
+
+  # ── 8. Report admin requests ────────────────────────────────
+  - At the end of your report, list ALL admin commands you would
+    have wanted run, grouped by goal. Especially:
+      - Pre-test setup: `bounty declare faction:thornwall_guards mob:101 --reason "..."`
+      - Verification: `bounty show <id>` (post-kill, should show
+        status=claimed, claimed_by=player:<smoketester userId>)
+      - Verification: `faction show smoketester` (should show
+        thornwall_guards rep increased by the bounty's rep
+        reward)
+      - Verification: `bounty list --all` (should show the
+        claimed row)
