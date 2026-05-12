@@ -547,11 +547,13 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 		}
 
 		// Phase 24.3 / 2.5: Apply spawn mutations with body-parts gate
+		// Hoist the species lookup to avoid redundant calls.
+		sp := species.GetSpecies(mob.Character.SpeciesId)
+
 		if len(mob.SpawnMutations) > 0 {
 			if mob.Character.Mutations == nil {
 				mob.Character.Mutations = make(map[string]int)
 			}
-			spCurated := species.GetSpecies(mob.Character.SpeciesId)
 			for _, mutId := range mob.SpawnMutations {
 				spec := mutations.GetMutation(mutId)
 				if spec == nil {
@@ -561,14 +563,20 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 						"mutation", mutId)
 					continue
 				}
-				if !spec.CanApplyTo(spCurated) {
-					mudlog.Warn("MobSpawn",
+				if !spec.CanApplyTo(sp) {
+					// Defensive: nil-guard species fields in warning log
+					fields := []any{
 						"msg", "mutation requirements not met by species",
 						"mobId", mob.MobId,
 						"mutation", mutId,
-						"species", spCurated.Name,
 						"requires", spec.RequiresBodyParts,
-						"species_body_parts", spCurated.BodyParts)
+					}
+					if sp != nil {
+						fields = append(fields,
+							"species", sp.Name,
+							"species_body_parts", sp.BodyParts)
+					}
+					mudlog.Warn("MobSpawn", fields...)
 					continue
 				}
 				mob.Character.Mutations[mutId] = 1
@@ -579,7 +587,6 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 			if mob.Character.Mutations == nil {
 				mob.Character.Mutations = make(map[string]int)
 			}
-			sp := species.GetSpecies(mob.Character.SpeciesId)
 			pool := mutations.GetWeightedPool(mob.Character.Mutations, sp)
 			if len(pool) > 0 {
 				mutId := mutations.RollAcquisition(pool)
@@ -588,7 +595,7 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 		}
 		// Phase 2.5: Merge species intrinsic mutations after both curated
 		// and random-roll paths have resolved.
-		mob.Character.ApplyIntrinsicMutations(species.GetSpecies(mob.Character.SpeciesId))
+		mob.Character.ApplyIntrinsicMutations(sp)
 
 		mob.Character.Equipment.Weapon.Validate()
 		mob.Character.Equipment.Offhand.Validate()

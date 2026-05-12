@@ -1695,3 +1695,68 @@ func TestMobSpawn_IntrinsicStackingWithAcquired(t *testing.T) {
 		t.Errorf("expected tail rank 2 (1 acquired + 1 intrinsic), got %d", c.Mutations["tail"])
 	}
 }
+
+// TestMobSpawn_CuratedGateSkipsIncompatibleMutation verifies that the curated
+// SpawnMutations gate (in newMobByIdInternal) correctly filters out mutations
+// that require body parts the species lacks. This exercises the gate logic
+// that CanApplyTo enforces when processing mob template SpawnMutations.
+func TestMobSpawn_CuratedGateSkipsIncompatibleMutation(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	// Seed mutations: extra-arms (requires arms), tough-skin (universal).
+	cleanMut := mutations.SeedMutationsForTest(map[string]*mutations.MutationSpec{
+		"extra-arms": {
+			MutationId:        "extra-arms",
+			Name:              "Extra Arms",
+			Rarity:            9,
+			RequiresBodyParts: []string{"arms"},
+		},
+		"tough-skin": {
+			MutationId: "tough-skin",
+			Name:       "Tough Skin",
+			Rarity:     3,
+		},
+	})
+	defer cleanMut()
+
+	// Seed canine-like species (no arms).
+	cleanSp := species.SeedSpeciesForTest(map[int]*species.Species{
+		999: {
+			SpeciesId: 999,
+			Name:      "test-canine",
+			BodyParts: []string{"legs", "eyes", "mouth", "skin", "tail"},
+		},
+	})
+	defer cleanSp()
+
+	// Create a mob template with both mutations in SpawnMutations.
+	mobsMu.Lock()
+	mobs[999] = &Mob{
+		MobId:           999,
+		Zone:            "test",
+		StatPool:        100,
+		SpawnMutations:  []string{"extra-arms", "tough-skin"},
+		ActivityLevel:   50,
+		Character: characters.Character{
+			Name:      "Test Canine",
+			SpeciesId: 999,
+		},
+	}
+	mobsMu.Unlock()
+
+	// Spawn the mob (calls newMobByIdInternal with the curated gate).
+	mob := NewMobById(999, 100)
+	if mob == nil {
+		t.Fatal("NewMobById returned nil")
+	}
+	defer DestroyInstance(mob.InstanceId)
+
+	// Verify: tough-skin applied, extra-arms blocked.
+	if mob.Character.Mutations["tough-skin"] != 1 {
+		t.Errorf("tough-skin should be applied, got rank %d", mob.Character.Mutations["tough-skin"])
+	}
+	if mob.Character.Mutations["extra-arms"] > 0 {
+		t.Errorf("extra-arms should NOT be applied to canine, got rank %d", mob.Character.Mutations["extra-arms"])
+	}
+}
