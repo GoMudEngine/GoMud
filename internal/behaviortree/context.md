@@ -673,3 +673,48 @@ Key takeaway: room state (`ceremony_active`, `ceremony_ticks`) coordinates
 between the `room_enter` (which starts the ceremony) and `room_idle` (which
 ends it), demonstrating how to build timed multi-phase room events without any
 JavaScript.
+
+---
+
+## Panic-Flee Pattern (chunk 2.6)
+
+A shared `mob_hurt + mob_health_below:N → flee` branch is the FIRST
+child of the top-level selector in five core archetypes:
+`generic_fighter`, `predator`, `leader`, `lookout`, `tank_taunter`.
+Threshold defaults to 25% HP. Emergency flee outranks any combat
+action because it's the first matching branch in the selector
+evaluation order.
+
+Mobs that need a different threshold (e.g., Chrysalis Phantom at
+20%, Edrin's heal-at-50% sequence) author a per-boss archetype that
+overrides the default.
+
+---
+
+## New Archetypes (chunk 2.6)
+
+Added in the legacy tactics-engine sunset migration:
+
+- **`defensive_caster`** — Caster pattern with self-preservation:
+  panic-flee at HP<30, panic-buff (chrysalis-cocoon when
+  Chrysalis Shell buff 52 is missing), AoE on multiple targets
+  (conviction-barrage), single-target spike (conviction-spike).
+  Used by goblin_shaman (219), tunnel_shaman (74),
+  bandit_caster (285), elemental_queen (321). Absorbed the
+  legacy `defensive_caster` and `caster_backline` tactic presets.
+- **`boss_edrin`** — Old Edrin's fragile-caster rotation with
+  fold-recall at HP<30, panic-flee at HP<25, heal at HP<50,
+  opening conviction-ward (shield spell — no buff gate),
+  mind-spike on casters, hemorrhagic-burst on multi,
+  pyretic-surge single-target.
+- **`boss_sylara`** — Windwarden Sylara's heal-at-30 + panic
+  chrysalis-cocoon (buff 52) + conviction-ward opener
+  (shield spell — no buff gate) + bash interrupt.
+- **`boss_rhett`** — Geomancer Rhett's defense-only opener
+  (conviction-armor when buff 38 missing) + panic-flee.
+- **`boss_soren`** — Soren's leader-archetype combat plus a
+  call_for_help at HP<30 branch.
+- **`boss_chrysalis_phantom`** — Tight panic-flee (HP<20) +
+  target_casting → trip interrupt.
+
+Spec: `docs/superpowers/specs/2026-05-12-mob-aliveness-2.6-sunset-tactics-engine-design.md`

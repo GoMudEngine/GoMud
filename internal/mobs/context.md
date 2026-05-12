@@ -55,30 +55,25 @@ The mobs system is built around several key components:
 - Idle, angry, and combat command sets
 - Boredom tracking and player interaction memory
 - Conversation participation with other NPCs
-- **Reactive Tactical AI** — event-driven combat decisions via `internal/mobai/`
+- Behavior tree combat decisions (see `internal/behaviortree/context.md`)
 
-### 2b. **Reactive Tactical AI (mobai package)**
-Mobs with `tactic_preset` and/or `tactics` in their YAML gain event-driven
-combat intelligence that fires alongside (and can override) the legacy AI.
+### 2b. **Mob Behavior (chunk 2.6 update)**
 
-**Signal flow:**
-1. `combat_start` signal emits when a mob first enters combat (from both
-   `handlePlayerVsMob` and `handleMobCombat`)
-2. `combat_round` signal emits every round for mobs already in combat
-3. `HandleMobAISignal` evaluates tactics against current `TriggerContext`
-4. Matching tactic queued as `PendingReaction` with delay
-5. `ProcessMobReactions` fires reactions on NewTurn (50ms tick)
-6. `handleMobAIDecision` defers legacy AI when reactive AI recently acted
+Mob behavior is driven entirely by the behavior tree (btree) system —
+see `internal/behaviortree/context.md`. The legacy `internal/mobai/`
+tactics engine was removed in chunk 2.6; the Mob struct no longer
+carries `Tactics`, `TacticPreset`, `ReactionDelay`, or
+`TacticalDiscipline` fields. Mob YAMLs no longer support
+`tactic_preset:`, `tactics:`, `reaction_delay:`, or
+`tactical_discipline:` keys (they're silently ignored if present).
 
-**YAML fields:** `tactic_preset`, `tactics` (list of trigger/action/priority),
-`reaction_delay` (seconds), `tactical_discipline` (0-1 follow-through chance)
+Note: the `CombatMemory` substrate (grudge tracking across flee /
+re-engage cycles) was preserved from the deleted engine and now lives
+at `internal/mobs/combat_memory.go`. Mob struct still carries the
+`CombatMemory *CombatMemory` field and the SetCombatMemory /
+CombatMemoryExpired helpers.
 
-**Presets:** `aggressive_melee`, `defensive_caster`, `ambusher`, `tank`
-Custom tactics merge with preset rules (custom priorities override preset).
-
-**Targeting preference:** `LookForTrouble` and `RetargetOrEnd` both prefer
-player targets over companions/mobs. Companions only get targeted when no
-eligible players are available.
+Design: `docs/superpowers/specs/2026-05-12-mob-aliveness-2.6-sunset-tactics-engine-design.md`
 
 ### 3. **Social and Combat Dynamics**
 - Group-based allegiance system
