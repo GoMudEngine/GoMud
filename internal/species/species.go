@@ -48,6 +48,8 @@ type Species struct {
 	NaturalBash      bool             `yaml:"naturalbash,omitempty"`    // Can bash without a shield (elementals, golems)
 	ReturnDamage     int              `yaml:"return_damage,omitempty"`  // % of melee damage returned to attacker (fire elemental, etc.)
 	GrappleImmune    bool             `yaml:"grapple_immune,omitempty"` // Cannot be grappled (ethereal, fire, etc.)
+	BodyParts        []string         `yaml:"body_parts,omitempty"`     // Set of canonical body-part tags this species has
+	IntrinsicMutations map[string]int `yaml:"intrinsic_mutations,omitempty"` // Maps mutation id -> baseline rank
 }
 
 func GetAllSpecies() []Species {
@@ -193,4 +195,59 @@ func LoadDataFiles() {
 
 	mudlog.Info("species.LoadDataFiles()", "loadedCount", len(allSpecies), "Time Taken", time.Since(start))
 
+}
+
+// CanonicalBodyParts is the exhaustive set of body-part tags that
+// can appear in Species.BodyParts and MutationSpec.RequiresBodyParts.
+// Boot-time validation rejects any value not in this set.
+var CanonicalBodyParts = []string{
+	"arms",  // explicit grasping limbs distinct from legs
+	"hands", // fingered manipulators on the arms
+	"legs",  // distinct locomotion limbs
+	"eyes",  // visual organs
+	"mouth", // biting/vocal apparatus
+	"skin",  // surface coverage
+	"tail",  // anatomical tail
+}
+
+// IsCanonicalBodyPart reports whether the given tag is in the
+// canonical set.
+func IsCanonicalBodyPart(tag string) bool {
+	for _, t := range CanonicalBodyParts {
+		if t == tag {
+			return true
+		}
+	}
+	return false
+}
+
+// HasBodyPart returns true if this species declares the given
+// canonical body-part tag, OR if BodyParts is nil (fail-open for
+// un-migrated species). An explicit empty slice means "no body
+// parts" and returns false for every tag.
+func (s *Species) HasBodyPart(part string) bool {
+	if s == nil {
+		return true // defensive fail-open
+	}
+	if s.BodyParts == nil {
+		return true // un-migrated species fail-open
+	}
+	for _, p := range s.BodyParts {
+		if p == part {
+			return true
+		}
+	}
+	return false
+}
+
+// HasAllBodyParts returns true if this species has every part in
+// the requirements list. Empty requirements list always returns
+// true (body-agnostic mutations).
+func (s *Species) HasAllBodyParts(required []string) bool {
+	for _, part := range required {
+		if !s.HasBodyPart(part) {
+			return false
+		}
+	}
+	return true
 }
