@@ -204,6 +204,13 @@ Condition nodes use `type: condition` with `check: <name>`.
 | `item_matches` | `item_id` (int) | Event ItemId matches. `player_give` only. |
 | `multiple_enemies` | none | More than one player + charmed mob in room. |
 
+### Combat Assessment
+
+| Condition | Params | Description |
+|-----------|--------|-------------|
+| `target_power_ratio_above` | `value` (float) | True when self_power / target_power > value. Target resolution: `Event.UserId` → `Aggro.MobInstanceId` → `Aggro.UserId`. Returns Failure if no target resolvable or value missing/zero. |
+| `target_power_ratio_below` | `value` (float) | Mirror of `_above`: true when ratio < value. |
+
 ---
 
 ## Action Reference
@@ -246,6 +253,12 @@ are subject to perception-scaled reaction delays (see below).
 | `attack` | none | Mob attacks the triggering player; if none, picks random player in room. |
 | `flee` | none | Mob flees combat. |
 | `cast` | `spell` (string) | Mob casts the named spell. |
+
+### Combat Targeting — instant
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `target_weakest_mob_in_room` | `ratio_below` (float, default 1.0) | Scans `room.GetMobs()`, picks the mob with the lowest power ratio relative to self that the caller's `HatesMob` returns true for, sets it as Aggro. Skips self, dead, non-combatant, same-owner companions, and mobs the caller doesn't hate. Players are NOT scanned. Returns Success on a pick, Failure otherwise. |
 
 ### Boss & Companion Control — delayed
 
@@ -356,6 +369,7 @@ A mob with Perception 50 has:
 | `set_misc_data` | No |
 | `set_room_locked` | No |
 | `command` | No |
+| `target_weakest_mob_in_room` | No |
 
 ---
 
