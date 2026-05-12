@@ -24,7 +24,6 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/items"
-	"github.com/GoMudEngine/GoMud/internal/mobai"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/pkg/errors"
@@ -117,15 +116,7 @@ type Mob struct {
 	LLMProfile         *llm.LLMProfile `yaml:"llmprofile,omitempty"`          // Optional LLM-driven dialogue profile
 	Archetype          string          `yaml:"archetype,omitempty"`           // "fighting", "casting", or "" (default even distribution)
 	DefaultDisposition int             `yaml:"default_disposition,omitempty"` // Per-NPC starting disposition score on the [-100, +100] scale; 0 means neutral. Used by internal/opinions to seed first-time interactions and as the asymptote for decay.
-	// Mob AI framework fields
-	ReactionDelay           float64             `yaml:"reaction_delay,omitempty"`      // Seconds before executing a reactive tactic (default 1.5)
-	TacticalDiscipline      float64             `yaml:"tactical_discipline,omitempty"` // 0.0-1.0, how reliably mob follows tactics (default 0.5)
-	TacticPreset            string              `yaml:"tactic_preset,omitempty"`       // Named preset: "aggressive_melee", "defensive_caster", "ambusher"
-	Tactics                 []mobai.TacticRule  `yaml:"tactics,omitempty"`             // Per-mob tactic overrides
-	CombatMemory            *mobai.CombatMemory `yaml:"-"`                             // Runtime combat memory (not persisted)
-	lastReactionTurn        uint64              // Cooldown: last turn a reaction fired
-	effectiveDiscipline     float64             // Runtime discipline (base ± variance, grows over time)
-	disciplineInitialized   bool                // Whether effective discipline has been set
+	CombatMemory   *CombatMemory `yaml:"-"` // Runtime combat memory (not persisted)
 	SpawnMutations          []string            `yaml:"spawnmutations,omitempty,flow"`     // Mutations always granted at spawn (Phase 24.3)
 	MutationChance          int                 `yaml:"mutationchance,omitempty"`          // % chance to gain 1 random bonus mutation on spawn (Phase 24.3)
 	CharmImmune             bool                `yaml:"charm_immune,omitempty"`            // If true, charm spells cannot affect this mob
@@ -176,81 +167,14 @@ func (m *Mob) IsNonCombatant() bool {
 	return m.NonCombatant
 }
 
-func (m *Mob) GetLastReactionTurn() uint64 {
-	return m.lastReactionTurn
-}
-
-func (m *Mob) SetLastReactionTurn(turn uint64) {
-	m.lastReactionTurn = turn
-}
-
-// GetEffectiveDiscipline returns the mob's current discipline, initializing
-// on first call with ±0.1 random variance from the base YAML value.
-func (m *Mob) GetEffectiveDiscipline() float64 {
-	if !m.disciplineInitialized {
-		base := m.TacticalDiscipline
-		if base <= 0 {
-			base = 0.5
-		}
-		// ±0.1 variance (uniform random)
-		variance := (float64(util.Rand(21)) - 10.0) / 100.0 // -0.10 to +0.10
-		m.effectiveDiscipline = base + variance
-		if m.effectiveDiscipline < 0 {
-			m.effectiveDiscipline = 0
-		}
-		if m.effectiveDiscipline > 1.0 {
-			m.effectiveDiscipline = 1.0
-		}
-		m.disciplineInitialized = true
-	}
-	return m.effectiveDiscipline
-}
-
-// GrowDiscipline nudges the mob's effective discipline toward 1.0.
-// Called after a successful tactic execution.
-func (m *Mob) GrowDiscipline(amount float64) {
-	if !m.disciplineInitialized {
-		m.GetEffectiveDiscipline() // initialize first
-	}
-	m.effectiveDiscipline += amount
-	if m.effectiveDiscipline > 1.0 {
-		m.effectiveDiscipline = 1.0
-	}
-}
-
-// GetZone satisfies mobai.MobActor — returns the mob's zone name.
+// GetZone returns the mob's zone name.
 func (m *Mob) GetZone() string {
 	return m.Zone
 }
 
-// GetRoomId satisfies mobai.MobActor — returns the mob's current room ID.
-func (m *Mob) GetRoomId() int {
-	return m.Character.RoomId
-}
-
-// GetName satisfies mobai.MobActor — returns the mob's display name.
+// GetName returns the mob's display name.
 func (m *Mob) GetName() string {
 	return m.Character.Name
-}
-
-// GetAggroUserId satisfies mobai.MobActor — returns the UserId of the aggro
-// target, or 0 if there is no aggro or the aggro target is a mob.
-func (m *Mob) GetAggroUserId() int {
-	if m.Character.Aggro == nil {
-		return 0
-	}
-	return m.Character.Aggro.UserId
-}
-
-// HasAggro satisfies mobai.MobActor — returns true if the mob has an active
-// aggro target.
-func (m *Mob) HasAggro() bool {
-	return m.Character.Aggro != nil
-}
-
-// GetCombatMemory satisfies mobai.MobActor — returns the mob's combat memory.
-func (m *Mob) GetCombatMemory() *mobai.CombatMemory {
-	return m.CombatMemory
 }
 
 // Gets a copy of all mob info

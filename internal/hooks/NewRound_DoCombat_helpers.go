@@ -11,9 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
-	"github.com/GoMudEngine/GoMud/internal/mobai"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -705,25 +703,6 @@ func handlePlayerConcentrationBreak(defUser *users.UserRecord, roundResult comba
 func handleMobAIDecision(mob *mobs.Mob, c configs.Config) bool {
 	if mob.Character.Aggro.Type != characters.DefaultAttack {
 		return false
-	}
-
-	// If mob has reactive AI tactics and recently reacted, skip legacy AI
-	resolvedTactics := mobai.ResolveTactics(mob.TacticPreset, mob.Tactics)
-	if len(resolvedTactics) > 0 {
-		bal := configs.GetBalanceConfig()
-		delay := mobai.GetEffectiveReactionDelay(
-			mob.ReactionDelay,
-			float64(bal.MobReactionDelayMin),
-			float64(bal.MobReactionDelayMax),
-		)
-		cooldownTurns := uint64(delay * float64(configs.GetTimingConfig().TurnsPerSecond()))
-		lastReaction := mob.GetLastReactionTurn()
-		currentTurn := util.GetTurnCount()
-		if lastReaction > 0 && currentTurn-lastReaction < cooldownTurns*2 {
-			mudlog.Debug("MobAI", "decision", "skip_legacy", "mob", mob.Character.Name, "lastReaction", lastReaction, "current", currentTurn)
-			return true // Reactive AI is handling this mob
-		}
-		mudlog.Debug("MobAI", "decision", "fallthrough_to_legacy", "mob", mob.Character.Name, "tactics", len(resolvedTactics), "lastReaction", lastReaction)
 	}
 
 	// Stage 11.5: Caster AI decision - try spell first, then special move
