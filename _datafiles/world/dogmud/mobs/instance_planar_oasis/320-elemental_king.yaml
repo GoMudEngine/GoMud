@@ -7,8 +7,7 @@ statpool: 4
 hostile: true
 groups:
   - elemental
-mutations:
-  large: 1
+spawnmutations: [large]
 activitylevel: 30
 tactic_preset: aggressive_melee
 tactical_discipline: 0.90
