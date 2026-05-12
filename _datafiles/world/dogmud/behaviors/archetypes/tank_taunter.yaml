@@ -22,6 +22,28 @@
 tree:
   type: selector
   children:
+    # NEW: panic-flee at critical HP (absorbs the inline tactic
+    # `health_below:25 → flee` from chunk 2.6 migration).
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 25
+        - type: action
+          do: flee
+
+    # NEW: call for help at low HP (absorbs the `tank` tactic preset).
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 20
+        - type: action
+          do: command
+          cmd: callforhelp
+
     # ── packmate_hurt: engage the attacker ───────────────────────
     - type: action
       event: packmate_hurt
