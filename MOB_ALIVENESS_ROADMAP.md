@@ -87,7 +87,7 @@ should always agree.
 | 2.2a | Tactical | Incorporeal mutation | M | — | Done |
 | 2.3 | Tactical | Equip-if-better behavior | S | 2.2 | Done |
 | 2.4 | Tactical | Mob `consider` + threat-aware behaviors | S | 2.2 | Done |
-| 2.5 | Tactical | Mutations on mobs | L | — | Not started |
+| 2.5 | Tactical | Mutations on mobs | L | — | Done |
 | 2.6 | Tactical | Tactics-cast preemption fix | S | — | Not started |
 | 2.7 | Tactical | Mob skullduggery suite | M | — | Not started |
 | 2.8 | Tactical | Mob scout / track / scan | S | — | Not started |
@@ -117,7 +117,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 12 / 41 done • 0 in progress • 29 not started.
+**Roll-up:** 13 / 41 done • 0 in progress • 28 not started.
 
 ---
 
@@ -338,13 +338,14 @@ Build vocabulary before the planner.
 - **Shipped:** `internal/actions/consider.go` — `Consider(actor, target) ConsiderResult` with prediction text emission via `actor.SendText` (MobActor no-op preserves silent compute path). Player + mob wrappers each ~15 lines. Btree primitives in `conditions_combat.go` and `actions_combat.go` (new function alongside existing entries). Target resolution chain: `Event.UserId` → `Aggro.MobInstanceId` → `Aggro.UserId` (matches `actions.ResolveAggroTarget` convention). `mob.HatesMob(other)` predicate gates predation — covers faction/pack-awareness without coupling to 1.2 substrate. Lookout `player_enter` branch with `target_power_ratio_above: 1.0` ambush gate. Predator archetype `ratio_below: 0.85` predation ceiling. PowerScore audit section added to `internal/combat/context.md`. Spec at `docs/superpowers/specs/2026-05-12-mob-aliveness-2.4-mob-consider-design.md`, plan at `docs/superpowers/plans/2026-05-12-mob-aliveness-2.4-mob-consider.md`.
 
 ### 2.5 Mutations on mobs
-**Status:** Not started • **Size:** L
+**Status:** Done (2026-05-12) • **Size:** L
 
 - **Goal:** Companion Phase 5 — mutations apply to mobs the way they do to players.
 - **In:** Mob mutation slots, YAML schema, runtime application of mutation effects (extra arms, tail, etc.), combat integration, scaling.
 - **Out:** Player-facing UI for mutations on companions/mobs (separate concern).
 - **Depends on:** —
 - **Why:** Closes a major parity gap. Mutated mobs are a content lever for novel encounters. (Absorbed from MEMORY.md — Companion Phase 5.)
+- **Shipped:** Body-plan gating model — `Species.BodyParts []string` from a canonical seven-tag set (`arms, hands, legs, eyes, mouth, skin, tail`); `MutationSpec.RequiresBodyParts []string` replaces the old `RequiresArms bool`. Three gating sites updated: random-roll pool (`GetWeightedPool` signature changed to take species), curated `SpawnMutations` path (latent bug fix — was applying unconditionally), and mid-game mutation grants (5 call sites across user round tick, behavior tree action, quest engine bridge, login, and mob spawn). `Character.ApplyIntrinsicMutations(species)` merges species intrinsics additively into the character's mutation map at init time, cap-aware via `MutationMaxRank = 4`. Migration covered all 35 existing species (skip dummy 19, orb 20) + 4 new elemental species (sand 41, storm 42, ice 43, smoke 44). 17 mutation YAMLs gained `requires_body_parts:` declarations. 5 mob YAMLs in `instance_planar_oasis/` repointed: king kept on magma + added `mutations: { large: 1 }` override, queen moved to new ice species (dropping her chunk-2.2a `incorporeal: 4` override since her crystal/water form is corporeal), prince moved to new smoke species. Redundant `mutations: { incorporeal: 4 }` overrides on 4 summons mobs (wraith, spectre, fire, air) cleaned up — incorporeal is now intrinsic on the species. Boot-time validation panics on unknown body-part tags or unknown mutation ids in intrinsic_mutations. Helpfiles updated to document body-plan gating in player-facing terms (mutations.template, species.template, 17 per-mutation templates each got a "Requires:" line). Spec at `docs/superpowers/specs/2026-05-12-mob-aliveness-2.5-mutations-on-mobs-design.md`, plan at `docs/superpowers/plans/2026-05-12-mob-aliveness-2.5-mutations-on-mobs.md`.
 
 ### 2.6 Tactics-cast preemption fix
 **Status:** Not started • **Size:** S
