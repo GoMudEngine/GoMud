@@ -3,36 +3,9 @@ package behaviortree
 import (
 	"testing"
 
-	"github.com/GoMudEngine/GoMud/internal/buffs"
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
-
-// seedTwoMobs registers two mob templates + two instances in one
-// SeedMobsForTest call, avoiding the single-mob limitation of
-// seedTestMob. Returns a single cleanup function.
-func seedTwoMobs(t *testing.T, roomId int,
-	template1, instance1 int, name1 string,
-	template2, instance2 int, name2 string,
-) func() {
-	t.Helper()
-	specs := map[int]*mobs.Mob{
-		template1: {MobId: mobs.MobId(template1), Character: characters.Character{
-			Name: name1, RoomId: roomId, Buffs: buffs.New(),
-		}},
-		template2: {MobId: mobs.MobId(template2), Character: characters.Character{
-			Name: name2, RoomId: roomId, Buffs: buffs.New(),
-		}},
-	}
-	instances := map[int]*mobs.Mob{
-		instance1: {MobId: mobs.MobId(template1), InstanceId: instance1, HomeRoomId: roomId,
-			Character: characters.Character{Name: name1, RoomId: roomId, Buffs: buffs.New()}},
-		instance2: {MobId: mobs.MobId(template2), InstanceId: instance2, HomeRoomId: roomId,
-			Character: characters.Character{Name: name2, RoomId: roomId, Buffs: buffs.New()}},
-	}
-	return mobs.SeedMobsForTest(specs, instances)
-}
 
 func TestTargetWeakestMobInRoom_EmptyRoom(t *testing.T) {
 	cleanRoom := seedTestRoom(t, 1, "TestZone")
@@ -96,6 +69,8 @@ func TestTargetWeakestMobInRoom_HatedButStronger_Failure(t *testing.T) {
 	bear := mobs.GetInstance(112)
 
 	// Bear stronger than wolf — wolf hates bears but won't engage.
+	wolf.Character.HealthMax.Value = 1000
+	wolf.Character.Health = 1000
 	bear.Character.HealthMax.Value = 5000
 	bear.Character.Health = 5000
 	bear.Character.Stats.Strength.ValueAdj = 500

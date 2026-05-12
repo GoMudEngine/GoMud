@@ -60,6 +60,12 @@ func init() {
 	actionRegistry["go_to_caller_room"] = actGoToCallerRoom
 
 	// Predator actions
+	//
+	// target_weakest_mob_in_room is intentionally absent from the
+	// delayedActions map below — Aggro-setting is an internal state
+	// write, not a visible action. Adding a perception delay would
+	// create a window where idle ticks re-fire before Aggro takes
+	// effect.
 	actionRegistry["target_weakest_mob_in_room"] = actTargetWeakestMobInRoom
 }
 
