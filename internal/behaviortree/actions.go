@@ -58,6 +58,9 @@ func init() {
 
 	// Pack tactics actions
 	actionRegistry["go_to_caller_room"] = actGoToCallerRoom
+
+	// Predator actions
+	actionRegistry["target_weakest_mob_in_room"] = actTargetWeakestMobInRoom
 }
 
 // LookupAction returns the action function for the given name,
