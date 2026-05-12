@@ -5,6 +5,9 @@ description: The magma elemental combines the crushing mass of earth with
   scorches anything it touches and bowls enemies flat with contemptuous
   force. The most devastating elemental a conjurer can summon, it demands
   a staggering amount of conviction to call forth.
+body_parts: [skin]
+intrinsic_mutations:
+  thick-hide: 1
 size: large
 unarmedname: molten slam
 selectable: false

@@ -5,6 +5,7 @@ size: medium
 unarmedname: fists
 selectable: true
 knowsfirstaid: true
+body_parts: [arms, hands, legs, eyes, mouth, skin]
 angrycommands:
   - emote is looking for trouble.
   - shout it's time to die!

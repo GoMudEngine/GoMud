@@ -5,6 +5,9 @@ description: A massive construct of stitched corpse-parts, the flesh golem is
   does not feel; it does not stop. What it lacks in speed or cunning it more
   than compensates for with raw, crushing strength and a body that soaks damage
   like a bog soaks rain.
+body_parts: [arms, hands, legs, eyes, mouth, skin]
+intrinsic_mutations:
+  iron-constitution: 1
 size: large
 unarmedname: fists
 selectable: false

@@ -4,6 +4,9 @@ description: A many-legged predator that spins silken webs and waits
   with eerie stillness. Arachnids inject paralyzing venom
   through needle-sharp fangs, then wrap their helpless prey
   in silk.
+body_parts: [legs, eyes, mouth, skin]
+intrinsic_mutations:
+  tremorsense: 1
 buffids:
   - 29 # Night Vision
 size: small

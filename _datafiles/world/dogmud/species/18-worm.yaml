@@ -4,6 +4,9 @@ description: A massive, segmented tunneler that burrows through earth
   and stone. Its gaping, ring-toothed maw devours soil,
   rock, and anything unfortunate enough to stand in its
   path.
+body_parts: [mouth, skin]
+intrinsic_mutations:
+  tremorsense: 1
 naturalarmor: 7
 size: large
 unarmedname: maw

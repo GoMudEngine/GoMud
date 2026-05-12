@@ -3,6 +3,9 @@ name: fish
 description: A streamlined aquatic creature that glides through water
   with effortless grace. Most fish flee from danger, but
   some larger specimens can deliver a surprising bite.
+body_parts: [eyes, mouth, skin]
+intrinsic_mutations:
+  cold-blooded: 1
 size: small
 unarmedname: fins
 selectable: false

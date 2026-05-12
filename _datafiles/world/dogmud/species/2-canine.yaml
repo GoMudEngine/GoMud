@@ -3,6 +3,9 @@ name: canine
 description: A four-legged predator with keen senses and powerful jaws.
   Canines hunt in coordinated packs, using their superior
   speed and endurance to run down prey over long distances.
+body_parts: [legs, eyes, mouth, skin, tail]
+intrinsic_mutations:
+  tail: 1
 buffids:
   - 29 # Night Vision
 size: medium

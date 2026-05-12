@@ -5,6 +5,9 @@ description: |
   martens — small to medium carnivores with thick muscular bodies,
   short legs, and a willingness to fight things twice their size.
   Heavy-jawed and stubborn; what they bite they tend to keep.
+body_parts: [legs, eyes, mouth, skin, tail]
+intrinsic_mutations:
+  tail: 1
 buffids:
   - 29 # Night Vision (mostly nocturnal hunters)
 size: small
