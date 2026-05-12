@@ -864,6 +864,24 @@ func TestCanApplyTo_NilSpecies_FailOpen(t *testing.T) {
 	}
 }
 
+func TestCanApplyTo_UnmigratedSpecies_FailOpen(t *testing.T) {
+	// Species with no BodyParts field declared (un-migrated, Task 7
+	// hasn't tagged it yet). Mutation requires arms. Should
+	// fail-open via species.HasBodyPart's nil-BodyParts handling.
+	spec := &MutationSpec{
+		MutationId:        "test",
+		RequiresBodyParts: []string{"arms"},
+	}
+	sp := &species.Species{
+		SpeciesId: 999,
+		Name:      "unmigrated",
+		BodyParts: nil, // un-migrated species
+	}
+	if !spec.CanApplyTo(sp) {
+		t.Error("un-migrated species (nil BodyParts) should fail-open (return true)")
+	}
+}
+
 func TestGetWeightedPool_FiltersByBodyParts(t *testing.T) {
 	// Seed a controlled registry: one arm-requiring mutation, one universal.
 	prev := allMutations

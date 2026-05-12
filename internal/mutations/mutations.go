@@ -47,7 +47,8 @@ type MutationSpec struct {
 
 	// RequiresBodyParts lists canonical body-part tags from
 	// species.CanonicalBodyParts. Empty/nil = body-agnostic.
-	// Validated at boot against the canonical set.
+	// Boot-time validation is added in chunk-2.5 Task 6 (or see
+	// species.IsCanonicalBodyPart for the canonical set).
 	RequiresBodyParts []string `yaml:"requires_body_parts,omitempty"`
 }
 
@@ -212,6 +213,9 @@ func calcRarityBonus(owned map[string]int) int {
 // Mutations already owned or conflicting with owned mutations are excluded.
 // sp filters out mutations whose body-part requirements the species does not meet.
 // Pass nil for sp to disable body-part filtering (fail-open for players/unknown species).
+//
+// Returns mutation IDs rather than spec pointers to preserve
+// RollAcquisition compatibility.
 func GetWeightedPool(owned map[string]int, sp *species.Species) []string {
 	// Rarity uplift: reduce common mutation weights for advanced players
 	rarityBonus := calcRarityBonus(owned)
