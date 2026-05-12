@@ -546,15 +546,32 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 			mob.SpecialMoveChance = 30 // 30% default chance to use special moves
 		}
 
-		// Phase 24.3: Apply spawn mutations
+		// Phase 24.3 / 2.5: Apply spawn mutations with body-parts gate
 		if len(mob.SpawnMutations) > 0 {
 			if mob.Character.Mutations == nil {
 				mob.Character.Mutations = make(map[string]int)
 			}
+			spCurated := species.GetSpecies(mob.Character.SpeciesId)
 			for _, mutId := range mob.SpawnMutations {
-				if mutations.GetMutation(mutId) != nil {
-					mob.Character.Mutations[mutId] = 1
+				spec := mutations.GetMutation(mutId)
+				if spec == nil {
+					mudlog.Warn("MobSpawn",
+						"msg", "unknown mutation id in SpawnMutations",
+						"mobId", mob.MobId,
+						"mutation", mutId)
+					continue
 				}
+				if !spec.CanApplyTo(spCurated) {
+					mudlog.Warn("MobSpawn",
+						"msg", "mutation requirements not met by species",
+						"mobId", mob.MobId,
+						"mutation", mutId,
+						"species", spCurated.Name,
+						"requires", spec.RequiresBodyParts,
+						"species_body_parts", spCurated.BodyParts)
+					continue
+				}
+				mob.Character.Mutations[mutId] = 1
 			}
 		}
 		// Phase 24.3: Roll for random bonus mutation
@@ -569,6 +586,9 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 				mob.Character.Mutations[mutId] = 1
 			}
 		}
+		// Phase 2.5: Merge species intrinsic mutations after both curated
+		// and random-roll paths have resolved.
+		mob.Character.ApplyIntrinsicMutations(species.GetSpecies(mob.Character.SpeciesId))
 
 		mob.Character.Equipment.Weapon.Validate()
 		mob.Character.Equipment.Offhand.Validate()
