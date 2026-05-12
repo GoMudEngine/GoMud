@@ -3,6 +3,7 @@ name: Clawed Hands
 description: Your fingernails fuse and harden into rending claws. Formidable in combat, unsettling to behold.
 rarity: 5
 visual: Their fingers end in curved, dark claws.
+requires_body_parts: [hands]
 pro:
   type: natural_weapon
   target: ""

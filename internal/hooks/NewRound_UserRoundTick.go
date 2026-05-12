@@ -256,7 +256,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 									}
 								}
 							} else if canAcquire {
-								pool := mutations.GetWeightedPool(user.Character.Mutations)
+								pool := mutations.GetWeightedPool(user.Character.Mutations, nil)
 								if len(pool) > 0 {
 									mutId := mutations.RollAcquisition(pool)
 									if user.Character.Mutations == nil {
@@ -462,7 +462,6 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 				// Recalculate all stats at the end of the round tick
 				user.Character.Validate()
 
-	
 			}
 
 		}

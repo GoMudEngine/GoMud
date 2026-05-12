@@ -247,7 +247,7 @@ func (b *GameBridge) GiveMutation() {
 	if b.user.Character.Mutations == nil {
 		b.user.Character.Mutations = make(map[string]int)
 	}
-	pool := mutations.GetWeightedPool(b.user.Character.Mutations)
+	pool := mutations.GetWeightedPool(b.user.Character.Mutations, nil)
 	if len(pool) == 0 {
 		return
 	}

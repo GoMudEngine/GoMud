@@ -47,7 +47,7 @@ func actGrantMutation(params map[string]any, ctx *EvalContext) Result {
 	if user == nil {
 		return Failure
 	}
-	pool := mutations.GetWeightedPool(user.Character.Mutations)
+	pool := mutations.GetWeightedPool(user.Character.Mutations, nil)
 	if len(pool) == 0 {
 		return Success // no mutations available, but not an error
 	}

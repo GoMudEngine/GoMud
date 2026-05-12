@@ -265,11 +265,8 @@ func tickMobMutationAcquisition(mob *mobs.Mob, mb *configs.Balance) {
 	}
 
 	if canAcquire {
-		var specDisabledSlots []string
-		if specInfo := species.GetSpecies(mob.Character.SpeciesId); specInfo != nil {
-			specDisabledSlots = specInfo.DisabledSlots
-		}
-		pool := mutations.GetWeightedPool(mob.Character.Mutations, specDisabledSlots)
+		sp := species.GetSpecies(mob.Character.SpeciesId)
+		pool := mutations.GetWeightedPool(mob.Character.Mutations, sp)
 		if mutId := mutations.RollAcquisition(pool); mutId != "" {
 			if mob.Character.Mutations == nil {
 				mob.Character.Mutations = make(map[string]int)

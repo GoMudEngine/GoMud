@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/pkg/errors"
 )
@@ -26,11 +27,11 @@ type MutationEffect struct {
 
 // MutationSpec is the data-driven definition of a single mutation loaded from YAML.
 type MutationSpec struct {
-	MutationId  string         `yaml:"mutationid"`
-	Name        string         `yaml:"name"`
-	Description string         `yaml:"description"`
-	Rarity      int            `yaml:"rarity"` // 1=common … 10=very rare
-	Visual      string         `yaml:"visual"` // appended to character look desc
+	MutationId  string `yaml:"mutationid"`
+	Name        string `yaml:"name"`
+	Description string `yaml:"description"`
+	Rarity      int    `yaml:"rarity"` // 1=common … 10=very rare
+	Visual      string `yaml:"visual"` // appended to character look desc
 
 	// Legacy single-effect fields (backward compat — migrated into Pros/Cons during Validate)
 	Pro MutationEffect `yaml:"pro"`
@@ -44,10 +45,10 @@ type MutationSpec struct {
 	// If a character owns any conflicting mutation, this one is excluded from the pool.
 	Conflicts []string `yaml:"conflicts,omitempty"`
 
-	// RequiresArms filters this mutation out of the pool for species with disabled
-	// weapon/offhand slots (e.g., wolves, bears). Only relevant for mutations that
-	// grant arm-related abilities.
-	RequiresArms bool `yaml:"requires_arms,omitempty"`
+	// RequiresBodyParts lists canonical body-part tags from
+	// species.CanonicalBodyParts. Empty/nil = body-agnostic.
+	// Validated at boot against the canonical set.
+	RequiresBodyParts []string `yaml:"requires_body_parts,omitempty"`
 }
 
 // Id implements fileloader.Loadable.
@@ -209,16 +210,9 @@ func calcRarityBonus(owned map[string]int) int {
 // GetWeightedPool builds a weighted slice of mutation IDs suitable for random selection.
 // Each mutation appears (11 - Rarity) times so rarer mutations are less likely.
 // Mutations already owned or conflicting with owned mutations are excluded.
-// disabledSlots filters out mutations requiring arms for species that lack arm slots.
-func GetWeightedPool(owned map[string]int, disabledSlots ...[]string) []string {
-	slotDisabled := map[string]bool{}
-	if len(disabledSlots) > 0 && disabledSlots[0] != nil {
-		for _, slot := range disabledSlots[0] {
-			slotDisabled[slot] = true
-		}
-	}
-	hasArms := !slotDisabled["weapon"] && !slotDisabled["offhand"]
-
+// sp filters out mutations whose body-part requirements the species does not meet.
+// Pass nil for sp to disable body-part filtering (fail-open for players/unknown species).
+func GetWeightedPool(owned map[string]int, sp *species.Species) []string {
 	// Rarity uplift: reduce common mutation weights for advanced players
 	rarityBonus := calcRarityBonus(owned)
 
@@ -230,7 +224,7 @@ func GetWeightedPool(owned map[string]int, disabledSlots ...[]string) []string {
 		if HasConflict(owned, id) {
 			continue
 		}
-		if spec.RequiresArms && !hasArms {
+		if !spec.CanApplyTo(sp) {
 			continue
 		}
 		weight := 11 - spec.Rarity - rarityBonus
@@ -242,6 +236,16 @@ func GetWeightedPool(owned map[string]int, disabledSlots ...[]string) []string {
 		}
 	}
 	return pool
+}
+
+// CanApplyTo reports whether this mutation's body-part requirements
+// are satisfied by the given species. Empty requirements pass for
+// any embodied or unembodied species.
+func (s *MutationSpec) CanApplyTo(sp *species.Species) bool {
+	if sp == nil {
+		return true // defensive fail-open
+	}
+	return sp.HasAllBodyParts(s.RequiresBodyParts)
 }
 
 // RollAcquisition picks a random mutation ID from the weighted pool.

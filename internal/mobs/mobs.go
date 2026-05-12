@@ -562,11 +562,8 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 			if mob.Character.Mutations == nil {
 				mob.Character.Mutations = make(map[string]int)
 			}
-			var specDisabledSlots []string
-			if specInfo := species.GetSpecies(mob.Character.SpeciesId); specInfo != nil {
-				specDisabledSlots = specInfo.DisabledSlots
-			}
-			pool := mutations.GetWeightedPool(mob.Character.Mutations, specDisabledSlots)
+			sp := species.GetSpecies(mob.Character.SpeciesId)
+			pool := mutations.GetWeightedPool(mob.Character.Mutations, sp)
 			if len(pool) > 0 {
 				mutId := mutations.RollAcquisition(pool)
 				mob.Character.Mutations[mutId] = 1
