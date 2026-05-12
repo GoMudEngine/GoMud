@@ -16,6 +16,17 @@ Each subsequent mutation requires significantly more combat to trigger. Rarer mu
 contribute more weight, making the next one even harder to earn. You can carry up to five
 mutations at once.
 
+<ansi fg="yellow">━━━ Anatomy and Mutation Compatibility ━━━</ansi>
+
+Not every mutation is available to every creature. A mutation may require certain anatomy —
+extra arms need arms to grow from, sharp claws need hands to grow on, keen eyes need eyes to
+sharpen. If your species lacks the necessary body part, the mutation cannot take hold.
+
+Conversely, some species have intrinsic mutations — natural anatomy that grants the
+mechanical effect of a mutation without needing to roll for it. A wolf has an intrinsic
+tail; a vampire has intrinsic regenerative tissue. Acquired mutations stack additively on
+top of intrinsic ones.
+
 <ansi fg="yellow">━━━ Pros and Cons ━━━</ansi>
 
 Every mutation has both benefits and drawbacks. The Chrysalis does not improve you cleanly —

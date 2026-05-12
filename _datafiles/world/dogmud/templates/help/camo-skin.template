@@ -4,6 +4,7 @@ Your skin shifts and blurs, mimicking your surroundings with an
 unsettling fluidity. You fade from notice — but something about the
 effect repulses those who see through it.
 
+<ansi fg="yellow">Requires:</ansi>  Skin
 <ansi fg="yellow">Type:</ansi>     Passive
 <ansi fg="yellow">Rarity:</ansi>   Rare
 

@@ -4,7 +4,8 @@ Venom sacs have developed in your jaw, connected to elongated canines
 that can deliver a potent toxin. The mutation warps your face into
 something bestial and unsettling.
 
-<ansi fg="yellow">Type:</ansi>     Active Ability
+<ansi fg="yellow">Requires:</ansi>  Mouth (fanged jaw)
+<parameter name="yellow">Type:</ansi>     Active Ability
 <ansi fg="yellow">Rarity:</ansi>   Very Rare
 
 <ansi fg="yellow">Benefits:</ansi>
