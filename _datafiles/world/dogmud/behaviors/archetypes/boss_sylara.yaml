@@ -1,0 +1,55 @@
+# boss_sylara archetype
+#
+# Windwarden Sylara (mob 241) — quest-giving boss caster.
+# Defensive caster with heal on HP<30, panic-buff chrysalis-
+# cocoon when missing, opening conviction-ward, and bash to
+# interrupt casters.
+#
+# Migrated from inline tactics in chunk 2.6.
+
+tree:
+  type: selector
+  children:
+    # Heal at HP<30
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 30
+        - type: action
+          do: cast
+          spell: heal
+
+    # Combat cascade
+    - type: selector
+      event: mob_combat_round
+      children:
+        # Panic-buff: chrysalis-cocoon when buff 52 is missing
+        - type: sequence
+          children:
+            - type: decorator
+              mod: invert
+              child:
+                type: condition
+                check: mob_has_buff
+                buff_id: 52
+            - type: action
+              do: cast
+              spell: chrysalis-cocoon
+
+        # Opening: conviction-ward when combat starts
+        # Note: conviction-ward is a shield spell with no explicit buff_id.
+        # Using cast without buff check, as the spell manages its own shield.
+        - type: action
+          do: cast
+          spell: conviction-ward
+
+        # Interrupt: bash on a casting target
+        - type: sequence
+          children:
+            - type: condition
+              check: target_is_casting
+            - type: action
+              do: command_best_of
+              cmds: [bash]

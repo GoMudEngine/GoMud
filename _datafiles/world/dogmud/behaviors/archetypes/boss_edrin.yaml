@@ -1,0 +1,82 @@
+# boss_edrin archetype
+#
+# Old Edrin (mob 275) — a fragile mind-spike caster whose
+# defining trick is fold-recall: when below 30% HP, he opens
+# a fold and recalls home. Below that he uses a heal at 50%
+# HP. Combat rotation: opening conviction-ward, interrupt
+# with mind-spike, hemorrhagic-burst on multi-target,
+# pyretic-surge single-target fallback.
+#
+# Migrated from inline tactics in chunk 2.6.
+#
+# Spec: docs/superpowers/specs/2026-05-12-mob-aliveness-2.6-sunset-tactics-engine-design.md
+
+tree:
+  type: selector
+  children:
+    # Emergency recall at HP<30
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 30
+        - type: action
+          do: cast
+          spell: fold-recall
+
+    # Panic-flee at HP<25 (only fires if fold-recall failed)
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 25
+        - type: action
+          do: flee
+
+    # Heal at HP<50
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 50
+        - type: action
+          do: cast
+          spell: heal
+
+    # Combat cascade
+    - type: selector
+      event: mob_combat_round
+      children:
+        # Opening buff: conviction-ward when buff is missing.
+        # Note: conviction-ward is a shield spell (effect_type: shield)
+        # with no explicit buff_id in its definition. Using cast without
+        # buff check, as the spell manages its own shield tracking.
+        - type: action
+          do: cast
+          spell: conviction-ward
+
+        # Interrupt: mind-spike on a casting target
+        - type: sequence
+          children:
+            - type: condition
+              check: target_is_casting
+            - type: action
+              do: cast
+              spell: mind-spike
+
+        # Multi-target AoE
+        - type: sequence
+          children:
+            - type: condition
+              check: multiple_enemies
+            - type: action
+              do: cast
+              spell: hemorrhagic-burst
+
+        # Single-target fallback
+        - type: action
+          do: cast
+          spell: pyretic-surge

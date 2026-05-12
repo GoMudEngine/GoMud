@@ -1,0 +1,51 @@
+# boss_soren archetype
+#
+# Soren (mob 286) — named bandit camp leader. Extends the
+# `leader` archetype's rally/warcry pattern with a low-HP
+# call_for_help trigger that's specific to Soren (not
+# universal to all leader-archetype mobs).
+#
+# Migrated from inline tactics in chunk 2.6.
+
+tree:
+  type: selector
+  children:
+    # Panic-flee at critical HP
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 25
+        - type: action
+          do: flee
+
+    # Soren-specific: call for help at HP<30
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 30
+        - type: action
+          do: command
+          cmd: callforhelp
+
+    # Below: identical to the `leader` archetype's combat behavior.
+    - type: sequence
+      event: packmate_hurt
+      children:
+        - type: action
+          do: command_best_of
+          cmds: [rally, warcry]
+        - type: action
+          do: attack
+
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: action
+          do: command_best_of
+          cmds: [rally, warcry]
+        - type: action
+          do: attack
