@@ -249,6 +249,28 @@ mitigation getters, completed during chunk 2.2a:
 This ensures characters with many-armed mutations or high-value jewelry can
 leverage their full equipment potential for defense.
 
+## Intrinsic Mutations (chunk 2.5)
+
+`Character.ApplyIntrinsicMutations(species *species.Species)` merges
+the species's intrinsic mutations additively into `Character.Mutations`.
+No-op on nil species or empty intrinsic map. Cap-aware via
+`MutationMaxRank = 4` (matches chunk-2.2a convention; no per-mutation
+max field exists today).
+
+Called once at character init AFTER all other mutation logic:
+1. Curated SpawnMutations from mob YAML (mob spawn only)
+2. Random-roll mutation acquisition (mob spawn + player round tick)
+3. Persistent acquired mutations from save file (players only)
+4. `ApplyIntrinsicMutations(species)` — this call
+
+Stacks ADDITIVELY: a wolf species with `intrinsic_mutations: { tail: 1 }`
+that also rolls `tail` rank 1 ends up with effective rank 2 in
+`Character.Mutations`.
+
+File: `internal/characters/intrinsic.go`
+
+Design: `docs/superpowers/specs/2026-05-12-mob-aliveness-2.5-mutations-on-mobs-design.md`
+
 ## Key Features
 
 ### Character Persistence

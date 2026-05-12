@@ -96,6 +96,42 @@ are excluded. `RollAcquisition()` picks uniformly at random from that slice.
 
 Maximum mutations per character: `MutationMaxCount` = 5.
 
+### Body-Plan Gating (chunk 2.5)
+
+`MutationSpec.RequiresBodyParts []string` lists canonical body-part tags
+required for the mutation to apply. Empty/nil = body-agnostic. The legacy
+`RequiresArms bool` field has been REMOVED — migration replaced it with
+`RequiresBodyParts: [arms]`.
+
+Three gating sites:
+
+1. **Random-roll pool:** `GetWeightedPool(current, species)` filters
+   out mutations whose body-parts requirements aren't met by the
+   species. The signature changed from `GetWeightedPool(current,
+   disabledSlots)` to take `*species.Species` directly.
+2. **Curated SpawnMutations path:** `mobs.go` checks each entry via
+   `MutationSpec.CanApplyTo(species)`; logs a warning + skips on
+   mismatch.
+3. **Mid-game grants:** Quest engine bridge + behavior tree
+   `grant_mutation` action + player round tick all pass the user's
+   species to `GetWeightedPool`. Pool-level filtering means body-
+   part-incompatible mutations are silently excluded from candidates
+   rather than producing an explicit rejection message (the spec's
+   "Your body cannot integrate this mutation" line is reserved for
+   a future direct-grant flow like mutation potions).
+
+Boot-time validation (`ValidateBodyPartTags`) panics on unknown
+body-part tags in any mutation YAML.
+
+### Intrinsic Mutation Stacking
+
+Species's `IntrinsicMutations` map merges additively with acquired
+mutations at character init via `Character.ApplyIntrinsicMutations`.
+Cap-aware: combined rank clamped to `MutationMaxRank = 4` (matches
+the chunk-2.2a convention).
+
+Design: `docs/superpowers/specs/2026-05-12-mob-aliveness-2.5-mutations-on-mobs-design.md`
+
 ### Conflict System (Phase 24.1)
 
 Mutations can declare `conflicts: [id1, id2]` in their YAML. `HasConflict()`
