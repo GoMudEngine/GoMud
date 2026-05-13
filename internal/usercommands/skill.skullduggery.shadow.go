@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -52,38 +51,12 @@ func Shadow(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return true, nil
 	}
 
-	// Must be hidden to shadow
-	if !user.Character.HasBuffFlag(buffs.Hidden) {
-		user.SendText(
-			"You must be hidden to shadow someone. " +
-				"Try <ansi fg=\"command\">sneak</ansi> first.")
-		return true, nil
-	}
-
-	if user.Character.Aggro != nil {
-		user.SendText("You can't do that while in combat!")
-		return true, nil
-	}
-
-	// Check cooldown — prevents re-shadowing immediately after a shadow ends
-	cooldownKey := skills.Skullduggery.String(`shadow`)
-	if user.Character.GetCooldown(cooldownKey) > 0 {
-		user.SendText(fmt.Sprintf(
-			"You need to wait %d more rounds before shadowing again.",
-			user.Character.GetCooldown(cooldownKey)))
-		return true, nil
-	}
-
-	// Resolve target in the current room
+	// Resolve target in the current room, excluding the player themselves.
 	target, err := actions.ResolveTargetActor(room, strings.ToLower(rest), actions.ResolveTargetOptions{
 		ExcludeUserId: user.UserId,
 	})
-	if err == actions.ErrTargetVanished {
-		user.SendText("They seem to have vanished.")
-		return true, nil
-	}
 	if err != nil {
-		// ErrTargetNotFound — could be self-exclusion or genuinely not found.
+		// Check whether the name matched the player themselves.
 		if pId, _ := room.FindByName(strings.ToLower(rest)); pId == user.UserId {
 			user.SendText("You can't shadow yourself.")
 			return true, nil
@@ -92,33 +65,21 @@ func Shadow(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return true, nil
 	}
 
-	// Store the shadow target
+	opts := actions.ShadowOptions{}
 	if target.IsPlayer() {
-		targetUser := target.(*actions.UserActor).User
-		user.Character.SetMiscData("shadow-target-user", targetUser.UserId)
-		user.Character.SetMiscData("shadow-target-mob", nil)
-		user.SendText(fmt.Sprintf(
-			`You begin shadowing <ansi fg="username">%s</ansi>, `+
-				`watching their every move.`,
-			targetUser.Character.Name))
+		opts.TargetUserId = target.GetUserId()
 	} else {
-		mob := target.(*actions.MobActor).Mob
-		user.Character.SetMiscData("shadow-target-user", nil)
-		user.Character.SetMiscData("shadow-target-mob", mob.InstanceId)
-		user.SendText(fmt.Sprintf(
-			`You begin shadowing <ansi fg="mobname">%s</ansi>, `+
-				`moving silently in their wake.`,
-			mob.Character.Name))
+		opts.TargetMobInstanceId = target.GetMobInstanceId()
 	}
 
-	events.AddToQueue(events.SkillUsed{
-		UserId:  user.UserId,
-		Skill:   skills.Skullduggery,
-		Details: `shadow`,
-	})
+	actor := &actions.UserActor{User: user, Room: room}
+	result := actions.Shadow(actor, opts)
 
-	user.Character.CheckSkillProgression(
-		string(skills.Skullduggery), user.UserId, 1.0)
+	if result.OnCooldown {
+		user.SendText(fmt.Sprintf(
+			"You need to wait %s before shadowing again.",
+			result.Reason))
+	}
 
 	return true, nil
 }
