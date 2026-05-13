@@ -5,6 +5,9 @@
 package combatphase
 
 import (
+	"errors"
+	"sync"
+
 	"github.com/GoMudEngine/GoMud/internal/state"
 )
 
@@ -149,3 +152,115 @@ func (m *Machine) CurrentTarget() state.ActorRef {
 func (m *Machine) Inner() *state.Machine[State] {
 	return m.inner
 }
+
+// === Machine registry ===
+// Cross-character lookups for inbound attacker tracking, target-death
+// cascades, etc. Real engine integration (Task 10) wires this from
+// Character setup.
+
+var (
+	registryMu      sync.Mutex
+	machineRegistry = map[state.ActorRef]*Machine{}
+)
+
+// RegisterMachine binds an ActorRef to its Machine.
+func RegisterMachine(ref state.ActorRef, m *Machine) {
+	registryMu.Lock()
+	defer registryMu.Unlock()
+	machineRegistry[ref] = m
+}
+
+// UnregisterMachine removes a binding (e.g. on logout or despawn).
+func UnregisterMachine(ref state.ActorRef) {
+	registryMu.Lock()
+	defer registryMu.Unlock()
+	delete(machineRegistry, ref)
+}
+
+// lookupMachine returns the registered Machine for ref, or nil.
+func lookupMachine(ref state.ActorRef) *Machine {
+	registryMu.Lock()
+	defer registryMu.Unlock()
+	return machineRegistry[ref]
+}
+
+// === STUBS — Implementations land in Tasks 5-8. ===
+
+// errNotImplemented is returned by stubs so tests get an error rather than
+// a panic when the real logic hasn't been written yet.
+var errNotImplemented = errors.New("not implemented")
+
+// TransitionToEngaging initiates combat against a target.
+func (m *Machine) TransitionToEngaging(d EngagingData, r state.TransitionReason) error {
+	return errNotImplemented
+}
+
+// TransitionToDisengaging initiates a flee attempt from Engaged state.
+func (m *Machine) TransitionToDisengaging(r state.TransitionReason) error {
+	return errNotImplemented
+}
+
+// ResolveFlee completes a flee attempt: success=true → Idle, false → Engaged.
+func (m *Machine) ResolveFlee(success bool) {}
+
+// OnRoundTick advances Engaging countdown or fires scheduled transitions.
+func (m *Machine) OnRoundTick() {}
+
+// NotifyTargetDied is called when this machine's outbound target has died.
+func (m *Machine) NotifyTargetDied(target state.ActorRef) {}
+
+// NotifySelfDied is called when this character has died; clears all combat state.
+func (m *Machine) NotifySelfDied() {}
+
+// ForceIdle unconditionally transitions the machine to Idle (e.g. on
+// combatant-flag toggle, charm, or despawn).
+func (m *Machine) ForceIdle(r state.TransitionReason) {}
+
+// OnEndOfRoundIfSurprise registers a callback that fires once at end of the
+// first combat round when this engagement was initiated with TriggerSurpriseAttack.
+func (m *Machine) OnEndOfRoundIfSurprise(fn func(state.TransitionReason)) {}
+
+// OnCombatRoundEnd is called at the end of each combat round; advances
+// surprise tracking and fires registered end-of-round callbacks.
+func (m *Machine) OnCombatRoundEnd() {}
+
+// RegisterCombatantVeto adds a veto that blocks Engaging when the attacker
+// is a NonCombatant. check() returns true when combat IS allowed.
+func (m *Machine) RegisterCombatantVeto(check func() bool) {}
+
+// RegisterActivityCheck adds a veto that blocks Engaging when the character
+// is busy with an activity. check() returns true when free.
+func (m *Machine) RegisterActivityCheck(check func() bool) {}
+
+// RegisterLifeCheck adds a veto that blocks Engaging when the attacker
+// is dead. check() returns true when alive.
+func (m *Machine) RegisterLifeCheck(check func() bool) {}
+
+// RegisterPositionCheck adds a veto that blocks Disengaging when the
+// character is grappled. check() returns true when movement is possible.
+func (m *Machine) RegisterPositionCheck(check func() bool) {}
+
+// RegisterTargetCombatantCheck adds a veto that blocks Engaging when the
+// target is a NonCombatant. check(target) returns true when target can be attacked.
+func (m *Machine) RegisterTargetCombatantCheck(check func(state.ActorRef) bool) {}
+
+// RegisterTargetLifeCheck adds a veto that blocks Engaging when the target
+// is dead. check(target) returns true when alive.
+func (m *Machine) RegisterTargetLifeCheck(check func(state.ActorRef) bool) {}
+
+// RegisterTargetPresenceCheck adds a veto that blocks Engaging when the
+// target is AFK or disconnected. check(target) returns true when present.
+func (m *Machine) RegisterTargetPresenceCheck(check func(state.ActorRef) bool) {}
+
+// SubscribeAttackersChange registers a callback that fires whenever the
+// inbound Attackers list changes (add or remove).
+func (m *Machine) SubscribeAttackersChange(fn func([]state.ActorRef)) {}
+
+// OnTickEvent registers a callback that DispatchTickEvent will invoke with
+// the state-appropriate event name.
+func (m *Machine) OnTickEvent(fn func(name string, r state.TransitionReason)) {}
+
+// DispatchTickEvent fires the registered tick-event callback with the event
+// name appropriate to the current state (mob_combat_round, mob_idle, or
+// silent for Engaging/Disengaging).
+func (m *Machine) DispatchTickEvent() {}
