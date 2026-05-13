@@ -93,7 +93,7 @@ func TestSneak_AlreadyHidden(t *testing.T) {
 	// The AlreadyHidden check happens first before any room processing.
 	result := Sneak(actor)
 
-	// With an empty room and no observers, ExecuteSneak should succeed
+	// With an empty room and no observers, Sneak should succeed
 	// (since there's no one to spot the actor).
 	assert.False(t, result.AlreadyHidden, "character should not start hidden")
 	// Success will be true if room is empty (no observers to fail the roll)
