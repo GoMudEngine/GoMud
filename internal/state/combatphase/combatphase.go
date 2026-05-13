@@ -55,6 +55,19 @@ type DisengagingData struct {
 	FleeRound  int            // round flee was initiated
 }
 
+// vetoChain holds the registered veto functions. Each
+// function returns true if the transition is OK, false if
+// it should be vetoed.
+type vetoChain struct {
+	combatantSelf   func() bool                 // self.Combatant
+	activitySelf    func() bool                 // self.Activity == Free
+	lifeSelf        func() bool                 // self.Life == Alive
+	positionSelf    func() bool                 // self.Position == Standing (for flee only)
+	targetCombatant func(state.ActorRef) bool   // target.Combatant
+	targetLife      func(state.ActorRef) bool   // target.Life == Alive
+	targetPresence  func(state.ActorRef) bool   // target.Presence available
+}
+
 // Machine wraps state.Machine[State] with Combat-Phase-specific
 // API including per-state data storage and Attackers tracking.
 //
@@ -70,6 +83,7 @@ type Machine struct {
 	disengaging              *DisengagingData
 	attackers                []state.ActorRef // inbound attacker list
 	attackersChangeListeners []func([]state.ActorRef)
+	vetoes                   vetoChain
 }
 
 // NewMachine returns a Combat Phase machine in Idle.
@@ -189,11 +203,29 @@ func lookupMachine(ref state.ActorRef) *Machine {
 // === Task 5 implementations ===
 
 // TransitionToEngaging is the primary entry point into combat.
-// Vetoes (Task 6) run inside via state.Machine's TransitionTo.
+// Vetoes run before the inner framework transition.
 // On success, stores EngagingData and notifies target's inbound list.
 func (m *Machine) TransitionToEngaging(d EngagingData, r state.TransitionReason) error {
-	// (Vetoes registered via Register*Veto/Check land in Task 6;
-	// they wire into the inner Machine's BeforeTransition hook.)
+	// Vetoes — run before the framework's transition.
+	if m.vetoes.combatantSelf != nil && !m.vetoes.combatantSelf() {
+		return &state.VetoError{HandlerName: "combatant_self", Reason: "non-combatant"}
+	}
+	if m.vetoes.activitySelf != nil && !m.vetoes.activitySelf() {
+		return &state.VetoError{HandlerName: "activity_self", Reason: "busy with activity"}
+	}
+	if m.vetoes.lifeSelf != nil && !m.vetoes.lifeSelf() {
+		return &state.VetoError{HandlerName: "life_self", Reason: "not alive"}
+	}
+	if m.vetoes.targetCombatant != nil && !m.vetoes.targetCombatant(d.Target) {
+		return &state.VetoError{HandlerName: "target_combatant", Reason: "target is non-combatant"}
+	}
+	if m.vetoes.targetLife != nil && !m.vetoes.targetLife(d.Target) {
+		return &state.VetoError{HandlerName: "target_life", Reason: "target not alive"}
+	}
+	if m.vetoes.targetPresence != nil && !m.vetoes.targetPresence(d.Target) {
+		return &state.VetoError{HandlerName: "target_presence", Reason: "target unavailable"}
+	}
+
 	if err := m.inner.TransitionTo(Engaging, r); err != nil {
 		return err
 	}
@@ -205,12 +237,16 @@ func (m *Machine) TransitionToEngaging(d EngagingData, r state.TransitionReason)
 }
 
 // TransitionToDisengaging starts a flee/disengage attempt.
-// Veto for grappled state (Task 6) runs inside.
+// Flee while grappled/clinched/grounded is vetoed via positionSelf.
 func (m *Machine) TransitionToDisengaging(r state.TransitionReason) error {
+	// Flee while grappled/clinched/grounded is vetoed.
+	if r.Trigger == TriggerFleeCommand &&
+		m.vetoes.positionSelf != nil && !m.vetoes.positionSelf() {
+		return &state.VetoError{HandlerName: "position_self", Reason: "grappled"}
+	}
 	if err := m.inner.TransitionTo(Disengaging, r); err != nil {
 		return err
 	}
-	// Capture last target from EngagedData if present.
 	target := state.ActorRef{}
 	if m.engaged != nil {
 		target = m.engaged.Target
@@ -410,31 +446,37 @@ func (m *Machine) OnCombatRoundEnd() {}
 
 // RegisterCombatantVeto adds a veto that blocks Engaging when the attacker
 // is a NonCombatant. check() returns true when combat IS allowed.
-func (m *Machine) RegisterCombatantVeto(check func() bool) {}
+func (m *Machine) RegisterCombatantVeto(check func() bool) { m.vetoes.combatantSelf = check }
 
 // RegisterActivityCheck adds a veto that blocks Engaging when the character
 // is busy with an activity. check() returns true when free.
-func (m *Machine) RegisterActivityCheck(check func() bool) {}
+func (m *Machine) RegisterActivityCheck(check func() bool) { m.vetoes.activitySelf = check }
 
 // RegisterLifeCheck adds a veto that blocks Engaging when the attacker
 // is dead. check() returns true when alive.
-func (m *Machine) RegisterLifeCheck(check func() bool) {}
+func (m *Machine) RegisterLifeCheck(check func() bool) { m.vetoes.lifeSelf = check }
 
 // RegisterPositionCheck adds a veto that blocks Disengaging when the
 // character is grappled. check() returns true when movement is possible.
-func (m *Machine) RegisterPositionCheck(check func() bool) {}
+func (m *Machine) RegisterPositionCheck(check func() bool) { m.vetoes.positionSelf = check }
 
 // RegisterTargetCombatantCheck adds a veto that blocks Engaging when the
 // target is a NonCombatant. check(target) returns true when target can be attacked.
-func (m *Machine) RegisterTargetCombatantCheck(check func(state.ActorRef) bool) {}
+func (m *Machine) RegisterTargetCombatantCheck(c func(state.ActorRef) bool) {
+	m.vetoes.targetCombatant = c
+}
 
 // RegisterTargetLifeCheck adds a veto that blocks Engaging when the target
 // is dead. check(target) returns true when alive.
-func (m *Machine) RegisterTargetLifeCheck(check func(state.ActorRef) bool) {}
+func (m *Machine) RegisterTargetLifeCheck(c func(state.ActorRef) bool) {
+	m.vetoes.targetLife = c
+}
 
 // RegisterTargetPresenceCheck adds a veto that blocks Engaging when the
 // target is AFK or disconnected. check(target) returns true when present.
-func (m *Machine) RegisterTargetPresenceCheck(check func(state.ActorRef) bool) {}
+func (m *Machine) RegisterTargetPresenceCheck(c func(state.ActorRef) bool) {
+	m.vetoes.targetPresence = c
+}
 
 // OnTickEvent registers a callback that DispatchTickEvent will invoke with
 // the state-appropriate event name.
