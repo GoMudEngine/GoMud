@@ -11,9 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
-	"github.com/GoMudEngine/GoMud/internal/mobai"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -203,26 +201,17 @@ func resolveCombatTarget(atk, def actions.Actor, roundNumber uint64) bool {
 		return false
 	}
 
-	// PvM-only: emit combat_start for the defender mob if this is its
-	// first round in combat. Mirrors legacy resolvePlayerVsMobTarget so
-	// mobs that die in round 1 still get their reactive AI signal fired
-	// before the attack roll. (Mob-attacker combat_start is fired in
-	// handleMobCombat itself.)
+	// PvM-only: initialize CombatMemory for the defender mob if this is
+	// its first round in combat so grudge tracking works across flee/re-engage.
 	if atk.IsPlayer() && !def.IsPlayer() {
 		if defMob := asMobOrNil(def); defMob != nil {
 			if defMob.CombatMemory == nil && defChar.Aggro != nil {
-				mudlog.Debug("MobAI", "emit", "combat_start", "mob", defChar.Name, "mobId", defMob.InstanceId, "source", "handleCombatRound")
-				defMob.CombatMemory = mobai.SetMemory(
+				defMob.CombatMemory = mobs.SetCombatMemory(
 					defChar.Aggro.UserId,
 					defChar.Aggro.MobInstanceId,
 					defChar.RoomId,
 					roundNumber,
 				)
-				events.AddToQueue(events.MobAISignal{
-					MobInstanceId: defMob.InstanceId,
-					SignalType:    "combat_start",
-					RoomId:        defChar.RoomId,
-				})
 			}
 		}
 	}

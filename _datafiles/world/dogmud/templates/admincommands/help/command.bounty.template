@@ -1,0 +1,25 @@
+<ansi fg="white-bold">bounty</ansi> — declare, view, withdraw, and resolve bounties
+
+  <ansi fg="cyan">bounty list</ansi> [<ansi fg="yellow">--all</ansi>]
+    List open bounties (default) or every row including
+    claimed/expired/withdrawn.
+
+  <ansi fg="cyan">bounty show</ansi> <ansi fg="yellow"><id></ansi>
+    Show full detail of one bounty.
+
+  <ansi fg="cyan">bounty declare</ansi> <ansi fg="yellow"><issuer-spec> <target-spec> [opts]</ansi>
+    Manually declare a bounty.
+      Specs: <type>:<id>
+        faction:thornwall_guards  quest:14  npc:357
+        player:17                 mob:101
+      Options:
+        --gold N            override default gold reward
+        --rep N             override default rep reward
+        --expiry-rounds N   expire after N rounds (0 = never)
+        --reason "..."      flavor text shown on board
+
+  <ansi fg="cyan">bounty withdraw</ansi> <ansi fg="yellow"><id></ansi>
+    Cancel an open bounty.
+
+  <ansi fg="cyan">bounty prune-expired</ansi>
+    Sweep open bounties past their expiry round.

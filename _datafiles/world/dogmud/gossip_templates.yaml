@@ -156,3 +156,10 @@ fallback:
   - "Mm. No news is... well, it is just no news."
   - "Ask me later. Nothing interesting right now."
   - "The world keeps turning, but it has not done anything worth mentioning."
+
+# Fact-based gossip templates. {description} is replaced with the fact's description.
+# Fallback chain: fact-{factId} → fact-{tag} → fact-default.
+fact-default:
+  - "I heard {description}"
+  - "Word is, {description}"
+  - "They say {description}"

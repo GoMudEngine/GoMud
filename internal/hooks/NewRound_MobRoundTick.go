@@ -13,7 +13,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
-	"github.com/GoMudEngine/GoMud/internal/mobai"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
@@ -137,7 +136,7 @@ func tickMobCooldowns(mob *mobs.Mob) {
 // expireMobCombatMemory — current inline block at lines 99–105.
 func expireMobCombatMemory(mob *mobs.Mob) {
 	if mob.CombatMemory != nil {
-		if mobai.MemoryExpired(mob.CombatMemory, util.GetRoundCount(),
+		if mobs.CombatMemoryExpired(mob.CombatMemory, util.GetRoundCount(),
 			int(configs.GetBalanceConfig().CombatMemoryDuration)) {
 			mob.CombatMemory = nil
 		}
@@ -265,11 +264,8 @@ func tickMobMutationAcquisition(mob *mobs.Mob, mb *configs.Balance) {
 	}
 
 	if canAcquire {
-		var specDisabledSlots []string
-		if specInfo := species.GetSpecies(mob.Character.SpeciesId); specInfo != nil {
-			specDisabledSlots = specInfo.DisabledSlots
-		}
-		pool := mutations.GetWeightedPool(mob.Character.Mutations, specDisabledSlots)
+		sp := species.GetSpecies(mob.Character.SpeciesId)
+		pool := mutations.GetWeightedPool(mob.Character.Mutations, sp)
 		if mutId := mutations.RollAcquisition(pool); mutId != "" {
 			if mob.Character.Mutations == nil {
 				mob.Character.Mutations = make(map[string]int)

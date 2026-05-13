@@ -23,8 +23,13 @@ The `internal/characters` package is the core character system for DOGMud, handl
 ### Character Statistics System
 - **Six core stats**: Strength, Dexterity, Perception, Vitality, Willpower, Charisma
 - **Stat scaling**: Stats over 100 use `SQRT(overage)*2` formula for diminishing returns
-- **Dynamic modifiers**: Equipment, buffs, and species bonuses affect final stats
+- **Dynamic modifiers**: Equipment, buffs, pets, and mutations affect final stats
 - **Use-based improvement**: Stats improve organically through gameplay
+
+**Gear-effectiveness integration (chunk 2.2a):** `Character.StatMod()` multiplies
+the Equipment portion of `Mods` by `mutations.GearEffectivenessMultiplier(c.Mutations)`
+before summing with Buffs and Pet contributions. This cascades through `RecalculateStats()`
+into all downstream consumers (stat values, mitigation, recovery, skills, spells).
 
 ### Skill System (`progression.go`)
 - **Use-based progression**: Skills improve through gameplay use, not training points
@@ -217,6 +222,54 @@ if !user.Character.Cooldowns.Try("combat-special", fmt.Sprintf("%d rounds", cfg.
 - Auto-decremented via `RoundTick()` called in combat hooks
 - `Try(key, period)` checks if cooldown expired and resets if action performed
 - `Get(key)` returns remaining rounds for display purposes
+
+## Mitigation System (Three Channels)
+
+The character package provides three mitigation getter methods that compute
+total damage reduction across all equipped items and modifications:
+
+**Three Methods:**
+- `GetPhysicalMitigation()` — defends against physical damage
+- `GetMagicalMitigation()` — defends against spells
+- `GetConvictionMitigation()` — defends against taunt/conviction damage
+
+**Gear-effectiveness integration (chunk 2.2a):** Each method separates
+gear-derived contributions (equipment slot mitigation) from non-gear
+contributions (natural armor from mutations, species baseline, shield spell
+magnitude, buff stat mods). The gear portion is multiplied by
+`mutations.GearEffectivenessMultiplier(c.Mutations)` before summing.
+
+**Slot coverage:** All 25 equipment slots are included in the three
+mitigation getters, completed during chunk 2.2a:
+- Physical mitigation: Shoulders, Back, Wrist1/2, Ring, Ring2, ExtraWrist1-4,
+  ExtraArm3-4, ComponentBag (all physical-type armor items).
+- Magical mitigation: same slots (all items can carry magical mitigation).
+- Conviction mitigation: same slots.
+
+This ensures characters with many-armed mutations or high-value jewelry can
+leverage their full equipment potential for defense.
+
+## Intrinsic Mutations (chunk 2.5)
+
+`Character.ApplyIntrinsicMutations(species *species.Species)` merges
+the species's intrinsic mutations additively into `Character.Mutations`.
+No-op on nil species or empty intrinsic map. Cap-aware via
+`MutationMaxRank = 4` (matches chunk-2.2a convention; no per-mutation
+max field exists today).
+
+Called once at character init AFTER all other mutation logic:
+1. Curated SpawnMutations from mob YAML (mob spawn only)
+2. Random-roll mutation acquisition (mob spawn + player round tick)
+3. Persistent acquired mutations from save file (players only)
+4. `ApplyIntrinsicMutations(species)` — this call
+
+Stacks ADDITIVELY: a wolf species with `intrinsic_mutations: { tail: 1 }`
+that also rolls `tail` rank 1 ends up with effective rank 2 in
+`Character.Mutations`.
+
+File: `internal/characters/intrinsic.go`
+
+Design: `docs/superpowers/specs/2026-05-12-mob-aliveness-2.5-mutations-on-mobs-design.md`
 
 ## Key Features
 

@@ -20,6 +20,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -234,8 +235,8 @@ func engageHostilePlayerInRoom(mobInstanceId int, roomId int) bool {
 		if u == nil {
 			continue
 		}
-		// Honor peacefulquest immunity — same gate as mobcommands.LookForTrouble.
-		if mob.PeacefulQuest != "" && u.Character.HasQuest(mob.PeacefulQuest) {
+		// Honor faction-rep peace gate — same as mobcommands.LookForTrouble.
+		if factions.IsPeacefulToward(mob, u.UserId) {
 			continue
 		}
 		mob.Character.SetAggro(uid, 0, characters.DefaultAttack)

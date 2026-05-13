@@ -9,7 +9,6 @@ maxwander: 2
 groups:
   - cave-pack
   - animal
-archetype: fighting
 mutationchance: 40
 idlecommands:
   - 'emote clings to the wall, its many legs gripping the stone'
@@ -19,12 +18,6 @@ idlecommands:
   - ''
   - 'emote scuttles across the ceiling, legs moving in a rippling wave'
 activitylevel: 15
-reaction_delay: 1.5
-tactical_discipline: 0.25
-tactics:
-  - trigger: health_below:25
-    action: flee
-    priority: 10
 character:
   name: cave crawler
   description: |

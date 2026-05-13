@@ -18,6 +18,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -256,7 +257,9 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 									}
 								}
 							} else if canAcquire {
-								pool := mutations.GetWeightedPool(user.Character.Mutations)
+								// Pass the user's species so body-part requirements gate the pool.
+								sp := species.GetSpecies(user.Character.SpeciesId)
+								pool := mutations.GetWeightedPool(user.Character.Mutations, sp)
 								if len(pool) > 0 {
 									mutId := mutations.RollAcquisition(pool)
 									if user.Character.Mutations == nil {
@@ -462,7 +465,6 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 				// Recalculate all stats at the end of the round tick
 				user.Character.Validate()
 
-	
 			}
 
 		}

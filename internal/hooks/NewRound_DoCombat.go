@@ -12,9 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
-	"github.com/GoMudEngine/GoMud/internal/mobai"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -241,33 +239,15 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 			continue
 		}
 
-		// Emit combat_start signal on the first round of engagement.
-		// CombatMemory being nil indicates the mob has not yet been in combat
-		// with this target, so we set the memory and fire the signal once.
+		// Initialize CombatMemory on the first round of engagement so
+		// the mob can track its aggro target across flee/re-engage cycles.
 		if mob.CombatMemory == nil && mob.Character.Aggro != nil {
-			mudlog.Debug("MobAI", "emit", "combat_start", "mob", mob.Character.Name, "mobId", mob.InstanceId)
-			mob.CombatMemory = mobai.SetMemory(
+			mob.CombatMemory = mobs.SetCombatMemory(
 				mob.Character.Aggro.UserId,
 				mob.Character.Aggro.MobInstanceId,
 				mob.Character.RoomId,
 				evt.RoundNumber,
 			)
-			events.AddToQueue(events.MobAISignal{
-				MobInstanceId: mob.InstanceId,
-				SignalType:    "combat_start",
-				RoomId:        mob.Character.RoomId,
-			})
-		}
-
-		// Emit combat_round signal every round for mobs already in combat.
-		// This allows per-round triggers (health_below, multiple_targets, etc.)
-		// to fire the reactive AI on an ongoing basis.
-		if mob.CombatMemory != nil && mob.Character.Aggro != nil {
-			events.AddToQueue(events.MobAISignal{
-				MobInstanceId: mob.InstanceId,
-				SignalType:    "combat_round",
-				RoomId:        mob.Character.RoomId,
-			})
 		}
 
 		// Fire mob_combat_round for the attacking mob BEFORE the legacy
@@ -364,12 +344,12 @@ func processGrappleProgression(char1 *characters.Character, char2 *characters.Ch
 	if result.Changed {
 		if result.NewPosition == characters.PositionStanding {
 			// Both broke apart
-			sendVisualRoomText(room, 
+			sendVisualRoomText(room,
 				fmt.Sprintf(`<ansi fg="combat">%s</ansi>`, result.RoomMessage),
 			)
 		} else if result.NewPosition == characters.PositionGrounded {
 			// Advanced to grounded
-			sendVisualRoomText(room, 
+			sendVisualRoomText(room,
 				fmt.Sprintf(`<ansi fg="combat"><ansi fg="username">%s</ansi> takes <ansi fg="mobname">%s</ansi> to the ground!</ansi>`,
 					controllerName, controlledName),
 			)

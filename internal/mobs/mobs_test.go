@@ -6,6 +6,9 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
+	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v2"
 )
@@ -1609,5 +1612,151 @@ zone: Test Zone
 	}
 	if m.CorpseDescription != "" {
 		t.Errorf("CorpseDescription default = %q, want empty", m.CorpseDescription)
+	}
+}
+
+// ─── Phase 2.5 spawn mutation gate tests ─────────────────────────────────────
+
+// TestMobSpawn_CanineNeverGetsExtraArms verifies that GetWeightedPool never
+// returns arm-requiring or hand-requiring mutations for a species that lacks
+// those body parts. Seeds a controlled mutations registry with known IDs.
+func TestMobSpawn_CanineNeverGetsExtraArms(t *testing.T) {
+	// Seed a controlled mutations registry: arm-requiring, hand-requiring,
+	// and one universal mutation (no body-part requirements).
+	cleanup := mutations.SeedMutationsForTest(map[string]*mutations.MutationSpec{
+		"extra-arms": {
+			MutationId:        "extra-arms",
+			Name:              "Extra Arms",
+			Rarity:            9,
+			RequiresBodyParts: []string{"arms"},
+		},
+		"elongated-limbs": {
+			MutationId:        "elongated-limbs",
+			Name:              "Elongated Limbs",
+			Rarity:            5,
+			RequiresBodyParts: []string{"arms"},
+		},
+		"clawed-hands": {
+			MutationId:        "clawed-hands",
+			Name:              "Clawed Hands",
+			Rarity:            4,
+			RequiresBodyParts: []string{"hands"},
+		},
+		"tough-skin": {
+			MutationId: "tough-skin",
+			Name:       "Tough Skin",
+			Rarity:     3,
+		},
+	})
+	defer cleanup()
+
+	// Canine-like species: intentionally omits arms and hands.
+	sp := &species.Species{
+		SpeciesId: 999,
+		Name:      "canine-test",
+		BodyParts: []string{"legs", "eyes", "mouth", "skin", "tail"},
+	}
+	current := map[string]int{}
+	seen := map[string]int{}
+	for i := 0; i < 500; i++ {
+		pool := mutations.GetWeightedPool(current, sp)
+		if len(pool) == 0 {
+			continue
+		}
+		picked := pool[util.Rand(len(pool))]
+		seen[picked]++
+	}
+	if seen["extra-arms"] > 0 {
+		t.Errorf("canine-shaped species should NEVER roll extra-arms, got %d times", seen["extra-arms"])
+	}
+	if seen["elongated-limbs"] > 0 {
+		t.Errorf("canine-shaped species should NEVER roll elongated-limbs, got %d times", seen["elongated-limbs"])
+	}
+	if seen["clawed-hands"] > 0 {
+		t.Errorf("canine-shaped species should NEVER roll clawed-hands, got %d times", seen["clawed-hands"])
+	}
+	// Sanity check: the universal mutation must appear at least sometimes.
+	if seen["tough-skin"] == 0 {
+		t.Error("expected tough-skin (no body-part requirements) to appear at least once in 500 rolls")
+	}
+}
+
+// TestMobSpawn_IntrinsicStackingWithAcquired verifies that ApplyIntrinsicMutations
+// stacks additively with already-acquired mutation ranks.
+func TestMobSpawn_IntrinsicStackingWithAcquired(t *testing.T) {
+	// Species with intrinsic tail rank 1; character already has acquired rank 1.
+	sp := &species.Species{
+		SpeciesId:          999,
+		IntrinsicMutations: map[string]int{"tail": 1},
+	}
+	c := &characters.Character{Mutations: map[string]int{"tail": 1}}
+	c.ApplyIntrinsicMutations(sp)
+	if c.Mutations["tail"] != 2 {
+		t.Errorf("expected tail rank 2 (1 acquired + 1 intrinsic), got %d", c.Mutations["tail"])
+	}
+}
+
+// TestMobSpawn_CuratedGateSkipsIncompatibleMutation verifies that the curated
+// SpawnMutations gate (in newMobByIdInternal) correctly filters out mutations
+// that require body parts the species lacks. This exercises the gate logic
+// that CanApplyTo enforces when processing mob template SpawnMutations.
+func TestMobSpawn_CuratedGateSkipsIncompatibleMutation(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	// Seed mutations: extra-arms (requires arms), tough-skin (universal).
+	cleanMut := mutations.SeedMutationsForTest(map[string]*mutations.MutationSpec{
+		"extra-arms": {
+			MutationId:        "extra-arms",
+			Name:              "Extra Arms",
+			Rarity:            9,
+			RequiresBodyParts: []string{"arms"},
+		},
+		"tough-skin": {
+			MutationId: "tough-skin",
+			Name:       "Tough Skin",
+			Rarity:     3,
+		},
+	})
+	defer cleanMut()
+
+	// Seed canine-like species (no arms).
+	cleanSp := species.SeedSpeciesForTest(map[int]*species.Species{
+		999: {
+			SpeciesId: 999,
+			Name:      "test-canine",
+			BodyParts: []string{"legs", "eyes", "mouth", "skin", "tail"},
+		},
+	})
+	defer cleanSp()
+
+	// Create a mob template with both mutations in SpawnMutations.
+	mobsMu.Lock()
+	mobs[999] = &Mob{
+		MobId:           999,
+		Zone:            "test",
+		StatPool:        100,
+		SpawnMutations:  []string{"extra-arms", "tough-skin"},
+		ActivityLevel:   50,
+		Character: characters.Character{
+			Name:      "Test Canine",
+			SpeciesId: 999,
+		},
+	}
+	mobsMu.Unlock()
+
+	// Spawn the mob (calls newMobByIdInternal with the curated gate).
+	mob := NewMobById(999, 100)
+	if mob == nil {
+		t.Fatal("NewMobById returned nil")
+	}
+	defer DestroyInstance(mob.InstanceId)
+
+	// Verify: tough-skin applied, extra-arms blocked.
+	if mob.Character.Mutations["tough-skin"] != 1 {
+		t.Errorf("tough-skin should be applied, got rank %d", mob.Character.Mutations["tough-skin"])
+	}
+	if mob.Character.Mutations["extra-arms"] > 0 {
+		t.Errorf("extra-arms should NOT be applied to canine, got rank %d", mob.Character.Mutations["extra-arms"])
 	}
 }

@@ -8,8 +8,11 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/crimes"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/factions"
+	"github.com/GoMudEngine/GoMud/internal/knowledge"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -201,6 +204,38 @@ func stealFromMob(mobInstanceId int, attackerScore float64, rank int,
 		)
 
 		user.Character.CancelBuffsWithFlag(buffs.Hidden)
+
+		// chunk 1.3: record theft crime on faction-aligned victim
+		if factionIds := factions.FactionsForMob(m); len(factionIds) > 0 {
+			// All witnesses including the victim (excludeInstanceId=0).
+			witnesses := crimes.WitnessesInRoom(factionIds, room, 0)
+			perp := crimes.IdentifiedPerp(user.UserId, witnesses)
+			// External witnesses (excluding victim) for HadExternalWitness.
+			externalWitnesses := crimes.WitnessesInRoom(factionIds, room, m.InstanceId)
+			hadExternal := len(externalWitnesses) > 0
+			delta := int(configs.GetBalanceConfig().CrimeRepDeltaTheft)
+			for _, fid := range factionIds {
+				crimeIds := crimes.Record([]string{fid}, crimes.KindTheft, perp,
+					m, m.InstanceId, room.RoomId, m.Character.Zone, hadExternal)
+				if perp.Type == crimes.PerpPlayer {
+					factions.BumpRep(fid, user.UserId, delta)
+					// Knowledge: each witness records the player as the perp of
+					// these crimes.
+					subject := knowledge.PlayerSubject(user.UserId)
+					for _, witnessInstId := range witnesses {
+						w := mobs.GetInstance(witnessInstId)
+						if w == nil {
+							continue
+						}
+						for _, crimeId := range crimeIds {
+							knowledge.RecordCrimeWitnessed(int(w.MobId), subject, crimeId)
+						}
+						knowledge.RecordMet(int(w.MobId), subject, room.RoomId,
+							knowledge.SourceWitnessed)
+					}
+				}
+			}
+		}
 
 		m.Command(fmt.Sprintf(`attack @%d`, user.UserId))
 	}

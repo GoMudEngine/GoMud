@@ -15,24 +15,25 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/facts"
 	"github.com/GoMudEngine/GoMud/internal/llm"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
+	"github.com/GoMudEngine/GoMud/internal/relationships"
 	"gopkg.in/yaml.v2"
 
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/items"
-	"github.com/GoMudEngine/GoMud/internal/mobai"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/pkg/errors"
 )
 
 var (
-	instanceCounter int         = 0
+	instanceCounter int          = 0
 	mobs                         = map[int]*Mob{}
 	mobsMu          sync.RWMutex // guards mobs + allMobNames
-	allMobNames                  = []string{}
+	allMobNames     = []string{}
 
 	mobInstances   = map[int]*Mob{}
 	mobInstancesMu sync.RWMutex // guards mobInstances + instanceCounter
@@ -64,10 +65,19 @@ type MobForHire struct {
 }
 type MobId int // Creating a custom type to help prevent confusion over MobId and MobInstanceId
 
+// RelationshipYAMLEntry is the per-edge authoring shape on a mob
+// template's `relationships:` field. Consumed by the relationships
+// package at startup.
+type RelationshipYAMLEntry struct {
+	To      int    `yaml:"to"`
+	Type    string `yaml:"type"`
+	Subtype string `yaml:"subtype,omitempty"`
+}
+
 type Mob struct {
 	MobId           MobId
 	Zone            string   `yaml:"zone,omitempty"`
-	StatPool        int      `yaml:"statpool,omitempty"`      // Stat points randomly distributed across stats on spawn
+	StatPool        int      `yaml:"statpool,omitempty"` // Stat points randomly distributed across stats on spawn
 	ItemDropChance  int      // chance in 100
 	LootPool        []int    `yaml:"loot_pool,omitempty"`     // Item IDs for instance loot generation
 	ActivityLevel   int      `yaml:"activitylevel,omitempty"` // 1-100%
@@ -75,79 +85,73 @@ type Mob struct {
 	HomeRoomId      int      `yaml:"-"`
 	Hostile         bool     // whether they attack on sight
 	PackFleeImmune  bool     `yaml:"pack_flee_immune,omitempty"` // if true, won't flee when packmates die
-	PeacefulQuest   string   `yaml:"peacefulquest,omitempty"` // if set, mob won't attack players who have this quest token
-	LastIdleCommand uint8    `yaml:"-"` // Track what hte last used idlecommand was
-	BoredomCounter  uint8    `yaml:"-"` // how many rounds have passed since this mob has seen a player
+	LastIdleCommand uint8    `yaml:"-"`                          // Track what hte last used idlecommand was
+	BoredomCounter  uint8    `yaml:"-"`                          // how many rounds have passed since this mob has seen a player
 	Groups          []string // What group do they identify with? Helps with teamwork
 	FoldAnchorRoom  int      `yaml:"fold_anchor_room,omitempty"` // Spawn-time fold-recall anchor (room ID)
 	// Pack-combat routine (v2-ready — see docs/superpowers/specs/2026-04-22-pack-tactics-revamp-design.md).
 	// Freeform string compared with equality to other mobs' Routine for pack
 	// identification. Mobs without a routine don't participate in packs.
-	Routine      string   `yaml:"routine,omitempty"`
+	Routine string `yaml:"routine,omitempty"`
 
 	// Other routine strings this mob also reacts to. Example: a bandit
 	// lookout with routine "watch_north_road" might list "bandit_camp_guard"
 	// here so it receives the camp's call-for-help.
 	RoutineLinks []string `yaml:"routine_links,omitempty"`
 
-	Hates           []string `yaml:"hates,omitempty"`        // What NPC groups or races do they hate and probably fight if encountered?
-	IdleCommands      []string       `yaml:"idlecommands,omitempty"`   // Commands they may do while idle (not in combat)
-	AngryCommands     []string                                         // randomly chosen to queue when they are angry/entering combat.
-	CombatCommands    []string       `yaml:"combatcommands,omitempty"` // Commands they may do while in combat
-	AIProfile         string         `yaml:"aiprofile,omitempty"`      // Combat AI profile: "default", "aggressive", "defensive", "grappler", "brawler", "tactical" (Stage 8.9)
-	SpecialMoveChance int            `yaml:"specialmovechance,omitempty"` // Base % to use special moves (0-100) (Stage 8.9)
-	MovePreferences   map[string]int `yaml:"movepreferences,omitempty"`   // Custom weights per move (Stage 8.9)
-	Character         characters.Character
-	MaxWander       int      `yaml:"maxwander,omitempty"`       // Max rooms to wander from home
-	WanderCount     int      `yaml:"-"`                         // How many times this mob has wandered
-	PreventIdle     bool     `yaml:"-"`                         // Whether they can't possibly be idle
-	ScriptTag       string   `yaml:"scripttag"`                 // Script for this mob: mobs/frostfang/scripts/{mobId}-{mobname}-{ScriptTag}.js
-	QuestFlags      []string `yaml:"questflags,omitempty,flow"` // What quest flags are set on this mob?
-	BuffIds         []int    `yaml:"buffids,omitempty"`         // Buff Id's this mob always has upon spawn
-	LLMProfile     *llm.LLMProfile `yaml:"llmprofile,omitempty"` // Optional LLM-driven dialogue profile
-	Archetype      string          `yaml:"archetype,omitempty"`           // "fighting", "casting", or "" (default even distribution)
-	// Mob AI framework fields
-	ReactionDelay       float64             `yaml:"reaction_delay,omitempty"`      // Seconds before executing a reactive tactic (default 1.5)
-	TacticalDiscipline  float64             `yaml:"tactical_discipline,omitempty"` // 0.0-1.0, how reliably mob follows tactics (default 0.5)
-	TacticPreset        string              `yaml:"tactic_preset,omitempty"`       // Named preset: "aggressive_melee", "defensive_caster", "ambusher"
-	Tactics             []mobai.TacticRule  `yaml:"tactics,omitempty"`             // Per-mob tactic overrides
-	CombatMemory        *mobai.CombatMemory `yaml:"-"`                             // Runtime combat memory (not persisted)
-	lastReactionTurn    uint64                                                      // Cooldown: last turn a reaction fired
-	effectiveDiscipline float64                                                     // Runtime discipline (base ± variance, grows over time)
-	disciplineInitialized bool                                                      // Whether effective discipline has been set
-	SpawnMutations []string        `yaml:"spawnmutations,omitempty,flow"` // Mutations always granted at spawn (Phase 24.3)
-	MutationChance int             `yaml:"mutationchance,omitempty"`      // % chance to gain 1 random bonus mutation on spawn (Phase 24.3)
-	CharmImmune             bool     `yaml:"charm_immune,omitempty"`            // If true, charm spells cannot affect this mob
-	NonCombatant            bool     `yaml:"non_combatant,omitempty"`           // If true, cannot be attacked, stolen from, or aggroed
-	PlayerAttackImmune      bool     `yaml:"player_attack_immune,omitempty"`    // If true, players cannot attack this mob (but mob can still fight)
-	BuysGeneral             bool     `yaml:"buys_general,omitempty"`            // Whether this merchant buys misc goods
-	Crafter                 bool     `yaml:"crafter,omitempty"`                 // Whether this mob crafts autonomously (Stage 38.5.4)
-	CrafterSkill            string   `yaml:"crafterskill,omitempty"`            // Craft skill used (e.g. "blacksmithing")
-	CrafterRecipeIds        []string `yaml:"crafterrecipeids,omitempty"`        // Recipe IDs this mob can craft
-	CrafterRestockMaterials []int    `yaml:"crafterrestockmaterials,omitempty"` // Item IDs restocked periodically
-	ShopCraftSupport        string   `yaml:"craft_support,omitempty"`           // Crafting discipline this shop supports (one of shops.ValidCraftSupports)
+	Hates              []string       `yaml:"hates,omitempty"`        // What NPC groups or races do they hate and probably fight if encountered?
+	IdleCommands       []string       `yaml:"idlecommands,omitempty"` // Commands they may do while idle (not in combat)
+	AngryCommands      []string       // randomly chosen to queue when they are angry/entering combat.
+	CombatCommands     []string       `yaml:"combatcommands,omitempty"`    // Commands they may do while in combat
+	AIProfile          string         `yaml:"aiprofile,omitempty"`         // Combat AI profile: "default", "aggressive", "defensive", "grappler", "brawler", "tactical" (Stage 8.9)
+	SpecialMoveChance  int            `yaml:"specialmovechance,omitempty"` // Base % to use special moves (0-100) (Stage 8.9)
+	MovePreferences    map[string]int `yaml:"movepreferences,omitempty"`   // Custom weights per move (Stage 8.9)
+	Character          characters.Character
+	MaxWander          int             `yaml:"maxwander,omitempty"`           // Max rooms to wander from home
+	WanderCount        int             `yaml:"-"`                             // How many times this mob has wandered
+	PreventIdle        bool            `yaml:"-"`                             // Whether they can't possibly be idle
+	ScriptTag          string          `yaml:"scripttag"`                     // Script for this mob: mobs/frostfang/scripts/{mobId}-{mobname}-{ScriptTag}.js
+	QuestFlags         []string        `yaml:"questflags,omitempty,flow"`     // What quest flags are set on this mob?
+	BuffIds            []int           `yaml:"buffids,omitempty"`             // Buff Id's this mob always has upon spawn
+	LLMProfile         *llm.LLMProfile `yaml:"llmprofile,omitempty"`          // Optional LLM-driven dialogue profile
+	Archetype          string          `yaml:"archetype,omitempty"`           // "fighting", "casting", or "" (default even distribution)
+	DefaultDisposition int             `yaml:"default_disposition,omitempty"` // Per-NPC starting disposition score on the [-100, +100] scale; 0 means neutral. Used by internal/opinions to seed first-time interactions and as the asymptote for decay.
+	CombatMemory   *CombatMemory `yaml:"-"` // Runtime combat memory (not persisted)
+	SpawnMutations          []string            `yaml:"spawnmutations,omitempty,flow"`     // Mutations always granted at spawn (Phase 24.3)
+	MutationChance          int                 `yaml:"mutationchance,omitempty"`          // % chance to gain 1 random bonus mutation on spawn (Phase 24.3)
+	CharmImmune             bool                `yaml:"charm_immune,omitempty"`            // If true, charm spells cannot affect this mob
+	NonCombatant            bool                `yaml:"non_combatant,omitempty"`           // If true, cannot be attacked, stolen from, or aggroed
+	PlayerAttackImmune      bool                `yaml:"player_attack_immune,omitempty"`    // If true, players cannot attack this mob (but mob can still fight)
+	BuysGeneral             bool                `yaml:"buys_general,omitempty"`            // Whether this merchant buys misc goods
+	Crafter                 bool                `yaml:"crafter,omitempty"`                 // Whether this mob crafts autonomously (Stage 38.5.4)
+	CrafterSkill            string              `yaml:"crafterskill,omitempty"`            // Craft skill used (e.g. "blacksmithing")
+	CrafterRecipeIds        []string            `yaml:"crafterrecipeids,omitempty"`        // Recipe IDs this mob can craft
+	CrafterRestockMaterials []int               `yaml:"crafterrestockmaterials,omitempty"` // Item IDs restocked periodically
+	ShopCraftSupport        string              `yaml:"craft_support,omitempty"`           // Crafting discipline this shop supports (one of shops.ValidCraftSupports)
 
 	// ── Stage 3.4: spawn-time overrides for special mobs (wagons, statues, etc.) ──
-	CarryCapacityOverride float64 `yaml:"carry_capacity,omitempty"`     // overrides Strength-derived calc when > 0
-	HealthMaxOverride     int     `yaml:"health_max,omitempty"`         // overrides Vitality-derived calc when > 0
-	StaminaMaxOverride    int     `yaml:"stamina_max,omitempty"`        // overrides default calc when > 0
-	CorpseName            string  `yaml:"corpse_name,omitempty"`        // overrides "<Name> corpse" rendering when set
-	CorpseDescription     string  `yaml:"corpse_description,omitempty"` // overrides default corpse look-text when set
-	StockMultiplier       float64 `yaml:"stock_multiplier,omitempty"`   // shop stock-cap scale; default 1.0 (treated as 1.0 by EffectiveMaxStock if unset)
+	CarryCapacityOverride float64 `yaml:"carry_capacity,omitempty"`       // overrides Strength-derived calc when > 0
+	HealthMaxOverride     int     `yaml:"health_max,omitempty"`           // overrides Vitality-derived calc when > 0
+	StaminaMaxOverride    int     `yaml:"stamina_max,omitempty"`          // overrides default calc when > 0
+	CorpseName            string  `yaml:"corpse_name,omitempty"`          // overrides "<Name> corpse" rendering when set
+	CorpseDescription     string  `yaml:"corpse_description,omitempty"`   // overrides default corpse look-text when set
+	StockMultiplier       float64 `yaml:"stock_multiplier,omitempty"`     // shop stock-cap scale; default 1.0 (treated as 1.0 by EffectiveMaxStock if unset)
 	HideEquipmentSlots    bool    `yaml:"hide_equipment_slots,omitempty"` // suppresses the Equipment block in look-mob render. For object mobs (wagons, statues) where equipment slots don't make sense.
 
-	PackBonusTotal          int      `yaml:"-"`                                 // Total training points from pack scaling (Stage 38.5.3)
-	PackAlphaId             int      `yaml:"-"`                                 // InstanceId of alpha this mob follows (0 = none)
-	IsPackAlpha             bool     `yaml:"-"`                                 // Whether this mob is currently the pack alpha
-	ScatterRounds           int      `yaml:"-"`                                 // Rounds remaining where mob skips wander (after alpha death)
-	crafterLastRestockRound uint64                                              // Last round materials were restocked (transient)
+	PackBonusTotal          int    `yaml:"-"` // Total training points from pack scaling (Stage 38.5.3)
+	PackAlphaId             int    `yaml:"-"` // InstanceId of alpha this mob follows (0 = none)
+	IsPackAlpha             bool   `yaml:"-"` // Whether this mob is currently the pack alpha
+	ScatterRounds           int    `yaml:"-"` // Rounds remaining where mob skips wander (after alpha death)
+	crafterLastRestockRound uint64 // Last round materials were restocked (transient)
 	BehaviorArchetype       string `yaml:"behavior_archetype,omitempty"` // Archetype name (e.g., "melee_self_buff") — resolved to behaviors/archetypes/<name>.yaml if per-mob tree absent.
 	BTreeState              any    `yaml:"-"`                            // Behavior tree per-instance state (*behaviortree.BehaviorState)
 	tempDataStore           map[string]any
-	conversationId  int              // Identifier of conversation currently involved in.
-	Path            PathQueue        `yaml:"-"` // a pre-calculated path the mob is following.
-	lastCommandTurn uint64           // The last turn a command was scheduled for
-	playersAttacked map[int]struct{} // all players this mob has attacked at some point
+	conversationId          int              // Identifier of conversation currently involved in.
+	Path                    PathQueue        `yaml:"-"` // a pre-calculated path the mob is following.
+	lastCommandTurn         uint64           // The last turn a command was scheduled for
+	playersAttacked         map[int]struct{} // all players this mob has attacked at some point
+	Relationships           []RelationshipYAMLEntry `yaml:"relationships,omitempty"` // Authored relationship edges; consumed by relationships.LoadFromMobs at startup.
+	KnowsFacts              []string                `yaml:"knows_facts,omitempty"`   // Fact IDs this mob knows at startup; consumed by facts.LoadFromMobs at startup.
 }
 
 func MobInstanceExists(instanceId int) bool {
@@ -163,81 +167,14 @@ func (m *Mob) IsNonCombatant() bool {
 	return m.NonCombatant
 }
 
-func (m *Mob) GetLastReactionTurn() uint64 {
-	return m.lastReactionTurn
-}
-
-func (m *Mob) SetLastReactionTurn(turn uint64) {
-	m.lastReactionTurn = turn
-}
-
-// GetEffectiveDiscipline returns the mob's current discipline, initializing
-// on first call with ±0.1 random variance from the base YAML value.
-func (m *Mob) GetEffectiveDiscipline() float64 {
-	if !m.disciplineInitialized {
-		base := m.TacticalDiscipline
-		if base <= 0 {
-			base = 0.5
-		}
-		// ±0.1 variance (uniform random)
-		variance := (float64(util.Rand(21)) - 10.0) / 100.0 // -0.10 to +0.10
-		m.effectiveDiscipline = base + variance
-		if m.effectiveDiscipline < 0 {
-			m.effectiveDiscipline = 0
-		}
-		if m.effectiveDiscipline > 1.0 {
-			m.effectiveDiscipline = 1.0
-		}
-		m.disciplineInitialized = true
-	}
-	return m.effectiveDiscipline
-}
-
-// GrowDiscipline nudges the mob's effective discipline toward 1.0.
-// Called after a successful tactic execution.
-func (m *Mob) GrowDiscipline(amount float64) {
-	if !m.disciplineInitialized {
-		m.GetEffectiveDiscipline() // initialize first
-	}
-	m.effectiveDiscipline += amount
-	if m.effectiveDiscipline > 1.0 {
-		m.effectiveDiscipline = 1.0
-	}
-}
-
-// GetZone satisfies mobai.MobActor — returns the mob's zone name.
+// GetZone returns the mob's zone name.
 func (m *Mob) GetZone() string {
 	return m.Zone
 }
 
-// GetRoomId satisfies mobai.MobActor — returns the mob's current room ID.
-func (m *Mob) GetRoomId() int {
-	return m.Character.RoomId
-}
-
-// GetName satisfies mobai.MobActor — returns the mob's display name.
+// GetName returns the mob's display name.
 func (m *Mob) GetName() string {
 	return m.Character.Name
-}
-
-// GetAggroUserId satisfies mobai.MobActor — returns the UserId of the aggro
-// target, or 0 if there is no aggro or the aggro target is a mob.
-func (m *Mob) GetAggroUserId() int {
-	if m.Character.Aggro == nil {
-		return 0
-	}
-	return m.Character.Aggro.UserId
-}
-
-// HasAggro satisfies mobai.MobActor — returns true if the mob has an active
-// aggro target.
-func (m *Mob) HasAggro() bool {
-	return m.Character.Aggro != nil
-}
-
-// GetCombatMemory satisfies mobai.MobActor — returns the mob's combat memory.
-func (m *Mob) GetCombatMemory() *mobai.CombatMemory {
-	return m.CombatMemory
 }
 
 // Gets a copy of all mob info
@@ -533,15 +470,40 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 			mob.SpecialMoveChance = 30 // 30% default chance to use special moves
 		}
 
-		// Phase 24.3: Apply spawn mutations
+		// Phase 24.3 / 2.5: Apply spawn mutations with body-parts gate
+		// Hoist the species lookup to avoid redundant calls.
+		sp := species.GetSpecies(mob.Character.SpeciesId)
+
 		if len(mob.SpawnMutations) > 0 {
 			if mob.Character.Mutations == nil {
 				mob.Character.Mutations = make(map[string]int)
 			}
 			for _, mutId := range mob.SpawnMutations {
-				if mutations.GetMutation(mutId) != nil {
-					mob.Character.Mutations[mutId] = 1
+				spec := mutations.GetMutation(mutId)
+				if spec == nil {
+					mudlog.Warn("MobSpawn",
+						"msg", "unknown mutation id in SpawnMutations",
+						"mobId", mob.MobId,
+						"mutation", mutId)
+					continue
 				}
+				if !spec.CanApplyTo(sp) {
+					// Defensive: nil-guard species fields in warning log
+					fields := []any{
+						"msg", "mutation requirements not met by species",
+						"mobId", mob.MobId,
+						"mutation", mutId,
+						"requires", spec.RequiresBodyParts,
+					}
+					if sp != nil {
+						fields = append(fields,
+							"species", sp.Name,
+							"species_body_parts", sp.BodyParts)
+					}
+					mudlog.Warn("MobSpawn", fields...)
+					continue
+				}
+				mob.Character.Mutations[mutId] = 1
 			}
 		}
 		// Phase 24.3: Roll for random bonus mutation
@@ -549,16 +511,15 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 			if mob.Character.Mutations == nil {
 				mob.Character.Mutations = make(map[string]int)
 			}
-			var specDisabledSlots []string
-			if specInfo := species.GetSpecies(mob.Character.SpeciesId); specInfo != nil {
-				specDisabledSlots = specInfo.DisabledSlots
-			}
-			pool := mutations.GetWeightedPool(mob.Character.Mutations, specDisabledSlots)
+			pool := mutations.GetWeightedPool(mob.Character.Mutations, sp)
 			if len(pool) > 0 {
 				mutId := mutations.RollAcquisition(pool)
 				mob.Character.Mutations[mutId] = 1
 			}
 		}
+		// Phase 2.5: Merge species intrinsic mutations after both curated
+		// and random-roll paths have resolved.
+		mob.Character.ApplyIntrinsicMutations(sp)
 
 		mob.Character.Equipment.Weapon.Validate()
 		mob.Character.Equipment.Offhand.Validate()
@@ -1122,6 +1083,59 @@ func LoadDataFiles() {
 	mobNameCacheMu.Unlock()
 
 	mudlog.Info("mobs.LoadDataFiles()", "loadedCount", len(tmpMobs), "Time Taken", time.Since(start))
+
+	// Populate the relationships graph from authored YAML edges.
+	mobsMu.RLock()
+	edges := make([]relationships.MobEdges, 0, len(mobs))
+	for id, spec := range mobs {
+		if len(spec.Relationships) == 0 {
+			continue
+		}
+		conv := make([]relationships.EdgeInput, 0, len(spec.Relationships))
+		for _, e := range spec.Relationships {
+			conv = append(conv, relationships.EdgeInput{
+				To:      e.To,
+				Type:    relationships.Type(e.Type),
+				Subtype: e.Subtype,
+			})
+		}
+		edges = append(edges, relationships.MobEdges{
+			MobId: id,
+			Edges: conv,
+		})
+	}
+	mobsMu.RUnlock()
+
+	relationships.LoadFromMobs(edges, func(mobId int) bool {
+		mobsMu.RLock()
+		defer mobsMu.RUnlock()
+		_, ok := mobs[mobId]
+		return ok
+	})
+
+	// Seed per-NPC fact awareness from authored knows_facts: declarations.
+	mobsMu.RLock()
+	factSeeds := make([]facts.MobAwarenessSeed, 0, len(mobs))
+	for id, spec := range mobs {
+		if len(spec.KnowsFacts) == 0 {
+			continue
+		}
+		factSeeds = append(factSeeds, facts.MobAwarenessSeed{
+			MobId:      id,
+			MobName:    spec.Character.Name,
+			KnowsFacts: spec.KnowsFacts,
+		})
+	}
+	mobsMu.RUnlock()
+
+	facts.LoadFromMobs(factSeeds, func(mobId int) string {
+		mobsMu.RLock()
+		defer mobsMu.RUnlock()
+		if spec, ok := mobs[mobId]; ok {
+			return spec.Character.Name
+		}
+		return ""
+	})
 
 }
 

@@ -229,9 +229,9 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 	// they share the same spoiled status (so spoiled potions don't merge
 	// with fresh ones).
 	type stackEntry struct {
-		name          string
-		nameFormatted string
-		count         int
+		name           string
+		nameFormatted  string
+		count          int
 		representative items.Item // first item seen for this stack key
 		spoiled        bool
 	}

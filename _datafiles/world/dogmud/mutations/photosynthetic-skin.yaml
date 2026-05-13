@@ -2,6 +2,7 @@ mutationid: photosynthetic-skin
 name: Photosynthetic Skin
 description: A verdant tinge spreads beneath your skin as chloroplast-like organelles take root. In sunlight you heal; in darkness, the hunger gnaws.
 rarity: 5
+requires_body_parts: [skin]
 visual: Their skin has a faint greenish undertone, more vivid in sunlight.
 pros:
   - type: health_regen_if_lit_multiplier

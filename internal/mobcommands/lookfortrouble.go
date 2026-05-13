@@ -5,6 +5,7 @@ import (
 	"math"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
@@ -93,8 +94,9 @@ func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) 
 				}
 			}
 
-			// peacefulquest: mob won't attack players who have this token
-			if mob.PeacefulQuest != "" && user.Character.HasQuest(mob.PeacefulQuest) {
+			// Faction-rep peace gate: skip players who are at TierWarm
+			// or higher with at least one of the mob's defined factions.
+			if factions.IsPeacefulToward(mob, user.UserId) {
 				continue
 			}
 

@@ -178,94 +178,116 @@ func (c *Character) GetDefense() int {
 // GetPhysicalMitigation returns total physical mitigation as a fraction (0.0–1.0).
 // Sources: equipment physical_mitigation (falls back to DamageReduction for
 // unmigrated items), mutations, species natural armor, shield spells.
+// Incorporeal mutation scales gear-derived mitigation.
 func (c *Character) GetPhysicalMitigation() float64 {
-	total := 0
-
+	// Gear-derived: sum of equipment slot PhysicalMitigation.
+	gearMit := 0
 	slots := []items.Item{
 		c.Equipment.Weapon, c.Equipment.Offhand,
 		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2,
-		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Body,
-		c.Equipment.Belt, c.Equipment.Gloves, c.Equipment.Ring,
+		c.Equipment.ExtraArm3, c.Equipment.ExtraArm4,
+		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Shoulders,
+		c.Equipment.Body, c.Equipment.Back, c.Equipment.Belt,
+		c.Equipment.Wrist1, c.Equipment.Wrist2,
+		c.Equipment.ExtraWrist1, c.Equipment.ExtraWrist2,
+		c.Equipment.ExtraWrist3, c.Equipment.ExtraWrist4,
+		c.Equipment.Gloves, c.Equipment.Ring, c.Equipment.Ring2,
 		c.Equipment.Legs, c.Equipment.Feet, c.Equipment.Tail,
+		c.Equipment.ComponentBag,
 	}
 	for _, slot := range slots {
 		if slot.ItemId <= 0 {
 			continue
 		}
 		spec := slot.GetSpec()
-		total += spec.PhysicalMitigation
+		gearMit += spec.PhysicalMitigation
 	}
+	// Apply gear-effectiveness multiplier to the gear-derived portion.
+	gearMit = int(float64(gearMit) * mutations.GearEffectivenessMultiplier(c.Mutations))
 
-	// Shield condition (Minor Shield spell)
-	total += int(c.GetConditionMagnitude(ConditionShield))
-
-	// Mutation natural armor
-	total += mutations.GetNaturalArmor(c.Mutations)
-
-	// Species natural armor
+	// Non-gear additions (shield spell, mutations, species natural armor).
+	nonGearMit := int(c.GetConditionMagnitude(ConditionShield))
+	nonGearMit += mutations.GetNaturalArmor(c.Mutations)
 	if speciesInfo := species.GetSpecies(c.SpeciesId); speciesInfo != nil {
-		total += speciesInfo.NaturalArmor
+		nonGearMit += speciesInfo.NaturalArmor
 	}
 
-	return float64(total) / 100.0
+	return float64(gearMit+nonGearMit) / 100.0
 }
 
 // GetMagicalMitigation returns total magical mitigation as a fraction (0.0–1.0).
-// Sources: equipment magical_mitigation, mutation magical resistance.
+// Sources: equipment magical_mitigation, mutation magical resistance, buff stat mods.
+// Incorporeal mutation scales gear-derived mitigation.
 func (c *Character) GetMagicalMitigation() float64 {
-	total := 0
-
+	// Gear-derived: sum of equipment slot MagicalMitigation.
+	gearMit := 0
 	slots := []items.Item{
 		c.Equipment.Weapon, c.Equipment.Offhand,
 		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2,
-		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Body,
-		c.Equipment.Belt, c.Equipment.Gloves, c.Equipment.Ring,
+		c.Equipment.ExtraArm3, c.Equipment.ExtraArm4,
+		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Shoulders,
+		c.Equipment.Body, c.Equipment.Back, c.Equipment.Belt,
+		c.Equipment.Wrist1, c.Equipment.Wrist2,
+		c.Equipment.ExtraWrist1, c.Equipment.ExtraWrist2,
+		c.Equipment.ExtraWrist3, c.Equipment.ExtraWrist4,
+		c.Equipment.Gloves, c.Equipment.Ring, c.Equipment.Ring2,
 		c.Equipment.Legs, c.Equipment.Feet, c.Equipment.Tail,
+		c.Equipment.ComponentBag,
 	}
 	for _, slot := range slots {
 		if slot.ItemId <= 0 {
 			continue
 		}
 		spec := slot.GetSpec()
-		total += spec.MagicalMitigation
+		gearMit += spec.MagicalMitigation
 	}
+	// Apply gear-effectiveness multiplier to the gear-derived portion.
+	gearMit = int(float64(gearMit) * mutations.GearEffectivenessMultiplier(c.Mutations))
 
-	// Mutation magical resistance (returned as fraction 0.0–1.0, convert to percentage points)
-	total += int(mutations.GetMagicalResistance(c.Mutations) * 100)
+	// Non-gear additions (mutation resistance + buff stat mods via c.StatMod).
+	// Note: c.StatMod("magical_mitigation") returns a mixed value where the
+	// equipment-stat-mod portion is already scaled by Task 4's StatMod change;
+	// buff portion is unscaled (correct — buffs aren't gear).
+	nonGearMit := int(mutations.GetMagicalResistance(c.Mutations) * 100)
+	nonGearMit += c.StatMod("magical_mitigation")
 
-	// Buff statmods (e.g. Iron Will, Chrysalis Cocoon)
-	total += c.StatMod("magical_mitigation")
-
-	return float64(total) / 100.0
+	return float64(gearMit+nonGearMit) / 100.0
 }
 
 // GetConvictionMitigation returns total conviction mitigation as a fraction (0.0–1.0).
 // Sources: equipment conviction_mitigation, mutation conviction resistance, buff statmods.
+// Incorporeal mutation scales gear-derived mitigation.
 func (c *Character) GetConvictionMitigation() float64 {
-	total := 0
-
+	// Gear-derived: sum of equipment slot ConvictionMitigation.
+	gearMit := 0
 	slots := []items.Item{
 		c.Equipment.Weapon, c.Equipment.Offhand,
 		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2,
-		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Body,
-		c.Equipment.Belt, c.Equipment.Gloves, c.Equipment.Ring,
+		c.Equipment.ExtraArm3, c.Equipment.ExtraArm4,
+		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Shoulders,
+		c.Equipment.Body, c.Equipment.Back, c.Equipment.Belt,
+		c.Equipment.Wrist1, c.Equipment.Wrist2,
+		c.Equipment.ExtraWrist1, c.Equipment.ExtraWrist2,
+		c.Equipment.ExtraWrist3, c.Equipment.ExtraWrist4,
+		c.Equipment.Gloves, c.Equipment.Ring, c.Equipment.Ring2,
 		c.Equipment.Legs, c.Equipment.Feet, c.Equipment.Tail,
+		c.Equipment.ComponentBag,
 	}
 	for _, slot := range slots {
 		if slot.ItemId <= 0 {
 			continue
 		}
 		spec := slot.GetSpec()
-		total += spec.ConvictionMitigation
+		gearMit += spec.ConvictionMitigation
 	}
+	// Apply gear-effectiveness multiplier to the gear-derived portion.
+	gearMit = int(float64(gearMit) * mutations.GearEffectivenessMultiplier(c.Mutations))
 
-	// Mutation conviction resistance (returned as fraction 0.0–1.0, convert to percentage points)
-	total += int(mutations.GetConvictionResistance(c.Mutations) * 100)
+	// Non-gear additions (mutation resistance + buff stat mods via c.StatMod).
+	nonGearMit := int(mutations.GetConvictionResistance(c.Mutations) * 100)
+	nonGearMit += c.StatMod("conviction_mitigation")
 
-	// Buff statmods (e.g. Iron Will, Chrysalis Cocoon)
-	total += c.StatMod("conviction_mitigation")
-
-	return float64(total) / 100.0
+	return float64(gearMit+nonGearMit) / 100.0
 }
 
 // GetDefenseSequence returns ordered defenses based on equipment (Stage 7.1)

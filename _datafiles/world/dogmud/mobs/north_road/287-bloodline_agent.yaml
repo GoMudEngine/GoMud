@@ -23,9 +23,6 @@ combatcommands:
   - 'emote moves with the fluid precision of formal training, each cut exact'
   - ''
 activitylevel: 25
-reaction_delay: 0.3
-tactical_discipline: 0.95
-tactic_preset: aggressive_melee
 character:
   name: bloodline agent
   description: |

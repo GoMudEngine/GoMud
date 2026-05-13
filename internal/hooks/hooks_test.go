@@ -170,16 +170,16 @@ func seedAllRegistries() func() {
 
 	cleanupSpells := spells.SeedSpellsForTest(map[string]*spells.SpellData{
 		"sparks": {
-			SpellId:          "sparks",
-			Name:             "Sparks",
-			Type:             spells.HarmSingle,
-			Cost:             3,
-			Difficulty:       10,
-			DamageMultiplier: 0.8,
-			BaseFolds:        4,
-			EffectType:       "damage",
+			SpellId:           "sparks",
+			Name:              "Sparks",
+			Type:              spells.HarmSingle,
+			Cost:              3,
+			Difficulty:        10,
+			DamageMultiplier:  0.8,
+			BaseFolds:         4,
+			EffectType:        "damage",
 			TargetDefenseType: "mental",
-			Schools:          []string{spells.SchoolElemental},
+			Schools:           []string{spells.SchoolElemental},
 		},
 	})
 

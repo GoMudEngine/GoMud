@@ -3,6 +3,7 @@ name: serpent
 description: A legless predator that strikes with blinding speed. Serpents
   rely on stealth, patience, and venom to subdue prey far
   larger than themselves.
+body_parts: [eyes, mouth, skin]
 buffids:
   - 29 # Night Vision
 size: small

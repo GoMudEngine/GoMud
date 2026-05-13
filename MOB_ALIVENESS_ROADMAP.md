@@ -75,19 +75,20 @@ should always agree.
 
 | Chunk | Phase | Title | Size | Depends on | Status |
 |-------|-------|-------|------|-----------|--------|
-| 1.1 | Substrate | Persistent NPC opinion store | M | — | Not started |
-| 1.2 | Substrate | Faction system | L | 1.1 | Not started |
-| 1.3 | Substrate | Crime/wanted state | M | 1.2 | Not started |
-| 1.4 | Substrate | NPC knowledge model | M | 1.1 | Not started |
-| 1.5 | Substrate | Bounty state | S | 1.2 | Not started |
-| 1.6 | Substrate | NPC-to-NPC relationships | M | — | Not started |
-| 1.7 | Substrate | World-model facts | M | 1.4 | Not started |
-| 2.1 | Tactical | Mob `buy` command | M | — | Not started |
-| 2.2 | Tactical | Item-comparison primitive | M | — | Not started |
-| 2.3 | Tactical | Equip-if-better behavior | S | 2.2 | Not started |
-| 2.4 | Tactical | Mob `appraise` / `assess` | S | 2.2 | Not started |
-| 2.5 | Tactical | Mutations on mobs | L | — | Not started |
-| 2.6 | Tactical | Tactics-cast preemption fix | S | — | Not started |
+| 1.1 | Substrate | Persistent NPC opinion store | M | — | Done |
+| 1.2 | Substrate | Faction system | L | 1.1 | Done |
+| 1.3 | Substrate | Crime/wanted state | M | 1.2 | Done |
+| 1.4 | Substrate | NPC knowledge model | M | 1.1 | Done |
+| 1.5 | Substrate | Bounty state | S | 1.2 | Done |
+| 1.6 | Substrate | NPC-to-NPC relationships | M | — | Done |
+| 1.7 | Substrate | World-model facts | M | 1.4 | Done |
+| 2.1 | Tactical | Mob `buy` command | M | — | Done |
+| 2.2 | Tactical | Item-comparison primitive | M | — | Done |
+| 2.2a | Tactical | Incorporeal mutation | M | — | Done |
+| 2.3 | Tactical | Equip-if-better behavior | S | 2.2 | Done |
+| 2.4 | Tactical | Mob `consider` + threat-aware behaviors | S | 2.2 | Done |
+| 2.5 | Tactical | Mutations on mobs | L | — | Done |
+| 2.6 | Tactical | Sunset legacy tactics engine | L | — | Done |
 | 2.7 | Tactical | Mob skullduggery suite | M | — | Not started |
 | 2.8 | Tactical | Mob scout / track / scan | S | — | Not started |
 | 2.9 | Tactical | Mob `forage` as a command | S | — | Not started |
@@ -113,9 +114,10 @@ should always agree.
 | 6.3 | Polish | Per-zone tuning (1–2 zones) | M | 6.1 | Not started |
 | 6.4 | Polish | Performance review (initial) | S | 6.3 | Not started |
 | 6.5 | Polish | Content pass — broader rollout | XL | 6.3 | Not started |
+| 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 0 / 39 done • 0 in progress • 39 not started.
+**Roll-up:** 14 / 41 done • 0 in progress • 27 not started.
 
 ---
 
@@ -124,67 +126,76 @@ should always agree.
 State primitives the rest of the layers read from and write to.
 
 ### 1.1 Persistent NPC opinion store
-**Status:** Not started • **Size:** M
+**Status:** Done (2026-05-06) • **Size:** M
 
 - **Goal:** Per-NPC × per-player disposition score that persists across spawns, deaths, and server restarts.
 - **In:** Storage schema, read/write API, decay rules, admin debug command, integration points for combat/dialogue/quest systems to mutate scores.
 - **Out:** Player-facing visibility (deferred), per-faction roll-up (covered by 1.2).
 - **Depends on:** —
 - **Why:** Foundation. Without this, "the merchant remembers you cheated him last week" is impossible. Underlies most of Phase 4 and Phase 5.
+- **Shipped:** `internal/opinions/` package with signed-scalar score [-100, +100], per-NPC YAML at `_datafiles/world/dogmud/opinions/{mobId}-{namesimple}.yaml`, lazy decay toward per-NPC default, public API (Get/Set/Bump/TierFor), admin command `opinion show/set/bump/reset`, helpfile, combat hookup on first-aggression in `attack`/`target`. Spec at `docs/superpowers/specs/2026-05-06-mob-aliveness-1.1-opinion-store-design.md`, plan at `docs/superpowers/plans/2026-05-06-mob-aliveness-1.1-opinion-store.md`.
 
 ### 1.2 Faction system
-**Status:** Not started • **Size:** L
+**Status:** Done (2026-05-06) • **Size:** L
 
 - **Goal:** Faction definitions, NPC membership, per-player reputation per faction.
 - **In:** Faction YAML, NPC `faction` field, per-player rep store, rep-change API, faction-vs-faction relations (allies/enemies), admin inspection commands.
 - **Out:** Faction-specific quests (content-pass time), full citizenship UI (future).
 - **Depends on:** 1.1 (shares store backend)
 - **Why:** Replaces the `peacefulquest` placeholder. Enables "Stillwater militia hates you because you killed one of theirs."
+- **Shipped:** `internal/factions/` package with signed-scalar rep [-100, +100], no decay, per-faction default rep. Definition YAMLs at `_datafiles/world/dogmud/factions/{slug}.yaml` (committed); rep state at `_datafiles/world/dogmud/factions.rep/{slug}.yaml` (gitignored). Public API (GetRep/SetRep/BumpRep/TierFor + FactionsForMob/IsPeacefulToward), reuses `opinions.Tier` for banding. New quest engine `bump_rep` action. Combat hookup `MobDeath_FactionRep` bumps killer + same-room party members. Admin command `faction list/show/set/bump/reset` + helpfile. Two authored factions: warren (default -25, enemies thornwall_guards) and thornwall_guards (default 0, narrow guards-only — broader thornwall_citizens deferred to chunk 1.3 alongside crime/wanted state). `peacefulquest` field deleted from Mob struct after Migration 0.13.0 seeded warren rep at +30 for live players holding the legacy `2-end` quest token. Quest 2 (The Warren Compact) now fires `bump_rep: warren +30` on completion. Smoke-boot verified: migration ran cleanly, faction definitions load without panic on ally/enemy validation, rep file persists. **Manual in-game smoke test (smoketester walking through quest 2 end-to-end) deferred to user verification per the spec's smoke-test section.** Fixed a latent path bug from chunk 1.1 — `opinions.opinionsBaseDir` and `factions.*BaseDir` were treating `DataFiles` as if it didn't already include `/world/dogmud`, which it does. Roadmap chunk 6.5a added for the broader faction content pass. Spec at `docs/superpowers/specs/2026-05-06-mob-aliveness-1.2-faction-system-design.md`, plan at `docs/superpowers/plans/2026-05-06-mob-aliveness-1.2-faction-system.md`.
 
 ### 1.3 Crime/wanted state
-**Status:** Not started • **Size:** M
+**Status:** Done (2026-05-06) • **Size:** M
 
 - **Goal:** Per-player log of unresolved crimes (theft, assault, murder) keyed by zone or faction.
 - **In:** Crime types, witness tracking, zone/faction scoping, expiry rules, query API, admin debug.
 - **Out:** Guard reactions — that's 5.1.
 - **Depends on:** 1.2
 - **Why:** "I assaulted a Stillwater citizen — Stillwater knows it" requires this data. Town justice and bounty hunting both consume it.
+- **Shipped:** `internal/crimes/` package storing per-faction murder/assault/theft logs at `_datafiles/world/dogmud/factions.crimes/{slug}.yaml` (gitignored). Witness-required model: faction-aligned mob in the room identifies the perpetrator; lone acts record `perp: unknown` with no rep impact. Public API: Record, Resolve, FindRecentAssault, AllForFaction, AllForPlayer, PruneStale, WitnessesInRoom, IdentifiedPerp, UpgradeAssaultToMurder. Crime-aware combat hookups: `MobDeath_FactionRep` rewritten to consult crime log + apply per-kind rep deltas (CrimeRepDeltaMurder -25, Assault -10, Theft -5); first-aggression in `attack`/`target` records assault crime alongside chunk 1.2 opinion bump; failed-steal records theft crime. Each fight yields ONE crime (assault upgrades in-place to murder on death). 365-day game-time stale safety net via PruneStale (Balance.CrimeStaleAfterRounds = 7,884,000). Authored `thornwall_citizens` faction (deferred from 1.2) — 20 named civilians + 3 guards via multi-faction membership. New admin command `crime list/show/resolve/prune-stale` + helpfile. Bonus fix during T7: caught a real `loadOrLazyInit` race condition (concurrent goroutines on uncached faction could lose records — saw 491/500 before fix); fixed via double-check-lock pattern. Spec at `docs/superpowers/specs/2026-05-06-mob-aliveness-1.3-crime-wanted-design.md`, plan at `docs/superpowers/plans/2026-05-06-mob-aliveness-1.3-crime-wanted.md`.
 
 ### 1.4 NPC knowledge model
-**Status:** Not started • **Size:** M
+**Status:** Done (2026-05-09) • **Size:** M
 
 - **Goal:** What facts does this NPC know about player X — name learned, last-seen room, deeds witnessed, items seen carried.
 - **In:** Knowledge schema, learn/forget API, perception-gated learning (NPCs only learn what they witness or are told), query API for tactical/strategic layers.
 - **Out:** World-level facts (1.7).
 - **Depends on:** 1.1
 - **Why:** Lets an NPC say "I saw you with the bandit chief's coat — turn it in." Without this, NPCs are amnesiacs even if 1.1 tells them their feeling.
+- **Shipped:** `internal/knowledge/` package storing per-observer-NPC YAML at `_datafiles/world/dogmud/knowledge/{mobId}-{namesimple}.yaml` (gitignored). Polymorphic subject (`{type, id}` for player or mob template), source/confidence tier on every record, per-fact decay rules, NPC-on-NPC supported. v1 fact types: identity (HasMet + NameLearned), location (LastSeen + bounded observation log capped at `KnowledgeObservationLogMax = 32`), routine (FrequentedRooms top-K query), deeds-witnessed (crime row IDs, lazy-filtered against 1.3 on read via WitnessedCrimes). Auto-write triggers v1: forager/caravan room change (new hook listener `MobRoomChange_KnowledgeObservers` wraps `knowledge.RecordRoutineObservers`; archetype discriminators `forager.IsForagerMob` and `caravan.IsCaravanMob` added) and 1.3 crime witnessing (three call-site additions in attack.go, MobDeath_FactionRep.go, skullduggery steal). Explicit `Forget` / `ForgetFact` API for amnesia consumers. New admin command `knowledge show/forget/frequented` + helpfile. No cross-substrate cascade in v1 (documented as a deferred decision pending amnesia spell consumer). Spec at `docs/superpowers/specs/2026-05-09-mob-aliveness-1.4-knowledge-model-design.md`, plan at `docs/superpowers/plans/2026-05-09-mob-aliveness-1.4-knowledge-model.md`.
 
 ### 1.5 Bounty state
-**Status:** Not started • **Size:** S
+**Status:** Done (2026-05-09) • **Size:** S
 
 - **Goal:** Declared bounties (payer, target, reward, conditions, expiry) queryable by mobs and players.
 - **In:** Bounty data structure, declaration API (faction-driven, quest-driven, NPC-driven), claim/resolution API, admin commands.
 - **Out:** Bounty board UI for players (could be a follow-on player-facing affordance), bounty hunter behavior (5.2).
 - **Depends on:** 1.2
 - **Why:** Enables 5.2 bounty hunting, escalation in town justice, faction-driven contracts.
+- **Shipped:** `internal/bounties/` package storing per-bounty registry at `_datafiles/world/dogmud/bounties.yaml` (gitignored). Polymorphic target via `knowledge.Subject` (player or mob template); three issuer types (faction, quest, npc). Reward auto-computes from target statpool — `gold = floor(statpool × BountyGoldDefaultMultiplier)` (default 0.5, floor 50) and `rep = max(1, floor(statpool / 100))`, both stored on the row at declaration with declarer override available via `DeclareOpts`. Auto-claim hook `MobDeath_BountyClaim` fires on mob death — highest-damager wins (companion damage already rolls up via `combat.go`'s charmed-userId path), gold transferred to character, faction rep bumped when issuer is a faction. Quest engine `declare_bounty` action wires the substrate into quest content. Single `bounty` command with role-gated subcommands: list/show available to all players (filter by mob/player/<faction-slug>), declare/withdraw/prune-expired admin-only. Admin helpfile + player helpfile. Two physical bounty boards as flavor nouns (Thornwall Guard Barracks 473, Stillwater Constabulary 4110) — discovery via `look bounty board`; data flow via the universal command. Withdraw + expiry semantics; non-open rows preserved for audit. Spec at `docs/superpowers/specs/2026-05-09-mob-aliveness-1.5-bounty-state-design.md`, plan at `docs/superpowers/plans/2026-05-09-mob-aliveness-1.5-bounty-state.md`.
 
 ### 1.6 NPC-to-NPC relationships
-**Status:** Not started • **Size:** M
+**Status:** Done (2026-05-09) • **Size:** M
 
 - **Goal:** Kinship and friendship graph between NPCs (Voss is Lars's brother; Marta is the smith's wife).
 - **In:** Relationship types (family, friend, rival, lover, employer/employee), per-NPC relationship list, query API, mutation API.
 - **Out:** Relationship change as a player-facing mechanic (a romance system is way out of scope).
 - **Depends on:** —
 - **Why:** Killing one NPC seeds revenge goals in their kin. The world starts to feel woven, not flat.
+- **Shipped:** `internal/relationships/` package storing the in-memory mob-to-mob relationship graph. Source of truth: each mob template's YAML gains an optional `relationships:` field with `to`, `type`, `subtype`. Six types (family, friend, rival, lover, employer, employee); engine auto-mirrors symmetric (same-type reverse) and asymmetric (employer ↔ employee) at load time. Subtype is per-side flavor. Permissive validation — unknown ids, self-edges, unknown types, conflicts all warn-not-panic. Public API: `RelationsOf`, `RelationsOfType`, `KinOf`, `AlliesOf`, `RivalsOf`, `RelationsBetween`, `AreRelated`, `EmployerOf`, `EmployedBy`, `AllRelations`, plus mutation `Add`/`Remove`/`ChangeType` (in-memory only v1; persistence overlay deferred). Loader hook in `mobs.LoadDataFiles` flattens mob templates into `LoadFromMobs(edges, validateMobId)` post-load. Admin command `relationship show/between/add/remove/list` + helpfile. **Backfilled `context.md` for chunks 1.1–1.5** plus authored fresh one for 1.6, per the new aliveness roadmap maintenance rule. Spec at `docs/superpowers/specs/2026-05-09-mob-aliveness-1.6-npc-relationships-design.md`, plan at `docs/superpowers/plans/2026-05-09-mob-aliveness-1.6-npc-relationships.md`.
 
 ### 1.7 World-model facts
-**Status:** Not started • **Size:** M
+**Status:** Done (2026-05-09) • **Size:** M
 
 - **Goal:** Zone-level or world-level facts NPCs can "know" (the bridge collapsed, the bandit camp moved, the king is dead).
 - **In:** Fact schema, fact declaration API, NPC awareness-of-fact tracking (some know, some don't), propagation rules (gossip).
 - **Out:** Dynamic fact generation from world events — start with author-declared facts.
 - **Depends on:** 1.4
 - **Why:** Makes the world feel like it has news, rumors, and shared context — not just isolated NPC bubbles.
+- **Shipped:** `internal/facts/` package storing the standing-fact registry at `_datafiles/world/dogmud/facts.yaml` (committed; empty seed) and per-NPC awareness at `_datafiles/world/dogmud/facts.awareness/{mobId}-{namesimple}.yaml` (gitignored). Awareness store is unified — it holds BOTH heard-event ids (bounded FIFO via `FactsHeardEventsMax`, default 32; replaces the in-memory `recentGossipEvents` TempData) AND known-fact ids (persistent). Three withdraw signals: manual `Withdraw`, time-based `expiry_round` + `PruneExpired` sweep, auto via `withdraw_on_respawn_of` field with new `MobRoomChange_FactsAutoWithdraw` listener. Lazy-filter on read for awareness × registry join. Public API: Declare, Withdraw, Expire, PruneExpired, WithdrawAllBoundTo, GetFact, AllActiveFacts, AllFactsByTag, AllRows, RecordHeardEvent, HeardEvent, RecordKnowsFact, KnowsFact, KnownFactsOf, ForgetFact, ForgetAll, AllForObserver, LoadFromMobs. Mob YAML extension: `knows_facts: [factId, ...]` for inline authoring (chunk 1.6 pattern); seeded into awareness at `mobs.LoadDataFiles` post-load. Worldevents gained `Id uint64` field, atomic-counter assigned at `EmitWorldEvent` time. `buildGossipLine` migrated from `recentGossipEvents` TempData to facts substrate; gossip candidate pool extended with known facts (new `fact-default` template family, 70/30 event/fact split when both pools non-empty). Admin command `fact list/show/declare/withdraw/expire/prune-expired/awareness/teach/forget/forget-all` + helpfile. New package context.md authored. Spec at `docs/superpowers/specs/2026-05-09-mob-aliveness-1.7-world-facts-design.md`, plan at `docs/superpowers/plans/2026-05-09-mob-aliveness-1.7-world-facts.md`.
+
+**Phase 1 substrate complete.** All seven Phase 1 chunks shipped: opinions (1.1), factions (1.2), crimes (1.3), knowledge (1.4), bounties (1.5), relationships (1.6), facts (1.7).
 
 ---
 
@@ -194,16 +205,17 @@ Verbs and behavior-tree gaps that the strategic layer will need to dispatch.
 Build vocabulary before the planner.
 
 ### 2.1 Mob `buy` command
-**Status:** Not started • **Size:** M
+**Status:** Done (2026-05-11) • **Size:** M
 
 - **Goal:** Mobs can purchase from shops, including disambiguation, gold checks, carry capacity.
 - **In:** Mobcommand `buy`, integration with existing shop pricing/stock, restocking interaction with NPC-buyer behavior.
 - **Out:** Decision logic for *what* to buy — that lives in tactical/strategic.
 - **Depends on:** —
 - **Why:** Strategic-layer "save up for armor" is impossible without this verb.
+- **Shipped:** Consolidated `actions.Buy(buyer Actor, opts BuyOptions) BuyResult` lifted from `internal/usercommands/buy.go` into the shared `actions` package. Player wrapper at `internal/usercommands/buy.go` collapses to ~22 lines (~830 lines deleted); new mob wrapper at `internal/mobcommands/buy.go` (~20 lines) registered in the `mobCommands` map. Both shop backends supported symmetrically — legacy `Character.Shop` (with `Restock()` on access + the `+1` merchant-gold cheat preserved) and `ShopInventory` (dynamic pricing, persistence, bartering discount up to 15% at skill 50). Sale types limited to items + buffs; merc and pet paths dropped entirely (no current shop YAML sells either; `executePurchaseMerc` / `executePurchasePet` deleted). New pre-side-effect carry-capacity gate in `validatePurchase` closes a pre-existing player-side gap: `char.GetCarriedWeight() + newItem.GetSpec().Weight > char.CarryCapacity()` blocks the purchase before destock or gold deduction. Quest-engine `command:buy` notification gated by `buyer.IsPlayer()`. Mob bartering progression falls out naturally via the symmetric `OnSkillUse("bartering")` call. Quantity (`buy N <item>`) and `from <merchant>` syntax work on both wrappers. `EffectiveRestock` exported from actions package because `internal/usercommands/list.go` shared the helper. Unit tests cover empty-request, no-merchant, encumbrance-gate-pre-side-effect, catalog merc/pet filtering, quantity parsing; full purchase-flow integration testing deferred to the broader aliveness-effort manual smoke. Smoke verified at build level: `go build` clean, all 47 packages pass tests, server boots cleanly past data-file load with 225 mobs / 248 items / 21 quests. Spec at `docs/superpowers/specs/2026-05-11-mob-aliveness-2.1-mob-buy-command-design.md`, plan at `docs/superpowers/plans/2026-05-11-mob-aliveness-2.1-mob-buy-command.md`.
 
 ### 2.2 Item-comparison primitive
-**Status:** Not started • **Size:** M
+**Status:** Done (2026-05-11) • **Size:** M
 
 - **Goal:** Callable function: "is item A an upgrade over item B for this mob?"
 - **In:** Multi-axis comparison (damage, mitigation, weight, slot conflicts, archetype-fit), per-archetype weighting, returns a score so callers can rank a list.
@@ -211,41 +223,139 @@ Build vocabulary before the planner.
 - **Depends on:** —
 - **Why:** Underlies all "smart equipping" and "smart shopping." Without it, mobs can't tell good gear from bad.
 
+- **Shipped:** New `internal/itemvalue/` package with two-tier
+  API. Pure `ItemValue(spec, profile) float64` for catalog
+  ranking (used by chunk 5.3 equipment-aware shopping). Mob-
+  aware `ItemValueDelta(char, profile, candidate) SwapDelta`
+  for swap decisions with smart slot selection (rings pick the
+  weaker occupant; 1H weapons compare Weapon vs Offhand
+  placements; 2H weapons displace both Weapon and Offhand).
+  Symmetric bonus application (`DualWieldBonus`, `ShieldBonus`,
+  `TwoHandedBonus`); `DualWieldBonus` conditional on the pre-
+  swap main hand holding a 1H weapon (no synergy without a
+  partner). Encumbrance tier penalty applied per-tier crossed
+  (thresholds 0.25/0.50/0.75/1.00 matching userrecord prompt
+  rendering). Six named weight profiles (`PhysicalBruiser`,
+  `PhysicalTank`, `Stealth`, `MagicalPure`, `MagicalSupport`,
+  `Neutral`) derived via `ProfileFor(stat, behavior)` —
+  `BehaviorArchetype` primary, `Archetype` fallback. New
+  `IsUpgrade(char, profile, candidate) bool` convenience
+  wrapper. Deleted v0 helpers `items.ItemPower` and
+  `items.IsUpgrade`; migrated sole caller `mobs/crafter.go`
+  to the new API (~200 lines net deleted). Skill mods on item
+  instances flagged as out of scope (instance-zone loot
+  affixes carry +skill mods that the spec.StatMods view
+  doesn't currently surface). Spec at
+  `docs/superpowers/specs/2026-05-11-mob-aliveness-2.2-item-comparison-primitive-design.md`,
+  plan at
+  `docs/superpowers/plans/2026-05-11-mob-aliveness-2.2-item-comparison-primitive.md`.
+
+### 2.2a Incorporeal mutation
+**Status:** Done (2026-05-11) • **Size:** M
+
+- **Goal:** Model ethereal beings (wraiths, spectres, fire and
+  air elementals, elemental queen) as a new rarest mutation
+  (`incorporeal`) with four ranks scaling gear effectiveness
+  loss + physical defense bonus + stat shifts.
+- **In:** Mutation YAML, two new effect types
+  (`gear_effectiveness_loss`, `physical_defense_bonus`), five
+  consumer-site integrations (stat aggregation, three
+  mitigation getters, weapon damage, spell damage, defense
+  resolution, itemvalue scoring), mob YAML tagging on five
+  templates, helpfile + per-mutation help template +
+  context.md updates.
+- **Out:** Per-rank tuning beyond starting values, player
+  acquisition trigger beyond rarity weighting, earth/water
+  elemental tagging.
+- **Depends on:** —
+- **Why:** Chunk 2.3 (equip-if-better) needs a gate to skip
+  ethereal mobs/players. Soft-scaling via itemvalue scoring
+  is cleaner than a hardcoded skip path. Also unblocks future
+  "incorporeal player" progression goals.
+- **Shipped:** New `_datafiles/world/dogmud/mutations/incorporeal.yaml`
+  with rarity 10 + conflict list (seven body-dependent
+  mutations). New `GetGearEffectivenessLoss`,
+  `GearEffectivenessMultiplier`, `GetPhysicalDefenseBonus`
+  helpers in `internal/mutations/mutations.go` —
+  `gear_effectiveness_loss` uses raw level multiplication
+  (linear 0.25/0.50/0.75/1.00 across ranks), the carve-out
+  documented in `internal/mutations/context.md`. Five
+  integration sites: `character.go` (StatMod scales Equipment
+  portion + three Get*Mitigation methods separate gear from
+  non-gear with the slot list completed during this chunk
+  — previously missing Shoulders, Back, Wrist1/2, ExtraWrist1-4,
+  Ring2, ExtraArm3-4, ComponentBag), `combat_helpers.go`
+  (buildWeaponSetup applies multiplier to weaponDmgMult;
+  best-of-all defense resolution adds physical_defense_bonus
+  for physical-channel attacks), `calculations.go` (spell
+  damage gear contributions scaled at 4 sites including buff
+  tick-pool scaling), `itemvalue/delta.go` (ItemValueDelta
+  applies multiplier to candidate + displaced totals). Five
+  mob templates tagged with `mutations: { incorporeal: 4 }`
+  (wraith, spectre, fire elemental, air elemental, elemental
+  queen). Helpfile + dedicated per-mutation help template +
+  three context.md files updated. Spec at
+  `docs/superpowers/specs/2026-05-11-mob-aliveness-2.2a-incorporeal-mutation-design.md`,
+  plan at
+  `docs/superpowers/plans/2026-05-11-mob-aliveness-2.2a-incorporeal-mutation.md`.
+
 ### 2.3 Equip-if-better behavior
-**Status:** Not started • **Size:** S
+**Status:** Done (2026-05-11) • **Size:** S
 
 - **Goal:** Tactical behavior: on loot pickup or item-give, evaluate and equip if it beats the current slot occupant.
 - **In:** Btree action, per-archetype configurable, emits emote when swapping.
 - **Out:** —
 - **Depends on:** 2.2
 - **Why:** "I gave the bandit a steel sword and he's still using a club" → fixed.
+- **Shipped:** Two gate helpers in `internal/itemvalue/equip_eligibility.go`:
+  `CanEquipFromGive` (skips animal species via `Species.DisabledSlots`
+  + non-combat archetypes) and `CanScanFloorLoot` (above + charmed-
+  status). New `EquipBestFloorItem(mob, room) bool` lives in
+  `internal/hooks/mob_equip_best_floor_item.go` (not in `itemvalue`
+  — would close an import cycle through rooms→mobs→itemvalue) and
+  is wired into `internal/hooks/MobIdle_HandleIdleMobs.go`. Existing
+  `internal/mobcommands/gearup.go` rewritten to use `itemvalue.IsUpgrade`
+  instead of the gold-value heuristic; PermaGear / charmed-drop /
+  emote phrasing all preserved (charmed-drop logic now applied to
+  both the specific-item and bare-gearup paths). Push and pull
+  broadcast emotes are distinct ("puts on" / "wields" for push;
+  "picks up X and dons it" / "wields it" for pull). Incorporeal
+  mobs (chunk 2.2a) skip naturally via gear-effectiveness scoring
+  — no special path. Per-archetype configurability is satisfied by
+  chunk 2.2's WeightProfile system (no new knobs). Spec at
+  `docs/superpowers/specs/2026-05-11-mob-aliveness-2.3-equip-if-better-design.md`,
+  plan at
+  `docs/superpowers/plans/2026-05-11-mob-aliveness-2.3-equip-if-better.md`.
 
-### 2.4 Mob `appraise` / `assess`
-**Status:** Not started • **Size:** S
+### 2.4 Mob `consider` + threat-aware behaviors
+**Status:** Done (2026-05-12) • **Size:** S
 
-- **Goal:** Mobs can assess players (combat capability, equipped gear quality) and items.
-- **In:** Mobcommand wrappers around existing player commands, callable from btree.
-- **Out:** —
-- **Depends on:** 2.2 (for item assessment)
-- **Why:** Lets NPCs decide to flee a strong player or covet a player's weapon.
+- **Goal:** Mobs size up combat threats the same way players do; reactive (lookout-only-ambushes-weaker-players) and opportunistic (predator-engages-weaker-prey) behaviors unlocked.
+- **In:** Actor-pattern consolidation of `consider` into `actions.Consider(actor, target) ConsiderResult` shared by player + mob wrappers (`internal/usercommands/consider.go` thinned, `internal/mobcommands/consider.go` added). Two btree primitives: `target_power_ratio_above`/`_below` condition (in new `conditions_combat.go`) and `target_weakest_mob_in_room` action (added to `actions_combat.go`). Demo wiring: lookout archetype gains `player_enter`→ambush-if-stronger branch; new `predator` archetype copies generic_fighter and adds a leading `mob_idle` predation branch; three ironwind wolf YAMLs (steppe/young/scarred) flip to predator (alpha kept as `leader` to preserve its rally/warcry pack-leader behavior — a `predator_leader` hybrid is logged as future work).
+- **Out:** Player gear-coveting (players don't drop gear so no use case); `appraise` mobcommand (player command is obsoleted by identify spell); `combat.PowerScore` math changes (audit confirmed gear is already reflected through `ValueAdj`/`Get*Mitigation` pipes; the audit deliverable is a documentation section in `internal/combat/context.md`).
+- **Depends on:** 2.2 (item-comparison primitive contributed conceptually but PowerScore-based assessment uses existing combat infrastructure).
+- **Why:** Reactive lookouts that don't suicide-ambush strong players. Opportunistic predators that go after weaker prey. Foundation for chunk 2.6 (tactics-cast preemption — power-ratio gating offensive vs. defensive cast selection) and 5.2 (bounty hunting — bounty hunters need to assess wanted targets).
+- **Shipped:** `internal/actions/consider.go` — `Consider(actor, target) ConsiderResult` with prediction text emission via `actor.SendText` (MobActor no-op preserves silent compute path). Player + mob wrappers each ~15 lines. Btree primitives in `conditions_combat.go` and `actions_combat.go` (new function alongside existing entries). Target resolution chain: `Event.UserId` → `Aggro.MobInstanceId` → `Aggro.UserId` (matches `actions.ResolveAggroTarget` convention). `mob.HatesMob(other)` predicate gates predation — covers faction/pack-awareness without coupling to 1.2 substrate. Lookout `player_enter` branch with `target_power_ratio_above: 1.0` ambush gate. Predator archetype `ratio_below: 0.85` predation ceiling. PowerScore audit section added to `internal/combat/context.md`. Spec at `docs/superpowers/specs/2026-05-12-mob-aliveness-2.4-mob-consider-design.md`, plan at `docs/superpowers/plans/2026-05-12-mob-aliveness-2.4-mob-consider.md`.
 
 ### 2.5 Mutations on mobs
-**Status:** Not started • **Size:** L
+**Status:** Done (2026-05-12) • **Size:** L
 
 - **Goal:** Companion Phase 5 — mutations apply to mobs the way they do to players.
 - **In:** Mob mutation slots, YAML schema, runtime application of mutation effects (extra arms, tail, etc.), combat integration, scaling.
 - **Out:** Player-facing UI for mutations on companions/mobs (separate concern).
 - **Depends on:** —
 - **Why:** Closes a major parity gap. Mutated mobs are a content lever for novel encounters. (Absorbed from MEMORY.md — Companion Phase 5.)
+- **Shipped:** Body-plan gating model — `Species.BodyParts []string` from a canonical seven-tag set (`arms, hands, legs, eyes, mouth, skin, tail`); `MutationSpec.RequiresBodyParts []string` replaces the old `RequiresArms bool`. Three gating sites updated: random-roll pool (`GetWeightedPool` signature changed to take species), curated `SpawnMutations` path (latent bug fix — was applying unconditionally), and mid-game mutation grants (5 call sites across user round tick, behavior tree action, quest engine bridge, login, and mob spawn). `Character.ApplyIntrinsicMutations(species)` merges species intrinsics additively into the character's mutation map at init time, cap-aware via `MutationMaxRank = 4`. Migration covered all 35 existing species (skip dummy 19, orb 20) + 4 new elemental species (sand 41, storm 42, ice 43, smoke 44). 17 mutation YAMLs gained `requires_body_parts:` declarations. 5 mob YAMLs in `instance_planar_oasis/` repointed: king kept on magma + added `mutations: { large: 1 }` override, queen moved to new ice species (dropping her chunk-2.2a `incorporeal: 4` override since her crystal/water form is corporeal), prince moved to new smoke species. Redundant `mutations: { incorporeal: 4 }` overrides on 4 summons mobs (wraith, spectre, fire, air) cleaned up — incorporeal is now intrinsic on the species. Boot-time validation panics on unknown body-part tags or unknown mutation ids in intrinsic_mutations. Helpfiles updated to document body-plan gating in player-facing terms (mutations.template, species.template, 17 per-mutation templates each got a "Requires:" line). Spec at `docs/superpowers/specs/2026-05-12-mob-aliveness-2.5-mutations-on-mobs-design.md`, plan at `docs/superpowers/plans/2026-05-12-mob-aliveness-2.5-mutations-on-mobs.md`.
 
-### 2.6 Tactics-cast preemption fix
-**Status:** Not started • **Size:** S
+### 2.6 Sunset legacy tactics engine
+**Status:** Done (2026-05-12) • **Size:** L
 
-- **Goal:** Resolve the existing bug where higher-priority cast tactics lose `CastingState` to lower-priority casts that started in the same combat tick.
-- **In:** Surface `AlreadyCasting` / `OnCooldown` exits in `mobcommands/cast.go`; reorder tactic resolution.
-- **Out:** —
+- **Goal:** Delete the legacy `internal/mobai/` tactics engine and migrate all 44 tactic-using mobs to the behavior tree (btree) system.
+- **In:** Reframed from the original "fix the Edrin priority race" band-aid into the structural fix. Btree now the single mob-behavior substrate. Five existing archetypes gain a shared panic-flee branch (generic_fighter, predator, leader, lookout, tank_taunter). tank_taunter additionally gets a call_for_help branch (absorbing the `tank` preset); ambusher gets a target_casting→trip branch (absorbing the `ambusher` preset). One new `defensive_caster` archetype absorbs 4 mobs from the old `defensive_caster` and `caster_backline` presets. Five per-boss archetypes for named encounter mobs (Edrin, Sylara, Rhett, Soren, Chrysalis Phantom) preserve their unique spell rotations.
+- **Out:** Boss encounter tuning (faithful translation only); generic-mob inline-tactic preservation beyond what the augmented archetypes cover (acceptable loss).
 - **Depends on:** —
-- **Why:** Smarter mobs are useless if their tactics get clobbered. (Absorbed from MEMORY.md.)
+- **Why:** Eliminated the dual-system architectural smell. The original Edrin priority-race bug became structurally impossible (btree selectors are inherently priority-ordered, no async reaction queue racing `InitiateCast`). ~1,144 net lines of legacy code deleted.
+- **Shipped:** Zero new btree primitives (mob_has_buff + invert decorator covers missing_buff). 6 new archetypes (defensive_caster + 5 boss). 5 archetype augmentations. 44 mob YAML migrations (24 preset-only + 5 named bosses + 9 generic inline-tactics). Engine deletion: `internal/mobai/` directory entirely removed (10 files including tactics.go, reactor.go, actions.go, types.go, memory.go, triggers.go and tests). `CombatMemory` substrate migrated to `internal/mobs/combat_memory.go` (it was used outside the tactics engine for grudge tracking). Mob struct fields `Tactics`, `TacticPreset`, `ReactionDelay`, `TacticalDiscipline` removed. Hook callers in `internal/hooks/` cleaned (MobAI_Reactor.go deleted entirely). `internal/mobs/context.md` + `internal/behaviortree/context.md` updated. `project_tactics_cast_preemption.md` MEMORY entry deleted. **Known follow-up:** Edrin/Sylara's conviction-ward opening cast lacks a self-gate because conviction-ward is a shield spell (no buff_id). Bosses re-cast wastefully after shield expires; behavior is not broken, just wasteful. Polish item for a future tuning pass. Spec at `docs/superpowers/specs/2026-05-12-mob-aliveness-2.6-sunset-tactics-engine-design.md`, plan at `docs/superpowers/plans/2026-05-12-mob-aliveness-2.6-sunset-tactics-engine.md`.
 
 ### 2.7 Mob skullduggery suite
 **Status:** Not started • **Size:** M
@@ -499,6 +609,25 @@ Validate the framework against real content, then scale.
 - **Depends on:** 6.3
 - **Why:** Scaling the formula across the world. The "and now actually populate it" step.
 
+### 6.5a Faction definitions content pass
+**Status:** Not started • **Size:** M
+
+- **Goal:** Author the rest of the world's factions on top of the
+  1.2/1.3 substrate.
+- **In:** YAML faction definitions for bandits, warden, ironwind
+  shaman, Sanctum Basin guards, Dustwalk caravans, Stillwater
+  militia & citizens, etc. Tag remaining faction-relevant mobs
+  with their `groups: [<faction_id>]`. Define ally/enemy graphs
+  across the full set. Surface any schema gaps the substrate
+  didn't anticipate.
+- **Out:** Per-faction quests (own content chunk).
+- **Depends on:** 1.2, 1.3
+- **Why:** 1.2 ships substrate + warren + thornwall_guards. 1.3
+  adds thornwall_citizens + alliance-aware guard logic. Bulk
+  authoring the rest now would risk schema churn — better to
+  validate the substrate against two reference factions, then
+  bulk-author once the pattern is settled.
+
 ### 6.6 Performance re-review
 **Status:** Not started • **Size:** S
 
@@ -544,3 +673,8 @@ Recorded so we don't forget, but not part of this roadmap:
 - **Removing chunks:** Mark `Cancelled` rather than deleting, with a one-line reason. Helps future-you remember what was considered and why it was dropped.
 - **Per-chunk specs and plans:** Each chunk gets its own `docs/superpowers/specs/YYYY-MM-DD-<chunk-id>-design.md` and corresponding plan when picked up.
 - **MEMORY.md sync:** When a MEMORY-absorbed chunk ships, remove its MEMORY entry. When a brand-new chunk ships, add a note in COMPLETED.md.
+- **`context.md` is required per chunk.** Every chunk that creates a new `internal/<package>/` directory MUST ship a `context.md` documenting the package, in the established DOGMud style. Chunks that meaningfully modify an existing package (extend its API surface, add new files, reshape its data model) MUST update the existing `context.md` to match. Style references — copy the section structure from one of these:
+  - `internal/badinputtracker/context.md` (~170 lines) — small, single-responsibility package
+  - `internal/clans/context.md` (~190 lines) — medium, multi-file package
+  - `internal/buffs/context.md` (~700 lines) — large, deeply-integrated package
+  Required sections: Overview, Key Components (file map), Key Functions (signatures + behavior), Global State (if any), Data Structure Design (schemas + YAML shapes), Integration Notes (which packages consume / are consumed by), and Testing Notes. Aliveness chunks 1.1–1.5 missed this; they're being backfilled in chunk 1.6's plan.

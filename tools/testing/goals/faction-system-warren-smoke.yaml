@@ -1,0 +1,133 @@
+description: |
+  End-to-end smoke test for the faction system shipped in chunk 1.2
+  (mob aliveness roadmap). Validates: (1) admin faction tooling
+  works, (2) warren mobs default to hostile-on-sight against
+  outsiders, (3) completing The Warren Compact (quest 2) bumps
+  warren rep and grants peace, (4) IsPeacefulToward gate uses the
+  new faction system instead of the legacy peacefulquest field,
+  (5) killing warren members after the truce drops rep back below
+  the peace threshold.
+
+  PRE-TEST SETUP (already arranged by the controller — verify on
+  login):
+  - You are positioned in or near "Narrow Descent" (room 300).
+  - Your inventory contains a "healing salve" (item 30036). If not,
+    your first sub-goal is acquiring one — see goal 1.
+  - You already know the chrysalis-glow spell.
+  - You have NOT completed quest 2 (The Warren Compact). Your
+    quest log should not list it as done.
+
+  Note on a known balance fix: the warren peace bump was raised
+  from +30 to +50 just before this test. Default warren rep is
+  -25 (Cold tier); after quest completion expect rep around +25
+  (Warm tier). If the server wasn't restarted with the fix, the
+  bump will still be +30 leading to a post-quest rep of +5
+  (Neutral) — record what you see and flag the discrepancy.
+
+goals:
+  # ── 0. Login + orientation ────────────────────────────────────
+  - Log in as smoketester. Run `look` and report your starting room.
+    Run `inventory` and confirm whether you have a healing salve
+    (item should show as "healing salve"). If not, your first task
+    is acquiring one (goal 1). Run `spells` and verify
+    chrysalis-glow is in your list.
+
+  # ── 1. Acquire a healing salve if you don't have one ─────────
+  - If you don't already have a healing salve, get one. Two paths:
+    (a) Try `craft healing-salve` — your knownrecipes shows
+        healing-salve at level 1, but you may lack components.
+    (b) Travel to Sanctum Basin and buy one from Alchemist Yenna.
+        From your current room, navigate to Sanctum Basin's
+        alchemist's shop (Yenna is the alchemist NPC there).
+        Run `list` at her shop, find the healing salve, and `buy
+        healing salve`.
+    Take whichever path works first. Report which one.
+
+  # ── 2. Cast chrysalis-glow before descending ─────────────────
+  - The Labyrinth of Low Tunnels is dark. Cast `chrysalis-glow`
+    BEFORE descending — without it, you may not be able to read
+    room descriptions or see the shaman. Verify the spell's
+    cast/buff text appears.
+
+  # ── 3. Verify warren-mob default hostility (PRE-quest) ───────
+  - Before doing the quest, navigate to a room with a warren
+    member to verify they are aggressive at default rep.
+    Specifically: from Narrow Descent (room 300), do NOT go down
+    immediately. Instead, find a room where you can encounter a
+    warren scout (mob 72) or warrior (mob 73) — these spawn in
+    the labyrinth's broader passages. If a warren mob aggros you
+    on entry to its room (you see "X prepares to fight you" or
+    similar without your having attacked first), report PASS for
+    "default warren hostility." If warren mobs ignore you, that's
+    a FAIL — note it and continue.
+    NOTE: do NOT actually fight them yet — flee or kite to the
+    next goal. Engaging now would prematurely change rep.
+
+  # ── 4. Pick up quest 2 from the tunnel shaman ────────────────
+  - Travel to the Low Junction (room 301) — from Narrow Descent
+    (300), `down` should take you there. The tunnel shaman (mob
+    74) is in this room. Talk to the shaman: `talk shaman`,
+    `ask shaman quest`. The shaman should offer The Warren
+    Compact, asking you to bring a healing salve as proof of
+    good intent.
+    Verify: your quest log (`quests` or `quest log` if available)
+    now shows "The Warren Compact" with stage start.
+
+  # ── 5. Complete the quest by giving the salve ────────────────
+  - With the healing salve in your inventory, run `give healing
+    salve to shaman`. Expect:
+    a) The chieftain's reward message ("the chieftain inclines
+       its heavy head…") fires.
+    b) The shaman's lines fire ("These are good. Strong. Our sick
+       will benefit." and "You have done what I asked. ...").
+    c) You receive 15 gold and a rhetoric skill bump.
+    d) Your quest log shows quest 2 at stage end.
+    Report each of (a)-(d) as PASS or FAIL.
+
+  # ── 6. Verify warren-mob peace (POST-quest) ──────────────────
+  - From Low Junction, find a warren scout or warrior (you can
+    walk west/east/up to nearby rooms). Stand in the same room
+    as one for at least 2 rounds without taking any hostile
+    action. If they do NOT attack you, report PASS — the new
+    faction-rep gate is working. If they DO attack you, that's
+    a FAIL: note it and report whether you had completed quest 2
+    cleanly (this is the post-balance-fix scenario where +50
+    bump should land you at +25 Warm tier).
+
+  # ── 7. Verify rep drops on combat (kill a warren mob) ────────
+  - Now `attack scout` (or warrior) and kill one warren mob.
+    After it dies, request an admin to run `faction show
+    smoketester`. Expected: warren rep dropped by
+    FactionMemberKillRep (-10), so post-quest +25 minus 10 = +15
+    (still Warm tier — borderline, you should still be peaceful).
+    Report the rep value you see.
+    Caveat: if the server wasn't restarted with the +50 fix,
+    you'll see post-quest +5 minus 10 = -5 (Neutral). Either way,
+    document the math.
+
+  # ── 8. Verify rep saturation (kill multiple warren mobs) ─────
+  - Kill 3-4 more warren mobs to drop rep substantially. Expected
+    cumulative drop: ~40-50 from start. Then ask admin again for
+    `faction show smoketester`. Expected: rep at Cold tier or
+    lower, and warren mobs now aggro you again.
+    Report the final rep value, the tier label admin reports
+    (e.g. "Cold"), and whether subsequent warren-mob encounters
+    aggro you.
+
+  # ── 9. Admin-tooling smoke (request admin help) ──────────────
+  - Ask the admin to run all of these and report what was shown:
+    a) `faction list` — should show warren and thornwall_guards.
+    b) `faction show warren smoketester` — your specific rep.
+    c) `faction set warren smoketester 0` — admin override.
+    d) `faction show smoketester` — should now show warren at 0.
+    e) `faction reset warren smoketester` — should snap to default
+       (-25).
+    f) `faction show smoketester` — should now show warren at -25
+       (or no row, since reset means default).
+
+  # ── 10. Final self-summary ───────────────────────────────────
+  - Write a one-paragraph summary at the top of your report
+    titled "Smoke verdict": did chunk 1.2 ship working substrate
+    end-to-end? List any FAIL items with the most likely cause
+    (e.g., "+30 bump suggests server wasn't restarted with the
+    fix").

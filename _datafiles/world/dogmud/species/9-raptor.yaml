@@ -3,6 +3,9 @@ name: raptor
 description: A keen-eyed bird of prey with razor talons and a hooked
   beak. Raptors circle high above, spotting movement from
   impossible distances before diving to strike.
+body_parts: [legs, eyes, mouth, skin]
+intrinsic_mutations:
+  keen-eyes: 1
 buffids:
   - 29 # Night Vision
 size: small

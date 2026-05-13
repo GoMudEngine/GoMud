@@ -66,6 +66,14 @@ func ProfileFor(mobId int) *ForagerProfile {
 	return profiles[mobId]
 }
 
+// IsForagerMob reports whether the given mob template ID belongs to one
+// of the registered forager NPCs. Used by the room-change hook to decide
+// whether to record knowledge observations for bystanders in the
+// destination room.
+func IsForagerMob(mobTemplateId int) bool {
+	return ProfileFor(mobTemplateId) != nil
+}
+
 // AllProfiles returns every registered forager. Stable order by Kind
 // (Marsh, Steppe, Fernway) so callers that need determinism (tests,
 // CLI) get consistent output.

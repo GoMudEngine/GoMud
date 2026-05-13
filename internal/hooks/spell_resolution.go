@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -438,10 +439,11 @@ func applyMobEffect_buff(
 			if buffSpec := buffs.GetBuffSpec(buffId); buffSpec != nil && buffSpec.TickPool != "" {
 				skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
 				scalingMult := combat.SkillMultiplier(skillLevel)
-				// Apply weapon spell damage multiplier if equipped
+				// Apply weapon spell damage multiplier if equipped, scaled
+				// by gear-effectiveness for incorporeal casters.
 				if user.Character.Equipment.Weapon.ItemId > 0 {
 					if weaponSpec := items.GetItemSpec(user.Character.Equipment.Weapon.ItemId); weaponSpec != nil && weaponSpec.SpellDamageMultiplier > 0 {
-						scalingMult *= weaponSpec.SpellDamageMultiplier
+						scalingMult *= weaponSpec.SpellDamageMultiplier * mutations.GearEffectivenessMultiplier(user.Character.Mutations)
 					}
 				}
 				var maxPool int
@@ -710,10 +712,11 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 			if buffSpec := buffs.GetBuffSpec(buffId); buffSpec != nil && buffSpec.TickPool != "" {
 				skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
 				scalingMult := combat.SkillMultiplier(skillLevel)
-				// Apply weapon spell damage multiplier if equipped
+				// Apply weapon spell damage multiplier if equipped, scaled
+				// by gear-effectiveness for incorporeal casters.
 				if user.Character.Equipment.Weapon.ItemId > 0 {
 					if weaponSpec := items.GetItemSpec(user.Character.Equipment.Weapon.ItemId); weaponSpec != nil && weaponSpec.SpellDamageMultiplier > 0 {
-						scalingMult *= weaponSpec.SpellDamageMultiplier
+						scalingMult *= weaponSpec.SpellDamageMultiplier * mutations.GearEffectivenessMultiplier(user.Character.Mutations)
 					}
 				}
 				var maxPool int
@@ -1186,7 +1189,7 @@ func resolveIdentify(user *users.UserRecord, itemName string, room *rooms.Room) 
 		fmt.Sprintf(`You concentrate on the <ansi fg="item">%s</ansi>...`,
 			matchItem.DisplayName()),
 	)
-	sendVisualRoomText(room, 
+	sendVisualRoomText(room,
 		fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> concentrates on their <ansi fg="item">%s</ansi>...`,
 			user.Character.Name, matchItem.DisplayName()),

@@ -1,6 +1,5 @@
 mobid: 78
 zone: Labyrinth of Low Tunnels
-archetype: fighting
 behavior_archetype: generic_fighter
 statpool: 6
 itemdropchance: 20
@@ -21,12 +20,6 @@ combatcommands:
   - 'emote clacks its mandibles together with a wet, grinding sound'
   - ''
 activitylevel: 20
-reaction_delay: 2.0
-tactical_discipline: 0.25
-tactics:
-  - trigger: health_below:30
-    action: flee
-    priority: 10
 spawnmutations: [thick-hide]
 mutationchance: 15
 character:

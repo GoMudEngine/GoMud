@@ -1,0 +1,38 @@
+speciesid: 42
+name: Storm Elemental
+description: A roaring vortex of charged wind and crawling lightning,
+  the storm elemental is the swiftest and most ferocious of the
+  air-tribe elementals. It strikes with branching arcs that leap from
+  one target to another and tears the breath from anyone who stands
+  too long in its path.
+size: large
+unarmedname: arcing strike
+selectable: false
+tameable: false
+grapple_immune: true
+return_damage: 15
+angrycommands:
+  - emote spins faster, lightning crackling along its outer edge.
+  - emote unleashes a deafening peal of thunder from its core.
+stats:
+  strength:
+    base: 30
+  dexterity:
+    base: 220
+  perception:
+    base: 180
+  vitality:
+    base: 25
+  willpower:
+    base: 90
+  charisma:
+    base: 5
+damage:
+  basedamage: 3
+  variance: 2
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'back', 'body',
+  'belt', 'gloves', 'ring', 'legs', 'feet']
+body_parts: []
+intrinsic_mutations:
+  incorporeal: 4
+  hasted: 1

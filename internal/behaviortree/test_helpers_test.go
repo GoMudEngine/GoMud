@@ -46,6 +46,31 @@ func seedTestMob(t *testing.T, templateId int, instanceId int, homeRoomId int, n
 	)
 }
 
+// seedTwoMobs registers two mob templates + two instances in one
+// SeedMobsForTest call, avoiding the single-mob limitation of
+// seedTestMob. Returns a single cleanup function.
+func seedTwoMobs(t *testing.T, roomId int,
+	template1, instance1 int, name1 string,
+	template2, instance2 int, name2 string,
+) func() {
+	t.Helper()
+	specs := map[int]*mobs.Mob{
+		template1: {MobId: mobs.MobId(template1), Character: characters.Character{
+			Name: name1, RoomId: roomId, Buffs: buffs.New(),
+		}},
+		template2: {MobId: mobs.MobId(template2), Character: characters.Character{
+			Name: name2, RoomId: roomId, Buffs: buffs.New(),
+		}},
+	}
+	instances := map[int]*mobs.Mob{
+		instance1: {MobId: mobs.MobId(template1), InstanceId: instance1, HomeRoomId: roomId,
+			Character: characters.Character{Name: name1, RoomId: roomId, Buffs: buffs.New()}},
+		instance2: {MobId: mobs.MobId(template2), InstanceId: instance2, HomeRoomId: roomId,
+			Character: characters.Character{Name: name2, RoomId: roomId, Buffs: buffs.New()}},
+	}
+	return mobs.SeedMobsForTest(specs, instances)
+}
+
 // seedTestUser seeds a single user (UserId, username, charName, RoomId).
 // Returns a cleanup function.
 func seedTestUser(t *testing.T, userId int, username string, charName string, roomId int) func() {

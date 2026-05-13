@@ -1,0 +1,34 @@
+# boss_chrysalis_phantom archetype
+#
+# Chrysalis Phantom (mob 272) — eldritch melee bruiser. Flees
+# below 20% HP and trips casting targets mid-combat. The
+# generic `ambusher` archetype almost covers this (after the
+# chunk 2.6 augmentation it gains target_casting→trip too), but
+# the Phantom has a tighter panic threshold (HP<20 vs the
+# augmented archetype's HP<25 panic-flee) and uses `trip`
+# (single-cmd) rather than `command_best_of`.
+#
+# Migrated from inline tactics in chunk 2.6.
+
+tree:
+  type: selector
+  children:
+    # Panic-flee at HP<20 (tighter than the generic 25%)
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 20
+        - type: action
+          do: flee
+
+    # Interrupt: trip a casting target mid-combat
+    - type: sequence
+      event: mob_combat_round
+      children:
+        - type: condition
+          check: target_is_casting
+        - type: action
+          do: command_best_of
+          cmds: [trip]

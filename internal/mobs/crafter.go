@@ -4,6 +4,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/itemvalue"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -364,8 +365,6 @@ func mergeRecipeIds(a, b []string) []string {
 // the mob. Returns nil if no upgrade recipe is craftable with current stock.
 // reservePct is the per-ingredient reserve fraction; see HasMaterialsWithReservePct.
 func pickSelfGearRecipe(mob *Mob, recipeIds []string, shopInv *shops.ShopInventory, reservePct float64) *crafting.RecipeSpec {
-	wornItems := mob.Character.Equipment.GetAllItems()
-
 	for _, recipeId := range recipeIds {
 		recipe := crafting.GetRecipe(recipeId)
 		if recipe == nil || recipe.Output.ItemId <= 0 {
@@ -375,30 +374,12 @@ func pickSelfGearRecipe(mob *Mob, recipeIds []string, shopInv *shops.ShopInvento
 			continue
 		}
 
-		candidateSpec := items.GetItemSpec(recipe.Output.ItemId)
-		if candidateSpec == nil {
-			continue
-		}
-
-		// Check if this is an upgrade over any currently worn item of the same type
-		isUpgrade := false
-		wornSameType := false
-		for _, worn := range wornItems {
-			wornSpec := worn.GetSpec()
-			if wornSpec.Type == candidateSpec.Type {
-				wornSameType = true
-				if items.IsUpgrade(wornSpec, *candidateSpec) {
-					isUpgrade = true
-					break
-				}
-			}
-		}
-		// Also an upgrade if the slot is empty (nothing worn of that type)
-		if !wornSameType && items.ItemPower(*candidateSpec) > 0 {
-			isUpgrade = true
-		}
-
-		if !isUpgrade {
+		// Upgrade check via the consolidated itemvalue primitive.
+		// The new API handles slot-conflict math (e.g., 2H weapons
+		// displacing both Weapon and Offhand) internally.
+		profile := itemvalue.ProfileFor(mob.Archetype, mob.BehaviorArchetype)
+		candidate := items.New(recipe.Output.ItemId)
+		if !itemvalue.IsUpgrade(&mob.Character, profile, candidate) {
 			continue
 		}
 

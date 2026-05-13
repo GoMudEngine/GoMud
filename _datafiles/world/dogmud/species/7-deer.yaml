@@ -3,6 +3,10 @@ name: deer
 description: A graceful, fleet-footed herbivore with large, watchful
   eyes. Deer rely on speed and acute senses to escape
   danger, but will lash out with sharp hooves when cornered.
+body_parts: [legs, eyes, mouth, skin, tail]
+intrinsic_mutations:
+  tail: 1
+  keen-eyes: 1
 size: medium
 unarmedname: hooves
 selectable: false

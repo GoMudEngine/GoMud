@@ -9,6 +9,7 @@ non_combatant: true
 maxwander: 0
 groups:
   - humanoid
+  - thornwall_citizens
 idlecommands:
   - 'emote adjusts a stack of coins on the counter'
   - 'emote makes a notation in a heavy ledger'

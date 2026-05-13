@@ -403,6 +403,25 @@ type Balance struct {
 	ScoreWeightInput      ConfigFloat `yaml:"ScoreWeightInput"`
 	ScoreWeightThroughput ConfigFloat `yaml:"ScoreWeightThroughput"`
 	ScoreWeightShopGold   ConfigFloat `yaml:"ScoreWeightShopGold"`
+
+	// ── OPINIONS / DISPOSITION ───────────────────────────────────────────────
+	OpinionAttackBump              ConfigInt `yaml:"OpinionAttackBump"`              // Disposition delta when a player initiates aggression on a mob (default -15)
+	DispositionDecayHalfLifeRounds ConfigInt `yaml:"DispositionDecayHalfLifeRounds"` // Rounds for one half-life of disposition decay toward default (default 100000; 0 disables decay)
+
+	// ── FACTIONS ─────────────────────────────────────────────────────────────
+	FactionMemberKillRep   ConfigInt `yaml:"FactionMemberKillRep"`   // Rep delta when a player kills a member of a defined faction (default -10) — DEPRECATED, retained for any non-citizen faction fallback path. Citizen factions use CrimeRepDeltaMurder via internal/crimes.
+	CrimeRepDeltaMurder    ConfigInt `yaml:"CrimeRepDeltaMurder"`    // Rep delta on murder crime with identified perpetrator (default -25)
+	CrimeRepDeltaAssault   ConfigInt `yaml:"CrimeRepDeltaAssault"`   // Rep delta on assault crime with identified perpetrator (default -10)
+	CrimeRepDeltaTheft     ConfigInt `yaml:"CrimeRepDeltaTheft"`     // Rep delta on theft crime with identified perpetrator (default -5)
+	CrimeStaleAfterRounds           ConfigInt `yaml:"CrimeStaleAfterRounds"`           // Rounds after which an unresolved crime is auto-snapped to stale (default 7884000 — ~365 game-days at 4-second rounds)
+	KnowledgeObservationLogMax      ConfigInt `yaml:"KnowledgeObservationLogMax"`      // Max observation log entries per record (FIFO) (default 32)
+
+	// ── BOUNTIES ────────────────────────────────────────────────────────────
+	BountyGoldDefaultMultiplier ConfigFloat `yaml:"BountyGoldDefaultMultiplier"` // Multiplier on statpool for default gold reward (default 0.5)
+	BountyGoldFloor             ConfigInt   `yaml:"BountyGoldFloor"`             // Minimum gold floor for any bounty (default 50)
+
+	// ── FACTS & EVENTS ──────────────────────────────────────────────────────
+	FactsHeardEventsMax ConfigInt `yaml:"FactsHeardEventsMax"` // Max facts_heard events per mobs instance (default 32)
 }
 
 func (b *Balance) Validate() {

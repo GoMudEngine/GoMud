@@ -2,6 +2,7 @@ mutationid: extra-legs
 name: Extra Legs
 description: Your lower body has developed additional limbs, giving you a centaur-like stance. The added stability and power come at the cost of your appearance — you are a disturbing sight that draws unwanted aggression.
 rarity: 8
+requires_body_parts: [legs]
 visual: Additional legs extend from their lower body, giving them an unsettling, insectoid gait.
 pros:
   - type: movement_speed

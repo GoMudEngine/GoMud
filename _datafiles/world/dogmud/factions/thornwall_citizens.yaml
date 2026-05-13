@@ -1,0 +1,9 @@
+faction_id: thornwall_citizens
+display_name: "Thornwall Citizenry"
+description: |
+  The townsfolk of Thornwall — merchants, craftspeople, beggars,
+  city officials, the elders who gather at the gate. They keep
+  the city alive and watch each other's backs in small ways.
+default_rep: 0
+allies: [thornwall_guards]
+enemies: []

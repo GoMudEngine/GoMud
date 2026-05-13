@@ -4,6 +4,9 @@ description: A roiling column of living flame, the fire elemental blazes
   with terrifying speed and intensity. It scorches everything it touches
   and punishes those foolish enough to strike it with bare hands. The heat
   it radiates is enough to blister skin before it even attacks.
+body_parts: []
+intrinsic_mutations:
+  incorporeal: 4
 size: medium
 unarmedname: scorching strike
 selectable: false

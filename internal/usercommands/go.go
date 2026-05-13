@@ -264,7 +264,6 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 			user.SendText("Oops, couldn't move there!")
 		} else {
 
-
 			// Quest engine: room_enter notification
 			bridge := questengine.NewGameBridge(user, destRoom.RoomId)
 			questengine.GetEngine().Notify("room_enter", questengine.EventDetails{

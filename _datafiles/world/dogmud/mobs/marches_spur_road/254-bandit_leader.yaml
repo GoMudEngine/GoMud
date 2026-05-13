@@ -18,16 +18,6 @@ idlecommands:
   - 'emote rolls one shoulder slowly, settling her vest'
   - ''
 activitylevel: 8
-reaction_delay: 1.0
-tactical_discipline: 0.65
-tactic_preset: aggressive_melee
-tactics:
-  - trigger: health_below:15
-    action: flee
-    priority: 11
-  - trigger: multiple_targets
-    action: retarget_strongest
-    priority: 8
 character:
   name: bandit leader
   description: |

@@ -100,7 +100,7 @@ func PackFlee(e events.Event) events.ListenerReturn {
 		if speciesName == "" {
 			speciesName = "creatures"
 		}
-		sendVisualRoomText(room, 
+		sendVisualRoomText(room,
 			fmt.Sprintf(`<ansi fg="yellow">Sensing the death of their packmate, the remaining %s scatter!</ansi>`, speciesName),
 		)
 	}

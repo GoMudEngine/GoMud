@@ -1,0 +1,43 @@
+<ansi fg="white-bold">fact</ansi> — manage standing facts and per-NPC awareness
+
+  <ansi fg="cyan">fact list</ansi> [<ansi fg="yellow">--all</ansi>]
+    List active facts (default) or every status including
+    withdrawn and expired.
+
+  <ansi fg="cyan">fact show</ansi> <ansi fg="yellow"><factId></ansi>
+    Full detail for a single fact.
+
+  <ansi fg="cyan">fact declare</ansi> <ansi fg="yellow"><factId> [opts] -- <description></ansi>
+    Declare a new standing fact. The <ansi fg="yellow">--</ansi> separator is required;
+    everything after it becomes the description (spaces allowed).
+      Options:
+        --zone Z                    bind to a zone (for Local sig)
+        --region R                  bind to a region (for Regional sig)
+        --significance S            local | regional | global
+        --expiry-rounds N           expire after N rounds (0 = never)
+        --tags a,b,c                comma-separated tags
+        --withdraw-on-respawn-of MOBID  auto-withdraw when mob respawns
+
+  <ansi fg="cyan">fact withdraw</ansi> <ansi fg="yellow"><factId></ansi>
+    Manually flip a fact to withdrawn status.
+
+  <ansi fg="cyan">fact expire</ansi> <ansi fg="yellow"><factId></ansi>
+    Manually flip a fact to expired status.
+
+  <ansi fg="cyan">fact prune-expired</ansi>
+    Sweep all active facts past their expiry_round and flip them
+    to expired.
+
+  <ansi fg="cyan">fact awareness</ansi> <ansi fg="yellow"><mobId></ansi>
+    Show the heard-events list and known-facts list for an NPC
+    (numeric mob template id).
+
+  <ansi fg="cyan">fact teach</ansi> <ansi fg="yellow"><mobId> <factId></ansi> [<ansi fg="yellow">--source S</ansi>]
+    Make an NPC aware of a fact. Source defaults to witnessed.
+    Source ∈ witnessed | told | deduced | unknown.
+
+  <ansi fg="cyan">fact forget</ansi> <ansi fg="yellow"><mobId> <factId></ansi>
+    Drop a single fact awareness entry from an NPC.
+
+  <ansi fg="cyan">fact forget-all</ansi> <ansi fg="yellow"><mobId></ansi>
+    Drop all awareness (heard events + known facts) for an NPC.

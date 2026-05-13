@@ -33,10 +33,10 @@ func sellFindItem(user *users.UserRecord, name string) (items.Item, bool) {
 type sellResult int
 
 const (
-	sellOK           sellResult = iota // item sold successfully
-	sellNoItem                         // player has no more matching items
-	sellMerchantBroke                  // merchant ran out of gold
-	sellRejected                       // merchant declined this item type
+	sellOK            sellResult = iota // item sold successfully
+	sellNoItem                          // player has no more matching items
+	sellMerchantBroke                   // merchant ran out of gold
+	sellRejected                        // merchant declined this item type
 )
 
 // trySellOne attempts to sell a single matching item to mob.

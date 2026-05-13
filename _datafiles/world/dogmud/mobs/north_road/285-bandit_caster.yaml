@@ -1,7 +1,7 @@
 mobid: 285
 zone: North Road
 archetype: casting
-behavior_archetype: support_caster
+behavior_archetype: defensive_caster
 routine: bandit_camp_guard
 statpool: 120
 itemdropchance: 20
@@ -26,9 +26,6 @@ combatcommands:
   - 'emote whispers something sharp and precise, the air thickening briefly around her hands'
   - ''
 activitylevel: 10
-reaction_delay: 1.0
-tactical_discipline: 0.90
-tactic_preset: defensive_caster
 character:
   name: bandit caster
   description: |

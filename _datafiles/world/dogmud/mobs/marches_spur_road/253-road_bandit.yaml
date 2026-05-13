@@ -4,7 +4,6 @@ statpool: 60
 itemdropchance: 15
 hostile: true
 maxwander: 1
-archetype: fighting
 behavior_archetype: generic_fighter
 groups:
   - humanoid
@@ -17,15 +16,6 @@ idlecommands:
   - 'emote spits into the dust and shifts his weight'
   - ''
 activitylevel: 10
-reaction_delay: 1.5
-tactical_discipline: 0.35
-tactics:
-  - trigger: health_below:20
-    action: flee
-    priority: 10
-  - trigger: target_casting
-    action: bash
-    priority: 9
 character:
   name: road bandit
   description: |

@@ -44,6 +44,17 @@ tree:
       event: mob_hurt
       do: flee
 
+    # NEW: interrupt casting targets mid-combat (absorbs the
+    # `ambusher` tactic preset's third rule).
+    - type: sequence
+      event: mob_combat_round
+      children:
+        - type: condition
+          check: target_is_casting
+        - type: action
+          do: command_best_of
+          cmds: [trip]
+
     # 4. Re-apply Hidden when idle and NOT already hidden.
     #    The inverted condition prevents spamming add_buff (and its
     #    "{source} disappears into the shadows" room text) every round.

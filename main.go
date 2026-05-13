@@ -27,6 +27,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/flags"
@@ -77,7 +78,7 @@ import (
 // When updating this version:
 // 1. Expect to update the github release version
 // 2. Consider whether any migration code is needed for breaking changes, particularly in datafiles (see internal/migration)
-const VERSION = "0.12.0"
+const VERSION = "0.13.0"
 
 var (
 	sigChan            = make(chan os.Signal, 1)
@@ -1149,12 +1150,27 @@ func loadAllDataFiles(isReload bool) {
 	items.LoadDataFiles()
 	species.LoadDataFiles()
 	mobs.LoadDataFiles()
+
+	// Cross-reference validation: body-part tags and intrinsic
+	// mutation references must be coherent.
+	mutations.ValidateBodyPartTags()
+	species.ValidateBodyPartTags(mutations.HasSpec)
+
 	mobs.AuditMobNameCollisions(func(name string) (int, bool) {
 		if userId, _ := users.CharacterNameSearch(name); userId > 0 {
 			return userId, true
 		}
 		return 0, false
 	})
+
+	// Faction definitions: load eagerly so consumer code (combat
+	// hooks, quest engine, btree) can query factions by id without
+	// per-call disk lookups. Validates allies/enemies references —
+	// panics on unknown reference.
+	if err := factions.LoadAllDefinitions(); err != nil {
+		mudlog.Error("factions.LoadAllDefinitions", "error", err)
+	}
+
 	allMobTemplates := mobs.AllMobTemplates()
 	adapted := make([]shops.ShopBearingMob, 0, len(allMobTemplates))
 	for _, m := range allMobTemplates {

@@ -19,9 +19,6 @@ idlecommands:
   - ''
   - 'emote scratches furiously at the stone, sending chips flying'
 activitylevel: 15
-reaction_delay: 1.5
-tactical_discipline: 0.30
-tactic_preset: aggressive_melee
 character:
   name: deep gnawer
   description: |

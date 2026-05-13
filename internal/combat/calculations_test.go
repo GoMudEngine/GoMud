@@ -199,3 +199,21 @@ func TestPowerScore_ZeroValueNoPanic(t *testing.T) {
 	})
 }
 
+// TestBuildWeaponSetup_IncorporealIntegration documents the Incorporeal
+// mutation integration point for weapon damage scaling.
+//
+// Without Incorporeal mutation: GearEffectivenessMultiplier(mutations) = 1.0,
+// so weaponDmgMult = itemSpec.DamageMultiplier * 1.0 (unchanged).
+//
+// With Incorporeal rank 4: GearEffectivenessMultiplier(mutations) = 0.0,
+// so weaponDmgMult = itemSpec.DamageMultiplier * 0.0 = 0, triggering the
+// fallback to unarmed damage (ethereal beings' natural strikes still connect).
+//
+// Implementation site: internal/combat/combat_helpers.go:buildWeaponSetup()
+// The line:
+//    gearMul := mutations.GearEffectivenessMultiplier(sourceChar.Mutations)
+//    ws.weaponDmgMult = itemSpec.DamageMultiplier * gearMul
+//
+// Full Incorporeal integration (rank 4 fallback behavior) is covered by
+// Task 12 smoke tests, which load the mutation YAML and verify combat flow.
+

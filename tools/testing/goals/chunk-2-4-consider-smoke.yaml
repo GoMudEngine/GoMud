@@ -1,0 +1,142 @@
+description: |
+  Smoke test for chunk 2.4 (mob `consider` + threat-aware behaviors).
+  The chunk consolidated `consider` via the actor pattern, added two
+  btree primitives (`target_power_ratio_above`/`_below` condition +
+  `target_weakest_mob_in_room` action), and wired demo behaviors onto
+  the `lookout` archetype (player_enter ambush gated by power ratio)
+  and a new `predator` archetype on three ironwind steppe wolves
+  (steppe 205, young 206, scarred 223 — alpha 215 kept as `leader`).
+
+  This goal focuses on what a NON-ADMIN tester can verify in-game.
+  Mob-vs-mob predation checks need admin spawn + observation and
+  are listed in "Admin verification" at the bottom of the report.
+
+  IMPORTANT: don't modify code. Observe, capture, report. Even if
+  you spot what looks like a bug, write it up in the report — do
+  NOT edit any files.
+
+goals:
+  # ── 0. Login + orientation ────────────────────────────────────
+  - Log in as smoketester (port 55555, host localhost). Run
+    `set charset` to switch to ASCII. Run `look` to confirm your
+    starting room. Run `status` and capture your power-relevant
+    stats (Str/Dex/Vit/Wil/Per/Cha + HP/SP/CP) so we know the
+    baseline for the consider checks.
+
+  # ── 1. Player consider parity — weak target ───────────────────
+  - Find a low-stat NPC in your starting area. Try `consider rat`
+    or `consider <any creature name visible in look>`. Capture the
+    exact text emitted. We're verifying TWO things:
+      a) The first line names the target: "You consider
+         <ansi fg=...>NAME</ansi>..."
+      b) The second line is a prediction band: one of
+         "pose no threat", "clear advantage", "odds favor you",
+         "even contest", "upper hand", "severely outmatched",
+         "will not survive".
+    Quote both lines verbatim in your report.
+
+  # ── 2. Player consider parity — strong target ─────────────────
+  - Find or travel to a higher-power NPC. If you don't know where
+    to find one, ask the bot for a list of nearby aggressive mobs
+    (`scan` if you know it, or just `consider` whoever is in the
+    room). Capture the consider output again. The prediction band
+    should differ from the weak-target case in step 1. Quote the
+    line and confirm the band shift makes sense.
+
+  # ── 3. Verify consider self-exclusion ─────────────────────────
+  - Run `consider <your own character name>`. Confirm the command
+    silently no-ops (no text emitted) — the actor pattern uses
+    `ExcludeUserId: user.UserId` for player-side resolution. If
+    text IS emitted naming you, that's a regression — flag it.
+
+  # ── 4. Travel toward the bandit lookout ───────────────────────
+  - Navigate to the North Road zone. The bandit lookout (mob 283)
+    lives in that zone. If you don't know the route, try
+    `north`/`south`/`east`/`west` and report your path. When you
+    reach a room with a "bandit lookout" or "wiry figure" in the
+    `look` output, you've found it.
+
+    Note: the lookout has the Hidden buff (buffids: 9). You may
+    NOT see it in `look` initially — that's expected. A perception
+    check on room entry may reveal it.
+
+  # ── 5. Lookout response to your power level ──────────────────
+  - Stand in the lookout's room for at least 5 rounds (~20 seconds —
+    `sleep 2 && sleep 2` between observations). Capture any
+    aggressive lines (e.g., "<name> attacks you", combat round
+    text). The result depends on your power ratio vs. the lookout:
+
+      - If your character is STRONGER than the lookout: no
+        aggression should fire. The lookout's `player_enter`
+        branch evaluates `target_power_ratio_above: 1.0` (i.e.,
+        lookout_power / your_power > 1.0); for a strong player
+        this fails and the lookout silently stays hidden.
+
+      - If your character is WEAKER than the lookout: it should
+        ambush. You should see attack lines fire on a subsequent
+        round.
+
+    Capture: which case you fell into, what lines you observed,
+    and whether the behavior matches expectation. If you're
+    strong and the lookout DOES attack, that's a regression
+    (the gate failed open). If you're weak and the lookout does
+    NOT attack within 5 rounds, also flag — but note that
+    perception-scaled reaction delay can shift timing.
+
+  # ── 6. Wolf predation — observation pass ─────────────────────
+  - Navigate to the Ironwind Steppe zone. You're looking for a
+    room containing both a steppe wolf (or young wolf or scarred
+    wolf) AND some other smaller hated creature like a rat or
+    boar. If you find such a pairing, idle in the room for 10
+    rounds and watch:
+
+      - Does the wolf attack the smaller creature on its own?
+        That's the predator archetype's `mob_idle` predation
+        branch firing.
+      - Capture any "X attacks Y" lines that name the wolf as
+        attacker and the smaller mob as defender.
+
+    Realistically, such pairings may not naturally co-locate.
+    If you can't find one, note in the report — admin can spawn
+    a test rat into a wolf's room for post-test validation.
+
+  # ── 7. Final summary ──────────────────────────────────────────
+  - Write a "Smoke verdict" paragraph at the top of your report.
+    Use this template:
+
+      Smoke verdict: PASS | PARTIAL | FAIL
+        - Player consider parity: PASS/FAIL (quote one line)
+        - Player consider self-exclusion: PASS/FAIL
+        - Lookout reactive gate: PASS/PARTIAL/UNTESTED
+          (which case you were in + what you observed)
+        - Wolf predation: OBSERVED / NOT-OBSERVED
+          (whether you encountered a wolf + prey pairing)
+
+  # ── 8. Admin verification list ──────────────────────────────
+  - End your report with an "Admin verification needed" section
+    listing checks that require admin commands. The controller
+    will run these afterwards:
+
+      1. Mob consider silent run:
+         `mob 105 consider rat` (or any test target name)
+         → confirm no text leaks to room
+
+      2. Wolf predation forced pairing:
+         Spawn a young wolf (mob 206) and a weaker rat in the
+         same admin-controlled room. Wait one idle tick. Verify
+         wolf's `Aggro.MobInstanceId` points at the rat
+         (`mob 206 show aggro` or similar).
+
+      3. Wolf same-species skip:
+         Spawn two young wolves (mob 206) alone in a room.
+         Wait one idle tick. Neither should set Aggro on the
+         other (HatesMob returns false on same MobId).
+
+      4. Alpha wolf retained leader archetype:
+         `mob 215 show` (or similar) → confirm `behavior_archetype:
+         leader`, not `predator` (decision: alpha keeps rally/warcry).
+
+      5. Lookout ambush forced low-power case:
+         Spawn the bandit lookout (mob 283) in an isolated room.
+         Walk in as a deliberately low-stat alt. Confirm ambush
+         fires within a few rounds.

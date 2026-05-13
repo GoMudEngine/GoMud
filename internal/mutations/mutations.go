@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/pkg/errors"
 )
@@ -26,11 +27,11 @@ type MutationEffect struct {
 
 // MutationSpec is the data-driven definition of a single mutation loaded from YAML.
 type MutationSpec struct {
-	MutationId  string         `yaml:"mutationid"`
-	Name        string         `yaml:"name"`
-	Description string         `yaml:"description"`
-	Rarity      int            `yaml:"rarity"` // 1=common … 10=very rare
-	Visual      string         `yaml:"visual"` // appended to character look desc
+	MutationId  string `yaml:"mutationid"`
+	Name        string `yaml:"name"`
+	Description string `yaml:"description"`
+	Rarity      int    `yaml:"rarity"` // 1=common … 10=very rare
+	Visual      string `yaml:"visual"` // appended to character look desc
 
 	// Legacy single-effect fields (backward compat — migrated into Pros/Cons during Validate)
 	Pro MutationEffect `yaml:"pro"`
@@ -44,10 +45,11 @@ type MutationSpec struct {
 	// If a character owns any conflicting mutation, this one is excluded from the pool.
 	Conflicts []string `yaml:"conflicts,omitempty"`
 
-	// RequiresArms filters this mutation out of the pool for species with disabled
-	// weapon/offhand slots (e.g., wolves, bears). Only relevant for mutations that
-	// grant arm-related abilities.
-	RequiresArms bool `yaml:"requires_arms,omitempty"`
+	// RequiresBodyParts lists canonical body-part tags from
+	// species.CanonicalBodyParts. Empty/nil = body-agnostic.
+	// Boot-time validation is added in chunk-2.5 Task 6 (or see
+	// species.IsCanonicalBodyPart for the canonical set).
+	RequiresBodyParts []string `yaml:"requires_body_parts,omitempty"`
 }
 
 // Id implements fileloader.Loadable.
@@ -209,16 +211,12 @@ func calcRarityBonus(owned map[string]int) int {
 // GetWeightedPool builds a weighted slice of mutation IDs suitable for random selection.
 // Each mutation appears (11 - Rarity) times so rarer mutations are less likely.
 // Mutations already owned or conflicting with owned mutations are excluded.
-// disabledSlots filters out mutations requiring arms for species that lack arm slots.
-func GetWeightedPool(owned map[string]int, disabledSlots ...[]string) []string {
-	slotDisabled := map[string]bool{}
-	if len(disabledSlots) > 0 && disabledSlots[0] != nil {
-		for _, slot := range disabledSlots[0] {
-			slotDisabled[slot] = true
-		}
-	}
-	hasArms := !slotDisabled["weapon"] && !slotDisabled["offhand"]
-
+// sp filters out mutations whose body-part requirements the species does not meet.
+// Pass nil for sp to disable body-part filtering (fail-open for players/unknown species).
+//
+// Returns mutation IDs rather than spec pointers to preserve
+// RollAcquisition compatibility.
+func GetWeightedPool(owned map[string]int, sp *species.Species) []string {
 	// Rarity uplift: reduce common mutation weights for advanced players
 	rarityBonus := calcRarityBonus(owned)
 
@@ -230,7 +228,7 @@ func GetWeightedPool(owned map[string]int, disabledSlots ...[]string) []string {
 		if HasConflict(owned, id) {
 			continue
 		}
-		if spec.RequiresArms && !hasArms {
+		if !spec.CanApplyTo(sp) {
 			continue
 		}
 		weight := 11 - spec.Rarity - rarityBonus
@@ -242,6 +240,16 @@ func GetWeightedPool(owned map[string]int, disabledSlots ...[]string) []string {
 		}
 	}
 	return pool
+}
+
+// CanApplyTo reports whether this mutation's body-part requirements
+// are satisfied by the given species. Empty requirements pass for
+// any embodied or unembodied species.
+func (s *MutationSpec) CanApplyTo(sp *species.Species) bool {
+	if sp == nil {
+		return true // defensive fail-open
+	}
+	return sp.HasAllBodyParts(s.RequiresBodyParts)
 }
 
 // RollAcquisition picks a random mutation ID from the weighted pool.
@@ -535,4 +543,77 @@ func IsAdrenalSurgeActive(owned map[string]int, currentHP, maxHP int) bool {
 		return false
 	}
 	return currentHP*4 < maxHP
+}
+
+// ─── Stage 2.2a: Incorporeal mutation helpers ────────────────────────────────
+
+// GetGearEffectivenessLoss returns the total fraction (0.0–1.0)
+// by which all equipment effects (stat mods, weapon damage,
+// mitigation values) should be reduced for this character.
+// Computed with RAW level multiplication — does NOT call
+// LevelMultiplier. This produces a linear progression across
+// ranks 1-4 of 0.25/0.50/0.75/1.00, matching the design intent
+// for percentage-loss effects. Clamped to [0.0, 1.0].
+func GetGearEffectivenessLoss(owned map[string]int) float64 {
+	loss := 0.0
+	for id, level := range owned {
+		spec := GetMutation(id)
+		if spec == nil {
+			continue
+		}
+		// Either side of the pros/cons split can declare this
+		// effect; the type name implies a downside but we sum
+		// both for completeness.
+		for _, c := range spec.Cons {
+			if c.Type == "gear_effectiveness_loss" {
+				loss += c.Value * float64(level)
+			}
+		}
+		for _, p := range spec.Pros {
+			if p.Type == "gear_effectiveness_loss" {
+				loss += p.Value * float64(level)
+			}
+		}
+	}
+	if loss < 0 {
+		loss = 0
+	} else if loss > 1 {
+		loss = 1
+	}
+	return loss
+}
+
+// GearEffectivenessMultiplier returns the multiplier consumers
+// apply to gear-derived values (1.0 = full effectiveness, 0.0 = none).
+// Convenience wrapper over GetGearEffectivenessLoss.
+func GearEffectivenessMultiplier(owned map[string]int) float64 {
+	return 1.0 - GetGearEffectivenessLoss(owned)
+}
+
+// GetPhysicalDefenseBonus returns the total bonus added to the
+// defender's roll margin for physical-channel attacks. Uses
+// standard LevelMultiplier scaling.
+func GetPhysicalDefenseBonus(owned map[string]int) float64 {
+	return sumEffects(owned, "physical_defense_bonus", "")
+}
+
+// HasSpec returns true if a mutation with the given id is loaded.
+// Used by cross-package validation.
+func HasSpec(id string) bool {
+	_, ok := allMutations[id]
+	return ok
+}
+
+// ValidateBodyPartTags scans all loaded mutation specs and panics
+// on any unknown body-part tag in RequiresBodyParts.
+func ValidateBodyPartTags() {
+	for _, spec := range allMutations {
+		for _, tag := range spec.RequiresBodyParts {
+			if !species.IsCanonicalBodyPart(tag) {
+				panic(fmt.Sprintf(
+					"mutation %q: unknown requires_body_parts tag %q (canonical: %v)",
+					spec.MutationId, tag, species.CanonicalBodyParts))
+			}
+		}
+	}
 }

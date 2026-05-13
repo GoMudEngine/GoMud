@@ -46,6 +46,5 @@ func CheckItemQuests(e events.Event) events.ListenerReturn {
 
 	}
 
-
 	return events.Continue
 }

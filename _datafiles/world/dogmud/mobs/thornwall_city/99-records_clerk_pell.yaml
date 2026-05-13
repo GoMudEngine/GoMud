@@ -8,6 +8,7 @@ maxwander: 0
 groups:
   - humanoid
   - clerk
+  - thornwall_citizens
 idlecommands:
   - 'emote stamps a document with a heavy seal, the sound sharp in the quiet room'
   - 'emote retrieves a ledger from the shelves, blowing dust from its spine'

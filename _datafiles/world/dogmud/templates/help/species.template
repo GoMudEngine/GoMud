@@ -3,6 +3,12 @@
 <ansi fg="command">species</ansi> represent the type of creature someone is. All players are human.
 Non-human species exist as NPCs and creatures in the world of Gaius.
 
+Each species has a distinct body plan that determines what mutations can take hold. A wolf
+cannot grow extra arms; a snake cannot have extra legs; an ice elemental's crystalline form
+cannot grow skin that camouflages. Some species also have natural traits that behave like
+baseline mutations — a wolf's tail, a vampire's regenerative tissue, an ascended being's
+resistance to magic. These intrinsic traits stack with any mutations the creature acquires.
+
 Species are affected by Size:
     <ansi fg="yellow">Small</ansi>  - 1-Handed weapons require 2 hands. 2-Handed weapons cannot be used.
     <ansi fg="yellow">Medium</ansi> - Can use 1-Handed weapons with a shield, and sometimes dual-wield.

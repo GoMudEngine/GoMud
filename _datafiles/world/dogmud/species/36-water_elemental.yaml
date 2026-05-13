@@ -4,6 +4,9 @@ description: A surging mass of animated water, the water elemental flows
   around obstacles and strikes with crushing waves. Nearly impossible to
   wound with conventional weapons, it drowns foes in relentless watery
   blows and wears down resistance through sheer persistence.
+body_parts: [skin]
+intrinsic_mutations:
+  regenerative-tissue: 1
 size: large
 unarmedname: watery surge
 selectable: false

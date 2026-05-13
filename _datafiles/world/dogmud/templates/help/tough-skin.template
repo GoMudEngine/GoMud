@@ -3,6 +3,7 @@
 Your skin thickens into layered, leathery hide. Protection comes at
 the cost of agility.
 
+<ansi fg="yellow">Requires:</ansi>  Skin
 <ansi fg="yellow">Type:</ansi>     Passive
 <ansi fg="yellow">Rarity:</ansi>   Common
 

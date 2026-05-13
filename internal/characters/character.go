@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/stats"
@@ -362,6 +363,13 @@ const (
 
 // Where 1000 = a full round
 
+// StatMod aggregates stat-mod contributions from gear, buffs,
+// and pets. Equipment contributions are scaled by the gear-
+// effectiveness multiplier from the character's mutations
+// (Incorporeal scales gear to zero at max rank). Buff and pet
+// contributions are unaffected — they're not gear-derived.
 func (c *Character) StatMod(statName string) int {
-	return c.Equipment.StatMod(statName) + c.Buffs.StatMod(statName) + c.Pet.StatMod(statName)
+	gearStat := c.Equipment.StatMod(statName)
+	gearStat = int(float64(gearStat) * mutations.GearEffectivenessMultiplier(c.Mutations))
+	return gearStat + c.Buffs.StatMod(statName) + c.Pet.StatMod(statName)
 }

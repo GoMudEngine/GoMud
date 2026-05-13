@@ -3,6 +3,7 @@ package mutations
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -98,12 +99,12 @@ func seedRegistry() {
 			},
 		},
 		"thick-hide": {
-			MutationId:  "thick-hide",
-			Name:        "Thick Hide",
-			Rarity:      4,
-			Pro:         MutationEffect{Type: "natural_armor", Value: 15},
-			Con:         MutationEffect{Type: "movement_speed", Value: -0.10},
-			Conflicts:   []string{"fast-reflexes"},
+			MutationId: "thick-hide",
+			Name:       "Thick Hide",
+			Rarity:     4,
+			Pro:        MutationEffect{Type: "natural_armor", Value: 15},
+			Con:        MutationEffect{Type: "movement_speed", Value: -0.10},
+			Conflicts:  []string{"fast-reflexes"},
 		},
 	}
 
@@ -229,7 +230,7 @@ func TestGetWeightedPool(t *testing.T) {
 	seedRegistry()
 
 	// Empty owned — all mutations in pool
-	pool := GetWeightedPool(map[string]int{})
+	pool := GetWeightedPool(map[string]int{}, nil)
 	if len(pool) == 0 {
 		t.Fatal("expected non-empty pool for empty owned")
 	}
@@ -247,7 +248,7 @@ func TestGetWeightedPool(t *testing.T) {
 	}
 
 	// Owning a mutation excludes it from the pool
-	pool2 := GetWeightedPool(buildOwned("fast-reflexes", 1))
+	pool2 := GetWeightedPool(buildOwned("fast-reflexes", 1), nil)
 	if countOccurrences(pool2, "fast-reflexes") > 0 {
 		t.Error("owned mutation should be excluded from pool")
 	}
@@ -268,7 +269,7 @@ func TestIsAdrenalSurgeActive(t *testing.T) {
 	}{
 		{"no mutation", noOwned, 10, 100, false},
 		{"at exactly 25%", owned, 25, 100, false}, // 25*4 = 100, NOT < 100
-		{"just below 25%", owned, 24, 100, true},   // 24*4 = 96 < 100
+		{"just below 25%", owned, 24, 100, true},  // 24*4 = 96 < 100
 		{"full HP", owned, 100, 100, false},
 		{"zero maxHP guard", owned, 0, 0, false},
 		{"1 HP out of 100", owned, 1, 100, true},
@@ -287,7 +288,7 @@ func TestIsAdrenalSurgeActive(t *testing.T) {
 func TestRollAcquisition(t *testing.T) {
 	seedRegistry()
 
-	pool := GetWeightedPool(map[string]int{})
+	pool := GetWeightedPool(map[string]int{}, nil)
 	result := RollAcquisition(pool)
 	if result == "" {
 		t.Error("RollAcquisition on non-empty pool should return a mutation id")
@@ -427,8 +428,8 @@ func TestGetMutationLoad(t *testing.T) {
 		want  float64
 	}{
 		{"empty", map[string]int{}, 0.0},
-		{"single L1", buildOwned("fast-reflexes", 1), 3.0},        // rarity 3 × level 1
-		{"single L2", buildOwned("fast-reflexes", 2), 6.0},        // rarity 3 × level 2
+		{"single L1", buildOwned("fast-reflexes", 1), 3.0},                             // rarity 3 × level 1
+		{"single L2", buildOwned("fast-reflexes", 2), 6.0},                             // rarity 3 × level 2
 		{"two mutations", buildOwned("fast-reflexes", 1, "iron-constitution", 1), 8.0}, // 3+5
 	}
 
@@ -670,19 +671,19 @@ func TestGetStatProgressionMultiplier(t *testing.T) {
 func TestGetWeightedPool_RarityUplift_NoMutations(t *testing.T) {
 	seedRegistry()
 	owned := map[string]int{}
-	pool := GetWeightedPool(owned)
+	pool := GetWeightedPool(owned, nil)
 	assert.Greater(t, len(pool), 0, "pool should not be empty")
 }
 
 func TestGetWeightedPool_RarityUplift_HighAvgLevel(t *testing.T) {
 	seedRegistry()
-	basePool := GetWeightedPool(map[string]int{})
+	basePool := GetWeightedPool(map[string]int{}, nil)
 
 	owned := map[string]int{
 		"thick-hide": 4,
 		"iron-gut":   4,
 	}
-	upliftPool := GetWeightedPool(owned)
+	upliftPool := GetWeightedPool(owned, nil)
 
 	assert.Greater(t, len(basePool), len(upliftPool),
 		"high avg level should produce a smaller pool (reduced common weights)")
@@ -707,6 +708,214 @@ func TestRarityBonus_Calculation(t *testing.T) {
 			got := calcRarityBonus(tt.owned)
 			assert.Equal(t, tt.expected, got)
 		})
+	}
+}
+
+// ─── Stage 2.2a: Incorporeal mutation tests ──────────────────────────────────
+
+func TestGetGearEffectivenessLoss_PerRank(t *testing.T) {
+	prev := allMutations
+	defer func() { allMutations = prev }()
+	allMutations = map[string]*MutationSpec{
+		"test-incorporeal": {
+			MutationId: "test-incorporeal",
+			Name:       "Test Incorporeal",
+			Rarity:     10,
+			Cons: []MutationEffect{
+				{Type: "gear_effectiveness_loss", Target: "", Value: 0.25},
+			},
+		},
+	}
+
+	cases := []struct {
+		level int
+		want  float64
+	}{
+		{1, 0.25},
+		{2, 0.50},
+		{3, 0.75},
+		{4, 1.00},
+	}
+	for _, c := range cases {
+		owned := map[string]int{"test-incorporeal": c.level}
+		got := GetGearEffectivenessLoss(owned)
+		if got != c.want {
+			t.Errorf("level %d: got %.2f, want %.2f", c.level, got, c.want)
+		}
+	}
+}
+
+func TestGetGearEffectivenessLoss_Clamping(t *testing.T) {
+	prev := allMutations
+	defer func() { allMutations = prev }()
+	allMutations = map[string]*MutationSpec{
+		"a": {
+			MutationId: "a", Name: "A", Rarity: 1,
+			Cons: []MutationEffect{
+				{Type: "gear_effectiveness_loss", Value: 0.50},
+			},
+		},
+		"b": {
+			MutationId: "b", Name: "B", Rarity: 1,
+			Cons: []MutationEffect{
+				{Type: "gear_effectiveness_loss", Value: 0.50},
+			},
+		},
+	}
+	// Two sources each at level 2 → 0.50×2 + 0.50×2 = 2.0 → clamped to 1.0
+	owned := map[string]int{"a": 2, "b": 2}
+	got := GetGearEffectivenessLoss(owned)
+	if got != 1.0 {
+		t.Errorf("expected clamp to 1.0, got %.2f", got)
+	}
+}
+
+func TestGetGearEffectivenessLoss_NoEffect(t *testing.T) {
+	got := GetGearEffectivenessLoss(map[string]int{})
+	if got != 0.0 {
+		t.Errorf("expected 0.0 for empty owned, got %.2f", got)
+	}
+}
+
+func TestGearEffectivenessMultiplier_Inverts(t *testing.T) {
+	prev := allMutations
+	defer func() { allMutations = prev }()
+	allMutations = map[string]*MutationSpec{
+		"x": {
+			MutationId: "x", Name: "X", Rarity: 1,
+			Cons: []MutationEffect{
+				{Type: "gear_effectiveness_loss", Value: 0.25},
+			},
+		},
+	}
+	for level := 0; level <= 4; level++ {
+		owned := map[string]int{}
+		if level > 0 {
+			owned["x"] = level
+		}
+		mul := GearEffectivenessMultiplier(owned)
+		loss := GetGearEffectivenessLoss(owned)
+		if mul+loss != 1.0 {
+			t.Errorf("level %d: mul %.2f + loss %.2f != 1.0", level, mul, loss)
+		}
+	}
+}
+
+func TestGetPhysicalDefenseBonus_PerRank(t *testing.T) {
+	prev := allMutations
+	defer func() { allMutations = prev }()
+	allMutations = map[string]*MutationSpec{
+		"y": {
+			MutationId: "y", Name: "Y", Rarity: 1,
+			Pros: []MutationEffect{
+				{Type: "physical_defense_bonus", Value: 15},
+			},
+		},
+	}
+	// LevelMultiplier curve: 1.0/1.5/2.0/2.5
+	cases := []struct {
+		level int
+		want  float64
+	}{
+		{1, 15.0},
+		{2, 22.5},
+		{3, 30.0},
+		{4, 37.5},
+	}
+	for _, c := range cases {
+		owned := map[string]int{"y": c.level}
+		got := GetPhysicalDefenseBonus(owned)
+		if got != c.want {
+			t.Errorf("level %d: got %.2f, want %.2f", c.level, got, c.want)
+		}
+	}
+}
+
+// ─── Stage 2.5 Task 2: CanApplyTo and GetWeightedPool body-parts filter tests ──
+
+func TestCanApplyTo_NoRequirements(t *testing.T) {
+	spec := &MutationSpec{MutationId: "test", RequiresBodyParts: nil}
+	sp := &species.Species{BodyParts: []string{}} // incorporeal
+	if !spec.CanApplyTo(sp) {
+		t.Error("body-agnostic mutation should apply to any species")
+	}
+}
+
+func TestCanApplyTo_RequirementMet(t *testing.T) {
+	spec := &MutationSpec{MutationId: "test", RequiresBodyParts: []string{"arms"}}
+	sp := &species.Species{BodyParts: []string{"arms", "legs"}}
+	if !spec.CanApplyTo(sp) {
+		t.Error("met requirement should pass")
+	}
+}
+
+func TestCanApplyTo_RequirementMissing(t *testing.T) {
+	spec := &MutationSpec{MutationId: "test", RequiresBodyParts: []string{"arms"}}
+	sp := &species.Species{BodyParts: []string{"legs"}}
+	if spec.CanApplyTo(sp) {
+		t.Error("missing requirement should fail")
+	}
+}
+
+func TestCanApplyTo_NilSpecies_FailOpen(t *testing.T) {
+	spec := &MutationSpec{MutationId: "test", RequiresBodyParts: []string{"arms"}}
+	if !spec.CanApplyTo(nil) {
+		t.Error("nil species should fail-open (return true)")
+	}
+}
+
+func TestCanApplyTo_UnmigratedSpecies_FailOpen(t *testing.T) {
+	// Species with no BodyParts field declared (un-migrated, Task 7
+	// hasn't tagged it yet). Mutation requires arms. Should
+	// fail-open via species.HasBodyPart's nil-BodyParts handling.
+	spec := &MutationSpec{
+		MutationId:        "test",
+		RequiresBodyParts: []string{"arms"},
+	}
+	sp := &species.Species{
+		SpeciesId: 999,
+		Name:      "unmigrated",
+		BodyParts: nil, // un-migrated species
+	}
+	if !spec.CanApplyTo(sp) {
+		t.Error("un-migrated species (nil BodyParts) should fail-open (return true)")
+	}
+}
+
+func TestGetWeightedPool_FiltersByBodyParts(t *testing.T) {
+	// Seed a controlled registry: one arm-requiring mutation, one universal.
+	prev := allMutations
+	defer func() { allMutations = prev }()
+	allMutations = map[string]*MutationSpec{
+		"extra-arms": {
+			MutationId:        "extra-arms",
+			Name:              "Extra Arms",
+			Rarity:            9,
+			RequiresBodyParts: []string{"arms"},
+		},
+		"tough-skin": {
+			MutationId: "tough-skin",
+			Name:       "Tough Skin",
+			Rarity:     3,
+		},
+	}
+
+	// A wolf-like species with no arms.
+	sp := &species.Species{
+		SpeciesId: 999,
+		BodyParts: []string{"legs", "eyes", "mouth", "skin", "tail"},
+	}
+	current := map[string]int{}
+	pool := GetWeightedPool(current, sp)
+	seen := map[string]bool{}
+	for _, id := range pool {
+		seen[id] = true
+	}
+	if seen["extra-arms"] {
+		t.Error("pool should EXCLUDE extra-arms for species without arms")
+	}
+	if !seen["tough-skin"] {
+		t.Error("pool should INCLUDE tough-skin (no body-part requirements)")
 	}
 }
 

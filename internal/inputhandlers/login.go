@@ -146,6 +146,10 @@ func FinalizeLoginOrCreate(results map[string]string, sharedState map[string]any
 		if humanSpecies, ok := species.FindSpecies("human"); ok {
 			newUser.Character.SpeciesId = humanSpecies.Id()
 			newUser.Character.Validate()
+			// Wire intrinsic mutations for the species (no-op for humans today;
+			// future-proofs non-human playable species).
+			sp := species.GetSpecies(humanSpecies.Id())
+			newUser.Character.ApplyIntrinsicMutations(sp)
 		}
 
 		if err := users.CreateUser(newUser); err != nil {

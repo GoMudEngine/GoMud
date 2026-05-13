@@ -1,0 +1,35 @@
+speciesid: 41
+name: Sand Elemental
+description: A swirling column of grit and sun-warmed sand, the sand
+  elemental is what happens when desert wind and parched earth refuse
+  to settle. It tears at flesh with abrasive whirls and chokes lungs
+  with sweeping clouds that sting the eyes blind.
+size: medium
+unarmedname: abrasive whirl
+selectable: false
+tameable: false
+angrycommands:
+  - emote tightens its column, sand grains hissing like cicadas.
+  - emote sends a stinging spray of grit ahead of itself.
+stats:
+  strength:
+    base: 80
+  dexterity:
+    base: 130
+  perception:
+    base: 100
+  vitality:
+    base: 90
+  willpower:
+    base: 50
+  charisma:
+    base: 5
+damage:
+  basedamage: 3
+  variance: 1
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'back',
+  'belt', 'gloves', 'ring', 'legs', 'feet']
+body_parts: [skin]
+intrinsic_mutations:
+  incorporeal: 2
+  blinding-spit: 1

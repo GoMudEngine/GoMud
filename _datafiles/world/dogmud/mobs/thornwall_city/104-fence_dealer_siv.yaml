@@ -11,6 +11,7 @@ maxwander: 0
 groups:
   - humanoid
   - merchant
+  - thornwall_citizens
 idlecommands:
   - 'emote examines an item behind the counter, turning it in the lamplight'
   - 'emote makes a notation in a small, well-hidden notebook'

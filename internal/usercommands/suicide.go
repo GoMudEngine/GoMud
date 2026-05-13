@@ -186,7 +186,7 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	user.SendText(`<ansi fg="yellow">You feel weakened by the brush with death.</ansi>`)
 
 	user.Character.CancelBuffsWithFlag(buffs.All)
-	user.Character.Conditions = nil   // Fix B: wipe all combat conditions (poison, bleeding, rally, etc.)
+	user.Character.Conditions = nil // Fix B: wipe all combat conditions (poison, bleeding, rally, etc.)
 	user.Character.EndAggro()
 	user.Character.CastingState = nil
 

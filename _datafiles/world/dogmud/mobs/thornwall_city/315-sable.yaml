@@ -4,6 +4,7 @@ non_combatant: true
 charm_immune: true
 groups:
   - humanoid
+  - thornwall_citizens
 activitylevel: 5
 idlecommands:
   - 'emote studies a swirling orb of energy, muttering calculations'

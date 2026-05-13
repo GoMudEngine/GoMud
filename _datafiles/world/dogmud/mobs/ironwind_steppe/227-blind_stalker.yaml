@@ -24,13 +24,6 @@ idlecommands:
   - ''
   - 'emote opens its jaws impossibly wide, tasting the air'
 activitylevel: 15
-reaction_delay: 0.6
-tactical_discipline: 0.75
-tactic_preset: ambusher
-tactics:
-  - trigger: health_below:20
-    action: flee
-    priority: 11
 combatcommands:
   - ''
   - ''

@@ -1,0 +1,56 @@
+# defensive_caster archetype
+#
+# Caster pattern with self-preservation: panic-buff (chrysalis-
+# cocoon) when buff 52 is missing, AoE on multiple targets,
+# single-target spike otherwise, flee at low HP.
+#
+# Used by: goblin_shaman (219), tunnel_shaman (74),
+# bandit_caster (285), elemental_queen (321). Absorbs the
+# legacy `defensive_caster` and `caster_backline` tactic presets
+# (chunk 2.6 migration).
+#
+# Spec: docs/superpowers/specs/2026-05-12-mob-aliveness-2.6-sunset-tactics-engine-design.md
+
+tree:
+  type: selector
+  children:
+    # Panic-flee at low HP — wins over any cast
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 30
+        - type: action
+          do: flee
+
+    # Per-round combat cascade
+    - type: selector
+      event: mob_combat_round
+      children:
+        # Panic-buff: cast cocoon when buff 52 is missing
+        - type: sequence
+          children:
+            - type: decorator
+              mod: invert
+              child:
+                type: condition
+                check: mob_has_buff
+                buff_id: 52
+            - type: action
+              do: cast
+              spell: chrysalis-cocoon
+
+        # Multi-target AoE
+        - type: sequence
+          children:
+            - type: condition
+              check: multiple_enemies
+            - type: action
+              do: cast
+              spell: conviction-barrage
+
+        # Single-target fallback
+        - type: action
+          do: cast
+          spell: conviction-spike

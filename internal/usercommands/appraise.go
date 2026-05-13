@@ -45,13 +45,13 @@ func Appraise(rest string, user *users.UserRecord, room *rooms.Room, flags event
 		}
 
 		type identifyDetails struct {
-			Item         *items.Item
-			ItemSpec     *items.ItemSpec
+			Item     *items.Item
+			ItemSpec *items.ItemSpec
 		}
 
 		details := identifyDetails{
-			Item:         &item,
-			ItemSpec:     &itemSpec,
+			Item:     &item,
+			ItemSpec: &itemSpec,
 		}
 
 		appraisePrice := 20

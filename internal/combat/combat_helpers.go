@@ -254,7 +254,8 @@ func buildWeaponSetup(sourceChar *characters.Character, targetChar *characters.C
 		// Racial bonus
 		ws.baseDmg += float64(weapon.StatMod(string(statmods.RacialBonusPrefix) + strings.ToLower(targetChar.Species())))
 
-		ws.weaponDmgMult = itemSpec.DamageMultiplier
+		gearMul := mutations.GearEffectivenessMultiplier(sourceChar.Mutations)
+		ws.weaponDmgMult = itemSpec.DamageMultiplier * gearMul
 		if ws.weaponDmgMult <= 0 {
 			ws.weaponDmgMult = float64(bal.UnarmedDamageMultiplier)
 		}
@@ -520,6 +521,11 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 		if !ctx.targetCanSee {
 			defenseScore *= float64(bal.DarknessCombatPenalty)
 		}
+
+		// Incorporeal mutation: physical defense bonus (channel-scoped
+		// to physical attacks; this function only handles physical
+		// swings — spells use a different resolution path).
+		defenseScore += mutations.GetPhysicalDefenseBonus(targetChar.Mutations)
 
 		// Roll this defense against the single attack roll
 		defenseRoll := dice.Roll(defenseScore, atkStdDev)

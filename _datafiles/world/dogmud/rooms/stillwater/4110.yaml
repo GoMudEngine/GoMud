@@ -9,13 +9,13 @@ description: >
   A long pine <ansi fg="itemname">counter</ansi> divides the
   room front-to-back, and behind it a heavy iron
   <ansi fg="itemname">strongbox</ansi> sits bolted to the
-  floor in the corner. The northern wall is a layered
-  patchwork of <ansi fg="itemname">postings</ansi> — wanted
-  notices, bounty offers, public-record entries, faded
-  curling sheets that no one has been bothered to take down.
-  The back of the room is closed off by a row of thick iron
-  <ansi fg="itemname">bars</ansi>, with a single barred door
-  at their center, separating the office from a small
+  floor in the corner. The northern wall holds a layered
+  <ansi fg="itemname">bounty board</ansi> — a patchwork of
+  wanted notices, bounty offers, public-record entries, and
+  faded curling sheets that no one has been bothered to take
+  down. The back of the room is closed off by a row of thick
+  iron <ansi fg="itemname">bars</ansi>, with a single barred
+  door at their center, separating the office from a small
   one-person <ansi fg="itemname">cell</ansi> furnished with
   a plank bench, a wooden slop bucket with a fitted lid, and
   clean straw on a packed-earth floor.
@@ -41,13 +41,20 @@ nouns:
     takes two keys, both of which the constable wears.
     Confiscated goods, town funds, the occasional valuable
     held as evidence.
+  bounty board: A weather-worn corkboard stands against
+    the northern wall, papered with wanted notices and
+    contract slips, recent ones still clean, older ones
+    curling at the edges. Anyone with the will to read
+    them can run "bounty list" anywhere in town to see
+    what's open. A fresher notice is pinned at eye level,
+    doubling the reward for the lake-cave bounty.
   postings: A thick layered patchwork of paper across the
     northern wall — wanted notices, bounty offers,
-    public-record entries, bait-shop hours, a fresher
-    notice doubling the lake-cave bounty. The older sheets
-    curl at the corners and bleed through the newer in
-    damp weather. Some have been there long enough that
-    the wanted face is unrecognizable.
+    public-record entries, bait-shop hours, and various
+    notices from town council. The older sheets curl at
+    the corners and bleed through the newer in damp
+    weather. Some have been there long enough that the
+    wanted face is unrecognizable.
   bars: A row of thick iron bars set vertically into stone
     sockets at floor and ceiling, separating the front
     office from the holding cell at the back of the

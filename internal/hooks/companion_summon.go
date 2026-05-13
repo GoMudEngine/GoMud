@@ -4,12 +4,12 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
-	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // resolveCompanionSummon handles YAML-driven companion summoning spells.
@@ -177,4 +177,3 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 
 	return true
 }
-

@@ -243,6 +243,38 @@ Combat assessment weights:
 - Defense comparison: 10%
 ```
 
+## Power Scoring & Gear Contribution
+
+`combat.PowerScore(char)` combines six terms: Offense, Defense,
+Durability, Skills, Mutations, and KD ratio. Equipment
+contribution flows through the standard pipes; there is no
+separate "gear quality" axis.
+
+| PowerScore term | Equipment field(s) that feed it |
+|---|---|
+| Offense (physAtk per-swing) | weapon `DamageMultiplier`, `SpeedMultiplier`; offhand + ExtraArm weapons |
+| Offense (magAtk caster) | equipped weapon `SpellDamageMultiplier` |
+| Offense (any stat-derived) | equipment `StatMods` → `Stats.X.ValueAdj` |
+| Defense (mitigation) | equipment `PhysicalMitigation` / `MagicalMitigation` / `ConvictionMitigation` summed by `char.Get*Mitigation()` |
+| Defense (avoidance) | equipment-driven dodge/parry/block via `char.GetDefenseScore(...)` |
+| Durability | `char.HealthMax.Value` / `StaminaMax.Value` / `ConvictionMax.Value` — all reflect equipment stat boosts |
+| Skills | not gear-driven |
+| Mutations | not gear-driven |
+| KD ratio | not gear-driven |
+
+A player swapping a steel sword for an iron one will see
+PowerScore drop because (a) the weapon's `DamageMultiplier`
+changes (physAtk) and (b) any stat-mod difference flows through
+`ValueAdj` into multiple terms. The Incorporeal mutation (chunk
+2.2a) further scales gear contributions via
+`mutations.GearEffectivenessMultiplier` — an ethereal wraith's
+PowerScore reflects gear at the rank-determined fraction.
+
+Consumers: `actions.Consider` (player + mob `consider`),
+behavior tree conditions `target_power_ratio_above` and
+`target_power_ratio_below`, behavior tree action
+`target_weakest_mob_in_room`.
+
 ## Dependencies
 
 - `internal/characters` - Character stats, equipment, and abilities

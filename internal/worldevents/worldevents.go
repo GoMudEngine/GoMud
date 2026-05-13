@@ -5,6 +5,7 @@
 package worldevents
 
 import (
+	"sync/atomic"
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -38,6 +39,7 @@ const (
 
 // WorldEvent captures a single notable occurrence in the game world.
 type WorldEvent struct {
+	Id           uint64         // Monotonically increasing event ID, assigned at emit time
 	Type         WorldEventType
 	Significance Significance
 	ZoneName     string // Origin zone display name
@@ -64,6 +66,7 @@ var (
 	eventBuffer []WorldEvent
 	maxEvents   int
 	ready       bool
+	nextEventId atomic.Uint64
 )
 
 // InitWorldEvents allocates the ring buffer from config. Safe to call
@@ -88,6 +91,8 @@ func InitWorldEvents() {
 // EmitWorldEvent appends an event to the ring buffer.
 // Must be called under util.LockMud() (same thread-safety contract as combat analytics).
 func EmitWorldEvent(evt WorldEvent) {
+	evt.Id = nextEventId.Add(1)
+
 	if !ready {
 		InitWorldEvents()
 		if !ready {

@@ -12,8 +12,6 @@ itemdropchance: 75
 loot_pool:
   - 10028
   - 20069
-tactic_preset: aggressive_melee
-tactical_discipline: 0.90
 idlecommands:
   - 'emote plants the warhammer head-down in the dirt and stares at the gate'
   - ''

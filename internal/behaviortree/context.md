@@ -204,6 +204,13 @@ Condition nodes use `type: condition` with `check: <name>`.
 | `item_matches` | `item_id` (int) | Event ItemId matches. `player_give` only. |
 | `multiple_enemies` | none | More than one player + charmed mob in room. |
 
+### Combat Assessment
+
+| Condition | Params | Description |
+|-----------|--------|-------------|
+| `target_power_ratio_above` | `value` (float) | True when self_power / target_power > value. Target resolution: `Event.UserId` → `Aggro.MobInstanceId` → `Aggro.UserId`. Returns Failure if no target resolvable or value missing/zero. |
+| `target_power_ratio_below` | `value` (float) | Mirror of `_above`: true when ratio < value. |
+
 ---
 
 ## Action Reference
@@ -246,6 +253,12 @@ are subject to perception-scaled reaction delays (see below).
 | `attack` | none | Mob attacks the triggering player; if none, picks random player in room. |
 | `flee` | none | Mob flees combat. |
 | `cast` | `spell` (string) | Mob casts the named spell. |
+
+### Combat Targeting — instant
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `target_weakest_mob_in_room` | `ratio_below` (float, default 1.0) | Scans `room.GetMobs()`, picks the mob with the lowest power ratio relative to self that the caller's `HatesMob` returns true for, sets it as Aggro. Skips self, dead, non-combatant, same-owner companions, and mobs the caller doesn't hate. Players are NOT scanned. Returns Success on a pick, Failure otherwise. |
 
 ### Boss & Companion Control — delayed
 
@@ -356,6 +369,7 @@ A mob with Perception 50 has:
 | `set_misc_data` | No |
 | `set_room_locked` | No |
 | `command` | No |
+| `target_weakest_mob_in_room` | No |
 
 ---
 
@@ -659,3 +673,48 @@ Key takeaway: room state (`ceremony_active`, `ceremony_ticks`) coordinates
 between the `room_enter` (which starts the ceremony) and `room_idle` (which
 ends it), demonstrating how to build timed multi-phase room events without any
 JavaScript.
+
+---
+
+## Panic-Flee Pattern (chunk 2.6)
+
+A shared `mob_hurt + mob_health_below:N → flee` branch is the FIRST
+child of the top-level selector in five core archetypes:
+`generic_fighter`, `predator`, `leader`, `lookout`, `tank_taunter`.
+Threshold defaults to 25% HP. Emergency flee outranks any combat
+action because it's the first matching branch in the selector
+evaluation order.
+
+Mobs that need a different threshold (e.g., Chrysalis Phantom at
+20%, Edrin's heal-at-50% sequence) author a per-boss archetype that
+overrides the default.
+
+---
+
+## New Archetypes (chunk 2.6)
+
+Added in the legacy tactics-engine sunset migration:
+
+- **`defensive_caster`** — Caster pattern with self-preservation:
+  panic-flee at HP<30, panic-buff (chrysalis-cocoon when
+  Chrysalis Shell buff 52 is missing), AoE on multiple targets
+  (conviction-barrage), single-target spike (conviction-spike).
+  Used by goblin_shaman (219), tunnel_shaman (74),
+  bandit_caster (285), elemental_queen (321). Absorbed the
+  legacy `defensive_caster` and `caster_backline` tactic presets.
+- **`boss_edrin`** — Old Edrin's fragile-caster rotation with
+  fold-recall at HP<30, panic-flee at HP<25, heal at HP<50,
+  opening conviction-ward (shield spell — no buff gate),
+  mind-spike on casters, hemorrhagic-burst on multi,
+  pyretic-surge single-target.
+- **`boss_sylara`** — Windwarden Sylara's heal-at-30 + panic
+  chrysalis-cocoon (buff 52) + conviction-ward opener
+  (shield spell — no buff gate) + bash interrupt.
+- **`boss_rhett`** — Geomancer Rhett's defense-only opener
+  (conviction-armor when buff 38 missing) + panic-flee.
+- **`boss_soren`** — Soren's leader-archetype combat plus a
+  call_for_help at HP<30 branch.
+- **`boss_chrysalis_phantom`** — Tight panic-flee (HP<20) +
+  target_casting → trip interrupt.
+
+Spec: `docs/superpowers/specs/2026-05-12-mob-aliveness-2.6-sunset-tactics-engine-design.md`

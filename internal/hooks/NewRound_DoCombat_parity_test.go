@@ -45,22 +45,22 @@ func enableMobProgression(t *testing.T) func() {
 	prevGp := configs.GetGamePlayConfig()
 
 	require.NoError(t, configs.AddOverlayOverrides(map[string]any{
-		"GamePlay.UseSkillProgression":   true,
-		"Balance.MobProgressionEnabled":  true,
-		"Balance.MobProgressionRate":     1.0,
-		"Balance.BaseProgressionChance":  1.0,
-		"Balance.MobStatCap":             10000,
-		"Balance.MobSkillCap":            10000,
+		"GamePlay.UseSkillProgression":  true,
+		"Balance.MobProgressionEnabled": true,
+		"Balance.MobProgressionRate":    1.0,
+		"Balance.BaseProgressionChance": 1.0,
+		"Balance.MobStatCap":            10000,
+		"Balance.MobSkillCap":           10000,
 	}))
 
 	return func() {
 		_ = configs.AddOverlayOverrides(map[string]any{
-			"GamePlay.UseSkillProgression":   bool(prevGp.UseSkillProgression),
-			"Balance.MobProgressionEnabled":  bool(prevBal.MobProgressionEnabled),
-			"Balance.MobProgressionRate":     float64(prevBal.MobProgressionRate),
-			"Balance.BaseProgressionChance":  float64(prevBal.BaseProgressionChance),
-			"Balance.MobStatCap":             int(prevBal.MobStatCap),
-			"Balance.MobSkillCap":            int(prevBal.MobSkillCap),
+			"GamePlay.UseSkillProgression":  bool(prevGp.UseSkillProgression),
+			"Balance.MobProgressionEnabled": bool(prevBal.MobProgressionEnabled),
+			"Balance.MobProgressionRate":    float64(prevBal.MobProgressionRate),
+			"Balance.BaseProgressionChance": float64(prevBal.BaseProgressionChance),
+			"Balance.MobStatCap":            int(prevBal.MobStatCap),
+			"Balance.MobSkillCap":           int(prevBal.MobSkillCap),
 		})
 	}
 }

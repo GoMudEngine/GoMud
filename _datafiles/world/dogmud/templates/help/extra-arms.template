@@ -5,6 +5,7 @@ ability to wield additional weapons. The grotesque sight of four
 flailing limbs draws hostile attention and unsettles everyone around
 you.
 
+<ansi fg="yellow">Requires:</ansi>  Arms (a species with explicit grasping limbs)
 <ansi fg="yellow">Type:</ansi>     Active Ability
 <ansi fg="yellow">Rarity:</ansi>   Extremely Rare
 

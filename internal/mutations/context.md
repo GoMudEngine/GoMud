@@ -56,6 +56,8 @@ Legacy `pro`/`con` single-effect fields are automatically migrated into the
 | `stat_progression_multiplier` | `character.CheckStatProgression()` | Scale stat gain chance |
 | `flag` | various | Grant a permanent flag (nightvision, lightsource, hidden, see-hidden) |
 | `health_regen_if_lit` | `hooks/UserRoundTick` | HP regen only in lit rooms |
+| `gear_effectiveness_loss` | `character.StatMod()`, `itemvalue.ItemValueDelta()` | Percentage loss (0–1.0) applied to all gear-derived values; summed across owned mutations. **Special carve-out: uses raw level multiplication (ranks 1–4 = 0.25/0.50/0.75/1.00), NOT `LevelMultiplier`**. Reason: percentage-loss effects need linear scaling so rank 4 = exactly 100% loss. Consumers apply `(1.0 - loss)` multiplier. Clamped to [0.0, 1.0]. |
+| `physical_defense_bonus` | `combat.calculateCombat()` | Flat additive bonus to defender's roll margin for physical-channel attacks; summed across mutations. Uses standard `LevelMultiplier` scaling. |
 
 ### Active Abilities (Phase 24.5)
 
@@ -94,6 +96,42 @@ are excluded. `RollAcquisition()` picks uniformly at random from that slice.
 
 Maximum mutations per character: `MutationMaxCount` = 5.
 
+### Body-Plan Gating (chunk 2.5)
+
+`MutationSpec.RequiresBodyParts []string` lists canonical body-part tags
+required for the mutation to apply. Empty/nil = body-agnostic. The legacy
+`RequiresArms bool` field has been REMOVED — migration replaced it with
+`RequiresBodyParts: [arms]`.
+
+Three gating sites:
+
+1. **Random-roll pool:** `GetWeightedPool(current, species)` filters
+   out mutations whose body-parts requirements aren't met by the
+   species. The signature changed from `GetWeightedPool(current,
+   disabledSlots)` to take `*species.Species` directly.
+2. **Curated SpawnMutations path:** `mobs.go` checks each entry via
+   `MutationSpec.CanApplyTo(species)`; logs a warning + skips on
+   mismatch.
+3. **Mid-game grants:** Quest engine bridge + behavior tree
+   `grant_mutation` action + player round tick all pass the user's
+   species to `GetWeightedPool`. Pool-level filtering means body-
+   part-incompatible mutations are silently excluded from candidates
+   rather than producing an explicit rejection message (the spec's
+   "Your body cannot integrate this mutation" line is reserved for
+   a future direct-grant flow like mutation potions).
+
+Boot-time validation (`ValidateBodyPartTags`) panics on unknown
+body-part tags in any mutation YAML.
+
+### Intrinsic Mutation Stacking
+
+Species's `IntrinsicMutations` map merges additively with acquired
+mutations at character init via `Character.ApplyIntrinsicMutations`.
+Cap-aware: combined rank clamped to `MutationMaxRank = 4` (matches
+the chunk-2.2a convention).
+
+Design: `docs/superpowers/specs/2026-05-12-mob-aliveness-2.5-mutations-on-mobs-design.md`
+
 ### Conflict System (Phase 24.1)
 
 Mutations can declare `conflicts: [id1, id2]` in their YAML. `HasConflict()`
@@ -102,6 +140,17 @@ checks both directions:
 - Each owned mutation's conflicts list vs candidate
 
 Conflicting mutations are excluded from `GetWeightedPool()` during acquisition.
+
+### Helper Functions
+
+```go
+// Gear effectiveness loss (chunk 2.2a — Incorporeal mutation)
+GetGearEffectivenessLoss(owned map[string]int) float64   // Sum loss across owned
+GearEffectivenessMultiplier(owned map[string]int) float64 // Convenience: (1.0 - loss)
+
+// Physical defense bonus (chunk 2.2a — Incorporeal mutation)
+GetPhysicalDefenseBonus(owned map[string]int) float64 // Sum bonus across owned
+```
 
 ### Registry
 

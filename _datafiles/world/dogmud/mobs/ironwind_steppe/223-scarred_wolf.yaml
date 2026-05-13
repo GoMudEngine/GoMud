@@ -1,6 +1,6 @@
 mobid: 223
 zone: Ironwind Steppe
-behavior_archetype: generic_fighter
+behavior_archetype: predator
 routine: wolf_pack_ironwind
 statpool: 130
 itemdropchance: 15

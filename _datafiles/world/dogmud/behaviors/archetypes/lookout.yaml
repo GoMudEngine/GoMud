@@ -15,6 +15,29 @@
 tree:
   type: selector
   children:
+    # NEW: panic-flee at critical HP (absorbs the inline tactic
+    # `health_below:25 → flee` from chunk 2.6 migration).
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 25
+        - type: action
+          do: flee
+
+    # NEW: ambush only if I outmatch the entering player.
+    # target_power_ratio_above: self_power / target_power > value.
+    # value=1.0 means self is strictly stronger than target.
+    - type: sequence
+      event: player_enter
+      children:
+        - type: condition
+          check: target_power_ratio_above
+          value: 1.0
+        - type: action
+          do: attack
+
     - type: sequence
       event: packmate_hurt
       children:

@@ -182,6 +182,25 @@ func GetByUserId(userId int) *UserRecord {
 	return nil
 }
 
+// GetByCharacterNameOrLoad finds a user by character name, falling
+// back to a disk load when no online user matches. Used by admin
+// state-inspection commands (faction/crime/opinion show) that should
+// work for offline players. The disk fallback passes
+// skipValidation=true to avoid mutating disk state on a passive read.
+//
+// Disk lookup is by username, not character name; for accounts where
+// the two differ, only the online-map match will succeed. DOGMud's
+// single-character-per-account model keeps them aligned in practice.
+func GetByCharacterNameOrLoad(name string) *UserRecord {
+	if u := GetByCharacterName(name); u != nil {
+		return u
+	}
+	if u, err := LoadUser(name, true); err == nil && u != nil {
+		return u
+	}
+	return nil
+}
+
 func GetByConnectionId(connectionId connections.ConnectionId) *UserRecord {
 	userManager.mu.RLock()
 	defer userManager.mu.RUnlock()

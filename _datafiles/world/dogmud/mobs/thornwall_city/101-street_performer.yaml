@@ -7,6 +7,7 @@ hostile: false
 maxwander: 2
 groups:
   - humanoid
+  - thornwall_citizens
 idlecommands:
   - 'emote juggles three coloured balls in a lazy arc'
   - 'emote plays a jaunty tune on a battered tin whistle'

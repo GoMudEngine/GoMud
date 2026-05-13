@@ -7,6 +7,16 @@ _datafiles/**/plugin-data/*
 **/rooms.instances
 **/mobs.instances
 _datafiles/**/shops
+# Runtime faction rep state — not committed
+_datafiles/**/factions.rep
+# Runtime crime log state — not committed
+_datafiles/**/factions.crimes
+# Runtime NPC knowledge state — not committed
+_datafiles/**/knowledge/
+# Runtime NPC opinion state — not committed
+_datafiles/**/opinions/
+# Runtime NPC fact awareness state — not committed
+_datafiles/**/facts.awareness/
 .worktrees/
 tools/testing/reports/*.md
 vendor/
