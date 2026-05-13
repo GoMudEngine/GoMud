@@ -337,9 +337,10 @@ implementation begins. ID prefix `CP-` = Combat Phase.
 
 | ID | Start state | Trigger | Conditions | Outcome | Rationale |
 |----|-------------|---------|-----------|---------|-----------|
-| CP-023 | A.Idle, A.Awareness=Hidden | A: attack command | base | A → Engaging{B, reason=SurpriseAttack}; A.Awareness stays Hidden until end of first combat round | Surprise bonus rewards the setup |
-| CP-024 | A.Engaging{B, reason=SurpriseAttack} → Engaged | scheduled fire | (forced) | A → Engaged{B}; A.Awareness Hidden → Revealing → Visible (cascade on Engaged entry, NOT Engaging) | Stealth breaks on first swing landed, not on engage start |
-| CP-025 | A.Engaged{B}, A.Awareness=Hidden | round tick fires combat round | A took an attack action | A.Awareness Hidden → Revealing → Visible after the attack | Active combat reveals; passive observation does not |
+| CP-023 | A.Idle, A.Awareness=Hidden | A: attack command | base | A → Engaging{B, reason=SurpriseAttack}; A.Awareness stays Hidden through Engaging | Surprise bonus rewards the setup; Awareness preserved through pre-engagement |
+| CP-024 | A.Engaging{B, reason=SurpriseAttack} → Engaged | scheduled fire | (forced) | A → Engaged{B}; A.Awareness still Hidden (cascade does NOT fire here) | Surprise round hasn't happened yet — stealth must persist until after the round's swings resolve |
+| CP-025 | A.Engaged{B} (first round after surprise entry), A.Awareness=Hidden | combat round resolves all swings (dual/triple/Extra-Arms weapon configurations all get the surprise bonus on every swing this round) | round end | At end-of-round cascade: A.Awareness Hidden → Revealing → Visible. Subsequent rounds are normal combat. | Multi-weapon characters get surprise on EVERY weapon this round; reveal happens once at round end, after all swings (regardless of hit/miss). Miss still breaks stealth — the swing was made. |
+| CP-025b | A.Engaged{B}, A.Awareness=Hidden (e.g., re-stealthed mid-combat somehow — out of scope for chunk 0 but framework must not block) | round tick fires combat round | A takes attack action | A.Awareness Hidden → Revealing → Visible at end-of-round cascade | Same end-of-round semantics as CP-025 for any combat round with attack actions while hidden |
 
 ### Non-combat target picking (the chunk 2.7 bug case)
 
@@ -525,20 +526,26 @@ more Behavior Matrix rows.
   (they default to not subscribing); but archetype authors
   should know they exist. Update btree context.md.
 
-## Open questions
+## Resolved during spec review
 
-- **Surprise attack timing (CP-009 / CP-024).** The matrix
-  says stealth persists through Engaging→Engaged, breaks on
-  the first swing landing during Engaged. Edge case: what if
-  the surprise attack misses? Does stealth still break, or
-  does the attacker get another stealth-bonus swing? Spec
-  says it breaks (the swing was made, regardless of outcome).
-  Worth user confirmation during spec review.
+- **Surprise attack timing (CP-024, CP-025).** Stealth persists
+  through Engaging entry, persists through Engaged entry,
+  and breaks at **end of first combat round** — after all
+  weapon swings for that round have resolved. This handles
+  dual-wielding, triple-wielding, and Extra-Arms mutation
+  configurations: every weapon swing in the surprise round
+  gets the bonus. A miss still breaks stealth (the swing was
+  made, regardless of hit/miss outcome). The implementation
+  point: Awareness's Hidden→Revealing cascade fires from an
+  **end-of-round** cascade slot triggered by Combat Phase's
+  Engaged tick, not from the Engaging→Engaged transition itself.
 
-- **Cross-room mob pursuit policy.** CP-021 says mobs CAN
-  follow but the archetype decides whether to. Default
-  behavior: do not pursue. Pursuit is an opt-in archetype
-  feature for later (bounty hunter chunk 5.2). Confirm.
+- **Cross-room mob pursuit policy.** Mobs CAN follow per the
+  framework but the **default archetype behavior is no
+  pursuit**. The framework provides the capability; pursuit
+  is an opt-in archetype branch wired in chunk 5.2 (bounty
+  hunting). Chunk 0 ensures nothing in the framework blocks
+  cross-room aggro retention.
 
 ## Roadmap impact
 
