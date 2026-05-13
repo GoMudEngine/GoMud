@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
 	"github.com/GoMudEngine/GoMud/internal/stats"
 )
@@ -420,4 +421,69 @@ func (c *Character) StatMod(statName string) int {
 	gearStat := c.Equipment.StatMod(statName)
 	gearStat = int(float64(gearStat) * mutations.GearEffectivenessMultiplier(c.Mutations))
 	return gearStat + c.Buffs.StatMod(statName) + c.Pet.StatMod(statName)
+}
+
+// ===================================================================
+// Combat Phase Convenience Methods (Task 11)
+// ===================================================================
+
+// IsEngaged returns true if Combat Phase is Engaged (actively
+// in a combat round). Replacement for `c.Aggro != nil && wait==0`
+// (the closest historical equivalent).
+func (c *Character) IsEngaged() bool {
+	if c.CombatPhase == nil {
+		return false
+	}
+	return c.CombatPhase.IsEngaged()
+}
+
+// IsInCombat returns true if Combat Phase is anything but Idle
+// (includes Engaging, Engaged, Disengaging). Replacement for the
+// historical `c.Aggro != nil` check that gated movement,
+// commands, regen, etc.
+func (c *Character) IsInCombat() bool {
+	if c.CombatPhase == nil {
+		return false
+	}
+	return c.CombatPhase.IsInCombat()
+}
+
+// EngagedTarget returns the current Engaged target as an ActorRef.
+// Returns zero ActorRef when not Engaged (or Engaging/Disengaging).
+// Replacement for `c.Aggro.UserId` / `c.Aggro.MobInstanceId` reads
+// during Engaged state.
+func (c *Character) EngagedTarget() state.ActorRef {
+	if c.CombatPhase == nil {
+		return state.ActorRef{}
+	}
+	if d, ok := c.CombatPhase.EngagedData(); ok {
+		return d.Target
+	}
+	return state.ActorRef{}
+}
+
+// CurrentCombatTarget returns the Combat Phase target across all
+// non-Idle states (Engaging.Target, Engaged.Target, or
+// Disengaging.LastTarget). Returns zero ActorRef when Idle.
+// Used by callers that need "who am I targeting right now,
+// regardless of phase" semantics.
+func (c *Character) CurrentCombatTarget() state.ActorRef {
+	if c.CombatPhase == nil {
+		return state.ActorRef{}
+	}
+	return c.CombatPhase.CurrentTarget()
+}
+
+// Attackers returns the framework-maintained inbound attacker
+// list — every character currently Engaging or Engaged with
+// this Character as their target.
+//
+// Replaces room-scan loops for "who's attacking me?". The list
+// is updated atomically by the Combat Phase framework on every
+// transition.
+func (c *Character) Attackers() []state.ActorRef {
+	if c.CombatPhase == nil {
+		return nil
+	}
+	return c.CombatPhase.Attackers()
 }
