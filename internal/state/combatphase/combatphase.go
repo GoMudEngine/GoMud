@@ -81,9 +81,10 @@ type Machine struct {
 	engaging                 *EngagingData
 	engaged                  *EngagedData
 	disengaging              *DisengagingData
-	attackers                []state.ActorRef // inbound attacker list
-	attackersChangeListeners []func([]state.ActorRef)
-	vetoes                   vetoChain
+	attackers                         []state.ActorRef // inbound attacker list
+	attackersChangeListeners          []func([]state.ActorRef)
+	vetoes                            vetoChain
+	endOfRoundIfSurpriseCallbacks     []func(state.TransitionReason)
 }
 
 // NewMachine returns a Combat Phase machine in Idle.
@@ -436,13 +437,37 @@ func (m *Machine) SubscribeAttackersChange(fn func([]state.ActorRef)) {
 
 // === STUBS — Implementations land in Tasks 6-8. ===
 
-// OnEndOfRoundIfSurprise registers a callback that fires once at end of the
-// first combat round when this engagement was initiated with TriggerSurpriseAttack.
-func (m *Machine) OnEndOfRoundIfSurprise(fn func(state.TransitionReason)) {}
+// OnEndOfRoundIfSurprise registers a callback that fires when
+// the Engaged state's SurpriseLeft flag is consumed (i.e., at
+// the end of the first combat round of a surprise engagement).
+//
+// Awareness machine (chunk 1) registers here to transition
+// Hidden → Revealing → Visible after all weapon swings for the
+// surprise round have resolved. This supports multi-weapon
+// configurations (dual wield, triple, Extra Arms mutations) —
+// every swing in the surprise round gets the bonus before
+// stealth breaks.
+func (m *Machine) OnEndOfRoundIfSurprise(fn func(state.TransitionReason)) {
+	m.endOfRoundIfSurpriseCallbacks = append(m.endOfRoundIfSurpriseCallbacks, fn)
+}
 
-// OnCombatRoundEnd is called at the end of each combat round; advances
-// surprise tracking and fires registered end-of-round callbacks.
-func (m *Machine) OnCombatRoundEnd() {}
+// OnCombatRoundEnd is called by the round driver at the end of
+// each combat round for an Engaged character. If SurpriseLeft is
+// still true, fires the registered surprise-consumed callbacks
+// and clears the flag. Otherwise no-op.
+func (m *Machine) OnCombatRoundEnd() {
+	if m.State() != Engaged || m.engaged == nil {
+		return
+	}
+	if !m.engaged.SurpriseLeft {
+		return
+	}
+	reason := state.TransitionReason{Trigger: "surprise_consumed"}
+	for _, fn := range m.endOfRoundIfSurpriseCallbacks {
+		fn(reason)
+	}
+	m.engaged.SurpriseLeft = false
+}
 
 // RegisterCombatantVeto adds a veto that blocks Engaging when the attacker
 // is a NonCombatant. check() returns true when combat IS allowed.
