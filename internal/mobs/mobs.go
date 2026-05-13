@@ -120,7 +120,12 @@ type Mob struct {
 	SpawnMutations          []string            `yaml:"spawnmutations,omitempty,flow"`     // Mutations always granted at spawn (Phase 24.3)
 	MutationChance          int                 `yaml:"mutationchance,omitempty"`          // % chance to gain 1 random bonus mutation on spawn (Phase 24.3)
 	CharmImmune             bool                `yaml:"charm_immune,omitempty"`            // If true, charm spells cannot affect this mob
-	NonCombatant            bool                `yaml:"non_combatant,omitempty"`           // If true, cannot be attacked, stolen from, or aggroed
+	NonCombatant            bool                `yaml:"non_combatant,omitempty"`           // If true, cannot be attacked, stolen from, or aggroed. Synced → Character.NonCombatant in Validate().
+	// AutoAggro indicates whether this mob auto-attacks players on sight.
+	// Replaces the conflated Hostile field's auto-attack semantic.
+	// Loaded from YAML field `auto_aggro:`; if absent, backward-compat
+	// copy from the legacy `hostile:` field in Validate() (sunset Task 18).
+	AutoAggro               bool                `yaml:"auto_aggro,omitempty"`
 	PlayerAttackImmune      bool                `yaml:"player_attack_immune,omitempty"`    // If true, players cannot attack this mob (but mob can still fight)
 	BuysGeneral             bool                `yaml:"buys_general,omitempty"`            // Whether this merchant buys misc goods
 	Crafter                 bool                `yaml:"crafter,omitempty"`                 // Whether this mob crafts autonomously (Stage 38.5.4)
@@ -163,8 +168,13 @@ func MobInstanceExists(instanceId int) bool {
 
 // IsNonCombatant returns true if the mob is flagged as a non-combatant
 // (shopkeepers, quest NPCs, etc.) that cannot be attacked or stolen from.
+//
+// Delegates to Character.NonCombatant (the canonical field after Task 9).
+// Also checks the legacy Mob.NonCombatant field during the migration window
+// (sunset in Task 18) so that test fixtures that set the field directly
+// without calling Validate() continue to work correctly.
 func (m *Mob) IsNonCombatant() bool {
-	return m.NonCombatant
+	return m.Character.NonCombatant || m.NonCombatant
 }
 
 // GetZone returns the mob's zone name.
@@ -1000,6 +1010,20 @@ func (r *Mob) Validate() error {
 		r.ActivityLevel = 10
 	} else if r.ActivityLevel > 100 {
 		r.ActivityLevel = 100
+	}
+
+	// Sync legacy Mob.NonCombatant → Character.NonCombatant.
+	// The YAML field lives on Mob for backward compat; Character is the
+	// canonical home going forward (consumed by CombatPhase veto, Task 10).
+	if r.NonCombatant {
+		r.Character.NonCombatant = true
+	}
+
+	// Backward-compat: populate AutoAggro from the legacy Hostile field
+	// if AutoAggro wasn't set explicitly in YAML.
+	// Hostile is sunset in Task 18; new YAML should write `auto_aggro: true`.
+	if r.Hostile && !r.AutoAggro {
+		r.AutoAggro = true
 	}
 
 	r.Character.Validate()

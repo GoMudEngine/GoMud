@@ -52,6 +52,13 @@ type Character struct {
 	Shop             Shop                           `yaml:"shop,omitempty"`          // Definition of shop services/items this character stocks (or just has at the moment)
 	SpellBook        map[string]int                 `yaml:"spellbook,omitempty"`     // The spells the character has learned
 	KnownRecipes     map[string]int                 `yaml:"knownrecipes,omitempty"`  // The crafting recipes the character has discovered
+	// NonCombatant indicates whether this character is exempt from combat.
+	// Default false (i.e., everyone is a combatant by default). Set true for
+	// non-combatant NPCs and future player passivity spells. Inverted name
+	// gives a sensible zero value — no init needed in New().
+	// For mobs, this is populated from Mob.NonCombatant during Mob.Validate().
+	// Consumed by Combat Phase's veto chain (chunk 0 Task 10).
+	NonCombatant     bool                           `yaml:"non_combatant,omitempty"` // True = exempt from combat
 	Charmed          *CharmInfo                     `yaml:"-"`                       // If they are charmed, this is the info
 	EverCharmed      bool                           `yaml:"-"`                       // True if this mob was ever a companion (survives dismiss)
 	CharmedMobs      []int                          `yaml:"-"`                       // If they have charmed anyone, this is the list of mob instance ids
@@ -242,6 +249,13 @@ func (c *Character) SetUserId(userId int) {
 
 func (c *Character) GetUserId() int {
 	return c.userId
+}
+
+// IsCombatant returns true unless the character is flagged NonCombatant.
+// Used by Combat Phase's veto chain (chunk 0 Task 10) and any code that
+// needs to ask "can this character be in combat at all?".
+func (c *Character) IsCombatant() bool {
+	return !c.NonCombatant
 }
 
 func (c *Character) SetMiscData(key string, value any) {
