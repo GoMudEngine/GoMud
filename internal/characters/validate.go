@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 	"github.com/GoMudEngine/GoMud/internal/stats"
 )
@@ -513,6 +514,12 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 
 	// ── Skill migrations must run before ensureAllSkills ────────────
 	c.validateSkillMigrations()
+
+	// Ensure runtime-only fields are initialised after YAML load
+	// (yaml:"-" fields are not populated by yaml.Unmarshal).
+	if c.CombatPhase == nil {
+		c.CombatPhase = combatphase.NewMachine()
+	}
 
 	if len(c.Description) == 0 {
 		c.Description = "They seem thoroughly uninteresting."

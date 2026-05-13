@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
 	"github.com/GoMudEngine/GoMud/internal/stats"
 )
 
@@ -64,6 +65,11 @@ type Character struct {
 	ConvictionMax    stats.StatInfo                 `yaml:"-"`                       // The maximum conviction of the character. Don't write to yaml since is dynamically calculated.
 	ActionPointsMax          stats.StatInfo                 `yaml:"-"`                       // The maximum actions of character. Don't write to yaml since is dynamically calculated.
 	Aggro                    *Aggro                         `yaml:"-"`                       // Dont' store this. If they leave they break their aggro
+	// NEW (chunk 0 Task 3): Combat Phase state machine. Future source
+	// of truth for "am I in combat?" and "who am I targeting?". Lives
+	// alongside Aggro during the migration window; Aggro is deleted
+	// in Task 18 of the chunk-0 plan.
+	CombatPhase              *combatphase.Machine           `yaml:"-"`
 	CombatPosition           CombatPosition                 `yaml:"-"`                       // Current combat position (Standing/Prone/Clinched/Grounded). Don't store this.
 	PositionRoundsMin        int                            `yaml:"-"`                       // Minimum rounds in current position (for Prone bash/trip, etc). Don't store this.
 	GrappleControllerId      int                            `yaml:"-"`                       // UserId or MobInstanceId of grapple controller (0 = none, Stage 8.2+). Don't store this.
@@ -148,6 +154,7 @@ func New() *Character {
 		DefensesThisRound: 0,
 		ConsecutiveHits:   0,
 		ConsecutiveMisses: 0,
+		CombatPhase:       combatphase.NewMachine(),
 	}
 
 	// Roll character stats using normal distribution
