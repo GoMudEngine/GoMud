@@ -37,8 +37,11 @@ enough to send you off a cliff?
 - **Age/status**: 17, uninfected (Hollow), from Ashwick hamlet
 - **Role**: POV protagonist, Act 1 anchor, holder of the crew ID chip
 - **Physical**: Dark hair. Three years of coal-pouch deception to fake the
-  Chrysalis mark. Puts the pouch directly on her palm at the Autumnal Rite;
-  the coal-dark palm is the false "mark." Ankle injury from Ch. 9 fall in
+  Chrysalis mark. The pouch is worn inside the linen bandage, against the
+  forearm — the deception produces warmth, not a visible mark. The deacon's
+  candle-test at the Rite is a heat check, not a visual-mark check. The
+  bandage and the "old burn" story are the cover. Ankle injury from Ch. 9 fall
+  in
   woodcutter's shelter (muddy bank gives way), wraps it herself, resolving
   by Ch. 11. Carries a knife (kept ready, habit not threat). Medium height
   implied by how she moves through spaces.
@@ -166,12 +169,13 @@ enough to send you off a cliff?
 - **Role**: POV character. Hunter thread, reluctant-ally trajectory.
 - **Physical**: Bark-skin patches spreading from wrists up arms. Mid-bicep
   by Ch. 4; **upper arm / nearing shoulder by Ch. 18** (author-locked
-  escalation). Ch. 22 onward: edges begin receding as she stops feeding
-  the Chrysalis via Bloom — **the "un-feeding" metaphor (Ch. 26 canon)**:
+  escalation). Ch. 22 onward: internal sensation only — drier patch,
+  looser whorls under the thumb — **visible regression begins Ch. 25
+  (Day 3 east)**. This is the "un-feeding" metaphor (Ch. 26 canon):
   the mutation retreats not because of healing but because the fuel is
-  gone. Drier wrist-patch, looser shoulder-edge, elbow-inside starting
-  to yield by Day 3 east. Do NOT render this as reward or relief — it
-  is withdrawal's body-cost at a quieter register than tremor or sweat.
+  gone. Group-visible bark change begins Ch. 26. Do NOT render early
+  regression as reward or relief — it is withdrawal's body-cost at a
+  quieter register than tremor or sweat. No visible flaking before Day 3.
   Lean and economical in how she occupies space. Manuscript implies she
   is not tall but moves with professional precision.
 - **Carries**: Bloom wafer tin (nearly empty by Ch. 18; decision made not
@@ -212,6 +216,10 @@ enough to send you off a cliff?
 - **Known contradictions**: Feedback item FB-5 (harvesting irony) says the
   connection between Bloom supply chain and "consuming Maren's kind" needs
   to be made explicit in Vane's realization. Currently implicit only.
+  **Resolved (iter 1)**: Bark-skin regression timing — visible regression
+  now begins Ch. 25 (Day 3 east); Chs. 22-24 are internal sensation only.
+  Ch. 22 morning-walk flaking and Ch. 23 Davan flake-on-cuff observation
+  have been removed from manuscript.
 
 ### Supporting Characters
 
@@ -450,7 +458,9 @@ preserves the truth as legend.
 
   **On activation (Ch. 27 closing — Ch. 28 drafters inherit this
   baseline):** the disc's ongoing hum *stops* at seating (first silence
-  in three years); a sub-audible bone-register sound begins beneath
+  since the continuous hum began on Day 5 morning — the disc's three-year
+  carry was *pulses*, not hum; the hum itself only started Ch. 27); a
+  sub-audible bone-register sound begins beneath
   the hill; the air between body and hillside shifts from ambient to
   *interior-cool* (the air of a closed room opening); the disc's
   symbol under the user's thumb lights a color new to the disc — warm
@@ -505,7 +515,14 @@ preserves the truth as legend.
     logged voice entries. Same catalog dates as the written records;
     a second register of the same archive rather than a separate
     archive. Palm contact activates; playback is in a language no
-    character on Gaius can parse.
+    character on Gaius can parse. **The storage walls and the
+    hillside above are continuous material** — one piece, not
+    wall-inserted-into-hill. This is established in Aldric's Ch. 29
+    reading and grounds the Ch. 30 mechanism: the voice played at
+    the wall resonates through the continuous material to Maren's
+    palm at the recess outside (the "hill as speaker" payoff).
+    The voiced-wall and the voiced-hill are the same object at
+    two points of contact.
   - **"Native-resistant baseline"** — the ship's own locked technical
     vocabulary for unchanged/immune humans. This is the authoritative
     term the records use where Gaius theology says "chosen" or "bloodline."
@@ -530,6 +547,19 @@ preserves the truth as legend.
     lifetimes. This sharpens the Ch. 30 ethical choice from moral
     ("should we un-make ourselves") to genetic-temporal ("no one
     alive can open it; would we make a line of people who could?").
+    - **Maren's case specifically (D4 canon):** Passive environmental
+      Chrysalis presence is universal on Gaius — even a true Hollow
+      (genetically uninfected, never underwent the Rite) accumulates
+      cellular Chrysalis through seventeen years of breathing Gaian
+      air, drinking Gaian water, living on Gaian soil. Immunity
+      (bloodline: organism present but inactive) and native-baseline
+      (Maren: organism never hosted by her genome) are different
+      axes — but both result in passive cellular integration over a
+      lifetime on Gaius. The bio-lock catches Maren for the same
+      reason it catches the bloodline: the organism is in her
+      cells, arrived by environment rather than by lineage. This
+      distinction must be preserved in any passage that groups
+      Maren with the bloodline as bio-lock exceptions.
 
   **Ch. 30 canon (the book ending — LOCKED):**
   - **Orbital-pair mechanism for record playback:** The ship's voiced-
@@ -691,7 +721,10 @@ secretions while captive) but the social stigma at street level still
 needs amplification.
 
 Chrysalis Rite: ceremony at which the mark appears on participants. Maren
-has been faking this with a coal-dark palm for three years (Ch. 1 exposure).
+has been faking the warmth-signature for three years (Ch. 1 exposure) — a
+coal pouch worn inside a linen bandage against the forearm, producing warmth
+the deacon's candle-test reads as the Chrysalis heat signature. No visible
+mark is involved; the deception is thermal, not visual.
 Second Skin Ritual: the ceremony's name. Deacon Ferris witnesses the
 exposure.
 
@@ -963,7 +996,7 @@ the giver bleeds through the wafer.
 
 ### Ulla's Letter / Father's Letter
 - Father's letter inside Ulla's letter. Content: went east to the hill
-  ten years ago, the disc will open it, told this once and left.
+  five years ago, the disc will open it, told this once and left.
 - Letter was already opened when it arrived at Ulla's — bloodline knows
   about the disc specifically (Ch. 11 Vane's inference).
 
@@ -1185,18 +1218,20 @@ can perceive), not start from silence.
 
 ### Author Canon — Locked Decisions (as of this bible revision)
 
-- **Maren's father is dead.** He went east ten years ago and did not return.
+- **Maren's father is dead.** He went east five years ago (Maren was twelve)
+  and did not return.
   Finding his remains is a traumatic event for Maren. **Ch. 27 canon
   (drafted):** remains lie four paces from the southeastern recess, a
   hand-line outstretched toward it — the tragic geometry of key and
-  lock present but ten years apart (the disc was with his infant
-  daughter; he reached the hill without it). Belongings salvageable:
+  lock present but five years apart (the disc was kept by the great-aunt
+  who would pass it to Maren a year later after her mother's death;
+  he reached the hill without it). Belongings salvageable:
   grey wool coat (dark cuff-facings and a grandmother's shoulder-seam,
   details Ulla would recognize from her Ch. 11 description); leather
   pack-strap; leather satchel containing a small bound book wrapped in
   oiled cloth (now failed), a fire-tin with flint, and a river-smoothed
   egg-sized stone he had picked up somewhere. Bones inside the coat
-  are sparse (animals, weather, ten years). Maren does not weep
+  are sparse (animals, weather, five years). Maren does not weep
   on-page; she leaves the satchel and contents at the remains in
   Ch. 27 — **the bound book is a deliberate Ch. 28/29/30 callback
   hook** the author may choose to pick up. Reader should feel the
