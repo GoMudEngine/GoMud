@@ -211,6 +211,14 @@ Condition nodes use `type: condition` with `check: <name>`.
 | `target_power_ratio_above` | `value` (float) | True when self_power / target_power > value. Target resolution: `Event.UserId` → `Aggro.MobInstanceId` → `Aggro.UserId`. Returns Failure if no target resolvable or value missing/zero. |
 | `target_power_ratio_below` | `value` (float) | Mirror of `_above`: true when ratio < value. |
 
+### Stealth & Visibility (chunk 2.7)
+
+| Condition | Params | Description |
+|-----------|--------|-------------|
+| `mob_is_hidden` | none | True when self carries the Hidden buff (ID 9). |
+| `target_is_hidden` | none | True when the resolved target carries the Hidden buff (ID 9). |
+| `target_has_gold` | `min` (int) | True when the resolved PLAYER target has at least N gold. Mob targets always return Failure. |
+
 ---
 
 ## Action Reference
@@ -259,6 +267,17 @@ are subject to perception-scaled reaction delays (see below).
 | Action | Params | Description |
 |--------|--------|-------------|
 | `target_weakest_mob_in_room` | `ratio_below` (float, default 1.0) | Scans `room.GetMobs()`, picks the mob with the lowest power ratio relative to self that the caller's `HatesMob` returns true for, sets it as Aggro. Skips self, dead, non-combatant, same-owner companions, and mobs the caller doesn't hate. Players are NOT scanned. Returns Success on a pick, Failure otherwise. |
+| `target_random_player_in_room` | none | Picks a random player in the current room and sets them as Aggro. Returns Success on a pick, Failure if no players. |
+
+### Skullduggery — varied delays (chunk 2.7)
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `try_sneak` | none | Invoke `actions.Sneak` (delayed). Success when self enters or is already in the hidden state. |
+| `try_steal` | none | Invoke `actions.Steal` against the resolved target (delayed). Target resolution uses Event.UserId or Aggro fallback. |
+| `try_plant` | `item_tag` (string, e.g. "copper coin") | Invoke `actions.Plant` with the named item from backpack (delayed). Failure if item not found or not in backpack. |
+| `try_shadow` | none | Invoke `actions.Shadow` against the resolved target (delayed). Requires self already hidden. |
+| `try_defuse` | none | Invoke `actions.Defuse` on the first trap found in room (delayed). Scans containers then exits. |
 
 ### Boss & Companion Control — delayed
 
@@ -370,6 +389,12 @@ A mob with Perception 50 has:
 | `set_room_locked` | No |
 | `command` | No |
 | `target_weakest_mob_in_room` | No |
+| `target_random_player_in_room` | No |
+| `try_sneak` | Yes |
+| `try_steal` | Yes |
+| `try_plant` | Yes |
+| `try_shadow` | Yes |
+| `try_defuse` | Yes |
 
 ---
 
