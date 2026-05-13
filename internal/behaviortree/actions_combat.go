@@ -91,6 +91,32 @@ func actRemoveBuff(params map[string]any, ctx *EvalContext) Result {
 	return Success
 }
 
+// actTargetRandomPlayerInRoom picks a random player in the
+// caller's current room and sets them as the caller's aggro
+// target. Returns Failure when no players are present.
+//
+// Used by archetypes (e.g., `thief`) that operate on player
+// targets without an existing aggro chain — sister action to
+// target_weakest_mob_in_room.
+func actTargetRandomPlayerInRoom(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil {
+		return Failure
+	}
+	room := rooms.LoadRoom(mob.Character.RoomId)
+	if room == nil {
+		return Failure
+	}
+	playerIds := room.GetPlayers()
+	if len(playerIds) == 0 {
+		return Failure
+	}
+	idx := util.Rand(len(playerIds))
+	pickedId := playerIds[idx]
+	mob.Character.SetAggro(pickedId, 0, characters.DefaultAttack)
+	return Success
+}
+
 // actTargetWeakestMobInRoom scans room.GetMobs(), computes
 // PowerScore(target) / PowerScore(self) for each candidate that
 // passes mob.HatesMob, picks the lowest ratio strictly below the

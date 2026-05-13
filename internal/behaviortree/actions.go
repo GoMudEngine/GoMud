@@ -67,6 +67,7 @@ func init() {
 	// create a window where idle ticks re-fire before Aggro takes
 	// effect.
 	actionRegistry["target_weakest_mob_in_room"] = actTargetWeakestMobInRoom
+	actionRegistry["target_random_player_in_room"] = actTargetRandomPlayerInRoom
 }
 
 // LookupAction returns the action function for the given name,

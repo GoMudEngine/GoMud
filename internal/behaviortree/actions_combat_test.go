@@ -166,3 +166,58 @@ func TestTargetWeakestMobInRoom_RatioBelowCap(t *testing.T) {
 		t.Errorf("expected Failure (target ratio above 0.5 ceiling), got %v", r)
 	}
 }
+
+func TestActTargetRandomPlayerInRoom_PicksAPlayer(t *testing.T) {
+	cleanRoom := seedTestRoom(t, 1, "TestZone")
+	defer cleanRoom()
+	cleanMob := seedTestMob(t, 5, 105, 1, "Thief")
+	defer cleanMob()
+	cleanUser1 := seedTestUser(t, 1, "alice", "Alice", 1)
+	defer cleanUser1()
+	cleanUser2 := seedTestUser(t, 2, "bob", "Bob", 1)
+	defer cleanUser2()
+
+	thief := mobs.GetInstance(105)
+	thief.Character.HealthMax.Value = 500
+	thief.Character.Health = 500
+
+	room := rooms.LoadRoom(1)
+	room.AddMob(105)
+	room.AddPlayer(1)
+	room.AddPlayer(2)
+
+	ctx := &EvalContext{InstanceId: 105, RoomId: 1}
+	if r := actTargetRandomPlayerInRoom(map[string]any{}, ctx); r != Success {
+		t.Errorf("expected Success with players present, got %v", r)
+	}
+	if thief.Character.Aggro == nil {
+		t.Fatal("expected Aggro to be set, got nil")
+	}
+	pickedId := thief.Character.Aggro.UserId
+	if pickedId != 1 && pickedId != 2 {
+		t.Errorf("expected Aggro.UserId to be 1 or 2, got %d", pickedId)
+	}
+}
+
+func TestActTargetRandomPlayerInRoom_EmptyRoom(t *testing.T) {
+	cleanRoom := seedTestRoom(t, 1, "TestZone")
+	defer cleanRoom()
+	cleanMob := seedTestMob(t, 5, 105, 1, "Thief")
+	defer cleanMob()
+
+	thief := mobs.GetInstance(105)
+	thief.Character.HealthMax.Value = 500
+	thief.Character.Health = 500
+
+	room := rooms.LoadRoom(1)
+	room.AddMob(105)
+	// No players added.
+
+	ctx := &EvalContext{InstanceId: 105, RoomId: 1}
+	if r := actTargetRandomPlayerInRoom(map[string]any{}, ctx); r != Failure {
+		t.Errorf("expected Failure with no players, got %v", r)
+	}
+	if thief.Character.Aggro != nil {
+		t.Errorf("expected Aggro to remain nil, got %+v", thief.Character.Aggro)
+	}
+}
