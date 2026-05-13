@@ -134,26 +134,6 @@ func plantOnMob(actor Actor, mobInstanceId int, plantItem items.Item,
 		return PlantResult{Reason: "target not found"}
 	}
 
-	if m.IsNonCombatant() || m.PlayerAttackImmune {
-		actor.SendText(fmt.Sprintf(
-			`You can't plant items on <ansi fg="mobname">%s</ansi>.`,
-			m.Character.Name))
-		return PlantResult{
-			DefenderName: m.Character.Name,
-			Reason:       "immune",
-		}
-	}
-
-	// Skill rank 2 required — checked AFTER immune gate so rank messaging
-	// is only seen when the target is actually a valid plant target.
-	if rank < 2 {
-		actor.SendText("You aren't advanced enough at skullduggery for that.")
-		return PlantResult{
-			DefenderName: m.Character.Name,
-			Reason:       "not advanced enough",
-		}
-	}
-
 	// Skill-use and progression — always fire regardless of roll outcome.
 	actor.OnSkillUse(string(skills.Skullduggery))
 
@@ -283,15 +263,6 @@ func plantOnPlayer(actor Actor, targetUserId int, plantItem items.Item,
 		return PlantResult{Reason: "target not found"}
 	}
 
-	// Skill rank 2 required.
-	if rank < 2 {
-		actor.SendText("You aren't advanced enough at skullduggery for that.")
-		return PlantResult{
-			DefenderName: targetUser.Character.Name,
-			Reason:       "not advanced enough",
-		}
-	}
-
 	// Skill-use and progression.
 	actor.OnSkillUse(string(skills.Skullduggery))
 
@@ -365,12 +336,6 @@ func plantInContainer(actor Actor, containerName string, plantItem items.Item,
 	if !ok {
 		actor.SendText("You don't see that here.")
 		return PlantResult{Reason: "not found"}
-	}
-
-	// Skill rank 2 required — mirrors the gate in plantOnMob.
-	if rank < 2 {
-		actor.SendText("You aren't advanced enough at skullduggery for that.")
-		return PlantResult{Reason: "not advanced enough"}
 	}
 
 	// Skill-use and progression — always fire regardless of roll outcome.
