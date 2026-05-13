@@ -398,7 +398,58 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 			// Stealth detection: hidden player entering a room
 			if isSneaking {
-				if spotted, spotterName := checkStealthDetection(user, destRoom); spotted {
+				sneakScore := actions.CalcSneakScore(user.Character)
+
+				// Build party exclusion set so allies don't expose the sneaker
+				partyIds := make(map[int]bool)
+				if p := parties.Get(user.UserId); p != nil {
+					for _, uid := range p.GetMembers() {
+						partyIds[uid] = true
+					}
+				}
+
+				spotted := false
+				spotterName := ""
+
+				// Check player observers
+				for _, pId := range destRoom.GetPlayers() {
+					if pId == user.UserId || partyIds[pId] {
+						continue
+					}
+					p := users.GetByUserId(pId)
+					if p == nil {
+						continue
+					}
+					observerScore := actions.CalcSearchScore(p.Character)
+					success, _, _, _ := dice.OpposedRollStat(sneakScore, observerScore)
+					if !success {
+						p.SendText(fmt.Sprintf(
+							`<ansi fg="username">%s</ansi> slips into the room but you notice them.`,
+							user.Character.Name))
+						spotted = true
+						spotterName = p.Character.Name
+						break
+					}
+				}
+
+				// Check mob observers if not yet spotted
+				if !spotted {
+					for _, mId := range destRoom.GetMobs() {
+						mob := mobs.GetInstance(mId)
+						if mob == nil {
+							continue
+						}
+						observerScore := actions.CalcSearchScore(&mob.Character)
+						success, _, _, _ := dice.OpposedRollStat(sneakScore, observerScore)
+						if !success {
+							spotted = true
+							spotterName = mob.Character.Name
+							break
+						}
+					}
+				}
+
+				if spotted {
 					user.Character.CancelBuffsWithFlag(buffs.Hidden)
 					user.Character.SetMiscData(`sneaking`, nil)
 					isSneaking = false
@@ -420,7 +471,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					if hiddenP == nil || !hiddenP.Character.HasBuffFlag(buffs.Hidden) {
 						continue
 					}
-					hiddenScore := calcSneakScore(hiddenP.Character)
+					hiddenScore := actions.CalcSneakScore(hiddenP.Character)
 					success, _, _, _ := dice.OpposedRollStat(observerScore, hiddenScore)
 					if success {
 						hiddenP.Character.CancelBuffsWithFlag(buffs.Hidden)
@@ -439,7 +490,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					if mob == nil || !mob.Character.HasBuffFlag(buffs.Hidden) {
 						continue
 					}
-					hiddenScore := calcSneakScore(&mob.Character)
+					hiddenScore := actions.CalcSneakScore(&mob.Character)
 					success, _, _, _ := dice.OpposedRollStat(observerScore, hiddenScore)
 					if success {
 						mob.Character.RemovePermaBuff(9)

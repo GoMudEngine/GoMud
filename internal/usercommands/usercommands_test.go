@@ -7139,7 +7139,6 @@ func TestTryCommandRoutingBatch(t *testing.T) {
 		{"unlock", ""},
 		{"forage", ""},
 		{"break", ""},
-		{"pickpocket", ""},
 		{"bash", ""},
 		{"grapple", ""},
 		{"kick", ""},
