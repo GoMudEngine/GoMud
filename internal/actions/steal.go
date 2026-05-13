@@ -370,7 +370,7 @@ func stealFromPlayer(actor Actor, targetUserId int, attackerScore float64,
 		if detected {
 			targetUser.SendText(fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi> lifts `+
-					`<ansi fg="gold">%d gold</ansi> from your pocket!`,
+					`<ansi fg="yellow-bold">%d gold</ansi> from your pocket!`,
 				actor.GetName(), result.StoleGold))
 			result.Detected = true
 		}

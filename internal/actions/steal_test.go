@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // ---------------------------------------------------------------------------
@@ -70,17 +71,30 @@ func newStealMobActor(dex int, skillRank int) *stubActorWithId {
 }
 
 // stubActorWithId extends the existing stubActor to let tests control
-// IsPlayer / GetUserId / GetMobInstanceId independently.
+// IsPlayer / GetUserId / GetMobInstanceId independently. It also tracks
+// OnSkillUse calls so tests can assert that skill progression fires.
 type stubActorWithId struct {
 	stubActor
-	isPlayer      bool
-	userId        int
-	mobInstanceId int
+	isPlayer        bool
+	userId          int
+	mobInstanceId   int
+	skillUsesByName map[string]int // counts per skill name
+	skillUseTotal   int            // total calls across all skills
 }
 
-func (a *stubActorWithId) IsPlayer() bool        { return a.isPlayer }
-func (a *stubActorWithId) GetUserId() int         { return a.userId }
-func (a *stubActorWithId) GetMobInstanceId() int  { return a.mobInstanceId }
+func (a *stubActorWithId) IsPlayer() bool       { return a.isPlayer }
+func (a *stubActorWithId) GetUserId() int        { return a.userId }
+func (a *stubActorWithId) GetMobInstanceId() int { return a.mobInstanceId }
+
+// OnSkillUse records each call so tests can assert skill progression fires.
+func (a *stubActorWithId) OnSkillUse(skillName string) bool {
+	if a.skillUsesByName == nil {
+		a.skillUsesByName = make(map[string]int)
+	}
+	a.skillUsesByName[skillName]++
+	a.skillUseTotal++
+	return false
+}
 
 // ---------------------------------------------------------------------------
 // TestSteal_NoTarget
@@ -147,6 +161,13 @@ func TestSteal_MobTarget_GoldSuccess(t *testing.T) {
 	// Allow a small tolerance for dice variance.
 	assert.Greater(t, succeeded, trials/2,
 		"high-stat attacker should succeed majority of attempts")
+
+	// Skill progression must fire on every steal attempt (win or lose).
+	// Over 20 trials the counter must be at least 20.
+	require.Greater(t, actor.skillUsesByName[string(skills.Skullduggery)], 0,
+		"Steal should call OnSkillUse('skullduggery') on every attempt")
+	assert.GreaterOrEqual(t, actor.skillUsesByName[string(skills.Skullduggery)], trials,
+		"OnSkillUse should have been called once per trial")
 }
 
 // ---------------------------------------------------------------------------
@@ -218,6 +239,82 @@ func TestSteal_MobOnPlayer(t *testing.T) {
 		assert.True(t, result.Detected,
 			"failure must be due to detection, not other error")
 	}
+}
+
+// ---------------------------------------------------------------------------
+// TestSteal_MobOnPlayer_DetectionWin
+// ---------------------------------------------------------------------------
+
+// TestSteal_MobOnPlayer_DetectionWin verifies that the detection-win branch in
+// stealFromPlayer (result.Detected = true + targetUser.SendText) is reachable
+// under realistic stats.
+//
+// Design rationale:
+//
+//	Theft uses: attackerScore (Dex + SkillMult(rank)*25) * StealSkillMultiplier
+//	            vs defenderScore = raw Perception
+//	Detection uses: CalcSearchScore (Perception + SkillMult(search)*25)
+//	                vs CalcSneakScore (Dex + SkillMult(skullduggery)*25)
+//
+// By giving the defender a high Search skill rank we boost CalcSearchScore
+// far above their raw Perception, while their raw Perception stays low enough
+// that the theft roll succeeds reliably.
+//
+//	Actor:    Dex=110, skullduggery rank=2
+//	          attackerScore  ≈ 145   (beats Per=40 → theft nearly certain)
+//	          CalcSneakScore ≈ 145
+//	Defender: Perception=40, Search rank=50
+//	          CalcSearchScore ≈ 40 + 3.0*25 = 115
+//
+// Detection is 115 vs 145, a ~24% per-trial chance. Over 50 trials the
+// probability of seeing at least one detection event is >99.999%.
+func TestSteal_MobOnPlayer_DetectionWin(t *testing.T) {
+	const playerGold = 200
+	const trials = 50
+
+	// Register target player with high Search skill so CalcSearchScore
+	// outpaces the actor's CalcSneakScore significantly.
+	targetUser := users.NewTestUser(3001, "watchful", "Watchful", 0)
+	targetUser.Character.Gold = playerGold
+	targetUser.Character.Stats.Perception.ValueAdj = 40 // low raw Per → theft usually succeeds
+	if targetUser.Character.Skills == nil {
+		targetUser.Character.Skills = make(map[string]int)
+	}
+	targetUser.Character.Skills[string(skills.Search)] = 50 // CalcSearchScore ≈ 115
+	cleanup := users.SeedUsersForTest(map[int]*users.UserRecord{
+		3001: targetUser,
+	})
+	defer cleanup()
+
+	// Mob actor: Dex=110, rank=2 (just meets the gate). attackerScore ≈ 145.
+	actor := newStealMobActor(110, 2)
+
+	detectionCount := 0
+	successCount := 0
+
+	for i := 0; i < trials; i++ {
+		// Reset gold and cooldown each trial.
+		targetUser.Character.Gold = playerGold
+		delete(actor.char.Cooldowns, skills.Skullduggery.String("steal"))
+
+		result := Steal(actor, StealOptions{TargetUserId: 3001})
+		if result.Succeeded {
+			successCount++
+		}
+		if result.Detected && result.Succeeded {
+			detectionCount++
+		}
+	}
+
+	// Theft should succeed frequently (high attackerScore vs low raw Perception).
+	require.Greater(t, successCount, trials/2,
+		"theft must succeed in majority of trials to exercise the detection path")
+
+	// Detection must fire in at least one trial. With ~24% per-successful-theft
+	// probability over 50 trials the chance of zero detections is <0.0001%.
+	require.Greater(t, detectionCount, 0,
+		"detection-win branch (result.Detected=true after successful theft) "+
+			"must be reachable; check CalcSearchScore vs CalcSneakScore math")
 }
 
 // ---------------------------------------------------------------------------
