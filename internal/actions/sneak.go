@@ -8,7 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
-// SneakResult holds the outcome of an ExecuteSneak call.
+// SneakResult holds the outcome of a Sneak call.
 type SneakResult struct {
 	// Success is true when the actor entered the hidden state.
 	Success bool
@@ -26,7 +26,7 @@ type SneakResult struct {
 	RollHappened bool
 }
 
-// ExecuteSneak attempts to put actor into the hidden (sneaking) state.
+// Sneak attempts to put actor into the hidden (sneaking) state.
 //
 // It rolls the actor's sneak score against every observer in the room. Party
 // members of a player actor are excluded from the observer checks. If any
@@ -41,7 +41,7 @@ type SneakResult struct {
 //   - Failure cooldowns (player side only)
 //   - Skill progression and quest engine notifications
 //   - Player-facing messaging
-func ExecuteSneak(actor Actor) SneakResult {
+func Sneak(actor Actor) SneakResult {
 	char := actor.GetCharacter()
 
 	// Already hidden — nothing to do.

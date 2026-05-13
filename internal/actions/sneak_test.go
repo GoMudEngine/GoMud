@@ -68,16 +68,16 @@ func TestCalcSearchScore_Baseline(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
-// ExecuteSneak Tests
+// Sneak Tests
 // ---------------------------------------------------------------------------
 
-// TestExecuteSneak_AlreadyHidden verifies that a character with the Hidden
+// TestSneak_AlreadyHidden verifies that a character with the Hidden
 // buff returns AlreadyHidden=true and Success=false.
 //
 // Note: We use a mock character with HasBuffFlag method that we can control,
 // since the actual buff system requires registered buff specs. We test the
 // logic by verifying the early return condition.
-func TestExecuteSneak_AlreadyHidden(t *testing.T) {
+func TestSneak_AlreadyHidden(t *testing.T) {
 	char := newTestChar()
 	room := newTestRoom()
 	actor := newStubActor(char, room)
@@ -89,9 +89,9 @@ func TestExecuteSneak_AlreadyHidden(t *testing.T) {
 	// For now, we'll create a character with an empty room and verify the
 	// basic flow. The HasBuffFlag check is tested in the buffs package itself.
 
-	// This test verifies the ExecuteSneak function handles empty rooms correctly.
+	// This test verifies the Sneak function handles empty rooms correctly.
 	// The AlreadyHidden check happens first before any room processing.
-	result := ExecuteSneak(actor)
+	result := Sneak(actor)
 
 	// With an empty room and no observers, ExecuteSneak should succeed
 	// (since there's no one to spot the actor).
@@ -101,8 +101,8 @@ func TestExecuteSneak_AlreadyHidden(t *testing.T) {
 	assert.False(t, result.InCombat, "should not be marked as in combat")
 }
 
-// TestExecuteSneak_InCombat verifies that a character in combat cannot sneak.
-func TestExecuteSneak_InCombat(t *testing.T) {
+// TestSneak_InCombat verifies that a character in combat cannot sneak.
+func TestSneak_InCombat(t *testing.T) {
 	char := newTestChar()
 	room := newTestRoom()
 	actor := newStubActor(char, room)
@@ -114,7 +114,7 @@ func TestExecuteSneak_InCombat(t *testing.T) {
 		UserId:        0,
 	}
 
-	result := ExecuteSneak(actor)
+	result := Sneak(actor)
 
 	assert.True(t, result.InCombat, "should detect combat status")
 	assert.False(t, result.Success, "should not be successful")

@@ -42,7 +42,7 @@ func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
-	result := actions.ExecuteSneak(&actions.UserActor{User: user, Room: room})
+	result := actions.Sneak(&actions.UserActor{User: user, Room: room})
 
 	switch {
 	case result.AlreadyHidden:
