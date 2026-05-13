@@ -10,7 +10,7 @@ import (
 
 func Break(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	if user.Character.Aggro != nil {
+	if user.Character.IsInCombat() {
 		user.Character.EndAggro()
 		user.SendText(`You break off combat.`)
 		room.SendTextVisual(

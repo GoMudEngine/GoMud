@@ -29,17 +29,17 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		// If no argument supplied, attack whoever is attacking the player currently.
 		for _, mId := range room.GetMobs(rooms.FindFightingPlayer) {
 			m := mobs.GetInstance(mId)
-			if m == nil || m.Character.Aggro == nil {
+			if m == nil || !m.Character.IsInCombat() {
 				continue
 			}
 
-			if m.Character.Aggro.UserId == user.UserId {
+			if m.Character.EngagedTarget().UserId == user.UserId {
 				attackMobInstanceId = m.InstanceId
 				break
 			}
 
 			if partyInfo != nil {
-				if partyInfo.IsMember(m.Character.Aggro.UserId) {
+				if partyInfo.IsMember(m.Character.EngagedTarget().UserId) {
 					attackMobInstanceId = m.InstanceId
 					break
 				}
@@ -49,17 +49,17 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		if attackMobInstanceId == 0 {
 			for _, uId := range room.GetPlayers(rooms.FindFightingPlayer) {
 				u := users.GetByUserId(uId)
-				if u.Character.Aggro == nil {
+				if !u.Character.IsInCombat() {
 					continue
 				}
 
-				if u.Character.Aggro.UserId == user.UserId {
+				if u.Character.EngagedTarget().UserId == user.UserId {
 					attackPlayerId = u.UserId
 					break
 				}
 
 				if partyInfo != nil {
-					if partyInfo.IsMember(u.Character.Aggro.UserId) {
+					if partyInfo.IsMember(u.Character.EngagedTarget().UserId) {
 						attackPlayerId = u.UserId
 						break
 					}
@@ -72,17 +72,17 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			if partyInfo != nil {
 				for uId := range partyInfo.GetMembers() {
 					if partyUser := users.GetByUserId(uId); partyUser != nil {
-						if partyUser.Character.Aggro == nil {
+						if !partyUser.Character.IsInCombat() {
 							continue
 						}
 
-						if partyUser.Character.Aggro.MobInstanceId > 0 {
-							attackMobInstanceId = partyUser.Character.Aggro.MobInstanceId
+						if partyUser.Character.EngagedTarget().MobInstanceId > 0 {
+							attackMobInstanceId = partyUser.Character.EngagedTarget().MobInstanceId
 							break
 						}
 
-						if partyUser.Character.Aggro.UserId > 0 {
-							attackPlayerId = partyUser.Character.Aggro.UserId
+						if partyUser.Character.EngagedTarget().UserId > 0 {
+							attackPlayerId = partyUser.Character.EngagedTarget().UserId
 							break
 						}
 
@@ -115,9 +115,9 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	// --- TARGET SWITCHING LOGIC (Stage 7.4) ---
 	// If already in combat and trying to attack a different target, use target switching
-	if user.Character.Aggro != nil {
-		currentTargetUserId := user.Character.Aggro.UserId
-		currentTargetMobId := user.Character.Aggro.MobInstanceId
+	if user.Character.IsInCombat() {
+		currentTargetUserId := user.Character.EngagedTarget().UserId
+		currentTargetMobId := user.Character.EngagedTarget().MobInstanceId
 
 		isDifferentTarget := false
 		if attackMobInstanceId > 0 && attackMobInstanceId != currentTargetMobId {
@@ -176,7 +176,7 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 					if partyUser := users.GetByUserId(id); partyUser != nil {
 						if partyUser.Character.RoomId == user.Character.RoomId &&
 							partyUser.Character.GetSetting("autoattack") != "off" &&
-							partyUser.Character.Aggro == nil {
+							!partyUser.Character.IsInCombat() {
 							// Surprise attack for hidden party members before they join combat
 							if partyUser.Character.HasBuffFlag(buffs.Hidden) {
 								partyCfg := configs.GetBalanceConfig()
@@ -202,6 +202,9 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			// Detect "fresh aggression" before SetAggro overwrites prior state:
 			// either no prior aggro, or aggro on a different target.
+			// NOTE: Keep Aggro read here for Task 12 — CombatPhase is not
+			// populated by writers until Task 15; EngagedTarget() would
+			// return zero and cause double-bumps until the sunset in Task 18.
 			isFreshAggro := user.Character.Aggro == nil ||
 				user.Character.Aggro.MobInstanceId != attackMobInstanceId
 
@@ -230,7 +233,7 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			for _, instId := range room.GetMobs(rooms.FindCharmed) {
 				if m := mobs.GetInstance(instId); m != nil {
-					if m.Character.Aggro == nil && m.Character.IsCharmed(user.UserId) {
+					if !m.Character.IsInCombat() && m.Character.IsCharmed(user.UserId) {
 						// Only auto-assist if the companion has AutoAssist enabled
 						comp := user.Character.GetCompanionByInstanceId(instId)
 						if comp != nil && comp.AutoAssist {
@@ -301,7 +304,7 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			for _, instId := range room.GetMobs(rooms.FindCharmed) {
 				if m := mobs.GetInstance(instId); m != nil {
-					if m.Character.Aggro == nil && m.Character.IsCharmed(user.UserId) {
+					if !m.Character.IsInCombat() && m.Character.IsCharmed(user.UserId) {
 						comp := user.Character.GetCompanionByInstanceId(instId)
 						if comp != nil && comp.AutoAssist {
 							m.Command(fmt.Sprintf(`attack @%d`, attackPlayerId))

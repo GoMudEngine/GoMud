@@ -24,7 +24,7 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	// Must be in combat
-	if user.Character.Aggro == nil {
+	if !user.Character.IsInCombat() {
 		user.SendText("You must be in combat to throw something!")
 		return true, nil
 	}

@@ -34,7 +34,7 @@ func Assist(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 					continue
 				}
 				if member := users.GetByUserId(memberId); member != nil {
-					if member.Character.Aggro != nil && member.Character.RoomId == user.Character.RoomId {
+					if member.Character.IsInCombat() && member.Character.RoomId == user.Character.RoomId {
 						assistTarget = member
 						break
 					}
@@ -63,7 +63,7 @@ func Assist(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return true, nil
 	}
 
-	if assistTarget.Character.Aggro == nil {
+	if !assistTarget.Character.IsInCombat() {
 		user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is not fighting anyone.`, assistTarget.Character.Name))
 		return true, nil
 	}
@@ -74,13 +74,13 @@ func Assist(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	// Attack whatever they're fighting
-	if mobInstId := assistTarget.Character.Aggro.MobInstanceId; mobInstId > 0 {
+	if mobInstId := assistTarget.Character.EngagedTarget().MobInstanceId; mobInstId > 0 {
 		if m := mobs.GetInstance(mobInstId); m != nil {
 			return Attack(fmt.Sprintf("#%d", mobInstId), user, room, flags)
 		}
 	}
 
-	if targetUserId := assistTarget.Character.Aggro.UserId; targetUserId > 0 {
+	if targetUserId := assistTarget.Character.EngagedTarget().UserId; targetUserId > 0 {
 		if p := users.GetByUserId(targetUserId); p != nil {
 			return Attack(fmt.Sprintf("@%d", targetUserId), user, room, flags)
 		}

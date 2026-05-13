@@ -38,7 +38,7 @@ func bumpOpinionOnTargetSwitch(user *users.UserRecord, room *rooms.Room, newMobI
 func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	// Must be in combat to switch targets
-	if user.Character.Aggro == nil {
+	if !user.Character.IsInCombat() {
 		user.SendText("You're not in combat. Use <ansi fg=\"command\">attack</ansi> to initiate combat.")
 		return true, nil
 	}
@@ -72,8 +72,8 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	newTargetMobInstanceId := target.GetMobInstanceId()
 
 	// Check if already targeting this entity
-	currentTargetUserId := user.Character.Aggro.UserId
-	currentTargetMobId := user.Character.Aggro.MobInstanceId
+	currentTargetUserId := user.Character.EngagedTarget().UserId
+	currentTargetMobId := user.Character.EngagedTarget().MobInstanceId
 
 	if newTargetPlayerId > 0 && newTargetPlayerId == currentTargetUserId {
 		user.SendText("You're already targeting them!")

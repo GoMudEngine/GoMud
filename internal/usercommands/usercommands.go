@@ -455,7 +455,7 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 		// Check if command is allowed during combat
 		if !cmdInfo.AllowedInCombat {
 			// If in combat, prevent it (unless admin)
-			if user.Character.Aggro != nil && !cmdInfo.AdminOnly {
+			if user.Character.IsInCombat() && !cmdInfo.AdminOnly {
 				user.SendText("You can't do that while fighting!")
 				return true, nil
 			}

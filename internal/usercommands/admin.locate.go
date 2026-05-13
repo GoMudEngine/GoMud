@@ -130,7 +130,7 @@ func Locate(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				}
 
 				mobName := mob.Character.Name
-				if mob.Character.Aggro != nil {
+				if mob.Character.IsInCombat() {
 					mobName = `*` + mobName
 				}
 				if len(mobName) > 24 {

@@ -17,7 +17,7 @@ func Grapple(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	}
 
 	// Must be in combat or specify a target to use grapple
-	if user.Character.Aggro == nil {
+	if !user.Character.IsInCombat() {
 		if rest == "" {
 			user.SendText("Grapple whom?")
 			return true, nil

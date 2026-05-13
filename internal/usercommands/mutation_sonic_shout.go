@@ -23,7 +23,7 @@ func SonicShout(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 		return true, nil
 	}
 
-	if user.Character.Aggro == nil {
+	if !user.Character.IsInCombat() {
 		user.SendText("You must be in combat to use sonic shout!")
 		return true, nil
 	}

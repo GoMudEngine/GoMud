@@ -37,10 +37,10 @@ func PacifismAura(rest string, user *users.UserRecord, room *rooms.Room, flags e
 	deAggroCount := 0
 	for _, mobInstId := range room.GetMobs(rooms.FindAll) {
 		mob := mobs.GetInstance(mobInstId)
-		if mob == nil || mob.Character.Aggro == nil {
+		if mob == nil || !mob.Character.IsInCombat() {
 			continue
 		}
-		if mob.Character.Aggro.UserId == user.UserId {
+		if mob.Character.EngagedTarget().UserId == user.UserId {
 			mob.Character.EndAggro()
 			deAggroCount++
 		}

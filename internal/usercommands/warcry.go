@@ -64,7 +64,7 @@ func Warcry(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	// Skill and stat progression
 	// OnSkillUse handles rhetoric progression + charisma stat use internally.
 	// In combat: always fire. Out of combat: 50% chance (soft incentive).
-	if user.Character.Aggro != nil {
+	if user.Character.IsInCombat() {
 		user.Character.OnSkillUse(string(skills.Rhetoric), user.UserId)
 	} else if util.Rand(100) < 50 {
 		user.Character.OnSkillUse(string(skills.Rhetoric), user.UserId)

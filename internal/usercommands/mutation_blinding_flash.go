@@ -21,7 +21,7 @@ func BlindingFlash(rest string, user *users.UserRecord, room *rooms.Room, flags 
 		return true, nil
 	}
 
-	if user.Character.Aggro == nil {
+	if !user.Character.IsInCombat() {
 		user.SendText("You must be in combat to use blinding flash!")
 		return true, nil
 	}

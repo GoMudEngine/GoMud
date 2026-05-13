@@ -448,6 +448,15 @@ func (c *Character) IsInCombat() bool {
 	return c.CombatPhase.IsInCombat()
 }
 
+// IsDisengaging returns true if Combat Phase is Disengaging (flee in
+// progress). Replacement for `c.Aggro != nil && c.Aggro.Type == characters.Flee`.
+func (c *Character) IsDisengaging() bool {
+	if c.CombatPhase == nil {
+		return false
+	}
+	return c.CombatPhase.State() == combatphase.Disengaging
+}
+
 // EngagedTarget returns the current Engaged target as an ActorRef.
 // Returns zero ActorRef when not Engaged (or Engaging/Disengaging).
 // Replacement for `c.Aggro.UserId` / `c.Aggro.MobInstanceId` reads

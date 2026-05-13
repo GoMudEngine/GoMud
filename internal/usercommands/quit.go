@@ -8,7 +8,7 @@ import (
 
 func Quit(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	if user.Character.Aggro != nil {
+	if user.Character.IsInCombat() {
 		user.SendText("You're too busy to quit right now!")
 		return true, nil
 	}

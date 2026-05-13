@@ -9,7 +9,7 @@ import (
 
 func Flee(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	if user.Character.Aggro == nil || user.Character.Aggro.Type != characters.Flee {
+	if !user.Character.IsDisengaging() {
 		// Fleeing costs stamina
 		const fleeStaminaCost = 10
 		if !user.Character.DeductStamina(fleeStaminaCost) {

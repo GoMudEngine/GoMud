@@ -113,8 +113,8 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	if dmgCt == 0 {
 		causeOfDeath := ""
 		// Check if fighting a mob
-		if user.Character.Aggro != nil && user.Character.Aggro.MobInstanceId > 0 {
-			if mob := mobs.GetInstance(user.Character.Aggro.MobInstanceId); mob != nil {
+		if user.Character.IsInCombat() && user.Character.EngagedTarget().MobInstanceId > 0 {
+			if mob := mobs.GetInstance(user.Character.EngagedTarget().MobInstanceId); mob != nil {
 				causeOfDeath = mob.Character.Name
 			}
 		}
@@ -196,17 +196,17 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	// slate — they follow via TransportCompanions.
 	for _, mobInstId := range room.GetMobs(rooms.FindFighting) {
 		mob := mobs.GetInstance(mobInstId)
-		if mob == nil || mob.Character.Aggro == nil {
+		if mob == nil || !mob.Character.IsInCombat() {
 			continue
 		}
 		// Standard aggro targeting this player (UserId shape).
-		if mob.Character.Aggro.UserId == user.UserId {
+		if mob.Character.EngagedTarget().UserId == user.UserId {
 			mob.Character.EndAggro()
 			continue
 		}
 		// Spell-cast-shape aggro: check SpellInfo.TargetUserIds if
 		// it contains this player. Abort the in-flight cast.
-		if mob.Character.Aggro.Type == characters.SpellCast {
+		if mob.Character.Aggro != nil && mob.Character.Aggro.Type == characters.SpellCast {
 			for _, tid := range mob.Character.Aggro.SpellInfo.TargetUserIds {
 				if tid == user.UserId {
 					mob.Character.EndAggro()

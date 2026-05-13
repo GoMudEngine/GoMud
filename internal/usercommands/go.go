@@ -39,7 +39,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 		}
 	}
 
-	if user.Character.Aggro != nil {
+	if user.Character.IsInCombat() {
 		// Always allow movement out of the death recovery room —
 		// stale aggro must never trap a player in the Shadow Realm.
 		// Use GetOriginalRoom() because the shadow realm is an ephemeral
@@ -519,7 +519,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						continue
 					}
 
-					if mob.Character.Aggro == nil || mob.Character.Aggro.UserId != user.UserId {
+					if !mob.Character.IsInCombat() || mob.Character.EngagedTarget().UserId != user.UserId {
 						continue
 					}
 
@@ -575,7 +575,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					if mob == nil {
 						continue
 					}
-					if mob.Character.Aggro != nil {
+					if mob.Character.IsInCombat() {
 						continue
 					}
 					if mob.Character.IsCharmed() {

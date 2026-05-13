@@ -23,7 +23,7 @@ func ToxicBite(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		return true, nil
 	}
 
-	if user.Character.Aggro == nil {
+	if !user.Character.IsInCombat() {
 		user.SendText("You must be in combat to use toxic bite!")
 		return true, nil
 	}
@@ -41,8 +41,8 @@ func ToxicBite(rest string, user *users.UserRecord, room *rooms.Room, flags even
 	}
 	user.Character.Stamina -= staminaCost
 
-	targetMobId := user.Character.Aggro.MobInstanceId
-	targetPlayerId := user.Character.Aggro.UserId
+	targetMobId := user.Character.EngagedTarget().MobInstanceId
+	targetPlayerId := user.Character.EngagedTarget().UserId
 
 	var targetName string
 	var targetMob *mobs.Mob

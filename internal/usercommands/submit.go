@@ -17,7 +17,7 @@ import (
 func Submit(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	// Must be in combat to use submit
-	if user.Character.Aggro == nil {
+	if !user.Character.IsInCombat() {
 		user.SendText("You must be in combat to attempt a submission!")
 		return true, nil
 	}
@@ -42,8 +42,8 @@ func Submit(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	// Get current target from aggro
-	targetPlayerId := user.Character.Aggro.UserId
-	targetMobId := user.Character.Aggro.MobInstanceId
+	targetPlayerId := user.Character.EngagedTarget().UserId
+	targetMobId := user.Character.EngagedTarget().MobInstanceId
 
 	var targetChar *users.UserRecord
 	var targetMob *mobs.Mob

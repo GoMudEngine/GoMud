@@ -18,7 +18,7 @@ func Bash(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	// Must be in combat or specify a target to use bash.
-	if user.Character.Aggro == nil {
+	if !user.Character.IsInCombat() {
 		if rest == "" {
 			user.SendText("Bash whom?")
 			return true, nil

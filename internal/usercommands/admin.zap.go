@@ -55,13 +55,13 @@ func Zap(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 	}
 
-	if user.Character.Aggro == nil {
+	if !user.Character.IsInCombat() {
 		user.SendText("You are not in combat.")
 		return true, nil
 	}
 
-	if user.Character.Aggro.MobInstanceId > 0 {
-		mob := mobs.GetInstance(user.Character.Aggro.MobInstanceId)
+	if user.Character.EngagedTarget().MobInstanceId > 0 {
+		mob := mobs.GetInstance(user.Character.EngagedTarget().MobInstanceId)
 		if mob == nil {
 			user.SendText("Zap Mob not found.")
 			return true, nil
@@ -72,8 +72,8 @@ func Zap(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			mob.Character.Health = 1
 			mob.Character.Conviction = 1
 		}
-	} else if user.Character.Aggro.UserId > 0 {
-		u := users.GetByUserId(user.Character.Aggro.UserId)
+	} else if user.Character.EngagedTarget().UserId > 0 {
+		u := users.GetByUserId(user.Character.EngagedTarget().UserId)
 		if u == nil {
 			user.SendText("Zap User not found.")
 			return true, nil

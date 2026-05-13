@@ -19,7 +19,7 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	// Must be in combat or specify a target to use kick
-	if user.Character.Aggro == nil {
+	if !user.Character.IsInCombat() {
 		if rest == "" {
 			user.SendText("Kick whom?")
 			return true, nil

@@ -19,7 +19,7 @@ func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	// Must be in combat or specify a target to use taunt.
-	if user.Character.Aggro == nil {
+	if !user.Character.IsInCombat() {
 		if rest == "" {
 			user.SendText("Taunt whom?")
 			return true, nil

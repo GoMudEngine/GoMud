@@ -61,7 +61,7 @@ func Rally(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	applyRallyToCompanions(user, room, result.Bonus, result.Duration)
 
 	// Rhetoric skill progression.
-	if user.Character.Aggro != nil {
+	if user.Character.IsInCombat() {
 		user.Character.OnSkillUse(string(skills.Rhetoric), user.UserId)
 	} else if util.Rand(100) < 50 {
 		user.Character.OnSkillUse(string(skills.Rhetoric), user.UserId)
