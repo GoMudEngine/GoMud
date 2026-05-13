@@ -21,9 +21,35 @@ var (
 	startingRace   = 0
 	startingHealth = 10
 	StartingRoomId = 0
-	startingZone     = `Nowhere`
-	defaultName      = `nameless`
+	startingZone   = `Nowhere`
+	defaultName    = `nameless`
 )
+
+// onCharacterCreatedCallbacks fire after every fresh Character instance is
+// constructed via New() or after Validate() initializes a freshly-loaded
+// Character. Used by hook packages to wire up per-Character state-machine
+// veto callbacks without import cycles.
+var onCharacterCreatedCallbacks []func(*Character)
+
+// OnCharacterCreated registers a callback that fires whenever a Character is
+// fully constructed (post-init). The callback is called with a pointer to the
+// Character so it can register vetoes/cascades/observers on its CombatPhase
+// machine.
+//
+// Used by internal/hooks/* to wire state-machine veto callbacks to Character
+// fields without creating import cycles.
+func OnCharacterCreated(fn func(*Character)) {
+	onCharacterCreatedCallbacks = append(onCharacterCreatedCallbacks, fn)
+}
+
+// fireCharacterCreated runs all registered OnCharacterCreated callbacks.
+// Called by New() and guarded by combatPhaseWired in Validate() so
+// YAML-loaded characters fire callbacks exactly once.
+func fireCharacterCreated(c *Character) {
+	for _, fn := range onCharacterCreatedCallbacks {
+		fn(c)
+	}
+}
 
 type NameRenderFlag uint8
 
@@ -114,8 +140,9 @@ type Character struct {
 	LastAttackRejectedRound uint64                  `yaml:"-"` // runtime only — round of last player_attack_rejected event fire, for dedupe
 	CastingState     *CastingState                  `yaml:"-"` // Active fold-based cast in progress (Stage 11.2). Not persisted.
 	CraftingState    *CraftingState                 `yaml:"-"` // Active crafting in progress (Stage 13.1). Not persisted.
-	permaBuffIds     []int                          // Buff Id's that are always present for this character
-	userId           int                            // User ID of the character if any
+	permaBuffIds      []int // Buff Id's that are always present for this character
+	userId            int  // User ID of the character if any
+	combatPhaseWired  bool `yaml:"-"` // true after OnCharacterCreated callbacks have fired once
 	// Stage 3.4: spawn-time override for carry capacity. Set via
 	// ApplyMobOverrides for special mobs (wagons). Zero falls through
 	// to the default Strength-derived calc.

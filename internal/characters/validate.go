@@ -520,6 +520,14 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	if c.CombatPhase == nil {
 		c.CombatPhase = combatphase.NewMachine()
 	}
+	// Fire OnCharacterCreated callbacks exactly once per Character.
+	// The guard prevents repeated firing on re-validation (e.g. stat
+	// recalcs, equipment changes) while still covering the YAML-load
+	// path where New() was never called.
+	if !c.combatPhaseWired {
+		c.combatPhaseWired = true
+		fireCharacterCreated(c)
+	}
 
 	if len(c.Description) == 0 {
 		c.Description = "They seem thoroughly uninteresting."
