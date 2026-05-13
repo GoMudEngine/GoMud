@@ -22,18 +22,13 @@
 tree:
   type: selector
   children:
-    # NEW: panic-flee at critical HP (absorbs the inline tactic
-    # `health_below:25 → flee` from chunk 2.6 migration).
-    - type: sequence
-      event: mob_hurt
-      children:
-        - type: condition
-          check: mob_health_below
-          percent: 25
-        - type: action
-          do: flee
-
-    # NEW: call for help at low HP (absorbs the `tank` tactic preset).
+    # Call for help at low HP (absorbs the `tank` tactic preset's
+    # `health_below:20 → call_for_help` rule).
+    #
+    # Tank archetype intentionally has NO panic-flee branch — tanks
+    # hold aggro under pressure rather than running. The chunk-2.6
+    # smoke verified that adding panic-flee at HP<25 made the
+    # HP<20 callforhelp branch unreachable.
     - type: sequence
       event: mob_hurt
       children:
