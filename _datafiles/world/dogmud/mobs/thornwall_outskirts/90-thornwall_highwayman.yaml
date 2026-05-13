@@ -3,7 +3,7 @@ zone: Thornwall Outskirts
 behavior_archetype: thief
 statpool: 12
 itemdropchance: 12
-hostile: true
+hostile: false
 maxwander: 2
 groups:
   - bandit
