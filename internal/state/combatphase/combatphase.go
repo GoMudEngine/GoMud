@@ -85,6 +85,7 @@ type Machine struct {
 	attackersChangeListeners          []func([]state.ActorRef)
 	vetoes                            vetoChain
 	endOfRoundIfSurpriseCallbacks     []func(state.TransitionReason)
+	tickEventListeners                []func(name string, r state.TransitionReason)
 }
 
 // NewMachine returns a Combat Phase machine in Idle.
@@ -503,11 +504,37 @@ func (m *Machine) RegisterTargetPresenceCheck(c func(state.ActorRef) bool) {
 	m.vetoes.targetPresence = c
 }
 
-// OnTickEvent registers a callback that DispatchTickEvent will invoke with
-// the state-appropriate event name.
-func (m *Machine) OnTickEvent(fn func(name string, r state.TransitionReason)) {}
+// OnTickEvent registers a callback that fires from DispatchTickEvent
+// with the btree event name corresponding to the current state.
+// Currently: "mob_combat_round" when Engaged, "mob_idle" when Idle.
+// Engaging and Disengaging dispatch no events (silent states).
+//
+// The round driver (Task 15) wires this up to fire btree events
+// for every character once per round.
+func (m *Machine) OnTickEvent(fn func(name string, r state.TransitionReason)) {
+	m.tickEventListeners = append(m.tickEventListeners, fn)
+}
 
-// DispatchTickEvent fires the registered tick-event callback with the event
-// name appropriate to the current state (mob_combat_round, mob_idle, or
-// silent for Engaging/Disengaging).
-func (m *Machine) DispatchTickEvent() {}
+// DispatchTickEvent fires the appropriate per-state tick event
+// to all registered listeners. Called by the round driver at the
+// start of each round per character.
+//
+// Engaging and Disengaging are silent — those states are pre-
+// engagement and mid-disengagement; their action is driven by
+// internal counters (OnRoundTick) and resolution methods
+// (ResolveFlee), not by btree events.
+func (m *Machine) DispatchTickEvent() {
+	var name string
+	switch m.State() {
+	case Engaged:
+		name = "mob_combat_round"
+	case Idle:
+		name = "mob_idle"
+	default:
+		return // Engaging and Disengaging are silent
+	}
+	r := state.TransitionReason{Trigger: "tick"}
+	for _, fn := range m.tickEventListeners {
+		fn(name, r)
+	}
+}
