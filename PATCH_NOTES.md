@@ -1,5 +1,135 @@
 # DOGMud Patch Notes
 
+## 2026-05-12 — Phase 2 tactical: chunks 2.4 + 2.5 + 2.6
+
+Three Phase-2 tactical chunks shipped on
+`feature/mob-aliveness-1.3-crimes` in one day (14 / 41 done).
+Branch carries chunks 1.1–2.6; merged to `development`, not yet
+pushed to prod.
+
+### 2.4 — Mob `consider` + threat-aware behaviors
+
+Consolidated the `consider` math via the actor pattern (mirroring
+chunk 2.1's `buy` consolidation) so players and mobs share the
+same code path. Reframed from the original "covet a player's
+gear" half (dropped — players don't drop gear) into reactive
+lookout and opportunistic predator patterns.
+
+- New shared function `actions.Consider(actor, target) → ConsiderResult`.
+  Player wrapper collapses to ~15 lines (~830 lines deleted);
+  `internal/mobcommands/consider.go` is the parallel mob wrapper
+  (`MobActor.SendText` no-op so the math runs silently).
+- New btree primitives: `target_power_ratio_above` /
+  `target_power_ratio_below` (condition) and
+  `target_weakest_mob_in_room` (action). Target resolution chain:
+  `Event.UserId` → `Aggro.MobInstanceId` → `Aggro.UserId`
+  (matches `actions.ResolveAggroTarget`).
+- `mob.HatesMob` predicate gates predation — faction/pack
+  awareness without coupling to the 1.2 substrate.
+- Demo wiring: `lookout` archetype gains `player_enter` ambush
+  branch (`target_power_ratio_above: 1.0` — outclass before
+  ambushing); new `predator` archetype copies generic_fighter
+  + adds a leading `mob_idle` predation branch
+  (`ratio_below: 0.85`); 3 ironwind wolves (steppe 205, young
+  206, scarred 223) flip to predator. Alpha wolf 215 retained
+  `leader` archetype to preserve rally/warcry behavior; future
+  `predator_leader` hybrid logged as follow-up.
+- PowerScore audit deliverable: new "Power Scoring & Gear
+  Contribution" section in `internal/combat/context.md`
+  documenting how equipment flows through the existing
+  `ValueAdj` / mitigation pipes (no math changes).
+
+Spec at `docs/superpowers/specs/2026-05-12-mob-aliveness-2.4-mob-consider-design.md`,
+plan at `docs/superpowers/plans/2026-05-12-mob-aliveness-2.4-mob-consider.md`.
+
+### 2.5 — Mutations on mobs (body-plan gating + intrinsic mutations)
+
+Generalized chunk 2.2a's incorporeal-only mutation support into
+a full body-plan gating model. Species declare what body parts
+they have; mutations declare what they require. Species can
+additionally declare intrinsic mutations that stack additively
+with acquired mutations at character init.
+
+- Schema: `Species.BodyParts []string` + `IntrinsicMutations
+  map[string]int` (yaml `body_parts:` / `intrinsic_mutations:`).
+  Canonical seven-tag set: `arms, hands, legs, eyes, mouth,
+  skin, tail`. `MutationSpec.RequiresArms bool` → `RequiresBodyParts
+  []string`. Boot-time validation panics on unknown tags or
+  unknown mutation ids in intrinsic_mutations.
+- New: `Character.ApplyIntrinsicMutations(species)` helper —
+  cap-aware additive merge at init time (`MutationMaxRank = 4`,
+  chunk-2.2a convention). Called from mob spawn + player creation.
+- Gating sites: random-roll pool (`GetWeightedPool` now takes
+  `*species.Species`), curated `SpawnMutations` path on mob YAMLs
+  (latent bug fix — was applying unconditionally), 4 mid-game
+  acquisition sites in user-tick / btree quest action / quest
+  engine bridge.
+- Migration: all 35 existing species + 4 new elemental species
+  (sand, storm, ice, smoke) — total 39 species YAMLs touched.
+  17 mutation YAMLs gained `requires_body_parts:` declarations.
+  Five `instance_planar_oasis` elemental mobs repointed: king
+  kept on magma + new mob-YAML `spawnmutations: [large]` (top-
+  level, NOT under a `mutations:` map — caught in smoke); queen
+  moved to new ice species (dropped her chunk-2.2a
+  `incorporeal:4` override since her crystal/water form is
+  corporeal per description); prince moved to new smoke species.
+- Cleanup: redundant `mutations: { incorporeal:4 }` overrides
+  removed from 4 `summons` mobs (wraith/spectre/fire/air) —
+  incorporeal is now intrinsic on the species.
+
+Spec at `docs/superpowers/specs/2026-05-12-mob-aliveness-2.5-mutations-on-mobs-design.md`,
+plan at `docs/superpowers/plans/2026-05-12-mob-aliveness-2.5-mutations-on-mobs.md`.
+
+### 2.6 — Sunset legacy tactics engine
+
+Reframed from the original "fix the Edrin priority race"
+band-aid into the structural fix: deleted the legacy
+`internal/mobai/` tactics engine entirely and migrated all 44
+tactic-using mobs to the behavior tree (btree) system. The
+Edrin priority-race bug is now structurally impossible (btree
+selectors are inherently priority-ordered, no async reaction
+queue racing `InitiateCast`).
+
+- ~1,144 net lines of legacy code deleted. `internal/mobai/`
+  directory removed entirely (10 files: tactics.go, reactor.go,
+  actions.go, types.go, memory.go, triggers.go + tests). The
+  `CombatMemory` substrate (grudge tracking across flee /
+  re-engage) was preserved at `internal/mobs/combat_memory.go`
+  — it was used outside the tactics engine.
+- Zero new btree primitives — existing `mob_has_buff` + invert
+  decorator covers the legacy `missing_buff:N` trigger.
+- 5 existing archetypes (`generic_fighter`, `predator`,
+  `leader`, `lookout`, `tank_taunter`) gained a shared
+  `mob_hurt + mob_health_below:25 → flee` panic-flee branch as
+  FIRST child. tank_taunter additionally gained a
+  `mob_hurt + mob_health_below:20 → callforhelp` branch
+  (absorbing the `tank` preset). ambusher gained a
+  `mob_combat_round + target_is_casting → trip` branch
+  (absorbing the `ambusher` preset's third rule).
+  Post-smoke fix: panic-flee REMOVED from tank_taunter — flee
+  preempted callforhelp at the threshold boundary; tanks
+  semantically shouldn't flee.
+- 1 new shared archetype `defensive_caster` absorbs 4 mobs
+  from the `defensive_caster` and `caster_backline` presets
+  (goblin_shaman 219, tunnel_shaman 74, bandit_caster 285,
+  elemental_queen 321).
+- 5 new per-boss archetypes preserve unique spell rotations:
+  `boss_edrin`, `boss_sylara`, `boss_rhett`, `boss_soren`,
+  `boss_chrysalis_phantom`.
+- 44 mob YAML migrations strip `tactic_preset:`, `tactics:`,
+  `reaction_delay:`, `tactical_discipline:`. The
+  corresponding 4 `Mob` struct fields removed.
+- Known follow-up: Edrin/Sylara's `conviction-ward` opening
+  cast has no buff self-gate (conviction-ward is a shield
+  spell with no `buff_id`). Bosses re-cast wastefully after
+  the shield expires — behavior is not broken, just wasteful.
+  Polish item for a future tuning pass.
+
+Spec at `docs/superpowers/specs/2026-05-12-mob-aliveness-2.6-sunset-tactics-engine-design.md`,
+plan at `docs/superpowers/plans/2026-05-12-mob-aliveness-2.6-sunset-tactics-engine.md`.
+
+---
+
 ## 2026-05-09 — Phase 1 substrate complete (chunks 1.6 + 1.7)
 
 Two more aliveness substrate chunks shipped on `feature/mob-aliveness-1.3-crimes`,
