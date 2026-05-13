@@ -68,6 +68,13 @@ func init() {
 	// effect.
 	actionRegistry["target_weakest_mob_in_room"] = actTargetWeakestMobInRoom
 	actionRegistry["target_random_player_in_room"] = actTargetRandomPlayerInRoom
+
+	// Skullduggery actions
+	actionRegistry["try_sneak"] = actTrySneak
+	actionRegistry["try_steal"] = actTrySteal
+	actionRegistry["try_plant"] = actTryPlant
+	actionRegistry["try_shadow"] = actTryShadow
+	actionRegistry["try_defuse"] = actTryDefuse
 }
 
 // LookupAction returns the action function for the given name,
