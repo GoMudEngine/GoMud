@@ -1,6 +1,6 @@
 mobid: 90
 zone: Thornwall Outskirts
-behavior_archetype: generic_fighter
+behavior_archetype: thief
 statpool: 12
 itemdropchance: 12
 hostile: true
