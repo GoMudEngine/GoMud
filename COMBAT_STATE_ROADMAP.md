@@ -51,6 +51,56 @@ fixed. The `SoftTarget` slot on `EvalContext` is already shipped.
 
 ---
 
+## Chunk 0 — Shipped (2026-05-13)
+
+Built the `internal/state/` framework (`Machine[S]`, transitions,
+vetoes/cascades/observers, scheduled transitions) co-developed
+with the first consumer (`internal/state/combatphase/`). Migrated
+~90 Aggro readers across `usercommands/`, `hooks/`,
+`behaviortree/`, `combat/`, `mobcommands/`. Migrated writers via
+centralized dual-write in `SetAggro`/`EndAggro` compat wrappers
+(`internal/characters/combat_state_compat.go`). Round driver
+dispatches via Combat Phase state. Wired btree transition events
+(`mob_engaging`/`mob_engaged`/`mob_disengaging`/`mob_combat_ended`).
+Wired companion auto-assist via `SubscribeAttackersChange`.
+Sunset `internal/hooks/aggro_helpers.go` (functions moved to
+`combat_retarget.go` for the few remaining DoCombat-internal
+callers). Introduced `Character.NonCombatant` flag + `Mob.AutoAggro`
+field (legacy `Hostile` private-bridged for YAML backward compat).
+
+**Marquee fix:** the chunk-2.7 thief-archetype bug is structurally
+impossible. `EvalContext.SoftTarget` slot enables non-combat target
+picking without triggering Combat Phase transitions. `target_random_player_in_room`
+stashes there; `try_steal`/`try_plant`/`try_shadow` consume it via
+`resolveSkullduggeryTarget`. Behavior Matrix tests CP-026 and CP-027
+encode this structural property.
+
+**Behavior Matrix complete:** 32 intent-driven tests (CP-001 through
+CP-036, with some numbering reshuffles) cover entry/exit, vetoes,
+multi-attacker tracking, surprise attack semantics, death cascades,
+and per-state tick dispatch. Every test maps to an intent row, not
+a parity-with-old-code row.
+
+**Deferred from chunk 0 (followups):**
+- `Character.Aggro` field NOT removed — 200+ direct reads remain
+  across the codebase; preserved as compat surface via wrappers.
+  Field deletion scheduled for a post-chunks-1-5 cleanup pass.
+- `internal/hooks/NewRound_DoCombat_unified.go` NOT deleted —
+  Stage 2b commit (`3aaa19cc`, pre-chunk-0) had already activated
+  it as production code. Preserved as live dispatch.
+- `combat_retarget.go` (the former `aggro_helpers.go`) — kept as
+  the DoCombat-internal retarget/validate logic. Future cleanup
+  may fold into Combat Phase cascades.
+
+**Aliveness work paused** for chunks 1-5. Chunk 2.7 Task 19
+(roadmap closeout for the skullduggery suite) remains pending
+until user-driven smoke confirms scenario 8 (thief regression).
+
+Next: chunk 1 — Awareness machine (`Visible` / `Concealing` /
+`Hidden` / `Revealing`).
+
+---
+
 ## Architectural principles
 
 - **Six machines, one flag.** Each machine owns exactly one concern.
