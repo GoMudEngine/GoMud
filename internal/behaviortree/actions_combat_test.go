@@ -190,12 +190,18 @@ func TestActTargetRandomPlayerInRoom_PicksAPlayer(t *testing.T) {
 	if r := actTargetRandomPlayerInRoom(map[string]any{}, ctx); r != Success {
 		t.Errorf("expected Success with players present, got %v", r)
 	}
-	if thief.Character.Aggro == nil {
-		t.Fatal("expected Aggro to be set, got nil")
+	// SoftTarget must be set — NOT Aggro. Chunk 2.7 fix: picking a target
+	// for skullduggery must not silently engage combat.
+	if ctx.SoftTarget.IsZero() {
+		t.Fatal("expected SoftTarget to be set, got zero value")
 	}
-	pickedId := thief.Character.Aggro.UserId
+	pickedId := ctx.SoftTarget.UserId
 	if pickedId != 1 && pickedId != 2 {
-		t.Errorf("expected Aggro.UserId to be 1 or 2, got %d", pickedId)
+		t.Errorf("expected SoftTarget.UserId to be 1 or 2, got %d", pickedId)
+	}
+	// Combat must NOT be engaged — Aggro must remain nil.
+	if thief.Character.Aggro != nil {
+		t.Errorf("expected Aggro to remain nil (no combat engagement), got %+v", thief.Character.Aggro)
 	}
 }
 
@@ -216,6 +222,9 @@ func TestActTargetRandomPlayerInRoom_EmptyRoom(t *testing.T) {
 	ctx := &EvalContext{InstanceId: 105, RoomId: 1}
 	if r := actTargetRandomPlayerInRoom(map[string]any{}, ctx); r != Failure {
 		t.Errorf("expected Failure with no players, got %v", r)
+	}
+	if !ctx.SoftTarget.IsZero() {
+		t.Errorf("expected SoftTarget to remain zero, got %+v", ctx.SoftTarget)
 	}
 	if thief.Character.Aggro != nil {
 		t.Errorf("expected Aggro to remain nil, got %+v", thief.Character.Aggro)

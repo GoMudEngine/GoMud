@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -83,7 +83,7 @@ func TestCondTargetIsHidden_TrueWhenTargetBuffPresent(t *testing.T) {
 	}
 }
 
-func TestCondTargetIsHidden_TrueViaAggroUser(t *testing.T) {
+func TestCondTargetIsHidden_TrueViaSoftTarget(t *testing.T) {
 	cleanBuffs := buffs.SeedBuffsForTest(hiddenBuffSpec)
 	defer cleanBuffs()
 
@@ -92,18 +92,20 @@ func TestCondTargetIsHidden_TrueViaAggroUser(t *testing.T) {
 	cleanUser := seedTestUser(t, 42, "sneaky", "Sneaky", 1)
 	defer cleanUser()
 
-	// Set aggro on user 42; no Event.UserId.
-	mob := mobs.GetInstance(105)
-	mob.Character.Aggro = &characters.Aggro{UserId: 42}
-
+	// Set SoftTarget on user 42; no Event.UserId.
+	// This exercises the SoftTarget priority path in resolveSkullduggeryTarget
+	// (chunk-2.7 fix: target_random_player_in_room sets SoftTarget, not Aggro).
 	user := users.GetByUserId(42)
 	if err := user.Character.AddBuff(9, false); err != nil {
 		t.Fatalf("AddBuff(9) failed on user: %v", err)
 	}
 
-	ctx := &EvalContext{InstanceId: 105} // no Event.UserId
+	ctx := &EvalContext{
+		InstanceId: 105, // no Event.UserId
+		SoftTarget: state.ActorRef{UserId: 42},
+	}
 	if r := condTargetIsHidden(map[string]any{}, ctx); r != Success {
-		t.Errorf("expected Success via aggro user fallback with Hidden buff, got %v", r)
+		t.Errorf("expected Success via SoftTarget with Hidden buff, got %v", r)
 	}
 }
 
@@ -188,7 +190,7 @@ func TestCondTargetHasGold_FalseBelowThreshold(t *testing.T) {
 	}
 }
 
-func TestCondTargetHasGold_FalseForMobTarget(t *testing.T) {
+func TestCondTargetHasGold_FalseForMobSoftTarget(t *testing.T) {
 	// Two mobs: the checking mob and a target mob.
 	cleanMobs := seedTwoMobs(t, 1,
 		5, 105, "CheckerMob",
@@ -196,12 +198,14 @@ func TestCondTargetHasGold_FalseForMobTarget(t *testing.T) {
 	)
 	defer cleanMobs()
 
-	checker := mobs.GetInstance(105)
-	checker.Character.Aggro = &characters.Aggro{MobInstanceId: 106}
-
-	ctx := &EvalContext{InstanceId: 105} // no Event.UserId
+	// SoftTarget points at the mob — condTargetHasGold returns Failure
+	// because mob gold is not stealable by the thief archetype.
+	ctx := &EvalContext{
+		InstanceId: 105,
+		SoftTarget: state.ActorRef{MobInstanceId: 106},
+	}
 	if r := condTargetHasGold(map[string]any{"min": 1}, ctx); r != Failure {
-		t.Errorf("expected Failure for mob aggro target (mob gold not stealable), got %v", r)
+		t.Errorf("expected Failure for mob SoftTarget (mob gold not stealable), got %v", r)
 	}
 }
 

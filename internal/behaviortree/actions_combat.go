@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -92,12 +93,19 @@ func actRemoveBuff(params map[string]any, ctx *EvalContext) Result {
 }
 
 // actTargetRandomPlayerInRoom picks a random player in the
-// caller's current room and sets them as the caller's aggro
-// target. Returns Failure when no players are present.
+// caller's current room and stashes them as the EvalContext's
+// SoftTarget. This is the non-combat target-picker primitive
+// used by skullduggery archetypes (thief, future shadow/plant
+// variants).
 //
-// Used by archetypes (e.g., `thief`) that operate on player
-// targets without an existing aggro chain — sister action to
-// target_weakest_mob_in_room.
+// CRITICAL: this action does NOT call SetAggro or transition
+// Combat Phase. The picked player is a "soft target" — the
+// caller's NEXT action (try_steal, try_plant, etc.) consumes
+// SoftTarget without triggering combat. This is the structural
+// fix for the chunk 2.7 thief-archetype bug; non-combat target
+// picking must not silently engage combat.
+//
+// Returns Failure when no players are present in the room.
 func actTargetRandomPlayerInRoom(params map[string]any, ctx *EvalContext) Result {
 	mob := mobs.GetInstance(ctx.InstanceId)
 	if mob == nil {
@@ -113,7 +121,10 @@ func actTargetRandomPlayerInRoom(params map[string]any, ctx *EvalContext) Result
 	}
 	idx := util.Rand(len(playerIds))
 	pickedId := playerIds[idx]
-	mob.Character.SetAggro(pickedId, 0, characters.DefaultAttack)
+
+	// CRITICAL: Stash in SoftTarget. Do NOT call SetAggro.
+	// Combat target lives on Combat Phase's Engaged state ONLY.
+	ctx.SoftTarget = state.ActorRef{UserId: pickedId}
 	return Success
 }
 

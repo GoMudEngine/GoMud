@@ -22,13 +22,10 @@ func condMobIsHidden(params map[string]any, ctx *EvalContext) Result {
 }
 
 // condTargetIsHidden returns Success when the resolved target carries the
-// Hidden buff. Resolution order: ctx.Event.UserId → mob.Aggro.UserId →
-// mob.Aggro.MobInstanceId.
+// Hidden buff. Resolution order: SoftTarget → Event.UserId → CombatPhase.
 //
-// Note: this uses aggro-user-before-aggro-mob priority, matching the
-// thief's pick-target context. This differs from resolveTargetPower in
-// conditions_combat.go, which uses aggro-mob-before-aggro-user to match
-// the combat agro priority.
+// SoftTarget priority ensures the thief archetype's steal-and-flee sequence
+// checks the same player picked by target_random_player_in_room.
 func condTargetIsHidden(params map[string]any, ctx *EvalContext) Result {
 	u, m := resolveSkullduggeryTarget(ctx)
 	if u != nil && u.Character.HasBuffFlag(buffs.Hidden) {
@@ -62,33 +59,51 @@ func condTargetHasGold(params map[string]any, ctx *EvalContext) Result {
 // resolveSkullduggeryTarget returns the contextual target as a user or mob
 // using the fallback chain:
 //
-//  1. ctx.Event.UserId → player
-//  2. mob.Character.Aggro.UserId → player
-//  3. mob.Character.Aggro.MobInstanceId → mob
+//  1. ctx.SoftTarget → non-combat target set by target_random_player_in_room
+//  2. ctx.Event.UserId → triggering player
+//  3. Combat Phase target (mob.Character.CurrentCombatTarget)
 //
 // Returns (nil, nil) when no target is resolvable.
 //
-// The aggro-user-before-aggro-mob priority matches the thief's context:
-// the primary targets for steal/shadow are players. Compare with
-// resolveTargetPower in conditions_combat.go which uses the reverse order
-// to match melee-combat aggro semantics.
+// SoftTarget has priority because skullduggery is a non-combat path: the
+// upstream target-picker (target_random_player_in_room) sets SoftTarget
+// specifically for the downstream condition + action chain to consume. This
+// ensures conditions like target_has_gold evaluate against the same player
+// that try_steal will act on, even when no combat has started.
 func resolveSkullduggeryTarget(ctx *EvalContext) (*users.UserRecord, *mobs.Mob) {
+	// Priority 1: SoftTarget (non-combat target set by target-picker actions).
+	if !ctx.SoftTarget.IsZero() {
+		if ctx.SoftTarget.IsPlayer() {
+			if u := users.GetByUserId(ctx.SoftTarget.UserId); u != nil {
+				return u, nil
+			}
+		}
+		if ctx.SoftTarget.IsMob() {
+			if m := mobs.GetInstance(ctx.SoftTarget.MobInstanceId); m != nil {
+				return nil, m
+			}
+		}
+		// SoftTarget set but couldn't resolve — fall through.
+	}
+	// Priority 2: Triggering player from the event.
 	if ctx.Event.UserId > 0 {
 		if u := users.GetByUserId(ctx.Event.UserId); u != nil {
 			return u, nil
 		}
 	}
+	// Priority 3: Combat Phase target (only when mob is actually in combat).
 	mob := mobs.GetInstance(ctx.InstanceId)
-	if mob == nil || mob.Character.Aggro == nil {
+	if mob == nil {
 		return nil, nil
 	}
-	if mob.Character.Aggro.UserId > 0 {
-		if u := users.GetByUserId(mob.Character.Aggro.UserId); u != nil {
+	t := mob.Character.CurrentCombatTarget()
+	if t.IsPlayer() {
+		if u := users.GetByUserId(t.UserId); u != nil {
 			return u, nil
 		}
 	}
-	if mob.Character.Aggro.MobInstanceId > 0 {
-		if m := mobs.GetInstance(mob.Character.Aggro.MobInstanceId); m != nil {
+	if t.IsMob() {
+		if m := mobs.GetInstance(t.MobInstanceId); m != nil {
 			return nil, m
 		}
 	}
