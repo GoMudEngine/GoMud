@@ -499,6 +499,98 @@ func SystemMaintenance(e events.Event) events.ListenerReturn {
 }
 ```
 
+## Combat State Machine Integration (chunk 0)
+
+Four files in the hooks package wire the Combat Phase machine into the
+engine without creating import cycles (the characters package cannot
+import hooks; hooks import characters and register via `OnCharacterCreated`).
+
+### CombatPhase_Vetoes.go
+
+Registers the seven veto callbacks on every new `Character` via
+`characters.OnCharacterCreated(wireCombatPhaseVetoes)`.
+
+Each veto reads the current character field for its concern. Future
+chunks replace each closure body as the corresponding machine lands
+(e.g., `RegisterLifeCheck` will read `c.LifeMachine.State() == Alive`
+once the Life machine ships in chunk 2).
+
+| Veto registration | Reads |
+|-------------------|-------|
+| `RegisterCombatantVeto` | `c.IsCombatant()` |
+| `RegisterActivityCheck` | `c.CastingState == nil && c.CraftingState == nil` |
+| `RegisterLifeCheck` | `c.Health > 0` |
+| `RegisterPositionCheck` | `c.CombatPosition == PositionStanding` |
+| `RegisterTargetCombatantCheck` | target's `IsCombatant()` via users/mobs lookup |
+| `RegisterTargetLifeCheck` | target's `Health > 0` via users/mobs lookup |
+| `RegisterTargetPresenceCheck` | player grace buff (`NoAggroTarget`) check |
+
+### CombatPhase_BtreeEvents.go
+
+Registers an `AfterTransition` cascade that fires btree transition events
+whenever a mob's Combat Phase state changes. Player characters also have
+`CombatPhase` but the btree system only fires for mob instances.
+
+Events fired (once per state transition, not per round):
+- `mob_engaging` — `Idle → Engaging`
+- `mob_engaged` — `Engaging → Engaged` (after `RoundsUntil` countdown)
+- `mob_disengaging` — `Engaged → Disengaging` (flee initiated)
+- `mob_combat_ended` — any → `Idle` (target died, flee succeeded, etc.)
+
+Tick events (`mob_combat_round`, `mob_idle`) fire from the round driver
+via `DispatchTickEvent`, not from this file.
+
+Mob ownership is resolved via `findMobOwningCharacter`, an O(N) scan
+over all mob instances that compares `Character` pointer identity. This
+is acceptable because transition events fire at most once per state
+change (not per round).
+
+### CombatPhase_CompanionAssist.go
+
+Registers `SubscribeAttackersChange` on every character. When a charmed
+companion's inbound attacker list grows (new attacker recorded), the
+handler reactively directs the companion's owner and sibling companions
+to join the fight — without waiting for the next round tick.
+
+Behavioral parity with the old polling path in `NewRound_DoCombat`:
+- Same `AutoAssist` flag check on the companion entry
+- Same `NoAggroTarget` grace-period guard on the owner
+- Sibling companions in the same room are also assisted
+
+The polling `CompanionAutoTarget` in `combat_retarget.go` remains as a
+fallback. Duplicate attack commands are benign (second attempt is vetoed
+by the already-fighting state).
+
+### combat_retarget.go
+
+Contains three functions moved from the deleted `aggro_helpers.go` in
+chunk 0's sunset pass. Still consumed by `NewRound_DoCombat`.
+
+- **`ValidateAggro(char)`** — checks if the character's `Aggro` target
+  still exists and is alive in the same room; calls `EndAggro()` and
+  returns false if stale.
+- **`RetargetOrEnd(char, room, userId, mobInstanceId)`** — clears current
+  aggro and scans the room for a new target already attacking the
+  character (or the character's companions). Returns true if a new target
+  was found and `SetAggro` was called.
+- **`CompanionAutoTarget(mob, room)`** — polling fallback for companion
+  auto-assist. Runs once per round in `NewRound_DoCombat`. Directs idle
+  companions to join the owner's fight or intercept mobs attacking the
+  owner.
+
+### Round driver dispatch (NewRound_DoCombat.go)
+
+The round driver reads Combat Phase state instead of legacy `Aggro`:
+
+- `c.IsInCombat()` replaces `c.Aggro != nil` in the "who is fighting?"
+  loop.
+- `c.CombatPhase.OnRoundTick()` advances `Engaging` → `Engaged` when
+  `RoundsUntil` hits zero.
+- `c.CombatPhase.DispatchTickEvent()` fires `mob_combat_round` or
+  `mob_idle` btree events per character per round.
+- `c.CombatPhase.OnCombatRoundEnd()` clears the `SurpriseLeft` flag
+  at end-of-round for surprise engagements.
+
 ## Dependencies
 
 - `internal/events` - Event system for listener registration and event processing
@@ -512,5 +604,4 @@ func SystemMaintenance(e events.Event) events.ListenerReturn {
 - `internal/mutations` - Mutation system for mob mutation acquisition
 - `internal/worldevents` - World event recording for emergent behavior milestones
 - `internal/mudlog` - Logging system for debugging and monitoring
-
-This comprehensive hooks system provides the core game logic implementation through event-driven architecture, handling everything from basic gameplay mechanics to complex system maintenance tasks while maintaining clean separation of concerns and extensible design patterns.
+- `internal/state/combatphase` - Combat Phase state machine (chunk 0)

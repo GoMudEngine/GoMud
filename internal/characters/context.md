@@ -313,6 +313,103 @@ When reading or writing merchant code, always distinguish between these three
 gold/inventory sources to avoid double-counting or routing items to the
 wrong pool.
 
+## Combat Phase Machine Integration (chunk 0)
+
+### New field: CombatPhase
+
+```go
+CombatPhase *combatphase.Machine `yaml:"-"`
+```
+
+Initialized in `New()` and lazily in `Validate()` (for characters loaded
+from YAML without a direct `New()` path). `RegisterMachine` is called
+immediately after allocation so inbound-attacker tracking is active from
+the first combat action.
+
+### New flag: NonCombatant
+
+```go
+NonCombatant bool `yaml:"non_combatant,omitempty"`
+```
+
+`true` = character is immune to combat targeting (shops, quest-givers,
+etc.). Set from `Mob.NonCombatant` during `Mob.Validate()` for mob
+characters; set directly in player creation for any exempt player
+archetype.
+
+```go
+func (c *Character) IsCombatant() bool { return !c.NonCombatant }
+```
+
+The `RegisterCombatantVeto` wiring in `CombatPhase_Vetoes.go` calls this
+to block `TransitionToEngaging` for non-combatants.
+
+### Internal guard: combatPhaseWired
+
+```go
+combatPhaseWired bool `yaml:"-"`
+```
+
+Set to `true` the first time `fireCharacterCreated` runs. The `Validate()`
+path checks this flag to avoid double-firing `OnCharacterCreated` callbacks
+when `Validate()` is called multiple times during a character's lifetime.
+
+### Predicate methods
+
+All read from `CombatPhase` exclusively; they do not read the legacy
+`Aggro` field.
+
+```go
+func (c *Character) IsEngaged() bool
+    // true when Combat Phase == Engaged (actively fighting)
+
+func (c *Character) IsInCombat() bool
+    // true when Combat Phase != Idle (any non-idle combat state)
+
+func (c *Character) IsDisengaging() bool
+    // true when Combat Phase == Disengaging (flee in progress)
+
+func (c *Character) EngagedTarget() state.ActorRef
+    // current target when Engaged; zero when not Engaged
+
+func (c *Character) CurrentCombatTarget() state.ActorRef
+    // current target across all non-Idle states (Engaging/Engaged/Disengaging)
+
+func (c *Character) Attackers() []state.ActorRef
+    // snapshot of inbound attacker list from CombatPhase
+```
+
+### Legacy Aggro field (compat surface)
+
+The `Aggro *Aggro` field is kept in `combat_state_compat.go` for the
+~200 direct field reads in usercommands, hooks, combat, and mob-commands
+that were not migrated in chunk 0. **Do not add new reads against
+`Character.Aggro`** — use the predicate methods above.
+
+All writes go through `SetAggro` / `EndAggro`, which dual-write to both
+`Aggro` and `CombatPhase.TransitionToEngaging` / `ForceIdle`. Direct
+mutation of `Character.Aggro` (bypassing the wrappers) is forbidden.
+
+Field removal is scheduled for a cleanup chunk after chunks 1-5 land and
+the remaining reads are migrated.
+
+### OnCharacterCreated callback registry
+
+```go
+func OnCharacterCreated(fn func(*Character))
+```
+
+Registers a callback that fires once per `Character` the first time it
+is fully initialized (after `New()` or on first `Validate()` if loaded
+from YAML). Used by the hooks package to wire state-machine vetoes and
+observers without creating an import cycle (characters cannot import
+hooks; hooks import characters).
+
+Current registrations (all in `internal/hooks/`):
+- `wireCombatPhaseVetoes` — wires the seven veto closures
+- `wireCombatPhaseBtreeEvents` — wires the btree transition cascade
+- `wireCompanionAssist` — subscribes to Attackers-change events
+
 ## Dependencies
 - `internal/stats`: Core statistics definitions
 - `internal/items`: Item system integration
@@ -324,3 +421,4 @@ wrong pool.
 - `internal/pets`: Pet system integration
 - `internal/gametime`: Time-based mechanics
 - `internal/colorpatterns`: Text formatting and colors
+- `internal/state/combatphase`: Combat Phase state machine (chunk 0)

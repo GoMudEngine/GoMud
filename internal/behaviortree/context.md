@@ -718,6 +718,44 @@ JavaScript.
 
 ---
 
+## EvalContext.SoftTarget (chunk 2.7 fix)
+
+`SoftTarget state.ActorRef` is a non-combat target slot on `EvalContext`.
+It exists to solve the chunk-2.7 class of bugs where thief-archetype
+behavior trees used `target_random_player_in_room` to pick a target and
+then the steal/plant/shadow primitives read the wrong actor because there
+was no safe place to stash "player I want to pickpocket" that is separate
+from "player I am currently fighting."
+
+### Design contract
+
+- `target_random_player_in_room` stashes its pick in `ctx.SoftTarget`
+  and does **not** call `SetAggro` or `TransitionToEngaging`. The mob's
+  Combat Phase stays `Idle`; only the evaluation-local `SoftTarget` is set.
+- Skullduggery conditions and actions (`target_is_hidden`, `target_has_gold`,
+  `try_steal`, `try_plant`, `try_shadow`) read `resolveSkullduggeryTarget`,
+  whose priority chain is:
+  1. `ctx.SoftTarget` — non-combat pick from this evaluation round
+  2. `ctx.Event.UserId` — player who triggered the btree event
+  3. `CombatPhase` current target — attacker in combat
+
+`SoftTarget` always wins if set, so `target_random_player_in_room → try_steal`
+sequences work correctly even when the mob is simultaneously in combat with
+a different player.
+
+### What it prevents
+
+Before this fix, `target_random_player_in_room` called `SetAggro`, which
+set `CombatPhase` to `Engaging` for the picked player. This caused:
+1. A non-combat thief mob unexpectedly entering combat with a bystander.
+2. The steal action targeting the combat target (potentially a different
+   player) instead of the intended pickpocket target.
+
+The `SoftTarget` slot severs the non-combat targeting path from the
+combat state machine entirely.
+
+---
+
 ## Panic-Flee Pattern (chunk 2.6)
 
 A shared `mob_hurt + mob_health_below:N → flee` branch is the FIRST
