@@ -53,8 +53,8 @@ func resolveCharmSpell(user *users.UserRecord, targetMob *mobs.Mob, room *rooms.
 		int(math.Round(float64(statTrainingTotal)*0.10))
 
 	// ── 5. Aggro penalty ───────────────────────────────────────────────
-	if targetMob.Character.Aggro != nil {
-		if targetMob.Character.Aggro.UserId == user.UserId {
+	if targetMob.Character.IsInCombat() {
+		if targetMob.Character.CurrentCombatTarget().UserId == user.UserId {
 			// Fighting the caster — steepest penalty
 			attackScore = int(math.Round(float64(attackScore) * 0.75))
 		} else {
@@ -95,15 +95,15 @@ func resolveCharmSpell(user *users.UserRecord, targetMob *mobs.Mob, room *rooms.
 				continue
 			}
 			if companion := mobs.GetInstance(charmId); companion != nil {
-				if companion.Character.Aggro != nil &&
-					companion.Character.Aggro.MobInstanceId == targetMob.InstanceId {
+				if companion.Character.IsInCombat() &&
+					companion.Character.CurrentCombatTarget().MobInstanceId == targetMob.InstanceId {
 					companion.Character.EndAggro()
 				}
 			}
 		}
 
 		// Clear the owner's own aggro if targeting the new mob
-		if ch.Aggro != nil && ch.Aggro.MobInstanceId == targetMob.InstanceId {
+		if ch.IsInCombat() && ch.CurrentCombatTarget().MobInstanceId == targetMob.InstanceId {
 			ch.EndAggro()
 		}
 

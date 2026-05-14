@@ -368,7 +368,7 @@ func anyPartyMemberInCombat(callerInstId int) bool {
 	}
 	for _, m := range p.Members {
 		c := m.GetCharacter()
-		if c != nil && c.Aggro != nil {
+		if c != nil && c.IsInCombat() {
 			return true
 		}
 	}

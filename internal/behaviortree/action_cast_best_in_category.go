@@ -136,7 +136,7 @@ func findMostWoundedPackmate(self *mobs.Mob) *mobs.Mob {
 // actively tanking.
 func findTankingPackmate(self *mobs.Mob) *mobs.Mob {
 	for _, pm := range mobs.FindPackmatesInRoom(self) {
-		if pm.Character.Aggro != nil {
+		if pm.Character.IsInCombat() {
 			return pm
 		}
 	}

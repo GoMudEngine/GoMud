@@ -163,15 +163,15 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 			continue
 		}
 		if companion := mobs.GetInstance(charmId); companion != nil {
-			if companion.Character.Aggro != nil &&
-				companion.Character.Aggro.MobInstanceId == mob.InstanceId {
+			if companion.Character.IsInCombat() &&
+				companion.Character.CurrentCombatTarget().MobInstanceId == mob.InstanceId {
 				companion.Character.EndAggro()
 			}
 		}
 	}
 
 	// Clear the owner's own aggro if targeting the new mob
-	if ch.Aggro != nil && ch.Aggro.MobInstanceId == mob.InstanceId {
+	if ch.IsInCombat() && ch.CurrentCombatTarget().MobInstanceId == mob.InstanceId {
 		ch.EndAggro()
 	}
 

@@ -210,7 +210,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 
 				// Stage 12.2: Mutation progress — accumulates during combat, triggers acquisition or deepening
 				// Stage 17.2: The Eye modulates how quickly mutations happen (0.5× at new moon, 1.5× at full)
-				if user.Character.Aggro != nil {
+				if user.Character.IsInCombat() {
 					mb := configs.GetBalanceConfig()
 					canAcquire := len(user.Character.Mutations) < int(mb.MutationMaxCount)
 					canDeepen := mutations.CanDeepen(user.Character.Mutations)
@@ -301,7 +301,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 
 				// Stage 13.1: Crafting tick — advance or complete active crafting
 				if user.Character.CraftingState != nil {
-					if user.Character.Aggro != nil {
+					if user.Character.IsInCombat() {
 						user.Character.CraftingState = nil
 						user.SendText(`<ansi fg="red">Your work is interrupted!</ansi>`)
 					} else {
@@ -427,7 +427,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 				}
 
 				// Stage 31.6: Chrysalis enchantment ticking (combat only)
-				if user.Character.Aggro != nil {
+				if user.Character.IsInCombat() {
 					for _, itemPtr := range user.Character.Equipment.GetAllItemPtrs() {
 						if !itemPtr.HasChrysalisEnchantment() {
 							continue

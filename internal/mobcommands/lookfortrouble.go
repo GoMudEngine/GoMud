@@ -19,7 +19,7 @@ import (
 func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	// Already aggroed, skip.
-	if mob.Character.Aggro != nil {
+	if mob.Character.IsInCombat() {
 		return true, nil
 	}
 

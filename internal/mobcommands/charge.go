@@ -16,7 +16,7 @@ import (
 // Charge is a boar trip variant — same mechanics, different messages.
 func Charge(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
-	if mob.Character.Aggro == nil {
+	if !mob.Character.IsInCombat() {
 		return true, nil
 	}
 
@@ -26,8 +26,8 @@ func Charge(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	// Resolve target
-	targetPlayerId := mob.Character.Aggro.UserId
-	targetMobId := mob.Character.Aggro.MobInstanceId
+	targetPlayerId := mob.Character.CurrentCombatTarget().UserId
+	targetMobId := mob.Character.CurrentCombatTarget().MobInstanceId
 
 	var targetChar *users.UserRecord
 	var targetMob *mobs.Mob

@@ -41,7 +41,7 @@ func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		if u == nil {
 			continue
 		}
-		if u.Character.Aggro == nil || u.Character.Aggro.MobInstanceId != mob.InstanceId {
+		if !u.Character.IsInCombat() || u.Character.CurrentCombatTarget().MobInstanceId != mob.InstanceId {
 			continue
 		}
 
@@ -63,7 +63,7 @@ func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		if m == nil {
 			continue
 		}
-		if m.Character.Aggro == nil || m.Character.Aggro.MobInstanceId != mob.InstanceId {
+		if !m.Character.IsInCombat() || m.Character.CurrentCombatTarget().MobInstanceId != mob.InstanceId {
 			continue
 		}
 
@@ -80,7 +80,7 @@ func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	// If in combat, clear aggro
-	if mob.Character.Aggro != nil {
+	if mob.Character.IsInCombat() {
 		mob.Character.EndAggro()
 	}
 

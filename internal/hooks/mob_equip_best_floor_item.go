@@ -16,7 +16,7 @@ import (
 //
 // No-op (returns false) if any of:
 //   - !itemvalue.CanScanFloorLoot(&mob.Character, mob.BehaviorArchetype)
-//   - mob is in combat (Character.Aggro != nil)
+//   - mob is in combat (Character.IsInCombat())
 //   - room is nil or has no floor items
 //   - no floor item scores as an upgrade for this mob+profile
 //
@@ -28,7 +28,7 @@ func EquipBestFloorItem(mob *mobs.Mob, room *rooms.Room) bool {
 	if !itemvalue.CanScanFloorLoot(&mob.Character, mob.BehaviorArchetype) {
 		return false
 	}
-	if mob.Character.Aggro != nil {
+	if mob.Character.IsInCombat() {
 		return false // busy fighting
 	}
 	if room == nil || len(room.Items) == 0 {

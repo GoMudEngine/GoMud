@@ -12,8 +12,8 @@ import (
 
 func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
-	// Must be in combat to use kick; silently skip if no aggro.
-	if mob.Character.Aggro == nil {
+	// Must be in combat to use kick; silently skip if not in combat.
+	if !mob.Character.IsInCombat() {
 		return true, nil
 	}
 

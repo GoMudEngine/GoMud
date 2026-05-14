@@ -72,7 +72,7 @@ func TransportCompanions(owner *users.UserRecord, oldRoomId, newRoomId int) {
 		owner.SendText(fmt.Sprintf("Your %s rejoins you.", mob.Character.Name))
 
 		// End aggro if the current target is no longer in the destination room.
-		if mob.Character.Aggro != nil {
+		if mob.Character.IsInCombat() {
 			aggro := mob.Character.Aggro
 			// Only strip aggro when it has a concrete target to check for;
 			// an Aggro struct with both IDs zero is mid-setup state and

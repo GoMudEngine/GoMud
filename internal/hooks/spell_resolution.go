@@ -273,13 +273,13 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 // Note: applyMobEffect_buff does NOT call this helper — its aggro block
 // is gated on spell Type being Harm*. Kept inline there.
 func setMobSpellAggro(user *users.UserRecord, mob *mobs.Mob) {
-	if mob.Character.Aggro == nil {
+	if !mob.Character.IsInCombat() {
 		mob.PreventIdle = true
 		if user != nil {
 			mob.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
 		}
 	}
-	if user != nil && user.Character.Aggro == nil {
+	if user != nil && !user.Character.IsInCombat() {
 		user.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
 	}
 }
@@ -463,13 +463,13 @@ func applyMobEffect_buff(
 	// Conditional aggro for harmful buff spells — kept inline because it is
 	// gated on Harm* spell types; not consolidated in Task 7's setMobSpellAggro.
 	if spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti {
-		if mob.Character.Aggro == nil {
+		if !mob.Character.IsInCombat() {
 			mob.PreventIdle = true
 			if user != nil {
 				mob.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
 			}
 		}
-		if user != nil && user.Character.Aggro == nil {
+		if user != nil && !user.Character.IsInCombat() {
 			user.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
 		}
 	}
@@ -567,10 +567,10 @@ func resolveAgainstPlayer(user *users.UserRecord, target *users.UserRecord, room
 
 	// Set reciprocal aggro for harm spells
 	if spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti {
-		if user.Character.Aggro == nil {
+		if !user.Character.IsInCombat() {
 			user.Character.SetAggro(target.UserId, 0, characters.DefaultAttack)
 		}
-		if target.Character.Aggro == nil {
+		if !target.Character.IsInCombat() {
 			target.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
 		}
 	}

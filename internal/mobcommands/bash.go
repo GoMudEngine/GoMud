@@ -13,8 +13,8 @@ import (
 
 func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
-	// Must be in combat to use bash; silently skip if no aggro.
-	if mob.Character.Aggro == nil {
+	// Must be in combat to use bash; silently skip if not in combat.
+	if !mob.Character.IsInCombat() {
 		return true, nil
 	}
 

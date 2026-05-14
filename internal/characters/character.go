@@ -437,15 +437,20 @@ func (c *Character) IsEngaged() bool {
 	return c.CombatPhase.IsEngaged()
 }
 
-// IsInCombat returns true if Combat Phase is anything but Idle
-// (includes Engaging, Engaged, Disengaging). Replacement for the
-// historical `c.Aggro != nil` check that gated movement,
-// commands, regen, etc.
+// IsInCombat returns true if the character is in any non-Idle combat state.
+// During the Task 13→15 migration window both the legacy Aggro field and the
+// new CombatPhase machine can independently signal "in combat".  Either one
+// being non-nil / non-Idle is sufficient so that:
+//   - Migrated callers that read CombatPhase work correctly
+//   - Existing tests and engine code that still write only Aggro continue to
+//     pass while Task 15 wires the two systems together
+//
+// Task 18 (Aggro sunset) will remove the Aggro fallback once the field is gone.
 func (c *Character) IsInCombat() bool {
-	if c.CombatPhase == nil {
-		return false
+	if c.CombatPhase != nil && c.CombatPhase.IsInCombat() {
+		return true
 	}
-	return c.CombatPhase.IsInCombat()
+	return c.Aggro != nil
 }
 
 // IsDisengaging returns true if Combat Phase is Disengaging (flee in
@@ -471,16 +476,30 @@ func (c *Character) EngagedTarget() state.ActorRef {
 	return state.ActorRef{}
 }
 
-// CurrentCombatTarget returns the Combat Phase target across all
-// non-Idle states (Engaging.Target, Engaged.Target, or
-// Disengaging.LastTarget). Returns zero ActorRef when Idle.
-// Used by callers that need "who am I targeting right now,
-// regardless of phase" semantics.
+// CurrentCombatTarget returns the current combat target across all non-Idle
+// states (Engaging.Target, Engaged.Target, or Disengaging.LastTarget).
+// Returns zero ActorRef when Idle.
+//
+// During the Task 13→15 migration window the legacy Aggro field may carry the
+// target even when CombatPhase has not been updated yet.  We fall back to
+// Aggro when CombatPhase returns a zero ref so that migrated readers work
+// correctly with both new and old setup paths.
+//
+// Task 18 (Aggro sunset) will remove the Aggro fallback once the field is gone.
 func (c *Character) CurrentCombatTarget() state.ActorRef {
-	if c.CombatPhase == nil {
-		return state.ActorRef{}
+	if c.CombatPhase != nil {
+		if ref := c.CombatPhase.CurrentTarget(); !ref.IsZero() {
+			return ref
+		}
 	}
-	return c.CombatPhase.CurrentTarget()
+	// Aggro fallback for transitional period.
+	if c.Aggro != nil {
+		return state.ActorRef{
+			UserId:        c.Aggro.UserId,
+			MobInstanceId: c.Aggro.MobInstanceId,
+		}
+	}
+	return state.ActorRef{}
 }
 
 // Attackers returns the framework-maintained inbound attacker

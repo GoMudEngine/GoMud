@@ -20,7 +20,7 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		// If no argument supplied, attack whoever is attacking the player currently.
 		for _, mId := range room.GetMobs(rooms.FindFightingMob) {
 			m := mobs.GetInstance(mId)
-			if m.Character.Aggro != nil && m.Character.Aggro.MobInstanceId == mob.InstanceId {
+			if m.Character.IsInCombat() && m.Character.CurrentCombatTarget().MobInstanceId == mob.InstanceId {
 				attackMobInstanceId = m.InstanceId
 				break
 			}
@@ -29,7 +29,7 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		if attackMobInstanceId == 0 {
 			for _, uId := range room.GetPlayers(rooms.FindFightingMob) {
 				u := users.GetByUserId(uId)
-				if u.Character.Aggro != nil && u.Character.Aggro.MobInstanceId == mob.InstanceId {
+				if u.Character.IsInCombat() && u.Character.CurrentCombatTarget().MobInstanceId == mob.InstanceId {
 					attackPlayerId = u.UserId
 					break
 				}
@@ -70,7 +70,7 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				aggroType = characters.SurpriseAttack
 			}
 			// Only announce if not already fighting this target
-			alreadyFighting := mob.Character.Aggro != nil && mob.Character.Aggro.UserId == attackPlayerId
+			alreadyFighting := mob.Character.IsInCombat() && mob.Character.CurrentCombatTarget().UserId == attackPlayerId
 			mob.Character.SetAggro(attackPlayerId, 0, aggroType)
 
 			if !isSneaking && !alreadyFighting {

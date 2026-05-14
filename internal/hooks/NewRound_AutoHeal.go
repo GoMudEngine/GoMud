@@ -43,7 +43,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 
 		regenMultiplier := roomRegenMultiplier(rooms.LoadRoom(user.Character.RoomId))
 
-		inCombat := user.Character.Aggro != nil
+		inCombat := user.Character.IsInCombat()
 		healthStart := user.Character.Health
 
 		// Death on zero — any path that dropped Health below 1 (damage,
@@ -263,7 +263,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			continue
 		}
 
-		mobInCombat := mob.Character.Aggro != nil
+		mobInCombat := mob.Character.IsInCombat()
 		mobRegenMult := roomRegenMultiplier(rooms.LoadRoom(mob.Character.RoomId))
 
 		// Health regen (out of combat only, unless heal-spell ConditionRegen)

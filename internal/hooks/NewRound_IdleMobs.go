@@ -62,9 +62,9 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 
 		// If they are doing some sort of combat thing,
 		// Don't do idle actions
-		if mob.Character.Aggro != nil {
-			if mob.Character.Aggro.UserId > 0 {
-				user := users.GetByUserId(mob.Character.Aggro.UserId)
+		if mob.Character.IsInCombat() {
+			if mob.Character.CurrentCombatTarget().UserId > 0 {
+				user := users.GetByUserId(mob.Character.CurrentCombatTarget().UserId)
 				if user == nil || user.Character.RoomId != mob.Character.RoomId {
 					mob.Command(`emote mumbles about losing their quarry.`)
 					mob.Character.EndAggro()

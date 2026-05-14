@@ -72,7 +72,7 @@ func condPartyInCombat(params map[string]any, ctx *EvalContext) Result {
 	}
 	for _, m := range p.Members {
 		c := m.GetCharacter()
-		if c != nil && c.Aggro != nil {
+		if c != nil && c.IsInCombat() {
 			return Success
 		}
 	}
@@ -88,7 +88,7 @@ func condPartyLeaderInCombat(params map[string]any, ctx *EvalContext) Result {
 		return Failure
 	}
 	c := p.Leader.GetCharacter()
-	if c != nil && c.Aggro != nil {
+	if c != nil && c.IsInCombat() {
 		return Success
 	}
 	return Failure

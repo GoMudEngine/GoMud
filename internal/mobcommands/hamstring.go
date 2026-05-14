@@ -13,7 +13,7 @@ import (
 // Hamstring is a wolf physical attack that applies a bleed condition.
 func Hamstring(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
-	if mob.Character.Aggro == nil {
+	if !mob.Character.IsInCombat() {
 		return true, nil
 	}
 

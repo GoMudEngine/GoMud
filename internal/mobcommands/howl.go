@@ -12,7 +12,7 @@ import (
 // Howl is a wolf conviction attack — a taunt reskin for mob use.
 func Howl(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
-	if mob.Character.Aggro == nil {
+	if !mob.Character.IsInCombat() {
 		return true, nil
 	}
 

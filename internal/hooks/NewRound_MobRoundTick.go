@@ -200,7 +200,7 @@ func tickMobBuffs(mob *mobs.Mob, mobInstanceId int) {
 
 // tickMobMutationAcquisition — current inline block at lines 162–260.
 func tickMobMutationAcquisition(mob *mobs.Mob, mb *configs.Balance) {
-	if !(bool(mb.MobMutationEnabled) && mob.Character.Aggro != nil) {
+	if !(bool(mb.MobMutationEnabled) && mob.Character.IsInCombat()) {
 		return
 	}
 	canAcquire := len(mob.Character.Mutations) < int(mb.MutationMaxCount)
@@ -399,7 +399,7 @@ func tickMobCrafting(mob *mobs.Mob) {
 	if mob.Character.CraftingState == nil {
 		return
 	}
-	if mob.Character.Aggro != nil {
+	if mob.Character.IsInCombat() {
 		mob.Character.CraftingState = nil
 		return
 	}

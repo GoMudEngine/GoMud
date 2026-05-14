@@ -13,7 +13,7 @@ import (
 func Trip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	// Must be in combat to use trip
-	if mob.Character.Aggro == nil {
+	if !mob.Character.IsInCombat() {
 		return true, nil
 	}
 

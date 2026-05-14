@@ -122,7 +122,7 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	// The casting block in the combat tick safely handles CastingState and skips melee.
 	switch spellInfo.Type {
 	case spells.HarmSingle, spells.HarmMulti, spells.HarmArea:
-		if mob.Character.Aggro == nil && len(result.TargetUserIds) > 0 {
+		if !mob.Character.IsInCombat() && len(result.TargetUserIds) > 0 {
 			mob.Character.SetAggro(result.TargetUserIds[0], 0, characters.DefaultAttack)
 		}
 	}

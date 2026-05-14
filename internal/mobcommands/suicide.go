@@ -135,8 +135,8 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		for uId := range mob.Character.PlayerDamage {
 			if user := users.GetByUserId(uId); user != nil {
 
-				if user.Character.Aggro != nil {
-					if user.Character.Aggro.MobInstanceId == mob.InstanceId {
+				if user.Character.IsInCombat() {
+					if user.Character.CurrentCombatTarget().MobInstanceId == mob.InstanceId {
 						user.Character.EndAggro()
 					}
 				}

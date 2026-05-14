@@ -12,7 +12,7 @@ func condMobInCombat(params map[string]any, ctx *EvalContext) Result {
 	if mob == nil {
 		return Failure
 	}
-	if mob.Character.Aggro != nil {
+	if mob.Character.IsInCombat() {
 		return Success
 	}
 	return Failure
@@ -79,7 +79,7 @@ func condMobInRoom(params map[string]any, ctx *EvalContext) Result {
 // is mid-cast. Used by archetypes that want to prioritize interrupts.
 func condTargetIsCasting(params map[string]any, ctx *EvalContext) Result {
 	mob := mobs.GetInstance(ctx.InstanceId)
-	if mob == nil || mob.Character.Aggro == nil {
+	if mob == nil || !mob.Character.IsInCombat() {
 		return Failure
 	}
 	target := actions.ResolveAggroTarget(mob.Character.Aggro)
@@ -98,19 +98,19 @@ func condTargetIsCasting(params map[string]any, ctx *EvalContext) Result {
 // taunt when they're not already the focus.
 func condTargetAggroNotOnMe(params map[string]any, ctx *EvalContext) Result {
 	mob := mobs.GetInstance(ctx.InstanceId)
-	if mob == nil || mob.Character.Aggro == nil {
+	if mob == nil || !mob.Character.IsInCombat() {
 		return Failure
 	}
 	target := actions.ResolveAggroTarget(mob.Character.Aggro)
 	if !target.Found {
 		return Failure
 	}
-	if target.Char.Aggro == nil {
+	if !target.Char.IsInCombat() {
 		return Success
 	}
 	// Target's aggro is on me (mob) iff Aggro.MobInstanceId == mob.InstanceId
 	// AND Aggro.UserId == 0 (mob target, not player target).
-	if target.Char.Aggro.MobInstanceId == mob.InstanceId && target.Char.Aggro.UserId == 0 {
+	if target.Char.CurrentCombatTarget().MobInstanceId == mob.InstanceId && target.Char.CurrentCombatTarget().UserId == 0 {
 		return Failure
 	}
 	return Success
@@ -152,7 +152,7 @@ func condPackmateIsTanking(params map[string]any, ctx *EvalContext) Result {
 		return Failure
 	}
 	for _, pm := range mobs.FindPackmatesInRoom(self) {
-		if pm.Character.Aggro != nil {
+		if pm.Character.IsInCombat() {
 			return Success
 		}
 	}
@@ -164,7 +164,7 @@ func condPackmateIsTanking(params map[string]any, ctx *EvalContext) Result {
 // Used to gate bonus-damage kicks (stomp when prone, knee when clinched).
 func condTargetNotStanding(params map[string]any, ctx *EvalContext) Result {
 	mob := mobs.GetInstance(ctx.InstanceId)
-	if mob == nil || mob.Character.Aggro == nil {
+	if mob == nil || !mob.Character.IsInCombat() {
 		return Failure
 	}
 	target := actions.ResolveAggroTarget(mob.Character.Aggro)

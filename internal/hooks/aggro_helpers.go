@@ -79,7 +79,7 @@ func RetargetOrEnd(char *characters.Character, room *rooms.Room,
 	// Scan players in the room first — prefer player targets over companions.
 	for _, pId := range room.GetPlayers(rooms.FindFighting) {
 		attackingPlayer := users.GetByUserId(pId)
-		if attackingPlayer == nil || attackingPlayer.Character.Aggro == nil {
+		if attackingPlayer == nil || !attackingPlayer.Character.IsInCombat() {
 			continue
 		}
 
@@ -96,7 +96,7 @@ func RetargetOrEnd(char *characters.Character, room *rooms.Room,
 	// Scan mobs in the room that are currently fighting.
 	for _, instId := range room.GetMobs(rooms.FindFighting) {
 		attackingMob := mobs.GetInstance(instId)
-		if attackingMob == nil || attackingMob.Character.Aggro == nil {
+		if attackingMob == nil || !attackingMob.Character.IsInCombat() {
 			continue
 		}
 
@@ -116,7 +116,7 @@ func RetargetOrEnd(char *characters.Character, room *rooms.Room,
 		if ownerId > 0 {
 			for _, instId := range room.GetMobs(rooms.FindFighting) {
 				attackingMob := mobs.GetInstance(instId)
-				if attackingMob == nil || attackingMob.Character.Aggro == nil {
+				if attackingMob == nil || !attackingMob.Character.IsInCombat() {
 					continue
 				}
 				if attackingMob.Character.Aggro.UserId == ownerId {
@@ -140,7 +140,7 @@ func RetargetOrEnd(char *characters.Character, room *rooms.Room,
 //     engage the first one found.
 func CompanionAutoTarget(mob *mobs.Mob, room *rooms.Room) {
 	// Already fighting — nothing to do.
-	if mob.Character.Aggro != nil {
+	if mob.Character.IsInCombat() {
 		return
 	}
 
@@ -172,7 +172,7 @@ func CompanionAutoTarget(mob *mobs.Mob, room *rooms.Room) {
 	}
 
 	// If owner is fighting, join their fight immediately.
-	if owner.Character.Aggro != nil {
+	if owner.Character.IsInCombat() {
 		ownerAggro := owner.Character.Aggro
 		if ownerAggro.UserId > 0 {
 			mob.Command(fmt.Sprintf("attack @%d", ownerAggro.UserId))
@@ -187,7 +187,7 @@ func CompanionAutoTarget(mob *mobs.Mob, room *rooms.Room) {
 	// Owner is idle — scan room for mobs attacking the owner and intercept.
 	for _, instId := range room.GetMobs(rooms.FindFighting) {
 		attackingMob := mobs.GetInstance(instId)
-		if attackingMob == nil || attackingMob.Character.Aggro == nil {
+		if attackingMob == nil || !attackingMob.Character.IsInCombat() {
 			continue
 		}
 		if attackingMob.Character.Aggro.UserId == ownerId {
