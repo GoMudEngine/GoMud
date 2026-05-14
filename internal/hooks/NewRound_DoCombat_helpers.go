@@ -481,17 +481,34 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 // handlePlayerFlee processes a player's flee attempt.
 // Returns true if the player is fleeing and should skip combat.
 func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) bool {
-	if user.Character.Aggro.Type != characters.Flee {
+	// Task 15: IsDisengaging() reads CombatPhase.State() == Disengaging,
+	// set by TransitionToDisengaging in flee.go. This replaces the legacy
+	// Aggro.Type == Flee sentinel check.
+	// TODO Task 18: remove legacy Aggro.Type fallback once Aggro is gone.
+	isFleeing := user.Character.IsDisengaging()
+	if !isFleeing && user.Character.Aggro != nil && user.Character.Aggro.Type == characters.Flee {
+		// Legacy path: Aggro-only set (no CombatPhase wired). Still handled.
+		isFleeing = true
+	}
+	if !isFleeing {
 		return false
 	}
 
-	// Revert to Default combat regardless of outcome
-	user.Character.SetAggro(user.Character.Aggro.UserId, user.Character.Aggro.MobInstanceId, characters.DefaultAttack)
+	// Revert to Default combat regardless of outcome (legacy path only).
+	// When CombatPhase is wired, ResolveFlee(false) handles the revert.
+	if user.Character.Aggro != nil && user.Character.Aggro.Type == characters.Flee {
+		user.Character.SetAggro(user.Character.Aggro.UserId, user.Character.Aggro.MobInstanceId, characters.DefaultAttack)
+	}
 
-	// Can't flee while in a grapple position (clinched or grounded)
+	// Can't flee while in a grapple position (clinched or grounded).
+	// CombatPhase position veto also blocks TransitionToDisengaging, but
+	// the message still needs to fire here for UX.
 	if user.Character.CombatPosition == characters.PositionClinched ||
 		user.Character.CombatPosition == characters.PositionGrounded {
 		user.SendText(`<ansi fg="red">You can't flee while grappled!</ansi>`)
+		if user.Character.CombatPhase != nil {
+			user.Character.CombatPhase.ResolveFlee(false)
+		}
 		return true
 	}
 
@@ -545,12 +562,20 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 	if blockedByMob != `` {
 		user.SendText(fmt.Sprintf(`<ansi fg="red-bold"><ansi fg="mobname">%s</ansi> blocks you from fleeing!</ansi>`, blockedByMob))
 		uRoom.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is blocked from fleeing by <ansi fg="mobname">%s</ansi>!`, user.Character.Name, blockedByMob), user.UserId)
+		// Task 15: flee failure — restore Engaged state in CombatPhase.
+		if user.Character.CombatPhase != nil {
+			user.Character.CombatPhase.ResolveFlee(false)
+		}
 		return true
 	}
 
 	if blockedByPlayer != `` {
 		user.SendText(fmt.Sprintf(`<ansi fg="red-bold"><ansi fg="username">%s</ansi> blocks you from fleeing!</ansi>`, blockedByPlayer))
 		uRoom.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is blocked from fleeing by <ansi fg="username">%s</ansi>!`, user.Character.Name, blockedByPlayer), user.UserId, blockedByPlayerId)
+		// Task 15: flee failure — restore Engaged state in CombatPhase.
+		if user.Character.CombatPhase != nil {
+			user.Character.CombatPhase.ResolveFlee(false)
+		}
 		return true
 	}
 
@@ -559,13 +584,22 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 
 	if exitName == `` {
 		user.SendText(`You can't find an exit!`)
+		// No exit found — treat as blocked (flee failure).
+		if user.Character.CombatPhase != nil {
+			user.Character.CombatPhase.ResolveFlee(false)
+		}
 		return true
 	}
 
 	user.SendText(fmt.Sprintf(`You flee to the <ansi fg="exit">%s</ansi> exit!`, exitName))
 	uRoom.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> flees to the <ansi fg="exit">%s</ansi> exit!`, user.Character.Name, exitName), user.UserId)
 
+	// Task 15: flee success — EndAggro clears legacy Aggro; ResolveFlee
+	// transitions CombatPhase Disengaging → Idle.
 	user.Character.EndAggro()
+	if user.Character.CombatPhase != nil {
+		user.Character.CombatPhase.ResolveFlee(true)
+	}
 
 	if err := rooms.MoveToRoom(user.UserId, exitRoomId); err == nil {
 

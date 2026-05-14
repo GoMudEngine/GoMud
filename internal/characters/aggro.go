@@ -2,6 +2,8 @@ package characters
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -109,11 +111,42 @@ func (c *Character) SetAggro(userId int, mobInstanceId int, aggroType AggroType,
 		RoundsWaiting: combatAddlWaitRounds,
 	}
 
+	// Task 15: Dual-write — also transition Combat Phase so new
+	// readers (IsInCombat, CurrentCombatTarget, etc.) stay correct.
+	// Errors are intentionally ignored: vetoes may legitimately reject
+	// the transition (non-combatant, dead target, etc.) while the
+	// legacy Aggro write has already done its job.
+	// TODO Task 18: remove legacy Aggro write once CombatPhase is sole
+	// source of truth.
+	if c.CombatPhase != nil {
+		trigger := combatphase.TriggerAttackCommand
+		if aggroType == SurpriseAttack {
+			trigger = combatphase.TriggerSurpriseAttack
+		}
+		_ = c.CombatPhase.TransitionToEngaging(combatphase.EngagingData{
+			Target: state.ActorRef{
+				UserId:        userId,
+				MobInstanceId: mobInstanceId,
+			},
+			RoundsUntil: combatAddlWaitRounds,
+		}, state.TransitionReason{
+			Trigger: trigger,
+			Actor:   state.ActorRef{UserId: c.userId},
+			Target:  state.ActorRef{UserId: userId, MobInstanceId: mobInstanceId},
+		})
+	}
 }
 
 func (c *Character) EndAggro() {
 	c.Aggro = nil
 	c.ClearGrappleState()
+	// Task 15: Dual-write — also clear Combat Phase so new readers stay correct.
+	// TODO Task 18: this becomes the sole cleanup path once Aggro is removed.
+	if c.CombatPhase != nil && c.CombatPhase.IsInCombat() {
+		c.CombatPhase.ForceIdle(state.TransitionReason{
+			Trigger: combatphase.TriggerForceIdle,
+		})
+	}
 }
 
 // ClearGrappleState clears all grapple-related state

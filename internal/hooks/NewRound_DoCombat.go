@@ -81,6 +81,14 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			continue
 		}
 
+		// Task 15: tick the Combat Phase machine every round for every
+		// player. This advances Engaging→Engaged countdowns and fires
+		// registered DispatchTickEvent listeners.
+		if user.Character.CombatPhase != nil {
+			user.Character.CombatPhase.OnRoundTick()
+			user.Character.CombatPhase.DispatchTickEvent()
+		}
+
 		handlePlayerShieldDecay(user)
 
 		if handlePlayerFoldCasting(user, userId) {
@@ -181,6 +189,13 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 				mob.Character.EndAggro()
 			}
 			continue
+		}
+
+		// Task 15: tick the Combat Phase machine every round for every mob.
+		// Advances Engaging→Engaged countdowns and fires tick event listeners.
+		if mob.Character.CombatPhase != nil {
+			mob.Character.CombatPhase.OnRoundTick()
+			mob.Character.CombatPhase.DispatchTickEvent()
 		}
 
 		mobRoom := rooms.LoadRoom(mob.Character.RoomId)
