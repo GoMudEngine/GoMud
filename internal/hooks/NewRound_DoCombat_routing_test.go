@@ -78,7 +78,7 @@ func seedSecondMobInstance(t *testing.T) {
 		MobId:      m1.MobId,
 		InstanceId: 101,
 		HomeRoomId: m1.HomeRoomId,
-		Hostile:    true,
+		AutoAggro: true,
 		Groups:     m1.Groups,
 		Character: characters.Character{
 			Name:      "Skeleton2",
@@ -104,7 +104,7 @@ func seedSecondMobInstance(t *testing.T) {
 	// state we want to preserve. Workaround: register the instance via the
 	// package's internal registry by re-seeding with both instances.
 	specs := map[int]*mobs.Mob{
-		int(m1.MobId): {MobId: m1.MobId, Zone: m1.Zone, Hostile: m1.Hostile,
+		int(m1.MobId): {MobId: m1.MobId, Zone: m1.Zone, AutoAggro: m1.AutoAggro,
 			ActivityLevel: m1.ActivityLevel, Groups: m1.Groups,
 			Character: characters.Character{Name: m1.Character.Name}},
 	}

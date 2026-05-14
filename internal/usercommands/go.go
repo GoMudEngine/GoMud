@@ -587,7 +587,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						continue
 					}
 
-					if !mob.Hostile { // Is it automatically hostile?
+					if !mob.AutoAggro { // Is it automatically hostile?
 						continue
 					}
 

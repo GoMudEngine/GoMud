@@ -98,11 +98,10 @@ type Character struct {
 	StaminaMax       stats.StatInfo                 `yaml:"-"`                       // The maximum stamina of the character. Don't write to yaml since is dynamically calculated.
 	ConvictionMax    stats.StatInfo                 `yaml:"-"`                       // The maximum conviction of the character. Don't write to yaml since is dynamically calculated.
 	ActionPointsMax          stats.StatInfo                 `yaml:"-"`                       // The maximum actions of character. Don't write to yaml since is dynamically calculated.
-	Aggro                    *Aggro                         `yaml:"-"`                       // Dont' store this. If they leave they break their aggro
-	// NEW (chunk 0 Task 3): Combat Phase state machine. Future source
-	// of truth for "am I in combat?" and "who am I targeting?". Lives
-	// alongside Aggro during the migration window; Aggro is deleted
-	// in Task 18 of the chunk-0 plan.
+	Aggro                    *Aggro                         `yaml:"-"`                       // Runtime combat target. All writes go through SetAggro/EndAggro (dual-write to CombatPhase).
+	// CombatPhase is the canonical state machine for "am I in combat?" and
+	// "who am I targeting?". It runs alongside the Aggro field; both are
+	// kept in sync by SetAggro/EndAggro. Direct .Aggro reads remain valid.
 	CombatPhase              *combatphase.Machine           `yaml:"-"`
 	CombatPosition           CombatPosition                 `yaml:"-"`                       // Current combat position (Standing/Prone/Clinched/Grounded). Don't store this.
 	PositionRoundsMin        int                            `yaml:"-"`                       // Minimum rounds in current position (for Prone bash/trip, etc). Don't store this.
@@ -438,14 +437,8 @@ func (c *Character) IsEngaged() bool {
 }
 
 // IsInCombat returns true if the character is in any non-Idle combat state.
-// During the Task 13→15 migration window both the legacy Aggro field and the
-// new CombatPhase machine can independently signal "in combat".  Either one
-// being non-nil / non-Idle is sufficient so that:
-//   - Migrated callers that read CombatPhase work correctly
-//   - Existing tests and engine code that still write only Aggro continue to
-//     pass while Task 15 wires the two systems together
-//
-// Task 18 (Aggro sunset) will remove the Aggro fallback once the field is gone.
+// CombatPhase is the primary source of truth; Aggro is checked as a fallback
+// so that test fixtures which set the field directly continue to work.
 func (c *Character) IsInCombat() bool {
 	if c.CombatPhase != nil && c.CombatPhase.IsInCombat() {
 		return true
@@ -480,19 +473,16 @@ func (c *Character) EngagedTarget() state.ActorRef {
 // states (Engaging.Target, Engaged.Target, or Disengaging.LastTarget).
 // Returns zero ActorRef when Idle.
 //
-// During the Task 13→15 migration window the legacy Aggro field may carry the
-// target even when CombatPhase has not been updated yet.  We fall back to
-// Aggro when CombatPhase returns a zero ref so that migrated readers work
-// correctly with both new and old setup paths.
-//
-// Task 18 (Aggro sunset) will remove the Aggro fallback once the field is gone.
+// CombatPhase is the primary source of truth. The Aggro field is checked as a
+// fallback so that test fixtures and any site that writes Aggro directly
+// continue to return valid targets.
 func (c *Character) CurrentCombatTarget() state.ActorRef {
 	if c.CombatPhase != nil {
 		if ref := c.CombatPhase.CurrentTarget(); !ref.IsZero() {
 			return ref
 		}
 	}
-	// Aggro fallback for transitional period.
+	// Aggro fallback.
 	if c.Aggro != nil {
 		return state.ActorRef{
 			UserId:        c.Aggro.UserId,

@@ -100,7 +100,7 @@ func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) 
 				continue
 			}
 
-			if mob.Hostile { // Does it always attack players?
+			if mob.AutoAggro { // Does it always attack players?
 
 				allPotentialTargets = append(allPotentialTargets, playerId)
 

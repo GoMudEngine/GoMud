@@ -30,7 +30,7 @@ func seedRegistry() func() {
 			Zone:          "Sanctum Basin",
 			StatPool:      100,
 			ActivityLevel: 50,
-			Hostile:       true,
+			AutoAggro: true,
 			Groups:        []string{"undead", "dungeon"},
 			Hates:         []string{"townfolk"},
 			IdleCommands:  []string{"emote lurks in the shadows.", "emote growls softly."},
@@ -46,7 +46,7 @@ func seedRegistry() func() {
 			Zone:          "Sanctum Basin",
 			StatPool:      120,
 			ActivityLevel: 30,
-			Hostile:       false,
+			AutoAggro: false,
 			Groups:        []string{"townfolk"},
 			Hates:         []string{},
 			IdleCommands:  []string{"emote hums a tune."},
@@ -64,7 +64,7 @@ func seedRegistry() func() {
 			Zone:          "Dark Forest",
 			StatPool:      80,
 			ActivityLevel: 70,
-			Hostile:       true,
+			AutoAggro: true,
 			Groups:        []string{"beasts"},
 			Hates:         []string{"*"},
 			IdleCommands:  []string{},
@@ -80,7 +80,7 @@ func seedRegistry() func() {
 			Zone:          "Sanctum Basin",
 			StatPool:      60,
 			ActivityLevel: 0, // should clamp to 10 on Validate
-			Hostile:       false,
+			AutoAggro: false,
 			Groups:        []string{"undead"},
 			Hates:         []string{"beasts"},
 			Character: characters.Character{
@@ -93,7 +93,7 @@ func seedRegistry() func() {
 			Zone:          "Sanctum Basin",
 			StatPool:      200,
 			ActivityLevel: 150, // should clamp to 100 on Validate
-			Hostile:       true,
+			AutoAggro: true,
 			Groups:        []string{},
 			Hates:         []string{},
 			Character: characters.Character{

@@ -1081,8 +1081,7 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 					`<ansi fg="username">%s</ansi>!`,
 				caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
 		}
-		if target.Character.Aggro == nil {
-			// Task 15: use SetAggro for dual-write (Aggro + CombatPhase).
+		if !target.Character.IsInCombat() {
 			target.Character.SetAggro(0, caster.InstanceId, characters.DefaultAttack)
 		}
 		// Magical crit received → willpower progression for defender
@@ -1101,8 +1100,7 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 		sendVisualRoomText(room, fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> afflicts <ansi fg="username">%s</ansi>!`,
 			caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
-		if target.Character.Aggro == nil {
-			// Task 15: use SetAggro for dual-write (Aggro + CombatPhase).
+		if !target.Character.IsInCombat() {
 			target.Character.SetAggro(0, caster.InstanceId, characters.DefaultAttack)
 		}
 	case "knockdown":
@@ -1130,8 +1128,7 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> knocks `+
 				`<ansi fg="username">%s</ansi> to the ground!`,
 			caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
-		if target.Character.Aggro == nil {
-			// Task 15: use SetAggro for dual-write (Aggro + CombatPhase).
+		if !target.Character.IsInCombat() {
 			target.Character.SetAggro(0, caster.InstanceId, characters.DefaultAttack)
 		}
 	case "buff":
@@ -1139,9 +1136,8 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 			target.AddBuff(buffId, "spell")
 		}
 		// Set aggro for harmful buff spells
-		// Task 15: use SetAggro for dual-write (Aggro + CombatPhase).
 		if spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti {
-			if target.Character.Aggro == nil {
+			if !target.Character.IsInCombat() {
 				target.Character.SetAggro(0, caster.InstanceId, characters.DefaultAttack)
 			}
 		}

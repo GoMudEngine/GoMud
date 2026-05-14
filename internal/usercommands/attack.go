@@ -116,8 +116,8 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	// --- TARGET SWITCHING LOGIC (Stage 7.4) ---
 	// If already in combat and trying to attack a different target, use target switching
 	if user.Character.IsInCombat() {
-		currentTargetUserId := user.Character.EngagedTarget().UserId
-		currentTargetMobId := user.Character.EngagedTarget().MobInstanceId
+		currentTargetUserId := user.Character.CurrentCombatTarget().UserId
+		currentTargetMobId := user.Character.CurrentCombatTarget().MobInstanceId
 
 		isDifferentTarget := false
 		if attackMobInstanceId > 0 && attackMobInstanceId != currentTargetMobId {

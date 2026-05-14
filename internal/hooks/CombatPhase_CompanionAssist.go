@@ -30,11 +30,12 @@ import (
 //     for MvP attacks (which fires before the round loop, not here)
 //   - Sibling companions in the same room are also directed to assist
 //
-// Task 18 will remove CompanionAutoTarget from aggro_helpers.go.
-// Until then, both paths may fire: the reactive (this file) fires when
-// the attacker is first recorded; the polling path fires the next round
-// tick. Duplicate attack commands are benign — the second attempt hits
-// an already-fighting companion or is vetoed.
+// CompanionAutoTarget in combat_retarget.go still runs as a polling
+// fallback in NewRound_DoCombat. Both paths may fire: the reactive
+// (this file) fires when the attacker is first recorded; the polling
+// path fires the next round tick. Duplicate attack commands are
+// benign — the second attempt hits an already-fighting companion or
+// is vetoed.
 func wireCompanionAssist(c *characters.Character) {
 	prevLen := 0
 	c.CombatPhase.SubscribeAttackersChange(func(attackers []state.ActorRef) {

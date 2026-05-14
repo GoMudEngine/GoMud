@@ -83,7 +83,11 @@ type Mob struct {
 	ActivityLevel   int      `yaml:"activitylevel,omitempty"` // 1-100%
 	InstanceId      int      `yaml:"-"`
 	HomeRoomId      int      `yaml:"-"`
-	Hostile         bool     // whether they attack on sight
+	// legacyHostile is the backward-compat YAML field. Loaders read `hostile:`
+	// and copy to AutoAggro in Validate(). New YAML should use `auto_aggro: true`.
+	// Future cleanup: bulk-rename hostile: → auto_aggro: in mob YAMLs, then
+	// remove this field.
+	legacyHostile bool `yaml:"hostile,omitempty"`
 	PackFleeImmune  bool     `yaml:"pack_flee_immune,omitempty"` // if true, won't flee when packmates die
 	LastIdleCommand uint8    `yaml:"-"`                          // Track what hte last used idlecommand was
 	BoredomCounter  uint8    `yaml:"-"`                          // how many rounds have passed since this mob has seen a player
@@ -1019,10 +1023,9 @@ func (r *Mob) Validate() error {
 		r.Character.NonCombatant = true
 	}
 
-	// Backward-compat: populate AutoAggro from the legacy Hostile field
-	// if AutoAggro wasn't set explicitly in YAML.
-	// Hostile is sunset in Task 18; new YAML should write `auto_aggro: true`.
-	if r.Hostile && !r.AutoAggro {
+	// Backward-compat: populate AutoAggro from the legacy `hostile:` YAML field
+	// if AutoAggro wasn't set explicitly. New mob YAMLs should use `auto_aggro: true`.
+	if r.legacyHostile && !r.AutoAggro {
 		r.AutoAggro = true
 	}
 

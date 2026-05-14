@@ -52,7 +52,7 @@ func seedAllRegistries() func() {
 		1: {
 			MobId:         1,
 			Zone:          "TestZone",
-			Hostile:       true,
+			AutoAggro: true,
 			ActivityLevel: 50,
 			Groups:        []string{"undead"},
 			Character: characters.Character{
@@ -62,7 +62,7 @@ func seedAllRegistries() func() {
 		2: {
 			MobId:         2,
 			Zone:          "TestZone",
-			Hostile:       false,
+			AutoAggro: false,
 			ActivityLevel: 30,
 			Character: characters.Character{
 				Name: "Merchant",
@@ -74,7 +74,7 @@ func seedAllRegistries() func() {
 			MobId:      1,
 			InstanceId: 100,
 			HomeRoomId: 1,
-			Hostile:    true,
+			AutoAggro: true,
 			Groups:     []string{"undead"},
 			Character: characters.Character{
 				Name:      "Skeleton",
@@ -2583,7 +2583,7 @@ func TestHandleIdleMobs_GossiperMob(t *testing.T) {
 		MobId:         114,
 		InstanceId:    200,
 		HomeRoomId:    1,
-		Hostile:       false,
+		AutoAggro: false,
 		ActivityLevel: 7,
 		Groups:        []string{"humanoid", "gossiper"},
 		Character: characters.Character{

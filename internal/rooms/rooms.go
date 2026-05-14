@@ -671,7 +671,7 @@ func (r *Room) Prepare(checkAdjacentRooms bool) {
 				}
 
 				if spawnInfo.ForceHostile {
-					mob.Hostile = true
+					mob.AutoAggro = true
 				}
 
 				if spawnInfo.MaxWander != 0 {
@@ -1165,7 +1165,7 @@ func (r *Room) GetMobs(findTypes ...FindFlag) []int {
 		}
 
 		// Useful to find any mobs that will always attack players
-		if mob.Hostile && typeFlag&FindHostile == FindHostile {
+		if mob.AutoAggro && typeFlag&FindHostile == FindHostile {
 			mobMatches = append(mobMatches, mobId)
 			continue
 		}
@@ -1180,7 +1180,7 @@ func (r *Room) GetMobs(findTypes ...FindFlag) []int {
 		// If not allied with players
 		// and not current aggressive to anything
 		// and won't automatically attack players
-		if typeFlag&FindNeutral == FindNeutral && !isCharmed && mob.Character.Aggro == nil && !mob.Hostile {
+		if typeFlag&FindNeutral == FindNeutral && !isCharmed && mob.Character.Aggro == nil && !mob.AutoAggro {
 			mobMatches = append(mobMatches, mobId)
 			continue
 		}

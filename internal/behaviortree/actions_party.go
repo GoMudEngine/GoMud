@@ -223,7 +223,7 @@ func engageHostilePlayerInRoom(mobInstanceId int, roomId int) bool {
 	if mob.Character.IsInCombat() {
 		return true // already engaged
 	}
-	if !mob.Hostile {
+	if !mob.AutoAggro {
 		return false
 	}
 	room := rooms.LoadRoom(roomId)

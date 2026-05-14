@@ -24,7 +24,7 @@ func buildGroupHateRoom(t *testing.T) (bandit, caravanMob *mobs.Mob, room *rooms
 		MobId:      9001,
 		InstanceId: 301,
 		HomeRoomId: 9999,
-		Hostile:    false, // not globally hostile — goes through HatesMob path
+		AutoAggro: false, // not globally hostile — goes through HatesMob path
 		Hates:      []string{"caravan"},
 		Character: characters.Character{
 			Name:      "Bandit Lookout",
@@ -41,7 +41,7 @@ func buildGroupHateRoom(t *testing.T) (bandit, caravanMob *mobs.Mob, room *rooms
 		MobId:      9002, // different MobId — HatesMob same-mob-type guard won't fire
 		InstanceId: 302,
 		HomeRoomId: 9999,
-		Hostile:    false,
+		AutoAggro: false,
 		Groups:     []string{"caravan"},
 		Character: characters.Character{
 			Name:      "Caravan Guard Ketil",
@@ -153,7 +153,7 @@ func TestLookForTrouble_NoAggroWhenGroupHateMissing(t *testing.T) {
 		MobId:      9001,
 		InstanceId: 301,
 		HomeRoomId: 9999,
-		Hostile:    false,
+		AutoAggro: false,
 		Hates:      nil, // no hates — should not aggro on caravan
 		Character: characters.Character{
 			Name:      "Neutral Guard",
