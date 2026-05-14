@@ -158,6 +158,23 @@ tree:
 Any node may include `event: <type>` to skip that branch when the event
 does not match. Nodes without an `event` field evaluate on all events.
 
+### Combat Phase transition events (chunk 0)
+
+These events fire ONCE per state transition (not per round):
+
+- `mob_engaging` — fires when Combat Phase transitions Idle → Engaging
+  (e.g., on attack command or attack btree action).
+- `mob_engaged` — fires when Engaging → Engaged completes (after the
+  RoundsUntil weapon-wait countdown).
+- `mob_disengaging` — fires when Engaged → Disengaging (flee initiated).
+- `mob_combat_ended` — fires when any state transitions to Idle (combat
+  ends for any reason: target died, flee succeeded, force-idle, etc.).
+
+Tick events (`mob_combat_round`, `mob_idle`) fire per-round-while-in-state.
+Transition events fire at the moment of state change.
+
+Future chunks (1-5) will add transition events for their machines.
+
 ---
 
 ## Condition Reference
