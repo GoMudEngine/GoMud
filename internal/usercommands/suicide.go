@@ -268,12 +268,7 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	}
 
 	// Resolve home room from player settings, falling back to default.
-	homeSetting := user.Character.GetSetting("home")
-	homeRoomId, ok := homeLocations[homeSetting]
-	if !ok {
-		homeRoomId = homeLocations["default"]
-	}
-	rooms.MoveToRoom(user.UserId, homeRoomId)
+	rooms.MoveToRoom(user.UserId, user.Character.ResolveRespawnRoom())
 
 	// Belt-and-suspenders: re-clear aggro after room move in case any
 	// code path (e.g., mob combat round processing) assigned aggro
