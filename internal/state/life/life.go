@@ -5,7 +5,6 @@
 package life
 
 import (
-	"errors"
 	"sync"
 
 	"github.com/GoMudEngine/GoMud/internal/state"
@@ -137,27 +136,3 @@ func lookupMachine(ref state.ActorRef) *Machine {
 	return machineRegistry[ref]
 }
 
-// === Transition method stubs (Tasks 3-10 implement) ===
-
-// TransitionToDead transitions Alive → Dead.
-// Stores DeadData (killer, damage map) for observer consumption.
-func (m *Machine) TransitionToDead(d DeadData, r state.TransitionReason) error {
-	return errors.New("not implemented")
-}
-
-// TransitionToRespawning transitions Dead → Respawning.
-// Player-only path; mobs stay Dead and are destroyed by Task 7
-// observer.
-func (m *Machine) TransitionToRespawning(d RespawningData, r state.TransitionReason) error {
-	return errors.New("not implemented")
-}
-
-// TransitionToAlive transitions Respawning → Alive (or Dead →
-// Alive for admin restoration).
-func (m *Machine) TransitionToAlive(r state.TransitionReason) error {
-	return errors.New("not implemented")
-}
-
-// ForceAlive drops to Alive from any state. Used by admin
-// commands and test setup. No-op if already Alive.
-func (m *Machine) ForceAlive(r state.TransitionReason) {}
