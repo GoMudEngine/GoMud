@@ -39,8 +39,9 @@ This effort collapses that surface to one canonical framework:
 | 3 | Activity | Not started | Free / Casting / Crafting / Foraging / Salvaging / ... |
 | 4 | Position | Not started | Standing / Prone / Clinched / Grounded |
 | 5 | Presence | Not started | Player and mob variants |
+| 6 | Perception | Not started | Sighted / Blinded. Observer-side dual to Awareness — centralizes room-broadcast visibility gating. Added 2026-05-13 after recurring blind/dark-room broadcast bugs (latest: companion-name leak through blindness). No hard dependency on chunks 3-5; could ship earlier if pain escalates. |
 
-**Mob aliveness work paused** for the duration of chunks 1-5. The
+**Mob aliveness work paused** for the duration of chunks 1-6. The
 aliveness substrate (memory, disposition, factions, schedules) is a
 consumer of the state machines; building it before the substrate is
 stable would create churn. Resumes after chunk 5.
@@ -274,11 +275,14 @@ characters, hooks, usercommands, mobcommands all green.
   permadeath path gone, chunk 0/1 regression) deferred to user
   session.
 
-**Aliveness work stays paused** for chunks 3-5. Chunk 3 (Activity
-machine) brainstorm is next.
+**Aliveness work stays paused** for chunks 3-6. Chunk 3 (Activity
+machine) brainstorm is next per the master spec ordering, with
+chunk 6 (Perception) added 2026-05-13 to address the recurring
+blind/dark-room broadcast bug class.
 
 Next: chunk 3 — Activity machine (`Free` / `Casting` / `Crafting` /
-`Foraging` / `Salvaging` / ...).
+`Foraging` / `Salvaging` / ...). Perception (chunk 6) may bump
+earlier in the sequence if blind-broadcast bugs become blocking.
 
 ---
 

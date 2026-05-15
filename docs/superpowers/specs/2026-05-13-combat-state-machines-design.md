@@ -67,11 +67,13 @@ This redesign:
 
 Brainstorming refined the framing:
 
-1. **Six orthogonal state machines, one flag.** Each machine
+1. **Seven orthogonal state machines, one flag.** Each machine
    models a single concern with explicit states and transitions.
    Concerns are orthogonal — a hidden character can be in
    combat or not; a casting character can be prone or standing.
-   The state list (final, after pushback):
+   The state list (final, after pushback; Perception added
+   2026-05-13 as chunk 6 after recurring blind/dark-room
+   broadcast bugs surfaced during chunks 1-2):
 
    | # | Type | Name | States |
    |---|------|------|--------|
@@ -81,7 +83,8 @@ Brainstorming refined the framing:
    | 4 | Machine | Awareness | Visible / Concealing / Hidden / Revealing |
    | 5 | Machine | Life | Alive / Dead / Respawning |
    | 6 | Machine | Presence | Player: Connecting / Active / Idle / AFK / Disconnected • Mob: Spawning / Active / Dormant / Despawning |
-   | 7 | Flag | Combatant | Combatant / NonCombatant |
+   | 7 | Machine | Perception | Sighted / Blinded |
+   | 8 | Flag | Combatant | Combatant / NonCombatant |
 
    Charm stays a struct field on Character (uses the
    framework's scheduled-transition machinery for rebellion
@@ -410,7 +413,109 @@ activity.
 - Presence = Despawning / Disconnected cancels all pending
   scheduled transitions.
 
-### 7. Combatant (Flag)
+### 7. Perception
+
+**States:** `Sighted | Blinded`
+
+**Concerns:** "can this observer see room events?", the recurring
+whack-a-mole bug class where messages leak through to blind or
+dark-room players. Latest exemplar (2026-05-13): a player's own
+companion casts a spell and the message renders with the
+companion's name, despite the owner being in a dark room. Same
+class of bug has surfaced repeatedly: combat broadcasts ignoring
+observer state, mob actions visible despite blindness, room-
+broadcast text not gated by observer night-vision.
+
+**Replaces:** the scattered ad-hoc visibility/blindness checks at
+each room-broadcast site. The current `room.SendTextVisual(text,
+excludeUserId)` family assumes every non-excluded recipient can
+"see" the broadcast; Perception centralizes the observer-side
+gate so the check lives in one helper instead of N broadcast
+sites.
+
+**Key transitions:**
+- `Sighted → Blinded` (blindness condition / debuff buff /
+  spell effect applied)
+- `Blinded → Sighted` (effect expires, cure cast, condition
+  cleared)
+
+Two states minimum. Dimsighted / partial-vision deferred (YAGNI —
+no current game mechanic pulls for an intermediate state). Add
+later if a "blurred vision" or "partial blindness" effect needs
+distinct semantics.
+
+**Observer + actor + environment composition:**
+
+Perception is the *observer*-side complement to Awareness (which
+is *actor*-side). The composite "does this observer perceive this
+actor's action" relationship is:
+
+```
+SEEING(observer, actor, room) :=
+    observer.IsSighted()                              // Perception (this chunk)
+      && actor.IsVisibleTo(observer)                  // Awareness (chunk 1)
+      && (room.IsLit() || observer.HasNightVision())  // environment + buff
+```
+
+Room-broadcast helpers funnel through a single perceiver-aware
+dispatcher. Each potential recipient's Perception is consulted;
+Blinded observers receive either fallback text ("you hear
+someone casting" / "you sense movement nearby") or full
+suppression, gated by broadcast tag. Default policy by tag:
+
+| Broadcast tag | Sighted | Blinded |
+|---|---|---|
+| Speech (say / shout) | full text | full text (audible) |
+| Combat hit/miss | full text | fallback ("you hear blows landing nearby") |
+| Spell cast | full text | fallback ("you hear an incantation") |
+| Movement (enter/leave) | full text | fallback ("you hear footsteps") |
+| Item drop/pickup | full text | fallback ("you hear something clatter") |
+| Atmospheric description | full text | suppress |
+
+Final per-tag matrix authored during chunk 6 spec.
+
+**Cross-machine rules:**
+- `Life: → Dead` does NOT transition Perception. Dead characters
+  route through the Shadow Realm room separation, not via
+  blindness suppression.
+- `Presence: Spawning/Respawning → Active` starts Sighted (fresh
+  state on entry).
+- No machine vetoes Perception transitions — blindness is an
+  externally-applied effect, not a player-elected state.
+- Awareness queries (`IsVisibleTo`) and Perception queries
+  (`IsSighted`) compose at broadcast time, not at transition time.
+  Neither machine vetoes the other.
+
+**Sunset:**
+- Ad-hoc `c.HasCondition(ConditionBlinded)` checks at broadcast sites
+- Any `IsBlind()` predicate scattered across hooks / usercommands
+- `room.SendTextVisual` callers audited and routed through the
+  perceiver-aware dispatcher (speech / combat / spell / movement
+  / item / atmosphere — one tag per call site)
+
+**Behavior Matrix:** ~20-30 rows authored during chunk 6 spec.
+Coverage:
+- Sighted → Blinded transitions on each effect source
+- Blinded → Sighted on each cure / expiry path
+- Per-tag broadcast contract (suppress vs fallback)
+- Companion-by-name leak regression: blind observer + companion
+  cast in same room → fallback text, not "<companion> casts X"
+- Multi-observer room broadcast with mixed Perception states →
+  each observer sees the appropriate variant
+- Interaction with NightVision and dark-room: blind observer
+  with NightVision is still blind (Perception trumps light)
+- Self-perception: the actor of an action always perceives their
+  own action regardless of blind state (UI consistency)
+
+**Why chunk 6 (rationale for the addition):** Awareness (chunk 1)
+established actor-side visibility; the operational bugs that
+remain (and keep recurring after each spot-fix) are observer-
+side gaps. Centralization is the unblock. Slots cleanly after
+Presence because no earlier chunk depends on it, and the
+recurring nature of the bug class argues for a structural fix
+rather than continued whack-a-mole.
+
+### 8. Combatant (Flag)
 
 **Values:** `Combatant | NonCombatant`
 
@@ -449,6 +554,9 @@ this is the bird's-eye view.
 | Awareness: → Hidden | Combat Phase next Engaging transition uses SurpriseAttack reason | Hidden attack = surprise crit setup |
 | Presence: → Disconnected/Dormant | Scheduled transitions paused, not canceled | Resume on reconnect |
 | Combatant: → NonCombatant | Combat Phase: any → Idle (forced); all inbound aggro cleared | Pacifism is immediate |
+| Any: room broadcast (visual tags) | Perception consulted per observer; Blinded → suppress or fallback per tag | Centralized observer-side visibility gating (chunk 6) |
+| Awareness: actor.IsVisibleTo(observer) | Composed with observer.IsSighted() and room.IsLit() to produce SEEING | Actor + observer + environment combine at broadcast time |
+| Presence: Spawning/Respawning → Active | Perception → Sighted (fresh start) | Initial state on entry |
 
 ## Migration strategy
 
@@ -481,15 +589,21 @@ discovered during smoke.
 
 | Chunk | Title | Size | Depends on | Status |
 |-------|-------|------|-----------|--------|
-| 0 | State machine framework + Combat Phase | XL | — | Not started |
-| 1 | Awareness machine | M | 0 | Not started |
-| 2 | Life machine | M | 0 | Not started |
+| 0 | State machine framework + Combat Phase | XL | — | Done (2026-05-13) |
+| 1 | Awareness machine | M | 0 | Done (2026-05-15) |
+| 2 | Life machine | M | 0 | Done (2026-05-13) |
 | 3 | Activity machine | L | 0 | Not started |
 | 4 | Position machine | M | 0, 1 (interactions) | Not started |
 | 5 | Presence machine | M | 0 | Not started |
+| 6 | Perception machine | S-M | 0, 1 (composes with Awareness) | Not started |
 
-Total estimated effort: 6-8 weeks. Aliveness pauses for the
-duration; resumes after chunk 5 lands.
+Total estimated effort: 7-9 weeks (chunk 6 added 2026-05-13).
+Aliveness pauses for the duration; resumes after chunk 6 lands.
+
+**Note on chunk 6 ordering:** Chunk 6 has no hard dependency on
+chunks 3-5 and could ship earlier if the blind/dark-room broadcast
+bugs become blocking. Current plan keeps chronological numbering;
+revisit if operational pain escalates.
 
 ## Behavior Matrix template
 
@@ -568,10 +682,25 @@ the rationale, not just "make the test pass."
 - **New top-level work item** added to MEMORY.md / roadmap:
   "Combat State Machines — systemic redesign (6 chunks)."
 
+## Followup candidates (post-chunk-6)
+
+- **Shared ability cooldown.** rally / warcry / taunt / special
+  attacks / casts all share one cooldown timer. Two states
+  (Ready / OnCooldown) fits the framework cleanly, but no cross-
+  machine consumer (no quest/faction/AI subscriber wants to react
+  to "cooldown started"). Lean toward a `Character.AbilityCooldown`
+  helper rather than a full machine. Revisit if cross-cutting
+  consumers surface during chunks 3-6.
+- **Deafened state on Perception.** Adds an audio-broadcast gate
+  parallel to the visual gate. YAGNI for now (no current
+  mechanic pulls for it; the audio-broadcast surface is much
+  smaller than visual). Add as a Perception sub-state or split
+  into an Audition machine if a "deafen" effect lands.
+
 ## Resumption criteria
 
 State machines work is complete when:
-1. All six machine chunks landed with their Behavior Matrices
+1. All seven machine chunks landed with their Behavior Matrices
    green.
 2. Chunk 2.7 smoke re-runs cleanly against the new substrate
    (thief archetype behaves correctly: hides, attempts steal,
