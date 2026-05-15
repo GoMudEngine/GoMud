@@ -3,6 +3,7 @@ package hooks
 import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
@@ -61,6 +62,12 @@ func wireLifeCrossMachineCascades(c *characters.Character) {
 				c.Stamina = c.StaminaMax.Value / 20       // 5%
 				c.Conviction = c.ConvictionMax.Value / 20 // 5%
 				_ = c.AddBuff(81, false)                  // NoAggroTarget grace
+
+				// Clear damage ledger and notify vitals subscribers.
+				clear(c.PlayerDamage)
+				if uid := c.GetUserId(); uid != 0 {
+					events.AddToQueue(events.CharacterVitalsChanged{UserId: uid})
+				}
 			}
 		})
 }

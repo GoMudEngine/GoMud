@@ -6,7 +6,6 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
-	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/exit"
@@ -6424,75 +6423,20 @@ func TestBuildQuestContext(t *testing.T) {
 	assert.Nil(t, result)
 }
 
-// ─── applyStatDecay ────────────────────────────────────────────────────────
+// ─── applyStatDecay / applySkillRust ─────────────────────────────────────────
+//
+// These functions moved to internal/hooks/Death_PlayerCleanup.go as
+// applyPlayerStatDecay and applyPlayerSkillRust (chunk-2 Task 9).
+// They are package-private in hooks and cannot be imported from here
+// (hooks → usercommands dependency already exists; reverse import
+// would be circular). Logic coverage lives in hooks_test.go.
 
 func TestApplyStatDecay(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, _ := getTestUserAndRoom(t)
-
-	config := configs.GetGamePlayConfig()
-	origStr := user.Character.Stats.Strength.Training
-	origDex := user.Character.Stats.Dexterity.Training
-	origPer := user.Character.Stats.Perception.Training
-	origVit := user.Character.Stats.Vitality.Training
-	origWil := user.Character.Stats.Willpower.Training
-	origCha := user.Character.Stats.Charisma.Training
-
-	// Set some training to ensure decay can happen
-	user.Character.Stats.Strength.Training = 50
-	user.Character.Stats.Dexterity.Training = 50
-	user.Character.Stats.Perception.Training = 50
-	user.Character.Stats.Vitality.Training = 50
-	user.Character.Stats.Willpower.Training = 50
-	user.Character.Stats.Charisma.Training = 50
-
-	applyStatDecay(user, config)
-
-	// At least one stat should have decreased
-	totalBefore := 300 // 6 * 50
-	totalAfter := user.Character.Stats.Strength.Training +
-		user.Character.Stats.Dexterity.Training +
-		user.Character.Stats.Perception.Training +
-		user.Character.Stats.Vitality.Training +
-		user.Character.Stats.Willpower.Training +
-		user.Character.Stats.Charisma.Training
-	assert.Less(t, totalAfter, totalBefore)
-
-	// Restore
-	user.Character.Stats.Strength.Training = origStr
-	user.Character.Stats.Dexterity.Training = origDex
-	user.Character.Stats.Perception.Training = origPer
-	user.Character.Stats.Vitality.Training = origVit
-	user.Character.Stats.Willpower.Training = origWil
-	user.Character.Stats.Charisma.Training = origCha
+	t.Skip("moved to hooks.applyPlayerStatDecay (Death_PlayerCleanup.go); tested there")
 }
 
-// ─── applySkillRust ─────────────────────────────────────────────────────────
-
 func TestApplySkillRust(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, _ := getTestUserAndRoom(t)
-
-	config := configs.GetGamePlayConfig()
-
-	t.Run("no_eligible_skills", func(t *testing.T) {
-		// No skills at all — should return without panic
-		user.Character.Skills = map[string]int{}
-		applySkillRust(user, config)
-	})
-
-	t.Run("with_eligible_skills", func(t *testing.T) {
-		user.Character.Skills = map[string]int{
-			"melee":  5,
-			"ranged": 3,
-		}
-		applySkillRust(user, config)
-		// Just verify no panic — actual decay depends on recency tracking
-	})
+	t.Skip("moved to hooks.applyPlayerSkillRust (Death_PlayerCleanup.go); tested there")
 }
 
 // ─── GetLockRender ──────────────────────────────────────────────────────────

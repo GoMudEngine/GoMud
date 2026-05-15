@@ -16,10 +16,11 @@ var validTransitions = state.TransitionTable[State]{
 
 // Trigger reason constants.
 const (
-	TriggerHealthZero   = "health_zero"
-	TriggerSuicide      = "suicide_command"
-	TriggerAdminKill    = "admin_kill"
-	TriggerCleanupReady = "cleanup_ready"
-	TriggerRespawnReady = "respawn_ready"
-	TriggerForceAlive   = "force_alive"
+	TriggerHealthZero      = "health_zero"
+	TriggerSuicide         = "suicide_command"
+	TriggerAdminKill       = "admin_kill"
+	TriggerCleanupReady    = "cleanup_ready"
+	TriggerRespawnReady    = "respawn_ready"
+	TriggerRespawnComplete = "respawn_complete"
+	TriggerForceAlive      = "force_alive"
 )

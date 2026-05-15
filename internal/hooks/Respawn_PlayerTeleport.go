@@ -31,6 +31,11 @@ func wireRespawnTeleport(c *characters.Character) {
 			}
 
 			rooms.MoveToRoom(u.UserId, c.ResolveRespawnRoom())
+
+			// Belt-and-suspenders: re-clear aggro after MoveToRoom in
+			// case any code path reassigned aggro during the room
+			// transition (e.g., mob combat round processed mid-move).
+			c.EndAggro()
 		})
 }
 
