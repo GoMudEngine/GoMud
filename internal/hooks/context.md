@@ -591,6 +591,55 @@ The round driver reads Combat Phase state instead of legacy `Aggro`:
 - `c.CombatPhase.OnCombatRoundEnd()` clears the `SurpriseLeft` flag
   at end-of-round for surprise engagements.
 
+## Awareness State Machine Integration (chunk 1)
+
+Four files in the hooks package wire the Awareness machine into the
+engine without creating import cycles (the characters package cannot
+import hooks; hooks import characters and register via `OnCharacterCreated`).
+
+### Awareness_Vetoes.go
+
+Registers the activity check and detection-roll veto callbacks on every new
+`Character` via `characters.OnCharacterCreated(wireAwarenessVetoes)`.
+
+Each veto reads the current character field for its concern.
+
+| Veto registration | Reads |
+|-------------------|-------|
+| `RegisterActivityCheck` | `c.CastingState == nil && c.CraftingState == nil` |
+| `RegisterDetectionCheck` | validates sneak attempt is proceeding (scaffold) |
+
+### Awareness_Cascades.go
+
+Registers an `AfterTransition` callback on the Awareness machine. When
+the machine transitions away from or into the `Hidden` state, the hook
+applies or removes buff #9 to keep the visible effect synchronized with
+the invisible state.
+
+Also subscribes to Combat Phase's `OnEndOfRoundIfSurprise` callback. When
+a surprise engagement completes its first round, the hook triggers the
+Awareness reveal cascade (`Hidden → Revealing → Visible`), forcing any
+hidden characters out of hiding.
+
+Events and cascades (per state transition, not per round):
+- Awareness `Visible → Hidden`: apply buff #9 + room text "sneaks away"
+- Awareness `Hidden → Visible`: remove buff #9 + room text "emerges from hiding"
+- Combat Phase end-of-surprise round: trigger Awareness reveal cascade
+
+### Awareness_LightChange.go
+
+Scaffolding for future light-source re-roll mechanics. Registers a
+`OnCharacterCreated` callback to set up the listener registration hooks
+for light-state-change events. Today a no-op pending full light-system
+design; the file exists to document the integration point for future
+chapters.
+
+### Logout_AwarenessCleanup.go
+
+Registers an `OnPlayerDespawn` listener that calls `character.Awareness.ForceVisible()`
+to ensure the awareness machine is reset on logout. Prevents stale awareness
+state or leaks if a character is reused or respawned.
+
 ## Dependencies
 
 - `internal/events` - Event system for listener registration and event processing
@@ -605,3 +654,4 @@ The round driver reads Combat Phase state instead of legacy `Aggro`:
 - `internal/worldevents` - World event recording for emergent behavior milestones
 - `internal/mudlog` - Logging system for debugging and monitoring
 - `internal/state/combatphase` - Combat Phase state machine (chunk 0)
+- `internal/state/awareness` - Awareness state machine (chunk 1)

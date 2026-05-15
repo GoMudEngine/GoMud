@@ -410,6 +410,66 @@ Current registrations (all in `internal/hooks/`):
 - `wireCombatPhaseBtreeEvents` — wires the btree transition cascade
 - `wireCompanionAssist` — subscribes to Attackers-change events
 
+## Awareness Machine Integration (chunk 1)
+
+### New field: Awareness
+
+```go
+Awareness *awareness.Machine `yaml:"-"`
+```
+
+Initialized in `New()` and lazily in `Validate()` (for characters loaded
+from YAML without a direct `New()` path). The awareness machine tracks
+whether a character is currently hidden and coordinates state transitions
+for sneak attempts, detection, and revealing. It operates independently
+of Combat Phase but cascades through the same hook framework.
+
+### New predicate: IsHidden()
+
+```go
+func (c *Character) IsHidden() bool
+    // true when Awareness == Hidden
+    // replacement for the old HasBuffFlag(buffs.Hidden) pattern
+```
+
+The only canonical way to check if a character is hidden. It reads directly
+from the Awareness machine's state, not from buff #9 (which is now a
+side-effect carrier only).
+
+### Cascade pattern: Awareness to Buff #9
+
+The `Awareness_Cascades.go` hook ensures buff #9 ("Hidden" status effect)
+stays synchronized with the Awareness machine:
+
+- When Awareness transitions to `Hidden` state, the hook applies buff #9
+  to the character (providing stat mods and room broadcast text).
+- When Awareness transitions away from `Hidden`, the hook removes buff #9.
+
+This maintains backward compatibility with systems that check for buff #9
+while keeping the Awareness machine as the canonical state source.
+
+### Hidden movement stamina scaling
+
+When a character is `Hidden`, movement stamina cost is multiplied by
+`HiddenMoveStaminaMultiplier` (config default 1.0, tunable at runtime).
+This is read in `GetMovementStaminaCost()` and applied before returning
+the movement cost to the caller.
+
+### Integration with Combat Phase
+
+The Awareness machine subscribes to Combat Phase's `OnEndOfRoundIfSurprise`
+callback (wired in `Awareness_Cascades.go`). When a surprise engagement
+completes its first round of swings, the Awareness machine triggers a
+reveal cascade (`Hidden → Revealing → Visible`), forcing surprise-attacked
+sneakers out of hiding. The full cascade completes before the next round
+begins, ensuring surprised attackers are visible for retaliation.
+
+### Logout cleanup
+
+The `Logout_AwarenessCleanup.go` hook calls `ForceVisible()` on logout,
+ensuring the awareness machine doesn't leak state or block future character
+reuses (edge case safety).
+
 ## Dependencies
 - `internal/stats`: Core statistics definitions
 - `internal/items`: Item system integration
@@ -422,3 +482,4 @@ Current registrations (all in `internal/hooks/`):
 - `internal/gametime`: Time-based mechanics
 - `internal/colorpatterns`: Text formatting and colors
 - `internal/state/combatphase`: Combat Phase state machine (chunk 0)
+- `internal/state/awareness`: Awareness state machine (chunk 1)

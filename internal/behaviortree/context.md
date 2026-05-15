@@ -228,12 +228,17 @@ Condition nodes use `type: condition` with `check: <name>`.
 | `target_power_ratio_above` | `value` (float) | True when self_power / target_power > value. Target resolution: `Event.UserId` → `Aggro.MobInstanceId` → `Aggro.UserId`. Returns Failure if no target resolvable or value missing/zero. |
 | `target_power_ratio_below` | `value` (float) | Mirror of `_above`: true when ratio < value. |
 
-### Stealth & Visibility (chunk 2.7)
+### Stealth & Visibility (chunk 1)
+
+Post-chunk-1, hidden-state conditions read via the `Character.IsHidden()`
+predicate, which consults the Awareness machine instead of the buff #9 flag.
+Conditions now reflect the canonical awareness state, not the side-effect
+buff.
 
 | Condition | Params | Description |
 |-----------|--------|-------------|
-| `mob_is_hidden` | none | True when self carries the Hidden buff (ID 9). |
-| `target_is_hidden` | none | True when the resolved target carries the Hidden buff (ID 9). |
+| `mob_is_hidden` | none | True when self.Awareness.IsHidden() (previously checked buff #9). |
+| `target_is_hidden` | none | True when the resolved target.Awareness.IsHidden() (previously checked buff #9). |
 | `target_has_gold` | `min` (int) | True when the resolved PLAYER target has at least N gold. Mob targets always return Failure. |
 
 ---
