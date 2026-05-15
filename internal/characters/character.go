@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
 	"github.com/GoMudEngine/GoMud/internal/stats"
 )
@@ -103,6 +104,10 @@ type Character struct {
 	// "who am I targeting?". It runs alongside the Aggro field; both are
 	// kept in sync by SetAggro/EndAggro. Direct .Aggro reads remain valid.
 	CombatPhase              *combatphase.Machine           `yaml:"-"`
+	// Awareness state machine (chunk 1). Source of truth for
+	// "is this character hidden?" Buff #9 still exists as effect
+	// carrier; this machine drives its add/remove via cascade.
+	Awareness                *awareness.Machine             `yaml:"-"`
 	CombatPosition           CombatPosition                 `yaml:"-"`                       // Current combat position (Standing/Prone/Clinched/Grounded). Don't store this.
 	PositionRoundsMin        int                            `yaml:"-"`                       // Minimum rounds in current position (for Prone bash/trip, etc). Don't store this.
 	GrappleControllerId      int                            `yaml:"-"`                       // UserId or MobInstanceId of grapple controller (0 = none, Stage 8.2+). Don't store this.
@@ -189,6 +194,7 @@ func New() *Character {
 		ConsecutiveHits:   0,
 		ConsecutiveMisses: 0,
 		CombatPhase:       combatphase.NewMachine(),
+		Awareness:         awareness.NewMachine(),
 	}
 
 	// Roll character stats using normal distribution
