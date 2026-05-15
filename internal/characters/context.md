@@ -470,6 +470,98 @@ The `Logout_AwarenessCleanup.go` hook calls `ForceVisible()` on logout,
 ensuring the awareness machine doesn't leak state or block future character
 reuses (edge case safety).
 
+## Life Machine Integration (chunk 2)
+
+### New field: Life
+
+```go
+Life *life.Machine `yaml:"-"`
+```
+
+Initialized in `New()` and lazily in `Validate()` (for characters
+loaded from YAML without a direct `New()` path). `RegisterMachine`
+is called immediately after allocation. The Life machine is the
+canonical source of truth for "is this character alive?".
+
+### Predicate methods
+
+```go
+func (c *Character) IsAlive() bool
+    // true when Life == Alive
+
+func (c *Character) IsDead() bool
+    // true when Life == Dead
+
+func (c *Character) IsRespawning() bool
+    // true when Life == Respawning (player only)
+```
+
+Note: these predicates call through to the Life machine. Tests that
+exercise code paths gated by these predicates must initialize the
+Life machine (via `Validate()` or direct `NewMachine()` assignment)
+or the call will panic on a nil pointer.
+
+### Die helper (die.go)
+
+```go
+func (c *Character) Die(killer state.ActorRef, trigger string)
+```
+
+Chains all Life transitions in the correct order. Players complete
+all three states (`Dead → Respawning → Alive`) same-tick via
+synchronous `AfterTransition` observer chains. Mobs only transition
+to `Dead`; the instance-cleanup observer fires synchronously and
+despawns the mob.
+
+Callers MUST pre-check before calling `Die`:
+1. `ReviveOnDeath` buff (prevents death; callers bail early if set)
+2. `LastSuicideRound` dedupe (if the call site can double-fire)
+3. Shadow Realm zone guard (player call sites only)
+
+`Die` is idempotent: if the Life machine is already `Dead` or
+`Respawning` it returns immediately without firing observers.
+
+### ResolveRespawnRoom (respawn_home.go)
+
+```go
+func (c *Character) ResolveRespawnRoom() int
+```
+
+Reads the player's `"home"` setting, looks it up in
+`HomeLocations`, and falls back to `"default"` (Sanctum Basin
+entrance, room 0) if unset or unrecognized.
+
+`HomeLocations` maps setting key → room ID. `HomeLocationNames`
+maps setting key → display string. Both are exported maps consumed
+by `sethome.go` (key validation) and by `Respawn_PlayerTeleport.go`
+(destination resolution).
+
+Current entries:
+
+| Key | Room ID | Display Name |
+|-----|---------|--------------|
+| `"default"` | 0 | Sanctum Basin |
+| `"thornwall"` | 468 | Thornwall City (Temple Interior) |
+| `"stillwater"` | 4123 | Stillwater (Temple of Stillwater) |
+
+### MobInstanceId field
+
+```go
+MobInstanceId int `yaml:"-"`
+```
+
+Non-persisted field set to the mob's live `InstanceId` at
+character initialization. Used as a cheap gating check in Life
+machine observers (`c.MobInstanceId != 0` = mob) without requiring
+a cast or registry lookup.
+
+### OnCharacterCreated additions (chunk 2)
+
+The `OnCharacterCreated` registry gains Life-machine wire callbacks.
+New registrations (all in `internal/hooks/`):
+- `wireLifeMachine` — registers the Life machine and all Death +
+  Respawn observer chains
+
 ## Dependencies
 - `internal/stats`: Core statistics definitions
 - `internal/items`: Item system integration
@@ -483,3 +575,4 @@ reuses (edge case safety).
 - `internal/colorpatterns`: Text formatting and colors
 - `internal/state/combatphase`: Combat Phase state machine (chunk 0)
 - `internal/state/awareness`: Awareness state machine (chunk 1)
+- `internal/state/life`: Life state machine (chunk 2)

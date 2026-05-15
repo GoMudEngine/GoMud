@@ -640,6 +640,83 @@ Registers an `OnPlayerDespawn` listener that calls `character.Awareness.ForceVis
 to ensure the awareness machine is reset on logout. Prevents stale awareness
 state or leaks if a character is reused or respawned.
 
+## Life Machine Cascade + Death/Respawn Observers (chunk 2)
+
+Fourteen files in the hooks package wire the Life machine into the
+engine without creating import cycles. Each file registers its
+observer via `characters.OnCharacterCreated(wireXxx)` at `init()`
+time. Player-only observers gate on `c.GetUserId() != 0`; mob-only
+observers gate on `c.MobInstanceId != 0`.
+
+### Life_Cascades.go
+
+Cross-machine cleanup that fires on two Life transitions:
+
+**Alive → Dead:**
+- Forces Combat Phase to `Idle` (`ForceIdle`)
+- Forces Awareness to `Visible` (`ForceVisible`)
+- Nils `CastingState` and `CraftingState`
+- Resets `CombatPosition` to Standing
+- Clears `GrappleControllerId`
+- Cancels all non-permanent active buffs
+- Clears active combat conditions
+
+**Dead → Respawning:**
+- Refills all resource pools to 5% of max
+- Applies `NoAggroTarget` grace buff (#81)
+- Clears live `PlayerDamage` map (snapshot already in `DeadData`)
+- Queues `CharacterVitalsChanged` event
+
+### Death observers
+
+| File | Purpose |
+|------|---------|
+| `Death_PlayerCleanup.go` | Stat decay + skill rust penalties, KD tracking (death count), party death notifications |
+| `Death_PlayerAnnouncement.go` | Room broadcast, global broadcast, `events.PlayerDeath` queue, worldevents PvE emit, weakened/darkness text, instance ejection |
+| `Death_PlayerCorpse.go` | Player corpse creation in the death room |
+| `Death_InboundAggroCleanup.go` | Clears mobs and companions that were targeting the dying actor; fires for both player and mob deaths |
+| `Death_MobLoot.go` | Carried and equipped item drop, gold drop, dark-room sound cue, mob corpse creation |
+| `Death_AlivenessSubstrate.go` | Fires `events.MobDeath`; downstream subscribers handle faction rep, opinion update, crime recording, knowledge propagation, bounty resolution |
+| `Death_MobInstanceCleanup.go` | `DeleteMobInstance`, `DestroyInstance`, `CleanupMobSpawns`, `RemoveMob` |
+| `Death_MobBroadcast.go` | Room "X has died" broadcast, Guide tempdata, worldevents `MobKilledByPlayer` |
+| `Death_MobBehaviorTree.go` | Fires `mob_die` btree event with primary killer's `UserId` |
+| `Death_MobKillCredit.go` | `EndAggro` on killers, `KD.AddMobKill`, `OnFirstMobKill`, party kill credit |
+| `Death_MobCharmCleanup.go` | `TrackRecentDeath`, `RemoveCharm`, reverse-track player `TrackCharmed` |
+
+### Respawn observers
+
+| File | Purpose |
+|------|---------|
+| `Respawn_PlayerTeleport.go` | `rooms.MoveToRoom` to `c.ResolveRespawnRoom()` destination; belt-and-suspenders `EndAggro` |
+| `Respawn_PlayerAutoLook.go` | Fires `u.Command("look")` for room-render UX after respawn teleport |
+
+### Wiring pattern
+
+All fourteen files follow the same registration pattern:
+
+```go
+func init() {
+    characters.OnCharacterCreated(wireXxx)
+}
+
+func wireXxx(c *characters.Character) {
+    c.Life.Inner().AfterTransition(func(from, to life.State,
+        r state.TransitionReason) {
+        if from != life.Alive || to != life.Dead {
+            return
+        }
+        // ... observer logic, gated by c.GetUserId() != 0
+        // or c.MobInstanceId != 0 as appropriate
+    })
+}
+```
+
+The `AfterTransition` callbacks on the `state.Machine[State]` inner
+framework call all registered observers synchronously before
+returning control to the caller. This means by the time
+`c.Life.TransitionToDead(...)` returns, all death-cascade side
+effects have already fired.
+
 ## Dependencies
 
 - `internal/events` - Event system for listener registration and event processing
@@ -655,3 +732,4 @@ state or leaks if a character is reused or respawned.
 - `internal/mudlog` - Logging system for debugging and monitoring
 - `internal/state/combatphase` - Combat Phase state machine (chunk 0)
 - `internal/state/awareness` - Awareness state machine (chunk 1)
+- `internal/state/life` - Life state machine (chunk 2)

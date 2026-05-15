@@ -127,3 +127,30 @@ Searched `tools/testing/goals/` and `tools/testing/roles/` for permadeath/extra-
 3. **Permadeath system already sunset before chunk 2.** References in spec/plan files show permadeath was already identified for removal; chunk 2's T11 completed that cleanup. The system was not live.
 
 4. **Death flow references are all post-chunk-2.** PATCH_NOTES entries about respawn grace, stat decay, skill rust, and 5% pool restoration are accurate and intentional; no corrections needed.
+
+---
+
+## Post-T13 additions (found and fixed during T13 work, 2026-05-15)
+
+### FUNCTIONS_ACTORS.md — GiveExtraLife() docs removed
+
+The audit marked `FUNCTIONS_ACTORS.md` as "Keep as-is" because the
+function stub still exists for upstream parity. T13 re-evaluated:
+the function is a no-op (mechanic removed), so documenting it as a
+live API is misleading. Two entries removed:
+
+- Line 66 (original numbering) — TOC entry:
+  `[ActorObject.GiveExtraLife()](#actorobjectgiveextralife)`
+- Lines 477-478 (original numbering) — Body section:
+  `## [ActorObject.GiveExtraLife()...]` + description line
+
+`internal/state/life/context.md` notes the function as a no-op stub
+in its Sunset Notes section.
+
+### _datafiles/world/default/users/1.yaml — extralives field removed
+
+`_datafiles/world/default/users/1.yaml` line 128 (original numbering)
+contained `extralives: 3`. The YAML loader ignores this field
+post-T11, but the stale key was removed for cleanliness.
+
+Both items are included in the T13 commit.

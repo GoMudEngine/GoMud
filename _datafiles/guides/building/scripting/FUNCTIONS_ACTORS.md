@@ -63,7 +63,6 @@ ActorObjects are the basic object that represents Users and NPCs
   - [ActorObject.CharmExpire()](#actorobjectcharmexpire)
   - [ActorObject.GetCharmCount() int](#actorobjectgetcharmcount-int)
   - [ActorObject.GetMaxCharmCount() int](#actorobjectgetmaxcharmcount-int)
-  - [ActorObject.GiveExtraLife()](#actorobjectgiveextralife)
   - [ActorObject.ShorthandId() string](#actorobjectshorthandid-string)
   - [ActorObject.Uncurse()](#actorobjectuncurse)
   - [ActorObject.GetPet()](#actorobjectgetpet)
@@ -473,9 +472,6 @@ Returns the number of charmed creatures in the actors control
 
 ## [ActorObject.GetMaxCharmCount() int](/internal/scripting/actor_func.go)
 Returns the maximum allowed charmed creatures for this actor
-
-## [ActorObject.GiveExtraLife()](/internal/scripting/actor_func.go)
-Increases extra lives by 1 for the player/actor
 
 ## [ActorObject.ShorthandId() string](/internal/scripting/actor_func.go)
 Returns the shorthand ID string to refer to the mob or player ( `@123` or `#122` )

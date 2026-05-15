@@ -102,6 +102,6 @@ function onPurchase(user ActorObject, item ItemObject, room RoomObject) {
 | item | [ItemObject](FUNCTIONS_ITEMS.md) |
 | room | [RoomObject](FUNCTIONS_ROOMS.md) |
 
-Returning `false` will prevent the user from being given the object. This can be useful if you want to initate a script from a purchase, but not actually grant the item to the user, such as purchasing extra lives, a ticket for travel, or renting a room.
+Returning `false` will prevent the user from being given the object. This can be useful if you want to initate a script from a purchase, but not actually grant the item to the user, such as purchasing a ticket for travel, renting a room, or accessing a gated quest area.
 
 ---
