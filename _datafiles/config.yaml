@@ -248,9 +248,6 @@ GamePlay:
     #   Players with total skill ranks at or below this value are protected
     #   from death penalties. Gives new players a grace period.
     ProtectionSkillRanks: 10
-    # - PermaDeath -
-    #   If true, players lose their character if they die with zero lives left.
-    PermaDeath: false
     # - CorpsesEnabled -
     #   If set to true, corpses are left behind by players or mobs that are killed.
     CorpsesEnabled: true
@@ -258,15 +255,6 @@ GamePlay:
     #   How long until corpses crumble to dust (Go away).
     #   See ShopRestockRate comments for time format.
     CorpseDecayTime: 4 hours
-  # - LivesStart -
-  #   (Req: PermaDeath) How many lives players start with before being reset.
-  LivesStart: 3
-  # - LivesMax -
-  #   (Req: PermaDeath) The maximum lives a player can have.
-  LivesMax: 3
-  # - PricePerLife -
-  #   (Req: PermaDeath) If non-zero, players can buy extra lives for this amount.
-  PricePerLife: 1000000
   # - ShopRestockRate -
   #   The default time for a shops to restock 1 item. This can still be
   #   overriden in character shop definitions if desired.

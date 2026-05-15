@@ -299,12 +299,8 @@ const (
 func handlePlayerDeath(e events.Event) events.ListenerReturn {
     death := e.(events.PlayerDeath)
     
-    if death.Permanent {
-        // Handle permadeath
-        handlePermaDeath(death.UserId)
-        return events.Cancel // Stop further processing
-    }
-    
+    // death.Permanent is always false (permadeath sunset); field kept for
+    // upstream parity only. All deaths are treated as normal deaths.
     // Normal death, allow other handlers
     return events.Continue
 }

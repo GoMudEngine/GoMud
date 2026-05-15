@@ -102,12 +102,7 @@ Network:
 GamePlay:
   AllowItemBuffRemoval: true
   Death:
-    PermaDeath: false
     CorpseDecayRounds: 100
-  LivesStart: 3
-  LivesMax: 10
-  LivesOnLevelUp: 1
-  PricePerLife: 1000
   ShopRestockRate: "1h"
   ContainerSizeMax: 50
   MaxAltCharacters: 5
@@ -233,7 +228,7 @@ allConfig := config.AllConfigData()
 
 // Set values using dot notation
 configs.SetVal("Server.MudName", "New Name")
-configs.SetVal("GamePlay.Death.PermaDeath", "true")
+configs.SetVal("GamePlay.Death.EquipmentDropChance", "0.1")
 ```
 
 ### Path Resolution and Correction

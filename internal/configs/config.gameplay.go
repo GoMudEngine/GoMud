@@ -5,9 +5,6 @@ type GamePlay struct {
 	// Death related settings
 	Death GameplayDeath `yaml:"Death"`
 
-	LivesStart     ConfigInt `yaml:"LivesStart"`     // Starting permadeath lives
-	LivesMax       ConfigInt `yaml:"LivesMax"`       // Maximum permadeath lives
-	PricePerLife   ConfigInt `yaml:"PricePerLife"`   // Price in gold to buy new lives
 	// Shops/Conatiners
 	ShopRestockRate  ConfigString `yaml:"ShopRestockRate"`  // Default time it takes to restock 1 quantity in shops
 	ContainerSizeMax ConfigInt    `yaml:"ContainerSizeMax"` // How many objects containers can hold before overflowing
@@ -27,7 +24,6 @@ type GameplayDeath struct {
 	EquipmentDropChance ConfigFloat  `yaml:"EquipmentDropChance"` // Chance a player will drop a given piece of equipment on death
 	AlwaysDropBackpack  ConfigBool   `yaml:"AlwaysDropBackpack"`  // If true, players will always drop their backpack items on death
 	ProtectionSkillRanks ConfigInt  `yaml:"ProtectionSkillRanks"` // Total skill ranks below which death penalties are waived
-	PermaDeath           ConfigBool `yaml:"PermaDeath"`           // Is permadeath enabled?
 	CorpsesEnabled      ConfigBool   `yaml:"CorpsesEnabled"`      // Whether corpses are left behind after mob/player deaths
 	CorpseDecayTime     ConfigString `yaml:"CorpseDecayTime"`     // How long until corpses decay to dust (go away)
 	// DOGMud death penalties (Stage 20.1)
@@ -62,18 +58,6 @@ func (g *GamePlay) Validate() {
 
 	if g.Death.ProtectionSkillRanks < 0 {
 		g.Death.ProtectionSkillRanks = 10 // default
-	}
-
-	if g.LivesStart < 0 {
-		g.LivesStart = 0
-	}
-
-	if g.LivesMax < 0 {
-		g.LivesMax = 0
-	}
-
-	if g.PricePerLife < 1 {
-		g.PricePerLife = 1
 	}
 
 	if g.ShopRestockRate == `` {

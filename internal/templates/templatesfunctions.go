@@ -198,9 +198,6 @@ var (
 			}
 			return colorpatterns.ApplyColorPattern(s, pattern)
 		},
-		"permadeath": func() bool {
-			return bool(configs.GetGamePlayConfig().Death.PermaDeath)
-		},
 		"zodiac": func(year int) string {
 			return gametime.GetZodiac(year)
 		},

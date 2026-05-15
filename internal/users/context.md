@@ -217,11 +217,6 @@ func NewUserRecord(userId int, connectionId uint64) *UserRecord {
         EventLog:       UserLog{},
     }
     
-    // Set extra lives for permadeath mode
-    if c.Death.PermaDeath {
-        u.Character.ExtraLives = int(c.LivesStart)
-    }
-    
     return u
 }
 

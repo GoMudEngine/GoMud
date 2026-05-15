@@ -65,8 +65,6 @@ type UserRecord struct {
 
 func NewUserRecord(userId int, connectionId uint64) *UserRecord {
 
-	c := configs.GetGamePlayConfig()
-
 	u := &UserRecord{
 		connectionId:   connectionId,
 		UserId:         userId,
@@ -80,10 +78,6 @@ func NewUserRecord(userId int, connectionId uint64) *UserRecord {
 		connectionTime: time.Now(),
 		tempDataStore:  make(map[string]any),
 		EventLog:       UserLog{},
-	}
-
-	if c.Death.PermaDeath {
-		u.Character.ExtraLives = int(c.LivesStart)
 	}
 
 	return u
