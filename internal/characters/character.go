@@ -535,3 +535,32 @@ func (c *Character) IsHidden() bool {
 	}
 	return c.Awareness.IsHidden()
 }
+
+// ===================================================================
+// Life Convenience Methods (Task 4)
+// ===================================================================
+
+// IsAlive returns true when Life state is Alive.
+// Replacement for ad-hoc Health > 0 checks once callers migrate.
+func (c *Character) IsAlive() bool {
+	if c.Life == nil {
+		return true // defensive: pre-init characters treated as alive
+	}
+	return c.Life.IsAlive()
+}
+
+// IsDead returns true when Life state is Dead.
+func (c *Character) IsDead() bool {
+	if c.Life == nil {
+		return false
+	}
+	return c.Life.IsDead()
+}
+
+// IsRespawning returns true when Life state is Respawning.
+func (c *Character) IsRespawning() bool {
+	if c.Life == nil {
+		return false
+	}
+	return c.Life.IsRespawning()
+}
