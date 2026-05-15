@@ -212,6 +212,7 @@ const (
     TriggerObserverSearch        = "observer_search"
     TriggerLightChange           = "light_change"
     TriggerSkullduggeryFailed    = "skullduggery_failed"
+    TriggerNoisyAction           = "noisy_action"  // say/shout/whisper/rally/warcry/taunt
     TriggerLogout                = "logout_safety_valve"
     TriggerDeath                 = "death_cascade"
     TriggerForceVisible          = "force_visible"
@@ -259,7 +260,7 @@ Each row drives a RED-phase test. ID prefix `AW-` = Awareness.
 |----|-------|---------|------------|---------|-----------|
 | AW-012 | Hidden | Sneaker's emission state changes (equips/removes torch; casts/cancels light spell; gains/loses glowing mutation) | re-roll fires for all observers using new modifiers | If any roll lost → Hidden → Revealing → Visible | Becoming a light source is a state change that observers can react to. |
 | AW-013 | Hidden | Room light state changes (someone enters with only light; someone leaves with only light) | re-roll fires for all hidden actors in the room | Same outcome per actor | Environmental light change re-evaluates all stealth. |
-| AW-014 | Hidden | Sneaker has NightVision; sneaker enters dark room | (no auto-reveal) | Hidden persists; future detection rolls use observer's effective visibility, not the raw room light | NightVision changes observer-side modifier, not Awareness state. |
+| AW-014 | Hidden | Observer has NightVision; both are in a dark room | (per-observer detection roll) | The sneak score for THIS observer's roll uses the lit-room modifier (`0.9×` if sneaker not lit, `0.85×` if sneaker is lit). The room "is dark" globally but "is effectively lit from this observer's POV" via NightVision. | NightVision logically equates to lit-room conditions for the observer's perception; treat the sneaker as if they were in a lit room when computing against this observer specifically. |
 
 ### Combat-entry cascade
 
@@ -312,6 +313,13 @@ Each row drives a RED-phase test. ID prefix `AW-` = Awareness.
 |----|-------|---------|------------|---------|-----------|
 | AW-030 | Hidden | Any Hidden → Revealing transition | (cascade fires) | Room broadcast text fires; buff #9 removed; cascade subscribers notified (Combat Phase, aliveness substrate) | Revealing is the atomic "reveal happens now" state where all observer-facing effects fire. |
 | AW-031 | Revealing | (cascade complete) | (forced) | → Visible same-tick | Revealing is conceptual; no multi-round duration. |
+
+### Noisy action stealth break
+
+| ID | Start | Trigger | Conditions | Outcome | Rationale |
+|----|-------|---------|------------|---------|-----------|
+| AW-032 | Hidden | `say` / `shout` / `whisper` (room-broadcast variants only) | (forced) | → Revealing → Visible | Speaking aloud reveals position; you cannot maintain stealth while talking. |
+| AW-033 | Hidden | `rally` / `warcry` / `taunt` | (forced) | → Revealing → Visible | These are loud broadcast verbs. `taunt` enters Combat Phase too (cascade fires double); `rally`/`warcry` may not enter combat directly but still break stealth via explicit reveal. |
 
 ## Hidden mechanic redesign details
 
@@ -393,31 +401,50 @@ func CalcSneakScore(char *characters.Character) float64 {
 }
 
 // AFTER (chunk 1):
-func CalcSneakScore(char *characters.Character, room *rooms.Room) float64 {
+// CalcSneakScore now takes an effectiveLit bool — the room is
+// "effectively lit" from the observer's POV if either the room
+// is lit OR the observer has NightVision. Callers (detection
+// roll sites) compute this per-observer before calling.
+func CalcSneakScore(char *characters.Character, effectiveLit bool) float64 {
     base := float64(char.Stats.Dexterity.ValueAdj) +
         combat.SkillMultiplier(char.GetSkillLevel(skills.Skullduggery)) * 25.0 +
         mutationStealthBonus(char.Mutations)
 
     cfg := configs.GetBalanceConfig()
-    isLit := room.GetVisibility() >= 1
     emits := char.EmitsLight()
 
     switch {
-    case emits && !isLit:
+    case emits && !effectiveLit:
         base *= cfg.SneakModEmitsLightDarkRoom   // default 0.5
-    case emits && isLit:
+    case emits && effectiveLit:
         base *= cfg.SneakModEmitsLightLitRoom    // default 0.85
-    case !emits && isLit:
+    case !emits && effectiveLit:
         base *= cfg.SneakModNoLightLitRoom       // default 0.9
         // else: baseline (no mod applied)
     }
     return base
 }
+
+// Convenience helper for the common case where the caller has
+// the room and observer in hand.
+func CalcSneakScoreVsObserver(sneaker, observer *characters.Character, room *rooms.Room) float64 {
+    effectiveLit := room.GetVisibility() >= 1 ||
+        observer.HasFlagFromAnySource(buffs.NightVision)
+    return CalcSneakScore(sneaker, effectiveLit)
+}
 ```
 
-Every caller updated to pass the room. Already accessible at
-each site (most go through `actor.GetRoom()` or have room in
-scope).
+NightVision observer in a dark room → `effectiveLit = true` →
+sneak score uses the lit-room modifier (0.9× or 0.85×) when
+rolled against THIS observer. Same room, no NightVision
+observer → `effectiveLit = false` → baseline (or beacon, if
+sneaker emits). Per-observer evaluation is critical here; the
+same sneaker may roll differently against different observers
+in the same room.
+
+Every detection-roll caller passes both observer and room.
+Already accessible at each site (`internal/hooks/go.go`
+room-entry detection, observer search commands, etc.).
 
 ### Light state change detection
 
@@ -633,20 +660,33 @@ rows.
   may show it's too brutal or too soft; tunable via config
   knob.
 
-## Open questions
+## Resolved during spec review
 
-- **NightVision modifier on observer side.** Today the
-  `destRoom.GetVisibility() >= 1 || HasFlagFromAnySource(buffs.NightVision)`
-  pattern lives in `internal/hooks/go.go` (room entry detection).
-  Awareness's detection rolls should consult both. Confirm
-  during implementation whether existing detection code reads
-  effective visibility or raw room light — adjust to effective.
+- **NightVision modifier.** Resolved as: NightVision observer
+  in a dark room is treated for that observer's detection roll
+  as if the room were lit — the sneak score uses the lit-room
+  modifier (`0.9×` if sneaker not lit, `0.85×` if sneaker is
+  lit). `CalcSneakScore` signature takes `effectiveLit bool`;
+  the per-observer detection sites compute `effectiveLit =
+  room.IsLit() || observer.HasNightVision`. AW-014 matrix row
+  updated to reflect this; convenience helper
+  `CalcSneakScoreVsObserver` provided.
 
-- **Should `say`/`shout` break stealth?** Today `say` reads
-  `HasBuffFlag(buffs.Hidden)` (likely to do whisper-while-
-  hidden mechanic). Spec preserves current behavior; doesn't
-  add a reveal trigger for talking. Could revisit in a
-  followup if play feedback wants it.
+- **`say`/`shout` and related noisy verbs.** Resolved as: all
+  noisy communication and broadcast verbs (`say`, `shout`,
+  `whisper` for the room-broadcast paths, `rally`, `warcry`,
+  `taunt`) break stealth via explicit
+  `Awareness.TransitionToRevealing(TriggerNoisyAction)` calls
+  in their command handlers. Matrix rows AW-032 and AW-033
+  cover this category. Some of these verbs also enter Combat
+  Phase (`taunt` always; `warcry` against hostile targets);
+  the cascade fires too but is idempotent against
+  already-Revealing/Visible Awareness state, so double-firing
+  is safe.
+
+  `whisper` continues to NOT break stealth when used in its
+  direct-target form (whispering a target by name is quiet by
+  design). Only room-broadcast forms reveal.
 
 ## Roadmap impact
 
