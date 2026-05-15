@@ -39,10 +39,18 @@ func wireLifeCrossMachineCascades(c *characters.Character) {
 					Trigger: awareness.TriggerDeath,
 				})
 
-				// 3. Activity → Free (chunk-3 pre-wire:
-				//    clear casting/crafting state directly).
-				c.CastingState = nil
-				c.CraftingState = nil
+				// 3. Activity → Free is now handled by Activity_Cascades.go
+				//    (chunk 3). The legacy CastingState/CraftingState pointer
+				//    nil-outs that lived here are gone — Activity.TransitionToFree
+				//    (fired by the activity_life_dead AfterTransition observer)
+				//    clears the per-state data slots inside the machine.
+				//
+				// Transition-window note: legacy CastingState/CraftingState
+				// fields are still being written by skill.cast.go and craft.go
+				// until Tasks 6-7 add parallel-writes to the Activity machine.
+				// During that window, a player who dies mid-activity will have
+				// stale legacy pointer state. Task 11 deletes the legacy fields
+				// entirely; Tasks 6-7 keep them in sync via parallel-write.
 
 				// 4. Position → Standing (chunk-4 pre-wire).
 				c.CombatPosition = characters.PositionStanding
