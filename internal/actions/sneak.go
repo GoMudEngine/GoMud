@@ -4,6 +4,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -53,6 +55,17 @@ func Sneak(actor Actor) SneakResult {
 		return SneakResult{InCombat: true}
 	}
 
+	// Transition to Concealing; the activity veto fires here if the actor
+	// is busy crafting/casting. On veto error we return without a result
+	// since the caller's skill-gate messaging handles the veto path.
+	if err := char.Awareness.TransitionToConcealing(
+		awareness.ConcealingData{},
+		state.TransitionReason{Trigger: awareness.TriggerSneakCommand},
+	); err != nil {
+		// Activity veto or invalid transition (e.g. already Concealing).
+		return SneakResult{}
+	}
+
 	room := actor.GetRoom()
 
 	// Build party exclusion set for player actors.
@@ -92,6 +105,9 @@ func Sneak(actor Actor) SneakResult {
 			observer.SendText(
 				`<ansi fg="username">` + actor.GetName() + `</ansi> tries to hide but you notice them.`,
 			)
+			char.Awareness.ResolveConcealment(false, state.TransitionReason{
+				Trigger: awareness.TriggerSneakFailed,
+			})
 			return SneakResult{SpottedByName: observer.Character.Name, RollHappened: true}
 		}
 	}
@@ -110,12 +126,18 @@ func Sneak(actor Actor) SneakResult {
 		rollHappened = true
 		success, _, _, _ := dice.OpposedRollStat(sneakScore, observerScore)
 		if !success {
+			char.Awareness.ResolveConcealment(false, state.TransitionReason{
+				Trigger: awareness.TriggerSneakFailed,
+			})
 			return SneakResult{SpottedByName: m.Character.Name, RollHappened: true}
 		}
 	}
 
-	// All observers failed to spot the actor — apply hidden state.
-	actor.AddBuff(9, `skill`)
+	// All observers failed to spot the actor — transition to Hidden.
+	// The buff-#9 mirror cascade in Awareness_Cascades.go handles AddBuff automatically.
+	char.Awareness.ResolveConcealment(true, state.TransitionReason{
+		Trigger: awareness.TriggerSneakSuccess,
+	})
 	char.SetMiscData(`sneaking`, true)
 
 	return SneakResult{Success: true, RollHappened: rollHappened}

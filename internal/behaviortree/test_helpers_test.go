@@ -42,9 +42,10 @@ func seedTestMob(t *testing.T, templateId int, instanceId int, homeRoomId int, n
 	spec := &mobs.Mob{
 		MobId: mobs.MobId(templateId),
 		Character: characters.Character{
-			Name:   name,
-			RoomId: homeRoomId,
-			Buffs:  buffs.New(),
+			Name:      name,
+			RoomId:    homeRoomId,
+			Buffs:     buffs.New(),
+			Awareness: awareness.NewMachine(),
 		},
 	}
 	instance := &mobs.Mob{
@@ -52,9 +53,10 @@ func seedTestMob(t *testing.T, templateId int, instanceId int, homeRoomId int, n
 		InstanceId: instanceId,
 		HomeRoomId: homeRoomId,
 		Character: characters.Character{
-			Name:   name,
-			RoomId: homeRoomId,
-			Buffs:  buffs.New(),
+			Name:      name,
+			RoomId:    homeRoomId,
+			Buffs:     buffs.New(),
+			Awareness: awareness.NewMachine(),
 		},
 	}
 	return mobs.SeedMobsForTest(
@@ -73,17 +75,17 @@ func seedTwoMobs(t *testing.T, roomId int,
 	t.Helper()
 	specs := map[int]*mobs.Mob{
 		template1: {MobId: mobs.MobId(template1), Character: characters.Character{
-			Name: name1, RoomId: roomId, Buffs: buffs.New(),
+			Name: name1, RoomId: roomId, Buffs: buffs.New(), Awareness: awareness.NewMachine(),
 		}},
 		template2: {MobId: mobs.MobId(template2), Character: characters.Character{
-			Name: name2, RoomId: roomId, Buffs: buffs.New(),
+			Name: name2, RoomId: roomId, Buffs: buffs.New(), Awareness: awareness.NewMachine(),
 		}},
 	}
 	instances := map[int]*mobs.Mob{
 		instance1: {MobId: mobs.MobId(template1), InstanceId: instance1, HomeRoomId: roomId,
-			Character: characters.Character{Name: name1, RoomId: roomId, Buffs: buffs.New()}},
+			Character: characters.Character{Name: name1, RoomId: roomId, Buffs: buffs.New(), Awareness: awareness.NewMachine()}},
 		instance2: {MobId: mobs.MobId(template2), InstanceId: instance2, HomeRoomId: roomId,
-			Character: characters.Character{Name: name2, RoomId: roomId, Buffs: buffs.New()}},
+			Character: characters.Character{Name: name2, RoomId: roomId, Buffs: buffs.New(), Awareness: awareness.NewMachine()}},
 	}
 	return mobs.SeedMobsForTest(specs, instances)
 }

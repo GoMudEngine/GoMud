@@ -7,6 +7,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -16,6 +18,14 @@ func Shout(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if user.Muted {
 		user.SendText(`You are <ansi fg="alert-5">MUTED</ansi>. You can only send <ansi fg="command">whisper</ansi>'s to Admins and Moderators.`)
 		return true, nil
+	}
+
+	// Shouting is a noisy action — reveal if hidden.
+	if user.Character.IsHidden() {
+		user.Character.Awareness.TransitionToRevealing(state.TransitionReason{
+			Trigger:  awareness.TriggerNoisyAction,
+			Metadata: map[string]any{"command": "shout"},
+		})
 	}
 
 	isSneaking := user.Character.IsHidden()

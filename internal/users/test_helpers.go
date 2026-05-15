@@ -3,6 +3,7 @@ package users
 import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 )
 
 // SeedUsersForTest replaces the global userManager with a fresh instance
@@ -43,6 +44,7 @@ func NewTestUser(userId int, username string, charName string, connId uint64) *U
 		Stamina:   100,
 		Buffs:     buffs.New(),
 		Cooldowns: map[string]int{},
+		Awareness: awareness.NewMachine(),
 	}
 	ch.HealthMax.Value = 100
 	ch.StaminaMax.Value = 100

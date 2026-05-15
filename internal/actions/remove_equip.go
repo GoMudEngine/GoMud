@@ -1,9 +1,10 @@
 package actions
 
 import (
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 )
 
 // EquipItemResult is the result of an EquipItem call.
@@ -44,7 +45,9 @@ func EquipItem(actor Actor, itemName string) EquipItemResult {
 		}
 	}
 
-	char.CancelBuffsWithFlag(buffs.Hidden)
+	char.Awareness.TransitionToRevealing(state.TransitionReason{
+		Trigger: awareness.TriggerForceVisible,
+	})
 
 	// Return displaced gear to backpack; drop to floor on overflow.
 	for _, di := range displaced {
@@ -94,7 +97,9 @@ func RemoveEquipment(actor Actor, itemName string) RemoveEquipResult {
 		return RemoveEquipResult{Found: false}
 	}
 
-	char.CancelBuffsWithFlag(buffs.Hidden)
+	char.Awareness.TransitionToRevealing(state.TransitionReason{
+		Trigger: awareness.TriggerForceVisible,
+	})
 
 	if !char.RemoveFromBody(matchItem) {
 		// RemoveFromBody failed — item is still on body

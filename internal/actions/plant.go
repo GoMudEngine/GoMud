@@ -3,7 +3,6 @@ package actions
 import (
 	"fmt"
 
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crimes"
@@ -16,6 +15,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -206,7 +207,9 @@ func plantOnMob(actor Actor, mobInstanceId int, plantItem items.Item,
 		)
 	}
 
-	actor.GetCharacter().CancelBuffsWithFlag(buffs.Hidden)
+	actor.GetCharacter().Awareness.TransitionToRevealing(state.TransitionReason{
+		Trigger: awareness.TriggerSkullduggeryFailed,
+	})
 
 	// Record plant crime on faction-aligned victim.
 	if factionIds := factions.FactionsForMob(m); len(factionIds) > 0 {
@@ -273,7 +276,9 @@ func plantOnPlayer(actor Actor, targetUserId int, plantItem items.Item,
 		actor.SendText(fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> catches you in the act!`,
 			targetUser.Character.Name))
-		actor.GetCharacter().CancelBuffsWithFlag(buffs.Hidden)
+		actor.GetCharacter().Awareness.TransitionToRevealing(state.TransitionReason{
+			Trigger: awareness.TriggerSkullduggeryFailed,
+		})
 		return PlantResult{
 			Detected:     true,
 			DefenderName: targetUser.Character.Name,
@@ -420,7 +425,9 @@ func plantInContainer(actor Actor, containerName string, plantItem items.Item,
 			actor.GetUserId(),
 		)
 
-		actor.GetCharacter().CancelBuffsWithFlag(buffs.Hidden)
+		actor.GetCharacter().Awareness.TransitionToRevealing(state.TransitionReason{
+			Trigger: awareness.TriggerSkullduggeryFailed,
+		})
 		return PlantResult{
 			Detected:     true,
 			DefenderName: spotterName,

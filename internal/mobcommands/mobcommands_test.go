@@ -15,6 +15,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -88,6 +89,7 @@ func seedAllRegistries() func() {
 				Health:    50,
 				Buffs:     buffs.New(),
 				Cooldowns: map[string]int{},
+				Awareness: awareness.NewMachine(),
 			},
 		},
 		200: {
@@ -101,6 +103,7 @@ func seedAllRegistries() func() {
 				Health:    100,
 				Buffs:     buffs.New(),
 				Cooldowns: map[string]int{},
+				Awareness: awareness.NewMachine(),
 			},
 		},
 	}

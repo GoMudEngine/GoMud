@@ -10,6 +10,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -75,6 +77,16 @@ type TauntResult struct {
 // out-of-combat aggro setup (e.g. player targeting before entering combat).
 func ExecuteTaunt(actor Actor) TauntResult {
 	char := actor.GetCharacter()
+
+	// Taunting is a noisy action — reveal if hidden. The Combat Phase
+	// cascade also fires a reveal when combat is entered; both paths are
+	// idempotent against an already-Revealing/Visible actor.
+	if char.IsHidden() {
+		char.Awareness.TransitionToRevealing(state.TransitionReason{
+			Trigger:  awareness.TriggerNoisyAction,
+			Metadata: map[string]any{"command": "taunt"},
+		})
+	}
 
 	// Don't interrupt a craft to taunt.
 	if char.IsCrafting() {
