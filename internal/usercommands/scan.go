@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -37,7 +36,7 @@ func Scan(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				continue
 			}
 			// Skip hidden mobs
-			if mob.Character.HasBuffFlag(buffs.Hidden) {
+			if mob.Character.IsHidden() {
 				continue
 			}
 			parts = append(parts, fmt.Sprintf(`<ansi fg="mobname">%s</ansi>`, mob.Character.Name))

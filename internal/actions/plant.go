@@ -97,7 +97,7 @@ func Plant(actor Actor, opts PlantOptions) PlantResult {
 		}
 	}
 
-	isHidden := char.HasBuffFlag(buffs.Hidden)
+	isHidden := char.IsHidden()
 
 	// Compute attacker score (identical formula to steal).
 	rank := char.GetSkillLevel(skills.Skullduggery)

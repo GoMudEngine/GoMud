@@ -78,7 +78,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 	// misc-data flag (set synchronously by sneak command). This handles
 	// the case where the player sneaks then immediately moves before the
 	// buff event processes.
-	isSneaking := user.Character.HasBuffFlag(buffs.Hidden)
+	isSneaking := user.Character.IsHidden()
 	if !isSneaking {
 		if sneakFlag, ok := user.Character.GetMiscData(`sneaking`).(bool); ok && sneakFlag {
 			isSneaking = true
@@ -372,7 +372,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				if shadowP == nil {
 					continue
 				}
-				if !shadowP.Character.HasBuffFlag(buffs.Hidden) {
+				if !shadowP.Character.IsHidden() {
 					continue
 				}
 				if !shadowIsTargetingUser(shadowP, user.UserId) {
@@ -384,7 +384,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				// After the move attempt, check if the shadower is still hidden.
 				// The room-entry detection in go.go runs for the shadower's move,
 				// so if they were spotted their hidden buff will already be gone.
-				if !shadowP.Character.HasBuffFlag(buffs.Hidden) {
+				if !shadowP.Character.IsHidden() {
 					endShadow(shadowP, "You've been spotted -- your shadow ends.")
 					continue
 				}
@@ -469,7 +469,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						continue
 					}
 					hiddenP := users.GetByUserId(pId)
-					if hiddenP == nil || !hiddenP.Character.HasBuffFlag(buffs.Hidden) {
+					if hiddenP == nil || !hiddenP.Character.IsHidden() {
 						continue
 					}
 					hiddenScore := actions.CalcSneakScoreVsObserver(hiddenP.Character, user.Character, destRoom)
@@ -488,7 +488,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				// Check hidden mobs
 				for _, mId := range destRoom.GetMobs(rooms.FindAll) {
 					mob := mobs.GetInstance(mId)
-					if mob == nil || !mob.Character.HasBuffFlag(buffs.Hidden) {
+					if mob == nil || !mob.Character.IsHidden() {
 						continue
 					}
 					hiddenScore := actions.CalcSneakScoreVsObserver(&mob.Character, user.Character, destRoom)
@@ -594,7 +594,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 					// Hidden mobs attack silently — no "notices you" message.
 					// They still trigger lookfortrouble for the surprise attack.
-					if !mob.Character.HasBuffFlag(buffs.Hidden) {
+					if !mob.Character.IsHidden() {
 						if destRoom.GetVisibility() >= 1 || user.Character.HasFlagFromAnySource(buffs.NightVision) {
 							user.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> notices you as you enter!`, mob.Character.Name))
 						} else {
@@ -637,7 +637,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				}
 			}
 
-			if !user.Character.HasBuffFlag(buffs.Hidden) {
+			if !user.Character.IsHidden() {
 
 				room.SendTextVisual(
 					fmt.Sprintf(string(c.ExitRoomMessageWrapper),

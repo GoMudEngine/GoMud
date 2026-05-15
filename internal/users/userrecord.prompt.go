@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
@@ -479,7 +478,7 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 
 			case `{h}`:
 				hiddenFlag := ``
-				if u.Character.HasBuffFlag(buffs.Hidden) {
+				if u.Character.IsHidden() {
 					hiddenFlag = `H`
 				}
 				promptOut.WriteString(hiddenFlag)

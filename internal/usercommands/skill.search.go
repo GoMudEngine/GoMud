@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/dice"
@@ -108,7 +107,7 @@ func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			continue
 		}
 		p := users.GetByUserId(pId)
-		if p == nil || !p.Character.HasBuffFlag(buffs.Hidden) {
+		if p == nil || !p.Character.IsHidden() {
 			continue
 		}
 		rolledAgainstSomething = true
@@ -138,7 +137,7 @@ func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	hiddenMobs := []string{}
 	for _, mId := range room.GetMobs() {
 		mob := mobs.GetInstance(mId)
-		if mob == nil || !mob.Character.HasBuffFlag(buffs.Hidden) {
+		if mob == nil || !mob.Character.IsHidden() {
 			continue
 		}
 		rolledAgainstSomething = true

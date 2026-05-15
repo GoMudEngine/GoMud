@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -42,7 +41,7 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		attackMobInstanceId = t.MobInstanceId
 	}
 
-	isSneaking := mob.Character.HasBuffFlag(buffs.Hidden)
+	isSneaking := mob.Character.IsHidden()
 
 	/*
 		combatAddlWaitRounds := mob.Character.Equipment.Weapon.GetSpec().WaitRounds + mob.Character.Equipment.Weapon.GetSpec().WaitRounds
@@ -66,7 +65,7 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			// loop's CancelIfCombat pass so the surprise attack resolves
 			// with the mob still hidden (backstab crit bonus).
 			aggroType := characters.DefaultAttack
-			if mob.Character.HasBuffFlag(buffs.Hidden) {
+			if mob.Character.IsHidden() {
 				aggroType = characters.SurpriseAttack
 			}
 			// Only announce if not already fighting this target
@@ -97,7 +96,7 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		if m != nil {
 
 			mobAggroType := characters.DefaultAttack
-			if mob.Character.HasBuffFlag(buffs.Hidden) {
+			if mob.Character.IsHidden() {
 				mobAggroType = characters.SurpriseAttack
 				mob.Character.Validate(true)
 			}

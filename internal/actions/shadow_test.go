@@ -6,6 +6,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -37,12 +39,23 @@ func init() {
 // Shadow test helpers
 // ---------------------------------------------------------------------------
 
-// addHiddenBuff grants buff 9 (Hidden) to a character. Requires that the buff
-// spec for id 9 has been seeded via init() above.
+// addHiddenBuff grants buff 9 (Hidden) to a character AND advances the
+// Awareness state machine to Hidden so that c.IsHidden() returns true.
+// Requires that the buff spec for id 9 has been seeded via init() above.
 func addHiddenBuff(char *characters.Character) {
 	char.Buffs = buffs.New()
 	// AddBuff calls GetBuffSpec internally; works because of the seeded spec.
 	char.Buffs.AddBuff(9, true /* permanent for test purposes */)
+	// Sync Awareness machine: reset to Visible, then advance to Hidden.
+	// Without this, Character.IsHidden() (which delegates to Awareness) returns
+	// false even though buff #9 is present.
+	if char.Awareness == nil {
+		char.Awareness = awareness.NewMachine()
+	}
+	r := state.TransitionReason{Trigger: "test_setup"}
+	char.Awareness.ForceVisible(r) // reset regardless of current state
+	_ = char.Awareness.TransitionToConcealing(awareness.ConcealingData{}, r)
+	char.Awareness.ResolveConcealment(true, r)
 }
 
 // newShadowPlayerActor creates a player-backed stubActorWithId with the

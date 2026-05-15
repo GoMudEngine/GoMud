@@ -3,7 +3,6 @@ package actions
 import (
 	"fmt"
 
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -18,7 +17,7 @@ type SayResult struct {
 // and fires the Communication event. The caller handles: mute checks, drunk
 // text, self-message, room formatting, and darkness-aware display.
 func Say(actor Actor, text string) SayResult {
-	isSneaking := actor.GetCharacter().HasBuffFlag(buffs.Hidden)
+	isSneaking := actor.GetCharacter().IsHidden()
 
 	actor.GetRoom().SendTextToExits(`You hear someone talking.`, true)
 

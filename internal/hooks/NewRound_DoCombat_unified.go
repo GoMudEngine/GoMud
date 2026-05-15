@@ -72,7 +72,7 @@ func handleCombatRound(
 	}
 
 	// Hidden defender bails the round (existing per-quadrant behavior).
-	if def.GetCharacter().HasBuffFlag(buffs.Hidden) {
+	if def.GetCharacter().IsHidden() {
 		// Divergence: only player attackers get the "can't seem to find
 		// your target" feedback. Mob attackers silently bail (no chat).
 		if atk.IsPlayer() {

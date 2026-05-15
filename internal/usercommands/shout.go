@@ -18,7 +18,7 @@ func Shout(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
-	isSneaking := user.Character.HasBuffFlag(buffs.Hidden)
+	isSneaking := user.Character.IsHidden()
 	isDrunk := user.Character.HasBuffFlag(buffs.Drunk)
 
 	rest = strings.ToUpper(rest)

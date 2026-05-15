@@ -86,7 +86,7 @@ func Steal(actor Actor, opts StealOptions) StealResult {
 		}
 	}
 
-	isHidden := char.HasBuffFlag(buffs.Hidden)
+	isHidden := char.IsHidden()
 
 	// Compute attacker score.
 	rank := char.GetSkillLevel(skills.Skullduggery)

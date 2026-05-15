@@ -1,7 +1,6 @@
 package behaviortree
 
 import (
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -15,7 +14,7 @@ func condMobIsHidden(params map[string]any, ctx *EvalContext) Result {
 	if mob == nil {
 		return Failure
 	}
-	if mob.Character.HasBuffFlag(buffs.Hidden) {
+	if mob.Character.IsHidden() {
 		return Success
 	}
 	return Failure
@@ -28,10 +27,10 @@ func condMobIsHidden(params map[string]any, ctx *EvalContext) Result {
 // checks the same player picked by target_random_player_in_room.
 func condTargetIsHidden(params map[string]any, ctx *EvalContext) Result {
 	u, m := resolveSkullduggeryTarget(ctx)
-	if u != nil && u.Character.HasBuffFlag(buffs.Hidden) {
+	if u != nil && u.Character.IsHidden() {
 		return Success
 	}
-	if m != nil && m.Character.HasBuffFlag(buffs.Hidden) {
+	if m != nil && m.Character.IsHidden() {
 		return Success
 	}
 	return Failure

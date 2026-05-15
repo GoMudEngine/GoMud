@@ -811,7 +811,7 @@ func handleMobTargetSwitch(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 			continue
 		}
 		if u := users.GetByUserId(userId); u != nil {
-			if u.Character.Health > 0 && !u.Character.HasBuffFlag(buffs.Hidden) {
+			if u.Character.Health > 0 && !u.Character.IsHidden() {
 				if u.Character.Aggro != nil && u.Character.Aggro.MobInstanceId == mob.InstanceId {
 					potentialTargets = append(potentialTargets, userId)
 				}

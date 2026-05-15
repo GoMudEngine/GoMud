@@ -3,7 +3,6 @@ package usercommands
 import (
 	"fmt"
 
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -30,7 +29,7 @@ func Read(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		}
 	}
 
-	isSneaking := user.Character.HasBuffFlag(buffs.Hidden)
+	isSneaking := user.Character.IsHidden()
 
 	if len(foundItemName) == 0 {
 		user.SendText(fmt.Sprintf(`You don't have a "%s" that can be read.`, rest))

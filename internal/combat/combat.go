@@ -326,7 +326,7 @@ func GetWaitMessages(stepType items.Intensity, sourceChar *characters.Character,
 		attackResult.SendToSource(string(toAttackerMsg))
 	}
 
-	if !sourceChar.HasBuffFlag(buffs.Hidden) {
+	if !sourceChar.IsHidden() {
 
 		if string(toDefenderMsg) != `` {
 			attackResult.SendToTarget(string(toDefenderMsg))

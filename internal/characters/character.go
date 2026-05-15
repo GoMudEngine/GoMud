@@ -511,3 +511,19 @@ func (c *Character) Attackers() []state.ActorRef {
 	}
 	return c.CombatPhase.Attackers()
 }
+
+// ===================================================================
+// Awareness Convenience Methods (Task 10)
+// ===================================================================
+
+// IsHidden returns true when the character's Awareness state is
+// Hidden. Replacement for the legacy HasBuffFlag(buffs.Hidden)
+// pattern. Buff #9 still exists as an effect carrier; the cascade
+// in internal/hooks/Awareness_Cascades.go keeps the buff and the
+// Awareness state synchronized.
+func (c *Character) IsHidden() bool {
+	if c.Awareness == nil {
+		return false
+	}
+	return c.Awareness.IsHidden()
+}

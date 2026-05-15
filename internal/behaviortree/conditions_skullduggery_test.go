@@ -31,9 +31,7 @@ func TestCondMobIsHidden_TrueWhenBuffPresent(t *testing.T) {
 	defer cleanMob()
 
 	mob := mobs.GetInstance(105)
-	if err := mob.Character.AddBuff(9, false); err != nil {
-		t.Fatalf("AddBuff(9) failed: %v", err)
-	}
+	grantHiddenBuff(t, &mob.Character)
 
 	ctx := &EvalContext{InstanceId: 105}
 	if r := condMobIsHidden(map[string]any{}, ctx); r != Success {
@@ -70,9 +68,7 @@ func TestCondTargetIsHidden_TrueWhenTargetBuffPresent(t *testing.T) {
 	defer cleanUser()
 
 	user := users.GetByUserId(42)
-	if err := user.Character.AddBuff(9, false); err != nil {
-		t.Fatalf("AddBuff(9) failed on user: %v", err)
-	}
+	grantHiddenBuff(t, user.Character)
 
 	ctx := &EvalContext{
 		InstanceId: 105,
@@ -96,9 +92,7 @@ func TestCondTargetIsHidden_TrueViaSoftTarget(t *testing.T) {
 	// This exercises the SoftTarget priority path in resolveSkullduggeryTarget
 	// (chunk-2.7 fix: target_random_player_in_room sets SoftTarget, not Aggro).
 	user := users.GetByUserId(42)
-	if err := user.Character.AddBuff(9, false); err != nil {
-		t.Fatalf("AddBuff(9) failed on user: %v", err)
-	}
+	grantHiddenBuff(t, user.Character)
 
 	ctx := &EvalContext{
 		InstanceId: 105, // no Event.UserId

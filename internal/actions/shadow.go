@@ -3,7 +3,6 @@ package actions
 import (
 	"fmt"
 
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -39,7 +38,7 @@ func Shadow(actor Actor, opts ShadowOptions) ShadowResult {
 	char := actor.GetCharacter()
 
 	// Must be hidden to shadow.
-	if !char.HasBuffFlag(buffs.Hidden) {
+	if !char.IsHidden() {
 		actor.SendText(
 			"You must be hidden to shadow someone. " +
 				`Try <ansi fg="command">sneak</ansi> first.`)

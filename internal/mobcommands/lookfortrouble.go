@@ -72,7 +72,7 @@ func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) 
 
 			if user.Character.Health < 1 {
 				ignoreUser = true
-			} else if user.Character.HasBuffFlag(buffs.Hidden) {
+			} else if user.Character.IsHidden() {
 				ignoreUser = true
 			}
 

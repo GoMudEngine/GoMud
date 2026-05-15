@@ -1,7 +1,6 @@
 package actions
 
 import (
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
@@ -45,7 +44,7 @@ func Sneak(actor Actor) SneakResult {
 	char := actor.GetCharacter()
 
 	// Already hidden — nothing to do.
-	if char.HasBuffFlag(buffs.Hidden) {
+	if char.IsHidden() {
 		return SneakResult{AlreadyHidden: true}
 	}
 

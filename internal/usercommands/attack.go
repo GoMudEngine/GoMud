@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crimes"
@@ -103,7 +102,7 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return true, nil
 	}
 
-	isSneaking := user.Character.HasBuffFlag(buffs.Hidden)
+	isSneaking := user.Character.IsHidden()
 
 	/*
 		combatAddlWaitRounds := user.Character.Equipment.Weapon.GetSpec().WaitRounds + user.Character.Equipment.Weapon.GetSpec().WaitRounds
@@ -178,7 +177,7 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 							partyUser.Character.GetSetting("autoattack") != "off" &&
 							!partyUser.Character.IsInCombat() {
 							// Surprise attack for hidden party members before they join combat
-							if partyUser.Character.HasBuffFlag(buffs.Hidden) {
+							if partyUser.Character.IsHidden() {
 								partyCfg := configs.GetBalanceConfig()
 								if partyUser.Character.TryCooldown("special-move",
 									fmt.Sprintf("%d rounds", partyCfg.SpecialMoveCooldown)) {
