@@ -67,9 +67,11 @@ func (c *Character) GetMovementStaminaCost(terrainMultiplier float64) int {
 		cost *= (1.0 - moveMod) // positive moveMod = faster = less cost
 	}
 
-	// Sneaking costs extra stamina — moving carefully is harder
+	// Sneaking costs extra stamina — moving carefully is harder.
+	// HiddenMoveStaminaMultiplier (default 3.0) stacks multiplicatively
+	// with encumbrance: over-encumbered hidden movement is brutal (5×3 = 15× cost).
 	if c.HasBuffFlag(buffs.Hidden) {
-		cost *= 1.5
+		cost *= float64(b.HiddenMoveStaminaMultiplier)
 	}
 
 	// Cap at maximum stamina cost
