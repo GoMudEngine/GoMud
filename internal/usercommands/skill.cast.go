@@ -15,6 +15,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -94,9 +96,11 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	// 4.5. Can't cast while crafting
-	if user.Character.CraftingState != nil {
-		user.SendText(`You are busy crafting.`)
+	// 4.5. Can't cast while doing anything else (crafting, salvaging, etc.)
+	// Use IsFree() rather than checking CraftingState directly so that all
+	// Activity machine states are covered through the migration window.
+	if !user.Character.IsFree() {
+		user.SendText(`You are too busy to cast right now.`)
 		return true, nil
 	}
 
@@ -237,7 +241,33 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	// 11. Apply conviction cost multiplier to the CastingState.
 	result.CastingState.TotalConvictionCost = totalConvictionCost
 
-	// 12. Commit CastingState.
+	// 12. Commit CastingState — parallel write to Activity machine AND legacy
+	// field. Both stay in sync through Task 11 (when legacy field is deleted).
+	castData := activity.CastingData{
+		SpellId:              result.CastingState.SpellId,
+		FoldsNeeded:          result.CastingState.FoldsNeeded,
+		FoldsAccumulated:     result.CastingState.FoldsAccumulated,
+		FoldsPerRound:        result.CastingState.FoldsPerRound,
+		TotalConvictionCost:  result.CastingState.TotalConvictionCost,
+		ConvictionSpent:      result.CastingState.ConvictionSpent,
+		TargetUserIds:        result.CastingState.TargetUserIds,
+		TargetMobInstanceIds: result.CastingState.TargetMobInstanceIds,
+		SpellRest:            result.CastingState.SpellRest,
+	}
+	if err := user.Character.Activity.TransitionToCasting(
+		castData,
+		state.TransitionReason{
+			Trigger: activity.TriggerCastBegin,
+			Actor:   state.ActorRef{UserId: user.UserId},
+		},
+	); err != nil {
+		// Activity machine refused — already busy with something. This
+		// path should not be reached (IsFree() check above guards it),
+		// but handle defensively.
+		user.SendText(`You're already busy with something else.`)
+		return true, nil
+	}
+	// Mirror to legacy field through Task 11.
 	user.Character.CastingState = result.CastingState
 
 	// 12b. Send YAML cast text (if defined).
@@ -301,6 +331,13 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			}
 		}
 		if blocked {
+			// Abort the cast — undo both the legacy field and Activity machine.
+			if user.Character.Activity != nil && user.Character.Activity.IsCasting() {
+				_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
+					Trigger: activity.TriggerCastCancel,
+					Actor:   state.ActorRef{UserId: user.UserId},
+				})
+			}
 			user.Character.CastingState = nil
 			return true, nil
 		}

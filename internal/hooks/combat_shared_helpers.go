@@ -15,6 +15,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -358,6 +360,18 @@ func advanceFolds(cs *characters.CastingState) bool {
 	return false
 }
 
+// clearCastingActivity fires Activity.TransitionToFree with the given trigger
+// if the character's Activity machine is currently in the Casting state.
+// Used alongside legacy CastingState = nil through Task 11.
+func clearCastingActivity(ch *characters.Character, trigger string) {
+	if ch.Activity != nil && ch.Activity.IsCasting() {
+		_ = ch.Activity.TransitionToFree(state.TransitionReason{
+			Trigger: trigger,
+			Actor:   ch.Activity.Self(),
+		})
+	}
+}
+
 // =============================================================================
 // processFoldRound — shared fold casting step for both players and mobs.
 //
@@ -402,6 +416,7 @@ func processFoldRound(char *characters.Character) FoldRoundResult {
 
 	// Prone → immediate concentration break.
 	if char.CombatPosition == characters.PositionProne {
+		clearCastingActivity(char, activity.TriggerConcentrationBreak)
 		char.CastingState = nil
 		return FoldRoundResult{ProneBroke: true, CastingState: cs}
 	}
@@ -432,11 +447,13 @@ func processFoldRound(char *characters.Character) FoldRoundResult {
 		}
 	}
 	if targetGone {
+		clearCastingActivity(char, activity.TriggerConcentrationBreak)
 		char.CastingState = nil
 		return FoldRoundResult{TargetGone: true, CastingState: cs}
 	}
 
 	if spellData == nil {
+		clearCastingActivity(char, activity.TriggerConcentrationBreak)
 		char.CastingState = nil
 		return FoldRoundResult{SpellDataMissing: true, CastingState: cs}
 	}
@@ -446,6 +463,7 @@ func processFoldRound(char *characters.Character) FoldRoundResult {
 	roundCost := calcFoldConvictionCost(cs, foldDelta)
 
 	if roundCost > 0 && char.Conviction < roundCost {
+		clearCastingActivity(char, activity.TriggerConcentrationBreak)
 		char.CastingState = nil
 		return FoldRoundResult{
 			InsufficientConviction: true,
@@ -462,6 +480,7 @@ func processFoldRound(char *characters.Character) FoldRoundResult {
 
 	complete := advanceFolds(cs)
 	if complete {
+		clearCastingActivity(char, activity.TriggerCastComplete)
 		char.CastingState = nil
 		return FoldRoundResult{
 			CastComplete:   true,

@@ -10,6 +10,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -110,8 +112,32 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 	mob.Character.Conviction -= firstRoundCost
 
-	// Commit CastingState, recording the first-round payment.
+	// Commit CastingState — parallel write to Activity machine AND legacy
+	// field. Both stay in sync through Task 11 (when legacy field is deleted).
 	result.CastingState.ConvictionSpent = firstRoundCost
+	castData := activity.CastingData{
+		SpellId:              result.CastingState.SpellId,
+		FoldsNeeded:          result.CastingState.FoldsNeeded,
+		FoldsAccumulated:     result.CastingState.FoldsAccumulated,
+		FoldsPerRound:        result.CastingState.FoldsPerRound,
+		TotalConvictionCost:  result.CastingState.TotalConvictionCost,
+		ConvictionSpent:      result.CastingState.ConvictionSpent,
+		TargetUserIds:        result.CastingState.TargetUserIds,
+		TargetMobInstanceIds: result.CastingState.TargetMobInstanceIds,
+		SpellRest:            result.CastingState.SpellRest,
+	}
+	if err := mob.Character.Activity.TransitionToCasting(
+		castData,
+		state.TransitionReason{
+			Trigger: activity.TriggerCastBegin,
+			Actor:   state.ActorRef{MobInstanceId: mob.InstanceId},
+		},
+	); err != nil {
+		// Mob can't start cast — likely busy. Silent failure;
+		// btree will pick another action next tick.
+		return true, nil
+	}
+	// Mirror to legacy field through Task 11.
 	mob.Character.CastingState = result.CastingState
 
 	sendRoomText(room, fmt.Sprintf(

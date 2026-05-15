@@ -16,6 +16,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/usercommands"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -208,6 +209,7 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 	// Bleeding out = automatic concentration break (player-only check).
 	if user.Character.IsDisabled() {
 		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(user.Character.CastingState))
+		clearCastingActivity(user.Character, activity.TriggerConcentrationBreak)
 		user.Character.CastingState = nil
 		return true
 	}
@@ -724,6 +726,7 @@ func handleOffhandBreakMobDef(roundResult combat.AttackResult, defMob *mobs.Mob)
 func handlePlayerConcentrationBreak(defUser *users.UserRecord, roundResult combat.AttackResult, defRoom *rooms.Room) {
 	if checkConcentrationBreak(defUser.Character, roundResult.DamageToTarget) {
 		recordConcentrationFailure(combat.User, combat.Mob, defUser.Character, castingTargetChar(defUser.Character.CastingState))
+		clearCastingActivity(defUser.Character, activity.TriggerConcentrationBreak)
 		defUser.Character.CastingState = nil
 		defUser.SendText(`<ansi fg="red">The pain shatters your concentration!</ansi>`)
 		defRoom.SendText(fmt.Sprintf(
