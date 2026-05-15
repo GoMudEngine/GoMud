@@ -14,6 +14,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/life"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -165,8 +167,11 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 	// Sweep runs for every mob regardless of zone activity — dead mobs
 	// should not linger even in idle zones.
 	for _, mobId := range mobs.GetAllMobInstanceIds() {
-		if mob := mobs.GetInstance(mobId); mob != nil && mob.Character.Health <= 0 {
-			mob.Command(`suicide`)
+		if mob := mobs.GetInstance(mobId); mob != nil && mob.Character.Health <= 0 && mob.Character.IsAlive() {
+			// No killer attribution available in the sweep pass — the
+			// mob died from a prior-round effect and the attacker is
+			// no longer recoverable from context here.
+			mob.Character.Die(state.ActorRef{}, life.TriggerHealthZero)
 		}
 	}
 
@@ -382,10 +387,12 @@ func handleAffected(affectedPlayerIds []int, affectedMobInstanceIds []int) {
 		playersHandled[userId] = struct{}{}
 
 		if user := users.GetByUserId(userId); user != nil {
-			if user.Character.Health < 1 {
-				// Death on zero: suicide drops all money/items and
-				// transports the player to the land of the dead.
-				user.Command(`suicide`)
+			if user.Character.Health < 1 && user.Character.IsAlive() {
+				// Death on zero: route through Life cascade for same-tick
+				// observer firing (teleport, stat decay, loot, etc.).
+				// Killer attribution: the attacker is tracked via
+				// PlayerDamage (snapshotted inside Die).
+				user.Character.Die(state.ActorRef{}, life.TriggerHealthZero)
 			}
 		}
 	}
@@ -398,10 +405,8 @@ func handleAffected(affectedPlayerIds []int, affectedMobInstanceIds []int) {
 		mobsHandled[mobId] = struct{}{}
 
 		if mob := mobs.GetInstance(mobId); mob != nil {
-			if mob.Character.Health < 1 {
-
-				mob.Command(`suicide`)
-
+			if mob.Character.Health < 1 && mob.Character.IsAlive() {
+				mob.Character.Die(state.ActorRef{}, life.TriggerHealthZero)
 			}
 		}
 

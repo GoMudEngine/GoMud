@@ -19,6 +19,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/life"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/GoMudEngine/GoMud/internal/worldevents"
@@ -103,8 +105,8 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 
 		// Death check always runs — a DoT tick in an idle zone should
 		// still kill the mob. Skip the rest of the loop when the mob dies.
-		if mob.Character.Health <= 0 {
-			mob.Command(`suicide`)
+		if mob.Character.Health <= 0 && mob.Character.IsAlive() {
+			mob.Character.Die(state.ActorRef{}, life.TriggerHealthZero)
 			continue
 		}
 

@@ -13,6 +13,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/mutators"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/life"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -47,13 +49,12 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 		healthStart := user.Character.Health
 
 		// Death on zero — any path that dropped Health below 1 (damage,
-		// DoT, grenade, etc.) gets caught here on the next round tick and
-		// converted into a suicide (drops items/money, transports to the
-		// land of the dead). DoCombat's end-of-round resolution handles
-		// the same check for in-combat deaths; AutoHeal is the catch-all
-		// for non-combat deaths (grenade, DoT outside combat, etc.).
-		if user.Character.Health < 1 {
-			user.Command(`suicide`)
+		// DoT, grenade, etc.) gets caught here on the next round tick.
+		// DoCombat handles in-combat deaths same-tick; AutoHeal is the
+		// catch-all for non-combat deaths (poison, DoT, grenade, etc.).
+		// Environmental death has no player killer — empty ActorRef.
+		if user.Character.Health < 1 && user.Character.IsAlive() {
+			user.Character.Die(state.ActorRef{}, life.TriggerHealthZero)
 			continue
 		}
 

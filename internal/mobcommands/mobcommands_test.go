@@ -16,6 +16,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/state/awareness"
+	"github.com/GoMudEngine/GoMud/internal/state/life"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -84,12 +85,15 @@ func seedAllRegistries() func() {
 			AutoAggro: true,
 			Groups:     []string{"undead"},
 			Character: characters.Character{
-				Name:      "Skeleton",
-				RoomId:    1,
-				Health:    50,
-				Buffs:     buffs.New(),
-				Cooldowns: map[string]int{},
-				Awareness: awareness.NewMachine(),
+				Name:          "Skeleton",
+				RoomId:        1,
+				Health:        50,
+				Buffs:         buffs.New(),
+				Cooldowns:     map[string]int{},
+				Awareness:     awareness.NewMachine(),
+				Life:          life.NewMachine(),
+				MobInstanceId: 100,
+				IsMob:         true,
 			},
 		},
 		200: {
@@ -98,12 +102,15 @@ func seedAllRegistries() func() {
 			HomeRoomId: 1,
 			AutoAggro: false,
 			Character: characters.Character{
-				Name:      "Merchant",
-				RoomId:    1,
-				Health:    100,
-				Buffs:     buffs.New(),
-				Cooldowns: map[string]int{},
-				Awareness: awareness.NewMachine(),
+				Name:          "Merchant",
+				RoomId:        1,
+				Health:        100,
+				Buffs:         buffs.New(),
+				Cooldowns:     map[string]int{},
+				Awareness:     awareness.NewMachine(),
+				Life:          life.NewMachine(),
+				MobInstanceId: 200,
+				IsMob:         true,
 			},
 		},
 	}

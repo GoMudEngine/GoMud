@@ -44,40 +44,13 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		return true, nil
 	}
 
-	// Trigger the Life cascade. All cleanup, announcements, corpse
-	// creation, teleport, decay, and respawn happen via observers
-	// wired to the three transitions below.
-	damageSnapshot := copyPlayerDamage(user.Character.PlayerDamage)
-	_ = user.Character.Life.TransitionToDead(
-		life.DeadData{
-			DamageMap: damageSnapshot,
-		},
-		state.TransitionReason{
-			Trigger: life.TriggerSuicide,
-			Actor:   state.ActorRef{UserId: user.UserId},
-		},
-	)
-	_ = user.Character.Life.TransitionToRespawning(
-		life.RespawningData{DestRoomId: user.Character.ResolveRespawnRoom()},
-		state.TransitionReason{Trigger: life.TriggerRespawnReady},
-	)
-	_ = user.Character.Life.TransitionToAlive(
-		state.TransitionReason{Trigger: life.TriggerRespawnComplete},
+	// Route through the Life cascade. All cleanup, announcements,
+	// corpse creation, teleport, decay, and respawn happen via
+	// observers wired to the three transitions inside Die().
+	user.Character.Die(
+		state.ActorRef{UserId: user.UserId},
+		life.TriggerSuicide,
 	)
 
 	return true, nil
-}
-
-// copyPlayerDamage returns a shallow copy of the PlayerDamage map so
-// observers receive a stable snapshot that isn't modified by
-// subsequent clear() calls in Life_Cascades.go.
-func copyPlayerDamage(src map[int]int) map[int]int {
-	if len(src) == 0 {
-		return nil
-	}
-	dst := make(map[int]int, len(src))
-	for k, v := range src {
-		dst[k] = v
-	}
-	return dst
 }
