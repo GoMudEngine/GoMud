@@ -8,6 +8,9 @@
 package awareness
 
 import (
+	"errors"
+	"sync"
+
 	"github.com/GoMudEngine/GoMud/internal/state"
 )
 
@@ -107,3 +110,65 @@ func (m *Machine) SetSelf(ref state.ActorRef) { m.self = ref }
 
 // Self returns the bound ActorRef.
 func (m *Machine) Self() state.ActorRef { return m.self }
+
+// === Machine registry ===
+// Cross-character lookups for observer detection, reveal cascades, etc.
+
+var (
+	registryMu      sync.Mutex
+	machineRegistry = map[state.ActorRef]*Machine{}
+)
+
+// RegisterMachine binds an ActorRef to its Machine for cross-
+// character notifications.
+func RegisterMachine(ref state.ActorRef, m *Machine) {
+	registryMu.Lock()
+	defer registryMu.Unlock()
+	machineRegistry[ref] = m
+	m.self = ref
+}
+
+// UnregisterMachine removes a binding (player logout, mob despawn).
+func UnregisterMachine(ref state.ActorRef) {
+	registryMu.Lock()
+	defer registryMu.Unlock()
+	delete(machineRegistry, ref)
+}
+
+// lookupMachine returns the registered Machine for ref, or nil.
+func lookupMachine(ref state.ActorRef) *Machine {
+	registryMu.Lock()
+	defer registryMu.Unlock()
+	return machineRegistry[ref]
+}
+
+// === Transition method stubs (Tasks 3-11 implement) ===
+
+// TransitionToConcealing initiates a sneak attempt.
+// Visible → Concealing.
+func (m *Machine) TransitionToConcealing(d ConcealingData, r state.TransitionReason) error {
+	return errors.New("not implemented")
+}
+
+// ResolveConcealment finalizes a sneak attempt.
+// success=true → Hidden; success=false → Visible.
+func (m *Machine) ResolveConcealment(success bool, r state.TransitionReason) {}
+
+// TransitionToRevealing initiates a reveal cascade.
+// Hidden → Revealing → Visible (same-tick).
+func (m *Machine) TransitionToRevealing(r state.TransitionReason) error {
+	return errors.New("not implemented")
+}
+
+// NotifyRoomChanged fires per-observer detection rolls on room
+// entry/exit. detected=true → TransitionToRevealing.
+func (m *Machine) NotifyRoomChanged(detected bool, r state.TransitionReason) {}
+
+// ForceVisible transitions to Visible from any state, bypassing
+// normal roll logic. Used for logout/death safety valves.
+func (m *Machine) ForceVisible(r state.TransitionReason) {}
+
+// RegisterActivityCheck registers a veto that blocks Concealing
+// when the character is busy with an activity. check() returns
+// true when free.
+func (m *Machine) RegisterActivityCheck(check func() bool) {}
