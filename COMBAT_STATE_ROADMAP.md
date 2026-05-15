@@ -35,7 +35,7 @@ This effort collapses that surface to one canonical framework:
 |-------|-------|--------|----------------|
 | 0 | Framework + Combat Phase | Done (2026-05-13) | `feature/mob-aliveness-1.3-crimes`. Framework package + Combat Phase machine; compat wrappers preserve `Aggro` API. Full field deletion deferred. |
 | 1 | Awareness | Done (2026-05-15) | Visible / Concealing / Hidden / Revealing. FSM port + Hidden mechanic refresh. 33 Behavior Matrix tests (29 PASS + 4 SKIP). |
-| 2 | Life | Not started | Alive / Dead / Respawning |
+| 2 | Life | Done (2026-05-13) | Alive / Dead / Respawning. 252-line `mobcommands/suicide.go` + ~290-line `usercommands/suicide.go` consolidated into thin handlers + Life cascade + 14 observer files. Permadeath + extra-lives sunset. Auto-look after respawn teleport. 12 Behavior Matrix tests PASS + 15 SKIP (integration-deferred). |
 | 3 | Activity | Not started | Free / Casting / Crafting / Foraging / Salvaging / ... |
 | 4 | Position | Not started | Standing / Prone / Clinched / Grounded |
 | 5 | Presence | Not started | Player and mob variants |
@@ -172,6 +172,113 @@ beyond unit-test scope (covered by future in-game smoke).
 machine) brainstorm is next.
 
 Next: chunk 2 — Life machine (`Alive` / `Dead` / `Respawning`).
+
+---
+
+## Chunk 2 — Shipped (2026-05-13)
+
+Built the `internal/state/life/` machine (`Alive / Dead / Respawning`)
+on the chunk-0 framework. Consolidated scattered death-cleanup logic
+into a Life cascade + per-concern observer files. `usercommands/suicide.go`
+shrank from ~290 lines to ~50 (thin handler chaining
+`TransitionToDead → TransitionToRespawning → TransitionToAlive`).
+`mobcommands/suicide.go` shrank from 252 lines to ~60 (thin handler;
+mobs stay at `Dead`, observers handle the rest). Same-tick observer
+firing for both player and mob death paths.
+
+**Cascade + observer architecture:**
+- `Life_Cascades.go` — cross-machine cleanup on `Alive → Dead` (Combat
+  Phase → Idle, Awareness → Visible, casting/crafting nil, position
+  Standing, grapple cleared, non-permanent buffs canceled, conditions
+  cleared); on `Dead → Respawning` (resource refill to 5% of max,
+  NoAggroTarget grace buff #81, clear PlayerDamage, CharacterVitalsChanged
+  event).
+- **Player death observers:** `Death_PlayerCleanup` (stat decay + skill
+  rust + KD + party notify), `Death_PlayerAnnouncement` (room +
+  global broadcasts, events.PlayerDeath queue, worldevents PvE emit,
+  weakened/darkness text, instance ejection), `Death_PlayerCorpse`
+  (corpse creation in death room).
+- **Mob death observers:** `Death_MobLoot` (carried/equipped item drop,
+  gold, corpse), `Death_AlivenessSubstrate` (fires events.MobDeath),
+  `Death_MobInstanceCleanup` (DeleteMobInstance + DestroyInstance +
+  CleanupMobSpawns + RemoveMob), `Death_MobBroadcast` (room "X has
+  died" + Guide tempdata + worldevents.MobKilledByPlayer),
+  `Death_MobBehaviorTree` (mob_die btree event), `Death_MobKillCredit`
+  (EndAggro + KD.AddMobKill + OnFirstMobKill + party credit),
+  `Death_MobCharmCleanup` (TrackRecentDeath + RemoveCharm).
+- **Cross-cutting:** `Death_InboundAggroCleanup` (clears mobs and
+  companions targeting the dying actor; fires for both player AND mob
+  deaths).
+- **Respawn observers:** `Respawn_PlayerTeleport` (`rooms.MoveToRoom`
+  to `ResolveRespawnRoom` destination + belt-and-suspenders EndAggro),
+  `Respawn_PlayerAutoLook` (fires `u.Command("look")` so the new room
+  renders without manual command — UX fix, parallel fold-recall fix
+  logged as followup).
+
+**Character API additions:**
+- `Life *life.Machine` field + `IsAlive()` / `IsDead()` / `IsRespawning()`
+  predicates.
+- `Die(killer, trigger)` helper in `die.go` — chains the appropriate
+  transitions (mobs stay Dead; players chain Dead → Respawning →
+  Alive same-tick). Callers pre-check ReviveOnDeath, dedupe, Shadow
+  Realm.
+- `ResolveRespawnRoom()` reads `home` setting → looks up
+  `HomeLocations` (exported map in `respawn_home.go`) → falls back to
+  `default` (room 0).
+- `MobInstanceId` non-persisted field added (mirrors `Mob.InstanceId`)
+  for cheap mob-actor gating in Life observers without a full instance
+  scan.
+
+**Combat-driven death migration:** the four production sites that
+detect health-zero (`NewRound_DoCombat.go` sweep + handleAffected,
+`NewRound_AutoHeal.go` player catch-all, `NewRound_MobRoundTick.go`
+DoT/idle, `Buff_ApplyBuffs.go` buff-tick) now call `c.Die()` directly
+instead of queueing `user.Command("suicide")` or `mob.Command("suicide")`.
+Observers fire same-tick.
+
+**Sunset:**
+- Permadeath system removed entirely. `Character.ExtraLives` field +
+  `Death.PermaDeath` / `LivesStart` / `LivesMax` / `PricePerLife`
+  config knobs deleted. `{{ permadeath }}` template helper removed.
+  Status template + about helpfile cleaned. `events.PlayerDeath.Permanent`
+  field kept for upstream parity but always queued false. Scripting
+  docs (`FUNCTIONS_ACTORS.md` `GiveExtraLife()`, `SCRIPTING_ITEMS.md`
+  example) updated.
+- ReviveOnDeath buff preserved (separate one-shot mechanic). Stat
+  decay + skill rust preserved as normal-death penalties.
+
+**Behavior Matrix complete:** 27 intent-driven tests (LI-001 through
+LI-027) authored in `life_test.go`. 12 pass directly (LI-001 through
+LI-007, LI-017-019); 15 SKIP because they require hook integration
+(LI-008-016, LI-020-027 — verified by the hook observer files +
+in-game smoke). Chunk 0 + chunk 1 regression tests pass; package
+tests across state/life, state/combatphase, state/awareness,
+characters, hooks, usercommands, mobcommands all green.
+
+**Deferred from chunk 2 (followups):**
+- Activity machine (chunk 3) will repoint the Activity pre-wire in
+  `Life_Cascades.go` (currently clears `CastingState`/`CraftingState`
+  directly) to the proper Activity machine query.
+- Position machine (chunk 4) will repoint the Position pre-wire in
+  `Life_Cascades.go` (currently clears `CombatPosition` /
+  `GrappleControllerId` directly).
+- Auto-look after fold-recall teleport — separate memory entry
+  `project_auto_look_after_room_change.md` covers this parallel UX
+  fix.
+- Chunk 1 sneak-end-message cosmetic bug
+  (`project_chunk1_sneak_end_message_bug.md`) — addressing during a
+  later cleanup pass.
+- 10 in-game smoke scenarios from the spec (player suicide flow,
+  combat death, mob death + loot, mid-cast death, hidden death,
+  grappled death, stat decay verification, multi-killer mob kill,
+  permadeath path gone, chunk 0/1 regression) deferred to user
+  session.
+
+**Aliveness work stays paused** for chunks 3-5. Chunk 3 (Activity
+machine) brainstorm is next.
+
+Next: chunk 3 — Activity machine (`Free` / `Casting` / `Crafting` /
+`Foraging` / `Salvaging` / ...).
 
 ---
 
