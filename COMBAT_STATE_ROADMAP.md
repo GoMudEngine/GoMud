@@ -34,7 +34,7 @@ This effort collapses that surface to one canonical framework:
 | Chunk | Title | Status | Branch / Notes |
 |-------|-------|--------|----------------|
 | 0 | Framework + Combat Phase | Done (2026-05-13) | `feature/mob-aliveness-1.3-crimes`. Framework package + Combat Phase machine; compat wrappers preserve `Aggro` API. Full field deletion deferred. |
-| 1 | Awareness | Not started | Visible / Concealing / Hidden / Revealing |
+| 1 | Awareness | Done (2026-05-15) | Visible / Concealing / Hidden / Revealing. FSM port + Hidden mechanic refresh. 33 Behavior Matrix tests (29 PASS + 4 SKIP). |
 | 2 | Life | Not started | Alive / Dead / Respawning |
 | 3 | Activity | Not started | Free / Casting / Crafting / Foraging / Salvaging / ... |
 | 4 | Position | Not started | Standing / Prone / Clinched / Grounded |
@@ -98,6 +98,80 @@ until user-driven smoke confirms scenario 8 (thief regression).
 
 Next: chunk 1 — Awareness machine (`Visible` / `Concealing` /
 `Hidden` / `Revealing`).
+
+---
+
+## Chunk 1 — Shipped (2026-05-15)
+
+Built the `internal/state/awareness/` machine
+(`Visible/Concealing/Hidden/Revealing`) on the chunk-0 framework.
+Subscribed to Combat Phase's `OnEndOfRoundIfSurprise` callback to
+close the chunk-0 surprise handshake at end of first combat
+round. Replaces buff-#9-as-state-of-truth with Awareness state;
+buff #9 stays as the side-effect carrier with the cascade in
+`internal/hooks/Awareness_Cascades.go` keeping it mirrored.
+
+**Marquee mechanic refresh** bundled with the FSM port:
+- **No duration** on Hidden — persists until explicitly broken
+  (combat, detection roll, light state change, logout, noisy
+  action). Buff #9 YAML stripped of `triggerrate`/`triggercount`.
+- **Stamina cost for hidden movement** — default 3.0× multiplier,
+  stacks multiplicatively with encumbrance. Replaces a
+  pre-existing hardcoded 1.5× in `GetMovementStaminaCost`.
+- **Light-conditional sneak score** — sneaker-side 4-way
+  conditional: baseline (dark/dark), 0.9× (dark sneaker, lit
+  room), 0.85× (lit sneaker, lit room), 0.5× (lit sneaker, dark
+  room — beacon in darkness). `CalcSneakScore(char, effectiveLit)`
+  + `CalcSneakScoreVsObserver(sneaker, observer, room)` helper.
+  NightVision observer treats sneaker as in a lit room for that
+  observer's roll.
+- **Noisy actions** break stealth via `TriggerNoisyAction`:
+  `say`, `shout`, `rally`, `warcry`, `taunt`. Direct-target
+  `whisper` stays quiet (confirmed during migration —
+  no broadcast-form variant existed).
+- **Logout safety valve** — players logging out while Hidden are
+  forced through Revealing → Visible synchronously, so observers
+  see the leave broadcast and reconnects start Visible.
+- **Activity veto pre-wire** — `Visible → Concealing` blocked when
+  the character is mid-cast or mid-craft. Chunk-3 will repoint
+  the callback to the proper Activity machine.
+
+**Sunset:**
+- Buff #20 (`very_hidden`) deleted as dead content.
+- ~49 `HasBuffFlag(buffs.Hidden)` / `HasFlagFromAnySource(buffs.Hidden)`
+  readers migrated to `Character.IsHidden()` across 31 files.
+- 8 explicit `CancelBuffsWithFlag(buffs.Hidden)` writers migrated
+  to `Awareness.TransitionToRevealing(...)`.
+- Sneak action's direct `AddBuff(9, ...)` replaced by Awareness
+  state transitions; the buff-mirror cascade handles the buff.
+- Zombie `aggro.go` / `aggro_helpers.go` files left behind from
+  chunk-0 Task 18 finally cleaned up (the implementer who did
+  Task 18 said `git rm` but files were still on disk).
+- `internal/buffs/buffspec.go` `Validate()` now allows no-trigger
+  buffs (needed for the no-duration Hidden buff).
+
+**Behavior Matrix complete:** 33 intent-driven tests (AW-001
+through AW-033) authored in awareness_test.go. 29 pass directly;
+4 (AW-024-027, the CalcSneakScore truth-table rows) implemented
+in `internal/actions/skill_helpers_test.go` (or sneak_test.go)
+where the function lives — AW-024/025 implemented, AW-026/027
+skipped because EmitsLight=true requires buff/equipment setup
+beyond unit-test scope (covered by future in-game smoke).
+
+**Deferred from chunk 1 (followups):**
+- `internal/hooks/Awareness_LightChange.go` scaffolding shipped
+  (event listeners wired); full re-roll body deferred — existing
+  room-entry detection in `internal/hooks/go.go` continues to
+  handle the primary case. Future expansion adds re-rolls for
+  light-source equipment changes within a room.
+- AW-026/027 unit tests skipped (integration-only).
+- The 10 in-game smoke scenarios from the spec deferred to user
+  session.
+
+**Aliveness work stays paused** for chunks 2-5. Chunk 2 (Life
+machine) brainstorm is next.
+
+Next: chunk 2 — Life machine (`Alive` / `Dead` / `Respawning`).
 
 ---
 
