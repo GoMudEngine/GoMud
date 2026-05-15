@@ -5,6 +5,9 @@
 package life
 
 import (
+	"errors"
+	"sync"
+
 	"github.com/GoMudEngine/GoMud/internal/state"
 )
 
@@ -102,3 +105,59 @@ func (m *Machine) SetSelf(ref state.ActorRef) { m.self = ref }
 
 // Self returns the bound ActorRef.
 func (m *Machine) Self() state.ActorRef { return m.self }
+
+// === Machine registry ===
+// Cross-character lookups for death cascades, party notifications, etc.
+
+var (
+	registryMu      sync.Mutex
+	machineRegistry = map[state.ActorRef]*Machine{}
+)
+
+// RegisterMachine binds an ActorRef to its Machine for cross-
+// character notifications.
+func RegisterMachine(ref state.ActorRef, m *Machine) {
+	registryMu.Lock()
+	defer registryMu.Unlock()
+	machineRegistry[ref] = m
+	m.SetSelf(ref)
+}
+
+// UnregisterMachine removes a binding (player logout, mob despawn).
+func UnregisterMachine(ref state.ActorRef) {
+	registryMu.Lock()
+	defer registryMu.Unlock()
+	delete(machineRegistry, ref)
+}
+
+// lookupMachine returns the registered Machine for ref, or nil.
+func lookupMachine(ref state.ActorRef) *Machine {
+	registryMu.Lock()
+	defer registryMu.Unlock()
+	return machineRegistry[ref]
+}
+
+// === Transition method stubs (Tasks 3-10 implement) ===
+
+// TransitionToDead transitions Alive → Dead.
+// Stores DeadData (killer, damage map) for observer consumption.
+func (m *Machine) TransitionToDead(d DeadData, r state.TransitionReason) error {
+	return errors.New("not implemented")
+}
+
+// TransitionToRespawning transitions Dead → Respawning.
+// Player-only path; mobs stay Dead and are destroyed by Task 7
+// observer.
+func (m *Machine) TransitionToRespawning(d RespawningData, r state.TransitionReason) error {
+	return errors.New("not implemented")
+}
+
+// TransitionToAlive transitions Respawning → Alive (or Dead →
+// Alive for admin restoration).
+func (m *Machine) TransitionToAlive(r state.TransitionReason) error {
+	return errors.New("not implemented")
+}
+
+// ForceAlive drops to Alive from any state. Used by admin
+// commands and test setup. No-op if already Alive.
+func (m *Machine) ForceAlive(r state.TransitionReason) {}
