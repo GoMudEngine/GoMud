@@ -313,7 +313,7 @@ func plantOnPlayer(actor Actor, targetUserId int, plantItem items.Item,
 	// Independent detection roll: victim may notice even on success.
 	if !actor.IsPlayer() {
 		searchScore := CalcSearchScore(targetUser.Character)
-		sneakScore := CalcSneakScore(actor.GetCharacter())
+		sneakScore := CalcSneakScoreVsObserver(actor.GetCharacter(), targetUser.Character, actor.GetRoom())
 		detected, _, _, _ := dice.OpposedRollStat(searchScore, sneakScore)
 		if detected {
 			targetUser.SendText(fmt.Sprintf(

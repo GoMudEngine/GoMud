@@ -168,7 +168,7 @@ func shadowPlayer(actor Actor, targetUserId int, cfg configs.Balance) ShadowResu
 	// Initial detection roll: target wins if their search score beats the
 	// actor's sneak score. Uses the same formula as shadowDetectionRoll in
 	// go.go (Per+Search vs Dex+Skullduggery; OpposedRollStat: first arg wins).
-	sneakScore := CalcSneakScore(char)
+	sneakScore := CalcSneakScoreVsObserver(char, targetUser.Character, actor.GetRoom())
 	searchScore := CalcSearchScore(targetUser.Character)
 	detected, _, _, _ := dice.OpposedRollStat(searchScore, sneakScore)
 	if detected {

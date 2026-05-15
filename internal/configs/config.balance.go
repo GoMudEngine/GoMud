@@ -62,6 +62,10 @@ type Balance struct {
 	StealHiddenBonus               ConfigInt   `yaml:"StealHiddenBonus"`               // Bonus to attacker score when hidden (default 25)
 	StealCooldown                  ConfigInt   `yaml:"StealCooldown"`                  // Steal/plant cooldown in real seconds (default 60)
 	ShadowCooldown                 ConfigInt   `yaml:"ShadowCooldown"`                 // Rounds before re-shadowing (default 5)
+	HiddenMoveStaminaMultiplier    ConfigFloat `yaml:"HiddenMoveStaminaMultiplier"`    // Extra stamina cost multiplier for moving while hidden (default 3.0)
+	SneakModEmitsLightDarkRoom     ConfigFloat `yaml:"SneakModEmitsLightDarkRoom"`     // Sneak score multiplier: sneaker emits light, room dark (default 0.5)
+	SneakModEmitsLightLitRoom      ConfigFloat `yaml:"SneakModEmitsLightLitRoom"`      // Sneak score multiplier: sneaker emits light, room lit (default 0.85)
+	SneakModNoLightLitRoom         ConfigFloat `yaml:"SneakModNoLightLitRoom"`         // Sneak score multiplier: sneaker dark, room lit (default 0.9)
 
 	// ── COMBAT: SPELL COSTS ──────────────────────────────────────────────────
 	SpellConvictionCostMultiplier ConfigFloat `yaml:"SpellConvictionCostMultiplier"` // Global multiplier for spell conviction costs (default 1.0)

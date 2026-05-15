@@ -55,7 +55,6 @@ func Sneak(actor Actor) SneakResult {
 	}
 
 	room := actor.GetRoom()
-	sneakScore := CalcSneakScore(char)
 
 	// Build party exclusion set for player actors.
 	// Mob actors have no party (GetUserId returns 0); parties.Get(0) returns nil.
@@ -74,7 +73,9 @@ func Sneak(actor Actor) SneakResult {
 
 	rollHappened := false
 
-	// Check each player in the room.
+	// Check each player in the room. Score is computed per-observer so
+	// that NightVision observers (effectiveLit=true) apply the appropriate
+	// light modifier even in a dark room.
 	for _, observerId := range room.GetPlayers() {
 		if partySet[observerId] {
 			continue
@@ -83,6 +84,7 @@ func Sneak(actor Actor) SneakResult {
 		if observer == nil {
 			continue
 		}
+		sneakScore := CalcSneakScoreVsObserver(char, observer.Character, room)
 		observerScore := CalcSearchScore(observer.Character)
 		rollHappened = true
 		success, _, _, _ := dice.OpposedRollStat(sneakScore, observerScore)
@@ -104,6 +106,7 @@ func Sneak(actor Actor) SneakResult {
 		if m == nil {
 			continue
 		}
+		sneakScore := CalcSneakScoreVsObserver(char, &m.Character, room)
 		observerScore := CalcSearchScore(&m.Character)
 		rollHappened = true
 		success, _, _, _ := dice.OpposedRollStat(sneakScore, observerScore)

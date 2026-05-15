@@ -72,6 +72,18 @@ func (b *Balance) validateCombat() {
 	if b.ShadowCooldown < 0 {
 		b.ShadowCooldown = 5
 	}
+	if b.HiddenMoveStaminaMultiplier <= 0 {
+		b.HiddenMoveStaminaMultiplier = 3.0
+	}
+	if b.SneakModEmitsLightDarkRoom <= 0 {
+		b.SneakModEmitsLightDarkRoom = 0.5
+	}
+	if b.SneakModEmitsLightLitRoom <= 0 {
+		b.SneakModEmitsLightLitRoom = 0.85
+	}
+	if b.SneakModNoLightLitRoom <= 0 {
+		b.SneakModNoLightLitRoom = 0.9
+	}
 
 	// ── DARKNESS ─────────────────────────────────────────────────────────────
 	if b.DarknessCombatPenalty <= 0 || b.DarknessCombatPenalty > 1.0 {

@@ -126,8 +126,10 @@ func shadowIsTargetingUser(shadower *users.UserRecord, moverId int) bool {
 // shadowDetectionRoll performs a target-specific detection check.
 // Returns true if the target sensed the follower (shadower detected).
 // Uses Perception+Search vs Dex+Skullduggery (target is the attacker).
-func shadowDetectionRoll(shadower *users.UserRecord, target *users.UserRecord) bool {
-	sneakScore := actions.CalcSneakScore(shadower.Character)
+// room is the current room in which the detection check occurs; used
+// to compute per-observer light conditions (NightVision, room darkness).
+func shadowDetectionRoll(shadower *users.UserRecord, target *users.UserRecord, room *rooms.Room) bool {
+	sneakScore := actions.CalcSneakScoreVsObserver(shadower.Character, target.Character, room)
 	targetScore := actions.CalcSearchScore(target.Character)
 
 	// OpposedRollStat(atk, def) returns true when atk (first arg) wins.

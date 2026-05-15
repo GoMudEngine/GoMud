@@ -459,6 +459,18 @@ Balance:
   # See _datafiles/combat-messages/* for message definitions.
   ConsistentAttackMessages: false
 
+  # ── SKULLDUGGERY: LIGHT-CONDITIONAL SNEAK MODIFIERS ──────────────────────
+  # Four-way conditional applied in CalcSneakScore(effectiveLit).
+  # effectiveLit = room is lit OR observer has NightVision buff.
+  #   beacon in darkness: sneaker emits light, room dark  → 0.5x  (very hard to hide)
+  #   blend in:           sneaker emits light, room lit   → 0.85x (lit, but so is room)
+  #   alert observers:    sneaker dark, room lit          → 0.9x  (harder to hide)
+  #   baseline:           sneaker dark, room dark         → 1.0x  (best stealth)
+  HiddenMoveStaminaMultiplier: 3.0  # Extra stamina cost multiplier for hidden movement
+  SneakModEmitsLightDarkRoom: 0.5   # Beacon penalty: emitting light in a dark room
+  SneakModEmitsLightLitRoom: 0.85   # Blend-in modifier: emitting light in a lit room
+  SneakModNoLightLitRoom: 0.9       # Alert-observer modifier: dark sneaker in lit room
+
   # ── COMBAT: DARKNESS ───────────────────────────────────────────────────────
   # Multiplier on attack AND defense scores when fighting in a dark room
   # without nightvision. 0.80 = 20% penalty to hit and defend while blind.
