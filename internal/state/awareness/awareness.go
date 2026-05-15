@@ -8,7 +8,6 @@
 package awareness
 
 import (
-	"errors"
 	"sync"
 
 	"github.com/GoMudEngine/GoMud/internal/state"
@@ -69,6 +68,7 @@ type Machine struct {
 	hidden     *HiddenData
 	revealing  *RevealingData
 	self       state.ActorRef
+	vetoes     vetoChain
 }
 
 // NewMachine returns an Awareness machine in Visible.
@@ -142,33 +142,101 @@ func lookupMachine(ref state.ActorRef) *Machine {
 	return machineRegistry[ref]
 }
 
-// === Transition method stubs (Tasks 3-11 implement) ===
+// === Transition methods ===
 
-// TransitionToConcealing initiates a sneak attempt.
-// Visible → Concealing.
+// TransitionToConcealing initiates a sneak attempt. Runs the
+// Activity veto first (can't sneak while casting/crafting).
+// Stores ConcealingData; caller is responsible for calling
+// ResolveConcealment with the roll outcome.
 func (m *Machine) TransitionToConcealing(d ConcealingData, r state.TransitionReason) error {
-	return errors.New("not implemented")
+	if m.vetoes.activitySelf != nil && !m.vetoes.activitySelf() {
+		return &state.VetoError{
+			HandlerName: "activity_self",
+			Reason:      "busy with activity",
+		}
+	}
+	if err := m.inner.TransitionTo(Concealing, r); err != nil {
+		return err
+	}
+	m.concealing = &d
+	return nil
 }
 
-// ResolveConcealment finalizes a sneak attempt.
+// ResolveConcealment finalizes the sneak attempt.
 // success=true → Hidden; success=false → Visible.
-func (m *Machine) ResolveConcealment(success bool, r state.TransitionReason) {}
-
-// TransitionToRevealing initiates a reveal cascade.
-// Hidden → Revealing → Visible (same-tick).
-func (m *Machine) TransitionToRevealing(r state.TransitionReason) error {
-	return errors.New("not implemented")
+// Idempotent: no-op if not currently Concealing.
+func (m *Machine) ResolveConcealment(success bool, r state.TransitionReason) {
+	if m.State() != Concealing {
+		return
+	}
+	target := Visible
+	if success {
+		target = Hidden
+	}
+	_ = m.inner.TransitionTo(target, r)
+	m.concealing = nil
+	if success {
+		m.hidden = &HiddenData{}
+	} else {
+		m.hidden = nil
+	}
 }
 
-// NotifyRoomChanged fires per-observer detection rolls on room
-// entry/exit. detected=true → TransitionToRevealing.
-func (m *Machine) NotifyRoomChanged(detected bool, r state.TransitionReason) {}
+// TransitionToRevealing transitions Hidden → Revealing → Visible
+// same-tick. Cascade subscribers fire during Revealing; then
+// Visible is set immediately.
+//
+// Idempotent if not currently Hidden — returns nil.
+func (m *Machine) TransitionToRevealing(r state.TransitionReason) error {
+	if m.State() != Hidden {
+		return nil
+	}
+	if err := m.inner.TransitionTo(Revealing, r); err != nil {
+		return err
+	}
+	m.hidden = nil
+	m.revealing = &RevealingData{Reason: r}
 
-// ForceVisible transitions to Visible from any state, bypassing
-// normal roll logic. Used for logout/death safety valves.
-func (m *Machine) ForceVisible(r state.TransitionReason) {}
+	// Same-tick transition to Visible. Inner.TransitionTo fires
+	// the framework's AfterTransition cascades for the
+	// Revealing→Visible step; subscribers see both transitions
+	// (Hidden→Revealing AND Revealing→Visible) within the same
+	// stack frame.
+	if err := m.inner.TransitionTo(Visible, state.TransitionReason{
+		Trigger: r.Trigger,
+		Actor:   r.Actor,
+		Target:  r.Target,
+	}); err != nil {
+		return err
+	}
+	m.revealing = nil
+	return nil
+}
 
-// RegisterActivityCheck registers a veto that blocks Concealing
-// when the character is busy with an activity. check() returns
-// true when free.
-func (m *Machine) RegisterActivityCheck(check func() bool) {}
+// NotifyRoomChanged is called when the actor changes room.
+// Caller (typically internal/hooks/go.go) has already run per-
+// observer detection rolls; this method receives the outcome.
+//
+// detected=true means at least one observer's perception beat
+// the sneaker's score → transition Hidden → Revealing.
+// detected=false means stealth held — no-op.
+func (m *Machine) NotifyRoomChanged(detected bool, r state.TransitionReason) {
+	if detected && m.State() == Hidden {
+		_ = m.TransitionToRevealing(r)
+	}
+}
+
+// ForceVisible drops to Visible from any state. Used by logout
+// safety valve, death cascade, charm changes, etc. If currently
+// Hidden, routes through Revealing (cascade subscribers fire).
+// If currently Concealing, transitions directly to Visible.
+// If already Visible or in flight (Revealing), no-op.
+func (m *Machine) ForceVisible(r state.TransitionReason) {
+	switch m.State() {
+	case Hidden:
+		_ = m.TransitionToRevealing(r)
+	case Concealing:
+		_ = m.inner.TransitionTo(Visible, r)
+		m.concealing = nil
+	}
+}
