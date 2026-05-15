@@ -16,6 +16,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
+	"github.com/GoMudEngine/GoMud/internal/state/life"
 	"github.com/GoMudEngine/GoMud/internal/stats"
 )
 
@@ -108,6 +109,12 @@ type Character struct {
 	// "is this character hidden?" Buff #9 still exists as effect
 	// carrier; this machine drives its add/remove via cascade.
 	Awareness                *awareness.Machine             `yaml:"-"`
+	// Life state machine (chunk 2). Source of truth for "is this
+	// character alive/dead/respawning?" Cascade handlers in
+	// internal/hooks/Life_Cascades.go fire on transitions to clean
+	// up other machines and trigger per-actor effects (loot,
+	// teleport, decay, etc.).
+	Life                     *life.Machine                  `yaml:"-"`
 	CombatPosition           CombatPosition                 `yaml:"-"`                       // Current combat position (Standing/Prone/Clinched/Grounded). Don't store this.
 	PositionRoundsMin        int                            `yaml:"-"`                       // Minimum rounds in current position (for Prone bash/trip, etc). Don't store this.
 	GrappleControllerId      int                            `yaml:"-"`                       // UserId or MobInstanceId of grapple controller (0 = none, Stage 8.2+). Don't store this.
@@ -195,6 +202,7 @@ func New() *Character {
 		ConsecutiveMisses: 0,
 		CombatPhase:       combatphase.NewMachine(),
 		Awareness:         awareness.NewMachine(),
+		Life:              life.NewMachine(),
 	}
 
 	// Roll character stats using normal distribution
