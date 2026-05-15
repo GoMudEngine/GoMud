@@ -1562,14 +1562,141 @@ EOF
 
 ---
 
-## Task 12: Documentation
+## Task 12: Survey docs + helpfiles affected by chunk 2
+
+**Files:** (survey — no production code changes; this task produces a list that Task 13 consumes)
+
+Before authoring the documentation in Task 13, survey the codebase to identify every context.md, helpfile, and other documentation surface that mentions concepts changed or removed by chunk 2 — permadeath, extra lives, death/suicide mechanics, respawn flow, stat decay, ReviveOnDeath. The result is a punch list of docs to update.
+
+This catches doc drift that the obvious "update characters/, hooks/, state/life/ context.md" list misses — e.g., player-facing help text for `suicide`, admin docs that describe `kill` semantics, the help entry for `respawn` if one exists.
+
+- [ ] **Step 1: Grep context.md files**
+
+```bash
+grep -rln "permadeath\|extra.live\|ExtraLives\|stat decay\|skill rust\|ReviveOnDeath\|grace buff\|graveyard\|NoAggroTarget" \
+  --include="context.md" .
+```
+
+Note every hit. For each, identify which paragraph/section is affected and whether it needs:
+- DELETE (paragraph mentions removed feature like permadeath/extra lives)
+- UPDATE (paragraph describes mechanic that's changed — e.g., death flow now goes through Life machine)
+- KEEP (paragraph happens to use the word but the meaning is unchanged — e.g., a mention of stat decay that's still accurate post-chunk-2)
+
+- [ ] **Step 2: Grep player-facing helpfiles**
+
+```bash
+ls _datafiles/helpfiles/ 2>&1 | head -20
+```
+
+Identify the helpfile directory structure. Then:
+
+```bash
+grep -rln "permadeath\|extra.live\|extra life\|extra-life\|suicide\|respawn\|graveyard\|stat decay\|skill rust" \
+  _datafiles/helpfiles/ 2>&1
+```
+
+For each hit:
+- Helpfiles for `suicide`, `quit`, `respawn`, `die` commands likely need updating
+- Helpfiles mentioning "extra lives" or "permadeath" need editing/deletion
+- Helpfiles for `hide`/`sneak` may have been updated in chunk 1 — verify they're not stale
+
+Also check for help-template files (`.template`) and admin helpfiles separately. Note the path structure.
+
+- [ ] **Step 3: Grep top-level docs**
+
+```bash
+grep -rln "permadeath\|extra.live\|extra life\|extra-life" \
+  --include="*.md" --include="*.txt" \
+  PATCH_NOTES.md DEVELOPMENT_PLAN.md world.md github_guide.md CLAUDE.md \
+  COMBAT_STATE_ROADMAP.md MOB_ALIVENESS_ROADMAP.md 2>&1
+```
+
+Top-level docs (project root) may reference the sunset features. Note any hits.
+
+- [ ] **Step 4: Grep YAML descriptions / lore**
+
+```bash
+grep -rln "permadeath\|extra live" _datafiles/ 2>&1 | head -10
+```
+
+Some YAMLs may have lore text or description fields that mention permadeath in flavor. Note any hits — these usually need rewording rather than deletion.
+
+- [ ] **Step 5: Produce the audit document**
+
+Create a short audit file at `tools/testing/audits/2026-05-15-chunk-2-doc-helpfile-audit.md` (or similar — match existing audit conventions if any):
+
+```markdown
+# Chunk 2 documentation + helpfile audit
+
+Produced 2026-05-15 to feed Task 13 (Documentation) of the
+chunk-2 Life machine plan.
+
+## context.md files needing updates
+
+- internal/.../context.md — [what changed]
+- ...
+
+## Helpfiles needing updates
+
+- _datafiles/helpfiles/suicide.txt — needs rewrite: no permadeath path
+- ...
+
+## Top-level docs
+
+- PATCH_NOTES.md — pending entry for chunk 2 (added by Task 14 or separately)
+- ...
+
+## YAML lore mentions
+
+- _datafiles/.../some_quest.yaml — flavor mention of "permadeath" (reword to "death")
+- ...
+
+## No-action items
+
+- [files where the keyword appeared but the meaning is unchanged]
+```
+
+This document feeds Task 13. Don't commit code yet — the audit is the deliverable.
+
+- [ ] **Step 6: Commit the audit document**
+
+```bash
+git add tools/testing/audits/2026-05-15-chunk-2-doc-helpfile-audit.md
+git commit -m "$(cat <<'EOF'
+docs(audits): chunk-2 doc + helpfile audit
+
+Survey of context.md files, helpfiles, top-level docs, and YAML
+lore mentioning concepts changed/removed by chunk 2 (permadeath,
+extra lives, death/suicide mechanics, respawn flow, stat decay).
+Feeds Task 13 documentation updates.
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
+EOF
+)"
+```
+
+---
+
+## Task 13: Documentation + helpfile updates
 
 **Files:**
+- Read: `tools/testing/audits/2026-05-15-chunk-2-doc-helpfile-audit.md` (from Task 12 — the audit punch list)
 - Create: `internal/state/life/context.md`
 - Modify: `internal/characters/context.md` (add Life section)
 - Modify: `internal/hooks/context.md` (document new Life cascade + Death/Respawn observer files)
+- Modify: every helpfile + every additional context.md identified by the Task 12 audit
 
-- [ ] **Step 1: Create `internal/state/life/context.md`**
+This task consumes the audit and updates every file flagged. The new context.md authoring is the same as the prior chunks; helpfile updates are net-new work driven by the audit.
+
+- [ ] **Step 1: Re-read the Task 12 audit document**
+
+```bash
+cat tools/testing/audits/2026-05-15-chunk-2-doc-helpfile-audit.md
+```
+
+This is the punch list for the doc updates. Work through it section by section.
+
+- [ ] **Step 2: Create `internal/state/life/context.md`**
 
 Use `internal/state/awareness/context.md` as a template (~200 lines). Required sections:
 - Overview
@@ -1580,7 +1707,7 @@ Use `internal/state/awareness/context.md` as a template (~200 lines). Required s
 - Integration Notes — consumes state framework; consumed by Character + hooks files
 - Testing Notes — Behavior Matrix LI-001 through LI-027 in life_test.go
 
-- [ ] **Step 2: Update `internal/characters/context.md`**
+- [ ] **Step 3: Update `internal/characters/context.md`**
 
 Append "Life Machine Integration (chunk 2)":
 - Character.Life field
@@ -1588,7 +1715,7 @@ Append "Life Machine Integration (chunk 2)":
 - Cascade pattern (Life_Cascades.go)
 - Permadeath + ExtraLives sunset noted
 
-- [ ] **Step 3: Update `internal/hooks/context.md`**
+- [ ] **Step 4: Update `internal/hooks/context.md`**
 
 Document the new chunk-2 hook files:
 - Life_Cascades.go (cross-machine cleanup)
@@ -1599,17 +1726,41 @@ Document the new chunk-2 hook files:
 - Respawn_PlayerTeleport.go (graveyard teleport)
 - Respawn_PlayerAutoLook.go (auto-look)
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 5: Update additional context.md files flagged by audit**
+
+For every context.md hit in the Task 12 audit beyond the three core files (life, characters, hooks), apply the change documented in the audit:
+- DELETE paragraphs covering removed features (permadeath, extra lives)
+- UPDATE paragraphs describing changed mechanics (death flow now goes through Life machine; respawn sequence is single-tick + auto-look)
+- KEEP paragraphs marked no-action
+
+- [ ] **Step 6: Update helpfiles flagged by audit**
+
+For every helpfile flagged:
+- `_datafiles/helpfiles/suicide.*` (or similar) — describe death as routing through Life machine; remove permadeath warnings; mention auto-look after respawn
+- `_datafiles/helpfiles/quit.*` — verify mentions of "if you're hidden you'll be revealed before disconnect" if any
+- Any helpfile mentioning extra lives / permadeath — rewrite or delete
+- Any helpfile mentioning stat decay or skill rust — verify still accurate post-chunk-2
+
+If a helpfile is purely outdated (e.g., describes a feature that no longer exists), delete it. If outdated text is mixed with still-valid text, rewrite the outdated portion. Match the existing helpfile prose style.
+
+- [ ] **Step 7: Update top-level / YAML mentions flagged by audit**
+
+Top-level docs (PATCH_NOTES, world.md, etc.) and YAML lore mentions — apply audit recommendations. Lore mentions usually need rewording rather than deletion (the world's narrative doesn't care about engine mechanics).
+
+- [ ] **Step 8: Commit**
 
 ```bash
-git add internal/state/life/context.md internal/characters/context.md internal/hooks/context.md
+git add -A
 git commit -m "$(cat <<'EOF'
-docs(life): chunk 2 context.md updates
+docs(life): chunk 2 documentation + helpfile updates
 
 New state/life/context.md (~200 lines following the
 awareness/context.md template). Integration sections in
 characters/ and hooks/ context.mds documenting Life field,
-predicates, cascade, and observer files.
+predicates, cascade, and observer files. Helpfile + secondary
+context.md + top-level doc + YAML lore updates driven by the
+Task 12 audit (permadeath/extra-lives sunset, death flow
+refactor, respawn auto-look).
 
 Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
 EOF
@@ -1618,7 +1769,7 @@ EOF
 
 ---
 
-## Task 13: Build/test/smoke validation
+## Task 14: Build/test/smoke validation
 
 **Files:** (verification only)
 
@@ -1683,7 +1834,7 @@ DO NOT commit; just verify and report.
 
 ---
 
-## Task 14: Roadmap closeout
+## Task 15: Roadmap closeout
 
 **Files:**
 - Modify: `COMBAT_STATE_ROADMAP.md`
@@ -1726,9 +1877,10 @@ EOF
 | Migrate suicide.go to thin handler | Task 9 |
 | Migrate ApplyHealthChange + mob death paths | Task 10 |
 | Sunset permadeath + extra lives | Task 11 |
-| Documentation | Task 12 |
-| Build/test/smoke validation | Task 13 |
-| Roadmap closeout | Task 14 |
+| Survey docs + helpfiles affected by chunk 2 | Task 12 |
+| Documentation + helpfile updates | Task 13 |
+| Build/test/smoke validation | Task 14 |
+| Roadmap closeout | Task 15 |
 
 All spec sections covered. Behavior Matrix rows LI-001 through LI-027 distributed across Tasks 2 (RED tests) + Tasks 3-8 (implementation).
 
