@@ -329,6 +329,7 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 		mob.HomeRoomId = homeRoomId
 		mob.Character.RoomId = homeRoomId
 		mob.Character.IsMob = true
+		mob.Character.MobInstanceId = newInstanceId
 		mob.Character.PlayerDamage = make(map[int]int)
 
 		// Deep copy maps to prevent shared state with template.
