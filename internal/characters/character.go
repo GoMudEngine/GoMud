@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
@@ -115,6 +116,10 @@ type Character struct {
 	// up other machines and trigger per-actor effects (loot,
 	// teleport, decay, etc.).
 	Life                     *life.Machine                  `yaml:"-"`
+	// Activity state machine (chunk 3). Source of truth for "what
+	// activity is this character engaged in?" Replaces
+	// CastingState + CraftingState pointer fields (Task 11).
+	Activity                 *activity.Machine              `yaml:"-"`
 	CombatPosition           CombatPosition                 `yaml:"-"`                       // Current combat position (Standing/Prone/Clinched/Grounded). Don't store this.
 	PositionRoundsMin        int                            `yaml:"-"`                       // Minimum rounds in current position (for Prone bash/trip, etc). Don't store this.
 	GrappleControllerId      int                            `yaml:"-"`                       // UserId or MobInstanceId of grapple controller (0 = none, Stage 8.2+). Don't store this.
@@ -203,6 +208,7 @@ func New() *Character {
 		CombatPhase:       combatphase.NewMachine(),
 		Awareness:         awareness.NewMachine(),
 		Life:              life.NewMachine(),
+		Activity:          activity.NewMachine(),
 	}
 
 	// Roll character stats using normal distribution

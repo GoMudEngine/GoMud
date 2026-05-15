@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
@@ -527,6 +528,9 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	}
 	if c.Life == nil {
 		c.Life = life.NewMachine()
+	}
+	if c.Activity == nil {
+		c.Activity = activity.NewMachine()
 	}
 	// Fire OnCharacterCreated callbacks exactly once per Character.
 	// The guard prevents repeated firing on re-validation (e.g. stat
