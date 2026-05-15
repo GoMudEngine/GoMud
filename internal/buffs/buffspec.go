@@ -226,14 +226,18 @@ func (b *BuffSpec) Validate() error {
 		b.TriggerCount = int(configs.GetNetworkConfig().LogoutRounds)
 	}
 
-	b.RoundInterval = int(validationCalculator.AddPeriod(b.TriggerRate) - validationRound)
+	// If TriggerRate is set, validate RoundInterval and TriggerCount
+	if b.TriggerRate != "" {
+		b.RoundInterval = int(validationCalculator.AddPeriod(b.TriggerRate) - validationRound)
 
-	if b.TriggerCount < 1 {
-		return fmt.Errorf("buffId %d (%s) has a TriggersCount of < 1, must be at least 1", b.BuffId, b.Name)
+		if b.TriggerCount < 1 {
+			return fmt.Errorf("buffId %d (%s) has a TriggersCount of < 1, must be at least 1", b.BuffId, b.Name)
+		}
+		if b.RoundInterval < 1 {
+			return fmt.Errorf("buffId %d (%s) has a RoundInterval of < 1, must be at least 1. Is %s a valid time string?", b.BuffId, b.Name, b.TriggerRate)
+		}
 	}
-	if b.RoundInterval < 1 {
-		return fmt.Errorf("buffId %d (%s) has a RoundInterval of < 1, must be at least 1. Is %s a valid time string?", b.BuffId, b.Name, b.TriggerRate)
-	}
+
 	return nil
 }
 

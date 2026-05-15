@@ -1,0 +1,148 @@
+description: |
+  Admin-driven smoke test for Combat State Machines Chunk 0
+  (framework + Combat Phase machine). The chunk replaced the
+  overloaded Character.Aggro field with a Combat Phase state
+  machine (Idle / Engaging / Engaged / Disengaging), introduced
+  the Combatant/NonCombatant flag, wired Attackers() inbound
+  tracking, and structurally fixed the chunk 2.7 thief-archetype
+  bug via EvalContext.SoftTarget.
+
+  The smoketester account is admin role (confirmed in prior
+  chunks). Use admin commands freely to spawn, inspect, and
+  damage mobs.
+
+  IMPORTANT: don't modify code or YAML files. Observe, capture,
+  report. If a check fails, write it up — do NOT edit any files.
+
+goals:
+  # ── 0. Login + admin confirm ──────────────────────────────────
+  - Log in as smoketester (port 55555, host localhost). Run
+    `set charset` to switch to ASCII. Run `look`. Verify admin
+    privilege via `whoami` or `help admin`.
+
+  # ── MARQUEE: Chunk 2.7 thief regression ──────────────────────
+  - **THIS IS THE CRITICAL TEST.** Travel to Thornwall Outskirts
+    room 441 or 445 (the highwayman spawn rooms — `goto 441`
+    or `goto 445`). The Thornwall highwayman (mob 90) uses the
+    thief archetype.
+
+    Wait/loiter in the room for 2-3 rounds (use `wait` or
+    just send blank commands or `look`). Observe the highwayman's
+    behavior across at least 5 rounds.
+
+    **Expected behavior (PASS):**
+      - Highwayman is NOT in combat with you on entry
+      - Highwayman may: pick up items off floor (gearup),
+        sneak/hide, attempt steal
+      - If steal succeeds and is detected, you see a message
+        like "The Thornwall highwayman lifts N gold from your
+        pocket!" or similar
+      - Highwayman does NOT grapple you, does NOT attack you,
+        does NOT engage in combat unless you attack first
+      - On steal-and-flee branch firing: highwayman may leave
+        the room after attempting
+
+    **Original bug (FAIL):**
+      - Highwayman picks up sword, hides, then opens combat
+        with grapple (the original chunk 2.7 smoke failure
+        that motivated this whole chunk-0 effort)
+
+    Capture verbatim: every line you see from the highwayman
+    across at least 8 rounds. Include any combat output,
+    pickpocket messages, flee text, idle emotes.
+
+    If the highwayman initiates combat with you, the chunk
+    0 fix has REGRESSED — flag this loudly as the marquee
+    failure.
+
+  # ── 1. Basic combat (CP-001, CP-003, CP-004, CP-033) ─────────
+  - Pick a clearly-hostile mob (a Stillwater Marsh bandit or
+    Ironwind Steppe wolf — `goto` to their zone or
+    `spawnmob` if you have the perm). Attack it: `attack <mob>`.
+
+    Expected:
+      - Combat engages (you see swings, damage)
+      - Mob fights back
+      - On mob death: you see "X has died" or similar; you
+        return to Idle (movement works again)
+
+    Capture the round-by-round output of one combat to its
+    natural conclusion.
+
+  # ── 2. Player flee — success path (CP-006, CP-007) ──────────
+  - Engage another mob. Once in combat, run `flee`. Expected:
+      - You see "You attempt to flee" or similar
+      - On success: you move to an adjacent room, combat ends
+      - On failure: you stay in combat (this is CP-008)
+
+    Capture the flee output.
+
+  # ── 3. Grapple blocks flee (CP-016) ──────────────────────────
+  - Find a mob that grapples (a bandit fighter is a common one,
+    or use `mob <inst> grapple <you>` if admin allows).
+    Once grappled, attempt `flee`.
+
+    Expected: flee is vetoed with a message like "You can't
+    flee while grappled" or similar.
+
+    Capture the veto message text.
+
+  # ── 4. Multi-attacker tracking (CP-017) ──────────────────────
+  - Spawn 3 mobs in one room (`spawnmob` 3 times for a hostile
+    species). Attack one to trigger their aggression. Once
+    multiple are attacking you, run an admin inspection command
+    if available (`look at self`, `status`, or admin
+    `dump <self> attackers` if it exists).
+
+    Expected: at least 3 attackers tracked. Even if no specific
+    "show me my attackers" UI exists, the combat output should
+    show 3 mobs hitting you per round.
+
+    Kill one. Verify combat continues against the other 2 —
+    no orphaned aggro, no Combat Phase issues.
+
+  # ── 5. Death cascade (CP-028, CP-029) ───────────────────────
+  - During the multi-attacker scenario above, after killing
+    one of the mobs, verify the other 2 continue attacking you
+    without issue. The dead mob's Combat Phase cleanup should
+    not affect the survivors.
+
+    If at any point the survivors stop attacking when one of
+    their packmates dies, that's a death-cascade bug.
+
+  # ── 6. Persistence (CP-030) ──────────────────────────────────
+  - If feasible: log out mid-combat (use `quit` while engaged),
+    then log back in. Expected: you're in Idle state, not
+    Engaged. Inventory + room state preserved; combat state
+    reset.
+
+    If you can't log out mid-combat (some MUDs prevent this),
+    that's also acceptable behavior — just note it.
+
+  # ── 7. Persistence boot test ─────────────────────────────────
+  - Run `look` and verify your character is in a sensible Idle
+    state at login — no leftover combat aggro from a previous
+    session.
+
+  # ── 8. Final summary ─────────────────────────────────────────
+  - Write a "Smoke verdict" paragraph at the top of your report:
+
+      Smoke verdict: PASS | PARTIAL | FAIL
+        - MARQUEE chunk 2.7 thief regression: PASS/FAIL
+        - Basic combat lifecycle: PASS/FAIL
+        - Player flee mechanics: PASS/FAIL
+        - Grapple blocks flee: PASS/FAIL
+        - Multi-attacker tracking: PASS/FAIL
+        - Death cascade: PASS/FAIL
+        - Persistence (login Idle): PASS/FAIL
+
+    **The MARQUEE result is the most important.** If the
+    highwayman attacks you on sight, chunk 0 failed to deliver
+    its primary deliverable.
+
+  # ── 9. Blockers ──────────────────────────────────────────────
+  - If any admin command syntax fails to work as expected,
+    document the failure mode + your attempted commands in a
+    "Blockers" section. Don't fight tooling — flag and move on.
+
+  Report file: `tools/testing/reports/chunk-0-combat-state-machines-<YYYYMMDD-HHMM>.md`

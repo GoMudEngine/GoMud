@@ -1,0 +1,147 @@
+description: |
+  Admin-driven smoke test for chunk 2.5 (mutations on mobs).
+  The chunk added body-plan gating: species declare `body_parts:`,
+  mutations declare `requires_body_parts:`, and incompatible
+  mutations are silently filtered from acquisition pools. Plus
+  intrinsic mutations on species merge additively at spawn.
+
+  The smoketester account has been promoted to admin role for
+  this run. You have access to admin commands like `mob`,
+  `spawnmob`, `mutate`, `goto`, `whoami`, etc. Use them freely
+  to spawn test mobs and inspect their mutation state.
+
+  IMPORTANT: don't modify code or YAML files. Observe, capture,
+  report. Even if you spot what looks like a bug, write it up
+  — do NOT edit any files.
+
+goals:
+  # ── 0. Login + admin confirm ──────────────────────────────────
+  - Log in as smoketester (port 55555, host localhost). Run
+    `set charset` to switch to ASCII. Run `look` to confirm
+    your starting room. Run `whoami` or `who` to verify your
+    role shows admin.
+
+  # ── 1. Find admin help for spawn + inspection ────────────────
+  - Run `help admin` (or `help admin commands`) to see what's
+    available. Look specifically for: spawnmob, mob, mutate,
+    goto. Capture the exact syntax for each.
+
+    If `help admin` doesn't reveal the commands, try them
+    directly with `?` or `--help` arguments to discover usage.
+
+  # ── 2. Wolf body-parts gate — pool filtering ──────────────────
+  - Goto an empty test room (e.g., admin spawn area, or a
+    quiet zone room). Spawn a steppe wolf:
+      `spawnmob 205` (or admin syntax for spawning by mob id)
+
+    Capture the wolf's instance id. Inspect its mutations:
+      `mob <inst_id> show` (or whatever shows full state)
+
+    Expected: the wolf has an intrinsic `tail` rank entry
+    (from species 2-canine's `intrinsic_mutations: { tail: 1 }`).
+    NO `extra-arms`, `clawed-hands`, `elongated-limbs`, or
+    `extra-legs` should appear — wolves lack arms/hands.
+
+    Spawn 5-10 more wolves (steppe wolves 205, young wolf 206,
+    or scarred wolf 223) to sample more mutation rolls. None
+    should ever have arms/hands-requiring mutations.
+
+    **Capture the mutation lists** for each wolf you spawn.
+
+  # ── 3. Elemental Queen — body change (corporeal) ─────────────
+  - Spawn the elemental queen (mob 321 in instance_planar_oasis).
+    If you can't navigate to that zone, try `spawnmob 321` from
+    a test room.
+
+    Inspect: `mob <inst_id> show`.
+
+    Expected:
+      - Species shows as "Ice Elemental" (id 43) — NOT the old
+        earth_elemental.
+      - Mutation list shows `cold-blooded: 1` and `magical-
+        resistance: 1` (intrinsic from ice species).
+      - `incorporeal` does NOT appear in her mutation list
+        (chunk 2.5 dropped that override since her body is
+        crystal/water, corporeal).
+
+    **Capture the queen's species and mutation list** verbatim.
+
+  # ── 4. Elemental Prince — incorporeal-by-intrinsic ───────────
+  - Spawn the elemental prince (mob 322). Inspect.
+
+    Expected:
+      - Species shows as "Smoke Elemental" (id 44).
+      - Mutation list shows `incorporeal: 4`, `hasted: 1`,
+        `fast-reflexes: 1` (intrinsic from smoke species).
+
+    **Capture the prince's species and mutation list.**
+
+  # ── 5. Sand and Storm Elementals ─────────────────────────────
+  - Spawn sand elemental (mob 318). Expected:
+      - Species: Sand Elemental (id 41)
+      - Intrinsic mutations: `incorporeal: 2`, `blinding-spit: 1`
+
+  - Spawn storm elemental (mob 319). Expected:
+      - Species: Storm Elemental (id 42)
+      - Intrinsic mutations: `incorporeal: 4`, `hasted: 1`
+
+    **Capture the species and mutation lists for both.**
+
+  # ── 6. Elemental King — large override ───────────────────────
+  - Spawn elemental king (mob 320). Expected:
+      - Species: Magma Elemental (id 40) — KEPT, not changed.
+      - Mutation list shows `large: 1` (from mob-YAML override)
+        plus intrinsic mutations from magma species
+        (`thick-hide: 1`).
+
+    **Capture the king's species and mutation list.**
+
+  # ── 7. Incorporeal cleanup verification ──────────────────────
+  - Spawn a wraith if you can find one (mob YAMLs use species 32).
+    Spawn a spectre (species 33). Spawn a regular fire
+    elemental from summons (mob 313). Spawn a regular air
+    elemental (mob 312).
+
+    Each should show `incorporeal: 4` in their mutation list
+    (now from species intrinsic, not from a mob-YAML
+    override). The gear-effectiveness on these mobs should be
+    zero (incorporeal rank 4 = no gear contribution).
+
+    Test by giving one of them a sword via admin:
+      `mob <inst_id> give 10003` (or whatever item-give syntax)
+    Confirm the sword equips. Now run combat or `consider`
+    against the mob to see if weapon damage feels near-zero.
+
+    **Capture mutation lists for each spawned ethereal mob.**
+
+  # ── 8. Player-side: humans get no intrinsics ─────────────────
+  - As yourself (smoketester, a human), check your mutation
+    list. Use `mutate list` or `mutations` or similar admin
+    inspection command.
+
+    Expected: you have whatever mutations you'd had before the
+    chunk landed, and NO new intrinsics (humans have no
+    `intrinsic_mutations:` declared in species YAML).
+
+    Confirm: even though chunk-2.5 wired the player path,
+    humans see no behavior change.
+
+  # ── 9. Final summary ─────────────────────────────────────────
+  - Write a "Smoke verdict" paragraph at the top of your
+    report:
+
+      Smoke verdict: PASS | PARTIAL | FAIL
+        - Wolf body-parts gate: PASS/FAIL (paste a mutation list)
+        - Wolf intrinsic tail: PASS/FAIL
+        - Ice queen corporeal: PASS/FAIL (paste species + muts)
+        - Smoke prince incorporeal: PASS/FAIL
+        - Sand/storm elementals: PASS/FAIL
+        - Magma king large override: PASS/FAIL
+        - Existing ethereal cleanup: PASS/FAIL
+        - Player path no-op: PASS/FAIL
+
+  # ── 10. Blockers ─────────────────────────────────────────────
+  - If any admin command syntax fails to work as you expect,
+    document the failure mode + your attempted commands in a
+    "Blockers" section. The goal here is to verify the chunk,
+    not to fight tooling — flag instead of grinding.
