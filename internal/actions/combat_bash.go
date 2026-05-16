@@ -48,8 +48,8 @@ type BashResult struct {
 func ExecuteBash(actor Actor) BashResult {
 	char := actor.GetCharacter()
 
-	// Don't interrupt a craft to swing a shield.
-	if char.IsCrafting() {
+	// Don't interrupt any active activity (cast/craft/salvage) to swing a shield.
+	if char.IsActing() {
 		return BashResult{Crafting: true}
 	}
 

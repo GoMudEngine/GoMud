@@ -36,10 +36,10 @@ func ExecuteRally(actor Actor) RallyResult {
 		})
 	}
 
-	// IsCrafting applies universally — mobs can craft too (future
-	// crafter archetype) and should not interrupt their craft to
-	// rally.
-	if char.IsCrafting() {
+	// IsActing applies universally — any active activity (cast/craft/salvage)
+	// blocks rally. Mobs can craft/cast too and should not interrupt their
+	// activity to rally.
+	if char.IsActing() {
 		return RallyResult{Crafting: true}
 	}
 

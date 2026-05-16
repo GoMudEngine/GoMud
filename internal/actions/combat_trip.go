@@ -60,8 +60,8 @@ type TripResult struct {
 func ExecuteTrip(actor Actor) TripResult {
 	char := actor.GetCharacter()
 
-	// Don't interrupt a craft to trip someone.
-	if char.IsCrafting() {
+	// Don't interrupt any active activity (cast/craft/salvage) to trip someone.
+	if char.IsActing() {
 		return TripResult{Crafting: true}
 	}
 

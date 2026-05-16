@@ -12,7 +12,7 @@ import (
 )
 
 func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
-	if user.Character.IsCrafting() {
+	if user.Character.IsActing() {
 		user.SendText(`<ansi fg="red">You can't trip someone while focused on your work. Finish or be interrupted first.</ansi>`)
 		return true, nil
 	}

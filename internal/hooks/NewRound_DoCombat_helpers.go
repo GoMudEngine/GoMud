@@ -722,8 +722,15 @@ func handleOffhandBreakMobDef(roundResult combat.AttackResult, defMob *mobs.Mob)
 	})
 }
 
-// handlePlayerConcentrationBreak checks if a caster's concentration breaks when hit.
+// handlePlayerConcentrationBreak checks if a caster's concentration breaks when hit,
+// and hard-cancels any in-progress crafting or salvaging activity on the same damage hit.
+// The two helpers are independent: a Casting character gets a willpower roll;
+// a Crafting/Salvaging character is always interrupted (no roll).
 func handlePlayerConcentrationBreak(defUser *users.UserRecord, roundResult combat.AttackResult, defRoom *rooms.Room) {
+	// Hard-cancel craft/salvage on any damage (no roll needed).
+	if roundResult.DamageToTarget > 0 {
+		cancelCraftOrSalvageOnDamage(defUser.Character)
+	}
 	if checkConcentrationBreak(defUser.Character, roundResult.DamageToTarget) {
 		recordConcentrationFailure(combat.User, combat.Mob, defUser.Character, castingTargetChar(defUser.Character.CastingState))
 		clearCastingActivity(defUser.Character, activity.TriggerConcentrationBreak)

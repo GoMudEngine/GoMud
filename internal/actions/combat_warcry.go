@@ -36,10 +36,10 @@ func ExecuteWarcry(actor Actor) WarcryResult {
 		})
 	}
 
-	// IsCrafting applies universally — mobs can craft too (future
-	// crafter archetype) and should not interrupt their craft to
-	// warcry.
-	if char.IsCrafting() {
+	// IsActing applies universally — any active activity (cast/craft/salvage)
+	// blocks warcry. Mobs can craft/cast too and should not interrupt their
+	// activity to warcry.
+	if char.IsActing() {
 		return WarcryResult{Crafting: true}
 	}
 

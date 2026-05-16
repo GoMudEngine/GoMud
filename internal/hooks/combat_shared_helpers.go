@@ -372,6 +372,34 @@ func clearCastingActivity(ch *characters.Character, trigger string) {
 	}
 }
 
+// cancelCraftOrSalvageOnDamage cancels the character's Activity if it is
+// Crafting or Salvaging. This is a hard cancel — no roll — because any
+// damage interrupts physical work immediately. Casting interrupts are
+// handled separately by clearCastingActivity (concentration break via
+// willpower roll). Both helpers may be called together at the same damage
+// site: they are independent and each no-ops when the state doesn't match.
+func cancelCraftOrSalvageOnDamage(ch *characters.Character) {
+	if ch.Activity == nil {
+		return
+	}
+	switch ch.Activity.State() {
+	case activity.Crafting:
+		_ = ch.Activity.TransitionToFree(state.TransitionReason{
+			Trigger: activity.TriggerDamageInterrupt,
+			Actor:   ch.Activity.Self(),
+		})
+		ch.CraftingState = nil
+	case activity.Salvaging:
+		_ = ch.Activity.TransitionToFree(state.TransitionReason{
+			Trigger: activity.TriggerDamageInterrupt,
+			Actor:   ch.Activity.Self(),
+		})
+		ch.CraftingState = nil
+		delete(ch.MiscData, "salvage_item_uuid")
+		delete(ch.MiscData, "salvage_spoiled_potion")
+	}
+}
+
 // =============================================================================
 // processFoldRound — shared fold casting step for both players and mobs.
 //

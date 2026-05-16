@@ -65,8 +65,8 @@ type KickResult struct {
 func ExecuteKick(actor Actor) KickResult {
 	char := actor.GetCharacter()
 
-	// Don't interrupt a craft to kick.
-	if char.IsCrafting() {
+	// Don't interrupt any active activity (cast/craft/salvage) to kick.
+	if char.IsActing() {
 		return KickResult{Crafting: true}
 	}
 

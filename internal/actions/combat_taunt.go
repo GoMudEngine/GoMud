@@ -88,8 +88,8 @@ func ExecuteTaunt(actor Actor) TauntResult {
 		})
 	}
 
-	// Don't interrupt a craft to taunt.
-	if char.IsCrafting() {
+	// Don't interrupt any active activity (cast/craft/salvage) to taunt.
+	if char.IsActing() {
 		return TauntResult{Crafting: true}
 	}
 
