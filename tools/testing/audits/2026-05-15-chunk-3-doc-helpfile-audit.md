@@ -150,3 +150,47 @@ For `internal/state/activity/context.md`, model it after the existing `internal/
 - Dependencies
 - Sunrise notes (what chunk-3 adds)
 - Sunset notes (what chunk-3 removes: CastingState/CraftingState struct files, salvage hijack)
+
+---
+
+## Post-T13 additions
+
+T13 execution date: 2026-05-15.
+
+### Files created
+
+- `internal/state/activity/context.md` — NEW. Documents Activity machine
+  types, transitions, predicates, per-activity interrupt policy table,
+  intentional asymmetries (no Foraging/Tracking state, mob forager FSM
+  boundary, no IsForaging predicate, salvage own state), cascade
+  integration, persistence, test notes, sunset list.
+
+### Files updated
+
+- `internal/combat/context.md` — Lines 370, 619: Updated `CastingState`
+  is non-nil → `c.IsCasting()` is true (Activity machine is in Casting).
+- `internal/hooks/context.md` — Lines 522, 609: Updated
+  `RegisterActivityCheck` table entries from `CastingState == nil &&
+  CraftingState == nil` to `c.IsActing()` (negated). Line 658: Updated
+  "Nils CastingState and CraftingState" to describe Activity machine
+  transitioning to Free via `activity_life_dead` observer. Added new
+  section "Activity Machine Cascade + Observers (chunk 3)" documenting
+  `Activity_Cascades.go` and all call-site wirings.
+- `internal/state/awareness/context.md` — Lines 117-118: Updated
+  `RegisterActivityCheck` description to reference `c.IsActing()`.
+  Lines 253-254: Updated Dependencies to reference `Character.Activity`
+  via `IsActing()`.
+- `internal/state/life/context.md` — Line 206: Updated "Nils
+  CastingState and CraftingState" to "Transitions Activity machine to
+  Free via activity_life_dead observer in Activity_Cascades.go".
+- `internal/characters/context.md` — Added "Activity Machine Integration
+  (chunk 3)" section with Activity field, all five predicates, new
+  OnCharacterCreated registration, and sunset notes.
+
+### Skipped (file does not exist)
+
+- `internal/forager/context.md` — Does not exist. The intentional-
+  asymmetry rationale (mob forager FSM stays separate from
+  Character.Activity) is documented in `internal/state/activity/
+  context.md` "Notes on intentional asymmetries" bullet 2. No cross-
+  reference file to update.

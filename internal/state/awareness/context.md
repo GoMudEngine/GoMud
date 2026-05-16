@@ -114,8 +114,8 @@ func (m *Machine) RegisterActivityCheck(check func() bool)
 
 Wired at character-creation time by `Awareness_Vetoes.go` to ensure the
 character is not engaged in crafting or casting before allowing the sneak
-transition. The closure reads the character's `CastingState` and
-`CraftingState` fields.
+transition. The closure reads `c.IsActing()` (negated) to check whether
+the character is free — querying the Activity machine internally.
 
 ### Detection check registration
 
@@ -250,8 +250,8 @@ inline literals to ensure stable identifiers across the codebase:
 
 - `internal/state` — framework (`Machine[State]`, `TransitionTable`,
   `TransitionReason`, `ActorRef`).
-- `internal/characters` — reads `Dexterity`, `Perception`, `CastingState`,
-  `CraftingState` for veto and detection checks.
+- `internal/characters` — reads `Dexterity`, `Perception`, and
+  `Character.Activity` (via `IsActing()`) for veto and detection checks.
 - `internal/rooms` — room entry/exit for detecting observers.
 
 ### Consumed by

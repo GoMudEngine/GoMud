@@ -203,7 +203,7 @@ Fires on two transitions:
 **Alive → Dead:**
 - Forces Combat Phase to `Idle` (clears aggro)
 - Forces Awareness to `Visible` (clears hidden state)
-- Nils `CastingState` and `CraftingState`
+- Transitions Activity machine to `Free` (via `activity_life_dead` observer in `Activity_Cascades.go`)
 - Resets `CombatPosition` to Standing
 - Clears grapple controller
 - Cancels all non-permanent buffs

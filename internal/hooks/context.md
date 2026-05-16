@@ -518,7 +518,7 @@ once the Life machine ships in chunk 2).
 | Veto registration | Reads |
 |-------------------|-------|
 | `RegisterCombatantVeto` | `c.IsCombatant()` |
-| `RegisterActivityCheck` | `c.CastingState == nil && c.CraftingState == nil` |
+| `RegisterActivityCheck` | `c.IsActing()` (negated) — queries Activity machine |
 | `RegisterLifeCheck` | `c.Health > 0` |
 | `RegisterPositionCheck` | `c.CombatPosition == PositionStanding` |
 | `RegisterTargetCombatantCheck` | target's `IsCombatant()` via users/mobs lookup |
@@ -606,7 +606,7 @@ Each veto reads the current character field for its concern.
 
 | Veto registration | Reads |
 |-------------------|-------|
-| `RegisterActivityCheck` | `c.CastingState == nil && c.CraftingState == nil` |
+| `RegisterActivityCheck` | `c.IsActing()` (negated) — queries Activity machine |
 | `RegisterDetectionCheck` | validates sneak attempt is proceeding (scaffold) |
 
 ### Awareness_Cascades.go
@@ -655,7 +655,8 @@ Cross-machine cleanup that fires on two Life transitions:
 **Alive → Dead:**
 - Forces Combat Phase to `Idle` (`ForceIdle`)
 - Forces Awareness to `Visible` (`ForceVisible`)
-- Nils `CastingState` and `CraftingState`
+- Transitions Activity machine to `Free` (via separate `activity_life_dead`
+  observer in `Activity_Cascades.go` — see Activity Machine section below)
 - Resets `CombatPosition` to Standing
 - Clears `GrappleControllerId`
 - Cancels all non-permanent active buffs
@@ -716,6 +717,58 @@ framework call all registered observers synchronously before
 returning control to the caller. This means by the time
 `c.Life.TransitionToDead(...)` returns, all death-cascade side
 effects have already fired.
+
+## Activity Machine Cascade + Observers (chunk 3)
+
+One file in the hooks package wires the Activity machine into the engine
+without creating import cycles (same pattern as chunks 0-2).
+
+### Activity_Cascades.go
+
+Registers one `AfterTransition` observer via
+`characters.OnCharacterCreated(wireActivityCrossMachineCascades)`.
+
+**`activity_life_dead` handler — Life `Alive → Dead` → Activity `→ Free`:**
+
+When the Life machine transitions `Alive → Dead`, the handler calls
+`c.Activity.TransitionToFree(TriggerDeath)` if any activity is in
+flight. This repoints the chunk-2 pre-wire in `Life_Cascades.go` (which
+niled `CastingState` and `CraftingState` directly) onto a proper
+Activity-side observer. All three active states (Casting, Crafting,
+Salvaging) transition to Free; there is no casting exemption for the
+death cascade.
+
+**Combat-entry cancellation — implemented via veto, not cascade:**
+
+Crafting and Salvaging are blocked when the character enters combat
+(`Idle → Engaging`). This is implemented as the `activity_self` veto in
+`CombatPhase_Vetoes.go` — `RegisterActivityCheck` reads `c.IsActing()`
+and vetoes the transition if any activity is active. Casting is exempt
+from this veto (a character can continue casting after entering combat).
+A separate `AfterTransition` cascade for combat-entry was evaluated and
+removed as unreachable (the veto fires before the transition succeeds).
+
+### Call-site wirings (not AfterTransition)
+
+Movement and damage interrupts do not fit the machine-to-machine
+`AfterTransition` pattern; they are wired directly at their call sites:
+
+| Interrupt | Location | Trigger fired |
+|-----------|----------|---------------|
+| Movement (Crafting/Salvaging) | `internal/usercommands/go.go` | `TriggerMovementInterrupt` |
+| Damage taken (Crafting/Salvaging) | `cancelCraftOrSalvageOnDamage` in `combat_shared_helpers.go` | `TriggerDamageInterrupt` |
+| Damage taken (Casting) | `clearCastingActivity` in `combat_shared_helpers.go` | `TriggerConcentrationBreak` on roll failure |
+
+Completion triggers are fired by per-tick consumers after a successful
+`Advance*` call:
+
+| Completion | Location | Trigger fired |
+|------------|----------|---------------|
+| Cast completes | `processFoldRound` in `NewRound_UserRoundTick.go` | `TriggerCastComplete` |
+| Craft completes (player) | inline craft-tick block in `NewRound_UserRoundTick.go` | `TriggerCraftComplete` |
+| Craft completes (mob) | inline craft-tick block in `NewRound_MobRoundTick.go` | `TriggerCraftComplete` |
+| Salvage completes (player) | inline salvage-tick block in `NewRound_UserRoundTick.go` | `TriggerSalvageComplete` |
+| Salvage completes (mob) | inline salvage-tick block in `NewRound_MobRoundTick.go` | `TriggerSalvageComplete` |
 
 ## Dependencies
 

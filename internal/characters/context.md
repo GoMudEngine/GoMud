@@ -562,6 +562,68 @@ New registrations (all in `internal/hooks/`):
 - `wireLifeMachine` — registers the Life machine and all Death +
   Respawn observer chains
 
+## Activity Machine Integration (chunk 3)
+
+### New field: Activity
+
+```go
+Activity *activity.Machine `yaml:"-"`
+```
+
+Initialized in `New()` and nil-guarded in `Validate()` (for characters
+loaded from YAML without a direct `New()` path). The Activity machine
+is the canonical source of truth for "what multi-round action is this
+character locked into right now?"
+
+### Predicate methods
+
+```go
+func (c *Character) IsFree() bool
+    // true when Activity == Free (no activity in flight)
+
+func (c *Character) IsCasting() bool
+    // true when Activity == Casting
+    // replaces the old c.CastingState != nil check
+
+func (c *Character) IsCrafting() bool
+    // true when Activity == Crafting
+    // replaces the old c.CraftingState != nil check
+
+func (c *Character) IsSalvaging() bool
+    // true when Activity == Salvaging
+
+func (c *Character) IsActing() bool
+    // true when Activity != Free (any non-Free state)
+    // canonical "is busy" gate replacing the old IsCrafting() gate
+    // at special-moves check sites (13 call sites rewired in chunk 3)
+```
+
+`IsActing()` is preferred for "should this action be blocked because
+the character is busy?" checks. Use the specific predicates only when
+you need to distinguish which activity is running (e.g., the craft
+command's own re-entrancy check).
+
+### OnCharacterCreated additions (chunk 3)
+
+The `OnCharacterCreated` registry gains the Activity machine wire
+callback. New registration (in `internal/hooks/`):
+- `wireActivityCrossMachineCascades` — subscribes `activity_life_dead`
+  observer to the Life machine; wires the Activity machine's identity
+  via `RegisterMachine`.
+
+### Sunset notes (chunk 3)
+
+The following fields and files were deleted in chunk 3:
+- `Character.CastingState *characters.CastingState` field
+- `Character.CraftingState *characters.CraftingState` field
+- `internal/characters/casting.go` — `CastingState` struct
+- `internal/characters/crafting.go` — `CraftingState` struct
+- `CraftingState.MiscData["salvage_item_uuid"]` key pattern
+
+All call sites that read `c.CastingState != nil` or
+`c.CraftingState != nil` were migrated to `IsCasting()` / `IsCrafting()`
+/ `IsSalvaging()` / `IsFree()` / `IsActing()` predicates.
+
 ## Dependencies
 - `internal/stats`: Core statistics definitions
 - `internal/items`: Item system integration
@@ -576,3 +638,4 @@ New registrations (all in `internal/hooks/`):
 - `internal/state/combatphase`: Combat Phase state machine (chunk 0)
 - `internal/state/awareness`: Awareness state machine (chunk 1)
 - `internal/state/life`: Life state machine (chunk 2)
+- `internal/state/activity`: Activity state machine (chunk 3)

@@ -367,7 +367,8 @@ If the player has a `NoCombat` buff flag, skip the entire combat turn
 
 #### 2c. Fold Casting Check
 `handlePlayerFoldCasting(user, userId)` — If the player typed
-`cast fireball` last round, `CastingState` is non-nil:
+`cast fireball` last round, `c.IsCasting()` is true (Activity machine
+is in Casting state):
 
 1. Prone/disabled check — breaks concentration immediately.
 2. Conviction cost — proportional to folds gained this round:
@@ -618,8 +619,8 @@ inline in `handleMobCombat`, not extracted to a helper).
 
 #### 4b. Fold Casting Check
 `handleMobFoldCasting(mob, mobRoom)` — Same fold system as players. If
-the mob started casting last round, folds accumulate. On completion, spell
-resolves via `resolveMobSpell()`.
+`mob.Character.IsCasting()` is true (Activity machine is in Casting state),
+folds accumulate. On completion, spell resolves via `resolveMobSpell()`.
 
 #### 4c. AI Decision: `handleMobAIDecision()`
 
