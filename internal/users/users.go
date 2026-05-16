@@ -295,6 +295,15 @@ func LoginUser(user *UserRecord, connectionId connections.ConnectionId) (*UserRe
 
 	mudlog.Info("LOGIN", "userId", user.UserId)
 
+	// Defensive: re-seed the Character's userId back-reference.
+	// LoadUser already does this for the fresh-login path, but a
+	// zombie-reconnect path above (line 233-237) swaps in the
+	// already-loaded zombieUser, whose Character may predate the
+	// LoadUser fix. Setting it here too means every active session
+	// has Character.userId == UserRecord.UserId regardless of how
+	// the user got into the session.
+	user.Character.SetUserId(user.UserId)
+
 	// Set their input round to current to track idle time fresh
 	user.SetLastInputRound(util.GetRoundCount())
 

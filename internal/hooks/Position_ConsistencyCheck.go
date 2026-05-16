@@ -15,7 +15,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
-	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -144,15 +143,21 @@ func forceBreakPair(a, b *characters.Character, err error) {
 	notifyForceBreak(b)
 }
 
-// notifyForceBreak sends a generic "grapple breaks apart" beat to
-// the character's room. Intentionally non-specific — the player
-// shouldn't be exposed to invariant-violation diagnostics.
+// notifyForceBreak is the player-facing side of force-break.
+// Intentionally a no-op: a consistency-check force-break is a
+// diagnostic for an invariant that "should never happen in
+// production" (per the file header), and any player-visible message
+// at this point is more misleading than helpful — it implies an
+// external force broke the grapple when in reality the actual
+// cause (target died, target escaped, voluntary stand, etc.) has
+// its own proper messaging path. The mudlog.Warn in
+// forceBreakSolo/forceBreakPair is the engineering signal; the
+// player should see whatever the underlying cause emitted, or
+// nothing if the cause was silent (which is itself a bug worth
+// catching via the Warn).
 func notifyForceBreak(c *characters.Character) {
-	r := rooms.LoadRoom(c.RoomId)
-	if r == nil {
-		return
-	}
-	r.SendText("The grapple suddenly breaks apart.")
+	// no-op; kept as a hook in case 4e wants per-cause messaging.
+	_ = c
 }
 
 func init() {
