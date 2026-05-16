@@ -20,6 +20,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -325,6 +327,13 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 						} else {
 							recipe := crafting.GetRecipe(cs.RecipeId)
 							enchantTargetSlot := cs.TargetSlot
+							// Fire Activity transition alongside legacy clear.
+							if user.Character.Activity != nil && user.Character.Activity.IsCrafting() {
+								_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
+									Trigger: activity.TriggerCraftComplete,
+									Actor:   user.Character.Activity.Self(),
+								})
+							}
 							user.Character.CraftingState = nil
 							if recipe != nil {
 								sl := user.Character.Skills[recipe.Skill]

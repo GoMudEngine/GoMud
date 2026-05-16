@@ -7,6 +7,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 )
 
 // CraftResult describes the outcome of an InitiateCraft call.
@@ -129,6 +131,26 @@ func InitiateCraft(actor Actor, recipeName string) CraftResult {
 	}
 
 	// ── Start multi-round crafting ────────────────────────────────────────────
+	craftData := activity.CraftingData{
+		RecipeId:    recipe.RecipeId,
+		RoundsTotal: recipe.TimeRounds,
+	}
+	actorRef := state.ActorRef{
+		UserId:        actor.GetUserId(),
+		MobInstanceId: actor.GetMobInstanceId(),
+	}
+	if err := char.Activity.TransitionToCrafting(
+		craftData,
+		state.TransitionReason{
+			Trigger: activity.TriggerCraftBegin,
+			Actor:   actorRef,
+		},
+	); err != nil {
+		res.AlreadyCrafting = true
+		return res
+	}
+
+	// Mirror to legacy field through Task 11.
 	char.CraftingState = &characters.CraftingState{
 		RecipeId:    recipe.RecipeId,
 		RoundsTotal: recipe.TimeRounds,

@@ -15,6 +15,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -60,11 +62,26 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 		return true, nil
 	}
 
-	// Movement cancels crafting
-	if user.Character.CraftingState != nil {
-		user.Character.CraftingState = nil
-		user.SendText(`<ansi fg="red">Your movement interrupts your crafting.</ansi>`)
+	// Movement cancels crafting and salvaging — route through Activity
+	// machine for both. Casting is NOT interrupted by movement (policy).
+	if user.Character.Activity != nil && !user.Character.Activity.IsFree() {
+		switch user.Character.Activity.State() {
+		case activity.Crafting:
+			_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
+				Trigger: activity.TriggerMovementInterrupt,
+				Actor:   state.ActorRef{UserId: user.UserId},
+			})
+			user.SendText(`<ansi fg="red">Your movement interrupts your crafting.</ansi>`)
+		case activity.Salvaging:
+			_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
+				Trigger: activity.TriggerMovementInterrupt,
+				Actor:   state.ActorRef{UserId: user.UserId},
+			})
+			user.SendText(`<ansi fg="red">Your movement interrupts your salvaging.</ansi>`)
+		}
 	}
+	// Legacy clear preserved through Task 11.
+	user.Character.CraftingState = nil
 
 	// If has a buff that prevents combat, skip the player
 	if user.Character.HasBuffFlag(buffs.NoMovement) {

@@ -20,6 +20,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -396,13 +397,12 @@ func tickMobCharmState(mob *mobs.Mob) {
 	}
 }
 
-// tickMobCrafting — current inline block at lines 355–396.
+// tickMobCrafting advances or completes an active mob crafting operation.
+// The mob-only combat-cancel block that previously lived here has been
+// deleted — Activity_Cascades.go (Task 5) now handles combat-entry cancel
+// for both mobs and players via the cascade observer (parity per AC-038).
 func tickMobCrafting(mob *mobs.Mob) {
 	if mob.Character.CraftingState == nil {
-		return
-	}
-	if mob.Character.IsInCombat() {
-		mob.Character.CraftingState = nil
 		return
 	}
 	cs := mob.Character.CraftingState
@@ -411,6 +411,13 @@ func tickMobCrafting(mob *mobs.Mob) {
 		return
 	}
 	recipe := crafting.GetRecipe(cs.RecipeId)
+	// Fire Activity transition alongside legacy clear.
+	if mob.Character.Activity != nil && mob.Character.Activity.IsCrafting() {
+		_ = mob.Character.Activity.TransitionToFree(state.TransitionReason{
+			Trigger: activity.TriggerCraftComplete,
+			Actor:   mob.Character.Activity.Self(),
+		})
+	}
 	mob.Character.CraftingState = nil
 	if recipe == nil {
 		return
