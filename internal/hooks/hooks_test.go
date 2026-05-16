@@ -16,6 +16,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -96,6 +97,7 @@ func seedAllRegistries() func() {
 	testMobInstances[100].Character.Stats.Strength.ValueAdj = 80
 	testMobInstances[100].Character.Stats.Dexterity.ValueAdj = 80
 	testMobInstances[100].Character.Stats.Willpower.ValueAdj = 60
+	testMobInstances[100].Character.Position = position.NewMachine()
 
 	cleanupMobs := mobs.SeedMobsForTest(testMobSpecs, testMobInstances)
 

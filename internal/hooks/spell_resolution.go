@@ -12,11 +12,14 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -405,8 +408,19 @@ func applyMobEffect_knockdown(
 		}
 	}
 	mob.Character.Health -= dmg
-	mob.Character.CombatPosition = characters.PositionProne
-	mob.Character.PositionRoundsMin = 1
+	// Chunk 4b W5 cutover: spell knockdowns default to Supine (the
+	// "slams to the ground" wording fits backward force). Skip the
+	// legacy parallel-write if the FSM transition fails so the two
+	// views stay consistent.
+	if err := mob.Character.Position.TransitionToSupine(
+		position.SupineData{MinRecoveryRounds: 1},
+		state.TransitionReason{Trigger: position.TriggerKnockdownSpell},
+	); err != nil {
+		mudlog.Warn("applyMobEffect_knockdown: TransitionToSupine failed", "mob", mob.InstanceId, "err", err)
+	} else {
+		mob.Character.CombatPosition = characters.PositionProne
+		mob.Character.PositionRoundsMin = 1
+	}
 	setMobSpellAggro(user, mob)
 	if user != nil {
 		if kdDeflected {
@@ -1118,8 +1132,18 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 		}
 		mobSpellDmg = dmg
 		target.Character.Health -= dmg
-		target.Character.CombatPosition = characters.PositionProne
-		target.Character.PositionRoundsMin = 1
+		// Chunk 4b W5 cutover: mob-cast knockdown on player. Same
+		// Supine choice as the player-cast branch above.
+		if err := target.Character.Position.TransitionToSupine(
+			position.SupineData{MinRecoveryRounds: 1},
+			state.TransitionReason{Trigger: position.TriggerKnockdownSpell},
+		); err != nil {
+			mudlog.Warn("mob spell knockdown: TransitionToSupine failed",
+				"target_user", target.UserId, "err", err)
+		} else {
+			target.Character.CombatPosition = characters.PositionProne
+			target.Character.PositionRoundsMin = 1
+		}
 		target.SendText(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> slams you `+
 				`to the ground! (<ansi fg="damage">%s</ansi>)%s`,
