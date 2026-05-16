@@ -934,13 +934,43 @@ func buildAttackMessages(result *AttackResult, sourceChar *characters.Character,
 		pctDamage = math.Ceil(float64(attackTargetDamage) / sdp.dmgMean * 100)
 	}
 
+	// T4 (chunk 4c): compute the display subtype for attack-message selection.
+	// When ShouldBludgeon fires (weapon reach exceeds position grapple radius),
+	// bladed/ranged weapons narrate as Bludgeoning — the fiction tracks the
+	// pommel/hilt strike that the math already reflects (T3 damage penalty).
+	// Natural-blunt subtypes (Fist, Claws, Bite, Sting, Slam, Gore, Whipping)
+	// and caster subtypes (Wand, Sceptre, Staff) keep their own vocabulary.
+	displaySubtype := ws.weaponSubType
+	{
+		var weaponReach float64
+		if ws.weapon.ItemId > 0 {
+			spec := ws.weapon.GetSpec()
+			weaponReach = items.ResolveReach(&spec)
+		} else {
+			weaponReach = items.ResolveNaturalReach(ws.weaponSubType)
+		}
+		posRadius := 0.0
+		if sourceChar.Position != nil {
+			posRadius = PositionReachRadius(sourceChar.Position.State())
+		}
+		if ShouldBludgeon(weaponReach, posRadius) {
+			switch displaySubtype {
+			case items.Slashing, items.Cleaving, items.Stabbing, items.Shooting:
+				displaySubtype = items.Bludgeoning
+			}
+			// Natural-blunt (Fist/Claws/Bite/Sting/Slam/Gore/Whipping) and
+			// caster (Wand/Sceptre/Staff) subtypes are intentionally excluded
+			// from the swap — their own vocabulary is already appropriate.
+		}
+	}
+
 	// Use fumble messages when a fumble is detected
 	var msgs items.AttackOptions
 	isFeint := false
 	if result.Fumble {
-		msgs = items.GetPreAttackMessage(ws.weaponSubType, items.Fumble)
+		msgs = items.GetPreAttackMessage(displaySubtype, items.Fumble)
 	} else {
-		msgs = items.GetAttackMessage(ws.weaponSubType, int(pctDamage))
+		msgs = items.GetAttackMessage(displaySubtype, int(pctDamage))
 		// Feint check: skilled attackers can turn misses into deliberate-looking feints
 		if int(pctDamage) == 0 && !result.Fumble {
 			isFeint = checkFeint(sourceChar.GetCombatSkillLevel())
