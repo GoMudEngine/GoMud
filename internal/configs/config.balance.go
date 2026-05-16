@@ -44,6 +44,28 @@ type Balance struct {
 	// primitive (T5) and Position_Messaging (T7).
 	GrappleStaminaLowThreshold ConfigFloat `yaml:"GrappleStaminaLowThreshold"` // Stamina fraction floor for grapple stamina warning (default 0.25)
 
+	// ── REACH UTILITY CURVE (chunk 4c) ───────────────────────────────────────
+	// See internal/combat/reach.go for the formula and the design spec for
+	// reasoning.
+
+	// ReachStandingGrappleRadius is the effective radius (meters) at
+	// which a weapon stops fitting in Clinch / BackStanding positions.
+	// Default 0.5 — about chest-to-chest distance in a clinch.
+	ReachStandingGrappleRadius ConfigFloat `yaml:"reach_standing_grapple_radius"`
+
+	// ReachGroundGrappleRadius is the effective radius (meters) at
+	// which a weapon stops fitting in any ground grapple (Mount,
+	// SideControl, KneeOnBelly, NorthSouth, Crucifix, BackGround,
+	// HalfGuard, Guard). Default 0.3 — body-on-body distance.
+	ReachGroundGrappleRadius ConfigFloat `yaml:"reach_ground_grapple_radius"`
+
+	// ReachUtilityFloor caps the minimum damage multiplier from the
+	// reach curve. Without a floor, a pike in mount would multiply
+	// damage by ~0.1 — a floor at 0.15 ensures even the longest
+	// weapon can poke for chip damage (pommel jab, hilt-strike).
+	// Tunable; smoke may push this lower.
+	ReachUtilityFloor ConfigFloat `yaml:"reach_utility_floor"`
+
 	// ── GRAPPLE CONTROL AXIS (chunk 4b) ──────────────────────────────────────
 	// Per-round drift mechanics — see
 	// docs/superpowers/specs/2026-05-16-state-chunk-4b-position-control-axis-design.md

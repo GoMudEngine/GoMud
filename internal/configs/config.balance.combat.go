@@ -85,6 +85,17 @@ func (b *Balance) validateCombat() {
 		b.SneakModNoLightLitRoom = 0.9
 	}
 
+	// ── REACH UTILITY CURVE (chunk 4c) ───────────────────────────────────────
+	if b.ReachStandingGrappleRadius <= 0 {
+		b.ReachStandingGrappleRadius = 0.5
+	}
+	if b.ReachGroundGrappleRadius <= 0 {
+		b.ReachGroundGrappleRadius = 0.3
+	}
+	if b.ReachUtilityFloor <= 0 {
+		b.ReachUtilityFloor = 0.15
+	}
+
 	// ── GRAPPLE THRESHOLDS ───────────────────────────────────────────────────
 	if b.GrappleStaminaLowThreshold <= 0 || b.GrappleStaminaLowThreshold >= 1.0 {
 		b.GrappleStaminaLowThreshold = 0.25

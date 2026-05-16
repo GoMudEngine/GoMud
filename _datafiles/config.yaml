@@ -574,6 +574,16 @@ Balance:
   GrappleStaminaLowThreshold: 0.25      # Stamina fraction below which "you're getting gassed" fires once per grapple
   PositionConsistencyCheckRounds: 10    # How often the periodic invariant checker runs
 
+  # ── Reach Utility Curve (chunk 4c — weapon reach vs grapple radius) ────────
+  # Long weapons (spears, longswords) take a damage penalty when the attacker
+  # is grappling. Short weapons (daggers, fists) stay effective. The radius
+  # (meters) defines the space available in each grapple class; weapons whose
+  # reach exceeds the radius are penalized (radius/reach, floored at
+  # reach_utility_floor). See internal/combat/reach.go for formula details.
+  reach_standing_grapple_radius: 0.5  # Clinch / BackStanding: ~chest-to-chest
+  reach_ground_grapple_radius: 0.3    # Ground grapples: body-on-body distance
+  reach_utility_floor: 0.15          # Floor: even a pike can still poke (hilt-strike)
+
   # ── REGEN RATES (fraction of pool max per tick; 0.01 = 1%) ────────────────
   PlayerHealthRegenPct: 0.02     # Bumped from 1% to 2%; players needed faster recovery
   PlayerStaminaRegenPct: 0.02    # Tuned 39.2: doubled from 0.01; fights felt too exhausting at 1%
