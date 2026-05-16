@@ -1,10 +1,6 @@
 package characters
 
 import (
-	"fmt"
-	"runtime"
-
-	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
 )
@@ -25,23 +21,6 @@ import (
 // Die is idempotent: if the Life machine is already Dead or
 // Respawning it returns immediately without firing observers.
 func (c *Character) Die(killer state.ActorRef, trigger string) {
-	// [DEATH_DIAG] Temporary — log every Die invocation with caller +
-	// pre-state so we can pin down the chunk-4b silent combat-end
-	// (mob ends up at Health<1 with no death broadcast and no
-	// despawn). Remove once root cause found.
-	caller := "<unknown>"
-	if pc, _, _, ok := runtime.Caller(1); ok {
-		if fn := runtime.FuncForPC(pc); fn != nil {
-			caller = fn.Name()
-		}
-	}
-	mudlog.Warn("[DEATH_DIAG] Character.Die",
-		"name", c.Name, "user_id", c.userId, "mob_inst_id", c.MobInstanceId,
-		"c_addr", fmt.Sprintf("%p", c),
-		"life_addr", fmt.Sprintf("%p", c.Life),
-		"health", c.Health, "is_alive_pre", c.IsAlive(),
-		"trigger", trigger, "caller", caller)
-
 	if !c.IsAlive() {
 		return
 	}

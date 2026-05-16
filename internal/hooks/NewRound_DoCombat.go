@@ -12,7 +12,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
@@ -356,21 +355,9 @@ func handleAffected(affectedPlayerIds []int, affectedMobInstanceIds []int) {
 		mobsHandled[mobId] = struct{}{}
 
 		if mob := mobs.GetInstance(mobId); mob != nil {
-			// [DEATH_DIAG] Temporary — log every iteration of the
-			// post-combat death-check loop so we can see if the mob
-			// makes it here with Health<1 + IsAlive (ready to Die)
-			// or if the loop is short-circuiting somewhere.
-			mudlog.Warn("[DEATH_DIAG] post-combat handleAffected",
-				"mob_inst_id", mobId, "name", mob.Character.Name,
-				"health", mob.Character.Health,
-				"is_alive", mob.Character.IsAlive(),
-				"will_die", mob.Character.Health < 1 && mob.Character.IsAlive())
 			if mob.Character.Health < 1 && mob.Character.IsAlive() {
 				mob.Character.Die(state.ActorRef{}, life.TriggerHealthZero)
 			}
-		} else {
-			mudlog.Warn("[DEATH_DIAG] post-combat handleAffected — mob nil",
-				"mob_inst_id", mobId)
 		}
 
 	}

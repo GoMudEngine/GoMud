@@ -3,7 +3,6 @@ package rooms
 import (
 	"errors"
 	"fmt"
-	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -17,7 +16,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutators"
 	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -837,21 +835,6 @@ func (r *Room) AddMob(mobInstanceId int) {
 }
 
 func (r *Room) RemoveMob(mobInstanceId int) {
-
-	// [SILENT_REMOVE_DIAG] Temporary diagnostic — log every mob
-	// removal with the calling function so we can find the silent
-	// despawn path (chunk-4b grapple smoke 2026-05-16: mobs vanish
-	// mid-combat with no death/flee/leave message). Remove once
-	// root cause is identified.
-	if pc, _, _, ok := runtime.Caller(1); ok {
-		fn := runtime.FuncForPC(pc)
-		caller := "<unknown>"
-		if fn != nil {
-			caller = fn.Name()
-		}
-		mudlog.Warn("[SILENT_REMOVE_DIAG] RemoveMob",
-			"room_id", r.RoomId, "mob_inst_id", mobInstanceId, "caller", caller)
-	}
 
 	r.MarkVisited(mobInstanceId, VisitorMob, 1)
 

@@ -1,11 +1,7 @@
 package characters
 
 import (
-	"fmt"
-	"runtime"
-
 	"github.com/GoMudEngine/GoMud/internal/items"
-	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -91,26 +87,6 @@ func (c *Character) SetAggroRemote(exitName string, userId int, mobInstanceId in
 // Engaging. All writes to Aggro go through this method (dual-write to
 // CombatPhase for parity). Direct field reads of .Aggro remain valid.
 func (c *Character) SetAggro(userId int, mobInstanceId int, aggroType AggroType, roundsWaitTime ...int) {
-	// [AGGRO_DIAG] Temporary — log every SetAggro with caller +
-	// pre-state. Helps trace chunk-4b combat start/end mysteries.
-	{
-		caller := "<unknown>"
-		if pc, _, _, ok := runtime.Caller(1); ok {
-			if fn := runtime.FuncForPC(pc); fn != nil {
-				caller = fn.Name()
-			}
-		}
-		preAggro := "nil"
-		if c.Aggro != nil {
-			preAggro = fmt.Sprintf("u=%d/m=%d/t=%d", c.Aggro.UserId, c.Aggro.MobInstanceId, c.Aggro.Type)
-		}
-		mudlog.Warn("[AGGRO_DIAG] SetAggro",
-			"name", c.Name, "self_user_id", c.userId, "self_mob_inst_id", c.MobInstanceId,
-			"pre_aggro", preAggro,
-			"new_target_user_id", userId, "new_target_mob_inst_id", mobInstanceId,
-			"new_aggro_type", aggroType, "caller", caller)
-	}
-
 	// Grace-period guard: don't acquire aggro on a grace-protected
 	// player. Other target shapes (mob, spellcast) are unaffected.
 	if userId > 0 && userUntargetableFn != nil && userUntargetableFn(userId) {
@@ -173,24 +149,6 @@ func (c *Character) SetAggro(userId int, mobInstanceId int, aggroType AggroType,
 
 // EndAggro clears the character's combat target and forces Combat Phase to Idle.
 func (c *Character) EndAggro() {
-	// [AGGRO_DIAG] Temporary — log every EndAggro call with caller +
-	// pre-state. Helps trace chunk-4b silent combat ends (player
-	// drops out of combat with no death/flee/leave). Remove once
-	// root cause found.
-	caller := "<unknown>"
-	if pc, _, _, ok := runtime.Caller(1); ok {
-		if fn := runtime.FuncForPC(pc); fn != nil {
-			caller = fn.Name()
-		}
-	}
-	preAggro := "nil"
-	if c.Aggro != nil {
-		preAggro = fmt.Sprintf("u=%d/m=%d/t=%d", c.Aggro.UserId, c.Aggro.MobInstanceId, c.Aggro.Type)
-	}
-	mudlog.Warn("[AGGRO_DIAG] EndAggro",
-		"name", c.Name, "user_id", c.userId, "mob_inst_id", c.MobInstanceId,
-		"pre_aggro", preAggro, "health", c.Health, "caller", caller)
-
 	c.Aggro = nil
 	c.ClearGrappleState()
 	if c.CombatPhase != nil && c.CombatPhase.IsInCombat() {

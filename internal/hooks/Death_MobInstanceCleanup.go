@@ -1,11 +1,8 @@
 package hooks
 
 import (
-	"fmt"
-
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
@@ -22,41 +19,18 @@ import (
 // internal/mobcommands/suicide.go (lines 225-237) is the live
 // path today; it will be removed when Task 10 lands.
 func wireMobInstanceCleanup(c *characters.Character) {
-	// [DESPAWN_DIAG] Log registration time so we can correlate the
-	// captured-c with the firing-c. If they don't match by name +
-	// MobInstanceId, the wiring went onto the wrong Character.
-	mudlog.Warn("[DESPAWN_DIAG] REGISTER",
-		"name", c.Name, "mob_inst_id_at_register", c.MobInstanceId,
-		"c_addr", fmt.Sprintf("%p", c),
-		"life_addr", fmt.Sprintf("%p", c.Life))
-
 	c.Life.Inner().AfterTransition("mob_instance_cleanup",
 		func(from, to life.State, r state.TransitionReason) {
-			// [DESPAWN_DIAG] Temporary — log every fire of this
-			// cascade so we can confirm it's running for dying mobs.
-			mudlog.Warn("[DESPAWN_DIAG] mob_instance_cleanup observer fired",
-				"name", c.Name, "mob_inst_id", c.MobInstanceId,
-				"c_addr", fmt.Sprintf("%p", c),
-				"life_addr_at_register", fmt.Sprintf("%p", c.Life),
-				"from", from, "to", to, "trigger", r.Trigger)
 			if from != life.Alive || to != life.Dead {
 				return
 			}
-			// Only fire for mob characters.
 			if c.MobInstanceId == 0 {
-				mudlog.Warn("[DESPAWN_DIAG] skip: MobInstanceId==0",
-					"name", c.Name)
 				return
 			}
 			m := mobs.GetInstance(c.MobInstanceId)
 			if m == nil {
-				mudlog.Warn("[DESPAWN_DIAG] skip: mob already destroyed",
-					"name", c.Name, "mob_inst_id", c.MobInstanceId)
 				return
 			}
-			mudlog.Warn("[DESPAWN_DIAG] calling scheduleMobDespawnFromLife",
-				"name", c.Name, "mob_inst_id", c.MobInstanceId,
-				"room_id", m.Character.RoomId)
 			scheduleMobDespawnFromLife(m)
 		})
 }
