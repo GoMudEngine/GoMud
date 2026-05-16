@@ -52,9 +52,11 @@ func wireLifeCrossMachineCascades(c *characters.Character) {
 				// stale legacy pointer state. Task 11 deletes the legacy fields
 				// entirely; Tasks 6-7 keep them in sync via parallel-write.
 
-				// 4. Position → Standing (chunk-4 pre-wire).
-				c.CombatPosition = characters.PositionStanding
-				c.GrappleControllerId = 0
+				// 4. Position → Standing is now handled by the
+				//    Position FSM cascade (Position_Cascades.go) which
+				//    fires on Life Alive→Dead. The legacy pre-wire that
+				//    lived here is removed in chunk-4b R4 now that all
+				//    production readers go through the FSM predicates.
 
 				// 5. Buffs (non-permanent) → cancel all.
 				c.CancelBuffsWithFlag(buffs.All)
