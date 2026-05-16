@@ -38,6 +38,12 @@ type Balance struct {
 	GroundedDodgePenalty        ConfigFloat `yaml:"GroundedDodgePenalty"`        // Dodge score multiplier while grounded (default 0.75)
 	GroundedParryPenalty        ConfigFloat `yaml:"GroundedParryPenalty"`        // Parry score multiplier while grounded (default 0.77)
 	GroundedBlockPenalty        ConfigFloat `yaml:"GroundedBlockPenalty"`        // Block score multiplier while grounded (default 0.80)
+	// GrappleStaminaLowThreshold is the stamina fraction (0.0–1.0) below
+	// which a character is considered "low stamina" for grapple purposes.
+	// Used by IsLowGrappleStamina() and the mob_low_grapple_stamina btree
+	// primitive (T5) and Position_Messaging (T7). T6 adds the rest of the
+	// grapple-axis knobs; this is the single field T3 needs.
+	GrappleStaminaLowThreshold ConfigFloat `yaml:"GrappleStaminaLowThreshold"` // Stamina fraction floor for grapple stamina warning (default 0.25)
 
 	// ── COMBAT: SPECIAL MOVES ────────────────────────────────────────────────
 	SpecialMoveCooldown ConfigInt   `yaml:"SpecialMoveCooldown"` // Shared cooldown rounds for bash/trip/kick (default 5)

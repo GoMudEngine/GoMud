@@ -536,6 +536,9 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	if c.Position == nil {
 		c.Position = position.NewMachine()
 	}
+	if c.PerGrappleMessageCooldowns == nil {
+		c.PerGrappleMessageCooldowns = map[string]bool{}
+	}
 	// Fire OnCharacterCreated callbacks exactly once per Character.
 	// The guard prevents repeated firing on re-validation (e.g. stat
 	// recalcs, equipment changes) while still covering the YAML-load

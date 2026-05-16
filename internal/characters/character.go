@@ -127,6 +127,11 @@ type Character struct {
 	// Crucifix/BackGround/HalfGuard/Guard/Turtle). Coexists with the
 	// legacy CombatPosition enum through the 4b migration window.
 	Position                 *position.Machine              `yaml:"-"`
+	// PerGrappleMessageCooldowns tracks which gradient/stamina
+	// messages have already fired during the current grapple session.
+	// Resets when the character returns to a non-grapple state.
+	// Non-persistent — combat doesn't survive logout.
+	PerGrappleMessageCooldowns map[string]bool               `yaml:"-"`
 	CombatPosition           CombatPosition                 `yaml:"-"`                       // Current combat position (Standing/Prone/Clinched/Grounded). Don't store this.
 	PositionRoundsMin        int                            `yaml:"-"`                       // Minimum rounds in current position (for Prone bash/trip, etc). Don't store this.
 	GrappleControllerId      int                            `yaml:"-"`                       // UserId or MobInstanceId of grapple controller (0 = none, Stage 8.2+). Don't store this.
@@ -210,11 +215,12 @@ func New() *Character {
 		DefensesThisRound: 0,
 		ConsecutiveHits:   0,
 		ConsecutiveMisses: 0,
-		CombatPhase:       combatphase.NewMachine(),
-		Awareness:         awareness.NewMachine(),
-		Life:              life.NewMachine(),
-		Activity:          activity.NewMachine(),
-		Position:          position.NewMachine(),
+		CombatPhase:                combatphase.NewMachine(),
+		Awareness:                  awareness.NewMachine(),
+		Life:                       life.NewMachine(),
+		Activity:                   activity.NewMachine(),
+		Position:                   position.NewMachine(),
+		PerGrappleMessageCooldowns: map[string]bool{},
 	}
 
 	// Roll character stats using normal distribution

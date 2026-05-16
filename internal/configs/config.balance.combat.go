@@ -85,6 +85,11 @@ func (b *Balance) validateCombat() {
 		b.SneakModNoLightLitRoom = 0.9
 	}
 
+	// ── GRAPPLE THRESHOLDS ───────────────────────────────────────────────────
+	if b.GrappleStaminaLowThreshold <= 0 || b.GrappleStaminaLowThreshold >= 1.0 {
+		b.GrappleStaminaLowThreshold = 0.25
+	}
+
 	// ── DARKNESS ─────────────────────────────────────────────────────────────
 	if b.DarknessCombatPenalty <= 0 || b.DarknessCombatPenalty > 1.0 {
 		b.DarknessCombatPenalty = 0.80

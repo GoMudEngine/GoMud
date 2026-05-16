@@ -8,6 +8,8 @@
 // 4b/4c sunset the enum helpers once command sites cut over.
 package characters
 
+import "github.com/GoMudEngine/GoMud/internal/configs"
+
 // --- Per-state predicates (14) ---
 
 // IsStanding returns true when the character is in Standing position.
@@ -165,4 +167,40 @@ func (c *Character) IsOnFloor() bool {
 		return false
 	}
 	return c.Position.IsOnFloor()
+}
+
+// --- Control-axis predicates (chunk 4b) ---
+
+// IsController returns true when the character is the controller
+// side of a grapple pair. False outside of grapples.
+func (c *Character) IsController() bool {
+	if c.Position == nil {
+		return false
+	}
+	return c.Position.IsController()
+}
+
+// IsBeingControlled returns true when the character is the
+// controlled side of a grapple pair.
+func (c *Character) IsBeingControlled() bool {
+	if c.Position == nil {
+		return false
+	}
+	return c.Position.IsBeingControlled()
+}
+
+// IsLowGrappleStamina returns true when stamina fraction is below
+// GrappleStaminaLowThreshold (config). Used by btree primitive
+// mob_low_grapple_stamina and by Position_Messaging (T7) for
+// stamina warnings.
+func (c *Character) IsLowGrappleStamina() bool {
+	cfg := configs.GetBalanceConfig()
+	threshold := float64(cfg.GrappleStaminaLowThreshold)
+	if threshold <= 0 {
+		threshold = 0.25 // fallback if config not loaded
+	}
+	if c.StaminaMax.Value <= 0 {
+		return false
+	}
+	return float64(c.Stamina)/float64(c.StaminaMax.Value) < threshold
 }
