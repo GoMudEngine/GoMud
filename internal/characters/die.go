@@ -1,6 +1,7 @@
 package characters
 
 import (
+	"fmt"
 	"runtime"
 
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -36,6 +37,8 @@ func (c *Character) Die(killer state.ActorRef, trigger string) {
 	}
 	mudlog.Warn("[DEATH_DIAG] Character.Die",
 		"name", c.Name, "user_id", c.userId, "mob_inst_id", c.MobInstanceId,
+		"c_addr", fmt.Sprintf("%p", c),
+		"life_addr", fmt.Sprintf("%p", c.Life),
 		"health", c.Health, "is_alive_pre", c.IsAlive(),
 		"trigger", trigger, "caller", caller)
 
