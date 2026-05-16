@@ -284,6 +284,25 @@ func (m *Machine) MutateGrappleControlLevel(newLevel ControlLevel) {
 	m.grapple.ControlLevel = newLevel
 }
 
+// ConsumeRecoveryRound decrements MinRecoveryRounds on the current
+// ProneData or SupineData WITHOUT firing a transition. Called by
+// AttemptRecovery once per round while the character is still
+// gated by the minimum-recovery window. Mirrors
+// MutateGrappleControlLevel — per-state data mutation outside the
+// transition methods.
+//
+// No-op if not in Prone or Supine or if MinRecoveryRounds is
+// already zero.
+func (m *Machine) ConsumeRecoveryRound() {
+	if m.IsProne() && m.prone != nil && m.prone.MinRecoveryRounds > 0 {
+		m.prone.MinRecoveryRounds--
+		return
+	}
+	if m.IsSupine() && m.supine != nil && m.supine.MinRecoveryRounds > 0 {
+		m.supine.MinRecoveryRounds--
+	}
+}
+
 // === Framework escape hatches ===
 
 // Inner returns the underlying state.Machine — used by rules.go

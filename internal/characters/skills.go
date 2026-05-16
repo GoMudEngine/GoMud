@@ -6,8 +6,11 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"maps"
 )
 
@@ -33,28 +36,47 @@ func (c *Character) GetAllSkillRanks() map[string]int {
 	return retMap
 }
 
-// AttemptRecovery attempts to recover from Prone status.
+// AttemptRecovery attempts to recover from Prone or Supine status.
 // Returns (attemptMade, success) — attemptMade=true only if minimum duration
 // has passed and a roll was made. success indicates whether the recovery attempt
 // succeeded (only meaningful if attemptMade is true).
+//
+// Chunk 4b W6: gates on the new Position FSM (IsProne || IsSupine) and reads
+// MinRecoveryRounds from the appropriate per-state data. The recovery success
+// path fires Position.TransitionToStanding(TriggerRecoveryRoll) alongside the
+// legacy CombatPosition / PositionRoundsMin parallel-writes. If the FSM
+// transition fails the legacy fields are NOT updated so the two views stay
+// consistent.
 func (c *Character) AttemptRecovery(statValue int) (bool, bool) {
-	// Currently only handles Prone, but future-proofed for grapple/entangle/etc
-	if c.CombatPosition != PositionProne {
-		return false, false // No condition to recover from
+	if !c.IsProne() && !c.IsSupine() {
+		return false, false
 	}
 
-	// Decrement minimum prone duration counter
-	if c.PositionRoundsMin > 0 {
-		c.PositionRoundsMin--
-		// Still in minimum prone period, can't attempt recovery yet
-		// Reduce attacks to 1 this round (struggling to stand)
+	// Read MinRecoveryRounds from the appropriate per-state data slot.
+	var minRounds int
+	if c.IsProne() {
+		if d, ok := c.Position.ProneData(); ok {
+			minRounds = d.MinRecoveryRounds
+		}
+	} else {
+		if d, ok := c.Position.SupineData(); ok {
+			minRounds = d.MinRecoveryRounds
+		}
+	}
+
+	if minRounds > 0 {
+		c.Position.ConsumeRecoveryRound()
+		// Keep the legacy counter in lockstep until S2 sunsets it.
+		if c.PositionRoundsMin > 0 {
+			c.PositionRoundsMin--
+		}
+		// Still in minimum recovery period — reduce attacks to 1 this round.
 		c.AddCondition(ConditionRecoveryPenalty, 1, 1.0, "prone recovery")
-		return false, false // No recovery attempt yet (still in minimum duration)
+		return false, false
 	}
 
-	// Minimum duration passed, now roll for recovery based on stat
-	// Calculate recovery chance using logarithmic formula
-	// DEX 25 = 25%, DEX 100 = 50%, DEX 300 = 75%, caps at 90%
+	// Minimum duration passed, now roll for recovery based on stat.
+	// DEX 25 = 25%, DEX 100 = 50%, DEX 300 = 75%, caps at 90%.
 	chance := 25.0
 	if statValue > 0 {
 		chance = 25.0 + 20.0*math.Log(float64(statValue)/25.0)
@@ -66,15 +88,21 @@ func (c *Character) AttemptRecovery(statValue int) (bool, bool) {
 		}
 	}
 
-	// Roll for success
-	roll := dice.RollStat(50) // Mean of 50
+	roll := dice.RollStat(50)
 	success := roll.Value < chance
 
 	if success {
+		if err := c.Position.TransitionToStanding(state.TransitionReason{Trigger: position.TriggerRecoveryRoll}); err != nil {
+			// Should never happen — Prone→Standing and Supine→Standing are
+			// both valid edges. Log + keep legacy fields aligned with FSM by
+			// not updating them, then report the attempt as a failure.
+			mudlog.Warn("AttemptRecovery: TransitionToStanding failed", "err", err)
+			c.AddCondition(ConditionRecoveryPenalty, 1, 1.0, "prone recovery")
+			return true, false
+		}
 		c.CombatPosition = PositionStanding
 		c.PositionRoundsMin = 0
 	} else {
-		// Failed recovery attempt - reduce attacks to 1 this round
 		c.AddCondition(ConditionRecoveryPenalty, 1, 1.0, "prone recovery")
 	}
 
