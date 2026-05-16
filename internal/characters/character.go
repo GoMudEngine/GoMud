@@ -304,6 +304,18 @@ func (c *Character) GetUserId() int {
 	return c.userId
 }
 
+// GetMobInstanceId returns the mob instance ID (non-zero for mobs, zero for
+// players). Satisfies position.GrappleActor for TransitionPair callers.
+func (c *Character) GetMobInstanceId() int {
+	return c.MobInstanceId
+}
+
+// GetPosition returns the Position state machine pointer. Satisfies
+// position.GrappleActor for TransitionPair callers.
+func (c *Character) GetPosition() *position.Machine {
+	return c.Position
+}
+
 // IsCombatant returns true unless the character is flagged NonCombatant.
 // Used by Combat Phase's veto chain (chunk 0 Task 10) and any code that
 // needs to ask "can this character be in combat at all?".
