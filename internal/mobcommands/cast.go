@@ -48,8 +48,10 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		switch {
 		case result.AlreadyCasting:
 			inProgress := ""
-			if mob.Character.CastingState != nil {
-				inProgress = mob.Character.CastingState.SpellId
+			if mob.Character.Activity != nil {
+				if cd, ok := mob.Character.Activity.CastingData(); ok {
+					inProgress = cd.SpellId
+				}
 			}
 			mudlog.Debug("mob.Cast",
 				"mob", mob.Character.Name,
@@ -112,19 +114,17 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 	mob.Character.Conviction -= firstRoundCost
 
-	// Commit CastingState — parallel write to Activity machine AND legacy
-	// field. Both stay in sync through Task 11 (when legacy field is deleted).
-	result.CastingState.ConvictionSpent = firstRoundCost
+	// Commit CastingState to Activity machine (sole truth).
 	castData := activity.CastingData{
-		SpellId:              result.CastingState.SpellId,
-		FoldsNeeded:          result.CastingState.FoldsNeeded,
-		FoldsAccumulated:     result.CastingState.FoldsAccumulated,
-		FoldsPerRound:        result.CastingState.FoldsPerRound,
-		TotalConvictionCost:  result.CastingState.TotalConvictionCost,
-		ConvictionSpent:      result.CastingState.ConvictionSpent,
-		TargetUserIds:        result.CastingState.TargetUserIds,
-		TargetMobInstanceIds: result.CastingState.TargetMobInstanceIds,
-		SpellRest:            result.CastingState.SpellRest,
+		SpellId:              result.SpellInfo.SpellId,
+		FoldsNeeded:          result.FoldsNeeded,
+		FoldsAccumulated:     0,
+		FoldsPerRound:        result.FoldsPerRound,
+		TotalConvictionCost:  result.TotalCost,
+		ConvictionSpent:      firstRoundCost,
+		TargetUserIds:        result.TargetUserIds,
+		TargetMobInstanceIds: result.TargetMobInstanceIds,
+		SpellRest:            result.SpellRest,
 	}
 	if err := mob.Character.Activity.TransitionToCasting(
 		castData,
@@ -137,8 +137,6 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		// btree will pick another action next tick.
 		return true, nil
 	}
-	// Mirror to legacy field through Task 11.
-	mob.Character.CastingState = result.CastingState
 
 	sendRoomText(room, fmt.Sprintf(
 		`<ansi fg="mobname">%s</ansi> begins weaving a spell.`, mob.Character.Name))

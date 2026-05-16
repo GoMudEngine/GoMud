@@ -35,8 +35,6 @@ func Cancel(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			Trigger: activity.TriggerCastCancel,
 			Actor:   state.ActorRef{UserId: user.UserId},
 		})
-		// Legacy parallel-write clear; removed in Task 11.
-		user.Character.CastingState = nil
 		user.SendText(`You stop casting.`)
 
 	case activity.Crafting:
@@ -44,7 +42,6 @@ func Cancel(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			Trigger: activity.TriggerCraftCancel,
 			Actor:   state.ActorRef{UserId: user.UserId},
 		})
-		user.Character.CraftingState = nil
 		user.SendText(`You stop crafting.`)
 
 	case activity.Salvaging:
@@ -52,9 +49,6 @@ func Cancel(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			Trigger: activity.TriggerSalvageCancel,
 			Actor:   state.ActorRef{UserId: user.UserId},
 		})
-		user.Character.CraftingState = nil
-		delete(user.Character.MiscData, "salvage_item_uuid")
-		delete(user.Character.MiscData, "salvage_spoiled_potion")
 		user.SendText(`You stop salvaging.`)
 	}
 	return true, nil

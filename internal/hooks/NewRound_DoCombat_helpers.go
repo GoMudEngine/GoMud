@@ -176,11 +176,8 @@ func handlePlayerShieldDecay(user *users.UserRecord) {
 	}
 }
 
-// castingTargetChar returns the first target character from a CastingState, or nil.
-func castingTargetChar(cs *characters.CastingState) *characters.Character {
-	if cs == nil {
-		return nil
-	}
+// castingTargetChar returns the first target character from a CastingData, or nil.
+func castingTargetChar(cs activity.CastingData) *characters.Character {
 	for _, mobInstId := range cs.TargetMobInstanceIds {
 		if m := mobs.GetInstance(mobInstId); m != nil {
 			return &m.Character
@@ -202,20 +199,19 @@ func recordConcentrationFailure(src, tgt combat.SourceTarget, srcChar *character
 // handlePlayerFoldCasting processes fold spell casting for a player.
 // Returns true if the player is casting and should skip combat.
 func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
-	if user.Character.CastingState == nil {
+	if user.Character.Activity == nil || !user.Character.Activity.IsCasting() {
 		return false
 	}
 
+	// Capture state before processFoldRound clears it on terminal conditions.
+	csBeforeProcess, _ := user.Character.Activity.CastingData()
+
 	// Bleeding out = automatic concentration break (player-only check).
 	if user.Character.IsDisabled() {
-		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(user.Character.CastingState))
+		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(csBeforeProcess))
 		clearCastingActivity(user.Character, activity.TriggerConcentrationBreak)
-		user.Character.CastingState = nil
 		return true
 	}
-
-	// Capture state before processFoldRound clears it on terminal conditions.
-	csBeforeProcess := user.Character.CastingState
 
 	result := processFoldRound(user.Character)
 
@@ -241,7 +237,7 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 		user.SendText(`<ansi fg="red">Your conviction wavers — the fold collapses.</ansi>`)
 
 	case result.CastComplete:
-		cs := result.CastingState
+		cs := result.CastingData
 		spellData := result.SpellData
 		// Send YAML wait text (if defined).
 		if spellData != nil && (spellData.WaitUserText != "" || spellData.WaitRoomText != "") {
@@ -351,7 +347,7 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 		}
 
 	case result.StillCasting:
-		cs := result.CastingState
+		cs := result.CastingData
 		// Send YAML wait text (if defined).
 		waitSpellInfo := spells.GetSpell(cs.SpellId)
 		if waitSpellInfo != nil && (waitSpellInfo.WaitUserText != "" || waitSpellInfo.WaitRoomText != "") {
@@ -379,12 +375,12 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 // handleMobFoldCasting processes fold spell casting for a mob.
 // Returns true if the mob is casting and should skip combat.
 func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
-	if mob.Character.CastingState == nil {
+	if mob.Character.Activity == nil || !mob.Character.Activity.IsCasting() {
 		return false
 	}
 
 	// Capture state before processFoldRound clears it on terminal conditions.
-	csBeforeProcess := mob.Character.CastingState
+	csBeforeProcess, _ := mob.Character.Activity.CastingData()
 
 	result := processFoldRound(&mob.Character)
 
@@ -408,7 +404,7 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 			`%s's spell falters.`, mobDisplayName(mob, mobRoom, 0)))
 
 	case result.CastComplete:
-		cs := result.CastingState
+		cs := result.CastingData
 		spellData := result.SpellData
 		if resolveRoom := rooms.LoadRoom(mob.Character.RoomId); resolveRoom != nil {
 			resolveMobSpell(mob, cs, spellData, resolveRoom)
@@ -732,9 +728,9 @@ func handlePlayerConcentrationBreak(defUser *users.UserRecord, roundResult comba
 		cancelCraftOrSalvageOnDamage(defUser.Character)
 	}
 	if checkConcentrationBreak(defUser.Character, roundResult.DamageToTarget) {
-		recordConcentrationFailure(combat.User, combat.Mob, defUser.Character, castingTargetChar(defUser.Character.CastingState))
+		csSnap, _ := defUser.Character.Activity.CastingData()
+		recordConcentrationFailure(combat.User, combat.Mob, defUser.Character, castingTargetChar(csSnap))
 		clearCastingActivity(defUser.Character, activity.TriggerConcentrationBreak)
-		defUser.Character.CastingState = nil
 		defUser.SendText(`<ansi fg="red">The pain shatters your concentration!</ansi>`)
 		defRoom.SendText(fmt.Sprintf(
 			`<ansi fg="username">%s</ansi>'s concentration breaks.`,

@@ -14,6 +14,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -196,7 +198,7 @@ func seedAllRegistries() func() {
 // ─── Combat Shared Helpers ────────────────────────────────────────────────────
 
 func TestSimulateFoldRound_FromZero(t *testing.T) {
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		FoldsAccumulated: 0,
 		FoldsPerRound:    1,
 		FoldsNeeded:      8,
@@ -207,7 +209,7 @@ func TestSimulateFoldRound_FromZero(t *testing.T) {
 }
 
 func TestSimulateFoldRound_Doubling(t *testing.T) {
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		FoldsAccumulated: 2,
 		FoldsPerRound:    1,
 		FoldsNeeded:      8,
@@ -217,7 +219,7 @@ func TestSimulateFoldRound_Doubling(t *testing.T) {
 }
 
 func TestSimulateFoldRound_MultipleFoldsPerRound(t *testing.T) {
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		FoldsAccumulated: 0,
 		FoldsPerRound:    3,
 		FoldsNeeded:      16,
@@ -228,7 +230,7 @@ func TestSimulateFoldRound_MultipleFoldsPerRound(t *testing.T) {
 }
 
 func TestSimulateFoldRound_CapsAtNeeded(t *testing.T) {
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		FoldsAccumulated: 4,
 		FoldsPerRound:    2,
 		FoldsNeeded:      8,
@@ -239,7 +241,7 @@ func TestSimulateFoldRound_CapsAtNeeded(t *testing.T) {
 }
 
 func TestCalcFoldConvictionCost_Basic(t *testing.T) {
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		TotalConvictionCost: 10,
 		FoldsNeeded:         4,
 	}
@@ -267,7 +269,7 @@ func TestHandleIdleMobs_SuppressesRestockInCaravanServedZones(t *testing.T) {
 }
 
 func TestCalcFoldConvictionCost_MinimumOne(t *testing.T) {
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		TotalConvictionCost: 1,
 		FoldsNeeded:         100,
 	}
@@ -276,7 +278,7 @@ func TestCalcFoldConvictionCost_MinimumOne(t *testing.T) {
 }
 
 func TestCalcFoldConvictionCost_ZeroCost(t *testing.T) {
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		TotalConvictionCost: 0,
 		FoldsNeeded:         4,
 	}
@@ -285,7 +287,7 @@ func TestCalcFoldConvictionCost_ZeroCost(t *testing.T) {
 }
 
 func TestCalcFoldConvictionCost_ZeroFoldsNeeded(t *testing.T) {
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		TotalConvictionCost: 10,
 		FoldsNeeded:         0,
 	}
@@ -293,83 +295,44 @@ func TestCalcFoldConvictionCost_ZeroFoldsNeeded(t *testing.T) {
 	assert.Equal(t, 0, cost)
 }
 
-func TestAdvanceFolds_FromZero(t *testing.T) {
-	cs := &characters.CastingState{
-		FoldsAccumulated: 0,
-		FoldsPerRound:    1,
-		FoldsNeeded:      4,
-	}
-	done := advanceFolds(cs)
-	assert.False(t, done)
-	assert.Equal(t, 1, cs.FoldsAccumulated)
+// TestAdvanceFolds_* tests removed — advanceFolds was deleted in Task 11
+// (Activity machine AdvanceCastingFolds replaces it).
+
+func newCastingChar(spellId string) *characters.Character {
+	ch := &characters.Character{}
+	ch.Activity = activity.NewMachine()
+	_ = ch.Activity.TransitionToCasting(
+		activity.CastingData{SpellId: spellId},
+		state.TransitionReason{Trigger: activity.TriggerCastBegin},
+	)
+	return ch
 }
 
-func TestAdvanceFolds_CompletesAtNeeded(t *testing.T) {
-	cs := &characters.CastingState{
-		FoldsAccumulated: 2,
-		FoldsPerRound:    1,
-		FoldsNeeded:      4,
-	}
-	done := advanceFolds(cs)
-	assert.True(t, done)
-	assert.Equal(t, 4, cs.FoldsAccumulated)
-}
-
-func TestAdvanceFolds_CapsOvershoot(t *testing.T) {
-	cs := &characters.CastingState{
-		FoldsAccumulated: 4,
-		FoldsPerRound:    2,
-		FoldsNeeded:      5,
-	}
-	// 4→8, capped to 5, done
-	done := advanceFolds(cs)
-	assert.True(t, done)
-	assert.Equal(t, 5, cs.FoldsAccumulated)
-}
-
-func TestAdvanceFolds_MultipleFoldsPerRound(t *testing.T) {
-	cs := &characters.CastingState{
-		FoldsAccumulated: 0,
-		FoldsPerRound:    4,
-		FoldsNeeded:      16,
-	}
-	// 0→1, 1→2, 2→4, 4→8. Needs 16, got 8.
-	done := advanceFolds(cs)
-	assert.False(t, done)
-	assert.Equal(t, 8, cs.FoldsAccumulated)
-}
-
-func TestCheckConcentrationBreak_NilCastingState(t *testing.T) {
+func TestCheckConcentrationBreak_NotCasting(t *testing.T) {
 	ch := &characters.Character{}
 	ch.HealthMax.Value = 100
 	broke := checkConcentrationBreak(ch, 10)
-	assert.False(t, broke, "nil CastingState should never break")
+	assert.False(t, broke, "not-casting character should never break")
 }
 
 func TestCheckConcentrationBreak_ZeroDamage(t *testing.T) {
-	ch := &characters.Character{
-		CastingState: &characters.CastingState{SpellId: "sparks"},
-	}
+	ch := newCastingChar("sparks")
 	ch.HealthMax.Value = 100
 	broke := checkConcentrationBreak(ch, 0)
 	assert.False(t, broke, "zero damage should never break")
 }
 
 func TestCheckConcentrationBreak_NegativeDamage(t *testing.T) {
-	ch := &characters.Character{
-		CastingState: &characters.CastingState{SpellId: "sparks"},
-	}
+	ch := newCastingChar("sparks")
 	ch.HealthMax.Value = 100
 	broke := checkConcentrationBreak(ch, -5)
 	assert.False(t, broke, "negative damage should never break")
 }
 
 func TestCheckConcentrationBreak_WithDamage(t *testing.T) {
-	// With a valid casting state and damage > 0, the function should run
+	// With an active cast and damage > 0, the function should run
 	// (result depends on RNG so we just verify it doesn't panic)
-	ch := &characters.Character{
-		CastingState: &characters.CastingState{SpellId: "sparks"},
-	}
+	ch := newCastingChar("sparks")
 	ch.HealthMax.Value = 100
 	ch.Stats.Willpower.ValueAdj = 100
 	// Just ensure no panic — result is probabilistic
@@ -1601,7 +1564,7 @@ func TestHandlePlayerFoldCasting_NoCastingState(t *testing.T) {
 	defer cleanup()
 
 	u := users.GetByUserId(1)
-	u.Character.CastingState = nil
+	// Leave Activity nil / Free — no cast in progress.
 
 	result := handlePlayerFoldCasting(u, 1)
 	assert.False(t, result, "no casting state should return false")
@@ -1613,11 +1576,16 @@ func TestHandlePlayerFoldCasting_DisabledPlayer(t *testing.T) {
 
 	u := users.GetByUserId(1)
 	u.Character.Health = 0 // disabled
-	u.Character.CastingState = &characters.CastingState{SpellId: "sparks"}
+	u.Character.Activity = activity.NewMachine()
+	_ = u.Character.Activity.TransitionToCasting(
+		activity.CastingData{SpellId: "sparks"},
+		state.TransitionReason{Trigger: activity.TriggerCastBegin},
+	)
 
 	result := handlePlayerFoldCasting(u, 1)
 	assert.True(t, result, "disabled player should skip combat")
-	assert.Nil(t, u.Character.CastingState, "casting state should be cleared")
+	assert.True(t, u.Character.Activity == nil || u.Character.Activity.IsFree(),
+		"Activity must be Free after disabled-player abort")
 }
 
 func TestHandlePlayerFoldCasting_PronePlayer(t *testing.T) {
@@ -1625,12 +1593,17 @@ func TestHandlePlayerFoldCasting_PronePlayer(t *testing.T) {
 	defer cleanup()
 
 	u := users.GetByUserId(1)
-	u.Character.CastingState = &characters.CastingState{SpellId: "sparks"}
+	u.Character.Activity = activity.NewMachine()
+	_ = u.Character.Activity.TransitionToCasting(
+		activity.CastingData{SpellId: "sparks"},
+		state.TransitionReason{Trigger: activity.TriggerCastBegin},
+	)
 	u.Character.CombatPosition = characters.PositionProne
 
 	result := handlePlayerFoldCasting(u, 1)
 	assert.True(t, result, "prone player should skip combat")
-	assert.Nil(t, u.Character.CastingState, "casting state should be cleared")
+	assert.True(t, u.Character.Activity == nil || u.Character.Activity.IsFree(),
+		"Activity must be Free after prone-player abort")
 }
 
 // ─── HandleMobFoldCasting ─────────────────────────────────────────────────────
@@ -1640,7 +1613,7 @@ func TestHandleMobFoldCasting_NoCastingState(t *testing.T) {
 	defer cleanup()
 
 	mob := mobs.GetInstance(100)
-	mob.Character.CastingState = nil
+	// Leave Activity nil / Free — no cast in progress.
 	room := rooms.LoadRoom(1)
 
 	result := handleMobFoldCasting(mob, room)
@@ -1652,13 +1625,18 @@ func TestHandleMobFoldCasting_ProneMob(t *testing.T) {
 	defer cleanup()
 
 	mob := mobs.GetInstance(100)
-	mob.Character.CastingState = &characters.CastingState{SpellId: "sparks"}
+	mob.Character.Activity = activity.NewMachine()
+	_ = mob.Character.Activity.TransitionToCasting(
+		activity.CastingData{SpellId: "sparks"},
+		state.TransitionReason{Trigger: activity.TriggerCastBegin},
+	)
 	mob.Character.CombatPosition = characters.PositionProne
 	room := rooms.LoadRoom(1)
 
 	result := handleMobFoldCasting(mob, room)
 	assert.True(t, result)
-	assert.Nil(t, mob.Character.CastingState)
+	assert.True(t, mob.Character.Activity == nil || mob.Character.Activity.IsFree(),
+		"Activity must be Free after prone-mob abort")
 }
 
 // ─── ProcessGrappleProgression ────────────────────────────────────────────────
@@ -1878,7 +1856,7 @@ func TestHandlePlayerConcentrationBreak_NoCasting(t *testing.T) {
 	defer cleanup()
 	u := users.GetByUserId(1)
 	room := rooms.LoadRoom(1)
-	u.Character.CastingState = nil
+	// Leave Activity nil / Free — no cast in progress.
 	handlePlayerConcentrationBreak(u, combat.AttackResult{DamageToTarget: 5}, room)
 	// Should not panic
 }
@@ -1888,9 +1866,11 @@ func TestHandlePlayerConcentrationBreak_WithCasting(t *testing.T) {
 	defer cleanup()
 	u := users.GetByUserId(1)
 	room := rooms.LoadRoom(1)
-	u.Character.CastingState = &characters.CastingState{
-		SpellId: "sparks",
-	}
+	u.Character.Activity = activity.NewMachine()
+	_ = u.Character.Activity.TransitionToCasting(
+		activity.CastingData{SpellId: "sparks"},
+		state.TransitionReason{Trigger: activity.TriggerCastBegin},
+	)
 	// Large damage to break concentration
 	handlePlayerConcentrationBreak(u, combat.AttackResult{DamageToTarget: 999}, room)
 }
@@ -1953,7 +1933,7 @@ func TestResolveSpell_HarmSingle(t *testing.T) {
 	spellData := spells.GetSpell("sparks")
 	require.NotNil(t, spellData)
 
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		SpellId:              "sparks",
 		TargetMobInstanceIds: []int{100},
 	}
@@ -1979,7 +1959,7 @@ func TestResolveSpell_TargetLeftRoom(t *testing.T) {
 	mob := mobs.GetInstance(100)
 	mob.Character.RoomId = 999
 
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		SpellId:              "sparks",
 		TargetMobInstanceIds: []int{100},
 	}
@@ -2009,7 +1989,7 @@ func TestResolveSpell_HarmArea(t *testing.T) {
 	})
 	defer cleanupSpells()
 
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		SpellId: "fireball",
 	}
 
@@ -2032,7 +2012,7 @@ func TestResolveSpell_HelpArea(t *testing.T) {
 		EffectMagnitude:   20,
 	}
 
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		SpellId:       "massHeal",
 		TargetUserIds: []int{},
 	}
@@ -2050,7 +2030,7 @@ func TestResolveSpell_DeadMobSkipped(t *testing.T) {
 	mob := mobs.GetInstance(100)
 	mob.Character.Health = 0
 
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		SpellId:              "sparks",
 		TargetMobInstanceIds: []int{100},
 	}
@@ -2376,7 +2356,7 @@ func TestResolveMobSpell_HarmSingle(t *testing.T) {
 	room := rooms.LoadRoom(1)
 	spellData := spells.GetSpell("sparks")
 
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		SpellId:       "sparks",
 		TargetUserIds: []int{1},
 	}
@@ -2398,7 +2378,7 @@ func TestResolveMobSpell_SelfCast(t *testing.T) {
 		EffectMagnitude: 3,
 	}
 
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		SpellId:              "mobheal",
 		TargetMobInstanceIds: []int{100}, // Self target
 	}
@@ -2431,7 +2411,7 @@ func TestResolveMobSpell_MobVsMob(t *testing.T) {
 	mobs.SeedMobsForTest(map[int]*mobs.Mob{1: {MobId: 1, Character: characters.Character{Name: "Skeleton"}}},
 		map[int]*mobs.Mob{100: mob, 101: mob2})
 
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		SpellId:              "sparks",
 		TargetMobInstanceIds: []int{101},
 	}

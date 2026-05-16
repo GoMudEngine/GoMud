@@ -491,15 +491,16 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 				}
 
 			case `{casting}`:
-				if u.Character.CastingState != nil {
-					cs := u.Character.CastingState
-					spellName := cs.SpellId
-					if sd := spells.GetSpell(cs.SpellId); sd != nil {
-						spellName = sd.Name
+				if u.Character.Activity != nil {
+					if cs, ok := u.Character.Activity.CastingData(); ok {
+						spellName := cs.SpellId
+						if sd := spells.GetSpell(cs.SpellId); sd != nil {
+							spellName = sd.Name
+						}
+						promptOut.WriteString(fmt.Sprintf(
+							`<ansi fg="cyan"> [%s %d/%d]</ansi>`,
+							spellName, cs.FoldsAccumulated, cs.FoldsNeeded))
 					}
-					promptOut.WriteString(fmt.Sprintf(
-						`<ansi fg="cyan"> [%s %d/%d]</ansi>`,
-						spellName, cs.FoldsAccumulated, cs.FoldsNeeded))
 				}
 
 			case `{g}`:

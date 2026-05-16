@@ -15,23 +15,18 @@ import (
 
 // CastResult holds all shared output from InitiateCast. The caller (user or
 // mob wrapper) uses this to apply wrapper-specific logic and then commit the
-// CastingState to the character.
+// cast via the Activity machine.
 type CastResult struct {
 	// SpellInfo is the resolved spell data. Non-nil on success.
 	SpellInfo *spells.SpellData
 
-	// CastingState is pre-built but NOT yet applied to the character.
-	// The wrapper must set char.CastingState = result.CastingState after its
-	// own checks (e.g. conviction pre-check, initiation roll) pass.
-	CastingState *characters.CastingState
-
-	// Initiated is true when all shared checks passed and CastingState is ready.
+	// Initiated is true when all shared checks passed and cast data is ready.
 	Initiated bool
 
 	// Early-exit flags — exactly one will be true when Initiated is false.
 	InvalidSpell   bool // spell not found by ID or name
 	SpellNotKnown  bool // actor does not know the spell (player check only)
-	AlreadyCasting bool // character already has a CastingState in progress
+	AlreadyCasting bool // character already has an Activity cast in progress
 	OnCooldown     bool // special-move cooldown blocked the cast
 	NoTarget       bool // required target could not be resolved
 
@@ -77,7 +72,7 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 	}
 
 	// 2. Already casting?
-	if char.CastingState != nil {
+	if char.Activity != nil && char.Activity.IsCasting() {
 		return CastResult{SpellInfo: spellInfo, AlreadyCasting: true}
 	}
 
@@ -276,22 +271,8 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 	// 6. Conviction cost (base, no multiplier — caller applies mutations).
 	totalCost := spellInfo.Cost
 
-	// 7. Build CastingState — NOT applied to char here.
-	cs := &characters.CastingState{
-		SpellId:              spellInfo.SpellId,
-		FoldsNeeded:          foldsNeeded,
-		FoldsAccumulated:     0,
-		FoldsPerRound:        foldsPerRound,
-		TotalConvictionCost:  totalCost,
-		ConvictionSpent:      0,
-		TargetUserIds:        targetUserIds,
-		TargetMobInstanceIds: targetMobInstanceIds,
-		SpellRest:            spellRest,
-	}
-
 	return CastResult{
 		SpellInfo:            spellInfo,
-		CastingState:         cs,
 		Initiated:            true,
 		FoldsNeeded:          foldsNeeded,
 		FoldsPerRound:        foldsPerRound,

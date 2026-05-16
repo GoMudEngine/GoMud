@@ -1046,14 +1046,6 @@ func TestCancel(t *testing.T) {
 	})
 
 	t.Run("casting", func(t *testing.T) {
-		user.Character.CastingState = &characters.CastingState{
-			SpellId:          "sparks",
-			FoldsAccumulated: 2,
-			FoldsNeeded:      4,
-			ConvictionSpent:  3,
-		}
-		// Parallel-write: Activity machine must also be in Casting so
-		// the new dispatch-on-state cancel path fires.
 		if user.Character.Activity == nil {
 			user.Character.Activity = activity.NewMachine()
 		}
@@ -1064,7 +1056,8 @@ func TestCancel(t *testing.T) {
 		handled, err := Cancel("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
-		assert.Nil(t, user.Character.CastingState)
+		assert.True(t, user.Character.Activity == nil || user.Character.Activity.IsFree(),
+			"Activity must be Free after cancel")
 	})
 }
 
@@ -3980,28 +3973,22 @@ func TestTryCommand(t *testing.T) {
 
 	t.Run("casting_state_blocks", func(t *testing.T) {
 		user := users.GetByUserId(1)
-		user.Character.CastingState = &characters.CastingState{
-			SpellId:          "sparks",
-			FoldsAccumulated: 2,
-			FoldsNeeded:      4,
-			ConvictionSpent:  3,
+		if user.Character.Activity == nil {
+			user.Character.Activity = activity.NewMachine()
 		}
+		_ = user.Character.Activity.TransitionToCasting(
+			activity.CastingData{SpellId: "sparks", ConvictionSpent: 3, FoldsNeeded: 4},
+			state.TransitionReason{Trigger: activity.TriggerCastBegin},
+		)
 		handled, err := TryCommand("attack", "skeleton", 1, events.CmdSkipScripts)
 		assert.True(t, handled) // Blocked by casting guard
 		assert.NoError(t, err)
-		user.Character.CastingState = nil
+		// Clear Activity for subsequent sub-tests.
+		_ = user.Character.Activity.TransitionToFree(state.TransitionReason{Trigger: "test-cleanup"})
 	})
 
 	t.Run("casting_allows_cancel", func(t *testing.T) {
 		user := users.GetByUserId(1)
-		user.Character.CastingState = &characters.CastingState{
-			SpellId:          "sparks",
-			FoldsAccumulated: 2,
-			FoldsNeeded:      4,
-			ConvictionSpent:  3,
-		}
-		// Parallel-write: Activity machine must also be in Casting so
-		// the new dispatch-on-state cancel path fires.
 		if user.Character.Activity == nil {
 			user.Character.Activity = activity.NewMachine()
 		}
@@ -4012,22 +3999,25 @@ func TestTryCommand(t *testing.T) {
 		handled, err := TryCommand("cancel", "", 1, events.CmdSkipScripts)
 		assert.True(t, handled)
 		assert.NoError(t, err)
-		assert.Nil(t, user.Character.CastingState)
+		assert.True(t, user.Character.Activity == nil || user.Character.Activity.IsFree(),
+			"Activity must be Free after cancel")
 	})
 
 	t.Run("casting_flee_clears_cast", func(t *testing.T) {
 		user := users.GetByUserId(1)
 		user.Character.Aggro = &characters.Aggro{MobInstanceId: 100}
-		user.Character.CastingState = &characters.CastingState{
-			SpellId:          "sparks",
-			FoldsAccumulated: 2,
-			FoldsNeeded:      4,
-			ConvictionSpent:  3,
+		if user.Character.Activity == nil {
+			user.Character.Activity = activity.NewMachine()
 		}
+		_ = user.Character.Activity.TransitionToCasting(
+			activity.CastingData{SpellId: "sparks", ConvictionSpent: 3, FoldsNeeded: 4},
+			state.TransitionReason{Trigger: activity.TriggerCastBegin},
+		)
 		handled, err := TryCommand("flee", "", 1, events.CmdSkipScripts)
 		assert.True(t, handled)
 		assert.NoError(t, err)
-		assert.Nil(t, user.Character.CastingState)
+		assert.True(t, user.Character.Activity == nil || user.Character.Activity.IsFree(),
+			"Activity must be Free after flee")
 		user.Character.Aggro = nil
 		user.Character.RoomId = 1
 		rooms.LoadRoom(1).AddPlayer(1)
@@ -4035,17 +4025,19 @@ func TestTryCommand(t *testing.T) {
 
 	t.Run("casting_allows_info_commands", func(t *testing.T) {
 		user := users.GetByUserId(1)
-		user.Character.CastingState = &characters.CastingState{
-			SpellId:          "sparks",
-			FoldsAccumulated: 2,
-			FoldsNeeded:      4,
-			ConvictionSpent:  3,
+		if user.Character.Activity == nil {
+			user.Character.Activity = activity.NewMachine()
 		}
+		_ = user.Character.Activity.TransitionToCasting(
+			activity.CastingData{SpellId: "sparks", ConvictionSpent: 3, FoldsNeeded: 4},
+			state.TransitionReason{Trigger: activity.TriggerCastBegin},
+		)
 		// Status is AllowedWhenDowned=true, should pass through
 		handled, err := TryCommand("status", "", 1, events.CmdSkipScripts)
 		assert.True(t, handled)
 		assert.NoError(t, err)
-		user.Character.CastingState = nil
+		// Clear Activity for subsequent sub-tests.
+		_ = user.Character.Activity.TransitionToFree(state.TransitionReason{Trigger: "test-cleanup"})
 	})
 
 	t.Run("look_self_keyword", func(t *testing.T) {
@@ -5060,7 +5052,10 @@ func TestCastDeep(t *testing.T) {
 		assert.True(t, handled)
 		_ = err
 		delete(user.Character.SpellBook, "sparks")
-		user.Character.CastingState = nil
+		// Clear any casting Activity that may have been set.
+		if user.Character.Activity != nil && user.Character.Activity.IsCasting() {
+			_ = user.Character.Activity.TransitionToFree(state.TransitionReason{Trigger: "test-cleanup"})
+		}
 	})
 }
 

@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -43,8 +44,11 @@ func TransportCompanions(owner *users.UserRecord, oldRoomId, newRoomId int) {
 		}
 
 		// Interrupt any in-progress cast (spent conviction is forfeit).
-		if mob.Character.CastingState != nil {
-			mob.Character.CastingState = nil
+		if mob.Character.Activity != nil && mob.Character.Activity.IsCasting() {
+			mob.Character.Activity.ForceFree(state.TransitionReason{
+				Trigger: "companion_follow",
+				Actor:   mob.Character.Activity.Self(),
+			})
 		}
 
 		// Remove from current room.

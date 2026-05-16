@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -173,7 +172,6 @@ func craftEnchanting(rest string, recipe *crafting.RecipeSpec, user *users.UserR
 	}
 
 	// Start multi-round enchanting with the resolved slot.
-	// Parallel-write Activity machine + legacy CraftingState through Task 11.
 	craftData := activity.CraftingData{
 		RecipeId:    recipe.RecipeId,
 		RoundsTotal: recipe.TimeRounds,
@@ -188,12 +186,6 @@ func craftEnchanting(rest string, recipe *crafting.RecipeSpec, user *users.UserR
 	); err != nil {
 		user.SendText(`<ansi fg="red">You are already working on something. Finish or be interrupted first.</ansi>`)
 		return true, nil
-	}
-	// Legacy mirror through Task 11.
-	user.Character.CraftingState = &characters.CraftingState{
-		RecipeId:    recipe.RecipeId,
-		RoundsTotal: recipe.TimeRounds,
-		TargetSlot:  slotLabel,
 	}
 	user.SendText(fmt.Sprintf(
 		`<ansi fg="yellow">You begin enchanting <ansi fg="itemname">%s</ansi>... (%s)</ansi>`,

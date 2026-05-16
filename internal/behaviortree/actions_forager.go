@@ -28,6 +28,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -403,7 +404,13 @@ func tickForagerRecalling(
 		toRoom := rooms.LoadRoom(anchorRoomId)
 		if toRoom != nil {
 			mob.Character.EndAggro()
-			mob.Character.CastingState = nil // clear any stale cast
+			// Clear any stale cast via Activity machine.
+			if mob.Character.Activity != nil && mob.Character.Activity.IsCasting() {
+				mob.Character.Activity.ForceFree(state.TransitionReason{
+					Trigger: "forager_teleport",
+					Actor:   mob.Character.Activity.Self(),
+				})
+			}
 			if fromRoom != nil {
 				fromRoom.RemoveMob(mob.InstanceId)
 			}

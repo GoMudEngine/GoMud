@@ -13,6 +13,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -399,10 +401,13 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 	// Informational commands (AllowedWhenDowned=true) pass through.
 	// 'cancel' always allowed (to stop casting).
 	// 'flee' clears the cast and then proceeds.
-	if user.Character.CastingState != nil {
+	if user.Character.Activity != nil && user.Character.Activity.IsCasting() {
 		if cmd == `flee` {
-			cs := user.Character.CastingState
-			user.Character.CastingState = nil
+			cs, _ := user.Character.Activity.CastingData()
+			_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
+				Trigger: activity.TriggerCastCancel,
+				Actor:   state.ActorRef{UserId: user.UserId},
+			})
 			user.SendText(fmt.Sprintf(
 				`<ansi fg="cyan">You lose your concentration as you flee! %d conviction is lost.</ansi>`,
 				cs.ConvictionSpent))
@@ -412,10 +417,11 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 			// Fall through — let the flee command execute normally
 		} else if cmd != `cancel` {
 			if cmdInfo, hasCmdInfo := userCommands[cmd]; !hasCmdInfo || !cmdInfo.AllowedWhenDowned {
+				cs, _ := user.Character.Activity.CastingData()
 				user.SendText(fmt.Sprintf(
 					`<ansi fg="cyan">You are holding <ansi fg="cyan-bold">%d/%d</ansi> folds. Type <ansi fg="cyan-bold">cancel</ansi> to stop.</ansi>`,
-					user.Character.CastingState.FoldsAccumulated,
-					user.Character.CastingState.FoldsNeeded))
+					cs.FoldsAccumulated,
+					cs.FoldsNeeded))
 				return true, nil
 			}
 		}

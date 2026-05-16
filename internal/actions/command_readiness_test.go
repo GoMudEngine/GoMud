@@ -126,10 +126,6 @@ func TestCommandIsReady_IsCrafting_BlocksEveryCommand(t *testing.T) {
 					activity.CraftingData{RecipeId: "test", RoundsTotal: 1},
 					state.TransitionReason{Trigger: activity.TriggerCraftBegin},
 				)
-				m.Character.CraftingState = &characters.CraftingState{
-					RecipeId:    "test",
-					RoundsTotal: 1,
-				} // parallel-write (Task 11 sunsets)
 			})
 			actor := &MobActor{Mob: m, Room: nil}
 			assert.False(t, CommandIsReady(actor, cmd),

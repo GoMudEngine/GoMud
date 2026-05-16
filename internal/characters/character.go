@@ -155,8 +155,6 @@ type Character struct {
 	LastPlayerDamage uint64                         `yaml:"-"` // last round a player damaged this character
 	LastSuicideRound uint64                         `yaml:"-"` // runtime only — round of last Suicide execution, for double-fire dedupe
 	LastAttackRejectedRound uint64                  `yaml:"-"` // runtime only — round of last player_attack_rejected event fire, for dedupe
-	CastingState     *CastingState                  `yaml:"-"` // Active fold-based cast in progress (Stage 11.2). Not persisted.
-	CraftingState    *CraftingState                 `yaml:"-"` // Active crafting in progress (Stage 13.1). Not persisted.
 	permaBuffIds      []int // Buff Id's that are always present for this character
 	userId            int  // User ID of the character if any
 	combatPhaseWired  bool `yaml:"-"` // true after OnCharacterCreated callbacks have fired once

@@ -3,7 +3,6 @@ package actions
 import (
 	"strings"
 
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -15,7 +14,7 @@ import (
 // Callers are responsible for all player-facing messaging.
 type CraftResult struct {
 	// Initiated is true when multi-round crafting has been started
-	// (CraftingState set on the character).
+	// (Activity machine transitioned to Crafting).
 	Initiated bool
 	// ImmediateComplete is true when the recipe had TimeRounds <= 0 and was
 	// completed in a single call.
@@ -150,11 +149,6 @@ func InitiateCraft(actor Actor, recipeName string) CraftResult {
 		return res
 	}
 
-	// Mirror to legacy field through Task 11.
-	char.CraftingState = &characters.CraftingState{
-		RecipeId:    recipe.RecipeId,
-		RoundsTotal: recipe.TimeRounds,
-	}
 	res.Initiated = true
 	return res
 }

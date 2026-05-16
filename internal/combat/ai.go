@@ -342,7 +342,7 @@ func ScoreGrapple(mob *mobs.Mob, target *characters.Character) int {
 
 // CanUseCast returns true if the mob has spells, is not already casting, and has conviction.
 func CanUseCast(char *characters.Character) bool {
-	if char.CastingState != nil {
+	if char.Activity != nil && char.Activity.IsCasting() {
 		return false
 	}
 	if len(char.SpellBook) == 0 {

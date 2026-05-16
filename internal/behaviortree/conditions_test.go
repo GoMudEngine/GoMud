@@ -589,7 +589,6 @@ func TestCondTargetIsCasting_TargetCasting_ReturnsSuccess(t *testing.T) {
 		activity.CastingData{SpellId: "fireball"},
 		state.TransitionReason{Trigger: activity.TriggerCastBegin},
 	)
-	target.Character.CastingState = &characters.CastingState{} // parallel-write (Task 11 sunsets)
 	mobs.SetInstanceForTest(target.InstanceId, target)
 	defer mobs.SetInstanceForTest(target.InstanceId, nil)
 	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)

@@ -90,8 +90,8 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	// 4. Already casting?
-	if user.Character.CastingState != nil {
-		cs := user.Character.CastingState
+	if user.Character.Activity != nil && user.Character.Activity.IsCasting() {
+		cs, _ := user.Character.Activity.CastingData()
 		user.SendText(`<ansi fg="cyan">` + spells.GetCastMessage("already_casting", cs.SpellId) + `</ansi>`)
 		return true, nil
 	}
@@ -215,10 +215,10 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	// 10. Apply stat override for folds-per-round.
-	// For traditional spells, this captures The Eye modulation of Perception.
-	// For manifestation spells, this ensures Charisma is used (InitiateCast
-	// already used it, but we recompute with the correct skill level here).
+	// 10. Compute final folds-per-round and total conviction cost.
+	// Apply stat override for folds-per-round when The Eye (or manifestation
+	// path) requires a different stat than what InitiateCast used.
+	foldsPerRound := result.FoldsPerRound
 	var baseStatForCast int
 	if isManifestation {
 		baseStatForCast = user.Character.Stats.Charisma.ValueAdj
@@ -234,25 +234,20 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		} else {
 			overrideSkill = castSkill
 		}
-		result.CastingState.FoldsPerRound = characters.CalcFoldsPerRound(
-			primaryStatForCast, overrideSkill)
+		foldsPerRound = characters.CalcFoldsPerRound(primaryStatForCast, overrideSkill)
 	}
 
-	// 11. Apply conviction cost multiplier to the CastingState.
-	result.CastingState.TotalConvictionCost = totalConvictionCost
-
-	// 12. Commit CastingState — parallel write to Activity machine AND legacy
-	// field. Both stay in sync through Task 11 (when legacy field is deleted).
+	// 11 + 12. Build CastingData and commit to Activity machine (sole truth).
 	castData := activity.CastingData{
-		SpellId:              result.CastingState.SpellId,
-		FoldsNeeded:          result.CastingState.FoldsNeeded,
-		FoldsAccumulated:     result.CastingState.FoldsAccumulated,
-		FoldsPerRound:        result.CastingState.FoldsPerRound,
-		TotalConvictionCost:  result.CastingState.TotalConvictionCost,
-		ConvictionSpent:      result.CastingState.ConvictionSpent,
-		TargetUserIds:        result.CastingState.TargetUserIds,
-		TargetMobInstanceIds: result.CastingState.TargetMobInstanceIds,
-		SpellRest:            result.CastingState.SpellRest,
+		SpellId:              result.SpellInfo.SpellId,
+		FoldsNeeded:          result.FoldsNeeded,
+		FoldsAccumulated:     0,
+		FoldsPerRound:        foldsPerRound,
+		TotalConvictionCost:  totalConvictionCost,
+		ConvictionSpent:      0,
+		TargetUserIds:        result.TargetUserIds,
+		TargetMobInstanceIds: result.TargetMobInstanceIds,
+		SpellRest:            result.SpellRest,
 	}
 	if err := user.Character.Activity.TransitionToCasting(
 		castData,
@@ -267,8 +262,6 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		user.SendText(`You're already busy with something else.`)
 		return true, nil
 	}
-	// Mirror to legacy field through Task 11.
-	user.Character.CastingState = result.CastingState
 
 	// 12b. Send YAML cast text (if defined).
 	if spellInfo.CastUserText != "" || spellInfo.CastRoomText != "" {
@@ -331,14 +324,13 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			}
 		}
 		if blocked {
-			// Abort the cast — undo both the legacy field and Activity machine.
+			// Abort the cast — undo Activity machine.
 			if user.Character.Activity != nil && user.Character.Activity.IsCasting() {
 				_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
 					Trigger: activity.TriggerCastCancel,
 					Actor:   state.ActorRef{UserId: user.UserId},
 				})
 			}
-			user.Character.CastingState = nil
 			return true, nil
 		}
 	}

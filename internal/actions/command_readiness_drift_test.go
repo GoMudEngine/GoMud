@@ -305,8 +305,4 @@ func setCraftingForTest(m *mobs.Mob) {
 		activity.CraftingData{RecipeId: "test-recipe", RoundsTotal: 5},
 		state.TransitionReason{Trigger: activity.TriggerCraftBegin},
 	)
-	m.Character.CraftingState = &characters.CraftingState{
-		RecipeId:    "test-recipe",
-		RoundsTotal: 5,
-	} // parallel-write (Task 11 sunsets)
 }

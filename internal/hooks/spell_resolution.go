@@ -16,6 +16,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -56,7 +57,7 @@ func calcSpellDuration(baseFolds int, spellcastingSkill int, willpower int) int 
 // Extracting the 6-line loop skeleton into a shared wrapper would require
 // function-parameter callbacks or an interface, adding abstraction without
 // meaningful savings. Keep them separate and well-documented instead.
-func resolveSpell(user *users.UserRecord, cs *characters.CastingState, spellData *spells.SpellData, room *rooms.Room) {
+func resolveSpell(user *users.UserRecord, cs activity.CastingData, spellData *spells.SpellData, room *rooms.Room) {
 
 	skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
 	spellAttack := characters.CalcSpellAttack(user.Character.Stats.Willpower.ValueAdj, skillLevel)
@@ -845,7 +846,7 @@ func consumeSpellComponent(user *users.UserRecord, tag string) {
 //     spells; player casters never self-target via this dispatcher.
 //   - No onMagic script, no component consumption.
 //   - Per-target helpers are entirely separate from the player equivalents.
-func resolveMobSpell(mob *mobs.Mob, cs *characters.CastingState, spellData *spells.SpellData, room *rooms.Room) {
+func resolveMobSpell(mob *mobs.Mob, cs activity.CastingData, spellData *spells.SpellData, room *rooms.Room) {
 	// Go spell hooks — dispatch position-mutating / non-target spells before
 	// the type-based effect routing below. Mirrors the player path in
 	// resolveSpell. Stage 3.0d.

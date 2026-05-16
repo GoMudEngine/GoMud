@@ -6,6 +6,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -58,7 +60,6 @@ func TestInitiateCast_InvalidSpell(t *testing.T) {
 	assert.False(t, result.OnCooldown)
 	assert.False(t, result.SpellNotKnown)
 	assert.False(t, result.NoTarget)
-	assert.Nil(t, result.CastingState)
 }
 
 // ---------------------------------------------------------------------------
@@ -66,24 +67,25 @@ func TestInitiateCast_InvalidSpell(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 // TestInitiateCast_AlreadyCasting verifies that if the character already has
-// an active CastingState the function returns AlreadyCasting=true.
+// an active cast (Activity machine in Casting state) the function returns
+// AlreadyCasting=true.
 func TestInitiateCast_AlreadyCasting(t *testing.T) {
 	sd, cleanup := seedTestSpell("test-already", spells.HelpSingle, 4)
 	defer cleanup()
 
 	actor, char, _ := newCastActor()
-	// Pre-set an active casting state.
-	char.CastingState = &characters.CastingState{
-		SpellId:     "test-already",
-		FoldsNeeded: 4,
-	}
+	// Put Activity machine into Casting state to simulate an in-progress cast.
+	char.Activity = activity.NewMachine()
+	_ = char.Activity.TransitionToCasting(
+		activity.CastingData{SpellId: "test-already", FoldsNeeded: 4},
+		state.TransitionReason{Trigger: activity.TriggerCastBegin},
+	)
 
 	result := InitiateCast(actor, sd.SpellId, "")
 
 	assert.True(t, result.AlreadyCasting, "AlreadyCasting should be set")
 	assert.False(t, result.Initiated, "Initiated should be false")
 	assert.NotNil(t, result.SpellInfo, "SpellInfo should still be populated")
-	assert.Nil(t, result.CastingState, "CastingState should not be built")
 }
 
 // ---------------------------------------------------------------------------
@@ -155,43 +157,35 @@ func TestInitiateCast_FoldsCalculation_DefaultBaseFolds(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
-// TestInitiateCast_CastingStateBuilt
+// TestInitiateCast_ResultFields
 // ---------------------------------------------------------------------------
 
-// TestInitiateCast_CastingStateBuilt verifies that a fully successful call
-// produces a non-nil CastingState whose fields mirror the result values, and
-// that Initiated is true.
-func TestInitiateCast_CastingStateBuilt(t *testing.T) {
+// TestInitiateCast_ResultFields verifies that a fully successful call
+// populates all CastResult fields correctly and that Initiated is true.
+// InitiateCast no longer builds a CastingState — the caller uses the result
+// fields to commit the cast to the Activity machine.
+func TestInitiateCast_ResultFields(t *testing.T) {
 	const baseFolds = 4
 	sd, cleanup := seedTestSpell("test-built", spells.Neutral, baseFolds)
 	defer cleanup()
 
-	actor, _, _ := newCastActor()
+	actor, char, _ := newCastActor()
 
 	result := InitiateCast(actor, sd.SpellId, "some rest text")
 
 	require.True(t, result.Initiated, "expected successful initiation")
-	require.NotNil(t, result.CastingState, "CastingState must be non-nil on success")
-
-	cs := result.CastingState
-	assert.Equal(t, sd.SpellId, cs.SpellId,
-		"CastingState.SpellId should match the spell")
-	assert.Equal(t, result.FoldsNeeded, cs.FoldsNeeded,
-		"CastingState.FoldsNeeded should match result")
-	assert.Equal(t, result.FoldsPerRound, cs.FoldsPerRound,
-		"CastingState.FoldsPerRound should match result")
-	assert.Equal(t, result.TotalCost, cs.TotalConvictionCost,
-		"CastingState.TotalConvictionCost should match result.TotalCost")
-	assert.Equal(t, 0, cs.FoldsAccumulated,
-		"FoldsAccumulated must start at zero")
-	assert.Equal(t, 0, cs.ConvictionSpent,
-		"ConvictionSpent must start at zero")
-	assert.Equal(t, "some rest text", cs.SpellRest,
-		"Neutral spell rest text should propagate to CastingState")
-	// CastingState must NOT already be applied to the character — that is the
-	// caller's responsibility (see InitiateCast doc comment).
-	assert.Nil(t, actor.char.CastingState,
-		"CastingState must NOT be applied to char by InitiateCast itself")
+	assert.Equal(t, sd.SpellId, result.SpellInfo.SpellId,
+		"SpellInfo.SpellId should match the spell")
+	assert.Equal(t, characters.NextPowerOfTwo(baseFolds), result.FoldsNeeded,
+		"FoldsNeeded should equal NextPowerOfTwo(BaseFolds)")
+	assert.Greater(t, result.FoldsPerRound, 0,
+		"FoldsPerRound must be positive")
+	assert.Equal(t, "some rest text", result.SpellRest,
+		"Neutral spell rest text should propagate to result")
+	// Activity machine must NOT have been transitioned by InitiateCast itself —
+	// that is the caller's responsibility.
+	assert.False(t, char.Activity != nil && char.Activity.IsCasting(),
+		"Activity must NOT be transitioned to Casting by InitiateCast itself")
 }
 
 // ---------------------------------------------------------------------------
@@ -211,6 +205,4 @@ func TestInitiateCast_CostPropagation(t *testing.T) {
 	require.True(t, result.Initiated)
 	assert.Equal(t, 42, result.TotalCost,
 		"TotalCost should equal the spell's raw Cost field")
-	assert.Equal(t, 42, result.CastingState.TotalConvictionCost,
-		"CastingState.TotalConvictionCost should equal the spell's raw Cost field")
 }

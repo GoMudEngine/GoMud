@@ -80,9 +80,6 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 			user.SendText(`<ansi fg="red">Your movement interrupts your salvaging.</ansi>`)
 		}
 	}
-	// Legacy clear preserved through Task 11.
-	user.Character.CraftingState = nil
-
 	// If has a buff that prevents combat, skip the player
 	if user.Character.HasBuffFlag(buffs.NoMovement) {
 		user.SendText("You can't do that!")
@@ -371,10 +368,9 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					continue
 				}
 				if mob.Character.IsCharmed(user.UserId) { // Charmed mobs follow
-					// Companions interrupt casting to follow owner
-					if mob.Character.CastingState != nil {
-						mob.Character.CastingState = nil
-					}
+					// Companions interrupt casting to follow owner — Activity
+					// cascade (Activity_Cascades.go movement interrupt) handles
+					// the machine transition; no direct field manipulation needed.
 					mob.Command(rest)
 				}
 			}

@@ -301,71 +301,52 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 					}
 				}
 
-				// Stage 13.1: Crafting tick — advance or complete active crafting
-				if user.Character.CraftingState != nil {
-					if user.Character.IsInCombat() {
-						// Fire Activity interrupt for salvaging if machine is in Salvaging state.
-						// The crafting interrupt is handled separately (legacy or Activity path).
-						if user.Character.Activity != nil && user.Character.Activity.IsSalvaging() {
-							_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
-								Trigger: activity.TriggerCombatInterrupt,
-								Actor:   user.Character.Activity.Self(),
-							})
-							if user.Character.MiscData != nil {
-								delete(user.Character.MiscData, "salvage_item_uuid")
-								delete(user.Character.MiscData, "salvage_spoiled_potion")
+				// Stage 13.1: Crafting/Salvaging tick — advance or complete via Activity machine.
+				if user.Character.Activity != nil {
+					switch user.Character.Activity.State() {
+					case activity.Salvaging:
+						// Salvaging tick — advance round via Activity machine.
+						sd, complete := user.Character.Activity.AdvanceSalvagingRound()
+						if !complete {
+							user.SendText(fmt.Sprintf(
+								`<ansi fg="yellow">You continue salvaging... (%d/%d)</ansi>`,
+								sd.RoundsComplete, sd.RoundsTotal))
+						} else {
+							// Determine salvage type from ItemUuid prefix.
+							const corpsePrefix = "corpse:"
+							if strings.HasPrefix(sd.ItemUuid, corpsePrefix) {
+								mobIdStr := strings.TrimPrefix(sd.ItemUuid, corpsePrefix)
+								_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
+									Trigger: activity.TriggerSalvageComplete,
+									Actor:   user.Character.Activity.Self(),
+								})
+								resolveCorpseSalvage(user, mobIdStr)
+							} else {
+								// Parse item ID from UUID stored during TransitionToSalvaging.
+								// ItemUuid holds the raw UUID string; item ID is recovered via
+								// resolveSalvage's MiscData-free path using SalvagingData.
+								_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
+									Trigger: activity.TriggerSalvageComplete,
+									Actor:   user.Character.Activity.Self(),
+								})
+								resolveSalvageFromData(user, sd)
 							}
 						}
-						user.Character.CraftingState = nil
-						user.SendText(`<ansi fg="red">Your work is interrupted!</ansi>`)
-					} else {
-						cs := user.Character.CraftingState
-						cs.RoundsComplete++
-						if cs.RoundsComplete < cs.RoundsTotal {
-							progressMsg := cs.RecipeId
-							if strings.HasPrefix(cs.RecipeId, "salvage:") || strings.HasPrefix(cs.RecipeId, "salvage-corpse:") {
-								progressMsg = "salvaging"
-							}
+
+					case activity.Crafting:
+						// Crafting tick — advance round via Activity machine.
+						cd, complete := user.Character.Activity.AdvanceCraftingRound()
+						if !complete {
 							user.SendText(fmt.Sprintf(
 								`<ansi fg="yellow">You continue working on %s... (%d/%d)</ansi>`,
-								progressMsg, cs.RoundsComplete, cs.RoundsTotal))
-						} else if mobIdStr, ok := strings.CutPrefix(cs.RecipeId, "salvage-corpse:"); ok {
-							// Corpse salvage completion — fire Activity transition if machine is
-							// in Salvaging (new path). Fallback: machine may be Free (pre-commit
-							// in-flight salvage), in which case MiscData is the source of truth.
-							// MiscData keys are cleared inside resolveCorpseSalvage.
-							if user.Character.Activity != nil && user.Character.Activity.IsSalvaging() {
-								_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
-									Trigger: activity.TriggerSalvageComplete,
-									Actor:   user.Character.Activity.Self(),
-								})
-							}
-							user.Character.CraftingState = nil
-							resolveCorpseSalvage(user, mobIdStr)
-						} else if itemIdStr, ok := strings.CutPrefix(cs.RecipeId, "salvage:"); ok {
-							// Salvage completion — fire Activity transition if machine is in
-							// Salvaging (new path). Fallback: machine may be Free (pre-commit
-							// in-flight salvage), in which case MiscData is the source of truth.
-							// MiscData keys are cleared inside resolveSalvage.
-							if user.Character.Activity != nil && user.Character.Activity.IsSalvaging() {
-								_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
-									Trigger: activity.TriggerSalvageComplete,
-									Actor:   user.Character.Activity.Self(),
-								})
-							}
-							user.Character.CraftingState = nil
-							resolveSalvage(user, itemIdStr)
+								cd.RecipeId, cd.RoundsComplete, cd.RoundsTotal))
 						} else {
-							recipe := crafting.GetRecipe(cs.RecipeId)
-							enchantTargetSlot := cs.TargetSlot
-							// Fire Activity transition alongside legacy clear.
-							if user.Character.Activity != nil && user.Character.Activity.IsCrafting() {
-								_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
-									Trigger: activity.TriggerCraftComplete,
-									Actor:   user.Character.Activity.Self(),
-								})
-							}
-							user.Character.CraftingState = nil
+							recipe := crafting.GetRecipe(cd.RecipeId)
+							enchantTargetSlot := cd.TargetSlot
+							_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
+								Trigger: activity.TriggerCraftComplete,
+								Actor:   user.Character.Activity.Self(),
+							})
 							if recipe != nil {
 								sl := user.Character.Skills[recipe.Skill]
 								chance := crafting.CalcSuccessChance(sl, recipe.SkillMinimum)
@@ -514,33 +495,30 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 	return events.Continue
 }
 
-// resolveSalvage handles salvage completion when CraftingState finishes.
-func resolveSalvage(user *users.UserRecord, itemIdStr string) {
-	var itemId int
-	fmt.Sscanf(itemIdStr, "%d", &itemId)
+// resolveSalvageFromData resolves salvage completion using Activity SalvagingData
+// as the sole source of truth. The item is located by UUID from SalvagingData.
+func resolveSalvageFromData(user *users.UserRecord, sd activity.SalvagingData) {
+	uuidStr := sd.ItemUuid
 
-	spec := items.GetItemSpec(itemId)
-	if spec == nil {
-		user.SendText(`<ansi fg="red">Something went wrong with your salvage attempt.</ansi>`)
-		return
-	}
-
-	// Find the specific item in backpack by UUID
-	uuidStr, _ := user.Character.GetMiscData("salvage_item_uuid").(string)
-	user.Character.SetMiscData("salvage_item_uuid", nil)
-
+	// Find item in backpack by UUID.
 	found := false
 	var targetItem items.Item
 	for _, itm := range user.Character.Items {
-		if itm.UUID.String() == uuidStr && itm.ItemId == itemId {
+		if itm.UUID.String() == uuidStr {
 			targetItem = itm
 			found = true
 			break
 		}
 	}
-
 	if !found {
 		user.SendText(`<ansi fg="red">The item you were salvaging is no longer in your backpack.</ansi>`)
+		return
+	}
+
+	itemId := targetItem.ItemId
+	spec := items.GetItemSpec(itemId)
+	if spec == nil {
+		user.SendText(`<ansi fg="red">Something went wrong with your salvage attempt.</ansi>`)
 		return
 	}
 
@@ -553,10 +531,7 @@ func resolveSalvage(user *users.UserRecord, itemIdStr string) {
 
 	// Roll returns from recipe, tagged salvage_returns, or spoiled potion
 	var recovered []crafting.RecipeIngredient
-	isSpoiledPotion, _ := user.Character.GetMiscData("salvage_spoiled_potion").(bool)
-	user.Character.SetMiscData("salvage_spoiled_potion", nil)
-
-	if isSpoiledPotion {
+	if sd.SpoiledPotion {
 		// Spoiled/declining potions always return 1-2 binding paste
 		qty := 1
 		if chance > 0.5 {

@@ -7,6 +7,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -237,7 +239,11 @@ func TestCanUseCast(t *testing.T) {
 			c.SpellBook = tt.spellBook
 			c.Conviction = tt.conviction
 			if tt.casting {
-				c.CastingState = &characters.CastingState{}
+				c.Activity = activity.NewMachine()
+				_ = c.Activity.TransitionToCasting(
+					activity.CastingData{SpellId: "sparks"},
+					state.TransitionReason{Trigger: activity.TriggerCastBegin},
+				)
 			}
 			assert.Equal(t, tt.want, CanUseCast(c))
 		})

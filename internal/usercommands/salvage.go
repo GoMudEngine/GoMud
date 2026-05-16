@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -112,18 +111,6 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		return true, nil
 	}
 
-	// Legacy mirror — parallel-write CraftingState + MiscData through Task 11
-	// so any reader still on the old path keeps working.
-	user.Character.CraftingState = &characters.CraftingState{
-		RecipeId:    fmt.Sprintf("salvage:%d", spec.ItemId),
-		RoundsTotal: rounds,
-	}
-	if user.Character.MiscData == nil {
-		user.Character.MiscData = map[string]any{}
-	}
-	user.Character.SetMiscData("salvage_item_uuid", itm.UUID.String())
-	user.Character.SetMiscData("salvage_spoiled_potion", isSpoiledPotion)
-
 	user.SendText(fmt.Sprintf(
 		`<ansi fg="yellow">You begin carefully disassembling the <ansi fg="itemname">%s</ansi>...</ansi>`,
 		itm.DisplayName()))
@@ -177,7 +164,6 @@ func startCorpseSalvage(user *users.UserRecord, corpse rooms.Corpse) (bool, erro
 		return true, nil
 	}
 
-	// Legacy mirror — parallel-write CraftingState + MiscData through Task 11.
 	// Stash corpse identity for the resolver. mobid + roundCreated
 	// uniquely identifies the corpse within the room. Store as int to
 	// avoid type-assertion issues if MiscData ever round-trips through
@@ -187,11 +173,6 @@ func startCorpseSalvage(user *users.UserRecord, corpse rooms.Corpse) (bool, erro
 	}
 	user.Character.SetMiscData("salvage_corpse_round_created", int(corpse.RoundCreated))
 	user.Character.SetMiscData("salvage_corpse_name", corpse.Character.Name)
-
-	user.Character.CraftingState = &characters.CraftingState{
-		RecipeId:    fmt.Sprintf("salvage-corpse:%d", corpse.MobId),
-		RoundsTotal: rounds,
-	}
 
 	user.SendText(fmt.Sprintf(
 		`<ansi fg="yellow">You begin carefully working over the <ansi fg="mobname">%s corpse</ansi>...</ansi>`,

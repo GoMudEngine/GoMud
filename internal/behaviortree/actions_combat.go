@@ -237,23 +237,18 @@ func actionCancelActivity(params map[string]any, ctx *EvalContext) Result {
 			Trigger: activity.TriggerCastCancel,
 			Actor:   state.ActorRef{MobInstanceId: mob.InstanceId},
 		})
-		mob.Character.CastingState = nil
 
 	case activity.Crafting:
 		_ = a.TransitionToFree(state.TransitionReason{
 			Trigger: activity.TriggerCraftCancel,
 			Actor:   state.ActorRef{MobInstanceId: mob.InstanceId},
 		})
-		mob.Character.CraftingState = nil
 
 	case activity.Salvaging:
 		_ = a.TransitionToFree(state.TransitionReason{
 			Trigger: activity.TriggerSalvageCancel,
 			Actor:   state.ActorRef{MobInstanceId: mob.InstanceId},
 		})
-		mob.Character.CraftingState = nil
-		delete(mob.Character.MiscData, "salvage_item_uuid")
-		delete(mob.Character.MiscData, "salvage_spoiled_potion")
 	}
 	return Success
 }

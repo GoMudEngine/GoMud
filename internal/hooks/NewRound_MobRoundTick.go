@@ -402,23 +402,18 @@ func tickMobCharmState(mob *mobs.Mob) {
 // deleted — Activity_Cascades.go (Task 5) now handles combat-entry cancel
 // for both mobs and players via the cascade observer (parity per AC-038).
 func tickMobCrafting(mob *mobs.Mob) {
-	if mob.Character.CraftingState == nil {
+	if mob.Character.Activity == nil || !mob.Character.Activity.IsCrafting() {
 		return
 	}
-	cs := mob.Character.CraftingState
-	cs.RoundsComplete++
-	if cs.RoundsComplete < cs.RoundsTotal {
+	cd, complete := mob.Character.Activity.AdvanceCraftingRound()
+	if !complete {
 		return
 	}
-	recipe := crafting.GetRecipe(cs.RecipeId)
-	// Fire Activity transition alongside legacy clear.
-	if mob.Character.Activity != nil && mob.Character.Activity.IsCrafting() {
-		_ = mob.Character.Activity.TransitionToFree(state.TransitionReason{
-			Trigger: activity.TriggerCraftComplete,
-			Actor:   mob.Character.Activity.Self(),
-		})
-	}
-	mob.Character.CraftingState = nil
+	recipe := crafting.GetRecipe(cd.RecipeId)
+	_ = mob.Character.Activity.TransitionToFree(state.TransitionReason{
+		Trigger: activity.TriggerCraftComplete,
+		Actor:   mob.Character.Activity.Self(),
+	})
 	if recipe == nil {
 		return
 	}

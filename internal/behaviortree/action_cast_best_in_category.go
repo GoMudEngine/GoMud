@@ -47,7 +47,7 @@ func actCastBestInCategory(params map[string]any, ctx *EvalContext) Result {
 	}
 
 	// Already casting — don't double-initiate.
-	if mob.Character.CastingState != nil {
+	if mob.Character.Activity != nil && mob.Character.Activity.IsCasting() {
 		return Failure
 	}
 

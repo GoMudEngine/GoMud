@@ -66,3 +66,41 @@ func (m *Machine) ForceFree(r state.TransitionReason) {
 	m.crafting = nil
 	m.salvaging = nil
 }
+
+// AdvanceCastingFolds increments folds accumulated and conviction
+// spent on the current cast. Returns the updated data and true if
+// the cast just completed (FoldsAccumulated >= FoldsNeeded).
+//
+// Caller is responsible for transitioning to Free + resolving the
+// spell when complete = true.
+func (m *Machine) AdvanceCastingFolds(folds int, convictionCost int) (CastingData, bool) {
+	if m.State() != Casting || m.casting == nil {
+		return CastingData{}, false
+	}
+	m.casting.FoldsAccumulated += folds
+	m.casting.ConvictionSpent += convictionCost
+	complete := m.casting.FoldsAccumulated >= m.casting.FoldsNeeded
+	return *m.casting, complete
+}
+
+// AdvanceCraftingRound increments rounds complete on the current
+// craft. Returns the updated data and true if the craft just
+// completed.
+func (m *Machine) AdvanceCraftingRound() (CraftingData, bool) {
+	if m.State() != Crafting || m.crafting == nil {
+		return CraftingData{}, false
+	}
+	m.crafting.RoundsComplete++
+	complete := m.crafting.RoundsComplete >= m.crafting.RoundsTotal
+	return *m.crafting, complete
+}
+
+// AdvanceSalvagingRound is the Salvaging equivalent of AdvanceCraftingRound.
+func (m *Machine) AdvanceSalvagingRound() (SalvagingData, bool) {
+	if m.State() != Salvaging || m.salvaging == nil {
+		return SalvagingData{}, false
+	}
+	m.salvaging.RoundsComplete++
+	complete := m.salvaging.RoundsComplete >= m.salvaging.RoundsTotal
+	return *m.salvaging, complete
+}

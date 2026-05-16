@@ -19,7 +19,7 @@ func wireCombatPhaseVetoes(c *characters.Character) {
 	})
 	c.CombatPhase.RegisterActivityCheck(func() bool {
 		// Free == no active multi-round activity.
-		return c.CastingState == nil && c.CraftingState == nil
+		return c.IsFree()
 	})
 	c.CombatPhase.RegisterLifeCheck(func() bool {
 		return c.Health > 0

@@ -4,7 +4,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
-	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
 )
 
@@ -12,9 +11,12 @@ import (
 // to the other machines that drive its interrupt rules:
 //   - Life: Alive → Dead → Activity → Free (covers what the chunk-2
 //     pre-wire in Life_Cascades.go used to do directly).
-//   - Combat Phase: Idle → Engaging (self-initiated) → cancel only
-//     if current Activity is Crafting or Salvaging. Casting is
-//     exempt — casting IS a combat action.
+//
+// Note: Crafting/Salvaging are interrupted by combat via the
+// activity_self veto in CombatPhase_Vetoes.go — the veto prevents
+// TransitionToEngaging from succeeding while any Activity is active.
+// A separate AfterTransition cascade for combat-entry is therefore
+// unreachable and has been removed.
 //
 // Movement cancel and damage cancel for Crafting/Salvaging are not
 // machine-to-machine transitions and don't fit AfterTransition;
@@ -34,25 +36,6 @@ func wireActivityCrossMachineCascades(c *characters.Character) {
 				Trigger: activity.TriggerDeath,
 				Actor:   c.Activity.Self(),
 			})
-		})
-
-	// Combat Phase: Idle → Engaging (self-initiated) → cancel
-	// Crafting/Salvaging. Casting is exempt.
-	c.CombatPhase.Inner().AfterTransition("activity_combat_entry",
-		func(from, to combatphase.State, r state.TransitionReason) {
-			if from != combatphase.Idle || to != combatphase.Engaging {
-				return
-			}
-			if c.Activity == nil {
-				return
-			}
-			switch c.Activity.State() {
-			case activity.Crafting, activity.Salvaging:
-				_ = c.Activity.TransitionToFree(state.TransitionReason{
-					Trigger: activity.TriggerCombatInterrupt,
-					Actor:   c.Activity.Self(),
-				})
-			}
 		})
 }
 

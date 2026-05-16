@@ -37,9 +37,12 @@ func TestActivityCascadeOnLifeDead(t *testing.T) {
 	}
 }
 
-// TestActivityCascadeOnCombatEntryForCrafting verifies that entering
-// combat (Idle→Engaging) cancels a Crafting activity. Covers AC-038.
-func TestActivityCascadeOnCombatEntryForCrafting(t *testing.T) {
+// TestCombatEntryVetoedWhenCrafting verifies that TransitionToEngaging is
+// vetoed (returns a non-nil error) while the character is Crafting, and that
+// the Activity remains Crafting afterwards. The activity_self veto in
+// CombatPhase_Vetoes.go provides this protection — no separate cascade is
+// needed. Covers AC-038.
+func TestCombatEntryVetoedWhenCrafting(t *testing.T) {
 	c := characters.New()
 	_ = c.Activity.TransitionToCrafting(
 		activity.CraftingData{RecipeId: "iron_dagger", RoundsTotal: 4},
@@ -49,25 +52,27 @@ func TestActivityCascadeOnCombatEntryForCrafting(t *testing.T) {
 		t.Fatal("setup: expected character to be crafting")
 	}
 
-	// TransitionToEngaging takes (EngagingData, TransitionReason).
-	// No vetoes are registered in tests, so the transition succeeds.
-	_ = c.CombatPhase.TransitionToEngaging(
+	err := c.CombatPhase.TransitionToEngaging(
 		combatphase.EngagingData{Target: state.ActorRef{UserId: 999}},
 		state.TransitionReason{Trigger: combatphase.TriggerAttackCommand},
 	)
 
-	if !c.IsFree() {
+	if err == nil {
+		t.Error("TransitionToEngaging should be vetoed while crafting; got nil error")
+	}
+	if !c.IsCrafting() {
 		t.Errorf(
-			"Activity should cascade to Free on Combat Phase Engaging; got %v",
+			"Activity should remain Crafting after vetoed combat entry; got %v",
 			c.Activity.State(),
 		)
 	}
 }
 
-// TestActivityCastingNotCanceledByCombatEntry verifies that entering
-// combat (Idle→Engaging) does NOT cancel a Casting activity — casting
-// is exempt per the per-activity interrupt policy. Covers AC-018.
-func TestActivityCastingNotCanceledByCombatEntry(t *testing.T) {
+// TestCombatEntryVetoedWhenCasting verifies that TransitionToEngaging is
+// vetoed (returns a non-nil error) while the character is Casting, and that
+// the Activity remains Casting afterwards. Casting is always a combat-adjacent
+// action and must not be interrupted by a combat-entry veto. Covers AC-018.
+func TestCombatEntryVetoedWhenCasting(t *testing.T) {
 	c := characters.New()
 	_ = c.Activity.TransitionToCasting(
 		activity.CastingData{SpellId: "fireball"},
@@ -77,14 +82,17 @@ func TestActivityCastingNotCanceledByCombatEntry(t *testing.T) {
 		t.Fatal("setup: expected character to be casting")
 	}
 
-	_ = c.CombatPhase.TransitionToEngaging(
+	err := c.CombatPhase.TransitionToEngaging(
 		combatphase.EngagingData{Target: state.ActorRef{UserId: 999}},
 		state.TransitionReason{Trigger: combatphase.TriggerAttackCommand},
 	)
 
+	if err == nil {
+		t.Error("TransitionToEngaging should be vetoed while casting; got nil error")
+	}
 	if !c.IsCasting() {
 		t.Errorf(
-			"Casting should NOT cascade to Free on Combat Phase Engaging; got %v",
+			"Activity should remain Casting after vetoed combat entry; got %v",
 			c.Activity.State(),
 		)
 	}

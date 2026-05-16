@@ -6,20 +6,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 )
 
-// CastingState tracks active fold-based spellcasting progress.
-// Not persisted — the Character field uses yaml:"-".
-type CastingState struct {
-	SpellId              string
-	FoldsNeeded          int
-	FoldsAccumulated     int
-	FoldsPerRound        int
-	TotalConvictionCost  int // conviction owed for full cast
-	ConvictionSpent      int // conviction paid so far (non-refundable on cancel)
-	TargetUserIds        []int
-	TargetMobInstanceIds []int
-	SpellRest            string // for Neutral-type spells
-}
-
 // NextPowerOfTwo returns the smallest power of 2 >= n (minimum 2).
 func NextPowerOfTwo(n int) int {
 	if n <= 2 {

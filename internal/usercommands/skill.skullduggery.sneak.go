@@ -25,9 +25,9 @@ func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return false, nil
 	}
 
-	// Can't sneak while crafting
-	if user.Character.CraftingState != nil {
-		user.SendText(`You are busy crafting.`)
+	// Can't sneak while crafting or otherwise occupied
+	if !user.Character.IsFree() {
+		user.SendText(`You are busy with something else.`)
 		return true, nil
 	}
 
