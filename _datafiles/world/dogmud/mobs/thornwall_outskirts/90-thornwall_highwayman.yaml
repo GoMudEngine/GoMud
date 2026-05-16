@@ -9,9 +9,13 @@ groups:
   - bandit
   - humanoid
 idlecommands:
+  # Hidden ambusher — visible idle emotes break the stealth illusion.
+  # Keep `sneak` (re-hides when the buff/FSM lapses) and empty
+  # strings (skip-this-tick) so the mob stays unobtrusive between
+  # ambush attempts.
   - 'sneak'
-  - 'emote loiters at the roadside, watching passing traffic with calculating eyes'
-  - 'emote flips a coin absently, catching it without looking'
+  - ''
+  - ''
   - ''
   - ''
 combatcommands:
