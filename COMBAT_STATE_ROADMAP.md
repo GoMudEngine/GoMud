@@ -37,7 +37,7 @@ This effort collapses that surface to one canonical framework:
 | 1 | Awareness | Done (2026-05-15) | Visible / Concealing / Hidden / Revealing. FSM port + Hidden mechanic refresh. 33 Behavior Matrix tests (29 PASS + 4 SKIP). |
 | 2 | Life | Done (2026-05-13) | Alive / Dead / Respawning. 252-line `mobcommands/suicide.go` + ~290-line `usercommands/suicide.go` consolidated into thin handlers + Life cascade + 14 observer files. Permadeath + extra-lives sunset. Auto-look after respawn teleport. 12 Behavior Matrix tests PASS + 15 SKIP (integration-deferred). |
 | 3 | Activity | Done (2026-05-15) | Free / Casting / Crafting / Salvaging. Star-topology FSM consolidates `Character.CastingState` + `Character.CraftingState` pointer fields and the salvage MiscData hijack into one per-state-data machine. Per-activity interrupt policy formalized (casting allows combat entry; craft/salvage block & cancel on combat/damage/movement). `cancel_activity` btree primitive added. 16/22 Behavior Matrix tests PASS/SKIP. |
-| 4a | Position — FSM | Not started | 13 geometric states (Standing / Prone / Clinch / BackStanding / Mount / SideControl / KneeOnBelly / NorthSouth / Crucifix / BackGround / HalfGuard / Guard / Turtle). Expanded 2026-05-16 to full BJJ/MMA taxonomy; control axis added as data slot. |
+| 4a | Position — FSM | Done (2026-05-16) | 14 geometric states (Standing / Prone / Supine / Clinch / BackStanding / Mount / SideControl / KneeOnBelly / NorthSouth / Crucifix / BackGround / HalfGuard / Guard / Turtle). Prone/Supine split during brainstorm — submission paths, recovery difficulty, and back-take vulnerability diverge. Per-state data (StandingData / ProneData / SupineData / shared GrappleData), ~75-edge transition graph, 22 trigger constants, 19 Character predicates, 10 btree primitives, Life-Dead cascade observer. Ships DORMANT — zero behavior change; legacy CombatPosition enum + all command writers untouched. 4b cuts over writers + control rolls + sunsets legacy. |
 | 4b | Position — control axis | Not started | Per-grappler 5-level control scale (InControl / LosingControl / Neutral / BecomingControlled / Controlled). Per-round opposed rolls; threshold-triggered position transitions; gradient messaging. |
 | 4c | Position — weapon utility | Not started | (Position × WeaponType) → modifier table. Combat resolution reads it. Lets long weapons fail in mount, knives stay useful, etc. |
 | 4d | Position — submissions | Not started | Rework/sunset existing submission special-attack command. Automatic/opportunistic submissions gated on (Position, ControlLevel). Submission outcomes (choked, damaged limb, tap, continue). |
@@ -396,6 +396,136 @@ machine) brainstorm is next.
 
 Next: chunk 4 — Position machine (`Standing` / `Prone` / `Clinched` /
 `Grounded`).
+
+---
+
+## Chunk 4a — Shipped (2026-05-16)
+
+Built the `internal/state/position/` machine on the chunk-0 framework
+as the architectural scaffold for the rich-grapple system. 4a ships
+DORMANT — no production code transitions the new FSM; legacy
+`CombatPosition` enum + `PositionRoundsMin` + `GrappleControllerId` +
+`ConditionGrappleController` + all command writers (trip / bash /
+grapple / stand / kick / spell knockdown / `AttemptRecovery`) + all
+readers (kick variant selector / flee veto / defense degradation /
+chunk-0 `RegisterPositionCheck`) remain unchanged. Zero behavior
+change. 4b's cutover sub-chunk swaps command-site writers to the new
+FSM and incrementally sunsets the legacy state.
+
+**14-state taxonomy:** Standing / Prone (face-down knockdown) /
+Supine (face-up knockdown) / Clinch / BackStanding / Mount /
+SideControl / KneeOnBelly / NorthSouth / Crucifix / BackGround /
+HalfGuard / Guard / Turtle. **Prone/Supine split** during brainstorm:
+the distinction matters mechanically — Prone is back-take vulnerable
+(face-down) and harder to recover from; Supine can pull guard
+(face-up) and recovers more easily. Submission paths diverge entirely
+(Prone → back-take → RNC; Supine → guard pull → all BJJ submissions).
+
+**Per-state data:** `StandingData` (empty), `ProneData` /
+`SupineData` (Reason + MinRecoveryRounds + KnockdownSource), shared
+`GrappleData` (Reason + Partner + ControlLevel) across all 11 grapple
+states. Per-state extras (ClinchGrip, ArmsIsolated, HooksIn,
+TrappedLeg, GuardVariant) deferred to 4b/4c as wrapping structs when
+consumers materialize.
+
+**Control axis** (`ControlLevel` enum: Neutral / InControl /
+LosingControl / BecomingControlled / Controlled) stored as
+`GrappleData` field. Neutral is iota=0 so Go's zero value defaults
+match the spec — `GrappleData{Partner: ref}` literals get Neutral
+without explicit assignment. 4a does NOT drive control transitions;
+4b adds the per-round opposed rolls.
+
+**Transition graph:** ~75 valid edges across the 14×14 matrix.
+Star-ish topology around Standing — every grapple state can return
+to Standing; Standing is the entry point. Intentional non-edges
+documented: Standing → BackStanding (requires Clinch first), Supine
+→ BackGround (requires intermediate state to flip target),
+Clinch → KOB/NS/Crucifix (those positions require target already on
+ground; reach via SideControl first).
+
+**22 trigger constants** covering knockdowns (face-forward /
+face-backward / spell), recovery (roll + stand-command), grapple
+entry/break, 5 takedown variants from Clinch, 3 back-take paths,
+controller-advance + controlled-escape, defensive (turtle-defend +
+guard-pull), opportunistic (mount-prone-target), arm-isolation
+(Crucifix), and cascade (death).
+
+**19 Character predicates** (`internal/characters/position_predicates.go`):
+- 14 per-state: IsStanding / IsProne / IsSupine / IsClinch /
+  IsBackStanding / IsMount / IsSideControl / IsKneeOnBelly /
+  IsNorthSouth / IsCrucifix / IsBackGround / IsHalfGuard / IsGuard /
+  IsTurtle
+- 5 rollup: IsGrappling (any of 11 grapple states), IsStandingGrapple
+  (Clinch | BackStanding), IsGroundGrapple (9 ground grapple states),
+  IsTopDominant (Mount/SC/KOB/NS/Crucifix/BackGround), IsOnFloor
+  (Prone | Supine | any ground grapple)
+
+**10 btree primitives** (`internal/behaviortree/conditions_position.go`):
+- 7 self-position: mob_is_standing, mob_is_prone, mob_is_grappling,
+  mob_in_mount, mob_in_guard, mob_in_clinch, mob_in_top_dominant
+- 3 target-position: target_is_standing, target_is_prone,
+  target_is_grappled
+- All DORMANT in 4a (always return Failure because no mob's Position
+  machine is transitioned in production). Become live once 4b drives
+  transitions. Control-axis primitives (mob_is_in_control,
+  target_is_being_controlled) deferred to 4b.
+
+**Cross-machine cascade:** Life Dead → Position Standing observer
+(`internal/hooks/Position_Cascades.go`, handler key
+`position_life_dead`). **Coexists with the chunk-2 Life pre-wire**
+(which still resets `c.CombatPosition = PositionStanding` directly +
+clears `GrappleControllerId`). Both fire on death; both reach Standing
+(legacy pre-wire on the legacy field; 4a observer on the new FSM).
+No drift possible because the new FSM defaults to Standing and 4a has
+no writers. 4b removes the chunk-2 pre-wire once command sites cut
+over.
+
+**Behavior Matrix:** 45 intent-driven tests (PO-001 through PO-045)
+authored in `position_test.go`. 38 PASS at unit layer; 7 SKIP because
+they require cross-machine wiring (verified by `Position_Cascades_test.go`
++ `conditions_position_test.go` integration tests). Chunks 0/1/2/3
+regression tests pass; package tests across the affected boundary
+(state/..., characters, hooks, behaviortree) all green.
+
+**Intentional simplifications** (documented in
+`internal/state/position/context.md`):
+1. Prone/Supine split — intentional, not consolidated.
+2. Shared GrappleData across all 11 grapple states — per-state extras
+   deferred to 4b/4c via wrapping structs.
+3. No control-axis rolls — `ControlLevel` field exists default
+   Neutral; 4b adds the rolls.
+4. No btree primitives for control axis — 4b additions.
+5. Cascade coexistence with chunk-2 pre-wire — no drift possible
+   because new FSM defaults to Standing and 4a has no writers.
+6. Standing → BackStanding NOT direct — must go via Clinch.
+7. Supine → BackGround NOT direct — would require flipping target.
+8. Clinch → KOB / NorthSouth / Crucifix NOT direct — require ground
+   pin first.
+9. Btree primitive subset — only commonly-queried positions get
+   primitives; rollup `mob_in_top_dominant` covers broad cases.
+
+**Bonus fix during T3:** `ControlLevel` enum reordered so `Neutral`
+is iota=0 (was `InControl`). The original ordering made Go's zero
+value `InControl`, which silently demoted explicit InControl assignments
+via a workaround. Reorder makes the zero value semantically correct
+and lets 4b's roll-driven code set any control level explicitly without
+demotion.
+
+**Deferred to 4b:** command-site writer cutover (trip / bash /
+grapple / stand / kick / spell knockdown / AttemptRecovery all move
+to write the new FSM), per-round control rolls, threshold-triggered
+position transitions, legacy field sunset (CombatPosition enum +
+PositionRoundsMin + GrappleControllerId + ConditionGrappleController),
+chunk-2 Life pre-wire removal, chunk-0 `RegisterPositionCheck`
+rewire, **broader doc sweep** (combat package, mobs package,
+behaviortree archetype YAMLs, helpfiles for stand/grapple/trip/etc.,
+player-facing combat docs).
+
+**Aliveness work stays paused** for chunks 4b-6. Chunk 4b (Position
+— control-axis mechanics) brainstorm is next.
+
+Next: chunk 4b — Position control axis (per-round opposed rolls,
+threshold-triggered position transitions, gradient messaging).
 
 ---
 
