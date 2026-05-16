@@ -23,7 +23,7 @@ func newTestMob(t *testing.T, cfg func(*mobs.Mob)) *mobs.Mob {
 	m.Character.StaminaMax.Value = 999
 	m.Character.Conviction = 999
 	m.Character.ConvictionMax.Value = 999
-	m.Character.CombatPosition = characters.PositionStanding
+	setCombatPositionParallel(&m.Character, characters.PositionStanding)
 	m.Character.Buffs = buffs.New() // Properly initialize buffs maps
 	m.Character.SetAggro(1, 0, characters.DefaultAttack) // user 1 as generic target
 	if cfg != nil {
@@ -81,7 +81,7 @@ func TestCommandIsReady_Trip_TargetAlreadyProneFalse(t *testing.T) {
 	m := newTestMob(t, nil)
 	targetMob := &mobs.Mob{InstanceId: 200}
 	targetMob.Character.Name = "Target"
-	targetMob.Character.CombatPosition = characters.PositionProne
+	setCombatPositionParallel(&targetMob.Character, characters.PositionProne)
 	mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
 	defer mobs.SetInstanceForTest(targetMob.InstanceId, nil)
 	m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
@@ -101,7 +101,7 @@ func TestCommandIsReady_Grapple_TargetAlreadyClinchedFalse(t *testing.T) {
 	m := newTestMob(t, nil)
 	targetMob := &mobs.Mob{InstanceId: 201}
 	targetMob.Character.Name = "Target"
-	targetMob.Character.CombatPosition = characters.PositionClinched
+	setCombatPositionParallel(&targetMob.Character, characters.PositionClinched)
 	mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
 	defer mobs.SetInstanceForTest(targetMob.InstanceId, nil)
 	m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)

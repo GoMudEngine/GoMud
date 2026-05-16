@@ -4,13 +4,52 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/stretchr/testify/assert"
 )
 
 func init() {
 	// Initialize mudlog for tests
 	mudlog.SetupLogger(nil, "", "", false)
+}
+
+// setCombatPositionParallel writes BOTH the legacy CombatPosition
+// field AND the new Position FSM in lockstep. F1 fixture helper
+// for the chunk-4b transition window; mirrors the same helper in
+// internal/combat test scope. Seeds Position if nil. Synthetic
+// Partner ref for Clinched/Grounded (FSM requires non-zero).
+func setCombatPositionParallel(c *characters.Character, pos characters.CombatPosition) {
+	c.CombatPosition = pos
+	if c.Position == nil {
+		c.Position = position.NewMachine()
+	}
+	r := state.TransitionReason{Trigger: "test_setup"}
+	switch pos {
+	case characters.PositionStanding:
+		c.Position.ForceStanding(r)
+	case characters.PositionProne:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToProne(position.ProneData{}, r)
+	case characters.PositionClinched:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+	case characters.PositionGrounded:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+		_ = c.Position.TransitionToMount(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}, ControlLevel: position.InControl},
+			state.TransitionReason{Trigger: position.TriggerTakedownMount},
+		)
+	}
 }
 
 // TestEmoteAliasLookup verifies that a known emote alias returns IsAlias=true
