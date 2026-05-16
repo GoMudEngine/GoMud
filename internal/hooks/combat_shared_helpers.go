@@ -266,16 +266,17 @@ func applyCritEffects(attacker, defender *characters.Character, roundResult comb
 	// ── Block crit → auto-bash (ignores cooldown) ───────────────────────
 	if roundResult.BlockCritDetected {
 		bashResult := combat.ExecuteSkillMove(combat.SkillMoveParams{
-			Attacker:        defender,
-			Defender:        attacker,
-			AttackStat:      defender.Stats.Strength.ValueAdj,
-			AttackSkill:     defender.GetSkillLevel(skills.WeaponCombat),
-			DefenseStat:     attacker.Stats.Dexterity.ValueAdj,
-			DefenseSkill:    attacker.GetCombatSkillLevel(),
-			DamagePercent:   float64(cfg.BashDamagePercent),
-			KnockdownChance: int(cfg.BashKnockdownChance),
-			SkillRank:       defender.GetSkillLevel(skills.WeaponCombat),
-			DamageStat:      defender.Stats.Strength.ValueAdj,
+			Attacker:          defender,
+			Defender:          attacker,
+			AttackStat:        defender.Stats.Strength.ValueAdj,
+			AttackSkill:       defender.GetSkillLevel(skills.WeaponCombat),
+			DefenseStat:       attacker.Stats.Dexterity.ValueAdj,
+			DefenseSkill:      attacker.GetCombatSkillLevel(),
+			DamagePercent:     float64(cfg.BashDamagePercent),
+			KnockdownChance:   int(cfg.BashKnockdownChance),
+			SkillRank:         defender.GetSkillLevel(skills.WeaponCombat),
+			DamageStat:        defender.Stats.Strength.ValueAdj,
+			KnockdownToSupine: true, // bash sends attacker backward
 		})
 		result.AutoBash = true
 		result.BashResult = bashResult
