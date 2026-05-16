@@ -243,9 +243,9 @@ buff.
 
 ### Position & Grapple (chunks 4a + 4b)
 
-Registered in `conditions_position.go`. All conditions read the new
-Position FSM via the `Character.IsXxx()` predicate family — never the
-legacy `CombatPosition` enum.
+Registered in `conditions_position.go`. All conditions read the
+Position FSM via the `Character.IsXxx()` predicate family. The legacy
+`CombatPosition` enum is fully removed (T21 sunset).
 
 **Chunk 4a — per-state and rollup predicates (10):**
 
@@ -273,7 +273,7 @@ need finer-grained checks.
 
 | Condition | Params | Description |
 |-----------|--------|-------------|
-| `mob_is_in_control` | none | True when `self.IsController()` — controller side of a grapple pair. Replaces the legacy `HasCondition(ConditionGrappleController)` check (sunset target S4). |
+| `mob_is_in_control` | none | True when `self.IsController()` — controller side of a grapple pair. Replaced the deleted `HasCondition(ConditionGrappleController)` check (S4 shipped). |
 | `mob_is_being_controlled` | none | True when `self.IsBeingControlled()` — controlled side. |
 | `mob_control_at_least` | `level` (string: "InControl", "LosingControl", "Neutral", "BecomingControlled", "Controlled") | True when self's `ControlLevel` ≥ the named level on the controller→controlled axis. Used by archetypes that want graduated reactions (e.g. "if I'm only `LosingControl`, try to scramble; if I'm `Controlled`, turtle"). |
 | `mob_low_grapple_stamina` | none | True when `self.IsLowGrappleStamina()` — stamina fraction below `GrappleStaminaLowThreshold` (config, default 0.25). Drives the "I'm gassed" archetype reactions. |

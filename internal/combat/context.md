@@ -150,9 +150,9 @@ to the new Position FSM.
   `MinRecoveryRounds` (replaces legacy `PositionRoundsMin`),
   `KnockdownSource` (the attacker's `ActorRef`), and the
   `TransitionReason`.
-- **Legacy parallel:** `Character.CombatPosition = PositionProne` and
-  `Character.PositionRoundsMin` are still written in lockstep until S1/S2
-  sunset them. The legacy enum collapses Prone/Supine into one bucket.
+- The legacy `CombatPosition` / `PositionRoundsMin` parallel-writes are
+  removed (T21 sunset). The legacy enum collapsed Prone/Supine into one
+  bucket; the FSM distinguishes them.
 - Visual indicator: "prone" adjective added via `GetAdjectives()` (still
   enum-driven; helpfile content enhancement deferred to chunk 4f).
 
@@ -199,8 +199,8 @@ penalty profile via `IsProne() || IsSupine()` reads in
    - Bypasses `MinRecoveryRounds`. Fires
      `Position.TransitionToStanding(TriggerStandCommand)` BEFORE
      deducting stamina so an FSM-edge failure bails without charge.
-   - Plus legacy parallel-write of `CombatPosition` /
-     `PositionRoundsMin`.
+   - The legacy `CombatPosition` / `PositionRoundsMin` parallel-writes
+     are removed (T21 sunset); the FSM transition is the sole write.
 
 ### Grapple mechanics (Position FSM control axis, chunk 4b)
 
@@ -223,18 +223,16 @@ package interacts:
   asymmetry is the "smother" feedback loop).
 - **Third-party defense filter** — `IsThirdPartyAttack` (chunk 4b R2)
   now reads `target.IsGrappling()` + `GrappleData.Partner` instead of
-  the legacy `CombatPosition.IsGrapplePosition()` + `GrappleControllerId`.
-  Zero-Partner (solo Turtle) preserves legacy "no controller → not
+  the deleted `CombatPosition.IsGrapplePosition()` + `GrappleControllerId`
+  fields. Zero-Partner (solo Turtle) preserves the "no controller → not
   third-party" semantics; 4e refines.
 - **Crit-threshold bonuses** — controller in any grapple grants a
   crit boost (-0.2 standing, -0.4 ground); reads `c.IsController()`
   (chunk 4b R1, replaces `HasCondition(ConditionGrappleController)`).
 
-Kick variant selector in `internal/actions/combat_kick.go` and several
-mob-AI helpers in `internal/combat/ai.go` are **unmigrated readers**
-of the legacy enum; their cutover is part of the broader
-CombatPosition reader sweep (see memory entry
-`project_chunk_4b_r4_blocked_on_reader_sweep.md`).
+The legacy `CombatPosition` enum is fully removed (T21 sunset). All
+readers in `combat_helpers.go`, `ai.go`, `grapple.go`, and across
+the codebase were migrated in the chunk-4b reader sweep before deletion.
 
 ### Special Combat Moves
 Three tactical combat abilities with knockdown mechanics and shared cooldown:

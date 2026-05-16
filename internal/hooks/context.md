@@ -657,14 +657,10 @@ Cross-machine cleanup that fires on two Life transitions:
 - Forces Awareness to `Visible` (`ForceVisible`)
 - Transitions Activity machine to `Free` (via separate `activity_life_dead`
   observer in `Activity_Cascades.go` — see Activity Machine section below)
-- Resets `CombatPosition` to Standing — **legacy parallel** with the
-  chunk-4a `position_life_dead` observer in `Position_Cascades.go`,
-  which resets the new Position FSM independently. Chunk 4b R4
-  (delete this legacy reset) is **deferred** pending the broader
-  CombatPosition reader sweep; see memory entry
-  `project_chunk_4b_r4_blocked_on_reader_sweep.md`.
-- Clears `GrappleControllerId` — same legacy-parallel + R4-deferred
-  status (Position FSM tracks the partner via `GrappleData.Partner`).
+- (The legacy `CombatPosition` reset and `GrappleControllerId` clear
+  that previously lived here were deleted in chunk 4b R4. The
+  `position_life_dead` observer in `Position_Cascades.go` owns the
+  Position FSM death cascade.)
 - Cancels all non-permanent active buffs
 - Clears active combat conditions
 
@@ -798,15 +794,10 @@ When the Life machine transitions `Alive → Dead`, the handler calls
 is non-nil and not already `Standing`. This ensures that a character
 who dies while grappled or knocked down returns to the `Standing` default.
 
-This observer **coexists** with the chunk-2 `Life_Cascades.go` pre-wire
-that still resets `c.CombatPosition = PositionStanding` directly and clears
-`GrappleControllerId`. Both observers fire on every death. Chunk 4b R4
-(delete the pre-wire) is **deferred** pending the broader CombatPosition
-reader sweep — see memory entry
-`project_chunk_4b_r4_blocked_on_reader_sweep.md`. The "coexistence" is
-intentional during the transition window: the new FSM defaults to
-`Standing` and chunk 4a had no writers, so no drift was possible; chunk
-4b writers parallel-write both views, preserving the no-drift invariant.
+This observer is now the sole Position reset on death. Chunk 4b R4
+deleted the chunk-2 `Life_Cascades.go` pre-wire that previously reset
+`c.CombatPosition = PositionStanding` and `c.GrappleControllerId = 0`
+directly. Those legacy fields no longer exist (T21 sunset).
 
 **Integration tests** in `Position_Cascades_test.go` cover four scenarios:
 - PO-037: Standing at death → remains Standing (no-op observer path)

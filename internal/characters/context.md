@@ -634,16 +634,13 @@ Position *position.Machine `yaml:"-"`
 
 Initialized in `New()` and nil-guarded in `Validate()` (for characters
 loaded from YAML without a direct `New()` path). The Position machine
-is the canonical source of truth for body geometry and grapple state.
-Chunk 4a scaffolded the machine DORMANT; **chunk 4b wired every
-production writer and migrated most readers** (writers W1-W8: grapple
-entry, legacy progression delete, submission outcomes, trip/bash,
-spell knockdown, auto-recovery, stand command; readers R1/R2/R3/R5/R6:
-combat math, third-party defense filter, flee blockers, CombatPhase
-position check, prompt `{pos}` token). R4 (delete Life cascade Position
-pre-wire) and S1-S5 (legacy field sunsets) are **deferred** pending a
-broader CombatPosition reader sweep — see memory entry
-`project_chunk_4b_r4_blocked_on_reader_sweep.md`.
+is the sole source of truth for body geometry and grapple state. Chunk
+4a scaffolded the machine; **chunk 4b completed the full cutover**:
+all production writers (W1-W8), all readers (R1-R6 including R4 Life
+cascade pre-wire deletion), and the legacy field sunsets (S1-S5) have
+all shipped. The legacy `CombatPosition` enum, `PositionRoundsMin`
+field, `GrappleControllerId` field, `ConditionGrappleController`
+constant, and `internal/characters/combatposition.go` are deleted.
 
 ### Predicate methods (chunk 4a + 4b)
 
@@ -664,8 +661,8 @@ default); all others return `false`.
 
 - `IsController()` — true when the character is on the controller side
   of a grapple pair (reads `Position.GrappleData().ControlLevel`
-  via `IsControllerLevel`). Replaces the legacy
-  `HasCondition(ConditionGrappleController)` check; sunset target S4.
+  via `IsControllerLevel`). Replaced the deleted
+  `HasCondition(ConditionGrappleController)` check (S4 shipped).
 - `IsBeingControlled()` — true when the character is on the controlled
   side (symmetric to `IsController`).
 - `IsLowGrappleStamina()` — true when stamina fraction is below
@@ -673,28 +670,22 @@ default); all others return `false`.
   `mob_low_grapple_stamina` btree primitive and by
   `Position_Messaging` for the once-per-grapple "you're getting
   gassed" warning.
-- `GetPositionSpeedMultiplier()` — replaces the legacy
-  `CombatPosition.GetSpeedMultiplier()` helper (sunset S5). Switches
+- `GetPositionSpeedMultiplier()` — replaces the deleted
+  `CombatPosition.GetSpeedMultiplier()` helper (S5 shipped). Switches
   on `Position.State()`: Standing 1.0, Prone/Supine/Turtle 0.5,
   Clinch/BackStanding 0.6, ground grapples 0.3.
 
-**Legacy enum coexistence — status:** the chunk 4b reader sweep is
-**in progress** but not complete. Combat math (`combat_helpers.go`,
-all 6 reader sites) and the third-party defense filter
-(`IsThirdPartyAttack`) read the FSM. ~25 readers across `combat/ai.go`,
-`combat/grapple.go`, `actions/combat_kick.go`,
-`actions/command_readiness.go`, `behaviortree/conditions_mob.go`,
-`hooks/combat_shared_helpers.go`, `mobcommands/submit.go`,
-`usercommands/submit.go`, `characters/combat_state_compat.go` are
-still unmigrated. The legacy `CombatPosition` enum, its
-`IsGroundPosition()` / `IsGrapplePosition()` / `GetSpeedMultiplier()` /
-`GetPositionColor()` helpers, the `PositionRoundsMin` /
-`GrappleControllerId` fields, and the `ConditionGrappleController`
-constant remain in place until S1-S5 land. The mapping table for
-migrators:
+**Legacy enum — fully removed (T21 sunset, 2026-05-16):** the
+`CombatPosition` enum, its `IsGroundPosition()` / `IsGrapplePosition()`
+/ `GetSpeedMultiplier()` / `GetPositionColor()` helpers, the
+`PositionRoundsMin` / `GrappleControllerId` fields, the
+`ConditionGrappleController` constant, and the file
+`internal/characters/combatposition.go` are all deleted. The mapping
+table below is kept for historical reference (chunk 4c/4d/4e writers
+should use these predicates from day one):
 
-| Legacy reader | New FSM predicate |
-|---------------|-------------------|
+| Deleted legacy API | Current FSM predicate |
+|--------------------|-----------------------|
 | `== PositionProne` | `IsProne() \|\| IsSupine()` |
 | `== PositionClinched` | `IsStandingGrapple()` |
 | `== PositionGrounded` | `IsGroundGrapple()` |
