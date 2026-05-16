@@ -304,6 +304,18 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 				// Stage 13.1: Crafting tick — advance or complete active crafting
 				if user.Character.CraftingState != nil {
 					if user.Character.IsInCombat() {
+						// Fire Activity interrupt for salvaging if machine is in Salvaging state.
+						// The crafting interrupt is handled separately (legacy or Activity path).
+						if user.Character.Activity != nil && user.Character.Activity.IsSalvaging() {
+							_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
+								Trigger: activity.TriggerCombatInterrupt,
+								Actor:   user.Character.Activity.Self(),
+							})
+							if user.Character.MiscData != nil {
+								delete(user.Character.MiscData, "salvage_item_uuid")
+								delete(user.Character.MiscData, "salvage_spoiled_potion")
+							}
+						}
 						user.Character.CraftingState = nil
 						user.SendText(`<ansi fg="red">Your work is interrupted!</ansi>`)
 					} else {
@@ -318,10 +330,29 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 								`<ansi fg="yellow">You continue working on %s... (%d/%d)</ansi>`,
 								progressMsg, cs.RoundsComplete, cs.RoundsTotal))
 						} else if mobIdStr, ok := strings.CutPrefix(cs.RecipeId, "salvage-corpse:"); ok {
+							// Corpse salvage completion — fire Activity transition if machine is
+							// in Salvaging (new path). Fallback: machine may be Free (pre-commit
+							// in-flight salvage), in which case MiscData is the source of truth.
+							// MiscData keys are cleared inside resolveCorpseSalvage.
+							if user.Character.Activity != nil && user.Character.Activity.IsSalvaging() {
+								_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
+									Trigger: activity.TriggerSalvageComplete,
+									Actor:   user.Character.Activity.Self(),
+								})
+							}
 							user.Character.CraftingState = nil
 							resolveCorpseSalvage(user, mobIdStr)
 						} else if itemIdStr, ok := strings.CutPrefix(cs.RecipeId, "salvage:"); ok {
-							// Salvage completion
+							// Salvage completion — fire Activity transition if machine is in
+							// Salvaging (new path). Fallback: machine may be Free (pre-commit
+							// in-flight salvage), in which case MiscData is the source of truth.
+							// MiscData keys are cleared inside resolveSalvage.
+							if user.Character.Activity != nil && user.Character.Activity.IsSalvaging() {
+								_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
+									Trigger: activity.TriggerSalvageComplete,
+									Actor:   user.Character.Activity.Self(),
+								})
+							}
 							user.Character.CraftingState = nil
 							resolveSalvage(user, itemIdStr)
 						} else {

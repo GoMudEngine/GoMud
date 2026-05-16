@@ -11,6 +11,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -25,8 +27,8 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		return true, nil
 	}
 
-	// Already busy?
-	if user.Character.IsCrafting() {
+	// Already busy? (Activity machine will also reject if not Free.)
+	if !user.Character.IsFree() {
 		user.SendText(`<ansi fg="red">You're already busy working on something.</ansi>`)
 		return true, nil
 	}
@@ -93,15 +95,34 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	rounds := crafting.CalcSalvageRounds(totalGold,
 		int(bal.SalvageGoldPerRound), int(bal.SalvageMaxRounds))
 
-	// Store salvage target info for resolution
-	user.Character.SetMiscData("salvage_item_uuid", itm.UUID.String())
-	user.Character.SetMiscData("salvage_spoiled_potion", isSpoiledPotion)
+	// Transition Activity machine to Salvaging.
+	salvageData := activity.SalvagingData{
+		ItemUuid:      itm.UUID.String(),
+		RoundsTotal:   rounds,
+		SpoiledPotion: isSpoiledPotion,
+	}
+	if err := user.Character.Activity.TransitionToSalvaging(
+		salvageData,
+		state.TransitionReason{
+			Trigger: activity.TriggerSalvageBegin,
+			Actor:   state.ActorRef{UserId: user.UserId},
+		},
+	); err != nil {
+		user.SendText(`<ansi fg="red">You're already busy working on something.</ansi>`)
+		return true, nil
+	}
 
-	// Start multi-round salvage activity using CraftingState
+	// Legacy mirror — parallel-write CraftingState + MiscData through Task 11
+	// so any reader still on the old path keeps working.
 	user.Character.CraftingState = &characters.CraftingState{
 		RecipeId:    fmt.Sprintf("salvage:%d", spec.ItemId),
 		RoundsTotal: rounds,
 	}
+	if user.Character.MiscData == nil {
+		user.Character.MiscData = map[string]any{}
+	}
+	user.Character.SetMiscData("salvage_item_uuid", itm.UUID.String())
+	user.Character.SetMiscData("salvage_spoiled_potion", isSpoiledPotion)
 
 	user.SendText(fmt.Sprintf(
 		`<ansi fg="yellow">You begin carefully disassembling the <ansi fg="itemname">%s</ansi>...</ansi>`,
@@ -138,10 +159,32 @@ func startCorpseSalvage(user *users.UserRecord, corpse rooms.Corpse) (bool, erro
 	rounds := crafting.CalcSalvageRounds(totalGold,
 		int(bal.SalvageGoldPerRound), int(bal.SalvageMaxRounds))
 
+	// Transition Activity machine to Salvaging (corpse variant).
+	// ItemUuid is unused for corpse salvage; the corpse is identified
+	// via MiscData keys below. RoundsTotal is set for data-shape parity.
+	corpseData := activity.SalvagingData{
+		ItemUuid:    fmt.Sprintf("corpse:%d", corpse.MobId),
+		RoundsTotal: rounds,
+	}
+	if err := user.Character.Activity.TransitionToSalvaging(
+		corpseData,
+		state.TransitionReason{
+			Trigger: activity.TriggerSalvageBegin,
+			Actor:   state.ActorRef{UserId: user.UserId},
+		},
+	); err != nil {
+		user.SendText(`<ansi fg="red">You're already busy working on something.</ansi>`)
+		return true, nil
+	}
+
+	// Legacy mirror — parallel-write CraftingState + MiscData through Task 11.
 	// Stash corpse identity for the resolver. mobid + roundCreated
 	// uniquely identifies the corpse within the room. Store as int to
 	// avoid type-assertion issues if MiscData ever round-trips through
 	// YAML (uint64 can come back coerced).
+	if user.Character.MiscData == nil {
+		user.Character.MiscData = map[string]any{}
+	}
 	user.Character.SetMiscData("salvage_corpse_round_created", int(corpse.RoundCreated))
 	user.Character.SetMiscData("salvage_corpse_name", corpse.Character.Name)
 
