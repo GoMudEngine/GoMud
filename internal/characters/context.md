@@ -624,6 +624,48 @@ All call sites that read `c.CastingState != nil` or
 `c.CraftingState != nil` were migrated to `IsCasting()` / `IsCrafting()`
 / `IsSalvaging()` / `IsFree()` / `IsActing()` predicates.
 
+## Position Machine Integration (chunk 4a — scaffold)
+
+### New field: Position
+
+```go
+Position *position.Machine `yaml:"-"`
+```
+
+Initialized in `New()` and nil-guarded in `Validate()` (for characters
+loaded from YAML without a direct `New()` path). The Position machine
+is the canonical source of truth for body geometry and grapple state.
+It ships DORMANT in 4a — no production code writes to it. Chunk 4b
+wires command-site writers and cuts over all read sites.
+
+### Predicate methods (chunk 4a)
+
+19 predicates in `position_predicates.go` delegate to the underlying
+machine with nil guards. Nil-guard convention: `IsStanding()` returns
+`true` on a nil machine (matches `NewMachine()` default). All others
+return `false` on a nil machine.
+
+14 per-state predicates: `IsStanding`, `IsProne`, `IsSupine`,
+`IsClinch`, `IsBackStanding`, `IsMount`, `IsSideControl`,
+`IsKneeOnBelly`, `IsNorthSouth`, `IsCrucifix`, `IsBackGround`,
+`IsHalfGuard`, `IsGuard`, `IsTurtle`.
+
+5 rollup predicates: `IsGrappling`, `IsStandingGrapple`,
+`IsGroundGrapple`, `IsTopDominant`, `IsOnFloor`.
+
+These coexist with the legacy `CombatPosition` enum and its
+`IsGroundPosition()` / `IsGrapplePosition()` helpers. Chunk 4b
+removes the legacy helpers once command sites cut over to write the
+new FSM.
+
+### OnCharacterCreated additions (chunk 4a)
+
+The `OnCharacterCreated` registry gains the Position machine wire
+callback. New registration (in `internal/hooks/`):
+- `wirePositionCrossMachineCascades` — subscribes the
+  `position_life_dead` observer to the Life machine; handles
+  `Alive → Dead` cascade that resets Position to `Standing`.
+
 ## Dependencies
 - `internal/stats`: Core statistics definitions
 - `internal/items`: Item system integration
@@ -639,3 +681,4 @@ All call sites that read `c.CastingState != nil` or
 - `internal/state/awareness`: Awareness state machine (chunk 1)
 - `internal/state/life`: Life state machine (chunk 2)
 - `internal/state/activity`: Activity state machine (chunk 3)
+- `internal/state/position`: Position state machine (chunk 4a)

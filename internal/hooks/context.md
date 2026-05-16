@@ -773,6 +773,36 @@ Completion triggers are fired by per-tick consumers after a successful
 | Salvage completes (player) | inline salvage-tick block in `NewRound_UserRoundTick.go` | `TriggerSalvageComplete` |
 | Salvage completes (mob) | inline salvage-tick block in `NewRound_MobRoundTick.go` | `TriggerSalvageComplete` |
 
+## Position Cascade (chunk 4a — scaffold)
+
+One file in the hooks package wires the Position machine into the engine
+(same import-cycle-free pattern as chunks 0-3).
+
+### Position_Cascades.go
+
+Registers one `AfterTransition` observer on the Life machine via
+`characters.OnCharacterCreated(wirePositionCrossMachineCascades)`.
+
+**`position_life_dead` handler — Life `Alive → Dead` → Position → Standing:**
+
+When the Life machine transitions `Alive → Dead`, the handler calls
+`c.Position.TransitionToStanding(TriggerDeath)` if the Position machine
+is non-nil and not already `Standing`. This ensures that a character
+who dies while grappled or knocked down returns to the `Standing` default.
+
+This observer **coexists** with the chunk-2 `Life_Cascades.go` pre-wire
+that still resets `c.CombatPosition = PositionStanding` directly and clears
+`GrappleControllerId`. Both observers fire on every death. No drift is
+possible because the new FSM defaults to `Standing` and chunk 4a has no
+writers. The chunk-2 pre-wire is removed in 4b once command sites cut
+over to the new FSM.
+
+**Integration tests** in `Position_Cascades_test.go` cover four scenarios:
+- PO-037: Standing at death → remains Standing (no-op observer path)
+- PO-038: Mount at death → cascades to Standing
+- PO-039: Guard at death → cascades to Standing
+- PO-040: BackGround at death → cascades to Standing
+
 ## Dependencies
 
 - `internal/events` - Event system for listener registration and event processing
@@ -789,3 +819,4 @@ Completion triggers are fired by per-tick consumers after a successful
 - `internal/state/combatphase` - Combat Phase state machine (chunk 0)
 - `internal/state/awareness` - Awareness state machine (chunk 1)
 - `internal/state/life` - Life state machine (chunk 2)
+- `internal/state/position` - Position state machine (chunk 4a)
