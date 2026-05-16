@@ -1639,20 +1639,6 @@ func TestHandleMobFoldCasting_ProneMob(t *testing.T) {
 		"Activity must be Free after prone-mob abort")
 }
 
-// ─── ProcessGrappleProgression ────────────────────────────────────────────────
-
-func TestProcessGrappleProgression_NotGrappled(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	ch1 := &characters.Character{CombatPosition: characters.PositionStanding}
-	ch2 := &characters.Character{CombatPosition: characters.PositionStanding}
-	room := rooms.LoadRoom(1)
-
-	// Should return without doing anything (not in grapple)
-	processGrappleProgression(ch1, ch2, "Alice", "Bob", room, 1, 2)
-}
-
 // ─── IdleMobs ─────────────────────────────────────────────────────────────────
 
 func TestIdleMobs_NoPanic(t *testing.T) {

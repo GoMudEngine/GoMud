@@ -8,7 +8,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
-	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
@@ -321,61 +320,12 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 	return affectedPlayerIds, affectedMobInstanceIds
 }
 
-// processGrappleProgression handles automatic position changes for grappled fighters
-// Stage 8.3: Clinched → attempts to advance to Grounded or break free
-// Grounded → controlled fighter attempts to escape
-func processGrappleProgression(char1 *characters.Character, char2 *characters.Character, char1Name string, char2Name string, room *rooms.Room, user1Id int, user2Id int) {
-	// Only process if both are in a grapple position
-	if !char1.CombatPosition.IsGrapplePosition() || !char2.CombatPosition.IsGrapplePosition() {
-		return
-	}
-
-	// Determine who is controller and who is controlled
-	var controller, controlled *characters.Character
-	var controllerName, controlledName string
-
-	if char1.HasCondition(characters.ConditionGrappleController) {
-		controller = char1
-		controlled = char2
-		controllerName = char1Name
-		controlledName = char2Name
-	} else {
-		controller = char2
-		controlled = char1
-		controllerName = char2Name
-		controlledName = char1Name
-	}
-
-	var result combat.PositionProgressionResult
-
-	// Check position and perform appropriate progression
-	if char1.CombatPosition == characters.PositionClinched {
-		result = combat.CheckClinchProgression(controller, controlled)
-	} else if char1.CombatPosition == characters.PositionGrounded {
-		result = combat.CheckGroundedEscape(controller, controlled)
-	} else {
-		return // Not in a grapple position that needs processing
-	}
-
-	// Apply the result
-	combat.ApplyPositionProgression(char1, char2, result)
-
-	// Send messages if position changed
-	if result.Changed {
-		if result.NewPosition == characters.PositionStanding {
-			// Both broke apart
-			sendVisualRoomText(room,
-				fmt.Sprintf(`<ansi fg="combat">%s</ansi>`, result.RoomMessage),
-			)
-		} else if result.NewPosition == characters.PositionGrounded {
-			// Advanced to grounded
-			sendVisualRoomText(room,
-				fmt.Sprintf(`<ansi fg="combat"><ansi fg="username">%s</ansi> takes <ansi fg="mobname">%s</ansi> to the ground!</ansi>`,
-					controllerName, controlledName),
-			)
-		}
-	}
-}
+// processGrappleProgression was the chunk-2-era binary single-roll
+// progression scanner: every round, take a clinched pair to Grounded
+// or break it. Chunk 4b replaces it with the per-round drift tick in
+// Position_GrappleTick.go (T6) — graduated multi-round ControlLevel
+// shifts that fire threshold-triggered transitions when either side
+// hits Controlled. Deleted here in T10.
 
 func handleAffected(affectedPlayerIds []int, affectedMobInstanceIds []int) {
 

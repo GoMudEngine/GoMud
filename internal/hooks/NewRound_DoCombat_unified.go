@@ -86,15 +86,12 @@ func handleCombatRound(
 	// append the player attacker's Aggro target user id pre-attack).
 	appendPreAttackAffected(atk, def, affectedPlayerIds, affectedMobInstanceIds)
 
-	// Grapple progression (parity across all four quadrants today).
-	processGrappleProgression(
-		atk.GetCharacter(), def.GetCharacter(),
-		atk.GetCharacter().Name, def.GetCharacter().Name,
-		atk.GetRoom(),
-		atk.GetUserId(), def.GetUserId(),
-	)
+	// Grapple progression is now handled by the per-round control-axis
+	// tick in Position_GrappleTick.go (chunk 4b T6). The legacy single-
+	// roll processGrappleProgression scanner was deleted in T10.
 
-	// MvP-only: target switch AI runs after grapple, before the swing.
+	// MvP-only: target switch AI runs after the grapple-progression hook,
+	// before the swing.
 	if !atk.IsPlayer() && def.IsPlayer() {
 		// Divergence (MvP-only): the legacy mob handler considers
 		// switching to a different player target before swinging.

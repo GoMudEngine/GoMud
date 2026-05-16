@@ -1,8 +1,6 @@
 package combat
 
 import (
-	"math"
-
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -33,16 +31,6 @@ type SubmissionResult struct {
 	Choice       string // "yield" or "resist"
 }
 
-
-// PositionProgressionResult represents the outcome of automatic position checks
-type PositionProgressionResult struct {
-	Changed          bool
-	NewPosition      characters.CombatPosition
-	ControllerWon    bool
-	Margin           float64
-	Message          string // For both participants
-	RoomMessage      string // For room observers
-}
 
 // AttemptGrapple performs a grapple attempt from attacker to defender.
 // Returns a GrappleResult with the outcome and details.
@@ -182,112 +170,6 @@ func legacyMapPositionToCombatPosition(s position.State) characters.CombatPositi
 	default: // Mount, SideControl, KOB, NS, Crucifix, BackGround, HalfGuard, Guard, Turtle
 		return characters.PositionGrounded
 	}
-}
-
-// CheckClinchProgression performs automatic control check for clinched fighters
-// Stage 8.3: Str + Combat Skill opposed roll
-// Success: Transition to Grounded (controller maintains control)
-// Failure: Break apart, both return to Standing
-func CheckClinchProgression(controller *characters.Character, controlled *characters.Character) PositionProgressionResult {
-	result := PositionProgressionResult{}
-
-	// Opposed roll: Str + Combat Skill
-	controllerScore := float64(controller.Stats.Strength.ValueAdj) + float64(controller.GetCombatSkillLevel())
-	controlledScore := float64(controlled.Stats.Strength.ValueAdj) + float64(controlled.GetCombatSkillLevel())
-
-	success, margin, _, _ := dice.OpposedRollStat(controllerScore, controlledScore)
-
-	result.Changed = true
-	result.Margin = margin
-
-	if success {
-		// Controller advances to grounded
-		result.NewPosition = characters.PositionGrounded
-		result.ControllerWon = true
-		result.Message = "The grapple intensifies as you're taken to the ground!"
-		result.RoomMessage = "The grapple intensifies as they go to the ground!"
-	} else {
-		// Break apart, both return to standing
-		result.NewPosition = characters.PositionStanding
-		result.ControllerWon = false
-		result.Message = "You break free from the grapple and return to standing!"
-		result.RoomMessage = "They break apart and return to standing positions!"
-	}
-
-	return result
-}
-
-// CheckGroundedEscape performs automatic escape attempt for grounded fighters
-// Stage 8.3: Controlled fighter attempts to escape
-// Success: Both return to Standing
-// Failure: Remain Grounded
-func CheckGroundedEscape(controller *characters.Character, controlled *characters.Character) PositionProgressionResult {
-	result := PositionProgressionResult{}
-
-	// Opposed roll: controlled tries to escape
-	// Controlled: Str + Combat Skill + Dex
-	// Controller: Str + Combat Skill
-	controlledScore := float64(controlled.Stats.Strength.ValueAdj) +
-		float64(controlled.GetCombatSkillLevel()) +
-		float64(controlled.Stats.Dexterity.ValueAdj) * 0.5 // Half dex bonus for scrambling
-
-	// Stage 8.7: Apply armor escape modifier
-	if controlled.Equipment.Body.ItemId != 0 {
-		armorSpec := items.GetItemSpec(controlled.Equipment.Body.ItemId)
-		if armorSpec != nil && armorSpec.EscapeModifier != 0.0 {
-			// Multiplicative modifiers (compatible with future balance config YAML)
-			if armorSpec.EscapeModifier > 0.0 {
-				// Positive modifier: bonus to escape (e.g., +1.0 = doubles escape score for light armor)
-				controlledScore *= (1.0 + armorSpec.EscapeModifier)
-			} else {
-				// Negative modifier: penalty to escape (e.g., -2.0 = reduces to 1/3 for heavy armor)
-				controlledScore /= (1.0 + math.Abs(armorSpec.EscapeModifier))
-			}
-		}
-	}
-
-	controllerScore := float64(controller.Stats.Strength.ValueAdj) + float64(controller.GetCombatSkillLevel())
-
-	success, margin, _, _ := dice.OpposedRollStat(controlledScore, controllerScore)
-
-	result.Changed = success
-	result.Margin = margin
-
-	if success {
-		// Escape successful
-		result.NewPosition = characters.PositionStanding
-		result.ControllerWon = false
-		result.Message = "You scramble free and return to standing!"
-		result.RoomMessage = "They scramble apart and return to standing positions!"
-	} else {
-		// Remain grounded
-		result.NewPosition = characters.PositionGrounded
-		result.ControllerWon = true
-		result.Message = "You struggle but remain pinned on the ground!"
-		result.RoomMessage = "They struggle on the ground!"
-	}
-
-	return result
-}
-
-// ApplyPositionProgression applies the result of a position progression check
-func ApplyPositionProgression(char1 *characters.Character, char2 *characters.Character, result PositionProgressionResult) {
-	if !result.Changed {
-		return
-	}
-
-	// Set new positions
-	char1.CombatPosition = result.NewPosition
-	char2.CombatPosition = result.NewPosition
-
-	// If returning to standing, clear grapple tracking
-	if result.NewPosition == characters.PositionStanding {
-		char1.GrappleControllerId = 0
-		char2.GrappleControllerId = 0
-		char1.RemoveCondition(characters.ConditionGrappleController)
-		char2.RemoveCondition(characters.ConditionGrappleController)
-	}
-	// If advancing to grounded, controller status stays the same (already set)
 }
 
 // IsThirdPartyAttack returns true if the attacker is not involved in the target's grapple.
