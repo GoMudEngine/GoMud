@@ -102,7 +102,7 @@ const (
 | `heal` | Direct HP restoration to target(s) |
 | `shield` | Applies ConditionShield with magnitude = damage absorbed |
 | `dot` | Applies ConditionPoisoned; ticks for EffectDuration cycles (each cycle = 3 rounds in AutoHeal) |
-| `knockdown` | Deals damage + sets target prone (CombatPosition = PositionProne, 1 round min) |
+| `knockdown` | Deals damage + knocks the target down. Chunk 4b W5 cutover fires `Position.TransitionToSupine(MinRecoveryRounds: 1, TriggerKnockdownSpell)` (face-up "slams to the ground" default) alongside the legacy `CombatPosition = PositionProne` parallel-write. Future work may add a direction config to distinguish blast (Supine) from shockwave (Prone). |
 | `purge` | Removes poison buffs and ConditionPoisoned from target(s) |
 | `none` | No automatic effect — spell behavior handled in Go hooks (used by buff spells, summons, utility) |
 

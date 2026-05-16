@@ -265,9 +265,13 @@ characters, hooks, usercommands, mobcommands all green.
 - Activity machine (chunk 3) will repoint the Activity pre-wire in
   `Life_Cascades.go` (currently clears `CastingState`/`CraftingState`
   directly) to the proper Activity machine query.
-- Position machine (chunk 4) will repoint the Position pre-wire in
-  `Life_Cascades.go` (currently clears `CombatPosition` /
-  `GrappleControllerId` directly).
+- Position machine (chunk 4) partially repointed the Position pre-wire
+  in `Life_Cascades.go`: chunk 4a created the `position_life_dead`
+  cascade observer (in `internal/hooks/Position_Cascades.go`) that
+  coexists with the legacy pre-wire and resets the new FSM independently.
+  **Chunk 4b R4 (delete the legacy pre-wire) is deferred** pending the
+  broader CombatPosition reader sweep — see memory entry
+  `project_chunk_4b_r4_blocked_on_reader_sweep.md`.
 - Auto-look after fold-recall teleport — separate memory entry
   `project_auto_look_after_room_change.md` covers this parallel UX
   fix.
@@ -511,15 +515,36 @@ via a workaround. Reorder makes the zero value semantically correct
 and lets 4b's roll-driven code set any control level explicitly without
 demotion.
 
-**Deferred to 4b:** command-site writer cutover (trip / bash /
-grapple / stand / kick / spell knockdown / AttemptRecovery all move
-to write the new FSM), per-round control rolls, threshold-triggered
-position transitions, legacy field sunset (CombatPosition enum +
-PositionRoundsMin + GrappleControllerId + ConditionGrappleController),
-chunk-2 Life pre-wire removal, chunk-0 `RegisterPositionCheck`
-rewire, **broader doc sweep** (combat package, mobs package,
-behaviortree archetype YAMLs, helpfiles for stand/grapple/trip/etc.,
-player-facing combat docs).
+**Status of 4a's "Deferred to 4b" list (post-4b cutover, 2026-05-16):**
+
+- ✅ **Writer cutover** — W1-W8 shipped. Every command-site writer
+  (`trip`, `bash`, `grapple`, `stand`, spell knockdown,
+  `AttemptRecovery`, submission outcomes, grapple crit-fail)
+  parallel-writes the FSM and the legacy enum.
+- ✅ **Per-round control rolls** — `Position_GrappleTick.go` fires
+  the opposed Strength + Unarmed-combat roll each round, scaled by
+  stamina + encumbrance curves.
+- ✅ **Threshold-triggered position transitions** — fire from the
+  same per-round observer when `ControlLevel` crosses thresholds.
+- ✅ **Chunk-0 `RegisterPositionCheck` rewire** — R5 done; the veto
+  closure now reads `c.IsStanding()`.
+- ⚠️ **Reader cutover partial** — R1/R2/R3/R5/R6 done; ~25 readers
+  remain across `combat/ai.go`, `combat/grapple.go`,
+  `actions/combat_kick.go`, etc. See
+  `project_chunk_4b_r4_blocked_on_reader_sweep.md`.
+- ⛔ **Legacy field sunset (S1-S5) blocked** on the broader reader
+  sweep. `CombatPosition` enum, `PositionRoundsMin`,
+  `GrappleControllerId`, `ConditionGrappleController`, and
+  `combatposition.go` remain in place.
+- ⛔ **Chunk-2 Life pre-wire removal (R4) deferred** — same blocker
+  as S1-S5; the legacy reset coexists with the chunk-4a cascade
+  observer.
+- ⚠️ **Doc sweep partial** — context.md files (state/position,
+  characters, hooks, combat, state/life, spells, behaviortree)
+  updated by T23; helpfile + full doc sweep (combat package prose,
+  mobs package, behaviortree archetype YAMLs, helpfiles for
+  stand/grapple/trip/etc., player-facing combat docs) deferred to
+  chunk 4f per the chunk-4b spec.
 
 **Aliveness work stays paused** for chunks 4b-6. Chunk 4b (Position
 — control-axis mechanics) brainstorm is next.

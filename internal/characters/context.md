@@ -635,15 +635,22 @@ Position *position.Machine `yaml:"-"`
 Initialized in `New()` and nil-guarded in `Validate()` (for characters
 loaded from YAML without a direct `New()` path). The Position machine
 is the canonical source of truth for body geometry and grapple state.
-It ships DORMANT in 4a — no production code writes to it. Chunk 4b
-wires command-site writers and cuts over all read sites.
+Chunk 4a scaffolded the machine DORMANT; **chunk 4b wired every
+production writer and migrated most readers** (writers W1-W8: grapple
+entry, legacy progression delete, submission outcomes, trip/bash,
+spell knockdown, auto-recovery, stand command; readers R1/R2/R3/R5/R6:
+combat math, third-party defense filter, flee blockers, CombatPhase
+position check, prompt `{pos}` token). R4 (delete Life cascade Position
+pre-wire) and S1-S5 (legacy field sunsets) are **deferred** pending a
+broader CombatPosition reader sweep — see memory entry
+`project_chunk_4b_r4_blocked_on_reader_sweep.md`.
 
-### Predicate methods (chunk 4a)
+### Predicate methods (chunk 4a + 4b)
 
-19 predicates in `position_predicates.go` delegate to the underlying
-machine with nil guards. Nil-guard convention: `IsStanding()` returns
-`true` on a nil machine (matches `NewMachine()` default). All others
-return `false` on a nil machine.
+**Chunk 4a — 19 predicates** in `position_predicates.go` delegate to
+the underlying machine with nil guards. Nil-guard convention:
+`IsStanding()` returns `true` on a nil machine (matches `NewMachine()`
+default); all others return `false`.
 
 14 per-state predicates: `IsStanding`, `IsProne`, `IsSupine`,
 `IsClinch`, `IsBackStanding`, `IsMount`, `IsSideControl`,
@@ -653,18 +660,85 @@ return `false` on a nil machine.
 5 rollup predicates: `IsGrappling`, `IsStandingGrapple`,
 `IsGroundGrapple`, `IsTopDominant`, `IsOnFloor`.
 
-These coexist with the legacy `CombatPosition` enum and its
-`IsGroundPosition()` / `IsGrapplePosition()` helpers. Chunk 4b
-removes the legacy helpers once command sites cut over to write the
-new FSM.
+**Chunk 4b — 4 control-axis predicates and helpers:**
 
-### OnCharacterCreated additions (chunk 4a)
+- `IsController()` — true when the character is on the controller side
+  of a grapple pair (reads `Position.GrappleData().ControlLevel`
+  via `IsControllerLevel`). Replaces the legacy
+  `HasCondition(ConditionGrappleController)` check; sunset target S4.
+- `IsBeingControlled()` — true when the character is on the controlled
+  side (symmetric to `IsController`).
+- `IsLowGrappleStamina()` — true when stamina fraction is below
+  `GrappleStaminaLowThreshold` (config, default 0.25). Used by
+  `mob_low_grapple_stamina` btree primitive and by
+  `Position_Messaging` for the once-per-grapple "you're getting
+  gassed" warning.
+- `GetPositionSpeedMultiplier()` — replaces the legacy
+  `CombatPosition.GetSpeedMultiplier()` helper (sunset S5). Switches
+  on `Position.State()`: Standing 1.0, Prone/Supine/Turtle 0.5,
+  Clinch/BackStanding 0.6, ground grapples 0.3.
 
-The `OnCharacterCreated` registry gains the Position machine wire
-callback. New registration (in `internal/hooks/`):
-- `wirePositionCrossMachineCascades` — subscribes the
+**Legacy enum coexistence — status:** the chunk 4b reader sweep is
+**in progress** but not complete. Combat math (`combat_helpers.go`,
+all 6 reader sites) and the third-party defense filter
+(`IsThirdPartyAttack`) read the FSM. ~25 readers across `combat/ai.go`,
+`combat/grapple.go`, `actions/combat_kick.go`,
+`actions/command_readiness.go`, `behaviortree/conditions_mob.go`,
+`hooks/combat_shared_helpers.go`, `mobcommands/submit.go`,
+`usercommands/submit.go`, `characters/combat_state_compat.go` are
+still unmigrated. The legacy `CombatPosition` enum, its
+`IsGroundPosition()` / `IsGrapplePosition()` / `GetSpeedMultiplier()` /
+`GetPositionColor()` helpers, the `PositionRoundsMin` /
+`GrappleControllerId` fields, and the `ConditionGrappleController`
+constant remain in place until S1-S5 land. The mapping table for
+migrators:
+
+| Legacy reader | New FSM predicate |
+|---------------|-------------------|
+| `== PositionProne` | `IsProne() \|\| IsSupine()` |
+| `== PositionClinched` | `IsStandingGrapple()` |
+| `== PositionGrounded` | `IsGroundGrapple()` |
+| `!= PositionStanding` | `!IsStanding()` |
+| `.IsGrapplePosition()` | `IsGrappling()` |
+| `.IsGroundPosition()` | `IsOnFloor()` |
+| `.GetSpeedMultiplier()` | `GetPositionSpeedMultiplier()` |
+| `HasCondition(GrappleController)` | `IsController()` |
+
+### Prompt helpers (chunk 4b R6)
+
+The `{pos}` prompt-token cutover added two private helpers in
+`internal/users/userrecord.prompt.go`:
+
+- `positionPromptColor(position.State) string` — returns the ANSI
+  color name. Standing white, Prone/Supine yellow, Clinch/BackStanding
+  orange, ground grapples red. Replaces the legacy
+  `CombatPosition.GetPositionColor()`.
+- `positionPromptAbbrev(position.State) string` — abbreviates long
+  state names: BackStanding→B.Std, BackGround→B.Gnd, SideControl→SC,
+  KneeOnBelly→KOB, NorthSouth→N-S, HalfGuard→H.Gd. Other states
+  render verbatim via `State.String()`.
+
+These live in the users package (not characters) because they format
+the prompt-substitution output, not the underlying state.
+
+### OnCharacterCreated additions (chunk 4a + 4b)
+
+The `OnCharacterCreated` registry gains four Position-related wire
+callbacks across chunks 4a and 4b:
+
+- **4a `wirePositionCrossMachineCascades`** — subscribes the
   `position_life_dead` observer to the Life machine; handles
   `Alive → Dead` cascade that resets Position to `Standing`.
+- **4b `wirePositionGrappleTick`** — registers the per-round drift
+  observer that fires opposed control rolls + grapple stamina cost +
+  threshold-triggered position transitions.
+- **4b `wirePositionMessaging`** — registers the per-round messaging
+  observer that fires gradient ("getting controlled"), transition
+  ("you scramble out of mount"), and stamina-warning text with
+  per-grapple cooldowns.
+- **4b `wirePositionConsistencyCheck`** — registers the periodic
+  invariant checker (`ValidateGrapplePair`) that catches pair drift
+  (e.g. controller's partner ref doesn't match controlled's ref).
 
 ## Dependencies
 - `internal/stats`: Core statistics definitions
@@ -681,4 +755,4 @@ callback. New registration (in `internal/hooks/`):
 - `internal/state/awareness`: Awareness state machine (chunk 1)
 - `internal/state/life`: Life state machine (chunk 2)
 - `internal/state/activity`: Activity state machine (chunk 3)
-- `internal/state/position`: Position state machine (chunk 4a)
+- `internal/state/position`: Position state machine (chunks 4a + 4b)

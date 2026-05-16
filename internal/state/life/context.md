@@ -204,8 +204,12 @@ Fires on two transitions:
 - Forces Combat Phase to `Idle` (clears aggro)
 - Forces Awareness to `Visible` (clears hidden state)
 - Transitions Activity machine to `Free` (via `activity_life_dead` observer in `Activity_Cascades.go`)
-- Resets `CombatPosition` to Standing
-- Clears grapple controller
+- Resets `CombatPosition` to Standing (legacy parallel; chunk-4a
+  `position_life_dead` observer in `internal/hooks/Position_Cascades.go`
+  resets the new Position FSM independently. Chunk 4b R4 — delete this
+  legacy reset — is deferred pending the broader CombatPosition reader
+  sweep; see memory `project_chunk_4b_r4_blocked_on_reader_sweep.md`.)
+- Clears grapple controller (same legacy-parallel + R4-deferred status)
 - Cancels all non-permanent buffs
 - Clears active combat conditions
 

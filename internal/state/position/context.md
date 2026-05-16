@@ -9,21 +9,43 @@ states drawn from the full BJJ/MMA position taxonomy, covering everything
 from standing upright to ground-dominant control positions to defensive
 curls.
 
-**Chunk 4a ships this package DORMANT.** No production code writes to the
-machine in 4a; all existing position-driven code paths remain on the
-legacy system:
+**Status (post-chunk-4b cutover, 2026-05-16):**
 
-- `CombatPosition` enum (in `internal/characters`) — untouched
-- `PositionRoundsMin` field on `Character` — untouched
-- `GrappleControllerId` field on `Character` — untouched
-- `ConditionGrappleController` condition check — untouched
-- Recovery rolls in `AttemptRecovery()` — untouched
-- Kick variant selector (`kick` / `stomp` / `knee`) — untouched
-- Flee veto, defense degradation, prone multipliers — untouched
+- Writer cutover **W1-W8 shipped**: every production writer
+  (`ApplyGrappleResult`, submission outcomes, grapple crit-fail, trip,
+  bash, spell knockdown, `AttemptRecovery`, `stand`) parallel-writes
+  the FSM and the legacy `CombatPosition` / `PositionRoundsMin` /
+  `GrappleControllerId` fields. The legacy enum still receives writes
+  until S1-S5 sunset the fields.
+- Reader cutover **R1, R2, R3, R5, R6 shipped**: combat math
+  (`combat_helpers.go`), third-party defense filter
+  (`IsThirdPartyAttack`), flee blockers, CombatPhase position check,
+  and the `{pos}` prompt token all read the FSM via predicate methods.
+- **R4 deferred**: deleting the Life-cascade Position pre-wire
+  (`Life_Cascades.go:55-57`) requires a broader CombatPosition reader
+  sweep first (~25 unmigrated readers across `combat/ai.go`,
+  `combat/grapple.go`, `actions/combat_kick.go`,
+  `actions/command_readiness.go`, `behaviortree/conditions_mob.go`,
+  `hooks/combat_shared_helpers.go`, `mobcommands/submit.go`,
+  `usercommands/submit.go`, `characters/combat_state_compat.go`).
+  Sunsets **S1-S5 blocked** on the same sweep. See memory entry
+  `project_chunk_4b_r4_blocked_on_reader_sweep.md`.
+- Test fixtures **F1 shipped**: every test that writes
+  `Character.CombatPosition` now parallel-writes the FSM via
+  `setCombatPositionParallel` helpers per package (combat, actions,
+  hooks, mobcommands, behaviortree, usercommands).
+- **Control axis live**: per-round opposed-roll drift mechanics
+  (`Position_GrappleTick.go`), gradient/transition/stamina messaging
+  (`Position_Messaging.go`), and the periodic pair-invariant checker
+  (`Position_ConsistencyCheck.go`) all fire in production.
 
-**Chunk 4b** is the cutover chunk that wires command-site writers
-(`trip`, `bash`, `grapple`, `stand`, etc.) to the new FSM and removes the
-legacy `CombatPosition` enum. All behavioral changes belong to 4b or later.
+**Next chunks:** 4c — weapon/combat integration (position-based weapon
+availability, attack-variant selection, ground-striking modifiers).
+4d — submissions engine (chokes / joint-locks gated by ControlLevel
+thresholds). 4e — player command parity (player-facing `grapple`,
+`escape`, `submit`, `position`). 4f — helpfile + full doc sweep
+(player-facing help content for the 14-state model, Supine
+distinction, per-round drift narrative).
 
 ---
 
@@ -333,12 +355,14 @@ Nil-guard convention: `IsStanding()` returns `true` on a nil machine
 
 ## Btree Primitives
 
-`internal/behaviortree/conditions_position.go` registers 10 primitives in
-the behaviortree conditions registry. All are dormant in 4a (mobs never
-transition their Position machine yet); they always return `Failure` unless
-the mob's Position was manually set in a test.
+`internal/behaviortree/conditions_position.go` registers **16 primitives**
+in the behaviortree conditions registry — 10 chunk-4a per-state/rollup
+primitives + 6 chunk-4b control-axis primitives. Post-4b they're live
+(chunk-4b writers transition mob Position FSMs in the same situations
+players transition theirs). Canonical mapping table:
+`internal/behaviortree/context.md` "Position & Grapple (chunks 4a + 4b)".
 
-### Self-position (7)
+### Self-position (chunk 4a — 7)
 
 | Condition key | Fires Success when mob is in |
 |---------------|------------------------------|
@@ -350,13 +374,96 @@ the mob's Position was manually set in a test.
 | `mob_in_clinch` | Clinch |
 | `mob_in_top_dominant` | any top-dominant ground state |
 
-### Target-position (3)
+### Target-position (chunk 4a — 3)
 
 | Condition key | Fires Success when target is in |
 |---------------|----------------------------------|
 | `target_is_standing` | Standing |
 | `target_is_prone` | Prone |
 | `target_is_grappled` | any grapple state |
+
+### Control-axis (chunk 4b — 6)
+
+| Condition key | Fires Success when |
+|---------------|--------------------|
+| `mob_is_in_control` | self `IsController()` (controller side of a grapple pair) |
+| `mob_is_being_controlled` | self `IsBeingControlled()` |
+| `mob_control_at_least` | self `ControlLevel ≥` the `level` parameter (string-named) |
+| `mob_low_grapple_stamina` | self `IsLowGrappleStamina()` — stamina < `GrappleStaminaLowThreshold` |
+| `target_is_in_control` | target `IsController()` |
+| `target_is_being_controlled` | target `IsBeingControlled()` |
+
+---
+
+## Control-Axis API (chunk 4b)
+
+Five entry points that act on the per-grappler `ControlLevel` axis
+without (in most cases) firing FSM transitions:
+
+- `Machine.MutateGrappleControlLevel(newLevel ControlLevel)` —
+  sets `ControlLevel` on the current `GrappleData` in place. The FSM
+  transition table forbids `Mount→Mount` etc., so per-round drift
+  can't go through `TransitionTo*`. Called from
+  `Position_GrappleTick.go` only.
+- `Machine.ConsumeRecoveryRound()` — decrements `MinRecoveryRounds`
+  on the current `ProneData` or `SupineData` in place. Mirrors
+  `MutateGrappleControlLevel`. Called from `AttemptRecovery` once per
+  round during the minimum-recovery window.
+- `Machine.IsController() bool` — true when the character is on the
+  controller side of a grapple pair (reads `GrappleData.ControlLevel`
+  via `IsControllerLevel`).
+- `Machine.IsBeingControlled() bool` — symmetric to `IsController`.
+- Free functions in `pair.go`: `IsControllerLevel(ControlLevel) bool`,
+  `IsControlledLevel(ControlLevel) bool`,
+  `InitialControlForPair(target State, role Role) ControlLevel`,
+  `DefaultEscapeTarget(s State) State`,
+  `TransitionPair(controller, controlled, target, r)`,
+  `ValidateGrapplePair(a, b) error`.
+
+`TransitionPair` is the canonical entry for grapple-entry and
+controller-initiated position changes: it transitions both sides
+atomically, rolling back if either fails. `ValidateGrapplePair` is
+the invariant check used by `Position_ConsistencyCheck.go`.
+
+---
+
+## Per-Round Messaging Contract (chunk 4b)
+
+`internal/hooks/Position_Messaging.go` generates three message
+classes with per-grapple cooldowns. Cooldown state lives on
+`Character.PerGrappleMessageCooldowns map[string]int` and is cleared
+on any `TransitionToStanding` (escape / break / death).
+
+| Class | Trigger | Cooldown | Variants |
+|-------|---------|----------|----------|
+| **Gradient** | `ControlLevel` crossing (InControl → LosingControl → Neutral → BecomingControlled → Controlled) | Once per direction per grapple | controller / controlled / room |
+| **Transition** | Position FSM state change while grappling | Per transition (no cooldown) | controller / controlled / room |
+| **Stamina warning** | `c.IsLowGrappleStamina()` (stamina < `GrappleStaminaLowThreshold`) | Once per grapple | self only |
+
+Transition messages have controller/controlled/room variants to
+keep prose accurate to perspective ("you scramble out of mount and
+into guard" vs "they scramble out of your mount and pull guard").
+Gradient messages tighten as the spread widens — `LosingControl` is
+"you feel your grip slipping", `Controlled` is "you can barely
+move".
+
+---
+
+## Three new hooks observers (chunk 4b)
+
+Wired via `OnCharacterCreated` in `internal/hooks/`:
+
+- **`Position_GrappleTick.go`** — per-round drift (opposed roll,
+  stamina cost, threshold-triggered transitions). Drives the
+  control-axis evolution.
+- **`Position_Messaging.go`** — gradient/transition/stamina-warning
+  text generation with per-grapple cooldowns (see above).
+- **`Position_ConsistencyCheck.go`** — periodic invariant checker
+  (`ValidateGrapplePair`). Logs WARN on partner-ref mismatches,
+  asymmetric `ControlLevel`, or orphan grapples.
+
+See `internal/hooks/context.md` "Position Cascade + Observers
+(chunks 4a + 4b)" for the full operational walkthrough.
 
 ---
 
@@ -375,36 +482,47 @@ machine is non-nil and not already `Standing`.
 
 This observer **coexists** with the chunk-2 `Life_Cascades.go` pre-wire
 that still resets `c.CombatPosition = PositionStanding` directly and clears
-`GrappleControllerId`. Both observers fire on every death. No drift is
-possible because the new FSM defaults to `Standing` and 4a has no writers.
-The chunk-2 pre-wire is removed in 4b once command sites cut over to write
-the new FSM.
+`GrappleControllerId`. Both observers fire on every death. **Chunk 4b R4
+(delete the pre-wire) is deferred** pending the broader CombatPosition
+reader sweep; see memory entry
+`project_chunk_4b_r4_blocked_on_reader_sweep.md`. The "coexistence" is
+intentional during the transition window — chunk 4b writers
+parallel-write both views, preserving the no-drift invariant.
 
 ---
 
 ## Intentional Simplifications
 
-These were left out of 4a deliberately. Each is a named 4b/4c/4d target:
+Items 1, 3, 4, 5 below were 4b targets and **shipped** (status updated
+post-cutover). Items 2, 6, 7, 8, 9 remain deferred to their named
+sub-chunks.
 
-1. **No per-round control rolls.** `ControlLevel` is stored but never driven.
-   Chunk 4b adds the opposed Strength/Dexterity roll loop.
-2. **No per-state extra structs.** `GrappleData` is shared across all 11
-   grapple states. Chunk 4b/4c adds `ClinchGrip`, `ArmsIsolated`, `HooksIn`,
-   `TrappedLeg`, `GuardVariant` when consumers materialize.
-3. **No command-site writers.** `trip`, `bash`, `grapple`, `stand`, and
-   related commands are not wired to the FSM. Chunk 4b handles cutover.
-4. **No combat-modifier reads.** Position-based attack/defense modifiers do
-   not read the new FSM yet. Chunk 4b wires the reads after command-site
-   cutover.
-5. **No flee veto.** The position-check veto in `CombatPhase_Vetoes.go` still
-   reads `c.CombatPosition`. Chunk 4b migrates it.
-6. **No weapon interaction.** Ground positions affect weapon availability and
-   attack variants; chunk 4c/4d adds those rules.
+1. ~~No per-round control rolls.~~ **Shipped in 4b** —
+   `Position_GrappleTick.go` fires the opposed Strength + Unarmed-combat
+   roll every round, scaled by stamina + encumbrance curves, and
+   shifts `ControlLevel` via `MutateGrappleControlLevel`.
+2. **No per-state extra structs.** `GrappleData` is still shared
+   across all 11 grapple states. Chunk 4c adds `ClinchGrip`,
+   `ArmsIsolated`, `HooksIn`, `TrappedLeg`, `GuardVariant` when
+   consumers (weapon integration, submission engine) materialize.
+3. ~~No command-site writers.~~ **Shipped in 4b** — every writer
+   (`trip`, `bash`, `grapple`, `stand`, spell knockdown,
+   `AttemptRecovery`, submission outcomes, grapple crit-fail)
+   parallel-writes the FSM.
+4. ~~No combat-modifier reads.~~ **Shipped in 4b R1/R2** —
+   `combat_helpers.go` reads `c.IsX()` predicates;
+   `IsThirdPartyAttack` reads `GrappleData.Partner`. Broader reader
+   sweep (combat/ai.go, combat/grapple.go, etc.) still in progress.
+5. ~~No flee veto.~~ **Shipped in 4b R3/R5** — `mobcommands/flee.go`,
+   `handlePlayerFlee`, and `RegisterPositionCheck` all read the FSM.
+6. **No weapon interaction.** Ground positions affect weapon
+   availability and attack variants; chunk 4c/4d adds those rules.
 7. **No submission system.** Submissions (chokes, joint locks) require
    `ControlLevel` to exceed thresholds; chunk 4d adds the submission engine.
-8. **No `CombatPosition` enum removal.** The legacy `CombatPosition` enum and
-   all ~50 read sites coexist with the new FSM throughout 4a. Chunk 4b
-   removes them after cutover.
+8. **`CombatPosition` enum removal in progress.** Chunk 4b W1-W8
+   parallel-writes the legacy enum; readers being migrated by the
+   broader R4-deferred sweep. S1-S5 sunset the fields and the
+   `combatposition.go` file once the sweep is clean.
 9. **No persistence migration.** The Position machine is `yaml:"-"`. Characters
    log in at `Standing` via `Validate()` initialization. No save-file changes.
 
@@ -453,27 +571,34 @@ Integration tests for btree primitives (PO-041 through PO-043) live in
 
 Nothing. 4a is purely additive.
 
-### Legacy targets catalogued for future sub-chunks
+### Legacy targets — status (post-4b cutover)
 
-| Legacy item | Location | When removed |
-|-------------|----------|--------------|
-| `CombatPosition` enum | `internal/characters/` | 4b (after command-site cutover) |
-| `PositionRoundsMin` field | `Character` struct | 4b (replaced by `ProneData.MinRecoveryRounds`) |
-| `GrappleControllerId` field | `Character` struct | 4b (replaced by `GrappleData.Partner`) |
-| `ConditionGrappleController` check | combat / hooks | 4b |
-| `Life_Cascades.go` CombatPosition reset | hooks | 4b (pre-wire removed when new FSM is written) |
-| Legacy `AttemptRecovery()` path | `characters/` | 4b (migrated to FSM recovery roll) |
-| Prone/prone check in kick variant selector | `usercommands/kick.go` | 4b |
-| ~50 `c.CombatPosition` / `IsProne()` read sites | various packages | 4b/4c |
+| Legacy item | Location | Status |
+|-------------|----------|--------|
+| `CombatPosition` enum | `internal/characters/` | Writers parallel-write (W1-W8 done); readers being migrated (R1/R2 done; ~25 unmigrated). S5 blocked on reader sweep. |
+| `PositionRoundsMin` field | `Character` struct | Parallel-writes in place (W4/W5/W6 + `AttemptRecovery`). S2 blocked on reader sweep. |
+| `GrappleControllerId` field | `Character` struct | Parallel-writes in place (W1, W3). S3 blocked on reader sweep — `combat/ai.go` and other unmigrated readers still consult it. |
+| `ConditionGrappleController` check | combat / hooks | All known readers migrated (R1: `combat_helpers.go` crit threshold reads `IsController()`). S4: verify-then-delete pending. |
+| `Life_Cascades.go` CombatPosition reset | hooks | R4 **deferred** — see `project_chunk_4b_r4_blocked_on_reader_sweep.md`. |
+| Legacy `AttemptRecovery()` path | `characters/` | **W6 done** — `AttemptRecovery` parallel-writes the FSM and gates on `IsProne() \|\| IsSupine()`. |
+| Kick variant selector legacy reads | `internal/actions/combat_kick.go` | **Unmigrated** — followup noted in R1+R2 commit message; part of the broader sweep. |
+| `handleDoubleFumble` legacy-only knockdown write | `internal/combat/combat_helpers.go` | **Unmigrated writer** — sister to W4; needs a parallel-write companion. |
+| ~25 unmigrated `c.CombatPosition` read sites | various packages | See R4 memory entry for full file list. |
 
 ---
 
 ## What 4b / 4c / 4d / 4e / 4f Bring
 
-- **4b — Writer cutover:** Wires `trip`, `bash`, `grapple`, `stand`,
-  `flee` to the new FSM. Removes `CombatPosition` enum and its ~50
-  read sites. Cuts over combat-modifier reads. Adds `ControlLevel`
-  per-round opposed rolls.
+- **4b — Writer cutover + control axis (shipped 2026-05-16):** Every
+  command-site writer (`trip`, `bash`, `grapple`, `stand`, spell
+  knockdown, `AttemptRecovery`, submission outcomes, grapple crit-fail)
+  parallel-writes the FSM and the legacy enum. Combat math, third-party
+  defense filter, flee blockers, CombatPhase position check, and the
+  `{pos}` prompt token read the FSM. Per-round `ControlLevel` drift,
+  gradient/transition/stamina messaging, and the periodic pair-invariant
+  checker all fire. **Deferred:** R4 (delete the Life-cascade Position
+  pre-wire) and S1-S5 (sunset the legacy fields and `combatposition.go`)
+  await a broader CombatPosition reader sweep (~25 unmigrated readers).
 - **4c — Weapon/combat integration:** Position-based weapon availability
   rules, attack variant selection by position, ground-striking modifiers.
 - **4d — Submissions engine:** Choke and joint-lock submissions gated by

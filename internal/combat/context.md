@@ -85,7 +85,7 @@ The combat system is built around several key components:
 // - Combat skill rank differential
 // - Accuracy buff (doubles crit chance)
 // - Blink buff on target (halves crit chance)
-// - Grapple position: controller in clinch -0.2, grounded -0.4
+// - Grapple position: `c.IsController()` + IsStandingGrapple -0.2, IsGroundGrapple -0.4 (chunk 4b R1)
 // - Backstab: guaranteed crit on first pass
 ```
 
@@ -134,44 +134,107 @@ outclassed defenders have a 15% chance to avoid any swing.
   `MinAttackHitChance` (attacker hits when defense wins)
 - Defense crit detection (z > 2.0): parry crit → disarm, dodge crit → grapple opportunity
 
-### Prone Condition System
-Characters can be knocked to the ground by special combat moves (bash/trip/kick), applying severe combat penalties:
+### Prone / Supine Knockdown System (Position FSM, chunks 4a + 4b)
 
-**Prone State:**
-- Tracked via `Character.Prone` boolean field
-- Minimum prone duration: 2 rounds (`Character.ProneRoundsRemaining`)
-- Visual indicator: "prone" adjective added via `GetAdjectives()`
+Characters can be knocked to the ground by special combat moves
+(bash/trip/kick) or spell knockdowns, applying severe combat penalties.
+Chunk 4a split the legacy single "prone" state into **Prone** (face-down)
+and **Supine** (face-up); chunk 4b cut over every writer and most readers
+to the new Position FSM.
 
-**Combat Modifiers (applied in `combat.go`):**
-- Attack penalty: -30 to attack score
-- Damage penalty: ×0.80 (20% reduction)
-- Vulnerability: Attackers get +20 to hit prone targets
-- Dodge penalty: ×0.50 (50% reduction)
-- Parry penalty: ×0.70 (30% reduction)
-- Block penalty: ×0.80 (20% reduction)
+**Down state (Position FSM):**
+- Canonical source: `Character.Position` (`*position.Machine`). Use
+  `c.IsProne()` and `c.IsSupine()` predicates; rollup `c.IsOnFloor()`
+  covers either + ground grapples.
+- Per-state data: `ProneData` / `SupineData` carry
+  `MinRecoveryRounds` (replaces legacy `PositionRoundsMin`),
+  `KnockdownSource` (the attacker's `ActorRef`), and the
+  `TransitionReason`.
+- **Legacy parallel:** `Character.CombatPosition = PositionProne` and
+  `Character.PositionRoundsMin` are still written in lockstep until S1/S2
+  sunset them. The legacy enum collapses Prone/Supine into one bucket.
+- Visual indicator: "prone" adjective added via `GetAdjectives()` (still
+  enum-driven; helpfile content enhancement deferred to chunk 4f).
 
-**Behavioral Restrictions:**
-- Cannot flee from combat (enforced in flee.go)
-- Cannot move between rooms (enforced in movement commands)
+**Why split Prone vs Supine?** Submission paths and recovery
+mechanics diverge: Prone is back-take-vulnerable and harder to
+recover from; Supine can pull guard (`TransitionToGuard`) and recovers
+more easily. Mechanically (4b): both states share the same combat
+penalty profile via `IsProne() || IsSupine()` reads in
+`combat_helpers.go` (R1). Submission-engine divergence is chunk 4d.
 
-**Recovery Mechanics:**
-1. **Automatic Recovery** - Stat-based logarithmic formula
-   - Formula: `min(90, 25 + 20 × ln(DEX/25))` where DEX is Dexterity stat
-   - Implemented in `Character.AttemptRecovery(statValue int)`
-   - Called automatically each round via `NewRound_UserRoundTick` and `NewRound_MobRoundTick` hooks
-   - Recovery attempts only after minimum prone duration expires
-   - Failed recovery attempts set `ConditionRecoveryPenalty` condition (limits attacks to 1)
-   - Success rate examples: 25 DEX = 25%, 100 DEX = 53%, 300 DEX = 75%, capped at 90%
+**Combat modifiers** (applied in `combat_helpers.go`, all migrated to
+`IsProne() || IsSupine()` in chunk 4b R1):
+- Attacker prone: `dmgMean *= ProneDamagePenalty` (config),
+  `attackScore *= ProneAttackMultiplier`
+- Defender prone: `attackScore *= ProneVulnerabilityMultiplier`
+- Dodge/parry/block penalties: `ProneDodgePenalty` / `ProneParryPenalty`
+  / `ProneBlockPenalty` (defense penalty switch reads
+  `IsProne() || IsSupine()` → prone bucket).
 
-2. **Manual Recovery** - Stand command
-   - Costs 15% of maximum stamina (config: `StandStaminaCost`)
-   - Requires minimum 15% stamina remaining (config: `StandMinStamina`)
-   - Guaranteed success, bypasses minimum duration
-   - Immediately removes prone state and resets `ProneRoundsRemaining`
+**Behavioral restrictions** (chunk 4b R3, reads
+`IsProne() || IsSupine()`):
+- Cannot flee from combat (`mobcommands/flee.go` + `handlePlayerFlee`
+  apply a 0.5x flee-score penalty; grapple states block flee entirely).
+- Cannot move between rooms (enforced in movement commands —
+  unmigrated reader, scheduled in the broader sweep).
 
-**Future-Proofing:**
-- `AttemptRecovery()` accepts generic `statValue` parameter for other conditions (grapple, entangle)
-- Can be called with Strength for grapple recovery, different stats for other effects
+**Recovery mechanics** (chunk 4b W6 / W7 cutover):
+
+1. **Automatic recovery** — stat-based logarithmic formula
+   `min(90, 25 + 20 × ln(DEX/25))`. Implemented in
+   `Character.AttemptRecovery(statValue int)`. Gates on
+   `IsProne() || IsSupine()` and reads `MinRecoveryRounds` from
+   `ProneData` / `SupineData`. Decrements via
+   `Position.ConsumeRecoveryRound()` (mutates the per-state slot in
+   place; analogous to `MutateGrappleControlLevel`). On success fires
+   `Position.TransitionToStanding(TriggerRecoveryRoll)` plus the legacy
+   parallel-write. Called every round via `NewRound_UserRoundTick`
+   and `NewRound_MobRoundTick`. Failed attempts add
+   `ConditionRecoveryPenalty` (limits attacks to 1).
+
+2. **Manual recovery** — `stand` command (`internal/usercommands/stand.go`)
+   - Costs `StandStaminaCost` (config, 15% of max). Requires
+     `StandMinStamina` remaining.
+   - Bypasses `MinRecoveryRounds`. Fires
+     `Position.TransitionToStanding(TriggerStandCommand)` BEFORE
+     deducting stamina so an FSM-edge failure bails without charge.
+   - Plus legacy parallel-write of `CombatPosition` /
+     `PositionRoundsMin`.
+
+### Grapple mechanics (Position FSM control axis, chunk 4b)
+
+The 11 grapple states (Clinch, BackStanding, Mount, SideControl,
+KneeOnBelly, NorthSouth, Crucifix, BackGround, HalfGuard, Guard,
+Turtle) and the per-grappler **control axis**
+(`ControlLevel: InControl ↔ LosingControl ↔ Neutral ↔ BecomingControlled ↔ Controlled`)
+live in `internal/state/position/`. Canonical doc:
+`internal/state/position/context.md`. Brief summary of how the combat
+package interacts:
+
+- **Per-round drift** — `Position_GrappleTick.go` (hooks package) fires
+  the opposed Strength + Unarmed-combat roll each round, scaled by
+  stamina + encumbrance curves, and shifts `ControlLevel` via
+  `MutateGrappleControlLevel` (no FSM transition — the table forbids
+  `Mount→Mount`). Threshold crossings can fire follow-up position
+  transitions.
+- **Per-round stamina cost** — `GrappleStaminaCostPerRound` × a
+  per-role multiplier (controller 1.0x, controlled 2.0x by default;
+  asymmetry is the "smother" feedback loop).
+- **Third-party defense filter** — `IsThirdPartyAttack` (chunk 4b R2)
+  now reads `target.IsGrappling()` + `GrappleData.Partner` instead of
+  the legacy `CombatPosition.IsGrapplePosition()` + `GrappleControllerId`.
+  Zero-Partner (solo Turtle) preserves legacy "no controller → not
+  third-party" semantics; 4e refines.
+- **Crit-threshold bonuses** — controller in any grapple grants a
+  crit boost (-0.2 standing, -0.4 ground); reads `c.IsController()`
+  (chunk 4b R1, replaces `HasCondition(ConditionGrappleController)`).
+
+Kick variant selector in `internal/actions/combat_kick.go` and several
+mob-AI helpers in `internal/combat/ai.go` are **unmigrated readers**
+of the legacy enum; their cutover is part of the broader
+CombatPosition reader sweep (see memory entry
+`project_chunk_4b_r4_blocked_on_reader_sweep.md`).
 
 ### Special Combat Moves
 Three tactical combat abilities with knockdown mechanics and shared cooldown:
@@ -489,7 +552,7 @@ ws.baseDmg     = weapon base damage
 ws.weaponDmgMult = item's damage_multiplier (e.g. 1.2)
 ws.weaponSpeed = item's speed multiplier (e.g. 1.0)
 ws.attacks     = GetModifiedAttackCount(attacks, speed)  // skill-modified
-ws.attacks    *= CombatPosition.GetSpeedMultiplier()    // position modifier
+ws.attacks    *= c.GetPositionSpeedMultiplier()         // position modifier (Position FSM, chunk 4b R1)
 // ConditionRecoveryPenalty: forces attacks = 1
 // Racial bonus: weapon.StatMod(RacialBonusPrefix + targetSpecies)
 // Hard cap: max 4 swings per weapon per pass

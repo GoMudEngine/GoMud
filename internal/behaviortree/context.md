@@ -241,6 +241,51 @@ buff.
 | `target_is_hidden` | none | True when the resolved target.Awareness.IsHidden() (previously checked buff #9). |
 | `target_has_gold` | `min` (int) | True when the resolved PLAYER target has at least N gold. Mob targets always return Failure. |
 
+### Position & Grapple (chunks 4a + 4b)
+
+Registered in `conditions_position.go`. All conditions read the new
+Position FSM via the `Character.IsXxx()` predicate family — never the
+legacy `CombatPosition` enum.
+
+**Chunk 4a — per-state and rollup predicates (10):**
+
+| Condition | Params | Description |
+|-----------|--------|-------------|
+| `mob_is_standing` | none | True when `self.IsStanding()` (Position FSM Standing). |
+| `mob_is_prone` | none | True when `self.IsProne()` (face-down knockdown). |
+| `mob_is_grappling` | none | True when `self.IsGrappling()` (any of the 11 grapple states). |
+| `mob_in_mount` | none | True when `self.IsMount()`. |
+| `mob_in_guard` | none | True when `self.IsGuard()`. |
+| `mob_in_clinch` | none | True when `self.IsClinch()`. |
+| `mob_in_top_dominant` | none | True when `self.IsTopDominant()` (Mount / SideControl / KneeOnBelly / NorthSouth / Crucifix / BackGround). |
+| `target_is_standing` | none | True when aggro target `IsStanding()`. |
+| `target_is_prone` | none | True when aggro target `IsProne()`. |
+| `target_is_grappled` | none | True when aggro target `IsGrappling()`. |
+
+The chunk-4a predicates intentionally cover the commonly-queried
+positions only; the full 14-state predicate API is available on
+Character (`IsSupine`, `IsBackStanding`, `IsSideControl`,
+`IsKneeOnBelly`, `IsNorthSouth`, `IsCrucifix`, `IsBackGround`,
+`IsHalfGuard`, `IsTurtle`) for future primitives if archetype YAMLs
+need finer-grained checks.
+
+**Chunk 4b — control-axis predicates (6):**
+
+| Condition | Params | Description |
+|-----------|--------|-------------|
+| `mob_is_in_control` | none | True when `self.IsController()` — controller side of a grapple pair. Replaces the legacy `HasCondition(ConditionGrappleController)` check (sunset target S4). |
+| `mob_is_being_controlled` | none | True when `self.IsBeingControlled()` — controlled side. |
+| `mob_control_at_least` | `level` (string: "InControl", "LosingControl", "Neutral", "BecomingControlled", "Controlled") | True when self's `ControlLevel` ≥ the named level on the controller→controlled axis. Used by archetypes that want graduated reactions (e.g. "if I'm only `LosingControl`, try to scramble; if I'm `Controlled`, turtle"). |
+| `mob_low_grapple_stamina` | none | True when `self.IsLowGrappleStamina()` — stamina fraction below `GrappleStaminaLowThreshold` (config, default 0.25). Drives the "I'm gassed" archetype reactions. |
+| `target_is_in_control` | none | True when aggro target `IsController()`. |
+| `target_is_being_controlled` | none | True when aggro target `IsBeingControlled()`. |
+
+The control-axis primitives let mob archetypes react to the per-round
+drift mechanics introduced in chunk 4b — for example, a wrestler
+archetype can press the advantage when `target_is_being_controlled`,
+or a brawler archetype can disengage when `mob_low_grapple_stamina`
+fires.
+
 ---
 
 ## Action Reference

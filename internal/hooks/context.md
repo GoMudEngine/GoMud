@@ -520,7 +520,7 @@ once the Life machine ships in chunk 2).
 | `RegisterCombatantVeto` | `c.IsCombatant()` |
 | `RegisterActivityCheck` | `c.IsActing()` (negated) — queries Activity machine |
 | `RegisterLifeCheck` | `c.Health > 0` |
-| `RegisterPositionCheck` | `c.CombatPosition == PositionStanding` |
+| `RegisterPositionCheck` | `c.IsStanding()` (Position FSM, chunk 4b R5) |
 | `RegisterTargetCombatantCheck` | target's `IsCombatant()` via users/mobs lookup |
 | `RegisterTargetLifeCheck` | target's `Health > 0` via users/mobs lookup |
 | `RegisterTargetPresenceCheck` | player grace buff (`NoAggroTarget`) check |
@@ -657,8 +657,14 @@ Cross-machine cleanup that fires on two Life transitions:
 - Forces Awareness to `Visible` (`ForceVisible`)
 - Transitions Activity machine to `Free` (via separate `activity_life_dead`
   observer in `Activity_Cascades.go` — see Activity Machine section below)
-- Resets `CombatPosition` to Standing
-- Clears `GrappleControllerId`
+- Resets `CombatPosition` to Standing — **legacy parallel** with the
+  chunk-4a `position_life_dead` observer in `Position_Cascades.go`,
+  which resets the new Position FSM independently. Chunk 4b R4
+  (delete this legacy reset) is **deferred** pending the broader
+  CombatPosition reader sweep; see memory entry
+  `project_chunk_4b_r4_blocked_on_reader_sweep.md`.
+- Clears `GrappleControllerId` — same legacy-parallel + R4-deferred
+  status (Position FSM tracks the partner via `GrappleData.Partner`).
 - Cancels all non-permanent active buffs
 - Clears active combat conditions
 
@@ -773,12 +779,14 @@ Completion triggers are fired by per-tick consumers after a successful
 | Salvage completes (player) | inline salvage-tick block in `NewRound_UserRoundTick.go` | `TriggerSalvageComplete` |
 | Salvage completes (mob) | inline salvage-tick block in `NewRound_MobRoundTick.go` | `TriggerSalvageComplete` |
 
-## Position Cascade (chunk 4a — scaffold)
+## Position Cascade + Observers (chunks 4a + 4b)
 
-One file in the hooks package wires the Position machine into the engine
-(same import-cycle-free pattern as chunks 0-3).
+Four files in the hooks package wire the Position machine into the
+engine (same import-cycle-free pattern as chunks 0-3). One file
+scaffolded the cascade in 4a; three more landed in 4b with the
+control-axis cutover.
 
-### Position_Cascades.go
+### Position_Cascades.go (chunk 4a)
 
 Registers one `AfterTransition` observer on the Life machine via
 `characters.OnCharacterCreated(wirePositionCrossMachineCascades)`.
@@ -792,16 +800,89 @@ who dies while grappled or knocked down returns to the `Standing` default.
 
 This observer **coexists** with the chunk-2 `Life_Cascades.go` pre-wire
 that still resets `c.CombatPosition = PositionStanding` directly and clears
-`GrappleControllerId`. Both observers fire on every death. No drift is
-possible because the new FSM defaults to `Standing` and chunk 4a has no
-writers. The chunk-2 pre-wire is removed in 4b once command sites cut
-over to the new FSM.
+`GrappleControllerId`. Both observers fire on every death. Chunk 4b R4
+(delete the pre-wire) is **deferred** pending the broader CombatPosition
+reader sweep — see memory entry
+`project_chunk_4b_r4_blocked_on_reader_sweep.md`. The "coexistence" is
+intentional during the transition window: the new FSM defaults to
+`Standing` and chunk 4a had no writers, so no drift was possible; chunk
+4b writers parallel-write both views, preserving the no-drift invariant.
 
 **Integration tests** in `Position_Cascades_test.go` cover four scenarios:
 - PO-037: Standing at death → remains Standing (no-op observer path)
 - PO-038: Mount at death → cascades to Standing
 - PO-039: Guard at death → cascades to Standing
 - PO-040: BackGround at death → cascades to Standing
+
+### Position_GrappleTick.go (chunk 4b)
+
+Per-round drift observer registered via
+`wirePositionGrappleTick` on character creation. Fires from the
+NewRound tick walker and drives three things for every character
+currently in a grapple:
+
+1. **Opposed control rolls** — Strength + Unarmed-combat for both
+   sides, modified by `grappleStaminaMultiplier` (curve config
+   `GrappleStaminaPenaltyMax` / `Curve`) and the encumbrance multiplier
+   (curve `GrappleEncumbrancePenaltyMax` / `Curve`). The winning
+   margin's `ZScore` shifts `ControlLevel` along the
+   InControl ↔ LosingControl ↔ Neutral ↔ BecomingControlled ↔ Controlled
+   axis via `MutateGrappleControlLevel` (without firing a state
+   transition — the FSM forbids `Mount→Mount`, so per-round drift
+   mutates the shared `GrappleData` directly).
+2. **Per-round stamina cost** — `GrappleStaminaCostPerRound`, scaled
+   by `GrappleControllerCostMultiplier` (default 1.0) for the
+   controller side or `GrappleControlledCostMultiplier` (default 2.0)
+   for the controlled side. The asymmetry creates the "smother" feedback
+   loop: controlled side gases out first.
+3. **Threshold-triggered position transitions** — when `ControlLevel`
+   crosses `InControl`/`Controlled` thresholds, fires a follow-up
+   position transition (e.g. Mount controller crosses to deeper
+   control → still Mount but with `ControlLevel: InControl` set; a
+   controlled grappler crossing to `Controlled` may transition out via
+   `TransitionToTurtle` defensive curl).
+
+Smother edge case: when stamina hits 0 the character keeps grappling
+(no FSM transition) and the penalty curve maxes out — the controlled
+side simply gets gassed faster, reinforcing the feedback loop.
+
+### Position_Messaging.go (chunk 4b)
+
+Per-round messaging observer. Subscribes via `wirePositionMessaging`
+to the GrappleTick walker and the Position FSM's `AfterTransition`.
+Generates three message classes with per-grapple cooldowns
+(`Character.PerGrappleMessageCooldowns map[string]int`):
+
+- **Gradient messages** — "you're losing control of the grapple",
+  "your grip is slipping", etc. Fire once per grapple per
+  `ControlLevel` crossing.
+- **Transition messages** — "you scramble out of mount and into
+  guard", "they pull you down to half-guard". Fire on every Position
+  state change while grappling; have controller / controlled / room
+  variants.
+- **Stamina warnings** — "you're getting gassed" — fire once per
+  grapple when stamina drops below `GrappleStaminaLowThreshold`
+  (config, default 0.25). `IsLowGrappleStamina()` is the predicate.
+
+Cooldowns reset when the grapple ends (any `TransitionToStanding` via
+escape, break, or death).
+
+### Position_ConsistencyCheck.go (chunk 4b)
+
+Periodic invariant checker registered via
+`wirePositionConsistencyCheck`. Walks character pairs and calls
+`position.ValidateGrapplePair(a, b)` to verify:
+
+- If `a.IsGrappling()` and references `b` via `GrappleData.Partner`,
+  then `b.IsGrappling()` and references `a` symmetrically.
+- ControlLevel relationship is consistent with the pair role (one
+  controller / one controlled / mutual neutral).
+- No orphan grapples (character in a grapple state with no Partner
+  except Turtle).
+
+Logs WARN on any invariant violation. Cheap to run (small pair
+universe in any one room); intended as a safety net during 4b's
+parallel-write window.
 
 ## Dependencies
 
@@ -819,4 +900,4 @@ over to the new FSM.
 - `internal/state/combatphase` - Combat Phase state machine (chunk 0)
 - `internal/state/awareness` - Awareness state machine (chunk 1)
 - `internal/state/life` - Life state machine (chunk 2)
-- `internal/state/position` - Position state machine (chunk 4a)
+- `internal/state/position` - Position state machine (chunks 4a + 4b)
