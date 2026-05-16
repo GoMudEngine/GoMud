@@ -5,6 +5,8 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -298,8 +300,13 @@ func runExecuteAndReadFlag(cmd string, actor Actor, flag string) bool {
 
 // setCraftingForTest puts a mob into crafting state.
 func setCraftingForTest(m *mobs.Mob) {
+	m.Character.Activity = activity.NewMachine()
+	_ = m.Character.Activity.TransitionToCrafting(
+		activity.CraftingData{RecipeId: "test-recipe", RoundsTotal: 5},
+		state.TransitionReason{Trigger: activity.TriggerCraftBegin},
+	)
 	m.Character.CraftingState = &characters.CraftingState{
 		RecipeId:    "test-recipe",
 		RoundsTotal: 5,
-	}
+	} // parallel-write (Task 11 sunsets)
 }

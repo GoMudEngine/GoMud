@@ -8,6 +8,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
 )
@@ -582,7 +584,12 @@ func TestCondTargetIsCasting_TargetCasting_ReturnsSuccess(t *testing.T) {
 	mob := newTestMob(t)
 	target := &mobs.Mob{InstanceId: 200}
 	target.Character.Name = "Target"
-	target.Character.CastingState = &characters.CastingState{}
+	target.Character.Activity = activity.NewMachine()
+	_ = target.Character.Activity.TransitionToCasting(
+		activity.CastingData{SpellId: "fireball"},
+		state.TransitionReason{Trigger: activity.TriggerCastBegin},
+	)
+	target.Character.CastingState = &characters.CastingState{} // parallel-write (Task 11 sunsets)
 	mobs.SetInstanceForTest(target.InstanceId, target)
 	defer mobs.SetInstanceForTest(target.InstanceId, nil)
 	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)

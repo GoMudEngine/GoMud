@@ -6,6 +6,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -119,10 +121,15 @@ func TestCommandIsReady_IsCrafting_BlocksEveryCommand(t *testing.T) {
 	for _, cmd := range []string{"taunt", "rally", "warcry", "trip", "bash", "grapple", "kick"} {
 		t.Run(cmd, func(t *testing.T) {
 			m := newTestMob(t, func(m *mobs.Mob) {
+				m.Character.Activity = activity.NewMachine()
+				_ = m.Character.Activity.TransitionToCrafting(
+					activity.CraftingData{RecipeId: "test", RoundsTotal: 1},
+					state.TransitionReason{Trigger: activity.TriggerCraftBegin},
+				)
 				m.Character.CraftingState = &characters.CraftingState{
 					RecipeId:    "test",
 					RoundsTotal: 1,
-				}
+				} // parallel-write (Task 11 sunsets)
 			})
 			actor := &MobActor{Mob: m, Room: nil}
 			assert.False(t, CommandIsReady(actor, cmd),
