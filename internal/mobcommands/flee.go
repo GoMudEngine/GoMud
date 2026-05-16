@@ -4,11 +4,9 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
-	"github.com/GoMudEngine/GoMud/internal/dice"
+	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/skills"
-	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
 // Flee makes a mob disengage from combat and move to a random adjacent room.
@@ -35,56 +33,14 @@ func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	// Prone penalty applied to flee score below. Chunk 4b R3: Supine
-	// suffers the same penalty as Prone (legacy enum couldn't
-	// distinguish the two knockdown directions).
-	pronePenalty := 1.0
-	if mob.Character.IsProne() || mob.Character.IsSupine() {
-		pronePenalty = 0.5
-	}
-
-	// Check players fighting this mob
-	for _, uId := range room.GetPlayers(rooms.FindFightingMob) {
-		u := users.GetByUserId(uId)
-		if u == nil {
-			continue
-		}
-		if !u.Character.IsInCombat() || u.Character.CurrentCombatTarget().MobInstanceId != mob.InstanceId {
-			continue
-		}
-
-		fleeScore := float64(mob.Character.Stats.Dexterity.ValueAdj+
-			mob.Character.GetSkillLevel(skills.Skullduggery)*25) * pronePenalty
-		blockScore := float64(u.Character.Stats.Dexterity.ValueAdj +
-			u.Character.GetSkillLevel(skills.UnarmedCombat)*25)
-		success, _, _, _ := dice.OpposedRollStat(fleeScore, blockScore)
-		if !success {
-			sendRoomText(room,
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to flee but is blocked!`, mob.Character.Name))
-			return true, nil
-		}
-	}
-
-	// Check mobs fighting this mob
-	for _, mId := range room.GetMobs(rooms.FindFightingMob) {
-		m := mobs.GetInstance(mId)
-		if m == nil {
-			continue
-		}
-		if !m.Character.IsInCombat() || m.Character.CurrentCombatTarget().MobInstanceId != mob.InstanceId {
-			continue
-		}
-
-		fleeScore := float64(mob.Character.Stats.Dexterity.ValueAdj+
-			mob.Character.GetSkillLevel(skills.Skullduggery)*25) * pronePenalty
-		blockScore := float64(m.Character.Stats.Dexterity.ValueAdj +
-			m.Character.GetSkillLevel(skills.UnarmedCombat)*25)
-		success, _, _, _ := dice.OpposedRollStat(fleeScore, blockScore)
-		if !success {
-			sendRoomText(room,
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to flee but is blocked!`, mob.Character.Name))
-			return true, nil
-		}
+	// Shared opposed-roll blocker resolution (combat.ResolveFleeBlockers).
+	// Identical math to the player-flee path in handlePlayerFlee; the
+	// helper handles both player and mob blockers, the prone penalty,
+	// and the targeting filter.
+	if combat.ResolveFleeBlockers(&mob.Character, room) != nil {
+		sendRoomText(room,
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to flee but is blocked!`, mob.Character.Name))
+		return true, nil
 	}
 
 	// If in combat, clear aggro

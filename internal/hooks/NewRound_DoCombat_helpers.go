@@ -8,7 +8,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
-	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -510,67 +509,25 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 		return true
 	}
 
-	blockedByMob := ``
-	for _, mobInstId := range uRoom.GetMobs(rooms.FindFighting) {
-		if mob := mobs.GetInstance(mobInstId); mob != nil {
-			if mob.Character.Aggro == nil || mob.Character.Aggro.UserId != userId {
-				continue
-			}
-
-			// Flee: Dex + Skullduggery vs blocker's Dex + UnarmedCombat
-			fleeScore := float64(user.Character.Stats.Dexterity.ValueAdj +
-				user.Character.GetSkillLevel(skills.Skullduggery)*25)
-
-			// Prone penalty — halve flee score when knocked down.
-			// Chunk 4b R3: Supine suffers the same penalty as Prone.
-			if user.Character.IsProne() || user.Character.IsSupine() {
-				fleeScore *= 0.5
-			}
-			blockScore := float64(mob.Character.Stats.Dexterity.ValueAdj +
-				mob.Character.GetSkillLevel(skills.UnarmedCombat)*25)
-			success, _, _, _ := dice.OpposedRollStat(fleeScore, blockScore)
-			if !success {
-				blockedByMob = mob.Character.Name
-				break
-			}
+	// Shared opposed-roll blocker resolution (combat.ResolveFleeBlockers).
+	// Replaces two duplicated loops; also corrects the prior
+	// variable-shadowing in the player-blockers loop (the inner
+	// `for _, userId := range` shadowed the outer fleer's id, so PvP
+	// players never blocked each other from fleeing). Perspective-
+	// specific messaging stays here.
+	if blocker := combat.ResolveFleeBlockers(user.Character, uRoom); blocker != nil {
+		var targetTag string
+		if blocker.IsPlayer() {
+			targetTag = "username"
+		} else {
+			targetTag = "mobname"
 		}
-	}
-
-	blockedByPlayer := ``
-	blockedByPlayerId := 0
-	for _, userId := range uRoom.GetPlayers(rooms.FindFighting) {
-		if u := users.GetByUserId(userId); u != nil {
-			if u.Character.Aggro == nil || u.Character.Aggro.UserId != userId {
-				continue
-			}
-
-			// Flee: Dex + Skullduggery vs blocker's Dex + UnarmedCombat
-			fleeScore := float64(user.Character.Stats.Dexterity.ValueAdj +
-				user.Character.GetSkillLevel(skills.Skullduggery)*25)
-			blockScore := float64(u.Character.Stats.Dexterity.ValueAdj +
-				u.Character.GetSkillLevel(skills.UnarmedCombat)*25)
-			success, _, _, _ := dice.OpposedRollStat(fleeScore, blockScore)
-			if !success {
-				blockedByPlayer = u.Character.Name
-				blockedByPlayerId = u.UserId
-				break
-			}
+		user.SendText(fmt.Sprintf(`<ansi fg="red-bold"><ansi fg="%s">%s</ansi> blocks you from fleeing!</ansi>`, targetTag, blocker.Name))
+		excludes := []int{user.UserId}
+		if blocker.IsPlayer() {
+			excludes = append(excludes, blocker.UserId)
 		}
-	}
-
-	if blockedByMob != `` {
-		user.SendText(fmt.Sprintf(`<ansi fg="red-bold"><ansi fg="mobname">%s</ansi> blocks you from fleeing!</ansi>`, blockedByMob))
-		uRoom.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is blocked from fleeing by <ansi fg="mobname">%s</ansi>!`, user.Character.Name, blockedByMob), user.UserId)
-		// Task 15: flee failure — restore Engaged state in CombatPhase.
-		if user.Character.CombatPhase != nil {
-			user.Character.CombatPhase.ResolveFlee(false)
-		}
-		return true
-	}
-
-	if blockedByPlayer != `` {
-		user.SendText(fmt.Sprintf(`<ansi fg="red-bold"><ansi fg="username">%s</ansi> blocks you from fleeing!</ansi>`, blockedByPlayer))
-		uRoom.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is blocked from fleeing by <ansi fg="username">%s</ansi>!`, user.Character.Name, blockedByPlayer), user.UserId, blockedByPlayerId)
+		uRoom.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is blocked from fleeing by <ansi fg="%s">%s</ansi>!`, user.Character.Name, targetTag, blocker.Name), excludes...)
 		// Task 15: flee failure — restore Engaged state in CombatPhase.
 		if user.Character.CombatPhase != nil {
 			user.Character.CombatPhase.ResolveFlee(false)
