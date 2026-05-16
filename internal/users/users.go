@@ -457,6 +457,18 @@ func LoadUser(username string, skipValidation ...bool) (*UserRecord, error) {
 		}
 	}
 
+	// Seed the Character's userId back-reference. UserRecord.UserId is
+	// the authoritative source; Character.userId is its private mirror
+	// used by Character.GetUserId() (called by combat / FSM partner-ref
+	// builders, prompt rendering, btree primitives, etc.). Without this,
+	// the private field stays zero post-load — fine for legacy code that
+	// reads .Aggro.UserId directly, but the chunk-4b grapple FSM builds
+	// ActorRef{UserId: controller.GetUserId(), ...} and rejects the
+	// pair transition with ErrPartnerRequired when the resulting ref is
+	// zero. The only other site calling SetUserId was the alt-character
+	// switch path, so brand-new logins were the only path that broke.
+	loadedUser.Character.SetUserId(loadedUser.UserId)
+
 	// One-time migrations
 	loadedUser.Character.MigratePairedSpells()
 	loadedUser.Character.MigrateNeckToBack()

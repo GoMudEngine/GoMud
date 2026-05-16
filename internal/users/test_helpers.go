@@ -61,6 +61,12 @@ func NewTestUser(userId int, username string, charName string, connId uint64) *U
 	ch.Stats.Willpower.ValueAdj = 100
 	ch.Stats.Charisma.ValueAdj = 100
 
+	// Mirror the production LoadUser path: seed the Character's
+	// userId back-reference so Character.GetUserId() returns the
+	// fixture's UserId. Without this, FSM partner-ref builders and
+	// other call sites see a zero ActorRef for test players.
+	ch.SetUserId(userId)
+
 	return &UserRecord{
 		UserId:       userId,
 		Username:     username,

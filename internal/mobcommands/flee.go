@@ -6,7 +6,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
 
@@ -20,25 +19,6 @@ func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	if mob.IsNonCombatant() {
 		return true, nil
 	}
-
-	// [GRAPPLE_DIAG] Temporary diagnostic — log the mob's Position
-	// state and aggro at flee entry. Remove once the round-2 grapple-
-	// persistence bug is understood. See bug_log 2026-05-16.
-	posState := "<nil>"
-	grappling := false
-	if mob.Character.Position != nil {
-		posState = mob.Character.Position.State().String()
-		grappling = mob.Character.Position.IsGrappling()
-	}
-	mudlog.Warn("[GRAPPLE_DIAG] mobcommands.Flee entry",
-		"mob_id", mob.InstanceId, "mob_name", mob.Character.Name,
-		"position_state", posState, "is_grappling", grappling,
-		"is_standing_grapple", mob.Character.IsStandingGrapple(),
-		"is_ground_grapple", mob.Character.IsGroundGrapple(),
-		"mob_in_combat", mob.Character.IsInCombat(),
-		"legacy_combat_position", mob.Character.CombatPosition,
-		"legacy_grapple_controller_id", mob.Character.GrappleControllerId,
-	)
 
 	// Can't flee while grappled. Chunk 4b R3: FSM-driven — covers all
 	// 11 grapple states via the two rollups (legacy enum only knew the
