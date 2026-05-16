@@ -6,6 +6,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 )
 
 // GrappleResult represents the outcome of a grapple attempt
@@ -119,22 +122,66 @@ func AttemptGrapple(attacker *characters.Character, defender *characters.Charact
 
 // ApplyGrappleResult applies the grapple result to both characters.
 // Sets positions and tracks the grapple controller.
+//
+// Chunk 4b W1 cutover: fires position.TransitionPair onto the new
+// FSM in parallel with the legacy CombatPosition + GrappleControllerId
+// writes. If the pair transition fails (e.g. invalid source state for
+// the chosen target) the legacy fields are NOT updated either, so the
+// two views stay consistent across the migration window. Both writes
+// disappear in S1 along with CombatPosition itself.
 func ApplyGrappleResult(attacker *characters.Character, defender *characters.Character, result GrappleResult, attackerId int) {
 	if !result.Success {
 		return
 	}
 
-	// Set both characters to the new position
-	attacker.CombatPosition = result.NewPosition
-	defender.CombatPosition = result.NewPosition
+	// Pick the FSM target. Either side already on the ground lands the
+	// pair directly into SideControl (skips Clinch); both standing →
+	// Clinch.
+	target := position.Clinch
+	if attacker.CombatPosition == characters.PositionProne ||
+		defender.CombatPosition == characters.PositionProne {
+		target = position.SideControl
+	}
 
-	// Track who initiated/controls the grapple
+	if err := position.TransitionPair(
+		attacker, defender, target,
+		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+	); err != nil {
+		mudlog.Warn("ApplyGrappleResult: TransitionPair failed",
+			"attacker", attackerId, "target", target, "err", err)
+		return
+	}
+
+	// Legacy parallel-write (deleted in S1). Derive from the FSM
+	// target so the two views agree by construction even if
+	// result.NewPosition is computed differently in the future.
+	legacyPos := legacyMapPositionToCombatPosition(target)
+	attacker.CombatPosition = legacyPos
+	defender.CombatPosition = legacyPos
 	attacker.GrappleControllerId = attackerId
 	defender.GrappleControllerId = attackerId
 
 	// Stage 8.3: Mark who is the controller
 	attacker.AddCondition(characters.ConditionGrappleController, 0, 1.0, "grapple")
 	defender.RemoveCondition(characters.ConditionGrappleController)
+}
+
+// legacyMapPositionToCombatPosition translates the new FSM State to
+// the legacy CombatPosition enum during the migration window.
+// Deleted in S1 alongside CombatPosition itself. Provided as a
+// reference for future W-series tasks that need to translate an FSM
+// state they don't already have a CombatPosition for.
+func legacyMapPositionToCombatPosition(s position.State) characters.CombatPosition {
+	switch s {
+	case position.Standing:
+		return characters.PositionStanding
+	case position.Prone, position.Supine:
+		return characters.PositionProne
+	case position.Clinch, position.BackStanding:
+		return characters.PositionClinched
+	default: // Mount, SideControl, KOB, NS, Crucifix, BackGround, HalfGuard, Guard, Turtle
+		return characters.PositionGrounded
+	}
 }
 
 // CheckClinchProgression performs automatic control check for clinched fighters
