@@ -3,6 +3,7 @@ package behaviortree
 import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 )
 
 // --- Self-position queries (7) ---
@@ -131,6 +132,121 @@ func condTargetIsGrappled(params map[string]any, ctx *EvalContext) Result {
 	return Failure
 }
 
+// --- Control-axis queries (chunk 4b) ---
+
+func condMobIsInControl(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil {
+		return Failure
+	}
+	if mob.Character.IsController() {
+		return Success
+	}
+	return Failure
+}
+
+func condMobIsBeingControlled(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil {
+		return Failure
+	}
+	if mob.Character.IsBeingControlled() {
+		return Success
+	}
+	return Failure
+}
+
+// condMobControlAtLeast is parameterized. Takes "level" string param
+// ("in_control" / "losing_control" / "neutral" / "becoming_controlled"
+// / "controlled"). Returns Success if mob's ControlLevel is
+// "at or better than" the param FROM THE MOB'S ROLE PERSPECTIVE:
+//   - controller: lower rank (closer to InControl) = better → current.rank <= threshold.rank
+//   - controlled: higher rank (closer to Controlled) = better → current.rank >= threshold.rank
+func condMobControlAtLeast(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil || mob.Character.Position == nil {
+		return Failure
+	}
+	d, ok := mob.Character.Position.GrappleData()
+	if !ok {
+		return Failure
+	}
+	levelStr, _ := params["level"].(string)
+	threshold, ok := parseControlLevel(levelStr)
+	if !ok {
+		return Failure
+	}
+	curRank := position.ControlRankExported(d.ControlLevel)
+	thRank := position.ControlRankExported(threshold)
+	if mob.Character.IsController() {
+		if curRank <= thRank {
+			return Success
+		}
+		return Failure
+	}
+	if curRank >= thRank {
+		return Success
+	}
+	return Failure
+}
+
+func parseControlLevel(s string) (position.ControlLevel, bool) {
+	switch s {
+	case "in_control":
+		return position.InControl, true
+	case "losing_control":
+		return position.LosingControl, true
+	case "neutral":
+		return position.Neutral, true
+	case "becoming_controlled":
+		return position.BecomingControlled, true
+	case "controlled":
+		return position.Controlled, true
+	}
+	return position.Neutral, false
+}
+
+func condMobLowGrappleStamina(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil {
+		return Failure
+	}
+	if mob.Character.IsLowGrappleStamina() {
+		return Success
+	}
+	return Failure
+}
+
+func condTargetIsInControl(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil || !mob.Character.IsInCombat() {
+		return Failure
+	}
+	target := actions.ResolveAggroTarget(mob.Character.Aggro)
+	if !target.Found {
+		return Failure
+	}
+	if target.Char.IsController() {
+		return Success
+	}
+	return Failure
+}
+
+func condTargetIsBeingControlled(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil || !mob.Character.IsInCombat() {
+		return Failure
+	}
+	target := actions.ResolveAggroTarget(mob.Character.Aggro)
+	if !target.Found {
+		return Failure
+	}
+	if target.Char.IsBeingControlled() {
+		return Success
+	}
+	return Failure
+}
+
 func init() {
 	conditionRegistry["mob_is_standing"] = condMobIsStanding
 	conditionRegistry["mob_is_prone"] = condMobIsProne
@@ -142,4 +258,10 @@ func init() {
 	conditionRegistry["target_is_standing"] = condTargetIsStanding
 	conditionRegistry["target_is_prone"] = condTargetIsProne
 	conditionRegistry["target_is_grappled"] = condTargetIsGrappled
+	conditionRegistry["mob_is_in_control"] = condMobIsInControl
+	conditionRegistry["mob_is_being_controlled"] = condMobIsBeingControlled
+	conditionRegistry["mob_control_at_least"] = condMobControlAtLeast
+	conditionRegistry["mob_low_grapple_stamina"] = condMobLowGrappleStamina
+	conditionRegistry["target_is_in_control"] = condTargetIsInControl
+	conditionRegistry["target_is_being_controlled"] = condTargetIsBeingControlled
 }

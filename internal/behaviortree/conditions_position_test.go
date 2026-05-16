@@ -102,3 +102,64 @@ func TestPositionPrimitives_AllRegistered(t *testing.T) {
 		})
 	}
 }
+
+// --- PO-044: control-axis primitives (chunk 4b) ---
+
+func TestCondMobIsInControl_NotGrappling_Failure(t *testing.T) {
+	mob := newTestMob(t)
+	mob.Character.Position = position.NewMachine()
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+	assert.Equal(t, Failure, condMobIsInControl(nil, ctx))
+}
+
+func TestCondMobIsInControl_InMountAsController_Success(t *testing.T) {
+	mob := newTestMob(t)
+	mob.Character.Position = position.NewMachine()
+	_ = mob.Character.Position.TransitionToClinch(
+		position.GrappleData{Partner: state.ActorRef{UserId: 999}},
+		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+	)
+	_ = mob.Character.Position.TransitionToMount(
+		position.GrappleData{Partner: state.ActorRef{UserId: 999}, ControlLevel: position.InControl},
+		state.TransitionReason{Trigger: position.TriggerTakedownMount},
+	)
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+	assert.Equal(t, Success, condMobIsInControl(nil, ctx))
+}
+
+func TestCondMobControlAtLeast_NeutralOrBetter_AsController(t *testing.T) {
+	mob := newTestMob(t)
+	mob.Character.Position = position.NewMachine()
+	_ = mob.Character.Position.TransitionToClinch(
+		position.GrappleData{Partner: state.ActorRef{UserId: 999}},
+		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+	)
+	_ = mob.Character.Position.TransitionToMount(
+		position.GrappleData{Partner: state.ActorRef{UserId: 999}, ControlLevel: position.InControl},
+		state.TransitionReason{Trigger: position.TriggerTakedownMount},
+	)
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+	params := map[string]any{"level": "neutral"}
+	// Controller at InControl is "better than" Neutral → Success.
+	assert.Equal(t, Success, condMobControlAtLeast(params, ctx))
+}
+
+func TestPositionPrimitives_AllRegistered_4b(t *testing.T) {
+	names := []string{
+		// 4a primitives
+		"mob_is_standing", "mob_is_prone", "mob_is_grappling",
+		"mob_in_mount", "mob_in_guard", "mob_in_clinch", "mob_in_top_dominant",
+		"target_is_standing", "target_is_prone", "target_is_grappled",
+		// 4b primitives
+		"mob_is_in_control", "mob_is_being_controlled",
+		"mob_control_at_least", "mob_low_grapple_stamina",
+		"target_is_in_control", "target_is_being_controlled",
+	}
+	for _, name := range names {
+		t.Run(name, func(t *testing.T) {
+			if LookupCondition(name) == nil {
+				t.Errorf("condition %q not registered", name)
+			}
+		})
+	}
+}
