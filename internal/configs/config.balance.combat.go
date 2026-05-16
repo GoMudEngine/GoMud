@@ -90,6 +90,32 @@ func (b *Balance) validateCombat() {
 		b.GrappleStaminaLowThreshold = 0.25
 	}
 
+	// ── GRAPPLE CONTROL AXIS (chunk 4b) ──────────────────────────────────────
+	if b.GrappleStaminaPenaltyMax <= 0 || b.GrappleStaminaPenaltyMax > 1.0 {
+		b.GrappleStaminaPenaltyMax = 0.60
+	}
+	if b.GrappleStaminaPenaltyCurve <= 0 {
+		b.GrappleStaminaPenaltyCurve = 1.5
+	}
+	if b.GrappleEncumbrancePenaltyMax <= 0 || b.GrappleEncumbrancePenaltyMax > 1.0 {
+		b.GrappleEncumbrancePenaltyMax = 0.80
+	}
+	if b.GrappleEncumbrancePenaltyCurve <= 0 {
+		b.GrappleEncumbrancePenaltyCurve = 1.5
+	}
+	if b.GrappleStaminaCostPerRound <= 0 {
+		b.GrappleStaminaCostPerRound = 5
+	}
+	if b.GrappleControllerCostMultiplier <= 0 {
+		b.GrappleControllerCostMultiplier = 1.0
+	}
+	if b.GrappleControlledCostMultiplier <= 0 {
+		b.GrappleControlledCostMultiplier = 2.0
+	}
+	if b.PositionConsistencyCheckRounds <= 0 {
+		b.PositionConsistencyCheckRounds = 10
+	}
+
 	// ── DARKNESS ─────────────────────────────────────────────────────────────
 	if b.DarknessCombatPenalty <= 0 || b.DarknessCombatPenalty > 1.0 {
 		b.DarknessCombatPenalty = 0.80

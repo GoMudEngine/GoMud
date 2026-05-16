@@ -41,9 +41,20 @@ type Balance struct {
 	// GrappleStaminaLowThreshold is the stamina fraction (0.0–1.0) below
 	// which a character is considered "low stamina" for grapple purposes.
 	// Used by IsLowGrappleStamina() and the mob_low_grapple_stamina btree
-	// primitive (T5) and Position_Messaging (T7). T6 adds the rest of the
-	// grapple-axis knobs; this is the single field T3 needs.
+	// primitive (T5) and Position_Messaging (T7).
 	GrappleStaminaLowThreshold ConfigFloat `yaml:"GrappleStaminaLowThreshold"` // Stamina fraction floor for grapple stamina warning (default 0.25)
+
+	// ── GRAPPLE CONTROL AXIS (chunk 4b) ──────────────────────────────────────
+	// Per-round drift mechanics — see
+	// docs/superpowers/specs/2026-05-16-state-chunk-4b-position-control-axis-design.md
+	GrappleStaminaPenaltyMax        ConfigFloat `yaml:"GrappleStaminaPenaltyMax"`        // Max roll-mult reduction at 0% stamina (default 0.60)
+	GrappleStaminaPenaltyCurve      ConfigFloat `yaml:"GrappleStaminaPenaltyCurve"`      // Exponent shape of stamina penalty curve (default 1.5)
+	GrappleEncumbrancePenaltyMax    ConfigFloat `yaml:"GrappleEncumbrancePenaltyMax"`    // Max roll-mult reduction at max encumbrance (default 0.80)
+	GrappleEncumbrancePenaltyCurve  ConfigFloat `yaml:"GrappleEncumbrancePenaltyCurve"`  // Exponent shape of encumbrance penalty curve (default 1.5)
+	GrappleStaminaCostPerRound      ConfigInt   `yaml:"GrappleStaminaCostPerRound"`      // Base per-round stamina cost in grapples (default 5)
+	GrappleControllerCostMultiplier ConfigFloat `yaml:"GrappleControllerCostMultiplier"` // Controller's per-round cost multiplier (default 1.0)
+	GrappleControlledCostMultiplier ConfigFloat `yaml:"GrappleControlledCostMultiplier"` // Controlled's per-round cost multiplier (default 2.0)
+	PositionConsistencyCheckRounds  ConfigInt   `yaml:"PositionConsistencyCheckRounds"`  // How often the periodic invariant checker runs (default 10)
 
 	// ── COMBAT: SPECIAL MOVES ────────────────────────────────────────────────
 	SpecialMoveCooldown ConfigInt   `yaml:"SpecialMoveCooldown"` // Shared cooldown rounds for bash/trip/kick (default 5)

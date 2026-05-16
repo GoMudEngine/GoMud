@@ -560,6 +560,20 @@ Balance:
   StaminaPenaltyMax: 0.28        # At 0% SP: attacks/hit rate reduced by 28%
   ConvictionPenaltyMax: 0.28     # At 0% CP: taunt/spell reduced by 28%
 
+  # ── Grapple Control Axis (chunk 4b — per-round drift mechanics) ──────────
+  # See docs/superpowers/specs/2026-05-16-state-chunk-4b-position-control-axis-design.md
+  # Penalty curves are deliberately steeper than the combat ResourcePenalty
+  # knobs above — grappling cardio-stresses faster than stand-up fighting.
+  GrappleStaminaPenaltyMax: 0.60        # Max roll-mult reduction at 0% stamina
+  GrappleStaminaPenaltyCurve: 1.5       # Exponent — higher = steeper near 0% stamina
+  GrappleEncumbrancePenaltyMax: 0.80    # Max roll-mult reduction at "crushed" encumbrance
+  GrappleEncumbrancePenaltyCurve: 1.5   # Exponent — higher = steeper near max
+  GrappleStaminaCostPerRound: 5         # Base per-round stamina cost in grapples
+  GrappleControllerCostMultiplier: 1.0  # Controller side multiplier (5 × 1.0 = 5/round)
+  GrappleControlledCostMultiplier: 2.0  # Controlled side multiplier (5 × 2.0 = 10/round)
+  GrappleStaminaLowThreshold: 0.25      # Stamina fraction below which "you're getting gassed" fires once per grapple
+  PositionConsistencyCheckRounds: 10    # How often the periodic invariant checker runs
+
   # ── REGEN RATES (fraction of pool max per tick; 0.01 = 1%) ────────────────
   PlayerHealthRegenPct: 0.02     # Bumped from 1% to 2%; players needed faster recovery
   PlayerStaminaRegenPct: 0.02    # Tuned 39.2: doubled from 0.01; fights felt too exhausting at 1%

@@ -269,6 +269,21 @@ func (m *Machine) GrappleData() (GrappleData, bool) {
 	return *m.grapple, true
 }
 
+// MutateGrappleControlLevel updates the ControlLevel on the
+// current GrappleData WITHOUT firing a transition. Used by the
+// per-round drift hook in Position_GrappleTick.go — the FSM
+// transition table forbids Mount→Mount, so per-round
+// re-transitions aren't viable. This is the ONE place outside
+// transition methods that mutates per-state data.
+//
+// No-op if the machine is not in a grapple state.
+func (m *Machine) MutateGrappleControlLevel(newLevel ControlLevel) {
+	if !m.IsGrappling() || m.grapple == nil {
+		return
+	}
+	m.grapple.ControlLevel = newLevel
+}
+
 // === Framework escape hatches ===
 
 // Inner returns the underlying state.Machine — used by rules.go
