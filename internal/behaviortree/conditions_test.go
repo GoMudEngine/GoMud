@@ -10,9 +10,45 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
 )
+
+// setCombatPositionParallel writes BOTH the legacy CombatPosition
+// field AND the new Position FSM in lockstep. F1 fixture helper
+// for the chunk-4b transition window. Synthetic Partner ref for
+// Clinched/Grounded (FSM requires non-zero).
+func setCombatPositionParallel(c *characters.Character, pos characters.CombatPosition) {
+	c.CombatPosition = pos
+	if c.Position == nil {
+		c.Position = position.NewMachine()
+	}
+	r := state.TransitionReason{Trigger: "test_setup"}
+	switch pos {
+	case characters.PositionStanding:
+		c.Position.ForceStanding(r)
+	case characters.PositionProne:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToProne(position.ProneData{}, r)
+	case characters.PositionClinched:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+	case characters.PositionGrounded:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+		_ = c.Position.TransitionToMount(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}, ControlLevel: position.InControl},
+			state.TransitionReason{Trigger: position.TriggerTakedownMount},
+		)
+	}
+}
 
 // newTestMob seeds a mob at instance 100 and registers it via
 // mobs.SetInstanceForTest. Auto-cleans at test end.
@@ -667,7 +703,7 @@ func TestCondTargetNotStanding_TargetStanding_ReturnsFailure(t *testing.T) {
 	mob := newTestMob(t)
 	target := &mobs.Mob{InstanceId: 205}
 	target.Character.Name = "Target"
-	target.Character.CombatPosition = characters.PositionStanding
+	setCombatPositionParallel(&target.Character, characters.PositionStanding)
 	mobs.SetInstanceForTest(target.InstanceId, target)
 	defer mobs.SetInstanceForTest(target.InstanceId, nil)
 	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)
@@ -680,7 +716,7 @@ func TestCondTargetNotStanding_TargetProne_ReturnsSuccess(t *testing.T) {
 	mob := newTestMob(t)
 	target := &mobs.Mob{InstanceId: 206}
 	target.Character.Name = "Target"
-	target.Character.CombatPosition = characters.PositionProne
+	setCombatPositionParallel(&target.Character, characters.PositionProne)
 	mobs.SetInstanceForTest(target.InstanceId, target)
 	defer mobs.SetInstanceForTest(target.InstanceId, nil)
 	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)
@@ -693,7 +729,7 @@ func TestCondTargetNotStanding_TargetClinched_ReturnsSuccess(t *testing.T) {
 	mob := newTestMob(t)
 	target := &mobs.Mob{InstanceId: 207}
 	target.Character.Name = "Target"
-	target.Character.CombatPosition = characters.PositionClinched
+	setCombatPositionParallel(&target.Character, characters.PositionClinched)
 	mobs.SetInstanceForTest(target.InstanceId, target)
 	defer mobs.SetInstanceForTest(target.InstanceId, nil)
 	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)

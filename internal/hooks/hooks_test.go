@@ -197,6 +197,41 @@ func seedAllRegistries() func() {
 	}
 }
 
+// setCombatPositionParallel writes BOTH the legacy CombatPosition
+// field AND the new Position FSM in lockstep. F1 fixture helper
+// for the chunk-4b transition window. Synthetic Partner ref for
+// Clinched/Grounded (FSM requires non-zero).
+func setCombatPositionParallel(c *characters.Character, pos characters.CombatPosition) {
+	c.CombatPosition = pos
+	if c.Position == nil {
+		c.Position = position.NewMachine()
+	}
+	r := state.TransitionReason{Trigger: "test_setup"}
+	switch pos {
+	case characters.PositionStanding:
+		c.Position.ForceStanding(r)
+	case characters.PositionProne:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToProne(position.ProneData{}, r)
+	case characters.PositionClinched:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+	case characters.PositionGrounded:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+		_ = c.Position.TransitionToMount(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}, ControlLevel: position.InControl},
+			state.TransitionReason{Trigger: position.TriggerTakedownMount},
+		)
+	}
+}
+
 // ─── Combat Shared Helpers ────────────────────────────────────────────────────
 
 func TestSimulateFoldRound_FromZero(t *testing.T) {
@@ -1600,7 +1635,7 @@ func TestHandlePlayerFoldCasting_PronePlayer(t *testing.T) {
 		activity.CastingData{SpellId: "sparks"},
 		state.TransitionReason{Trigger: activity.TriggerCastBegin},
 	)
-	u.Character.CombatPosition = characters.PositionProne
+	setCombatPositionParallel(u.Character, characters.PositionProne)
 
 	result := handlePlayerFoldCasting(u, 1)
 	assert.True(t, result, "prone player should skip combat")
@@ -1632,7 +1667,7 @@ func TestHandleMobFoldCasting_ProneMob(t *testing.T) {
 		activity.CastingData{SpellId: "sparks"},
 		state.TransitionReason{Trigger: activity.TriggerCastBegin},
 	)
-	mob.Character.CombatPosition = characters.PositionProne
+	setCombatPositionParallel(&mob.Character, characters.PositionProne)
 	room := rooms.LoadRoom(1)
 
 	result := handleMobFoldCasting(mob, room)

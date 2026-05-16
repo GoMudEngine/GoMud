@@ -15,8 +15,10 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -24,6 +26,41 @@ import (
 )
 
 // ─── Test Infrastructure ──────────────────────────────────────────────────────
+
+// setCombatPositionParallel writes BOTH the legacy CombatPosition
+// field AND the new Position FSM in lockstep. F1 fixture helper
+// for the chunk-4b transition window. Synthetic Partner ref for
+// Clinched/Grounded (FSM requires non-zero).
+func setCombatPositionParallel(c *characters.Character, pos characters.CombatPosition) {
+	c.CombatPosition = pos
+	if c.Position == nil {
+		c.Position = position.NewMachine()
+	}
+	r := state.TransitionReason{Trigger: "test_setup"}
+	switch pos {
+	case characters.PositionStanding:
+		c.Position.ForceStanding(r)
+	case characters.PositionProne:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToProne(position.ProneData{}, r)
+	case characters.PositionClinched:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+	case characters.PositionGrounded:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+		_ = c.Position.TransitionToMount(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}, ControlLevel: position.InControl},
+			state.TransitionReason{Trigger: position.TriggerTakedownMount},
+		)
+	}
+}
 
 func TestMain(m *testing.M) {
 	mudlog.SetupLogger(nil, "", "", false)
@@ -1102,19 +1139,19 @@ func TestSubmitInCombat(t *testing.T) {
 
 	// In combat but not grounded
 	mob.Character.Aggro = &characters.Aggro{UserId: 1}
-	mob.Character.CombatPosition = characters.PositionStanding
+	setCombatPositionParallel(&mob.Character, characters.PositionStanding)
 	handled, err := Submit("", mob, room)
 	assert.True(t, handled)
 	_ = err
 
 	// In combat and grounded but not grapple controller
-	mob.Character.CombatPosition = characters.PositionGrounded
+	setCombatPositionParallel(&mob.Character, characters.PositionGrounded)
 	handled, err = Submit("", mob, room)
 	assert.True(t, handled)
 	_ = err
 
 	mob.Character.Aggro = nil
-	mob.Character.CombatPosition = characters.PositionStanding
+	setCombatPositionParallel(&mob.Character, characters.PositionStanding)
 }
 
 func TestWanderBranches(t *testing.T) {

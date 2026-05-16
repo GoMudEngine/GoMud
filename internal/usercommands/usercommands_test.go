@@ -28,6 +28,41 @@ import (
 
 // ─── Test Infrastructure ──────────────────────────────────────────────────────
 
+// setCombatPositionParallel writes BOTH the legacy CombatPosition
+// field AND the new Position FSM in lockstep. F1 fixture helper
+// for the chunk-4b transition window. Synthetic Partner ref for
+// Clinched/Grounded (FSM requires non-zero).
+func setCombatPositionParallel(c *characters.Character, pos characters.CombatPosition) {
+	c.CombatPosition = pos
+	if c.Position == nil {
+		c.Position = position.NewMachine()
+	}
+	r := state.TransitionReason{Trigger: "test_setup"}
+	switch pos {
+	case characters.PositionStanding:
+		c.Position.ForceStanding(r)
+	case characters.PositionProne:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToProne(position.ProneData{}, r)
+	case characters.PositionClinched:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+	case characters.PositionGrounded:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+		_ = c.Position.TransitionToMount(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}, ControlLevel: position.InControl},
+			state.TransitionReason{Trigger: position.TriggerTakedownMount},
+		)
+	}
+}
+
 func TestMain(m *testing.M) {
 	mudlog.SetupLogger(nil, "", "", false)
 	// Initialize translation system so language.T() doesn't panic
@@ -630,25 +665,19 @@ func TestStand(t *testing.T) {
 
 	user, room := getTestUserAndRoom(t)
 
-	// Chunk 4b W7: Stand now gates on the Position FSM (IsProne ||
-	// IsSupine), so fixture writes must parallel-write both the
-	// legacy CombatPosition field and the FSM. T20 (F1) will widen
-	// this migration across the rest of the suite.
+	// Chunk 4b W7: Stand gates on the Position FSM (IsProne ||
+	// IsSupine). T20 (F1) introduced the setCombatPositionParallel
+	// helper to keep legacy + FSM in lockstep across fixture sites.
 
 	t.Run("already_standing", func(t *testing.T) {
-		user.Character.CombatPosition = characters.PositionStanding
-		user.Character.Position.ForceStanding(state.TransitionReason{Trigger: "test_reset"})
+		setCombatPositionParallel(user.Character, characters.PositionStanding)
 		handled, err := Stand("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
 	})
 
 	t.Run("from_prone", func(t *testing.T) {
-		user.Character.CombatPosition = characters.PositionProne
-		_ = user.Character.Position.TransitionToProne(
-			position.ProneData{},
-			state.TransitionReason{Trigger: "test_setup"},
-		)
+		setCombatPositionParallel(user.Character, characters.PositionProne)
 		user.Character.Stamina = 100
 		handled, err := Stand("", user, room, 0)
 		assert.True(t, handled)
@@ -658,11 +687,7 @@ func TestStand(t *testing.T) {
 	})
 
 	t.Run("too_exhausted", func(t *testing.T) {
-		user.Character.CombatPosition = characters.PositionProne
-		_ = user.Character.Position.TransitionToProne(
-			position.ProneData{},
-			state.TransitionReason{Trigger: "test_setup"},
-		)
+		setCombatPositionParallel(user.Character, characters.PositionProne)
 		user.Character.Stamina = 0
 		handled, err := Stand("", user, room, 0)
 		assert.True(t, handled)
@@ -671,8 +696,7 @@ func TestStand(t *testing.T) {
 		assert.Equal(t, characters.PositionProne, user.Character.CombatPosition)
 		assert.True(t, user.Character.IsProne())
 		// Reset
-		user.Character.CombatPosition = characters.PositionStanding
-		user.Character.Position.ForceStanding(state.TransitionReason{Trigger: "test_reset"})
+		setCombatPositionParallel(user.Character, characters.PositionStanding)
 		user.Character.Stamina = 100
 	})
 }
@@ -3262,13 +3286,13 @@ func TestGoDeepBranches(t *testing.T) {
 	})
 
 	t.Run("prone_movement", func(t *testing.T) {
-		user.Character.CombatPosition = characters.PositionProne
+		setCombatPositionParallel(user.Character, characters.PositionProne)
 		user.Character.ActionPoints = 100
 		handled, err := Go("north", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
 		// Restore
-		user.Character.CombatPosition = characters.PositionStanding
+		setCombatPositionParallel(user.Character, characters.PositionStanding)
 		user.Character.RoomId = 1
 		room.AddPlayer(1)
 		user.Character.ActionPoints = 5
@@ -4545,7 +4569,7 @@ func TestSubmitDeep(t *testing.T) {
 
 	t.Run("in_combat_not_grounded", func(t *testing.T) {
 		user.Character.Aggro = &characters.Aggro{MobInstanceId: 100}
-		user.Character.CombatPosition = characters.PositionStanding
+		setCombatPositionParallel(user.Character, characters.PositionStanding)
 		handled, err := Submit("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
@@ -4554,12 +4578,12 @@ func TestSubmitDeep(t *testing.T) {
 
 	t.Run("in_combat_grounded_not_controller", func(t *testing.T) {
 		user.Character.Aggro = &characters.Aggro{MobInstanceId: 100}
-		user.Character.CombatPosition = characters.PositionGrounded
+		setCombatPositionParallel(user.Character, characters.PositionGrounded)
 		handled, err := Submit("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
 		user.Character.Aggro = nil
-		user.Character.CombatPosition = characters.PositionStanding
+		setCombatPositionParallel(user.Character, characters.PositionStanding)
 	})
 }
 
@@ -4791,13 +4815,13 @@ func TestFleeMoreBranches(t *testing.T) {
 
 	t.Run("flee_prone", func(t *testing.T) {
 		user.Character.Aggro = &characters.Aggro{MobInstanceId: 100}
-		user.Character.CombatPosition = characters.PositionProne
+		setCombatPositionParallel(user.Character, characters.PositionProne)
 		user.Character.ActionPoints = 100
 		handled, err := Flee("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
 		user.Character.Aggro = nil
-		user.Character.CombatPosition = characters.PositionStanding
+		setCombatPositionParallel(user.Character, characters.PositionStanding)
 		user.Character.RoomId = 1
 		room.AddPlayer(1)
 		user.Character.ActionPoints = 5
