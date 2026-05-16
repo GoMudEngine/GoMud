@@ -38,7 +38,7 @@ This effort collapses that surface to one canonical framework:
 | 2 | Life | Done (2026-05-13) | Alive / Dead / Respawning. 252-line `mobcommands/suicide.go` + ~290-line `usercommands/suicide.go` consolidated into thin handlers + Life cascade + 14 observer files. Permadeath + extra-lives sunset. Auto-look after respawn teleport. 12 Behavior Matrix tests PASS + 15 SKIP (integration-deferred). |
 | 3 | Activity | Done (2026-05-15) | Free / Casting / Crafting / Salvaging. Star-topology FSM consolidates `Character.CastingState` + `Character.CraftingState` pointer fields and the salvage MiscData hijack into one per-state-data machine. Per-activity interrupt policy formalized (casting allows combat entry; craft/salvage block & cancel on combat/damage/movement). `cancel_activity` btree primitive added. 16/22 Behavior Matrix tests PASS/SKIP. |
 | 4a | Position — FSM | Done (2026-05-16) | 14 geometric states (Standing / Prone / Supine / Clinch / BackStanding / Mount / SideControl / KneeOnBelly / NorthSouth / Crucifix / BackGround / HalfGuard / Guard / Turtle). Prone/Supine split during brainstorm — submission paths, recovery difficulty, and back-take vulnerability diverge. Per-state data (StandingData / ProneData / SupineData / shared GrappleData), ~75-edge transition graph, 22 trigger constants, 19 Character predicates, 10 btree primitives, Life-Dead cascade observer. Ships DORMANT — zero behavior change; legacy CombatPosition enum + all command writers untouched. 4b cuts over writers + control rolls + sunsets legacy. |
-| 4b | Position — control axis | Not started | Per-grappler 5-level control scale (InControl / LosingControl / Neutral / BecomingControlled / Controlled). Per-round opposed rolls; threshold-triggered position transitions; gradient messaging. |
+| 4b | Position — control axis | Done (2026-05-16) | Per-grappler 5-level control scale (InControl / LosingControl / Neutral / BecomingControlled / Controlled). Per-round opposed Strength + Unarmed-combat rolls with stamina + encumbrance curves; margin → delta with 2-consecutive-controlled threshold; gradient + transition + stamina-warning messages; 6 new btree control-axis primitives; 4 pair invariants enforced via TransitionPair + ValidateGrapplePair + periodic ConsistencyCheck. Legacy `CombatPosition` / `PositionRoundsMin` / `GrappleControllerId` / `ConditionGrappleController` / `combatposition.go` all sunset. |
 | 4c | Position — weapon utility | Not started | (Position × WeaponType) → modifier table. Combat resolution reads it. Lets long weapons fail in mount, knives stay useful, etc. |
 | 4d | Position — submissions | Not started | Rework/sunset existing submission special-attack command. Automatic/opportunistic submissions gated on (Position, ControlLevel). Submission outcomes (choked, damaged limb, tap, continue). |
 | 4e | Position — third-party | Not started | Symmetric defense degradation (controlled severely, controller moderately); offense restrictions; outside-damage → control degradation; mob AI bias toward grappled targets; submission-interrupt risk. |
@@ -265,13 +265,12 @@ characters, hooks, usercommands, mobcommands all green.
 - Activity machine (chunk 3) will repoint the Activity pre-wire in
   `Life_Cascades.go` (currently clears `CastingState`/`CraftingState`
   directly) to the proper Activity machine query.
-- Position machine (chunk 4) partially repointed the Position pre-wire
+- Position machine (chunk 4) fully repointed the Position pre-wire
   in `Life_Cascades.go`: chunk 4a created the `position_life_dead`
-  cascade observer (in `internal/hooks/Position_Cascades.go`) that
-  coexists with the legacy pre-wire and resets the new FSM independently.
-  **Chunk 4b R4 (delete the legacy pre-wire) is deferred** pending the
-  broader CombatPosition reader sweep — see memory entry
-  `project_chunk_4b_r4_blocked_on_reader_sweep.md`.
+  cascade observer (in `internal/hooks/Position_Cascades.go`); chunk
+  4b R4 (`a481797f`) deleted the legacy pre-wire after every
+  CombatPosition reader was migrated to the FSM predicates and the
+  legacy fields were sunset (T21, `6a9697d5`).
 - Auto-look after fold-recall teleport — separate memory entry
   `project_auto_look_after_room_change.md` covers this parallel UX
   fix.
@@ -517,40 +516,135 @@ demotion.
 
 **Status of 4a's "Deferred to 4b" list (post-4b cutover, 2026-05-16):**
 
-- ✅ **Writer cutover** — W1-W8 shipped. Every command-site writer
-  (`trip`, `bash`, `grapple`, `stand`, spell knockdown,
-  `AttemptRecovery`, submission outcomes, grapple crit-fail)
-  parallel-writes the FSM and the legacy enum.
-- ✅ **Per-round control rolls** — `Position_GrappleTick.go` fires
-  the opposed Strength + Unarmed-combat roll each round, scaled by
-  stamina + encumbrance curves.
-- ✅ **Threshold-triggered position transitions** — fire from the
-  same per-round observer when `ControlLevel` crosses thresholds.
-- ✅ **Chunk-0 `RegisterPositionCheck` rewire** — R5 done; the veto
-  closure now reads `c.IsStanding()`.
-- ⚠️ **Reader cutover partial** — R1/R2/R3/R5/R6 done; ~25 readers
-  remain across `combat/ai.go`, `combat/grapple.go`,
-  `actions/combat_kick.go`, etc. See
-  `project_chunk_4b_r4_blocked_on_reader_sweep.md`.
-- ⛔ **Legacy field sunset (S1-S5) blocked** on the broader reader
-  sweep. `CombatPosition` enum, `PositionRoundsMin`,
-  `GrappleControllerId`, `ConditionGrappleController`, and
-  `combatposition.go` remain in place.
-- ⛔ **Chunk-2 Life pre-wire removal (R4) deferred** — same blocker
-  as S1-S5; the legacy reset coexists with the chunk-4a cascade
-  observer.
-- ⚠️ **Doc sweep partial** — context.md files (state/position,
-  characters, hooks, combat, state/life, spells, behaviortree)
-  updated by T23; helpfile + full doc sweep (combat package prose,
-  mobs package, behaviortree archetype YAMLs, helpfiles for
-  stand/grapple/trip/etc., player-facing combat docs) deferred to
-  chunk 4f per the chunk-4b spec.
+All shipped. See the Chunk 4b section below for details.
 
-**Aliveness work stays paused** for chunks 4b-6. Chunk 4b (Position
-— control-axis mechanics) brainstorm is next.
+---
 
-Next: chunk 4b — Position control axis (per-round opposed rolls,
-threshold-triggered position transitions, gradient messaging).
+## Chunk 4b — Shipped (2026-05-16)
+
+Cutover sub-chunk for the Position FSM. Writers, readers, and tests
+all moved off the legacy `CombatPosition` enum onto the 14-state FSM
++ ControlLevel axis built in chunk 4a, then the legacy fields and
+file were deleted. Per-round drift mechanics (opposed rolls with
+margin → control-level delta, threshold-triggered position
+transitions, gradient + transition + stamina-warning messaging)
+went live in production. Four formal pair invariants enforced via
+`TransitionPair` + `ValidateGrapplePair` + a periodic
+`Position_ConsistencyCheck` observer that snapshots + auto-corrects
+drift.
+
+**Writer cutover (W1-W8):** every command-site writer migrated to
+fire FSM transitions: `ApplyGrappleResult` (W1), trip + bash + spell
+knockdown (W4 + W5), `AttemptRecovery` + `stand` (W6), submission
+outcomes + grapple crit-fail (W3 + W8). Each landed as its own
+commit (1c373be1, fb0cd1f9, 5cbca323, 162a65f4, ae17ef2d).
+
+**Reader cutover (R1-R6):** the post-W reader sweep covered every
+remaining `.CombatPosition.*` / `IsGrapplePosition()` /
+`IsGroundPosition()` / `HasCondition(ConditionGrappleController)`
+across `combat/ai.go`, `combat/grapple.go`, `actions/combat_kick.go`,
+`actions/command_readiness.go`, `behaviortree/conditions_mob.go`,
+`hooks/combat_shared_helpers.go`, `characters/combat_state_compat.go`,
+`mobcommands/submit.go`, `usercommands/submit.go`,
+`users/userrecord.prompt.go`, `combat/analytics.go`, and
+`modules/gmcp/gmcp.Commands.go` (`4738b26e`). R4 deleted the legacy
+chunk-2 Life cascade pre-wire (`a481797f`). R5 (CombatPhase
+`RegisterPositionCheck`) and R6 (`{pos}` prompt token) already
+shipped earlier in chunk 4b.
+
+**Sunsets (S1-S5):** `Character.CombatPosition` field, `PositionRoundsMin`,
+`GrappleControllerId`, the `ConditionGrappleController` constant, and
+`internal/characters/combatposition.go` (the legacy enum + helpers:
+`IsGroundPosition`, `IsGrapplePosition`, `GetSpeedMultiplier`,
+`GetPositionColor`, `GetWorstPosition`) all deleted in a single
+commit (`6a9697d5`). Replacements live in the FSM: per-state data
+slots (`ProneData.MinRecoveryRounds`, `SupineData.MinRecoveryRounds`),
+the new `Position.ExtendRecoveryRound()` helper for stomp, and
+`c.IsController()` derived from `GrappleData.ControlLevel`. Net diff:
+-169 lines across 30 files.
+
+**Test fixtures (F1):** `setCombatPositionParallel(c, position.State)`
+helpers in each test package (combat/hitroll_test.go,
+actions/actions_test.go, behaviortree/conditions_test.go,
+hooks/hooks_test.go, mobcommands/mobcommands_test.go,
+usercommands/usercommands_test.go) now FSM-only (legacy parallel
+write deleted in T21 alongside the field). Signature changed from
+`characters.CombatPosition` to `position.State`.
+
+**Per-round control axis** — `Position_GrappleTick.go` fires per
+round for every grappler. Opposed Strength + Unarmed-combat roll
+scaled by stamina + encumbrance penalty curves. Margin → control
+delta via `MarginToDelta` (capped at ±1 per round). Two-consecutive-
+Controlled gate before position downgrade fires, preventing
+single-round flukes. Threshold transitions: Controlled →
+DefaultEscapeTarget; LosingControl below stamina threshold →
+escalating message; etc.
+
+**Asymmetric stamina cost** — controller pays less per round than
+controlled side (encourages opportunistic top-control play instead
+of immediate sub attempts).
+
+**Messaging contract** — `Position_Messaging.go` per-grapple-cooldown-
+gated. Three message classes: gradient (control shifting),
+transition (position changed), stamina warning (resource at risk).
+YAML config + message templates load at boot from
+`_datafiles/world/dogmud/grapple-messages.yaml`.
+
+**6 new btree control-axis primitives** (per chunk-4b spec):
+`mob_is_in_control`, `target_is_being_controlled`,
+`mob_low_grapple_stamina`, `target_low_grapple_stamina`,
+`mob_position_threshold_winning`, `mob_position_threshold_losing`.
+Together with the 10 from chunk 4a, that's **16 total position
+primitives**.
+
+**4 pair invariants** — formalized in `ValidateGrapplePair`:
+1. Both sides reference each other (Partner symmetry)
+2. ControlLevels sum to "valid pairing" (no double-controller, no
+   double-controlled)
+3. Pair-state matches (e.g., Mount on one ⇒ Mount or BackGround on
+   the other)
+4. Pair lifespan is monotonic (no resurrection)
+
+Enforced at write time by `TransitionPair`. Backstopped by the
+periodic `Position_ConsistencyCheck` observer that scans live
+grapple pairs every N rounds and force-breaks any pair that drifts
+out of invariant.
+
+**Behavior Matrix:** PB-001 through PB-080 authored across
+`position_test.go` and the per-package integration tests
+(`Position_*_test.go`, `grapple_test.go`, `ai_test.go`,
+`conditions_position_test.go`). Mix of PASS / SKIP per chunks-0-3
+convention. Chunks 0-4a regression clean. 176-test position package
+suite green.
+
+**Smoke debugging:** the chunk-4b smoke surfaced a long-standing
+shared-state-machine bug in `mobs.newMobByIdInternal` — `mob := *m`
+shallow-copied the template Character including pointer-typed Life
+/ CombatPhase / Position / Awareness / Activity machines AND the
+`combatPhaseWired = true` guard. Every spawned instance shared the
+template's machines; observers wired on the template fired with the
+template's `*Character` (`MobInstanceId=0`), so the mob despawn
+cascade silently skipped. Fix: `Character.ResetForMobInstance()`
+nils the machine pointers + clears the guard after the shallow
+copy, so the next `Validate()` builds fresh per-instance machines
+and re-fires `OnCharacterCreated`. Committed at `aee70eed`. Saved
+as a class-of-bug memory (`feedback_shallow_copy_shared_pointers.md`)
+since this pattern is easy to repeat anywhere the codebase clones
+a Character / Mob struct.
+
+**Documentation:** T22 audit (`tools/testing/audits/2026-05-16-chunk-4b-doc-helpfile-audit.md`)
+inventoried stale "deleted in S1" / "sunset target" / "until S1"
+framing across all context.md files. T23 (`9b188c7c`) rewrote 7
+context.md files to present-tense post-cutover voice:
+`state/position/context.md`, `characters/context.md`,
+`hooks/context.md`, `combat/context.md`, `behaviortree/context.md`,
+plus `state/life/context.md` and `spells/context.md`.
+
+**Aliveness work stays paused** for chunks 4c-6. Chunk 4c
+(weapon-utility-by-position table) brainstorm is next.
+
+Next: chunk 4c — Position × WeaponType modifier table (long weapons
+fail in mount, knives stay useful, etc.).
 
 ---
 
