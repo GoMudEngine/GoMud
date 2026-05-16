@@ -207,7 +207,13 @@ func (u *UserRecord) GetCommandPrompt() string {
 		}
 
 		var customPrompt any = nil
-		var inCombat bool = u.Character.Aggro != nil
+		// Use IsInCombat() (CombatPhase-aware) instead of the raw
+		// Aggro field — the prompt should render the fight format
+		// whenever the player is engaged, even if the legacy Aggro
+		// pointer happens to be transiently nil between rounds.
+		// IsInCombat falls back to Aggro for legacy code paths that
+		// haven't wired CombatPhase yet.
+		var inCombat bool = u.Character.IsInCombat()
 
 		if inCombat {
 			customPrompt = u.GetConfigOption(`fprompt-compiled`)
@@ -407,60 +413,61 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 				}
 
 			case `{target}`:
-				if u.Character.Aggro != nil {
-					if u.Character.Aggro.MobInstanceId > 0 {
-						if m := mobs.GetInstance(u.Character.Aggro.MobInstanceId); m != nil {
-							promptOut.WriteString(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>`, m.Character.Name))
-						}
-					} else if u.Character.Aggro.UserId > 0 {
-						if target := GetByUserId(u.Character.Aggro.UserId); target != nil {
-							promptOut.WriteString(fmt.Sprintf(`<ansi fg="username">%s</ansi>`, target.Character.Name))
-						}
+				// Source target from CombatPhase (canonical) with
+				// fallback to legacy Aggro inside CurrentCombatTarget.
+				// Robust against transient Aggro=nil between rounds.
+				tRef := u.Character.CurrentCombatTarget()
+				if tRef.MobInstanceId > 0 {
+					if m := mobs.GetInstance(tRef.MobInstanceId); m != nil {
+						promptOut.WriteString(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>`, m.Character.Name))
+					}
+				} else if tRef.UserId > 0 {
+					if target := GetByUserId(tRef.UserId); target != nil {
+						promptOut.WriteString(fmt.Sprintf(`<ansi fg="username">%s</ansi>`, target.Character.Name))
 					}
 				}
 
 			case `{targethealth}`:
-				if u.Character.Aggro != nil {
-					var tHealth, tMax int
-					if u.Character.Aggro.MobInstanceId > 0 {
-						if m := mobs.GetInstance(u.Character.Aggro.MobInstanceId); m != nil {
-							tHealth, tMax = m.Character.Health, m.Character.HealthMax.Value
-						}
-					} else if u.Character.Aggro.UserId > 0 {
-						if target := GetByUserId(u.Character.Aggro.UserId); target != nil {
-							tHealth, tMax = target.Character.Health, target.Character.HealthMax.Value
-						}
+				tRef := u.Character.CurrentCombatTarget()
+				var tHealth, tMax int
+				if tRef.MobInstanceId > 0 {
+					if m := mobs.GetInstance(tRef.MobInstanceId); m != nil {
+						tHealth, tMax = m.Character.Health, m.Character.HealthMax.Value
 					}
-					if tMax > 0 {
-						desc, color := targetHealthDesc(tHealth, tMax)
-						promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, color, desc))
+				} else if tRef.UserId > 0 {
+					if target := GetByUserId(tRef.UserId); target != nil {
+						tHealth, tMax = target.Character.Health, target.Character.HealthMax.Value
 					}
+				}
+				if tMax > 0 {
+					desc, color := targetHealthDesc(tHealth, tMax)
+					promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, color, desc))
 				}
 
 			case `{targetpos}`:
-				if u.Character.Aggro != nil {
-					var tPos characters.CombatPosition
-					if u.Character.Aggro.MobInstanceId > 0 {
-						if m := mobs.GetInstance(u.Character.Aggro.MobInstanceId); m != nil {
-							tPos = m.Character.CombatPosition
-						}
-					} else if u.Character.Aggro.UserId > 0 {
-						if target := GetByUserId(u.Character.Aggro.UserId); target != nil {
-							tPos = target.Character.CombatPosition
-						}
+				tRef := u.Character.CurrentCombatTarget()
+				var tPos characters.CombatPosition
+				if tRef.MobInstanceId > 0 {
+					if m := mobs.GetInstance(tRef.MobInstanceId); m != nil {
+						tPos = m.Character.CombatPosition
 					}
-					if tPos != `` {
-						promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`,
-							tPos.GetPositionColor(), tPos.String()))
+				} else if tRef.UserId > 0 {
+					if target := GetByUserId(tRef.UserId); target != nil {
+						tPos = target.Character.CombatPosition
 					}
+				}
+				if tPos != `` {
+					promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`,
+						tPos.GetPositionColor(), tPos.String()))
 				}
 
 			case `{tank}`:
-				if u.Character.Aggro != nil && u.Character.Aggro.MobInstanceId > 0 {
-					if m := mobs.GetInstance(u.Character.Aggro.MobInstanceId); m != nil {
-						if m.Character.Aggro != nil && m.Character.Aggro.UserId > 0 &&
-							m.Character.Aggro.UserId != u.UserId {
-							if tankUser := GetByUserId(m.Character.Aggro.UserId); tankUser != nil {
+				tRef := u.Character.CurrentCombatTarget()
+				if tRef.MobInstanceId > 0 {
+					if m := mobs.GetInstance(tRef.MobInstanceId); m != nil {
+						mRef := m.Character.CurrentCombatTarget()
+						if mRef.UserId > 0 && mRef.UserId != u.UserId {
+							if tankUser := GetByUserId(mRef.UserId); tankUser != nil {
 								tankBar := renderVitalBar(
 									tankUser.Character.Health,
 									tankUser.Character.HealthMax.Value,
