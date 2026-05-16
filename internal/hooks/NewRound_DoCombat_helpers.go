@@ -498,11 +498,11 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 		user.Character.SetAggro(user.Character.Aggro.UserId, user.Character.Aggro.MobInstanceId, characters.DefaultAttack)
 	}
 
-	// Can't flee while in a grapple position (clinched or grounded).
-	// CombatPhase position veto also blocks TransitionToDisengaging, but
-	// the message still needs to fire here for UX.
-	if user.Character.CombatPosition == characters.PositionClinched ||
-		user.Character.CombatPosition == characters.PositionGrounded {
+	// Can't flee while in any grapple state. CombatPhase position veto
+	// also blocks TransitionToDisengaging, but the message still needs
+	// to fire here for UX. Chunk 4b R3: FSM-driven — IsStandingGrapple
+	// || IsGroundGrapple covers all 11 grapple states.
+	if user.Character.IsStandingGrapple() || user.Character.IsGroundGrapple() {
 		user.SendText(`<ansi fg="red">You can't flee while grappled!</ansi>`)
 		if user.Character.CombatPhase != nil {
 			user.Character.CombatPhase.ResolveFlee(false)
@@ -521,8 +521,9 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 			fleeScore := float64(user.Character.Stats.Dexterity.ValueAdj +
 				user.Character.GetSkillLevel(skills.Skullduggery)*25)
 
-			// Prone penalty — halve flee score when knocked down
-			if user.Character.CombatPosition == characters.PositionProne {
+			// Prone penalty — halve flee score when knocked down.
+			// Chunk 4b R3: Supine suffers the same penalty as Prone.
+			if user.Character.IsProne() || user.Character.IsSupine() {
 				fleeScore *= 0.5
 			}
 			blockScore := float64(mob.Character.Stats.Dexterity.ValueAdj +

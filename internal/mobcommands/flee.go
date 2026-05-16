@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -23,15 +22,18 @@ func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	// Can't flee while grappled
-	if mob.Character.CombatPosition == characters.PositionClinched ||
-		mob.Character.CombatPosition == characters.PositionGrounded {
+	// Can't flee while grappled. Chunk 4b R3: FSM-driven — covers all
+	// 11 grapple states via the two rollups (legacy enum only knew the
+	// Clinched / Grounded buckets).
+	if mob.Character.IsStandingGrapple() || mob.Character.IsGroundGrapple() {
 		return true, nil
 	}
 
-	// Prone penalty applied to flee score below
+	// Prone penalty applied to flee score below. Chunk 4b R3: Supine
+	// suffers the same penalty as Prone (legacy enum couldn't
+	// distinguish the two knockdown directions).
 	pronePenalty := 1.0
-	if mob.Character.CombatPosition == characters.PositionProne {
+	if mob.Character.IsProne() || mob.Character.IsSupine() {
 		pronePenalty = 0.5
 	}
 
