@@ -174,21 +174,35 @@ func legacyMapPositionToCombatPosition(s position.State) characters.CombatPositi
 
 // IsThirdPartyAttack returns true if the attacker is not involved in the target's grapple.
 // This identifies opportunistic attackers targeting grappling fighters.
-// Stage 8.5: Third-party grapple vulnerability
+// Stage 8.5: Third-party grapple vulnerability.
+//
+// Chunk 4b R2: FSM-driven. Target must be in a grapple state and have a
+// Partner recorded in its GrappleData; attacker is third-party iff its
+// ActorRef does not match that Partner. Replaces the legacy
+// CombatPosition.IsGrapplePosition + GrappleControllerId reads (both
+// sunset in S3/S5).
 func IsThirdPartyAttack(attacker *characters.Character, target *characters.Character) bool {
-	// Target must be in a grapple position
-	if !target.CombatPosition.IsGrapplePosition() {
+	if !target.IsGrappling() {
 		return false
 	}
-
-	// Target must have an active grapple (controller ID set)
-	if target.GrappleControllerId == 0 {
+	if target.Position == nil {
 		return false
 	}
-
-	// Attacker is third-party if they're not part of this grapple
-	// (different controller ID or no grapple at all)
-	return attacker.GrappleControllerId != target.GrappleControllerId
+	d, ok := target.Position.GrappleData()
+	if !ok {
+		return false
+	}
+	if d.Partner.IsZero() {
+		// Solo Turtle is the only legal zero-Partner grapple state.
+		// Preserve legacy behavior: "no controller ID" → not third
+		// party. 4e refines this with proper solo-defender semantics.
+		return false
+	}
+	attackerRef := state.ActorRef{
+		UserId:        attacker.GetUserId(),
+		MobInstanceId: attacker.GetMobInstanceId(),
+	}
+	return d.Partner != attackerRef
 }
 
 // AttemptSubmission performs a submission attempt from controller to controlled.

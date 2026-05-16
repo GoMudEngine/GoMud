@@ -8,7 +8,10 @@
 // 4b/4c sunset the enum helpers once command sites cut over.
 package characters
 
-import "github.com/GoMudEngine/GoMud/internal/configs"
+import (
+	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
+)
 
 // --- Per-state predicates (14) ---
 
@@ -187,6 +190,33 @@ func (c *Character) IsBeingControlled() bool {
 		return false
 	}
 	return c.Position.IsBeingControlled()
+}
+
+// GetPositionSpeedMultiplier returns the combat attack-speed multiplier for
+// the character's current Position state. Replaces the legacy
+// CombatPosition.GetSpeedMultiplier helper (sunset in S5 of chunk 4b).
+//
+// Mapping (matches the legacy enum's intent; Turtle joins Prone/Supine
+// because a balled-up defender swings just as poorly):
+//
+//	Standing                  → 1.0
+//	Prone / Supine / Turtle   → 0.5
+//	Clinch / BackStanding     → 0.6
+//	Ground grapples (9 states) → 0.3
+func (c *Character) GetPositionSpeedMultiplier() float64 {
+	if c.Position == nil {
+		return 1.0
+	}
+	switch c.Position.State() {
+	case position.Standing:
+		return 1.0
+	case position.Prone, position.Supine, position.Turtle:
+		return 0.5
+	case position.Clinch, position.BackStanding:
+		return 0.6
+	default:
+		return 0.3
+	}
 }
 
 // IsLowGrappleStamina returns true when stamina fraction is below

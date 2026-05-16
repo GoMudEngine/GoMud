@@ -109,9 +109,9 @@ func calcSwingCount(sourceChar *characters.Character, weaponSpeed float64, extra
 		swings *= float64(bal.HasteSwingMultiplier)
 	}
 
-	// Position-based speed modifier
-	positionSpeed := sourceChar.CombatPosition.GetSpeedMultiplier()
-	swings *= positionSpeed
+	// Position-based speed modifier (chunk 4b R1: FSM-driven via the new
+	// helper; legacy CombatPosition.GetSpeedMultiplier is sunset in S5).
+	swings *= sourceChar.GetPositionSpeedMultiplier()
 
 	// Round to nearest int, minimum 1
 	result := int(math.Round(swings))
@@ -299,8 +299,9 @@ func buildDamageParams(sourceChar *characters.Character, targetChar *characters.
 	dmgMean *= dmgMult
 	rawDmgForCrit *= dmgMult
 
-	// Stage 7.5: Apply prone damage penalty
-	if sourceChar.CombatPosition == characters.PositionProne {
+	// Stage 7.5: Apply prone damage penalty. Chunk 4b R1: FSM-driven —
+	// Supine attackers swing just as poorly as Prone, so include both.
+	if sourceChar.IsProne() || sourceChar.IsSupine() {
 		dmgMean *= float64(configs.GetBalanceConfig().ProneDamagePenalty)
 		rawDmgForCrit *= float64(configs.GetBalanceConfig().ProneDamagePenalty)
 	}
@@ -343,11 +344,13 @@ func calcAttackScore(sourceChar *characters.Character, targetChar *characters.Ch
 	staminaMult := ResourceMultiplier(sourceChar.Stamina, sourceChar.StaminaMax.Value, spPenalty)
 	attackScore *= staminaMult
 
-	// Stage 7.5: Apply prone attack multipliers
-	if sourceChar.CombatPosition == characters.PositionProne {
+	// Stage 7.5: Apply prone attack multipliers. Chunk 4b R1: FSM-driven —
+	// Supine maps to the same modifier as Prone (legacy enum couldn't
+	// distinguish the two).
+	if sourceChar.IsProne() || sourceChar.IsSupine() {
 		attackScore *= float64(bal.ProneAttackMultiplier)
 	}
-	if targetChar.CombatPosition == characters.PositionProne {
+	if targetChar.IsProne() || targetChar.IsSupine() {
 		attackScore *= float64(bal.ProneVulnerabilityMultiplier)
 	}
 
@@ -377,15 +380,18 @@ func calcCritThreshold(sourceChar *characters.Character, targetChar *characters.
 		critThreshold = 1.5
 	}
 
-	// Stage 8.3: Position-based crit modifiers
-	if sourceChar.CombatPosition.IsGrapplePosition() && sourceChar.HasCondition(characters.ConditionGrappleController) {
-		if sourceChar.CombatPosition == characters.PositionGrounded {
+	// Stage 8.3: Position-based crit modifiers. Chunk 4b R1: FSM-driven —
+	// IsController replaces the legacy ConditionGrappleController gate
+	// (S4 sunset), and IsGroundGrapple / IsStandingGrapple replace the
+	// legacy PositionGrounded / PositionClinched enum reads.
+	if sourceChar.IsController() {
+		if sourceChar.IsGroundGrapple() {
 			critThreshold -= 0.4
-		} else if sourceChar.CombatPosition == characters.PositionClinched {
+		} else if sourceChar.IsStandingGrapple() {
 			critThreshold -= 0.2
 		}
 	}
-	if targetChar.CombatPosition == characters.PositionGrounded && !targetChar.HasCondition(characters.ConditionGrappleController) {
+	if targetChar.IsGroundGrapple() && !targetChar.IsController() {
 		critThreshold += 0.4
 	}
 
@@ -471,9 +477,13 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 			defenseScore *= float64(bal.BlockEffectiveness)
 		}
 
-		// Stage 7.5: Apply position-based defense penalties
-		switch targetChar.CombatPosition {
-		case characters.PositionProne:
+		// Stage 7.5: Apply position-based defense penalties. Chunk 4b R1:
+		// FSM-driven — Prone/Supine collapse to the legacy "prone"
+		// penalty bucket, IsStandingGrapple matches the legacy
+		// "clinched" bucket, IsGroundGrapple matches the legacy
+		// "grounded" bucket.
+		switch {
+		case targetChar.IsProne() || targetChar.IsSupine():
 			switch defenseType {
 			case "dodge":
 				defenseScore *= float64(bal.ProneDodgePenalty)
@@ -482,7 +492,7 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 			case "block":
 				defenseScore *= float64(bal.ProneBlockPenalty)
 			}
-		case characters.PositionClinched:
+		case targetChar.IsStandingGrapple():
 			switch defenseType {
 			case "dodge":
 				defenseScore *= float64(bal.ClinchDodgePenalty)
@@ -491,7 +501,7 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 			case "block":
 				defenseScore *= float64(bal.ClinchBlockPenalty)
 			}
-		case characters.PositionGrounded:
+		case targetChar.IsGroundGrapple():
 			switch defenseType {
 			case "dodge":
 				defenseScore *= float64(bal.GroundedDodgePenalty)

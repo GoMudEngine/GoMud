@@ -4,73 +4,75 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/stretchr/testify/assert"
 )
 
 // ─── IsThirdPartyAttack ─────────────────────────────────────────────────────
 
+// Chunk 4b R2: IsThirdPartyAttack now reads the Position FSM
+// (target.IsGrappling + GrappleData.Partner) instead of the legacy
+// CombatPosition + GrappleControllerId fields. Fixtures use FSM
+// transitions so the test covers the new code path.
 func TestIsThirdPartyAttack(t *testing.T) {
-	tests := []struct {
-		name              string
-		atkPos            characters.CombatPosition
-		tgtPos            characters.CombatPosition
-		atkGrappleCtrlId  int
-		tgtGrappleCtrlId  int
-		want              bool
-	}{
-		{
-			name:   "neither in grapple → not third party",
-			atkPos: characters.PositionStanding,
-			tgtPos: characters.PositionStanding,
-			want:   false,
-		},
-		{
-			name:             "target in grapple but no controller ID → not third party",
-			atkPos:           characters.PositionStanding,
-			tgtPos:           characters.PositionClinched,
-			tgtGrappleCtrlId: 0, // no controller set
-			want:             false,
-		},
-		{
-			name:             "both in same grapple → not third party",
-			atkPos:           characters.PositionGrounded,
-			tgtPos:           characters.PositionGrounded,
-			atkGrappleCtrlId: 42,
-			tgtGrappleCtrlId: 42,
-			want:             false,
-		},
-		{
-			name:             "attacker standing, target in grapple with different controller → third party",
-			atkPos:           characters.PositionStanding,
-			tgtPos:           characters.PositionClinched,
-			atkGrappleCtrlId: 0,
-			tgtGrappleCtrlId: 42,
-			want:             true,
-		},
-		{
-			name:             "attacker in different grapple than target → third party",
-			atkPos:           characters.PositionGrounded,
-			tgtPos:           characters.PositionGrounded,
-			atkGrappleCtrlId: 10,
-			tgtGrappleCtrlId: 42,
-			want:             true,
-		},
+	newChar := func(uid int) *characters.Character {
+		c := characters.New()
+		c.SetUserId(uid)
+		return c
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			atk := characters.New()
-			atk.CombatPosition = tt.atkPos
-			atk.GrappleControllerId = tt.atkGrappleCtrlId
+	t.Run("neither in grapple → not third party", func(t *testing.T) {
+		atk := newChar(1)
+		tgt := newChar(2)
+		assert.False(t, IsThirdPartyAttack(atk, tgt))
+	})
 
-			tgt := characters.New()
-			tgt.CombatPosition = tt.tgtPos
-			tgt.GrappleControllerId = tt.tgtGrappleCtrlId
+	t.Run("both in same Clinch (partner refs match) → not third party", func(t *testing.T) {
+		atk := newChar(10)
+		tgt := newChar(20)
+		err := atk.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: tgt.GetUserId()}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+		assert.NoError(t, err)
+		err = tgt.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: atk.GetUserId()}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+		assert.NoError(t, err)
+		assert.False(t, IsThirdPartyAttack(atk, tgt))
+	})
 
-			got := IsThirdPartyAttack(atk, tgt)
-			assert.Equal(t, tt.want, got)
-		})
-	}
+	t.Run("attacker standing, target in grapple with someone else → third party", func(t *testing.T) {
+		atk := newChar(1)
+		other := newChar(42)
+		tgt := newChar(2)
+		err := tgt.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: other.GetUserId()}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+		assert.NoError(t, err)
+		assert.True(t, IsThirdPartyAttack(atk, tgt))
+	})
+
+	t.Run("attacker in a different grapple than target → third party", func(t *testing.T) {
+		atk := newChar(10)
+		atkPartner := newChar(11)
+		tgt := newChar(20)
+		tgtPartner := newChar(21)
+		err := atk.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: atkPartner.GetUserId()}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+		assert.NoError(t, err)
+		err = tgt.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: tgtPartner.GetUserId()}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+		assert.NoError(t, err)
+		assert.True(t, IsThirdPartyAttack(atk, tgt))
+	})
 }
 
 // ─── AttemptGrapple ─────────────────────────────────────────────────────────

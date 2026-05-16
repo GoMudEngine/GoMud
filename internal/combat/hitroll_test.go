@@ -8,6 +8,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -84,15 +86,24 @@ func TestCalcSwingCount_RecoveryForcesOne(t *testing.T) {
 }
 
 func TestCalcSwingCount_ProneReduces(t *testing.T) {
-	ch := &characters.Character{}
+	// Chunk 4b R1: calcSwingCount reads the speed multiplier via the
+	// new FSM helper. Use characters.New() (which seeds Position) and
+	// parallel-write the FSM alongside the legacy CombatPosition field
+	// until S1/S2 sunset the legacy field.
+	ch := characters.New()
 	ch.Stats.Dexterity.ValueAdj = 100
 	ch.StaminaMax.Value = 100
 	ch.Stamina = 100
 
 	ch.CombatPosition = characters.PositionStanding
+	ch.Position.ForceStanding(state.TransitionReason{Trigger: "test_setup"})
 	standing := calcSwingCount(ch, 1.4, 0, false)
 
 	ch.CombatPosition = characters.PositionProne
+	_ = ch.Position.TransitionToProne(
+		position.ProneData{},
+		state.TransitionReason{Trigger: "test_setup"},
+	)
 	prone := calcSwingCount(ch, 1.4, 0, false)
 
 	assert.Less(t, prone, standing,
