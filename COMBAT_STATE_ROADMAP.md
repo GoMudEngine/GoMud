@@ -36,7 +36,7 @@ This effort collapses that surface to one canonical framework:
 | 0 | Framework + Combat Phase | Done (2026-05-13) | `feature/mob-aliveness-1.3-crimes`. Framework package + Combat Phase machine; compat wrappers preserve `Aggro` API. Full field deletion deferred. |
 | 1 | Awareness | Done (2026-05-15) | Visible / Concealing / Hidden / Revealing. FSM port + Hidden mechanic refresh. 33 Behavior Matrix tests (29 PASS + 4 SKIP). |
 | 2 | Life | Done (2026-05-13) | Alive / Dead / Respawning. 252-line `mobcommands/suicide.go` + ~290-line `usercommands/suicide.go` consolidated into thin handlers + Life cascade + 14 observer files. Permadeath + extra-lives sunset. Auto-look after respawn teleport. 12 Behavior Matrix tests PASS + 15 SKIP (integration-deferred). |
-| 3 | Activity | Not started | Free / Casting / Crafting / Foraging / Salvaging / ... |
+| 3 | Activity | Done (2026-05-15) | Free / Casting / Crafting / Salvaging. Star-topology FSM consolidates `Character.CastingState` + `Character.CraftingState` pointer fields and the salvage MiscData hijack into one per-state-data machine. Per-activity interrupt policy formalized (casting allows combat entry; craft/salvage block & cancel on combat/damage/movement). `cancel_activity` btree primitive added. 16/22 Behavior Matrix tests PASS/SKIP. |
 | 4 | Position | Not started | Standing / Prone / Clinched / Grounded |
 | 5 | Presence | Not started | Player and mob variants |
 | 6 | Perception | Not started | Sighted / Blinded. Observer-side dual to Awareness — centralizes room-broadcast visibility gating. Added 2026-05-13 after recurring blind/dark-room broadcast bugs (latest: companion-name leak through blindness). No hard dependency on chunks 3-5; could ship earlier if pain escalates. |
@@ -283,6 +283,114 @@ blind/dark-room broadcast bug class.
 Next: chunk 3 — Activity machine (`Free` / `Casting` / `Crafting` /
 `Foraging` / `Salvaging` / ...). Perception (chunk 6) may bump
 earlier in the sequence if blind-broadcast bugs become blocking.
+
+---
+
+## Chunk 3 — Shipped (2026-05-15)
+
+Built the `internal/state/activity/` machine (`Free / Casting /
+Crafting / Salvaging`) on the chunk-0 framework. Star topology — every
+active state goes through Free, no direct active-to-active. Per-state
+data structs (`CastingData`, `CraftingData`, `SalvagingData`) preserve
+the field shapes of the deleted `CastingState` and `CraftingState`
+pointer fields so per-tick consumers (`processFoldRound` for casts,
+inline craft-tick blocks for crafts/salvages) only swap accessor.
+
+**Migration cadence:** parallel-write strategy kept the server bootable
+and tests green at every commit through Tasks 6-10 — both the legacy
+`CastingState`/`CraftingState` pointer fields AND the new Activity
+machine stayed in sync. Task 11 deleted the legacy fields + struct files
+and added three `Advance*` per-tick helpers (`AdvanceCastingFolds`,
+`AdvanceCraftingRound`, `AdvanceSalvagingRound`) that mutate per-state
+data without re-transitioning (transition-table-safe).
+
+**Per-activity interrupt policy (formalized in spec):**
+- **Casting** — combat entry allowed (cast IS a combat action; veto
+  exempt). Damage triggers concentration break (willpower roll —
+  existing rule, rewired to fire `Activity.TransitionToFree` on roll
+  failure).
+- **Crafting** — combat entry blocked by the activity veto in
+  `CombatPhase_Vetoes.go` (`RegisterActivityCheck` returns
+  `!c.IsCrafting() && !c.IsSalvaging()`). Damage fires hard cancel
+  via `cancelCraftOrSalvageOnDamage` (no roll). Movement cancels via
+  `Activity.TransitionToFree(TriggerMovementInterrupt)` from `go.go`.
+- **Salvaging** — same rules as Crafting.
+
+**Mob/player parity** — three pre-chunk-3 asymmetries resolved:
+- Mob crafting auto-cancelled on combat entry; player crafting didn't.
+  Now both flow through the same `RegisterActivityCheck` veto.
+- Damage broke casts only; crafts and salvages were damage-resilient.
+  Now all three respond to damage per the policy table.
+- Mob-only combat-cancel block in `tickMobCrafting` deleted; cascade
+  observer covers both actors generically.
+
+**Cancel + btree primitive** — `usercommands/cancel.go` now dispatches
+on `Activity.State()`: 50% conviction refund on cast cancel (preserved
+existing math), no refund on craft/salvage cancel (no materials consumed
+until completion). `mobcommands/cancel.go` is new — mob parity. New
+`cancel_activity` btree action in `internal/behaviortree/actions_combat.go`
+enables tactical-abort patterns from behavior trees (panic-flee on low
+HP, swap to heal mid-cast, drop craft to defend). **Authoring the
+behavior trees that use it is deferred to content/aliveness work after
+chunk 6.**
+
+**Salvage hijack cleanup** — `CraftingState.RecipeId = "salvage:<itemid>"`
++ `MiscData["salvage_item_uuid"]` + `MiscData["salvage_spoiled_potion"]`
+all gone. `SalvagingData` holds the same data as typed fields. Resolver
+in `NewRound_UserRoundTick.go:resolveSalvage` reads directly from
+`Activity.SalvagingData()`.
+
+**IsActing gate audit** — 13 `IsCrafting()` call sites migrated to
+`IsActing()` (the canonical "busy with any locked-in activity" gate),
+preserving 5 sites that genuinely want crafting-specifically (the craft
+command's own re-entrancy check, round-completion checks, and the
+predicate definition itself). Casting + Salvaging now block bash / kick
+/ taunt / rally / warcry / trip alongside Crafting.
+
+**Sunset:**
+- `Character.CastingState` + `Character.CraftingState` pointer fields
+  deleted.
+- `internal/characters/casting.go` + `internal/characters/crafting.go`
+  struct files deleted (helpers moved to `cast_helpers.go`).
+- Chunk-2 Activity pre-wire in `Life_Cascades.go` (direct
+  `CastingState = nil` / `CraftingState = nil`) deleted — Activity-side
+  observer (`activity_life_dead` in `Activity_Cascades.go`) subscribed
+  to Life Dead now owns the cleanup.
+
+**Behavior Matrix:** 38 intent-driven tests (AC-001 through AC-038)
+authored in `activity_test.go`. 16 PASS directly (basic transitions,
+star-topology veto); 22 SKIP at the unit layer because they require
+cross-machine wiring (verified by `Activity_Cascades_test.go` integration
+tests + the migration tasks themselves). Chunks 0/1/2 regression tests
+pass; package tests across the affected boundary (state/..., characters,
+hooks, usercommands, mobcommands, actions, behaviortree, combat) all
+green.
+
+**Intentional asymmetries (documented in `internal/state/activity/context.md`):**
+1. No Foraging or Tracking state — both are one-shot today; ceremony
+   without payoff.
+2. Mob forager `forager.ForagerState` left in btree — different
+   abstraction layer (AI orchestration vs character mechanic state).
+   Mob foragers remain `Activity = Free` throughout the forage loop.
+3. No `IsForaging()` / `IsTracking()` predicates on Character — direct
+   consequence of (1).
+4. Salvage gets its own state despite structural similarity to crafting
+   — cleans up the hijack; future divergence likely.
+
+**Deferred from chunk 3 (followups):**
+- Multi-round mob salvage with per-round messaging (mobs stay
+  single-tick at the resolution layer for now).
+- Tactical activity-cancel behavior trees (primitive ships; authoring
+  is content/aliveness work after chunk 6).
+- Shared ability cooldown — master spec logs this as a Phase-7
+  candidate (helper, not machine).
+- In-game smoke scenarios from the spec deferred to user session.
+
+**Aliveness work stays paused** for chunks 4-6. Chunk 4 (Position
+machine) brainstorm is next.
+
+Next: chunk 4 — Position machine (`Standing` / `Prone` / `Clinched` /
+`Grounded`).
 
 ---
 
