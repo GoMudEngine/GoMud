@@ -302,30 +302,133 @@ fields.
 
 ### 3. Position
 
-**States:** `Standing | Prone | Clinched | Grounded`
+**States (expanded 2026-05-16 to a full BJJ/MMA position taxonomy
+— see "Position rich-grapple expansion" below for rationale and
+sub-chunk breakdown):**
 
-**Concerns:** body position in combat, grapple state, recovery
-mechanics.
+```
+Standing | Prone | Clinch | BackStanding |
+Mount | SideControl | KneeOnBelly | NorthSouth | Crucifix | BackGround |
+HalfGuard | Guard | Turtle
+```
+
+13 states total — 2 non-grapple (Standing, Prone), 2 standing-pair
+(Clinch, BackStanding), 6 ground-top-dominant (Mount, SideControl,
+KneeOnBelly, NorthSouth, Crucifix, BackGround), 1 ground-transitional
+(HalfGuard), 1 ground-bottom-active (Guard), 1 ground-defensive
+(Turtle).
+
+**Concerns:** body position in combat, grapple state (full BJJ/MMA
+position taxonomy), control gradient between paired grapplers,
+weapon utility per position, submission setup, recovery mechanics,
+third-party-interaction asymmetries.
 
 **Replaces:** the half-migrated `CombatPosition` enum + the
-deprecated `Prone` bool + `PositionRoundsMin` recovery counter.
-Recovery rules become transition cooldowns on Standing-from-
-Prone/Grounded transitions.
+deprecated `Prone` bool + `PositionRoundsMin` recovery counter +
+`GrappleControllerId` field + `ConditionGrappleController` side-
+channel. Recovery rules become transition cooldowns on Standing-
+from-Prone transitions; controller role becomes a derived property
+of the per-state control level instead of an explicit flag.
 
-**Key transitions:** `Standing → Prone` (knockdown, trip
-success), `Prone → Standing` (recovery roll), `Standing →
-Clinched` (grapple), `Clinched → Grounded` (grapple control
-escalation), `Clinched/Grounded → Standing` (grapple break /
-target submission). Documented Behavior Matrix.
+**Key axes (orthogonal to FSM state):**
 
-**Interaction:**
-- Position ∈ {Clinched, Grounded} blocks Combat Phase
-  `Engaged → Disengaging` via flee.
-- Position = Prone gates certain commands (can't bash from
-  prone; can stomp instead — already in code as kick variant
-  selector).
-- Life=Dead forces Position=Standing on next tick (and clears
-  inbound grapple state).
+- **Control axis** — per-grappler 5-level scale: `InControl |
+  LosingControl | Neutral | BecomingControlled | Controlled`.
+  Stored as per-state data on grapple states. Each round, opposed
+  rolls shift control; when control crosses thresholds, position
+  transitions trigger.
+- **Weapon utility** — `(Position × WeaponType) → modifier`
+  content table. Drives damage / hit math.
+- **Submission availability** — `(Position, ControlLevel)` tuple
+  gates which submissions can be attempted. Auto/opportunistic
+  rather than explicit command (rework of current submission
+  special-attack command in 4d).
+- **Third-party interaction** — both grapplers have degraded
+  defense vs outside attackers (controlled is severely degraded,
+  controller is moderately degraded — asymmetry maps to control
+  axis). Outside damage to controller degrades control level.
+
+**Key transitions (geometric only; control-axis transitions live
+in 4b):**
+
+| From | To | Trigger |
+|---|---|---|
+| Standing | Prone | knockdown (bash / trip / spell knockdown) |
+| Prone | Standing | recovery roll / explicit `stand` (stamina cost) |
+| Standing | Clinch | grapple entry roll |
+| Clinch | Standing | grapple break |
+| Clinch | BackStanding | back-take from clinch |
+| Clinch | Mount / SideControl / NorthSouth / Guard / BackGround | takedown variants |
+| BackStanding | Standing | break |
+| BackStanding | BackGround | back-controller pulls down |
+| BackStanding | Clinch | controlled turns to face |
+| Mount ↔ SideControl ↔ KneeOnBelly ↔ NorthSouth | each other | controller transitions (control-roll-gated) |
+| Mount / SideControl / NorthSouth | Crucifix | controller isolates arms |
+| Mount / SideControl / NorthSouth / Crucifix / BackGround | HalfGuard / Guard | controlled escapes (control-roll-gated) |
+| Mount / SideControl / NorthSouth | BackGround | controlled rolls, controller takes back |
+| HalfGuard ↔ Guard | each other | top passes / bottom recovers |
+| Guard / HalfGuard / Mount-bottom | Standing | bottom escapes + stands |
+| any-ground | Turtle | controlled curls defensively (failed escape) |
+| Turtle | Standing | controlled stands |
+| Turtle | BackGround | controller hooks in |
+| Prone | Mount / SideControl / NorthSouth / BackGround | another character mounts the prone target |
+
+Full transition graph + Behavior Matrix authored in chunk-4a spec.
+
+**Interaction with other machines:**
+
+- Position ∈ {grapple states} blocks Combat Phase
+  `Engaged → Disengaging` via flee (existing rule, preserved).
+- Position = Prone gates certain commands (stomp variant
+  selector — already wired).
+- Position ∈ {grapple top-dominant} unlocks position-gated
+  attacks (knee / cross-face / ground-and-pound — new in 4c).
+- Life=Dead forces Position=Standing on next tick (chunk-2
+  pre-wire repointed onto Position-machine observer in 4a).
+- Combat Phase Idle→Engaging veto: Position must be Standing
+  OR a grapple top-dominant state (Mount/SC/KOB/etc.) where the
+  controller can choose to enter combat with a third party.
+
+### 3a. Position rich-grapple expansion (added 2026-05-16)
+
+Chunk 4 was originally specced for 4 positions (Standing / Prone /
+Clinched / Grounded). On 2026-05-16 the scope expanded to a full
+BJJ/MMA position taxonomy (13 states) plus an orthogonal control
+axis, weapon-utility table, submission system, and third-party
+interaction mechanics. Rationale: the original 4-state model
+gives correct structure but loses the tactical richness of real
+grappling — different ground positions have meaningfully different
+submission opportunities, weapon utility, escape difficulty, and
+defense-asymmetry vs third parties. The richer system enables the
+"very real tactical decisions" the user identified as the design
+intent.
+
+Because the expanded scope is roughly 4× the size of the prior
+chunks, it ships as 6 sub-chunks each sized like a chunk-3 sibling:
+
+| Sub-chunk | Scope | Size |
+|---|---|---|
+| **4a** | Position FSM: 13 geometric states, transitions, basic per-state data (incl. `ControlLevel` field default Neutral), migration from `CombatPosition` enum, btree primitives for position queries. No per-round control rolls yet — control axis exists as a data slot only. | M-L |
+| **4b** | Control-axis mechanics: per-round opposed rolls, threshold-triggered position transitions, gradient messaging ("you feel your mount slipping"). | M |
+| **4c** | Weapon-utility-by-position table: (Position × WeaponType) → damage/hit modifier YAML, combat resolution reads it. | S-M |
+| **4d** | Submission system: rework or sunset the existing `submission` special-attack command in favor of automatic / opportunistic submissions gated on (Position, ControlLevel). Submission outcomes (choked out, damaged limb, tap-out, continue) authored. | M-L |
+| **4e** | Third-party interaction: symmetric defense degradation (controller moderately, controlled severely), grappler offense restrictions vs third party, outside-damage→control-axis degradation, mob AI bias toward attacking grappled enemies, submission-interrupt risk. | M |
+| **4f** | Balance pass + position flavor text + smoke against full-stack combat scenarios. | M |
+
+**Out of scope across all of chunk 4 (logged as future followups
+if pulled):**
+- N-vs-1 grappling (mob B physically joins an existing grapple
+  to make it 2-on-1). Doesn't exist in current code; real but
+  rare; significant complexity in the per-state data shape.
+- Cardio / fatigue effects specific to grapple duration. Existing
+  stamina system handles general tiredness; layering grapple-
+  specific cardio is bonus content.
+- Clinch-grip granularity as distinct FSM states (Thai plum,
+  50/50, over-under, double-underhooks, single-collar). Modeled
+  as per-state `ClinchGrip` data field instead — drives modifiers
+  but isn't a separate FSM state. Promotes to distinct states
+  only if grip transitions reveal the data-driven model is too
+  loose.
 
 ### 4. Awareness
 
@@ -592,18 +695,33 @@ discovered during smoke.
 | 0 | State machine framework + Combat Phase | XL | — | Done (2026-05-13) |
 | 1 | Awareness machine | M | 0 | Done (2026-05-15) |
 | 2 | Life machine | M | 0 | Done (2026-05-13) |
-| 3 | Activity machine | L | 0 | Not started |
-| 4 | Position machine | M | 0, 1 (interactions) | Not started |
+| 3 | Activity machine | L | 0 | Done (2026-05-15) |
+| 4a | Position machine — FSM + 13 states + migration | M-L | 0, 1 | Not started |
+| 4b | Position — control-axis mechanics | M | 4a | Not started |
+| 4c | Position — weapon-utility-by-position table | S-M | 4a | Not started |
+| 4d | Position — submission system (rework/sunset existing command) | M-L | 4b | Not started |
+| 4e | Position — third-party interaction asymmetries | M | 4a, 4b | Not started |
+| 4f | Position — balance pass + flavor text + full-stack smoke | M | 4a-4e | Not started |
 | 5 | Presence machine | M | 0 | Not started |
 | 6 | Perception machine | S-M | 0, 1 (composes with Awareness) | Not started |
 
-Total estimated effort: 7-9 weeks (chunk 6 added 2026-05-13).
-Aliveness pauses for the duration; resumes after chunk 6 lands.
+Total estimated effort: 12-15 weeks (chunk 4 expanded 2026-05-16
+into 6 sub-chunks for the rich-grapple system — see section "3a.
+Position rich-grapple expansion" for rationale). Aliveness pauses
+for the duration; resumes after chunk 6 lands.
 
 **Note on chunk 6 ordering:** Chunk 6 has no hard dependency on
 chunks 3-5 and could ship earlier if the blind/dark-room broadcast
 bugs become blocking. Current plan keeps chronological numbering;
 revisit if operational pain escalates.
+
+**Note on chunk 4 sub-chunk ordering:** 4a is the architectural
+prerequisite for everything else (it ships the FSM that 4b-4e
+build on). After 4a lands, 4b-4e have weaker ordering — 4c
+(weapon utility) and 4e (third party) could potentially ship
+in parallel with 4b (control axis), but for simplicity the
+canonical order is sequential. 4f is always last (depends on
+all prior sub-chunks for balance / smoke surface).
 
 ## Behavior Matrix template
 
