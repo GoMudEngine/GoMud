@@ -224,15 +224,28 @@ func AttemptSubmission(controller *characters.Character, controlled *characters.
 
 // ApplySubmissionFailure applies the consequences of a failed submission attempt.
 // Stage 8.6: Controller falls prone, controlled escapes to standing.
+// Chunk 4b W3 cutover: break the pair via TransitionPair → Standing,
+// then knock the controller down. Legacy CombatPosition / PositionRoundsMin
+// / GrappleControllerId stay in sync via parallel-write until S1.
 func ApplySubmissionFailure(controller *characters.Character, controlled *characters.Character) {
-	// Controlled escapes to standing
+	// FSM: break the grapple, then knock controller to Prone.
+	if err := position.TransitionPair(
+		controller, controlled, position.Standing,
+		state.TransitionReason{Trigger: position.TriggerGrappleBreak},
+	); err != nil {
+		mudlog.Warn("ApplySubmissionFailure: TransitionPair → Standing failed", "err", err)
+		return
+	}
+	_ = controller.Position.TransitionToProne(
+		position.ProneData{MinRecoveryRounds: 2},
+		state.TransitionReason{Trigger: position.TriggerKnockdownFaceForward},
+	)
+
+	// Legacy parallel-write (deleted in S1).
 	controlled.CombatPosition = characters.PositionStanding
-
-	// Controller falls prone (overcommitted)
 	controller.CombatPosition = characters.PositionProne
-	controller.PositionRoundsMin = 2 // Must spend 2 rounds recovering
+	controller.PositionRoundsMin = 2
 
-	// Clear grapple state for both
 	controller.GrappleControllerId = 0
 	controlled.GrappleControllerId = 0
 	controller.RemoveCondition(characters.ConditionGrappleController)
@@ -241,25 +254,37 @@ func ApplySubmissionFailure(controller *characters.Character, controlled *charac
 
 // ApplySubmissionSuccess applies the consequences of a successful submission.
 // Stage 8.6: If opponent yields, combat ends. If resists, takes 2x damage and attempts escape.
+// Chunk 4b W3 cutover: on yield, break the pair via TransitionPair →
+// Standing, then knock the controlled side prone for 3 rounds. Resist
+// branch leaves position untouched (controlled stays in the grapple);
+// the per-round tick (T6) handles any subsequent escape.
 func ApplySubmissionSuccess(controller *characters.Character, controlled *characters.Character, choice string) {
 	if choice == "yield" {
-		// Opponent yields - combat ends, they are helpless
-		// Note: Actual combat end logic is handled in submit.go command
-		// This function just marks the state
+		// FSM: end the grapple, then knock the loser prone.
+		if err := position.TransitionPair(
+			controller, controlled, position.Standing,
+			state.TransitionReason{Trigger: position.TriggerGrappleBreak},
+		); err != nil {
+			mudlog.Warn("ApplySubmissionSuccess yield: TransitionPair → Standing failed", "err", err)
+			return
+		}
+		_ = controlled.Position.TransitionToProne(
+			position.ProneData{MinRecoveryRounds: 3},
+			state.TransitionReason{Trigger: position.TriggerKnockdownFaceForward},
+		)
+
+		// Legacy parallel-write (deleted in S1).
 		controlled.CombatPosition = characters.PositionProne
-		controlled.PositionRoundsMin = 3 // Helpless on ground
+		controlled.PositionRoundsMin = 3
 	} else {
-		// Opponent resists - takes damage based on controller's strength
+		// Resist: take damage based on controller's strength. Position
+		// unchanged — the per-round tick handles any subsequent escape.
 		baseDamage := float64(controller.Stats.Strength.ValueAdj)
-		damage := int(baseDamage * 2.0) // 2x strength as damage
+		damage := int(baseDamage * 2.0)
 		if damage < 1 {
 			damage = 1
 		}
-
 		controlled.Health -= damage
-
-		// Trigger automatic escape check (handled in position progression system)
-		// The grounded escape will be attempted in the next round tick
 	}
 }
 
@@ -273,13 +298,24 @@ type CritFailureResult struct {
 // HandleGrappleCritFailure handles the consequences of a critical grapple failure.
 // Stage 8.6: Attacker falls prone, defender gets reversal opportunity (+15% grapple bonus).
 //
-// Triggered when grapple fails with z-score < -2.0 (~2-3% chance)
+// Triggered when grapple fails with z-score < -2.0 (~2-3% chance).
+// Chunk 4b W8 cutover: attacker is Standing (grapple entry from
+// Standing) and the failure aborts before pair formation, so a direct
+// Standing → Prone transition is the right move. Legacy CombatPosition
+// + PositionRoundsMin stay in sync via parallel-write until S1.
 func HandleGrappleCritFailure(attacker *characters.Character, defender *characters.Character) CritFailureResult {
 	result := CritFailureResult{}
 
-	// Attacker falls prone (badly overcommitted)
+	if err := attacker.Position.TransitionToProne(
+		position.ProneData{MinRecoveryRounds: 2},
+		state.TransitionReason{Trigger: position.TriggerKnockdownFaceForward},
+	); err != nil {
+		mudlog.Warn("HandleGrappleCritFailure: TransitionToProne failed", "err", err)
+	}
+
+	// Legacy parallel-write (deleted in S1).
 	attacker.CombatPosition = characters.PositionProne
-	attacker.PositionRoundsMin = 2 // Must spend 2 rounds recovering
+	attacker.PositionRoundsMin = 2
 
 	// Defender gets grapple opportunity (reuse existing system from Stage 8.4)
 	SetGrappleOpportunity(defender)
