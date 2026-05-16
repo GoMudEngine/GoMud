@@ -3,6 +3,7 @@ package hooks
 import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
@@ -21,17 +22,29 @@ import (
 func wireMobInstanceCleanup(c *characters.Character) {
 	c.Life.Inner().AfterTransition("mob_instance_cleanup",
 		func(from, to life.State, r state.TransitionReason) {
+			// [DESPAWN_DIAG] Temporary — log every fire of this
+			// cascade so we can confirm it's running for dying mobs.
+			mudlog.Warn("[DESPAWN_DIAG] mob_instance_cleanup observer fired",
+				"name", c.Name, "mob_inst_id", c.MobInstanceId,
+				"from", from, "to", to, "trigger", r.Trigger)
 			if from != life.Alive || to != life.Dead {
 				return
 			}
 			// Only fire for mob characters.
 			if c.MobInstanceId == 0 {
+				mudlog.Warn("[DESPAWN_DIAG] skip: MobInstanceId==0",
+					"name", c.Name)
 				return
 			}
 			m := mobs.GetInstance(c.MobInstanceId)
 			if m == nil {
+				mudlog.Warn("[DESPAWN_DIAG] skip: mob already destroyed",
+					"name", c.Name, "mob_inst_id", c.MobInstanceId)
 				return
 			}
+			mudlog.Warn("[DESPAWN_DIAG] calling scheduleMobDespawnFromLife",
+				"name", c.Name, "mob_inst_id", c.MobInstanceId,
+				"room_id", m.Character.RoomId)
 			scheduleMobDespawnFromLife(m)
 		})
 }
