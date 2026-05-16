@@ -30,7 +30,10 @@ func wireCombatPhaseVetoes(c *characters.Character) {
 		return c.Health > 0
 	})
 	c.CombatPhase.RegisterPositionCheck(func() bool {
-		return c.CombatPosition == characters.PositionStanding
+		// Chunk 4b R5: FSM-driven — IsStanding() is the new source of
+		// truth (covers the legacy CombatPosition == PositionStanding
+		// check). Sunset of the legacy enum happens in S5.
+		return c.IsStanding()
 	})
 
 	// Target-side checks — look up the target character at call time.
