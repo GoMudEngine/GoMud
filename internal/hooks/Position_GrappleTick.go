@@ -202,6 +202,16 @@ func processGrapplePair(controller, controlled *characters.Character) {
 	ctrlHittingControlled := newCtrl == position.Controlled && ctrlData.ControlLevel == position.Controlled
 
 	if cdHittingControlled || ctrlHittingControlled {
+		// [GRAPPLE_DIAG] Temporary diagnostic — log when threshold-
+		// escape fires. Remove once the round-2 grapple-persistence
+		// bug is understood. See bug_log 2026-05-16.
+		mudlog.Warn("[GRAPPLE_DIAG] Position_GrappleTick threshold-escape firing",
+			"controller_id", controller.GetUserId(), "controller_mob_inst", controller.GetMobInstanceId(),
+			"controlled_id", controlled.GetUserId(), "controlled_mob_inst", controlled.GetMobInstanceId(),
+			"position", controller.Position.State(),
+			"ctrl_prev_level", ctrlData.ControlLevel, "ctrl_new_level", newCtrl,
+			"cd_prev_level", cdData.ControlLevel, "cd_new_level", newCd,
+		)
 		escapeTarget := position.DefaultEscapeTarget(controller.Position.State())
 		_ = position.TransitionPair(
 			controller, controlled,

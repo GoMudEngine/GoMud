@@ -140,6 +140,22 @@ func ApplyGrappleResult(attacker *characters.Character, defender *characters.Cha
 		return
 	}
 
+	// [GRAPPLE_DIAG] Temporary diagnostic — confirm FSM transition
+	// landed. Remove once the round-2 grapple-persistence bug is
+	// understood. See bug_log 2026-05-16 (highwayman grapple stops
+	// in round 2).
+	atkState := "<nil>"
+	defState := "<nil>"
+	if attacker.Position != nil {
+		atkState = attacker.Position.State().String()
+	}
+	if defender.Position != nil {
+		defState = defender.Position.State().String()
+	}
+	mudlog.Warn("[GRAPPLE_DIAG] ApplyGrappleResult post-TransitionPair",
+		"target", target, "attacker_state", atkState, "defender_state", defState,
+		"attacker_id", attackerId, "defender_mob_inst", defender.GetMobInstanceId())
+
 	// Legacy parallel-write (deleted in S1). Derive from the FSM
 	// target so the two views agree by construction even if
 	// result.NewPosition is computed differently in the future.
