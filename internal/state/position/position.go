@@ -74,10 +74,16 @@ func (s State) String() string {
 // adds per-round opposed rolls that shift it.
 type ControlLevel int
 
+// Neutral is iota=0 so the zero value of a GrappleData{} literal
+// defaults to Neutral (matches the spec — control rolls drive
+// shifts away from Neutral in 4b). Display ordering in narrative
+// text still follows the "in control → losing → neutral →
+// becoming → controlled" gradient; this enum order is purely a
+// zero-value convenience.
 const (
-	InControl ControlLevel = iota
+	Neutral ControlLevel = iota
+	InControl
 	LosingControl
-	Neutral
 	BecomingControlled
 	Controlled
 )

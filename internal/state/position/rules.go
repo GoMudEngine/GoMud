@@ -59,12 +59,6 @@ func (m *Machine) transitionGrapple(target State, d GrappleData, r state.Transit
 	if target != Turtle && d.Partner.IsZero() {
 		return ErrPartnerRequired
 	}
-	// Normalize zero ControlLevel to Neutral. InControl (iota=0) is the Go
-	// zero value but Neutral is the 4a default — callers that omit ControlLevel
-	// get Neutral. Explicit InControl is settable only by 4b+ roll-driven code.
-	if d.ControlLevel == InControl {
-		d.ControlLevel = Neutral
-	}
 	d.Reason = r
 	prev := m.grapple
 	m.grapple = &d
