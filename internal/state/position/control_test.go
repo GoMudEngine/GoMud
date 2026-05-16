@@ -97,3 +97,30 @@ func TestDefaultEscapeTarget_Guard(t *testing.T) {
 		t.Errorf("DefaultEscapeTarget(Guard) = %v, want Standing", got)
 	}
 }
+
+// TestShiftControl_OneStepFromNeutralDoesNotReachControlled locks in
+// the cap invariant relied on by Position_GrappleTick.processGrapplePair:
+// after capping per-round delta at 1, the controlled side moves from
+// Neutral to BecomingControlled in one round — NOT Controlled. This
+// keeps the threshold-escape transition from firing on round 1 of a
+// fresh Clinch grapple. See bug log 2026-05-16 (highwayman grapple
+// breaking on round 1).
+func TestShiftControl_OneStepFromNeutralDoesNotReachControlled(t *testing.T) {
+	got := position.ShiftControl(position.Neutral, 1)
+	if got == position.Controlled {
+		t.Fatalf("ShiftControl(Neutral, 1) reached Controlled — gradient broken")
+	}
+	if got != position.BecomingControlled {
+		t.Errorf("ShiftControl(Neutral, 1) = %v, want BecomingControlled", got)
+	}
+}
+
+// TestShiftControl_OneStepFromNeutralTowardInControl is the symmetric
+// invariant for the controller side: Neutral - 1 = LosingControl (one
+// step toward InControl), not InControl directly.
+func TestShiftControl_OneStepFromNeutralTowardInControl(t *testing.T) {
+	got := position.ShiftControl(position.Neutral, -1)
+	if got != position.LosingControl {
+		t.Errorf("ShiftControl(Neutral, -1) = %v, want LosingControl", got)
+	}
+}

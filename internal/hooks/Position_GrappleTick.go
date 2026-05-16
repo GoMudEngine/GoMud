@@ -140,6 +140,21 @@ func processGrapplePair(controller, controlled *characters.Character) {
 		return
 	}
 
+	// Cap per-round drift at 1 so the gradient
+	// (InControl → LosingControl → Neutral → BecomingControlled →
+	// Controlled) is always traversed one step at a time. Without
+	// this cap, a moderate margin (|z| ≥ 1.0, MarginToDelta returns
+	// 2-3) can jump the controlled side from Neutral directly to
+	// Controlled in one round, firing the threshold-escape transition
+	// and breaking the grapple before the controlled side has any
+	// chance to react. The cap also ensures gradient messages fire
+	// reliably (each crossing once per direction per grapple) instead
+	// of skipping over intermediate ranks. See bug log 2026-05-16
+	// (highwayman grapple breaking on round 1).
+	if delta > 1 {
+		delta = 1
+	}
+
 	// Positive margin = controller won → controlled drifts toward
 	// Controlled (rank up), controller drifts toward InControl (rank down).
 	var ctrlDelta, cdDelta int
