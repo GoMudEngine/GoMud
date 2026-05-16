@@ -18,6 +18,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/stats"
 )
 
@@ -120,6 +121,12 @@ type Character struct {
 	// activity is this character engaged in?" Replaces
 	// CastingState + CraftingState pointer fields (Task 11).
 	Activity                 *activity.Machine              `yaml:"-"`
+	// Position state machine (chunk 4a). Source of truth for body
+	// position + grapple geometry. 14 states (Standing/Prone/Supine/
+	// Clinch/BackStanding/Mount/SideControl/KneeOnBelly/NorthSouth/
+	// Crucifix/BackGround/HalfGuard/Guard/Turtle). Coexists with the
+	// legacy CombatPosition enum through the 4b migration window.
+	Position                 *position.Machine              `yaml:"-"`
 	CombatPosition           CombatPosition                 `yaml:"-"`                       // Current combat position (Standing/Prone/Clinched/Grounded). Don't store this.
 	PositionRoundsMin        int                            `yaml:"-"`                       // Minimum rounds in current position (for Prone bash/trip, etc). Don't store this.
 	GrappleControllerId      int                            `yaml:"-"`                       // UserId or MobInstanceId of grapple controller (0 = none, Stage 8.2+). Don't store this.
@@ -207,6 +214,7 @@ func New() *Character {
 		Awareness:         awareness.NewMachine(),
 		Life:              life.NewMachine(),
 		Activity:          activity.NewMachine(),
+		Position:          position.NewMachine(),
 	}
 
 	// Roll character stats using normal distribution

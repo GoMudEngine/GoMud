@@ -17,6 +17,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 	"github.com/GoMudEngine/GoMud/internal/stats"
 )
@@ -531,6 +532,9 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	}
 	if c.Activity == nil {
 		c.Activity = activity.NewMachine()
+	}
+	if c.Position == nil {
+		c.Position = position.NewMachine()
 	}
 	// Fire OnCharacterCreated callbacks exactly once per Character.
 	// The guard prevents repeated firing on re-validation (e.g. stat
