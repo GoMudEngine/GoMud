@@ -185,7 +185,23 @@ func processGrapplePair(controller, controlled *characters.Character) {
 	// Threshold check: either side hitting Controlled triggers escape
 	// to the position's default escape target. Reset per-grapple
 	// message cooldowns so the next grapple starts with a clean slate.
-	if newCtrl == position.Controlled || newCd == position.Controlled {
+	//
+	// Sustained-pressure gate (2026-05-16): require the controlled
+	// side (or the reversed controller) to have been at Controlled in
+	// the PRIOR round before firing escape. The first round at
+	// Controlled is a "warning round" — gradient messages fire above
+	// to telegraph it, but the position holds. The second consecutive
+	// round at Controlled triggers the escape. This gives the
+	// dominating side at least one round to act (advance position,
+	// submit in 4d, taunt, etc.) before the controlled side scrambles
+	// out. Without this gate, a Clinch grapple breaks ~2-3 rounds
+	// after entry under sustained controller dominance — fast enough
+	// that the player feels the grapple "just stops happening". See
+	// bug log 2026-05-16 (highwayman grapple breaking round 2).
+	cdHittingControlled := newCd == position.Controlled && cdData.ControlLevel == position.Controlled
+	ctrlHittingControlled := newCtrl == position.Controlled && ctrlData.ControlLevel == position.Controlled
+
+	if cdHittingControlled || ctrlHittingControlled {
 		escapeTarget := position.DefaultEscapeTarget(controller.Position.State())
 		_ = position.TransitionPair(
 			controller, controlled,
