@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -95,7 +96,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 				// a real target mob that's not prone.
 				targetMob := &mobs.Mob{InstanceId: 200}
 				targetMob.Character.Name = "Target"
-				setCombatPositionParallel(&targetMob.Character, characters.PositionStanding)
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
 				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
 				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
 			},
@@ -105,7 +106,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 				setCraftingForTest(m)
 				targetMob := &mobs.Mob{InstanceId: 201}
 				targetMob.Character.Name = "Target"
-				setCombatPositionParallel(&targetMob.Character, characters.PositionStanding)
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
 				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
 				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
 			},
@@ -115,7 +116,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 				m.Character.Cooldowns = characters.Cooldowns{"special-move": 3}
 				targetMob := &mobs.Mob{InstanceId: 202}
 				targetMob.Character.Name = "Target"
-				setCombatPositionParallel(&targetMob.Character, characters.PositionStanding)
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
 				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
 				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
 			},
@@ -150,7 +151,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 				setCraftingForTest(m)
 				targetMob := &mobs.Mob{InstanceId: 204}
 				targetMob.Character.Name = "Target"
-				setCombatPositionParallel(&targetMob.Character, characters.PositionStanding)
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
 				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
 				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
 			},
@@ -160,7 +161,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 				m.Character.Cooldowns = characters.Cooldowns{"special-move": 3}
 				targetMob := &mobs.Mob{InstanceId: 205}
 				targetMob.Character.Name = "Target"
-				setCombatPositionParallel(&targetMob.Character, characters.PositionStanding)
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
 				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
 				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
 			},

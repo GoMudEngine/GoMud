@@ -15,29 +15,26 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// setCombatPositionParallel writes BOTH the legacy CombatPosition
-// field AND the new Position FSM in lockstep. F1 fixture helper
-// for the chunk-4b transition window. Synthetic Partner ref for
-// Clinched/Grounded (FSM requires non-zero).
-func setCombatPositionParallel(c *characters.Character, pos characters.CombatPosition) {
-	c.CombatPosition = pos
+// setCombatPositionParallel sets the Position FSM to the given state. Seeds
+// Position if nil. Synthetic Partner ref for grapple states (FSM requires non-zero).
+func setCombatPositionParallel(c *characters.Character, pos position.State) {
 	if c.Position == nil {
 		c.Position = position.NewMachine()
 	}
 	r := state.TransitionReason{Trigger: "test_setup"}
 	switch pos {
-	case characters.PositionStanding:
+	case position.Standing:
 		c.Position.ForceStanding(r)
-	case characters.PositionProne:
+	case position.Prone:
 		c.Position.ForceStanding(r)
 		_ = c.Position.TransitionToProne(position.ProneData{}, r)
-	case characters.PositionClinched:
+	case position.Clinch:
 		c.Position.ForceStanding(r)
 		_ = c.Position.TransitionToClinch(
 			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
 			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
 		)
-	case characters.PositionGrounded:
+	case position.Mount:
 		c.Position.ForceStanding(r)
 		_ = c.Position.TransitionToClinch(
 			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
@@ -703,7 +700,7 @@ func TestCondTargetNotStanding_TargetStanding_ReturnsFailure(t *testing.T) {
 	mob := newTestMob(t)
 	target := &mobs.Mob{InstanceId: 205}
 	target.Character.Name = "Target"
-	setCombatPositionParallel(&target.Character, characters.PositionStanding)
+	setCombatPositionParallel(&target.Character, position.Standing)
 	mobs.SetInstanceForTest(target.InstanceId, target)
 	defer mobs.SetInstanceForTest(target.InstanceId, nil)
 	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)
@@ -716,7 +713,7 @@ func TestCondTargetNotStanding_TargetProne_ReturnsSuccess(t *testing.T) {
 	mob := newTestMob(t)
 	target := &mobs.Mob{InstanceId: 206}
 	target.Character.Name = "Target"
-	setCombatPositionParallel(&target.Character, characters.PositionProne)
+	setCombatPositionParallel(&target.Character, position.Prone)
 	mobs.SetInstanceForTest(target.InstanceId, target)
 	defer mobs.SetInstanceForTest(target.InstanceId, nil)
 	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)
@@ -729,7 +726,7 @@ func TestCondTargetNotStanding_TargetClinched_ReturnsSuccess(t *testing.T) {
 	mob := newTestMob(t)
 	target := &mobs.Mob{InstanceId: 207}
 	target.Character.Name = "Target"
-	setCombatPositionParallel(&target.Character, characters.PositionClinched)
+	setCombatPositionParallel(&target.Character, position.Clinch)
 	mobs.SetInstanceForTest(target.InstanceId, target)
 	defer mobs.SetInstanceForTest(target.InstanceId, nil)
 	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)

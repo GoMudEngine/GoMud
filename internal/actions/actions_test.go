@@ -16,30 +16,26 @@ func init() {
 	mudlog.SetupLogger(nil, "", "", false)
 }
 
-// setCombatPositionParallel writes BOTH the legacy CombatPosition
-// field AND the new Position FSM in lockstep. F1 fixture helper
-// for the chunk-4b transition window; mirrors the same helper in
-// internal/combat test scope. Seeds Position if nil. Synthetic
-// Partner ref for Clinched/Grounded (FSM requires non-zero).
-func setCombatPositionParallel(c *characters.Character, pos characters.CombatPosition) {
-	c.CombatPosition = pos
+// setCombatPositionParallel sets the Position FSM to the given state. Seeds
+// Position if nil. Synthetic Partner ref for grapple states (FSM requires non-zero).
+func setCombatPositionParallel(c *characters.Character, pos position.State) {
 	if c.Position == nil {
 		c.Position = position.NewMachine()
 	}
 	r := state.TransitionReason{Trigger: "test_setup"}
 	switch pos {
-	case characters.PositionStanding:
+	case position.Standing:
 		c.Position.ForceStanding(r)
-	case characters.PositionProne:
+	case position.Prone:
 		c.Position.ForceStanding(r)
 		_ = c.Position.TransitionToProne(position.ProneData{}, r)
-	case characters.PositionClinched:
+	case position.Clinch:
 		c.Position.ForceStanding(r)
 		_ = c.Position.TransitionToClinch(
 			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
 			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
 		)
-	case characters.PositionGrounded:
+	case position.Mount:
 		c.Position.ForceStanding(r)
 		_ = c.Position.TransitionToClinch(
 			position.GrappleData{Partner: state.ActorRef{UserId: 1}},

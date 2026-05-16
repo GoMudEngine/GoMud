@@ -161,12 +161,10 @@ func (c *Character) EndAggro() {
 // ClearGrappleState clears all grapple-related state.
 // Called when combat ends, targets change, or participant dies.
 func (c *Character) ClearGrappleState() {
-	c.GrappleControllerId = 0
-	c.RemoveCondition(ConditionGrappleController)
-	// Reset to standing if in a grapple position
-	if c.IsGrappling() {
-		c.CombatPosition = PositionStanding
-	}
+	// FSM owns position state; no legacy fields to clear.
+	// Position_Cascades.go handles the FSM reset on Alive→Dead via observer.
+	// For mid-combat target switches, the FSM is left as-is; the next
+	// round's state will reflect reality.
 }
 
 // IsAggro returns true if the character is currently engaged with the

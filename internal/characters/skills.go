@@ -41,12 +41,9 @@ func (c *Character) GetAllSkillRanks() map[string]int {
 // has passed and a roll was made. success indicates whether the recovery attempt
 // succeeded (only meaningful if attemptMade is true).
 //
-// Chunk 4b W6: gates on the new Position FSM (IsProne || IsSupine) and reads
-// MinRecoveryRounds from the appropriate per-state data. The recovery success
-// path fires Position.TransitionToStanding(TriggerRecoveryRoll) alongside the
-// legacy CombatPosition / PositionRoundsMin parallel-writes. If the FSM
-// transition fails the legacy fields are NOT updated so the two views stay
-// consistent.
+// Gates on the new Position FSM (IsProne || IsSupine) and reads
+// MinRecoveryRounds from the per-state data. On success fires
+// Position.TransitionToStanding(TriggerRecoveryRoll).
 func (c *Character) AttemptRecovery(statValue int) (bool, bool) {
 	if !c.IsProne() && !c.IsSupine() {
 		return false, false
@@ -66,10 +63,6 @@ func (c *Character) AttemptRecovery(statValue int) (bool, bool) {
 
 	if minRounds > 0 {
 		c.Position.ConsumeRecoveryRound()
-		// Keep the legacy counter in lockstep until S2 sunsets it.
-		if c.PositionRoundsMin > 0 {
-			c.PositionRoundsMin--
-		}
 		// Still in minimum recovery period — reduce attacks to 1 this round.
 		c.AddCondition(ConditionRecoveryPenalty, 1, 1.0, "prone recovery")
 		return false, false
@@ -94,14 +87,11 @@ func (c *Character) AttemptRecovery(statValue int) (bool, bool) {
 	if success {
 		if err := c.Position.TransitionToStanding(state.TransitionReason{Trigger: position.TriggerRecoveryRoll}); err != nil {
 			// Should never happen — Prone→Standing and Supine→Standing are
-			// both valid edges. Log + keep legacy fields aligned with FSM by
-			// not updating them, then report the attempt as a failure.
+			// both valid edges. Log and report the attempt as a failure.
 			mudlog.Warn("AttemptRecovery: TransitionToStanding failed", "err", err)
 			c.AddCondition(ConditionRecoveryPenalty, 1, 1.0, "prone recovery")
 			return true, false
 		}
-		c.CombatPosition = PositionStanding
-		c.PositionRoundsMin = 0
 	} else {
 		c.AddCondition(ConditionRecoveryPenalty, 1, 1.0, "prone recovery")
 	}

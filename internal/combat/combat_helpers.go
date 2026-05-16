@@ -15,6 +15,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -603,9 +605,14 @@ var doubleFumbleMessages = []struct {
 
 // handleDoubleFumble applies prone to both combatants and sends comedy text.
 func handleDoubleFumble(result *AttackResult, sourceChar *characters.Character, targetChar *characters.Character) {
-	// Both go prone
-	sourceChar.CombatPosition = characters.PositionProne
-	targetChar.CombatPosition = characters.PositionProne
+	// Both go prone via FSM.
+	r := state.TransitionReason{Trigger: position.TriggerKnockdownFaceForward}
+	if err := sourceChar.Position.TransitionToProne(position.ProneData{}, r); err != nil {
+		mudlog.Warn("handleDoubleFumble: source TransitionToProne failed", "err", err)
+	}
+	if err := targetChar.Position.TransitionToProne(position.ProneData{}, r); err != nil {
+		mudlog.Warn("handleDoubleFumble: target TransitionToProne failed", "err", err)
+	}
 
 	// Pick a random comedy message
 	msg := doubleFumbleMessages[util.Rand(len(doubleFumbleMessages))]

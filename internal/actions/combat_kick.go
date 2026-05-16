@@ -128,7 +128,7 @@ func ExecuteKick(actor Actor) KickResult {
 	// Stomp extends prone duration on a successful hit.
 	if result.Hit && variant == KickStomp &&
 		(target.Char.IsProne() || target.Char.IsSupine()) {
-		target.Char.PositionRoundsMin += 1
+		target.Char.Position.ExtendRecoveryRound()
 	}
 
 	// Determine source/target types for analytics.

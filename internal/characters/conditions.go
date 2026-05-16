@@ -6,7 +6,6 @@ type ConditionType int
 const (
 	ConditionRecoveryPenalty  ConditionType = iota // Limits attacks to 1 this round (prone recovery)
 	ConditionDefensePenalty                        // Reduces defense this round (failed grapple exposure)
-	ConditionGrappleController                     // Is the active grapple controller
 	ConditionShield                                // Magical armor barrier (+physical armor, Stage 11.4)
 	ConditionRegen                                 // Regenerates HP each AutoHeal tick (heal spell, Stage 11.5)
 	ConditionBlinded                               // Reduces perception/dodge/accuracy (Phase 24.5)
@@ -32,8 +31,6 @@ func (c ConditionType) DisplayName() string {
 		return "Recovery Penalty"
 	case ConditionDefensePenalty:
 		return "Defense Penalty"
-	case ConditionGrappleController:
-		return "Grapple Control"
 	case ConditionShield:
 		return "Minor Shield"
 	case ConditionRegen:
@@ -62,8 +59,6 @@ func (c ConditionType) Description() string {
 		return "Attacks reduced to 1 (prone recovery)"
 	case ConditionDefensePenalty:
 		return "Defense reduced 15% (off-balance, exposed)"
-	case ConditionGrappleController:
-		return "Active grapple controller"
 	case ConditionShield:
 		return "Magical armor barrier (+physical armor)"
 	case ConditionRegen:

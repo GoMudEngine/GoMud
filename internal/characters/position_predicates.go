@@ -2,10 +2,6 @@
 // Each method delegates to c.Position.IsXxx() with a nil guard
 // (a Character constructed outside New() and not run through
 // Validate() may have c.Position == nil).
-//
-// These methods coexist with the legacy CombatPosition enum +
-// CombatPosition.IsGroundPosition() / IsGrapplePosition() helpers.
-// 4b/4c sunset the enum helpers once command sites cut over.
 package characters
 
 import (

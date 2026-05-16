@@ -147,17 +147,13 @@ type Character struct {
 	// Position state machine (chunk 4a). Source of truth for body
 	// position + grapple geometry. 14 states (Standing/Prone/Supine/
 	// Clinch/BackStanding/Mount/SideControl/KneeOnBelly/NorthSouth/
-	// Crucifix/BackGround/HalfGuard/Guard/Turtle). Coexists with the
-	// legacy CombatPosition enum through the 4b migration window.
+	// Crucifix/BackGround/HalfGuard/Guard/Turtle).
 	Position                 *position.Machine              `yaml:"-"`
 	// PerGrappleMessageCooldowns tracks which gradient/stamina
 	// messages have already fired during the current grapple session.
 	// Resets when the character returns to a non-grapple state.
 	// Non-persistent — combat doesn't survive logout.
 	PerGrappleMessageCooldowns map[string]bool               `yaml:"-"`
-	CombatPosition           CombatPosition                 `yaml:"-"`                       // Current combat position (Standing/Prone/Clinched/Grounded). Don't store this.
-	PositionRoundsMin        int                            `yaml:"-"`                       // Minimum rounds in current position (for Prone bash/trip, etc). Don't store this.
-	GrappleControllerId      int                            `yaml:"-"`                       // UserId or MobInstanceId of grapple controller (0 = none, Stage 8.2+). Don't store this.
 	Conditions               []CombatCondition              `yaml:"-"`                       // Active temporary combat conditions (Stage 9.8). Don't store this.
 	AttacksThisRound         int                            `yaml:"-"`                       // Stage 9.4: Tracks recent attacks for stance calculation. Don't store this.
 	DefensesThisRound        int                            `yaml:"-"`                       // Stage 9.4: Tracks recent defenses for stance calculation. Don't store this.
@@ -223,7 +219,6 @@ func New() *Character {
 		Items:          []items.Item{},
 		Buffs:          buffs.New(),
 		Equipment:      Worn{},
-		CombatPosition: PositionStanding, // Stage 8.1: Default combat position
 		Cooldowns:      make(Cooldowns),  // Initialize cooldowns map
 		MiscData:       make(map[string]any),
 		Discoveries:    make(map[int][]string),

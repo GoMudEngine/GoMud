@@ -122,20 +122,20 @@ func TestCanUseBash(t *testing.T) {
 func TestCanUseTrip(t *testing.T) {
 	tests := []struct {
 		name     string
-		position characters.CombatPosition
+		pos position.State
 		cooldown bool
 		want     bool
 	}{
-		{"standing, no cooldown", characters.PositionStanding, false, true},
-		{"standing, on cooldown", characters.PositionStanding, true, false},
-		{"clinched", characters.PositionClinched, false, false},
-		{"grounded", characters.PositionGrounded, false, false},
+		{"standing, no cooldown", position.Standing, false, true},
+		{"standing, on cooldown", position.Standing, true, false},
+		{"clinched", position.Clinch, false, false},
+		{"grounded", position.Mount, false, false},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := characters.New()
-			setCombatPositionParallel(c, tt.position)
+			setCombatPositionParallel(c, tt.pos)
 			if tt.cooldown {
 				c.Cooldowns["special-move"] = 3
 			}
@@ -164,21 +164,21 @@ func TestCanUseKick(t *testing.T) {
 func TestCanUseGrapple(t *testing.T) {
 	tests := []struct {
 		name     string
-		position characters.CombatPosition
+		pos position.State
 		cooldown bool
 		want     bool
 	}{
-		{"standing, no cooldown", characters.PositionStanding, false, true},
-		{"on cooldown", characters.PositionStanding, true, false},
-		{"already clinched", characters.PositionClinched, false, false},
-		{"already grounded", characters.PositionGrounded, false, false},
-		{"prone (not a grapple position)", characters.PositionProne, false, true},
+		{"standing, no cooldown", position.Standing, false, true},
+		{"on cooldown", position.Standing, true, false},
+		{"already clinched", position.Clinch, false, false},
+		{"already grounded", position.Mount, false, false},
+		{"prone (not a grapple position)", position.Prone, false, true},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := characters.New()
-			setCombatPositionParallel(c, tt.position)
+			setCombatPositionParallel(c, tt.pos)
 			if tt.cooldown {
 				c.Cooldowns["special-move"] = 3
 			}
@@ -192,15 +192,15 @@ func TestCanUseGrapple(t *testing.T) {
 func TestCanUseSubmit(t *testing.T) {
 	tests := []struct {
 		name       string
-		position   characters.CombatPosition
+		pos        position.State
 		controller bool
 		cooldown   bool
 		want       bool
 	}{
-		{"grounded + controller", characters.PositionGrounded, true, false, true},
-		{"grounded but not controller", characters.PositionGrounded, false, false, false},
-		{"standing + controller", characters.PositionStanding, true, false, false},
-		{"grounded + controller + cooldown", characters.PositionGrounded, true, true, false},
+		{"grounded + controller", position.Mount, true, false, true},
+		{"grounded but not controller", position.Mount, false, false, false},
+		{"standing + controller", position.Standing, true, false, false},
+		{"grounded + controller + cooldown", position.Mount, true, true, false},
 	}
 
 	for _, tt := range tests {
@@ -210,8 +210,7 @@ func TestCanUseSubmit(t *testing.T) {
 			// with InControl; the bottom-side case uses Guard with
 			// Controlled instead so IsController() returns false. Skip
 			// the helper for that case and wire the FSM directly.
-			if tt.position == characters.PositionGrounded && !tt.controller {
-				c.CombatPosition = characters.PositionGrounded
+			if tt.pos == position.Mount && !tt.controller {
 				_ = c.Position.TransitionToClinch(
 					position.GrappleData{Partner: state.ActorRef{UserId: 1}, ControlLevel: position.Controlled},
 					state.TransitionReason{Trigger: position.TriggerGrappleEntry},
@@ -221,10 +220,11 @@ func TestCanUseSubmit(t *testing.T) {
 					state.TransitionReason{Trigger: position.TriggerGuardPull},
 				)
 			} else {
-				setCombatPositionParallel(c, tt.position)
-				if tt.controller {
-					c.AddCondition(characters.ConditionGrappleController, 0, 1.0, "test")
-				}
+				setCombatPositionParallel(c, tt.pos)
+				// For the controller case, the FSM Mount state (set by
+				// setCombatPositionParallel for PositionGrounded) already
+				// marks InControl, so IsController() returns true without
+				// the legacy ConditionGrappleController.
 			}
 			if tt.cooldown {
 				c.Cooldowns["special-move"] = 3
@@ -292,7 +292,7 @@ func TestScoreBash(t *testing.T) {
 		c.HealthMax.Value = 100
 		c.Health = int(healthPct)
 		if prone {
-			setCombatPositionParallel(c, characters.PositionProne)
+			setCombatPositionParallel(c, position.Prone)
 		}
 		return c
 	}
@@ -316,21 +316,21 @@ func TestScoreBash(t *testing.T) {
 // ─── ScoreTrip ──────────────────────────────────────────────────────────────
 
 func TestScoreTrip(t *testing.T) {
-	makeMob := func(dex int, unarmedSkill int, position characters.CombatPosition) *mobs.Mob {
+	makeMob := func(dex int, unarmedSkill int, pos position.State) *mobs.Mob {
 		m := &mobs.Mob{}
 		m.Character = *characters.New()
 		m.Character.Stats.Dexterity.ValueAdj = dex
 		m.Character.Skills[string(skills.UnarmedCombat)] = unarmedSkill
-		setCombatPositionParallel(&m.Character, position)
+		setCombatPositionParallel(&m.Character, pos)
 		return m
 	}
 
 	t.Run("target already prone → 0", func(t *testing.T) {
 		target := characters.New()
-		setCombatPositionParallel(target, characters.PositionProne)
+		setCombatPositionParallel(target, position.Prone)
 		target.HealthMax.Value = 100
 		target.Health = 100
-		score := ScoreTrip(makeMob(100, 0, characters.PositionStanding), target)
+		score := ScoreTrip(makeMob(100, 0, position.Standing), target)
 		assert.Equal(t, 0, score)
 	})
 
@@ -339,7 +339,7 @@ func TestScoreTrip(t *testing.T) {
 		target.Stats.Dexterity.ValueAdj = 5
 		target.HealthMax.Value = 100
 		target.Health = 100
-		score := ScoreTrip(makeMob(100, 50, characters.PositionStanding), target)
+		score := ScoreTrip(makeMob(100, 50, position.Standing), target)
 		assert.Greater(t, score, 60)
 	})
 }
@@ -387,7 +387,7 @@ func TestScoreGrapple(t *testing.T) {
 
 	t.Run("already in grapple → 0", func(t *testing.T) {
 		mob := makeMob(100, 50, 100, 100)
-		setCombatPositionParallel(&mob.Character, characters.PositionClinched)
+		setCombatPositionParallel(&mob.Character, position.Clinch)
 		target := characters.New()
 		target.HealthMax.Value = 100
 		target.Health = 100

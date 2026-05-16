@@ -3,7 +3,6 @@ package usercommands
 import (
 	"fmt"
 
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -34,10 +33,8 @@ func Stand(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
-	// Fire the FSM transition first — if it fails (shouldn't, since
-	// Prone→Standing and Supine→Standing are valid edges) bail without
-	// charging stamina or touching the legacy fields so the two views
-	// stay consistent.
+	// Fire the FSM transition first — bail without charging stamina if it fails
+	// (shouldn't happen since Prone→Standing and Supine→Standing are valid edges).
 	if err := user.Character.Position.TransitionToStanding(state.TransitionReason{Trigger: position.TriggerStandCommand}); err != nil {
 		mudlog.Warn("Stand: TransitionToStanding failed", "user", user.UserId, "err", err)
 		user.SendText("Something prevents you from standing.")
@@ -49,10 +46,6 @@ func Stand(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if user.Character.Stamina < 0 {
 		user.Character.Stamina = 0
 	}
-
-	// Remove prone status (bypasses minimum duration) — legacy parallel write.
-	user.Character.CombatPosition = characters.PositionStanding
-	user.Character.PositionRoundsMin = 0
 
 	// Send messages
 	user.SendText("You struggle to your feet!")

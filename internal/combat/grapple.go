@@ -11,16 +11,16 @@ import (
 
 // GrappleResult represents the outcome of a grapple attempt
 type GrappleResult struct {
-	Success          bool
-	Margin           float64
-	NewPosition      characters.CombatPosition
-	AttackScore      float64
-	DefenseScore     float64
-	AttackRoll       float64
-	DefenseRoll      float64
-	PositionPenalty  float64 // For defender if prone
-	AttackZScore     float64 // For crit detection (Stage 8.4)
-	DefenseZScore    float64 // For reference (Stage 8.4)
+	Success         bool
+	Margin          float64
+	IsGroundGrapple bool    // true when the new grapple position is a ground grapple (SideControl)
+	AttackScore     float64
+	DefenseScore    float64
+	AttackRoll      float64
+	DefenseRoll     float64
+	PositionPenalty float64 // For defender if prone
+	AttackZScore    float64 // For crit detection (Stage 8.4)
+	DefenseZScore   float64 // For reference (Stage 8.4)
 }
 
 // SubmissionResult represents the outcome of a submission attempt (Stage 8.6)
@@ -94,15 +94,9 @@ func AttemptGrapple(attacker *characters.Character, defender *characters.Charact
 	result.AttackZScore = attackRoll.ZScore   // Stage 8.4: For crit detection
 	result.DefenseZScore = defenseRoll.ZScore // Stage 8.4: For reference
 
-	// Determine new position on success
+	// Determine whether the new grapple position is a ground grapple.
 	if success {
-		if defender.IsProne() || defender.IsSupine() {
-			// Prone → Grounded (direct, skip Clinched)
-			result.NewPosition = characters.PositionGrounded
-		} else {
-			// Standing → Clinched
-			result.NewPosition = characters.PositionClinched
-		}
+		result.IsGroundGrapple = defender.IsProne() || defender.IsSupine()
 	}
 
 	return result
@@ -140,36 +134,9 @@ func ApplyGrappleResult(attacker *characters.Character, defender *characters.Cha
 		return
 	}
 
-	// Legacy parallel-write (deleted in S1). Derive from the FSM
-	// target so the two views agree by construction even if
-	// result.NewPosition is computed differently in the future.
-	legacyPos := legacyMapPositionToCombatPosition(target)
-	attacker.CombatPosition = legacyPos
-	defender.CombatPosition = legacyPos
-	attacker.GrappleControllerId = attackerId
-	defender.GrappleControllerId = attackerId
-
-	// Stage 8.3: Mark who is the controller
-	attacker.AddCondition(characters.ConditionGrappleController, 0, 1.0, "grapple")
-	defender.RemoveCondition(characters.ConditionGrappleController)
-}
-
-// legacyMapPositionToCombatPosition translates the new FSM State to
-// the legacy CombatPosition enum during the migration window.
-// Deleted in S1 alongside CombatPosition itself. Provided as a
-// reference for future W-series tasks that need to translate an FSM
-// state they don't already have a CombatPosition for.
-func legacyMapPositionToCombatPosition(s position.State) characters.CombatPosition {
-	switch s {
-	case position.Standing:
-		return characters.PositionStanding
-	case position.Prone, position.Supine:
-		return characters.PositionProne
-	case position.Clinch, position.BackStanding:
-		return characters.PositionClinched
-	default: // Mount, SideControl, KOB, NS, Crucifix, BackGround, HalfGuard, Guard, Turtle
-		return characters.PositionGrounded
-	}
+	// Stage 8.3: Mark who is the controller (FSM-driven via IsController()).
+	// ConditionGrappleController is sunset; controller identity lives in the
+	// FSM GrappleData.ControlLevel field.
 }
 
 // IsThirdPartyAttack returns true if the attacker is not involved in the target's grapple.
@@ -255,15 +222,6 @@ func ApplySubmissionFailure(controller *characters.Character, controlled *charac
 		state.TransitionReason{Trigger: position.TriggerKnockdownFaceForward},
 	)
 
-	// Legacy parallel-write (deleted in S1).
-	controlled.CombatPosition = characters.PositionStanding
-	controller.CombatPosition = characters.PositionProne
-	controller.PositionRoundsMin = 2
-
-	controller.GrappleControllerId = 0
-	controlled.GrappleControllerId = 0
-	controller.RemoveCondition(characters.ConditionGrappleController)
-	controlled.RemoveCondition(characters.ConditionGrappleController)
 }
 
 // ApplySubmissionSuccess applies the consequences of a successful submission.
@@ -287,9 +245,6 @@ func ApplySubmissionSuccess(controller *characters.Character, controlled *charac
 			state.TransitionReason{Trigger: position.TriggerKnockdownFaceForward},
 		)
 
-		// Legacy parallel-write (deleted in S1).
-		controlled.CombatPosition = characters.PositionProne
-		controlled.PositionRoundsMin = 3
 	} else {
 		// Resist: take damage based on controller's strength. Position
 		// unchanged — the per-round tick handles any subsequent escape.
@@ -326,10 +281,6 @@ func HandleGrappleCritFailure(attacker *characters.Character, defender *characte
 	); err != nil {
 		mudlog.Warn("HandleGrappleCritFailure: TransitionToProne failed", "err", err)
 	}
-
-	// Legacy parallel-write (deleted in S1).
-	attacker.CombatPosition = characters.PositionProne
-	attacker.PositionRoundsMin = 2
 
 	// Defender gets grapple opportunity (reuse existing system from Stage 8.4)
 	SetGrappleOpportunity(defender)

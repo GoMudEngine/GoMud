@@ -12,6 +12,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -72,8 +74,10 @@ func SonicShout(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 			// Knockdown
 			knockdownRoll := dice.RollStat(50)
 			if knockdownRoll.Value < 40 {
-				mob.Character.CombatPosition = characters.PositionProne
-				mob.Character.PositionRoundsMin = 2
+				_ = mob.Character.Position.TransitionToProne(
+					position.ProneData{MinRecoveryRounds: 2},
+					state.TransitionReason{Trigger: position.TriggerKnockdownFaceForward},
+				)
 			}
 			user.SendText(fmt.Sprintf(`The shout staggers <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%s</ansi>)`,
 				mob.Character.Name, combat.GetDamageDescription(baseDamage, mob.Character.HealthMax.Value)))

@@ -105,9 +105,6 @@ func ExecuteSkillMove(p SkillMoveParams) SkillMoveResult {
 			if fsmErr != nil {
 				mudlog.Warn("ExecuteSkillMove: knockdown transition failed",
 					"to_supine", p.KnockdownToSupine, "err", fsmErr)
-			} else {
-				p.Defender.CombatPosition = characters.PositionProne
-				p.Defender.PositionRoundsMin = 2
 			}
 		}
 	}

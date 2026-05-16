@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
@@ -445,20 +444,24 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 				}
 
 			case `{targetpos}`:
+				// FSM-driven: same color/abbrev helpers used by {pos}.
 				tRef := u.Character.CurrentCombatTarget()
-				var tPos characters.CombatPosition
+				var tPos position.State
+				var tPosFound bool
 				if tRef.MobInstanceId > 0 {
-					if m := mobs.GetInstance(tRef.MobInstanceId); m != nil {
-						tPos = m.Character.CombatPosition
+					if m := mobs.GetInstance(tRef.MobInstanceId); m != nil && m.Character.Position != nil {
+						tPos = m.Character.Position.State()
+						tPosFound = true
 					}
 				} else if tRef.UserId > 0 {
-					if target := GetByUserId(tRef.UserId); target != nil {
-						tPos = target.Character.CombatPosition
+					if target := GetByUserId(tRef.UserId); target != nil && target.Character.Position != nil {
+						tPos = target.Character.Position.State()
+						tPosFound = true
 					}
 				}
-				if tPos != `` {
+				if tPosFound && tPos != position.Standing {
 					promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`,
-						tPos.GetPositionColor(), tPos.String()))
+						positionPromptColor(tPos), positionPromptAbbrev(tPos)))
 				}
 
 			case `{tank}`:

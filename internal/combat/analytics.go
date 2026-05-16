@@ -158,12 +158,11 @@ func positionFields(char *characters.Character) (string, bool) {
 	if char == nil {
 		return "standing", false
 	}
-	pos := string(char.CombatPosition)
-	if pos == "" {
-		pos = "standing"
+	pos := "standing"
+	if char.Position != nil {
+		pos = char.Position.State().String()
 	}
-	isController := char.HasCondition(characters.ConditionGrappleController)
-	return pos, isController
+	return pos, char.IsController()
 }
 
 // RecordAttack records a standard auto-attack event (legacy: one event per round).

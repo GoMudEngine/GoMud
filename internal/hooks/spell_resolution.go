@@ -417,9 +417,6 @@ func applyMobEffect_knockdown(
 		state.TransitionReason{Trigger: position.TriggerKnockdownSpell},
 	); err != nil {
 		mudlog.Warn("applyMobEffect_knockdown: TransitionToSupine failed", "mob", mob.InstanceId, "err", err)
-	} else {
-		mob.Character.CombatPosition = characters.PositionProne
-		mob.Character.PositionRoundsMin = 1
 	}
 	setMobSpellAggro(user, mob)
 	if user != nil {
@@ -1140,9 +1137,6 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 		); err != nil {
 			mudlog.Warn("mob spell knockdown: TransitionToSupine failed",
 				"target_user", target.UserId, "err", err)
-		} else {
-			target.Character.CombatPosition = characters.PositionProne
-			target.Character.PositionRoundsMin = 1
 		}
 		target.SendText(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> slams you `+

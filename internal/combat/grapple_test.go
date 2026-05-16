@@ -130,7 +130,7 @@ func TestAttemptGrapple_Statistical(t *testing.T) {
 			def := characters.New()
 			def.Stats.Dexterity.ValueAdj = 100
 			def.Skills["unarmed-combat"] = 25
-			setCombatPositionParallel(def, characters.PositionProne)
+			setCombatPositionParallel(def, position.Prone)
 
 			result := AttemptGrapple(atk, def)
 			if result.Success {
@@ -155,8 +155,8 @@ func TestAttemptGrapple_PositionTransition(t *testing.T) {
 
 		result := AttemptGrapple(atk, def)
 		if result.Success {
-			assert.Equal(t, characters.PositionClinched, result.NewPosition,
-				"successful grapple on standing defender → Clinched")
+			assert.False(t, result.IsGroundGrapple,
+				"successful grapple on standing defender → clinch (not ground grapple)")
 			return
 		}
 	}

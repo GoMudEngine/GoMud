@@ -33,13 +33,12 @@ func ExecuteGrappleMove(attacker, defender *characters.Character,
 
 		// Determine position description
 		result.PositionDesc = "clinched"
-		if result.NewPosition.String() == "grounded" {
+		if result.IsGroundGrapple {
 			result.PositionDesc = "grounded"
 		}
 
-		// Check for grapple crit disarm (z > 2.0 in clinch/ground)
-		if result.AttackZScore > 2.0 &&
-			(result.NewPosition.String() == "clinched" || result.NewPosition.String() == "grounded") {
+		// Check for grapple crit disarm (z > 2.0 in any grapple position)
+		if result.AttackZScore > 2.0 {
 
 			disarm := AttemptCritDisarm(attacker, defender, 15.0)
 			if disarm.Success {

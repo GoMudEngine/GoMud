@@ -27,29 +27,27 @@ import (
 
 // ─── Test Infrastructure ──────────────────────────────────────────────────────
 
-// setCombatPositionParallel writes BOTH the legacy CombatPosition
-// field AND the new Position FSM in lockstep. F1 fixture helper
-// for the chunk-4b transition window. Synthetic Partner ref for
-// Clinched/Grounded (FSM requires non-zero).
-func setCombatPositionParallel(c *characters.Character, pos characters.CombatPosition) {
-	c.CombatPosition = pos
+
+// setCombatPositionParallel sets the Position FSM to the given state. Seeds
+// Position if nil. Synthetic Partner ref for grapple states (FSM requires non-zero).
+func setCombatPositionParallel(c *characters.Character, pos position.State) {
 	if c.Position == nil {
 		c.Position = position.NewMachine()
 	}
 	r := state.TransitionReason{Trigger: "test_setup"}
 	switch pos {
-	case characters.PositionStanding:
+	case position.Standing:
 		c.Position.ForceStanding(r)
-	case characters.PositionProne:
+	case position.Prone:
 		c.Position.ForceStanding(r)
 		_ = c.Position.TransitionToProne(position.ProneData{}, r)
-	case characters.PositionClinched:
+	case position.Clinch:
 		c.Position.ForceStanding(r)
 		_ = c.Position.TransitionToClinch(
 			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
 			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
 		)
-	case characters.PositionGrounded:
+	case position.Mount:
 		c.Position.ForceStanding(r)
 		_ = c.Position.TransitionToClinch(
 			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
@@ -1139,19 +1137,19 @@ func TestSubmitInCombat(t *testing.T) {
 
 	// In combat but not grounded
 	mob.Character.Aggro = &characters.Aggro{UserId: 1}
-	setCombatPositionParallel(&mob.Character, characters.PositionStanding)
+	setCombatPositionParallel(&mob.Character, position.Standing)
 	handled, err := Submit("", mob, room)
 	assert.True(t, handled)
 	_ = err
 
 	// In combat and grounded but not grapple controller
-	setCombatPositionParallel(&mob.Character, characters.PositionGrounded)
+	setCombatPositionParallel(&mob.Character, position.Mount)
 	handled, err = Submit("", mob, room)
 	assert.True(t, handled)
 	_ = err
 
 	mob.Character.Aggro = nil
-	setCombatPositionParallel(&mob.Character, characters.PositionStanding)
+	setCombatPositionParallel(&mob.Character, position.Standing)
 }
 
 func TestWanderBranches(t *testing.T) {

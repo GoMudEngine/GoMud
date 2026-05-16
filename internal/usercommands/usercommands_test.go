@@ -28,29 +28,27 @@ import (
 
 // ─── Test Infrastructure ──────────────────────────────────────────────────────
 
-// setCombatPositionParallel writes BOTH the legacy CombatPosition
-// field AND the new Position FSM in lockstep. F1 fixture helper
-// for the chunk-4b transition window. Synthetic Partner ref for
-// Clinched/Grounded (FSM requires non-zero).
-func setCombatPositionParallel(c *characters.Character, pos characters.CombatPosition) {
-	c.CombatPosition = pos
+
+// setCombatPositionParallel sets the Position FSM to the given state. Seeds
+// Position if nil. Synthetic Partner ref for grapple states (FSM requires non-zero).
+func setCombatPositionParallel(c *characters.Character, pos position.State) {
 	if c.Position == nil {
 		c.Position = position.NewMachine()
 	}
 	r := state.TransitionReason{Trigger: "test_setup"}
 	switch pos {
-	case characters.PositionStanding:
+	case position.Standing:
 		c.Position.ForceStanding(r)
-	case characters.PositionProne:
+	case position.Prone:
 		c.Position.ForceStanding(r)
 		_ = c.Position.TransitionToProne(position.ProneData{}, r)
-	case characters.PositionClinched:
+	case position.Clinch:
 		c.Position.ForceStanding(r)
 		_ = c.Position.TransitionToClinch(
 			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
 			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
 		)
-	case characters.PositionGrounded:
+	case position.Mount:
 		c.Position.ForceStanding(r)
 		_ = c.Position.TransitionToClinch(
 			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
@@ -670,33 +668,31 @@ func TestStand(t *testing.T) {
 	// helper to keep legacy + FSM in lockstep across fixture sites.
 
 	t.Run("already_standing", func(t *testing.T) {
-		setCombatPositionParallel(user.Character, characters.PositionStanding)
+		setCombatPositionParallel(user.Character, position.Standing)
 		handled, err := Stand("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
 	})
 
 	t.Run("from_prone", func(t *testing.T) {
-		setCombatPositionParallel(user.Character, characters.PositionProne)
+		setCombatPositionParallel(user.Character, position.Prone)
 		user.Character.Stamina = 100
 		handled, err := Stand("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
-		assert.Equal(t, characters.PositionStanding, user.Character.CombatPosition)
 		assert.True(t, user.Character.IsStanding())
 	})
 
 	t.Run("too_exhausted", func(t *testing.T) {
-		setCombatPositionParallel(user.Character, characters.PositionProne)
+		setCombatPositionParallel(user.Character, position.Prone)
 		user.Character.Stamina = 0
 		handled, err := Stand("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
 		// Should still be prone
-		assert.Equal(t, characters.PositionProne, user.Character.CombatPosition)
 		assert.True(t, user.Character.IsProne())
 		// Reset
-		setCombatPositionParallel(user.Character, characters.PositionStanding)
+		setCombatPositionParallel(user.Character, position.Standing)
 		user.Character.Stamina = 100
 	})
 }
@@ -3286,13 +3282,13 @@ func TestGoDeepBranches(t *testing.T) {
 	})
 
 	t.Run("prone_movement", func(t *testing.T) {
-		setCombatPositionParallel(user.Character, characters.PositionProne)
+		setCombatPositionParallel(user.Character, position.Prone)
 		user.Character.ActionPoints = 100
 		handled, err := Go("north", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
 		// Restore
-		setCombatPositionParallel(user.Character, characters.PositionStanding)
+		setCombatPositionParallel(user.Character, position.Standing)
 		user.Character.RoomId = 1
 		room.AddPlayer(1)
 		user.Character.ActionPoints = 5
@@ -4569,7 +4565,7 @@ func TestSubmitDeep(t *testing.T) {
 
 	t.Run("in_combat_not_grounded", func(t *testing.T) {
 		user.Character.Aggro = &characters.Aggro{MobInstanceId: 100}
-		setCombatPositionParallel(user.Character, characters.PositionStanding)
+		setCombatPositionParallel(user.Character, position.Standing)
 		handled, err := Submit("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
@@ -4578,12 +4574,12 @@ func TestSubmitDeep(t *testing.T) {
 
 	t.Run("in_combat_grounded_not_controller", func(t *testing.T) {
 		user.Character.Aggro = &characters.Aggro{MobInstanceId: 100}
-		setCombatPositionParallel(user.Character, characters.PositionGrounded)
+		setCombatPositionParallel(user.Character, position.Mount)
 		handled, err := Submit("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
 		user.Character.Aggro = nil
-		setCombatPositionParallel(user.Character, characters.PositionStanding)
+		setCombatPositionParallel(user.Character, position.Standing)
 	})
 }
 
@@ -4815,13 +4811,13 @@ func TestFleeMoreBranches(t *testing.T) {
 
 	t.Run("flee_prone", func(t *testing.T) {
 		user.Character.Aggro = &characters.Aggro{MobInstanceId: 100}
-		setCombatPositionParallel(user.Character, characters.PositionProne)
+		setCombatPositionParallel(user.Character, position.Prone)
 		user.Character.ActionPoints = 100
 		handled, err := Flee("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
 		user.Character.Aggro = nil
-		setCombatPositionParallel(user.Character, characters.PositionStanding)
+		setCombatPositionParallel(user.Character, position.Standing)
 		user.Character.RoomId = 1
 		room.AddPlayer(1)
 		user.Character.ActionPoints = 5

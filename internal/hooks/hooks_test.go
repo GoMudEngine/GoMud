@@ -197,29 +197,27 @@ func seedAllRegistries() func() {
 	}
 }
 
-// setCombatPositionParallel writes BOTH the legacy CombatPosition
-// field AND the new Position FSM in lockstep. F1 fixture helper
-// for the chunk-4b transition window. Synthetic Partner ref for
-// Clinched/Grounded (FSM requires non-zero).
-func setCombatPositionParallel(c *characters.Character, pos characters.CombatPosition) {
-	c.CombatPosition = pos
+
+// setCombatPositionParallel sets the Position FSM to the given state. Seeds
+// Position if nil. Synthetic Partner ref for grapple states (FSM requires non-zero).
+func setCombatPositionParallel(c *characters.Character, pos position.State) {
 	if c.Position == nil {
 		c.Position = position.NewMachine()
 	}
 	r := state.TransitionReason{Trigger: "test_setup"}
 	switch pos {
-	case characters.PositionStanding:
+	case position.Standing:
 		c.Position.ForceStanding(r)
-	case characters.PositionProne:
+	case position.Prone:
 		c.Position.ForceStanding(r)
 		_ = c.Position.TransitionToProne(position.ProneData{}, r)
-	case characters.PositionClinched:
+	case position.Clinch:
 		c.Position.ForceStanding(r)
 		_ = c.Position.TransitionToClinch(
 			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
 			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
 		)
-	case characters.PositionGrounded:
+	case position.Mount:
 		c.Position.ForceStanding(r)
 		_ = c.Position.TransitionToClinch(
 			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
@@ -1635,7 +1633,7 @@ func TestHandlePlayerFoldCasting_PronePlayer(t *testing.T) {
 		activity.CastingData{SpellId: "sparks"},
 		state.TransitionReason{Trigger: activity.TriggerCastBegin},
 	)
-	setCombatPositionParallel(u.Character, characters.PositionProne)
+	setCombatPositionParallel(u.Character, position.Prone)
 
 	result := handlePlayerFoldCasting(u, 1)
 	assert.True(t, result, "prone player should skip combat")
@@ -1667,7 +1665,7 @@ func TestHandleMobFoldCasting_ProneMob(t *testing.T) {
 		activity.CastingData{SpellId: "sparks"},
 		state.TransitionReason{Trigger: activity.TriggerCastBegin},
 	)
-	setCombatPositionParallel(&mob.Character, characters.PositionProne)
+	setCombatPositionParallel(&mob.Character, position.Prone)
 	room := rooms.LoadRoom(1)
 
 	result := handleMobFoldCasting(mob, room)
@@ -2163,7 +2161,7 @@ func TestApplyMobEffect_Knockdown(t *testing.T) {
 	}
 	dmg := applyMobEffect(u, u.Character, mob, room, kdSpell, 20, false)
 	assert.GreaterOrEqual(t, dmg, 0)
-	assert.Equal(t, characters.PositionProne, mob.Character.CombatPosition)
+	assert.True(t, mob.Character.IsSupine() || mob.Character.IsProne(), "mob should be knocked down")
 }
 
 func TestApplyMobEffect_Buff(t *testing.T) {

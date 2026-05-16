@@ -303,6 +303,22 @@ func (m *Machine) ConsumeRecoveryRound() {
 	}
 }
 
+// ExtendRecoveryRound increments MinRecoveryRounds on the current
+// ProneData or SupineData. Called by stomp to extend the minimum
+// time before the target can attempt to stand. Inverse of
+// ConsumeRecoveryRound.
+//
+// No-op if not in Prone or Supine.
+func (m *Machine) ExtendRecoveryRound() {
+	if m.IsProne() && m.prone != nil {
+		m.prone.MinRecoveryRounds++
+		return
+	}
+	if m.IsSupine() && m.supine != nil {
+		m.supine.MinRecoveryRounds++
+	}
+}
+
 // === Framework escape hatches ===
 
 // Inner returns the underlying state.Machine — used by rules.go

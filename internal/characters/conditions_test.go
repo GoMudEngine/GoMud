@@ -74,7 +74,6 @@ func TestAllConditions_HaveDisplayNames(t *testing.T) {
 	conditions := []ConditionType{
 		ConditionRecoveryPenalty,
 		ConditionDefensePenalty,
-		ConditionGrappleController,
 		ConditionShield,
 		ConditionRegen,
 		ConditionBlinded,
