@@ -56,6 +56,29 @@ func fireCharacterCreated(c *Character) {
 	}
 }
 
+// ResetForMobInstance clears state-machine pointers and the
+// OnCharacterCreated guard so a freshly shallow-copied mob instance
+// gets its own state machines (and its own observer closures) rather
+// than sharing the template's. mobs.newMobByIdInternal shallow-copies
+// the template Character; without this reset, every instance points
+// at the same Life/CombatPhase/Position/Awareness/Activity machines,
+// and observers wired on the template fire with the template's *c
+// (MobInstanceId=0) instead of the instance's, causing despawn /
+// cascade bugs.
+//
+// Called from mobs.newMobByIdInternal between the shallow copy and
+// the first Validate() call. Validate() then constructs new machines
+// and re-fires fireCharacterCreated for the instance.
+func (c *Character) ResetForMobInstance() {
+	c.Life = nil
+	c.CombatPhase = nil
+	c.Position = nil
+	c.Awareness = nil
+	c.Activity = nil
+	c.combatPhaseWired = false
+	c.PerGrappleMessageCooldowns = nil
+}
+
 type NameRenderFlag uint8
 
 const (

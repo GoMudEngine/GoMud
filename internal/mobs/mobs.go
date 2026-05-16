@@ -332,6 +332,15 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 		mob.Character.MobInstanceId = newInstanceId
 		mob.Character.PlayerDamage = make(map[int]int)
 
+		// State-machine pointers and the OnCharacterCreated wiring
+		// guard are shallow-copied above. Null them out so the
+		// upcoming Validate() builds new machines for this instance
+		// and re-fires OnCharacterCreated, letting observers capture
+		// the instance Character (not the template). Without this,
+		// mob death + position cascades fire with c.MobInstanceId=0
+		// and skip their cleanup paths.
+		mob.Character.ResetForMobInstance()
+
 		// Deep copy maps to prevent shared state with template.
 		// Go shallow copy shares map backing data — mutations to an
 		// instance's skills/spellbook would contaminate the template.
