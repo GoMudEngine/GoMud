@@ -21,6 +21,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -698,3 +700,58 @@ func TestActCommandBestOf_InvalidParamReturnsFailure(t *testing.T) {
 		t.Errorf("expected Failure (invalid param), got %v", result)
 	}
 }
+
+// ─── cancel_activity ─────────────────────────────────────────────
+
+// TestCancelActivityBtreeAction verifies that actionCancelActivity
+// transitions an active Casting mob to Free (Success), and returns
+// Failure when already Free (idempotency guard).
+func TestCancelActivityBtreeAction(t *testing.T) {
+	fn := LookupAction("cancel_activity")
+	if fn == nil {
+		t.Fatal("cancel_activity not registered")
+	}
+
+	// Seed a mob with an Activity machine and transition it to Casting.
+	mob := &mobs.Mob{MobId: 1, InstanceId: 999}
+	mob.Character.Name = "TestCaster"
+	mob.Character.Activity = activity.NewMachine()
+	if err := mob.Character.Activity.TransitionToCasting(
+		activity.CastingData{SpellId: "fireball", TotalConvictionCost: 10},
+		state.TransitionReason{Trigger: activity.TriggerCastBegin},
+	); err != nil {
+		t.Fatalf("test setup: TransitionToCasting failed: %v", err)
+	}
+	mobs.SetInstanceForTest(mob.InstanceId, mob)
+	t.Cleanup(func() { mobs.SetInstanceForTest(mob.InstanceId, nil) })
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+
+	// Act: cancel the cast.
+	if result := fn(nil, ctx); result != Success {
+		t.Fatalf("expected Success on active cast, got %v", result)
+	}
+	if !mob.Character.Activity.IsFree() {
+		t.Errorf("Activity should be Free after cancel; got %v",
+			mob.Character.Activity.State())
+	}
+
+	// Idempotency: calling again on Free returns Failure.
+	if result := fn(nil, ctx); result != Failure {
+		t.Errorf("expected Failure when Activity already Free, got %v", result)
+	}
+}
+
+// TestCancelActivityBtreeAction_MissingMob verifies Failure when the
+// EvalContext references a non-existent mob instance.
+func TestCancelActivityBtreeAction_MissingMob(t *testing.T) {
+	fn := LookupAction("cancel_activity")
+	if fn == nil {
+		t.Fatal("cancel_activity not registered")
+	}
+	ctx := &EvalContext{InstanceId: 99998} // never seeded
+	if result := fn(nil, ctx); result != Failure {
+		t.Errorf("expected Failure for missing mob, got %v", result)
+	}
+}
+

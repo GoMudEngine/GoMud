@@ -75,6 +75,9 @@ func init() {
 	actionRegistry["try_plant"] = actTryPlant
 	actionRegistry["try_shadow"] = actTryShadow
 	actionRegistry["try_defuse"] = actTryDefuse
+
+	// Activity control
+	actionRegistry["cancel_activity"] = actionCancelActivity
 }
 
 // LookupAction returns the action function for the given name,

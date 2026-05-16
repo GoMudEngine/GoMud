@@ -17,6 +17,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -1050,6 +1052,15 @@ func TestCancel(t *testing.T) {
 			FoldsNeeded:      4,
 			ConvictionSpent:  3,
 		}
+		// Parallel-write: Activity machine must also be in Casting so
+		// the new dispatch-on-state cancel path fires.
+		if user.Character.Activity == nil {
+			user.Character.Activity = activity.NewMachine()
+		}
+		_ = user.Character.Activity.TransitionToCasting(
+			activity.CastingData{SpellId: "sparks", ConvictionSpent: 3, FoldsNeeded: 4},
+			state.TransitionReason{Trigger: activity.TriggerCastBegin},
+		)
 		handled, err := Cancel("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
@@ -3989,6 +4000,15 @@ func TestTryCommand(t *testing.T) {
 			FoldsNeeded:      4,
 			ConvictionSpent:  3,
 		}
+		// Parallel-write: Activity machine must also be in Casting so
+		// the new dispatch-on-state cancel path fires.
+		if user.Character.Activity == nil {
+			user.Character.Activity = activity.NewMachine()
+		}
+		_ = user.Character.Activity.TransitionToCasting(
+			activity.CastingData{SpellId: "sparks", ConvictionSpent: 3, FoldsNeeded: 4},
+			state.TransitionReason{Trigger: activity.TriggerCastBegin},
+		)
 		handled, err := TryCommand("cancel", "", 1, events.CmdSkipScripts)
 		assert.True(t, handled)
 		assert.NoError(t, err)

@@ -31,6 +31,7 @@ var (
 		"break":          {Break, false},
 		"broadcast":      {Broadcast, false},
 		"buy":            {Buy, false},
+		"cancel":         {Cancel, false},
 		"cast":           {Cast, false},
 		"craft":          {Craft, false},
 		"charge":         {Charge, false},

@@ -1,7 +1,8 @@
 package behaviortree
 
 // actions_combat.go — combat actions:
-// actAttack, actFlee, actCast, actAddBuff, actRemoveBuff
+// actAttack, actFlee, actCast, actAddBuff, actRemoveBuff,
+// actionCancelActivity
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -9,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -195,5 +197,63 @@ func actTargetWeakestMobInRoom(params map[string]any, ctx *EvalContext) Result {
 		return Failure
 	}
 	mob.Character.SetAggro(0, bestId, characters.DefaultAttack)
+	return Success
+}
+
+// actionCancelActivity aborts the mob's current Activity if any is
+// in progress. Returns Success if an activity was cancelled, Failure
+// if the mob was already Free (or has no Activity machine).
+//
+// Inlines the refund + cleanup logic rather than delegating to
+// mobcommands.Cancel because mobcommands imports behaviortree
+// (callforhelp.go, flee.go), which would create a circular import.
+//
+// Use cases in behavior trees:
+//   - panic-flee on low HP: cancel offensive cast, then flee
+//   - swap to heal mid-cast when ally is dying
+//   - drop craft to defend when ambushed
+func actionCancelActivity(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil {
+		return Failure
+	}
+	a := mob.Character.Activity
+	if a == nil || a.IsFree() {
+		return Failure
+	}
+
+	switch a.State() {
+	case activity.Casting:
+		d, _ := a.CastingData()
+		unspent := d.TotalConvictionCost - d.ConvictionSpent
+		if unspent > 0 {
+			refund := unspent / 2
+			mob.Character.Conviction += refund
+			if mob.Character.Conviction > mob.Character.ConvictionMax.Value {
+				mob.Character.Conviction = mob.Character.ConvictionMax.Value
+			}
+		}
+		_ = a.TransitionToFree(state.TransitionReason{
+			Trigger: activity.TriggerCastCancel,
+			Actor:   state.ActorRef{MobInstanceId: mob.InstanceId},
+		})
+		mob.Character.CastingState = nil
+
+	case activity.Crafting:
+		_ = a.TransitionToFree(state.TransitionReason{
+			Trigger: activity.TriggerCraftCancel,
+			Actor:   state.ActorRef{MobInstanceId: mob.InstanceId},
+		})
+		mob.Character.CraftingState = nil
+
+	case activity.Salvaging:
+		_ = a.TransitionToFree(state.TransitionReason{
+			Trigger: activity.TriggerSalvageCancel,
+			Actor:   state.ActorRef{MobInstanceId: mob.InstanceId},
+		})
+		mob.Character.CraftingState = nil
+		delete(mob.Character.MiscData, "salvage_item_uuid")
+		delete(mob.Character.MiscData, "salvage_spoiled_potion")
+	}
 	return Success
 }

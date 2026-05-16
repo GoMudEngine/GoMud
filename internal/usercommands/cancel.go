@@ -1,29 +1,61 @@
 package usercommands
 
 import (
-	"fmt"
-
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
-// Cancel aborts an in-progress fold-based cast, reporting conviction already spent.
+// Cancel aborts any in-progress activity (casting, crafting, salvaging).
+// Casting: refunds 50% of unspent conviction.
+// Crafting: no refund (materials not consumed until completion).
+// Salvaging: no refund (item not consumed until completion).
 func Cancel(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
-	if user.Character.CastingState == nil {
-		user.SendText(`You aren't casting anything.`)
+	a := user.Character.Activity
+	if a == nil || a.IsFree() {
+		user.SendText(`You aren't doing anything to cancel.`)
 		return true, nil
 	}
 
-	cs := user.Character.CastingState
-	user.Character.CastingState = nil
+	switch a.State() {
+	case activity.Casting:
+		d, _ := a.CastingData()
+		// Refund 50% of unspent conviction (existing behavior, preserved).
+		unspent := d.TotalConvictionCost - d.ConvictionSpent
+		if unspent > 0 {
+			refund := unspent / 2
+			user.Character.Conviction += refund
+			if user.Character.Conviction > user.Character.ConvictionMax.Value {
+				user.Character.Conviction = user.Character.ConvictionMax.Value
+			}
+		}
+		_ = a.TransitionToFree(state.TransitionReason{
+			Trigger: activity.TriggerCastCancel,
+			Actor:   state.ActorRef{UserId: user.UserId},
+		})
+		// Legacy parallel-write clear; removed in Task 11.
+		user.Character.CastingState = nil
+		user.SendText(`You stop casting.`)
 
-	user.SendText(fmt.Sprintf(
-		`<ansi fg="cyan">You release your held folds. %d conviction is lost.</ansi>`,
-		cs.ConvictionSpent))
-	room.SendTextVisual(fmt.Sprintf(
-		`<ansi fg="username">%s</ansi> breaks their concentration.`,
-		user.Character.Name), user.UserId)
+	case activity.Crafting:
+		_ = a.TransitionToFree(state.TransitionReason{
+			Trigger: activity.TriggerCraftCancel,
+			Actor:   state.ActorRef{UserId: user.UserId},
+		})
+		user.Character.CraftingState = nil
+		user.SendText(`You stop crafting.`)
 
+	case activity.Salvaging:
+		_ = a.TransitionToFree(state.TransitionReason{
+			Trigger: activity.TriggerSalvageCancel,
+			Actor:   state.ActorRef{UserId: user.UserId},
+		})
+		user.Character.CraftingState = nil
+		delete(user.Character.MiscData, "salvage_item_uuid")
+		delete(user.Character.MiscData, "salvage_spoiled_potion")
+		user.SendText(`You stop salvaging.`)
+	}
 	return true, nil
 }
