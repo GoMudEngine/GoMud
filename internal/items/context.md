@@ -687,7 +687,9 @@ message = message.SetTokenValue(items.TokenDamage, "15")
 message = message.SetTokenValue(items.TokenTarget, "orc")
 ```
 
-This comprehensive item system provides the foundation for all equipment, consumables, and objects in GoMud, supporting complex interactions, modifications, and integration with all other game systems.
+This comprehensive item system provides the foundation for all equipment,
+consumables, and objects in GoMud, supporting complex interactions,
+modifications, and integration with all other game systems.
 
 ---
 
@@ -813,3 +815,55 @@ vendor scale all MaxStock caps. Default 1.0 means MaxStock = RarityTier
 exactly. Set this on big trading-post mobs (e.g., 2.0 for a major
 depot) or small specialty stalls (e.g., 0.5 for a single-recipe niche
 vendor).
+
+---
+
+## Weapon Reach (chunk 4c)
+
+`ItemSpec.Reach` (float64, meters) encodes how much physical space a weapon
+needs to operate at full effectiveness. The combat pipeline consults reach
+when the attacker is grappling — weapons whose reach exceeds the position's
+effective radius are penalized multiplicatively, while weapons that fit the
+radius pay no penalty. A greatsword in mount swings awkwardly (the haft
+catches the attacker's own body); a dagger in mount stays fully dangerous.
+The attack-message vocabulary swaps to a bludgeoning set when the penalty
+fires (pommel/hilt strike narration). Full design spec and formula:
+`docs/superpowers/specs/2026-05-16-state-chunk-4c-position-weapon-utility-design.md`
+
+**Consumer side:** `internal/combat/reach.go` (T2) — `PositionReachRadius`,
+`ReachUtility`, `ShouldBludgeon`, `CalcReachAdjustedItemMult`.
+
+### Default reach by subtype
+
+| Subtype     | Reach (m) | Notes                                    |
+|-------------|-----------|------------------------------------------|
+| Fist        | 0.10      | Punch length                             |
+| Claws       | 0.15      | Fingers extended                         |
+| Bite        | 0.15      | Head-mounted, neck-length                |
+| Sting       | 0.20      | Abdomen/tail-tip                         |
+| Slam        | 0.30      | Bull rush, shoulder-check                |
+| Stabbing    | 0.30      | Dagger / shiv family                     |
+| Gore        | 0.40      | Horn-tip from skull base                 |
+| Wand        | 0.40      | Foot-long focus                          |
+| Whipping    | 0.50      | Hand-held whip; mob tail overrides       |
+| Sceptre     | 0.60      | Larger ornamented focus                  |
+| Bludgeoning | 0.80      | Mace / hammer family                     |
+| Cleaving    | 0.90      | Axe family                               |
+| Slashing    | 1.00      | Sword family                             |
+| Shooting    | 1.00      | Bow/crossbow as club; override compacts  |
+| Staff       | 1.50      | Quarterstaff equivalent in close quarters|
+
+Natural-attack subtypes (Fist through Whipping) stay at or below the default
+ground-grapple radius (0.3 m), so they pay no penalty — by design.
+
+### Authoring guidance
+
+1. **Leave `reach` empty** in YAML for normal items of a known subtype.
+   The engine falls through to the subtype default via `ResolveReach`.
+2. **Set `reach: <meters>` only for outliers** — e.g., an unusually long
+   dagger (`reach: 0.5`) or a compact crossbow (`reach: 0.6`).
+3. **Use meters**, not abstract units. Real-world references help balance.
+4. **New subtypes:** add a `case` in `DefaultReachForSubtype` in
+   `internal/items/reach.go` and update this table.
+5. Arm length / species reach is intentionally out of scope (chunk 4c
+   decision). Weapon reach only.
