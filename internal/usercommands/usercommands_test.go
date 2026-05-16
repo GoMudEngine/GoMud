@@ -19,6 +19,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -629,8 +630,14 @@ func TestStand(t *testing.T) {
 
 	user, room := getTestUserAndRoom(t)
 
+	// Chunk 4b W7: Stand now gates on the Position FSM (IsProne ||
+	// IsSupine), so fixture writes must parallel-write both the
+	// legacy CombatPosition field and the FSM. T20 (F1) will widen
+	// this migration across the rest of the suite.
+
 	t.Run("already_standing", func(t *testing.T) {
 		user.Character.CombatPosition = characters.PositionStanding
+		user.Character.Position.ForceStanding(state.TransitionReason{Trigger: "test_reset"})
 		handled, err := Stand("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
@@ -638,23 +645,34 @@ func TestStand(t *testing.T) {
 
 	t.Run("from_prone", func(t *testing.T) {
 		user.Character.CombatPosition = characters.PositionProne
+		_ = user.Character.Position.TransitionToProne(
+			position.ProneData{},
+			state.TransitionReason{Trigger: "test_setup"},
+		)
 		user.Character.Stamina = 100
 		handled, err := Stand("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
 		assert.Equal(t, characters.PositionStanding, user.Character.CombatPosition)
+		assert.True(t, user.Character.IsStanding())
 	})
 
 	t.Run("too_exhausted", func(t *testing.T) {
 		user.Character.CombatPosition = characters.PositionProne
+		_ = user.Character.Position.TransitionToProne(
+			position.ProneData{},
+			state.TransitionReason{Trigger: "test_setup"},
+		)
 		user.Character.Stamina = 0
 		handled, err := Stand("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
 		// Should still be prone
 		assert.Equal(t, characters.PositionProne, user.Character.CombatPosition)
+		assert.True(t, user.Character.IsProne())
 		// Reset
 		user.Character.CombatPosition = characters.PositionStanding
+		user.Character.Position.ForceStanding(state.TransitionReason{Trigger: "test_reset"})
 		user.Character.Stamina = 100
 	})
 }

@@ -6,14 +6,17 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
 func Stand(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	// Check if character is prone
-	if user.Character.CombatPosition != characters.PositionProne {
+	// Chunk 4b W7: gate on the new Position FSM (Prone or Supine).
+	if !user.Character.IsProne() && !user.Character.IsSupine() {
 		user.SendText("You're already standing.")
 		return true, nil
 	}
@@ -31,13 +34,23 @@ func Stand(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
+	// Fire the FSM transition first — if it fails (shouldn't, since
+	// Prone→Standing and Supine→Standing are valid edges) bail without
+	// charging stamina or touching the legacy fields so the two views
+	// stay consistent.
+	if err := user.Character.Position.TransitionToStanding(state.TransitionReason{Trigger: position.TriggerStandCommand}); err != nil {
+		mudlog.Warn("Stand: TransitionToStanding failed", "user", user.UserId, "err", err)
+		user.SendText("Something prevents you from standing.")
+		return true, nil
+	}
+
 	// Deduct stamina
 	user.Character.Stamina -= staminaCost
 	if user.Character.Stamina < 0 {
 		user.Character.Stamina = 0
 	}
 
-	// Remove prone status (bypasses minimum duration)
+	// Remove prone status (bypasses minimum duration) — legacy parallel write.
 	user.Character.CombatPosition = characters.PositionStanding
 	user.Character.PositionRoundsMin = 0
 
