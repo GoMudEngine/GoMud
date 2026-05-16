@@ -12,7 +12,8 @@ Supine state distinction, gradient/transition/stamina messaging) by
 chunk 4b (Position FSM cutover + control axis).
 
 Survey date: 2026-05-16. Branch: `feature/mob-aliveness-1.3-crimes`,
-commit after T20 F1 (test-fixture parallel-write migration).
+commit after T21 S1-S5 sunset (legacy field/file deletes fully shipped,
+including R4 Life-cascade pre-wire removal).
 
 ---
 
@@ -20,88 +21,51 @@ commit after T20 F1 (test-fixture parallel-write migration).
 
 ### Updates needed (mechanic changed, references outdated)
 
-- `internal/state/position/context.md` — Largest scope. The chunk-4a
-  "ships DORMANT" framing (lines 12-26) is now stale: 4b's writer cutover
-  (W1-W8), reader cutover (R1, R2, R3, R5, R6), and F1 fixture migration
-  have shipped. **R4** (delete `Life_Cascades.go:55-57` chunk-2 pre-wire)
-  is **deferred** pending a broader CombatPosition reader sweep (~25
-  unmigrated readers across combat/ai.go, combat/grapple.go,
-  actions/combat_kick.go, actions/command_readiness.go,
-  behaviortree/conditions_mob.go, hooks/combat_shared_helpers.go,
-  mobcommands/submit.go, usercommands/submit.go,
-  characters/combat_state_compat.go); **S1-S5** (legacy field/file
-  sunsets) are blocked on the same sweep. The "Intentional
-  Simplifications" section (lines 385-410) lists items 1, 3, 4, 5, 7 as
-  4b targets — items 1 (control rolls), 3 (writers), 4 (reader cutover),
-  5 (flee veto) shipped; item 7 (submissions) remains 4d. The "Sunset
-  Notes" table (lines 456-467) needs status columns updated (W1-W8 / R
-  done, R4 deferred, S blocked). Add new sections for control-axis API
-  (`MutateGrappleControlLevel`, `ConsumeRecoveryRound`, `IsController`,
-  `IsBeingControlled`, `IsControllerLevel`, `IsControlledLevel`,
-  `IsLowGrappleStamina`), per-round messaging contract (gradient,
-  transition, stamina warning, cooldown semantics), three new observers
-  (`Position_GrappleTick`, `Position_Messaging`, `Position_ConsistencyCheck`),
-  the 6 control-axis btree primitives, and the 16-primitive total btree
-  surface.
+- `internal/state/position/context.md` — Largest scope. **All of
+  W1-W8, R1-R6 (including R4 pre-wire deletion), F1, and S1-S5 sunset
+  have shipped.** UPDATE: rewrite Status section from "R4 deferred /
+  S1-S5 blocked" to "fully shipped". Update Cascade Integration to
+  remove "coexists with chunk-2 pre-wire" framing. Update Intentional
+  Simplifications item 8 from "in progress" to shipped. Update Sunset
+  Notes table to mark all items deleted. Update Persistence note to
+  remove "identical to how CombatPosition behaves today". Update
+  "What 4b brings" to remove the deferred-work list.
 
-- `internal/characters/context.md` — Lines 656-659: "These coexist with
-  the legacy `CombatPosition` enum and its `IsGroundPosition()` /
-  `IsGrapplePosition()` helpers. Chunk 4b removes the legacy helpers
-  once command sites cut over to write the new FSM." Status update: the
-  legacy helpers are no longer read by combat_helpers.go (R1) or
-  grapple.go (R2) but the broader sweep is incomplete — ~25 readers
-  remain. Update to "Chunk 4b reader sweep in progress; legacy helpers
-  to be deleted in S5 after the sweep finishes." Also add a new section
-  for the 4b-introduced predicates on Character: `IsController`,
-  `IsBeingControlled`, `IsLowGrappleStamina`, `GetPositionSpeedMultiplier`,
-  and the new prompt helpers `positionPromptColor` / `positionPromptAbbrev`
-  (lives in users package but worth cross-referencing).
+- `internal/characters/context.md` — UPDATE: remove "R4 deferred /
+  S1-S5 blocked" and "remain in place until S1-S5 land" language.
+  Replace with "fully removed (T21 sunset)". Update `IsController()`
+  description from "sunset target S4" to "S4 shipped". Update
+  `GetPositionSpeedMultiplier()` from "sunset S5" to "S5 shipped".
+  Rename "Legacy enum coexistence" block to historical-reference table.
 
-- `internal/hooks/context.md` — Line 523: `RegisterPositionCheck` table
-  entry reads `c.CombatPosition == PositionStanding`. **Update to
-  `c.IsStanding()`** (R5 cutover landed in commit `edc12d81`). Lines
-  660-661: Life cascade list "Resets `CombatPosition` to Standing /
-  Clears `GrappleControllerId`" — R4 deferred, so these legacy resets
-  are still in place. Update with a "(legacy parallel reset; the new
-  FSM is reset independently by `position_life_dead` observer in
-  `Position_Cascades.go`; R4 will delete the legacy pre-wire after the
-  reader sweep)" note. Lines 793-799: Position cascade "coexists with
-  chunk-2 pre-wire" prose — accurate now, but should note R4 status
-  ("deferred pending broader reader sweep"). **Add new sections** for
-  three chunk-4b observers: `Position_GrappleTick` (per-round control
-  drift via `MutateGrappleControlLevel` + grapple stamina cost +
-  threshold-triggered position transitions), `Position_Messaging`
-  (gradient / transition / stamina warning with cooldown), and
-  `Position_ConsistencyCheck` (periodic pair-invariant checker via
-  `ValidateGrapplePair`).
+- `internal/hooks/context.md` — UPDATE: Life_Cascades Alive→Dead list
+  still mentions "Resets CombatPosition to Standing" and "Clears
+  GrappleControllerId" — both removed by R4 + T21. Delete those bullet
+  points and replace with a note that R4 removed the pre-wire and the
+  `position_life_dead` observer in `Position_Cascades.go` is now the
+  sole position reset. Similarly update the Position_Cascades section
+  to remove "coexists with chunk-2 pre-wire / R4 deferred" framing.
+  Note: `RegisterPositionCheck` (line 523) already reads `c.IsStanding()`
+  — no change needed there.
 
-- `internal/combat/context.md` — Line 492: `ws.attacks *=
-  CombatPosition.GetSpeedMultiplier()` — pseudocode in
-  `calcSwingCount` walkthrough. **Update to `sourceChar.GetPositionSpeedMultiplier()`**
-  (R1 cutover). Broader: grapple mechanics section should be rewritten
-  in 4b voice — single-round Clinch/Grounded binary is replaced by the
-  per-round opposed control roll model, the 14-state taxonomy, and
-  threshold-triggered transitions. Mention the `IsThirdPartyAttack`
-  rewrite reading `GrappleData.Partner` (R2).
+- `internal/combat/context.md` — UPDATE: remove "plus legacy
+  parallel-write of CombatPosition / PositionRoundsMin" from the
+  stand-command recovery section (T21 sunset). Remove "unmigrated
+  readers of the legacy enum" paragraph (R-sweep complete). Update
+  IsThirdPartyAttack note to say "deleted" fields rather than
+  "legacy". Update Down state "legacy parallel" bullet.
 
-- `internal/state/life/context.md` — Line 207: "Resets `CombatPosition`
-  to Standing" — same R4-deferred status note as the hooks doc. Update
-  to "(legacy parallel reset; `position_life_dead` observer in
-  `internal/hooks/Position_Cascades.go` resets the new FSM
-  independently; R4 will delete the legacy pre-wire after the broader
-  reader sweep)".
+- `internal/state/life/context.md` — UPDATE: Life_Cascades section
+  still mentions "Resets CombatPosition to Standing (legacy parallel;
+  R4 deferred)". Replace with a note that those lines were removed in
+  R4 and the `position_life_dead` observer in `Position_Cascades.go`
+  is now sole owner of the Position death cascade.
 
-- `internal/spells/context.md` — Line 105: `knockdown` effect entry
-  describes "sets target prone (CombatPosition = PositionProne, 1 round
-  min)". W5 cutover (`spell_resolution.go`) now also fires
-  `Position.TransitionToSupine(MinRecoveryRounds: 1, TriggerKnockdownSpell)`
-  alongside the legacy write — the "slams to the ground" wording fits a
-  backward blast → Supine, not Prone. Update to: "Deals damage + knocks
-  the target down — Supine via the Position FSM
-  (`TriggerKnockdownSpell`) and `CombatPosition = PositionProne` legacy
-  parallel-write, 1 round min recovery. T22 doc audit can revisit if
-  spells gain a direction config to distinguish blast (Supine) from
-  shockwave (Prone)."
+- `internal/spells/context.md` — UPDATE: knockdown entry still
+  mentions "alongside the legacy `CombatPosition = PositionProne`
+  parallel-write". Remove the legacy reference (T21 sunset). The
+  canonical outcome is `TransitionToSupine` (face-up, Supine) via
+  `TriggerKnockdownSpell`. The legacy write is gone.
 
 ### Keep as-is (keyword match but meaning unchanged)
 
@@ -341,36 +305,32 @@ writes both the legacy field and the FSM.
    `GetPositionSpeedMultiplier`. Cross-reference users-package prompt
    helpers (`positionPromptColor`, `positionPromptAbbrev`).
 
-3. `internal/hooks/context.md` — Update `RegisterPositionCheck` table
-   entry (line 523) to `c.IsStanding()`. Add "(legacy parallel; R4
-   deferred)" notes on lines 660-661 (Life cascade Position resets).
-   Update Position cascade prose (lines 793-799) to note R4 deferred
-   status. **Add new sections** for `Position_GrappleTick`,
-   `Position_Messaging`, `Position_ConsistencyCheck` observers.
+3. `internal/hooks/context.md` — DELETE "Resets CombatPosition to
+   Standing" and "Clears GrappleControllerId" bullets from Life cascade
+   list (R4 removed them). UPDATE Position_Cascades section to remove
+   "coexists with chunk-2 pre-wire / R4 deferred" framing.
+   (`RegisterPositionCheck` already reads `c.IsStanding()` — no change.)
 
-4. `internal/combat/context.md` — Update line 492 pseudocode
-   (`CombatPosition.GetSpeedMultiplier()` → `c.GetPositionSpeedMultiplier()`).
-   Rewrite grapple mechanics section: replace single-round
-   Clinch/Grounded binary with per-round opposed control roll, 14-state
-   taxonomy, threshold-triggered transitions, gradient/transition
-   messaging contract. Note `IsThirdPartyAttack` Partner-based check
-   (R2).
+4. `internal/combat/context.md` — DELETE "plus legacy parallel-write
+   of CombatPosition / PositionRoundsMin" from stand-command section.
+   DELETE "unmigrated readers of the legacy enum" paragraph. UPDATE
+   IsThirdPartyAttack note to say "deleted" fields. UPDATE Down state
+   "legacy parallel" bullet to reflect T21 sunset.
 
-5. `internal/state/life/context.md` — Update line 207 "(legacy
-   parallel; `position_life_dead` observer resets the FSM
-   independently; R4 deferred)".
+5. `internal/state/life/context.md` — DELETE "Resets CombatPosition
+   to Standing (legacy parallel; R4 deferred)" and "Clears grapple
+   controller (same legacy-parallel + R4-deferred status)". Replace
+   with note that R4 deleted those lines.
 
-6. `internal/spells/context.md` — Update line 105 knockdown effect
-   entry: note Supine transition via `TriggerKnockdownSpell` (W5
-   cutover) alongside the legacy `CombatPosition = PositionProne`
-   write.
+6. `internal/spells/context.md` — UPDATE knockdown entry: remove
+   "alongside the legacy `CombatPosition = PositionProne` parallel-
+   write". The FSM `TransitionToSupine` is now the sole write.
 
-7. `internal/behaviortree/context.md` — **Net-new section** documenting
-   the 16 position btree primitives (10 chunk-4a per-state + rollup +
-   6 chunk-4b control-axis). Include a table mapping primitive name
-   to underlying predicate (e.g. `mob_in_grapple → c.IsGrappling()`,
-   `mob_is_in_control → c.IsController()`, `target_is_being_controlled`,
-   `mob_low_grapple_stamina → c.IsLowGrappleStamina()`, etc.).
+7. `internal/behaviortree/context.md` — UPDATE: `mob_is_in_control`
+   entry says "sunset target S4" — replace with "S4 shipped". Update
+   the preamble from "never the legacy CombatPosition enum" to note the
+   legacy enum is now deleted (T21). The 16-primitive table is already
+   present and accurate; only the status language needs correction.
 
 8. `COMBAT_STATE_ROADMAP.md` — Status pass on lines 268-270 (chunk-2
    forward-reference now partially satisfied), lines 514-522 (chunk-4a
@@ -379,11 +339,11 @@ writes both the legacy field and the FSM.
 
 **Notes for T25 (out of T23 scope):**
 
-- Mark chunk 4b shipped in `COMBAT_STATE_ROADMAP.md` and
-  `MOB_ALIVENESS_ROADMAP.md` with the deferral list (R4, S1-S5,
-  broader reader sweep, helpfile 4f sweep).
-- Update `MEMORY.md` followups index to mark the R4 reader sweep as
-  the natural next-session work.
+- Mark chunk 4b fully shipped in `COMBAT_STATE_ROADMAP.md` and
+  `MOB_ALIVENESS_ROADMAP.md` (all R4, S1-S5, and reader sweep work
+  landed before T23; helpfile sweep remains 4f scope).
+- Update `MEMORY.md` followups index to remove the R4 reader sweep
+  entry (shipped) and note that the next chunk is 4c.
 - `DEVELOPMENT_PLAN.md` Stage 8 historical entries can be marked
   "superseded by chunk 4b Position FSM" if maintaining as a living
   doc; not strictly required.
@@ -410,13 +370,13 @@ writes both the legacy field and the FSM.
    feature names (e.g. `target_prone` trigger, `grappler` archetype)
    that survive the rename.
 
-4. **`Position_Cascades.go` observer + Life pre-wire still coexist by
-   design.** R4 (delete the pre-wire) is **deferred** pending the
-   broader CombatPosition reader sweep. The "coexistence" prose in
-   `hooks/context.md`, `state/life/context.md`, and
-   `state/position/context.md` is **still accurate**, but should be
-   tagged with "(R4 deferred; reader sweep pending)" status so future
-   readers understand why both observers fire.
+4. **`Position_Cascades.go` observer is now the sole Position death
+   cascade.** R4 shipped (`a481797f`) — the chunk-2 `Life_Cascades.go`
+   pre-wire that reset `c.CombatPosition` and `c.GrappleControllerId`
+   is deleted. T21 removed the legacy fields entirely. All three docs
+   (`hooks/context.md`, `state/life/context.md`, `state/position/
+   context.md`) still contain "coexists with chunk-2 pre-wire / R4
+   deferred" language — that is what T23 corrects.
 
 5. **Btree primitive surface tripled in 4b** (10 chunk-4a per-state
    primitives + 6 chunk-4b control-axis primitives), but
@@ -448,25 +408,23 @@ writes both the legacy field and the FSM.
 
 ## Post-audit notes for T23 execution
 
-When updating context.md files, preserve the chunk-by-chunk historical
-voice (matches chunk-2/3 audit pattern):
+When updating context.md files, use present-tense "fully shipped" voice
+(T21 + R4 both landed before T23 runs):
 
-- **Before (chunk 4a):** "These coexist with the legacy `CombatPosition`
-  enum and its helpers. Chunk 4b removes the legacy helpers..."
-- **After (chunk 4b):** "Chunk 4b reader sweep in progress; ~25
-  legacy readers remain (see memory entry
-  `project_chunk_4b_r4_blocked_on_reader_sweep.md`). The legacy enum +
-  helpers are scheduled for deletion in S5 after the sweep finishes."
+- **Before (stale):** "coexists with the legacy `CombatPosition` enum
+  and its helpers; R4 deferred; S1-S5 blocked"
+- **After (current):** "The legacy `CombatPosition` enum and all
+  supporting fields are deleted (T21 sunset). The Position FSM is the
+  sole source of truth."
 
-For the `Position_Cascades.go` coexistence note across three files
-(hooks/, state/life/, state/position/), the pattern is:
+For the `Position_Cascades.go` section across three files
+(hooks/, state/life/, state/position/):
 
 - "The chunk-4a `position_life_dead` observer (in
-  `internal/hooks/Position_Cascades.go`) resets the new FSM
-  independently. The chunk-2 `Life_Cascades.go:55-57` pre-wire
-  (legacy `CombatPosition` + `GrappleControllerId` resets) **also
-  fires** — R4 (pre-wire deletion) is deferred pending the broader
-  CombatPosition reader sweep."
+  `internal/hooks/Position_Cascades.go`) is the sole Position reset on
+  death. The chunk-2 `Life_Cascades.go` pre-wire that reset legacy
+  `CombatPosition` + `GrappleControllerId` was deleted in R4. Those
+  fields no longer exist (T21 sunset)."
 
 For `internal/behaviortree/context.md` (net new section), model it
 after the existing structure (overview + table + integration notes):
@@ -503,15 +461,15 @@ after the existing structure (overview + table + integration notes):
 before committing — names above are the working set; actual
 identifiers may differ in case/underscore convention.)
 
-For `position/context.md` Sunset Notes table, add a "Status" column:
+For `position/context.md` Sunset Notes table — all items now fully
+shipped (update "Status" column accordingly):
 
 | Legacy item | Status |
 |-------------|--------|
-| `CombatPosition` enum | 4b cutover in progress; S5 blocked on reader sweep |
-| `PositionRoundsMin` field | 4b parallel-writes in place; S2 blocked on reader sweep |
-| `GrappleControllerId` field | 4b parallel-writes in place; S3 blocked on reader sweep |
-| `ConditionGrappleController` | 4b R1/R2 migrated all known readers; S4 verify-then-delete |
-| `Life_Cascades.go` Position pre-wire | R4 deferred — see `project_chunk_4b_r4_blocked_on_reader_sweep.md` |
-| Legacy `AttemptRecovery()` path | W6 done — parallel-writes Position FSM |
-| Kick variant selector legacy reads | Unmigrated — followup noted in R1+R2 commit |
-| ~25 `c.CombatPosition` read sites | Unmigrated — see R4 memory entry for file list |
+| `CombatPosition` enum | **Deleted** — T21 S5 (reader sweep complete) |
+| `PositionRoundsMin` field | **Deleted** — T21 S2 |
+| `GrappleControllerId` field | **Deleted** — T21 S3 |
+| `ConditionGrappleController` | **Deleted** — T21 S4 |
+| `Life_Cascades.go` Position pre-wire | **Deleted** — R4 (`a481797f`) |
+| `internal/characters/combatposition.go` | **Deleted** — T21 |
+| Legacy `AttemptRecovery()` path | **Shipped** W6 |
