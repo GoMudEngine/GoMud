@@ -53,7 +53,7 @@ func CommandIsReady(actor Actor, cmd string) bool {
 		if !target.Found {
 			return false
 		}
-		return !target.Char.CombatPosition.IsGroundPosition()
+		return !target.Char.IsOnFloor()
 
 	case "bash":
 		if char.Aggro == nil {
@@ -69,7 +69,7 @@ func CommandIsReady(actor Actor, cmd string) bool {
 		if !target.Found {
 			return false
 		}
-		return !target.Char.CombatPosition.IsGrapplePosition()
+		return !target.Char.IsGrappling()
 
 	case "kick":
 		return char.Aggro != nil

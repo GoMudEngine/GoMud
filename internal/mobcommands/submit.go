@@ -3,7 +3,6 @@ package mobcommands
 import (
 	"fmt"
 
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -18,13 +17,13 @@ func Submit(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	// Must be in Grounded position
-	if mob.Character.CombatPosition != characters.PositionGrounded {
+	// Must be in a ground grapple
+	if !mob.Character.IsGroundGrapple() {
 		return true, nil
 	}
 
 	// Must be the grapple controller
-	if !mob.Character.HasCondition(characters.ConditionGrappleController) {
+	if !mob.Character.IsController() {
 		return true, nil
 	}
 

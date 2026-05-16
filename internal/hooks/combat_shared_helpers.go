@@ -422,8 +422,8 @@ func processFoldRound(char *characters.Character) FoldRoundResult {
 	}
 	cs, _ := char.Activity.CastingData()
 
-	// Prone → immediate concentration break.
-	if char.CombatPosition == characters.PositionProne {
+	// Downed (prone or supine) → immediate concentration break.
+	if char.IsProne() || char.IsSupine() {
 		clearCastingActivity(char, activity.TriggerConcentrationBreak)
 		return FoldRoundResult{ProneBroke: true, CastingData: cs}
 	}

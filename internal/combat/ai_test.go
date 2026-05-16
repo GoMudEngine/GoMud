@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -134,7 +135,7 @@ func TestCanUseTrip(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := characters.New()
-			c.CombatPosition = tt.position
+			setCombatPositionParallel(c, tt.position)
 			if tt.cooldown {
 				c.Cooldowns["special-move"] = 3
 			}
@@ -177,7 +178,7 @@ func TestCanUseGrapple(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := characters.New()
-			c.CombatPosition = tt.position
+			setCombatPositionParallel(c, tt.position)
 			if tt.cooldown {
 				c.Cooldowns["special-move"] = 3
 			}
@@ -205,9 +206,25 @@ func TestCanUseSubmit(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := characters.New()
-			c.CombatPosition = tt.position
-			if tt.controller {
-				c.AddCondition(characters.ConditionGrappleController, 0, 1.0, "test")
+			// For PositionGrounded the helper writes the Mount FSM state
+			// with InControl; the bottom-side case uses Guard with
+			// Controlled instead so IsController() returns false. Skip
+			// the helper for that case and wire the FSM directly.
+			if tt.position == characters.PositionGrounded && !tt.controller {
+				c.CombatPosition = characters.PositionGrounded
+				_ = c.Position.TransitionToClinch(
+					position.GrappleData{Partner: state.ActorRef{UserId: 1}, ControlLevel: position.Controlled},
+					state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+				)
+				_ = c.Position.TransitionToGuard(
+					position.GrappleData{Partner: state.ActorRef{UserId: 1}, ControlLevel: position.Controlled},
+					state.TransitionReason{Trigger: position.TriggerGuardPull},
+				)
+			} else {
+				setCombatPositionParallel(c, tt.position)
+				if tt.controller {
+					c.AddCondition(characters.ConditionGrappleController, 0, 1.0, "test")
+				}
 			}
 			if tt.cooldown {
 				c.Cooldowns["special-move"] = 3

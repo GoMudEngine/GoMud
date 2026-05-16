@@ -22,14 +22,14 @@ func Submit(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return true, nil
 	}
 
-	// Must be in Grounded position
-	if user.Character.CombatPosition != characters.PositionGrounded {
+	// Must be in a ground grapple
+	if !user.Character.IsGroundGrapple() {
 		user.SendText("You must be in a grounded grapple to attempt a submission!")
 		return true, nil
 	}
 
 	// Must be the grapple controller
-	if !user.Character.HasCondition(characters.ConditionGrappleController) {
+	if !user.Character.IsController() {
 		user.SendText("You must be in control of the grapple to attempt a submission!")
 		return true, nil
 	}

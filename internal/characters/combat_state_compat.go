@@ -164,7 +164,7 @@ func (c *Character) ClearGrappleState() {
 	c.GrappleControllerId = 0
 	c.RemoveCondition(ConditionGrappleController)
 	// Reset to standing if in a grapple position
-	if c.CombatPosition.IsGrapplePosition() {
+	if c.IsGrappling() {
 		c.CombatPosition = PositionStanding
 	}
 }

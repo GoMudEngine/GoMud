@@ -73,13 +73,13 @@ func AttemptGrapple(attacker *characters.Character, defender *characters.Charact
 	}
 
 	// Position modifiers
-	if defender.CombatPosition == characters.PositionProne {
+	if defender.IsProne() || defender.IsSupine() {
 		// Defender at -70% defense when already down (brutal!)
 		result.PositionPenalty = -0.7
 		result.DefenseScore *= 0.3
 	}
 
-	if attacker.CombatPosition == characters.PositionProne {
+	if attacker.IsProne() || attacker.IsSupine() {
 		// Attacker at -50% offense when attacking from ground
 		result.AttackScore *= 0.5
 	}
@@ -96,7 +96,7 @@ func AttemptGrapple(attacker *characters.Character, defender *characters.Charact
 
 	// Determine new position on success
 	if success {
-		if defender.CombatPosition == characters.PositionProne {
+		if defender.IsProne() || defender.IsSupine() {
 			// Prone → Grounded (direct, skip Clinched)
 			result.NewPosition = characters.PositionGrounded
 		} else {
@@ -126,8 +126,8 @@ func ApplyGrappleResult(attacker *characters.Character, defender *characters.Cha
 	// pair directly into SideControl (skips Clinch); both standing →
 	// Clinch.
 	target := position.Clinch
-	if attacker.CombatPosition == characters.PositionProne ||
-		defender.CombatPosition == characters.PositionProne {
+	if attacker.IsProne() || attacker.IsSupine() ||
+		defender.IsProne() || defender.IsSupine() {
 		target = position.SideControl
 	}
 

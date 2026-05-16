@@ -2,7 +2,6 @@ package behaviortree
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
@@ -171,7 +170,7 @@ func condTargetNotStanding(params map[string]any, ctx *EvalContext) Result {
 	if !target.Found {
 		return Failure
 	}
-	if target.Char.CombatPosition != characters.PositionStanding {
+	if !target.Char.IsStanding() {
 		return Success
 	}
 	return Failure
