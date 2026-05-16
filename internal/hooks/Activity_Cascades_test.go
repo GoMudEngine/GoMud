@@ -68,11 +68,14 @@ func TestCombatEntryVetoedWhenCrafting(t *testing.T) {
 	}
 }
 
-// TestCombatEntryVetoedWhenCasting verifies that TransitionToEngaging is
-// vetoed (returns a non-nil error) while the character is Casting, and that
-// the Activity remains Casting afterwards. Casting is always a combat-adjacent
-// action and must not be interrupted by a combat-entry veto. Covers AC-018.
-func TestCombatEntryVetoedWhenCasting(t *testing.T) {
+// TestCombatEntryAllowedWhenCasting verifies that TransitionToEngaging
+// SUCCEEDS while the character is Casting. Per the chunk-3 per-activity
+// policy (Q2C from brainstorm — covers AC-018), casting is itself a
+// combat action and is exempt from the activity_self veto in
+// CombatPhase_Vetoes.go. The cast continues through combat entry;
+// damage triggers a separate concentration-break path. Only Crafting
+// and Salvaging block combat entry.
+func TestCombatEntryAllowedWhenCasting(t *testing.T) {
 	c := characters.New()
 	_ = c.Activity.TransitionToCasting(
 		activity.CastingData{SpellId: "fireball"},
@@ -87,12 +90,12 @@ func TestCombatEntryVetoedWhenCasting(t *testing.T) {
 		state.TransitionReason{Trigger: combatphase.TriggerAttackCommand},
 	)
 
-	if err == nil {
-		t.Error("TransitionToEngaging should be vetoed while casting; got nil error")
+	if err != nil {
+		t.Errorf("TransitionToEngaging should succeed while casting; got %v", err)
 	}
 	if !c.IsCasting() {
 		t.Errorf(
-			"Activity should remain Casting after vetoed combat entry; got %v",
+			"Activity should remain Casting after combat entry (no cascade-cancel for casting); got %v",
 			c.Activity.State(),
 		)
 	}

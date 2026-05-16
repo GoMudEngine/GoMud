@@ -18,8 +18,13 @@ func wireCombatPhaseVetoes(c *characters.Character) {
 		return c.IsCombatant()
 	})
 	c.CombatPhase.RegisterActivityCheck(func() bool {
-		// Free == no active multi-round activity.
-		return c.IsFree()
+		// Per chunk-3 per-activity policy (spec section "Per-activity
+		// interrupt policy" — choice C from brainstorm): casting is
+		// itself a combat action and is EXEMPT from the combat-entry
+		// veto (cast continues into / during combat; damage triggers
+		// concentration break via separate path). Crafting and
+		// salvaging block combat entry — caller must cancel first.
+		return !c.IsCrafting() && !c.IsSalvaging()
 	})
 	c.CombatPhase.RegisterLifeCheck(func() bool {
 		return c.Health > 0

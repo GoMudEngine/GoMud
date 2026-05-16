@@ -740,13 +740,16 @@ death cascade.
 
 **Combat-entry cancellation — implemented via veto, not cascade:**
 
-Crafting and Salvaging are blocked when the character enters combat
-(`Idle → Engaging`). This is implemented as the `activity_self` veto in
-`CombatPhase_Vetoes.go` — `RegisterActivityCheck` reads `c.IsActing()`
-and vetoes the transition if any activity is active. Casting is exempt
-from this veto (a character can continue casting after entering combat).
-A separate `AfterTransition` cascade for combat-entry was evaluated and
-removed as unreachable (the veto fires before the transition succeeds).
+Crafting and Salvaging block the character from entering combat
+(`Idle → Engaging`). This is implemented in `CombatPhase_Vetoes.go` —
+`RegisterActivityCheck` returns `!c.IsCrafting() && !c.IsSalvaging()`,
+so the veto fires only when one of those two activities is active.
+Casting is exempt (cast IS a combat action — the character continues
+casting through combat entry, with damage handled separately via the
+concentration-break path). A separate `AfterTransition` cascade for
+combat-entry was evaluated and removed as unreachable (the veto fires
+before the transition succeeds for craft/salvage; nothing to cascade
+for casting).
 
 ### Call-site wirings (not AfterTransition)
 

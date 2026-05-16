@@ -435,4 +435,6 @@ Chunk 3 deleted the following. Do not re-add these patterns:
   `CraftingState = nil`) — replaced by `Activity_Cascades.go`
   `activity_life_dead` observer subscribed to the Life machine
 - `NewRound_MobRoundTick.go:tickMobCrafting` mob-only combat-cancel
-  block — covered by the `activity_self` veto in `CombatPhase_Vetoes.go`
+  block — covered by the activity veto in `CombatPhase_Vetoes.go`
+  (`RegisterActivityCheck` rejects combat entry when `IsCrafting()` or
+  `IsSalvaging()`; casting is exempt per the per-activity policy)
