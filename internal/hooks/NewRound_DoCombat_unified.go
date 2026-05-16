@@ -17,6 +17,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -65,6 +67,23 @@ func handleCombatRound(
 	// CancelCombatBuffs also strips permabuff entries so Validate() won't
 	// re-apply them (notably: Hidden seeded via buffids on ambushers).
 	def.GetCharacter().CancelCombatBuffs()
+
+	// Chunk 1 follow-up (surfaced by chunk 4b smoke 2026-05-16):
+	// CancelCombatBuffs strips buff #9 but the Awareness FSM is the
+	// canonical source of truth for IsHidden post-chunk-1. The cascade
+	// in Awareness_Cascades.go fires only when the defender's OWN
+	// CombatPhase transitions Idle→Engaging — which doesn't happen
+	// when a defender is targeted but never SetAggro's the attacker
+	// (e.g. a hidden mob grappled while it has no aggro of its own).
+	// Force the FSM out of Hidden if the buff strip left it stale; the
+	// cascade re-strips the buff (no-op since already gone). Without
+	// this, hidden ambushers stay stuck Hidden and the IsHidden check
+	// below fires "can't seem to find your target" on every round.
+	if defChar := def.GetCharacter(); defChar.Awareness != nil && defChar.IsHidden() {
+		defChar.Awareness.ForceVisible(state.TransitionReason{
+			Trigger: awareness.TriggerCombatEntered,
+		})
+	}
 
 	// Phase 1: wait-round short-circuit.
 	if phase1WaitRound(atk, def) {
