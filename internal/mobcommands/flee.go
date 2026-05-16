@@ -24,8 +24,14 @@ func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	// Can't flee while grappled. Chunk 4b R3: FSM-driven — covers all
 	// 11 grapple states via the two rollups (legacy enum only knew the
-	// Clinched / Grounded buckets).
+	// Clinched / Grounded buckets). Mirrors the player-flee
+	// grapple-block UX in handlePlayerFlee — the player needs to see
+	// that their grapple is holding the mob even when the mob tries
+	// to break free. Pre-chunk-4b this returned silently, which made
+	// the grapple feel passive.
 	if mob.Character.IsStandingGrapple() || mob.Character.IsGroundGrapple() {
+		sendRoomText(room,
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to break free but you've got them locked down!`, mob.Character.Name))
 		return true, nil
 	}
 
@@ -89,7 +95,11 @@ func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	// Get a random exit (skips secret and locked exits)
 	exitName, _ := room.GetRandomExit()
 	if exitName == "" {
-		// Cornered — no exits available
+		// Cornered — no exits available. Surface the panic visibly so
+		// the room knows the mob tried and failed (pre-fix this was
+		// silent, making the mob appear to randomly exit combat).
+		sendRoomText(room,
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> looks around frantically for an escape but finds none!`, mob.Character.Name))
 		return true, nil
 	}
 
