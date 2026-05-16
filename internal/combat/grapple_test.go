@@ -130,7 +130,7 @@ func TestAttemptGrapple_Statistical(t *testing.T) {
 			def := characters.New()
 			def.Stats.Dexterity.ValueAdj = 100
 			def.Skills["unarmed-combat"] = 25
-			def.CombatPosition = characters.PositionProne
+			setCombatPositionParallel(def, characters.PositionProne)
 
 			result := AttemptGrapple(atk, def)
 			if result.Success {

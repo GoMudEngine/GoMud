@@ -19,6 +19,44 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
+// setCombatPositionParallel writes BOTH the legacy CombatPosition field
+// AND the new Position FSM in lockstep. F1 fixture helper for the chunk
+// 4b transition window: tests that previously wrote only the legacy
+// enum now keep both views aligned so FSM-driven readers see the
+// intended state. Seeds Position if nil (struct-literal Characters
+// don't run through New()'s machine init). Use a synthetic partner
+// ActorRef for Clinched/Grounded — the FSM only requires non-zero.
+func setCombatPositionParallel(c *characters.Character, pos characters.CombatPosition) {
+	c.CombatPosition = pos
+	if c.Position == nil {
+		c.Position = position.NewMachine()
+	}
+	r := state.TransitionReason{Trigger: "test_setup"}
+	switch pos {
+	case characters.PositionStanding:
+		c.Position.ForceStanding(r)
+	case characters.PositionProne:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToProne(position.ProneData{}, r)
+	case characters.PositionClinched:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+	case characters.PositionGrounded:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+		_ = c.Position.TransitionToMount(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}, ControlLevel: position.InControl},
+			state.TransitionReason{Trigger: position.TriggerTakedownMount},
+		)
+	}
+}
+
 // ─── calcSwingCount ─────────────────────────────────────────────────────────
 
 func TestCalcSwingCount_Baseline(t *testing.T) {
@@ -27,7 +65,7 @@ func TestCalcSwingCount_Baseline(t *testing.T) {
 	ch.Stats.Dexterity.ValueAdj = 100
 	ch.StaminaMax.Value = 100
 	ch.Stamina = 100
-	ch.CombatPosition = characters.PositionStanding
+	setCombatPositionParallel(ch, characters.PositionStanding)
 
 	tests := []struct {
 		name        string
@@ -54,7 +92,7 @@ func TestCalcSwingCount_HighDexUnarmedPullsAhead(t *testing.T) {
 	ch.Stats.Dexterity.ValueAdj = 150
 	ch.StaminaMax.Value = 100
 	ch.Stamina = 100
-	ch.CombatPosition = characters.PositionStanding
+	setCombatPositionParallel(ch, characters.PositionStanding)
 
 	unarmed := calcSwingCount(ch, 1.4, 0, false)
 	light := calcSwingCount(ch, 1.2, 0, false)
@@ -67,7 +105,7 @@ func TestCalcSwingCount_HardCap(t *testing.T) {
 	ch.Stats.Dexterity.ValueAdj = 500 // absurdly high
 	ch.StaminaMax.Value = 100
 	ch.Stamina = 100
-	ch.CombatPosition = characters.PositionStanding
+	setCombatPositionParallel(ch, characters.PositionStanding)
 
 	got := calcSwingCount(ch, 1.4, 5, false)
 	assert.LessOrEqual(t, got, 4, "swing count should never exceed hard cap of 4")
@@ -78,7 +116,7 @@ func TestCalcSwingCount_RecoveryForcesOne(t *testing.T) {
 	ch.Stats.Dexterity.ValueAdj = 200
 	ch.StaminaMax.Value = 100
 	ch.Stamina = 100
-	ch.CombatPosition = characters.PositionStanding
+	setCombatPositionParallel(ch, characters.PositionStanding)
 	ch.AddCondition(characters.ConditionRecoveryPenalty, 1, 1.0, "test")
 
 	got := calcSwingCount(ch, 1.4, 0, false)
@@ -95,15 +133,10 @@ func TestCalcSwingCount_ProneReduces(t *testing.T) {
 	ch.StaminaMax.Value = 100
 	ch.Stamina = 100
 
-	ch.CombatPosition = characters.PositionStanding
-	ch.Position.ForceStanding(state.TransitionReason{Trigger: "test_setup"})
+	setCombatPositionParallel(ch, characters.PositionStanding)
 	standing := calcSwingCount(ch, 1.4, 0, false)
 
-	ch.CombatPosition = characters.PositionProne
-	_ = ch.Position.TransitionToProne(
-		position.ProneData{},
-		state.TransitionReason{Trigger: "test_setup"},
-	)
+	setCombatPositionParallel(ch, characters.PositionProne)
 	prone := calcSwingCount(ch, 1.4, 0, false)
 
 	assert.Less(t, prone, standing,
@@ -115,7 +148,7 @@ func TestCalcSwingCount_MinimumOne(t *testing.T) {
 	ch.Stats.Dexterity.ValueAdj = 10 // very low
 	ch.StaminaMax.Value = 100
 	ch.Stamina = 1 // nearly depleted
-	ch.CombatPosition = characters.PositionProne
+	setCombatPositionParallel(ch, characters.PositionProne)
 
 	got := calcSwingCount(ch, 0.5, 0, false)
 	assert.GreaterOrEqual(t, got, 1, "swing count should never go below 1")
@@ -165,8 +198,8 @@ func TestResolveDefenseOutcome_DoubleFumble(t *testing.T) {
 	result := &AttackResult{}
 	src := &characters.Character{Name: "Attacker"}
 	tgt := &characters.Character{Name: "Defender"}
-	src.CombatPosition = characters.PositionStanding
-	tgt.CombatPosition = characters.PositionStanding
+	setCombatPositionParallel(src, characters.PositionStanding)
+	setCombatPositionParallel(tgt, characters.PositionStanding)
 
 	// Both fumble
 	best := mockBestDefense(-2.5, -2.5, 50, 50, characters.DefenseDodge)

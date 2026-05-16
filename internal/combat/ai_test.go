@@ -275,7 +275,7 @@ func TestScoreBash(t *testing.T) {
 		c.HealthMax.Value = 100
 		c.Health = int(healthPct)
 		if prone {
-			c.CombatPosition = characters.PositionProne
+			setCombatPositionParallel(c, characters.PositionProne)
 		}
 		return c
 	}
@@ -304,13 +304,13 @@ func TestScoreTrip(t *testing.T) {
 		m.Character = *characters.New()
 		m.Character.Stats.Dexterity.ValueAdj = dex
 		m.Character.Skills[string(skills.UnarmedCombat)] = unarmedSkill
-		m.Character.CombatPosition = position
+		setCombatPositionParallel(&m.Character, position)
 		return m
 	}
 
 	t.Run("target already prone → 0", func(t *testing.T) {
 		target := characters.New()
-		target.CombatPosition = characters.PositionProne
+		setCombatPositionParallel(target, characters.PositionProne)
 		target.HealthMax.Value = 100
 		target.Health = 100
 		score := ScoreTrip(makeMob(100, 0, characters.PositionStanding), target)
@@ -370,7 +370,7 @@ func TestScoreGrapple(t *testing.T) {
 
 	t.Run("already in grapple → 0", func(t *testing.T) {
 		mob := makeMob(100, 50, 100, 100)
-		mob.Character.CombatPosition = characters.PositionClinched
+		setCombatPositionParallel(&mob.Character, characters.PositionClinched)
 		target := characters.New()
 		target.HealthMax.Value = 100
 		target.Health = 100
