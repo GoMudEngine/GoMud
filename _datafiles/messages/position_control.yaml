@@ -1,0 +1,54 @@
+# Position control-axis message templates (chunk 4b).
+# Substitution tokens:
+#   {position}      — display name of the current grapple position
+#   {old_position}  — pre-transition position (transition_messages only)
+#   {new_position}  — post-transition position (transition_messages only)
+#   {Character}     — single-character broadcasts
+#   {Controller}    — name of the controller side
+#   {Controlled}    — name of the controlled side
+#
+# Starter copy; polished in 4f balance pass.
+
+gradient_messages:
+  controller:
+    in_control:
+      self: "You settle into a dominating {position}."
+      room: "{Controller} settles into a dominating {position}."
+    losing_control:
+      self: "You feel your {position} slipping."
+      room: "{Controller} struggles to maintain {position}."
+    neutral:
+      self: "The {position} is even — it's all up for grabs."
+      room: "The {position} between {Controller} and {Controlled} is even."
+    becoming_controlled:
+      self: "You're about to lose the {position}."
+      room: "{Controller} is losing {position}."
+    controlled:
+      self: "You've lost the {position}!"
+      room: "{Controller} has lost {position}."
+
+  controlled:
+    losing_control:
+      self: "You feel an opening — they're losing the position."
+      room: ""
+    neutral:
+      self: "The {position} is even — it's all up for grabs."
+      room: ""
+    becoming_controlled:
+      self: "You're starting to control the position!"
+      room: ""
+    controlled:
+      self: "You're about to escape!"
+      room: ""
+
+transition_messages:
+  controller:
+    self: "You lose the {old_position} as they recover to {new_position}."
+    room: "{Controller} loses the {old_position} to {Controlled}, who recovers to {new_position}."
+  controlled:
+    self: "You escape the {old_position} to {new_position}!"
+    room: ""
+
+stamina_warning:
+  self: "You're getting gassed — your {position} is hard to maintain."
+  room: "{Character} looks exhausted in the {position}."

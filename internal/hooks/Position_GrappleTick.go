@@ -272,23 +272,7 @@ func applyGrappleStaminaCost(controller, controlled *characters.Character, cfg c
 }
 
 // fireGradientMessages / fireTransitionMessages / fireStaminaWarningIfLow
-// are no-op stubs in T6. Task 7 lands the real implementations in
-// Position_Messaging.go so its work is purely additive.
-func fireGradientMessages(c *characters.Character, from, to position.ControlLevel) {
-	_ = c
-	_ = from
-	_ = to
-}
-
-func fireTransitionMessages(controller, controlled *characters.Character, target position.State) {
-	_ = controller
-	_ = controlled
-	_ = target
-}
-
-func fireStaminaWarningIfLow(c *characters.Character) {
-	_ = c
-}
+// live in Position_Messaging.go (T7).
 
 func init() {
 	events.RegisterListener(events.NewRound{}, processGrappleTick)
