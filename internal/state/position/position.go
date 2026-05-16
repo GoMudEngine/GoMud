@@ -211,6 +211,37 @@ func (m *Machine) IsOnFloor() bool {
 	return m.IsProne() || m.IsSupine() || m.IsGroundGrapple()
 }
 
+// IsController returns true when the character is the controller
+// side of a grapple pair. False for Standing, Prone, Supine, and
+// for grapple states where the character's ControlLevel is on the
+// controlled side or neutral (symmetric positions).
+//
+// Used by the per-round tick to identify which side of a pair to
+// iterate from; used by btree primitives for AI decisions.
+func (m *Machine) IsController() bool {
+	if !m.IsGrappling() {
+		return false
+	}
+	d, ok := m.GrappleData()
+	if !ok {
+		return false
+	}
+	return IsControllerLevel(d.ControlLevel)
+}
+
+// IsBeingControlled returns true when the character is the
+// controlled side of a grapple pair.
+func (m *Machine) IsBeingControlled() bool {
+	if !m.IsGrappling() {
+		return false
+	}
+	d, ok := m.GrappleData()
+	if !ok {
+		return false
+	}
+	return IsControlledLevel(d.ControlLevel)
+}
+
 // === Data accessors ===
 
 // ProneData returns the prone context if currently Prone.
