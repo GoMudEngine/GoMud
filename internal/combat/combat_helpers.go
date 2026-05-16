@@ -257,15 +257,30 @@ func buildWeaponSetup(sourceChar *characters.Character, targetChar *characters.C
 		ws.baseDmg += float64(weapon.StatMod(string(statmods.RacialBonusPrefix) + strings.ToLower(targetChar.Species())))
 
 		gearMul := mutations.GearEffectivenessMultiplier(sourceChar.Mutations)
-		ws.weaponDmgMult = itemSpec.DamageMultiplier * gearMul
+		// T3 (chunk 4c): apply reach-utility penalty — long weapons are
+		// penalized in grapple positions. CalcReachAdjustedItemMult uses
+		// DamageMultiplier as the base and scales by radius/reach. The
+		// resulting effective multiplier is then further scaled by gearMul.
+		adjustedMult := CalcReachAdjustedItemMult(weapon, sourceChar)
+		ws.weaponDmgMult = adjustedMult * gearMul
 		if ws.weaponDmgMult <= 0 {
 			ws.weaponDmgMult = float64(bal.UnarmedDamageMultiplier)
 		}
 	} else {
+		// Natural-attack path (mob unarmed, species DamageMultiplier).
+		// Apply reach-utility directly: mob claws/bite/fist are short-reach
+		// and stay effective in grapples, so this is mostly a correctness
+		// guard — the numbers don't change for natural attacks in practice.
+		naturalReach := items.ResolveNaturalReach(ws.weaponSubType)
+		posRadius := 0.0 // default: no grapple penalty if Position not initialized
+		if sourceChar.Position != nil {
+			posRadius = PositionReachRadius(sourceChar.Position.State())
+		}
+		reachMult := ReachUtility(naturalReach, posRadius)
 		if speciesInfo := species.GetSpecies(sourceChar.SpeciesId); speciesInfo != nil && speciesInfo.DamageMultiplier > 0 {
-			ws.weaponDmgMult = speciesInfo.DamageMultiplier
+			ws.weaponDmgMult = speciesInfo.DamageMultiplier * reachMult
 		} else {
-			ws.weaponDmgMult = float64(bal.UnarmedDamageMultiplier)
+			ws.weaponDmgMult = float64(bal.UnarmedDamageMultiplier) * reachMult
 		}
 	}
 

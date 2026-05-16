@@ -42,6 +42,12 @@ type SkillMoveParams struct {
 // ExecuteSkillMove performs the core combat resolution for bash/kick/trip.
 // It handles the opposed roll, damage pipeline, knockdown determination,
 // and applies HP reduction + prone status. Callers handle messaging and analytics.
+//
+// Reach adjustment (chunk 4c): kick/stomp/knee variants are body-driven
+// (foot/knee impacts), not weapon-driven, so they do NOT apply the reach
+// utility curve. The knee variant's DamagePercent (KneeDamagePercent=1.00)
+// is already calibrated for the grapple context. Grapple-entry, trip,
+// and bash are force-driven and are similarly reach-agnostic.
 func ExecuteSkillMove(p SkillMoveParams) SkillMoveResult {
 	result := SkillMoveResult{}
 
