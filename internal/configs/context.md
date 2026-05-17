@@ -496,3 +496,24 @@ apiKey := configs.GetSecret(config.Server.APIKey)
 ```
 
 This configuration system provides a robust foundation for managing all aspects of GoMud server configuration with type safety, validation, security, and runtime flexibility.
+
+---
+
+## DOGMud Balance Configuration Knobs
+
+The `Balance` subsection of the config holds all gameplay-tuning constants.
+Additions by chunk are documented below.
+
+### Weapon Reach (chunk 4c)
+
+Three knobs control how harshly long weapons are penalised in grapples.
+All live under `Balance` in `_datafiles/config.yaml`.
+
+| Knob | Default | Effect |
+|------|---------|--------|
+| `ReachStandingGrappleRadius` | 0.5 | Effective radius (m) for Clinch / BackStanding. Weapons longer than this are penalised. |
+| `ReachGroundGrappleRadius` | 0.3 | Effective radius (m) for ground grapple states (Mount, Guard, etc.). Tighter than standing. |
+| `ReachUtilityFloor` | 0.15 | Minimum damage multiplier from the reach curve. Prevents long weapons from doing literal zero damage. |
+
+See `internal/combat/context.md` "Weapon Reach Utility" for the full
+formula and exempt subtype list.

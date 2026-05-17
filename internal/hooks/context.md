@@ -858,6 +858,21 @@ Generates three message classes with per-grapple cooldowns
 Cooldowns reset when the grapple ends (any `TransitionToStanding` via
 escape, break, or death).
 
+### Reach pipeline integration (chunk 4c)
+
+No new hook files for 4c. The reach penalty is applied inline within
+the existing per-swing helpers in `NewRound_DoCombat_helpers.go`:
+
+- **Reach-adjusted damage:** `buildWeaponSetup` calls
+  `combat.CalcReachAdjustedItemMult(weapon, attacker)` instead of
+  reading `weaponSpec.DamageMultiplier` directly. Long weapons take a
+  multiplicative penalty in grapple positions.
+- **Bludgeon narration:** `buildAttackMessages` calls
+  `combat.ShouldBludgeon(reach, radius)` before `items.GetAttackMessage`.
+  When true, bladed weapon subtypes (Slashing, Cleaving, Stabbing,
+  Shooting) swap to `Bludgeoning` vocabulary so fiction tracks math.
+  Natural-blunt and caster subtypes are exempt.
+
 ### Position_ConsistencyCheck.go (chunk 4b)
 
 Periodic invariant checker registered via

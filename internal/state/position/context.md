@@ -32,12 +32,17 @@ curls.
   (`Position_Messaging.go`), and the periodic pair-invariant checker
   (`Position_ConsistencyCheck.go`) all fire in production.
 
-**Next chunks:** 4c — weapon/combat integration (position-based weapon
-availability, attack-variant selection, ground-striking modifiers).
-4d — submissions engine (chokes / joint-locks gated by ControlLevel
-thresholds). 4e — player command parity (player-facing `grapple`,
-`escape`, `submit`, `position`). 4f — helpfile + full doc sweep
-(player-facing help content for the 14-state model, Supine
+**4c shipped:** Weapon reach utility. `internal/combat/reach.go` reads
+`State()` to compute a damage multiplier (position-radius curve:
+standing-grapple 0.5 m, ground-grapple 0.3 m). Long weapons degrade in
+grapples; short weapons stay effective. Bladed weapons narrate as
+Bludgeoning when `ShouldBludgeon` fires. See
+`internal/combat/context.md` for the integration.
+
+**Next chunks:** 4d — submissions engine (chokes / joint-locks gated by
+ControlLevel thresholds). 4e — player command parity (player-facing
+`grapple`, `escape`, `submit`, `position`). 4f — helpfile + full doc
+sweep (player-facing help content for the 14-state model, Supine
 distinction, per-round drift narrative).
 
 ---
@@ -504,8 +509,9 @@ sub-chunks.
    sweep (combat/ai.go, combat/grapple.go, etc.) still in progress.
 5. ~~No flee veto.~~ **Shipped in 4b R3/R5** — `mobcommands/flee.go`,
    `handlePlayerFlee`, and `RegisterPositionCheck` all read the FSM.
-6. **No weapon interaction.** Ground positions affect weapon
-   availability and attack variants; chunk 4c/4d adds those rules.
+6. ~~No weapon interaction.~~ **Shipped in 4c** — `internal/combat/reach.go`
+   reads `State()` to penalise long weapons in grapples. Attack-variant
+   selection and weapon-availability gating remain for 4d.
 7. **No submission system.** Submissions (chokes, joint locks) require
    `ControlLevel` to exceed thresholds; chunk 4d adds the submission engine.
 8. ~~`CombatPosition` enum removal in progress.~~ **Shipped in 4b** —
@@ -583,8 +589,10 @@ Nothing. 4a is purely additive.
   `internal/characters/combatposition.go` deleted (S1-S5). Per-round
   `ControlLevel` drift, gradient/transition/stamina messaging, and the
   periodic pair-invariant checker all fire.
-- **4c — Weapon/combat integration:** Position-based weapon availability
-  rules, attack variant selection by position, ground-striking modifiers.
+- **4c — Weapon reach utility (fully shipped 2026-05-16):** `State()` is
+  read by `internal/combat/reach.go` to compute a damage multiplier.
+  Standing-grapple radius 0.5 m, ground-grapple radius 0.3 m. Bladed
+  weapons swap to Bludgeoning narration when `ShouldBludgeon` fires.
 - **4d — Submissions engine:** Choke and joint-lock submissions gated by
   `ControlLevel` thresholds, tap/break resolution, injury consequences.
 - **4e — Player command parity:** Player-facing `grapple`, `escape`,

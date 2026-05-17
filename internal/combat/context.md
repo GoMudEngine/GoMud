@@ -825,3 +825,63 @@ values directly.
 | `hooks/NewRound_DoCombat_helpers.go` | All extracted helpers: `handlePlayerShieldDecay`, `handlePlayerFoldCasting`, `handleMobFoldCasting`, `handlePlayerFlee`, `handlePlayerVsPlayer`, `handlePlayerVsMob`, `handleMobVsPlayer`, `handleMobVsMob`, `handleMobAIDecision`, `handleMobTargetSwitch`, `handleMobWeaponPickup`, `handleMobDownedGrace`, `handlePartyAutoAttack`, `handleCharmedMobAssist`, `handleAutoRetargetPlayer`, `handlePlayerConcentrationBreak`, `dispatchCombatMessages`, `handleOffhandBreakUserDef`, `handleOffhandBreakMobDef` |
 | `hooks/combat_shared_helpers.go` | `simulateFoldRound`, `calcFoldConvictionCost`, `advanceFolds`, `checkConcentrationBreak`, `tryWeaponBreak`, `applyCritEffects`, `CritEffectResult`, `calcSpellDamageForCharacter` |
 | `hooks/spell_resolution.go` | `resolveSpell`, `resolveAgainstMob`, `resolveAgainstPlayer`, `applyPlayerEffect` |
+
+---
+
+## Weapon Reach Utility (chunk 4c)
+
+When a character is grappling, long weapons cannot be swung freely —
+the haft catches the attacker's own body. Chunk 4c adds a multiplicative
+damage penalty that scales with how much a weapon's reach exceeds the
+grapple's effective radius. Short weapons (daggers, fists) pay no
+penalty; polearms in mount are severely degraded. All logic lives in
+`internal/combat/reach.go`.
+
+### Functions
+
+**`PositionReachRadius(s position.State) float64`**
+Returns the effective constraint radius (meters) for a given position:
+- Non-grapple states → 0.0 (no penalty, any weapon)
+- Clinch, BackStanding → `ReachStandingGrappleRadius` (default 0.5 m)
+- All ground grapple states (Mount, Guard, etc.) → `ReachGroundGrappleRadius`
+  (default 0.3 m)
+
+**`ReachUtility(weaponReach, posRadius float64) float64`**
+Returns `min(1.0, posRadius / weaponReach)`, floored at `ReachUtilityFloor`
+(default 0.15). A dagger (0.30 m) in mount (radius 0.30 m) scores 1.0 —
+full damage. A sword (1.00 m) in mount scores 0.30 — 30% of normal.
+
+**`ShouldBludgeon(weaponReach, posRadius float64) bool`**
+True when `weaponReach > posRadius` (i.e., weapon exceeds grapple radius).
+Drives the narration swap described below.
+
+**`CalcReachAdjustedItemMult(weapon Item, attacker *Character) float64`**
+Pipeline-integration helper called in `combat_helpers.go:buildWeaponSetup`
+for every swing. Resolves weapon reach (via `items.ResolveReach`), reads
+the position radius via `PositionReachRadius(attacker.Position.State())`,
+and returns the adjusted `DamageMultiplier` (weapon's base multiplier
+scaled by `ReachUtility`). Natural-attack paths (mob unarmed, claws, bite)
+use `items.ResolveNaturalReach(subtype)` directly and do not go through
+this helper.
+
+### Bludgeon narration
+
+When `ShouldBludgeon` fires in `combat_helpers.go:buildAttackMessages`,
+the message subtype is swapped to `Bludgeoning` before calling
+`items.GetAttackMessage`. Effect: "you slam the iron sword's pommel into
+the bandit's ribs" instead of slashing narration. Damage math is unchanged;
+the swap is cosmetic only.
+
+**Exempt subtypes (no swap):**
+- Natural-blunt: Fist, Claws, Bite, Sting, Slam, Gore, Whipping
+- Caster: Wand, Sceptre, Staff
+
+**Affected subtypes (swap fires):** Slashing, Cleaving, Stabbing, Shooting.
+
+### Balance knobs (`Balance` section in config)
+
+| Knob | Default | Effect |
+|------|---------|--------|
+| `ReachStandingGrappleRadius` | 0.5 m | Constraint radius for Clinch / BackStanding. Weapons longer than this are penalised. |
+| `ReachGroundGrappleRadius` | 0.3 m | Tighter constraint for ground grapples (Mount, Guard, etc.). |
+| `ReachUtilityFloor` | 0.15 | Minimum damage multiplier from the reach curve. Prevents total nullification. |

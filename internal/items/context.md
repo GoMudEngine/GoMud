@@ -847,11 +847,18 @@ fires (pommel/hilt strike narration). Full design spec and formula:
 | Wand        | 0.40      | Foot-long focus                          |
 | Whipping    | 0.50      | Hand-held whip; mob tail overrides       |
 | Sceptre     | 0.60      | Larger ornamented focus                  |
-| Bludgeoning | 0.80      | Mace / hammer family                     |
 | Cleaving    | 0.90      | Axe family                               |
 | Slashing    | 1.00      | Sword family                             |
 | Shooting    | 1.00      | Bow/crossbow as club; override compacts  |
 | Staff       | 1.50      | Quarterstaff equivalent in close quarters|
+
+**Note on Bludgeoning:** `Bludgeoning` is a combat-message vocabulary subtype
+(used for the narration swap when a bladed weapon is penalised in a grapple),
+NOT a weapon carry-subtype that item authors set in YAML. It has no entry in
+`DefaultReachForSubtype` by design. Mace/hammer items should currently be
+authored without a subtype (falling through to the sentinel 0.0, which means
+no reach penalty — correct for a short weapon). If a dedicated mace subtype
+is added in a future chunk, update `internal/items/reach.go` and this table.
 
 Natural-attack subtypes (Fist through Whipping) stay at or below the default
 ground-grapple radius (0.3 m), so they pay no penalty — by design.

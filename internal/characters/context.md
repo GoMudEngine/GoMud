@@ -695,6 +695,10 @@ should use these predicates from day one):
 | `.GetSpeedMultiplier()` | `GetPositionSpeedMultiplier()` |
 | `HasCondition(GrappleController)` | `IsController()` |
 
+Position predicates also drive the chunk-4c reach utility
+(`internal/combat/reach.go`): `IsGrappling()` + `State()` determine the
+grapple radius, which scales weapon damage per swing.
+
 ### Prompt helpers (chunk 4b R6)
 
 The `{pos}` prompt-token cutover added two private helpers in
