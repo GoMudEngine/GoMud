@@ -39,7 +39,7 @@ This effort collapses that surface to one canonical framework:
 | 3 | Activity | Done (2026-05-15) | Free / Casting / Crafting / Salvaging. Star-topology FSM consolidates `Character.CastingState` + `Character.CraftingState` pointer fields and the salvage MiscData hijack into one per-state-data machine. Per-activity interrupt policy formalized (casting allows combat entry; craft/salvage block & cancel on combat/damage/movement). `cancel_activity` btree primitive added. 16/22 Behavior Matrix tests PASS/SKIP. |
 | 4a | Position — FSM | Done (2026-05-16) | 14 geometric states (Standing / Prone / Supine / Clinch / BackStanding / Mount / SideControl / KneeOnBelly / NorthSouth / Crucifix / BackGround / HalfGuard / Guard / Turtle). Prone/Supine split during brainstorm — submission paths, recovery difficulty, and back-take vulnerability diverge. Per-state data (StandingData / ProneData / SupineData / shared GrappleData), ~75-edge transition graph, 22 trigger constants, 19 Character predicates, 10 btree primitives, Life-Dead cascade observer. Ships DORMANT — zero behavior change; legacy CombatPosition enum + all command writers untouched. 4b cuts over writers + control rolls + sunsets legacy. |
 | 4b | Position — control axis | Done (2026-05-16) | Per-grappler 5-level control scale (InControl / LosingControl / Neutral / BecomingControlled / Controlled). Per-round opposed Strength + Unarmed-combat rolls with stamina + encumbrance curves; margin → delta with 2-consecutive-controlled threshold; gradient + transition + stamina-warning messages; 6 new btree control-axis primitives; 4 pair invariants enforced via TransitionPair + ValidateGrapplePair + periodic ConsistencyCheck. Legacy `CombatPosition` / `PositionRoundsMin` / `GrappleControllerId` / `ConditionGrappleController` / `combatposition.go` all sunset. |
-| 4c | Position — weapon utility | Not started | (Position × WeaponType) → modifier table. Combat resolution reads it. Lets long weapons fail in mount, knives stay useful, etc. |
+| 4c | Position — weapon utility | Done (2026-05-16) | `Reach float64` field (meters) on `ItemSpec` + default-by-subtype lookup (`internal/items/reach.go`); per-state grapple-radius curve (standing-grapple 0.5m, ground-grapple 0.3m, other unbounded); `ReachUtility = radius/reach` formula floored at 0.15; pipeline integration via `CalcReachAdjustedItemMult` at `combat/combat_helpers.go:buildWeaponSetup`; bladed weapons (Slashing/Cleaving/Stabbing/Shooting) in grapples narrate with Bludgeoning vocabulary at `buildAttackMessages`. 3 new balance knobs. New `help reach` top-level helpfile + per-weapon helpfile mentions. Phase-1 YAML migration zero (per-item override added for `lake_iron_hook_spear` since spear defaulted to dagger range). |
 | 4d | Position — submissions | Not started | Rework/sunset existing submission special-attack command. Automatic/opportunistic submissions gated on (Position, ControlLevel). Submission outcomes (choked, damaged limb, tap, continue). |
 | 4e | Position — third-party | Not started | Symmetric defense degradation (controlled severely, controller moderately); offense restrictions; outside-damage → control degradation; mob AI bias toward grappled targets; submission-interrupt risk. |
 | 4f | Position — balance + smoke | Not started | Tune modifiers, write position-flavor text, full-stack combat smoke. |
@@ -645,6 +645,92 @@ plus `state/life/context.md` and `spells/context.md`.
 
 Next: chunk 4c — Position × WeaponType modifier table (long weapons
 fail in mount, knives stay useful, etc.).
+
+---
+
+## Chunk 4c — Shipped (2026-05-16)
+
+Same-day follow-up to 4b. Position × weapon utility shipped as a
+reach-on-weapon model: single `Reach float64` (meters) field on
+`ItemSpec` with default-by-subtype lookup; position radius curve in
+the combat package; `radius / reach` formula floored at 0.15 wired
+into the per-swing damage path. Bladed weapons (Slashing / Cleaving /
+Stabbing / Shooting) in grapples narrate with the Bludgeoning
+vocabulary so the fiction tracks the math. End-state: tactical
+weapon-swapping in grapples becomes a real choice — carrying a
+dagger as offhand is now a viable response to a grappler; two-
+handed reach weapons (spear, halberd, greatsword, quarterstaff)
+become liabilities once a clinch lands.
+
+**Architecture (smaller than 4a/4b):** one new field, two new small
+files (`items/reach.go`, `combat/reach.go`), one pipeline helper, two
+call-site updates in `combat_helpers.go` (`buildWeaponSetup` for the
+damage multiplier, `buildAttackMessages` for the vocabulary swap),
+and three new balance knobs. No FSM changes, no new btree primitives,
+no sunsets. The cheap chunk between 4b and 4d.
+
+**Reach taxonomy:** documented in `internal/items/context.md`. Natural
+attacks 0.1-0.5m (fist 0.1, claws/bite 0.15, sting 0.2, slam 0.3,
+gore 0.4, whipping 0.5). Stabbing 0.3, Cleaving 0.9, Slashing 1.0,
+Bludgeoning 0.8, Shooting 1.0 (melee-fallback). Caster: wand 0.4,
+sceptre 0.6, staff 1.5.
+
+**Position radius curve:** Standing / Prone / Supine / Turtle
+unbounded (no penalty). Clinch + BackStanding share standing-grapple
+radius (0.5m). The 8 ground-grapple states (Mount, SideControl,
+KneeOnBelly, NorthSouth, Crucifix, BackGround, HalfGuard, Guard)
+share ground-grapple radius (0.3m).
+
+**Bludgeon narration:** when `ShouldBludgeon(reach, radius)` fires
+for a bladed weapon, the attack-message rendering subtype swaps to
+Bludgeoning. Caster weapons (Wand/Sceptre/Staff) and natural-blunt
+subtypes (Fist/Claws/Bite/Sting/Slam/Gore/Whipping) stay with their
+own vocabulary. Damage math is the same Physical-channel value just
+multiplied by ReachUtility — the swap is cosmetic only. The existing
+Bludgeoning templates use `{itemname}` token interpolation, so
+"You bash the iron greatsword's pommel into the bandit" renders
+without needing bespoke pommel-strike vocabulary.
+
+**Balance knobs** (`internal/configs/balance.go`):
+- `ReachStandingGrappleRadius` (default 0.5)
+- `ReachGroundGrappleRadius` (default 0.3)
+- `ReachUtilityFloor` (default 0.15)
+
+**Behavior Matrix:** PB-201 through PB-220 PASS. Coverage split
+across T1 (PB-213/214 ResolveReach behavior in `items/reach_test.go`),
+T2 (PB-201..212 + PB-219..220 utility math in
+`combat/reach_test.go::TestBehaviorMatrix_Reach`), and T4
+(PB-215..218 bludgeon narration in `combat/reach_bludgeon_test.go`).
+Chunks 0-4b regression clean; server boots cleanly in 6.3s.
+
+**Documentation:** T8 audit
+(`tools/testing/audits/2026-05-16-chunk-4c-doc-helpfile-audit.md`,
+commit `052d7d6d`) inventoried helpfiles + context.md surface. T9
+(`0d9e9eba`) shipped 11 helpfile updates including a new
+`reach.template` top-level reference page, an expanded
+`grapple.template`, and per-weapon reach notes on iron-dagger /
+iron-short-sword / steel-longsword / lake-iron-hook-spear. T9 also
+added a `reach: 2.0` YAML override to `lake-iron-hook-spear` since
+the Stabbing subtype default (0.3m) is fictionally wrong for a
+spear. T10 (`bee42e9b` + followup `a7b4320a`) updated 6 context.md
+files: items (verified taxonomy table; the T8 false-alarm finding
+that called Bludgeoning "narration-only" was caught and reverted —
+Bludgeoning is both a real carry-subtype on mace/hammer items AND
+the narration-swap target), combat (new "Weapon Reach Utility"
+section), state/position (cross-reference), characters (predicate
+consumer note), hooks (per-swing site update), configs (3 new
+knobs table).
+
+**Phase-1 YAML migration is zero** by design — every existing weapon
+inherits its subtype default. Per-item overrides will land
+post-smoke as balance feedback comes in. The lake-iron-hook-spear
+fix surfaced during T8 audit is the first such override.
+
+**Aliveness work stays paused** for chunks 4d-6. Chunk 4d
+(submission rework — opportunistic submissions gated on Position +
+ControlLevel) is next.
+
+Next: chunk 4d — Submission rework.
 
 ---
 
