@@ -2,14 +2,41 @@
 
 The <ansi fg="command">grapple</ansi> command attempts to lock your opponent in a grappling
 hold. Grappled foes are restrained: they cannot flee, their attacks
-and defenses are penalised, and your <ansi fg="command">knee</ansi> special becomes available.
+and defenses are penalised, and your <ansi fg="command">knee</ansi> special becomes
+available.
+
+<ansi fg="yellow">━━━ Grapple Positions ━━━</ansi>
+
+A grapple isn't a single state — it develops through positions as
+control shifts. Standing grapples (Clinch, BackStanding) are closer
+quarters than a normal fight. Ground grapples (Mount, Guard, Side
+Control, etc.) are tighter still.
+
+<ansi fg="yellow">━━━ Weapon Reach in Grapples ━━━</ansi>
+
+Long weapons become a liability when you're grappling. In a clinch
+or mount, a sword or spear can't be swung freely — the haft catches
+your own body. The weapon's pommel or hilt still lands for reduced
+damage, and your combat narration shifts to reflect it.
+
+  - <ansi fg="stat">Short weapons (daggers, fists, claws):</ansi>
+    Remain fully effective in any grapple.
+  - <ansi fg="stat">Medium weapons (swords, axes):</ansi>
+    Penalised in ground grapples; partial penalty in clinch.
+  - <ansi fg="stat">Long weapons (spears, polearms, staves):</ansi>
+    Severely penalised in all grapple positions.
+
+Carrying a dagger in your offhand is a sound counter to grapplers —
+it will swing at full damage while a main-hand sword is hampered.
 
 <ansi fg="yellow">Usage: </ansi>
 
   <ansi fg="command">grapple <target></ansi>   Attempt to grapple a target in combat.
 
-Success is an opposed roll of Strength vs. the target's Strength and
-Dexterity. Grapple-immune creatures (e.g. elementals, oozes) cannot
-be grappled.
+Success is an opposed roll of Strength vs. the target's Strength
+and Dexterity. Grapple-immune creatures (e.g. elementals, oozes)
+cannot be grappled.
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help attack</ansi>, <ansi fg="command">help kick</ansi>, <ansi fg="command">help trip</ansi>
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help attack</ansi>, <ansi fg="command">help kick</ansi>,
+  <ansi fg="command">help trip</ansi>, <ansi fg="command">help submit</ansi>,
+  <ansi fg="command">help reach</ansi>

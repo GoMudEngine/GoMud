@@ -13,6 +13,7 @@ description: A long-shafted spear forged from refined lake-iron, the
 type: weapon
 hands: 1
 subtype: piercing
+reach: 2.0
 weight: 5.0
 speedmultiplier: 0.70
 staminacost: 7

@@ -3,6 +3,9 @@
 A broad, compact iron blade with a leather grip — a dependable
 sidearm for warriors who value reach without sacrificing speed.
 
+<ansi fg="cyan">Reach:</ansi> Medium — penalised in close-quarters grapples.
+Consider a dagger offhand if grapplers are common.
+
 <ansi fg="yellow">━━━ Crafting ━━━</ansi>
 
   <ansi fg="yellow">Skill:</ansi>       blacksmithing (minimum 8)

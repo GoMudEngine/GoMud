@@ -13,6 +13,9 @@ fists, claws, and bare hands.
     The free hand punches too.
   - <ansi fg="stat">No Dual-Wield Penalty:</ansi> Fists, claws, and bare
     hands fight naturally with no accuracy loss.
+  - <ansi fg="stat">Grapple-Friendly:</ansi> Fists and claws have very
+    short reach. They stay fully effective in clinches and ground
+    grapples where long weapons become awkward.
 
 <ansi fg="yellow">━━━ Speed ━━━</ansi>
 

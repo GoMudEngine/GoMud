@@ -29,6 +29,9 @@ Fighting with fists, claws, or bare hands:
   - <ansi fg="stat">No Penalty:</ansi> Natural weapons ignore dual-wield penalty
   - <ansi fg="stat">Mixed Setup:</ansi> Sword in one hand + empty hand still
     punches with the free hand
+  - <ansi fg="stat">Grapple Advantage:</ansi> Fists and claws fit comfortably
+    in any grapple — long weapons lose effectiveness in close
+    quarters. See <ansi fg="command">help grapple</ansi>.
 
 <ansi fg="yellow">━━━ Layered Defense System ━━━</ansi>
 
