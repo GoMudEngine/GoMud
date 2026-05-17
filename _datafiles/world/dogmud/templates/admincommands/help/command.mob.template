@@ -14,3 +14,11 @@ List all mob names.
 List mobs that match a provided search term. You can use a wildcard on either
 or both sides of the search term, such as <ansi fg="command">mob list *frost*</ansi>.
 
+<ansi fg="command">mob heal [instId]</ansi>
+Restore a mob's Health, Stamina, and Conviction to their max values.
+Useful for sustained combat testing (e.g., observing per-round grapple
+mechanics, weapon-reach narration) against a target that would normally
+die in a few rounds.
+    <ansi fg="command">mob heal 12</ansi>    Heal a specific mob instance.
+    <ansi fg="command">mob heal</ansi>       (no id) Heal every mob in the current room.
+

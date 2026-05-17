@@ -54,6 +54,66 @@ func Mob(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		return mob_List(strings.TrimSpace(rest[4:]), user, room, flags)
 	}
 
+	// Heal a mob (refills HP/SP/CP to max)
+	if args[0] == `heal` {
+
+		if !user.HasRolePermission(`mob.spawn`) {
+			user.SendText(`you do not have <ansi fg="command">mob.spawn</ansi> permission`)
+			return true, nil
+		}
+
+		return mob_Heal(args[1:], user, room, flags)
+	}
+
+	return true, nil
+}
+
+// mob_Heal restores a mob's Health / Stamina / Conviction to their
+// respective max values. Intended for sustained combat testing where
+// the tester wants a non-lethal sparring partner that won't die in
+// 4-6 rounds. Targets a mob instance id from the args.
+//
+// Usage: mob heal <instId>
+// Or:    mob heal             (heals every mob in the current room)
+func mob_Heal(args []string, user *users.UserRecord, room *rooms.Room, _ events.EventFlag) (bool, error) {
+
+	// No id → heal every mob in the room.
+	if len(args) == 0 {
+		healed := 0
+		for _, mobInstId := range room.GetMobs() {
+			if m := mobs.GetInstance(mobInstId); m != nil {
+				m.Character.Health = m.Character.HealthMax.Value
+				m.Character.Stamina = m.Character.StaminaMax.Value
+				m.Character.Conviction = m.Character.ConvictionMax.Value
+				healed++
+			}
+		}
+		if healed == 0 {
+			user.SendText(`No mobs in this room to heal.`)
+			return true, nil
+		}
+		user.SendText(fmt.Sprintf(`Healed %d mob(s) in the room to full.`, healed))
+		return true, nil
+	}
+
+	// Specific instance id.
+	instId, err := strconv.Atoi(args[0])
+	if err != nil || instId < 1 {
+		user.SendText(`Usage: <ansi fg="command">mob heal [instId]</ansi> — omit instId to heal every mob in the room.`)
+		return true, nil
+	}
+
+	m := mobs.GetInstance(instId)
+	if m == nil {
+		user.SendText(fmt.Sprintf(`No mob instance with id %d.`, instId))
+		return true, nil
+	}
+
+	m.Character.Health = m.Character.HealthMax.Value
+	m.Character.Stamina = m.Character.StaminaMax.Value
+	m.Character.Conviction = m.Character.ConvictionMax.Value
+
+	user.SendText(fmt.Sprintf(`Healed <ansi fg="mobname">%s</ansi> (instance %d) to full.`, m.Character.Name, instId))
 	return true, nil
 }
 
