@@ -467,7 +467,7 @@ Balance:
   # ── COMBAT: DAMAGE ────────────────────────────────────────────────────────
   # Global panic buttons. 1.0 = no change. GlobalDamageMultiplier is
   # applied to ALL damage channels in CalcRawDamage().
-  GlobalDamageMultiplier: 1.0
+  GlobalDamageMultiplier: 0.5  # Halved for chunk-4b-fixup smoke — let grapples develop before TTK
   GlobalDefenseMultiplier: 1.0
   #
   # Legacy unarmed knobs — still used by GetDefaultDistributionDamage()
@@ -501,7 +501,7 @@ Balance:
   #     0.05 →   5 raw damage per swing (current — low, needs MobDamageMultiplier)
   #     0.15 →  15 raw damage per swing
   #     0.30 →  30 raw damage per swing (original default)
-  MeleeDamageScale: 0.22       # Halved from 0.43 for chunk-4b-fixup smoke — let grapples have time to develop
+  MeleeDamageScale: 0.43       # Down ~5% from 0.45; melee was slightly overtuned
   #
   # MobDamageMultiplier: extra multiplier applied ONLY to NPC melee
   #   damage. Lets you keep player damage low while making NPCs threatening.
@@ -513,12 +513,12 @@ Balance:
   # SpellDamageScale: multiplier on ALL spell damage output (players + NPCs).
   #   1.0 = no scaling. Example at Wil 100, skill 0, spell mult 1.0:
   #     1.0 → 100 raw,  1.5 → 150 raw,  0.5 → 50 raw
-  SpellDamageScale: 0.6         # Halved from 1.2 for chunk-4b-fixup smoke — keep all channels proportional
+  SpellDamageScale: 1.2         # Tuned 39.4: -25% from 1.6; progression now works so spells scale naturally
   #
   # RhetoricDamageScale: multiplier on taunt/conviction damage output.
   #   Taunt uses itemMult 0.5 as base. Example at Cha 100, skill 0:
   #     1.0 → 50 raw,  2.0 → 100 raw
-  RhetoricDamageScale: 1.5      # Halved from 3.0 for chunk-4b-fixup smoke — keep all channels proportional
+  RhetoricDamageScale: 3.0      # Bumped from 2.0; taunts need to be a real damage threat to justify the conviction cost
   #
   # SkillMultiplierBase/Max: controls how much skill rank affects damage.
   #   At rank 0 the multiplier is Base, at soft cap (50) it's Max.
