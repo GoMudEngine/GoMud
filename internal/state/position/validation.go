@@ -34,11 +34,9 @@ func (v PairInvariantViolation) Error() string {
 //  3. Matching-state: a.State() == b.State() while in a grapple pair.
 //
 //  4. Role-exclusivity: for asymmetric positions (any except Clinch,
-//     HalfGuard, Turtle), exactly one side is the controller
-//     (ControlLevel ∈ {InControl, LosingControl}) and the other is
-//     controlled (∈ {BecomingControlled, Controlled}). Both-Neutral
-//     and one-Neutral-one-non-Neutral are violations for asymmetric
-//     positions.
+//     HalfGuard, Turtle), exactly one side must have
+//     IsControllerRole=true and the other IsControllerRole=false.
+//     Both-true and both-false are violations.
 func ValidateGrapplePair(a, b GrappleActor) error {
 	if a == nil || b == nil {
 		return PairInvariantViolation{
@@ -104,19 +102,17 @@ func ValidateGrapplePair(a, b GrappleActor) error {
 	}
 
 	// Invariant 4: role-exclusivity for asymmetric positions.
+	// Chunk 4b-fixup: uses IsControllerRole instead of ControlLevel.
+	// Exactly one side must have IsControllerRole=true; the other
+	// must have IsControllerRole=false.
 	if !isSymmetricGrapple(stateA) {
-		aIsCtrl := IsControllerLevel(dA.ControlLevel)
-		bIsCtrl := IsControllerLevel(dB.ControlLevel)
-		aIsCd := IsControlledLevel(dA.ControlLevel)
-		bIsCd := IsControlledLevel(dB.ControlLevel)
-
-		// Exactly one controller + exactly one controlled required.
-		if !(aIsCtrl && bIsCd) && !(aIsCd && bIsCtrl) {
+		if dA.IsControllerRole == dB.IsControllerRole {
 			return PairInvariantViolation{
 				Invariant: "role-exclusivity",
 				Description: fmt.Sprintf(
-					"asymmetric state %v requires one controller + one controlled; got a=%v, b=%v",
-					stateA, dA.ControlLevel, dB.ControlLevel),
+					"asymmetric state %v requires one controller + one controlled; "+
+						"got a.IsControllerRole=%v, b.IsControllerRole=%v",
+					stateA, dA.IsControllerRole, dB.IsControllerRole),
 			}
 		}
 	}
@@ -125,8 +121,7 @@ func ValidateGrapplePair(a, b GrappleActor) error {
 }
 
 // isSymmetricGrapple returns true for grapple states where both
-// sides can legitimately hold Neutral ControlLevel (Clinch,
-// HalfGuard, Turtle).
+// sides have no dominant role — Clinch, HalfGuard, and Turtle.
 func isSymmetricGrapple(s State) bool {
 	return s == Clinch || s == HalfGuard || s == Turtle
 }

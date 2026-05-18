@@ -140,11 +140,11 @@ func EvaluateSubAttempt(controller, controlled *characters.Character) (combat.Ro
 	if !ok {
 		return combat.RoleTop, false
 	}
-	cl := ctrlData.ControlLevel
 
 	// Top eligibility: controller won drift roll big AND top subs available.
+	// IsTopSubEligible now takes IsControllerRole bool.
 	topOK := false
-	if position.IsTopSubEligible(posState, cl) && snap.MarginAttacker > alpha {
+	if position.IsTopSubEligible(posState, ctrlData.IsControllerRole) && snap.MarginAttacker > alpha {
 		topOK = true
 	}
 
@@ -154,8 +154,7 @@ func EvaluateSubAttempt(controller, controlled *characters.Character) (combat.Ro
 	bottomMargin := -snap.MarginAttacker // defender margin is the inverse
 	cdData, cdOK := controlled.Position.GrappleData()
 	if cdOK {
-		cdCL := cdData.ControlLevel
-		if position.IsBottomSubEligible(posState, cdCL) {
+		if position.IsBottomSubEligible(posState, cdData.IsControllerRole) {
 			if bottomMargin > alpha || snap.DefenderZScore >= critZ {
 				bottomOK = true
 			}

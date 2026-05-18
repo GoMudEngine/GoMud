@@ -22,7 +22,7 @@ func TestValidateGrapplePair_ValidMount(t *testing.T) {
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
 	)
 	_ = a.Position.TransitionToMount(
-		position.GrappleData{Partner: refB, ControlLevel: position.InControl},
+		position.GrappleData{Partner: refB, IsControllerRole: true},
 		state.TransitionReason{Trigger: position.TriggerTakedownMount},
 	)
 	_ = b.Position.TransitionToClinch(
@@ -30,7 +30,7 @@ func TestValidateGrapplePair_ValidMount(t *testing.T) {
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
 	)
 	_ = b.Position.TransitionToMount(
-		position.GrappleData{Partner: refA, ControlLevel: position.Controlled},
+		position.GrappleData{Partner: refA, IsControllerRole: false},
 		state.TransitionReason{Trigger: position.TriggerTakedownMount},
 	)
 
@@ -48,13 +48,13 @@ func TestValidateGrapplePair_BothInControlRejected(t *testing.T) {
 	refA := state.ActorRef{UserId: 1}
 	refB := state.ActorRef{UserId: 2}
 
-	// Force both into Mount with InControl (invariant violation).
+	// Force both into Mount with IsControllerRole=true (invariant violation).
 	_ = a.Position.TransitionToClinch(
 		position.GrappleData{Partner: refB},
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
 	)
 	_ = a.Position.TransitionToMount(
-		position.GrappleData{Partner: refB, ControlLevel: position.InControl},
+		position.GrappleData{Partner: refB, IsControllerRole: true},
 		state.TransitionReason{Trigger: position.TriggerTakedownMount},
 	)
 	_ = b.Position.TransitionToClinch(
@@ -62,7 +62,7 @@ func TestValidateGrapplePair_BothInControlRejected(t *testing.T) {
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
 	)
 	_ = b.Position.TransitionToMount(
-		position.GrappleData{Partner: refA, ControlLevel: position.InControl}, // BUG: both InControl
+		position.GrappleData{Partner: refA, IsControllerRole: true}, // BUG: both controller
 		state.TransitionReason{Trigger: position.TriggerTakedownMount},
 	)
 
@@ -90,9 +90,9 @@ func TestValidateGrapplePair_StateMismatchRejected(t *testing.T) {
 
 	// a in Mount, b in SideControl — state mismatch.
 	_ = a.Position.TransitionToClinch(position.GrappleData{Partner: refB}, state.TransitionReason{Trigger: position.TriggerGrappleEntry})
-	_ = a.Position.TransitionToMount(position.GrappleData{Partner: refB, ControlLevel: position.InControl}, state.TransitionReason{Trigger: position.TriggerTakedownMount})
+	_ = a.Position.TransitionToMount(position.GrappleData{Partner: refB, IsControllerRole: true}, state.TransitionReason{Trigger: position.TriggerTakedownMount})
 	_ = b.Position.TransitionToClinch(position.GrappleData{Partner: refA}, state.TransitionReason{Trigger: position.TriggerGrappleEntry})
-	_ = b.Position.TransitionToSideControl(position.GrappleData{Partner: refA, ControlLevel: position.Controlled}, state.TransitionReason{Trigger: position.TriggerTakedownSide})
+	_ = b.Position.TransitionToSideControl(position.GrappleData{Partner: refA, IsControllerRole: false}, state.TransitionReason{Trigger: position.TriggerTakedownSide})
 
 	err := position.ValidateGrapplePair(a, b)
 	if err == nil {
@@ -114,9 +114,9 @@ func TestValidateGrapplePair_BrokenPartnerRefRejected(t *testing.T) {
 	refStale := state.ActorRef{UserId: 99}
 
 	_ = a.Position.TransitionToClinch(position.GrappleData{Partner: refB}, state.TransitionReason{Trigger: position.TriggerGrappleEntry})
-	_ = a.Position.TransitionToMount(position.GrappleData{Partner: refB, ControlLevel: position.InControl}, state.TransitionReason{Trigger: position.TriggerTakedownMount})
+	_ = a.Position.TransitionToMount(position.GrappleData{Partner: refB, IsControllerRole: true}, state.TransitionReason{Trigger: position.TriggerTakedownMount})
 	_ = b.Position.TransitionToClinch(position.GrappleData{Partner: refStale}, state.TransitionReason{Trigger: position.TriggerGrappleEntry})
-	_ = b.Position.TransitionToMount(position.GrappleData{Partner: refStale, ControlLevel: position.Controlled}, state.TransitionReason{Trigger: position.TriggerTakedownMount})
+	_ = b.Position.TransitionToMount(position.GrappleData{Partner: refStale, IsControllerRole: false}, state.TransitionReason{Trigger: position.TriggerTakedownMount})
 
 	err := position.ValidateGrapplePair(a, b)
 	if err == nil {

@@ -3,7 +3,6 @@ package behaviortree
 import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/state/position"
 )
 
 // --- Self-position queries (7) ---
@@ -156,54 +155,19 @@ func condMobIsBeingControlled(params map[string]any, ctx *EvalContext) Result {
 	return Failure
 }
 
-// condMobControlAtLeast is parameterized. Takes "level" string param
-// ("in_control" / "losing_control" / "neutral" / "becoming_controlled"
-// / "controlled"). Returns Success if mob's ControlLevel is
-// "at or better than" the param FROM THE MOB'S ROLE PERSPECTIVE:
-//   - controller: lower rank (closer to InControl) = better → current.rank <= threshold.rank
-//   - controlled: higher rank (closer to Controlled) = better → current.rank >= threshold.rank
+// condMobControlAtLeast was a ControlLevel-gradient check that compared
+// the mob's per-round drift needle to a named threshold. The drift
+// needle (ControlLevel) is removed in chunk 4b-fixup T18.
+//
+// TODO: T19 — sunset/convert. The condition registry key
+// "mob_control_at_least" is kept so existing behavior-tree YAML
+// does not crash on load, but the function always returns Failure
+// until T19 re-engineers it against the new per-round drift snapshot
+// (Character.LastDriftRoll.MarginAttacker) or removes the key
+// from the registry entirely.
 func condMobControlAtLeast(params map[string]any, ctx *EvalContext) Result {
-	mob := mobs.GetInstance(ctx.InstanceId)
-	if mob == nil || mob.Character.Position == nil {
-		return Failure
-	}
-	d, ok := mob.Character.Position.GrappleData()
-	if !ok {
-		return Failure
-	}
-	levelStr, _ := params["level"].(string)
-	threshold, ok := parseControlLevel(levelStr)
-	if !ok {
-		return Failure
-	}
-	curRank := position.ControlRankExported(d.ControlLevel)
-	thRank := position.ControlRankExported(threshold)
-	if mob.Character.IsController() {
-		if curRank <= thRank {
-			return Success
-		}
-		return Failure
-	}
-	if curRank >= thRank {
-		return Success
-	}
+	// TODO: T19 — re-engineer or remove
 	return Failure
-}
-
-func parseControlLevel(s string) (position.ControlLevel, bool) {
-	switch s {
-	case "in_control":
-		return position.InControl, true
-	case "losing_control":
-		return position.LosingControl, true
-	case "neutral":
-		return position.Neutral, true
-	case "becoming_controlled":
-		return position.BecomingControlled, true
-	case "controlled":
-		return position.Controlled, true
-	}
-	return position.Neutral, false
 }
 
 func condMobLowGrappleStamina(params map[string]any, ctx *EvalContext) Result {

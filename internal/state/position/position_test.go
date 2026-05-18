@@ -45,14 +45,8 @@ func TestPO_003_StateStringFormatted(t *testing.T) {
 	}
 }
 
-func TestPO_004_ControlLevelStringFormatted(t *testing.T) {
-	for c := position.InControl; c <= position.Controlled; c++ {
-		got := c.String()
-		if got == "" || got == "Unknown" {
-			t.Errorf("ControlLevel(%d).String() = %q, want non-empty + non-Unknown", c, got)
-		}
-	}
-}
+// TestPO_004_ControlLevelStringFormatted was removed in chunk 4b-fixup T18:
+// ControlLevel enum deleted; no longer testable.
 
 // --- PO-005 through PO-018: Basic transitions (14 representative samples) ---
 
@@ -335,7 +329,7 @@ func TestPO_024_GrappleRequiresNonZeroPartner(t *testing.T) {
 func TestPO_025_ClinchDataPreserved(t *testing.T) {
 	m := position.NewMachine()
 	_ = m.TransitionToClinch(
-		position.GrappleData{Partner: state.ActorRef{UserId: 17}, ControlLevel: position.LosingControl},
+		position.GrappleData{Partner: state.ActorRef{UserId: 17}, IsControllerRole: true},
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
 	)
 	d, ok := m.GrappleData()
@@ -345,20 +339,22 @@ func TestPO_025_ClinchDataPreserved(t *testing.T) {
 	if d.Partner.UserId != 17 {
 		t.Errorf("Partner.UserId = %d, want 17", d.Partner.UserId)
 	}
-	if d.ControlLevel != position.LosingControl {
-		t.Errorf("ControlLevel = %v, want LosingControl", d.ControlLevel)
+	if !d.IsControllerRole {
+		t.Errorf("IsControllerRole = false, want true (as set at transition)")
 	}
 }
 
-func TestPO_026_GrappleDataDefaultsNeutral(t *testing.T) {
+func TestPO_026_GrappleDataDefaultsNoController(t *testing.T) {
+	// Chunk 4b-fixup T18: ControlLevel removed. Default GrappleData has
+	// IsControllerRole=false (zero value of bool).
 	m := position.NewMachine()
 	_ = m.TransitionToClinch(
-		position.GrappleData{Partner: state.ActorRef{UserId: 18}}, // ControlLevel omitted
+		position.GrappleData{Partner: state.ActorRef{UserId: 18}}, // IsControllerRole omitted
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
 	)
 	d, _ := m.GrappleData()
-	if d.ControlLevel != position.Neutral {
-		t.Errorf("default ControlLevel = %v, want Neutral", d.ControlLevel)
+	if d.IsControllerRole {
+		t.Errorf("default IsControllerRole = true, want false (zero value)")
 	}
 }
 

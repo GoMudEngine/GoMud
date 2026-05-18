@@ -1,8 +1,12 @@
 // Pair-aware transitions for the Position FSM. TransitionPair is
 // the canonical way to put two characters into the same grapple
-// state with role-appropriate initial ControlLevels. Direct calls
-// to TransitionToXxx remain available for tests + edge cases but
+// state with role-appropriate GrappleData. Direct calls to
+// TransitionToXxx remain available for tests + edge cases but
 // don't enforce pair semantics.
+//
+// Chunk 4b-fixup: Role type + InitialControlForPair removed.
+// GrappleData.IsControllerRole replaces ControlLevel as the
+// minimal role discriminator.
 package position
 
 import (
@@ -26,18 +30,6 @@ type GrappleActor interface {
 	GetPosition() *Machine
 }
 
-// Role identifies a character's perspective in a grapple pair.
-// In symmetric positions (Clinch, HalfGuard, Turtle solo) both
-// sides hold the same Neutral ControlLevel; in asymmetric
-// positions the controller side has ControlLevel ∈ {InControl,
-// LosingControl} and the controlled has the complement.
-type Role int
-
-const (
-	RoleController Role = iota
-	RoleControlled
-)
-
 // ErrPairInvalidSourceStates is returned when TransitionPair is
 // called with characters that aren't in compatible source states
 // for the target transition.
@@ -47,43 +39,6 @@ var ErrPairInvalidSourceStates = errors.New("TransitionPair: source states incom
 // failed and the rollback of the first side also failed —
 // extremely unlikely but the consistency checker will catch it.
 var ErrPairRollbackFailed = errors.New("TransitionPair: rollback of first side failed; pair may be desynced")
-
-// InitialControlForPair returns the ControlLevel a character should
-// start with when their pair transitions into the given grapple
-// state. Encodes the design intuition that some positions are
-// inherently asymmetric (Mount-top dominant) and others symmetric
-// (Clinch true 50/50); also captures the Guard inversion (bottom is
-// the active controller via legs).
-func InitialControlForPair(target State, role Role) ControlLevel {
-	switch target {
-	case Clinch, HalfGuard:
-		return Neutral
-	case BackStanding, Mount, SideControl, Crucifix, BackGround:
-		if role == RoleController {
-			return InControl
-		}
-		return Controlled
-	case KneeOnBelly, NorthSouth:
-		if role == RoleController {
-			return LosingControl
-		}
-		return BecomingControlled
-	case Guard:
-		// Inverted! Bottom (RoleController per our convention) is
-		// the active grappler controlling top with their legs.
-		if role == RoleController {
-			return InControl
-		}
-		return Controlled
-	case Turtle:
-		// Defensive curl; both sides somewhat passive.
-		if role == RoleController {
-			return BecomingControlled
-		}
-		return LosingControl
-	}
-	return Neutral
-}
 
 // DefaultEscapeTarget returns the position state to transition to
 // when the controlled fighter escapes the given grapple position.
@@ -113,11 +68,11 @@ func DefaultEscapeTarget(current State) State {
 }
 
 // TransitionPair atomically moves a controller + controlled pair
-// into the same grapple state, with role-appropriate initial
-// ControlLevels per InitialControlForPair. Validates source states;
-// rolls back the first side if the second fails. Standing target
-// is a special case: clears both sides' GrappleData (the grapple
-// has ended).
+// into the same grapple state, stamping IsControllerRole=true on
+// the controller side and false on the controlled side. Validates
+// source states; rolls back the first side if the second fails.
+// Standing target is a special case: clears both sides' GrappleData
+// (the grapple has ended).
 //
 // Caller is responsible for identifying the controller and
 // controlled (the existing CheckClinchProgression / grapple
@@ -150,6 +105,8 @@ func TransitionPair(
 	}
 
 	// Non-Standing target: build pair data + fire both transitions.
+	// For symmetric states (Clinch, HalfGuard, Turtle), both sides
+	// get IsControllerRole=false by convention.
 	ctrlRef := state.ActorRef{
 		UserId:        controller.GetUserId(),
 		MobInstanceId: controller.GetMobInstanceId(),
@@ -160,12 +117,12 @@ func TransitionPair(
 	}
 
 	ctrlData := GrappleData{
-		Partner:      cdRef,
-		ControlLevel: InitialControlForPair(target, RoleController),
+		Partner:          cdRef,
+		IsControllerRole: !isSymmetricGrapple(target),
 	}
 	cdData := GrappleData{
-		Partner:      ctrlRef,
-		ControlLevel: InitialControlForPair(target, RoleControlled),
+		Partner:          ctrlRef,
+		IsControllerRole: false,
 	}
 
 	prev := snapshotPosition(controller)

@@ -46,7 +46,7 @@ func forceMount(c *characters.Character) {
 		reason,
 	)
 	_ = c.Position.TransitionToMount(
-		position.GrappleData{Partner: partner, ControlLevel: position.InControl},
+		position.GrappleData{Partner: partner, IsControllerRole: true},
 		state.TransitionReason{Trigger: position.TriggerTakedownMount},
 	)
 }

@@ -8,22 +8,19 @@ import (
 
 // condMobCanSubmitTop reports true when the mob is the controller side
 // of a sub-eligible grapple (position has top-attack subs available AND
-// ControlLevel is InControl/LosingControl). Used by AI archetypes to
-// branch on whether a submission is available, or to avoid stepping on
-// the auto-fired submission tick.
+// IsControllerRole is true). Used by AI archetypes to branch on whether
+// a submission is available, or to avoid stepping on the auto-fired
+// submission tick.
 func condMobCanSubmitTop(params map[string]any, ctx *EvalContext) Result {
 	mob := mobs.GetInstance(ctx.InstanceId)
 	if mob == nil || mob.Character.Position == nil {
-		return Failure
-	}
-	if !mob.Character.IsController() {
 		return Failure
 	}
 	gd, ok := mob.Character.Position.GrappleData()
 	if !ok {
 		return Failure
 	}
-	if position.IsTopSubEligible(mob.Character.Position.State(), gd.ControlLevel) {
+	if position.IsTopSubEligible(mob.Character.Position.State(), gd.IsControllerRole) {
 		return Success
 	}
 	return Failure
@@ -37,14 +34,11 @@ func condMobCanSubmitBottom(params map[string]any, ctx *EvalContext) Result {
 	if mob == nil || mob.Character.Position == nil {
 		return Failure
 	}
-	if !mob.Character.IsBeingControlled() {
-		return Failure
-	}
 	gd, ok := mob.Character.Position.GrappleData()
 	if !ok {
 		return Failure
 	}
-	if position.IsBottomSubEligible(mob.Character.Position.State(), gd.ControlLevel) {
+	if position.IsBottomSubEligible(mob.Character.Position.State(), gd.IsControllerRole) {
 		return Success
 	}
 	return Failure

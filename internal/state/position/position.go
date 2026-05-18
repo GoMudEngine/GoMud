@@ -1,11 +1,12 @@
 // Package position defines the Position state machine — the fifth
 // consumer of internal/state, after combatphase, awareness, life,
 // and activity. Models body position + grapple geometry using the
-// full BJJ/MMA position taxonomy (14 states) plus a per-grappler
-// control axis (ControlLevel) stored as data on grapple states.
+// full BJJ/MMA position taxonomy (14 states).
 //
 // Chunk 4a ships this scaffold DORMANT — no production code
 // transitions the machine. 4b cuts over command-site writers.
+// Chunk 4b-fixup removes the ControlLevel drift-needle; controller
+// identity now derives from the FSM state + IsController() predicate.
 package position
 
 import (
@@ -69,41 +70,6 @@ func (s State) String() string {
 	return "Unknown"
 }
 
-// ControlLevel is the per-grappler control axis. Stored on
-// GrappleData. 4a defaults to Neutral on transition entry; 4b
-// adds per-round opposed rolls that shift it.
-type ControlLevel int
-
-// Neutral is iota=0 so the zero value of a GrappleData{} literal
-// defaults to Neutral (matches the spec — control rolls drive
-// shifts away from Neutral in 4b). Display ordering in narrative
-// text still follows the "in control → losing → neutral →
-// becoming → controlled" gradient; this enum order is purely a
-// zero-value convenience.
-const (
-	Neutral ControlLevel = iota
-	InControl
-	LosingControl
-	BecomingControlled
-	Controlled
-)
-
-func (c ControlLevel) String() string {
-	switch c {
-	case InControl:
-		return "InControl"
-	case LosingControl:
-		return "LosingControl"
-	case Neutral:
-		return "Neutral"
-	case BecomingControlled:
-		return "BecomingControlled"
-	case Controlled:
-		return "Controlled"
-	}
-	return "Unknown"
-}
-
 // StandingData — empty (default state, no payload).
 type StandingData struct{}
 
@@ -129,10 +95,17 @@ type SupineData struct {
 // introduce per-state extras (ClinchGrip, ArmsIsolated, HooksIn,
 // TrappedLeg, GuardVariant). 4b/4c add state-specific wrapping
 // structs when consumers materialize.
+//
+// Chunk 4b-fixup: ControlLevel removed. IsControllerRole is the
+// minimal discriminator that replaces it: true on the character who
+// initiated / holds the dominant role in an asymmetric grapple.
+// TransitionPair stamps this field at transition time.
+// For symmetric states (Clinch, HalfGuard, Turtle), both sides hold
+// IsControllerRole = false.
 type GrappleData struct {
-	Reason       state.TransitionReason
-	Partner      state.ActorRef // zero only for solo Turtle
-	ControlLevel ControlLevel   // default Neutral; 4b drives changes
+	Reason           state.TransitionReason
+	Partner          state.ActorRef // zero only for solo Turtle
+	IsControllerRole bool           // true = this side is the controller
 }
 
 // Machine wraps state.Machine[State] with Position-specific API.
@@ -213,8 +186,10 @@ func (m *Machine) IsOnFloor() bool {
 
 // IsController returns true when the character is the controller
 // side of a grapple pair. False for Standing, Prone, Supine, and
-// for grapple states where the character's ControlLevel is on the
-// controlled side or neutral (symmetric positions).
+// for symmetric grapple states (Clinch, HalfGuard, Turtle).
+//
+// Chunk 4b-fixup: reads GrappleData.IsControllerRole, which is
+// stamped by TransitionPair at transition time.
 //
 // Used by the per-round tick to identify which side of a pair to
 // iterate from; used by btree primitives for AI decisions.
@@ -226,7 +201,7 @@ func (m *Machine) IsController() bool {
 	if !ok {
 		return false
 	}
-	return IsControllerLevel(d.ControlLevel)
+	return d.IsControllerRole
 }
 
 // IsBeingControlled returns true when the character is the
@@ -239,7 +214,14 @@ func (m *Machine) IsBeingControlled() bool {
 	if !ok {
 		return false
 	}
-	return IsControlledLevel(d.ControlLevel)
+	// Symmetric states (Clinch, HalfGuard, Turtle) never have a
+	// controlled side: both IsControllerRole fields are false.
+	// IsBeingControlled = asymmetric pair AND NOT the controller.
+	s := m.State()
+	if s == Clinch || s == HalfGuard || s == Turtle {
+		return false
+	}
+	return !d.IsControllerRole
 }
 
 // === Data accessors ===
@@ -267,21 +249,6 @@ func (m *Machine) GrappleData() (GrappleData, bool) {
 		return GrappleData{}, false
 	}
 	return *m.grapple, true
-}
-
-// MutateGrappleControlLevel updates the ControlLevel on the
-// current GrappleData WITHOUT firing a transition. Used by the
-// per-round drift hook in Position_GrappleTick.go — the FSM
-// transition table forbids Mount→Mount, so per-round
-// re-transitions aren't viable. This is the ONE place outside
-// transition methods that mutates per-state data.
-//
-// No-op if the machine is not in a grapple state.
-func (m *Machine) MutateGrappleControlLevel(newLevel ControlLevel) {
-	if !m.IsGrappling() || m.grapple == nil {
-		return
-	}
-	m.grapple.ControlLevel = newLevel
 }
 
 // ConsumeRecoveryRound decrements MinRecoveryRounds on the current

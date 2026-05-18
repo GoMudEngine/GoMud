@@ -11,9 +11,9 @@ import (
 )
 
 // setupMountForOutcome puts a + b in a Mount grapple with a as
-// controller (InControl) and b as controlled (Controlled).
-// Uses the proven TransitionPair → MutateGrappleControlLevel
-// pattern from Position_SubmissionTick_test.go.
+// controller (IsControllerRole=true) and b as controlled
+// (IsControllerRole=false). TransitionPair stamps the roles directly;
+// MutateGrappleControlLevel is removed in chunk 4b-fixup T18.
 func setupMountForOutcome(t *testing.T) (controller, controlled *characters.Character) {
 	t.Helper()
 	a := characters.New()
@@ -41,8 +41,8 @@ func setupMountForOutcome(t *testing.T) (controller, controlled *characters.Char
 		t.Fatalf("TransitionPair → Mount failed: %v", err)
 	}
 
-	a.Position.MutateGrappleControlLevel(position.InControl)
-	b.Position.MutateGrappleControlLevel(position.Controlled)
+	// TransitionPair → Mount stamps a.IsControllerRole=true, b.IsControllerRole=false.
+	// No MutateGrappleControlLevel needed (method removed in T18).
 
 	return a, b
 }
@@ -85,8 +85,8 @@ func setupMountWithMobDefender(t *testing.T) (controller, controlled *characters
 		t.Fatalf("TransitionPair → Mount failed: %v", err)
 	}
 
-	a.Position.MutateGrappleControlLevel(position.InControl)
-	b.Position.MutateGrappleControlLevel(position.Controlled)
+	// TransitionPair → Mount stamps a.IsControllerRole=true, b.IsControllerRole=false.
+	// No MutateGrappleControlLevel needed (method removed in T18).
 
 	return a, b
 }
@@ -283,25 +283,18 @@ func TestPB_313_CritSubdue_NoStunnedBuff(t *testing.T) {
 		"PB-313: Stunned buff must not be applied on crit+subdue (death cascade fires)")
 }
 
-// PB-316: Mount + Controlled + defender drift margin < alpha → no sub roll.
-// (Label for the specific bottom-side case already covered by
-// TestEvaluateSubAttempt_NeitherEligible, but here we document it explicitly
-// as a bottom-sub variant.)
-// This is a policy test: verify that IsBottomSubEligible returns false when
-// the defender has a sufficient bottom position but we inject ControlLevel=Neutral,
-// which is above the Controlled/BecomingControlled gate.
-func TestPB_316_BottomSub_InsufficientMargin_NoBotSubWindow(t *testing.T) {
-	// Directly test the eligibility predicate: Mount position + Neutral
-	// ControlLevel (defender is NOT in Controlled/BecomingControlled, so the
-	// bottom-sub gate should fail even though Mount has bottom subs).
-	// The margin < alpha case is fully covered by EvaluateSubAttempt_NeitherEligible;
-	// here we verify the eligibility gate itself for the ControlLevel axis.
+// PB-316: IsBottomSubEligible only opens when IsControllerRole=false (i.e.,
+// the controlled side). IsControllerRole=true (controller) must not open the
+// bottom-sub window even on Mount (which has bottom subs).
+//
+// Chunk 4b-fixup T18: ControlLevel removed; test updated to use IsControllerRole.
+func TestPB_316_BottomSub_ControllerRoleBlocked(t *testing.T) {
 	assert.False(t,
-		position.IsBottomSubEligible(position.Mount, position.Neutral),
-		"PB-316: Mount+Neutral ControlLevel must not open bottom-sub window")
-	assert.False(t,
-		position.IsBottomSubEligible(position.Mount, position.InControl),
-		"PB-316: Mount+InControl ControlLevel must not open bottom-sub window (already escaping)")
+		position.IsBottomSubEligible(position.Mount, true),
+		"PB-316: Mount+IsControllerRole=true must not open bottom-sub window")
+	assert.True(t,
+		position.IsBottomSubEligible(position.Mount, false),
+		"PB-316: Mount+IsControllerRole=false should open bottom-sub window")
 }
 
 // PB-318: Bottom-sub success — defender attempting sub from Mount-bottom.

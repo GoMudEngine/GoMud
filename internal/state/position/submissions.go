@@ -94,25 +94,31 @@ func BottomSubmissionsForPosition(s State) []SubmissionType {
 }
 
 // IsTopSubEligible reports whether the controller side of a pair
-// can attempt a submission at the given position + control level.
-// Requires top-attack subs available AND ControlLevel of InControl
-// or LosingControl.
-func IsTopSubEligible(s State, cl ControlLevel) bool {
+// can attempt a submission at the given position.
+// Requires top-attack subs to be available at this state AND
+// isControllerRole==true (i.e. this side is the controller).
+//
+// Chunk 4b-fixup: ControlLevel parameter replaced with
+// isControllerRole bool.
+func IsTopSubEligible(s State, isControllerRole bool) bool {
 	if len(TopSubmissionsForPosition(s)) == 0 {
 		return false
 	}
-	return cl == InControl || cl == LosingControl
+	return isControllerRole
 }
 
 // IsBottomSubEligible reports whether the controlled side of a pair
-// can attempt a reversal submission at the given position + control
-// level. Requires bottom-attack subs available AND ControlLevel of
-// Controlled or BecomingControlled.
-func IsBottomSubEligible(s State, cl ControlLevel) bool {
+// can attempt a reversal submission at the given position.
+// Requires bottom-attack subs to be available AND
+// isControllerRole==false (i.e. this side is the controlled side).
+//
+// Chunk 4b-fixup: ControlLevel parameter replaced with
+// isControllerRole bool.
+func IsBottomSubEligible(s State, isControllerRole bool) bool {
 	if len(BottomSubmissionsForPosition(s)) == 0 {
 		return false
 	}
-	return cl == Controlled || cl == BecomingControlled
+	return !isControllerRole
 }
 
 // CrippleBodyPart returns the body part broken by a successful

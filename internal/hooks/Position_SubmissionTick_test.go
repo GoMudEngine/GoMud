@@ -11,9 +11,9 @@ import (
 )
 
 // setupMountPair creates two characters in a Mount grapple with `a`
-// as controller (InControl) and `b` as controlled (Controlled).
-// Mirror of the pattern used in Position_GrappleTick_test.go:
-// Standing → Clinch → Mount via position.TransitionPair.
+// as controller (IsControllerRole=true) and `b` as controlled
+// (IsControllerRole=false). Chunk 4b-fixup T18: ControlLevel removed;
+// role now stamped by TransitionPair.
 func setupMountPair(t *testing.T) (controller, controlled *characters.Character) {
 	t.Helper()
 
@@ -44,12 +44,9 @@ func setupMountPair(t *testing.T) (controller, controlled *characters.Character)
 		t.Fatalf("TransitionPair → Mount failed: %v", err)
 	}
 
-	// After Mount transition, `a` is the controller side. Force it to
-	// InControl so IsTopSubEligible passes (requires InControl or
-	// LosingControl). Force `b` to Controlled so IsBottomSubEligible
-	// passes (requires Controlled or BecomingControlled).
-	a.Position.MutateGrappleControlLevel(position.InControl)
-	b.Position.MutateGrappleControlLevel(position.Controlled)
+	// After TransitionPair → Mount, `a` has IsControllerRole=true and
+	// `b` has IsControllerRole=false. IsTopSubEligible / IsBottomSubEligible
+	// use IsControllerRole directly (chunk 4b-fixup T18: ControlLevel removed).
 
 	return a, b
 }

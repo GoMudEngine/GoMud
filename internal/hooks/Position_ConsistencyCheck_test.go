@@ -46,31 +46,31 @@ func TestForceBreakPair_BothReturnToStanding(t *testing.T) {
 	refB := state.ActorRef{UserId: 2}
 
 	// Walk both through Standing → Clinch → Mount, then deliberately
-	// stamp both ControlLevels to InControl to violate invariant 4.
+	// stamp both IsControllerRole=true to violate invariant 4.
 	if err := a.Position.TransitionToClinch(
-		position.GrappleData{Partner: refB, ControlLevel: position.Neutral},
+		position.GrappleData{Partner: refB, IsControllerRole: false},
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry}); err != nil {
 		t.Fatalf("a → Clinch failed: %v", err)
 	}
 	if err := a.Position.TransitionToMount(
-		position.GrappleData{Partner: refB, ControlLevel: position.InControl},
+		position.GrappleData{Partner: refB, IsControllerRole: true},
 		state.TransitionReason{Trigger: position.TriggerTakedownMount}); err != nil {
 		t.Fatalf("a → Mount failed: %v", err)
 	}
 	if err := b.Position.TransitionToClinch(
-		position.GrappleData{Partner: refA, ControlLevel: position.Neutral},
+		position.GrappleData{Partner: refA, IsControllerRole: false},
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry}); err != nil {
 		t.Fatalf("b → Clinch failed: %v", err)
 	}
 	if err := b.Position.TransitionToMount(
-		position.GrappleData{Partner: refA, ControlLevel: position.InControl},
+		position.GrappleData{Partner: refA, IsControllerRole: true},
 		state.TransitionReason{Trigger: position.TriggerTakedownMount}); err != nil {
 		t.Fatalf("b → Mount failed: %v", err)
 	}
 
 	err := position.ValidateGrapplePair(a, b)
 	if err == nil {
-		t.Fatal("expected invariant violation in setup (both InControl)")
+		t.Fatal("expected invariant violation in setup (both IsControllerRole=true)")
 	}
 
 	forceBreakPair(a, b, err)
@@ -94,7 +94,7 @@ func TestForceBreakSolo_ReturnsToStanding(t *testing.T) {
 	dangling := state.ActorRef{UserId: 999}
 
 	if err := c.Position.TransitionToClinch(
-		position.GrappleData{Partner: dangling, ControlLevel: position.Neutral},
+		position.GrappleData{Partner: dangling, IsControllerRole: false},
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry}); err != nil {
 		t.Fatalf("→ Clinch failed: %v", err)
 	}
