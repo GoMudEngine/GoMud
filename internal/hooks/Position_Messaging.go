@@ -1,17 +1,13 @@
-// Position_Messaging.go renders the three message classes called
-// from Position_GrappleTick.go:
-//
-//   - fireGradientMessages: per-ControlLevel-boundary "you're losing
-//     it" / "you're taking it" beats. One firing per level per
-//     grapple — tracked in c.PerGrappleMessageCooldowns and cleared
-//     when the grapple ends (handled in GrappleTick threshold escape).
-//
-//   - fireTransitionMessages: position-change broadcasts on escape.
-//     Always fires.
+// Position_Messaging.go renders grapple and submission position
+// messages via Position_GrappleTick.go and grapplemessaging.go:
 //
 //   - fireStaminaWarningIfLow: one-shot "you're getting gassed" beat
 //     when stamina drops below GrappleStaminaLowThreshold. Reuses
 //     the per-grapple cooldown map.
+//
+//   - Submission messaging: fireSubmissionOpeningMessage and
+//     fireSubmissionResolutionMessage fire outcome-specific templates
+//     that are registered with the combat package at init time.
 //
 // Templates live at _datafiles/messages/position_control.yaml,
 // loaded once via sync.Once.
@@ -32,11 +28,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"gopkg.in/yaml.v3"
 )
-
-type positionMsgPair struct {
-	Self string `yaml:"self"`
-	Room string `yaml:"room"`
-}
 
 // submissionMsgTriple holds attacker / target / room variants for
 // a single submission message key. Attacker and target are personal
@@ -60,10 +51,11 @@ type submissionMessageBlock struct {
 }
 
 type positionMessageTemplates struct {
-	GradientMessages   map[string]map[string]positionMsgPair `yaml:"gradient_messages"`
-	TransitionMessages map[string]positionMsgPair            `yaml:"transition_messages"`
-	StaminaWarning     positionMsgPair                       `yaml:"stamina_warning"`
-	Submission         submissionMessageBlock                 `yaml:"submission"`
+	StaminaWarning struct {
+		Self string `yaml:"self"`
+		Room string `yaml:"room"`
+	} `yaml:"stamina_warning"`
+	Submission submissionMessageBlock `yaml:"submission"`
 }
 
 var (
@@ -92,71 +84,6 @@ func loadPositionMessages() positionMessageTemplates {
 	return posMsgTemplates
 }
 
-// fireGradientMessages fires a per-level message when c's ControlLevel
-// changes. Cooldown-gated: each level fires at most once per grapple
-// session. Cooldowns clear on grapple-ending transition (handled in
-// Position_GrappleTick.go).
-func fireGradientMessages(c *characters.Character, from, to position.ControlLevel) {
-	if from == to {
-		return
-	}
-	if c == nil || c.Position == nil {
-		return
-	}
-	role := "controlled"
-	if c.IsController() {
-		role = "controller"
-	}
-	levelKey := controlLevelKey(to)
-	if levelKey == "" {
-		return
-	}
-	cooldownKey := "gradient_" + role + "_" + levelKey
-	if c.PerGrappleMessageCooldowns == nil {
-		c.PerGrappleMessageCooldowns = map[string]bool{}
-	}
-	if c.PerGrappleMessageCooldowns[cooldownKey] {
-		return
-	}
-	c.PerGrappleMessageCooldowns[cooldownKey] = true
-
-	templates := loadPositionMessages()
-	roleBlock, ok := templates.GradientMessages[role]
-	if !ok {
-		return
-	}
-	msg, ok := roleBlock[levelKey]
-	if !ok {
-		return
-	}
-
-	subs := substitutionsForCharacter(c)
-	sendCharacterMsg(c, substitute(msg.Self, subs), substitute(msg.Room, subs))
-}
-
-// fireTransitionMessages fires the position-transition message pair
-// on both sides + a room broadcast. Always fires (no cooldown — the
-// transition itself is rare).
-func fireTransitionMessages(controller, controlled *characters.Character, target position.State) {
-	if controller == nil || controlled == nil ||
-		controller.Position == nil || controlled.Position == nil {
-		return
-	}
-	templates := loadPositionMessages()
-	subs := map[string]string{
-		"old_position": controller.Position.State().String(),
-		"new_position": target.String(),
-		"position":     controller.Position.State().String(),
-		"Controller":   controller.Name,
-		"Controlled":   controlled.Name,
-		"Character":    controller.Name,
-	}
-	ctrlMsg := templates.TransitionMessages["controller"]
-	cdMsg := templates.TransitionMessages["controlled"]
-
-	sendCharacterMsg(controller, substitute(ctrlMsg.Self, subs), substitute(ctrlMsg.Room, subs))
-	sendCharacterMsg(controlled, substitute(cdMsg.Self, subs), substitute(cdMsg.Room, subs))
-}
 
 // fireStaminaWarningIfLow fires a one-shot "getting gassed" beat
 // when c's stamina drops below the grapple-low threshold. Reuses the
@@ -207,23 +134,6 @@ func substitutionsForCharacter(c *characters.Character) map[string]string {
 		subs["Controller"] = partnerName
 	}
 	return subs
-}
-
-// controlLevelKey maps a ControlLevel to its YAML key.
-func controlLevelKey(c position.ControlLevel) string {
-	switch c {
-	case position.InControl:
-		return "in_control"
-	case position.LosingControl:
-		return "losing_control"
-	case position.Neutral:
-		return "neutral"
-	case position.BecomingControlled:
-		return "becoming_controlled"
-	case position.Controlled:
-		return "controlled"
-	}
-	return ""
 }
 
 // substitute does simple {key} replacement.

@@ -587,8 +587,8 @@ func applyGrappleStaminaCost(controller, controlled *characters.Character, cfg c
 	}
 }
 
-// fireGradientMessages / fireTransitionMessages / fireStaminaWarningIfLow
-// live in Position_Messaging.go (T7).
+// fireStaminaWarningIfLow (called at lines 219-220) and submission
+// messaging live in Position_Messaging.go (T6/T7/T17).
 
 func init() {
 	events.RegisterListener(events.NewRound{}, processGrappleTick)
