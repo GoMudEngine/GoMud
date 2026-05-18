@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -46,6 +47,10 @@ func Set(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		return cmdSetFprompt(user, rest, setTarget, args)
 	case `wimpy`:
 		return cmdSetWimpy(user, rest, setTarget, args)
+	case `submission`:
+		return cmdSetSubmission(user, args)
+	case `surrender`:
+		return cmdSetSurrender(user, args)
 	default:
 		// Are they setting a macro? // setTarget should be "=1" etc
 		if len(setTarget) == 2 && setTarget[0] == '=' {
@@ -106,6 +111,14 @@ func displaySetStatus(user *users.UserRecord) {
 	}
 	user.SendText(`<ansi fg="yellow-bold">wimpy:</ansi> `)
 	user.SendText(fmt.Sprintf(`%d%%`, currentWimpy.(int)))
+	user.SendText(``)
+
+	user.SendText(`<ansi fg="yellow-bold">submission:</ansi> `)
+	user.SendText(fmt.Sprintf(`<ansi fg="green">%s</ansi>`, user.Character.SubmissionPolicy))
+	user.SendText(``)
+
+	user.SendText(`<ansi fg="yellow-bold">surrender:</ansi> `)
+	user.SendText(fmt.Sprintf(`<ansi fg="green">%s</ansi>`, user.Character.SurrenderPolicy))
 	user.SendText(``)
 
 	user.SendText(`See: <ansi fg="command">help set</ansi>`)
@@ -372,6 +385,68 @@ func cmdSetCharset(user *users.UserRecord) (bool, error) {
 		Name:   "charset",
 	})
 
+	return true, nil
+}
+
+func cmdSetSubmission(user *users.UserRecord, args []string) (bool, error) {
+	if len(args) < 1 {
+		user.SendText(fmt.Sprintf("Your submission policy: <ansi fg=\"command\">%s</ansi>",
+			user.Character.SubmissionPolicy))
+		user.SendText("Set with: <ansi fg=\"command\">set submission &lt;mercy|subdue|cripple|lethal&gt;</ansi>")
+		user.SendText("See <ansi fg=\"command\">help submission</ansi> for details.")
+		return true, nil
+	}
+
+	newPolicy, ok := characters.ParseSubmissionPolicy(args[0])
+	if !ok {
+		user.SendText(fmt.Sprintf("Unknown submission policy: <ansi fg=\"red\">%s</ansi>", args[0]))
+		user.SendText("Valid policies: mercy, subdue, cripple, lethal.")
+		return true, nil
+	}
+
+	// First-time lethal confirmation: require the command twice before accepting.
+	if newPolicy == characters.PolicyLethal && user.Character.SubmissionPolicy != characters.PolicyLethal {
+		confirmed, _ := user.Character.GetMiscData("submission_lethal_confirmed").(string)
+		if confirmed != "1" {
+			pending, _ := user.Character.GetMiscData("submission_lethal_pending").(string)
+			if pending != "1" {
+				user.SendText(`<ansi fg="yellow-bold">WARNING:</ansi> Setting your submission policy to` +
+					` <ansi fg="red-bold">lethal</ansi> means your successful submissions will KILL` +
+					` opponents — players included, with full deprogression and corpse loot.`)
+				user.SendText("If you're sure, run the command again to confirm.")
+				user.Character.SetMiscData("submission_lethal_pending", "1")
+				return true, nil
+			}
+			user.Character.SetMiscData("submission_lethal_confirmed", "1")
+			user.Character.SetMiscData("submission_lethal_pending", nil)
+		}
+	}
+
+	user.Character.SubmissionPolicy = newPolicy
+	user.SendText(fmt.Sprintf("Submission policy set to <ansi fg=\"command\">%s</ansi>.", newPolicy))
+	return true, nil
+}
+
+func cmdSetSurrender(user *users.UserRecord, args []string) (bool, error) {
+	if len(args) < 1 {
+		user.SendText(fmt.Sprintf("Your surrender policy: <ansi fg=\"command\">%s</ansi>",
+			user.Character.SurrenderPolicy))
+		user.SendText("Set with: <ansi fg=\"command\">set surrender &lt;never|always|auto-tap-below &lt;N&gt;&gt;</ansi>")
+		user.SendText("See <ansi fg=\"command\">help surrender</ansi> for details.")
+		return true, nil
+	}
+
+	// Join remaining args so "auto-tap-below 25" works as two tokens.
+	policyStr := strings.Join(args, " ")
+	newPolicy, ok := characters.ParseSurrenderPolicy(policyStr)
+	if !ok {
+		user.SendText(fmt.Sprintf("Unknown surrender policy: <ansi fg=\"red\">%s</ansi>", policyStr))
+		user.SendText("Valid policies: never, always, auto-tap-below &lt;1-100&gt;.")
+		return true, nil
+	}
+
+	user.Character.SurrenderPolicy = newPolicy
+	user.SendText(fmt.Sprintf("Surrender policy set to <ansi fg=\"command\">%s</ansi>.", newPolicy))
 	return true, nil
 }
 
