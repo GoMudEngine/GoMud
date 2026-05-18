@@ -106,3 +106,60 @@ striking_apex:
 		t.Errorf("expected 2 strike flavor lines, got %d", len(apex))
 	}
 }
+
+func TestValidateCompletenessEmpty(t *testing.T) {
+	lib := &Library{
+		Advancements: map[string]TemplateTriad{},
+		Degradations: map[string]TemplateTriad{},
+		Reversals:    map[string]TemplateTriad{},
+		Escapes:      map[string]TemplateTriad{},
+		Holds:        map[string]TemplateTriad{},
+		StrikingApex: map[string][]string{},
+	}
+	errs := ValidateCompleteness(lib)
+	if len(errs) == 0 {
+		t.Error("empty library should produce completeness errors")
+	}
+}
+
+func TestValidateCompletenessMissingTriadSpeaker(t *testing.T) {
+	lib := &Library{
+		Advancements: map[string]TemplateTriad{
+			"clinch_to_mount": {
+				Controller: []string{"a", "b", "c"},
+				Controlled: []string{"a", "b", "c"},
+				// Observers missing — should error
+			},
+		},
+		Degradations: map[string]TemplateTriad{},
+		Reversals:    map[string]TemplateTriad{},
+		Escapes:      map[string]TemplateTriad{},
+		Holds:        map[string]TemplateTriad{},
+		StrikingApex: map[string][]string{},
+	}
+	errs := ValidateCompleteness(lib)
+	if len(errs) == 0 {
+		t.Error("triad with empty Observers should fail validation")
+	}
+}
+
+func TestValidateCompletenessUnderMinCount(t *testing.T) {
+	lib := &Library{
+		Advancements: map[string]TemplateTriad{
+			"clinch_to_mount": {
+				Controller: []string{"only one"},
+				Controlled: []string{"only one"},
+				Observers:  []string{"only one"},
+			},
+		},
+		Degradations: map[string]TemplateTriad{},
+		Reversals:    map[string]TemplateTriad{},
+		Escapes:      map[string]TemplateTriad{},
+		Holds:        map[string]TemplateTriad{},
+		StrikingApex: map[string][]string{},
+	}
+	errs := ValidateCompleteness(lib)
+	if len(errs) == 0 {
+		t.Error("triad with only 1 template per speaker should fail (minimum 3)")
+	}
+}

@@ -79,3 +79,146 @@ func Load(path string) (*Library, error) {
 	}
 	return lib, nil
 }
+
+// Minimum templates per triad-speaker variant (spec §7.4).
+const MinTemplatesPerSpeaker = 3
+
+// Minimum templates for the Mount strike-apex single-speaker list.
+const MinStrikingApexTemplates = 5
+
+// RequiredAdvancementKeys lists the (source, target) pairs that the
+// advancement messaging must cover. Derived from the spec §6.1 table
+// — every cell in the table that produces an actual transition (not
+// Hold) needs its own template triad.
+var RequiredAdvancementKeys = []string{
+	// Clinch posture variants (1-step)
+	"clinch_to_mount",
+	"clinch_to_sidecontrol",
+	"clinch_to_background",
+	"clinch_to_backstanding",
+
+	// BackStanding all tiers
+	"backstanding_to_background",
+
+	// Mount 3-step only (1/2-step are Hold)
+	"mount_to_background",
+
+	// SideControl 1/2-step → Mount, 3-step → BackGround
+	"sidecontrol_to_mount",
+	"sidecontrol_to_background",
+
+	// KneeOnBelly 1/2 → Mount; 3 → BackGround
+	"kob_to_mount",
+	"kob_to_background",
+
+	// NorthSouth 1 → SC, 2 → Mount, 3 → BackGround
+	"ns_to_sidecontrol",
+	"ns_to_mount",
+	"ns_to_background",
+
+	// HalfGuard 1 → SC, 2 → Mount, 3 → BackGround
+	"halfguard_to_sidecontrol",
+	"halfguard_to_mount",
+	"halfguard_to_background",
+
+	// Guard 1 → SC, 2 → Mount, 3 → BackGround (controller bottom passes)
+	"guard_to_sidecontrol",
+	"guard_to_mount",
+	"guard_to_background",
+
+	// Turtle all tiers → BackGround
+	"turtle_to_background",
+}
+
+// RequiredDegradationKeys lists the (source, target) pairs from spec
+// §6.2 that produce actual transitions (Hold sources omitted).
+var RequiredDegradationKeys = []string{
+	"backstanding_to_clinch",
+	"mount_to_sidecontrol",
+	"sidecontrol_to_halfguard",
+	"kob_to_sidecontrol",
+	"ns_to_sidecontrol",
+	"crucifix_to_background",
+	"background_to_mount",
+	"halfguard_to_guard",
+}
+
+// RequiredReversalKeys covers the 2 realism-exception reversals
+// (Mount→Guard, BackGround→Mount) plus the generic fallback.
+var RequiredReversalKeys = []string{
+	"mount_reverse",      // → Guard with role swap
+	"background_reverse", // → Mount with role swap
+	"generic_reverse",    // any other source: same position, role swap
+}
+
+// RequiredEscapeKeys: single generic key for the always-to-Standing
+// escape.
+var RequiredEscapeKeys = []string{
+	"generic_escape",
+}
+
+// RequiredHoldKeys: per-context hold flavor. Sparse — only fires
+// every ~3-4 rounds via cooldown.
+var RequiredHoldKeys = []string{
+	"clinch_hold",
+	"ground_hold_generic",
+	"guard_hold",
+	"turtle_hold",
+	"backstanding_hold",
+}
+
+// RequiredStrikingApexKeys: Mount-only.
+var RequiredStrikingApexKeys = []string{
+	"mount_strike_flavor",
+}
+
+// ValidateCompleteness checks that every required key is present
+// AND each triad has at least MinTemplatesPerSpeaker templates per
+// speaker variant. StrikingApex keys need MinStrikingApexTemplates
+// in the single-speaker list. Returns a slice of all violations
+// (caller decides whether to fail-loud at boot or just log).
+func ValidateCompleteness(lib *Library) []error {
+	var errs []error
+
+	check := func(category string, keys []string, m map[string]TemplateTriad) {
+		for _, key := range keys {
+			triad, ok := m[key]
+			if !ok {
+				errs = append(errs, fmt.Errorf("%s: missing key %q", category, key))
+				continue
+			}
+			if len(triad.Controller) < MinTemplatesPerSpeaker {
+				errs = append(errs, fmt.Errorf("%s.%s.controller: %d templates, need >= %d",
+					category, key, len(triad.Controller), MinTemplatesPerSpeaker))
+			}
+			if len(triad.Controlled) < MinTemplatesPerSpeaker {
+				errs = append(errs, fmt.Errorf("%s.%s.controlled: %d templates, need >= %d",
+					category, key, len(triad.Controlled), MinTemplatesPerSpeaker))
+			}
+			if len(triad.Observers) < MinTemplatesPerSpeaker {
+				errs = append(errs, fmt.Errorf("%s.%s.observers: %d templates, need >= %d",
+					category, key, len(triad.Observers), MinTemplatesPerSpeaker))
+			}
+		}
+	}
+
+	check("advancements", RequiredAdvancementKeys, lib.Advancements)
+	check("degradations", RequiredDegradationKeys, lib.Degradations)
+	check("reversals", RequiredReversalKeys, lib.Reversals)
+	check("escapes", RequiredEscapeKeys, lib.Escapes)
+	check("holds", RequiredHoldKeys, lib.Holds)
+
+	for _, key := range RequiredStrikingApexKeys {
+		templates, ok := lib.StrikingApex[key]
+		if !ok {
+			errs = append(errs, fmt.Errorf("striking_apex: missing key %q", key))
+			continue
+		}
+		if len(templates) < MinStrikingApexTemplates {
+			errs = append(errs, fmt.Errorf("striking_apex.%s: %d templates, need >= %d",
+				key, len(templates), MinStrikingApexTemplates))
+		}
+	}
+
+	return errs
+}
