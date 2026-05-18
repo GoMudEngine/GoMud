@@ -807,53 +807,87 @@ directly. Those legacy fields no longer exist (T21 sunset).
 
 ### Position_GrappleTick.go (chunk 4b)
 
-Per-round drift observer registered via
+Per-round control-outcome observer registered via
 `wirePositionGrappleTick` on character creation. Fires from the
-NewRound tick walker and drives three things for every character
-currently in a grapple:
+NewRound tick walker once per active grapple pair (iterated from the
+controller side). For each pair:
 
-1. **Opposed control rolls** — Strength + Unarmed-combat for both
-   sides, modified by `grappleStaminaMultiplier` (curve config
+1. **Opposed control roll** — Strength + Unarmed-combat for both sides,
+   modified by `grappleStaminaMultiplier` (curve config
    `GrappleStaminaPenaltyMax` / `Curve`) and the encumbrance multiplier
-   (curve `GrappleEncumbrancePenaltyMax` / `Curve`). The winning
-   margin's `ZScore` shifts `ControlLevel` along the
-   InControl ↔ LosingControl ↔ Neutral ↔ BecomingControlled ↔ Controlled
-   axis via `MutateGrappleControlLevel` (without firing a state
-   transition — the FSM forbids `Mount→Mount`, so per-round drift
-   mutates the shared `GrappleData` directly).
-2. **Per-round stamina cost** — `GrappleStaminaCostPerRound`, scaled
-   by `GrappleControllerCostMultiplier` (default 1.0) for the
-   controller side or `GrappleControlledCostMultiplier` (default 2.0)
-   for the controlled side. The asymmetry creates the "smother" feedback
-   loop: controlled side gases out first.
-3. **Threshold-triggered position transitions** — when `ControlLevel`
-   crosses `InControl`/`Controlled` thresholds, fires a follow-up
-   position transition (e.g. Mount controller crosses to deeper
-   control → still Mount but with `ControlLevel: InControl` set; a
-   controlled grappler crossing to `Controlled` may transition out via
-   `TransitionToTurtle` defensive curl).
+   (curve `GrappleEncumbrancePenaltyMax` / `Curve`). Produces a signed
+   ZScore representing the controller's margin.
 
-Smother edge case: when stamina hits 0 the character keeps grappling
-(no FSM transition) and the penalty curve maxes out — the controlled
-side simply gets gassed faster, reinforcing the feedback loop.
+2. **Outcome resolution via `position.ResolveOutcome`** — Passes the
+   controller, signed ZScore, and defender's posture to the resolver,
+   which returns an `Outcome` struct describing the kind
+   (Advance / Degrade / Reversal / Escape / Hold) and target position
+   if applicable.
+
+3. **Transition application** — Dispatches the outcome:
+   - `OutcomeAdvance` / `OutcomeDegrade`: calls `applyAdvanceOrEscape`
+     to transition to the target position.
+   - `OutcomeReversal`: calls `applyReversal` to swap controller and
+     controlled roles and transition to the reversed position.
+   - `OutcomeEscape`: calls `applyAdvanceOrEscape(newTarget=Standing)`
+     to break the grapple.
+   - `OutcomeHold`: no transition; advances the round in-place.
+   - Resets per-grapple cooldown maps on escape (when breaking to Standing).
+
+4. **Per-round stamina cost** — `GrappleStaminaCostPerRound`, scaled
+   by `GrappleControllerCostMultiplier` (default 1.0) for controller or
+   `GrappleControlledCostMultiplier` (default 2.0) for controlled. The
+   asymmetry creates the "smother" feedback loop.
+
+5. **Outcome messaging** — Calls `emitOutcomeMessages` to dispatch
+   outcome-specific template messages (Advance / Degrade / Reversal / Escape)
+   and `emitHoldFlavor` + `emitStrikingApexFlavor` on Hold rounds.
+
+**Grapple Messaging Library (`loadGrappleLib`):**
+Lazily loads `_datafiles/world/dogmud/messaging/grapple_outcomes.yaml`
+via `sync.Once` pattern. Organizes templates into six maps by outcome kind:
+`Advancements`, `Degradations`, `Reversals`, `Escapes`, `Holds`, and
+`StrikingApex`. Per-grapple cooldown tracking via
+`Character.PerGrappleMessageCooldowns` (map of `bool` for per-outcome
+deduplication) and `Character.PerGrappleMessageCooldownsLastRound`
+(map of `uint64` for sparse hold-flavor every ~4 rounds).
+
+**Outcome-driven messaging (`emitOutcomeMessages`):**
+Selects template triad (Controller / Controlled / Observers variants)
+by outcome kind and position name. Each speaker variant picks from a
+pool via `grapplemessaging.PickTemplate` with per-grapple cooldown
+to ensure variety. On Hold, defers to `emitHoldFlavor` and
+`emitStrikingApexFlavor` for special handling.
+
+**Hold-round flavor (`emitHoldFlavor`):**
+Fires sparse flavor text every ~4 rounds (configurable via
+`holdEmitEveryRounds`). Uses a "hold_last_round" key in the
+last-round map to track emission timing per position state.
+
+**Mount-strike flavor (`emitStrikingApexFlavor`):**
+Fires only on Hold rounds at Mount position. Adds a single-speaker
+message visible to the controller; observers see the combat damage
+text from the combat system.
 
 ### Position_Messaging.go (chunk 4b)
 
-Per-round messaging observer. Subscribes via `wirePositionMessaging`
-to the GrappleTick walker and the Position FSM's `AfterTransition`.
-Generates three message classes with per-grapple cooldowns
-(`Character.PerGrappleMessageCooldowns map[string]int`):
+Per-round support observer subscribed to the NewRound walker via
+`processGrappleTick`. After grapple control drift and transitions are
+resolved, fires supplementary messaging:
 
-- **Gradient messages** — "you're losing control of the grapple",
-  "your grip is slipping", etc. Fire once per grapple per
-  `ControlLevel` crossing.
-- **Transition messages** — "you scramble out of mount and into
-  guard", "they pull you down to half-guard". Fire on every Position
-  state change while grappling; have controller / controlled / room
-  variants.
-- **Stamina warnings** — "you're getting gassed" — fire once per
-  grapple when stamina drops below `GrappleStaminaLowThreshold`
-  (config, default 0.25). `IsLowGrappleStamina()` is the predicate.
+- **`fireStaminaWarningIfLow`** — One-shot "you're getting gassed" beat
+  when stamina drops below `GrappleStaminaLowThreshold` (config,
+  default 0.25). `IsLowGrappleStamina()` is the predicate. Reuses the
+  per-grapple cooldown map for deduplication.
+
+- **Submission messaging callbacks** — `fireSubmissionOpeningMessage` and
+  `fireSubmissionResolutionMessage` are registered as hooks with the
+  combat package to fire outcome-specific templates when submissions are
+  attempted or resolved. Templates loaded from
+  `_datafiles/messages/position_control.yaml` via `loadPositionMessages`
+  (sync.Once pattern). Opening messages vary by submission type (armlock,
+  choke, etc.); resolution messages vary by outcome (Mercy / Subdue /
+  Cripple / Lethal).
 
 Cooldowns reset when the grapple ends (any `TransitionToStanding` via
 escape, break, or death).
@@ -927,8 +961,8 @@ Periodic invariant checker registered via
 
 - If `a.IsGrappling()` and references `b` via `GrappleData.Partner`,
   then `b.IsGrappling()` and references `a` symmetrically.
-- ControlLevel relationship is consistent with the pair role (one
-  controller / one controlled / mutual neutral).
+- Pair role relationship is consistent (one controller, one controlled,
+  or mutual neutral).
 - No orphan grapples (character in a grapple state with no Partner
   except Turtle).
 
