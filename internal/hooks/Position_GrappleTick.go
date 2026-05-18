@@ -30,6 +30,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // processGrappleTick is the NewRound event listener. Iterates all
@@ -126,7 +127,22 @@ func processGrapplePair(controller, controlled *characters.Character) {
 	// We translate margin into a "margin z-score" using the attacker's
 	// stddev (same value used to spread both rolls) so MarginToDelta's
 	// |z| buckets map cleanly to the spec table.
-	_, margin, atkRoll, _ := dice.OpposedRollStat(ctrlScore, cdScore)
+	_, margin, atkRoll, defRoll := dice.OpposedRollStat(ctrlScore, cdScore)
+
+	// Chunk 4d T5: stash this round's drift result on both characters so
+	// Position_SubmissionTick (T6) can read the margin and z-scores
+	// without re-rolling and getting a different result.
+	// Round-numbered so T6 can detect stale data from a prior round.
+	currentRound := util.GetRoundCount()
+	snap := characters.DriftRollSnapshot{
+		Round:          currentRound,
+		MarginAttacker: margin,
+		AttackerZScore: atkRoll.ZScore,
+		DefenderZScore: defRoll.ZScore,
+	}
+	controller.LastDriftRoll = snap
+	controlled.LastDriftRoll = snap
+
 	marginZ := 0.0
 	if atkRoll.StdDev > 0 {
 		marginZ = margin / atkRoll.StdDev

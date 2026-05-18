@@ -142,6 +142,11 @@ type Character struct {
 	// for round-robin sub-type selection so multi-sub positions don't
 	// hammer the same sub every round.
 	LastSubmissionAttempted int `yaml:"-"` // index into TopSubmissionsForPosition / BottomSubmissionsForPosition
+	// LastDriftRoll is populated by Position_GrappleTick each round
+	// with the result of the opposed drift check.
+	// Position_SubmissionTick reads it to decide whether a sub-attempt
+	// opportunity has opened without re-rolling (chunk 4d T5/T6).
+	LastDriftRoll DriftRollSnapshot `yaml:"-"` // chunk 4d: read by Position_SubmissionTick
 	// Awareness state machine (chunk 1). Source of truth for
 	// "is this character hidden?" Buff #9 still exists as effect
 	// carrier; this machine drives its add/remove via cascade.
@@ -205,6 +210,18 @@ type Character struct {
 	// ApplyMobOverrides for special mobs (wagons). Zero falls through
 	// to the default Strength-derived calc.
 	carryCapacityOverride float64 `yaml:"-"`
+}
+
+// DriftRollSnapshot captures the chunk-4b grapple-tick drift roll
+// result for the most recent round, so that the chunk-4d
+// Position_SubmissionTick observer can read it without re-rolling.
+// The two sides are stored separately because both can be checked
+// for sub-attempt eligibility per round.
+type DriftRollSnapshot struct {
+	Round          uint64  // round number this snapshot was taken
+	MarginAttacker float64 // attacker-side margin (positive = attacker won)
+	AttackerZScore float64
+	DefenderZScore float64
 }
 
 func New() *Character {
