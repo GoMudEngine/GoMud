@@ -186,3 +186,26 @@ func TestProductionLibraryAdvancementsComplete(t *testing.T) {
 		}
 	}
 }
+
+func TestProductionLibraryDegradationsComplete(t *testing.T) {
+	lib, err := Load("../../_datafiles/world/dogmud/messaging/grapple_outcomes.yaml")
+	if err != nil {
+		t.Fatalf("Load prod library: %v", err)
+	}
+	for _, key := range RequiredDegradationKeys {
+		triad, ok := lib.Degradations[key]
+		if !ok {
+			t.Errorf("missing degradation key: %s", key)
+			continue
+		}
+		if len(triad.Controller) < MinTemplatesPerSpeaker {
+			t.Errorf("%s.controller: %d < %d", key, len(triad.Controller), MinTemplatesPerSpeaker)
+		}
+		if len(triad.Controlled) < MinTemplatesPerSpeaker {
+			t.Errorf("%s.controlled: %d < %d", key, len(triad.Controlled), MinTemplatesPerSpeaker)
+		}
+		if len(triad.Observers) < MinTemplatesPerSpeaker {
+			t.Errorf("%s.observers: %d < %d", key, len(triad.Observers), MinTemplatesPerSpeaker)
+		}
+	}
+}

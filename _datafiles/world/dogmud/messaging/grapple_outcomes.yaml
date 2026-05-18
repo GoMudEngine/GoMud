@@ -495,7 +495,210 @@ advancements:
         \ {controllerName} threads a hook in and flattens them to back\
         \ mount."
 
-degradations: {}
+degradations:
+  # ── BackStanding degradation ─────────────────────────────────────────────
+  backstanding_to_clinch:
+    controller:
+      - "{controlledName} pivots hard and strips your waist grip. Suddenly\
+        \ you're facing each other in a clinch instead of riding their back."
+      - "They duck the chin, peel your hand off the seatbelt, and spin to\
+        \ face you. The back control dissolves into a chest-to-chest clinch."
+      - "A sharp elbow drives into your forearm and your grip breaks.\
+        \ {controlledName} wheels around before you can reestablish — clinch."
+    controlled:
+      - "You drop your chin, peel {controllerName}'s seatbelt hand, and\
+        \ pivot hard. Their grip peels away and you're face-to-face in a\
+        \ clinch."
+      - "You drive your elbow back into {controllerName}'s forearm and feel\
+        \ the grip loosen. You spin out and secure the clinch before they\
+        \ can adjust."
+      - "You shuck the waist lock sideways and rotate into {controllerName}.\
+        \ Back control becomes clinch — still in their space, but facing\
+        \ them now."
+    observers:
+      - "{controlledName} peels {controllerName}'s seatbelt grip and pivots\
+        \ to face them; back control gives way to a clinch."
+      - "{controlledName} drives an elbow back, strips the grip, and wheels\
+        \ around into a clinch with {controllerName}."
+      - "{controlledName} shucks the waist lock and rotates out;\
+        \ {controllerName} can only follow into a mutual clinch."
+
+  # ── Mount degradation ────────────────────────────────────────────────────
+  mount_to_sidecontrol:
+    controller:
+      - "{controlledName} bridges hard and hip-escapes — your mount slides\
+        \ off into side control."
+      - "You can't keep your base. {controlledName} shrimps free and lands\
+        \ in side control."
+      - "A frame on your hip pries your knees apart; you settle for side\
+        \ control."
+    controlled:
+      - "You bridge hard and shrimp the hip free —\
+        \ {controllerName}'s mount slides off you and into side control."
+      - "Your elbow frames between you and {controllerName}'s hip. You\
+        \ hip-escape and they settle for side."
+      - "You buckle your knees and arc your back. {controllerName} loses\
+        \ base; you scramble to side."
+    observers:
+      - "{controlledName} bridges and hip-escapes from under\
+        \ {controllerName}; the mount slides to side control."
+      - "{controlledName} shrimps a frame in; {controllerName} can't hold\
+        \ mount and settles for side."
+      - "{controlledName}'s buckle-and-arc pries {controllerName} off;\
+        \ mount becomes side control."
+
+  # ── SideControl degradation ──────────────────────────────────────────────
+  sidecontrol_to_halfguard:
+    controller:
+      - "{controlledName} threads a knee inside and recovers half guard.\
+        \ Your side control compresses to a half-guard pin."
+      - "They worm their near knee across your hip and you feel the half\
+        \ guard close around your leg. Side control tightens to half guard."
+      - "A frame on your shoulder creates just enough space.\
+        \ {controlledName} pumps the near knee in and recovers half guard."
+    controlled:
+      - "You elbow-frame {controllerName}'s shoulder and work your near\
+        \ knee inside. It threads through and you close the half guard."
+      - "You shrimp out on the hip side, make space, and pump your knee\
+        \ through — half guard recovered."
+      - "You post the inside elbow, flatten your near hip, and pull the\
+        \ knee in. {controllerName}'s side control compresses to half guard."
+    observers:
+      - "{controlledName} elbow-frames and threads the near knee inside;\
+        \ side control becomes half guard."
+      - "{controlledName} shrimps a gap on the hip and recovers half\
+        \ guard on {controllerName}."
+      - "{controlledName} posts the inside elbow and pumps the knee\
+        \ through; {controllerName} is reduced to half guard."
+
+  # ── Knee-On-Belly degradation ────────────────────────────────────────────
+  kob_to_sidecontrol:
+    controller:
+      - "{controlledName} shrimps sideways and knocks your knee off their\
+        \ belly. You drop your hip back down into side control."
+      - "They bridge off the knee pressure and twist. You can't rebalance\
+        \ — your base falls and you settle for side control."
+      - "A two-handed push on your knee breaks the pin; you ride the shove\
+        \ down into side control instead."
+    controlled:
+      - "You shrimp into {controllerName} and knock the knee off your belly\
+        \ — they drop back into side control. Uncomfortable, but better."
+      - "You bridge against the knee and twist your hips out. The knee-on-\
+        \ belly collapses and {controllerName} settles for side control."
+      - "You plant both hands on {controllerName}'s knee and push sideways.\
+        \ The pin breaks and they fall into side control."
+    observers:
+      - "{controlledName} shrimps into {controllerName} and bucks the knee\
+        \ off their belly; {controllerName} drops to side control."
+      - "{controlledName} bridges against the knee and twists out;\
+        \ {controllerName} falls back to side control."
+      - "{controlledName} pushes {controllerName}'s knee sideways;\
+        \ knee-on-belly gives way to side control."
+
+  # ── North-South degradation ──────────────────────────────────────────────
+  ns_to_sidecontrol:
+    controller:
+      - "{controlledName} turns their hips out and frames your thigh away.\
+        \ North-south loses grip and you slide to side control."
+      - "They shrimp their hips sideways and you can't follow. You settle\
+        \ for side control rather than lose position entirely."
+      - "A bridge and hip roll pries your weight off center;\
+        \ {controlledName} angles out and you drop to side control."
+    controlled:
+      - "You shrimp your hips sideways and frame {controllerName}'s thigh\
+        \ out. Their north-south hold breaks; they slide to side control."
+      - "You bridge and roll the hips. {controllerName} loses alignment and\
+        \ slides off to side control — you take it."
+      - "You work the elbow frame against {controllerName}'s knee and angle\
+        \ your hips out until the north-south hold breaks into side control."
+    observers:
+      - "{controlledName} shrimps the hips and frames {controllerName}'s\
+        \ thigh away; north-south degrades to side control."
+      - "{controlledName} bridges and hip-rolls out from under\
+        \ {controllerName}; the position becomes side control."
+      - "{controlledName} elbow-frames {controllerName}'s knee and angles\
+        \ free; north-south collapses to side control."
+
+  # ── Crucifix degradation ─────────────────────────────────────────────────
+  crucifix_to_background:
+    controller:
+      - "{controlledName} rolls the trapped arm free and the crucifix\
+        \ unravels. You're left with back mount instead."
+      - "They force the elbow inside and break your arm trap. The crucifix\
+        \ is gone — you settle onto their back."
+      - "A violent roll strips the figure-four on the arm.\
+        \ {controlledName} pulls free and you return to back mount."
+    controlled:
+      - "You force your elbow down, drive the arm inside {controllerName}'s\
+        \ grip, and break the figure-four. The crucifix falls apart and\
+        \ you're back to back mount."
+      - "You tuck the chin, bridge into the arm trap, and roll the elbow\
+        \ free. {controllerName} loses the crucifix and settles for back\
+        \ mount."
+      - "You flatten the arm and swim it through the trap. The crucifix\
+        \ dissolves — {controllerName} still has your back, but the arm\
+        \ is free."
+    observers:
+      - "{controlledName} forces the elbow inside {controllerName}'s grip\
+        \ and breaks the arm trap; crucifix falls back to back mount."
+      - "{controlledName} bridges into the figure-four and rolls the arm\
+        \ free; {controllerName} loses the crucifix."
+      - "{controlledName} swims the trapped arm through;\
+        \ {controllerName}'s crucifix unravels to back mount."
+
+  # ── BackGround degradation ───────────────────────────────────────────────
+  background_to_mount:
+    controller:
+      - "{controlledName} turns into you — they roll face-up and pull\
+        \ you forward. You're in mount now, on top but no longer at the\
+        \ back."
+      - "They hip-escape sideways and drag your top hook down. You\
+        \ tumble forward as they rotate, and the position becomes mount."
+      - "A fast roll toward your hook-side spins them face-up.\
+        \ {controlledName} pulls you over and you land in mount."
+    controlled:
+      - "You roll toward {controllerName}'s hook-side, drag the top hook\
+        \ down, and pull them forward. Back mount becomes mount — you're\
+        \ face-up now with {controllerName} on top."
+      - "You hip-escape to the side and torque your upper body toward\
+        \ {controllerName}. They tumble forward and the position flips\
+        \ to mount."
+      - "You post the outside elbow and roll hard toward the hook.\
+        \ {controllerName} loses the back and lands in mount — but you\
+        \ escaped the back."
+    observers:
+      - "{controlledName} rolls toward {controllerName}'s hook-side and\
+        \ pulls them forward; back mount becomes mount."
+      - "{controlledName} hip-escapes and turns face-up;\
+        \ {controllerName} tumbles forward into mount."
+      - "{controlledName} rolls hard toward the hook and drags\
+        \ {controllerName} over; back mount gives way to front mount."
+
+  # ── Half Guard degradation ───────────────────────────────────────────────
+  halfguard_to_guard:
+    controller:
+      - "{controlledName} wiggles the trapped leg out and closes full\
+        \ guard. Your half-guard pin is gone — both legs locked around\
+        \ your waist."
+      - "They shrimp to create space and drag the knee through. Half\
+        \ guard becomes full guard before you can flatten them again."
+      - "A hip bump creates enough room for {controlledName} to pull\
+        \ the second leg free. Full guard closes and the pass resets."
+    controlled:
+      - "You shrimp hard on the pinned side, create a sliver of space,\
+        \ and drag the knee through. Half guard becomes full guard."
+      - "You hip-bump {controllerName} to break their weight and snake\
+        \ the second leg free. Full guard — you're back in the fight."
+      - "You bridge and shrimp, working the trapped knee toward the\
+        \ center until it clears {controllerName}'s thigh. Full guard\
+        \ locks in."
+    observers:
+      - "{controlledName} shrimps and drags the trapped knee through;\
+        \ half guard becomes full guard on {controllerName}."
+      - "{controlledName} hip-bumps {controllerName} and pulls the\
+        \ second leg free; full guard closes."
+      - "{controlledName} bridges and shrimps the knee clear;\
+        \ {controllerName}'s half guard becomes full guard."
 reversals: {}
 escapes: {}
 holds: {}
