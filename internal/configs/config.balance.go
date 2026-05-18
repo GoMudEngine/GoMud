@@ -66,6 +66,18 @@ type Balance struct {
 	// Tunable; smoke may push this lower.
 	ReachUtilityFloor ConfigFloat `yaml:"reach_utility_floor"`
 
+	// ── CHUNK 4D: SUBMISSION TICK ────────────────────────────────────────────
+	// Per-round opportunistic submission attempts gated on the chunk-4b
+	// control-axis drift roll. See spec
+	// docs/superpowers/specs/2026-05-18-state-chunk-4d-submission-rework-design.md
+	SubmissionAttemptAlpha   ConfigFloat `yaml:"submission_attempt_alpha"`     // Min drift-margin (std devs) that opens a sub window (either side)
+	SubmissionAttemptCritZ   ConfigFloat `yaml:"submission_attempt_crit_z"`    // Defender-side shortcut: drift z >= this opens a bottom-sub window regardless of margin
+	SubSkillWeight           ConfigFloat `yaml:"sub_skill_weight"`             // Unarmed-combat skill contribution multiplier in the sub roll
+	SubBadZThreshold         ConfigFloat `yaml:"sub_bad_z_threshold"`          // Z-score below which the sub roll's bad-tier (attempter falls prone) fires
+	SubCritZThreshold        ConfigFloat `yaml:"sub_crit_z_threshold"`         // Z-score at or above which the sub roll's crit-tier (recipient stunned) fires
+	SubGoldLossFraction      ConfigFloat `yaml:"sub_gold_loss_fraction"`       // Fraction of carried gold transferred to the aggressor on subdue/cripple
+	BrokenLimbBuffDuration   ConfigInt   `yaml:"broken_limb_buff_duration"`    // Duration in rounds for the broken-limb buff; expires naturally via standard buff tick
+
 	// ── GRAPPLE CONTROL AXIS (chunk 4b) ──────────────────────────────────────
 	// Per-round drift mechanics — see
 	// docs/superpowers/specs/2026-05-16-state-chunk-4b-position-control-axis-design.md

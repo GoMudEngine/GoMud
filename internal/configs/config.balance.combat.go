@@ -96,6 +96,29 @@ func (b *Balance) validateCombat() {
 		b.ReachUtilityFloor = 0.15
 	}
 
+	// ── CHUNK 4D: SUBMISSION TICK ────────────────────────────────────────────
+	if b.SubmissionAttemptAlpha <= 0 {
+		b.SubmissionAttemptAlpha = 1.0
+	}
+	if b.SubmissionAttemptCritZ <= 0 {
+		b.SubmissionAttemptCritZ = 2.0
+	}
+	if b.SubSkillWeight <= 0 {
+		b.SubSkillWeight = 1.5
+	}
+	if b.SubBadZThreshold == 0 {
+		b.SubBadZThreshold = -1.0
+	}
+	if b.SubCritZThreshold <= 0 {
+		b.SubCritZThreshold = 2.0
+	}
+	if b.SubGoldLossFraction < 0 || b.SubGoldLossFraction > 1.0 {
+		b.SubGoldLossFraction = 0.20
+	}
+	if b.BrokenLimbBuffDuration <= 0 {
+		b.BrokenLimbBuffDuration = 900
+	}
+
 	// ── GRAPPLE THRESHOLDS ───────────────────────────────────────────────────
 	if b.GrappleStaminaLowThreshold <= 0 || b.GrappleStaminaLowThreshold >= 1.0 {
 		b.GrappleStaminaLowThreshold = 0.25

@@ -584,6 +584,18 @@ Balance:
   reach_ground_grapple_radius: 0.3    # Ground grapples: body-on-body distance
   reach_utility_floor: 0.15          # Floor: even a pike can still poke (hilt-strike)
 
+  # ── Chunk 4d: Submission tick ─────────────────────────────────────────────
+  # Per-round opportunistic submission attempts gated on the chunk-4b
+  # control-axis drift roll. See spec
+  # docs/superpowers/specs/2026-05-18-state-chunk-4d-submission-rework-design.md
+  submission_attempt_alpha: 1.0          # Drift margin (std devs) that opens a sub window for the winning side
+  submission_attempt_crit_z: 2.0         # Defender-crit shortcut for bottom-sub windows
+  sub_skill_weight: 1.5                  # Unarmed-combat skill weight in the sub roll
+  sub_bad_z_threshold: -1.0              # Sub roll z < this → attempter falls prone, pair breaks
+  sub_crit_z_threshold: 2.0              # Sub roll z >= this → recipient stunned next round
+  sub_gold_loss_fraction: 0.20           # Fraction of carried gold transferred on subdue/cripple
+  broken_limb_buff_duration: 900         # Rounds (~60 min of play at 4s rounds); expires naturally
+
   # ── REGEN RATES (fraction of pool max per tick; 0.01 = 1%) ────────────────
   PlayerHealthRegenPct: 0.02     # Bumped from 1% to 2%; players needed faster recovery
   PlayerStaminaRegenPct: 0.02    # Tuned 39.2: doubled from 0.01; fights felt too exhausting at 1%
