@@ -155,21 +155,6 @@ func condMobIsBeingControlled(params map[string]any, ctx *EvalContext) Result {
 	return Failure
 }
 
-// condMobControlAtLeast was a ControlLevel-gradient check that compared
-// the mob's per-round drift needle to a named threshold. The drift
-// needle (ControlLevel) is removed in chunk 4b-fixup T18.
-//
-// TODO: T19 — sunset/convert. The condition registry key
-// "mob_control_at_least" is kept so existing behavior-tree YAML
-// does not crash on load, but the function always returns Failure
-// until T19 re-engineers it against the new per-round drift snapshot
-// (Character.LastDriftRoll.MarginAttacker) or removes the key
-// from the registry entirely.
-func condMobControlAtLeast(params map[string]any, ctx *EvalContext) Result {
-	// TODO: T19 — re-engineer or remove
-	return Failure
-}
-
 func condMobLowGrappleStamina(params map[string]any, ctx *EvalContext) Result {
 	mob := mobs.GetInstance(ctx.InstanceId)
 	if mob == nil {
@@ -224,7 +209,6 @@ func init() {
 	conditionRegistry["target_is_grappled"] = condTargetIsGrappled
 	conditionRegistry["mob_is_in_control"] = condMobIsInControl
 	conditionRegistry["mob_is_being_controlled"] = condMobIsBeingControlled
-	conditionRegistry["mob_control_at_least"] = condMobControlAtLeast
 	conditionRegistry["mob_low_grapple_stamina"] = condMobLowGrappleStamina
 	conditionRegistry["target_is_in_control"] = condTargetIsInControl
 	conditionRegistry["target_is_being_controlled"] = condTargetIsBeingControlled

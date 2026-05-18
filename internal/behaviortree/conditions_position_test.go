@@ -127,25 +127,6 @@ func TestCondMobIsInControl_InMountAsController_Success(t *testing.T) {
 	assert.Equal(t, Success, condMobIsInControl(nil, ctx))
 }
 
-func TestCondMobControlAtLeast_NeutralOrBetter_AsController(t *testing.T) {
-	// chunk 4b-fixup T18: condMobControlAtLeast stubbed to Failure pending T19
-	// re-engineering. Test updated to match stub behaviour.
-	mob := newTestMob(t)
-	mob.Character.Position = position.NewMachine()
-	_ = mob.Character.Position.TransitionToClinch(
-		position.GrappleData{Partner: state.ActorRef{UserId: 999}},
-		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
-	)
-	_ = mob.Character.Position.TransitionToMount(
-		position.GrappleData{Partner: state.ActorRef{UserId: 999}, IsControllerRole: true},
-		state.TransitionReason{Trigger: position.TriggerTakedownMount},
-	)
-	ctx := &EvalContext{InstanceId: mob.InstanceId}
-	params := map[string]any{"level": "neutral"}
-	// TODO: T19 — re-engineer condMobControlAtLeast; currently stubbed to Failure.
-	assert.Equal(t, Failure, condMobControlAtLeast(params, ctx))
-}
-
 func TestPositionPrimitives_AllRegistered_4b(t *testing.T) {
 	names := []string{
 		// 4a primitives
@@ -154,7 +135,7 @@ func TestPositionPrimitives_AllRegistered_4b(t *testing.T) {
 		"target_is_standing", "target_is_prone", "target_is_grappled",
 		// 4b primitives
 		"mob_is_in_control", "mob_is_being_controlled",
-		"mob_control_at_least", "mob_low_grapple_stamina",
+		"mob_low_grapple_stamina",
 		"target_is_in_control", "target_is_being_controlled",
 	}
 	for _, name := range names {

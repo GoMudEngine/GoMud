@@ -269,13 +269,17 @@ Character (`IsSupine`, `IsBackStanding`, `IsSideControl`,
 `IsHalfGuard`, `IsTurtle`) for future primitives if archetype YAMLs
 need finer-grained checks.
 
-**Chunk 4b — control-axis predicates (6):**
+**Chunk 4b — control-axis predicates (5):**
+
+Note: `mob_control_at_least` was deleted in chunk 4b-fixup T19. The
+`ControlLevel` gradient it depended on was removed in T18. Use
+`mob_is_in_control` / `mob_is_being_controlled` for binary controller
+checks, or `mob_low_grapple_stamina` for resource-based gating.
 
 | Condition | Params | Description |
 |-----------|--------|-------------|
 | `mob_is_in_control` | none | True when `self.IsController()` — controller side of a grapple pair. Replaced the deleted `HasCondition(ConditionGrappleController)` check (S4 shipped). |
 | `mob_is_being_controlled` | none | True when `self.IsBeingControlled()` — controlled side. |
-| `mob_control_at_least` | `level` (string: "InControl", "LosingControl", "Neutral", "BecomingControlled", "Controlled") | True when self's `ControlLevel` ≥ the named level on the controller→controlled axis. Used by archetypes that want graduated reactions (e.g. "if I'm only `LosingControl`, try to scramble; if I'm `Controlled`, turtle"). |
 | `mob_low_grapple_stamina` | none | True when `self.IsLowGrappleStamina()` — stamina fraction below `GrappleStaminaLowThreshold` (config, default 0.25). Drives the "I'm gassed" archetype reactions. |
 | `target_is_in_control` | none | True when aggro target `IsController()`. |
 | `target_is_being_controlled` | none | True when aggro target `IsBeingControlled()`. |
