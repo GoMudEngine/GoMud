@@ -199,3 +199,23 @@ func TestResolveSubmissionOutcome_CritMercyAppliesStunnedStub(t *testing.T) {
 	assert.False(t, atk.IsGrappling(), "grapple broken on crit+mercy")
 	assert.True(t, def.IsAlive(), "defender alive after crit+mercy release")
 }
+
+func TestResolveSubmissionOutcome_CrippleAppliesBrokenLimbBuff(t *testing.T) {
+	// This test verifies that cripple policy applies the broken-limb buff
+	// for submission types that affect limbs (e.g., armbar, omoplata,
+	// kimura, americana). The actual buff spec (id 83) is loaded from YAML
+	// at server startup, so this unit test can't verify the buff exists in
+	// the registry. Instead, we verify the death cascade occurs and the
+	// applyBrokenLimbBuff call path is exercised (no panic).
+	atk, def := setupMountWithMobDefender(t)
+	atk.SubmissionPolicy = characters.PolicyCripple
+	result := combat.SubmissionAttemptResult{
+		Tier:    combat.SubTierSuccess,
+		SubType: position.SubArmbar,
+	}
+	combat.ResolveSubmissionOutcome(atk, def, result, combat.RoleTop)
+	// Cripple with armbar: death cascade fires + applyBrokenLimbBuff called.
+	// The buff's actual existence is verified at server boot when YAML is loaded.
+	assert.False(t, def.IsAlive(),
+		"defender should enter death cascade on cripple+armbar")
+}

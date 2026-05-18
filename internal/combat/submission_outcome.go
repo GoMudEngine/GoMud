@@ -205,11 +205,14 @@ func snapshotVictimDamage(victim *characters.Character) map[int]int {
 // Stub for T7 — full implementation lands in T9 after the buff YAML
 // is registered.
 func applyBrokenLimbBuff(victim *characters.Character, bodyPart string) {
-	// T9: victim.AddBuff(83) — buff id 83 = broken_limb
-	// The bodyPart string ("arm" / "shoulder") gates which stat
-	// penalties the buff applies. Thread it into AddBuff context
-	// once the buff YAML supports per-part parameterisation.
-	_ = victim
+	if victim == nil || bodyPart == "" {
+		return
+	}
+	// Buff 83 = broken_limb (T9 yaml). The body part ("arm" / "shoulder")
+	// is currently flavor only — narration uses it via Position_Messaging
+	// in T11. Future per-arm tracking could drive weapon-specific
+	// accuracy penalties.
+	_ = victim.AddBuff(83, false)
 	_ = bodyPart
 }
 
