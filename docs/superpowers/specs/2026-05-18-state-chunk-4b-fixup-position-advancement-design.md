@@ -392,6 +392,35 @@ concept. The transition-message and stamina-warning code paths in
 Position_Messaging stay — the message *firing* hook gets new event
 types.
 
+### 7.6 Realism sanity-check pass (REQUIRED plan task)
+
+After all ~227 templates are authored, a dedicated review task in the
+plan must sanity-check every template against the question: **"Does
+this read like a real description of combat with grappling?"** A reader
+familiar with MMA/BJJ should be able to picture each line without
+cringing at anatomy errors, made-up techniques, or move sequences that
+don't physically work.
+
+Specific things the review must catch:
+
+- **Anatomical impossibilities** (e.g. "you wrench his arm backwards
+  through his own shoulder").
+- **Made-up moves** that sound vaguely martial but aren't real
+  techniques.
+- **Wrong move for the position** (e.g. attempting a "leg lock" from
+  Mount — leg locks don't come from Mount).
+- **Position-of-the-bodies errors** — flavor that describes the
+  defender as standing when they're on the ground, or vice versa.
+- **Wrong subject for the action** (e.g. defender "lands a takedown"
+  during a degradation — the defender isn't initiating).
+- **Tone consistency** within a category — all templates for one
+  outcome should land in the same register (visceral and grounded,
+  not occasionally fantastical or jokey).
+
+The reviewer should be a fresh subagent with no context pollution
+from the authoring tasks. Output: per-template approve/revise with
+specific anatomy/technique notes for revises.
+
 ---
 
 ## 8. What Chunk 4b Code Gets Sunset
