@@ -148,3 +148,40 @@ func TestAdvancementTargetClinchPosture(t *testing.T) {
 		})
 	}
 }
+
+func TestDegradeTarget(t *testing.T) {
+	cases := []struct {
+		name       string
+		source     State
+		wantTarget State
+		wantHold   bool
+	}{
+		// Symmetric source — no degrade target
+		{"clinch_hold", Clinch, Clinch, true},
+
+		// Standard degrades
+		{"backstanding_to_clinch", BackStanding, Clinch, false},
+		{"mount_to_sidecontrol", Mount, SideControl, false},
+		{"sidecontrol_to_halfguard", SideControl, HalfGuard, false},
+		{"kob_to_sidecontrol", KneeOnBelly, SideControl, false},
+		{"ns_to_sidecontrol", NorthSouth, SideControl, false},
+		{"crucifix_to_background", Crucifix, BackGround, false},
+		{"background_to_mount", BackGround, Mount, false},
+		{"halfguard_to_guard", HalfGuard, Guard, false},
+
+		// Terminal degrade sources — defender must escape or reverse
+		{"guard_hold", Guard, Guard, true},
+		{"turtle_hold", Turtle, Turtle, true},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			target, hold := DegradeTarget(c.source)
+			if hold != c.wantHold {
+				t.Errorf("DegradeTarget(%v) hold=%v, want %v", c.source, hold, c.wantHold)
+			}
+			if !hold && target != c.wantTarget {
+				t.Errorf("DegradeTarget(%v) target=%v, want %v", c.source, target, c.wantTarget)
+			}
+		})
+	}
+}

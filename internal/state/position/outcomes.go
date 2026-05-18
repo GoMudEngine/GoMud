@@ -136,3 +136,36 @@ func clinchAdvancementTarget(tier OutcomeTier, defenderPosture State) State {
 		return BackGround
 	}
 }
+
+// DegradeTarget returns the position to step down to when the
+// defender wins drift moderately (|z| in [0.5, 1.0)). Implements
+// spec §6.2. For symmetric or terminal positions (Clinch, Guard,
+// Turtle), returns (source, true) — defender can't degrade further
+// from these and must escape or reverse instead.
+func DegradeTarget(source State) (target State, hold bool) {
+	switch source {
+	case Clinch:
+		// Symmetric — no degrade target. Stamina-drain round.
+		return Clinch, true
+	case BackStanding:
+		return Clinch, false
+	case Mount:
+		return SideControl, false
+	case SideControl:
+		return HalfGuard, false
+	case KneeOnBelly:
+		return SideControl, false
+	case NorthSouth:
+		return SideControl, false
+	case Crucifix:
+		return BackGround, false
+	case BackGround:
+		return Mount, false
+	case HalfGuard:
+		return Guard, false
+	case Guard, Turtle:
+		// Terminal — defender can only escape or reverse from here.
+		return source, true
+	}
+	return source, true
+}
