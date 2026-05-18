@@ -39,11 +39,21 @@ grapples; short weapons stay effective. Bladed weapons narrate as
 Bludgeoning when `ShouldBludgeon` fires. See
 `internal/combat/context.md` for the integration.
 
-**Next chunks:** 4d — submissions engine (chokes / joint-locks gated by
-ControlLevel thresholds). 4e — player command parity (player-facing
-`grapple`, `escape`, `submit`, `position`). 4f — helpfile + full doc
-sweep (player-facing help content for the 14-state model, Supine
-distinction, per-round drift narrative).
+**4d shipped:** Automatic submission system. Fires from
+`internal/hooks/Position_SubmissionTick.go` once per grapple round when
+the drift-roll margin snapshot exceeds `SubmissionAttemptAlpha`. Four-tier
+resolution (bad / neutral / success / crit) consumes the attempter's
+`SubmissionPolicy` and may consult the defender's `SurrenderPolicy` (mercy
+policy only). Life cascade extended with `NoDeprogression` +
+`GoldLossFraction` DeadData flags. New buffs: broken-limb (id 83) for
+cripple outcomes, submission-stunned (id 84) for crit-tier mercy. Role-split
+submission mapping lives in `internal/state/position/submissions.go`; the
+consumer side is documented in `internal/combat/context.md`.
+
+**Next chunks:** 4e — player command parity (player-facing `grapple`,
+`escape`, `position` commands matching mob capabilities). 4f — helpfile +
+full doc sweep (player-facing help content for all grapple/position
+commands, per-round drift narrative).
 
 ---
 
@@ -393,6 +403,52 @@ players transition theirs). Canonical mapping table:
 
 ---
 
+## Submissions (chunk 4d)
+
+The submission-type mapping and eligibility predicates live in
+`internal/state/position/submissions.go`. The consumer-side roll,
+tier classification, and policy dispatch are in `internal/combat/`
+(see `internal/combat/context.md` "Submission System").
+
+### Role-split submission pools
+
+Each grapple position has two submission pools: top-attack subs
+(controller side) and bottom-attack subs (controlled side, sparser
+by design). The split is defined in `TopSubmissionsForPosition` and
+`BottomSubmissionsForPosition`.
+
+### SubmissionType enum (7 values)
+
+| Value | Class | Body part |
+|-------|-------|-----------|
+| `SubNone` | — | sentinel / empty pool |
+| `SubRearNakedChoke` | Choke | — (no limb) |
+| `SubTriangle` | Choke | — (no limb) |
+| `SubArmbar` | Joint lock | arm |
+| `SubKimura` | Joint lock | shoulder |
+| `SubAnacondaChoke` | Choke | — (no limb) |
+| `SubGuilhotine` | Choke | — (no limb) |
+
+`CrippleBodyPart(subType) string` returns the limb name for joint-lock
+subs and `""` for choke subs. The cripple → subdue degradation in
+`submission_outcome.go` uses this to avoid applying a broken-limb buff
+for chokes.
+
+### Eligibility predicates
+
+- `IsTopSubEligible(state State, cl ControlLevel) bool` — true when
+  the controller-side position has top-attack subs available and
+  `ControlLevel` is `InControl` or `LosingControl`.
+- `IsBottomSubEligible(state State, cl ControlLevel) bool` — true when
+  the controlled-side position has bottom-attack subs available and
+  `ControlLevel` is `Controlled` or `BecomingControlled`.
+
+Both predicates are called from `EvaluateSubAttempt` in
+`internal/hooks/Position_SubmissionTick.go` and from the btree
+conditions `mob_can_submit_top` / `mob_can_submit_bottom`.
+
+---
+
 ## Control-Axis API (chunk 4b)
 
 Five entry points that act on the per-grappler `ControlLevel` axis
@@ -512,8 +568,10 @@ sub-chunks.
 6. ~~No weapon interaction.~~ **Shipped in 4c** — `internal/combat/reach.go`
    reads `State()` to penalise long weapons in grapples. Attack-variant
    selection and weapon-availability gating remain for 4d.
-7. **No submission system.** Submissions (chokes, joint locks) require
-   `ControlLevel` to exceed thresholds; chunk 4d adds the submission engine.
+7. ~~No submission system.~~ **Shipped in 4d** — `Position_SubmissionTick.go`
+   fires the opposed submission roll each grapple round, gated by
+   `SubmissionAttemptAlpha`. Choke and joint-lock subs resolve via
+   `combat.ResolveSubmissionOutcome` and the attempter's `SubmissionPolicy`.
 8. ~~`CombatPosition` enum removal in progress.~~ **Shipped in 4b** —
    all readers migrated (R-sweep + R4), all legacy fields and
    `internal/characters/combatposition.go` deleted (S1-S5).
@@ -593,10 +651,14 @@ Nothing. 4a is purely additive.
   read by `internal/combat/reach.go` to compute a damage multiplier.
   Standing-grapple radius 0.5 m, ground-grapple radius 0.3 m. Bladed
   weapons swap to Bludgeoning narration when `ShouldBludgeon` fires.
-- **4d — Submissions engine:** Choke and joint-lock submissions gated by
-  `ControlLevel` thresholds, tap/break resolution, injury consequences.
+- **4d — Submissions engine (fully shipped 2026-05-18):** Automatic per-round
+  sub tick (`Position_SubmissionTick.go`), role-split eligibility predicates,
+  four-tier resolution, SubmissionPolicy + SurrenderPolicy character fields,
+  NoDeprogression + GoldLossFraction DeadData flags, broken-limb buff (83),
+  submission-stunned buff (84), btree primitives (3), 41 behavior matrix tests
+  (PB-301..PB-341). Legacy `submit` command sunsetted (T18).
 - **4e — Player command parity:** Player-facing `grapple`, `escape`,
-  `submit`, `position` commands matching mob capabilities.
+  `position` commands matching mob capabilities.
 - **4f — Helpfile + full doc sweep:** Player-facing help content for all
   grapple/position commands; full doc updates to combat, mobs, btree,
   actions packages deferred until cutover is complete.

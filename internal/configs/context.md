@@ -517,3 +517,23 @@ All live under `Balance` in `_datafiles/config.yaml`.
 
 See `internal/combat/context.md` "Weapon Reach Utility" for the full
 formula and exempt subtype list.
+
+### Submission System (chunk 4d)
+
+Six knobs control when submission windows open and how tiers are
+resolved. All live under `Balance` in `_datafiles/config.yaml`.
+The `SubSkillWeight` default is 1.5 (higher than the initial T3 plan
+value of 1.0 — adjusted at validation time in
+`config.balance.combat.go`).
+
+| Knob | Default | Effect |
+|------|---------|--------|
+| `SubmissionAttemptAlpha` | 1.0 | Min drift-margin z-score (absolute) for a sub window to open on either side of the grapple. |
+| `SubmissionAttemptCritZ` | 2.0 | Defender drift z >= this opens a bottom-sub window regardless of margin (the crit shortcut). |
+| `SubSkillWeight` | 1.5 | Unarmed-combat skill contribution multiplier in the sub roll. Higher = more skill-dependent outcomes. |
+| `SubBadZThreshold` | -1.0 | Sub-roll z-score below which the bad tier fires (attempter falls Prone, grapple breaks). |
+| `SubCritZThreshold` | 2.0 | Sub-roll z-score at or above which the crit tier fires (recipient gets 1-round Stunned buff on mercy policy). |
+| `SubGoldLossFraction` | 0.20 | Fraction of defender's carried gold transferred to attacker on subdue/cripple outcomes. |
+
+See `internal/combat/context.md` "Submission System (chunk 4d)" for the
+full resolution flow and policy matrix.

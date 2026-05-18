@@ -67,9 +67,11 @@ Empty — the Alive state has no metadata.
 
 ```go
 type DeadData struct {
-    Reason    state.TransitionReason
-    Killer    state.ActorRef
-    DamageMap map[int]int  // userId → damage dealt
+    Reason           state.TransitionReason
+    Killer           state.ActorRef
+    DamageMap        map[int]int  // userId → damage dealt
+    NoDeprogression  bool         // T8: set for subdue/cripple submissions
+    GoldLossFraction float64      // T8: fraction of gold to transfer on subdue/cripple
 }
 ```
 
@@ -80,6 +82,28 @@ snapshot. `Life_Cascades.go` clears the live `PlayerDamage` field
 during the `Dead → Respawning` transition, so the snapshot ensures
 downstream consumers always see a stable value regardless of
 cascade ordering.
+
+**`NoDeprogression`** — Added in chunk 4d T8. When `true`,
+`Death_PlayerCleanup.go` skips the standard attribute-decay and
+skill-rust cascade steps. Set by the submission outcome resolver
+(`applyDeathCascade`) for `subdue` and `cripple` policy outcomes.
+This allows players to "die" via a submission — waking at the temple
+with pools restored — without permanent character damage. `lethal`
+policy leaves this `false` so the normal decay path fires.
+
+**`GoldLossFraction`** — Added in chunk 4d T8. Fraction of the
+defender's carried gold transferred to the attacker at resolution
+time. Set alongside `NoDeprogression` by `applyDeathCascade` using
+the `SubGoldLossFraction` config value (default 0.20). Zero for
+`mercy` and `lethal` policies (lethal uses normal loot; mercy releases
+without taking gold).
+
+`Death_PlayerAnnouncement.go` reads both fields to decide messaging:
+when `NoDeprogression` is true the global broadcast is suppressed and
+a submission-specific local message fires instead.
+
+See `internal/combat/context.md` "Submission System" for the consumer
+side of these fields.
 
 ### RespawningData
 
@@ -111,6 +135,7 @@ inline string literals for stable identifiers across the codebase.
 | `TriggerRespawnReady` | `"respawn_ready"` | `Die()` helper advances Dead → Respawning |
 | `TriggerRespawnComplete` | `"respawn_complete"` | `Die()` helper advances Respawning → Alive |
 | `TriggerForceAlive` | `"force_alive"` | Admin restoration skips normal cascade |
+| `TriggerSubmission` | `"submission"` | Chunk 4d: death triggered by a grapple submission outcome |
 
 ---
 

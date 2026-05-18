@@ -261,10 +261,10 @@ Option C deferred.
 | `AttemptGrapple` | grapple.go:58 | No | Opposed roll, reads cooldowns |
 | `CheckClinchProgression` | grapple.go:144 | No | Auto-check for clinch |
 | `CheckGroundedEscape` | grapple.go:177 | No | Escape with armor mod |
-| `AttemptSubmission` | grapple.go:276 | No | Finishing move |
 | `IsThirdPartyAttack` | grapple.go:249 | Yes | Pure check |
-| `ApplySubmissionFailure` | grapple.go | No | State mutation |
-| `ApplySubmissionSuccess` | grapple.go | No | State mutation |
+| ~~`AttemptSubmission`~~ | ~~grapple.go:276~~ | — | **DELETED T18** — replaced by `RollSubmissionAttempt` + `ResolveSubmissionOutcome` in `submission.go`/`submission_outcome.go`. Tested via PB-301..PB-341 (T19). |
+| ~~`ApplySubmissionFailure`~~ | ~~grapple.go~~ | — | **DELETED T18** |
+| ~~`ApplySubmissionSuccess`~~ | ~~grapple.go~~ | — | **DELETED T18** |
 
 ### Combat / AI (8) — mostly pure scoring
 

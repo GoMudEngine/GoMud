@@ -716,6 +716,49 @@ The `{pos}` prompt-token cutover added two private helpers in
 These live in the users package (not characters) because they format
 the prompt-substitution output, not the underlying state.
 
+### Chunk-4d submission fields (T2, T5)
+
+Three fields added to the `Character` struct in chunk 4d:
+
+**`SubmissionPolicy SubmissionPolicy`** — controller-side disposition
+that resolves when the attempter locks a submission. Four values:
+`PolicyMercy` / `PolicySubdue` / `PolicyCripple` / `PolicyLethal`.
+Default for players: `PolicySubdue`. Set via `set submission` command.
+Mob defaults are archetype-driven via
+`DefaultSubmissionPolicyForArchetype(archetype)`.
+
+Persisted: `yaml:"submission_policy,omitempty"`.
+
+**`SurrenderPolicy SurrenderPolicy`** — controlled-side tap signal. A
+struct `{Mode SurrenderMode, HpPctThreshold int}`. Three modes:
+`SurrenderNever` / `SurrenderAlways` / `SurrenderAutoTap` (fires when
+HP% drops below `HpPctThreshold`). Default for players:
+`SurrenderAutoTap` at 15%. Set via `set surrender` command.
+
+Persisted: `yaml:"surrender_policy,omitempty"`.
+
+Only `mercy` policy on the attempter consults `SurrenderPolicy`. The
+other three policies proceed regardless of the defender's tap signal.
+
+**`LastDriftRoll DriftRollSnapshot`** — runtime-only snapshot of the
+most recent per-round grapple drift roll. Written by
+`Position_GrappleTick.go` at the end of each grapple round; read by
+`Position_SubmissionTick.go` to decide whether a sub-attempt window is
+open without re-rolling. The snapshot includes:
+- `Round uint64` — the round number when the snapshot was taken
+  (used by `EvaluateSubAttempt` to reject stale data).
+- `MarginAttacker float64` — attacker-side drift margin.
+- `AttackerZScore float64` — controller's z-score from the drift roll.
+- `DefenderZScore float64` — controlled side's z-score.
+
+Not persisted: `yaml:"-"`.
+
+**`LastSubmissionAttempted int`** — round-robin index into the current
+position's sub pool (`TopSubmissionsForPosition` or
+`BottomSubmissionsForPosition`). Advanced by
+`pickSubmissionRoundRobin` each time a sub attempt fires so the same
+sub type is not hammered every round. Not persisted: `yaml:"-"`.
+
 ### OnCharacterCreated additions (chunk 4a + 4b)
 
 The `OnCharacterCreated` registry gains four Position-related wire

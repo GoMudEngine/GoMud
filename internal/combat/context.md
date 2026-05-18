@@ -814,7 +814,7 @@ values directly.
 | `combat/attackresult.go` | `AttackResult` struct (includes `DefenseAttempts`, `AttackZScore`, `DefenseZScore`, `ParryCritDetected`, `DodgeCritDetected`) and message helpers |
 | `combat/ai.go` | `ChooseSpecialMove`, `ChooseCastAction`, `GetAIProfile`, AI profiles, viability checks (`CanUseBash`, `CanUseKick`, etc.), scoring functions |
 | `combat/criteffects.go` | `AttemptCritDisarm`, `SetGrappleOpportunity`, `HasGrappleOpportunity`, `GetGrappleOpportunityBonus`, `ClearGrappleOpportunity` |
-| `combat/grapple.go` | `AttemptGrapple`, `ApplyGrappleResult`, `CheckClinchProgression`, `CheckGroundedEscape`, `ApplyPositionProgression`, `IsThirdPartyAttack`, `AttemptSubmission` |
+| `combat/grapple.go` | `AttemptGrapple`, `ApplyGrappleResult`, `CheckClinchProgression`, `CheckGroundedEscape`, `ApplyPositionProgression`, `IsThirdPartyAttack` |
 | `combat/grapple_move.go` | `ExecuteGrappleMove`, `GrappleMoveResult`, `GrappleMoveDisarmWeapon` |
 | `combat/skill_moves.go` | `ExecuteSkillMove`, `SkillMoveResult`, `SkillMoveParams` |
 | `combat/calculations.go` | Hit chance, crit probability, power ranking, alignment calculations |
@@ -885,3 +885,139 @@ the swap is cosmetic only.
 | `ReachStandingGrappleRadius` | 0.5 m | Constraint radius for Clinch / BackStanding. Weapons longer than this are penalised. |
 | `ReachGroundGrappleRadius` | 0.3 m | Tighter constraint for ground grapples (Mount, Guard, etc.). |
 | `ReachUtilityFloor` | 0.15 | Minimum damage multiplier from the reach curve. Prevents total nullification. |
+
+---
+
+## Submission System (chunk 4d)
+
+The submission system is an automatic, engine-fired mechanic — no player
+command triggers it. Once per grapple round, after `Position_GrappleTick`
+stashes the drift-roll snapshot, `Position_SubmissionTick.go` checks
+whether either side of the pair has a sub-attempt window open and, if so,
+rolls a fresh opposed check and applies the outcome.
+
+### Key files
+
+- `internal/combat/submission.go` — `RollSubmissionAttempt`, tier
+  classification (`ClassifySubmissionTier`), `SubmissionTier` enum,
+  `SubmissionAttemptResult` struct, `Role` enum (RoleTop / RoleBottom).
+- `internal/combat/submission_outcome.go` — `ResolveSubmissionOutcome`,
+  policy dispatch helpers (`applyBadTier`, `applyMercyRelease`,
+  `applyDeathCascade`, `applyBrokenLimbBuff`, `applyStunnedBuff`).
+  Also houses `RegisterSubmissionMessaging` — the callback registration
+  point for T11 narration hooks (avoids a combat → hooks import cycle).
+- `internal/hooks/Position_SubmissionTick.go` — per-round observer.
+  Iterates active characters, gates on the controller side, calls
+  `EvaluateSubAttempt` to decide role + eligibility, then calls
+  `RollSubmissionAttempt` + `ResolveSubmissionOutcome`.
+  See `internal/hooks/context.md` "Position_SubmissionTick" for the
+  full observer walkthrough.
+
+### Roll formula
+
+`RollSubmissionAttempt` fires a SEPARATE opposed roll from the chunk-4b
+drift roll. Drift gates the opportunity window; this roll resolves the
+attempt:
+
+```
+attackerScore = attempter.Strength
+              + attempter.UnarmedCombatSkill × SubSkillWeight
+defenderScore = recipient.Strength
+              + recipient.Vitality
+              + recipient.UnarmedCombatSkill × SubSkillWeight
+```
+
+Both sides roll via `dice.OpposedRollStat`. The attacker's z-score
+determines the tier (see below).
+
+### Tier classification
+
+`ClassifySubmissionTier(success bool, attackerZ float64) SubmissionTier`
+maps the roll result to one of four tiers:
+
+| Tier | Condition | Effect |
+|------|-----------|--------|
+| `SubTierBad` | Attacker failed AND attackerZ < `SubBadZThreshold` | Attempter falls Prone; grapple breaks to Standing. |
+| `SubTierNeutral` | Attacker failed, z >= threshold | No effect; grapple continues. |
+| `SubTierSuccess` | Attacker succeeded, z < `SubCritZThreshold` | Apply attempter's `SubmissionPolicy`. |
+| `SubTierCrit` | Attacker succeeded, z >= `SubCritZThreshold` | Apply policy + apply Stunned buff (id 84) to recipient when policy is mercy. |
+
+### Policy outcome ladder
+
+`ResolveSubmissionOutcome` dispatches to per-policy helpers based on
+`attempter.SubmissionPolicy`:
+
+| Policy | Outcome |
+|--------|---------|
+| `mercy` | Clean grapple break; both return to Standing. Crit: recipient gets 1-round Stunned buff (id 84). Honors `SurrenderPolicy` tap signal. |
+| `subdue` | Death cascade with `NoDeprogression = true`, `GoldLossFraction = SubGoldLossFraction`. Defender wakes at temple with no stat decay. |
+| `cripple` | Same as subdue + broken-limb buff (id 83) applied to the body part targeted by the submission type. Choke subs (RNC, Triangle, Anaconda) degrade to subdue because chokes don't break limbs. |
+| `lethal` | Full death cascade; `NoDeprogression = false`. Standard stat decay applies. |
+
+**Note on SurrenderPolicy:** Only `mercy` policy consults the defender's
+tap signal. Subdue / cripple / lethal proceed regardless of the defender's
+`SurrenderPolicy`. This is a deliberate realism call — a killer doesn't
+stop because you tap.
+
+### Choke-degradation rule
+
+When `SubmissionPolicy == PolicyCripple` and the sub type is a choke
+(`position.CrippleBodyPart(subType) == ""`), `effectivePolicy` degrades
+to `PolicySubdue`. This prevents choke-class subs from triggering the
+broken-limb buff that requires a physical joint target. The degradation
+applies silently — the attempter intended cripple but the choke just
+subdues.
+
+### Bottom-sub asymmetry
+
+Top-subs (controller side) open when `MarginAttacker > SubmissionAttemptAlpha`.
+Bottom-subs (controlled side) open when the DEFENDER's margin exceeds
+alpha OR when `DefenderZScore >= SubmissionAttemptCritZ`. The crit
+shortcut lets a dominated-but-lucky controlled fighter occasionally fire
+a reversal even when consistently losing drift rolls — by design sparser
+than top-subs.
+
+### New buffs
+
+| ID | Name | Duration | Source | Effect |
+|----|------|----------|--------|--------|
+| 83 | Broken Limb | ~3600 rounds (~1 hr play) | Cripple sub outcome | Reduces combat effectiveness; persists across respawn; cannot be dispelled early |
+| 84 | Submission Stunned | 1 round | Crit sub tier (mercy policy only) | Brief combat stagger; auto-clears next round |
+
+### Life cascade integration
+
+Subdue and cripple submissions call `victim.Life.TransitionToDead`
+directly (not `victim.Die`) so the new `DeadData` fields can be
+populated before observers fire:
+
+- `NoDeprogression bool` — `true` for subdue/cripple; `Death_PlayerCleanup`
+  skips stat-decay when this is set.
+- `GoldLossFraction float64` — set to `SubGoldLossFraction` (default 0.20);
+  `Death_PlayerAnnouncement` transfers this fraction of the defender's
+  gold to the attacker.
+
+Lethal submissions use `victim.Die()` with `NoDeprogression = false` —
+the normal decay path.
+
+`TriggerSubmission` is the trigger constant added to `internal/state/life/`
+transitions in T7. See `internal/state/life/context.md` for the
+`DeadData` struct documentation.
+
+### Balance knobs (`Balance` section in config)
+
+Six knobs control submission window eligibility and tier classification.
+The `SubSkillWeight` default is 1.5 (not 1.0 as the T3 plan assumed —
+updated at validation time).
+
+| Knob | Default | Effect |
+|------|---------|--------|
+| `SubmissionAttemptAlpha` | 1.0 | Min drift-margin z-score to open a sub window on either side of the grapple. |
+| `SubmissionAttemptCritZ` | 2.0 | Defender drift z >= this opens a bottom-sub window regardless of margin. |
+| `SubSkillWeight` | 1.5 | Unarmed-combat skill contribution multiplier in the sub roll. |
+| `SubBadZThreshold` | -1.0 | Sub-roll z-score below which the bad tier fires (attempter falls Prone). |
+| `SubCritZThreshold` | 2.0 | Sub-roll z-score at or above which the crit tier fires (recipient stunned). |
+| `SubGoldLossFraction` | 0.20 | Fraction of defender's carried gold transferred to attacker on subdue/cripple. |
+
+See `internal/configs/context.md` "Submission System (chunk 4d)" for
+the config-level documentation and `internal/state/position/context.md`
+for the submission-type mapping and eligibility predicates.

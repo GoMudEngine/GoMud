@@ -286,6 +286,20 @@ archetype can press the advantage when `target_is_being_controlled`,
 or a brawler archetype can disengage when `mob_low_grapple_stamina`
 fires.
 
+**Chunk 4d — submission primitives (3)** registered in
+`conditions_submission.go`:
+
+| Condition | Params | Description |
+|-----------|--------|-------------|
+| `mob_can_submit_top` | none | True when `self.IsController()` AND `position.IsTopSubEligible(state, controlLevel)` — mob is on the controller side with top-attack subs available at the current control level. |
+| `mob_can_submit_bottom` | none | True when `self.IsBeingControlled()` AND `position.IsBottomSubEligible(state, controlLevel)` — mob is on the controlled side with reversal subs available. |
+| `mob_submission_policy_is` | `policy` (string: "mercy"/"subdue"/"cripple"/"lethal") | True when `mob.Character.SubmissionPolicy` matches the given string. Used by archetype branches that vary tactics by policy (e.g., a boss that acts differently when set to lethal). |
+
+These primitives are informational — the submission itself fires
+automatically via `Position_SubmissionTick.go` regardless of btree
+state. Use them to branch on context (e.g., taunt before a sub attempt,
+or switch to a defensive posture when `mob_can_submit_bottom` is true).
+
 ---
 
 ## Action Reference

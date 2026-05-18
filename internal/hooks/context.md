@@ -858,6 +858,52 @@ Generates three message classes with per-grapple cooldowns
 Cooldowns reset when the grapple ends (any `TransitionToStanding` via
 escape, break, or death).
 
+### Position_SubmissionTick.go (chunk 4d)
+
+Per-round submission-attempt observer registered via
+`events.RegisterListener(events.NewRound{}, processSubmissionTick)`
+in its own `init()`. Runs AFTER `Position_GrappleTick.go` because the
+two files sort alphabetically — `SubmissionTick` > `GrappleTick` — so
+registration order within the package guarantees the drift snapshot is
+fresh when this observer reads it.
+
+**Per-round flow for each active character:**
+
+1. Skip non-controllers (pair is processed once from the controller side).
+2. Resolve the grapple partner via `resolvePartner(c)`.
+3. Call `EvaluateSubAttempt(controller, controlled)`, which reads
+   `c.LastDriftRoll` (the `DriftRollSnapshot` written by
+   `Position_GrappleTick` this same round):
+   - Top window: `MarginAttacker > SubmissionAttemptAlpha` AND
+     `IsTopSubEligible(posState, controlLevel)`.
+   - Bottom window: `(-MarginAttacker) > SubmissionAttemptAlpha` OR
+     `DefenderZScore >= SubmissionAttemptCritZ`, AND
+     `IsBottomSubEligible`.
+   - Returns the eligible `Role` (RoleTop / RoleBottom) and a bool.
+4. If eligible, pick a sub type via `pickSubmissionRoundRobin` (advances
+   `c.LastSubmissionAttempted` index, cycling through the position's
+   pool).
+5. Call `combat.RollSubmissionAttempt(attempter, recipient, subType)`.
+6. Call `combat.ResolveSubmissionOutcome(attempter, recipient, result, role)`.
+
+The `LastDriftRoll.Round` field is compared against the current round
+counter to reject stale snapshots (e.g., character just logged in).
+
+**Cross-references:**
+- `Character.LastDriftRoll` — see `internal/characters/context.md`
+  "Chunk-4d submission fields".
+- Roll formula and tier table — see `internal/combat/context.md`
+  "Submission System".
+- Position eligibility predicates — see `internal/state/position/context.md`
+  "Submissions".
+
+**Death_PlayerAnnouncement gate (T8):** When a death is triggered via
+`life.TriggerSubmission`, `Death_PlayerAnnouncement.go` skips the
+standard "you have been slain" global broadcast and instead emits a
+submission-specific room message. The gate reads `d.NoDeprogression`
+from `DeadData` to distinguish subdue/cripple (quiet, local) from
+lethal (global announce). Source: `internal/hooks/Death_PlayerAnnouncement.go`.
+
 ### Reach pipeline integration (chunk 4c)
 
 No new hook files for 4c. The reach penalty is applied inline within
