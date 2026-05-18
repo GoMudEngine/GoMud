@@ -782,7 +782,7 @@ escapes:
     controlled:
       - "You explode through the gap and scramble to your feet — free of {controllerName}'s grip at last."
       - "A frame, a kick, a scramble. You're up — {controllerName}'s grip is broken."
-      - "You wrench the joint loose, kick {controllerName} away, and stand up clear."
+      - "You create the frame, kick {controllerName} away, and scramble to your feet — free."
     observers:
       - "{controlledName} explodes free of {controllerName} and scrambles back to their feet."
       - "{controllerName}'s grip fails — {controlledName} scrambles up and out of reach."
@@ -857,7 +857,7 @@ holds:
 striking_apex:
   mount_strike_flavor:
     - "You ride high in mount and rain elbows down."
-    - "Your knees pin {controlledName}'s shoulders flat — heavy shots punch through their guard."
+    - "You ride high mount, knees driving into {controlledName}'s biceps — their arms can't lift to defend."
     - "{controlledName} bridges weakly under you; you posture up and drive hammerfists into their guard."
     - "Sweat and copper. You ride the mount and drop knuckles like pistons."
     - "Their arms tire from defending their face. You sit heavy and let the strikes through."
