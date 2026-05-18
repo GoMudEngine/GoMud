@@ -232,3 +232,22 @@ func TestProductionLibraryReversalsComplete(t *testing.T) {
 		}
 	}
 }
+
+func TestProductionLibraryEscapesComplete(t *testing.T) {
+	lib, err := Load("../../_datafiles/world/dogmud/messaging/grapple_outcomes.yaml")
+	if err != nil {
+		t.Fatalf("Load prod library: %v", err)
+	}
+	for _, key := range RequiredEscapeKeys {
+		triad, ok := lib.Escapes[key]
+		if !ok {
+			t.Errorf("missing escape key: %s", key)
+			continue
+		}
+		if len(triad.Controller) < MinTemplatesPerSpeaker ||
+			len(triad.Controlled) < MinTemplatesPerSpeaker ||
+			len(triad.Observers) < MinTemplatesPerSpeaker {
+			t.Errorf("escape %s under-populated", key)
+		}
+	}
+}

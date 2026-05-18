@@ -773,6 +773,19 @@ reversals:
       - "{controllerName} held the position a moment too long;\
         \ {controlledName} reverses it."
 
-escapes: {}
+escapes:
+  generic_escape:
+    controller:
+      - "{controlledName} explodes free — they're back on their feet before you can grab again."
+      - "Your grip fails. {controlledName} scrambles up and out of reach."
+      - "{controlledName} kicks off you and pops to their feet — the grapple breaks."
+    controlled:
+      - "You explode through the gap and scramble to your feet — free of {controllerName}'s grip at last."
+      - "A frame, a kick, a scramble. You're up — {controllerName}'s grip is broken."
+      - "You wrench the joint loose, kick {controllerName} away, and stand up clear."
+    observers:
+      - "{controlledName} explodes free of {controllerName} and scrambles back to their feet."
+      - "{controllerName}'s grip fails — {controlledName} scrambles up and out of reach."
+      - "{controlledName} kicks {controllerName} off and the grapple breaks; both stand."
 holds: {}
 striking_apex: {}
