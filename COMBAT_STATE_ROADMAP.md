@@ -40,7 +40,7 @@ This effort collapses that surface to one canonical framework:
 | 4a | Position — FSM | Done (2026-05-16) | 14 geometric states (Standing / Prone / Supine / Clinch / BackStanding / Mount / SideControl / KneeOnBelly / NorthSouth / Crucifix / BackGround / HalfGuard / Guard / Turtle). Prone/Supine split during brainstorm — submission paths, recovery difficulty, and back-take vulnerability diverge. Per-state data (StandingData / ProneData / SupineData / shared GrappleData), ~75-edge transition graph, 22 trigger constants, 19 Character predicates, 10 btree primitives, Life-Dead cascade observer. Ships DORMANT — zero behavior change; legacy CombatPosition enum + all command writers untouched. 4b cuts over writers + control rolls + sunsets legacy. |
 | 4b | Position — control axis | Done (2026-05-16) | Per-grappler 5-level control scale (InControl / LosingControl / Neutral / BecomingControlled / Controlled). Per-round opposed Strength + Unarmed-combat rolls with stamina + encumbrance curves; margin → delta with 2-consecutive-controlled threshold; gradient + transition + stamina-warning messages; 6 new btree control-axis primitives; 4 pair invariants enforced via TransitionPair + ValidateGrapplePair + periodic ConsistencyCheck. Legacy `CombatPosition` / `PositionRoundsMin` / `GrappleControllerId` / `ConditionGrappleController` / `combatposition.go` all sunset. |
 | 4c | Position — weapon utility | Done (2026-05-16) | `Reach float64` field (meters) on `ItemSpec` + default-by-subtype lookup (`internal/items/reach.go`); per-state grapple-radius curve (standing-grapple 0.5m, ground-grapple 0.3m, other unbounded); `ReachUtility = radius/reach` formula floored at 0.15; pipeline integration via `CalcReachAdjustedItemMult` at `combat/combat_helpers.go:buildWeaponSetup`; bladed weapons (Slashing/Cleaving/Stabbing/Shooting) in grapples narrate with Bludgeoning vocabulary at `buildAttackMessages`. 3 new balance knobs. New `help reach` top-level helpfile + per-weapon helpfile mentions. Phase-1 YAML migration zero (per-item override added for `lake_iron_hook_spear` since spear defaulted to dagger range). |
-| 4d | Position — submissions | Not started | Rework/sunset existing submission special-attack command. Automatic/opportunistic submissions gated on (Position, ControlLevel). Submission outcomes (choked, damaged limb, tap, continue). |
+| 4d | Position — submissions | Done (2026-05-18) | Symmetric opportunistic per-round submission system on top of chunk-4b's drift roll. Drift-margin > alpha or defender-crit opens a sub window on either side; separate sub roll resolves into 4 tiers (Bad/Neutral/Success/Crit). Position picks sub type via role-split mapping (top-attack vs bottom-attack subs); 7 SubmissionType enum values. Policy-driven outcomes (mercy/subdue/cripple/lethal) with no per-round prompts. Subdue + cripple reuse the Life cascade with new NoDeprogression + GoldLossFraction DeadData flags — defender wakes at temple, no stat decay, partial gold loss, optional broken-limb buff (cripple). Mob policies inherit from archetype defaults with per-mob YAML overrides (bosses → lethal). Legacy player-typed `submit` command + AttemptSubmission/ApplySubmissionSuccess/ApplySubmissionFailure helpers fully sunset. 2 new buffs (broken-limb #83, submission-stunned #84). 3 new btree primitives. Behavior Matrix PB-301..PB-341 mixed PASS/SKIP. |
 | 4e | Position — third-party | Not started | Symmetric defense degradation (controlled severely, controller moderately); offense restrictions; outside-damage → control degradation; mob AI bias toward grappled targets; submission-interrupt risk. |
 | 4f | Position — balance + smoke | Not started | Tune modifiers, write position-flavor text, full-stack combat smoke. |
 | 5 | Presence | Not started | Player and mob variants |
@@ -731,6 +731,138 @@ fix surfaced during T8 audit is the first such override.
 ControlLevel) is next.
 
 Next: chunk 4d — Submission rework.
+
+---
+
+## Chunk 4d — Shipped (2026-05-18)
+
+Symmetric opportunistic per-round submission system shipped. The
+legacy player-typed `submit` command + AttemptSubmission /
+ApplySubmissionSuccess / ApplySubmissionFailure helpers are
+sunset; the engine now fires sub attempts automatically when the
+chunk-4b drift roll favors a side by margin > alpha (or defender
+crits defense). End-state: submissions are an organic per-round
+threat that emerges from chunk-4b control drift; position drives
+the sub type; the consequences are real but proportional to the
+aggressor's chosen brutality.
+
+**Symmetric per-round model** — both controller and defender sides
+of a pair are checked for sub-attempt opportunity each round.
+Controller side fires when drift margin > `SubmissionAttemptAlpha`
+(default 1.0) AND position has top-attack subs. Defender side fires
+when defender wins drift by margin > alpha OR defender z-score >=
+`SubmissionAttemptCritZ` (default 2.0). Tiebreak on larger absolute
+z-score when both sides qualify.
+
+**Separate sub roll + 4-tier outcome:** opposed Strength +
+Unarmed-combat-skill check (defender bonus Vitality). Result tiers:
+- **Bad** (z < `SubBadZThreshold`, default -1.0): attempter
+  overcommits → falls Prone, pair breaks to Standing
+- **Neutral**: no consequence, pair stays
+- **Success**: sub locks, attempter's policy resolves
+- **Crit** (z >= `SubCritZThreshold`, default 2.0): sub locks AND
+  recipient gets the 1-round Stunned buff (only on mercy outcomes —
+  other policies enter the death cascade where stun is moot)
+
+**Position drives sub type** — 7 named subs (Armbar / RNC / Triangle /
+Americana / Kimura / Omoplata / Anaconda). Mount → Americana / Triangle
+/ Armbar (rotating via per-character round-robin). BackGround → RNC.
+Crucifix → Armbar. Guard-bottom (the bottom-game controller in FSM
+terms) → Triangle / Armbar / Omoplata. Bottom-attack subs are sparser
+by design (asymmetry favors the controller).
+
+**Choke degradation:** cripple + a choke sub (RNC / Triangle /
+Anaconda) automatically degrades to subdue because chokes don't
+break limbs (CrippleBodyPart returns "").
+
+**Policy-driven outcomes (no per-round prompts):**
+
+| Policy | Behavior on success/crit |
+|--------|--------------------------|
+| **mercy** | Clean release; brief recovery debuff. Crit additionally stuns the recipient for 1 round (Stunned buff #84). |
+| **subdue** (default) | No-deprogression death; partial gold transfer; defender wakes at temple woozy but uninjured. |
+| **cripple** | Same as subdue + broken-limb buff (#83, 900-round duration, persists across respawn). Chokes degrade to subdue. |
+| **lethal** | Full death cascade with deprogression + full corpse loot. Requires two-step confirmation the first time set. |
+
+**Defender's `SurrenderPolicy`** — `never` / `always` / `auto-tap-below
+<hp%>` (default `auto-tap-below 15` for players). Honored ONLY by
+mercy controllers, per the realism framing: "the tap is a signal,
+not a guarantee." Bandits / predators / hostile NPCs ignore taps and
+apply their policy anyway.
+
+**Death-cascade reuse** — two new `DeadData` fields drive subdue/
+cripple semantics through the existing chunk-2 Life pipeline:
+- `NoDeprogression bool` — `Death_PlayerCleanup` skips the stat-
+  decay step when true
+- `GoldLossFraction float64` — `Death_PlayerCorpse` skips full corpse
+  + transfers fraction of gold to Killer when > 0 (default 0.20 from
+  `SubGoldLossFraction` config)
+- A `TriggerSubmission` constant added to `internal/state/life/`
+- `Death_PlayerAnnouncement` gated so subdue/cripple skip the
+  "YOU HAVE DIED" broadcast + "darkness swallows you" closure (the
+  player was knocked out, not killed — fiction matches)
+
+**Mob policy storage** — `MobSpec.SubmissionPolicy` /
+`SurrenderPolicy` yaml fields with fallback to
+`DefaultSubmissionPolicyForArchetype` / `DefaultSurrenderPolicyForArchetype`.
+8 per-mob overrides authored on named bosses (Edrin / Sylara / Rhett
+/ Soren / Chrysalis Phantom + Elemental King / Arena Champion /
+Stone Beetle Queen) — all set to lethal + never. Most mobs inherit
+archetype defaults.
+
+**3 new btree primitives** in
+`internal/behaviortree/conditions_submission.go`:
+- `mob_can_submit_top` — controller in sub-eligible position
+- `mob_can_submit_bottom` — controlled side with bottom-attack subs
+- `mob_submission_policy_is <policy>` — branch on policy enum
+
+Engine fires sub attempts via `Position_SubmissionTick.go`
+(observer registered AFTER `Position_GrappleTick.go` via
+filename-alphabetical init order so the drift snapshot is fresh).
+Reads `Character.LastDriftRoll` snapshot (round-numbered for
+staleness detection).
+
+**Player UX:**
+- `set submission <mercy|subdue|cripple|lethal>` — controller policy.
+  Lethal requires two-step confirmation the first time.
+- `set surrender <never|always|auto-tap-below <N>>` — defender policy.
+- `status` shows both policies + broken-limb buff with remaining
+  rounds.
+- New helpfiles `help submission` + `help surrender`. Existing
+  helpfiles updated (grapple, combat, attack, special, death,
+  conditions, status, set, unarmed-combat, weapon-combat).
+
+**Behavior Matrix:** PB-301 through PB-341, mix of PASS / SKIP per
+the chunks-0-3 convention. Coverage split across
+`internal/state/position/submissions_test.go`,
+`internal/characters/submission_policy_test.go`,
+`internal/combat/submission_test.go`,
+`internal/combat/submission_outcome_test.go`,
+`internal/hooks/Position_SubmissionTick_test.go`,
+`internal/mobs/mobs_test.go`,
+`internal/behaviortree/conditions_submission_test.go`,
+`internal/buffs/buffs_test.go`, and
+`internal/usercommands/usercommands_test.go`. Chunks 0-4c regression
+clean. Server boots cleanly past data-file loading.
+
+**Documentation:** T20 audit
+(`tools/testing/audits/2026-05-18-chunk-4d-doc-helpfile-audit.md`,
+commit `75e6d1c0`) inventoried 9 helpfile updates + 9 context.md
+updates. T21 (`93684b32`) fixed the live broken `help submit` link
+in `grapple.template` (was 404'ing at runtime after T18 sunset),
+removed `submit` from `special.template`, added a no-deprogression
+section to `death.template`, expanded `conditions.template` to
+include the broken-limb buff, and added cross-references across
+8 other helpfiles. T22 (`f3578fb5`) updated 9 context.md files —
+the largest update was `internal/combat/context.md` getting a new
+"Submission System (chunk 4d)" section AND removing stale refs
+to the deleted helpers.
+
+**Aliveness work stays paused** for chunks 4e-6. Chunk 4e (third-
+party interaction asymmetries — defenders / parties / outside
+damage during a grapple) is next.
+
+Next: chunk 4e — Third-party interaction asymmetries.
 
 ---
 
