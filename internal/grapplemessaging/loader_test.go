@@ -1,0 +1,108 @@
+package grapplemessaging
+
+import (
+	"os"
+	"path/filepath"
+	"testing"
+)
+
+func writeTempYAML(t *testing.T, content string) string {
+	t.Helper()
+	dir := t.TempDir()
+	path := filepath.Join(dir, "test_grapple_outcomes.yaml")
+	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+		t.Fatalf("write temp yaml: %v", err)
+	}
+	return path
+}
+
+func TestLoaderEmptySkeleton(t *testing.T) {
+	path := writeTempYAML(t, `
+advancements: {}
+degradations: {}
+reversals: {}
+escapes: {}
+holds: {}
+striking_apex: {}
+`)
+	lib, err := Load(path)
+	if err != nil {
+		t.Fatalf("Load skeleton: %v", err)
+	}
+	if lib == nil {
+		t.Fatal("Load returned nil library")
+	}
+	if len(lib.Advancements) != 0 {
+		t.Errorf("expected empty advancements, got %d", len(lib.Advancements))
+	}
+}
+
+func TestLoaderTriadParse(t *testing.T) {
+	path := writeTempYAML(t, `
+advancements:
+  clinch_to_mount:
+    controller:
+      - "You drive forward and ride them into mount."
+    controlled:
+      - "{controllerName} drives forward and mounts you."
+    observers:
+      - "{controllerName} drives forward and mounts {controlledName}."
+degradations: {}
+reversals: {}
+escapes: {}
+holds: {}
+striking_apex: {}
+`)
+	lib, err := Load(path)
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	triad, ok := lib.Advancements["clinch_to_mount"]
+	if !ok {
+		t.Fatal("missing clinch_to_mount key")
+	}
+	if len(triad.Controller) != 1 || len(triad.Controlled) != 1 || len(triad.Observers) != 1 {
+		t.Errorf("triad lengths: ctrl=%d cd=%d obs=%d, want 1/1/1",
+			len(triad.Controller), len(triad.Controlled), len(triad.Observers))
+	}
+}
+
+func TestLoaderMissingFile(t *testing.T) {
+	_, err := Load("/nonexistent/grapple_outcomes.yaml")
+	if err == nil {
+		t.Error("Load should error on missing file")
+	}
+}
+
+func TestLoaderInvalidYAML(t *testing.T) {
+	path := writeTempYAML(t, `this is not: valid: yaml: at all: ::`)
+	_, err := Load(path)
+	if err == nil {
+		t.Error("Load should error on invalid YAML")
+	}
+}
+
+func TestStrikingApexParse(t *testing.T) {
+	path := writeTempYAML(t, `
+advancements: {}
+degradations: {}
+reversals: {}
+escapes: {}
+holds: {}
+striking_apex:
+  mount_strike_flavor:
+    - "You ride high in mount and rain elbows down."
+    - "Their arms tire from defending; you sit heavy."
+`)
+	lib, err := Load(path)
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	apex, ok := lib.StrikingApex["mount_strike_flavor"]
+	if !ok {
+		t.Fatal("missing mount_strike_flavor key")
+	}
+	if len(apex) != 2 {
+		t.Errorf("expected 2 strike flavor lines, got %d", len(apex))
+	}
+}

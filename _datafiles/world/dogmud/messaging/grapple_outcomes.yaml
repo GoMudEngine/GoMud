@@ -1,0 +1,22 @@
+# Grapple outcome flavor templates for chunk 4b-fixup.
+# See docs/superpowers/specs/2026-05-18-state-chunk-4b-fixup-position-
+# advancement-design.md §7 for the authoring rubric.
+#
+# Template substitution variables:
+#   {controllerName} - the controller side's display name
+#   {controlledName} - the controlled side's display name
+#
+# Speaker variants:
+#   controller - second-person to the controller side
+#   controlled - second-person to the controlled side
+#   observers  - third-person to the room
+#
+# This file is loaded at boot by internal/grapplemessaging.
+# Skeleton committed in T6; full templates land in T8-T13.
+
+advancements: {}
+degradations: {}
+reversals: {}
+escapes: {}
+holds: {}
+striking_apex: {}
