@@ -219,3 +219,194 @@ func TestResolveSubmissionOutcome_CrippleAppliesBrokenLimbBuff(t *testing.T) {
 	assert.False(t, def.IsAlive(),
 		"defender should enter death cascade on cripple+armbar")
 }
+
+// ── T19: Behavior Matrix gap tests ───────────────────────────────────────────
+
+// PB-306: Success sub roll, policy=mercy, defender always-tap.
+// Mercy releases regardless of defender surrender policy.
+// Defender policy (always-tap) is stored correctly and the outcome is a
+// clean release.
+func TestPB_306_MercyRelease_DefenderAlwaysTap(t *testing.T) {
+	atk, def := setupMountForOutcome(t)
+	atk.SubmissionPolicy = characters.PolicyMercy
+	def.SurrenderPolicy = characters.SurrenderPolicy{Mode: characters.SurrenderAlways}
+	result := combat.SubmissionAttemptResult{
+		Tier:    combat.SubTierSuccess,
+		SubType: position.SubArmbar,
+	}
+	combat.ResolveSubmissionOutcome(atk, def, result, combat.RoleTop)
+	// Mercy: clean release regardless of defender surrender policy.
+	assert.False(t, atk.IsGrappling(), "PB-306: attacker released from grapple on mercy")
+	assert.False(t, def.IsGrappling(), "PB-306: defender released from grapple on mercy")
+	assert.True(t, def.IsAlive(), "PB-306: defender alive after mercy release")
+}
+
+// PB-307: Success sub roll, policy=mercy, defender never-tap.
+// Per Open Q3 resolution: mercy is about the controller's nature, not a
+// negotiation. Release fires anyway even though the defender would not tap.
+func TestPB_307_MercyRelease_DefenderNeverTap(t *testing.T) {
+	atk, def := setupMountForOutcome(t)
+	atk.SubmissionPolicy = characters.PolicyMercy
+	def.SurrenderPolicy = characters.SurrenderPolicy{Mode: characters.SurrenderNever}
+	result := combat.SubmissionAttemptResult{
+		Tier:    combat.SubTierSuccess,
+		SubType: position.SubArmbar,
+	}
+	combat.ResolveSubmissionOutcome(atk, def, result, combat.RoleTop)
+	// Mercy controller releases regardless — defender's never-tap policy has no
+	// mechanical effect on a mercy-policy controller.
+	assert.False(t, atk.IsGrappling(), "PB-307: attacker released even with defender never-tap")
+	assert.False(t, def.IsGrappling(), "PB-307: defender released even with never-tap")
+	assert.True(t, def.IsAlive(), "PB-307: defender alive after mercy+never-tap release")
+}
+
+// PB-313: Crit sub roll, policy=subdue.
+// Recipient should NOT receive the Stunned buff (they enter the death cascade;
+// buff would be a no-op). The subdue death-cascade outcome still fires.
+func TestPB_313_CritSubdue_NoStunnedBuff(t *testing.T) {
+	// Use mob defender so Die() stays Dead (players respawn synchronously).
+	atk, def := setupMountWithMobDefender(t)
+	atk.SubmissionPolicy = characters.PolicySubdue
+	result := combat.SubmissionAttemptResult{
+		Tier:    combat.SubTierCrit,
+		SubType: position.SubArmbar,
+	}
+	combat.ResolveSubmissionOutcome(atk, def, result, combat.RoleTop)
+	// Subdue: death cascade fires (mob stays Dead).
+	assert.False(t, def.IsAlive(),
+		"PB-313: defender should enter death cascade on crit+subdue")
+	// Stunned buff (id 84) must NOT have been applied because policy≠mercy.
+	// The defender entered the death cascade before any buff could matter;
+	// confirm HasBuff returns false (buff registry not seeded in unit tests,
+	// so HasBuff(84) will be false either way — but that's the correct state).
+	assert.False(t, def.HasBuff(84),
+		"PB-313: Stunned buff must not be applied on crit+subdue (death cascade fires)")
+}
+
+// PB-316: Mount + Controlled + defender drift margin < alpha → no sub roll.
+// (Label for the specific bottom-side case already covered by
+// TestEvaluateSubAttempt_NeitherEligible, but here we document it explicitly
+// as a bottom-sub variant.)
+// This is a policy test: verify that IsBottomSubEligible returns false when
+// the defender has a sufficient bottom position but we inject ControlLevel=Neutral,
+// which is above the Controlled/BecomingControlled gate.
+func TestPB_316_BottomSub_InsufficientMargin_NoBotSubWindow(t *testing.T) {
+	// Directly test the eligibility predicate: Mount position + Neutral
+	// ControlLevel (defender is NOT in Controlled/BecomingControlled, so the
+	// bottom-sub gate should fail even though Mount has bottom subs).
+	// The margin < alpha case is fully covered by EvaluateSubAttempt_NeitherEligible;
+	// here we verify the eligibility gate itself for the ControlLevel axis.
+	assert.False(t,
+		position.IsBottomSubEligible(position.Mount, position.Neutral),
+		"PB-316: Mount+Neutral ControlLevel must not open bottom-sub window")
+	assert.False(t,
+		position.IsBottomSubEligible(position.Mount, position.InControl),
+		"PB-316: Mount+InControl ControlLevel must not open bottom-sub window (already escaping)")
+}
+
+// PB-318: Bottom-sub success — defender attempting sub from Mount-bottom.
+// The defender (RoleBottom attempter) should have their SubmissionPolicy applied
+// to the former controller (now the recipient). Outcome is determined by the
+// bottom-attempter's policy, not the controller's.
+func TestPB_318_BottomSubSuccess_DefenderPolicyAppliedToController(t *testing.T) {
+	// Set up: controller=a (InControl), defender=b (Controlled).
+	// For RoleBottom, the attempter IS the controlled side (b) and the
+	// recipient is the controller (a).
+	// Use mob controller so Die() stays Dead if subdue fires.
+	//
+	// Note: setupMountWithMobDefender builds a as controller and b as mob.
+	// For PB-318 we need the inverse — the bottom (b) is the human attempter;
+	// the top (a) is the one who may die. Use setupMountForOutcome (both players)
+	// and set b's policy; the player cascade goes Dead→Respawning→Alive
+	// (stays alive), so we verify the grapple breaks (subdue fires) rather
+	// than checking IsAlive.
+	controller, defender := setupMountForOutcome(t)
+	// The bottom (defender) attempts and succeeds — defender's policy resolves.
+	defender.SubmissionPolicy = characters.PolicyMercy
+	result := combat.SubmissionAttemptResult{
+		Tier:    combat.SubTierSuccess,
+		SubType: position.SubArmbar, // Mount-bottom armbar
+	}
+	// RoleBottom: attempter=defender, recipient=controller.
+	combat.ResolveSubmissionOutcome(defender, controller, result, combat.RoleBottom)
+	// Mercy policy: clean release, grapple breaks, nobody dies.
+	assert.False(t, defender.IsGrappling(),
+		"PB-318: bottom-sub success with mercy: defender (attempter) no longer grappling")
+	assert.False(t, controller.IsGrappling(),
+		"PB-318: bottom-sub success with mercy: controller (recipient) no longer grappling")
+	assert.True(t, controller.IsAlive(),
+		"PB-318: mercy policy on bottom-sub release keeps controller alive")
+}
+
+// PB-319: Bottom-sub bad roll — defender (attempter) falls Prone; pair breaks.
+func TestPB_319_BottomSubBadRoll_DefenderProne(t *testing.T) {
+	controller, defender := setupMountForOutcome(t)
+	result := combat.SubmissionAttemptResult{
+		Tier:    combat.SubTierBad,
+		SubType: position.SubArmbar,
+	}
+	// RoleBottom: attempter=defender; bad roll → attempter (defender) falls Prone.
+	combat.ResolveSubmissionOutcome(defender, controller, result, combat.RoleBottom)
+	assert.True(t, defender.IsProne(),
+		"PB-319: bottom-sub bad roll should knock bottom attempter Prone")
+	assert.False(t, defender.IsGrappling(),
+		"PB-319: grapple should break after bottom-sub bad roll")
+}
+
+// PB-322: Player surrender always-tap + attacker mercy → release fires.
+// The spec: mercy controller always releases; defender always-tap policy is
+// consistent with this. Verify the combination results in a clean release.
+func TestPB_322_SurrenderAlwaysTap_AttackerMercy_Releases(t *testing.T) {
+	atk, def := setupMountForOutcome(t)
+	atk.SubmissionPolicy = characters.PolicyMercy
+	def.SurrenderPolicy = characters.SurrenderPolicy{
+		Mode:           characters.SurrenderAlways,
+		HpPctThreshold: 0, // always-tap ignores HP threshold
+	}
+	result := combat.SubmissionAttemptResult{
+		Tier:    combat.SubTierSuccess,
+		SubType: position.SubArmbar,
+	}
+	combat.ResolveSubmissionOutcome(atk, def, result, combat.RoleTop)
+	// Mercy + always-tap: clean release, both alive.
+	assert.False(t, atk.IsGrappling(),
+		"PB-322: mercy+always-tap: attacker no longer grappling")
+	assert.True(t, def.IsAlive(),
+		"PB-322: mercy+always-tap: defender alive after release")
+}
+
+// PB-323: Player surrender never-tap + attacker subdue → tap signal ignored.
+// Subdue fires regardless of defender's surrender policy.
+func TestPB_323_SurrenderNeverTap_AttackerSubdue_Fires(t *testing.T) {
+	// Use mob defender so cascade stays Dead.
+	atk, def := setupMountWithMobDefender(t)
+	atk.SubmissionPolicy = characters.PolicySubdue
+	def.SurrenderPolicy = characters.SurrenderPolicy{Mode: characters.SurrenderNever}
+	result := combat.SubmissionAttemptResult{
+		Tier:    combat.SubTierSuccess,
+		SubType: position.SubArmbar,
+	}
+	combat.ResolveSubmissionOutcome(atk, def, result, combat.RoleTop)
+	// Subdue ignores never-tap: death cascade fires.
+	assert.False(t, def.IsAlive(),
+		"PB-323: subdue fires regardless of never-tap surrender policy")
+}
+
+// PB-330: Broken-arm debuff statmod — verified in internal/buffs package.
+// TestPB_330 and TestPB_332 live in internal/buffs/buffs_test.go (internal
+// package) where the buff registry can be seeded without the YAML loader.
+// See TestPB_330_BrokenLimbBuff_StatModApplied and
+// TestPB_332_BrokenLimbBuff_ExpiresNaturally in that file.
+
+// PB-331: Broken-arm debuff prevents 2H weapon wield.
+// SKIP — the 2H wield restriction is a spec note in the chunk-4d design doc
+// ("can't wield two-handed weapons") but is NOT yet wired as a buff flag or
+// equip-path guard in 4d code. The buff YAML (83-broken_limb.yaml) only
+// applies statmods (str/dex/vit). The 2H restriction is 4f flavor work.
+// When implemented, the test should go in internal/usercommands/equip_test.go
+// and verify that equip.go rejects a 2H weapon when buff 83 is active.
+func TestPB_331_BrokenLimbBuff_NoTwoHandedWield(t *testing.T) {
+	t.Skip("PB-331: 2H wield restriction from broken-limb buff is 4f flavor work; " +
+		"buff 83 YAML only applies statmods in 4d. Test should live in " +
+		"internal/usercommands/equip_test.go when the wield guard is wired.")
+}

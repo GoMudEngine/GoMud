@@ -7299,3 +7299,16 @@ func TestCombatSkillsInCombat(t *testing.T) {
 
 	user.Character.Aggro = nil
 }
+
+// ── T19: Behavior Matrix PB-340 ───────────────────────────────────────────────
+
+// PB-340: Legacy `submit` command typed (after sunset) → unknown command.
+// T18 deleted internal/usercommands/submit.go and removed the registry entry.
+// This test asserts that "submit" is NOT present in the command registry so
+// that any accidental re-registration is caught immediately.
+func TestPB_340_LegacySubmitCommand_NotRegistered(t *testing.T) {
+	reg := GetCommandRegistry()
+	_, found := reg["submit"]
+	assert.False(t, found,
+		"PB-340: legacy 'submit' command must not be in the registry after T18 sunset")
+}
