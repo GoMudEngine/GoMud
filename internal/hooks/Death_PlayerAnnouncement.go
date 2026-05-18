@@ -37,6 +37,27 @@ func wirePlayerDeathAnnouncement(c *characters.Character) {
 
 			d, _ := c.Life.DeadData()
 
+			// chunk 4d: subdue / cripple submission outcomes route
+			// through the Life cascade with NoDeprogression set so
+			// the player wakes at the temple without losing training.
+			// The fiction is "knocked out, not killed" — so skip the
+			// global death announcements, "you feel weakened" flavour,
+			// and PvE death event emission. Submission-specific
+			// narration is handled by Position_Messaging (T11).
+			// Instance ejection (step 7) still fires because being
+			// subdued in an ephemeral zone should still kick you.
+			if d.NoDeprogression {
+				if rooms.IsEphemeralRoomId(c.RoomId) {
+					if inst := rooms.GetInstanceRegistry().FindByRoomId(c.RoomId); inst != nil {
+						if inst.DeathPolicy == "ejected" {
+							inst.RevokeAccess(u.UserId)
+							u.SendText(`<ansi fg="red">You have been expelled from the instance. There is no return.</ansi>`)
+						}
+					}
+				}
+				return
+			}
+
 			// 1. Room broadcast "X has died."
 			room := rooms.LoadRoom(c.RoomId)
 			if room != nil {
