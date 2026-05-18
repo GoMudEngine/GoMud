@@ -112,6 +112,22 @@ const (
 	// Controller-initiated transitions within ground subgraph
 	TriggerPositionAdvance = "position_advance" // Mount ↔ SC ↔ KOB ↔ NS, etc.
 
+	// TriggerPositionDegrade fires when the defender wins drift by a
+	// moderate margin (|z| in [0.5, 1.0)) and the position regresses
+	// to a less-dominant state per the spec §6.2 table.
+	TriggerPositionDegrade = "position_degrade"
+
+	// TriggerReversal fires when the defender wins drift big (|z| in
+	// [1.0, 2.0)). Roles swap; position usually stays the same, with
+	// realism exceptions Mount→Guard and BackGround→Mount per spec §6.3.
+	TriggerReversal = "reversal"
+
+	// TriggerControlledEscape fires when the defender wins drift
+	// decisively (|z| >= 2.0). TransitionPair to Standing regardless
+	// of current position. Replaces the chunk-4b "Controlled for 2
+	// consecutive rounds" gate.
+	TriggerControlledEscape = "controlled_escape"
+
 	// Controlled-initiated escapes
 	TriggerPositionEscape = "position_escape" // → Standing or up the chain (HalfGuard, Guard)
 
