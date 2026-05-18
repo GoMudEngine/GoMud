@@ -130,6 +130,18 @@ type Character struct {
 	// "who am I targeting?". It runs alongside the Aggro field; both are
 	// kept in sync by SetAggro/EndAggro. Direct .Aggro reads remain valid.
 	CombatPhase              *combatphase.Machine           `yaml:"-"`
+	// Chunk 4d: submission policy fields. Set via `set submission`
+	// and `set surrender` commands. Defaults are PolicySubdue and
+	// SurrenderPolicy{Mode: SurrenderAutoTap, HpPctThreshold: 15}
+	// for players (applied by characters.New()); mobs inherit from
+	// archetype defaults at spawn (see DefaultSubmissionPolicyForArchetype).
+	SubmissionPolicy SubmissionPolicy `yaml:"submission_policy,omitempty"`
+	SurrenderPolicy  SurrenderPolicy  `yaml:"surrender_policy,omitempty"`
+	// LastSubmissionAttempted tracks the most recent sub type the
+	// character attempted (per role). Used by Position_SubmissionTick
+	// for round-robin sub-type selection so multi-sub positions don't
+	// hammer the same sub every round.
+	LastSubmissionAttempted int `yaml:"-"` // index into TopSubmissionsForPosition / BottomSubmissionsForPosition
 	// Awareness state machine (chunk 1). Source of truth for
 	// "is this character hidden?" Buff #9 still exists as effect
 	// carrier; this machine drives its add/remove via cascade.
@@ -239,6 +251,9 @@ func New() *Character {
 		Activity:                   activity.NewMachine(),
 		Position:                   position.NewMachine(),
 		PerGrappleMessageCooldowns: map[string]bool{},
+		SubmissionPolicy:           PolicySubdue,
+		SurrenderPolicy:            SurrenderPolicy{Mode: SurrenderAutoTap, HpPctThreshold: 15},
+		LastSubmissionAttempted:    0,
 	}
 
 	// Roll character stats using normal distribution
