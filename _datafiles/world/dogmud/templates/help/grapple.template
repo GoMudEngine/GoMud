@@ -37,6 +37,11 @@ Success is an opposed roll of Strength vs. the target's Strength
 and Dexterity. Grapple-immune creatures (e.g. elementals, oozes)
 cannot be grappled.
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help attack</ansi>, <ansi fg="command">help kick</ansi>,
-  <ansi fg="command">help trip</ansi>, <ansi fg="command">help submit</ansi>,
+When you establish dominant control in a grapple, the engine may
+fire a submission attempt automatically — no command needed. See
+<ansi fg="command">help submission</ansi>.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help attack</ansi>,
+  <ansi fg="command">help kick</ansi>, <ansi fg="command">help trip</ansi>,
+  <ansi fg="command">help submission</ansi>, <ansi fg="command">help surrender</ansi>,
   <ansi fg="command">help reach</ansi>

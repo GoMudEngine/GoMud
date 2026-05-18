@@ -95,6 +95,9 @@ See individual help topics for details on each special move.
 
 <ansi fg="yellow">See Also:</ansi>
 
-  <ansi fg="command">help combat</ansi>, <ansi fg="command">help defense</ansi>, <ansi fg="command">help flee</ansi>, <ansi fg="command">help bash</ansi>
-  <ansi fg="command">help trip</ansi>, <ansi fg="command">help kick</ansi>, <ansi fg="command">help prone</ansi>, <ansi fg="command">help stamina</ansi>
-  <ansi fg="command">help grapple</ansi>, <ansi fg="command">help reach</ansi>
+  <ansi fg="command">help combat</ansi>, <ansi fg="command">help defense</ansi>,
+  <ansi fg="command">help flee</ansi>, <ansi fg="command">help bash</ansi>
+  <ansi fg="command">help trip</ansi>, <ansi fg="command">help kick</ansi>,
+  <ansi fg="command">help prone</ansi>, <ansi fg="command">help stamina</ansi>
+  <ansi fg="command">help grapple</ansi>, <ansi fg="command">help reach</ansi>,
+  <ansi fg="command">help submission</ansi>

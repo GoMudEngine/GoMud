@@ -22,6 +22,16 @@ pools, and equipment.
 All stats improve through use -- the more you rely on a
 stat in your adventures, the more it grows over time.
 
+<ansi fg="yellow">Grapple Policies: </ansi>
+
+  <ansi fg="command">Submission</ansi> - What you do when you lock a submission.
+    (<ansi fg="command">mercy</ansi> / <ansi fg="command">subdue</ansi> / <ansi fg="command">cripple</ansi> / <ansi fg="command">lethal</ansi>)
+    See <ansi fg="command">help submission</ansi>.
+
+  <ansi fg="command">Surrender</ansi>  - Whether you tap out when caught in a sub.
+    (<ansi fg="command">never</ansi> / <ansi fg="command">always</ansi> / <ansi fg="command">auto-tap-below N%</ansi>)
+    See <ansi fg="command">help surrender</ansi>.
+
 <ansi fg="yellow">Usage: </ansi>
 
   <ansi fg="command">status</ansi> - Show your character status
@@ -31,4 +41,6 @@ stat in your adventures, the more it grows over time.
   <ansi fg="command">help experience</ansi>
   <ansi fg="command">help health</ansi>
   <ansi fg="command">help armor</ansi>
+  <ansi fg="command">help submission</ansi>
+  <ansi fg="command">help surrender</ansi>
 

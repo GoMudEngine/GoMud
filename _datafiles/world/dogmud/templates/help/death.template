@@ -15,4 +15,15 @@ The best defense against death is staying aware of your health and knowing
 when to <ansi fg="command">flee</ansi>. Skills and attributes you use regularly are protected
 from decay -- keep training and they'll endure.
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help sethome</ansi>
+<ansi fg="yellow-bold">Submission Exception:</ansi>
+  If you were knocked out by a grapple submission (subdue or
+  cripple outcome), you wake at the temple with NO stat decay —
+  your opponent chose not to kill you. A cripple submission also
+  leaves a broken limb that persists for around an hour of play
+  time before recovering naturally.
+  A portion of your carried gold is transferred to your opponent
+  in either case.
+  See <ansi fg="command">help submission</ansi>.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help sethome</ansi>,
+  <ansi fg="command">help submission</ansi>

@@ -37,8 +37,20 @@ There are a handful of settings you can adjust with this command, including:
   <ansi fg="command">set wimpy</ansi>
   Set your wimpy percentage (See <ansi fg="command">help wimpy</ansi>)
 
+  <ansi fg="command">set submission &lt;mercy|subdue|cripple|lethal&gt;</ansi>
+  Sets what happens when you lock a submission on an opponent.
+  Type <ansi fg="command">set submission</ansi> alone to see your current policy.
+  See <ansi fg="command">help submission</ansi>.
+
+  <ansi fg="command">set surrender &lt;never|always|auto-tap-below N&gt;</ansi>
+  Sets whether you tap out when caught in a submission.
+  Type <ansi fg="command">set surrender</ansi> alone to see your current policy.
+  See <ansi fg="command">help surrender</ansi>.
+
   <ansi fg="command">set charset</ansi>
   Toggles between UTF-8 and ASCII display modes. If your client
   shows garbled characters in tables and borders, switch to ASCII.
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help alias</ansi>, <ansi fg="command">help macros</ansi>, <ansi fg="command">help prompt</ansi>
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help alias</ansi>, <ansi fg="command">help macros</ansi>,
+  <ansi fg="command">help prompt</ansi>, <ansi fg="command">help submission</ansi>,
+  <ansi fg="command">help surrender</ansi>

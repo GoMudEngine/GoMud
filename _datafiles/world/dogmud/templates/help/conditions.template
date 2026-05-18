@@ -1,4 +1,24 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">conditions</ansi>
 
-The <ansi fg="command">conditions</ansi> command lists current afflictions.
+The <ansi fg="command">conditions</ansi> command lists your current afflictions
+and debuffs.
 
+<ansi fg="yellow">━━━ Notable Conditions ━━━</ansi>
+
+  <ansi fg="stat">Broken Limb:</ansi>
+    A limb broken during a cripple submission. Reduces your
+    combat effectiveness for an extended period. Recovers
+    naturally over time — about an hour of play. Cannot be
+    removed early by normal healing or dispel effects.
+    See <ansi fg="command">help submission</ansi>.
+
+  <ansi fg="stat">Prone:</ansi>
+    On the ground, face-down. Penalises attacks and leaves you
+    more vulnerable to incoming hits. Use <ansi fg="command">stand</ansi>
+    to get up. See <ansi fg="command">help prone</ansi>.
+
+  <ansi fg="stat">Stunned:</ansi>
+    A brief stagger — lasts one round and clears automatically.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help submission</ansi>,
+  <ansi fg="command">help prone</ansi>
