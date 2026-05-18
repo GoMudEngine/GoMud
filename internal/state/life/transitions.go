@@ -23,4 +23,10 @@ const (
 	TriggerRespawnReady    = "respawn_ready"
 	TriggerRespawnComplete = "respawn_complete"
 	TriggerForceAlive      = "force_alive"
+	// TriggerSubmission is used when the death cascade fires as a result
+	// of a resolved submission outcome (subdue, cripple, or lethal
+	// policy). T8 will extend DeadData to carry NoDeprogression +
+	// GoldLossFraction; until then, downstream observers treat this
+	// trigger identically to TriggerHealthZero.
+	TriggerSubmission = "submission"
 )

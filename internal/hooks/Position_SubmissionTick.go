@@ -98,11 +98,7 @@ func processSubmissionTickForChar(c *characters.Character) {
 		"atkZ", result.AttackerZScore,
 	)
 
-	// T7: combat.ResolveSubmissionOutcome(attempter, recipient, result, role)
-	// Stub for T6 — full outcome resolution lands in T7. For now the
-	// tick fires, logs, and returns; the actual outcome plumbing is
-	// added once the resolver exists.
-	_ = result
+	combat.ResolveSubmissionOutcome(attempter, recipient, result, role)
 }
 
 // EvaluateSubAttempt checks whether a sub attempt is eligible for
