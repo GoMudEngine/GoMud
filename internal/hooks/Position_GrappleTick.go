@@ -1,19 +1,18 @@
 // Position_GrappleTick.go fires once per round per active grapple
 // pair. For each character that's currently a controller (IsController),
 // it looks up the partner via GrappleData.Partner, validates the pair,
-// rolls an opposed Strength+grappling check, computes ControlLevel
-// drift (via position.MarginToDelta), applies asymmetric stamina cost,
-// and fires a threshold transition when either side hits Controlled.
+// rolls an opposed Strength+grappling check, dispatches the result
+// through position.ResolveOutcome, and applies the resulting transition
+// (advance / degrade / reversal / escape / hold) via TransitionPair.
 //
 // Iterates the controller side only — the controlled side is processed
 // transitively through its controller. Skips solo Turtles (no partner)
 // and any pair that fails ValidateGrapplePair (logged; consistency
 // checker will force-break in T8).
 //
-// Messaging hooks (fireGradientMessages / fireTransitionMessages /
-// fireStaminaWarningIfLow) are no-op stubs here; Task 7 lands the real
-// implementations in Position_Messaging.go so that work is purely
-// additive (no changes to this file).
+// Chunk 4b-fixup: replaces the chunk-4b ControlLevel drift-needle math
+// with outcome-driven dispatch. ControlLevel is sunset in T18.
+// Messaging (emitOutcomeMessages) is wired in T16.
 package hooks
 
 import (
@@ -99,13 +98,19 @@ func resolvePartner(c *characters.Character) *characters.Character {
 	return nil
 }
 
-// processGrapplePair fires the opposed roll, computes drift, updates
-// both sides' ControlLevels, applies asymmetric stamina cost, and
-// triggers an escape transition when either side hits Controlled.
+// processGrapplePair runs the per-round drift roll, dispatches the
+// result through position.ResolveOutcome, applies the resulting
+// transition (advance / degrade / reversal / escape / hold), updates
+// the LastDriftRoll snapshot for chunk-4d submission tick, and
+// applies stamina cost.
+//
+// Chunk 4b-fixup: replaces the chunk-4b ControlLevel drift-needle
+// math. ControlLevel is sunset entirely; the per-round outcome IS
+// the position change.
 func processGrapplePair(controller, controlled *characters.Character) {
 	cfg := configs.GetBalanceConfig()
 
-	// Score formula:
+	// Score formula unchanged from chunk 4b:
 	//   controller: (Str + WeaponCombat) × stamina × encumbrance
 	//   controlled: (Str + WeaponCombat + 0.5·Dex + body.EscapeModifier)
 	//               × stamina × encumbrance
@@ -123,16 +128,9 @@ func processGrapplePair(controller, controlled *characters.Character) {
 		grappleStaminaMultiplier(controlled, cfg) *
 		grappleEncumbranceMultiplier(controlled, cfg)
 
-	// OpposedRollStat returns (success, margin, attackRoll, defenseRoll).
-	// We translate margin into a "margin z-score" using the attacker's
-	// stddev (same value used to spread both rolls) so MarginToDelta's
-	// |z| buckets map cleanly to the spec table.
 	_, margin, atkRoll, defRoll := dice.OpposedRollStat(ctrlScore, cdScore)
 
-	// Chunk 4d T5: stash this round's drift result on both characters so
-	// Position_SubmissionTick (T6) can read the margin and z-scores
-	// without re-rolling and getting a different result.
-	// Round-numbered so T6 can detect stale data from a prior round.
+	// LastDriftRoll snapshot for chunk-4d Position_SubmissionTick.
 	currentRound := util.GetRoundCount()
 	snap := characters.DriftRollSnapshot{
 		Round:          currentRound,
@@ -143,102 +141,81 @@ func processGrapplePair(controller, controlled *characters.Character) {
 	controller.LastDriftRoll = snap
 	controlled.LastDriftRoll = snap
 
-	marginZ := 0.0
+	// Compute signed z used by ResolveOutcome.
+	z := 0.0
 	if atkRoll.StdDev > 0 {
-		marginZ = margin / atkRoll.StdDev
-	}
-	delta := position.MarginToDelta(math.Abs(marginZ))
-
-	if delta == 0 {
-		applyGrappleStaminaCost(controller, controlled, cfg)
-		fireStaminaWarningIfLow(controller)
-		fireStaminaWarningIfLow(controlled)
-		return
+		z = margin / atkRoll.StdDev
 	}
 
-	// Cap per-round drift at 1 so the gradient
-	// (InControl → LosingControl → Neutral → BecomingControlled →
-	// Controlled) is always traversed one step at a time. Without
-	// this cap, a moderate margin (|z| ≥ 1.0, MarginToDelta returns
-	// 2-3) can jump the controlled side from Neutral directly to
-	// Controlled in one round, firing the threshold-escape transition
-	// and breaking the grapple before the controlled side has any
-	// chance to react. The cap also ensures gradient messages fire
-	// reliably (each crossing once per direction per grapple) instead
-	// of skipping over intermediate ranks. See bug log 2026-05-16
-	// (highwayman grapple breaking on round 1).
-	if delta > 1 {
-		delta = 1
+	source := controller.Position.State()
+	defenderPosture := controlled.Position.State()
+	outcome := position.ResolveOutcome(source, z, defenderPosture)
+
+	// Apply outcome via TransitionPair when position changes.
+	switch outcome.Kind {
+	case position.OutcomeAdvance:
+		applyAdvanceOrEscape(controller, controlled, outcome.Target,
+			position.TriggerPositionAdvance)
+	case position.OutcomeDegrade:
+		applyAdvanceOrEscape(controller, controlled, outcome.Target,
+			position.TriggerPositionDegrade)
+	case position.OutcomeReversal:
+		applyReversal(controller, controlled, outcome.Target)
+	case position.OutcomeEscape:
+		applyAdvanceOrEscape(controller, controlled, position.Standing,
+			position.TriggerControlledEscape)
+		// Clear per-grapple cooldowns on full escape — next grapple
+		// starts fresh.
+		controller.PerGrappleMessageCooldowns = map[string]bool{}
+		controlled.PerGrappleMessageCooldowns = map[string]bool{}
+	case position.OutcomeHold:
+		// No transition. Stamina drains; flavor handled below.
 	}
 
-	// Positive margin = controller won → controlled drifts toward
-	// Controlled (rank up), controller drifts toward InControl (rank down).
-	var ctrlDelta, cdDelta int
-	if margin > 0 {
-		ctrlDelta = -delta
-		cdDelta = +delta
-	} else {
-		ctrlDelta = +delta
-		cdDelta = -delta
-	}
-
-	ctrlData, _ := controller.Position.GrappleData()
-	cdData, _ := controlled.Position.GrappleData()
-
-	newCtrl := position.ShiftControl(ctrlData.ControlLevel, ctrlDelta)
-	newCd := position.ShiftControl(cdData.ControlLevel, cdDelta)
-
-	updateControlLevel(controller, newCtrl)
-	updateControlLevel(controlled, newCd)
-
-	fireGradientMessages(controller, ctrlData.ControlLevel, newCtrl)
-	fireGradientMessages(controlled, cdData.ControlLevel, newCd)
-
+	// Stamina cost unchanged.
 	applyGrappleStaminaCost(controller, controlled, cfg)
 	fireStaminaWarningIfLow(controller)
 	fireStaminaWarningIfLow(controlled)
 
-	// Threshold check: either side hitting Controlled triggers escape
-	// to the position's default escape target. Reset per-grapple
-	// message cooldowns so the next grapple starts with a clean slate.
-	//
-	// Sustained-pressure gate (2026-05-16): require the controlled
-	// side (or the reversed controller) to have been at Controlled in
-	// the PRIOR round before firing escape. The first round at
-	// Controlled is a "warning round" — gradient messages fire above
-	// to telegraph it, but the position holds. The second consecutive
-	// round at Controlled triggers the escape. This gives the
-	// dominating side at least one round to act (advance position,
-	// submit in 4d, taunt, etc.) before the controlled side scrambles
-	// out. Without this gate, a Clinch grapple breaks ~2-3 rounds
-	// after entry under sustained controller dominance — fast enough
-	// that the player feels the grapple "just stops happening". See
-	// bug log 2026-05-16 (highwayman grapple breaking round 2).
-	cdHittingControlled := newCd == position.Controlled && cdData.ControlLevel == position.Controlled
-	ctrlHittingControlled := newCtrl == position.Controlled && ctrlData.ControlLevel == position.Controlled
+	// Messaging — T16 wires this. Stub for now so the test in T15
+	// asserts call-through without rendering.
+	emitOutcomeMessages(controller, controlled, outcome)
+}
 
-	if cdHittingControlled || ctrlHittingControlled {
-		escapeTarget := position.DefaultEscapeTarget(controller.Position.State())
-		_ = position.TransitionPair(
-			controller, controlled,
-			escapeTarget,
-			state.TransitionReason{Trigger: position.TriggerControlThresholdCrossed},
-		)
-		controller.PerGrappleMessageCooldowns = map[string]bool{}
-		controlled.PerGrappleMessageCooldowns = map[string]bool{}
-		fireTransitionMessages(controller, controlled, escapeTarget)
+// applyAdvanceOrEscape fires position.TransitionPair with controller
+// and controlled in their existing roles. Used for advances,
+// degrades, and full escapes (which all keep the role assignment).
+func applyAdvanceOrEscape(controller, controlled *characters.Character,
+	target position.State, trigger string) {
+	if err := position.TransitionPair(controller, controlled, target,
+		state.TransitionReason{Trigger: trigger}); err != nil {
+		mudlog.Warn("Position_GrappleTick: TransitionPair failed",
+			"controller_user", controller.GetUserId(),
+			"controller_mob", controller.GetMobInstanceId(),
+			"target", target, "trigger", trigger, "err", err)
 	}
 }
 
-// updateControlLevel mutates the character's GrappleData ControlLevel
-// without re-transitioning the FSM state. The transition table forbids
-// e.g. Mount→Mount, so per-round control shifts can't go through
-// TransitionTo. See position.Machine.MutateGrappleControlLevel.
-func updateControlLevel(c *characters.Character, newLevel position.ControlLevel) {
-	if c.Position == nil {
-		return
+// applyReversal swaps roles when transitioning. The former defender
+// becomes the new controller; former controller becomes the new
+// controlled. position.TransitionPair takes (controller, controlled)
+// args, so we swap them at the call site.
+func applyReversal(formerController, formerControlled *characters.Character,
+	target position.State) {
+	if err := position.TransitionPair(formerControlled, formerController, target,
+		state.TransitionReason{Trigger: position.TriggerReversal}); err != nil {
+		mudlog.Warn("Position_GrappleTick: reversal TransitionPair failed",
+			"former_controller_user", formerController.GetUserId(),
+			"former_controlled_user", formerControlled.GetUserId(),
+			"target", target, "err", err)
 	}
-	c.Position.MutateGrappleControlLevel(newLevel)
+}
+
+// emitOutcomeMessages is wired to grapplemessaging.RenderOutcome
+// in T16. Stub here so T15 compiles + runs.
+func emitOutcomeMessages(controller, controlled *characters.Character,
+	outcome position.Outcome) {
+	// Wired in T16.
 }
 
 // grappleStaminaMultiplier returns a penalty multiplier in (1-max, 1].
