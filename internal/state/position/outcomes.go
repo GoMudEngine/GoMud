@@ -169,3 +169,28 @@ func DegradeTarget(source State) (target State, hold bool) {
 	}
 	return source, true
 }
+
+// ReversalTarget returns the position to transition to when the
+// defender wins drift big (|z| in [1.0, 2.0)) — a reversal. Roles
+// always swap (returned as `swap=true`). Two realism exceptions per
+// spec §6.3 land in a different position:
+//   - Mount        → Guard  (defender bridges up into former
+//                            controller's guard; former controller
+//                            is now the Guard-controlled top)
+//   - BackGround   → Mount  (defender turns into former controller;
+//                            former controller is now Mount-controlled
+//                            bottom)
+// All other sources return the same state with roles swapped.
+//
+// Caller is responsible for performing the role swap when applying
+// the transition.
+func ReversalTarget(source State) (target State, swap bool) {
+	switch source {
+	case Mount:
+		return Guard, true
+	case BackGround:
+		return Mount, true
+	default:
+		return source, true
+	}
+}

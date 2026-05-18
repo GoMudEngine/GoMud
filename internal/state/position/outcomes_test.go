@@ -185,3 +185,38 @@ func TestDegradeTarget(t *testing.T) {
 		})
 	}
 }
+
+func TestReversalTarget(t *testing.T) {
+	cases := []struct {
+		name       string
+		source     State
+		wantTarget State
+		wantSwap   bool // role swap (always true for reversals)
+	}{
+		// Realism exceptions
+		{"mount_reverse_to_guard", Mount, Guard, true},
+		{"background_reverse_to_mount", BackGround, Mount, true},
+
+		// Default: same position, roles swap
+		{"clinch_reverse_same", Clinch, Clinch, true},
+		{"sidecontrol_reverse_same", SideControl, SideControl, true},
+		{"kob_reverse_same", KneeOnBelly, KneeOnBelly, true},
+		{"ns_reverse_same", NorthSouth, NorthSouth, true},
+		{"crucifix_reverse_same", Crucifix, Crucifix, true},
+		{"halfguard_reverse_same", HalfGuard, HalfGuard, true},
+		{"guard_reverse_same", Guard, Guard, true},
+		{"turtle_reverse_same", Turtle, Turtle, true},
+		{"backstanding_reverse_same", BackStanding, BackStanding, true},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			target, swap := ReversalTarget(c.source)
+			if target != c.wantTarget {
+				t.Errorf("ReversalTarget(%v) target=%v, want %v", c.source, target, c.wantTarget)
+			}
+			if swap != c.wantSwap {
+				t.Errorf("ReversalTarget(%v) swap=%v, want %v", c.source, swap, c.wantSwap)
+			}
+		})
+	}
+}
