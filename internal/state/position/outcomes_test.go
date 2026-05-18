@@ -220,3 +220,104 @@ func TestReversalTarget(t *testing.T) {
 		})
 	}
 }
+
+func TestResolveOutcomeHold(t *testing.T) {
+	o := ResolveOutcome(Mount, 0.3, Standing)
+	if o.Kind != OutcomeHold {
+		t.Errorf("z=0.3 should resolve to Hold, got %v", o.Kind)
+	}
+	if o.SubWindow {
+		t.Errorf("z=0.3 should not open sub window")
+	}
+}
+
+func TestResolveOutcomeAdvance(t *testing.T) {
+	// SideControl, z=0.7 (1-step) → Mount, no sub
+	o := ResolveOutcome(SideControl, 0.7, Standing)
+	if o.Kind != OutcomeAdvance {
+		t.Errorf("z=0.7 from SideControl should be Advance, got %v", o.Kind)
+	}
+	if o.Target != Mount {
+		t.Errorf("z=0.7 from SideControl should target Mount, got %v", o.Target)
+	}
+	if o.SubWindow {
+		t.Errorf("z=0.7 should not open sub window")
+	}
+}
+
+func TestResolveOutcomeAdvanceWithSub(t *testing.T) {
+	// SideControl, z=1.7 (2-step, sub-window open) → Mount + sub
+	o := ResolveOutcome(SideControl, 1.7, Standing)
+	if o.Kind != OutcomeAdvance {
+		t.Errorf("z=1.7 should be Advance, got %v", o.Kind)
+	}
+	if o.Target != Mount {
+		t.Errorf("z=1.7 from SideControl should target Mount, got %v", o.Target)
+	}
+	if !o.SubWindow {
+		t.Errorf("z=1.7 should open sub window")
+	}
+}
+
+func TestResolveOutcomeAdvanceWithSubAtThreeStep(t *testing.T) {
+	// SideControl, z=2.5 (3-step) → BackGround + sub
+	o := ResolveOutcome(SideControl, 2.5, Standing)
+	if o.Target != BackGround {
+		t.Errorf("z=2.5 from SideControl should target BackGround, got %v", o.Target)
+	}
+	if !o.SubWindow {
+		t.Errorf("z=2.5 should open sub window")
+	}
+}
+
+func TestResolveOutcomeMountStrikingApex(t *testing.T) {
+	// Mount, z=1.7 (2-step) → Hold (striking apex), but sub window opens
+	o := ResolveOutcome(Mount, 1.7, Standing)
+	if o.Kind != OutcomeHold {
+		t.Errorf("z=1.7 from Mount should be Hold (striking apex), got %v", o.Kind)
+	}
+	if !o.SubWindow {
+		t.Errorf("z=1.7 from Mount should still open sub window (independent gate)")
+	}
+}
+
+func TestResolveOutcomeDegrade(t *testing.T) {
+	// Mount, z=-0.7 (defender 1-step) → degrade to SideControl
+	o := ResolveOutcome(Mount, -0.7, Standing)
+	if o.Kind != OutcomeDegrade {
+		t.Errorf("z=-0.7 from Mount should be Degrade, got %v", o.Kind)
+	}
+	if o.Target != SideControl {
+		t.Errorf("z=-0.7 from Mount should degrade to SideControl, got %v", o.Target)
+	}
+}
+
+func TestResolveOutcomeDegradeTerminalClinchHold(t *testing.T) {
+	// Clinch, z=-0.7 → Hold (Clinch has no degrade target)
+	o := ResolveOutcome(Clinch, -0.7, Standing)
+	if o.Kind != OutcomeHold {
+		t.Errorf("z=-0.7 from Clinch should Hold (no degrade target), got %v", o.Kind)
+	}
+}
+
+func TestResolveOutcomeReversal(t *testing.T) {
+	// Mount, z=-1.5 → Reversal to Guard
+	o := ResolveOutcome(Mount, -1.5, Standing)
+	if o.Kind != OutcomeReversal {
+		t.Errorf("z=-1.5 from Mount should be Reversal, got %v", o.Kind)
+	}
+	if o.Target != Guard {
+		t.Errorf("Mount reversal target should be Guard, got %v", o.Target)
+	}
+}
+
+func TestResolveOutcomeEscape(t *testing.T) {
+	// Mount, z=-2.5 → Escape to Standing
+	o := ResolveOutcome(Mount, -2.5, Standing)
+	if o.Kind != OutcomeEscape {
+		t.Errorf("z=-2.5 from Mount should be Escape, got %v", o.Kind)
+	}
+	if o.Target != Standing {
+		t.Errorf("Escape target should be Standing, got %v", o.Target)
+	}
+}

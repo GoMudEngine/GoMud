@@ -194,3 +194,106 @@ func ReversalTarget(source State) (target State, swap bool) {
 		return source, true
 	}
 }
+
+// OutcomeKind enumerates the five round-outcome categories for a
+// grapple per spec §4. Combined with Outcome.Target and
+// Outcome.SubWindow, fully describes what happens this round.
+type OutcomeKind int
+
+const (
+	OutcomeHold     OutcomeKind = iota // No position change
+	OutcomeAdvance                     // Controller wins; advance to Target
+	OutcomeDegrade                     // Defender wins moderate; position regresses to Target
+	OutcomeReversal                    // Defender wins big; roles swap, position is Target
+	OutcomeEscape                      // Defender wins decisive; both → Standing
+)
+
+// Outcome is the resolved per-round result of a drift roll, ready
+// for Position_GrappleTick to apply via TransitionPair and pass to
+// the messaging layer.
+type Outcome struct {
+	Kind      OutcomeKind
+	Source    State // pre-transition position (for messaging context)
+	Target    State // post-transition position (= Source for Hold)
+	SubWindow bool  // true if |z| >= 1.5 (chunk 4d composition)
+}
+
+// ResolveOutcome dispatches the drift roll's z-score to one of the
+// five outcome categories per spec §4 + §5.
+//
+//   - z is signed: positive = controller won, negative = defender won.
+//   - source is the controller's current grapple position.
+//   - defenderPosture matters only when source is Clinch (Clinch-1-step
+//     posture-based dispatch); ignored for non-Clinch sources.
+func ResolveOutcome(source State, z float64, defenderPosture State) Outcome {
+	absZ := z
+	if absZ < 0 {
+		absZ = -absZ
+	}
+	tier := OutcomeTierFromAbsZ(absZ)
+	subOpens := SubWindowOpens(absZ)
+
+	// Hold tier (|z| < 0.5): no position change regardless of sign.
+	if tier == TierHold {
+		return Outcome{
+			Kind:      OutcomeHold,
+			Source:    source,
+			Target:    source,
+			SubWindow: subOpens, // Always false at this tier, but consistent
+		}
+	}
+
+	// Controller-favored (positive z).
+	if z > 0 {
+		target, hold := AdvancementTarget(source, tier, defenderPosture)
+		if hold {
+			return Outcome{
+				Kind:      OutcomeHold,
+				Source:    source,
+				Target:    source,
+				SubWindow: subOpens,
+			}
+		}
+		return Outcome{
+			Kind:      OutcomeAdvance,
+			Source:    source,
+			Target:    target,
+			SubWindow: subOpens,
+		}
+	}
+
+	// Defender-favored (negative z). Branch on tier.
+	switch tier {
+	case TierOneStep:
+		target, hold := DegradeTarget(source)
+		if hold {
+			return Outcome{
+				Kind:      OutcomeHold,
+				Source:    source,
+				Target:    source,
+				SubWindow: subOpens, // Never true at TierOneStep
+			}
+		}
+		return Outcome{
+			Kind:      OutcomeDegrade,
+			Source:    source,
+			Target:    target,
+			SubWindow: subOpens,
+		}
+	case TierTwoStep:
+		target, _ := ReversalTarget(source)
+		return Outcome{
+			Kind:      OutcomeReversal,
+			Source:    source,
+			Target:    target,
+			SubWindow: subOpens,
+		}
+	default: // TierThreeStep
+		return Outcome{
+			Kind:      OutcomeEscape,
+			Source:    source,
+			Target:    Standing,
+			SubWindow: subOpens,
+		}
+	}
+}
