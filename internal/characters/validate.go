@@ -107,12 +107,17 @@ func (c *Character) RecalculateStats() {
 		}
 	}
 
-	// Floors.
-	if c.StaminaMax.Value < 0 {
-		c.StaminaMax.Value = 0
+	// Floors. Pool maxes are floored at 1, not 0, because downstream
+	// consumers (prompt `{sp%}` / `{mp%}` tokens at
+	// internal/users/userrecord.prompt.go, ratio calcs in combat /
+	// resource-multiplier curves) divide by these values without a
+	// zero-guard. A degenerate character with Willpower=0 used to
+	// crash the prompt-render path; floor 1 prevents the divide.
+	if c.StaminaMax.Value < 1 {
+		c.StaminaMax.Value = 1
 	}
-	if c.ConvictionMax.Value < 0 {
-		c.ConvictionMax.Value = 0
+	if c.ConvictionMax.Value < 1 {
+		c.ConvictionMax.Value = 1
 	}
 	if c.HealthMax.Value < 1 {
 		c.HealthMax.Value = 1
