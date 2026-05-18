@@ -787,5 +787,79 @@ escapes:
       - "{controlledName} explodes free of {controllerName} and scrambles back to their feet."
       - "{controllerName}'s grip fails — {controlledName} scrambles up and out of reach."
       - "{controlledName} kicks {controllerName} off and the grapple breaks; both stand."
-holds: {}
-striking_apex: {}
+holds:
+  clinch_hold:
+    controller:
+      - "You and {controlledName} grind in the clinch — wrist fights and head-position grunts."
+      - "Hand-fighting in the pocket. Neither of you gives an inch."
+      - "Shoulders pressed together, breath ragged — you wrestle for the underhook."
+    controlled:
+      - "You and {controllerName} grind in the clinch — wrists battle for control."
+      - "Your shoulders crash together. Neither side breaks position."
+      - "Breath rasps against {controllerName}'s neck. The clinch holds."
+    observers:
+      - "{controllerName} and {controlledName} grind in the clinch — neither giving ground."
+      - "{controllerName} and {controlledName} fight hands and head position."
+      - "Shoulders crash together; the clinch holds."
+  ground_hold_generic:
+    controller:
+      - "You posture down and ride out {controlledName}'s squirming."
+      - "Pressure stays on. {controlledName} can't generate the leverage to move you."
+      - "You settle your weight and let {controlledName} burn cardio trying to shift you."
+    controlled:
+      - "{controllerName}'s weight settles harder. You burn cardio trying to find leverage."
+      - "You squirm and frame, but {controllerName} rides it out."
+      - "Pressure pins you flat. You can't generate the leverage to budge."
+    observers:
+      - "{controllerName} rides out {controlledName}'s squirming."
+      - "{controllerName} settles in and lets {controlledName} burn cardio."
+      - "{controlledName} squirms; {controllerName} stays heavy."
+  guard_hold:
+    controller:
+      - "You break {controlledName}'s posture down with your legs — they grind for an opening."
+      - "Your hips frame {controlledName}'s; the guard stays closed."
+      - "You snap {controlledName}'s head down with high guard, smothering their base."
+    controlled:
+      - "{controllerName}'s legs pry and snap — you can't post your base."
+      - "Your knees frame in vain. {controllerName}'s guard holds."
+      - "{controllerName} drags your head down with high guard; you smother."
+    observers:
+      - "{controllerName} works the guard, breaking {controlledName}'s posture."
+      - "{controllerName}'s legs frame and pry; {controlledName} can't pass."
+      - "{controllerName} keeps {controlledName} smothered in high guard."
+  turtle_hold:
+    controller:
+      - "{controlledName} curls tighter. You hand-fight for an opening to the back."
+      - "You ride the shoulder, looking for the seatbelt. {controlledName} stays balled up."
+      - "Knees driven in tight — {controlledName} can't expand from the turtle."
+    controlled:
+      - "You curl tighter. {controllerName} pulls at your wrists."
+      - "{controllerName} rides your shoulder, hunting hooks. You stay balled up."
+      - "Their knees drive in. You can't expand from the turtle."
+    observers:
+      - "{controllerName} hand-fights {controlledName}, looking for an opening to the back."
+      - "{controllerName} rides {controlledName}'s shoulder; the turtle holds."
+      - "{controlledName} stays balled tight against {controllerName}."
+  backstanding_hold:
+    controller:
+      - "You stay glued to {controlledName}'s back, hands fighting for the over-under."
+      - "Hooks aren't there yet — you ride the standing back-clinch and wait."
+      - "{controlledName} hand-fights your wrists; you stay stuck to their spine."
+    controlled:
+      - "{controllerName} stays glued to your back. You hand-fight the over-under."
+      - "You feel them hunting hooks — you grip and shake to keep them off your hips."
+      - "{controllerName}'s chest rides your spine. You can't peel them off."
+    observers:
+      - "{controllerName} stays glued to {controlledName}'s back, hand-fighting."
+      - "{controllerName} hunts hooks against {controlledName}'s hips; {controlledName} blocks."
+      - "{controlledName} shakes against {controllerName}'s back-clinch — neither gives."
+
+striking_apex:
+  mount_strike_flavor:
+    - "You ride high in mount and rain elbows down."
+    - "Your knees pin {controlledName}'s shoulders flat — heavy shots punch through their guard."
+    - "{controlledName} bridges weakly under you; you posture up and drive hammerfists into their guard."
+    - "Sweat and copper. You ride the mount and drop knuckles like pistons."
+    - "Their arms tire from defending their face. You sit heavy and let the strikes through."
+    - "You shift your weight onto {controlledName}'s sternum and unload — short, vicious elbows from the top."
+    - "Cross-face pinning their jaw, free hand cocked back — you punish from full mount."

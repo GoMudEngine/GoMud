@@ -251,3 +251,52 @@ func TestProductionLibraryEscapesComplete(t *testing.T) {
 		}
 	}
 }
+
+func TestProductionLibraryHoldsComplete(t *testing.T) {
+	lib, err := Load("../../_datafiles/world/dogmud/messaging/grapple_outcomes.yaml")
+	if err != nil {
+		t.Fatalf("Load prod library: %v", err)
+	}
+	for _, key := range RequiredHoldKeys {
+		triad, ok := lib.Holds[key]
+		if !ok {
+			t.Errorf("missing hold key: %s", key)
+			continue
+		}
+		if len(triad.Controller) < MinTemplatesPerSpeaker ||
+			len(triad.Controlled) < MinTemplatesPerSpeaker ||
+			len(triad.Observers) < MinTemplatesPerSpeaker {
+			t.Errorf("hold %s under-populated", key)
+		}
+	}
+}
+
+func TestProductionLibraryStrikingApexComplete(t *testing.T) {
+	lib, err := Load("../../_datafiles/world/dogmud/messaging/grapple_outcomes.yaml")
+	if err != nil {
+		t.Fatalf("Load prod library: %v", err)
+	}
+	for _, key := range RequiredStrikingApexKeys {
+		templates, ok := lib.StrikingApex[key]
+		if !ok {
+			t.Errorf("missing striking_apex key: %s", key)
+			continue
+		}
+		if len(templates) < MinStrikingApexTemplates {
+			t.Errorf("striking_apex.%s: %d < %d", key, len(templates), MinStrikingApexTemplates)
+		}
+	}
+}
+
+func TestProductionLibraryFullValidation(t *testing.T) {
+	lib, err := Load("../../_datafiles/world/dogmud/messaging/grapple_outcomes.yaml")
+	if err != nil {
+		t.Fatalf("Load prod library: %v", err)
+	}
+	errs := ValidateCompleteness(lib)
+	if len(errs) > 0 {
+		for _, e := range errs {
+			t.Errorf("completeness: %v", e)
+		}
+	}
+}
