@@ -24,6 +24,7 @@ import (
 	"sync"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -37,10 +38,32 @@ type positionMsgPair struct {
 	Room string `yaml:"room"`
 }
 
+// submissionMsgTriple holds attacker / target / room variants for
+// a single submission message key. Attacker and target are personal
+// messages; room goes to all other characters in the room.
+type submissionMsgTriple struct {
+	Attacker string `yaml:"attacker"`
+	Target   string `yaml:"target"`
+	Room     string `yaml:"room"`
+}
+
+type submissionMessageBlock struct {
+	Opening            map[string]submissionMsgTriple `yaml:"opening"`
+	EscapeBad          submissionMsgTriple            `yaml:"escape_bad"`
+	Neutral            submissionMsgTriple            `yaml:"neutral"`
+	OutcomeMercy       submissionMsgTriple            `yaml:"outcome_mercy"`
+	OutcomeSubdue      submissionMsgTriple            `yaml:"outcome_subdue"`
+	OutcomeCrippleArm  submissionMsgTriple            `yaml:"outcome_cripple_arm"`
+	OutcomeCrippleShoulder submissionMsgTriple        `yaml:"outcome_cripple_shoulder"`
+	OutcomeLethal      submissionMsgTriple            `yaml:"outcome_lethal"`
+	CritFlag           submissionMsgTriple            `yaml:"crit_flag"`
+}
+
 type positionMessageTemplates struct {
 	GradientMessages   map[string]map[string]positionMsgPair `yaml:"gradient_messages"`
 	TransitionMessages map[string]positionMsgPair            `yaml:"transition_messages"`
 	StaminaWarning     positionMsgPair                       `yaml:"stamina_warning"`
+	Submission         submissionMessageBlock                 `yaml:"submission"`
 }
 
 var (
@@ -250,6 +273,174 @@ func userForCharacter(c *characters.Character) *users.UserRecord {
 		return users.GetByUserId(uid)
 	}
 	return nil
+}
+
+// submissionTypeKey converts a SubmissionType to the lowercase YAML
+// key used under submission.opening. Must match the keys in
+// position_control.yaml exactly.
+func submissionTypeKey(t position.SubmissionType) string {
+	switch t {
+	case position.SubArmbar:
+		return "armbar"
+	case position.SubRNC:
+		return "rnc"
+	case position.SubTriangle:
+		return "triangle"
+	case position.SubKimura:
+		return "kimura"
+	case position.SubAmericana:
+		return "americana"
+	case position.SubOmoplata:
+		return "omoplata"
+	case position.SubAnaconda:
+		return "anaconda"
+	default:
+		return ""
+	}
+}
+
+// sendSubmissionTriple dispatches a submissionMsgTriple to the
+// attempter (personal), recipient (personal), and room (everyone
+// else). Empty string slots are silently skipped.
+func sendSubmissionTriple(
+	attempter, recipient *characters.Character,
+	tmpl submissionMsgTriple,
+	subs map[string]string,
+) {
+	atkMsg := substitute(tmpl.Attacker, subs)
+	tgtMsg := substitute(tmpl.Target, subs)
+	roomMsg := substitute(tmpl.Room, subs)
+
+	var excludeIds []int
+	if ua := userForCharacter(attempter); ua != nil {
+		if atkMsg != "" {
+			ua.SendText(atkMsg)
+		}
+		excludeIds = append(excludeIds, ua.UserId)
+	}
+	if ur := userForCharacter(recipient); ur != nil {
+		if tgtMsg != "" {
+			ur.SendText(tgtMsg)
+		}
+		excludeIds = append(excludeIds, ur.UserId)
+	}
+
+	if roomMsg == "" {
+		return
+	}
+	r := rooms.LoadRoom(attempter.RoomId)
+	if r == nil {
+		return
+	}
+	switch len(excludeIds) {
+	case 0:
+		r.SendText(roomMsg)
+	case 1:
+		r.SendText(roomMsg, excludeIds[0])
+	default:
+		r.SendText(roomMsg, excludeIds[0], excludeIds[1])
+	}
+}
+
+// fireSubmissionOpeningMessage sends the "opening" message for a
+// submission when its window first fires, before the outcome
+// resolves. Picks the phrase from position_control.yaml under
+// submission.opening.<subtype-key>. Degrades gracefully when the
+// key is missing (no-op).
+func fireSubmissionOpeningMessage(
+	attempter, recipient *characters.Character,
+	subType position.SubmissionType,
+) {
+	if attempter == nil || recipient == nil {
+		return
+	}
+	key := submissionTypeKey(subType)
+	if key == "" {
+		return
+	}
+	templates := loadPositionMessages()
+	tmpl, ok := templates.Submission.Opening[key]
+	if !ok {
+		return
+	}
+	subs := map[string]string{
+		"attacker": attempter.Name,
+		"target":   recipient.Name,
+	}
+	sendSubmissionTriple(attempter, recipient, tmpl, subs)
+}
+
+// fireSubmissionResolutionMessage sends the outcome message after
+// the submission resolves. Picks the key based on tier + policy +
+// bodyPart:
+//
+//   - SubTierBad                        → escape_bad
+//   - SubTierNeutral                    → neutral
+//   - SubTierSuccess/Crit + mercy       → outcome_mercy
+//   - SubTierSuccess/Crit + subdue      → outcome_subdue
+//   - SubTierSuccess/Crit + cripple arm → outcome_cripple_arm
+//   - SubTierSuccess/Crit + cripple shoulder → outcome_cripple_shoulder
+//   - SubTierSuccess/Crit + lethal      → outcome_lethal
+//
+// On a Crit, the crit_flag attacker prefix is prepended to the
+// attacker's message before dispatch.
+func fireSubmissionResolutionMessage(
+	attempter, recipient *characters.Character,
+	subType position.SubmissionType,
+	tier combat.SubmissionTier,
+	policy characters.SubmissionPolicy,
+	bodyPart string,
+) {
+	if attempter == nil || recipient == nil {
+		return
+	}
+	templates := loadPositionMessages()
+	sub := templates.Submission
+
+	var tmpl submissionMsgTriple
+	switch tier {
+	case combat.SubTierBad:
+		tmpl = sub.EscapeBad
+	case combat.SubTierNeutral:
+		tmpl = sub.Neutral
+	default: // SubTierSuccess, SubTierCrit
+		switch policy {
+		case characters.PolicyMercy:
+			tmpl = sub.OutcomeMercy
+		case characters.PolicySubdue:
+			tmpl = sub.OutcomeSubdue
+		case characters.PolicyCripple:
+			if bodyPart == "shoulder" {
+				tmpl = sub.OutcomeCrippleShoulder
+			} else {
+				// "arm" or degraded choke (body part "" already
+				// redirected to subdue by ResolveSubmissionOutcome;
+				// fall back to arm bucket for safety)
+				tmpl = sub.OutcomeCrippleArm
+			}
+		case characters.PolicyLethal:
+			tmpl = sub.OutcomeLethal
+		default:
+			tmpl = sub.OutcomeSubdue
+		}
+		// Crit: prepend the crit_flag prefix to the attacker text.
+		if tier == combat.SubTierCrit && sub.CritFlag.Attacker != "" {
+			tmpl.Attacker = sub.CritFlag.Attacker + tmpl.Attacker
+		}
+	}
+
+	subs := map[string]string{
+		"attacker": attempter.Name,
+		"target":   recipient.Name,
+	}
+	sendSubmissionTriple(attempter, recipient, tmpl, subs)
+}
+
+func init() {
+	combat.RegisterSubmissionMessaging(
+		fireSubmissionOpeningMessage,
+		fireSubmissionResolutionMessage,
+	)
 }
 
 // Keep mobs import live for future helpers that may want to resolve

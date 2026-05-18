@@ -9,6 +9,34 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 )
 
+// Callbacks for submission narration. Registered by the hooks package
+// in its init() to avoid a combat → hooks import cycle. nil-safe;
+// ResolveSubmissionOutcome no-ops if not registered.
+var (
+	onSubmissionOpening func(
+		attempter, recipient *characters.Character,
+		subType position.SubmissionType,
+	)
+	onSubmissionResolution func(
+		attempter, recipient *characters.Character,
+		subType position.SubmissionType,
+		tier SubmissionTier,
+		policy characters.SubmissionPolicy,
+		bodyPart string,
+	)
+)
+
+// RegisterSubmissionMessaging registers callbacks for narration of
+// submission attempts and resolutions. Called from the hooks package
+// in init() to avoid a combat → hooks import cycle.
+func RegisterSubmissionMessaging(
+	opening func(attempter, recipient *characters.Character, subType position.SubmissionType),
+	resolution func(attempter, recipient *characters.Character, subType position.SubmissionType, tier SubmissionTier, policy characters.SubmissionPolicy, bodyPart string),
+) {
+	onSubmissionOpening = opening
+	onSubmissionResolution = resolution
+}
+
 // ResolveSubmissionOutcome applies the attempt result to the
 // attempter + recipient based on the attempter's SubmissionPolicy.
 // Side effects per tier:
@@ -40,13 +68,38 @@ func ResolveSubmissionOutcome(
 	result SubmissionAttemptResult,
 	role Role,
 ) {
+	// Resolve the effective body part now so messaging and outcome
+	// both use the same degraded value (choke cripple → subdue).
+	bodyPart := position.CrippleBodyPart(result.SubType)
+	effectivePolicy := attempter.SubmissionPolicy
+	if effectivePolicy == characters.PolicyCripple && bodyPart == "" {
+		effectivePolicy = characters.PolicySubdue
+	}
+
+	// Opening narration fires before the outcome is applied so the
+	// player reads the attempt beat before any unconscious state lands.
+	if onSubmissionOpening != nil {
+		onSubmissionOpening(attempter, recipient, result.SubType)
+	}
+
 	switch result.Tier {
 	case SubTierBad:
 		applyBadTier(attempter, recipient)
 	case SubTierNeutral:
-		return // no-op; caller owns messaging
+		// no mechanical effect; fall through to resolution messaging
 	case SubTierSuccess, SubTierCrit:
 		applySuccessByPolicy(attempter, recipient, result)
+	}
+
+	// Resolution narration fires after the outcome is applied.
+	if onSubmissionResolution != nil {
+		onSubmissionResolution(
+			attempter, recipient,
+			result.SubType,
+			result.Tier,
+			effectivePolicy,
+			bodyPart,
+		)
 	}
 }
 
