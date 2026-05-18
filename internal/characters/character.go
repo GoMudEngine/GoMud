@@ -77,6 +77,7 @@ func (c *Character) ResetForMobInstance() {
 	c.Activity = nil
 	c.combatPhaseWired = false
 	c.PerGrappleMessageCooldowns = nil
+	c.PerGrappleMessageCooldownsLastRound = nil
 }
 
 type NameRenderFlag uint8
@@ -171,6 +172,12 @@ type Character struct {
 	// Resets when the character returns to a non-grapple state.
 	// Non-persistent — combat doesn't survive logout.
 	PerGrappleMessageCooldowns map[string]bool               `yaml:"-"`
+	// PerGrappleMessageCooldownsLastRound tracks the last round number
+	// at which a sparse hold-flavor message was emitted, keyed by hold
+	// context (e.g. "hold_last_round:clinch"). Used by
+	// internal/hooks/Position_GrappleTick.go's emitHoldFlavor to
+	// throttle hold-round messages to once every ~4 rounds.
+	PerGrappleMessageCooldownsLastRound map[string]uint64     `yaml:"-"`
 	Conditions               []CombatCondition              `yaml:"-"`                       // Active temporary combat conditions (Stage 9.8). Don't store this.
 	AttacksThisRound         int                            `yaml:"-"`                       // Stage 9.4: Tracks recent attacks for stance calculation. Don't store this.
 	DefensesThisRound        int                            `yaml:"-"`                       // Stage 9.4: Tracks recent defenses for stance calculation. Don't store this.

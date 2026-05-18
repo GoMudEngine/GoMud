@@ -16,21 +16,63 @@
 package hooks
 
 import (
+	"fmt"
 	"math"
+	"sync"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/grapplemessaging"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
+
+var (
+	// grappleOutcomesLib holds the parsed template library. Loaded
+	// lazily on first use via grappleLibOnce — avoids mudlog nil-pointer
+	// panics during test package init (mudlog.SetupLogger hasn't run yet).
+	grappleOutcomesLib *grapplemessaging.Library
+	grappleLibOnce     sync.Once
+)
+
+// loadGrappleLib ensures the library is loaded exactly once. Callers
+// that need the library should call this; after the first call the
+// sync.Once is a cheap no-op.
+func loadGrappleLib() *grapplemessaging.Library {
+	grappleLibOnce.Do(func() {
+		lib, err := grapplemessaging.Load(
+			"_datafiles/world/dogmud/messaging/grapple_outcomes.yaml")
+		if err != nil {
+			mudlog.Error("Position_GrappleTick: failed to load grapple_outcomes.yaml",
+				"err", err)
+			// Use an empty library so render calls return debug strings.
+			lib = &grapplemessaging.Library{
+				Advancements: map[string]grapplemessaging.TemplateTriad{},
+				Degradations: map[string]grapplemessaging.TemplateTriad{},
+				Reversals:    map[string]grapplemessaging.TemplateTriad{},
+				Escapes:      map[string]grapplemessaging.TemplateTriad{},
+				Holds:        map[string]grapplemessaging.TemplateTriad{},
+				StrikingApex: map[string][]string{},
+			}
+		}
+		errs := grapplemessaging.ValidateCompleteness(lib)
+		for _, e := range errs {
+			mudlog.Warn("Position_GrappleTick: grapple_outcomes.yaml incomplete",
+				"violation", e)
+		}
+		grappleOutcomesLib = lib
+	})
+	return grappleOutcomesLib
+}
 
 // processGrappleTick is the NewRound event listener. Iterates all
 // active players + mobs; for each character that's a controller,
@@ -177,8 +219,7 @@ func processGrapplePair(controller, controlled *characters.Character) {
 	fireStaminaWarningIfLow(controller)
 	fireStaminaWarningIfLow(controlled)
 
-	// Messaging — T16 wires this. Stub for now so the test in T15
-	// asserts call-through without rendering.
+	// Messaging — wired in T16.
 	emitOutcomeMessages(controller, controlled, outcome)
 }
 
@@ -211,11 +252,262 @@ func applyReversal(formerController, formerControlled *characters.Character,
 	}
 }
 
-// emitOutcomeMessages is wired to grapplemessaging.RenderOutcome
-// in T16. Stub here so T15 compiles + runs.
+// emitOutcomeMessages picks a template triad for the outcome and
+// sends the appropriate speaker variant to each side + the room.
+// Cooldown map lives on Character.PerGrappleMessageCooldowns;
+// PickTemplate handles within-grapple variety.
 func emitOutcomeMessages(controller, controlled *characters.Character,
 	outcome position.Outcome) {
-	// Wired in T16.
+	lib := loadGrappleLib()
+	if lib == nil {
+		return
+	}
+
+	// Initialize cooldown maps if nil (chunk-4b created them on
+	// transitions; defensive init here).
+	if controller.PerGrappleMessageCooldowns == nil {
+		controller.PerGrappleMessageCooldowns = map[string]bool{}
+	}
+	if controlled.PerGrappleMessageCooldowns == nil {
+		controlled.PerGrappleMessageCooldowns = map[string]bool{}
+	}
+
+	// Pick template triad based on outcome kind + source/target.
+	var (
+		triad grapplemessaging.TemplateTriad
+		key   string
+		found bool
+	)
+
+	switch outcome.Kind {
+	case position.OutcomeAdvance:
+		key = stateMessagingName(outcome.Source) + "_to_" + stateMessagingName(outcome.Target)
+		triad, found = lib.Advancements[key]
+	case position.OutcomeDegrade:
+		key = stateMessagingName(outcome.Source) + "_to_" + stateMessagingName(outcome.Target)
+		triad, found = lib.Degradations[key]
+	case position.OutcomeReversal:
+		key = stateMessagingName(outcome.Source) + "_reverse"
+		triad, found = lib.Reversals[key]
+		if !found {
+			key = "generic_reverse"
+			triad, found = lib.Reversals[key]
+		}
+	case position.OutcomeEscape:
+		key = "generic_escape"
+		triad, found = lib.Escapes[key]
+	case position.OutcomeHold:
+		emitHoldFlavor(controller, controlled, outcome)
+		emitStrikingApexFlavor(controller, controlled, outcome)
+		return
+	}
+
+	if !found {
+		mudlog.Warn("Position_GrappleTick: missing message key",
+			"kind", outcome.Kind, "key", key)
+		return
+	}
+
+	controllerName := characterDisplayName(controller)
+	controlledName := characterDisplayName(controlled)
+
+	if msg := grapplemessaging.PickTemplate(triad.Controller,
+		controller.PerGrappleMessageCooldowns, key+":ctrl"); msg != "" {
+		sendToCharacter(controller,
+			grapplemessaging.RenderTemplate(msg, controllerName, controlledName))
+	}
+	if msg := grapplemessaging.PickTemplate(triad.Controlled,
+		controlled.PerGrappleMessageCooldowns, key+":cd"); msg != "" {
+		sendToCharacter(controlled,
+			grapplemessaging.RenderTemplate(msg, controllerName, controlledName))
+	}
+	if msg := grapplemessaging.PickTemplate(triad.Observers,
+		controller.PerGrappleMessageCooldowns, key+":obs"); msg != "" {
+		broadcastToRoomExcluding(controller, controlled,
+			grapplemessaging.RenderTemplate(msg, controllerName, controlledName))
+	}
+}
+
+// emitHoldFlavor sends sparse hold-round flavor every ~4 rounds.
+// Tracked via a "hold_last_round" key in the last-round map.
+func emitHoldFlavor(controller, controlled *characters.Character,
+	outcome position.Outcome) {
+	const holdEmitEveryRounds = uint64(4)
+	round := util.GetRoundCount()
+	lastKey := "hold_last_round:" + stateMessagingName(outcome.Source)
+	lastRound := uint64(0)
+	if controller.PerGrappleMessageCooldownsLastRound != nil {
+		if v, ok := controller.PerGrappleMessageCooldownsLastRound[lastKey]; ok {
+			lastRound = v
+		}
+	}
+	if round-lastRound < holdEmitEveryRounds {
+		return
+	}
+	// Mark for next time.
+	if controller.PerGrappleMessageCooldownsLastRound == nil {
+		controller.PerGrappleMessageCooldownsLastRound = map[string]uint64{}
+	}
+	controller.PerGrappleMessageCooldownsLastRound[lastKey] = round
+
+	// Pick hold key by source state.
+	key := holdKeyForState(outcome.Source)
+	lib := loadGrappleLib()
+	if lib == nil {
+		return
+	}
+	triad, found := lib.Holds[key]
+	if !found {
+		return
+	}
+	controllerName := characterDisplayName(controller)
+	controlledName := characterDisplayName(controlled)
+
+	if msg := grapplemessaging.PickTemplate(triad.Controller,
+		controller.PerGrappleMessageCooldowns, "hold:"+key+":ctrl"); msg != "" {
+		sendToCharacter(controller,
+			grapplemessaging.RenderTemplate(msg, controllerName, controlledName))
+	}
+	if msg := grapplemessaging.PickTemplate(triad.Controlled,
+		controlled.PerGrappleMessageCooldowns, "hold:"+key+":cd"); msg != "" {
+		sendToCharacter(controlled,
+			grapplemessaging.RenderTemplate(msg, controllerName, controlledName))
+	}
+	if msg := grapplemessaging.PickTemplate(triad.Observers,
+		controller.PerGrappleMessageCooldowns, "hold:"+key+":obs"); msg != "" {
+		broadcastToRoomExcluding(controller, controlled,
+			grapplemessaging.RenderTemplate(msg, controllerName, controlledName))
+	}
+}
+
+// emitStrikingApexFlavor fires Mount-strike flavor on Hold rounds at
+// Mount. Single-speaker list — visible to controller only; observers
+// see the combat damage text from the combat system.
+func emitStrikingApexFlavor(controller, controlled *characters.Character,
+	outcome position.Outcome) {
+	if outcome.Source != position.Mount {
+		return
+	}
+	lib := loadGrappleLib()
+	if lib == nil {
+		return
+	}
+	pool, found := lib.StrikingApex["mount_strike_flavor"]
+	if !found {
+		return
+	}
+	controllerName := characterDisplayName(controller)
+	controlledName := characterDisplayName(controlled)
+	msg := grapplemessaging.PickTemplate(pool,
+		controller.PerGrappleMessageCooldowns, "apex:mount_strike")
+	if msg != "" {
+		sendToCharacter(controller,
+			grapplemessaging.RenderTemplate(msg, controllerName, controlledName))
+	}
+}
+
+// stateMessagingName converts a position.State to its canonical
+// snake_case YAML key segment.
+func stateMessagingName(s position.State) string {
+	switch s {
+	case position.Clinch:
+		return "clinch"
+	case position.BackStanding:
+		return "backstanding"
+	case position.Mount:
+		return "mount"
+	case position.SideControl:
+		return "sidecontrol"
+	case position.KneeOnBelly:
+		return "kob"
+	case position.NorthSouth:
+		return "ns"
+	case position.Crucifix:
+		return "crucifix"
+	case position.BackGround:
+		return "background"
+	case position.HalfGuard:
+		return "halfguard"
+	case position.Guard:
+		return "guard"
+	case position.Turtle:
+		return "turtle"
+	case position.Standing:
+		return "standing"
+	}
+	return "unknown"
+}
+
+// holdKeyForState picks the right hold-template key for a source state.
+func holdKeyForState(s position.State) string {
+	switch s {
+	case position.Clinch:
+		return "clinch_hold"
+	case position.Guard:
+		return "guard_hold"
+	case position.Turtle:
+		return "turtle_hold"
+	case position.BackStanding:
+		return "backstanding_hold"
+	default:
+		// Everything else is a ground position.
+		return "ground_hold_generic"
+	}
+}
+
+// characterDisplayName returns the name wrapped with the appropriate
+// ANSI color tag (username for players, mobname for mobs).
+func characterDisplayName(c *characters.Character) string {
+	if c.GetUserId() > 0 {
+		return fmt.Sprintf(`<ansi fg="username">%s</ansi>`, c.Name)
+	}
+	return fmt.Sprintf(`<ansi fg="mobname">%s</ansi>`, c.Name)
+}
+
+// sendToCharacter sends a text message to a player character.
+// For mobs, no-op — NPCs don't have a stdout. Uses the existing
+// userForCharacter helper from Position_Messaging.go (same package).
+func sendToCharacter(c *characters.Character, msg string) {
+	if u := userForCharacter(c); u != nil {
+		u.SendText(msg)
+	}
+	// Mobs don't receive text.
+}
+
+// broadcastToRoomExcluding sends a text message to every user in the
+// room except controller and controlled. Follows the pattern from
+// sendSubmissionTriple in Position_Messaging.go.
+func broadcastToRoomExcluding(controller, controlled *characters.Character,
+	msg string) {
+	roomId := 0
+	if controller != nil {
+		roomId = controller.RoomId
+	}
+	if roomId == 0 && controlled != nil {
+		roomId = controlled.RoomId
+	}
+	if roomId == 0 {
+		return
+	}
+	r := rooms.LoadRoom(roomId)
+	if r == nil {
+		return
+	}
+	var excludeIds []int
+	if controller != nil && controller.GetUserId() > 0 {
+		excludeIds = append(excludeIds, controller.GetUserId())
+	}
+	if controlled != nil && controlled.GetUserId() > 0 {
+		excludeIds = append(excludeIds, controlled.GetUserId())
+	}
+	switch len(excludeIds) {
+	case 0:
+		r.SendText(msg)
+	case 1:
+		r.SendText(msg, excludeIds[0])
+	default:
+		r.SendText(msg, excludeIds[0], excludeIds[1])
+	}
 }
 
 // grappleStaminaMultiplier returns a penalty multiplier in (1-max, 1].
@@ -300,4 +592,6 @@ func applyGrappleStaminaCost(controller, controlled *characters.Character, cfg c
 
 func init() {
 	events.RegisterListener(events.NewRound{}, processGrappleTick)
+	// Template library loaded lazily on first use via loadGrappleLib()
+	// to avoid mudlog nil-pointer panics during test package init.
 }
