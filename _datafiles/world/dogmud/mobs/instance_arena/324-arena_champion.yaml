@@ -2,6 +2,8 @@ mobid: 324
 zone: Instance Arena
 archetype: fighting
 behavior_archetype: leader
+submission_policy: lethal
+surrender_policy: never
 routine: arena_gauntlet
 statpool: 4
 hostile: true

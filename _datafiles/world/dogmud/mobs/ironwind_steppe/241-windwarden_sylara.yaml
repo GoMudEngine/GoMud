@@ -1,5 +1,7 @@
 mobid: 241
 behavior_archetype: boss_sylara
+submission_policy: lethal
+surrender_policy: never
 zone: Ironwind Steppe
 statpool: 110
 itemdropchance: 0

@@ -1,5 +1,7 @@
 mobid: 242
 behavior_archetype: boss_rhett
+submission_policy: lethal
+surrender_policy: never
 zone: Ironwind Steppe
 statpool: 90
 itemdropchance: 0
