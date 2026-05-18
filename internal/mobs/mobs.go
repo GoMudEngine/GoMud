@@ -153,6 +153,8 @@ type Mob struct {
 	ScatterRounds           int    `yaml:"-"` // Rounds remaining where mob skips wander (after alpha death)
 	crafterLastRestockRound uint64 // Last round materials were restocked (transient)
 	BehaviorArchetype       string `yaml:"behavior_archetype,omitempty"` // Archetype name (e.g., "melee_self_buff") — resolved to behaviors/archetypes/<name>.yaml if per-mob tree absent.
+	SubmissionPolicy        string `yaml:"submission_policy,omitempty"`  // chunk 4d T12: override archetype default; "mercy"/"subdue"/"cripple"/"lethal"
+	SurrenderPolicy         string `yaml:"surrender_policy,omitempty"`   // chunk 4d T12: override archetype default; "never"/"always"/"auto-tap-below <N>"
 	BTreeState              any    `yaml:"-"`                            // Behavior tree per-instance state (*behaviortree.BehaviorState)
 	tempDataStore           map[string]any
 	conversationId          int              // Identifier of conversation currently involved in.
@@ -331,6 +333,28 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 		mob.Character.IsMob = true
 		mob.Character.MobInstanceId = newInstanceId
 		mob.Character.PlayerDamage = make(map[int]int)
+
+		// Chunk 4d T12: submission policy from YAML override or archetype default.
+		if mob.SubmissionPolicy != "" {
+			if p, ok := characters.ParseSubmissionPolicy(mob.SubmissionPolicy); ok {
+				mob.Character.SubmissionPolicy = p
+			} else {
+				mudlog.Warn("MobSpawn", "msg", "invalid submission_policy", "mobId", mob.MobId, "value", mob.SubmissionPolicy)
+				mob.Character.SubmissionPolicy = characters.DefaultSubmissionPolicyForArchetype(mob.BehaviorArchetype)
+			}
+		} else {
+			mob.Character.SubmissionPolicy = characters.DefaultSubmissionPolicyForArchetype(mob.BehaviorArchetype)
+		}
+		if mob.SurrenderPolicy != "" {
+			if p, ok := characters.ParseSurrenderPolicy(mob.SurrenderPolicy); ok {
+				mob.Character.SurrenderPolicy = p
+			} else {
+				mudlog.Warn("MobSpawn", "msg", "invalid surrender_policy", "mobId", mob.MobId, "value", mob.SurrenderPolicy)
+				mob.Character.SurrenderPolicy = characters.DefaultSurrenderPolicyForArchetype(mob.BehaviorArchetype)
+			}
+		} else {
+			mob.Character.SurrenderPolicy = characters.DefaultSurrenderPolicyForArchetype(mob.BehaviorArchetype)
+		}
 
 		// State-machine pointers and the OnCharacterCreated wiring
 		// guard are shallow-copied above. Null them out so the

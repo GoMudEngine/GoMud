@@ -1696,6 +1696,171 @@ func TestMobSpawn_IntrinsicStackingWithAcquired(t *testing.T) {
 	}
 }
 
+// ─── Submission / Surrender policy at spawn ──────────────────────────────────
+
+// TestNewMobById_SubmissionPolicyFromArchetypeDefault verifies that a mob
+// with no submission_policy YAML override inherits the archetype default
+// when spawned via NewMobById.
+func TestNewMobById_SubmissionPolicyFromArchetypeDefault(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	// Seed a mob with BehaviorArchetype "civilian" → expects PolicyMercy.
+	mobsMu.Lock()
+	mobs[50] = &Mob{
+		MobId:             50,
+		Zone:              "Test",
+		StatPool:          10,
+		ActivityLevel:     50,
+		BehaviorArchetype: "civilian",
+		Character: characters.Character{
+			Name:      "Test Civilian",
+			SpeciesId: 0,
+		},
+	}
+	mobsMu.Unlock()
+
+	mob := NewMobById(50, 100)
+	if mob == nil {
+		t.Fatal("NewMobById returned nil for mob 50")
+	}
+	defer DestroyInstance(mob.InstanceId)
+
+	assert.Equal(t, characters.PolicyMercy, mob.Character.SubmissionPolicy,
+		"civilian archetype should default to PolicyMercy")
+	assert.Equal(t, characters.SurrenderAlways, mob.Character.SurrenderPolicy.Mode,
+		"civilian archetype should default to SurrenderAlways")
+}
+
+// TestNewMobById_SubmissionPolicyDefaultFallback verifies that a mob with
+// no BehaviorArchetype (blank) falls through to the generic_fighter default.
+func TestNewMobById_SubmissionPolicyDefaultFallback(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	// Mob 4 (Ghostly Wisp) has no BehaviorArchetype set → generic default.
+	mob := NewMobById(4, 100)
+	if mob == nil {
+		t.Fatal("NewMobById returned nil for mob 4")
+	}
+	defer DestroyInstance(mob.InstanceId)
+
+	// "" archetype → DefaultSubmissionPolicyForArchetype("") → PolicySubdue
+	assert.Equal(t, characters.PolicySubdue, mob.Character.SubmissionPolicy,
+		"blank archetype should default to PolicySubdue")
+	// "" archetype → DefaultSurrenderPolicyForArchetype("") → SurrenderAutoTap
+	assert.Equal(t, characters.SurrenderAutoTap, mob.Character.SurrenderPolicy.Mode,
+		"blank archetype should default to SurrenderAutoTap")
+}
+
+// TestNewMobById_SubmissionPolicyYAMLOverride verifies that a mob with a
+// valid submission_policy YAML field uses that value rather than the
+// archetype default.
+func TestNewMobById_SubmissionPolicyYAMLOverride(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	// Seed a mob with BehaviorArchetype "predator" (default → PolicySubdue)
+	// but YAML override "lethal".
+	mobsMu.Lock()
+	mobs[51] = &Mob{
+		MobId:             51,
+		Zone:              "Test",
+		StatPool:          10,
+		ActivityLevel:     50,
+		BehaviorArchetype: "predator",
+		SubmissionPolicy:  "lethal",
+		SurrenderPolicy:   "never",
+		Character: characters.Character{
+			Name:      "Test Predator",
+			SpeciesId: 0,
+		},
+	}
+	mobsMu.Unlock()
+
+	mob := NewMobById(51, 100)
+	if mob == nil {
+		t.Fatal("NewMobById returned nil for mob 51")
+	}
+	defer DestroyInstance(mob.InstanceId)
+
+	assert.Equal(t, characters.PolicyLethal, mob.Character.SubmissionPolicy,
+		"YAML override 'lethal' should win over predator archetype default (subdue)")
+	assert.Equal(t, characters.SurrenderNever, mob.Character.SurrenderPolicy.Mode,
+		"YAML override 'never' should win over predator archetype default")
+}
+
+// TestNewMobById_SubmissionPolicyInvalidFallsBack verifies that an invalid
+// YAML submission_policy value logs a warning and falls back to the archetype
+// default rather than panicking or using the zero value.
+func TestNewMobById_SubmissionPolicyInvalidFallsBack(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	// Seed a mob with an invalid policy string; BehaviorArchetype "leader"
+	// → archetype default is PolicyCripple.
+	mobsMu.Lock()
+	mobs[52] = &Mob{
+		MobId:             52,
+		Zone:              "Test",
+		StatPool:          10,
+		ActivityLevel:     50,
+		BehaviorArchetype: "leader",
+		SubmissionPolicy:  "eviscerate", // invalid
+		SurrenderPolicy:   "bogus",      // invalid
+		Character: characters.Character{
+			Name:      "Test Leader",
+			SpeciesId: 0,
+		},
+	}
+	mobsMu.Unlock()
+
+	mob := NewMobById(52, 100)
+	if mob == nil {
+		t.Fatal("NewMobById returned nil for mob 52")
+	}
+	defer DestroyInstance(mob.InstanceId)
+
+	// Invalid → falls back to archetype default for "leader" → PolicyCripple
+	assert.Equal(t, characters.PolicyCripple, mob.Character.SubmissionPolicy,
+		"invalid YAML override should fall back to leader archetype default (cripple)")
+	// Invalid surrender → falls back to "leader" archetype default → SurrenderNever
+	assert.Equal(t, characters.SurrenderNever, mob.Character.SurrenderPolicy.Mode,
+		"invalid surrender YAML override should fall back to leader archetype default (never)")
+}
+
+// TestMob_SubmissionPolicyYAMLRoundtrip verifies the two new fields survive
+// a yaml.Unmarshal round-trip on the Mob struct.
+func TestMob_SubmissionPolicyYAMLRoundtrip(t *testing.T) {
+	src := `mobid: 9999
+zone: Test
+submission_policy: cripple
+surrender_policy: never
+`
+	var m Mob
+	if err := yaml.Unmarshal([]byte(src), &m); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if m.SubmissionPolicy != "cripple" {
+		t.Errorf("SubmissionPolicy = %q, want cripple", m.SubmissionPolicy)
+	}
+	if m.SurrenderPolicy != "never" {
+		t.Errorf("SurrenderPolicy = %q, want never", m.SurrenderPolicy)
+	}
+
+	// Defaults to blank when omitted.
+	var m2 Mob
+	if err := yaml.Unmarshal([]byte("mobid: 9998\n"), &m2); err != nil {
+		t.Fatalf("unmarshal m2: %v", err)
+	}
+	if m2.SubmissionPolicy != "" {
+		t.Errorf("SubmissionPolicy default = %q, want empty", m2.SubmissionPolicy)
+	}
+	if m2.SurrenderPolicy != "" {
+		t.Errorf("SurrenderPolicy default = %q, want empty", m2.SurrenderPolicy)
+	}
+}
+
 // TestMobSpawn_CuratedGateSkipsIncompatibleMutation verifies that the curated
 // SpawnMutations gate (in newMobByIdInternal) correctly filters out mutations
 // that require body parts the species lacks. This exercises the gate logic
