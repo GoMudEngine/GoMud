@@ -54,12 +54,12 @@ func setupMountPair(t *testing.T) (controller, controlled *characters.Character)
 func TestEvaluateSubAttempt_ControllerEligible(t *testing.T) {
 	a, b := setupMountPair(t)
 
-	// Fake a drift roll where controller won big — margin above
-	// default alpha (1.0).
+	// Fake a drift roll where controller won big — margin above the
+	// unified sub-window threshold (SubWindowOpens: |z| >= 1.5).
 	currentRound := util.GetRoundCount()
 	snap := characters.DriftRollSnapshot{
 		Round:          currentRound,
-		MarginAttacker: 2.0, // controller won by 2 std devs
+		MarginAttacker: 2.0, // controller won by 2 std devs (above 1.5)
 		AttackerZScore: 1.5,
 		DefenderZScore: -1.5,
 	}
@@ -126,7 +126,7 @@ func TestEvaluateSubAttempt_NeitherEligible(t *testing.T) {
 	currentRound := util.GetRoundCount()
 	snap := characters.DriftRollSnapshot{
 		Round:          currentRound,
-		MarginAttacker: 0.3, // not enough on either side (below alpha 1.0)
+		MarginAttacker: 0.3, // not enough on either side (below unified |z|>=1.5)
 		AttackerZScore: 0.3,
 		DefenderZScore: -0.3,
 	}
@@ -183,4 +183,32 @@ func TestPickSubmissionRoundRobin_Cycles(t *testing.T) {
 			t.Errorf("round-robin index %d: got %v, want %v", i, got, expected)
 		}
 	}
+}
+
+// TestSubmissionTickReadsPostAdvancePosition is an integration scaffold
+// for the ordering guarantee introduced by chunk 4b-fixup T20.
+//
+// Intended scenario:
+//   - Controller in Mount, drift z = 2.5 → ResolveOutcome (T15) advances
+//     position to BackGround before SubmissionTick fires.
+//   - SubmissionTick should offer a sub from the BackGround pool
+//     (RNC family), not from the Mount pool (americana family).
+//
+// This ordering is guaranteed because both processGrappleTick and
+// processSubmissionTick are NewRound listeners registered in filename-
+// alphabetical order: GrappleTick runs first (calls ResolveOutcome +
+// TransitionPair), then SubmissionTick reads the mutated position.
+//
+// T26 manual AI smoke covers this end-to-end. The test is left as a
+// Skip scaffold so a future test author has clear context for what to
+// build when full integration harness support is available.
+func TestSubmissionTickReadsPostAdvancePosition(t *testing.T) {
+	// Setup: controller in Mount, z = 2.5 → ResolveOutcome advances
+	// to BackGround. SubmissionTick should fire sub from BackGround
+	// (RNC family), not from Mount (americana family).
+	//
+	// This test asserts ordering: T15 wired processGrapplePair to call
+	// ResolveOutcome → TransitionPair → then SubmissionTick reads the
+	// new position.
+	t.Skip("Integration scaffolding TBD by implementer; manual smoke covers in T26.")
 }

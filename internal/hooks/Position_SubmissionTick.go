@@ -107,15 +107,20 @@ func processSubmissionTickForChar(c *characters.Character) {
 // the attempter (top = controller, bottom = controlled) and whether
 // eligible.
 //
-// Eligibility rules:
-//   - Top (controller): drift MarginAttacker > alpha AND top-attack
-//     subs are available at this position+control-level.
-//   - Bottom (controlled): (-MarginAttacker) > alpha OR
-//     DefenderZScore >= critZ, AND bottom-attack subs are available.
+// Eligibility rules (chunk 4b-fixup T20: gate unified to SubWindowOpens):
+//   - Top (controller): position.SubWindowOpens(MarginAttacker) AND
+//     top-attack subs are available at this position.
+//   - Bottom (controlled): position.SubWindowOpens(-MarginAttacker) OR
+//     DefenderZScore >= critZ (config-tunable shortcut), AND bottom-
+//     attack subs are available at this position.
+//
+// position.SubWindowOpens uses the canonical |z| >= 1.5 threshold
+// (subWindowAlpha in internal/state/position/outcomes.go), replacing
+// the former config-driven SubmissionAttemptAlpha (default 1.0).
 //
 // At most one side passes per round — the drift roll has one winner.
-// If both sides qualify (wide alpha + crit shortcut edge case),
-// the side with the larger absolute z-score wins the tiebreak.
+// If both sides qualify (wide gate + crit shortcut edge case), the
+// side with the larger absolute z-score wins the tiebreak.
 //
 // Returns (RoleTop, false) as the zero-value non-eligible result so
 // callers can safely ignore the role when eligible==false.
@@ -131,8 +136,14 @@ func EvaluateSubAttempt(controller, controlled *characters.Character) (combat.Ro
 		return combat.RoleTop, false // stale or missing snapshot
 	}
 
+	// critZ remains config-driven (defender crit shortcut is a tunable
+	// design knob independent of the sub-window threshold).
+	// The sub-window threshold itself is now read from the canonical
+	// position.SubWindowOpens gate (|z| >= 1.5) rather than from the
+	// old SubmissionAttemptAlpha config field (which defaulted to 1.0).
+	// Using the unified gate keeps chunk-4d in lock-step with the
+	// chunk 4b-fixup outcome dispatcher.
 	cfg := configs.GetBalanceConfig()
-	alpha := float64(cfg.SubmissionAttemptAlpha)
 	critZ := float64(cfg.SubmissionAttemptCritZ)
 
 	posState := controller.Position.State()
@@ -142,9 +153,11 @@ func EvaluateSubAttempt(controller, controlled *characters.Character) (combat.Ro
 	}
 
 	// Top eligibility: controller won drift roll big AND top subs available.
-	// IsTopSubEligible now takes IsControllerRole bool.
+	// Uses position.SubWindowOpens (unified |z| >= 1.5 gate) instead of
+	// the former config-driven SubmissionAttemptAlpha (was 1.0).
 	topOK := false
-	if position.IsTopSubEligible(posState, ctrlData.IsControllerRole) && snap.MarginAttacker > alpha {
+	if position.IsTopSubEligible(posState, ctrlData.IsControllerRole) &&
+		position.SubWindowOpens(snap.MarginAttacker) {
 		topOK = true
 	}
 
@@ -155,7 +168,7 @@ func EvaluateSubAttempt(controller, controlled *characters.Character) (combat.Ro
 	cdData, cdOK := controlled.Position.GrappleData()
 	if cdOK {
 		if position.IsBottomSubEligible(posState, cdData.IsControllerRole) {
-			if bottomMargin > alpha || snap.DefenderZScore >= critZ {
+			if position.SubWindowOpens(bottomMargin) || snap.DefenderZScore >= critZ {
 				bottomOK = true
 			}
 		}
