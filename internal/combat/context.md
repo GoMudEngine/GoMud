@@ -187,11 +187,9 @@ penalty profile via `IsProne() || IsSupine()` reads in
    `IsProne() || IsSupine()` and reads `MinRecoveryRounds` from
    `ProneData` / `SupineData`. Decrements via
    `Position.ConsumeRecoveryRound()` (mutates the per-state slot in
-   place; analogous to `MutateGrappleControlLevel`). On success fires
-   `Position.TransitionToStanding(TriggerRecoveryRoll)` plus the legacy
-   parallel-write. Called every round via `NewRound_UserRoundTick`
-   and `NewRound_MobRoundTick`. Failed attempts add
-   `ConditionRecoveryPenalty` (limits attacks to 1).
+   place). On success fires `Position.TransitionToStanding(TriggerRecoveryRoll)`.
+   Called every round via `NewRound_UserRoundTick` and `NewRound_MobRoundTick`.
+   Failed attempts add `ConditionRecoveryPenalty` (limits attacks to 1).
 
 2. **Manual recovery** — `stand` command (`internal/usercommands/stand.go`)
    - Costs `StandStaminaCost` (config, 15% of max). Requires
@@ -206,18 +204,18 @@ penalty profile via `IsProne() || IsSupine()` reads in
 
 The 11 grapple states (Clinch, BackStanding, Mount, SideControl,
 KneeOnBelly, NorthSouth, Crucifix, BackGround, HalfGuard, Guard,
-Turtle) and the per-grappler **control axis**
-(`ControlLevel: InControl ↔ LosingControl ↔ Neutral ↔ BecomingControlled ↔ Controlled`)
-live in `internal/state/position/`. Canonical doc:
-`internal/state/position/context.md`. Brief summary of how the combat
-package interacts:
+Turtle) live in `internal/state/position/`. Per-round control drift
+is resolved through outcome rolls (Hold / Advance / Degrade / Reversal /
+Escape), tracked via `GrappleData.IsControllerRole` bool. Canonical
+documentation: `internal/state/position/context.md`. Brief summary of
+how the combat package interacts:
 
 - **Per-round drift** — `Position_GrappleTick.go` (hooks package) fires
   the opposed Strength + Unarmed-combat roll each round, scaled by
-  stamina + encumbrance curves, and shifts `ControlLevel` via
-  `MutateGrappleControlLevel` (no FSM transition — the table forbids
-  `Mount→Mount`). Threshold crossings can fire follow-up position
-  transitions.
+  stamina + encumbrance curves. The roll result resolves via
+  `position.ResolveOutcome` to one of five tiers (Hold / Advance /
+  Degrade / Reversal / Escape), which may trigger position transitions.
+  See `internal/state/position/context.md` for the outcome model.
 - **Per-round stamina cost** — `GrappleStaminaCostPerRound` × a
   per-role multiplier (controller 1.0x, controlled 2.0x by default;
   asymmetry is the "smother" feedback loop).

@@ -271,10 +271,13 @@ need finer-grained checks.
 
 **Chunk 4b — control-axis predicates (5):**
 
-Note: `mob_control_at_least` was deleted in chunk 4b-fixup T19. The
-`ControlLevel` gradient it depended on was removed in T18. Use
-`mob_is_in_control` / `mob_is_being_controlled` for binary controller
-checks, or `mob_low_grapple_stamina` for resource-based gating.
+Note: `mob_control_at_least` was deleted in chunk 4b-fixup T19. The old
+`ControlLevel` gradient (a five-tier drift needle) was removed in T18
+and replaced with a simpler per-round outcome model (Hold / Advance /
+Degrade / Reversal / Escape) and `GrappleData.IsControllerRole` bool.
+Use `mob_is_in_control` / `mob_is_being_controlled` for binary
+controller checks, or `mob_low_grapple_stamina` for resource-based
+gating.
 
 | Condition | Params | Description |
 |-----------|--------|-------------|
