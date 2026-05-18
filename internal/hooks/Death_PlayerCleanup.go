@@ -46,7 +46,9 @@ func wirePlayerDeathCleanup(c *characters.Character) {
 			// 2. Stat decay + skill rust — preserved normal-death
 			//    penalties. Guard matches suicide.go allowPenalties check.
 			allowPenalties := u.Character.GetTotalSkillRanks() > int(config.Death.ProtectionSkillRanks)
-			if allowPenalties {
+			// chunk 4d: skip deprogression for submission outcomes that
+			// intentionally leave the victim alive (subdue/cripple).
+			if allowPenalties && !d.NoDeprogression {
 				applyPlayerStatDecay(u, config)
 				applyPlayerSkillRust(u, config)
 			}

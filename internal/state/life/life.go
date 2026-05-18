@@ -42,6 +42,9 @@ type DeadData struct {
 	Reason    state.TransitionReason
 	Killer    state.ActorRef
 	DamageMap map[int]int // userId → damage; for kill-credit and party-share
+	// chunk 4d: submission outcome severity ladder
+	NoDeprogression  bool    // skip stat-decay step; set by subdue + cripple outcomes
+	GoldLossFraction float64 // 0 = full corpse loot; > 0 = transfer this fraction of gold to Killer, skip corpse
 }
 
 // RespawningData captures the in-flight respawn cycle.

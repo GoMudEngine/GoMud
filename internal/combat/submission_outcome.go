@@ -122,17 +122,16 @@ func applyMercyRelease(attempter, recipient *characters.Character) {
 	// recovery-debuff buff YAML is registered.
 }
 
-// applyDeathCascade calls the existing Die() entry point and stubs
-// the T8/T9 extensions clearly.
+// applyDeathCascade routes the victim through the Life cascade with
+// the T8 DeadData fields populated.
 //
-// noDeprogression — when true (subdue/cripple), the death cascade
-// should skip stat/skill rollback. T8 extends DeadData with this flag
-// and threads it through Death_PlayerCleanup + Death_PlayerCorpse.
-// Until T8 lands, the cascade runs as a normal death.
+// noDeprogression — when true (subdue/cripple), Death_PlayerCleanup
+// skips stat/skill rollback so the defender wakes at the temple without
+// losing training.
 //
 // brokenLimb + brokenBodyPart — when true (cripple with a joint sub),
 // a broken-limb buff is applied after the cascade. T9 wires the
-// actual buff id + YAML; for T7 the stub is a no-op.
+// actual buff id + YAML.
 func applyDeathCascade(
 	killer *characters.Character,
 	victim *characters.Character,
@@ -141,8 +140,6 @@ func applyDeathCascade(
 	brokenBodyPart string,
 ) {
 	cfg := configs.GetBalanceConfig()
-	// goldFrac is recorded here for T8; the actual gold transfer lands
-	// when DeadData gains the GoldLossFraction field.
 	goldFrac := 0.0
 	if noDeprogression {
 		goldFrac = float64(cfg.SubGoldLossFraction)
@@ -153,19 +150,55 @@ func applyDeathCascade(
 		MobInstanceId: killer.MobInstanceId,
 	}
 
-	// TriggerSubmission lets T8 observers distinguish this cascade from
-	// a normal combat-damage kill. Until T8 extends DeadData, downstream
-	// observers treat it the same as TriggerHealthZero.
-	victim.Die(killerRef, life.TriggerSubmission)
+	if !victim.IsAlive() {
+		return
+	}
 
-	// T8 stubs: extend DeadData with NoDeprogression + GoldLossFraction
-	// and modify Death_PlayerCleanup / Death_PlayerCorpse to read them.
-	_ = noDeprogression // T8: pass into DeadData
-	_ = goldFrac        // T8: pass into DeadData
+	damageSnapshot := snapshotVictimDamage(victim)
+
+	// Call TransitionToDead directly (instead of victim.Die) so we can
+	// populate the new T8 fields on DeadData. The Respawning + Alive
+	// transitions that follow mirror Die()'s player cascade.
+	_ = victim.Life.TransitionToDead(
+		life.DeadData{
+			Killer:           killerRef,
+			DamageMap:        damageSnapshot,
+			NoDeprogression:  noDeprogression,
+			GoldLossFraction: goldFrac,
+		},
+		state.TransitionReason{
+			Trigger: life.TriggerSubmission,
+			Actor:   killerRef,
+		},
+	)
+
+	// Players continue through the respawn cycle; mobs stop at Dead.
+	if victim.GetUserId() != 0 {
+		_ = victim.Life.TransitionToRespawning(
+			life.RespawningData{DestRoomId: victim.ResolveRespawnRoom()},
+			state.TransitionReason{Trigger: life.TriggerRespawnReady},
+		)
+		_ = victim.Life.TransitionToAlive(
+			state.TransitionReason{Trigger: life.TriggerRespawnComplete},
+		)
+	}
 
 	if brokenLimb {
 		applyBrokenLimbBuff(victim, brokenBodyPart)
 	}
+}
+
+// snapshotVictimDamage returns a shallow copy of the victim's
+// PlayerDamage map so the DeadData carries a stable snapshot.
+func snapshotVictimDamage(victim *characters.Character) map[int]int {
+	if len(victim.PlayerDamage) == 0 {
+		return nil
+	}
+	dst := make(map[int]int, len(victim.PlayerDamage))
+	for k, v := range victim.PlayerDamage {
+		dst[k] = v
+	}
+	return dst
 }
 
 // applyBrokenLimbBuff applies the chunk-4d broken-limb buff (id 83).

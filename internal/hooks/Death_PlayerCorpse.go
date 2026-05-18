@@ -3,6 +3,7 @@ package hooks
 import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
@@ -31,6 +32,16 @@ func wirePlayerCorpse(c *characters.Character) {
 				return
 			}
 
+			d, _ := c.Life.DeadData()
+
+			// chunk 4d: partial gold transfer — skip full corpse creation
+			// when GoldLossFraction > 0 (subdue/cripple submission outcomes).
+			// The victim wakes at the temple poorer but without a lootable corpse.
+			if d.GoldLossFraction > 0 && !d.Killer.IsZero() {
+				transferPartialGold(c, d.Killer, d.GoldLossFraction)
+				return
+			}
+
 			config := configs.GetGamePlayConfig()
 			if !config.Death.CorpsesEnabled {
 				return
@@ -50,6 +61,31 @@ func wirePlayerCorpse(c *characters.Character) {
 				RoundCreated: util.GetRoundCount(),
 			})
 		})
+}
+
+// transferPartialGold moves a fraction of the dying character's gold
+// to the killer (player or mob). Used by chunk-4d subdue and cripple
+// outcomes that intentionally leave the victim alive but poorer.
+// No corpse is created in the calling branch.
+func transferPartialGold(victim *characters.Character, killerRef state.ActorRef, fraction float64) {
+	if fraction <= 0 || fraction > 1.0 || victim.Gold <= 0 {
+		return
+	}
+	loss := int(float64(victim.Gold) * fraction)
+	if loss < 1 {
+		loss = 1
+	}
+	victim.Gold -= loss
+	switch {
+	case killerRef.UserId > 0:
+		if u := users.GetByUserId(killerRef.UserId); u != nil {
+			u.Character.Gold += loss
+		}
+	case killerRef.MobInstanceId > 0:
+		if m := mobs.GetInstance(killerRef.MobInstanceId); m != nil {
+			m.Character.Gold += loss
+		}
+	}
 }
 
 func init() {
