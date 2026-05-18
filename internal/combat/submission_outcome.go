@@ -220,6 +220,8 @@ func applyBrokenLimbBuff(victim *characters.Character, bodyPart string) {
 // in T10. Stub for T7 — full implementation lands in T10 after the
 // buff YAML is registered.
 func applyStunnedBuff(c *characters.Character) {
-	// T10: c.AddBuff(84) — buff id 84 = submission-stunned (T10 yaml)
-	_ = c
+	if c == nil {
+		return
+	}
+	_ = c.AddBuff(84, false)
 }

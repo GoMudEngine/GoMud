@@ -1,0 +1,12 @@
+buffid: 84
+name: Stunned
+description: |
+  A particularly brutal submission left you reeling — you can't mount
+  any meaningful attack or defense this round.
+triggerrate: 1 round
+triggercount: 1
+statmods:
+  defense: -50
+  combatmodifier: -75
+start_user_text: '<ansi fg="red">The submission''s pressure leaves you stunned, unable to react.</ansi>'
+end_user_text: '<ansi fg="green">You shake off the stun and regain your composure.</ansi>'
