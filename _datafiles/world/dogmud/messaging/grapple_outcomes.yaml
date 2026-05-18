@@ -699,7 +699,80 @@ degradations:
         \ second leg free; full guard closes."
       - "{controlledName} bridges and shrimps the knee clear;\
         \ {controllerName}'s half guard becomes full guard."
-reversals: {}
+reversals:
+  # ── Mount Reversal ──────────────────────────────────────────────────────────
+  # Bridge-and-roll: former controller tumbles forward into closed guard.
+  mount_reverse:
+    controller:
+      - "{controlledName} bridges and you tumble forward — they roll up\
+        \ between your legs and now you're in their guard."
+      - "Your base evaporates. {controlledName} bucks you off and comes up\
+        \ between your legs — full guard."
+      - "Hooks dig under your hips and lift; you cartwheel forward into their\
+        \ guard."
+    controlled:
+      - "You bridge hard, post on the temple, and roll {controllerName}\
+        \ between your legs — full guard, you're on top."
+      - "Hips up, frame on the chin, sweep the post. {controllerName}\
+        \ tumbles forward into your guard."
+      - "You time the buck and lift the hooks — {controllerName} cartwheels\
+        \ off you and lands in your closed guard."
+    observers:
+      - "{controlledName} bridges and rolls {controllerName} forward into a\
+        \ guard reversal — top and bottom flip."
+      - "{controlledName} times a buck and sweeps {controllerName} into\
+        \ closed guard, reversing the mount."
+      - "{controllerName} cartwheels off {controlledName}'s bridge and\
+        \ lands in their guard."
+
+  # ── BackGround Reversal ─────────────────────────────────────────────────────
+  # Turn-in-and-pin: defender peels the hook, spins into attacker, mounts.
+  background_reverse:
+    controller:
+      - "You lose the hooks — {controlledName} peels your top hook and spins\
+        \ into you. They land in mount before you can recover."
+      - "{controlledName} rolls toward your near hook. You can't readjust in\
+        \ time and they end up sitting on your chest."
+      - "The seatbelt breaks. {controlledName} turns inside and you find\
+        \ yourself pinned flat under mount."
+    controlled:
+      - "You peel the top hook, rotate hard into {controllerName}, and sit\
+        \ on their chest in mount. Back mount is gone."
+      - "You roll toward {controllerName}'s near side, drag the hook down,\
+        \ and come up on top — mount."
+      - "You spin inside the seatbelt before {controllerName} can tighten\
+        \ it. They go flat; you land in mount."
+    observers:
+      - "{controlledName} peels {controllerName}'s hook and spins inside,\
+        \ landing in mount — back mount reversed."
+      - "{controlledName} rolls toward the near hook and comes up in mount\
+        \ on {controllerName}."
+      - "{controlledName} turns into {controllerName}'s seatbelt grip and\
+        \ pins them flat in mount."
+
+  # ── Generic Reversal ────────────────────────────────────────────────────────
+  # Role-swap in the same geometry; no position-specific move named.
+  generic_reverse:
+    controller:
+      - "{controlledName} finds the leverage you missed. The position flips\
+        \ and suddenly they're the one in control."
+      - "A scramble, a shift — and you're on the wrong end of the pin."
+      - "You held it a half-second too long. {controlledName} reverses the\
+        \ position and pins you down."
+    controlled:
+      - "You find the angle and force the reversal — {controllerName} is\
+        \ now the one pinned."
+      - "You exploit the opening. The pressure reverses and you're on top,\
+        \ in control."
+      - "A sharp change of direction and {controllerName}'s control evaporates.\
+        \ You've reversed the position."
+    observers:
+      - "{controlledName} reverses the position on {controllerName},\
+        \ claiming control."
+      - "{controlledName} exploits a gap and flips the pin — roles swap."
+      - "{controllerName} held the position a moment too long;\
+        \ {controlledName} reverses it."
+
 escapes: {}
 holds: {}
 striking_apex: {}
