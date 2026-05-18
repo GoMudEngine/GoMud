@@ -2431,16 +2431,6 @@ func TestMap(t *testing.T) {
 	})
 }
 
-func TestSubmit(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, room := getTestUserAndRoom(t)
-	handled, err := Submit("", user, room, 0)
-	assert.True(t, handled)
-	assert.NoError(t, err)
-}
-
 func TestTrack(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
@@ -4546,40 +4536,6 @@ func TestAdminBuffDeep(t *testing.T) {
 		handled, err := Buff("100", user, room, 0)
 		assert.True(t, handled)
 		_ = err
-	})
-}
-
-// ─── Submit deep coverage ───────────────────────────────────────────────────
-
-func TestSubmitDeep(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, room := getTestUserAndRoom(t)
-
-	t.Run("not_in_combat", func(t *testing.T) {
-		handled, err := Submit("", user, room, 0)
-		assert.True(t, handled)
-		assert.NoError(t, err)
-	})
-
-	t.Run("in_combat_not_grounded", func(t *testing.T) {
-		user.Character.Aggro = &characters.Aggro{MobInstanceId: 100}
-		setCombatPositionParallel(user.Character, position.Standing)
-		handled, err := Submit("", user, room, 0)
-		assert.True(t, handled)
-		assert.NoError(t, err)
-		user.Character.Aggro = nil
-	})
-
-	t.Run("in_combat_grounded_not_controller", func(t *testing.T) {
-		user.Character.Aggro = &characters.Aggro{MobInstanceId: 100}
-		setCombatPositionParallel(user.Character, position.Mount)
-		handled, err := Submit("", user, room, 0)
-		assert.True(t, handled)
-		assert.NoError(t, err)
-		user.Character.Aggro = nil
-		setCombatPositionParallel(user.Character, position.Standing)
 	})
 }
 

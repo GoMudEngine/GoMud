@@ -705,19 +705,6 @@ func TestShowMob(t *testing.T) {
 	})
 }
 
-func TestSubmitMob(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	mob, room := getTestMobAndRoom(t)
-
-	t.Run("submit_not_in_combat", func(t *testing.T) {
-		handled, err := Submit("", mob, room)
-		assert.True(t, handled)
-		_ = err
-	})
-}
-
 func TestLookForTrouble(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
@@ -1128,29 +1115,6 @@ func TestAttackInCombat(t *testing.T) {
 }
 
 // ─── Deeper branch tests ────────────────────────────────────────────────────
-
-func TestSubmitInCombat(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	mob, room := getTestMobAndRoom(t)
-
-	// In combat but not grounded
-	mob.Character.Aggro = &characters.Aggro{UserId: 1}
-	setCombatPositionParallel(&mob.Character, position.Standing)
-	handled, err := Submit("", mob, room)
-	assert.True(t, handled)
-	_ = err
-
-	// In combat and grounded but not grapple controller
-	setCombatPositionParallel(&mob.Character, position.Mount)
-	handled, err = Submit("", mob, room)
-	assert.True(t, handled)
-	_ = err
-
-	mob.Character.Aggro = nil
-	setCombatPositionParallel(&mob.Character, position.Standing)
-}
 
 func TestWanderBranches(t *testing.T) {
 	cleanup := seedAllRegistries()

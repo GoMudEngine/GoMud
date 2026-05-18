@@ -23,15 +23,6 @@ type GrappleResult struct {
 	DefenseZScore   float64 // For reference (Stage 8.4)
 }
 
-// SubmissionResult represents the outcome of a submission attempt (Stage 8.6)
-type SubmissionResult struct {
-	Success      bool
-	Margin       float64
-	AttackZScore float64
-	Choice       string // "yield" or "resist"
-}
-
-
 // AttemptGrapple performs a grapple attempt from attacker to defender.
 // Returns a GrappleResult with the outcome and details.
 //
@@ -170,91 +161,6 @@ func IsThirdPartyAttack(attacker *characters.Character, target *characters.Chara
 		MobInstanceId: attacker.GetMobInstanceId(),
 	}
 	return d.Partner != attackerRef
-}
-
-// AttemptSubmission performs a submission attempt from controller to controlled.
-// Stage 8.6: High-risk finishing move requiring Grounded position.
-//
-// Submission calculation:
-// attackScore = controller.Str + controller.CombatSkill
-// defenseScore = controlled.Str + controlled.CombatSkill + (controlled.Dex / 2)
-//
-// Success threshold: z-score > 1.0 (harder than normal grapple)
-//
-// Note: Opponent choice logic (yield vs resist) is handled in the command handler
-// where we have access to player/mob distinction.
-func AttemptSubmission(controller *characters.Character, controlled *characters.Character) SubmissionResult {
-	result := SubmissionResult{}
-
-	// Base scores: Str + Combat Skill
-	controllerScore := float64(controller.Stats.Strength.ValueAdj) + float64(controller.GetCombatSkillLevel())
-	controlledScore := float64(controlled.Stats.Strength.ValueAdj) + float64(controlled.GetCombatSkillLevel()) +
-		(float64(controlled.Stats.Dexterity.ValueAdj) * 0.5) // Half dex bonus for escape attempts
-
-	// Opposed roll
-	success, margin, attackRoll, _ := dice.OpposedRollStat(controllerScore, controlledScore)
-
-	result.Margin = margin
-	result.AttackZScore = attackRoll.ZScore
-
-	// Success requires z-score > 1.0 (harder than normal grapple)
-	result.Success = success && attackRoll.ZScore > 1.0
-
-	return result
-}
-
-// ApplySubmissionFailure applies the consequences of a failed submission attempt.
-// Stage 8.6: Controller falls prone, controlled escapes to standing.
-// Chunk 4b W3 cutover: break the pair via TransitionPair → Standing,
-// then knock the controller down. Legacy CombatPosition / PositionRoundsMin
-// / GrappleControllerId stay in sync via parallel-write until S1.
-func ApplySubmissionFailure(controller *characters.Character, controlled *characters.Character) {
-	// FSM: break the grapple, then knock controller to Prone.
-	if err := position.TransitionPair(
-		controller, controlled, position.Standing,
-		state.TransitionReason{Trigger: position.TriggerGrappleBreak},
-	); err != nil {
-		mudlog.Warn("ApplySubmissionFailure: TransitionPair → Standing failed", "err", err)
-		return
-	}
-	_ = controller.Position.TransitionToProne(
-		position.ProneData{MinRecoveryRounds: 2},
-		state.TransitionReason{Trigger: position.TriggerKnockdownFaceForward},
-	)
-
-}
-
-// ApplySubmissionSuccess applies the consequences of a successful submission.
-// Stage 8.6: If opponent yields, combat ends. If resists, takes 2x damage and attempts escape.
-// Chunk 4b W3 cutover: on yield, break the pair via TransitionPair →
-// Standing, then knock the controlled side prone for 3 rounds. Resist
-// branch leaves position untouched (controlled stays in the grapple);
-// the per-round tick (T6) handles any subsequent escape.
-func ApplySubmissionSuccess(controller *characters.Character, controlled *characters.Character, choice string) {
-	if choice == "yield" {
-		// FSM: end the grapple, then knock the loser prone.
-		if err := position.TransitionPair(
-			controller, controlled, position.Standing,
-			state.TransitionReason{Trigger: position.TriggerGrappleBreak},
-		); err != nil {
-			mudlog.Warn("ApplySubmissionSuccess yield: TransitionPair → Standing failed", "err", err)
-			return
-		}
-		_ = controlled.Position.TransitionToProne(
-			position.ProneData{MinRecoveryRounds: 3},
-			state.TransitionReason{Trigger: position.TriggerKnockdownFaceForward},
-		)
-
-	} else {
-		// Resist: take damage based on controller's strength. Position
-		// unchanged — the per-round tick handles any subsequent escape.
-		baseDamage := float64(controller.Stats.Strength.ValueAdj)
-		damage := int(baseDamage * 2.0)
-		if damage < 1 {
-			damage = 1
-		}
-		controlled.Health -= damage
-	}
 }
 
 // CritFailureResult represents the outcome of a critical grapple failure (Stage 8.6)

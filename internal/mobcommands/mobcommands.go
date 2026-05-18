@@ -79,7 +79,6 @@ var (
 		"show":           {Show, false},
 		"sneak":          {Sneak, false},
 		"steal":          {Steal, false},
-		"submit":         {Submit, false},
 		"suicide":        {Suicide, true},
 		//		"stash":  {Stash, false},
 		"trip":    {Trip, false},
