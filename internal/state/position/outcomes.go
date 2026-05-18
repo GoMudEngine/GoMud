@@ -47,3 +47,92 @@ func OutcomeTierFromAbsZ(absZ float64) OutcomeTier {
 func SubWindowOpens(absZ float64) bool {
 	return absZ >= subWindowAlpha
 }
+
+// AdvancementTarget returns the position state to transition to when
+// the controller wins drift at the given tier, plus a `hold` flag
+// indicating "no position change" (status quo). Implements spec §6.1
+// table. For Clinch, defenderPosture determines the 1-step target.
+// defenderPosture is ignored for non-Clinch sources.
+//
+// For terminal-apex positions (Crucifix, BackGround) and the striking
+// apex (Mount at 1/2 step), returns (source, true). Sub-gate is the
+// caller's responsibility.
+func AdvancementTarget(source State, tier OutcomeTier, defenderPosture State) (target State, hold bool) {
+	if tier == TierHold {
+		return source, true
+	}
+
+	switch source {
+	case Clinch:
+		return clinchAdvancementTarget(tier, defenderPosture), false
+
+	case BackStanding:
+		return BackGround, false
+
+	case Mount:
+		if tier == TierThreeStep {
+			return BackGround, false
+		}
+		// 1-step + 2-step: striking apex Hold
+		return Mount, true
+
+	case SideControl, KneeOnBelly:
+		if tier == TierThreeStep {
+			return BackGround, false
+		}
+		return Mount, false
+
+	case NorthSouth:
+		switch tier {
+		case TierOneStep:
+			return SideControl, false
+		case TierTwoStep:
+			return Mount, false
+		default: // TierThreeStep
+			return BackGround, false
+		}
+
+	case Crucifix, BackGround:
+		// Terminal apex — sub-only, no position advance.
+		return source, true
+
+	case HalfGuard, Guard:
+		switch tier {
+		case TierOneStep:
+			return SideControl, false
+		case TierTwoStep:
+			return Mount, false
+		default: // TierThreeStep
+			return BackGround, false
+		}
+
+	case Turtle:
+		return BackGround, false
+	}
+
+	// Unexpected source state — treat as Hold to be safe.
+	return source, true
+}
+
+func clinchAdvancementTarget(tier OutcomeTier, defenderPosture State) State {
+	switch tier {
+	case TierOneStep:
+		switch defenderPosture {
+		case Prone:
+			return SideControl
+		case Supine:
+			return Mount
+		case Turtle:
+			return BackGround
+		default:
+			// BackStanding is also valid but reached only when the
+			// defender turned away mid-clinch; default fallthrough is
+			// Mount per spec §6.1.
+			return Mount
+		}
+	case TierTwoStep:
+		return Mount
+	default: // TierThreeStep
+		return BackGround
+	}
+}
