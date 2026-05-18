@@ -64,7 +64,7 @@
 | Behavior Matrix tests | NEW (T19) | PB-301..PB-341 across the various test files |
 | `tools/testing/audits/2026-05-18-chunk-4d-doc-helpfile-audit.md` | NEW (T20) | Doc audit deliverable |
 | Helpfiles + context.md (per audit) | MODIFY (T21) | Apply audit findings |
-| `COMBAT_STATE_ROADMAP.md` | MODIFY (T22) | Mark chunk 4d Done; add "Chunk 4d — Shipped" section |
+| `COMBAT_STATE_ROADMAP.md` | MODIFY (T23) | Mark chunk 4d Done; add "Chunk 4d — Shipped" section |
 
 ---
 
@@ -3213,52 +3213,208 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 
 ---
 
-## Task 21: Apply doc + helpfile updates
+## Task 21: Apply helpfile updates
 
 **Files:**
-- Modify: helpfiles + context.md files per audit
+- Modify: helpfiles per T20 audit (likely candidates: `grapple.template`, `combat.template`, `attack.template`, possibly `kick.template` / `bash.template` / `trip.template` if cross-references warranted)
 
-Walk the audit and apply each UPDATE.
+Walk the audit's helpfile section and apply each UPDATE. Context.md files are explicitly OUT OF SCOPE here — they're T22.
 
-- [ ] **Step 1: Apply audit findings to helpfiles**
+- [ ] **Step 1: Apply audit findings to each flagged helpfile**
 
-For each helpfile UPDATE flagged in T20:
-- Update prose
-- Verify ansi tags + 80-char wrap
+For each helpfile flagged UPDATE in T20:
+- Open the file
+- Apply the suggested copy from the audit (or adapt to fit the existing helpfile's structure)
+- Verify ansi tags are well-formed (no orphan `</ansi>` or missing fg attrs)
+- Verify 80-char line wrap is respected
+- Verify See Also cross-references are correct (most existing helpfiles will want new cross-links to `help submission` / `help surrender`)
 
-Likely candidates: `grapple.template` (mention submissions + policy reference), `combat.template` (brief overview line), `attack.template` (cross-reference).
+Likely candidates per the audit:
+- `grapple.template` — add a paragraph on submissions firing automatically at ground positions; cross-link to `help submission`
+- `combat.template` — brief overview mention of the submission system as a class of combat outcome
+- `attack.template` — cross-reference mention
+- `bash.template` / `kick.template` / `trip.template` — short notes if relevant; many will be KEEP-AS-IS
 
-- [ ] **Step 2: Apply audit findings to context.md files**
-
-For each context.md UPDATE flagged in T20:
-- `internal/combat/context.md` — add submission system section: roll formula, tier classification, policy matrix, broken-limb interaction
-- `internal/state/position/context.md` — add reference to submissions.go + the role-split mapping
-- `internal/hooks/context.md` — document Position_SubmissionTick + its dependency on Position_GrappleTick's snapshot
-- `internal/characters/context.md` — note SubmissionPolicy + SurrenderPolicy fields + LastDriftRoll snapshot
-- `internal/state/life/context.md` — document NoDeprogression + GoldLossFraction DeadData fields
-
-- [ ] **Step 3: Build verify (defensive)**
+- [ ] **Step 2: Spot-check rendered output**
 
 ```
-go build ./...
+git --no-pager grep -lE "<ansi[^>]*>[^<]*<ansi" _datafiles/world/dogmud/templates/help/ | head -5
 ```
+
+Expected: zero new orphan-tag offenders (any pre-existing hits are not 4d's responsibility).
+
+- [ ] **Step 3: Boot smoke + spot-check help output**
+
+```
+go build -o /tmp/dogmud-t21.exe . && /tmp/dogmud-t21.exe > /tmp/dogmud-t21.log 2>&1 &
+until grep -qE "Server Ready|panic" /tmp/dogmud-t21.log; do sleep 2; done
+grep -E "Server Ready|panic" /tmp/dogmud-t21.log | head -3
+taskkill //IM dogmud-t21.exe //F
+rm -f /tmp/dogmud-t21.exe /tmp/dogmud-t21.log
+```
+
+Expected: ready, no panic.
 
 - [ ] **Step 4: Commit**
 
 ```
-git add internal/ _datafiles/world/dogmud/templates/help/
-git commit -m "docs: T21 — chunk-4d helpfile + context.md updates
+git add _datafiles/world/dogmud/templates/help/
+git commit -m "docs(helpfiles): T21 — chunk-4d helpfile updates per T20 audit
 
-Per T20 audit findings. Updates the helpfile network for submissions
-and updates context.md files in combat, position, hooks, characters,
-and state/life packages.
+Updates [N] helpfiles flagged by the audit: [list]. New cross-links
+to help submission / help surrender from related combat helpfiles.
+80-char wrap + ansi convention preserved. Boot smoke clean.
 
 Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 ```
 
 ---
 
-## Task 22: Roadmap closeout
+## Task 22: Context.md sweep + updates
+
+**Files:**
+- Modify: `internal/combat/context.md` (biggest update — new submission system section)
+- Modify: `internal/state/position/context.md`
+- Modify: `internal/hooks/context.md`
+- Modify: `internal/characters/context.md`
+- Modify: `internal/state/life/context.md`
+- Modify: `internal/buffs/context.md` (if exists)
+- Modify: `internal/configs/context.md` (if exists)
+- Modify: `internal/behaviortree/context.md` (if exists — for the 3 new primitives)
+
+Same SOP as chunk 4c's T10 ("comprehensive context.md sweep"). The chunk-4d shipped surface is wide — combat + position + hooks + characters + life + buffs + configs + behaviortree all see new types / functions / behavior — so a dedicated context.md task ensures the in-source documentation network stays accurate.
+
+- [ ] **Step 1: Re-survey context.md files**
+
+T20's audit produced an inventory but this task verifies completeness. Run:
+
+```
+git --no-pager grep -nlE "submission|surrender|broken[ -]limb|SubmissionPolicy|SurrenderPolicy|NoDeprogression|GoldLossFraction|Position_SubmissionTick|SubTier|RollSubmissionAttempt|ResolveSubmissionOutcome|TopSubmissionsForPosition|BottomSubmissionsForPosition|IsTopSubEligible|IsBottomSubEligible" -- '**/context.md'
+```
+
+For each hit:
+- If the file documents a type / function / behavior that 4d added or changed → flag for UPDATE
+- If the file mentions the *legacy* submit command (now sunset per T18) → flag for UPDATE-to-historical or DELETE
+
+Cross-check against T20's audit; reconcile any gaps.
+
+- [ ] **Step 2: Update `internal/combat/context.md`** (largest update)
+
+This is the canonical doc for the new system. Add a major new section "Submission System (chunk 4d)" covering:
+- Overview paragraph: opportunistic per-round, gated on chunk-4b drift, symmetric (top + bottom)
+- Roll formula: `RollSubmissionAttempt` math + the SubSkillWeight knob
+- Tier classification table: bad / neutral / success / crit + their z-score thresholds
+- The four-policy outcome ladder + the death-cascade reuse (link to life context for NoDeprogression/GoldLossFraction)
+- Choke-degradation rule (cripple + choke → subdue, since chokes don't break limbs)
+- Bottom-sub asymmetry (sparser by design)
+- Broken-limb buff (id 83, duration-based, persists across respawn)
+- Submission-stunned buff (id 84, 1-round, only fires on crit + mercy)
+- Where it lives: `internal/combat/submission.go` + `internal/combat/submission_outcome.go`
+- Per-round observer: `internal/hooks/Position_SubmissionTick.go` (cross-ref hooks context)
+- Balance knobs table (7 knobs from T3)
+
+Aim for ~120 lines. Match the existing context.md voice (declarative present-tense, "the system does X" not "the system will do X").
+
+- [ ] **Step 3: Update `internal/state/position/context.md`**
+
+Add a "Submissions (chunk 4d)" subsection under the Status / Consumers area:
+- Reference to `internal/state/position/submissions.go`
+- The role-split mapping (top vs bottom attack subs)
+- The 7 SubmissionType enum values
+- Eligibility predicates (`IsTopSubEligible`, `IsBottomSubEligible`)
+- Cross-link to combat context.md for the consumer side
+
+Aim for ~40 lines.
+
+- [ ] **Step 4: Update `internal/hooks/context.md`**
+
+Add a "Position_SubmissionTick (chunk 4d)" subsection under the existing observer documentation:
+- Fires after Position_GrappleTick each round
+- Reads `Character.LastDriftRoll` snapshot (which Position_GrappleTick stashes — cross-link characters context)
+- Per-pair, per-side eligibility check (`EvaluateSubAttempt`)
+- Round-robin sub-type selection via `Character.LastSubmissionAttempted`
+- Calls `combat.RollSubmissionAttempt` + `combat.ResolveSubmissionOutcome`
+- Listener priority must run after `processGrappleTick`
+
+Aim for ~30 lines.
+
+- [ ] **Step 5: Update `internal/characters/context.md`**
+
+Add to the existing fields/predicates documentation:
+- `SubmissionPolicy` field (enum: Mercy / Subdue / Cripple / Lethal)
+- `SurrenderPolicy` field (struct: Mode + HpPctThreshold)
+- `LastDriftRoll DriftRollSnapshot` runtime-only field — what writes it (Position_GrappleTick) and what reads it (Position_SubmissionTick)
+- `LastSubmissionAttempted` round-robin index field
+- Default values: PolicySubdue + SurrenderAutoTap@15% for players; archetype-driven for mobs
+
+Aim for ~30 lines.
+
+- [ ] **Step 6: Update `internal/state/life/context.md`**
+
+Add to the DeadData documentation:
+- `NoDeprogression bool` — when true, `Death_PlayerCleanup` skips the stat-decay step. Chunk 4d uses this for subdue + cripple submission outcomes (defender wakes at temple without losing training).
+- `GoldLossFraction float64` — when > 0, `Death_PlayerCorpse` skips the full-corpse path and instead transfers that fraction of gold from victim to Killer.
+- Cross-link to combat context for the chunk-4d consumer side.
+
+Aim for ~20 lines.
+
+- [ ] **Step 7: Update `internal/buffs/context.md`** (if exists)
+
+If the buffs package has a context.md, note the two new buff registrations:
+- Buff 83 (broken_limb): duration-based, persists across respawn (`persistsafterdeath` flag), set by chunk-4d cripple outcomes
+- Buff 84 (submission_stunned): 1-round, set by chunk-4d crit + mercy outcomes
+
+If no context.md exists in buffs/, skip this step.
+
+- [ ] **Step 8: Update `internal/configs/context.md`** (if exists)
+
+If the configs package has a context.md, add the 7 chunk-4d balance knobs to whatever table or list documents balance config. If no context.md, skip.
+
+- [ ] **Step 9: Update `internal/behaviortree/context.md`** (if exists)
+
+If the behaviortree package has a context.md with a primitive list/table, add the 3 new chunk-4d primitives:
+- `mob_can_submit_top`
+- `mob_can_submit_bottom`
+- `mob_submission_policy_is <policy>`
+
+If no context.md, skip.
+
+- [ ] **Step 10: Build verify (defensive — doc-only changes shouldn't break it)**
+
+```
+go build ./...
+```
+
+Expected: clean.
+
+- [ ] **Step 11: Commit**
+
+```
+git add internal/combat/context.md internal/state/position/context.md internal/hooks/context.md internal/characters/context.md internal/state/life/context.md
+# Plus internal/buffs/context.md, internal/configs/context.md, internal/behaviortree/context.md IF they exist and were touched
+git commit -m "docs(position): chunk-4d context.md sweep
+
+Applies T20 audit findings to the context.md network:
+  - combat/context.md: new 'Submission System (chunk 4d)' section
+    covering roll formula, tier classification, policy ladder,
+    choke-degradation rule, asymmetry rationale, balance knobs
+  - state/position/context.md: role-split submission mapping reference
+  - hooks/context.md: Position_SubmissionTick observer documentation
+  - characters/context.md: SubmissionPolicy + SurrenderPolicy fields
+    + LastDriftRoll snapshot mechanics
+  - state/life/context.md: NoDeprogression + GoldLossFraction DeadData
+    field semantics
+  - [buffs/configs/behaviortree context.md updates if files exist]
+
+Present-tense post-cutover voice. Cross-references between packages
+keep the network consistent.
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
+```
+
+---
+
+## Task 23: Roadmap closeout
 
 **Files:**
 - Modify: `COMBAT_STATE_ROADMAP.md`
@@ -3347,8 +3503,9 @@ EOF
 | Legacy submit sunset | T18 |
 | Behavior Matrix | T19 |
 | Doc audit | T20 |
-| Doc updates | T21 |
-| Roadmap closeout | T22 |
+| Helpfile updates | T21 |
+| Context.md sweep + updates | T22 |
+| Roadmap closeout | T23 |
 
 All spec sections covered.
 
