@@ -8,9 +8,31 @@ available.
 <ansi fg="yellow">━━━ Grapple Positions ━━━</ansi>
 
 A grapple isn't a single state — it develops through positions as
-control shifts. Standing grapples (Clinch, BackStanding) are closer
-quarters than a normal fight. Ground grapples (Mount, Guard, Side
-Control, etc.) are tighter still.
+the struggle shifts. Standing grapples (Clinch, BackStanding) are
+closer quarters than a normal fight. Ground grapples (Mount,
+Guard, Side Control, etc.) are tighter still.
+
+Each round of a grapple resolves to one of five outcomes:
+
+  <ansi fg="stat">Hold</ansi>      Neither side gains ground; both fighters drain stamina
+            trading effort for nothing.
+
+  <ansi fg="stat">Advance</ansi>   You move to a more dominant position — closer to
+            the top, or taking the back.
+
+  <ansi fg="stat">Degrade</ansi>   You slip to a less dominant position; your opponent
+            has gained ground on you.
+
+  <ansi fg="stat">Reversal</ansi>  Your opponent takes over the controlling position
+            entirely.
+
+  <ansi fg="stat">Escape</ansi>    The grapple breaks; both fighters return to standing.
+
+Dominant positions like the Mount are striking apexes — the longer
+you hold one, the harder you can work your opponent. Taking the
+back (BackMount) requires a decisive advance. Submission attempts
+fire independently when you're decisively winning a round, from
+whatever position you currently hold.
 
 <ansi fg="yellow">━━━ Weapon Reach in Grapples ━━━</ansi>
 
@@ -37,9 +59,9 @@ Success is an opposed roll of Strength vs. the target's Strength
 and Dexterity. Grapple-immune creatures (e.g. elementals, oozes)
 cannot be grappled.
 
-When you establish dominant control in a grapple, the engine may
-fire a submission attempt automatically — no command needed. See
-<ansi fg="command">help submission</ansi>.
+When you decisively win a grapple round from a dominant position,
+the engine may fire a submission attempt automatically — no command
+needed. See <ansi fg="command">help submission</ansi>.
 
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help attack</ansi>,
   <ansi fg="command">help kick</ansi>, <ansi fg="command">help trip</ansi>,

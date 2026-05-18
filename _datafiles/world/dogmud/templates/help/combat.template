@@ -77,8 +77,8 @@ Tactical moves with cooldowns that can turn the tide:
 
 All share a <ansi fg="red">5-round cooldown</ansi>. Knockdowns apply prone.
 
-Submissions (joint locks, chokes) fire automatically when
-your control in a grapple is dominant. See
+Submissions (joint locks, chokes) fire automatically when you
+decisively win a grapple round from a dominant position. See
 <ansi fg="command">help submission</ansi>.
 
 <ansi fg="yellow">━━━ Target Switching ━━━</ansi>

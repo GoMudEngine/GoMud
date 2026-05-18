@@ -15,17 +15,18 @@ automatically adapts to the combat situation:
   extends how long they stay down. This is the payoff for
   knocking someone prone.
 
-<ansi fg="yellow">━━━ Knee (grapple, in control) ━━━</ansi>
+<ansi fg="yellow">━━━ Knee (grapple, dominant position) ━━━</ansi>
 
-  When you have control in a clinch or ground grapple, your
-  kick becomes a close-range knee strike. Strong damage that
-  works where kicks can't — and where long weapons struggle.
+  When you hold a dominant position in a clinch or ground
+  grapple, your kick becomes a close-range knee strike.
+  Strong damage that works where kicks can't — and where
+  long weapons struggle.
 
 <ansi fg="yellow">Usage: </ansi>
 
   <ansi fg="command">kick</ansi>       Auto-selects variant based on position.
   <ansi fg="command">stomp</ansi>      Alias for kick (stomps if target is prone).
-  <ansi fg="command">knee</ansi>       Alias for kick (knees if in grapple control).
+  <ansi fg="command">knee</ansi>       Alias for kick (knees if in dominant grapple position).
 
 Requires being in combat. Shares a cooldown with other
 special moves (bash, trip). Uses the <ansi fg="skill">unarmed-combat</ansi> skill.

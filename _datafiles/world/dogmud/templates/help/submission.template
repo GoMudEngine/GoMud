@@ -3,7 +3,8 @@
 When you grapple an opponent on the ground, your character may lock
 in a submission — a joint lock or choke that finishes the fight
 without further trading of blows. Submissions fire AUTOMATICALLY
-when your control is strong enough; you don't type a command.
+when you're decisively winning a grapple round; you don't type
+a command.
 
 What HAPPENS when a submission lands is determined by your
 <ansi fg="command">submission policy</ansi> — set ahead of time, no
