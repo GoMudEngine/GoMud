@@ -38,23 +38,27 @@ chokeouts), and doesn't give either side meaningful agency around the
 outcome.
 
 4d replaces this with an opportunistic per-round model that piggybacks
-on the chunk-4b control-axis tick:
+on the chunk-4b control-axis tick. The model is **symmetric** — both
+the controller AND the defender can win a sub opportunity on their
+side of the drift roll:
 
-1. When a controller wins their per-round drift roll by a margin
+1. When either side wins the per-round drift roll by a margin
    exceeding an alpha threshold AND their current Position has
-   associated submissions, a **submission attempt opportunity** opens
-   for that round.
+   associated submissions available for their role (top-attack subs
+   for the controller, bottom-attack subs for the defender), a
+   **submission attempt opportunity** opens for that round.
 2. A **separate sub-roll** then determines what happens this round:
-   - **Bad** (margin below failure threshold): defender exploits the
-     overcommit and **escapes the grapple entirely** (pair breaks to
-     Standing; controller falls Prone).
-   - **Neutral** (failed sub but not catastrophically): controller
-     keeps the position and ControlLevel, sub didn't lock in.
-   - **Success** (sub locks): apply the controller's pre-set
+   - **Bad** (margin below failure threshold): attempter overcommits;
+     pair breaks to Standing, attempter falls Prone. For controller
+     attempts this is the "defender escapes the grapple" outcome; for
+     defender attempts it's the "bottom-game scramble failed" outcome.
+   - **Neutral** (failed sub but not catastrophically): position +
+     ControlLevel unchanged, sub didn't lock in.
+   - **Success** (sub locks): apply the attempter's pre-set
      **submission policy** → outcome.
    - **Critical success** (z-score > crit threshold): sub locks AND
-     defender is **stunned next round** (cannot attack / defend; gets
-     hit for free).
+     the *recipient* is **stunned next round** (cannot attack / defend;
+     gets hit for free).
 3. Outcome resolution uses **policy-driven** decisions on both sides
    — no prompts. Controllers (player or mob) have a `submission
    policy` set ahead of time (`mercy` / `subdue` / `cripple` /
@@ -75,14 +79,9 @@ chosen brutality.
 
 ## Non-goals (4d)
 
-- **Bottom-position submissions from Controlled side.** 4d models
-  only the *controller* (InControl side) attempting submissions. Some
-  positions (Guard, HalfGuard) have meaningful bottom-game submissions
-  in BJJ; in the FSM model the Guard-bottom *is* the controller of
-  that pair-state, so the formal model already covers this — the
-  position-to-sub mapping table just needs to include bottom-Guard
-  subs (triangle, armbar from guard, omoplata). No special "reverse
-  attacker" plumbing.
+- **Standing submissions.** Submissions require a ground grapple in
+  4d. Standing guillotines, arm drags, and clinch-throw submissions
+  are out of scope.
 - **Multi-attacker grapples / 2-on-1 submissions.** Master-spec
   out-of-scope.
 - **Mid-round defender escape from a locked submission.** Once the
@@ -98,9 +97,10 @@ chosen brutality.
 - **Surgical submission-type selection by the controller** (e.g.,
   "submit armbar" to pick one). Position drives the type. If the
   player wants a different sub, they change position first.
-- **Healing the broken-limb debuff via spells or potions.** 4d
-  introduces the debuff and the temple-heal interaction that clears
-  it; spell-based heals are 4f flavor.
+- **Healing the broken-limb debuff via spells or potions.** 4d's
+  broken-limb buff expires naturally on the standard buff tick
+  (default 900 rounds). Spell / potion / quest-item accelerators are
+  4f flavor.
 - **Submission damage to non-grapple targets** (e.g., joint locks
   applied from standing). Submissions require a ground grapple in
   4d.
@@ -109,31 +109,34 @@ chosen brutality.
 
 4d adds one new observer file (`Position_SubmissionTick.go`), one new
 policy substrate on Character (`SubmissionPolicy` / `SurrenderPolicy`
-enum + fields), a new buff (broken-limb debuff), a `NoDeprogression`
-flag on the death cascade, and a position → submission mapping table
-in `internal/state/position/`. Sunsets the legacy `submit` command
-and the `AttemptSubmission` / `ApplySubmissionSuccess` /
+enum + fields), a new buff (broken-limb debuff, standard duration-
+based), a `NoDeprogression` flag on the death cascade, and a position
+→ submission mapping table (split by role: top-attack vs bottom-
+attack subs) in `internal/state/position/`. The submission tick is
+symmetric — both controller and defender sides of a pair get checked
+for sub-attempt opportunity each round. Sunsets the legacy `submit`
+command and the `AttemptSubmission` / `ApplySubmissionSuccess` /
 `ApplySubmissionFailure` helpers in `internal/combat/grapple.go`.
 
 ### Files
 
 | File | Status | Responsibility |
 |------|--------|----------------|
-| `internal/state/position/submissions.go` | NEW | `SubmissionType` enum (Armbar / RNC / Triangle / Americana / Kimura / Omoplata / Anaconda); `PositionSubmissions(s State) []SubmissionType` mapping; `IsSubmissionEligible(s State, cl ControlLevel) bool` predicate |
-| `internal/state/position/submissions_test.go` | NEW | Mapping + eligibility unit tests across all 14 states × all ControlLevels |
+| `internal/state/position/submissions.go` | NEW | `SubmissionType` enum (Armbar / RNC / Triangle / Americana / Kimura / Omoplata / Anaconda); `TopSubmissionsForPosition(s State) []SubmissionType`; `BottomSubmissionsForPosition(s State) []SubmissionType`; `IsTopSubEligible(s State, cl ControlLevel) bool` + `IsBottomSubEligible(s State, cl ControlLevel) bool` predicates |
+| `internal/state/position/submissions_test.go` | NEW | Top + bottom mapping + eligibility unit tests across all 14 states × all ControlLevels |
 | `internal/characters/submission_policy.go` | NEW | `SubmissionPolicy` + `SurrenderPolicy` enums + `Character.SubPolicy` / `Character.SurrenderPolicy` field accessors + parse-from-string helpers for `set` command + default-by-archetype lookup |
 | `internal/characters/submission_policy_test.go` | NEW | Enum parsing, default lookup, edge cases |
-| `internal/hooks/Position_SubmissionTick.go` | NEW | Per-round observer: checks each controller for sub-attempt opportunity, rolls separate sub roll, branches on result tier, calls `ResolveSubmissionOutcome` |
-| `internal/hooks/Position_SubmissionTick_test.go` | NEW | Integration tests for each tier (bad/neutral/success/crit) × each outcome policy |
-| `internal/combat/submission.go` | NEW | `RollSubmissionAttempt(controller, defender) SubmissionAttemptResult`; `ResolveSubmissionOutcome(controller, defender, type, result, policies)` — produces messaging + applies outcome |
+| `internal/hooks/Position_SubmissionTick.go` | NEW | Per-round observer: checks each side of each pair for sub-attempt opportunity (top + bottom), rolls separate sub roll, branches on result tier, calls `ResolveSubmissionOutcome` |
+| `internal/hooks/Position_SubmissionTick_test.go` | NEW | Integration tests for each tier (bad/neutral/success/crit) × each outcome policy × top-vs-bottom-attack |
+| `internal/combat/submission.go` | NEW | `RollSubmissionAttempt(attempter, recipient, role) SubmissionAttemptResult`; `ResolveSubmissionOutcome(attempter, recipient, type, result, policies)` — produces messaging + applies outcome. The `role` discriminator is purely for narration (top-attack vs bottom-attack messaging differs) |
 | `internal/combat/submission_test.go` | NEW | Roll tier boundaries, policy resolution matrix |
-| `internal/buffs/buffs.go` | MODIFY | Register new buff "broken limb" (combat-stat penalty; persists across rest; cleared by temple heal interaction) |
-| `_datafiles/world/dogmud/buffs/<id>-broken_limb.yaml` | NEW | Buff YAML with stat penalties + duration semantics |
+| `internal/buffs/buffs.go` | MODIFY | Register new buff "broken limb" (combat-stat penalty; duration-based via standard buff tick; default 900 rounds) |
+| `_datafiles/world/dogmud/buffs/<id>-broken_limb.yaml` | NEW | Buff YAML with stat penalties + duration |
 | `internal/hooks/Life_Cascades.go` | MODIFY | Add `NoDeprogression bool` flag on `life.DeadData`; when set, `Death_PlayerCleanup` skips the stat-decay step |
 | `internal/state/life/life.go` | MODIFY | Extend `DeadData` struct with `NoDeprogression bool` field |
 | `internal/hooks/Death_PlayerCleanup.go` | MODIFY | Check the flag; skip deprogression when set |
 | `internal/hooks/Death_PlayerCorpse.go` | MODIFY | When `NoDeprogression` set: skip full-corpse-loot path; transfer only the configured gold-loss fraction to the aggressor (no item drop) |
-| `internal/behaviortree/conditions_submission.go` | NEW | New btree primitives: `mob_can_submit` (controller in sub-eligible pos with InControl), `mob_submission_policy_is <policy>` |
+| `internal/behaviortree/conditions_submission.go` | NEW | New btree primitives: `mob_can_submit_top` (sub-eligible from controller side), `mob_can_submit_bottom` (sub-eligible from controlled side / reversal opportunity), `mob_submission_policy_is <policy>` |
 | `internal/behaviortree/conditions_submission_test.go` | NEW | Primitive tests |
 | `internal/usercommands/submit.go` | DELETE | Legacy command sunset |
 | `internal/mobcommands/submit.go` | DELETE | Mob equivalent sunset |
@@ -156,18 +159,41 @@ roll for the current round (margin, z-score, ControlLevel transitions).
 
 ### Eligibility gate
 
-For each grapple pair in the room, check the controller side:
-1. Position must be sub-eligible (`IsSubmissionEligible(state, cl)`).
-   See "Position → submission mapping" below.
+The sub tick fires symmetrically — checking each side of the pair
+for its own attempt opportunity. For each round, for each grapple
+pair, run the gate twice (once per side):
+
+**Controller-side (top-attack) eligibility:**
+1. Position must have top-attack subs available
+   (`TopSubmissionsForPosition(state)` returns non-empty).
 2. ControlLevel must be `InControl` OR `LosingControl`. (At Neutral
    or below the controller doesn't have enough positional dominance
    to threaten a sub.)
-3. This round's drift-roll margin must exceed
+3. This round's drift-roll margin (controller side) must exceed
    `SubmissionAttemptAlpha` (config; default `1.0` — about a one-
    standard-deviation win). This is the "alpha threshold" the user
-   specified: only strong drift rounds open submission opportunities.
+   specified.
 
-If all three gates pass, fire the sub roll for this round.
+**Defender-side (bottom-attack / reversal) eligibility:**
+1. Position must have bottom-attack subs available
+   (`BottomSubmissionsForPosition(state)` returns non-empty). Not
+   all positions allow bottom subs — see mapping table below.
+2. ControlLevel must be `Controlled` OR `BecomingControlled`. (At
+   Neutral or above the defender is already escaping via the drift
+   tick — bottom sub is specifically a "I'm losing but I caught
+   something" scramble.)
+3. This round's drift-roll margin (defender side — i.e., the
+   defender won the drift roll by this much) must exceed
+   `SubmissionAttemptAlpha`. Symmetric to the controller gate.
+
+If a side's gates pass, fire a sub roll for that side. In practice
+both sides can't pass on the same round — the drift roll has one
+winner — so at most one sub attempt fires per pair per round.
+
+**Crit-defense shortcut:** if the drift roll critically favored the
+defender (defender's z-score >= `SubmissionAttemptCritZ`, default
+`2.0`), the defender's gate passes regardless of margin/alpha. The
+defender's crit on the drift roll alone opens the sub window.
 
 ### The separate submission roll
 
@@ -207,39 +233,54 @@ dominance pays off the round you achieve it.
 
 | Knob | Default | What it controls |
 |------|---------|------------------|
-| `SubmissionAttemptAlpha` | `1.0` | Minimum drift-roll margin (in std devs) that opens a sub window |
+| `SubmissionAttemptAlpha` | `1.0` | Minimum drift-roll margin (in std devs) that opens a sub window (controller OR defender side) |
+| `SubmissionAttemptCritZ` | `2.0` | Drift-roll z-score that opens a sub window regardless of margin (the "defender crits defense" shortcut for bottom subs) |
 | `SubSkillWeight` | `1.5` | Unarmed-combat skill contribution to the sub roll vs strength |
-| `SubBadZThreshold` | `-1.0` | Z-score below which the bad-tier (escape) fires |
-| `SubCritZThreshold` | `2.0` | Z-score at or above which the crit-tier (stun) fires |
+| `SubBadZThreshold` | `-1.0` | Z-score below which the bad-tier (attempter overcommits + falls prone) fires |
+| `SubCritZThreshold` | `2.0` | Z-score at or above which the crit-tier (recipient stunned) fires |
 | `SubGoldLossFraction` | `0.20` | Fraction of carried gold transferred on subdue/cripple |
-| `BrokenLimbBuffDuration` | `0` | 0 = until cleared by temple heal action. Future-tuning: a long round count |
+| `BrokenLimbBuffDuration` | `900` | Round duration of the broken-limb buff (~60 minutes of play at 4s rounds). Standard buff tick decrements; no heal action required. |
 
 ## Position → submission mapping
 
 The canonical mapping in `internal/state/position/submissions.go`.
 Position drives the submission type; sub type drives the narration
-flavor and the broken-limb body-part. Multiple subs per position are
-fine — the tick picks one (round-robin? random?) — but each is
+flavor and the broken-limb body-part. Multiple subs per side per
+position are fine — the tick picks one (round-robin) — but each is
 locked to a body part for the cripple outcome.
 
-| Position | Sub types | Cripple body part |
-|----------|-----------|-------------------|
-| Standing / Prone / Supine / Turtle | none | n/a (not sub-eligible) |
-| Clinch | none | n/a (standing grapple — no subs in 4d; future: standing arm-drag / guillotine entry) |
-| BackStanding | RNC (rear naked choke) | none (choke → unconscious, no limb damage) |
-| Mount | Americana / Triangle / Armbar (rotating) | arm (or face/neck for Triangle = no body part, just unconscious) |
-| SideControl | Kimura / Americana | arm (shoulder) |
-| KneeOnBelly | Armbar | arm |
-| NorthSouth | Kimura / Anaconda (choke) | arm OR none (Anaconda = unconscious) |
-| Crucifix | Armbar | arm (locked) |
-| BackGround | RNC | none (choke) |
-| HalfGuard (controller from top) | Kimura | arm |
-| Guard (controller from bottom) | Triangle / Armbar / Omoplata | arm / face-neck for Triangle = none |
-| Turtle | none in 4d | n/a (Turtle is a defensive curl — back-take submissions from an attacker behind a turtled defender are 4e/4f future work; for now Turtle is not sub-eligible) |
+The mapping is split by **role** (top-attack vs bottom-attack)
+because BJJ bottom-game subs (Mount-bottom triangle, SideControl-
+bottom kimura) come from positions where the attacker is the
+Controlled side. In the FSM, the "controller" is whoever has the
+positional dominance (Mount-top, SideControl-top, etc.) — the
+Controlled side is the bottom person in that pair-state, and their
+sub options are the BJJ "from-bottom" subs.
 
-**Default selection** when a position has multiple subs: round-robin
-per controller (track last-attempted sub on `Character`). Avoids
-hammering the same sub every round; gives a varied narrative.
+| Position | Top-attack subs | Bottom-attack subs | Cripple body part |
+|----------|----------------|--------------------|--------------------|
+| Standing / Prone / Supine | none | none | n/a |
+| Clinch / BackStanding | RNC (BackStanding only — back-take choke) | none | choke only — no body part |
+| Mount | Americana / Triangle / Armbar (rotating) | Triangle / Armbar (hipping up to catch arm) | arm (Triangle = none / unconscious) |
+| SideControl | Kimura / Americana | Kimura (snatching wrist) | arm (shoulder) |
+| KneeOnBelly | Armbar | none (too pinned to attack from below) | arm |
+| NorthSouth | Kimura / Anaconda (choke) | Kimura | arm / Anaconda = none |
+| Crucifix | Armbar | none (arms isolated below) | arm |
+| BackGround | RNC | none (face down, can't attack back) | choke only |
+| HalfGuard | Kimura (top) | Kimura (bottom-half snatching wrist) | arm |
+| Guard | Triangle / Armbar / Omoplata (Guard-bottom is the controller in FSM) | none (Guard-top is being controlled — survives, doesn't attack) | arm / Triangle = none |
+| Turtle | none in 4d | none (back-take subs from an attacker behind a turtled defender are 4e/4f future work) | n/a |
+
+**Asymmetry note:** Top-attack subs are more numerous than bottom-
+attack subs because dominant positions are inherently more sub-rich.
+Bottom subs are mostly limited to "snatch a wrist while being pinned"
+(Kimura family) and "hip up to catch the attacking arm" (Mount-bottom
+triangle/armbar). This asymmetry is by design — getting controlled
+SHOULD favor the top.
+
+**Default selection** when a side has multiple subs at the position:
+round-robin per character (track last-attempted sub on `Character`).
+Avoids hammering the same sub every round; gives a varied narrative.
 
 **Sub types and outcome flavor:**
 
@@ -264,7 +305,7 @@ limb with a choke). Joint-lock variants do full cripple.
 |--------|---------------------------|
 | `mercy` | Release the grapple cleanly. Defender stays standing (or transitions to Standing if was on the ground). Defender takes a brief recovery debuff (~2 rounds of -10% stamina). No gold transfer. No persistent damage. |
 | `subdue` (default for most player + neutral mob archetypes) | Choke / hold to unconscious. Defender enters the no-deprogression death path (see Outcome severity section). Aggressor takes `SubGoldLossFraction` of defender's gold. Defender wakes up at temple with no lasting injury (chokes leave you woozy, not broken). |
-| `cripple` | Break the joint / take the limb (per the sub type → body part mapping above). Defender enters no-deprogression death path AND wakes up at temple with a persistent **broken limb** debuff that requires a temple-heal action to clear. Gold transfer same as subdue. |
+| `cripple` | Break the joint / take the limb (per the sub type → body part mapping above). Defender enters no-deprogression death path AND wakes up at temple with a **broken limb** debuff that expires naturally after `BrokenLimbBuffDuration` rounds (default 900, ~60 minutes of play). Gold transfer same as subdue. |
 | `lethal` | Apply continuous damage drain (HP loss per round) until defender hits 0 → full death path WITH deprogression + full corpse loot. The aggressor doesn't have to stay in the lock to maintain it; once `lethal` policy + successful sub, the engine queues a damage cascade over the next 2-3 rounds. (Allows the defender's allies to intervene during the locked finish. Implementation detail of how the cascade is queued — direct damage tick observer vs delayed death event — lives in the plan, not the spec.) |
 
 ### Defender (`SurrenderPolicy` enum)
@@ -331,7 +372,7 @@ cascade for `subdue` / `cripple` / `lethal` outcomes. Add a single
 |---------|---------------------------|----------------------|-----------|-------------|-------------------|------------------|
 | `mercy + tap honored` | NO | n/a | none | n/a | brief recovery debuff (~2 rounds, -10% stamina) | stays in room, position resets to Standing |
 | `subdue` | YES | TRUE | `SubGoldLossFraction` (default 20%) → aggressor | NONE (defender drops no items, just the gold transfer) | none | temple (per existing respawn-room logic) |
-| `cripple` | YES | TRUE | `SubGoldLossFraction` → aggressor | NONE | **broken limb** debuff (combat-stat penalty, persists until temple-healed) | temple |
+| `cripple` | YES | TRUE | `SubGoldLossFraction` → aggressor | NONE | **broken limb** debuff (combat-stat penalty; expires naturally after `BrokenLimbBuffDuration` rounds, default 900) | temple |
 | `lethal` | YES | FALSE | full (existing death loot path) | full (existing) | n/a (you're dead) | temple (or whatever the existing death respawn logic chooses) |
 
 ### Death cascade modifications
@@ -373,21 +414,20 @@ runs unchanged.
 A new buff (registered in `internal/buffs/`) with:
 - **Statmods**: -25% accuracy with the affected arm's weapon; can't
   wield two-handed weapons; -10% defense; -5% stamina max
-- **Duration**: indefinite (cleared by a temple-heal interaction, not
-  a round timer). New buff flag `requires_heal_action: true` so the
-  existing buff-tick doesn't decrement / expire it.
+- **Duration**: `BrokenLimbBuffDuration` rounds (config; default
+  `900` — roughly 60 minutes of active play at 4s rounds). Standard
+  buff tick decrements; expires naturally. No special heal action.
 - **Display**: prominent in `status` output ("Right arm: BROKEN
-  (requires temple heal)")
-- **Healing**: new admin / temple-priest interaction, modeled as a
-  per-room dialogue tree on the temple priest mob. The smoke-tester
-  can use an admin `mob heal-injury <inst>` shortcut to clear the
-  debuff for testing.
+  (~Nh remaining)")
+- **Future-facing:** healing spells, potions, or quest items that
+  speed broken-limb recovery can land in 4f without changing the
+  buff machinery — they'd just shave duration off the buff tick.
 
 Lifecycle: applied by `ResolveSubmissionOutcome` when policy ==
-`cripple` AND sub type maps to a limb body part; persists across rest,
-respawn (re-applied on the respawned character — the broken arm
-survived the trip to temple), and combat; cleared by the heal
-interaction.
+`cripple` AND sub type maps to a limb body part; persists across
+rest, respawn (re-applied on the respawned character — the broken arm
+survived the trip to temple — with remaining duration carried over),
+and combat; expires automatically after the duration tick.
 
 ## Btree primitives (submission tier)
 
@@ -395,7 +435,8 @@ New primitives for mob AI in `internal/behaviortree/conditions_submission.go`:
 
 | Primitive | Type | What it checks |
 |-----------|------|-----------------|
-| `mob_can_submit` | condition | Mob is the controller of a sub-eligible grapple (position + ControlLevel match) |
+| `mob_can_submit_top` | condition | Mob is the controller of a sub-eligible grapple (`IsTopSubEligible` returns true for current position + ControlLevel) |
+| `mob_can_submit_bottom` | condition | Mob is the controlled side of a sub-eligible grapple AND has bottom-attack subs available for the position |
 | `mob_submission_policy_is <policy>` | condition | Mob's current `SubmissionPolicy` matches the named value; used in archetype branches that want to fork on policy |
 
 These are deliberately minimal — mob submission attempts fire from
@@ -416,7 +457,7 @@ commit at the end of the chunk.
 |-------|-------|
 | Foundation | T1 Position submission mapping + eligibility predicate. T2 Policy enums + Character fields + default lookup. T3 Balance knobs + config.yaml. |
 | Mechanics | T4 Submission roll + tier resolution. T5 Per-round submission observer (Position_SubmissionTick). T6 Outcome resolver + policy matrix. T7 NoDeprogression / GoldLossFraction Life cascade modifications. |
-| Effects | T8 Broken-limb buff + temple-heal interaction. T9 Stunned buff (1-round, for crit-tier). T10 Submission messages YAML. |
+| Effects | T8 Broken-limb buff (duration-based). T9 Stunned buff (1-round, for crit-tier). T10 Submission messages YAML. |
 | Mob integration | T11 MobSpec fields + archetype defaults. T12 Btree primitives. T13 Selective mob YAML overrides (bosses, civilians). |
 | Player UX | T14 `set submission` / `set surrender` commands. T15 Status display additions. T16 New helpfiles (submission, surrender). |
 | Sunset | T17 DELETE `submit` command (user + mob), DELETE helpers in grapple.go (`AttemptSubmission`, `ApplySubmissionSuccess`, `ApplySubmissionFailure`, `SubmissionResult`), DELETE submit.template helpfile, fix compile errors. |
@@ -429,26 +470,33 @@ commit at the end of the chunk.
 | ID | Scenario | Expected |
 |----|----------|----------|
 | PB-301 | Standing — no sub eligibility | tick fires no sub roll |
-| PB-302 | Mount + InControl + drift margin > alpha | sub roll fires |
-| PB-303 | Mount + InControl + drift margin < alpha | no sub roll this round |
-| PB-304 | Bad sub roll (z < -1.0) | controller falls Prone, pair breaks to Standing |
+| PB-302 | Mount + InControl + controller drift margin > alpha | top-sub roll fires |
+| PB-303 | Mount + InControl + controller drift margin < alpha | no sub roll this round |
+| PB-304 | Bad sub roll (z < -1.0) — top attempt | controller falls Prone, pair breaks to Standing |
 | PB-305 | Neutral sub roll | no change |
 | PB-306 | Success sub roll, policy=mercy, defender taps | clean release, brief recovery debuff |
-| PB-307 | Success sub roll, policy=mercy, defender never-tap | no-deprogression death path? OR no-op? — see Open Q3 |
+| PB-307 | Success sub roll, policy=mercy, defender never-tap | clean release fires anyway (per Open Q3 resolution: mercy is about the controller's nature) |
 | PB-308 | Success sub roll, policy=subdue, defender never-tap | no-deprogression death, 20% gold to aggressor, temple respawn, no debuff |
-| PB-309 | Success sub roll, policy=cripple, sub=Armbar (Mount) | no-deprogression death + broken-arm debuff, gold transfer, temple respawn |
+| PB-309 | Success sub roll, policy=cripple, sub=Armbar (Mount) | no-deprogression death + broken-arm debuff (duration 900 rounds default), gold transfer, temple respawn |
 | PB-310 | Success sub roll, policy=cripple, sub=RNC (BackGround) | no-deprogression death (no debuff — chokes don't break) — degrades to subdue |
 | PB-311 | Success sub roll, policy=lethal | full death path with deprogression, full corpse loot, temple respawn |
-| PB-312 | Crit sub roll, policy=subdue | sub + 1-round Stunned buff on defender, then subdue outcome |
-| PB-313 | Position rotation: 3 consecutive sub windows in Mount | round-robin sub types: Americana → Triangle → Armbar |
+| PB-312 | Crit sub roll, policy=mercy | sub + 1-round Stunned buff on defender, then mercy outcome (release) |
+| PB-313 | Crit sub roll, policy=subdue | no Stunned buff (recipient enters death cascade, buff is moot), subdue outcome |
+| PB-314 | Position rotation: 3 consecutive sub windows in Mount | round-robin sub types: Americana → Triangle → Armbar |
+| PB-315 | Mount + Controlled + defender drift margin > alpha | bottom-sub roll fires (defender attempts Triangle or Armbar from below) |
+| PB-316 | Mount + Controlled + defender drift margin < alpha | no sub roll this round |
+| PB-317 | Mount + Controlled + defender drift z >= SubmissionAttemptCritZ | bottom-sub roll fires (crit shortcut bypasses margin gate) |
+| PB-318 | Bottom-sub success, defender attempting from Mount-bottom | sub locks, defender's submission policy resolves outcome on the (former) controller |
+| PB-319 | Bottom-sub bad roll | defender (attempter) falls Prone, pair breaks; controller stays Standing |
 | PB-320 | Mob policy: predator default subdue | mob fires subdue automatically |
 | PB-321 | Mob policy: boss override lethal | mob fires lethal automatically |
 | PB-322 | Player set surrender always-tap, attacker mercy | every sub releases on tap |
 | PB-323 | Player set surrender never-tap, attacker subdue | tap ignored, sub outcome fires |
 | PB-330 | Broken-arm debuff applied, attack swing | -25% accuracy correctly applied |
 | PB-331 | Broken-arm debuff, attempt 2H weapon wield | rejected with message |
-| PB-332 | Broken-arm debuff cleared by temple heal | debuff removed |
+| PB-332 | Broken-arm debuff expires naturally after duration | buff cleared on tick, stats restored |
 | PB-340 | Legacy `submit` command typed (after sunset) | `unknown command` response |
+| PB-341 | KneeOnBelly + Controlled (no bottom subs at position) | defender's drift-win doesn't open a sub window |
 
 ## Sunset list (chunk 4d)
 
@@ -496,20 +544,11 @@ commit at the end of the chunk.
    crit narration still fires regardless ("With brutal precision
    you...!").
 
-3. **Q3 — `mercy + never-tap` interaction.** What happens when a
-   merciful controller successfully locks a sub but the defender has
-   `never-tap`? Three options:
-   - (a) The release fires anyway — controller is just letting them
-     up because they're merciful, no input from defender required.
-   - (b) Mercy requires a tap to honor; without one, the sub becomes
-     a no-op (sub didn't land for resolution purposes) — but the
-     position stays.
-   - (c) The release still fires, but the defender takes a small
-     "wrenched joint" debuff for refusing to tap (lower than cripple,
-     no death cascade).
-   Recommended: (a) — mercy is about the controller's nature, not a
-   negotiation. The defender's never-tap policy just means they
+3. **Q3 — `mercy + never-tap` interaction.** RESOLVED: (a) — the
+   release fires anyway. Mercy is about the controller's nature, not
+   a negotiation. The defender's never-tap policy just means they
    weren't going to ask, and the controller releases regardless.
+   PB-307 in the matrix captures this.
 
 4. **Q4 — PvP submission policy.** Two players, both with `lethal`
    policies set, end up in a grapple. Without consent rules, the
@@ -520,10 +559,11 @@ commit at the end of the chunk.
    `lethal` (called out in the player UX section already).
 
 5. **Q5 — Broken-limb interaction with healing spells.** The buff
-   is `requires_heal_action: true` — meaning the existing heal-spell
-   timer-decrement doesn't expire it. Is there a healing spell that
-   SHOULD clear it (e.g., a high-tier `mend bones` spell)? Out of
-   4d scope per non-goals; 4f flavor.
+   uses the standard duration-based decrement (default 900 rounds,
+   ~60 minutes of play). Existing heal-spell tickers won't affect
+   it specifically. A future `mend bones` spell or quest item that
+   shaves duration off the buff would slot in cleanly without
+   changing the buff machinery — 4f flavor.
 
 6. **Q6 — Stamina cost of sub attempts.** The chunk-4b drift tick
    already debits stamina per round. Should sub attempts cost
@@ -549,11 +589,14 @@ commit at the end of the chunk.
 
 ## Resumption criteria (chunk 4d done when)
 
-- Per-round submission attempt opportunity opens on chunk-4b drift
-  margin > alpha, fires opposed roll, branches on tier (bad / neutral /
-  success / crit) correctly.
-- Bad roll escapes the defender from the grapple entirely; controller
-  falls Prone.
+- Per-round submission attempt opportunity opens symmetrically:
+  controller side on top-attack-eligible position + drift margin >
+  alpha; defender side on bottom-attack-eligible position + defender
+  drift-roll margin > alpha (or defender crits the drift roll). Fires
+  separate opposed roll, branches on tier (bad / neutral / success /
+  crit) correctly per side.
+- Bad roll causes the *attempter* to fall Prone; pair breaks to
+  Standing.
 - Success roll resolves through the controller's pre-set policy
   (mercy / subdue / cripple / lethal) without per-round prompts on
   either side.
@@ -571,8 +614,11 @@ commit at the end of the chunk.
   players; `submission` / `surrender` no-args display current policy.
 - Mob YAML supports `submission_policy:` / `surrender_policy:`
   fields, falling through to archetype defaults.
-- 2 new btree primitives shipped: `mob_can_submit`,
-  `mob_submission_policy_is`.
+- 3 new btree primitives shipped: `mob_can_submit_top`,
+  `mob_can_submit_bottom`, `mob_submission_policy_is`.
+- Broken-limb buff expires naturally on the standard buff tick after
+  `BrokenLimbBuffDuration` rounds; persists across rest, respawn,
+  and login.
 - Legacy `submit` command + `AttemptSubmission` / `ApplySubmissionSuccess`
   / `ApplySubmissionFailure` helpers + `SubmissionResult` struct
   deleted; final grep returns zero hits outside comments.
@@ -582,11 +628,10 @@ commit at the end of the chunk.
 
 ## Out-of-scope / future followup candidates
 
-- Bottom-position submissions from a separately-controlled bottom
-  game (covered in 4d via the Guard-as-controller framing, but more
-  nuanced bottom-attack states could be added in 4e/4f).
 - Multi-attacker grapples + 2-on-1 submissions.
-- Healing the broken-limb debuff via spells / potions (4f).
+- Spells / potions / items that *accelerate* broken-limb healing
+  (the buff already expires naturally — speeding it up is a 4f
+  flavor add).
 - Position-specific submission narration flavor variations (e.g.,
   Crucifix armbar reads differently from KneeOnBelly armbar) — 4f.
 - Voluntary "drag captured opponent" mechanic after a successful
@@ -598,5 +643,10 @@ commit at the end of the chunk.
   cooldown-per-victim or a faction/relationship cap.
 - Per-position stamina costs vary (Crucifix armbar is more expensive
   to attempt than Mount americana). 4f.
-- `mob heal-injury <inst>` admin command for clearing broken-limb in
-  test scenarios (sister to chunk-4c's `mob heal`).
+- Standing submission entries (guillotine from clinch, arm-drag-to-
+  back). 4e/4f future work.
+- Back-take submissions from an attacker behind a turtled defender
+  (Turtle position currently has no subs in 4d). 4e/4f.
+- Admin `mob heal-injury <inst>` shortcut — could be useful for
+  testing if the default 900-round duration is too long during smoke,
+  but not required since the buff expires naturally.
