@@ -108,3 +108,25 @@ func ClassifySubmissionTier(success bool, attackerZ float64) SubmissionTier {
 	}
 	return SubTierNeutral
 }
+
+// Role discriminates whether a sub attempt comes from the top
+// (controller) side of a grapple or the bottom (controlled) side.
+// Used by Position_SubmissionTick + Position_Messaging to pick the
+// right submission pool and narration.
+type Role int
+
+const (
+	RoleTop    Role = iota
+	RoleBottom Role = iota
+)
+
+func (r Role) String() string {
+	switch r {
+	case RoleTop:
+		return "top"
+	case RoleBottom:
+		return "bottom"
+	default:
+		return "unknown"
+	}
+}
