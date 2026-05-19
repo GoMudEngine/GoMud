@@ -83,6 +83,13 @@ Server:
   - Server.Seed
   - Server.OnLoginCommands
   - Server.BannedNames
+  # Presence machine (chunk 5 — 2026-05-19) — replaces MaxMobBoredom +
+  # ad-hoc AFK computation. See internal/state/presence/context.md.
+  PresenceIdleAfterRounds: 8         # Active → Idle (~30s)
+  PresenceAFKAfterRounds: 75         # Idle → AFK (~5min)
+  PresenceDisconnectAfterRounds: 900 # AFK → Disconnected (~1h)
+  PresenceMobDormantAfterRounds: 30  # mob Active → Dormant
+  PresenceMobDespawnAfterRounds: 60  # mob Dormant → Despawning
 
 ################################################################################
 #
