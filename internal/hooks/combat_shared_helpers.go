@@ -17,6 +17,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
+	"github.com/GoMudEngine/GoMud/internal/state/control"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -423,29 +425,42 @@ func processFoldRound(char *characters.Character) FoldRoundResult {
 	}
 	cs, _ := char.Activity.CastingData()
 
-	// Downed (prone or supine) → immediate concentration break.
-	if char.IsProne() || char.IsSupine() {
-		clearCastingActivity(char, activity.TriggerConcentrationBreak)
-		return FoldRoundResult{ProneBroke: true, CastingData: cs}
-	}
-
-	// Chunk 4e T4 — spell disruption audit: grappled casters cannot maintain
-	// concentration. All 11 grapple positions (Clinch, BackStanding, Mount,
-	// SideControl, KneeOnBelly, NorthSouth, Crucifix, BackGround, HalfGuard,
-	// Guard, Turtle) break concentration at the start of every fold round.
-	// Per spec §4.2 simplification: grapple implies disruption equivalent to
-	// Prone. Per-position disruption curves are chunk 4f territory.
+	// Position-based concentration disruption (chunk 4f). Replaces the
+	// three deterministic 100% gates (Prone/Supine/Grapple) that chunks
+	// pre-4e shipped. Now: damage%-equivalent per (position, role) →
+	// existing CalcConcentrationChance(Wil, dmgPctEquiv) curve → roll.
+	// Standing returns 0 and skips the check entirely.
 	//
-	// Spell disruption audit (chunk 4e T4, 2026-05-19):
-	// GAP FOUND: processFoldRound only checked IsProne()/IsSupine(); all 11
-	// grapple states fell through to the fold-advance path, letting grappled
-	// casters complete spells unimpeded. Added catch-all below treating any
-	// grapple state as Prone-equivalent immediate concentration break.
-	// checkConcentrationBreak (damage-hit path) has no position filter and
-	// fires correctly for all positions — no gap there.
-	if char.IsGrappling() {
-		clearCastingActivity(char, activity.TriggerConcentrationBreak)
-		return FoldRoundResult{GrappleBroke: true, CastingData: cs}
+	// The damage-path checkConcentrationBreak still fires independently
+	// when damage lands during a round — both paths can break a single
+	// cast (layered disruption).
+	if char.Position != nil {
+		posState := char.Position.State()
+		var ctrlState control.State
+		if char.Control != nil {
+			ctrlState = char.Control.State()
+		}
+		dmgPctEquiv := position.PositionDisruptionDmgEquiv(posState, ctrlState)
+		if dmgPctEquiv > 0 {
+			chance := characters.CalcConcentrationChance(
+				char.Stats.Willpower.ValueAdj, dmgPctEquiv)
+			roll := util.Rand(100)
+			util.LogRoll(`PositionConcentration`, roll, chance)
+			if roll >= chance {
+				// Concentration broke. Route messaging by which break
+				// flag the caller expects for this position.
+				clearCastingActivity(char, activity.TriggerConcentrationBreak)
+				result := FoldRoundResult{CastingData: cs}
+				switch {
+				case char.IsProne(), char.IsSupine():
+					result.ProneBroke = true
+				case char.IsGrappling():
+					result.GrappleBroke = true
+				}
+				return result
+			}
+			// Roll passed — concentration held this round; fold continues.
+		}
 	}
 
 	// Target-gone check: any dead/nil target breaks the spell.
