@@ -13,6 +13,7 @@ import (
 	"errors"
 
 	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/control"
 )
 
 // GrappleActor is the minimal interface TransitionPair requires from
@@ -28,6 +29,10 @@ type GrappleActor interface {
 	GetUserId() int
 	GetMobInstanceId() int
 	GetPosition() *Machine
+	// GetControl returns the per-character ControlLevel machine.
+	// Added in chunk 4b-fixup-2 T6 so TransitionPair can initialize
+	// ControlLevel state on grapple entry/exit.
+	GetControl() *control.Machine
 }
 
 // ErrPairInvalidSourceStates is returned when TransitionPair is
@@ -101,6 +106,13 @@ func TransitionPair(
 			}
 			return err
 		}
+		// Chunk 4b-fixup-2 T6: reset ControlLevel to Neutral on grapple exit.
+		if controller.GetControl() != nil {
+			_ = controller.GetControl().TransitionToNeutral(state.TransitionReason{Trigger: control.TriggerGrappleExit})
+		}
+		if controlled.GetControl() != nil {
+			_ = controlled.GetControl().TransitionToNeutral(state.TransitionReason{Trigger: control.TriggerGrappleExit})
+		}
 		return nil
 	}
 
@@ -116,13 +128,14 @@ func TransitionPair(
 		MobInstanceId: controlled.GetMobInstanceId(),
 	}
 
+	// Chunk 4b-fixup-2 T6: IsControllerRole is no longer stamped here.
+	// ControlLevel state is initialized below after both sides transition
+	// successfully. IsControllerRole field is kept in the struct until T16.
 	ctrlData := GrappleData{
-		Partner:          cdRef,
-		IsControllerRole: !isSymmetricGrapple(target),
+		Partner: cdRef,
 	}
 	cdData := GrappleData{
-		Partner:          ctrlRef,
-		IsControllerRole: false,
+		Partner: ctrlRef,
 	}
 
 	prev := snapshotPosition(controller)
@@ -135,6 +148,22 @@ func TransitionPair(
 		}
 		return err
 	}
+
+	// Chunk 4b-fixup-2 T6: initialize ControlLevel state per position
+	// symmetry class. Symmetric positions (Clinch, HalfGuard, Turtle) put
+	// both sides at Neutral. Asymmetric positions (Mount, SideControl, etc.)
+	// put the controller side at Controlling and the controlled side at
+	// Controlled.
+	if controller.GetControl() != nil && controlled.GetControl() != nil {
+		if isSymmetricGrapple(target) {
+			_ = controller.GetControl().TransitionToNeutral(state.TransitionReason{Trigger: control.TriggerGrappleEnter})
+			_ = controlled.GetControl().TransitionToNeutral(state.TransitionReason{Trigger: control.TriggerGrappleEnter})
+		} else {
+			_ = controller.GetControl().TransitionToControlling(state.TransitionReason{Trigger: control.TriggerGrappleEnter})
+			_ = controlled.GetControl().TransitionToControlled(state.TransitionReason{Trigger: control.TriggerGrappleEnter})
+		}
+	}
+
 	return nil
 }
 

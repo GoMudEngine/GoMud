@@ -388,6 +388,12 @@ func (c *Character) GetPosition() *position.Machine {
 	return c.Position
 }
 
+// GetControl returns the ControlLevel state machine pointer. Satisfies
+// position.GrappleActor for TransitionPair callers (chunk 4b-fixup-2 T6).
+func (c *Character) GetControl() *control.Machine {
+	return c.Control
+}
+
 // IsCombatant returns true unless the character is flagged NonCombatant.
 // Used by Combat Phase's veto chain (chunk 0 Task 10) and any code that
 // needs to ask "can this character be in combat at all?".
