@@ -1,0 +1,80 @@
+goals:
+  - Engage a humanoid grappling-archetype mob and initiate a grapple
+    from standing. Verify the engine moves you into a grapple state
+    (Clinch or BackStanding) and a position narration appears.
+
+  - Push the grapple to advance: keep attacking and grappling. Look
+    for messages indicating you advanced to a more dominant position
+    (Mount, SideControl, BackGround, etc.). The roadmap calls Mount
+    the "striking apex"; if you reach it, note the round count.
+
+  - Once you reach a dominant position, verify the round-by-round hit
+    rate against the controlled defender is meaningfully higher than
+    your hit rate before the grapple began. Watch the swing narration:
+    a controller in Mount, SideControl, or BackGround should land
+    more often than a standing attacker would. If you have
+    combatstats, sample it; otherwise observe.
+
+  - Try to eat any food item while grappled (use `eat <food>`). Verify
+    the command is rejected with a flavor message about hands being
+    committed to the grapple. Do the same for `drink <potion>`.
+
+  - Try to flee from a grappled position. Verify it remains blocked
+    with appropriate messaging.
+
+  - Cast a damaging or buff spell while grappled in a controller
+    position (e.g., Mount-Controlling, BackGround-Controlling) and
+    note whether the spell completes or whether your concentration
+    breaks before completion. Try multiple casts — chunk 4f makes
+    this a per-round chance roll mediated by Willpower, so behavior
+    should be VARIABLE: sometimes you complete, sometimes you break.
+    If your character has high Willpower, completion is more likely.
+
+  - Have a low-Willpower character (if available, or create one) be
+    pinned in Mount-Controlled and attempt to cast. Verify concentration
+    breaks reliably (high disruption + low Wil → very low hold chance).
+    Sometimes still holds — chance roll, not deterministic.
+
+  - Try casting from a Guard-bottom position (you should be in
+    Controlling role, even though you're underneath geometrically).
+    Verify casting is the LEAST disrupted of any grapple position —
+    you should complete spells more often here than from any
+    Controlled-role position.
+
+  - If you can engineer a third-party scenario (spawn a second hostile
+    in the room), observe:
+      (a) Does the third party hit the grappled target more easily
+          than they'd hit a standing target? (target-side bonus)
+      (b) Does the controller's grip seem to loosen when outside
+          damage lands? (chunk 4e §5 outside-damage drift — look for
+          flavor like "your control slips" or a ControlLevel gradient
+          message)
+      (c) If you reach a submission attempt and outside damage hits
+          during the sub-firing round, does the sub fail / land in
+          the Bad tier? (chunk 4e §7 sub interrupt)
+
+  - With a second mob in the room and you grappled with the first,
+    observe whether nearby mobs gain interest in attacking the
+    controlled defender or stay on their original target. The AI
+    tiebreaker (chunk 4e §6) prefers grappled-controlled targets
+    when priorities are close, but does NOT override clear primary
+    preferences.
+
+  - Read `help grapple` and confirm the disruption language (chunk
+    4f T3) reads naturally: "harder when you're on the ground or
+    pinned … Willpower decides how often your concentration holds".
+    No mention of percentages, multipliers, or other internal
+    values.
+
+  - Read `help submission` and `help surrender` (if they exist).
+    Verify no numerical leaks from chunks 4d-4f.
+
+  - Read `help cast` and `help spells`. Verify no stale references
+    to "spells fail when grappled" or "always disrupted by prone"
+    or other deterministic-break wording.
+
+  - Report: no panics, no missing-template debug strings (e.g.,
+    `[[missing template: grapple_outcome_advance_mount]]`), no
+    "unexpected position state" log spam, no zero-config or nil-
+    pointer issues, no double-message bugs (same outcome narrated
+    twice in one round).
