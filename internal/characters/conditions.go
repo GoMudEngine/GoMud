@@ -1,5 +1,10 @@
 package characters
 
+import (
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/perception"
+)
+
 // ConditionType identifies a temporary combat condition.
 type ConditionType int
 
@@ -85,10 +90,22 @@ func (c *Character) AddCondition(typ ConditionType, duration int, magnitude floa
 	for i, cond := range c.Conditions {
 		if cond.Type == typ {
 			c.Conditions[i] = CombatCondition{Type: typ, Duration: duration, Magnitude: magnitude, Source: source}
+			// Chunk 6 (Perception): ConditionBlinded triggers Sighted → Blinded.
+			// Guard against re-entry: only fire if state is currently Sighted.
+			if typ == ConditionBlinded && c.Perception != nil && c.Perception.State() == perception.Sighted {
+				_ = c.Perception.TransitionTo(perception.Blinded,
+					state.TransitionReason{Trigger: perception.TriggerConditionAdded})
+			}
 			return
 		}
 	}
 	c.Conditions = append(c.Conditions, CombatCondition{Type: typ, Duration: duration, Magnitude: magnitude, Source: source})
+	// Chunk 6 (Perception): ConditionBlinded triggers Sighted → Blinded.
+	// Guard against re-entry: only fire if state is currently Sighted.
+	if typ == ConditionBlinded && c.Perception != nil && c.Perception.State() == perception.Sighted {
+		_ = c.Perception.TransitionTo(perception.Blinded,
+			state.TransitionReason{Trigger: perception.TriggerConditionAdded})
+	}
 }
 
 // HasCondition returns true if the character currently has the given condition.
@@ -113,11 +130,19 @@ func (c *Character) GetConditionMagnitude(typ ConditionType) float64 {
 
 // RemoveCondition removes the given condition type if present.
 func (c *Character) RemoveCondition(typ ConditionType) {
+	removed := false
 	for i, cond := range c.Conditions {
 		if cond.Type == typ {
 			c.Conditions = append(c.Conditions[:i], c.Conditions[i+1:]...)
-			return
+			removed = true
+			break
 		}
+	}
+	// Chunk 6 (Perception): ConditionBlinded clear may flip Blinded →
+	// Sighted, but only if no other blind source is still active.
+	if removed && typ == ConditionBlinded && c.Perception != nil && c.Perception.State() == perception.Blinded && !c.HasAnyBlindSource() {
+		_ = c.Perception.TransitionTo(perception.Sighted,
+			state.TransitionReason{Trigger: perception.TriggerConditionRemoved})
 	}
 }
 
