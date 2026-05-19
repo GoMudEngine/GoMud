@@ -1,14 +1,20 @@
 // Position_GrappleTick.go fires once per round per active grapple
-// pair. For each character that's currently a controller (IsController),
-// it looks up the partner via GrappleData.Partner, validates the pair,
-// rolls an opposed Strength+grappling check, dispatches the result
-// through position.ResolveOutcome, and applies the resulting transition
+// pair. For each character that's currently grappling, it looks up
+// the partner via GrappleData.Partner, validates the pair, rolls an
+// opposed Strength+grappling check, dispatches the result through
+// position.ResolveOutcome, and applies the resulting transition
 // (advance / degrade / reversal / escape / hold) via TransitionPair.
 //
-// Iterates the controller side only — the controlled side is processed
-// transitively through its controller. Skips solo Turtles (no partner)
-// and any pair that fails ValidateGrapplePair (logged; consistency
-// checker will force-break in T8).
+// Chunk 4b-fixup-2 T8: replaces the IsController()-filtered single-side
+// iteration with pair-aware deduplication. Both sides of the pair are
+// marked seen so the partner loop skips them — each pair is processed
+// exactly once per round. This fixes the symmetric Clinch regression
+// where IsController() returned false for both sides and the drift roll
+// never fired.
+//
+// The drift-roll attacker-arg is chosen by determineDriftAttacker:
+// priority is Control state (most Controlling-leaning wins), then
+// IsAggressor, then iteration order.
 //
 // Chunk 4b-fixup: replaces the chunk-4b ControlLevel drift-needle math
 // with outcome-driven dispatch. ControlLevel is sunset in T18.
@@ -31,6 +37,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/control"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -74,15 +81,87 @@ func loadGrappleLib() *grapplemessaging.Library {
 	return grappleOutcomesLib
 }
 
+// determineDriftAttacker picks which side is the drift-roll's
+// attacker-arg. Priority:
+//  1. Whoever has the more controller-leaning Control state.
+//  2. Tiebreaker: whoever has IsAggressor=true.
+//  3. Final fallback: lhs (the iteration order side).
+func determineDriftAttacker(lhs, rhs *characters.Character) (attacker, defender *characters.Character) {
+	if lhs.Control == nil || rhs.Control == nil {
+		return lhs, rhs
+	}
+	lhsRank := controlRank(lhs.Control.State())
+	rhsRank := controlRank(rhs.Control.State())
+	if lhsRank < rhsRank {
+		return lhs, rhs
+	}
+	if rhsRank < lhsRank {
+		return rhs, lhs
+	}
+	// Tie: prefer aggressor
+	if lhs.Position != nil {
+		if d, ok := lhs.Position.GrappleData(); ok && d.IsAggressor {
+			return lhs, rhs
+		}
+	}
+	if rhs.Position != nil {
+		if d, ok := rhs.Position.GrappleData(); ok && d.IsAggressor {
+			return rhs, lhs
+		}
+	}
+	// Last resort: caller order
+	return lhs, rhs
+}
+
+// controlRank maps control states to a priority score for attacker
+// selection. 0 = Controlling (most attacker-favored), 1 = Neutral,
+// 2 = Controlled. Transient states get the rank of their nearest
+// stable state (defensive — transients shouldn't be observed between
+// ticks).
+func controlRank(s control.State) int {
+	switch s {
+	case control.Controlling, control.LosingControl:
+		return 0
+	case control.Neutral:
+		return 1
+	case control.BecomingControlled, control.Controlled:
+		return 2
+	}
+	return 1
+}
+
+// processGrapplePairFromIteration is called by processGrappleTick;
+// determines which side is the controller arg, then delegates to
+// processGrapplePair (existing).
+func processGrapplePairFromIteration(lhs, rhs *characters.Character) {
+	controller, controlled := determineDriftAttacker(lhs, rhs)
+	processGrapplePair(controller, controlled)
+}
+
 // processGrappleTick is the NewRound event listener. Iterates all
-// active players + mobs; for each character that's a controller,
-// resolves the partner and processes the pair.
+// active players + mobs; for each character that's grappling,
+// resolves the partner and processes the pair exactly once (deduped
+// via a seen map).
+//
+// Chunk 4b-fixup-2 T8: replaced the IsController() filter with
+// pair-aware deduplication. Both sides are marked seen when a pair
+// is processed so the partner's loop entry is skipped. This fixes
+// symmetric Clinch where IsController() returned false for both sides.
 func processGrappleTick(e events.Event) events.ListenerReturn {
+	seen := map[state.ActorRef]bool{}
+
 	for _, u := range users.GetAllActiveUsers() {
 		if u == nil || u.Character == nil {
 			continue
 		}
-		if !u.Character.IsController() {
+		myRef := state.ActorRef{UserId: u.UserId}
+		if seen[myRef] {
+			continue
+		}
+		if u.Character.Position == nil {
+			continue
+		}
+		if !u.Character.Position.IsGrappling() {
 			continue
 		}
 		partner := resolvePartner(u.Character)
@@ -93,14 +172,29 @@ func processGrappleTick(e events.Event) events.ListenerReturn {
 			mudlog.Warn("Position_GrappleTick: invalid pair", "user", u.UserId, "err", err)
 			continue
 		}
-		processGrapplePair(u.Character, partner)
+		partnerRef := state.ActorRef{
+			UserId:        partner.GetUserId(),
+			MobInstanceId: partner.GetMobInstanceId(),
+		}
+		seen[myRef] = true
+		seen[partnerRef] = true
+
+		processGrapplePairFromIteration(u.Character, partner)
 	}
+
 	for _, mobInstId := range mobs.GetAllMobInstanceIds() {
 		m := mobs.GetInstance(mobInstId)
 		if m == nil {
 			continue
 		}
-		if !m.Character.IsController() {
+		myRef := state.ActorRef{MobInstanceId: m.InstanceId}
+		if seen[myRef] {
+			continue
+		}
+		if m.Character.Position == nil {
+			continue
+		}
+		if !m.Character.Position.IsGrappling() {
 			continue
 		}
 		partner := resolvePartner(&m.Character)
@@ -111,8 +205,16 @@ func processGrappleTick(e events.Event) events.ListenerReturn {
 			mudlog.Warn("Position_GrappleTick: invalid pair", "mob", m.InstanceId, "err", err)
 			continue
 		}
-		processGrapplePair(&m.Character, partner)
+		partnerRef := state.ActorRef{
+			UserId:        partner.GetUserId(),
+			MobInstanceId: partner.GetMobInstanceId(),
+		}
+		seen[myRef] = true
+		seen[partnerRef] = true
+
+		processGrapplePairFromIteration(&m.Character, partner)
 	}
+
 	return events.Continue
 }
 
