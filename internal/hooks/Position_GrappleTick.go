@@ -321,6 +321,9 @@ func processGrapplePair(controller, controlled *characters.Character) {
 	fireStaminaWarningIfLow(controller)
 	fireStaminaWarningIfLow(controlled)
 
+	// Chunk 4b-fixup-2 T9: apply ControlLevel shifts based on drift z.
+	applyControlShift(controller, controlled, z)
+
 	// Messaging — wired in T16.
 	emitOutcomeMessages(controller, controlled, outcome)
 }
@@ -686,6 +689,70 @@ func applyGrappleStaminaCost(controller, controlled *characters.Character, cfg c
 	controlled.Stamina -= cdCost
 	if controlled.Stamina < 0 {
 		controlled.Stamina = 0
+	}
+}
+
+// applyControlShift updates both sides' ControlLevel state based on
+// drift roll outcome. Chunk 4b-fixup-2 T9 spec §5:
+//   |z| < 0.5      → no shift
+//   0.5 ≤ |z| < 1.5 → 1 step
+//   |z| ≥ 1.5      → 2 steps
+// Winner shifts toward Controlling; loser shifts toward Controlled.
+func applyControlShift(controller, controlled *characters.Character, z float64) {
+	absZ := z
+	if absZ < 0 {
+		absZ = -absZ
+	}
+	var steps int
+	switch {
+	case absZ < 0.5:
+		return // no shift
+	case absZ < 1.5:
+		steps = 1
+	default:
+		steps = 2
+	}
+
+	if z > 0 {
+		// Controller wins — shifts toward Controlling
+		shiftControl(controller, +steps)
+		shiftControl(controlled, -steps)
+	} else {
+		// Controlled wins — shifts toward Controlling
+		shiftControl(controlled, +steps)
+		shiftControl(controller, -steps)
+	}
+}
+
+// shiftControl moves the given character's Control state by `steps`
+// stable-state ranks. Positive steps = toward Controlling; negative
+// = toward Controlled. Caps at the endpoints.
+func shiftControl(c *characters.Character, steps int) {
+	if c == nil || c.Control == nil {
+		return
+	}
+	currentRank := controlRank(c.Control.State())
+	newRank := currentRank - steps // toward Controlling means lower rank
+	if newRank < 0 {
+		newRank = 0
+	}
+	if newRank > 2 {
+		newRank = 2
+	}
+	if newRank == currentRank {
+		return
+	}
+	reason := state.TransitionReason{Trigger: control.TriggerDriftLoss}
+	if newRank < currentRank {
+		reason.Trigger = control.TriggerDriftWin
+	}
+	switch newRank {
+	case 0:
+		_ = c.Control.TransitionToControlling(reason)
+	case 1:
+		_ = c.Control.TransitionToNeutral(reason)
+	case 2:
+		_ = c.Control.TransitionToControlled(reason)
 	}
 }
 
