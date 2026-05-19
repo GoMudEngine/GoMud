@@ -47,12 +47,18 @@ func TestPlayerPresence_ConnectingToActive(t *testing.T) {
 	}
 }
 
-// PR-003: Active → Active on input is a no-op (idempotent re-enter).
-func TestPlayerPresence_ActiveToActiveOnInput(t *testing.T) {
+// PR-003: Active → Active is NOT in the transition table; an attempt
+// returns ErrInvalidTransition and leaves the state unchanged. Consumer
+// code should skip the TransitionTo call when already Active. This test
+// verifies the machine doesn't silently allow self-transition.
+func TestPlayerPresence_ActiveSelfTransitionRejected(t *testing.T) {
 	m := NewPlayerPresence()
 	_ = m.TransitionTo(Active, state.TransitionReason{Trigger: TriggerEnteredRoom})
+	if err := m.TransitionTo(Active, state.TransitionReason{Trigger: TriggerInputReceived}); err == nil {
+		t.Errorf("TransitionTo(Active) from Active: got nil err; want ErrInvalidTransition")
+	}
 	if m.State() != Active {
-		t.Errorf("Active after re-entry, state = %v, want Active", m.State())
+		t.Errorf("state after rejected self-transition = %v, want Active", m.State())
 	}
 }
 

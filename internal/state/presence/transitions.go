@@ -10,7 +10,7 @@ import "github.com/GoMudEngine/GoMud/internal/state"
 //	AFK        --hours OR TCP timeout---------------> Disconnected
 //
 //	[any non-Disconnected] --input received---------> Active
-//	[any non-Connecting]   --manual `afk` cmd-------> AFK
+//	[Active/Idle]          --manual `afk` cmd-------> AFK
 //	[any]                  --TCP closed-------------> Disconnected
 var playerTransitions = state.TransitionTable[State]{
 	Connecting:   {Active, Disconnected},

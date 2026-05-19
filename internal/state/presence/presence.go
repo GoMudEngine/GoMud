@@ -14,8 +14,6 @@
 package presence
 
 import (
-	"errors"
-
 	"github.com/GoMudEngine/GoMud/internal/state"
 )
 
@@ -131,6 +129,11 @@ func (m *Machine) TransitionTo(to State, r state.TransitionReason) error {
 }
 
 // TransitionToAFK is a convenience for AFK with data.
+//
+// Note: AFK→AFK is intentionally excluded from the player transition
+// table. If a future change adds it as a self-transition, the data-swap
+// semantics in this method (set m.afkData AFTER inner.TransitionTo)
+// will need to clear the previous AFKData explicitly.
 func (m *Machine) TransitionToAFK(d AFKData, r state.TransitionReason) error {
 	if m == nil || m.inner == nil {
 		return nil
@@ -169,7 +172,3 @@ func (m *Machine) RegisterObserver(name string, obs func(from, to State, r state
 	}
 	m.inner.Subscribe(name, obs)
 }
-
-// ErrPresenceVetoed is a sentinel for tests that want to detect a veto
-// without depending on the VetoError wrapper created by the framework.
-var ErrPresenceVetoed = errors.New("presence: transition vetoed")
