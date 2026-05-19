@@ -78,6 +78,43 @@ damage, and your combat narration shifts to reflect it.
 Carrying a dagger in your offhand is a sound counter to grapplers —
 it will swing at full damage while a main-hand sword is hampered.
 
+<ansi fg="yellow">━━━ Fighting From Position ━━━</ansi>
+
+Position dominates the math of in-grapple combat:
+
+  <ansi fg="stat">Striking down:</ansi> attacking from a dominant
+            position (mount, side control, back mount) is
+            substantially easier than swinging from standing.
+
+  <ansi fg="stat">Striking back:</ansi> trying to hit your opponent
+            while pinned is much harder. The worst positions —
+            crucifix, back mount, full mount — leave you barely
+            able to swing.
+
+  <ansi fg="stat">Outside the fight:</ansi> a third party attacking
+            either grappler finds them easier to hit. Two
+            grapplers locked together pay less attention to
+            their surroundings.
+
+  <ansi fg="stat">Outside hits disrupt:</ansi> if a third party
+            damages a grappler who's holding position, that
+            grappler's grip loosens. Enough outside damage will
+            eventually break a hold.
+
+  <ansi fg="stat">Submissions are fragile:</ansi> a hard hit from
+            outside the grapple while you're applying a
+            submission will break the attempt and leave you
+            worse off than when you started.
+
+<ansi fg="yellow">━━━ What You Can't Do While Grappled ━━━</ansi>
+
+Both hands are committed when you're grappling:
+
+  - Eating and drinking are unavailable until you're free.
+  - Spellcasting and other concentration-heavy actions are
+    disrupted just as if you were knocked prone.
+  - You cannot move from the room until the grapple ends.
+
 <ansi fg="yellow">Usage: </ansi>
 
   <ansi fg="command">grapple <target></ansi>   Attempt to grapple a target in combat.
