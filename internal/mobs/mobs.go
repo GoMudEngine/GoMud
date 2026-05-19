@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -1073,6 +1074,22 @@ func (r *Mob) Validate() error {
 	// rather than nil-guard so template mobs and freshly shallow-copied
 	// instances are both handled correctly.
 	r.Character.Presence = presence.NewMobPresence()
+
+	// Essential-mob veto (chunk 5): shopkeepers, foragers, caravan crew,
+	// and charmed companions must never transition out of Active. Wraps
+	// the existing Despawns() + IsCharmed() + IsEssential() policy.
+	essentialVeto := func(reason state.TransitionReason) error {
+		if !r.Despawns() || r.IsEssential() || r.Character.IsCharmed() {
+			return &state.VetoError{
+				HandlerName: "essential_mob",
+				Reason:      "essential mob (shop/forager/caravan/charmed)",
+			}
+		}
+		return nil
+	}
+	r.Character.Presence.RegisterVeto(presence.Active, presence.Dormant, essentialVeto)
+	r.Character.Presence.RegisterVeto(presence.Active, presence.Despawning, essentialVeto)
+	r.Character.Presence.RegisterVeto(presence.Dormant, presence.Despawning, essentialVeto)
 
 	return nil
 }
