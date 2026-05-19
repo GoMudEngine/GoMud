@@ -224,7 +224,7 @@ func setCombatPositionParallel(c *characters.Character, pos position.State) {
 			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
 		)
 		_ = c.Position.TransitionToMount(
-			position.GrappleData{Partner: state.ActorRef{UserId: 1}, IsControllerRole: true},
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
 			state.TransitionReason{Trigger: position.TriggerTakedownMount},
 		)
 	}

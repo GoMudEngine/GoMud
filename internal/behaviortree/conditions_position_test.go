@@ -121,7 +121,7 @@ func TestCondMobIsInControl_InMountAsController_Success(t *testing.T) {
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
 	)
 	_ = mob.Character.Position.TransitionToMount(
-		position.GrappleData{Partner: state.ActorRef{UserId: 999}, IsControllerRole: true},
+		position.GrappleData{Partner: state.ActorRef{UserId: 999}},
 		state.TransitionReason{Trigger: position.TriggerTakedownMount},
 	)
 	// Chunk 4b-fixup-2 T7: IsController() reads Control.State(); init

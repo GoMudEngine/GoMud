@@ -212,11 +212,11 @@ func TestCanUseSubmit(t *testing.T) {
 			// the helper for that case and wire the FSM directly.
 			if tt.pos == position.Mount && !tt.controller {
 				_ = c.Position.TransitionToClinch(
-					position.GrappleData{Partner: state.ActorRef{UserId: 1}, IsControllerRole: false},
+					position.GrappleData{Partner: state.ActorRef{UserId: 1}},
 					state.TransitionReason{Trigger: position.TriggerGrappleEntry},
 				)
 				_ = c.Position.TransitionToGuard(
-					position.GrappleData{Partner: state.ActorRef{UserId: 1}, IsControllerRole: false},
+					position.GrappleData{Partner: state.ActorRef{UserId: 1}},
 					state.TransitionReason{Trigger: position.TriggerGuardPull},
 				)
 			} else {

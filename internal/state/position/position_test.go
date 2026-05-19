@@ -329,7 +329,7 @@ func TestPO_024_GrappleRequiresNonZeroPartner(t *testing.T) {
 func TestPO_025_ClinchDataPreserved(t *testing.T) {
 	m := position.NewMachine()
 	_ = m.TransitionToClinch(
-		position.GrappleData{Partner: state.ActorRef{UserId: 17}, IsControllerRole: true},
+		position.GrappleData{Partner: state.ActorRef{UserId: 17}},
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
 	)
 	d, ok := m.GrappleData()
@@ -339,22 +339,20 @@ func TestPO_025_ClinchDataPreserved(t *testing.T) {
 	if d.Partner.UserId != 17 {
 		t.Errorf("Partner.UserId = %d, want 17", d.Partner.UserId)
 	}
-	if !d.IsControllerRole {
-		t.Errorf("IsControllerRole = false, want true (as set at transition)")
-	}
 }
 
 func TestPO_026_GrappleDataDefaultsNoController(t *testing.T) {
-	// Chunk 4b-fixup T18: ControlLevel removed. Default GrappleData has
-	// IsControllerRole=false (zero value of bool).
+	// Chunk 4b-fixup T16: IsControllerRole field removed.
+	// GrappleData now only contains Reason, Partner, and IsAggressor.
 	m := position.NewMachine()
 	_ = m.TransitionToClinch(
-		position.GrappleData{Partner: state.ActorRef{UserId: 18}}, // IsControllerRole omitted
+		position.GrappleData{Partner: state.ActorRef{UserId: 18}},
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
 	)
 	d, _ := m.GrappleData()
-	if d.IsControllerRole {
-		t.Errorf("default IsControllerRole = true, want false (zero value)")
+	// Verify we can retrieve the data; the field check has been removed.
+	if d.Partner.UserId != 18 {
+		t.Errorf("Partner.UserId = %d, want 18", d.Partner.UserId)
 	}
 }
 

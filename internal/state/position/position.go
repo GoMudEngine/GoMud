@@ -103,10 +103,9 @@ type SupineData struct {
 // For symmetric states (Clinch, HalfGuard, Turtle), both sides hold
 // IsControllerRole = false.
 type GrappleData struct {
-	Reason           state.TransitionReason
-	Partner          state.ActorRef // zero only for solo Turtle
-	IsControllerRole bool           // true = this side is the controller; sunset in T16, leave for T6/T7 readers
-	IsAggressor      bool           // true if this side initiated the grapple; used as drift-roll tiebreaker in symmetric positions
+	Reason      state.TransitionReason
+	Partner     state.ActorRef // zero only for solo Turtle
+	IsAggressor bool           // true if this side initiated the grapple; used as drift-roll tiebreaker in symmetric positions
 }
 
 // Machine wraps state.Machine[State] with Position-specific API.

@@ -2,6 +2,5 @@ mob_id: 374
 zone: Thornwall City
 deliveries_by_tier:
   30: 75
-  40: 150
-  50: 75
-last_updated_round: 2100767
+  40: 266
+last_updated_round: 1325302

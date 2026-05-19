@@ -1,0 +1,149 @@
+description: |
+  Admin-driven smoke test for Combat State Machines Chunk 1
+  (Awareness machine). The chunk replaced buff-#9-as-source-of-
+  truth for "is this character hidden?" with the Awareness state
+  machine (Visible/Concealing/Hidden/Revealing). Buff #9 still
+  exists as effect carrier; the cascade in Awareness_Cascades.go
+  keeps it mirrored with the state.
+
+  Bundled mechanic refresh:
+  - Hidden has NO duration (used to be 15 rounds; now persists
+    until explicitly broken)
+  - Hidden movement costs 3x stamina (stacks with encumbrance)
+  - Light-conditional sneak score:
+      dark sneaker, dark room: 1.0x (baseline)
+      dark sneaker, lit room:  0.9x
+      lit sneaker, lit room:   0.85x
+      lit sneaker, dark room:  0.5x (beacon in darkness)
+  - Noisy actions break stealth (say/shout/rally/warcry/taunt)
+  - Logout while Hidden forces Revealing → Visible with room
+    broadcast
+
+  The smoketester account is admin role (confirmed in prior
+  chunks). Use admin commands freely.
+
+  IMPORTANT: don't modify code or YAML files. Observe, capture,
+  report. If a check fails, write it up — do NOT edit any files.
+
+goals:
+  # ── 0. Login + admin confirm ──────────────────────────────────
+  - Log in as smoketester (port 55555, host localhost). Run
+    `set charset` to switch to ASCII. Run `look`. Verify admin
+    via `help admin`.
+
+  # ── 1. Sneak alone succeeds (AW-001) ─────────────────────────
+  - Teleport to a quiet room (e.g., `teleport 200` — Test Arena
+    Entrance). Verify no other players or hostile mobs are in
+    the room. Run `sneak`. Verify the "You feel sneaky" message
+    and "X disappears into the shadows" room broadcast (if a
+    mob is in the room to observe it).
+
+    Run `status` after. The Awareness state is internal; you
+    won't see it directly, but you can verify by attempting
+    actions that require Hidden state (e.g., shadow).
+
+  # ── 2. No duration test (NEW) ────────────────────────────────
+  - Once Hidden (from step 1), wait MANY rounds without taking
+    any action. Use `wait` if available, or just send blank
+    commands / `look` repeatedly. Stay Hidden for at least
+    20+ rounds — pre-chunk-1 the buff expired at 15 rounds.
+
+    Confirm Hidden persists past 20 rounds. This is the
+    "no duration" mechanic from chunk 1.
+
+  # ── 3. Hidden movement stamina cost (AW-019) ────────────────
+  - While Hidden, check your stamina via `status` (note baseline).
+    Walk 3-5 rooms in any direction. Re-check `status`.
+
+    Expected: stamina dropped noticeably faster than normal
+    walking. Pre-chunk-1, hidden movement had a hardcoded 1.5x;
+    chunk 1 changed it to 3.0x (config-tunable). So three rooms
+    of stealthed walking should drain ~3x the stamina of normal
+    walking.
+
+    Note: you'll un-hide if you fail any movement detection
+    roll — that's expected and a separate test.
+
+  # ── 4. Combat entry breaks stealth (AW-015) ─────────────────
+  - Go to a known hostile-mob area. Spawn a bandit (mob 284) or
+    similar combatant. While Hidden, attack the mob.
+
+    Expected:
+      - Combat enters Engaging phase
+      - Awareness cascade fires Hidden → Revealing → Visible
+      - You see "X emerges from the shadows" room broadcast
+      - Combat proceeds normally
+
+  # ── 5. Surprise attack from stealth (AW-016, AW-017, AW-018) ─
+  - Sneak again. Once Hidden, attack a hostile mob. The attack
+    should:
+      - Set Combat Phase Engaging with TriggerSurpriseAttack
+      - Preserve Hidden through Engaging
+      - Engaging → Engaged carries SurpriseLeft = true
+      - First combat round: all weapon swings get surprise bonus
+        (dual/triple weapon configs matter here)
+      - END of first combat round: surprise consumed,
+        Hidden → Revealing → Visible
+
+    Capture: the message text on the surprise round, any
+    bonus-damage indicators, and the "emerges from shadows"
+    line at end of round 1.
+
+  # ── 6. Noisy action stealth break (AW-032/AW-033) ───────────
+  - Sneak. While Hidden, run `say hello world`. Expected:
+    immediately reveal — Hidden → Revealing → Visible, room
+    broadcast fires.
+
+    Repeat with `shout` if you can without disrupting other
+    players. Or use `rally` / `warcry` in combat to test those.
+
+  # ── 7. Logout safety valve (AW-021) ─────────────────────────
+  - Sneak somewhere. Confirm Hidden (via status / next action
+    verification). Then `quit`. Re-login. Verify:
+      - On reconnect, you are NOT still hidden
+      - The room broadcast "emerges from the shadows" should
+        have fired before disconnect (other players in your
+        room would have seen it)
+
+  # ── 8. Light-conditional sneak (informal) ───────────────────
+  - Light test scenarios are hard to validate without
+    instrumenting roll outcomes. Just verify behavior FEELS
+    right:
+      - Sneak in a dark room (most outside rooms): should
+        succeed often
+      - Sneak in a lit area like Temple Interior or a torchlit
+        corridor: should succeed less often
+      - Try equipping a torch (if you have one) while hidden —
+        observe whether the next detection roll fires
+
+  # ── 9. Combat Phase regression (chunk 0 thief) ──────────────
+  - Walk to Thornwall Outskirts (`teleport 441` or `teleport
+    445`). Observe the Thornwall highwayman. Confirm the chunk-2.7
+    thief regression test still passes — the highwayman should
+    hide, attempt steal, possibly flee, but NEVER initiate
+    combat with you.
+
+    This is the marquee chunk-2.7 scenario that closed chunk 0.
+    Verify chunk 1's Awareness changes didn't regress it.
+
+  # ── 10. Final summary ───────────────────────────────────────
+  - Write a "Smoke verdict" paragraph at the top of your report:
+
+      Smoke verdict: PASS | PARTIAL | FAIL
+        - Sneak alone (AW-001): PASS/FAIL
+        - No duration test: PASS/FAIL
+        - Hidden movement stamina cost: PASS/FAIL
+        - Combat entry stealth break (AW-015): PASS/FAIL
+        - Surprise attack flow (AW-016-018): PASS/FAIL
+        - Noisy action reveal (AW-032/033): PASS/FAIL
+        - Logout safety valve (AW-021): PASS/FAIL
+        - Light-conditional sneak (informal): NOTES
+        - Chunk 0 thief regression: PASS/FAIL
+
+  # ── 11. Blockers ─────────────────────────────────────────────
+  - If any admin command syntax fails or the server doesn't
+    behave as expected, document the failure mode + your
+    attempted commands in a "Blockers" section. Don't fight
+    tooling — flag and move on.
+
+  Report file: `tools/testing/reports/2026-05-15-local-feature-tester-chunk-1-awareness-state-machine.md`

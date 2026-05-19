@@ -31,7 +31,7 @@ func TestCondMobCanSubmitTop_InMountAsController_Success(t *testing.T) {
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
 	)
 	_ = mob.Character.Position.TransitionToMount(
-		position.GrappleData{Partner: state.ActorRef{UserId: 999}, IsControllerRole: true},
+		position.GrappleData{Partner: state.ActorRef{UserId: 999}},
 		state.TransitionReason{Trigger: position.TriggerTakedownMount},
 	)
 	ctx := &EvalContext{InstanceId: mob.InstanceId}
@@ -50,7 +50,7 @@ func TestCondMobCanSubmitTop_InMountAsControlled_Failure(t *testing.T) {
 	)
 	// Mount the mob as the controlled side (bottom)
 	_ = mob.Character.Position.TransitionToMount(
-		position.GrappleData{Partner: state.ActorRef{UserId: 999}, IsControllerRole: false},
+		position.GrappleData{Partner: state.ActorRef{UserId: 999}},
 		state.TransitionReason{Trigger: position.TriggerTakedownMount},
 	)
 	ctx := &EvalContext{InstanceId: mob.InstanceId}
@@ -79,7 +79,7 @@ func TestCondMobCanSubmitBottom_InMountAsControlled_Success(t *testing.T) {
 	)
 	// Mount as controlled (bottom); Mount has bottom subs (Triangle, Armbar)
 	_ = mob.Character.Position.TransitionToMount(
-		position.GrappleData{Partner: state.ActorRef{UserId: 999}, IsControllerRole: false},
+		position.GrappleData{Partner: state.ActorRef{UserId: 999}},
 		state.TransitionReason{Trigger: position.TriggerTakedownMount},
 	)
 	ctx := &EvalContext{InstanceId: mob.InstanceId}
@@ -98,7 +98,7 @@ func TestCondMobCanSubmitBottom_InKneeOnBellyAsControlled_Failure(t *testing.T) 
 	)
 	// KneeOnBelly has no bottom subs, so condition should fail
 	_ = mob.Character.Position.TransitionToKneeOnBelly(
-		position.GrappleData{Partner: state.ActorRef{UserId: 999}, IsControllerRole: false},
+		position.GrappleData{Partner: state.ActorRef{UserId: 999}},
 		state.TransitionReason{Trigger: position.TriggerPositionAdvance},
 	)
 	ctx := &EvalContext{InstanceId: mob.InstanceId}
@@ -117,7 +117,7 @@ func TestCondMobCanSubmitBottom_InMountAsController_Failure(t *testing.T) {
 	)
 	// Mount as controller (top); can't submit as bottom
 	_ = mob.Character.Position.TransitionToMount(
-		position.GrappleData{Partner: state.ActorRef{UserId: 999}, IsControllerRole: true},
+		position.GrappleData{Partner: state.ActorRef{UserId: 999}},
 		state.TransitionReason{Trigger: position.TriggerTakedownMount},
 	)
 	ctx := &EvalContext{InstanceId: mob.InstanceId}

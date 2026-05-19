@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/control"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 )
 
@@ -46,31 +47,41 @@ func TestForceBreakPair_BothReturnToStanding(t *testing.T) {
 	refB := state.ActorRef{UserId: 2}
 
 	// Walk both through Standing → Clinch → Mount, then deliberately
-	// stamp both IsControllerRole=true to violate invariant 4.
+	// stamp both to controller roles to violate invariant 4. This is
+	// now done via Control.State() so we wire Control directly.
+	a.Control = control.NewMachine()
 	if err := a.Position.TransitionToClinch(
-		position.GrappleData{Partner: refB, IsControllerRole: false},
+		position.GrappleData{Partner: refB},
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry}); err != nil {
 		t.Fatalf("a → Clinch failed: %v", err)
 	}
 	if err := a.Position.TransitionToMount(
-		position.GrappleData{Partner: refB, IsControllerRole: true},
+		position.GrappleData{Partner: refB},
 		state.TransitionReason{Trigger: position.TriggerTakedownMount}); err != nil {
 		t.Fatalf("a → Mount failed: %v", err)
 	}
+	if err := a.Control.TransitionToControlling(state.TransitionReason{Trigger: position.TriggerTakedownMount}); err != nil {
+		t.Fatalf("a.Control → Controlling failed: %v", err)
+	}
+
+	b.Control = control.NewMachine()
 	if err := b.Position.TransitionToClinch(
-		position.GrappleData{Partner: refA, IsControllerRole: false},
+		position.GrappleData{Partner: refA},
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry}); err != nil {
 		t.Fatalf("b → Clinch failed: %v", err)
 	}
 	if err := b.Position.TransitionToMount(
-		position.GrappleData{Partner: refA, IsControllerRole: true},
+		position.GrappleData{Partner: refA},
 		state.TransitionReason{Trigger: position.TriggerTakedownMount}); err != nil {
 		t.Fatalf("b → Mount failed: %v", err)
+	}
+	if err := b.Control.TransitionToControlling(state.TransitionReason{Trigger: position.TriggerTakedownMount}); err != nil {
+		t.Fatalf("b.Control → Controlling failed: %v", err)
 	}
 
 	err := position.ValidateGrapplePair(a, b)
 	if err == nil {
-		t.Fatal("expected invariant violation in setup (both IsControllerRole=true)")
+		t.Fatal("expected invariant violation in setup (both Control.Controlling)")
 	}
 
 	forceBreakPair(a, b, err)
@@ -94,7 +105,7 @@ func TestForceBreakSolo_ReturnsToStanding(t *testing.T) {
 	dangling := state.ActorRef{UserId: 999}
 
 	if err := c.Position.TransitionToClinch(
-		position.GrappleData{Partner: dangling, IsControllerRole: false},
+		position.GrappleData{Partner: dangling},
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry}); err != nil {
 		t.Fatalf("→ Clinch failed: %v", err)
 	}
