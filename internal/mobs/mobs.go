@@ -92,7 +92,6 @@ type Mob struct {
 	legacyHostile bool `yaml:"hostile,omitempty"`
 	PackFleeImmune  bool     `yaml:"pack_flee_immune,omitempty"` // if true, won't flee when packmates die
 	LastIdleCommand uint8    `yaml:"-"`                          // Track what hte last used idlecommand was
-	BoredomCounter  uint8    `yaml:"-"`                          // how many rounds have passed since this mob has seen a player
 	Groups          []string // What group do they identify with? Helps with teamwork
 	FoldAnchorRoom  int      `yaml:"fold_anchor_room,omitempty"` // Spawn-time fold-recall anchor (room ID)
 	// Pack-combat routine (v2-ready — see docs/superpowers/specs/2026-04-22-pack-tactics-revamp-design.md).
@@ -115,7 +114,6 @@ type Mob struct {
 	Character          characters.Character
 	MaxWander          int             `yaml:"maxwander,omitempty"`           // Max rooms to wander from home
 	WanderCount        int             `yaml:"-"`                             // How many times this mob has wandered
-	PreventIdle        bool            `yaml:"-"`                             // Whether they can't possibly be idle
 	ScriptTag          string          `yaml:"scripttag"`                     // Script for this mob: mobs/frostfang/scripts/{mobId}-{mobname}-{ScriptTag}.js
 	QuestFlags         []string        `yaml:"questflags,omitempty,flow"`     // What quest flags are set on this mob?
 	BuffIds            []int           `yaml:"buffids,omitempty"`             // Buff Id's this mob always has upon spawn

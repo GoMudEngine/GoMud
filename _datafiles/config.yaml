@@ -98,12 +98,6 @@ Server:
 #
 ################################################################################
 Memory:
-  # - MaxMobBoredom -
-  #   How many rounds a mob can go without seeing a player before a mob despawns.
-  #   This is mainly a resource management feature to keep the game from getting
-  #   bogged down with too many mobs in memory. If you want mobs to stick around
-  #   indefinitely, set this to 0. Certain mobs may never despawn, however.
-  MaxMobBoredom: 250
   # - MobUnloadThreshold -
   #   Do not unload any bots if the in-memory count is under this threshold.
   MobUnloadThreshold: 100
