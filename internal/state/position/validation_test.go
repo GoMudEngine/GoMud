@@ -78,8 +78,8 @@ func TestValidateGrapplePair_BothInControlRejected(t *testing.T) {
 	if !ok {
 		t.Fatalf("expected PairInvariantViolation; got %T", err)
 	}
-	if violation.Invariant != "role-exclusivity" {
-		t.Errorf("expected role-exclusivity; got %q", violation.Invariant)
+	if violation.Invariant != "control-exclusivity" {
+		t.Errorf("expected control-exclusivity; got %q", violation.Invariant)
 	}
 }
 

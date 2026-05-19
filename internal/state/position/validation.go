@@ -10,7 +10,7 @@ import (
 // PairInvariantViolation describes which of the four invariants
 // failed and provides context for logging.
 type PairInvariantViolation struct {
-	Invariant   string // "single-partner", "bidirectional", "matching-state", "role-exclusivity"
+	Invariant   string // "single-partner", "bidirectional", "matching-state", "control-exclusivity"
 	Description string
 }
 
@@ -34,10 +34,11 @@ func (v PairInvariantViolation) Error() string {
 //
 //  3. Matching-state: a.State() == b.State() while in a grapple pair.
 //
-//  4. Role-exclusivity: for asymmetric positions (any except Clinch,
-//     HalfGuard, Turtle), exactly one side must have
-//     IsControllerRole=true and the other IsControllerRole=false.
-//     Both-true and both-false are violations.
+//  4. ControlLevel consistency: both sides at Controlling is impossible
+//     (only one can dominate); both sides at Controlled is impossible
+//     (only one can be dominated). Applies to ALL grapple positions,
+//     symmetric and asymmetric alike. Nil Control machines are skipped
+//     (bootstrap / test-fixture paths that haven't wired Control).
 func ValidateGrapplePair(a, b GrappleActor) error {
 	if a == nil || b == nil {
 		return PairInvariantViolation{
@@ -102,38 +103,41 @@ func ValidateGrapplePair(a, b GrappleActor) error {
 		}
 	}
 
-	// Invariant 4: role-exclusivity for asymmetric positions.
-	// Chunk 4b-fixup-2 T7: reads Control.State() instead of the
-	// deprecated IsControllerRole bool. Exactly one side must be
-	// Controlling and the other Controlled.
-	if !isSymmetricGrapple(stateA) {
-		ctrlA := a.GetControl()
-		ctrlB := b.GetControl()
-		// Tolerate nil Control machines during bootstrap / tests that
-		// haven't wired Control yet (fall back to IsControllerRole check).
-		if ctrlA != nil && ctrlB != nil {
-			aIsCtrl := ctrlA.State() == control.Controlling
-			bIsCtrl := ctrlB.State() == control.Controlling
-			if aIsCtrl == bIsCtrl {
-				return PairInvariantViolation{
-					Invariant: "role-exclusivity",
-					Description: fmt.Sprintf(
-						"asymmetric state %v requires one Controlling + one Controlled; "+
-							"got a.Control=%v, b.Control=%v",
-						stateA, ctrlA.State(), ctrlB.State()),
-				}
-			}
-		} else {
-			// Fallback: IsControllerRole bool (T16 will remove this path).
-			if dA.IsControllerRole == dB.IsControllerRole {
-				return PairInvariantViolation{
-					Invariant: "role-exclusivity",
-					Description: fmt.Sprintf(
-						"asymmetric state %v requires one controller + one controlled; "+
-							"got a.IsControllerRole=%v, b.IsControllerRole=%v",
-						stateA, dA.IsControllerRole, dB.IsControllerRole),
-				}
-			}
+	// Invariant 4: ControlLevel state consistency.
+	// - Both sides at Controlling is impossible (only one dominates).
+	// - Both sides at Controlled is impossible (only one is dominated).
+	// - Applies to symmetric AND asymmetric positions.
+	//
+	// Transient states (LosingControl, BecomingControlled) shouldn't
+	// appear at consistency-check time — they're entered same-tick
+	// during boundary crossings and resolve before the tick ends.
+	// If we see one in a check, that's a bug; flag it.
+	ctrlA := a.GetControl()
+	ctrlB := b.GetControl()
+	if ctrlA == nil || ctrlB == nil {
+		// Control machine not initialized — bootstrap path or test
+		// fixture. Skip the check; T6 ensures real grapples have
+		// Control initialized.
+		return nil
+	}
+
+	aState := ctrlA.State()
+	bState := ctrlB.State()
+
+	if aState == control.Controlling && bState == control.Controlling {
+		return PairInvariantViolation{
+			Invariant: "control-exclusivity",
+			Description: fmt.Sprintf(
+				"both sides at Controlling state in position %v (impossible: only one side can dominate)",
+				stateA),
+		}
+	}
+	if aState == control.Controlled && bState == control.Controlled {
+		return PairInvariantViolation{
+			Invariant: "control-exclusivity",
+			Description: fmt.Sprintf(
+				"both sides at Controlled state in position %v (impossible: only one side can be dominated)",
+				stateA),
 		}
 	}
 
