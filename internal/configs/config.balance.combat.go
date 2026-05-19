@@ -119,6 +119,17 @@ func (b *Balance) validateCombat() {
 		b.BrokenLimbBuffDuration = 900
 	}
 
+	// ── CHUNK 4E: THIRD-PARTY INTERFERENCE ──────────────────────────────────
+	// ControlDegradeOnOutsideHit is a ConfigBool — no zero-check needed.
+	// SubInterruptDamageThresholdPct: valid range [0.0, 1.0]. 0.0 means
+	// crit-only path; negative values are nonsensical, clamp to 0.
+	if b.SubInterruptDamageThresholdPct < 0 {
+		b.SubInterruptDamageThresholdPct = 0
+	}
+	if b.SubInterruptDamageThresholdPct > 1.0 {
+		b.SubInterruptDamageThresholdPct = 0.10
+	}
+
 	// ── GRAPPLE THRESHOLDS ───────────────────────────────────────────────────
 	if b.GrappleStaminaLowThreshold <= 0 || b.GrappleStaminaLowThreshold >= 1.0 {
 		b.GrappleStaminaLowThreshold = 0.25

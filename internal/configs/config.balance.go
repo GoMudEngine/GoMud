@@ -78,6 +78,22 @@ type Balance struct {
 	SubGoldLossFraction      ConfigFloat `yaml:"sub_gold_loss_fraction"`       // Fraction of carried gold transferred to the aggressor on subdue/cripple
 	BrokenLimbBuffDuration   ConfigInt   `yaml:"broken_limb_buff_duration"`    // Duration in rounds for the broken-limb buff; expires naturally via standard buff tick
 
+	// ── CHUNK 4E: THIRD-PARTY INTERFERENCE ──────────────────────────────────
+	// See docs/superpowers/specs/ chunk-4e design.
+
+	// ControlDegradeOnOutsideHit enables chunk 4e §5: third-party damage on
+	// a grapple controller shifts their ControlLevel one step toward Neutral
+	// per disrupted round. Set false to disable the mechanic for tuning.
+	ControlDegradeOnOutsideHit ConfigBool `yaml:"ControlDegradeOnOutsideHit"`
+
+	// SubInterruptDamageThresholdPct is the fraction of HealthMax that
+	// constitutes "above-threshold" third-party damage for chunk 4e §7
+	// sub interrupt. Below this, damage doesn't break a sub setup; at or
+	// above, the sub outcome is forced to Bad tier. A crit also triggers
+	// the override regardless of threshold. Default 0.10 (10% of max HP).
+	// Set 0 to disable threshold-path (crit-only).
+	SubInterruptDamageThresholdPct ConfigFloat `yaml:"SubInterruptDamageThresholdPct"`
+
 	// ── GRAPPLE CONTROL AXIS (chunk 4b) ──────────────────────────────────────
 	// Per-round drift mechanics — see
 	// docs/superpowers/specs/2026-05-16-state-chunk-4b-position-control-axis-design.md

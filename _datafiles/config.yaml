@@ -560,6 +560,10 @@ Balance:
   StaminaPenaltyMax: 0.28        # At 0% SP: attacks/hit rate reduced by 28%
   ConvictionPenaltyMax: 0.28     # At 0% CP: taunt/spell reduced by 28%
 
+  # ── Chunk 4e: Third-party interference ───────────────────────────────────
+  ControlDegradeOnOutsideHit: true     # chunk 4e §5; set false to disable 3rd-party hit → controller ControlLevel drift
+  SubInterruptDamageThresholdPct: 0.10  # chunk 4e §7; 10% of max HP triggers sub interrupt. Set 0 to disable threshold path (crit-only).
+
   # ── Grapple Control Axis (chunk 4b — per-round drift mechanics) ──────────
   # See docs/superpowers/specs/2026-05-16-state-chunk-4b-position-control-axis-design.md
   # Penalty curves are deliberately steeper than the combat ResourcePenalty

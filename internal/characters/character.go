@@ -80,6 +80,8 @@ func (c *Character) ResetForMobInstance() {
 	c.combatPhaseWired = false
 	c.PerGrappleMessageCooldowns = nil
 	c.PerGrappleMessageCooldownsLastRound = nil
+	c.OutsideHitDisruptedRound = 0
+	c.SubInterruptDamageThisRound = 0
 }
 
 type NameRenderFlag uint8
@@ -186,6 +188,20 @@ type Character struct {
 	// internal/hooks/Position_GrappleTick.go's emitHoldFlavor to
 	// throttle hold-round messages to once every ~4 rounds.
 	PerGrappleMessageCooldownsLastRound map[string]uint64     `yaml:"-"`
+	// OutsideHitDisruptedRound tracks the last round number at which a
+	// third-party hit caused a ControlLevel disruption (chunk 4e §5).
+	// Used to dedupe multiple hits per round — one disruption per round
+	// even if multiple third parties land hits. Compared against
+	// util.GetRoundCount(); equality means "already disrupted this round."
+	OutsideHitDisruptedRound int64 `yaml:"-"`
+	// SubInterruptDamageThisRound accumulates qualifying third-party
+	// damage delivered to this character during the current round.
+	// "Qualifying" means: from a non-grapple-partner AND (crit OR damage
+	// >= SubInterruptDamageThresholdPct × HealthMax). Chunk 4e §7 reads
+	// this in Position_SubmissionTick to decide whether to force-Bad
+	// any sub firing this round. Reset implicitly by being read once
+	// per round.
+	SubInterruptDamageThisRound float64 `yaml:"-"`
 	Conditions               []CombatCondition              `yaml:"-"`                       // Active temporary combat conditions (Stage 9.8). Don't store this.
 	AttacksThisRound         int                            `yaml:"-"`                       // Stage 9.4: Tracks recent attacks for stance calculation. Don't store this.
 	DefensesThisRound        int                            `yaml:"-"`                       // Stage 9.4: Tracks recent defenses for stance calculation. Don't store this.
