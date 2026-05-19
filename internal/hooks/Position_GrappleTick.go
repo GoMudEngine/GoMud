@@ -254,23 +254,17 @@ func resolvePartner(c *characters.Character) *characters.Character {
 func processGrapplePair(controller, controlled *characters.Character) {
 	cfg := configs.GetBalanceConfig()
 
-	// Score formula unchanged from chunk 4b:
-	//   controller: (Str + WeaponCombat) × stamina × encumbrance
-	//   controlled: (Str + WeaponCombat + 0.5·Dex + body.EscapeModifier)
-	//               × stamina × encumbrance
-	ctrlBase := float64(controller.Stats.Strength.Value) +
-		float64(controller.GetSkillLevel(skills.WeaponCombat))
-	cdBase := float64(controlled.Stats.Strength.Value) +
-		float64(controlled.GetSkillLevel(skills.WeaponCombat)) +
-		0.5*float64(controlled.Stats.Dexterity.Value) +
-		escapeModifierFromBody(controlled)
-
-	ctrlScore := ctrlBase *
-		grappleStaminaMultiplier(controller, cfg) *
-		grappleEncumbranceMultiplier(controller, cfg)
-	cdScore := cdBase *
-		grappleStaminaMultiplier(controlled, cfg) *
-		grappleEncumbranceMultiplier(controlled, cfg)
+	// Score formula (spec 2026-05-19 §3):
+	//   score = (0.7·Str + 0.3·Dex + skill_coef·UnarmedCombat)
+	//           × stamina_mult × encumbrance_mult
+	//   skill_coef = 2.2 (aggressor) or 2.0 (defender)
+	//
+	// IsAggressor is set on GrappleData by ApplyGrappleResult's
+	// markAggressor call (chunk 4b-fixup-2 T5). It persists for the
+	// lifetime of the grapple — even after reversals, the original
+	// initiator keeps the bonus.
+	ctrlScore := grappleScore(controller, isAggressorSide(controller), cfg)
+	cdScore := grappleScore(controlled, isAggressorSide(controlled), cfg)
 
 	_, margin, atkRoll, defRoll := dice.OpposedRollStat(ctrlScore, cdScore)
 
@@ -640,6 +634,22 @@ func grappleScore(c *characters.Character, isAggressor bool, cfg configs.Balance
 
 	base := 0.7*strVal + 0.3*dexVal + skillCoef*skill
 	return base * grappleStaminaMultiplier(c, cfg) * grappleEncumbranceMultiplier(c, cfg)
+}
+
+// isAggressorSide returns true if this character's GrappleData
+// has IsAggressor=true. Set once by ApplyGrappleResult.markAggressor
+// (chunk 4b-fixup-2 T5) when the grapple is initiated; persists
+// for the grapple's lifetime regardless of subsequent reversals.
+// Returns false defensively for nil/Position-less characters.
+func isAggressorSide(c *characters.Character) bool {
+	if c == nil || c.Position == nil {
+		return false
+	}
+	d, ok := c.Position.GrappleData()
+	if !ok {
+		return false
+	}
+	return d.IsAggressor
 }
 
 // grappleStaminaMultiplier returns a penalty multiplier in (1-max, 1].
