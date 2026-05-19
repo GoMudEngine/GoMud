@@ -20,6 +20,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/state/control"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
+	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/stats"
 )
 
@@ -77,6 +78,7 @@ func (c *Character) ResetForMobInstance() {
 	c.Awareness = nil
 	c.Activity = nil
 	c.Control = nil
+	c.Presence = nil
 	c.combatPhaseWired = false
 	c.PerGrappleMessageCooldowns = nil
 	c.PerGrappleMessageCooldownsLastRound = nil
@@ -177,6 +179,11 @@ type Character struct {
 	// (LosingControl/BecomingControlled) entered same-tick during
 	// boundary crossings. Resets to Neutral on grapple exit.
 	Control                  *control.Machine               `yaml:"-"` // not persisted; recomputed at boot
+	// Presence is the canonical state machine for "is this character
+	// meaningfully present?". Per-actor states (Player: Connecting /
+	// Active / Idle / AFK / Disconnected; Mob: Spawning / Active /
+	// Dormant / Despawning). See internal/state/presence/context.md.
+	Presence                 *presence.Machine              `yaml:"-"`
 	// PerGrappleMessageCooldowns tracks which gradient/stamina
 	// messages have already fired during the current grapple session.
 	// Resets when the character returns to a non-grapple state.
@@ -299,6 +306,7 @@ func New() *Character {
 		Activity:                   activity.NewMachine(),
 		Position:                   position.NewMachine(),
 		Control:                    control.NewMachine(),
+		Presence:                   presence.NewPlayerPresence(),
 		PerGrappleMessageCooldowns: map[string]bool{},
 		SubmissionPolicy:           PolicySubdue,
 		SurrenderPolicy:            SurrenderPolicy{Mode: SurrenderAutoTap, HpPctThreshold: 15},

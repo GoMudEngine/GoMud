@@ -18,6 +18,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
+	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 	"github.com/GoMudEngine/GoMud/internal/stats"
 )
@@ -540,6 +541,9 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 	}
 	if c.Position == nil {
 		c.Position = position.NewMachine()
+	}
+	if c.Presence == nil {
+		c.Presence = presence.NewPlayerPresence()
 	}
 	if c.PerGrappleMessageCooldowns == nil {
 		c.PerGrappleMessageCooldowns = map[string]bool{}

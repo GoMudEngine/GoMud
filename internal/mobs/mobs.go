@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/facts"
@@ -1064,6 +1065,14 @@ func (r *Mob) Validate() error {
 	}
 
 	r.Character.Validate()
+
+	// Always (re)initialize Presence with the mob transition table.
+	// Character.Validate() nil-guards with NewPlayerPresence() so that
+	// YAML-loaded players are covered, but every mob actor needs the mob
+	// state set (Spawning initial state + mob transition table). Re-create
+	// rather than nil-guard so template mobs and freshly shallow-copied
+	// instances are both handled correctly.
+	r.Character.Presence = presence.NewMobPresence()
 
 	return nil
 }
