@@ -58,6 +58,8 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 	// ControlLevel toward Neutral.
 	if attackResult.DamageToTarget > 0 {
 		chunk4eApplyOutsideHitDisruption(user.Character, &mob.Character)
+		// Chunk 4e §7: track third-party damage that would interrupt subs.
+		chunk4eAccumulateSubInterruptDamage(user.Character, &mob.Character, attackResult.DamageToTarget, attackResult.Crit)
 	}
 
 	// Remember who has hit him
@@ -131,6 +133,8 @@ func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) 
 		// Chunk 4e §5: third-party hit on grapple controller drifts their
 		// ControlLevel toward Neutral.
 		chunk4eApplyOutsideHitDisruption(userAtk.Character, userDef.Character)
+		// Chunk 4e §7: track third-party damage that would interrupt subs.
+		chunk4eAccumulateSubInterruptDamage(userAtk.Character, userDef.Character, attackResult.DamageToTarget, attackResult.Crit)
 	}
 
 	// Track progression stats for the attacking player
@@ -202,6 +206,8 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 		// Chunk 4e §5: third-party hit on grapple controller drifts their
 		// ControlLevel toward Neutral.
 		chunk4eApplyOutsideHitDisruption(&mob.Character, user.Character)
+		// Chunk 4e §7: track third-party damage that would interrupt subs.
+		chunk4eAccumulateSubInterruptDamage(&mob.Character, user.Character, attackResult.DamageToTarget, attackResult.Crit)
 	}
 
 	// Track defender's dexterity use (reacting to attacks)
@@ -237,6 +243,8 @@ func AttackMobVsMob(mobAtk *mobs.Mob, mobDef *mobs.Mob) AttackResult {
 	// ControlLevel toward Neutral.
 	if attackResult.DamageToTarget > 0 {
 		chunk4eApplyOutsideHitDisruption(&mobAtk.Character, &mobDef.Character)
+		// Chunk 4e §7: track third-party damage that would interrupt subs.
+		chunk4eAccumulateSubInterruptDamage(&mobAtk.Character, &mobDef.Character, attackResult.DamageToTarget, attackResult.Crit)
 	}
 
 	// If attacking mob was player charmed, attribute damage done to that player
@@ -529,6 +537,34 @@ func applyPositionHitModifiers(source, target *characters.Character) float64 {
 	}
 	return position.AttackerSelfHitModifier(srcPos, srcRole) *
 		position.TargetSideHitModifier(tgtPos, tgtRole)
+}
+
+// chunk4eAccumulateSubInterruptDamage fires §7 of the chunk 4e spec:
+// track third-party damage that would interrupt a sub attempt this
+// round. Damage qualifies if it's a crit OR exceeds
+// SubInterruptDamageThresholdPct × target.HealthMax. Accumulates on
+// Character.SubInterruptDamageThisRound, which Position_SubmissionTick
+// (T8) checks before resolving the sub outcome.
+func chunk4eAccumulateSubInterruptDamage(attacker, target *characters.Character, damage int, isCrit bool) {
+	if attacker == nil || target == nil {
+		return
+	}
+	if !IsThirdPartyAttack(attacker, target) {
+		return // partner hit — doesn't interrupt subs
+	}
+	bal := configs.GetBalanceConfig()
+	threshold := float64(bal.SubInterruptDamageThresholdPct)
+
+	qualifies := isCrit
+	if !qualifies && threshold > 0 && target.HealthMax.Value > 0 {
+		ratio := float64(damage) / float64(target.HealthMax.Value)
+		if ratio >= threshold {
+			qualifies = true
+		}
+	}
+	if qualifies {
+		target.SubInterruptDamageThisRound += float64(damage)
+	}
 }
 
 // chunk4eApplyOutsideHitDisruption fires §5 of the chunk 4e spec:
