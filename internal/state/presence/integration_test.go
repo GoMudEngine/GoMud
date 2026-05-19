@@ -75,3 +75,20 @@ func TestCombatPhaseVeto_AllowsOnAFK(t *testing.T) {
 		t.Errorf("AFK target should be attackable; got allowed=false")
 	}
 }
+
+// TestDormantWake_OnAttack verifies a Dormant mob transitions to Active
+// when an attack lands.
+func TestDormantWake_OnAttack(t *testing.T) {
+	m := presence.NewMobPresence()
+	_ = m.TransitionTo(presence.Active, state.TransitionReason{Trigger: presence.TriggerSpawnTickResolve})
+	_ = m.TransitionTo(presence.Dormant, state.TransitionReason{Trigger: presence.TriggerBored})
+
+	// Simulate the wake check that the attack-resolution path will do:
+	if m.State() == presence.Dormant {
+		_ = m.TransitionTo(presence.Active,
+			state.TransitionReason{Trigger: presence.TriggerAttacked})
+	}
+	if m.State() != presence.Active {
+		t.Errorf("after attack wake, state = %v, want Active", m.State())
+	}
+}

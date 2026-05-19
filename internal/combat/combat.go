@@ -15,6 +15,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/control"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
+	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -36,6 +37,17 @@ func canSeeInRoom(char *characters.Character, room *rooms.Room) bool {
 
 // Performs a combat round from a player to a mob
 func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
+
+	// Chunk 5 (Presence) T7: auto-wake Dormant mobs on incoming attack.
+	// The mob's per-round tick was being skipped while Dormant; receivability
+	// stays intact. Wake fires BEFORE damage so the target is Active when
+	// per-round logic runs. Reset LastDormantEntryRound so the next
+	// Active→Dormant timer starts fresh.
+	if mob.Character.Presence != nil && mob.Character.Presence.State() == presence.Dormant {
+		_ = mob.Character.Presence.TransitionTo(presence.Active,
+			state.TransitionReason{Trigger: presence.TriggerAttacked})
+		mob.Character.LastDormantEntryRound = 0
+	}
 
 	room := rooms.LoadRoom(user.Character.RoomId)
 	ctx := combatContext{
@@ -225,6 +237,14 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 
 // Performs a combat round from a mob to a mob
 func AttackMobVsMob(mobAtk *mobs.Mob, mobDef *mobs.Mob) AttackResult {
+
+	// Chunk 5 (Presence) T7: auto-wake Dormant mobs on incoming attack.
+	// Same semantics as AttackPlayerVsMob: defender wakes before damage applies.
+	if mobDef.Character.Presence != nil && mobDef.Character.Presence.State() == presence.Dormant {
+		_ = mobDef.Character.Presence.TransitionTo(presence.Active,
+			state.TransitionReason{Trigger: presence.TriggerAttacked})
+		mobDef.Character.LastDormantEntryRound = 0
+	}
 
 	room := rooms.LoadRoom(mobAtk.Character.RoomId)
 	ctx := combatContext{
