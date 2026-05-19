@@ -1,0 +1,42 @@
+goals:
+  - Type `status` and verify the command works normally. This is the
+    baseline — your Presence machine should be in Active.
+
+  - Send `afk testing chunk 5`. Verify the response says "You are now
+    AFK: testing chunk 5". Type `online` and confirm your name shows
+    up with an AFK marker.
+
+  - Send `look`. Verify the AFK is cleared with a "You are no longer
+    AFK." message. Reading the room should also work — both happen
+    in the same response.
+
+  - Send `afk` (no message). Verify it sets AFK with no message.
+    Then send `afk` again with no argument. Verify it toggles off
+    with "You are no longer AFK."
+
+  - Spawn a humanoid grappling-archetype mob via `mob spawn 105`
+    (Thornwall Thug). Confirm it appears in the room.
+
+  - Travel to a different room far from the spawned mob (3-4 rooms
+    away). Wait ~30 rounds — about 2 minutes real time. Send `noop`
+    occasionally to keep the bridge alive. The mob should
+    eventually go Dormant (PresenceMobDormantAfterRounds=30).
+
+  - Return to the room with the mob. Verify the mob is still visible
+    (the RoomChange wake fires it to Active). Attack it — verify
+    the attack lands (auto-wake-on-attack also fires, in case
+    RoomChange somehow didn't).
+
+  - Spawn a shopkeeper mob (any mob with HasShop, look in
+    _datafiles/world for one, or use the local shopkeeper if any
+    exists nearby). Travel away. Wait 60+ rounds. Return. Verify
+    the essential mob is STILL present and Active.
+
+  - Read `help afk` if it exists. Confirm wording isn't stale.
+
+  - Read `help grapple` and verify the chunk-4f Willpower-mediated
+    spell-disruption wording from previous work still reads OK.
+
+  - Report no panics, no missing-template debug strings, no
+    "unexpected presence state" log spam, no double-message bugs
+    around the AFK toggle.
