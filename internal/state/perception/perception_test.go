@@ -40,8 +40,11 @@ func TestSightedToBlindedOnBuffApplied(t *testing.T) {
 	}
 }
 
-// PE-003: Same path with flashbang trigger (no semantic difference in the FSM —
-// the trigger string distinguishes the source for logs).
+// PE-003: Same Sighted→Blinded path, this time carrying a buffId metadata
+// payload identifying flashbang as the source. The FSM itself ignores
+// metadata — it's a pass-through payload for observers/consumers to use
+// during the messaging-framework wiring. Trigger string is identical to
+// PE-002 (both use TriggerBuffApplied).
 func TestSightedToBlindedOnFlashbang(t *testing.T) {
 	m := NewMachine()
 	if err := m.TransitionTo(Blinded, state.TransitionReason{Trigger: TriggerBuffApplied, Metadata: map[string]any{"buffId": BuffIdFlashbangBlindness}}); err != nil {

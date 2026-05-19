@@ -1,7 +1,7 @@
-// Package perception defines the Perception state machine — the sixth
-// consumer of internal/state, after combatphase, awareness, life,
-// activity, position, and presence. Two-state FSM (Sighted / Blinded)
-// gating broadcast visibility and active-inspection.
+// Package perception defines the Perception state machine — the final
+// consumer of internal/state, alongside combatphase, awareness, life,
+// activity, position, control, and presence. Two-state FSM (Sighted /
+// Blinded) gating broadcast visibility and active-inspection.
 //
 // SHIPS DORMANT in chunk 6. Transitions fire correctly via buff /
 // condition observers, but no consumer reads the state yet. The future
