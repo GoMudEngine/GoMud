@@ -539,10 +539,6 @@ func (u *UserRecord) ClearPrompt() {
 }
 
 func (u *UserRecord) GetOnlineInfo() OnlineInfo {
-	c := configs.GetTimingConfig()
-	afkRounds := uint64(c.SecondsToRounds(int(configs.GetNetworkConfig().AfkSeconds)))
-	roundNow := util.GetRoundCount()
-
 	connTime := u.GetConnectTime()
 
 	oTime := time.Since(connTime)
@@ -560,9 +556,10 @@ func (u *UserRecord) GetOnlineInfo() OnlineInfo {
 		timeStr = fmt.Sprintf(`%ds`, s)
 	}
 
-	isAfk := u.ManualAFK
-	if !isAfk && afkRounds > 0 && roundNow-u.GetLastInputRound() >= afkRounds {
-		isAfk = true
+	// Chunk 5 (Presence): IsAFK shim reads the canonical Presence state.
+	isAfk := false
+	if u.Character != nil && u.Character.Presence != nil {
+		isAfk = u.Character.Presence.State() == presence.AFK
 	}
 
 	isAI := false

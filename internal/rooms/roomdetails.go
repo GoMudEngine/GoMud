@@ -264,11 +264,14 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 
 				pName := player.Character.GetPlayerName(user.UserId, renderFlags...)
 				playerEntry := pName.String()
-				if player.ManualAFK {
-					if player.AFKMessage != "" {
-						playerEntry += ` <ansi fg="8">(AFK: ` + player.AFKMessage + `)</ansi>`
-					} else {
-						playerEntry += ` <ansi fg="8">(AFK)</ansi>`
+				// Chunk 5 (Presence): read AFK status from canonical Presence machine.
+				if player.Character != nil && player.Character.Presence != nil {
+					if d, ok := player.Character.Presence.AFKData(); ok && d.Manual {
+						if d.Message != "" {
+							playerEntry += ` <ansi fg="8">(AFK: ` + d.Message + `)</ansi>`
+						} else {
+							playerEntry += ` <ansi fg="8">(AFK)</ansi>`
+						}
 					}
 				}
 				details.VisiblePlayers = append(details.VisiblePlayers, playerEntry)
