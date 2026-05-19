@@ -31,7 +31,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/grapplemessaging"
-	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -694,21 +693,6 @@ func grappleEncumbranceMultiplier(c *characters.Character, cfg configs.Balance) 
 	maxPen := float64(cfg.GrappleEncumbrancePenaltyMax)
 	curve := float64(cfg.GrappleEncumbrancePenaltyCurve)
 	return 1.0 - maxPen*math.Pow(normalized, curve)
-}
-
-// escapeModifierFromBody reads the controlled character's body slot
-// armor for the EscapeModifier field on ItemSpec. Mirrors the legacy
-// CheckGroundedEscape helper from chunk 2.
-func escapeModifierFromBody(c *characters.Character) float64 {
-	bodyItem := c.Equipment.Body
-	if bodyItem.ItemId == 0 {
-		return 0.0
-	}
-	spec := items.GetItemSpec(bodyItem.ItemId)
-	if spec == nil {
-		return 0.0
-	}
-	return spec.EscapeModifier
 }
 
 // applyGrappleStaminaCost deducts asymmetric per-round stamina from
