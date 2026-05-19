@@ -16,6 +16,10 @@ fists, claws, and bare hands.
   - <ansi fg="stat">Grapple-Friendly:</ansi> Fists and claws have very
     short reach. They stay fully effective in clinches and ground
     grapples where long weapons become awkward.
+  - <ansi fg="stat">Grapple Drift:</ansi> <ansi fg="skill">unarmed-combat</ansi>
+    is the primary skill that determines who wins each round of a
+    grapple's drift toward advance, hold, reversal, or escape.
+    See <ansi fg="command">help grapple</ansi> for the full picture.
 
 <ansi fg="yellow">━━━ Speed ━━━</ansi>
 

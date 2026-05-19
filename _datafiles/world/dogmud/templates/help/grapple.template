@@ -34,6 +34,33 @@ back (BackMount) requires a decisive advance. Submission attempts
 fire independently when you're decisively winning a round, from
 whatever position you currently hold.
 
+<ansi fg="yellow">━━━ What Decides Each Round ━━━</ansi>
+
+A grapple round resolves through an opposed contest of fitness and
+technique. Several things tilt the contest:
+
+  <ansi fg="stat">Unarmed Combat skill:</ansi> the biggest single factor.
+            Trained grapplers reliably beat untrained ones of
+            similar build.
+
+  <ansi fg="stat">Strength:</ansi> the primary stat for controlling and
+            holding positions.
+
+  <ansi fg="stat">Dexterity:</ansi> a secondary stat for setups, framing,
+            and scrambling.
+
+  <ansi fg="stat">Initiative:</ansi> the side that started the grapple has
+            a small edge that round — they picked the moment.
+
+  <ansi fg="stat">Stamina:</ansi> a gassed grappler is dramatically worse.
+            Long grapples favor whoever paces themselves.
+
+  <ansi fg="stat">Encumbrance:</ansi> carrying too much weight hurts both
+            sides of a grapple.
+
+Heavy armor doesn't directly help you escape — it just costs you
+more stamina to fight while wearing it.
+
 <ansi fg="yellow">━━━ Weapon Reach in Grapples ━━━</ansi>
 
 Long weapons become a liability when you're grappling. In a clinch
