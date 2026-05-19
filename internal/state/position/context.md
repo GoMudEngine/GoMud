@@ -9,7 +9,7 @@ states drawn from the full BJJ/MMA position taxonomy, covering everything
 from standing upright to ground-dominant control positions to defensive
 curls.
 
-**Status (fully shipped, 2026-05-18):**
+**Status (fully shipped, 2026-05-19):**
 
 - Writer cutover **W1-W8 shipped**: every production writer
   (`ApplyGrappleResult`, submission outcomes, grapple crit-fail, trip,
@@ -65,10 +65,29 @@ cripple outcomes, submission-stunned (id 84) for crit-tier mercy. Role-split
 submission mapping lives in `internal/state/position/submissions.go`; the
 consumer side is documented in `internal/combat/context.md`.
 
-**Next chunks:** 4e — player command parity (player-facing `grapple`,
-`escape`, `position` commands matching mob capabilities). 4f — helpfile +
-full doc sweep (player-facing help content for all grapple/position
-commands, per-round drift narrative).
+**4e shipped:** Third-party hooks and defense degradation. Position-tiered
+hit modifiers (`modifiers.go`) add `TargetSideHitModifier` +
+`AttackerSelfHitModifier` lookups consumed by `applyPositionHitModifiers` in
+`internal/combat/combat.go`; Mount controller vs controlled = 1.32× net.
+Eat/drink commands blocked during any grapple state. Outside-damage on a
+grapple controller shifts `Character.Control` one step toward Neutral per
+disrupted round (deduped via `OutsideHitDisruptedRound`; gated by config
+`ControlDegradeOnOutsideHit`). Sub interrupt: third-party crit or damage
+≥ `SubInterruptDamageThresholdPct × HealthMax` during a sub round forces
+Bad-tier outcome. AI tiebreaker: `applyGrappledControlledTiebreak` in
+`internal/mobcommands/lookfortrouble.go` biases mob target selection toward
+grapple-controlled players.
+
+**4f shipped:** Chance-based position concentration disruption.
+`disruption.go` (`PositionDisruptionDmgEquiv`) provides a per-(position,
+role) damage%-equivalent integer. `processFoldRound` in
+`internal/hooks/combat_shared_helpers.go` replaced the three deterministic
+100% break gates with a single call to this lookup +
+`characters.CalcConcentrationChance(Wil, dmgPctEquiv)` + `util.Rand(100)`.
+Standing returns 0 (check skipped). Grapple helpfile softened to match.
+Chunk 4 (Position) is now **CLOSED**.
+
+**Next:** Chunk 5 — Presence system.
 
 ---
 
@@ -817,10 +836,8 @@ position. |
 
 ---
 
-## What 4e / 4f Bring
+## Chunk 4 closed
 
-- **4e — Player command parity:** Player-facing `grapple`, `escape`,
-  `position` commands matching mob capabilities.
-- **4f — Helpfile + full doc sweep:** Player-facing help content for all
-  grapple/position commands; full doc updates to combat, mobs, btree,
-  actions packages; per-round drift narrative for players.
+Chunks 4a through 4f (Position FSM, ControlLevel FSM, weapon reach,
+submissions, third-party hooks, and chance-based concentration disruption)
+are all fully shipped as of 2026-05-19. Chunk 5 (Presence) is next.

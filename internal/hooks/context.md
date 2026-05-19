@@ -1015,7 +1015,7 @@ submission-specific room message. The gate reads `d.NoDeprogression`
 from `DeadData` to distinguish subdue/cripple (quiet, local) from
 lethal (global announce). Source: `internal/hooks/Death_PlayerAnnouncement.go`.
 
-### Chunk 4e sub-interrupt + spell disruption hooks
+### Chunk 4e sub-interrupt hook
 
 **Position_SubmissionTick.go** reads `Character.SubInterruptDamageThisRound`
 (accumulated by combat's `chunk4eAccumulateSubInterruptDamage` hook) before
@@ -1023,12 +1023,35 @@ resolving sub outcomes. If > 0, forces the tier to `SubTierBad` regardless
 of the roll result. Both submitter and partner accumulators are reset to 0
 at the end of each per-pair tick via defer.
 
-**combat_shared_helpers.go** `processFoldRound` adds a grapple-state catch-all
-(chunk 4e T4 audit): if the caster is `IsGrappling()`, the in-flight fold
-clears and `GrappleBroke: true` is returned. NewRound_DoCombat_helpers
-handles the message routing. This closes the gap where casters in Mount,
-Clinch, etc. could complete spells unimpeded (Prone/Supine already
-disrupted; grapple states did not until chunk 4e).
+### Chunk 4f: chance-based position concentration disruption
+
+**`processFoldRound`** in `combat_shared_helpers.go` (chunk 4f) replaces the
+earlier deterministic 100% break gates (Prone/Supine/Grapple from chunks 4a-4e)
+with a single chance-based check:
+
+1. Reads `position.PositionDisruptionDmgEquiv(posState, ctrlState)` from
+   `internal/state/position/disruption.go`. Returns 0 for `Standing`
+   (check skipped entirely).
+2. Feeds the damage%-equivalent into the existing
+   `characters.CalcConcentrationChance(Wil, dmgPctEquiv)` curve (same
+   function used by the damage-path `checkConcentrationBreak`).
+3. Rolls `util.Rand(100)` and calls `util.LogRoll("Position Concentration", ...)`
+   for observability.
+4. On failure, calls `clearCastingActivity(TriggerConcentrationBreak)` and
+   returns `ProneBroke: true` or `GrappleBroke: true` (caller routes messages).
+5. On success, fold accumulation continues normally.
+
+**Layered disruption:** The damage-path `checkConcentrationBreak` still fires
+independently when damage lands during a round. Both paths can break a single
+cast in the same round. The Activity machine does not have a concept of "already
+broke this round" — two breaks in one round simply fire `TransitionToFree` twice;
+the second call is a no-op from the `Free` state.
+
+Cross-references:
+- `internal/state/position/disruption.go` — per-position dmg%-equivalent table
+- `internal/state/position/context.md` — chunk 4f status + Guard inversion note
+- `characters.CalcConcentrationChance` — shared Willpower curve
+  (`internal/characters/cast_helpers.go`)
 
 ### Reach pipeline integration (chunk 4c)
 

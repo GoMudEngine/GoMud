@@ -418,6 +418,33 @@ integration-level tests that pass in the full server smoke test.
 
 ## Sunset Notes
 
+## Position-based casting disruption (chunks 4e + 4f)
+
+The Activity machine's `Casting` state is disrupted by two independent paths:
+
+1. **Damage-path** (`checkConcentrationBreak` in
+   `internal/hooks/combat_shared_helpers.go`): fires when the caster takes
+   damage. Rolls `characters.CalcConcentrationChance(Wil, damagePct)`;
+   on failure fires `TriggerConcentrationBreak`. Unchanged since chunk 3.
+
+2. **Position-path** (`processFoldRound`, chunk 4f): at the start of every
+   fold round, if the caster is not `Standing`, looks up
+   `position.PositionDisruptionDmgEquiv(pos, role)` from
+   `internal/state/position/disruption.go`, feeds it through the same
+   `CalcConcentrationChance` curve, and rolls. Standing returns 0 (check
+   skipped). Both paths can break a single cast in the same round
+   (layered disruption). See `internal/hooks/context.md` for the full
+   walkthrough and `internal/state/position/context.md` for the per-position
+   table.
+
+The Activity machine itself has no position awareness — `processFoldRound`
+drives the break by calling `clearCastingActivity(char,
+TriggerConcentrationBreak)`, which calls `Activity.TransitionToFree`.
+
+---
+
+## Sunset Notes
+
 Chunk 3 deleted the following. Do not re-add these patterns:
 
 - `Character.CastingState *characters.CastingState` field

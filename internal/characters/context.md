@@ -657,14 +657,14 @@ default); all others return `false`.
 5 rollup predicates: `IsGrappling`, `IsStandingGrapple`,
 `IsGroundGrapple`, `IsTopDominant`, `IsOnFloor`.
 
-**Chunk 4b — 4 control-axis predicates and helpers:**
+**Chunk 4b-fixup-2 — control-axis predicates and helpers:**
 
-- `IsController()` — true when the character is on the controller side
-  of a grapple pair (reads `Position.GrappleData().ControlLevel`
-  via `IsControllerLevel`). Replaced the deleted
+- `IsController()` — true when `Character.Control.State() ==
+  control.Controlling`. Reads the `internal/state/control` FSM on
+  `Character.Control *control.Machine`. Replaced the deleted
   `HasCondition(ConditionGrappleController)` check (S4 shipped).
-- `IsBeingControlled()` — true when the character is on the controlled
-  side (symmetric to `IsController`).
+- `IsBeingControlled()` — true when `Character.Control.State() ==
+  control.Controlled` (symmetric to `IsController`).
 - `IsLowGrappleStamina()` — true when stamina fraction is below
   `GrappleStaminaLowThreshold` (config, default 0.25). Used by
   `mob_low_grapple_stamina` btree primitive and by
@@ -758,6 +758,33 @@ position's sub pool (`TopSubmissionsForPosition` or
 `BottomSubmissionsForPosition`). Advanced by
 `pickSubmissionRoundRobin` each time a sub attempt fires so the same
 sub type is not hammered every round. Not persisted: `yaml:"-"`.
+
+### CalcConcentrationChance (cast_helpers.go)
+
+```go
+func CalcConcentrationChance(willpower, damagePct int) int
+```
+
+Returns the % chance (0-100) that a caster maintains concentration given
+their Willpower and an incoming disruption expressed as a percentage of max
+HP. Higher Willpower → higher chance to hold; higher `damagePct` →
+lower chance to hold. The formula uses a Willpower divisor and a flat base,
+both tunable via config.
+
+**Consumed by two independent disruption paths:**
+
+1. **Damage-path** (`checkConcentrationBreak` in
+   `internal/hooks/combat_shared_helpers.go`): fires when the caster
+   takes damage mid-cast. `damagePct = (damage * 100) / maxHP`.
+2. **Position-path** (`processFoldRound`, chunk 4f): fires every fold
+   round when the caster is not `Standing`. `damagePct` comes from
+   `position.PositionDisruptionDmgEquiv(pos, role)` —
+   `internal/state/position/disruption.go`. Standing returns 0 (call
+   to `CalcConcentrationChance` is skipped entirely in that case).
+
+Both paths call `characters.CalcConcentrationChance` with the same
+Willpower curve; both can break a cast in the same round (layered
+disruption). Tests live in `internal/characters/casting_test.go`.
 
 ### OnCharacterCreated additions (chunk 4a + 4b)
 

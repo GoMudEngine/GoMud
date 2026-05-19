@@ -55,6 +55,30 @@ Per-pair invariant (in `internal/state/position/validation.go`):
 - Not both at Controlling.
 - Not both at Controlled.
 
+## Consumers of ControlLevel state (chunks 4e + 4f)
+
+- **Position hit-modifier tables** (`internal/state/position/modifiers.go`,
+  chunk 4e): `TargetSideHitModifier` and `AttackerSelfHitModifier` both take
+  `(pos State, role control.State)`. The `control.State` arg distinguishes
+  controller from controlled for asymmetric positions (e.g., Mount controller
+  gets 1.10× self-bonus, controlled gets 0.74×).
+
+- **Outside-damage control degradation** (chunk 4e §5): when a third party
+  hits a grapple controller, `chunk4eApplyOutsideHitDisruption` in
+  `internal/combat/combat.go` calls `TransitionOneStepTowardNeutral` on the
+  controller's `Character.Control`. Deduped per round via
+  `Character.OutsideHitDisruptedRound`; gated by config
+  `Balance.ControlDegradeOnOutsideHit`.
+
+- **Position disruption lookup** (`internal/state/position/disruption.go`,
+  chunk 4f): `PositionDisruptionDmgEquiv(pos, role)` returns a
+  damage%-equivalent integer per (position, control-role) pair. Fed into
+  `characters.CalcConcentrationChance(Wil, dmgPctEquiv)` in
+  `processFoldRound` to produce a Willpower-mediated chance-based
+  concentration break. Guard position inverts: bottom (Controlling) has
+  lower disruption than top (Controlled) because the controlled side has
+  hands and movement suppressed.
+
 ## Not currently used for
 
 - Position-change outcome gating. Position changes still come from the
