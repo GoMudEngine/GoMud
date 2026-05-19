@@ -763,4 +763,109 @@ func init() {
 	events.RegisterListener(events.NewRound{}, processGrappleTick)
 	// Template library loaded lazily on first use via loadGrappleLib()
 	// to avoid mudlog nil-pointer panics during test package init.
+
+	// Chunk 4b-fixup-2 T13: register the ControlLevel boundary-cross
+	// callback to fire gradient messaging when characters cross state
+	// boundaries. emitGradientMessage nil-checks grappleOutcomesLib so
+	// it is safe to call even if the library has not loaded yet.
+	control.RegisterBoundaryCrossCallback(func(self state.ActorRef, transient control.State, from control.State, to control.State, r state.TransitionReason) {
+		emitGradientMessage(self, transient, from, to)
+	})
+}
+
+// emitGradientMessage fires the appropriate gradient flavor when
+// a character's ControlLevel state crosses a boundary same-tick.
+// Resolves the gradient key from (transient, from, to) and dispatches
+// the Self/Partner/Observers triad with name substitution + cooldown.
+func emitGradientMessage(self state.ActorRef, transient control.State, from control.State, to control.State) {
+	if grappleOutcomesLib == nil {
+		return
+	}
+	key := gradientKeyForCrossing(transient, from, to)
+	if key == "" {
+		return
+	}
+	triad, ok := grappleOutcomesLib.Gradients[key]
+	if !ok {
+		mudlog.Warn("Position_GrappleTick: missing gradient key", "key", key)
+		return
+	}
+
+	// Resolve self + partner characters.
+	selfChar := characterFromRef(self)
+	if selfChar == nil {
+		return
+	}
+	partner := resolvePartner(selfChar)
+	if partner == nil {
+		return
+	}
+
+	if selfChar.PerGrappleMessageCooldowns == nil {
+		selfChar.PerGrappleMessageCooldowns = map[string]bool{}
+	}
+	if partner.PerGrappleMessageCooldowns == nil {
+		partner.PerGrappleMessageCooldowns = map[string]bool{}
+	}
+
+	selfName := characterDisplayName(selfChar)
+	partnerName := characterDisplayName(partner)
+
+	// Gradient templates use {controllerName} for "self" (the character
+	// whose state changed) and {controlledName} for "partner" in
+	// observer templates. The substitution matches what the YAML
+	// authoring used (selfName fills {controllerName}; partnerName
+	// fills {controlledName}).
+	if msg := grapplemessaging.PickTemplate(triad.Self, selfChar.PerGrappleMessageCooldowns, "gradient:"+key+":self"); msg != "" {
+		sendToCharacter(selfChar, grapplemessaging.RenderTemplate(msg, selfName, partnerName))
+	}
+	if msg := grapplemessaging.PickTemplate(triad.Partner, partner.PerGrappleMessageCooldowns, "gradient:"+key+":partner"); msg != "" {
+		sendToCharacter(partner, grapplemessaging.RenderTemplate(msg, selfName, partnerName))
+	}
+	if msg := grapplemessaging.PickTemplate(triad.Observers, selfChar.PerGrappleMessageCooldowns, "gradient:"+key+":obs"); msg != "" {
+		broadcastToRoomExcluding(selfChar, partner, grapplemessaging.RenderTemplate(msg, selfName, partnerName))
+	}
+}
+
+// gradientKeyForCrossing returns the YAML key for a boundary crossing.
+// Spec §7:
+//
+//	upper_boundary_down: Controlling → Neutral
+//	upper_boundary_up:   Neutral → Controlling
+//	lower_boundary_down: Neutral → Controlled
+//	lower_boundary_up:   Controlled → Neutral
+func gradientKeyForCrossing(transient control.State, from control.State, to control.State) string {
+	if transient == control.LosingControl {
+		if from == control.Controlling && to == control.Neutral {
+			return "upper_boundary_down"
+		}
+		if from == control.Neutral && to == control.Controlling {
+			return "upper_boundary_up"
+		}
+	}
+	if transient == control.BecomingControlled {
+		if from == control.Neutral && to == control.Controlled {
+			return "lower_boundary_down"
+		}
+		if from == control.Controlled && to == control.Neutral {
+			return "lower_boundary_up"
+		}
+	}
+	return ""
+}
+
+// characterFromRef resolves a state.ActorRef to its Character pointer.
+// Helper for emitGradientMessage; mirrors the resolvePartner pattern.
+func characterFromRef(ref state.ActorRef) *characters.Character {
+	if ref.UserId > 0 {
+		if u := users.GetByUserId(ref.UserId); u != nil {
+			return u.Character
+		}
+	}
+	if ref.MobInstanceId > 0 {
+		if m := mobs.GetInstance(ref.MobInstanceId); m != nil {
+			return &m.Character
+		}
+	}
+	return nil
 }
