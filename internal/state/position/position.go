@@ -185,46 +185,6 @@ func (m *Machine) IsOnFloor() bool {
 	return m.IsProne() || m.IsSupine() || m.IsGroundGrapple()
 }
 
-// IsController returns true when the character is the controller
-// side of a grapple pair. False for Standing, Prone, Supine, and
-// for symmetric grapple states (Clinch, HalfGuard, Turtle).
-//
-// Chunk 4b-fixup: reads GrappleData.IsControllerRole, which is
-// stamped by TransitionPair at transition time.
-//
-// Used by the per-round tick to identify which side of a pair to
-// iterate from; used by btree primitives for AI decisions.
-func (m *Machine) IsController() bool {
-	if !m.IsGrappling() {
-		return false
-	}
-	d, ok := m.GrappleData()
-	if !ok {
-		return false
-	}
-	return d.IsControllerRole
-}
-
-// IsBeingControlled returns true when the character is the
-// controlled side of a grapple pair.
-func (m *Machine) IsBeingControlled() bool {
-	if !m.IsGrappling() {
-		return false
-	}
-	d, ok := m.GrappleData()
-	if !ok {
-		return false
-	}
-	// Symmetric states (Clinch, HalfGuard, Turtle) never have a
-	// controlled side: both IsControllerRole fields are false.
-	// IsBeingControlled = asymmetric pair AND NOT the controller.
-	s := m.State()
-	if s == Clinch || s == HalfGuard || s == Turtle {
-		return false
-	}
-	return !d.IsControllerRole
-}
-
 // === Data accessors ===
 
 // ProneData returns the prone context if currently Prone.

@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/control"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/stretchr/testify/assert"
 )
@@ -26,6 +27,11 @@ func TestMain(m *testing.M) {
 func setCombatPositionParallel(c *characters.Character, pos position.State) {
 	if c.Position == nil {
 		c.Position = position.NewMachine()
+	}
+	// Chunk 4b-fixup-2 T7: IsController() reads Control.State(); init the
+	// machine so asymmetric grapple setups get the correct state.
+	if c.Control == nil {
+		c.Control = control.NewMachine()
 	}
 	r := state.TransitionReason{Trigger: "test_setup"}
 	switch pos {
@@ -50,6 +56,8 @@ func setCombatPositionParallel(c *characters.Character, pos position.State) {
 			position.GrappleData{Partner: state.ActorRef{UserId: 1}, IsControllerRole: true},
 			state.TransitionReason{Trigger: position.TriggerTakedownMount},
 		)
+		// Set Control to Controlling so IsController() returns true.
+		_ = c.Control.TransitionToControlling(state.TransitionReason{Trigger: control.TriggerGrappleEnter})
 	default:
 		c.Position.ForceStanding(r)
 	}

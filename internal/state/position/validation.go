@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/control"
 )
 
 // PairInvariantViolation describes which of the four invariants
@@ -102,17 +103,36 @@ func ValidateGrapplePair(a, b GrappleActor) error {
 	}
 
 	// Invariant 4: role-exclusivity for asymmetric positions.
-	// Chunk 4b-fixup: uses IsControllerRole instead of ControlLevel.
-	// Exactly one side must have IsControllerRole=true; the other
-	// must have IsControllerRole=false.
+	// Chunk 4b-fixup-2 T7: reads Control.State() instead of the
+	// deprecated IsControllerRole bool. Exactly one side must be
+	// Controlling and the other Controlled.
 	if !isSymmetricGrapple(stateA) {
-		if dA.IsControllerRole == dB.IsControllerRole {
-			return PairInvariantViolation{
-				Invariant: "role-exclusivity",
-				Description: fmt.Sprintf(
-					"asymmetric state %v requires one controller + one controlled; "+
-						"got a.IsControllerRole=%v, b.IsControllerRole=%v",
-					stateA, dA.IsControllerRole, dB.IsControllerRole),
+		ctrlA := a.GetControl()
+		ctrlB := b.GetControl()
+		// Tolerate nil Control machines during bootstrap / tests that
+		// haven't wired Control yet (fall back to IsControllerRole check).
+		if ctrlA != nil && ctrlB != nil {
+			aIsCtrl := ctrlA.State() == control.Controlling
+			bIsCtrl := ctrlB.State() == control.Controlling
+			if aIsCtrl == bIsCtrl {
+				return PairInvariantViolation{
+					Invariant: "role-exclusivity",
+					Description: fmt.Sprintf(
+						"asymmetric state %v requires one Controlling + one Controlled; "+
+							"got a.Control=%v, b.Control=%v",
+						stateA, ctrlA.State(), ctrlB.State()),
+				}
+			}
+		} else {
+			// Fallback: IsControllerRole bool (T16 will remove this path).
+			if dA.IsControllerRole == dB.IsControllerRole {
+				return PairInvariantViolation{
+					Invariant: "role-exclusivity",
+					Description: fmt.Sprintf(
+						"asymmetric state %v requires one controller + one controlled; "+
+							"got a.IsControllerRole=%v, b.IsControllerRole=%v",
+						stateA, dA.IsControllerRole, dB.IsControllerRole),
+				}
 			}
 		}
 	}

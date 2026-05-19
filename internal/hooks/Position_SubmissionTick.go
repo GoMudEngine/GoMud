@@ -147,30 +147,26 @@ func EvaluateSubAttempt(controller, controlled *characters.Character) (combat.Ro
 	critZ := float64(cfg.SubmissionAttemptCritZ)
 
 	posState := controller.Position.State()
-	ctrlData, ok := controller.Position.GrappleData()
-	if !ok {
-		return combat.RoleTop, false
-	}
 
 	// Top eligibility: controller won drift roll big AND top subs available.
-	// Uses position.SubWindowOpens (unified |z| >= 1.5 gate) instead of
-	// the former config-driven SubmissionAttemptAlpha (was 1.0).
+	// Chunk 4b-fixup-2 T7: uses character.IsController() (reads Control.State())
+	// instead of deprecated ctrlData.IsControllerRole.
 	topOK := false
-	if position.IsTopSubEligible(posState, ctrlData.IsControllerRole) &&
+	if position.IsTopSubEligible(posState, controller.IsController()) &&
 		position.SubWindowOpens(snap.MarginAttacker) {
 		topOK = true
 	}
 
 	// Bottom eligibility: defender won drift roll big OR crit-defended,
 	// AND bottom subs available at this position+level.
+	// Chunk 4b-fixup-2 T7: IsBottomSubEligible expects isControllerRole=false
+	// to signal "this is the controlled side." Pass controlled.IsController()
+	// (which is false when properly Controlled) — IsBottomSubEligible negates it.
 	bottomOK := false
 	bottomMargin := -snap.MarginAttacker // defender margin is the inverse
-	cdData, cdOK := controlled.Position.GrappleData()
-	if cdOK {
-		if position.IsBottomSubEligible(posState, cdData.IsControllerRole) {
-			if position.SubWindowOpens(bottomMargin) || snap.DefenderZScore >= critZ {
-				bottomOK = true
-			}
+	if position.IsBottomSubEligible(posState, controlled.IsController()) {
+		if position.SubWindowOpens(bottomMargin) || snap.DefenderZScore >= critZ {
+			bottomOK = true
 		}
 	}
 

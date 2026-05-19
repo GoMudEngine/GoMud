@@ -221,10 +221,9 @@ func TestCanUseSubmit(t *testing.T) {
 				)
 			} else {
 				setCombatPositionParallel(c, tt.pos)
-				// For the controller case, the FSM Mount state (set by
-				// setCombatPositionParallel for PositionGrounded) already
-				// marks InControl, so IsController() returns true without
-				// the legacy ConditionGrappleController.
+				// For the controller case, setCombatPositionParallel sets
+				// both Position (Mount) and Control (Controlling), so
+				// IsController() returns true via Control.State().
 			}
 			if tt.cooldown {
 				c.Cooldowns["special-move"] = 3

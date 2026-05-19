@@ -6,6 +6,7 @@ package characters
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/state/control"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 )
 
@@ -168,24 +169,25 @@ func (c *Character) IsOnFloor() bool {
 	return c.Position.IsOnFloor()
 }
 
-// --- Control-axis predicates (chunk 4b) ---
+// --- Control-axis predicates (chunk 4b-fixup-2 T7) ---
 
-// IsController returns true when the character is the controller
-// side of a grapple pair. False outside of grapples.
+// IsController returns true if this character is the "controller"
+// side of a grapple — i.e., Control state is Controlling. Replaces
+// chunk-4b-fixup's IsControllerRole bool read.
 func (c *Character) IsController() bool {
-	if c.Position == nil {
+	if c.Control == nil {
 		return false
 	}
-	return c.Position.IsController()
+	return c.Control.State() == control.Controlling
 }
 
-// IsBeingControlled returns true when the character is the
-// controlled side of a grapple pair.
+// IsBeingControlled returns true if this character is being
+// dominated in a grapple — i.e., Control state is Controlled.
 func (c *Character) IsBeingControlled() bool {
-	if c.Position == nil {
+	if c.Control == nil {
 		return false
 	}
-	return c.Position.IsBeingControlled()
+	return c.Control.State() == control.Controlled
 }
 
 // GetPositionSpeedMultiplier returns the combat attack-speed multiplier for

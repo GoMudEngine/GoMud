@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/control"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/stretchr/testify/assert"
 )
@@ -123,6 +124,14 @@ func TestCondMobIsInControl_InMountAsController_Success(t *testing.T) {
 		position.GrappleData{Partner: state.ActorRef{UserId: 999}, IsControllerRole: true},
 		state.TransitionReason{Trigger: position.TriggerTakedownMount},
 	)
+	// Chunk 4b-fixup-2 T7: IsController() reads Control.State(); init
+	// the Control machine and set to Controlling to match the controller-role
+	// position setup. newTestMob leaves Control nil; init it here.
+	ctrl := control.NewMachine()
+	_ = ctrl.TransitionToControlling(
+		state.TransitionReason{Trigger: control.TriggerGrappleEnter},
+	)
+	mob.Character.Control = ctrl
 	ctx := &EvalContext{InstanceId: mob.InstanceId}
 	assert.Equal(t, Success, condMobIsInControl(nil, ctx))
 }
