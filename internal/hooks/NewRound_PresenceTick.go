@@ -26,6 +26,16 @@ func PresenceTick(e events.Event) events.ListenerReturn {
 	roundNow := evt.RoundNumber
 
 	// === Player presence transitions ===
+	//
+	// CUMULATIVE THRESHOLDS, all measured from lastInputRound:
+	//   PresenceIdleAfterRounds       = 8   (Active → Idle when no input for 8+ rounds)
+	//   PresenceAFKAfterRounds        = 75  (Idle → AFK when no input for 75+ rounds total)
+	//   PresenceDisconnectAfterRounds = 900 (AFK → Disconnected at 900+ rounds total)
+	//
+	// Defaults are strictly increasing so the player passes through each
+	// tier in order on consecutive ticks. If thresholds are tuned, keep
+	// idleAfter < afkAfter < disconnectAfter or some transitions become
+	// unreachable.
 	idleAfter := uint64(srvCfg.PresenceIdleAfterRounds)
 	afkAfter := uint64(srvCfg.PresenceAFKAfterRounds)
 	disconnectAfter := uint64(srvCfg.PresenceDisconnectAfterRounds)
@@ -65,6 +75,9 @@ func PresenceTick(e events.Event) events.ListenerReturn {
 
 	for _, mobId := range mobs.GetAllMobInstanceIds() {
 		mob := mobs.GetInstance(mobId)
+		// Mob.Character is by-value (not a pointer), so no nil check on
+		// Character itself — only on the Presence machine. This is the
+		// only asymmetry vs the player loop's Character nil-check.
 		if mob == nil || mob.Character.Presence == nil {
 			continue
 		}
@@ -84,7 +97,14 @@ func PresenceTick(e events.Event) events.ListenerReturn {
 
 		case presence.Dormant:
 			// Despawn check: rounds since entering Dormant.
-			// Use LastDormantEntryRound on Character; if 0, set it now.
+			// LastDormantEntryRound is 0 on a freshly-Dormant mob (Active→
+			// Dormant transition path doesn't set it explicitly; nor does
+			// ResetForMobInstance leave it nonzero). We lazily stamp it
+			// here on the first tick after entry, so this case effectively
+			// has a one-round entry delay before the despawn timer starts.
+			// If a future task wires LastDormantEntryRound at the Active→
+			// Dormant transition site directly, this lazy-stamp block can
+			// be dropped.
 			if mob.Character.LastDormantEntryRound == 0 {
 				mob.Character.LastDormantEntryRound = roundNow
 				continue
