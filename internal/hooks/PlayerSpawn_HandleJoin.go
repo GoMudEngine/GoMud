@@ -10,6 +10,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -184,6 +186,14 @@ func HandleJoin(e events.Event) events.ListenerReturn {
 		}, bridge, bridge)
 
 		user.CommandFlagged(`look`, events.CmdSecretly) // Do a secret look.
+	}
+
+	// Chunk 5 (Presence): newly-joined character transitions Connecting → Active.
+	// Character is now fully in the world (placed in a room), so the
+	// Connecting warm-up state is complete.
+	if user.Character != nil && user.Character.Presence != nil {
+		_ = user.Character.Presence.TransitionTo(presence.Active,
+			state.TransitionReason{Trigger: presence.TriggerEnteredRoom})
 	}
 
 	return events.Continue

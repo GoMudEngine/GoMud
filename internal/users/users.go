@@ -15,6 +15,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/util"
 
 	//
@@ -396,6 +398,14 @@ func LogOutUserByConnectionId(connectionId connections.ConnectionId) error {
 	if u != nil {
 		u.Character.Validate()
 		SaveUser(*u)
+
+		// Chunk 5 (Presence): fire Disconnected BEFORE the user is removed
+		// from the active maps so the T8 scheduler-cancel observer can still
+		// find the character via its ActorRef.
+		if u.Character != nil && u.Character.Presence != nil {
+			_ = u.Character.Presence.TransitionTo(presence.Disconnected,
+				state.TransitionReason{Trigger: presence.TriggerTCPClosed})
+		}
 	}
 
 	userManager.mu.Lock()
