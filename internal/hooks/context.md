@@ -805,12 +805,31 @@ directly. Those legacy fields no longer exist (T21 sunset).
 - PO-039: Guard at death → cascades to Standing
 - PO-040: BackGround at death → cascades to Standing
 
-### Position_GrappleTick.go (chunk 4b)
+### Position_GrappleTick.go (chunk 4b / 4b-fixup-2)
 
-Per-round control-outcome observer registered via
-`wirePositionGrappleTick` on character creation. Fires from the
-NewRound tick walker once per active grapple pair (iterated from the
-controller side). For each pair:
+Per-round grapple observer registered via `events.RegisterListener`
+(`processGrappleTick`) in the file's `init()`. Fires once per round.
+Iterates all active players and mobs; for each grappling character,
+resolves the partner and processes the pair exactly once per round
+(deduplication via a `seen map[state.ActorRef]bool`).
+
+**Chunk 4b-fixup-2 T8** replaced the old `IsController()`-filtered
+single-side iteration with pair-aware deduplication. This fixed the
+symmetric-position regression (Clinch / HalfGuard / Turtle) where
+both sides returned `IsController() == false` and the drift roll
+never fired.
+
+For each pair, `processGrapplePairFromIteration` calls
+`determineDriftAttacker` to pick the controller arg, then delegates
+to `processGrapplePair`:
+
+**`determineDriftAttacker`** picks the drift-roll attacker-arg. Priority:
+1. Whoever has the more controller-leaning `Control` state
+   (`control.Controlling` < `Neutral` < `Controlled`).
+2. Tiebreaker: whoever has `GrappleData.IsAggressor == true`.
+3. Final fallback: iteration-order (lhs).
+
+For each pair inside `processGrapplePair`:
 
 1. **Opposed control roll** — Strength + Unarmed-combat for both sides,
    modified by `grappleStaminaMultiplier` (curve config
@@ -832,16 +851,42 @@ controller side). For each pair:
    - `OutcomeEscape`: calls `applyAdvanceOrEscape(newTarget=Standing)`
      to break the grapple.
    - `OutcomeHold`: no transition; advances the round in-place.
-   - Resets per-grapple cooldown maps on escape (when breaking to Standing).
+   - Resets per-grapple cooldown maps on escape (when breaking to
+     Standing).
 
-4. **Per-round stamina cost** — `GrappleStaminaCostPerRound`, scaled
+4. **ControlLevel shift (`applyControlShift`)** — After the position
+   outcome is applied, `applyControlShift(controller, controlled, z)`
+   updates both sides' `Character.Control` FSM state based on the
+   z-score magnitude:
+   - `|z| < 0.5`: no shift
+   - `0.5 ≤ |z| < 1.5`: 1 stable-state step
+   - `|z| ≥ 1.5`: 2 stable-state steps
+   Winner shifts toward Controlling; loser shifts toward Controlled.
+   Each step fires the boundary-cross callback when crossing
+   LosingControl or BecomingControlled.
+
+5. **Per-round stamina cost** — `GrappleStaminaCostPerRound`, scaled
    by `GrappleControllerCostMultiplier` (default 1.0) for controller or
    `GrappleControlledCostMultiplier` (default 2.0) for controlled. The
    asymmetry creates the "smother" feedback loop.
 
-5. **Outcome messaging** — Calls `emitOutcomeMessages` to dispatch
-   outcome-specific template messages (Advance / Degrade / Reversal / Escape)
-   and `emitHoldFlavor` + `emitStrikingApexFlavor` on Hold rounds.
+6. **Outcome messaging** — Calls `emitOutcomeMessages` to dispatch
+   outcome-specific template messages (Advance / Degrade / Reversal /
+   Escape) and `emitHoldFlavor` + `emitStrikingApexFlavor` on Hold
+   rounds.
+
+**Boundary-cross callback (chunk 4b-fixup-2 T13):**
+
+Registered at `init()` via `control.RegisterBoundaryCrossCallback`.
+When `applyControlShift` drives a side's ControlLevel through a
+boundary (LosingControl or BecomingControlled), the callback fires
+`emitGradientMessage(self, transient, from, to)`. This:
+- Resolves the gradient key from the transient state + direction
+  (`gradientKeyForCrossing`).
+- Looks up the `GradientTriad` in `grappleOutcomesLib.Gradients`.
+- Dispatches Self / Partner / Observers messages with name
+  substitution and per-grapple cooldown (preventing repeated messages
+  for the same gradient within one fight).
 
 **Grapple Messaging Library (`loadGrappleLib`):**
 Lazily loads `_datafiles/world/dogmud/messaging/grapple_outcomes.yaml`
@@ -987,3 +1032,4 @@ parallel-write window.
 - `internal/state/awareness` - Awareness state machine (chunk 1)
 - `internal/state/life` - Life state machine (chunk 2)
 - `internal/state/position` - Position state machine (chunks 4a + 4b)
+- `internal/state/control` - ControlLevel state machine (chunk 4b-fixup-2)

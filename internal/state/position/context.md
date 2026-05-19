@@ -30,9 +30,22 @@ curls.
 - **Chunk 4b-fixup shipped (2026-05-18):** `ControlLevel` drift-needle
   sunset entirely. Per-round drift roll now resolves directly to one
   of five outcome kinds (Hold / Advance / Degrade / Reversal / Escape)
-  via `position.ResolveOutcome`. `GrappleData.IsControllerRole` bool
-  replaces `ControlLevel` as the sole role discriminator. ~280 flavor
-  templates in `_datafiles/world/dogmud/messaging/grapple_outcomes.yaml`.
+  via `position.ResolveOutcome`. `GrappleData.IsAggressor` bool is the
+  sole remaining role discriminator in the Position package; per-side
+  dominance tracking moved to the dedicated `internal/state/control`
+  FSM on `Character.Control`. ~280 flavor templates in
+  `_datafiles/world/dogmud/messaging/grapple_outcomes.yaml`.
+
+- **Chunk 4b-fixup-2 shipped (2026-05-18):** Restored a proper
+  ControlLevel FSM (`internal/state/control`) to replace the brittle
+  `IsControllerRole bool`. `Character.Control *control.Machine` is
+  initialized to Neutral at grapple start (symmetric positions) or
+  Controlling/Controlled (asymmetric positions) by `TransitionPair`.
+  `IsController()` / `IsBeingControlled()` on Character read the
+  Control FSM state instead of the deleted bool. Pair iteration in
+  `processGrappleTick` uses a seen-map (no more IsController filter),
+  fixing Clinch where both sides previously returned false. Per-round
+  `applyControlShift` drives ControlLevel shifts via the FSM.
 
 **4c shipped:** Weapon reach utility. `internal/combat/reach.go` reads
 `State()` to compute a damage multiplier (position-radius curve:
@@ -171,20 +184,24 @@ pull Guard, recovery is easier, and different submission entries apply.
 
 ```go
 type GrappleData struct {
-    Reason           state.TransitionReason
-    Partner          state.ActorRef // zero only for solo Turtle
-    IsControllerRole bool           // true = this side is the controller
+    Reason      state.TransitionReason
+    Partner     state.ActorRef // zero only for solo Turtle
+    IsAggressor bool           // true if this side initiated the grapple;
+                               // used as drift-roll tiebreaker in symmetric
+                               // positions
 }
 ```
 
-Shared across all 11 grapple states. `IsControllerRole` is the minimal
-role discriminator introduced in chunk 4b-fixup. `TransitionPair` stamps
-this field at transition time based on whether the target position is
-symmetric (Clinch / HalfGuard / Turtle → both false) or asymmetric
-(all others → controller side true, controlled side false).
+Shared across all 11 grapple states. `IsAggressor` is the sole remaining
+role discriminator inside the Position package — it is a tiebreaker for
+`determineDriftAttacker` when both sides have identical ControlLevel ranks.
+`TransitionPair` no longer stamps an `IsControllerRole` field; per-side
+dominance is instead tracked by `Character.Control *control.Machine`
+(see `internal/state/control/`).
 
-`IsController()` / `IsBeingControlled()` predicates on Machine read this
-field directly.
+`IsController()` / `IsBeingControlled()` predicates on `Character` read
+the `Control` FSM state (`Controlling` or `Controlled`) rather than a
+deleted bool field.
 
 ---
 
@@ -254,20 +271,22 @@ TriggerControlledEscape)` — hard exit, both return to Standing.
 
 ## Role Tracking
 
-`GrappleData.IsControllerRole bool` is the minimal role discriminator
-(introduced in chunk 4b-fixup). `IsController()` / `IsBeingControlled()`
-predicates on Machine read this field directly.
+Per-side dominance tracking now lives in `Character.Control
+*control.Machine` (see `internal/state/control/`). `IsController()` /
+`IsBeingControlled()` predicates on `Character` read this FSM.
+`GrappleData.IsAggressor` is a separate field used only as a
+drift-roll tiebreaker when both sides share equal ControlLevel rank.
 
-Per-position role assignment:
+`TransitionPair` initializes `Character.Control` at grapple entry:
 
-| Position | Controller role |
+| Position | Initial ControlLevel |
 |---|---|
-| Clinch, HalfGuard, Turtle | No controller — both sides
-`IsControllerRole = false` |
-| BackStanding | The fighter who has the back |
+| Clinch, HalfGuard, Turtle | Both sides → `TransitionToNeutral` |
+| BackStanding | Back-taker → `TransitionToControlling`; other side
+→ `TransitionToControlled` |
 | Mount, SideControl, KneeOnBelly, NorthSouth, Crucifix, BackGround |
-Fighter on top / who has back |
-| Guard | Fighter on bottom (active guard control via legs) |
+Top / back fighter → Controlling; bottom fighter → Controlled |
+| Guard | Bottom fighter → Controlling; top fighter → Controlled |
 
 ---
 
@@ -530,12 +549,15 @@ for chokes.
 
 ### Eligibility predicates
 
-- `IsTopSubEligible(state State, isControllerRole bool) bool` — true
-  when the controller-side position has top-attack subs available and
-  `isControllerRole == true`.
-- `IsBottomSubEligible(state State, isControllerRole bool) bool` — true
-  when the controlled-side position has bottom-attack subs available and
-  `isControllerRole == false`.
+- `IsTopSubEligible(state State, controlState control.State) bool` —
+  true when the position has top-attack subs available and
+  `controlState == control.Controlling`.
+- `IsBottomSubEligible(state State, controlState control.State) bool` —
+  true when the position has bottom-attack subs available and
+  `controlState == control.Controlled`.
+
+Both predicates take a `control.State` argument (chunk 4b-fixup-2 T14
+updated callers from the deleted `isControllerRole bool`).
 
 Both predicates are called from `EvaluateSubAttempt` in
 `internal/hooks/Position_SubmissionTick.go` and from the btree
@@ -547,17 +569,35 @@ conditions `mob_can_submit_top` / `mob_can_submit_bottom`.
 
 `TransitionPair` is the canonical entry for grapple-entry and
 controller-initiated position changes: it transitions both sides
-atomically, stamping `IsControllerRole` appropriately, rolling back if
-either fails. `ValidateGrapplePair` is the invariant check used by
-`Position_ConsistencyCheck.go`.
+atomically and initializes each side's `Character.Control` FSM state
+(Neutral or Controlling/Controlled depending on position symmetry),
+rolling back if either position transition fails. `ValidateGrapplePair`
+is the invariant check used by `Position_ConsistencyCheck.go`.
 
 Key invariants enforced by the pair system:
 - Both sides of a pair must be in the same grapple state.
 - `Partner` references must be symmetric (A's Partner == B, B's Partner
   == A).
 - Symmetric states (Clinch, HalfGuard, Turtle): both sides have
-  `IsControllerRole == false`.
-- Asymmetric states: exactly one side has `IsControllerRole == true`.
+  `Character.Control` at Neutral.
+- Asymmetric states (ControlLevel exclusivity): not both at Controlling;
+  not both at Controlled. Exactly one side is Controlling and one is
+  Controlled after grapple entry.
+
+---
+
+## ControlLevel FSM
+
+Per-side dominance within a grapple is tracked by
+`Character.Control *control.Machine` in `internal/state/control/`.
+See `internal/state/control/context.md` for the full state diagram,
+trigger constants, boundary-cross callback protocol, and invariants.
+
+The Position package is the **source of truth for what position two
+characters are in**; the Control package is the **source of truth for
+who has dominance**. They are orthogonal: a character can be in Mount
+(asymmetric — typically Controlling) or Clinch (symmetric — both Neutral)
+independently of the position FSM.
 
 ---
 
@@ -595,7 +635,8 @@ Wired via `OnCharacterCreated` in `internal/hooks/`:
   text generation with per-grapple cooldowns.
 - **`Position_ConsistencyCheck.go`** — periodic invariant checker
   (`ValidateGrapplePair`). Logs WARN on partner-ref mismatches,
-  asymmetric `IsControllerRole`, or orphan grapples.
+  ControlLevel exclusivity violations (both Controlling or both
+  Controlled), or orphan grapples.
 
 See `internal/hooks/context.md` for the full operational walkthrough.
 
@@ -702,11 +743,14 @@ Nothing. 4a is purely additive.
 |---|---|
 | `internal/state/position/control.go` | Entire file removed |
 | `ControlLevel` enum + 5 constants | `Neutral`, `InControl`,
-`LosingControl`, `BecomingControlled`, `Controlled` — gone |
+`LosingControl`, `BecomingControlled`, `Controlled` — gone from
+position package (restored as proper FSM in `internal/state/control/`
+by 4b-fixup-2) |
 | `GrappleData.ControlLevel` field | Replaced by `IsControllerRole
-bool` |
-| `InitialControlForPair` | Removed from `pair.go` — no level to
-initialize |
+bool` (itself deleted by 4b-fixup-2 T16; dominance now in
+`Character.Control`) |
+| `InitialControlForPair` | Removed from `pair.go` — replaced by
+`TransitionPair` initializing `Character.Control` via the new FSM |
 | `IsControllerLevel`, `IsControlledLevel` | Removed from `pair.go` |
 | `ControlRankExported`, `MarginToDelta` | Removed (replaced by §5
 outcome buckets in spec) |
@@ -715,7 +759,14 @@ outcome buckets in spec) |
 gradient class removed; outcome class added |
 | Chunk-4b control-axis btree primitives | 4 of 6 removed in T19;
 `mob_is_in_control` + `mob_is_being_controlled` retained as role
-checks |
+checks (now read `Character.Control` FSM) |
+
+### What chunk 4b-fixup-2 additionally deletes
+
+| Deleted artifact | Notes |
+|---|---|
+| `GrappleData.IsControllerRole bool` | Removed (T16). Dominance
+tracking moved to `Character.Control *control.Machine`. |
 
 ### Legacy targets — status (fully shipped, 2026-05-18)
 
