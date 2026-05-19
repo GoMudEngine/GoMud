@@ -1,5 +1,29 @@
 # DOGMud Patch Notes
 
+## 2026-05-19 — Chunk 4f: Position balance + smoke
+
+**Spell disruption in grapples is now Willpower-mediated.** Previously,
+being knocked prone or grappled automatically broke any spell you were
+casting. Now, your Willpower mediates a per-round concentration check
+— a strong-willed caster can sometimes complete a spell from
+underneath, while a distracted one rarely will. The hardest positions
+(crucifix, back mount) remain brutal disruptors; the most lenient
+(guard from underneath, where your hands are free) gives high-Wil
+casters a real fighting chance.
+
+**Comprehensive position-system smoke** across grapple entry,
+advancement, dominant-position striking, eat/drink restrictions,
+third-party hooks, AI tiebreaker, submission interrupt, and helpfile
+language. Followup polish items logged for future chunks.
+
+**Helpfile coverage audit** across grapple, cast, attack, submission,
+flee, prone, stand, trip, bash, and related help topics. Removed
+mechanical-value leaks (raw formulas, percentage thresholds, cooldown
+round counts); tightened language wherever chunk 4f's chance-based
+disruption invalidated older wording.
+
+Chunk 4 (Position) is now closed.
+
 ## 2026-05-16 — Rich-grapple system live: chunks 4a + 4b + 4c
 
 Three Position-FSM sub-chunks shipped end-to-end on
