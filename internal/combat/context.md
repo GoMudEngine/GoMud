@@ -826,6 +826,36 @@ values directly.
 
 ---
 
+## Position hit modifiers (chunk 4e)
+
+After `calcAttackScore` returns, `applyPositionHitModifiers(source, target)`
+multiplies the score by the two `internal/state/position/modifiers.go`
+lookups (attacker-self × target-side). Both default to 1.0 outside grapples,
+so standing-vs-standing combat is mathematically unchanged.
+
+In-grapple effect: Mount controller swinging at controlled = 1.32×;
+third party attacking a mounted defender = 1.20×; mounted defender
+swinging back = 0.74×.
+
+### Outside-damage hooks (chunk 4e §5 + §7)
+
+After each Attack* function applies damage to its target, two hooks
+fire at the bottom of the damage block (guarded by DamageToTarget > 0):
+
+- `chunk4eApplyOutsideHitDisruption(attacker, target)` — if target is a
+  grapple controller AND attacker is not the partner (per
+  `IsThirdPartyAttack`), shifts target's Control state one step toward
+  Neutral. Deduped per round via `Character.OutsideHitDisruptedRound`.
+  Gated by `Balance.ControlDegradeOnOutsideHit`.
+
+- `chunk4eAccumulateSubInterruptDamage(attacker, target, damage, isCrit)` —
+  if attacker is a third party AND the hit is a crit OR damage ≥
+  `SubInterruptDamageThresholdPct × HealthMax`, adds to
+  `Character.SubInterruptDamageThisRound`. Position_SubmissionTick reads
+  the accumulator; if > 0 when a sub fires, forces Bad-tier outcome.
+
+---
+
 ## Weapon Reach Utility (chunk 4c)
 
 When a character is grappling, long weapons cannot be swung freely —

@@ -139,6 +139,30 @@ partner. |
 
 ---
 
+## Position-tiered hit modifiers (chunk 4e)
+
+Two pure lookup functions in `modifiers.go` expose per-(position, role)
+hit multipliers. Both default to 1.0 outside grapples; both are consumed
+by the combat hit-roll path in `internal/combat/combat.go`.
+
+- `TargetSideHitModifier(pos, role)` — bonus to any attacker's hit roll
+  when targeting someone in this position. Higher = easier to hit.
+- `AttackerSelfHitModifier(pos, role)` — modifier on the attacker's own
+  hit roll based on THEIR own position. > 1.0 = your position helps;
+  < 1.0 = your position hurts.
+
+Net hit modifier = AttackerSelfHitModifier × TargetSideHitModifier.
+
+See `docs/superpowers/specs/2026-05-19-state-chunk-4e-third-party-design.md`
+§3 for the full tables + sample compositions. Tables are code constants
+(not config) for v1; chunk 4f can promote them if smoke surfaces tuning
+needs.
+
+Modifiers are symmetric — first-party in the grapple AND third-party
+intruders both pick up the bonus when hitting a grappled target.
+
+---
+
 ## Per-State Data
 
 ### StandingData

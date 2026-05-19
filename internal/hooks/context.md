@@ -1015,6 +1015,21 @@ submission-specific room message. The gate reads `d.NoDeprogression`
 from `DeadData` to distinguish subdue/cripple (quiet, local) from
 lethal (global announce). Source: `internal/hooks/Death_PlayerAnnouncement.go`.
 
+### Chunk 4e sub-interrupt + spell disruption hooks
+
+**Position_SubmissionTick.go** reads `Character.SubInterruptDamageThisRound`
+(accumulated by combat's `chunk4eAccumulateSubInterruptDamage` hook) before
+resolving sub outcomes. If > 0, forces the tier to `SubTierBad` regardless
+of the roll result. Both submitter and partner accumulators are reset to 0
+at the end of each per-pair tick via defer.
+
+**combat_shared_helpers.go** `processFoldRound` adds a grapple-state catch-all
+(chunk 4e T4 audit): if the caster is `IsGrappling()`, the in-flight fold
+clears and `GrappleBroke: true` is returned. NewRound_DoCombat_helpers
+handles the message routing. This closes the gap where casters in Mount,
+Clinch, etc. could complete spells unimpeded (Prone/Supine already
+disrupted; grapple states did not until chunk 4e).
+
 ### Reach pipeline integration (chunk 4c)
 
 No new hook files for 4c. The reach penalty is applied inline within
