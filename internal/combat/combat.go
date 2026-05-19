@@ -12,9 +12,11 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/control"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 type SourceTarget string
@@ -51,6 +53,12 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 	}
 
 	mob.Character.ApplyHealthChange(attackResult.DamageToTarget * -1)
+
+	// Chunk 4e §5: third-party hit on grapple controller drifts their
+	// ControlLevel toward Neutral.
+	if attackResult.DamageToTarget > 0 {
+		chunk4eApplyOutsideHitDisruption(user.Character, &mob.Character)
+	}
 
 	// Remember who has hit him
 	mob.Character.TrackPlayerDamage(user.UserId, attackResult.DamageToTarget)
@@ -120,6 +128,9 @@ func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) 
 	if attackResult.DamageToTarget != 0 {
 		userDef.Character.ApplyHealthChange(attackResult.DamageToTarget * -1)
 		userDef.WimpyCheck()
+		// Chunk 4e §5: third-party hit on grapple controller drifts their
+		// ControlLevel toward Neutral.
+		chunk4eApplyOutsideHitDisruption(userAtk.Character, userDef.Character)
 	}
 
 	// Track progression stats for the attacking player
@@ -188,6 +199,9 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 	if attackResult.DamageToTarget != 0 {
 		user.Character.ApplyHealthChange(attackResult.DamageToTarget * -1)
 		user.WimpyCheck()
+		// Chunk 4e §5: third-party hit on grapple controller drifts their
+		// ControlLevel toward Neutral.
+		chunk4eApplyOutsideHitDisruption(&mob.Character, user.Character)
 	}
 
 	// Track defender's dexterity use (reacting to attacks)
@@ -218,6 +232,12 @@ func AttackMobVsMob(mobAtk *mobs.Mob, mobDef *mobs.Mob) AttackResult {
 
 	mobAtk.Character.ApplyHealthChange(attackResult.DamageToSource * -1)
 	mobDef.Character.ApplyHealthChange(attackResult.DamageToTarget * -1)
+
+	// Chunk 4e §5: third-party hit on grapple controller drifts their
+	// ControlLevel toward Neutral.
+	if attackResult.DamageToTarget > 0 {
+		chunk4eApplyOutsideHitDisruption(&mobAtk.Character, &mobDef.Character)
+	}
 
 	// If attacking mob was player charmed, attribute damage done to that player
 	if charmedUserId := mobAtk.Character.GetCharmedUserId(); charmedUserId > 0 {
@@ -509,4 +529,39 @@ func applyPositionHitModifiers(source, target *characters.Character) float64 {
 	}
 	return position.AttackerSelfHitModifier(srcPos, srcRole) *
 		position.TargetSideHitModifier(tgtPos, tgtRole)
+}
+
+// chunk4eApplyOutsideHitDisruption fires §5 of the chunk 4e spec:
+// when a third party (non-grapple-partner) damages a grapple controller,
+// shift the controller's ControlLevel one step toward Neutral. Deduped
+// per round via Character.OutsideHitDisruptedRound. No-op if the config
+// knob is false, the target isn't a controller, or the attacker IS
+// the grapple partner.
+func chunk4eApplyOutsideHitDisruption(attacker, target *characters.Character) {
+	if !configs.GetBalanceConfig().ControlDegradeOnOutsideHit {
+		return
+	}
+	if attacker == nil || target == nil {
+		return
+	}
+	if !target.IsGrappling() {
+		return
+	}
+	if !target.IsController() {
+		return
+	}
+	if !IsThirdPartyAttack(attacker, target) {
+		return // attacker IS the partner — no disruption
+	}
+	round := int64(util.GetRoundCount())
+	if target.OutsideHitDisruptedRound == round {
+		return // already disrupted this round
+	}
+	target.OutsideHitDisruptedRound = round
+
+	// Shift one step toward Neutral. Fires gradient messaging via the
+	// chunk-4b-fixup-2 T13 boundary-cross callback automatically.
+	_ = target.GetControl().TransitionToNeutral(state.TransitionReason{
+		Trigger: control.TriggerDriftLoss,
+	})
 }
