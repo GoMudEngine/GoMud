@@ -1,5 +1,29 @@
 # DOGMud Patch Notes
 
+## 2026-05-19 — Chunk 5: Presence state machine
+
+**Cleaner AFK and idle handling.** The engine now tracks every
+character's "presence" — whether they're actively in the world, idle,
+AFK, or disconnected — through a dedicated state machine instead of
+scattered checks. Functionally identical for most cases. The one
+visible change: an AFK player in a dangerous room can STILL be
+attacked (intentional — going AFK in a dangerous place was always a
+risk).
+
+**Mob hibernation.** Mobs that have been bored for a while (no players
+nearby for a stretch) now go Dormant — they skip their per-round tick
+to save engine work. The moment a player enters their room or attacks
+them, they wake up to normal Active behavior. Shopkeepers, foragers,
+caravan crew, and charmed companions never go Dormant — they're
+exempt from idle-out so the living-economy systems keep running
+smoothly.
+
+**Quieter sunset.** Legacy ManualAFK, AFKMessage, BoredomCounter, and
+PreventIdle fields are gone, along with the MaxMobBoredom config knob.
+
+Chunk 5 closes another step of the combat-state-machines arc; chunk 6
+(Perception) is what remains.
+
 ## 2026-05-19 — Chunk 4f: Position balance + smoke
 
 **Spell disruption in grapples is now Willpower-mediated.** Previously,
