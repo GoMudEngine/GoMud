@@ -829,13 +829,45 @@ to `processGrapplePair`:
 2. Tiebreaker: whoever has `GrappleData.IsAggressor == true`.
 3. Final fallback: iteration-order (lhs).
 
+### Score formula (2026-05-19 rework)
+
+Each side's per-round score is computed by `grappleScore(c, isAggressor, cfg)`:
+
+```
+score = (0.7·Str + 0.3·Dex + skill_coef·UnarmedCombat)
+        × stamina_multiplier × encumbrance_multiplier
+```
+
+where `skill_coef = 2.2` for the aggressor (the side that initiated
+the grapple via `grapple` command or btree `grapple` primitive) and
+`2.0` for the defender. Symmetric in shape — no role-based unilateral
+stat bonus. Position bias is already captured by `ControlLevel` state
+initialization (chunk 4b-fixup-2); the formula doesn't double-encode it.
+
+The aggressor flag (`GrappleData.IsAggressor`) is set once by
+`ApplyGrappleResult.markAggressor` at grapple entry and persists for
+the grapple's lifetime, regardless of any later reversals.
+
+Body-armor `EscapeModifier` is NOT read by the formula. The field
+remains on `ItemSpec` for backward compatibility and possible future
+re-purposing (sub eligibility, armor resistance, etc.). The legacy
+`escapeModifierFromBody` helper was deleted in the 2026-05-19 rework.
+
+The grapple-skill is `UnarmedCombat` per its own definition
+(`internal/skills/skills.go:29`: "Fist/body attacks & defense,
+grappling"). Earlier versions of this formula read `WeaponCombat`
+by mistake; that bug auto-escaped every grapple for any unarmed-
+trained player.
+
+See `docs/superpowers/specs/2026-05-19-grapple-drift-formula-rework-design.md`
+for the design rationale and sample z-score table.
+
 For each pair inside `processGrapplePair`:
 
-1. **Opposed control roll** — Strength + Unarmed-combat for both sides,
-   modified by `grappleStaminaMultiplier` (curve config
-   `GrappleStaminaPenaltyMax` / `Curve`) and the encumbrance multiplier
-   (curve `GrappleEncumbrancePenaltyMax` / `Curve`). Produces a signed
-   ZScore representing the controller's margin.
+1. **Opposed control roll** — Score values computed for both sides via
+   the formula above, with `grappleStaminaMultiplier` and the encumbrance
+   multiplier already baked in. Produces a signed ZScore representing the
+   controller's margin.
 
 2. **Outcome resolution via `position.ResolveOutcome`** — Passes the
    controller, signed ZScore, and defender's posture to the resolver,
