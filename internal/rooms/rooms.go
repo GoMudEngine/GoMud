@@ -18,6 +18,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutators"
 	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -2136,12 +2138,16 @@ func (r *Room) RoundTick() {
 
 	}
 
-	// If any players are in the room
-	// Update all mobs in the room that they've seen a player
+	// If any players are in the room, wake any Dormant mobs.
+	// Chunk 5 (Presence): replaces the old BoredomCounter = 0 reset.
 	if len(r.players) > 0 {
 		for _, mobInstanceId := range r.mobs {
 			if mob := mobs.GetInstance(mobInstanceId); mob != nil {
-				mob.BoredomCounter = 0
+				if mob.Character.Presence != nil && mob.Character.Presence.State() == presence.Dormant {
+					_ = mob.Character.Presence.TransitionTo(presence.Active,
+						state.TransitionReason{Trigger: presence.TriggerPlayerEntry})
+					mob.Character.LastDormantEntryRound = 0
+				}
 			}
 		}
 	}
