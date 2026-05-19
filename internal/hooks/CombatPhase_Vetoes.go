@@ -1,10 +1,10 @@
 package hooks
 
 import (
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -66,14 +66,27 @@ func wireCombatPhaseVetoes(c *characters.Character) {
 		return true
 	})
 	c.CombatPhase.RegisterTargetPresenceCheck(func(t state.ActorRef) bool {
+		// Chunk 5 T6: block Engaging when the target is Disconnected or
+		// Despawning. AFK / Idle / Dormant targets ARE attackable — "if
+		// you went AFK in a dangerous room, you deserve it." Dormant mobs
+		// will auto-wake on attack via the T7 wake-on-attack hook.
 		if t.IsPlayer() {
 			if u := users.GetByUserId(t.UserId); u != nil {
-				// Presence machine arrives in a later chunk. For now gate
-				// on the NoAggroTarget grace buff (respawn-grace mechanism).
-				return !u.Character.HasBuffFlag(buffs.NoAggroTarget)
+				switch u.Character.Presence.State() {
+				case presence.Disconnected, presence.Despawning:
+					return false
+				}
 			}
 		}
-		// Mobs do not have a grace period; always present if alive.
+		if t.IsMob() {
+			if m := mobs.GetInstance(t.MobInstanceId); m != nil {
+				switch m.Character.Presence.State() {
+				case presence.Disconnected, presence.Despawning:
+					return false
+				}
+			}
+		}
+		// Unknown / stale ref — allow defensively.
 		return true
 	})
 }

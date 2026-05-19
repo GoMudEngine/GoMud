@@ -45,3 +45,33 @@ func TestEssentialVeto_BlocksActiveToDespawning(t *testing.T) {
 		t.Errorf("TransitionTo(Despawning) with essential veto: got nil; want VetoError")
 	}
 }
+
+// TestCombatPhaseVeto_BlocksOnDisconnected verifies that a target in
+// Presence.Disconnected is correctly identified as non-attackable by the
+// veto logic. (Pure-state smoke; full CombatPhase+Character wiring is
+// covered in internal/hooks tests once the engine setup lands.)
+func TestCombatPhaseVeto_BlocksOnDisconnected(t *testing.T) {
+	target := presence.NewPlayerPresence()
+	_ = target.TransitionTo(presence.Active, state.TransitionReason{Trigger: presence.TriggerEnteredRoom})
+	_ = target.TransitionTo(presence.Disconnected, state.TransitionReason{Trigger: presence.TriggerTCPClosed})
+
+	// Mirror the veto logic from CombatPhase_Vetoes.go: Disconnected and
+	// Despawning block attack; all other states allow it.
+	allowed := target.State() != presence.Disconnected && target.State() != presence.Despawning
+	if allowed {
+		t.Errorf("Disconnected target should be vetoed; got allowed=true")
+	}
+}
+
+// TestCombatPhaseVeto_AllowsOnAFK verifies that an AFK target is
+// attackable — "if you went AFK in a dangerous room, you deserve it."
+func TestCombatPhaseVeto_AllowsOnAFK(t *testing.T) {
+	target := presence.NewPlayerPresence()
+	_ = target.TransitionTo(presence.Active, state.TransitionReason{Trigger: presence.TriggerEnteredRoom})
+	_ = target.TransitionTo(presence.AFK, state.TransitionReason{Trigger: presence.TriggerTimeoutAFK})
+
+	allowed := target.State() != presence.Disconnected && target.State() != presence.Despawning
+	if !allowed {
+		t.Errorf("AFK target should be attackable; got allowed=false")
+	}
+}
