@@ -416,8 +416,6 @@ integration-level tests that pass in the full server smoke test.
 
 ---
 
-## Sunset Notes
-
 ## Position-based casting disruption (chunks 4e + 4f)
 
 The Activity machine's `Casting` state is disrupted by two independent paths:
