@@ -615,6 +615,33 @@ func broadcastToRoomExcluding(controller, controlled *characters.Character,
 	}
 }
 
+// grappleScore computes one side's per-round drift score. Spec
+// 2026-05-19 §3. Symmetric formula for both sides; aggressor gets a
+// 10% bonus on the skill term (initiative edge).
+//
+//	score = (0.7·Str + 0.3·Dex + skill_coef·UnarmedCombat)
+//	        × stamina_multiplier × encumbrance_multiplier
+//
+// where skill_coef = 2.2 for the aggressor side, 2.0 for the defender.
+// Returns 0 for a nil character (defensive — callers should never
+// pass nil but the function shouldn't panic on it).
+func grappleScore(c *characters.Character, isAggressor bool, cfg configs.Balance) float64 {
+	if c == nil {
+		return 0
+	}
+	strVal := float64(c.Stats.Strength.Value)
+	dexVal := float64(c.Stats.Dexterity.Value)
+	skill := float64(c.GetSkillLevel(skills.UnarmedCombat))
+
+	skillCoef := 2.0
+	if isAggressor {
+		skillCoef = 2.2
+	}
+
+	base := 0.7*strVal + 0.3*dexVal + skillCoef*skill
+	return base * grappleStaminaMultiplier(c, cfg) * grappleEncumbranceMultiplier(c, cfg)
+}
+
 // grappleStaminaMultiplier returns a penalty multiplier in (1-max, 1].
 // Steeper than the combat ResourcePenalty curve: grappling cardio-
 // stresses faster than stand-up fighting (default 0.60 max vs 0.28).

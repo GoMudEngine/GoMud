@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -87,5 +89,125 @@ func TestProcessGrapplePair_StashesDriftSnapshot(t *testing.T) {
 	if a.LastDriftRoll.MarginAttacker != b.LastDriftRoll.MarginAttacker {
 		t.Errorf("margin mismatch: a=%v b=%v",
 			a.LastDriftRoll.MarginAttacker, b.LastDriftRoll.MarginAttacker)
+	}
+}
+
+// makeGrappleCharacter constructs a minimal Character with the given
+// stats + skill level for grappleScore unit tests. Stamina and
+// encumbrance multipliers will resolve to 1.0 because no penalties
+// apply (Stamina at max, no items carried).
+//
+// Note: characters.New() calls ensureAllSkills which floors every
+// skill at 1. makeGrappleCharacter always writes the explicit ucSkill
+// value (including 0) to override that floor, so tests can verify
+// the formula's skill term in isolation.
+func makeGrappleCharacter(t *testing.T, str, dex, ucSkill int) *characters.Character {
+	t.Helper()
+	c := characters.New()
+	c.Stats.Strength.Base = str
+	c.Stats.Dexterity.Base = dex
+	c.Stats.Strength.Recalculate()
+	c.Stats.Dexterity.Recalculate()
+	c.Stamina = 1000
+	c.StaminaMax.Value = 1000
+	if c.Skills == nil {
+		c.Skills = map[string]int{}
+	}
+	// Always write ucSkill (even 0) to override the rank-1 floor set by
+	// ensureAllSkills during New().
+	c.Skills[string(skills.UnarmedCombat)] = ucSkill
+	return c
+}
+
+// grappleScoreApproxEqual returns true when |a-b| < eps. Used for
+// float comparisons in grappleScore tests (2.2*50 produces a tiny
+// rounding error with IEEE-754 doubles).
+func grappleScoreApproxEqual(a, b float64) bool {
+	const eps = 1e-9
+	d := a - b
+	if d < 0 {
+		d = -d
+	}
+	return d < eps
+}
+
+func TestGrappleScore_StrCoefficient(t *testing.T) {
+	cfg := configs.GetBalanceConfig()
+	c := makeGrappleCharacter(t, 100, 0, 0)
+	got := grappleScore(c, false, cfg)
+	want := 70.0 // 0.7 * 100 + 0 + 0
+	if !grappleScoreApproxEqual(got, want) {
+		t.Errorf("Str=100 only → score = %v, want %v", got, want)
+	}
+}
+
+func TestGrappleScore_DexCoefficient(t *testing.T) {
+	cfg := configs.GetBalanceConfig()
+	c := makeGrappleCharacter(t, 0, 100, 0)
+	got := grappleScore(c, false, cfg)
+	want := 30.0 // 0 + 0.3 * 100 + 0
+	if !grappleScoreApproxEqual(got, want) {
+		t.Errorf("Dex=100 only → score = %v, want %v", got, want)
+	}
+}
+
+func TestGrappleScore_SkillCoefficientDefender(t *testing.T) {
+	cfg := configs.GetBalanceConfig()
+	c := makeGrappleCharacter(t, 0, 0, 50)
+	got := grappleScore(c, false, cfg)
+	want := 100.0 // 0 + 0 + 2.0 * 50
+	if !grappleScoreApproxEqual(got, want) {
+		t.Errorf("UC=50 defender → score = %v, want %v", got, want)
+	}
+}
+
+func TestGrappleScore_SkillCoefficientAggressor(t *testing.T) {
+	cfg := configs.GetBalanceConfig()
+	c := makeGrappleCharacter(t, 0, 0, 50)
+	got := grappleScore(c, true, cfg)
+	want := 110.0 // 0 + 0 + 2.2 * 50
+	if !grappleScoreApproxEqual(got, want) {
+		t.Errorf("UC=50 aggressor → score = %v, want %v", got, want)
+	}
+}
+
+func TestGrappleScore_CombinedFormulaDefender(t *testing.T) {
+	cfg := configs.GetBalanceConfig()
+	c := makeGrappleCharacter(t, 100, 100, 30)
+	got := grappleScore(c, false, cfg)
+	want := 160.0 // 0.7*100 + 0.3*100 + 2.0*30 = 70 + 30 + 60
+	if !grappleScoreApproxEqual(got, want) {
+		t.Errorf("S100/D100/UC30 defender → score = %v, want %v", got, want)
+	}
+}
+
+func TestGrappleScore_CombinedFormulaAggressor(t *testing.T) {
+	cfg := configs.GetBalanceConfig()
+	c := makeGrappleCharacter(t, 100, 100, 30)
+	got := grappleScore(c, true, cfg)
+	want := 166.0 // 0.7*100 + 0.3*100 + 2.2*30 = 70 + 30 + 66
+	if !grappleScoreApproxEqual(got, want) {
+		t.Errorf("S100/D100/UC30 aggressor → score = %v, want %v", got, want)
+	}
+}
+
+func TestGrappleScore_EscapeModifierIgnored(t *testing.T) {
+	// EscapeModifier on body armor should NOT change the score.
+	// Verification: grappleScore never references EscapeModifier
+	// (no field read in the function body).
+	cfg := configs.GetBalanceConfig()
+	c := makeGrappleCharacter(t, 100, 100, 0)
+	baseline := grappleScore(c, false, cfg)
+	got := grappleScore(c, false, cfg)
+	if !grappleScoreApproxEqual(got, baseline) {
+		t.Errorf("score should not depend on EscapeModifier; got %v, baseline %v", got, baseline)
+	}
+}
+
+func TestGrappleScore_NilCharacter(t *testing.T) {
+	cfg := configs.GetBalanceConfig()
+	got := grappleScore(nil, false, cfg)
+	if got != 0 {
+		t.Errorf("nil character → score = %v, want 0", got)
 	}
 }
