@@ -9,9 +9,11 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
-	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/state/control"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -401,6 +403,12 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 			attackScore := calcAttackScore(&sourceChar, &targetChar, ws.penalty, ctx)
 
+			// Chunk 4e: position-tiered hit modifiers. Multiplies attackScore by
+			// the attacker's self-position modifier and the target's position
+			// modifier. Both default to 1.0 outside grapples. See
+			// internal/state/position/modifiers.go.
+			attackScore *= applyPositionHitModifiers(&sourceChar, &targetChar)
+
 			defenseSequence := targetChar.GetDefenseSequence()
 
 			// Third-party grapple vulnerability
@@ -473,4 +481,32 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 	return attackResult
 
+}
+
+// applyPositionHitModifiers returns the combined position-based hit
+// modifier for an attack from sourceChar to targetChar. Chunk 4e spec §3.
+// Both default to 1.0 if either character is missing position/control
+// state — equivalent to "outside a grapple, no modifier."
+func applyPositionHitModifiers(source, target *characters.Character) float64 {
+	if source == nil || target == nil {
+		return 1.0
+	}
+	srcPos := position.Standing
+	srcRole := control.Neutral
+	if source.Position != nil {
+		srcPos = source.Position.State()
+	}
+	if source.Control != nil {
+		srcRole = source.Control.State()
+	}
+	tgtPos := position.Standing
+	tgtRole := control.Neutral
+	if target.Position != nil {
+		tgtPos = target.Position.State()
+	}
+	if target.Control != nil {
+		tgtRole = target.Control.State()
+	}
+	return position.AttackerSelfHitModifier(srcPos, srcRole) *
+		position.TargetSideHitModifier(tgtPos, tgtRole)
 }
