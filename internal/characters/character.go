@@ -17,6 +17,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
+	"github.com/GoMudEngine/GoMud/internal/state/control"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/stats"
@@ -75,6 +76,7 @@ func (c *Character) ResetForMobInstance() {
 	c.Position = nil
 	c.Awareness = nil
 	c.Activity = nil
+	c.Control = nil
 	c.combatPhaseWired = false
 	c.PerGrappleMessageCooldowns = nil
 	c.PerGrappleMessageCooldownsLastRound = nil
@@ -167,6 +169,12 @@ type Character struct {
 	// Clinch/BackStanding/Mount/SideControl/KneeOnBelly/NorthSouth/
 	// Crucifix/BackGround/HalfGuard/Guard/Turtle).
 	Position                 *position.Machine              `yaml:"-"`
+	// Control is the per-character ControlLevel state machine
+	// (chunk 4b-fixup-2). Tracks dominance within a grapple — 5 states:
+	// 3 stable (Controlling/Neutral/Controlled) + 2 transient
+	// (LosingControl/BecomingControlled) entered same-tick during
+	// boundary crossings. Resets to Neutral on grapple exit.
+	Control                  *control.Machine               `yaml:"-"` // not persisted; recomputed at boot
 	// PerGrappleMessageCooldowns tracks which gradient/stamina
 	// messages have already fired during the current grapple session.
 	// Resets when the character returns to a non-grapple state.
@@ -274,6 +282,7 @@ func New() *Character {
 		Life:                       life.NewMachine(),
 		Activity:                   activity.NewMachine(),
 		Position:                   position.NewMachine(),
+		Control:                    control.NewMachine(),
 		PerGrappleMessageCooldowns: map[string]bool{},
 		SubmissionPolicy:           PolicySubdue,
 		SurrenderPolicy:            SurrenderPolicy{Mode: SurrenderAutoTap, HpPctThreshold: 15},
