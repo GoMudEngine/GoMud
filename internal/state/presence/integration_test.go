@@ -92,3 +92,43 @@ func TestDormantWake_OnAttack(t *testing.T) {
 		t.Errorf("after attack wake, state = %v, want Active", m.State())
 	}
 }
+
+// TestSchedulerCancelObserver_FiresOnTerminal verifies the observer
+// fires when the machine enters Disconnected. (Actual scheduler-cancel
+// behavior is exercised in the scheduler package's own tests; this
+// test only confirms the observer wiring + state filter.)
+func TestSchedulerCancelObserver_FiresOnTerminal(t *testing.T) {
+	fired := false
+	m := presence.NewPlayerPresence()
+	m.RegisterObserver("test_terminal_observer",
+		func(from, to presence.State, r state.TransitionReason) {
+			if to == presence.Disconnected {
+				fired = true
+			}
+		})
+	_ = m.TransitionTo(presence.Active, state.TransitionReason{Trigger: presence.TriggerEnteredRoom})
+	_ = m.TransitionTo(presence.Disconnected, state.TransitionReason{Trigger: presence.TriggerTCPClosed})
+	if !fired {
+		t.Errorf("observer did not fire on Disconnected entry")
+	}
+}
+
+// TestSchedulerCancelObserver_NotFiredOnIntermediate verifies the
+// observer's state filter — it should NOT fire on transitions that
+// aren't to a terminal state.
+func TestSchedulerCancelObserver_NotFiredOnIntermediate(t *testing.T) {
+	fired := false
+	m := presence.NewPlayerPresence()
+	m.RegisterObserver("test_terminal_observer",
+		func(from, to presence.State, r state.TransitionReason) {
+			if to == presence.Disconnected || to == presence.Despawning {
+				fired = true
+			}
+		})
+	_ = m.TransitionTo(presence.Active, state.TransitionReason{Trigger: presence.TriggerEnteredRoom})
+	_ = m.TransitionTo(presence.Idle, state.TransitionReason{Trigger: presence.TriggerTimeoutIdle})
+	_ = m.TransitionTo(presence.AFK, state.TransitionReason{Trigger: presence.TriggerTimeoutAFK})
+	if fired {
+		t.Errorf("observer fired on non-terminal transitions; want NOT fired")
+	}
+}

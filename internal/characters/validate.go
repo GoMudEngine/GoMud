@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
@@ -548,6 +549,16 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		// here and uses per-call-site nil checks instead (see
 		// position_predicates.go for examples).
 		c.Presence = presence.NewPlayerPresence()
+		// Chunk 5 (Presence) T8: terminal-state cleanup. On entry to
+		// Disconnected, cancel all pending scheduled transitions for this
+		// character (Activity casting timers, Position recovery timers, etc.)
+		// so they don't fire after the player has left the world.
+		c.Presence.RegisterObserver("scheduler_cancel_on_disconnected",
+			func(from, to presence.State, r state.TransitionReason) {
+				if to == presence.Disconnected {
+					c.CancelAllScheduled()
+				}
+			})
 	}
 	if c.PerGrappleMessageCooldowns == nil {
 		c.PerGrappleMessageCooldowns = map[string]bool{}

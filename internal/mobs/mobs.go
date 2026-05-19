@@ -1091,6 +1091,17 @@ func (r *Mob) Validate() error {
 	r.Character.Presence.RegisterVeto(presence.Active, presence.Despawning, essentialVeto)
 	r.Character.Presence.RegisterVeto(presence.Dormant, presence.Despawning, essentialVeto)
 
+	// Chunk 5 (Presence) T8: terminal-state cleanup. On entry to
+	// Despawning, cancel all pending scheduled transitions for this
+	// character (Activity casting timers, Position recovery timers, etc.)
+	// so they don't fire after the mob is removed.
+	r.Character.Presence.RegisterObserver("scheduler_cancel_on_despawning",
+		func(from, to presence.State, reason state.TransitionReason) {
+			if to == presence.Despawning {
+				r.Character.CancelAllScheduled()
+			}
+		})
+
 	return nil
 }
 

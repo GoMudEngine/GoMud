@@ -435,6 +435,36 @@ func (c *Character) IsCombatant() bool {
 	return !c.NonCombatant
 }
 
+// CancelAllScheduled cancels every pending scheduled transition across
+// all of this character's state machines (CombatPhase, Awareness, Life,
+// Activity, Position, Presence). Called by the Presence terminal-state
+// observers (Disconnected for players, Despawning for mobs) to ensure
+// Activity casting timers, Position recovery timers, and any other
+// deferred transitions do not fire after the character has left the world.
+//
+// Control is intentionally omitted — it uses same-tick transient
+// traversal and never registers scheduled transitions.
+func (c *Character) CancelAllScheduled() {
+	if c.CombatPhase != nil {
+		c.CombatPhase.Inner().CancelScheduled()
+	}
+	if c.Awareness != nil {
+		c.Awareness.Inner().CancelScheduled()
+	}
+	if c.Life != nil {
+		c.Life.Inner().CancelScheduled()
+	}
+	if c.Activity != nil {
+		c.Activity.Inner().CancelScheduled()
+	}
+	if c.Position != nil {
+		c.Position.Inner().CancelScheduled()
+	}
+	if c.Presence != nil {
+		c.Presence.CancelScheduled()
+	}
+}
+
 func (c *Character) SetMiscData(key string, value any) {
 
 	if c.MiscData == nil {

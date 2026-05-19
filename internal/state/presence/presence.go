@@ -172,3 +172,18 @@ func (m *Machine) RegisterObserver(name string, obs func(from, to State, r state
 	}
 	m.inner.Subscribe(name, obs)
 }
+
+// Inner returns the underlying state.Machine. Used by
+// Character.CancelAllScheduled (T8) and any hook that needs direct
+// access to the raw machine. Not part of the stable API.
+func (m *Machine) Inner() *state.Machine[State] { return m.inner }
+
+// CancelScheduled cancels all pending scheduled transitions on this
+// Presence machine. Called by Character.CancelAllScheduled on
+// terminal-state entry (Disconnected for players, Despawning for mobs).
+func (m *Machine) CancelScheduled() {
+	if m == nil || m.inner == nil {
+		return
+	}
+	m.inner.CancelScheduled()
+}
