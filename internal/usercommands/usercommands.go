@@ -290,13 +290,6 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 		return false, fmt.Errorf(`user %d not found`, userId)
 	}
 
-	// Any input clears manual AFK (except the afk command itself)
-	if user.ManualAFK && cmd != "afk" {
-		user.ManualAFK = false
-		user.AFKMessage = ""
-		user.SendText(`<ansi fg="8">You are no longer AFK.</ansi>`)
-	}
-
 	// Do not allow scripts to intercept server commands
 	if cmd != `server` {
 

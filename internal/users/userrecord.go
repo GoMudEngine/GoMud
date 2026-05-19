@@ -167,8 +167,13 @@ func (u *UserRecord) SetLastInputRound(rdNum uint64) {
 	if u.Character != nil && u.Character.Presence != nil {
 		switch u.Character.Presence.State() {
 		case presence.Idle, presence.AFK:
+			// Capture manual flag before transitioning (TransitionTo clears AFKData).
+			d, hadData := u.Character.Presence.AFKData()
 			_ = u.Character.Presence.TransitionTo(presence.Active,
 				state.TransitionReason{Trigger: presence.TriggerInputReceived})
+			if hadData && d.Manual {
+				u.SendText(`<ansi fg="8">You are no longer AFK.</ansi>`)
+			}
 		}
 	}
 }
