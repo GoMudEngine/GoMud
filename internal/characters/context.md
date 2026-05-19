@@ -848,6 +848,48 @@ New registrations (all in `internal/hooks/`):
 - `wirePresenceSchedulerObserver` — fires `CancelAllScheduled()` on
   terminal-state entry.
 
+## Perception Machine Integration (chunk 6)
+
+### New field: Perception
+
+```go
+Perception *perception.Machine `yaml:"-"`
+```
+
+Initialized in `New()` and nil-guarded in `Validate()` (for characters
+loaded from YAML without a direct `New()` path). Also unconditionally
+overwritten in `mobs.Mob.Validate()` after the shallow copy, and reset
+to nil in `Character.ResetForMobInstance()` so fresh mob instances get
+their own machine. Not persisted: perception state is transient and
+reconstructed from active buffs/conditions at runtime.
+
+The Perception machine tracks whether a character can see — `Sighted`
+(default) or `Blinded` (any of three active sources: Buff 3, Buff 77,
+or ConditionBlinded). Chunk 6 ships DORMANT: transitions fire correctly
+via `AddBuff`/`RemoveBuff`/`AddCondition`/`RemoveCondition`, but no
+consumer reads `Perception.State()` yet. The future messaging framework
+chunk wires this into broadcast gating (visual broadcasts suppressed
+while Blinded), infrared "red shapes" rendering, and look-command
+blocking. See `internal/state/perception/context.md` for full details
+and `messaging-framework-chunk` project memory for the successor scope.
+
+### IsBlinded predicate
+
+No `IsBlinded()` predicate ships in chunk 6 — the dormant design omits
+it intentionally to avoid readers being added before the messaging
+framework context is in place. The predicate will land in the messaging
+framework chunk alongside the first real consumer.
+
+### HasAnyBlindSource helper (sight.go)
+
+`Character.HasAnyBlindSource()` in `internal/characters/sight.go` checks
+all three blind sources and returns true if any is currently active. Used
+by the expire-paths in `RemoveBuff` and `RemoveCondition` to determine
+whether to fire `Blinded→Sighted` when one of multiple overlapping
+sources clears. Uses `Buffs.TriggersLeft(id) > 0` rather than
+`HasBuff(id)` — see `internal/state/perception/context.md` for the
+implementation-detail rationale.
+
 ## Dependencies
 - `internal/stats`: Core statistics definitions
 - `internal/items`: Item system integration
@@ -865,3 +907,4 @@ New registrations (all in `internal/hooks/`):
 - `internal/state/activity`: Activity state machine (chunk 3)
 - `internal/state/position`: Position state machine (chunks 4a + 4b)
 - `internal/state/presence`: Presence state machine (chunk 5)
+- `internal/state/perception`: Perception state machine (chunk 6)

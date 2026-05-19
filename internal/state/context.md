@@ -9,13 +9,19 @@ enforcement, veto/cascade/observer hooks, and scheduled deferred transitions.
 
 The package is intentionally domain-free. It knows nothing about combat,
 characters, or game events. All game-specific logic lives in the consumer
-packages (currently only `internal/state/combatphase`; future chunks 1-5
-add one machine each for Awareness, Life, Activity, Position, and Presence).
+packages: `internal/state/combatphase` (chunk 0), `internal/state/awareness`
+(chunk 1), `internal/state/life` (chunk 2), `internal/state/activity` (chunk 3),
+`internal/state/position` + `internal/state/control` (chunks 4a-4f),
+`internal/state/presence` (chunk 5), and `internal/state/perception` (chunk 6).
 
-The motivation for a shared framework is uniformity across the six machines:
+The motivation for a shared framework is uniformity across all seven machines:
 every machine gets veto + cascade + observer infrastructure for free, and all
-six machines share the same global `RoundScheduler` so deferred transitions
+machines share the same global `RoundScheduler` so deferred transitions
 are driven by a single authoritative tick.
+
+**Arc status (2026-05-19):** The combat-state-machines arc is complete — all
+six consumer packages (chunks 0-6) have shipped. Mob aliveness substrate
+work can resume.
 
 ---
 
@@ -194,24 +200,23 @@ type ObserverHandler[S] func(from, to S, reason TransitionReason)
 
 ## Integration Notes
 
-### Current consumers
+### All consumers (arc complete, 2026-05-19)
 
-Only `internal/state/combatphase` (chunk 0). Each future chunk adds one
-machine and registers it via `OnCharacterCreated` in the hooks package.
-
-### Future chunks (1-5)
-
-| Chunk | Machine | States |
+| Chunk | Package | States |
 |-------|---------|--------|
-| 1 | Awareness | Visible / Concealing / Hidden / Revealing |
-| 2 | Life | Alive / Dead / Respawning |
-| 3 | Activity | Free / Casting / Crafting / Foraging / Salvaging / ... |
-| 4 | Position | Standing / Prone / Clinched / Grounded |
-| 5 | Presence | (player and mob variants) |
+| 0 | `internal/state/combatphase` | Idle / Engaging / Engaged / Disengaging |
+| 1 | `internal/state/awareness` | Visible / Concealing / Hidden / Revealing |
+| 2 | `internal/state/life` | Alive / Dead / Respawning |
+| 3 | `internal/state/activity` | Free / Casting / Crafting / Salvaging |
+| 4a-4f | `internal/state/position` + `internal/state/control` | 14 position states; 5 control-level states |
+| 5 | `internal/state/presence` | Active / Connecting / Idle / AFK / Disconnected / Spawning / Dormant / Despawning |
+| 6 | `internal/state/perception` | Sighted / Blinded (ships DORMANT) |
 
-Each chunk adds a `Character.<MachineName> *<package>.Machine` field
-and a `hooks/<Machine>_Vetoes.go` + optional `_BtreeEvents.go` file
-following the same pattern as Combat Phase.
+Each consumer adds a `Character.<MachineName> *<package>.Machine` field
+and registers wire callbacks via `OnCharacterCreated` in the hooks package.
+The Perception machine (chunk 6) ships DORMANT — transitions fire but no
+consumer reads the state yet. The future messaging framework chunk wires
+it into broadcast gating and look-command blocking.
 
 ### Import rules
 

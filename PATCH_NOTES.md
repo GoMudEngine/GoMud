@@ -1,5 +1,21 @@
 # DOGMud Patch Notes
 
+## 2026-05-19 — Chunk 6: Perception state machine (dormant)
+
+**Internal-only change.** The engine now tracks every character's
+visual state — Sighted or Blinded — as a proper state machine. Today
+no gameplay surface uses this; existing dark-room and blindness
+handling behaves exactly as before. The primitive is in place for a
+future broader messaging-framework upgrade that ties together
+color-coded combat text, infrared "red shapes" rendering, line
+wrapping, and the long-standing bug where messages can leak through
+blindness or darkness with character names visible.
+
+The combat-state-machines arc that began with chunk 0 (2026-05-13)
+is now complete — six FSMs (Combat Phase, Awareness, Life, Activity,
+Position, Presence, Perception) all shipped. Mob aliveness substrate
+work can resume.
+
 ## 2026-05-19 — Chunk 5: Presence state machine
 
 **Cleaner AFK and idle handling.** The engine now tracks every
