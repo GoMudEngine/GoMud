@@ -918,22 +918,22 @@ gradients:
   # lower_boundary_down: Neutral → Controlled (you're being overwhelmed)
   lower_boundary_down:
     self:
-      - "Pressure crashes down — {controllerName} sinks the hooks and\
-        \ you're pinned flat."
+      - "Pressure crashes down — {controllerName} smothers your movement\
+        \ and you're fully controlled."
       - "Your space evaporates. {controllerName}'s weight settles heavy\
         \ and you can't generate leverage."
       - "The position turns on you — {controllerName} establishes full\
         \ control and you're stuck."
     partner:
-      - "Your weight settles and {controlledName} flattens out under you\
-        \ — full control."
+      - "Your pressure drives through; {controlledName} can't resist and\
+        \ the position fully locks in."
       - "You drive the pressure home; {controlledName} can't find\
         \ leverage anymore."
-      - "{controlledName}'s frame collapses; you've got them fully\
-        \ pinned now."
+      - "{controlledName}'s frame collapses; you've got full control of\
+        \ the exchange now."
     observers:
-      - "{controllerName} drives pressure home and {controlledName} is\
-        \ pinned flat — full control established."
+      - "{controllerName} drives pressure home and {controlledName} can\
+        \ no longer resist — full control established."
       - "{controlledName}'s leverage gives way; {controllerName} settles\
         \ into dominant control."
       - "{controllerName} locks {controlledName} down — the position is\
@@ -942,8 +942,8 @@ gradients:
   # lower_boundary_up: Controlled → Neutral (you create space)
   lower_boundary_up:
     self:
-      - "You create space — a bridge and a hip-escape pries\
-        \ {controllerName}'s weight off your sternum."
+      - "You create space — a bridge and a hip-escape breaks\
+        \ {controllerName}'s weight off you."
       - "Your frame catches and you wrench free of the worst of the\
         \ pressure. Breathing room."
       - "You scramble back to a fighting position; {controllerName} no\
@@ -951,8 +951,8 @@ gradients:
     partner:
       - "{controlledName} bridges and creates space — your dominant\
         \ control slips into a scramble."
-      - "{controlledName}'s frame pries your weight off; the pin starts\
-        \ to break."
+      - "{controlledName}'s frame disrupts your control — the pin\
+        \ starts to break."
       - "You feel {controlledName} earn back leverage — they're no longer\
         \ fully pinned."
     observers:
@@ -960,5 +960,5 @@ gradients:
         \ {controllerName}'s control — the position evens out."
       - "{controlledName} earns space against {controllerName}; the pin\
         \ breaks back to neutral."
-      - "{controllerName}'s control on {controlledName} fails; they\
-        \ create breathing room."
+      - "{controllerName}'s control on {controlledName} fails;\
+        \ {controlledName} creates breathing room."
