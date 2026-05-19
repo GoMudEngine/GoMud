@@ -355,6 +355,29 @@ func TestValidateCompletenessGradientsMissing(t *testing.T) {
 	}
 }
 
+func TestProductionLibraryGradientsComplete(t *testing.T) {
+	lib, err := Load("../../_datafiles/world/dogmud/messaging/grapple_outcomes.yaml")
+	if err != nil {
+		t.Fatalf("Load prod library: %v", err)
+	}
+	for _, key := range RequiredGradientKeys {
+		triad, ok := lib.Gradients[key]
+		if !ok {
+			t.Errorf("missing gradient key: %s", key)
+			continue
+		}
+		if len(triad.Self) < MinTemplatesPerSpeaker {
+			t.Errorf("%s.self: %d < %d", key, len(triad.Self), MinTemplatesPerSpeaker)
+		}
+		if len(triad.Partner) < MinTemplatesPerSpeaker {
+			t.Errorf("%s.partner: %d < %d", key, len(triad.Partner), MinTemplatesPerSpeaker)
+		}
+		if len(triad.Observers) < MinTemplatesPerSpeaker {
+			t.Errorf("%s.observers: %d < %d", key, len(triad.Observers), MinTemplatesPerSpeaker)
+		}
+	}
+}
+
 // contains is a tiny string search helper to avoid an import dependency
 // shuffle in this file.
 func contains(haystack, needle string) bool {

@@ -547,6 +547,10 @@ degradations:
       - "{controlledName}'s buckle-and-arc pries {controllerName} off;\
         \ mount becomes side control."
 
+# NOTE: degradation keys above use controller/controlled/observers
+# (TemplateTriad). Gradient keys below use self/partner/observers
+# (GradientTriad) — different type, different YAML field names.
+
   # ── SideControl degradation ──────────────────────────────────────────────
   sidecontrol_to_halfguard:
     controller:
@@ -863,3 +867,98 @@ striking_apex:
     - "Their arms tire from defending their face. You sit heavy and let the strikes through."
     - "You shift your weight onto {controlledName}'s sternum and unload — short, vicious elbows from the top."
     - "Cross-face pinning their jaw, free hand cocked back — you punish from full mount."
+
+gradients:
+  # upper_boundary_down: Controlling → Neutral (your dominance is slipping)
+  upper_boundary_down:
+    self:
+      - "Your control slips — {controlledName} squirms free of the lock\
+        \ you had."
+      - "You feel your grip loosen; {controlledName}'s frantic movements\
+        \ pry leverage back from you."
+      - "The dominant position shifts under you — you're no longer in\
+        \ control of this exchange."
+    partner:
+      - "{controllerName}'s dominance slips. You feel space opening where\
+        \ there was none."
+      - "{controllerName} can't hold the pressure — your bridges and\
+        \ frames are working."
+      - "The lock {controllerName} had on you starts to give. You're\
+        \ scrambling back to even."
+    observers:
+      - "{controllerName} loses their controlling grip on {controlledName};\
+        \ the exchange evens out."
+      - "{controlledName} squirms and frames; {controllerName}'s dominance\
+        \ slips."
+      - "The pressure {controllerName} had on {controlledName} fades —\
+        \ neutral footing returns."
+
+  # upper_boundary_up: Neutral → Controlling (you're asserting dominance)
+  upper_boundary_up:
+    self:
+      - "You feel the position click — your weight settles right and you\
+        \ assert full control."
+      - "Your leverage finally takes; you're now in the dominant position."
+      - "A surge of pressure and you've got it — you're the controlling\
+        \ side now."
+    partner:
+      - "{controllerName} settles their weight and the position locks\
+        \ against you — they're in control."
+      - "You feel {controllerName} establish the dominant grip. The fight\
+        \ tightens."
+      - "{controllerName} times the pressure right and asserts control\
+        \ over you."
+    observers:
+      - "{controllerName} establishes dominance over {controlledName} —\
+        \ control settles in their favor."
+      - "{controllerName}'s pressure finally takes; they assume the\
+        \ controlling position."
+      - "{controllerName} locks in dominance over {controlledName}."
+
+  # lower_boundary_down: Neutral → Controlled (you're being overwhelmed)
+  lower_boundary_down:
+    self:
+      - "Pressure crashes down — {controllerName} sinks the hooks and\
+        \ you're pinned flat."
+      - "Your space evaporates. {controllerName}'s weight settles heavy\
+        \ and you can't generate leverage."
+      - "The position turns on you — {controllerName} establishes full\
+        \ control and you're stuck."
+    partner:
+      - "Your weight settles and {controlledName} flattens out under you\
+        \ — full control."
+      - "You drive the pressure home; {controlledName} can't find\
+        \ leverage anymore."
+      - "{controlledName}'s frame collapses; you've got them fully\
+        \ pinned now."
+    observers:
+      - "{controllerName} drives pressure home and {controlledName} is\
+        \ pinned flat — full control established."
+      - "{controlledName}'s leverage gives way; {controllerName} settles\
+        \ into dominant control."
+      - "{controllerName} locks {controlledName} down — the position is\
+        \ fully controlled now."
+
+  # lower_boundary_up: Controlled → Neutral (you create space)
+  lower_boundary_up:
+    self:
+      - "You create space — a bridge and a hip-escape pries\
+        \ {controllerName}'s weight off your sternum."
+      - "Your frame catches and you wrench free of the worst of the\
+        \ pressure. Breathing room."
+      - "You scramble back to a fighting position; {controllerName} no\
+        \ longer has you fully pinned."
+    partner:
+      - "{controlledName} bridges and creates space — your dominant\
+        \ control slips into a scramble."
+      - "{controlledName}'s frame pries your weight off; the pin starts\
+        \ to break."
+      - "You feel {controlledName} earn back leverage — they're no longer\
+        \ fully pinned."
+    observers:
+      - "{controlledName} bridges and scrambles back from\
+        \ {controllerName}'s control — the position evens out."
+      - "{controlledName} earns space against {controllerName}; the pin\
+        \ breaks back to neutral."
+      - "{controllerName}'s control on {controlledName} fails; they\
+        \ create breathing room."
