@@ -105,7 +105,8 @@ type SupineData struct {
 type GrappleData struct {
 	Reason           state.TransitionReason
 	Partner          state.ActorRef // zero only for solo Turtle
-	IsControllerRole bool           // true = this side is the controller
+	IsControllerRole bool           // true = this side is the controller; sunset in T16, leave for T6/T7 readers
+	IsAggressor      bool           // true if this side initiated the grapple; used as drift-roll tiebreaker in symmetric positions
 }
 
 // Machine wraps state.Machine[State] with Position-specific API.
@@ -249,6 +250,13 @@ func (m *Machine) GrappleData() (GrappleData, bool) {
 		return GrappleData{}, false
 	}
 	return *m.grapple, true
+}
+
+// SetGrappleData replaces the machine's per-state GrappleData.
+// Used by callers that need to update fields like IsAggressor after
+// initial pair transition.
+func (m *Machine) SetGrappleData(d GrappleData) {
+	m.grapple = &d
 }
 
 // ConsumeRecoveryRound decrements MinRecoveryRounds on the current

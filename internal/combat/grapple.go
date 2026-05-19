@@ -128,6 +128,10 @@ func ApplyGrappleResult(attacker *characters.Character, defender *characters.Cha
 	// Stage 8.3: Mark who is the controller (FSM-driven via IsController()).
 	// ConditionGrappleController is sunset; controller identity lives in the
 	// FSM GrappleData.ControlLevel field.
+
+	// Chunk 4b-fixup-2 T5: mark attacker as aggressor for drift-roll
+	// tiebreaker in symmetric positions.
+	markAggressor(attacker)
 }
 
 // IsThirdPartyAttack returns true if the attacker is not involved in the target's grapple.
@@ -161,6 +165,23 @@ func IsThirdPartyAttack(attacker *characters.Character, target *characters.Chara
 		MobInstanceId: attacker.GetMobInstanceId(),
 	}
 	return d.Partner != attackerRef
+}
+
+// markAggressor sets IsAggressor=true on the attacker side's
+// GrappleData after a successful TransitionPair. Called from
+// ApplyGrappleResult. Used as a tiebreaker for the drift roll's
+// attacker-arg in symmetric positions (Clinch, HalfGuard, Turtle)
+// where both sides start at the same ControlLevel state.
+func markAggressor(attacker *characters.Character) {
+	if attacker == nil || attacker.Position == nil {
+		return
+	}
+	d, ok := attacker.Position.GrappleData()
+	if !ok {
+		return
+	}
+	d.IsAggressor = true
+	attacker.Position.SetGrappleData(d)
 }
 
 // CritFailureResult represents the outcome of a critical grapple failure (Stage 8.6)
