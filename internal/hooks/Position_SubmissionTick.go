@@ -65,6 +65,24 @@ func processSubmissionTickForChar(c *characters.Character) {
 		return
 	}
 
+	// Chunk 4e §8: always reset the sub-interrupt accumulator for the
+	// controller at the end of this tick, regardless of whether a sub
+	// fires. The accumulator was written by the damage pipeline this
+	// round (T7) and must not bleed into the next round. Using defer
+	// ensures the reset fires even on early-return paths (no sub pool,
+	// not eligible, etc.).
+	//
+	// The attempter might be c or partner, determined below. We reset
+	// both c and partner defensively — the partner's own tick will
+	// never fire (only controllers are processed here), so this is
+	// the only opportunity to clear partner's accumulator.
+	defer func() {
+		c.SubInterruptDamageThisRound = 0
+		if partner != nil {
+			partner.SubInterruptDamageThisRound = 0
+		}
+	}()
+
 	role, eligible := EvaluateSubAttempt(c, partner)
 	if !eligible {
 		return
@@ -88,6 +106,21 @@ func processSubmissionTickForChar(c *characters.Character) {
 
 	subType := pickSubmissionRoundRobin(attempter, subPool)
 	result := combat.RollSubmissionAttempt(attempter, recipient, subType)
+
+	// Chunk 4e §8: if the submitter took qualifying third-party damage
+	// this round, force Bad-tier outcome. The damage was accumulated by
+	// chunk4eAccumulateSubInterruptDamage in the combat pipeline (T7).
+	// Models "a kick to the ribs while applying an armbar = you lose the
+	// armbar AND your position."
+	if attempter.SubInterruptDamageThisRound > 0 {
+		mudlog.Debug("Position_SubmissionTick: sub interrupted by 3rd-party damage",
+			"submitter_user", attempter.GetUserId(),
+			"submitter_mob", attempter.GetMobInstanceId(),
+			"damage", attempter.SubInterruptDamageThisRound,
+			"original_tier", result.Tier,
+		)
+		result.Tier = combat.SubTierBad
+	}
 
 	mudlog.Debug("SubmissionTick",
 		"role", role,

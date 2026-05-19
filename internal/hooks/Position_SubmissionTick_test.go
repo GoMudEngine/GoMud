@@ -212,3 +212,39 @@ func TestSubmissionTickReadsPostAdvancePosition(t *testing.T) {
 	// new position.
 	t.Skip("Integration scaffolding TBD by implementer; manual smoke covers in T26.")
 }
+
+// TestSubInterrupt_ForcesBadTier is an integration scaffold for the
+// chunk 4e §8 sub-interrupt override. When a sub fires AND
+// attempter.SubInterruptDamageThisRound > 0, the resolved tier must be
+// SubTierBad regardless of the dice roll outcome.
+//
+// Full integration requires heavyweight fixtures (live position state
+// machine, round counter, opposed dice). T12 AI smoke validates
+// end-to-end. The scaffold documents the expected post-condition for
+// a future test author.
+func TestSubInterrupt_ForcesBadTier(t *testing.T) {
+	t.Skip("Integration scaffold — full sub-tick setup is heavyweight; T12 AI smoke validates")
+	// Setup: create a controller in Mount with a high-margin drift roll
+	// so EvaluateSubAttempt returns (RoleTop, true). Set
+	// controller.SubInterruptDamageThisRound = 50 (some positive value).
+	// Run processSubmissionTickForChar(controller).
+	// Verify: the sub outcome applied to the pair is Bad-tier (attempter
+	// knocked Prone, pair transitions to Standing). The original dice
+	// roll may have returned SubTierSuccess or SubTierCrit — the
+	// override must supersede it.
+	_ = combat.SubTierBad // reference the constant so the import is valid when unskipped
+}
+
+// TestSubInterrupt_ResetAfterRound is an integration scaffold for the
+// chunk 4e §8 accumulator reset. After processSubmissionTickForChar
+// runs (whether or not a sub fires), SubInterruptDamageThisRound for
+// both controller and controlled must be 0.
+func TestSubInterrupt_ResetAfterRound(t *testing.T) {
+	t.Skip("Integration scaffold — T12 AI smoke validates")
+	// Setup: controller + controlled in Mount, SubInterruptDamageThisRound
+	// set to 30 on the controller.
+	// Run processSubmissionTickForChar(controller).
+	// Verify: controller.SubInterruptDamageThisRound == 0 afterward.
+	// Also verify partner.SubInterruptDamageThisRound == 0 (defensive
+	// reset for the controlled side, which has no own tick entry point).
+}
