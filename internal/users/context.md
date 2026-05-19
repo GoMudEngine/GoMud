@@ -609,6 +609,42 @@ for _, userId := range expiredZombies {
 }
 ```
 
+## Presence Machine Integration (chunk 5)
+
+The Presence machine lives on `Character`, not `UserRecord`, but the
+player-side connection lifecycle is wired primarily inside the users
+package:
+
+- **`users.go` — TCP-close observer:** `LogOutUserByConnectionId` calls
+  `u.Character.Presence.TransitionTo(presence.Disconnected, ...)` with
+  `TriggerTCPClosed` when a connection is dropped. This fires the
+  scheduler-cancel observer automatically.
+- **`users.go` — Login-complete:** `HandleJoin` (or its callee
+  `loginCharacterTo`) fires `Presence.TransitionTo(presence.Active, ...)`
+  with `TriggerEnteredRoom` when the character is placed in its starting
+  room, advancing from `Connecting` to `Active`.
+- **`userrecord.go` — Input wake:** `SetLastInputRound` calls
+  `Presence.TransitionTo(presence.Active, ...)` with
+  `TriggerInputReceived` on every non-Disconnected state transition. This
+  replaces the old manual-AFK clear shim that read `ManualAFK` directly.
+
+### OnlineInfo.IsAFK (compat shim)
+
+`OnlineInfo.IsAFK` continues to exist on the struct used by `online.go`
+for the player list. In chunk 5 it is populated by:
+
+```go
+IsAFK: u.Character.Presence.State() == presence.AFK,
+```
+
+replacing the old ad-hoc computation
+`ManualAFK || (roundNow - lastInputRound >= afkRounds)`. The `online`
+command display and any `(afk)` marker in room descriptions still work
+identically — the Presence machine is the only thing that changed.
+
+The `Idle` Presence state is intentionally invisible to the UI in v1.
+Only `AFK` surfaces to players via the `(afk)` tag.
+
 ## Dependencies
 
 - `internal/characters` - Character system integration for user avatars
@@ -619,5 +655,10 @@ for _, userId := range expiredZombies {
 - `internal/util` - Utility functions for hashing, file operations, and validation
 - `internal/mudlog` - Logging system for user events and debugging
 - `gopkg.in/yaml.v2` - YAML serialization for user data persistence
+- `internal/state/presence` - Presence state machine (chunk 5 — lives on
+  Character but connection lifecycle wired here)
 
-This comprehensive users system provides robust user account management with authentication, connection tracking, data persistence, messaging, and seamless integration with all game systems while maintaining high performance through efficient indexing and caching.
+This comprehensive users system provides robust user account management
+with authentication, connection tracking, data persistence, messaging,
+and seamless integration with all game systems while maintaining high
+performance through efficient indexing and caching.

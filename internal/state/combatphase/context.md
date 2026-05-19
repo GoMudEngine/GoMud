@@ -173,6 +173,23 @@ Wired at character-creation time by `CombatPhase_Vetoes.go` via the
 `OnCharacterCreated` callback. Each registration accepts a closure over
 the character's own fields so the checks always read current values.
 
+#### Presence veto on `Idle→Engaging` (chunk 5)
+
+`RegisterTargetPresenceCheck` is populated by `hooks.wireCombatPhaseVetoes`
+(chunk 5 T6). The closure reads the TARGET's `Presence.State()` and
+returns false (block) for two terminal states:
+
+- `presence.Disconnected` — TCP is gone; the character is in the graveyard.
+- `presence.Despawning` — mob is on its last tick before removal.
+
+Idle, AFK, and Dormant targets are NOT blocked — a player who typed `afk`
+in a dangerous room still takes hits by design (see §2 of the chunk-5
+spec). The NoAggroTarget grace buff (#81) also blocks `Idle→Engaging` via
+the same `RegisterTargetPresenceCheck` hook for newly-respawned players.
+This is orthogonal to Presence state: NoAggroTarget blocks regardless of
+Presence, and Presence's Disconnected/Despawning block regardless of
+NoAggroTarget. Neither subsumes the other.
+
 ### Surprise round
 
 ```go

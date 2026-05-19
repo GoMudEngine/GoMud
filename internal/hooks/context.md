@@ -1085,6 +1085,71 @@ Logs WARN on any invariant violation. Cheap to run (small pair
 universe in any one room); intended as a safety net during 4b's
 parallel-write window.
 
+## Presence Machine Observers (chunk 5)
+
+Four files wire the Presence machine into the engine (same
+import-cycle-free `OnCharacterCreated` pattern as chunks 0-4).
+
+### NewRound_PresenceTick.go
+
+Registered as a `NewRound` listener. Fires timeout-driven Presence
+transitions for every active player and mob each round.
+
+- **Players:** reads `roundNow - lastInputRound`; fires `Active→Idle`,
+  `Idle→AFK`, or `AFK→Disconnected` when the round delta exceeds the
+  corresponding config threshold.
+- **Mobs:** reads `roundNow - lastTargetFoundRound`; fires
+  `Active→Dormant` (gated by essential-mob veto) or
+  `Dormant→Despawning` (same veto) when thresholds are exceeded.
+- **Spawning mobs:** transitions `Spawning→Active` on the first tick
+  after creation.
+
+**Ordering:**
+- Runs AFTER `NewRound_DoCombat`: attacks that landed this round
+  transition `Dormant→Active` (T7 wake-on-attack) before PresenceTick
+  evaluates timeouts, so the now-Active mob is not immediately bounced
+  back to Dormant.
+- Runs BEFORE `NewRound_AutoHeal`: ensures freshly-woken Active mobs
+  are eligible for heal-tick logic in the same round.
+- Runs BEFORE `NewRound_IdleMobs`: mobs that PresenceTick transitions to
+  `Despawning` get their terminal-tick removal in the same round without
+  needing an extra tick.
+
+### Presence_MobVetoes.go
+
+Wired via `characters.OnCharacterCreated(wireMobPresenceVetoes)`. For
+mob instances only (gated by `c.MobInstanceId != 0`), registers two
+vetoes on the Presence machine:
+
+- `Active→Dormant`: calls `mob.IsEssential() || mob.Character.IsCharmed()`.
+  Shopkeepers, foragers, caravan crew, and charmed companions are
+  permanently Active.
+- `Active→Despawning`: same veto policy.
+
+### Presence_MobWake.go
+
+Registered as a `RoomChange` event listener (for player entries). When
+a player enters a room, any mob in that room whose Presence is `Dormant`
+is transitioned `Dormant→Active` with `TriggerPlayerEntry`. This is the
+T11 wake path for room-entry; T7 (auto-wake on attack) is wired inline
+in the attack-resolution path.
+
+### Presence_SchedulerObserver.go
+
+Wired via `characters.OnCharacterCreated(wirePresenceSchedulerObserver)`.
+Registers a `RegisterObserver` callback on the Presence machine. Fires
+when `to == Disconnected` (player) or `to == Despawning` (mob). Calls
+`c.CancelAllScheduled()` to wipe all pending scheduled transitions
+across every machine on this character.
+
+### CombatPhase veto integration
+
+`wireCombatPhaseVetoes` in `CombatPhase_Vetoes.go` populates
+`RegisterTargetPresenceCheck` (the seventh veto) with a closure that
+reads the target's `Presence.State()` and blocks for `Disconnected` and
+`Despawning`. Idle/AFK/Dormant targets are explicitly NOT blocked.
+See `internal/state/combatphase/context.md` for the full veto chain.
+
 ## Dependencies
 
 - `internal/events` - Event system for listener registration and event processing
@@ -1103,3 +1168,4 @@ parallel-write window.
 - `internal/state/life` - Life state machine (chunk 2)
 - `internal/state/position` - Position state machine (chunks 4a + 4b)
 - `internal/state/control` - ControlLevel state machine (chunk 4b-fixup-2)
+- `internal/state/presence` - Presence state machine (chunk 5)

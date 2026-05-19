@@ -805,6 +805,49 @@ callbacks across chunks 4a and 4b:
   invariant checker (`ValidateGrapplePair`) that catches pair drift
   (e.g. controller's partner ref doesn't match controlled's ref).
 
+## Presence Machine Integration (chunk 5)
+
+### New field: Presence
+
+```go
+Presence *presence.Machine `yaml:"-"`
+```
+
+Initialized in `New()` (player path → `NewPlayerPresence()`, starts in
+`Connecting`) and in `mobs.Mob.Validate()` after the shallow copy (mob
+path → `NewMobPresence()`, starts in `Spawning`). The field is
+nil-guarded at all consumers via `m.State()` which returns `Active` on
+a nil machine. Not persisted: presence is transient session state that
+resets on disconnect/respawn.
+
+The Presence machine is the single canonical source for "is this
+character meaningfully present?" — replacing the ad-hoc
+`ManualAFK`/`BoredomCounter` fields that were removed in chunk 5.
+
+### CancelAllScheduled helper (T8)
+
+```go
+func (c *Character) CancelAllScheduled()
+```
+
+Called by the scheduler-cancel observer when Presence enters a terminal
+state (`Disconnected` for players, `Despawning` for mobs). Cancels all
+pending scheduled transitions across all machines on this character
+(Activity casting/crafting timers, Position recovery timers, etc.).
+Wired by `hooks.wirePresenceSchedulerObserver` via `OnCharacterCreated`.
+
+### OnCharacterCreated additions (chunk 5)
+
+New registrations (all in `internal/hooks/`):
+- `wirePresenceMobVetoes` — registers `Active→Dormant` and
+  `Active→Despawning` vetoes that return `ErrVetoed` when
+  `IsEssential() || IsCharmed()`.
+- `wireCombatPhasePresenceVeto` — populates
+  `CombatPhase.RegisterTargetPresenceCheck` with a closure that blocks
+  `Idle→Engaging` for `Disconnected`/`Despawning` targets.
+- `wirePresenceSchedulerObserver` — fires `CancelAllScheduled()` on
+  terminal-state entry.
+
 ## Dependencies
 - `internal/stats`: Core statistics definitions
 - `internal/items`: Item system integration
@@ -821,3 +864,4 @@ callbacks across chunks 4a and 4b:
 - `internal/state/life`: Life state machine (chunk 2)
 - `internal/state/activity`: Activity state machine (chunk 3)
 - `internal/state/position`: Position state machine (chunks 4a + 4b)
+- `internal/state/presence`: Presence state machine (chunk 5)

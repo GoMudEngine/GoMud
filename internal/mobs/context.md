@@ -75,6 +75,41 @@ CombatMemoryExpired helpers.
 
 Design: `docs/superpowers/specs/2026-05-12-mob-aliveness-2.6-sunset-tactics-engine-design.md`
 
+### 2c. **Mob Lifecycle — Presence Machine (chunk 5)**
+
+`BoredomCounter uint8` and `PreventIdle bool` are **deleted** in chunk 5
+(T12). Their roles are taken over by the Presence state machine on
+`Character.Presence *presence.Machine` and a new per-mob field
+`Character.LastTargetFoundRound uint64`.
+
+**BoredomCounter → Presence:** The boredom semantics now live in
+`NewRound_PresenceTick.go`. Each round, the hook computes
+`roundNow - mob.Character.LastTargetFoundRound` and fires
+`Active→Dormant` when the delta exceeds `PresenceMobDormantAfterRounds`
+(default 30 rounds). `Dormant→Despawning` fires after an additional
+`PresenceMobDespawnAfterRounds` (default 60 rounds). Both transitions
+are vetoed for essential mobs (`IsEssential() || IsCharmed()`).
+
+**PreventIdle → Active veto:** The one-tick suppression that
+`PreventIdle` provided (blocking idle command dispatch for a single
+round) is subsumed by the Active state itself. A mob in Active state is
+always eligible for idle commands; the veto that `PreventIdle` guarded
+(skipping an idle tick after a state change) is no longer needed because
+the Presence machine's transition itself provides the state boundary.
+
+**Essential-mob veto (T5):** `hooks.Presence_MobVetoes.go` registers
+`Active→Dormant` and `Active→Despawning` vetoes that return `ErrVetoed`
+when `mob.IsEssential() || mob.Character.IsCharmed()`. Shopkeepers,
+foragers, caravan crew, and charmed companions never leave Active.
+
+**Spawning state:** `NewMobPresence()` starts in `Spawning`. On the
+next `NewRound_PresenceTick`, the mob advances `Spawning→Active`. This
+gives one-round initialization budget before the mob begins receiving
+idle ticks and combat-eligible checks.
+
+See `internal/state/presence/context.md` for the full Presence state
+list, transition tables, and config knobs.
+
 ### 3. **Social and Combat Dynamics**
 - Group-based allegiance system
 - Race and alignment-based hostility
