@@ -211,3 +211,90 @@ func TestGrappleScore_NilCharacter(t *testing.T) {
 		t.Errorf("nil character → score = %v, want 0", got)
 	}
 }
+
+// TestGrappleScore_QuesterVsBoarSurvives is the regression test for
+// the 2026-05-19 bug where quester0 immediately escaped from every
+// grapple against a steppe boar. With the new formula, quester0's
+// 30 unarmed-combat training should bring them into competitive
+// range (not 80+ points behind).
+//
+// Stats from production YAML:
+//   quester0: Str.Base=103 + Training=13 = 116; Dex.Base=113 + Training=13 = 126
+//   quester0 skill: unarmed-combat=30
+//   steppe boar (typical spawn): Str≈149, Dex≈91, no skill
+//
+// Quester0 grappling boar: quester0 is aggressor. Expected:
+//   atk = (0.7*116 + 0.3*126) + 2.2*30 = 119 + 66 = 185
+//   def = (0.7*149 + 0.3*91)  + 2.0*0  = 131.6 + 0 = 131.6
+//   margin = 53.4, z = 53.4/(185*0.15) ≈ +1.92 → 2-step advance.
+//
+// We don't roll the dice here (too flaky) — we just verify the
+// deterministic score components and the resulting margin.
+func TestGrappleScore_QuesterVsBoarSurvives(t *testing.T) {
+	cfg := configs.GetBalanceConfig()
+
+	quester := makeGrappleCharacter(t, 116, 126, 30)
+	boar := makeGrappleCharacter(t, 149, 91, 0)
+
+	atkScore := grappleScore(quester, true, cfg) // quester is aggressor
+	defScore := grappleScore(boar, false, cfg)
+
+	// Quester0's score should exceed boar's despite raw Str gap.
+	if atkScore <= defScore {
+		t.Errorf("quester0 (trained) score %.1f should exceed boar score %.1f", atkScore, defScore)
+	}
+
+	// Margin should be in the 2-step band (z in [1.0, 2.0)):
+	// 2-step means decisive advance but not immediate sub/escape.
+	margin := atkScore - defScore
+	sigma := atkScore * 0.15 // RollSpread default
+	z := margin / sigma
+	if z < 1.0 || z >= 2.0 {
+		t.Errorf("expected z in [1.0, 2.0) (2-step advance band), got z=%.2f (atk=%.1f def=%.1f margin=%.1f sigma=%.1f)",
+			z, atkScore, defScore, margin, sigma)
+	}
+}
+
+// TestGrappleScore_UntrainedVsTrainedDefenderEscapes is the inverse
+// regression: an untrained aggressor against a trained defender
+// should produce z ≤ -2.0 (escape). Confirms the formula doesn't
+// silently make grapples always-favor-aggressor.
+func TestGrappleScore_UntrainedVsTrainedDefenderEscapes(t *testing.T) {
+	cfg := configs.GetBalanceConfig()
+
+	untrained := makeGrappleCharacter(t, 100, 100, 0)
+	trained := makeGrappleCharacter(t, 100, 100, 30)
+
+	atkScore := grappleScore(untrained, true, cfg) // 100 + 0
+	defScore := grappleScore(trained, false, cfg)  // 100 + 60
+
+	margin := atkScore - defScore
+	sigma := atkScore * 0.15
+	z := margin / sigma
+
+	if z > -2.0 {
+		t.Errorf("expected z ≤ -2.0 (defender escape band), got z=%.2f (atk=%.1f def=%.1f)",
+			z, atkScore, defScore)
+	}
+}
+
+// TestGrappleScore_EqualPairHolds confirms balanced grapplers land
+// in the Hold band (|z| < 0.5) when their stats and skill match.
+func TestGrappleScore_EqualPairHolds(t *testing.T) {
+	cfg := configs.GetBalanceConfig()
+
+	a := makeGrappleCharacter(t, 100, 100, 15)
+	b := makeGrappleCharacter(t, 100, 100, 15)
+
+	atkScore := grappleScore(a, true, cfg)  // 100 + 33 = 133
+	defScore := grappleScore(b, false, cfg) // 100 + 30 = 130
+
+	margin := atkScore - defScore
+	sigma := atkScore * 0.15
+	z := margin / sigma
+
+	if z < 0 || z >= 0.5 {
+		t.Errorf("expected z in [0, 0.5) (Hold band, slight aggressor edge), got z=%.2f (atk=%.1f def=%.1f)",
+			z, atkScore, defScore)
+	}
+}
