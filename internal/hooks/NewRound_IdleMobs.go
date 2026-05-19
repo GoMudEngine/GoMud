@@ -2,7 +2,6 @@
 package hooks
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
@@ -10,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -21,8 +21,6 @@ import (
 func IdleMobs(e events.Event) events.ListenerReturn {
 
 	mc := configs.GetMemoryConfig()
-
-	maxBoredom := uint8(mc.MaxMobBoredom)
 
 	allMobInstances := mobs.GetAllMobInstanceIds()
 
@@ -41,22 +39,14 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 			continue
 		}
 
-		if allowedUnloadCt > 0 && mob.BoredomCounter >= maxBoredom {
-
-			if mob.Despawns() {
-				mob.Command(`despawn` + fmt.Sprintf(` depression %d/%d`, mob.BoredomCounter, maxBoredom))
+		// Chunk 5 (Presence): despawn driven by Presence state, not BoredomCounter.
+		// PresenceTick (T4) has already transitioned the mob to Despawning;
+		// this hook fires the actual removal on the next tick.
+		if mob.Character.Presence != nil && mob.Character.Presence.State() == presence.Despawning {
+			if allowedUnloadCt > 0 {
+				mob.Command(`despawn presence_despawning`)
 				allowedUnloadCt--
-
-			} else {
-				mob.BoredomCounter = 0
 			}
-
-			continue
-		}
-
-		// If idle prevented, it's a one round interrupt (until another comes along)
-		if mob.PreventIdle {
-			mob.PreventIdle = false
 			continue
 		}
 

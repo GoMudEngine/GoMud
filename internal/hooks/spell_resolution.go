@@ -278,7 +278,6 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 // is gated on spell Type being Harm*. Kept inline there.
 func setMobSpellAggro(user *users.UserRecord, mob *mobs.Mob) {
 	if !mob.Character.IsInCombat() {
-		mob.PreventIdle = true
 		if user != nil {
 			mob.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
 		}
@@ -476,7 +475,6 @@ func applyMobEffect_buff(
 	// gated on Harm* spell types; not consolidated in Task 7's setMobSpellAggro.
 	if spellData.Type == spells.HarmSingle || spellData.Type == spells.HarmArea || spellData.Type == spells.HarmMulti {
 		if !mob.Character.IsInCombat() {
-			mob.PreventIdle = true
 			if user != nil {
 				mob.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
 			}

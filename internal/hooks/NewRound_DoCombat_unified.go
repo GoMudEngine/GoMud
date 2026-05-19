@@ -676,7 +676,6 @@ func handleAggroAndAssist(atk, def actions.Actor, cfg *configs.Config) {
 		// respawning players who had attacked bandits).
 		dispatchPackmateHurt(defMob, atk.GetUserId(), 0)
 		if defChar.Aggro == nil {
-			defMob.PreventIdle = true
 			if atkChar.RoomId != defChar.RoomId {
 				if mobRoom := rooms.LoadRoom(defChar.RoomId); mobRoom != nil {
 					for exitName, exitInfo := range mobRoom.Exits {
@@ -722,7 +721,6 @@ func handleAggroAndAssist(atk, def actions.Actor, cfg *configs.Config) {
 		//   - Companion-owner assist if defender mob is charmed.
 		defMob := asMob(def)
 		if defChar.Aggro == nil {
-			defMob.PreventIdle = true
 			defChar.Aggro = &characters.Aggro{
 				Type: characters.DefaultAttack,
 			}
