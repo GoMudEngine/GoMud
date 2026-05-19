@@ -445,16 +445,21 @@ func processFoldRound(char *characters.Character) FoldRoundResult {
 			chance := characters.CalcConcentrationChance(
 				char.Stats.Willpower.ValueAdj, dmgPctEquiv)
 			roll := util.Rand(100)
-			util.LogRoll(`PositionConcentration`, roll, chance)
+			util.LogRoll(`Position Concentration`, roll, chance)
 			if roll >= chance {
 				// Concentration broke. Route messaging by which break
-				// flag the caller expects for this position.
+				// flag the caller expects for this position. Default
+				// falls back to GrappleBroke for any future non-Standing
+				// position that lands here without a Prone/Supine/Grapple
+				// classification.
 				clearCastingActivity(char, activity.TriggerConcentrationBreak)
 				result := FoldRoundResult{CastingData: cs}
 				switch {
 				case char.IsProne(), char.IsSupine():
 					result.ProneBroke = true
 				case char.IsGrappling():
+					result.GrappleBroke = true
+				default:
 					result.GrappleBroke = true
 				}
 				return result
