@@ -141,7 +141,7 @@ func TestLookForTrouble_TargetsMobByGroupHate(t *testing.T) {
 
 // TestLookForTrouble_NoAggroWhenGroupHateMissing is the contrast test:
 // when the bandit has NO hates list, lookfortrouble must not select the
-// caravan mob (no target, BoredomCounter increments for despawning mobs).
+// caravan mob (no target found — LastTargetFoundRound stays unset).
 //
 // This ensures the group-hate path in lookfortrouble is selective — it
 // should NOT aggro on neutral mobs the acting mob has no reason to hate.

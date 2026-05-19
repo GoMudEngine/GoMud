@@ -177,16 +177,13 @@ func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) 
 	}
 
 	if targetUserId > 0 {
+		// Chunk 5 (Presence): stamp LastTargetFoundRound so PresenceTick
+		// can reset the "bored" timer when a target is found.
+		mob.Character.LastTargetFoundRound = util.GetRoundCount()
 		mob.Command(fmt.Sprintf("attack @%d", targetUserId)) // @ denotes a specific player id
 	} else if targetMobInstanceId > 0 {
+		mob.Character.LastTargetFoundRound = util.GetRoundCount()
 		mob.Command(fmt.Sprintf("attack #%d", targetMobInstanceId)) // # denotes a specific mob id
-	} else {
-
-		if mob.Despawns() {
-			if mob.BoredomCounter < 255 {
-				mob.BoredomCounter++
-			}
-		}
 	}
 
 	return true, nil
