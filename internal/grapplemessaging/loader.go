@@ -25,6 +25,19 @@ type TemplateTriad struct {
 	Observers  []string `yaml:"observers"`
 }
 
+// GradientTriad holds the three speaker-variant template lists for
+// a gradient (ControlLevel boundary-crossing) event. Self is shown
+// to the character whose state changed; partner is shown to the
+// other side of the grapple; observers is broadcast to the room.
+//
+// Different from TemplateTriad's controller/controlled/observers
+// semantics — gradients fire per-character (self), not per-role.
+type GradientTriad struct {
+	Self      []string `yaml:"self"`
+	Partner   []string `yaml:"partner"`
+	Observers []string `yaml:"observers"`
+}
+
 // Library is the parsed in-memory template store. Keys for each map
 // follow spec §7.1 conventions:
 //   - Advancements:  "<source>_to_<target>" (e.g. "clinch_to_mount")
@@ -36,6 +49,8 @@ type TemplateTriad struct {
 //                    "ground_hold_generic")
 //   - StrikingApex:  Single-speaker (no triad); "mount_strike_flavor"
 //                    is the only key currently.
+//   - Gradients:     Boundary-crossing (ControlLevel transitions);
+//                    "upper_boundary_down/up", "lower_boundary_down/up"
 type Library struct {
 	Advancements map[string]TemplateTriad `yaml:"advancements"`
 	Degradations map[string]TemplateTriad `yaml:"degradations"`
@@ -43,6 +58,7 @@ type Library struct {
 	Escapes      map[string]TemplateTriad `yaml:"escapes"`
 	Holds        map[string]TemplateTriad `yaml:"holds"`
 	StrikingApex map[string][]string      `yaml:"striking_apex"`
+	Gradients    map[string]GradientTriad `yaml:"gradients"`
 }
 
 // Load reads and parses the grapple outcome template file. Returns
@@ -76,6 +92,9 @@ func Load(path string) (*Library, error) {
 	}
 	if lib.StrikingApex == nil {
 		lib.StrikingApex = map[string][]string{}
+	}
+	if lib.Gradients == nil {
+		lib.Gradients = map[string]GradientTriad{}
 	}
 	return lib, nil
 }
@@ -172,6 +191,14 @@ var RequiredStrikingApexKeys = []string{
 	"mount_strike_flavor",
 }
 
+// RequiredGradientKeys: 4 boundary-direction keys.
+var RequiredGradientKeys = []string{
+	"upper_boundary_down", // Controlling → Neutral
+	"upper_boundary_up",   // Neutral → Controlling
+	"lower_boundary_down", // Neutral → Controlled
+	"lower_boundary_up",   // Controlled → Neutral
+}
+
 // ValidateCompleteness checks that every required key is present
 // AND each triad has at least MinTemplatesPerSpeaker templates per
 // speaker variant. StrikingApex keys need MinStrikingApexTemplates
@@ -217,6 +244,26 @@ func ValidateCompleteness(lib *Library) []error {
 		if len(templates) < MinStrikingApexTemplates {
 			errs = append(errs, fmt.Errorf("striking_apex.%s: %d templates, need >= %d",
 				key, len(templates), MinStrikingApexTemplates))
+		}
+	}
+
+	for _, key := range RequiredGradientKeys {
+		triad, ok := lib.Gradients[key]
+		if !ok {
+			errs = append(errs, fmt.Errorf("gradients: missing key %q", key))
+			continue
+		}
+		if len(triad.Self) < MinTemplatesPerSpeaker {
+			errs = append(errs, fmt.Errorf("gradients.%s.self: %d templates, need >= %d",
+				key, len(triad.Self), MinTemplatesPerSpeaker))
+		}
+		if len(triad.Partner) < MinTemplatesPerSpeaker {
+			errs = append(errs, fmt.Errorf("gradients.%s.partner: %d templates, need >= %d",
+				key, len(triad.Partner), MinTemplatesPerSpeaker))
+		}
+		if len(triad.Observers) < MinTemplatesPerSpeaker {
+			errs = append(errs, fmt.Errorf("gradients.%s.observers: %d templates, need >= %d",
+				key, len(triad.Observers), MinTemplatesPerSpeaker))
 		}
 	}
 

@@ -300,3 +300,68 @@ func TestProductionLibraryFullValidation(t *testing.T) {
 		}
 	}
 }
+
+func TestGradientTriadParse(t *testing.T) {
+	path := writeTempYAML(t, `
+advancements: {}
+degradations: {}
+reversals: {}
+escapes: {}
+holds: {}
+striking_apex: {}
+gradients:
+  upper_boundary_down:
+    self:
+      - "Your grip slips."
+    partner:
+      - "{controllerName}'s grip slips."
+    observers:
+      - "{controllerName}'s grip on {controlledName} slips."
+`)
+	lib, err := Load(path)
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	g, ok := lib.Gradients["upper_boundary_down"]
+	if !ok {
+		t.Fatal("missing upper_boundary_down key")
+	}
+	if len(g.Self) != 1 || len(g.Partner) != 1 || len(g.Observers) != 1 {
+		t.Errorf("triad lengths: self=%d partner=%d obs=%d, want 1/1/1",
+			len(g.Self), len(g.Partner), len(g.Observers))
+	}
+}
+
+func TestValidateCompletenessGradientsMissing(t *testing.T) {
+	lib := &Library{
+		Advancements: map[string]TemplateTriad{},
+		Degradations: map[string]TemplateTriad{},
+		Reversals:    map[string]TemplateTriad{},
+		Escapes:      map[string]TemplateTriad{},
+		Holds:        map[string]TemplateTriad{},
+		StrikingApex: map[string][]string{},
+		Gradients:    map[string]GradientTriad{},
+	}
+	errs := ValidateCompleteness(lib)
+	foundGradientErr := false
+	for _, e := range errs {
+		if e.Error() != "" && contains(e.Error(), "gradients:") {
+			foundGradientErr = true
+			break
+		}
+	}
+	if !foundGradientErr {
+		t.Error("empty Gradients should produce a 'gradients: missing key' error")
+	}
+}
+
+// contains is a tiny string search helper to avoid an import dependency
+// shuffle in this file.
+func contains(haystack, needle string) bool {
+	for i := 0; i+len(needle) <= len(haystack); i++ {
+		if haystack[i:i+len(needle)] == needle {
+			return true
+		}
+	}
+	return false
+}
