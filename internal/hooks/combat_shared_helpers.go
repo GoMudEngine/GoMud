@@ -397,6 +397,7 @@ func cancelCraftOrSalvageOnDamage(ch *characters.Character) {
 type FoldRoundResult struct {
 	// Terminal states — caller should return after messaging.
 	ProneBroke             bool // caster fell prone, concentration broken
+	GrappleBroke           bool // caster is in a grapple state, concentration broken (chunk 4e T4)
 	TargetGone             bool // all targets are dead/gone
 	SpellDataMissing       bool // spells.GetSpell returned nil
 	InsufficientConviction bool // not enough CP to pay this fold's cost
@@ -426,6 +427,25 @@ func processFoldRound(char *characters.Character) FoldRoundResult {
 	if char.IsProne() || char.IsSupine() {
 		clearCastingActivity(char, activity.TriggerConcentrationBreak)
 		return FoldRoundResult{ProneBroke: true, CastingData: cs}
+	}
+
+	// Chunk 4e T4 — spell disruption audit: grappled casters cannot maintain
+	// concentration. All 11 grapple positions (Clinch, BackStanding, Mount,
+	// SideControl, KneeOnBelly, NorthSouth, Crucifix, BackGround, HalfGuard,
+	// Guard, Turtle) break concentration at the start of every fold round.
+	// Per spec §4.2 simplification: grapple implies disruption equivalent to
+	// Prone. Per-position disruption curves are chunk 4f territory.
+	//
+	// Spell disruption audit (chunk 4e T4, 2026-05-19):
+	// GAP FOUND: processFoldRound only checked IsProne()/IsSupine(); all 11
+	// grapple states fell through to the fold-advance path, letting grappled
+	// casters complete spells unimpeded. Added catch-all below treating any
+	// grapple state as Prone-equivalent immediate concentration break.
+	// checkConcentrationBreak (damage-hit path) has no position filter and
+	// fires correctly for all positions — no gap there.
+	if char.IsGrappling() {
+		clearCastingActivity(char, activity.TriggerConcentrationBreak)
+		return FoldRoundResult{GrappleBroke: true, CastingData: cs}
 	}
 
 	// Target-gone check: any dead/nil target breaks the spell.

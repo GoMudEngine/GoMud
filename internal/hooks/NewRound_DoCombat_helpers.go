@@ -224,6 +224,16 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 				`<ansi fg="username">%s</ansi>'s concentration breaks.`, user.Character.Name), user.UserId)
 		}
 
+	case result.GrappleBroke:
+		// Chunk 4e T4: grapple breaks concentration same as Prone (spec §4.2).
+		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(csBeforeProcess))
+		user.SendText(`<ansi fg="red">Your concentration shatters — you cannot hold the fold while grappled!</ansi>`)
+		room := rooms.LoadRoom(user.Character.RoomId)
+		if room != nil {
+			sendVisualRoomText(room, fmt.Sprintf(
+				`<ansi fg="username">%s</ansi>'s concentration breaks.`, user.Character.Name), user.UserId)
+		}
+
 	case result.TargetGone:
 		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(csBeforeProcess))
 		user.SendText(`<ansi fg="red">Your spell fizzles — the target is gone.</ansi>`)
@@ -385,6 +395,12 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 
 	switch {
 	case result.ProneBroke:
+		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(csBeforeProcess))
+		mobRoom.SendText(fmt.Sprintf(
+			`%s's concentration breaks.`, mobDisplayName(mob, mobRoom, 0)))
+
+	case result.GrappleBroke:
+		// Chunk 4e T4: grapple breaks concentration same as Prone (spec §4.2).
 		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(csBeforeProcess))
 		mobRoom.SendText(fmt.Sprintf(
 			`%s's concentration breaks.`, mobDisplayName(mob, mobRoom, 0)))
