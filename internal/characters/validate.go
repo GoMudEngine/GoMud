@@ -543,6 +543,10 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 		c.Position = position.NewMachine()
 	}
 	if c.Presence == nil {
+		// Player default — mob.Validate() overwrites with NewMobPresence()
+		// AFTER calling this. Control intentionally lacks a parallel guard
+		// here and uses per-call-site nil checks instead (see
+		// position_predicates.go for examples).
 		c.Presence = presence.NewPlayerPresence()
 	}
 	if c.PerGrappleMessageCooldowns == nil {
