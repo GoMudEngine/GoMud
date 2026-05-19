@@ -11,6 +11,11 @@ import (
 
 func Eat(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
+	// Chunk 4e: can't eat while grappled — both hands committed.
+	if mob.Character.Position != nil && mob.Character.Position.IsGrappling() {
+		return true, nil
+	}
+
 	if matchItem, found := mob.Character.FindInBackpack(rest); found {
 
 		itemSpec := matchItem.GetSpec()

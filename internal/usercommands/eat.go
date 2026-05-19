@@ -13,6 +13,12 @@ import (
 
 func Eat(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
+	// Chunk 4e: can't eat while grappled — both hands committed.
+	if user.Character.Position != nil && user.Character.Position.IsGrappling() {
+		user.SendText(`<ansi fg="red">Your hands are committed to the grapple — you can't reach for that.</ansi>`)
+		return true, nil
+	}
+
 	// Check whether the user has an item in their inventory that matches
 	matchItem, found := user.Character.FindInBackpack(rest)
 
