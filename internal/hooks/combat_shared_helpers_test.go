@@ -8,19 +8,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 )
 
-// makeCastingChar returns a Character set up for a fold-round test. Caller
-// configures Position/Control/Willpower as needed.
-func makeCastingChar(t *testing.T, willpower int) *characters.Character {
-	t.Helper()
-	c := characters.New()
-	c.Stats.Willpower.ValueAdj = willpower
-	// Start a minimal casting activity so processFoldRound's "IsCasting"
-	// gate passes. Use any spell id that exists in spells data. If no
-	// real spell is required for the test path, the caller may stub via
-	// the Activity API.
-	return c
-}
-
 func TestProcessFoldRound_StandingNoCheck(t *testing.T) {
 	// Standing should never hit the disruption gate; the function should
 	// proceed past it. We can't easily run the full fold without a real
