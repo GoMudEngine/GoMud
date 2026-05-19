@@ -1,6 +1,7 @@
 package hooks
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/state"
@@ -70,8 +71,15 @@ func wireCombatPhaseVetoes(c *characters.Character) {
 		// Despawning. AFK / Idle / Dormant targets ARE attackable — "if
 		// you went AFK in a dangerous room, you deserve it." Dormant mobs
 		// will auto-wake on attack via the T7 wake-on-attack hook.
+		//
+		// Respawn grace remains orthogonal: the NoAggroTarget buff
+		// (post-respawn grace window) ALSO blocks aggro on players —
+		// this is independent of Presence and predates the machine.
 		if t.IsPlayer() {
 			if u := users.GetByUserId(t.UserId); u != nil {
+				if u.Character.HasBuffFlag(buffs.NoAggroTarget) {
+					return false
+				}
 				switch u.Character.Presence.State() {
 				case presence.Disconnected, presence.Despawning:
 					return false
