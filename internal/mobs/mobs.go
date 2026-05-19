@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/perception"
 	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -1072,6 +1073,13 @@ func (r *Mob) Validate() error {
 	// rather than nil-guard so template mobs and freshly shallow-copied
 	// instances are both handled correctly.
 	r.Character.Presence = presence.NewMobPresence()
+
+	// Unconditional overwrite — ensures mob actors always get a fresh
+	// Perception machine even though both player and mob paths share the
+	// same constructor (NewMachine). Matches the Presence overwrite
+	// pattern above for consistency: Character.Validate() installs a
+	// player default, mob.Validate() replaces it unconditionally.
+	r.Character.Perception = perception.NewMachine()
 
 	// Essential-mob veto (chunk 5): shopkeepers, foragers, caravan crew,
 	// and charmed companions must never transition out of Active. Wraps

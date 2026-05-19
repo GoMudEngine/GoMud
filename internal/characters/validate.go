@@ -19,6 +19,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
+	"github.com/GoMudEngine/GoMud/internal/state/perception"
 	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 	"github.com/GoMudEngine/GoMud/internal/stats"
@@ -559,6 +560,12 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 					c.CancelAllScheduled()
 				}
 			})
+	}
+	if c.Perception == nil {
+		// Player default — mob.Validate() overwrites unconditionally
+		// after this runs. Same constructor for both actor types but
+		// the unconditional overwrite matches the Presence pattern.
+		c.Perception = perception.NewMachine()
 	}
 	if c.PerGrappleMessageCooldowns == nil {
 		c.PerGrappleMessageCooldowns = map[string]bool{}

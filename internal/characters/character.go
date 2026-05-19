@@ -20,6 +20,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/state/control"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
+	"github.com/GoMudEngine/GoMud/internal/state/perception"
 	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/stats"
 )
@@ -79,6 +80,7 @@ func (c *Character) ResetForMobInstance() {
 	c.Activity = nil
 	c.Control = nil
 	c.Presence = nil
+	c.Perception = nil
 	c.combatPhaseWired = false
 	c.PerGrappleMessageCooldowns = nil
 	c.PerGrappleMessageCooldownsLastRound = nil
@@ -186,6 +188,14 @@ type Character struct {
 	// Active / Idle / AFK / Disconnected; Mob: Spawning / Active /
 	// Dormant / Despawning). See internal/state/presence/context.md.
 	Presence                 *presence.Machine              `yaml:"-"`
+	// Perception is the canonical state machine for "do this character's
+	// eyes work?" — Sighted / Blinded. Ships DORMANT in chunk 6: the
+	// machine transitions correctly via buff/condition observers but no
+	// consumer reads the state yet. The future centralized messaging
+	// framework chunk will wire it into broadcast gating, infrared
+	// rendering, look-command blocking. See
+	// internal/state/perception/context.md.
+	Perception               *perception.Machine            `yaml:"-"`
 	// PerGrappleMessageCooldowns tracks which gradient/stamina
 	// messages have already fired during the current grapple session.
 	// Resets when the character returns to a non-grapple state.
@@ -317,6 +327,7 @@ func New() *Character {
 		Position:                   position.NewMachine(),
 		Control:                    control.NewMachine(),
 		Presence:                   presence.NewPlayerPresence(),
+		Perception:                 perception.NewMachine(),
 		PerGrappleMessageCooldowns: map[string]bool{},
 		SubmissionPolicy:           PolicySubdue,
 		SurrenderPolicy:            SurrenderPolicy{Mode: SurrenderAutoTap, HpPctThreshold: 15},
