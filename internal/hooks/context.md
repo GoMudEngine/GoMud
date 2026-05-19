@@ -1115,32 +1115,33 @@ transitions for every active player and mob each round.
   `Despawning` get their terminal-tick removal in the same round without
   needing an extra tick.
 
-### Presence_MobVetoes.go
+### Essential-mob vetoes (in `internal/mobs/mobs.go` `Validate()`)
 
-Wired via `characters.OnCharacterCreated(wireMobPresenceVetoes)`. For
-mob instances only (gated by `c.MobInstanceId != 0`), registers two
-vetoes on the Presence machine:
+NOT a hook file — registered inline in mob `Validate()` immediately
+after `NewMobPresence()`. Three vetoes (Active→Dormant, Active→Despawning,
+Dormant→Despawning) all share one policy closure:
 
-- `Active→Dormant`: calls `mob.IsEssential() || mob.Character.IsCharmed()`.
-  Shopkeepers, foragers, caravan crew, and charmed companions are
-  permanently Active.
-- `Active→Despawning`: same veto policy.
+- Returns `VetoError` when `!mob.Despawns() || mob.IsEssential() ||
+  mob.Character.IsCharmed()`. Shopkeepers, foragers, caravan crew, and
+  charmed companions are permanently Active.
 
-### Presence_MobWake.go
+### RoomChange_PresencePlayerEntry.go
 
-Registered as a `RoomChange` event listener (for player entries). When
-a player enters a room, any mob in that room whose Presence is `Dormant`
-is transitioned `Dormant→Active` with `TriggerPlayerEntry`. This is the
-T11 wake path for room-entry; T7 (auto-wake on attack) is wired inline
-in the attack-resolution path.
+Registered as a `RoomChange` event listener. Fires only on player
+entries (`evt.UserId != 0`). When a player enters a room, any mob in
+that room whose Presence is `Dormant` is transitioned `Dormant→Active`
+with `TriggerPlayerEntry` (also resets `LastDormantEntryRound = 0`).
+This is the T11 room-entry wake path; T7 (auto-wake on attack) is wired
+inline in `internal/combat/combat.go`'s `AttackPlayerVsMob` /
+`AttackMobVsMob`.
 
-### Presence_SchedulerObserver.go
+### Scheduler observer (in `validate.go` + `mobs.go`)
 
-Wired via `characters.OnCharacterCreated(wirePresenceSchedulerObserver)`.
-Registers a `RegisterObserver` callback on the Presence machine. Fires
-when `to == Disconnected` (player) or `to == Despawning` (mob). Calls
-`c.CancelAllScheduled()` to wipe all pending scheduled transitions
-across every machine on this character.
+NOT a hook file — registered inline at each Presence-machine
+construction site. The observer captures `*Character` by closure and
+fires `c.CancelAllScheduled()` when `to == Disconnected` (player) or
+`to == Despawning` (mob), wiping pending scheduled transitions across
+every machine on this character.
 
 ### CombatPhase veto integration
 
