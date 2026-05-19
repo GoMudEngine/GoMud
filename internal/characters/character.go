@@ -84,6 +84,8 @@ func (c *Character) ResetForMobInstance() {
 	c.PerGrappleMessageCooldownsLastRound = nil
 	c.OutsideHitDisruptedRound = 0
 	c.SubInterruptDamageThisRound = 0
+	c.LastTargetFoundRound = 0
+	c.LastDormantEntryRound = 0
 }
 
 type NameRenderFlag uint8
@@ -209,6 +211,14 @@ type Character struct {
 	// any sub firing this round. Reset implicitly by being read once
 	// per round.
 	SubInterruptDamageThisRound float64 `yaml:"-"`
+	// LastTargetFoundRound tracks the round number when this character
+	// last found a combat target. Used by Presence.PresenceTick to
+	// determine when a mob is "bored". Replaces Mob.BoredomCounter.
+	LastTargetFoundRound uint64 `yaml:"-"`
+	// LastDormantEntryRound tracks when this character entered
+	// Presence.Dormant. Used by Presence.PresenceTick to determine
+	// when to transition to Despawning.
+	LastDormantEntryRound uint64 `yaml:"-"`
 	Conditions               []CombatCondition              `yaml:"-"`                       // Active temporary combat conditions (Stage 9.8). Don't store this.
 	AttacksThisRound         int                            `yaml:"-"`                       // Stage 9.4: Tracks recent attacks for stance calculation. Don't store this.
 	DefensesThisRound        int                            `yaml:"-"`                       // Stage 9.4: Tracks recent defenses for stance calculation. Don't store this.

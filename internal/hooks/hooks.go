@@ -33,6 +33,7 @@ func RegisterListeners() {
 	//
 	// Done with combat
 	//
+	events.RegisterListener(events.NewRound{}, PresenceTick) // NEW: chunk 5
 	events.RegisterListener(events.NewRound{}, AutoHeal)
 	events.RegisterListener(events.NewRound{}, BroadcastHints)
 	events.RegisterListener(events.NewRound{}, IdleMobs)
