@@ -15,6 +15,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
+	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -430,6 +431,23 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 			} else if len(rest) >= wordLen+1 && rest[len(rest)-(wordLen+1):] == ` `+selfWord {
 				rest = rest[:len(rest)-(wordLen+1)] + ` ` + user.Character.Name
 				break
+			}
+		}
+	}
+
+	// Chunk 5 (Presence): any non-`afk` command wakes Idle/AFK back to
+	// Active and (if previously manual-AFK) sends the "no longer AFK"
+	// notice. The `afk` command itself toggles state via its own handler;
+	// exempting it here prevents the double-message bug where the wake
+	// fires the clear-message and then `afk` sets the state right back.
+	if cmd != "afk" && user.Character != nil && user.Character.Presence != nil {
+		switch user.Character.Presence.State() {
+		case presence.Idle, presence.AFK:
+			d, hadData := user.Character.Presence.AFKData()
+			_ = user.Character.Presence.TransitionTo(presence.Active,
+				state.TransitionReason{Trigger: presence.TriggerInputReceived})
+			if hadData && d.Manual {
+				user.SendText(`<ansi fg="8">You are no longer AFK.</ansi>`)
 			}
 		}
 	}

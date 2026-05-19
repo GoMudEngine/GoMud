@@ -16,7 +16,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/prompt"
 	"github.com/GoMudEngine/GoMud/internal/skills"
-	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"golang.org/x/crypto/bcrypt"
@@ -156,24 +155,10 @@ func (u *UserRecord) ShorthandId() string {
 
 func (u *UserRecord) SetLastInputRound(rdNum uint64) {
 	u.lastInputRound = rdNum
-
-	// Chunk 5 (Presence): any input wakes Idle/AFK back to Active.
-	// The Active→Idle/AFK auto-transitions are driven by the
-	// NewRound_PresenceTick hook reading lastInputRound; this covers
-	// the reverse direction so players are never stuck in Idle/AFK
-	// after they send a command.
-	if u.Character != nil && u.Character.Presence != nil {
-		switch u.Character.Presence.State() {
-		case presence.Idle, presence.AFK:
-			// Capture manual flag before transitioning (TransitionTo clears AFKData).
-			d, hadData := u.Character.Presence.AFKData()
-			_ = u.Character.Presence.TransitionTo(presence.Active,
-				state.TransitionReason{Trigger: presence.TriggerInputReceived})
-			if hadData && d.Manual {
-				u.SendText(`<ansi fg="8">You are no longer AFK.</ansi>`)
-			}
-		}
-	}
+	// Note: the Idle/AFK → Active wake fires from usercommands.TryCommand
+	// (per-command entry point) so it can branch on which command is
+	// being dispatched. The `afk` command toggles its own state and must
+	// not be auto-cleared before its handler runs.
 }
 
 func (u *UserRecord) GetLastInputRound() uint64 {
