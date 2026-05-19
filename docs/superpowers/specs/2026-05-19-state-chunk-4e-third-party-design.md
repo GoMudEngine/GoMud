@@ -128,9 +128,17 @@ When a character is in any grapple state (`IsGrappling() == true`), reject the c
 
 Hook into each command's pre-check. If the character is grappling, return early with the rejection message. Simple, single-point check.
 
-### 4.2 Spell casting — INVESTIGATE LATER, NOT 4e SCOPE
+### 4.2 Spell casting — AUDIT + SIMPLE GRAPPLE COVERAGE
 
-Spell disruption already exists in the engine (chunk-3 Activity machine + various interrupt paths). Per user direction, leave it alone for chunk 4e. Logged as a future polish item: re-evaluate whether grapple-specific disruption (different from generic damage-interrupts-cast) is wanted.
+Spell disruption already exists in the engine (chunk-3 Activity machine + various interrupt paths). The audit task verifies the existing disruption fires correctly when the caster is in each of the 11 grapple positions (Clinch, BackStanding, Mount, SideControl, KneeOnBelly, NorthSouth, Crucifix, BackGround, HalfGuard, Guard, Turtle) AND in any non-grapple non-standing position (Prone, Supine).
+
+**Expected behavior:** taking damage while casting interrupts the cast — this should already work universally. The audit verifies it actually does, especially for the symmetric grapple states that the chunk-4b-fixup-2 work introduced or repaired.
+
+**If the audit finds gaps** (e.g., some grapple positions don't trigger disruption from outside damage), the simplification is: **being grappled imposes the same per-tick disruption chance as a "big crit" or being knocked Prone**, treated as a single bucket. This is a v1 simplification — chunk 4f or later can introduce position-specific disruption curves if smoke surfaces the need. The simplification keeps chunk 4e small without leaving a known hole.
+
+The audit + (potential) fix is one plan task with two outcomes:
+- Audit passes: a comment in the spec doc + commit logging the verified-clean result, no code change.
+- Audit fails: add the catch-all "grappled implies disruption chance equivalent to prone/crit" path at whatever existing disruption hook is closest. Single integration point.
 
 ### 4.3 Crafting / salvaging — CONFIRMED NO-OP
 
@@ -349,12 +357,13 @@ Both writes are O(1), no perf concern. Single check + dispatch at one pipeline s
 1. `modifiers.go` + unit tests (pure code, no integration).
 2. Hook hit modifiers into the combat hit roll. Boot smoke + targeted manual test (mount a boar, verify hit rate jumped).
 3. Eat/drink/quaff pre-checks (user + mob commands).
-4. Config knobs + character fields.
-5. Damage-pipeline hooks: §5 control degrade + §7 sub interrupt damage tracking.
-6. Position_SubmissionTick sub-interrupt override.
-7. Mob target picker tiebreaker.
-8. context.md + helpfile updates.
-9. Boot smoke + AI smoke.
+4. Spell disruption audit — verify existing disruption fires from each of the 11 grapple positions + Prone/Supine. If gaps found, add the catch-all "grappled implies disruption chance equivalent to prone/crit" path at the existing disruption hook. One task with two possible outcomes.
+5. Config knobs + character fields.
+6. Damage-pipeline hooks: §5 control degrade + §7 sub interrupt damage tracking.
+7. Position_SubmissionTick sub-interrupt override.
+8. Mob target picker tiebreaker.
+9. context.md + helpfile updates.
+10. Boot smoke + AI smoke.
 
 Order is dependency-driven: §1 must precede §5/§7 hooks (which need the helper plumbing). Helpfile/docs at the end.
 
@@ -365,7 +374,7 @@ Order is dependency-driven: §1 must precede §5/§7 hooks (which need the helpe
 - **Per-archetype AI bias tuning** — single universal tiebreaker only; per-archetype is 4f.
 - **Per-mob modifier overrides** — no mob YAML can override the position modifier tables.
 - **Position-specific damage bonuses on top of hit modifiers** — hit-only per user direction.
-- **Spell disruption improvements** — already in game; revisit later.
+- **Position-specific spell disruption curves** — v1 uses the simplification "grappled implies prone/crit-equivalent disruption chance" if the audit shows gaps. Per-position disruption nuance is 4f or later.
 - **Sub interrupt that DEGRADES the outcome tier instead of forcing Bad** — picked the simpler force-Bad model.
 - **Outside damage helping the defender** — defender unaffected; avoids the "punch my pinned ally" exploit.
 - **Crit defense from grappled state** — not a chunk 4e deliverable; crit logic stays as-is.
