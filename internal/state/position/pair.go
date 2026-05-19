@@ -154,7 +154,18 @@ func TransitionPair(
 	// both sides at Neutral. Asymmetric positions (Mount, SideControl, etc.)
 	// put the controller side at Controlling and the controlled side at
 	// Controlled.
+	//
+	// Bind Control machine self-ref before transitions so the boundary-
+	// cross callback can route gradient messages back to the right
+	// character via characterFromRef. NewMachine() leaves self at zero;
+	// without this, emitGradientMessage silently skips.
 	if controller.GetControl() != nil && controlled.GetControl() != nil {
+		if controller.GetControl().Self().IsZero() {
+			controller.GetControl().SetSelf(ctrlRef)
+		}
+		if controlled.GetControl().Self().IsZero() {
+			controlled.GetControl().SetSelf(cdRef)
+		}
 		if isSymmetricGrapple(target) {
 			_ = controller.GetControl().TransitionToNeutral(state.TransitionReason{Trigger: control.TriggerGrappleEnter})
 			_ = controlled.GetControl().TransitionToNeutral(state.TransitionReason{Trigger: control.TriggerGrappleEnter})

@@ -731,6 +731,16 @@ func shiftControl(c *characters.Character, steps int) {
 	if c == nil || c.Control == nil {
 		return
 	}
+	// Lazily bind Control machine to this character's ActorRef so the
+	// boundary-cross callback can route gradient messages back to the
+	// right character via characterFromRef. NewMachine() leaves self
+	// at zero-value; without this, emitGradientMessage silently skips.
+	if c.Control.Self().IsZero() {
+		c.Control.SetSelf(state.ActorRef{
+			UserId:        c.GetUserId(),
+			MobInstanceId: c.GetMobInstanceId(),
+		})
+	}
 	currentRank := controlRank(c.Control.State())
 	newRank := currentRank - steps // toward Controlling means lower rank
 	if newRank < 0 {
