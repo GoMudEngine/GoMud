@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/control"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/stretchr/testify/assert"
 )
@@ -283,18 +284,22 @@ func TestPB_313_CritSubdue_NoStunnedBuff(t *testing.T) {
 		"PB-313: Stunned buff must not be applied on crit+subdue (death cascade fires)")
 }
 
-// PB-316: IsBottomSubEligible only opens when IsControllerRole=false (i.e.,
-// the controlled side). IsControllerRole=true (controller) must not open the
-// bottom-sub window even on Mount (which has bottom subs).
+// PB-316: IsBottomSubEligible only opens when control.Controlled (i.e.,
+// the actively dominated side). Controlling must not open the bottom-sub
+// window even on Mount (which has bottom subs), and Neutral must not
+// either — the side must earn the Controlled state.
 //
-// Chunk 4b-fixup T18: ControlLevel removed; test updated to use IsControllerRole.
+// Chunk 4b-fixup-2 T14: IsControllerRole bool replaced by control.State.
 func TestPB_316_BottomSub_ControllerRoleBlocked(t *testing.T) {
 	assert.False(t,
-		position.IsBottomSubEligible(position.Mount, true),
-		"PB-316: Mount+IsControllerRole=true must not open bottom-sub window")
+		position.IsBottomSubEligible(position.Mount, control.Controlling),
+		"PB-316: Mount+Controlling must not open bottom-sub window")
+	assert.False(t,
+		position.IsBottomSubEligible(position.Mount, control.Neutral),
+		"PB-316: Mount+Neutral must not open bottom-sub window")
 	assert.True(t,
-		position.IsBottomSubEligible(position.Mount, false),
-		"PB-316: Mount+IsControllerRole=false should open bottom-sub window")
+		position.IsBottomSubEligible(position.Mount, control.Controlled),
+		"PB-316: Mount+Controlled should open bottom-sub window")
 }
 
 // PB-318: Bottom-sub success — defender attempting sub from Mount-bottom.

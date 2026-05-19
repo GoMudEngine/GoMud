@@ -3,6 +3,7 @@ package position_test
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/state/control"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/stretchr/testify/assert"
 )
@@ -53,26 +54,30 @@ func TestBottomSubmissionsForPosition_CoreMappings(t *testing.T) {
 	}
 }
 
-// TestIsTopSubEligible — chunk 4b-fixup T18: ControlLevel replaced by
-// IsControllerRole bool. Top subs require IsControllerRole=true.
+// TestIsTopSubEligible — chunk 4b-fixup-2 T14: IsControllerRole bool
+// replaced by control.State. Top subs require exactly Controlling.
 func TestIsTopSubEligible(t *testing.T) {
-	assert.True(t, position.IsTopSubEligible(position.Mount, true),
-		"controller (IsControllerRole=true) can attempt top subs")
-	assert.False(t, position.IsTopSubEligible(position.Mount, false),
-		"controlled (IsControllerRole=false) cannot attempt top subs")
-	assert.False(t, position.IsTopSubEligible(position.Standing, true),
-		"no top subs at Standing regardless of role")
+	assert.True(t, position.IsTopSubEligible(position.Mount, control.Controlling),
+		"Controlling in Mount can attempt top subs")
+	assert.False(t, position.IsTopSubEligible(position.Mount, control.Controlled),
+		"Controlled in Mount cannot attempt top subs")
+	assert.False(t, position.IsTopSubEligible(position.Mount, control.Neutral),
+		"Neutral in Mount cannot attempt top subs — must earn Controlling")
+	assert.False(t, position.IsTopSubEligible(position.Standing, control.Controlling),
+		"no top subs at Standing regardless of control state")
 }
 
-// TestIsBottomSubEligible — chunk 4b-fixup T18: ControlLevel replaced by
-// IsControllerRole bool. Bottom subs require IsControllerRole=false.
+// TestIsBottomSubEligible — chunk 4b-fixup-2 T14: IsControllerRole bool
+// replaced by control.State. Bottom subs require exactly Controlled.
 func TestIsBottomSubEligible(t *testing.T) {
-	assert.True(t, position.IsBottomSubEligible(position.Mount, false),
-		"controlled (IsControllerRole=false) can attempt bottom subs")
-	assert.False(t, position.IsBottomSubEligible(position.Mount, true),
-		"controller (IsControllerRole=true) cannot attempt bottom subs")
-	assert.False(t, position.IsBottomSubEligible(position.KneeOnBelly, false),
-		"no bottom subs at KOB regardless of role")
+	assert.True(t, position.IsBottomSubEligible(position.Mount, control.Controlled),
+		"Controlled in Mount can attempt bottom subs")
+	assert.False(t, position.IsBottomSubEligible(position.Mount, control.Controlling),
+		"Controlling in Mount cannot attempt bottom subs")
+	assert.False(t, position.IsBottomSubEligible(position.Mount, control.Neutral),
+		"Neutral in Mount cannot attempt bottom subs — must be actively Controlled")
+	assert.False(t, position.IsBottomSubEligible(position.KneeOnBelly, control.Controlled),
+		"no bottom subs at KOB regardless of control state")
 }
 
 func TestCrippleBodyPart(t *testing.T) {

@@ -1,5 +1,9 @@
 package position
 
+import (
+	"github.com/GoMudEngine/GoMud/internal/state/control"
+)
+
 // SubmissionType enumerates the named submissions available in
 // chunk 4d. Each position-state has 0..N submissions available to
 // each role (top-attack from the controller side, bottom-attack from
@@ -93,32 +97,28 @@ func BottomSubmissionsForPosition(s State) []SubmissionType {
 	}
 }
 
-// IsTopSubEligible reports whether the controller side of a pair
-// can attempt a submission at the given position.
-// Requires top-attack subs to be available at this state AND
-// isControllerRole==true (i.e. this side is the controller).
-//
-// Chunk 4b-fixup: ControlLevel parameter replaced with
-// isControllerRole bool.
-func IsTopSubEligible(s State, isControllerRole bool) bool {
-	if len(TopSubmissionsForPosition(s)) == 0 {
+// IsTopSubEligible returns true if the side at posState with ctrlState
+// can attempt a top-position submission. Chunk 4b-fixup-2 T14: requires
+// Controlling state (not just "is in top position") — the side must have
+// earned the dominant control to set up a submission. Neutral does not
+// qualify; the controller must actively hold their position.
+func IsTopSubEligible(s State, ctrlState control.State) bool {
+	if ctrlState != control.Controlling {
 		return false
 	}
-	return isControllerRole
+	return len(TopSubmissionsForPosition(s)) > 0
 }
 
-// IsBottomSubEligible reports whether the controlled side of a pair
-// can attempt a reversal submission at the given position.
-// Requires bottom-attack subs to be available AND
-// isControllerRole==false (i.e. this side is the controlled side).
-//
-// Chunk 4b-fixup: ControlLevel parameter replaced with
-// isControllerRole bool.
-func IsBottomSubEligible(s State, isControllerRole bool) bool {
-	if len(BottomSubmissionsForPosition(s)) == 0 {
+// IsBottomSubEligible returns true if the side at posState with
+// ctrlState can attempt a bottom-position submission. Chunk 4b-fixup-2
+// T14: requires Controlled state — the side must be on the receiving end
+// of dominant control for bottom subs to make sense (e.g., guard
+// triangle when being passed). Neutral does not qualify.
+func IsBottomSubEligible(s State, ctrlState control.State) bool {
+	if ctrlState != control.Controlled {
 		return false
 	}
-	return !isControllerRole
+	return len(BottomSubmissionsForPosition(s)) > 0
 }
 
 // CrippleBodyPart returns the body part broken by a successful

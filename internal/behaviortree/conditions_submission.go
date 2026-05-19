@@ -7,20 +7,23 @@ import (
 )
 
 // condMobCanSubmitTop reports true when the mob is the controller side
-// of a sub-eligible grapple (position has top-attack subs available AND
-// IsControllerRole is true). Used by AI archetypes to branch on whether
-// a submission is available, or to avoid stepping on the auto-fired
-// submission tick.
+// of a sub-eligible grapple. Chunk 4b-fixup-2 T14: passes
+// mob.Character.Control.State() directly so IsTopSubEligible can gate
+// on exactly Controlling (Neutral no longer qualifies). GrappleData is
+// still fetched to confirm the mob is in an active grapple pair before
+// checking control state.
 func condMobCanSubmitTop(params map[string]any, ctx *EvalContext) Result {
 	mob := mobs.GetInstance(ctx.InstanceId)
 	if mob == nil || mob.Character.Position == nil {
 		return Failure
 	}
-	gd, ok := mob.Character.Position.GrappleData()
-	if !ok {
+	if _, ok := mob.Character.Position.GrappleData(); !ok {
 		return Failure
 	}
-	if position.IsTopSubEligible(mob.Character.Position.State(), gd.IsControllerRole) {
+	if mob.Character.Control == nil {
+		return Failure
+	}
+	if position.IsTopSubEligible(mob.Character.Position.State(), mob.Character.Control.State()) {
 		return Success
 	}
 	return Failure
@@ -28,17 +31,22 @@ func condMobCanSubmitTop(params map[string]any, ctx *EvalContext) Result {
 
 // condMobCanSubmitBottom reports true when the mob is the controlled
 // side of a grapple with bottom-attack subs available at the current
-// position (e.g., Mount-bottom → Triangle/Armbar reversal).
+// position (e.g., Mount-bottom → Triangle/Armbar reversal). Chunk
+// 4b-fixup-2 T14: passes mob.Character.Control.State() directly so
+// IsBottomSubEligible gates on exactly Controlled (Neutral no longer
+// qualifies).
 func condMobCanSubmitBottom(params map[string]any, ctx *EvalContext) Result {
 	mob := mobs.GetInstance(ctx.InstanceId)
 	if mob == nil || mob.Character.Position == nil {
 		return Failure
 	}
-	gd, ok := mob.Character.Position.GrappleData()
-	if !ok {
+	if _, ok := mob.Character.Position.GrappleData(); !ok {
 		return Failure
 	}
-	if position.IsBottomSubEligible(mob.Character.Position.State(), gd.IsControllerRole) {
+	if mob.Character.Control == nil {
+		return Failure
+	}
+	if position.IsBottomSubEligible(mob.Character.Position.State(), mob.Character.Control.State()) {
 		return Success
 	}
 	return Failure

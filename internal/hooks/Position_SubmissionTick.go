@@ -149,22 +149,24 @@ func EvaluateSubAttempt(controller, controlled *characters.Character) (combat.Ro
 	posState := controller.Position.State()
 
 	// Top eligibility: controller won drift roll big AND top subs available.
-	// Chunk 4b-fixup-2 T7: uses character.IsController() (reads Control.State())
-	// instead of deprecated ctrlData.IsControllerRole.
+	// Chunk 4b-fixup-2 T14: pass Control.State() directly so IsTopSubEligible
+	// can gate on exactly Controlling (Neutral no longer qualifies).
 	topOK := false
-	if position.IsTopSubEligible(posState, controller.IsController()) &&
+	if controller.Control != nil &&
+		position.IsTopSubEligible(posState, controller.Control.State()) &&
 		position.SubWindowOpens(snap.MarginAttacker) {
 		topOK = true
 	}
 
 	// Bottom eligibility: defender won drift roll big OR crit-defended,
 	// AND bottom subs available at this position+level.
-	// Chunk 4b-fixup-2 T7: IsBottomSubEligible expects isControllerRole=false
-	// to signal "this is the controlled side." Pass controlled.IsController()
-	// (which is false when properly Controlled) — IsBottomSubEligible negates it.
+	// Chunk 4b-fixup-2 T14: pass controlled.Control.State() so
+	// IsBottomSubEligible gates on exactly Controlled (Neutral no longer
+	// qualifies). Nil-guard in case Control hasn't been initialised yet.
 	bottomOK := false
 	bottomMargin := -snap.MarginAttacker // defender margin is the inverse
-	if position.IsBottomSubEligible(posState, controlled.IsController()) {
+	if controlled.Control != nil &&
+		position.IsBottomSubEligible(posState, controlled.Control.State()) {
 		if position.SubWindowOpens(bottomMargin) || snap.DefenderZScore >= critZ {
 			bottomOK = true
 		}

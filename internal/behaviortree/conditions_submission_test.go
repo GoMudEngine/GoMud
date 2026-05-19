@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/control"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/stretchr/testify/assert"
 )
@@ -21,6 +22,10 @@ func TestCondMobCanSubmitTop_NotGrappling_Failure(t *testing.T) {
 func TestCondMobCanSubmitTop_InMountAsController_Success(t *testing.T) {
 	mob := newTestMob(t)
 	mob.Character.Position = position.NewMachine()
+	// Chunk 4b-fixup-2 T14: condMobCanSubmitTop reads Control.State(), not
+	// IsControllerRole. Init the Control machine and transition to Controlling.
+	mob.Character.Control = control.NewMachine()
+	_ = mob.Character.Control.TransitionToControlling(state.TransitionReason{Trigger: position.TriggerTakedownMount})
 	_ = mob.Character.Position.TransitionToClinch(
 		position.GrappleData{Partner: state.ActorRef{UserId: 999}},
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
@@ -36,6 +41,9 @@ func TestCondMobCanSubmitTop_InMountAsController_Success(t *testing.T) {
 func TestCondMobCanSubmitTop_InMountAsControlled_Failure(t *testing.T) {
 	mob := newTestMob(t)
 	mob.Character.Position = position.NewMachine()
+	// Chunk 4b-fixup-2 T14: Control at Controlled — top sub must fail.
+	mob.Character.Control = control.NewMachine()
+	_ = mob.Character.Control.TransitionToControlled(state.TransitionReason{Trigger: position.TriggerTakedownMount})
 	_ = mob.Character.Position.TransitionToClinch(
 		position.GrappleData{Partner: state.ActorRef{UserId: 999}},
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
@@ -61,6 +69,10 @@ func TestCondMobCanSubmitBottom_NotGrappling_Failure(t *testing.T) {
 func TestCondMobCanSubmitBottom_InMountAsControlled_Success(t *testing.T) {
 	mob := newTestMob(t)
 	mob.Character.Position = position.NewMachine()
+	// Chunk 4b-fixup-2 T14: condMobCanSubmitBottom reads Control.State(), not
+	// IsControllerRole. Init Control and transition to Controlled.
+	mob.Character.Control = control.NewMachine()
+	_ = mob.Character.Control.TransitionToControlled(state.TransitionReason{Trigger: position.TriggerTakedownMount})
 	_ = mob.Character.Position.TransitionToClinch(
 		position.GrappleData{Partner: state.ActorRef{UserId: 999}},
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
@@ -77,6 +89,9 @@ func TestCondMobCanSubmitBottom_InMountAsControlled_Success(t *testing.T) {
 func TestCondMobCanSubmitBottom_InKneeOnBellyAsControlled_Failure(t *testing.T) {
 	mob := newTestMob(t)
 	mob.Character.Position = position.NewMachine()
+	// Controlled in KneeOnBelly: no bottom subs at KOB so should fail.
+	mob.Character.Control = control.NewMachine()
+	_ = mob.Character.Control.TransitionToControlled(state.TransitionReason{Trigger: position.TriggerPositionAdvance})
 	_ = mob.Character.Position.TransitionToClinch(
 		position.GrappleData{Partner: state.ActorRef{UserId: 999}},
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
@@ -93,6 +108,9 @@ func TestCondMobCanSubmitBottom_InKneeOnBellyAsControlled_Failure(t *testing.T) 
 func TestCondMobCanSubmitBottom_InMountAsController_Failure(t *testing.T) {
 	mob := newTestMob(t)
 	mob.Character.Position = position.NewMachine()
+	// Controlling in Mount: top role, can't submit as bottom.
+	mob.Character.Control = control.NewMachine()
+	_ = mob.Character.Control.TransitionToControlling(state.TransitionReason{Trigger: position.TriggerTakedownMount})
 	_ = mob.Character.Position.TransitionToClinch(
 		position.GrappleData{Partner: state.ActorRef{UserId: 999}},
 		state.TransitionReason{Trigger: position.TriggerGrappleEntry},
