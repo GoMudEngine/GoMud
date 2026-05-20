@@ -1,14 +1,10 @@
 package actions
 
 import (
-	"slices"
-
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
 // MobActor adapts a *mobs.Mob so it satisfies the Actor interface.
@@ -49,13 +45,19 @@ func (a *MobActor) SendText(cat messaging.Category, msg string) {}
 func (a *MobActor) SendTextLegacy(msg string) {}
 
 func (a *MobActor) SendRoomText(msg string, excludeSelf bool) {
-	sendRoomTextDarknessAware(a.Room, msg)
+	if a.Room == nil {
+		return
+	}
+	a.Room.SendTextVisual(messaging.CategoryMobEmote, msg)
 }
 
 // SendRoomCommunication is identical to SendRoomText for mobs: mobs do not
 // respect client-side mute/deafen settings.
 func (a *MobActor) SendRoomCommunication(msg string, excludeSelf bool) {
-	sendRoomTextDarknessAware(a.Room, msg)
+	if a.Room == nil {
+		return
+	}
+	a.Room.SendTextVisual(messaging.CategoryNPCDialogue, msg)
 }
 
 func (a *MobActor) GetName() string {
@@ -94,26 +96,3 @@ func (a *MobActor) OnCriticalFailure(skillName string) {
 	a.Mob.Character.OnCriticalFailure(skillName, 0)
 }
 
-// sendRoomTextDarknessAware is a darkness-aware room broadcast. In lit rooms
-// it delegates to room.SendTextLegacy() directly. In dark rooms only players who
-// have the NightVision flag receive the message.
-//
-// DEPRECATED: redundant since the messaging pipeline (T1-T13) handles
-// dark-room sight gating per-recipient. Flagged for removal by T16's sunset
-// survey; the body is left intact so the existing MobActor.SendRoomText
-// shape keeps the same observable behavior in the meantime.
-func sendRoomTextDarknessAware(room *rooms.Room, msg string, excludeUserIds ...int) {
-	if room.GetVisibility() >= 1 {
-		room.SendTextLegacy(msg, excludeUserIds...)
-		return
-	}
-	for _, uid := range room.GetPlayers() {
-		if slices.Contains(excludeUserIds, uid) {
-			continue
-		}
-		u := users.GetByUserId(uid)
-		if u != nil && u.Character.HasFlagFromAnySource(buffs.NightVision) {
-			u.SendTextLegacy(msg)
-		}
-	}
-}
