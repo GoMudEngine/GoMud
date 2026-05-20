@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -37,7 +38,7 @@ func Look(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	if len(lookAt) == 0 {
 
 		if !secretLook && !isSneaking {
-			room.SendTextVisualLegacy(
+			room.SendTextVisual(messaging.CategoryMobEmote,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is looking around.`, mob.Character.Name),
 			)
 
@@ -62,7 +63,7 @@ func Look(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		}
 
 		if !isSneaking {
-			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> peers toward the %s.`, mob.Character.Name, exitName))
+			room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> peers toward the %s.`, mob.Character.Name, exitName))
 		}
 
 		lookRoom(mob, lookRoomId, secretLook || isSneaking)
@@ -76,7 +77,7 @@ func Look(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	if lookItem, found := mob.Character.FindInBackpack(lookAt); found {
 
 		if !isSneaking {
-			room.SendTextVisualLegacy(
+			room.SendTextVisual(messaging.CategoryMobEmote,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is admiring their <ansi fg="item">%s</ansi>.`, mob.Character.Name, lookItem.DisplayName()),
 			)
 		}
@@ -96,11 +97,11 @@ func Look(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			u := target.(*actions.UserActor).User
 
 			if !isSneaking {
-				u.SendTextLegacy(
+				u.SendText(messaging.CategoryMobEmote,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is looking at you.`, mob.Character.Name),
 				)
 
-				room.SendTextVisualLegacy(
+				room.SendTextVisual(messaging.CategoryMobEmote,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is looking at <ansi fg="username">%s</ansi>.`, mob.Character.Name, u.Character.Name),
 					u.UserId)
 			}
@@ -111,7 +112,7 @@ func Look(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 			if !isSneaking {
 				targetName := m.Character.GetMobName(0).String()
-				room.SendTextVisualLegacy(
+				room.SendTextVisual(messaging.CategoryMobEmote,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is looking at %s.`, mob.Character.Name, targetName),
 				)
 			}
@@ -129,7 +130,7 @@ func Look(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	if lookItem, found := mob.Character.FindOnBody(lookAt); found {
 
 		if !isSneaking {
-			room.SendTextVisualLegacy(
+			room.SendTextVisual(messaging.CategoryMobEmote,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is admiring their <ansi fg="item">%s</ansi>.`, mob.Character.Name, lookItem.DisplayName()),
 			)
 		}
@@ -144,7 +145,7 @@ func Look(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	if len(foundNoun) > 0 {
 
 		if !isSneaking {
-			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> is examining the <ansi fg="noun">%s</ansi>.`, mob.Character.Name, foundNoun))
+			room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(`<ansi fg="username">%s</ansi> is examining the <ansi fg="noun">%s</ansi>.`, mob.Character.Name, foundNoun))
 		}
 
 		return true, nil
@@ -158,7 +159,7 @@ func Look(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 		if petUser := users.GetByUserId(petUserId); petUser != nil {
 
-			room.SendTextVisualLegacy(
+			room.SendTextVisual(messaging.CategoryMobEmote,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is looking at %s.`, mob.Character.Name, petUser.Character.Pet.DisplayName()))
 
 			return true, nil
@@ -185,11 +186,11 @@ func lookRoom(mob *mobs.Mob, roomId int, secretLook bool) {
 		// Find the exit back
 		lookFromName := room.FindExitTo(mob.Character.RoomId)
 		if lookFromName == "" {
-			room.SendTextVisualLegacy(
+			room.SendTextVisual(messaging.CategoryMobEmote,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is looking into the room from somewhere...`, mob.Character.Name),
 			)
 		} else {
-			room.SendTextVisualLegacy(
+			room.SendTextVisual(messaging.CategoryMobEmote,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is looking into the room from the <ansi fg="exit">%s</ansi> exit`, mob.Character.Name, lookFromName),
 			)
 		}
