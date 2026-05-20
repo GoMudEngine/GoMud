@@ -72,6 +72,39 @@ func TestWrapAnsiZeroWidthIsPassthrough(t *testing.T) {
 	}
 }
 
+func TestWrapAnsiExplicitNewlineInsideOpenTagNoLeadingSpace(t *testing.T) {
+	got := WrapAnsi(`<ansi fg="red">line one`+"\n"+`line two</ansi>`, 80)
+	lines := splitLines(got)
+	if len(lines) < 2 {
+		t.Fatalf("expected 2 lines after explicit newline, got %d: %q", len(lines), got)
+	}
+	// Second line must start with the reopener tag followed directly
+	// by a visible character — no leading space.
+	if !startsWith(lines[1], `<ansi fg="red">line`) {
+		t.Fatalf("explicit-newline second line had leading space (or wrong reopen): %q", lines[1])
+	}
+}
+
+func TestWrapAnsiRegexCoversBgAndCombinedAttrs(t *testing.T) {
+	// <ansi bg="…"> alone.
+	bg := `<ansi bg="black">moonlight</ansi>`
+	got := WrapAnsi(bg, 80)
+	if got != bg {
+		t.Fatalf("bg-only tag should pass through 80-col wrap, got %q", got)
+	}
+	// Combined fg + bg.
+	combo := `<ansi fg="red" bg="black">alert</ansi>`
+	got = WrapAnsi(combo, 80)
+	if got != combo {
+		t.Fatalf("fg+bg combo should pass through 80-col wrap, got %q", got)
+	}
+	// Width-counting must exclude the tag content. 9 visible chars
+	// ("moonlight") with maxWidth=20 stays single-line.
+	if c := displayWidth(got); c > 20 {
+		t.Fatalf("displayWidth %d unexpectedly high — regex may not be stripping the combined tag", c)
+	}
+}
+
 // Test helpers — kept here, not exported.
 
 func splitLines(s string) []string {

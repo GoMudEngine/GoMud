@@ -5,9 +5,10 @@ import (
 	"strings"
 )
 
-// ansiTagPattern matches <ansi fg="…"> or </ansi>. Only used for
-// scanning; replacement uses the literal strings.
-var ansiTagPattern = regexp.MustCompile(`<ansi fg="[^"]*">|</ansi>`)
+// ansiTagPattern matches <ansi …> (any attribute set, including fg,
+// bg, or combinations) or </ansi>. Only used for scanning;
+// replacement uses the literal strings.
+var ansiTagPattern = regexp.MustCompile(`<ansi[^>]*>|</ansi>`)
 
 // WrapAnsi wraps text at maxWidth display columns. ANSI escape
 // sequences (<ansi …> / </ansi> tags) don't count toward width.
@@ -34,17 +35,18 @@ func WrapAnsi(text string, maxWidth int) string {
 	// word boundary, emit a newline; if a tag is open, close it
 	// before the break and reopen on the next line.
 	var (
-		out      strings.Builder
-		line     strings.Builder
-		col      int
-		openTag  string // empty when no tag is open
-		curWord  strings.Builder
-		curWordW int
+		out            strings.Builder
+		line           strings.Builder
+		col            int
+		openTag        string // empty when no tag is open
+		curWord        strings.Builder
+		curWordW       int
+		lineHasContent bool // visible content on line (not just tag re-opener)
 	)
 
 	flushWord := func() {
 		// Add space before word if line already has content and there's room.
-		if line.Len() > 0 && col+1+curWordW > maxWidth {
+		if lineHasContent && col+1+curWordW > maxWidth {
 			// Wrap before the word.
 			if openTag != "" {
 				line.WriteString(`</ansi>`)
@@ -53,15 +55,17 @@ func WrapAnsi(text string, maxWidth int) string {
 			out.WriteByte('\n')
 			line.Reset()
 			col = 0
+			lineHasContent = false
 			if openTag != "" {
 				line.WriteString(openTag)
 			}
-		} else if line.Len() > 0 {
+		} else if lineHasContent {
 			line.WriteByte(' ')
 			col++
 		}
 		line.WriteString(curWord.String())
 		col += curWordW
+		lineHasContent = true
 		curWord.Reset()
 		curWordW = 0
 	}
@@ -96,6 +100,7 @@ func WrapAnsi(text string, maxWidth int) string {
 				out.WriteByte('\n')
 				line.Reset()
 				col = 0
+				lineHasContent = false
 				if openTag != "" {
 					line.WriteString(openTag)
 				}
