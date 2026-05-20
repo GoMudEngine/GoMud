@@ -81,7 +81,9 @@ func RenderForRecipient(in RenderInput) string {
 // own files.
 
 func normalize(cat Category, text string) string { return text }
-func anonymize(text string) string                { return text }
+func anonymize(text string) string {
+	return Anonymize(text)
+}
 func applyCategoryColor(cat Category, text string) string {
 	if cat == CategoryDefault || text == "" {
 		return text
