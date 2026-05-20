@@ -70,10 +70,15 @@ func RenderForRecipient(in RenderInput) string {
 	// Stage 5: color (stubbed; T2 lands a no-op, T4 wires data).
 	text = applyCategoryColor(in.Category, text)
 
-	// Stage 6: wrap (only for narrative-prose Categories that
-	// produce genuinely long lines; everything else passes through
-	// so pre-formatted tables, banners, side-by-side templates, and
-	// short single-line feedback don't get mangled). See shouldWrap.
+	// Stage 6: wrap (disabled by default — terminal clients handle
+	// wrap on their own; server-side wrap was creating more layout
+	// regressions than it fixed for combat / spells / system feedback
+	// once chunk-7 routed everything through SendText). WrapAnsi
+	// remains callable directly by sites that genuinely need it
+	// (e.g., motd.go for the box-bordered banner). The shouldWrap
+	// hook is left in place as a future-extension point if a specific
+	// Category turns out to need server-side wrap; today it returns
+	// false for everything.
 	if shouldWrap(in.Category) {
 		text = wrap(text, in.LineWidth)
 	}
@@ -81,41 +86,15 @@ func RenderForRecipient(in RenderInput) string {
 	return text
 }
 
-// shouldWrap returns true for Categories whose senders produce
-// narrative prose (multi-sentence descriptions of combat, spells,
-// server-wide announcements) that benefits from server-side
-// ANSI-aware wrap at the recipient's LineWidth.
+// shouldWrap controls whether the pipeline's wrap stage fires. Today
+// it returns false for every Category — terminal clients wrap long
+// lines themselves, and server-side wrap was breaking pre-formatted
+// table output, banners, side-by-side templates, and combat /
+// spell prose that already fit comfortably in a typical terminal.
 //
-// All other Categories pass through the wrap stage unchanged because
-// their senders either:
-//   - Own their own column / banner layout (room descriptions,
-//     skill banners, table output via templates.GetTable),
-//   - Emit short single-line feedback that's already shorter than
-//     any sane LineWidth (errors, system messages, login/logout,
-//     speech, room entry/exit, loot/equipment confirmations),
-//   - Use hand-authored multi-line layout (NPC dialogue, MOTD,
-//     tips).
-//
-// The terminal client wraps long lines on its own; server-side wrap
-// here is only useful where the prose is reliably long AND the
-// caller hasn't pre-formatted layout.
+// Sites that explicitly want server-side wrap (motd.go's banner, for
+// example) call WrapAnsi directly with their own width.
 func shouldWrap(cat Category) bool {
-	switch cat {
-	case CategoryHitMelee, CategoryHitBlunt, CategoryHitNaturalSharp,
-		CategoryHitRanged, CategoryHitCaster, CategoryHitUnarmed,
-		CategoryDodge, CategoryParry, CategoryBlock,
-		CategoryGrappleFlow, CategoryGrappleHigh,
-		CategorySubmission, CategoryDeath,
-		CategorySurpriseAttack, CategoryKick, CategoryTrip,
-		CategoryBash, CategoryRally, CategoryWarcry,
-		CategoryTauntSuccess, CategoryTauntResist, CategoryTauntFailure,
-		CategorySpellFold, CategorySpellDisruption,
-		CategorySpellElemental, CategorySpellEnhancement,
-		CategorySpellMental, CategorySpellVital,
-		CategorySpellManifestation,
-		CategoryBroadcast:
-		return true
-	}
 	return false
 }
 

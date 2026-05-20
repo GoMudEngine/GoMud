@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/GoMudEngine/GoMud/internal/banner"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -117,21 +118,23 @@ func (c *Character) CheckSkillProgression(skillName string, userId int, bonusMul
 		actualSkill := resolveSkillName(skillName)
 
 		if skills.SkillExists(actualSkill) {
-			if c.IncreaseSkill(actualSkill) {
-				if userId > 0 {
+			increased := c.IncreaseSkill(actualSkill)
+			if userId > 0 {
+				var tier *banner.TierChange
+				if increased {
 					newLevel := c.Skills[actualSkill]
-					msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="yellow">%s</ansi> skill reaches <ansi fg="yellow-bold">%s</ansi>! <ansi fg="magenta">***</ansi>`, actualSkill, skills.GetSkillRankDescription(newLevel))
-					events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
+					prevTier := skills.GetSkillRankDescription(newLevel - 1)
+					newTier := skills.GetSkillRankDescription(newLevel)
+					if prevTier != newTier {
+						tier = &banner.TierChange{From: prevTier, To: newTier}
+					}
 				}
-			} else {
-				if userId > 0 {
-					msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> You feel your <ansi fg="yellow">%s</ansi> skills sharpening! <ansi fg="magenta">***</ansi>`, actualSkill)
-					events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
-				}
+				msg := banner.Format(banner.Skill, actualSkill, tier)
+				events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
 			}
 		} else {
 			if userId > 0 {
-				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> You feel your <ansi fg="yellow">%s</ansi> skills sharpening! <ansi fg="magenta">***</ansi>`, skillName)
+				msg := banner.Format(banner.Skill, skillName, nil)
 				events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
 			}
 		}
@@ -180,7 +183,7 @@ func (c *Character) CheckStatProgression(statName string, userId int, bonusMulti
 		mudlog.Debug("Progression", "check", "stat", "result", "PROGRESS", "stat", statName, "rank", virtualRank, "chance", fmt.Sprintf("%.2f%%", chance*100), "roll", roll, "threshold", threshold, "character", c.Name)
 		if c.IncreaseStat(statName, 1) {
 			if userId > 0 {
-				msg := fmt.Sprintf(`<ansi fg="magenta">***</ansi> Your <ansi fg="yellow">%s</ansi> grows stronger! <ansi fg="magenta">***</ansi>`, statName)
+				msg := banner.Format(banner.Stat, statName, nil)
 				events.AddToQueue(events.Message{UserId: userId, Text: msg + "\n"})
 			}
 			return true

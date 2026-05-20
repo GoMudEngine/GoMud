@@ -46,51 +46,12 @@ func TestApplyCategoryColorEmptyTextPassesThrough(t *testing.T) {
 	}
 }
 
-// TestShouldWrapTable encodes the opt-in wrap policy: only
-// narrative-prose categories get server-side wrap; everything else
-// passes through because its senders pre-format layout or emit short
-// single-line feedback.
-func TestShouldWrapTable(t *testing.T) {
-	mustWrap := []Category{
-		CategoryHitMelee, CategoryDodge, CategoryParry, CategoryBlock,
-		CategorySpellElemental, CategorySpellVital, CategorySpellFold,
-		CategoryGrappleFlow, CategorySubmission, CategoryDeath,
-		CategoryBroadcast,
-	}
-	for _, c := range mustWrap {
-		if !shouldWrap(c) {
-			t.Errorf("category %q should be in the wrap opt-in set", c)
-		}
-	}
-	mustPassThrough := []Category{
-		CategoryRoomDescription,  // template-laid side-by-side
-		CategorySkillProgress,    // fixed-width banner
-		CategorySystem,           // tables + short feedback
-		CategoryError,            // short single-line
-		CategoryWarning,          // short single-line
-		CategoryTip,              // hand-formatted
-		CategoryLoot,             // "You pick up X"
-		CategoryEquipment,        // "You wear X"
-		CategorySpeech,           // "X says, 'Hello'"
-		CategoryWhisper,          // short DMs
-		CategoryShout,            // short
-		CategoryOOC,              // short
-		CategoryEmote,            // short
-		CategoryNPCDialogue,      // hand-authored
-		CategoryDialogueHint,     // hand-authored
-		CategoryMobIdle,          // short ambient
-		CategoryMobEmote,         // short directed
-		CategoryRoomEntry,        // "X arrives from the south"
-		CategoryRoomExit,         // "X leaves to the north"
-		CategoryLogin,            // "X has logged in"
-		CategoryLogout,           // "X has gone offline"
-		CategoryBuffApply,        // hand-formatted
-		CategoryBuffExpire,       // hand-formatted
-		CategoryDefault,          // unchanged behavior
-	}
-	for _, c := range mustPassThrough {
+// TestShouldWrapDisabledByDefault confirms the wrap stage is off for
+// every Category in the enum. The terminal client handles wrap.
+func TestShouldWrapDisabledByDefault(t *testing.T) {
+	for c := CategoryDefault; c < categoryMax; c++ {
 		if shouldWrap(c) {
-			t.Errorf("category %q must NOT wrap (would break pre-formatted output or wrap short single-line text)", c)
+			t.Errorf("category %q must not wrap by default — terminal client handles long lines", c)
 		}
 	}
 }
@@ -120,9 +81,9 @@ func TestRoomDescriptionSkipsWrap(t *testing.T) {
 	}
 }
 
-// TestHitMeleeWrapStillFires confirms the skip table is targeted —
-// combat narration still wraps at LineWidth for narrow terminals.
-func TestHitMeleeWrapStillFires(t *testing.T) {
+// TestHitMeleeDoesNotWrap confirms server-side wrap is disabled for
+// combat narrative — the terminal client handles long lines.
+func TestHitMeleeDoesNotWrap(t *testing.T) {
 	long := "the rusty longsword bites through cloth and into flesh causing a serious wound to the defender's left shoulder"
 	got := RenderForRecipient(RenderInput{
 		Category:  CategoryHitMelee,
@@ -130,15 +91,10 @@ func TestHitMeleeWrapStillFires(t *testing.T) {
 		Channel:   ChannelAudio,
 		LineWidth: 40,
 	})
-	// Should contain at least one newline — wrap did fire.
-	hasNewline := false
+	// Should NOT contain a newline — wrap is off.
 	for _, ch := range got {
 		if ch == '\n' {
-			hasNewline = true
-			break
+			t.Fatalf("CategoryHitMelee must not wrap (terminal handles it); got %q", got)
 		}
-	}
-	if !hasNewline {
-		t.Fatalf("CategoryHitMelee must still wrap at LineWidth=40, got passthrough %q", got)
 	}
 }
