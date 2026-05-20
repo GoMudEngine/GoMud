@@ -187,13 +187,14 @@ colors:
 # Spec: docs/superpowers/specs/2026-05-19-messaging-framework-design.md
 # Test these in-game; values are first-pass approximations.
 
-# Combat — damage bands
-  hit-melee: 173
-  hit-blunt: 137
-  hit-natural-sharp: 95
-  hit-ranged: 137
-  hit-caster: 146
-  hit-unarmed: 173
+# Combat — damage bands (each band uses a visually distinct code so
+# multi-weapon characters see per-swing colors)
+  hit-melee: 173         # dusty rose — slashing / cleaving / stabbing (swords, spears)
+  hit-blunt: 130         # warm orange-brown — bludgeoning / slam (hammers, maces)
+  hit-natural-sharp: 95  # dark red-brown — claws / bite / sting / gore
+  hit-ranged: 110        # light sky blue — shooting / whipping (bows, whips)
+  hit-caster: 146        # lavender — wand / sceptre / staff melee
+  hit-unarmed: 215       # sandy brown — explicit unarmed / fist
 
 # Combat — defense
   dodge: 108

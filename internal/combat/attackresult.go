@@ -103,11 +103,17 @@ func (a *AttackResult) SendToRoomOld(cat messaging.Category, msg string) {
 // CategoryHit* damage-band. Used by the per-swing senders so each
 // weapon's narration renders in its band color (warhammer → blunt,
 // hook-spear → melee, knuckles → unarmed, etc.).
+//
+// Includes the literal "piercing" subtype as a synonym for Stabbing —
+// the YAML data files use both spellings ("piercing" is the dominant
+// term across spears / hooks / smuggler blades; the enum constant is
+// historically "stabbing"). Keep both mapped to CategoryHitMelee until
+// the YAML naming is normalized.
 func CategoryForWeaponSubtype(sub items.ItemSubType) messaging.Category {
 	switch sub {
 	case items.Bludgeoning, items.Slam:
 		return messaging.CategoryHitBlunt
-	case items.Cleaving, items.Stabbing, items.Slashing:
+	case items.Cleaving, items.Stabbing, items.Slashing, "piercing":
 		return messaging.CategoryHitMelee
 	case items.Claws, items.Bite, items.Sting, items.Gore:
 		return messaging.CategoryHitNaturalSharp
