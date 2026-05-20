@@ -96,6 +96,11 @@ const (
 	CategoryBuffExpire
 	CategoryMutation
 	CategoryToxin
+
+	// categoryMax is the exclusive upper bound of the Category enum.
+	// Used by tests to iterate the full range; do not consume in
+	// production code.
+	categoryMax
 )
 
 // String returns a stable identifier for the category — used in

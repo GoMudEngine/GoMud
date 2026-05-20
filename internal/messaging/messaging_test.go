@@ -9,18 +9,11 @@ func TestCategoryDefaultIsZero(t *testing.T) {
 }
 
 func TestCategoryStringRoundTrip(t *testing.T) {
-	cases := []Category{
-		CategoryHitMelee, CategoryDodge, CategoryParry, CategoryBlock,
-		CategoryGrappleFlow, CategorySurpriseAttack, CategoryRally,
-		CategorySpellFold, CategorySpellElemental, CategorySpeech,
-		CategoryWhisper, CategoryBroadcast, CategoryError,
-		CategoryRoomDescription, CategorySkillProgress,
-	}
 	seen := map[string]Category{}
-	for _, c := range cases {
+	for c := CategoryDefault; c < categoryMax; c++ {
 		s := c.String()
 		if s == "" || s == "Unknown" {
-			t.Errorf("category %d returned %q", c, s)
+			t.Errorf("category %d returned %q (every enum value must have a real String())", c, s)
 		}
 		if prev, ok := seen[s]; ok && prev != c {
 			t.Errorf("category %q is ambiguous (%d and %d)", s, prev, c)
