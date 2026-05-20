@@ -28,7 +28,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	if visibility < 1 {
 		if !user.Character.HasFlagFromAnySource(buffs.NightVision) {
-			user.SendText(`You can't see anything!`)
+			user.SendTextLegacy(`You can't see anything!`)
 			return true, nil
 		}
 	}
@@ -60,7 +60,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if len(lookAt) == 0 {
 
 		if !secretLook && !isSneaking {
-			room.SendTextVisual(
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking around.`, user.Character.Name),
 				user.UserId,
 			)
@@ -87,17 +87,17 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			u := target.(*actions.UserActor).User
 
 			if !isSneaking {
-				u.SendText(
+				u.SendTextLegacy(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking at you.`, user.Character.Name),
 				)
 
-				room.SendTextVisual(
+				room.SendTextVisualLegacy(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking at <ansi fg="username">%s</ansi>.`, user.Character.Name, u.Character.Name),
 					u.UserId)
 			}
 
 			descTxt, _ := templates.Process("character/description", u.Character, user.UserId)
-			user.SendText(descTxt)
+			user.SendTextLegacy(descTxt)
 
 			itemNames := []string{}
 			for _, item := range u.Character.Items {
@@ -110,7 +110,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			}
 
 			inventoryTxt, _ := templates.Process("character/inventory-look", invData, user.UserId)
-			user.SendText(inventoryTxt)
+			user.SendTextLegacy(inventoryTxt)
 
 		} else {
 
@@ -118,14 +118,14 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 			if !isSneaking {
 				targetName := m.Character.GetMobName(0).String()
-				room.SendTextVisual(
+				room.SendTextVisualLegacy(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking at %s.`, user.Character.Name, targetName),
 					user.UserId,
 				)
 			}
 
 			descTxt, _ := templates.Process("character/description", &m.Character, user.UserId)
-			user.SendText(descTxt)
+			user.SendTextLegacy(descTxt)
 
 			itemNames := []string{}
 			for _, item := range m.Character.Items {
@@ -139,7 +139,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			}
 
 			inventoryTxt, _ := templates.Process("character/inventory-look", invData, user.UserId)
-			user.SendText(inventoryTxt)
+			user.SendTextLegacy(inventoryTxt)
 		}
 
 		return true, nil
@@ -148,7 +148,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	// fall through to container / noun / pet lookup branches below
 
 	if room.MatchesSealedCrate(strings.ToLower(lookAt)) {
-		user.SendText(`A heavy iron-banded shipping crate sits at the roadside, its lid` +
+		user.SendTextLegacy(`A heavy iron-banded shipping crate sits at the roadside, its lid` +
 			` latched shut and its sides marked with the caravan's burned-in seal.` +
 			` The wood is weather-stained and the latch is recently oiled.`)
 		return true, nil
@@ -170,9 +170,9 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		container := room.Containers[containerName]
 
 		if container.Lock.IsLocked() {
-			user.SendText(``)
-			user.SendText(fmt.Sprintf(`The <ansi fg="container">%s</ansi> is locked.`, containerName))
-			user.SendText(``)
+			user.SendTextLegacy(``)
+			user.SendTextLegacy(fmt.Sprintf(`The <ansi fg="container">%s</ansi> is locked.`, containerName))
+			user.SendTextLegacy(``)
 			return true, nil
 		}
 
@@ -193,8 +193,8 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		if len(container.Recipes) > 0 {
 
-			user.SendText(``)
-			user.SendText(fmt.Sprintf(`You can <ansi fg="command">use</ansi> the <ansi fg="container">%s</ansi> if you put the following objects inside:`, containerName))
+			user.SendTextLegacy(``)
+			user.SendTextLegacy(fmt.Sprintf(`You can <ansi fg="command">use</ansi> the <ansi fg="container">%s</ansi> if you put the following objects inside:`, containerName))
 
 			for finalItemId, recipeList := range container.Recipes {
 
@@ -204,10 +204,10 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 					neededItems[inputItemId] += 1
 				}
 
-				user.SendText(``)
+				user.SendTextLegacy(``)
 
 				finalItem := items.New(finalItemId)
-				user.SendText(fmt.Sprintf(`    <ansi fg="230">To receive 1 <ansi fg="itemname">%s</ansi>:</ansi> `, finalItem.DisplayName()))
+				user.SendTextLegacy(fmt.Sprintf(`    <ansi fg="230">To receive 1 <ansi fg="itemname">%s</ansi>:</ansi> `, finalItem.DisplayName()))
 
 				for inputItemId, qtyNeeded := range neededItems {
 					tmpItem := items.New(inputItemId)
@@ -218,7 +218,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 					} else if totalContained > 0 {
 						colorClass = "3"
 					}
-					user.SendText(fmt.Sprintf(`        <ansi fg="%s">[%d/%d]</ansi> <ansi fg="itemname">%s</ansi>`, colorClass, totalContained, qtyNeeded, tmpItem.DisplayName()))
+					user.SendTextLegacy(fmt.Sprintf(`        <ansi fg="%s">[%d/%d]</ansi> <ansi fg="itemname">%s</ansi>`, colorClass, totalContained, qtyNeeded, tmpItem.DisplayName()))
 				}
 
 			}
@@ -232,9 +232,9 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		textOut, _ := templates.Process("descriptions/insidecontainer", chestStuff, user.UserId)
 
-		user.SendText(``)
-		user.SendText(textOut)
-		user.SendText(``)
+		user.SendTextLegacy(``)
+		user.SendTextLegacy(textOut)
+		user.SendTextLegacy(``)
 
 		return true, nil
 	}
@@ -261,7 +261,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			if !user.Character.HasFlagFromAnySource(buffs.NightVision) {
 				biome := room.GetBiome()
 				if !biome.IsLit() {
-					user.SendText(`It's too dark to see anything in that direction.`)
+					user.SendTextLegacy(`It's too dark to see anything in that direction.`)
 					return true, nil
 				}
 			}
@@ -270,13 +270,13 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		exitInfo, _ := room.GetExitInfo(exitName)
 		if exitInfo.Lock.IsLocked() {
-			user.SendText(fmt.Sprintf("The %s exit is locked.", exitName))
+			user.SendTextLegacy(fmt.Sprintf("The %s exit is locked.", exitName))
 			return true, nil
 		}
 
-		user.SendText(fmt.Sprintf("You peer toward the %s.", exitName))
+		user.SendTextLegacy(fmt.Sprintf("You peer toward the %s.", exitName))
 		if !isSneaking {
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> peers toward the %s.`, user.Character.Name, exitName), user.UserId)
+			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> peers toward the %s.`, user.Character.Name, exitName), user.UserId)
 		}
 
 		lookRoom(user, lookRoomId, secretLook || isSneaking)
@@ -288,7 +288,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	// If the input is a recognized direction alias but no exit exists,
 	// stop here — never fall through to item/mob matching.
 	if alias := keywords.TryDirectionAlias(lookAt); alias != lookAt {
-		user.SendText("There is no exit in that direction.")
+		user.SendTextLegacy("There is no exit in that direction.")
 		return true, nil
 	}
 
@@ -299,22 +299,22 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	if foundItem {
 
-		user.SendText(``)
+		user.SendTextLegacy(``)
 
-		user.SendText(
+		user.SendTextLegacy(
 			fmt.Sprintf(`You look at the <ansi fg="item">%s</ansi> %s:`, lookItem.DisplayName(), lookDestination),
 		)
 
-		user.SendText(``)
+		user.SendTextLegacy(``)
 
 		if !isSneaking {
-			room.SendTextVisual(
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> is admiring their <ansi fg="item">%s</ansi>.`, user.Character.Name, lookItem.DisplayName()),
 				user.UserId,
 			)
 		}
 
-		user.SendText(
+		user.SendTextLegacy(
 			util.SplitStringNL(lookItem.GetLongDescription(), 80),
 		)
 
@@ -332,13 +332,13 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			desc := items.GetPhaseDescription(
 				phase, alchSkill, elapsed, lookSpec.Aging, effSpeed)
 			if desc != "" {
-				user.SendText(
+				user.SendTextLegacy(
 					fmt.Sprintf(` - <ansi fg="yellow-bold">%s</ansi>`, desc),
 				)
 			}
 		}
 
-		user.SendText(``)
+		user.SendTextLegacy(``)
 
 		return true, nil
 	}
@@ -358,13 +358,13 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 	if len(foundNoun) > 0 {
 
-		user.SendText(``)
+		user.SendTextLegacy(``)
 
-		user.SendText(
+		user.SendTextLegacy(
 			fmt.Sprintf(`You look at the <ansi fg="noun">%s</ansi>:`, foundNoun),
 		)
 
-		user.SendText(``)
+		user.SendTextLegacy(``)
 
 		if !isSneaking {
 
@@ -379,15 +379,15 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				}
 			}
 
-			room.SendTextVisual(
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> is examining the <ansi fg="noun">%s</ansi>.`, user.Character.Name, foundNoun),
 				user.UserId,
 			)
 		}
 
-		user.SendText(util.SplitStringNL(foundDesc, 80))
+		user.SendTextLegacy(util.SplitStringNL(foundDesc, 80))
 
-		user.SendText(``)
+		user.SendTextLegacy(``)
 
 		return true, nil
 	}
@@ -402,12 +402,12 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if petUserId > 0 {
 		if petUser := users.GetByUserId(petUserId); petUser != nil {
 
-			user.SendText(fmt.Sprintf(`You look at %s`, petUser.Character.Pet.DisplayName()))
+			user.SendTextLegacy(fmt.Sprintf(`You look at %s`, petUser.Character.Pet.DisplayName()))
 
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking at %s.`, user.Character.Name, petUser.Character.Pet.DisplayName()), user.UserId)
+			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking at %s.`, user.Character.Name, petUser.Character.Pet.DisplayName()), user.UserId)
 
 			textOut, _ := templates.Process("character/pet", petUser, user.UserId)
-			user.SendText(textOut)
+			user.SendTextLegacy(textOut)
 
 			return true, nil
 		}
@@ -449,14 +449,14 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				corpseColor = `user-corpse`
 			}
 
-			user.SendText(fmt.Sprintf(`You look at the <ansi fg="%s">%s</ansi>.`, corpseColor, corpse.DisplayName()))
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking at the <ansi fg="%s">%s</ansi>.`, user.Character.Name, corpseColor, corpse.DisplayName()), user.UserId)
+			user.SendTextLegacy(fmt.Sprintf(`You look at the <ansi fg="%s">%s</ansi>.`, corpseColor, corpse.DisplayName()))
+			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking at the <ansi fg="%s">%s</ansi>.`, user.Character.Name, corpseColor, corpse.DisplayName()), user.UserId)
 
 			if corpse.CorpseDescription != "" {
-				user.SendText(corpse.CorpseDescription)
+				user.SendTextLegacy(corpse.CorpseDescription)
 			} else {
 				descTxt, _ := templates.Process("character/description-corpse", &corpse.Character, user.UserId)
-				user.SendText(descTxt)
+				user.SendTextLegacy(descTxt)
 			}
 
 			return true, nil
@@ -466,7 +466,7 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	// Nothing found
-	user.SendText("Look at what???")
+	user.SendTextLegacy("Look at what???")
 
 	return true, nil
 
@@ -489,12 +489,12 @@ func lookRoom(user *users.UserRecord, roomId int, secretLook bool) {
 		// Find the exit back
 		lookFromName := room.FindExitTo(user.Character.RoomId)
 		if lookFromName == "" {
-			room.SendTextVisual(
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking into the room from somewhere...`, user.Character.Name),
 				user.UserId,
 			)
 		} else {
-			room.SendTextVisual(
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking into the room from the <ansi fg="exit">%s</ansi> exit`, user.Character.Name, lookFromName),
 				user.UserId,
 			)
@@ -565,10 +565,10 @@ func lookRoom(user *users.UserRecord, roomId int, secretLook bool) {
 	}
 
 	textOut, _ := templates.Process("descriptions/room-title", details, user.UserId)
-	user.SendText(textOut)
+	user.SendTextLegacy(textOut)
 
 	textOut, _ = templates.Process("descriptions/room", details, user.UserId)
-	user.SendText(textOut)
+	user.SendTextLegacy(textOut)
 
 	// Append discovered hidden noun descriptions
 	if user != nil && room.HiddenNouns != nil {
@@ -581,7 +581,7 @@ func lookRoom(user *users.UserRecord, roomId int, secretLook bool) {
 			if user.Character.HasDiscovery(room.RoomId, key) {
 				hn := room.HiddenNouns[key]
 				if hn.HiddenDescription != "" {
-					user.SendText(hn.HiddenDescription)
+					user.SendTextLegacy(hn.HiddenDescription)
 				}
 			}
 		}
@@ -593,7 +593,7 @@ func lookRoom(user *users.UserRecord, roomId int, secretLook bool) {
 		if sign.VisibleUserId == user.UserId {
 			signCt++
 			textOut, _ = templates.Process("descriptions/rune", sign, user.UserId)
-			user.SendText(textOut)
+			user.SendTextLegacy(textOut)
 		}
 	}
 
@@ -601,16 +601,16 @@ func lookRoom(user *users.UserRecord, roomId int, secretLook bool) {
 	for _, sign := range publicSigns {
 		signCt++
 		textOut, _ = templates.Process("descriptions/sign", sign, user.UserId)
-		user.SendText(textOut)
+		user.SendTextLegacy(textOut)
 	}
 
 	if signCt > 0 {
-		user.SendText("")
+		user.SendTextLegacy("")
 	}
 
 	textOut, _ = templates.Process("descriptions/who", details, user.UserId)
 	if len(textOut) > 0 {
-		user.SendText(textOut)
+		user.SendTextLegacy(textOut)
 	}
 
 	groundStuff := []string{}
@@ -692,10 +692,10 @@ func lookRoom(user *users.UserRecord, roomId int, secretLook bool) {
 	}
 	textOut, _ = templates.Process("descriptions/ontheground", groundDetails, user.UserId)
 	if len(textOut) > 0 {
-		user.SendText(textOut)
+		user.SendTextLegacy(textOut)
 	}
 
 	textOut, _ = templates.Process("descriptions/exits", details, user.UserId)
-	user.SendText(textOut)
+	user.SendTextLegacy(textOut)
 
 }

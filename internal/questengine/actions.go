@@ -16,7 +16,7 @@ type ActionContext interface {
 	ConsumeItem(itemId int)
 	GiveItem(itemId int)
 	GiveGold(amount int)
-	SendText(text string)
+	SendTextLegacy(text string)
 	RoomText(text string)
 	SpawnMob(s SpawnDef)
 	SpawnItem(s SpawnDef)
@@ -57,7 +57,7 @@ func ExecuteAction(a ActionDef, ctx ActionContext) error {
 		return nil
 	}
 	if a.SendText != "" {
-		ctx.SendText(a.SendText)
+		ctx.SendTextLegacy(a.SendText)
 		return nil
 	}
 	if a.RoomText != "" {

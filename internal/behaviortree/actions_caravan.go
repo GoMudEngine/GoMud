@@ -209,7 +209,7 @@ func tickFernwayPickup(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext
 					persistCrate(ctx.RoomId, r.SealedCrate)
 				}
 				if stored > 0 {
-					r.SendText(fmt.Sprintf(
+					r.SendTextLegacy(fmt.Sprintf(
 						`<ansi fg="yellow">The caravan pulls up to the roadside crate, breaks the seal,`+
 							` and loads its contents into the wagon — %d %s in all.</ansi>`,
 						stored, caravanPluralize("crate-load", stored)))
@@ -273,7 +273,7 @@ func tickRoute(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result
 		)
 		if msg := caravan.FormatVisitMessage(delivered, pickedUp); msg != "" {
 			if r := rooms.LoadRoom(nextRoom); r != nil {
-				r.SendText(msg)
+				r.SendTextLegacy(msg)
 			}
 		}
 		newIdx := idx + 1

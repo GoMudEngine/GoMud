@@ -38,9 +38,9 @@ func Gearup(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	if !wornSomething {
 		if wearableCount == 0 {
-			user.SendText("You have nothing to wear.")
+			user.SendTextLegacy("You have nothing to wear.")
 		} else {
-			user.SendText("You're already wearing everything you can!")
+			user.SendTextLegacy("You're already wearing everything you can!")
 		}
 	}
 

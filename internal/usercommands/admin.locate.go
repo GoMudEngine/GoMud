@@ -21,7 +21,7 @@ func Locate(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	if rest == "" {
 		infoOutput, _ := templates.Process("admincommands/help/command.locate", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 		return true, nil
 	}
 
@@ -33,11 +33,11 @@ func Locate(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			return false, fmt.Errorf(`room %d not found`, locateUser.Character.RoomId)
 		}
 
-		user.SendText(
+		user.SendTextLegacy(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> is in room #<ansi fg="yellow-bold">%d</ansi> - <ansi fg="magenta">%s</ansi> <ansi fg="red">【%s】</ansi>`, locateUser.Character.Name, room.RoomId, room.Title, locateUser.Character.Zone),
 		)
 
-		locateUser.SendText(
+		locateUser.SendTextLegacy(
 			`You get the feeling someone is looking for you...`,
 		)
 
@@ -148,7 +148,7 @@ func Locate(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				if ct >= matchesPerPage {
 					onlineTableData := templates.GetTable(fmt.Sprintf(`Matches for "%s" [Page %d/%d]`, rest, pageNow+1, pageCt), headers, rows)
 					tplTxt, _ := templates.Process("tables/generic", onlineTableData, user.UserId)
-					user.SendText(tplTxt)
+					user.SendTextLegacy(tplTxt)
 					rows = [][]string{}
 					ct = 0
 					pageNow++
@@ -161,13 +161,13 @@ func Locate(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		if pageNow < pageCt {
 			onlineTableData := templates.GetTable(fmt.Sprintf(`Matches for "%s" [Page %d/%d]`, rest, pageNow+1, pageCt), headers, rows)
 			tplTxt, _ := templates.Process("tables/generic", onlineTableData, user.UserId)
-			user.SendText(tplTxt)
+			user.SendTextLegacy(tplTxt)
 		}
 
 		return true, nil
 	}
 
-	user.SendText(
+	user.SendTextLegacy(
 		fmt.Sprintf("No user or mob found with the name %s", rest),
 	)
 

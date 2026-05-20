@@ -39,7 +39,7 @@ func CompanionCleanup(e events.Event) events.ListenerReturn {
 		user.Character.RemoveCompanion(evt.InstanceId)
 		user.Character.TrackCharmed(evt.InstanceId, false)
 
-		user.SendText(fmt.Sprintf(
+		user.SendTextLegacy(fmt.Sprintf(
 			`<ansi fg="red">Your %s has fallen.</ansi>`,
 			companionName,
 		))

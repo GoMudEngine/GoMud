@@ -53,9 +53,9 @@ func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		if result.KnockedDown {
 			if targetUser != nil {
 				if canSee {
-					targetUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">%s</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, mobName, bashLabel, dmgDesc))
+					targetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">%s</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, mobName, bashLabel, dmgDesc))
 				} else {
-					targetUser.SendText(fmt.Sprintf(`Something's <ansi fg="yellow-bold">%s</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, bashLabel, dmgDesc))
+					targetUser.SendTextLegacy(fmt.Sprintf(`Something's <ansi fg="yellow-bold">%s</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, bashLabel, dmgDesc))
 				}
 			}
 			sendRoomText(room,
@@ -64,9 +64,9 @@ func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		} else {
 			if targetUser != nil {
 				if canSee {
-					targetUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">%s</ansi> strikes you! (<ansi fg="damage">%s</ansi> damage)`, mobName, bashLabel, dmgDesc))
+					targetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">%s</ansi> strikes you! (<ansi fg="damage">%s</ansi> damage)`, mobName, bashLabel, dmgDesc))
 				} else {
-					targetUser.SendText(fmt.Sprintf(`Something's <ansi fg="yellow-bold">%s</ansi> strikes you! (<ansi fg="damage">%s</ansi> damage)`, bashLabel, dmgDesc))
+					targetUser.SendTextLegacy(fmt.Sprintf(`Something's <ansi fg="yellow-bold">%s</ansi> strikes you! (<ansi fg="damage">%s</ansi> damage)`, bashLabel, dmgDesc))
 				}
 			}
 			sendRoomText(room,
@@ -76,9 +76,9 @@ func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	} else {
 		if targetUser != nil {
 			if canSee {
-				targetUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts a %s, but misses!`, mobName, bashLabel))
+				targetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts a %s, but misses!`, mobName, bashLabel))
 			} else {
-				targetUser.SendText(fmt.Sprintf(`Something attempts a %s, but misses!`, bashLabel))
+				targetUser.SendTextLegacy(fmt.Sprintf(`Something attempts a %s, but misses!`, bashLabel))
 			}
 		}
 		sendRoomText(room,

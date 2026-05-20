@@ -21,7 +21,7 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	if rest == "" {
-		user.SendText(`Wear WHAT?`)
+		user.SendTextLegacy(`Wear WHAT?`)
 		return true, nil
 	}
 
@@ -52,12 +52,12 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	matchItem, found := user.Character.FindInBackpack(rest)
 
 	if !found {
-		user.SendText(fmt.Sprintf(`You don't have a "%s" to wear.`, rest))
+		user.SendTextLegacy(fmt.Sprintf(`You don't have a "%s" to wear.`, rest))
 	} else {
 
 		iSpec := matchItem.GetSpec()
 		if iSpec.Type != items.Weapon && iSpec.Subtype != items.Wearable {
-			user.SendText(
+			user.SendTextLegacy(
 				fmt.Sprintf(`Your <ansi fg="item">%s</ansi> doesn't look very fashionable.`, matchItem.DisplayName()),
 			)
 			return true, nil
@@ -67,12 +67,12 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		if targetArmSlot > 0 {
 			// Only weapons and shields (offhand) can go in arm slots
 			if iSpec.Type != items.Weapon && iSpec.Type != items.Offhand {
-				user.SendText(`You can only wield weapons or shields in arm slots.`)
+				user.SendTextLegacy(`You can only wield weapons or shields in arm slots.`)
 				return true, nil
 			}
 			// Shields cannot go in arm 1 (primary weapon hand)
 			if iSpec.Type == items.Offhand && targetArmSlot == 1 {
-				user.SendText(`You can't put a shield in your primary weapon hand (arm 1).`)
+				user.SendTextLegacy(`You can't put a shield in your primary weapon hand (arm 1).`)
 				return true, nil
 			}
 
@@ -82,14 +82,14 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			slotInPair := (targetArmSlot - 1) % 2
 
 			if pairIdx >= len(pairs) {
-				user.SendText(fmt.Sprintf(`You don't have arm %d.`, targetArmSlot))
+				user.SendTextLegacy(fmt.Sprintf(`You don't have arm %d.`, targetArmSlot))
 				return true, nil
 			}
 			pair := &pairs[pairIdx]
 
 			// Check if targeting the second slot of a half-pair
 			if slotInPair == 1 && pair.IsHalfPair() {
-				user.SendText(fmt.Sprintf(`You don't have arm %d.`, targetArmSlot))
+				user.SendTextLegacy(fmt.Sprintf(`You don't have arm %d.`, targetArmSlot))
 				return true, nil
 			}
 
@@ -98,11 +98,11 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			// 2H weapons must go in odd-numbered arms (first slot of a pair)
 			if handsReq >= 2 {
 				if slotInPair != 0 {
-					user.SendText(`A two-handed weapon needs a pair of arms. Try arm 1, 3, or 5.`)
+					user.SendTextLegacy(`A two-handed weapon needs a pair of arms. Try arm 1, 3, or 5.`)
 					return true, nil
 				}
 				if pair.IsHalfPair() {
-					user.SendText(`That arm doesn't have a partner for a two-handed weapon.`)
+					user.SendTextLegacy(`That arm doesn't have a partner for a two-handed weapon.`)
 					return true, nil
 				}
 			}
@@ -116,19 +116,19 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 			// Check for cursed items before displacement
 			if !targetSlot.IsEmpty() && targetSlot.ItemPtr.IsCursed() {
-				user.SendText(fmt.Sprintf(`Your <ansi fg="item">%s</ansi> is cursed and can't be removed!`, targetSlot.ItemPtr.DisplayName()))
+				user.SendTextLegacy(fmt.Sprintf(`Your <ansi fg="item">%s</ansi> is cursed and can't be removed!`, targetSlot.ItemPtr.DisplayName()))
 				return true, nil
 			}
 
 			// For 2H, also check/displace the second slot
 			if handsReq >= 2 {
 				if !pair.Second.IsEmpty() && pair.Second.ItemPtr.IsCursed() {
-					user.SendText(fmt.Sprintf(`Your <ansi fg="item">%s</ansi> is cursed and can't be removed!`, pair.Second.ItemPtr.DisplayName()))
+					user.SendTextLegacy(fmt.Sprintf(`Your <ansi fg="item">%s</ansi> is cursed and can't be removed!`, pair.Second.ItemPtr.DisplayName()))
 					return true, nil
 				}
 				// Also check if the first slot holds a 2H (its partner is implicitly occupied)
 				if !pair.First.IsEmpty() && pair.First.ItemPtr.IsCursed() {
-					user.SendText(fmt.Sprintf(`Your <ansi fg="item">%s</ansi> is cursed and can't be removed!`, pair.First.ItemPtr.DisplayName()))
+					user.SendTextLegacy(fmt.Sprintf(`Your <ansi fg="item">%s</ansi> is cursed and can't be removed!`, pair.First.ItemPtr.DisplayName()))
 					return true, nil
 				}
 			}
@@ -136,7 +136,7 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			// If the partner slot holds a 2H weapon, we need to displace it too
 			if slotInPair == 1 && pair.First.Is2H(user.Character) {
 				if pair.First.ItemPtr.IsCursed() {
-					user.SendText(fmt.Sprintf(`Your <ansi fg="item">%s</ansi> is cursed and can't be removed!`, pair.First.ItemPtr.DisplayName()))
+					user.SendTextLegacy(fmt.Sprintf(`Your <ansi fg="item">%s</ansi> is cursed and can't be removed!`, pair.First.ItemPtr.DisplayName()))
 					return true, nil
 				}
 				displaced = append(displaced, *pair.First.ItemPtr)
@@ -161,7 +161,7 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			// Return displaced items to backpack
 			for _, old := range displaced {
 				if old.ItemId > 0 {
-					user.SendText(fmt.Sprintf(`You remove your <ansi fg="item">%s</ansi> and return it to your backpack.`, old.DisplayName()))
+					user.SendTextLegacy(fmt.Sprintf(`You remove your <ansi fg="item">%s</ansi> and return it to your backpack.`, old.DisplayName()))
 					user.Character.StoreItem(old)
 				}
 			}
@@ -172,11 +172,11 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				armLabel = pair.Second.Label
 			}
 			if iSpec.Type == items.Offhand {
-				user.SendText(fmt.Sprintf(`You equip your <ansi fg="item">%s</ansi> in your %s.`, matchItem.DisplayName(), armLabel))
+				user.SendTextLegacy(fmt.Sprintf(`You equip your <ansi fg="item">%s</ansi> in your %s.`, matchItem.DisplayName(), armLabel))
 			} else {
-				user.SendText(fmt.Sprintf(`You wield your <ansi fg="item">%s</ansi> in your %s.`, matchItem.DisplayName(), armLabel))
+				user.SendTextLegacy(fmt.Sprintf(`You wield your <ansi fg="item">%s</ansi> in your %s.`, matchItem.DisplayName(), armLabel))
 			}
-			room.SendTextVisual(
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> equips their <ansi fg="item">%s</ansi>.`, user.Character.Name, matchItem.DisplayName()),
 				user.UserId,
 			)
@@ -216,10 +216,10 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 			for _, oldItem := range result.DisplacedItems {
 				if oldItem.ItemId != 0 {
-					user.SendText(
+					user.SendTextLegacy(
 						fmt.Sprintf(`You remove your <ansi fg="item">%s</ansi> and return it to your backpack.`, oldItem.DisplayName()),
 					)
-					room.SendTextVisual(
+					room.SendTextVisualLegacy(
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> removes their <ansi fg="item">%s</ansi> and stores it away.`, user.Character.Name, oldItem.DisplayName()),
 						user.UserId,
 					)
@@ -227,18 +227,18 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			}
 
 			if result.Item.GetSpec().Subtype == items.Wearable {
-				user.SendText(
+				user.SendTextLegacy(
 					fmt.Sprintf(`You wear your <ansi fg="item">%s</ansi>.`, result.Item.DisplayName()),
 				)
-				room.SendTextVisual(
+				room.SendTextVisualLegacy(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> puts on their <ansi fg="item">%s</ansi>.`, user.Character.Name, result.Item.DisplayName()),
 					user.UserId,
 				)
 			} else {
-				user.SendText(
+				user.SendTextLegacy(
 					fmt.Sprintf(`You wield your <ansi fg="item">%s</ansi>. You're feeling dangerous.`, result.Item.DisplayName()),
 				)
-				room.SendTextVisual(
+				room.SendTextVisualLegacy(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> wields their <ansi fg="item">%s</ansi>.`, user.Character.Name, result.Item.DisplayName()),
 					user.UserId,
 				)
@@ -266,7 +266,7 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			if len(failureReason) <= 1 {
 				failureReason = fmt.Sprintf(`You can't figure out how to equip the <ansi fg="item">%s</ansi>.`, matchItem.DisplayName())
 			}
-			user.SendText(failureReason)
+			user.SendTextLegacy(failureReason)
 		}
 
 	}

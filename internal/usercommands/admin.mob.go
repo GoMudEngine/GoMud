@@ -28,7 +28,7 @@ func Mob(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 	if len(args) < 1 {
 		infoOutput, _ := templates.Process("admincommands/help/command.mob", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 		return true, nil
 	}
 
@@ -36,7 +36,7 @@ func Mob(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	if args[0] == `spawn` {
 
 		if !user.HasRolePermission(`mob.spawn`) {
-			user.SendText(`you do not have <ansi fg="command">mob.spawn</ansi> permission`)
+			user.SendTextLegacy(`you do not have <ansi fg="command">mob.spawn</ansi> permission`)
 			return true, nil
 		}
 
@@ -47,7 +47,7 @@ func Mob(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	if args[0] == `list` {
 
 		if !user.HasRolePermission(`mob.spawn`) {
-			user.SendText(`you do not have <ansi fg="command">mob.spawn</ansi> permission`)
+			user.SendTextLegacy(`you do not have <ansi fg="command">mob.spawn</ansi> permission`)
 			return true, nil
 		}
 
@@ -58,7 +58,7 @@ func Mob(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	if args[0] == `heal` {
 
 		if !user.HasRolePermission(`mob.spawn`) {
-			user.SendText(`you do not have <ansi fg="command">mob.spawn</ansi> permission`)
+			user.SendTextLegacy(`you do not have <ansi fg="command">mob.spawn</ansi> permission`)
 			return true, nil
 		}
 
@@ -89,23 +89,23 @@ func mob_Heal(args []string, user *users.UserRecord, room *rooms.Room, _ events.
 			}
 		}
 		if healed == 0 {
-			user.SendText(`No mobs in this room to heal.`)
+			user.SendTextLegacy(`No mobs in this room to heal.`)
 			return true, nil
 		}
-		user.SendText(fmt.Sprintf(`Healed %d mob(s) in the room to full.`, healed))
+		user.SendTextLegacy(fmt.Sprintf(`Healed %d mob(s) in the room to full.`, healed))
 		return true, nil
 	}
 
 	// Specific instance id.
 	instId, err := strconv.Atoi(args[0])
 	if err != nil || instId < 1 {
-		user.SendText(`Usage: <ansi fg="command">mob heal [instId]</ansi> — omit instId to heal every mob in the room.`)
+		user.SendTextLegacy(`Usage: <ansi fg="command">mob heal [instId]</ansi> — omit instId to heal every mob in the room.`)
 		return true, nil
 	}
 
 	m := mobs.GetInstance(instId)
 	if m == nil {
-		user.SendText(fmt.Sprintf(`No mob instance with id %d.`, instId))
+		user.SendTextLegacy(fmt.Sprintf(`No mob instance with id %d.`, instId))
 		return true, nil
 	}
 
@@ -113,7 +113,7 @@ func mob_Heal(args []string, user *users.UserRecord, room *rooms.Room, _ events.
 	m.Character.Stamina = m.Character.StaminaMax.Value
 	m.Character.Conviction = m.Character.ConvictionMax.Value
 
-	user.SendText(fmt.Sprintf(`Healed <ansi fg="mobname">%s</ansi> (instance %d) to full.`, m.Character.Name, instId))
+	user.SendTextLegacy(fmt.Sprintf(`Healed <ansi fg="mobname">%s</ansi> (instance %d) to full.`, m.Character.Name, instId))
 	return true, nil
 }
 
@@ -153,11 +153,11 @@ func mob_List(rest string, user *users.UserRecord, _ *rooms.Room, _ events.Event
 	numWidth := len(strconv.Itoa(len(mobList)))
 	colWidth := 1 + numWidth + 2 + longestName + 1
 
-	user.SendText(``)
+	user.SendTextLegacy(``)
 	sw := user.ClientSettings().Display.GetScreenWidth()
 	strOut := templates.DynamicList(mobList, colWidth, sw, numWidth, longestName)
-	user.SendText(strOut)
-	user.SendText(``)
+	user.SendTextLegacy(strOut)
+	user.SendTextLegacy(``)
 
 	return true, nil
 }
@@ -169,7 +169,7 @@ func mob_Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags even
 	// special handling of loot goblin
 	if rest == `loot goblin` && c.RoomId != 0 {
 		if gRoom := rooms.LoadRoom(int(c.RoomId)); gRoom != nil { // loot goblin room
-			user.SendText(`Somewhere in the realm, a <ansi fg="mobname">loot goblin</ansi> appears!`)
+			user.SendTextLegacy(`Somewhere in the realm, a <ansi fg="mobname">loot goblin</ansi> appears!`)
 			mudlog.Info(`Loot Goblin Spawn`, `roundNumber`, util.GetRoundCount(), `forced`, true)
 			gRoom.Prepare(false) // Make sure the loot goblin spawns.
 		}
@@ -187,10 +187,10 @@ func mob_Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		if mob := mobs.NewMobById(mobId, room.RoomId); mob != nil {
 			room.AddMob(mob.InstanceId)
 
-			user.SendText(
+			user.SendTextLegacy(
 				fmt.Sprintf(`You wave your hands around and <ansi fg="mobname">%s</ansi> appears in the air and falls to the ground.`, mob.Character.Name),
 			)
-			room.SendTextVisual(
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> waves their hands around and <ansi fg="mobname">%s</ansi> appears in the air and falls to the ground.`, user.Character.Name, mob.Character.Name),
 				user.UserId,
 			)
@@ -199,7 +199,7 @@ func mob_Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		}
 	}
 
-	user.SendText(
+	user.SendTextLegacy(
 		fmt.Sprintf(`Mob <ansi fg="mobname">%s</ansi> not found.`, rest),
 	)
 

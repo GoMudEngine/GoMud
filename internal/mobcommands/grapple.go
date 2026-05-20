@@ -40,9 +40,9 @@ func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	if result.Success {
 		if targetChar != nil {
 			if canSee {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> <ansi fg="yellow-bold">grapples</ansi> you, transitioning to <ansi fg="cyan">%s</ansi> position!`, mobName, result.PositionDesc))
+				targetChar.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> <ansi fg="yellow-bold">grapples</ansi> you, transitioning to <ansi fg="cyan">%s</ansi> position!`, mobName, result.PositionDesc))
 			} else {
-				targetChar.SendText(fmt.Sprintf(`Something <ansi fg="yellow-bold">grapples</ansi> you, transitioning to <ansi fg="cyan">%s</ansi> position!`, result.PositionDesc))
+				targetChar.SendTextLegacy(fmt.Sprintf(`Something <ansi fg="yellow-bold">grapples</ansi> you, transitioning to <ansi fg="cyan">%s</ansi> position!`, result.PositionDesc))
 			}
 		}
 		sendRoomText(room,
@@ -52,16 +52,16 @@ func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		// Disarm messaging
 		if result.DisarmResult != nil {
 			if targetChar != nil {
-				targetChar.SendText(result.DisarmResult.TargetMsg)
+				targetChar.SendTextLegacy(result.DisarmResult.TargetMsg)
 			}
 			sendRoomText(room, result.DisarmResult.RoomMessage, targetPlayerId)
 		}
 	} else {
 		if targetChar != nil {
 			if canSee {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to grapple you, but you slip away!`, mobName))
+				targetChar.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to grapple you, but you slip away!`, mobName))
 			} else {
-				targetChar.SendText(`Something tries to grapple you, but you slip away!`)
+				targetChar.SendTextLegacy(`Something tries to grapple you, but you slip away!`)
 			}
 		}
 		sendRoomText(room,
@@ -71,7 +71,7 @@ func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		// Critical failure messaging
 		if result.CritFailure != nil {
 			if targetChar != nil {
-				targetChar.SendText(result.CritFailure.TargetMessage)
+				targetChar.SendTextLegacy(result.CritFailure.TargetMessage)
 			}
 			sendRoomText(room, result.CritFailure.RoomMessage, targetPlayerId)
 		}

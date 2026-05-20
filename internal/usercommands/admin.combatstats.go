@@ -21,7 +21,7 @@ func CombatStats(rest string, user *users.UserRecord, room *rooms.Room, flags ev
 
 	if rest == "" {
 		infoOutput, _ := templates.Process("admincommands/help/command.combatstats", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 		return true, nil
 	}
 
@@ -44,7 +44,7 @@ func CombatStats(rest string, user *users.UserRecord, room *rooms.Room, flags ev
 		return combatStats_Export(user)
 	default:
 		infoOutput, _ := templates.Process("admincommands/help/command.combatstats", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 	}
 
 	return true, nil
@@ -64,10 +64,10 @@ func combatStats_Summary(args []string, user *users.UserRecord) (bool, error) {
 
 	if s.TotalEvents == 0 {
 		if filterLabel != "" {
-			user.SendText(fmt.Sprintf(
+			user.SendTextLegacy(fmt.Sprintf(
 				`No combat events found for attack type "%s".`, filterLabel))
 		} else {
-			user.SendText(`No combat events in the buffer.`)
+			user.SendTextLegacy(`No combat events in the buffer.`)
 		}
 		return true, nil
 	}
@@ -113,7 +113,7 @@ func combatStats_Summary(args []string, user *users.UserRecord) (bool, error) {
 
 	tblData := templates.GetTable(title, headers, rows, formatting)
 	tplTxt, _ := templates.Process("tables/generic", tblData, user.UserId)
-	user.SendText(tplTxt)
+	user.SendTextLegacy(tplTxt)
 
 	return true, nil
 }
@@ -122,7 +122,7 @@ func combatStats_Types(user *users.UserRecord) (bool, error) {
 
 	types := combat.GetAttackTypes()
 	if len(types) == 0 {
-		user.SendText(`No combat events in the buffer.`)
+		user.SendTextLegacy(`No combat events in the buffer.`)
 		return true, nil
 	}
 
@@ -154,7 +154,7 @@ func combatStats_Types(user *users.UserRecord) (bool, error) {
 		fmt.Sprintf(`Attack Types (%d total)`, combat.GetBufferLen()),
 		headers, rows, formatting)
 	tplTxt, _ := templates.Process("tables/generic", tblData, user.UserId)
-	user.SendText(tplTxt)
+	user.SendTextLegacy(tplTxt)
 
 	return true, nil
 }
@@ -163,7 +163,7 @@ func combatStats_Matchups(user *users.UserRecord) (bool, error) {
 
 	s := combat.GetSummary()
 	if s.TotalEvents == 0 {
-		user.SendText(`No combat events in the buffer.`)
+		user.SendTextLegacy(`No combat events in the buffer.`)
 		return true, nil
 	}
 
@@ -190,7 +190,7 @@ func combatStats_Matchups(user *users.UserRecord) (bool, error) {
 		fmt.Sprintf(`Combat Matchups (%s events)`, formatNumber(s.TotalEvents)),
 		headers, rows, formatting)
 	tplTxt, _ := templates.Process("tables/generic", tblData, user.UserId)
-	user.SendText(tplTxt)
+	user.SendTextLegacy(tplTxt)
 
 	return true, nil
 }
@@ -199,7 +199,7 @@ func combatStats_Defense(user *users.UserRecord) (bool, error) {
 
 	s := combat.GetSummary()
 	if s.TotalEvents == 0 {
-		user.SendText(`No combat events in the buffer.`)
+		user.SendTextLegacy(`No combat events in the buffer.`)
 		return true, nil
 	}
 
@@ -229,7 +229,7 @@ func combatStats_Defense(user *users.UserRecord) (bool, error) {
 		fmt.Sprintf(`Defense Breakdown (%s events)`, formatNumber(s.TotalEvents)),
 		headers, rows, formatting)
 	tplTxt, _ := templates.Process("tables/generic", tblData, user.UserId)
-	user.SendText(tplTxt)
+	user.SendTextLegacy(tplTxt)
 
 	return true, nil
 }
@@ -238,7 +238,7 @@ func combatStats_Position(user *users.UserRecord) (bool, error) {
 
 	s := combat.GetSummary()
 	if s.TotalEvents == 0 {
-		user.SendText(`No combat events in the buffer.`)
+		user.SendTextLegacy(`No combat events in the buffer.`)
 		return true, nil
 	}
 
@@ -266,7 +266,7 @@ func combatStats_Position(user *users.UserRecord) (bool, error) {
 		fmt.Sprintf(`Position Hit Rates (%s events)`, formatNumber(s.TotalEvents)),
 		headers, rows, formatting)
 	tplTxt, _ := templates.Process("tables/generic", tblData, user.UserId)
-	user.SendText(tplTxt)
+	user.SendTextLegacy(tplTxt)
 
 	return true, nil
 }
@@ -274,7 +274,7 @@ func combatStats_Position(user *users.UserRecord) (bool, error) {
 func combatStats_Reset(user *users.UserRecord) (bool, error) {
 
 	ct := combat.ResetBuffer()
-	user.SendText(fmt.Sprintf(
+	user.SendTextLegacy(fmt.Sprintf(
 		`Combat analytics buffer cleared. %s events removed.`,
 		formatNumber(ct)))
 
@@ -285,12 +285,12 @@ func combatStats_Export(user *users.UserRecord) (bool, error) {
 
 	bufLen := combat.GetBufferLen()
 	if bufLen == 0 {
-		user.SendText(`No combat events to export.`)
+		user.SendTextLegacy(`No combat events to export.`)
 		return true, nil
 	}
 
 	combat.ExportNow()
-	user.SendText(fmt.Sprintf(
+	user.SendTextLegacy(fmt.Sprintf(
 		`Flushed %s events to analytics log.`,
 		formatNumber(bufLen)))
 

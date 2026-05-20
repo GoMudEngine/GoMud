@@ -8,9 +8,9 @@ import (
 
 func Save(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	user.SendText("Saving...")
+	user.SendTextLegacy("Saving...")
 	users.SaveUser(*user)
-	user.SendText("done.")
+	user.SendTextLegacy("done.")
 
 	return true, nil
 }

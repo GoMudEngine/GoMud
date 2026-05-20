@@ -29,7 +29,7 @@ func Drink(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 		mob.Character.UseItem(matchItem)
 
-		room.SendTextVisual(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> drinks <ansi fg="itemname">%s</ansi>.`, mob.Character.Name, matchItem.DisplayName()))
+		room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> drinks <ansi fg="itemname">%s</ansi>.`, mob.Character.Name, matchItem.DisplayName()))
 
 		for _, buffId := range itemSpec.BuffIds {
 			mob.AddBuff(buffId, `drink`)

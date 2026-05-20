@@ -18,10 +18,10 @@ func resolvePurgeAffliction(user *users.UserRecord, target *users.UserRecord) {
 	room := rooms.LoadRoom(user.Character.RoomId)
 
 	if user.UserId != target.UserId {
-		user.SendText(fmt.Sprintf(
+		user.SendTextLegacy(fmt.Sprintf(
 			`<ansi fg="green">You direct purging energy towards <ansi fg="username">%s</ansi>.</ansi>`,
 			target.Character.Name))
-		target.SendText(fmt.Sprintf(
+		target.SendTextLegacy(fmt.Sprintf(
 			`<ansi fg="green"><ansi fg="username">%s</ansi> purges the afflictions from your body.</ansi>`,
 			user.Character.Name))
 		if room != nil {
@@ -30,7 +30,7 @@ func resolvePurgeAffliction(user *users.UserRecord, target *users.UserRecord) {
 				user.Character.Name, target.Character.Name), user.UserId, target.UserId)
 		}
 	} else {
-		user.SendText(`<ansi fg="green">You purge the afflictions from your body.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="green">You purge the afflictions from your body.</ansi>`)
 		if room != nil {
 			sendVisualRoomText(room, fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> purges their afflictions.`,

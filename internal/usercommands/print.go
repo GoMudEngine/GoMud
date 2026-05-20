@@ -54,7 +54,7 @@ func PrintLine(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		}
 
 		finalOutput = strings.ReplaceAll(finalOutput, `=`, `<ansi fg="8">=</ansi>`)
-		user.SendText(finalOutput)
+		user.SendTextLegacy(finalOutput)
 	}
 
 	return true, nil

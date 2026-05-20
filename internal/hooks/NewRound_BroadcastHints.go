@@ -81,7 +81,7 @@ func BroadcastHints(e events.Event) events.ListenerReturn {
 			continue
 		}
 
-		u.SendText(fullText)
+		u.SendTextLegacy(fullText)
 	}
 
 	// Also fire a Communication event for webclient comms window

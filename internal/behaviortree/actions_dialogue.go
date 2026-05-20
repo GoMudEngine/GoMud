@@ -32,20 +32,20 @@ func actRespond(params map[string]any, ctx *EvalContext) Result {
 
 	userText := getStringParam(params, "user_text")
 	if userText != "" {
-		user.SendText(textutil.SubstituteTokens(userText, tokenCtx))
+		user.SendTextLegacy(textutil.SubstituteTokens(userText, tokenCtx))
 	}
 
 	roomText := getStringParam(params, "room_text")
 	if roomText != "" {
 		room := rooms.LoadRoom(ctx.RoomId)
 		if room != nil {
-			room.SendTextVisual(textutil.SubstituteTokens(roomText, tokenCtx), ctx.Event.UserId)
+			room.SendTextVisualLegacy(textutil.SubstituteTokens(roomText, tokenCtx), ctx.Event.UserId)
 		}
 	}
 
 	hints := getStringParam(params, "hints")
 	if hints != "" {
-		user.SendText(fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
+		user.SendTextLegacy(fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
 	}
 
 	return Success
@@ -85,7 +85,7 @@ func actSendUserText(params map[string]any, ctx *EvalContext) Result {
 		return Failure
 	}
 	text := getStringParam(params, "text")
-	user.SendText(text)
+	user.SendTextLegacy(text)
 	return Success
 }
 
@@ -97,7 +97,7 @@ func actSendRoomText(params map[string]any, ctx *EvalContext) Result {
 		return Failure
 	}
 	text := getStringParam(params, "text")
-	room.SendText(text)
+	room.SendTextLegacy(text)
 	return Success
 }
 

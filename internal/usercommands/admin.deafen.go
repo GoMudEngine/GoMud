@@ -19,20 +19,20 @@ func Deafen(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	if rest == "" {
 		infoOutput, _ := templates.Process("admincommands/help/command.deafen", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 		return true, nil
 	}
 
 	target, err := actions.ResolveTargetActor(room, rest)
 	if err != nil || !target.IsPlayer() {
-		user.SendText("Could not find user.")
+		user.SendTextLegacy("Could not find user.")
 		return true, nil
 	}
 
 	u := target.(*actions.UserActor).User
 	u.Deafened = true
 
-	user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been <ansi fg="alert-5">DEAFENED</ansi>`, u.Username, u.Character.Name))
+	user.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been <ansi fg="alert-5">DEAFENED</ansi>`, u.Username, u.Character.Name))
 
 	return true, nil
 }
@@ -41,20 +41,20 @@ func UnDeafen(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 	if rest == "" {
 		infoOutput, _ := templates.Process("admincommands/help/command.deafen", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 		return true, nil
 	}
 
 	target, err := actions.ResolveTargetActor(room, rest)
 	if err != nil || !target.IsPlayer() {
-		user.SendText("Could not find user.")
+		user.SendTextLegacy("Could not find user.")
 		return true, nil
 	}
 
 	u := target.(*actions.UserActor).User
 	u.Deafened = false
 
-	user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been <ansi fg="alert-1">UNDEAFENED</ansi>`, u.Username, u.Character.Name))
+	user.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been <ansi fg="alert-1">UNDEAFENED</ansi>`, u.Username, u.Character.Name))
 
 	return true, nil
 }

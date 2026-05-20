@@ -14,7 +14,7 @@ func Offer(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	item, found := user.Character.FindInBackpack(rest)
 	if !found {
-		user.SendText("You don't have that item.")
+		user.SendTextLegacy("You don't have that item.")
 		return true, nil
 	}
 

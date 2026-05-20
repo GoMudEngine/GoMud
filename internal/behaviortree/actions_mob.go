@@ -380,7 +380,7 @@ func actOpenInstancePortal(params map[string]any, ctx *EvalContext) Result {
 	mob.Command("say The rift is open. Type " + exitKey + " to enter.")
 	mob.Command("say It will hold for a time. Do not tarry.")
 	room.SendTextToExits("You hear someone talking.", true)
-	room.SendText("The stone archway flares with energy. A shimmering portal appears.")
+	room.SendTextLegacy("The stone archway flares with energy. A shimmering portal appears.")
 	return Success
 }
 

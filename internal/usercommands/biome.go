@@ -14,12 +14,12 @@ func Biome(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	biome, ok := rooms.GetBiome(room.Biome)
 
 	if !ok {
-		user.SendText(`No biome information found about this area.`)
+		user.SendTextLegacy(`No biome information found about this area.`)
 		return false, fmt.Errorf(`biome %s not found`, room.Biome)
 	}
 
 	biomeTxt, _ := templates.Process("descriptions/biome", biome, user.UserId)
-	user.SendText(biomeTxt)
+	user.SendTextLegacy(biomeTxt)
 
 	return true, nil
 }

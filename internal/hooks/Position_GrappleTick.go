@@ -567,7 +567,7 @@ func characterDisplayName(c *characters.Character) string {
 // userForCharacter helper from Position_Messaging.go (same package).
 func sendToCharacter(c *characters.Character, msg string) {
 	if u := userForCharacter(c); u != nil {
-		u.SendText(msg)
+		u.SendTextLegacy(msg)
 	}
 	// Mobs don't receive text.
 }
@@ -600,11 +600,11 @@ func broadcastToRoomExcluding(controller, controlled *characters.Character,
 	}
 	switch len(excludeIds) {
 	case 0:
-		r.SendText(msg)
+		r.SendTextLegacy(msg)
 	case 1:
-		r.SendText(msg, excludeIds[0])
+		r.SendTextLegacy(msg, excludeIds[0])
 	default:
-		r.SendText(msg, excludeIds[0], excludeIds[1])
+		r.SendTextLegacy(msg, excludeIds[0], excludeIds[1])
 	}
 }
 

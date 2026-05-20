@@ -14,14 +14,14 @@ import (
 
 func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 	if user.Character.IsActing() {
-		user.SendText(`<ansi fg="red">You can't kick while focused on your work. Finish or be interrupted first.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">You can't kick while focused on your work. Finish or be interrupted first.</ansi>`)
 		return true, nil
 	}
 
 	// Must be in combat or specify a target to use kick
 	if !user.Character.IsInCombat() {
 		if rest == "" {
-			user.SendText("Kick whom?")
+			user.SendTextLegacy("Kick whom?")
 			return true, nil
 		}
 
@@ -31,24 +31,24 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		if err != nil {
 			// Self-exclusion collapses to NotFound; pre-check for self-targeting message.
 			if pId, _ := room.FindByName(rest); pId == user.UserId {
-				user.SendText("You can't kick yourself.")
+				user.SendTextLegacy("You can't kick yourself.")
 				return true, nil
 			}
-			user.SendText("You don't see them here.")
+			user.SendTextLegacy("You don't see them here.")
 			return true, nil
 		}
 
 		if !target.IsPlayer() {
 			mob := target.(*actions.MobActor).Mob
 			if mob.IsNonCombatant() || mob.PlayerAttackImmune {
-				user.SendText(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, mob.Character.Name))
+				user.SendTextLegacy(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, mob.Character.Name))
 				return true, nil
 			}
 			user.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
 		} else {
 			p := target.(*actions.UserActor).User
 			if pvpErr := room.CanPvp(user, p); pvpErr != nil {
-				user.SendText(pvpErr.Error())
+				user.SendTextLegacy(pvpErr.Error())
 				return true, nil
 			}
 			user.Character.SetAggro(p.UserId, 0, characters.DefaultAttack)
@@ -60,16 +60,16 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	if res.Crafting {
 		// Safety net — should have been caught by the pre-reject above.
-		user.SendText(`<ansi fg="red">You can't kick while focused on your work. Finish or be interrupted first.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">You can't kick while focused on your work. Finish or be interrupted first.</ansi>`)
 		return true, nil
 	}
 
 	if res.OnCooldown {
-		user.SendText("You need a moment to recover before attempting another special move.")
+		user.SendTextLegacy("You need a moment to recover before attempting another special move.")
 		return true, nil
 	}
 	if res.NoTarget {
-		user.SendText("You have no target!")
+		user.SendTextLegacy("You have no target!")
 		return true, nil
 	}
 
@@ -217,24 +217,24 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	if res.MoveResult.Hit {
 		if res.MoveResult.KnockedDown && len(knockdownMsgs) > 0 {
-			user.SendText(fmt.Sprintf(knockdownMsgs[util.Rand(len(knockdownMsgs))], targetName, dmgDesc))
+			user.SendTextLegacy(fmt.Sprintf(knockdownMsgs[util.Rand(len(knockdownMsgs))], targetName, dmgDesc))
 			if targetChar != nil {
-				targetChar.SendText(fmt.Sprintf(knockdownTargetMsgs[util.Rand(len(knockdownTargetMsgs))], user.Character.Name, dmgDesc))
+				targetChar.SendTextLegacy(fmt.Sprintf(knockdownTargetMsgs[util.Rand(len(knockdownTargetMsgs))], user.Character.Name, dmgDesc))
 			}
-			room.SendTextVisual(fmt.Sprintf(knockdownRoomMsgs[util.Rand(len(knockdownRoomMsgs))], user.Character.Name, targetName), user.UserId, res.Target.UserId)
+			room.SendTextVisualLegacy(fmt.Sprintf(knockdownRoomMsgs[util.Rand(len(knockdownRoomMsgs))], user.Character.Name, targetName), user.UserId, res.Target.UserId)
 		} else {
-			user.SendText(fmt.Sprintf(kickMsgs[util.Rand(len(kickMsgs))], targetName, dmgDesc))
+			user.SendTextLegacy(fmt.Sprintf(kickMsgs[util.Rand(len(kickMsgs))], targetName, dmgDesc))
 			if targetChar != nil {
-				targetChar.SendText(fmt.Sprintf(kickTargetMsgs[util.Rand(len(kickTargetMsgs))], user.Character.Name, dmgDesc))
+				targetChar.SendTextLegacy(fmt.Sprintf(kickTargetMsgs[util.Rand(len(kickTargetMsgs))], user.Character.Name, dmgDesc))
 			}
-			room.SendTextVisual(fmt.Sprintf(kickRoomMsgs[util.Rand(len(kickRoomMsgs))], user.Character.Name, targetName), user.UserId, res.Target.UserId)
+			room.SendTextVisualLegacy(fmt.Sprintf(kickRoomMsgs[util.Rand(len(kickRoomMsgs))], user.Character.Name, targetName), user.UserId, res.Target.UserId)
 		}
 	} else {
-		user.SendText(fmt.Sprintf(missMsgs[util.Rand(len(missMsgs))], targetName))
+		user.SendTextLegacy(fmt.Sprintf(missMsgs[util.Rand(len(missMsgs))], targetName))
 		if targetChar != nil {
-			targetChar.SendText(fmt.Sprintf(missTargetMsgs[util.Rand(len(missTargetMsgs))], user.Character.Name))
+			targetChar.SendTextLegacy(fmt.Sprintf(missTargetMsgs[util.Rand(len(missTargetMsgs))], user.Character.Name))
 		}
-		room.SendTextVisual(fmt.Sprintf(missRoomMsgs[util.Rand(len(missRoomMsgs))], user.Character.Name, targetName), user.UserId, res.Target.UserId)
+		room.SendTextVisualLegacy(fmt.Sprintf(missRoomMsgs[util.Rand(len(missRoomMsgs))], user.Character.Name, targetName), user.UserId, res.Target.UserId)
 	}
 
 	return true, nil

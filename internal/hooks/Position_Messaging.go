@@ -157,7 +157,7 @@ func sendCharacterMsg(c *characters.Character, selfMsg, roomMsg string) {
 	if u := userForCharacter(c); u != nil {
 		excludeId = u.UserId
 		if selfMsg != "" {
-			u.SendText(selfMsg)
+			u.SendTextLegacy(selfMsg)
 		}
 	}
 	if roomMsg == "" {
@@ -168,9 +168,9 @@ func sendCharacterMsg(c *characters.Character, selfMsg, roomMsg string) {
 		return
 	}
 	if excludeId > 0 {
-		r.SendText(roomMsg, excludeId)
+		r.SendTextLegacy(roomMsg, excludeId)
 	} else {
-		r.SendText(roomMsg)
+		r.SendTextLegacy(roomMsg)
 	}
 }
 
@@ -224,13 +224,13 @@ func sendSubmissionTriple(
 	var excludeIds []int
 	if ua := userForCharacter(attempter); ua != nil {
 		if atkMsg != "" {
-			ua.SendText(atkMsg)
+			ua.SendTextLegacy(atkMsg)
 		}
 		excludeIds = append(excludeIds, ua.UserId)
 	}
 	if ur := userForCharacter(recipient); ur != nil {
 		if tgtMsg != "" {
-			ur.SendText(tgtMsg)
+			ur.SendTextLegacy(tgtMsg)
 		}
 		excludeIds = append(excludeIds, ur.UserId)
 	}
@@ -244,11 +244,11 @@ func sendSubmissionTriple(
 	}
 	switch len(excludeIds) {
 	case 0:
-		r.SendText(roomMsg)
+		r.SendTextLegacy(roomMsg)
 	case 1:
-		r.SendText(roomMsg, excludeIds[0])
+		r.SendTextLegacy(roomMsg, excludeIds[0])
 	default:
-		r.SendText(roomMsg, excludeIds[0], excludeIds[1])
+		r.SendTextLegacy(roomMsg, excludeIds[0], excludeIds[1])
 	}
 }
 

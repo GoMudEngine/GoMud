@@ -13,29 +13,29 @@ import (
 func Reply(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	if user.LastWhisperFrom == 0 {
-		user.SendText("No one has whispered to you recently.")
+		user.SendTextLegacy("No one has whispered to you recently.")
 		return true, nil
 	}
 
 	if rest == "" {
-		user.SendText("Reply with what?")
+		user.SendTextLegacy("Reply with what?")
 		return true, nil
 	}
 
 	targetUser := users.GetByUserId(user.LastWhisperFrom)
 	if targetUser == nil {
-		user.SendText("That person is no longer online.")
+		user.SendTextLegacy("That person is no longer online.")
 		user.LastWhisperFrom = 0
 		return true, nil
 	}
 
 	replyMsg := fmt.Sprintf(`<ansi fg="white">***</ansi> <ansi fg="black-bold"><ansi fg="username">%s</ansi> whispers, "%s"</ansi> <ansi fg="white">***</ansi>`, user.Character.Name, rest)
-	targetUser.SendText(util.SplitStringNL(replyMsg, 80))
+	targetUser.SendTextLegacy(util.SplitStringNL(replyMsg, 80))
 
 	// Track reply chain — target can reply back
 	targetUser.LastWhisperFrom = user.UserId
 
-	user.SendText(
+	user.SendTextLegacy(
 		fmt.Sprintf(`You sent a <ansi fg="command">whisper</ansi> to <ansi fg="username">%s</ansi>`, targetUser.Character.Name),
 	)
 

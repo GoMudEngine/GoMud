@@ -21,25 +21,25 @@ import (
 func SonicShout(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	if !mutations.HasMutation(user.Character.Mutations, "sonic-shout") {
-		user.SendText("You don't have that ability.")
+		user.SendTextLegacy("You don't have that ability.")
 		return true, nil
 	}
 
 	if !user.Character.IsInCombat() {
-		user.SendText("You must be in combat to use sonic shout!")
+		user.SendTextLegacy("You must be in combat to use sonic shout!")
 		return true, nil
 	}
 
 	cfg := configs.GetBalanceConfig()
 	if !user.Character.Cooldowns.Try("special-move", fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
-		user.SendText("You need a moment to recover before attempting another special move.")
+		user.SendTextLegacy("You need a moment to recover before attempting another special move.")
 		return true, nil
 	}
 
 	// Stamina cost
 	staminaCost := 15
 	if user.Character.Stamina < staminaCost {
-		user.SendText("You're too exhausted to muster a sonic shout!")
+		user.SendTextLegacy("You're too exhausted to muster a sonic shout!")
 		return true, nil
 	}
 	user.Character.Stamina -= staminaCost
@@ -51,8 +51,8 @@ func SonicShout(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 		baseDamage = 1
 	}
 
-	user.SendText(`<ansi fg="magenta-bold">You unleash a devastating sonic shout that reverberates through the room!</ansi>`)
-	room.SendTextVisual(
+	user.SendTextLegacy(`<ansi fg="magenta-bold">You unleash a devastating sonic shout that reverberates through the room!</ansi>`)
+	room.SendTextVisualLegacy(
 		fmt.Sprintf(`<ansi fg="magenta-bold"><ansi fg="username">%s</ansi> unleashes a devastating sonic shout!</ansi>`, user.Character.Name),
 		user.UserId,
 	)
@@ -79,7 +79,7 @@ func SonicShout(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 					state.TransitionReason{Trigger: position.TriggerKnockdownFaceForward},
 				)
 			}
-			user.SendText(fmt.Sprintf(`The shout staggers <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%s</ansi>)`,
+			user.SendTextLegacy(fmt.Sprintf(`The shout staggers <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%s</ansi>)`,
 				mob.Character.Name, combat.GetDamageDescription(baseDamage, mob.Character.HealthMax.Value)))
 		}
 		// Stage 30.1: Record combat analytics per target
@@ -92,7 +92,7 @@ func SonicShout(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 	// Self-deafen: reduced perception for 3 rounds
 	user.Character.AddCondition(characters.ConditionBlinded, 3, 0.7, "sonic-shout self-deafen")
-	user.SendText(`<ansi fg="yellow">The echoes leave your own senses ringing!</ansi>`)
+	user.SendTextLegacy(`<ansi fg="yellow">The echoes leave your own senses ringing!</ansi>`)
 
 	events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.UnarmedCombat, Details: "sonic-shout"})
 

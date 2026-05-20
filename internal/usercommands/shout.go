@@ -16,7 +16,7 @@ import (
 func Shout(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	if user.Muted {
-		user.SendText(`You are <ansi fg="alert-5">MUTED</ansi>. You can only send <ansi fg="command">whisper</ansi>'s to Admins and Moderators.`)
+		user.SendTextLegacy(`You are <ansi fg="alert-5">MUTED</ansi>. You can only send <ansi fg="command">whisper</ansi>'s to Admins and Moderators.`)
 		return true, nil
 	}
 
@@ -77,7 +77,7 @@ func Shout(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	selfMsg := fmt.Sprintf(`You shout, "<ansi fg="yellow">%s</ansi>"`, rest)
-	user.SendText(util.SplitStringNL(selfMsg, 80))
+	user.SendTextLegacy(util.SplitStringNL(selfMsg, 80))
 
 	return true, nil
 }

@@ -13,24 +13,24 @@ import (
 func Mutations(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	if len(user.Character.Mutations) == 0 {
-		user.SendText(`<ansi fg="magenta">The Chrysalis has not yet reshaped you. No mutations have emerged.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="magenta">The Chrysalis has not yet reshaped you. No mutations have emerged.</ansi>`)
 		return true, nil
 	}
 
-	user.SendText(``)
-	user.SendText(`<ansi fg="magenta"> .:. <ansi fg="yellow">Your Mutations</ansi> .:.</ansi>`)
-	user.SendText(``)
+	user.SendTextLegacy(``)
+	user.SendTextLegacy(`<ansi fg="magenta"> .:. <ansi fg="yellow">Your Mutations</ansi> .:.</ansi>`)
+	user.SendTextLegacy(``)
 
 	for mutId, level := range user.Character.Mutations {
 		spec := mutations.GetMutation(mutId)
 		if spec == nil {
-			user.SendText(fmt.Sprintf(`  <ansi fg="yellow">%s</ansi> (Level %d)  <ansi fg="red">[data missing]</ansi>`, mutId, level))
+			user.SendTextLegacy(fmt.Sprintf(`  <ansi fg="yellow">%s</ansi> (Level %d)  <ansi fg="red">[data missing]</ansi>`, mutId, level))
 			continue
 		}
-		user.SendText(fmt.Sprintf(`  <ansi fg="yellow">%s</ansi> <ansi fg="magenta">(Level %d)</ansi>`, spec.Name, level))
-		user.SendText(fmt.Sprintf(`    <ansi fg="white">%s</ansi>`, spec.Description))
+		user.SendTextLegacy(fmt.Sprintf(`  <ansi fg="yellow">%s</ansi> <ansi fg="magenta">(Level %d)</ansi>`, spec.Name, level))
+		user.SendTextLegacy(fmt.Sprintf(`    <ansi fg="white">%s</ansi>`, spec.Description))
 	}
 
-	user.SendText(``)
+	user.SendTextLegacy(``)
 	return true, nil
 }

@@ -27,18 +27,18 @@ func Use(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		if len(container.Recipes) > 0 {
 
 			if container.Lock.IsLocked() {
-				user.SendText(``)
-				user.SendText(fmt.Sprintf(`The <ansi fg="container">%s</ansi> is locked.`, containerName))
-				user.SendText(``)
+				user.SendTextLegacy(``)
+				user.SendTextLegacy(fmt.Sprintf(`The <ansi fg="container">%s</ansi> is locked.`, containerName))
+				user.SendTextLegacy(``)
 				return true, nil
 			}
 
 			recipeReadyItemId := container.RecipeReady()
 
 			if recipeReadyItemId == 0 {
-				user.SendText("")
-				user.SendText(fmt.Sprintf(`The <ansi fg="container">%s</ansi> seems to be missing something.`, containerName))
-				user.SendText("")
+				user.SendTextLegacy("")
+				user.SendTextLegacy(fmt.Sprintf(`The <ansi fg="container">%s</ansi> seems to be missing something.`, containerName))
+				user.SendTextLegacy("")
 				return true, nil
 			}
 
@@ -55,11 +55,11 @@ func Use(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 			room.PlaySound(`change`, `other`)
 
-			user.SendText(``)
-			user.SendText(fmt.Sprintf(`The <ansi fg="container">%s</ansi> produces a <ansi fg="itemname">%s</ansi>!`, containerName, newItem.DisplayName()))
-			user.SendText(``)
+			user.SendTextLegacy(``)
+			user.SendTextLegacy(fmt.Sprintf(`The <ansi fg="container">%s</ansi> produces a <ansi fg="itemname">%s</ansi>!`, containerName, newItem.DisplayName()))
+			user.SendTextLegacy(``)
 
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> does something with the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName), user.UserId)
+			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> does something with the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName), user.UserId)
 
 			return true, nil
 
@@ -71,21 +71,21 @@ func Use(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	matchItem, found := user.Character.FindInBackpack(rest)
 
 	if !found {
-		user.SendText(fmt.Sprintf(`You don't have a "%s" to use.`, rest))
+		user.SendTextLegacy(fmt.Sprintf(`You don't have a "%s" to use.`, rest))
 	} else {
 
 		itemSpec := matchItem.GetSpec()
 
 		if itemSpec.Subtype != items.Usable {
-			user.SendText(
+			user.SendTextLegacy(
 				fmt.Sprintf(`You can't use <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()))
 			return true, nil
 		}
 
 		user.Character.CancelBuffsWithFlag(buffs.Hidden)
 
-		user.SendText(fmt.Sprintf(`You use the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()))
-		room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses their <ansi fg="itemname">%s</ansi>.`, user.Character.Name, matchItem.DisplayName()), user.UserId)
+		user.SendTextLegacy(fmt.Sprintf(`You use the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()))
+		room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses their <ansi fg="itemname">%s</ansi>.`, user.Character.Name, matchItem.DisplayName()), user.UserId)
 
 		// YAML-driven use effects (replaces JS onUse for simple items)
 		if itemSpec.OnUseTrainSkill != "" {
@@ -95,10 +95,10 @@ func Use(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			}
 			user.Character.TrainSkill(itemSpec.OnUseTrainSkill, trainAmount)
 			if itemSpec.OnUseUserText != "" {
-				user.SendText(itemSpec.OnUseUserText)
+				user.SendTextLegacy(itemSpec.OnUseUserText)
 			}
 			if itemSpec.OnUseRoomText != "" {
-				room.SendTextVisual(itemSpec.OnUseRoomText, user.UserId)
+				room.SendTextVisualLegacy(itemSpec.OnUseRoomText, user.UserId)
 			}
 		}
 

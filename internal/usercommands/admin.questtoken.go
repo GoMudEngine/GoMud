@@ -25,7 +25,7 @@ func QuestToken(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	if len(args) == 0 {
 		// send some sort of help info?
 		infoOutput, _ := templates.Process("admincommands/help/command.questtoken", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 	} else if args[0] == "list" {
 
 		allTokens := user.Character.GetQuestProgress()
@@ -52,7 +52,7 @@ func QuestToken(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 		searchResultsTable := templates.GetTable("Quest Tokens", headers, rows)
 		tplTxt, _ := templates.Process("tables/generic", searchResultsTable, user.UserId)
-		user.SendText(tplTxt)
+		user.SendTextLegacy(tplTxt)
 
 	} else if args[0] == "all" {
 
@@ -74,7 +74,7 @@ func QuestToken(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 		searchResultsTable := templates.GetTable("Quest Tokens", headers, rows)
 		tplTxt, _ := templates.Process("tables/generic", searchResultsTable, user.UserId)
-		user.SendText(tplTxt)
+		user.SendTextLegacy(tplTxt)
 
 	} else if args[0] == "flags" {
 
@@ -92,22 +92,22 @@ func QuestToken(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 		searchResultsTable := templates.GetTable("Quest Flags", headers, rows)
 		tplTxt, _ := templates.Process("tables/generic", searchResultsTable, user.UserId)
-		user.SendText(tplTxt)
+		user.SendTextLegacy(tplTxt)
 
 	} else if args[0] == "flag" {
 
 		if len(args) < 2 {
-			user.SendText("Usage: questtoken flag <key> [value]")
+			user.SendTextLegacy("Usage: questtoken flag <key> [value]")
 		} else if len(args) == 2 {
 			val := user.Character.GetQuestFlag(args[1])
 			if val == "" {
-				user.SendText(fmt.Sprintf("Flag %q is not set.", args[1]))
+				user.SendTextLegacy(fmt.Sprintf("Flag %q is not set.", args[1]))
 			} else {
-				user.SendText(fmt.Sprintf("Flag %q = %q", args[1], val))
+				user.SendTextLegacy(fmt.Sprintf("Flag %q = %q", args[1], val))
 			}
 		} else {
 			user.Character.SetQuestFlag(args[1], args[2])
-			user.SendText(fmt.Sprintf("Set flag %q = %q", args[1], args[2]))
+			user.SendTextLegacy(fmt.Sprintf("Set flag %q = %q", args[1], args[2]))
 		}
 
 	} else {

@@ -61,7 +61,7 @@ func checkSpoiledGrenades(user *users.UserRecord, room *rooms.Room) {
 					dmg = 1
 				}
 				user.Character.Health -= dmg
-				user.SendText(fmt.Sprintf(
+				user.SendTextLegacy(fmt.Sprintf(
 					`<ansi fg="red-bold">A <ansi fg="itemname">%s</ansi> in your pack detonates! (%s)</ansi>`,
 					item.DisplayName(),
 					combat.GetDamageDescription(dmg, user.Character.HealthMax.Value)))
@@ -70,7 +70,7 @@ func checkSpoiledGrenades(user *users.UserRecord, room *rooms.Room) {
 				for _, buffId := range spec.BuffIds {
 					user.AddBuff(buffId, "grenade-accident")
 				}
-				user.SendText(fmt.Sprintf(
+				user.SendTextLegacy(fmt.Sprintf(
 					`<ansi fg="red-bold">A <ansi fg="itemname">%s</ansi> in your pack goes off!</ansi>`,
 					item.DisplayName()))
 			}
@@ -87,12 +87,12 @@ func checkSpoiledGrenades(user *users.UserRecord, room *rooms.Room) {
 	if detonated > 0 || fizzled > 0 {
 		user.Character.Items = remaining
 		if fizzled > 0 {
-			user.SendText(fmt.Sprintf(
+			user.SendTextLegacy(fmt.Sprintf(
 				`<ansi fg="yellow">%d grenade(s) have destabilized and dissolved into putrid residue.</ansi>`,
 				fizzled))
 		}
 		if room != nil {
-			room.SendTextVisual(
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> fumbles with something in their pack...`,
 					user.Character.Name),
 				user.UserId)
@@ -459,7 +459,7 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 	}
 
 	tplTxt, _ := templates.Process("character/inventory", invData, user.UserId)
-	user.SendText(tplTxt)
+	user.SendTextLegacy(tplTxt)
 
 	return true, nil
 }

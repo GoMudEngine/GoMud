@@ -23,7 +23,7 @@ func Mudmail(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		if len(args) < 2 {
 			// send some sort of help info?
 			infoOutput, _ := templates.Process("admincommands/help/command.mudmail", nil, user.UserId)
-			user.SendText(infoOutput)
+			user.SendTextLegacy(infoOutput)
 			return true, nil
 		}
 	*/
@@ -31,7 +31,7 @@ func Mudmail(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	// Get if already exists, otherwise create new
 	cmdPrompt, isNew := user.StartPrompt(`mudmail`, rest)
 	if isNew {
-		user.SendText(fmt.Sprintf(`Starting a new mud mail...%s`, term.CRLFStr))
+		user.SendTextLegacy(fmt.Sprintf(`Starting a new mud mail...%s`, term.CRLFStr))
 	}
 
 	msg := users.Message{
@@ -47,7 +47,7 @@ func Mudmail(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	}
 
 	if question.Response == `` {
-		user.SendText(`Some name must be provided.`)
+		user.SendTextLegacy(`Some name must be provided.`)
 		question.RejectResponse()
 		return true, nil
 	}
@@ -91,7 +91,7 @@ func Mudmail(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		if itemAttached, found := user.Character.FindInBackpack(question.Response); found {
 			msg.Item = &itemAttached
 		} else {
-			user.SendText(`Could not find item: ` + question.Response)
+			user.SendTextLegacy(`Could not find item: ` + question.Response)
 			question.RejectResponse()
 			return true, nil
 		}
@@ -104,7 +104,7 @@ func Mudmail(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	if !question.Done {
 
 		tplTxt, _ := templates.Process("mail/message", msg, user.UserId)
-		user.SendText(tplTxt)
+		user.SendTextLegacy(tplTxt)
 
 		return true, nil
 	}
@@ -112,7 +112,7 @@ func Mudmail(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	user.ClearPrompt()
 
 	if question.Response[0:1] != `Y` {
-		user.SendText(`Okay! Cancelling mass mail.`)
+		user.SendTextLegacy(`Okay! Cancelling mass mail.`)
 		return true, nil
 	}
 
@@ -128,8 +128,8 @@ func Mudmail(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		u.Command(`inbox check`)
 	}
 
-	user.SendText(``)
-	user.SendText(`<ansi fg="alert-5">Message SENT!</ansi>`)
-	user.SendText(``)
+	user.SendTextLegacy(``)
+	user.SendTextLegacy(`<ansi fg="alert-5">Message SENT!</ansi>`)
+	user.SendTextLegacy(``)
 	return true, nil
 }

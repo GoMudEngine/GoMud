@@ -33,7 +33,7 @@ func Motd(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 	output += ` ╚══════════════════════════════════════════════════════════════════════════════╝</ansi>` + "\n"
 
-	user.SendText(output)
+	user.SendTextLegacy(output)
 
 	return true, nil
 }

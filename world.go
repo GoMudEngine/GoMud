@@ -993,7 +993,7 @@ func (w *World) processInput(userId int, inputText string, flags events.EventFla
 
 			badinputtracker.TrackBadCommand(command, remains)
 
-			user.SendText(fmt.Sprintf(`<ansi fg="command">%s</ansi> not recognized. Type <ansi fg="command">help</ansi> for commands.`, command))
+			user.SendTextLegacy(fmt.Sprintf(`<ansi fg="command">%s</ansi> not recognized. Type <ansi fg="command">help</ansi> for commands.`, command))
 			user.Command(`emote @looks a little confused`)
 		}
 	}

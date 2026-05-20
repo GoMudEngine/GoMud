@@ -19,7 +19,7 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) == 0 {
-		user.SendText(`Drop what?`)
+		user.SendTextLegacy(`Drop what?`)
 
 		return true, nil
 	}
@@ -48,19 +48,19 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		g, _ := strconv.ParseInt(args[0], 10, 32)
 		dropAmt := int(g)
 		if dropAmt < 1 {
-			user.SendText("Oops!")
+			user.SendTextLegacy("Oops!")
 			return true, nil
 		}
 
 		if dropAmt > user.Character.Gold {
-			user.SendText(fmt.Sprintf("You don't have %d gold to drop.", dropAmt))
+			user.SendTextLegacy(fmt.Sprintf("You don't have %d gold to drop.", dropAmt))
 			return true, nil
 		}
 
 		user.Character.CancelBuffsWithFlag(buffs.Hidden)
 
 		if err := actions.FloorDropGold(dropAmt, user.Character, room); err != nil {
-			user.SendText("Oops!")
+			user.SendTextLegacy("Oops!")
 			return true, nil
 		}
 
@@ -69,10 +69,10 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			GoldChange: -dropAmt,
 		})
 
-		user.SendText(
+		user.SendTextLegacy(
 			fmt.Sprintf(`You drop <ansi fg="gold">%d gold</ansi> on the floor.`, dropAmt),
 		)
-		room.SendTextVisual(
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> drops <ansi fg="gold">%d gold</ansi>.`, user.Character.Name, dropAmt),
 			user.UserId,
 		)
@@ -94,10 +94,10 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			dropped++
 		}
 		if dropped == 0 {
-			user.SendText(fmt.Sprintf(`You don't have any "%s" to drop.`, itemName))
+			user.SendTextLegacy(fmt.Sprintf(`You don't have any "%s" to drop.`, itemName))
 		} else {
-			user.SendText(fmt.Sprintf(`You drop %d item(s).`, dropped))
-			room.SendTextVisual(
+			user.SendTextLegacy(fmt.Sprintf(`You drop %d item(s).`, dropped))
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> drops some items.`, user.Character.Name),
 				user.UserId,
 			)
@@ -110,23 +110,23 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	result := actions.DropItem(actor, rest)
 
 	if !result.Found {
-		user.SendText(fmt.Sprintf("You don't have a %s to drop.", rest))
+		user.SendTextLegacy(fmt.Sprintf("You don't have a %s to drop.", rest))
 	} else {
 		user.Character.CancelBuffsWithFlag(buffs.Hidden)
 
 		iSpec := result.Item.GetSpec()
 
-		user.SendText(
+		user.SendTextLegacy(
 			fmt.Sprintf(`You drop the <ansi fg="item">%s</ansi>.`, result.Item.DisplayName()),
 		)
-		room.SendTextVisual(
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> drops their <ansi fg="item">%s</ansi>...`, user.Character.Name, result.Item.DisplayName()),
 			user.UserId,
 		)
 
 		// If grenades are dropped, they explode and affect everyone in the room!
 		if iSpec.Type == items.Grenade {
-			user.SendText(`Todo. Grenades disabled for now.`)
+			user.SendTextLegacy(`Todo. Grenades disabled for now.`)
 		}
 	}
 

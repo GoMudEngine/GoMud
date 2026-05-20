@@ -108,7 +108,7 @@ func Online(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	onlineResultsTable := templates.GetTable(tableTitle, headers, rows, allFormatting...)
 	tplTxt, _ := templates.Process("tables/generic", onlineResultsTable, user.UserId)
-	user.SendText(tplTxt)
+	user.SendTextLegacy(tplTxt)
 
 	return true, nil
 }

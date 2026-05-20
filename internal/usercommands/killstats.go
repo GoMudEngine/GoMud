@@ -123,9 +123,9 @@ func Killstats(rest string, user *users.UserRecord, room *rooms.Room, flags even
 	searchResultsTable := templates.GetTable(tableTitle+` by `+strings.Title(rest), headers, rows, formatting)
 	tplTxt, _ := templates.Process("tables/generic", searchResultsTable, user.UserId)
 	tplTxt += fmt.Sprintf("Also try: %s\n", strings.Join(otherSuggestions, `, `))
-	user.SendText(tplTxt)
+	user.SendTextLegacy(tplTxt)
 
-	//user.SendText(fmt.Sprintf(`Also try: %s`, strings.Join(otherSuggestions, `, `)))
+	//user.SendTextLegacy(fmt.Sprintf(`Also try: %s`, strings.Join(otherSuggestions, `, `)))
 
 	return true, nil
 }

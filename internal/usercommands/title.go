@@ -125,7 +125,7 @@ func Title(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	titleTxt, _ := templates.Process("character/title", data, user.UserId)
-	user.SendText(titleTxt)
+	user.SendTextLegacy(titleTxt)
 
 	return true, nil
 }

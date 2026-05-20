@@ -14,7 +14,7 @@ func Stash(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	matchItem, found := user.Character.FindInBackpack(rest)
 
 	if !found {
-		user.SendText(fmt.Sprintf("You don't have a %s to stash.", rest))
+		user.SendTextLegacy(fmt.Sprintf("You don't have a %s to stash.", rest))
 	} else {
 		// Swap the item location
 
@@ -31,11 +31,11 @@ func Stash(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 		isSneaking := user.Character.IsHidden()
 
-		user.SendText(
+		user.SendTextLegacy(
 			fmt.Sprintf(`You stash the <ansi fg="itemname">%s</ansi>. To get it back, try <ansi fg="command">get %s from stash</ansi>`, matchItem.DisplayName(), matchItem.DisplayName()))
 
 		if !isSneaking {
-			room.SendTextVisual(
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> is attempting to look unsuspicious.`, user.Character.Name),
 				user.UserId)
 		}

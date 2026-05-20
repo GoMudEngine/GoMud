@@ -15,7 +15,7 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	// "vanish" which forces unconditional despawn.
 	if rest != `vanish` && mob.Character.HasBuffFlag(buffs.ReviveOnDeath) {
 		mob.Character.Health = mob.Character.HealthMax.Value
-		room.SendTextVisual(
+		room.SendTextVisualLegacy(
 			`<ansi fg="mobname">` + mob.Character.Name + `</ansi> is suddenly revived in a shower of sparks!`,
 		)
 		mob.Character.CancelBuffsWithFlag(buffs.ReviveOnDeath)

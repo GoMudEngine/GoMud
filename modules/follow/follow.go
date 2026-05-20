@@ -194,14 +194,14 @@ func (f *FollowModule) onNewRound(e events.Event) events.ListenerReturn {
 
 			// user doing the following? Tell both users
 			if followSourceUser != nil {
-				followTargetUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> stopped following you.`, followSourceUser.Character.Name))
-				followSourceUser.SendText(fmt.Sprintf(`You are no longer following <ansi fg="username">%s</ansi>.`, followTargetUser.Character.Name))
+				followTargetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> stopped following you.`, followSourceUser.Character.Name))
+				followSourceUser.SendTextLegacy(fmt.Sprintf(`You are no longer following <ansi fg="username">%s</ansi>.`, followTargetUser.Character.Name))
 				continue
 			}
 
 			// mob doing the following? tell the target user
 			if followSourceMob != nil {
-				followTargetUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> stopped following you.`, followSourceMob.Character.Name))
+				followTargetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> stopped following you.`, followSourceMob.Character.Name))
 				continue
 			}
 
@@ -213,7 +213,7 @@ func (f *FollowModule) onNewRound(e events.Event) events.ListenerReturn {
 
 			// user doing the following? Tell the following user
 			if followSourceUser != nil {
-				followSourceUser.SendText(fmt.Sprintf(`You are no longer following <ansi fg="mobname">%s</ansi>.`, followTargetMob.Character.Name))
+				followSourceUser.SendTextLegacy(fmt.Sprintf(`You are no longer following <ansi fg="mobname">%s</ansi>.`, followTargetMob.Character.Name))
 			}
 
 			continue
@@ -370,12 +370,12 @@ func (f *FollowModule) onPlayerDeath(e events.Event) events.ListenerReturn {
 func (f *FollowModule) followUserCommand(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	if rest == "" {
-		user.SendText(`Follow whom? Try <ansi fg="command">help command</ansi>`)
+		user.SendTextLegacy(`Follow whom? Try <ansi fg="command">help command</ansi>`)
 		return true, nil
 	}
 
 	if parties.Get(user.UserId) != nil {
-		user.SendText(`You can't use this command while in a party.`)
+		user.SendTextLegacy(`You can't use this command while in a party.`)
 		return true, nil
 	}
 
@@ -413,7 +413,7 @@ func (f *FollowModule) followUserCommand(rest string, user *users.UserRecord, ro
 	followCommandSource := followId{userId: user.UserId}
 
 	if followCommandTarget.userId == followCommandSource.userId {
-		user.SendText(`You can't target yourself.`)
+		user.SendTextLegacy(`You can't target yourself.`)
 		return true, nil
 	}
 
@@ -429,13 +429,13 @@ func (f *FollowModule) followUserCommand(rest string, user *users.UserRecord, ro
 				}
 
 				if followerUser := users.GetByUserId(fId.userId); followerUser != nil {
-					followerUser.SendText(fmt.Sprintf(`You are no longer following <ansi fg="username">%s</ansi>.`, user.Character.Name))
+					followerUser.SendTextLegacy(fmt.Sprintf(`You are no longer following <ansi fg="username">%s</ansi>.`, user.Character.Name))
 				}
 			}
 
 		}
 
-		user.SendText(fmt.Sprintf(`Nobody is following you.`))
+		user.SendTextLegacy(fmt.Sprintf(`Nobody is following you.`))
 
 		return true, nil
 	}
@@ -448,8 +448,8 @@ func (f *FollowModule) followUserCommand(rest string, user *users.UserRecord, ro
 		if wasFollowing.userId > 0 {
 
 			if followUser := users.GetByUserId(wasFollowing.userId); followUser != nil {
-				followUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> stopped following you.`, followUser.Character.Name))
-				user.SendText(fmt.Sprintf(`You are no longer following <ansi fg="username">%s</ansi>.`, followUser.Character.Name))
+				followUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> stopped following you.`, followUser.Character.Name))
+				user.SendTextLegacy(fmt.Sprintf(`You are no longer following <ansi fg="username">%s</ansi>.`, followUser.Character.Name))
 				return true, nil
 			}
 
@@ -458,13 +458,13 @@ func (f *FollowModule) followUserCommand(rest string, user *users.UserRecord, ro
 		if wasFollowing.mobInstanceId > 0 {
 
 			if followMob := mobs.GetInstance(wasFollowing.mobInstanceId); followMob != nil {
-				user.SendText(fmt.Sprintf(`You are no longer following <ansi fg="mobname">%s</ansi>.`, followMob.Character.Name))
+				user.SendTextLegacy(fmt.Sprintf(`You are no longer following <ansi fg="mobname">%s</ansi>.`, followMob.Character.Name))
 				return true, nil
 			}
 
 		}
 
-		user.SendText(`You aren't following anyone.`)
+		user.SendTextLegacy(`You aren't following anyone.`)
 
 		return true, nil
 	}
@@ -476,9 +476,9 @@ func (f *FollowModule) followUserCommand(rest string, user *users.UserRecord, ro
 
 		targetUser := users.GetByUserId(followCommandTarget.userId)
 
-		user.SendText(fmt.Sprintf(`You start following <ansi fg="username">%s</ansi>.`, targetUser.Character.Name))
+		user.SendTextLegacy(fmt.Sprintf(`You start following <ansi fg="username">%s</ansi>.`, targetUser.Character.Name))
 
-		targetUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is following you.`, user.Character.Name))
+		targetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> is following you.`, user.Character.Name))
 
 		return true, nil
 	}
@@ -489,12 +489,12 @@ func (f *FollowModule) followUserCommand(rest string, user *users.UserRecord, ro
 
 		f.startFollow(followCommandTarget, followCommandSource, followEndRound)
 
-		user.SendText(fmt.Sprintf(`You start following <ansi fg="mobname">%s</ansi>.`, targetMob.Character.Name))
+		user.SendTextLegacy(fmt.Sprintf(`You start following <ansi fg="mobname">%s</ansi>.`, targetMob.Character.Name))
 
 		return true, nil
 	}
 
-	user.SendText(`Follow whom?`)
+	user.SendTextLegacy(`Follow whom?`)
 
 	return true, nil
 }
@@ -554,7 +554,7 @@ func (f *FollowModule) followMobCommand(rest string, mob *mobs.Mob, room *rooms.
 				}
 
 				if followerUser := users.GetByUserId(fId.userId); followerUser != nil {
-					followerUser.SendText(fmt.Sprintf(`You are no longer following <ansi fg="mobname">%s</ansi>.`, mob.Character.Name))
+					followerUser.SendTextLegacy(fmt.Sprintf(`You are no longer following <ansi fg="mobname">%s</ansi>.`, mob.Character.Name))
 				}
 			}
 
@@ -572,7 +572,7 @@ func (f *FollowModule) followMobCommand(rest string, mob *mobs.Mob, room *rooms.
 		if wasFollowing.userId > 0 {
 
 			if followUser := users.GetByUserId(wasFollowing.userId); followUser != nil {
-				followUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> stopped following you.`, followUser.Character.Name))
+				followUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> stopped following you.`, followUser.Character.Name))
 				return true, nil
 			}
 
@@ -592,7 +592,7 @@ func (f *FollowModule) followMobCommand(rest string, mob *mobs.Mob, room *rooms.
 
 		targetUser := users.GetByUserId(followCommandTarget.userId)
 
-		targetUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is following you.`, mob.Character.Name))
+		targetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is following you.`, mob.Character.Name))
 
 		return true, nil
 	}

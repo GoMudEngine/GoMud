@@ -44,10 +44,10 @@ func Relationship(rest string, user *users.UserRecord, room *rooms.Room, flags e
 
 func relationshipUsage(user *users.UserRecord) {
 	if out, err := templates.Process("admincommands/help/command.relationship", nil, user.UserId); err == nil && strings.TrimSpace(out) != "" {
-		user.SendText(out)
+		user.SendTextLegacy(out)
 		return
 	}
-	user.SendText(
+	user.SendTextLegacy(
 		"Usage:\r\n" +
 			"  relationship show <mobId>\r\n" +
 			"  relationship between <mobIdA> <mobIdB>\r\n" +
@@ -66,12 +66,12 @@ func relationshipShow(args []string, user *users.UserRecord) (bool, error) {
 	}
 	mobId, err := strconv.Atoi(args[0])
 	if err != nil {
-		user.SendText(fmt.Sprintf("Bad mob id %q\r\n", args[0]))
+		user.SendTextLegacy(fmt.Sprintf("Bad mob id %q\r\n", args[0]))
 		return true, nil
 	}
 	rels := relationships.RelationsOf(mobId)
 	if len(rels) == 0 {
-		user.SendText(fmt.Sprintf("No relationships for mob %d.\r\n", mobId))
+		user.SendTextLegacy(fmt.Sprintf("No relationships for mob %d.\r\n", mobId))
 		return true, nil
 	}
 	var b strings.Builder
@@ -91,7 +91,7 @@ func relationshipShow(args []string, user *users.UserRecord) (bool, error) {
 		}
 		fmt.Fprintf(&b, "  %-12s → mob %d (%s)%s\r\n", typeLabel, r.Other, other, subLabel)
 	}
-	user.SendText(b.String())
+	user.SendTextLegacy(b.String())
 	return true, nil
 }
 
@@ -102,18 +102,18 @@ func relationshipBetween(args []string, user *users.UserRecord) (bool, error) {
 	}
 	a, err := strconv.Atoi(args[0])
 	if err != nil {
-		user.SendText(fmt.Sprintf("Bad mob id %q\r\n", args[0]))
+		user.SendTextLegacy(fmt.Sprintf("Bad mob id %q\r\n", args[0]))
 		return true, nil
 	}
 	b, err := strconv.Atoi(args[1])
 	if err != nil {
-		user.SendText(fmt.Sprintf("Bad mob id %q\r\n", args[1]))
+		user.SendTextLegacy(fmt.Sprintf("Bad mob id %q\r\n", args[1]))
 		return true, nil
 	}
 	aSide := relationships.RelationsBetween(a, b)
 	bSide := relationships.RelationsBetween(b, a)
 	if len(aSide) == 0 && len(bSide) == 0 {
-		user.SendText(fmt.Sprintf("No relationship between mob %d and mob %d.\r\n", a, b))
+		user.SendTextLegacy(fmt.Sprintf("No relationship between mob %d and mob %d.\r\n", a, b))
 		return true, nil
 	}
 	var sb strings.Builder
@@ -132,7 +132,7 @@ func relationshipBetween(args []string, user *users.UserRecord) (bool, error) {
 		}
 		fmt.Fprintf(&sb, "  %-12s (%d→%d%s)\r\n", r.Type, b, a, sub)
 	}
-	user.SendText(sb.String())
+	user.SendTextLegacy(sb.String())
 	return true, nil
 }
 
@@ -143,12 +143,12 @@ func relationshipAdd(args []string, user *users.UserRecord) (bool, error) {
 	}
 	a, err := strconv.Atoi(args[0])
 	if err != nil {
-		user.SendText(fmt.Sprintf("Bad mob id %q\r\n", args[0]))
+		user.SendTextLegacy(fmt.Sprintf("Bad mob id %q\r\n", args[0]))
 		return true, nil
 	}
 	b, err := strconv.Atoi(args[1])
 	if err != nil {
-		user.SendText(fmt.Sprintf("Bad mob id %q\r\n", args[1]))
+		user.SendTextLegacy(fmt.Sprintf("Bad mob id %q\r\n", args[1]))
 		return true, nil
 	}
 	t := relationships.Type(strings.ToLower(args[2]))
@@ -157,7 +157,7 @@ func relationshipAdd(args []string, user *users.UserRecord) (bool, error) {
 		subtype = strings.Join(args[3:], " ")
 	}
 	relationships.Add(a, b, t, subtype)
-	user.SendText(fmt.Sprintf("Added: %d → %d (%s).\r\n", a, b, t))
+	user.SendTextLegacy(fmt.Sprintf("Added: %d → %d (%s).\r\n", a, b, t))
 	return true, nil
 }
 
@@ -168,24 +168,24 @@ func relationshipRemove(args []string, user *users.UserRecord) (bool, error) {
 	}
 	a, err := strconv.Atoi(args[0])
 	if err != nil {
-		user.SendText(fmt.Sprintf("Bad mob id %q\r\n", args[0]))
+		user.SendTextLegacy(fmt.Sprintf("Bad mob id %q\r\n", args[0]))
 		return true, nil
 	}
 	b, err := strconv.Atoi(args[1])
 	if err != nil {
-		user.SendText(fmt.Sprintf("Bad mob id %q\r\n", args[1]))
+		user.SendTextLegacy(fmt.Sprintf("Bad mob id %q\r\n", args[1]))
 		return true, nil
 	}
 	t := relationships.Type(strings.ToLower(args[2]))
 	relationships.Remove(a, b, t)
-	user.SendText(fmt.Sprintf("Removed: %d → %d (%s).\r\n", a, b, t))
+	user.SendTextLegacy(fmt.Sprintf("Removed: %d → %d (%s).\r\n", a, b, t))
 	return true, nil
 }
 
 func relationshipList(user *users.UserRecord) (bool, error) {
 	all := relationships.AllRelations()
 	if len(all) == 0 {
-		user.SendText("Graph is empty.\r\n")
+		user.SendTextLegacy("Graph is empty.\r\n")
 		return true, nil
 	}
 	sort.Slice(all, func(i, j int) bool {
@@ -203,7 +203,7 @@ func relationshipList(user *users.UserRecord) (bool, error) {
 		}
 		fmt.Fprintf(&b, "  %4d → %4d  %-10s%s\r\n", e.Owner, e.Other, e.Type, sub)
 	}
-	user.SendText(b.String())
+	user.SendTextLegacy(b.String())
 	return true, nil
 }
 

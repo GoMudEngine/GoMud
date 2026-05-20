@@ -32,20 +32,20 @@ func Read(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	isSneaking := user.Character.IsHidden()
 
 	if len(foundItemName) == 0 {
-		user.SendText(fmt.Sprintf(`You don't have a "%s" that can be read.`, rest))
+		user.SendTextLegacy(fmt.Sprintf(`You don't have a "%s" that can be read.`, rest))
 	} else {
-		user.SendText(
+		user.SendTextLegacy(
 			fmt.Sprintf(`You look at <ansi fg="item">%s</ansi>...`, foundItemLongName),
 		)
 
 		if !isSneaking {
-			room.SendTextVisual(
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> looks at their <ansi fg="item">%s</ansi>...`, user.Character.Name, foundItemName),
 				user.UserId,
 			)
 		}
 
-		user.SendText(foundItemDescription)
+		user.SendTextLegacy(foundItemDescription)
 	}
 
 	return true, nil

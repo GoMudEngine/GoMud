@@ -20,29 +20,29 @@ func Reload(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	if rest == "" {
 		infoOutput, _ := templates.Process("admincommands/help/command.reload", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 		return true, nil
 	}
 
 	switch strings.ToLower(rest) {
 	case `items`:
 		items.LoadDataFiles()
-		user.SendText(`Items reloaded.`)
+		user.SendTextLegacy(`Items reloaded.`)
 	case `biomes`:
 		rooms.LoadBiomeDataFiles()
-		user.SendText(`Biomes reloaded.`)
+		user.SendTextLegacy(`Biomes reloaded.`)
 	case `translations`:
 		ok := language.ReloadTranslation()
 		if !ok {
-			user.SendText(`Translations reload failed.`)
+			user.SendTextLegacy(`Translations reload failed.`)
 		} else {
-			user.SendText(`Translations reloaded.`)
+			user.SendTextLegacy(`Translations reloaded.`)
 		}
 	case `mapcache`:
 		mapper.ClearCache()
-		user.SendText(`Mapper cache cleared. Next 'map' command will rebuild from current room data.`)
+		user.SendTextLegacy(`Mapper cache cleared. Next 'map' command will rebuild from current room data.`)
 	default:
-		user.SendText(`Unknown reload command.`)
+		user.SendTextLegacy(`Unknown reload command.`)
 	}
 	return true, nil
 }

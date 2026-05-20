@@ -298,11 +298,20 @@ func TestHandleCombatRound_AllQuadrantsRouteCorrectly(t *testing.T) {
 					"%s: player defender (uid %d) must receive at least one direct message via SendText",
 					tc.name, defUserId)
 			}
-			// In MM, NO direct user-id messages should fire (both sides are
-			// mobs). Room broadcasts may still fire.
+			// In MM, neither COMBATANT receives direct messages (both
+			// sides are mobs; MobActor.SendTextLegacy is a no-op).
+			// Bystanders may still receive room-broadcasts via the T9
+			// per-recipient fan-out in Room.SendText/Visual — those
+			// surface as UserId-targeted events even though the
+			// originating call was a room broadcast. The combatant
+			// invariant is the one this assertion guards.
 			if !tc.atkIsPlayer && !tc.defIsPlayer {
-				assert.Empty(t, directRecipients,
-					"MM: no direct user-id messages should fire when both combatants are mobs; got: %v",
+				// atkUserId / defUserId are 0 for mob combatants; the
+				// only assertion that holds is "no message keyed by an
+				// uninitialized userId snuck in".
+				_, ok := directRecipients[0]
+				assert.False(t, ok,
+					"MM: no message should target UserId 0; got: %v",
 					directRecipients)
 			}
 

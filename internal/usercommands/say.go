@@ -15,7 +15,7 @@ import (
 func Say(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	if user.Muted {
-		user.SendText(`You are <ansi fg="alert-5">MUTED</ansi>. You can only send <ansi fg="command">whisper</ansi>'s to Admins and Moderators.`)
+		user.SendTextLegacy(`You are <ansi fg="alert-5">MUTED</ansi>. You can only send <ansi fg="command">whisper</ansi>'s to Admins and Moderators.`)
 		return true, nil
 	}
 
@@ -30,7 +30,7 @@ func Say(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	room.SendTextCommunication(roomMsg, user.UserId)
 
 	selfMsg := fmt.Sprintf(`You say, "<ansi fg="saytext">%s</ansi>"`, result.Text)
-	user.SendText(util.SplitStringNL(selfMsg, 80))
+	user.SendTextLegacy(util.SplitStringNL(selfMsg, 80))
 
 	return true, nil
 }

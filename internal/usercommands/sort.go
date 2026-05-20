@@ -19,7 +19,7 @@ func Sort(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	if !hasBag && !hasBandolier {
-		user.SendText(`You don't have a component bag or bandolier equipped.`)
+		user.SendTextLegacy(`You don't have a component bag or bandolier equipped.`)
 		return true, nil
 	}
 
@@ -34,7 +34,7 @@ func Sort(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	if materialsMoved == 0 && potionsMoved == 0 {
-		user.SendText(`No items found to sort.`)
+		user.SendTextLegacy(`No items found to sort.`)
 		return true, nil
 	}
 
@@ -50,7 +50,7 @@ func Sort(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			potionsMoved, user.Character.Equipment.Belt.DisplayName()))
 	}
 
-	user.SendText(fmt.Sprintf(
+	user.SendTextLegacy(fmt.Sprintf(
 		`<ansi fg="green">Sorted %s.</ansi>`,
 		strings.Join(parts, " and ")))
 

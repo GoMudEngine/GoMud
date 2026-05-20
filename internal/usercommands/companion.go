@@ -26,11 +26,11 @@ func Companion(rest string, user *users.UserRecord,
 	// ── Form 1: no args → list ──────────────────────────────────────────────
 	if rest == "" {
 		if len(companions) == 0 {
-			user.SendText("You have no companions.")
+			user.SendTextLegacy("You have no companions.")
 			return true, nil
 		}
 
-		user.SendText(`<ansi fg="yellow">━━━ Companions ━━━</ansi>`)
+		user.SendTextLegacy(`<ansi fg="yellow">━━━ Companions ━━━</ansi>`)
 		for _, comp := range companions {
 			mob := mobs.GetInstance(comp.InstanceId)
 
@@ -40,7 +40,7 @@ func Companion(rest string, user *users.UserRecord,
 			}
 
 			if mob == nil {
-				user.SendText(fmt.Sprintf(
+				user.SendTextLegacy(fmt.Sprintf(
 					`  <ansi fg="mobname">%s</ansi> [%s] `+
 						`<ansi fg="239">[offline]</ansi> `+
 						`(assist: %s)`,
@@ -65,16 +65,16 @@ func Companion(rest string, user *users.UserRecord,
 				0,
 			)
 
-			user.SendText(fmt.Sprintf(
+			user.SendTextLegacy(fmt.Sprintf(
 				`  <ansi fg="mobname">%s</ansi> [%s] (assist: %s)`,
 				comp.Name, comp.SourceType, assistStr,
 			))
-			user.SendText(fmt.Sprintf(
+			user.SendTextLegacy(fmt.Sprintf(
 				`    HP: %s  SP: %s  CP: %s`,
 				hpBar, spBar, cpBar,
 			))
 			if mutList := formatCompanionMutations(mob.Character.Mutations); mutList != "" {
-				user.SendText(fmt.Sprintf(`    Mutations: %s`, mutList))
+				user.SendTextLegacy(fmt.Sprintf(`    Mutations: %s`, mutList))
 			}
 		}
 		return true, nil
@@ -101,7 +101,7 @@ func Companion(rest string, user *users.UserRecord,
 
 	comp := user.Character.GetCompanion(compName)
 	if comp == nil {
-		user.SendText(fmt.Sprintf(
+		user.SendTextLegacy(fmt.Sprintf(
 			`You have no companion named "%s".`, compName,
 		))
 		return true, nil
@@ -110,7 +110,7 @@ func Companion(rest string, user *users.UserRecord,
 	// ── Form 4: rename companion ─────────────────────────────────────────────
 	if renameNick != "" {
 		if err := validateCompanionName(renameNick); err != nil {
-			user.SendText(err.Error())
+			user.SendTextLegacy(err.Error())
 			return true, nil
 		}
 
@@ -129,7 +129,7 @@ func Companion(rest string, user *users.UserRecord,
 			mob.Character.Name = newDisplayName
 		}
 
-		user.SendText(fmt.Sprintf(
+		user.SendTextLegacy(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> is now known as `+
 				`<ansi fg="mobname">%s</ansi>.`,
 			oldName, newDisplayName,
@@ -144,7 +144,7 @@ func Companion(rest string, user *users.UserRecord,
 		if comp.AutoAssist {
 			stateStr = "on"
 		}
-		user.SendText(fmt.Sprintf(
+		user.SendTextLegacy(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s auto-assist is now `+
 				`<ansi fg="yellow">%s</ansi>.`,
 			comp.Name, stateStr,
@@ -160,19 +160,19 @@ func Companion(rest string, user *users.UserRecord,
 		assistStr = "on"
 	}
 
-	user.SendText(fmt.Sprintf(
+	user.SendTextLegacy(fmt.Sprintf(
 		`<ansi fg="yellow">━━━ %s [%s] ━━━</ansi>`,
 		comp.Name, comp.SourceType,
 	))
 
 	if mob == nil {
-		user.SendText(`  This companion is not currently present.`)
-		user.SendText(fmt.Sprintf(`  Auto-Assist: %s`, assistStr))
+		user.SendTextLegacy(`  This companion is not currently present.`)
+		user.SendTextLegacy(fmt.Sprintf(`  Auto-Assist: %s`, assistStr))
 		return true, nil
 	}
 
 	// Vitals descriptions (no hard numbers)
-	user.SendText(fmt.Sprintf(
+	user.SendTextLegacy(fmt.Sprintf(
 		`  Health: %-10s Stamina: %-10s Conviction: %s`,
 		vitalDesc(mob.Character.Health, mob.Character.HealthMax.Value),
 		vitalDesc(mob.Character.Stamina, mob.Character.StaminaMax.Value),
@@ -180,13 +180,13 @@ func Companion(rest string, user *users.UserRecord,
 	))
 
 	// Stat descriptions using the same tiers as the player status command
-	user.SendText(fmt.Sprintf(
+	user.SendTextLegacy(fmt.Sprintf(
 		`  <ansi fg="yellow">Strength:</ansi>   %-13s <ansi fg="yellow">Dexterity:</ansi>  %-13s <ansi fg="yellow">Perception:</ansi> %s`,
 		statQualityDesc(mob.Character.Stats.Strength.ValueAdj),
 		statQualityDesc(mob.Character.Stats.Dexterity.ValueAdj),
 		statQualityDesc(mob.Character.Stats.Perception.ValueAdj),
 	))
-	user.SendText(fmt.Sprintf(
+	user.SendTextLegacy(fmt.Sprintf(
 		`  <ansi fg="yellow">Vitality:</ansi>   %-13s <ansi fg="yellow">Willpower:</ansi>  %-13s <ansi fg="yellow">Charisma:</ansi>   %s`,
 		statQualityDesc(mob.Character.Stats.Vitality.ValueAdj),
 		statQualityDesc(mob.Character.Stats.Willpower.ValueAdj),
@@ -194,10 +194,10 @@ func Companion(rest string, user *users.UserRecord,
 	))
 
 	if mutList := formatCompanionMutations(mob.Character.Mutations); mutList != "" {
-		user.SendText(fmt.Sprintf(`  <ansi fg="yellow">Mutations:</ansi>  %s`, mutList))
+		user.SendTextLegacy(fmt.Sprintf(`  <ansi fg="yellow">Mutations:</ansi>  %s`, mutList))
 	}
 
-	user.SendText(fmt.Sprintf(`  Auto-Assist: %s`, assistStr))
+	user.SendTextLegacy(fmt.Sprintf(`  Auto-Assist: %s`, assistStr))
 
 	return true, nil
 }

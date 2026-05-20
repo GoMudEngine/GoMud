@@ -49,12 +49,12 @@ func handleCombatWaitRound(
 
 	for _, msg := range roundResult.MessagesToSource {
 		if attackerUser != nil {
-			attackerUser.SendText(msg)
+			attackerUser.SendTextLegacy(msg)
 		}
 	}
 	for _, msg := range roundResult.MessagesToTarget {
 		if defenderUser != nil {
-			defenderUser.SendText(msg)
+			defenderUser.SendTextLegacy(msg)
 		}
 	}
 	for _, msg := range roundResult.MessagesToSourceRoom {

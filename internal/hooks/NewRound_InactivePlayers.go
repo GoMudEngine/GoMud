@@ -48,7 +48,7 @@ func InactivePlayers(e events.Event) events.ListenerReturn {
 		// dies naturally when the portal expires and all players leave.
 
 		if li-cutoffRound == 5 {
-			user.SendText(`<ansi fg="203">WARNING:</ansi> <ansi fg="208">You are about to be kicked for inactivity!</ansi>`)
+			user.SendTextLegacy(`<ansi fg="203">WARNING:</ansi> <ansi fg="208">You are about to be kicked for inactivity!</ansi>`)
 		}
 
 		if li < cutoffRound {

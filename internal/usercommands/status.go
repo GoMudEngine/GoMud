@@ -10,7 +10,7 @@ import (
 func Status(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	tplTxt, _ := templates.Process("character/status", user, user.UserId)
-	user.SendText(tplTxt)
+	user.SendTextLegacy(tplTxt)
 
 	return true, nil
 }

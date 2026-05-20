@@ -19,24 +19,24 @@ import (
 func ToxicBite(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	if !mutations.HasMutation(user.Character.Mutations, "toxic-bite") {
-		user.SendText("You don't have that ability.")
+		user.SendTextLegacy("You don't have that ability.")
 		return true, nil
 	}
 
 	if !user.Character.IsInCombat() {
-		user.SendText("You must be in combat to use toxic bite!")
+		user.SendTextLegacy("You must be in combat to use toxic bite!")
 		return true, nil
 	}
 
 	cfg := configs.GetBalanceConfig()
 	if !user.Character.Cooldowns.Try("special-move", fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
-		user.SendText("You need a moment to recover before attempting another special move.")
+		user.SendTextLegacy("You need a moment to recover before attempting another special move.")
 		return true, nil
 	}
 
 	staminaCost := 12
 	if user.Character.Stamina < staminaCost {
-		user.SendText("You're too exhausted!")
+		user.SendTextLegacy("You're too exhausted!")
 		return true, nil
 	}
 	user.Character.Stamina -= staminaCost
@@ -52,7 +52,7 @@ func ToxicBite(rest string, user *users.UserRecord, room *rooms.Room, flags even
 	if targetMobId > 0 {
 		targetMob = mobs.GetInstance(targetMobId)
 		if targetMob == nil {
-			user.SendText("Your target is gone!")
+			user.SendTextLegacy("Your target is gone!")
 			return true, nil
 		}
 		targetName = targetMob.Character.Name
@@ -60,13 +60,13 @@ func ToxicBite(rest string, user *users.UserRecord, room *rooms.Room, flags even
 	} else if targetPlayerId > 0 {
 		targetUser = users.GetByUserId(targetPlayerId)
 		if targetUser == nil {
-			user.SendText("Your target is gone!")
+			user.SendTextLegacy("Your target is gone!")
 			return true, nil
 		}
 		targetName = targetUser.Character.Name
 		targetMaxHP = targetUser.Character.HealthMax.Value
 	} else {
-		user.SendText("You have no target!")
+		user.SendTextLegacy("You have no target!")
 		return true, nil
 	}
 
@@ -108,15 +108,15 @@ func ToxicBite(rest string, user *users.UserRecord, room *rooms.Room, flags even
 			targetUser.Character.AddCondition(characters.ConditionPoisoned, 9, poisonDmg, "toxic-bite")
 		}
 
-		user.SendText(fmt.Sprintf(`<ansi fg="green-bold">You sink your toxic fangs into <ansi fg="mobname">%s</ansi>! Venom courses into the wound. (<ansi fg="damage">%s</ansi>)</ansi>`,
+		user.SendTextLegacy(fmt.Sprintf(`<ansi fg="green-bold">You sink your toxic fangs into <ansi fg="mobname">%s</ansi>! Venom courses into the wound. (<ansi fg="damage">%s</ansi>)</ansi>`,
 			targetName, combat.GetDamageDescription(biteDamage, targetMaxHP)))
 		if targetPlayerId > 0 {
 			if tUser := users.GetByUserId(targetPlayerId); tUser != nil {
-				tUser.SendText(fmt.Sprintf(`<ansi fg="red"><ansi fg="username">%s</ansi> bites you with venomous fangs! You feel poison spreading! (<ansi fg="damage">%s</ansi>)</ansi>`,
+				tUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="red"><ansi fg="username">%s</ansi> bites you with venomous fangs! You feel poison spreading! (<ansi fg="damage">%s</ansi>)</ansi>`,
 					user.Character.Name, combat.GetDamageDescription(biteDamage, targetMaxHP)))
 			}
 		}
-		room.SendTextVisual(
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> bites <ansi fg="mobname">%s</ansi> with venomous fangs!`, user.Character.Name, targetName),
 			user.UserId, targetPlayerId,
 		)
@@ -130,14 +130,14 @@ func ToxicBite(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		if user.Character.Health < 1 {
 			user.Character.Health = 0
 		}
-		user.SendText(fmt.Sprintf(`<ansi fg="red">Your toxic bite misses <ansi fg="mobname">%s</ansi> and you bite your own tongue! (<ansi fg="damage">%s</ansi>)</ansi>`,
+		user.SendTextLegacy(fmt.Sprintf(`<ansi fg="red">Your toxic bite misses <ansi fg="mobname">%s</ansi> and you bite your own tongue! (<ansi fg="damage">%s</ansi>)</ansi>`,
 			targetName, combat.GetDamageDescription(selfDamage, user.Character.HealthMax.Value)))
 		if targetPlayerId > 0 {
 			if tUser := users.GetByUserId(targetPlayerId); tUser != nil {
-				tUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> lunges to bite you, but misses!`, user.Character.Name))
+				tUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> lunges to bite you, but misses!`, user.Character.Name))
 			}
 		}
-		room.SendTextVisual(
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> lunges to bite <ansi fg="mobname">%s</ansi>, but misses and bites their own tongue!`, user.Character.Name, targetName),
 			user.UserId, targetPlayerId,
 		)

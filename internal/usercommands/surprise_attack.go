@@ -154,11 +154,11 @@ func executeSurpriseAttack(attacker *users.UserRecord, room *rooms.Room, targetM
 		roll := util.Rand(100)
 		if roll < penaltyPct {
 			// Missed this weapon swing due to penalty
-			attacker.SendText(
+			attacker.SendTextLegacy(
 				fmt.Sprintf(`<ansi fg="magenta-bold">*[SURPRISE ATTACK]*</ansi> You swing your <ansi fg="item">%s</ansi> at <ansi fg="mobname">%s</ansi> but miss!`,
 					w.name, targetName),
 			)
-			room.SendTextVisual(
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="magenta-bold">*[SURPRISE ATTACK]*</ansi> <ansi fg="username">%s</ansi> swings at %s from the shadows but misses!`,
 					attacker.Character.Name, targetName),
 				attacker.UserId,
@@ -196,18 +196,18 @@ func executeSurpriseAttack(attacker *users.UserRecord, room *rooms.Room, targetM
 
 		// Per-weapon hit message
 		dmgDesc := combat.GetDamageDescription(dmg, defenderMaxHP)
-		attacker.SendText(
+		attacker.SendTextLegacy(
 			fmt.Sprintf(`<ansi fg="magenta-bold">*[SURPRISE ATTACK]*</ansi> Your <ansi fg="item">%s</ansi> strikes <ansi fg="mobname">%s</ansi> from the shadows! (<ansi fg="damage">%s</ansi>)`,
 				w.name, targetName, dmgDesc),
 		)
-		room.SendTextVisual(
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(`<ansi fg="magenta-bold">*[SURPRISE ATTACK]*</ansi> <ansi fg="username">%s</ansi>'s <ansi fg="item">%s</ansi> strikes %s from the shadows!`,
 				attacker.Character.Name, w.name, targetName),
 			attacker.UserId,
 		)
 		if targetPlayerId > 0 {
 			if p := users.GetByUserId(targetPlayerId); p != nil {
-				p.SendText(
+				p.SendTextLegacy(
 					fmt.Sprintf(`<ansi fg="magenta-bold">*[SURPRISE ATTACK]*</ansi> <ansi fg="username">%s</ansi>'s <ansi fg="item">%s</ansi> strikes you from the shadows! (<ansi fg="damage">%s</ansi>)`,
 						attacker.Character.Name, w.name, dmgDesc),
 				)
@@ -217,11 +217,11 @@ func executeSurpriseAttack(attacker *users.UserRecord, room *rooms.Room, targetM
 
 	if !anyHit {
 		// All weapons missed — still reveal position
-		attacker.SendText(
+		attacker.SendTextLegacy(
 			fmt.Sprintf(`<ansi fg="magenta-bold">*[SURPRISE ATTACK]*</ansi> You lunge at <ansi fg="mobname">%s</ansi> from the shadows, but miss!`,
 				targetName),
 		)
-		room.SendTextVisual(
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(`<ansi fg="magenta-bold">*[SURPRISE ATTACK]*</ansi> <ansi fg="username">%s</ansi> lunges at %s from the shadows, but misses!`,
 				attacker.Character.Name, targetName),
 			attacker.UserId,

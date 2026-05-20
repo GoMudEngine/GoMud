@@ -19,7 +19,7 @@ type ConsiderResult struct {
 
 // Consider computes a power-ratio assessment of target from
 // actor's POV. For UserActor: also formats a colored prediction
-// string and calls actor.SendText(...). For MobActor: SendText
+// string and calls actor.SendTextLegacy(...). For MobActor: SendText
 // is a no-op (existing actor abstraction), so the math runs
 // silently. Triggers OnStatUse("perception") on the actor.
 func Consider(actor Actor, target Actor) ConsiderResult {
@@ -47,10 +47,10 @@ func Consider(actor Actor, target Actor) ConsiderResult {
 	if result.TargetIsPlayer {
 		considerType = "user"
 	}
-	actor.SendText(fmt.Sprintf(
+	actor.SendTextLegacy(fmt.Sprintf(
 		`You consider <ansi fg="%sname">%s</ansi>...`,
 		considerType, result.TargetName))
-	actor.SendText(fmt.Sprintf(
+	actor.SendTextLegacy(fmt.Sprintf(
 		`Your instincts tell you: %s`, predictionFor(result.Ratio)))
 
 	return result

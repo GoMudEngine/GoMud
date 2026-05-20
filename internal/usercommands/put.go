@@ -18,7 +18,7 @@ func Put(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) < 2 {
-		user.SendText("Place what where?")
+		user.SendTextLegacy("Place what where?")
 		return true, nil
 	}
 
@@ -31,7 +31,7 @@ func Put(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		nameSearch = args[i] + nameSearch
 
 		if room.MatchesSealedCrate(nameSearch) {
-			user.SendText(`The shipping crate is sealed; the caravan only lets through what they put in themselves.`)
+			user.SendTextLegacy(`The shipping crate is sealed; the caravan only lets through what they put in themselves.`)
 			return true, nil
 		}
 
@@ -50,21 +50,21 @@ func Put(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	}
 
 	if containerName == `` {
-		user.SendText(`No container found by that name`)
+		user.SendTextLegacy(`No container found by that name`)
 		return true, nil
 	}
 
 	container := room.Containers[containerName]
 
 	if container.Lock.IsLocked() {
-		user.SendText(``)
-		user.SendText(fmt.Sprintf(`The <ansi fg="container">%s</ansi> is locked.`, containerName))
-		user.SendText(``)
+		user.SendTextLegacy(``)
+		user.SendTextLegacy(fmt.Sprintf(`The <ansi fg="container">%s</ansi> is locked.`, containerName))
+		user.SendTextLegacy(``)
 		return true, nil
 	}
 
 	if len(args) < 1 {
-		user.SendText("Place what where?")
+		user.SendTextLegacy("Place what where?")
 		return true, nil
 	}
 
@@ -90,12 +90,12 @@ func Put(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	}
 
 	if !itemFound && goldAmt == 0 {
-		user.SendText(`You don't seem to be carrying that.`)
+		user.SendTextLegacy(`You don't seem to be carrying that.`)
 		return true, nil
 	}
 
 	if goldAmt > user.Character.Gold {
-		user.SendText(`You don't have that much gold.`)
+		user.SendTextLegacy(`You don't have that much gold.`)
 		return true, nil
 	}
 
@@ -108,8 +108,8 @@ func Put(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		})
 
 		container.Gold += goldAmt
-		user.SendText(fmt.Sprintf(`You place <ansi fg="gold">%d gold</ansi> into the <ansi fg="container">%s</ansi>`, goldAmt, containerName))
-		room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> places some <ansi fg="gold">gold</ansi> into the <ansi fg="container">%s</ansi>`, user.Character.Name, containerName), user.UserId)
+		user.SendTextLegacy(fmt.Sprintf(`You place <ansi fg="gold">%d gold</ansi> into the <ansi fg="container">%s</ansi>`, goldAmt, containerName))
+		room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> places some <ansi fg="gold">gold</ansi> into the <ansi fg="container">%s</ansi>`, user.Character.Name, containerName), user.UserId)
 	}
 
 	if itemFound {
@@ -123,8 +123,8 @@ func Put(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			Gained: false,
 		})
 
-		user.SendText(fmt.Sprintf(`You place your <ansi fg="itemname">%s</ansi> into the <ansi fg="container">%s</ansi>`, item.DisplayName(), containerName))
-		room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> places their <ansi fg="itemname">%s</ansi> into the <ansi fg="container">%s</ansi>`, user.Character.Name, item.DisplayName(), containerName), user.UserId)
+		user.SendTextLegacy(fmt.Sprintf(`You place your <ansi fg="itemname">%s</ansi> into the <ansi fg="container">%s</ansi>`, item.DisplayName(), containerName))
+		room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> places their <ansi fg="itemname">%s</ansi> into the <ansi fg="container">%s</ansi>`, user.Character.Name, item.DisplayName(), containerName), user.UserId)
 
 		// Enforce container size limits
 
@@ -143,7 +143,7 @@ func Put(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			}
 
 			container.RemoveItem(oopsItem)
-			room.SendTextVisual(fmt.Sprintf(`The <ansi fg="container">%s</ansi> is too full and a <ansi fg="itemname">%s</ansi> falls out and onto the floor.`, containerName, oopsItem.DisplayName()))
+			room.SendTextVisualLegacy(fmt.Sprintf(`The <ansi fg="container">%s</ansi> is too full and a <ansi fg="itemname">%s</ansi> falls out and onto the floor.`, containerName, oopsItem.DisplayName()))
 			room.AddItem(oopsItem, false)
 		}
 	}

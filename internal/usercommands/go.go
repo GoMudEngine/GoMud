@@ -49,7 +49,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 		deathRoom := int(configs.GetSpecialRoomsConfig().DeathRecoveryRoom)
 		actualRoom := rooms.GetOriginalRoom(user.Character.RoomId)
 		if actualRoom != deathRoom {
-			user.SendText("You can't do that! You are in combat!")
+			user.SendTextLegacy("You can't do that! You are in combat!")
 			return true, nil
 		}
 		// Force-clear the stale aggro so it doesn't follow them out.
@@ -58,7 +58,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 	// Block movement during quest sequences (e.g., Awakening Rite ceremony)
 	if lockMsg, ok := user.GetTempData(`questSequenceLock`).(string); ok && lockMsg != "" {
-		user.SendText(lockMsg)
+		user.SendTextLegacy(lockMsg)
 		return true, nil
 	}
 
@@ -71,18 +71,18 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				Trigger: activity.TriggerMovementInterrupt,
 				Actor:   state.ActorRef{UserId: user.UserId},
 			})
-			user.SendText(`<ansi fg="red">Your movement interrupts your crafting.</ansi>`)
+			user.SendTextLegacy(`<ansi fg="red">Your movement interrupts your crafting.</ansi>`)
 		case activity.Salvaging:
 			_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
 				Trigger: activity.TriggerMovementInterrupt,
 				Actor:   state.ActorRef{UserId: user.UserId},
 			})
-			user.SendText(`<ansi fg="red">Your movement interrupts your salvaging.</ansi>`)
+			user.SendTextLegacy(`<ansi fg="red">Your movement interrupts your salvaging.</ansi>`)
 		}
 	}
 	// If has a buff that prevents combat, skip the player
 	if user.Character.HasBuffFlag(buffs.NoMovement) {
-		user.SendText("You can't do that!")
+		user.SendTextLegacy("You can't do that!")
 		return true, nil
 	}
 
@@ -104,7 +104,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 	if exitName != `` {
 
 		if user.Character.IsDisabled() {
-			user.SendText("You are unable to do that while downed.")
+			user.SendTextLegacy("You are unable to do that while downed.")
 			return true, nil
 		}
 
@@ -118,9 +118,9 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 		if !user.Character.DeductActionPoints(actionCost) {
 
 			if encumbered {
-				user.SendText("You're too encumbered to move (<ansi fg=\"command\">help encumbrance</ansi>)!")
+				user.SendTextLegacy("You're too encumbered to move (<ansi fg=\"command\">help encumbrance</ansi>)!")
 			} else {
-				user.SendText("You're too tired to move (slow down)!")
+				user.SendTextLegacy("You're too tired to move (slow down)!")
 				mudlog.Debug("No ActionPoints", "AP", user.Character.ActionPoints, "Needed", actionCost)
 			}
 
@@ -144,7 +144,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 		// Calculate and check stamina cost
 		staminaCost := user.Character.GetMovementStaminaCost(terrainMultiplier)
 		if !user.Character.DeductStamina(staminaCost) {
-			user.SendText("You're too exhausted to move! Rest and recover your stamina.")
+			user.SendTextLegacy("You're too exhausted to move! Rest and recover your stamina.")
 			// Refund the action points since movement failed
 			user.Character.ActionPoints += actionCost
 			return true, nil
@@ -152,7 +152,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 		// Warn if stamina is getting low (< 25% of max)
 		if user.Character.Stamina < user.Character.StaminaMax.Value/4 {
-			user.SendText("<ansi fg=\"yellow\">You're feeling winded. Consider resting to recover your stamina.</ansi>")
+			user.SendTextLegacy("<ansi fg=\"yellow\">You're feeling winded. Consider resting to recover your stamina.</ansi>")
 		}
 
 		originRoomId := user.Character.RoomId
@@ -178,8 +178,8 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 			if lockpickItm.ItemId > 0 && hasSequence {
 
-				user.SendText(`You know this lock well, you quickly pick it.`)
-				room.SendTextVisual(
+				user.SendTextLegacy(`You know this lock well, you quickly pick it.`)
+				room.SendTextVisualLegacy(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> quickly picks the lock on the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
 					user.UserId)
 
@@ -189,8 +189,8 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				room.SetExitLock(exitName, false)
 
 			} else if hasKey {
-				user.SendText(fmt.Sprintf(`You use the key on your key ring to unlock the <ansi fg="exit">%s</ansi> exit.`, exitName))
-				room.SendTextVisual(
+				user.SendTextLegacy(fmt.Sprintf(`You use the key on your key ring to unlock the <ansi fg="exit">%s</ansi> exit.`, exitName))
+				room.SendTextVisualLegacy(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
 					user.UserId)
 
@@ -208,8 +208,8 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 					room.PlaySound(`change`, `other`)
 
-					user.SendText(fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="exit">%s</ansi> exit, and add it to your key ring for the future.`, itmSpec.Name, exitName))
-					room.SendTextVisual(
+					user.SendTextLegacy(fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="exit">%s</ansi> exit, and add it to your key ring for the future.`, itmSpec.Name, exitName))
+					room.SendTextVisualLegacy(
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
 						user.UserId)
 
@@ -229,7 +229,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				}
 
 				if exitInfo.Lock.IsLocked() {
-					user.SendText(`There's a lock preventing you from going that way. You'll need a <ansi fg="item">Key</ansi> or to <ansi fg="command">pick</ansi> the lock with <ansi fg="item">lockpicks</ansi>.`)
+					user.SendTextLegacy(`There's a lock preventing you from going that way. You'll need a <ansi fg="item">Key</ansi> or to <ansi fg="command">pick</ansi> the lock with <ansi fg="item">lockpicks</ansi>.`)
 					// Send GMCP message
 					if f, ok := GetExportedFunction(`SendGMCPEvent`); ok {
 						if gmcpSendFunc, ok := f.(func(int, string, any)); ok { // make sure the func definition is `func(int, string, any)`
@@ -244,7 +244,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 		}
 
 		if exitInfo.ExitMessage != `` && !flags.Has(events.CmdIsRequeue) {
-			user.SendText(exitInfo.ExitMessage)
+			user.SendTextLegacy(exitInfo.ExitMessage)
 			user.CommandFlagged(rest, flags|events.CmdIsRequeue|events.CmdBlockInputUntilComplete, 1)
 			return true, nil
 		}
@@ -275,7 +275,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 		})
 
 		if err := rooms.MoveToRoom(user.UserId, destRoom.RoomId); err != nil {
-			user.SendText("Oops, couldn't move there!")
+			user.SendTextLegacy("Oops, couldn't move there!")
 		} else {
 
 			// Quest engine: room_enter notification
@@ -287,12 +287,12 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 			// Tell the player they are moving
 			if isSneaking {
-				user.SendText(
+				user.SendTextLegacy(
 					fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 						fmt.Sprintf(`You <ansi fg="black-bold">sneak</ansi> towards the <ansi fg="exit">%s</ansi> exit.`, exitName),
 					))
 			} else {
-				user.SendText(
+				user.SendTextLegacy(
 					fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 						fmt.Sprintf(`You head towards the <ansi fg="exit">%s</ansi> exit.`, exitName),
 					))
@@ -300,14 +300,14 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				// Tell the old room they are leaving
 				if user.Character.Pet.Exists() {
 
-					room.SendTextVisual(
+					room.SendTextVisualLegacy(
 						fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 							fmt.Sprintf(`<ansi fg="username">%s</ansi> and %s leave towards the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, user.Character.Pet.DisplayName(), exitName),
 						),
 						user.UserId)
 
 				} else {
-					room.SendTextVisual(
+					room.SendTextVisualLegacy(
 						fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 							fmt.Sprintf(`<ansi fg="username">%s</ansi> leaves towards the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
 						),
@@ -317,9 +317,9 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				// Tell everyone if the pet is following
 				if user.Character.Pet.Exists() {
 
-					user.SendText(fmt.Sprintf(`%s follows you.`, user.Character.Pet.DisplayName()))
+					user.SendTextLegacy(fmt.Sprintf(`%s follows you.`, user.Character.Pet.DisplayName()))
 
-					destRoom.SendText(
+					destRoom.SendTextLegacy(
 						fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 							fmt.Sprintf(`<ansi fg="username">%s</ansi> and %s enters from <ansi fg="exit">%s</ansi>.`, user.Character.Name, user.Character.Pet.DisplayName(), exitName),
 						),
@@ -328,7 +328,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				} else {
 
 					// Tell the new room they have arrived
-					destRoom.SendText(
+					destRoom.SendTextLegacy(
 						fmt.Sprintf(string(c.EnterRoomMessageWrapper),
 							fmt.Sprintf(`<ansi fg="username">%s</ansi> enters from <ansi fg="exit">%s</ansi>.`, user.Character.Name, enterFromExit),
 						),
@@ -349,7 +349,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						}
 						if partyUser := users.GetByUserId(partyMemberId); partyUser != nil {
 							if partyUser.Character.RoomId == room.RoomId {
-								partyUser.SendText(`You follow the party leader.`)
+								partyUser.SendTextLegacy(`You follow the party leader.`)
 								partyUser.Command(rest)
 							}
 						}
@@ -404,7 +404,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 				// Target-specific detection roll: does the mover sense pursuit?
 				if shadowDetectionRoll(shadowP, user, destRoom) {
-					user.SendText(
+					user.SendTextLegacy(
 						"You sense someone following close behind you.")
 				}
 			}
@@ -436,7 +436,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					observerScore := actions.CalcSearchScore(p.Character)
 					success, _, _, _ := dice.OpposedRollStat(sneakScore, observerScore)
 					if !success {
-						p.SendText(fmt.Sprintf(
+						p.SendTextLegacy(fmt.Sprintf(
 							`<ansi fg="username">%s</ansi> slips into the room but you notice them.`,
 							user.Character.Name))
 						spotted = true
@@ -467,7 +467,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					user.Character.CancelBuffsWithFlag(buffs.Hidden)
 					user.Character.SetMiscData(`sneaking`, nil)
 					isSneaking = false
-					user.SendText(fmt.Sprintf(
+					user.SendTextLegacy(fmt.Sprintf(
 						"You slip into the room but %s notices you.", spotterName))
 				}
 			}
@@ -490,9 +490,9 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					if success {
 						hiddenP.Character.CancelBuffsWithFlag(buffs.Hidden)
 						hiddenP.Character.SetMiscData(`sneaking`, nil)
-						hiddenP.SendText(fmt.Sprintf(
+						hiddenP.SendTextLegacy(fmt.Sprintf(
 							"%s enters the room and notices you!", user.Character.Name))
-						user.SendText(fmt.Sprintf(
+						user.SendTextLegacy(fmt.Sprintf(
 							`You notice <ansi fg="username">%s</ansi> lurking in the shadows.`,
 							hiddenP.Character.Name))
 					}
@@ -511,10 +511,10 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						mob.Character.CancelBuffsWithFlag(buffs.Hidden)
 						mob.Character.Buffs.RemoveBuff(9)
 						mob.Character.Validate(true)
-						user.SendText(fmt.Sprintf(
+						user.SendTextLegacy(fmt.Sprintf(
 							`You notice <ansi fg="mobname">%s</ansi> lurking in the shadows!`,
 							mob.Character.Name))
-						destRoom.SendText(fmt.Sprintf(
+						destRoom.SendTextLegacy(fmt.Sprintf(
 							`<ansi fg="username">%s</ansi> spots <ansi fg="mobname">%s</ansi> hiding in the shadows!`,
 							user.Character.Name, mob.Character.Name),
 							user.UserId)
@@ -609,9 +609,9 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					// They still trigger lookfortrouble for the surprise attack.
 					if !mob.Character.IsHidden() {
 						if destRoom.GetVisibility() >= 1 || user.Character.HasFlagFromAnySource(buffs.NightVision) {
-							user.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> notices you as you enter!`, mob.Character.Name))
+							user.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> notices you as you enter!`, mob.Character.Name))
 						} else {
-							user.SendText(`<ansi fg="yellow">Something notices you in the darkness!</ansi>`)
+							user.SendTextLegacy(`<ansi fg="yellow">Something notices you in the darkness!</ansi>`)
 						}
 					}
 
@@ -641,7 +641,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 	if !handled {
 
 		if rest == "north" || rest == "south" || rest == "east" || rest == "west" || rest == "up" || rest == "down" || rest == "northwest" || rest == "northeast" || rest == "southwest" || rest == "southeast" {
-			user.SendText("You're bumping into walls.")
+			user.SendTextLegacy("You're bumping into walls.")
 
 			// Send GMCP message
 			if f, ok := GetExportedFunction(`SendGMCPEvent`); ok {
@@ -652,7 +652,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 			if !user.Character.IsHidden() {
 
-				room.SendTextVisual(
+				room.SendTextVisualLegacy(
 					fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> is bumping into walls.`, user.Character.Name),
 					),

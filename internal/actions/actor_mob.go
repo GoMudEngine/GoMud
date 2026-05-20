@@ -41,8 +41,8 @@ func (a *MobActor) GetRoom() *rooms.Room {
 	return a.Room
 }
 
-// SendText is a no-op for mobs — they have no player connection.
-func (a *MobActor) SendText(msg string) {}
+// SendTextLegacy is a no-op for mobs — they have no player connection.
+func (a *MobActor) SendTextLegacy(msg string) {}
 
 func (a *MobActor) SendRoomText(msg string, excludeSelf bool) {
 	sendRoomTextDarknessAware(a.Room, msg)
@@ -91,11 +91,11 @@ func (a *MobActor) OnCriticalFailure(skillName string) {
 }
 
 // sendRoomTextDarknessAware is a darkness-aware room broadcast. In lit rooms
-// it delegates to room.SendText() directly. In dark rooms only players who
+// it delegates to room.SendTextLegacy() directly. In dark rooms only players who
 // have the NightVision flag receive the message.
 func sendRoomTextDarknessAware(room *rooms.Room, msg string, excludeUserIds ...int) {
 	if room.GetVisibility() >= 1 {
-		room.SendText(msg, excludeUserIds...)
+		room.SendTextLegacy(msg, excludeUserIds...)
 		return
 	}
 	for _, uid := range room.GetPlayers() {
@@ -104,7 +104,7 @@ func sendRoomTextDarknessAware(room *rooms.Room, msg string, excludeUserIds ...i
 		}
 		u := users.GetByUserId(uid)
 		if u != nil && u.Character.HasFlagFromAnySource(buffs.NightVision) {
-			u.SendText(msg)
+			u.SendTextLegacy(msg)
 		}
 	}
 }

@@ -23,7 +23,7 @@ func Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if len(args) == 0 {
 		// send some sort of help info?
 		infoOutput, _ := templates.Process("admincommands/help/command.spawn", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 		return true, nil
 	}
 
@@ -46,10 +46,10 @@ func Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 			containerName := room.SpawnTempContainer(spawnTarget, "3 rounds", 0)
 
-			user.SendText(
+			user.SendTextLegacy(
 				fmt.Sprintf(`You wave your hands around and <ansi fg="container">%s</ansi> appears from thin air and falls to the ground.`, containerName),
 			)
-			room.SendTextVisual(
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> waves their hands around and <ansi fg="container">%s</ansi> appears from thin air and falls to the ground.`, user.Character.Name, containerName),
 				user.UserId,
 			)
@@ -72,10 +72,10 @@ func Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 			room.Gold += goldAmt
 
-			user.SendText(
+			user.SendTextLegacy(
 				fmt.Sprintf(`You wave your hands around and <ansi fg="gold">%d gold</ansi> appears from thin air and falls to the ground.`, goldAmt),
 			)
-			room.SendTextVisual(
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> waves their hands around and <ansi fg="gold">%d gold</ansi> appears from thin air and falls to the ground.`, user.Character.Name, goldAmt),
 				user.UserId,
 			)
@@ -85,10 +85,10 @@ func Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	}
 
-	user.SendText(
+	user.SendTextLegacy(
 		"You wave your hands around pathetically.",
 	)
-	room.SendTextVisual(
+	room.SendTextVisualLegacy(
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> waves their hands around pathetically.`, user.Character.Name),
 		user.UserId,
 	)

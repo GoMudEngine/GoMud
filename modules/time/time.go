@@ -65,7 +65,7 @@ func TimeCommand(rest string, user *users.UserRecord, room *rooms.Room, flags ev
 		dayNight = `night`
 	}
 
-	user.SendText(fmt.Sprintf(`It is now %s. It is <ansi fg="%s">%stime</ansi> on <ansi fg="230">day %d</ansi> of <ansi fg="230">year %d</ansi>. The month is <ansi fg="230">%s</ansi>, and it is the year of the <ansi fg="230">%s</ansi>`,
+	user.SendTextLegacy(fmt.Sprintf(`It is now %s. It is <ansi fg="%s">%stime</ansi> on <ansi fg="230">day %d</ansi> of <ansi fg="230">year %d</ansi>. The month is <ansi fg="230">%s</ansi>, and it is the year of the <ansi fg="230">%s</ansi>`,
 		gd.String(),
 		dayNight,
 		dayNight,

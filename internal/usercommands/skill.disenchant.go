@@ -19,13 +19,13 @@ func Disenchant(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 	rest = strings.TrimSpace(rest)
 	if rest == "" {
-		user.SendText(`<ansi fg="command">disenchant <item></ansi> — strip a Chrysalis enchantment from an item.`)
+		user.SendTextLegacy(`<ansi fg="command">disenchant <item></ansi> — strip a Chrysalis enchantment from an item.`)
 		return true, nil
 	}
 
 	// Must be at an enchanting circle
 	if room.Station != "enchanting_circle" {
-		user.SendText(`<ansi fg="red">You need to be at an enchanting circle to strip an enchantment.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">You need to be at an enchanting circle to strip an enchantment.</ansi>`)
 		return true, nil
 	}
 
@@ -36,13 +36,13 @@ func Disenchant(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 		targetItem = pMatch
 	}
 	if targetItem.ItemId < 1 {
-		user.SendText(fmt.Sprintf(`<ansi fg="red">You don't have "%s" in your inventory.</ansi>`, rest))
+		user.SendTextLegacy(fmt.Sprintf(`<ansi fg="red">You don't have "%s" in your inventory.</ansi>`, rest))
 		return true, nil
 	}
 
 	// Must have an enchantment
 	if !targetItem.HasChrysalisEnchantment() {
-		user.SendText(`<ansi fg="red">That item has no Chrysalis enchantment to strip.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">That item has no Chrysalis enchantment to strip.</ansi>`)
 		return true, nil
 	}
 
@@ -71,10 +71,10 @@ func Disenchant(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 		reservePool,
 	)
 
-	user.SendText(`<ansi fg="magenta">You pry the Chrysalis free. It comes away screaming — a ` +
+	user.SendTextLegacy(`<ansi fg="magenta">You pry the Chrysalis free. It comes away screaming — a ` +
 		`soundless wail that reverberates through your bones. The item ` +
 		`falls silent, stripped of its living power.</ansi>`)
-	user.SendText(`<ansi fg="red">A sudden emptiness floods through you. Your body aches ` +
+	user.SendTextLegacy(`<ansi fg="red">A sudden emptiness floods through you. Your body aches ` +
 		`for the connection it has lost. The withdrawal will pass... ` +
 		`in time.</ansi>`)
 

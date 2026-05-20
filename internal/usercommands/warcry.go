@@ -18,22 +18,22 @@ func Warcry(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	result := actions.ExecuteWarcry(&actions.UserActor{User: user, Room: room})
 
 	if result.Crafting {
-		user.SendText(`<ansi fg="red">You can't muster a warcry while focused on your work. Finish or be interrupted first.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">You can't muster a warcry while focused on your work. Finish or be interrupted first.</ansi>`)
 		return true, nil
 	}
 
 	if result.AlreadyActive {
-		user.SendText("Your warcry still echoes — you can't shout it louder.")
+		user.SendTextLegacy("Your warcry still echoes — you can't shout it louder.")
 		return true, nil
 	}
 
 	if result.OnCooldown {
-		user.SendText("You need a moment to recover before attempting another special move.")
+		user.SendTextLegacy("You need a moment to recover before attempting another special move.")
 		return true, nil
 	}
 
-	user.SendText(`<ansi fg="red-bold">You let out a thunderous warcry that ignites the fighting spirit of your allies!</ansi>`)
-	room.SendTextVisual(
+	user.SendTextLegacy(`<ansi fg="red-bold">You let out a thunderous warcry that ignites the fighting spirit of your allies!</ansi>`)
+	room.SendTextVisualLegacy(
 		fmt.Sprintf(`<ansi fg="red-bold"><ansi fg="username">%s</ansi> lets out a thunderous warcry!</ansi>`, user.Character.Name),
 		user.UserId,
 	)
@@ -48,7 +48,7 @@ func Warcry(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				if memberUser.Character.RoomId == user.Character.RoomId {
 					memberUser.Character.AddCondition(characters.ConditionWarcry, result.Duration, result.Bonus, "warcry")
 					memberUser.Character.AddBuff(79, false)
-					memberUser.SendText(
+					memberUser.SendTextLegacy(
 						fmt.Sprintf(`<ansi fg="red-bold"><ansi fg="username">%s</ansi>'s warcry stirs your blood!</ansi>`, user.Character.Name))
 
 					// Apply to this party member's companions in the room

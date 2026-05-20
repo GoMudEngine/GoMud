@@ -18,23 +18,23 @@ func Rally(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	result := actions.ExecuteRally(&actions.UserActor{User: user, Room: room})
 
 	if result.Crafting {
-		user.SendText(`<ansi fg="red">You can't rally while focused on your work. Finish or be interrupted first.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">You can't rally while focused on your work. Finish or be interrupted first.</ansi>`)
 		return true, nil
 	}
 	if result.AlreadyActive {
-		user.SendText("You're already rallied — save it for when it matters.")
+		user.SendTextLegacy("You're already rallied — save it for when it matters.")
 		return true, nil
 	}
 	if result.OnCooldown {
-		user.SendText("You need a moment to recover before attempting another special move.")
+		user.SendTextLegacy("You need a moment to recover before attempting another special move.")
 		return true, nil
 	}
 	if !result.Executed {
 		return true, nil
 	}
 
-	user.SendText(`<ansi fg="cyan-bold">You rally your allies with an inspiring shout that steadies their resolve!</ansi>`)
-	room.SendTextVisual(
+	user.SendTextLegacy(`<ansi fg="cyan-bold">You rally your allies with an inspiring shout that steadies their resolve!</ansi>`)
+	room.SendTextVisualLegacy(
 		fmt.Sprintf(`<ansi fg="cyan-bold"><ansi fg="username">%s</ansi> rallies everyone with an inspiring shout!</ansi>`, user.Character.Name),
 		user.UserId,
 	)
@@ -51,7 +51,7 @@ func Rally(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			}
 			memberUser.Character.AddCondition(characters.ConditionRally, result.Duration, result.Bonus, "rally")
 			memberUser.Character.AddBuff(80, false)
-			memberUser.SendText(
+			memberUser.SendTextLegacy(
 				fmt.Sprintf(`<ansi fg="cyan-bold"><ansi fg="username">%s</ansi>'s rallying cry steadies your nerves!</ansi>`, user.Character.Name))
 			applyRallyToCompanions(memberUser, room, result.Bonus, result.Duration)
 		}

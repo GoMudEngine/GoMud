@@ -12,8 +12,8 @@ import (
 
 func Scan(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	user.SendText(`You scan the surrounding area...`)
-	user.SendText(``)
+	user.SendTextLegacy(`You scan the surrounding area...`)
+	user.SendTextLegacy(``)
 
 	foundAnything := false
 
@@ -57,18 +57,18 @@ func Scan(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		titleLabel := fmt.Sprintf(`<ansi fg="room-title">%s</ansi>`, adjRoom.Title)
 
 		if len(parts) > 0 {
-			user.SendText(fmt.Sprintf(`  %s (%s): %s`, dirLabel, titleLabel, strings.Join(parts, `, `)))
+			user.SendTextLegacy(fmt.Sprintf(`  %s (%s): %s`, dirLabel, titleLabel, strings.Join(parts, `, `)))
 		} else {
-			user.SendText(fmt.Sprintf(`  %s (%s): nothing of interest`, dirLabel, titleLabel))
+			user.SendTextLegacy(fmt.Sprintf(`  %s (%s): nothing of interest`, dirLabel, titleLabel))
 		}
 		foundAnything = true
 	}
 
 	if !foundAnything {
-		user.SendText(`  There are no visible exits to scan.`)
+		user.SendTextLegacy(`  There are no visible exits to scan.`)
 	}
 
-	user.SendText(``)
+	user.SendTextLegacy(``)
 
 	return true, nil
 }

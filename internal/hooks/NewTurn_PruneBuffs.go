@@ -46,10 +46,10 @@ func PruneBuffs(e events.Event) events.ListenerReturn {
 								SourcePlainName: user.Character.GetCharacterName(false),
 							}
 							cfg := textutil.SendTextConfig{
-								UserSendFunc: func(msg string) { user.SendText(msg) },
+								UserSendFunc: func(msg string) { user.SendTextLegacy(msg) },
 								RoomSendFunc: func(msg string, skip ...int) {
 									if r := rooms.LoadRoom(user.Character.RoomId); r != nil {
-										r.SendText(msg, skip...)
+										r.SendTextLegacy(msg, skip...)
 									}
 								},
 								ExcludeId: user.UserId,
@@ -93,7 +93,7 @@ func PruneBuffs(e events.Event) events.ListenerReturn {
 					cfg := textutil.SendTextConfig{
 						RoomSendFunc: func(msg string, skip ...int) {
 							if r := rooms.LoadRoom(mob.Character.RoomId); r != nil {
-								r.SendText(msg, skip...)
+								r.SendTextLegacy(msg, skip...)
 							}
 						},
 					}

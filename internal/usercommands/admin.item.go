@@ -29,7 +29,7 @@ func Item(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	if len(args) < 1 {
 		infoOutput, _ := templates.Process("admincommands/help/command.item", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 		return true, nil
 	}
 
@@ -37,7 +37,7 @@ func Item(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if args[0] == `create` {
 
 		if !user.HasRolePermission(`item.create`) {
-			user.SendText(`you do not have <ansi fg="command">item.create</ansi> permission`)
+			user.SendTextLegacy(`you do not have <ansi fg="command">item.create</ansi> permission`)
 			return true, nil
 		}
 
@@ -48,7 +48,7 @@ func Item(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if args[0] == `spawn` {
 
 		if !user.HasRolePermission(`item.spawn`) {
-			user.SendText(`you do not have <ansi fg="command">item.create</ansi> permission`)
+			user.SendTextLegacy(`you do not have <ansi fg="command">item.create</ansi> permission`)
 			return true, nil
 		}
 
@@ -59,7 +59,7 @@ func Item(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if args[0] == `list` {
 
 		if !user.HasRolePermission(`item.spawn`) {
-			user.SendText(`you do not have <ansi fg="command">item.create</ansi> permission`)
+			user.SendTextLegacy(`you do not have <ansi fg="command">item.create</ansi> permission`)
 			return true, nil
 		}
 
@@ -105,11 +105,11 @@ func item_List(rest string, user *users.UserRecord, _ *rooms.Room, _ events.Even
 	numWidth := len(strconv.Itoa(len(itmNames)))
 	colWidth := 1 + numWidth + 2 + longestName + 1
 
-	user.SendText(``)
+	user.SendTextLegacy(``)
 	sw := user.ClientSettings().Display.GetScreenWidth()
 	strOut := templates.DynamicList(itmNames, colWidth, sw, numWidth, longestName)
-	user.SendText(strOut)
-	user.SendText(``)
+	user.SendTextLegacy(strOut)
+	user.SendTextLegacy(``)
 
 	return true, nil
 }
@@ -123,10 +123,10 @@ func item_Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 		if itm.ItemId > 0 {
 			room.AddItem(itm, false)
 
-			user.SendText(
+			user.SendTextLegacy(
 				fmt.Sprintf(`You wave your hands around and <ansi fg="item">%s</ansi> appears from thin air and falls to the ground.`, itm.DisplayName()),
 			)
-			room.SendTextVisual(
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> waves their hands around and <ansi fg="item">%s</ansi> appears from thin air and falls to the ground.`, user.Character.Name, itm.DisplayName()),
 				user.UserId,
 			)
@@ -136,7 +136,7 @@ func item_Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 	}
 
-	user.SendText(
+	user.SendTextLegacy(
 		fmt.Sprintf(`Item <ansi fg="itemname">%s</ansi> not found.`, rest),
 	)
 
@@ -157,8 +157,8 @@ func item_Create(rest string, user *users.UserRecord, room *rooms.Room, flags ev
 	cmdPrompt, isNew := user.StartPrompt(`item create`, rest)
 
 	if isNew {
-		user.SendText(``)
-		user.SendText(fmt.Sprintf(`Lets get a little info first.%s`, term.CRLFStr))
+		user.SendTextLegacy(``)
+		user.SendTextLegacy(fmt.Sprintf(`Lets get a little info first.%s`, term.CRLFStr))
 	}
 
 	//
@@ -192,7 +192,7 @@ func item_Create(rest string, user *users.UserRecord, room *rooms.Room, flags ev
 		question := cmdPrompt.Ask(`What Type of item will it be?`, []string{string(newItemSpec.Type)}, string(newItemSpec.Type))
 		if !question.Done {
 			tplTxt, _ := templates.Process("tables/numbered-list", typeOptions, user.UserId)
-			user.SendText(tplTxt)
+			user.SendTextLegacy(tplTxt)
 			return true, nil
 		}
 
@@ -213,7 +213,7 @@ func item_Create(rest string, user *users.UserRecord, room *rooms.Room, flags ev
 			question.RejectResponse()
 
 			tplTxt, _ := templates.Process("tables/numbered-list", typeOptions, user.UserId)
-			user.SendText(tplTxt)
+			user.SendTextLegacy(tplTxt)
 
 			return true, nil
 		}
@@ -299,7 +299,7 @@ func item_Create(rest string, user *users.UserRecord, room *rooms.Room, flags ev
 		}
 
 		if question.Response == `` {
-			user.SendText("Aborting...")
+			user.SendTextLegacy("Aborting...")
 			user.ClearPrompt()
 			return true, nil
 		}
@@ -316,7 +316,7 @@ func item_Create(rest string, user *users.UserRecord, room *rooms.Room, flags ev
 		}
 
 		if question.Response == `` {
-			user.SendText("Aborting...")
+			user.SendTextLegacy("Aborting...")
 			user.ClearPrompt()
 			return true, nil
 		}
@@ -341,12 +341,12 @@ func item_Create(rest string, user *users.UserRecord, room *rooms.Room, flags ev
 		question := cmdPrompt.Ask(`What Subtype of item will it be?`, []string{string(newItemSpec.Subtype)}, string(newItemSpec.Subtype))
 		if !question.Done {
 			tplTxt, _ := templates.Process("tables/numbered-list", subTypeOptions, user.UserId)
-			user.SendText(tplTxt)
+			user.SendTextLegacy(tplTxt)
 			return true, nil
 		}
 
 		if question.Response == `` {
-			user.SendText("Aborting...")
+			user.SendTextLegacy("Aborting...")
 			user.ClearPrompt()
 			return true, nil
 		}
@@ -368,7 +368,7 @@ func item_Create(rest string, user *users.UserRecord, room *rooms.Room, flags ev
 			question.RejectResponse()
 
 			tplTxt, _ := templates.Process("tables/numbered-list", subTypeOptions, user.UserId)
-			user.SendText(tplTxt)
+			user.SendTextLegacy(tplTxt)
 
 			return true, nil
 		}
@@ -416,7 +416,7 @@ func item_Create(rest string, user *users.UserRecord, room *rooms.Room, flags ev
 		if question.Response != `_` {
 
 			if quests.GetQuest(question.Response) == nil {
-				user.SendText(`Invalid quest token`)
+				user.SendTextLegacy(`Invalid quest token`)
 				question.RejectResponse()
 				return true, nil
 			}
@@ -455,36 +455,36 @@ func item_Create(rest string, user *users.UserRecord, room *rooms.Room, flags ev
 		question := cmdPrompt.Ask(`Does this look correct?`, []string{`y`, `n`}, `n`)
 		if !question.Done {
 
-			user.SendText(`  <ansi fg="yellow-bold">Name:</ansi>        <ansi fg="white-bold">` + newItemSpec.Name + `</ansi>`)
-			user.SendText(`  <ansi fg="yellow-bold">Desc:</ansi>        <ansi fg="white-bold">` + newItemSpec.Description + `</ansi>`)
-			user.SendText(`  <ansi fg="yellow-bold">Type:</ansi>        <ansi fg="white-bold">` + string(newItemSpec.Type) + `</ansi>`)
+			user.SendTextLegacy(`  <ansi fg="yellow-bold">Name:</ansi>        <ansi fg="white-bold">` + newItemSpec.Name + `</ansi>`)
+			user.SendTextLegacy(`  <ansi fg="yellow-bold">Desc:</ansi>        <ansi fg="white-bold">` + newItemSpec.Description + `</ansi>`)
+			user.SendTextLegacy(`  <ansi fg="yellow-bold">Type:</ansi>        <ansi fg="white-bold">` + string(newItemSpec.Type) + `</ansi>`)
 
 			if newItemSpec.Type == items.Key {
-				user.SendText(`  <ansi fg="yellow-bold">KeyId:</ansi>       <ansi fg="white-bold">` + newItemSpec.KeyLockId + `</ansi>`)
+				user.SendTextLegacy(`  <ansi fg="yellow-bold">KeyId:</ansi>       <ansi fg="white-bold">` + newItemSpec.KeyLockId + `</ansi>`)
 			}
 			if newItemSpec.Type == items.Weapon {
-				user.SendText(`  <ansi fg="yellow-bold">Damage:</ansi>      <ansi fg="white-bold">` + newItemSpec.Damage.DiceRoll + `</ansi>`)
-				user.SendText(`  <ansi fg="yellow-bold">DmgMult:</ansi>     <ansi fg="white-bold">` + fmt.Sprintf(`%.2f`, newItemSpec.DamageMultiplier) + `</ansi>`)
+				user.SendTextLegacy(`  <ansi fg="yellow-bold">Damage:</ansi>      <ansi fg="white-bold">` + newItemSpec.Damage.DiceRoll + `</ansi>`)
+				user.SendTextLegacy(`  <ansi fg="yellow-bold">DmgMult:</ansi>     <ansi fg="white-bold">` + fmt.Sprintf(`%.2f`, newItemSpec.DamageMultiplier) + `</ansi>`)
 			}
 			if newItemSpec.PhysicalMitigation > 0 || newItemSpec.MagicalMitigation > 0 || newItemSpec.ConvictionMitigation > 0 {
-				user.SendText(`  <ansi fg="yellow-bold">Physical:</ansi>    <ansi fg="white-bold">` + strconv.Itoa(newItemSpec.PhysicalMitigation) + `%</ansi>`)
-				user.SendText(`  <ansi fg="yellow-bold">Magical:</ansi>     <ansi fg="white-bold">` + strconv.Itoa(newItemSpec.MagicalMitigation) + `%</ansi>`)
-				user.SendText(`  <ansi fg="yellow-bold">Conviction:</ansi>  <ansi fg="white-bold">` + strconv.Itoa(newItemSpec.ConvictionMitigation) + `%</ansi>`)
+				user.SendTextLegacy(`  <ansi fg="yellow-bold">Physical:</ansi>    <ansi fg="white-bold">` + strconv.Itoa(newItemSpec.PhysicalMitigation) + `%</ansi>`)
+				user.SendTextLegacy(`  <ansi fg="yellow-bold">Magical:</ansi>     <ansi fg="white-bold">` + strconv.Itoa(newItemSpec.MagicalMitigation) + `%</ansi>`)
+				user.SendTextLegacy(`  <ansi fg="yellow-bold">Conviction:</ansi>  <ansi fg="white-bold">` + strconv.Itoa(newItemSpec.ConvictionMitigation) + `%</ansi>`)
 			}
 
 			if newItemSpec.Uses > 0 {
-				user.SendText(`  <ansi fg="yellow-bold">Uses:</ansi>        <ansi fg="white-bold">` + strconv.Itoa(newItemSpec.Uses) + `</ansi>`)
+				user.SendTextLegacy(`  <ansi fg="yellow-bold">Uses:</ansi>        <ansi fg="white-bold">` + strconv.Itoa(newItemSpec.Uses) + `</ansi>`)
 			}
 
 			if newItemSpec.Value > 0 {
-				user.SendText(`  <ansi fg="yellow-bold">Value:</ansi>       <ansi fg="white-bold">` + strconv.Itoa(newItemSpec.Value) + `</ansi>`)
+				user.SendTextLegacy(`  <ansi fg="yellow-bold">Value:</ansi>       <ansi fg="white-bold">` + strconv.Itoa(newItemSpec.Value) + `</ansi>`)
 			}
 
 			if newItemSpec.QuestToken != `` {
-				user.SendText(`  <ansi fg="yellow-bold">Quest Token:</ansi> <ansi fg="white-bold">` + newItemSpec.QuestToken + `</ansi>`)
+				user.SendTextLegacy(`  <ansi fg="yellow-bold">Quest Token:</ansi> <ansi fg="white-bold">` + newItemSpec.QuestToken + `</ansi>`)
 			}
 
-			user.SendText(`  <ansi fg="yellow-bold">SubType:</ansi>     <ansi fg="white-bold">` + string(newItemSpec.Subtype) + `</ansi>`)
+			user.SendTextLegacy(`  <ansi fg="yellow-bold">SubType:</ansi>     <ansi fg="white-bold">` + string(newItemSpec.Subtype) + `</ansi>`)
 
 			return true, nil
 		}
@@ -492,7 +492,7 @@ func item_Create(rest string, user *users.UserRecord, room *rooms.Room, flags ev
 		user.ClearPrompt()
 
 		if question.Response != `y` {
-			user.SendText("Aborting...")
+			user.SendTextLegacy("Aborting...")
 			return true, nil
 		}
 	}
@@ -500,18 +500,18 @@ func item_Create(rest string, user *users.UserRecord, room *rooms.Room, flags ev
 	newItemId, err := items.CreateNewItemFile(newItemSpec)
 
 	if err != nil {
-		user.SendText("Error: " + err.Error())
+		user.SendTextLegacy("Error: " + err.Error())
 		return true, nil
 	}
 
 	itemInst := items.GetItemSpec(newItemId)
 
-	user.SendText(``)
-	user.SendText(`  <ansi bg="red" fg="white-bold">ITEM CREATED</ansi>`)
-	user.SendText(``)
-	user.SendText(`  <ansi fg="yellow-bold">File Path:</ansi>   <ansi fg="white-bold">` + itemInst.Filepath() + `</ansi>`)
-	user.SendText(``)
-	user.SendText(`  <ansi fg="black-bold">note: Try <ansi fg="command">item spawn ` + newItemSpec.Name + `</ansi> to test it.`)
+	user.SendTextLegacy(``)
+	user.SendTextLegacy(`  <ansi bg="red" fg="white-bold">ITEM CREATED</ansi>`)
+	user.SendTextLegacy(``)
+	user.SendTextLegacy(`  <ansi fg="yellow-bold">File Path:</ansi>   <ansi fg="white-bold">` + itemInst.Filepath() + `</ansi>`)
+	user.SendTextLegacy(``)
+	user.SendTextLegacy(`  <ansi fg="black-bold">note: Try <ansi fg="command">item spawn ` + newItemSpec.Name + `</ansi> to test it.`)
 
 	return true, nil
 }

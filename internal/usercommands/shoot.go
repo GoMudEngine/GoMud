@@ -15,37 +15,37 @@ func Shoot(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	res := actions.ExecuteShoot(&actions.UserActor{User: user, Room: room}, rest)
 
 	if res.NoWeapon {
-		user.SendText(`You don't have a shooting weapon.`)
+		user.SendTextLegacy(`You don't have a shooting weapon.`)
 		return true, nil
 	}
 
 	if res.BadSyntax {
-		user.SendText(`Syntax: <ansi fg="command">shoot [target] [exit]</ansi>`)
+		user.SendTextLegacy(`Syntax: <ansi fg="command">shoot [target] [exit]</ansi>`)
 		return true, nil
 	}
 
 	if res.NoExit {
-		user.SendText(`Could not find where you wanted to shoot`)
+		user.SendTextLegacy(`Could not find where you wanted to shoot`)
 		return true, nil
 	}
 
 	if res.ExitLocked {
-		user.SendText(fmt.Sprintf("The %s exit is locked.", res.ExitName))
+		user.SendTextLegacy(fmt.Sprintf("The %s exit is locked.", res.ExitName))
 		return true, nil
 	}
 
 	if res.NoTarget {
-		user.SendText(`Could not find your target.`)
+		user.SendTextLegacy(`Could not find your target.`)
 		return true, nil
 	}
 
 	if res.IsCharmed {
-		user.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is your friend!`, res.TargetName))
+		user.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is your friend!`, res.TargetName))
 		return true, nil
 	}
 
 	if res.IsNonCombatant {
-		user.SendText(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, res.TargetName))
+		user.SendTextLegacy(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, res.TargetName))
 		return true, nil
 	}
 
@@ -53,7 +53,7 @@ func Shoot(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if !res.IsTargetMob && res.TargetUserId > 0 {
 		if p := users.GetByUserId(res.TargetUserId); p != nil {
 			if pvpErr := room.CanPvp(user, p); pvpErr != nil {
-				user.SendText(pvpErr.Error())
+				user.SendTextLegacy(pvpErr.Error())
 				return true, nil
 			}
 		}
@@ -62,7 +62,7 @@ func Shoot(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			if partyInfo.IsMember(res.TargetUserId) {
 				p := users.GetByUserId(res.TargetUserId)
 				if p != nil {
-					user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is in your party!`, p.Character.Name))
+					user.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> is in your party!`, p.Character.Name))
 					return true, nil
 				}
 			}
@@ -75,21 +75,21 @@ func Shoot(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	// Send feedback messages.
 	if res.IsTargetMob {
-		user.SendText(
+		user.SendTextLegacy(
 			fmt.Sprintf(`You prepare to shoot at <ansi fg="mobname">%s</ansi> through the <ansi fg="exit">%s</ansi> exit.`, res.TargetName, res.ExitName),
 		)
 		if !res.IsSneaking {
-			room.SendTextVisual(
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> prepares to shoot at <ansi fg="mobname">%s</ansi> through the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, res.TargetName, res.ExitName),
 				user.UserId,
 			)
 		}
 	} else {
-		user.SendText(
+		user.SendTextLegacy(
 			fmt.Sprintf(`You prepare to shoot at <ansi fg="username">%s</ansi> through the <ansi fg="exit">%s</ansi> exit.`, res.TargetName, res.ExitName),
 		)
 		if !res.IsSneaking {
-			room.SendTextVisual(
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> prepares to shoot at <ansi fg="username">%s</ansi> through the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, res.TargetName, res.ExitName),
 				user.UserId,
 			)

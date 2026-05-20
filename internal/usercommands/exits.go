@@ -12,7 +12,7 @@ func Exits(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	details := rooms.GetDetails(room, user)
 
 	exitTxt, _ := templates.Process("descriptions/exits", details, user.UserId)
-	user.SendText(exitTxt)
+	user.SendTextLegacy(exitTxt)
 
 	return true, nil
 }

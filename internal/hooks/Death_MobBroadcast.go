@@ -52,7 +52,7 @@ func wireMobDeathBroadcast(c *characters.Character) {
 			)
 			soundMsg := `You hear something collapse to the ground.`
 			if room.GetVisibility() >= 1 {
-				room.SendTextVisual(deathMsg)
+				room.SendTextVisualLegacy(deathMsg)
 			} else {
 				for _, uid := range room.GetPlayers() {
 					u := users.GetByUserId(uid)
@@ -60,9 +60,9 @@ func wireMobDeathBroadcast(c *characters.Character) {
 						continue
 					}
 					if u.Character.HasFlagFromAnySource(buffs.NightVision) {
-						u.SendText(deathMsg)
+						u.SendTextLegacy(deathMsg)
 					} else {
-						u.SendText(soundMsg)
+						u.SendTextLegacy(soundMsg)
 					}
 				}
 			}

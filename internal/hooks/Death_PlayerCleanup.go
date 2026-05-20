@@ -118,7 +118,7 @@ func applyPlayerStatDecay(u *users.UserRecord, config configs.GamePlay) {
 
 	u.Character.Validate()
 
-	u.SendText(fmt.Sprintf(`<ansi fg="red">The shadow of death saps your %s.</ansi>`, pick.desc))
+	u.SendTextLegacy(fmt.Sprintf(`<ansi fg="red">The shadow of death saps your %s.</ansi>`, pick.desc))
 	u.EventLog.Add(`death`, fmt.Sprintf(`Lost some <ansi fg="yellow">%s</ansi> training on death`, pick.name))
 }
 
@@ -166,7 +166,7 @@ func applyPlayerSkillRust(u *users.UserRecord, config configs.GamePlay) {
 		}
 		u.Character.Skills[skillName] = newRank
 
-		u.SendText(fmt.Sprintf(`<ansi fg="red">Your %s feels rusty and diminished.</ansi>`, skillName))
+		u.SendTextLegacy(fmt.Sprintf(`<ansi fg="red">Your %s feels rusty and diminished.</ansi>`, skillName))
 		u.EventLog.Add(`death`, fmt.Sprintf(`Lost some <ansi fg="yellow">%s</ansi> skill on death`, skillName))
 	}
 }
@@ -199,7 +199,7 @@ func notifyPartyOfPlayerDeath(c *characters.Character) {
 		if member.Character.RoomId == c.RoomId {
 			continue
 		}
-		member.SendText(msg)
+		member.SendTextLegacy(msg)
 	}
 }
 

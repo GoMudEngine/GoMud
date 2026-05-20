@@ -22,13 +22,13 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	rest = strings.TrimSpace(rest)
 
 	if rest == "" {
-		user.SendText(`<ansi fg="command">salvage <item></ansi> - Break down an item for materials.`)
+		user.SendTextLegacy(`<ansi fg="command">salvage <item></ansi> - Break down an item for materials.`)
 		return true, nil
 	}
 
 	// Already busy? (Activity machine will also reject if not Free.)
 	if !user.Character.IsFree() {
-		user.SendText(`<ansi fg="red">You're already busy working on something.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">You're already busy working on something.</ansi>`)
 		return true, nil
 	}
 
@@ -38,7 +38,7 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	if !found {
 		corpse, corpseFound := room.FindCorpse(rest)
 		if !corpseFound {
-			user.SendText(fmt.Sprintf(
+			user.SendTextLegacy(fmt.Sprintf(
 				`<ansi fg="red">You don't have "%s" and there's no corpse of that name here.</ansi>`, rest))
 			return true, nil
 		}
@@ -47,7 +47,7 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	// Require item to be in backpack, not equipped
 	if source != "in your backpack" {
-		user.SendText(`<ansi fg="red">You need to remove that before you can salvage it.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">You need to remove that before you can salvage it.</ansi>`)
 		return true, nil
 	}
 
@@ -77,7 +77,7 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	hasSalvageReturns := len(spec.SalvageReturns) > 0
 
 	if recipe == nil && !hasSalvageReturns && !isSpoiledPotion {
-		user.SendText(`<ansi fg="red">You can't find anything useful to salvage from that.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">You can't find anything useful to salvage from that.</ansi>`)
 		return true, nil
 	}
 
@@ -107,11 +107,11 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 			Actor:   state.ActorRef{UserId: user.UserId},
 		},
 	); err != nil {
-		user.SendText(`<ansi fg="red">You're already busy working on something.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">You're already busy working on something.</ansi>`)
 		return true, nil
 	}
 
-	user.SendText(fmt.Sprintf(
+	user.SendTextLegacy(fmt.Sprintf(
 		`<ansi fg="yellow">You begin carefully disassembling the <ansi fg="itemname">%s</ansi>...</ansi>`,
 		itm.DisplayName()))
 
@@ -125,19 +125,19 @@ func startCorpseSalvage(user *users.UserRecord, corpse rooms.Corpse) (bool, erro
 
 	// Player corpses are out of scope for v1.
 	if corpse.MobId <= 0 {
-		user.SendText(`<ansi fg="red">You can't bring yourself to salvage that.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">You can't bring yourself to salvage that.</ansi>`)
 		return true, nil
 	}
 
 	mobSpec := mobs.GetMobSpec(mobs.MobId(corpse.MobId))
 	if mobSpec == nil {
-		user.SendText(`<ansi fg="red">Something is wrong with that corpse.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">Something is wrong with that corpse.</ansi>`)
 		return true, nil
 	}
 
 	returns := crafting.LookupCorpseSalvage(mobSpec.Groups)
 	if len(returns) == 0 {
-		user.SendText(`<ansi fg="red">There's nothing useful to recover here.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">There's nothing useful to recover here.</ansi>`)
 		return true, nil
 	}
 
@@ -160,7 +160,7 @@ func startCorpseSalvage(user *users.UserRecord, corpse rooms.Corpse) (bool, erro
 			Actor:   state.ActorRef{UserId: user.UserId},
 		},
 	); err != nil {
-		user.SendText(`<ansi fg="red">You're already busy working on something.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">You're already busy working on something.</ansi>`)
 		return true, nil
 	}
 
@@ -174,7 +174,7 @@ func startCorpseSalvage(user *users.UserRecord, corpse rooms.Corpse) (bool, erro
 	user.Character.SetMiscData("salvage_corpse_round_created", int(corpse.RoundCreated))
 	user.Character.SetMiscData("salvage_corpse_name", corpse.Character.Name)
 
-	user.SendText(fmt.Sprintf(
+	user.SendTextLegacy(fmt.Sprintf(
 		`<ansi fg="yellow">You begin carefully working over the <ansi fg="mobname">%s corpse</ansi>...</ansi>`,
 		corpse.Character.Name))
 

@@ -82,7 +82,7 @@ func ApplyBuffs(e events.Event) events.ListenerReturn {
 				charPlainName = u.Character.GetCharacterName(false)
 				roomId = u.Character.RoomId
 				excludeId = u.UserId
-				sendFunc = func(msg string) { u.SendText(msg) }
+				sendFunc = func(msg string) { u.SendTextLegacy(msg) }
 			}
 		} else if evt.MobInstanceId != 0 {
 			if m := mobs.GetInstance(evt.MobInstanceId); m != nil {
@@ -101,7 +101,7 @@ func ApplyBuffs(e events.Event) events.ListenerReturn {
 				UserSendFunc: sendFunc,
 				RoomSendFunc: func(msg string, skip ...int) {
 					if r := rooms.LoadRoom(roomId); r != nil {
-						r.SendText(msg, skip...)
+						r.SendTextLegacy(msg, skip...)
 					}
 				},
 				ExcludeId: excludeId,

@@ -39,8 +39,8 @@ func HandleLookHints(e events.Event) events.ListenerReturn {
 		}
 
 		if showListTip {
-			user.SendText(`<ansi fg="alert-5">TIP:</ansi> <ansi fg="tip-text">Type <ansi fg="command">list</ansi> to see what merchants have for sale.</ansi>`)
-			user.SendText(``)
+			user.SendTextLegacy(`<ansi fg="alert-5">TIP:</ansi> <ansi fg="tip-text">Type <ansi fg="command">list</ansi> to see what merchants have for sale.</ansi>`)
+			user.SendTextLegacy(``)
 		}
 
 	}

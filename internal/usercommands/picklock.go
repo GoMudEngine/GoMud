@@ -31,19 +31,19 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 	}
 
 	if lockpickItm.ItemId < 1 {
-		user.SendText(`You need <ansi fg="item">lockpicks</ansi> to pick a lock.`)
+		user.SendTextLegacy(`You need <ansi fg="item">lockpicks</ansi> to pick a lock.`)
 		return true, nil
 	}
 
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) < 1 {
-		user.SendText("You wanna pock a lock? Specify where it is.")
+		user.SendTextLegacy("You wanna pock a lock? Specify where it is.")
 		return true, nil
 	}
 
 	if room.MatchesSealedCrate(args[0]) {
-		user.SendText(`The shipping crate has no lock to pick — it's sealed by the caravan's binding, not by mechanism.`)
+		user.SendTextLegacy(`The shipping crate has no lock to pick — it's sealed by the caravan's binding, not by mechanism.`)
 		return true, nil
 	}
 
@@ -67,12 +67,12 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 		container := room.Containers[containerName]
 
 		if !container.HasLock() {
-			user.SendText("There is no lock there.")
+			user.SendTextLegacy("There is no lock there.")
 			return true, nil
 		}
 
 		if !container.Lock.IsLocked() {
-			user.SendText("It's already unlocked.")
+			user.SendTextLegacy("It's already unlocked.")
 			return true, nil
 		}
 
@@ -90,12 +90,12 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 		exitInfo, _ := room.GetExitInfo(exitName)
 
 		if !exitInfo.HasLock() {
-			user.SendText("There is no lock there.")
+			user.SendTextLegacy("There is no lock there.")
 			return true, nil
 		}
 
 		if !exitInfo.Lock.IsLocked() {
-			user.SendText("It's already unlocked.")
+			user.SendTextLegacy("It's already unlocked.")
 			return true, nil
 		}
 
@@ -106,7 +106,7 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 	} else {
 
-		user.SendText("There is no such exit or container.")
+		user.SendTextLegacy("There is no such exit or container.")
 		return true, nil
 	}
 
@@ -135,15 +135,15 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 	}
 
 	if sequenceMatches(keyring_sequence, sequence) {
-		user.SendText("")
-		user.SendText("Your keyring already has this lock on it.")
+		user.SendTextLegacy("")
+		user.SendTextLegacy("Your keyring already has this lock on it.")
 
 		user.ClearPrompt()
 
-		user.SendText(``)
-		user.SendText(`<ansi fg="yellow-bold">***</ansi> <ansi fg="green-bold">You Successfully picked the lock!</ansi> <ansi fg="yellow-bold">***</ansi>`)
-		user.SendText(`<ansi fg="yellow-bold">***</ansi> <ansi fg="green-bold">You can automatically pick this lock any time as long as you carry <ansi fg="item">lockpicks</ansi>!</ansi> <ansi fg="yellow-bold">***</ansi>`)
-		user.SendText(``)
+		user.SendTextLegacy(``)
+		user.SendTextLegacy(`<ansi fg="yellow-bold">***</ansi> <ansi fg="green-bold">You Successfully picked the lock!</ansi> <ansi fg="yellow-bold">***</ansi>`)
+		user.SendTextLegacy(`<ansi fg="yellow-bold">***</ansi> <ansi fg="green-bold">You can automatically pick this lock any time as long as you carry <ansi fg="item">lockpicks</ansi>!</ansi> <ansi fg="yellow-bold">***</ansi>`)
+		user.SendTextLegacy(``)
 
 		user.Character.CheckSkillProgression(string(skills.Skullduggery), user.UserId, 1.0)
 
@@ -151,14 +151,14 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 		if containerName != `` {
 
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="container">%s</ansi> lock`, user.Character.Name, containerName), user.UserId)
+			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="container">%s</ansi> lock`, user.Character.Name, containerName), user.UserId)
 
 			container := room.Containers[containerName]
 			container.Lock.SetUnlocked()
 			room.Containers[containerName] = container
 		} else {
 
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
+			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
 
 			room.SetExitLock(exitName, false)
 
@@ -170,7 +170,7 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 	cmdPrompt, isNew := user.StartPrompt(`picklock`, rest)
 
 	if isNew {
-		user.SendText(GetLockRender(sequence, keyring_sequence, user.UserId))
+		user.SendTextLegacy(GetLockRender(sequence, keyring_sequence, user.UserId))
 	}
 
 	entered := ``
@@ -185,7 +185,7 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 	if question.Response == `quit` {
 		user.ClearPrompt()
-		user.SendText(`Type '<ansi fg="command">help picklock</ansi>' for more information on picking locks.`)
+		user.SendTextLegacy(`Type '<ansi fg="command">help picklock</ansi>' for more information on picking locks.`)
 		return true, nil
 	}
 
@@ -211,17 +211,17 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 			entered = ``
 			user.Character.UseItem(lockpickItm)
 
-			user.SendText(``)
-			user.SendText(fmt.Sprintf(`<ansi fg="yellow-bold">***</ansi> <ansi fg="red-bold">Oops! Your <ansi fg="item">%s</ansi> break off in the lock, resetting the lock. You'll have to start all over.</ansi> <ansi fg="yellow-bold">***</ansi>`, lockpickItm.GetSpec().NameSimple))
-			user.SendText(``)
+			user.SendTextLegacy(``)
+			user.SendTextLegacy(fmt.Sprintf(`<ansi fg="yellow-bold">***</ansi> <ansi fg="red-bold">Oops! Your <ansi fg="item">%s</ansi> break off in the lock, resetting the lock. You'll have to start all over.</ansi> <ansi fg="yellow-bold">***</ansi>`, lockpickItm.GetSpec().NameSimple))
+			user.SendTextLegacy(``)
 
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="alert-2"><ansi fg="username">%s</ansi> broke their lockpicks trying to pick a lock!</ansi>`, user.Character.Name), user.UserId)
+			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="alert-2"><ansi fg="username">%s</ansi> broke their lockpicks trying to pick a lock!</ansi>`, user.Character.Name), user.UserId)
 
 			if len(lockTrap) > 0 {
 
-				user.SendText(`<ansi fg="yellow-bold">***</ansi> <ansi fg="alert-5">A trap was triggered!</ansi> <ansi fg="yellow-bold">***</ansi>`)
-				user.SendText(``)
-				room.SendTextVisual(fmt.Sprintf(`<ansi fg="alert-3"><ansi fg="username">%s</ansi> triggered a trap!</ansi>`, user.Character.Name), user.UserId)
+				user.SendTextLegacy(`<ansi fg="yellow-bold">***</ansi> <ansi fg="alert-5">A trap was triggered!</ansi> <ansi fg="yellow-bold">***</ansi>`)
+				user.SendTextLegacy(``)
+				room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="alert-3"><ansi fg="username">%s</ansi> triggered a trap!</ansi>`, user.Character.Name), user.UserId)
 
 				for _, buffId := range lockTrap {
 					user.AddBuff(buffId, `trap`)
@@ -233,14 +233,14 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 	user.Character.SetKey(lockId, entered)
 
 	if len(entered) > 0 {
-		user.SendText(``)
-		user.SendText(`<ansi fg="green-bold">A satisfying *click* tells you that you're making progress...</ansi>`)
+		user.SendTextLegacy(``)
+		user.SendTextLegacy(`<ansi fg="green-bold">A satisfying *click* tells you that you're making progress...</ansi>`)
 	} else {
 		user.ClearPrompt()
 		return true, nil
 	}
 
-	user.SendText(GetLockRender(sequence, entered, user.UserId))
+	user.SendTextLegacy(GetLockRender(sequence, entered, user.UserId))
 
 	if sequenceMatches(entered, sequence) {
 
@@ -249,10 +249,10 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 			user.Character.SetKey(lockId, entered)
 		}
 
-		user.SendText(``)
-		user.SendText(`<ansi fg="yellow-bold">***</ansi> <ansi fg="green-bold">You Successfully picked the lock!</ansi> <ansi fg="yellow-bold">***</ansi>`)
-		user.SendText(`<ansi fg="yellow-bold">***</ansi> <ansi fg="green-bold">You can automatically pick this lock any time as long as you carry <ansi fg="item">lockpicks</ansi>!</ansi> <ansi fg="yellow-bold">***</ansi>`)
-		user.SendText(``)
+		user.SendTextLegacy(``)
+		user.SendTextLegacy(`<ansi fg="yellow-bold">***</ansi> <ansi fg="green-bold">You Successfully picked the lock!</ansi> <ansi fg="yellow-bold">***</ansi>`)
+		user.SendTextLegacy(`<ansi fg="yellow-bold">***</ansi> <ansi fg="green-bold">You can automatically pick this lock any time as long as you carry <ansi fg="item">lockpicks</ansi>!</ansi> <ansi fg="yellow-bold">***</ansi>`)
+		user.SendTextLegacy(``)
 
 		user.Character.CheckSkillProgression(string(skills.Skullduggery), user.UserId, 1.0)
 
@@ -260,13 +260,13 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 		if containerName != `` {
 
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="container">%s</ansi> lock`, user.Character.Name, containerName), user.UserId)
+			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="container">%s</ansi> lock`, user.Character.Name, containerName), user.UserId)
 
 			container := room.Containers[containerName]
 			container.Lock.SetUnlocked()
 			room.Containers[containerName] = container
 		} else {
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
+			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> picks the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
 			room.SetExitLock(exitName, false)
 		}
 
@@ -276,9 +276,9 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 	} else {
 		if containerName != `` {
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> tries to pick the <ansi fg="container">%s</ansi> lock`, user.Character.Name, containerName), user.UserId)
+			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> tries to pick the <ansi fg="container">%s</ansi> lock`, user.Character.Name, containerName), user.UserId)
 		} else {
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> tries to pick the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
+			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> tries to pick the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
 		}
 	}
 

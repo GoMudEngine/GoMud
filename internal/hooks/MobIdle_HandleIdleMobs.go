@@ -95,7 +95,7 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 				for _, uid := range room.GetPlayers() {
 					u := users.GetByUserId(uid)
 					if u != nil && u.Character.HasFlagFromAnySource(buffs.NightVision) {
-						u.SendText(msg)
+						u.SendTextLegacy(msg)
 					}
 				}
 			} else {

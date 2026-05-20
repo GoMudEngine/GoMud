@@ -12,13 +12,13 @@ func Break(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	if user.Character.IsInCombat() {
 		user.Character.EndAggro()
-		user.SendText(`You break off combat.`)
-		room.SendTextVisual(
+		user.SendTextLegacy(`You break off combat.`)
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> breaks off combat.`, user.Character.Name),
 			user.UserId,
 		)
 	} else {
-		user.SendText(`You aren't in combat!`)
+		user.SendTextLegacy(`You aren't in combat!`)
 	}
 
 	return true, nil

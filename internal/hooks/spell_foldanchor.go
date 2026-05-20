@@ -14,7 +14,7 @@ func resolveFoldAnchor(actor actions.Actor) {
 	roomId := char.RoomId
 	char.SetMiscData("fold-anchor-room", roomId)
 
-	actor.SendText(`A Chrysalis anchor locks into place here. ` +
+	actor.SendTextLegacy(`A Chrysalis anchor locks into place here. ` +
 		`Cast <ansi fg="command">fold-recall</ansi> from elsewhere to return.`)
 
 	actor.SendRoomText(fmt.Sprintf(

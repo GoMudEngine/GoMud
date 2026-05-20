@@ -401,17 +401,17 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 				Trigger: activity.TriggerCastCancel,
 				Actor:   state.ActorRef{UserId: user.UserId},
 			})
-			user.SendText(fmt.Sprintf(
+			user.SendTextLegacy(fmt.Sprintf(
 				`<ansi fg="cyan">You lose your concentration as you flee! %d conviction is lost.</ansi>`,
 				cs.ConvictionSpent))
-			room.SendTextVisual(fmt.Sprintf(
+			room.SendTextVisualLegacy(fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> breaks their concentration.`,
 				user.Character.Name), user.UserId)
 			// Fall through — let the flee command execute normally
 		} else if cmd != `cancel` {
 			if cmdInfo, hasCmdInfo := userCommands[cmd]; !hasCmdInfo || !cmdInfo.AllowedWhenDowned {
 				cs, _ := user.Character.Activity.CastingData()
-				user.SendText(fmt.Sprintf(
+				user.SendTextLegacy(fmt.Sprintf(
 					`<ansi fg="cyan">You are holding <ansi fg="cyan-bold">%d/%d</ansi> folds. Type <ansi fg="cyan-bold">cancel</ansi> to stop.</ansi>`,
 					cs.FoldsAccumulated,
 					cs.FoldsNeeded))
@@ -447,7 +447,7 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 			_ = user.Character.Presence.TransitionTo(presence.Active,
 				state.TransitionReason{Trigger: presence.TriggerInputReceived})
 			if hadData && d.Manual {
-				user.SendText(`<ansi fg="8">You are no longer AFK.</ansi>`)
+				user.SendTextLegacy(`<ansi fg="8">You are no longer AFK.</ansi>`)
 			}
 		}
 	}
@@ -458,7 +458,7 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 
 			// If actually downed, prevent it (unless admin)
 			if userDisabled && !cmdInfo.AdminOnly {
-				user.SendText("You are unable to do that while downed.")
+				user.SendTextLegacy("You are unable to do that while downed.")
 				return true, nil
 			}
 
@@ -472,7 +472,7 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 		if !cmdInfo.AllowedInCombat {
 			// If in combat, prevent it (unless admin)
 			if user.Character.IsInCombat() && !cmdInfo.AdminOnly {
-				user.SendText("You can't do that while fighting!")
+				user.SendTextLegacy("You can't do that while fighting!")
 				return true, nil
 			}
 		}

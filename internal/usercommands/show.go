@@ -20,7 +20,7 @@ func Show(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) < 2 {
-		user.SendText("Show what? To whom?")
+		user.SendTextLegacy("Show what? To whom?")
 		return true, nil
 	}
 
@@ -35,20 +35,20 @@ func Show(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	showItem, found = user.Character.FindInBackpack(objectName)
 
 	if !found {
-		user.SendText(fmt.Sprintf("You don't have a %s to show.", objectName))
+		user.SendTextLegacy(fmt.Sprintf("You don't have a %s to show.", objectName))
 		return true, nil
 	}
 
 	target, err := actions.ResolveTargetActor(room, targetName)
 	if err != nil {
-		user.SendText("Who???")
+		user.SendTextLegacy("Who???")
 		return true, nil
 	}
 
 	user.Character.CancelBuffsWithFlag(buffs.Hidden)
 
 	if showItem.ItemId == 0 {
-		user.SendText("Something went wrong.")
+		user.SendTextLegacy("Something went wrong.")
 		return true, nil
 	}
 
@@ -57,21 +57,21 @@ func Show(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		targetUser := target.(*actions.UserActor).User
 
 		// Tell the shower
-		user.SendText(
+		user.SendTextLegacy(
 			fmt.Sprintf(`You show the <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, showItem.DisplayName(), targetUser.Character.Name),
 		)
 
 		// Tell the Showee
-		targetUser.SendText(
+		targetUser.SendTextLegacy(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> shows you their <ansi fg="item">%s</ansi>.`, user.Character.Name, showItem.DisplayName()),
 		)
 
-		targetUser.SendText(
+		targetUser.SendTextLegacy(
 			"\n" + showItem.GetLongDescription() + "\n",
 		)
 
 		// Tell the rest of the room
-		room.SendTextVisual(
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, user.Character.Name, showItem.DisplayName(), targetUser.Character.Name),
 			targetUser.UserId,
 			user.UserId)
@@ -80,11 +80,11 @@ func Show(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		targetMob := target.(*actions.MobActor).Mob
 
-		user.SendText(
+		user.SendTextLegacy(
 			fmt.Sprintf(`You show the <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, showItem.DisplayName(), targetMob.Character.Name),
 		)
 
-		room.SendTextVisual(
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, showItem.DisplayName(), targetMob.Character.Name),
 			user.UserId,
 		)

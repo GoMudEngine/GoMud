@@ -82,13 +82,13 @@ func Help(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		helpTxt, err = GetHelpContents(rest)
 		if err != nil {
-			user.SendText(fmt.Sprintf(`No help found for "%s"`, rest))
+			user.SendTextLegacy(fmt.Sprintf(`No help found for "%s"`, rest))
 			return true, err
 		}
 
 	}
 
-	user.SendText(helpTxt)
+	user.SendTextLegacy(helpTxt)
 
 	return true, nil
 }

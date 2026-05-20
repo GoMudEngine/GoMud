@@ -49,7 +49,7 @@ func Plant(actor Actor, opts PlantOptions) PlantResult {
 
 	// Combat gate — can't plant while actively fighting.
 	if char.Aggro != nil {
-		actor.SendText("You can't do that while in combat!")
+		actor.SendTextLegacy("You can't do that while in combat!")
 		return PlantResult{Reason: "in combat"}
 	}
 
@@ -60,27 +60,27 @@ func Plant(actor Actor, opts PlantOptions) PlantResult {
 
 	// Under-attack gate — mobs with userId=0 short-circuit this harmlessly.
 	if room.AreMobsAttacking(actor.GetUserId()) {
-		actor.SendText("You can't do that while you are under attack!")
+		actor.SendTextLegacy("You can't do that while you are under attack!")
 		return PlantResult{Reason: "under attack"}
 	}
 
 	// Require a target.
 	if opts.TargetMobInstanceId == 0 && opts.TargetUserId == 0 &&
 		opts.ContainerNoun == "" {
-		actor.SendText("Plant on whom?")
+		actor.SendTextLegacy("Plant on whom?")
 		return PlantResult{Reason: "no target"}
 	}
 
 	// Require an item noun.
 	if opts.ItemNoun == "" {
-		actor.SendText("Plant what?")
+		actor.SendTextLegacy("Plant what?")
 		return PlantResult{Reason: "no item"}
 	}
 
 	// Find item in actor's backpack.
 	plantItem, found := char.FindInBackpack(opts.ItemNoun)
 	if !found {
-		actor.SendText("You don't have that.")
+		actor.SendTextLegacy("You don't have that.")
 		return PlantResult{Reason: "item not in backpack"}
 	}
 
@@ -131,7 +131,7 @@ func plantOnMob(actor Actor, mobInstanceId int, plantItem items.Item,
 
 	m := mobs.GetInstance(mobInstanceId)
 	if m == nil {
-		actor.SendText("They seem to have vanished.")
+		actor.SendTextLegacy("They seem to have vanished.")
 		return PlantResult{Reason: "target not found"}
 	}
 
@@ -180,7 +180,7 @@ func plantOnMob(actor Actor, mobInstanceId int, plantItem items.Item,
 			})
 		}
 
-		actor.SendText(fmt.Sprintf(
+		actor.SendTextLegacy(fmt.Sprintf(
 			`You deftly slip the <ansi fg="itemname">%s</ansi> into `+
 				`<ansi fg="mobname">%s</ansi>'s belongings unnoticed.`,
 			plantItem.DisplayName(), m.Character.Name))
@@ -193,12 +193,12 @@ func plantOnMob(actor Actor, mobInstanceId int, plantItem items.Item,
 	}
 
 	// Failure — detected.
-	actor.SendText(fmt.Sprintf(
+	actor.SendTextLegacy(fmt.Sprintf(
 		`<ansi fg="mobname">%s</ansi> catches you in the act!`,
 		m.Character.Name))
 
 	if room != nil {
-		room.SendTextVisual(
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> gets caught trying to plant `+
 					`something on <ansi fg="mobname">%s</ansi>!`,
@@ -262,7 +262,7 @@ func plantOnPlayer(actor Actor, targetUserId int, plantItem items.Item,
 
 	targetUser := users.GetByUserId(targetUserId)
 	if targetUser == nil {
-		actor.SendText("They seem to have vanished.")
+		actor.SendTextLegacy("They seem to have vanished.")
 		return PlantResult{Reason: "target not found"}
 	}
 
@@ -273,7 +273,7 @@ func plantOnPlayer(actor Actor, targetUserId int, plantItem items.Item,
 	success, _, _, _ := dice.OpposedRollStat(attackerScore, defenderScore)
 
 	if !success {
-		actor.SendText(fmt.Sprintf(
+		actor.SendTextLegacy(fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> catches you in the act!`,
 			targetUser.Character.Name))
 		actor.GetCharacter().Awareness.TransitionToRevealing(state.TransitionReason{
@@ -321,7 +321,7 @@ func plantOnPlayer(actor Actor, targetUserId int, plantItem items.Item,
 		sneakScore := CalcSneakScoreVsObserver(actor.GetCharacter(), targetUser.Character, actor.GetRoom())
 		detected, _, _, _ := dice.OpposedRollStat(searchScore, sneakScore)
 		if detected {
-			targetUser.SendText(fmt.Sprintf(
+			targetUser.SendTextLegacy(fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi> slips something into your `+
 					`belongings!`,
 				actor.GetName()))
@@ -339,7 +339,7 @@ func plantInContainer(actor Actor, containerName string, plantItem items.Item,
 	room := actor.GetRoom()
 	container, ok := room.Containers[containerName]
 	if !ok {
-		actor.SendText("You don't see that here.")
+		actor.SendTextLegacy("You don't see that here.")
 		return PlantResult{Reason: "not found"}
 	}
 
@@ -412,12 +412,12 @@ func plantInContainer(actor Actor, containerName string, plantItem items.Item,
 	}
 
 	if !success {
-		actor.SendText(fmt.Sprintf(
+		actor.SendTextLegacy(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> spots you slipping something into `+
 				`the <ansi fg="itemname">%s</ansi>!`,
 			spotterName, containerName))
 
-		room.SendTextVisual(
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> is caught planting something `+
 					`in the <ansi fg="itemname">%s</ansi>!`,
@@ -454,7 +454,7 @@ func plantInContainer(actor Actor, containerName string, plantItem items.Item,
 		})
 	}
 
-	actor.SendText(fmt.Sprintf(
+	actor.SendTextLegacy(fmt.Sprintf(
 		`You quietly slip your <ansi fg="itemname">%s</ansi> into `+
 			`the <ansi fg="itemname">%s</ansi>.`,
 		plantItem.DisplayName(), containerName))

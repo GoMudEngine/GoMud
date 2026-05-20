@@ -53,10 +53,10 @@ func Opinion(rest string, user *users.UserRecord, room *rooms.Room, flags events
 func opinionShowUsage(user *users.UserRecord) {
 	// Try templated help first; fall back to inline if missing.
 	if out, err := templates.Process("admincommands/help/command.opinion", nil, user.UserId); err == nil && strings.TrimSpace(out) != "" {
-		user.SendText(out)
+		user.SendTextLegacy(out)
 		return
 	}
-	user.SendText(
+	user.SendTextLegacy(
 		"Usage:\r\n" +
 			"  opinion show <playerName>\r\n" +
 			"  opinion show <mobName|mobId> <playerName>\r\n" +
@@ -81,13 +81,13 @@ func opinionShow(args []string, user *users.UserRecord) (bool, error) {
 func opinionShowAll(playerName string, user *users.UserRecord) (bool, error) {
 	target := users.GetByCharacterNameOrLoad(playerName)
 	if target == nil {
-		user.SendText(fmt.Sprintf("No such player: %s\r\n", playerName))
+		user.SendTextLegacy(fmt.Sprintf("No such player: %s\r\n", playerName))
 		return true, nil
 	}
 
 	rows := opinions.AllRowsForUser(target.UserId)
 	if len(rows) == 0 {
-		user.SendText(fmt.Sprintf("No NPCs hold an opinion of %s.\r\n", playerName))
+		user.SendTextLegacy(fmt.Sprintf("No NPCs hold an opinion of %s.\r\n", playerName))
 		return true, nil
 	}
 
@@ -107,23 +107,23 @@ func opinionShowAll(playerName string, user *users.UserRecord) (bool, error) {
 			r.Score, opinionTierName(opinions.TierOf(r.Score)),
 			opinionRoundsAgo(now, r.LastUpdatedRound))
 	}
-	user.SendText(b.String())
+	user.SendTextLegacy(b.String())
 	return true, nil
 }
 
 func opinionShowOne(mobIdent, playerName string, user *users.UserRecord) (bool, error) {
 	mobId, mobName, ok := opinionResolveMobIdent(mobIdent)
 	if !ok {
-		user.SendText(fmt.Sprintf("Unknown mob: %s\r\n", mobIdent))
+		user.SendTextLegacy(fmt.Sprintf("Unknown mob: %s\r\n", mobIdent))
 		return true, nil
 	}
 	target := users.GetByCharacterNameOrLoad(playerName)
 	if target == nil {
-		user.SendText(fmt.Sprintf("No such player: %s\r\n", playerName))
+		user.SendTextLegacy(fmt.Sprintf("No such player: %s\r\n", playerName))
 		return true, nil
 	}
 	score := opinions.Get(mobId, target.UserId)
-	user.SendText(fmt.Sprintf("%s (%d) -> %s: score=%d, tier=%s\r\n",
+	user.SendTextLegacy(fmt.Sprintf("%s (%d) -> %s: score=%d, tier=%s\r\n",
 		mobName, mobId, playerName, score, opinionTierName(opinions.TierOf(score))))
 	return true, nil
 }
@@ -147,12 +147,12 @@ func opinionMutate(args []string, user *users.UserRecord, mode opinionMutateMode
 	}
 	mobId, mobName, ok := opinionResolveMobIdent(args[0])
 	if !ok {
-		user.SendText(fmt.Sprintf("Unknown mob: %s\r\n", args[0]))
+		user.SendTextLegacy(fmt.Sprintf("Unknown mob: %s\r\n", args[0]))
 		return true, nil
 	}
 	target := users.GetByCharacterNameOrLoad(args[1])
 	if target == nil {
-		user.SendText(fmt.Sprintf("No such player: %s\r\n", args[1]))
+		user.SendTextLegacy(fmt.Sprintf("No such player: %s\r\n", args[1]))
 		return true, nil
 	}
 
@@ -160,24 +160,24 @@ func opinionMutate(args []string, user *users.UserRecord, mode opinionMutateMode
 	case mutateSet:
 		v, err := strconv.Atoi(args[2])
 		if err != nil {
-			user.SendText(fmt.Sprintf("Bad score %q: %v\r\n", args[2], err))
+			user.SendTextLegacy(fmt.Sprintf("Bad score %q: %v\r\n", args[2], err))
 			return true, nil
 		}
 		opinions.Set(mobId, target.UserId, v)
-		user.SendText(fmt.Sprintf("Set %s (%d) -> %s = %d\r\n", mobName, mobId, args[1], v))
+		user.SendTextLegacy(fmt.Sprintf("Set %s (%d) -> %s = %d\r\n", mobName, mobId, args[1], v))
 	case mutateBump:
 		v, err := strconv.Atoi(args[2])
 		if err != nil {
-			user.SendText(fmt.Sprintf("Bad delta %q: %v\r\n", args[2], err))
+			user.SendTextLegacy(fmt.Sprintf("Bad delta %q: %v\r\n", args[2], err))
 			return true, nil
 		}
 		opinions.Bump(mobId, target.UserId, v)
-		user.SendText(fmt.Sprintf("Bumped %s (%d) -> %s by %d (now %d)\r\n",
+		user.SendTextLegacy(fmt.Sprintf("Bumped %s (%d) -> %s by %d (now %d)\r\n",
 			mobName, mobId, args[1], v, opinions.Get(mobId, target.UserId)))
 	case mutateReset:
 		def := opinionMobDefaultDisposition(mobId)
 		opinions.Set(mobId, target.UserId, def)
-		user.SendText(fmt.Sprintf("Reset %s (%d) -> %s to default %d\r\n",
+		user.SendTextLegacy(fmt.Sprintf("Reset %s (%d) -> %s to default %d\r\n",
 			mobName, mobId, args[1], def))
 	}
 	return true, nil

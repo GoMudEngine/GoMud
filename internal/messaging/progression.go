@@ -65,21 +65,16 @@ func center(s string) string {
 // UserSender is the minimal interface SendProgression needs; the
 // real *users.UserRecord satisfies it. Decoupled so internal/messaging/
 // does not import internal/users/ (the audit's import direction).
-//
-// Note: post-T9 the UserSender.SendText signature will gain a leading
-// Category param. T9 updates this signature in the same commit it
-// updates everyone else's. For now the interface matches the existing
-// pre-T9 UserRecord.SendText shape.
 func SendProgression(user UserSender, kind ProgressionKind, name string, tier *TierChange) {
 	if user == nil {
 		return
 	}
-	user.SendText(FormatProgression(kind, name, tier))
+	user.SendText(CategorySkillProgress, FormatProgression(kind, name, tier))
 }
 
 // UserSender is the minimal interface SendProgression needs. The
 // real *users.UserRecord satisfies it. Decoupled so messaging/ does
 // not import users/ (the audit's import direction).
 type UserSender interface {
-	SendText(text string)
+	SendText(cat Category, text string)
 }

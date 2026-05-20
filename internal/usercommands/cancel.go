@@ -15,7 +15,7 @@ import (
 func Cancel(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 	a := user.Character.Activity
 	if a == nil || a.IsFree() {
-		user.SendText(`You aren't doing anything to cancel.`)
+		user.SendTextLegacy(`You aren't doing anything to cancel.`)
 		return true, nil
 	}
 
@@ -35,21 +35,21 @@ func Cancel(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			Trigger: activity.TriggerCastCancel,
 			Actor:   state.ActorRef{UserId: user.UserId},
 		})
-		user.SendText(`You stop casting.`)
+		user.SendTextLegacy(`You stop casting.`)
 
 	case activity.Crafting:
 		_ = a.TransitionToFree(state.TransitionReason{
 			Trigger: activity.TriggerCraftCancel,
 			Actor:   state.ActorRef{UserId: user.UserId},
 		})
-		user.SendText(`You stop crafting.`)
+		user.SendTextLegacy(`You stop crafting.`)
 
 	case activity.Salvaging:
 		_ = a.TransitionToFree(state.TransitionReason{
 			Trigger: activity.TriggerSalvageCancel,
 			Actor:   state.ActorRef{UserId: user.UserId},
 		})
-		user.SendText(`You stop salvaging.`)
+		user.SendTextLegacy(`You stop salvaging.`)
 	}
 	return true, nil
 }

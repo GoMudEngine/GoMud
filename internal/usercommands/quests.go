@@ -107,7 +107,7 @@ func Quests(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	})
 
 	questTxt, _ := templates.Process("character/quests", qInfo, user.UserId)
-	user.SendText(questTxt)
+	user.SendTextLegacy(questTxt)
 
 	return true, nil
 }

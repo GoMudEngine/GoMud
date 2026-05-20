@@ -41,7 +41,7 @@ func Remove(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	result := actions.RemoveEquipment(actor, rest)
 
 	if result.Removed {
-		room.SendTextVisual(
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> removes their <ansi fg="item">%s</ansi> and stores it away.`, mob.Character.Name, result.Item.DisplayName()))
 	}
 

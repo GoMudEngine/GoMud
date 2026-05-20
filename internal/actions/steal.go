@@ -52,7 +52,7 @@ func Steal(actor Actor, opts StealOptions) StealResult {
 
 	// Combat gate — can't steal while actively fighting.
 	if char.Aggro != nil {
-		actor.SendText("You can't do that while in combat!")
+		actor.SendTextLegacy("You can't do that while in combat!")
 		return StealResult{Reason: "in combat"}
 	}
 
@@ -63,14 +63,14 @@ func Steal(actor Actor, opts StealOptions) StealResult {
 
 	// Under-attack gate — mobs with userId=0 short-circuit this harmlessly.
 	if room.AreMobsAttacking(actor.GetUserId()) {
-		actor.SendText("You can't do that while you are under attack!")
+		actor.SendTextLegacy("You can't do that while you are under attack!")
 		return StealResult{Reason: "under attack"}
 	}
 
 	// Require a target.
 	if opts.TargetMobInstanceId == 0 && opts.TargetUserId == 0 &&
 		opts.ContainerNoun == "" {
-		actor.SendText("Steal from whom?")
+		actor.SendTextLegacy("Steal from whom?")
 		return StealResult{Reason: "no target"}
 	}
 
@@ -117,12 +117,12 @@ func stealFromMob(actor Actor, mobInstanceId int, attackerScore float64,
 
 	m := mobs.GetInstance(mobInstanceId)
 	if m == nil {
-		actor.SendText("They seem to have vanished.")
+		actor.SendTextLegacy("They seem to have vanished.")
 		return StealResult{Reason: "target not found"}
 	}
 
 	if m.IsNonCombatant() || m.PlayerAttackImmune {
-		actor.SendText(fmt.Sprintf(
+		actor.SendTextLegacy(fmt.Sprintf(
 			`You can't steal from <ansi fg="mobname">%s</ansi>.`,
 			m.Character.Name))
 		return StealResult{
@@ -136,7 +136,7 @@ func stealFromMob(actor Actor, mobInstanceId int, attackerScore float64,
 	// gets the immune rebuff (which doesn't imply skill would help)
 	// rather than the skill rebuff (which does).
 	if rank < 2 {
-		actor.SendText("You aren't advanced enough at skullduggery for that.")
+		actor.SendTextLegacy("You aren't advanced enough at skullduggery for that.")
 		return StealResult{
 			DefenderName: m.Character.Name,
 			Reason:       "not advanced enough",
@@ -223,12 +223,12 @@ func stealFromMob(actor Actor, mobInstanceId int, attackerScore float64,
 		}
 
 		if len(stolenStuff) == 0 {
-			actor.SendText(fmt.Sprintf(
+			actor.SendTextLegacy(fmt.Sprintf(
 				`You deftly rifle through <ansi fg="mobname">%s</ansi>'s `+
 					`belongings but find nothing worth taking.`,
 				m.Character.Name))
 		} else {
-			actor.SendText(fmt.Sprintf(
+			actor.SendTextLegacy(fmt.Sprintf(
 				`You successfully steal %s from <ansi fg="mobname">%s</ansi>.`,
 				strings.Join(stolenStuff, ` and `), m.Character.Name))
 		}
@@ -237,12 +237,12 @@ func stealFromMob(actor Actor, mobInstanceId int, attackerScore float64,
 	}
 
 	// Failure — detected.
-	actor.SendText(fmt.Sprintf(
+	actor.SendTextLegacy(fmt.Sprintf(
 		`<ansi fg="mobname">%s</ansi> catches you in the act!`,
 		m.Character.Name))
 
 	if room != nil {
-		room.SendTextVisual(
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> gets caught trying to steal `+
 					`from <ansi fg="mobname">%s</ansi>!`,
@@ -307,13 +307,13 @@ func stealFromPlayer(actor Actor, targetUserId int, attackerScore float64,
 
 	targetUser := users.GetByUserId(targetUserId)
 	if targetUser == nil {
-		actor.SendText("They seem to have vanished.")
+		actor.SendTextLegacy("They seem to have vanished.")
 		return StealResult{Reason: "target not found"}
 	}
 
 	// Skill rank 2 required.
 	if rank < 2 {
-		actor.SendText("You aren't advanced enough at skullduggery for that.")
+		actor.SendTextLegacy("You aren't advanced enough at skullduggery for that.")
 		return StealResult{
 			DefenderName: targetUser.Character.Name,
 			Reason:       "not advanced enough",
@@ -327,7 +327,7 @@ func stealFromPlayer(actor Actor, targetUserId int, attackerScore float64,
 	success, _, _, _ := dice.OpposedRollStat(attackerScore, defenderScore)
 
 	if !success {
-		actor.SendText(fmt.Sprintf(
+		actor.SendTextLegacy(fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> catches you in the act!`,
 			targetUser.Character.Name))
 		actor.GetCharacter().Awareness.TransitionToRevealing(state.TransitionReason{
@@ -373,7 +373,7 @@ func stealFromPlayer(actor Actor, targetUserId int, attackerScore float64,
 		sneakScore := CalcSneakScoreVsObserver(actor.GetCharacter(), targetUser.Character, actor.GetRoom())
 		detected, _, _, _ := dice.OpposedRollStat(searchScore, sneakScore)
 		if detected {
-			targetUser.SendText(fmt.Sprintf(
+			targetUser.SendTextLegacy(fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi> lifts `+
 					`<ansi fg="yellow-bold">%d gold</ansi> from your pocket!`,
 				actor.GetName(), result.StoleGold))
@@ -391,7 +391,7 @@ func stealFromContainer(actor Actor, containerName string,
 	room := actor.GetRoom()
 	container, ok := room.Containers[containerName]
 	if !ok {
-		actor.SendText("You don't see that here.")
+		actor.SendTextLegacy("You don't see that here.")
 		return StealResult{Reason: "not found"}
 	}
 
@@ -399,12 +399,12 @@ func stealFromContainer(actor Actor, containerName string,
 	// gate in stealFromMob; checked AFTER target validation so the rebuff
 	// order is consistent.
 	if rank < 2 {
-		actor.SendText("You aren't advanced enough at skullduggery for that.")
+		actor.SendTextLegacy("You aren't advanced enough at skullduggery for that.")
 		return StealResult{Reason: "not advanced enough"}
 	}
 
 	if len(container.Items) == 0 && container.Gold == 0 {
-		actor.SendText(fmt.Sprintf(
+		actor.SendTextLegacy(fmt.Sprintf(
 			`You root around inside the <ansi fg="itemname">%s</ansi> `+
 				`but find it empty.`,
 			containerName))
@@ -480,12 +480,12 @@ func stealFromContainer(actor Actor, containerName string,
 	}
 
 	if !success {
-		actor.SendText(fmt.Sprintf(
+		actor.SendTextLegacy(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> spots you reaching into the `+
 				`<ansi fg="itemname">%s</ansi>!`,
 			spotterName, containerName))
 
-		room.SendTextVisual(
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> is caught stealing from `+
 					`the <ansi fg="itemname">%s</ansi>!`,
@@ -531,7 +531,7 @@ func stealFromContainer(actor Actor, containerName string,
 			})
 		}
 
-		actor.SendText(fmt.Sprintf(
+		actor.SendTextLegacy(fmt.Sprintf(
 			`You quietly slip <ansi fg="itemname">%s</ansi> from the `+
 				`<ansi fg="itemname">%s</ansi>.`,
 			stolen.DisplayName(), containerName))
@@ -553,7 +553,7 @@ func stealFromContainer(actor Actor, containerName string,
 				})
 			}
 
-			actor.SendText(fmt.Sprintf(
+			actor.SendTextLegacy(fmt.Sprintf(
 				`You quietly lift <ansi fg="yellow-bold">%d gold</ansi> `+
 					`from the <ansi fg="itemname">%s</ansi>.`,
 				goldStolen, containerName))

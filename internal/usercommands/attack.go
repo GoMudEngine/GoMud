@@ -98,7 +98,7 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	if attackMobInstanceId == 0 && attackPlayerId == 0 {
-		user.SendText("You attack the darkness!")
+		user.SendTextLegacy("You attack the darkness!")
 		return true, nil
 	}
 
@@ -157,12 +157,12 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			mName := m.Character.GetMobNameIndexed(user.UserId, dupIdx).String()
 
 			if m.Character.IsCharmed() {
-				user.SendText(fmt.Sprintf(`%s is someone's companion!`, mName))
+				user.SendTextLegacy(fmt.Sprintf(`%s is someone's companion!`, mName))
 				return true, nil
 			}
 
 			if m.IsNonCombatant() || m.PlayerAttackImmune {
-				user.SendText(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, m.Character.Name))
+				user.SendTextLegacy(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, m.Character.Name))
 				mobs.FireAttackRejected(m, user.UserId)
 				return true, nil
 			}
@@ -219,12 +219,12 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				}
 			}
 
-			user.SendText(
+			user.SendTextLegacy(
 				fmt.Sprintf(`You prepare to enter into mortal combat with %s.`, mName),
 			)
 
 			if !isSneaking {
-				room.SendTextVisual(
+				room.SendTextVisualLegacy(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> prepares to fight %s.`, user.Character.Name, mName),
 					user.UserId,
 				)
@@ -249,13 +249,13 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		if p := users.GetByUserId(attackPlayerId); p != nil {
 
 			if pvpErr := room.CanPvp(user, p); pvpErr != nil {
-				user.SendText(pvpErr.Error())
+				user.SendTextLegacy(pvpErr.Error())
 				return true, nil
 			}
 
 			if partyInfo := parties.Get(user.UserId); partyInfo != nil {
 				if partyInfo.IsMember(attackPlayerId) {
-					user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is in your party!`, p.Character.Name))
+					user.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> is in your party!`, p.Character.Name))
 					return true, nil
 				}
 			}
@@ -286,17 +286,17 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			user.Character.SetAggro(attackPlayerId, 0, characters.DefaultAttack)
 
-			user.SendText(
+			user.SendTextLegacy(
 				fmt.Sprintf(`You prepare to enter into mortal combat with <ansi fg="username">%s</ansi>.`, p.Character.Name),
 			)
 
 			if !isSneaking {
 
-				p.SendText(
+				p.SendTextLegacy(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> prepares to fight you!`, user.Character.Name),
 				)
 
-				room.SendTextVisual(
+				room.SendTextVisualLegacy(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> prepares to fight <ansi fg="mobname">%s</ansi>.`, user.Character.Name, p.Character.Name),
 					user.UserId, attackPlayerId)
 			}

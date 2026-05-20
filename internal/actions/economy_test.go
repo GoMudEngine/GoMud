@@ -47,7 +47,7 @@ func newStubActor(char *characters.Character, room *rooms.Room) *stubActor {
 
 func (a *stubActor) GetCharacter() *characters.Character    { return a.char }
 func (a *stubActor) GetRoom() *rooms.Room                   { return a.room }
-func (a *stubActor) SendText(_ string)                      {}
+func (a *stubActor) SendTextLegacy(_ string)                {}
 func (a *stubActor) SendRoomText(_ string, _ bool)          {}
 func (a *stubActor) SendRoomCommunication(_ string, _ bool) {}
 func (a *stubActor) GetName() string                        { return "TestActor" }

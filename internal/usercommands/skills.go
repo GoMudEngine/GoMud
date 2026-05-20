@@ -28,12 +28,12 @@ func Skills(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	skillTxt, _ := templates.Process("character/skills", skillData, user.UserId)
-	user.SendText(skillTxt)
+	user.SendTextLegacy(skillTxt)
 
 	if rest == `extra` {
-		user.SendText(`<ansi fg="yellow">Cooldown Tracking:</ansi>`)
+		user.SendTextLegacy(`<ansi fg="yellow">Cooldown Tracking:</ansi>`)
 		for name, rnds := range user.Character.GetAllCooldowns() {
-			user.SendText(fmt.Sprintf(` <ansi fg="yellow">%s</ansi>: <ansi fg="red">%d</ansi>`, name, rnds))
+			user.SendTextLegacy(fmt.Sprintf(` <ansi fg="yellow">%s</ansi>: <ansi fg="red">%d</ansi>`, name, rnds))
 		}
 	}
 

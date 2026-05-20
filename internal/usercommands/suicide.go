@@ -15,7 +15,7 @@ import (
 func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	if user.Character.Zone == `Shadow Realm` {
-		user.SendText(`You're already dead!`)
+		user.SendTextLegacy(`You're already dead!`)
 		return true, errors.New(`already dead`)
 	}
 
@@ -35,8 +35,8 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	// character Alive.
 	if user.Character.HasBuffFlag(buffs.ReviveOnDeath) {
 		user.Character.Health = user.Character.HealthMax.Value
-		user.SendText(`You are revived in a shower of magical sparks!`)
-		room.SendTextVisual(
+		user.SendTextLegacy(`You are revived in a shower of magical sparks!`)
+		room.SendTextVisualLegacy(
 			`<ansi fg="username">`+user.Character.Name+`</ansi> is suddenly revived in a shower of sparks!`,
 			user.UserId,
 		)

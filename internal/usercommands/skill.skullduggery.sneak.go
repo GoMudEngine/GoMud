@@ -27,7 +27,7 @@ func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	// Can't sneak while crafting or otherwise occupied
 	if !user.Character.IsFree() {
-		user.SendText(`You are busy with something else.`)
+		user.SendTextLegacy(`You are busy with something else.`)
 		return true, nil
 	}
 
@@ -36,7 +36,7 @@ func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	// Check cooldown — only block if on cooldown from a prior failure
 	if user.Character.GetCooldown(sneakCooldownKey) > 0 {
-		user.SendText(fmt.Sprintf(
+		user.SendTextLegacy(fmt.Sprintf(
 			"You need to wait %d more rounds before you can try that again.",
 			user.Character.GetCooldown(sneakCooldownKey)))
 		return true, nil
@@ -46,18 +46,18 @@ func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	switch {
 	case result.AlreadyHidden:
-		user.SendText("You're already hidden!")
+		user.SendTextLegacy("You're already hidden!")
 		return true, nil
 
 	case result.InCombat:
-		user.SendText("You can't do that while in combat!")
+		user.SendTextLegacy("You can't do that while in combat!")
 		return true, nil
 
 	case result.SpottedByName != "":
 		// Apply failure cooldown so the player can't spam sneak
 		user.Character.TryCooldown(sneakCooldownKey,
 			fmt.Sprintf(`%d rounds`, cfg.SneakFailCooldown))
-		user.SendText(fmt.Sprintf(
+		user.SendTextLegacy(fmt.Sprintf(
 			`You try to blend into the shadows but <ansi fg="mobname">%s</ansi> notices you.`,
 			result.SpottedByName))
 
@@ -69,7 +69,7 @@ func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	// Success
-	user.SendText(`You slip into the shadows.`)
+	user.SendTextLegacy(`You slip into the shadows.`)
 
 	// Progress the skill only when a roll actually happened
 	if result.RollHappened {

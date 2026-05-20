@@ -16,7 +16,7 @@ func Stand(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	// Chunk 4b W7: gate on the new Position FSM (Prone or Supine).
 	if !user.Character.IsProne() && !user.Character.IsSupine() {
-		user.SendText("You're already standing.")
+		user.SendTextLegacy("You're already standing.")
 		return true, nil
 	}
 
@@ -29,7 +29,7 @@ func Stand(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	// Check if player has enough stamina
 	if user.Character.Stamina < minStamina {
 		needed := minStamina - user.Character.Stamina
-		user.SendText(fmt.Sprintf("You're too exhausted to stand! (need %d more stamina)", needed))
+		user.SendTextLegacy(fmt.Sprintf("You're too exhausted to stand! (need %d more stamina)", needed))
 		return true, nil
 	}
 
@@ -37,7 +37,7 @@ func Stand(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	// (shouldn't happen since Prone→Standing and Supine→Standing are valid edges).
 	if err := user.Character.Position.TransitionToStanding(state.TransitionReason{Trigger: position.TriggerStandCommand}); err != nil {
 		mudlog.Warn("Stand: TransitionToStanding failed", "user", user.UserId, "err", err)
-		user.SendText("Something prevents you from standing.")
+		user.SendTextLegacy("Something prevents you from standing.")
 		return true, nil
 	}
 
@@ -48,9 +48,9 @@ func Stand(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	// Send messages
-	user.SendText("You struggle to your feet!")
+	user.SendTextLegacy("You struggle to your feet!")
 
-	room.SendTextVisual(
+	room.SendTextVisualLegacy(
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> struggles to their feet.`, user.Character.Name),
 		user.UserId,
 	)

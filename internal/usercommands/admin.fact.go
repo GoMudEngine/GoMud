@@ -55,10 +55,10 @@ func Fact(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 func factUsage(user *users.UserRecord) {
 	if out, err := templates.Process("admincommands/help/command.fact", nil, user.UserId); err == nil && strings.TrimSpace(out) != "" {
-		user.SendText(out)
+		user.SendTextLegacy(out)
 		return
 	}
-	user.SendText(
+	user.SendTextLegacy(
 		"Usage:\r\n" +
 			"  fact list [--all]\r\n" +
 			"  fact show <factId>\r\n" +
@@ -87,7 +87,7 @@ func factList(args []string, user *users.UserRecord) (bool, error) {
 		rows = facts.AllActiveFacts()
 	}
 	if len(rows) == 0 {
-		user.SendText("No facts.\r\n")
+		user.SendTextLegacy("No facts.\r\n")
 		return true, nil
 	}
 	sort.Slice(rows, func(i, j int) bool { return rows[i].Id < rows[j].Id })
@@ -115,7 +115,7 @@ func factList(args []string, user *users.UserRecord) (bool, error) {
 			factTruncate(region, 10),
 			strings.Join(f.Tags, ","))
 	}
-	user.SendText(b.String())
+	user.SendTextLegacy(b.String())
 	return true, nil
 }
 
@@ -126,7 +126,7 @@ func factShow(args []string, user *users.UserRecord) (bool, error) {
 	}
 	f := facts.GetFact(args[0])
 	if f == nil {
-		user.SendText(fmt.Sprintf("No fact with id %q\r\n", args[0]))
+		user.SendTextLegacy(fmt.Sprintf("No fact with id %q\r\n", args[0]))
 		return true, nil
 	}
 	var b strings.Builder
@@ -146,7 +146,7 @@ func factShow(args []string, user *users.UserRecord) (bool, error) {
 	if f.WithdrawOnRespawnOf > 0 {
 		fmt.Fprintf(&b, "  Bound mob: %d (auto-withdraws on respawn)\r\n", f.WithdrawOnRespawnOf)
 	}
-	user.SendText(b.String())
+	user.SendTextLegacy(b.String())
 	return true, nil
 }
 
@@ -154,7 +154,7 @@ func factDeclare(rest string, user *users.UserRecord) (bool, error) {
 	// Custom parser: split on ` -- ` first to extract description.
 	idx := strings.Index(rest, " -- ")
 	if idx < 0 {
-		user.SendText("Missing -- separator before description.\r\nUsage: fact declare <factId> [opts] -- <description>\r\n")
+		user.SendTextLegacy("Missing -- separator before description.\r\nUsage: fact declare <factId> [opts] -- <description>\r\n")
 		return true, nil
 	}
 	beforeDash := strings.TrimSpace(rest[:idx])
@@ -209,10 +209,10 @@ func factDeclare(rest string, user *users.UserRecord) (bool, error) {
 	}
 
 	if err := facts.Declare(factId, opts); err != nil {
-		user.SendText(fmt.Sprintf("Declare failed: %v\r\n", err))
+		user.SendTextLegacy(fmt.Sprintf("Declare failed: %v\r\n", err))
 		return true, nil
 	}
-	user.SendText(fmt.Sprintf("Declared fact %q.\r\n", factId))
+	user.SendTextLegacy(fmt.Sprintf("Declared fact %q.\r\n", factId))
 	return true, nil
 }
 
@@ -222,7 +222,7 @@ func factWithdraw(args []string, user *users.UserRecord) (bool, error) {
 		return true, nil
 	}
 	facts.Withdraw(args[0])
-	user.SendText(fmt.Sprintf("Withdrew fact %q.\r\n", args[0]))
+	user.SendTextLegacy(fmt.Sprintf("Withdrew fact %q.\r\n", args[0]))
 	return true, nil
 }
 
@@ -232,13 +232,13 @@ func factExpire(args []string, user *users.UserRecord) (bool, error) {
 		return true, nil
 	}
 	facts.Expire(args[0])
-	user.SendText(fmt.Sprintf("Expired fact %q.\r\n", args[0]))
+	user.SendTextLegacy(fmt.Sprintf("Expired fact %q.\r\n", args[0]))
 	return true, nil
 }
 
 func factPrune(user *users.UserRecord) (bool, error) {
 	count := facts.PruneExpired()
-	user.SendText(fmt.Sprintf("Pruned %d expired fact(s).\r\n", count))
+	user.SendTextLegacy(fmt.Sprintf("Pruned %d expired fact(s).\r\n", count))
 	return true, nil
 }
 
@@ -249,7 +249,7 @@ func factAwareness(args []string, user *users.UserRecord) (bool, error) {
 	}
 	mobId, err := strconv.Atoi(args[0])
 	if err != nil {
-		user.SendText(fmt.Sprintf("Bad mob id %q\r\n", args[0]))
+		user.SendTextLegacy(fmt.Sprintf("Bad mob id %q\r\n", args[0]))
 		return true, nil
 	}
 	a := facts.AllForObserver(mobId)
@@ -262,7 +262,7 @@ func factAwareness(args []string, user *users.UserRecord) (bool, error) {
 		fmt.Fprintf(&b, "    %-22s source: %-10s round: %d\r\n",
 			factTruncate(k.Fact.Id, 22), k.Source, k.LearnedRound)
 	}
-	user.SendText(b.String())
+	user.SendTextLegacy(b.String())
 	return true, nil
 }
 
@@ -273,7 +273,7 @@ func factTeach(args []string, user *users.UserRecord) (bool, error) {
 	}
 	mobId, err := strconv.Atoi(args[0])
 	if err != nil {
-		user.SendText(fmt.Sprintf("Bad mob id %q\r\n", args[0]))
+		user.SendTextLegacy(fmt.Sprintf("Bad mob id %q\r\n", args[0]))
 		return true, nil
 	}
 	factId := args[1]
@@ -285,7 +285,7 @@ func factTeach(args []string, user *users.UserRecord) (bool, error) {
 		}
 	}
 	facts.RecordKnowsFact(mobId, factId, source)
-	user.SendText(fmt.Sprintf("Taught mob %d the fact %q (source: %s).\r\n", mobId, factId, source))
+	user.SendTextLegacy(fmt.Sprintf("Taught mob %d the fact %q (source: %s).\r\n", mobId, factId, source))
 	return true, nil
 }
 
@@ -296,11 +296,11 @@ func factForget(args []string, user *users.UserRecord) (bool, error) {
 	}
 	mobId, err := strconv.Atoi(args[0])
 	if err != nil {
-		user.SendText(fmt.Sprintf("Bad mob id %q\r\n", args[0]))
+		user.SendTextLegacy(fmt.Sprintf("Bad mob id %q\r\n", args[0]))
 		return true, nil
 	}
 	facts.ForgetFact(mobId, args[1])
-	user.SendText(fmt.Sprintf("Mob %d forgot fact %q.\r\n", mobId, args[1]))
+	user.SendTextLegacy(fmt.Sprintf("Mob %d forgot fact %q.\r\n", mobId, args[1]))
 	return true, nil
 }
 
@@ -311,11 +311,11 @@ func factForgetAll(args []string, user *users.UserRecord) (bool, error) {
 	}
 	mobId, err := strconv.Atoi(args[0])
 	if err != nil {
-		user.SendText(fmt.Sprintf("Bad mob id %q\r\n", args[0]))
+		user.SendTextLegacy(fmt.Sprintf("Bad mob id %q\r\n", args[0]))
 		return true, nil
 	}
 	facts.ForgetAll(mobId)
-	user.SendText(fmt.Sprintf("Mob %d forgot all facts and events.\r\n", mobId))
+	user.SendTextLegacy(fmt.Sprintf("Mob %d forgot all facts and events.\r\n", mobId))
 	return true, nil
 }
 

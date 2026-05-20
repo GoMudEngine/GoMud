@@ -22,14 +22,14 @@ func Talk(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	args := util.SplitButRespectQuotes(rest)
 
 	if len(args) == 0 {
-		user.SendText(`Talk to whom?`)
+		user.SendTextLegacy(`Talk to whom?`)
 		return true, nil
 	}
 
 	// Support "talk to <npc>" as well as "talk <npc>"
 	if strings.ToLower(args[0]) == `to` {
 		if len(args) < 2 {
-			user.SendText(`Talk to whom?`)
+			user.SendTextLegacy(`Talk to whom?`)
 			return true, nil
 		}
 		args = args[1:]
@@ -39,13 +39,13 @@ func Talk(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	target, err := actions.ResolveTargetActor(room, searchName)
 	if err != nil || target.IsPlayer() {
-		user.SendText(`Talk to whom?`)
+		user.SendTextLegacy(`Talk to whom?`)
 		return true, nil
 	}
 	mob := target.(*actions.MobActor).Mob
 	mobId := mob.InstanceId
 
-	room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> approaches <ansi fg="mobname">%s</ansi> for a conversation.`, user.Character.Name, mob.Character.Name), user.UserId)
+	room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> approaches <ansi fg="mobname">%s</ansi> for a conversation.`, user.Character.Name, mob.Character.Name), user.UserId)
 
 	// Build PlayerState for quest/item gating in dialogue
 	ps := buildPlayerState(user)
@@ -90,7 +90,7 @@ func Talk(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 						m.Command(`say ` + greetText)
 						if hints != `` {
 							if u := users.GetByUserId(user.UserId); u != nil {
-								u.SendText(fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
+								u.SendTextLegacy(fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
 							}
 						}
 					} else if response, moodChange, ok := dialogue.Match(df, mobIdCopy, ``, ps); ok {
@@ -113,7 +113,7 @@ func Talk(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			if greetText, hints, ok := dialogue.Greet(df, mobId, user.UserId, ps); ok {
 				mob.Command(`say ` + greetText)
 				if hints != `` {
-					user.SendText(fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
+					user.SendTextLegacy(fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
 				}
 			} else if response, moodChange, ok := dialogue.Match(df, mobId, ``, ps); ok {
 				// no tree — try a greeting pattern match with empty topic
@@ -163,7 +163,7 @@ func buildPlayerState(user *users.UserRecord) *dialogue.PlayerState {
 			newItem := items.New(itemId)
 			if newItem.ItemId > 0 {
 				user.Character.StoreItem(newItem)
-				user.SendText(fmt.Sprintf(`You receive a <ansi fg="itemname">%s</ansi>.`, newItem.DisplayName()))
+				user.SendTextLegacy(fmt.Sprintf(`You receive a <ansi fg="itemname">%s</ansi>.`, newItem.DisplayName()))
 				events.AddToQueue(events.ItemOwnership{
 					UserId: user.UserId,
 					Item:   newItem,

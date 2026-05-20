@@ -102,7 +102,7 @@ func Sneak(actor Actor) SneakResult {
 		success, _, _, _ := dice.OpposedRollStat(sneakScore, observerScore)
 		if !success {
 			// Notify the observing player.
-			observer.SendText(
+			observer.SendTextLegacy(
 				`<ansi fg="username">` + actor.GetName() + `</ansi> tries to hide but you notice them.`,
 			)
 			char.Awareness.ResolveConcealment(false, state.TransitionReason{

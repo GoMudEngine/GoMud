@@ -55,7 +55,7 @@ func TransportCompanions(owner *users.UserRecord, oldRoomId, newRoomId int) {
 		curRoom := rooms.LoadRoom(mob.Character.RoomId)
 		if curRoom != nil {
 			curRoom.RemoveMob(mob.InstanceId)
-			curRoom.SendText(
+			curRoom.SendTextLegacy(
 				fmt.Sprintf("%s follows %s.", mob.Character.Name, owner.Character.Name),
 				owner.UserId,
 			)
@@ -73,7 +73,7 @@ func TransportCompanions(owner *users.UserRecord, oldRoomId, newRoomId int) {
 		mob.Character.RoomId = newRoomId
 
 		// Inform owner.
-		owner.SendText(fmt.Sprintf("Your %s rejoins you.", mob.Character.Name))
+		owner.SendTextLegacy(fmt.Sprintf("Your %s rejoins you.", mob.Character.Name))
 
 		// End aggro if the current target is no longer in the destination room.
 		if mob.Character.IsInCombat() {

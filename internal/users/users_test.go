@@ -954,7 +954,7 @@ func TestUserRecord_Prompt(t *testing.T) {
 func TestUserRecord_SendText(t *testing.T) {
 	u := &UserRecord{UserId: 1}
 	// Should not panic — adds event to queue
-	u.SendText("Hello, world!")
+	u.SendTextLegacy("Hello, world!")
 }
 
 func TestUserRecord_AddBuff(t *testing.T) {

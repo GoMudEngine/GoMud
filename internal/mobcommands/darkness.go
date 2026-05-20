@@ -7,12 +7,12 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
-// sendRoomText is a darkness-aware drop-in replacement for room.SendTextVisual().
+// sendRoomText is a darkness-aware drop-in replacement for room.SendTextVisualLegacy().
 // In lit rooms it behaves identically. In dark rooms only players with
 // nightvision receive the message; others see nothing.
 func sendRoomText(room *rooms.Room, msg string, excludeUserIds ...int) {
 	if room.GetVisibility() >= 1 {
-		room.SendTextVisual(msg, excludeUserIds...)
+		room.SendTextVisualLegacy(msg, excludeUserIds...)
 		return
 	}
 	for _, uid := range room.GetPlayers() {
@@ -21,7 +21,7 @@ func sendRoomText(room *rooms.Room, msg string, excludeUserIds ...int) {
 		}
 		u := users.GetByUserId(uid)
 		if u != nil && u.Character.HasFlagFromAnySource(buffs.NightVision) {
-			u.SendText(msg)
+			u.SendTextLegacy(msg)
 		}
 	}
 }
@@ -32,7 +32,7 @@ func sendRoomText(room *rooms.Room, msg string, excludeUserIds ...int) {
 // In lit rooms, everyone sees the full message.
 func sendAudioRoomText(room *rooms.Room, mob *mobs.Mob, anonMsg string, fullMsg string) {
 	if room.GetVisibility() >= 1 {
-		room.SendTextVisual(fullMsg)
+		room.SendTextVisualLegacy(fullMsg)
 		return
 	}
 	for _, uid := range room.GetPlayers() {
@@ -41,9 +41,9 @@ func sendAudioRoomText(room *rooms.Room, mob *mobs.Mob, anonMsg string, fullMsg 
 			continue
 		}
 		if u.Character.HasFlagFromAnySource(buffs.NightVision) {
-			u.SendText(fullMsg)
+			u.SendTextLegacy(fullMsg)
 		} else {
-			u.SendText(anonMsg)
+			u.SendTextLegacy(anonMsg)
 		}
 	}
 }

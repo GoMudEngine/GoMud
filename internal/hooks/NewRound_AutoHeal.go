@@ -88,13 +88,13 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 							if userRoom := rooms.LoadRoom(user.Character.RoomId); userRoom != nil {
 								userRoom.AddItem(pot, false)
 							}
-							user.SendText(fmt.Sprintf(
+							user.SendTextLegacy(fmt.Sprintf(
 								`<ansi fg="yellow">Your <ansi fg="itemname">%s</ansi> has destabilized and falls out of your bandolier onto the ground.</ansi>`,
 								pot.DisplayName()))
 						} else {
 							// Spoiled potions go to backpack
 							user.Character.Items = append(user.Character.Items, pot)
-							user.SendText(fmt.Sprintf(
+							user.SendTextLegacy(fmt.Sprintf(
 								`<ansi fg="yellow">Your <ansi fg="itemname">%s</ansi> has spoiled and falls out of your bandolier.</ansi>`,
 								pot.DisplayName()))
 						}
@@ -150,7 +150,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				// Emit tick feedback while a heal-spell ConditionRegen is active
 				// so players get confirmation their mend-wounds (or similar) is working.
 				if user.Character.HasCondition(characters.ConditionRegen) {
-					user.SendText(fmt.Sprintf(
+					user.SendTextLegacy(fmt.Sprintf(
 						`<ansi fg="green">Your wounds knit closed. (%s)</ansi>`,
 						combat.GetHealDescription(healAmt, user.Character.HealthMax.Value)))
 				}
@@ -164,7 +164,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 						healAmt = 1
 					}
 					user.Character.Heal(healAmt)
-					user.SendText(fmt.Sprintf(
+					user.SendTextLegacy(fmt.Sprintf(
 						`<ansi fg="green">Your wounds knit closed. (%s)</ansi>`,
 						combat.GetHealDescription(healAmt, user.Character.HealthMax.Value)))
 				}
@@ -178,7 +178,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				}
 				user.Character.Health -= poisonDmg
 				cancelCraftOrSalvageOnDamage(user.Character)
-				user.SendText(`<ansi fg="green">The poison burns through your veins!</ansi>`)
+				user.SendTextLegacy(`<ansi fg="green">The poison burns through your veins!</ansi>`)
 			}
 
 			// Stage 42.7: Apply bleed DoT damage
@@ -189,7 +189,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				}
 				user.Character.Health -= bleedDmg
 				cancelCraftOrSalvageOnDamage(user.Character)
-				user.SendText(`<ansi fg="red">Blood seeps from your wounds!</ansi>`)
+				user.SendTextLegacy(`<ansi fg="red">Blood seeps from your wounds!</ansi>`)
 			}
 		}
 

@@ -48,7 +48,7 @@ func Conditions(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	}
 
 	tplTxt, _ := templates.Process("character/conditions", afflictions, user.UserId)
-	user.SendText(tplTxt)
+	user.SendTextLegacy(tplTxt)
 
 	return true, nil
 }

@@ -54,7 +54,7 @@ func trySellOne(itemName string, user *users.UserRecord, room *rooms.Room,
 		return 0, sellRejected
 	}
 	if itemSpec.QuestToken != `` {
-		user.SendText("Quest items cannot be sold!")
+		user.SendTextLegacy("Quest items cannot be sold!")
 		return 0, sellRejected
 	}
 
@@ -137,7 +137,7 @@ func trySellOne(itemName string, user *users.UserRecord, room *rooms.Room,
 							shopInv.AddStockAtRound(old.ItemId, 1, util.GetRoundCount())
 						}
 					}
-					room.SendTextVisual(
+					room.SendTextVisualLegacy(
 						fmt.Sprintf(`<ansi fg="mobname">%s</ansi> examines the <ansi fg="itemname">%s</ansi> and puts it on.`, mob.Character.Name, newItem.DisplayName()),
 						user.UserId,
 					)
@@ -167,7 +167,7 @@ func trySellOne(itemName string, user *users.UserRecord, room *rooms.Room,
 func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	if rest == "" {
-		user.SendText("What would you like to sell?")
+		user.SendTextLegacy("What would you like to sell?")
 		return true, nil
 	}
 
@@ -190,7 +190,7 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if strings.HasPrefix(lower, "all.") {
 		suffix := strings.TrimPrefix(lower, "all.")
 		if strings.TrimSpace(suffix) == "" {
-			user.SendText("Specify what you want to sell. (e.g. <ansi fg=\"command\">sell all iron-ore</ansi>)")
+			user.SendTextLegacy("Specify what you want to sell. (e.g. <ansi fg=\"command\">sell all iron-ore</ansi>)")
 			return true, nil
 		}
 		quantity = unlimited
@@ -203,7 +203,7 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			firstWord := strings.ToLower(args[0])
 			if firstWord == "all" {
 				if strings.TrimSpace(args[1]) == "" {
-					user.SendText("Specify what you want to sell. (e.g. <ansi fg=\"command\">sell all iron-ore</ansi>)")
+					user.SendTextLegacy("Specify what you want to sell. (e.g. <ansi fg=\"command\">sell all iron-ore</ansi>)")
 					return true, nil
 				}
 				quantity = unlimited
@@ -214,7 +214,7 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			}
 		} else if strings.ToLower(strings.TrimSpace(rest)) == "all" {
 			// bare "sell all" with no item name
-			user.SendText("Specify what you want to sell. (e.g. <ansi fg=\"command\">sell all iron-ore</ansi>)")
+			user.SendTextLegacy("Specify what you want to sell. (e.g. <ansi fg=\"command\">sell all iron-ore</ansi>)")
 			return true, nil
 		}
 	}
@@ -222,7 +222,7 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	// ── Validate item exists and is sellable before resolving merchant ─────
 	item, found := sellFindItem(user, itemName)
 	if !found {
-		user.SendText("You don't have that item.")
+		user.SendTextLegacy("You don't have that item.")
 		return true, nil
 	}
 	itemSpec := item.GetSpec()
@@ -230,14 +230,14 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 	if itemSpec.QuestToken != `` {
-		user.SendText("Quest items cannot be sold!")
+		user.SendTextLegacy("Quest items cannot be sold!")
 		return true, nil
 	}
 
 	// ── Resolve merchant once ─────────────────────────────────────────────
 	merchantMobs := room.GetMobs(rooms.FindMerchant)
 	if len(merchantMobs) == 0 {
-		user.SendText("There's no merchant here.")
+		user.SendTextLegacy("There's no merchant here.")
 		return true, nil
 	}
 
@@ -326,10 +326,10 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			}
 		}
 		user.EventLog.Add(`shop`, fmt.Sprintf(`Sold your <ansi fg="itemname">%s</ansi> to <ansi fg="mobname">%s</ansi> for <ansi fg="gold">%d gold</ansi>`, displayName, selectedMob.Character.Name, totalGold))
-		user.SendText(
+		user.SendTextLegacy(
 			fmt.Sprintf(`You sell a <ansi fg="itemname">%s</ansi> for <ansi fg="gold">%d gold</ansi>.`, displayName, totalGold),
 		)
-		room.SendTextVisual(
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> sells a <ansi fg="itemname">%s</ansi>.`, user.Character.Name, displayName),
 			user.UserId,
 		)
@@ -343,11 +343,11 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			`Sold %d <ansi fg="itemname">%s</ansi> to <ansi fg="mobname">%s</ansi> for <ansi fg="gold">%d gold</ansi>`,
 			sold, pluralName, selectedMob.Character.Name, totalGold,
 		))
-		user.SendText(fmt.Sprintf(
+		user.SendTextLegacy(fmt.Sprintf(
 			`You sell %d <ansi fg="itemname">%s</ansi> for <ansi fg="gold">%d gold</ansi>.`,
 			sold, pluralName, totalGold,
 		))
-		room.SendTextVisual(
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> sells %d <ansi fg="itemname">%s</ansi>.`,
 				user.Character.Name, sold, pluralName),
 			user.UserId,
@@ -365,7 +365,7 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		default:
 			reason = fmt.Sprintf("running out of %s", lastDisplayName)
 		}
-		user.SendText(fmt.Sprintf(
+		user.SendTextLegacy(fmt.Sprintf(
 			`<ansi fg="yellow">Sold %d before %s.</ansi>`,
 			sold, reason,
 		))

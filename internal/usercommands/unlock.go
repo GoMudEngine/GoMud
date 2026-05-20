@@ -16,7 +16,7 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) < 1 {
-		user.SendText("Unlock what?")
+		user.SendTextLegacy("Unlock what?")
 		return true, nil
 	}
 
@@ -35,7 +35,7 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		container := room.Containers[containerName]
 
 		if !container.Lock.IsLocked() {
-			user.SendText("That's not locked.")
+			user.SendTextLegacy("That's not locked.")
 			return true, nil
 		}
 
@@ -54,8 +54,8 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			room.PlaySound(`change`, `other`)
 
-			user.SendText(fmt.Sprintf(`You use a key to unlock the <ansi fg="container">%s</ansi>.`, containerName))
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName), user.UserId)
+			user.SendTextLegacy(fmt.Sprintf(`You use a key to unlock the <ansi fg="container">%s</ansi>.`, containerName))
+			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName), user.UserId)
 		} else if hasBackpackKey {
 
 			itmSpec := backpackKeyItm.GetSpec()
@@ -76,12 +76,12 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			room.PlaySound(`change`, `other`)
 
-			user.SendText(fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="container">%s</ansi>, and add it to your key ring for the future.`, itmSpec.Name, containerName))
-			room.SendTextVisual(
+			user.SendTextLegacy(fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="container">%s</ansi>, and add it to your key ring for the future.`, itmSpec.Name, containerName))
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName),
 				user.UserId)
 		} else {
-			user.SendText(`You do not have the key for that. Maybe you could <ansi fg="command">picklock</ansi> the lock.`)
+			user.SendTextLegacy(`You do not have the key for that. Maybe you could <ansi fg="command">picklock</ansi> the lock.`)
 		}
 
 		return true, nil
@@ -91,7 +91,7 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		exitInfo, _ := room.GetExitInfo(exitName)
 
 		if !exitInfo.Lock.IsLocked() {
-			user.SendText("That's not locked.")
+			user.SendTextLegacy("That's not locked.")
 			return true, nil
 		}
 
@@ -110,8 +110,8 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			room.PlaySound(`change`, `other`)
 
-			user.SendText(fmt.Sprintf(`You use a key to unlock the <ansi fg="exit">%s</ansi> lock.`, exitName))
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
+			user.SendTextLegacy(fmt.Sprintf(`You use a key to unlock the <ansi fg="exit">%s</ansi> lock.`, exitName))
+			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
 		} else if hasBackpackKey {
 
 			itmSpec := backpackKeyItm.GetSpec()
@@ -132,19 +132,19 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			room.PlaySound(`change`, `other`)
 
-			user.SendText(fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="exit">%s</ansi> exit, and add it to your key ring for the future.`, itmSpec.Name, exitName))
-			room.SendTextVisual(
+			user.SendTextLegacy(fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="exit">%s</ansi> exit, and add it to your key ring for the future.`, itmSpec.Name, exitName))
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName),
 				user.UserId)
 		} else {
-			user.SendText(`You do not have the key for that. Maybe you could <ansi fg="command">picklock</ansi> the lock.`)
+			user.SendTextLegacy(`You do not have the key for that. Maybe you could <ansi fg="command">picklock</ansi> the lock.`)
 		}
 
 		return true, nil
 
 	}
 
-	user.SendText("There is no such exit or container.")
+	user.SendTextLegacy("There is no such exit or container.")
 	return true, nil
 
 }

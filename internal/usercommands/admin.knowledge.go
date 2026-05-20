@@ -41,10 +41,10 @@ func Knowledge(rest string, user *users.UserRecord, room *rooms.Room, flags even
 
 func knowledgeUsage(user *users.UserRecord) {
 	if out, err := templates.Process("admincommands/help/command.knowledge", nil, user.UserId); err == nil && strings.TrimSpace(out) != "" {
-		user.SendText(out)
+		user.SendTextLegacy(out)
 		return
 	}
-	user.SendText(
+	user.SendTextLegacy(
 		"Usage:\r\n" +
 			"  knowledge show <mobId>\r\n" +
 			"  knowledge show <mobId> <playerName>\r\n" +
@@ -101,7 +101,7 @@ func knowledgeShow(args []string, user *users.UserRecord) (bool, error) {
 	}
 	mobId, ok := knowledgeResolveMobIdent(args[0])
 	if !ok {
-		user.SendText(fmt.Sprintf("Unknown mob: %s\r\n", args[0]))
+		user.SendTextLegacy(fmt.Sprintf("Unknown mob: %s\r\n", args[0]))
 		return true, nil
 	}
 
@@ -109,7 +109,7 @@ func knowledgeShow(args []string, user *users.UserRecord) (bool, error) {
 		// List all records for this observer.
 		records := knowledge.AllForObserver(mobId)
 		if len(records) == 0 {
-			user.SendText(fmt.Sprintf("No knowledge records for mob %d.\r\n", mobId))
+			user.SendTextLegacy(fmt.Sprintf("No knowledge records for mob %d.\r\n", mobId))
 			return true, nil
 		}
 		var b strings.Builder
@@ -129,19 +129,19 @@ func knowledgeShow(args []string, user *users.UserRecord) (bool, error) {
 			lastSeen := fmt.Sprintf("room %d @ round %d", r.LastSeenRoom, r.LastSeenRound)
 			fmt.Fprintf(&b, "  %-12s  %4s  %-20s  %s\r\n", subject, met, r.NameLearned, lastSeen)
 		}
-		user.SendText(b.String())
+		user.SendTextLegacy(b.String())
 		return true, nil
 	}
 
 	// Drill into a specific subject.
 	subj, ok := knowledgeResolveSubject(args[1:])
 	if !ok {
-		user.SendText("Unknown subject\r\n")
+		user.SendTextLegacy("Unknown subject\r\n")
 		return true, nil
 	}
 	r := knowledge.Get(mobId, subj)
 	if r == nil {
-		user.SendText(fmt.Sprintf("No record: mob %d <-> %s:%d\r\n", mobId, subj.Type, subj.Id))
+		user.SendTextLegacy(fmt.Sprintf("No record: mob %d <-> %s:%d\r\n", mobId, subj.Type, subj.Id))
 		return true, nil
 	}
 	var b strings.Builder
@@ -161,7 +161,7 @@ func knowledgeShow(args []string, user *users.UserRecord) (bool, error) {
 			fmt.Fprintf(&b, "    crime %d (%s) resolved: %s\r\n", w.CrimeId, w.Kind, resolved)
 		}
 	}
-	user.SendText(b.String())
+	user.SendTextLegacy(b.String())
 	return true, nil
 }
 
@@ -172,12 +172,12 @@ func knowledgeFrequented(args []string, user *users.UserRecord) (bool, error) {
 	}
 	mobId, ok := knowledgeResolveMobIdent(args[0])
 	if !ok {
-		user.SendText(fmt.Sprintf("Unknown mob: %s\r\n", args[0]))
+		user.SendTextLegacy(fmt.Sprintf("Unknown mob: %s\r\n", args[0]))
 		return true, nil
 	}
 	target := users.GetByCharacterNameOrLoad(args[1])
 	if target == nil {
-		user.SendText(fmt.Sprintf("No such player: %s\r\n", args[1]))
+		user.SendTextLegacy(fmt.Sprintf("No such player: %s\r\n", args[1]))
 		return true, nil
 	}
 	topK := 5
@@ -188,7 +188,7 @@ func knowledgeFrequented(args []string, user *users.UserRecord) (bool, error) {
 	}
 	rows := knowledge.FrequentedRooms(mobId, knowledge.PlayerSubject(target.UserId), topK)
 	if len(rows) == 0 {
-		user.SendText("No observations recorded.\r\n")
+		user.SendTextLegacy("No observations recorded.\r\n")
 		return true, nil
 	}
 	var b strings.Builder
@@ -196,7 +196,7 @@ func knowledgeFrequented(args []string, user *users.UserRecord) (bool, error) {
 	for _, r := range rows {
 		fmt.Fprintf(&b, "  room %d  (%d sightings)\r\n", r.Room, r.Count)
 	}
-	user.SendText(b.String())
+	user.SendTextLegacy(b.String())
 	return true, nil
 }
 
@@ -207,21 +207,21 @@ func knowledgeForget(args []string, user *users.UserRecord) (bool, error) {
 	}
 	mobId, ok := knowledgeResolveMobIdent(args[0])
 	if !ok {
-		user.SendText(fmt.Sprintf("Unknown mob: %s\r\n", args[0]))
+		user.SendTextLegacy(fmt.Sprintf("Unknown mob: %s\r\n", args[0]))
 		return true, nil
 	}
 	target := users.GetByCharacterNameOrLoad(args[1])
 	if target == nil {
-		user.SendText(fmt.Sprintf("No such player: %s\r\n", args[1]))
+		user.SendTextLegacy(fmt.Sprintf("No such player: %s\r\n", args[1]))
 		return true, nil
 	}
 	subj := knowledge.PlayerSubject(target.UserId)
 	if len(args) == 2 {
 		knowledge.Forget(mobId, subj)
-		user.SendText(fmt.Sprintf("Forgot record: mob %d <-> %s\r\n", mobId, args[1]))
+		user.SendTextLegacy(fmt.Sprintf("Forgot record: mob %d <-> %s\r\n", mobId, args[1]))
 		return true, nil
 	}
 	knowledge.ForgetFact(mobId, subj, strings.ToLower(args[2]))
-	user.SendText(fmt.Sprintf("Forgot fact %q: mob %d <-> %s\r\n", args[2], mobId, args[1]))
+	user.SendTextLegacy(fmt.Sprintf("Forgot fact %q: mob %d <-> %s\r\n", args[2], mobId, args[1]))
 	return true, nil
 }

@@ -320,7 +320,7 @@ func tickForagerDeliveringFernway(
 	room := rooms.LoadRoom(ctx.RoomId)
 	if dumped := dumpFernwayLoadIntoCrate(p, mob, room); dumped > 0 {
 		persistCrate(ctx.RoomId, room.SealedCrate)
-		room.SendText(fmt.Sprintf(
+		room.SendTextLegacy(fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> hauls a satchel up to the crate, latches it shut, and turns for home.`,
 			p.Name))
 	}
@@ -453,7 +453,7 @@ func npcAttemptForage(
 		return
 	}
 	mob.Character.StoreItem(item)
-	room.SendText(fmt.Sprintf(
+	room.SendTextLegacy(fmt.Sprintf(
 		`<ansi fg="mobname">%s</ansi> stoops over a patch of growth`+
 			` and tucks something into a satchel.`,
 		p.Name))
@@ -503,7 +503,7 @@ func dumpSatchelToLockbox(mob *mobs.Mob, ctx *EvalContext) bool {
 	if dumped {
 		box.Lock.SetLocked() // bumps RotationSeed
 		room.Containers["lockbox"] = box
-		room.SendText(`<ansi fg="yellow">A latch clicks shut from somewhere in the sanctuary.</ansi>`)
+		room.SendTextLegacy(`<ansi fg="yellow">A latch clicks shut from somewhere in the sanctuary.</ansi>`)
 	}
 	return dumped
 }
@@ -558,7 +558,7 @@ func npcVisitVendorsInRoom(
 				}
 				forager.AddLbsDelivered(mob.Zone, int(mob.MobId), uint64(math.Round(spec.Weight)))
 			}
-			room.SendText(fmt.Sprintf(
+			room.SendTextLegacy(fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi> hands a %s to`+
 					` <ansi fg="mobname">%s</ansi>.`,
 				p.Name, item.DisplayName(), vendor.Character.Name,

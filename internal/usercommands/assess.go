@@ -17,23 +17,23 @@ func Assess(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	rest = strings.TrimSpace(rest)
 	if rest == `` {
-		user.SendText(`Assess what?`)
+		user.SendTextLegacy(`Assess what?`)
 		return true, nil
 	}
 
 	corpse, found := room.FindCorpse(rest)
 	if !found {
-		user.SendText(`You don't see those remains here.`)
+		user.SendTextLegacy(`You don't see those remains here.`)
 		return true, nil
 	}
 
 	if corpse.Character.IsCharmed() {
-		user.SendText(`These remains were bound to a master. The essence is spent — there is nothing left to raise.`)
+		user.SendTextLegacy(`These remains were bound to a master. The essence is spent — there is nothing left to raise.`)
 		return true, nil
 	}
 
 	if !user.Character.TryCooldown(`assess`, "6 rounds") {
-		user.SendText(
+		user.SendTextLegacy(
 			fmt.Sprintf("You need to wait %d more rounds before you can assess again.", user.Character.GetCooldown(`assess`)),
 		)
 		return true, nil
@@ -67,8 +67,8 @@ func Assess(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		essenceDesc = `barely a trace of essence`
 	}
 
-	user.SendText(`You study the remains of <ansi fg="mob-corpse">` + corpse.Character.Name + `</ansi>.`)
-	user.SendText(`You sense ` + essenceDesc + ` within.`)
+	user.SendTextLegacy(`You study the remains of <ansi fg="mob-corpse">` + corpse.Character.Name + `</ansi>.`)
+	user.SendTextLegacy(`You sense ` + essenceDesc + ` within.`)
 
 	// List which undead types this corpse could support.
 	var supported []string
@@ -92,9 +92,9 @@ func Assess(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	if len(supported) == 0 {
-		user.SendText(`The essence is too faint to animate any form.`)
+		user.SendTextLegacy(`The essence is too faint to animate any form.`)
 	} else {
-		user.SendText(`It could sustain: ` + strings.Join(supported, `, `) + `.`)
+		user.SendTextLegacy(`It could sustain: ` + strings.Join(supported, `, `) + `.`)
 	}
 
 	// Trigger manifestation skill progression.

@@ -41,9 +41,9 @@ func Hamstring(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		dmgDesc := combat.GetDamageDescription(result.Damage, result.TargetMaxHP)
 		if targetChar != nil {
 			if canSee {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> rakes its fangs across your legs, opening deep wounds! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+				targetChar.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> rakes its fangs across your legs, opening deep wounds! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
 			} else {
-				targetChar.SendText(fmt.Sprintf(`Something rakes its fangs across your legs, opening deep wounds! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+				targetChar.SendTextLegacy(fmt.Sprintf(`Something rakes its fangs across your legs, opening deep wounds! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
 			}
 		}
 		sendRoomText(room,
@@ -52,9 +52,9 @@ func Hamstring(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	} else {
 		if targetChar != nil {
 			if canSee {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> lunges at your legs, but you sidestep the attack!`, mobName))
+				targetChar.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> lunges at your legs, but you sidestep the attack!`, mobName))
 			} else {
-				targetChar.SendText(`Something lunges at your legs, but you sidestep the attack!`)
+				targetChar.SendTextLegacy(`Something lunges at your legs, but you sidestep the attack!`)
 			}
 		}
 		sendRoomText(room,

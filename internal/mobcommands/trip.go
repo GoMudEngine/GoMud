@@ -45,9 +45,9 @@ func Trip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			if result.KnockedDown {
 				if targetChar != nil {
 					if canSee {
-						targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> hammers you with their tail, sending you crashing to the ground! (<ansi fg="damage">%s</ansi>)`, mobName, dmgDesc))
+						targetChar.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> hammers you with their tail, sending you crashing to the ground! (<ansi fg="damage">%s</ansi>)`, mobName, dmgDesc))
 					} else {
-						targetChar.SendText(fmt.Sprintf(`Something hammers you with a powerful sweep, sending you crashing to the ground! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
+						targetChar.SendTextLegacy(fmt.Sprintf(`Something hammers you with a powerful sweep, sending you crashing to the ground! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 					}
 				}
 				sendRoomText(room,
@@ -56,9 +56,9 @@ func Trip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			} else {
 				if targetChar != nil {
 					if canSee {
-						targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> sweeps at you with their tail, but you manage to stay upright! (<ansi fg="damage">%s</ansi>)`, mobName, dmgDesc))
+						targetChar.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> sweeps at you with their tail, but you manage to stay upright! (<ansi fg="damage">%s</ansi>)`, mobName, dmgDesc))
 					} else {
-						targetChar.SendText(fmt.Sprintf(`Something sweeps at you powerfully, but you manage to stay upright! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
+						targetChar.SendTextLegacy(fmt.Sprintf(`Something sweeps at you powerfully, but you manage to stay upright! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 					}
 				}
 				sendRoomText(room,
@@ -69,9 +69,9 @@ func Trip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			if result.KnockedDown {
 				if targetChar != nil {
 					if canSee {
-						targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> sweeps your legs, sending you crashing to the ground! (<ansi fg="damage">%s</ansi>)`, mobName, dmgDesc))
+						targetChar.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> sweeps your legs, sending you crashing to the ground! (<ansi fg="damage">%s</ansi>)`, mobName, dmgDesc))
 					} else {
-						targetChar.SendText(fmt.Sprintf(`Something sweeps your legs, sending you crashing to the ground! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
+						targetChar.SendTextLegacy(fmt.Sprintf(`Something sweeps your legs, sending you crashing to the ground! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 					}
 				}
 				sendRoomText(room,
@@ -80,9 +80,9 @@ func Trip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			} else {
 				if targetChar != nil {
 					if canSee {
-						targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to trip you, but you keep your footing! (<ansi fg="damage">%s</ansi>)`, mobName, dmgDesc))
+						targetChar.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to trip you, but you keep your footing! (<ansi fg="damage">%s</ansi>)`, mobName, dmgDesc))
 					} else {
-						targetChar.SendText(fmt.Sprintf(`Something attempts to trip you, but you keep your footing! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
+						targetChar.SendTextLegacy(fmt.Sprintf(`Something attempts to trip you, but you keep your footing! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 					}
 				}
 				sendRoomText(room,
@@ -94,9 +94,9 @@ func Trip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		if hasTail {
 			if targetChar != nil {
 				if canSee {
-					targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> swings their tail at you, but you avoid it!`, mobName))
+					targetChar.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> swings their tail at you, but you avoid it!`, mobName))
 				} else {
-					targetChar.SendText(`Something sweeps at you powerfully, but you avoid it!`)
+					targetChar.SendTextLegacy(`Something sweeps at you powerfully, but you avoid it!`)
 				}
 			}
 			sendRoomText(room,
@@ -105,9 +105,9 @@ func Trip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		} else {
 			if targetChar != nil {
 				if canSee {
-					targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to trip you, but you avoid it!`, mobName))
+					targetChar.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to trip you, but you avoid it!`, mobName))
 				} else {
-					targetChar.SendText(`Something attempts to trip you, but you avoid it!`)
+					targetChar.SendTextLegacy(`Something attempts to trip you, but you avoid it!`)
 				}
 			}
 			sendRoomText(room,

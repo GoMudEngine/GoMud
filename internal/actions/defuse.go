@@ -61,13 +61,13 @@ func Defuse(actor Actor, opts DefuseOptions) DefuseResult {
 		return DefuseResult{Reason: "not advanced enough"}
 	}
 	if skillLevel < 3 {
-		actor.SendText("You aren't advanced enough at skullduggery for that.")
+		actor.SendTextLegacy("You aren't advanced enough at skullduggery for that.")
 		return DefuseResult{Reason: "not advanced enough"}
 	}
 
 	// Combat gate.
 	if char.Aggro != nil {
-		actor.SendText("You can't do that while in combat!")
+		actor.SendTextLegacy("You can't do that while in combat!")
 		return DefuseResult{Reason: "in combat"}
 	}
 
@@ -77,13 +77,13 @@ func Defuse(actor Actor, opts DefuseOptions) DefuseResult {
 	}
 
 	if room.AreMobsAttacking(actor.GetUserId()) {
-		actor.SendText("You can't do that while you are under attack!")
+		actor.SendTextLegacy("You can't do that while you are under attack!")
 		return DefuseResult{Reason: "under attack"}
 	}
 
 	// Require a target noun.
 	if opts.TargetNoun == "" {
-		actor.SendText("Defuse what? Specify an exit or container.")
+		actor.SendTextLegacy("Defuse what? Specify an exit or container.")
 		return DefuseResult{Reason: "no target"}
 	}
 
@@ -113,7 +113,7 @@ func Defuse(actor Actor, opts DefuseOptions) DefuseResult {
 	}
 
 	if !kitFound {
-		actor.SendText(`You need a <ansi fg="item">disarm kit</ansi> to attempt this.`)
+		actor.SendTextLegacy(`You need a <ansi fg="item">disarm kit</ansi> to attempt this.`)
 		return DefuseResult{
 			TrapName: trapTargetDisplayName(tgt),
 			Reason:   "no disarm kit",
@@ -157,8 +157,8 @@ func Defuse(actor Actor, opts DefuseOptions) DefuseResult {
 
 	// ── Failure: trigger the trap ───────────────────────────────────────────
 
-	actor.SendText(`<ansi fg="red-bold">The trap triggers as you fumble the mechanism!</ansi>`)
-	room.SendTextVisual(
+	actor.SendTextLegacy(`<ansi fg="red-bold">The trap triggers as you fumble the mechanism!</ansi>`)
+	room.SendTextVisualLegacy(
 		fmt.Sprintf(`<ansi fg="alert-3"><ansi fg="username">%s</ansi> triggers a trap!</ansi>`,
 			actor.GetName()),
 		actor.GetUserId(),
@@ -201,11 +201,11 @@ func resolveDefuseLockTarget(actor Actor, room *rooms.Room, noun string) defuseL
 	if containerName != "" {
 		container := room.Containers[containerName]
 		if !container.HasLock() {
-			actor.SendText("There is no lock there.")
+			actor.SendTextLegacy("There is no lock there.")
 			return defuseLockTarget{kind: lockTargetNone}
 		}
 		if len(container.Lock.TrapBuffIds) == 0 {
-			actor.SendText("You don't detect any traps on that.")
+			actor.SendTextLegacy("You don't detect any traps on that.")
 			return defuseLockTarget{kind: lockTargetNone}
 		}
 		return defuseLockTarget{
@@ -222,11 +222,11 @@ func resolveDefuseLockTarget(actor Actor, room *rooms.Room, noun string) defuseL
 		exitInfo, ok := room.GetExitInfo(exitName)
 		if ok {
 			if !exitInfo.HasLock() {
-				actor.SendText("There is no lock there.")
+				actor.SendTextLegacy("There is no lock there.")
 				return defuseLockTarget{kind: lockTargetNone}
 			}
 			if len(exitInfo.Lock.TrapBuffIds) == 0 {
-				actor.SendText("You don't detect any traps on that.")
+				actor.SendTextLegacy("You don't detect any traps on that.")
 				return defuseLockTarget{kind: lockTargetNone}
 			}
 			return defuseLockTarget{
@@ -238,7 +238,7 @@ func resolveDefuseLockTarget(actor Actor, room *rooms.Room, noun string) defuseL
 		}
 	}
 
-	actor.SendText("There is no such exit or container.")
+	actor.SendTextLegacy("There is no such exit or container.")
 	return defuseLockTarget{kind: lockTargetNone}
 }
 
@@ -250,8 +250,8 @@ func clearDefuseTrap(actor Actor, room *rooms.Room, tgt defuseLockTarget) {
 		container := room.Containers[tgt.containerName]
 		container.Lock.TrapBuffIds = nil
 		room.Containers[tgt.containerName] = container
-		actor.SendText(`<ansi fg="green">You carefully disarm the trap mechanism.</ansi>`)
-		room.SendTextVisual(
+		actor.SendTextLegacy(`<ansi fg="green">You carefully disarm the trap mechanism.</ansi>`)
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> disarms a trap on the `+
 					`<ansi fg="container">%s</ansi>.`,
@@ -263,8 +263,8 @@ func clearDefuseTrap(actor Actor, room *rooms.Room, tgt defuseLockTarget) {
 			exitInfo.Lock.TrapBuffIds = nil
 			room.Exits[tgt.exitName] = exitInfo
 		}
-		actor.SendText(`<ansi fg="green">You carefully disarm the trap mechanism.</ansi>`)
-		room.SendTextVisual(
+		actor.SendTextLegacy(`<ansi fg="green">You carefully disarm the trap mechanism.</ansi>`)
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> disarms a trap on the `+
 					`<ansi fg="exit">%s</ansi> exit.`,

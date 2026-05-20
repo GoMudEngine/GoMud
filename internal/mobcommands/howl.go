@@ -39,9 +39,9 @@ func Howl(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	case result.Hit:
 		if targetPlayer != nil {
 			if canSeeInDark(targetPlayer, room) {
-				targetPlayer.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s menacing howl shakes your resolve! (<ansi fg="damage">%s</ansi>)`, mob.Character.Name, result.DmgDesc))
+				targetPlayer.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s menacing howl shakes your resolve! (<ansi fg="damage">%s</ansi>)`, mob.Character.Name, result.DmgDesc))
 			} else {
-				targetPlayer.SendText(fmt.Sprintf(`A menacing howl shakes your resolve! (<ansi fg="damage">%s</ansi>)`, result.DmgDesc))
+				targetPlayer.SendTextLegacy(fmt.Sprintf(`A menacing howl shakes your resolve! (<ansi fg="damage">%s</ansi>)`, result.DmgDesc))
 			}
 		}
 		sendAudioRoomText(room, mob,
@@ -51,12 +51,12 @@ func Howl(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		// Stoic resolve messaging
 		if result.CritDeflected {
 			if targetPlayer != nil {
-				targetPlayer.SendText(
+				targetPlayer.SendTextLegacy(
 					`<ansi fg="green">The howl washes over you harmlessly — you are unmoved.</ansi>`)
 			}
 		} else if result.Deflected {
 			if targetPlayer != nil {
-				targetPlayer.SendText(
+				targetPlayer.SendTextLegacy(
 					`<ansi fg="green">You steel yourself against the howl's fury.</ansi>`)
 			}
 		}
@@ -64,9 +64,9 @@ func Howl(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	default: // miss
 		if targetPlayer != nil {
 			if canSeeInDark(targetPlayer, room) {
-				targetPlayer.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> howls, but you steel yourself against the sound.`, mob.Character.Name))
+				targetPlayer.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> howls, but you steel yourself against the sound.`, mob.Character.Name))
 			} else {
-				targetPlayer.SendText(`Something howls, but you steel yourself against the sound.`)
+				targetPlayer.SendTextLegacy(`Something howls, but you steel yourself against the sound.`)
 			}
 		}
 		sendAudioRoomText(room, mob,

@@ -31,7 +31,7 @@ func Zone(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if len(args) == 0 {
 		// send some sort of help info?
 		infoOutput, _ := templates.Process("admincommands/help/command.zone", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 
 		return handled, nil
 	}
@@ -46,24 +46,24 @@ func Zone(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	zoneConfig := rooms.GetZoneConfig(room.Zone)
 	if zoneConfig == nil {
-		user.SendText(fmt.Sprintf(`Couldn't find zone info for <ansi fg="red">%s</ansi>`, room.Zone))
+		user.SendTextLegacy(fmt.Sprintf(`Couldn't find zone info for <ansi fg="red">%s</ansi>`, room.Zone))
 		return true, nil
 	}
 
 	if zoneCmd == `info` {
 
-		user.SendText(``)
-		user.SendText(fmt.Sprintf(`<ansi fg="yellow-bold">Zone Config for:    <ansi fg="red">%s</ansi></ansi>`, room.Zone))
-		user.SendText(fmt.Sprintf(`   <ansi fg="yellow-bold">Root Room Id:</ansi>    <ansi fg="red">%d</ansi>`, zoneConfig.RoomId))
+		user.SendTextLegacy(``)
+		user.SendTextLegacy(fmt.Sprintf(`<ansi fg="yellow-bold">Zone Config for:    <ansi fg="red">%s</ansi></ansi>`, room.Zone))
+		user.SendTextLegacy(fmt.Sprintf(`   <ansi fg="yellow-bold">Root Room Id:</ansi>    <ansi fg="red">%d</ansi>`, zoneConfig.RoomId))
 
-		user.SendText(``)
+		user.SendTextLegacy(``)
 
 		return true, nil
 	}
 
 	// Everthing after this point requires additional args
 	if len(args) < 1 {
-		user.SendText(`Not enough arguments provided.`)
+		user.SendTextLegacy(`Not enough arguments provided.`)
 		return true, nil
 	}
 
@@ -74,7 +74,7 @@ func Zone(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		args = args[1:]
 
 		if setWhat == `autoscale` {
-			user.SendText(`Autoscaling has been removed. Use per-mob statpool values instead.`)
+			user.SendTextLegacy(`Autoscaling has been removed. Use per-mob statpool values instead.`)
 			return true, nil
 		}
 
@@ -87,7 +87,7 @@ func zone_Edit(rest string, user *users.UserRecord, room *rooms.Room, flags even
 
 	originalZoneConfig := rooms.GetZoneConfig(room.Zone)
 	if originalZoneConfig == nil {
-		user.SendText(`Could not find zone config.`)
+		user.SendTextLegacy(`Could not find zone config.`)
 		return true, nil
 	}
 
@@ -137,7 +137,7 @@ func zone_Edit(rest string, user *users.UserRecord, room *rooms.Room, flags even
 	question := cmdPrompt.Ask(`Select a mutator to add/remove, or nothing to continue:`, []string{}, `0`)
 	if !question.Done {
 		tplTxt, _ := templates.Process("tables/numbered-list-doubled", mutatorOptions, user.UserId)
-		user.SendText(tplTxt)
+		user.SendTextLegacy(tplTxt)
 		return true, nil
 	}
 
@@ -166,11 +166,11 @@ func zone_Edit(rest string, user *users.UserRecord, room *rooms.Room, flags even
 
 		if mutatorSelected == `` {
 
-			user.SendText("Invalid selection.")
+			user.SendTextLegacy("Invalid selection.")
 			question.RejectResponse()
 
 			tplTxt, _ := templates.Process("tables/numbered-list-doubled", mutatorOptions, user.UserId)
-			user.SendText(tplTxt)
+			user.SendTextLegacy(tplTxt)
 			return true, nil
 		}
 
@@ -201,7 +201,7 @@ func zone_Edit(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		}
 
 		tplTxt, _ := templates.Process("tables/numbered-list-doubled", mutatorOptions, user.UserId)
-		user.SendText(tplTxt)
+		user.SendTextLegacy(tplTxt)
 		return true, nil
 
 	}
@@ -220,7 +220,7 @@ func zone_Edit(rest string, user *users.UserRecord, room *rooms.Room, flags even
 
 			relativeString := configs.GetFilePathsConfig().WebCDNLocation.String()
 			if len(relativeString) > 0 {
-				user.SendText(`   <ansi fg="red">Note:</ansi> Music file path must be relative to: <ansi fg="red">` + relativeString + `</ansi>`)
+				user.SendTextLegacy(`   <ansi fg="red">Note:</ansi> Music file path must be relative to: <ansi fg="red">` + relativeString + `</ansi>`)
 			}
 
 			question := cmdPrompt.Ask(`Zone music file path?`, []string{editZoneConfig.MusicFile}, editZoneConfig.MusicFile)
@@ -245,9 +245,9 @@ func zone_Edit(rest string, user *users.UserRecord, room *rooms.Room, flags even
 
 	rooms.SaveZoneConfig(&editZoneConfig)
 
-	user.SendText(``)
-	user.SendText(`Changes saved.`)
-	user.SendText(``)
+	user.SendTextLegacy(``)
+	user.SendTextLegacy(`Changes saved.`)
+	user.SendTextLegacy(``)
 
 	user.ClearPrompt()
 

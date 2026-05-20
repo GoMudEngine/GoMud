@@ -17,7 +17,7 @@ func Share(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	party := parties.Get(user.UserId)
 	if party == nil {
-		user.SendText("You can only share in a party.")
+		user.SendTextLegacy("You can only share in a party.")
 		return true, nil
 	}
 
@@ -34,12 +34,12 @@ func Share(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		}
 
 		if giveGoldAmount < 0 {
-			user.SendText("You can't share a negative amount of gold.")
+			user.SendTextLegacy("You can't share a negative amount of gold.")
 			return true, nil
 		}
 
 		if giveGoldAmount > user.Character.Gold {
-			user.SendText("You don't have that much gold to share.")
+			user.SendTextLegacy("You don't have that much gold to share.")
 			return true, nil
 		}
 
@@ -72,7 +72,7 @@ func Share(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	} else {
 
-		user.SendText(`You can share gold by typing <ansi fg="command">share [amt] gold</ansi>?`)
+		user.SendTextLegacy(`You can share gold by typing <ansi fg="command">share [amt] gold</ansi>?`)
 	}
 
 	return true, nil

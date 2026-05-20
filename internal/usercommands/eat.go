@@ -15,7 +15,7 @@ func Eat(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 	// Chunk 4e: can't eat while grappled — both hands committed.
 	if user.Character.Position != nil && user.Character.Position.IsGrappling() {
-		user.SendText(`<ansi fg="red">Your hands are committed to the grapple — you can't reach for that.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">Your hands are committed to the grapple — you can't reach for that.</ansi>`)
 		return true, nil
 	}
 
@@ -23,13 +23,13 @@ func Eat(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	matchItem, found := user.Character.FindInBackpack(rest)
 
 	if !found {
-		user.SendText(fmt.Sprintf(`You don't have a "%s" to eat.`, rest))
+		user.SendTextLegacy(fmt.Sprintf(`You don't have a "%s" to eat.`, rest))
 	} else {
 
 		itemSpec := matchItem.GetSpec()
 
 		if itemSpec.Subtype != items.Edible {
-			user.SendText(
+			user.SendTextLegacy(
 				fmt.Sprintf(`You can't eat <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()),
 			)
 			return true, nil
@@ -45,15 +45,15 @@ func Eat(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			effSpeed := items.CalcEffectiveAgingSpeed(1.0, matchItem.CraftSkill) // food has no bottle
 			phase, _ := items.GetAgingPhase(elapsed, itemSpec.Aging, effSpeed)
 			if phase == items.PhaseSpoiled {
-				user.SendText(`<ansi fg="red">The food has gone bad! It reeks of decay and is clearly inedible.</ansi>`)
+				user.SendTextLegacy(`<ansi fg="red">The food has gone bad! It reeks of decay and is clearly inedible.</ansi>`)
 				return true, nil
 			}
 		}
 
 		user.Character.CancelBuffsWithFlag(buffs.Hidden)
 
-		user.SendText(fmt.Sprintf(`You eat some of the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()))
-		room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> eats some <ansi fg="itemname">%s</ansi>.`, user.Character.Name, matchItem.DisplayName()), user.UserId)
+		user.SendTextLegacy(fmt.Sprintf(`You eat some of the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()))
+		room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> eats some <ansi fg="itemname">%s</ansi>.`, user.Character.Name, matchItem.DisplayName()), user.UserId)
 
 		// If no more uses, will be lost, so trigger event
 		if usesLeft := user.Character.UseItem(matchItem); usesLeft < 1 {

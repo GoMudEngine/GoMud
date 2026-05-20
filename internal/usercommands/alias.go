@@ -26,10 +26,10 @@ func Alias(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			addedAlias, deletedAlias := user.AddCommandAlias(aliasName, aliasVal)
 
 			if addedAlias != `` {
-				user.SendText(fmt.Sprintf(`<ansi fg="yellow">Custom Alias Added:</ansi> <ansi fg="command">%s</ansi>=<ansi fg="command">%s</ansi>`, addedAlias, aliasVal))
+				user.SendTextLegacy(fmt.Sprintf(`<ansi fg="yellow">Custom Alias Added:</ansi> <ansi fg="command">%s</ansi>=<ansi fg="command">%s</ansi>`, addedAlias, aliasVal))
 			}
 			if deletedAlias != `` {
-				user.SendText(fmt.Sprintf(`<ansi fg="yellow">Custom Alias Removed:</ansi> <ansi fg="command">%s</ansi>`, deletedAlias))
+				user.SendTextLegacy(fmt.Sprintf(`<ansi fg="yellow">Custom Alias Removed:</ansi> <ansi fg="command">%s</ansi>`, deletedAlias))
 			}
 			return true, nil
 
@@ -64,7 +64,7 @@ func Alias(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	aliasTableData := templates.GetTable(`Built in Aliases`, headers, rows, tableFormatting)
 	aliasTxt, _ := templates.Process("tables/generic", aliasTableData, user.UserId)
-	user.SendText(aliasTxt)
+	user.SendTextLegacy(aliasTxt)
 
 	if len(user.Aliases) > 0 {
 
@@ -77,11 +77,11 @@ func Alias(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 		aliasTableData := templates.GetTable(`Custom Aliases`, headers, rows, tableFormatting)
 		aliasTxt, _ := templates.Process("tables/generic", aliasTableData, user.UserId)
-		user.SendText(aliasTxt)
+		user.SendTextLegacy(aliasTxt)
 	}
 
-	user.SendText(`<ansi fg="yellow"><ansi fg="command">help alias</ansi> for more information on setting custom aliases.</ansi>`)
-	user.SendText(``)
+	user.SendTextLegacy(`<ansi fg="yellow"><ansi fg="command">help alias</ansi> for more information on setting custom aliases.</ansi>`)
+	user.SendTextLegacy(``)
 
 	return true, nil
 }

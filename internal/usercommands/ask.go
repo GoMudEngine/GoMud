@@ -26,7 +26,7 @@ func deliverDialogue(df *dialogue.DialogueFile, mob *mobs.Mob, mobInstanceId int
 			mob.Command(`say ` + nodeText)
 			if hints != `` {
 				if u := users.GetByUserId(userId); u != nil {
-					u.SendText(fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
+					u.SendTextLegacy(fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
 				}
 			}
 			dialogue.ShiftMood(mobInstanceId, moodChange, df.DefaultMood)
@@ -58,7 +58,7 @@ func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			}
 		}
 
-		user.SendText(`You must <ansi fg="command">ask</ansi> <ansi fg="mobname">someone</ansi> <ansi fg="yellow">something</ansi>`)
+		user.SendTextLegacy(`You must <ansi fg="command">ask</ansi> <ansi fg="mobname">someone</ansi> <ansi fg="yellow">something</ansi>`)
 		return true, nil
 	}
 
@@ -67,11 +67,11 @@ func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	// Only ask charmed players or mobs to do stuff
 	target, err := actions.ResolveTargetActor(room, searchName)
 	if err != nil {
-		user.SendText(`ask who what?`)
+		user.SendTextLegacy(`ask who what?`)
 		return true, nil
 	}
 	if target.IsPlayer() {
-		user.SendText(`You can't ask another player.`)
+		user.SendTextLegacy(`You can't ask another player.`)
 		return true, nil
 	}
 
@@ -81,7 +81,7 @@ func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	args = args[1:]
 
 	if !mob.Character.IsCharmed() {
-		room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> asks <ansi fg="mobname">%s</ansi> about "%s"`, user.Character.Name, mob.Character.Name, strings.Join(args, ` `)), user.UserId)
+		room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> asks <ansi fg="mobname">%s</ansi> about "%s"`, user.Character.Name, mob.Character.Name, strings.Join(args, ` `)), user.UserId)
 	}
 
 	// players may type "ask <mob> to <do something>"

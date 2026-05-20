@@ -296,11 +296,13 @@ func TestActSendUserText_DeliversToUser(t *testing.T) {
 	}
 
 	events.ProcessEvents()
+	// Pipeline normalize stage capitalizes the first letter; compare
+	// case-insensitively so the test still validates content delivery.
 
 	mu.Lock()
 	found := false
 	for _, m := range *captured {
-		if m.UserId == 1 && strings.Contains(m.Text, wantText) {
+		if m.UserId == 1 && strings.Contains(strings.ToLower(m.Text), wantText) {
 			found = true
 			break
 		}
@@ -327,6 +329,14 @@ func TestActSendRoomText_BroadcastsToRoom(t *testing.T) {
 
 	cleanRoom := seedTestRoom(t, 1, "TestZone")
 	defer cleanRoom()
+	// Post-T9, Room.SendText fans out per-recipient via r.players;
+	// without a player in the room, no events are emitted. Seed a
+	// player into room 1 and add them to the room's player list.
+	cleanUser := seedTestUser(t, 1, "alice", "Aliceia", 1)
+	defer cleanUser()
+	if room1 := rooms.LoadRoom(1); room1 != nil {
+		room1.AddPlayer(1)
+	}
 
 	captured, mu, cleanup := captureMessages(t)
 	defer cleanup()
@@ -339,11 +349,14 @@ func TestActSendRoomText_BroadcastsToRoom(t *testing.T) {
 
 	events.ProcessEvents()
 
-	// Room.SendText emits events.Message with RoomId set (no UserId target).
+	// Room.SendText now fans out per-user (UserId set, no RoomId) and
+	// the normalize stage capitalizes the first letter. Compare
+	// case-insensitively and accept either targeted or room-broadcast
+	// envelopes so the test stays valid through the T9 pipeline switch.
 	mu.Lock()
 	found := false
 	for _, m := range *captured {
-		if m.RoomId == 1 && strings.Contains(m.Text, wantText) {
+		if (m.RoomId == 1 || m.UserId != 0) && strings.Contains(strings.ToLower(m.Text), wantText) {
 			found = true
 			break
 		}

@@ -30,11 +30,11 @@ func Skillset(rest string, user *users.UserRecord, room *rooms.Room, flags event
 	if len(args) < 2 {
 		// send some sort of help info?
 		infoOutput, _ := templates.Process("admincommands/help/command.skillset", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 
-		user.SendText(`Skill Names:`)
+		user.SendTextLegacy(`Skill Names:`)
 		for _, name := range skills.GetAllSkillNames() {
-			user.SendText(`  <ansi fg="skill">` + string(name) + `</ansi>`)
+			user.SendTextLegacy(`  <ansi fg="skill">` + string(name) + `</ansi>`)
 		}
 
 		return true, nil
@@ -50,11 +50,11 @@ func Skillset(rest string, user *users.UserRecord, room *rooms.Room, flags event
 	if len(args) < 2 {
 		// send some sort of help info?
 		infoOutput, _ := templates.Process("admincommands/help/command.skillset", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 
-		user.SendText(`Skill Names:`)
+		user.SendTextLegacy(`Skill Names:`)
 		for _, name := range skills.GetAllSkillNames() {
-			user.SendText(`  <ansi fg="skill">` + string(name) + `</ansi>`)
+			user.SendTextLegacy(`  <ansi fg="skill">` + string(name) + `</ansi>`)
 		}
 
 		return true, nil
@@ -65,11 +65,11 @@ func Skillset(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 		for _, skillName := range skills.GetAllSkillNames() {
 			targetUser.Character.SetSkill(string(skillName), skillValueInt)
-			targetUser.SendText(fmt.Sprintf(`Your "<ansi fg="skill">%s</ansi>" skill level has been set to <ansi fg="red">%d</ansi>.`, skillName, skillValueInt))
+			targetUser.SendTextLegacy(fmt.Sprintf(`Your "<ansi fg="skill">%s</ansi>" skill level has been set to <ansi fg="red">%d</ansi>.`, skillName, skillValueInt))
 		}
 
 		if targetUser.UserId != user.UserId {
-			user.SendText("done.")
+			user.SendTextLegacy("done.")
 		}
 
 		return true, nil
@@ -82,13 +82,13 @@ func Skillset(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 	if found {
 		targetUser.Character.SetSkill(skillName, skillValueInt)
-		targetUser.SendText(fmt.Sprintf(`Your "<ansi fg="skill">%s</ansi>" skill level has been set to <ansi fg="red">%d</ansi>.`, skillName, skillValueInt))
+		targetUser.SendTextLegacy(fmt.Sprintf(`Your "<ansi fg="skill">%s</ansi>" skill level has been set to <ansi fg="red">%d</ansi>.`, skillName, skillValueInt))
 
 		if targetUser.UserId != user.UserId {
-			user.SendText("done.")
+			user.SendTextLegacy("done.")
 		}
 	} else {
-		targetUser.SendText(fmt.Sprintf(`Skill "%s" not found.`, skillName))
+		targetUser.SendTextLegacy(fmt.Sprintf(`Skill "%s" not found.`, skillName))
 	}
 
 	return true, nil

@@ -39,7 +39,7 @@ func Shadow(actor Actor, opts ShadowOptions) ShadowResult {
 
 	// Must be hidden to shadow.
 	if !char.IsHidden() {
-		actor.SendText(
+		actor.SendTextLegacy(
 			"You must be hidden to shadow someone. " +
 				`Try <ansi fg="command">sneak</ansi> first.`)
 		return ShadowResult{Reason: "not hidden"}
@@ -47,13 +47,13 @@ func Shadow(actor Actor, opts ShadowOptions) ShadowResult {
 
 	// Combat gate.
 	if char.Aggro != nil {
-		actor.SendText("You can't do that while in combat!")
+		actor.SendTextLegacy("You can't do that while in combat!")
 		return ShadowResult{Reason: "in combat"}
 	}
 
 	// Require a target.
 	if opts.TargetMobInstanceId == 0 && opts.TargetUserId == 0 {
-		actor.SendText("Shadow whom?")
+		actor.SendTextLegacy("Shadow whom?")
 		return ShadowResult{Reason: "no target"}
 	}
 
@@ -81,7 +81,7 @@ func Shadow(actor Actor, opts ShadowOptions) ShadowResult {
 func shadowMob(actor Actor, mobInstanceId int, cfg configs.Balance) ShadowResult {
 	m := mobs.GetInstance(mobInstanceId)
 	if m == nil {
-		actor.SendText("They seem to have vanished.")
+		actor.SendTextLegacy("They seem to have vanished.")
 		return ShadowResult{Reason: "target not found"}
 	}
 
@@ -89,7 +89,7 @@ func shadowMob(actor Actor, mobInstanceId int, cfg configs.Balance) ShadowResult
 	char.SetMiscData("shadow-target-user", nil)
 	char.SetMiscData("shadow-target-mob", m.InstanceId)
 
-	actor.SendText(fmt.Sprintf(
+	actor.SendTextLegacy(fmt.Sprintf(
 		`You begin shadowing <ansi fg="mobname">%s</ansi>, `+
 			`moving silently in their wake.`,
 		m.Character.Name))
@@ -129,7 +129,7 @@ func shadowMob(actor Actor, mobInstanceId int, cfg configs.Balance) ShadowResult
 func shadowPlayer(actor Actor, targetUserId int, cfg configs.Balance) ShadowResult {
 	targetUser := users.GetByUserId(targetUserId)
 	if targetUser == nil {
-		actor.SendText("They seem to have vanished.")
+		actor.SendTextLegacy("They seem to have vanished.")
 		return ShadowResult{Reason: "target not found"}
 	}
 
@@ -137,7 +137,7 @@ func shadowPlayer(actor Actor, targetUserId int, cfg configs.Balance) ShadowResu
 	char.SetMiscData("shadow-target-user", targetUser.UserId)
 	char.SetMiscData("shadow-target-mob", nil)
 
-	actor.SendText(fmt.Sprintf(
+	actor.SendTextLegacy(fmt.Sprintf(
 		`You begin shadowing <ansi fg="username">%s</ansi>, `+
 			`watching their every move.`,
 		targetUser.Character.Name))
@@ -171,7 +171,7 @@ func shadowPlayer(actor Actor, targetUserId int, cfg configs.Balance) ShadowResu
 	searchScore := CalcSearchScore(targetUser.Character)
 	detected, _, _, _ := dice.OpposedRollStat(searchScore, sneakScore)
 	if detected {
-		targetUser.SendText("You sense someone following close behind you.")
+		targetUser.SendTextLegacy("You sense someone following close behind you.")
 	}
 
 	return ShadowResult{

@@ -35,7 +35,7 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 
 	// ── 1. Companion cap ────────────────────────────────────────────────
 	if len(ch.Companions) >= ch.GetMaxCompanions() {
-		user.SendText("You cannot maintain any more companions.")
+		user.SendTextLegacy("You cannot maintain any more companions.")
 		return false
 	}
 
@@ -50,7 +50,7 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 			}
 		}
 		if !found {
-			user.SendText("You lack the required component for this summoning.")
+			user.SendTextLegacy("You lack the required component for this summoning.")
 			return false
 		}
 	}
@@ -100,9 +100,9 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 
 		if targetIdx < 0 {
 			if spellRest != "" {
-				user.SendText("You cannot find suitable remains matching that description.")
+				user.SendTextLegacy("You cannot find suitable remains matching that description.")
 			} else {
-				user.SendText("There are no suitable remains here to raise.")
+				user.SendTextLegacy("There are no suitable remains here to raise.")
 			}
 			return false
 		}
@@ -126,7 +126,7 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 	// ── 5. Spawn and register ───────────────────────────────────────────
 	mob := mobs.NewMobByIdFresh(mobs.MobId(spellData.SummonMobId), room.RoomId, pool)
 	if mob == nil {
-		user.SendText("The summoning fails — something is wrong.")
+		user.SendTextLegacy("The summoning fails — something is wrong.")
 		return false
 	}
 	room.AddMob(mob.InstanceId)
@@ -153,7 +153,7 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 	}
 	if !ch.AddCompanion(info) {
 		// Should not happen since we checked cap above, but be safe
-		user.SendText("You cannot maintain any more companions.")
+		user.SendTextLegacy("You cannot maintain any more companions.")
 		return false
 	}
 

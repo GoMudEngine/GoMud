@@ -26,18 +26,18 @@ func Dismiss(rest string, user *users.UserRecord,
 
 	rest = strings.TrimSpace(rest)
 	if rest == "" {
-		user.SendText("Dismiss whom? (dismiss <companion name>)")
+		user.SendTextLegacy("Dismiss whom? (dismiss <companion name>)")
 		return true, nil
 	}
 
 	if len(user.Character.Companions) == 0 {
-		user.SendText("You have no companions to dismiss.")
+		user.SendTextLegacy("You have no companions to dismiss.")
 		return true, nil
 	}
 
 	comp := user.Character.GetCompanion(rest)
 	if comp == nil {
-		user.SendText(fmt.Sprintf(
+		user.SendTextLegacy(fmt.Sprintf(
 			`You have no companion named "%s".`, rest,
 		))
 		return true, nil
@@ -52,7 +52,7 @@ func Dismiss(rest string, user *users.UserRecord,
 	if mob == nil {
 		// Companion is offline / already gone — just clean up the record.
 		user.Character.RemoveCompanion(instanceId)
-		user.SendText(fmt.Sprintf(
+		user.SendTextLegacy(fmt.Sprintf(
 			`Your bond with <ansi fg="mobname">%s</ansi> fades away.`,
 			compName,
 		))
@@ -77,11 +77,11 @@ func Dismiss(rest string, user *users.UserRecord,
 
 	if isPlayerCrafted {
 		// Mage-crafted companion dissolves peacefully — no aggro, immediate despawn.
-		user.SendText(fmt.Sprintf(
+		user.SendTextLegacy(fmt.Sprintf(
 			`You release <ansi fg="mobname">%s</ansi> — it dissolves back into the energies that shaped it.`,
 			compName,
 		))
-		room.SendTextVisual(
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> dismisses `+
 					`<ansi fg="mobname">%s</ansi>; it dissolves away.`,
@@ -96,17 +96,17 @@ func Dismiss(rest string, user *users.UserRecord,
 	// Charmed wild creature — the bond-break is a betrayal; it turns hostile.
 	mob.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
 
-	user.SendText(fmt.Sprintf(
+	user.SendTextLegacy(fmt.Sprintf(
 		`You sever the bond with <ansi fg="mobname">%s</ansi>.`,
 		compName,
 	))
-	user.SendText(fmt.Sprintf(
+	user.SendTextLegacy(fmt.Sprintf(
 		`<ansi fg="mobname">%s</ansi> turns on you with fury!`,
 		compName,
 	))
 
 	// Room message (exclude the dismissing player — they already saw it).
-	room.SendTextVisual(
+	room.SendTextVisualLegacy(
 		fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> dismisses `+
 				`<ansi fg="mobname">%s</ansi>!`,
@@ -114,7 +114,7 @@ func Dismiss(rest string, user *users.UserRecord,
 		),
 		user.UserId,
 	)
-	room.SendTextVisual(
+	room.SendTextVisualLegacy(
 		fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> turns hostile!`,
 			compName,

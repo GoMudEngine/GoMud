@@ -29,7 +29,7 @@ func Shadow(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return false, nil
 	}
 	if skillLevel < 3 {
-		user.SendText("You aren't advanced enough at skullduggery for that.")
+		user.SendTextLegacy("You aren't advanced enough at skullduggery for that.")
 		return true, nil
 	}
 
@@ -41,13 +41,13 @@ func Shadow(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			user.Character.GetMiscData("shadow-target-mob") != nil {
 			endShadow(user, "You stop shadowing your target.")
 		} else {
-			user.SendText("You aren't shadowing anyone.")
+			user.SendTextLegacy("You aren't shadowing anyone.")
 		}
 		return true, nil
 	}
 
 	if rest == "" {
-		user.SendText("Shadow whom?")
+		user.SendTextLegacy("Shadow whom?")
 		return true, nil
 	}
 
@@ -58,10 +58,10 @@ func Shadow(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	if err != nil {
 		// Check whether the name matched the player themselves.
 		if pId, _ := room.FindByName(strings.ToLower(rest)); pId == user.UserId {
-			user.SendText("You can't shadow yourself.")
+			user.SendTextLegacy("You can't shadow yourself.")
 			return true, nil
 		}
-		user.SendText("Shadow whom?")
+		user.SendTextLegacy("Shadow whom?")
 		return true, nil
 	}
 
@@ -76,7 +76,7 @@ func Shadow(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	result := actions.Shadow(actor, opts)
 
 	if result.OnCooldown {
-		user.SendText(fmt.Sprintf(
+		user.SendTextLegacy(fmt.Sprintf(
 			"You need to wait %s before shadowing again.",
 			result.Reason))
 	}
@@ -96,7 +96,7 @@ func endShadow(user *users.UserRecord, reason string) {
 		fmt.Sprintf(`%d rounds`, cfg.ShadowCooldown))
 
 	if reason != "" {
-		user.SendText(reason)
+		user.SendTextLegacy(reason)
 	}
 }
 

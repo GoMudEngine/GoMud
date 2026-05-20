@@ -100,7 +100,7 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		cfg := textutil.SendTextConfig{
 			RoomSendFunc: func(msg string, skip ...int) {
 				if castRoom != nil {
-					castRoom.SendText(msg, skip...)
+					castRoom.SendTextLegacy(msg, skip...)
 				}
 			},
 		}

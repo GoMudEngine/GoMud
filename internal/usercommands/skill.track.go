@@ -50,7 +50,7 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	// Failure case
 	if roll.Value < 125 {
-		user.SendText("You don't see any tracks.")
+		user.SendTextLegacy("You don't see any tracks.")
 		return true, nil
 	}
 
@@ -64,7 +64,7 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if rest == `` {
 
 		if !user.Character.TryCooldown(skills.Search.String(), "1 round") {
-			user.SendText(
+			user.SendTextLegacy(
 				fmt.Sprintf("You need to wait %d more rounds to use that skill again.", user.Character.GetCooldown(skills.Search.String())))
 			return true, errors.New(`you're doing that too often`)
 		}
@@ -171,9 +171,9 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		//
 		if len(visitorData) > 0 {
 			trackTxt, _ := templates.Process("descriptions/track", visitorData, user.UserId)
-			user.SendText(trackTxt)
+			user.SendTextLegacy(trackTxt)
 		} else {
-			user.SendText("You don't see any tracks.")
+			user.SendTextLegacy("You don't see any tracks.")
 		}
 
 		// Quest engine: command notification
@@ -194,21 +194,21 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		user.Character.SetMiscData("tracking-user", nil)
 		user.Character.SetMiscData("tracking-display-count", nil)
 		user.Character.RemoveBuff(26)
-		user.SendText(`You stop tracking.`)
+		user.SendTextLegacy(`You stop tracking.`)
 		return true, nil
 	}
 
 	// Targeted tracking requires a high roll
 	if roll.Value < 175 {
 
-		user.SendText("Your tracking skills aren't sharp enough right now.")
+		user.SendTextLegacy("Your tracking skills aren't sharp enough right now.")
 		return true, errors.New(`your tracking skills aren't sharp enough right now`)
 
 	}
 
 	if !user.Character.TryCooldown(skills.Search.String(), "1 round") {
 
-		user.SendText(
+		user.SendTextLegacy(
 			fmt.Sprintf("You need to wait %d more rounds to use that skill again.", user.Character.GetCooldown(skills.Search.String())))
 
 		return true, errors.New(`you're doing that too often`)
@@ -229,11 +229,11 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		if err == nil {
 			if target.IsPlayer() {
 				u := target.(*actions.UserActor).User
-				user.SendText(
+				user.SendTextLegacy(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> is in the room with you!`, u.Character.Name))
 			} else {
 				m := target.(*actions.MobActor).Mob
-				user.SendText(
+				user.SendTextLegacy(
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is in the room with you!`, m.Character.Name))
 			}
 			return true, nil
@@ -339,7 +339,7 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 			}
 
-			user.SendText("You don't see any tracks.")
+			user.SendTextLegacy("You don't see any tracks.")
 
 			return true, nil
 		}
@@ -457,9 +457,9 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		//
 		if len(visitorData) > 0 {
 			trackTxt, _ := templates.Process("descriptions/track", visitorData, user.UserId)
-			user.SendText(trackTxt)
+			user.SendTextLegacy(trackTxt)
 		} else {
-			user.SendText("You don't see any tracks.")
+			user.SendTextLegacy("You don't see any tracks.")
 		}
 
 		// Quest engine: command notification

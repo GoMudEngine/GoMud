@@ -3,6 +3,7 @@ package rooms
 import (
 	"errors"
 	"fmt"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -15,7 +16,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutators"
 	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
 	"github.com/GoMudEngine/GoMud/internal/state"
@@ -230,10 +233,10 @@ func (r *Room) UpdateCorpses(roundNow uint64) {
 		if corpse.Prunable {
 			removeIdx = append(removeIdx, idx)
 			if corpse.MobId > 0 {
-				r.SendText(fmt.Sprintf(`A <ansi fg="mob-corpse">%s</ansi> crumbles to dust.`, corpse.DisplayName()))
+				r.SendTextLegacy(fmt.Sprintf(`A <ansi fg="mob-corpse">%s</ansi> crumbles to dust.`, corpse.DisplayName()))
 			}
 			if corpse.UserId > 0 {
-				r.SendText(fmt.Sprintf(`A <ansi fg="user-corpse">%s corpse</ansi> crumbles to dust.`, corpse.Character.Name))
+				r.SendTextLegacy(fmt.Sprintf(`A <ansi fg="user-corpse">%s corpse</ansi> crumbles to dust.`, corpse.Character.Name))
 			}
 		}
 		r.Corpses[idx] = corpse
@@ -256,43 +259,137 @@ func (r *Room) SendTextCommunication(txt string, excludeUserIds ...int) {
 
 }
 
-func (r *Room) SendText(txt string, excludeUserIds ...int) {
-
-	events.AddToQueue(events.Message{
-		RoomId:         r.RoomId,
-		Text:           txt + "\n",
-		ExcludeUserIds: excludeUserIds,
-		IsQuiet:        false,
-	})
-
-}
-
-// SendTextVisual sends a visual message that requires sight. In dark rooms,
-// only players with nightvision receive the message. Use this instead of
-// SendText when the message contains character names or visual descriptions
-// that shouldn't be visible in darkness.
-func (r *Room) SendTextVisual(txt string, excludeUserIds ...int) {
-	if r.GetVisibility() >= 1 {
-		r.SendText(txt, excludeUserIds...)
-		return
-	}
-	// Dark room — send only to nightvision players
+// SendText delivers an audio-channel (unfiltered) message to every
+// recipient in the room. Bypasses sight gate + anonymize; runs
+// normalize, color, and wrap. Blinded observers still receive it.
+func (r *Room) SendText(cat messaging.Category, txt string, excludeUserIds ...int) {
 	for _, uid := range r.GetPlayers() {
-		excluded := false
-		for _, eid := range excludeUserIds {
-			if uid == eid {
-				excluded = true
-				break
-			}
-		}
-		if excluded {
+		if excluded(uid, excludeUserIds) {
 			continue
 		}
 		u := users.GetByUserId(uid)
-		if u != nil && u.Character.HasFlagFromAnySource(buffs.NightVision) {
-			u.SendText(txt)
+		if u == nil {
+			continue
+		}
+		rendered := messaging.RenderForRecipient(messaging.RenderInput{
+			Category:  cat,
+			Text:      txt,
+			Channel:   messaging.ChannelAudio,
+			LineWidth: u.GetLineWidth(),
+		})
+		if rendered == "" {
+			continue
+		}
+		events.AddToQueue(events.Message{
+			UserId: u.UserId,
+			Text:   rendered + "\n",
+		})
+	}
+}
+
+// SendTextVisual delivers a sight-gated message. Per-recipient sight
+// is computed via messaging.CanSeeClearly / CanSeeShapes; infrared
+// observers get an anonymized render.
+func (r *Room) SendTextVisual(cat messaging.Category, txt string, excludeUserIds ...int) {
+	for _, uid := range r.GetPlayers() {
+		if excluded(uid, excludeUserIds) {
+			continue
+		}
+		u := users.GetByUserId(uid)
+		if u == nil {
+			continue
+		}
+		decision := messaging.SightNone
+		switch {
+		case messaging.CanSeeClearly(u.Character, r):
+			decision = messaging.SightFull
+		case messaging.CanSeeShapes(u.Character, r):
+			decision = messaging.SightShapes
+		}
+		rendered := messaging.RenderForRecipient(messaging.RenderInput{
+			Category:      cat,
+			Text:          txt,
+			Channel:       messaging.ChannelVisual,
+			SightDecision: decision,
+			LineWidth:     u.GetLineWidth(),
+		})
+		if rendered == "" {
+			continue
+		}
+		events.AddToQueue(events.Message{
+			UserId: u.UserId,
+			Text:   rendered + "\n",
+		})
+	}
+}
+
+// SendTextVisualToUser delivers a sight-gated message to a single
+// user, gated by their character's vision in this room. Use this
+// from sites that previously called user.SendText with visual
+// content — the audit (T13) migrates those callers here. This lives
+// on Room (not UserRecord) because rooms imports users; the inverse
+// edge would create a cycle.
+func (r *Room) SendTextVisualToUser(u *users.UserRecord, cat messaging.Category, txt string) {
+	if u == nil {
+		return
+	}
+	decision := messaging.SightNone
+	switch {
+	case messaging.CanSeeClearly(u.Character, r):
+		decision = messaging.SightFull
+	case messaging.CanSeeShapes(u.Character, r):
+		decision = messaging.SightShapes
+	}
+	rendered := messaging.RenderForRecipient(messaging.RenderInput{
+		Category:      cat,
+		Text:          txt,
+		Channel:       messaging.ChannelVisual,
+		SightDecision: decision,
+		LineWidth:     u.GetLineWidth(),
+	})
+	if rendered == "" {
+		return
+	}
+	events.AddToQueue(events.Message{
+		UserId: u.UserId,
+		Text:   rendered + "\n",
+	})
+}
+
+// SendTextLegacy is a temporary compatibility shim for callers that
+// haven't yet migrated to the categorized API. Maps to
+// CategoryDefault and emits one warning per call site so the audit
+// can track remaining sites. DELETED in T16.
+func (r *Room) SendTextLegacy(txt string, excludeUserIds ...int) {
+	mudlog.Warn("messaging legacy call", "site", legacyCallerInfo(), "fn", "Room.SendText")
+	r.SendText(messaging.CategoryDefault, txt, excludeUserIds...)
+}
+
+// SendTextVisualLegacy is the shim for SendTextVisual. DELETED in T16.
+func (r *Room) SendTextVisualLegacy(txt string, excludeUserIds ...int) {
+	mudlog.Warn("messaging legacy call", "site", legacyCallerInfo(), "fn", "Room.SendTextVisual")
+	r.SendTextVisual(messaging.CategoryDefault, txt, excludeUserIds...)
+}
+
+// excluded is a tiny helper for the shared exclusion check.
+func excluded(uid int, excludeIds []int) bool {
+	for _, eid := range excludeIds {
+		if uid == eid {
+			return true
 		}
 	}
+	return false
+}
+
+// legacyCallerInfo returns "file:line" of the caller two frames up
+// (skipping legacyCallerInfo + the shim itself). Used only for the
+// temp-shim deprecation warnings.
+func legacyCallerInfo() string {
+	_, file, line, ok := runtime.Caller(2)
+	if !ok {
+		return "unknown"
+	}
+	return fmt.Sprintf("%s:%d", file, line)
 }
 
 func (r *Room) PlaySound(soundId string, category string, excludeUserIds ...int) {
@@ -598,7 +695,7 @@ func (r *Room) Prepare(checkAdjacentRooms bool) {
 	if len(r.Containers) > 0 {
 		for k, c := range r.Containers {
 			if c.DespawnRound > 0 && c.DespawnRound <= roundNow {
-				r.SendText(fmt.Sprintf(`The <ansi fg="container">%s</ansi> crumbles to dust, and is gone.`, k))
+				r.SendTextLegacy(fmt.Sprintf(`The <ansi fg="container">%s</ansi> crumbles to dust, and is gone.`, k))
 				delete(r.Containers, k)
 			}
 		}

@@ -18,7 +18,7 @@ func Assist(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	partyInfo := parties.Get(user.UserId)
 	if partyInfo == nil {
-		user.SendText(`You are not in a party.`)
+		user.SendTextLegacy(`You are not in a party.`)
 		return true, nil
 	}
 
@@ -59,17 +59,17 @@ func Assist(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	if assistTarget == nil {
-		user.SendText(`No party member found to assist.`)
+		user.SendTextLegacy(`No party member found to assist.`)
 		return true, nil
 	}
 
 	if !assistTarget.Character.IsInCombat() {
-		user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is not fighting anyone.`, assistTarget.Character.Name))
+		user.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> is not fighting anyone.`, assistTarget.Character.Name))
 		return true, nil
 	}
 
 	if assistTarget.Character.RoomId != user.Character.RoomId {
-		user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is not here.`, assistTarget.Character.Name))
+		user.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> is not here.`, assistTarget.Character.Name))
 		return true, nil
 	}
 
@@ -86,7 +86,7 @@ func Assist(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		}
 	}
 
-	user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi>'s target is no longer here.`, assistTarget.Character.Name))
+	user.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi>'s target is no longer here.`, assistTarget.Character.Name))
 	return true, nil
 }
 

@@ -28,7 +28,7 @@ func Teleport(rest string, user *users.UserRecord, room *rooms.Room, flags event
 	if len(rest) == 0 {
 		// send some sort of help info?
 		infoOutput, _ := templates.Process("admincommands/help/command.teleport", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 
 		return true, nil
 	}
@@ -51,7 +51,7 @@ func Teleport(rest string, user *users.UserRecord, room *rooms.Room, flags event
 		if mapper.IsCompassDirection(rest) {
 
 			if !user.HasRolePermission(`teleport.direction`) {
-				user.SendText(`you do not have <ansi fg="command">teleport.direction</ansi> permission`)
+				user.SendTextLegacy(`you do not have <ansi fg="command">teleport.direction</ansi> permission`)
 				return true, nil
 			}
 
@@ -59,7 +59,7 @@ func Teleport(rest string, user *users.UserRecord, room *rooms.Room, flags event
 			if zMapper == nil {
 				err := fmt.Errorf("Could not find mapper for zone: %s", room.Zone)
 				mudlog.Error("Map", "error", err)
-				user.SendText(`No map found (or an error occured)"`)
+				user.SendTextLegacy(`No map found (or an error occured)"`)
 				return true, err
 			}
 
@@ -71,7 +71,7 @@ func Teleport(rest string, user *users.UserRecord, room *rooms.Room, flags event
 			if locateUser := users.GetByCharacterName(rest); locateUser != nil {
 
 				if !user.HasRolePermission(`teleport.playername`) {
-					user.SendText(`you do not have <ansi fg="command">teleport.direction</ansi> permission`)
+					user.SendTextLegacy(`you do not have <ansi fg="command">teleport.direction</ansi> permission`)
 					return true, nil
 				}
 
@@ -82,7 +82,7 @@ func Teleport(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 	} else {
 		if !user.HasRolePermission(`teleport.roomid`) {
-			user.SendText(`you do not have <ansi fg="command">teleport.direction</ansi> permission`)
+			user.SendTextLegacy(`you do not have <ansi fg="command">teleport.direction</ansi> permission`)
 			return true, nil
 		}
 	}
@@ -90,14 +90,14 @@ func Teleport(rest string, user *users.UserRecord, room *rooms.Room, flags event
 	if gotoRoomId != 0 || rest == `0` {
 
 		if err := rooms.MoveToRoom(targetUser.UserId, gotoRoomId); err != nil {
-			user.SendText(err.Error())
+			user.SendTextLegacy(err.Error())
 
 		} else {
 
-			user.SendText(fmt.Sprintf("Moved to room %d.", gotoRoomId))
+			user.SendTextLegacy(fmt.Sprintf("Moved to room %d.", gotoRoomId))
 
 			gotoRoom := rooms.LoadRoom(gotoRoomId)
-			gotoRoom.SendText(
+			gotoRoom.SendTextLegacy(
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> appears in a flash of light!`, targetUser.Character.Name),
 				targetUser.UserId,
 			)
@@ -121,8 +121,8 @@ func Teleport(rest string, user *users.UserRecord, room *rooms.Room, flags event
 							}
 
 							rooms.MoveToRoom(partyUser.UserId, gotoRoomId)
-							partyUser.SendText(fmt.Sprintf("Moved to room %d.", gotoRoomId))
-							room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> appears in a flash of light!`, partyUser.Character.Name), partyUser.UserId)
+							partyUser.SendTextLegacy(fmt.Sprintf("Moved to room %d.", gotoRoomId))
+							room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> appears in a flash of light!`, partyUser.Character.Name), partyUser.UserId)
 
 							Look(``, partyUser, gotoRoom, flags)
 
@@ -145,7 +145,7 @@ func Teleport(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 		}
 	} else {
-		user.SendText(fmt.Sprintf(`Invalid teleport command: <ansi fg="command">%s</ansi> (No RoomId, direction, or character name match)`, rest))
+		user.SendTextLegacy(fmt.Sprintf(`Invalid teleport command: <ansi fg="command">%s</ansi> (No RoomId, direction, or character name match)`, rest))
 	}
 
 	return true, nil

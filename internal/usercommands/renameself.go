@@ -19,12 +19,12 @@ func RenameSelf(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	newName := strings.TrimSpace(rest)
 	if newName == `` {
 		infoOutput, _ := templates.Process("help/rename", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 		return true, nil
 	}
 
 	if strings.EqualFold(newName, user.Character.Name) {
-		user.SendText(`That's already your name.`)
+		user.SendTextLegacy(`That's already your name.`)
 		return true, nil
 	}
 
@@ -34,7 +34,7 @@ func RenameSelf(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 		cooldown := time.Duration(cooldownHours) * time.Hour
 		if elapsed < cooldown {
 			nextAt := user.LastRenameAt.Add(cooldown)
-			user.SendText(fmt.Sprintf(
+			user.SendTextLegacy(fmt.Sprintf(
 				`You renamed yourself recently. You can rename again on %s.`,
 				nextAt.Format(`2006-01-02 at 15:04`)))
 			return true, nil
@@ -42,7 +42,7 @@ func RenameSelf(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	}
 
 	if err := users.ValidateActorName(newName, users.ValidateActorOpts{ExcludeUserId: user.UserId}); err != nil {
-		user.SendText(fmt.Sprintf(`That name won't work: %s`, err.Error()))
+		user.SendTextLegacy(fmt.Sprintf(`That name won't work: %s`, err.Error()))
 		return true, nil
 	}
 
@@ -66,14 +66,14 @@ func RenameSelf(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 		return true, nil
 	}
 	if q.Response != `yes` {
-		user.SendText(`Aborted.`)
+		user.SendTextLegacy(`Aborted.`)
 		user.ClearPrompt()
 		return true, nil
 	}
 
 	oldName := user.Character.Name
 	if err := users.RenameUser(user, newName); err != nil {
-		user.SendText(fmt.Sprintf(`Rename failed: %s`, err.Error()))
+		user.SendTextLegacy(fmt.Sprintf(`Rename failed: %s`, err.Error()))
 		user.ClearPrompt()
 		return true, err
 	}
@@ -85,8 +85,8 @@ func RenameSelf(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 		`Renamed from <ansi fg="username">%s</ansi> to <ansi fg="username">%s</ansi>`,
 		oldName, newName))
 
-	user.SendText(`The world ripples briefly — you are now known as <ansi fg="username">` + newName + `</ansi>.`)
-	room.SendTextVisual(
+	user.SendTextLegacy(`The world ripples briefly — you are now known as <ansi fg="username">` + newName + `</ansi>.`)
+	room.SendTextVisualLegacy(
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> shimmers and is now known as <ansi fg="username">%s</ansi>.`,
 			oldName, newName),
 		user.UserId)

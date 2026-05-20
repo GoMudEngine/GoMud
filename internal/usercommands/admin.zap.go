@@ -24,14 +24,14 @@ func Zap(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 		target, err := actions.ResolveTargetActor(room, rest)
 		if err == actions.ErrTargetVanished {
-			user.SendText("Zap target not found.")
+			user.SendTextLegacy("Zap target not found.")
 			return true, nil
 		}
 		if err == nil {
 			if !target.IsPlayer() {
 				mob := target.(*actions.MobActor).Mob
-				user.SendText(fmt.Sprintf(`You zap <ansi fg="mobname">%s</ansi> with a %s!`, mob.Character.Name, boltOfLightning))
-				room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="mobname">%s</ansi> with a %s!`, user.Character.Name, mob.Character.Name, boltOfLightning), user.UserId)
+				user.SendTextLegacy(fmt.Sprintf(`You zap <ansi fg="mobname">%s</ansi> with a %s!`, mob.Character.Name, boltOfLightning))
+				room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="mobname">%s</ansi> with a %s!`, user.Character.Name, mob.Character.Name, boltOfLightning), user.UserId)
 
 				mob.Character.Health = 1
 				mob.Character.Conviction = 1
@@ -40,9 +40,9 @@ func Zap(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			}
 
 			u := target.(*actions.UserActor).User
-			user.SendText(fmt.Sprintf(`You zap <ansi fg="username">%s</ansi> with a %s!`, u.Character.Name, boltOfLightning))
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="username">%s</ansi> with a %s!`, user.Character.Name, u.Character.Name, boltOfLightning), user.UserId, u.UserId)
-			u.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps you with a %s!`, user.Character.Name, boltOfLightning))
+			user.SendTextLegacy(fmt.Sprintf(`You zap <ansi fg="username">%s</ansi> with a %s!`, u.Character.Name, boltOfLightning))
+			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="username">%s</ansi> with a %s!`, user.Character.Name, u.Character.Name, boltOfLightning), user.UserId, u.UserId)
+			u.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps you with a %s!`, user.Character.Name, boltOfLightning))
 
 			u.Character.Health = 1
 			u.Character.Conviction = 1
@@ -56,18 +56,18 @@ func Zap(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	}
 
 	if !user.Character.IsInCombat() {
-		user.SendText("You are not in combat.")
+		user.SendTextLegacy("You are not in combat.")
 		return true, nil
 	}
 
 	if user.Character.EngagedTarget().MobInstanceId > 0 {
 		mob := mobs.GetInstance(user.Character.EngagedTarget().MobInstanceId)
 		if mob == nil {
-			user.SendText("Zap Mob not found.")
+			user.SendTextLegacy("Zap Mob not found.")
 			return true, nil
 		} else {
-			user.SendText(fmt.Sprintf(`You zap <ansi fg="mobname">%s</ansi> with a %s!`, mob.Character.Name, boltOfLightning))
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="mobname">%s</ansi> with a %s!`, user.Character.Name, mob.Character.Name, boltOfLightning), user.UserId)
+			user.SendTextLegacy(fmt.Sprintf(`You zap <ansi fg="mobname">%s</ansi> with a %s!`, mob.Character.Name, boltOfLightning))
+			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="mobname">%s</ansi> with a %s!`, user.Character.Name, mob.Character.Name, boltOfLightning), user.UserId)
 
 			mob.Character.Health = 1
 			mob.Character.Conviction = 1
@@ -75,11 +75,11 @@ func Zap(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	} else if user.Character.EngagedTarget().UserId > 0 {
 		u := users.GetByUserId(user.Character.EngagedTarget().UserId)
 		if u == nil {
-			user.SendText("Zap User not found.")
+			user.SendTextLegacy("Zap User not found.")
 			return true, nil
 		} else {
-			user.SendText(fmt.Sprintf(`You zap <ansi fg="username">%s</ansi> with a %s!`, u.Character.Name, boltOfLightning))
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="username">%s</ansi> with a %s!`, user.Character.Name, u.Character.Name, boltOfLightning), user.UserId)
+			user.SendTextLegacy(fmt.Sprintf(`You zap <ansi fg="username">%s</ansi> with a %s!`, u.Character.Name, boltOfLightning))
+			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="username">%s</ansi> with a %s!`, user.Character.Name, u.Character.Name, boltOfLightning), user.UserId)
 
 			u.Character.Health = 1
 			u.Character.Conviction = 1

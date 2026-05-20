@@ -38,12 +38,12 @@ func Character(rest string, user *users.UserRecord, room *rooms.Room, flags even
 	c := configs.GetGamePlayConfig()
 
 	if c.MaxAltCharacters == 0 {
-		user.SendText(`<ansi fg="203">Alt character are disabled on this server.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="203">Alt character are disabled on this server.</ansi>`)
 		return true, errors.New(`alt characters disabled`)
 	}
 
 	if user.Character.GetTotalSkillRanks() < 20 && len(nameToAlt) < 1 {
-		user.SendText(`<ansi fg="203">You must gain at least 20 total skill ranks to access character alts.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="203">You must gain at least 20 total skill ranks to access character alts.</ansi>`)
 		return true, errors.New(`20 skill ranks minimum`)
 	}
 
@@ -72,8 +72,8 @@ func Character(rest string, user *users.UserRecord, room *rooms.Room, flags even
 
 		if len(nameToAlt) > 0 {
 			altTblTxt := getAltTable(nameToAlt, hiredOutChars, user.UserId)
-			user.SendText(``)
-			user.SendText(altTblTxt)
+			user.SendTextLegacy(``)
+			user.SendTextLegacy(altTblTxt)
 		}
 
 	}
@@ -125,7 +125,7 @@ func selectAltByName(cmdPrompt *prompt.Prompt, altNames []string, questionText s
 // checkHiredOut checks if a character is currently hired out as a mob. Returns true if hired out (and sends message).
 func checkHiredOut(user *users.UserRecord, char characters.Character, hiredOutChars map[string]characters.Character) bool {
 	if friend, ok := hiredOutChars[char.Name]; ok && friend.Description == char.Description {
-		user.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is currently hired out.`, char.Name))
+		user.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is currently hired out.`, char.Name))
 		user.ClearPrompt()
 		return true
 	}
@@ -135,8 +135,8 @@ func checkHiredOut(user *users.UserRecord, char characters.Character, hiredOutCh
 func cmdCharacterNew(user *users.UserRecord, room *rooms.Room, cmdPrompt *prompt.Prompt, nameToAlt map[string]characters.Character, altNames []string, c configs.GamePlay) (bool, error) {
 
 	if len(altNames) >= int(c.MaxAltCharacters) {
-		user.SendText(`<ansi fg="203">You already have too many alts.</ansi>`)
-		user.SendText(`<ansi fg="203">You'll need to delete one to create a new one.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="203">You already have too many alts.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="203">You'll need to delete one to create a new one.</ansi>`)
 
 		// Reject the menu response so they can pick again
 		// Re-calling Ask with the same question text returns the existing question object
@@ -175,8 +175,8 @@ func cmdCharacterDelete(user *users.UserRecord, cmdPrompt *prompt.Prompt, altNam
 
 	if len(nameToAlt) > 0 {
 		altTblTxt := getAltTable(nameToAlt, hiredOutChars, user.UserId)
-		user.SendText(``)
-		user.SendText(altTblTxt)
+		user.SendTextLegacy(``)
+		user.SendTextLegacy(altTblTxt)
 	}
 
 	match, rawResponse, done := selectAltByName(cmdPrompt, altNames, `Enter the name of the character you wish to delete:`)
@@ -198,7 +198,7 @@ func cmdCharacterDelete(user *users.UserRecord, cmdPrompt *prompt.Prompt, altNam
 		}
 
 		if question.Response == `no` {
-			user.SendText(`<ansi fg="203">Okay. Aborting.</ansi>`)
+			user.SendTextLegacy(`<ansi fg="203">Okay. Aborting.</ansi>`)
 			user.ClearPrompt()
 			return true, nil
 		}
@@ -213,13 +213,13 @@ func cmdCharacterDelete(user *users.UserRecord, cmdPrompt *prompt.Prompt, altNam
 
 		user.EventLog.Add(`char`, `Deleted alt character: <ansi fg="username">`+match+`</ansi>`)
 
-		user.SendText(`<ansi fg="username">` + match + `</ansi> <ansi fg="red">is deleted.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="username">` + match + `</ansi> <ansi fg="red">is deleted.</ansi>`)
 		user.ClearPrompt()
 		return true, nil
 
 	}
 
-	user.SendText(`<ansi fg="203">No character with the name <ansi fg="username">` + rawResponse + `</ansi> found.</ansi>`)
+	user.SendTextLegacy(`<ansi fg="203">No character with the name <ansi fg="username">` + rawResponse + `</ansi> found.</ansi>`)
 
 	user.ClearPrompt()
 	return true, nil
@@ -229,8 +229,8 @@ func cmdCharacterChange(user *users.UserRecord, room *rooms.Room, cmdPrompt *pro
 
 	if len(nameToAlt) > 0 {
 		altTblTxt := getAltTable(nameToAlt, hiredOutChars, user.UserId)
-		user.SendText(``)
-		user.SendText(altTblTxt)
+		user.SendTextLegacy(``)
+		user.SendTextLegacy(altTblTxt)
 	}
 
 	match, rawResponse, done := selectAltByName(cmdPrompt, altNames, `Enter the name of the character you wish to change to:`)
@@ -252,7 +252,7 @@ func cmdCharacterChange(user *users.UserRecord, room *rooms.Room, cmdPrompt *pro
 		}
 
 		if question.Response == `no` {
-			user.SendText(`<ansi fg="203">Okay. Aborting.</ansi>`)
+			user.SendTextLegacy(`<ansi fg="203">Okay. Aborting.</ansi>`)
 			user.ClearPrompt()
 			return true, nil
 		}
@@ -261,7 +261,7 @@ func cmdCharacterChange(user *users.UserRecord, room *rooms.Room, cmdPrompt *pro
 
 		succes := user.SwapToAlt(match)
 		if !succes {
-			user.SendText(`<ansi fg="203">Something went wrong.</ansi>`)
+			user.SendTextLegacy(`<ansi fg="203">Something went wrong.</ansi>`)
 			user.ClearPrompt()
 			return true, nil
 		}
@@ -281,15 +281,15 @@ func cmdCharacterChange(user *users.UserRecord, room *rooms.Room, cmdPrompt *pro
 
 		user.EventLog.Add(`char`, `Changed from <ansi fg="username">`+oldName+`</ansi> to alt character: <ansi fg="username">`+char.Name+`</ansi>`)
 
-		user.SendText(term.CRLFStr + `You dematerialize as <ansi fg="username">` + oldName + `</ansi>. and rematerialize as <ansi fg="username">` + char.Name + `</ansi>!` + term.CRLFStr)
-		room.SendTextVisual(`<ansi fg="username">`+oldName+`</ansi> vanishes, and <ansi fg="username">`+char.Name+`</ansi> appears in a shower of sparks!`, user.UserId)
+		user.SendTextLegacy(term.CRLFStr + `You dematerialize as <ansi fg="username">` + oldName + `</ansi>. and rematerialize as <ansi fg="username">` + char.Name + `</ansi>!` + term.CRLFStr)
+		room.SendTextVisualLegacy(`<ansi fg="username">`+oldName+`</ansi> vanishes, and <ansi fg="username">`+char.Name+`</ansi> appears in a shower of sparks!`, user.UserId)
 
 		user.ClearPrompt()
 		return true, nil
 
 	}
 
-	user.SendText(`<ansi fg="203">No character with the name <ansi fg="username">` + rawResponse + `</ansi> found.</ansi>`)
+	user.SendTextLegacy(`<ansi fg="203">No character with the name <ansi fg="username">` + rawResponse + `</ansi> found.</ansi>`)
 
 	user.ClearPrompt()
 	return true, nil
@@ -299,8 +299,8 @@ func cmdCharacterView(user *users.UserRecord, room *rooms.Room, cmdPrompt *promp
 
 	if len(nameToAlt) > 0 {
 		altTblTxt := getAltTable(nameToAlt, hiredOutChars, user.UserId)
-		user.SendText(``)
-		user.SendText(altTblTxt)
+		user.SendTextLegacy(``)
+		user.SendTextLegacy(altTblTxt)
 	}
 
 	match, rawResponse, done := selectAltByName(cmdPrompt, altNames, `Enter the name of the character you wish to view:`)
@@ -335,7 +335,7 @@ func cmdCharacterView(user *users.UserRecord, room *rooms.Room, cmdPrompt *promp
 
 	}
 
-	user.SendText(`<ansi fg="203">No character with the name <ansi fg="username">` + rawResponse + `</ansi> found.</ansi>`)
+	user.SendTextLegacy(`<ansi fg="203">No character with the name <ansi fg="username">` + rawResponse + `</ansi> found.</ansi>`)
 
 	user.ClearPrompt()
 	return true, nil
@@ -354,7 +354,7 @@ func cmdCharacterHire(user *users.UserRecord, room *rooms.Room, cmdPrompt *promp
 
 		// Do they already have this mob hired??
 		if friend, ok := hiredOutChars[char.Name]; ok && friend.Description == char.Description {
-			user.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is already hired out.`, char.Name))
+			user.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is already hired out.`, char.Name))
 			user.ClearPrompt()
 			return true, nil
 		}
@@ -378,7 +378,7 @@ func cmdCharacterHire(user *users.UserRecord, room *rooms.Room, cmdPrompt *promp
 		}
 
 		if user.Character.Gold < charValue {
-			user.SendText(fmt.Sprintf(`You only have <ansi fg="gold">%d gold</ansi> and it would cost <ansi fg="gold">%d gold</ansi> to hire <ansi fg="username">%s</ansi>.`, charValue, charValue, char.Name))
+			user.SendTextLegacy(fmt.Sprintf(`You only have <ansi fg="gold">%d gold</ansi> and it would cost <ansi fg="gold">%d gold</ansi> to hire <ansi fg="username">%s</ansi>.`, charValue, charValue, char.Name))
 			user.ClearPrompt()
 			return true, nil
 		}
@@ -386,7 +386,7 @@ func cmdCharacterHire(user *users.UserRecord, room *rooms.Room, cmdPrompt *promp
 		// Prevent follower overage
 		maxCharmed := user.Character.GetMaxCharmedCreatures()
 		if len(hiredOutChars) >= maxCharmed {
-			user.SendText(fmt.Sprintf(`You can only have %d mobs following you at a time.`, maxCharmed))
+			user.SendTextLegacy(fmt.Sprintf(`You can only have %d mobs following you at a time.`, maxCharmed))
 			user.ClearPrompt()
 			return true, nil
 		}
@@ -423,8 +423,8 @@ func cmdCharacterHire(user *users.UserRecord, room *rooms.Room, cmdPrompt *promp
 
 		user.EventLog.Add(`char`, `Hired an alt character to help you out: <ansi fg="username">`+m.Character.Name+`</ansi>`)
 
-		user.SendText(`<ansi fg="username">` + m.Character.Name + `</ansi> appears to help you out!`)
-		room.SendTextVisual(`<ansi fg="username">`+m.Character.Name+`</ansi> appears to help <ansi fg="username">`+user.Character.Name+`</ansi>!`, user.UserId)
+		user.SendTextLegacy(`<ansi fg="username">` + m.Character.Name + `</ansi> appears to help you out!`)
+		room.SendTextVisualLegacy(`<ansi fg="username">`+m.Character.Name+`</ansi> appears to help <ansi fg="username">`+user.Character.Name+`</ansi>!`, user.UserId)
 
 		m.Command(`emote waves sheepishly.`, 2)
 
@@ -433,7 +433,7 @@ func cmdCharacterHire(user *users.UserRecord, room *rooms.Room, cmdPrompt *promp
 
 	}
 
-	user.SendText(`<ansi fg="203">No character with the name <ansi fg="username">` + rawResponse + `</ansi> found.</ansi>`)
+	user.SendTextLegacy(`<ansi fg="203">No character with the name <ansi fg="username">` + rawResponse + `</ansi> found.</ansi>`)
 
 	user.ClearPrompt()
 	return true, nil

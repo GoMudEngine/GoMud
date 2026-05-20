@@ -18,7 +18,7 @@ func Storage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	if !room.IsStorage {
 
-		user.SendText(`You are not at a storage location.` + term.CRLFStr)
+		user.SendTextLegacy(`You are not at a storage location.` + term.CRLFStr)
 
 		if len(room.Containers) > 0 {
 			cName := ``
@@ -26,7 +26,7 @@ func Storage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 				cName = k
 				break
 			}
-			user.SendText(fmt.Sprintf(`Maybe you meant to use the <ansi fg="command">put</ansi> command to <ansi fg="command">put</ansi> something into the <ansi fg="container">%s</ansi>?`, cName) + term.CRLFStr)
+			user.SendTextLegacy(fmt.Sprintf(`Maybe you meant to use the <ansi fg="command">put</ansi> command to <ansi fg="command">put</ansi> something into the <ansi fg="container">%s</ansi>?`, cName) + term.CRLFStr)
 		}
 
 		return true, nil
@@ -47,20 +47,20 @@ func Storage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		}
 
 		storageTxt, _ := templates.Process("character/storage", slotNames, user.UserId)
-		user.SendText(storageTxt)
+		user.SendTextLegacy(storageTxt)
 
 		return true, nil
 	}
 
 	if rest == `add` {
-		user.SendText(`add what?` + term.CRLFStr)
+		user.SendTextLegacy(`add what?` + term.CRLFStr)
 		return true, nil
 	}
 
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) < 2 || (args[0] != `add` && args[0] != `remove`) {
-		user.SendText(`Try <ansi fg="command">help storage</ansi> for more information about storage.` + term.CRLFStr)
+		user.SendTextLegacy(`Try <ansi fg="command">help storage</ansi> for more information about storage.` + term.CRLFStr)
 		return true, nil
 	}
 
@@ -92,7 +92,7 @@ func Storage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 			storageCap = 20
 		}
 		if user.ItemStorage.SlotCount() >= storageCap {
-			user.SendText(`Your storage is full.`)
+			user.SendTextLegacy(`Your storage is full.`)
 			return true, nil
 		}
 
@@ -111,7 +111,7 @@ func Storage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 				}
 			}
 			if deposited > 0 {
-				user.SendText(fmt.Sprintf(`You placed %d item(s) into storage.`, deposited))
+				user.SendTextLegacy(fmt.Sprintf(`You placed %d item(s) into storage.`, deposited))
 			}
 			return true, nil
 		}
@@ -134,33 +134,33 @@ func Storage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 			}
 			switch deposited {
 			case 0:
-				user.SendText(fmt.Sprintf(`You don't have a %s to add to storage.%s`, itemName, term.CRLFStr))
+				user.SendTextLegacy(fmt.Sprintf(`You don't have a %s to add to storage.%s`, itemName, term.CRLFStr))
 			case 1:
-				user.SendText(fmt.Sprintf(`You placed the <ansi fg="itemname">%s</ansi> into storage.`, itemName))
+				user.SendTextLegacy(fmt.Sprintf(`You placed the <ansi fg="itemname">%s</ansi> into storage.`, itemName))
 			default:
-				user.SendText(fmt.Sprintf(`You placed %d <ansi fg="itemname">%s</ansi> into storage.`, deposited, itemName))
+				user.SendTextLegacy(fmt.Sprintf(`You placed %d <ansi fg="itemname">%s</ansi> into storage.`, deposited, itemName))
 			}
 			return true, nil
 		}
 
 		// storage add [N] iron-ore
 		if itemName == `` {
-			user.SendText(`add what?` + term.CRLFStr)
+			user.SendTextLegacy(`add what?` + term.CRLFStr)
 			return true, nil
 		}
 
 		deposited := 0
 		for i := 0; i < qty; i++ {
 			if user.ItemStorage.SlotCount() >= storageCap {
-				user.SendText(`Your storage is full.`)
+				user.SendTextLegacy(`Your storage is full.`)
 				break
 			}
 			itm, found := storageCarriedFind(user, itemName)
 			if !found {
 				if deposited > 0 {
-					user.SendText(fmt.Sprintf(`You only had %d to deposit.`, deposited))
+					user.SendTextLegacy(fmt.Sprintf(`You only had %d to deposit.`, deposited))
 				} else {
-					user.SendText(fmt.Sprintf(`You don't have a %s to add to storage.%s`, itemName, term.CRLFStr))
+					user.SendTextLegacy(fmt.Sprintf(`You don't have a %s to add to storage.%s`, itemName, term.CRLFStr))
 				}
 				break
 			}
@@ -171,9 +171,9 @@ func Storage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		case 0:
 			// error already sent above
 		case 1:
-			user.SendText(fmt.Sprintf(`You placed the <ansi fg="itemname">%s</ansi> into storage.`, itemName))
+			user.SendTextLegacy(fmt.Sprintf(`You placed the <ansi fg="itemname">%s</ansi> into storage.`, itemName))
 		default:
-			user.SendText(fmt.Sprintf(`You placed %d <ansi fg="itemname">%s</ansi> into storage.`, deposited, itemName))
+			user.SendTextLegacy(fmt.Sprintf(`You placed %d <ansi fg="itemname">%s</ansi> into storage.`, deposited, itemName))
 		}
 
 		return true, nil
@@ -186,14 +186,14 @@ func Storage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		for _, slot := range user.ItemStorage.GetSlots() {
 			for i := 0; i < slot.Count; i++ {
 				if !storageRemoveQuiet(user, slot.Item) {
-					user.SendText(`You can't carry the rest.`)
+					user.SendTextLegacy(`You can't carry the rest.`)
 					break
 				}
 				retrieved++
 			}
 		}
 		if retrieved > 0 {
-			user.SendText(fmt.Sprintf(`You retrieved %d item(s) from storage.`, retrieved))
+			user.SendTextLegacy(fmt.Sprintf(`You retrieved %d item(s) from storage.`, retrieved))
 		}
 		return true, nil
 	}
@@ -214,7 +214,7 @@ func Storage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 			}
 			if !storageRemoveQuiet(user, itm) {
 				if retrieved > 0 {
-					user.SendText(`You can't carry the rest.`)
+					user.SendTextLegacy(`You can't carry the rest.`)
 				}
 				break
 			}
@@ -222,11 +222,11 @@ func Storage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		}
 		switch retrieved {
 		case 0:
-			user.SendText(fmt.Sprintf(`You don't have a %s in storage.`, itemName))
+			user.SendTextLegacy(fmt.Sprintf(`You don't have a %s in storage.`, itemName))
 		case 1:
-			user.SendText(fmt.Sprintf(`You removed the <ansi fg="itemname">%s</ansi> from storage.`, itemName))
+			user.SendTextLegacy(fmt.Sprintf(`You removed the <ansi fg="itemname">%s</ansi> from storage.`, itemName))
 		default:
-			user.SendText(fmt.Sprintf(`You retrieved %d <ansi fg="itemname">%s</ansi> from storage.`, retrieved, itemName))
+			user.SendTextLegacy(fmt.Sprintf(`You retrieved %d <ansi fg="itemname">%s</ansi> from storage.`, retrieved, itemName))
 		}
 		return true, nil
 	}
@@ -236,7 +236,7 @@ func Storage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		slots := user.ItemStorage.GetSlots()
 		itmIdx-- // convert to 0-based
 		if itmIdx >= len(slots) {
-			user.SendText(`You don't have that item in storage.`)
+			user.SendTextLegacy(`You don't have that item in storage.`)
 			return true, nil
 		}
 		storageRemoveOne(user, slots[itmIdx].Item)
@@ -249,24 +249,24 @@ func Storage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		itm, found := user.ItemStorage.FindItem(itemName)
 		if !found {
 			if retrieved > 0 {
-				user.SendText(fmt.Sprintf(`You can only retrieve %d from storage.`, retrieved))
+				user.SendTextLegacy(fmt.Sprintf(`You can only retrieve %d from storage.`, retrieved))
 			} else {
-				user.SendText(fmt.Sprintf(`You don't have a %s in storage.`, itemName))
+				user.SendTextLegacy(fmt.Sprintf(`You don't have a %s in storage.`, itemName))
 			}
 			break
 		}
 		if !storageRemoveOne(user, itm) {
 			if retrieved == 0 {
-				user.SendText(`You can't carry that!`)
+				user.SendTextLegacy(`You can't carry that!`)
 			} else {
-				user.SendText(`You can't carry the rest.`)
+				user.SendTextLegacy(`You can't carry the rest.`)
 			}
 			break
 		}
 		retrieved++
 	}
 	if retrieved > 1 {
-		user.SendText(fmt.Sprintf(`You retrieved %d <ansi fg="itemname">%s</ansi> from storage.`, retrieved, itemName))
+		user.SendTextLegacy(fmt.Sprintf(`You retrieved %d <ansi fg="itemname">%s</ansi> from storage.`, retrieved, itemName))
 	}
 
 	return true, nil
@@ -329,6 +329,6 @@ func storageRemoveOne(user *users.UserRecord, itm items.Item) bool {
 	if !storageRemoveQuiet(user, itm) {
 		return false
 	}
-	user.SendText(fmt.Sprintf(`You removed the <ansi fg="itemname">%s</ansi> from storage.`, itm.DisplayName()))
+	user.SendTextLegacy(fmt.Sprintf(`You removed the <ansi fg="itemname">%s</ansi> from storage.`, itm.DisplayName()))
 	return true
 }

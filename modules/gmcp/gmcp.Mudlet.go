@@ -567,9 +567,9 @@ func (g *GMCPMudletModule) partyUpdateHandler(e events.Event) events.ListenerRet
 func (g *GMCPMudletModule) handleToggleCommand(user *users.UserRecord, settingName string, value bool, enableMsg string, disableMsg string) {
 	user.SetConfigOption(settingName, value)
 	if value {
-		user.SendText("\n<ansi fg=\"green\">" + enableMsg + "</ansi>\n")
+		user.SendTextLegacy("\n<ansi fg=\"green\">" + enableMsg + "</ansi>\n")
 	} else {
-		user.SendText("\n<ansi fg=\"yellow\">" + disableMsg + "</ansi>\n")
+		user.SendTextLegacy("\n<ansi fg=\"yellow\">" + disableMsg + "</ansi>\n")
 	}
 
 	// Update Discord status if this was a Discord-related setting
@@ -583,7 +583,7 @@ func (g *GMCPMudletModule) sendUICommand(rest string, user *users.UserRecord, ro
 	// Only proceed if client is Mudlet
 	connId := user.ConnectionId()
 	if gmcpData, ok := gmcpModule.cache.Get(connId); !ok || !gmcpData.Client.IsMudlet {
-		user.SendText("\n<ansi fg=\"red\">This command is only available for Mudlet clients.</ansi> You are currently using: " + gmcpData.Client.Name + "\n")
+		user.SendTextLegacy("\n<ansi fg=\"red\">This command is only available for Mudlet clients.</ansi> You are currently using: " + gmcpData.Client.Name + "\n")
 		return true, nil
 	}
 
@@ -601,16 +601,16 @@ func (g *GMCPMudletModule) sendUICommand(rest string, user *users.UserRecord, ro
 			promptStatus = "<ansi fg=\"green\">ENABLED</ansi>"
 		}
 
-		user.SendText("\n<ansi fg=\"cyan-bold\">" + mudName + " Mudlet UI Management</ansi>\n")
-		user.SendText("<ansi fg=\"yellow-bold\">Status:</ansi>\n")
-		user.SendText("  Login message display: " + promptStatus + "\n")
-		user.SendText("<ansi fg=\"yellow-bold\">Available Commands:</ansi>\n")
-		user.SendText("  <ansi fg=\"command\">mudletui install</ansi> - Install the Mudlet UI package\n")
-		user.SendText("  <ansi fg=\"command\">mudletui remove</ansi>  - Remove the Mudlet UI package\n")
-		user.SendText("  <ansi fg=\"command\">mudletui update</ansi>  - Manually check for updates to the Mudlet UI package\n")
-		user.SendText("  <ansi fg=\"command\">mudletui hide</ansi>    - Hide login messages\n")
-		user.SendText("  <ansi fg=\"command\">mudletui show</ansi>    - Enable login messages\n\n")
-		user.SendText("For more information, type <ansi fg=\"command\">help mudletui</ansi>\n")
+		user.SendTextLegacy("\n<ansi fg=\"cyan-bold\">" + mudName + " Mudlet UI Management</ansi>\n")
+		user.SendTextLegacy("<ansi fg=\"yellow-bold\">Status:</ansi>\n")
+		user.SendTextLegacy("  Login message display: " + promptStatus + "\n")
+		user.SendTextLegacy("<ansi fg=\"yellow-bold\">Available Commands:</ansi>\n")
+		user.SendTextLegacy("  <ansi fg=\"command\">mudletui install</ansi> - Install the Mudlet UI package\n")
+		user.SendTextLegacy("  <ansi fg=\"command\">mudletui remove</ansi>  - Remove the Mudlet UI package\n")
+		user.SendTextLegacy("  <ansi fg=\"command\">mudletui update</ansi>  - Manually check for updates to the Mudlet UI package\n")
+		user.SendTextLegacy("  <ansi fg=\"command\">mudletui hide</ansi>    - Hide login messages\n")
+		user.SendTextLegacy("  <ansi fg=\"command\">mudletui show</ansi>    - Enable login messages\n\n")
+		user.SendTextLegacy("For more information, type <ansi fg=\"command\">help mudletui</ansi>\n")
 		return true, nil
 	}
 
@@ -619,30 +619,30 @@ func (g *GMCPMudletModule) sendUICommand(rest string, user *users.UserRecord, ro
 	case "install":
 		g.sendMudletUIInstall(user.UserId)
 		user.SetConfigOption("mudlet_ui_prompt_disabled", true)
-		user.SendText("\n<ansi fg=\"green\">UI installation package sent to your Mudlet client.</ansi> If it doesn't install automatically, you may need to accept the installation prompt in Mudlet.\n")
+		user.SendTextLegacy("\n<ansi fg=\"green\">UI installation package sent to your Mudlet client.</ansi> If it doesn't install automatically, you may need to accept the installation prompt in Mudlet.\n")
 
 	case "remove":
 		g.sendMudletUIRemove(user.UserId)
-		user.SendText("\n<ansi fg=\"yellow\">UI removal command sent to your Mudlet client.</ansi>\n")
+		user.SendTextLegacy("\n<ansi fg=\"yellow\">UI removal command sent to your Mudlet client.</ansi>\n")
 
 	case "update":
 		g.sendMudletUIUpdate(user.UserId)
-		user.SendText("\n<ansi fg=\"cyan\">Manual UI update check sent to your Mudlet client.</ansi>\n")
+		user.SendTextLegacy("\n<ansi fg=\"cyan\">Manual UI update check sent to your Mudlet client.</ansi>\n")
 
 	case "hide":
 		g.handleToggleCommand(user, "mudlet_ui_prompt_disabled", true,
 			"The Mudlet UI prompt has been hidden.",
 			"")
-		user.SendText("You can use <ansi fg=\"command\">mudletui show</ansi> in the future if you want to see the prompts again.\n")
+		user.SendTextLegacy("You can use <ansi fg=\"command\">mudletui show</ansi> in the future if you want to see the prompts again.\n")
 
 	case "show":
 		g.handleToggleCommand(user, "mudlet_ui_prompt_disabled", false,
 			"The Mudlet UI prompt has been re-enabled.",
 			"")
-		user.SendText("You can use <ansi fg=\"command\">mudletui hide</ansi> in the future if you want to hide the prompts again.\n")
+		user.SendTextLegacy("You can use <ansi fg=\"command\">mudletui hide</ansi> in the future if you want to hide the prompts again.\n")
 
 	default:
-		user.SendText("\nUsage: mudletui install|remove|update|hide|show\n\nType '<ansi fg=\"command\">help mudletui</ansi>' for more information.\n")
+		user.SendTextLegacy("\nUsage: mudletui install|remove|update|hide|show\n\nType '<ansi fg=\"command\">help mudletui</ansi>' for more information.\n")
 	}
 
 	return true, nil
@@ -670,7 +670,7 @@ func (g *GMCPMudletModule) checkClientCommand(rest string, user *users.UserRecor
 		}
 
 		// Show Mudlet help
-		user.SendText("\n\n<ansi fg=\"cyan-bold\">We have detected you are using Mudlet as a client.</ansi>\n")
+		user.SendTextLegacy("\n\n<ansi fg=\"cyan-bold\">We have detected you are using Mudlet as a client.</ansi>\n")
 		usercommands.Help("mudletui", user, room, flags)
 	}
 	return true, nil
@@ -681,14 +681,14 @@ func (g *GMCPMudletModule) discordCommand(rest string, user *users.UserRecord, r
 	// Only proceed if client is Mudlet
 	connId := user.ConnectionId()
 	if gmcpData, ok := gmcpModule.cache.Get(connId); !ok || !gmcpData.Client.IsMudlet {
-		user.SendText("\n<ansi fg=\"red\">This command is only available for Mudlet clients.</ansi> You are currently using: " + gmcpData.Client.Name + "\n")
+		user.SendTextLegacy("\n<ansi fg=\"red\">This command is only available for Mudlet clients.</ansi> You are currently using: " + gmcpData.Client.Name + "\n")
 		return true, nil
 	}
 
 	// Process arguments
 	args := strings.Fields(rest)
 	if len(args) == 0 {
-		user.SendText("\nUsage: discord area on|off|party on|off|name on|off|level on|off|info on|off|status on|off\n")
+		user.SendTextLegacy("\nUsage: discord area on|off|party on|off|name on|off|level on|off|info on|off|status on|off\n")
 		return true, nil
 	}
 
@@ -701,7 +701,7 @@ func (g *GMCPMudletModule) discordCommand(rest string, user *users.UserRecord, r
 			} else if args[1] == "off" {
 				g.handleToggleCommand(user, "discord_show_area", false, "Area display in Discord status disabled.", "")
 			} else {
-				user.SendText("\nUsage: discord area on|off\n")
+				user.SendTextLegacy("\nUsage: discord area on|off\n")
 			}
 
 		case "party":
@@ -710,7 +710,7 @@ func (g *GMCPMudletModule) discordCommand(rest string, user *users.UserRecord, r
 			} else if args[1] == "off" {
 				g.handleToggleCommand(user, "discord_show_party", false, "Party display in Discord status disabled.", "")
 			} else {
-				user.SendText("\nUsage: discord party on|off\n")
+				user.SendTextLegacy("\nUsage: discord party on|off\n")
 			}
 
 		case "name":
@@ -719,7 +719,7 @@ func (g *GMCPMudletModule) discordCommand(rest string, user *users.UserRecord, r
 			} else if args[1] == "off" {
 				g.handleToggleCommand(user, "discord_show_name", false, "Character name display in Discord status disabled.", "")
 			} else {
-				user.SendText("\nUsage: discord name on|off\n")
+				user.SendTextLegacy("\nUsage: discord name on|off\n")
 			}
 
 		case "level":
@@ -728,7 +728,7 @@ func (g *GMCPMudletModule) discordCommand(rest string, user *users.UserRecord, r
 			} else if args[1] == "off" {
 				g.handleToggleCommand(user, "discord_show_level", false, "Level display in Discord status disabled.", "")
 			} else {
-				user.SendText("\nUsage: discord level on|off\n")
+				user.SendTextLegacy("\nUsage: discord level on|off\n")
 			}
 
 		case "info":
@@ -746,7 +746,7 @@ func (g *GMCPMudletModule) discordCommand(rest string, user *users.UserRecord, r
 					InviteURL:     "",
 				})
 			} else {
-				user.SendText("\nUsage: discord info on|off\n")
+				user.SendTextLegacy("\nUsage: discord info on|off\n")
 			}
 
 		case "status":
@@ -757,14 +757,14 @@ func (g *GMCPMudletModule) discordCommand(rest string, user *users.UserRecord, r
 				g.handleToggleCommand(user, "discord_enable_status", false, "Discord.Status package sending disabled.", "")
 				g.clearDiscordStatus(user.UserId)
 			} else {
-				user.SendText("\nUsage: discord status on|off\n")
+				user.SendTextLegacy("\nUsage: discord status on|off\n")
 			}
 
 		default:
-			user.SendText("\nUsage: discord area on|off|party on|off|name on|off|level on|off|info on|off|status on|off\n")
+			user.SendTextLegacy("\nUsage: discord area on|off|party on|off|name on|off|level on|off|info on|off|status on|off\n")
 		}
 	} else {
-		user.SendText("\nUsage: discord area on|off|party on|off|name on|off|level on|off|info on|off|status on|off\n")
+		user.SendTextLegacy("\nUsage: discord area on|off|party on|off|name on|off|level on|off|info on|off|status on|off\n")
 	}
 
 	return true, nil

@@ -18,21 +18,21 @@ func Suggest(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	rest = strings.TrimSpace(rest)
 	if rest == `` {
-		user.SendText(`<ansi fg="yellow">Usage: <ansi fg="cyan-bold">suggest <your idea></ansi>`)
-		user.SendText(`<ansi fg="yellow">Use this command to share ideas and suggestions for improving the game.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="yellow">Usage: <ansi fg="cyan-bold">suggest <your idea></ansi>`)
+		user.SendTextLegacy(`<ansi fg="yellow">Use this command to share ideas and suggestions for improving the game.</ansi>`)
 		return true, nil
 	}
 
 	feedbackDir := util.FilePath(`_datafiles/feedback`)
 	if err := os.MkdirAll(feedbackDir, 0755); err != nil {
-		user.SendText(`<ansi fg="red">Could not save suggestion. Please notify an admin.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">Could not save suggestion. Please notify an admin.</ansi>`)
 		return true, nil
 	}
 
 	filePath := util.FilePath(`_datafiles/feedback/suggestions.txt`)
 	f, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		user.SendText(`<ansi fg="red">Could not save suggestion. Please notify an admin.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">Could not save suggestion. Please notify an admin.</ansi>`)
 		return true, nil
 	}
 	defer f.Close()
@@ -47,11 +47,11 @@ func Suggest(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	)
 
 	if _, err := f.WriteString(entry); err != nil {
-		user.SendText(`<ansi fg="red">Could not save suggestion. Please notify an admin.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">Could not save suggestion. Please notify an admin.</ansi>`)
 		return true, nil
 	}
 
-	user.SendText(`<ansi fg="green">Suggestion submitted. Thank you for your feedback!</ansi>`)
+	user.SendTextLegacy(`<ansi fg="green">Suggestion submitted. Thank you for your feedback!</ansi>`)
 
 	return true, nil
 }

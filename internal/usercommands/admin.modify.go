@@ -24,7 +24,7 @@ func Modify(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	if len(args) < 3 {
 		infoOutput, _ := templates.Process("admincommands/help/command.modify", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 		return true, nil
 	}
 
@@ -32,7 +32,7 @@ func Modify(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	if args[0] == `role` {
 
 		if !user.HasRolePermission(`modify.role`) {
-			user.SendText(`you do not have <ansi fg="command">modify.role</ansi> permission`)
+			user.SendTextLegacy(`you do not have <ansi fg="command">modify.role</ansi> permission`)
 			return true, nil
 		}
 
@@ -43,7 +43,7 @@ func Modify(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		_, roleExists := allRoles[newRole]
 
 		if newRole != users.RoleAdmin && newRole != users.RoleUser && !roleExists {
-			user.SendText(`<ansi fg="alert-4">Invalid permission type.</ansi>`)
+			user.SendTextLegacy(`<ansi fg="alert-4">Invalid permission type.</ansi>`)
 			return true, nil
 		}
 
@@ -54,12 +54,12 @@ func Modify(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			if strings.EqualFold(searchUser, u.Username) {
 
 				if u.Role == users.RoleAdmin {
-					user.SendText(`<ansi fg="alert-4">Admin permissions cannot be removed this way.</ansi>`)
+					user.SendTextLegacy(`<ansi fg="alert-4">Admin permissions cannot be removed this way.</ansi>`)
 					return true, nil
 				}
 
 				if u.Role == newRole {
-					user.SendText(`<ansi fg="alert-4">That permission is already set for this user.</ansi>`)
+					user.SendTextLegacy(`<ansi fg="alert-4">That permission is already set for this user.</ansi>`)
 					return true, nil
 				}
 
@@ -70,7 +70,7 @@ func Modify(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 				users.SaveUser(*u)
 
-				u.SendText(`<ansi fg="alert-3">Your role has been set to: ` + newRole + `</ansi>`)
+				u.SendTextLegacy(`<ansi fg="alert-3">Your role has been set to: ` + newRole + `</ansi>`)
 				break
 			}
 		}
@@ -81,12 +81,12 @@ func Modify(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				if strings.EqualFold(searchUser, u.Username) {
 
 					if u.Role == users.RoleAdmin {
-						user.SendText(`<ansi fg="alert-4">Admin permissions cannot be removed this way.</ansi>`)
+						user.SendTextLegacy(`<ansi fg="alert-4">Admin permissions cannot be removed this way.</ansi>`)
 						return false
 					}
 
 					if u.Role == newRole {
-						user.SendText(`<ansi fg="alert-4">That permission is already set for this user.</ansi>`)
+						user.SendTextLegacy(`<ansi fg="alert-4">That permission is already set for this user.</ansi>`)
 						return false
 					}
 
@@ -105,7 +105,7 @@ func Modify(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		}
 
 		if len(foundUsername) > 0 {
-			user.SendText(fmt.Sprintf(`Role changed for user <ansi fg="username">%s</ansi> (Character name: <ansi fg="username">%s</ansi>).`, foundUsername, foundCharacterName))
+			user.SendTextLegacy(fmt.Sprintf(`Role changed for user <ansi fg="username">%s</ansi> (Character name: <ansi fg="username">%s</ansi>).`, foundUsername, foundCharacterName))
 			return true, nil
 		}
 

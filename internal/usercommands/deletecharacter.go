@@ -23,7 +23,7 @@ func DeleteCharacter(rest string, user *users.UserRecord, room *rooms.Room, flag
 		return true, nil
 	}
 	if q1.Response != `yes` {
-		user.SendText(`Aborted.`)
+		user.SendTextLegacy(`Aborted.`)
 		user.ClearPrompt()
 		return true, nil
 	}
@@ -36,7 +36,7 @@ func DeleteCharacter(rest string, user *users.UserRecord, room *rooms.Room, flag
 		return true, nil
 	}
 	if q2.Response != user.Character.Name { // case-sensitive
-		user.SendText(`That doesn't match. Aborted.`)
+		user.SendTextLegacy(`That doesn't match. Aborted.`)
 		user.ClearPrompt()
 		return true, nil
 	}
@@ -44,10 +44,10 @@ func DeleteCharacter(rest string, user *users.UserRecord, room *rooms.Room, flag
 	oldName := user.Character.Name
 	user.EventLog.Add(`char`, `Account deleted by user.`)
 
-	room.SendTextVisual(
+	room.SendTextVisualLegacy(
 		fmt.Sprintf(`<ansi fg="username">%s</ansi>'s form dissolves into shimmering dust.`, oldName),
 		user.UserId)
-	user.SendText(fmt.Sprintf(
+	user.SendTextLegacy(fmt.Sprintf(
 		`Your form dissolves into shimmering dust. Farewell, <ansi fg="username">%s</ansi>.`,
 		oldName))
 

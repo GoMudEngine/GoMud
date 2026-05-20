@@ -51,7 +51,7 @@ func wirePlayerDeathAnnouncement(c *characters.Character) {
 					if inst := rooms.GetInstanceRegistry().FindByRoomId(c.RoomId); inst != nil {
 						if inst.DeathPolicy == "ejected" {
 							inst.RevokeAccess(u.UserId)
-							u.SendText(`<ansi fg="red">You have been expelled from the instance. There is no return.</ansi>`)
+							u.SendTextLegacy(`<ansi fg="red">You have been expelled from the instance. There is no return.</ansi>`)
 						}
 					}
 				}
@@ -61,7 +61,7 @@ func wirePlayerDeathAnnouncement(c *characters.Character) {
 			// 1. Room broadcast "X has died."
 			room := rooms.LoadRoom(c.RoomId)
 			if room != nil {
-				room.SendTextVisual(
+				room.SendTextVisualLegacy(
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> has died.`, c.Name),
 					u.UserId,
 				)
@@ -147,7 +147,7 @@ func wirePlayerDeathAnnouncement(c *characters.Character) {
 			}
 
 			// 6. "You feel weakened" text to the dying player.
-			u.SendText(`<ansi fg="yellow">You feel weakened by the brush with death.</ansi>`)
+			u.SendTextLegacy(`<ansi fg="yellow">You feel weakened by the brush with death.</ansi>`)
 
 			// 7. Instance ejection — if dead in an ephemeral zone with
 			//    "ejected" death policy, revoke access before teleport.
@@ -155,14 +155,14 @@ func wirePlayerDeathAnnouncement(c *characters.Character) {
 				if inst := rooms.GetInstanceRegistry().FindByRoomId(c.RoomId); inst != nil {
 					if inst.DeathPolicy == "ejected" {
 						inst.RevokeAccess(u.UserId)
-						u.SendText(`<ansi fg="red">You have been expelled from the instance. There is no return.</ansi>`)
+						u.SendTextLegacy(`<ansi fg="red">You have been expelled from the instance. There is no return.</ansi>`)
 					}
 				}
 			}
 
 			// 8. "Darkness swallows you" flavour — fired on Dead-entry so
 			//    the player gets closure text before the teleport fires.
-			u.SendText(`<ansi fg="yellow">Darkness swallows you. When you open your eyes, you are somewhere safe.</ansi>`)
+			u.SendTextLegacy(`<ansi fg="yellow">Darkness swallows you. When you open your eyes, you are somewhere safe.</ansi>`)
 		})
 }
 

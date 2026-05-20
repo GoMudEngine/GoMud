@@ -66,25 +66,25 @@ func Set(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 func displaySetStatus(user *users.UserRecord) {
 	c := configs.GetTextFormatsConfig()
 
-	user.SendText(`<ansi fg="yellow-bold">description:</ansi>`)
-	user.SendText(`<ansi fg="yellow">` + util.SplitStringNL(user.Character.Description, 80) + `</ansi>`)
-	user.SendText(``)
+	user.SendTextLegacy(`<ansi fg="yellow-bold">description:</ansi>`)
+	user.SendTextLegacy(`<ansi fg="yellow">` + util.SplitStringNL(user.Character.Description, 80) + `</ansi>`)
+	user.SendTextLegacy(``)
 
-	user.SendText(`<ansi fg="yellow-bold">ScreenReader:</ansi> `)
+	user.SendTextLegacy(`<ansi fg="yellow-bold">ScreenReader:</ansi> `)
 	if user.ScreenReader {
-		user.SendText(`<ansi fg="green">ON</ansi>`)
+		user.SendTextLegacy(`<ansi fg="green">ON</ansi>`)
 	} else {
-		user.SendText(`<ansi fg="red">OFF</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">OFF</ansi>`)
 	}
-	user.SendText(``)
+	user.SendTextLegacy(``)
 
-	user.SendText(`<ansi fg="yellow-bold">charset:</ansi> `)
+	user.SendTextLegacy(`<ansi fg="yellow-bold">charset:</ansi> `)
 	if user.AsciiMode {
-		user.SendText(`<ansi fg="red">ASCII</ansi> (legacy client mode)`)
+		user.SendTextLegacy(`<ansi fg="red">ASCII</ansi> (legacy client mode)`)
 	} else {
-		user.SendText(`<ansi fg="green">UTF-8</ansi>`)
+		user.SendTextLegacy(`<ansi fg="green">UTF-8</ansi>`)
 	}
-	user.SendText(``)
+	user.SendTextLegacy(``)
 
 	displayBoolSetting(user, `auction`, `auction`)
 	displayBoolSetting(user, `shortadjectives`, `shortadjectives`)
@@ -95,35 +95,35 @@ func displaySetStatus(user *users.UserRecord) {
 	if currentPrompt == nil {
 		currentPrompt = c.Prompt.String()
 	}
-	user.SendText(`<ansi fg="yellow-bold">prompt: </ansi> `)
-	user.SendText(currentPrompt.(string))
-	user.SendText(``)
+	user.SendTextLegacy(`<ansi fg="yellow-bold">prompt: </ansi> `)
+	user.SendTextLegacy(currentPrompt.(string))
+	user.SendTextLegacy(``)
 
 	currentPrompt = user.GetConfigOption(`fprompt`)
 	if currentPrompt == nil {
 		currentPrompt = c.FightPrompt.String()
 	}
-	user.SendText(`<ansi fg="yellow-bold">fprompt:</ansi> `)
-	user.SendText(currentPrompt.(string))
-	user.SendText(``)
+	user.SendTextLegacy(`<ansi fg="yellow-bold">fprompt:</ansi> `)
+	user.SendTextLegacy(currentPrompt.(string))
+	user.SendTextLegacy(``)
 
 	currentWimpy := user.GetConfigOption(`wimpy`)
 	if currentWimpy == nil {
 		currentWimpy = 0
 	}
-	user.SendText(`<ansi fg="yellow-bold">wimpy:</ansi> `)
-	user.SendText(fmt.Sprintf(`%d%%`, currentWimpy.(int)))
-	user.SendText(``)
+	user.SendTextLegacy(`<ansi fg="yellow-bold">wimpy:</ansi> `)
+	user.SendTextLegacy(fmt.Sprintf(`%d%%`, currentWimpy.(int)))
+	user.SendTextLegacy(``)
 
-	user.SendText(`<ansi fg="yellow-bold">submission:</ansi> `)
-	user.SendText(fmt.Sprintf(`<ansi fg="green">%s</ansi>`, user.Character.SubmissionPolicy))
-	user.SendText(``)
+	user.SendTextLegacy(`<ansi fg="yellow-bold">submission:</ansi> `)
+	user.SendTextLegacy(fmt.Sprintf(`<ansi fg="green">%s</ansi>`, user.Character.SubmissionPolicy))
+	user.SendTextLegacy(``)
 
-	user.SendText(`<ansi fg="yellow-bold">surrender:</ansi> `)
-	user.SendText(fmt.Sprintf(`<ansi fg="green">%s</ansi>`, user.Character.SurrenderPolicy))
-	user.SendText(``)
+	user.SendTextLegacy(`<ansi fg="yellow-bold">surrender:</ansi> `)
+	user.SendTextLegacy(fmt.Sprintf(`<ansi fg="green">%s</ansi>`, user.Character.SurrenderPolicy))
+	user.SendTextLegacy(``)
 
-	user.SendText(`See: <ansi fg="command">help set</ansi>`)
+	user.SendTextLegacy(`See: <ansi fg="command">help set</ansi>`)
 }
 
 func displayBoolSetting(user *users.UserRecord, settingName string, label string) {
@@ -132,9 +132,9 @@ func displayBoolSetting(user *users.UserRecord, settingName string, label string
 	if on == nil || on.(bool) {
 		onTxt = `<ansi fg="green">ON</ansi>`
 	}
-	user.SendText(`<ansi fg="yellow-bold">` + label + `:</ansi> `)
-	user.SendText(onTxt)
-	user.SendText(``)
+	user.SendTextLegacy(`<ansi fg="yellow-bold">` + label + `:</ansi> `)
+	user.SendTextLegacy(onTxt)
+	user.SendTextLegacy(``)
 }
 
 func cmdSetDescription(user *users.UserRecord, rest string, setTarget string) (bool, error) {
@@ -144,7 +144,7 @@ func cmdSetDescription(user *users.UserRecord, rest string, setTarget string) (b
 	}
 	user.Character.Description = rest
 
-	user.SendText("Description set. Look at yourself to confirm.")
+	user.SendTextLegacy("Description set. Look at yourself to confirm.")
 
 	events.AddToQueue(events.UserSettingChanged{
 		UserId: user.UserId,
@@ -161,10 +161,10 @@ func cmdSetToggle(user *users.UserRecord, settingName string, displayName string
 	}
 	if !on.(bool) {
 		on = true
-		user.SendText(displayName + ` toggled <ansi fg="red">ON</ansi>.`)
+		user.SendTextLegacy(displayName + ` toggled <ansi fg="red">ON</ansi>.`)
 	} else {
 		on = false
-		user.SendText(displayName + ` toggled <ansi fg="red">OFF</ansi>.`)
+		user.SendTextLegacy(displayName + ` toggled <ansi fg="red">OFF</ansi>.`)
 	}
 
 	user.SetConfigOption(settingName, on)
@@ -179,9 +179,9 @@ func cmdSetToggle(user *users.UserRecord, settingName string, displayName string
 
 func cmdSetScreenReader(user *users.UserRecord) (bool, error) {
 	if user.ScreenReader {
-		user.SendText(`ScreenReader mode toggled <ansi fg="red">OFF</ansi>.`)
+		user.SendTextLegacy(`ScreenReader mode toggled <ansi fg="red">OFF</ansi>.`)
 	} else {
-		user.SendText(`ScreenReader mode toggled <ansi fg="red">ON</ansi>.`)
+		user.SendTextLegacy(`ScreenReader mode toggled <ansi fg="red">ON</ansi>.`)
 	}
 	user.ScreenReader = !user.ScreenReader
 
@@ -201,9 +201,9 @@ func cmdSetPrompt(user *users.UserRecord, rest string, setTarget string, args []
 		if currentPrompt == nil {
 			currentPrompt = c.Prompt.String()
 		}
-		user.SendText("Your current prompt:\n")
-		user.SendText(currentPrompt.(string))
-		user.SendText("\n" + `Type <ansi fg="command">help set-prompt</ansi> for more info on customizing prompts.` + "\n")
+		user.SendTextLegacy("Your current prompt:\n")
+		user.SendTextLegacy(currentPrompt.(string))
+		user.SendTextLegacy("\n" + `Type <ansi fg="command">help set-prompt</ansi> for more info on customizing prompts.` + "\n")
 		return true, nil
 	}
 
@@ -222,7 +222,7 @@ func cmdSetPrompt(user *users.UserRecord, rest string, setTarget string, args []
 		user.SetConfigOption(`prompt-compiled`, util.ConvertColorShortTags(promptStr))
 	}
 
-	user.SendText("Prompt set.")
+	user.SendTextLegacy("Prompt set.")
 
 	events.AddToQueue(events.UserSettingChanged{
 		UserId: user.UserId,
@@ -236,14 +236,14 @@ func cmdSetFprompt(user *users.UserRecord, rest string, setTarget string, args [
 
 	if len(args) < 1 {
 		customPrompt := user.GetConfigOption(`fprompt`)
-		user.SendText(`<ansi fg="yellow-bold">Fight Prompt:</ansi>`)
+		user.SendTextLegacy(`<ansi fg="yellow-bold">Fight Prompt:</ansi>`)
 		if customPrompt == nil {
-			user.SendText(`  <ansi fg="8">[system default - toggle-driven]</ansi>`)
+			user.SendTextLegacy(`  <ansi fg="8">[system default - toggle-driven]</ansi>`)
 		} else {
-			user.SendText(`  ` + customPrompt.(string))
+			user.SendTextLegacy(`  ` + customPrompt.(string))
 		}
-		user.SendText(``)
-		user.SendText(`<ansi fg="yellow">Toggle Settings</ansi> <ansi fg="8">(set fprompt tog <name> to change):</ansi>`)
+		user.SendTextLegacy(``)
+		user.SendTextLegacy(`<ansi fg="yellow">Toggle Settings</ansi> <ansi fg="8">(set fprompt tog <name> to change):</ansi>`)
 		toggleList := []struct{ name, desc string }{
 			{"bars", "HP/SP/CP vital bars"},
 			{"pos", "Your combat position"},
@@ -259,10 +259,10 @@ func cmdSetFprompt(user *users.UserRecord, rest string, setTarget string, args [
 			if !on {
 				state = `<ansi fg="red">[OFF]</ansi>`
 			}
-			user.SendText(fmt.Sprintf(`  <ansi fg="magenta">%-14s</ansi> %s %s`, t.name, state, t.desc))
+			user.SendTextLegacy(fmt.Sprintf(`  <ansi fg="magenta">%-14s</ansi> %s %s`, t.name, state, t.desc))
 		}
-		user.SendText(``)
-		user.SendText(`Type <ansi fg="command">help set-prompt</ansi> for more info on customizing prompts.`)
+		user.SendTextLegacy(``)
+		user.SendTextLegacy(`Type <ansi fg="command">help set-prompt</ansi> for more info on customizing prompts.`)
 		return true, nil
 	}
 
@@ -286,7 +286,7 @@ func cmdSetFprompt(user *users.UserRecord, rest string, setTarget string, args [
 	if element != `` {
 		desc, valid := validToggles[element]
 		if !valid {
-			user.SendText(`Unknown toggle. Valid options: bars, pos, target, targethealth, targetpos, tank`)
+			user.SendTextLegacy(`Unknown toggle. Valid options: bars, pos, target, targethealth, targetpos, tank`)
 			return true, nil
 		}
 		key := `fprompt-tog-` + element
@@ -301,9 +301,9 @@ func cmdSetFprompt(user *users.UserRecord, rest string, setTarget string, args [
 		// Rebuild and cache the toggle-driven template immediately
 		user.SetConfigOption(`fprompt-default-compiled`, util.ConvertColorShortTags(user.BuildFightPromptTemplate()))
 		if !current {
-			user.SendText(fmt.Sprintf(`Fight prompt: %s <ansi fg="green">[ON]</ansi>`, desc))
+			user.SendTextLegacy(fmt.Sprintf(`Fight prompt: %s <ansi fg="green">[ON]</ansi>`, desc))
 		} else {
-			user.SendText(fmt.Sprintf(`Fight prompt: %s <ansi fg="red">[OFF]</ansi>`, desc))
+			user.SendTextLegacy(fmt.Sprintf(`Fight prompt: %s <ansi fg="red">[OFF]</ansi>`, desc))
 		}
 		return true, nil
 	}
@@ -323,7 +323,7 @@ func cmdSetFprompt(user *users.UserRecord, rest string, setTarget string, args [
 		user.SetConfigOption(`fprompt-compiled`, util.ConvertColorShortTags(promptStr))
 	}
 
-	user.SendText("fprompt set.")
+	user.SendTextLegacy("fprompt set.")
 
 	events.AddToQueue(events.UserSettingChanged{
 		UserId: user.UserId,
@@ -340,9 +340,9 @@ func cmdSetWimpy(user *users.UserRecord, rest string, setTarget string, args []s
 		if currentWimpy == nil {
 			currentWimpy = 0
 		}
-		user.SendText("Your current wimpy:\n")
-		user.SendText(fmt.Sprintf(`%d%%`, currentWimpy.(int)))
-		user.SendText("\n" + `Type <ansi fg="command">help wimpy</ansi> to learn about the wimpy setting.` + "\n")
+		user.SendTextLegacy("Your current wimpy:\n")
+		user.SendTextLegacy(fmt.Sprintf(`%d%%`, currentWimpy.(int)))
+		user.SendTextLegacy("\n" + `Type <ansi fg="command">help wimpy</ansi> to learn about the wimpy setting.` + "\n")
 		return true, nil
 	}
 
@@ -355,7 +355,7 @@ func cmdSetWimpy(user *users.UserRecord, rest string, setTarget string, args []s
 		user.SetConfigOption(`wimpy`, wimpyInt)
 	}
 
-	user.SendText("wimpy set.")
+	user.SendTextLegacy("wimpy set.")
 
 	events.AddToQueue(events.UserSettingChanged{
 		UserId: user.UserId,
@@ -374,12 +374,12 @@ func cmdSetCharset(user *users.UserRecord) (bool, error) {
 	connections.OverwriteClientSettings(user.ConnectionId(), cs)
 
 	if user.AsciiMode {
-		user.SendText("Charset mode set to <ansi fg=\"red\">ASCII</ansi>.")
-		user.SendText("Box-drawing characters will be converted to ASCII equivalents.")
-		user.SendText("Use <ansi fg=\"command\">set charset</ansi> again to switch back to UTF-8.")
+		user.SendTextLegacy("Charset mode set to <ansi fg=\"red\">ASCII</ansi>.")
+		user.SendTextLegacy("Box-drawing characters will be converted to ASCII equivalents.")
+		user.SendTextLegacy("Use <ansi fg=\"command\">set charset</ansi> again to switch back to UTF-8.")
 	} else {
-		user.SendText("Charset mode set to <ansi fg=\"green\">UTF-8</ansi>.")
-		user.SendText("Full Unicode box-drawing characters will be displayed.")
+		user.SendTextLegacy("Charset mode set to <ansi fg=\"green\">UTF-8</ansi>.")
+		user.SendTextLegacy("Full Unicode box-drawing characters will be displayed.")
 	}
 
 	events.AddToQueue(events.UserSettingChanged{
@@ -392,17 +392,17 @@ func cmdSetCharset(user *users.UserRecord) (bool, error) {
 
 func cmdSetSubmission(user *users.UserRecord, args []string) (bool, error) {
 	if len(args) < 1 {
-		user.SendText(fmt.Sprintf("Your submission policy: <ansi fg=\"command\">%s</ansi>",
+		user.SendTextLegacy(fmt.Sprintf("Your submission policy: <ansi fg=\"command\">%s</ansi>",
 			user.Character.SubmissionPolicy))
-		user.SendText("Set with: <ansi fg=\"command\">set submission &lt;mercy|subdue|cripple|lethal&gt;</ansi>")
-		user.SendText("See <ansi fg=\"command\">help submission</ansi> for details.")
+		user.SendTextLegacy("Set with: <ansi fg=\"command\">set submission &lt;mercy|subdue|cripple|lethal&gt;</ansi>")
+		user.SendTextLegacy("See <ansi fg=\"command\">help submission</ansi> for details.")
 		return true, nil
 	}
 
 	newPolicy, ok := characters.ParseSubmissionPolicy(args[0])
 	if !ok {
-		user.SendText(fmt.Sprintf("Unknown submission policy: <ansi fg=\"red\">%s</ansi>", args[0]))
-		user.SendText("Valid policies: mercy, subdue, cripple, lethal.")
+		user.SendTextLegacy(fmt.Sprintf("Unknown submission policy: <ansi fg=\"red\">%s</ansi>", args[0]))
+		user.SendTextLegacy("Valid policies: mercy, subdue, cripple, lethal.")
 		return true, nil
 	}
 
@@ -412,10 +412,10 @@ func cmdSetSubmission(user *users.UserRecord, args []string) (bool, error) {
 		if confirmed != "1" {
 			pending, _ := user.Character.GetMiscData("submission_lethal_pending").(string)
 			if pending != "1" {
-				user.SendText(`<ansi fg="yellow-bold">WARNING:</ansi> Setting your submission policy to` +
+				user.SendTextLegacy(`<ansi fg="yellow-bold">WARNING:</ansi> Setting your submission policy to` +
 					` <ansi fg="red-bold">lethal</ansi> means your successful submissions will KILL` +
 					` opponents — players included, with full deprogression and corpse loot.`)
-				user.SendText("If you're sure, run the command again to confirm.")
+				user.SendTextLegacy("If you're sure, run the command again to confirm.")
 				user.Character.SetMiscData("submission_lethal_pending", "1")
 				return true, nil
 			}
@@ -425,16 +425,16 @@ func cmdSetSubmission(user *users.UserRecord, args []string) (bool, error) {
 	}
 
 	user.Character.SubmissionPolicy = newPolicy
-	user.SendText(fmt.Sprintf("Submission policy set to <ansi fg=\"command\">%s</ansi>.", newPolicy))
+	user.SendTextLegacy(fmt.Sprintf("Submission policy set to <ansi fg=\"command\">%s</ansi>.", newPolicy))
 	return true, nil
 }
 
 func cmdSetSurrender(user *users.UserRecord, args []string) (bool, error) {
 	if len(args) < 1 {
-		user.SendText(fmt.Sprintf("Your surrender policy: <ansi fg=\"command\">%s</ansi>",
+		user.SendTextLegacy(fmt.Sprintf("Your surrender policy: <ansi fg=\"command\">%s</ansi>",
 			user.Character.SurrenderPolicy))
-		user.SendText("Set with: <ansi fg=\"command\">set surrender &lt;never|always|auto-tap-below &lt;N&gt;&gt;</ansi>")
-		user.SendText("See <ansi fg=\"command\">help surrender</ansi> for details.")
+		user.SendTextLegacy("Set with: <ansi fg=\"command\">set surrender &lt;never|always|auto-tap-below &lt;N&gt;&gt;</ansi>")
+		user.SendTextLegacy("See <ansi fg=\"command\">help surrender</ansi> for details.")
 		return true, nil
 	}
 
@@ -442,28 +442,28 @@ func cmdSetSurrender(user *users.UserRecord, args []string) (bool, error) {
 	policyStr := strings.Join(args, " ")
 	newPolicy, ok := characters.ParseSurrenderPolicy(policyStr)
 	if !ok {
-		user.SendText(fmt.Sprintf("Unknown surrender policy: <ansi fg=\"red\">%s</ansi>", policyStr))
-		user.SendText("Valid policies: never, always, auto-tap-below &lt;1-100&gt;.")
+		user.SendTextLegacy(fmt.Sprintf("Unknown surrender policy: <ansi fg=\"red\">%s</ansi>", policyStr))
+		user.SendTextLegacy("Valid policies: never, always, auto-tap-below &lt;1-100&gt;.")
 		return true, nil
 	}
 
 	user.Character.SurrenderPolicy = newPolicy
-	user.SendText(fmt.Sprintf("Surrender policy set to <ansi fg=\"command\">%s</ansi>.", newPolicy))
+	user.SendTextLegacy(fmt.Sprintf("Surrender policy set to <ansi fg=\"command\">%s</ansi>.", newPolicy))
 	return true, nil
 }
 
 func cmdSetLineWidth(user *users.UserRecord, args []string) (bool, error) {
 	if len(args) < 1 {
-		user.SendText(fmt.Sprintf("Line width is currently %d.", user.GetLineWidth()))
+		user.SendTextLegacy(fmt.Sprintf("Line width is currently %d.", user.GetLineWidth()))
 		return true, nil
 	}
 	n, err := strconv.Atoi(args[0])
 	if err != nil || n < 40 || n > 240 {
-		user.SendText("Line width must be a number between 40 and 240.")
+		user.SendTextLegacy("Line width must be a number between 40 and 240.")
 		return true, nil
 	}
 	user.LineWidth = n
-	user.SendText(fmt.Sprintf("Line width set to %d.", n))
+	user.SendTextLegacy(fmt.Sprintf("Line width set to %d.", n))
 
 	events.AddToQueue(events.UserSettingChanged{
 		UserId: user.UserId,
@@ -479,7 +479,7 @@ func cmdSetMacro(user *users.UserRecord, setTarget string, args []string) (bool,
 
 	macroNum, _ := strconv.Atoi(string(setTarget[1]))
 	if macroNum == 0 {
-		user.SendText("Invalid macro number supplied.")
+		user.SendTextLegacy("Invalid macro number supplied.")
 		return true, nil
 	}
 
@@ -494,12 +494,12 @@ func cmdSetMacro(user *users.UserRecord, setTarget string, args []string) (bool,
 
 	if len(setVal) == 0 {
 		delete(user.Macros, setTarget)
-		user.SendText(fmt.Sprintf(`Macro <ansi fg="command">=%d</ansi> deleted.`, macroNum))
+		user.SendTextLegacy(fmt.Sprintf(`Macro <ansi fg="command">=%d</ansi> deleted.`, macroNum))
 	} else {
 
 		allComands := strings.Split(setVal, ";")
 		if len(allComands) > 10 {
-			user.SendText(`Macros are limited to 10 commands.`)
+			user.SendTextLegacy(`Macros are limited to 10 commands.`)
 			return true, nil
 		}
 
@@ -509,7 +509,7 @@ func cmdSetMacro(user *users.UserRecord, setTarget string, args []string) (bool,
 
 			if len(cmd) > 0 {
 				if cmd[0] == '=' {
-					user.SendText(`You cannot reference macros inside of a macro`)
+					user.SendTextLegacy(`You cannot reference macros inside of a macro`)
 					return true, nil
 				}
 				finalMacroCommands = append(finalMacroCommands, cmd)
@@ -518,13 +518,13 @@ func cmdSetMacro(user *users.UserRecord, setTarget string, args []string) (bool,
 		}
 
 		if len(finalMacroCommands) < 1 {
-			user.SendText(`There was a problem setting your macro.`)
+			user.SendTextLegacy(`There was a problem setting your macro.`)
 			return true, nil
 		}
 
 		user.Macros[setTarget] = strings.Join(finalMacroCommands, `;`)
 
-		user.SendText(fmt.Sprintf(`Macro set. Type <ansi fg="command">=%d</ansi> or (if your terminal supports it) press <ansi fg="command">F%d</ansi> to use it.`, macroNum, macroNum))
+		user.SendTextLegacy(fmt.Sprintf(`Macro set. Type <ansi fg="command">=%d</ansi> or (if your terminal supports it) press <ansi fg="command">F%d</ansi> to use it.`, macroNum, macroNum))
 	}
 
 	events.AddToQueue(events.UserSettingChanged{

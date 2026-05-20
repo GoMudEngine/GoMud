@@ -365,20 +365,20 @@ func tickMobCharmState(mob *mobs.Mob) {
 							comp.CharmDuration = newDuration
 							comp.CharmRerolls++
 
-							owner.SendText(fmt.Sprintf(
+							owner.SendTextLegacy(fmt.Sprintf(
 								`<ansi fg="cyan">Your hold on %s wavers... but you reassert your will.</ansi>`,
 								comp.Name))
 							if comp.CharmRerolls >= 5 {
-								owner.SendText(fmt.Sprintf(
+								owner.SendTextLegacy(fmt.Sprintf(
 									`<ansi fg="red">%s's eyes flash with defiance. Your control is slipping...</ansi>`,
 									comp.Name))
 							} else if comp.CharmRerolls >= 3 {
-								owner.SendText(fmt.Sprintf(
+								owner.SendTextLegacy(fmt.Sprintf(
 									`<ansi fg="yellow">You sense %s's will straining against your bond...</ansi>`,
 									comp.Name))
 							}
 						} else {
-							owner.SendText(fmt.Sprintf(
+							owner.SendTextLegacy(fmt.Sprintf(
 								`<ansi fg="red-bold">%s breaks free of your control!</ansi>`, comp.Name))
 							if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
 								sendVisualRoomText(room, fmt.Sprintf(

@@ -15,7 +15,7 @@ func Appraise(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 	merchantMobs := room.GetMobs(rooms.FindMerchant)
 	if len(merchantMobs) == 0 {
-		user.SendText(`You need to be at a merchant to appraise items.`)
+		user.SendTextLegacy(`You need to be at a merchant to appraise items.`)
 		return true, nil
 	}
 
@@ -35,7 +35,7 @@ func Appraise(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 		item, found := user.Character.FindInBackpack(rest)
 		if !found {
-			user.SendText("You don't have that item.")
+			user.SendTextLegacy("You don't have that item.")
 			return true, nil
 		}
 
@@ -71,11 +71,11 @@ func Appraise(rest string, user *users.UserRecord, room *rooms.Room, flags event
 			GoldChange: appraisePrice,
 		})
 
-		user.SendText(fmt.Sprintf(`You give <ansi fg="mobname">%s</ansi> %d gold to appraise <ansi fg="itemname">%s</ansi>.`, mob.Character.Name, appraisePrice, itemSpec.Name))
-		room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> appraises <ansi fg="itemname">%s</ansi>.`, user.Character.Name, itemSpec.Name), user.UserId)
+		user.SendTextLegacy(fmt.Sprintf(`You give <ansi fg="mobname">%s</ansi> %d gold to appraise <ansi fg="itemname">%s</ansi>.`, mob.Character.Name, appraisePrice, itemSpec.Name))
+		room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> appraises <ansi fg="itemname">%s</ansi>.`, user.Character.Name, itemSpec.Name), user.UserId)
 
 		inspectTxt, _ := templates.Process("descriptions/identify", details, user.UserId)
-		user.SendText(inspectTxt)
+		user.SendTextLegacy(inspectTxt)
 
 		break
 	}

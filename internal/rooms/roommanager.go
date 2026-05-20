@@ -189,11 +189,11 @@ func RoomMaintenance() []int {
 					for _, sign := range prunedSigns {
 						if sign.VisibleUserId == 0 {
 							if u := users.GetByUserId(userId); u != nil {
-								u.SendText("A sign crumbles to dust.\n")
+								u.SendTextLegacy("A sign crumbles to dust.\n")
 							}
 						} else if sign.VisibleUserId == userId {
 							if u := users.GetByUserId(userId); u != nil {
-								u.SendText("The rune you had enscribed here has faded away.\n")
+								u.SendTextLegacy("The rune you had enscribed here has faded away.\n")
 							}
 						}
 					}
@@ -208,7 +208,7 @@ func RoomMaintenance() []int {
 				for _, exit := range prunedExits {
 					for _, userId := range roomPlayers {
 						if u := users.GetByUserId(userId); u != nil {
-							u.SendText(fmt.Sprintf("The %s vanishes.\n", exit.Title))
+							u.SendTextLegacy(fmt.Sprintf("The %s vanishes.\n", exit.Title))
 						}
 					}
 				}
@@ -310,7 +310,7 @@ func MoveToRoom(userId int, toRoomId int, isSpawn ...bool) error {
 		if inst := instanceRegistry.FindByRoomId(toRoomId); inst != nil {
 			if !inst.IsAuthorized(userId) {
 				if user != nil {
-					user.SendText(`<ansi fg="red">The portal's energy pushes you back. It wasn't opened for you.</ansi>`)
+					user.SendTextLegacy(`<ansi fg="red">The portal's energy pushes you back. It wasn't opened for you.</ansi>`)
 				}
 				return fmt.Errorf("instance access denied")
 			}

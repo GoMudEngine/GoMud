@@ -74,7 +74,7 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	if !listedSomething {
-		user.SendText("Visit a merchant to list and buy objects.")
+		user.SendTextLegacy("Visit a merchant to list and buy objects.")
 	}
 
 	return true, nil
@@ -393,8 +393,8 @@ func sortRowsByCol(rows [][]string, col int) {
 func renderShopTable(user *users.UserRecord, title, colorPattern, sellerName, sellerTag string, headers []string, rows [][]string, helpText string) {
 	saleItemsData := templates.GetTable(fmt.Sprintf(`%s by <ansi fg="%s">%s</ansi>`, colorpatterns.ApplyColorPattern(title, colorPattern), sellerTag, sellerName), headers, rows)
 	tplTxt, _ := templates.Process("tables/shoplist", saleItemsData, user.UserId, user.UserId)
-	user.SendText(tplTxt)
-	user.SendText(fmt.Sprintf(`%s%s`, helpText, term.CRLFStr))
+	user.SendTextLegacy(tplTxt)
+	user.SendTextLegacy(fmt.Sprintf(`%s%s`, helpText, term.CRLFStr))
 }
 
 // renderMobMerchantListing renders all shop sections for a mob merchant.

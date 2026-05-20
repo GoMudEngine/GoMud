@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"math/big"
+	"runtime"
 	"strings"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/prompt"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -284,13 +286,43 @@ func (u *UserRecord) AddBuff(buffId int, source string) {
 
 }
 
-func (u *UserRecord) SendText(txt string) {
-
+// SendText delivers an audio-channel message to this user. See
+// rooms.SendText for channel semantics. CategoryDefault keeps prose
+// uncolored.
+func (u *UserRecord) SendText(cat messaging.Category, txt string) {
+	rendered := messaging.RenderForRecipient(messaging.RenderInput{
+		Category:  cat,
+		Text:      txt,
+		Channel:   messaging.ChannelAudio,
+		LineWidth: u.GetLineWidth(),
+	})
+	if rendered == "" {
+		return
+	}
 	events.AddToQueue(events.Message{
 		UserId: u.UserId,
-		Text:   txt + "\n",
+		Text:   rendered + "\n",
 	})
+}
 
+// SendTextLegacy is the temporary shim for callers that haven't
+// migrated to the categorized API. Emits one warning per call site
+// so the audit can track remaining sites. DELETED in T16.
+func (u *UserRecord) SendTextLegacy(txt string) {
+	mudlog.Warn("messaging legacy call", "site", legacyCallerInfoUser(), "fn", "UserRecord.SendText")
+	u.SendText(messaging.CategoryDefault, txt)
+}
+
+// legacyCallerInfoUser returns "file:line" of the caller two frames
+// up (skipping this helper + the shim itself). Used only for the
+// temp-shim deprecation warnings. Duplicated rather than imported
+// from rooms/ to avoid a circular dependency.
+func legacyCallerInfoUser() string {
+	_, file, line, ok := runtime.Caller(2)
+	if !ok {
+		return "unknown"
+	}
+	return fmt.Sprintf("%s:%d", file, line)
 }
 
 // GetLineWidth returns the user's configured line width, falling back

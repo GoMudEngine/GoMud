@@ -75,7 +75,7 @@ func actGiveGold(params map[string]any, ctx *EvalContext) Result {
 		return Failure
 	}
 	user.Character.Gold += amount
-	user.SendText(fmt.Sprintf("You receive %d gold.\n", amount))
+	user.SendTextLegacy(fmt.Sprintf("You receive %d gold.\n", amount))
 	return Success
 }
 
@@ -108,7 +108,7 @@ func actGiveItem(params map[string]any, ctx *EvalContext) Result {
 	if !user.Character.StoreItem(item) {
 		return Failure
 	}
-	user.SendText(fmt.Sprintf("You receive a %s.\n", item.Name()))
+	user.SendTextLegacy(fmt.Sprintf("You receive a %s.\n", item.Name()))
 	return Success
 }
 
@@ -129,7 +129,7 @@ func actReturnItem(params map[string]any, ctx *EvalContext) Result {
 	if !user.Character.StoreItem(item) {
 		return Failure
 	}
-	user.SendText(fmt.Sprintf("%s hands back the %s.\n", ctx.MobName, item.Name()))
+	user.SendTextLegacy(fmt.Sprintf("%s hands back the %s.\n", ctx.MobName, item.Name()))
 	return Success
 }
 

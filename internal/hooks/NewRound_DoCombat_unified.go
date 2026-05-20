@@ -95,7 +95,7 @@ func handleCombatRound(
 		// Divergence: only player attackers get the "can't seem to find
 		// your target" feedback. Mob attackers silently bail (no chat).
 		if atk.IsPlayer() {
-			atk.SendText("You can't seem to find your target.")
+			atk.SendTextLegacy("You can't seem to find your target.")
 		}
 		return
 	}
@@ -172,7 +172,7 @@ func resolveCombatTarget(atk, def actions.Actor, roundNumber uint64) bool {
 		// Divergence: only player attackers get the "can't be found" message
 		// (mobs have no connection).
 		if atk.IsPlayer() {
-			atk.SendText(`Your target can't be found.`)
+			atk.SendTextLegacy(`Your target can't be found.`)
 		}
 		atkChar.EndAggro()
 		return false
@@ -194,7 +194,7 @@ func resolveCombatTarget(atk, def actions.Actor, roundNumber uint64) bool {
 					}
 				}
 			}
-			atk.SendText(`Your target can't be found.`)
+			atk.SendTextLegacy(`Your target can't be found.`)
 			atkChar.EndAggro()
 			return false
 		}
@@ -208,7 +208,7 @@ func resolveCombatTarget(atk, def actions.Actor, roundNumber uint64) bool {
 					}
 				}
 			}
-			atk.SendText(`Your target can't be found.`)
+			atk.SendTextLegacy(`Your target can't be found.`)
 			atkChar.EndAggro()
 			return false
 		}
@@ -368,7 +368,7 @@ func applyCombatDamageBonuses(atk, def actions.Actor, res *combat.AttackResult) 
 			// feeds" message — mobs have no connection.
 			if atk.IsPlayer() {
 				healDesc := combat.GetHealDescription(healAmt, atkChar.HealthMax.Value)
-				atk.SendText(fmt.Sprintf(
+				atk.SendTextLegacy(fmt.Sprintf(
 					`<ansi fg="green">Your weapon feeds on the blow! (%s)</ansi>`,
 					healDesc))
 			}
@@ -418,13 +418,13 @@ func emitReturnDamageText(atk, def actions.Actor, returnDmg int) {
 
 	// Player attacker: send the private "you recoil" message.
 	if atk.IsPlayer() {
-		atk.SendText(fmt.Sprintf(
+		atk.SendTextLegacy(fmt.Sprintf(
 			`<ansi fg="red">You recoil from striking %s! (%s)</ansi>`,
 			defToken, dmgDesc))
 	}
 	// Player defender: send the "X recoils from striking you" message.
 	if def.IsPlayer() {
-		def.SendText(fmt.Sprintf(
+		def.SendTextLegacy(fmt.Sprintf(
 			`<ansi fg="red">%s recoils from striking you! (%s)</ansi>`,
 			atkToken, dmgDesc))
 	}
@@ -478,13 +478,13 @@ func dispatchCritAndMessaging(atk, def actions.Actor, res *combat.AttackResult) 
 
 	// Crit message routing — Divergence #1.
 	if critResult.AttackerMsg != `` && atk.IsPlayer() {
-		atk.SendText(critResult.AttackerMsg)
+		atk.SendTextLegacy(critResult.AttackerMsg)
 	}
 	if critResult.DefenderMsg != `` && def.IsPlayer() {
-		def.SendText(critResult.DefenderMsg)
+		def.SendTextLegacy(critResult.DefenderMsg)
 	}
 	if critResult.RoomMsg != `` && atkRoom != nil {
-		atkRoom.SendText(critResult.RoomMsg, playerExcludeIds(atk, def)...)
+		atkRoom.SendTextLegacy(critResult.RoomMsg, playerExcludeIds(atk, def)...)
 	}
 
 	// Buffs from the round (BuffSource → atk, BuffTarget → def).
@@ -498,12 +498,12 @@ func dispatchCritAndMessaging(atk, def actions.Actor, res *combat.AttackResult) 
 	// Direct messages — Divergence #1.
 	if atk.IsPlayer() {
 		for _, msg := range res.MessagesToSource {
-			atk.SendText(msg)
+			atk.SendTextLegacy(msg)
 		}
 	}
 	if def.IsPlayer() {
 		for _, msg := range res.MessagesToTarget {
-			def.SendText(msg)
+			def.SendTextLegacy(msg)
 		}
 	}
 
@@ -608,7 +608,7 @@ func emitAttackerStatGain(atk actions.Actor, statName string, uid int) {
 		return
 	}
 	if tmpl, ok := characters.MobStatGainMessages[statName]; ok {
-		atkRoom.SendText(fmt.Sprintf(tmpl, mobDisplayName(mob, atkRoom, 0)))
+		atkRoom.SendTextLegacy(fmt.Sprintf(tmpl, mobDisplayName(mob, atkRoom, 0)))
 	}
 }
 
@@ -800,11 +800,11 @@ func emitRetargetMessage(atk actions.Actor) {
 		return
 	}
 	if mob := mobs.GetInstance(atkChar.Aggro.MobInstanceId); mob != nil {
-		atk.SendText(fmt.Sprintf(
+		atk.SendTextLegacy(fmt.Sprintf(
 			"You turn your attention to <ansi fg=\"mobname\">%s</ansi>!",
 			mob.Character.Name))
 	} else if newDef := users.GetByUserId(atkChar.Aggro.UserId); newDef != nil {
-		atk.SendText(fmt.Sprintf(
+		atk.SendTextLegacy(fmt.Sprintf(
 			"You turn your attention to <ansi fg=\"username\">%s</ansi>!",
 			newDef.Character.Name))
 	}

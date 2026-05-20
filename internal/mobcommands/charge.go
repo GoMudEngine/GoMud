@@ -74,9 +74,9 @@ func Charge(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		if result.KnockedDown {
 			if targetChar != nil {
 				if canSee {
-					targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges and slams into you, sending you sprawling! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+					targetChar.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges and slams into you, sending you sprawling! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
 				} else {
-					targetChar.SendText(fmt.Sprintf(`Something charges and slams into you, sending you sprawling! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+					targetChar.SendTextLegacy(fmt.Sprintf(`Something charges and slams into you, sending you sprawling! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
 				}
 			}
 			sendRoomText(room,
@@ -85,9 +85,9 @@ func Charge(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		} else {
 			if targetChar != nil {
 				if canSee {
-					targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges at you, but you keep your footing! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+					targetChar.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges at you, but you keep your footing! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
 				} else {
-					targetChar.SendText(fmt.Sprintf(`Something charges at you, but you keep your footing! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+					targetChar.SendTextLegacy(fmt.Sprintf(`Something charges at you, but you keep your footing! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
 				}
 			}
 			sendRoomText(room,
@@ -97,9 +97,9 @@ func Charge(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	} else {
 		if targetChar != nil {
 			if canSee {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges past you, missing entirely!`, mobName))
+				targetChar.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges past you, missing entirely!`, mobName))
 			} else {
-				targetChar.SendText(`Something charges past you, missing entirely!`)
+				targetChar.SendTextLegacy(`Something charges past you, missing entirely!`)
 			}
 		}
 		sendRoomText(room,

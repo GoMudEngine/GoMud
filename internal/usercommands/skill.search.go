@@ -28,7 +28,7 @@ Per-discovery gaussian rolls against tier difficulty targets:
 func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	if !user.Character.TryCooldown(`search`, "2 rounds") {
-		user.SendText(
+		user.SendTextLegacy(
 			fmt.Sprintf("You need to wait %d more rounds to do that again.", user.Character.GetCooldown(`search`)),
 		)
 		return true, fmt.Errorf("you're doing that too often")
@@ -39,8 +39,8 @@ func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	searchScore := float64(user.Character.Stats.Perception.ValueAdj) +
 		combat.SkillMultiplier(searchRank)*25.0
 
-	user.SendText("You snoop around for a bit...\n")
-	room.SendTextVisual(
+	user.SendTextLegacy("You snoop around for a bit...\n")
+	room.SendTextVisualLegacy(
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> is snooping around.`, user.Character.Name),
 		user.UserId,
 	)
@@ -55,7 +55,7 @@ func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		rolledAgainstSomething = true
 		roll := dice.RollStat(searchScore)
 		if roll.Value >= 125 {
-			user.SendText(fmt.Sprintf(`You found a secret exit: <ansi fg="secret-exit">%s</ansi>`, exitName))
+			user.SendTextLegacy(fmt.Sprintf(`You found a secret exit: <ansi fg="secret-exit">%s</ansi>`, exitName))
 		}
 	}
 
@@ -71,7 +71,7 @@ func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		roll := dice.RollStat(searchScore)
 		if roll.Value >= 125 {
 			user.Character.AddDiscovery(room.RoomId, containerName)
-			user.SendText(fmt.Sprintf(`You discover a hidden <ansi fg="container">%s</ansi>!`, containerName))
+			user.SendTextLegacy(fmt.Sprintf(`You discover a hidden <ansi fg="container">%s</ansi>!`, containerName))
 		}
 	}
 
@@ -97,7 +97,7 @@ func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			`IsNight`:     gametime.IsNight(),
 		}
 		textOut, _ := templates.Process("descriptions/ontheground", groundDetails, user.UserId)
-		user.SendText(textOut)
+		user.SendTextLegacy(textOut)
 	}
 
 	// ── Tier 2 (target 135): Hidden players ─────────────────────
@@ -130,7 +130,7 @@ func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			)
 		}
 		whoTxt, _ := templates.Process("descriptions/who", details, user.UserId)
-		user.SendText(whoTxt)
+		user.SendTextLegacy(whoTxt)
 	}
 
 	// ── Tier 2 (target 135): Hidden mobs ────────────────────────
@@ -160,7 +160,7 @@ func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			)
 		}
 		whoTxt, _ := templates.Process("descriptions/who", details, user.UserId)
-		user.SendText(whoTxt)
+		user.SendTextLegacy(whoTxt)
 	}
 
 	// ── Tier 3 (target 175): Hidden nouns ───────────────────────
@@ -180,8 +180,8 @@ func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		roll := dice.RollStat(searchScore)
 		if roll.Value >= 175 {
 			user.Character.AddDiscovery(room.RoomId, nounKey)
-			user.SendText(fmt.Sprintf(`You discover something: <ansi fg="noun">%s</ansi>`, nounKey))
-			user.SendText(hiddenNoun.HiddenDescription)
+			user.SendTextLegacy(fmt.Sprintf(`You discover something: <ansi fg="noun">%s</ansi>`, nounKey))
+			user.SendTextLegacy(hiddenNoun.HiddenDescription)
 		}
 	}
 

@@ -16,8 +16,10 @@ type Actor interface {
 	// GetRoom returns the room the actor currently occupies.
 	GetRoom() *rooms.Room
 
-	// SendText delivers a message to this actor only (no-op for mobs).
-	SendText(msg string)
+	// SendTextLegacy delivers a message to this actor only (no-op for
+	// mobs). Temporary shim name during the T9 messaging-framework
+	// migration; T10-T14 will replace with a categorized signature.
+	SendTextLegacy(msg string)
 
 	// SendRoomText broadcasts msg to the room. When excludeSelf is true the
 	// actor's own connection is omitted from the broadcast.

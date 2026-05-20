@@ -24,7 +24,7 @@ func Spell(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	if len(args) < 1 {
 		infoOutput, _ := templates.Process("admincommands/help/command.spell", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 		return true, nil
 	}
 
@@ -32,7 +32,7 @@ func Spell(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if args[0] == `list` {
 
 		if !user.HasRolePermission(`spell.list`) {
-			user.SendText(`you do not have <ansi fg="command">spell.list</ansi> permission`)
+			user.SendTextLegacy(`you do not have <ansi fg="command">spell.list</ansi> permission`)
 			return true, nil
 		}
 
@@ -69,7 +69,7 @@ func spell_List(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	})
 
 	tplTxt, _ := templates.Process("tables/numbered-list", spellNames, user.UserId)
-	user.SendText(tplTxt)
+	user.SendTextLegacy(tplTxt)
 
 	return true, nil
 }

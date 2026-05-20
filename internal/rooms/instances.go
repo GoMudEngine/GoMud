@@ -186,7 +186,7 @@ func (ir *InstanceRegistry) CheckPortalTimers() {
 
 		for _, ephId := range inst.RoomIdMap {
 			if room := LoadRoom(ephId); room != nil {
-				room.SendText(msg)
+				room.SendTextLegacy(msg)
 			}
 		}
 	}
@@ -210,7 +210,7 @@ func (ir *InstanceRegistry) CheckPortalTimers() {
 			}
 			for _, userId := range room.GetPlayers() {
 				if u := users.GetByUserId(userId); u != nil {
-					u.SendText(collapseMsg)
+					u.SendTextLegacy(collapseMsg)
 				}
 				MoveToRoom(userId, inst.OverworldRoomId)
 			}

@@ -13,7 +13,7 @@ import (
 func Macros(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	if len(user.Macros) == 0 {
-		user.SendText("You have no macros set.")
+		user.SendTextLegacy("You have no macros set.")
 		return true, nil
 	}
 
@@ -24,12 +24,12 @@ func Macros(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 	sort.Strings(sortedKeys)
 
-	user.SendText(`<ansi fg="226">Your macros:</ansi>`)
+	user.SendTextLegacy(`<ansi fg="226">Your macros:</ansi>`)
 	for _, macro := range sortedKeys {
 		macroCommand := user.Macros[macro]
-		user.SendText(``)
+		user.SendTextLegacy(``)
 
-		user.SendText(fmt.Sprintf(`  <ansi fg="228">%s</ansi>:`, macro))
+		user.SendTextLegacy(fmt.Sprintf(`  <ansi fg="228">%s</ansi>:`, macro))
 
 		commandParts := strings.Split(macroCommand, `;`)
 
@@ -42,12 +42,12 @@ func Macros(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				cmdRest = strings.Join(cmdParts[1:], ` `)
 			}
 
-			user.SendText(fmt.Sprintf(`      %s) <ansi fg="command">%s</ansi> %s`, string(rune(97+i)), cmdAlone, cmdRest))
+			user.SendTextLegacy(fmt.Sprintf(`      %s) <ansi fg="command">%s</ansi> %s`, string(rune(97+i)), cmdAlone, cmdRest))
 		}
 	}
-	user.SendText(``)
-	user.SendText(`To use a macro, type <ansi fg="command">={num}</ansi>.`)
-	user.SendText(`Some terminals support pressing the associated F-Key (<ansi fg="228">F1</ansi>, <ansi fg="228">F2</ansi>, etc.)`)
+	user.SendTextLegacy(``)
+	user.SendTextLegacy(`To use a macro, type <ansi fg="command">={num}</ansi>.`)
+	user.SendTextLegacy(`Some terminals support pressing the associated F-Key (<ansi fg="228">F1</ansi>, <ansi fg="228">F2</ansi>, etc.)`)
 
 	return true, nil
 }

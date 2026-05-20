@@ -44,9 +44,9 @@ func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		case actions.KickStomp:
 			if targetUser != nil {
 				if canSee {
-					targetUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> stomps on you while you're down! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+					targetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> stomps on you while you're down! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
 				} else {
-					targetUser.SendText(fmt.Sprintf(`Something stomps on you while you're down! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+					targetUser.SendTextLegacy(fmt.Sprintf(`Something stomps on you while you're down! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
 				}
 			}
 			sendRoomText(room,
@@ -56,9 +56,9 @@ func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		case actions.KickKnee:
 			if targetUser != nil {
 				if canSee {
-					targetUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> drives a knee into you in the grapple! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+					targetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> drives a knee into you in the grapple! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
 				} else {
-					targetUser.SendText(fmt.Sprintf(`Something drives a knee into you! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+					targetUser.SendTextLegacy(fmt.Sprintf(`Something drives a knee into you! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
 				}
 			}
 			sendRoomText(room,
@@ -69,9 +69,9 @@ func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			if result.KnockedDown {
 				if targetUser != nil {
 					if canSee {
-						targetUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s powerful <ansi fg="yellow-bold">kick</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+						targetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s powerful <ansi fg="yellow-bold">kick</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
 					} else {
-						targetUser.SendText(fmt.Sprintf(`Something's powerful <ansi fg="yellow-bold">kick</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+						targetUser.SendTextLegacy(fmt.Sprintf(`Something's powerful <ansi fg="yellow-bold">kick</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
 					}
 				}
 				sendRoomText(room,
@@ -80,9 +80,9 @@ func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			} else {
 				if targetUser != nil {
 					if canSee {
-						targetUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> kicks you hard! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+						targetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> kicks you hard! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
 					} else {
-						targetUser.SendText(fmt.Sprintf(`Something kicks you hard! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+						targetUser.SendTextLegacy(fmt.Sprintf(`Something kicks you hard! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
 					}
 				}
 				sendRoomText(room,
@@ -95,9 +95,9 @@ func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		case actions.KickStomp:
 			if targetUser != nil {
 				if canSee {
-					targetUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to stomp you, but you roll aside!`, mobName))
+					targetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to stomp you, but you roll aside!`, mobName))
 				} else {
-					targetUser.SendText(`Something tries to stomp you, but you roll aside!`)
+					targetUser.SendTextLegacy(`Something tries to stomp you, but you roll aside!`)
 				}
 			}
 			sendRoomText(room,
@@ -107,9 +107,9 @@ func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		case actions.KickKnee:
 			if targetUser != nil {
 				if canSee {
-					targetUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to knee you, but you block it!`, mobName))
+					targetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to knee you, but you block it!`, mobName))
 				} else {
-					targetUser.SendText(`Something tries to knee you, but you block it!`)
+					targetUser.SendTextLegacy(`Something tries to knee you, but you block it!`)
 				}
 			}
 			sendRoomText(room,
@@ -119,9 +119,9 @@ func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		default: // KickStandard
 			if targetUser != nil {
 				if canSee {
-					targetUser.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to kick you, but misses!`, mobName))
+					targetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to kick you, but misses!`, mobName))
 				} else {
-					targetUser.SendText(`Something attempts to kick you, but misses!`)
+					targetUser.SendTextLegacy(`Something attempts to kick you, but misses!`)
 				}
 			}
 			sendRoomText(room,

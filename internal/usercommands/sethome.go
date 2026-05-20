@@ -25,17 +25,17 @@ func SetHome(rest string, user *users.UserRecord, room *rooms.Room, flags events
 			currentName = characters.HomeLocationNames["default"]
 		}
 
-		user.SendText(fmt.Sprintf(
+		user.SendTextLegacy(fmt.Sprintf(
 			`<ansi fg="yellow-bold">Current home:</ansi> %s`,
 			currentName))
-		user.SendText(``)
-		user.SendText(`<ansi fg="yellow-bold">Available locations:</ansi>`)
+		user.SendTextLegacy(``)
+		user.SendTextLegacy(`<ansi fg="yellow-bold">Available locations:</ansi>`)
 		for key, name := range characters.HomeLocationNames {
 			marker := ""
 			if key == current {
 				marker = ` <ansi fg="green">(current)</ansi>`
 			}
-			user.SendText(fmt.Sprintf(
+			user.SendTextLegacy(fmt.Sprintf(
 				`  <ansi fg="command">sethome %s</ansi> - %s%s`,
 				key, name, marker))
 		}
@@ -43,7 +43,7 @@ func SetHome(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	}
 
 	if _, valid := characters.HomeLocations[args]; !valid {
-		user.SendText(fmt.Sprintf(
+		user.SendTextLegacy(fmt.Sprintf(
 			`<ansi fg="red">Unknown location "%s".</ansi> Type `+
 				`<ansi fg="command">sethome</ansi> to see options.`,
 			args))
@@ -51,7 +51,7 @@ func SetHome(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	}
 
 	user.Character.SetSetting("home", args)
-	user.SendText(fmt.Sprintf(
+	user.SendTextLegacy(fmt.Sprintf(
 		`<ansi fg="green">Home set to %s.</ansi> `+
 			`You will return here when you die.`,
 		characters.HomeLocationNames[args]))

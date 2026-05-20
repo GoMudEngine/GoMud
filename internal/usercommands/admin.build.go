@@ -27,7 +27,7 @@ func Build(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if len(args) < 2 {
 		// send some sort of help info?
 		infoOutput, _ := templates.Process("admincommands/help/command.build", nil, user.UserId, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 	} else {
 
 		// #build zone "The Arctic"
@@ -36,14 +36,14 @@ func Build(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			zoneName := strings.Join(args[1:], ` `)
 
 			if roomId, err := rooms.CreateZone(zoneName); err != nil {
-				user.SendText(err.Error())
+				user.SendTextLegacy(err.Error())
 			} else {
-				user.SendText(fmt.Sprintf("Zone %s created.", zoneName))
+				user.SendTextLegacy(fmt.Sprintf("Zone %s created.", zoneName))
 
 				if err := rooms.MoveToRoom(user.UserId, roomId); err != nil {
-					user.SendText(err.Error())
+					user.SendTextLegacy(err.Error())
 				} else {
-					user.SendText(fmt.Sprintf("Moved to room %d.", roomId))
+					user.SendTextLegacy(fmt.Sprintf("Moved to room %d.", roomId))
 					events.AddToQueue(events.Input{
 						UserId:    user.UserId,
 						InputText: `look`,
@@ -71,7 +71,7 @@ func Build(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			returnExitDirection := ``
 
 			if exitName, exitDirection, err = mapper.AdjustExitName(exitName); err != nil {
-				user.SendText(err.Error())
+				user.SendTextLegacy(err.Error())
 				return true, err
 			}
 
@@ -85,7 +85,7 @@ func Build(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 			if returnExitName != `` {
 				if returnExitName, returnExitDirection, err = mapper.AdjustExitName(returnExitName); err != nil {
-					user.SendText(err.Error())
+					user.SendTextLegacy(err.Error())
 					return true, err
 				}
 			}
@@ -98,7 +98,7 @@ func Build(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			if rMapper == nil {
 				err := fmt.Errorf("Could not find mapper for roomId: %d", room.RoomId)
 				mudlog.Error("Map", "error", err)
-				user.SendText(`No map found (or an error occured)"`)
+				user.SendTextLegacy(`No map found (or an error occured)"`)
 				return true, err
 			}
 
@@ -111,8 +111,8 @@ func Build(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 				// If there was a problem building the room, send the error to the user before returning
 				if err != nil {
-					user.SendText(err.Error())
-					user.SendText(fmt.Sprintf("Error building room %s.", exitName))
+					user.SendTextLegacy(err.Error())
+					user.SendTextLegacy(fmt.Sprintf("Error building room %s.", exitName))
 					return false, nil
 				}
 
@@ -131,9 +131,9 @@ func Build(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			}
 
 			if err := rooms.MoveToRoom(user.UserId, destinationRoom.RoomId); err != nil {
-				user.SendText(err.Error())
+				user.SendTextLegacy(err.Error())
 			} else {
-				user.SendText(fmt.Sprintf("Moved to room %d.", destinationRoom.RoomId))
+				user.SendTextLegacy(fmt.Sprintf("Moved to room %d.", destinationRoom.RoomId))
 
 				events.AddToQueue(events.Input{
 					UserId:    user.UserId,

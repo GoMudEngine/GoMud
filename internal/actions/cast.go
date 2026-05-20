@@ -93,11 +93,11 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 				if actor.IsPlayer() {
 					if m := mobs.GetInstance(mId); m != nil {
 						if m.Character.IsCharmed() {
-							actor.SendText("You can't target a companion with a harmful spell.")
+							actor.SendTextLegacy("You can't target a companion with a harmful spell.")
 							return CastResult{SpellInfo: spellInfo, NoTarget: true}
 						}
 						if m.IsNonCombatant() {
-							actor.SendText(fmt.Sprintf("You can't target %s with a harmful spell.", m.Character.Name))
+							actor.SendTextLegacy(fmt.Sprintf("You can't target %s with a harmful spell.", m.Character.Name))
 							mobs.FireAttackRejected(m, actor.GetUserId())
 							return CastResult{SpellInfo: spellInfo, NoTarget: true}
 						}
@@ -116,7 +116,7 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 					targetUser := users.GetByUserId(pId)
 					if casterUser != nil && targetUser != nil {
 						if pvpErr := room.CanPvp(casterUser, targetUser); pvpErr != nil {
-							actor.SendText(pvpErr.Error())
+							actor.SendTextLegacy(pvpErr.Error())
 							return CastResult{SpellInfo: spellInfo, NoTarget: true}
 						}
 					}

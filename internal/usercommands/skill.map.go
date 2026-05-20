@@ -39,12 +39,12 @@ func Map(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	}
 
 	if rest == "sprawl" {
-		user.SendText(fmt.Sprintf("The reach of your maps is %d rooms.", user.Character.GetMapSprawlCapacity()))
+		user.SendTextLegacy(fmt.Sprintf("The reach of your maps is %d rooms.", user.Character.GetMapSprawlCapacity()))
 		return true, nil
 	}
 
 	if !user.Character.TryCooldown(`map`, "1 round") {
-		user.SendText(
+		user.SendTextLegacy(
 			`You can only create 1 map per round.`,
 		)
 		return true, errors.New(`you're doing that too often`)
@@ -67,7 +67,7 @@ func Map(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 	// First check for a premade map.
 	if mapTxt, err := templates.Process("maps/"+rooms.ZoneNameSanitize(zone), zone); err == nil {
-		user.SendText(mapTxt)
+		user.SendTextLegacy(mapTxt)
 		return true, nil
 	}
 
@@ -112,7 +112,7 @@ func Map(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	zMapper := mapper.GetMapper(roomId)
 	if zMapper == nil {
 		mudlog.Error("Map", "error", "Could not find mapper for zone:"+zone)
-		user.SendText(`No map found (or an error occured)"`)
+		user.SendTextLegacy(`No map found (or an error occured)"`)
 		return true, err
 	}
 
@@ -204,11 +204,11 @@ func Map(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	mapTxt, err := templates.Process("maps/map", mapData, user.UserId)
 	if err != nil {
 		mudlog.Error("Map", "error", err.Error())
-		user.SendText(`No map found (or an error occured)"`)
+		user.SendTextLegacy(`No map found (or an error occured)"`)
 		return true, err
 	}
 
-	user.SendText(mapTxt)
+	user.SendTextLegacy(mapTxt)
 
 	return true, nil
 }

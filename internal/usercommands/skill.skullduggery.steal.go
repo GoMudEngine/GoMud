@@ -35,7 +35,7 @@ func Steal(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) == 0 {
-		user.SendText("Steal from whom?")
+		user.SendTextLegacy("Steal from whom?")
 		return true, nil
 	}
 
@@ -51,7 +51,7 @@ func Steal(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	// actions.Steal emits player-facing text for every outcome except
 	// the cooldown case (which returns without calling SendText).
 	if result.OnCooldown {
-		user.SendText(fmt.Sprintf(
+		user.SendTextLegacy(fmt.Sprintf(
 			"You need to wait %s before you can do that again.",
 			result.Reason))
 	}
@@ -79,7 +79,7 @@ func parseStealArgs(args []string, room *rooms.Room, user *users.UserRecord) *ac
 	target, err := actions.ResolveTargetActor(room, targetNoun)
 	if err == nil {
 		if target.IsPlayer() {
-			user.SendText("You can't steal from other players.")
+			user.SendTextLegacy("You can't steal from other players.")
 			return nil
 		}
 		return &actions.StealOptions{
@@ -95,6 +95,6 @@ func parseStealArgs(args []string, room *rooms.Room, user *users.UserRecord) *ac
 		}
 	}
 
-	user.SendText("Steal from whom?")
+	user.SendTextLegacy("Steal from whom?")
 	return nil
 }

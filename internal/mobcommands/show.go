@@ -50,16 +50,16 @@ func Show(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		if showItem.ItemId > 0 {
 
 			// Tell the Showee
-			targetUser.SendText(
+			targetUser.SendTextLegacy(
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> shows you their <ansi fg="item">%s</ansi>.`, mob.Character.Name, showItem.DisplayName()),
 			)
 
-			targetUser.SendText(
+			targetUser.SendTextLegacy(
 				"\n" + showItem.GetLongDescription() + "\n",
 			)
 
 			// Tell the rest of the room
-			room.SendTextVisual(
+			room.SendTextVisualLegacy(
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, mob.Character.Name, showItem.DisplayName(), targetUser.Character.Name),
 				targetUser.UserId)
 
@@ -76,7 +76,7 @@ func Show(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	if showItem.ItemId > 0 {
 
-		room.SendTextVisual(
+		room.SendTextVisualLegacy(
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, mob.Character.Name, showItem.DisplayName(), targetMob.Character.Name),
 		)
 

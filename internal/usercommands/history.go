@@ -40,7 +40,7 @@ func History(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	searchResultsTable := templates.GetTable(`History`, headers, rows, formatting)
 	tplTxt, _ := templates.Process("tables/generic", searchResultsTable, user.UserId)
-	user.SendText(tplTxt)
+	user.SendTextLegacy(tplTxt)
 
 	return true, nil
 }

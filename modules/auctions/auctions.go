@@ -122,7 +122,7 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 
 	if on := user.GetConfigOption(`auction`); on != nil && !on.(bool) {
 
-		user.SendText(
+		user.SendTextLegacy(
 			`Auctions are disabled. See <ansi fg="command">help set</ansi> for learn how to change this.`,
 		)
 
@@ -137,9 +137,9 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 
 		if currentAuction != nil {
 			auctionTxt, _ := templates.Process("auctions/auction-update", currentAuction, user.UserId)
-			user.SendText(auctionTxt)
+			user.SendTextLegacy(auctionTxt)
 		} else {
-			user.SendText(`No current auctions. You can auction something, though!`)
+			user.SendTextLegacy(`No current auctions. You can auction something, though!`)
 		}
 		return true, nil
 	}
@@ -180,7 +180,7 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 		historyTableData := templates.GetTable(`Past Auctions`, headers, rows, formatting)
 
 		tplTxt, _ := templates.Process("tables/generic", historyTableData, user.UserId)
-		user.SendText(tplTxt)
+		user.SendTextLegacy(tplTxt)
 
 		return true, nil
 	}
@@ -188,22 +188,22 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 	if args[0] == `bid` {
 
 		if currentAuction == nil {
-			user.SendText(`There is not an auction to bid on.`)
+			user.SendTextLegacy(`There is not an auction to bid on.`)
 			return true, nil
 		}
 
 		if currentAuction.SellerUserId == user.UserId {
-			user.SendText(`You cannot bid on your own auction.`)
+			user.SendTextLegacy(`You cannot bid on your own auction.`)
 			return true, nil
 		}
 
 		if currentAuction.HighestBidUserId == user.UserId {
-			user.SendText(`You are already the highest bidder.`)
+			user.SendTextLegacy(`You are already the highest bidder.`)
 			return true, nil
 		}
 
 		if len(args) < 2 {
-			user.SendText(`Bid how much?`)
+			user.SendTextLegacy(`Bid how much?`)
 			return true, nil
 		}
 
@@ -214,17 +214,17 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 
 		amt, _ := strconv.Atoi(args[1])
 		if amt < minBid {
-			user.SendText(fmt.Sprintf(`You must bid at least <ansi fg="gold">%d gold</ansi>.`, minBid))
+			user.SendTextLegacy(fmt.Sprintf(`You must bid at least <ansi fg="gold">%d gold</ansi>.`, minBid))
 			return true, nil
 		}
 
 		if amt > user.Character.Gold {
-			user.SendText(`You don't have that much gold.`)
+			user.SendTextLegacy(`You don't have that much gold.`)
 			return true, nil
 		}
 
 		if err := mod.auctionMgr.Bid(user.UserId, amt); err != nil {
-			user.SendText(err.Error())
+			user.SendTextLegacy(err.Error())
 			return true, nil
 		}
 
@@ -241,7 +241,7 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 			if u := users.GetByUserId(uid); u != nil {
 				auctionOn := u.GetConfigOption(`auction`)
 				if auctionOn == nil || auctionOn.(bool) {
-					u.SendText(auctionTxt)
+					u.SendTextLegacy(auctionTxt)
 				}
 			}
 		}
@@ -267,7 +267,7 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 
 	// If there is already an auction happening, abort this attempt.
 	if currentAuction != nil {
-		user.SendText(`There is already an auction in progress.`)
+		user.SendTextLegacy(`There is already an auction in progress.`)
 		return true, nil
 	}
 
@@ -275,7 +275,7 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 	matchItem, found := user.Character.FindInBackpack(rest)
 
 	if !found {
-		user.SendText(fmt.Sprintf("You don't have a %s to auction.", rest))
+		user.SendTextLegacy(fmt.Sprintf("You don't have a %s to auction.", rest))
 		return true, nil
 	}
 
@@ -286,7 +286,7 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 	}
 
 	if questionConfirm.Response != `Yes` {
-		user.SendText(`Aborting auction`)
+		user.SendTextLegacy(`Aborting auction`)
 		user.ClearPrompt()
 		return true, nil
 	}
@@ -298,14 +298,14 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 
 	amt, _ := strconv.Atoi(questionAmount.Response)
 	if amt < 1 {
-		user.SendText(`Aborting auction`)
+		user.SendTextLegacy(`Aborting auction`)
 		user.ClearPrompt()
 		return true, nil
 	}
 
 	user.ClearPrompt()
 
-	user.SendText(fmt.Sprintf("Auctioning your <ansi fg=\"item\">%s</ansi> for <ansi fg=\"gold\">%d gold</ansi>.", matchItem.DisplayName(), amt))
+	user.SendTextLegacy(fmt.Sprintf("Auctioning your <ansi fg=\"item\">%s</ansi> for <ansi fg=\"gold\">%d gold</ansi>.", matchItem.DisplayName(), amt))
 
 	duration := 60
 	if dur, ok := mod.plug.Config.Get(`DurationSeconds`).(int); ok {
@@ -353,7 +353,7 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 			if u := users.GetByUserId(uid); u != nil {
 				auctionOn := u.GetConfigOption(`auction`)
 				if auctionOn == nil || auctionOn.(bool) {
-					u.SendText(auctionTxt)
+					u.SendTextLegacy(auctionTxt)
 				}
 			}
 		}
@@ -371,7 +371,7 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 					})
 
 					msg := fmt.Sprintf(`<ansi fg="yellow">You have won the auction for the <ansi fg="item">%s</ansi>! It has been added to your backpack.</ansi>`, auctionNow.ItemData.DisplayName())
-					user.SendText(msg)
+					user.SendTextLegacy(msg)
 				}
 			} else {
 
@@ -404,7 +404,7 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 
 				if sellerUser := users.GetByUserId(auctionNow.SellerUserId); sellerUser != nil {
 					sellerUser.Character.Bank += auctionNow.HighestBid
-					sellerUser.SendText(`<ansi fg="yellow">` + msg + `</ansi>`)
+					sellerUser.SendTextLegacy(`<ansi fg="yellow">` + msg + `</ansi>`)
 
 					events.AddToQueue(events.EquipmentChange{
 						UserId:     sellerUser.UserId,
@@ -449,7 +449,7 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 					})
 
 					msg := fmt.Sprintf(`<ansi fg="yellow">The auction for the <ansi fg="item">%s</ansi> has ended without a winner. It has been returned to you.</ansi>`, auctionNow.ItemData.DisplayName())
-					user.SendText(msg)
+					user.SendTextLegacy(msg)
 				}
 			}
 
@@ -461,7 +461,7 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 					auctionOn := u.GetConfigOption(`auction`)
 					if auctionOn == nil || auctionOn.(bool) {
 						msg := fmt.Sprintf(`<ansi fg="yellow">The auction for the <ansi fg="item">%s</ansi> has ended without a winner. It has been returned to the seller.</ansi>`, auctionNow.ItemData.DisplayName())
-						u.SendText(msg)
+						u.SendTextLegacy(msg)
 					}
 				}
 			}
@@ -495,7 +495,7 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 			if u := users.GetByUserId(uid); u != nil {
 				auctionOn := u.GetConfigOption(`auction`)
 				if auctionOn == nil || auctionOn.(bool) {
-					u.SendText(auctionTxt)
+					u.SendTextLegacy(auctionTxt)
 				}
 			}
 		}
@@ -527,7 +527,7 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 			if u := users.GetByUserId(uid); u != nil {
 				auctionOn := u.GetConfigOption(`auction`)
 				if auctionOn == nil || auctionOn.(bool) {
-					u.SendText(auctionTxt)
+					u.SendTextLegacy(auctionTxt)
 				}
 			}
 		}

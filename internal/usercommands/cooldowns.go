@@ -10,7 +10,7 @@ import (
 func Cooldowns(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	cdTxt, _ := templates.Process("character/cooldowns", user.Character.GetAllCooldowns(), user.UserId)
-	user.SendText(cdTxt)
+	user.SendTextLegacy(cdTxt)
 
 	return true, nil
 }

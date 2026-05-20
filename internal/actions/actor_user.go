@@ -37,15 +37,15 @@ func (a *UserActor) GetRoom() *rooms.Room {
 	return a.Room
 }
 
-func (a *UserActor) SendText(msg string) {
-	a.User.SendText(msg)
+func (a *UserActor) SendTextLegacy(msg string) {
+	a.User.SendTextLegacy(msg)
 }
 
 func (a *UserActor) SendRoomText(msg string, excludeSelf bool) {
 	if excludeSelf {
-		a.Room.SendText(msg, a.User.UserId)
+		a.Room.SendTextLegacy(msg, a.User.UserId)
 	} else {
-		a.Room.SendText(msg)
+		a.Room.SendTextLegacy(msg)
 	}
 }
 

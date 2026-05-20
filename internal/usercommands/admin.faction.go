@@ -55,10 +55,10 @@ func Faction(rest string, user *users.UserRecord, room *rooms.Room, flags events
 func factionShowUsage(user *users.UserRecord) {
 	// Try templated help first; fall back to inline if missing.
 	if out, err := templates.Process("admincommands/help/command.faction", nil, user.UserId); err == nil && strings.TrimSpace(out) != "" {
-		user.SendText(out)
+		user.SendTextLegacy(out)
 		return
 	}
-	user.SendText(
+	user.SendTextLegacy(
 		"Usage:\r\n" +
 			"  faction list\r\n" +
 			"  faction show <playerName>\r\n" +
@@ -72,7 +72,7 @@ func factionShowUsage(user *users.UserRecord) {
 func factionListAll(user *users.UserRecord) (bool, error) {
 	defs := factions.AllDefinitions()
 	if len(defs) == 0 {
-		user.SendText("No factions loaded.\r\n")
+		user.SendTextLegacy("No factions loaded.\r\n")
 		return true, nil
 	}
 	sort.Slice(defs, func(i, j int) bool { return defs[i].FactionId < defs[j].FactionId })
@@ -89,7 +89,7 @@ func factionListAll(user *users.UserRecord) (bool, error) {
 			d.DefaultRep,
 			d.Allies, d.Enemies)
 	}
-	user.SendText(b.String())
+	user.SendTextLegacy(b.String())
 	return true, nil
 }
 
@@ -108,7 +108,7 @@ func factionShow(args []string, user *users.UserRecord) (bool, error) {
 func factionShowAllForUser(playerName string, user *users.UserRecord) (bool, error) {
 	target := users.GetByCharacterNameOrLoad(playerName)
 	if target == nil {
-		user.SendText(fmt.Sprintf("No such player: %s\r\n", playerName))
+		user.SendTextLegacy(fmt.Sprintf("No such player: %s\r\n", playerName))
 		return true, nil
 	}
 
@@ -126,7 +126,7 @@ func factionShowAllForUser(playerName string, user *users.UserRecord) (bool, err
 		rows = append(rows, row{d.FactionId, rep})
 	}
 	if len(rows) == 0 {
-		user.SendText(fmt.Sprintf("No factions hold a non-default rep for %s.\r\n", playerName))
+		user.SendTextLegacy(fmt.Sprintf("No factions hold a non-default rep for %s.\r\n", playerName))
 		return true, nil
 	}
 	sort.Slice(rows, func(i, j int) bool { return rows[i].rep < rows[j].rep })
@@ -140,22 +140,22 @@ func factionShowAllForUser(playerName string, user *users.UserRecord) (bool, err
 			factionTruncate(r.factionId, 25),
 			r.rep, factionTierName(opinions.TierOf(r.rep)))
 	}
-	user.SendText(b.String())
+	user.SendTextLegacy(b.String())
 	return true, nil
 }
 
 func factionShowOne(factionId, playerName string, user *users.UserRecord) (bool, error) {
 	if factions.GetDefinition(factionId) == nil {
-		user.SendText(fmt.Sprintf("Unknown faction: %s\r\n", factionId))
+		user.SendTextLegacy(fmt.Sprintf("Unknown faction: %s\r\n", factionId))
 		return true, nil
 	}
 	target := users.GetByCharacterNameOrLoad(playerName)
 	if target == nil {
-		user.SendText(fmt.Sprintf("No such player: %s\r\n", playerName))
+		user.SendTextLegacy(fmt.Sprintf("No such player: %s\r\n", playerName))
 		return true, nil
 	}
 	rep := factions.GetRep(factionId, target.UserId)
-	user.SendText(fmt.Sprintf("%s -> %s: rep=%d, tier=%s\r\n",
+	user.SendTextLegacy(fmt.Sprintf("%s -> %s: rep=%d, tier=%s\r\n",
 		factionId, playerName, rep, factionTierName(opinions.TierOf(rep))))
 	return true, nil
 }
@@ -179,12 +179,12 @@ func factionMutate(args []string, user *users.UserRecord, mode factionMutateMode
 	}
 	factionId := args[0]
 	if factions.GetDefinition(factionId) == nil {
-		user.SendText(fmt.Sprintf("Unknown faction: %s\r\n", factionId))
+		user.SendTextLegacy(fmt.Sprintf("Unknown faction: %s\r\n", factionId))
 		return true, nil
 	}
 	target := users.GetByCharacterNameOrLoad(args[1])
 	if target == nil {
-		user.SendText(fmt.Sprintf("No such player: %s\r\n", args[1]))
+		user.SendTextLegacy(fmt.Sprintf("No such player: %s\r\n", args[1]))
 		return true, nil
 	}
 
@@ -192,24 +192,24 @@ func factionMutate(args []string, user *users.UserRecord, mode factionMutateMode
 	case factionMutateSet:
 		v, err := strconv.Atoi(args[2])
 		if err != nil {
-			user.SendText(fmt.Sprintf("Bad rep %q: %v\r\n", args[2], err))
+			user.SendTextLegacy(fmt.Sprintf("Bad rep %q: %v\r\n", args[2], err))
 			return true, nil
 		}
 		factions.SetRep(factionId, target.UserId, v)
-		user.SendText(fmt.Sprintf("Set %s -> %s = %d\r\n", factionId, args[1], v))
+		user.SendTextLegacy(fmt.Sprintf("Set %s -> %s = %d\r\n", factionId, args[1], v))
 	case factionMutateBump:
 		v, err := strconv.Atoi(args[2])
 		if err != nil {
-			user.SendText(fmt.Sprintf("Bad delta %q: %v\r\n", args[2], err))
+			user.SendTextLegacy(fmt.Sprintf("Bad delta %q: %v\r\n", args[2], err))
 			return true, nil
 		}
 		factions.BumpRep(factionId, target.UserId, v)
-		user.SendText(fmt.Sprintf("Bumped %s -> %s by %d (now %d)\r\n",
+		user.SendTextLegacy(fmt.Sprintf("Bumped %s -> %s by %d (now %d)\r\n",
 			factionId, args[1], v, factions.GetRep(factionId, target.UserId)))
 	case factionMutateReset:
 		def := factions.GetDefinition(factionId)
 		factions.SetRep(factionId, target.UserId, def.DefaultRep)
-		user.SendText(fmt.Sprintf("Reset %s -> %s to default %d\r\n",
+		user.SendTextLegacy(fmt.Sprintf("Reset %s -> %s to default %d\r\n",
 			factionId, args[1], def.DefaultRep))
 	}
 	return true, nil

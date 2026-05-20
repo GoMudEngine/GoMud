@@ -21,7 +21,7 @@ func Say(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	if result.IsSneaking {
 		anonMsg := fmt.Sprintf(`someone says, "<ansi fg="saytext-mob">%s</ansi>"`, result.Text)
-		room.SendTextVisual(util.SplitStringNL(anonMsg, 80))
+		room.SendTextVisualLegacy(util.SplitStringNL(anonMsg, 80))
 	} else {
 		anonMsg := actions.FormatSayText("", result.Text, true, "mobname", "saytext-mob")
 		namedMsg := actions.FormatSayText(mob.Character.Name, result.Text, false, "mobname", "saytext-mob")

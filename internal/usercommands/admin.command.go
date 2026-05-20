@@ -30,7 +30,7 @@ func Command(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		mobCommands := mobcommands.GetAllMobCommands()
 
 		infoOutput, _ := templates.Process("admincommands/help/command.command", mobCommands, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 		return true, nil
 	}
 

@@ -75,9 +75,9 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			if !isSneaking && !alreadyFighting {
 
 				if canSeeInDark(u, room) {
-					u.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to fight you!`, mob.Character.Name))
+					u.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to fight you!`, mob.Character.Name))
 				} else {
-					u.SendText(`Something prepares to fight you!`)
+					u.SendTextLegacy(`Something prepares to fight you!`)
 				}
 
 				sendRoomText(room,

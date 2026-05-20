@@ -35,7 +35,7 @@ func clearRoomAggroOnDeparture(room *rooms.Room, departingInstanceId int) {
 				// Is this mob attacking us or one of our companions?
 				if m.Character.CurrentCombatTarget().UserId == uid {
 					u.Character.SetAggro(0, mId, characters.DefaultAttack)
-					u.SendText(fmt.Sprintf(
+					u.SendTextLegacy(fmt.Sprintf(
 						"You turn your attention to <ansi fg=\"mobname\">%s</ansi>!",
 						m.Character.Name))
 					retargeted = true
@@ -45,7 +45,7 @@ func clearRoomAggroOnDeparture(room *rooms.Room, departingInstanceId int) {
 				for _, comp := range u.Character.Companions {
 					if comp.InstanceId > 0 && m.Character.CurrentCombatTarget().MobInstanceId == comp.InstanceId {
 						u.Character.SetAggro(0, mId, characters.DefaultAttack)
-						u.SendText(fmt.Sprintf(
+						u.SendTextLegacy(fmt.Sprintf(
 							"You turn your attention to <ansi fg=\"mobname\">%s</ansi>!",
 							m.Character.Name))
 						retargeted = true
@@ -80,7 +80,7 @@ func sendMovementMessage(room *rooms.Room, visualMsg string, soundMsg string) {
 	vis := room.GetVisibility()
 	if vis >= 1 {
 		// Room is lit enough — everyone sees the message
-		room.SendTextVisual(visualMsg)
+		room.SendTextVisualLegacy(visualMsg)
 		return
 	}
 	// Room is dark — send per-player based on night vision
@@ -90,9 +90,9 @@ func sendMovementMessage(room *rooms.Room, visualMsg string, soundMsg string) {
 			continue
 		}
 		if u.Character.HasFlagFromAnySource(buffs.NightVision) {
-			u.SendText(visualMsg)
+			u.SendTextLegacy(visualMsg)
 		} else if soundMsg != "" {
-			u.SendText(soundMsg)
+			u.SendTextLegacy(soundMsg)
 		}
 	}
 }

@@ -69,7 +69,7 @@ func dropMobLootAndSetCorpse(m *mobs.Mob, room *rooms.Room) {
 				`<ansi fg="item">%s</ansi> drops to the ground.`,
 				item.DisplayName(),
 			)
-			room.SendTextVisual(msg)
+			room.SendTextVisualLegacy(msg)
 			room.AddItem(item, false)
 			lootDropped = true
 		}
@@ -84,7 +84,7 @@ func dropMobLootAndSetCorpse(m *mobs.Mob, room *rooms.Room) {
 				`<ansi fg="item">%s</ansi> drops to the ground.`,
 				item.DisplayName(),
 			)
-			room.SendTextVisual(msg)
+			room.SendTextVisualLegacy(msg)
 			room.AddItem(item, false)
 			lootDropped = true
 		}
@@ -94,14 +94,14 @@ func dropMobLootAndSetCorpse(m *mobs.Mob, room *rooms.Room) {
 				`<ansi fg="yellow-bold">%d gold</ansi> drops to the ground.`,
 				m.Character.Gold,
 			)
-			room.SendTextVisual(msg)
+			room.SendTextVisualLegacy(msg)
 			room.Gold += m.Character.Gold
 			lootDropped = true
 		}
 
 		// Dark-room fallback sound for loot drops.
 		if lootDropped && room.GetVisibility() < 1 {
-			room.SendText(`You hear something clatter to the ground.`)
+			room.SendTextLegacy(`You hear something clatter to the ground.`)
 		}
 	}
 

@@ -41,9 +41,9 @@ func Taunt(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	case result.Hit:
 		if targetPlayer != nil {
 			if canSeeInDark(targetPlayer, room) {
-				targetPlayer.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s thunderous challenge rattles your nerve! (<ansi fg="damage">%s</ansi>)`, mob.Character.Name, result.DmgDesc))
+				targetPlayer.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s thunderous challenge rattles your nerve! (<ansi fg="damage">%s</ansi>)`, mob.Character.Name, result.DmgDesc))
 			} else {
-				targetPlayer.SendText(fmt.Sprintf(`A thunderous challenge rattles your nerve! (<ansi fg="damage">%s</ansi>)`, result.DmgDesc))
+				targetPlayer.SendTextLegacy(fmt.Sprintf(`A thunderous challenge rattles your nerve! (<ansi fg="damage">%s</ansi>)`, result.DmgDesc))
 			}
 		}
 		sendAudioRoomText(room, mob,
@@ -53,12 +53,12 @@ func Taunt(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		// Stoic resolve messaging
 		if result.CritDeflected {
 			if targetPlayer != nil {
-				targetPlayer.SendText(
+				targetPlayer.SendTextLegacy(
 					`<ansi fg="green">The challenge rolls off you like rain from stone — you are unmoved.</ansi>`)
 			}
 		} else if result.Deflected {
 			if targetPlayer != nil {
-				targetPlayer.SendText(
+				targetPlayer.SendTextLegacy(
 					`<ansi fg="green">You set your jaw and weather the challenge.</ansi>`)
 			}
 		}
@@ -66,9 +66,9 @@ func Taunt(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	default: // miss
 		if targetPlayer != nil {
 			if canSeeInDark(targetPlayer, room) {
-				targetPlayer.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> bellows a challenge, but you brush it off.`, mob.Character.Name))
+				targetPlayer.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> bellows a challenge, but you brush it off.`, mob.Character.Name))
 			} else {
-				targetPlayer.SendText(`Something bellows a challenge, but you brush it off.`)
+				targetPlayer.SendTextLegacy(`Something bellows a challenge, but you brush it off.`)
 			}
 		}
 		sendAudioRoomText(room, mob,

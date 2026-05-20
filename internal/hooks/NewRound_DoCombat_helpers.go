@@ -67,7 +67,7 @@ func sendVisualRoomText(room *rooms.Room, visualMsg string, excludeUserIds ...in
 	if room == nil {
 		return
 	}
-	room.SendTextVisual(visualMsg, excludeUserIds...)
+	room.SendTextVisualLegacy(visualMsg, excludeUserIds...)
 }
 
 // isExcludedUser checks if a userId is in the exclusion list.
@@ -92,7 +92,7 @@ func sendDarkRoomCombatFallback(room *rooms.Room, excludeUserIds ...int) {
 		}
 		u := users.GetByUserId(uid)
 		if u != nil && !u.Character.HasFlagFromAnySource(buffs.NightVision) {
-			u.SendText(`<ansi fg="yellow">You hear the sounds of fighting nearby.</ansi>`)
+			u.SendTextLegacy(`<ansi fg="yellow">You hear the sounds of fighting nearby.</ansi>`)
 		}
 	}
 }
@@ -168,7 +168,7 @@ func handlePlayerShieldDecay(user *users.UserRecord) {
 	if user.Character.HasCondition(characters.ConditionShield) {
 		if user.Character.GetConditionDuration(characters.ConditionShield) <= 1 {
 			user.Character.RemoveCondition(characters.ConditionShield)
-			user.SendText(`<ansi fg="blue">Your Minor Shield dissipates.</ansi>`)
+			user.SendTextLegacy(`<ansi fg="blue">Your Minor Shield dissipates.</ansi>`)
 		} else {
 			user.Character.DecrementCondition(characters.ConditionShield)
 		}
@@ -217,7 +217,7 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 	switch {
 	case result.ProneBroke:
 		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(csBeforeProcess))
-		user.SendText(`<ansi fg="red">You lose your concentration as you hit the ground!</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">You lose your concentration as you hit the ground!</ansi>`)
 		room := rooms.LoadRoom(user.Character.RoomId)
 		if room != nil {
 			sendVisualRoomText(room, fmt.Sprintf(
@@ -227,7 +227,7 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 	case result.GrappleBroke:
 		// Chunk 4e T4: grapple breaks concentration same as Prone (spec §4.2).
 		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(csBeforeProcess))
-		user.SendText(`<ansi fg="red">Your concentration shatters — you cannot hold the fold while grappled!</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">Your concentration shatters — you cannot hold the fold while grappled!</ansi>`)
 		room := rooms.LoadRoom(user.Character.RoomId)
 		if room != nil {
 			sendVisualRoomText(room, fmt.Sprintf(
@@ -236,14 +236,14 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 
 	case result.TargetGone:
 		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(csBeforeProcess))
-		user.SendText(`<ansi fg="red">Your spell fizzles — the target is gone.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">Your spell fizzles — the target is gone.</ansi>`)
 
 	case result.SpellDataMissing:
-		user.SendText(`<ansi fg="red">The spell dissipates — its data cannot be found.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">The spell dissipates — its data cannot be found.</ansi>`)
 
 	case result.InsufficientConviction:
 		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(csBeforeProcess))
-		user.SendText(`<ansi fg="red">Your conviction wavers — the fold collapses.</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">Your conviction wavers — the fold collapses.</ansi>`)
 
 	case result.CastComplete:
 		cs := result.CastingData
@@ -255,10 +255,10 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 				SourcePlainName: user.Character.GetCharacterName(false),
 			}
 			cfg := textutil.SendTextConfig{
-				UserSendFunc: func(msg string) { user.SendText(msg) },
+				UserSendFunc: func(msg string) { user.SendTextLegacy(msg) },
 				RoomSendFunc: func(msg string, skip ...int) {
 					if r := rooms.LoadRoom(user.Character.RoomId); r != nil {
-						r.SendText(msg, skip...)
+						r.SendTextLegacy(msg, skip...)
 					}
 				},
 				ExcludeId: user.UserId,
@@ -321,7 +321,7 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 				pick := eligible[util.Rand(len(eligible))]
 				if user.Character.LearnSpell(pick) {
 					if newSpell := spells.GetSpell(pick); newSpell != nil {
-						user.SendText(fmt.Sprintf(
+						user.SendTextLegacy(fmt.Sprintf(
 							`<ansi fg="magenta-bold">A new pattern crystallizes in your mind: <ansi fg="cyan-bold">%s</ansi></ansi>`,
 							newSpell.Name))
 					}
@@ -346,7 +346,7 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 					pick := eligible[util.Rand(len(eligible))]
 					if user.Character.LearnSpell(pick) {
 						if newSpell := spells.GetSpell(pick); newSpell != nil {
-							user.SendText(fmt.Sprintf(
+							user.SendTextLegacy(fmt.Sprintf(
 								`<ansi fg="magenta-bold">A manifestation reveals itself: <ansi fg="cyan-bold">%s</ansi></ansi>`,
 								newSpell.Name))
 						}
@@ -365,17 +365,17 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 				SourcePlainName: user.Character.GetCharacterName(false),
 			}
 			cfg := textutil.SendTextConfig{
-				UserSendFunc: func(msg string) { user.SendText(msg) },
+				UserSendFunc: func(msg string) { user.SendTextLegacy(msg) },
 				RoomSendFunc: func(msg string, skip ...int) {
 					if r := rooms.LoadRoom(user.Character.RoomId); r != nil {
-						r.SendText(msg, skip...)
+						r.SendTextLegacy(msg, skip...)
 					}
 				},
 				ExcludeId: user.UserId,
 			}
 			textutil.SendPhaseText(waitSpellInfo.WaitUserText, waitSpellInfo.WaitRoomText, tCtx, "pink", cfg)
 		}
-		user.SendText(`<ansi fg="cyan">` + spells.GetCastMessage("cast_started", cs.SpellId) + `</ansi>`)
+		user.SendTextLegacy(`<ansi fg="cyan">` + spells.GetCastMessage("cast_started", cs.SpellId) + `</ansi>`)
 	}
 
 	return true
@@ -396,18 +396,18 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 	switch {
 	case result.ProneBroke:
 		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(csBeforeProcess))
-		mobRoom.SendText(fmt.Sprintf(
+		mobRoom.SendTextLegacy(fmt.Sprintf(
 			`%s's concentration breaks.`, mobDisplayName(mob, mobRoom, 0)))
 
 	case result.GrappleBroke:
 		// Chunk 4e T4: grapple breaks concentration same as Prone (spec §4.2).
 		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(csBeforeProcess))
-		mobRoom.SendText(fmt.Sprintf(
+		mobRoom.SendTextLegacy(fmt.Sprintf(
 			`%s's concentration breaks.`, mobDisplayName(mob, mobRoom, 0)))
 
 	case result.TargetGone:
 		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(csBeforeProcess))
-		mobRoom.SendText(fmt.Sprintf(
+		mobRoom.SendTextLegacy(fmt.Sprintf(
 			`%s's spell fizzles.`, mobDisplayName(mob, mobRoom, 0)))
 
 	case result.SpellDataMissing:
@@ -415,7 +415,7 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 
 	case result.InsufficientConviction:
 		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(csBeforeProcess))
-		mobRoom.SendText(fmt.Sprintf(
+		mobRoom.SendTextLegacy(fmt.Sprintf(
 			`%s's spell falters.`, mobDisplayName(mob, mobRoom, 0)))
 
 	case result.CastComplete:
@@ -484,7 +484,7 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 		}
 
 	case result.StillCasting:
-		mobRoom.SendText(fmt.Sprintf(
+		mobRoom.SendTextLegacy(fmt.Sprintf(
 			`%s weaves magic with focused intent.`, mobDisplayName(mob, mobRoom, 0)))
 	}
 
@@ -518,7 +518,7 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 	// to fire here for UX. Chunk 4b R3: FSM-driven — IsStandingGrapple
 	// || IsGroundGrapple covers all 11 grapple states.
 	if user.Character.IsStandingGrapple() || user.Character.IsGroundGrapple() {
-		user.SendText(`<ansi fg="red">You can't flee while grappled!</ansi>`)
+		user.SendTextLegacy(`<ansi fg="red">You can't flee while grappled!</ansi>`)
 		if user.Character.CombatPhase != nil {
 			user.Character.CombatPhase.ResolveFlee(false)
 		}
@@ -538,12 +538,12 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 		} else {
 			targetTag = "mobname"
 		}
-		user.SendText(fmt.Sprintf(`<ansi fg="red-bold"><ansi fg="%s">%s</ansi> blocks you from fleeing!</ansi>`, targetTag, blocker.Name))
+		user.SendTextLegacy(fmt.Sprintf(`<ansi fg="red-bold"><ansi fg="%s">%s</ansi> blocks you from fleeing!</ansi>`, targetTag, blocker.Name))
 		excludes := []int{user.UserId}
 		if blocker.IsPlayer() {
 			excludes = append(excludes, blocker.UserId)
 		}
-		uRoom.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is blocked from fleeing by <ansi fg="%s">%s</ansi>!`, user.Character.Name, targetTag, blocker.Name), excludes...)
+		uRoom.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> is blocked from fleeing by <ansi fg="%s">%s</ansi>!`, user.Character.Name, targetTag, blocker.Name), excludes...)
 		// Task 15: flee failure — restore Engaged state in CombatPhase.
 		if user.Character.CombatPhase != nil {
 			user.Character.CombatPhase.ResolveFlee(false)
@@ -555,7 +555,7 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 	exitName, exitRoomId := uRoom.GetRandomExit()
 
 	if exitName == `` {
-		user.SendText(`You can't find an exit!`)
+		user.SendTextLegacy(`You can't find an exit!`)
 		// No exit found — treat as blocked (flee failure).
 		if user.Character.CombatPhase != nil {
 			user.Character.CombatPhase.ResolveFlee(false)
@@ -563,8 +563,8 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 		return true
 	}
 
-	user.SendText(fmt.Sprintf(`You flee to the <ansi fg="exit">%s</ansi> exit!`, exitName))
-	uRoom.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> flees to the <ansi fg="exit">%s</ansi> exit!`, user.Character.Name, exitName), user.UserId)
+	user.SendTextLegacy(fmt.Sprintf(`You flee to the <ansi fg="exit">%s</ansi> exit!`, exitName))
+	uRoom.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> flees to the <ansi fg="exit">%s</ansi> exit!`, user.Character.Name, exitName), user.UserId)
 
 	// Task 15: flee success — EndAggro clears legacy Aggro; ResolveFlee
 	// transitions CombatPhase Disengaging → Idle.
@@ -648,11 +648,11 @@ func handleOffhandBreakUserDef(roundResult combat.AttackResult, defUser *users.U
 		return
 	}
 
-	defUser.SendText(`<ansi fg="202">***</ansi>`)
-	defUser.SendText(fmt.Sprintf(`<ansi fg="214"><ansi fg="202">***</ansi> Your <ansi fg="item">%s</ansi> breaks! <ansi fg="202">***</ansi></ansi>`, br.BrokenItemName))
-	defUser.SendText(`<ansi fg="202">***</ansi>`)
+	defUser.SendTextLegacy(`<ansi fg="202">***</ansi>`)
+	defUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="214"><ansi fg="202">***</ansi> Your <ansi fg="item">%s</ansi> breaks! <ansi fg="202">***</ansi></ansi>`, br.BrokenItemName))
+	defUser.SendTextLegacy(`<ansi fg="202">***</ansi>`)
 
-	defRoom.SendText(fmt.Sprintf(`<ansi fg="214"><ansi fg="202">***</ansi> The <ansi fg="item">%s</ansi> <ansi fg="username">%s</ansi> was carrying breaks! <ansi fg="202">***</ansi></ansi>`, br.BrokenItemName, defUser.Character.Name), defUser.UserId)
+	defRoom.SendTextLegacy(fmt.Sprintf(`<ansi fg="214"><ansi fg="202">***</ansi> The <ansi fg="item">%s</ansi> <ansi fg="username">%s</ansi> was carrying breaks! <ansi fg="202">***</ansi></ansi>`, br.BrokenItemName, defUser.Character.Name), defUser.UserId)
 
 	events.AddToQueue(events.ItemOwnership{
 		UserId: defUser.UserId,
@@ -676,7 +676,7 @@ func handleOffhandBreakMobDef(roundResult combat.AttackResult, defMob *mobs.Mob)
 	}
 
 	if defRoom != nil {
-		defRoom.SendText(fmt.Sprintf(`<ansi fg="214"><ansi fg="202">***</ansi> The <ansi fg="item">%s</ansi> <ansi fg="mobname">%s</ansi> was carrying breaks! <ansi fg="202">***</ansi></ansi>`, br.BrokenItemName, defMob.Character.Name))
+		defRoom.SendTextLegacy(fmt.Sprintf(`<ansi fg="214"><ansi fg="202">***</ansi> The <ansi fg="item">%s</ansi> <ansi fg="mobname">%s</ansi> was carrying breaks! <ansi fg="202">***</ansi></ansi>`, br.BrokenItemName, defMob.Character.Name))
 	}
 
 	events.AddToQueue(events.ItemOwnership{
@@ -705,8 +705,8 @@ func handlePlayerConcentrationBreak(defUser *users.UserRecord, roundResult comba
 		csSnap, _ := defUser.Character.Activity.CastingData()
 		recordConcentrationFailure(combat.User, combat.Mob, defUser.Character, castingTargetChar(csSnap))
 		clearCastingActivity(defUser.Character, activity.TriggerConcentrationBreak)
-		defUser.SendText(`<ansi fg="red">The pain shatters your concentration!</ansi>`)
-		defRoom.SendText(fmt.Sprintf(
+		defUser.SendTextLegacy(`<ansi fg="red">The pain shatters your concentration!</ansi>`)
+		defRoom.SendTextLegacy(fmt.Sprintf(
 			`<ansi fg="username">%s</ansi>'s concentration breaks.`,
 			defUser.Character.Name), defUser.UserId)
 	}
@@ -812,7 +812,7 @@ func handleMobTargetSwitch(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 		mob.Character.SetAggro(newTargetId, 0, mob.Character.Aggro.Type, 1)
 
 		if newTarget := users.GetByUserId(newTargetId); newTarget != nil {
-			mobRoom.SendText(
+			mobRoom.SendTextLegacy(
 				fmt.Sprintf("%s shifts focus to <ansi fg=\"username\">%s</ansi>!", mobDisplayName(mob, mobRoom, 0), newTarget.Character.Name),
 			)
 		}

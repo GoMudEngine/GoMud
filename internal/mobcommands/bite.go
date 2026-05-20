@@ -41,11 +41,11 @@ func Bite(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	if result.Hit {
 		if targetUser != nil {
 			if canSee {
-				targetUser.SendText(fmt.Sprintf(
+				targetUser.SendTextLegacy(fmt.Sprintf(
 					`<ansi fg="mobname">%s</ansi> sinks its fangs into you, drawing strength from the wound! (<ansi fg="damage">%s</ansi> damage)`,
 					mobName, dmgDesc))
 			} else {
-				targetUser.SendText(fmt.Sprintf(
+				targetUser.SendTextLegacy(fmt.Sprintf(
 					`Something sinks its fangs into you in the darkness, drawing strength from the wound! (<ansi fg="damage">%s</ansi> damage)`,
 					dmgDesc))
 			}
@@ -64,11 +64,11 @@ func Bite(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	} else {
 		if targetUser != nil {
 			if canSee {
-				targetUser.SendText(fmt.Sprintf(
+				targetUser.SendTextLegacy(fmt.Sprintf(
 					`<ansi fg="mobname">%s</ansi> snaps its fangs at you, but misses!`,
 					mobName))
 			} else {
-				targetUser.SendText(`Something snaps its fangs at you in the darkness, but misses!`)
+				targetUser.SendTextLegacy(`Something snaps its fangs at you in the darkness, but misses!`)
 			}
 		}
 		sendRoomText(room,

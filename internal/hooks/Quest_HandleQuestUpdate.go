@@ -69,7 +69,7 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 			questUser.EventLog.Add(`quest`, fmt.Sprintf(`Given a new quest: <ansi fg="questname">%s</ansi>`, questInfo.Name))
 
 			questUpTxt, _ := templates.Process("character/questup", fmt.Sprintf(`You have been given a new quest: <ansi fg="questname">%s</ansi>!`, questInfo.Name), questUser.UserId)
-			questUser.SendText(questUpTxt)
+			questUser.SendTextLegacy(questUpTxt)
 		}
 	} else if stepName == `end` {
 
@@ -78,12 +78,12 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 			questUser.EventLog.Add(`quest`, fmt.Sprintf(`Completed a quest: <ansi fg="questname">%s</ansi>`, questInfo.Name))
 
 			questUpTxt, _ := templates.Process("character/questup", fmt.Sprintf(`You have completed the quest: <ansi fg="questname">%s</ansi>!`, questInfo.Name), questUser.UserId)
-			questUser.SendText(questUpTxt)
+			questUser.SendTextLegacy(questUpTxt)
 		}
 
 		// Message to player?
 		if len(questInfo.Rewards.PlayerMessage) > 0 {
-			questUser.SendText(questInfo.Rewards.PlayerMessage)
+			questUser.SendTextLegacy(questInfo.Rewards.PlayerMessage)
 		}
 		// Message to room?
 		if len(questInfo.Rewards.RoomMessage) > 0 {
@@ -102,7 +102,7 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 		}
 		// Gold reward?
 		if questInfo.Rewards.Gold > 0 {
-			questUser.SendText(fmt.Sprintf(`You receive <ansi fg="gold">%d gold</ansi>!`, questInfo.Rewards.Gold))
+			questUser.SendTextLegacy(fmt.Sprintf(`You receive <ansi fg="gold">%d gold</ansi>!`, questInfo.Rewards.Gold))
 			questUser.Character.Gold += questInfo.Rewards.Gold
 
 			events.AddToQueue(events.EquipmentChange{
@@ -114,7 +114,7 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 		// Item reward?
 		if questInfo.Rewards.ItemId > 0 {
 			newItm := items.New(questInfo.Rewards.ItemId)
-			questUser.SendText(fmt.Sprintf(`You receive <ansi fg="itemname">%s</ansi>!`, newItm.NameSimple()))
+			questUser.SendTextLegacy(fmt.Sprintf(`You receive <ansi fg="itemname">%s</ansi>!`, newItm.NameSimple()))
 			questUser.Character.StoreItem(newItm)
 
 			iSpec := newItm.GetSpec()
@@ -151,7 +151,7 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 						SkillLevel: newLevel,
 					}
 					skillUpTxt, _ := templates.Process("character/skillup", skillData, questUser.UserId)
-					questUser.SendText(skillUpTxt)
+					questUser.SendTextLegacy(skillUpTxt)
 				}
 
 			}
@@ -160,7 +160,7 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 		if questInfo.Rewards.SpellId != "" {
 			if questUser.Character.LearnSpell(questInfo.Rewards.SpellId) {
 				if spellData := spells.GetSpell(questInfo.Rewards.SpellId); spellData != nil {
-					questUser.SendText(fmt.Sprintf(
+					questUser.SendTextLegacy(fmt.Sprintf(
 						`<ansi fg="magenta-bold">You have learned the spell: <ansi fg="cyan-bold">%s</ansi></ansi>`,
 						spellData.Name))
 				}
@@ -168,7 +168,7 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 		}
 		// Move them to another room/area?
 		if questInfo.Rewards.RoomId > 0 {
-			questUser.SendText(`You are suddenly moved to a new place!`)
+			questUser.SendTextLegacy(`You are suddenly moved to a new place!`)
 
 			if room := rooms.LoadRoom(questUser.Character.RoomId); room != nil {
 				sendVisualRoomText(room, fmt.Sprintf(`<ansi fg="username">%s</ansi> is suddenly moved to a new place!`, questUser.Character.Name), questUser.UserId)
@@ -182,7 +182,7 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 			questUser.EventLog.Add(`quest`, fmt.Sprintf(`Made progress on a quest: <ansi fg="questname">%s</ansi>`, questInfo.Name))
 
 			questUpTxt, _ := templates.Process("character/questup", fmt.Sprintf(`You've made progress on the quest: <ansi fg="questname">%s</ansi>!`, questInfo.Name), questUser.UserId)
-			questUser.SendText(questUpTxt)
+			questUser.SendTextLegacy(questUpTxt)
 		}
 	}
 

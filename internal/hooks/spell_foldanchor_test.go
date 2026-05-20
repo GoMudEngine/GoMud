@@ -25,7 +25,7 @@ type fakeActor struct {
 
 func (f *fakeActor) GetCharacter() *characters.Character { return f.char }
 func (f *fakeActor) GetRoom() *rooms.Room                { return f.room }
-func (f *fakeActor) SendText(msg string)                 { f.selfTexts = append(f.selfTexts, msg) }
+func (f *fakeActor) SendTextLegacy(msg string)           { f.selfTexts = append(f.selfTexts, msg) }
 func (f *fakeActor) SendRoomText(msg string, excludeSelf bool) {
 	f.roomTexts = append(f.roomTexts, msg)
 }

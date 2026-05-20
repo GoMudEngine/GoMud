@@ -18,7 +18,7 @@ func SysLogs(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	if rest == "" {
 		infoOutput, _ := templates.Process("admincommands/help/command.syslogs", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 		return true, nil
 	}
 
@@ -27,13 +27,13 @@ func SysLogs(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	if args[0] == "off" {
 
 		events.AddToQueue(events.Log{FollowRemove: user.ConnectionId()})
-		user.SendText(`Log follow disabled.`)
+		user.SendTextLegacy(`Log follow disabled.`)
 
 		return true, nil
 	}
 
 	events.AddToQueue(events.Log{FollowAdd: user.ConnectionId(), Level: strings.ToUpper(args[0])})
-	user.SendText(`Log follow enabled. Use <ansi fg="command">syslogs off</ansi> to turn it off.`)
+	user.SendTextLegacy(`Log follow enabled. Use <ansi fg="command">syslogs off</ansi> to turn it off.`)
 
 	return true, nil
 }

@@ -34,7 +34,7 @@ func Server(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	if rest == "" {
 		infoOutput, _ := templates.Process("admincommands/help/command.server", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendTextLegacy(infoOutput)
 		return true, nil
 	}
 
@@ -49,7 +49,7 @@ func Server(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 		if len(args) < 1 {
 
-			user.SendText(``)
+			user.SendTextLegacy(``)
 
 			cfgData := configs.GetConfig().AllConfigData()
 			cfgKeys := make([]string, 0, len(cfgData))
@@ -79,7 +79,7 @@ func Server(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 					if len(parts) > 1 {
 						if lastPrefix != parts[0] {
 							lastPrefix = parts[0]
-							user.SendText(``)
+							user.SendTextLegacy(``)
 						}
 						nameColorized = `<ansi fg="yellow">` + parts[0] + `.</ansi>`
 						displayName = strings.Join(parts[1:], `.`)
@@ -87,7 +87,7 @@ func Server(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				}
 				extraSpace := strings.Repeat(` `, longestKey-len(k))
 
-				user.SendText(`<ansi fg="yellow-bold">` + nameColorized + displayName + `</ansi>: <ansi fg="red-bold">` + extraSpace + util.SplitStringNL(fmt.Sprintf(`%v`, cfgData[k]), lineLength, strings.Repeat(` `, longestKey+2)) + `</ansi>`)
+				user.SendTextLegacy(`<ansi fg="yellow-bold">` + nameColorized + displayName + `</ansi>: <ansi fg="red-bold">` + extraSpace + util.SplitStringNL(fmt.Sprintf(`%v`, cfgData[k]), lineLength, strings.Repeat(` `, longestKey+2)) + `</ansi>`)
 
 			}
 
@@ -97,12 +97,12 @@ func Server(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		if args[0] == "day" {
 			gametime.SetToDay(-1)
 			gd := gametime.GetDate()
-			user.SendText(`Time set to ` + gd.String())
+			user.SendTextLegacy(`Time set to ` + gd.String())
 			return true, nil
 		} else if args[0] == "night" {
 			gametime.SetToNight(-1)
 			gd := gametime.GetDate()
-			user.SendText(`Time set to ` + gd.String())
+			user.SendTextLegacy(`Time set to ` + gd.String())
 			return true, nil
 		}
 
@@ -110,18 +110,18 @@ func Server(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		configValue := strings.Join(args[1:], ` `)
 
 		if err := configs.SetVal(configName, configValue); err != nil {
-			user.SendText(fmt.Sprintf(`config change error: %s=%s (%s)`, configName, configValue, err))
+			user.SendTextLegacy(fmt.Sprintf(`config change error: %s=%s (%s)`, configName, configValue, err))
 			return true, nil
 		}
 
-		user.SendText(fmt.Sprintf(`config changed: %s=%s`, configName, configValue))
+		user.SendTextLegacy(fmt.Sprintf(`config changed: %s=%s`, configName, configValue))
 
 		return true, nil
 	}
 
 	if rest == "reload-ansi" {
 		templates.LoadAliases()
-		user.SendText(`ansi aliases reloaded`)
+		user.SendTextLegacy(`ansi aliases reloaded`)
 		return true, nil
 	}
 
@@ -142,9 +142,9 @@ func Server(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		//
 		// General Go stats
 		//
-		user.SendText(``)
-		user.SendText(fmt.Sprintf(`<ansi fg="yellow-bold">IP/Port:</ansi>    <ansi fg="red">%s</ansi>`, util.GetServerAddress()))
-		user.SendText(``)
+		user.SendTextLegacy(``)
+		user.SendTextLegacy(fmt.Sprintf(`<ansi fg="yellow-bold">IP/Port:</ansi>    <ansi fg="red">%s</ansi>`, util.GetServerAddress()))
+		user.SendTextLegacy(``)
 
 		//
 		// Special timing related stats
@@ -178,7 +178,7 @@ func Server(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 		tblData := templates.GetTable(`Timer Stats`, headers, rows, formatting)
 		tplTxt, _ := templates.Process("tables/generic", tblData, user.UserId)
-		user.SendText(tplTxt)
+		user.SendTextLegacy(tplTxt)
 
 		//
 		// Alternative rendering
@@ -292,7 +292,7 @@ func Server(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		memRepRows = append(memRepRows, rowData)
 		memRepTblData := templates.GetTable(`Specific Memory`, memRepHeaders, memRepRows, memRepFormatting)
 		memRepTxt, _ := templates.Process("tables/generic", memRepTblData, user.UserId)
-		user.SendText(memRepTxt)
+		user.SendTextLegacy(memRepTxt)
 	}
 
 	return true, nil
@@ -304,10 +304,10 @@ func server_Config(_ string, user *users.UserRecord, room *rooms.Room, flags eve
 	cmdPrompt, isNew := user.StartPrompt(`server config`, "")
 
 	if isNew {
-		user.SendText(``)
+		user.SendTextLegacy(``)
 		menuOptions, _ := getConfigOptions("")
 		tplTxt, _ := templates.Process("tables/numbered-list", menuOptions, user.UserId)
-		user.SendText(tplTxt)
+		user.SendTextLegacy(tplTxt)
 	}
 
 	configPrefix := ""
@@ -320,7 +320,7 @@ func server_Config(_ string, user *users.UserRecord, room *rooms.Room, flags eve
 		if configVal, ok := allConfigData[configPrefix]; ok {
 
 			if !isEditAllowed(configPrefix) {
-				user.SendText(errValueLocked.Error())
+				user.SendTextLegacy(errValueLocked.Error())
 				user.ClearPrompt()
 				return true, nil
 			}
@@ -335,12 +335,12 @@ func server_Config(_ string, user *users.UserRecord, room *rooms.Room, flags eve
 			err := configs.SetVal(configPrefix, question.Response)
 			if err == nil {
 				allConfigData := configs.GetConfig().AllConfigData()
-				user.SendText(``)
-				user.SendText(fmt.Sprintf(`<ansi fg="6">%s</ansi> has been set to: <ansi fg="9">%s<ansi>`, configPrefix, allConfigData[configPrefix]))
-				user.SendText(``)
+				user.SendTextLegacy(``)
+				user.SendTextLegacy(fmt.Sprintf(`<ansi fg="6">%s</ansi> has been set to: <ansi fg="9">%s<ansi>`, configPrefix, allConfigData[configPrefix]))
+				user.SendTextLegacy(``)
 				return true, nil
 			}
-			user.SendText(err.Error())
+			user.SendTextLegacy(err.Error())
 			return true, nil
 		}
 	}
@@ -351,7 +351,7 @@ func server_Config(_ string, user *users.UserRecord, room *rooms.Room, flags eve
 	}
 
 	if question.Response == "quit" {
-		user.SendText("Quitting...")
+		user.SendTextLegacy("Quitting...")
 		user.ClearPrompt()
 		return true, nil
 	}
@@ -363,7 +363,7 @@ func server_Config(_ string, user *users.UserRecord, room *rooms.Room, flags eve
 	fullPath += question.Response
 
 	if !isEditAllowed(fullPath) {
-		user.SendText(errValueLocked.Error())
+		user.SendTextLegacy(errValueLocked.Error())
 		question.RejectResponse()
 		return true, nil
 	}
@@ -383,7 +383,7 @@ func server_Config(_ string, user *users.UserRecord, room *rooms.Room, flags eve
 			cmdPrompt.Store("config-selected", fullPath)
 
 			if !isEditAllowed(fullPath) {
-				user.SendText(errValueLocked.Error())
+				user.SendTextLegacy(errValueLocked.Error())
 				user.ClearPrompt()
 				return true, nil
 			}
@@ -400,12 +400,12 @@ func server_Config(_ string, user *users.UserRecord, room *rooms.Room, flags eve
 	}
 
 	if fullPath != "" {
-		user.SendText(``)
-		user.SendText(`   [<ansi fg="6">` + fullPath + `</ansi>]`)
+		user.SendTextLegacy(``)
+		user.SendTextLegacy(`   [<ansi fg="6">` + fullPath + `</ansi>]`)
 	}
 
 	tplTxt, _ := templates.Process("tables/numbered-list", menuOptions, user.UserId)
-	user.SendText(tplTxt)
+	user.SendTextLegacy(tplTxt)
 
 	question.RejectResponse()
 

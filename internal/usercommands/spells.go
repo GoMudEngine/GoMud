@@ -135,7 +135,7 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	onlineResultsTable := templates.GetTable(`Spells`, headers, rows, rowFormatting...)
 	tplTxt, _ := templates.Process("tables/generic", onlineResultsTable, user.UserId)
-	user.SendText(tplTxt)
+	user.SendTextLegacy(tplTxt)
 
 	return true, nil
 }
