@@ -7,6 +7,7 @@ package behaviortree
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
@@ -32,20 +33,20 @@ func actRespond(params map[string]any, ctx *EvalContext) Result {
 
 	userText := getStringParam(params, "user_text")
 	if userText != "" {
-		user.SendTextLegacy(textutil.SubstituteTokens(userText, tokenCtx))
+		user.SendText(messaging.CategoryNPCDialogue, textutil.SubstituteTokens(userText, tokenCtx))
 	}
 
 	roomText := getStringParam(params, "room_text")
 	if roomText != "" {
 		room := rooms.LoadRoom(ctx.RoomId)
 		if room != nil {
-			room.SendTextVisualLegacy(textutil.SubstituteTokens(roomText, tokenCtx), ctx.Event.UserId)
+			room.SendTextVisual(messaging.CategoryNPCDialogue, textutil.SubstituteTokens(roomText, tokenCtx), ctx.Event.UserId)
 		}
 	}
 
 	hints := getStringParam(params, "hints")
 	if hints != "" {
-		user.SendTextLegacy(fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
+		user.SendText(messaging.CategoryDialogueHint, fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
 	}
 
 	return Success
@@ -85,7 +86,7 @@ func actSendUserText(params map[string]any, ctx *EvalContext) Result {
 		return Failure
 	}
 	text := getStringParam(params, "text")
-	user.SendTextLegacy(text)
+	user.SendText(messaging.CategoryNPCDialogue, text)
 	return Success
 }
 
@@ -97,7 +98,7 @@ func actSendRoomText(params map[string]any, ctx *EvalContext) Result {
 		return Failure
 	}
 	text := getStringParam(params, "text")
-	room.SendTextLegacy(text)
+	room.SendText(messaging.CategoryMobEmote, text)
 	return Success
 }
 
