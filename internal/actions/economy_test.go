@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -47,6 +48,7 @@ func newStubActor(char *characters.Character, room *rooms.Room) *stubActor {
 
 func (a *stubActor) GetCharacter() *characters.Character    { return a.char }
 func (a *stubActor) GetRoom() *rooms.Room                   { return a.room }
+func (a *stubActor) SendText(_ messaging.Category, _ string) {}
 func (a *stubActor) SendTextLegacy(_ string)                {}
 func (a *stubActor) SendRoomText(_ string, _ bool)          {}
 func (a *stubActor) SendRoomCommunication(_ string, _ bool) {}

@@ -2,6 +2,7 @@ package actions
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
 
@@ -16,9 +17,13 @@ type Actor interface {
 	// GetRoom returns the room the actor currently occupies.
 	GetRoom() *rooms.Room
 
+	// SendText delivers a categorized message to this actor only (no-op
+	// for mobs). Routes through the centralized messaging pipeline.
+	SendText(cat messaging.Category, msg string)
+
 	// SendTextLegacy delivers a message to this actor only (no-op for
-	// mobs). Temporary shim name during the T9 messaging-framework
-	// migration; T10-T14 will replace with a categorized signature.
+	// mobs). Temporary shim retained through T14 for callers that
+	// haven't been migrated yet; T16 deletes the shim entirely.
 	SendTextLegacy(msg string)
 
 	// SendRoomText broadcasts msg to the room. When excludeSelf is true the

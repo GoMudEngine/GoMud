@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/bounties"
 	"github.com/GoMudEngine/GoMud/internal/knowledge"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -16,6 +17,7 @@ type ActionContext interface {
 	ConsumeItem(itemId int)
 	GiveItem(itemId int)
 	GiveGold(amount int)
+	SendText(cat messaging.Category, text string)
 	SendTextLegacy(text string)
 	RoomText(text string)
 	SpawnMob(s SpawnDef)

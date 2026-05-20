@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -40,6 +41,9 @@ func (a *MobActor) GetCharacter() *characters.Character {
 func (a *MobActor) GetRoom() *rooms.Room {
 	return a.Room
 }
+
+// SendText is a no-op for mobs — they have no player connection.
+func (a *MobActor) SendText(cat messaging.Category, msg string) {}
 
 // SendTextLegacy is a no-op for mobs — they have no player connection.
 func (a *MobActor) SendTextLegacy(msg string) {}

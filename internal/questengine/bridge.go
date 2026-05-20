@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
@@ -134,6 +135,11 @@ func (b *GameBridge) GiveGold(amount int) {
 		UserId:     b.user.UserId,
 		GoldChange: amount,
 	})
+}
+
+// SendText sends a categorized message directly to the player.
+func (b *GameBridge) SendText(cat messaging.Category, text string) {
+	b.user.SendText(cat, text)
 }
 
 // SendTextLegacy sends a message directly to the player.

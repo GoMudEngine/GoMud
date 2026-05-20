@@ -2,6 +2,7 @@ package actions
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -35,6 +36,10 @@ func (a *UserActor) GetCharacter() *characters.Character {
 
 func (a *UserActor) GetRoom() *rooms.Room {
 	return a.Room
+}
+
+func (a *UserActor) SendText(cat messaging.Category, msg string) {
+	a.User.SendText(cat, msg)
 }
 
 func (a *UserActor) SendTextLegacy(msg string) {

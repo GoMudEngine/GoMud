@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/stretchr/testify/assert"
 )
@@ -25,7 +26,10 @@ type fakeActor struct {
 
 func (f *fakeActor) GetCharacter() *characters.Character { return f.char }
 func (f *fakeActor) GetRoom() *rooms.Room                { return f.room }
-func (f *fakeActor) SendTextLegacy(msg string)           { f.selfTexts = append(f.selfTexts, msg) }
+func (f *fakeActor) SendText(_ messaging.Category, msg string) {
+	f.selfTexts = append(f.selfTexts, msg)
+}
+func (f *fakeActor) SendTextLegacy(msg string) { f.selfTexts = append(f.selfTexts, msg) }
 func (f *fakeActor) SendRoomText(msg string, excludeSelf bool) {
 	f.roomTexts = append(f.roomTexts, msg)
 }
