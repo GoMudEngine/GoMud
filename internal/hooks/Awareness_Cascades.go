@@ -57,8 +57,16 @@ func wireAwarenessFromCombatPhase(c *characters.Character) {
 		func(from, to awareness.State, r state.TransitionReason) {
 			switch {
 			case to == awareness.Hidden:
-				// Apply buff #9 (timed; Hidden flag + stat-mod carrier).
-				_ = c.AddBuff(9, false)
+				// Apply buff #9 as permanent — the awareness state
+				// machine owns lifecycle. Buff #9 has no triggerrate
+				// (dropped in d282c4ab), so TriggerCount=0 would
+				// otherwise mark TriggersLeft=0 and the buff would
+				// prune on the next NewTurn (firing "You no longer
+				// feel sneaky." while the awareness state still
+				// reports Hidden — split source of truth).
+				// The Revealing/Visible transitions cancel it via
+				// CancelBuffsWithFlag(Hidden) below.
+				_ = c.AddBuff(9, true)
 			case from == awareness.Hidden &&
 				(to == awareness.Revealing || to == awareness.Visible):
 				// Remove buff #9 via cancel-on-flag mechanism.
