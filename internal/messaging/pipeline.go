@@ -70,32 +70,50 @@ func RenderForRecipient(in RenderInput) string {
 	// Stage 5: color (stubbed; T2 lands a no-op, T4 wires data).
 	text = applyCategoryColor(in.Category, text)
 
-	// Stage 6: wrap (stubbed; T5 lands the implementation).
-	// Categories that own their own multi-column / banner layout
-	// skip the wrap stage so the pipeline doesn't break their
-	// pre-laid-out columns. The template (e.g., descriptions/room
-	// renders description + side-by-side minimap) is the authoritative
-	// width.
-	if !skipWrap(in.Category) {
+	// Stage 6: wrap (only for narrative-prose Categories that
+	// produce genuinely long lines; everything else passes through
+	// so pre-formatted tables, banners, side-by-side templates, and
+	// short single-line feedback don't get mangled). See shouldWrap.
+	if shouldWrap(in.Category) {
 		text = wrap(text, in.LineWidth)
 	}
 
 	return text
 }
 
-// skipWrap returns true for Categories whose text is pre-formatted
-// with column / banner layout that the wrap stage must not touch.
+// shouldWrap returns true for Categories whose senders produce
+// narrative prose (multi-sentence descriptions of combat, spells,
+// server-wide announcements) that benefits from server-side
+// ANSI-aware wrap at the recipient's LineWidth.
 //
-// CategoryRoomDescription — template-laid description + minimap.
-// CategorySkillProgress — fixed-width banner rule.
-// CategoryNPCDialogue / CategoryDialogueHint — hand-authored multi-
-//   line dialogue may include layout the wrap would mangle.
-func skipWrap(cat Category) bool {
+// All other Categories pass through the wrap stage unchanged because
+// their senders either:
+//   - Own their own column / banner layout (room descriptions,
+//     skill banners, table output via templates.GetTable),
+//   - Emit short single-line feedback that's already shorter than
+//     any sane LineWidth (errors, system messages, login/logout,
+//     speech, room entry/exit, loot/equipment confirmations),
+//   - Use hand-authored multi-line layout (NPC dialogue, MOTD,
+//     tips).
+//
+// The terminal client wraps long lines on its own; server-side wrap
+// here is only useful where the prose is reliably long AND the
+// caller hasn't pre-formatted layout.
+func shouldWrap(cat Category) bool {
 	switch cat {
-	case CategoryRoomDescription,
-		CategorySkillProgress,
-		CategoryNPCDialogue,
-		CategoryDialogueHint:
+	case CategoryHitMelee, CategoryHitBlunt, CategoryHitNaturalSharp,
+		CategoryHitRanged, CategoryHitCaster, CategoryHitUnarmed,
+		CategoryDodge, CategoryParry, CategoryBlock,
+		CategoryGrappleFlow, CategoryGrappleHigh,
+		CategorySubmission, CategoryDeath,
+		CategorySurpriseAttack, CategoryKick, CategoryTrip,
+		CategoryBash, CategoryRally, CategoryWarcry,
+		CategoryTauntSuccess, CategoryTauntResist, CategoryTauntFailure,
+		CategorySpellFold, CategorySpellDisruption,
+		CategorySpellElemental, CategorySpellEnhancement,
+		CategorySpellMental, CategorySpellVital,
+		CategorySpellManifestation,
+		CategoryBroadcast:
 		return true
 	}
 	return false

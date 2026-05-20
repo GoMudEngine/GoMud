@@ -46,27 +46,51 @@ func TestApplyCategoryColorEmptyTextPassesThrough(t *testing.T) {
 	}
 }
 
-// TestSkipWrapTable encodes which Categories own their own layout
-// and must not be touched by the wrap stage.
-func TestSkipWrapTable(t *testing.T) {
-	mustSkip := []Category{
-		CategoryRoomDescription,
-		CategorySkillProgress,
-		CategoryNPCDialogue,
-		CategoryDialogueHint,
-	}
-	for _, c := range mustSkip {
-		if !skipWrap(c) {
-			t.Errorf("category %q should skip wrap", c)
-		}
-	}
+// TestShouldWrapTable encodes the opt-in wrap policy: only
+// narrative-prose categories get server-side wrap; everything else
+// passes through because its senders pre-format layout or emit short
+// single-line feedback.
+func TestShouldWrapTable(t *testing.T) {
 	mustWrap := []Category{
 		CategoryHitMelee, CategoryDodge, CategoryParry, CategoryBlock,
-		CategorySpeech, CategorySystem, CategoryDefault,
+		CategorySpellElemental, CategorySpellVital, CategorySpellFold,
+		CategoryGrappleFlow, CategorySubmission, CategoryDeath,
+		CategoryBroadcast,
 	}
 	for _, c := range mustWrap {
-		if skipWrap(c) {
-			t.Errorf("category %q must NOT skip wrap (would defeat per-user LineWidth)", c)
+		if !shouldWrap(c) {
+			t.Errorf("category %q should be in the wrap opt-in set", c)
+		}
+	}
+	mustPassThrough := []Category{
+		CategoryRoomDescription,  // template-laid side-by-side
+		CategorySkillProgress,    // fixed-width banner
+		CategorySystem,           // tables + short feedback
+		CategoryError,            // short single-line
+		CategoryWarning,          // short single-line
+		CategoryTip,              // hand-formatted
+		CategoryLoot,             // "You pick up X"
+		CategoryEquipment,        // "You wear X"
+		CategorySpeech,           // "X says, 'Hello'"
+		CategoryWhisper,          // short DMs
+		CategoryShout,            // short
+		CategoryOOC,              // short
+		CategoryEmote,            // short
+		CategoryNPCDialogue,      // hand-authored
+		CategoryDialogueHint,     // hand-authored
+		CategoryMobIdle,          // short ambient
+		CategoryMobEmote,         // short directed
+		CategoryRoomEntry,        // "X arrives from the south"
+		CategoryRoomExit,         // "X leaves to the north"
+		CategoryLogin,            // "X has logged in"
+		CategoryLogout,           // "X has gone offline"
+		CategoryBuffApply,        // hand-formatted
+		CategoryBuffExpire,       // hand-formatted
+		CategoryDefault,          // unchanged behavior
+	}
+	for _, c := range mustPassThrough {
+		if shouldWrap(c) {
+			t.Errorf("category %q must NOT wrap (would break pre-formatted output or wrap short single-line text)", c)
 		}
 	}
 }
