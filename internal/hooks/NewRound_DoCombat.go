@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
@@ -57,7 +58,7 @@ func DoCombat(e events.Event) events.ListenerReturn {
 					targetName = u.Character.Name
 				}
 			}
-			user.SendTextLegacy(fmt.Sprintf("You shift your focus to <ansi fg=\"mobname\">%s</ansi>!", targetName))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf("You shift your focus to <ansi fg=\"mobname\">%s</ansi>!", targetName))
 		}
 	}
 
@@ -106,9 +107,9 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			if uRoom != nil {
 				if RetargetOrEnd(user.Character, uRoom, user.UserId, 0) {
 					if mob := mobs.GetInstance(user.Character.Aggro.MobInstanceId); mob != nil {
-						user.SendTextLegacy(fmt.Sprintf("You turn your attention to <ansi fg=\"mobname\">%s</ansi>!", mob.Character.Name))
+						user.SendText(messaging.CategorySystem, fmt.Sprintf("You turn your attention to <ansi fg=\"mobname\">%s</ansi>!", mob.Character.Name))
 					} else if defUser := users.GetByUserId(user.Character.Aggro.UserId); defUser != nil {
-						user.SendTextLegacy(fmt.Sprintf("You turn your attention to <ansi fg=\"username\">%s</ansi>!", defUser.Character.Name))
+						user.SendText(messaging.CategorySystem, fmt.Sprintf("You turn your attention to <ansi fg=\"username\">%s</ansi>!", defUser.Character.Name))
 					}
 				}
 			}
@@ -228,7 +229,7 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 			if mob.Character.HasCondition(characters.ConditionShield) {
 				if mob.Character.GetConditionDuration(characters.ConditionShield) <= 1 {
 					mob.Character.RemoveCondition(characters.ConditionShield)
-					mobRoom.SendTextLegacy(fmt.Sprintf(
+					mobRoom.SendText(messaging.CategoryBuffExpire, fmt.Sprintf(
 						`<ansi fg="blue"><ansi fg="mobname">%s</ansi>'s Minor Shield dissipates.</ansi>`,
 						mob.Character.Name))
 				} else {

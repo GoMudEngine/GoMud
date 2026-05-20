@@ -4,6 +4,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -47,21 +48,25 @@ func handleCombatWaitRound(
 
 	roundResult := combat.GetWaitMessages(items.Wait, attackerChar, defenderChar, roleSource, roleTarget)
 
+	// AttackResult drainage — wait-round messages are typically passive
+	// "waiting" / "winding up" prose. Use CategoryDefault to keep the
+	// pipeline neutral; T18 smoke surfaces any class that should be
+	// promoted to a more specific Category.
 	for _, msg := range roundResult.MessagesToSource {
 		if attackerUser != nil {
-			attackerUser.SendTextLegacy(msg)
+			attackerUser.SendText(messaging.CategoryDefault, msg)
 		}
 	}
 	for _, msg := range roundResult.MessagesToTarget {
 		if defenderUser != nil {
-			defenderUser.SendTextLegacy(msg)
+			defenderUser.SendText(messaging.CategoryDefault, msg)
 		}
 	}
 	for _, msg := range roundResult.MessagesToSourceRoom {
-		sendVisualRoomText(attackerRoom, msg, viewerUserId)
+		sendVisualRoomText(attackerRoom, messaging.CategoryDefault, msg, viewerUserId)
 	}
 	for _, msg := range roundResult.MessagesToTargetRoom {
-		sendVisualRoomText(defenderRoom, msg, viewerUserId)
+		sendVisualRoomText(defenderRoom, messaging.CategoryDefault, msg, viewerUserId)
 	}
 	sendDarkRoomCombatFallback(attackerRoom, viewerUserId)
 	if defenderRoom != attackerRoom {

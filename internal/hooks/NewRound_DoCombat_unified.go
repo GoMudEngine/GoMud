@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/parties"
@@ -412,7 +413,7 @@ func emitReturnDamageText(atk, def actions.Actor, returnDmg int) {
 	}
 
 	excludes := playerExcludeIds(atk, def)
-	sendVisualRoomText(atkRoom, fmt.Sprintf(
+	sendVisualRoomText(atkRoom, messaging.CategoryHitMelee, fmt.Sprintf(
 		`<ansi fg="red">%s recoils from striking %s! (%s)</ansi>`,
 		atkToken, defToken, dmgDesc), excludes...)
 
@@ -484,7 +485,8 @@ func dispatchCritAndMessaging(atk, def actions.Actor, res *combat.AttackResult) 
 		def.SendTextLegacy(critResult.DefenderMsg)
 	}
 	if critResult.RoomMsg != `` && atkRoom != nil {
-		atkRoom.SendTextLegacy(critResult.RoomMsg, playerExcludeIds(atk, def)...)
+		// Crit effects (riposte / sweep / bash) are melee follow-ups.
+		atkRoom.SendText(messaging.CategoryHitMelee, critResult.RoomMsg, playerExcludeIds(atk, def)...)
 	}
 
 	// Buffs from the round (BuffSource → atk, BuffTarget → def).
@@ -508,12 +510,18 @@ func dispatchCritAndMessaging(atk, def actions.Actor, res *combat.AttackResult) 
 	}
 
 	// Room broadcasts with player-receiver excludes.
+	//
+	// AttackResult drainage: these slices mix hit / defense / grapple
+	// narration without classification on the channel. Per T11 design
+	// we tag heterogeneous drainage as CategoryDefault (no color); the
+	// per-line categorization belongs in combat/ at the producer site
+	// and is left for a future pass.
 	excludes := playerExcludeIds(atk, def)
 	for _, msg := range res.MessagesToSourceRoom {
-		sendVisualRoomText(atkRoom, msg, excludes...)
+		sendVisualRoomText(atkRoom, messaging.CategoryDefault, msg, excludes...)
 	}
 	for _, msg := range res.MessagesToTargetRoom {
-		sendVisualRoomText(defRoom, msg, excludes...)
+		sendVisualRoomText(defRoom, messaging.CategoryDefault, msg, excludes...)
 	}
 	sendDarkRoomCombatFallback(atkRoom, excludes...)
 	if defRoom != atkRoom {
@@ -608,7 +616,8 @@ func emitAttackerStatGain(atk actions.Actor, statName string, uid int) {
 		return
 	}
 	if tmpl, ok := characters.MobStatGainMessages[statName]; ok {
-		atkRoom.SendTextLegacy(fmt.Sprintf(tmpl, mobDisplayName(mob, atkRoom, 0)))
+		// Mob-side stat-gain flavor text — visible mob emote.
+		atkRoom.SendText(messaging.CategoryMobEmote, fmt.Sprintf(tmpl, mobDisplayName(mob, atkRoom, 0)))
 	}
 }
 

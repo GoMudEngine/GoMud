@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/dice"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -26,13 +27,13 @@ func resolveCharmSpell(user *users.UserRecord, targetMob *mobs.Mob, room *rooms.
 
 	// ── 1. Charm immunity ──────────────────────────────────────────────
 	if targetMob.CharmImmune {
-		user.SendTextLegacy(`That creature's mind is impervious to charm.`)
+		user.SendText(messaging.CategorySpellMental, `That creature's mind is impervious to charm.`)
 		return false
 	}
 
 	// ── 2. Companion cap ───────────────────────────────────────────────
 	if len(ch.Companions) >= ch.GetMaxCompanions() {
-		user.SendTextLegacy(`You cannot maintain any more companions.`)
+		user.SendText(messaging.CategorySystem, `You cannot maintain any more companions.`)
 		return false
 	}
 
@@ -85,7 +86,7 @@ func resolveCharmSpell(user *users.UserRecord, targetMob *mobs.Mob, room *rooms.
 			AutoAssist: true,
 		}
 		if !ch.AddCompanion(info) {
-			user.SendTextLegacy(`You cannot maintain any more companions.`)
+			user.SendText(messaging.CategorySystem, `You cannot maintain any more companions.`)
 			return false
 		}
 
@@ -107,10 +108,10 @@ func resolveCharmSpell(user *users.UserRecord, targetMob *mobs.Mob, room *rooms.
 			ch.EndAggro()
 		}
 
-		user.SendTextLegacy(fmt.Sprintf(
+		user.SendText(messaging.CategorySpellMental, fmt.Sprintf(
 			`<ansi fg="cyan">%s's eyes glaze as your will takes hold. It is yours.</ansi>`,
 			targetName))
-		sendVisualRoomText(room, fmt.Sprintf(
+		sendVisualRoomText(room, messaging.CategorySpellMental, fmt.Sprintf(
 			`<ansi fg="cyan"><ansi fg="username">%s</ansi> bends %s to their will!</ansi>`,
 			user.Character.Name, targetName), user.UserId)
 
@@ -118,10 +119,10 @@ func resolveCharmSpell(user *users.UserRecord, targetMob *mobs.Mob, room *rooms.
 	}
 
 	// ── Failure ────────────────────────────────────────────────────────
-	user.SendTextLegacy(fmt.Sprintf(
+	user.SendText(messaging.CategorySpellMental, fmt.Sprintf(
 		`<ansi fg="yellow">You reach for %s's mind, but its will is iron. The spell shatters.</ansi>`,
 		targetName))
-	sendVisualRoomText(room, fmt.Sprintf(
+	sendVisualRoomText(room, messaging.CategorySpellMental, fmt.Sprintf(
 		`<ansi fg="yellow"><ansi fg="username">%s</ansi>'s charm spell breaks against %s's resolve!</ansi>`,
 		user.Character.Name, targetName), user.UserId)
 

@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
@@ -120,7 +121,7 @@ func HandleLeave(e events.Event) events.ListenerReturn {
 
 	if _, ok := room.RemovePlayer(evt.UserId); ok {
 		tplTxt, _ := templates.Process("player-despawn", user.Character.Name)
-		sendVisualRoomText(room, tplTxt)
+		sendVisualRoomText(room, messaging.CategoryLogout, tplTxt)
 	}
 
 	tplTxt, _ := templates.Process("goodbye", nil, evt.UserId)

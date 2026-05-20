@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/facts"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobcommands"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -64,7 +65,7 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 					`A runner drops off a bundle of goods. <ansi fg="mobname">%s</ansi> checks the contents and nods.`,
 				}
 				msg := fmt.Sprintf(msgs[util.Rand(len(msgs))], mob.Character.Name)
-				sendVisualRoomText(room, msg)
+				sendVisualRoomText(room, messaging.CategoryMobIdle, msg)
 			}
 		}
 	}
@@ -95,11 +96,11 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 				for _, uid := range room.GetPlayers() {
 					u := users.GetByUserId(uid)
 					if u != nil && u.Character.HasFlagFromAnySource(buffs.NightVision) {
-						u.SendTextLegacy(msg)
+						u.SendText(messaging.CategoryMobIdle, msg)
 					}
 				}
 			} else {
-				sendVisualRoomText(room, msg)
+				sendVisualRoomText(room, messaging.CategoryMobIdle, msg)
 			}
 		}
 		// Emit world event for rare crafts

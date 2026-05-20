@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
@@ -56,7 +57,7 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 					region = zCfg.Region
 				}
 				if room := rooms.LoadRoom(firstMob.Character.RoomId); room != nil {
-					sendVisualRoomText(room, fmt.Sprintf(
+					sendVisualRoomText(room, messaging.CategoryMobEmote, fmt.Sprintf(
 						`The <ansi fg="mobname">%s</ansi> pack moves with renewed coordination.`,
 						bonus.GroupTag))
 				}
@@ -152,9 +153,9 @@ func tickMobProneRecovery(mob *mobs.Mob) {
 		if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
 			mName := mobDisplayName(mob, room, 0)
 			if success {
-				sendVisualRoomText(room, mName+" clambers to their feet in a rushed panic.")
+				sendVisualRoomText(room, messaging.CategoryMobEmote, mName+" clambers to their feet in a rushed panic.")
 			} else {
-				sendVisualRoomText(room, mName+" attempts to stand, but slips and falls in the chaos of battle.")
+				sendVisualRoomText(room, messaging.CategoryMobEmote, mName+" attempts to stand, but slips and falls in the chaos of battle.")
 			}
 		}
 	}
@@ -234,7 +235,7 @@ func tickMobMutationAcquisition(mob *mobs.Mob, mb *configs.Balance) {
 			newLevel := mob.Character.Mutations[mutId]
 			if spec := mutations.GetMutation(mutId); spec != nil {
 				if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
-					sendVisualRoomText(room, fmt.Sprintf(
+					sendVisualRoomText(room, messaging.CategoryMutation, fmt.Sprintf(
 						`<ansi fg="magenta">The mutation in <ansi fg="mobname">%s</ansi> intensifies.</ansi>`,
 						mob.Character.Name))
 				}
@@ -276,7 +277,7 @@ func tickMobMutationAcquisition(mob *mobs.Mob, mb *configs.Balance) {
 			mob.Character.Mutations[mutId] = 1
 			if spec := mutations.GetMutation(mutId); spec != nil {
 				if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
-					sendVisualRoomText(room, fmt.Sprintf(
+					sendVisualRoomText(room, messaging.CategoryMutation, fmt.Sprintf(
 						`<ansi fg="magenta">Something shifts in <ansi fg="mobname">%s</ansi>. %s</ansi>`,
 						mob.Character.Name, spec.Visual))
 				}
@@ -365,23 +366,23 @@ func tickMobCharmState(mob *mobs.Mob) {
 							comp.CharmDuration = newDuration
 							comp.CharmRerolls++
 
-							owner.SendTextLegacy(fmt.Sprintf(
+							owner.SendText(messaging.CategorySpellMental, fmt.Sprintf(
 								`<ansi fg="cyan">Your hold on %s wavers... but you reassert your will.</ansi>`,
 								comp.Name))
 							if comp.CharmRerolls >= 5 {
-								owner.SendTextLegacy(fmt.Sprintf(
+								owner.SendText(messaging.CategorySpellMental, fmt.Sprintf(
 									`<ansi fg="red">%s's eyes flash with defiance. Your control is slipping...</ansi>`,
 									comp.Name))
 							} else if comp.CharmRerolls >= 3 {
-								owner.SendTextLegacy(fmt.Sprintf(
+								owner.SendText(messaging.CategorySpellMental, fmt.Sprintf(
 									`<ansi fg="yellow">You sense %s's will straining against your bond...</ansi>`,
 									comp.Name))
 							}
 						} else {
-							owner.SendTextLegacy(fmt.Sprintf(
+							owner.SendText(messaging.CategorySpellMental, fmt.Sprintf(
 								`<ansi fg="red-bold">%s breaks free of your control!</ansi>`, comp.Name))
 							if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
-								sendVisualRoomText(room, fmt.Sprintf(
+								sendVisualRoomText(room, messaging.CategoryMobEmote, fmt.Sprintf(
 									`<ansi fg="red">%s snarls and turns on %s!</ansi>`,
 									mob.Character.Name, owner.Character.Name), owner.UserId)
 							}
@@ -432,7 +433,7 @@ func tickMobCrafting(mob *mobs.Mob) {
 		craftBonus := 1.0 + float64(recipe.SkillMinimum)*float64(configs.GetBalanceConfig().CraftDifficultyProgressionScale)
 		mob.Character.OnSkillUseScaled(recipe.Skill, 0, craftBonus)
 		if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
-			sendVisualRoomText(room, fmt.Sprintf(
+			sendVisualRoomText(room, messaging.CategoryMobIdle, fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi> finishes their work.`,
 				mob.Character.Name))
 		}
