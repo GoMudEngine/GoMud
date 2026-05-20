@@ -109,24 +109,27 @@ func replaceDarknessMessages(result *combat.AttackResult, sourceCanSee bool, tar
 		return
 	}
 
-	// Build replacement messages based on swing events
+	// Build replacement messages based on swing events. Dark-room
+	// substitutes carry the same per-line outcome category as the
+	// equivalent sighted line — defense crit / dodge → CategoryDodge,
+	// hits → CategoryHitMelee, miss/fumble → CategoryHitMelee.
 	if !sourceCanSee {
-		newMsgs := make([]string, 0, len(result.SwingEvents))
+		newMsgs := make([]combat.TaggedMessage, 0, len(result.SwingEvents))
 		for _, se := range result.SwingEvents {
 			if se.DoubleFumble {
-				// Keep comedy double fumble text
 				continue
 			}
-			if se.Fumble {
-				newMsgs = append(newMsgs, `<ansi fg="fumble-text">!!!</ansi> <ansi fg="yellow">You stumble badly in the darkness!</ansi> <ansi fg="fumble-text">!!!</ansi>`)
-			} else if se.Crit {
-				newMsgs = append(newMsgs, `<ansi fg="crit-text">***</ansi> <ansi fg="attack-good">You land a devastating blow in the dark!</ansi> <ansi fg="crit-text">***</ansi>`)
-			} else if se.DefenseCrit || se.DefenseUsed != "" {
-				newMsgs = append(newMsgs, `<ansi fg="attack-bad">Your attack is deflected by something!</ansi>`)
-			} else if se.Hit {
-				newMsgs = append(newMsgs, `<ansi fg="attack-good">You strike blindly and connect!</ansi>`)
-			} else {
-				newMsgs = append(newMsgs, `<ansi fg="yellow">You swing wildly in the darkness!</ansi>`)
+			switch {
+			case se.Fumble:
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryHitMelee, Text: `<ansi fg="fumble-text">!!!</ansi> <ansi fg="yellow">You stumble badly in the darkness!</ansi> <ansi fg="fumble-text">!!!</ansi>`})
+			case se.Crit:
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryHitMelee, Text: `<ansi fg="crit-text">***</ansi> <ansi fg="attack-good">You land a devastating blow in the dark!</ansi> <ansi fg="crit-text">***</ansi>`})
+			case se.DefenseCrit || se.DefenseUsed != "":
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryDodge, Text: `<ansi fg="attack-bad">Your attack is deflected by something!</ansi>`})
+			case se.Hit:
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryHitMelee, Text: `<ansi fg="attack-good">You strike blindly and connect!</ansi>`})
+			default:
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryHitMelee, Text: `<ansi fg="yellow">You swing wildly in the darkness!</ansi>`})
 			}
 		}
 		if len(newMsgs) > 0 {
@@ -135,22 +138,22 @@ func replaceDarknessMessages(result *combat.AttackResult, sourceCanSee bool, tar
 	}
 
 	if !targetCanSee {
-		newMsgs := make([]string, 0, len(result.SwingEvents))
+		newMsgs := make([]combat.TaggedMessage, 0, len(result.SwingEvents))
 		for _, se := range result.SwingEvents {
 			if se.DoubleFumble {
-				// Keep comedy double fumble text
 				continue
 			}
-			if se.Fumble {
-				newMsgs = append(newMsgs, `<ansi fg="yellow">You hear your attacker stumble!</ansi>`)
-			} else if se.Crit {
-				newMsgs = append(newMsgs, `<ansi fg="crit-text">***</ansi> <ansi fg="red">Something hits you hard in the dark!</ansi> <ansi fg="crit-text">***</ansi>`)
-			} else if se.DefenseCrit || se.DefenseUsed != "" {
-				newMsgs = append(newMsgs, `<ansi fg="defense-good">You fend off something in the dark!</ansi>`)
-			} else if se.Hit {
-				newMsgs = append(newMsgs, `<ansi fg="red">Something strikes you in the dark!</ansi>`)
-			} else {
-				newMsgs = append(newMsgs, `<ansi fg="yellow">You hear something whoosh past!</ansi>`)
+			switch {
+			case se.Fumble:
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryHitMelee, Text: `<ansi fg="yellow">You hear your attacker stumble!</ansi>`})
+			case se.Crit:
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryHitMelee, Text: `<ansi fg="crit-text">***</ansi> <ansi fg="red">Something hits you hard in the dark!</ansi> <ansi fg="crit-text">***</ansi>`})
+			case se.DefenseCrit || se.DefenseUsed != "":
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryDodge, Text: `<ansi fg="defense-good">You fend off something in the dark!</ansi>`})
+			case se.Hit:
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryHitMelee, Text: `<ansi fg="red">Something strikes you in the dark!</ansi>`})
+			default:
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryHitMelee, Text: `<ansi fg="yellow">You hear something whoosh past!</ansi>`})
 			}
 		}
 		if len(newMsgs) > 0 {

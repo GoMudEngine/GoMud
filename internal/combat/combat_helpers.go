@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -435,15 +436,20 @@ func filterDefensesForThirdParty(result *AttackResult, sourceChar *characters.Ch
 		}
 	}
 
-	// If no defenses remain, send vulnerability messages and auto-hit
+	// If no defenses remain, send vulnerability messages and auto-hit.
+	// Vulnerability prose is hit-prep — the swing is about to land.
 	if len(filteredDefenses) == 0 {
-		result.SendToTarget(fmt.Sprintf(
+		hitCat := messaging.CategoryHitMelee
+		if sourceChar.Equipment.Weapon.ItemId > 0 {
+			hitCat = CategoryForWeaponSubtype(sourceChar.Equipment.Weapon.GetSpec().Subtype)
+		}
+		result.SendToTarget(hitCat, fmt.Sprintf(
 			`<ansi fg="red">You're too entangled to defend against %s's attack!</ansi>`,
 			sourceChar.Name))
-		result.SendToSource(fmt.Sprintf(
+		result.SendToSource(hitCat, fmt.Sprintf(
 			`<ansi fg="attack-good">%s is helpless against your attack!</ansi>`,
 			targetChar.Name))
-		result.SendToSourceRoom(fmt.Sprintf(
+		result.SendToSourceRoom(hitCat, fmt.Sprintf(
 			`<ansi fg="combat">%s is defenseless against %s's attack!</ansi>`,
 			targetChar.Name, sourceChar.Name))
 	}
@@ -632,13 +638,17 @@ func handleDoubleFumble(result *AttackResult, sourceChar *characters.Character, 
 	// Pick a random comedy message
 	msg := doubleFumbleMessages[util.Rand(len(doubleFumbleMessages))]
 
-	result.SendToSource(fmt.Sprintf(`<ansi fg="fumble-text">!!!</ansi> `+
+	// Double-fumble: both sides fumble, no defense, no clean
+	// weapon category to pick. Use CategoryHitMelee as the combat-
+	// neutral hit-band default.
+	fumbleCat := messaging.CategoryHitMelee
+	result.SendToSource(fumbleCat, fmt.Sprintf(`<ansi fg="fumble-text">!!!</ansi> `+
 		`<ansi fg="yellow">`+msg.toAttacker+`</ansi>`+
 		` <ansi fg="fumble-text">!!!</ansi>`, targetChar.Name))
-	result.SendToTarget(fmt.Sprintf(`<ansi fg="fumble-text">!!!</ansi> `+
+	result.SendToTarget(fumbleCat, fmt.Sprintf(`<ansi fg="fumble-text">!!!</ansi> `+
 		`<ansi fg="yellow">`+msg.toDefender+`</ansi>`+
 		` <ansi fg="fumble-text">!!!</ansi>`, sourceChar.Name))
-	result.SendToSourceRoom(fmt.Sprintf(`<ansi fg="fumble-text">!!!</ansi> `+
+	result.SendToSourceRoom(fumbleCat, fmt.Sprintf(`<ansi fg="fumble-text">!!!</ansi> `+
 		`<ansi fg="yellow">`+msg.toRoom+`</ansi>`+
 		` <ansi fg="fumble-text">!!!</ansi>`, sourceChar.Name, targetChar.Name))
 }
@@ -857,24 +867,26 @@ func sendDefenseMessages(result *AttackResult, best bestDefenseResult, sourceCha
 			toRoomMsg = toRoomMsg.SetTokenValue(token, value)
 		}
 
-		result.SendToTarget(string(toDefenderMsg))
-		result.SendToSource(string(toAttackerMsg))
-		result.SendToSourceRoom(string(toRoomMsg))
+		defCat := CategoryForDefenseVerb(defenseVerb)
+		result.SendToTarget(defCat, string(toDefenderMsg))
+		result.SendToSource(defCat, string(toAttackerMsg))
+		result.SendToSourceRoom(defCat, string(toRoomMsg))
 		if sourceChar.RoomId != targetChar.RoomId {
-			result.SendToTargetRoom(string(toRoomMsg))
+			result.SendToTargetRoom(defCat, string(toRoomMsg))
 		}
 	} else {
-		result.SendToSource(fmt.Sprintf(`<ansi fg="attack-bad">%s %ss your attack!</ansi>`, targetChar.Name, defenseVerb))
-		result.SendToTarget(fmt.Sprintf(`<ansi fg="defense-good">You %s %s's attack!</ansi>`, defenseVerb, sourceChar.Name))
-		result.SendToSourceRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss %s's attack.</ansi>`, targetChar.Name, defenseVerb, sourceChar.Name))
+		defCat := CategoryForDefenseVerb(defenseVerb)
+		result.SendToSource(defCat, fmt.Sprintf(`<ansi fg="attack-bad">%s %ss your attack!</ansi>`, targetChar.Name, defenseVerb))
+		result.SendToTarget(defCat, fmt.Sprintf(`<ansi fg="defense-good">You %s %s's attack!</ansi>`, defenseVerb, sourceChar.Name))
+		result.SendToSourceRoom(defCat, fmt.Sprintf(`<ansi fg="combat">%s %ss %s's attack.</ansi>`, targetChar.Name, defenseVerb, sourceChar.Name))
 		if sourceChar.RoomId != targetChar.RoomId {
-			result.SendToTargetRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss an attack.</ansi>`, targetChar.Name, defenseVerb))
+			result.SendToTargetRoom(defCat, fmt.Sprintf(`<ansi fg="combat">%s %ss an attack.</ansi>`, targetChar.Name, defenseVerb))
 		}
 	}
 
 	// Stage 8.5: Add third-party context if applicable
 	if isThirdParty {
-		result.SendToTarget(fmt.Sprintf(
+		result.SendToTarget(CategoryForDefenseVerb(defenseVerb), fmt.Sprintf(
 			`<ansi fg="yellow">(Despite being entangled in a grapple!)</ansi>`))
 	}
 }
@@ -895,11 +907,12 @@ func sendFloorDefenseMessages(result *AttackResult, defType string, sourceChar *
 		defenseVerb = "avoid"
 	}
 
-	result.SendToSource(fmt.Sprintf(`<ansi fg="attack-bad">%s %ss your attack!</ansi>`, targetChar.Name, defenseVerb))
-	result.SendToTarget(fmt.Sprintf(`<ansi fg="defense-good">You %s %s's attack!</ansi>`, defenseVerb, sourceChar.Name))
-	result.SendToSourceRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss %s's attack.</ansi>`, targetChar.Name, defenseVerb, sourceChar.Name))
+	defCat := CategoryForDefenseVerb(defenseVerb)
+	result.SendToSource(defCat, fmt.Sprintf(`<ansi fg="attack-bad">%s %ss your attack!</ansi>`, targetChar.Name, defenseVerb))
+	result.SendToTarget(defCat, fmt.Sprintf(`<ansi fg="defense-good">You %s %s's attack!</ansi>`, defenseVerb, sourceChar.Name))
+	result.SendToSourceRoom(defCat, fmt.Sprintf(`<ansi fg="combat">%s %ss %s's attack.</ansi>`, targetChar.Name, defenseVerb, sourceChar.Name))
 	if sourceChar.RoomId != targetChar.RoomId {
-		result.SendToTargetRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss an attack.</ansi>`, targetChar.Name, defenseVerb))
+		result.SendToTargetRoom(defCat, fmt.Sprintf(`<ansi fg="combat">%s %ss an attack.</ansi>`, targetChar.Name, defenseVerb))
 	}
 }
 
@@ -1090,13 +1103,16 @@ func buildAttackMessages(result *AttackResult, sourceChar *characters.Character,
 		}
 	}
 
+	// Per-swing hit-band Category from the weapon subtype.
+	hitCat := CategoryForWeaponSubtype(ws.weaponSubType)
+
 	// Send to attacker
 	attackerMsg := string(toAttackerMsg)
 	if attackSourceDamage > 0 && attackSourceReduction > 0 {
 		attackerMsg += fmt.Sprintf(` <ansi fg="white">[%s was blocked]</ansi>`, GetDamageDescription(attackSourceReduction, sourceChar.HealthMax.Value))
 	}
 
-	result.SendToSource(string(attackerMsg))
+	result.SendToSource(hitCat, string(attackerMsg))
 
 	// Send to victim
 	defenderMsg := string(toDefenderMsg)
@@ -1104,17 +1120,17 @@ func buildAttackMessages(result *AttackResult, sourceChar *characters.Character,
 		defenderMsg += fmt.Sprintf(` <ansi fg="red">[you blocked %s]</ansi>`, GetDamageDescription(attackTargetReduction, targetChar.HealthMax.Value))
 	}
 
-	result.SendToTarget(string(defenderMsg))
+	result.SendToTarget(hitCat, string(defenderMsg))
 
 	// Send to room
-	result.SendToSourceRoom(
+	result.SendToSourceRoom(hitCat,
 		string(toAttackerRoomMsg.SetTokenValue(items.TokenTarget, targetChar.Name).
 			SetTokenValue(items.TokenTargetType, string(tgtType))),
 	)
 
 	// Send to defender room if separate
 	if len(string(toDefenderRoomMsg)) > 0 {
-		result.SendToTargetRoom(
+		result.SendToTargetRoom(hitCat,
 			string(toDefenderRoomMsg.SetTokenValue(items.TokenTarget, targetChar.Name).SetTokenValue(items.TokenTargetType, string(tgtType))),
 		)
 	}
@@ -1147,21 +1163,23 @@ func applyPetDamage(result *AttackResult, sourceChar *characters.Character, targ
 		petBaseDmg, petVar = dice.DiceToDistribution(petDmg.DiceCount, petDmg.SideCount, petDmg.BonusDamage)
 	}
 
+	// Pet damage is claws/bite/etc — natural-sharp band.
+	petCat := messaging.CategoryHitNaturalSharp
 	for i := 0; i < petAttacks; i++ {
 		attackTargetDamage := int(math.Round(math.Max(0, dice.Roll(petBaseDmg, petVar).Value)))
 
 		result.DamageToTarget += attackTargetDamage
 
 		toAttackerMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%s</ansi> to <ansi fg="%sname">%s</ansi>!`, sourceChar.Pet.DisplayName(), GetDamageDescription(attackTargetDamage, targetChar.HealthMax.Value), string(tgtType), targetChar.Name)
-		result.SendToSource(toAttackerMsg)
+		result.SendToSource(petCat, toAttackerMsg)
 
 		toDefenderMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%s</ansi> to you!`, sourceChar.Pet.DisplayName(), GetDamageDescription(attackTargetDamage, targetChar.HealthMax.Value))
-		result.SendToTarget(toDefenderMsg)
+		result.SendToTarget(petCat, toDefenderMsg)
 
 		toAttackerRoomMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%s</ansi> to <ansi fg="%sname">%s</ansi>!`, sourceChar.Pet.DisplayName(), GetDamageDescription(attackTargetDamage, targetChar.HealthMax.Value), string(tgtType), targetChar.Name)
-		result.SendToSourceRoom(toAttackerRoomMsg)
+		result.SendToSourceRoom(petCat, toAttackerRoomMsg)
 		if sourceChar.RoomId != targetChar.RoomId {
-			result.SendToTargetRoom(toAttackerRoomMsg)
+			result.SendToTargetRoom(petCat, toAttackerRoomMsg)
 		}
 	}
 }

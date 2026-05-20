@@ -364,23 +364,30 @@ func GetWaitMessages(stepType items.Intensity, sourceChar *characters.Character,
 		}
 	}
 
+	// Wait-round messages: source's weapon category for hit-band
+	// color; falls back to CategoryHitMelee if no main weapon.
+	waitCat := messaging.CategoryHitMelee
+	if sourceChar.Equipment.Weapon.ItemId > 0 {
+		waitCat = CategoryForWeaponSubtype(sourceChar.Equipment.Weapon.GetSpec().Subtype)
+	}
+
 	if string(toAttackerMsg) != `` {
-		attackResult.SendToSource(string(toAttackerMsg))
+		attackResult.SendToSource(waitCat, string(toAttackerMsg))
 	}
 
 	if !sourceChar.IsHidden() {
 
 		if string(toDefenderMsg) != `` {
-			attackResult.SendToTarget(string(toDefenderMsg))
+			attackResult.SendToTarget(waitCat, string(toDefenderMsg))
 		}
 
 		if string(toAttackerRoomMsg) != `` {
-			attackResult.SendToSourceRoom(string(toAttackerRoomMsg))
+			attackResult.SendToSourceRoom(waitCat, string(toAttackerRoomMsg))
 		}
 
 		if sourceChar.RoomId != targetChar.RoomId {
 			if string(toDefenderRoomMsg) != `` {
-				attackResult.SendToTargetRoom(string(toDefenderRoomMsg))
+				attackResult.SendToTargetRoom(waitCat, string(toDefenderRoomMsg))
 			}
 		}
 

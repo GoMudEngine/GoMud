@@ -47,29 +47,24 @@ func handleCombatWaitRound(
 
 	roundResult := combat.GetWaitMessages(items.Wait, attackerChar, defenderChar, roleSource, roleTarget)
 
-	// AttackResult drainage — wait-round messages are typically
-	// "waiting" / "winding up" prose between a swing and its
-	// resolution. categoryForAttack picks the same Category the
-	// resolution swing will use, so the wait + outcome render as a
-	// consistent color band.
-	attackerCat := categoryForAttack(&roundResult, false)
-	defenderCat := categoryForAttack(&roundResult, true)
-
+	// AttackResult drainage — each TaggedMessage carries the Category
+	// the producer chose for that line (weapon subtype for hits,
+	// defense verb for defenses).
 	for _, msg := range roundResult.MessagesToSource {
 		if attackerUser != nil {
-			attackerUser.SendText(attackerCat, msg)
+			attackerUser.SendText(msg.Category, msg.Text)
 		}
 	}
 	for _, msg := range roundResult.MessagesToTarget {
 		if defenderUser != nil {
-			defenderUser.SendText(defenderCat, msg)
+			defenderUser.SendText(msg.Category, msg.Text)
 		}
 	}
 	for _, msg := range roundResult.MessagesToSourceRoom {
-		sendVisualRoomText(attackerRoom, attackerCat, msg, viewerUserId)
+		sendVisualRoomText(attackerRoom, msg.Category, msg.Text, viewerUserId)
 	}
 	for _, msg := range roundResult.MessagesToTargetRoom {
-		sendVisualRoomText(defenderRoom, defenderCat, msg, viewerUserId)
+		sendVisualRoomText(defenderRoom, msg.Category, msg.Text, viewerUserId)
 	}
 	sendDarkRoomCombatFallback(attackerRoom, viewerUserId)
 	if defenderRoom != attackerRoom {

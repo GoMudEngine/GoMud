@@ -498,35 +498,31 @@ func dispatchCritAndMessaging(atk, def actions.Actor, res *combat.AttackResult) 
 	}
 
 	// Direct messages — Divergence #1.
-	// AttackResult.MessagesTo* carry heterogeneous combat narration
-	// (hits / defenses / grapple lines). categoryForAttack picks the
-	// best Category from AttackResult metadata: defense Category for
-	// defender-side drainage when a defense fired, otherwise a
-	// CategoryHit* matching the swing's weapon band. Heterogeneous
-	// lines within a drainage get the dominant Category — not per-line
-	// perfect, but visibly distinct from the pre-chunk-7 uncolored
-	// pass-through and consistent with the user-facing palette.
-	attackerCat := categoryForAttack(res, false)
-	defenderCat := categoryForAttack(res, true)
-
+	// AttackResult.MessagesTo* carry per-line TaggedMessage data
+	// (Category + Text). The combat producer tags each line at the
+	// site that creates it: hit lines get CategoryHit{Melee,Blunt,
+	// NaturalSharp,Ranged,Caster,Unarmed} from the weapon subtype,
+	// defense lines get CategoryDodge/Parry/Block from the verb.
+	// Multi-weapon rounds emit heterogeneous categories per swing —
+	// the drain just preserves each line's tag.
 	if atk.IsPlayer() {
 		for _, msg := range res.MessagesToSource {
-			atk.SendText(attackerCat, msg)
+			atk.SendText(msg.Category, msg.Text)
 		}
 	}
 	if def.IsPlayer() {
 		for _, msg := range res.MessagesToTarget {
-			def.SendText(defenderCat, msg)
+			def.SendText(msg.Category, msg.Text)
 		}
 	}
 
 	// Room broadcasts with player-receiver excludes.
 	excludes := playerExcludeIds(atk, def)
 	for _, msg := range res.MessagesToSourceRoom {
-		sendVisualRoomText(atkRoom, attackerCat, msg, excludes...)
+		sendVisualRoomText(atkRoom, msg.Category, msg.Text, excludes...)
 	}
 	for _, msg := range res.MessagesToTargetRoom {
-		sendVisualRoomText(defRoom, defenderCat, msg, excludes...)
+		sendVisualRoomText(defRoom, msg.Category, msg.Text, excludes...)
 	}
 	sendDarkRoomCombatFallback(atkRoom, excludes...)
 	if defRoom != atkRoom {
