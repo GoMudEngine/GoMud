@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/knowledge"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
@@ -49,7 +50,7 @@ func Plant(actor Actor, opts PlantOptions) PlantResult {
 
 	// Combat gate — can't plant while actively fighting.
 	if char.Aggro != nil {
-		actor.SendTextLegacy("You can't do that while in combat!")
+		actor.SendText(messaging.CategorySystem, "You can't do that while in combat!")
 		return PlantResult{Reason: "in combat"}
 	}
 
@@ -60,27 +61,27 @@ func Plant(actor Actor, opts PlantOptions) PlantResult {
 
 	// Under-attack gate — mobs with userId=0 short-circuit this harmlessly.
 	if room.AreMobsAttacking(actor.GetUserId()) {
-		actor.SendTextLegacy("You can't do that while you are under attack!")
+		actor.SendText(messaging.CategorySystem, "You can't do that while you are under attack!")
 		return PlantResult{Reason: "under attack"}
 	}
 
 	// Require a target.
 	if opts.TargetMobInstanceId == 0 && opts.TargetUserId == 0 &&
 		opts.ContainerNoun == "" {
-		actor.SendTextLegacy("Plant on whom?")
+		actor.SendText(messaging.CategorySystem, "Plant on whom?")
 		return PlantResult{Reason: "no target"}
 	}
 
 	// Require an item noun.
 	if opts.ItemNoun == "" {
-		actor.SendTextLegacy("Plant what?")
+		actor.SendText(messaging.CategorySystem, "Plant what?")
 		return PlantResult{Reason: "no item"}
 	}
 
 	// Find item in actor's backpack.
 	plantItem, found := char.FindInBackpack(opts.ItemNoun)
 	if !found {
-		actor.SendTextLegacy("You don't have that.")
+		actor.SendText(messaging.CategorySystem, "You don't have that.")
 		return PlantResult{Reason: "item not in backpack"}
 	}
 
@@ -131,7 +132,7 @@ func plantOnMob(actor Actor, mobInstanceId int, plantItem items.Item,
 
 	m := mobs.GetInstance(mobInstanceId)
 	if m == nil {
-		actor.SendTextLegacy("They seem to have vanished.")
+		actor.SendText(messaging.CategorySystem, "They seem to have vanished.")
 		return PlantResult{Reason: "target not found"}
 	}
 
@@ -180,7 +181,7 @@ func plantOnMob(actor Actor, mobInstanceId int, plantItem items.Item,
 			})
 		}
 
-		actor.SendTextLegacy(fmt.Sprintf(
+		actor.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`You deftly slip the <ansi fg="itemname">%s</ansi> into `+
 				`<ansi fg="mobname">%s</ansi>'s belongings unnoticed.`,
 			plantItem.DisplayName(), m.Character.Name))
@@ -193,12 +194,12 @@ func plantOnMob(actor Actor, mobInstanceId int, plantItem items.Item,
 	}
 
 	// Failure — detected.
-	actor.SendTextLegacy(fmt.Sprintf(
+	actor.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`<ansi fg="mobname">%s</ansi> catches you in the act!`,
 		m.Character.Name))
 
 	if room != nil {
-		room.SendTextVisualLegacy(
+		room.SendTextVisual(messaging.CategoryMobEmote,
 			fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> gets caught trying to plant `+
 					`something on <ansi fg="mobname">%s</ansi>!`,
@@ -262,7 +263,7 @@ func plantOnPlayer(actor Actor, targetUserId int, plantItem items.Item,
 
 	targetUser := users.GetByUserId(targetUserId)
 	if targetUser == nil {
-		actor.SendTextLegacy("They seem to have vanished.")
+		actor.SendText(messaging.CategorySystem, "They seem to have vanished.")
 		return PlantResult{Reason: "target not found"}
 	}
 
@@ -273,7 +274,7 @@ func plantOnPlayer(actor Actor, targetUserId int, plantItem items.Item,
 	success, _, _, _ := dice.OpposedRollStat(attackerScore, defenderScore)
 
 	if !success {
-		actor.SendTextLegacy(fmt.Sprintf(
+		actor.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> catches you in the act!`,
 			targetUser.Character.Name))
 		actor.GetCharacter().Awareness.TransitionToRevealing(state.TransitionReason{
@@ -321,7 +322,7 @@ func plantOnPlayer(actor Actor, targetUserId int, plantItem items.Item,
 		sneakScore := CalcSneakScoreVsObserver(actor.GetCharacter(), targetUser.Character, actor.GetRoom())
 		detected, _, _, _ := dice.OpposedRollStat(searchScore, sneakScore)
 		if detected {
-			targetUser.SendTextLegacy(fmt.Sprintf(
+			targetUser.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi> slips something into your `+
 					`belongings!`,
 				actor.GetName()))
@@ -339,7 +340,7 @@ func plantInContainer(actor Actor, containerName string, plantItem items.Item,
 	room := actor.GetRoom()
 	container, ok := room.Containers[containerName]
 	if !ok {
-		actor.SendTextLegacy("You don't see that here.")
+		actor.SendText(messaging.CategorySystem, "You don't see that here.")
 		return PlantResult{Reason: "not found"}
 	}
 
@@ -412,12 +413,12 @@ func plantInContainer(actor Actor, containerName string, plantItem items.Item,
 	}
 
 	if !success {
-		actor.SendTextLegacy(fmt.Sprintf(
+		actor.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> spots you slipping something into `+
 				`the <ansi fg="itemname">%s</ansi>!`,
 			spotterName, containerName))
 
-		room.SendTextVisualLegacy(
+		room.SendTextVisual(messaging.CategoryMobEmote,
 			fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> is caught planting something `+
 					`in the <ansi fg="itemname">%s</ansi>!`,
@@ -454,7 +455,7 @@ func plantInContainer(actor Actor, containerName string, plantItem items.Item,
 		})
 	}
 
-	actor.SendTextLegacy(fmt.Sprintf(
+	actor.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`You quietly slip your <ansi fg="itemname">%s</ansi> into `+
 			`the <ansi fg="itemname">%s</ansi>.`,
 		plantItem.DisplayName(), containerName))

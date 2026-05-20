@@ -97,6 +97,11 @@ func (a *MobActor) OnCriticalFailure(skillName string) {
 // sendRoomTextDarknessAware is a darkness-aware room broadcast. In lit rooms
 // it delegates to room.SendTextLegacy() directly. In dark rooms only players who
 // have the NightVision flag receive the message.
+//
+// DEPRECATED: redundant since the messaging pipeline (T1-T13) handles
+// dark-room sight gating per-recipient. Flagged for removal by T16's sunset
+// survey; the body is left intact so the existing MobActor.SendRoomText
+// shape keeps the same observable behavior in the meantime.
 func sendRoomTextDarknessAware(room *rooms.Room, msg string, excludeUserIds ...int) {
 	if room.GetVisibility() >= 1 {
 		room.SendTextLegacy(msg, excludeUserIds...)

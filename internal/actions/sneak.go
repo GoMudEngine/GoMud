@@ -2,6 +2,7 @@ package actions
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/state"
@@ -102,8 +103,8 @@ func Sneak(actor Actor) SneakResult {
 		success, _, _, _ := dice.OpposedRollStat(sneakScore, observerScore)
 		if !success {
 			// Notify the observing player.
-			observer.SendTextLegacy(
-				`<ansi fg="username">` + actor.GetName() + `</ansi> tries to hide but you notice them.`,
+			observer.SendText(messaging.CategorySystem,
+				`<ansi fg="username">`+actor.GetName()+`</ansi> tries to hide but you notice them.`,
 			)
 			char.Awareness.ResolveConcealment(false, state.TransitionReason{
 				Trigger: awareness.TriggerSneakFailed,

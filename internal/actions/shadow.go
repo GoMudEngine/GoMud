@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -39,21 +40,21 @@ func Shadow(actor Actor, opts ShadowOptions) ShadowResult {
 
 	// Must be hidden to shadow.
 	if !char.IsHidden() {
-		actor.SendTextLegacy(
-			"You must be hidden to shadow someone. " +
+		actor.SendText(messaging.CategorySystem,
+			"You must be hidden to shadow someone. "+
 				`Try <ansi fg="command">sneak</ansi> first.`)
 		return ShadowResult{Reason: "not hidden"}
 	}
 
 	// Combat gate.
 	if char.Aggro != nil {
-		actor.SendTextLegacy("You can't do that while in combat!")
+		actor.SendText(messaging.CategorySystem, "You can't do that while in combat!")
 		return ShadowResult{Reason: "in combat"}
 	}
 
 	// Require a target.
 	if opts.TargetMobInstanceId == 0 && opts.TargetUserId == 0 {
-		actor.SendTextLegacy("Shadow whom?")
+		actor.SendText(messaging.CategorySystem, "Shadow whom?")
 		return ShadowResult{Reason: "no target"}
 	}
 
@@ -81,7 +82,7 @@ func Shadow(actor Actor, opts ShadowOptions) ShadowResult {
 func shadowMob(actor Actor, mobInstanceId int, cfg configs.Balance) ShadowResult {
 	m := mobs.GetInstance(mobInstanceId)
 	if m == nil {
-		actor.SendTextLegacy("They seem to have vanished.")
+		actor.SendText(messaging.CategorySystem, "They seem to have vanished.")
 		return ShadowResult{Reason: "target not found"}
 	}
 
@@ -89,7 +90,7 @@ func shadowMob(actor Actor, mobInstanceId int, cfg configs.Balance) ShadowResult
 	char.SetMiscData("shadow-target-user", nil)
 	char.SetMiscData("shadow-target-mob", m.InstanceId)
 
-	actor.SendTextLegacy(fmt.Sprintf(
+	actor.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`You begin shadowing <ansi fg="mobname">%s</ansi>, `+
 			`moving silently in their wake.`,
 		m.Character.Name))
@@ -129,7 +130,7 @@ func shadowMob(actor Actor, mobInstanceId int, cfg configs.Balance) ShadowResult
 func shadowPlayer(actor Actor, targetUserId int, cfg configs.Balance) ShadowResult {
 	targetUser := users.GetByUserId(targetUserId)
 	if targetUser == nil {
-		actor.SendTextLegacy("They seem to have vanished.")
+		actor.SendText(messaging.CategorySystem, "They seem to have vanished.")
 		return ShadowResult{Reason: "target not found"}
 	}
 
@@ -137,7 +138,7 @@ func shadowPlayer(actor Actor, targetUserId int, cfg configs.Balance) ShadowResu
 	char.SetMiscData("shadow-target-user", targetUser.UserId)
 	char.SetMiscData("shadow-target-mob", nil)
 
-	actor.SendTextLegacy(fmt.Sprintf(
+	actor.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`You begin shadowing <ansi fg="username">%s</ansi>, `+
 			`watching their every move.`,
 		targetUser.Character.Name))
@@ -171,7 +172,7 @@ func shadowPlayer(actor Actor, targetUserId int, cfg configs.Balance) ShadowResu
 	searchScore := CalcSearchScore(targetUser.Character)
 	detected, _, _, _ := dice.OpposedRollStat(searchScore, sneakScore)
 	if detected {
-		targetUser.SendTextLegacy("You sense someone following close behind you.")
+		targetUser.SendText(messaging.CategorySystem, "You sense someone following close behind you.")
 	}
 
 	return ShadowResult{

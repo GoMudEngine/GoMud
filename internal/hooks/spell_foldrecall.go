@@ -22,21 +22,21 @@ func validateFoldRecall(actor actions.Actor) bool {
 	// allow_recall: false).
 	if currentRoom := rooms.LoadRoom(currentRoomId); currentRoom != nil {
 		if blocked, ok := currentRoom.GetTempData("allow_recall").(bool); ok && !blocked {
-			actor.SendTextLegacy("Something about this place prevents you from recalling.")
+			actor.SendText(messaging.CategorySpellFold, "Something about this place prevents you from recalling.")
 			return false
 		}
 	}
 
 	anchorRoom := getMiscDataInt(char, "fold-anchor-room")
 	if anchorRoom <= 0 {
-		actor.SendTextLegacy(`You reach for the Veil, but there is no anchor to ` +
-			`pull you. Set one first with ` +
+		actor.SendText(messaging.CategorySpellFold, `You reach for the Veil, but there is no anchor to `+
+			`pull you. Set one first with `+
 			`<ansi fg="command">cast fold-anchor</ansi>.`)
 		return false
 	}
 
 	if anchorRoom == currentRoomId {
-		actor.SendTextLegacy("You are already standing on your anchor.")
+		actor.SendText(messaging.CategorySpellFold, "You are already standing on your anchor.")
 		return false
 	}
 
@@ -53,7 +53,7 @@ func resolveFoldRecall(actor actions.Actor) {
 	currentRoomId := char.RoomId
 
 	if anchorRoom <= 0 || anchorRoom == currentRoomId {
-		actor.SendTextLegacy("The fold collapses — no valid anchor found.")
+		actor.SendText(messaging.CategorySpellFold, "The fold collapses — no valid anchor found.")
 		return
 	}
 
@@ -63,7 +63,7 @@ func resolveFoldRecall(actor actions.Actor) {
 	// Move the actor first; only broadcast on success so a failed teleport
 	// doesn't leave the departure room thinking the actor vanished.
 	if !teleportActor(actor, anchorRoom) {
-		actor.SendTextLegacy("The fold collapses — no valid anchor found.")
+		actor.SendText(messaging.CategorySpellFold, "The fold collapses — no valid anchor found.")
 		return
 	}
 
@@ -75,7 +75,7 @@ func resolveFoldRecall(actor actions.Actor) {
 			actor.GetName()), actor.GetUserId())
 	}
 
-	actor.SendTextLegacy("You fold through the Veil and arrive at your anchor point!")
+	actor.SendText(messaging.CategorySpellFold, "You fold through the Veil and arrive at your anchor point!")
 
 	// Arrival broadcast on the new room.
 	if newRoom := rooms.LoadRoom(anchorRoom); newRoom != nil {

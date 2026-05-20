@@ -96,7 +96,7 @@ func handleCombatRound(
 		// Divergence: only player attackers get the "can't seem to find
 		// your target" feedback. Mob attackers silently bail (no chat).
 		if atk.IsPlayer() {
-			atk.SendTextLegacy("You can't seem to find your target.")
+			atk.SendText(messaging.CategorySystem, "You can't seem to find your target.")
 		}
 		return
 	}
@@ -173,7 +173,7 @@ func resolveCombatTarget(atk, def actions.Actor, roundNumber uint64) bool {
 		// Divergence: only player attackers get the "can't be found" message
 		// (mobs have no connection).
 		if atk.IsPlayer() {
-			atk.SendTextLegacy(`Your target can't be found.`)
+			atk.SendText(messaging.CategorySystem, `Your target can't be found.`)
 		}
 		atkChar.EndAggro()
 		return false
@@ -195,7 +195,7 @@ func resolveCombatTarget(atk, def actions.Actor, roundNumber uint64) bool {
 					}
 				}
 			}
-			atk.SendTextLegacy(`Your target can't be found.`)
+			atk.SendText(messaging.CategorySystem, `Your target can't be found.`)
 			atkChar.EndAggro()
 			return false
 		}
@@ -209,7 +209,7 @@ func resolveCombatTarget(atk, def actions.Actor, roundNumber uint64) bool {
 					}
 				}
 			}
-			atk.SendTextLegacy(`Your target can't be found.`)
+			atk.SendText(messaging.CategorySystem, `Your target can't be found.`)
 			atkChar.EndAggro()
 			return false
 		}
@@ -369,7 +369,7 @@ func applyCombatDamageBonuses(atk, def actions.Actor, res *combat.AttackResult) 
 			// feeds" message — mobs have no connection.
 			if atk.IsPlayer() {
 				healDesc := combat.GetHealDescription(healAmt, atkChar.HealthMax.Value)
-				atk.SendTextLegacy(fmt.Sprintf(
+				atk.SendText(messaging.CategoryHitMelee, fmt.Sprintf(
 					`<ansi fg="green">Your weapon feeds on the blow! (%s)</ansi>`,
 					healDesc))
 			}
@@ -419,13 +419,13 @@ func emitReturnDamageText(atk, def actions.Actor, returnDmg int) {
 
 	// Player attacker: send the private "you recoil" message.
 	if atk.IsPlayer() {
-		atk.SendTextLegacy(fmt.Sprintf(
+		atk.SendText(messaging.CategoryHitMelee, fmt.Sprintf(
 			`<ansi fg="red">You recoil from striking %s! (%s)</ansi>`,
 			defToken, dmgDesc))
 	}
 	// Player defender: send the "X recoils from striking you" message.
 	if def.IsPlayer() {
-		def.SendTextLegacy(fmt.Sprintf(
+		def.SendText(messaging.CategoryHitMelee, fmt.Sprintf(
 			`<ansi fg="red">%s recoils from striking you! (%s)</ansi>`,
 			atkToken, dmgDesc))
 	}
@@ -479,10 +479,10 @@ func dispatchCritAndMessaging(atk, def actions.Actor, res *combat.AttackResult) 
 
 	// Crit message routing — Divergence #1.
 	if critResult.AttackerMsg != `` && atk.IsPlayer() {
-		atk.SendTextLegacy(critResult.AttackerMsg)
+		atk.SendText(messaging.CategoryHitMelee, critResult.AttackerMsg)
 	}
 	if critResult.DefenderMsg != `` && def.IsPlayer() {
-		def.SendTextLegacy(critResult.DefenderMsg)
+		def.SendText(messaging.CategoryHitMelee, critResult.DefenderMsg)
 	}
 	if critResult.RoomMsg != `` && atkRoom != nil {
 		// Crit effects (riposte / sweep / bash) are melee follow-ups.
@@ -498,14 +498,18 @@ func dispatchCritAndMessaging(atk, def actions.Actor, res *combat.AttackResult) 
 	}
 
 	// Direct messages — Divergence #1.
+	// AttackResult.MessagesToSource/Target carry heterogeneous combat
+	// narration (hits / defenses / grapple lines). Per T11 design we tag
+	// the drainage as CategoryDefault here; per-line categorization belongs
+	// at the producer site in combat/ and is left for a future pass.
 	if atk.IsPlayer() {
 		for _, msg := range res.MessagesToSource {
-			atk.SendTextLegacy(msg)
+			atk.SendText(messaging.CategoryDefault, msg)
 		}
 	}
 	if def.IsPlayer() {
 		for _, msg := range res.MessagesToTarget {
-			def.SendTextLegacy(msg)
+			def.SendText(messaging.CategoryDefault, msg)
 		}
 	}
 
@@ -809,11 +813,11 @@ func emitRetargetMessage(atk actions.Actor) {
 		return
 	}
 	if mob := mobs.GetInstance(atkChar.Aggro.MobInstanceId); mob != nil {
-		atk.SendTextLegacy(fmt.Sprintf(
+		atk.SendText(messaging.CategorySystem, fmt.Sprintf(
 			"You turn your attention to <ansi fg=\"mobname\">%s</ansi>!",
 			mob.Character.Name))
 	} else if newDef := users.GetByUserId(atkChar.Aggro.UserId); newDef != nil {
-		atk.SendTextLegacy(fmt.Sprintf(
+		atk.SendText(messaging.CategorySystem, fmt.Sprintf(
 			"You turn your attention to <ansi fg=\"username\">%s</ansi>!",
 			newDef.Character.Name))
 	}

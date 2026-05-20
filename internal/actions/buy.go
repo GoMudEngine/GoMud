@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
@@ -155,7 +156,7 @@ func validatePurchase(
 		weight := newItm.GetSpec().Weight
 		if char.GetCarriedWeight()+weight > char.CarryCapacity() {
 			if buyer.IsPlayer() {
-				buyer.SendTextLegacy("You can't carry any more.")
+				buyer.SendText(messaging.CategoryError, "You can't carry any more.")
 			}
 			return purchaseContext{}, BuyReasonOverburdened, false
 		}
@@ -166,7 +167,7 @@ func validatePurchase(
 		if shopMob != nil {
 			shopMob.Command(`say I don't have that for sale right now.`)
 		} else if shopUser != nil && buyer.IsPlayer() {
-			buyer.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> doesn't have that for sale right now.`, shopUser.Character.Name))
+			buyer.SendText(messaging.CategoryError, fmt.Sprintf(`<ansi fg="username">%s</ansi> doesn't have that for sale right now.`, shopUser.Character.Name))
 		}
 		return purchaseContext{}, BuyReasonOutOfStock, false
 	}
@@ -194,7 +195,7 @@ func validatePurchase(
 		tradeItemName = tradeItm.Name()
 		if _, found := char.FindInBackpack(tradeItemName); !found {
 			if buyer.IsPlayer() {
-				buyer.SendTextLegacy(fmt.Sprintf(`You must have a <ansi fg="itemname">%s</ansi> to trade for that.`, tradeItm.DisplayName()))
+				buyer.SendText(messaging.CategoryError, fmt.Sprintf(`You must have a <ansi fg="itemname">%s</ansi> to trade for that.`, tradeItm.DisplayName()))
 			}
 			return purchaseContext{}, BuyReasonMissingTradeItem, false
 		}
@@ -209,7 +210,7 @@ func validatePurchase(
 	} else if shopUser != nil {
 		if !shopUser.Character.Shop.Destock(matchedShopItem) {
 			if buyer.IsPlayer() {
-				buyer.SendTextLegacy(`That's not for sale.`)
+				buyer.SendText(messaging.CategoryError, `That's not for sale.`)
 			}
 			return purchaseContext{}, BuyReasonOutOfStock, false
 		}
@@ -279,7 +280,7 @@ func sendMerchantMessage(buyer Actor, shopMob *mobs.Mob, shopUser *users.UserRec
 	if shopMob != nil {
 		shopMob.Command(mobMsg)
 	} else if shopUser != nil && buyer.IsPlayer() {
-		buyer.SendTextLegacy(userMsg)
+		buyer.SendText(messaging.CategoryError, userMsg)
 	}
 }
 
@@ -330,10 +331,10 @@ func Buy(buyer Actor, opts BuyOptions) BuyResult {
 			// Self-targeting collapses to NotFound under ExcludeUserId;
 			// check explicitly so we can return BuyReasonSelfTarget.
 			if pId, _ := room.FindByName(mercName); pId == buyer.GetUserId() {
-				buyer.SendTextLegacy("You can't buy from yourself.")
+				buyer.SendText(messaging.CategoryError, "You can't buy from yourself.")
 				return BuyResult{Reason: BuyReasonSelfTarget, Requested: quantity}
 			}
-			buyer.SendTextLegacy("Visit a merchant to purchase objects or services.")
+			buyer.SendText(messaging.CategorySystem, "Visit a merchant to purchase objects or services.")
 			return BuyResult{Reason: BuyReasonNoMerchant, Requested: quantity}
 		} else {
 			return BuyResult{Reason: BuyReasonNoMerchant, Requested: quantity}
@@ -345,7 +346,7 @@ func Buy(buyer Actor, opts BuyOptions) BuyResult {
 
 	if len(merchantPlayers) == 0 && len(merchantMobs) == 0 {
 		if buyer.IsPlayer() {
-			buyer.SendTextLegacy("Visit a merchant to purchase objects or services.")
+			buyer.SendText(messaging.CategorySystem, "Visit a merchant to purchase objects or services.")
 		}
 		return BuyResult{Reason: BuyReasonNoMerchant, Requested: quantity}
 	}
@@ -369,7 +370,7 @@ func Buy(buyer Actor, opts BuyOptions) BuyResult {
 		}
 		if quantity > 1 && purchased < quantity {
 			if buyer.IsPlayer() {
-				buyer.SendTextLegacy(fmt.Sprintf(`<ansi fg="yellow">Purchased %d of %d before running short.</ansi>`, purchased, quantity))
+				buyer.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="yellow">Purchased %d of %d before running short.</ansi>`, purchased, quantity))
 			}
 		}
 		return BuyResult{
@@ -586,7 +587,7 @@ func tryPurchaseFromInventory(buyer Actor, request string, shopMob *mobs.Mob, sh
 	// path, since ShopInventory bypasses validatePurchase.
 	if char.GetCarriedWeight()+matched.item.GetSpec().Weight > char.CarryCapacity() {
 		if buyer.IsPlayer() {
-			buyer.SendTextLegacy("You can't carry any more.")
+			buyer.SendText(messaging.CategoryError, "You can't carry any more.")
 		}
 		return BuyResult{Reason: BuyReasonOverburdened}
 	}
@@ -602,7 +603,7 @@ func tryPurchaseFromInventory(buyer Actor, request string, shopMob *mobs.Mob, sh
 		if shopMob != nil {
 			shopMob.Command(`say You don't have enough gold for that.`)
 		} else if buyer.IsPlayer() {
-			buyer.SendTextLegacy(`You don't have enough gold for that.`)
+			buyer.SendText(messaging.CategoryError, `You don't have enough gold for that.`)
 		}
 		return BuyResult{Reason: BuyReasonInsufficientGold}
 	}
@@ -671,7 +672,7 @@ func executePurchaseItem(buyer Actor, shopMob *mobs.Mob, shopUser *users.UserRec
 				u.EventLog.Add(`shop`, fmt.Sprintf(`Purchased a <ansi fg="itemname">%s</ansi> from <ansi fg="mobname">%s</ansi> for %s`, newItm.DisplayName(), shopMob.Character.Name, tradeInString))
 			}
 		}
-		buyer.SendTextLegacy(fmt.Sprintf(`You purchase the <ansi fg="itemname">%s</ansi> from <ansi fg="mobname">%s</ansi> for %s.`, newItm.DisplayName(), shopMob.Character.Name, tradeInString))
+		buyer.SendText(messaging.CategoryLoot, fmt.Sprintf(`You purchase the <ansi fg="itemname">%s</ansi> from <ansi fg="mobname">%s</ansi> for %s.`, newItm.DisplayName(), shopMob.Character.Name, tradeInString))
 		buyer.SendRoomText(fmt.Sprintf(`<ansi fg="username">%s</ansi> purchases the <ansi fg="itemname">%s</ansi> from <ansi fg="mobname">%s</ansi>.`, buyerName, newItm.DisplayName(), shopMob.Character.Name), true)
 	} else if shopUser != nil {
 		if buyer.IsPlayer() {
@@ -679,8 +680,8 @@ func executePurchaseItem(buyer Actor, shopMob *mobs.Mob, shopUser *users.UserRec
 				u.EventLog.Add(`shop`, fmt.Sprintf(`Purchased a <ansi fg="itemname">%s</ansi> from <ansi fg="username">%s</ansi> for %s.`, newItm.DisplayName(), shopUser.Character.Name, tradeInString))
 			}
 		}
-		buyer.SendTextLegacy(fmt.Sprintf(`You purchase the <ansi fg="itemname">%s</ansi> from <ansi fg="username">%s</ansi> for %s.`, newItm.DisplayName(), shopUser.Character.Name, tradeInString))
-		shopUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> purchased the <ansi fg="itemname">%s</ansi> you were selling for %s.`, buyerName, newItm.DisplayName(), tradeInString))
+		buyer.SendText(messaging.CategoryLoot, fmt.Sprintf(`You purchase the <ansi fg="itemname">%s</ansi> from <ansi fg="username">%s</ansi> for %s.`, newItm.DisplayName(), shopUser.Character.Name, tradeInString))
+		shopUser.SendText(messaging.CategoryLoot, fmt.Sprintf(`<ansi fg="username">%s</ansi> purchased the <ansi fg="itemname">%s</ansi> you were selling for %s.`, buyerName, newItm.DisplayName(), tradeInString))
 		buyer.SendRoomText(fmt.Sprintf(`<ansi fg="username">%s</ansi> purchases the <ansi fg="itemname">%s</ansi> from <ansi fg="username">%s</ansi>.`, buyerName, newItm.DisplayName(), shopUser.Character.Name), true)
 	}
 
@@ -699,7 +700,7 @@ func executePurchaseBuff(buyer Actor, shopMob *mobs.Mob, shopUser *users.UserRec
 				u.EventLog.Add(`shop`, fmt.Sprintf(`Purchased a <ansi fg="buff">%s</ansi> enchantment from <ansi fg="mobname">%s</ansi> for %s`, buffSpec.Name, shopMob.Character.Name, tradeInString))
 			}
 		}
-		buyer.SendTextLegacy(fmt.Sprintf(`You pay %s to <ansi fg="mobname">%s</ansi>.`, tradeInString, shopMob.Character.Name))
+		buyer.SendText(messaging.CategoryLoot, fmt.Sprintf(`You pay %s to <ansi fg="mobname">%s</ansi>.`, tradeInString, shopMob.Character.Name))
 		buyer.SendRoomText(fmt.Sprintf(`<ansi fg="username">%s</ansi> pays %s to <ansi fg="mobname">%s</ansi>.`, buyerName, tradeInString, shopMob.Character.Name), true)
 		shopMob.Command(`emote mutters a soft incantation.`, 1)
 	} else if shopUser != nil {
@@ -708,8 +709,8 @@ func executePurchaseBuff(buyer Actor, shopMob *mobs.Mob, shopUser *users.UserRec
 				u.EventLog.Add(`shop`, fmt.Sprintf(`Purchased a <ansi fg="buff">%s</ansi> enchantment from  <ansi fg="username">%s</ansi> for %s`, buffSpec.Name, shopUser.Character.Name, tradeInString))
 			}
 		}
-		buyer.SendTextLegacy(fmt.Sprintf(`You pay %s to <ansi fg="username">%s</ansi>.`, tradeInString, shopUser.Character.Name))
-		shopUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> pays you %s for an enchantment.`, buyerName, tradeInString))
+		buyer.SendText(messaging.CategoryLoot, fmt.Sprintf(`You pay %s to <ansi fg="username">%s</ansi>.`, tradeInString, shopUser.Character.Name))
+		shopUser.SendText(messaging.CategoryLoot, fmt.Sprintf(`<ansi fg="username">%s</ansi> pays you %s for an enchantment.`, buyerName, tradeInString))
 		buyer.SendRoomText(fmt.Sprintf(`<ansi fg="username">%s</ansi> pays to <ansi fg="username">%s</ansi> for an enchantment.`, buyerName, shopUser.Character.Name), true)
 		// player-merchant doesn't emote (matches existing behavior).
 	}

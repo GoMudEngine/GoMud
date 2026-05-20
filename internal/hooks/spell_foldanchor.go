@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 )
 
 func resolveFoldAnchor(actor actions.Actor) {
@@ -14,7 +15,7 @@ func resolveFoldAnchor(actor actions.Actor) {
 	roomId := char.RoomId
 	char.SetMiscData("fold-anchor-room", roomId)
 
-	actor.SendTextLegacy(`A Chrysalis anchor locks into place here. ` +
+	actor.SendText(messaging.CategorySpellFold, `A Chrysalis anchor locks into place here. `+
 		`Cast <ansi fg="command">fold-recall</ansi> from elsewhere to return.`)
 
 	actor.SendRoomText(fmt.Sprintf(
