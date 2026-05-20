@@ -166,3 +166,67 @@ func TestTargetWeakestMobInRoom_RatioBelowCap(t *testing.T) {
 		t.Errorf("expected Failure (target ratio above 0.5 ceiling), got %v", r)
 	}
 }
+
+func TestActTargetRandomPlayerInRoom_PicksAPlayer(t *testing.T) {
+	cleanRoom := seedTestRoom(t, 1, "TestZone")
+	defer cleanRoom()
+	cleanMob := seedTestMob(t, 5, 105, 1, "Thief")
+	defer cleanMob()
+	cleanUser1 := seedTestUser(t, 1, "alice", "Alice", 1)
+	defer cleanUser1()
+	cleanUser2 := seedTestUser(t, 2, "bob", "Bob", 1)
+	defer cleanUser2()
+
+	thief := mobs.GetInstance(105)
+	thief.Character.HealthMax.Value = 500
+	thief.Character.Health = 500
+
+	room := rooms.LoadRoom(1)
+	room.AddMob(105)
+	room.AddPlayer(1)
+	room.AddPlayer(2)
+
+	ctx := &EvalContext{InstanceId: 105, RoomId: 1}
+	if r := actTargetRandomPlayerInRoom(map[string]any{}, ctx); r != Success {
+		t.Errorf("expected Success with players present, got %v", r)
+	}
+	// SoftTarget must be set — NOT Aggro. Chunk 2.7 fix: picking a target
+	// for skullduggery must not silently engage combat.
+	if ctx.SoftTarget.IsZero() {
+		t.Fatal("expected SoftTarget to be set, got zero value")
+	}
+	pickedId := ctx.SoftTarget.UserId
+	if pickedId != 1 && pickedId != 2 {
+		t.Errorf("expected SoftTarget.UserId to be 1 or 2, got %d", pickedId)
+	}
+	// Combat must NOT be engaged — Aggro must remain nil.
+	if thief.Character.Aggro != nil {
+		t.Errorf("expected Aggro to remain nil (no combat engagement), got %+v", thief.Character.Aggro)
+	}
+}
+
+func TestActTargetRandomPlayerInRoom_EmptyRoom(t *testing.T) {
+	cleanRoom := seedTestRoom(t, 1, "TestZone")
+	defer cleanRoom()
+	cleanMob := seedTestMob(t, 5, 105, 1, "Thief")
+	defer cleanMob()
+
+	thief := mobs.GetInstance(105)
+	thief.Character.HealthMax.Value = 500
+	thief.Character.Health = 500
+
+	room := rooms.LoadRoom(1)
+	room.AddMob(105)
+	// No players added.
+
+	ctx := &EvalContext{InstanceId: 105, RoomId: 1}
+	if r := actTargetRandomPlayerInRoom(map[string]any{}, ctx); r != Failure {
+		t.Errorf("expected Failure with no players, got %v", r)
+	}
+	if !ctx.SoftTarget.IsZero() {
+		t.Errorf("expected SoftTarget to remain zero, got %+v", ctx.SoftTarget)
+	}
+	if thief.Character.Aggro != nil {
+		t.Errorf("expected Aggro to remain nil, got %+v", thief.Character.Aggro)
+	}
+}

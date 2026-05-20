@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/badinputtracker"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -34,7 +35,7 @@ func BadCommands(rest string, user *users.UserRecord, room *rooms.Room, flags ev
 	badCommandTableData := templates.GetTable(`Bad Commands`, headers, rows)
 	tplTxt, _ := templates.Process("tables/generic", badCommandTableData, user.UserId, user.UserId)
 
-	user.SendText(tplTxt)
+	user.SendText(messaging.CategorySystem, tplTxt)
 
 	return true, nil
 }

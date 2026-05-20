@@ -89,7 +89,7 @@ should always agree.
 | 2.4 | Tactical | Mob `consider` + threat-aware behaviors | S | 2.2 | Done |
 | 2.5 | Tactical | Mutations on mobs | L | — | Done |
 | 2.6 | Tactical | Sunset legacy tactics engine | L | — | Done |
-| 2.7 | Tactical | Mob skullduggery suite | M | — | Not started |
+| 2.7 | Tactical | Mob skullduggery suite | M | — | Done |
 | 2.8 | Tactical | Mob scout / track / scan | S | — | Not started |
 | 2.9 | Tactical | Mob `forage` as a command | S | — | Not started |
 | 2.10 | Tactical | PvM/MvP/PvP/MvM parity audit | M | 2.1–2.9 | Not started |
@@ -117,7 +117,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 14 / 41 done • 0 in progress • 27 not started.
+**Roll-up:** 15 / 41 done • 0 in progress • 26 not started.
 
 ---
 
@@ -358,13 +358,14 @@ Build vocabulary before the planner.
 - **Shipped:** Zero new btree primitives (mob_has_buff + invert decorator covers missing_buff). 6 new archetypes (defensive_caster + 5 boss). 5 archetype augmentations. 44 mob YAML migrations (24 preset-only + 5 named bosses + 9 generic inline-tactics). Engine deletion: `internal/mobai/` directory entirely removed (10 files including tactics.go, reactor.go, actions.go, types.go, memory.go, triggers.go and tests). `CombatMemory` substrate migrated to `internal/mobs/combat_memory.go` (it was used outside the tactics engine for grudge tracking). Mob struct fields `Tactics`, `TacticPreset`, `ReactionDelay`, `TacticalDiscipline` removed. Hook callers in `internal/hooks/` cleaned (MobAI_Reactor.go deleted entirely). `internal/mobs/context.md` + `internal/behaviortree/context.md` updated. `project_tactics_cast_preemption.md` MEMORY entry deleted. **Known follow-up:** Edrin/Sylara's conviction-ward opening cast lacks a self-gate because conviction-ward is a shield spell (no buff_id). Bosses re-cast wastefully after shield expires; behavior is not broken, just wasteful. Polish item for a future tuning pass. Spec at `docs/superpowers/specs/2026-05-12-mob-aliveness-2.6-sunset-tactics-engine-design.md`, plan at `docs/superpowers/plans/2026-05-12-mob-aliveness-2.6-sunset-tactics-engine.md`.
 
 ### 2.7 Mob skullduggery suite
-**Status:** Not started • **Size:** M
+**Status:** Done (2026-05-15) • **Size:** M
 
 - **Goal:** Mob versions of `steal`, `pickpocket`, `sneak`, `hide`, `plant` (and maybe `defuse`/`shadow`).
 - **In:** Mobcommands for each, behavior tree integration, archetype tagging (only thieves/scouts use these).
 - **Out:** —
 - **Depends on:** —
 - **Why:** Bandit NPCs that can't pickpocket aren't bandits. Major aliveness lever.
+- **Shipped:** All 5 skullduggery verbs lifted into `internal/actions/` via the actor pattern (Sneak/Steal/Plant/Defuse/Shadow). Player wrappers thinned; mob wrappers added; btree primitives (`try_steal`, `try_sneak`, `try_plant`, `try_shadow`, `try_defuse`) + state-query conditions (`mob_is_hidden`, `target_is_hidden`, `target_has_gold`) + new picker (`target_random_player_in_room`) added. New `thief` archetype with steal-and-flee loop (panic-flee, power-overmatch combat, self-defense, steal+flee, re-stealth). Thornwall highwayman flipped to thief archetype. Mob-on-player detection roll (search vs sneak) on Steal mirror to the existing player-on-mob path; gold transfer happens regardless of detection, only the victim's awareness is detection-gated. Legacy `stealth_detection.go` shim + pickpocket test placeholder sunset (triple-removal in go.go left intact — load-bearing for permabuffs, see followup memory). **In-game smoke validated 2026-05-15** after the combat-state-machines side quest (chunk 0) landed: Thornwall highwayman attempts hide → steals 73 gold from smoketester → flees, never enters combat. Originally (2026-05-13) the highwayman picked up a sword, hid, then opened with grapple — root cause was `target_random_player_in_room` calling `SetAggro`, which is the in-combat flag. The chunk-0 `EvalContext.SoftTarget` slot structurally prevents that bug class. Spec at `docs/superpowers/specs/2026-05-13-mob-aliveness-2.7-skullduggery-suite-design.md`, plan at `docs/superpowers/plans/2026-05-13-mob-aliveness-2.7-skullduggery-suite.md`, smoke report at `tools/testing/reports/2026-05-15-local-feature-tester-chunk-0-combat-state-machines.md`.
 
 ### 2.8 Mob scout / track / scan
 **Status:** Not started • **Size:** S
@@ -636,6 +637,49 @@ Validate the framework against real content, then scale.
 - **Out:** —
 - **Depends on:** 6.5
 - **Why:** Goal engines + persistent state + schedules can compound. Catch degradation while we still have headroom.
+
+---
+
+## Parallel arc — Combat state machines + messaging framework
+
+A multi-chunk infrastructure arc that ran in parallel with Phase 1
+substrate work on the `feature/mob-aliveness-1.3-crimes` branch. Not
+part of any aliveness phase, but tracked here because it shipped on
+the same branch and unblocks downstream aliveness work (mob position
+narration, dormant-mob hibernation, sight-gated infrared rendering,
+color-coded combat text, etc.).
+
+| Sub-chunk | Title | Date | Status |
+|-----------|-------|------|--------|
+| 0  | Combat state-machine framework (chunk 0 substrate) | 2026-05-13 | Done |
+| 1  | Awareness state machine | 2026-05-14 | Done |
+| 2  | Combat-phase state machine | 2026-05-15 | Done |
+| 3  | Life state machine | 2026-05-15 | Done |
+| 4a | Position FSM scaffold (dormant) | 2026-05-16 | Done |
+| 4b | Position writers + readers cutover | 2026-05-16 | Done |
+| 4c | Weapon-reach utility + position rebalance | 2026-05-16 | Done |
+| 4d | Submissions + outside-damage drift | 2026-05-17 | Done |
+| 4e | Third-party interactions | 2026-05-18 | Done |
+| 4f | Position balance + spell disruption | 2026-05-19 | Done |
+| 5  | Presence state machine (AFK + mob hibernation) | 2026-05-19 | Done |
+| 6  | Perception state machine (dormant) | 2026-05-19 | Done |
+| 7  | Centralized messaging framework | 2026-05-20 | Done |
+
+**Chunk 7 — Centralized messaging framework (2026-05-20):**
+Successor to chunk 6's dormant Perception FSM. Built
+`internal/messaging/` (Category enum, 7-stage pipeline,
+sight predicates, infrared anonymizer, ANSI-aware wrapper,
+categorized SendText API). Migrated ~2300 callsites across
+combat/, hooks/, mobcommands/, usercommands/, rooms/, actions/,
+behaviortree/, questengine/, modules/, world.go. Deleted all
+legacy SendText shims and duplicate helpers (canSeeInRoom × 2,
+sendRoomTextDarknessAware, wrapText, *.SendTextLegacy, etc.).
+Fixed the long-standing companion-name leak (pet names no longer
+visible to blind/dark-room observers). Spec at
+`docs/superpowers/specs/2026-05-19-messaging-framework-design.md`.
+
+Arc complete: chunks 0-7 all shipped on the same feature branch.
+Mob-aliveness Phase 1 substrate work fully resumes from here.
 
 ---
 

@@ -2,6 +2,8 @@ mobid: 320
 zone: Instance Planar Oasis
 archetype: fighting
 behavior_archetype: leader
+submission_policy: lethal
+surrender_policy: never
 routine: planar_oasis_pack
 statpool: 4
 hostile: true

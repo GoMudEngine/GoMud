@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -18,7 +19,7 @@ func Assist(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	partyInfo := parties.Get(user.UserId)
 	if partyInfo == nil {
-		user.SendText(`You are not in a party.`)
+		user.SendText(messaging.CategorySystem, `You are not in a party.`)
 		return true, nil
 	}
 
@@ -34,7 +35,7 @@ func Assist(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 					continue
 				}
 				if member := users.GetByUserId(memberId); member != nil {
-					if member.Character.Aggro != nil && member.Character.RoomId == user.Character.RoomId {
+					if member.Character.IsInCombat() && member.Character.RoomId == user.Character.RoomId {
 						assistTarget = member
 						break
 					}
@@ -59,34 +60,34 @@ func Assist(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	if assistTarget == nil {
-		user.SendText(`No party member found to assist.`)
+		user.SendText(messaging.CategorySystem, `No party member found to assist.`)
 		return true, nil
 	}
 
-	if assistTarget.Character.Aggro == nil {
-		user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is not fighting anyone.`, assistTarget.Character.Name))
+	if !assistTarget.Character.IsInCombat() {
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> is not fighting anyone.`, assistTarget.Character.Name))
 		return true, nil
 	}
 
 	if assistTarget.Character.RoomId != user.Character.RoomId {
-		user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is not here.`, assistTarget.Character.Name))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> is not here.`, assistTarget.Character.Name))
 		return true, nil
 	}
 
 	// Attack whatever they're fighting
-	if mobInstId := assistTarget.Character.Aggro.MobInstanceId; mobInstId > 0 {
+	if mobInstId := assistTarget.Character.EngagedTarget().MobInstanceId; mobInstId > 0 {
 		if m := mobs.GetInstance(mobInstId); m != nil {
 			return Attack(fmt.Sprintf("#%d", mobInstId), user, room, flags)
 		}
 	}
 
-	if targetUserId := assistTarget.Character.Aggro.UserId; targetUserId > 0 {
+	if targetUserId := assistTarget.Character.EngagedTarget().UserId; targetUserId > 0 {
 		if p := users.GetByUserId(targetUserId); p != nil {
 			return Attack(fmt.Sprintf("@%d", targetUserId), user, room, flags)
 		}
 	}
 
-	user.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi>'s target is no longer here.`, assistTarget.Character.Name))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi>'s target is no longer here.`, assistTarget.Character.Name))
 	return true, nil
 }
 

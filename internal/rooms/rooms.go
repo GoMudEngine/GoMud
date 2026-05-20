@@ -15,9 +15,12 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutators"
 	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -228,10 +231,10 @@ func (r *Room) UpdateCorpses(roundNow uint64) {
 		if corpse.Prunable {
 			removeIdx = append(removeIdx, idx)
 			if corpse.MobId > 0 {
-				r.SendText(fmt.Sprintf(`A <ansi fg="mob-corpse">%s</ansi> crumbles to dust.`, corpse.DisplayName()))
+				r.SendText(messaging.CategoryRoomDescription, fmt.Sprintf(`A <ansi fg="mob-corpse">%s</ansi> crumbles to dust.`, corpse.DisplayName()))
 			}
 			if corpse.UserId > 0 {
-				r.SendText(fmt.Sprintf(`A <ansi fg="user-corpse">%s corpse</ansi> crumbles to dust.`, corpse.Character.Name))
+				r.SendText(messaging.CategoryRoomDescription, fmt.Sprintf(`A <ansi fg="user-corpse">%s corpse</ansi> crumbles to dust.`, corpse.Character.Name))
 			}
 		}
 		r.Corpses[idx] = corpse
@@ -254,43 +257,111 @@ func (r *Room) SendTextCommunication(txt string, excludeUserIds ...int) {
 
 }
 
-func (r *Room) SendText(txt string, excludeUserIds ...int) {
-
-	events.AddToQueue(events.Message{
-		RoomId:         r.RoomId,
-		Text:           txt + "\n",
-		ExcludeUserIds: excludeUserIds,
-		IsQuiet:        false,
-	})
-
-}
-
-// SendTextVisual sends a visual message that requires sight. In dark rooms,
-// only players with nightvision receive the message. Use this instead of
-// SendText when the message contains character names or visual descriptions
-// that shouldn't be visible in darkness.
-func (r *Room) SendTextVisual(txt string, excludeUserIds ...int) {
-	if r.GetVisibility() >= 1 {
-		r.SendText(txt, excludeUserIds...)
-		return
-	}
-	// Dark room — send only to nightvision players
+// SendText delivers an audio-channel (unfiltered) message to every
+// recipient in the room. Bypasses sight gate + anonymize; runs
+// normalize, color, and wrap. Blinded observers still receive it.
+func (r *Room) SendText(cat messaging.Category, txt string, excludeUserIds ...int) {
 	for _, uid := range r.GetPlayers() {
-		excluded := false
-		for _, eid := range excludeUserIds {
-			if uid == eid {
-				excluded = true
-				break
-			}
-		}
-		if excluded {
+		if excluded(uid, excludeUserIds) {
 			continue
 		}
 		u := users.GetByUserId(uid)
-		if u != nil && u.Character.HasFlagFromAnySource(buffs.NightVision) {
-			u.SendText(txt)
+		if u == nil {
+			continue
+		}
+		rendered := messaging.RenderForRecipient(messaging.RenderInput{
+			Category:  cat,
+			Text:      txt,
+			Channel:   messaging.ChannelAudio,
+			LineWidth: u.GetLineWidth(),
+		})
+		if rendered == "" {
+			continue
+		}
+		events.AddToQueue(events.Message{
+			UserId: u.UserId,
+			Text:   rendered + "\n",
+		})
+	}
+}
+
+// SendTextVisual delivers a sight-gated message. Per-recipient sight
+// is computed via messaging.CanSeeClearly / CanSeeShapes; infrared
+// observers get an anonymized render.
+func (r *Room) SendTextVisual(cat messaging.Category, txt string, excludeUserIds ...int) {
+	for _, uid := range r.GetPlayers() {
+		if excluded(uid, excludeUserIds) {
+			continue
+		}
+		u := users.GetByUserId(uid)
+		if u == nil {
+			continue
+		}
+		decision := messaging.SightNone
+		switch {
+		case messaging.CanSeeClearly(u.Character, r):
+			decision = messaging.SightFull
+		case messaging.CanSeeShapes(u.Character, r):
+			decision = messaging.SightShapes
+		}
+		rendered := messaging.RenderForRecipient(messaging.RenderInput{
+			Category:      cat,
+			Text:          txt,
+			Channel:       messaging.ChannelVisual,
+			SightDecision: decision,
+			LineWidth:     u.GetLineWidth(),
+		})
+		if rendered == "" {
+			continue
+		}
+		events.AddToQueue(events.Message{
+			UserId: u.UserId,
+			Text:   rendered + "\n",
+		})
+	}
+}
+
+// SendTextVisualToUser delivers a sight-gated message to a single
+// user, gated by their character's vision in this room. Use this
+// from sites that previously called user.SendText with visual
+// content — the audit (T13) migrates those callers here. This lives
+// on Room (not UserRecord) because rooms imports users; the inverse
+// edge would create a cycle.
+func (r *Room) SendTextVisualToUser(u *users.UserRecord, cat messaging.Category, txt string) {
+	if u == nil {
+		return
+	}
+	decision := messaging.SightNone
+	switch {
+	case messaging.CanSeeClearly(u.Character, r):
+		decision = messaging.SightFull
+	case messaging.CanSeeShapes(u.Character, r):
+		decision = messaging.SightShapes
+	}
+	rendered := messaging.RenderForRecipient(messaging.RenderInput{
+		Category:      cat,
+		Text:          txt,
+		Channel:       messaging.ChannelVisual,
+		SightDecision: decision,
+		LineWidth:     u.GetLineWidth(),
+	})
+	if rendered == "" {
+		return
+	}
+	events.AddToQueue(events.Message{
+		UserId: u.UserId,
+		Text:   rendered + "\n",
+	})
+}
+
+// excluded is a tiny helper for the shared exclusion check.
+func excluded(uid int, excludeIds []int) bool {
+	for _, eid := range excludeIds {
+		if uid == eid {
+			return true
 		}
 	}
+	return false
 }
 
 func (r *Room) PlaySound(soundId string, category string, excludeUserIds ...int) {
@@ -596,7 +667,7 @@ func (r *Room) Prepare(checkAdjacentRooms bool) {
 	if len(r.Containers) > 0 {
 		for k, c := range r.Containers {
 			if c.DespawnRound > 0 && c.DespawnRound <= roundNow {
-				r.SendText(fmt.Sprintf(`The <ansi fg="container">%s</ansi> crumbles to dust, and is gone.`, k))
+				r.SendText(messaging.CategoryRoomDescription, fmt.Sprintf(`The <ansi fg="container">%s</ansi> crumbles to dust, and is gone.`, k))
 				delete(r.Containers, k)
 			}
 		}
@@ -671,7 +742,7 @@ func (r *Room) Prepare(checkAdjacentRooms bool) {
 				}
 
 				if spawnInfo.ForceHostile {
-					mob.Hostile = true
+					mob.AutoAggro = true
 				}
 
 				if spawnInfo.MaxWander != 0 {
@@ -823,7 +894,7 @@ func (r *Room) AddMob(mobInstanceId int) {
 		MobInstanceId: mobInstanceId,
 		FromRoomId:    mob.Character.RoomId,
 		ToRoomId:      r.RoomId,
-		Unseen:        mob.Character.HasBuffFlag(buffs.Hidden),
+		Unseen:        mob.Character.IsHidden(),
 	})
 
 	mob.Character.RoomId = r.RoomId
@@ -1165,7 +1236,7 @@ func (r *Room) GetMobs(findTypes ...FindFlag) []int {
 		}
 
 		// Useful to find any mobs that will always attack players
-		if mob.Hostile && typeFlag&FindHostile == FindHostile {
+		if mob.AutoAggro && typeFlag&FindHostile == FindHostile {
 			mobMatches = append(mobMatches, mobId)
 			continue
 		}
@@ -1180,7 +1251,7 @@ func (r *Room) GetMobs(findTypes ...FindFlag) []int {
 		// If not allied with players
 		// and not current aggressive to anything
 		// and won't automatically attack players
-		if typeFlag&FindNeutral == FindNeutral && !isCharmed && mob.Character.Aggro == nil && !mob.Hostile {
+		if typeFlag&FindNeutral == FindNeutral && !isCharmed && mob.Character.Aggro == nil && !mob.AutoAggro {
 			mobMatches = append(mobMatches, mobId)
 			continue
 		}
@@ -2136,12 +2207,16 @@ func (r *Room) RoundTick() {
 
 	}
 
-	// If any players are in the room
-	// Update all mobs in the room that they've seen a player
+	// If any players are in the room, wake any Dormant mobs.
+	// Chunk 5 (Presence): replaces the old BoredomCounter = 0 reset.
 	if len(r.players) > 0 {
 		for _, mobInstanceId := range r.mobs {
 			if mob := mobs.GetInstance(mobInstanceId); mob != nil {
-				mob.BoredomCounter = 0
+				if mob.Character.Presence != nil && mob.Character.Presence.State() == presence.Dormant {
+					_ = mob.Character.Presence.TransitionTo(presence.Active,
+						state.TransitionReason{Trigger: presence.TriggerPlayerEntry})
+					mob.Character.LastDormantEntryRound = 0
+				}
 			}
 		}
 	}

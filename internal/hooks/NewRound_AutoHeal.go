@@ -9,10 +9,13 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/mutators"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/life"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -43,17 +46,16 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 
 		regenMultiplier := roomRegenMultiplier(rooms.LoadRoom(user.Character.RoomId))
 
-		inCombat := user.Character.Aggro != nil
+		inCombat := user.Character.IsInCombat()
 		healthStart := user.Character.Health
 
 		// Death on zero — any path that dropped Health below 1 (damage,
-		// DoT, grenade, etc.) gets caught here on the next round tick and
-		// converted into a suicide (drops items/money, transports to the
-		// land of the dead). DoCombat's end-of-round resolution handles
-		// the same check for in-combat deaths; AutoHeal is the catch-all
-		// for non-combat deaths (grenade, DoT outside combat, etc.).
-		if user.Character.Health < 1 {
-			user.Command(`suicide`)
+		// DoT, grenade, etc.) gets caught here on the next round tick.
+		// DoCombat handles in-combat deaths same-tick; AutoHeal is the
+		// catch-all for non-combat deaths (poison, DoT, grenade, etc.).
+		// Environmental death has no player killer — empty ActorRef.
+		if user.Character.Health < 1 && user.Character.IsAlive() {
+			user.Character.Die(state.ActorRef{}, life.TriggerHealthZero)
 			continue
 		}
 
@@ -87,13 +89,13 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 							if userRoom := rooms.LoadRoom(user.Character.RoomId); userRoom != nil {
 								userRoom.AddItem(pot, false)
 							}
-							user.SendText(fmt.Sprintf(
+							user.SendText(messaging.CategoryWarning, fmt.Sprintf(
 								`<ansi fg="yellow">Your <ansi fg="itemname">%s</ansi> has destabilized and falls out of your bandolier onto the ground.</ansi>`,
 								pot.DisplayName()))
 						} else {
 							// Spoiled potions go to backpack
 							user.Character.Items = append(user.Character.Items, pot)
-							user.SendText(fmt.Sprintf(
+							user.SendText(messaging.CategoryWarning, fmt.Sprintf(
 								`<ansi fg="yellow">Your <ansi fg="itemname">%s</ansi> has spoiled and falls out of your bandolier.</ansi>`,
 								pot.DisplayName()))
 						}
@@ -149,7 +151,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				// Emit tick feedback while a heal-spell ConditionRegen is active
 				// so players get confirmation their mend-wounds (or similar) is working.
 				if user.Character.HasCondition(characters.ConditionRegen) {
-					user.SendText(fmt.Sprintf(
+					user.SendText(messaging.CategorySpellVital, fmt.Sprintf(
 						`<ansi fg="green">Your wounds knit closed. (%s)</ansi>`,
 						combat.GetHealDescription(healAmt, user.Character.HealthMax.Value)))
 				}
@@ -163,7 +165,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 						healAmt = 1
 					}
 					user.Character.Heal(healAmt)
-					user.SendText(fmt.Sprintf(
+					user.SendText(messaging.CategorySpellVital, fmt.Sprintf(
 						`<ansi fg="green">Your wounds knit closed. (%s)</ansi>`,
 						combat.GetHealDescription(healAmt, user.Character.HealthMax.Value)))
 				}
@@ -176,7 +178,8 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 					poisonDmg = 1
 				}
 				user.Character.Health -= poisonDmg
-				user.SendText(`<ansi fg="green">The poison burns through your veins!</ansi>`)
+				cancelCraftOrSalvageOnDamage(user.Character)
+				user.SendText(messaging.CategoryToxin, `<ansi fg="green">The poison burns through your veins!</ansi>`)
 			}
 
 			// Stage 42.7: Apply bleed DoT damage
@@ -186,7 +189,8 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 					bleedDmg = 1
 				}
 				user.Character.Health -= bleedDmg
-				user.SendText(`<ansi fg="red">Blood seeps from your wounds!</ansi>`)
+				cancelCraftOrSalvageOnDamage(user.Character)
+				user.SendText(messaging.CategoryToxin, `<ansi fg="red">Blood seeps from your wounds!</ansi>`)
 			}
 		}
 
@@ -263,7 +267,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			continue
 		}
 
-		mobInCombat := mob.Character.Aggro != nil
+		mobInCombat := mob.Character.IsInCombat()
 		mobRegenMult := roomRegenMultiplier(rooms.LoadRoom(mob.Character.RoomId))
 
 		// Health regen (out of combat only, unless heal-spell ConditionRegen)
@@ -348,6 +352,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				poisonDmg = 1
 			}
 			mob.Character.Health -= poisonDmg
+			cancelCraftOrSalvageOnDamage(&mob.Character)
 			if mob.Character.Health < 1 {
 				mob.Character.Health = 0
 			}
@@ -360,6 +365,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				bleedDmg = 1
 			}
 			mob.Character.Health -= bleedDmg
+			cancelCraftOrSalvageOnDamage(&mob.Character)
 			if mob.Character.Health < 1 {
 				mob.Character.Health = 0
 			}

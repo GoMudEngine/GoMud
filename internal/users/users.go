@@ -15,6 +15,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/util"
 
 	//
@@ -295,6 +297,15 @@ func LoginUser(user *UserRecord, connectionId connections.ConnectionId) (*UserRe
 
 	mudlog.Info("LOGIN", "userId", user.UserId)
 
+	// Defensive: re-seed the Character's userId back-reference.
+	// LoadUser already does this for the fresh-login path, but a
+	// zombie-reconnect path above (line 233-237) swaps in the
+	// already-loaded zombieUser, whose Character may predate the
+	// LoadUser fix. Setting it here too means every active session
+	// has Character.userId == UserRecord.UserId regardless of how
+	// the user got into the session.
+	user.Character.SetUserId(user.UserId)
+
 	// Set their input round to current to track idle time fresh
 	user.SetLastInputRound(util.GetRoundCount())
 
@@ -387,6 +398,14 @@ func LogOutUserByConnectionId(connectionId connections.ConnectionId) error {
 	if u != nil {
 		u.Character.Validate()
 		SaveUser(*u)
+
+		// Chunk 5 (Presence): fire Disconnected BEFORE the user is removed
+		// from the active maps so the T8 scheduler-cancel observer can still
+		// find the character via its ActorRef.
+		if u.Character != nil && u.Character.Presence != nil {
+			_ = u.Character.Presence.TransitionTo(presence.Disconnected,
+				state.TransitionReason{Trigger: presence.TriggerTCPClosed})
+		}
 	}
 
 	userManager.mu.Lock()
@@ -456,6 +475,18 @@ func LoadUser(username string, skipValidation ...bool) (*UserRecord, error) {
 			SaveUser(*loadedUser)
 		}
 	}
+
+	// Seed the Character's userId back-reference. UserRecord.UserId is
+	// the authoritative source; Character.userId is its private mirror
+	// used by Character.GetUserId() (called by combat / FSM partner-ref
+	// builders, prompt rendering, btree primitives, etc.). Without this,
+	// the private field stays zero post-load — fine for legacy code that
+	// reads .Aggro.UserId directly, but the chunk-4b grapple FSM builds
+	// ActorRef{UserId: controller.GetUserId(), ...} and rejects the
+	// pair transition with ErrPartnerRequired when the resulting ref is
+	// zero. The only other site calling SetUserId was the alt-character
+	// switch path, so brand-new logins were the only path that broke.
+	loadedUser.Character.SetUserId(loadedUser.UserId)
 
 	// One-time migrations
 	loadedUser.Character.MigratePairedSpells()

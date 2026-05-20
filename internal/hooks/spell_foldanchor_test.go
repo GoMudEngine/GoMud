@@ -5,13 +5,16 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/stretchr/testify/assert"
 )
 
 // fakeActor is a minimal Actor implementation for unit tests. It records
-// SendText / SendRoomText calls so assertions can verify behavior without
-// touching the user/mob packages.
+// SendText calls so assertions can verify behavior without touching the
+// user/mob packages. Room broadcasts go through actor.GetRoom().SendTextVisual
+// directly (post-T16); tests stub a real *rooms.Room and rely on it not
+// panicking when there are no players in the room.
 type fakeActor struct {
 	char      *characters.Character
 	room      *rooms.Room
@@ -20,14 +23,12 @@ type fakeActor struct {
 	userId    int
 	mobInstId int
 	selfTexts []string
-	roomTexts []string
 }
 
 func (f *fakeActor) GetCharacter() *characters.Character { return f.char }
 func (f *fakeActor) GetRoom() *rooms.Room                { return f.room }
-func (f *fakeActor) SendText(msg string)                 { f.selfTexts = append(f.selfTexts, msg) }
-func (f *fakeActor) SendRoomText(msg string, excludeSelf bool) {
-	f.roomTexts = append(f.roomTexts, msg)
+func (f *fakeActor) SendText(_ messaging.Category, msg string) {
+	f.selfTexts = append(f.selfTexts, msg)
 }
 func (f *fakeActor) SendRoomCommunication(msg string, excludeSelf bool) {}
 func (f *fakeActor) GetName() string                                    { return f.name }
@@ -51,6 +52,7 @@ func TestResolveFoldAnchor_PlayerActor_SetsMiscData(t *testing.T) {
 
 	a := &fakeActor{
 		char:     c,
+		room:     &rooms.Room{RoomId: 4036},
 		name:     "TestPlayer",
 		isPlayer: true,
 		userId:   42,
@@ -61,7 +63,6 @@ func TestResolveFoldAnchor_PlayerActor_SetsMiscData(t *testing.T) {
 	got := c.GetMiscData("fold-anchor-room")
 	assert.Equal(t, 4036, got, "MiscData should hold the actor's current room ID")
 	assert.Len(t, a.selfTexts, 1, "player should receive one self message")
-	assert.Len(t, a.roomTexts, 1, "room should receive one shimmer broadcast")
 }
 
 func TestResolveFoldAnchor_MobActor_SetsMiscData(t *testing.T) {
@@ -70,6 +71,7 @@ func TestResolveFoldAnchor_MobActor_SetsMiscData(t *testing.T) {
 
 	a := &fakeActor{
 		char:      c,
+		room:      &rooms.Room{RoomId: 4036},
 		name:      "Old Edrin",
 		isPlayer:  false,
 		mobInstId: 99,
@@ -79,5 +81,4 @@ func TestResolveFoldAnchor_MobActor_SetsMiscData(t *testing.T) {
 
 	got := c.GetMiscData("fold-anchor-room")
 	assert.Equal(t, 4036, got, "MiscData should hold the actor's current room ID")
-	assert.Len(t, a.roomTexts, 1, "room should still get the shimmer broadcast for mob actors")
 }

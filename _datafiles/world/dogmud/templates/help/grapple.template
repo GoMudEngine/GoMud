@@ -2,14 +2,135 @@
 
 The <ansi fg="command">grapple</ansi> command attempts to lock your opponent in a grappling
 hold. Grappled foes are restrained: they cannot flee, their attacks
-and defenses are penalised, and your <ansi fg="command">knee</ansi> special becomes available.
+and defenses are penalised, and your <ansi fg="command">knee</ansi> special becomes
+available.
+
+<ansi fg="yellow">━━━ Grapple Positions ━━━</ansi>
+
+A grapple isn't a single state — it develops through positions as
+the struggle shifts. Standing grapples (Clinch, BackStanding) are
+closer quarters than a normal fight. Ground grapples (Mount,
+Guard, Side Control, etc.) are tighter still.
+
+Each round of a grapple resolves to one of five outcomes:
+
+  <ansi fg="stat">Hold</ansi>      Neither side gains ground; both fighters drain stamina
+            trading effort for nothing.
+
+  <ansi fg="stat">Advance</ansi>   You move to a more dominant position — closer to
+            the top, or taking the back.
+
+  <ansi fg="stat">Degrade</ansi>   You slip to a less dominant position; your opponent
+            has gained ground on you.
+
+  <ansi fg="stat">Reversal</ansi>  Your opponent takes over the controlling position
+            entirely.
+
+  <ansi fg="stat">Escape</ansi>    The grapple breaks; both fighters return to standing.
+
+Dominant positions like the Mount are striking apexes — the longer
+you hold one, the harder you can work your opponent. Taking the
+back (BackMount) requires a decisive advance. Submission attempts
+fire independently when you're decisively winning a round, from
+whatever position you currently hold.
+
+<ansi fg="yellow">━━━ What Decides Each Round ━━━</ansi>
+
+A grapple round resolves through an opposed contest of fitness and
+technique. Several things tilt the contest:
+
+  <ansi fg="stat">Unarmed Combat skill:</ansi> the biggest single factor.
+            Trained grapplers reliably beat untrained ones of
+            similar build.
+
+  <ansi fg="stat">Strength:</ansi> the primary stat for controlling and
+            holding positions.
+
+  <ansi fg="stat">Dexterity:</ansi> a secondary stat for setups, framing,
+            and scrambling.
+
+  <ansi fg="stat">Initiative:</ansi> the side that started the grapple has
+            a small edge that round — they picked the moment.
+
+  <ansi fg="stat">Stamina:</ansi> a gassed grappler is dramatically worse.
+            Long grapples favor whoever paces themselves.
+
+  <ansi fg="stat">Encumbrance:</ansi> carrying too much weight hurts both
+            sides of a grapple.
+
+Heavy armor doesn't directly help you escape — it just costs you
+more stamina to fight while wearing it.
+
+<ansi fg="yellow">━━━ Weapon Reach in Grapples ━━━</ansi>
+
+Long weapons become a liability when you're grappling. In a clinch
+or mount, a sword or spear can't be swung freely — the haft catches
+your own body. The weapon's pommel or hilt still lands for reduced
+damage, and your combat narration shifts to reflect it.
+
+  - <ansi fg="stat">Short weapons (daggers, fists, claws):</ansi>
+    Remain fully effective in any grapple.
+  - <ansi fg="stat">Medium weapons (swords, axes):</ansi>
+    Penalised in ground grapples; partial penalty in clinch.
+  - <ansi fg="stat">Long weapons (spears, polearms, staves):</ansi>
+    Severely penalised in all grapple positions.
+
+Carrying a dagger in your offhand is a sound counter to grapplers —
+it will swing at full damage while a main-hand sword is hampered.
+
+<ansi fg="yellow">━━━ Fighting From Position ━━━</ansi>
+
+Position dominates the math of in-grapple combat:
+
+  <ansi fg="stat">Striking down:</ansi> attacking from a dominant
+            position (mount, side control, back mount) is
+            substantially easier than swinging from standing.
+
+  <ansi fg="stat">Striking back:</ansi> trying to hit your opponent
+            while pinned is much harder. The worst positions —
+            crucifix, back mount, full mount — leave you barely
+            able to swing.
+
+  <ansi fg="stat">Outside the fight:</ansi> a third party attacking
+            either grappler finds them easier to hit. Two
+            grapplers locked together pay less attention to
+            their surroundings.
+
+  <ansi fg="stat">Outside hits disrupt:</ansi> if a third party
+            damages a grappler who's holding position, that
+            grappler's grip loosens. Enough outside damage will
+            eventually break a hold.
+
+  <ansi fg="stat">Submissions are fragile:</ansi> a hard hit from
+            outside the grapple while you're applying a
+            submission will break the attempt and leave you
+            worse off than when you started.
+
+<ansi fg="yellow">━━━ What You Can't Do While Grappled ━━━</ansi>
+
+Both hands are committed when you're grappling:
+
+  - Eating and drinking are unavailable until you're free.
+  - Spellcasting and other concentration-heavy actions become
+    harder when you're on the ground or pinned in a grapple. Your
+    Willpower decides how often your concentration holds — a
+    strong-willed caster can sometimes finish a spell from
+    underneath, while a distracted one rarely manages it.
+  - You cannot move from the room until the grapple ends.
 
 <ansi fg="yellow">Usage: </ansi>
 
   <ansi fg="command">grapple <target></ansi>   Attempt to grapple a target in combat.
 
-Success is an opposed roll of Strength vs. the target's Strength and
-Dexterity. Grapple-immune creatures (e.g. elementals, oozes) cannot
-be grappled.
+Success is an opposed roll of Strength vs. the target's Strength
+and Dexterity. Grapple-immune creatures (e.g. elementals, oozes)
+cannot be grappled.
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help attack</ansi>, <ansi fg="command">help kick</ansi>, <ansi fg="command">help trip</ansi>
+When you decisively win a grapple round from a dominant position,
+the engine may fire a submission attempt automatically — no command
+needed. See <ansi fg="command">help submission</ansi>.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help attack</ansi>,
+  <ansi fg="command">help kick</ansi>, <ansi fg="command">help trip</ansi>,
+  <ansi fg="command">help submission</ansi>, <ansi fg="command">help surrender</ansi>,
+  <ansi fg="command">help reach</ansi>

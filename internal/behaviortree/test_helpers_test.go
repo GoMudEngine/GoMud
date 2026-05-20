@@ -10,11 +10,28 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
 func TestMain(m *testing.M) {
 	mudlog.SetupLogger(nil, "", "", false)
+
+	// Seed a default biome so GetVisibility() / GetBiome() don't return nil
+	// when rooms are created with no explicit Biome field. Without this,
+	// any code path that calls room.GetBiome().IsDark() panics.
+	rooms.SeedBiomesForTest(map[string]*rooms.BiomeInfo{
+		`default`: {
+			BiomeId:      `default`,
+			Name:         `Default`,
+			Symbol:       `•`,
+			LitArea:      true,
+			Description:  `A default biome used in tests.`,
+			MovementCost: 1.0,
+		},
+	})
+
 	os.Exit(m.Run())
 }
 
@@ -25,9 +42,10 @@ func seedTestMob(t *testing.T, templateId int, instanceId int, homeRoomId int, n
 	spec := &mobs.Mob{
 		MobId: mobs.MobId(templateId),
 		Character: characters.Character{
-			Name:   name,
-			RoomId: homeRoomId,
-			Buffs:  buffs.New(),
+			Name:      name,
+			RoomId:    homeRoomId,
+			Buffs:     buffs.New(),
+			Awareness: awareness.NewMachine(),
 		},
 	}
 	instance := &mobs.Mob{
@@ -35,9 +53,10 @@ func seedTestMob(t *testing.T, templateId int, instanceId int, homeRoomId int, n
 		InstanceId: instanceId,
 		HomeRoomId: homeRoomId,
 		Character: characters.Character{
-			Name:   name,
-			RoomId: homeRoomId,
-			Buffs:  buffs.New(),
+			Name:      name,
+			RoomId:    homeRoomId,
+			Buffs:     buffs.New(),
+			Awareness: awareness.NewMachine(),
 		},
 	}
 	return mobs.SeedMobsForTest(
@@ -56,17 +75,17 @@ func seedTwoMobs(t *testing.T, roomId int,
 	t.Helper()
 	specs := map[int]*mobs.Mob{
 		template1: {MobId: mobs.MobId(template1), Character: characters.Character{
-			Name: name1, RoomId: roomId, Buffs: buffs.New(),
+			Name: name1, RoomId: roomId, Buffs: buffs.New(), Awareness: awareness.NewMachine(),
 		}},
 		template2: {MobId: mobs.MobId(template2), Character: characters.Character{
-			Name: name2, RoomId: roomId, Buffs: buffs.New(),
+			Name: name2, RoomId: roomId, Buffs: buffs.New(), Awareness: awareness.NewMachine(),
 		}},
 	}
 	instances := map[int]*mobs.Mob{
 		instance1: {MobId: mobs.MobId(template1), InstanceId: instance1, HomeRoomId: roomId,
-			Character: characters.Character{Name: name1, RoomId: roomId, Buffs: buffs.New()}},
+			Character: characters.Character{Name: name1, RoomId: roomId, Buffs: buffs.New(), Awareness: awareness.NewMachine()}},
 		instance2: {MobId: mobs.MobId(template2), InstanceId: instance2, HomeRoomId: roomId,
-			Character: characters.Character{Name: name2, RoomId: roomId, Buffs: buffs.New()}},
+			Character: characters.Character{Name: name2, RoomId: roomId, Buffs: buffs.New(), Awareness: awareness.NewMachine()}},
 	}
 	return mobs.SeedMobsForTest(specs, instances)
 }
@@ -94,4 +113,23 @@ func seedTestRoom(t *testing.T, roomId int, zone string) func() {
 		map[int]*rooms.Room{roomId: r},
 		map[string]*rooms.ZoneConfig{},
 	)
+}
+
+// grantHiddenBuff adds buff 9 to the character AND advances the Awareness
+// state machine to Hidden so that char.IsHidden() returns true.
+// Callers must have seeded hiddenBuffSpec (or equivalent) before calling.
+// Uses a fatal error if AddBuff fails so tests get a clear message.
+func grantHiddenBuff(t *testing.T, char *characters.Character) {
+	t.Helper()
+	if err := char.AddBuff(9, false); err != nil {
+		t.Fatalf("grantHiddenBuff: AddBuff(9) failed: %v", err)
+	}
+	// Sync Awareness machine to Hidden state so char.IsHidden() returns true.
+	if char.Awareness == nil {
+		char.Awareness = awareness.NewMachine()
+	}
+	r := state.TransitionReason{Trigger: "test_setup"}
+	char.Awareness.ForceVisible(r) // reset regardless of current state
+	_ = char.Awareness.TransitionToConcealing(awareness.ConcealingData{}, r)
+	char.Awareness.ResolveConcealment(true, r)
 }

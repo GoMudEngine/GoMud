@@ -2,6 +2,8 @@ mobid: 275
 zone: Marches Spur Road
 buffids: [52, 61]
 behavior_archetype: boss_edrin
+submission_policy: lethal
+surrender_policy: never
 statpool: 500
 spawnmutations: [regenerative-tissue, magical-resistance, psychic-resistance, thick-hide, brazen-resolve]
 itemdropchance: 10

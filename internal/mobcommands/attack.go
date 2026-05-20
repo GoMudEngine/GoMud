@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -20,7 +20,7 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		// If no argument supplied, attack whoever is attacking the player currently.
 		for _, mId := range room.GetMobs(rooms.FindFightingMob) {
 			m := mobs.GetInstance(mId)
-			if m.Character.Aggro != nil && m.Character.Aggro.MobInstanceId == mob.InstanceId {
+			if m.Character.IsInCombat() && m.Character.CurrentCombatTarget().MobInstanceId == mob.InstanceId {
 				attackMobInstanceId = m.InstanceId
 				break
 			}
@@ -29,7 +29,7 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		if attackMobInstanceId == 0 {
 			for _, uId := range room.GetPlayers(rooms.FindFightingMob) {
 				u := users.GetByUserId(uId)
-				if u.Character.Aggro != nil && u.Character.Aggro.MobInstanceId == mob.InstanceId {
+				if u.Character.IsInCombat() && u.Character.CurrentCombatTarget().MobInstanceId == mob.InstanceId {
 					attackPlayerId = u.UserId
 					break
 				}
@@ -42,7 +42,7 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		attackMobInstanceId = t.MobInstanceId
 	}
 
-	isSneaking := mob.Character.HasBuffFlag(buffs.Hidden)
+	isSneaking := mob.Character.IsHidden()
 
 	/*
 		combatAddlWaitRounds := mob.Character.Equipment.Weapon.GetSpec().WaitRounds + mob.Character.Equipment.Weapon.GetSpec().WaitRounds
@@ -66,22 +66,22 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			// loop's CancelIfCombat pass so the surprise attack resolves
 			// with the mob still hidden (backstab crit bonus).
 			aggroType := characters.DefaultAttack
-			if mob.Character.HasBuffFlag(buffs.Hidden) {
+			if mob.Character.IsHidden() {
 				aggroType = characters.SurpriseAttack
 			}
 			// Only announce if not already fighting this target
-			alreadyFighting := mob.Character.Aggro != nil && mob.Character.Aggro.UserId == attackPlayerId
+			alreadyFighting := mob.Character.IsInCombat() && mob.Character.CurrentCombatTarget().UserId == attackPlayerId
 			mob.Character.SetAggro(attackPlayerId, 0, aggroType)
 
 			if !isSneaking && !alreadyFighting {
 
 				if canSeeInDark(u, room) {
-					u.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to fight you!`, mob.Character.Name))
+					u.SendText(messaging.CategoryHitMelee, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to fight you!`, mob.Character.Name))
 				} else {
-					u.SendText(`Something prepares to fight you!`)
+					u.SendText(messaging.CategoryHitMelee, `Something prepares to fight you!`)
 				}
 
-				sendRoomText(room,
+				sendRoomText(room, messaging.CategoryHitMelee,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to fight <ansi fg="username">%s</ansi>`, mob.Character.Name, u.Character.Name),
 					u.UserId)
 
@@ -97,14 +97,14 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		if m != nil {
 
 			mobAggroType := characters.DefaultAttack
-			if mob.Character.HasBuffFlag(buffs.Hidden) {
+			if mob.Character.IsHidden() {
 				mobAggroType = characters.SurpriseAttack
 				mob.Character.Validate(true)
 			}
 			mob.Character.SetAggro(0, attackMobInstanceId, mobAggroType)
 
 			if !isSneaking {
-				sendRoomText(room,
+				sendRoomText(room, messaging.CategoryHitMelee,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to fight <ansi fg="mobname">%s</ansi>`, mob.Character.Name, m.Character.Name))
 			}
 
@@ -114,7 +114,7 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	if !isSneaking {
-		sendRoomText(room,
+		sendRoomText(room, messaging.CategoryMobEmote,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> looks confused and upset.`, mob.Character.Name))
 	}
 

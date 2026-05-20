@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/bounties"
 	"github.com/GoMudEngine/GoMud/internal/knowledge"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -16,7 +17,7 @@ type ActionContext interface {
 	ConsumeItem(itemId int)
 	GiveItem(itemId int)
 	GiveGold(amount int)
-	SendText(text string)
+	SendText(cat messaging.Category, text string)
 	RoomText(text string)
 	SpawnMob(s SpawnDef)
 	SpawnItem(s SpawnDef)
@@ -57,7 +58,7 @@ func ExecuteAction(a ActionDef, ctx ActionContext) error {
 		return nil
 	}
 	if a.SendText != "" {
-		ctx.SendText(a.SendText)
+		ctx.SendText(messaging.CategoryNPCDialogue, a.SendText)
 		return nil
 	}
 	if a.RoomText != "" {

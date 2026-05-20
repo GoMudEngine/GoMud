@@ -8,9 +8,44 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
 )
+
+// setCombatPositionParallel sets the Position FSM to the given state. Seeds
+// Position if nil. Synthetic Partner ref for grapple states (FSM requires non-zero).
+func setCombatPositionParallel(c *characters.Character, pos position.State) {
+	if c.Position == nil {
+		c.Position = position.NewMachine()
+	}
+	r := state.TransitionReason{Trigger: "test_setup"}
+	switch pos {
+	case position.Standing:
+		c.Position.ForceStanding(r)
+	case position.Prone:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToProne(position.ProneData{}, r)
+	case position.Clinch:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+	case position.Mount:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+		_ = c.Position.TransitionToMount(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerTakedownMount},
+		)
+	}
+}
 
 // newTestMob seeds a mob at instance 100 and registers it via
 // mobs.SetInstanceForTest. Auto-cleans at test end.
@@ -582,7 +617,11 @@ func TestCondTargetIsCasting_TargetCasting_ReturnsSuccess(t *testing.T) {
 	mob := newTestMob(t)
 	target := &mobs.Mob{InstanceId: 200}
 	target.Character.Name = "Target"
-	target.Character.CastingState = &characters.CastingState{}
+	target.Character.Activity = activity.NewMachine()
+	_ = target.Character.Activity.TransitionToCasting(
+		activity.CastingData{SpellId: "fireball"},
+		state.TransitionReason{Trigger: activity.TriggerCastBegin},
+	)
 	mobs.SetInstanceForTest(target.InstanceId, target)
 	defer mobs.SetInstanceForTest(target.InstanceId, nil)
 	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)
@@ -661,7 +700,7 @@ func TestCondTargetNotStanding_TargetStanding_ReturnsFailure(t *testing.T) {
 	mob := newTestMob(t)
 	target := &mobs.Mob{InstanceId: 205}
 	target.Character.Name = "Target"
-	target.Character.CombatPosition = characters.PositionStanding
+	setCombatPositionParallel(&target.Character, position.Standing)
 	mobs.SetInstanceForTest(target.InstanceId, target)
 	defer mobs.SetInstanceForTest(target.InstanceId, nil)
 	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)
@@ -674,7 +713,7 @@ func TestCondTargetNotStanding_TargetProne_ReturnsSuccess(t *testing.T) {
 	mob := newTestMob(t)
 	target := &mobs.Mob{InstanceId: 206}
 	target.Character.Name = "Target"
-	target.Character.CombatPosition = characters.PositionProne
+	setCombatPositionParallel(&target.Character, position.Prone)
 	mobs.SetInstanceForTest(target.InstanceId, target)
 	defer mobs.SetInstanceForTest(target.InstanceId, nil)
 	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)
@@ -687,7 +726,7 @@ func TestCondTargetNotStanding_TargetClinched_ReturnsSuccess(t *testing.T) {
 	mob := newTestMob(t)
 	target := &mobs.Mob{InstanceId: 207}
 	target.Character.Name = "Target"
-	target.Character.CombatPosition = characters.PositionClinched
+	setCombatPositionParallel(&target.Character, position.Clinch)
 	mobs.SetInstanceForTest(target.InstanceId, target)
 	defer mobs.SetInstanceForTest(target.InstanceId, nil)
 	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)

@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/bounties"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/knowledge"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -38,7 +39,7 @@ func Bounty(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return bountyAdminShow(args[1:], user)
 	case "declare", "withdraw", "prune-expired":
 		if !isAdmin {
-			user.SendText("That subcommand is admin-only.\r\n")
+			user.SendText(messaging.CategorySystem, "That subcommand is admin-only.\r\n")
 			return true, nil
 		}
 		switch strings.ToLower(args[0]) {
@@ -62,10 +63,10 @@ func Bounty(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 func bountyAdminUsage(user *users.UserRecord) {
 	if out, err := templates.Process("admincommands/help/command.bounty", nil, user.UserId); err == nil && strings.TrimSpace(out) != "" {
-		user.SendText(out)
+		user.SendText(messaging.CategorySystem, out)
 		return
 	}
-	user.SendText(
+	user.SendText(messaging.CategorySystem, 
 		"Usage:\r\n" +
 			"  bounty list [--all] [filter]\r\n" +
 			"  bounty show <id>\r\n" +
@@ -79,10 +80,10 @@ func bountyAdminUsage(user *users.UserRecord) {
 
 func bountyUserUsage(user *users.UserRecord) {
 	if out, err := templates.Process("help/bounty", nil, user.UserId); err == nil && strings.TrimSpace(out) != "" {
-		user.SendText(out)
+		user.SendText(messaging.CategorySystem, out)
 		return
 	}
-	user.SendText(
+	user.SendText(messaging.CategorySystem, 
 		"Usage:\r\n" +
 			"  bounty list [filter]\r\n" +
 			"  bounty show <id>\r\n" +
@@ -126,7 +127,7 @@ func bountyAdminList(args []string, user *users.UserRecord) (bool, error) {
 		rows = filtered
 	}
 	if len(rows) == 0 {
-		user.SendText("No bounties.\r\n")
+		user.SendText(messaging.CategorySystem, "No bounties.\r\n")
 		return true, nil
 	}
 	sort.Slice(rows, func(i, j int) bool { return rows[i].GoldReward > rows[j].GoldReward })
@@ -144,7 +145,7 @@ func bountyAdminList(args []string, user *users.UserRecord) (bool, error) {
 			fmt.Sprintf("%s:%d", r.Target.Type, r.Target.Id),
 			r.GoldReward, r.RepReward, r.DeclaredReason)
 	}
-	user.SendText(b.String())
+	user.SendText(messaging.CategorySystem, b.String())
 	return true, nil
 }
 
@@ -159,12 +160,12 @@ func bountyAdminShow(args []string, user *users.UserRecord) (bool, error) {
 	}
 	id, err := strconv.Atoi(args[0])
 	if err != nil {
-		user.SendText(fmt.Sprintf("Bad bounty id %q\r\n", args[0]))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Bad bounty id %q\r\n", args[0]))
 		return true, nil
 	}
 	b := bounties.Get(id)
 	if b == nil {
-		user.SendText(fmt.Sprintf("No bounty with id %d\r\n", id))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("No bounty with id %d\r\n", id))
 		return true, nil
 	}
 	var sb strings.Builder
@@ -183,7 +184,7 @@ func bountyAdminShow(args []string, user *users.UserRecord) (bool, error) {
 		fmt.Fprintf(&sb, "  Claimed:   round %d by %s:%d\r\n",
 			b.ClaimedRound, b.ClaimedBy.Type, b.ClaimedBy.Id)
 	}
-	user.SendText(sb.String())
+	user.SendText(messaging.CategorySystem, sb.String())
 	return true, nil
 }
 
@@ -194,12 +195,12 @@ func bountyAdminDeclare(args []string, user *users.UserRecord) (bool, error) {
 	}
 	issuer, ok := parseIssuerSpec(args[0])
 	if !ok {
-		user.SendText(fmt.Sprintf("Bad issuer spec %q (use type:id)\r\n", args[0]))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Bad issuer spec %q (use type:id)\r\n", args[0]))
 		return true, nil
 	}
 	target, ok := parseTargetSpec(args[1])
 	if !ok {
-		user.SendText(fmt.Sprintf("Bad target spec %q (use type:id)\r\n", args[1]))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Bad target spec %q (use type:id)\r\n", args[1]))
 		return true, nil
 	}
 	opts := bounties.DeclareOpts{}
@@ -239,10 +240,10 @@ func bountyAdminDeclare(args []string, user *users.UserRecord) (bool, error) {
 	}
 	id, err := bounties.Declare(issuer, target, bounties.ConditionKill, expiryRound, opts)
 	if err != nil {
-		user.SendText(fmt.Sprintf("Declare failed: %v\r\n", err))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Declare failed: %v\r\n", err))
 		return true, nil
 	}
-	user.SendText(fmt.Sprintf("Declared bounty #%d.\r\n", id))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf("Declared bounty #%d.\r\n", id))
 	return true, nil
 }
 
@@ -253,17 +254,17 @@ func bountyAdminWithdraw(args []string, user *users.UserRecord) (bool, error) {
 	}
 	id, err := strconv.Atoi(args[0])
 	if err != nil {
-		user.SendText(fmt.Sprintf("Bad bounty id %q\r\n", args[0]))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Bad bounty id %q\r\n", args[0]))
 		return true, nil
 	}
 	bounties.Withdraw(id)
-	user.SendText(fmt.Sprintf("Withdrew bounty #%d.\r\n", id))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf("Withdrew bounty #%d.\r\n", id))
 	return true, nil
 }
 
 func bountyAdminPrune(user *users.UserRecord) (bool, error) {
 	count := bounties.PruneExpired()
-	user.SendText(fmt.Sprintf("Pruned %d expired bounty rows.\r\n", count))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf("Pruned %d expired bounty rows.\r\n", count))
 	return true, nil
 }
 

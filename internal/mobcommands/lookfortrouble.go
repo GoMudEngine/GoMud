@@ -19,7 +19,7 @@ import (
 func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	// Already aggroed, skip.
-	if mob.Character.Aggro != nil {
+	if mob.Character.IsInCombat() {
 		return true, nil
 	}
 
@@ -72,7 +72,7 @@ func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) 
 
 			if user.Character.Health < 1 {
 				ignoreUser = true
-			} else if user.Character.HasBuffFlag(buffs.Hidden) {
+			} else if user.Character.IsHidden() {
 				ignoreUser = true
 			}
 
@@ -100,7 +100,7 @@ func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) 
 				continue
 			}
 
-			if mob.Hostile { // Does it always attack players?
+			if mob.AutoAggro { // Does it always attack players?
 
 				allPotentialTargets = append(allPotentialTargets, playerId)
 
@@ -166,23 +166,113 @@ func LookForTrouble(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) 
 	// Prefer player targets over companions/mobs. Only fall back to mob
 	// targets when no eligible players are available.
 	if userCt > 0 {
-		targetUserId = nonDownedUserTargets[util.Rand(userCt)]
+		// Chunk 4e §6: tiebreaker bias toward grappled-controlled targets.
+		// When a candidate who is being controlled in a grapple (i.e., pinned)
+		// has a pool weight within 10% of the top-weight candidate, boost them
+		// to match the top weight. Does NOT override a clear primary preference.
+		nonDownedUserTargets = applyGrappledControlledTiebreak(nonDownedUserTargets)
+		targetUserId = nonDownedUserTargets[util.Rand(len(nonDownedUserTargets))]
 	} else if mobCt > 0 {
 		targetMobInstanceId = possibleMobTargets[util.Rand(mobCt)]
 	}
 
 	if targetUserId > 0 {
+		// Chunk 5 (Presence): stamp LastTargetFoundRound so PresenceTick
+		// can reset the "bored" timer when a target is found.
+		mob.Character.LastTargetFoundRound = util.GetRoundCount()
 		mob.Command(fmt.Sprintf("attack @%d", targetUserId)) // @ denotes a specific player id
 	} else if targetMobInstanceId > 0 {
+		mob.Character.LastTargetFoundRound = util.GetRoundCount()
 		mob.Command(fmt.Sprintf("attack #%d", targetMobInstanceId)) // # denotes a specific mob id
-	} else {
+	}
 
-		if mob.Despawns() {
-			if mob.BoredomCounter < 255 {
-				mob.BoredomCounter++
+	return true, nil
+}
+
+// applyGrappledControlledTiebreak boosts grappled-controlled candidates in
+// the pool when they are within 10% of the top-weight candidate. Returns a
+// new pool slice (never modifies the input). This is a TIEBREAKER ONLY: if a
+// grappled candidate's pool weight is already below the 10% tie band, the
+// original pool is returned unchanged.
+//
+// "Grappled-controlled" means the player is in a grapple AND is on the
+// controlled/losing side (i.e., being mounted or pinned by someone else).
+// A mob targeting such a player models predatory opportunism: the pinned
+// target is already vulnerable and harder to rescue.
+//
+// Chunk 4e §6.
+func applyGrappledControlledTiebreak(pool []int) []int {
+	if len(pool) < 2 {
+		return pool
+	}
+
+	// Count pool-entry occurrences per user — that's their priority weight.
+	weights := make(map[int]int)
+	for _, uid := range pool {
+		weights[uid]++
+	}
+
+	// Find the maximum weight among all candidates.
+	maxWeight := 0
+	for _, w := range weights {
+		if w > maxWeight {
+			maxWeight = w
+		}
+	}
+
+	// Determine the tie band floor (top weight minus 10%).
+	// Use integer arithmetic: tieBandFloor = maxWeight - maxWeight/10.
+	// A candidate is "in the tie band" if their weight >= tieBandFloor.
+	tieBandFloor := maxWeight - maxWeight/10
+	if tieBandFloor < 1 {
+		tieBandFloor = 1
+	}
+
+	// Find any candidate in the tie band who is grappled+controlled.
+	// Only boost if at least one such candidate exists AND is not already
+	// at maxWeight (otherwise no change needed).
+	needsBoost := false
+	for uid, w := range weights {
+		if w < tieBandFloor {
+			continue // outside tie band
+		}
+		if w >= maxWeight {
+			continue // already at top — no boost needed
+		}
+		user := users.GetByUserId(uid)
+		if user == nil || user.Character == nil {
+			continue
+		}
+		if user.Character.IsGrappling() && user.Character.IsBeingControlled() {
+			needsBoost = true
+			break
+		}
+	}
+
+	if !needsBoost {
+		return pool
+	}
+
+	// Rebuild the pool: boost tie-band grappled-controlled candidates up to
+	// maxWeight by appending extra entries for them.
+	out := make([]int, len(pool))
+	copy(out, pool)
+
+	for uid, w := range weights {
+		if w < tieBandFloor || w >= maxWeight {
+			continue
+		}
+		user := users.GetByUserId(uid)
+		if user == nil || user.Character == nil {
+			continue
+		}
+		if user.Character.IsGrappling() && user.Character.IsBeingControlled() {
+			deficit := maxWeight - w
+			for i := 0; i < deficit; i++ {
+				out = append(out, uid)
 			}
 		}
 	}
 
-	return true, nil
+	return out
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/stretchr/testify/assert"
@@ -954,7 +955,7 @@ func TestUserRecord_Prompt(t *testing.T) {
 func TestUserRecord_SendText(t *testing.T) {
 	u := &UserRecord{UserId: 1}
 	// Should not panic — adds event to queue
-	u.SendText("Hello, world!")
+	u.SendText(messaging.CategorySystem, "Hello, world!")
 }
 
 func TestUserRecord_AddBuff(t *testing.T) {

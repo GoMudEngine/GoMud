@@ -7,6 +7,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -71,7 +72,7 @@ func (c *CleanupModule) userTrashCommand(rest string, user *users.UserRecord, ro
 	matchItem, found := user.Character.FindInBackpack(rest)
 
 	if !found {
-		user.SendText(fmt.Sprintf(`You don't have a "%s" to trash.`, rest))
+		user.SendText(messaging.CategoryError, fmt.Sprintf(`You don't have a "%s" to trash.`, rest))
 	} else {
 
 		isSneaking := user.Character.HasBuffFlag(buffs.Hidden)
@@ -84,11 +85,11 @@ func (c *CleanupModule) userTrashCommand(rest string, user *users.UserRecord, ro
 			Gained: false,
 		})
 
-		user.SendText(
+		user.SendText(messaging.CategorySystem,
 			fmt.Sprintf(`You trash the <ansi fg="item">%s</ansi> for good.`, matchItem.DisplayName()))
 
 		if !isSneaking {
-			room.SendText(
+			room.SendText(messaging.CategoryMobEmote,
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> destroys <ansi fg="item">%s</ansi>...`, user.Character.Name, matchItem.DisplayName()),
 				user.UserId)
 		}
@@ -122,7 +123,7 @@ func (c *CleanupModule) userBuryCommand(rest string, user *users.UserRecord, roo
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) == 0 {
-		user.SendText("Bury what?")
+		user.SendText(messaging.CategorySystem, "Bury what?")
 		return true, nil
 	}
 
@@ -135,8 +136,8 @@ func (c *CleanupModule) userBuryCommand(rest string, user *users.UserRecord, roo
 				corpseColor = `user-corpse`
 			}
 
-			user.SendText(fmt.Sprintf(`You bury the <ansi fg="%s">%s corpse</ansi>.`, corpseColor, corpse.Character.Name))
-			room.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> buries the <ansi fg="%s">%s corpse</ansi>.`, user.Character.Name, corpseColor, corpse.Character.Name), user.UserId)
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You bury the <ansi fg="%s">%s corpse</ansi>.`, corpseColor, corpse.Character.Name))
+			room.SendText(messaging.CategoryMobEmote, fmt.Sprintf(`<ansi fg="username">%s</ansi> buries the <ansi fg="%s">%s corpse</ansi>.`, user.Character.Name, corpseColor, corpse.Character.Name), user.UserId)
 			return true, nil
 
 		}
@@ -144,7 +145,7 @@ func (c *CleanupModule) userBuryCommand(rest string, user *users.UserRecord, roo
 		return true, nil
 	}
 
-	user.SendText(fmt.Sprintf("You don't see a %s around for burying.", rest))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf("You don't see a %s around for burying.", rest))
 
 	return true, nil
 }
@@ -166,7 +167,7 @@ func (c *CleanupModule) mobBuryCommand(rest string, mob *mobs.Mob, room *rooms.R
 				corpseColor = `user-corpse`
 			}
 
-			room.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> buries the <ansi fg="%s">%s corpse</ansi>.`, mob.Character.Name, corpseColor, corpse.Character.Name))
+			room.SendText(messaging.CategoryMobEmote, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> buries the <ansi fg="%s">%s corpse</ansi>.`, mob.Character.Name, corpseColor, corpse.Character.Name))
 			return true, nil
 
 		}

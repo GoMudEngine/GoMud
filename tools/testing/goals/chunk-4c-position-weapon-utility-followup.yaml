@@ -1,0 +1,224 @@
+description: |
+  Follow-up smoke test for chunk 4c (Position × Weapon Utility — reach
+  model). The first smoke session
+  (`tools/testing/reports/2026-05-16-local-feature-tester-chunk-4c-position-weapon-utility.md`)
+  confirmed the headline behavior — bludgeon narration swap fires for
+  bladed weapons in Clinch — but several goals were BLOCKED because
+  sparring partners died in 4-6 rounds, never giving the grapple time
+  to drift to ground-grapple states.
+
+  Three things shipped to unblock this session (commit `0a73b987`):
+    1. `help attack` now shows the reach + weapon utility section
+       (was previously shadowed by attack.md / attack.template
+       precedence issue)
+    2. `mob heal [instId]` admin command (or `mob heal` with no id to
+       heal every mob in the room). Restores Health/Stamina/Conviction
+       to max. Permissioned under mob.spawn.
+    3. New mob `training_post` (id 9005, Test Arena zone). Hits back
+       (so combat doesn't end on disengage) but pulls every punch
+       (low str, low skills, sharp stick weapon). 5000 max HP / 5000
+       stamina. Spawn with `mob spawn 9005` or
+       `mob spawn training post`. Perfect for sustained combat
+       observation.
+
+  Goal: pick up the BLOCKED tests from the first report — ground-
+  grapple narration, weapon swap mid-grapple A/B, spear in mount worst
+  case, warhammer narration (should NOT swap), wand + staff caster
+  exemption, unarmed in grapple — using the training_post + mob_heal
+  loop to keep combat alive as long as you need it.
+
+  The smoketester already has the 7-weapon chunk-4c smoke kit (iron
+  dagger x2, iron short sword, steel longsword, lake-iron hook-spear,
+  steel warhammer, willow wand, oak staff).
+
+  IMPORTANT — observe only. DO NOT modify code, YAML files, or
+  helpfiles even if you spot what looks like a bug. Write it up in
+  the report; never edit.
+
+goals:
+  # ── 0. Login + verify smoke followups landed ─────────────────
+  - Log in as smoketester (host localhost, port 55555,
+    password smoke123test). Run `set charset` to switch to ASCII.
+    Run `look` to confirm starting room.
+
+  - Verify `help attack` now shows the new "Weapon Reach in
+    Grapples" section. Capture the relevant snippet.
+    (Was previously showing legacy content — fixed in commit
+    0a73b987.)
+
+  # ── 1. Spawn and heal the training post ──────────────────────
+  - Spawn the training post: `mob spawn 9005` (or
+    `mob spawn training post`). Capture its instance id from the
+    spawn message OR use `mob list training*` to discover it.
+
+  - Run `mob heal <instId>` and confirm the response says
+    "Healed training post (instance N) to full." This verifies
+    the new admin command works.
+
+  - As a sanity check also try `mob heal` with NO id while
+    standing in a room with mobs — it should heal everything in
+    the room.
+
+  # ── 2. Longsword baseline + clinch + ground grapple ──────────
+  - Wield the steel longsword. Attack the training post a couple
+    rounds STANDING. Capture 2 attack messages — should be
+    slashing vocabulary, no bludgeon swap.
+
+  - Grapple: `grapple training post`. If the roll fails, retry
+    after the cooldown. Once in Clinch, capture 2-3 attack
+    messages — should see bludgeon vocab ("you bash", "you
+    smash", "you pound", "you crush") interpolating the longsword
+    name. This re-confirms the prior session's finding.
+
+  - Between rounds, periodically `mob heal <instId>` (or
+    `mob heal`) to keep the training post alive. The training
+    post's 5000 HP means you probably won't need to heal often,
+    but if it drops below 50% give it a top-off.
+
+  - Continue attacking until the grapple drifts to a ground
+    state (Mount, SideControl, KneeOnBelly, NorthSouth, Crucifix,
+    BackGround, HalfGuard, or Guard — your prompt {pos} token
+    will tell you). Per chunk-4b mechanics, control-axis rolls
+    each round push the loser toward a default escape /
+    promotion target.
+
+  - Once in a ground state, capture 3-5 attack messages with the
+    longsword. The bludgeon swap should still be firing
+    (radius 0.3m vs reach 1.0m → much more damage penalty than
+    clinch, but same vocabulary swap). Damage descriptions
+    should noticeably degrade compared to standing baseline.
+
+  # ── 3. Mid-grapple weapon swap A/B (longsword → dagger) ──────
+  - While in the ground grapple, swap weapons:
+    `remove longsword` then `wield iron dagger`. Confirm via
+    `inventory`.
+
+  - Heal the training post (`mob heal <instId>`) so the
+    comparison isn't muddied by HP / morale state.
+
+  - Attack 3-5 rounds with the dagger. Expected: damage
+    descriptions noticeably IMPROVE compared to the longsword
+    rounds. Vocabulary: STANDARD STABBING ("you poke", "you
+    thrust", "you stab") — NOT bludgeon swap, because dagger
+    reach (0.3m) === ground-grapple radius (0.3m), formula
+    predicts no penalty and no narration swap.
+
+  - This is the key A/B comparison: same opponent, same position,
+    just different weapon. Player has tactile evidence that
+    swapping to a dagger fixes the problem.
+
+  # ── 4. Worst-case (hook spear in mount or any ground state) ──
+  - Disengage if still grappled, or use whatever admin command
+    breaks the grapple. Heal the training post.
+
+  - Wield the lake-iron hook-spear (`wield hook-spear`).
+
+  - Grapple training post, drift to ground state.
+
+  - Capture 3-5 attack messages. Expected: damage SEVERELY
+    degraded (reach 2.0m, radius 0.3m → 0.15 floored = 15%
+    damage). Bludgeon narration. The spear should feel almost
+    useless — note specifically whether the messages convey
+    "barely poking with the haft" or whether they read
+    unchanged-from-standing.
+
+  # ── 5. Warhammer (bludgeoning baseline — no narration swap) ──
+  - Disengage if needed, heal the training post, swap to the
+    steel warhammer (`wield warhammer`).
+
+  - Attack standing — capture baseline (should be standard
+    bludgeoning vocab — bash, smash, etc.).
+
+  - Grapple training post, drift to ground.
+
+  - Capture 3-5 attack messages. Expected: damage degraded
+    (reach 0.8m, radius 0.3m → ~0.375 multiplier). Vocabulary:
+    SAME bludgeoning set as standing — the narration swap
+    should NOT fire because the warhammer is ALREADY
+    Bludgeoning subtype. This verifies the swap-exemption logic.
+
+  - Note specifically whether you can tell the warhammer's
+    grapple swings apart from its standing swings by message
+    alone (you probably can't — same vocab; the only
+    differentiator is the damage descriptor).
+
+  # ── 6. Caster wand + staff exemption ─────────────────────────
+  - Disengage if needed, heal training post, wield the willow
+    wand. Attack standing — capture baseline (wand vocab).
+
+  - Grapple, drift to ground if possible.
+
+  - Capture 2-3 attack messages with the wand in ground grapple.
+    Expected: minimal damage penalty (reach 0.4m vs radius
+    0.3m → 0.75 multiplier). Vocabulary: KEEPS wand vocabulary
+    (NOT bludgeon swap) because caster subtypes are exempt.
+
+  - Swap to oak staff (`wield oak staff`). Heal training post.
+    Standing attack: capture (staff vocab).
+
+  - Grapple, drift to ground.
+
+  - Capture 2-3 attack messages with the staff in ground
+    grapple. Expected: SEVERE damage penalty (reach 1.5m vs
+    radius 0.3m → 0.20 multiplier). Vocabulary: KEEPS staff
+    vocabulary — the bludgeon swap should NOT fire. This is the
+    key caster-exemption test.
+
+  # ── 7. Unarmed in grapple (sanity) ───────────────────────────
+  - Disengage, heal training post, `remove staff` to be unarmed.
+
+  - Attack standing — capture baseline (unarmed/fist vocab).
+
+  - Grapple, drift to ground.
+
+  - Capture 2-3 attack messages unarmed. Expected: NO damage
+    penalty (fist reach 0.1m ≤ any radius). Standard unarmed
+    vocabulary.
+
+  # ── 8. Smoke verdict ─────────────────────────────────────────
+  - Write a "Smoke verdict" paragraph at the top of your
+    report:
+
+      Smoke verdict: PASS | PARTIAL | FAIL
+
+      Per-test breakdown (compare to first session's BLOCKED
+      list — these should now mostly be testable):
+      - help attack updated: PASS/FAIL
+      - mob heal admin command: PASS/FAIL
+      - training_post mob spawnable + survivable: PASS/FAIL
+      - Longsword baseline standing: PASS/FAIL
+      - Longsword clinch bludgeon swap: PASS/FAIL (already
+        confirmed in first session — re-confirming)
+      - Longsword ground-grapple bludgeon swap: PASS/FAIL (NEW —
+        first session was BLOCKED here)
+      - Weapon swap A/B (longsword→dagger same grapple): PASS/FAIL
+      - Hook spear ground grapple: PASS/FAIL
+      - Warhammer (NO narration swap, already-blunt): PASS/FAIL
+      - Wand caster exemption: PASS/FAIL
+      - Staff caster exemption: PASS/FAIL
+      - Unarmed full damage in grapple: PASS/FAIL
+
+      Narrative quality:
+      - 2-3 sentences on whether the ground-grapple bludgeon
+        narration reads natural or jarring. Quote 1-2 examples.
+      - Did the damage gap between longsword-in-grapple and
+        dagger-in-grapple feel TACTILE — i.e., would a player
+        notice "wait, the dagger is hitting harder than the
+        sword right now"? Or is the gap subtle?
+
+      Recommended balance tweaks (if any):
+      - Reach floor (0.15) — too high, too low, or right?
+      - Standing-grapple radius (0.5m) — right?
+      - Ground-grapple radius (0.3m) — right?
+      - Anything else that surfaced.
+
+  # ── 9. Blockers ──────────────────────────────────────────────
+  - If grapple drift to ground states still doesn't happen within
+    8-10 rounds of attacking, document the failure mode in a
+    "Blockers" section.
+
+  - If `mob heal` doesn't work, document the failure and proceed
+    with whatever combat you can get.
+
+  - If any goal turns into a blocker, mark it and continue with
+    the next — don't grind.

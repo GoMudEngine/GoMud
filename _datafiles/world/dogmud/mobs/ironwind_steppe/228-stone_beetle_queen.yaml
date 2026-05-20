@@ -1,6 +1,8 @@
 mobid: 228
 zone: Ironwind Steppe
 behavior_archetype: leader
+submission_policy: lethal
+surrender_policy: never
 routine: cave_pack_ironwind
 statpool: 220
 itemdropchance: 10

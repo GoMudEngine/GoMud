@@ -220,10 +220,10 @@ func engageHostilePlayerInRoom(mobInstanceId int, roomId int) bool {
 	if mob == nil {
 		return false
 	}
-	if mob.Character.Aggro != nil {
+	if mob.Character.IsInCombat() {
 		return true // already engaged
 	}
-	if !mob.Hostile {
+	if !mob.AutoAggro {
 		return false
 	}
 	room := rooms.LoadRoom(roomId)
@@ -241,7 +241,7 @@ func engageHostilePlayerInRoom(mobInstanceId int, roomId int) bool {
 		}
 		mob.Character.SetAggro(uid, 0, characters.DefaultAttack)
 		// SetAggro silently no-ops on grace-protected players; verify it stuck.
-		if mob.Character.Aggro != nil {
+		if mob.Character.IsInCombat() {
 			return true
 		}
 	}
@@ -279,7 +279,7 @@ func actPartyAssistTarget(params map[string]any, ctx *EvalContext) Result {
 		return Failure
 	}
 	leaderChar := p.Leader.GetCharacter()
-	if leaderChar == nil || leaderChar.Aggro == nil {
+	if leaderChar == nil || !leaderChar.IsInCombat() {
 		return Failure
 	}
 	self := mobs.GetInstance(ctx.InstanceId)
@@ -287,8 +287,8 @@ func actPartyAssistTarget(params map[string]any, ctx *EvalContext) Result {
 		return Failure
 	}
 	self.Character.SetAggro(
-		leaderChar.Aggro.UserId,
-		leaderChar.Aggro.MobInstanceId,
+		leaderChar.CurrentCombatTarget().UserId,
+		leaderChar.CurrentCombatTarget().MobInstanceId,
 		characters.DefaultAttack,
 	)
 	return Success

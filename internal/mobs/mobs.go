@@ -13,6 +13,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/perception"
+	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/facts"
@@ -83,10 +86,13 @@ type Mob struct {
 	ActivityLevel   int      `yaml:"activitylevel,omitempty"` // 1-100%
 	InstanceId      int      `yaml:"-"`
 	HomeRoomId      int      `yaml:"-"`
-	Hostile         bool     // whether they attack on sight
+	// legacyHostile is the backward-compat YAML field. Loaders read `hostile:`
+	// and copy to AutoAggro in Validate(). New YAML should use `auto_aggro: true`.
+	// Future cleanup: bulk-rename hostile: → auto_aggro: in mob YAMLs, then
+	// remove this field.
+	legacyHostile bool `yaml:"hostile,omitempty"`
 	PackFleeImmune  bool     `yaml:"pack_flee_immune,omitempty"` // if true, won't flee when packmates die
 	LastIdleCommand uint8    `yaml:"-"`                          // Track what hte last used idlecommand was
-	BoredomCounter  uint8    `yaml:"-"`                          // how many rounds have passed since this mob has seen a player
 	Groups          []string // What group do they identify with? Helps with teamwork
 	FoldAnchorRoom  int      `yaml:"fold_anchor_room,omitempty"` // Spawn-time fold-recall anchor (room ID)
 	// Pack-combat routine (v2-ready — see docs/superpowers/specs/2026-04-22-pack-tactics-revamp-design.md).
@@ -109,7 +115,6 @@ type Mob struct {
 	Character          characters.Character
 	MaxWander          int             `yaml:"maxwander,omitempty"`           // Max rooms to wander from home
 	WanderCount        int             `yaml:"-"`                             // How many times this mob has wandered
-	PreventIdle        bool            `yaml:"-"`                             // Whether they can't possibly be idle
 	ScriptTag          string          `yaml:"scripttag"`                     // Script for this mob: mobs/frostfang/scripts/{mobId}-{mobname}-{ScriptTag}.js
 	QuestFlags         []string        `yaml:"questflags,omitempty,flow"`     // What quest flags are set on this mob?
 	BuffIds            []int           `yaml:"buffids,omitempty"`             // Buff Id's this mob always has upon spawn
@@ -120,7 +125,12 @@ type Mob struct {
 	SpawnMutations          []string            `yaml:"spawnmutations,omitempty,flow"`     // Mutations always granted at spawn (Phase 24.3)
 	MutationChance          int                 `yaml:"mutationchance,omitempty"`          // % chance to gain 1 random bonus mutation on spawn (Phase 24.3)
 	CharmImmune             bool                `yaml:"charm_immune,omitempty"`            // If true, charm spells cannot affect this mob
-	NonCombatant            bool                `yaml:"non_combatant,omitempty"`           // If true, cannot be attacked, stolen from, or aggroed
+	NonCombatant            bool                `yaml:"non_combatant,omitempty"`           // If true, cannot be attacked, stolen from, or aggroed. Synced → Character.NonCombatant in Validate().
+	// AutoAggro indicates whether this mob auto-attacks players on sight.
+	// Replaces the conflated Hostile field's auto-attack semantic.
+	// Loaded from YAML field `auto_aggro:`; if absent, backward-compat
+	// copy from the legacy `hostile:` field in Validate() (sunset Task 18).
+	AutoAggro               bool                `yaml:"auto_aggro,omitempty"`
 	PlayerAttackImmune      bool                `yaml:"player_attack_immune,omitempty"`    // If true, players cannot attack this mob (but mob can still fight)
 	BuysGeneral             bool                `yaml:"buys_general,omitempty"`            // Whether this merchant buys misc goods
 	Crafter                 bool                `yaml:"crafter,omitempty"`                 // Whether this mob crafts autonomously (Stage 38.5.4)
@@ -144,6 +154,8 @@ type Mob struct {
 	ScatterRounds           int    `yaml:"-"` // Rounds remaining where mob skips wander (after alpha death)
 	crafterLastRestockRound uint64 // Last round materials were restocked (transient)
 	BehaviorArchetype       string `yaml:"behavior_archetype,omitempty"` // Archetype name (e.g., "melee_self_buff") — resolved to behaviors/archetypes/<name>.yaml if per-mob tree absent.
+	SubmissionPolicy        string `yaml:"submission_policy,omitempty"`  // chunk 4d T12: override archetype default; "mercy"/"subdue"/"cripple"/"lethal"
+	SurrenderPolicy         string `yaml:"surrender_policy,omitempty"`   // chunk 4d T12: override archetype default; "never"/"always"/"auto-tap-below <N>"
 	BTreeState              any    `yaml:"-"`                            // Behavior tree per-instance state (*behaviortree.BehaviorState)
 	tempDataStore           map[string]any
 	conversationId          int              // Identifier of conversation currently involved in.
@@ -163,8 +175,13 @@ func MobInstanceExists(instanceId int) bool {
 
 // IsNonCombatant returns true if the mob is flagged as a non-combatant
 // (shopkeepers, quest NPCs, etc.) that cannot be attacked or stolen from.
+//
+// Delegates to Character.NonCombatant (the canonical field after Task 9).
+// Also checks the legacy Mob.NonCombatant field during the migration window
+// (sunset in Task 18) so that test fixtures that set the field directly
+// without calling Validate() continue to work correctly.
 func (m *Mob) IsNonCombatant() bool {
-	return m.NonCombatant
+	return m.Character.NonCombatant || m.NonCombatant
 }
 
 // GetZone returns the mob's zone name.
@@ -315,7 +332,39 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 		mob.HomeRoomId = homeRoomId
 		mob.Character.RoomId = homeRoomId
 		mob.Character.IsMob = true
+		mob.Character.MobInstanceId = newInstanceId
 		mob.Character.PlayerDamage = make(map[int]int)
+
+		// Chunk 4d T12: submission policy from YAML override or archetype default.
+		if mob.SubmissionPolicy != "" {
+			if p, ok := characters.ParseSubmissionPolicy(mob.SubmissionPolicy); ok {
+				mob.Character.SubmissionPolicy = p
+			} else {
+				mudlog.Warn("MobSpawn", "msg", "invalid submission_policy", "mobId", mob.MobId, "value", mob.SubmissionPolicy)
+				mob.Character.SubmissionPolicy = characters.DefaultSubmissionPolicyForArchetype(mob.BehaviorArchetype)
+			}
+		} else {
+			mob.Character.SubmissionPolicy = characters.DefaultSubmissionPolicyForArchetype(mob.BehaviorArchetype)
+		}
+		if mob.SurrenderPolicy != "" {
+			if p, ok := characters.ParseSurrenderPolicy(mob.SurrenderPolicy); ok {
+				mob.Character.SurrenderPolicy = p
+			} else {
+				mudlog.Warn("MobSpawn", "msg", "invalid surrender_policy", "mobId", mob.MobId, "value", mob.SurrenderPolicy)
+				mob.Character.SurrenderPolicy = characters.DefaultSurrenderPolicyForArchetype(mob.BehaviorArchetype)
+			}
+		} else {
+			mob.Character.SurrenderPolicy = characters.DefaultSurrenderPolicyForArchetype(mob.BehaviorArchetype)
+		}
+
+		// State-machine pointers and the OnCharacterCreated wiring
+		// guard are shallow-copied above. Null them out so the
+		// upcoming Validate() builds new machines for this instance
+		// and re-fires OnCharacterCreated, letting observers capture
+		// the instance Character (not the template). Without this,
+		// mob death + position cascades fire with c.MobInstanceId=0
+		// and skip their cleanup paths.
+		mob.Character.ResetForMobInstance()
 
 		// Deep copy maps to prevent shared state with template.
 		// Go shallow copy shares map backing data — mutations to an
@@ -1002,7 +1051,62 @@ func (r *Mob) Validate() error {
 		r.ActivityLevel = 100
 	}
 
+	// Sync legacy Mob.NonCombatant → Character.NonCombatant.
+	// The YAML field lives on Mob for backward compat; Character is the
+	// canonical home going forward (consumed by CombatPhase veto, Task 10).
+	if r.NonCombatant {
+		r.Character.NonCombatant = true
+	}
+
+	// Backward-compat: populate AutoAggro from the legacy `hostile:` YAML field
+	// if AutoAggro wasn't set explicitly. New mob YAMLs should use `auto_aggro: true`.
+	if r.legacyHostile && !r.AutoAggro {
+		r.AutoAggro = true
+	}
+
 	r.Character.Validate()
+
+	// Always (re)initialize Presence with the mob transition table.
+	// Character.Validate() nil-guards with NewPlayerPresence() so that
+	// YAML-loaded players are covered, but every mob actor needs the mob
+	// state set (Spawning initial state + mob transition table). Re-create
+	// rather than nil-guard so template mobs and freshly shallow-copied
+	// instances are both handled correctly.
+	r.Character.Presence = presence.NewMobPresence()
+
+	// Unconditional overwrite — ensures mob actors always get a fresh
+	// Perception machine even though both player and mob paths share the
+	// same constructor (NewMachine). Matches the Presence overwrite
+	// pattern above for consistency: Character.Validate() installs a
+	// player default, mob.Validate() replaces it unconditionally.
+	r.Character.Perception = perception.NewMachine()
+
+	// Essential-mob veto (chunk 5): shopkeepers, foragers, caravan crew,
+	// and charmed companions must never transition out of Active. Wraps
+	// the existing Despawns() + IsCharmed() + IsEssential() policy.
+	essentialVeto := func(reason state.TransitionReason) error {
+		if !r.Despawns() || r.IsEssential() || r.Character.IsCharmed() {
+			return &state.VetoError{
+				HandlerName: "essential_mob",
+				Reason:      "essential mob (shop/forager/caravan/charmed)",
+			}
+		}
+		return nil
+	}
+	r.Character.Presence.RegisterVeto(presence.Active, presence.Dormant, essentialVeto)
+	r.Character.Presence.RegisterVeto(presence.Active, presence.Despawning, essentialVeto)
+	r.Character.Presence.RegisterVeto(presence.Dormant, presence.Despawning, essentialVeto)
+
+	// Chunk 5 (Presence) T8: terminal-state cleanup. On entry to
+	// Despawning, cancel all pending scheduled transitions for this
+	// character (Activity casting timers, Position recovery timers, etc.)
+	// so they don't fire after the mob is removed.
+	r.Character.Presence.RegisterObserver("scheduler_cancel_on_despawning",
+		func(from, to presence.State, reason state.TransitionReason) {
+			if to == presence.Despawning {
+				r.Character.CancelAllScheduled()
+			}
+		})
 
 	return nil
 }

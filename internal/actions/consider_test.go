@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
 
@@ -46,11 +47,10 @@ func newFakeActor(name string, statAdj, healthMax int, isPlayer bool) *fakeActor
 	}
 }
 
-func (a *fakeActor) GetCharacter() *characters.Character        { return a.char }
-func (a *fakeActor) GetRoom() *rooms.Room                       { return nil }
-func (a *fakeActor) SendText(msg string)                        { a.sent = append(a.sent, msg) }
-func (a *fakeActor) SendRoomText(msg string, _ bool)            {}
-func (a *fakeActor) SendRoomCommunication(msg string, _ bool)   {}
+func (a *fakeActor) GetCharacter() *characters.Character      { return a.char }
+func (a *fakeActor) GetRoom() *rooms.Room                     { return nil }
+func (a *fakeActor) SendText(_ messaging.Category, msg string) { a.sent = append(a.sent, msg) }
+func (a *fakeActor) SendRoomCommunication(msg string, _ bool) {}
 func (a *fakeActor) GetName() string                            { return a.name }
 func (a *fakeActor) IsPlayer() bool                             { return a.isPlayer }
 func (a *fakeActor) GetUserId() int                             { return 0 }

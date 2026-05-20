@@ -15,11 +15,14 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -92,11 +95,11 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 									for _, uid := range room.GetPlayers() {
 										u := users.GetByUserId(uid)
 										if u != nil && u.Character.HasFlagFromAnySource(buffs.NightVision) {
-											u.SendText(wrappedMsg)
+											u.SendText(messaging.CategoryRoomDescription, wrappedMsg)
 										}
 									}
 								} else {
-									sendVisualRoomText(room, wrappedMsg)
+									sendVisualRoomText(room, messaging.CategoryRoomDescription, wrappedMsg)
 								}
 							}
 
@@ -123,14 +126,14 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 				// Stage 7.5: Attempt automatic recovery from prone (uses DEX)
 				if attemptMade, success := user.Character.AttemptRecovery(user.Character.Stats.Dexterity.ValueAdj); attemptMade {
 					if success {
-						user.SendText("You scramble to your feet!")
+						user.SendText(messaging.CategorySystem, "You scramble to your feet!")
 						if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
-							sendVisualRoomText(room, "<ansi fg=\"username\">"+user.Character.Name+"</ansi> clambers to their feet in a rushed panic.", user.UserId)
+							sendVisualRoomText(room, messaging.CategoryEmote, "<ansi fg=\"username\">"+user.Character.Name+"</ansi> clambers to their feet in a rushed panic.", user.UserId)
 						}
 					} else {
-						user.SendText("You attempt to stand, but slip back down in the chaos of battle!")
+						user.SendText(messaging.CategorySystem, "You attempt to stand, but slip back down in the chaos of battle!")
 						if room := rooms.LoadRoom(user.Character.RoomId); room != nil {
-							sendVisualRoomText(room, "<ansi fg=\"username\">"+user.Character.Name+"</ansi> attempts to stand, but slips and falls in the chaos of battle.", user.UserId)
+							sendVisualRoomText(room, messaging.CategoryEmote, "<ansi fg=\"username\">"+user.Character.Name+"</ansi> attempts to stand, but slips and falls in the chaos of battle.", user.UserId)
 						}
 					}
 				}
@@ -160,10 +163,10 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 								SourcePlainName: user.Character.GetCharacterName(false),
 							}
 							cfg := textutil.SendTextConfig{
-								UserSendFunc: func(msg string) { user.SendText(msg) },
+								UserSendFunc: func(msg string) { user.SendText(messaging.CategoryBuffApply, msg) },
 								RoomSendFunc: func(msg string, skip ...int) {
 									if r := rooms.LoadRoom(user.Character.RoomId); r != nil {
-										r.SendText(msg, skip...)
+										r.SendText(messaging.CategoryBuffApply, msg, skip...)
 									}
 								},
 								ExcludeId: user.UserId,
@@ -210,7 +213,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 
 				// Stage 12.2: Mutation progress — accumulates during combat, triggers acquisition or deepening
 				// Stage 17.2: The Eye modulates how quickly mutations happen (0.5× at new moon, 1.5× at full)
-				if user.Character.Aggro != nil {
+				if user.Character.IsInCombat() {
 					mb := configs.GetBalanceConfig()
 					canAcquire := len(user.Character.Mutations) < int(mb.MutationMaxCount)
 					canDeepen := mutations.CanDeepen(user.Character.Mutations)
@@ -251,7 +254,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 										if newLevel >= int(mb.MutationMaxLevel) {
 											levelTag = "fully matured"
 										}
-										user.SendText(fmt.Sprintf(
+										user.SendText(messaging.CategoryMutation, fmt.Sprintf(
 											`<ansi fg="magenta">The Chrysalis deepens its hold. Your <ansi fg="yellow">%s</ansi> grows stronger (%s).</ansi>`,
 											spec.Name, levelTag))
 									}
@@ -268,10 +271,10 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 									user.Character.Mutations[mutId] = 1
 									spec := mutations.GetMutation(mutId)
 									if spec != nil {
-										user.SendText(fmt.Sprintf(
+										user.SendText(messaging.CategoryMutation, fmt.Sprintf(
 											`<ansi fg="magenta">Something stirs beneath your skin. A mutation emerges: <ansi fg="yellow">%s</ansi>.</ansi>`,
 											spec.Name))
-										user.SendText(fmt.Sprintf(`<ansi fg="magenta">%s</ansi>`, spec.Description))
+										user.SendText(messaging.CategoryMutation, fmt.Sprintf(`<ansi fg="magenta">%s</ansi>`, spec.Description))
 
 										// Emit world event for gossip system
 										sig := worldevents.Regional
@@ -299,33 +302,52 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 					}
 				}
 
-				// Stage 13.1: Crafting tick — advance or complete active crafting
-				if user.Character.CraftingState != nil {
-					if user.Character.Aggro != nil {
-						user.Character.CraftingState = nil
-						user.SendText(`<ansi fg="red">Your work is interrupted!</ansi>`)
-					} else {
-						cs := user.Character.CraftingState
-						cs.RoundsComplete++
-						if cs.RoundsComplete < cs.RoundsTotal {
-							progressMsg := cs.RecipeId
-							if strings.HasPrefix(cs.RecipeId, "salvage:") || strings.HasPrefix(cs.RecipeId, "salvage-corpse:") {
-								progressMsg = "salvaging"
-							}
-							user.SendText(fmt.Sprintf(
-								`<ansi fg="yellow">You continue working on %s... (%d/%d)</ansi>`,
-								progressMsg, cs.RoundsComplete, cs.RoundsTotal))
-						} else if mobIdStr, ok := strings.CutPrefix(cs.RecipeId, "salvage-corpse:"); ok {
-							user.Character.CraftingState = nil
-							resolveCorpseSalvage(user, mobIdStr)
-						} else if itemIdStr, ok := strings.CutPrefix(cs.RecipeId, "salvage:"); ok {
-							// Salvage completion
-							user.Character.CraftingState = nil
-							resolveSalvage(user, itemIdStr)
+				// Stage 13.1: Crafting/Salvaging tick — advance or complete via Activity machine.
+				if user.Character.Activity != nil {
+					switch user.Character.Activity.State() {
+					case activity.Salvaging:
+						// Salvaging tick — advance round via Activity machine.
+						sd, complete := user.Character.Activity.AdvanceSalvagingRound()
+						if !complete {
+							user.SendText(messaging.CategorySystem, fmt.Sprintf(
+								`<ansi fg="yellow">You continue salvaging... (%d/%d)</ansi>`,
+								sd.RoundsComplete, sd.RoundsTotal))
 						} else {
-							recipe := crafting.GetRecipe(cs.RecipeId)
-							enchantTargetSlot := cs.TargetSlot
-							user.Character.CraftingState = nil
+							// Determine salvage type from ItemUuid prefix.
+							const corpsePrefix = "corpse:"
+							if strings.HasPrefix(sd.ItemUuid, corpsePrefix) {
+								mobIdStr := strings.TrimPrefix(sd.ItemUuid, corpsePrefix)
+								_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
+									Trigger: activity.TriggerSalvageComplete,
+									Actor:   user.Character.Activity.Self(),
+								})
+								resolveCorpseSalvage(user, mobIdStr)
+							} else {
+								// Parse item ID from UUID stored during TransitionToSalvaging.
+								// ItemUuid holds the raw UUID string; item ID is recovered via
+								// resolveSalvage's MiscData-free path using SalvagingData.
+								_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
+									Trigger: activity.TriggerSalvageComplete,
+									Actor:   user.Character.Activity.Self(),
+								})
+								resolveSalvageFromData(user, sd)
+							}
+						}
+
+					case activity.Crafting:
+						// Crafting tick — advance round via Activity machine.
+						cd, complete := user.Character.Activity.AdvanceCraftingRound()
+						if !complete {
+							user.SendText(messaging.CategorySystem, fmt.Sprintf(
+								`<ansi fg="yellow">You continue working on %s... (%d/%d)</ansi>`,
+								cd.RecipeId, cd.RoundsComplete, cd.RoundsTotal))
+						} else {
+							recipe := crafting.GetRecipe(cd.RecipeId)
+							enchantTargetSlot := cd.TargetSlot
+							_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
+								Trigger: activity.TriggerCraftComplete,
+								Actor:   user.Character.Activity.Self(),
+							})
 							if recipe != nil {
 								sl := user.Character.Skills[recipe.Skill]
 								chance := crafting.CalcSuccessChance(sl, recipe.SkillMinimum)
@@ -358,7 +380,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 										// Enchanting: use the stored slot label to find the target
 										targetItem := user.Character.Equipment.GetSlotPointer(enchantTargetSlot)
 										if targetItem == nil || targetItem.ItemId < 1 {
-											user.SendText(`<ansi fg="red">The item is no longer equipped. The enchanting fails, but your materials are returned.</ansi>`)
+											user.SendText(messaging.CategoryWarning, `<ansi fg="red">The item is no longer equipped. The enchanting fails, but your materials are returned.</ansi>`)
 										} else {
 											user.Character.Items, user.Character.ComponentItems = crafting.ConsumeIngredients(user.Character.Items, user.Character.ComponentItems, recipe)
 											eDef := enchantments.GetEnchantment(recipe.EnchantType)
@@ -389,7 +411,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 									}
 									craftBonus := 1.0 + float64(recipe.SkillMinimum)*float64(configs.GetBalanceConfig().CraftDifficultyProgressionScale)
 									user.Character.OnSkillUseScaled(recipe.Skill, user.UserId, craftBonus)
-									user.SendText(fmt.Sprintf(`<ansi fg="green">%s</ansi>`, recipe.SuccessMessage))
+									user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="green">%s</ansi>`, recipe.SuccessMessage))
 
 									// Stage 31.1: Recipe discovery roll
 									bal := configs.GetBalanceConfig()
@@ -411,7 +433,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 											pick := eligible[util.Rand(len(eligible))]
 											if user.Character.LearnRecipe(pick) {
 												if newRecipe := crafting.GetRecipe(pick); newRecipe != nil {
-													user.SendText(fmt.Sprintf(
+													user.SendText(messaging.CategorySkillProgress, fmt.Sprintf(
 														`<ansi fg="yellow-bold">A new idea takes shape in your mind: %s!</ansi>`, newRecipe.Name))
 												}
 											}
@@ -419,7 +441,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 									}
 								} else {
 									user.Character.Items, user.Character.ComponentItems = crafting.ConsumeIngredients(user.Character.Items, user.Character.ComponentItems, recipe)
-									user.SendText(fmt.Sprintf(`<ansi fg="red">%s</ansi>`, recipe.FailureMessage))
+									user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">%s</ansi>`, recipe.FailureMessage))
 								}
 							}
 						}
@@ -427,7 +449,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 				}
 
 				// Stage 31.6: Chrysalis enchantment ticking (combat only)
-				if user.Character.Aggro != nil {
+				if user.Character.IsInCombat() {
 					for _, itemPtr := range user.Character.Equipment.GetAllItemPtrs() {
 						if !itemPtr.HasChrysalisEnchantment() {
 							continue
@@ -455,7 +477,7 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 
 								newTier := itemPtr.EnchantTier
 								if newTier < len(eDef.Tiers) && eDef.Tiers[newTier].TierUpMessage != "" {
-									user.SendText(fmt.Sprintf(`<ansi fg="magenta">%s</ansi>`, eDef.Tiers[newTier].TierUpMessage))
+									user.SendText(messaging.CategorySkillProgress, fmt.Sprintf(`<ansi fg="magenta">%s</ansi>`, eDef.Tiers[newTier].TierUpMessage))
 								}
 							}
 						}
@@ -474,33 +496,30 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 	return events.Continue
 }
 
-// resolveSalvage handles salvage completion when CraftingState finishes.
-func resolveSalvage(user *users.UserRecord, itemIdStr string) {
-	var itemId int
-	fmt.Sscanf(itemIdStr, "%d", &itemId)
+// resolveSalvageFromData resolves salvage completion using Activity SalvagingData
+// as the sole source of truth. The item is located by UUID from SalvagingData.
+func resolveSalvageFromData(user *users.UserRecord, sd activity.SalvagingData) {
+	uuidStr := sd.ItemUuid
 
-	spec := items.GetItemSpec(itemId)
-	if spec == nil {
-		user.SendText(`<ansi fg="red">Something went wrong with your salvage attempt.</ansi>`)
-		return
-	}
-
-	// Find the specific item in backpack by UUID
-	uuidStr, _ := user.Character.GetMiscData("salvage_item_uuid").(string)
-	user.Character.SetMiscData("salvage_item_uuid", nil)
-
+	// Find item in backpack by UUID.
 	found := false
 	var targetItem items.Item
 	for _, itm := range user.Character.Items {
-		if itm.UUID.String() == uuidStr && itm.ItemId == itemId {
+		if itm.UUID.String() == uuidStr {
 			targetItem = itm
 			found = true
 			break
 		}
 	}
-
 	if !found {
-		user.SendText(`<ansi fg="red">The item you were salvaging is no longer in your backpack.</ansi>`)
+		user.SendText(messaging.CategoryError, `<ansi fg="red">The item you were salvaging is no longer in your backpack.</ansi>`)
+		return
+	}
+
+	itemId := targetItem.ItemId
+	spec := items.GetItemSpec(itemId)
+	if spec == nil {
+		user.SendText(messaging.CategoryError, `<ansi fg="red">Something went wrong with your salvage attempt.</ansi>`)
 		return
 	}
 
@@ -513,10 +532,7 @@ func resolveSalvage(user *users.UserRecord, itemIdStr string) {
 
 	// Roll returns from recipe, tagged salvage_returns, or spoiled potion
 	var recovered []crafting.RecipeIngredient
-	isSpoiledPotion, _ := user.Character.GetMiscData("salvage_spoiled_potion").(bool)
-	user.Character.SetMiscData("salvage_spoiled_potion", nil)
-
-	if isSpoiledPotion {
+	if sd.SpoiledPotion {
 		// Spoiled/declining potions always return 1-2 binding paste
 		qty := 1
 		if chance > 0.5 {
@@ -551,12 +567,12 @@ func resolveSalvage(user *users.UserRecord, itemIdStr string) {
 			parts = append(parts, fmt.Sprintf("%dx %s",
 				ing.Quantity, ing.ItemTag))
 		}
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="green">You salvage the <ansi fg="itemname">%s</ansi> and recover: %s.</ansi>`,
 			targetItem.DisplayName(),
 			strings.Join(parts, ", ")))
 	} else {
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="red">You attempt to salvage the <ansi fg="itemname">%s</ansi> but recover nothing useful.</ansi>`,
 			targetItem.DisplayName()))
 	}
@@ -581,7 +597,7 @@ func resolveCorpseSalvage(user *users.UserRecord, mobIdStr string) {
 
 	room := rooms.LoadRoom(user.Character.RoomId)
 	if room == nil {
-		user.SendText(`<ansi fg="red">Something went wrong with your salvage attempt.</ansi>`)
+		user.SendText(messaging.CategoryError, `<ansi fg="red">Something went wrong with your salvage attempt.</ansi>`)
 		return
 	}
 
@@ -596,20 +612,20 @@ func resolveCorpseSalvage(user *users.UserRecord, mobIdStr string) {
 		}
 	}
 	if !found {
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategoryError, fmt.Sprintf(
 			`<ansi fg="red">The %s corpse is no longer here.</ansi>`, corpseName))
 		return
 	}
 
 	mobSpec := mobs.GetMobSpec(mobs.MobId(mobId))
 	if mobSpec == nil {
-		user.SendText(`<ansi fg="red">Something went wrong with your salvage attempt.</ansi>`)
+		user.SendText(messaging.CategoryError, `<ansi fg="red">Something went wrong with your salvage attempt.</ansi>`)
 		return
 	}
 
 	returns := crafting.LookupCorpseSalvage(mobSpec.Groups)
 	if len(returns) == 0 {
-		user.SendText(`<ansi fg="red">There's nothing useful to recover here.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">There's nothing useful to recover here.</ansi>`)
 		room.RemoveCorpse(target)
 		return
 	}
@@ -639,12 +655,12 @@ func resolveCorpseSalvage(user *users.UserRecord, mobIdStr string) {
 			}
 			parts = append(parts, fmt.Sprintf("%dx %s", ing.Quantity, ing.ItemTag))
 		}
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="green">You finish working over the <ansi fg="mobname">%s corpse</ansi> and recover: %s.</ansi>`,
 			corpseName,
 			strings.Join(parts, ", ")))
 	} else {
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="red">You work over the <ansi fg="mobname">%s corpse</ansi> but recover nothing useful.</ansi>`,
 			corpseName))
 	}

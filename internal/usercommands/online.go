@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/language"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -108,7 +109,7 @@ func Online(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	onlineResultsTable := templates.GetTable(tableTitle, headers, rows, allFormatting...)
 	tplTxt, _ := templates.Process("tables/generic", onlineResultsTable, user.UserId)
-	user.SendText(tplTxt)
+	user.SendText(messaging.CategorySystem, tplTxt)
 
 	return true, nil
 }

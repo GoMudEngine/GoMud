@@ -483,7 +483,19 @@ func GetLastPeriod(periodName string, roundNumber uint64) uint64 {
 	roundOfDay := roundNumber % roundsPerDay
 
 	// What round started this hour?
-	roundOfHour := roundOfDay % uint64(math.Floor(roundsPerHour))
+	// Guard: if RoundsPerDay < 24, integer roundsPerHour floors to 0
+	// and the modulo panics. Production default is RoundsPerDay=20,
+	// which falls in this danger zone for the "hour" period name.
+	// Degrade gracefully: treat hour-of-day as 0 (i.e., "hour"
+	// boundaries collapse onto day boundaries) rather than panic.
+	var roundsPerHourFloor uint64
+	if rph := uint64(math.Floor(roundsPerHour)); rph > 0 {
+		roundsPerHourFloor = rph
+	}
+	var roundOfHour uint64
+	if roundsPerHourFloor > 0 {
+		roundOfHour = roundOfDay % roundsPerHourFloor
+	}
 
 	if periodName == `hour` { // Start of the current hour (or closest to it)
 

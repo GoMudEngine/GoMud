@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gamelock"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mutators"
 	"github.com/GoMudEngine/GoMud/internal/prompt"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -39,7 +40,7 @@ func Room(rest string, user *users.UserRecord, liveRoom *rooms.Room, flags event
 
 	if len(args) == 0 {
 		infoOutput, _ := templates.Process("admincommands/help/command.room", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendText(messaging.CategorySystem, infoOutput)
 		return handled, nil
 	}
 
@@ -52,7 +53,7 @@ func Room(rest string, user *users.UserRecord, liveRoom *rooms.Room, flags event
 
 	if room == nil {
 		err := fmt.Errorf(`Something went wrong for RoomId: %d`, liveRoom.RoomId)
-		user.SendText(err.Error())
+		user.SendText(messaging.CategorySystem, err.Error())
 		return true, err
 	}
 
@@ -67,30 +68,30 @@ func Room(rest string, user *users.UserRecord, liveRoom *rooms.Room, flags event
 		return adminRoom_Info(args, user, room)
 	case `secretexit`:
 		if len(args) < 2 {
-			user.SendText(fmt.Sprintf(`Invalid room command: <ansi fg="command">%s</ansi>`, roomCmd))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`Invalid room command: <ansi fg="command">%s</ansi>`, roomCmd))
 			return handled, nil
 		}
 		return adminRoom_SecretExit(args, user, room)
 	case `copy`:
 		if len(args) < 3 {
-			user.SendText(fmt.Sprintf(`Invalid room command: <ansi fg="command">%s</ansi>`, roomCmd))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`Invalid room command: <ansi fg="command">%s</ansi>`, roomCmd))
 			return handled, nil
 		}
 		return adminRoom_Copy(args, user, room)
 	case `exit`:
 		if len(args) < 2 {
-			user.SendText(fmt.Sprintf(`Invalid room command: <ansi fg="command">%s</ansi>`, roomCmd))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`Invalid room command: <ansi fg="command">%s</ansi>`, roomCmd))
 			return handled, nil
 		}
 		return adminRoom_Exit(args, user, room)
 	case `set`:
 		if len(args) < 2 {
-			user.SendText(fmt.Sprintf(`Invalid room command: <ansi fg="command">%s</ansi>`, roomCmd))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`Invalid room command: <ansi fg="command">%s</ansi>`, roomCmd))
 			return handled, nil
 		}
 		return adminRoom_Set(args, user, room)
 	default:
-		user.SendText(fmt.Sprintf(`Invalid room command: <ansi fg="command">%s</ansi>`, roomCmd))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`Invalid room command: <ansi fg="command">%s</ansi>`, roomCmd))
 	}
 
 	return handled, nil
@@ -144,7 +145,7 @@ func room_Edit_Containers(rest string, user *users.UserRecord, room *rooms.Room,
 	question := cmdPrompt.Ask(`Choose one:`, []string{`new`}, `new`)
 	if !question.Done {
 		tplTxt, _ := templates.Process("tables/numbered-list", containerOptions, user.UserId)
-		user.SendText(tplTxt)
+		user.SendText(messaging.CategorySystem, tplTxt)
 		return true, nil
 	}
 
@@ -171,8 +172,8 @@ func room_Edit_Containers(rest string, user *users.UserRecord, room *rooms.Room,
 
 		// Does the container name they entered not exist? Failure!
 		if !currentlyEditing.Exists {
-			user.SendText("Invalid option selected.")
-			user.SendText("Aborting...")
+			user.SendText(messaging.CategorySystem, "Invalid option selected.")
+			user.SendText(messaging.CategorySystem, "Aborting...")
 			user.ClearPrompt()
 			return true, nil
 		}
@@ -189,9 +190,9 @@ func room_Edit_Containers(rest string, user *users.UserRecord, room *rooms.Room,
 			delete(room.Containers, currentlyEditing.Name)
 			rooms.SaveRoomTemplate(*room)
 
-			user.SendText(``)
-			user.SendText(fmt.Sprintf(`<ansi fg="container">%s</ansi> deleted from the room.`, currentlyEditing.Name))
-			user.SendText(``)
+			user.SendText(messaging.CategorySystem, ``)
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="container">%s</ansi> deleted from the room.`, currentlyEditing.Name))
+			user.SendText(messaging.CategorySystem, ``)
 
 			user.ClearPrompt()
 			return true, nil
@@ -217,8 +218,8 @@ func room_Edit_Containers(rest string, user *users.UserRecord, room *rooms.Room,
 
 		// Make sure they aren't using any reserved names.
 		if currentlyEditing.NameNew == `quit` || currentlyEditing.NameNew == `new` {
-			user.SendText("Invalid new name selected.")
-			user.SendText("Aborting...")
+			user.SendText(messaging.CategorySystem, "Invalid new name selected.")
+			user.SendText(messaging.CategorySystem, "Aborting...")
 			user.ClearPrompt()
 			return true, nil
 		}
@@ -227,7 +228,7 @@ func room_Edit_Containers(rest string, user *users.UserRecord, room *rooms.Room,
 		if currentlyEditing.Name != currentlyEditing.NameNew {
 			if _, ok := room.Containers[currentlyEditing.NameNew]; ok {
 
-				user.SendText(`<ansi fg="red">A container with that name already exists!</ansi>`)
+				user.SendText(messaging.CategorySystem, `<ansi fg="red">A container with that name already exists!</ansi>`)
 				question.RejectResponse()
 				return true, nil
 
@@ -272,22 +273,22 @@ func room_Edit_Containers(rest string, user *users.UserRecord, room *rooms.Room,
 	room.Containers[currentlyEditing.NameNew] = currentlyEditing.Container
 	rooms.SaveRoomTemplate(*room)
 
-	user.SendText(``)
+	user.SendText(messaging.CategorySystem, ``)
 
 	if currentlyEditing.Container.Lock.Difficulty > 0 {
 		lockId := fmt.Sprintf(`%d-%s`, room.RoomId, currentlyEditing.NameNew)
-		user.SendText(fmt.Sprintf(`<ansi fg="red">To Create Key -  LockId: <ansi fg="231" bg="5">%s</ansi></ansi>`, lockId))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">To Create Key -  LockId: <ansi fg="231" bg="5">%s</ansi></ansi>`, lockId))
 
 		seqString := ``
 		for _, dir := range util.GetLockSequence(lockId, int(currentlyEditing.Container.Lock.Difficulty), string(configs.GetServerConfig().Seed), currentlyEditing.Container.Lock.RotationSeed) {
 			seqString += string(dir) + " "
 		}
-		user.SendText(fmt.Sprintf(`<ansi fg="red">To pick lock - Sequence: <ansi fg="green">%s</ansi></ansi>`, seqString))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">To pick lock - Sequence: <ansi fg="green">%s</ansi></ansi>`, seqString))
 	}
 
-	user.SendText(``)
-	user.SendText(`Changes saved.`)
-	user.SendText(``)
+	user.SendText(messaging.CategorySystem, ``)
+	user.SendText(messaging.CategorySystem, `Changes saved.`)
+	user.SendText(messaging.CategorySystem, ``)
 
 	user.ClearPrompt()
 
@@ -298,8 +299,8 @@ func room_Edit_Containers_SendRecipes(user *users.UserRecord, recipeResultItemId
 
 	itm := items.New(recipeResultItemId)
 
-	user.SendText(``)
-	user.SendText(fmt.Sprintf(`    Current Recipe for %d (<ansi fg="itemname">%s</ansi>):`, recipeResultItemId, itm.DisplayName()))
+	user.SendText(messaging.CategorySystem, ``)
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`    Current Recipe for %d (<ansi fg="itemname">%s</ansi>):`, recipeResultItemId, itm.DisplayName()))
 
 	itemsList := []string{}
 	for itemId, qty := range recipeItems {
@@ -313,10 +314,10 @@ func room_Edit_Containers_SendRecipes(user *users.UserRecord, recipeResultItemId
 	})
 
 	for _, txt := range itemsList {
-		user.SendText(txt)
+		user.SendText(messaging.CategorySystem, txt)
 	}
 
-	user.SendText(``)
+	user.SendText(messaging.CategorySystem, ``)
 }
 
 // editLockAndTrap handles the lock/trap questionnaire shared by containers and exits.
@@ -344,7 +345,7 @@ func editLockAndTrap(cmdPrompt *prompt.Prompt, user *users.UserRecord, lock game
 
 		// Make sure the provided difficulty is within acceptable range.
 		if difficultyInt < 2 || difficultyInt > 32 {
-			user.SendText("Difficulty must between 2 and 32, inclusive.")
+			user.SendText(messaging.CategorySystem, "Difficulty must between 2 and 32, inclusive.")
 			question.RejectResponse()
 			return lock, true
 		}
@@ -409,7 +410,7 @@ func editLockAndTrap(cmdPrompt *prompt.Prompt, user *users.UserRecord, lock game
 			question := cmdPrompt.Ask(`Select a buff to add to the trap, or nothing to continue:`, []string{}, `0`)
 			if !question.Done {
 				tplTxt, _ := templates.Process("tables/numbered-list-doubled", buffOptions, user.UserId)
-				user.SendText(tplTxt)
+				user.SendText(messaging.CategorySystem, tplTxt)
 				return lock, true
 			}
 
@@ -436,11 +437,11 @@ func editLockAndTrap(cmdPrompt *prompt.Prompt, user *users.UserRecord, lock game
 
 				if buffSelectedInt == 0 {
 
-					user.SendText("Invalid selection.")
+					user.SendText(messaging.CategorySystem, "Invalid selection.")
 					question.RejectResponse()
 
 					tplTxt, _ := templates.Process("tables/numbered-list-doubled", buffOptions, user.UserId)
-					user.SendText(tplTxt)
+					user.SendText(messaging.CategorySystem, tplTxt)
 					return lock, true
 				}
 
@@ -471,7 +472,7 @@ func editLockAndTrap(cmdPrompt *prompt.Prompt, user *users.UserRecord, lock game
 				}
 
 				tplTxt, _ := templates.Process("tables/numbered-list-doubled", buffOptions, user.UserId)
-				user.SendText(tplTxt)
+				user.SendText(messaging.CategorySystem, tplTxt)
 				return lock, true
 
 			}
@@ -531,7 +532,7 @@ func editContainerRecipes(cmdPrompt *prompt.Prompt, user *users.UserRecord, reci
 		}
 
 		if recipeNow != 0 && items.GetItemSpec(recipeNow) == nil {
-			user.SendText(`<ansi fg="red">Invalid selection.</ansi>`)
+			user.SendText(messaging.CategorySystem, `<ansi fg="red">Invalid selection.</ansi>`)
 			question.RejectResponse()
 			return recipes, true
 		}
@@ -583,7 +584,7 @@ func editContainerRecipes(cmdPrompt *prompt.Prompt, user *users.UserRecord, reci
 			question := cmdPrompt.Ask(`Modify which (or new)?`, []string{`skip`}, `skip`)
 			if !question.Done {
 				tplTxt, _ := templates.Process("tables/numbered-list", recipeOptions, user.UserId)
-				user.SendText(tplTxt)
+				user.SendText(messaging.CategorySystem, tplTxt)
 				return recipes, true
 			}
 
@@ -613,7 +614,7 @@ func editContainerRecipes(cmdPrompt *prompt.Prompt, user *users.UserRecord, reci
 				itemIdInt, _ := strconv.Atoi(question.Response)
 				if items.GetItemSpec(itemIdInt) == nil {
 
-					user.SendText("Invalid itemId.")
+					user.SendText(messaging.CategorySystem, "Invalid itemId.")
 					question.RejectResponse()
 
 					return recipes, true
@@ -642,8 +643,8 @@ func editContainerRecipes(cmdPrompt *prompt.Prompt, user *users.UserRecord, reci
 			question = cmdPrompt.Ask(`Enter an itemId to add to the recipe, or nothing to continue:`, []string{``}, `skip`)
 			if !question.Done {
 				// They have a recipe to modify, ask for item id's
-				user.SendText(``)
-				user.SendText(`<ansi fg="cyan">Positive numbers add items, negative numbers remove items.</ansi>`)
+				user.SendText(messaging.CategorySystem, ``)
+				user.SendText(messaging.CategorySystem, `<ansi fg="cyan">Positive numbers add items, negative numbers remove items.</ansi>`)
 
 				room_Edit_Containers_SendRecipes(user, recipeNow, neededItems)
 
@@ -661,7 +662,7 @@ func editContainerRecipes(cmdPrompt *prompt.Prompt, user *users.UserRecord, reci
 				recipeAdjustment := items.FindItem(question.Response)
 
 				if itemSpec := items.GetItemSpec(recipeAdjustment); itemSpec == nil {
-					user.SendText(`<ansi fg="red">Invalid ItemId provided.</ansi>`)
+					user.SendText(messaging.CategorySystem, `<ansi fg="red">Invalid ItemId provided.</ansi>`)
 
 					room_Edit_Containers_SendRecipes(user, recipeNow, neededItems)
 
@@ -767,7 +768,7 @@ func room_Edit_Mutators(rest string, user *users.UserRecord, room *rooms.Room, f
 	question := cmdPrompt.Ask(`Select a mutator to add to the room, or nothing to continue:`, []string{}, `0`)
 	if !question.Done {
 		tplTxt, _ := templates.Process("tables/numbered-list-doubled", mutatorOptions, user.UserId)
-		user.SendText(tplTxt)
+		user.SendText(messaging.CategorySystem, tplTxt)
 		return true, nil
 	}
 
@@ -792,11 +793,11 @@ func room_Edit_Mutators(rest string, user *users.UserRecord, room *rooms.Room, f
 
 		if mutatorSelected == `` {
 
-			user.SendText("Invalid selection.")
+			user.SendText(messaging.CategorySystem, "Invalid selection.")
 			question.RejectResponse()
 
 			tplTxt, _ := templates.Process("tables/numbered-list-doubled", mutatorOptions, user.UserId)
-			user.SendText(tplTxt)
+			user.SendText(messaging.CategorySystem, tplTxt)
 			return true, nil
 		}
 
@@ -827,7 +828,7 @@ func room_Edit_Mutators(rest string, user *users.UserRecord, room *rooms.Room, f
 		}
 
 		tplTxt, _ := templates.Process("tables/numbered-list-doubled", mutatorOptions, user.UserId)
-		user.SendText(tplTxt)
+		user.SendText(messaging.CategorySystem, tplTxt)
 		return true, nil
 
 	}
@@ -841,9 +842,9 @@ func room_Edit_Mutators(rest string, user *users.UserRecord, room *rooms.Room, f
 	}
 	rooms.SaveRoomTemplate(*room)
 
-	user.SendText(``)
-	user.SendText(`Changes saved.`)
-	user.SendText(``)
+	user.SendText(messaging.CategorySystem, ``)
+	user.SendText(messaging.CategorySystem, `Changes saved.`)
+	user.SendText(messaging.CategorySystem, ``)
 
 	user.ClearPrompt()
 

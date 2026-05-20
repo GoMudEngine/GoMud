@@ -1,0 +1,40 @@
+goals:
+  - Engage at least 3 different grappling-archetype humanoid mobs and play
+    through full grapple lifecycles (entry → drift → advance/degrade →
+    eventual escape or sub or death). For each fight, capture the complete
+    text transcript of all grapple-related messaging.
+
+  - Read each transcript as a player would. Report whether the combat
+    reads as:
+      - Varied (no repeated lines within a single grapple; gradient and
+        outcome messages don't echo each other)
+      - Visceral (real MMA/BJJ vocabulary, not generic fantasy; reads
+        like sport grappling, not D&D)
+      - Coherent (each line describes an action that matches the current
+        position; defender's actions match their role; mount-strike-apex
+        lines only fire on Mount)
+      - Paced (Hold rounds don't feel empty; advances feel earned;
+        decisive moments — reversals, sub windows, escapes — feel
+        decisive rather than getting buried under other messaging)
+      - Informative (a player can follow what's happening in the grapple
+        round-by-round from the text alone, without needing to read
+        {pos} or run combatstats)
+
+  - Specifically watch for gradient flavor lines firing on ControlLevel
+    state changes (Controlling↔Neutral, Neutral↔Controlled in either
+    direction). Note: these were broken before the 54899f3b fix; should
+    now fire reliably. Capture 5+ examples across the session.
+
+  - Flag any lines that read awkwardly, repeat too often within a single
+    grapple, break immersion, or contradict the current position (e.g.,
+    a "bridge and hip-escape" line firing while in a standing clinch).
+
+  - Note the overall rhythm: how many rounds does a typical grapple last?
+    Does Mount feel like an apex worth fighting for? Does losing
+    Controlling state feel like a meaningful setback or just noise?
+
+  - Flag any usability friction: was it obvious when a position changed?
+    Did gradient messages help or just add to the noise? Could a new
+    player follow the grapple without out-of-game knowledge?
+
+  - Report no panics or "missing template" debug strings.

@@ -73,14 +73,14 @@ func resolveTargetPower(mob *mobs.Mob, ctx *EvalContext) (float64, bool) {
 	}
 	// Aggro fallback: matches actions.ResolveAggroTarget priority —
 	// mob target before player target when both fields are set.
-	if mob.Character.Aggro != nil {
-		if mob.Character.Aggro.MobInstanceId > 0 {
-			if m := mobs.GetInstance(mob.Character.Aggro.MobInstanceId); m != nil {
+	if mob.Character.IsInCombat() {
+		if mob.Character.CurrentCombatTarget().MobInstanceId > 0 {
+			if m := mobs.GetInstance(mob.Character.CurrentCombatTarget().MobInstanceId); m != nil {
 				return combat.PowerScore(m.Character), true
 			}
 		}
-		if mob.Character.Aggro.UserId > 0 {
-			if u := users.GetByUserId(mob.Character.Aggro.UserId); u != nil {
+		if mob.Character.CurrentCombatTarget().UserId > 0 {
+			if u := users.GetByUserId(mob.Character.CurrentCombatTarget().UserId); u != nil {
 				return combat.PowerScore(*u.Character), true
 			}
 		}

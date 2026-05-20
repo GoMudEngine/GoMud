@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 
@@ -24,14 +25,14 @@ func Zap(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 		target, err := actions.ResolveTargetActor(room, rest)
 		if err == actions.ErrTargetVanished {
-			user.SendText("Zap target not found.")
+			user.SendText(messaging.CategorySystem, "Zap target not found.")
 			return true, nil
 		}
 		if err == nil {
 			if !target.IsPlayer() {
 				mob := target.(*actions.MobActor).Mob
-				user.SendText(fmt.Sprintf(`You zap <ansi fg="mobname">%s</ansi> with a %s!`, mob.Character.Name, boltOfLightning))
-				room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="mobname">%s</ansi> with a %s!`, user.Character.Name, mob.Character.Name, boltOfLightning), user.UserId)
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(`You zap <ansi fg="mobname">%s</ansi> with a %s!`, mob.Character.Name, boltOfLightning))
+				room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="mobname">%s</ansi> with a %s!`, user.Character.Name, mob.Character.Name, boltOfLightning), user.UserId)
 
 				mob.Character.Health = 1
 				mob.Character.Conviction = 1
@@ -40,9 +41,9 @@ func Zap(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			}
 
 			u := target.(*actions.UserActor).User
-			user.SendText(fmt.Sprintf(`You zap <ansi fg="username">%s</ansi> with a %s!`, u.Character.Name, boltOfLightning))
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="username">%s</ansi> with a %s!`, user.Character.Name, u.Character.Name, boltOfLightning), user.UserId, u.UserId)
-			u.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps you with a %s!`, user.Character.Name, boltOfLightning))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You zap <ansi fg="username">%s</ansi> with a %s!`, u.Character.Name, boltOfLightning))
+			room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="username">%s</ansi> with a %s!`, user.Character.Name, u.Character.Name, boltOfLightning), user.UserId, u.UserId)
+			u.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps you with a %s!`, user.Character.Name, boltOfLightning))
 
 			u.Character.Health = 1
 			u.Character.Conviction = 1
@@ -55,31 +56,31 @@ func Zap(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 	}
 
-	if user.Character.Aggro == nil {
-		user.SendText("You are not in combat.")
+	if !user.Character.IsInCombat() {
+		user.SendText(messaging.CategorySystem, "You are not in combat.")
 		return true, nil
 	}
 
-	if user.Character.Aggro.MobInstanceId > 0 {
-		mob := mobs.GetInstance(user.Character.Aggro.MobInstanceId)
+	if user.Character.EngagedTarget().MobInstanceId > 0 {
+		mob := mobs.GetInstance(user.Character.EngagedTarget().MobInstanceId)
 		if mob == nil {
-			user.SendText("Zap Mob not found.")
+			user.SendText(messaging.CategorySystem, "Zap Mob not found.")
 			return true, nil
 		} else {
-			user.SendText(fmt.Sprintf(`You zap <ansi fg="mobname">%s</ansi> with a %s!`, mob.Character.Name, boltOfLightning))
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="mobname">%s</ansi> with a %s!`, user.Character.Name, mob.Character.Name, boltOfLightning), user.UserId)
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You zap <ansi fg="mobname">%s</ansi> with a %s!`, mob.Character.Name, boltOfLightning))
+			room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="mobname">%s</ansi> with a %s!`, user.Character.Name, mob.Character.Name, boltOfLightning), user.UserId)
 
 			mob.Character.Health = 1
 			mob.Character.Conviction = 1
 		}
-	} else if user.Character.Aggro.UserId > 0 {
-		u := users.GetByUserId(user.Character.Aggro.UserId)
+	} else if user.Character.EngagedTarget().UserId > 0 {
+		u := users.GetByUserId(user.Character.EngagedTarget().UserId)
 		if u == nil {
-			user.SendText("Zap User not found.")
+			user.SendText(messaging.CategorySystem, "Zap User not found.")
 			return true, nil
 		} else {
-			user.SendText(fmt.Sprintf(`You zap <ansi fg="username">%s</ansi> with a %s!`, u.Character.Name, boltOfLightning))
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="username">%s</ansi> with a %s!`, user.Character.Name, u.Character.Name, boltOfLightning), user.UserId)
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You zap <ansi fg="username">%s</ansi> with a %s!`, u.Character.Name, boltOfLightning))
+			room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(`<ansi fg="username">%s</ansi> zaps <ansi fg="username">%s</ansi> with a %s!`, user.Character.Name, u.Character.Name, boltOfLightning), user.UserId)
 
 			u.Character.Health = 1
 			u.Character.Conviction = 1

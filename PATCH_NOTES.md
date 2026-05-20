@@ -1,5 +1,386 @@
 # DOGMud Patch Notes
 
+## 2026-05-20 — Chunk 7: Centralized messaging framework
+
+**Every player-facing line of text now flows through a single
+pipeline** (compose → normalize → anonymize → color → wrap →
+deliver). The chunk-6 Perception state machine (shipped dormant last
+week) is now its consumer. ~2300 broadcast callsites across the
+codebase migrated to the categorized API.
+
+**Combat narration colored by weapon and outcome.** Each swing carries
+its own color band based on the weapon's damage type. Warhammers and
+maces render in warm orange-brown; swords and spears in dusty rose;
+claws and bites in dark red-brown; bows in light sky blue; wands and
+staves in lavender; fists in sandy brown. Defenses are in greens:
+dodge (leaf), parry (lime), block (forest). The 6-armed test
+character with four different weapons sees four different colors per
+round.
+
+**Spell colors by school.** Cast prep and fold lines render in pale
+steel-cyan. Resolves route by the spell's declared school: elemental
+in red (fire / ice / lightning damage), enhancement in warm gold
+(buffs / shields), mental in lavender (charm / illusion), vital in
+sage mint (heal), manifestation in rose pink (summon). Disruptions
+and backfires render in warning amber.
+
+**Progression banner.** Skill and stat advancements now render as a
+boxed banner — `SKILL ADVANCEMENT` / `STATISTIC INCREASED` centered
+on a 64-column rule, with a `from-tier → to-tier` line on the rare
+quality-band crossings. Replaces the old `*** You feel your X skills
+sharpening! ***` one-liner.
+
+**Style auto-corrects on every broadcast.** "A aggressive" → "an
+aggressive", "damage damage" → "damage", missing periods auto-
+appended, sentence starts auto-capitalized for combat prose.
+
+**Per-player line wrapping for tabular displays.** `set linewidth N`
+(range 40–240, default 80) matches your terminal. The MOTD banner
+and inbox separator track this; full table renderers (status,
+inventory, who, help) honor it for Go-side widths, with templates
+still drawing 80-column boxes.
+
+**Infrared observers see "a figure".** Players using infrared vision
+in a dark room now see anonymized red shapes instead of named
+characters — names and pet names are stripped from the visual feed
+before delivery.
+
+**Username retune.** Username (yellow → cool blue 153), mobname
+(cyan → warm tan 180), petname (orange → teal-cyan 108).
+
+**Bug fixes shipped alongside the framework.**
+- Companion-name leak: a player's pet name no longer appears in feeds
+  of blind or dark-room observers who shouldn't be able to see it.
+- Grapple-position name leak (sibling fix): grapplers' names also
+  route through the sight gate properly.
+- Sneak persistence: stepping into sneak no longer immediately fires
+  "You no longer feel sneaky" — buff #9 now persists per the
+  Awareness-FSM lifecycle, removed only when the FSM transitions out
+  of Hidden.
+- Mob corpses + loot drop reliably: a registration-order bug between
+  the Death observers caused mob instances to despawn before the loot
+  / corpse drop fired. Consolidated into a single observer with
+  explicit ordering.
+- Room descriptions preserve their side-by-side minimap layout: the
+  pipeline's wrap stage no longer wraps pre-laid-out template
+  content.
+
+**Internal cleanup.** Duplicate `canSeeInRoom` helpers consolidated.
+`sendRoomTextDarknessAware`, the naive byte-count `wrapText`, and
+all `SendTextLegacy` / `SendTextVisualLegacy` shims deleted.
+
+**Known deferrals** (logged as followups):
+- Tabular templates (status / inventory / who / help boxes) still
+  draw 80-column borders even when `set linewidth` is wider.
+- Pre-T9 IsQuiet / Deafened filter logic on the `RoomId` events
+  branch may be partially bypassed by the per-recipient fan-out;
+  affected callers are out of scope for this chunk.
+- Standing-combat moves (trip / kick / bash) can fire from grapple
+  positions and emit a hit message but no actual state change. Needs
+  position-aware variant routing like kick already has (stomp on
+  prone, knee on grappled).
+
+The combat-state-machines arc that began with chunk 0 (2026-05-13) is
+fully wired up: chunks 0-6 built the substrate (Combat Phase,
+Awareness, Life, Activity, Position, Presence, Perception); chunk 7
+ties it together and is what the player sees.
+
+## 2026-05-19 — Chunk 6: Perception state machine (dormant)
+
+**Internal-only change.** The engine now tracks every character's
+visual state — Sighted or Blinded — as a proper state machine. Today
+no gameplay surface uses this; existing dark-room and blindness
+handling behaves exactly as before. The primitive is in place for a
+future broader messaging-framework upgrade that ties together
+color-coded combat text, infrared "red shapes" rendering, line
+wrapping, and the long-standing bug where messages can leak through
+blindness or darkness with character names visible.
+
+The combat-state-machines arc that began with chunk 0 (2026-05-13)
+is now complete — six FSMs (Combat Phase, Awareness, Life, Activity,
+Position, Presence, Perception) all shipped. Mob aliveness substrate
+work can resume.
+
+## 2026-05-19 — Chunk 5: Presence state machine
+
+**Cleaner AFK and idle handling.** The engine now tracks every
+character's "presence" — whether they're actively in the world, idle,
+AFK, or disconnected — through a dedicated state machine instead of
+scattered checks. Functionally identical for most cases. The one
+visible change: an AFK player in a dangerous room can STILL be
+attacked (intentional — going AFK in a dangerous place was always a
+risk).
+
+**Mob hibernation.** Mobs that have been bored for a while (no players
+nearby for a stretch) now go Dormant — they skip their per-round tick
+to save engine work. The moment a player enters their room or attacks
+them, they wake up to normal Active behavior. Shopkeepers, foragers,
+caravan crew, and charmed companions never go Dormant — they're
+exempt from idle-out so the living-economy systems keep running
+smoothly.
+
+**Quieter sunset.** Legacy ManualAFK, AFKMessage, BoredomCounter, and
+PreventIdle fields are gone, along with the MaxMobBoredom config knob.
+
+Chunk 5 closes another step of the combat-state-machines arc; chunk 6
+(Perception) is what remains.
+
+## 2026-05-19 — Chunk 4f: Position balance + smoke
+
+**Spell disruption in grapples is now Willpower-mediated.** Previously,
+being knocked prone or grappled automatically broke any spell you were
+casting. Now, your Willpower mediates a per-round concentration check
+— a strong-willed caster can sometimes complete a spell from
+underneath, while a distracted one rarely will. The hardest positions
+(crucifix, back mount) remain brutal disruptors; the most lenient
+(guard from underneath, where your hands are free) gives high-Wil
+casters a real fighting chance.
+
+**Comprehensive position-system smoke** across grapple entry,
+advancement, dominant-position striking, eat/drink restrictions,
+third-party hooks, AI tiebreaker, submission interrupt, and helpfile
+language. Followup polish items logged for future chunks.
+
+**Helpfile coverage audit** across grapple, cast, attack, submission,
+flee, prone, stand, trip, bash, and related help topics. Removed
+mechanical-value leaks (raw formulas, percentage thresholds, cooldown
+round counts); tightened language wherever chunk 4f's chance-based
+disruption invalidated older wording.
+
+Chunk 4 (Position) is now closed.
+
+## 2026-05-16 — Rich-grapple system live: chunks 4a + 4b + 4c
+
+Three Position-FSM sub-chunks shipped end-to-end on
+`feature/mob-aliveness-1.3-crimes` in one day. The 14-state
+Position machine + per-round control-axis drift + weapon-reach
+utility together make grappling tactically deep: positions
+develop over rounds, control shifts based on opposed rolls, and
+weapon choice in a grapple actually matters. Branch is merged
+to `development`, not yet pushed to prod.
+
+### 4a — Position FSM scaffold (DORMANT)
+
+Built `internal/state/position/` on the chunk-0 framework as the
+14-state taxonomy underlying the rich-grapple system. Ships
+dormant: zero behavior change, legacy `CombatPosition` enum + all
+command writers/readers untouched. 4b cuts over.
+
+- 14 geometric states: Standing / Prone / Supine / Clinch /
+  BackStanding / Mount / SideControl / KneeOnBelly / NorthSouth /
+  Crucifix / BackGround / HalfGuard / Guard / Turtle. Prone/Supine
+  split intentionally — submission paths, recovery difficulty,
+  and back-take vulnerability diverge.
+- Per-state data: `StandingData` (empty), `ProneData` /
+  `SupineData` (Reason + MinRecoveryRounds + KnockdownSource),
+  shared `GrappleData` (Reason + Partner + ControlLevel) across
+  the 11 grapple states.
+- ~75-edge transition graph, 22 trigger constants, 19 Character
+  predicates (`IsStanding` / `IsProne` / ... / `IsOnFloor` /
+  `IsGrappling` rollup), 10 btree primitives, Life-Dead cascade
+  observer (`internal/hooks/Position_Cascades.go`).
+- `ControlLevel` enum (Neutral / InControl / LosingControl /
+  BecomingControlled / Controlled) reordered so Neutral is
+  iota=0 — Go's zero value defaults match the spec (catches
+  literals like `GrappleData{Partner: ref}` without explicit
+  ControlLevel assignment).
+- Behavior Matrix PO-001 through PO-045 PASS or SKIP per
+  chunks-0-3 convention.
+
+Spec at `docs/superpowers/specs/2026-05-16-state-chunk-4a-position-fsm-design.md`,
+plan at `docs/superpowers/plans/2026-05-16-state-chunk-4a-position-fsm.md`.
+
+### 4b — Position control axis + writer/reader cutover
+
+Lit up the 4a scaffold. Cut over all 11 command-site writers
+and ~25 reader sites from the legacy `CombatPosition` enum to
+the new FSM, added per-round opposed control rolls with stamina
++ encumbrance penalty curves, threshold-triggered position
+transitions, gradient/transition/stamina messaging, 6 new btree
+control-axis primitives, and a periodic consistency checker.
+Sunset the legacy `CombatPosition` enum + `PositionRoundsMin` +
+`GrappleControllerId` + `ConditionGrappleController` +
+`internal/characters/combatposition.go` at the end. Net delta:
+-169 lines across the sunset commit (`6a9697d5`).
+
+- **Per-round control mechanics:** `Position_GrappleTick.go`
+  fires per round for every grappler. Opposed Strength +
+  Unarmed-combat roll scaled by stamina + encumbrance penalty
+  curves. Margin → control-level delta via `MarginToDelta`
+  capped at ±1 per round. Two-consecutive-Controlled gate
+  prevents single-round flukes from triggering position
+  downgrades.
+- **Asymmetric stamina cost:** controller pays less per round
+  than controlled side (encourages opportunistic top-control
+  play instead of immediate submission attempts).
+- **Threshold transitions:** Controlled → `DefaultEscapeTarget`
+  (Mount → HalfGuard, etc.). Pair-coordinated via
+  `TransitionPair`.
+- **Messaging contract** (`Position_Messaging.go`,
+  per-grapple-cooldown-gated): gradient messages on control
+  shifts, transition messages on position changes, stamina
+  warning when resource at risk. YAML config + templates load
+  at boot from `_datafiles/world/dogmud/grapple-messages.yaml`.
+- **6 new btree control-axis primitives:**
+  `mob_is_in_control`, `target_is_being_controlled`,
+  `mob_low_grapple_stamina`, `target_low_grapple_stamina`,
+  `mob_position_threshold_winning`,
+  `mob_position_threshold_losing`. Together with the 10 from
+  4a, 16 total position primitives end of 4b.
+- **4 formal pair invariants** enforced via `TransitionPair` +
+  tested via `ValidateGrapplePair` + backstopped by periodic
+  `Position_ConsistencyCheck` observer that scans live grapple
+  pairs every N rounds and force-breaks any pair that drifts
+  out of invariant.
+- **Sunset:** `CombatPosition` field, `PositionRoundsMin`,
+  `GrappleControllerId`, `ConditionGrappleController` constant,
+  `internal/characters/combatposition.go` (legacy enum +
+  `IsGroundPosition` / `IsGrapplePosition` /
+  `GetSpeedMultiplier` / `GetPositionColor` / `GetWorstPosition`
+  helpers). Per-state data slots (`ProneData.MinRecoveryRounds`,
+  `SupineData.MinRecoveryRounds`) replace the legacy fields,
+  with a new `Position.ExtendRecoveryRound()` helper for stomp.
+  `c.IsController()` derives from `GrappleData.ControlLevel`.
+- **Smoke debugging** surfaced a long-standing shared-state-
+  machine bug in `mobs.newMobByIdInternal` — `mob := *m`
+  shallow-copied the template Character including pointer-typed
+  Life / CombatPhase / Position / Awareness / Activity
+  machines AND the `combatPhaseWired = true` guard. Every
+  spawned instance shared the template's machines; observers
+  wired on the template fired with the template's `*Character`
+  (`MobInstanceId=0`), so the mob despawn cascade silently
+  skipped. Fix: `Character.ResetForMobInstance()` nils the
+  machine pointers + clears the guard after the shallow copy,
+  so the next `Validate()` builds fresh per-instance machines
+  and re-fires `OnCharacterCreated`. Saved as a class-of-bug
+  memory (`feedback_shallow_copy_shared_pointers.md`) since
+  this pattern is easy to repeat anywhere the codebase clones
+  a Character / Mob struct.
+- **Mid-flight fixes** during the smoke loop: grapple pair
+  atomic break on death, `Character.userId` seeded on
+  `LoadUser` and `LoginUser` (was 0, causing `TransitionPair`
+  to fail with `ErrPartnerRequired`), prompt `{pos}` token
+  sourced from CombatPhase not legacy Aggro, 2-consecutive-
+  Controlled gate added, grapple-tick drift capped at 1 per
+  round, hidden defenders forced Visible in
+  `handleCombatRound`, highwayman idle emotes stripped (were
+  breaking stealth on hostile lookouts), silent flee-block /
+  cornered paths got messaging, flee blocker resolution
+  refactored to shared `combat.ResolveFleeBlockers` helper.
+- **Behavior Matrix:** PB-001 through PB-080 across
+  `position_test.go` and per-package integration tests. Mix
+  of PASS / SKIP. Chunks 0-4a regression clean. 176-test
+  position package suite green.
+
+Spec at `docs/superpowers/specs/2026-05-16-state-chunk-4b-position-control-axis-design.md`,
+plan at `docs/superpowers/plans/2026-05-16-state-chunk-4b-position-control-axis.md`.
+
+### 4c — Position × Weapon Utility (reach model)
+
+Made weapon choice in a grapple matter. Single `Reach float64`
+(meters) field on `ItemSpec` plus a default-by-subtype lookup;
+position radius curve in the combat package; `radius / reach`
+formula floored at 0.15 wired into the per-swing damage path.
+Bladed weapons (Slashing / Cleaving / Stabbing / Shooting) in
+grapples render with Bludgeoning vocabulary so the fiction
+tracks the damage penalty. Phase-1 YAML migration is zero by
+design — every existing weapon inherits its subtype default;
+per-item overrides land post-smoke as balance feedback comes in
+(`lake-iron-hook-spear` was the first such override — Stabbing
+default 0.3m was wrong for a 2.0m spear).
+
+The cheap chunk between heavyweight 4b and the upcoming 4d.
+No FSM changes, no new btree primitives, no sunsets. ~12 file
+touches, ~400 LOC production code.
+
+- **Reach taxonomy** in `internal/items/reach.go` covers all
+  in-engine weapon subtypes. Natural attacks 0.1–0.5m (fist
+  0.1, claws/bite 0.15, sting 0.2, slam 0.3, gore 0.4,
+  whipping 0.5). Melee: Stabbing 0.3, Cleaving 0.9, Slashing
+  1.0, Bludgeoning 0.8. Shooting 1.0 (melee-fallback). Caster:
+  wand 0.4, sceptre 0.6, staff 1.5. Authors leave reach empty
+  for normal items (subtype default applies); override per-item
+  only for outliers.
+- **Position radius curve** (`internal/combat/reach.go`):
+  Standing / Prone / Supine / Turtle unbounded (no penalty).
+  Clinch + BackStanding share standing-grapple radius (0.5m).
+  The 8 ground-grapple states share ground-grapple radius
+  (0.3m). Three new balance knobs:
+  `ReachStandingGrappleRadius`, `ReachGroundGrappleRadius`,
+  `ReachUtilityFloor`.
+- **Pipeline integration:** `CalcReachAdjustedItemMult(weapon,
+  attacker)` composes weapon `damage_multiplier` with the
+  reach utility. Single call site in `combat_helpers.go:
+  buildWeaponSetup`. Kick variants route through the same
+  helper; grapple/trip/bash stay reach-agnostic (force-driven,
+  not weapon-driven).
+- **Bludgeon narration:** when `ShouldBludgeon(reach, radius)`
+  fires for a bladed weapon, the attack-message subtype swaps
+  to Bludgeoning at the GetAttackMessage site in
+  `buildAttackMessages`. Caster (Wand / Sceptre / Staff) and
+  natural-blunt (Fist / Claws / Bite / Sting / Slam / Gore /
+  Whipping) subtypes exempt. Existing Bludgeoning templates
+  use `{itemname}` interpolation, so "You bash the iron
+  longsword's pommel into the bandit" renders without bespoke
+  pommel-strike vocabulary.
+- **Smoke-verified in production** (twice — first session
+  confirmed clinch bludgeon swap; followup with new test
+  fixtures confirmed warhammer no-swap + wand/staff caster
+  exemption):
+  - Longsword standing: full slashing vocab + damage
+  - Longsword in Clinch: "CRITICAL BASH... steel longsword"
+    (bludgeon swap firing)
+  - Warhammer in Clinch: "CRUSHES" — identical vocab to
+    standing (Bludgeoning subtype exempt from swap)
+  - Wand in Clinch: "CRITICAL ARCANE STRIKE" + "jab... willow
+    wand" (caster exemption — vocab preserved)
+  - Staff in Clinch: "crash your oak staff" (caster
+    exemption, staff channel preserved)
+
+Spec at `docs/superpowers/specs/2026-05-16-state-chunk-4c-position-weapon-utility-design.md`,
+plan at `docs/superpowers/plans/2026-05-16-state-chunk-4c-position-weapon-utility.md`.
+
+### Smoke followups (post-chunk-4c)
+
+Three small additions surfaced as the smoke tests played out:
+
+- **`help attack` reach section.** The chunk-4c T9 doc pass
+  edited `attack.template`, but `attack.md` (also present in
+  the dogmud helpfiles dir) shadows the `.template` in the
+  engine's help-lookup order. Edited `attack.md` directly to
+  add the reach + grapple paragraph alongside the legacy
+  chance-to-hit / crit-chance prose. Grep confirmed `attack`
+  was the only chunk-4c-touched helpfile with both `.md` and
+  `.template` siblings.
+- **`mob heal [instId]` admin command.** Restores a mob's
+  Health / Stamina / Conviction to max so testers can run
+  sustained combat against an otherwise-killable mob to
+  observe multi-round mechanics (grapple drift, weapon-reach
+  narration, per-round control cascades). Two forms:
+  `mob heal <instId>` heals a specific mob, `mob heal` (no
+  id) heals every mob in the room. Permissioned under
+  `mob.spawn`. Helpfile updated at
+  `_datafiles/.../admincommands/help/command.mob.template`.
+- **`training_post` mob (id 9005, Test Arena zone).** Hostile,
+  brawler AI, 5000 max HP / 5000 stamina, vit-100, sharp
+  stick. Hits back so combat doesn't end early but pulls
+  every punch — designed for sustained combat-mechanic
+  observation. Spawn with `mob spawn 9005` or
+  `mob spawn training post`. Replaces the need to repeatedly
+  spawn sparring partners that die in 4-6 rounds against an
+  over-leveled smoketester.
+
+### Roadmap status
+
+Chunks 4a, 4b, 4c all Done in `COMBAT_STATE_ROADMAP.md`. Next
+sub-chunk in the rich-grapple series is **4d — Submission
+rework**: opportunistic submissions gated on (Position,
+ControlLevel), submission outcomes (choked, damaged limb, tap,
+continue), rework/sunset the current `submit` special-attack
+command. Mob aliveness work stays paused for chunks 4d-6.
+
+---
+
 ## 2026-05-12 — Phase 2 tactical: chunks 2.4 + 2.5 + 2.6
 
 Three Phase-2 tactical chunks shipped on

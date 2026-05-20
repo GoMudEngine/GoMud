@@ -50,8 +50,8 @@ type GrappleResult struct {
 func ExecuteGrapple(actor Actor) GrappleResult {
 	char := actor.GetCharacter()
 
-	// Don't interrupt a craft to grapple.
-	if char.IsCrafting() {
+	// Don't interrupt any active activity (cast/craft/salvage) to grapple.
+	if char.IsActing() {
 		return GrappleResult{Crafting: true}
 	}
 

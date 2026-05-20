@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -63,7 +64,7 @@ func Buff(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 			searchResultsTable := templates.GetTable("Search Results", headers, rows)
 			tplTxt, _ := templates.Process("tables/generic", searchResultsTable, user.UserId, user.UserId)
-			user.SendText(tplTxt)
+			user.SendText(messaging.CategorySystem, tplTxt)
 		} else {
 
 			targetUserId := 0
@@ -109,7 +110,7 @@ func Buff(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			}
 
 			if buffId == 0 {
-				user.SendText("buffId must be an integer > 0.")
+				user.SendText(messaging.CategorySystem, "buffId must be an integer > 0.")
 				return true, nil
 
 			}
@@ -120,10 +121,10 @@ func Buff(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 					// Get the buff
 					if buffSpec := buffs.GetBuffSpec(buffId); buffSpec != nil {
 						targetUser.AddBuff(buffId, `admin`)
-						user.SendText(fmt.Sprintf("Buff %d (%s) applied to %s.", buffId, buffSpec.Name, targetUser.Character.Name))
+						user.SendText(messaging.CategorySystem, fmt.Sprintf("Buff %d (%s) applied to %s.", buffId, buffSpec.Name, targetUser.Character.Name))
 
 					} else {
-						user.SendText(fmt.Sprintf("Buff Id %d not found.", buffId))
+						user.SendText(messaging.CategorySystem, fmt.Sprintf("Buff Id %d not found.", buffId))
 					}
 
 					return true, nil
@@ -136,10 +137,10 @@ func Buff(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 					// Get the buff
 					if buffSpec := buffs.GetBuffSpec(buffId); buffSpec != nil {
 						targetMob.AddBuff(buffId, `admin`)
-						user.SendText(fmt.Sprintf("Buff %d (%s) applied to %s.", buffSpec.BuffId, buffSpec.Name, targetMob.Character.Name))
+						user.SendText(messaging.CategorySystem, fmt.Sprintf("Buff %d (%s) applied to %s.", buffSpec.BuffId, buffSpec.Name, targetMob.Character.Name))
 
 					} else {
-						user.SendText(fmt.Sprintf("Buff Id %d not found.", buffId))
+						user.SendText(messaging.CategorySystem, fmt.Sprintf("Buff Id %d not found.", buffId))
 					}
 
 					return true, nil
@@ -149,11 +150,11 @@ func Buff(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		}
 	}
 
-	user.SendText("target not found.")
+	user.SendText(messaging.CategorySystem, "target not found.")
 
 	// send some sort of help info?
 	infoOutput, _ := templates.Process("admincommands/help/command.buff", nil, user.UserId, user.UserId)
-	user.SendText(infoOutput)
+	user.SendText(messaging.CategorySystem, infoOutput)
 
 	return true, nil
 }

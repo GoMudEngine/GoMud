@@ -1,14 +1,16 @@
 package actions
 
 import (
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
-// SneakResult holds the outcome of an ExecuteSneak call.
+// SneakResult holds the outcome of a Sneak call.
 type SneakResult struct {
 	// Success is true when the actor entered the hidden state.
 	Success bool
@@ -26,7 +28,7 @@ type SneakResult struct {
 	RollHappened bool
 }
 
-// ExecuteSneak attempts to put actor into the hidden (sneaking) state.
+// Sneak attempts to put actor into the hidden (sneaking) state.
 //
 // It rolls the actor's sneak score against every observer in the room. Party
 // members of a player actor are excluded from the observer checks. If any
@@ -41,11 +43,11 @@ type SneakResult struct {
 //   - Failure cooldowns (player side only)
 //   - Skill progression and quest engine notifications
 //   - Player-facing messaging
-func ExecuteSneak(actor Actor) SneakResult {
+func Sneak(actor Actor) SneakResult {
 	char := actor.GetCharacter()
 
 	// Already hidden — nothing to do.
-	if char.HasBuffFlag(buffs.Hidden) {
+	if char.IsHidden() {
 		return SneakResult{AlreadyHidden: true}
 	}
 
@@ -54,8 +56,18 @@ func ExecuteSneak(actor Actor) SneakResult {
 		return SneakResult{InCombat: true}
 	}
 
+	// Transition to Concealing; the activity veto fires here if the actor
+	// is busy crafting/casting. On veto error we return without a result
+	// since the caller's skill-gate messaging handles the veto path.
+	if err := char.Awareness.TransitionToConcealing(
+		awareness.ConcealingData{},
+		state.TransitionReason{Trigger: awareness.TriggerSneakCommand},
+	); err != nil {
+		// Activity veto or invalid transition (e.g. already Concealing).
+		return SneakResult{}
+	}
+
 	room := actor.GetRoom()
-	sneakScore := CalcSneakScore(char)
 
 	// Build party exclusion set for player actors.
 	// Mob actors have no party (GetUserId returns 0); parties.Get(0) returns nil.
@@ -74,7 +86,9 @@ func ExecuteSneak(actor Actor) SneakResult {
 
 	rollHappened := false
 
-	// Check each player in the room.
+	// Check each player in the room. Score is computed per-observer so
+	// that NightVision observers (effectiveLit=true) apply the appropriate
+	// light modifier even in a dark room.
 	for _, observerId := range room.GetPlayers() {
 		if partySet[observerId] {
 			continue
@@ -83,14 +97,18 @@ func ExecuteSneak(actor Actor) SneakResult {
 		if observer == nil {
 			continue
 		}
+		sneakScore := CalcSneakScoreVsObserver(char, observer.Character, room)
 		observerScore := CalcSearchScore(observer.Character)
 		rollHappened = true
 		success, _, _, _ := dice.OpposedRollStat(sneakScore, observerScore)
 		if !success {
 			// Notify the observing player.
-			observer.SendText(
-				`<ansi fg="username">` + actor.GetName() + `</ansi> tries to hide but you notice them.`,
+			observer.SendText(messaging.CategorySystem,
+				`<ansi fg="username">`+actor.GetName()+`</ansi> tries to hide but you notice them.`,
 			)
+			char.Awareness.ResolveConcealment(false, state.TransitionReason{
+				Trigger: awareness.TriggerSneakFailed,
+			})
 			return SneakResult{SpottedByName: observer.Character.Name, RollHappened: true}
 		}
 	}
@@ -104,16 +122,23 @@ func ExecuteSneak(actor Actor) SneakResult {
 		if m == nil {
 			continue
 		}
+		sneakScore := CalcSneakScoreVsObserver(char, &m.Character, room)
 		observerScore := CalcSearchScore(&m.Character)
 		rollHappened = true
 		success, _, _, _ := dice.OpposedRollStat(sneakScore, observerScore)
 		if !success {
+			char.Awareness.ResolveConcealment(false, state.TransitionReason{
+				Trigger: awareness.TriggerSneakFailed,
+			})
 			return SneakResult{SpottedByName: m.Character.Name, RollHappened: true}
 		}
 	}
 
-	// All observers failed to spot the actor — apply hidden state.
-	actor.AddBuff(9, `skill`)
+	// All observers failed to spot the actor — transition to Hidden.
+	// The buff-#9 mirror cascade in Awareness_Cascades.go handles AddBuff automatically.
+	char.Awareness.ResolveConcealment(true, state.TransitionReason{
+		Trigger: awareness.TriggerSneakSuccess,
+	})
 	char.SetMiscData(`sneaking`, true)
 
 	return SneakResult{Success: true, RollHappened: rollHappened}

@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/knowledge"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -67,7 +68,7 @@ func MobDeathBountyClaim(e events.Event) events.ListenerReturn {
 			factions.BumpRep(claimed.Issuer.Id, killerUserId, claimed.RepReward)
 		}
 
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategoryLoot, fmt.Sprintf(
 			"You collect a bounty: %dg.\r\n",
 			claimed.GoldReward,
 		))

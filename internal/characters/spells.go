@@ -79,11 +79,47 @@ func (c *Character) GetSpells() map[string]int {
 	return ret
 }
 
-// IsCasting returns true if the character has an active fold-based cast in progress.
-func (c *Character) IsCasting() bool { return c.CastingState != nil }
+// IsCasting returns true if the Activity machine is in the Casting state.
+func (c *Character) IsCasting() bool {
+	if c.Activity == nil {
+		return false
+	}
+	return c.Activity.IsCasting()
+}
 
-// IsCrafting returns true if the character has an active crafting operation in progress.
-func (c *Character) IsCrafting() bool { return c.CraftingState != nil }
+// IsCrafting returns true if the Activity machine is in the Crafting state.
+func (c *Character) IsCrafting() bool {
+	if c.Activity == nil {
+		return false
+	}
+	return c.Activity.IsCrafting()
+}
+
+// IsSalvaging returns true if the Activity machine is in the Salvaging state.
+func (c *Character) IsSalvaging() bool {
+	if c.Activity == nil {
+		return false
+	}
+	return c.Activity.IsSalvaging()
+}
+
+// IsFree returns true if the character has no active Activity (nil machine or
+// machine in the Free state). Safe to call on characters constructed outside
+// New() before Validate() has run.
+func (c *Character) IsFree() bool {
+	if c.Activity == nil {
+		return true
+	}
+	return c.Activity.IsFree()
+}
+
+// IsActing returns true if the Activity machine is in any non-Free state.
+func (c *Character) IsActing() bool {
+	if c.Activity == nil {
+		return false
+	}
+	return c.Activity.IsActing()
+}
 
 func (c *Character) HasSpell(spellName string) bool {
 	if intVal, ok := c.SpellBook[spellName]; ok {

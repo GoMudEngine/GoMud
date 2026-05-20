@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -15,23 +16,18 @@ import (
 
 // CastResult holds all shared output from InitiateCast. The caller (user or
 // mob wrapper) uses this to apply wrapper-specific logic and then commit the
-// CastingState to the character.
+// cast via the Activity machine.
 type CastResult struct {
 	// SpellInfo is the resolved spell data. Non-nil on success.
 	SpellInfo *spells.SpellData
 
-	// CastingState is pre-built but NOT yet applied to the character.
-	// The wrapper must set char.CastingState = result.CastingState after its
-	// own checks (e.g. conviction pre-check, initiation roll) pass.
-	CastingState *characters.CastingState
-
-	// Initiated is true when all shared checks passed and CastingState is ready.
+	// Initiated is true when all shared checks passed and cast data is ready.
 	Initiated bool
 
 	// Early-exit flags — exactly one will be true when Initiated is false.
 	InvalidSpell   bool // spell not found by ID or name
 	SpellNotKnown  bool // actor does not know the spell (player check only)
-	AlreadyCasting bool // character already has a CastingState in progress
+	AlreadyCasting bool // character already has an Activity cast in progress
 	OnCooldown     bool // special-move cooldown blocked the cast
 	NoTarget       bool // required target could not be resolved
 
@@ -77,7 +73,7 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 	}
 
 	// 2. Already casting?
-	if char.CastingState != nil {
+	if char.Activity != nil && char.Activity.IsCasting() {
 		return CastResult{SpellInfo: spellInfo, AlreadyCasting: true}
 	}
 
@@ -98,11 +94,11 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 				if actor.IsPlayer() {
 					if m := mobs.GetInstance(mId); m != nil {
 						if m.Character.IsCharmed() {
-							actor.SendText("You can't target a companion with a harmful spell.")
+							actor.SendText(messaging.CategorySystem, "You can't target a companion with a harmful spell.")
 							return CastResult{SpellInfo: spellInfo, NoTarget: true}
 						}
 						if m.IsNonCombatant() {
-							actor.SendText(fmt.Sprintf("You can't target %s with a harmful spell.", m.Character.Name))
+							actor.SendText(messaging.CategorySystem, fmt.Sprintf("You can't target %s with a harmful spell.", m.Character.Name))
 							mobs.FireAttackRejected(m, actor.GetUserId())
 							return CastResult{SpellInfo: spellInfo, NoTarget: true}
 						}
@@ -121,7 +117,7 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 					targetUser := users.GetByUserId(pId)
 					if casterUser != nil && targetUser != nil {
 						if pvpErr := room.CanPvp(casterUser, targetUser); pvpErr != nil {
-							actor.SendText(pvpErr.Error())
+							actor.SendText(messaging.CategorySystem, pvpErr.Error())
 							return CastResult{SpellInfo: spellInfo, NoTarget: true}
 						}
 					}
@@ -276,22 +272,8 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 	// 6. Conviction cost (base, no multiplier — caller applies mutations).
 	totalCost := spellInfo.Cost
 
-	// 7. Build CastingState — NOT applied to char here.
-	cs := &characters.CastingState{
-		SpellId:              spellInfo.SpellId,
-		FoldsNeeded:          foldsNeeded,
-		FoldsAccumulated:     0,
-		FoldsPerRound:        foldsPerRound,
-		TotalConvictionCost:  totalCost,
-		ConvictionSpent:      0,
-		TargetUserIds:        targetUserIds,
-		TargetMobInstanceIds: targetMobInstanceIds,
-		SpellRest:            spellRest,
-	}
-
 	return CastResult{
 		SpellInfo:            spellInfo,
-		CastingState:         cs,
 		Initiated:            true,
 		FoldsNeeded:          foldsNeeded,
 		FoldsPerRound:        foldsPerRound,

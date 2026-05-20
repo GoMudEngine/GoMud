@@ -48,8 +48,8 @@ type BashResult struct {
 func ExecuteBash(actor Actor) BashResult {
 	char := actor.GetCharacter()
 
-	// Don't interrupt a craft to swing a shield.
-	if char.IsCrafting() {
+	// Don't interrupt any active activity (cast/craft/salvage) to swing a shield.
+	if char.IsActing() {
 		return BashResult{Crafting: true}
 	}
 
@@ -84,10 +84,11 @@ func ExecuteBash(actor Actor) BashResult {
 		AttackSkill:     char.GetSkillLevel(skills.WeaponCombat),
 		DefenseStat:     target.Char.Stats.Dexterity.ValueAdj,
 		DefenseSkill:    target.Char.GetCombatSkillLevel(),
-		DamagePercent:   float64(cfg.BashDamagePercent),
-		KnockdownChance: int(cfg.BashKnockdownChance),
-		SkillRank:       char.GetSkillLevel(skills.WeaponCombat),
-		DamageStat:      char.Stats.Strength.ValueAdj,
+		DamagePercent:     float64(cfg.BashDamagePercent),
+		KnockdownChance:   int(cfg.BashKnockdownChance),
+		SkillRank:         char.GetSkillLevel(skills.WeaponCombat),
+		DamageStat:        char.Stats.Strength.ValueAdj,
+		KnockdownToSupine: true, // bash sends defender backward
 	})
 
 	// Determine source/target types for analytics.

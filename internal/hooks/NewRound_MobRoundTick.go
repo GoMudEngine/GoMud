@@ -13,12 +13,16 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
+	"github.com/GoMudEngine/GoMud/internal/state/life"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/GoMudEngine/GoMud/internal/worldevents"
@@ -53,7 +57,7 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 					region = zCfg.Region
 				}
 				if room := rooms.LoadRoom(firstMob.Character.RoomId); room != nil {
-					sendVisualRoomText(room, fmt.Sprintf(
+					sendVisualRoomText(room, messaging.CategoryMobEmote, fmt.Sprintf(
 						`The <ansi fg="mobname">%s</ansi> pack moves with renewed coordination.`,
 						bonus.GroupTag))
 				}
@@ -103,8 +107,8 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 
 		// Death check always runs — a DoT tick in an idle zone should
 		// still kill the mob. Skip the rest of the loop when the mob dies.
-		if mob.Character.Health <= 0 {
-			mob.Command(`suicide`)
+		if mob.Character.Health <= 0 && mob.Character.IsAlive() {
+			mob.Character.Die(state.ActorRef{}, life.TriggerHealthZero)
 			continue
 		}
 
@@ -149,9 +153,9 @@ func tickMobProneRecovery(mob *mobs.Mob) {
 		if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
 			mName := mobDisplayName(mob, room, 0)
 			if success {
-				sendVisualRoomText(room, mName+" clambers to their feet in a rushed panic.")
+				sendVisualRoomText(room, messaging.CategoryMobEmote, mName+" clambers to their feet in a rushed panic.")
 			} else {
-				sendVisualRoomText(room, mName+" attempts to stand, but slips and falls in the chaos of battle.")
+				sendVisualRoomText(room, messaging.CategoryMobEmote, mName+" attempts to stand, but slips and falls in the chaos of battle.")
 			}
 		}
 	}
@@ -200,7 +204,7 @@ func tickMobBuffs(mob *mobs.Mob, mobInstanceId int) {
 
 // tickMobMutationAcquisition — current inline block at lines 162–260.
 func tickMobMutationAcquisition(mob *mobs.Mob, mb *configs.Balance) {
-	if !(bool(mb.MobMutationEnabled) && mob.Character.Aggro != nil) {
+	if !(bool(mb.MobMutationEnabled) && mob.Character.IsInCombat()) {
 		return
 	}
 	canAcquire := len(mob.Character.Mutations) < int(mb.MutationMaxCount)
@@ -231,7 +235,7 @@ func tickMobMutationAcquisition(mob *mobs.Mob, mb *configs.Balance) {
 			newLevel := mob.Character.Mutations[mutId]
 			if spec := mutations.GetMutation(mutId); spec != nil {
 				if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
-					sendVisualRoomText(room, fmt.Sprintf(
+					sendVisualRoomText(room, messaging.CategoryMutation, fmt.Sprintf(
 						`<ansi fg="magenta">The mutation in <ansi fg="mobname">%s</ansi> intensifies.</ansi>`,
 						mob.Character.Name))
 				}
@@ -273,7 +277,7 @@ func tickMobMutationAcquisition(mob *mobs.Mob, mb *configs.Balance) {
 			mob.Character.Mutations[mutId] = 1
 			if spec := mutations.GetMutation(mutId); spec != nil {
 				if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
-					sendVisualRoomText(room, fmt.Sprintf(
+					sendVisualRoomText(room, messaging.CategoryMutation, fmt.Sprintf(
 						`<ansi fg="magenta">Something shifts in <ansi fg="mobname">%s</ansi>. %s</ansi>`,
 						mob.Character.Name, spec.Visual))
 				}
@@ -362,23 +366,23 @@ func tickMobCharmState(mob *mobs.Mob) {
 							comp.CharmDuration = newDuration
 							comp.CharmRerolls++
 
-							owner.SendText(fmt.Sprintf(
+							owner.SendText(messaging.CategorySpellMental, fmt.Sprintf(
 								`<ansi fg="cyan">Your hold on %s wavers... but you reassert your will.</ansi>`,
 								comp.Name))
 							if comp.CharmRerolls >= 5 {
-								owner.SendText(fmt.Sprintf(
+								owner.SendText(messaging.CategorySpellMental, fmt.Sprintf(
 									`<ansi fg="red">%s's eyes flash with defiance. Your control is slipping...</ansi>`,
 									comp.Name))
 							} else if comp.CharmRerolls >= 3 {
-								owner.SendText(fmt.Sprintf(
+								owner.SendText(messaging.CategorySpellMental, fmt.Sprintf(
 									`<ansi fg="yellow">You sense %s's will straining against your bond...</ansi>`,
 									comp.Name))
 							}
 						} else {
-							owner.SendText(fmt.Sprintf(
+							owner.SendText(messaging.CategorySpellMental, fmt.Sprintf(
 								`<ansi fg="red-bold">%s breaks free of your control!</ansi>`, comp.Name))
 							if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
-								sendVisualRoomText(room, fmt.Sprintf(
+								sendVisualRoomText(room, messaging.CategoryMobEmote, fmt.Sprintf(
 									`<ansi fg="red">%s snarls and turns on %s!</ansi>`,
 									mob.Character.Name, owner.Character.Name), owner.UserId)
 							}
@@ -394,22 +398,23 @@ func tickMobCharmState(mob *mobs.Mob) {
 	}
 }
 
-// tickMobCrafting — current inline block at lines 355–396.
+// tickMobCrafting advances or completes an active mob crafting operation.
+// The mob-only combat-cancel block that previously lived here has been
+// deleted — Activity_Cascades.go (Task 5) now handles combat-entry cancel
+// for both mobs and players via the cascade observer (parity per AC-038).
 func tickMobCrafting(mob *mobs.Mob) {
-	if mob.Character.CraftingState == nil {
+	if mob.Character.Activity == nil || !mob.Character.Activity.IsCrafting() {
 		return
 	}
-	if mob.Character.Aggro != nil {
-		mob.Character.CraftingState = nil
+	cd, complete := mob.Character.Activity.AdvanceCraftingRound()
+	if !complete {
 		return
 	}
-	cs := mob.Character.CraftingState
-	cs.RoundsComplete++
-	if cs.RoundsComplete < cs.RoundsTotal {
-		return
-	}
-	recipe := crafting.GetRecipe(cs.RecipeId)
-	mob.Character.CraftingState = nil
+	recipe := crafting.GetRecipe(cd.RecipeId)
+	_ = mob.Character.Activity.TransitionToFree(state.TransitionReason{
+		Trigger: activity.TriggerCraftComplete,
+		Actor:   mob.Character.Activity.Self(),
+	})
 	if recipe == nil {
 		return
 	}
@@ -428,7 +433,7 @@ func tickMobCrafting(mob *mobs.Mob) {
 		craftBonus := 1.0 + float64(recipe.SkillMinimum)*float64(configs.GetBalanceConfig().CraftDifficultyProgressionScale)
 		mob.Character.OnSkillUseScaled(recipe.Skill, 0, craftBonus)
 		if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
-			sendVisualRoomText(room, fmt.Sprintf(
+			sendVisualRoomText(room, messaging.CategoryMobIdle, fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi> finishes their work.`,
 				mob.Character.Name))
 		}

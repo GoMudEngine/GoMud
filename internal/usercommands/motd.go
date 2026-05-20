@@ -1,12 +1,24 @@
 package usercommands
 
 import (
+	"regexp"
+	"strings"
+
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
+
+// motdAnsiTagRE strips <ansi …> / </ansi> tags for visible-width math
+// when padding MOTD lines. Mirrors the pattern in messaging/wrap.go.
+var motdAnsiTagRE = regexp.MustCompile(`<ansi[^>]*>|</ansi>`)
+
+func motdVisibleWidth(s string) int {
+	return len(motdAnsiTagRE.ReplaceAllString(s, ""))
+}
 
 func Motd(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
@@ -16,72 +28,54 @@ func Motd(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		text = m
 	}
 
-	// Wrap lines at ~74 chars to fit inside the box (80 - 4 for borders + padding)
-	wrapped := wrapText(text, 74)
+	// Box outer width scales with the player's configured line width.
+	// Layout: " " + "║" + " " + <content padded to padWidth> + "║"
+	//          1     1     1          ...                       1   = lw
+	// So padWidth = lw - 4 and wrap width = padWidth - 1 (leave a
+	// trailing space gutter inside the right border).
+	lw := user.GetLineWidth()
+	if lw < 20 {
+		lw = 20 // sanity floor; below this the box can't render
+	}
+	innerWidth := lw - 2  // chars between the ║ borders
+	padWidth := lw - 4    // ` ║ ` (3) + `║` (1) = 4 frame chars per line
+	wrapWidth := padWidth - 1
+
+	wrapped := strings.Split(messaging.WrapAnsi(text, wrapWidth), "\n")
+
+	horiz := strings.Repeat("═", innerWidth)
+
+	// Title row: pad the visible title to padWidth (ANSI tags don't
+	// count toward width — we add them after measuring).
+	title := `.:  M E S S A G E   O F   T H E   D A Y`
+	// Legacy layout was ` ║  TITLE...║` — content cell already opens with
+	// one space (the ` ║ ` frame), so we add 1 more space inside to match
+	// the legacy 2-space leading indent.
+	titleInner := " " + title
+	if len(titleInner) > padWidth {
+		titleInner = titleInner[:padWidth]
+	}
+	titlePadded := titleInner + strings.Repeat(" ", padWidth-len(titleInner))
+	// Re-insert the ansi styling around the visible title only.
+	titleStyled := strings.Replace(titlePadded, title, `<ansi fg="cyan-bold">`+title+`</ansi>`, 1)
 
 	var output string
-	output += `<ansi fg="yellow"> ╔══════════════════════════════════════════════════════════════════════════════╗` + "\n"
-	output += ` ║  <ansi fg="cyan-bold">.:  M E S S A G E   O F   T H E   D A Y</ansi>` + `                                    ║` + "\n"
-	output += ` ╠══════════════════════════════════════════════════════════════════════════════╣` + "\n"
+	output += `<ansi fg="yellow"> ╔` + horiz + `╗` + "\n"
+	output += ` ║ ` + titleStyled + `║` + "\n"
+	output += ` ╠` + horiz + `╣` + "\n"
 	for _, line := range wrapped {
-		// Pad each line to 76 chars inside the box
-		padded := line
-		for len(padded) < 76 {
-			padded += " "
+		// Pad each line to padWidth visible chars inside the box.
+		// ANSI tag bytes don't count toward width.
+		padLen := padWidth - motdVisibleWidth(line)
+		if padLen < 0 {
+			padLen = 0
 		}
-		output += ` ║ ` + padded + `║` + "\n"
+		output += ` ║ ` + line + strings.Repeat(" ", padLen) + `║` + "\n"
 	}
-	output += ` ╚══════════════════════════════════════════════════════════════════════════════╝</ansi>` + "\n"
+	output += ` ╚` + horiz + `╝</ansi>` + "\n"
 
-	user.SendText(output)
+	user.SendText(messaging.CategoryBroadcast, output)
 
 	return true, nil
 }
 
-// wrapText splits text into lines of at most maxWidth characters,
-// breaking at spaces when possible.
-func wrapText(text string, maxWidth int) []string {
-	words := []string{}
-	current := ""
-	for _, ch := range text {
-		if ch == ' ' || ch == '\n' {
-			if current != "" {
-				words = append(words, current)
-				current = ""
-			}
-			if ch == '\n' {
-				words = append(words, "\n")
-			}
-		} else {
-			current += string(ch)
-		}
-	}
-	if current != "" {
-		words = append(words, current)
-	}
-
-	lines := []string{}
-	line := ""
-	for _, word := range words {
-		if word == "\n" {
-			lines = append(lines, line)
-			line = ""
-			continue
-		}
-		if line == "" {
-			line = word
-		} else if len(line)+1+len(word) <= maxWidth {
-			line += " " + word
-		} else {
-			lines = append(lines, line)
-			line = word
-		}
-	}
-	if line != "" {
-		lines = append(lines, line)
-	}
-	if len(lines) == 0 {
-		lines = append(lines, "")
-	}
-	return lines
-}

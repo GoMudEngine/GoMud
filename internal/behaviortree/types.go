@@ -1,5 +1,7 @@
 package behaviortree
 
+import "github.com/GoMudEngine/GoMud/internal/state"
+
 // Result is the return value of a node evaluation.
 type Result int
 
@@ -38,6 +40,18 @@ type EvalContext struct {
 	RoomId     int    // Current room
 	MobName    string // Mob's display name
 	Intercepted bool  // Whether the command was intercepted by a behavior tree
+
+	// SoftTarget is a non-combat target slot used by archetypes
+	// that pick targets for skullduggery (steal/plant/shadow) WITHOUT
+	// entering combat. Set by target-picker actions like
+	// target_random_player_in_room; read by try_steal/try_plant/try_shadow.
+	//
+	// CRITICAL DESIGN: Combat target lives on Character.CombatPhase's
+	// Engaged state ONLY. To "pick a target without engaging combat,"
+	// callers stash it here and pass it to actions as a parameter.
+	// Setting Aggro for non-combat purposes is the chunk-2.7 bug class
+	// that this slot exists to prevent.
+	SoftTarget state.ActorRef
 }
 
 // NodeDef is the raw YAML definition of a node, parsed before

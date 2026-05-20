@@ -7,21 +7,22 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
-	if user.Character.IsCrafting() {
-		user.SendText(`<ansi fg="red">You can't taunt while focused on your work. Finish or be interrupted first.</ansi>`)
+	if user.Character.IsActing() {
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You can't taunt while focused on your work. Finish or be interrupted first.</ansi>`)
 		return true, nil
 	}
 
 	// Must be in combat or specify a target to use taunt.
-	if user.Character.Aggro == nil {
+	if !user.Character.IsInCombat() {
 		if rest == "" {
-			user.SendText("Taunt whom?")
+			user.SendText(messaging.CategorySystem, "Taunt whom?")
 			return true, nil
 		}
 
@@ -31,28 +32,28 @@ func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		if err != nil {
 			// Self-exclusion collapses to NotFound; pre-check for self-targeting message.
 			if pId, _ := room.FindByName(rest); pId == user.UserId {
-				user.SendText("You can't taunt yourself.")
+				user.SendText(messaging.CategorySystem, "You can't taunt yourself.")
 				return true, nil
 			}
-			user.SendText("You don't see them here.")
+			user.SendText(messaging.CategorySystem, "You don't see them here.")
 			return true, nil
 		}
 
 		if !target.IsPlayer() {
 			mob := target.(*actions.MobActor).Mob
 			if mob.IsNonCombatant() || mob.PlayerAttackImmune {
-				user.SendText(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, mob.Character.Name))
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, mob.Character.Name))
 				return true, nil
 			}
 			if mob.Character.IsCharmed() {
-				user.SendText(`You can't taunt a companion.`)
+				user.SendText(messaging.CategorySystem, `You can't taunt a companion.`)
 				return true, nil
 			}
 			user.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
 		} else {
 			p := target.(*actions.UserActor).User
 			if pvpErr := room.CanPvp(user, p); pvpErr != nil {
-				user.SendText(pvpErr.Error())
+				user.SendText(messaging.CategorySystem, pvpErr.Error())
 				return true, nil
 			}
 			user.Character.SetAggro(p.UserId, 0, characters.DefaultAttack)
@@ -64,17 +65,17 @@ func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	if result.Crafting {
 		// Safety net — should have been caught by the pre-reject above.
-		user.SendText(`<ansi fg="red">You can't taunt while focused on your work. Finish or be interrupted first.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You can't taunt while focused on your work. Finish or be interrupted first.</ansi>`)
 		return true, nil
 	}
 
 	if result.OnCooldown {
-		user.SendText("You need a moment to recover before attempting another special move.")
+		user.SendText(messaging.CategorySystem, "You need a moment to recover before attempting another special move.")
 		return true, nil
 	}
 
 	if result.NoTarget {
-		user.SendText("You have no target!")
+		user.SendText(messaging.CategorySystem, "You have no target!")
 		return true, nil
 	}
 
@@ -115,17 +116,17 @@ func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		// Stoic resolve messaging
 		if result.CritDeflected {
 			if targetPlayer != nil {
-				targetPlayer.SendText(
+				targetPlayer.SendText(messaging.CategorySystem, 
 					`<ansi fg="green">The words wash over you harmlessly — you are unmoved.</ansi>`)
 			}
-			user.SendText(
+			user.SendText(messaging.CategorySystem, 
 				`<ansi fg="yellow">Your words have no effect — your target is completely unmoved!</ansi>`)
 		} else if result.Deflected {
 			if targetPlayer != nil {
-				targetPlayer.SendText(
+				targetPlayer.SendText(messaging.CategorySystem, 
 					`<ansi fg="green">You steel yourself against the barrage of words.</ansi>`)
 			}
-			user.SendText(
+			user.SendText(messaging.CategorySystem, 
 				`<ansi fg="yellow">Your words fail to fully penetrate your target's resolve!</ansi>`)
 		}
 
@@ -146,7 +147,7 @@ func sendAggroPullMessages(user *users.UserRecord, room *rooms.Room, sourceName,
 		`Your mockery is unbearable -- <ansi fg="mobname">%s</ansi> wheels around to face you!`,
 		`<ansi fg="mobname">%s</ansi> snarls and shifts its full attention to you.`,
 	}
-	user.SendText(fmt.Sprintf(pullMsgs[util.Rand(len(pullMsgs))], targetName))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(pullMsgs[util.Rand(len(pullMsgs))], targetName))
 
 	roomPullMsgs := []string{
 		`<ansi fg="mobname">%s</ansi> breaks off and turns its fury on <ansi fg="username">%s</ansi>!`,
@@ -160,7 +161,7 @@ func sendAggroPullMessages(user *users.UserRecord, room *rooms.Room, sourceName,
 	} else {
 		roomMsg = fmt.Sprintf(roomPullMsgs[idx], targetName, sourceName)
 	}
-	room.SendTextVisual(roomMsg, user.UserId)
+	room.SendTextVisual(messaging.CategoryTauntSuccess, roomMsg, user.UserId)
 }
 
 // sendTauntMessages sends data-driven taunt messages to attacker, defender,
@@ -184,13 +185,13 @@ func sendTauntMessages(intensity combat.TauntIntensity, dmgDesc, source, target,
 		}
 	}
 
-	user.SendText(atkMsg)
+	user.SendText(messaging.CategorySystem, atkMsg)
 
 	if targetPlayer != nil && defMsg != "" {
-		targetPlayer.SendText(defMsg)
+		targetPlayer.SendText(messaging.CategorySystem, defMsg)
 	}
 
 	if roomMsg != "" {
-		room.SendTextVisual(roomMsg, user.UserId, targetPlayerId)
+		room.SendTextVisual(messaging.CategoryTauntSuccess, roomMsg, user.UserId, targetPlayerId)
 	}
 }

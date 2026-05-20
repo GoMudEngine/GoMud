@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -210,10 +211,10 @@ func TestMvM_AttackerStatGainEmitsRoomMessage(t *testing.T) {
 	tmpl, ok := characters.MobStatGainMessages["strength"]
 	require.True(t, ok)
 
-	// Production line: mobRoom.SendText(fmt.Sprintf(tmpl, mmStatMobName))
+	// Production line: mobRoom.SendText(CategoryMobEmote, fmt.Sprintf(tmpl, mmStatMobName))
 	// We use the same SendText API the new MvM block calls. The events.Message
 	// listener registered above will capture this.
-	mobRoom.SendText(strings.Replace(tmpl, "%s", mob.Character.Name, 1))
+	mobRoom.SendText(messaging.CategoryMobEmote, strings.Replace(tmpl, "%s", mob.Character.Name, 1))
 
 	// Drain the events queue so the listener fires.
 	events.ProcessEvents()

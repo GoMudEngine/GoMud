@@ -10,11 +10,14 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -109,9 +112,9 @@ func calcSwingCount(sourceChar *characters.Character, weaponSpeed float64, extra
 		swings *= float64(bal.HasteSwingMultiplier)
 	}
 
-	// Position-based speed modifier
-	positionSpeed := sourceChar.CombatPosition.GetSpeedMultiplier()
-	swings *= positionSpeed
+	// Position-based speed modifier (chunk 4b R1: FSM-driven via the new
+	// helper; legacy CombatPosition.GetSpeedMultiplier is sunset in S5).
+	swings *= sourceChar.GetPositionSpeedMultiplier()
 
 	// Round to nearest int, minimum 1
 	result := int(math.Round(swings))
@@ -255,15 +258,30 @@ func buildWeaponSetup(sourceChar *characters.Character, targetChar *characters.C
 		ws.baseDmg += float64(weapon.StatMod(string(statmods.RacialBonusPrefix) + strings.ToLower(targetChar.Species())))
 
 		gearMul := mutations.GearEffectivenessMultiplier(sourceChar.Mutations)
-		ws.weaponDmgMult = itemSpec.DamageMultiplier * gearMul
+		// T3 (chunk 4c): apply reach-utility penalty — long weapons are
+		// penalized in grapple positions. CalcReachAdjustedItemMult uses
+		// DamageMultiplier as the base and scales by radius/reach. The
+		// resulting effective multiplier is then further scaled by gearMul.
+		adjustedMult := CalcReachAdjustedItemMult(weapon, sourceChar)
+		ws.weaponDmgMult = adjustedMult * gearMul
 		if ws.weaponDmgMult <= 0 {
 			ws.weaponDmgMult = float64(bal.UnarmedDamageMultiplier)
 		}
 	} else {
+		// Natural-attack path (mob unarmed, species DamageMultiplier).
+		// Apply reach-utility directly: mob claws/bite/fist are short-reach
+		// and stay effective in grapples, so this is mostly a correctness
+		// guard — the numbers don't change for natural attacks in practice.
+		naturalReach := items.ResolveNaturalReach(ws.weaponSubType)
+		posRadius := 0.0 // default: no grapple penalty if Position not initialized
+		if sourceChar.Position != nil {
+			posRadius = PositionReachRadius(sourceChar.Position.State())
+		}
+		reachMult := ReachUtility(naturalReach, posRadius)
 		if speciesInfo := species.GetSpecies(sourceChar.SpeciesId); speciesInfo != nil && speciesInfo.DamageMultiplier > 0 {
-			ws.weaponDmgMult = speciesInfo.DamageMultiplier
+			ws.weaponDmgMult = speciesInfo.DamageMultiplier * reachMult
 		} else {
-			ws.weaponDmgMult = float64(bal.UnarmedDamageMultiplier)
+			ws.weaponDmgMult = float64(bal.UnarmedDamageMultiplier) * reachMult
 		}
 	}
 
@@ -299,8 +317,9 @@ func buildDamageParams(sourceChar *characters.Character, targetChar *characters.
 	dmgMean *= dmgMult
 	rawDmgForCrit *= dmgMult
 
-	// Stage 7.5: Apply prone damage penalty
-	if sourceChar.CombatPosition == characters.PositionProne {
+	// Stage 7.5: Apply prone damage penalty. Chunk 4b R1: FSM-driven —
+	// Supine attackers swing just as poorly as Prone, so include both.
+	if sourceChar.IsProne() || sourceChar.IsSupine() {
 		dmgMean *= float64(configs.GetBalanceConfig().ProneDamagePenalty)
 		rawDmgForCrit *= float64(configs.GetBalanceConfig().ProneDamagePenalty)
 	}
@@ -343,11 +362,13 @@ func calcAttackScore(sourceChar *characters.Character, targetChar *characters.Ch
 	staminaMult := ResourceMultiplier(sourceChar.Stamina, sourceChar.StaminaMax.Value, spPenalty)
 	attackScore *= staminaMult
 
-	// Stage 7.5: Apply prone attack multipliers
-	if sourceChar.CombatPosition == characters.PositionProne {
+	// Stage 7.5: Apply prone attack multipliers. Chunk 4b R1: FSM-driven —
+	// Supine maps to the same modifier as Prone (legacy enum couldn't
+	// distinguish the two).
+	if sourceChar.IsProne() || sourceChar.IsSupine() {
 		attackScore *= float64(bal.ProneAttackMultiplier)
 	}
-	if targetChar.CombatPosition == characters.PositionProne {
+	if targetChar.IsProne() || targetChar.IsSupine() {
 		attackScore *= float64(bal.ProneVulnerabilityMultiplier)
 	}
 
@@ -377,15 +398,18 @@ func calcCritThreshold(sourceChar *characters.Character, targetChar *characters.
 		critThreshold = 1.5
 	}
 
-	// Stage 8.3: Position-based crit modifiers
-	if sourceChar.CombatPosition.IsGrapplePosition() && sourceChar.HasCondition(characters.ConditionGrappleController) {
-		if sourceChar.CombatPosition == characters.PositionGrounded {
+	// Stage 8.3: Position-based crit modifiers. Chunk 4b R1: FSM-driven —
+	// IsController replaces the legacy ConditionGrappleController gate
+	// (S4 sunset), and IsGroundGrapple / IsStandingGrapple replace the
+	// legacy PositionGrounded / PositionClinched enum reads.
+	if sourceChar.IsController() {
+		if sourceChar.IsGroundGrapple() {
 			critThreshold -= 0.4
-		} else if sourceChar.CombatPosition == characters.PositionClinched {
+		} else if sourceChar.IsStandingGrapple() {
 			critThreshold -= 0.2
 		}
 	}
-	if targetChar.CombatPosition == characters.PositionGrounded && !targetChar.HasCondition(characters.ConditionGrappleController) {
+	if targetChar.IsGroundGrapple() && !targetChar.IsController() {
 		critThreshold += 0.4
 	}
 
@@ -412,15 +436,20 @@ func filterDefensesForThirdParty(result *AttackResult, sourceChar *characters.Ch
 		}
 	}
 
-	// If no defenses remain, send vulnerability messages and auto-hit
+	// If no defenses remain, send vulnerability messages and auto-hit.
+	// Vulnerability prose is hit-prep — the swing is about to land.
 	if len(filteredDefenses) == 0 {
-		result.SendToTarget(fmt.Sprintf(
+		hitCat := messaging.CategoryHitMelee
+		if sourceChar.Equipment.Weapon.ItemId > 0 {
+			hitCat = CategoryForWeaponSubtype(sourceChar.Equipment.Weapon.GetSpec().Subtype)
+		}
+		result.SendToTarget(hitCat, fmt.Sprintf(
 			`<ansi fg="red">You're too entangled to defend against %s's attack!</ansi>`,
 			sourceChar.Name))
-		result.SendToSource(fmt.Sprintf(
+		result.SendToSource(hitCat, fmt.Sprintf(
 			`<ansi fg="attack-good">%s is helpless against your attack!</ansi>`,
 			targetChar.Name))
-		result.SendToSourceRoom(fmt.Sprintf(
+		result.SendToSourceRoom(hitCat, fmt.Sprintf(
 			`<ansi fg="combat">%s is defenseless against %s's attack!</ansi>`,
 			targetChar.Name, sourceChar.Name))
 	}
@@ -471,9 +500,13 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 			defenseScore *= float64(bal.BlockEffectiveness)
 		}
 
-		// Stage 7.5: Apply position-based defense penalties
-		switch targetChar.CombatPosition {
-		case characters.PositionProne:
+		// Stage 7.5: Apply position-based defense penalties. Chunk 4b R1:
+		// FSM-driven — Prone/Supine collapse to the legacy "prone"
+		// penalty bucket, IsStandingGrapple matches the legacy
+		// "clinched" bucket, IsGroundGrapple matches the legacy
+		// "grounded" bucket.
+		switch {
+		case targetChar.IsProne() || targetChar.IsSupine():
 			switch defenseType {
 			case "dodge":
 				defenseScore *= float64(bal.ProneDodgePenalty)
@@ -482,7 +515,7 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 			case "block":
 				defenseScore *= float64(bal.ProneBlockPenalty)
 			}
-		case characters.PositionClinched:
+		case targetChar.IsStandingGrapple():
 			switch defenseType {
 			case "dodge":
 				defenseScore *= float64(bal.ClinchDodgePenalty)
@@ -491,7 +524,7 @@ func runBestOfAllDefense(result *AttackResult, sourceChar *characters.Character,
 			case "block":
 				defenseScore *= float64(bal.ClinchBlockPenalty)
 			}
-		case characters.PositionGrounded:
+		case targetChar.IsGroundGrapple():
 			switch defenseType {
 			case "dodge":
 				defenseScore *= float64(bal.GroundedDodgePenalty)
@@ -593,20 +626,29 @@ var doubleFumbleMessages = []struct {
 
 // handleDoubleFumble applies prone to both combatants and sends comedy text.
 func handleDoubleFumble(result *AttackResult, sourceChar *characters.Character, targetChar *characters.Character) {
-	// Both go prone
-	sourceChar.CombatPosition = characters.PositionProne
-	targetChar.CombatPosition = characters.PositionProne
+	// Both go prone via FSM.
+	r := state.TransitionReason{Trigger: position.TriggerKnockdownFaceForward}
+	if err := sourceChar.Position.TransitionToProne(position.ProneData{}, r); err != nil {
+		mudlog.Warn("handleDoubleFumble: source TransitionToProne failed", "err", err)
+	}
+	if err := targetChar.Position.TransitionToProne(position.ProneData{}, r); err != nil {
+		mudlog.Warn("handleDoubleFumble: target TransitionToProne failed", "err", err)
+	}
 
 	// Pick a random comedy message
 	msg := doubleFumbleMessages[util.Rand(len(doubleFumbleMessages))]
 
-	result.SendToSource(fmt.Sprintf(`<ansi fg="fumble-text">!!!</ansi> `+
+	// Double-fumble: both sides fumble, no defense, no clean
+	// weapon category to pick. Use CategoryHitMelee as the combat-
+	// neutral hit-band default.
+	fumbleCat := messaging.CategoryHitMelee
+	result.SendToSource(fumbleCat, fmt.Sprintf(`<ansi fg="fumble-text">!!!</ansi> `+
 		`<ansi fg="yellow">`+msg.toAttacker+`</ansi>`+
 		` <ansi fg="fumble-text">!!!</ansi>`, targetChar.Name))
-	result.SendToTarget(fmt.Sprintf(`<ansi fg="fumble-text">!!!</ansi> `+
+	result.SendToTarget(fumbleCat, fmt.Sprintf(`<ansi fg="fumble-text">!!!</ansi> `+
 		`<ansi fg="yellow">`+msg.toDefender+`</ansi>`+
 		` <ansi fg="fumble-text">!!!</ansi>`, sourceChar.Name))
-	result.SendToSourceRoom(fmt.Sprintf(`<ansi fg="fumble-text">!!!</ansi> `+
+	result.SendToSourceRoom(fumbleCat, fmt.Sprintf(`<ansi fg="fumble-text">!!!</ansi> `+
 		`<ansi fg="yellow">`+msg.toRoom+`</ansi>`+
 		` <ansi fg="fumble-text">!!!</ansi>`, sourceChar.Name, targetChar.Name))
 }
@@ -825,24 +867,26 @@ func sendDefenseMessages(result *AttackResult, best bestDefenseResult, sourceCha
 			toRoomMsg = toRoomMsg.SetTokenValue(token, value)
 		}
 
-		result.SendToTarget(string(toDefenderMsg))
-		result.SendToSource(string(toAttackerMsg))
-		result.SendToSourceRoom(string(toRoomMsg))
+		defCat := CategoryForDefenseVerb(defenseVerb)
+		result.SendToTarget(defCat, string(toDefenderMsg))
+		result.SendToSource(defCat, string(toAttackerMsg))
+		result.SendToSourceRoom(defCat, string(toRoomMsg))
 		if sourceChar.RoomId != targetChar.RoomId {
-			result.SendToTargetRoom(string(toRoomMsg))
+			result.SendToTargetRoom(defCat, string(toRoomMsg))
 		}
 	} else {
-		result.SendToSource(fmt.Sprintf(`<ansi fg="attack-bad">%s %ss your attack!</ansi>`, targetChar.Name, defenseVerb))
-		result.SendToTarget(fmt.Sprintf(`<ansi fg="defense-good">You %s %s's attack!</ansi>`, defenseVerb, sourceChar.Name))
-		result.SendToSourceRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss %s's attack.</ansi>`, targetChar.Name, defenseVerb, sourceChar.Name))
+		defCat := CategoryForDefenseVerb(defenseVerb)
+		result.SendToSource(defCat, fmt.Sprintf(`<ansi fg="attack-bad">%s %ss your attack!</ansi>`, targetChar.Name, defenseVerb))
+		result.SendToTarget(defCat, fmt.Sprintf(`<ansi fg="defense-good">You %s %s's attack!</ansi>`, defenseVerb, sourceChar.Name))
+		result.SendToSourceRoom(defCat, fmt.Sprintf(`<ansi fg="combat">%s %ss %s's attack.</ansi>`, targetChar.Name, defenseVerb, sourceChar.Name))
 		if sourceChar.RoomId != targetChar.RoomId {
-			result.SendToTargetRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss an attack.</ansi>`, targetChar.Name, defenseVerb))
+			result.SendToTargetRoom(defCat, fmt.Sprintf(`<ansi fg="combat">%s %ss an attack.</ansi>`, targetChar.Name, defenseVerb))
 		}
 	}
 
 	// Stage 8.5: Add third-party context if applicable
 	if isThirdParty {
-		result.SendToTarget(fmt.Sprintf(
+		result.SendToTarget(CategoryForDefenseVerb(defenseVerb), fmt.Sprintf(
 			`<ansi fg="yellow">(Despite being entangled in a grapple!)</ansi>`))
 	}
 }
@@ -863,11 +907,12 @@ func sendFloorDefenseMessages(result *AttackResult, defType string, sourceChar *
 		defenseVerb = "avoid"
 	}
 
-	result.SendToSource(fmt.Sprintf(`<ansi fg="attack-bad">%s %ss your attack!</ansi>`, targetChar.Name, defenseVerb))
-	result.SendToTarget(fmt.Sprintf(`<ansi fg="defense-good">You %s %s's attack!</ansi>`, defenseVerb, sourceChar.Name))
-	result.SendToSourceRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss %s's attack.</ansi>`, targetChar.Name, defenseVerb, sourceChar.Name))
+	defCat := CategoryForDefenseVerb(defenseVerb)
+	result.SendToSource(defCat, fmt.Sprintf(`<ansi fg="attack-bad">%s %ss your attack!</ansi>`, targetChar.Name, defenseVerb))
+	result.SendToTarget(defCat, fmt.Sprintf(`<ansi fg="defense-good">You %s %s's attack!</ansi>`, defenseVerb, sourceChar.Name))
+	result.SendToSourceRoom(defCat, fmt.Sprintf(`<ansi fg="combat">%s %ss %s's attack.</ansi>`, targetChar.Name, defenseVerb, sourceChar.Name))
 	if sourceChar.RoomId != targetChar.RoomId {
-		result.SendToTargetRoom(fmt.Sprintf(`<ansi fg="combat">%s %ss an attack.</ansi>`, targetChar.Name, defenseVerb))
+		result.SendToTargetRoom(defCat, fmt.Sprintf(`<ansi fg="combat">%s %ss an attack.</ansi>`, targetChar.Name, defenseVerb))
 	}
 }
 
@@ -902,13 +947,43 @@ func buildAttackMessages(result *AttackResult, sourceChar *characters.Character,
 		pctDamage = math.Ceil(float64(attackTargetDamage) / sdp.dmgMean * 100)
 	}
 
+	// T4 (chunk 4c): compute the display subtype for attack-message selection.
+	// When ShouldBludgeon fires (weapon reach exceeds position grapple radius),
+	// bladed/ranged weapons narrate as Bludgeoning — the fiction tracks the
+	// pommel/hilt strike that the math already reflects (T3 damage penalty).
+	// Natural-blunt subtypes (Fist, Claws, Bite, Sting, Slam, Gore, Whipping)
+	// and caster subtypes (Wand, Sceptre, Staff) keep their own vocabulary.
+	displaySubtype := ws.weaponSubType
+	{
+		var weaponReach float64
+		if ws.weapon.ItemId > 0 {
+			spec := ws.weapon.GetSpec()
+			weaponReach = items.ResolveReach(&spec)
+		} else {
+			weaponReach = items.ResolveNaturalReach(ws.weaponSubType)
+		}
+		posRadius := 0.0
+		if sourceChar.Position != nil {
+			posRadius = PositionReachRadius(sourceChar.Position.State())
+		}
+		if ShouldBludgeon(weaponReach, posRadius) {
+			switch displaySubtype {
+			case items.Slashing, items.Cleaving, items.Stabbing, items.Shooting:
+				displaySubtype = items.Bludgeoning
+			}
+			// Natural-blunt (Fist/Claws/Bite/Sting/Slam/Gore/Whipping) and
+			// caster (Wand/Sceptre/Staff) subtypes are intentionally excluded
+			// from the swap — their own vocabulary is already appropriate.
+		}
+	}
+
 	// Use fumble messages when a fumble is detected
 	var msgs items.AttackOptions
 	isFeint := false
 	if result.Fumble {
-		msgs = items.GetPreAttackMessage(ws.weaponSubType, items.Fumble)
+		msgs = items.GetPreAttackMessage(displaySubtype, items.Fumble)
 	} else {
-		msgs = items.GetAttackMessage(ws.weaponSubType, int(pctDamage))
+		msgs = items.GetAttackMessage(displaySubtype, int(pctDamage))
 		// Feint check: skilled attackers can turn misses into deliberate-looking feints
 		if int(pctDamage) == 0 && !result.Fumble {
 			isFeint = checkFeint(sourceChar.GetCombatSkillLevel())
@@ -1028,13 +1103,16 @@ func buildAttackMessages(result *AttackResult, sourceChar *characters.Character,
 		}
 	}
 
+	// Per-swing hit-band Category from the weapon subtype.
+	hitCat := CategoryForWeaponSubtype(ws.weaponSubType)
+
 	// Send to attacker
 	attackerMsg := string(toAttackerMsg)
 	if attackSourceDamage > 0 && attackSourceReduction > 0 {
 		attackerMsg += fmt.Sprintf(` <ansi fg="white">[%s was blocked]</ansi>`, GetDamageDescription(attackSourceReduction, sourceChar.HealthMax.Value))
 	}
 
-	result.SendToSource(string(attackerMsg))
+	result.SendToSource(hitCat, string(attackerMsg))
 
 	// Send to victim
 	defenderMsg := string(toDefenderMsg)
@@ -1042,17 +1120,17 @@ func buildAttackMessages(result *AttackResult, sourceChar *characters.Character,
 		defenderMsg += fmt.Sprintf(` <ansi fg="red">[you blocked %s]</ansi>`, GetDamageDescription(attackTargetReduction, targetChar.HealthMax.Value))
 	}
 
-	result.SendToTarget(string(defenderMsg))
+	result.SendToTarget(hitCat, string(defenderMsg))
 
 	// Send to room
-	result.SendToSourceRoom(
+	result.SendToSourceRoom(hitCat,
 		string(toAttackerRoomMsg.SetTokenValue(items.TokenTarget, targetChar.Name).
 			SetTokenValue(items.TokenTargetType, string(tgtType))),
 	)
 
 	// Send to defender room if separate
 	if len(string(toDefenderRoomMsg)) > 0 {
-		result.SendToTargetRoom(
+		result.SendToTargetRoom(hitCat,
 			string(toDefenderRoomMsg.SetTokenValue(items.TokenTarget, targetChar.Name).SetTokenValue(items.TokenTargetType, string(tgtType))),
 		)
 	}
@@ -1085,21 +1163,23 @@ func applyPetDamage(result *AttackResult, sourceChar *characters.Character, targ
 		petBaseDmg, petVar = dice.DiceToDistribution(petDmg.DiceCount, petDmg.SideCount, petDmg.BonusDamage)
 	}
 
+	// Pet damage is claws/bite/etc — natural-sharp band.
+	petCat := messaging.CategoryHitNaturalSharp
 	for i := 0; i < petAttacks; i++ {
 		attackTargetDamage := int(math.Round(math.Max(0, dice.Roll(petBaseDmg, petVar).Value)))
 
 		result.DamageToTarget += attackTargetDamage
 
 		toAttackerMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%s</ansi> to <ansi fg="%sname">%s</ansi>!`, sourceChar.Pet.DisplayName(), GetDamageDescription(attackTargetDamage, targetChar.HealthMax.Value), string(tgtType), targetChar.Name)
-		result.SendToSource(toAttackerMsg)
+		result.SendToSource(petCat, toAttackerMsg)
 
 		toDefenderMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%s</ansi> to you!`, sourceChar.Pet.DisplayName(), GetDamageDescription(attackTargetDamage, targetChar.HealthMax.Value))
-		result.SendToTarget(toDefenderMsg)
+		result.SendToTarget(petCat, toDefenderMsg)
 
 		toAttackerRoomMsg := fmt.Sprintf(`%s jumps into the fray and deals <ansi fg="damage">%s</ansi> to <ansi fg="%sname">%s</ansi>!`, sourceChar.Pet.DisplayName(), GetDamageDescription(attackTargetDamage, targetChar.HealthMax.Value), string(tgtType), targetChar.Name)
-		result.SendToSourceRoom(toAttackerRoomMsg)
+		result.SendToSourceRoom(petCat, toAttackerRoomMsg)
 		if sourceChar.RoomId != targetChar.RoomId {
-			result.SendToTargetRoom(toAttackerRoomMsg)
+			result.SendToTargetRoom(petCat, toAttackerRoomMsg)
 		}
 	}
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -12,8 +13,8 @@ import (
 func Emote(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	if len(rest) == 0 {
-		user.SendText("You emote.")
-		room.SendTextVisual(
+		user.SendText(messaging.CategoryEmote, "You emote.")
+		room.SendTextVisual(messaging.CategoryEmote,
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> emotes.`, user.Character.Name),
 			user.UserId,
 		)
@@ -24,13 +25,13 @@ func Emote(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	result := actions.Emote(rest)
 	if result.IsAlias {
 		aliasMsg := actions.FormatEmoteText(user.Character.Name, result.AliasText, "username")
-		user.SendText(fmt.Sprintf(`You Emote: %s`, aliasMsg))
-		room.SendTextVisual(aliasMsg, user.UserId)
+		user.SendText(messaging.CategoryEmote, fmt.Sprintf(`You Emote: %s`, aliasMsg))
+		room.SendTextVisual(messaging.CategoryEmote, aliasMsg, user.UserId)
 		return true, nil
 	}
 
 	if user.Muted {
-		user.SendText(`You are <ansi fg="alert-5">MUTED</ansi>. You can only send <ansi fg="command">whisper</ansi>'s to Admins and Moderators.`)
+		user.SendText(messaging.CategoryWarning, `You are <ansi fg="alert-5">MUTED</ansi>. You can only send <ansi fg="command">whisper</ansi>'s to Admins and Moderators.`)
 		return true, nil
 	}
 
@@ -38,7 +39,7 @@ func Emote(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		rest = rest[1:]
 	} else {
 		emoteMsg := actions.FormatEmoteText(user.Character.Name, rest, "username")
-		user.SendText(fmt.Sprintf(`You Emote: %s`, emoteMsg))
+		user.SendText(messaging.CategoryEmote, fmt.Sprintf(`You Emote: %s`, emoteMsg))
 	}
 
 	room.SendTextCommunication(

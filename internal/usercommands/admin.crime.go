@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/crimes"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/factions"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -58,10 +59,10 @@ func Crime(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 func crimeShowUsage(user *users.UserRecord) {
 	if out, err := templates.Process("admincommands/help/command.crime", nil, user.UserId); err == nil && strings.TrimSpace(out) != "" {
-		user.SendText(out)
+		user.SendText(messaging.CategorySystem, out)
 		return
 	}
-	user.SendText(
+	user.SendText(messaging.CategorySystem, 
 		"Usage:\r\n" +
 			"  crime list <factionId> [--all]\r\n" +
 			"  crime show <playerName> [--all]\r\n" +
@@ -77,12 +78,12 @@ func crimeList(args []string, user *users.UserRecord, includeResolved bool) (boo
 	}
 	factionId := args[0]
 	if factions.GetDefinition(factionId) == nil {
-		user.SendText(fmt.Sprintf("Unknown faction: %s\r\n", factionId))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Unknown faction: %s\r\n", factionId))
 		return true, nil
 	}
 	rows := crimes.AllForFaction(factionId, includeResolved)
 	if len(rows) == 0 {
-		user.SendText(fmt.Sprintf("No crimes for %s.\r\n", factionId))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("No crimes for %s.\r\n", factionId))
 		return true, nil
 	}
 	sort.Slice(rows, func(i, j int) bool { return rows[i].Round < rows[j].Round })
@@ -104,7 +105,7 @@ func crimeList(args []string, user *users.UserRecord, includeResolved bool) (boo
 			perpString(c.Perpetrator),
 			resolvedString(c))
 	}
-	user.SendText(b.String())
+	user.SendText(messaging.CategorySystem, b.String())
 	return true, nil
 }
 
@@ -124,7 +125,7 @@ func crimeShow(args []string, user *users.UserRecord, includeResolved bool) (boo
 	}
 	target := users.GetByCharacterNameOrLoad(args[0])
 	if target == nil {
-		user.SendText(fmt.Sprintf("No such player: %s\r\n", args[0]))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("No such player: %s\r\n", args[0]))
 		return true, nil
 	}
 
@@ -138,7 +139,7 @@ func crimeShow(args []string, user *users.UserRecord, includeResolved bool) (boo
 		}
 	}
 	if len(rows) == 0 {
-		user.SendText(fmt.Sprintf("No crimes recorded for %s.\r\n", args[0]))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("No crimes recorded for %s.\r\n", args[0]))
 		return true, nil
 	}
 	sort.Slice(rows, func(i, j int) bool { return rows[i].Crime.Round < rows[j].Crime.Round })
@@ -161,7 +162,7 @@ func crimeShow(args []string, user *users.UserRecord, includeResolved bool) (boo
 			fmt.Sprintf("room %d in %s", c.RoomId, c.Zone),
 			resolvedString(c))
 	}
-	user.SendText(b.String())
+	user.SendText(messaging.CategorySystem, b.String())
 	return true, nil
 }
 
@@ -185,16 +186,16 @@ func crimeResolve(args []string, user *users.UserRecord) (bool, error) {
 	factionId := args[0]
 	crimeId, err := strconv.Atoi(args[1])
 	if err != nil {
-		user.SendText(fmt.Sprintf("Bad crime id %q: %v\r\n", args[1], err))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Bad crime id %q: %v\r\n", args[1], err))
 		return true, nil
 	}
 	reason := strings.Join(args[2:], " ")
 	if factions.GetDefinition(factionId) == nil {
-		user.SendText(fmt.Sprintf("Unknown faction: %s\r\n", factionId))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Unknown faction: %s\r\n", factionId))
 		return true, nil
 	}
 	crimes.Resolve(factionId, crimeId, reason)
-	user.SendText(fmt.Sprintf("Resolved %s crime %d: %s\r\n", factionId, crimeId, reason))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf("Resolved %s crime %d: %s\r\n", factionId, crimeId, reason))
 	return true, nil
 }
 
@@ -205,11 +206,11 @@ func crimePruneStale(args []string, user *users.UserRecord) (bool, error) {
 	}
 	factionId := args[0]
 	if factions.GetDefinition(factionId) == nil {
-		user.SendText(fmt.Sprintf("Unknown faction: %s\r\n", factionId))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Unknown faction: %s\r\n", factionId))
 		return true, nil
 	}
 	count := crimes.PruneStale(factionId)
-	user.SendText(fmt.Sprintf("Resolved %d stale crime(s) for %s.\r\n", count, factionId))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf("Resolved %d stale crime(s) for %s.\r\n", count, factionId))
 	return true, nil
 }
 

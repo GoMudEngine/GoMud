@@ -64,8 +64,27 @@ func (r RollResult) String() string {
 // Roll performs a normal distribution roll
 // mean: center of the distribution (typically the character's stat value)
 // stdDev: spread of the distribution (controls randomness/consistency)
-// Returns a RollResult with the value and statistical information
+// Returns a RollResult with the value and statistical information.
+//
+// Degenerate case: when stdDev == 0 the roll has no variance —
+// return the deterministic mean. Without this guard the (value -
+// mean) / stdDev computation produces NaN, which silently
+// propagates through ZScore / Percentile and breaks
+// crit/fumble comparisons downstream (NaN comparisons always
+// evaluate false, so crit/fumble would silently never fire).
+// Practically reachable when a character with stat=0 swings, or
+// when damage_multiplier=0 on an item collapses dmgMean to 0.
 func Roll(mean, stdDev float64) RollResult {
+	if stdDev == 0 {
+		return RollResult{
+			Value:       mean,
+			Mean:        mean,
+			StdDev:      0,
+			ZScore:      0,
+			Percentile:  50,
+			Description: fmt.Sprintf("Normal(%.2f, 0.00) [deterministic]", mean),
+		}
+	}
 	value := rand.NormFloat64()*stdDev + mean
 	zScore := (value - mean) / stdDev
 	percentile := normalCDF(zScore) * 100

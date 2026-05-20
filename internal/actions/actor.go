@@ -2,6 +2,7 @@ package actions
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
 
@@ -16,17 +17,14 @@ type Actor interface {
 	// GetRoom returns the room the actor currently occupies.
 	GetRoom() *rooms.Room
 
-	// SendText delivers a message to this actor only (no-op for mobs).
-	SendText(msg string)
-
-	// SendRoomText broadcasts msg to the room. When excludeSelf is true the
-	// actor's own connection is omitted from the broadcast.
-	SendRoomText(msg string, excludeSelf bool)
+	// SendText delivers a categorized message to this actor only (no-op
+	// for mobs). Routes through the centralized messaging pipeline.
+	SendText(cat messaging.Category, msg string)
 
 	// SendRoomCommunication broadcasts a communication (say/shout/etc.) to
 	// the room. Some clients suppress these messages based on deafen settings;
 	// this variant goes through the communication pipeline rather than the raw
-	// text pipeline. excludeSelf works the same as SendRoomText.
+	// text pipeline. excludeSelf works the same as the deleted SendRoomText.
 	SendRoomCommunication(msg string, excludeSelf bool)
 
 	// GetName returns the display name of the actor.

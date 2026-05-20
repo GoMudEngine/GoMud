@@ -10,4 +10,14 @@ with a weapon has a chance to advance this skill.
 
 This skill also affects your parry defense when wielding a weapon.
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help skills</ansi>, <ansi fg="command">help equip</ansi>
+<ansi fg="yellow">━━━ Reach and Grappling ━━━</ansi>
+
+Melee weapons have a reach that affects how well they perform in
+close-quarters grapples. Long weapons (swords, axes, staves) are
+penalised when you're locked in a clinch or ground grapple — there
+isn't room to swing them freely. Short weapons (daggers) remain
+fully effective. See <ansi fg="command">help grapple</ansi> and
+<ansi fg="command">help reach</ansi> for details.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help skills</ansi>, <ansi fg="command">help equip</ansi>,
+  <ansi fg="command">help grapple</ansi>, <ansi fg="command">help reach</ansi>

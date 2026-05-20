@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
@@ -41,7 +42,7 @@ func Remove(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	result := actions.RemoveEquipment(actor, rest)
 
 	if result.Removed {
-		room.SendTextVisual(
+		room.SendTextVisual(messaging.CategoryEquipment,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> removes their <ansi fg="item">%s</ansi> and stores it away.`, mob.Character.Name, result.Item.DisplayName()))
 	}
 

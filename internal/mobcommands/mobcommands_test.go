@@ -15,6 +15,10 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
+	"github.com/GoMudEngine/GoMud/internal/state/life"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -22,6 +26,39 @@ import (
 )
 
 // ─── Test Infrastructure ──────────────────────────────────────────────────────
+
+
+// setCombatPositionParallel sets the Position FSM to the given state. Seeds
+// Position if nil. Synthetic Partner ref for grapple states (FSM requires non-zero).
+func setCombatPositionParallel(c *characters.Character, pos position.State) {
+	if c.Position == nil {
+		c.Position = position.NewMachine()
+	}
+	r := state.TransitionReason{Trigger: "test_setup"}
+	switch pos {
+	case position.Standing:
+		c.Position.ForceStanding(r)
+	case position.Prone:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToProne(position.ProneData{}, r)
+	case position.Clinch:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+	case position.Mount:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+		_ = c.Position.TransitionToMount(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerTakedownMount},
+		)
+	}
+}
 
 func TestMain(m *testing.M) {
 	mudlog.SetupLogger(nil, "", "", false)
@@ -58,7 +95,7 @@ func seedAllRegistries() func() {
 		1: {
 			MobId:         1,
 			Zone:          "TestZone",
-			Hostile:       true,
+			AutoAggro: true,
 			ActivityLevel: 50,
 			Groups:        []string{"undead"},
 			Character: characters.Character{
@@ -68,7 +105,7 @@ func seedAllRegistries() func() {
 		2: {
 			MobId:         2,
 			Zone:          "TestZone",
-			Hostile:       false,
+			AutoAggro: false,
 			ActivityLevel: 30,
 			Character: characters.Character{
 				Name: "Merchant",
@@ -80,27 +117,35 @@ func seedAllRegistries() func() {
 			MobId:      1,
 			InstanceId: 100,
 			HomeRoomId: 1,
-			Hostile:    true,
+			AutoAggro: true,
 			Groups:     []string{"undead"},
 			Character: characters.Character{
-				Name:      "Skeleton",
-				RoomId:    1,
-				Health:    50,
-				Buffs:     buffs.New(),
-				Cooldowns: map[string]int{},
+				Name:          "Skeleton",
+				RoomId:        1,
+				Health:        50,
+				Buffs:         buffs.New(),
+				Cooldowns:     map[string]int{},
+				Awareness:     awareness.NewMachine(),
+				Life:          life.NewMachine(),
+				MobInstanceId: 100,
+				IsMob:         true,
 			},
 		},
 		200: {
 			MobId:      2,
 			InstanceId: 200,
 			HomeRoomId: 1,
-			Hostile:    false,
+			AutoAggro: false,
 			Character: characters.Character{
-				Name:      "Merchant",
-				RoomId:    1,
-				Health:    100,
-				Buffs:     buffs.New(),
-				Cooldowns: map[string]int{},
+				Name:          "Merchant",
+				RoomId:        1,
+				Health:        100,
+				Buffs:         buffs.New(),
+				Cooldowns:     map[string]int{},
+				Awareness:     awareness.NewMachine(),
+				Life:          life.NewMachine(),
+				MobInstanceId: 200,
+				IsMob:         true,
 			},
 		},
 	}
@@ -660,19 +705,6 @@ func TestShowMob(t *testing.T) {
 	})
 }
 
-func TestSubmitMob(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	mob, room := getTestMobAndRoom(t)
-
-	t.Run("submit_not_in_combat", func(t *testing.T) {
-		handled, err := Submit("", mob, room)
-		assert.True(t, handled)
-		_ = err
-	})
-}
-
 func TestLookForTrouble(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
@@ -1083,29 +1115,6 @@ func TestAttackInCombat(t *testing.T) {
 }
 
 // ─── Deeper branch tests ────────────────────────────────────────────────────
-
-func TestSubmitInCombat(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	mob, room := getTestMobAndRoom(t)
-
-	// In combat but not grounded
-	mob.Character.Aggro = &characters.Aggro{UserId: 1}
-	mob.Character.CombatPosition = characters.PositionStanding
-	handled, err := Submit("", mob, room)
-	assert.True(t, handled)
-	_ = err
-
-	// In combat and grounded but not grapple controller
-	mob.Character.CombatPosition = characters.PositionGrounded
-	handled, err = Submit("", mob, room)
-	assert.True(t, handled)
-	_ = err
-
-	mob.Character.Aggro = nil
-	mob.Character.CombatPosition = characters.PositionStanding
-}
 
 func TestWanderBranches(t *testing.T) {
 	cleanup := seedAllRegistries()

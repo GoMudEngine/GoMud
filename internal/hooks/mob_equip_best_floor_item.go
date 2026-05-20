@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/itemvalue"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
@@ -16,7 +17,7 @@ import (
 //
 // No-op (returns false) if any of:
 //   - !itemvalue.CanScanFloorLoot(&mob.Character, mob.BehaviorArchetype)
-//   - mob is in combat (Character.Aggro != nil)
+//   - mob is in combat (Character.IsInCombat())
 //   - room is nil or has no floor items
 //   - no floor item scores as an upgrade for this mob+profile
 //
@@ -28,7 +29,7 @@ func EquipBestFloorItem(mob *mobs.Mob, room *rooms.Room) bool {
 	if !itemvalue.CanScanFloorLoot(&mob.Character, mob.BehaviorArchetype) {
 		return false
 	}
-	if mob.Character.Aggro != nil {
+	if mob.Character.IsInCombat() {
 		return false // busy fighting
 	}
 	if room == nil || len(room.Items) == 0 {
@@ -68,11 +69,11 @@ func EquipBestFloorItem(mob *mobs.Mob, room *rooms.Room) bool {
 	// the loot-pickup origin.
 	spec := result.Item.GetSpec()
 	if spec.Subtype == items.Wearable {
-		room.SendTextVisual(fmt.Sprintf(
+		room.SendTextVisual(messaging.CategoryEquipment, fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> picks up <ansi fg="item">%s</ansi> and dons it.`,
 			mob.Character.Name, result.Item.DisplayName()))
 	} else {
-		room.SendTextVisual(fmt.Sprintf(
+		room.SendTextVisual(messaging.CategoryEquipment, fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> picks up <ansi fg="item">%s</ansi> and wields it.`,
 			mob.Character.Name, result.Item.DisplayName()))
 	}

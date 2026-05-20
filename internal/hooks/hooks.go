@@ -15,6 +15,7 @@ func RegisterListeners() {
 	events.RegisterListener(events.RoomChange{}, CleanupEphemeralRooms)
 	events.RegisterListener(events.RoomChange{}, MobRoomChangeKnowledgeObservers)
 	events.RegisterListener(events.RoomChange{}, MobRoomChangeFactsAutoWithdraw)
+	events.RegisterListener(events.RoomChange{}, PresencePlayerEntry)
 
 	// NewRound Listeners
 	events.RegisterListener(events.NewRound{}, InactivePlayers)
@@ -33,6 +34,7 @@ func RegisterListeners() {
 	//
 	// Done with combat
 	//
+	events.RegisterListener(events.NewRound{}, PresenceTick)
 	events.RegisterListener(events.NewRound{}, AutoHeal)
 	events.RegisterListener(events.NewRound{}, BroadcastHints)
 	events.RegisterListener(events.NewRound{}, IdleMobs)

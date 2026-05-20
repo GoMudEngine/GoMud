@@ -3,7 +3,6 @@ package actions
 import (
 	"strings"
 
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -119,7 +118,7 @@ func ExecuteShoot(actor Actor, rest string) ShootResult {
 	}
 
 	// Determine sneaking state.
-	isSneaking := char.HasBuffFlag(buffs.Hidden)
+	isSneaking := char.IsHidden()
 
 	if attackMobInstanceId > 0 {
 		m := mobs.GetInstance(attackMobInstanceId)

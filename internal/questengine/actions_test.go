@@ -3,6 +3,7 @@ package questengine
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -43,7 +44,9 @@ func (m *mockActionContext) ConsumeItem(itemId int) {
 }
 func (m *mockActionContext) GiveItem(itemId int)  { m.givenItems = append(m.givenItems, itemId) }
 func (m *mockActionContext) GiveGold(amount int)  { m.givenGold += amount }
-func (m *mockActionContext) SendText(text string) { m.sentTexts = append(m.sentTexts, text) }
+func (m *mockActionContext) SendText(_ messaging.Category, text string) {
+	m.sentTexts = append(m.sentTexts, text)
+}
 func (m *mockActionContext) RoomText(text string) { m.roomTexts = append(m.roomTexts, text) }
 func (m *mockActionContext) SpawnMob(s SpawnDef)  { m.spawnedMobs = append(m.spawnedMobs, s) }
 func (m *mockActionContext) SpawnItem(s SpawnDef) { m.spawnedItems = append(m.spawnedItems, s) }

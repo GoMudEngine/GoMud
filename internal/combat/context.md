@@ -85,7 +85,7 @@ The combat system is built around several key components:
 // - Combat skill rank differential
 // - Accuracy buff (doubles crit chance)
 // - Blink buff on target (halves crit chance)
-// - Grapple position: controller in clinch -0.2, grounded -0.4
+// - Grapple position: `c.IsController()` + IsStandingGrapple -0.2, IsGroundGrapple -0.4 (chunk 4b R1)
 // - Backstab: guaranteed crit on first pass
 ```
 
@@ -134,44 +134,103 @@ outclassed defenders have a 15% chance to avoid any swing.
   `MinAttackHitChance` (attacker hits when defense wins)
 - Defense crit detection (z > 2.0): parry crit → disarm, dodge crit → grapple opportunity
 
-### Prone Condition System
-Characters can be knocked to the ground by special combat moves (bash/trip/kick), applying severe combat penalties:
+### Prone / Supine Knockdown System (Position FSM, chunks 4a + 4b)
 
-**Prone State:**
-- Tracked via `Character.Prone` boolean field
-- Minimum prone duration: 2 rounds (`Character.ProneRoundsRemaining`)
-- Visual indicator: "prone" adjective added via `GetAdjectives()`
+Characters can be knocked to the ground by special combat moves
+(bash/trip/kick) or spell knockdowns, applying severe combat penalties.
+Chunk 4a split the legacy single "prone" state into **Prone** (face-down)
+and **Supine** (face-up); chunk 4b cut over every writer and most readers
+to the new Position FSM.
 
-**Combat Modifiers (applied in `combat.go`):**
-- Attack penalty: -30 to attack score
-- Damage penalty: ×0.80 (20% reduction)
-- Vulnerability: Attackers get +20 to hit prone targets
-- Dodge penalty: ×0.50 (50% reduction)
-- Parry penalty: ×0.70 (30% reduction)
-- Block penalty: ×0.80 (20% reduction)
+**Down state (Position FSM):**
+- Canonical source: `Character.Position` (`*position.Machine`). Use
+  `c.IsProne()` and `c.IsSupine()` predicates; rollup `c.IsOnFloor()`
+  covers either + ground grapples.
+- Per-state data: `ProneData` / `SupineData` carry
+  `MinRecoveryRounds` (replaces legacy `PositionRoundsMin`),
+  `KnockdownSource` (the attacker's `ActorRef`), and the
+  `TransitionReason`.
+- The legacy `CombatPosition` / `PositionRoundsMin` parallel-writes are
+  removed (T21 sunset). The legacy enum collapsed Prone/Supine into one
+  bucket; the FSM distinguishes them.
+- Visual indicator: "prone" adjective added via `GetAdjectives()` (still
+  enum-driven; helpfile content enhancement deferred to chunk 4f).
 
-**Behavioral Restrictions:**
-- Cannot flee from combat (enforced in flee.go)
-- Cannot move between rooms (enforced in movement commands)
+**Why split Prone vs Supine?** Submission paths and recovery
+mechanics diverge: Prone is back-take-vulnerable and harder to
+recover from; Supine can pull guard (`TransitionToGuard`) and recovers
+more easily. Mechanically (4b): both states share the same combat
+penalty profile via `IsProne() || IsSupine()` reads in
+`combat_helpers.go` (R1). Submission-engine divergence is chunk 4d.
 
-**Recovery Mechanics:**
-1. **Automatic Recovery** - Stat-based logarithmic formula
-   - Formula: `min(90, 25 + 20 × ln(DEX/25))` where DEX is Dexterity stat
-   - Implemented in `Character.AttemptRecovery(statValue int)`
-   - Called automatically each round via `NewRound_UserRoundTick` and `NewRound_MobRoundTick` hooks
-   - Recovery attempts only after minimum prone duration expires
-   - Failed recovery attempts set `ConditionRecoveryPenalty` condition (limits attacks to 1)
-   - Success rate examples: 25 DEX = 25%, 100 DEX = 53%, 300 DEX = 75%, capped at 90%
+**Combat modifiers** (applied in `combat_helpers.go`, all migrated to
+`IsProne() || IsSupine()` in chunk 4b R1):
+- Attacker prone: `dmgMean *= ProneDamagePenalty` (config),
+  `attackScore *= ProneAttackMultiplier`
+- Defender prone: `attackScore *= ProneVulnerabilityMultiplier`
+- Dodge/parry/block penalties: `ProneDodgePenalty` / `ProneParryPenalty`
+  / `ProneBlockPenalty` (defense penalty switch reads
+  `IsProne() || IsSupine()` → prone bucket).
 
-2. **Manual Recovery** - Stand command
-   - Costs 15% of maximum stamina (config: `StandStaminaCost`)
-   - Requires minimum 15% stamina remaining (config: `StandMinStamina`)
-   - Guaranteed success, bypasses minimum duration
-   - Immediately removes prone state and resets `ProneRoundsRemaining`
+**Behavioral restrictions** (chunk 4b R3, reads
+`IsProne() || IsSupine()`):
+- Cannot flee from combat (`mobcommands/flee.go` + `handlePlayerFlee`
+  apply a 0.5x flee-score penalty; grapple states block flee entirely).
+- Cannot move between rooms (enforced in movement commands —
+  unmigrated reader, scheduled in the broader sweep).
 
-**Future-Proofing:**
-- `AttemptRecovery()` accepts generic `statValue` parameter for other conditions (grapple, entangle)
-- Can be called with Strength for grapple recovery, different stats for other effects
+**Recovery mechanics** (chunk 4b W6 / W7 cutover):
+
+1. **Automatic recovery** — stat-based logarithmic formula
+   `min(90, 25 + 20 × ln(DEX/25))`. Implemented in
+   `Character.AttemptRecovery(statValue int)`. Gates on
+   `IsProne() || IsSupine()` and reads `MinRecoveryRounds` from
+   `ProneData` / `SupineData`. Decrements via
+   `Position.ConsumeRecoveryRound()` (mutates the per-state slot in
+   place). On success fires `Position.TransitionToStanding(TriggerRecoveryRoll)`.
+   Called every round via `NewRound_UserRoundTick` and `NewRound_MobRoundTick`.
+   Failed attempts add `ConditionRecoveryPenalty` (limits attacks to 1).
+
+2. **Manual recovery** — `stand` command (`internal/usercommands/stand.go`)
+   - Costs `StandStaminaCost` (config, 15% of max). Requires
+     `StandMinStamina` remaining.
+   - Bypasses `MinRecoveryRounds`. Fires
+     `Position.TransitionToStanding(TriggerStandCommand)` BEFORE
+     deducting stamina so an FSM-edge failure bails without charge.
+   - The legacy `CombatPosition` / `PositionRoundsMin` parallel-writes
+     are removed (T21 sunset); the FSM transition is the sole write.
+
+### Grapple mechanics (Position FSM control axis, chunk 4b)
+
+The 11 grapple states (Clinch, BackStanding, Mount, SideControl,
+KneeOnBelly, NorthSouth, Crucifix, BackGround, HalfGuard, Guard,
+Turtle) live in `internal/state/position/`. Per-round control drift
+is resolved through outcome rolls (Hold / Advance / Degrade / Reversal /
+Escape), tracked via `GrappleData.IsControllerRole` bool. Canonical
+documentation: `internal/state/position/context.md`. Brief summary of
+how the combat package interacts:
+
+- **Per-round drift** — `Position_GrappleTick.go` (hooks package) fires
+  the opposed Strength + Unarmed-combat roll each round, scaled by
+  stamina + encumbrance curves. The roll result resolves via
+  `position.ResolveOutcome` to one of five tiers (Hold / Advance /
+  Degrade / Reversal / Escape), which may trigger position transitions.
+  See `internal/state/position/context.md` for the outcome model.
+- **Per-round stamina cost** — `GrappleStaminaCostPerRound` × a
+  per-role multiplier (controller 1.0x, controlled 2.0x by default;
+  asymmetry is the "smother" feedback loop).
+- **Third-party defense filter** — `IsThirdPartyAttack` (chunk 4b R2)
+  now reads `target.IsGrappling()` + `GrappleData.Partner` instead of
+  the deleted `CombatPosition.IsGrapplePosition()` + `GrappleControllerId`
+  fields. Zero-Partner (solo Turtle) preserves the "no controller → not
+  third-party" semantics; 4e refines.
+- **Crit-threshold bonuses** — controller in any grapple grants a
+  crit boost (-0.2 standing, -0.4 ground); reads `c.IsController()`
+  (chunk 4b R1, replaces `HasCondition(ConditionGrappleController)`).
+
+The legacy `CombatPosition` enum is fully removed (T21 sunset). All
+readers in `combat_helpers.go`, `ai.go`, `grapple.go`, and across
+the codebase were migrated in the chunk-4b reader sweep before deletion.
 
 ### Special Combat Moves
 Three tactical combat abilities with knockdown mechanics and shared cooldown:
@@ -367,7 +426,8 @@ If the player has a `NoCombat` buff flag, skip the entire combat turn
 
 #### 2c. Fold Casting Check
 `handlePlayerFoldCasting(user, userId)` — If the player typed
-`cast fireball` last round, `CastingState` is non-nil:
+`cast fireball` last round, `c.IsCasting()` is true (Activity machine
+is in Casting state):
 
 1. Prone/disabled check — breaks concentration immediately.
 2. Conviction cost — proportional to folds gained this round:
@@ -488,7 +548,7 @@ ws.baseDmg     = weapon base damage
 ws.weaponDmgMult = item's damage_multiplier (e.g. 1.2)
 ws.weaponSpeed = item's speed multiplier (e.g. 1.0)
 ws.attacks     = GetModifiedAttackCount(attacks, speed)  // skill-modified
-ws.attacks    *= CombatPosition.GetSpeedMultiplier()    // position modifier
+ws.attacks    *= c.GetPositionSpeedMultiplier()         // position modifier (Position FSM, chunk 4b R1)
 // ConditionRecoveryPenalty: forces attacks = 1
 // Racial bonus: weapon.StatMod(RacialBonusPrefix + targetSpecies)
 // Hard cap: max 4 swings per weapon per pass
@@ -618,8 +678,8 @@ inline in `handleMobCombat`, not extracted to a helper).
 
 #### 4b. Fold Casting Check
 `handleMobFoldCasting(mob, mobRoom)` — Same fold system as players. If
-the mob started casting last round, folds accumulate. On completion, spell
-resolves via `resolveMobSpell()`.
+`mob.Character.IsCasting()` is true (Activity machine is in Casting state),
+folds accumulate. On completion, spell resolves via `resolveMobSpell()`.
 
 #### 4c. AI Decision: `handleMobAIDecision()`
 
@@ -752,7 +812,7 @@ values directly.
 | `combat/attackresult.go` | `AttackResult` struct (includes `DefenseAttempts`, `AttackZScore`, `DefenseZScore`, `ParryCritDetected`, `DodgeCritDetected`) and message helpers |
 | `combat/ai.go` | `ChooseSpecialMove`, `ChooseCastAction`, `GetAIProfile`, AI profiles, viability checks (`CanUseBash`, `CanUseKick`, etc.), scoring functions |
 | `combat/criteffects.go` | `AttemptCritDisarm`, `SetGrappleOpportunity`, `HasGrappleOpportunity`, `GetGrappleOpportunityBonus`, `ClearGrappleOpportunity` |
-| `combat/grapple.go` | `AttemptGrapple`, `ApplyGrappleResult`, `CheckClinchProgression`, `CheckGroundedEscape`, `ApplyPositionProgression`, `IsThirdPartyAttack`, `AttemptSubmission` |
+| `combat/grapple.go` | `AttemptGrapple`, `ApplyGrappleResult`, `CheckClinchProgression`, `CheckGroundedEscape`, `ApplyPositionProgression`, `IsThirdPartyAttack` |
 | `combat/grapple_move.go` | `ExecuteGrappleMove`, `GrappleMoveResult`, `GrappleMoveDisarmWeapon` |
 | `combat/skill_moves.go` | `ExecuteSkillMove`, `SkillMoveResult`, `SkillMoveParams` |
 | `combat/calculations.go` | Hit chance, crit probability, power ranking, alignment calculations |
@@ -763,3 +823,229 @@ values directly.
 | `hooks/NewRound_DoCombat_helpers.go` | All extracted helpers: `handlePlayerShieldDecay`, `handlePlayerFoldCasting`, `handleMobFoldCasting`, `handlePlayerFlee`, `handlePlayerVsPlayer`, `handlePlayerVsMob`, `handleMobVsPlayer`, `handleMobVsMob`, `handleMobAIDecision`, `handleMobTargetSwitch`, `handleMobWeaponPickup`, `handleMobDownedGrace`, `handlePartyAutoAttack`, `handleCharmedMobAssist`, `handleAutoRetargetPlayer`, `handlePlayerConcentrationBreak`, `dispatchCombatMessages`, `handleOffhandBreakUserDef`, `handleOffhandBreakMobDef` |
 | `hooks/combat_shared_helpers.go` | `simulateFoldRound`, `calcFoldConvictionCost`, `advanceFolds`, `checkConcentrationBreak`, `tryWeaponBreak`, `applyCritEffects`, `CritEffectResult`, `calcSpellDamageForCharacter` |
 | `hooks/spell_resolution.go` | `resolveSpell`, `resolveAgainstMob`, `resolveAgainstPlayer`, `applyPlayerEffect` |
+
+---
+
+## Position hit modifiers (chunk 4e)
+
+After `calcAttackScore` returns, `applyPositionHitModifiers(source, target)`
+multiplies the score by the two `internal/state/position/modifiers.go`
+lookups (attacker-self × target-side). Both default to 1.0 outside grapples,
+so standing-vs-standing combat is mathematically unchanged.
+
+In-grapple effect: Mount controller swinging at controlled = 1.32×;
+third party attacking a mounted defender = 1.20×; mounted defender
+swinging back = 0.74×.
+
+### Outside-damage hooks (chunk 4e §5 + §7)
+
+After each Attack* function applies damage to its target, two hooks
+fire at the bottom of the damage block (guarded by DamageToTarget > 0):
+
+- `chunk4eApplyOutsideHitDisruption(attacker, target)` — if target is a
+  grapple controller AND attacker is not the partner (per
+  `IsThirdPartyAttack`), shifts target's Control state one step toward
+  Neutral. Deduped per round via `Character.OutsideHitDisruptedRound`.
+  Gated by `Balance.ControlDegradeOnOutsideHit`.
+
+- `chunk4eAccumulateSubInterruptDamage(attacker, target, damage, isCrit)` —
+  if attacker is a third party AND the hit is a crit OR damage ≥
+  `SubInterruptDamageThresholdPct × HealthMax`, adds to
+  `Character.SubInterruptDamageThisRound`. Position_SubmissionTick reads
+  the accumulator; if > 0 when a sub fires, forces Bad-tier outcome.
+
+---
+
+## Weapon Reach Utility (chunk 4c)
+
+When a character is grappling, long weapons cannot be swung freely —
+the haft catches the attacker's own body. Chunk 4c adds a multiplicative
+damage penalty that scales with how much a weapon's reach exceeds the
+grapple's effective radius. Short weapons (daggers, fists) pay no
+penalty; polearms in mount are severely degraded. All logic lives in
+`internal/combat/reach.go`.
+
+### Functions
+
+**`PositionReachRadius(s position.State) float64`**
+Returns the effective constraint radius (meters) for a given position:
+- Non-grapple states → 0.0 (no penalty, any weapon)
+- Clinch, BackStanding → `ReachStandingGrappleRadius` (default 0.5 m)
+- All ground grapple states (Mount, Guard, etc.) → `ReachGroundGrappleRadius`
+  (default 0.3 m)
+
+**`ReachUtility(weaponReach, posRadius float64) float64`**
+Returns `min(1.0, posRadius / weaponReach)`, floored at `ReachUtilityFloor`
+(default 0.15). A dagger (0.30 m) in mount (radius 0.30 m) scores 1.0 —
+full damage. A sword (1.00 m) in mount scores 0.30 — 30% of normal.
+
+**`ShouldBludgeon(weaponReach, posRadius float64) bool`**
+True when `weaponReach > posRadius` (i.e., weapon exceeds grapple radius).
+Drives the narration swap described below.
+
+**`CalcReachAdjustedItemMult(weapon Item, attacker *Character) float64`**
+Pipeline-integration helper called in `combat_helpers.go:buildWeaponSetup`
+for every swing. Resolves weapon reach (via `items.ResolveReach`), reads
+the position radius via `PositionReachRadius(attacker.Position.State())`,
+and returns the adjusted `DamageMultiplier` (weapon's base multiplier
+scaled by `ReachUtility`). Natural-attack paths (mob unarmed, claws, bite)
+use `items.ResolveNaturalReach(subtype)` directly and do not go through
+this helper.
+
+### Bludgeon narration
+
+When `ShouldBludgeon` fires in `combat_helpers.go:buildAttackMessages`,
+the message subtype is swapped to `Bludgeoning` before calling
+`items.GetAttackMessage`. Effect: "you slam the iron sword's pommel into
+the bandit's ribs" instead of slashing narration. Damage math is unchanged;
+the swap is cosmetic only.
+
+**Exempt subtypes (no swap):**
+- Natural-blunt: Fist, Claws, Bite, Sting, Slam, Gore, Whipping
+- Caster: Wand, Sceptre, Staff
+
+**Affected subtypes (swap fires):** Slashing, Cleaving, Stabbing, Shooting.
+
+### Balance knobs (`Balance` section in config)
+
+| Knob | Default | Effect |
+|------|---------|--------|
+| `ReachStandingGrappleRadius` | 0.5 m | Constraint radius for Clinch / BackStanding. Weapons longer than this are penalised. |
+| `ReachGroundGrappleRadius` | 0.3 m | Tighter constraint for ground grapples (Mount, Guard, etc.). |
+| `ReachUtilityFloor` | 0.15 | Minimum damage multiplier from the reach curve. Prevents total nullification. |
+
+---
+
+## Submission System (chunk 4d)
+
+The submission system is an automatic, engine-fired mechanic — no player
+command triggers it. Once per grapple round, after `Position_GrappleTick`
+stashes the drift-roll snapshot, `Position_SubmissionTick.go` checks
+whether either side of the pair has a sub-attempt window open and, if so,
+rolls a fresh opposed check and applies the outcome.
+
+### Key files
+
+- `internal/combat/submission.go` — `RollSubmissionAttempt`, tier
+  classification (`ClassifySubmissionTier`), `SubmissionTier` enum,
+  `SubmissionAttemptResult` struct, `Role` enum (RoleTop / RoleBottom).
+- `internal/combat/submission_outcome.go` — `ResolveSubmissionOutcome`,
+  policy dispatch helpers (`applyBadTier`, `applyMercyRelease`,
+  `applyDeathCascade`, `applyBrokenLimbBuff`, `applyStunnedBuff`).
+  Also houses `RegisterSubmissionMessaging` — the callback registration
+  point for T11 narration hooks (avoids a combat → hooks import cycle).
+- `internal/hooks/Position_SubmissionTick.go` — per-round observer.
+  Iterates active characters, gates on the controller side, calls
+  `EvaluateSubAttempt` to decide role + eligibility, then calls
+  `RollSubmissionAttempt` + `ResolveSubmissionOutcome`.
+  See `internal/hooks/context.md` "Position_SubmissionTick" for the
+  full observer walkthrough.
+
+### Roll formula
+
+`RollSubmissionAttempt` fires a SEPARATE opposed roll from the chunk-4b
+drift roll. Drift gates the opportunity window; this roll resolves the
+attempt:
+
+```
+attackerScore = attempter.Strength
+              + attempter.UnarmedCombatSkill × SubSkillWeight
+defenderScore = recipient.Strength
+              + recipient.Vitality
+              + recipient.UnarmedCombatSkill × SubSkillWeight
+```
+
+Both sides roll via `dice.OpposedRollStat`. The attacker's z-score
+determines the tier (see below).
+
+### Tier classification
+
+`ClassifySubmissionTier(success bool, attackerZ float64) SubmissionTier`
+maps the roll result to one of four tiers:
+
+| Tier | Condition | Effect |
+|------|-----------|--------|
+| `SubTierBad` | Attacker failed AND attackerZ < `SubBadZThreshold` | Attempter falls Prone; grapple breaks to Standing. |
+| `SubTierNeutral` | Attacker failed, z >= threshold | No effect; grapple continues. |
+| `SubTierSuccess` | Attacker succeeded, z < `SubCritZThreshold` | Apply attempter's `SubmissionPolicy`. |
+| `SubTierCrit` | Attacker succeeded, z >= `SubCritZThreshold` | Apply policy + apply Stunned buff (id 84) to recipient when policy is mercy. |
+
+### Policy outcome ladder
+
+`ResolveSubmissionOutcome` dispatches to per-policy helpers based on
+`attempter.SubmissionPolicy`:
+
+| Policy | Outcome |
+|--------|---------|
+| `mercy` | Clean grapple break; both return to Standing. Crit: recipient gets 1-round Stunned buff (id 84). Honors `SurrenderPolicy` tap signal. |
+| `subdue` | Death cascade with `NoDeprogression = true`, `GoldLossFraction = SubGoldLossFraction`. Defender wakes at temple with no stat decay. |
+| `cripple` | Same as subdue + broken-limb buff (id 83) applied to the body part targeted by the submission type. Choke subs (RNC, Triangle, Anaconda) degrade to subdue because chokes don't break limbs. |
+| `lethal` | Full death cascade; `NoDeprogression = false`. Standard stat decay applies. |
+
+**Note on SurrenderPolicy:** Only `mercy` policy consults the defender's
+tap signal. Subdue / cripple / lethal proceed regardless of the defender's
+`SurrenderPolicy`. This is a deliberate realism call — a killer doesn't
+stop because you tap.
+
+### Choke-degradation rule
+
+When `SubmissionPolicy == PolicyCripple` and the sub type is a choke
+(`position.CrippleBodyPart(subType) == ""`), `effectivePolicy` degrades
+to `PolicySubdue`. This prevents choke-class subs from triggering the
+broken-limb buff that requires a physical joint target. The degradation
+applies silently — the attempter intended cripple but the choke just
+subdues.
+
+### Bottom-sub asymmetry
+
+Top-subs (controller side) open when `MarginAttacker > SubmissionAttemptAlpha`.
+Bottom-subs (controlled side) open when the DEFENDER's margin exceeds
+alpha OR when `DefenderZScore >= SubmissionAttemptCritZ`. The crit
+shortcut lets a dominated-but-lucky controlled fighter occasionally fire
+a reversal even when consistently losing drift rolls — by design sparser
+than top-subs.
+
+### New buffs
+
+| ID | Name | Duration | Source | Effect |
+|----|------|----------|--------|--------|
+| 83 | Broken Limb | ~3600 rounds (~1 hr play) | Cripple sub outcome | Reduces combat effectiveness; persists across respawn; cannot be dispelled early |
+| 84 | Submission Stunned | 1 round | Crit sub tier (mercy policy only) | Brief combat stagger; auto-clears next round |
+
+### Life cascade integration
+
+Subdue and cripple submissions call `victim.Life.TransitionToDead`
+directly (not `victim.Die`) so the new `DeadData` fields can be
+populated before observers fire:
+
+- `NoDeprogression bool` — `true` for subdue/cripple; `Death_PlayerCleanup`
+  skips stat-decay when this is set.
+- `GoldLossFraction float64` — set to `SubGoldLossFraction` (default 0.20);
+  `Death_PlayerAnnouncement` transfers this fraction of the defender's
+  gold to the attacker.
+
+Lethal submissions use `victim.Die()` with `NoDeprogression = false` —
+the normal decay path.
+
+`TriggerSubmission` is the trigger constant added to `internal/state/life/`
+transitions in T7. See `internal/state/life/context.md` for the
+`DeadData` struct documentation.
+
+### Balance knobs (`Balance` section in config)
+
+Six knobs control submission window eligibility and tier classification.
+The `SubSkillWeight` default is 1.5 (not 1.0 as the T3 plan assumed —
+updated at validation time).
+
+| Knob | Default | Effect |
+|------|---------|--------|
+| `SubmissionAttemptAlpha` | 1.0 | Min drift-margin z-score to open a sub window on either side of the grapple. |
+| `SubmissionAttemptCritZ` | 2.0 | Defender drift z >= this opens a bottom-sub window regardless of margin. |
+| `SubSkillWeight` | 1.5 | Unarmed-combat skill contribution multiplier in the sub roll. |
+| `SubBadZThreshold` | -1.0 | Sub-roll z-score below which the bad tier fires (attempter falls Prone). |
+| `SubCritZThreshold` | 2.0 | Sub-roll z-score at or above which the crit tier fires (recipient stunned). |
+| `SubGoldLossFraction` | 0.20 | Fraction of defender's carried gold transferred to attacker on subdue/cripple. |
+
+See `internal/configs/context.md` "Submission System (chunk 4d)" for
+the config-level documentation and `internal/state/position/context.md`
+for the submission-type mapping and eligibility predicates.

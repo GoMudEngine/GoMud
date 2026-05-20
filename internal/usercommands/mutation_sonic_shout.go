@@ -8,10 +8,13 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -19,25 +22,25 @@ import (
 func SonicShout(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	if !mutations.HasMutation(user.Character.Mutations, "sonic-shout") {
-		user.SendText("You don't have that ability.")
+		user.SendText(messaging.CategorySystem, "You don't have that ability.")
 		return true, nil
 	}
 
-	if user.Character.Aggro == nil {
-		user.SendText("You must be in combat to use sonic shout!")
+	if !user.Character.IsInCombat() {
+		user.SendText(messaging.CategorySystem, "You must be in combat to use sonic shout!")
 		return true, nil
 	}
 
 	cfg := configs.GetBalanceConfig()
 	if !user.Character.Cooldowns.Try("special-move", fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
-		user.SendText("You need a moment to recover before attempting another special move.")
+		user.SendText(messaging.CategorySystem, "You need a moment to recover before attempting another special move.")
 		return true, nil
 	}
 
 	// Stamina cost
 	staminaCost := 15
 	if user.Character.Stamina < staminaCost {
-		user.SendText("You're too exhausted to muster a sonic shout!")
+		user.SendText(messaging.CategorySystem, "You're too exhausted to muster a sonic shout!")
 		return true, nil
 	}
 	user.Character.Stamina -= staminaCost
@@ -49,8 +52,8 @@ func SonicShout(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 		baseDamage = 1
 	}
 
-	user.SendText(`<ansi fg="magenta-bold">You unleash a devastating sonic shout that reverberates through the room!</ansi>`)
-	room.SendTextVisual(
+	user.SendText(messaging.CategorySystem, `<ansi fg="magenta-bold">You unleash a devastating sonic shout that reverberates through the room!</ansi>`)
+	room.SendTextVisual(messaging.CategoryMutation, 
 		fmt.Sprintf(`<ansi fg="magenta-bold"><ansi fg="username">%s</ansi> unleashes a devastating sonic shout!</ansi>`, user.Character.Name),
 		user.UserId,
 	)
@@ -72,10 +75,12 @@ func SonicShout(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 			// Knockdown
 			knockdownRoll := dice.RollStat(50)
 			if knockdownRoll.Value < 40 {
-				mob.Character.CombatPosition = characters.PositionProne
-				mob.Character.PositionRoundsMin = 2
+				_ = mob.Character.Position.TransitionToProne(
+					position.ProneData{MinRecoveryRounds: 2},
+					state.TransitionReason{Trigger: position.TriggerKnockdownFaceForward},
+				)
 			}
-			user.SendText(fmt.Sprintf(`The shout staggers <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%s</ansi>)`,
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`The shout staggers <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%s</ansi>)`,
 				mob.Character.Name, combat.GetDamageDescription(baseDamage, mob.Character.HealthMax.Value)))
 		}
 		// Stage 30.1: Record combat analytics per target
@@ -88,7 +93,7 @@ func SonicShout(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 	// Self-deafen: reduced perception for 3 rounds
 	user.Character.AddCondition(characters.ConditionBlinded, 3, 0.7, "sonic-shout self-deafen")
-	user.SendText(`<ansi fg="yellow">The echoes leave your own senses ringing!</ansi>`)
+	user.SendText(messaging.CategorySystem, `<ansi fg="yellow">The echoes leave your own senses ringing!</ansi>`)
 
 	events.AddToQueue(events.SkillUsed{UserId: user.UserId, Skill: skills.UnarmedCombat, Details: "sonic-shout"})
 

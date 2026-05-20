@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -13,7 +14,7 @@ import (
 func Macros(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	if len(user.Macros) == 0 {
-		user.SendText("You have no macros set.")
+		user.SendText(messaging.CategorySystem, "You have no macros set.")
 		return true, nil
 	}
 
@@ -24,12 +25,12 @@ func Macros(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 	sort.Strings(sortedKeys)
 
-	user.SendText(`<ansi fg="226">Your macros:</ansi>`)
+	user.SendText(messaging.CategorySystem, `<ansi fg="226">Your macros:</ansi>`)
 	for _, macro := range sortedKeys {
 		macroCommand := user.Macros[macro]
-		user.SendText(``)
+		user.SendText(messaging.CategorySystem, ``)
 
-		user.SendText(fmt.Sprintf(`  <ansi fg="228">%s</ansi>:`, macro))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`  <ansi fg="228">%s</ansi>:`, macro))
 
 		commandParts := strings.Split(macroCommand, `;`)
 
@@ -42,12 +43,12 @@ func Macros(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				cmdRest = strings.Join(cmdParts[1:], ` `)
 			}
 
-			user.SendText(fmt.Sprintf(`      %s) <ansi fg="command">%s</ansi> %s`, string(rune(97+i)), cmdAlone, cmdRest))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`      %s) <ansi fg="command">%s</ansi> %s`, string(rune(97+i)), cmdAlone, cmdRest))
 		}
 	}
-	user.SendText(``)
-	user.SendText(`To use a macro, type <ansi fg="command">={num}</ansi>.`)
-	user.SendText(`Some terminals support pressing the associated F-Key (<ansi fg="228">F1</ansi>, <ansi fg="228">F2</ansi>, etc.)`)
+	user.SendText(messaging.CategorySystem, ``)
+	user.SendText(messaging.CategorySystem, `To use a macro, type <ansi fg="command">={num}</ansi>.`)
+	user.SendText(messaging.CategorySystem, `Some terminals support pressing the associated F-Key (<ansi fg="228">F1</ansi>, <ansi fg="228">F2</ansi>, etc.)`)
 
 	return true, nil
 }

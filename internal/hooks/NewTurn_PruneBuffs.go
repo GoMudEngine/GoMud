@@ -3,6 +3,7 @@ package hooks
 import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -46,10 +47,10 @@ func PruneBuffs(e events.Event) events.ListenerReturn {
 								SourcePlainName: user.Character.GetCharacterName(false),
 							}
 							cfg := textutil.SendTextConfig{
-								UserSendFunc: func(msg string) { user.SendText(msg) },
+								UserSendFunc: func(msg string) { user.SendText(messaging.CategoryBuffExpire, msg) },
 								RoomSendFunc: func(msg string, skip ...int) {
 									if r := rooms.LoadRoom(user.Character.RoomId); r != nil {
-										r.SendText(msg, skip...)
+										r.SendText(messaging.CategoryBuffExpire, msg, skip...)
 									}
 								},
 								ExcludeId: user.UserId,
@@ -93,7 +94,7 @@ func PruneBuffs(e events.Event) events.ListenerReturn {
 					cfg := textutil.SendTextConfig{
 						RoomSendFunc: func(msg string, skip ...int) {
 							if r := rooms.LoadRoom(mob.Character.RoomId); r != nil {
-								r.SendText(msg, skip...)
+								r.SendText(messaging.CategoryBuffExpire, msg, skip...)
 							}
 						},
 					}

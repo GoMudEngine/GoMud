@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/mapper"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
@@ -39,12 +40,12 @@ func Map(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	}
 
 	if rest == "sprawl" {
-		user.SendText(fmt.Sprintf("The reach of your maps is %d rooms.", user.Character.GetMapSprawlCapacity()))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("The reach of your maps is %d rooms.", user.Character.GetMapSprawlCapacity()))
 		return true, nil
 	}
 
 	if !user.Character.TryCooldown(`map`, "1 round") {
-		user.SendText(
+		user.SendText(messaging.CategorySystem, 
 			`You can only create 1 map per round.`,
 		)
 		return true, errors.New(`you're doing that too often`)
@@ -67,7 +68,7 @@ func Map(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 	// First check for a premade map.
 	if mapTxt, err := templates.Process("maps/"+rooms.ZoneNameSanitize(zone), zone); err == nil {
-		user.SendText(mapTxt)
+		user.SendText(messaging.CategorySystem, mapTxt)
 		return true, nil
 	}
 
@@ -112,7 +113,7 @@ func Map(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	zMapper := mapper.GetMapper(roomId)
 	if zMapper == nil {
 		mudlog.Error("Map", "error", "Could not find mapper for zone:"+zone)
-		user.SendText(`No map found (or an error occured)"`)
+		user.SendText(messaging.CategorySystem, `No map found (or an error occured)"`)
 		return true, err
 	}
 
@@ -204,11 +205,11 @@ func Map(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	mapTxt, err := templates.Process("maps/map", mapData, user.UserId)
 	if err != nil {
 		mudlog.Error("Map", "error", err.Error())
-		user.SendText(`No map found (or an error occured)"`)
+		user.SendText(messaging.CategorySystem, `No map found (or an error occured)"`)
 		return true, err
 	}
 
-	user.SendText(mapTxt)
+	user.SendText(messaging.CategorySystem, mapTxt)
 
 	return true, nil
 }

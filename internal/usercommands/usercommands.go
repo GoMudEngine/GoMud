@@ -10,9 +10,13 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
+	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -187,7 +191,6 @@ var (
 		`stash`:           {Stash, false, false, false}, // Can't manipulate stash in combat
 		`status`:          {Status, true, true, false},
 		`stand`:           {Stand, true, true, false}, // Can stand when downed
-		`submit`:          {Submit, false, true, false},
 		`suggest`:         {Suggest, true, true, false},
 		`storage`:         {Storage, false, false, false}, // Can't manipulate storage in combat
 		`suicide`:         {Suicide, true, true, false},
@@ -287,13 +290,6 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 	user := users.GetByUserId(userId)
 	if user == nil {
 		return false, fmt.Errorf(`user %d not found`, userId)
-	}
-
-	// Any input clears manual AFK (except the afk command itself)
-	if user.ManualAFK && cmd != "afk" {
-		user.ManualAFK = false
-		user.AFKMessage = ""
-		user.SendText(`<ansi fg="8">You are no longer AFK.</ansi>`)
 	}
 
 	// Do not allow scripts to intercept server commands
@@ -399,23 +395,27 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 	// Informational commands (AllowedWhenDowned=true) pass through.
 	// 'cancel' always allowed (to stop casting).
 	// 'flee' clears the cast and then proceeds.
-	if user.Character.CastingState != nil {
+	if user.Character.Activity != nil && user.Character.Activity.IsCasting() {
 		if cmd == `flee` {
-			cs := user.Character.CastingState
-			user.Character.CastingState = nil
-			user.SendText(fmt.Sprintf(
+			cs, _ := user.Character.Activity.CastingData()
+			_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
+				Trigger: activity.TriggerCastCancel,
+				Actor:   state.ActorRef{UserId: user.UserId},
+			})
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`<ansi fg="cyan">You lose your concentration as you flee! %d conviction is lost.</ansi>`,
 				cs.ConvictionSpent))
-			room.SendTextVisual(fmt.Sprintf(
+			room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> breaks their concentration.`,
 				user.Character.Name), user.UserId)
 			// Fall through — let the flee command execute normally
 		} else if cmd != `cancel` {
 			if cmdInfo, hasCmdInfo := userCommands[cmd]; !hasCmdInfo || !cmdInfo.AllowedWhenDowned {
-				user.SendText(fmt.Sprintf(
+				cs, _ := user.Character.Activity.CastingData()
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(
 					`<ansi fg="cyan">You are holding <ansi fg="cyan-bold">%d/%d</ansi> folds. Type <ansi fg="cyan-bold">cancel</ansi> to stop.</ansi>`,
-					user.Character.CastingState.FoldsAccumulated,
-					user.Character.CastingState.FoldsNeeded))
+					cs.FoldsAccumulated,
+					cs.FoldsNeeded))
 				return true, nil
 			}
 		}
@@ -436,13 +436,30 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 		}
 	}
 
+	// Chunk 5 (Presence): any non-`afk` command wakes Idle/AFK back to
+	// Active and (if previously manual-AFK) sends the "no longer AFK"
+	// notice. The `afk` command itself toggles state via its own handler;
+	// exempting it here prevents the double-message bug where the wake
+	// fires the clear-message and then `afk` sets the state right back.
+	if cmd != "afk" && user.Character != nil && user.Character.Presence != nil {
+		switch user.Character.Presence.State() {
+		case presence.Idle, presence.AFK:
+			d, hadData := user.Character.Presence.AFKData()
+			_ = user.Character.Presence.TransitionTo(presence.Active,
+				state.TransitionReason{Trigger: presence.TriggerInputReceived})
+			if hadData && d.Manual {
+				user.SendText(messaging.CategorySystem, `<ansi fg="8">You are no longer AFK.</ansi>`)
+			}
+		}
+	}
+
 	if cmdInfo, ok := userCommands[cmd]; ok {
 
 		if !cmdInfo.AllowedWhenDowned {
 
 			// If actually downed, prevent it (unless admin)
 			if userDisabled && !cmdInfo.AdminOnly {
-				user.SendText("You are unable to do that while downed.")
+				user.SendText(messaging.CategorySystem, "You are unable to do that while downed.")
 				return true, nil
 			}
 
@@ -455,8 +472,8 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 		// Check if command is allowed during combat
 		if !cmdInfo.AllowedInCombat {
 			// If in combat, prevent it (unless admin)
-			if user.Character.Aggro != nil && !cmdInfo.AdminOnly {
-				user.SendText("You can't do that while fighting!")
+			if user.Character.IsInCombat() && !cmdInfo.AdminOnly {
+				user.SendText(messaging.CategorySystem, "You can't do that while fighting!")
 				return true, nil
 			}
 		}

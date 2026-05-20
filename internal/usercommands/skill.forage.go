@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -18,12 +19,12 @@ func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	biome := room.GetBiome()
 	if _, ok := forager.ForageYields[biome.BiomeId]; !ok {
-		user.SendText(`There is nothing here worth foraging. Try an outdoor area.`)
+		user.SendText(messaging.CategorySystem, `There is nothing here worth foraging. Try an outdoor area.`)
 		return true, nil
 	}
 
 	if !user.Character.TryCooldown(`forage`, "6 rounds") {
-		user.SendText(
+		user.SendText(messaging.CategorySystem, 
 			fmt.Sprintf("You need to wait %d more rounds before you can forage again.", user.Character.GetCooldown(`forage`)),
 		)
 		return true, fmt.Errorf("you're doing that too often")
@@ -39,8 +40,8 @@ func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		Command: "forage",
 	}, bridge, bridge)
 
-	user.SendText(`You crouch low and begin searching the ground carefully...`)
-	room.SendTextVisual(
+	user.SendText(messaging.CategorySystem, `You crouch low and begin searching the ground carefully...`)
+	room.SendTextVisual(messaging.CategoryMobEmote, 
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> is searching the ground for something.`, user.Character.Name),
 		user.UserId,
 	)
@@ -52,13 +53,13 @@ func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	})
 
 	if !result.Found {
-		user.SendText(`You find nothing of use this time.`)
+		user.SendText(messaging.CategorySystem, `You find nothing of use this time.`)
 		return true, nil
 	}
 
 	newItem := items.New(result.ItemId)
 	if !newItem.IsValid() {
-		user.SendText(`You find something, but it crumbles in your hands.`)
+		user.SendText(messaging.CategorySystem, `You find something, but it crumbles in your hands.`)
 		return true, nil
 	}
 
@@ -66,7 +67,7 @@ func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	events.AddToQueue(events.ItemOwnership{UserId: user.UserId, Item: newItem, Gained: true})
 	user.Character.CheckSkillProgression(string(skills.Search), user.UserId, 1.0)
 
-	user.SendText(fmt.Sprintf(`You find a <ansi fg="itemname">%s</ansi>.`, newItem.DisplayName()))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`You find a <ansi fg="itemname">%s</ansi>.`, newItem.DisplayName()))
 
 	return true, nil
 }

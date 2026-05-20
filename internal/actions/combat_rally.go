@@ -7,6 +7,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 )
 
 // RallyResult reports the outcome of a rally cooldown+buff application.
@@ -26,10 +28,18 @@ type RallyResult struct {
 func ExecuteRally(actor Actor) RallyResult {
 	char := actor.GetCharacter()
 
-	// IsCrafting applies universally — mobs can craft too (future
-	// crafter archetype) and should not interrupt their craft to
-	// rally.
-	if char.IsCrafting() {
+	// Rallying is a noisy action — reveal if hidden.
+	if char.IsHidden() {
+		char.Awareness.TransitionToRevealing(state.TransitionReason{
+			Trigger:  awareness.TriggerNoisyAction,
+			Metadata: map[string]any{"command": "rally"},
+		})
+	}
+
+	// IsActing applies universally — any active activity (cast/craft/salvage)
+	// blocks rally. Mobs can craft/cast too and should not interrupt their
+	// activity to rally.
+	if char.IsActing() {
 		return RallyResult{Crafting: true}
 	}
 

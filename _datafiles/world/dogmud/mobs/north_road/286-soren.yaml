@@ -1,6 +1,8 @@
 mobid: 286
 zone: North Road
 behavior_archetype: boss_soren
+submission_policy: lethal
+surrender_policy: never
 routine: bandit_camp_guard
 statpool: 175
 itemdropchance: 100

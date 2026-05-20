@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -16,7 +17,7 @@ import (
 // Charge is a boar trip variant — same mechanics, different messages.
 func Charge(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
-	if mob.Character.Aggro == nil {
+	if !mob.Character.IsInCombat() {
 		return true, nil
 	}
 
@@ -26,8 +27,8 @@ func Charge(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	// Resolve target
-	targetPlayerId := mob.Character.Aggro.UserId
-	targetMobId := mob.Character.Aggro.MobInstanceId
+	targetPlayerId := mob.Character.CurrentCombatTarget().UserId
+	targetMobId := mob.Character.CurrentCombatTarget().MobInstanceId
 
 	var targetChar *users.UserRecord
 	var targetMob *mobs.Mob
@@ -74,35 +75,35 @@ func Charge(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		if result.KnockedDown {
 			if targetChar != nil {
 				if canSee {
-					targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges and slams into you, sending you sprawling! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+					targetChar.SendText(messaging.CategoryTrip, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges and slams into you, sending you sprawling! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
 				} else {
-					targetChar.SendText(fmt.Sprintf(`Something charges and slams into you, sending you sprawling! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+					targetChar.SendText(messaging.CategoryTrip, fmt.Sprintf(`Something charges and slams into you, sending you sprawling! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
 				}
 			}
-			sendRoomText(room,
+			sendRoomText(room, messaging.CategoryTrip,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges and slams into <ansi fg="username">%s</ansi>, sending them sprawling!`, mobName, targetName),
 				targetPlayerId)
 		} else {
 			if targetChar != nil {
 				if canSee {
-					targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges at you, but you keep your footing! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+					targetChar.SendText(messaging.CategoryTrip, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges at you, but you keep your footing! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
 				} else {
-					targetChar.SendText(fmt.Sprintf(`Something charges at you, but you keep your footing! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+					targetChar.SendText(messaging.CategoryTrip, fmt.Sprintf(`Something charges at you, but you keep your footing! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
 				}
 			}
-			sendRoomText(room,
+			sendRoomText(room, messaging.CategoryTrip,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges at <ansi fg="username">%s</ansi>, but they keep their footing!`, mobName, targetName),
 				targetPlayerId)
 		}
 	} else {
 		if targetChar != nil {
 			if canSee {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges past you, missing entirely!`, mobName))
+				targetChar.SendText(messaging.CategoryTrip, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges past you, missing entirely!`, mobName))
 			} else {
-				targetChar.SendText(`Something charges past you, missing entirely!`)
+				targetChar.SendText(messaging.CategoryTrip, `Something charges past you, missing entirely!`)
 			}
 		}
-		sendRoomText(room,
+		sendRoomText(room, messaging.CategoryTrip,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges past <ansi fg="username">%s</ansi>, missing entirely!`, mobName, targetName),
 			targetPlayerId)
 	}

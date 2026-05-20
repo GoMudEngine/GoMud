@@ -8,7 +8,7 @@ import (
 
 func Sneak(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
-	result := actions.ExecuteSneak(&actions.MobActor{Mob: mob, Room: room})
+	result := actions.Sneak(&actions.MobActor{Mob: mob, Room: room})
 
 	if result.Success {
 		// Track skill use so mobs can progress skullduggery like players.

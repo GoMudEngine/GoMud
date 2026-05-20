@@ -2,6 +2,7 @@ package actions
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -23,8 +24,8 @@ func NewUserActor(u *users.UserRecord) Actor {
 }
 
 // NewUserActorInRoom is NewUserActor with a pre-populated room reference.
-// Use this at sites where downstream code calls GetRoom() / SendRoomText()
-// on the returned Actor.
+// Use this at sites where downstream code calls GetRoom() on the returned
+// Actor.
 func NewUserActorInRoom(u *users.UserRecord, room *rooms.Room) Actor {
 	return &UserActor{User: u, Room: room}
 }
@@ -37,16 +38,8 @@ func (a *UserActor) GetRoom() *rooms.Room {
 	return a.Room
 }
 
-func (a *UserActor) SendText(msg string) {
-	a.User.SendText(msg)
-}
-
-func (a *UserActor) SendRoomText(msg string, excludeSelf bool) {
-	if excludeSelf {
-		a.Room.SendText(msg, a.User.UserId)
-	} else {
-		a.Room.SendText(msg)
-	}
+func (a *UserActor) SendText(cat messaging.Category, msg string) {
+	a.User.SendText(cat, msg)
 }
 
 func (a *UserActor) SendRoomCommunication(msg string, excludeSelf bool) {

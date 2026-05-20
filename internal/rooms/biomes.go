@@ -146,3 +146,4 @@ func GetAllBiomes() []BiomeInfo {
 	}
 	return ret
 }
+

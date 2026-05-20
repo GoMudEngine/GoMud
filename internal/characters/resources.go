@@ -3,7 +3,6 @@ package characters
 import (
 	"math"
 
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
@@ -67,9 +66,11 @@ func (c *Character) GetMovementStaminaCost(terrainMultiplier float64) int {
 		cost *= (1.0 - moveMod) // positive moveMod = faster = less cost
 	}
 
-	// Sneaking costs extra stamina — moving carefully is harder
-	if c.HasBuffFlag(buffs.Hidden) {
-		cost *= 1.5
+	// Sneaking costs extra stamina — moving carefully is harder.
+	// HiddenMoveStaminaMultiplier (default 3.0) stacks multiplicatively
+	// with encumbrance: over-encumbered hidden movement is brutal (5×3 = 15× cost).
+	if c.IsHidden() {
+		cost *= float64(b.HiddenMoveStaminaMultiplier)
 	}
 
 	// Cap at maximum stamina cost

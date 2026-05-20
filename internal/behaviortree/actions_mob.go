@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/exit"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
@@ -380,7 +381,7 @@ func actOpenInstancePortal(params map[string]any, ctx *EvalContext) Result {
 	mob.Command("say The rift is open. Type " + exitKey + " to enter.")
 	mob.Command("say It will hold for a time. Do not tarry.")
 	room.SendTextToExits("You hear someone talking.", true)
-	room.SendText("The stone archway flares with energy. A shimmering portal appears.")
+	room.SendText(messaging.CategoryMobEmote, "The stone archway flares with energy. A shimmering portal appears.")
 	return Success
 }
 

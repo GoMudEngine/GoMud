@@ -256,7 +256,7 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 			player := users.GetByUserId(playerId)
 			if player != nil {
 
-				if player.Character.HasFlagFromAnySource(buffs.Hidden) { // Don't show them if sneaking or camo
+				if player.Character.IsHidden() { // Don't show them if sneaking or camo
 					if !user.Character.Pet.Exists() || !user.Character.HasFlagFromAnySource(buffs.SeeHidden) {
 						continue
 					}
@@ -264,11 +264,14 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 
 				pName := player.Character.GetPlayerName(user.UserId, renderFlags...)
 				playerEntry := pName.String()
-				if player.ManualAFK {
-					if player.AFKMessage != "" {
-						playerEntry += ` <ansi fg="8">(AFK: ` + player.AFKMessage + `)</ansi>`
-					} else {
-						playerEntry += ` <ansi fg="8">(AFK)</ansi>`
+				// Chunk 5 (Presence): read AFK status from canonical Presence machine.
+				if player.Character != nil && player.Character.Presence != nil {
+					if d, ok := player.Character.Presence.AFKData(); ok && d.Manual {
+						if d.Message != "" {
+							playerEntry += ` <ansi fg="8">(AFK: ` + d.Message + `)</ansi>`
+						} else {
+							playerEntry += ` <ansi fg="8">(AFK)</ansi>`
+						}
 					}
 				}
 				details.VisiblePlayers = append(details.VisiblePlayers, playerEntry)
@@ -286,7 +289,7 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 	mobNameCount := map[string]int{}
 	for _, mobInstanceId := range r.mobs {
 		if mob := mobs.GetInstance(mobInstanceId); mob != nil {
-			if mob.Character.HasFlagFromAnySource(buffs.Hidden) {
+			if mob.Character.IsHidden() {
 				if !user.Character.Pet.Exists() || !user.Character.HasFlagFromAnySource(buffs.SeeHidden) {
 					continue
 				}
@@ -299,7 +302,7 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 	for idx, mobInstanceId := range r.mobs {
 		if mob := mobs.GetInstance(mobInstanceId); mob != nil {
 
-			if mob.Character.HasFlagFromAnySource(buffs.Hidden) { // Don't show them if sneaking or camo
+			if mob.Character.IsHidden() { // Don't show them if sneaking or camo
 				if !user.Character.Pet.Exists() || !user.Character.HasFlagFromAnySource(buffs.SeeHidden) {
 					continue
 				}

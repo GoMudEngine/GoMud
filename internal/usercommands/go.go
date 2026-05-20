@@ -10,11 +10,14 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -39,7 +42,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 		}
 	}
 
-	if user.Character.Aggro != nil {
+	if user.Character.IsInCombat() {
 		// Always allow movement out of the death recovery room —
 		// stale aggro must never trap a player in the Shadow Realm.
 		// Use GetOriginalRoom() because the shadow realm is an ephemeral
@@ -47,7 +50,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 		deathRoom := int(configs.GetSpecialRoomsConfig().DeathRecoveryRoom)
 		actualRoom := rooms.GetOriginalRoom(user.Character.RoomId)
 		if actualRoom != deathRoom {
-			user.SendText("You can't do that! You are in combat!")
+			user.SendText(messaging.CategorySystem, "You can't do that! You are in combat!")
 			return true, nil
 		}
 		// Force-clear the stale aggro so it doesn't follow them out.
@@ -56,19 +59,31 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 	// Block movement during quest sequences (e.g., Awakening Rite ceremony)
 	if lockMsg, ok := user.GetTempData(`questSequenceLock`).(string); ok && lockMsg != "" {
-		user.SendText(lockMsg)
+		user.SendText(messaging.CategorySystem, lockMsg)
 		return true, nil
 	}
 
-	// Movement cancels crafting
-	if user.Character.CraftingState != nil {
-		user.Character.CraftingState = nil
-		user.SendText(`<ansi fg="red">Your movement interrupts your crafting.</ansi>`)
+	// Movement cancels crafting and salvaging — route through Activity
+	// machine for both. Casting is NOT interrupted by movement (policy).
+	if user.Character.Activity != nil && !user.Character.Activity.IsFree() {
+		switch user.Character.Activity.State() {
+		case activity.Crafting:
+			_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
+				Trigger: activity.TriggerMovementInterrupt,
+				Actor:   state.ActorRef{UserId: user.UserId},
+			})
+			user.SendText(messaging.CategorySystem, `<ansi fg="red">Your movement interrupts your crafting.</ansi>`)
+		case activity.Salvaging:
+			_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
+				Trigger: activity.TriggerMovementInterrupt,
+				Actor:   state.ActorRef{UserId: user.UserId},
+			})
+			user.SendText(messaging.CategorySystem, `<ansi fg="red">Your movement interrupts your salvaging.</ansi>`)
+		}
 	}
-
 	// If has a buff that prevents combat, skip the player
 	if user.Character.HasBuffFlag(buffs.NoMovement) {
-		user.SendText("You can't do that!")
+		user.SendText(messaging.CategorySystem, "You can't do that!")
 		return true, nil
 	}
 
@@ -78,7 +93,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 	// misc-data flag (set synchronously by sneak command). This handles
 	// the case where the player sneaks then immediately moves before the
 	// buff event processes.
-	isSneaking := user.Character.HasBuffFlag(buffs.Hidden)
+	isSneaking := user.Character.IsHidden()
 	if !isSneaking {
 		if sneakFlag, ok := user.Character.GetMiscData(`sneaking`).(bool); ok && sneakFlag {
 			isSneaking = true
@@ -90,7 +105,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 	if exitName != `` {
 
 		if user.Character.IsDisabled() {
-			user.SendText("You are unable to do that while downed.")
+			user.SendText(messaging.CategorySystem, "You are unable to do that while downed.")
 			return true, nil
 		}
 
@@ -104,9 +119,9 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 		if !user.Character.DeductActionPoints(actionCost) {
 
 			if encumbered {
-				user.SendText("You're too encumbered to move (<ansi fg=\"command\">help encumbrance</ansi>)!")
+				user.SendText(messaging.CategorySystem, "You're too encumbered to move (<ansi fg=\"command\">help encumbrance</ansi>)!")
 			} else {
-				user.SendText("You're too tired to move (slow down)!")
+				user.SendText(messaging.CategorySystem, "You're too tired to move (slow down)!")
 				mudlog.Debug("No ActionPoints", "AP", user.Character.ActionPoints, "Needed", actionCost)
 			}
 
@@ -130,7 +145,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 		// Calculate and check stamina cost
 		staminaCost := user.Character.GetMovementStaminaCost(terrainMultiplier)
 		if !user.Character.DeductStamina(staminaCost) {
-			user.SendText("You're too exhausted to move! Rest and recover your stamina.")
+			user.SendText(messaging.CategorySystem, "You're too exhausted to move! Rest and recover your stamina.")
 			// Refund the action points since movement failed
 			user.Character.ActionPoints += actionCost
 			return true, nil
@@ -138,7 +153,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 		// Warn if stamina is getting low (< 25% of max)
 		if user.Character.Stamina < user.Character.StaminaMax.Value/4 {
-			user.SendText("<ansi fg=\"yellow\">You're feeling winded. Consider resting to recover your stamina.</ansi>")
+			user.SendText(messaging.CategorySystem, "<ansi fg=\"yellow\">You're feeling winded. Consider resting to recover your stamina.</ansi>")
 		}
 
 		originRoomId := user.Character.RoomId
@@ -164,8 +179,8 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 			if lockpickItm.ItemId > 0 && hasSequence {
 
-				user.SendText(`You know this lock well, you quickly pick it.`)
-				room.SendTextVisual(
+				user.SendText(messaging.CategorySystem, `You know this lock well, you quickly pick it.`)
+				room.SendTextVisual(messaging.CategoryMobEmote, 
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> quickly picks the lock on the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
 					user.UserId)
 
@@ -175,8 +190,8 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				room.SetExitLock(exitName, false)
 
 			} else if hasKey {
-				user.SendText(fmt.Sprintf(`You use the key on your key ring to unlock the <ansi fg="exit">%s</ansi> exit.`, exitName))
-				room.SendTextVisual(
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(`You use the key on your key ring to unlock the <ansi fg="exit">%s</ansi> exit.`, exitName))
+				room.SendTextVisual(messaging.CategoryMobEmote, 
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
 					user.UserId)
 
@@ -194,8 +209,8 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 					room.PlaySound(`change`, `other`)
 
-					user.SendText(fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="exit">%s</ansi> exit, and add it to your key ring for the future.`, itmSpec.Name, exitName))
-					room.SendTextVisual(
+					user.SendText(messaging.CategorySystem, fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="exit">%s</ansi> exit, and add it to your key ring for the future.`, itmSpec.Name, exitName))
+					room.SendTextVisual(messaging.CategoryMobEmote, 
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
 						user.UserId)
 
@@ -215,7 +230,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				}
 
 				if exitInfo.Lock.IsLocked() {
-					user.SendText(`There's a lock preventing you from going that way. You'll need a <ansi fg="item">Key</ansi> or to <ansi fg="command">pick</ansi> the lock with <ansi fg="item">lockpicks</ansi>.`)
+					user.SendText(messaging.CategorySystem, `There's a lock preventing you from going that way. You'll need a <ansi fg="item">Key</ansi> or to <ansi fg="command">pick</ansi> the lock with <ansi fg="item">lockpicks</ansi>.`)
 					// Send GMCP message
 					if f, ok := GetExportedFunction(`SendGMCPEvent`); ok {
 						if gmcpSendFunc, ok := f.(func(int, string, any)); ok { // make sure the func definition is `func(int, string, any)`
@@ -230,7 +245,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 		}
 
 		if exitInfo.ExitMessage != `` && !flags.Has(events.CmdIsRequeue) {
-			user.SendText(exitInfo.ExitMessage)
+			user.SendText(messaging.CategoryRoomDescription, exitInfo.ExitMessage)
 			user.CommandFlagged(rest, flags|events.CmdIsRequeue|events.CmdBlockInputUntilComplete, 1)
 			return true, nil
 		}
@@ -261,7 +276,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 		})
 
 		if err := rooms.MoveToRoom(user.UserId, destRoom.RoomId); err != nil {
-			user.SendText("Oops, couldn't move there!")
+			user.SendText(messaging.CategorySystem, "Oops, couldn't move there!")
 		} else {
 
 			// Quest engine: room_enter notification
@@ -273,12 +288,12 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 			// Tell the player they are moving
 			if isSneaking {
-				user.SendText(
+				user.SendText(messaging.CategoryRoomExit,
 					fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 						fmt.Sprintf(`You <ansi fg="black-bold">sneak</ansi> towards the <ansi fg="exit">%s</ansi> exit.`, exitName),
 					))
 			} else {
-				user.SendText(
+				user.SendText(messaging.CategoryRoomExit,
 					fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 						fmt.Sprintf(`You head towards the <ansi fg="exit">%s</ansi> exit.`, exitName),
 					))
@@ -286,14 +301,14 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				// Tell the old room they are leaving
 				if user.Character.Pet.Exists() {
 
-					room.SendTextVisual(
+					room.SendTextVisual(messaging.CategoryRoomExit,
 						fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 							fmt.Sprintf(`<ansi fg="username">%s</ansi> and %s leave towards the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, user.Character.Pet.DisplayName(), exitName),
 						),
 						user.UserId)
 
 				} else {
-					room.SendTextVisual(
+					room.SendTextVisual(messaging.CategoryRoomExit,
 						fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 							fmt.Sprintf(`<ansi fg="username">%s</ansi> leaves towards the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
 						),
@@ -303,9 +318,9 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				// Tell everyone if the pet is following
 				if user.Character.Pet.Exists() {
 
-					user.SendText(fmt.Sprintf(`%s follows you.`, user.Character.Pet.DisplayName()))
+					user.SendText(messaging.CategorySystem, fmt.Sprintf(`%s follows you.`, user.Character.Pet.DisplayName()))
 
-					destRoom.SendText(
+					destRoom.SendText(messaging.CategoryRoomEntry,
 						fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 							fmt.Sprintf(`<ansi fg="username">%s</ansi> and %s enters from <ansi fg="exit">%s</ansi>.`, user.Character.Name, user.Character.Pet.DisplayName(), exitName),
 						),
@@ -314,7 +329,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				} else {
 
 					// Tell the new room they have arrived
-					destRoom.SendText(
+					destRoom.SendText(messaging.CategoryRoomEntry,
 						fmt.Sprintf(string(c.EnterRoomMessageWrapper),
 							fmt.Sprintf(`<ansi fg="username">%s</ansi> enters from <ansi fg="exit">%s</ansi>.`, user.Character.Name, enterFromExit),
 						),
@@ -335,7 +350,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						}
 						if partyUser := users.GetByUserId(partyMemberId); partyUser != nil {
 							if partyUser.Character.RoomId == room.RoomId {
-								partyUser.SendText(`You follow the party leader.`)
+								partyUser.SendText(messaging.CategorySystem, `You follow the party leader.`)
 								partyUser.Command(rest)
 							}
 						}
@@ -354,10 +369,9 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					continue
 				}
 				if mob.Character.IsCharmed(user.UserId) { // Charmed mobs follow
-					// Companions interrupt casting to follow owner
-					if mob.Character.CastingState != nil {
-						mob.Character.CastingState = nil
-					}
+					// Companions interrupt casting to follow owner — Activity
+					// cascade (Activity_Cascades.go movement interrupt) handles
+					// the machine transition; no direct field manipulation needed.
 					mob.Command(rest)
 				}
 			}
@@ -372,7 +386,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				if shadowP == nil {
 					continue
 				}
-				if !shadowP.Character.HasBuffFlag(buffs.Hidden) {
+				if !shadowP.Character.IsHidden() {
 					continue
 				}
 				if !shadowIsTargetingUser(shadowP, user.UserId) {
@@ -384,25 +398,77 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				// After the move attempt, check if the shadower is still hidden.
 				// The room-entry detection in go.go runs for the shadower's move,
 				// so if they were spotted their hidden buff will already be gone.
-				if !shadowP.Character.HasBuffFlag(buffs.Hidden) {
+				if !shadowP.Character.IsHidden() {
 					endShadow(shadowP, "You've been spotted -- your shadow ends.")
 					continue
 				}
 
 				// Target-specific detection roll: does the mover sense pursuit?
-				if shadowDetectionRoll(shadowP, user) {
-					user.SendText(
+				if shadowDetectionRoll(shadowP, user, destRoom) {
+					user.SendText(messaging.CategorySystem, 
 						"You sense someone following close behind you.")
 				}
 			}
 
 			// Stealth detection: hidden player entering a room
 			if isSneaking {
-				if spotted, spotterName := checkStealthDetection(user, destRoom); spotted {
+				// Build party exclusion set so allies don't expose the sneaker
+				partyIds := make(map[int]bool)
+				if p := parties.Get(user.UserId); p != nil {
+					for _, uid := range p.GetMembers() {
+						partyIds[uid] = true
+					}
+				}
+
+				spotted := false
+				spotterName := ""
+
+				// Check player observers. Sneak score is computed per-observer so
+				// NightVision observers apply the correct light modifier.
+				for _, pId := range destRoom.GetPlayers() {
+					if pId == user.UserId || partyIds[pId] {
+						continue
+					}
+					p := users.GetByUserId(pId)
+					if p == nil {
+						continue
+					}
+					sneakScore := actions.CalcSneakScoreVsObserver(user.Character, p.Character, destRoom)
+					observerScore := actions.CalcSearchScore(p.Character)
+					success, _, _, _ := dice.OpposedRollStat(sneakScore, observerScore)
+					if !success {
+						p.SendText(messaging.CategorySystem, fmt.Sprintf(
+							`<ansi fg="username">%s</ansi> slips into the room but you notice them.`,
+							user.Character.Name))
+						spotted = true
+						spotterName = p.Character.Name
+						break
+					}
+				}
+
+				// Check mob observers if not yet spotted
+				if !spotted {
+					for _, mId := range destRoom.GetMobs() {
+						mob := mobs.GetInstance(mId)
+						if mob == nil {
+							continue
+						}
+						sneakScore := actions.CalcSneakScoreVsObserver(user.Character, &mob.Character, destRoom)
+						observerScore := actions.CalcSearchScore(&mob.Character)
+						success, _, _, _ := dice.OpposedRollStat(sneakScore, observerScore)
+						if !success {
+							spotted = true
+							spotterName = mob.Character.Name
+							break
+						}
+					}
+				}
+
+				if spotted {
 					user.Character.CancelBuffsWithFlag(buffs.Hidden)
 					user.Character.SetMiscData(`sneaking`, nil)
 					isSneaking = false
-					user.SendText(fmt.Sprintf(
+					user.SendText(messaging.CategorySystem, fmt.Sprintf(
 						"You slip into the room but %s notices you.", spotterName))
 				}
 			}
@@ -417,17 +483,17 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						continue
 					}
 					hiddenP := users.GetByUserId(pId)
-					if hiddenP == nil || !hiddenP.Character.HasBuffFlag(buffs.Hidden) {
+					if hiddenP == nil || !hiddenP.Character.IsHidden() {
 						continue
 					}
-					hiddenScore := calcSneakScore(hiddenP.Character)
+					hiddenScore := actions.CalcSneakScoreVsObserver(hiddenP.Character, user.Character, destRoom)
 					success, _, _, _ := dice.OpposedRollStat(observerScore, hiddenScore)
 					if success {
 						hiddenP.Character.CancelBuffsWithFlag(buffs.Hidden)
 						hiddenP.Character.SetMiscData(`sneaking`, nil)
-						hiddenP.SendText(fmt.Sprintf(
+						hiddenP.SendText(messaging.CategorySystem, fmt.Sprintf(
 							"%s enters the room and notices you!", user.Character.Name))
-						user.SendText(fmt.Sprintf(
+						user.SendText(messaging.CategorySystem, fmt.Sprintf(
 							`You notice <ansi fg="username">%s</ansi> lurking in the shadows.`,
 							hiddenP.Character.Name))
 					}
@@ -436,20 +502,20 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				// Check hidden mobs
 				for _, mId := range destRoom.GetMobs(rooms.FindAll) {
 					mob := mobs.GetInstance(mId)
-					if mob == nil || !mob.Character.HasBuffFlag(buffs.Hidden) {
+					if mob == nil || !mob.Character.IsHidden() {
 						continue
 					}
-					hiddenScore := calcSneakScore(&mob.Character)
+					hiddenScore := actions.CalcSneakScoreVsObserver(&mob.Character, user.Character, destRoom)
 					success, _, _, _ := dice.OpposedRollStat(observerScore, hiddenScore)
 					if success {
 						mob.Character.RemovePermaBuff(9)
 						mob.Character.CancelBuffsWithFlag(buffs.Hidden)
 						mob.Character.Buffs.RemoveBuff(9)
 						mob.Character.Validate(true)
-						user.SendText(fmt.Sprintf(
+						user.SendText(messaging.CategorySystem, fmt.Sprintf(
 							`You notice <ansi fg="mobname">%s</ansi> lurking in the shadows!`,
 							mob.Character.Name))
-						destRoom.SendText(fmt.Sprintf(
+						destRoom.SendText(messaging.CategorySystem, fmt.Sprintf(
 							`<ansi fg="username">%s</ansi> spots <ansi fg="mobname">%s</ansi> hiding in the shadows!`,
 							user.Character.Name, mob.Character.Name),
 							user.UserId)
@@ -468,7 +534,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						continue
 					}
 
-					if mob.Character.Aggro == nil || mob.Character.Aggro.UserId != user.UserId {
+					if !mob.Character.IsInCombat() || mob.Character.EngagedTarget().UserId != user.UserId {
 						continue
 					}
 
@@ -524,7 +590,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					if mob == nil {
 						continue
 					}
-					if mob.Character.Aggro != nil {
+					if mob.Character.IsInCombat() {
 						continue
 					}
 					if mob.Character.IsCharmed() {
@@ -536,17 +602,17 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						continue
 					}
 
-					if !mob.Hostile { // Is it automatically hostile?
+					if !mob.AutoAggro { // Is it automatically hostile?
 						continue
 					}
 
 					// Hidden mobs attack silently — no "notices you" message.
 					// They still trigger lookfortrouble for the surprise attack.
-					if !mob.Character.HasBuffFlag(buffs.Hidden) {
+					if !mob.Character.IsHidden() {
 						if destRoom.GetVisibility() >= 1 || user.Character.HasFlagFromAnySource(buffs.NightVision) {
-							user.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> notices you as you enter!`, mob.Character.Name))
+							user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> notices you as you enter!`, mob.Character.Name))
 						} else {
-							user.SendText(`<ansi fg="yellow">Something notices you in the darkness!</ansi>`)
+							user.SendText(messaging.CategorySystem, `<ansi fg="yellow">Something notices you in the darkness!</ansi>`)
 						}
 					}
 
@@ -576,7 +642,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 	if !handled {
 
 		if rest == "north" || rest == "south" || rest == "east" || rest == "west" || rest == "up" || rest == "down" || rest == "northwest" || rest == "northeast" || rest == "southwest" || rest == "southeast" {
-			user.SendText("You're bumping into walls.")
+			user.SendText(messaging.CategorySystem, "You're bumping into walls.")
 
 			// Send GMCP message
 			if f, ok := GetExportedFunction(`SendGMCPEvent`); ok {
@@ -585,9 +651,9 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				}
 			}
 
-			if !user.Character.HasBuffFlag(buffs.Hidden) {
+			if !user.Character.IsHidden() {
 
-				room.SendTextVisual(
+				room.SendTextVisual(messaging.CategoryMobEmote, 
 					fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> is bumping into walls.`, user.Character.Name),
 					),

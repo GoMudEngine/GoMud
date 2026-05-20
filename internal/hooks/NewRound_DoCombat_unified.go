@@ -11,12 +11,15 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -66,17 +69,34 @@ func handleCombatRound(
 	// re-apply them (notably: Hidden seeded via buffids on ambushers).
 	def.GetCharacter().CancelCombatBuffs()
 
+	// Chunk 1 follow-up (surfaced by chunk 4b smoke 2026-05-16):
+	// CancelCombatBuffs strips buff #9 but the Awareness FSM is the
+	// canonical source of truth for IsHidden post-chunk-1. The cascade
+	// in Awareness_Cascades.go fires only when the defender's OWN
+	// CombatPhase transitions Idle→Engaging — which doesn't happen
+	// when a defender is targeted but never SetAggro's the attacker
+	// (e.g. a hidden mob grappled while it has no aggro of its own).
+	// Force the FSM out of Hidden if the buff strip left it stale; the
+	// cascade re-strips the buff (no-op since already gone). Without
+	// this, hidden ambushers stay stuck Hidden and the IsHidden check
+	// below fires "can't seem to find your target" on every round.
+	if defChar := def.GetCharacter(); defChar.Awareness != nil && defChar.IsHidden() {
+		defChar.Awareness.ForceVisible(state.TransitionReason{
+			Trigger: awareness.TriggerCombatEntered,
+		})
+	}
+
 	// Phase 1: wait-round short-circuit.
 	if phase1WaitRound(atk, def) {
 		return
 	}
 
 	// Hidden defender bails the round (existing per-quadrant behavior).
-	if def.GetCharacter().HasBuffFlag(buffs.Hidden) {
+	if def.GetCharacter().IsHidden() {
 		// Divergence: only player attackers get the "can't seem to find
 		// your target" feedback. Mob attackers silently bail (no chat).
 		if atk.IsPlayer() {
-			atk.SendText("You can't seem to find your target.")
+			atk.SendText(messaging.CategorySystem, "You can't seem to find your target.")
 		}
 		return
 	}
@@ -86,15 +106,12 @@ func handleCombatRound(
 	// append the player attacker's Aggro target user id pre-attack).
 	appendPreAttackAffected(atk, def, affectedPlayerIds, affectedMobInstanceIds)
 
-	// Grapple progression (parity across all four quadrants today).
-	processGrappleProgression(
-		atk.GetCharacter(), def.GetCharacter(),
-		atk.GetCharacter().Name, def.GetCharacter().Name,
-		atk.GetRoom(),
-		atk.GetUserId(), def.GetUserId(),
-	)
+	// Grapple progression is now handled by the per-round control-axis
+	// tick in Position_GrappleTick.go (chunk 4b T6). The legacy single-
+	// roll processGrappleProgression scanner was deleted in T10.
 
-	// MvP-only: target switch AI runs after grapple, before the swing.
+	// MvP-only: target switch AI runs after the grapple-progression hook,
+	// before the swing.
 	if !atk.IsPlayer() && def.IsPlayer() {
 		// Divergence (MvP-only): the legacy mob handler considers
 		// switching to a different player target before swinging.
@@ -156,7 +173,7 @@ func resolveCombatTarget(atk, def actions.Actor, roundNumber uint64) bool {
 		// Divergence: only player attackers get the "can't be found" message
 		// (mobs have no connection).
 		if atk.IsPlayer() {
-			atk.SendText(`Your target can't be found.`)
+			atk.SendText(messaging.CategorySystem, `Your target can't be found.`)
 		}
 		atkChar.EndAggro()
 		return false
@@ -178,7 +195,7 @@ func resolveCombatTarget(atk, def actions.Actor, roundNumber uint64) bool {
 					}
 				}
 			}
-			atk.SendText(`Your target can't be found.`)
+			atk.SendText(messaging.CategorySystem, `Your target can't be found.`)
 			atkChar.EndAggro()
 			return false
 		}
@@ -192,7 +209,7 @@ func resolveCombatTarget(atk, def actions.Actor, roundNumber uint64) bool {
 					}
 				}
 			}
-			atk.SendText(`Your target can't be found.`)
+			atk.SendText(messaging.CategorySystem, `Your target can't be found.`)
 			atkChar.EndAggro()
 			return false
 		}
@@ -352,7 +369,7 @@ func applyCombatDamageBonuses(atk, def actions.Actor, res *combat.AttackResult) 
 			// feeds" message — mobs have no connection.
 			if atk.IsPlayer() {
 				healDesc := combat.GetHealDescription(healAmt, atkChar.HealthMax.Value)
-				atk.SendText(fmt.Sprintf(
+				atk.SendText(messaging.CategoryHitMelee, fmt.Sprintf(
 					`<ansi fg="green">Your weapon feeds on the blow! (%s)</ansi>`,
 					healDesc))
 			}
@@ -396,19 +413,19 @@ func emitReturnDamageText(atk, def actions.Actor, returnDmg int) {
 	}
 
 	excludes := playerExcludeIds(atk, def)
-	sendVisualRoomText(atkRoom, fmt.Sprintf(
+	sendVisualRoomText(atkRoom, messaging.CategoryHitMelee, fmt.Sprintf(
 		`<ansi fg="red">%s recoils from striking %s! (%s)</ansi>`,
 		atkToken, defToken, dmgDesc), excludes...)
 
 	// Player attacker: send the private "you recoil" message.
 	if atk.IsPlayer() {
-		atk.SendText(fmt.Sprintf(
+		atk.SendText(messaging.CategoryHitMelee, fmt.Sprintf(
 			`<ansi fg="red">You recoil from striking %s! (%s)</ansi>`,
 			defToken, dmgDesc))
 	}
 	// Player defender: send the "X recoils from striking you" message.
 	if def.IsPlayer() {
-		def.SendText(fmt.Sprintf(
+		def.SendText(messaging.CategoryHitMelee, fmt.Sprintf(
 			`<ansi fg="red">%s recoils from striking you! (%s)</ansi>`,
 			atkToken, dmgDesc))
 	}
@@ -448,10 +465,10 @@ func dispatchCritAndMessaging(atk, def actions.Actor, res *combat.AttackResult) 
 	srcCanSee := true
 	tgtCanSee := true
 	if atk.IsPlayer() {
-		srcCanSee = canSeeInRoom(atkChar, atkRoom)
+		srcCanSee = messaging.CanSeeClearly(atkChar, atkRoom)
 	}
 	if def.IsPlayer() {
-		tgtCanSee = canSeeInRoom(defChar, defRoom)
+		tgtCanSee = messaging.CanSeeClearly(defChar, defRoom)
 	}
 	if !srcCanSee || !tgtCanSee {
 		replaceDarknessMessages(res, srcCanSee, tgtCanSee)
@@ -462,13 +479,14 @@ func dispatchCritAndMessaging(atk, def actions.Actor, res *combat.AttackResult) 
 
 	// Crit message routing — Divergence #1.
 	if critResult.AttackerMsg != `` && atk.IsPlayer() {
-		atk.SendText(critResult.AttackerMsg)
+		atk.SendText(messaging.CategoryHitMelee, critResult.AttackerMsg)
 	}
 	if critResult.DefenderMsg != `` && def.IsPlayer() {
-		def.SendText(critResult.DefenderMsg)
+		def.SendText(messaging.CategoryHitMelee, critResult.DefenderMsg)
 	}
 	if critResult.RoomMsg != `` && atkRoom != nil {
-		atkRoom.SendText(critResult.RoomMsg, playerExcludeIds(atk, def)...)
+		// Crit effects (riposte / sweep / bash) are melee follow-ups.
+		atkRoom.SendText(messaging.CategoryHitMelee, critResult.RoomMsg, playerExcludeIds(atk, def)...)
 	}
 
 	// Buffs from the round (BuffSource → atk, BuffTarget → def).
@@ -480,24 +498,31 @@ func dispatchCritAndMessaging(atk, def actions.Actor, res *combat.AttackResult) 
 	}
 
 	// Direct messages — Divergence #1.
+	// AttackResult.MessagesTo* carry per-line TaggedMessage data
+	// (Category + Text). The combat producer tags each line at the
+	// site that creates it: hit lines get CategoryHit{Melee,Blunt,
+	// NaturalSharp,Ranged,Caster,Unarmed} from the weapon subtype,
+	// defense lines get CategoryDodge/Parry/Block from the verb.
+	// Multi-weapon rounds emit heterogeneous categories per swing —
+	// the drain just preserves each line's tag.
 	if atk.IsPlayer() {
 		for _, msg := range res.MessagesToSource {
-			atk.SendText(msg)
+			atk.SendText(msg.Category, msg.Text)
 		}
 	}
 	if def.IsPlayer() {
 		for _, msg := range res.MessagesToTarget {
-			def.SendText(msg)
+			def.SendText(msg.Category, msg.Text)
 		}
 	}
 
 	// Room broadcasts with player-receiver excludes.
 	excludes := playerExcludeIds(atk, def)
 	for _, msg := range res.MessagesToSourceRoom {
-		sendVisualRoomText(atkRoom, msg, excludes...)
+		sendVisualRoomText(atkRoom, msg.Category, msg.Text, excludes...)
 	}
 	for _, msg := range res.MessagesToTargetRoom {
-		sendVisualRoomText(defRoom, msg, excludes...)
+		sendVisualRoomText(defRoom, msg.Category, msg.Text, excludes...)
 	}
 	sendDarkRoomCombatFallback(atkRoom, excludes...)
 	if defRoom != atkRoom {
@@ -592,7 +617,8 @@ func emitAttackerStatGain(atk actions.Actor, statName string, uid int) {
 		return
 	}
 	if tmpl, ok := characters.MobStatGainMessages[statName]; ok {
-		atkRoom.SendText(fmt.Sprintf(tmpl, mobDisplayName(mob, atkRoom, 0)))
+		// Mob-side stat-gain flavor text — visible mob emote.
+		atkRoom.SendText(messaging.CategoryMobEmote, fmt.Sprintf(tmpl, mobDisplayName(mob, atkRoom, 0)))
 	}
 }
 
@@ -660,7 +686,6 @@ func handleAggroAndAssist(atk, def actions.Actor, cfg *configs.Config) {
 		// respawning players who had attacked bandits).
 		dispatchPackmateHurt(defMob, atk.GetUserId(), 0)
 		if defChar.Aggro == nil {
-			defMob.PreventIdle = true
 			if atkChar.RoomId != defChar.RoomId {
 				if mobRoom := rooms.LoadRoom(defChar.RoomId); mobRoom != nil {
 					for exitName, exitInfo := range mobRoom.Exits {
@@ -706,7 +731,6 @@ func handleAggroAndAssist(atk, def actions.Actor, cfg *configs.Config) {
 		//   - Companion-owner assist if defender mob is charmed.
 		defMob := asMob(def)
 		if defChar.Aggro == nil {
-			defMob.PreventIdle = true
 			defChar.Aggro = &characters.Aggro{
 				Type: characters.DefaultAttack,
 			}
@@ -786,11 +810,11 @@ func emitRetargetMessage(atk actions.Actor) {
 		return
 	}
 	if mob := mobs.GetInstance(atkChar.Aggro.MobInstanceId); mob != nil {
-		atk.SendText(fmt.Sprintf(
+		atk.SendText(messaging.CategorySystem, fmt.Sprintf(
 			"You turn your attention to <ansi fg=\"mobname\">%s</ansi>!",
 			mob.Character.Name))
 	} else if newDef := users.GetByUserId(atkChar.Aggro.UserId); newDef != nil {
-		atk.SendText(fmt.Sprintf(
+		atk.SendText(messaging.CategorySystem, fmt.Sprintf(
 			"You turn your attention to <ansi fg=\"username\">%s</ansi>!",
 			newDef.Character.Name))
 	}

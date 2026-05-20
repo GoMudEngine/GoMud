@@ -1,0 +1,14 @@
+buffid: 83
+name: Broken Limb
+description: |
+  A grapple submission cranked the joint past its limit. Combat
+  effectiveness reduced until the bone sets and heals.
+triggerrate: 1 round
+triggercount: 900
+statmods:
+  strength: -25
+  dexterity: -25
+  vitality: -10
+  staminarecovery: -2
+start_user_text: '<ansi fg="red">You feel the wrench of a broken limb. Sharp pain will follow every motion until it heals.</ansi>'
+end_user_text: '<ansi fg="green">The ache in your limb finally fades. You can move at full strength again.</ansi>'

@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -35,7 +36,7 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 
 	// ── 1. Companion cap ────────────────────────────────────────────────
 	if len(ch.Companions) >= ch.GetMaxCompanions() {
-		user.SendText("You cannot maintain any more companions.")
+		user.SendText(messaging.CategorySystem, "You cannot maintain any more companions.")
 		return false
 	}
 
@@ -50,7 +51,7 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 			}
 		}
 		if !found {
-			user.SendText("You lack the required component for this summoning.")
+			user.SendText(messaging.CategorySpellManifestation, "You lack the required component for this summoning.")
 			return false
 		}
 	}
@@ -100,9 +101,9 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 
 		if targetIdx < 0 {
 			if spellRest != "" {
-				user.SendText("You cannot find suitable remains matching that description.")
+				user.SendText(messaging.CategorySpellManifestation, "You cannot find suitable remains matching that description.")
 			} else {
-				user.SendText("There are no suitable remains here to raise.")
+				user.SendText(messaging.CategorySpellManifestation, "There are no suitable remains here to raise.")
 			}
 			return false
 		}
@@ -126,7 +127,7 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 	// ── 5. Spawn and register ───────────────────────────────────────────
 	mob := mobs.NewMobByIdFresh(mobs.MobId(spellData.SummonMobId), room.RoomId, pool)
 	if mob == nil {
-		user.SendText("The summoning fails — something is wrong.")
+		user.SendText(messaging.CategorySpellDisruption, "The summoning fails — something is wrong.")
 		return false
 	}
 	room.AddMob(mob.InstanceId)
@@ -153,7 +154,7 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 	}
 	if !ch.AddCompanion(info) {
 		// Should not happen since we checked cap above, but be safe
-		user.SendText("You cannot maintain any more companions.")
+		user.SendText(messaging.CategorySystem, "You cannot maintain any more companions.")
 		return false
 	}
 
@@ -163,15 +164,15 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 			continue
 		}
 		if companion := mobs.GetInstance(charmId); companion != nil {
-			if companion.Character.Aggro != nil &&
-				companion.Character.Aggro.MobInstanceId == mob.InstanceId {
+			if companion.Character.IsInCombat() &&
+				companion.Character.CurrentCombatTarget().MobInstanceId == mob.InstanceId {
 				companion.Character.EndAggro()
 			}
 		}
 	}
 
 	// Clear the owner's own aggro if targeting the new mob
-	if ch.Aggro != nil && ch.Aggro.MobInstanceId == mob.InstanceId {
+	if ch.IsInCombat() && ch.CurrentCombatTarget().MobInstanceId == mob.InstanceId {
 		ch.EndAggro()
 	}
 

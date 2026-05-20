@@ -5,6 +5,11 @@ welded to the socket — the smith's adaptation of a fisher's gaff
 for a fighter's hand. The hook catches a parrying weapon and drags
 it offline.
 
+<ansi fg="cyan">Reach:</ansi> Very long — this is a full spear. In a grapple it
+becomes nearly useless as a conventional weapon; the shaft is
+too long to control. You will be swinging the butt end.
+Consider a backup short blade.
+
 <ansi fg="yellow">━━━ Crafting ━━━</ansi>
 
   <ansi fg="yellow">Skill:</ansi>       blacksmithing (minimum 22)

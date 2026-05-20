@@ -2,6 +2,8 @@ mobid: 272
 zone: Thornwall City
 buffids: [9]
 behavior_archetype: boss_chrysalis_phantom
+submission_policy: lethal
+surrender_policy: never
 statpool: 300
 itemdropchance: 10
 hostile: true

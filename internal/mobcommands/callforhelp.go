@@ -108,8 +108,8 @@ func CallForHelp(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 				mobInfo.Command(fmt.Sprintf(`go %d`, room.RoomId), 1.0)
 
-				if mob.Character.Aggro != nil && mob.Character.Aggro.UserId > 0 {
-					mobInfo.Command(fmt.Sprintf(`attack @%d`, mob.Character.Aggro.UserId), 0.25)
+				if mob.Character.IsInCombat() && mob.Character.CurrentCombatTarget().UserId > 0 {
+					mobInfo.Command(fmt.Sprintf(`attack @%d`, mob.Character.CurrentCombatTarget().UserId), 0.25)
 				}
 			}
 		}

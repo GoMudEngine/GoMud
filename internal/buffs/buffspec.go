@@ -36,7 +36,7 @@ const (
 	NoCombat       Flag = `no-combat`
 	NoMovement     Flag = `no-go`
 	NoFlee         Flag = `no-flee`
-	NoAggroTarget  Flag = `no-aggro-target`   // grace-period protection: mobs cannot acquire aggro on the bearer
+	NoAggroTarget  Flag = `no-aggro-target` // grace-period protection: mobs cannot acquire aggro on the bearer
 	CancelIfCombat Flag = `cancel-on-combat`
 	CancelOnAction Flag = `cancel-on-action`
 	CancelOnWater  Flag = `cancel-on-water`
@@ -53,15 +53,16 @@ const (
 	Drunk  Flag = `drunk`
 
 	// Useful flags
-	Hidden       Flag = `hidden`
-	Accuracy     Flag = `accuracy`
-	Blink        Flag = `blink`
-	EmitsLight   Flag = `lightsource`
-	SuperHearing Flag = `superhearing`
-	NightVision  Flag = `nightvision`
-	Warmed       Flag = `warmed`
-	Hydrated     Flag = `hydrated`
-	Thirsty      Flag = `thirsty`
+	Hidden         Flag = `hidden`
+	Accuracy       Flag = `accuracy`
+	Blink          Flag = `blink`
+	EmitsLight     Flag = `lightsource`
+	SuperHearing   Flag = `superhearing`
+	NightVision    Flag = `nightvision`
+	InfraredVision Flag = `infraredvision`
+	Warmed         Flag = `warmed`
+	Hydrated       Flag = `hydrated`
+	Thirsty        Flag = `thirsty`
 
 	// Phase 25 spell buff flags
 	Haste         Flag = `haste`
@@ -105,10 +106,10 @@ type BuffSpec struct {
 	EndRoomText     string `yaml:"end_room_text,omitempty"`
 
 	// Config-driven tick fields — replaces JS onTrigger for heal/DoT buffs
-	TickPool         string  `yaml:"tick_pool,omitempty"`           // "health", "stamina", "conviction"
-	TickPercent      float64 `yaml:"tick_percent,omitempty"`        // Base % of max pool. Positive=heal, negative=damage
-	TickVariance     float64 `yaml:"tick_variance,omitempty"`       // Random variance added to percent
-	TickMin          int     `yaml:"tick_min,omitempty"`            // Minimum absolute tick amount (default 1)
+	TickPool         string  `yaml:"tick_pool,omitempty"`          // "health", "stamina", "conviction"
+	TickPercent      float64 `yaml:"tick_percent,omitempty"`       // Base % of max pool. Positive=heal, negative=damage
+	TickVariance     float64 `yaml:"tick_variance,omitempty"`      // Random variance added to percent
+	TickMin          int     `yaml:"tick_min,omitempty"`           // Minimum absolute tick amount (default 1)
 	StartRemoveBuffs []int   `yaml:"start_remove_buffs,omitempty"` // Buff IDs to remove when this buff starts
 }
 
@@ -226,14 +227,18 @@ func (b *BuffSpec) Validate() error {
 		b.TriggerCount = int(configs.GetNetworkConfig().LogoutRounds)
 	}
 
-	b.RoundInterval = int(validationCalculator.AddPeriod(b.TriggerRate) - validationRound)
+	// If TriggerRate is set, validate RoundInterval and TriggerCount
+	if b.TriggerRate != "" {
+		b.RoundInterval = int(validationCalculator.AddPeriod(b.TriggerRate) - validationRound)
 
-	if b.TriggerCount < 1 {
-		return fmt.Errorf("buffId %d (%s) has a TriggersCount of < 1, must be at least 1", b.BuffId, b.Name)
+		if b.TriggerCount < 1 {
+			return fmt.Errorf("buffId %d (%s) has a TriggersCount of < 1, must be at least 1", b.BuffId, b.Name)
+		}
+		if b.RoundInterval < 1 {
+			return fmt.Errorf("buffId %d (%s) has a RoundInterval of < 1, must be at least 1. Is %s a valid time string?", b.BuffId, b.Name, b.TriggerRate)
+		}
 	}
-	if b.RoundInterval < 1 {
-		return fmt.Errorf("buffId %d (%s) has a RoundInterval of < 1, must be at least 1. Is %s a valid time string?", b.BuffId, b.Name, b.TriggerRate)
-	}
+
 	return nil
 }
 

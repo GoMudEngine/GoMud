@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -16,7 +17,7 @@ func Hint(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	allProgress := user.Character.GetQuestProgress()
 
 	if len(allProgress) == 0 {
-		user.SendText(`You don't have any active quests.`)
+		user.SendText(messaging.CategoryTip, `You don't have any active quests.`)
 		return true, nil
 	}
 
@@ -36,13 +37,13 @@ func Hint(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			}
 		}
 		if _, ok := allProgress[targetQuestId]; !ok {
-			user.SendText(`You don't have any active quests.`)
+			user.SendText(messaging.CategoryTip, `You don't have any active quests.`)
 			return true, nil
 		}
 	} else if numId, err := strconv.Atoi(rest); err == nil {
 		// Numeric ID provided.
 		if _, ok := allProgress[numId]; !ok {
-			user.SendText(`You don't have an active quest by that name.`)
+			user.SendText(messaging.CategoryTip, `You don't have an active quest by that name.`)
 			return true, nil
 		}
 		targetQuestId = numId
@@ -61,7 +62,7 @@ func Hint(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			}
 		}
 		if targetQuestId == 0 {
-			user.SendText(`You don't have an active quest by that name.`)
+			user.SendText(messaging.CategoryTip, `You don't have an active quest by that name.`)
 			return true, nil
 		}
 	}
@@ -69,7 +70,7 @@ func Hint(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	engine := questengine.GetEngine()
 	qDef := engine.GetQuest(targetQuestId)
 	if qDef == nil {
-		user.SendText(`You don't have any active quests.`)
+		user.SendText(messaging.CategoryTip, `You don't have any active quests.`)
 		return true, nil
 	}
 
@@ -77,7 +78,7 @@ func Hint(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	// Completed quests have step "end".
 	if currentStep == "end" {
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategoryTip, fmt.Sprintf(
 			`<ansi fg="yellow">Quest Hint</ansi> <ansi fg="yellow-bold">(%s)</ansi>: <ansi fg="white-bold">This quest is complete!</ansi>`,
 			qDef.Name,
 		))
@@ -103,7 +104,7 @@ func Hint(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		hintText = "No hint available for this step."
 	}
 
-	user.SendText(fmt.Sprintf(
+	user.SendText(messaging.CategoryTip, fmt.Sprintf(
 		`<ansi fg="yellow">Quest Hint</ansi> <ansi fg="yellow-bold">(%s)</ansi>: <ansi fg="white-bold">%s</ansi>`,
 		qDef.Name,
 		hintText,

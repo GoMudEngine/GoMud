@@ -252,6 +252,17 @@ type ItemSpec struct {
 	Weight          float64     `yaml:"weight,omitempty"`          // Weight in pounds (affects encumbrance)
 	GrappleModifier float64     `yaml:"grapplemodifier,omitempty"` // Grapple bonus/penalty (Stage 8.2)
 	EscapeModifier  float64     `yaml:"escapemodifier,omitempty"`  // Armor escape modifier for Grounded position (Stage 8.7)
+	// Reach is the weapon's operational reach in meters. Combat
+	// consults reach in grapple positions: weapons whose reach
+	// exceeds the position's effective radius are penalized (see
+	// internal/combat/reach.go). Zero is a sentinel meaning "use
+	// DefaultReachForSubtype lookup based on Subtype"; authors set
+	// an explicit non-zero value only for outliers (a particularly
+	// short dagger, an oversized hilt, etc.).
+	//
+	// Reach is weapon-only — arm length / species reach is
+	// intentionally out of scope for chunk 4c per the design spec.
+	Reach float64 `yaml:"reach,omitempty"`
 	Hands           WeaponHands `yaml:"hands"`                     // How many hands it takes to wield
 	Name            string
 	DisplayName     string `yaml:"displayname,omitempty"` // Name that is typically displayed to the user

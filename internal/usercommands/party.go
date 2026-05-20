@@ -8,6 +8,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -46,7 +47,7 @@ func Party(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	//
 
 	if currentParty == nil {
-		user.SendText(`You are not attached to a party.`)
+		user.SendText(messaging.CategorySystem, `You are not attached to a party.`)
 		return true, nil
 	}
 
@@ -63,7 +64,7 @@ func Party(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	if currentParty.Invited(user.UserId) {
-		user.SendText(`You haven't accepted an invitation to the party.`)
+		user.SendText(messaging.CategorySystem, `You haven't accepted an invitation to the party.`)
 		return true, nil
 	}
 
@@ -132,23 +133,23 @@ func cmdPartyCreate(user *users.UserRecord, currentParty *parties.Party) (bool, 
 	// check if they are already part of a party
 	if currentParty != nil {
 		if currentParty.Invited(user.UserId) {
-			user.SendText(`You already have a pending party invite. Try <ansi fg="command">party accept/decline</ansi> first`)
+			user.SendText(messaging.CategorySystem, `You already have a pending party invite. Try <ansi fg="command">party accept/decline</ansi> first`)
 		} else if currentParty.IsLeader(user.UserId) {
-			user.SendText(`You already own a party Type <ansi fg="command">party list</ansi> for more info.`)
+			user.SendText(messaging.CategorySystem, `You already own a party Type <ansi fg="command">party list</ansi> for more info.`)
 		} else {
-			user.SendText(`You are already party of a party.`)
+			user.SendText(messaging.CategorySystem, `You are already party of a party.`)
 		}
 		return true, nil
 	}
 
 	if currentParty = parties.New(user.UserId); currentParty != nil {
 		user.EventLog.Add(`party`, `Started a new party`)
-		user.SendText(`You started a new party!`)
+		user.SendText(messaging.CategorySystem, `You started a new party!`)
 
 		dispatchPartyEvent(currentParty, `created`)
 
 	} else {
-		user.SendText(`Something went wrong.`)
+		user.SendText(messaging.CategorySystem, `Something went wrong.`)
 	}
 
 	return true, nil
@@ -156,7 +157,7 @@ func cmdPartyCreate(user *users.UserRecord, currentParty *parties.Party) (bool, 
 
 func cmdPartyInvite(user *users.UserRecord, room *rooms.Room, currentParty *parties.Party, rest string) (bool, error) {
 	if rest == `` {
-		user.SendText(`Invite who?`)
+		user.SendText(messaging.CategorySystem, `Invite who?`)
 		return true, nil
 	}
 
@@ -166,17 +167,17 @@ func cmdPartyInvite(user *users.UserRecord, room *rooms.Room, currentParty *part
 	}
 
 	if !currentParty.IsLeader(user.UserId) {
-		user.SendText(`You are not the leader of your party.`)
+		user.SendText(messaging.CategorySystem, `You are not the leader of your party.`)
 		return true, nil
 	}
 
 	target, err := actions.ResolveTargetActor(room, rest)
 	if err != nil {
-		user.SendText(fmt.Sprintf(`%s not found.`, rest))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`%s not found.`, rest))
 		return true, nil
 	}
 	if !target.IsPlayer() {
-		user.SendText(`You can only invite players to your party.`)
+		user.SendText(messaging.CategorySystem, `You can only invite players to your party.`)
 		return true, nil
 	}
 
@@ -184,15 +185,15 @@ func cmdPartyInvite(user *users.UserRecord, room *rooms.Room, currentParty *part
 	invitePlayerId := invitedUser.UserId
 
 	if invitedParty := parties.Get(invitePlayerId); invitedParty != nil {
-		user.SendText(`That player is already in a party.`)
+		user.SendText(messaging.CategorySystem, `That player is already in a party.`)
 		return true, nil
 	}
 
 	if currentParty.InvitePlayer(invitePlayerId) {
-		user.SendText(fmt.Sprintf(`You invited <ansi fg="username">%s</ansi> to your party.`, invitedUser.Character.Name))
-		invitedUser.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> invited you to their party. Type <ansi fg="command">party accept</ansi> or <ansi fg="command">party decline</ansi> to respond.`, user.Character.Name))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You invited <ansi fg="username">%s</ansi> to your party.`, invitedUser.Character.Name))
+		invitedUser.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> invited you to their party. Type <ansi fg="command">party accept</ansi> or <ansi fg="command">party decline</ansi> to respond.`, user.Character.Name))
 	} else {
-		user.SendText(`Something went wrong.`)
+		user.SendText(messaging.CategorySystem, `Something went wrong.`)
 	}
 
 	dispatchPartyEvent(currentParty, `invited`)
@@ -204,20 +205,20 @@ func cmdPartyAccept(user *users.UserRecord, currentParty *parties.Party) (bool, 
 	if currentParty.AcceptInvite(user.UserId) {
 
 		user.EventLog.Add(`party`, `Joined a party`)
-		user.SendText(`You joined the party!`)
+		user.SendText(messaging.CategorySystem, `You joined the party!`)
 		for _, uid := range currentParty.UserIds {
 			if uid == user.UserId {
 				continue
 			}
 			if u := users.GetByUserId(uid); u != nil {
-				u.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> joined the party!`, user.Character.Name))
+				u.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> joined the party!`, user.Character.Name))
 			}
 		}
 
 		dispatchPartyEvent(currentParty, `joined`)
 
 	} else {
-		user.SendText(`Something went wrong.`)
+		user.SendText(messaging.CategorySystem, `Something went wrong.`)
 	}
 	return true, nil
 }
@@ -228,12 +229,12 @@ func cmdPartyDecline(user *users.UserRecord, currentParty *parties.Party) (bool,
 	if currentParty.DeclineInvite(user.UserId) {
 
 		if u := users.GetByUserId(currentParty.LeaderUserId); u != nil {
-			u.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> declined the invitation.`, user.Character.Name))
+			u.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> declined the invitation.`, user.Character.Name))
 		}
-		user.SendText(`You decline the invitation.`)
+		user.SendText(messaging.CategorySystem, `You decline the invitation.`)
 
 	} else {
-		user.SendText(`Something went wrong.`)
+		user.SendText(messaging.CategorySystem, `Something went wrong.`)
 	}
 	return true, nil
 }
@@ -368,10 +369,10 @@ func cmdPartyList(user *users.UserRecord, currentParty *parties.Party) {
 
 		partyTableData := templates.GetTable(`Party Members`, headers, rows, formatting...)
 		partyTxt, _ := templates.Process("tables/generic", partyTableData, user.UserId)
-		user.SendText(partyTxt)
+		user.SendText(messaging.CategorySystem, partyTxt)
 
 		if isInvited {
-			user.SendText(`Type <ansi fg="command">party accept/decline</ansi> to finalize your party membership.`)
+			user.SendText(messaging.CategorySystem, `Type <ansi fg="command">party accept/decline</ansi> to finalize your party membership.`)
 		}
 	}
 }
@@ -383,19 +384,19 @@ func cmdPartyAutoattack(user *users.UserRecord, currentParty *parties.Party, res
 	if rest == `on` {
 		user.Character.SetSetting("autoattack", "")
 		if wasOn {
-			user.SendText(`You already have auto-attack enabled.`)
+			user.SendText(messaging.CategorySystem, `You already have auto-attack enabled.`)
 		} else {
-			user.SendText(`You are now auto-attacking with your party.`)
+			user.SendText(messaging.CategorySystem, `You are now auto-attacking with your party.`)
 		}
 	} else if rest == `off` {
 		user.Character.SetSetting("autoattack", "off")
 		if wasOn {
-			user.SendText(`You are no longer auto-attacking with your party.`)
+			user.SendText(messaging.CategorySystem, `You are no longer auto-attacking with your party.`)
 		} else {
-			user.SendText(`You already have auto-attacking disabled.`)
+			user.SendText(messaging.CategorySystem, `You already have auto-attacking disabled.`)
 		}
 	} else {
-		user.SendText(`Usage: <ansi fg="command">party autoattack [on/off]</ansi>`)
+		user.SendText(messaging.CategorySystem, `Usage: <ansi fg="command">party autoattack [on/off]</ansi>`)
 		return
 	}
 
@@ -410,7 +411,7 @@ func cmdPartyLeave(user *users.UserRecord, currentParty *parties.Party) (bool, e
 			dispatchPartyEvent(currentParty, `disbanded`)
 
 			user.EventLog.Add(`party`, `Disbanded your party`)
-			user.SendText(`You disbanded the party.`)
+			user.SendText(messaging.CategorySystem, `You disbanded the party.`)
 			currentParty.Disband()
 
 			return true, nil
@@ -441,9 +442,9 @@ func cmdPartyLeave(user *users.UserRecord, currentParty *parties.Party) (bool, e
 				if u := users.GetByUserId(uid); u != nil {
 					if currentParty.LeaderUserId == uid {
 						u.EventLog.Add(`party`, `Promoted to party leader`)
-						u.SendText(`You are now the leader of the party.`)
+						u.SendText(messaging.CategorySystem, `You are now the leader of the party.`)
 					} else {
-						u.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is now the leader of the party.`, newLeaderUser.Character.Name))
+						u.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> is now the leader of the party.`, newLeaderUser.Character.Name))
 					}
 				}
 			}
@@ -453,7 +454,7 @@ func cmdPartyLeave(user *users.UserRecord, currentParty *parties.Party) (bool, e
 
 		currentParty.Leave(user.UserId)
 		user.EventLog.Add(`party`, `Left the party`)
-		user.SendText(`You left the party.`)
+		user.SendText(messaging.CategorySystem, `You left the party.`)
 
 		return true, nil
 	}
@@ -462,14 +463,14 @@ func cmdPartyLeave(user *users.UserRecord, currentParty *parties.Party) (bool, e
 
 	currentParty.Leave(user.UserId)
 	user.EventLog.Add(`party`, `Left the party`)
-	user.SendText(`You left the party.`)
+	user.SendText(messaging.CategorySystem, `You left the party.`)
 
 	for _, uid := range currentParty.UserIds {
 		if uid == user.UserId {
 			continue
 		}
 		if u := users.GetByUserId(uid); u != nil {
-			u.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> left the party.`, user.Character.Name))
+			u.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> left the party.`, user.Character.Name))
 		}
 	}
 
@@ -478,7 +479,7 @@ func cmdPartyLeave(user *users.UserRecord, currentParty *parties.Party) (bool, e
 
 func cmdPartyDisband(user *users.UserRecord, currentParty *parties.Party) (bool, error) {
 	if !currentParty.IsLeader(user.UserId) {
-		user.SendText(`You are not the leader of your party.`)
+		user.SendText(messaging.CategorySystem, `You are not the leader of your party.`)
 		return true, nil
 	}
 
@@ -487,12 +488,12 @@ func cmdPartyDisband(user *users.UserRecord, currentParty *parties.Party) (bool,
 			continue
 		}
 		if u := users.GetByUserId(uid); u != nil {
-			u.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> disbanded the party.`, user.Character.Name))
+			u.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> disbanded the party.`, user.Character.Name))
 		}
 	}
 	for _, uid := range currentParty.InviteUserIds {
 		if u := users.GetByUserId(uid); u != nil {
-			u.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> disbanded the party.`, user.Character.Name))
+			u.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> disbanded the party.`, user.Character.Name))
 		}
 	}
 
@@ -500,20 +501,20 @@ func cmdPartyDisband(user *users.UserRecord, currentParty *parties.Party) (bool,
 
 	currentParty.Disband()
 	user.EventLog.Add(`party`, `Disbanded the party`)
-	user.SendText(`You disbanded the party.`)
+	user.SendText(messaging.CategorySystem, `You disbanded the party.`)
 
 	return true, nil
 }
 
 func cmdPartyKick(user *users.UserRecord, currentParty *parties.Party, rest string) {
 	if !currentParty.IsLeader(user.UserId) {
-		user.SendText(`You are not the leader of your party.`)
+		user.SendText(messaging.CategorySystem, `You are not the leader of your party.`)
 		return
 	}
 
 	kickUserId, matchUser, found := findPartyMemberByName(currentParty, rest)
 	if !found {
-		user.SendText(fmt.Sprintf(`%s not found.`, rest))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`%s not found.`, rest))
 		return
 	}
 
@@ -522,25 +523,25 @@ func cmdPartyKick(user *users.UserRecord, currentParty *parties.Party, rest stri
 	currentParty.Leave(kickUserId)
 
 	if u := users.GetByUserId(kickUserId); u != nil {
-		u.SendText(`You were kicked from the party.`)
+		u.SendText(messaging.CategorySystem, `You were kicked from the party.`)
 	}
 
 	for _, uid := range currentParty.UserIds {
 		if u := users.GetByUserId(uid); u != nil {
-			u.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> was kicked from the party.`, matchUser))
+			u.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> was kicked from the party.`, matchUser))
 		}
 	}
 }
 
 func cmdPartyPromote(user *users.UserRecord, currentParty *parties.Party, rest string) {
 	if !currentParty.IsLeader(user.UserId) {
-		user.SendText(`You are not the leader of your party.`)
+		user.SendText(messaging.CategorySystem, `You are not the leader of your party.`)
 		return
 	}
 
 	promoteUserId, matchUser, found := findPartyMemberByName(currentParty, rest)
 	if !found {
-		user.SendText(fmt.Sprintf(`%s not found.`, rest))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`%s not found.`, rest))
 		return
 	}
 
@@ -550,13 +551,13 @@ func cmdPartyPromote(user *users.UserRecord, currentParty *parties.Party, rest s
 
 	if u := users.GetByUserId(promoteUserId); u != nil {
 		u.EventLog.Add(`party`, `Promoted to party leader`)
-		u.SendText(`You have been promoted to party leader.`)
+		u.SendText(messaging.CategorySystem, `You have been promoted to party leader.`)
 	}
 
 	for _, uid := range currentParty.UserIds {
 		if uid != promoteUserId {
 			if u := users.GetByUserId(uid); u != nil {
-				u.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is now the party leader.`, matchUser))
+				u.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> is now the party leader.`, matchUser))
 			}
 		}
 	}
@@ -564,7 +565,7 @@ func cmdPartyPromote(user *users.UserRecord, currentParty *parties.Party, rest s
 
 func cmdPartyChat(user *users.UserRecord, currentParty *parties.Party, rest string) {
 	if len(rest) == 0 {
-		user.SendText(`What do you want to say?`)
+		user.SendText(messaging.CategorySystem, `What do you want to say?`)
 		return
 	}
 
@@ -574,11 +575,11 @@ func cmdPartyChat(user *users.UserRecord, currentParty *parties.Party, rest stri
 		}
 		if u := users.GetByUserId(uId); u != nil {
 			msg := fmt.Sprintf(`<ansi fg="magenta">(party)</ansi> <ansi fg="username">%s</ansi> says, "<ansi fg="yellow">%s</ansi>"`, user.Character.Name, rest)
-			u.SendText(util.SplitStringNL(msg, 80))
+			u.SendText(messaging.CategorySystem, util.SplitStringNL(msg, 80))
 		}
 	}
 
-	user.SendText(fmt.Sprintf(`<ansi fg="magenta">(party)</ansi> You say, "<ansi fg="yellow">%s</ansi>"`, rest))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="magenta">(party)</ansi> You say, "<ansi fg="yellow">%s</ansi>"`, rest))
 
 	events.AddToQueue(events.Communication{
 		SourceUserId: user.UserId,
@@ -592,7 +593,7 @@ func cmdPartyChat(user *users.UserRecord, currentParty *parties.Party, rest stri
 // the party.debug role permission (admin users always pass).
 func cmdPartyAdmin(user *users.UserRecord, rest string) (bool, error) {
 	if !user.HasRolePermission(`party.debug`) {
-		user.SendText(`You do not have <ansi fg="command">party.debug</ansi> permission.`)
+		user.SendText(messaging.CategorySystem, `You do not have <ansi fg="command">party.debug</ansi> permission.`)
 		return true, nil
 	}
 
@@ -612,8 +613,8 @@ func cmdPartyAdmin(user *users.UserRecord, rest string) (bool, error) {
 		}
 		cmdPartyAdminShow(user, idStr)
 	default:
-		user.SendText(`Usage: <ansi fg="command">party admin list-npc</ansi>`)
-		user.SendText(`       <ansi fg="command">party admin show <id></ansi>`)
+		user.SendText(messaging.CategorySystem, `Usage: <ansi fg="command">party admin list-npc</ansi>`)
+		user.SendText(messaging.CategorySystem, `       <ansi fg="command">party admin show <id></ansi>`)
 	}
 	return true, nil
 }
@@ -644,24 +645,24 @@ func cmdPartyAdminListNPC(user *users.UserRecord) {
 		))
 	}
 	if len(lines) == 0 {
-		user.SendText(`No active NPC parties.`)
+		user.SendText(messaging.CategorySystem, `No active NPC parties.`)
 		return
 	}
-	user.SendText(`NPC Parties:`)
+	user.SendText(messaging.CategorySystem, `NPC Parties:`)
 	for _, l := range lines {
-		user.SendText(l)
+		user.SendText(messaging.CategorySystem, l)
 	}
 }
 
 // cmdPartyAdminShow dumps full state of one party by PartyIdInternal().
 func cmdPartyAdminShow(user *users.UserRecord, idStr string) {
 	if idStr == `` {
-		user.SendText(`Usage: <ansi fg="command">party admin show <id></ansi>`)
+		user.SendText(messaging.CategorySystem, `Usage: <ansi fg="command">party admin show <id></ansi>`)
 		return
 	}
 	targetId, err := strconv.Atoi(idStr)
 	if err != nil || targetId <= 0 {
-		user.SendText(fmt.Sprintf(`Invalid party id: %s`, idStr))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`Invalid party id: %s`, idStr))
 		return
 	}
 
@@ -673,7 +674,7 @@ func cmdPartyAdminShow(user *users.UserRecord, idStr string) {
 		}
 	}
 	if found == nil {
-		user.SendText(fmt.Sprintf(`No party with id %d.`, targetId))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`No party with id %d.`, targetId))
 		return
 	}
 
@@ -686,7 +687,7 @@ func cmdPartyAdminShow(user *users.UserRecord, idStr string) {
 		helpStr = strconv.Itoa(found.HelpRoomId)
 	}
 
-	user.SendText(fmt.Sprintf(`Party #%d`, found.PartyIdInternal()))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`Party #%d`, found.PartyIdInternal()))
 
 	if found.Leader != nil {
 		leaderRoom := 0
@@ -694,14 +695,14 @@ func cmdPartyAdminShow(user *users.UserRecord, idStr string) {
 			leaderRoom = r.RoomId
 		}
 		if found.Leader.IsPlayer() {
-			user.SendText(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`  Leader: %s (player %d, room %d)`,
 				found.Leader.GetName(),
 				found.Leader.GetUserId(),
 				leaderRoom,
 			))
 		} else {
-			user.SendText(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`  Leader: %s (mob %d, room %d)`,
 				found.Leader.GetName(),
 				found.Leader.GetMobInstanceId(),
@@ -709,10 +710,10 @@ func cmdPartyAdminShow(user *users.UserRecord, idStr string) {
 			))
 		}
 	} else {
-		user.SendText(`  Leader: (none)`)
+		user.SendText(messaging.CategorySystem, `  Leader: (none)`)
 	}
 
-	user.SendText(`  Members:`)
+	user.SendText(messaging.CategorySystem, `  Members:`)
 	for _, m := range found.Members {
 		memberRoom := 0
 		if r := m.GetRoom(); r != nil {
@@ -723,18 +724,18 @@ func cmdPartyAdminShow(user *users.UserRecord, idStr string) {
 			leaderTag = ` [LEADER]`
 		}
 		if m.IsPlayer() {
-			user.SendText(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`    %s (player %d, room %d)%s`,
 				m.GetName(), m.GetUserId(), memberRoom, leaderTag,
 			))
 		} else {
-			user.SendText(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`    %s (mob %d, room %d)%s`,
 				m.GetName(), m.GetMobInstanceId(), memberRoom, leaderTag,
 			))
 		}
 	}
 
-	user.SendText(fmt.Sprintf(`  Home room: %s`, homeStr))
-	user.SendText(fmt.Sprintf(`  Help room: %s`, helpStr))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`  Home room: %s`, homeStr))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`  Help room: %s`, helpStr))
 }

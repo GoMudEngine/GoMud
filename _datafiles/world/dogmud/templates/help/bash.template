@@ -1,7 +1,8 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">bash</ansi>
 
-The <ansi fg="command">bash</ansi> command performs a shield bash attack during combat, using your shield
-as a weapon to damage and potentially knock your opponent to the ground.
+The <ansi fg="command">bash</ansi> command performs a shield bash attack during combat, using
+your shield as a weapon to damage and potentially knock your opponent
+to the ground.
 
 <ansi fg="yellow">Requirements:</ansi>
 
@@ -16,16 +17,22 @@ as a weapon to damage and potentially knock your opponent to the ground.
 
 <ansi fg="yellow">Mechanics:</ansi>
 
-  <ansi fg="stat">Damage:</ansi> 50% of your normal attack damage
-  <ansi fg="stat">Knockdown Chance:</ansi> 40% base, modified by opposed skill check
+  <ansi fg="stat">Damage:</ansi> Solid but not as heavy as a full weapon swing — the
+    goal is the knockdown, not the wound.
+  <ansi fg="stat">Knockdown Chance:</ansi> Decent, resolved against the defender's
+    Dexterity and combat skill. Not as reliable as trip, but
+    you hit harder getting there.
     - Attacker: Weapon Combat skill + Strength
     - Defender: Combat skill + Dexterity
-  <ansi fg="stat">Cooldown:</ansi> 5 rounds (shared with trip and kick)
+  <ansi fg="stat">Cooldown:</ansi> Shared with trip and kick.
   <ansi fg="stat">Skill:</ansi> Progresses Weapon Combat
 
-If the knockdown succeeds, your target becomes <ansi fg="red">prone</ansi> for a minimum of 1 full
-round, suffering attack and defense penalties. See <ansi fg="command">help prone</ansi> for details.
+If the knockdown succeeds, your target becomes <ansi fg="red">prone</ansi> for a short
+time, suffering attack and defense penalties. See
+<ansi fg="command">help prone</ansi> for details.
 
 <ansi fg="yellow">See Also:</ansi>
 
-  <ansi fg="command">help trip</ansi>, <ansi fg="command">help kick</ansi>, <ansi fg="command">help stand</ansi>, <ansi fg="command">help prone</ansi>, <ansi fg="command">help combat</ansi>
+  <ansi fg="command">help trip</ansi>, <ansi fg="command">help kick</ansi>,
+  <ansi fg="command">help stand</ansi>, <ansi fg="command">help prone</ansi>,
+  <ansi fg="command">help combat</ansi>

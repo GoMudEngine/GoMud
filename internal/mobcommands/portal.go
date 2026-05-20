@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/exit"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
@@ -84,7 +85,7 @@ func Portal(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, fmt.Errorf("failed to add temporary exit to room")
 	}
 
-	room.SendTextVisual(
+	room.SendTextVisual(messaging.CategorySpellManifestation,
 		fmt.Sprintf(`<ansi fg="mobname">%s</ansi> squints really hard, and a %s appears!`, mob.Character.Name, newPortal.Title),
 	)
 
@@ -92,7 +93,7 @@ func Portal(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	newPortal.RoomId = mob.Character.RoomId
 	targetRoom.AddTemporaryExit(newPortalExitName, newPortal)
 
-	room.SendTextVisual(
+	room.SendTextVisual(messaging.CategorySpellManifestation,
 		fmt.Sprintf(`A %s appears!`, newPortal.Title),
 	)
 

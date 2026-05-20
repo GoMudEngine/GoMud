@@ -6,13 +6,15 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -52,41 +54,41 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	switch {
 	case result.RecipeNotFound:
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="red">No recipe found for "%s". Type <ansi fg="cyan-bold">craft list</ansi> to see available recipes.</ansi>`,
 			rest))
 		return true, nil
 
 	case result.RecipeNotKnown:
-		user.SendText(`<ansi fg="red">You don't know that recipe yet. Keep crafting to discover new ones!</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You don't know that recipe yet. Keep crafting to discover new ones!</ansi>`)
 		return true, nil
 
 	case result.AlreadyCrafting:
-		user.SendText(`<ansi fg="red">You are already working on something. Finish or be interrupted first.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You are already working on something. Finish or be interrupted first.</ansi>`)
 		return true, nil
 
 	case result.SkillTooLow:
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="red">Your %s skill is too low (requires %d, you have %d).</ansi>`,
 			result.SkillName, result.SkillMinimum, result.SkillLevel))
 		return true, nil
 
 	case result.WrongStation:
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="red">You need to be at a %s to craft that.</ansi>`,
 			result.StationNeeded))
 		return true, nil
 
 	case result.MissingIngredients:
-		user.SendText(fmt.Sprintf(`<ansi fg="red">You are missing: %s.</ansi>`, result.MissingTag))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">You are missing: %s.</ansi>`, result.MissingTag))
 		return true, nil
 
 	case result.ImmediateComplete:
-		user.SendText(fmt.Sprintf(`<ansi fg="green">%s</ansi>`, result.SuccessMsg))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="green">%s</ansi>`, result.SuccessMsg))
 		return true, nil
 
 	case result.Initiated:
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="yellow">You begin crafting %s... (%s)</ansi>`,
 			result.RecipeName, craftTimeDesc(result.TimeRounds)))
 
@@ -108,20 +110,20 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 func craftEnchanting(rest string, recipe *crafting.RecipeSpec, user *users.UserRecord, room *rooms.Room) (bool, error) {
 	// Known-recipe gate
 	if !user.Character.HasRecipe(recipe.RecipeId) {
-		user.SendText(`<ansi fg="red">You don't know that recipe yet. Keep crafting to discover new ones!</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You don't know that recipe yet. Keep crafting to discover new ones!</ansi>`)
 		return true, nil
 	}
 
 	// Already crafting?
 	if user.Character.IsCrafting() {
-		user.SendText(`<ansi fg="red">You are already working on something. Finish or be interrupted first.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You are already working on something. Finish or be interrupted first.</ansi>`)
 		return true, nil
 	}
 
 	// Skill gate
 	skillLevel := user.Character.GetSkillLevel(skills.SkillTag(recipe.Skill))
 	if skillLevel < recipe.SkillMinimum {
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="red">Your %s skill is too low (requires %d, you have %d).</ansi>`,
 			recipe.Skill, recipe.SkillMinimum, skillLevel))
 		return true, nil
@@ -129,7 +131,7 @@ func craftEnchanting(rest string, recipe *crafting.RecipeSpec, user *users.UserR
 
 	// Station check
 	if recipe.Station != "" && room.Station != recipe.Station {
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="red">You need to be at a %s to craft that.</ansi>`,
 			strings.ReplaceAll(recipe.Station, "_", " ")))
 		return true, nil
@@ -138,7 +140,7 @@ func craftEnchanting(rest string, recipe *crafting.RecipeSpec, user *users.UserR
 	// Ingredient check
 	ok, missing := crafting.HasIngredients(user.Character.Items, user.Character.ComponentItems, recipe)
 	if !ok {
-		user.SendText(fmt.Sprintf(`<ansi fg="red">You are missing: %s.</ansi>`, missing))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">You are missing: %s.</ansi>`, missing))
 		return true, nil
 	}
 
@@ -155,12 +157,12 @@ func craftEnchanting(rest string, recipe *crafting.RecipeSpec, user *users.UserR
 
 	slotLabel, targetItem, errMsg := resolveEnchantSlot(&user.Character.Equipment, recipe.TargetType, specifier)
 	if errMsg != "" {
-		user.SendText(fmt.Sprintf(`<ansi fg="red">%s</ansi>`, errMsg))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">%s</ansi>`, errMsg))
 		return true, nil
 	}
 
 	if targetItem == nil {
-		user.SendText(`<ansi fg="red">Could not find a valid item in that slot.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">Could not find a valid item in that slot.</ansi>`)
 		return true, nil
 	}
 
@@ -170,13 +172,23 @@ func craftEnchanting(rest string, recipe *crafting.RecipeSpec, user *users.UserR
 		return true, nil
 	}
 
-	// Start multi-round enchanting with the resolved slot
-	user.Character.CraftingState = &characters.CraftingState{
+	// Start multi-round enchanting with the resolved slot.
+	craftData := activity.CraftingData{
 		RecipeId:    recipe.RecipeId,
 		RoundsTotal: recipe.TimeRounds,
 		TargetSlot:  slotLabel,
 	}
-	user.SendText(fmt.Sprintf(
+	if err := user.Character.Activity.TransitionToCrafting(
+		craftData,
+		state.TransitionReason{
+			Trigger: activity.TriggerCraftBegin,
+			Actor:   state.ActorRef{UserId: user.UserId},
+		},
+	); err != nil {
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You are already working on something. Finish or be interrupted first.</ansi>`)
+		return true, nil
+	}
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`<ansi fg="yellow">You begin enchanting <ansi fg="itemname">%s</ansi>... (%s)</ansi>`,
 		targetItem.DisplayName(), craftTimeDesc(recipe.TimeRounds)))
 
@@ -195,7 +207,7 @@ func craftEnchanting(rest string, recipe *crafting.RecipeSpec, user *users.UserR
 func craftList(user *users.UserRecord, room *rooms.Room) bool {
 	all := crafting.GetAll()
 	if len(all) == 0 {
-		user.SendText(`<ansi fg="yellow">No crafting recipes are currently available.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="yellow">No crafting recipes are currently available.</ansi>`)
 		return true
 	}
 
@@ -208,7 +220,7 @@ func craftList(user *users.UserRecord, room *rooms.Room) bool {
 	}
 
 	if len(known) == 0 {
-		user.SendText(`<ansi fg="yellow">You haven't discovered any crafting recipes yet.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="yellow">You haven't discovered any crafting recipes yet.</ansi>`)
 		return true
 	}
 
@@ -223,8 +235,8 @@ func craftList(user *users.UserRecord, room *rooms.Room) bool {
 	}
 	sort.Strings(skillNames)
 
-	user.SendText(``)
-	user.SendText(`<ansi fg="cyan-bold"> .:. Crafting Recipes .:.</ansi>`)
+	user.SendText(messaging.CategorySystem, ``)
+	user.SendText(messaging.CategorySystem, `<ansi fg="cyan-bold"> .:. Crafting Recipes .:.</ansi>`)
 
 	totalKnown := 0
 	grandTotal := 0
@@ -245,8 +257,8 @@ func craftList(user *users.UserRecord, room *rooms.Room) bool {
 
 		completionDesc := recipeCompletionTier(knownCount, len(allForSkill))
 
-		user.SendText(``)
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, ``)
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="yellow">%s</ansi> <ansi fg="white">(%s)</ansi> — <ansi fg="black-bold">%s</ansi>`,
 			titleCase(strings.ReplaceAll(skillName, "-", " ")), skills.GetSkillRankDescription(skillLevel), completionDesc))
 
@@ -268,11 +280,11 @@ func craftList(user *users.UserRecord, room *rooms.Room) bool {
 				displayName = fmt.Sprintf("%s (%s)", r.Name, r.TargetType)
 			}
 			if reason != "" {
-				user.SendText(fmt.Sprintf(
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(
 					`  <ansi fg="red">[%s]</ansi> <ansi fg="white">%-26s</ansi> — %s  <ansi fg="red">%s</ansi><ansi fg="dark-cyan">%s, %s</ansi>`,
 					indicator, displayName, ingredientList, reason, stationStr, craftTimeDesc(r.TimeRounds)))
 			} else {
-				user.SendText(fmt.Sprintf(
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(
 					`  <ansi fg="green">[%s]</ansi> <ansi fg="white">%-26s</ansi> — %s  <ansi fg="dark-cyan">%s, %s</ansi>`,
 					indicator, displayName, ingredientList, stationStr, craftTimeDesc(r.TimeRounds)))
 			}
@@ -281,9 +293,9 @@ func craftList(user *users.UserRecord, room *rooms.Room) bool {
 
 	// Overall completion
 	overallDesc := recipeCompletionTier(totalKnown, grandTotal)
-	user.SendText(``)
-	user.SendText(fmt.Sprintf(`<ansi fg="cyan">Overall recipe knowledge: %s</ansi>`, overallDesc))
-	user.SendText(``)
+	user.SendText(messaging.CategorySystem, ``)
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="cyan">Overall recipe knowledge: %s</ansi>`, overallDesc))
+	user.SendText(messaging.CategorySystem, ``)
 	return true
 }
 
@@ -338,7 +350,7 @@ func completeCraft(user *users.UserRecord, recipe *crafting.RecipeSpec) {
 	user.Character.Items, user.Character.ComponentItems = crafting.ConsumeIngredients(user.Character.Items, user.Character.ComponentItems, recipe)
 	newItem := items.New(recipe.Output.ItemId)
 	user.Character.StoreItem(newItem)
-	user.SendText(fmt.Sprintf(`<ansi fg="green">%s</ansi>`, recipe.SuccessMessage))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="green">%s</ansi>`, recipe.SuccessMessage))
 }
 
 // titleCase capitalises the first letter of each space-separated word.

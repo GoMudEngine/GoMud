@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -16,7 +17,7 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) < 1 {
-		user.SendText("Unlock what?")
+		user.SendText(messaging.CategorySystem, "Unlock what?")
 		return true, nil
 	}
 
@@ -35,7 +36,7 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		container := room.Containers[containerName]
 
 		if !container.Lock.IsLocked() {
-			user.SendText("That's not locked.")
+			user.SendText(messaging.CategorySystem, "That's not locked.")
 			return true, nil
 		}
 
@@ -54,8 +55,8 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			room.PlaySound(`change`, `other`)
 
-			user.SendText(fmt.Sprintf(`You use a key to unlock the <ansi fg="container">%s</ansi>.`, containerName))
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName), user.UserId)
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You use a key to unlock the <ansi fg="container">%s</ansi>.`, containerName))
+			room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName), user.UserId)
 		} else if hasBackpackKey {
 
 			itmSpec := backpackKeyItm.GetSpec()
@@ -76,12 +77,12 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			room.PlaySound(`change`, `other`)
 
-			user.SendText(fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="container">%s</ansi>, and add it to your key ring for the future.`, itmSpec.Name, containerName))
-			room.SendTextVisual(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="container">%s</ansi>, and add it to your key ring for the future.`, itmSpec.Name, containerName))
+			room.SendTextVisual(messaging.CategoryMobEmote, 
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName),
 				user.UserId)
 		} else {
-			user.SendText(`You do not have the key for that. Maybe you could <ansi fg="command">picklock</ansi> the lock.`)
+			user.SendText(messaging.CategorySystem, `You do not have the key for that. Maybe you could <ansi fg="command">picklock</ansi> the lock.`)
 		}
 
 		return true, nil
@@ -91,7 +92,7 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		exitInfo, _ := room.GetExitInfo(exitName)
 
 		if !exitInfo.Lock.IsLocked() {
-			user.SendText("That's not locked.")
+			user.SendText(messaging.CategorySystem, "That's not locked.")
 			return true, nil
 		}
 
@@ -110,8 +111,8 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			room.PlaySound(`change`, `other`)
 
-			user.SendText(fmt.Sprintf(`You use a key to unlock the <ansi fg="exit">%s</ansi> lock.`, exitName))
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You use a key to unlock the <ansi fg="exit">%s</ansi> lock.`, exitName))
+			room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
 		} else if hasBackpackKey {
 
 			itmSpec := backpackKeyItm.GetSpec()
@@ -132,19 +133,19 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			room.PlaySound(`change`, `other`)
 
-			user.SendText(fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="exit">%s</ansi> exit, and add it to your key ring for the future.`, itmSpec.Name, exitName))
-			room.SendTextVisual(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="exit">%s</ansi> exit, and add it to your key ring for the future.`, itmSpec.Name, exitName))
+			room.SendTextVisual(messaging.CategoryMobEmote, 
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName),
 				user.UserId)
 		} else {
-			user.SendText(`You do not have the key for that. Maybe you could <ansi fg="command">picklock</ansi> the lock.`)
+			user.SendText(messaging.CategorySystem, `You do not have the key for that. Maybe you could <ansi fg="command">picklock</ansi> the lock.`)
 		}
 
 		return true, nil
 
 	}
 
-	user.SendText("There is no such exit or container.")
+	user.SendText(messaging.CategorySystem, "There is no such exit or container.")
 	return true, nil
 
 }

@@ -2,6 +2,11 @@
 
 The <ansi fg="command">flee</ansi> command attempts to run away from combat into another area.
 
-If successful, foes will not chase you. You must escape every foe attacking you, however.
+If successful, foes will not chase you. You must escape every foe
+attacking you, however.
 
-The chance of success is <ansi fg="red">30 + (fleeSpeed / (fleeSpeed+attackerSpeed) * 70)</ansi>
+Your chance of escaping depends on how fast you are relative to
+each attacker — a quicker combatant has a much better chance of
+breaking away. You cannot flee while grappled or prone.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help grapple</ansi>, <ansi fg="command">help combat</ansi>

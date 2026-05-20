@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/devtools"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -40,11 +41,11 @@ func Devtool(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		zoneName := strings.Join(args[1:], " ")
 		report, issueCount, err := devtools.CheckZoneConsistency(zoneName)
 		if err != nil {
-			user.SendText(fmt.Sprintf("Error: %s", err.Error()))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf("Error: %s", err.Error()))
 			return true, nil
 		}
-		user.SendText(report)
-		user.SendText(fmt.Sprintf("Total issues: %d", issueCount))
+		user.SendText(messaging.CategorySystem, report)
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Total issues: %d", issueCount))
 
 	case "makezone":
 		if len(args) < 4 {
@@ -55,17 +56,17 @@ func Devtool(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		width, wErr := strconv.Atoi(args[len(args)-2])
 		height, hErr := strconv.Atoi(args[len(args)-1])
 		if wErr != nil || hErr != nil {
-			user.SendText("Width and height must be integers.")
+			user.SendText(messaging.CategorySystem, "Width and height must be integers.")
 			showDevtoolHelp(user)
 			return true, nil
 		}
 		zoneName := strings.Join(args[1:len(args)-2], " ")
 		firstId, lastId, err := devtools.GenerateGrid(zoneName, width, height)
 		if err != nil {
-			user.SendText(fmt.Sprintf("Error: %s", err.Error()))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf("Error: %s", err.Error()))
 			return true, nil
 		}
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			"Created %d rooms in zone %q (room IDs %d–%d).",
 			width*height, zoneName, firstId, lastId,
 		))
@@ -78,20 +79,20 @@ func Devtool(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		}
 		zoneA, roomIdA, err := parseZoneRoom(args[1])
 		if err != nil {
-			user.SendText(fmt.Sprintf("Error parsing first arg: %s", err.Error()))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf("Error parsing first arg: %s", err.Error()))
 			return true, nil
 		}
 		direction := strings.ToLower(args[2])
 		zoneB, roomIdB, err := parseZoneRoom(args[3])
 		if err != nil {
-			user.SendText(fmt.Sprintf("Error parsing third arg: %s", err.Error()))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf("Error parsing third arg: %s", err.Error()))
 			return true, nil
 		}
 		if err := devtools.LinkRooms(zoneA, roomIdA, direction, zoneB, roomIdB); err != nil {
-			user.SendText(fmt.Sprintf("Error: %s", err.Error()))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf("Error: %s", err.Error()))
 			return true, nil
 		}
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			"Linked room %d (%s) %s ↔ room %d (%s).",
 			roomIdA, zoneA, direction, roomIdB, zoneB,
 		))
@@ -103,7 +104,7 @@ func Devtool(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		}
 		jsonInput := strings.Join(args[1:], " ")
 		result := devtools.HandleJSON(jsonInput)
-		user.SendText(result)
+		user.SendText(messaging.CategorySystem, result)
 
 	case "pressure":
 		// Stage 17.2: Report current moon phases and their stat effects.
@@ -118,7 +119,7 @@ func Devtool(rest string, user *users.UserRecord, room *rooms.Room, flags events
 			}
 			return ""
 		}
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			"Moon phases (0.0=new, 0.5=quarter, 1.0=full):\n"+
 				"  Swiftmoon  : %.3f  → DEX/STR %s%.1f%%\n"+
 				"  Wanderer   : %.3f  → VIT/WIL %s%.1f%%\n"+
@@ -131,7 +132,7 @@ func Devtool(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		))
 
 	default:
-		user.SendText(fmt.Sprintf("Unknown subcommand: %q", subCmd))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Unknown subcommand: %q", subCmd))
 		showDevtoolHelp(user)
 	}
 
@@ -141,7 +142,7 @@ func Devtool(rest string, user *users.UserRecord, room *rooms.Room, flags events
 // showDevtoolHelp renders and sends the devtool help template to the user.
 func showDevtoolHelp(user *users.UserRecord) {
 	infoOutput, _ := templates.Process("admincommands/help/command.devtool", nil, user.UserId)
-	user.SendText(infoOutput)
+	user.SendText(messaging.CategorySystem, infoOutput)
 }
 
 // parseZoneRoom splits "zoneName/roomId" into its components.

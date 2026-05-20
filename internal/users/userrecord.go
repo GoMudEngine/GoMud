@@ -13,9 +13,11 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/prompt"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -45,13 +47,12 @@ type UserRecord struct {
 	IsAI           bool                  `yaml:"isai,omitempty"`         // Flagged as an AI account
 	ScreenReader   bool                  `yaml:"screenreader,omitempty"` // Are they using a screen reader? (We should remove excess symbols)
 	AsciiMode      bool                  `yaml:"asciimode,omitempty"`    // Convert UTF-8 decorative chars to ASCII for legacy clients
+	LineWidth      int                   `yaml:"linewidth,omitempty"`    // Column width for line wrapping; 0 = default 80
 	EmailAddress   string                `yaml:"emailaddress,omitempty"` // Email address (if provided)
 	TipsComplete   map[string]bool       `yaml:"tipscomplete,omitempty"` // Tips the user has followed/completed so they can be quiet
 	EventLog        UserLog               `yaml:"-"` // Do not retain in user file (for now)
 	LastMusic       string                `yaml:"-"` // Keeps track of the last music that was played
 	LastWhisperFrom int                   `yaml:"-"` // UserId of last person who whispered to us (don't save)
-	ManualAFK       bool                  `yaml:"-"` // Manually set AFK status (don't save)
-	AFKMessage      string                `yaml:"-"` // Optional AFK message (don't save)
 	connectionId   uint64
 	unsentText     string
 	suggestText    string
@@ -64,8 +65,6 @@ type UserRecord struct {
 }
 
 func NewUserRecord(userId int, connectionId uint64) *UserRecord {
-
-	c := configs.GetGamePlayConfig()
 
 	u := &UserRecord{
 		connectionId:   connectionId,
@@ -80,10 +79,6 @@ func NewUserRecord(userId int, connectionId uint64) *UserRecord {
 		connectionTime: time.Now(),
 		tempDataStore:  make(map[string]any),
 		EventLog:       UserLog{},
-	}
-
-	if c.Death.PermaDeath {
-		u.Character.ExtraLives = int(c.LivesStart)
 	}
 
 	return u
@@ -162,6 +157,10 @@ func (u *UserRecord) ShorthandId() string {
 
 func (u *UserRecord) SetLastInputRound(rdNum uint64) {
 	u.lastInputRound = rdNum
+	// Note: the Idle/AFK → Active wake fires from usercommands.TryCommand
+	// (per-command entry point) so it can branch on which command is
+	// being dispatched. The `afk` command toggles its own state and must
+	// not be auto-cleared before its handler runs.
 }
 
 func (u *UserRecord) GetLastInputRound() uint64 {
@@ -286,13 +285,33 @@ func (u *UserRecord) AddBuff(buffId int, source string) {
 
 }
 
-func (u *UserRecord) SendText(txt string) {
-
+// SendText delivers an audio-channel message to this user. See
+// rooms.SendText for channel semantics. CategoryDefault keeps prose
+// uncolored.
+func (u *UserRecord) SendText(cat messaging.Category, txt string) {
+	rendered := messaging.RenderForRecipient(messaging.RenderInput{
+		Category:  cat,
+		Text:      txt,
+		Channel:   messaging.ChannelAudio,
+		LineWidth: u.GetLineWidth(),
+	})
+	if rendered == "" {
+		return
+	}
 	events.AddToQueue(events.Message{
 		UserId: u.UserId,
-		Text:   txt + "\n",
+		Text:   rendered + "\n",
 	})
+}
 
+// GetLineWidth returns the user's configured line width, falling back
+// to 80 if unset or invalid. The messaging pipeline reads this for
+// per-recipient wrapping.
+func (u *UserRecord) GetLineWidth() int {
+	if u == nil || u.LineWidth <= 0 {
+		return 80
+	}
+	return u.LineWidth
 }
 
 func (u *UserRecord) SendWebClientCommand(txt string) {
@@ -525,10 +544,6 @@ func (u *UserRecord) ClearPrompt() {
 }
 
 func (u *UserRecord) GetOnlineInfo() OnlineInfo {
-	c := configs.GetTimingConfig()
-	afkRounds := uint64(c.SecondsToRounds(int(configs.GetNetworkConfig().AfkSeconds)))
-	roundNow := util.GetRoundCount()
-
 	connTime := u.GetConnectTime()
 
 	oTime := time.Since(connTime)
@@ -546,9 +561,10 @@ func (u *UserRecord) GetOnlineInfo() OnlineInfo {
 		timeStr = fmt.Sprintf(`%ds`, s)
 	}
 
-	isAfk := u.ManualAFK
-	if !isAfk && afkRounds > 0 && roundNow-u.GetLastInputRound() >= afkRounds {
-		isAfk = true
+	// Chunk 5 (Presence): IsAFK shim reads the canonical Presence state.
+	isAfk := false
+	if u.Character != nil && u.Character.Presence != nil {
+		isAfk = u.Character.Presence.State() == presence.AFK
 	}
 
 	isAI := false

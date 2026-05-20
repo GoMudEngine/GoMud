@@ -762,3 +762,76 @@ func TestBuff_Expired(t *testing.T) {
 		})
 	}
 }
+
+// ── T19: Behavior Matrix PB-330 / PB-332 ─────────────────────────────────────
+
+// PB-330: Broken-limb buff (id 83) statmod: -25 str, -25 dex, -10 vit.
+// Seeds buff 83 into the registry directly (bypasses the YAML loader) and
+// verifies that a Buff carrying id 83 returns the expected StatMod values.
+func TestPB_330_BrokenLimbBuff_StatModApplied(t *testing.T) {
+	orig := buffs
+	buffs = map[int]*BuffSpec{
+		83: {
+			BuffId:        83,
+			Name:          "Broken Limb",
+			Description:   "A grapple submission cranked the joint past its limit.",
+			TriggerCount:  900,
+			RoundInterval: 1,
+			StatMods: statmods.StatMods{
+				"strength":  -25,
+				"dexterity": -25,
+				"vitality":  -10,
+			},
+		},
+	}
+	defer func() { buffs = orig }()
+
+	b := &Buff{BuffId: 83, TriggersLeft: 900}
+
+	assert.Equal(t, -25, b.StatMod("strength"),
+		"PB-330: broken-limb buff must apply -25 strength")
+	assert.Equal(t, -25, b.StatMod("dexterity"),
+		"PB-330: broken-limb buff must apply -25 dexterity")
+	assert.Equal(t, -10, b.StatMod("vitality"),
+		"PB-330: broken-limb buff must apply -10 vitality")
+	assert.Equal(t, 0, b.StatMod("charisma"),
+		"PB-330: broken-limb buff must not affect charisma")
+}
+
+// PB-332: Broken-limb buff expires naturally via round-tick decrement.
+// Seeds buff 83 and verifies that a Buffs instance carrying it decrements
+// TriggersLeft each round and eventually reaches TriggersLeftExpired (0).
+func TestPB_332_BrokenLimbBuff_ExpiresNaturally(t *testing.T) {
+	orig := buffs
+	buffs = map[int]*BuffSpec{
+		83: {
+			BuffId:        83,
+			Name:          "Broken Limb",
+			TriggerCount:  3, // shortened to 3 for test speed (real=900)
+			RoundInterval: 1,
+			StatMods:      statmods.StatMods{"strength": -25},
+		},
+	}
+	defer func() { buffs = orig }()
+
+	bs := New()
+	bs.AddBuff(83, false)
+
+	// Confirm buff is present and not yet expired.
+	assert.False(t, bs.List[0].Expired(),
+		"PB-332: broken-limb buff must not be expired on application")
+
+	// Tick 3 rounds — each trigger should decrement TriggersLeft.
+	for i := 0; i < 3; i++ {
+		bs.Trigger()
+	}
+
+	// After TriggerCount triggers, buff should be expired.
+	assert.True(t, bs.List[0].Expired(),
+		"PB-332: broken-limb buff must be expired after all trigger rounds elapsed")
+
+	// Prune confirms it can be cleaned up.
+	pruned := bs.Prune()
+	assert.Len(t, pruned, 1, "PB-332: expired broken-limb buff should be pruned")
+	assert.Empty(t, bs.List, "PB-332: buff list should be empty after prune")
+}

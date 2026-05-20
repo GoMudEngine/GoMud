@@ -3,10 +3,10 @@
 colors:
   table-title: 2
   userid: black
-  username: 11 # Bright yellow
+  username: 153       # cool light blue (was 11 / bright yellow)
   username-aggro: 124
   username-downed: 8 # Bright black
-  mobname: 51
+  mobname:  180       # warm tan (was 51 / bright cyan)
   mobname-aggro: 9 # Bright red
   mobname-downed: 124
   mobname-dup2: 45        # magenta-cyan
@@ -18,7 +18,7 @@ colors:
   mobname-dup4: 39        # blue-cyan
   mobname-dup4-aggro: 167 # dusky red
   mobname-dup4-downed: 131
-  petname: 215
+  petname:  108       # teal-cyan (was 215 / orange)
   spellname: magenta
   spell-text: 183
   nameprefix-pet: 10
@@ -182,3 +182,87 @@ colors:
   md-em: 208
   md-hr1: 4
   md-hr2: 4
+
+# === Messaging Framework Categories ===
+# Spec: docs/superpowers/specs/2026-05-19-messaging-framework-design.md
+# Test these in-game; values are first-pass approximations.
+
+# Combat — damage bands (each band uses a visually distinct code so
+# multi-weapon characters see per-swing colors)
+  hit-melee: 173         # dusty rose — slashing / cleaving / stabbing (swords, spears)
+  hit-blunt: 130         # warm orange-brown — bludgeoning / slam (hammers, maces)
+  hit-natural-sharp: 95  # dark red-brown — claws / bite / sting / gore
+  hit-ranged: 110        # light sky blue — shooting / whipping (bows, whips)
+  hit-caster: 146        # lavender — wand / sceptre / staff melee
+  hit-unarmed: 215       # sandy brown — explicit unarmed / fist
+
+# Combat — defense
+  dodge: 108
+  parry: 143
+  block: 71
+
+# Combat — grapple / submission / death
+  grapple-flow: 94
+  grapple-high: 130
+  submission: 169
+  death: 8
+
+# Combat — special moves
+  surprise: 9
+  kick: 11
+  trip: 214
+  bash: 172
+  rally: 14
+  warcry: 9
+  taunt-success: 169
+  taunt-resist: 2
+  taunt-failure: 11
+
+# Combat — anonymized observer (infrared)
+  combat-anon: 196
+
+# Spells — fold + 5 schools + disruption
+  spell-fold: 152          # pale steel-cyan — cast/fold preparation
+  spell-disruption: 214    # warning amber — fizzle/backfire/deflect
+  spell-elemental: 160     # red3 — fire/ice/lightning damage (distinct red, not the warm-orange shared with gold)
+  spell-enhancement: 179   # warm gold — buffs / shields / enchantments
+  spell-mental: 146        # lavender — psionics / charm / illusion
+  spell-vital: 108         # sage mint — heal / cure / restore
+  spell-manifestation: 169 # rose pink — summon / raise / bind
+
+# Social
+  speech: 111
+  whisper: 139
+  shout: 215
+  ooc: 67
+  npc-dialogue: 180
+  dialogue-hint: 65
+  emote: 144
+  mob-idle: 144
+  mob-emote: 137
+
+# System / meta
+  broadcast: 75
+  tip: 108
+  system: 8
+  error: 9
+  warning: 214
+  skill-progress: 179
+  login: 108
+  logout: 8
+
+# Environment
+  # room-description omitted — already defined above (line 52) as 15.
+  # Framework callers will use the existing alias unchanged.
+  room-entry: 7
+  room-exit: 7
+  weather: 75
+  time-of-day: 179
+
+# Other
+  loot: 7
+  equipment: 7
+  buff-apply: 109        # light steel blue — calmer than the old bright cyan so it doesn't dominate spell-school colors when both fire on a buff spell
+  buff-expire: 109
+  mutation: 146
+  toxin: 130

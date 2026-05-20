@@ -5,6 +5,9 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -93,7 +96,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 				// a real target mob that's not prone.
 				targetMob := &mobs.Mob{InstanceId: 200}
 				targetMob.Character.Name = "Target"
-				targetMob.Character.CombatPosition = characters.PositionStanding
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
 				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
 				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
 			},
@@ -103,7 +106,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 				setCraftingForTest(m)
 				targetMob := &mobs.Mob{InstanceId: 201}
 				targetMob.Character.Name = "Target"
-				targetMob.Character.CombatPosition = characters.PositionStanding
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
 				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
 				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
 			},
@@ -113,7 +116,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 				m.Character.Cooldowns = characters.Cooldowns{"special-move": 3}
 				targetMob := &mobs.Mob{InstanceId: 202}
 				targetMob.Character.Name = "Target"
-				targetMob.Character.CombatPosition = characters.PositionStanding
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
 				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
 				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
 			},
@@ -148,7 +151,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 				setCraftingForTest(m)
 				targetMob := &mobs.Mob{InstanceId: 204}
 				targetMob.Character.Name = "Target"
-				targetMob.Character.CombatPosition = characters.PositionStanding
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
 				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
 				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
 			},
@@ -158,7 +161,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 				m.Character.Cooldowns = characters.Cooldowns{"special-move": 3}
 				targetMob := &mobs.Mob{InstanceId: 205}
 				targetMob.Character.Name = "Target"
-				targetMob.Character.CombatPosition = characters.PositionStanding
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
 				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
 				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
 			},
@@ -298,8 +301,9 @@ func runExecuteAndReadFlag(cmd string, actor Actor, flag string) bool {
 
 // setCraftingForTest puts a mob into crafting state.
 func setCraftingForTest(m *mobs.Mob) {
-	m.Character.CraftingState = &characters.CraftingState{
-		RecipeId:    "test-recipe",
-		RoundsTotal: 5,
-	}
+	m.Character.Activity = activity.NewMachine()
+	_ = m.Character.Activity.TransitionToCrafting(
+		activity.CraftingData{RecipeId: "test-recipe", RoundsTotal: 5},
+		state.TransitionReason{Trigger: activity.TriggerCraftBegin},
+	)
 }

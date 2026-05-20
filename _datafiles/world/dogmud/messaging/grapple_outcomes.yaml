@@ -1,0 +1,964 @@
+# Grapple outcome flavor templates for chunk 4b-fixup.
+# See docs/superpowers/specs/2026-05-18-state-chunk-4b-fixup-position-
+# advancement-design.md §7 for the authoring rubric.
+#
+# Template substitution variables:
+#   {controllerName} - the controller side's display name
+#   {controlledName} - the controlled side's display name
+#
+# Speaker variants:
+#   controller - second-person to the controller side
+#   controlled - second-person to the controlled side
+#   observers  - third-person to the room
+#
+# This file is loaded at boot by internal/grapplemessaging.
+# Skeleton committed in T6; full templates land in T8-T13.
+
+advancements:
+  # ── Clinch exits ────────────────────────────────────────────────────────
+  clinch_to_mount:
+    controller:
+      - "You wrench the underhook, drive forward, and ride them down into\
+        \ mount."
+      - "A snap-down sets it up — you sprawl over the shoulder and slide\
+        \ into mount before they can recover."
+      - "Their stance breaks. You drag them flat and climb on top, knees\
+        \ high in mount."
+    controlled:
+      - "{controllerName} wrenches the underhook and rides you down. The\
+        \ ceiling spins overhead — they're mounted on your chest."
+      - "You feel the snap-down too late. Their weight crashes onto your\
+        \ sternum and the world goes vertical."
+      - "Your stance crumbles. {controllerName}'s knees hammer up under\
+        \ your armpits — full mount."
+    observers:
+      - "{controllerName} wrenches an underhook and rides {controlledName}\
+        \ down into mount."
+      - "{controllerName} snaps {controlledName} down and climbs into mount\
+        \ before they can post."
+      - "{controlledName}'s stance breaks; {controllerName} drags them flat\
+        \ and mounts them."
+
+  clinch_to_sidecontrol:
+    controller:
+      - "You overbalance them with a hip throw feint, catch them on the way\
+        \ down, and land in side control."
+      - "A two-on-one on the wrist lets you lever them sideways; they hit\
+        \ the ground and you sprawl across the chest."
+      - "You trip the near leg and follow them down, chest-to-chest, cutting\
+        \ off the hip with your weight."
+    controlled:
+      - "{controllerName} levers your wrist outward — your hip buckles and\
+        \ you land hard. Their weight pins your upper chest before you can\
+        \ roll."
+      - "A trip catches your trailing foot mid-step. You go down sideways\
+        \ and {controllerName} is already stacking across you."
+      - "You lose the underhook battle. {controllerName} dumps you to the\
+        \ floor and settles their hips perpendicular to yours — side control."
+    observers:
+      - "{controllerName} leverages a wrist and sweeps {controlledName} to\
+        \ the mat, settling into side control."
+      - "{controllerName} trips {controlledName}'s near leg and follows them\
+        \ down chest-to-chest."
+      - "{controlledName} hits the ground off a hip feint; {controllerName}\
+        \ drops into side control before they can recover."
+
+  clinch_to_background:
+    controller:
+      - "You pummel inside and spin behind them, both hands locking on the\
+        \ waist. Their back is yours before they can pivot."
+      - "A deep underhook lets you rotate around their outside. You're at\
+        \ their back, hands clasped at the belly."
+      - "You snap them forward at the neck, and as they duck they hand you\
+        \ the back. You slap in a seatbelt grip and drag them down."
+    controlled:
+      - "{controllerName} spins inside your guard and suddenly they're\
+        \ behind you, arms cinched around your waist."
+      - "You give the underhook, they take the back — it happens in one\
+        \ fluid rotation and now {controllerName}'s hands are clasped at\
+        \ your belly."
+      - "The snap-down doubles you over and {controllerName} flows behind\
+        \ you before you can stand back up."
+    observers:
+      - "{controllerName} pummels inside and spins behind {controlledName},\
+        \ locking both hands at the waist."
+      - "{controllerName} sweeps around the outside underhook and takes\
+        \ {controlledName}'s back standing."
+      - "{controlledName} is snapped forward; {controllerName} flows behind\
+        \ them and slaps on a seatbelt grip."
+
+  clinch_to_backstanding:
+    controller:
+      - "You body-lock from behind, lifting slightly to break their base,\
+        \ then drag them back against you. They're upright but your hooks\
+        \ are hunting."
+      - "A duck-under puts you behind them on one knee. You stand up into\
+        \ a rear clinch, both forearms framing their ribs."
+      - "You slip the double-collar and rotate around their hip — one\
+        \ circling step and you're at their back, chest pressed to their\
+        \ spine."
+    controlled:
+      - "A duck-under steals your hip. {controllerName} rises behind you,\
+        \ forearms boxing your ribs. You're standing but helpless."
+      - "{controllerName} body-locks from behind and your balance shifts\
+        \ back — you're on your heels, their hands are clasped at your\
+        \ sternum."
+      - "You feel the slip before you see it. {controllerName} is behind\
+        \ you now, rear clinch locked, waiting for the moment to drag you\
+        \ down."
+    observers:
+      - "{controllerName} ducks under and rises behind {controlledName} in\
+        \ a rear clinch."
+      - "{controllerName} body-locks {controlledName} from behind, both\
+        \ standing, {controllerName} framing for a takedown."
+      - "{controllerName} slips the hip and steps behind {controlledName},\
+        \ locking a rear waist grip."
+
+  # ── BackStanding exits ──────────────────────────────────────────────────
+  backstanding_to_background:
+    controller:
+      - "You haul down on the seatbelt, kick one heel behind their knee,\
+        \ and drag both of you to the mat. Hooks in."
+      - "You sit to the mat and pull them back — they land across your lap\
+        \ and you thread your hooks in before they can roll."
+      - "A sharp lift-and-drop breaks their base. You fall back with them\
+        \ and your legs swing over their hips — back mount secured."
+    controlled:
+      - "{controllerName} bites down on the seatbelt and sweeps your knee\
+        \ out. You land hard on your back with them coiled behind you."
+      - "The floor comes up fast — {controllerName} sat down and pulled you\
+        \ with them. Their heels are already digging into your hips."
+      - "A lift-and-dump breaks your posture. You hit the mat on your side\
+        \ and feel {controllerName}'s hooks thread in."
+    observers:
+      - "{controllerName} sweeps {controlledName}'s knee and drags them to\
+        \ the mat, sinking hooks on the way down."
+      - "{controllerName} sits to the mat, pulling {controlledName} back,\
+        \ and threads both hooks in for back mount."
+      - "{controlledName} goes down hard off a lift-and-drop;\
+        \ {controllerName} lands behind them and locks the back mount."
+
+  # ── Mount exits ─────────────────────────────────────────────────────────
+  mount_to_background:
+    controller:
+      - "They turn to shield their face from your elbow. You take the gift\
+        \ — seatbelt over the shoulder, hooks in, back mount."
+      - "As they roll to their stomach you ride the roll, posting your hand\
+        \ and sliding your legs around their torso."
+      - "They give up the turtle to dodge strikes. You follow and sink one\
+        \ hook, then the other, chest pressed to their back."
+    controlled:
+      - "You roll away from {controllerName}'s elbows but you hand them\
+        \ your back. They slap in a seatbelt and your position worsens."
+      - "You try to come to your knees but {controllerName} rides you over,\
+        \ hooks landing as you settle face-down."
+      - "{controllerName}'s elbow thuds near your temple; you flinch and\
+        \ roll. They follow smoothly onto your back."
+    observers:
+      - "{controlledName} rolls to avoid strikes; {controllerName} rides\
+        \ the roll and takes back mount."
+      - "{controllerName} follows {controlledName} as they turn away,\
+        \ threading hooks in for back mount."
+      - "{controlledName} turtles under pressure; {controllerName} slides\
+        \ to their back and sinks both hooks."
+
+  # ── SideControl exits ───────────────────────────────────────────────────
+  sidecontrol_to_mount:
+    controller:
+      - "You walk your knee up their hip line, step across the belly, and\
+        \ settle your weight into full mount."
+      - "A cross-face pins the head while you swing the far leg over —\
+        \ mount locked before they can replace guard."
+      - "Their near elbow frames high; you undercut it, knee-slide across\
+        \ the torso, and ride into mount."
+    controlled:
+      - "{controllerName} walks their knee across your belly. You scramble\
+        \ but their hips are already past your guard — mounted."
+      - "A cross-face drives your head to the mat. In the same motion\
+        \ {controllerName}'s knee swings over and their weight drops on you."
+      - "You feel the knee-slide before you can react. {controllerName}\
+        \ steps over and settles in mount."
+    observers:
+      - "{controllerName} knee-slides across {controlledName}'s torso into\
+        \ full mount."
+      - "{controllerName} pins {controlledName}'s head with a cross-face\
+        \ and swings into mount."
+      - "{controllerName} undercuts {controlledName}'s frame and mounts them."
+
+  sidecontrol_to_background:
+    controller:
+      - "They roll to their knees under the pressure. You ride them up,\
+        \ slap on the seatbelt, and drag them back down with hooks in."
+      - "As they turtle you flow to their back — one hook, then two,\
+        \ chest tight on their spine."
+      - "You sense the turn coming and time it: as they face down you spin\
+        \ to the back, threading both legs around their hips."
+    controlled:
+      - "You try to come up to your knees but {controllerName} rides the\
+        \ turtle and wraps over your shoulder — seatbelt. Their hooks\
+        \ dig in."
+      - "Rolling to escape side control hands {controllerName} your back.\
+        \ They follow and settle in before you can stand."
+      - "{controllerName} reads your roll and is already at your back as\
+        \ you face the floor."
+    observers:
+      - "{controlledName} turtles; {controllerName} rides to their back\
+        \ and sinks both hooks."
+      - "{controllerName} times {controlledName}'s roll and flows to back\
+        \ mount from side control."
+      - "{controlledName} comes to their knees; {controllerName} follows\
+        \ and takes the back."
+
+  # ── Knee-On-Belly exits ─────────────────────────────────────────────────
+  kob_to_mount:
+    controller:
+      - "You slide your knee forward off the belly and step the foot\
+        \ through — mount without them finding a frame."
+      - "Their elbows crash inward to relieve the knee pressure; you use\
+        \ the gap to swing the leg over. Mount."
+      - "A quick shift of your base and the knee crosses the hip line;\
+        \ you settle into full mount before they recover breath."
+    controlled:
+      - "You bridge against {controllerName}'s knee and they slide it\
+        \ forward — straight into mount, heavier and worse."
+      - "You try to shrimp but {controllerName} steps the knee through\
+        \ before you clear the hip. Mounted."
+      - "{controllerName}'s knee slides off your belly and their weight\
+        \ redistributes — full mount drops on you."
+    observers:
+      - "{controllerName} slides the knee off {controlledName}'s belly\
+        \ and settles into full mount."
+      - "{controlledName} pushes the knee but {controllerName} steps\
+        \ through into mount."
+      - "{controllerName} shifts base and transitions knee-on-belly into\
+        \ full mount on {controlledName}."
+
+  kob_to_background:
+    controller:
+      - "They roll away from the knee to find breathing room. You jump\
+        \ the roll and land on their back, already hunting hooks."
+      - "As they face down to escape the pressure, you flow behind them —\
+        \ seatbelt cinched, hooks threading in."
+      - "You read the roll before it happens. By the time they're face-down\
+        \ you're coiled at their back with both legs locked in."
+    controlled:
+      - "You roll to get away from {controllerName}'s knee — but they flow\
+        \ with you and end up at your back. Hooks dig into your hips."
+      - "Facing down feels safer than the knee on your stomach, but\
+        \ {controllerName} is already sinking the seatbelt across your\
+        \ shoulder."
+      - "{controllerName} reads your escape roll. You're face-down, they're\
+        \ behind you, hooks in."
+    observers:
+      - "{controlledName} rolls to escape the knee; {controllerName} flows\
+        \ to their back and sinks hooks."
+      - "{controllerName} times {controlledName}'s face-down escape from\
+        \ knee-on-belly and lands in back mount."
+      - "{controlledName} turns away from the knee; {controllerName}\
+        \ follows and takes the back."
+
+  # ── North-South exits ───────────────────────────────────────────────────
+  ns_to_sidecontrol:
+    controller:
+      - "You rotate ninety degrees, framing the shoulder, and drop your\
+        \ hip across their chest — side control."
+      - "From north-south you step the near knee down to the hip line,\
+        \ pivot, and stack into side control."
+      - "You shift your weight laterally, catch the far arm, and swing\
+        \ your hip across to land in side control."
+    controlled:
+      - "{controllerName} pivots out of north-south and drops their hip\
+        \ across your chest. You're in side control before you can frame."
+      - "The weight shifts sideways — {controllerName} steps through and\
+        \ stacks on your chest in side control."
+      - "{controllerName} catches your far arm and swings their hip across;\
+        \ you're now under side control."
+    observers:
+      - "{controllerName} rotates from north-south and drops into side\
+        \ control on {controlledName}."
+      - "{controllerName} steps the knee down and pivots into side control\
+        \ from north-south."
+      - "{controllerName} swings the hip across {controlledName} and\
+        \ settles in side control."
+
+  ns_to_mount:
+    controller:
+      - "You walk your hips forward along their body line and swing your\
+        \ legs over in one smooth pivot — mount."
+      - "From north-south you creep forward, thread the legs past the\
+        \ elbows, and land in mount before they can bridge."
+      - "A sharp forward drive with both knees slides you past the guard\
+        \ line. You drop into full mount."
+    controlled:
+      - "{controllerName} walks forward from north-south and swings into\
+        \ mount. You're pinned before you can lift your hips."
+      - "They thread through the arms from above — {controllerName}'s\
+        \ knees clear your guard and they drop into mount."
+      - "{controllerName} creeps forward and the transition happens too\
+        \ fast to stop. Full mount."
+    observers:
+      - "{controllerName} walks forward from north-south and pivots into\
+        \ full mount on {controlledName}."
+      - "{controllerName} threads the legs through {controlledName}'s\
+        \ elbows and lands in mount."
+      - "{controllerName} slides from north-south into full mount before\
+        \ {controlledName} can bridge."
+
+  ns_to_background:
+    controller:
+      - "You spin fully — hips over their face — and drive forward. They\
+        \ roll to stay oriented and hand you the back."
+      - "A north-south choke setup forces them to turn; you ride the\
+        \ roll and arrive at their back with a seatbelt ready."
+      - "You creep forward past the shoulder line. They turtle to protect\
+        \ the neck. You take the seatbelt and drop both hooks."
+    controlled:
+      - "{controllerName} drives into a north-south choke position. You\
+        \ roll to escape and wake up with them at your back."
+      - "You turn to protect your neck from north-south and\
+        \ {controllerName} flows right behind you."
+      - "{controllerName} advances past your shoulder. You turtle and\
+        \ they immediately take the seatbelt and back mount."
+    observers:
+      - "{controlledName} rolls to avoid a north-south choke setup;\
+        \ {controllerName} takes the back."
+      - "{controllerName} drives past {controlledName}'s shoulder line\
+        \ from north-south; {controlledName} turtles and the back is\
+        \ taken."
+      - "{controllerName} spins toward {controlledName}'s hips and follows\
+        \ the roll to back mount."
+
+  # ── Half Guard exits ────────────────────────────────────────────────────
+  halfguard_to_sidecontrol:
+    controller:
+      - "You hip-escape, free the trapped leg with a knee-slice, and\
+        \ clear the half guard into side control."
+      - "A cross-face and underhook flatten them out; you walk the knee\
+        \ through and post in side control."
+      - "You dig the underhook and switch your hips — the trapped leg\
+        \ pops free and you stack into side control."
+    controlled:
+      - "{controllerName} knee-slices through your half guard. The leg\
+        \ pops free and they sprawl into side control."
+      - "A cross-face grinds your head away while {controllerName} walks\
+        \ through the trapped leg. Side control."
+      - "{controllerName} underhooks, switches their hips, and your\
+        \ half guard collapses. They land in side control."
+    observers:
+      - "{controllerName} knee-slices through {controlledName}'s half\
+        \ guard and settles in side control."
+      - "{controllerName} flattens {controlledName} with cross-face and\
+        \ underhook, then passes to side control."
+      - "{controlledName}'s half guard breaks; {controllerName} posts into\
+        \ side control."
+
+  halfguard_to_mount:
+    controller:
+      - "You flatten them out, free the trapped leg, and step directly\
+        \ over into mount without pausing in side control."
+      - "A deep underhook lifts their shoulder; you thread the knee over\
+        \ their hip and go straight to mount."
+      - "You drive the cross-face hard, walk the knee through the half\
+        \ guard, and step into mount in one flowing sequence."
+    controlled:
+      - "{controllerName} frees their leg and steps directly into mount.\
+        \ No pause, no warning — you're mounted."
+      - "The underhook pries your shoulder up and {controllerName}'s knee\
+        \ threads past your guard. Mount."
+      - "{controllerName} drives the cross-face and your half guard\
+        \ crumbles. The knee threads through and they mount you."
+    observers:
+      - "{controllerName} frees the trapped leg from {controlledName}'s\
+        \ half guard and steps straight into mount."
+      - "{controllerName} underhooks {controlledName}'s shoulder and\
+        \ knee-threads into mount."
+      - "{controlledName}'s half guard collapses; {controllerName} steps\
+        \ directly into mount."
+
+  halfguard_to_background:
+    controller:
+      - "They roll to prevent the pass. You abandon the leg, slap the\
+        \ seatbelt over their shoulder, and drag them to their back."
+      - "A wide guard-pass attempt forces them face-down. You flow\
+        \ immediately to their back — one hook, then two."
+      - "They give up the half guard by rolling. You read it, back-step\
+        \ out of the leg entanglement, and take the back."
+    controlled:
+      - "You roll to block {controllerName}'s pass but you expose your\
+        \ back. They wrap the seatbelt and the hooks land."
+      - "{controllerName} backs out of the leg trap and flows to your\
+        \ back before you can stand."
+      - "You abandon the half guard to come to your knees;\
+        \ {controllerName} takes the back in the transition."
+    observers:
+      - "{controlledName} rolls to block the pass; {controllerName} takes\
+        \ the back from half guard."
+      - "{controllerName} back-steps the leg trap and flows to\
+        \ {controlledName}'s back."
+      - "{controlledName} comes to their knees from half guard;\
+        \ {controllerName} seizes the back mount."
+
+  # ── Guard exits (controller starts on bottom, sweep = advance) ──────────
+  guard_to_sidecontrol:
+    controller:
+      - "You off-balance them with a hip bump, catch the arm on the way\
+        \ over, and come up in side control."
+      - "A scissor sweep rolls them and you pop straight up to side\
+        \ control before they can frame."
+      - "You plant a foot on the hip, push them sideways, and follow them\
+        \ to the top — side control."
+    controlled:
+      - "The hip bump catches you leaning; you tip and {controllerName}\
+        \ comes up over you into side control."
+      - "{controllerName}'s scissor sweep dumps you sideways. You land\
+        \ flat and they're already stacking."
+      - "A foot drives into your hip and the world tilts. {controllerName}\
+        \ is on top in side control."
+    observers:
+      - "{controllerName} hip-bumps {controlledName} and sweeps to side\
+        \ control."
+      - "{controllerName} scissor-sweeps {controlledName} and posts in\
+        \ side control."
+      - "{controlledName} is swept sideways; {controllerName} comes up to\
+        \ side control."
+
+  guard_to_mount:
+    controller:
+      - "You trap the arm, bridge the hips, and roll them into mount\
+        \ — the arm-trap sweep put you on top."
+      - "A pendulum sweep with the legs sends them airborne. You swing\
+        \ up and land in mount before they settle."
+      - "You break their posture with a collar grip, roll them over your\
+        \ hips, and land in full mount."
+    controlled:
+      - "The arm trap locks your elbow and the hip bridge sends you\
+        \ rolling. {controllerName} is mounted on your chest."
+      - "{controllerName}'s leg pendulum catches your weight mid-pass.\
+        \ You fly over and land with them mounted."
+      - "A collar-and-hip roll breaks your base. {controllerName} winds\
+        \ up in full mount."
+    observers:
+      - "{controllerName} arm-trap bridges {controlledName} and sweeps\
+        \ to mount."
+      - "{controllerName} pendulum-sweeps {controlledName} and lands in\
+        \ full mount."
+      - "{controlledName} is collar-dragged over {controllerName}'s hips;\
+        \ {controllerName} mounts them."
+
+  guard_to_background:
+    controller:
+      - "They posture to escape the guard; you take the back in the\
+        \ scramble — seatbelt on, hooks threading in."
+      - "You transition to a back-take by rolling to the side, trapping\
+        \ the arm, and swinging behind them as they try to stand."
+      - "As they push up to break the guard you roll to the side and\
+        \ take the back — hooks in before their knees straighten."
+    controlled:
+      - "You posture to escape {controllerName}'s guard and they follow\
+        \ you up, slapping on the seatbelt. Back mount."
+      - "{controllerName} rolls sideways and arrives at your back as you\
+        \ try to stand — hooks already in."
+      - "You push up to break the guard and {controllerName} transitions\
+        \ right behind you. The hooks dig in before you're upright."
+    observers:
+      - "{controlledName} postures to escape; {controllerName} takes the\
+        \ back with a seatbelt and hooks."
+      - "{controllerName} rolls to {controlledName}'s back in the guard\
+        \ scramble and sinks both hooks."
+      - "{controlledName} pushes to stand; {controllerName} swings\
+        \ behind them and takes back mount."
+
+  # ── Turtle exits ────────────────────────────────────────────────────────
+  turtle_to_background:
+    controller:
+      - "You drive a seatbelt grip over the far shoulder, kick one heel\
+        \ across their hip, and roll them onto their back — hooks in."
+      - "You dig under the far arm, lock the seatbelt, and roll them to\
+        \ the side. Both hooks land as they straighten out."
+      - "A clock-choke setup forces them to react; they expose the hip\
+        \ and you sink one hook, then drag them to their back for the\
+        \ second."
+    controlled:
+      - "{controllerName} clamps the seatbelt across your far shoulder\
+        \ and rolls you over. You land on your back — hooks already in."
+      - "The seatbelt snaps tight under your arm and {controllerName}\
+        \ rolls you to the side. Their hooks dig into your hips."
+      - "You resist the clock-choke by shifting your hip but\
+        \ {controllerName} threads a hook in on that side and flattens\
+        \ you out."
+    observers:
+      - "{controllerName} seatbelts {controlledName} from turtle and\
+        \ rolls them to back mount."
+      - "{controllerName} locks a seatbelt under {controlledName}'s far\
+        \ arm and rolls them to the side, sinking hooks."
+      - "{controlledName} exposes a hip resisting the clock-choke;\
+        \ {controllerName} threads a hook in and flattens them to back\
+        \ mount."
+
+degradations:
+  # ── BackStanding degradation ─────────────────────────────────────────────
+  backstanding_to_clinch:
+    controller:
+      - "{controlledName} pivots hard and strips your waist grip. Suddenly\
+        \ you're facing each other in a clinch instead of riding their back."
+      - "They duck the chin, peel your hand off the seatbelt, and spin to\
+        \ face you. The back control dissolves into a chest-to-chest clinch."
+      - "A sharp elbow drives into your forearm and your grip breaks.\
+        \ {controlledName} wheels around before you can reestablish — clinch."
+    controlled:
+      - "You drop your chin, peel {controllerName}'s seatbelt hand, and\
+        \ pivot hard. Their grip peels away and you're face-to-face in a\
+        \ clinch."
+      - "You drive your elbow back into {controllerName}'s forearm and feel\
+        \ the grip loosen. You spin out and secure the clinch before they\
+        \ can adjust."
+      - "You shuck the waist lock sideways and rotate into {controllerName}.\
+        \ Back control becomes clinch — still in their space, but facing\
+        \ them now."
+    observers:
+      - "{controlledName} peels {controllerName}'s seatbelt grip and pivots\
+        \ to face them; back control gives way to a clinch."
+      - "{controlledName} drives an elbow back, strips the grip, and wheels\
+        \ around into a clinch with {controllerName}."
+      - "{controlledName} shucks the waist lock and rotates out;\
+        \ {controllerName} can only follow into a mutual clinch."
+
+  # ── Mount degradation ────────────────────────────────────────────────────
+  mount_to_sidecontrol:
+    controller:
+      - "{controlledName} bridges hard and hip-escapes — your mount slides\
+        \ off into side control."
+      - "You can't keep your base. {controlledName} shrimps free and lands\
+        \ in side control."
+      - "A frame on your hip pries your knees apart; you settle for side\
+        \ control."
+    controlled:
+      - "You bridge hard and shrimp the hip free —\
+        \ {controllerName}'s mount slides off you and into side control."
+      - "Your elbow frames between you and {controllerName}'s hip. You\
+        \ hip-escape and they settle for side."
+      - "You buckle your knees and arc your back. {controllerName} loses\
+        \ base; you scramble to side."
+    observers:
+      - "{controlledName} bridges and hip-escapes from under\
+        \ {controllerName}; the mount slides to side control."
+      - "{controlledName} shrimps a frame in; {controllerName} can't hold\
+        \ mount and settles for side."
+      - "{controlledName}'s buckle-and-arc pries {controllerName} off;\
+        \ mount becomes side control."
+
+# NOTE: degradation keys above use controller/controlled/observers
+# (TemplateTriad). Gradient keys below use self/partner/observers
+# (GradientTriad) — different type, different YAML field names.
+
+  # ── SideControl degradation ──────────────────────────────────────────────
+  sidecontrol_to_halfguard:
+    controller:
+      - "{controlledName} threads a knee inside and recovers half guard.\
+        \ Your side control compresses to a half-guard pin."
+      - "They worm their near knee across your hip and you feel the half\
+        \ guard close around your leg. Side control tightens to half guard."
+      - "A frame on your shoulder creates just enough space.\
+        \ {controlledName} pumps the near knee in and recovers half guard."
+    controlled:
+      - "You elbow-frame {controllerName}'s shoulder and work your near\
+        \ knee inside. It threads through and you close the half guard."
+      - "You shrimp out on the hip side, make space, and pump your knee\
+        \ through — half guard recovered."
+      - "You post the inside elbow, flatten your near hip, and pull the\
+        \ knee in. {controllerName}'s side control compresses to half guard."
+    observers:
+      - "{controlledName} elbow-frames and threads the near knee inside;\
+        \ side control becomes half guard."
+      - "{controlledName} shrimps a gap on the hip and recovers half\
+        \ guard on {controllerName}."
+      - "{controlledName} posts the inside elbow and pumps the knee\
+        \ through; {controllerName} is reduced to half guard."
+
+  # ── Knee-On-Belly degradation ────────────────────────────────────────────
+  kob_to_sidecontrol:
+    controller:
+      - "{controlledName} shrimps sideways and knocks your knee off their\
+        \ belly. You drop your hip back down into side control."
+      - "They bridge off the knee pressure and twist. You can't rebalance\
+        \ — your base falls and you settle for side control."
+      - "A two-handed push on your knee breaks the pin; you ride the shove\
+        \ down into side control instead."
+    controlled:
+      - "You shrimp into {controllerName} and knock the knee off your belly\
+        \ — they drop back into side control. Uncomfortable, but better."
+      - "You bridge against the knee and twist your hips out. The knee-on-\
+        \ belly collapses and {controllerName} settles for side control."
+      - "You plant both hands on {controllerName}'s knee and push sideways.\
+        \ The pin breaks and they fall into side control."
+    observers:
+      - "{controlledName} shrimps into {controllerName} and bucks the knee\
+        \ off their belly; {controllerName} drops to side control."
+      - "{controlledName} bridges against the knee and twists out;\
+        \ {controllerName} falls back to side control."
+      - "{controlledName} pushes {controllerName}'s knee sideways;\
+        \ knee-on-belly gives way to side control."
+
+  # ── North-South degradation ──────────────────────────────────────────────
+  ns_to_sidecontrol:
+    controller:
+      - "{controlledName} turns their hips out and frames your thigh away.\
+        \ North-south loses grip and you slide to side control."
+      - "They shrimp their hips sideways and you can't follow. You settle\
+        \ for side control rather than lose position entirely."
+      - "A bridge and hip roll pries your weight off center;\
+        \ {controlledName} angles out and you drop to side control."
+    controlled:
+      - "You shrimp your hips sideways and frame {controllerName}'s thigh\
+        \ out. Their north-south hold breaks; they slide to side control."
+      - "You bridge and roll the hips. {controllerName} loses alignment and\
+        \ slides off to side control — you take it."
+      - "You work the elbow frame against {controllerName}'s knee and angle\
+        \ your hips out until the north-south hold breaks into side control."
+    observers:
+      - "{controlledName} shrimps the hips and frames {controllerName}'s\
+        \ thigh away; north-south degrades to side control."
+      - "{controlledName} bridges and hip-rolls out from under\
+        \ {controllerName}; the position becomes side control."
+      - "{controlledName} elbow-frames {controllerName}'s knee and angles\
+        \ free; north-south collapses to side control."
+
+  # ── Crucifix degradation ─────────────────────────────────────────────────
+  crucifix_to_background:
+    controller:
+      - "{controlledName} rolls the trapped arm free and the crucifix\
+        \ unravels. You're left with back mount instead."
+      - "They force the elbow inside and break your arm trap. The crucifix\
+        \ is gone — you settle onto their back."
+      - "A violent roll strips the figure-four on the arm.\
+        \ {controlledName} pulls free and you return to back mount."
+    controlled:
+      - "You force your elbow down, drive the arm inside {controllerName}'s\
+        \ grip, and break the figure-four. The crucifix falls apart and\
+        \ you're back to back mount."
+      - "You tuck the chin, bridge into the arm trap, and roll the elbow\
+        \ free. {controllerName} loses the crucifix and settles for back\
+        \ mount."
+      - "You flatten the arm and swim it through the trap. The crucifix\
+        \ dissolves — {controllerName} still has your back, but the arm\
+        \ is free."
+    observers:
+      - "{controlledName} forces the elbow inside {controllerName}'s grip\
+        \ and breaks the arm trap; crucifix falls back to back mount."
+      - "{controlledName} bridges into the figure-four and rolls the arm\
+        \ free; {controllerName} loses the crucifix."
+      - "{controlledName} swims the trapped arm through;\
+        \ {controllerName}'s crucifix unravels to back mount."
+
+  # ── BackGround degradation ───────────────────────────────────────────────
+  background_to_mount:
+    controller:
+      - "{controlledName} turns into you — they roll face-up and pull\
+        \ you forward. You're in mount now, on top but no longer at the\
+        \ back."
+      - "They hip-escape sideways and drag your top hook down. You\
+        \ tumble forward as they rotate, and the position becomes mount."
+      - "A fast roll toward your hook-side spins them face-up.\
+        \ {controlledName} pulls you over and you land in mount."
+    controlled:
+      - "You roll toward {controllerName}'s hook-side, drag the top hook\
+        \ down, and pull them forward. Back mount becomes mount — you're\
+        \ face-up now with {controllerName} on top."
+      - "You hip-escape to the side and torque your upper body toward\
+        \ {controllerName}. They tumble forward and the position flips\
+        \ to mount."
+      - "You post the outside elbow and roll hard toward the hook.\
+        \ {controllerName} loses the back and lands in mount — but you\
+        \ escaped the back."
+    observers:
+      - "{controlledName} rolls toward {controllerName}'s hook-side and\
+        \ pulls them forward; back mount becomes mount."
+      - "{controlledName} hip-escapes and turns face-up;\
+        \ {controllerName} tumbles forward into mount."
+      - "{controlledName} rolls hard toward the hook and drags\
+        \ {controllerName} over; back mount gives way to front mount."
+
+  # ── Half Guard degradation ───────────────────────────────────────────────
+  halfguard_to_guard:
+    controller:
+      - "{controlledName} wiggles the trapped leg out and closes full\
+        \ guard. Your half-guard pin is gone — both legs locked around\
+        \ your waist."
+      - "They shrimp to create space and drag the knee through. Half\
+        \ guard becomes full guard before you can flatten them again."
+      - "A hip bump creates enough room for {controlledName} to pull\
+        \ the second leg free. Full guard closes and the pass resets."
+    controlled:
+      - "You shrimp hard on the pinned side, create a sliver of space,\
+        \ and drag the knee through. Half guard becomes full guard."
+      - "You hip-bump {controllerName} to break their weight and snake\
+        \ the second leg free. Full guard — you're back in the fight."
+      - "You bridge and shrimp, working the trapped knee toward the\
+        \ center until it clears {controllerName}'s thigh. Full guard\
+        \ locks in."
+    observers:
+      - "{controlledName} shrimps and drags the trapped knee through;\
+        \ half guard becomes full guard on {controllerName}."
+      - "{controlledName} hip-bumps {controllerName} and pulls the\
+        \ second leg free; full guard closes."
+      - "{controlledName} bridges and shrimps the knee clear;\
+        \ {controllerName}'s half guard becomes full guard."
+reversals:
+  # ── Mount Reversal ──────────────────────────────────────────────────────────
+  # Bridge-and-roll: former controller tumbles forward into closed guard.
+  mount_reverse:
+    controller:
+      - "{controlledName} bridges and you tumble forward — they roll up\
+        \ between your legs and now you're in their guard."
+      - "Your base evaporates. {controlledName} bucks you off and comes up\
+        \ between your legs — full guard."
+      - "Hooks dig under your hips and lift; you cartwheel forward into their\
+        \ guard."
+    controlled:
+      - "You bridge hard, post on the temple, and roll {controllerName}\
+        \ between your legs — full guard, you're on top."
+      - "Hips up, frame on the chin, sweep the post. {controllerName}\
+        \ tumbles forward into your guard."
+      - "You time the buck and lift the hooks — {controllerName} cartwheels\
+        \ off you and lands in your closed guard."
+    observers:
+      - "{controlledName} bridges and rolls {controllerName} forward into a\
+        \ guard reversal — top and bottom flip."
+      - "{controlledName} times a buck and sweeps {controllerName} into\
+        \ closed guard, reversing the mount."
+      - "{controllerName} cartwheels off {controlledName}'s bridge and\
+        \ lands in their guard."
+
+  # ── BackGround Reversal ─────────────────────────────────────────────────────
+  # Turn-in-and-pin: defender peels the hook, spins into attacker, mounts.
+  background_reverse:
+    controller:
+      - "You lose the hooks — {controlledName} peels your top hook and spins\
+        \ into you. They land in mount before you can recover."
+      - "{controlledName} rolls toward your near hook. You can't readjust in\
+        \ time and they end up sitting on your chest."
+      - "The seatbelt breaks. {controlledName} turns inside and you find\
+        \ yourself pinned flat under mount."
+    controlled:
+      - "You peel the top hook, rotate hard into {controllerName}, and sit\
+        \ on their chest in mount. Back mount is gone."
+      - "You roll toward {controllerName}'s near side, drag the hook down,\
+        \ and come up on top — mount."
+      - "You spin inside the seatbelt before {controllerName} can tighten\
+        \ it. They go flat; you land in mount."
+    observers:
+      - "{controlledName} peels {controllerName}'s hook and spins inside,\
+        \ landing in mount — back mount reversed."
+      - "{controlledName} rolls toward the near hook and comes up in mount\
+        \ on {controllerName}."
+      - "{controlledName} turns into {controllerName}'s seatbelt grip and\
+        \ pins them flat in mount."
+
+  # ── Generic Reversal ────────────────────────────────────────────────────────
+  # Role-swap in the same geometry; no position-specific move named.
+  generic_reverse:
+    controller:
+      - "{controlledName} finds the leverage you missed. The position flips\
+        \ and suddenly they're the one in control."
+      - "A scramble, a shift — and you're on the wrong end of the pin."
+      - "You held it a half-second too long. {controlledName} reverses the\
+        \ position and pins you down."
+    controlled:
+      - "You find the angle and force the reversal — {controllerName} is\
+        \ now the one pinned."
+      - "You exploit the opening. The pressure reverses and you're on top,\
+        \ in control."
+      - "A sharp change of direction and {controllerName}'s control evaporates.\
+        \ You've reversed the position."
+    observers:
+      - "{controlledName} reverses the position on {controllerName},\
+        \ claiming control."
+      - "{controlledName} exploits a gap and flips the pin — roles swap."
+      - "{controllerName} held the position a moment too long;\
+        \ {controlledName} reverses it."
+
+escapes:
+  generic_escape:
+    controller:
+      - "{controlledName} explodes free — they're back on their feet before you can grab again."
+      - "Your grip fails. {controlledName} scrambles up and out of reach."
+      - "{controlledName} kicks off you and pops to their feet — the grapple breaks."
+    controlled:
+      - "You explode through the gap and scramble to your feet — free of {controllerName}'s grip at last."
+      - "A frame, a kick, a scramble. You're up — {controllerName}'s grip is broken."
+      - "You create the frame, kick {controllerName} away, and scramble to your feet — free."
+    observers:
+      - "{controlledName} explodes free of {controllerName} and scrambles back to their feet."
+      - "{controllerName}'s grip fails — {controlledName} scrambles up and out of reach."
+      - "{controlledName} kicks {controllerName} off and the grapple breaks; both stand."
+holds:
+  clinch_hold:
+    controller:
+      - "You and {controlledName} grind in the clinch — wrist fights and head-position grunts."
+      - "Hand-fighting in the pocket. Neither of you gives an inch."
+      - "Shoulders pressed together, breath ragged — you wrestle for the underhook."
+    controlled:
+      - "You and {controllerName} grind in the clinch — wrists battle for control."
+      - "Your shoulders crash together. Neither side breaks position."
+      - "Breath rasps against {controllerName}'s neck. The clinch holds."
+    observers:
+      - "{controllerName} and {controlledName} grind in the clinch — neither giving ground."
+      - "{controllerName} and {controlledName} fight hands and head position."
+      - "Shoulders crash together; the clinch holds."
+  ground_hold_generic:
+    controller:
+      - "You posture down and ride out {controlledName}'s squirming."
+      - "Pressure stays on. {controlledName} can't generate the leverage to move you."
+      - "You settle your weight and let {controlledName} burn cardio trying to shift you."
+    controlled:
+      - "{controllerName}'s weight settles harder. You burn cardio trying to find leverage."
+      - "You squirm and frame, but {controllerName} rides it out."
+      - "Pressure pins you flat. You can't generate the leverage to budge."
+    observers:
+      - "{controllerName} rides out {controlledName}'s squirming."
+      - "{controllerName} settles in and lets {controlledName} burn cardio."
+      - "{controlledName} squirms; {controllerName} stays heavy."
+  guard_hold:
+    controller:
+      - "You break {controlledName}'s posture down with your legs — they grind for an opening."
+      - "Your hips frame {controlledName}'s; the guard stays closed."
+      - "You snap {controlledName}'s head down with high guard, smothering their base."
+    controlled:
+      - "{controllerName}'s legs pry and snap — you can't post your base."
+      - "Your knees frame in vain. {controllerName}'s guard holds."
+      - "{controllerName} drags your head down with high guard; you smother."
+    observers:
+      - "{controllerName} works the guard, breaking {controlledName}'s posture."
+      - "{controllerName}'s legs frame and pry; {controlledName} can't pass."
+      - "{controllerName} keeps {controlledName} smothered in high guard."
+  turtle_hold:
+    controller:
+      - "{controlledName} curls tighter. You hand-fight for an opening to the back."
+      - "You ride the shoulder, looking for the seatbelt. {controlledName} stays balled up."
+      - "Knees driven in tight — {controlledName} can't expand from the turtle."
+    controlled:
+      - "You curl tighter. {controllerName} pulls at your wrists."
+      - "{controllerName} rides your shoulder, hunting hooks. You stay balled up."
+      - "Their knees drive in. You can't expand from the turtle."
+    observers:
+      - "{controllerName} hand-fights {controlledName}, looking for an opening to the back."
+      - "{controllerName} rides {controlledName}'s shoulder; the turtle holds."
+      - "{controlledName} stays balled tight against {controllerName}."
+  backstanding_hold:
+    controller:
+      - "You stay glued to {controlledName}'s back, hands fighting for the over-under."
+      - "Hooks aren't there yet — you ride the standing back-clinch and wait."
+      - "{controlledName} hand-fights your wrists; you stay stuck to their spine."
+    controlled:
+      - "{controllerName} stays glued to your back. You hand-fight the over-under."
+      - "You feel them hunting hooks — you grip and shake to keep them off your hips."
+      - "{controllerName}'s chest rides your spine. You can't peel them off."
+    observers:
+      - "{controllerName} stays glued to {controlledName}'s back, hand-fighting."
+      - "{controllerName} hunts hooks against {controlledName}'s hips; {controlledName} blocks."
+      - "{controlledName} shakes against {controllerName}'s back-clinch — neither gives."
+
+striking_apex:
+  mount_strike_flavor:
+    - "You ride high in mount and rain elbows down."
+    - "You ride high mount, knees driving into {controlledName}'s biceps — their arms can't lift to defend."
+    - "{controlledName} bridges weakly under you; you posture up and drive hammerfists into their guard."
+    - "Sweat and copper. You ride the mount and drop knuckles like pistons."
+    - "Their arms tire from defending their face. You sit heavy and let the strikes through."
+    - "You shift your weight onto {controlledName}'s sternum and unload — short, vicious elbows from the top."
+    - "Cross-face pinning their jaw, free hand cocked back — you punish from full mount."
+
+gradients:
+  # upper_boundary_down: Controlling → Neutral (your dominance is slipping)
+  upper_boundary_down:
+    self:
+      - "Your control slips — {controlledName} squirms free of the lock\
+        \ you had."
+      - "You feel your grip loosen; {controlledName}'s frantic movements\
+        \ pry leverage back from you."
+      - "The dominant position shifts under you — you're no longer in\
+        \ control of this exchange."
+    partner:
+      - "{controllerName}'s dominance slips. You feel space opening where\
+        \ there was none."
+      - "{controllerName} can't hold the pressure — your bridges and\
+        \ frames are working."
+      - "The lock {controllerName} had on you starts to give. You're\
+        \ scrambling back to even."
+    observers:
+      - "{controllerName} loses their controlling grip on {controlledName};\
+        \ the exchange evens out."
+      - "{controlledName} squirms and frames; {controllerName}'s dominance\
+        \ slips."
+      - "The pressure {controllerName} had on {controlledName} fades —\
+        \ neutral footing returns."
+
+  # upper_boundary_up: Neutral → Controlling (you're asserting dominance)
+  upper_boundary_up:
+    self:
+      - "You feel the position click — your weight settles right and you\
+        \ assert full control."
+      - "Your leverage finally takes; you're now in the dominant position."
+      - "A surge of pressure and you've got it — you're the controlling\
+        \ side now."
+    partner:
+      - "{controllerName} settles their weight and the position locks\
+        \ against you — they're in control."
+      - "You feel {controllerName} establish the dominant grip. The fight\
+        \ tightens."
+      - "{controllerName} times the pressure right and asserts control\
+        \ over you."
+    observers:
+      - "{controllerName} establishes dominance over {controlledName} —\
+        \ control settles in their favor."
+      - "{controllerName}'s pressure finally takes; they assume the\
+        \ controlling position."
+      - "{controllerName} locks in dominance over {controlledName}."
+
+  # lower_boundary_down: Neutral → Controlled (you're being overwhelmed)
+  lower_boundary_down:
+    self:
+      - "Pressure crashes down — {controllerName} smothers your movement\
+        \ and you're fully controlled."
+      - "Your space evaporates. {controllerName}'s weight settles heavy\
+        \ and you can't generate leverage."
+      - "The position turns on you — {controllerName} establishes full\
+        \ control and you're stuck."
+    partner:
+      - "Your pressure drives through; {controlledName} can't resist and\
+        \ the position fully locks in."
+      - "You drive the pressure home; {controlledName} can't find\
+        \ leverage anymore."
+      - "{controlledName}'s frame collapses; you've got full control of\
+        \ the exchange now."
+    observers:
+      - "{controllerName} drives pressure home and {controlledName} can\
+        \ no longer resist — full control established."
+      - "{controlledName}'s leverage gives way; {controllerName} settles\
+        \ into dominant control."
+      - "{controllerName} locks {controlledName} down — the position is\
+        \ fully controlled now."
+
+  # lower_boundary_up: Controlled → Neutral (you create space)
+  lower_boundary_up:
+    self:
+      - "You create space — a bridge and a hip-escape breaks\
+        \ {controllerName}'s weight off you."
+      - "Your frame catches and you wrench free of the worst of the\
+        \ pressure. Breathing room."
+      - "You scramble back to a fighting position; {controllerName} no\
+        \ longer has you fully pinned."
+    partner:
+      - "{controlledName} bridges and creates space — your dominant\
+        \ control slips into a scramble."
+      - "{controlledName}'s frame disrupts your control — the pin\
+        \ starts to break."
+      - "You feel {controlledName} earn back leverage — they're no longer\
+        \ fully pinned."
+    observers:
+      - "{controlledName} bridges and scrambles back from\
+        \ {controllerName}'s control — the position evens out."
+      - "{controlledName} earns space against {controllerName}; the pin\
+        \ breaks back to neutral."
+      - "{controllerName}'s control on {controlledName} fails;\
+        \ {controlledName} creates breathing room."

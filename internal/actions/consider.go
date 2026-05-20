@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 )
 
 // ConsiderResult is the structured output of an actor's consider
@@ -47,10 +48,10 @@ func Consider(actor Actor, target Actor) ConsiderResult {
 	if result.TargetIsPlayer {
 		considerType = "user"
 	}
-	actor.SendText(fmt.Sprintf(
+	actor.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`You consider <ansi fg="%sname">%s</ansi>...`,
 		considerType, result.TargetName))
-	actor.SendText(fmt.Sprintf(
+	actor.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`Your instincts tell you: %s`, predictionFor(result.Ratio)))
 
 	return result
