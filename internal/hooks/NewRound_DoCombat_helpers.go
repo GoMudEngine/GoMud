@@ -374,7 +374,7 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 			}
 			textutil.SendPhaseText(waitSpellInfo.WaitUserText, waitSpellInfo.WaitRoomText, tCtx, "pink", cfg)
 		}
-		user.SendText(messaging.CategorySpellFold, `<ansi fg="cyan">`+spells.GetCastMessage("cast_started", cs.SpellId)+`</ansi>`)
+		user.SendText(messaging.CategorySpellFold, spells.GetCastMessage("cast_started", cs.SpellId))
 	}
 
 	return true
