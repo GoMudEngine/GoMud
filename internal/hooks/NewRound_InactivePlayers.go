@@ -4,6 +4,7 @@ package hooks
 import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -48,7 +49,7 @@ func InactivePlayers(e events.Event) events.ListenerReturn {
 		// dies naturally when the portal expires and all players leave.
 
 		if li-cutoffRound == 5 {
-			user.SendTextLegacy(`<ansi fg="203">WARNING:</ansi> <ansi fg="208">You are about to be kicked for inactivity!</ansi>`)
+			user.SendText(messaging.CategoryWarning, `<ansi fg="203">WARNING:</ansi> <ansi fg="208">You are about to be kicked for inactivity!</ansi>`)
 		}
 
 		if li < cutoffRound {

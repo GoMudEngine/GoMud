@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"gopkg.in/yaml.v2"
@@ -81,7 +82,7 @@ func BroadcastHints(e events.Event) events.ListenerReturn {
 			continue
 		}
 
-		u.SendTextLegacy(fullText)
+		u.SendText(messaging.CategoryTip, fullText)
 	}
 
 	// Also fire a Communication event for webclient comms window

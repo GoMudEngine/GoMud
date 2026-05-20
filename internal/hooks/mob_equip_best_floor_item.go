@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/itemvalue"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
@@ -68,11 +69,11 @@ func EquipBestFloorItem(mob *mobs.Mob, room *rooms.Room) bool {
 	// the loot-pickup origin.
 	spec := result.Item.GetSpec()
 	if spec.Subtype == items.Wearable {
-		room.SendTextVisualLegacy(fmt.Sprintf(
+		room.SendTextVisual(messaging.CategoryEquipment, fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> picks up <ansi fg="item">%s</ansi> and dons it.`,
 			mob.Character.Name, result.Item.DisplayName()))
 	} else {
-		room.SendTextVisualLegacy(fmt.Sprintf(
+		room.SendTextVisual(messaging.CategoryEquipment, fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> picks up <ansi fg="item">%s</ansi> and wields it.`,
 			mob.Character.Name, result.Item.DisplayName()))
 	}
