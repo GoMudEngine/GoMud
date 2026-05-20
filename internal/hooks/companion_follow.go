@@ -3,6 +3,7 @@ package hooks
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -55,7 +56,11 @@ func TransportCompanions(owner *users.UserRecord, oldRoomId, newRoomId int) {
 		curRoom := rooms.LoadRoom(mob.Character.RoomId)
 		if curRoom != nil {
 			curRoom.RemoveMob(mob.InstanceId)
-			curRoom.SendTextLegacy(
+			// COMPANION-NAME-LEAK FIX (T11c): named companion mention is
+			// visual content — route through SendTextVisual so infrared
+			// observers see the anonymized form, and blind observers don't
+			// see a free identification.
+			curRoom.SendTextVisual(messaging.CategoryMobEmote,
 				fmt.Sprintf("%s follows %s.", mob.Character.Name, owner.Character.Name),
 				owner.UserId,
 			)
@@ -72,8 +77,9 @@ func TransportCompanions(owner *users.UserRecord, oldRoomId, newRoomId int) {
 		destRoom.AddMob(mob.InstanceId)
 		mob.Character.RoomId = newRoomId
 
-		// Inform owner.
-		owner.SendTextLegacy(fmt.Sprintf("Your %s rejoins you.", mob.Character.Name))
+		// Inform owner. Owner-private channel — owner-knowable companion
+		// name is fine over audio (no infrared / blind observer to leak to).
+		owner.SendText(messaging.CategorySystem, fmt.Sprintf("Your %s rejoins you.", mob.Character.Name))
 
 		// End aggro if the current target is no longer in the destination room.
 		if mob.Character.IsInCombat() {

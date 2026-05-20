@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
@@ -51,7 +52,7 @@ func wirePlayerDeathAnnouncement(c *characters.Character) {
 					if inst := rooms.GetInstanceRegistry().FindByRoomId(c.RoomId); inst != nil {
 						if inst.DeathPolicy == "ejected" {
 							inst.RevokeAccess(u.UserId)
-							u.SendTextLegacy(`<ansi fg="red">You have been expelled from the instance. There is no return.</ansi>`)
+							u.SendText(messaging.CategorySystem, `<ansi fg="red">You have been expelled from the instance. There is no return.</ansi>`)
 						}
 					}
 				}
@@ -61,7 +62,7 @@ func wirePlayerDeathAnnouncement(c *characters.Character) {
 			// 1. Room broadcast "X has died."
 			room := rooms.LoadRoom(c.RoomId)
 			if room != nil {
-				room.SendTextVisualLegacy(
+				room.SendTextVisual(messaging.CategoryDeath,
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> has died.`, c.Name),
 					u.UserId,
 				)
@@ -147,7 +148,7 @@ func wirePlayerDeathAnnouncement(c *characters.Character) {
 			}
 
 			// 6. "You feel weakened" text to the dying player.
-			u.SendTextLegacy(`<ansi fg="yellow">You feel weakened by the brush with death.</ansi>`)
+			u.SendText(messaging.CategoryDeath, `<ansi fg="yellow">You feel weakened by the brush with death.</ansi>`)
 
 			// 7. Instance ejection — if dead in an ephemeral zone with
 			//    "ejected" death policy, revoke access before teleport.
@@ -155,14 +156,14 @@ func wirePlayerDeathAnnouncement(c *characters.Character) {
 				if inst := rooms.GetInstanceRegistry().FindByRoomId(c.RoomId); inst != nil {
 					if inst.DeathPolicy == "ejected" {
 						inst.RevokeAccess(u.UserId)
-						u.SendTextLegacy(`<ansi fg="red">You have been expelled from the instance. There is no return.</ansi>`)
+						u.SendText(messaging.CategorySystem, `<ansi fg="red">You have been expelled from the instance. There is no return.</ansi>`)
 					}
 				}
 			}
 
 			// 8. "Darkness swallows you" flavour — fired on Dead-entry so
 			//    the player gets closure text before the teleport fires.
-			u.SendTextLegacy(`<ansi fg="yellow">Darkness swallows you. When you open your eyes, you are somewhere safe.</ansi>`)
+			u.SendText(messaging.CategoryDeath, `<ansi fg="yellow">Darkness swallows you. When you open your eyes, you are somewhere safe.</ansi>`)
 		})
 }
 

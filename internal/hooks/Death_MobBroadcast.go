@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
@@ -52,7 +53,7 @@ func wireMobDeathBroadcast(c *characters.Character) {
 			)
 			soundMsg := `You hear something collapse to the ground.`
 			if room.GetVisibility() >= 1 {
-				room.SendTextVisualLegacy(deathMsg)
+				room.SendTextVisual(messaging.CategoryDeath, deathMsg)
 			} else {
 				for _, uid := range room.GetPlayers() {
 					u := users.GetByUserId(uid)
@@ -60,9 +61,9 @@ func wireMobDeathBroadcast(c *characters.Character) {
 						continue
 					}
 					if u.Character.HasFlagFromAnySource(buffs.NightVision) {
-						u.SendTextLegacy(deathMsg)
+						u.SendText(messaging.CategoryDeath, deathMsg)
 					} else {
-						u.SendTextLegacy(soundMsg)
+						u.SendText(messaging.CategoryDeath, soundMsg)
 					}
 				}
 			}

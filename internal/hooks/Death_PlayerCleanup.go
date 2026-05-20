@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
@@ -118,7 +119,7 @@ func applyPlayerStatDecay(u *users.UserRecord, config configs.GamePlay) {
 
 	u.Character.Validate()
 
-	u.SendTextLegacy(fmt.Sprintf(`<ansi fg="red">The shadow of death saps your %s.</ansi>`, pick.desc))
+	u.SendText(messaging.CategoryDeath, fmt.Sprintf(`<ansi fg="red">The shadow of death saps your %s.</ansi>`, pick.desc))
 	u.EventLog.Add(`death`, fmt.Sprintf(`Lost some <ansi fg="yellow">%s</ansi> training on death`, pick.name))
 }
 
@@ -166,7 +167,7 @@ func applyPlayerSkillRust(u *users.UserRecord, config configs.GamePlay) {
 		}
 		u.Character.Skills[skillName] = newRank
 
-		u.SendTextLegacy(fmt.Sprintf(`<ansi fg="red">Your %s feels rusty and diminished.</ansi>`, skillName))
+		u.SendText(messaging.CategoryDeath, fmt.Sprintf(`<ansi fg="red">Your %s feels rusty and diminished.</ansi>`, skillName))
 		u.EventLog.Add(`death`, fmt.Sprintf(`Lost some <ansi fg="yellow">%s</ansi> skill on death`, skillName))
 	}
 }
@@ -199,7 +200,7 @@ func notifyPartyOfPlayerDeath(c *characters.Character) {
 		if member.Character.RoomId == c.RoomId {
 			continue
 		}
-		member.SendTextLegacy(msg)
+		member.SendText(messaging.CategoryDeath, msg)
 	}
 }
 

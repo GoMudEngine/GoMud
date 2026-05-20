@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
@@ -69,7 +70,7 @@ func dropMobLootAndSetCorpse(m *mobs.Mob, room *rooms.Room) {
 				`<ansi fg="item">%s</ansi> drops to the ground.`,
 				item.DisplayName(),
 			)
-			room.SendTextVisualLegacy(msg)
+			room.SendTextVisual(messaging.CategoryLoot, msg)
 			room.AddItem(item, false)
 			lootDropped = true
 		}
@@ -84,7 +85,7 @@ func dropMobLootAndSetCorpse(m *mobs.Mob, room *rooms.Room) {
 				`<ansi fg="item">%s</ansi> drops to the ground.`,
 				item.DisplayName(),
 			)
-			room.SendTextVisualLegacy(msg)
+			room.SendTextVisual(messaging.CategoryLoot, msg)
 			room.AddItem(item, false)
 			lootDropped = true
 		}
@@ -94,14 +95,14 @@ func dropMobLootAndSetCorpse(m *mobs.Mob, room *rooms.Room) {
 				`<ansi fg="yellow-bold">%d gold</ansi> drops to the ground.`,
 				m.Character.Gold,
 			)
-			room.SendTextVisualLegacy(msg)
+			room.SendTextVisual(messaging.CategoryLoot, msg)
 			room.Gold += m.Character.Gold
 			lootDropped = true
 		}
 
 		// Dark-room fallback sound for loot drops.
 		if lootDropped && room.GetVisibility() < 1 {
-			room.SendTextLegacy(`You hear something clatter to the ground.`)
+			room.SendText(messaging.CategoryLoot, `You hear something clatter to the ground.`)
 		}
 	}
 
