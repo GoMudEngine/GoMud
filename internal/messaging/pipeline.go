@@ -83,11 +83,9 @@ func RenderForRecipient(in RenderInput) string {
 func normalize(cat Category, text string) string { return text }
 func anonymize(text string) string                { return text }
 func applyCategoryColor(cat Category, text string) string {
-	if cat == CategoryDefault {
+	if cat == CategoryDefault || text == "" {
 		return text
 	}
-	// Real impl in T4 wraps with <ansi fg="<cat.String()>">…</ansi>
-	// after the alias is registered. For now: no-op.
-	return text
+	return `<ansi fg="` + cat.String() + `">` + text + `</ansi>`
 }
 func wrap(text string, maxWidth int) string { return text }
