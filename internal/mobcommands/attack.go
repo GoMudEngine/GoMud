@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -75,12 +76,12 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			if !isSneaking && !alreadyFighting {
 
 				if canSeeInDark(u, room) {
-					u.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to fight you!`, mob.Character.Name))
+					u.SendText(messaging.CategoryHitMelee, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to fight you!`, mob.Character.Name))
 				} else {
-					u.SendTextLegacy(`Something prepares to fight you!`)
+					u.SendText(messaging.CategoryHitMelee, `Something prepares to fight you!`)
 				}
 
-				sendRoomText(room,
+				sendRoomText(room, messaging.CategoryHitMelee,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to fight <ansi fg="username">%s</ansi>`, mob.Character.Name, u.Character.Name),
 					u.UserId)
 
@@ -103,7 +104,7 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			mob.Character.SetAggro(0, attackMobInstanceId, mobAggroType)
 
 			if !isSneaking {
-				sendRoomText(room,
+				sendRoomText(room, messaging.CategoryHitMelee,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to fight <ansi fg="mobname">%s</ansi>`, mob.Character.Name, m.Character.Name))
 			}
 
@@ -113,7 +114,7 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	if !isSneaking {
-		sendRoomText(room,
+		sendRoomText(room, messaging.CategoryMobEmote,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> looks confused and upset.`, mob.Character.Name))
 	}
 

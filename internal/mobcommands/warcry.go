@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
@@ -17,7 +18,7 @@ func Warcry(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	sendAudioRoomText(room, mob,
+	sendAudioRoomText(room, mob, messaging.CategoryWarcry,
 		`<ansi fg="red-bold">Something lets out a bone-shaking warcry!</ansi>`,
 		fmt.Sprintf(`<ansi fg="red-bold"><ansi fg="mobname">%s</ansi> lets out a bone-shaking warcry!</ansi>`, mob.Character.Name))
 

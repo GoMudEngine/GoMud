@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -35,7 +36,7 @@ func SayTo(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		isSneaking := mob.Character.IsHidden()
 
 		if isSneaking {
-			toUser.SendTextLegacy(fmt.Sprintf(`someone says to you, "<ansi fg="saytext-mob">%s</ansi>"`, rest))
+			toUser.SendText(messaging.CategorySpeech, fmt.Sprintf(`someone says to you, "<ansi fg="saytext-mob">%s</ansi>"`, rest))
 
 			events.AddToQueue(events.Communication{
 				SourceMobInstanceId: mob.InstanceId,
@@ -46,8 +47,8 @@ func SayTo(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			})
 
 		} else {
-			toUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says to you, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, rest))
-			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says to <ansi fg="username">%s</ansi>, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, toUser.Character.Name, rest), toUser.UserId)
+			toUser.SendText(messaging.CategorySpeech, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says to you, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, rest))
+			room.SendText(messaging.CategorySpeech, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says to <ansi fg="username">%s</ansi>, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, toUser.Character.Name, rest), toUser.UserId)
 
 			events.AddToQueue(events.Communication{
 				SourceMobInstanceId: mob.InstanceId,
@@ -64,7 +65,7 @@ func SayTo(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		isSneaking := mob.Character.IsHidden()
 
 		if !isSneaking {
-			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says to <ansi fg="mobname">%s</ansi>, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, toMob.Character.Name, rest))
+			room.SendText(messaging.CategorySpeech, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says to <ansi fg="mobname">%s</ansi>, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, toMob.Character.Name, rest))
 
 			events.AddToQueue(events.Communication{
 				SourceMobInstanceId: mob.InstanceId,
@@ -101,9 +102,9 @@ func SayToOnly(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	isSneaking := mob.Character.IsHidden()
 
 	if isSneaking {
-		toUser.SendTextLegacy(fmt.Sprintf(`someone says to you, "<ansi fg="saytext-mob">%s</ansi>"`, rest))
+		toUser.SendText(messaging.CategorySpeech, fmt.Sprintf(`someone says to you, "<ansi fg="saytext-mob">%s</ansi>"`, rest))
 	} else {
-		toUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says to you, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, rest))
+		toUser.SendText(messaging.CategorySpeech, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> says to you, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, rest))
 	}
 
 	events.AddToQueue(events.Communication{
@@ -141,10 +142,10 @@ func ReplyTo(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		isSneaking := mob.Character.IsHidden()
 
 		if isSneaking {
-			toUser.SendTextLegacy(fmt.Sprintf(`someone replies to you, "<ansi fg="saytext-mob">%s</ansi>"`, rest))
+			toUser.SendText(messaging.CategorySpeech, fmt.Sprintf(`someone replies to you, "<ansi fg="saytext-mob">%s</ansi>"`, rest))
 		} else {
-			toUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> replies to you, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, rest))
-			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> replies to <ansi fg="username">%s</ansi>, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, toUser.Character.Name, rest), toUser.UserId)
+			toUser.SendText(messaging.CategorySpeech, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> replies to you, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, rest))
+			room.SendText(messaging.CategorySpeech, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> replies to <ansi fg="username">%s</ansi>, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, toUser.Character.Name, rest), toUser.UserId)
 		}
 	} else {
 
@@ -154,7 +155,7 @@ func ReplyTo(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		isSneaking := mob.Character.IsHidden()
 
 		if !isSneaking {
-			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> replies to <ansi fg="mobname">%s</ansi>, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, toMob.Character.Name, rest))
+			room.SendText(messaging.CategorySpeech, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> replies to <ansi fg="mobname">%s</ansi>, "<ansi fg="saytext-mob">%s</ansi>"`, mob.Character.Name, toMob.Character.Name, rest))
 		}
 	}
 

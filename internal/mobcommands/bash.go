@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/species"
@@ -53,35 +54,35 @@ func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		if result.KnockedDown {
 			if targetUser != nil {
 				if canSee {
-					targetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">%s</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, mobName, bashLabel, dmgDesc))
+					targetUser.SendText(messaging.CategoryBash, fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">%s</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, mobName, bashLabel, dmgDesc))
 				} else {
-					targetUser.SendTextLegacy(fmt.Sprintf(`Something's <ansi fg="yellow-bold">%s</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, bashLabel, dmgDesc))
+					targetUser.SendText(messaging.CategoryBash, fmt.Sprintf(`Something's <ansi fg="yellow-bold">%s</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi> damage)`, bashLabel, dmgDesc))
 				}
 			}
-			sendRoomText(room,
+			sendRoomText(room, messaging.CategoryBash,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">%s</ansi> knocks <ansi fg="username">%s</ansi> to the ground!`, mobName, bashLabel, target.Name),
 				target.UserId)
 		} else {
 			if targetUser != nil {
 				if canSee {
-					targetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">%s</ansi> strikes you! (<ansi fg="damage">%s</ansi> damage)`, mobName, bashLabel, dmgDesc))
+					targetUser.SendText(messaging.CategoryBash, fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">%s</ansi> strikes you! (<ansi fg="damage">%s</ansi> damage)`, mobName, bashLabel, dmgDesc))
 				} else {
-					targetUser.SendTextLegacy(fmt.Sprintf(`Something's <ansi fg="yellow-bold">%s</ansi> strikes you! (<ansi fg="damage">%s</ansi> damage)`, bashLabel, dmgDesc))
+					targetUser.SendText(messaging.CategoryBash, fmt.Sprintf(`Something's <ansi fg="yellow-bold">%s</ansi> strikes you! (<ansi fg="damage">%s</ansi> damage)`, bashLabel, dmgDesc))
 				}
 			}
-			sendRoomText(room,
+			sendRoomText(room, messaging.CategoryBash,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> %s <ansi fg="username">%s</ansi> %s!`, mobName, bashVerb, target.Name, bashWith),
 				target.UserId)
 		}
 	} else {
 		if targetUser != nil {
 			if canSee {
-				targetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts a %s, but misses!`, mobName, bashLabel))
+				targetUser.SendText(messaging.CategoryBash, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts a %s, but misses!`, mobName, bashLabel))
 			} else {
-				targetUser.SendTextLegacy(fmt.Sprintf(`Something attempts a %s, but misses!`, bashLabel))
+				targetUser.SendText(messaging.CategoryBash, fmt.Sprintf(`Something attempts a %s, but misses!`, bashLabel))
 			}
 		}
-		sendRoomText(room,
+		sendRoomText(room, messaging.CategoryBash,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to bash <ansi fg="username">%s</ansi>, but misses!`, mobName, target.Name),
 			target.UserId)
 	}

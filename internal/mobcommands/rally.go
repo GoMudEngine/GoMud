@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
@@ -17,7 +18,7 @@ func Rally(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	sendAudioRoomText(room, mob,
+	sendAudioRoomText(room, mob, messaging.CategoryRally,
 		`<ansi fg="cyan-bold">Something lets out a rallying roar!</ansi>`,
 		fmt.Sprintf(`<ansi fg="cyan-bold"><ansi fg="mobname">%s</ansi> lets out a rallying roar!</ansi>`, mob.Character.Name))
 

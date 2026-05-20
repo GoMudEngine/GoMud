@@ -2,17 +2,22 @@ package mobcommands
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
-// sendRoomText is a darkness-aware drop-in replacement for room.SendTextVisualLegacy().
+// sendRoomText is a darkness-aware drop-in replacement for room.SendTextVisual.
 // In lit rooms it behaves identically. In dark rooms only players with
 // nightvision receive the message; others see nothing.
-func sendRoomText(room *rooms.Room, msg string, excludeUserIds ...int) {
+//
+// cat tags the broadcast for color + sight-gating in the messaging
+// pipeline. Pick the most specific Category for the prose (e.g.
+// CategoryMobEmote for emotes, CategoryHitMelee for attack narration).
+func sendRoomText(room *rooms.Room, cat messaging.Category, msg string, excludeUserIds ...int) {
 	if room.GetVisibility() >= 1 {
-		room.SendTextVisualLegacy(msg, excludeUserIds...)
+		room.SendTextVisual(cat, msg, excludeUserIds...)
 		return
 	}
 	for _, uid := range room.GetPlayers() {
@@ -21,7 +26,7 @@ func sendRoomText(room *rooms.Room, msg string, excludeUserIds ...int) {
 		}
 		u := users.GetByUserId(uid)
 		if u != nil && u.Character.HasFlagFromAnySource(buffs.NightVision) {
-			u.SendTextLegacy(msg)
+			u.SendText(cat, msg)
 		}
 	}
 }
@@ -30,9 +35,12 @@ func sendRoomText(room *rooms.Room, msg string, excludeUserIds ...int) {
 // Players with nightvision see the full message with mob name.
 // Players without nightvision see the anonymous version.
 // In lit rooms, everyone sees the full message.
-func sendAudioRoomText(room *rooms.Room, mob *mobs.Mob, anonMsg string, fullMsg string) {
+//
+// cat selects the audio color/category (typically CategorySpeech,
+// CategoryShout, CategoryNPCDialogue, etc.).
+func sendAudioRoomText(room *rooms.Room, mob *mobs.Mob, cat messaging.Category, anonMsg string, fullMsg string) {
 	if room.GetVisibility() >= 1 {
-		room.SendTextVisualLegacy(fullMsg)
+		room.SendText(cat, fullMsg)
 		return
 	}
 	for _, uid := range room.GetPlayers() {
@@ -41,9 +49,9 @@ func sendAudioRoomText(room *rooms.Room, mob *mobs.Mob, anonMsg string, fullMsg 
 			continue
 		}
 		if u.Character.HasFlagFromAnySource(buffs.NightVision) {
-			u.SendTextLegacy(fullMsg)
+			u.SendText(cat, fullMsg)
 		} else {
-			u.SendTextLegacy(anonMsg)
+			u.SendText(cat, anonMsg)
 		}
 	}
 }

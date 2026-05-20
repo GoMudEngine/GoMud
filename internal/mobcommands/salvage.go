@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -99,7 +100,7 @@ func Salvage(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	// Emit flavor message if any players are watching.
 	if room.PlayerCt() > 0 {
-		sendRoomText(room,
+		sendRoomText(room, messaging.CategoryMobIdle,
 			fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi> kneels by the carcass and cuts`+
 					` strips of hide from it.`,

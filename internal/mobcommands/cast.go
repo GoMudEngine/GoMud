@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -100,7 +101,7 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		cfg := textutil.SendTextConfig{
 			RoomSendFunc: func(msg string, skip ...int) {
 				if castRoom != nil {
-					castRoom.SendTextLegacy(msg, skip...)
+					castRoom.SendText(messaging.CategorySpellFold, msg, skip...)
 				}
 			},
 		}
@@ -138,7 +139,7 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	sendRoomText(room, fmt.Sprintf(
+	sendRoomText(room, messaging.CategorySpellFold, fmt.Sprintf(
 		`<ansi fg="mobname">%s</ansi> begins weaving a spell.`, mob.Character.Name))
 
 	// Initiate combat aggro immediately when targeting a player with an offensive spell.

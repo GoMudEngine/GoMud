@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -41,22 +42,22 @@ func Bite(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	if result.Hit {
 		if targetUser != nil {
 			if canSee {
-				targetUser.SendTextLegacy(fmt.Sprintf(
+				targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(
 					`<ansi fg="mobname">%s</ansi> sinks its fangs into you, drawing strength from the wound! (<ansi fg="damage">%s</ansi> damage)`,
 					mobName, dmgDesc))
 			} else {
-				targetUser.SendTextLegacy(fmt.Sprintf(
+				targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(
 					`Something sinks its fangs into you in the darkness, drawing strength from the wound! (<ansi fg="damage">%s</ansi> damage)`,
 					dmgDesc))
 			}
 		}
 		if result.Damage > 0 {
-			sendRoomText(room,
+			sendRoomText(room, messaging.CategoryHitNaturalSharp,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> sinks its fangs into <ansi fg="username">%s</ansi> and draws strength from the wound!`,
 					mobName, target.Name),
 				target.UserId)
 		} else {
-			sendRoomText(room,
+			sendRoomText(room, messaging.CategoryHitNaturalSharp,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> sinks its fangs into <ansi fg="username">%s</ansi>!`,
 					mobName, target.Name),
 				target.UserId)
@@ -64,14 +65,14 @@ func Bite(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	} else {
 		if targetUser != nil {
 			if canSee {
-				targetUser.SendTextLegacy(fmt.Sprintf(
+				targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(
 					`<ansi fg="mobname">%s</ansi> snaps its fangs at you, but misses!`,
 					mobName))
 			} else {
-				targetUser.SendTextLegacy(`Something snaps its fangs at you in the darkness, but misses!`)
+				targetUser.SendText(messaging.CategoryHitNaturalSharp, `Something snaps its fangs at you in the darkness, but misses!`)
 			}
 		}
-		sendRoomText(room,
+		sendRoomText(room, messaging.CategoryHitNaturalSharp,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> snaps its fangs at <ansi fg="username">%s</ansi>, but misses!`,
 				mobName, target.Name),
 			target.UserId)

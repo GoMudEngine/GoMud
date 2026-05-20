@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
@@ -28,7 +29,7 @@ func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	// to break free. Pre-chunk-4b this returned silently, which made
 	// the grapple feel passive.
 	if mob.Character.IsStandingGrapple() || mob.Character.IsGroundGrapple() {
-		sendRoomText(room,
+		sendRoomText(room, messaging.CategoryGrappleFlow,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to break free but you've got them locked down!`, mob.Character.Name))
 		return true, nil
 	}
@@ -38,7 +39,7 @@ func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	// helper handles both player and mob blockers, the prone penalty,
 	// and the targeting filter.
 	if combat.ResolveFleeBlockers(&mob.Character, room) != nil {
-		sendRoomText(room,
+		sendRoomText(room, messaging.CategoryRoomExit,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to flee but is blocked!`, mob.Character.Name))
 		return true, nil
 	}
@@ -54,13 +55,13 @@ func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		// Cornered — no exits available. Surface the panic visibly so
 		// the room knows the mob tried and failed (pre-fix this was
 		// silent, making the mob appear to randomly exit combat).
-		sendRoomText(room,
+		sendRoomText(room, messaging.CategoryMobEmote,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> looks around frantically for an escape but finds none!`, mob.Character.Name))
 		return true, nil
 	}
 
 	// Send flee message before moving
-	sendRoomText(room,
+	sendRoomText(room, messaging.CategoryRoomExit,
 		fmt.Sprintf(`<ansi fg="mobname">%s</ansi> flees!`, mob.Character.Name))
 
 	// Move via the existing Go command

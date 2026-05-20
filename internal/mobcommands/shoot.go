@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
@@ -20,10 +21,10 @@ func Shoot(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	// Room messaging (mob never sends private text to itself).
 	if !res.IsSneaking {
 		if res.IsTargetMob {
-			sendRoomText(room,
+			sendRoomText(room, messaging.CategoryHitRanged,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to shoot at <ansi fg="mobname">%s</ansi> through the <ansi fg="exit">%s</ansi> exit.`, mob.Character.Name, res.TargetName, res.ExitName))
 		} else {
-			sendRoomText(room,
+			sendRoomText(room, messaging.CategoryHitRanged,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to shoot at <ansi fg="username">%s</ansi> through the <ansi fg="exit">%s</ansi> exit.`, mob.Character.Name, res.TargetName, res.ExitName))
 		}
 	}
