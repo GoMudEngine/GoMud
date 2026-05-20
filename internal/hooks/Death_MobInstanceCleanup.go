@@ -35,29 +35,42 @@ func wireMobInstanceCleanup(c *characters.Character) {
 		})
 }
 
-// scheduleMobDespawnFromLife is the observer-side port of the
-// instance-cleanup block from suicide.go (lines 225-237). When
-// Task 10 thins suicide.go, the inline block there is removed
-// and this function becomes the sole call site.
+// scheduleMobDespawnFromLife handles the full death pipeline for a
+// mob instance: drop loot + corpse FIRST (while m is still valid),
+// then despawn the instance.
 //
-// Order mirrors suicide.go exactly:
-//  1. Delete persisted instance file so respawn starts fresh.
-//  2. Destroy the in-memory instance record.
-//  3. Clean up the home-room spawn slot (no cooldown skip).
-//  4. Remove mob from its current room.
+// Consolidated into a single observer because the chunk-2 split
+// between Death_MobLoot.go and this file produced a registration-
+// order bug: AfterTransition cascades run in init() order, which
+// is alphabetical by filename, so Death_MobInstanceCleanup.go ('I')
+// ran BEFORE Death_MobLoot.go ('L') and destroyed the instance
+// before the loot drop could read it. Symptom: mobs despawn
+// instantly with no corpse / no loot drop.
+//
+// Order:
+//  1. Drop loot + add corpse (uses live mob instance).
+//  2. Delete persisted instance file so respawn starts fresh.
+//  3. Destroy the in-memory instance record.
+//  4. Clean up the home-room spawn slot (no cooldown skip).
+//  5. Remove mob from its current room.
 func scheduleMobDespawnFromLife(m *mobs.Mob) {
-	// 1. Delete saved instance so respawn starts fresh from template.
+	// 1. Drop loot + corpse BEFORE destroying the instance.
+	if room := rooms.LoadRoom(m.Character.RoomId); room != nil {
+		dropMobLootAndSetCorpse(m, room)
+	}
+
+	// 2. Delete saved instance so respawn starts fresh from template.
 	mobs.DeleteMobInstance(m.MobId, m.Zone, m.Character.Name, m.HomeRoomId)
 
-	// 2. Destroy any in-memory record of this mob instance.
+	// 3. Destroy any in-memory record of this mob instance.
 	mobs.DestroyInstance(m.InstanceId)
 
-	// 3. Clean up the home-room spawn slot.
+	// 4. Clean up the home-room spawn slot.
 	if r := rooms.LoadRoom(m.HomeRoomId); r != nil {
 		r.CleanupMobSpawns(false)
 	}
 
-	// 4. Remove from current room.
+	// 5. Remove from current room.
 	if currentRoom := rooms.LoadRoom(m.Character.RoomId); currentRoom != nil {
 		currentRoom.RemoveMob(m.InstanceId)
 	}

@@ -4,51 +4,20 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/state"
-	"github.com/GoMudEngine/GoMud/internal/state/life"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
-// wireMobDeathLoot subscribes to Life Alive→Dead transitions on
-// mob characters and drops loot + creates a corpse. Player actor
-// transitions are skipped (MobInstanceId == 0 guard).
-//
-// NOTE (Chunk-2): This observer is wired but dormant until
-// Task 10 routes mob death paths through Life.TransitionToDead.
-// The existing inline loot-drop + corpse logic in
-// internal/mobcommands/suicide.go (lines 180-250) is the live
-// path today; it will be removed when Task 10 lands.
-func wireMobDeathLoot(c *characters.Character) {
-	c.Life.Inner().AfterTransition("mob_death_loot",
-		func(from, to life.State, r state.TransitionReason) {
-			if from != life.Alive || to != life.Dead {
-				return
-			}
-			// Only fire for mob characters.
-			if c.MobInstanceId == 0 {
-				return
-			}
-			m := mobs.GetInstance(c.MobInstanceId)
-			if m == nil {
-				return
-			}
-			room := rooms.LoadRoom(m.Character.RoomId)
-			if room == nil {
-				return
-			}
-			dropMobLootAndSetCorpse(m, room)
-		})
-}
-
-// dropMobLootAndSetCorpse is the observer-side port of the
-// loot-drop + corpse-creation block from suicide.go (lines
-// 180-250). When Task 10 thins suicide.go, the inline block
-// there is removed and this function becomes the sole call site.
+// dropMobLootAndSetCorpse drops a dead mob's carried + equipped
+// items and creates a corpse in the room. Called from
+// Death_MobInstanceCleanup.go BEFORE the mob instance is destroyed
+// — the consolidated ordering avoids a registration-order bug where
+// the instance cleanup (filename "I" < "L") would otherwise run
+// first via init() ordering and wipe the instance before this
+// function could read its data.
 //
 // Carried items always drop (100% base). Equipped items gate on
 // mob.ItemDropChance. Gold always drops. Corpse is added when
@@ -119,6 +88,3 @@ func dropMobLootAndSetCorpse(m *mobs.Mob, room *rooms.Room) {
 	}
 }
 
-func init() {
-	characters.OnCharacterCreated(wireMobDeathLoot)
-}
