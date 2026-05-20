@@ -142,7 +142,7 @@ func resolveSpell(user *users.UserRecord, cs activity.CastingData, spellData *sp
 	// Skip for summon/charm spells — they handle their own targeting via Go functions
 	isSummonOrCharm := spellData != nil && (spellData.SummonMobId > 0 || spellData.EffectType == "charm")
 	if targetsResolved == 0 && !isSummonOrCharm {
-		user.SendText(messaging.CategorySpellDisruption, `<ansi fg="cyan">Your spell erupts outward but finds no targets.</ansi>`)
+		user.SendText(messaging.CategorySpellDisruption, `Your spell erupts outward but finds no targets.`)
 		sendVisualRoomText(room, messaging.CategorySpellDisruption, fmt.Sprintf(
 			`<ansi fg="username">%s</ansi>'s spell crackles through the air harmlessly.`,
 			user.Character.Name), user.UserId)
@@ -337,7 +337,7 @@ func applyMobEffect_damage(
 				mName, user.Character.Name, spellData.Name), user.UserId)
 		} else {
 			user.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
-				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> strikes %s! (<ansi fg="damage">%s</ansi>)%s</ansi>`,
+				`Your <ansi fg="cyan-bold">%s</ansi> strikes %s! (<ansi fg="damage">%s</ansi>)%s`,
 				spellData.Name, mName, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value), critTag))
 			sendVisualRoomText(room, messaging.CategorySpellElemental, fmt.Sprintf(
 				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes %s!`,
@@ -372,7 +372,7 @@ func applyMobEffect_dot(
 	setMobSpellAggro(user, mob)
 	if user != nil {
 		user.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
-			`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> afflicts %s!%s</ansi>`,
+			`Your <ansi fg="cyan-bold">%s</ansi> afflicts %s!%s`,
 			spellData.Name, mName, critTag))
 		sendVisualRoomText(room, messaging.CategorySpellElemental, fmt.Sprintf(
 			`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> afflicts %s!`,
@@ -426,7 +426,7 @@ func applyMobEffect_knockdown(
 				mName, spellData.Name, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value)))
 		} else {
 			user.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
-				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> slams %s to the ground! (<ansi fg="damage">%s</ansi>)%s</ansi>`,
+				`Your <ansi fg="cyan-bold">%s</ansi> slams %s to the ground! (<ansi fg="damage">%s</ansi>)%s`,
 				spellData.Name, mName, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value), critTag))
 		}
 		sendVisualRoomText(room, messaging.CategorySpellElemental, fmt.Sprintf(
@@ -486,7 +486,7 @@ func applyMobEffect_buff(
 	}
 	if user != nil {
 		user.SendText(messaging.CategorySpellEnhancement, fmt.Sprintf(
-			`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> takes effect on %s!%s</ansi>`,
+			`Your <ansi fg="cyan-bold">%s</ansi> takes effect on %s!%s`,
 			spellData.Name, mName, critTag))
 		sendVisualRoomText(room, messaging.CategorySpellEnhancement, fmt.Sprintf(
 			`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> affects %s!`,
@@ -502,7 +502,7 @@ func applyMobEffect_default(
 ) int {
 	if user != nil {
 		user.SendText(messaging.CategorySpellEnhancement, fmt.Sprintf(
-			`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> takes effect on %s.</ansi>`,
+			`Your <ansi fg="cyan-bold">%s</ansi> takes effect on %s.`,
 			spellData.Name, mName))
 	}
 	return 0
@@ -652,9 +652,9 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 				user.UserId, target.UserId)
 		} else {
 			user.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
-				`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> strikes `+
+				`Your <ansi fg="cyan-bold">%s</ansi> strikes `+
 					`<ansi fg="username">%s</ansi>! `+
-					`(<ansi fg="damage">%s</ansi>)%s</ansi>`,
+					`(<ansi fg="damage">%s</ansi>)%s`,
 				spellData.Name, target.Character.Name, dmgDesc, critTag))
 			sendVisualRoomText(room, messaging.CategorySpellElemental, fmt.Sprintf(
 				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes `+
@@ -744,11 +744,11 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 			}
 		}
 		user.SendText(messaging.CategorySpellEnhancement, fmt.Sprintf(
-			`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> takes effect on <ansi fg="username">%s</ansi>!%s</ansi>`,
+			`Your <ansi fg="cyan-bold">%s</ansi> takes effect on <ansi fg="username">%s</ansi>!%s`,
 			spellData.Name, target.Character.Name, critTag))
 		if target.UserId != user.UserId {
 			target.SendText(messaging.CategorySpellEnhancement, fmt.Sprintf(
-				`<ansi fg="cyan"><ansi fg="username">%s</ansi>'s <ansi fg="cyan-bold">%s</ansi> takes effect on you!</ansi>`,
+				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan-bold">%s</ansi> takes effect on you!`,
 				user.Character.Name, spellData.Name))
 		}
 
@@ -771,10 +771,10 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 			shieldBonus = int(float64(shieldBonus) * 1.5)
 		}
 		target.Character.AddCondition(characters.ConditionShield, duration, float64(shieldBonus), "spell")
-		target.SendText(messaging.CategorySpellEnhancement, `<ansi fg="cyan">A shimmering magical barrier forms around you, bolstering your defenses.</ansi>`)
+		target.SendText(messaging.CategorySpellEnhancement, `A shimmering magical barrier forms around you, bolstering your defenses.`)
 		if target.UserId != user.UserId {
 			user.SendText(messaging.CategorySpellEnhancement, fmt.Sprintf(
-				`<ansi fg="cyan">A shimmering magical barrier forms around <ansi fg="username">%s</ansi>, bolstering their defenses.</ansi>`,
+				`A shimmering magical barrier forms around <ansi fg="username">%s</ansi>, bolstering their defenses.`,
 				target.Character.Name))
 		}
 		sendVisualRoomText(room, messaging.CategorySpellEnhancement, fmt.Sprintf(
@@ -782,7 +782,7 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 
 	default:
 		user.SendText(messaging.CategorySpellEnhancement, fmt.Sprintf(
-			`<ansi fg="cyan">Your <ansi fg="cyan-bold">%s</ansi> takes effect on <ansi fg="username">%s</ansi>.</ansi>`,
+			`Your <ansi fg="cyan-bold">%s</ansi> takes effect on <ansi fg="username">%s</ansi>.`,
 			spellData.Name, target.Character.Name))
 	}
 }

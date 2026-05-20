@@ -11,7 +11,10 @@
 // and queues the banner directly via events.AddToQueue.
 package banner
 
-import "strings"
+import (
+	"strings"
+	"unicode/utf8"
+)
 
 // Kind discriminates skill vs stat advancement banners.
 type Kind int
@@ -58,11 +61,17 @@ func Format(kind Kind, name string, tier *TierChange) string {
 
 // center pads s with leading spaces to roughly center it inside the
 // banner rule width.
+//
+// Uses rune count (not byte count) for both s and rule because the
+// rule is composed of `━` (3-byte UTF-8 chars) — len() would return
+// 192 instead of 64 and the centered text would be pushed far to
+// the right of the rule.
 func center(s string) string {
-	width := len(rule)
-	if len(s) >= width {
+	width := utf8.RuneCountInString(rule)
+	sWidth := utf8.RuneCountInString(s)
+	if sWidth >= width {
 		return s
 	}
-	pad := (width - len(s)) / 2
+	pad := (width - sWidth) / 2
 	return strings.Repeat(" ", pad) + s
 }

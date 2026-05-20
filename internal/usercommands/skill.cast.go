@@ -93,7 +93,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	// 4. Already casting?
 	if user.Character.Activity != nil && user.Character.Activity.IsCasting() {
 		cs, _ := user.Character.Activity.CastingData()
-		user.SendText(messaging.CategorySystem, `<ansi fg="cyan">` + spells.GetCastMessage("already_casting", cs.SpellId) + `</ansi>`)
+		user.SendText(messaging.CategorySpellFold, spells.GetCastMessage("already_casting", cs.SpellId))
 		return true, nil
 	}
 
@@ -337,7 +337,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	// 14. Announce the cast start (skill progression now fires in InitiateCast).
-	user.SendText(messaging.CategorySpellFold, `<ansi fg="cyan">`+spells.GetCastMessage("cast_started", spellInfo.Name)+`</ansi>`)
+	user.SendText(messaging.CategorySpellFold, spells.GetCastMessage("cast_started", spellInfo.Name))
 	room.SendTextVisual(messaging.CategorySpellFold, fmt.Sprintf(
 		`<ansi fg="username">%s</ansi> closes their eyes in concentration.`,
 		user.Character.Name), user.UserId)
