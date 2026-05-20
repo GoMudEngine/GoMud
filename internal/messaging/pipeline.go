@@ -71,9 +71,34 @@ func RenderForRecipient(in RenderInput) string {
 	text = applyCategoryColor(in.Category, text)
 
 	// Stage 6: wrap (stubbed; T5 lands the implementation).
-	text = wrap(text, in.LineWidth)
+	// Categories that own their own multi-column / banner layout
+	// skip the wrap stage so the pipeline doesn't break their
+	// pre-laid-out columns. The template (e.g., descriptions/room
+	// renders description + side-by-side minimap) is the authoritative
+	// width.
+	if !skipWrap(in.Category) {
+		text = wrap(text, in.LineWidth)
+	}
 
 	return text
+}
+
+// skipWrap returns true for Categories whose text is pre-formatted
+// with column / banner layout that the wrap stage must not touch.
+//
+// CategoryRoomDescription — template-laid description + minimap.
+// CategorySkillProgress — fixed-width banner rule.
+// CategoryNPCDialogue / CategoryDialogueHint — hand-authored multi-
+//   line dialogue may include layout the wrap would mangle.
+func skipWrap(cat Category) bool {
+	switch cat {
+	case CategoryRoomDescription,
+		CategorySkillProgress,
+		CategoryNPCDialogue,
+		CategoryDialogueHint:
+		return true
+	}
+	return false
 }
 
 // Stub implementations — each task replaces its stub.
