@@ -51,6 +51,8 @@ func Set(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		return cmdSetSubmission(user, args)
 	case `surrender`:
 		return cmdSetSurrender(user, args)
+	case `linewidth`:
+		return cmdSetLineWidth(user, args)
 	default:
 		// Are they setting a macro? // setTarget should be "=1" etc
 		if len(setTarget) == 2 && setTarget[0] == '=' {
@@ -447,6 +449,27 @@ func cmdSetSurrender(user *users.UserRecord, args []string) (bool, error) {
 
 	user.Character.SurrenderPolicy = newPolicy
 	user.SendText(fmt.Sprintf("Surrender policy set to <ansi fg=\"command\">%s</ansi>.", newPolicy))
+	return true, nil
+}
+
+func cmdSetLineWidth(user *users.UserRecord, args []string) (bool, error) {
+	if len(args) < 1 {
+		user.SendText(fmt.Sprintf("Line width is currently %d.", user.GetLineWidth()))
+		return true, nil
+	}
+	n, err := strconv.Atoi(args[0])
+	if err != nil || n < 40 || n > 240 {
+		user.SendText("Line width must be a number between 40 and 240.")
+		return true, nil
+	}
+	user.LineWidth = n
+	user.SendText(fmt.Sprintf("Line width set to %d.", n))
+
+	events.AddToQueue(events.UserSettingChanged{
+		UserId: user.UserId,
+		Name:   `linewidth`,
+	})
+
 	return true, nil
 }
 

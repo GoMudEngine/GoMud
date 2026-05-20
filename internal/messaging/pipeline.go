@@ -88,4 +88,6 @@ func applyCategoryColor(cat Category, text string) string {
 	}
 	return `<ansi fg="` + cat.String() + `">` + text + `</ansi>`
 }
-func wrap(text string, maxWidth int) string { return text }
+func wrap(text string, maxWidth int) string {
+	return WrapAnsi(text, maxWidth)
+}

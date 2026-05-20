@@ -46,6 +46,7 @@ type UserRecord struct {
 	IsAI           bool                  `yaml:"isai,omitempty"`         // Flagged as an AI account
 	ScreenReader   bool                  `yaml:"screenreader,omitempty"` // Are they using a screen reader? (We should remove excess symbols)
 	AsciiMode      bool                  `yaml:"asciimode,omitempty"`    // Convert UTF-8 decorative chars to ASCII for legacy clients
+	LineWidth      int                   `yaml:"linewidth,omitempty"`    // Column width for line wrapping; 0 = default 80
 	EmailAddress   string                `yaml:"emailaddress,omitempty"` // Email address (if provided)
 	TipsComplete   map[string]bool       `yaml:"tipscomplete,omitempty"` // Tips the user has followed/completed so they can be quiet
 	EventLog        UserLog               `yaml:"-"` // Do not retain in user file (for now)
@@ -290,6 +291,16 @@ func (u *UserRecord) SendText(txt string) {
 		Text:   txt + "\n",
 	})
 
+}
+
+// GetLineWidth returns the user's configured line width, falling back
+// to 80 if unset or invalid. The messaging pipeline reads this for
+// per-recipient wrapping.
+func (u *UserRecord) GetLineWidth() int {
+	if u == nil || u.LineWidth <= 0 {
+		return 80
+	}
+	return u.LineWidth
 }
 
 func (u *UserRecord) SendWebClientCommand(txt string) {
