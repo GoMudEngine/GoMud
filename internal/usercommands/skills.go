@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -28,12 +29,12 @@ func Skills(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	skillTxt, _ := templates.Process("character/skills", skillData, user.UserId)
-	user.SendTextLegacy(skillTxt)
+	user.SendText(messaging.CategorySystem, skillTxt)
 
 	if rest == `extra` {
-		user.SendTextLegacy(`<ansi fg="yellow">Cooldown Tracking:</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="yellow">Cooldown Tracking:</ansi>`)
 		for name, rnds := range user.Character.GetAllCooldowns() {
-			user.SendTextLegacy(fmt.Sprintf(` <ansi fg="yellow">%s</ansi>: <ansi fg="red">%d</ansi>`, name, rnds))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(` <ansi fg="yellow">%s</ansi>: <ansi fg="red">%d</ansi>`, name, rnds))
 		}
 	}
 

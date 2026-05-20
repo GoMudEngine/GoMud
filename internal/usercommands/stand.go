@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
@@ -16,7 +17,7 @@ func Stand(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	// Chunk 4b W7: gate on the new Position FSM (Prone or Supine).
 	if !user.Character.IsProne() && !user.Character.IsSupine() {
-		user.SendTextLegacy("You're already standing.")
+		user.SendText(messaging.CategorySystem, "You're already standing.")
 		return true, nil
 	}
 
@@ -29,7 +30,7 @@ func Stand(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	// Check if player has enough stamina
 	if user.Character.Stamina < minStamina {
 		needed := minStamina - user.Character.Stamina
-		user.SendTextLegacy(fmt.Sprintf("You're too exhausted to stand! (need %d more stamina)", needed))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("You're too exhausted to stand! (need %d more stamina)", needed))
 		return true, nil
 	}
 
@@ -37,7 +38,7 @@ func Stand(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	// (shouldn't happen since Prone→Standing and Supine→Standing are valid edges).
 	if err := user.Character.Position.TransitionToStanding(state.TransitionReason{Trigger: position.TriggerStandCommand}); err != nil {
 		mudlog.Warn("Stand: TransitionToStanding failed", "user", user.UserId, "err", err)
-		user.SendTextLegacy("Something prevents you from standing.")
+		user.SendText(messaging.CategorySystem, "Something prevents you from standing.")
 		return true, nil
 	}
 
@@ -48,9 +49,9 @@ func Stand(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	// Send messages
-	user.SendTextLegacy("You struggle to your feet!")
+	user.SendText(messaging.CategorySystem, "You struggle to your feet!")
 
-	room.SendTextVisualLegacy(
+	room.SendTextVisual(messaging.CategoryMobEmote, 
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> struggles to their feet.`, user.Character.Name),
 		user.UserId,
 	)

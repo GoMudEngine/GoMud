@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -50,7 +51,7 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	// Failure case
 	if roll.Value < 125 {
-		user.SendTextLegacy("You don't see any tracks.")
+		user.SendText(messaging.CategorySystem, "You don't see any tracks.")
 		return true, nil
 	}
 
@@ -64,7 +65,7 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if rest == `` {
 
 		if !user.Character.TryCooldown(skills.Search.String(), "1 round") {
-			user.SendTextLegacy(
+			user.SendText(messaging.CategorySystem, 
 				fmt.Sprintf("You need to wait %d more rounds to use that skill again.", user.Character.GetCooldown(skills.Search.String())))
 			return true, errors.New(`you're doing that too often`)
 		}
@@ -171,9 +172,9 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		//
 		if len(visitorData) > 0 {
 			trackTxt, _ := templates.Process("descriptions/track", visitorData, user.UserId)
-			user.SendTextLegacy(trackTxt)
+			user.SendText(messaging.CategorySystem, trackTxt)
 		} else {
-			user.SendTextLegacy("You don't see any tracks.")
+			user.SendText(messaging.CategorySystem, "You don't see any tracks.")
 		}
 
 		// Quest engine: command notification
@@ -194,21 +195,21 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		user.Character.SetMiscData("tracking-user", nil)
 		user.Character.SetMiscData("tracking-display-count", nil)
 		user.Character.RemoveBuff(26)
-		user.SendTextLegacy(`You stop tracking.`)
+		user.SendText(messaging.CategorySystem, `You stop tracking.`)
 		return true, nil
 	}
 
 	// Targeted tracking requires a high roll
 	if roll.Value < 175 {
 
-		user.SendTextLegacy("Your tracking skills aren't sharp enough right now.")
+		user.SendText(messaging.CategorySystem, "Your tracking skills aren't sharp enough right now.")
 		return true, errors.New(`your tracking skills aren't sharp enough right now`)
 
 	}
 
 	if !user.Character.TryCooldown(skills.Search.String(), "1 round") {
 
-		user.SendTextLegacy(
+		user.SendText(messaging.CategorySystem, 
 			fmt.Sprintf("You need to wait %d more rounds to use that skill again.", user.Character.GetCooldown(skills.Search.String())))
 
 		return true, errors.New(`you're doing that too often`)
@@ -229,11 +230,11 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		if err == nil {
 			if target.IsPlayer() {
 				u := target.(*actions.UserActor).User
-				user.SendTextLegacy(
+				user.SendText(messaging.CategorySystem, 
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> is in the room with you!`, u.Character.Name))
 			} else {
 				m := target.(*actions.MobActor).Mob
-				user.SendTextLegacy(
+				user.SendText(messaging.CategorySystem, 
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> is in the room with you!`, m.Character.Name))
 			}
 			return true, nil
@@ -339,7 +340,7 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 			}
 
-			user.SendTextLegacy("You don't see any tracks.")
+			user.SendText(messaging.CategorySystem, "You don't see any tracks.")
 
 			return true, nil
 		}
@@ -457,9 +458,9 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		//
 		if len(visitorData) > 0 {
 			trackTxt, _ := templates.Process("descriptions/track", visitorData, user.UserId)
-			user.SendTextLegacy(trackTxt)
+			user.SendText(messaging.CategorySystem, trackTxt)
 		} else {
-			user.SendTextLegacy("You don't see any tracks.")
+			user.SendText(messaging.CategorySystem, "You don't see any tracks.")
 		}
 
 		// Quest engine: command notification

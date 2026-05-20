@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -27,7 +28,7 @@ func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	// Can't sneak while crafting or otherwise occupied
 	if !user.Character.IsFree() {
-		user.SendTextLegacy(`You are busy with something else.`)
+		user.SendText(messaging.CategorySystem, `You are busy with something else.`)
 		return true, nil
 	}
 
@@ -36,7 +37,7 @@ func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	// Check cooldown — only block if on cooldown from a prior failure
 	if user.Character.GetCooldown(sneakCooldownKey) > 0 {
-		user.SendTextLegacy(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			"You need to wait %d more rounds before you can try that again.",
 			user.Character.GetCooldown(sneakCooldownKey)))
 		return true, nil
@@ -46,18 +47,18 @@ func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	switch {
 	case result.AlreadyHidden:
-		user.SendTextLegacy("You're already hidden!")
+		user.SendText(messaging.CategorySystem, "You're already hidden!")
 		return true, nil
 
 	case result.InCombat:
-		user.SendTextLegacy("You can't do that while in combat!")
+		user.SendText(messaging.CategorySystem, "You can't do that while in combat!")
 		return true, nil
 
 	case result.SpottedByName != "":
 		// Apply failure cooldown so the player can't spam sneak
 		user.Character.TryCooldown(sneakCooldownKey,
 			fmt.Sprintf(`%d rounds`, cfg.SneakFailCooldown))
-		user.SendTextLegacy(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`You try to blend into the shadows but <ansi fg="mobname">%s</ansi> notices you.`,
 			result.SpottedByName))
 
@@ -69,7 +70,7 @@ func Sneak(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	// Success
-	user.SendTextLegacy(`You slip into the shadows.`)
+	user.SendText(messaging.CategorySystem, `You slip into the shadows.`)
 
 	// Progress the skill only when a roll actually happened
 	if result.RollHappened {

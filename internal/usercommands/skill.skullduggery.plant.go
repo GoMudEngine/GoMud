@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -28,12 +29,12 @@ func Plant(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) == 0 {
-		user.SendTextLegacy("Plant what?")
+		user.SendText(messaging.CategorySystem, "Plant what?")
 		return true, nil
 	}
 
 	if len(args) == 1 {
-		user.SendTextLegacy("Plant on whom?")
+		user.SendText(messaging.CategorySystem, "Plant on whom?")
 		return true, nil
 	}
 
@@ -49,7 +50,7 @@ func Plant(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	// actions.Plant emits player-facing text for every outcome except
 	// the cooldown case (which returns without calling SendText).
 	if result.OnCooldown {
-		user.SendTextLegacy(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			"You need to wait %s before you can do that again.",
 			result.Reason))
 	}
@@ -87,7 +88,7 @@ func parsePlantArgs(args []string, room *rooms.Room, user *users.UserRecord) (ac
 	}
 
 	if targetNoun == "" {
-		user.SendTextLegacy("Plant on whom?")
+		user.SendText(messaging.CategorySystem, "Plant on whom?")
 		return actions.PlantOptions{}, false
 	}
 
@@ -95,7 +96,7 @@ func parsePlantArgs(args []string, room *rooms.Room, user *users.UserRecord) (ac
 	target, err := actions.ResolveTargetActor(room, targetNoun)
 	if err == nil {
 		if target.IsPlayer() {
-			user.SendTextLegacy("You can't plant items on other players.")
+			user.SendText(messaging.CategorySystem, "You can't plant items on other players.")
 			return actions.PlantOptions{}, false
 		}
 		return actions.PlantOptions{
@@ -113,6 +114,6 @@ func parsePlantArgs(args []string, room *rooms.Room, user *users.UserRecord) (ac
 		}, true
 	}
 
-	user.SendTextLegacy("Plant on whom?")
+	user.SendText(messaging.CategorySystem, "Plant on whom?")
 	return actions.PlantOptions{}, false
 }

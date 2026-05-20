@@ -2,6 +2,7 @@ package usercommands
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
@@ -15,7 +16,7 @@ import (
 func Cancel(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 	a := user.Character.Activity
 	if a == nil || a.IsFree() {
-		user.SendTextLegacy(`You aren't doing anything to cancel.`)
+		user.SendText(messaging.CategorySystem, `You aren't doing anything to cancel.`)
 		return true, nil
 	}
 
@@ -35,21 +36,21 @@ func Cancel(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			Trigger: activity.TriggerCastCancel,
 			Actor:   state.ActorRef{UserId: user.UserId},
 		})
-		user.SendTextLegacy(`You stop casting.`)
+		user.SendText(messaging.CategorySystem, `You stop casting.`)
 
 	case activity.Crafting:
 		_ = a.TransitionToFree(state.TransitionReason{
 			Trigger: activity.TriggerCraftCancel,
 			Actor:   state.ActorRef{UserId: user.UserId},
 		})
-		user.SendTextLegacy(`You stop crafting.`)
+		user.SendText(messaging.CategorySystem, `You stop crafting.`)
 
 	case activity.Salvaging:
 		_ = a.TransitionToFree(state.TransitionReason{
 			Trigger: activity.TriggerSalvageCancel,
 			Actor:   state.ActorRef{UserId: user.UserId},
 		})
-		user.SendTextLegacy(`You stop salvaging.`)
+		user.SendText(messaging.CategorySystem, `You stop salvaging.`)
 	}
 	return true, nil
 }

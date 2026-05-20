@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -26,18 +27,18 @@ func Dismiss(rest string, user *users.UserRecord,
 
 	rest = strings.TrimSpace(rest)
 	if rest == "" {
-		user.SendTextLegacy("Dismiss whom? (dismiss <companion name>)")
+		user.SendText(messaging.CategorySystem, "Dismiss whom? (dismiss <companion name>)")
 		return true, nil
 	}
 
 	if len(user.Character.Companions) == 0 {
-		user.SendTextLegacy("You have no companions to dismiss.")
+		user.SendText(messaging.CategorySystem, "You have no companions to dismiss.")
 		return true, nil
 	}
 
 	comp := user.Character.GetCompanion(rest)
 	if comp == nil {
-		user.SendTextLegacy(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`You have no companion named "%s".`, rest,
 		))
 		return true, nil
@@ -52,7 +53,7 @@ func Dismiss(rest string, user *users.UserRecord,
 	if mob == nil {
 		// Companion is offline / already gone — just clean up the record.
 		user.Character.RemoveCompanion(instanceId)
-		user.SendTextLegacy(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`Your bond with <ansi fg="mobname">%s</ansi> fades away.`,
 			compName,
 		))
@@ -77,11 +78,11 @@ func Dismiss(rest string, user *users.UserRecord,
 
 	if isPlayerCrafted {
 		// Mage-crafted companion dissolves peacefully — no aggro, immediate despawn.
-		user.SendTextLegacy(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`You release <ansi fg="mobname">%s</ansi> — it dissolves back into the energies that shaped it.`,
 			compName,
 		))
-		room.SendTextVisualLegacy(
+		room.SendTextVisual(messaging.CategoryMobEmote, 
 			fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> dismisses `+
 					`<ansi fg="mobname">%s</ansi>; it dissolves away.`,
@@ -96,17 +97,17 @@ func Dismiss(rest string, user *users.UserRecord,
 	// Charmed wild creature — the bond-break is a betrayal; it turns hostile.
 	mob.Character.SetAggro(user.UserId, 0, characters.DefaultAttack)
 
-	user.SendTextLegacy(fmt.Sprintf(
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`You sever the bond with <ansi fg="mobname">%s</ansi>.`,
 		compName,
 	))
-	user.SendTextLegacy(fmt.Sprintf(
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`<ansi fg="mobname">%s</ansi> turns on you with fury!`,
 		compName,
 	))
 
 	// Room message (exclude the dismissing player — they already saw it).
-	room.SendTextVisualLegacy(
+	room.SendTextVisual(messaging.CategoryMobEmote, 
 		fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> dismisses `+
 				`<ansi fg="mobname">%s</ansi>!`,
@@ -114,7 +115,7 @@ func Dismiss(rest string, user *users.UserRecord,
 		),
 		user.UserId,
 	)
-	room.SendTextVisualLegacy(
+	room.SendTextVisual(messaging.CategoryMobEmote, 
 		fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> turns hostile!`,
 			compName,

@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -29,7 +30,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	// 0. Dead characters can't cast (Health <= 0).
 	if user.Character.IsDisabled() {
-		user.SendTextLegacy(`<ansi fg="red">You can't cast — you're dead.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You can't cast — you're dead.</ansi>`)
 		return true, nil
 	}
 
@@ -38,14 +39,14 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
 	manifestLevel := user.Character.GetSkillLevel(skills.Manifestation)
 	if skillLevel == 0 && manifestLevel == 0 {
-		user.SendTextLegacy(`<ansi fg="red">You have no spellcasting skill.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You have no spellcasting skill.</ansi>`)
 		return true, nil
 	}
 
 	// 2. Parse spell name and optional target from rest
 	rest = strings.TrimSpace(rest)
 	if rest == `` {
-		user.SendTextLegacy(`<ansi fg="red">Cast what? (Usage: cast <spell> [target])</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">Cast what? (Usage: cast <spell> [target])</ansi>`)
 		return true, nil
 	}
 
@@ -64,7 +65,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		spellInfo = spells.FindSpellByName(spellName)
 	}
 	if spellInfo == nil {
-		user.SendTextLegacy(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="red">No spell found for "%s". Use the spell ID (e.g. `+
 				`<ansi fg="cyan-bold">mm</ansi>, <ansi fg="cyan-bold">heal</ansi>). `+
 				`Type <ansi fg="cyan-bold">spells</ansi> to list what you know.</ansi>`,
@@ -72,19 +73,19 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 	if !user.Character.HasSpell(spellInfo.SpellId) {
-		user.SendTextLegacy(fmt.Sprintf(`<ansi fg="red">You haven't learned the spell "%s".</ansi>`, spellInfo.Name))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">You haven't learned the spell "%s".</ansi>`, spellInfo.Name))
 		return true, nil
 	}
 
 	// 3b. Verify the player has the skill appropriate for this spell's school.
 	if spellInfo.HasSchool(spells.SchoolManifestation) {
 		if manifestLevel == 0 {
-			user.SendTextLegacy(`<ansi fg="red">You have no manifestation skill.</ansi>`)
+			user.SendText(messaging.CategorySystem, `<ansi fg="red">You have no manifestation skill.</ansi>`)
 			return true, nil
 		}
 	} else {
 		if skillLevel == 0 {
-			user.SendTextLegacy(`<ansi fg="red">You have no spellcasting skill.</ansi>`)
+			user.SendText(messaging.CategorySystem, `<ansi fg="red">You have no spellcasting skill.</ansi>`)
 			return true, nil
 		}
 	}
@@ -92,7 +93,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	// 4. Already casting?
 	if user.Character.Activity != nil && user.Character.Activity.IsCasting() {
 		cs, _ := user.Character.Activity.CastingData()
-		user.SendTextLegacy(`<ansi fg="cyan">` + spells.GetCastMessage("already_casting", cs.SpellId) + `</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="cyan">` + spells.GetCastMessage("already_casting", cs.SpellId) + `</ansi>`)
 		return true, nil
 	}
 
@@ -100,7 +101,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	// Use IsFree() rather than checking CraftingState directly so that all
 	// Activity machine states are covered through the migration window.
 	if !user.Character.IsFree() {
-		user.SendTextLegacy(`You are too busy to cast right now.`)
+		user.SendText(messaging.CategorySystem, `You are too busy to cast right now.`)
 		return true, nil
 	}
 
@@ -109,7 +110,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	convMult := 1.0 + mutations.GetConvictionCostMultiplier(user.Character.Mutations)
 	totalConvictionCost := spellInfo.GetTotalConvictionCost(convMult)
 	if totalConvictionCost > 0 && user.Character.Conviction < totalConvictionCost {
-		user.SendTextLegacy(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="red">You don't have the conviction to cast %s.</ansi>`,
 			spellInfo.Name))
 		return true, nil
@@ -117,7 +118,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	// 6. Check initiation cooldown (blocks if a prior attempt failed)
 	if user.Character.GetCooldown(`cast-init`) > 0 {
-		user.SendTextLegacy(`<ansi fg="red">Your mind is still recovering from the effort.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">Your mind is still recovering from the effort.</ansi>`)
 		return true, nil
 	}
 
@@ -135,7 +136,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			}
 		}
 		if !found {
-			user.SendTextLegacy(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`<ansi fg="red">%s requires a %s in your inventory.</ansi>`,
 				spellInfo.Name, spellInfo.ComponentTag))
 			return true, nil
@@ -156,7 +157,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			} else if spec != nil && spec.Name != "" {
 				componentName = spec.Name
 			}
-			user.SendTextLegacy(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`<ansi fg="red">%s requires a %s in your inventory.</ansi>`,
 				spellInfo.Name, componentName))
 			return true, nil
@@ -171,8 +172,8 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if roll >= initiationChance {
 		// Failed — apply 2-round cooldown and inform user
 		user.Character.TryCooldown(`cast-init`, `2 rounds`)
-		user.SendTextLegacy(`<ansi fg="red">` + spells.GetCastMessage("concentration_slipped", spellInfo.Name) + `</ansi>`)
-		room.SendTextVisualLegacy(fmt.Sprintf(
+		user.SendText(messaging.CategorySpellDisruption, `<ansi fg="red">`+spells.GetCastMessage("concentration_slipped", spellInfo.Name)+`</ansi>`)
+		room.SendTextVisual(messaging.CategorySpellDisruption, fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> <ansi fg="red">loses their concentration.</ansi>`,
 			user.Character.Name), user.UserId)
 		return true, nil
@@ -199,14 +200,14 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	switch {
 	case result.OnCooldown:
-		user.SendTextLegacy(`You need a moment before you can do that.`)
+		user.SendText(messaging.CategorySystem, `You need a moment before you can do that.`)
 		return true, nil
 	case result.NoTarget:
 		// HarmSingle / HelpSingle can set this; supply a context-aware message.
 		if spellInfo.Type == spells.HelpSingle {
-			user.SendTextLegacy(fmt.Sprintf(`<ansi fg="red">You don't see "%s" here.</ansi>`, targetName))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">You don't see "%s" here.</ansi>`, targetName))
 		} else {
-			user.SendTextLegacy(`<ansi fg="red">You need a target to cast that spell.</ansi>`)
+			user.SendText(messaging.CategorySystem, `<ansi fg="red">You need a target to cast that spell.</ansi>`)
 		}
 		return true, nil
 	case !result.Initiated:
@@ -259,7 +260,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		// Activity machine refused — already busy with something. This
 		// path should not be reached (IsFree() check above guards it),
 		// but handle defensively.
-		user.SendTextLegacy(`You're already busy with something else.`)
+		user.SendText(messaging.CategorySystem, `You're already busy with something else.`)
 		return true, nil
 	}
 
@@ -282,10 +283,10 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			}
 		}
 		cfg := textutil.SendTextConfig{
-			UserSendFunc: func(msg string) { user.SendTextLegacy(msg) },
+			UserSendFunc: func(msg string) { user.SendText(messaging.CategorySystem, msg) },
 			RoomSendFunc: func(msg string, skip ...int) {
 				if castRoom != nil {
-					castRoom.SendTextLegacy(msg, skip...)
+					castRoom.SendText(messaging.CategorySystem, msg, skip...)
 				}
 			},
 			ExcludeId: user.UserId,
@@ -299,7 +300,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		blocked := false
 		if currentRoom := rooms.LoadRoom(currentRoomId); currentRoom != nil {
 			if allowed, ok := currentRoom.GetTempData("allow_recall").(bool); ok && !allowed {
-				user.SendTextLegacy("Something about this place prevents you from recalling.")
+				user.SendText(messaging.CategorySystem, "Something about this place prevents you from recalling.")
 				blocked = true
 			}
 		}
@@ -314,12 +315,12 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				}
 			}
 			if anchorRoom <= 0 {
-				user.SendTextLegacy(`You reach for the Veil, but there is no anchor to ` +
+				user.SendText(messaging.CategorySystem, `You reach for the Veil, but there is no anchor to ` +
 					`pull you. Set one first with ` +
 					`<ansi fg="command">cast fold-anchor</ansi>.`)
 				blocked = true
 			} else if anchorRoom == currentRoomId {
-				user.SendTextLegacy("You are already standing on your anchor.")
+				user.SendText(messaging.CategorySystem, "You are already standing on your anchor.")
 				blocked = true
 			}
 		}
@@ -336,8 +337,8 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	// 14. Announce the cast start (skill progression now fires in InitiateCast).
-	user.SendTextLegacy(`<ansi fg="cyan">` + spells.GetCastMessage("cast_started", spellInfo.Name) + `</ansi>`)
-	room.SendTextVisualLegacy(fmt.Sprintf(
+	user.SendText(messaging.CategorySpellFold, `<ansi fg="cyan">`+spells.GetCastMessage("cast_started", spellInfo.Name)+`</ansi>`)
+	room.SendTextVisual(messaging.CategorySpellFold, fmt.Sprintf(
 		`<ansi fg="username">%s</ansi> closes their eyes in concentration.`,
 		user.Character.Name), user.UserId)
 

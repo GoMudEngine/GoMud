@@ -7,20 +7,21 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
 func Bash(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 	if user.Character.IsActing() {
-		user.SendTextLegacy(`<ansi fg="red">You can't bash while focused on your work. Finish or be interrupted first.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You can't bash while focused on your work. Finish or be interrupted first.</ansi>`)
 		return true, nil
 	}
 
 	// Must be in combat or specify a target to use bash.
 	if !user.Character.IsInCombat() {
 		if rest == "" {
-			user.SendTextLegacy("Bash whom?")
+			user.SendText(messaging.CategorySystem, "Bash whom?")
 			return true, nil
 		}
 
@@ -30,24 +31,24 @@ func Bash(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		if err != nil {
 			// Self-exclusion collapses to NotFound; pre-check for self-targeting message.
 			if pId, _ := room.FindByName(rest); pId == user.UserId {
-				user.SendTextLegacy("You can't bash yourself.")
+				user.SendText(messaging.CategorySystem, "You can't bash yourself.")
 				return true, nil
 			}
-			user.SendTextLegacy("You don't see them here.")
+			user.SendText(messaging.CategorySystem, "You don't see them here.")
 			return true, nil
 		}
 
 		if !target.IsPlayer() {
 			mob := target.(*actions.MobActor).Mob
 			if mob.IsNonCombatant() || mob.PlayerAttackImmune {
-				user.SendTextLegacy(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, mob.Character.Name))
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, mob.Character.Name))
 				return true, nil
 			}
 			user.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
 		} else {
 			p := target.(*actions.UserActor).User
 			if pvpErr := room.CanPvp(user, p); pvpErr != nil {
-				user.SendTextLegacy(pvpErr.Error())
+				user.SendText(messaging.CategorySystem, pvpErr.Error())
 				return true, nil
 			}
 			user.Character.SetAggro(p.UserId, 0, characters.DefaultAttack)
@@ -59,19 +60,19 @@ func Bash(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	if bashResult.Crafting {
 		// Safety net — should have been caught by the pre-reject above.
-		user.SendTextLegacy(`<ansi fg="red">You can't bash while focused on your work. Finish or be interrupted first.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You can't bash while focused on your work. Finish or be interrupted first.</ansi>`)
 		return true, nil
 	}
 
 	switch {
 	case bashResult.NoShield:
-		user.SendTextLegacy("You need a shield equipped to perform a shield bash!")
+		user.SendText(messaging.CategorySystem, "You need a shield equipped to perform a shield bash!")
 		return true, nil
 	case bashResult.OnCooldown:
-		user.SendTextLegacy("You need a moment to recover before attempting another special move.")
+		user.SendText(messaging.CategorySystem, "You need a moment to recover before attempting another special move.")
 		return true, nil
 	case bashResult.NoTarget:
-		user.SendTextLegacy("Your target is gone!")
+		user.SendText(messaging.CategorySystem, "Your target is gone!")
 		return true, nil
 	}
 
@@ -88,30 +89,30 @@ func Bash(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	if result.Hit {
 		if result.KnockedDown {
-			user.SendTextLegacy(fmt.Sprintf(`Your <ansi fg="yellow-bold">shield bash</ansi> knocks <ansi fg="mobname">%s</ansi> to the ground! (<ansi fg="damage">%s</ansi>)`, target.Name, dmgDesc))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`Your <ansi fg="yellow-bold">shield bash</ansi> knocks <ansi fg="mobname">%s</ansi> to the ground! (<ansi fg="damage">%s</ansi>)`, target.Name, dmgDesc))
 			if targetUser != nil {
-				targetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi>)`, user.Character.Name, dmgDesc))
+				targetUser.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi>)`, user.Character.Name, dmgDesc))
 			}
-			room.SendTextVisualLegacy(
+			room.SendTextVisual(messaging.CategoryBash, 
 				fmt.Sprintf(`<ansi fg="username">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> knocks <ansi fg="mobname">%s</ansi> to the ground!`, user.Character.Name, target.Name),
 				user.UserId, target.UserId,
 			)
 		} else {
-			user.SendTextLegacy(fmt.Sprintf(`Your <ansi fg="yellow-bold">shield bash</ansi> strikes <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%s</ansi>)`, target.Name, dmgDesc))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`Your <ansi fg="yellow-bold">shield bash</ansi> strikes <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%s</ansi>)`, target.Name, dmgDesc))
 			if targetUser != nil {
-				targetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> strikes you! (<ansi fg="damage">%s</ansi>)`, user.Character.Name, dmgDesc))
+				targetUser.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi>'s <ansi fg="yellow-bold">shield bash</ansi> strikes you! (<ansi fg="damage">%s</ansi>)`, user.Character.Name, dmgDesc))
 			}
-			room.SendTextVisualLegacy(
+			room.SendTextVisual(messaging.CategoryBash, 
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> bashes <ansi fg="mobname">%s</ansi> with their shield!`, user.Character.Name, target.Name),
 				user.UserId, target.UserId,
 			)
 		}
 	} else {
-		user.SendTextLegacy(fmt.Sprintf(`Your <ansi fg="yellow-bold">shield bash</ansi> misses <ansi fg="mobname">%s</ansi>!`, target.Name))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`Your <ansi fg="yellow-bold">shield bash</ansi> misses <ansi fg="mobname">%s</ansi>!`, target.Name))
 		if targetUser != nil {
-			targetUser.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to bash you with their shield, but misses!`, user.Character.Name))
+			targetUser.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to bash you with their shield, but misses!`, user.Character.Name))
 		}
-		room.SendTextVisualLegacy(
+		room.SendTextVisual(messaging.CategoryBash, 
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to bash <ansi fg="mobname">%s</ansi>, but misses!`, user.Character.Name, target.Name),
 			user.UserId, target.UserId,
 		)

@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -28,7 +29,7 @@ Per-discovery gaussian rolls against tier difficulty targets:
 func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	if !user.Character.TryCooldown(`search`, "2 rounds") {
-		user.SendTextLegacy(
+		user.SendText(messaging.CategorySystem, 
 			fmt.Sprintf("You need to wait %d more rounds to do that again.", user.Character.GetCooldown(`search`)),
 		)
 		return true, fmt.Errorf("you're doing that too often")
@@ -39,8 +40,8 @@ func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	searchScore := float64(user.Character.Stats.Perception.ValueAdj) +
 		combat.SkillMultiplier(searchRank)*25.0
 
-	user.SendTextLegacy("You snoop around for a bit...\n")
-	room.SendTextVisualLegacy(
+	user.SendText(messaging.CategorySystem, "You snoop around for a bit...\n")
+	room.SendTextVisual(messaging.CategoryMobEmote, 
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> is snooping around.`, user.Character.Name),
 		user.UserId,
 	)
@@ -55,7 +56,7 @@ func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		rolledAgainstSomething = true
 		roll := dice.RollStat(searchScore)
 		if roll.Value >= 125 {
-			user.SendTextLegacy(fmt.Sprintf(`You found a secret exit: <ansi fg="secret-exit">%s</ansi>`, exitName))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You found a secret exit: <ansi fg="secret-exit">%s</ansi>`, exitName))
 		}
 	}
 
@@ -71,7 +72,7 @@ func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		roll := dice.RollStat(searchScore)
 		if roll.Value >= 125 {
 			user.Character.AddDiscovery(room.RoomId, containerName)
-			user.SendTextLegacy(fmt.Sprintf(`You discover a hidden <ansi fg="container">%s</ansi>!`, containerName))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You discover a hidden <ansi fg="container">%s</ansi>!`, containerName))
 		}
 	}
 
@@ -97,7 +98,7 @@ func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			`IsNight`:     gametime.IsNight(),
 		}
 		textOut, _ := templates.Process("descriptions/ontheground", groundDetails, user.UserId)
-		user.SendTextLegacy(textOut)
+		user.SendText(messaging.CategorySystem, textOut)
 	}
 
 	// ── Tier 2 (target 135): Hidden players ─────────────────────
@@ -130,7 +131,7 @@ func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			)
 		}
 		whoTxt, _ := templates.Process("descriptions/who", details, user.UserId)
-		user.SendTextLegacy(whoTxt)
+		user.SendText(messaging.CategorySystem, whoTxt)
 	}
 
 	// ── Tier 2 (target 135): Hidden mobs ────────────────────────
@@ -160,7 +161,7 @@ func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			)
 		}
 		whoTxt, _ := templates.Process("descriptions/who", details, user.UserId)
-		user.SendTextLegacy(whoTxt)
+		user.SendText(messaging.CategorySystem, whoTxt)
 	}
 
 	// ── Tier 3 (target 175): Hidden nouns ───────────────────────
@@ -180,8 +181,8 @@ func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		roll := dice.RollStat(searchScore)
 		if roll.Value >= 175 {
 			user.Character.AddDiscovery(room.RoomId, nounKey)
-			user.SendTextLegacy(fmt.Sprintf(`You discover something: <ansi fg="noun">%s</ansi>`, nounKey))
-			user.SendTextLegacy(hiddenNoun.HiddenDescription)
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You discover something: <ansi fg="noun">%s</ansi>`, nounKey))
+			user.SendText(messaging.CategorySystem, hiddenNoun.HiddenDescription)
 		}
 	}
 

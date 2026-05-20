@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -35,7 +36,7 @@ func Steal(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) == 0 {
-		user.SendTextLegacy("Steal from whom?")
+		user.SendText(messaging.CategorySystem, "Steal from whom?")
 		return true, nil
 	}
 
@@ -51,7 +52,7 @@ func Steal(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	// actions.Steal emits player-facing text for every outcome except
 	// the cooldown case (which returns without calling SendText).
 	if result.OnCooldown {
-		user.SendTextLegacy(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			"You need to wait %s before you can do that again.",
 			result.Reason))
 	}
@@ -79,7 +80,7 @@ func parseStealArgs(args []string, room *rooms.Room, user *users.UserRecord) *ac
 	target, err := actions.ResolveTargetActor(room, targetNoun)
 	if err == nil {
 		if target.IsPlayer() {
-			user.SendTextLegacy("You can't steal from other players.")
+			user.SendText(messaging.CategorySystem, "You can't steal from other players.")
 			return nil
 		}
 		return &actions.StealOptions{
@@ -95,6 +96,6 @@ func parseStealArgs(args []string, room *rooms.Room, user *users.UserRecord) *ac
 		}
 	}
 
-	user.SendTextLegacy("Steal from whom?")
+	user.SendText(messaging.CategorySystem, "Steal from whom?")
 	return nil
 }

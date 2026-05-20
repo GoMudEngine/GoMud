@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -29,7 +30,7 @@ func Shadow(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return false, nil
 	}
 	if skillLevel < 3 {
-		user.SendTextLegacy("You aren't advanced enough at skullduggery for that.")
+		user.SendText(messaging.CategorySystem, "You aren't advanced enough at skullduggery for that.")
 		return true, nil
 	}
 
@@ -41,13 +42,13 @@ func Shadow(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			user.Character.GetMiscData("shadow-target-mob") != nil {
 			endShadow(user, "You stop shadowing your target.")
 		} else {
-			user.SendTextLegacy("You aren't shadowing anyone.")
+			user.SendText(messaging.CategorySystem, "You aren't shadowing anyone.")
 		}
 		return true, nil
 	}
 
 	if rest == "" {
-		user.SendTextLegacy("Shadow whom?")
+		user.SendText(messaging.CategorySystem, "Shadow whom?")
 		return true, nil
 	}
 
@@ -58,10 +59,10 @@ func Shadow(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	if err != nil {
 		// Check whether the name matched the player themselves.
 		if pId, _ := room.FindByName(strings.ToLower(rest)); pId == user.UserId {
-			user.SendTextLegacy("You can't shadow yourself.")
+			user.SendText(messaging.CategorySystem, "You can't shadow yourself.")
 			return true, nil
 		}
-		user.SendTextLegacy("Shadow whom?")
+		user.SendText(messaging.CategorySystem, "Shadow whom?")
 		return true, nil
 	}
 
@@ -76,7 +77,7 @@ func Shadow(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	result := actions.Shadow(actor, opts)
 
 	if result.OnCooldown {
-		user.SendTextLegacy(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			"You need to wait %s before shadowing again.",
 			result.Reason))
 	}
@@ -96,7 +97,7 @@ func endShadow(user *users.UserRecord, reason string) {
 		fmt.Sprintf(`%d rounds`, cfg.ShadowCooldown))
 
 	if reason != "" {
-		user.SendTextLegacy(reason)
+		user.SendText(messaging.CategorySystem, reason)
 	}
 }
 

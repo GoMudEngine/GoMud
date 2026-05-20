@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/knowledge"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/opinions"
 	"github.com/GoMudEngine/GoMud/internal/parties"
@@ -98,7 +99,7 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	if attackMobInstanceId == 0 && attackPlayerId == 0 {
-		user.SendTextLegacy("You attack the darkness!")
+		user.SendText(messaging.CategorySystem, "You attack the darkness!")
 		return true, nil
 	}
 
@@ -157,12 +158,12 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			mName := m.Character.GetMobNameIndexed(user.UserId, dupIdx).String()
 
 			if m.Character.IsCharmed() {
-				user.SendTextLegacy(fmt.Sprintf(`%s is someone's companion!`, mName))
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(`%s is someone's companion!`, mName))
 				return true, nil
 			}
 
 			if m.IsNonCombatant() || m.PlayerAttackImmune {
-				user.SendTextLegacy(fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, m.Character.Name))
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, m.Character.Name))
 				mobs.FireAttackRejected(m, user.UserId)
 				return true, nil
 			}
@@ -219,12 +220,12 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				}
 			}
 
-			user.SendTextLegacy(
+			user.SendText(messaging.CategoryHitMelee,
 				fmt.Sprintf(`You prepare to enter into mortal combat with %s.`, mName),
 			)
 
 			if !isSneaking {
-				room.SendTextVisualLegacy(
+				room.SendTextVisual(messaging.CategoryHitMelee,
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> prepares to fight %s.`, user.Character.Name, mName),
 					user.UserId,
 				)
@@ -249,13 +250,13 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		if p := users.GetByUserId(attackPlayerId); p != nil {
 
 			if pvpErr := room.CanPvp(user, p); pvpErr != nil {
-				user.SendTextLegacy(pvpErr.Error())
+				user.SendText(messaging.CategorySystem, pvpErr.Error())
 				return true, nil
 			}
 
 			if partyInfo := parties.Get(user.UserId); partyInfo != nil {
 				if partyInfo.IsMember(attackPlayerId) {
-					user.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> is in your party!`, p.Character.Name))
+					user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> is in your party!`, p.Character.Name))
 					return true, nil
 				}
 			}
@@ -286,17 +287,17 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			user.Character.SetAggro(attackPlayerId, 0, characters.DefaultAttack)
 
-			user.SendTextLegacy(
+			user.SendText(messaging.CategoryHitMelee,
 				fmt.Sprintf(`You prepare to enter into mortal combat with <ansi fg="username">%s</ansi>.`, p.Character.Name),
 			)
 
 			if !isSneaking {
 
-				p.SendTextLegacy(
+				p.SendText(messaging.CategoryHitMelee,
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> prepares to fight you!`, user.Character.Name),
 				)
 
-				room.SendTextVisualLegacy(
+				room.SendTextVisual(messaging.CategoryHitMelee,
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> prepares to fight <ansi fg="mobname">%s</ansi>.`, user.Character.Name, p.Character.Name),
 					user.UserId, attackPlayerId)
 			}

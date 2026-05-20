@@ -3,6 +3,7 @@ package usercommands
 import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -48,7 +49,7 @@ func Conditions(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	}
 
 	tplTxt, _ := templates.Process("character/conditions", afflictions, user.UserId)
-	user.SendTextLegacy(tplTxt)
+	user.SendText(messaging.CategorySystem, tplTxt)
 
 	return true, nil
 }
