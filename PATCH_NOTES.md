@@ -5,51 +5,80 @@
 **Every player-facing line of text now flows through a single
 pipeline** (compose → normalize → anonymize → color → wrap →
 deliver). The chunk-6 Perception state machine (shipped dormant last
-week) is now its consumer.
+week) is now its consumer. ~2300 broadcast callsites across the
+codebase migrated to the categorized API.
 
-**Color-coded combat narration.** Damage bands by weapon subtype
-(light claws, heavy bludgeon, blade); defense in the green family
-(dodge / parry / block); specials in their existing hues; grapple in
-warm taupe; spells in a five-school palette (elemental, enhancement,
-mental, vital, manifestation); fold and cast lines in steel-cyan.
-Username (yellow → cool blue), mobname (cyan → warm tan), petname
-(orange → teal-cyan) retuned to match.
+**Combat narration colored by weapon and outcome.** Each swing carries
+its own color band based on the weapon's damage type. Warhammers and
+maces render in warm orange-brown; swords and spears in dusty rose;
+claws and bites in dark red-brown; bows in light sky blue; wands and
+staves in lavender; fists in sandy brown. Defenses are in greens:
+dodge (leaf), parry (lime), block (forest). The 6-armed test
+character with four different weapons sees four different colors per
+round.
+
+**Spell colors by school.** Cast prep and fold lines render in pale
+steel-cyan. Resolves route by the spell's declared school: elemental
+in red (fire / ice / lightning damage), enhancement in warm gold
+(buffs / shields), mental in lavender (charm / illusion), vital in
+sage mint (heal), manifestation in rose pink (summon). Disruptions
+and backfires render in warning amber.
+
+**Progression banner.** Skill and stat advancements now render as a
+boxed banner — `SKILL ADVANCEMENT` / `STATISTIC INCREASED` centered
+on a 64-column rule, with a `from-tier → to-tier` line on the rare
+quality-band crossings. Replaces the old `*** You feel your X skills
+sharpening! ***` one-liner.
 
 **Style auto-corrects on every broadcast.** "A aggressive" → "an
 aggressive", "damage damage" → "damage", missing periods auto-
 appended, sentence starts auto-capitalized for combat prose.
 
-**Per-player line wrapping.** `set linewidth N` (range 40–240,
-default 80) matches your terminal. ANSI-aware, so color tags don't
-get counted against the wrap budget.
+**Per-player line wrapping for tabular displays.** `set linewidth N`
+(range 40–240, default 80) matches your terminal. The MOTD banner
+and inbox separator track this; full table renderers (status,
+inventory, who, help) honor it for Go-side widths, with templates
+still drawing 80-column boxes.
 
 **Infrared observers see "a figure".** Players using infrared vision
 in a dark room now see anonymized red shapes instead of named
 characters — names and pet names are stripped from the visual feed
 before delivery.
 
-**Bug fixes.**
+**Username retune.** Username (yellow → cool blue 153), mobname
+(cyan → warm tan 180), petname (orange → teal-cyan 108).
+
+**Bug fixes shipped alongside the framework.**
 - Companion-name leak: a player's pet name no longer appears in feeds
   of blind or dark-room observers who shouldn't be able to see it.
 - Grapple-position name leak (sibling fix): grapplers' names also
   route through the sight gate properly.
+- Sneak persistence: stepping into sneak no longer immediately fires
+  "You no longer feel sneaky" — buff #9 now persists per the
+  Awareness-FSM lifecycle, removed only when the FSM transitions out
+  of Hidden.
+- Mob corpses + loot drop reliably: a registration-order bug between
+  the Death observers caused mob instances to despawn before the loot
+  / corpse drop fired. Consolidated into a single observer with
+  explicit ordering.
+- Room descriptions preserve their side-by-side minimap layout: the
+  pipeline's wrap stage no longer wraps pre-laid-out template
+  content.
 
 **Internal cleanup.** Duplicate `canSeeInRoom` helpers consolidated.
 `sendRoomTextDarknessAware`, the naive byte-count `wrapText`, and
-all `SendTextLegacy` shims deleted. ~2300 callsites migrated to the
-categorized API.
+all `SendTextLegacy` / `SendTextVisualLegacy` shims deleted.
 
 **Known deferrals** (logged as followups):
-- Progression banner format (SKILL ADVANCEMENT / STATISTIC INCREASED)
-  is built but unused — `messaging.SendProgression` is orphaned by an
-  import cycle with `internal/characters/`. Legacy `*** sharpening ***`
-  text still fires.
-- Tabular renderers (status / inventory / who / help) honor
-  `set linewidth` for Go-side widths, but the templates themselves
-  still draw 80-column boxes.
+- Tabular templates (status / inventory / who / help boxes) still
+  draw 80-column borders even when `set linewidth` is wider.
 - Pre-T9 IsQuiet / Deafened filter logic on the `RoomId` events
   branch may be partially bypassed by the per-recipient fan-out;
   affected callers are out of scope for this chunk.
+- Standing-combat moves (trip / kick / bash) can fire from grapple
+  positions and emit a hit message but no actual state change. Needs
+  position-aware variant routing like kick already has (stomp on
+  prone, knee on grappled).
 
 The combat-state-machines arc that began with chunk 0 (2026-05-13) is
 fully wired up: chunks 0-6 built the substrate (Combat Phase,
