@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -50,7 +51,7 @@ func Drop(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 		if dropAmt <= mob.Character.Gold {
 			if err := actions.FloorDropGold(dropAmt, &mob.Character, room); err == nil {
-				room.SendTextVisualLegacy(
+				room.SendTextVisual(messaging.CategoryLoot,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> drops <ansi fg="gold">%d gold</ansi>.`, mob.Character.Name, dropAmt))
 			}
 			return true, nil
@@ -66,7 +67,7 @@ func Drop(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	result := actions.DropItem(actor, rest)
 
 	if result.Found {
-		room.SendTextVisualLegacy(
+		room.SendTextVisual(messaging.CategoryLoot,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> drops their <ansi fg="item">%s</ansi>...`, mob.Character.Name, result.Item.DisplayName()))
 	}
 

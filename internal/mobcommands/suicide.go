@@ -2,6 +2,7 @@ package mobcommands
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -15,8 +16,8 @@ func Suicide(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	// "vanish" which forces unconditional despawn.
 	if rest != `vanish` && mob.Character.HasBuffFlag(buffs.ReviveOnDeath) {
 		mob.Character.Health = mob.Character.HealthMax.Value
-		room.SendTextVisualLegacy(
-			`<ansi fg="mobname">` + mob.Character.Name + `</ansi> is suddenly revived in a shower of sparks!`,
+		room.SendTextVisual(messaging.CategoryBuffApply,
+			`<ansi fg="mobname">`+mob.Character.Name+`</ansi> is suddenly revived in a shower of sparks!`,
 		)
 		mob.Character.CancelBuffsWithFlag(buffs.ReviveOnDeath)
 		return true, nil

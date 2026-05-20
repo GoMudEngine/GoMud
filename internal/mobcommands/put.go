@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -72,7 +73,7 @@ func Put(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	if goldAmt > 0 {
 		container.Gold += goldAmt
-		room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> places some <ansi fg="gold">gold</ansi> into the <ansi fg="container">%s</ansi>`, mob.Character.Name, containerName))
+		room.SendTextVisual(messaging.CategoryLoot, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> places some <ansi fg="gold">gold</ansi> into the <ansi fg="container">%s</ansi>`, mob.Character.Name, containerName))
 	}
 
 	if itemFound {
@@ -85,7 +86,7 @@ func Put(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			Gained:        false,
 		})
 
-		room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> places their <ansi fg="itemname">%s</ansi> into the <ansi fg="container">%s</ansi>`, mob.Character.Name, item.DisplayName(), containerName))
+		room.SendTextVisual(messaging.CategoryLoot, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> places their <ansi fg="itemname">%s</ansi> into the <ansi fg="container">%s</ansi>`, mob.Character.Name, item.DisplayName(), containerName))
 
 		// Enforce container size limits
 		if len(container.Items) > int(configs.GetGamePlayConfig().ContainerSizeMax) {
@@ -103,7 +104,7 @@ func Put(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			}
 
 			container.RemoveItem(oopsItem)
-			room.SendTextVisualLegacy(fmt.Sprintf(`The <ansi fg="container">%s</ansi> is too full and a <ansi fg="itemname">%s</ansi> falls out and onto the floor.`, containerName, oopsItem.DisplayName()))
+			room.SendTextVisual(messaging.CategoryLoot, fmt.Sprintf(`The <ansi fg="container">%s</ansi> is too full and a <ansi fg="itemname">%s</ansi> falls out and onto the floor.`, containerName, oopsItem.DisplayName()))
 			room.AddItem(oopsItem, false)
 		}
 	}

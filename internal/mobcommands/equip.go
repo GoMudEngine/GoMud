@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -66,16 +67,16 @@ func Equip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	if result.Equipped {
 		for _, oldItem := range result.DisplacedItems {
 			if oldItem.ItemId != 0 {
-				room.SendTextVisualLegacy(
+				room.SendTextVisual(messaging.CategoryEquipment,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> removes their <ansi fg="item">%s</ansi> and stores it away.`, mob.Character.Name, oldItem.DisplayName()))
 			}
 		}
 
 		if iSpec.Subtype == items.Wearable {
-			room.SendTextVisualLegacy(
+			room.SendTextVisual(messaging.CategoryEquipment,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> puts on <ansi fg="item">%s</ansi>.`, mob.Character.Name, result.Item.DisplayName()))
 		} else {
-			room.SendTextVisualLegacy(
+			room.SendTextVisual(messaging.CategoryEquipment,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> wields <ansi fg="item">%s</ansi>.`, mob.Character.Name, result.Item.DisplayName()))
 		}
 	}
