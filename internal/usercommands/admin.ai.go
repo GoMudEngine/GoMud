@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -19,7 +20,7 @@ import (
 func AiFlag(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	if rest == "" {
-		user.SendTextLegacy(`Usage: <ansi fg="command">ai-flag &lt;username&gt;</ansi> - Toggle AI flag on a user account.`)
+		user.SendText(messaging.CategorySystem, `Usage: <ansi fg="command">ai-flag &lt;username&gt;</ansi> - Toggle AI flag on a user account.`)
 		return true, nil
 	}
 
@@ -38,16 +39,16 @@ func AiFlag(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	if targetUser == nil {
-		user.SendTextLegacy("Could not find user.")
+		user.SendText(messaging.CategorySystem, "Could not find user.")
 		return true, nil
 	}
 
 	targetUser.IsAI = !targetUser.IsAI
 
 	if targetUser.IsAI {
-		user.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been flagged as <ansi fg="cyan-bold">AI</ansi>.`, targetUser.Username, targetUser.Character.Name))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been flagged as <ansi fg="cyan-bold">AI</ansi>.`, targetUser.Username, targetUser.Character.Name))
 	} else {
-		user.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) AI flag has been <ansi fg="alert-1">removed</ansi>.`, targetUser.Username, targetUser.Character.Name))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) AI flag has been <ansi fg="alert-1">removed</ansi>.`, targetUser.Username, targetUser.Character.Name))
 	}
 
 	return true, nil
@@ -77,14 +78,14 @@ func AiList(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			if u.IsAI {
 				flagTag = " <ansi fg=\"yellow\">[flagged]</ansi>"
 			}
-			user.SendTextLegacy(fmt.Sprintf(`  <ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>)%s%s`, u.Username, u.Character.Name, flagTag, connTag))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`  <ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>)%s%s`, u.Username, u.Character.Name, flagTag, connTag))
 		}
 	}
 
 	if aiCount == 0 {
-		user.SendTextLegacy("No AI accounts currently online.")
+		user.SendText(messaging.CategorySystem, "No AI accounts currently online.")
 	} else {
-		user.SendTextLegacy(fmt.Sprintf("%d AI account(s) online.", aiCount))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("%d AI account(s) online.", aiCount))
 	}
 
 	return true, nil

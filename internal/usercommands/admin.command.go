@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobcommands"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -30,7 +31,7 @@ func Command(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		mobCommands := mobcommands.GetAllMobCommands()
 
 		infoOutput, _ := templates.Process("admincommands/help/command.command", mobCommands, user.UserId)
-		user.SendTextLegacy(infoOutput)
+		user.SendText(messaging.CategorySystem, infoOutput)
 		return true, nil
 	}
 

@@ -7,6 +7,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -30,11 +31,11 @@ func Skillset(rest string, user *users.UserRecord, room *rooms.Room, flags event
 	if len(args) < 2 {
 		// send some sort of help info?
 		infoOutput, _ := templates.Process("admincommands/help/command.skillset", nil, user.UserId)
-		user.SendTextLegacy(infoOutput)
+		user.SendText(messaging.CategorySystem, infoOutput)
 
-		user.SendTextLegacy(`Skill Names:`)
+		user.SendText(messaging.CategorySystem, `Skill Names:`)
 		for _, name := range skills.GetAllSkillNames() {
-			user.SendTextLegacy(`  <ansi fg="skill">` + string(name) + `</ansi>`)
+			user.SendText(messaging.CategorySystem, `  <ansi fg="skill">` + string(name) + `</ansi>`)
 		}
 
 		return true, nil
@@ -50,11 +51,11 @@ func Skillset(rest string, user *users.UserRecord, room *rooms.Room, flags event
 	if len(args) < 2 {
 		// send some sort of help info?
 		infoOutput, _ := templates.Process("admincommands/help/command.skillset", nil, user.UserId)
-		user.SendTextLegacy(infoOutput)
+		user.SendText(messaging.CategorySystem, infoOutput)
 
-		user.SendTextLegacy(`Skill Names:`)
+		user.SendText(messaging.CategorySystem, `Skill Names:`)
 		for _, name := range skills.GetAllSkillNames() {
-			user.SendTextLegacy(`  <ansi fg="skill">` + string(name) + `</ansi>`)
+			user.SendText(messaging.CategorySystem, `  <ansi fg="skill">` + string(name) + `</ansi>`)
 		}
 
 		return true, nil
@@ -65,11 +66,11 @@ func Skillset(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 		for _, skillName := range skills.GetAllSkillNames() {
 			targetUser.Character.SetSkill(string(skillName), skillValueInt)
-			targetUser.SendTextLegacy(fmt.Sprintf(`Your "<ansi fg="skill">%s</ansi>" skill level has been set to <ansi fg="red">%d</ansi>.`, skillName, skillValueInt))
+			targetUser.SendText(messaging.CategorySystem, fmt.Sprintf(`Your "<ansi fg="skill">%s</ansi>" skill level has been set to <ansi fg="red">%d</ansi>.`, skillName, skillValueInt))
 		}
 
 		if targetUser.UserId != user.UserId {
-			user.SendTextLegacy("done.")
+			user.SendText(messaging.CategorySystem, "done.")
 		}
 
 		return true, nil
@@ -82,13 +83,13 @@ func Skillset(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 	if found {
 		targetUser.Character.SetSkill(skillName, skillValueInt)
-		targetUser.SendTextLegacy(fmt.Sprintf(`Your "<ansi fg="skill">%s</ansi>" skill level has been set to <ansi fg="red">%d</ansi>.`, skillName, skillValueInt))
+		targetUser.SendText(messaging.CategorySystem, fmt.Sprintf(`Your "<ansi fg="skill">%s</ansi>" skill level has been set to <ansi fg="red">%d</ansi>.`, skillName, skillValueInt))
 
 		if targetUser.UserId != user.UserId {
-			user.SendTextLegacy("done.")
+			user.SendText(messaging.CategorySystem, "done.")
 		}
 	} else {
-		targetUser.SendTextLegacy(fmt.Sprintf(`Skill "%s" not found.`, skillName))
+		targetUser.SendText(messaging.CategorySystem, fmt.Sprintf(`Skill "%s" not found.`, skillName))
 	}
 
 	return true, nil

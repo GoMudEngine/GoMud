@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 
@@ -19,20 +20,20 @@ func Mute(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	if rest == "" {
 		infoOutput, _ := templates.Process("admincommands/help/command.mute", nil, user.UserId)
-		user.SendTextLegacy(infoOutput)
+		user.SendText(messaging.CategorySystem, infoOutput)
 		return true, nil
 	}
 
 	target, err := actions.ResolveTargetActor(room, rest)
 	if err != nil || !target.IsPlayer() {
-		user.SendTextLegacy("Could not find user.")
+		user.SendText(messaging.CategorySystem, "Could not find user.")
 		return true, nil
 	}
 
 	u := target.(*actions.UserActor).User
 	u.Muted = true
 
-	user.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been <ansi fg="alert-5">MUTED</ansi>`, u.Username, u.Character.Name))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been <ansi fg="alert-5">MUTED</ansi>`, u.Username, u.Character.Name))
 
 	return true, nil
 }
@@ -41,20 +42,20 @@ func UnMute(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	if rest == "" {
 		infoOutput, _ := templates.Process("admincommands/help/command.mute", nil, user.UserId)
-		user.SendTextLegacy(infoOutput)
+		user.SendText(messaging.CategorySystem, infoOutput)
 		return true, nil
 	}
 
 	target, err := actions.ResolveTargetActor(room, rest)
 	if err != nil || !target.IsPlayer() {
-		user.SendTextLegacy("Could not find user.")
+		user.SendText(messaging.CategorySystem, "Could not find user.")
 		return true, nil
 	}
 
 	u := target.(*actions.UserActor).User
 	u.Muted = false
 
-	user.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been <ansi fg="alert-1">UNMUTED</ansi>`, u.Username, u.Character.Name))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been <ansi fg="alert-1">UNMUTED</ansi>`, u.Username, u.Character.Name))
 
 	return true, nil
 }

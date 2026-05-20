@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/term"
@@ -23,7 +24,7 @@ func Mudmail(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		if len(args) < 2 {
 			// send some sort of help info?
 			infoOutput, _ := templates.Process("admincommands/help/command.mudmail", nil, user.UserId)
-			user.SendTextLegacy(infoOutput)
+			user.SendText(messaging.CategorySystem, infoOutput)
 			return true, nil
 		}
 	*/
@@ -31,7 +32,7 @@ func Mudmail(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	// Get if already exists, otherwise create new
 	cmdPrompt, isNew := user.StartPrompt(`mudmail`, rest)
 	if isNew {
-		user.SendTextLegacy(fmt.Sprintf(`Starting a new mud mail...%s`, term.CRLFStr))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`Starting a new mud mail...%s`, term.CRLFStr))
 	}
 
 	msg := users.Message{
@@ -47,7 +48,7 @@ func Mudmail(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	}
 
 	if question.Response == `` {
-		user.SendTextLegacy(`Some name must be provided.`)
+		user.SendText(messaging.CategorySystem, `Some name must be provided.`)
 		question.RejectResponse()
 		return true, nil
 	}
@@ -91,7 +92,7 @@ func Mudmail(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		if itemAttached, found := user.Character.FindInBackpack(question.Response); found {
 			msg.Item = &itemAttached
 		} else {
-			user.SendTextLegacy(`Could not find item: ` + question.Response)
+			user.SendText(messaging.CategorySystem, `Could not find item: ` + question.Response)
 			question.RejectResponse()
 			return true, nil
 		}
@@ -104,7 +105,7 @@ func Mudmail(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	if !question.Done {
 
 		tplTxt, _ := templates.Process("mail/message", msg, user.UserId)
-		user.SendTextLegacy(tplTxt)
+		user.SendText(messaging.CategorySystem, tplTxt)
 
 		return true, nil
 	}
@@ -112,7 +113,7 @@ func Mudmail(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	user.ClearPrompt()
 
 	if question.Response[0:1] != `Y` {
-		user.SendTextLegacy(`Okay! Cancelling mass mail.`)
+		user.SendText(messaging.CategorySystem, `Okay! Cancelling mass mail.`)
 		return true, nil
 	}
 
@@ -128,8 +129,8 @@ func Mudmail(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		u.Command(`inbox check`)
 	}
 
-	user.SendTextLegacy(``)
-	user.SendTextLegacy(`<ansi fg="alert-5">Message SENT!</ansi>`)
-	user.SendTextLegacy(``)
+	user.SendText(messaging.CategorySystem, ``)
+	user.SendText(messaging.CategorySystem, `<ansi fg="alert-5">Message SENT!</ansi>`)
+	user.SendText(messaging.CategorySystem, ``)
 	return true, nil
 }

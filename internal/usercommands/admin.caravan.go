@@ -13,6 +13,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -28,7 +29,7 @@ func Caravan(rest string, user *users.UserRecord, room *rooms.Room,
 	args := util.SplitButRespectQuotes(rest)
 
 	if len(args) == 0 {
-		user.SendTextLegacy(`Usage: <ansi fg="command">caravan reset [instanceId]</ansi>`)
+		user.SendText(messaging.CategorySystem, `Usage: <ansi fg="command">caravan reset [instanceId]</ansi>`)
 		return true, nil
 	}
 
@@ -40,19 +41,19 @@ func Caravan(rest string, user *users.UserRecord, room *rooms.Room,
 			// Targeted reset by instance ID.
 			instId, err := strconv.Atoi(args[1])
 			if err != nil {
-				user.SendTextLegacy(fmt.Sprintf(
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(
 					`<ansi fg="red">Invalid instance ID %q — must be an integer.</ansi>`,
 					args[1],
 				))
 				return true, nil
 			}
 			if behaviortree.ResetCaravanStateByInstanceId(instId) {
-				user.SendTextLegacy(fmt.Sprintf(
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(
 					`<ansi fg="yellow">Caravan leader #%d reset to ThornwallDwell.</ansi>`,
 					instId,
 				))
 			} else {
-				user.SendTextLegacy(fmt.Sprintf(
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(
 					`<ansi fg="red">Instance #%d not found or is not a caravan leader.</ansi>`,
 					instId,
 				))
@@ -63,11 +64,11 @@ func Caravan(rest string, user *users.UserRecord, room *rooms.Room,
 		// Global reset — all caravan leaders.
 		count := behaviortree.ResetAllCaravanStates()
 		if count == 0 {
-			user.SendTextLegacy(
+			user.SendText(messaging.CategorySystem, 
 				`<ansi fg="yellow">No active caravan leaders found.</ansi>`,
 			)
 		} else {
-			user.SendTextLegacy(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`<ansi fg="yellow">Reset %d caravan leader(s) to ThornwallDwell.</ansi>`,
 				count,
 			))
@@ -75,7 +76,7 @@ func Caravan(rest string, user *users.UserRecord, room *rooms.Room,
 		return true, nil
 
 	default:
-		user.SendTextLegacy(`Usage: <ansi fg="command">caravan reset [instanceId]</ansi>`)
+		user.SendText(messaging.CategorySystem, `Usage: <ansi fg="command">caravan reset [instanceId]</ansi>`)
 	}
 
 	return true, nil

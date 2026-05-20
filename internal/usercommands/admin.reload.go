@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/language"
 	"github.com/GoMudEngine/GoMud/internal/mapper"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -20,29 +21,29 @@ func Reload(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	if rest == "" {
 		infoOutput, _ := templates.Process("admincommands/help/command.reload", nil, user.UserId)
-		user.SendTextLegacy(infoOutput)
+		user.SendText(messaging.CategorySystem, infoOutput)
 		return true, nil
 	}
 
 	switch strings.ToLower(rest) {
 	case `items`:
 		items.LoadDataFiles()
-		user.SendTextLegacy(`Items reloaded.`)
+		user.SendText(messaging.CategorySystem, `Items reloaded.`)
 	case `biomes`:
 		rooms.LoadBiomeDataFiles()
-		user.SendTextLegacy(`Biomes reloaded.`)
+		user.SendText(messaging.CategorySystem, `Biomes reloaded.`)
 	case `translations`:
 		ok := language.ReloadTranslation()
 		if !ok {
-			user.SendTextLegacy(`Translations reload failed.`)
+			user.SendText(messaging.CategorySystem, `Translations reload failed.`)
 		} else {
-			user.SendTextLegacy(`Translations reloaded.`)
+			user.SendText(messaging.CategorySystem, `Translations reloaded.`)
 		}
 	case `mapcache`:
 		mapper.ClearCache()
-		user.SendTextLegacy(`Mapper cache cleared. Next 'map' command will rebuild from current room data.`)
+		user.SendText(messaging.CategorySystem, `Mapper cache cleared. Next 'map' command will rebuild from current room data.`)
 	default:
-		user.SendTextLegacy(`Unknown reload command.`)
+		user.SendText(messaging.CategorySystem, `Unknown reload command.`)
 	}
 	return true, nil
 }

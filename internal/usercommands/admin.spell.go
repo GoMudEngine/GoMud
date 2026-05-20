@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -24,7 +25,7 @@ func Spell(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	if len(args) < 1 {
 		infoOutput, _ := templates.Process("admincommands/help/command.spell", nil, user.UserId)
-		user.SendTextLegacy(infoOutput)
+		user.SendText(messaging.CategorySystem, infoOutput)
 		return true, nil
 	}
 
@@ -32,7 +33,7 @@ func Spell(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if args[0] == `list` {
 
 		if !user.HasRolePermission(`spell.list`) {
-			user.SendTextLegacy(`you do not have <ansi fg="command">spell.list</ansi> permission`)
+			user.SendText(messaging.CategorySystem, `you do not have <ansi fg="command">spell.list</ansi> permission`)
 			return true, nil
 		}
 
@@ -69,7 +70,7 @@ func spell_List(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	})
 
 	tplTxt, _ := templates.Process("tables/numbered-list", spellNames, user.UserId)
-	user.SendTextLegacy(tplTxt)
+	user.SendText(messaging.CategorySystem, tplTxt)
 
 	return true, nil
 }
