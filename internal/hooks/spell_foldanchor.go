@@ -18,7 +18,9 @@ func resolveFoldAnchor(actor actions.Actor) {
 	actor.SendText(messaging.CategorySpellFold, `A Chrysalis anchor locks into place here. `+
 		`Cast <ansi fg="command">fold-recall</ansi> from elsewhere to return.`)
 
-	actor.SendRoomText(fmt.Sprintf(
-		`A faint shimmer marks where <ansi fg="username">%s</ansi> has set an anchor.`,
-		actor.GetName()), true)
+	if room := actor.GetRoom(); room != nil {
+		room.SendTextVisual(messaging.CategorySpellFold, fmt.Sprintf(
+			`A faint shimmer marks where <ansi fg="username">%s</ansi> has set an anchor.`,
+			actor.GetName()), actor.GetUserId())
+	}
 }

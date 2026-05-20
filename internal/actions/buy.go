@@ -673,7 +673,9 @@ func executePurchaseItem(buyer Actor, shopMob *mobs.Mob, shopUser *users.UserRec
 			}
 		}
 		buyer.SendText(messaging.CategoryLoot, fmt.Sprintf(`You purchase the <ansi fg="itemname">%s</ansi> from <ansi fg="mobname">%s</ansi> for %s.`, newItm.DisplayName(), shopMob.Character.Name, tradeInString))
-		buyer.SendRoomText(fmt.Sprintf(`<ansi fg="username">%s</ansi> purchases the <ansi fg="itemname">%s</ansi> from <ansi fg="mobname">%s</ansi>.`, buyerName, newItm.DisplayName(), shopMob.Character.Name), true)
+		if room := buyer.GetRoom(); room != nil {
+			room.SendTextVisual(messaging.CategoryLoot, fmt.Sprintf(`<ansi fg="username">%s</ansi> purchases the <ansi fg="itemname">%s</ansi> from <ansi fg="mobname">%s</ansi>.`, buyerName, newItm.DisplayName(), shopMob.Character.Name), buyer.GetUserId())
+		}
 	} else if shopUser != nil {
 		if buyer.IsPlayer() {
 			if u := users.GetByUserId(buyer.GetUserId()); u != nil {
@@ -682,7 +684,9 @@ func executePurchaseItem(buyer Actor, shopMob *mobs.Mob, shopUser *users.UserRec
 		}
 		buyer.SendText(messaging.CategoryLoot, fmt.Sprintf(`You purchase the <ansi fg="itemname">%s</ansi> from <ansi fg="username">%s</ansi> for %s.`, newItm.DisplayName(), shopUser.Character.Name, tradeInString))
 		shopUser.SendText(messaging.CategoryLoot, fmt.Sprintf(`<ansi fg="username">%s</ansi> purchased the <ansi fg="itemname">%s</ansi> you were selling for %s.`, buyerName, newItm.DisplayName(), tradeInString))
-		buyer.SendRoomText(fmt.Sprintf(`<ansi fg="username">%s</ansi> purchases the <ansi fg="itemname">%s</ansi> from <ansi fg="username">%s</ansi>.`, buyerName, newItm.DisplayName(), shopUser.Character.Name), true)
+		if room := buyer.GetRoom(); room != nil {
+			room.SendTextVisual(messaging.CategoryLoot, fmt.Sprintf(`<ansi fg="username">%s</ansi> purchases the <ansi fg="itemname">%s</ansi> from <ansi fg="username">%s</ansi>.`, buyerName, newItm.DisplayName(), shopUser.Character.Name), buyer.GetUserId())
+		}
 	}
 
 	buyer.GetCharacter().StoreItem(newItm)
@@ -701,7 +705,9 @@ func executePurchaseBuff(buyer Actor, shopMob *mobs.Mob, shopUser *users.UserRec
 			}
 		}
 		buyer.SendText(messaging.CategoryLoot, fmt.Sprintf(`You pay %s to <ansi fg="mobname">%s</ansi>.`, tradeInString, shopMob.Character.Name))
-		buyer.SendRoomText(fmt.Sprintf(`<ansi fg="username">%s</ansi> pays %s to <ansi fg="mobname">%s</ansi>.`, buyerName, tradeInString, shopMob.Character.Name), true)
+		if room := buyer.GetRoom(); room != nil {
+			room.SendTextVisual(messaging.CategoryLoot, fmt.Sprintf(`<ansi fg="username">%s</ansi> pays %s to <ansi fg="mobname">%s</ansi>.`, buyerName, tradeInString, shopMob.Character.Name), buyer.GetUserId())
+		}
 		shopMob.Command(`emote mutters a soft incantation.`, 1)
 	} else if shopUser != nil {
 		if buyer.IsPlayer() {
@@ -711,7 +717,9 @@ func executePurchaseBuff(buyer Actor, shopMob *mobs.Mob, shopUser *users.UserRec
 		}
 		buyer.SendText(messaging.CategoryLoot, fmt.Sprintf(`You pay %s to <ansi fg="username">%s</ansi>.`, tradeInString, shopUser.Character.Name))
 		shopUser.SendText(messaging.CategoryLoot, fmt.Sprintf(`<ansi fg="username">%s</ansi> pays you %s for an enchantment.`, buyerName, tradeInString))
-		buyer.SendRoomText(fmt.Sprintf(`<ansi fg="username">%s</ansi> pays to <ansi fg="username">%s</ansi> for an enchantment.`, buyerName, shopUser.Character.Name), true)
+		if room := buyer.GetRoom(); room != nil {
+			room.SendTextVisual(messaging.CategoryLoot, fmt.Sprintf(`<ansi fg="username">%s</ansi> pays to <ansi fg="username">%s</ansi> for an enchantment.`, buyerName, shopUser.Character.Name), buyer.GetUserId())
+		}
 		// player-merchant doesn't emote (matches existing behavior).
 	}
 
