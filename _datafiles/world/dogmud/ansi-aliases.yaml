@@ -262,7 +262,7 @@ colors:
 # Other
   loot: 7
   equipment: 7
-  buff-apply: 14
-  buff-expire: 14
+  buff-apply: 109        # light steel blue — calmer than the old bright cyan so it doesn't dominate spell-school colors when both fire on a buff spell
+  buff-expire: 109
   mutation: 146
   toxin: 130
