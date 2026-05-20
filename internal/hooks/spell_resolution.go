@@ -167,10 +167,10 @@ func resolveSpell(user *users.UserRecord, cs activity.CastingData, spellData *sp
 			}
 		}
 		cfg := textutil.SendTextConfig{
-			UserSendFunc: func(msg string) { user.SendText(messaging.CategorySpellEnhancement, msg) },
+			UserSendFunc: func(msg string) { user.SendText(spellSchoolCategory(spellData), msg) },
 			RoomSendFunc: func(msg string, skip ...int) {
 				if r := rooms.LoadRoom(user.Character.RoomId); r != nil {
-					r.SendText(messaging.CategorySpellEnhancement, msg, skip...)
+					r.SendText(spellSchoolCategory(spellData), msg, skip...)
 				}
 			},
 			ExcludeId: user.UserId,
@@ -272,6 +272,30 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 	return false
 }
 
+// spellSchoolCategory picks the messaging Category from a spell's
+// first declared school. Falls back to CategorySpellElemental if the
+// spell has no school tag — the historical default for damage spells.
+// A spell with multiple schools (rare) uses the first; the school
+// list order in YAML is the author's preference.
+func spellSchoolCategory(spellData *spells.SpellData) messaging.Category {
+	if spellData == nil || len(spellData.Schools) == 0 {
+		return messaging.CategorySpellElemental
+	}
+	switch spellData.Schools[0] {
+	case spells.SchoolElemental:
+		return messaging.CategorySpellElemental
+	case spells.SchoolEnhancement:
+		return messaging.CategorySpellEnhancement
+	case spells.SchoolMental:
+		return messaging.CategorySpellMental
+	case spells.SchoolVital:
+		return messaging.CategorySpellVital
+	case spells.SchoolManifestation:
+		return messaging.CategorySpellManifestation
+	}
+	return messaging.CategorySpellElemental
+}
+
 // setMobSpellAggro sets reciprocal aggro between the caster and the
 // mob target immediately after a hostile spell lands.
 //
@@ -322,24 +346,24 @@ func applyMobEffect_damage(
 	setMobSpellAggro(user, mob)
 	if user != nil {
 		if critDeflect {
-			user.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
+			user.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="yellow">%s completely unravels your %s!</ansi>`,
 				mName, spellData.Name))
-			sendVisualRoomText(room, messaging.CategorySpellElemental, fmt.Sprintf(
+			sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
 				`%s unravels <ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> completely!`,
 				mName, user.Character.Name, spellData.Name), user.UserId)
 		} else if deflected {
-			user.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
+			user.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="yellow">%s partially deflects your %s! (<ansi fg="damage">%s</ansi>)</ansi>`,
 				mName, spellData.Name, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value)))
-			sendVisualRoomText(room, messaging.CategorySpellElemental, fmt.Sprintf(
+			sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
 				`%s partially deflects <ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi>!`,
 				mName, user.Character.Name, spellData.Name), user.UserId)
 		} else {
-			user.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
+			user.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`Your %s strikes %s! (<ansi fg="damage">%s</ansi>)%s`,
 				spellData.Name, mName, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value), critTag))
-			sendVisualRoomText(room, messaging.CategorySpellElemental, fmt.Sprintf(
+			sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes %s!`,
 				user.Character.Name, spellData.Name, mName), user.UserId)
 		}
@@ -371,10 +395,10 @@ func applyMobEffect_dot(
 	mob.Character.AddCondition(characters.ConditionPoisoned, dotDuration, float64(magnitude), "spell")
 	setMobSpellAggro(user, mob)
 	if user != nil {
-		user.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
+		user.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 			`Your %s afflicts %s!%s`,
 			spellData.Name, mName, critTag))
-		sendVisualRoomText(room, messaging.CategorySpellElemental, fmt.Sprintf(
+		sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
 			`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> afflicts %s!`,
 			user.Character.Name, spellData.Name, mName), user.UserId)
 	}
@@ -421,15 +445,15 @@ func applyMobEffect_knockdown(
 	setMobSpellAggro(user, mob)
 	if user != nil {
 		if kdDeflected {
-			user.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
+			user.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="yellow">%s partially deflects your %s, but is knocked down! (<ansi fg="damage">%s</ansi>)</ansi>`,
 				mName, spellData.Name, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value)))
 		} else {
-			user.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
+			user.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`Your %s slams %s to the ground! (<ansi fg="damage">%s</ansi>)%s`,
 				spellData.Name, mName, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value), critTag))
 		}
-		sendVisualRoomText(room, messaging.CategorySpellElemental, fmt.Sprintf(
+		sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
 			`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> knocks %s to the ground!`,
 			user.Character.Name, spellData.Name, mName), user.UserId)
 	}
@@ -485,10 +509,10 @@ func applyMobEffect_buff(
 		}
 	}
 	if user != nil {
-		user.SendText(messaging.CategorySpellEnhancement, fmt.Sprintf(
+		user.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 			`Your %s takes effect on %s!%s`,
 			spellData.Name, mName, critTag))
-		sendVisualRoomText(room, messaging.CategorySpellEnhancement, fmt.Sprintf(
+		sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
 			`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> affects %s!`,
 			user.Character.Name, spellData.Name, mName), user.UserId)
 	}
@@ -501,7 +525,7 @@ func applyMobEffect_default(
 	mName string,
 ) int {
 	if user != nil {
-		user.SendText(messaging.CategorySpellEnhancement, fmt.Sprintf(
+		user.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 			`Your %s takes effect on %s.`,
 			spellData.Name, mName))
 	}
@@ -616,15 +640,15 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 			}
 		}
 		if critDeflect {
-			target.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
+			target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="green">You read <ansi fg="username">%s</ansi>'s spell perfectly `+
 					`and unravel it before it reaches you!</ansi>`,
 				user.Character.Name))
-			user.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
+			user.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="yellow"><ansi fg="username">%s</ansi> completely unravels `+
 					`your spell!</ansi>`,
 				target.Character.Name))
-			sendVisualRoomText(room, messaging.CategorySpellElemental, fmt.Sprintf(
+			sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> unravels <ansi fg="username">%s</ansi>'s `+
 					`spell completely!`,
 				target.Character.Name, user.Character.Name), user.UserId, target.UserId)
@@ -633,35 +657,35 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 		target.Character.Health -= dmg
 		dmgDesc := combat.GetDamageDescription(dmg, target.Character.HealthMax.Value)
 		if deflected {
-			target.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
+			target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="green">You partially deflect `+
 					`<ansi fg="username">%s</ansi>'s `+
 					`%s! `+
 					`(<ansi fg="damage">%s</ansi>)</ansi>`,
 				user.Character.Name, spellData.Name, dmgDesc))
-			user.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
+			user.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="yellow"><ansi fg="username">%s</ansi> partially deflects `+
 					`your %s! `+
 					`(<ansi fg="damage">%s</ansi>)</ansi>`,
 				target.Character.Name, spellData.Name, dmgDesc))
-			sendVisualRoomText(room, messaging.CategorySpellElemental, fmt.Sprintf(
+			sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> partially deflects `+
 					`<ansi fg="username">%s</ansi>'s `+
 					`<ansi fg="cyan">%s</ansi>!`,
 				target.Character.Name, user.Character.Name, spellData.Name),
 				user.UserId, target.UserId)
 		} else {
-			user.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
+			user.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`Your %s strikes `+
 					`<ansi fg="username">%s</ansi>! `+
 					`(<ansi fg="damage">%s</ansi>)%s`,
 				spellData.Name, target.Character.Name, dmgDesc, critTag))
-			sendVisualRoomText(room, messaging.CategorySpellElemental, fmt.Sprintf(
+			sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes `+
 					`<ansi fg="username">%s</ansi>!`,
 				user.Character.Name, spellData.Name, target.Character.Name),
 				user.UserId, target.UserId)
-			target.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
+			target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="red"><ansi fg="username">%s</ansi>'s `+
 					`%s strikes you! `+
 					`(<ansi fg="damage">%s</ansi>)</ansi>`,
@@ -743,11 +767,11 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 				target.Character.Buffs.SetTickAmount(buffId, tickAmt)
 			}
 		}
-		user.SendText(messaging.CategorySpellEnhancement, fmt.Sprintf(
+		user.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 			`Your %s takes effect on <ansi fg="username">%s</ansi>!%s`,
 			spellData.Name, target.Character.Name, critTag))
 		if target.UserId != user.UserId {
-			target.SendText(messaging.CategorySpellEnhancement, fmt.Sprintf(
+			target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="username">%s</ansi>'s %s takes effect on you!`,
 				user.Character.Name, spellData.Name))
 		}
@@ -771,17 +795,17 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 			shieldBonus = int(float64(shieldBonus) * 1.5)
 		}
 		target.Character.AddCondition(characters.ConditionShield, duration, float64(shieldBonus), "spell")
-		target.SendText(messaging.CategorySpellEnhancement, `A shimmering magical barrier forms around you, bolstering your defenses.`)
+		target.SendText(spellSchoolCategory(spellData), `A shimmering magical barrier forms around you, bolstering your defenses.`)
 		if target.UserId != user.UserId {
-			user.SendText(messaging.CategorySpellEnhancement, fmt.Sprintf(
+			user.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`A shimmering magical barrier forms around <ansi fg="username">%s</ansi>, bolstering their defenses.`,
 				target.Character.Name))
 		}
-		sendVisualRoomText(room, messaging.CategorySpellEnhancement, fmt.Sprintf(
+		sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
 			`A shimmering barrier surrounds <ansi fg="username">%s</ansi>.`, target.Character.Name), target.UserId)
 
 	default:
-		user.SendText(messaging.CategorySpellEnhancement, fmt.Sprintf(
+		user.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 			`Your %s takes effect on <ansi fg="username">%s</ansi>.`,
 			spellData.Name, target.Character.Name))
 	}
@@ -981,7 +1005,7 @@ func applyMobSelfEffect(mob *mobs.Mob, room *rooms.Room, spellData *spells.Spell
 		}
 		duration := calcSpellDuration(spellData.BaseFolds, skillLevel, mob.Character.Stats.Willpower.ValueAdj)
 		mob.Character.AddCondition(characters.ConditionShield, duration, float64(shieldBonus), "spell")
-		sendVisualRoomText(room, messaging.CategorySpellEnhancement, fmt.Sprintf(
+		sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
 			`A shimmering barrier forms around %s.`, mobDisplayName(mob, room, 0)))
 	}
 }
@@ -1054,12 +1078,12 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 			}
 		}
 		if critDeflect {
-			target.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
+			target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="green">You read `+
 					`<ansi fg="mobname">%s</ansi>'s spell perfectly `+
 					`and unravel it before it reaches you!</ansi>`,
 				caster.Character.Name))
-			sendVisualRoomText(room, messaging.CategorySpellElemental, fmt.Sprintf(
+			sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> unravels `+
 					`<ansi fg="mobname">%s</ansi>'s spell completely!`,
 				target.Character.Name, caster.Character.Name), target.UserId)
@@ -1068,26 +1092,26 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 		mobSpellDmg = dmg
 		target.Character.Health -= dmg
 		if deflected {
-			target.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
+			target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="green">You partially deflect `+
 					`<ansi fg="mobname">%s</ansi>'s `+
 					`<ansi fg="cyan">%s</ansi>! `+
 					`(<ansi fg="damage">%s</ansi>)</ansi>`,
 				caster.Character.Name, spellData.Name,
 				combat.GetDamageDescription(dmg, target.Character.HealthMax.Value)))
-			sendVisualRoomText(room, messaging.CategorySpellElemental, fmt.Sprintf(
+			sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> partially deflects `+
 					`<ansi fg="mobname">%s</ansi>'s `+
 					`<ansi fg="cyan">%s</ansi>!`,
 				target.Character.Name, caster.Character.Name, spellData.Name),
 				target.UserId)
 		} else {
-			target.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
+			target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> `+
 					`strikes you! (<ansi fg="damage">%s</ansi>)%s`,
 				caster.Character.Name, spellData.Name,
 				combat.GetDamageDescription(dmg, target.Character.HealthMax.Value), critTag))
-			sendVisualRoomText(room, messaging.CategorySpellElemental, fmt.Sprintf(
+			sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes `+
 					`<ansi fg="username">%s</ansi>!`,
 				caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
@@ -1105,10 +1129,10 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 			dotDuration = 3
 		}
 		target.Character.AddCondition(characters.ConditionPoisoned, dotDuration, float64(magnitude), "spell")
-		target.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
+		target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> afflicts you!%s`,
 			caster.Character.Name, spellData.Name, critTag))
-		sendVisualRoomText(room, messaging.CategorySpellElemental, fmt.Sprintf(
+		sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> afflicts <ansi fg="username">%s</ansi>!`,
 			caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
 		if !target.Character.IsInCombat() {
@@ -1137,12 +1161,12 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 			mudlog.Warn("mob spell knockdown: TransitionToSupine failed",
 				"target_user", target.UserId, "err", err)
 		}
-		target.SendText(messaging.CategorySpellElemental, fmt.Sprintf(
+		target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> slams you `+
 				`to the ground! (<ansi fg="damage">%s</ansi>)%s`,
 			caster.Character.Name, spellData.Name,
 			combat.GetDamageDescription(dmg, target.Character.HealthMax.Value), critTag))
-		sendVisualRoomText(room, messaging.CategorySpellElemental, fmt.Sprintf(
+		sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> knocks `+
 				`<ansi fg="username">%s</ansi> to the ground!`,
 			caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
@@ -1159,14 +1183,14 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 				target.Character.SetAggro(0, caster.InstanceId, characters.DefaultAttack)
 			}
 		}
-		target.SendText(messaging.CategorySpellEnhancement, fmt.Sprintf(
+		target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> takes effect on you!%s`,
 			caster.Character.Name, spellData.Name, critTag))
-		sendVisualRoomText(room, messaging.CategorySpellEnhancement, fmt.Sprintf(
+		sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> affects <ansi fg="username">%s</ansi>!`,
 			caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
 	default:
-		target.SendText(messaging.CategorySpellEnhancement, fmt.Sprintf(
+		target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> takes effect on you.`,
 			caster.Character.Name, spellData.Name))
 	}

@@ -222,13 +222,13 @@ colors:
   combat-anon: 196
 
 # Spells — fold + 5 schools + disruption
-  spell-fold: 152
-  spell-disruption: 214
-  spell-elemental: 173
-  spell-enhancement: 179
-  spell-mental: 146
-  spell-vital: 108
-  spell-manifestation: 169
+  spell-fold: 152          # pale steel-cyan — cast/fold preparation
+  spell-disruption: 214    # warning amber — fizzle/backfire/deflect
+  spell-elemental: 160     # red3 — fire/ice/lightning damage (distinct red, not the warm-orange shared with gold)
+  spell-enhancement: 179   # warm gold — buffs / shields / enchantments
+  spell-mental: 146        # lavender — psionics / charm / illusion
+  spell-vital: 108         # sage mint — heal / cure / restore
+  spell-manifestation: 169 # rose pink — summon / raise / bind
 
 # Social
   speech: 111
