@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math"
 	"math/big"
-	"runtime"
 	"strings"
 	"time"
 
@@ -303,26 +302,6 @@ func (u *UserRecord) SendText(cat messaging.Category, txt string) {
 		UserId: u.UserId,
 		Text:   rendered + "\n",
 	})
-}
-
-// SendTextLegacy is the temporary shim for callers that haven't
-// migrated to the categorized API. Emits one warning per call site
-// so the audit can track remaining sites. DELETED in T16.
-func (u *UserRecord) SendTextLegacy(txt string) {
-	mudlog.Warn("messaging legacy call", "site", legacyCallerInfoUser(), "fn", "UserRecord.SendText")
-	u.SendText(messaging.CategoryDefault, txt)
-}
-
-// legacyCallerInfoUser returns "file:line" of the caller two frames
-// up (skipping this helper + the shim itself). Used only for the
-// temp-shim deprecation warnings. Duplicated rather than imported
-// from rooms/ to avoid a circular dependency.
-func legacyCallerInfoUser() string {
-	_, file, line, ok := runtime.Caller(2)
-	if !ok {
-		return "unknown"
-	}
-	return fmt.Sprintf("%s:%d", file, line)
 }
 
 // GetLineWidth returns the user's configured line width, falling back

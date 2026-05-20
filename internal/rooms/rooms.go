@@ -3,7 +3,6 @@ package rooms
 import (
 	"errors"
 	"fmt"
-	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -18,7 +17,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutators"
 	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
 	"github.com/GoMudEngine/GoMud/internal/state"
@@ -356,21 +354,6 @@ func (r *Room) SendTextVisualToUser(u *users.UserRecord, cat messaging.Category,
 	})
 }
 
-// SendTextLegacy is a temporary compatibility shim for callers that
-// haven't yet migrated to the categorized API. Maps to
-// CategoryDefault and emits one warning per call site so the audit
-// can track remaining sites. DELETED in T16.
-func (r *Room) SendTextLegacy(txt string, excludeUserIds ...int) {
-	mudlog.Warn("messaging legacy call", "site", legacyCallerInfo(), "fn", "Room.SendText")
-	r.SendText(messaging.CategoryDefault, txt, excludeUserIds...)
-}
-
-// SendTextVisualLegacy is the shim for SendTextVisual. DELETED in T16.
-func (r *Room) SendTextVisualLegacy(txt string, excludeUserIds ...int) {
-	mudlog.Warn("messaging legacy call", "site", legacyCallerInfo(), "fn", "Room.SendTextVisual")
-	r.SendTextVisual(messaging.CategoryDefault, txt, excludeUserIds...)
-}
-
 // excluded is a tiny helper for the shared exclusion check.
 func excluded(uid int, excludeIds []int) bool {
 	for _, eid := range excludeIds {
@@ -379,17 +362,6 @@ func excluded(uid int, excludeIds []int) bool {
 		}
 	}
 	return false
-}
-
-// legacyCallerInfo returns "file:line" of the caller two frames up
-// (skipping legacyCallerInfo + the shim itself). Used only for the
-// temp-shim deprecation warnings.
-func legacyCallerInfo() string {
-	_, file, line, ok := runtime.Caller(2)
-	if !ok {
-		return "unknown"
-	}
-	return fmt.Sprintf("%s:%d", file, line)
 }
 
 func (r *Room) PlaySound(soundId string, category string, excludeUserIds ...int) {

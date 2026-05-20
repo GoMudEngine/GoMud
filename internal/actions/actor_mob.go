@@ -24,8 +24,8 @@ func NewMobActor(m *mobs.Mob) Actor {
 }
 
 // NewMobActorInRoom is NewMobActor with a pre-populated room reference.
-// Use this at sites where downstream code calls GetRoom() / SendRoomText()
-// on the returned Actor.
+// Use this at sites where downstream code calls GetRoom() on the returned
+// Actor.
 func NewMobActorInRoom(m *mobs.Mob, room *rooms.Room) Actor {
 	return &MobActor{Mob: m, Room: room}
 }
@@ -41,18 +41,9 @@ func (a *MobActor) GetRoom() *rooms.Room {
 // SendText is a no-op for mobs — they have no player connection.
 func (a *MobActor) SendText(cat messaging.Category, msg string) {}
 
-// SendTextLegacy is a no-op for mobs — they have no player connection.
-func (a *MobActor) SendTextLegacy(msg string) {}
-
-func (a *MobActor) SendRoomText(msg string, excludeSelf bool) {
-	if a.Room == nil {
-		return
-	}
-	a.Room.SendTextVisual(messaging.CategoryMobEmote, msg)
-}
-
-// SendRoomCommunication is identical to SendRoomText for mobs: mobs do not
-// respect client-side mute/deafen settings.
+// SendRoomCommunication broadcasts NPC speech to the room. Mobs do not
+// respect client-side mute/deafen settings; the broadcast is sight-gated
+// via the messaging pipeline.
 func (a *MobActor) SendRoomCommunication(msg string, excludeSelf bool) {
 	if a.Room == nil {
 		return

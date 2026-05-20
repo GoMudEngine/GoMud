@@ -18,7 +18,6 @@ type ActionContext interface {
 	GiveItem(itemId int)
 	GiveGold(amount int)
 	SendText(cat messaging.Category, text string)
-	SendTextLegacy(text string)
 	RoomText(text string)
 	SpawnMob(s SpawnDef)
 	SpawnItem(s SpawnDef)

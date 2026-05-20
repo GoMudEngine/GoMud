@@ -47,7 +47,6 @@ func (m *mockActionContext) GiveGold(amount int)  { m.givenGold += amount }
 func (m *mockActionContext) SendText(_ messaging.Category, text string) {
 	m.sentTexts = append(m.sentTexts, text)
 }
-func (m *mockActionContext) SendTextLegacy(text string) { m.sentTexts = append(m.sentTexts, text) }
 func (m *mockActionContext) RoomText(text string) { m.roomTexts = append(m.roomTexts, text) }
 func (m *mockActionContext) SpawnMob(s SpawnDef)  { m.spawnedMobs = append(m.spawnedMobs, s) }
 func (m *mockActionContext) SpawnItem(s SpawnDef) { m.spawnedItems = append(m.spawnedItems, s) }

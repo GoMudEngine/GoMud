@@ -50,8 +50,6 @@ func newFakeActor(name string, statAdj, healthMax int, isPlayer bool) *fakeActor
 func (a *fakeActor) GetCharacter() *characters.Character      { return a.char }
 func (a *fakeActor) GetRoom() *rooms.Room                     { return nil }
 func (a *fakeActor) SendText(_ messaging.Category, msg string) { a.sent = append(a.sent, msg) }
-func (a *fakeActor) SendTextLegacy(msg string)                { a.sent = append(a.sent, msg) }
-func (a *fakeActor) SendRoomText(msg string, _ bool)          {}
 func (a *fakeActor) SendRoomCommunication(msg string, _ bool) {}
 func (a *fakeActor) GetName() string                            { return a.name }
 func (a *fakeActor) IsPlayer() bool                             { return a.isPlayer }

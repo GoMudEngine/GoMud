@@ -299,7 +299,7 @@ func TestHandleCombatRound_AllQuadrantsRouteCorrectly(t *testing.T) {
 					tc.name, defUserId)
 			}
 			// In MM, neither COMBATANT receives direct messages (both
-			// sides are mobs; MobActor.SendTextLegacy is a no-op).
+			// sides are mobs; MobActor.SendText is a no-op).
 			// Bystanders may still receive room-broadcasts via the T9
 			// per-recipient fan-out in Room.SendText/Visual — those
 			// surface as UserId-targeted events even though the

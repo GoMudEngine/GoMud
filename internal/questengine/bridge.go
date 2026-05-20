@@ -142,11 +142,6 @@ func (b *GameBridge) SendText(cat messaging.Category, text string) {
 	b.user.SendText(cat, text)
 }
 
-// SendTextLegacy sends a message directly to the player.
-func (b *GameBridge) SendTextLegacy(text string) {
-	b.user.SendTextLegacy(text)
-}
-
 // RoomText sends a message to everyone in the room except the triggering player.
 func (b *GameBridge) RoomText(text string) {
 	room := rooms.LoadRoom(b.roomId)

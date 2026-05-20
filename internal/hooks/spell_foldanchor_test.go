@@ -30,8 +30,6 @@ func (f *fakeActor) GetRoom() *rooms.Room                { return f.room }
 func (f *fakeActor) SendText(_ messaging.Category, msg string) {
 	f.selfTexts = append(f.selfTexts, msg)
 }
-func (f *fakeActor) SendTextLegacy(msg string)                          { f.selfTexts = append(f.selfTexts, msg) }
-func (f *fakeActor) SendRoomText(msg string, excludeSelf bool)          {}
 func (f *fakeActor) SendRoomCommunication(msg string, excludeSelf bool) {}
 func (f *fakeActor) GetName() string                                    { return f.name }
 func (f *fakeActor) IsPlayer() bool                                     { return f.isPlayer }

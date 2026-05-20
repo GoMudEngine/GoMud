@@ -21,19 +21,10 @@ type Actor interface {
 	// for mobs). Routes through the centralized messaging pipeline.
 	SendText(cat messaging.Category, msg string)
 
-	// SendTextLegacy delivers a message to this actor only (no-op for
-	// mobs). Temporary shim retained through T14 for callers that
-	// haven't been migrated yet; T16 deletes the shim entirely.
-	SendTextLegacy(msg string)
-
-	// SendRoomText broadcasts msg to the room. When excludeSelf is true the
-	// actor's own connection is omitted from the broadcast.
-	SendRoomText(msg string, excludeSelf bool)
-
 	// SendRoomCommunication broadcasts a communication (say/shout/etc.) to
 	// the room. Some clients suppress these messages based on deafen settings;
 	// this variant goes through the communication pipeline rather than the raw
-	// text pipeline. excludeSelf works the same as SendRoomText.
+	// text pipeline. excludeSelf works the same as the deleted SendRoomText.
 	SendRoomCommunication(msg string, excludeSelf bool)
 
 	// GetName returns the display name of the actor.
