@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/llm"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -22,14 +23,14 @@ func Talk(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	args := util.SplitButRespectQuotes(rest)
 
 	if len(args) == 0 {
-		user.SendTextLegacy(`Talk to whom?`)
+		user.SendText(messaging.CategorySystem, `Talk to whom?`)
 		return true, nil
 	}
 
 	// Support "talk to <npc>" as well as "talk <npc>"
 	if strings.ToLower(args[0]) == `to` {
 		if len(args) < 2 {
-			user.SendTextLegacy(`Talk to whom?`)
+			user.SendText(messaging.CategorySystem, `Talk to whom?`)
 			return true, nil
 		}
 		args = args[1:]
@@ -39,13 +40,13 @@ func Talk(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	target, err := actions.ResolveTargetActor(room, searchName)
 	if err != nil || target.IsPlayer() {
-		user.SendTextLegacy(`Talk to whom?`)
+		user.SendText(messaging.CategorySystem, `Talk to whom?`)
 		return true, nil
 	}
 	mob := target.(*actions.MobActor).Mob
 	mobId := mob.InstanceId
 
-	room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> approaches <ansi fg="mobname">%s</ansi> for a conversation.`, user.Character.Name, mob.Character.Name), user.UserId)
+	room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(`<ansi fg="username">%s</ansi> approaches <ansi fg="mobname">%s</ansi> for a conversation.`, user.Character.Name, mob.Character.Name), user.UserId)
 
 	// Build PlayerState for quest/item gating in dialogue
 	ps := buildPlayerState(user)
@@ -90,7 +91,7 @@ func Talk(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 						m.Command(`say ` + greetText)
 						if hints != `` {
 							if u := users.GetByUserId(user.UserId); u != nil {
-								u.SendTextLegacy(fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
+								u.SendText(messaging.CategoryDialogueHint, fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
 							}
 						}
 					} else if response, moodChange, ok := dialogue.Match(df, mobIdCopy, ``, ps); ok {
@@ -113,7 +114,7 @@ func Talk(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			if greetText, hints, ok := dialogue.Greet(df, mobId, user.UserId, ps); ok {
 				mob.Command(`say ` + greetText)
 				if hints != `` {
-					user.SendTextLegacy(fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
+					user.SendText(messaging.CategoryDialogueHint, fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
 				}
 			} else if response, moodChange, ok := dialogue.Match(df, mobId, ``, ps); ok {
 				// no tree — try a greeting pattern match with empty topic
@@ -163,7 +164,7 @@ func buildPlayerState(user *users.UserRecord) *dialogue.PlayerState {
 			newItem := items.New(itemId)
 			if newItem.ItemId > 0 {
 				user.Character.StoreItem(newItem)
-				user.SendTextLegacy(fmt.Sprintf(`You receive a <ansi fg="itemname">%s</ansi>.`, newItem.DisplayName()))
+				user.SendText(messaging.CategoryLoot, fmt.Sprintf(`You receive a <ansi fg="itemname">%s</ansi>.`, newItem.DisplayName()))
 				events.AddToQueue(events.ItemOwnership{
 					UserId: user.UserId,
 					Item:   newItem,

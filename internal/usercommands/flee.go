@@ -2,6 +2,7 @@ package usercommands
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
@@ -14,11 +15,11 @@ func Flee(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		// Fleeing costs stamina
 		const fleeStaminaCost = 10
 		if !user.Character.DeductStamina(fleeStaminaCost) {
-			user.SendTextLegacy(`You're too exhausted to flee! You need to stand and fight.`)
+			user.SendText(messaging.CategorySystem, `You're too exhausted to flee! You need to stand and fight.`)
 			return true, nil
 		}
 
-		user.SendTextLegacy(`You attempt to flee...`)
+		user.SendText(messaging.CategorySystem, `You attempt to flee...`)
 
 		// Task 15: use CombatPhase.TransitionToDisengaging instead of the
 		// legacy Aggro{Type:Flee} sentinel. The round driver's handlePlayerFlee
