@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -189,11 +190,11 @@ func RoomMaintenance() []int {
 					for _, sign := range prunedSigns {
 						if sign.VisibleUserId == 0 {
 							if u := users.GetByUserId(userId); u != nil {
-								u.SendTextLegacy("A sign crumbles to dust.\n")
+								u.SendText(messaging.CategoryRoomDescription, "A sign crumbles to dust.\n")
 							}
 						} else if sign.VisibleUserId == userId {
 							if u := users.GetByUserId(userId); u != nil {
-								u.SendTextLegacy("The rune you had enscribed here has faded away.\n")
+								u.SendText(messaging.CategorySystem, "The rune you had enscribed here has faded away.\n")
 							}
 						}
 					}
@@ -208,7 +209,7 @@ func RoomMaintenance() []int {
 				for _, exit := range prunedExits {
 					for _, userId := range roomPlayers {
 						if u := users.GetByUserId(userId); u != nil {
-							u.SendTextLegacy(fmt.Sprintf("The %s vanishes.\n", exit.Title))
+							u.SendText(messaging.CategoryRoomExit, fmt.Sprintf("The %s vanishes.\n", exit.Title))
 						}
 					}
 				}
@@ -310,7 +311,7 @@ func MoveToRoom(userId int, toRoomId int, isSpawn ...bool) error {
 		if inst := instanceRegistry.FindByRoomId(toRoomId); inst != nil {
 			if !inst.IsAuthorized(userId) {
 				if user != nil {
-					user.SendTextLegacy(`<ansi fg="red">The portal's energy pushes you back. It wasn't opened for you.</ansi>`)
+					user.SendText(messaging.CategoryError, `<ansi fg="red">The portal's energy pushes you back. It wasn't opened for you.</ansi>`)
 				}
 				return fmt.Errorf("instance access denied")
 			}

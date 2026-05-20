@@ -233,10 +233,10 @@ func (r *Room) UpdateCorpses(roundNow uint64) {
 		if corpse.Prunable {
 			removeIdx = append(removeIdx, idx)
 			if corpse.MobId > 0 {
-				r.SendTextLegacy(fmt.Sprintf(`A <ansi fg="mob-corpse">%s</ansi> crumbles to dust.`, corpse.DisplayName()))
+				r.SendText(messaging.CategoryRoomDescription, fmt.Sprintf(`A <ansi fg="mob-corpse">%s</ansi> crumbles to dust.`, corpse.DisplayName()))
 			}
 			if corpse.UserId > 0 {
-				r.SendTextLegacy(fmt.Sprintf(`A <ansi fg="user-corpse">%s corpse</ansi> crumbles to dust.`, corpse.Character.Name))
+				r.SendText(messaging.CategoryRoomDescription, fmt.Sprintf(`A <ansi fg="user-corpse">%s corpse</ansi> crumbles to dust.`, corpse.Character.Name))
 			}
 		}
 		r.Corpses[idx] = corpse
@@ -695,7 +695,7 @@ func (r *Room) Prepare(checkAdjacentRooms bool) {
 	if len(r.Containers) > 0 {
 		for k, c := range r.Containers {
 			if c.DespawnRound > 0 && c.DespawnRound <= roundNow {
-				r.SendTextLegacy(fmt.Sprintf(`The <ansi fg="container">%s</ansi> crumbles to dust, and is gone.`, k))
+				r.SendText(messaging.CategoryRoomDescription, fmt.Sprintf(`The <ansi fg="container">%s</ansi> crumbles to dust, and is gone.`, k))
 				delete(r.Containers, k)
 			}
 		}

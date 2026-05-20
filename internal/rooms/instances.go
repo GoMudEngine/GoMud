@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -186,7 +187,7 @@ func (ir *InstanceRegistry) CheckPortalTimers() {
 
 		for _, ephId := range inst.RoomIdMap {
 			if room := LoadRoom(ephId); room != nil {
-				room.SendTextLegacy(msg)
+				room.SendText(messaging.CategoryWarning, msg)
 			}
 		}
 	}
@@ -210,7 +211,7 @@ func (ir *InstanceRegistry) CheckPortalTimers() {
 			}
 			for _, userId := range room.GetPlayers() {
 				if u := users.GetByUserId(userId); u != nil {
-					u.SendTextLegacy(collapseMsg)
+					u.SendText(messaging.CategoryWarning, collapseMsg)
 				}
 				MoveToRoom(userId, inst.OverworldRoomId)
 			}
