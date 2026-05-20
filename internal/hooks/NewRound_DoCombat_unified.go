@@ -498,34 +498,35 @@ func dispatchCritAndMessaging(atk, def actions.Actor, res *combat.AttackResult) 
 	}
 
 	// Direct messages — Divergence #1.
-	// AttackResult.MessagesToSource/Target carry heterogeneous combat
-	// narration (hits / defenses / grapple lines). Per T11 design we tag
-	// the drainage as CategoryDefault here; per-line categorization belongs
-	// at the producer site in combat/ and is left for a future pass.
+	// AttackResult.MessagesTo* carry heterogeneous combat narration
+	// (hits / defenses / grapple lines). categoryForAttack picks the
+	// best Category from AttackResult metadata: defense Category for
+	// defender-side drainage when a defense fired, otherwise a
+	// CategoryHit* matching the swing's weapon band. Heterogeneous
+	// lines within a drainage get the dominant Category — not per-line
+	// perfect, but visibly distinct from the pre-chunk-7 uncolored
+	// pass-through and consistent with the user-facing palette.
+	attackerCat := categoryForAttack(res, false)
+	defenderCat := categoryForAttack(res, true)
+
 	if atk.IsPlayer() {
 		for _, msg := range res.MessagesToSource {
-			atk.SendText(messaging.CategoryDefault, msg)
+			atk.SendText(attackerCat, msg)
 		}
 	}
 	if def.IsPlayer() {
 		for _, msg := range res.MessagesToTarget {
-			def.SendText(messaging.CategoryDefault, msg)
+			def.SendText(defenderCat, msg)
 		}
 	}
 
 	// Room broadcasts with player-receiver excludes.
-	//
-	// AttackResult drainage: these slices mix hit / defense / grapple
-	// narration without classification on the channel. Per T11 design
-	// we tag heterogeneous drainage as CategoryDefault (no color); the
-	// per-line categorization belongs in combat/ at the producer site
-	// and is left for a future pass.
 	excludes := playerExcludeIds(atk, def)
 	for _, msg := range res.MessagesToSourceRoom {
-		sendVisualRoomText(atkRoom, messaging.CategoryDefault, msg, excludes...)
+		sendVisualRoomText(atkRoom, attackerCat, msg, excludes...)
 	}
 	for _, msg := range res.MessagesToTargetRoom {
-		sendVisualRoomText(defRoom, messaging.CategoryDefault, msg, excludes...)
+		sendVisualRoomText(defRoom, defenderCat, msg, excludes...)
 	}
 	sendDarkRoomCombatFallback(atkRoom, excludes...)
 	if defRoom != atkRoom {

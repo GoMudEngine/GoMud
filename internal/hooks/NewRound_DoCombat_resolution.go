@@ -4,7 +4,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/items"
-	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -48,25 +47,29 @@ func handleCombatWaitRound(
 
 	roundResult := combat.GetWaitMessages(items.Wait, attackerChar, defenderChar, roleSource, roleTarget)
 
-	// AttackResult drainage — wait-round messages are typically passive
-	// "waiting" / "winding up" prose. Use CategoryDefault to keep the
-	// pipeline neutral; T18 smoke surfaces any class that should be
-	// promoted to a more specific Category.
+	// AttackResult drainage — wait-round messages are typically
+	// "waiting" / "winding up" prose between a swing and its
+	// resolution. categoryForAttack picks the same Category the
+	// resolution swing will use, so the wait + outcome render as a
+	// consistent color band.
+	attackerCat := categoryForAttack(&roundResult, false)
+	defenderCat := categoryForAttack(&roundResult, true)
+
 	for _, msg := range roundResult.MessagesToSource {
 		if attackerUser != nil {
-			attackerUser.SendText(messaging.CategoryDefault, msg)
+			attackerUser.SendText(attackerCat, msg)
 		}
 	}
 	for _, msg := range roundResult.MessagesToTarget {
 		if defenderUser != nil {
-			defenderUser.SendText(messaging.CategoryDefault, msg)
+			defenderUser.SendText(defenderCat, msg)
 		}
 	}
 	for _, msg := range roundResult.MessagesToSourceRoom {
-		sendVisualRoomText(attackerRoom, messaging.CategoryDefault, msg, viewerUserId)
+		sendVisualRoomText(attackerRoom, attackerCat, msg, viewerUserId)
 	}
 	for _, msg := range roundResult.MessagesToTargetRoom {
-		sendVisualRoomText(defenderRoom, messaging.CategoryDefault, msg, viewerUserId)
+		sendVisualRoomText(defenderRoom, defenderCat, msg, viewerUserId)
 	}
 	sendDarkRoomCombatFallback(attackerRoom, viewerUserId)
 	if defenderRoom != attackerRoom {
