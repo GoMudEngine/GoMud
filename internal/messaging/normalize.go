@@ -52,9 +52,9 @@ var (
 // Idempotent: Normalize(cat, Normalize(cat, x)) == Normalize(cat, x).
 //
 // Pure-string transforms; safe to call on any input including
-// already-tagged ANSI text. The dup-word regex is ANSI-blind — it
-// matches `\b(\w+) \1\b` which excludes `<` and `>` so tag
-// boundaries don't collapse word pairs.
+// already-tagged ANSI text. Dup-word collapse is ANSI-blind — see
+// collapseDupWords for the manual-scan implementation (RE2 doesn't
+// support the backreference the spec originally suggested).
 func Normalize(cat Category, text string) string {
 	if text == "" {
 		return text
