@@ -80,7 +80,9 @@ func RenderForRecipient(in RenderInput) string {
 // Keeping them in pipeline.go for now; T5/T6/T8 move them to their
 // own files.
 
-func normalize(cat Category, text string) string { return text }
+func normalize(cat Category, text string) string {
+	return Normalize(cat, text)
+}
 func anonymize(text string) string {
 	return Anonymize(text)
 }
