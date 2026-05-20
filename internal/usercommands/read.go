@@ -3,9 +3,9 @@ package usercommands
 import (
 	"fmt"
 
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -30,23 +30,23 @@ func Read(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		}
 	}
 
-	isSneaking := user.Character.HasBuffFlag(buffs.Hidden)
+	isSneaking := user.Character.IsHidden()
 
 	if len(foundItemName) == 0 {
-		user.SendText(fmt.Sprintf(`You don't have a "%s" that can be read.`, rest))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You don't have a "%s" that can be read.`, rest))
 	} else {
-		user.SendText(
+		user.SendText(messaging.CategorySystem, 
 			fmt.Sprintf(`You look at <ansi fg="item">%s</ansi>...`, foundItemLongName),
 		)
 
 		if !isSneaking {
-			room.SendTextVisual(
+			room.SendTextVisual(messaging.CategoryMobEmote, 
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> looks at their <ansi fg="item">%s</ansi>...`, user.Character.Name, foundItemName),
 				user.UserId,
 			)
 		}
 
-		user.SendText(foundItemDescription)
+		user.SendText(messaging.CategorySystem, foundItemDescription)
 	}
 
 	return true, nil

@@ -47,7 +47,7 @@ func actCastBestInCategory(params map[string]any, ctx *EvalContext) Result {
 	}
 
 	// Already casting — don't double-initiate.
-	if mob.Character.CastingState != nil {
+	if mob.Character.Activity != nil && mob.Character.Activity.IsCasting() {
 		return Failure
 	}
 
@@ -136,7 +136,7 @@ func findMostWoundedPackmate(self *mobs.Mob) *mobs.Mob {
 // actively tanking.
 func findTankingPackmate(self *mobs.Mob) *mobs.Mob {
 	for _, pm := range mobs.FindPackmatesInRoom(self) {
-		if pm.Character.Aggro != nil {
+		if pm.Character.IsInCombat() {
 			return pm
 		}
 	}

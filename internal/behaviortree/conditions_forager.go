@@ -35,10 +35,10 @@ func condMobCanSafelyEngage(
 	if profile == nil {
 		return Failure
 	}
-	if mob.Character.Aggro == nil {
+	if !mob.Character.IsInCombat() {
 		return Failure
 	}
-	target := mobs.GetInstance(mob.Character.Aggro.MobInstanceId)
+	target := mobs.GetInstance(mob.Character.CurrentCombatTarget().MobInstanceId)
 	if target == nil {
 		return Failure
 	}

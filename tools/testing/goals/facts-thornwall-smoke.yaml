@@ -1,0 +1,93 @@
+description: |
+  Smoke test for chunk 1.7 (world-model facts). The substrate
+  ships with a unified per-NPC awareness store (`heard_events`
+  bounded FIFO + `known_facts` persistent), a standing-fact
+  registry, and a migration of `buildGossipLine` away from the
+  in-memory `recentGossipEvents` TempData. NPCs in the gossip
+  group (Old Fen 114, Old Gobb 115, Old Wrex 116 in Thornwall's
+  Back Corner room 484) gossip about both events AND known facts
+  via the new `fact-default` template family.
+
+  PRE-TEST SETUP — admin must run BEFORE the tester logs in:
+    fact declare test-mayor --significance regional --tags politics -- The Thornwall mayor has resigned in disgrace.
+    fact teach 114 test-mayor --source witnessed
+    fact teach 115 test-mayor --source told
+    fact teach 116 test-mayor --source told
+
+  Verify pre-test state via:
+    fact list
+    fact awareness 114
+
+  Note: you are NOT an admin and CANNOT run `fact ...` commands.
+  Where goals reference admin commands, flag them in your report
+  under "Admin commands needed."
+
+goals:
+  # ── 0. Login + orientation ────────────────────────────────────
+  - Log in as smoketester (port 55555, host localhost). Run
+    `set charset` to switch to ASCII. Run `look` to confirm your
+    starting room.
+
+  # ── 1. Travel to The Back Corner (room 484) ──────────────────
+  - Navigate to Thornwall City room 484 ("The Back Corner") where
+    Fen, Gobb, and Wrex hang out as gossip mobs. If you don't know
+    the route, try `north`/`south`/`east`/`west` from your current
+    position and report the path you took. Run `look` once arrived
+    to confirm room name and that the three old men are present.
+
+  # ── 2. Observe gossip lines for the test fact ────────────────
+  - Idle in The Back Corner for at least 20 rounds (~80 seconds —
+    use `sleep 2 && sleep 2` between observation reads). The mobs
+    emit gossip via the `idlemessages` system; you should see
+    lines like "I heard the Thornwall mayor has resigned in
+    disgrace" or "Word is, the Thornwall mayor has resigned..."
+    or "They say the Thornwall mayor has resigned..." per the
+    new `fact-default` template family.
+
+    **Capture exact gossip lines you see during this period** —
+    quote them verbatim in the report. We want to confirm:
+      - At least one gossip line surfaces the test-mayor fact
+      - The substitution (`{description}`) renders the fact's
+        full description correctly
+      - The line attribution mentions one of the three old men
+        (Fen / Gobb / Wrex)
+
+    If 20 rounds pass with NO fact-related gossip, note it as a
+    BLOCKER in the report and capture whatever gossip lines DID
+    appear (likely fallback templates or event-based lines).
+
+  # ── 3. Confirm the fact-candidate path is non-blocking ──────
+  - The mix is roughly 70% events / 30% facts when both pools have
+    candidates. If event-typed lines also appear during your
+    observation window, that's expected and PASS. The test is
+    that the fact path eventually fires, not that it dominates.
+
+  # ── 4. Final summary ────────────────────────────────────────
+  - Write a 1-paragraph "Smoke verdict" at the top of your report.
+    Did the fact substrate fire on the gossip path? Quote at least
+    one gossip line as evidence (or note the blocker if none
+    appeared).
+
+  # ── 5. Admin verification list ──────────────────────────────
+  - At the end of your report, list the admin commands the
+    controller should run AFTER the tester finishes:
+      fact awareness 114    (heard_events should now include
+                             event ids the mob has gossiped during
+                             your session — confirms the migration
+                             from recentGossipEvents TempData
+                             works)
+      fact awareness 115
+      fact awareness 116
+      fact list             (should still show test-mayor active)
+
+      # Optional: lifecycle test
+      fact withdraw test-mayor
+      # Then idle in 484 again for 10+ rounds, confirm no
+      # mayor-related gossip surfaces (lazy filter excluded the
+      # withdrawn fact).
+
+      # Optional: auto-withdraw test
+      fact declare test-respawn --withdraw-on-respawn-of 100 -- A city beggar has gone missing.
+      # Then wait for mob 100 (city_beggar) to respawn somewhere
+      # in Thornwall City, OR force a respawn via admin command.
+      # Run `fact show test-respawn` — should be status=withdrawn.

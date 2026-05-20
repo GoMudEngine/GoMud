@@ -26,7 +26,9 @@ func CommandIsReady(actor Actor, cmd string) bool {
 	}
 
 	// Universal gates (apply to every command).
-	if char.IsCrafting() {
+	// IsActing() blocks bash/kick/taunt/rally/warcry/trip/grapple while
+	// Casting, Crafting, or Salvaging — any active Activity state.
+	if char.IsActing() {
 		return false
 	}
 	if char.GetCooldown("special-move") > 0 {
@@ -51,7 +53,7 @@ func CommandIsReady(actor Actor, cmd string) bool {
 		if !target.Found {
 			return false
 		}
-		return !target.Char.CombatPosition.IsGroundPosition()
+		return !target.Char.IsOnFloor()
 
 	case "bash":
 		if char.Aggro == nil {
@@ -67,7 +69,7 @@ func CommandIsReady(actor Actor, cmd string) bool {
 		if !target.Found {
 			return false
 		}
-		return !target.Char.CombatPosition.IsGrapplePosition()
+		return !target.Char.IsGrappling()
 
 	case "kick":
 		return char.Aggro != nil

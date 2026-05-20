@@ -2,6 +2,9 @@ speciesid: 0
 name: ghostly spirit
 description: A non-corporeal entity... mostly.
   world... mostly.
+body_parts: []
+intrinsic_mutations:
+  incorporeal: 4
 size: small
 angrycommands: [emote drifts aggressively.]
 unarmedname: ectoplasm

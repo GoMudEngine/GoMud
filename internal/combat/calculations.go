@@ -84,7 +84,7 @@ func PowerScore(char characters.Character) float64 {
 	if char.Equipment.Weapon.ItemId > 0 {
 		sdm := char.Equipment.Weapon.GetSpec().SpellDamageMultiplier
 		if sdm > 0 {
-			spellMult = sdm
+			spellMult = sdm * mutations.GearEffectivenessMultiplier(char.Mutations)
 		}
 	}
 	magAtk := CalcRawDamage(char.Stats.Willpower.ValueAdj, spellcastingRank, spellMult, ChannelMagical)

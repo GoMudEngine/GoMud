@@ -262,6 +262,17 @@ func (bs *Buffs) Trigger(buffId ...int) (triggeredBuffs []*Buff) {
 
 		if buffInfo := GetBuffSpec(b.BuffId); buffInfo != nil {
 
+			// Pure flag buffs (no triggerrate set in YAML) have
+			// RoundInterval==0 and are never meant to tick — they're
+			// just stat-mod + flag markers (e.g., Hidden #9). Skip
+			// them in the trigger loop so the modulo below doesn't
+			// divide by zero. They're removed by explicit
+			// CancelBuff* paths (e.g., cancel-on-combat flag) or by
+			// time-based duration if one is later authored.
+			if buffInfo.RoundInterval < 1 {
+				continue
+			}
+
 			// If there's no more life left to it, prune it
 			// We do this first so that it's the first thing that happens AFTER a full round has already passed.
 			if b.TriggersLeft > 0 {

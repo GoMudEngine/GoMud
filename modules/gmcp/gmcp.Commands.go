@@ -4,7 +4,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
@@ -190,12 +189,12 @@ func buildCommandsState(user *users.UserRecord) GMCPCommandsState {
 		}
 	}
 
-	// Derive blocked commands from active conditions and position
+	// Derive blocked commands from active conditions and position (FSM-driven).
 	blocked := []string{}
-	if user.Character.HasCondition(characters.ConditionGrappleController) {
+	if user.Character.IsController() {
 		blocked = append(blocked, `flee`)
 	}
-	if user.Character.CombatPosition == characters.PositionGrounded {
+	if user.Character.IsGroundGrapple() {
 		blocked = append(blocked, `stand`)
 	}
 

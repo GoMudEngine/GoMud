@@ -9,6 +9,8 @@ maxwander: 2
 groups:
   - humanoid
   - guard
+  - thornwall_guards
+  - thornwall_citizens
 idlecommands:
   - 'emote patrols the area with steady, measured steps'
   - 'emote scans the crowd with a practiced eye'

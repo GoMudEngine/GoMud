@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/exit"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -62,7 +63,7 @@ func room_Edit_Exits(rest string, user *users.UserRecord, room *rooms.Room, flag
 	question := cmdPrompt.Ask(`Choose one:`, []string{`new`}, `new`)
 	if !question.Done {
 		tplTxt, _ := templates.Process("tables/numbered-list", exitOptions, user.UserId)
-		user.SendText(tplTxt)
+		user.SendText(messaging.CategorySystem, tplTxt)
 		return true, nil
 	}
 
@@ -89,8 +90,8 @@ func room_Edit_Exits(rest string, user *users.UserRecord, room *rooms.Room, flag
 
 		// Does the exit name they entered not exist? Failure!
 		if !currentlyEditing.Exists {
-			user.SendText("Invalid option selected.")
-			user.SendText("Aborting...")
+			user.SendText(messaging.CategorySystem, "Invalid option selected.")
+			user.SendText(messaging.CategorySystem, "Aborting...")
 			user.ClearPrompt()
 			return true, nil
 		}
@@ -107,9 +108,9 @@ func room_Edit_Exits(rest string, user *users.UserRecord, room *rooms.Room, flag
 			delete(room.Exits, currentlyEditing.Name)
 			rooms.SaveRoomTemplate(*room)
 
-			user.SendText(``)
-			user.SendText(fmt.Sprintf(`<ansi fg="exit">%s</ansi> deleted from the room.`, currentlyEditing.Name))
-			user.SendText(``)
+			user.SendText(messaging.CategorySystem, ``)
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="exit">%s</ansi> deleted from the room.`, currentlyEditing.Name))
+			user.SendText(messaging.CategorySystem, ``)
 
 			user.ClearPrompt()
 			return true, nil
@@ -135,8 +136,8 @@ func room_Edit_Exits(rest string, user *users.UserRecord, room *rooms.Room, flag
 
 		// Make sure they aren't using any reserved names.
 		if currentlyEditing.NameNew == `quit` || currentlyEditing.NameNew == `new` {
-			user.SendText("Invalid new name selected.")
-			user.SendText("Aborting...")
+			user.SendText(messaging.CategorySystem, "Invalid new name selected.")
+			user.SendText(messaging.CategorySystem, "Aborting...")
 			user.ClearPrompt()
 			return true, nil
 		}
@@ -145,7 +146,7 @@ func room_Edit_Exits(rest string, user *users.UserRecord, room *rooms.Room, flag
 		if currentlyEditing.Name != currentlyEditing.NameNew {
 			if _, ok := room.Exits[currentlyEditing.NameNew]; ok {
 
-				user.SendText(`<ansi fg="red">An exit with that name already exists!</ansi>`)
+				user.SendText(messaging.CategorySystem, `<ansi fg="red">An exit with that name already exists!</ansi>`)
 				question.RejectResponse()
 				return true, nil
 
@@ -168,7 +169,7 @@ func room_Edit_Exits(rest string, user *users.UserRecord, room *rooms.Room, flag
 
 		// Make sure they aren't using any reserved names.
 		if rooms.LoadRoom(currentlyEditing.Exit.RoomId) == nil {
-			user.SendText("Invalid RoomId provided.")
+			user.SendText(messaging.CategorySystem, "Invalid RoomId provided.")
 			question.RejectResponse()
 			return true, nil
 		}
@@ -234,22 +235,22 @@ func room_Edit_Exits(rest string, user *users.UserRecord, room *rooms.Room, flag
 	room.Exits[currentlyEditing.NameNew] = currentlyEditing.Exit
 	rooms.SaveRoomTemplate(*room)
 
-	user.SendText(``)
+	user.SendText(messaging.CategorySystem, ``)
 
 	if currentlyEditing.Exit.Lock.Difficulty > 0 {
 		lockId := fmt.Sprintf(`%d-%s`, room.RoomId, currentlyEditing.NameNew)
-		user.SendText(fmt.Sprintf(`<ansi fg="red">To Create Key -  LockId: <ansi fg="231" bg="5">%s</ansi></ansi>`, lockId))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">To Create Key -  LockId: <ansi fg="231" bg="5">%s</ansi></ansi>`, lockId))
 
 		seqString := ``
 		for _, dir := range util.GetLockSequence(lockId, int(currentlyEditing.Exit.Lock.Difficulty), string(configs.GetServerConfig().Seed), currentlyEditing.Exit.Lock.RotationSeed) {
 			seqString += string(dir) + " "
 		}
-		user.SendText(fmt.Sprintf(`<ansi fg="red">To pick lock - Sequence: <ansi fg="green">%s</ansi></ansi>`, seqString))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">To pick lock - Sequence: <ansi fg="green">%s</ansi></ansi>`, seqString))
 	}
 
-	user.SendText(``)
-	user.SendText(`Changes saved.`)
-	user.SendText(``)
+	user.SendText(messaging.CategorySystem, ``)
+	user.SendText(messaging.CategorySystem, `Changes saved.`)
+	user.SendText(messaging.CategorySystem, ``)
 
 	user.ClearPrompt()
 

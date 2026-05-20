@@ -2,6 +2,7 @@ package usercommands
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -17,7 +18,7 @@ func Password(rest string, user *users.UserRecord, room *rooms.Room, flags event
 	}
 
 	if !user.PasswordMatches(question.Response) {
-		user.SendText(`<ansi fg="alert-5">Sorry, your password was incorrect.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="alert-5">Sorry, your password was incorrect.</ansi>`)
 		user.ClearPrompt()
 		return true, nil
 	}
@@ -37,20 +38,20 @@ func Password(rest string, user *users.UserRecord, room *rooms.Room, flags event
 	newPWConfirm := question.Response
 
 	if newPW != newPWConfirm {
-		user.SendText(`<ansi fg="alert-5">Sorry, your new password and the confirmation password did not match.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="alert-5">Sorry, your new password and the confirmation password did not match.</ansi>`)
 		user.ClearPrompt()
 		return true, nil
 	}
 
 	if err := user.SetPassword(newPW); err != nil {
-		user.SendText(`<ansi fg="alert-5">` + err.Error() + `</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="alert-5">` + err.Error() + `</ansi>`)
 		user.ClearPrompt()
 		return true, nil
 	}
 
 	users.SaveUser(*user)
 
-	user.SendText(`<ansi fg="alert-1">Your password has been changed!</ansi>`)
+	user.SendText(messaging.CategorySystem, `<ansi fg="alert-1">Your password has been changed!</ansi>`)
 
 	return true, nil
 }

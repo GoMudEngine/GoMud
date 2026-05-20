@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -23,7 +24,7 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) < 2 {
-		user.SendText(`Give what? To whom? (<ansi fg="command">give {object-name} {receiver-name}</ansi>)`)
+		user.SendText(messaging.CategorySystem, `Give what? To whom? (<ansi fg="command">give {object-name} {receiver-name}</ansi>)`)
 		return true, nil
 	}
 
@@ -40,12 +41,12 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		giveGoldAmount = int(g)
 
 		if giveGoldAmount < 0 {
-			user.SendText("You can't give a negative amount of gold.")
+			user.SendText(messaging.CategorySystem, "You can't give a negative amount of gold.")
 			return true, nil
 		}
 
 		if giveGoldAmount > user.Character.Gold {
-			user.SendText("You don't have that much gold to give.")
+			user.SendText(messaging.CategorySystem, "You don't have that much gold to give.")
 			return true, nil
 		}
 
@@ -57,7 +58,7 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		giveItem, found = user.Character.FindInBackpack(giveWhat)
 
 		if !found {
-			user.SendText(fmt.Sprintf(`You don't have a %s to give. (<ansi fg="command">give {object-name} {receiver-name}</ansi>)`, giveWhat))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You don't have a %s to give. (<ansi fg="command">give {object-name} {receiver-name}</ansi>)`, giveWhat))
 			return true, nil
 		}
 
@@ -76,17 +77,17 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				userActor := &actions.UserActor{User: user, Room: room}
 				result := actions.GiveItemToChar(userActor, giveWhat, targetUser.Character, targetUser.UserId, 0)
 				if result.Err != nil {
-					user.SendText("Something went wrong.")
+					user.SendText(messaging.CategorySystem, "Something went wrong.")
 					return true, nil
 				}
 
-				user.SendText(
+				user.SendText(messaging.CategorySystem, 
 					fmt.Sprintf(`You give the <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, result.Item.DisplayName(), targetUser.Character.Name),
 				)
-				targetUser.SendText(
+				targetUser.SendText(messaging.CategorySystem, 
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> gives you their <ansi fg="item">%s</ansi>.`, user.Character.Name, result.Item.DisplayName()),
 				)
-				room.SendTextVisual(
+				room.SendTextVisual(messaging.CategoryLoot, 
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> gives <ansi fg="username">%s</ansi> a <ansi fg="itemname">%s</ansi>.`, user.Character.Name, targetUser.Character.Name, result.Item.NameSimple()),
 					user.UserId,
 					targetUser.UserId)
@@ -95,17 +96,17 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 				if targetUser.UserId == user.UserId {
 
-					user.SendText(
+					user.SendText(messaging.CategorySystem, 
 						fmt.Sprintf(`You count out <ansi fg="gold">%d gold</ansi> and put it back in your pocket.`, giveGoldAmount),
 					)
-					room.SendTextVisual(
+					room.SendTextVisual(messaging.CategoryLoot, 
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> counts out some <ansi fg="gold">gold</ansi> and put it back in their pocket.`, user.Character.Name),
 						user.UserId)
 
 				} else {
 					userActor := &actions.UserActor{User: user, Room: room}
 					if err := actions.GiveGoldToChar(userActor, giveGoldAmount, targetUser.Character); err != nil {
-						user.SendText("Something went wrong.")
+						user.SendText(messaging.CategorySystem, "Something went wrong.")
 						return true, nil
 					}
 
@@ -119,19 +120,19 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 						GoldChange: -giveGoldAmount,
 					})
 
-					user.SendText(
+					user.SendText(messaging.CategorySystem, 
 						fmt.Sprintf(`You give <ansi fg="gold">%d gold</ansi> to <ansi fg="username">%s</ansi>.`, giveGoldAmount, targetUser.Character.Name),
 					)
-					targetUser.SendText(
+					targetUser.SendText(messaging.CategorySystem, 
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> gives you <ansi fg="gold">%d gold</ansi>.`, user.Character.Name, giveGoldAmount),
 					)
-					room.SendTextVisual(
+					room.SendTextVisual(messaging.CategoryLoot, 
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> gives <ansi fg="username">%s</ansi> some <ansi fg="gold">gold</ansi>.`, user.Character.Name, targetUser.Character.Name),
 						user.UserId,
 						targetUser.UserId)
 				}
 			} else {
-				user.SendText("Something went wrong.")
+				user.SendText(messaging.CategorySystem, "Something went wrong.")
 			}
 
 			return true, nil
@@ -150,7 +151,7 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			if giveGoldAmount > 0 {
 				userActor := &actions.UserActor{User: user, Room: room}
 				if err := actions.GiveGoldToChar(userActor, giveGoldAmount, &m.Character); err != nil {
-					user.SendText("Something went wrong.")
+					user.SendText(messaging.CategorySystem, "Something went wrong.")
 					return true, nil
 				}
 
@@ -159,10 +160,10 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 					GoldChange: -giveGoldAmount,
 				})
 
-				user.SendText(
+				user.SendText(messaging.CategorySystem, 
 					fmt.Sprintf(`You give <ansi fg="gold">%d gold</ansi> to <ansi fg="username">%s</ansi>.`, giveGoldAmount, m.Character.Name),
 				)
-				room.SendTextVisual(
+				room.SendTextVisual(messaging.CategoryLoot, 
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> gave some gold to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, m.Character.Name),
 					user.UserId,
 				)
@@ -183,10 +184,10 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 					// do NOT transfer to mob and do NOT fire onGive script.
 					user.Character.RemoveItem(giveItem)
 
-					user.SendText(
+					user.SendText(messaging.CategorySystem, 
 						fmt.Sprintf(`You give the <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, giveItem.DisplayName(), m.Character.Name),
 					)
-					room.SendTextVisual(
+					room.SendTextVisual(messaging.CategoryLoot, 
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> gave their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, giveItem.DisplayName(), m.Character.Name),
 						user.UserId,
 					)
@@ -204,16 +205,16 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				userActor := &actions.UserActor{User: user, Room: room}
 				result := actions.GiveItemToChar(userActor, giveWhat, &m.Character, 0, m.InstanceId)
 				if result.Err != nil {
-					user.SendText("Something went wrong.")
+					user.SendText(messaging.CategorySystem, "Something went wrong.")
 					return true, nil
 				}
 				// Update giveItem so onGive scripting below has the live value.
 				giveItem = result.Item
 
-				user.SendText(
+				user.SendText(messaging.CategorySystem, 
 					fmt.Sprintf(`You give the <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, giveItem.DisplayName(), m.Character.Name),
 				)
-				room.SendTextVisual(
+				room.SendTextVisual(messaging.CategoryLoot, 
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> gave their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, giveItem.DisplayName(), m.Character.Name),
 					user.UserId,
 				)
@@ -237,7 +238,7 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				m.Command(fmt.Sprintf(`gearup !%d`, giveItem.ItemId))
 			}
 		} else {
-			user.SendText("Something went wrong.")
+			user.SendText(messaging.CategorySystem, "Something went wrong.")
 		}
 
 		return true, nil
@@ -254,17 +255,17 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		petUser := users.GetByUserId(petUserId)
 		if petUser == nil {
-			user.SendText("Who???")
+			user.SendText(messaging.CategorySystem, "Who???")
 			return true, nil
 		}
 
 		if giveGoldAmount > 0 {
-			room.SendTextVisual(fmt.Sprintf(`What would %s do with <ansi fg="gold">%d gold</ansi>?`, petUser.Character.Pet.DisplayName(), giveGoldAmount))
+			room.SendTextVisual(messaging.CategoryLoot, fmt.Sprintf(`What would %s do with <ansi fg="gold">%d gold</ansi>?`, petUser.Character.Pet.DisplayName(), giveGoldAmount))
 			return true, nil
 		}
 
-		user.SendText(fmt.Sprintf(`You give the <ansi fg="itemname">%s</ansi> to %s.`, giveItem.DisplayName(), petUser.Character.Pet.DisplayName()))
-		room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> gives their <ansi fg="itemname">%s</ansi> to %s...`, user.Character.Name, giveItem.DisplayName(), petUser.Character.Pet.DisplayName()), user.UserId)
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You give the <ansi fg="itemname">%s</ansi> to %s.`, giveItem.DisplayName(), petUser.Character.Pet.DisplayName()))
+		room.SendTextVisual(messaging.CategoryLoot, fmt.Sprintf(`<ansi fg="username">%s</ansi> gives their <ansi fg="itemname">%s</ansi> to %s...`, user.Character.Name, giveItem.DisplayName(), petUser.Character.Pet.DisplayName()), user.UserId)
 
 		user.Character.RemoveItem(giveItem)
 
@@ -275,14 +276,14 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		})
 
 		if len(petUser.Character.Pet.Items) >= petUser.Character.Pet.Capacity || !petUser.Character.Pet.StoreItem(giveItem) {
-			room.SendTextVisual(fmt.Sprintf(`%s throws the <ansi fg="itemname">%s</ansi> onto the ground.`, petUser.Character.Pet.DisplayName(), giveItem.DisplayName()))
+			room.SendTextVisual(messaging.CategoryLoot, fmt.Sprintf(`%s throws the <ansi fg="itemname">%s</ansi> onto the ground.`, petUser.Character.Pet.DisplayName(), giveItem.DisplayName()))
 			room.AddItem(giveItem, false)
 		}
 
 		return true, nil
 	}
 
-	user.SendText(`Who??? (<ansi fg="command">give {object-name} {receiver-name}</ansi>)`)
+	user.SendText(messaging.CategorySystem, `Who??? (<ansi fg="command">give {object-name} {receiver-name}</ansi>)`)
 
 	return true, nil
 }

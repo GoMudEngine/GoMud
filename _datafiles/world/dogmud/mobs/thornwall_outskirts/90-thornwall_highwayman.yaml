@@ -1,18 +1,21 @@
 mobid: 90
 zone: Thornwall Outskirts
-archetype: fighting
-behavior_archetype: generic_fighter
+behavior_archetype: thief
 statpool: 12
 itemdropchance: 12
-hostile: true
+hostile: false
 maxwander: 2
 groups:
   - bandit
   - humanoid
 idlecommands:
+  # Hidden ambusher — visible idle emotes break the stealth illusion.
+  # Keep `sneak` (re-hides when the buff/FSM lapses) and empty
+  # strings (skip-this-tick) so the mob stays unobtrusive between
+  # ambush attempts.
   - 'sneak'
-  - 'emote loiters at the roadside, watching passing traffic with calculating eyes'
-  - 'emote flips a coin absently, catching it without looking'
+  - ''
+  - ''
   - ''
   - ''
 combatcommands:
@@ -23,18 +26,6 @@ combatcommands:
   - ''
   - ''
 activitylevel: 25
-reaction_delay: 1.2
-tactical_discipline: 0.40
-tactics:
-  - trigger: health_below:25
-    action: flee
-    priority: 10
-  - trigger: no_aggro
-    action: hide
-    priority: 9
-  - trigger: target_casting
-    action: trip
-    priority: 8
 character:
   name: thornwall highwayman
   description: |

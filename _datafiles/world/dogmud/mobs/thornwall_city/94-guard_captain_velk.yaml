@@ -10,6 +10,8 @@ maxwander: 0
 groups:
   - humanoid
   - guard
+  - thornwall_guards
+  - thornwall_citizens
 idlecommands:
   - 'emote reviews a duty roster, making corrections with a quill'
   - 'emote drums fingers on the table, studying an incident report'
@@ -17,9 +19,6 @@ idlecommands:
   - 'emote glances toward the cells, then back to the paperwork'
   - ''
 activitylevel: 15
-reaction_delay: 1.0
-tactical_discipline: 0.75
-tactic_preset: tank
 character:
   name: guard captain Velk
   description: |

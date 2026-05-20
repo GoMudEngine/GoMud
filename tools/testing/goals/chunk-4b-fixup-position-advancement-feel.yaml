@@ -1,0 +1,12 @@
+goals:
+  - Engage at least 3 different grappling-archetype mobs. For each
+    fight, capture the full text transcript of all messaging from
+    grapple-entry to grapple-end.
+  - Read the transcripts as a player would. Report whether combat
+    reads as:
+      - Varied (no repeated lines within a single grapple)
+      - Visceral (real MMA/BJJ vocabulary, not generic fantasy)
+      - Coherent (lines describe actions that match the position)
+      - Paced (Hold rounds don't feel empty; advances feel earned)
+  - Flag any lines that read awkwardly, repeat too often, or break
+    immersion.

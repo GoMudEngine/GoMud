@@ -701,4 +701,33 @@ if character.Buffs.HasFlag(buffs.EmitsLight, false) {
 - `internal/util` - Utility functions for file operations and validation
 - `internal/mudlog` - Logging system for debugging and monitoring
 
-This comprehensive buffs system provides sophisticated temporary status effects with precise timing control, behavioral modification, stat integration, and config-driven effect behaviors.
+This comprehensive buffs system provides sophisticated temporary status
+effects with precise timing control, behavioral modification, stat
+integration, and config-driven effect behaviors.
+
+---
+
+## DOGMud chunk-4d buffs
+
+Two new buffs added in chunk 4d (T9 + T10). Neither is a regen potion or
+combat potion — they are combat consequence buffs applied by the submission
+outcome resolver (`internal/combat/submission_outcome.go`).
+
+| ID | Name | Duration | Source | Effect |
+|----|------|----------|--------|--------|
+| 83 | Broken Limb | ~3600 rounds (~1 hr play) | Cripple submission outcome via `applyBrokenLimbBuff` | Reduces combat effectiveness for the afflicted limb's weapon role; persists across respawn; cannot be dispelled early by normal means |
+| 84 | Submission Stunned | 1 round | Crit submission tier (mercy policy only) via `applyStunnedBuff` | Brief combat stagger; auto-clears at the end of the following round |
+
+**Buff 83 (Broken Limb)** is the first persistent, non-dispellable
+combat debuff players commonly encounter. Triggered by a cripple-policy
+submission where the sub type targets a joint (armbar, kimura). Choke-class
+subs (RNC, Triangle, Anaconda, Guillotine) do NOT trigger buff 83 because
+they have no body-part target — the policy degrades to subdue instead.
+
+**Buff 84 (Submission Stunned)** is a 1-round stagger applied to the
+recipient when a mercy-policy submission lands a crit roll
+(`SubTierCrit`). Only fires on mercy policy because subdue/cripple/lethal
+send the defender through the death cascade and the buff would be a no-op.
+
+See `internal/combat/context.md` "Submission System" for the full
+context in which these buffs are applied.

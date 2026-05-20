@@ -22,13 +22,6 @@ idlecommands:
   - ''
   - 'emote opens a wide pale mouth in a silent yawn, lined with backward-curving teeth'
 activitylevel: 8
-reaction_delay: 0.7
-tactical_discipline: 0.65
-tactic_preset: ambusher
-tactics:
-  - trigger: health_below:25
-    action: flee
-    priority: 11
 combatcommands:
   - bite
   - ''

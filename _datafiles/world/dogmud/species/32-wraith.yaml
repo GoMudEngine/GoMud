@@ -4,6 +4,9 @@ description: A spirit torn from death and bound by necromantic rage, the wraith
   exists half in the mortal world and half beyond it. Its form flickers and
   phases, striking from angles that defy natural geometry. It sees the hidden
   and fears little that the living can throw at it.
+body_parts: []
+intrinsic_mutations:
+  incorporeal: 4
 size: medium
 unarmedname: touch
 selectable: false

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -39,7 +40,7 @@ func CompanionCleanup(e events.Event) events.ListenerReturn {
 		user.Character.RemoveCompanion(evt.InstanceId)
 		user.Character.TrackCharmed(evt.InstanceId, false)
 
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategoryDeath, fmt.Sprintf(
 			`<ansi fg="red">Your %s has fallen.</ansi>`,
 			companionName,
 		))

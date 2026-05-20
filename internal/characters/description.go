@@ -137,7 +137,7 @@ func (c *Character) GetAdjectives() []string {
 		retAdjectives = append(retAdjectives, `lit`)
 	}
 
-	if c.HasFlagFromAnySource(buffs.Hidden) {
+	if c.IsHidden() {
 		retAdjectives = append(retAdjectives, `hidden`)
 	}
 

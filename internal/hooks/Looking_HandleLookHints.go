@@ -2,6 +2,7 @@ package hooks
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -39,8 +40,8 @@ func HandleLookHints(e events.Event) events.ListenerReturn {
 		}
 
 		if showListTip {
-			user.SendText(`<ansi fg="alert-5">TIP:</ansi> <ansi fg="tip-text">Type <ansi fg="command">list</ansi> to see what merchants have for sale.</ansi>`)
-			user.SendText(``)
+			user.SendText(messaging.CategoryTip, `<ansi fg="alert-5">TIP:</ansi> <ansi fg="tip-text">Type <ansi fg="command">list</ansi> to see what merchants have for sale.</ansi>`)
+			user.SendText(messaging.CategoryTip, ``)
 		}
 
 	}

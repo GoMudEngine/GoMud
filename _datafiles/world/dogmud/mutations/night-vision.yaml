@@ -2,6 +2,7 @@ mutationid: night-vision
 name: Night Vision
 description: Your eyes reshape themselves, pupils dilating impossibly wide. Darkness becomes merely dim, though bright light stings more than it should.
 rarity: 5
+requires_body_parts: [eyes]
 visual: Their pupils are blown wide, filling their irises with pools of black that catch faint light.
 conflicts:
   - infrared-vision

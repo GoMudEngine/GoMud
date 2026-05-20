@@ -38,6 +38,73 @@ type Balance struct {
 	GroundedDodgePenalty        ConfigFloat `yaml:"GroundedDodgePenalty"`        // Dodge score multiplier while grounded (default 0.75)
 	GroundedParryPenalty        ConfigFloat `yaml:"GroundedParryPenalty"`        // Parry score multiplier while grounded (default 0.77)
 	GroundedBlockPenalty        ConfigFloat `yaml:"GroundedBlockPenalty"`        // Block score multiplier while grounded (default 0.80)
+	// GrappleStaminaLowThreshold is the stamina fraction (0.0–1.0) below
+	// which a character is considered "low stamina" for grapple purposes.
+	// Used by IsLowGrappleStamina() and the mob_low_grapple_stamina btree
+	// primitive (T5) and Position_Messaging (T7).
+	GrappleStaminaLowThreshold ConfigFloat `yaml:"GrappleStaminaLowThreshold"` // Stamina fraction floor for grapple stamina warning (default 0.25)
+
+	// ── REACH UTILITY CURVE (chunk 4c) ───────────────────────────────────────
+	// See internal/combat/reach.go for the formula and the design spec for
+	// reasoning.
+
+	// ReachStandingGrappleRadius is the effective radius (meters) at
+	// which a weapon stops fitting in Clinch / BackStanding positions.
+	// Default 0.5 — about chest-to-chest distance in a clinch.
+	ReachStandingGrappleRadius ConfigFloat `yaml:"reach_standing_grapple_radius"`
+
+	// ReachGroundGrappleRadius is the effective radius (meters) at
+	// which a weapon stops fitting in any ground grapple (Mount,
+	// SideControl, KneeOnBelly, NorthSouth, Crucifix, BackGround,
+	// HalfGuard, Guard). Default 0.3 — body-on-body distance.
+	ReachGroundGrappleRadius ConfigFloat `yaml:"reach_ground_grapple_radius"`
+
+	// ReachUtilityFloor caps the minimum damage multiplier from the
+	// reach curve. Without a floor, a pike in mount would multiply
+	// damage by ~0.1 — a floor at 0.15 ensures even the longest
+	// weapon can poke for chip damage (pommel jab, hilt-strike).
+	// Tunable; smoke may push this lower.
+	ReachUtilityFloor ConfigFloat `yaml:"reach_utility_floor"`
+
+	// ── CHUNK 4D: SUBMISSION TICK ────────────────────────────────────────────
+	// Per-round opportunistic submission attempts gated on the chunk-4b
+	// control-axis drift roll. See spec
+	// docs/superpowers/specs/2026-05-18-state-chunk-4d-submission-rework-design.md
+	SubmissionAttemptAlpha   ConfigFloat `yaml:"submission_attempt_alpha"`     // Min drift-margin (std devs) that opens a sub window (either side)
+	SubmissionAttemptCritZ   ConfigFloat `yaml:"submission_attempt_crit_z"`    // Defender-side shortcut: drift z >= this opens a bottom-sub window regardless of margin
+	SubSkillWeight           ConfigFloat `yaml:"sub_skill_weight"`             // Unarmed-combat skill contribution multiplier in the sub roll
+	SubBadZThreshold         ConfigFloat `yaml:"sub_bad_z_threshold"`          // Z-score below which the sub roll's bad-tier (attempter falls prone) fires
+	SubCritZThreshold        ConfigFloat `yaml:"sub_crit_z_threshold"`         // Z-score at or above which the sub roll's crit-tier (recipient stunned) fires
+	SubGoldLossFraction      ConfigFloat `yaml:"sub_gold_loss_fraction"`       // Fraction of carried gold transferred to the aggressor on subdue/cripple
+	BrokenLimbBuffDuration   ConfigInt   `yaml:"broken_limb_buff_duration"`    // Duration in rounds for the broken-limb buff; expires naturally via standard buff tick
+
+	// ── CHUNK 4E: THIRD-PARTY INTERFERENCE ──────────────────────────────────
+	// See docs/superpowers/specs/ chunk-4e design.
+
+	// ControlDegradeOnOutsideHit enables chunk 4e §5: third-party damage on
+	// a grapple controller shifts their ControlLevel one step toward Neutral
+	// per disrupted round. Set false to disable the mechanic for tuning.
+	ControlDegradeOnOutsideHit ConfigBool `yaml:"ControlDegradeOnOutsideHit"`
+
+	// SubInterruptDamageThresholdPct is the fraction of HealthMax that
+	// constitutes "above-threshold" third-party damage for chunk 4e §7
+	// sub interrupt. Below this, damage doesn't break a sub setup; at or
+	// above, the sub outcome is forced to Bad tier. A crit also triggers
+	// the override regardless of threshold. Default 0.10 (10% of max HP).
+	// Set 0 to disable threshold-path (crit-only).
+	SubInterruptDamageThresholdPct ConfigFloat `yaml:"SubInterruptDamageThresholdPct"`
+
+	// ── GRAPPLE CONTROL AXIS (chunk 4b) ──────────────────────────────────────
+	// Per-round drift mechanics — see
+	// docs/superpowers/specs/2026-05-16-state-chunk-4b-position-control-axis-design.md
+	GrappleStaminaPenaltyMax        ConfigFloat `yaml:"GrappleStaminaPenaltyMax"`        // Max roll-mult reduction at 0% stamina (default 0.60)
+	GrappleStaminaPenaltyCurve      ConfigFloat `yaml:"GrappleStaminaPenaltyCurve"`      // Exponent shape of stamina penalty curve (default 1.5)
+	GrappleEncumbrancePenaltyMax    ConfigFloat `yaml:"GrappleEncumbrancePenaltyMax"`    // Max roll-mult reduction at max encumbrance (default 0.80)
+	GrappleEncumbrancePenaltyCurve  ConfigFloat `yaml:"GrappleEncumbrancePenaltyCurve"`  // Exponent shape of encumbrance penalty curve (default 1.5)
+	GrappleStaminaCostPerRound      ConfigInt   `yaml:"GrappleStaminaCostPerRound"`      // Base per-round stamina cost in grapples (default 5)
+	GrappleControllerCostMultiplier ConfigFloat `yaml:"GrappleControllerCostMultiplier"` // Controller's per-round cost multiplier (default 1.0)
+	GrappleControlledCostMultiplier ConfigFloat `yaml:"GrappleControlledCostMultiplier"` // Controlled's per-round cost multiplier (default 2.0)
+	PositionConsistencyCheckRounds  ConfigInt   `yaml:"PositionConsistencyCheckRounds"`  // How often the periodic invariant checker runs (default 10)
 
 	// ── COMBAT: SPECIAL MOVES ────────────────────────────────────────────────
 	SpecialMoveCooldown ConfigInt   `yaml:"SpecialMoveCooldown"` // Shared cooldown rounds for bash/trip/kick (default 5)
@@ -62,6 +129,10 @@ type Balance struct {
 	StealHiddenBonus               ConfigInt   `yaml:"StealHiddenBonus"`               // Bonus to attacker score when hidden (default 25)
 	StealCooldown                  ConfigInt   `yaml:"StealCooldown"`                  // Steal/plant cooldown in real seconds (default 60)
 	ShadowCooldown                 ConfigInt   `yaml:"ShadowCooldown"`                 // Rounds before re-shadowing (default 5)
+	HiddenMoveStaminaMultiplier    ConfigFloat `yaml:"HiddenMoveStaminaMultiplier"`    // Extra stamina cost multiplier for moving while hidden (default 3.0)
+	SneakModEmitsLightDarkRoom     ConfigFloat `yaml:"SneakModEmitsLightDarkRoom"`     // Sneak score multiplier: sneaker emits light, room dark (default 0.5)
+	SneakModEmitsLightLitRoom      ConfigFloat `yaml:"SneakModEmitsLightLitRoom"`      // Sneak score multiplier: sneaker emits light, room lit (default 0.85)
+	SneakModNoLightLitRoom         ConfigFloat `yaml:"SneakModNoLightLitRoom"`         // Sneak score multiplier: sneaker dark, room lit (default 0.9)
 
 	// ── COMBAT: SPELL COSTS ──────────────────────────────────────────────────
 	SpellConvictionCostMultiplier ConfigFloat `yaml:"SpellConvictionCostMultiplier"` // Global multiplier for spell conviction costs (default 1.0)
@@ -403,6 +474,25 @@ type Balance struct {
 	ScoreWeightInput      ConfigFloat `yaml:"ScoreWeightInput"`
 	ScoreWeightThroughput ConfigFloat `yaml:"ScoreWeightThroughput"`
 	ScoreWeightShopGold   ConfigFloat `yaml:"ScoreWeightShopGold"`
+
+	// ── OPINIONS / DISPOSITION ───────────────────────────────────────────────
+	OpinionAttackBump              ConfigInt `yaml:"OpinionAttackBump"`              // Disposition delta when a player initiates aggression on a mob (default -15)
+	DispositionDecayHalfLifeRounds ConfigInt `yaml:"DispositionDecayHalfLifeRounds"` // Rounds for one half-life of disposition decay toward default (default 100000; 0 disables decay)
+
+	// ── FACTIONS ─────────────────────────────────────────────────────────────
+	FactionMemberKillRep   ConfigInt `yaml:"FactionMemberKillRep"`   // Rep delta when a player kills a member of a defined faction (default -10) — DEPRECATED, retained for any non-citizen faction fallback path. Citizen factions use CrimeRepDeltaMurder via internal/crimes.
+	CrimeRepDeltaMurder    ConfigInt `yaml:"CrimeRepDeltaMurder"`    // Rep delta on murder crime with identified perpetrator (default -25)
+	CrimeRepDeltaAssault   ConfigInt `yaml:"CrimeRepDeltaAssault"`   // Rep delta on assault crime with identified perpetrator (default -10)
+	CrimeRepDeltaTheft     ConfigInt `yaml:"CrimeRepDeltaTheft"`     // Rep delta on theft crime with identified perpetrator (default -5)
+	CrimeStaleAfterRounds           ConfigInt `yaml:"CrimeStaleAfterRounds"`           // Rounds after which an unresolved crime is auto-snapped to stale (default 7884000 — ~365 game-days at 4-second rounds)
+	KnowledgeObservationLogMax      ConfigInt `yaml:"KnowledgeObservationLogMax"`      // Max observation log entries per record (FIFO) (default 32)
+
+	// ── BOUNTIES ────────────────────────────────────────────────────────────
+	BountyGoldDefaultMultiplier ConfigFloat `yaml:"BountyGoldDefaultMultiplier"` // Multiplier on statpool for default gold reward (default 0.5)
+	BountyGoldFloor             ConfigInt   `yaml:"BountyGoldFloor"`             // Minimum gold floor for any bounty (default 50)
+
+	// ── FACTS & EVENTS ──────────────────────────────────────────────────────
+	FactsHeardEventsMax ConfigInt `yaml:"FactsHeardEventsMax"` // Max facts_heard events per mobs instance (default 32)
 }
 
 func (b *Balance) Validate() {

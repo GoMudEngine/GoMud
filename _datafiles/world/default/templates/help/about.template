@@ -34,8 +34,8 @@ several key goals in mind:
 <ansi fg="red-bold">3.</ansi> <ansi fg="11">Support a high degree of customization</ansi>
    <ansi fg="command">GoMud</ansi> doesn't presume to know how you want your <ansi fg="229">MUD</ansi> to play. Do you want 
    long days and short nights, or the other way around? Do you want PVP, or to 
-   use a specific color palette? Do you want to support permadeath and player 
-   loot drops? Should a round be 3 seconds or 4? <ansi fg="command">GoMud</ansi> seeks to make all of
+   use a specific color palette? Do you want to support player loot drops?
+   Should a round be 3 seconds or 4? <ansi fg="command">GoMud</ansi> seeks to make all of
    these decisions easily customizable through config files.
 
 <ansi fg="6">  .--.      .-'.      .--.      .--.      .--.      .--.      .`-.      .--.

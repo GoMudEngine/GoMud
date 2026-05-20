@@ -3,6 +3,10 @@ name: feline
 description: A sleek, silent predator built for ambush. Felines stalk
   their prey with infinite patience before exploding into
   a burst of lethal speed and slashing claws.
+body_parts: [legs, eyes, mouth, skin, tail]
+intrinsic_mutations:
+  tail: 1
+  night-vision: 1
 buffids:
   - 29 # Night Vision
 size: medium

@@ -5,6 +5,9 @@ description: A howling vortex of wind and lightning-laced current, the air
   slashing gusts before foes can react, darting around counterattacks with
   preternatural speed. What it lacks in durability it repays in relentless
   aggression.
+body_parts: []
+intrinsic_mutations:
+  incorporeal: 4
 size: medium
 unarmedname: slicing gust
 selectable: false

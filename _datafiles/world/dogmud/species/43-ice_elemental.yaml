@@ -1,0 +1,38 @@
+speciesid: 43
+name: Ice Elemental
+description: A slender humanoid figure of translucent crystal and
+  flowing meltwater, the ice elemental moves with alien grace. Cold
+  radiates from her presence in a way that aches in the bones, and
+  her crystalline limbs strike with the brittle, splintering force
+  of a glacier calving.
+size: medium
+unarmedname: crystal strike
+selectable: false
+tameable: false
+angrycommands:
+  - emote shifts her stance, frost spreading across the floor in
+    a spreading ring.
+  - emote draws breath, and the air around her crystallizes into
+    razor flakes.
+stats:
+  strength:
+    base: 110
+  dexterity:
+    base: 90
+  perception:
+    base: 100
+  vitality:
+    base: 180
+  willpower:
+    base: 120
+  charisma:
+    base: 30
+damage:
+  basedamage: 4
+  variance: 2
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'back',
+  'belt', 'gloves', 'ring', 'legs', 'feet']
+body_parts: [arms, legs, skin]
+intrinsic_mutations:
+  cold-blooded: 1
+  magical-resistance: 1

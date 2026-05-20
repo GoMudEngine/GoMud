@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -23,7 +24,7 @@ func Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if len(args) == 0 {
 		// send some sort of help info?
 		infoOutput, _ := templates.Process("admincommands/help/command.spawn", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendText(messaging.CategorySystem, infoOutput)
 		return true, nil
 	}
 
@@ -46,10 +47,10 @@ func Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 			containerName := room.SpawnTempContainer(spawnTarget, "3 rounds", 0)
 
-			user.SendText(
+			user.SendText(messaging.CategorySystem, 
 				fmt.Sprintf(`You wave your hands around and <ansi fg="container">%s</ansi> appears from thin air and falls to the ground.`, containerName),
 			)
-			room.SendTextVisual(
+			room.SendTextVisual(messaging.CategoryMobEmote, 
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> waves their hands around and <ansi fg="container">%s</ansi> appears from thin air and falls to the ground.`, user.Character.Name, containerName),
 				user.UserId,
 			)
@@ -72,10 +73,10 @@ func Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 			room.Gold += goldAmt
 
-			user.SendText(
+			user.SendText(messaging.CategorySystem, 
 				fmt.Sprintf(`You wave your hands around and <ansi fg="gold">%d gold</ansi> appears from thin air and falls to the ground.`, goldAmt),
 			)
-			room.SendTextVisual(
+			room.SendTextVisual(messaging.CategoryMobEmote, 
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> waves their hands around and <ansi fg="gold">%d gold</ansi> appears from thin air and falls to the ground.`, user.Character.Name, goldAmt),
 				user.UserId,
 			)
@@ -85,10 +86,10 @@ func Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	}
 
-	user.SendText(
+	user.SendText(messaging.CategorySystem, 
 		"You wave your hands around pathetically.",
 	)
-	room.SendTextVisual(
+	room.SendTextVisual(messaging.CategoryMobEmote, 
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> waves their hands around pathetically.`, user.Character.Name),
 		user.UserId,
 	)

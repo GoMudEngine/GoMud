@@ -1,0 +1,188 @@
+description: |
+  End-to-end smoke test for the crime/wanted-state substrate
+  shipped in chunk 1.3 (mob aliveness roadmap). Validates:
+  (1) crime substrate records murder/assault/theft against
+  thornwall_citizens, (2) witness-required model identifies
+  perpetrator only when faction-aligned witnesses are present,
+  (3) lone murders record perp=unknown with NO rep impact,
+  (4) assault upgrades in-place to murder when a fight ends in
+  death (one row per fight, not two), (5) faction rep drops by
+  the kind-specific delta (assault -10, murder -25 total / -15
+  incremental, theft -5), (6) failed steal records a theft crime
+  + identified perp via victim self-witness, (7) admin
+  `crime list/show/resolve` work end-to-end, (8) multi-faction
+  membership: killing a guard registers crimes against BOTH
+  thornwall_citizens AND thornwall_guards.
+
+  PRE-TEST SETUP (already arranged by the controller — verify
+  on login):
+  - You spawn in Thornwall City. The merchant (mob 102) and food
+    vendor (mob 103) are non_combatant and CANNOT be attacked or
+    stolen from — do NOT use them as targets. Use combatant
+    citizens instead: city_beggar (mob 100), street_performer
+    (mob 101), records_clerk_pell (mob 99), old_fen/gobb/wrex
+    (114-116), barmaid_dal (117).
+  - You have NO prior thornwall_citizens or thornwall_guards rep
+    (both at default 0).
+  - The crime log is fresh — no prior crimes recorded.
+  - You have ~600/600 health, 600/600 stamina. Skullduggery
+    starts at rank 1 — bring it to rank 2 yourself before goal 4
+    (see goal 3.5 below). Spam `sneak` in any room with a few
+    NPCs; rank 2 typically lands within a couple of minutes of
+    use-based progression.
+  - You have +25 warren rep from chunk 1.2's smoke test. Ignore
+    it; this run is about thornwall.
+  - The thornwall_citizens faction lists the guard mobs as
+    multi-membership members alongside thornwall_guards.
+
+  Note: you are NOT an admin and CANNOT run `crime list`,
+  `crime show`, `faction show`, etc. Where the goals reference
+  admin commands, **flag them in your report under "Admin
+  commands needed"** — the controller will run them and verify
+  state. You CAN run `quests`, `inventory`, `look`,
+  `conditions`, etc. yourself.
+
+goals:
+  # ── 0. Login + orientation ────────────────────────────────────
+  - Log in as smoketester (port 55555, host localhost). Run
+    `set charset` to switch to ASCII. Run `look` to confirm your
+    starting room and which mobs are visible. Run `inventory`
+    and note your weapon (should be wielded already). Use the
+    combatant citizen list from PRE-TEST SETUP to pick targets.
+
+  # ── 1. Witnessed assault + faction rep drop ──────────────────
+  - Find a room with a combatant citizen AND another faction
+    witness present (e.g., a guard or another citizen). Run
+    `attack <citizen>`. The first-aggression hook should record
+    an ASSAULT crime against thornwall_citizens, with the
+    bystander counting as an external witness (so perp is
+    identified AND HadExternalWitness=true on the row).
+
+    Request admin to run:
+      faction show smoketester
+      crime list thornwall_citizens
+    EXPECTED:
+      - thornwall_citizens rep dropped by CrimeRepDeltaAssault
+        (-10) → smoketester at rep -10 (Cold tier, but barely).
+      - One assault crime row, kind=assault, perp=smoketester.
+    Capture and report what the admin sees.
+
+  # ── 2. Assault upgrades to murder (one-row-per-fight) ────────
+  - Continue attacking the merchant until they are dead. The
+    MobDeath hook should UPGRADE the existing assault row in
+    place to kind=murder (NOT add a new row).
+
+    Request admin to run:
+      crime list thornwall_citizens
+      faction show smoketester
+    EXPECTED:
+      - Still ONE crime row for thornwall_citizens, but kind is
+        now `murder`. The Round/RoomId/VictimInstanceId may have
+        been refreshed to the death event.
+      - Rep dropped by an additional -15 (CrimeRepDeltaMurder
+        minus CrimeRepDeltaAssault, the incremental). Total
+        rep is now -25.
+
+  # ── 3. Lone murder — refund rep (NEW chunk 1.3 behavior) ────
+  - Walk to a room with a single COMBATANT citizen and no other
+    faction witnesses. Suggested target: street_performer (101)
+    or city_beggar (100) in a side room — confirm via `look`
+    that no other thornwall_citizens or thornwall_guards mobs
+    are in the room (caravan-org mobs don't count).
+
+    Attack and kill them in one fight. The substrate flow is:
+    1. Attack → assault recorded with perp=player (victim
+       self-witnesses), -10 rep applied, HadExternalWitness=false.
+    2. Kill → murder upgrade detects no current external
+       witnesses AND HadExternalWitness=false on the row.
+       Substrate sets perp=unknown AND REFUNDS the -10 rep.
+
+    Request admin to run:
+      crime list thornwall_citizens
+      faction show smoketester
+    EXPECTED:
+      - The previous assault row was upgraded in-place to
+        kind=murder, perp=unknown.
+      - Rep is UNCHANGED net-net from before this kill (the
+        assault -10 was refunded). Body is on the books, but
+        no surviving NPC saw who did it.
+
+  # ── 3.5. Rank up skullduggery to 2 ──────────────────────────
+  - Run `skills` and confirm skullduggery rank. If it's still 1,
+    move to a room with 2-3 NPCs and spam `sneak` until it ticks
+    to 2. Use-based progression is probabilistic but usually
+    fast; allow ~30-60 attempts. If stuck above 60 attempts,
+    note it in the report and skip goal 4.
+
+  # ── 4. Failed steal records theft crime ──────────────────────
+  - Find a live COMBATANT citizen (NOT a non_combatant
+    shopkeeper — voss/blacksmith/weaver/jeweler etc. are all
+    non_combatant and steal will reject). Suitable targets:
+    city_beggar (100), street_performer (101),
+    records_clerk_pell (99), old_fen/gobb/wrex (114-116),
+    barmaid_dal (117), tavern_keeper_marek (96).
+
+    Run `steal <citizen>`. With skullduggery rank 2, this will
+    fail most of the time. The failure message looks like "X
+    catches you in the act!" and the room broadcasts that you
+    were caught.
+
+    If it succeeds (silent), try a DIFFERENT target until you
+    get a failure.
+
+    Request admin to run:
+      crime list thornwall_citizens
+      faction show smoketester
+    EXPECTED:
+      - A new theft row, kind=theft, perp=smoketester (victim
+        is a self-witness when alive).
+      - Rep dropped by CrimeRepDeltaTheft (-5).
+
+  # ── 5. Cross-faction view ────────────────────────────────────
+  - Request admin to run:
+      crime show smoketester
+      crime show smoketester --all
+    EXPECTED:
+      - At least 3 unresolved rows: the upgraded murder, the
+        lone murder (BUT this should NOT appear because it has
+        perp=unknown — crime show only lists identified-perp
+        crimes), and the theft.
+      - So `crime show smoketester` (no --all) should list:
+        the citizens-murder (upgraded from assault) + theft.
+        That's 2 rows, both factions visible.
+
+  # ── 6. Resolution clears a row ───────────────────────────────
+  - Request admin to run:
+      crime resolve thornwall_citizens <id> "fine paid"
+    using the ID of one of your unresolved crimes. Then:
+      crime list thornwall_citizens
+      crime list thornwall_citizens --all
+    EXPECTED:
+      - Resolved row hidden by default.
+      - `--all` shows it with resolved_by="fine paid".
+      - Faction rep is unchanged (resolution does NOT restore
+        rep in chunk 1.3 — that's town-justice 5.1 territory).
+
+  # ── 7. Multi-faction guard kill (optional) ──────────────────
+  - Find a guard alone — try room 460 (Gate Ward, has a city
+    guard). Kill them. Request admin to run:
+      crime list thornwall_citizens
+      crime list thornwall_guards
+      faction show smoketester
+    EXPECTED:
+      - Both faction logs gain a murder row for the guard kill.
+      - Rep drops with BOTH factions by CrimeRepDeltaMurder
+        (-25 each, since this is a fresh murder — no prior
+        assault row for THIS instance, but if there was an
+        attack first the assault would be recorded then upgraded
+        as in goal 2).
+
+  # ── 8. Final self-summary ────────────────────────────────────
+  - Write a 1-paragraph summary at the top of your report titled
+    "Smoke verdict": did chunk 1.3 ship working substrate
+    end-to-end? List FAIL items and the most likely cause.
+
+  # ── 9. Report admin requests ────────────────────────────────
+  - At the end of your report, list ALL admin commands you would
+    have wanted to run, grouped by goal. The controller will
+    execute them and verify state.

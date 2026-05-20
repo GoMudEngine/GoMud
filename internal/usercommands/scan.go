@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -13,8 +13,8 @@ import (
 
 func Scan(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	user.SendText(`You scan the surrounding area...`)
-	user.SendText(``)
+	user.SendText(messaging.CategorySystem, `You scan the surrounding area...`)
+	user.SendText(messaging.CategorySystem, ``)
 
 	foundAnything := false
 
@@ -37,7 +37,7 @@ func Scan(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				continue
 			}
 			// Skip hidden mobs
-			if mob.Character.HasBuffFlag(buffs.Hidden) {
+			if mob.Character.IsHidden() {
 				continue
 			}
 			parts = append(parts, fmt.Sprintf(`<ansi fg="mobname">%s</ansi>`, mob.Character.Name))
@@ -58,18 +58,18 @@ func Scan(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		titleLabel := fmt.Sprintf(`<ansi fg="room-title">%s</ansi>`, adjRoom.Title)
 
 		if len(parts) > 0 {
-			user.SendText(fmt.Sprintf(`  %s (%s): %s`, dirLabel, titleLabel, strings.Join(parts, `, `)))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`  %s (%s): %s`, dirLabel, titleLabel, strings.Join(parts, `, `)))
 		} else {
-			user.SendText(fmt.Sprintf(`  %s (%s): nothing of interest`, dirLabel, titleLabel))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`  %s (%s): nothing of interest`, dirLabel, titleLabel))
 		}
 		foundAnything = true
 	}
 
 	if !foundAnything {
-		user.SendText(`  There are no visible exits to scan.`)
+		user.SendText(messaging.CategorySystem, `  There are no visible exits to scan.`)
 	}
 
-	user.SendText(``)
+	user.SendText(messaging.CategorySystem, ``)
 
 	return true, nil
 }

@@ -6,7 +6,6 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
-	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/exit"
@@ -18,6 +17,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -25,6 +27,39 @@ import (
 )
 
 // ─── Test Infrastructure ──────────────────────────────────────────────────────
+
+
+// setCombatPositionParallel sets the Position FSM to the given state. Seeds
+// Position if nil. Synthetic Partner ref for grapple states (FSM requires non-zero).
+func setCombatPositionParallel(c *characters.Character, pos position.State) {
+	if c.Position == nil {
+		c.Position = position.NewMachine()
+	}
+	r := state.TransitionReason{Trigger: "test_setup"}
+	switch pos {
+	case position.Standing:
+		c.Position.ForceStanding(r)
+	case position.Prone:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToProne(position.ProneData{}, r)
+	case position.Clinch:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+	case position.Mount:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+		_ = c.Position.TransitionToMount(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerTakedownMount},
+		)
+	}
+}
 
 func TestMain(m *testing.M) {
 	mudlog.SetupLogger(nil, "", "", false)
@@ -64,7 +99,7 @@ func seedAllRegistries() func() {
 		1: {
 			MobId:         1,
 			Zone:          "TestZone",
-			Hostile:       true,
+			AutoAggro: true,
 			ActivityLevel: 50,
 			Groups:        []string{"undead"},
 			Character: characters.Character{
@@ -74,7 +109,7 @@ func seedAllRegistries() func() {
 		2: {
 			MobId:         2,
 			Zone:          "TestZone",
-			Hostile:       false,
+			AutoAggro: false,
 			ActivityLevel: 30,
 			Character: characters.Character{
 				Name: "Merchant",
@@ -86,7 +121,7 @@ func seedAllRegistries() func() {
 			MobId:      1,
 			InstanceId: 100,
 			HomeRoomId: 1,
-			Hostile:    true,
+			AutoAggro: true,
 			Groups:     []string{"undead"},
 			Character: characters.Character{
 				Name:      "Skeleton",
@@ -377,7 +412,6 @@ func TestInventory(t *testing.T) {
 	})
 }
 
-
 func TestKillstats(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
@@ -629,32 +663,36 @@ func TestStand(t *testing.T) {
 
 	user, room := getTestUserAndRoom(t)
 
+	// Chunk 4b W7: Stand gates on the Position FSM (IsProne ||
+	// IsSupine). T20 (F1) introduced the setCombatPositionParallel
+	// helper to keep legacy + FSM in lockstep across fixture sites.
+
 	t.Run("already_standing", func(t *testing.T) {
-		user.Character.CombatPosition = characters.PositionStanding
+		setCombatPositionParallel(user.Character, position.Standing)
 		handled, err := Stand("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
 	})
 
 	t.Run("from_prone", func(t *testing.T) {
-		user.Character.CombatPosition = characters.PositionProne
+		setCombatPositionParallel(user.Character, position.Prone)
 		user.Character.Stamina = 100
 		handled, err := Stand("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
-		assert.Equal(t, characters.PositionStanding, user.Character.CombatPosition)
+		assert.True(t, user.Character.IsStanding())
 	})
 
 	t.Run("too_exhausted", func(t *testing.T) {
-		user.Character.CombatPosition = characters.PositionProne
+		setCombatPositionParallel(user.Character, position.Prone)
 		user.Character.Stamina = 0
 		handled, err := Stand("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
 		// Should still be prone
-		assert.Equal(t, characters.PositionProne, user.Character.CombatPosition)
+		assert.True(t, user.Character.IsProne())
 		// Reset
-		user.Character.CombatPosition = characters.PositionStanding
+		setCombatPositionParallel(user.Character, position.Standing)
 		user.Character.Stamina = 100
 	})
 }
@@ -1046,16 +1084,18 @@ func TestCancel(t *testing.T) {
 	})
 
 	t.Run("casting", func(t *testing.T) {
-		user.Character.CastingState = &characters.CastingState{
-			SpellId:          "sparks",
-			FoldsAccumulated: 2,
-			FoldsNeeded:      4,
-			ConvictionSpent:  3,
+		if user.Character.Activity == nil {
+			user.Character.Activity = activity.NewMachine()
 		}
+		_ = user.Character.Activity.TransitionToCasting(
+			activity.CastingData{SpellId: "sparks", ConvictionSpent: 3, FoldsNeeded: 4},
+			state.TransitionReason{Trigger: activity.TriggerCastBegin},
+		)
 		handled, err := Cancel("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
-		assert.Nil(t, user.Character.CastingState)
+		assert.True(t, user.Character.Activity == nil || user.Character.Activity.IsFree(),
+			"Activity must be Free after cancel")
 	})
 }
 
@@ -1533,7 +1573,6 @@ func TestUnlock(t *testing.T) {
 	assert.True(t, handled)
 	assert.NoError(t, err)
 }
-
 
 // ─── Search ─────────────────────────────────────────────────────────────────
 
@@ -2250,7 +2289,6 @@ func TestCharacter(t *testing.T) {
 	})
 }
 
-
 func TestCraft(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
@@ -2391,16 +2429,6 @@ func TestMap(t *testing.T) {
 		assert.True(t, handled)
 		_ = err // May return "too often" error from cooldown
 	})
-}
-
-func TestSubmit(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, room := getTestUserAndRoom(t)
-	handled, err := Submit("", user, room, 0)
-	assert.True(t, handled)
-	assert.NoError(t, err)
 }
 
 func TestTrack(t *testing.T) {
@@ -2939,7 +2967,6 @@ func TestQuestsWithData(t *testing.T) {
 	})
 }
 
-
 // ─── Deeper Coverage: Spells with spell data ────────────────────────────────
 
 func TestSpellsDetailed(t *testing.T) {
@@ -3245,13 +3272,13 @@ func TestGoDeepBranches(t *testing.T) {
 	})
 
 	t.Run("prone_movement", func(t *testing.T) {
-		user.Character.CombatPosition = characters.PositionProne
+		setCombatPositionParallel(user.Character, position.Prone)
 		user.Character.ActionPoints = 100
 		handled, err := Go("north", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
 		// Restore
-		user.Character.CombatPosition = characters.PositionStanding
+		setCombatPositionParallel(user.Character, position.Standing)
 		user.Character.RoomId = 1
 		room.AddPlayer(1)
 		user.Character.ActionPoints = 5
@@ -3656,7 +3683,6 @@ func TestMacrosWithData(t *testing.T) {
 	})
 }
 
-
 // ─── Deeper Coverage: Whisper branches ──────────────────────────────────────
 
 func TestWhisperBranches(t *testing.T) {
@@ -3975,45 +4001,51 @@ func TestTryCommand(t *testing.T) {
 
 	t.Run("casting_state_blocks", func(t *testing.T) {
 		user := users.GetByUserId(1)
-		user.Character.CastingState = &characters.CastingState{
-			SpellId:          "sparks",
-			FoldsAccumulated: 2,
-			FoldsNeeded:      4,
-			ConvictionSpent:  3,
+		if user.Character.Activity == nil {
+			user.Character.Activity = activity.NewMachine()
 		}
+		_ = user.Character.Activity.TransitionToCasting(
+			activity.CastingData{SpellId: "sparks", ConvictionSpent: 3, FoldsNeeded: 4},
+			state.TransitionReason{Trigger: activity.TriggerCastBegin},
+		)
 		handled, err := TryCommand("attack", "skeleton", 1, events.CmdSkipScripts)
 		assert.True(t, handled) // Blocked by casting guard
 		assert.NoError(t, err)
-		user.Character.CastingState = nil
+		// Clear Activity for subsequent sub-tests.
+		_ = user.Character.Activity.TransitionToFree(state.TransitionReason{Trigger: "test-cleanup"})
 	})
 
 	t.Run("casting_allows_cancel", func(t *testing.T) {
 		user := users.GetByUserId(1)
-		user.Character.CastingState = &characters.CastingState{
-			SpellId:          "sparks",
-			FoldsAccumulated: 2,
-			FoldsNeeded:      4,
-			ConvictionSpent:  3,
+		if user.Character.Activity == nil {
+			user.Character.Activity = activity.NewMachine()
 		}
+		_ = user.Character.Activity.TransitionToCasting(
+			activity.CastingData{SpellId: "sparks", ConvictionSpent: 3, FoldsNeeded: 4},
+			state.TransitionReason{Trigger: activity.TriggerCastBegin},
+		)
 		handled, err := TryCommand("cancel", "", 1, events.CmdSkipScripts)
 		assert.True(t, handled)
 		assert.NoError(t, err)
-		assert.Nil(t, user.Character.CastingState)
+		assert.True(t, user.Character.Activity == nil || user.Character.Activity.IsFree(),
+			"Activity must be Free after cancel")
 	})
 
 	t.Run("casting_flee_clears_cast", func(t *testing.T) {
 		user := users.GetByUserId(1)
 		user.Character.Aggro = &characters.Aggro{MobInstanceId: 100}
-		user.Character.CastingState = &characters.CastingState{
-			SpellId:          "sparks",
-			FoldsAccumulated: 2,
-			FoldsNeeded:      4,
-			ConvictionSpent:  3,
+		if user.Character.Activity == nil {
+			user.Character.Activity = activity.NewMachine()
 		}
+		_ = user.Character.Activity.TransitionToCasting(
+			activity.CastingData{SpellId: "sparks", ConvictionSpent: 3, FoldsNeeded: 4},
+			state.TransitionReason{Trigger: activity.TriggerCastBegin},
+		)
 		handled, err := TryCommand("flee", "", 1, events.CmdSkipScripts)
 		assert.True(t, handled)
 		assert.NoError(t, err)
-		assert.Nil(t, user.Character.CastingState)
+		assert.True(t, user.Character.Activity == nil || user.Character.Activity.IsFree(),
+			"Activity must be Free after flee")
 		user.Character.Aggro = nil
 		user.Character.RoomId = 1
 		rooms.LoadRoom(1).AddPlayer(1)
@@ -4021,17 +4053,19 @@ func TestTryCommand(t *testing.T) {
 
 	t.Run("casting_allows_info_commands", func(t *testing.T) {
 		user := users.GetByUserId(1)
-		user.Character.CastingState = &characters.CastingState{
-			SpellId:          "sparks",
-			FoldsAccumulated: 2,
-			FoldsNeeded:      4,
-			ConvictionSpent:  3,
+		if user.Character.Activity == nil {
+			user.Character.Activity = activity.NewMachine()
 		}
+		_ = user.Character.Activity.TransitionToCasting(
+			activity.CastingData{SpellId: "sparks", ConvictionSpent: 3, FoldsNeeded: 4},
+			state.TransitionReason{Trigger: activity.TriggerCastBegin},
+		)
 		// Status is AllowedWhenDowned=true, should pass through
 		handled, err := TryCommand("status", "", 1, events.CmdSkipScripts)
 		assert.True(t, handled)
 		assert.NoError(t, err)
-		user.Character.CastingState = nil
+		// Clear Activity for subsequent sub-tests.
+		_ = user.Character.Activity.TransitionToFree(state.TransitionReason{Trigger: "test-cleanup"})
 	})
 
 	t.Run("look_self_keyword", func(t *testing.T) {
@@ -4505,40 +4539,6 @@ func TestAdminBuffDeep(t *testing.T) {
 	})
 }
 
-// ─── Submit deep coverage ───────────────────────────────────────────────────
-
-func TestSubmitDeep(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, room := getTestUserAndRoom(t)
-
-	t.Run("not_in_combat", func(t *testing.T) {
-		handled, err := Submit("", user, room, 0)
-		assert.True(t, handled)
-		assert.NoError(t, err)
-	})
-
-	t.Run("in_combat_not_grounded", func(t *testing.T) {
-		user.Character.Aggro = &characters.Aggro{MobInstanceId: 100}
-		user.Character.CombatPosition = characters.PositionStanding
-		handled, err := Submit("", user, room, 0)
-		assert.True(t, handled)
-		assert.NoError(t, err)
-		user.Character.Aggro = nil
-	})
-
-	t.Run("in_combat_grounded_not_controller", func(t *testing.T) {
-		user.Character.Aggro = &characters.Aggro{MobInstanceId: 100}
-		user.Character.CombatPosition = characters.PositionGrounded
-		handled, err := Submit("", user, room, 0)
-		assert.True(t, handled)
-		assert.NoError(t, err)
-		user.Character.Aggro = nil
-		user.Character.CombatPosition = characters.PositionStanding
-	})
-}
-
 // ─── Deeper Go branches ────────────────────────────────────────────────────
 
 func TestGoMoreBranches(t *testing.T) {
@@ -4767,13 +4767,13 @@ func TestFleeMoreBranches(t *testing.T) {
 
 	t.Run("flee_prone", func(t *testing.T) {
 		user.Character.Aggro = &characters.Aggro{MobInstanceId: 100}
-		user.Character.CombatPosition = characters.PositionProne
+		setCombatPositionParallel(user.Character, position.Prone)
 		user.Character.ActionPoints = 100
 		handled, err := Flee("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
 		user.Character.Aggro = nil
-		user.Character.CombatPosition = characters.PositionStanding
+		setCombatPositionParallel(user.Character, position.Standing)
 		user.Character.RoomId = 1
 		room.AddPlayer(1)
 		user.Character.ActionPoints = 5
@@ -5046,7 +5046,10 @@ func TestCastDeep(t *testing.T) {
 		assert.True(t, handled)
 		_ = err
 		delete(user.Character.SpellBook, "sparks")
-		user.Character.CastingState = nil
+		// Clear any casting Activity that may have been set.
+		if user.Character.Activity != nil && user.Character.Activity.IsCasting() {
+			_ = user.Character.Activity.TransitionToFree(state.TransitionReason{Trigger: "test-cleanup"})
+		}
 	})
 }
 
@@ -5824,7 +5827,6 @@ func TestAdminBuildDeep(t *testing.T) {
 	})
 }
 
-
 // ─── Set deeper branches ───────────────────────────────────────────────────
 
 func TestSetWimpyBranch(t *testing.T) {
@@ -6430,75 +6432,20 @@ func TestBuildQuestContext(t *testing.T) {
 	assert.Nil(t, result)
 }
 
-// ─── applyStatDecay ────────────────────────────────────────────────────────
+// ─── applyStatDecay / applySkillRust ─────────────────────────────────────────
+//
+// These functions moved to internal/hooks/Death_PlayerCleanup.go as
+// applyPlayerStatDecay and applyPlayerSkillRust (chunk-2 Task 9).
+// They are package-private in hooks and cannot be imported from here
+// (hooks → usercommands dependency already exists; reverse import
+// would be circular). Logic coverage lives in hooks_test.go.
 
 func TestApplyStatDecay(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, _ := getTestUserAndRoom(t)
-
-	config := configs.GetGamePlayConfig()
-	origStr := user.Character.Stats.Strength.Training
-	origDex := user.Character.Stats.Dexterity.Training
-	origPer := user.Character.Stats.Perception.Training
-	origVit := user.Character.Stats.Vitality.Training
-	origWil := user.Character.Stats.Willpower.Training
-	origCha := user.Character.Stats.Charisma.Training
-
-	// Set some training to ensure decay can happen
-	user.Character.Stats.Strength.Training = 50
-	user.Character.Stats.Dexterity.Training = 50
-	user.Character.Stats.Perception.Training = 50
-	user.Character.Stats.Vitality.Training = 50
-	user.Character.Stats.Willpower.Training = 50
-	user.Character.Stats.Charisma.Training = 50
-
-	applyStatDecay(user, config)
-
-	// At least one stat should have decreased
-	totalBefore := 300 // 6 * 50
-	totalAfter := user.Character.Stats.Strength.Training +
-		user.Character.Stats.Dexterity.Training +
-		user.Character.Stats.Perception.Training +
-		user.Character.Stats.Vitality.Training +
-		user.Character.Stats.Willpower.Training +
-		user.Character.Stats.Charisma.Training
-	assert.Less(t, totalAfter, totalBefore)
-
-	// Restore
-	user.Character.Stats.Strength.Training = origStr
-	user.Character.Stats.Dexterity.Training = origDex
-	user.Character.Stats.Perception.Training = origPer
-	user.Character.Stats.Vitality.Training = origVit
-	user.Character.Stats.Willpower.Training = origWil
-	user.Character.Stats.Charisma.Training = origCha
+	t.Skip("moved to hooks.applyPlayerStatDecay (Death_PlayerCleanup.go); tested there")
 }
 
-// ─── applySkillRust ─────────────────────────────────────────────────────────
-
 func TestApplySkillRust(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, _ := getTestUserAndRoom(t)
-
-	config := configs.GetGamePlayConfig()
-
-	t.Run("no_eligible_skills", func(t *testing.T) {
-		// No skills at all — should return without panic
-		user.Character.Skills = map[string]int{}
-		applySkillRust(user, config)
-	})
-
-	t.Run("with_eligible_skills", func(t *testing.T) {
-		user.Character.Skills = map[string]int{
-			"melee":  5,
-			"ranged": 3,
-		}
-		applySkillRust(user, config)
-		// Just verify no panic — actual decay depends on recency tracking
-	})
+	t.Skip("moved to hooks.applyPlayerSkillRust (Death_PlayerCleanup.go); tested there")
 }
 
 // ─── GetLockRender ──────────────────────────────────────────────────────────
@@ -6524,7 +6471,6 @@ func TestGetLockRender(t *testing.T) {
 		_ = result
 	})
 }
-
 
 // ─── Deeper admin.buff ──────────────────────────────────────────────────────
 
@@ -6582,7 +6528,6 @@ func TestWhoDeeper(t *testing.T) {
 	})
 }
 
-
 // ─── Storage command ────────────────────────────────────────────────────────
 
 func TestStorageBranches(t *testing.T) {
@@ -6606,7 +6551,6 @@ func TestStorageBranches(t *testing.T) {
 		room.IsStorage = false
 	})
 }
-
 
 // ─── Target command ─────────────────────────────────────────────────────────
 
@@ -7148,7 +7092,6 @@ func TestTryCommandRoutingBatch(t *testing.T) {
 		{"unlock", ""},
 		{"forage", ""},
 		{"break", ""},
-		{"pickpocket", ""},
 		{"bash", ""},
 		{"grapple", ""},
 		{"kick", ""},
@@ -7355,4 +7298,17 @@ func TestCombatSkillsInCombat(t *testing.T) {
 	})
 
 	user.Character.Aggro = nil
+}
+
+// ── T19: Behavior Matrix PB-340 ───────────────────────────────────────────────
+
+// PB-340: Legacy `submit` command typed (after sunset) → unknown command.
+// T18 deleted internal/usercommands/submit.go and removed the registry entry.
+// This test asserts that "submit" is NOT present in the command registry so
+// that any accidental re-registration is caught immediately.
+func TestPB_340_LegacySubmitCommand_NotRegistered(t *testing.T) {
+	reg := GetCommandRegistry()
+	_, found := reg["submit"]
+	assert.False(t, found,
+		"PB-340: legacy 'submit' command must not be in the registry after T18 sunset")
 }

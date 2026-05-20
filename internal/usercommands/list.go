@@ -5,11 +5,13 @@ import (
 	"sort"
 	"strconv"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -73,7 +75,7 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	if !listedSomething {
-		user.SendText("Visit a merchant to list and buy objects.")
+		user.SendText(messaging.CategorySystem, "Visit a merchant to list and buy objects.")
 	}
 
 	return true, nil
@@ -94,7 +96,7 @@ func buildShopStockFromInventory(shopInv *shops.ShopInventory, user *users.UserR
 			continue
 		}
 		spec := itm.GetSpec()
-		restock := effectiveRestock(&entry)
+		restock := actions.EffectiveRestock(&entry)
 		price := shops.CalcSellPrice(spec.Value, entry.Current, restock, cfg)
 
 		stock = append(stock, characters.ShopItem{
@@ -392,8 +394,8 @@ func sortRowsByCol(rows [][]string, col int) {
 func renderShopTable(user *users.UserRecord, title, colorPattern, sellerName, sellerTag string, headers []string, rows [][]string, helpText string) {
 	saleItemsData := templates.GetTable(fmt.Sprintf(`%s by <ansi fg="%s">%s</ansi>`, colorpatterns.ApplyColorPattern(title, colorPattern), sellerTag, sellerName), headers, rows)
 	tplTxt, _ := templates.Process("tables/shoplist", saleItemsData, user.UserId, user.UserId)
-	user.SendText(tplTxt)
-	user.SendText(fmt.Sprintf(`%s%s`, helpText, term.CRLFStr))
+	user.SendText(messaging.CategorySystem, tplTxt)
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`%s%s`, helpText, term.CRLFStr))
 }
 
 // renderMobMerchantListing renders all shop sections for a mob merchant.

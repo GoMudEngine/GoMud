@@ -3,6 +3,10 @@
 A keen steel blade with a leather-wrapped hilt — the weapon of
 choice for seasoned warriors who demand reach, balance, and edge.
 
+<ansi fg="cyan">Reach:</ansi> Long — becomes awkward in grapples. The hilt still
+connects for reduced damage, but consider drawing a dagger
+when the fight goes to the ground.
+
 <ansi fg="yellow">━━━ Crafting ━━━</ansi>
 
   <ansi fg="yellow">Skill:</ansi>       blacksmithing (minimum 20)

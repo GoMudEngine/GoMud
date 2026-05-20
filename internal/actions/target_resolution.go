@@ -62,7 +62,7 @@ var (
 //
 //	target, err := actions.ResolveTargetActor(room, name)
 //	if err != nil {
-//	    user.SendText("You don't see them here.")  // caller controls wording
+//	    user.SendText(messaging.CategoryError, "You don't see them here.")  // caller controls wording
 //	    return true, nil
 //	}
 //	// ... use target uniformly ...

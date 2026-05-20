@@ -12,6 +12,7 @@ maxwander: 0
 groups:
   - humanoid
   - merchant
+  - thornwall_citizens
 idlecommands:
   - 'emote traces a binding sigil in the air with one finger, muttering'
   - 'emote peers at a chrysalis shard through a magnifying glass'

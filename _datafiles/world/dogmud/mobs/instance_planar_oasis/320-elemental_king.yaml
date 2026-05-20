@@ -2,14 +2,15 @@ mobid: 320
 zone: Instance Planar Oasis
 archetype: fighting
 behavior_archetype: leader
+submission_policy: lethal
+surrender_policy: never
 routine: planar_oasis_pack
 statpool: 4
 hostile: true
 groups:
   - elemental
+spawnmutations: [large]
 activitylevel: 30
-tactic_preset: aggressive_melee
-tactical_discipline: 0.90
 combatcommands:
   - 'emote brings both fists down in a thunderous overhead strike'
   - ''
@@ -27,7 +28,7 @@ character:
     warps the air into shimmering curtains. This is not a
     creature to be reasoned with. It is a force of nature
     wearing a shape, and it has noticed you.
-  speciesid: 37
+  speciesid: 40
   level: 1
   gold: 0
   stats:

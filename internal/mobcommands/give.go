@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -70,7 +71,7 @@ func Give(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				return true, nil
 			}
 
-			targetUser.SendText(
+			targetUser.SendText(messaging.CategoryLoot,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> gives you their <ansi fg="item">%s</ansi>.`, mob.Character.Name, result.Item.DisplayName()),
 			)
 
@@ -81,7 +82,7 @@ func Give(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				return true, nil
 			}
 
-			targetUser.SendText(
+			targetUser.SendText(messaging.CategoryLoot,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> gives you <ansi fg="gold">%d gold</ansi>.`, mob.Character.Name, giveGoldAmount),
 			)
 
@@ -104,7 +105,7 @@ func Give(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			return true, nil
 		}
 
-		room.SendTextVisual(
+		room.SendTextVisual(messaging.CategoryLoot,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> gave their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, mob.Character.Name, result.Item.DisplayName(), m.Character.Name),
 		)
 	} else if giveGoldAmount > 0 {
@@ -114,7 +115,7 @@ func Give(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			return true, nil
 		}
 
-		room.SendTextVisual(
+		room.SendTextVisual(messaging.CategoryLoot,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> gave some gold to <ansi fg="mobname">%s</ansi>.`, mob.Character.Name, m.Character.Name),
 		)
 	}

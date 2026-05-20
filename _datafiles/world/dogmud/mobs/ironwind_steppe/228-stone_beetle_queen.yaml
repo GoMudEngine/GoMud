@@ -1,6 +1,8 @@
 mobid: 228
 zone: Ironwind Steppe
 behavior_archetype: leader
+submission_policy: lethal
+surrender_policy: never
 routine: cave_pack_ironwind
 statpool: 220
 itemdropchance: 10
@@ -22,9 +24,6 @@ idlecommands:
   - 'emote raises its armored head, antennae sweeping the air'
   - ''
 activitylevel: 10
-reaction_delay: 1.0
-tactical_discipline: 0.55
-tactic_preset: tank
 character:
   name: stone beetle queen
   items:

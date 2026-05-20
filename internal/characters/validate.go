@@ -13,6 +13,14 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
+	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
+	"github.com/GoMudEngine/GoMud/internal/state/life"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
+	"github.com/GoMudEngine/GoMud/internal/state/perception"
+	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 	"github.com/GoMudEngine/GoMud/internal/stats"
 )
@@ -102,12 +110,17 @@ func (c *Character) RecalculateStats() {
 		}
 	}
 
-	// Floors.
-	if c.StaminaMax.Value < 0 {
-		c.StaminaMax.Value = 0
+	// Floors. Pool maxes are floored at 1, not 0, because downstream
+	// consumers (prompt `{sp%}` / `{mp%}` tokens at
+	// internal/users/userrecord.prompt.go, ratio calcs in combat /
+	// resource-multiplier curves) divide by these values without a
+	// zero-guard. A degenerate character with Willpower=0 used to
+	// crash the prompt-render path; floor 1 prevents the divide.
+	if c.StaminaMax.Value < 1 {
+		c.StaminaMax.Value = 1
 	}
-	if c.ConvictionMax.Value < 0 {
-		c.ConvictionMax.Value = 0
+	if c.ConvictionMax.Value < 1 {
+		c.ConvictionMax.Value = 1
 	}
 	if c.HealthMax.Value < 1 {
 		c.HealthMax.Value = 1
@@ -513,6 +526,58 @@ func (c *Character) Validate(recalcPermaBuffs ...bool) error {
 
 	// ── Skill migrations must run before ensureAllSkills ────────────
 	c.validateSkillMigrations()
+
+	// Ensure runtime-only fields are initialised after YAML load
+	// (yaml:"-" fields are not populated by yaml.Unmarshal).
+	if c.CombatPhase == nil {
+		c.CombatPhase = combatphase.NewMachine()
+	}
+	if c.Awareness == nil {
+		c.Awareness = awareness.NewMachine()
+	}
+	if c.Life == nil {
+		c.Life = life.NewMachine()
+	}
+	if c.Activity == nil {
+		c.Activity = activity.NewMachine()
+	}
+	if c.Position == nil {
+		c.Position = position.NewMachine()
+	}
+	if c.Presence == nil {
+		// Player default — mob.Validate() overwrites with NewMobPresence()
+		// AFTER calling this. Control intentionally lacks a parallel guard
+		// here and uses per-call-site nil checks instead (see
+		// position_predicates.go for examples).
+		c.Presence = presence.NewPlayerPresence()
+		// Chunk 5 (Presence) T8: terminal-state cleanup. On entry to
+		// Disconnected, cancel all pending scheduled transitions for this
+		// character (Activity casting timers, Position recovery timers, etc.)
+		// so they don't fire after the player has left the world.
+		c.Presence.RegisterObserver("scheduler_cancel_on_disconnected",
+			func(from, to presence.State, r state.TransitionReason) {
+				if to == presence.Disconnected {
+					c.CancelAllScheduled()
+				}
+			})
+	}
+	if c.Perception == nil {
+		// Player default — mob.Validate() overwrites unconditionally
+		// after this runs. Same constructor for both actor types but
+		// the unconditional overwrite matches the Presence pattern.
+		c.Perception = perception.NewMachine()
+	}
+	if c.PerGrappleMessageCooldowns == nil {
+		c.PerGrappleMessageCooldowns = map[string]bool{}
+	}
+	// Fire OnCharacterCreated callbacks exactly once per Character.
+	// The guard prevents repeated firing on re-validation (e.g. stat
+	// recalcs, equipment changes) while still covering the YAML-load
+	// path where New() was never called.
+	if !c.combatPhaseWired {
+		c.combatPhaseWired = true
+		fireCharacterCreated(c)
+	}
 
 	if len(c.Description) == 0 {
 		c.Description = "They seem thoroughly uninteresting."

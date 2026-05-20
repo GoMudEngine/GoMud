@@ -1,6 +1,5 @@
 mobid: 75
 zone: Labyrinth of Low Tunnels
-archetype: fighting
 behavior_archetype: leader
 statpool: 25
 hostile: false
@@ -23,21 +22,6 @@ idlecommands:
   - ''
   - ''
 activitylevel: 10
-reaction_delay: 1.5
-tactical_discipline: 0.60
-tactics:
-  - trigger: combat_start
-    action: call_for_help
-    priority: 11
-  - trigger: target_prone
-    action: kick
-    priority: 10
-  - trigger: target_casting
-    action: bash
-    priority: 9
-  - trigger: multiple_targets
-    action: retarget_strongest
-    priority: 8
 aiprofile: brawler
 specialmovechance: 25
 character:

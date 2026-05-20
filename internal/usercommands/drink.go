@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -13,6 +14,12 @@ import (
 )
 
 func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+
+	// Chunk 4e: can't drink while grappled — both hands committed.
+	if user.Character.Position != nil && user.Character.Position.IsGrappling() {
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">Your hands are committed to the grapple — you can't reach for that.</ansi>`)
+		return true, nil
+	}
 
 	// Search bandolier first (oldest first), then backpack
 	fromBandolier := false
@@ -24,14 +31,14 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	if !found {
-		user.SendText(fmt.Sprintf(`You don't have a "%s" to drink.`, rest))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You don't have a "%s" to drink.`, rest))
 		return true, nil
 	}
 
 	itemSpec := matchItem.GetSpec()
 
 	if itemSpec.Subtype != items.Drinkable {
-		user.SendText(
+		user.SendText(messaging.CategorySystem, 
 			fmt.Sprintf(`You can't drink <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()),
 		)
 		return true, nil
@@ -67,11 +74,11 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			user.Character.UseItem(matchItem)
 		}
 
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`You drink the <ansi fg="itemname">%s</ansi>...`, matchItem.DisplayName()))
-		user.SendText(
+		user.SendText(messaging.CategorySystem, 
 			`<ansi fg="red">The potion has gone bad! You retch as the foul liquid burns your throat.</ansi>`)
-		room.SendTextVisual(fmt.Sprintf(
+		room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> drinks something and immediately gags.`,
 			user.Character.Name), user.UserId)
 
@@ -82,7 +89,7 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		alchSkill := user.Character.GetSkillLevel(skills.Alchemy)
 		discoveryChance := 10.0 + float64(alchSkill)*0.5
 		if float64(util.Rand(100)) < discoveryChance {
-			user.SendText(
+			user.SendText(messaging.CategorySystem, 
 				`<ansi fg="yellow">The foul taste teaches you something about how the ingredients interact...</ansi>`)
 		}
 
@@ -93,7 +100,7 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if itemSpec.Toxicity > 0 {
 		toxCost := float64(itemSpec.Toxicity)
 		if user.Character.Toxicity+toxCost > user.Character.GetToxicityMax() {
-			user.SendText(
+			user.SendText(messaging.CategorySystem, 
 				`<ansi fg="red">Your body rejects the potion — too much toxicity.</ansi>`)
 			return true, nil
 		}
@@ -113,9 +120,9 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		user.Character.Toxicity += float64(itemSpec.Toxicity)
 	}
 
-	user.SendText(fmt.Sprintf(
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`You drink the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()))
-	room.SendTextVisual(fmt.Sprintf(
+	room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(
 		`<ansi fg="username">%s</ansi> drinks <ansi fg="itemname">%s</ansi>.`,
 		user.Character.Name, matchItem.DisplayName()), user.UserId)
 
@@ -123,13 +130,13 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if hasAging {
 		switch phase {
 		case items.PhaseFresh:
-			user.SendText(`The potion is freshly brewed — it should do the job.`)
+			user.SendText(messaging.CategorySystem, `The potion is freshly brewed — it should do the job.`)
 		case items.PhaseFermented:
-			user.SendText(`The potion has fermented nicely — you feel it working stronger than expected.`)
+			user.SendText(messaging.CategorySystem, `The potion has fermented nicely — you feel it working stronger than expected.`)
 		case items.PhasePeak:
-			user.SendText(`<ansi fg="green">The potion is at its peak — you feel its full potency.</ansi>`)
+			user.SendText(messaging.CategorySystem, `<ansi fg="green">The potion is at its peak — you feel its full potency.</ansi>`)
 		case items.PhaseDeclining:
-			user.SendText(`The potion tastes a bit stale — its effects are diminished.`)
+			user.SendText(messaging.CategorySystem, `The potion tastes a bit stale — its effects are diminished.`)
 		}
 	}
 

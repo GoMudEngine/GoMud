@@ -3,17 +3,18 @@ package actions
 import (
 	"strings"
 
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 )
 
 // CraftResult describes the outcome of an InitiateCraft call.
 // Callers are responsible for all player-facing messaging.
 type CraftResult struct {
 	// Initiated is true when multi-round crafting has been started
-	// (CraftingState set on the character).
+	// (Activity machine transitioned to Crafting).
 	Initiated bool
 	// ImmediateComplete is true when the recipe had TimeRounds <= 0 and was
 	// completed in a single call.
@@ -129,10 +130,25 @@ func InitiateCraft(actor Actor, recipeName string) CraftResult {
 	}
 
 	// ── Start multi-round crafting ────────────────────────────────────────────
-	char.CraftingState = &characters.CraftingState{
+	craftData := activity.CraftingData{
 		RecipeId:    recipe.RecipeId,
 		RoundsTotal: recipe.TimeRounds,
 	}
+	actorRef := state.ActorRef{
+		UserId:        actor.GetUserId(),
+		MobInstanceId: actor.GetMobInstanceId(),
+	}
+	if err := char.Activity.TransitionToCrafting(
+		craftData,
+		state.TransitionReason{
+			Trigger: activity.TriggerCraftBegin,
+			Actor:   actorRef,
+		},
+	); err != nil {
+		res.AlreadyCrafting = true
+		return res
+	}
+
 	res.Initiated = true
 	return res
 }

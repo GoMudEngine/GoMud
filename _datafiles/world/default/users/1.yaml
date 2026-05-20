@@ -125,7 +125,6 @@ character:
     playerkills: {}
     playerdeaths: {}
     totalpvpdeaths: 0
-  extralives: 3
   mobmastery:
     tame:
       1: 87

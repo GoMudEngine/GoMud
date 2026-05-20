@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
@@ -16,7 +17,7 @@ func Emote(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	if len(rest) == 0 {
-		sendRoomText(room,
+		sendRoomText(room, messaging.CategoryMobEmote,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> emotes.`, mob.Character.Name))
 		return true, nil
 	}
@@ -27,7 +28,7 @@ func Emote(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		emoteText = result.AliasText
 	}
 
-	sendRoomText(room, actions.FormatEmoteText(mob.Character.Name, emoteText, "mobname"))
+	sendRoomText(room, messaging.CategoryMobEmote, actions.FormatEmoteText(mob.Character.Name, emoteText, "mobname"))
 
 	return true, nil
 }

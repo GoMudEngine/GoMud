@@ -1,6 +1,10 @@
 speciesid: 22
 name: bat
 description: A winged mammal of the deep caves, navigating by echolocation.
+body_parts: [legs, eyes, mouth, skin]
+intrinsic_mutations:
+  night-vision: 1
+  tremorsense: 1
 size: small
 unarmedname: wings and fangs
 angrycommands: [emote shrieks and beats its wings furiously.]

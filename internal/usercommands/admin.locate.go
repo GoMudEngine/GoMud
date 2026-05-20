@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -21,7 +22,7 @@ func Locate(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	if rest == "" {
 		infoOutput, _ := templates.Process("admincommands/help/command.locate", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendText(messaging.CategorySystem, infoOutput)
 		return true, nil
 	}
 
@@ -33,11 +34,11 @@ func Locate(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			return false, fmt.Errorf(`room %d not found`, locateUser.Character.RoomId)
 		}
 
-		user.SendText(
+		user.SendText(messaging.CategorySystem, 
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> is in room #<ansi fg="yellow-bold">%d</ansi> - <ansi fg="magenta">%s</ansi> <ansi fg="red">【%s】</ansi>`, locateUser.Character.Name, room.RoomId, room.Title, locateUser.Character.Zone),
 		)
 
-		locateUser.SendText(
+		locateUser.SendText(messaging.CategorySystem, 
 			`You get the feeling someone is looking for you...`,
 		)
 
@@ -130,7 +131,7 @@ func Locate(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				}
 
 				mobName := mob.Character.Name
-				if mob.Character.Aggro != nil {
+				if mob.Character.IsInCombat() {
 					mobName = `*` + mobName
 				}
 				if len(mobName) > 24 {
@@ -148,7 +149,7 @@ func Locate(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				if ct >= matchesPerPage {
 					onlineTableData := templates.GetTable(fmt.Sprintf(`Matches for "%s" [Page %d/%d]`, rest, pageNow+1, pageCt), headers, rows)
 					tplTxt, _ := templates.Process("tables/generic", onlineTableData, user.UserId)
-					user.SendText(tplTxt)
+					user.SendText(messaging.CategorySystem, tplTxt)
 					rows = [][]string{}
 					ct = 0
 					pageNow++
@@ -161,13 +162,13 @@ func Locate(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		if pageNow < pageCt {
 			onlineTableData := templates.GetTable(fmt.Sprintf(`Matches for "%s" [Page %d/%d]`, rest, pageNow+1, pageCt), headers, rows)
 			tplTxt, _ := templates.Process("tables/generic", onlineTableData, user.UserId)
-			user.SendText(tplTxt)
+			user.SendText(messaging.CategorySystem, tplTxt)
 		}
 
 		return true, nil
 	}
 
-	user.SendText(
+	user.SendText(messaging.CategorySystem, 
 		fmt.Sprintf("No user or mob found with the name %s", rest),
 	)
 

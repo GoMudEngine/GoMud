@@ -2,6 +2,8 @@ mobid: 324
 zone: Instance Arena
 archetype: fighting
 behavior_archetype: leader
+submission_policy: lethal
+surrender_policy: never
 routine: arena_gauntlet
 statpool: 4
 hostile: true
@@ -12,8 +14,6 @@ itemdropchance: 75
 loot_pool:
   - 10028
   - 20069
-tactic_preset: aggressive_melee
-tactical_discipline: 0.90
 idlecommands:
   - 'emote plants the warhammer head-down in the dirt and stares at the gate'
   - ''

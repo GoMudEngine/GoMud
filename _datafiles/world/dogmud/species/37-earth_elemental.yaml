@@ -4,6 +4,10 @@ description: A lumbering fortress of living rock and compacted soil, the
   earth elemental is among the most durable constructs a conjurer can
   summon. It moves slowly but strikes with seismic force, and its natural
   mass lets it knock foes sprawling without need of a shield.
+body_parts: [arms, legs, skin]
+intrinsic_mutations:
+  thick-hide: 1
+  iron-constitution: 1
 size: large
 unarmedname: stone fists
 selectable: false

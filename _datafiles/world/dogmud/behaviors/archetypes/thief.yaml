@@ -1,0 +1,81 @@
+# thief archetype
+#
+# Sneak-first opportunist. Hides on idle, pickpockets passing
+# players, flees on detection or aggression. Engages directly
+# only when target is vastly outclassed (power ratio > 1.5).
+#
+# Branch priority (selector, top-down):
+#   1. Panic-flee at critical HP (shared pattern with other archetypes).
+#   2. Power-overmatch combat (player_enter + power ratio > 1.5 → attack).
+#   3. Self-defense (mob_hurt → attack, no health gate).
+#   4. Steal-and-flee loop (mob_idle + hidden + player in room → steal,
+#      flee).
+#   5. Re-stealth (mob_idle + not hidden → try_sneak).
+#   6. (Fallback: engine default idle wander.)
+#
+# Note: "mob_attacked" is not a btree event. Self-defense uses mob_hurt
+# (the same event as panic-flee) without a health-below condition gate,
+# matching lookout.yaml's self-defense pattern.
+#
+# Spec: docs/superpowers/specs/
+#       2026-05-13-mob-aliveness-2.7-skullduggery-suite-design.md
+
+tree:
+  type: selector
+  children:
+    # 1. Panic-flee at critical HP (matches predator.yaml's pattern).
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 25
+        - type: action
+          do: flee
+
+    # 2. Power-overmatch: if a player walks in who is 1.5x weaker,
+    # drop stealth and engage directly.
+    - type: sequence
+      event: player_enter
+      children:
+        - type: condition
+          check: target_power_ratio_above
+          value: 1.5
+        - type: action
+          do: attack
+
+    # 3. Self-defense: fight back if attacked (no health-below gate).
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: action
+          do: attack
+
+    # 4. Core loop: idle + hidden + gold-bearing player in room →
+    # pick a player, attempt theft, flee.
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: condition
+          check: mob_is_hidden
+        - type: action
+          do: target_random_player_in_room
+        - type: condition
+          check: target_has_gold
+          min: 5
+        - type: action
+          do: try_steal
+        - type: action
+          do: flee
+
+    # 5. Re-stealth when uncovered.
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: decorator
+          mod: invert
+          child:
+            type: condition
+            check: mob_is_hidden
+        - type: action
+          do: try_sneak

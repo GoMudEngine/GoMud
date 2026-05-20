@@ -1,0 +1,132 @@
+description: |
+  Admin-driven smoke test for chunk 2.6 (sunset legacy tactics
+  engine; migrate to btree). The chunk deleted `internal/mobai/`
+  entirely and migrated all 44 tactic-using mobs to behavior tree
+  archetypes. New archetypes: defensive_caster + boss_edrin /
+  boss_sylara / boss_rhett / boss_soren / boss_chrysalis_phantom.
+  Five existing archetypes (generic_fighter, predator, leader,
+  lookout, tank_taunter) gained a panic-flee branch.
+
+  The smoketester account is admin role (from chunk 2.5 smoke).
+  Use admin commands freely to spawn, inspect, and damage mobs.
+
+  IMPORTANT: don't modify code or YAML files. Observe, capture,
+  report. If a check fails, write it up — do NOT edit any files.
+
+goals:
+  # ── 0. Login + admin confirm ──────────────────────────────────
+  - Log in as smoketester (port 55555, host localhost). Run
+    `set charset` to switch to ASCII. Run `look`. Verify admin
+    privilege via `whoami` or `help admin` listing admin
+    commands.
+
+  # ── 1. Edrin priority-race (the original bug) ────────────────
+  - Goto a quiet test room (or admin-spawn area). Spawn Old
+    Edrin via `spawnmob 275` or admin syntax. Engage him in
+    combat. Admin-drop his HP to below 30%:
+      `mob <inst_id> sethp 25` (or equivalent — explore help)
+
+    Expected: Edrin casts `fold-recall` (the panic recall). The
+    cast may take several rounds (it's a multi-fold spell).
+    Watch combat output for "fold-recall" related text.
+
+    **Capture verbatim:** any cast lines, spell text, or
+    recall behavior. This is the bug that motivated the chunk
+    — fold-recall used to be silently dropped if conviction-ward
+    was queued earlier.
+
+    If Edrin DOES NOT cast fold-recall reliably when HP<30, that
+    is a regression — flag it.
+
+  # ── 2. Sylara opener ─────────────────────────────────────────
+  - Spawn Windwarden Sylara via `spawnmob 241`. Engage. Watch
+    the first combat round.
+
+    Expected: Sylara casts `conviction-ward` on the first
+    combat tick where she's not already casting. After the cast
+    completes, she should NOT immediately re-cast it on the
+    very next round (the shield's still active mechanically).
+    BUT: a known limitation is that conviction-ward has no buff
+    self-gate, so eventually (after the shield expires) Sylara
+    will re-cast it. That's expected and acceptable.
+
+    **Capture:** the first 5-6 combat rounds' cast lines.
+
+  # ── 3. Tank call_for_help ────────────────────────────────────
+  - Spawn a tank_taunter-archetype mob. Find one via
+    `help spawnmob` or by spawning candidates from the
+    Thornwall/Stillwater zones. Engage. Admin-drop HP to <20%.
+
+    Expected: mob fires `callforhelp` (room broadcast like
+    "X calls out for reinforcements!"). The augmented
+    `tank_taunter` archetype absorbed the `tank` preset's
+    `health_below:20 → call_for_help` rule.
+
+    Capture the call-for-help line.
+
+  # ── 4. Ambusher mid-combat trip ──────────────────────────────
+  - Spawn the bandit lookout (mob 283). The lookout uses the
+    augmented `ambusher` archetype. Engage. Start casting any
+    spell (an identify spell is fine).
+
+    Expected: lookout tries to trip you mid-combat. Capture
+    the trip attempt text.
+
+    NOTE: trip uses `command_best_of` so it shares cooldown
+    with other special moves. You may need to cast in a
+    different round if lookout just used another special move.
+
+  # ── 5. Panic-flee universality ───────────────────────────────
+  - Spawn a generic_fighter-archetype mob (e.g., 284-bandit_fighter
+    or 218-goblin_scrapper). Engage. Beat HP below 25%.
+
+    Expected: mob fires `flee` (room broadcast like "X flees!").
+    The augmented `generic_fighter` archetype absorbed the
+    `health_below:25 → flee` pattern.
+
+    Repeat with at least one other base archetype (e.g.,
+    predator/leader/lookout — spawn a steppe wolf 205 for
+    predator). Each should panic-flee at HP<25.
+
+    **Capture:** the flee lines.
+
+  # ── 6. defensive_caster rotation ─────────────────────────────
+  - Spawn a goblin shaman (mob 219). She has the new
+    `defensive_caster` archetype. Engage.
+
+    Expected (first few rounds):
+      - Round 1: casts `chrysalis-cocoon` (since buff 52 is missing)
+      - After cocoon lands (buff 52 present): switches to either
+        `conviction-spike` (single target) or
+        `conviction-barrage` (multi target)
+      - At HP<30: tries to flee
+
+    Capture the spell sequence.
+
+  # ── 7. Chrysalis Phantom (boss archetype) ────────────────────
+  - Spawn the Chrysalis Phantom (mob 272). She uses
+    `boss_chrysalis_phantom`. Engage. Start casting in the
+    room.
+
+    Expected:
+      - Phantom trips you on rounds where you're casting
+      - At HP<20: flees (tighter threshold than the generic 25%)
+
+  # ── 8. Final summary ─────────────────────────────────────────
+  - Write a "Smoke verdict" paragraph at the top of your report:
+
+      Smoke verdict: PASS | PARTIAL | FAIL
+        - Edrin fold-recall (the original bug): PASS/FAIL
+        - Sylara conviction-ward opener: PASS/FAIL
+        - Tank call_for_help: PASS/FAIL
+        - Ambusher mid-combat trip: PASS/FAIL
+        - Panic-flee on generic mobs: PASS/FAIL
+        - defensive_caster rotation: PASS/FAIL
+        - Chrysalis Phantom interrupt + tight flee: PASS/FAIL
+
+  # ── 9. Blockers ──────────────────────────────────────────────
+  - If any admin command syntax fails to work as expected,
+    document the failure mode + your attempted commands in a
+    "Blockers" section. Don't fight tooling — flag and move on.
+
+  Report file: `tools/testing/reports/chunk-2-6-tactics-sunset-admin-smoke-<YYYYMMDD-HHMM>.md`

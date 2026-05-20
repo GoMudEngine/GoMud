@@ -10,6 +10,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -122,7 +123,7 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 
 	if on := user.GetConfigOption(`auction`); on != nil && !on.(bool) {
 
-		user.SendText(
+		user.SendText(messaging.CategorySystem, 
 			`Auctions are disabled. See <ansi fg="command">help set</ansi> for learn how to change this.`,
 		)
 
@@ -137,9 +138,9 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 
 		if currentAuction != nil {
 			auctionTxt, _ := templates.Process("auctions/auction-update", currentAuction, user.UserId)
-			user.SendText(auctionTxt)
+			user.SendText(messaging.CategorySystem, auctionTxt)
 		} else {
-			user.SendText(`No current auctions. You can auction something, though!`)
+			user.SendText(messaging.CategorySystem, `No current auctions. You can auction something, though!`)
 		}
 		return true, nil
 	}
@@ -180,7 +181,7 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 		historyTableData := templates.GetTable(`Past Auctions`, headers, rows, formatting)
 
 		tplTxt, _ := templates.Process("tables/generic", historyTableData, user.UserId)
-		user.SendText(tplTxt)
+		user.SendText(messaging.CategorySystem, tplTxt)
 
 		return true, nil
 	}
@@ -188,22 +189,22 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 	if args[0] == `bid` {
 
 		if currentAuction == nil {
-			user.SendText(`There is not an auction to bid on.`)
+			user.SendText(messaging.CategorySystem, `There is not an auction to bid on.`)
 			return true, nil
 		}
 
 		if currentAuction.SellerUserId == user.UserId {
-			user.SendText(`You cannot bid on your own auction.`)
+			user.SendText(messaging.CategorySystem, `You cannot bid on your own auction.`)
 			return true, nil
 		}
 
 		if currentAuction.HighestBidUserId == user.UserId {
-			user.SendText(`You are already the highest bidder.`)
+			user.SendText(messaging.CategorySystem, `You are already the highest bidder.`)
 			return true, nil
 		}
 
 		if len(args) < 2 {
-			user.SendText(`Bid how much?`)
+			user.SendText(messaging.CategorySystem, `Bid how much?`)
 			return true, nil
 		}
 
@@ -214,17 +215,17 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 
 		amt, _ := strconv.Atoi(args[1])
 		if amt < minBid {
-			user.SendText(fmt.Sprintf(`You must bid at least <ansi fg="gold">%d gold</ansi>.`, minBid))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You must bid at least <ansi fg="gold">%d gold</ansi>.`, minBid))
 			return true, nil
 		}
 
 		if amt > user.Character.Gold {
-			user.SendText(`You don't have that much gold.`)
+			user.SendText(messaging.CategorySystem, `You don't have that much gold.`)
 			return true, nil
 		}
 
 		if err := mod.auctionMgr.Bid(user.UserId, amt); err != nil {
-			user.SendText(err.Error())
+			user.SendText(messaging.CategorySystem, err.Error())
 			return true, nil
 		}
 
@@ -241,7 +242,7 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 			if u := users.GetByUserId(uid); u != nil {
 				auctionOn := u.GetConfigOption(`auction`)
 				if auctionOn == nil || auctionOn.(bool) {
-					u.SendText(auctionTxt)
+					u.SendText(messaging.CategoryBroadcast, auctionTxt)
 				}
 			}
 		}
@@ -267,7 +268,7 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 
 	// If there is already an auction happening, abort this attempt.
 	if currentAuction != nil {
-		user.SendText(`There is already an auction in progress.`)
+		user.SendText(messaging.CategorySystem, `There is already an auction in progress.`)
 		return true, nil
 	}
 
@@ -275,7 +276,7 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 	matchItem, found := user.Character.FindInBackpack(rest)
 
 	if !found {
-		user.SendText(fmt.Sprintf("You don't have a %s to auction.", rest))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("You don't have a %s to auction.", rest))
 		return true, nil
 	}
 
@@ -286,7 +287,7 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 	}
 
 	if questionConfirm.Response != `Yes` {
-		user.SendText(`Aborting auction`)
+		user.SendText(messaging.CategorySystem, `Aborting auction`)
 		user.ClearPrompt()
 		return true, nil
 	}
@@ -298,14 +299,14 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 
 	amt, _ := strconv.Atoi(questionAmount.Response)
 	if amt < 1 {
-		user.SendText(`Aborting auction`)
+		user.SendText(messaging.CategorySystem, `Aborting auction`)
 		user.ClearPrompt()
 		return true, nil
 	}
 
 	user.ClearPrompt()
 
-	user.SendText(fmt.Sprintf("Auctioning your <ansi fg=\"item\">%s</ansi> for <ansi fg=\"gold\">%d gold</ansi>.", matchItem.DisplayName(), amt))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf("Auctioning your <ansi fg=\"item\">%s</ansi> for <ansi fg=\"gold\">%d gold</ansi>.", matchItem.DisplayName(), amt))
 
 	duration := 60
 	if dur, ok := mod.plug.Config.Get(`DurationSeconds`).(int); ok {
@@ -353,7 +354,7 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 			if u := users.GetByUserId(uid); u != nil {
 				auctionOn := u.GetConfigOption(`auction`)
 				if auctionOn == nil || auctionOn.(bool) {
-					u.SendText(auctionTxt)
+					u.SendText(messaging.CategoryBroadcast, auctionTxt)
 				}
 			}
 		}
@@ -371,7 +372,7 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 					})
 
 					msg := fmt.Sprintf(`<ansi fg="yellow">You have won the auction for the <ansi fg="item">%s</ansi>! It has been added to your backpack.</ansi>`, auctionNow.ItemData.DisplayName())
-					user.SendText(msg)
+					user.SendText(messaging.CategorySystem, msg)
 				}
 			} else {
 
@@ -404,7 +405,7 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 
 				if sellerUser := users.GetByUserId(auctionNow.SellerUserId); sellerUser != nil {
 					sellerUser.Character.Bank += auctionNow.HighestBid
-					sellerUser.SendText(`<ansi fg="yellow">` + msg + `</ansi>`)
+					sellerUser.SendText(messaging.CategorySystem, `<ansi fg="yellow">` + msg + `</ansi>`)
 
 					events.AddToQueue(events.EquipmentChange{
 						UserId:     sellerUser.UserId,
@@ -449,7 +450,7 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 					})
 
 					msg := fmt.Sprintf(`<ansi fg="yellow">The auction for the <ansi fg="item">%s</ansi> has ended without a winner. It has been returned to you.</ansi>`, auctionNow.ItemData.DisplayName())
-					user.SendText(msg)
+					user.SendText(messaging.CategorySystem, msg)
 				}
 			}
 
@@ -461,7 +462,7 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 					auctionOn := u.GetConfigOption(`auction`)
 					if auctionOn == nil || auctionOn.(bool) {
 						msg := fmt.Sprintf(`<ansi fg="yellow">The auction for the <ansi fg="item">%s</ansi> has ended without a winner. It has been returned to the seller.</ansi>`, auctionNow.ItemData.DisplayName())
-						u.SendText(msg)
+						u.SendText(messaging.CategoryBroadcast, msg)
 					}
 				}
 			}
@@ -495,7 +496,7 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 			if u := users.GetByUserId(uid); u != nil {
 				auctionOn := u.GetConfigOption(`auction`)
 				if auctionOn == nil || auctionOn.(bool) {
-					u.SendText(auctionTxt)
+					u.SendText(messaging.CategoryBroadcast, auctionTxt)
 				}
 			}
 		}
@@ -527,7 +528,7 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 			if u := users.GetByUserId(uid); u != nil {
 				auctionOn := u.GetConfigOption(`auction`)
 				if auctionOn == nil || auctionOn.(bool) {
-					u.SendText(auctionTxt)
+					u.SendText(messaging.CategoryBroadcast, auctionTxt)
 				}
 			}
 		}

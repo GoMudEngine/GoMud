@@ -6,6 +6,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,7 +24,7 @@ func newTestMob(t *testing.T, cfg func(*mobs.Mob)) *mobs.Mob {
 	m.Character.StaminaMax.Value = 999
 	m.Character.Conviction = 999
 	m.Character.ConvictionMax.Value = 999
-	m.Character.CombatPosition = characters.PositionStanding
+	setCombatPositionParallel(&m.Character, position.Standing)
 	m.Character.Buffs = buffs.New() // Properly initialize buffs maps
 	m.Character.SetAggro(1, 0, characters.DefaultAttack) // user 1 as generic target
 	if cfg != nil {
@@ -79,7 +82,7 @@ func TestCommandIsReady_Trip_TargetAlreadyProneFalse(t *testing.T) {
 	m := newTestMob(t, nil)
 	targetMob := &mobs.Mob{InstanceId: 200}
 	targetMob.Character.Name = "Target"
-	targetMob.Character.CombatPosition = characters.PositionProne
+	setCombatPositionParallel(&targetMob.Character, position.Prone)
 	mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
 	defer mobs.SetInstanceForTest(targetMob.InstanceId, nil)
 	m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
@@ -99,7 +102,7 @@ func TestCommandIsReady_Grapple_TargetAlreadyClinchedFalse(t *testing.T) {
 	m := newTestMob(t, nil)
 	targetMob := &mobs.Mob{InstanceId: 201}
 	targetMob.Character.Name = "Target"
-	targetMob.Character.CombatPosition = characters.PositionClinched
+	setCombatPositionParallel(&targetMob.Character, position.Clinch)
 	mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
 	defer mobs.SetInstanceForTest(targetMob.InstanceId, nil)
 	m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
@@ -119,10 +122,11 @@ func TestCommandIsReady_IsCrafting_BlocksEveryCommand(t *testing.T) {
 	for _, cmd := range []string{"taunt", "rally", "warcry", "trip", "bash", "grapple", "kick"} {
 		t.Run(cmd, func(t *testing.T) {
 			m := newTestMob(t, func(m *mobs.Mob) {
-				m.Character.CraftingState = &characters.CraftingState{
-					RecipeId:    "test",
-					RoundsTotal: 1,
-				}
+				m.Character.Activity = activity.NewMachine()
+				_ = m.Character.Activity.TransitionToCrafting(
+					activity.CraftingData{RecipeId: "test", RoundsTotal: 1},
+					state.TransitionReason{Trigger: activity.TriggerCraftBegin},
+				)
 			})
 			actor := &MobActor{Mob: m, Room: nil}
 			assert.False(t, CommandIsReady(actor, cmd),

@@ -6,30 +6,52 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/opinions"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
+// bumpOpinionOnTargetSwitch records a fresh aggression event on the
+// new target when switching combat targets. Mirrors the hook in
+// attack.go so all "the player initiated combat with this mob"
+// paths feed the same substrate.
+func bumpOpinionOnTargetSwitch(user *users.UserRecord, room *rooms.Room, newMobInstanceId, oldMobInstanceId int) {
+	if newMobInstanceId == 0 || newMobInstanceId == oldMobInstanceId {
+		return
+	}
+	mob := mobs.GetInstance(newMobInstanceId)
+	if mob == nil {
+		return
+	}
+	// chunk 1.1: per-NPC opinion bump
+	opinions.Bump(int(mob.MobId), user.UserId,
+		int(configs.GetBalanceConfig().OpinionAttackBump))
+	// chunk 1.3: assault crime + faction rep
+	recordAssaultCrime(user, mob, room)
+}
+
 func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	// Must be in combat to switch targets
-	if user.Character.Aggro == nil {
-		user.SendText("You're not in combat. Use <ansi fg=\"command\">attack</ansi> to initiate combat.")
+	if !user.Character.IsInCombat() {
+		user.SendText(messaging.CategorySystem, "You're not in combat. Use <ansi fg=\"command\">attack</ansi> to initiate combat.")
 		return true, nil
 	}
 
 	// Can't switch during spell casting or other special aggro types
 	if user.Character.Aggro.Type != characters.DefaultAttack && user.Character.Aggro.Type != characters.Shooting {
-		user.SendText("You can't switch targets right now.")
+		user.SendText(messaging.CategorySystem, "You can't switch targets right now.")
 		return true, nil
 	}
 
 	if rest == "" {
-		user.SendText("Switch to which target?")
+		user.SendText(messaging.CategorySystem, "Switch to which target?")
 		return true, nil
 	}
 
@@ -40,10 +62,10 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	if err != nil {
 		// Distinguish self-targeting vs not-found via the original wording.
 		if pId, _ := room.FindByName(rest); pId == user.UserId {
-			user.SendText("You can't target yourself!")
+			user.SendText(messaging.CategorySystem, "You can't target yourself!")
 			return true, nil
 		}
-		user.SendText(fmt.Sprintf("You don't see '%s' here.", rest))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("You don't see '%s' here.", rest))
 		return true, nil
 	}
 
@@ -51,16 +73,16 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	newTargetMobInstanceId := target.GetMobInstanceId()
 
 	// Check if already targeting this entity
-	currentTargetUserId := user.Character.Aggro.UserId
-	currentTargetMobId := user.Character.Aggro.MobInstanceId
+	currentTargetUserId := user.Character.EngagedTarget().UserId
+	currentTargetMobId := user.Character.EngagedTarget().MobInstanceId
 
 	if newTargetPlayerId > 0 && newTargetPlayerId == currentTargetUserId {
-		user.SendText("You're already targeting them!")
+		user.SendText(messaging.CategorySystem, "You're already targeting them!")
 		return true, nil
 	}
 
 	if newTargetMobInstanceId > 0 && newTargetMobInstanceId == currentTargetMobId {
-		user.SendText("You're already targeting them!")
+		user.SendText(messaging.CategorySystem, "You're already targeting them!")
 		return true, nil
 	}
 
@@ -68,13 +90,13 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	if newTargetMobInstanceId > 0 {
 		m := mobs.GetInstance(newTargetMobInstanceId)
 		if m == nil {
-			user.SendText(fmt.Sprintf("You don't see '%s' here.", rest))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf("You don't see '%s' here.", rest))
 			return true, nil
 		}
 
 		// Can't target any companion
 		if m.Character.IsCharmed() {
-			user.SendText(fmt.Sprintf("<ansi fg=\"mobname\">%s</ansi> is someone's companion!", m.Character.Name))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf("<ansi fg=\"mobname\">%s</ansi> is someone's companion!", m.Character.Name))
 			return true, nil
 		}
 	}
@@ -82,20 +104,20 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	if newTargetPlayerId > 0 {
 		p := users.GetByUserId(newTargetPlayerId)
 		if p == nil {
-			user.SendText(fmt.Sprintf("You don't see '%s' here.", rest))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf("You don't see '%s' here.", rest))
 			return true, nil
 		}
 
 		// Check PvP restrictions
 		if pvpErr := room.CanPvp(user, p); pvpErr != nil {
-			user.SendText(pvpErr.Error())
+			user.SendText(messaging.CategorySystem, pvpErr.Error())
 			return true, nil
 		}
 
 		// Can't target party members
 		if partyInfo := parties.Get(user.UserId); partyInfo != nil {
 			if partyInfo.IsMember(newTargetPlayerId) {
-				user.SendText(fmt.Sprintf("<ansi fg=\"username\">%s</ansi> is in your party!", p.Character.Name))
+				user.SendText(messaging.CategorySystem, fmt.Sprintf("<ansi fg=\"username\">%s</ansi> is in your party!", p.Character.Name))
 				return true, nil
 			}
 		}
@@ -120,15 +142,16 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	if currentTargetGone {
 		aggroType := user.Character.Aggro.Type
+		bumpOpinionOnTargetSwitch(user, room, newTargetMobInstanceId, currentTargetMobId)
 		user.Character.SetAggro(newTargetPlayerId, newTargetMobInstanceId, aggroType)
 
 		if newTargetMobInstanceId > 0 {
 			if m := mobs.GetInstance(newTargetMobInstanceId); m != nil {
-				user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"mobname\">%s</ansi>!", m.Character.Name))
+				user.SendText(messaging.CategorySystem, fmt.Sprintf("You turn your attention to <ansi fg=\"mobname\">%s</ansi>!", m.Character.Name))
 			}
 		} else if newTargetPlayerId > 0 {
 			if p := users.GetByUserId(newTargetPlayerId); p != nil {
-				user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"username\">%s</ansi>!", p.Character.Name))
+				user.SendText(messaging.CategorySystem, fmt.Sprintf("You turn your attention to <ansi fg=\"username\">%s</ansi>!", p.Character.Name))
 			}
 		}
 		return true, nil
@@ -146,20 +169,21 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		aggroType := user.Character.Aggro.Type
 
 		// Switch to new target with 1 round wait (cost of repositioning)
+		bumpOpinionOnTargetSwitch(user, room, newTargetMobInstanceId, currentTargetMobId)
 		user.Character.SetAggro(newTargetPlayerId, newTargetMobInstanceId, aggroType, 1)
 
 		if newTargetMobInstanceId > 0 {
 			m := mobs.GetInstance(newTargetMobInstanceId)
-			user.SendText(fmt.Sprintf("You shift your focus to <ansi fg=\"mobname\">%s</ansi>!", m.Character.Name))
-			room.SendTextVisual(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf("You shift your focus to <ansi fg=\"mobname\">%s</ansi>!", m.Character.Name))
+			room.SendTextVisual(messaging.CategoryMobEmote, 
 				fmt.Sprintf("<ansi fg=\"username\">%s</ansi> shifts focus to <ansi fg=\"mobname\">%s</ansi>!", user.Character.Name, m.Character.Name),
 				user.UserId,
 			)
 		} else if newTargetPlayerId > 0 {
 			p := users.GetByUserId(newTargetPlayerId)
-			user.SendText(fmt.Sprintf("You shift your focus to <ansi fg=\"username\">%s</ansi>!", p.Character.Name))
-			p.SendText(fmt.Sprintf("<ansi fg=\"username\">%s</ansi> shifts focus to you!", user.Character.Name))
-			room.SendTextVisual(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf("You shift your focus to <ansi fg=\"username\">%s</ansi>!", p.Character.Name))
+			p.SendText(messaging.CategorySystem, fmt.Sprintf("<ansi fg=\"username\">%s</ansi> shifts focus to you!", user.Character.Name))
+			room.SendTextVisual(messaging.CategoryMobEmote, 
 				fmt.Sprintf("<ansi fg=\"username\">%s</ansi> shifts focus to <ansi fg=\"username\">%s</ansi>!", user.Character.Name, p.Character.Name),
 				user.UserId, newTargetPlayerId,
 			)
@@ -167,7 +191,7 @@ func Target(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	} else {
 		// FAILURE: Keep attacking current target this round
-		user.SendText("You try to reposition but can't break away from your current opponent!")
+		user.SendText(messaging.CategorySystem, "You try to reposition but can't break away from your current opponent!")
 
 		// Still costs a round (set RoundsWaiting to 1)
 		user.Character.Aggro.RoundsWaiting = 1

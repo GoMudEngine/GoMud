@@ -2,6 +2,7 @@ mutationid: blinding-flash
 name: Blinding Flash
 description: Cells in your skin can discharge stored energy in a brilliant flash of light. The mutation has damaged your own light-sensitive cells, leaving your vision permanently diminished.
 rarity: 8
+requires_body_parts: [skin]
 visual: Patches of their skin occasionally flicker with a faint, pale luminescence, like heat lightning under the surface.
 conflicts:
   - camo-skin

@@ -22,6 +22,23 @@
 tree:
   type: selector
   children:
+    # Call for help at low HP (absorbs the `tank` tactic preset's
+    # `health_below:20 → call_for_help` rule).
+    #
+    # Tank archetype intentionally has NO panic-flee branch — tanks
+    # hold aggro under pressure rather than running. The chunk-2.6
+    # smoke verified that adding panic-flee at HP<25 made the
+    # HP<20 callforhelp branch unreachable.
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 20
+        - type: action
+          do: command
+          cmd: callforhelp
+
     # ── packmate_hurt: engage the attacker ───────────────────────
     - type: action
       event: packmate_hurt

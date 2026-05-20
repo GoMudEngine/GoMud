@@ -35,23 +35,24 @@ func (c *Character) CalculateStanceString() string {
 	}
 }
 
-// CalculatePositionString converts the CombatPosition enum to a human-readable
-// string suitable for use in combat messages.
+// CalculatePositionString returns a human-readable position string for use
+// in combat messages, driven by the Position FSM.
 //
 // Returns:
-//   - "standing" - PositionStanding
-//   - "prone" - PositionProne
-//   - "locked in close combat" - PositionClinched
-//   - "grappling on the ground" - PositionGrounded
+//   - "standing" - Standing (default)
+//   - "prone" - Prone or Supine
+//   - "locked in close combat" - any standing grapple state
+//   - "grappling on the ground" - any ground grapple state
 func (c *Character) CalculatePositionString() string {
-	switch c.CombatPosition {
-	case PositionStanding:
+	if c.Position == nil {
 		return "standing"
-	case PositionProne:
+	}
+	switch {
+	case c.IsProne() || c.IsSupine():
 		return "prone"
-	case PositionClinched:
+	case c.IsStandingGrapple():
 		return "locked in close combat"
-	case PositionGrounded:
+	case c.IsGroundGrapple():
 		return "grappling on the ground"
 	default:
 		return "standing"

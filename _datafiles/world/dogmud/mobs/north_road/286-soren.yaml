@@ -1,7 +1,8 @@
 mobid: 286
 zone: North Road
-archetype: fighting
-behavior_archetype: leader
+behavior_archetype: boss_soren
+submission_policy: lethal
+surrender_policy: never
 routine: bandit_camp_guard
 statpool: 175
 itemdropchance: 100
@@ -29,13 +30,6 @@ combatcommands:
   - 'emote absorbs a blow on the buckler and counters in the same motion'
   - ''
 activitylevel: 10
-reaction_delay: 0.6
-tactical_discipline: 0.90
-tactic_preset: aggressive_melee
-tactics:
-  - trigger: health_below:30
-    action: call_for_help
-    priority: 8
 character:
   name: Soren
   description: |

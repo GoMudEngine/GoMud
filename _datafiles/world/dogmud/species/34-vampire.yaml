@@ -4,6 +4,10 @@ description: A predator in the truest sense — stronger than any mortal, faster
   than most, with a magnetism that makes prey hesitate at exactly the wrong
   moment. Vampires are calculating hunters that blend martial prowess with
   the power of the will, and a bite that drains more than blood.
+body_parts: [arms, hands, legs, eyes, mouth, skin]
+intrinsic_mutations:
+  regenerative-tissue: 1
+  night-vision: 1
 size: medium
 unarmedname: claws
 selectable: false

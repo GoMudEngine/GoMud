@@ -8,16 +8,15 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
-	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
-	"github.com/GoMudEngine/GoMud/internal/mobai"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/usercommands"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -65,11 +64,15 @@ func mobDisplayName(mob *mobs.Mob, room *rooms.Room, viewingUserId int) string {
 
 // sendVisualRoomText sends a visual message that requires sight.
 // Delegates to Room.SendTextVisual which handles darkness filtering.
-func sendVisualRoomText(room *rooms.Room, visualMsg string, excludeUserIds ...int) {
+//
+// The cat parameter classifies the message so the central pipeline
+// can apply category-appropriate color + normalization. Callers used
+// to omit this; T11 added it as a required arg.
+func sendVisualRoomText(room *rooms.Room, cat messaging.Category, visualMsg string, excludeUserIds ...int) {
 	if room == nil {
 		return
 	}
-	room.SendTextVisual(visualMsg, excludeUserIds...)
+	room.SendTextVisual(cat, visualMsg, excludeUserIds...)
 }
 
 // isExcludedUser checks if a userId is in the exclusion list.
@@ -94,18 +97,9 @@ func sendDarkRoomCombatFallback(room *rooms.Room, excludeUserIds ...int) {
 		}
 		u := users.GetByUserId(uid)
 		if u != nil && !u.Character.HasFlagFromAnySource(buffs.NightVision) {
-			u.SendText(`<ansi fg="yellow">You hear the sounds of fighting nearby.</ansi>`)
+			u.SendText(messaging.CategoryDefault, `<ansi fg="yellow">You hear the sounds of fighting nearby.</ansi>`)
 		}
 	}
-}
-
-// canSeeInRoom returns true if the character has nightvision or the room
-// has enough visibility for sight.
-func canSeeInRoom(char *characters.Character, room *rooms.Room) bool {
-	if room == nil {
-		return true
-	}
-	return room.GetVisibility() >= 1 || char.HasFlagFromAnySource(buffs.NightVision)
 }
 
 // replaceDarknessMessages replaces detailed combat messages with generic
@@ -115,24 +109,27 @@ func replaceDarknessMessages(result *combat.AttackResult, sourceCanSee bool, tar
 		return
 	}
 
-	// Build replacement messages based on swing events
+	// Build replacement messages based on swing events. Dark-room
+	// substitutes carry the same per-line outcome category as the
+	// equivalent sighted line — defense crit / dodge → CategoryDodge,
+	// hits → CategoryHitMelee, miss/fumble → CategoryHitMelee.
 	if !sourceCanSee {
-		newMsgs := make([]string, 0, len(result.SwingEvents))
+		newMsgs := make([]combat.TaggedMessage, 0, len(result.SwingEvents))
 		for _, se := range result.SwingEvents {
 			if se.DoubleFumble {
-				// Keep comedy double fumble text
 				continue
 			}
-			if se.Fumble {
-				newMsgs = append(newMsgs, `<ansi fg="fumble-text">!!!</ansi> <ansi fg="yellow">You stumble badly in the darkness!</ansi> <ansi fg="fumble-text">!!!</ansi>`)
-			} else if se.Crit {
-				newMsgs = append(newMsgs, `<ansi fg="crit-text">***</ansi> <ansi fg="attack-good">You land a devastating blow in the dark!</ansi> <ansi fg="crit-text">***</ansi>`)
-			} else if se.DefenseCrit || se.DefenseUsed != "" {
-				newMsgs = append(newMsgs, `<ansi fg="attack-bad">Your attack is deflected by something!</ansi>`)
-			} else if se.Hit {
-				newMsgs = append(newMsgs, `<ansi fg="attack-good">You strike blindly and connect!</ansi>`)
-			} else {
-				newMsgs = append(newMsgs, `<ansi fg="yellow">You swing wildly in the darkness!</ansi>`)
+			switch {
+			case se.Fumble:
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryHitMelee, Text: `<ansi fg="fumble-text">!!!</ansi> <ansi fg="yellow">You stumble badly in the darkness!</ansi> <ansi fg="fumble-text">!!!</ansi>`})
+			case se.Crit:
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryHitMelee, Text: `<ansi fg="crit-text">***</ansi> <ansi fg="attack-good">You land a devastating blow in the dark!</ansi> <ansi fg="crit-text">***</ansi>`})
+			case se.DefenseCrit || se.DefenseUsed != "":
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryDodge, Text: `<ansi fg="attack-bad">Your attack is deflected by something!</ansi>`})
+			case se.Hit:
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryHitMelee, Text: `<ansi fg="attack-good">You strike blindly and connect!</ansi>`})
+			default:
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryHitMelee, Text: `<ansi fg="yellow">You swing wildly in the darkness!</ansi>`})
 			}
 		}
 		if len(newMsgs) > 0 {
@@ -141,22 +138,22 @@ func replaceDarknessMessages(result *combat.AttackResult, sourceCanSee bool, tar
 	}
 
 	if !targetCanSee {
-		newMsgs := make([]string, 0, len(result.SwingEvents))
+		newMsgs := make([]combat.TaggedMessage, 0, len(result.SwingEvents))
 		for _, se := range result.SwingEvents {
 			if se.DoubleFumble {
-				// Keep comedy double fumble text
 				continue
 			}
-			if se.Fumble {
-				newMsgs = append(newMsgs, `<ansi fg="yellow">You hear your attacker stumble!</ansi>`)
-			} else if se.Crit {
-				newMsgs = append(newMsgs, `<ansi fg="crit-text">***</ansi> <ansi fg="red">Something hits you hard in the dark!</ansi> <ansi fg="crit-text">***</ansi>`)
-			} else if se.DefenseCrit || se.DefenseUsed != "" {
-				newMsgs = append(newMsgs, `<ansi fg="defense-good">You fend off something in the dark!</ansi>`)
-			} else if se.Hit {
-				newMsgs = append(newMsgs, `<ansi fg="red">Something strikes you in the dark!</ansi>`)
-			} else {
-				newMsgs = append(newMsgs, `<ansi fg="yellow">You hear something whoosh past!</ansi>`)
+			switch {
+			case se.Fumble:
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryHitMelee, Text: `<ansi fg="yellow">You hear your attacker stumble!</ansi>`})
+			case se.Crit:
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryHitMelee, Text: `<ansi fg="crit-text">***</ansi> <ansi fg="red">Something hits you hard in the dark!</ansi> <ansi fg="crit-text">***</ansi>`})
+			case se.DefenseCrit || se.DefenseUsed != "":
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryDodge, Text: `<ansi fg="defense-good">You fend off something in the dark!</ansi>`})
+			case se.Hit:
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryHitMelee, Text: `<ansi fg="red">Something strikes you in the dark!</ansi>`})
+			default:
+				newMsgs = append(newMsgs, combat.TaggedMessage{Category: messaging.CategoryHitMelee, Text: `<ansi fg="yellow">You hear something whoosh past!</ansi>`})
 			}
 		}
 		if len(newMsgs) > 0 {
@@ -170,18 +167,15 @@ func handlePlayerShieldDecay(user *users.UserRecord) {
 	if user.Character.HasCondition(characters.ConditionShield) {
 		if user.Character.GetConditionDuration(characters.ConditionShield) <= 1 {
 			user.Character.RemoveCondition(characters.ConditionShield)
-			user.SendText(`<ansi fg="blue">Your Minor Shield dissipates.</ansi>`)
+			user.SendText(messaging.CategoryBuffExpire, `<ansi fg="blue">Your Minor Shield dissipates.</ansi>`)
 		} else {
 			user.Character.DecrementCondition(characters.ConditionShield)
 		}
 	}
 }
 
-// castingTargetChar returns the first target character from a CastingState, or nil.
-func castingTargetChar(cs *characters.CastingState) *characters.Character {
-	if cs == nil {
-		return nil
-	}
+// castingTargetChar returns the first target character from a CastingData, or nil.
+func castingTargetChar(cs activity.CastingData) *characters.Character {
 	for _, mobInstId := range cs.TargetMobInstanceIds {
 		if m := mobs.GetInstance(mobInstId); m != nil {
 			return &m.Character
@@ -203,45 +197,55 @@ func recordConcentrationFailure(src, tgt combat.SourceTarget, srcChar *character
 // handlePlayerFoldCasting processes fold spell casting for a player.
 // Returns true if the player is casting and should skip combat.
 func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
-	if user.Character.CastingState == nil {
+	if user.Character.Activity == nil || !user.Character.Activity.IsCasting() {
 		return false
 	}
 
+	// Capture state before processFoldRound clears it on terminal conditions.
+	csBeforeProcess, _ := user.Character.Activity.CastingData()
+
 	// Bleeding out = automatic concentration break (player-only check).
 	if user.Character.IsDisabled() {
-		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(user.Character.CastingState))
-		user.Character.CastingState = nil
+		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(csBeforeProcess))
+		clearCastingActivity(user.Character, activity.TriggerConcentrationBreak)
 		return true
 	}
-
-	// Capture state before processFoldRound clears it on terminal conditions.
-	csBeforeProcess := user.Character.CastingState
 
 	result := processFoldRound(user.Character)
 
 	switch {
 	case result.ProneBroke:
 		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(csBeforeProcess))
-		user.SendText(`<ansi fg="red">You lose your concentration as you hit the ground!</ansi>`)
+		user.SendText(messaging.CategorySpellDisruption, `<ansi fg="red">You lose your concentration as you hit the ground!</ansi>`)
 		room := rooms.LoadRoom(user.Character.RoomId)
 		if room != nil {
-			sendVisualRoomText(room, fmt.Sprintf(
+			sendVisualRoomText(room, messaging.CategorySpellDisruption, fmt.Sprintf(
+				`<ansi fg="username">%s</ansi>'s concentration breaks.`, user.Character.Name), user.UserId)
+		}
+
+	case result.GrappleBroke:
+		// Chunk 4e T4: grapple breaks concentration same as Prone (spec §4.2).
+		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(csBeforeProcess))
+		user.SendText(messaging.CategorySpellDisruption, `<ansi fg="red">Your concentration shatters — you cannot hold the fold while grappled!</ansi>`)
+		room := rooms.LoadRoom(user.Character.RoomId)
+		if room != nil {
+			sendVisualRoomText(room, messaging.CategorySpellDisruption, fmt.Sprintf(
 				`<ansi fg="username">%s</ansi>'s concentration breaks.`, user.Character.Name), user.UserId)
 		}
 
 	case result.TargetGone:
 		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(csBeforeProcess))
-		user.SendText(`<ansi fg="red">Your spell fizzles — the target is gone.</ansi>`)
+		user.SendText(messaging.CategorySpellDisruption, `<ansi fg="red">Your spell fizzles — the target is gone.</ansi>`)
 
 	case result.SpellDataMissing:
-		user.SendText(`<ansi fg="red">The spell dissipates — its data cannot be found.</ansi>`)
+		user.SendText(messaging.CategorySpellDisruption, `<ansi fg="red">The spell dissipates — its data cannot be found.</ansi>`)
 
 	case result.InsufficientConviction:
 		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(csBeforeProcess))
-		user.SendText(`<ansi fg="red">Your conviction wavers — the fold collapses.</ansi>`)
+		user.SendText(messaging.CategorySpellDisruption, `<ansi fg="red">Your conviction wavers — the fold collapses.</ansi>`)
 
 	case result.CastComplete:
-		cs := result.CastingState
+		cs := result.CastingData
 		spellData := result.SpellData
 		// Send YAML wait text (if defined).
 		if spellData != nil && (spellData.WaitUserText != "" || spellData.WaitRoomText != "") {
@@ -250,10 +254,10 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 				SourcePlainName: user.Character.GetCharacterName(false),
 			}
 			cfg := textutil.SendTextConfig{
-				UserSendFunc: func(msg string) { user.SendText(msg) },
+				UserSendFunc: func(msg string) { user.SendText(messaging.CategorySpellFold, msg) },
 				RoomSendFunc: func(msg string, skip ...int) {
 					if r := rooms.LoadRoom(user.Character.RoomId); r != nil {
-						r.SendText(msg, skip...)
+						r.SendText(messaging.CategorySpellFold, msg, skip...)
 					}
 				},
 				ExcludeId: user.UserId,
@@ -316,7 +320,7 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 				pick := eligible[util.Rand(len(eligible))]
 				if user.Character.LearnSpell(pick) {
 					if newSpell := spells.GetSpell(pick); newSpell != nil {
-						user.SendText(fmt.Sprintf(
+						user.SendText(messaging.CategorySkillProgress, fmt.Sprintf(
 							`<ansi fg="magenta-bold">A new pattern crystallizes in your mind: <ansi fg="cyan-bold">%s</ansi></ansi>`,
 							newSpell.Name))
 					}
@@ -341,7 +345,7 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 					pick := eligible[util.Rand(len(eligible))]
 					if user.Character.LearnSpell(pick) {
 						if newSpell := spells.GetSpell(pick); newSpell != nil {
-							user.SendText(fmt.Sprintf(
+							user.SendText(messaging.CategorySkillProgress, fmt.Sprintf(
 								`<ansi fg="magenta-bold">A manifestation reveals itself: <ansi fg="cyan-bold">%s</ansi></ansi>`,
 								newSpell.Name))
 						}
@@ -351,7 +355,7 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 		}
 
 	case result.StillCasting:
-		cs := result.CastingState
+		cs := result.CastingData
 		// Send YAML wait text (if defined).
 		waitSpellInfo := spells.GetSpell(cs.SpellId)
 		if waitSpellInfo != nil && (waitSpellInfo.WaitUserText != "" || waitSpellInfo.WaitRoomText != "") {
@@ -360,17 +364,17 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 				SourcePlainName: user.Character.GetCharacterName(false),
 			}
 			cfg := textutil.SendTextConfig{
-				UserSendFunc: func(msg string) { user.SendText(msg) },
+				UserSendFunc: func(msg string) { user.SendText(messaging.CategorySpellFold, msg) },
 				RoomSendFunc: func(msg string, skip ...int) {
 					if r := rooms.LoadRoom(user.Character.RoomId); r != nil {
-						r.SendText(msg, skip...)
+						r.SendText(messaging.CategorySpellFold, msg, skip...)
 					}
 				},
 				ExcludeId: user.UserId,
 			}
 			textutil.SendPhaseText(waitSpellInfo.WaitUserText, waitSpellInfo.WaitRoomText, tCtx, "pink", cfg)
 		}
-		user.SendText(`<ansi fg="cyan">` + spells.GetCastMessage("cast_started", cs.SpellId) + `</ansi>`)
+		user.SendText(messaging.CategorySpellFold, spells.GetCastMessage("cast_started", cs.SpellId))
 	}
 
 	return true
@@ -379,24 +383,30 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 // handleMobFoldCasting processes fold spell casting for a mob.
 // Returns true if the mob is casting and should skip combat.
 func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
-	if mob.Character.CastingState == nil {
+	if mob.Character.Activity == nil || !mob.Character.Activity.IsCasting() {
 		return false
 	}
 
 	// Capture state before processFoldRound clears it on terminal conditions.
-	csBeforeProcess := mob.Character.CastingState
+	csBeforeProcess, _ := mob.Character.Activity.CastingData()
 
 	result := processFoldRound(&mob.Character)
 
 	switch {
 	case result.ProneBroke:
 		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(csBeforeProcess))
-		mobRoom.SendText(fmt.Sprintf(
+		mobRoom.SendText(messaging.CategorySpellDisruption, fmt.Sprintf(
+			`%s's concentration breaks.`, mobDisplayName(mob, mobRoom, 0)))
+
+	case result.GrappleBroke:
+		// Chunk 4e T4: grapple breaks concentration same as Prone (spec §4.2).
+		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(csBeforeProcess))
+		mobRoom.SendText(messaging.CategorySpellDisruption, fmt.Sprintf(
 			`%s's concentration breaks.`, mobDisplayName(mob, mobRoom, 0)))
 
 	case result.TargetGone:
 		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(csBeforeProcess))
-		mobRoom.SendText(fmt.Sprintf(
+		mobRoom.SendText(messaging.CategorySpellDisruption, fmt.Sprintf(
 			`%s's spell fizzles.`, mobDisplayName(mob, mobRoom, 0)))
 
 	case result.SpellDataMissing:
@@ -404,11 +414,11 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 
 	case result.InsufficientConviction:
 		recordConcentrationFailure(combat.Mob, combat.User, &mob.Character, castingTargetChar(csBeforeProcess))
-		mobRoom.SendText(fmt.Sprintf(
+		mobRoom.SendText(messaging.CategorySpellDisruption, fmt.Sprintf(
 			`%s's spell falters.`, mobDisplayName(mob, mobRoom, 0)))
 
 	case result.CastComplete:
-		cs := result.CastingState
+		cs := result.CastingData
 		spellData := result.SpellData
 		if resolveRoom := rooms.LoadRoom(mob.Character.RoomId); resolveRoom != nil {
 			resolveMobSpell(mob, cs, spellData, resolveRoom)
@@ -473,7 +483,7 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 		}
 
 	case result.StillCasting:
-		mobRoom.SendText(fmt.Sprintf(
+		mobRoom.SendText(messaging.CategorySpellFold, fmt.Sprintf(
 			`%s weaves magic with focused intent.`, mobDisplayName(mob, mobRoom, 0)))
 	}
 
@@ -483,76 +493,60 @@ func handleMobFoldCasting(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 // handlePlayerFlee processes a player's flee attempt.
 // Returns true if the player is fleeing and should skip combat.
 func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) bool {
-	if user.Character.Aggro.Type != characters.Flee {
+	// Task 15: IsDisengaging() reads CombatPhase.State() == Disengaging,
+	// set by TransitionToDisengaging in flee.go. This replaces the legacy
+	// Aggro.Type == Flee sentinel check.
+	// TODO Task 18: remove legacy Aggro.Type fallback once Aggro is gone.
+	isFleeing := user.Character.IsDisengaging()
+	if !isFleeing && user.Character.Aggro != nil && user.Character.Aggro.Type == characters.Flee {
+		// Legacy path: Aggro-only set (no CombatPhase wired). Still handled.
+		isFleeing = true
+	}
+	if !isFleeing {
 		return false
 	}
 
-	// Revert to Default combat regardless of outcome
-	user.Character.SetAggro(user.Character.Aggro.UserId, user.Character.Aggro.MobInstanceId, characters.DefaultAttack)
+	// Revert to Default combat regardless of outcome (legacy path only).
+	// When CombatPhase is wired, ResolveFlee(false) handles the revert.
+	if user.Character.Aggro != nil && user.Character.Aggro.Type == characters.Flee {
+		user.Character.SetAggro(user.Character.Aggro.UserId, user.Character.Aggro.MobInstanceId, characters.DefaultAttack)
+	}
 
-	// Can't flee while in a grapple position (clinched or grounded)
-	if user.Character.CombatPosition == characters.PositionClinched ||
-		user.Character.CombatPosition == characters.PositionGrounded {
-		user.SendText(`<ansi fg="red">You can't flee while grappled!</ansi>`)
+	// Can't flee while in any grapple state. CombatPhase position veto
+	// also blocks TransitionToDisengaging, but the message still needs
+	// to fire here for UX. Chunk 4b R3: FSM-driven — IsStandingGrapple
+	// || IsGroundGrapple covers all 11 grapple states.
+	if user.Character.IsStandingGrapple() || user.Character.IsGroundGrapple() {
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You can't flee while grappled!</ansi>`)
+		if user.Character.CombatPhase != nil {
+			user.Character.CombatPhase.ResolveFlee(false)
+		}
 		return true
 	}
 
-	blockedByMob := ``
-	for _, mobInstId := range uRoom.GetMobs(rooms.FindFighting) {
-		if mob := mobs.GetInstance(mobInstId); mob != nil {
-			if mob.Character.Aggro == nil || mob.Character.Aggro.UserId != userId {
-				continue
-			}
-
-			// Flee: Dex + Skullduggery vs blocker's Dex + UnarmedCombat
-			fleeScore := float64(user.Character.Stats.Dexterity.ValueAdj +
-				user.Character.GetSkillLevel(skills.Skullduggery)*25)
-
-			// Prone penalty — halve flee score when knocked down
-			if user.Character.CombatPosition == characters.PositionProne {
-				fleeScore *= 0.5
-			}
-			blockScore := float64(mob.Character.Stats.Dexterity.ValueAdj +
-				mob.Character.GetSkillLevel(skills.UnarmedCombat)*25)
-			success, _, _, _ := dice.OpposedRollStat(fleeScore, blockScore)
-			if !success {
-				blockedByMob = mob.Character.Name
-				break
-			}
+	// Shared opposed-roll blocker resolution (combat.ResolveFleeBlockers).
+	// Replaces two duplicated loops; also corrects the prior
+	// variable-shadowing in the player-blockers loop (the inner
+	// `for _, userId := range` shadowed the outer fleer's id, so PvP
+	// players never blocked each other from fleeing). Perspective-
+	// specific messaging stays here.
+	if blocker := combat.ResolveFleeBlockers(user.Character, uRoom); blocker != nil {
+		var targetTag string
+		if blocker.IsPlayer() {
+			targetTag = "username"
+		} else {
+			targetTag = "mobname"
 		}
-	}
-
-	blockedByPlayer := ``
-	blockedByPlayerId := 0
-	for _, userId := range uRoom.GetPlayers(rooms.FindFighting) {
-		if u := users.GetByUserId(userId); u != nil {
-			if u.Character.Aggro == nil || u.Character.Aggro.UserId != userId {
-				continue
-			}
-
-			// Flee: Dex + Skullduggery vs blocker's Dex + UnarmedCombat
-			fleeScore := float64(user.Character.Stats.Dexterity.ValueAdj +
-				user.Character.GetSkillLevel(skills.Skullduggery)*25)
-			blockScore := float64(u.Character.Stats.Dexterity.ValueAdj +
-				u.Character.GetSkillLevel(skills.UnarmedCombat)*25)
-			success, _, _, _ := dice.OpposedRollStat(fleeScore, blockScore)
-			if !success {
-				blockedByPlayer = u.Character.Name
-				blockedByPlayerId = u.UserId
-				break
-			}
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red-bold"><ansi fg="%s">%s</ansi> blocks you from fleeing!</ansi>`, targetTag, blocker.Name))
+		excludes := []int{user.UserId}
+		if blocker.IsPlayer() {
+			excludes = append(excludes, blocker.UserId)
 		}
-	}
-
-	if blockedByMob != `` {
-		user.SendText(fmt.Sprintf(`<ansi fg="red-bold"><ansi fg="mobname">%s</ansi> blocks you from fleeing!</ansi>`, blockedByMob))
-		uRoom.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is blocked from fleeing by <ansi fg="mobname">%s</ansi>!`, user.Character.Name, blockedByMob), user.UserId)
-		return true
-	}
-
-	if blockedByPlayer != `` {
-		user.SendText(fmt.Sprintf(`<ansi fg="red-bold"><ansi fg="username">%s</ansi> blocks you from fleeing!</ansi>`, blockedByPlayer))
-		uRoom.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> is blocked from fleeing by <ansi fg="username">%s</ansi>!`, user.Character.Name, blockedByPlayer), user.UserId, blockedByPlayerId)
+		uRoom.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> is blocked from fleeing by <ansi fg="%s">%s</ansi>!`, user.Character.Name, targetTag, blocker.Name), excludes...)
+		// Task 15: flee failure — restore Engaged state in CombatPhase.
+		if user.Character.CombatPhase != nil {
+			user.Character.CombatPhase.ResolveFlee(false)
+		}
 		return true
 	}
 
@@ -560,14 +554,23 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 	exitName, exitRoomId := uRoom.GetRandomExit()
 
 	if exitName == `` {
-		user.SendText(`You can't find an exit!`)
+		user.SendText(messaging.CategorySystem, `You can't find an exit!`)
+		// No exit found — treat as blocked (flee failure).
+		if user.Character.CombatPhase != nil {
+			user.Character.CombatPhase.ResolveFlee(false)
+		}
 		return true
 	}
 
-	user.SendText(fmt.Sprintf(`You flee to the <ansi fg="exit">%s</ansi> exit!`, exitName))
-	uRoom.SendText(fmt.Sprintf(`<ansi fg="username">%s</ansi> flees to the <ansi fg="exit">%s</ansi> exit!`, user.Character.Name, exitName), user.UserId)
+	user.SendText(messaging.CategoryRoomExit, fmt.Sprintf(`You flee to the <ansi fg="exit">%s</ansi> exit!`, exitName))
+	uRoom.SendText(messaging.CategoryRoomExit, fmt.Sprintf(`<ansi fg="username">%s</ansi> flees to the <ansi fg="exit">%s</ansi> exit!`, user.Character.Name, exitName), user.UserId)
 
+	// Task 15: flee success — EndAggro clears legacy Aggro; ResolveFlee
+	// transitions CombatPhase Disengaging → Idle.
 	user.Character.EndAggro()
+	if user.Character.CombatPhase != nil {
+		user.Character.CombatPhase.ResolveFlee(true)
+	}
 
 	if err := rooms.MoveToRoom(user.UserId, exitRoomId); err == nil {
 
@@ -644,11 +647,11 @@ func handleOffhandBreakUserDef(roundResult combat.AttackResult, defUser *users.U
 		return
 	}
 
-	defUser.SendText(`<ansi fg="202">***</ansi>`)
-	defUser.SendText(fmt.Sprintf(`<ansi fg="214"><ansi fg="202">***</ansi> Your <ansi fg="item">%s</ansi> breaks! <ansi fg="202">***</ansi></ansi>`, br.BrokenItemName))
-	defUser.SendText(`<ansi fg="202">***</ansi>`)
+	defUser.SendText(messaging.CategoryEquipment, `<ansi fg="202">***</ansi>`)
+	defUser.SendText(messaging.CategoryEquipment, fmt.Sprintf(`<ansi fg="214"><ansi fg="202">***</ansi> Your <ansi fg="item">%s</ansi> breaks! <ansi fg="202">***</ansi></ansi>`, br.BrokenItemName))
+	defUser.SendText(messaging.CategoryEquipment, `<ansi fg="202">***</ansi>`)
 
-	defRoom.SendText(fmt.Sprintf(`<ansi fg="214"><ansi fg="202">***</ansi> The <ansi fg="item">%s</ansi> <ansi fg="username">%s</ansi> was carrying breaks! <ansi fg="202">***</ansi></ansi>`, br.BrokenItemName, defUser.Character.Name), defUser.UserId)
+	defRoom.SendText(messaging.CategoryEquipment, fmt.Sprintf(`<ansi fg="214"><ansi fg="202">***</ansi> The <ansi fg="item">%s</ansi> <ansi fg="username">%s</ansi> was carrying breaks! <ansi fg="202">***</ansi></ansi>`, br.BrokenItemName, defUser.Character.Name), defUser.UserId)
 
 	events.AddToQueue(events.ItemOwnership{
 		UserId: defUser.UserId,
@@ -672,7 +675,7 @@ func handleOffhandBreakMobDef(roundResult combat.AttackResult, defMob *mobs.Mob)
 	}
 
 	if defRoom != nil {
-		defRoom.SendText(fmt.Sprintf(`<ansi fg="214"><ansi fg="202">***</ansi> The <ansi fg="item">%s</ansi> <ansi fg="mobname">%s</ansi> was carrying breaks! <ansi fg="202">***</ansi></ansi>`, br.BrokenItemName, defMob.Character.Name))
+		defRoom.SendText(messaging.CategoryEquipment, fmt.Sprintf(`<ansi fg="214"><ansi fg="202">***</ansi> The <ansi fg="item">%s</ansi> <ansi fg="mobname">%s</ansi> was carrying breaks! <ansi fg="202">***</ansi></ansi>`, br.BrokenItemName, defMob.Character.Name))
 	}
 
 	events.AddToQueue(events.ItemOwnership{
@@ -688,13 +691,21 @@ func handleOffhandBreakMobDef(roundResult combat.AttackResult, defMob *mobs.Mob)
 	})
 }
 
-// handlePlayerConcentrationBreak checks if a caster's concentration breaks when hit.
+// handlePlayerConcentrationBreak checks if a caster's concentration breaks when hit,
+// and hard-cancels any in-progress crafting or salvaging activity on the same damage hit.
+// The two helpers are independent: a Casting character gets a willpower roll;
+// a Crafting/Salvaging character is always interrupted (no roll).
 func handlePlayerConcentrationBreak(defUser *users.UserRecord, roundResult combat.AttackResult, defRoom *rooms.Room) {
+	// Hard-cancel craft/salvage on any damage (no roll needed).
+	if roundResult.DamageToTarget > 0 {
+		cancelCraftOrSalvageOnDamage(defUser.Character)
+	}
 	if checkConcentrationBreak(defUser.Character, roundResult.DamageToTarget) {
-		recordConcentrationFailure(combat.User, combat.Mob, defUser.Character, castingTargetChar(defUser.Character.CastingState))
-		defUser.Character.CastingState = nil
-		defUser.SendText(`<ansi fg="red">The pain shatters your concentration!</ansi>`)
-		defRoom.SendText(fmt.Sprintf(
+		csSnap, _ := defUser.Character.Activity.CastingData()
+		recordConcentrationFailure(combat.User, combat.Mob, defUser.Character, castingTargetChar(csSnap))
+		clearCastingActivity(defUser.Character, activity.TriggerConcentrationBreak)
+		defUser.SendText(messaging.CategorySpellDisruption, `<ansi fg="red">The pain shatters your concentration!</ansi>`)
+		defRoom.SendText(messaging.CategorySpellDisruption, fmt.Sprintf(
 			`<ansi fg="username">%s</ansi>'s concentration breaks.`,
 			defUser.Character.Name), defUser.UserId)
 	}
@@ -705,25 +716,6 @@ func handlePlayerConcentrationBreak(defUser *users.UserRecord, roundResult comba
 func handleMobAIDecision(mob *mobs.Mob, c configs.Config) bool {
 	if mob.Character.Aggro.Type != characters.DefaultAttack {
 		return false
-	}
-
-	// If mob has reactive AI tactics and recently reacted, skip legacy AI
-	resolvedTactics := mobai.ResolveTactics(mob.TacticPreset, mob.Tactics)
-	if len(resolvedTactics) > 0 {
-		bal := configs.GetBalanceConfig()
-		delay := mobai.GetEffectiveReactionDelay(
-			mob.ReactionDelay,
-			float64(bal.MobReactionDelayMin),
-			float64(bal.MobReactionDelayMax),
-		)
-		cooldownTurns := uint64(delay * float64(configs.GetTimingConfig().TurnsPerSecond()))
-		lastReaction := mob.GetLastReactionTurn()
-		currentTurn := util.GetTurnCount()
-		if lastReaction > 0 && currentTurn-lastReaction < cooldownTurns*2 {
-			mudlog.Debug("MobAI", "decision", "skip_legacy", "mob", mob.Character.Name, "lastReaction", lastReaction, "current", currentTurn)
-			return true // Reactive AI is handling this mob
-		}
-		mudlog.Debug("MobAI", "decision", "fallthrough_to_legacy", "mob", mob.Character.Name, "tactics", len(resolvedTactics), "lastReaction", lastReaction)
 	}
 
 	// Stage 11.5: Caster AI decision - try spell first, then special move
@@ -798,7 +790,7 @@ func handleMobTargetSwitch(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 			continue
 		}
 		if u := users.GetByUserId(userId); u != nil {
-			if u.Character.Health > 0 && !u.Character.HasBuffFlag(buffs.Hidden) {
+			if u.Character.Health > 0 && !u.Character.IsHidden() {
 				if u.Character.Aggro != nil && u.Character.Aggro.MobInstanceId == mob.InstanceId {
 					potentialTargets = append(potentialTargets, userId)
 				}
@@ -819,7 +811,7 @@ func handleMobTargetSwitch(mob *mobs.Mob, mobRoom *rooms.Room) bool {
 		mob.Character.SetAggro(newTargetId, 0, mob.Character.Aggro.Type, 1)
 
 		if newTarget := users.GetByUserId(newTargetId); newTarget != nil {
-			mobRoom.SendText(
+			mobRoom.SendText(messaging.CategoryMobEmote,
 				fmt.Sprintf("%s shifts focus to <ansi fg=\"username\">%s</ansi>!", mobDisplayName(mob, mobRoom, 0), newTarget.Character.Name),
 			)
 		}
@@ -871,4 +863,3 @@ func handlePartyAutoAttack(mob *mobs.Mob, defUser *users.UserRecord) {
 		}
 	}
 }
-

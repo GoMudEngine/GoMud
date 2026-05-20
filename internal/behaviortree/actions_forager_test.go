@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/forager"
@@ -14,6 +13,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -534,8 +535,12 @@ func TestTickForagerRecalling_TeleportsDirectly(t *testing.T) {
 	// Mob 371 = Tova (Marsh forager). Start her in the territory room.
 	mob := buildForagerMob(t, 8240, 371, territoryRoom, 100, 100)
 
-	// Pre-set a stale CastingState to simulate the previously-stuck state.
-	mob.Character.CastingState = &characters.CastingState{SpellId: "fold-recall"}
+	// Put Activity into Casting state to simulate the previously-stuck state.
+	mob.Character.Activity = activity.NewMachine()
+	_ = mob.Character.Activity.TransitionToCasting(
+		activity.CastingData{SpellId: "fold-recall"},
+		state.TransitionReason{Trigger: activity.TriggerCastBegin},
+	)
 
 	// Set the fold-anchor-room in MiscData (matches Tova's sanctuary).
 	mob.Character.SetMiscData("fold-anchor-room", sanctuaryRoom)
@@ -568,10 +573,10 @@ func TestTickForagerRecalling_TeleportsDirectly(t *testing.T) {
 			mob.Character.RoomId, sanctuaryRoom)
 	}
 
-	// Stale CastingState must have been cleared.
-	if mob.Character.CastingState != nil {
-		t.Errorf("CastingState = %+v, want nil (stale cast not cleared)",
-			mob.Character.CastingState)
+	// Activity machine must have been cleared back to Free.
+	if mob.Character.Activity != nil && !mob.Character.Activity.IsFree() {
+		t.Errorf("Activity.State() = %v, want Free (stale cast not cleared)",
+			mob.Character.Activity.State())
 	}
 
 	// State should still be "recalling" — the sanctuary path fires on the

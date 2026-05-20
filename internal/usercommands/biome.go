@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -14,12 +15,12 @@ func Biome(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	biome, ok := rooms.GetBiome(room.Biome)
 
 	if !ok {
-		user.SendText(`No biome information found about this area.`)
+		user.SendText(messaging.CategorySystem, `No biome information found about this area.`)
 		return false, fmt.Errorf(`biome %s not found`, room.Biome)
 	}
 
 	biomeTxt, _ := templates.Process("descriptions/biome", biome, user.UserId)
-	user.SendText(biomeTxt)
+	user.SendText(messaging.CategorySystem, biomeTxt)
 
 	return true, nil
 }

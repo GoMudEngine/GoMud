@@ -6,9 +6,12 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 )
 
 // Salvage is the mob-side corpse-salvage handler. It is a single-tick direct
@@ -52,6 +55,24 @@ func Salvage(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	mobSpec := mobs.GetMobSpec(mobs.MobId(target.MobId))
 	returns := crafting.LookupCorpseSalvage(mobSpec.Groups)
 
+	// Transition to Salvaging for data-shape parity with user salvage.
+	// Mob salvage stays single-tick at the resolution layer — no per-round
+	// messaging for mobs. RoundsTotal=1 reflects the single-tick design.
+	// Guard nil Activity — test mobs constructed outside New() may not
+	// have the machine initialized yet.
+	if mob.Character.Activity != nil {
+		_ = mob.Character.Activity.TransitionToSalvaging(
+			activity.SalvagingData{
+				ItemUuid:    fmt.Sprintf("corpse:%d", target.MobId),
+				RoundsTotal: 1,
+			},
+			state.TransitionReason{
+				Trigger: activity.TriggerSalvageBegin,
+				Actor:   state.ActorRef{MobInstanceId: mob.InstanceId},
+			},
+		)
+	}
+
 	// Skill-scaled yield chance.
 	bal := configs.GetBalanceConfig()
 	salvageSkill := mob.Character.GetSkillLevel(skills.Salvage)
@@ -79,11 +100,19 @@ func Salvage(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	// Emit flavor message if any players are watching.
 	if room.PlayerCt() > 0 {
-		sendRoomText(room,
+		sendRoomText(room, messaging.CategoryMobIdle,
 			fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi> kneels by the carcass and cuts`+
 					` strips of hide from it.`,
 				mob.Character.Name))
+	}
+
+	// Return Activity machine to Free — single-tick resolution complete.
+	if mob.Character.Activity != nil {
+		_ = mob.Character.Activity.TransitionToFree(state.TransitionReason{
+			Trigger: activity.TriggerSalvageComplete,
+			Actor:   state.ActorRef{MobInstanceId: mob.InstanceId},
+		})
 	}
 
 	return true, nil

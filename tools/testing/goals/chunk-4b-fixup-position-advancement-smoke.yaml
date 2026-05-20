@@ -1,0 +1,14 @@
+goals:
+  - Engage a humanoid mob with a grappling archetype (predator wolf,
+    warren guard, or generic_fighter). Stay in combat for at least 5
+    rounds of grappling. Report all position changes observed via
+    {pos} prompt and any messaging seen.
+  - Verify that position advances at least once (Clinch → Mount or
+    further) within a 10-round window.
+  - Verify that Hold rounds occasionally show flavor messaging (not
+    every round; sparse).
+  - Verify that Mount rounds show striking-apex flavor.
+  - Verify that if defender wins decisive rolls, you see degradation,
+    reversal, or escape messaging.
+  - Report no panics or "missing grapple message template" debug
+    strings.

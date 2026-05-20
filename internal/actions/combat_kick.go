@@ -3,7 +3,6 @@ package actions
 import (
 	"fmt"
 
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -65,8 +64,8 @@ type KickResult struct {
 func ExecuteKick(actor Actor) KickResult {
 	char := actor.GetCharacter()
 
-	// Don't interrupt a craft to kick.
-	if char.IsCrafting() {
+	// Don't interrupt any active activity (cast/craft/salvage) to kick.
+	if char.IsActing() {
 		return KickResult{Crafting: true}
 	}
 
@@ -94,19 +93,17 @@ func ExecuteKick(actor Actor) KickResult {
 	knockdownChance := int(cfg.KickKnockdownChance)
 	mitigationMult := 1.0
 
-	// Stomp: target is prone.
-	if target.Char.CombatPosition == characters.PositionProne {
+	// Stomp: target is downed (prone or supine, not grappled).
+	if target.Char.IsProne() || target.Char.IsSupine() {
 		variant = KickStomp
 		damagePercent = float64(cfg.StompDamagePercent)
 		knockdownChance = 0
 		mitigationMult = 0.5
 	}
 
-	// Knee: attacker is clinched or grounded AND holds grapple control.
+	// Knee: attacker is in a grapple AND holds grapple control.
 	// Knee overrides stomp (edge case: attacker grounded, target also prone).
-	if (char.CombatPosition == characters.PositionClinched ||
-		char.CombatPosition == characters.PositionGrounded) &&
-		char.HasCondition(characters.ConditionGrappleController) {
+	if char.IsGrappling() && char.IsController() {
 		variant = KickKnee
 		damagePercent = float64(cfg.KneeDamagePercent)
 		knockdownChance = 0
@@ -130,8 +127,8 @@ func ExecuteKick(actor Actor) KickResult {
 
 	// Stomp extends prone duration on a successful hit.
 	if result.Hit && variant == KickStomp &&
-		target.Char.CombatPosition == characters.PositionProne {
-		target.Char.PositionRoundsMin += 1
+		(target.Char.IsProne() || target.Char.IsSupine()) {
+		target.Char.Position.ExtendRecoveryRound()
 	}
 
 	// Determine source/target types for analytics.

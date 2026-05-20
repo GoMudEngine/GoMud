@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -50,7 +51,7 @@ func Befriend(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	mob.Character.Charm(playerId, characters.CharmPermanent, characters.CharmExpiredRevert)
 	charmedUser.Character.TrackCharmed(mob.InstanceId, true)
 
-	sendRoomText(room,
+	sendRoomText(room, messaging.CategoryMobEmote,
 		fmt.Sprintf(`<ansi fg="mobname">%s</ansi> looks very friendly.`, mob.Character.Name))
 
 	return true, nil

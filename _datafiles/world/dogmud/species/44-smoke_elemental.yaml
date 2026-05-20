@@ -1,0 +1,41 @@
+speciesid: 44
+name: Smoke Elemental
+description: A lithe, shifting shape of smoke and flickering embers,
+  the smoke elemental seems to exist slightly out of phase with
+  reality. It moves too quickly for the eye to track cleanly and
+  strikes from where it isn't, leaving stinging trails of cinder
+  in its wake.
+size: medium
+unarmedname: ember lash
+selectable: false
+tameable: false
+grapple_immune: true
+return_damage: 20
+angrycommands:
+  - emote dissolves into a thicker plume, embers wheeling in
+    aggressive spirals.
+  - emote condenses briefly into solid form before scattering
+    into smoke again.
+stats:
+  strength:
+    base: 50
+  dexterity:
+    base: 200
+  perception:
+    base: 150
+  vitality:
+    base: 40
+  willpower:
+    base: 100
+  charisma:
+    base: 30
+damage:
+  basedamage: 4
+  variance: 2
+disabledslots: ['weapon', 'offhand', 'head', 'neck', 'back', 'body',
+  'belt', 'gloves', 'ring', 'legs', 'feet']
+body_parts: []
+intrinsic_mutations:
+  incorporeal: 4
+  hasted: 1
+  fast-reflexes: 1

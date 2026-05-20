@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -18,7 +19,7 @@ func Put(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) < 2 {
-		user.SendText("Place what where?")
+		user.SendText(messaging.CategorySystem, "Place what where?")
 		return true, nil
 	}
 
@@ -31,7 +32,7 @@ func Put(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		nameSearch = args[i] + nameSearch
 
 		if room.MatchesSealedCrate(nameSearch) {
-			user.SendText(`The shipping crate is sealed; the caravan only lets through what they put in themselves.`)
+			user.SendText(messaging.CategorySystem, `The shipping crate is sealed; the caravan only lets through what they put in themselves.`)
 			return true, nil
 		}
 
@@ -50,21 +51,21 @@ func Put(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	}
 
 	if containerName == `` {
-		user.SendText(`No container found by that name`)
+		user.SendText(messaging.CategorySystem, `No container found by that name`)
 		return true, nil
 	}
 
 	container := room.Containers[containerName]
 
 	if container.Lock.IsLocked() {
-		user.SendText(``)
-		user.SendText(fmt.Sprintf(`The <ansi fg="container">%s</ansi> is locked.`, containerName))
-		user.SendText(``)
+		user.SendText(messaging.CategorySystem, ``)
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`The <ansi fg="container">%s</ansi> is locked.`, containerName))
+		user.SendText(messaging.CategorySystem, ``)
 		return true, nil
 	}
 
 	if len(args) < 1 {
-		user.SendText("Place what where?")
+		user.SendText(messaging.CategorySystem, "Place what where?")
 		return true, nil
 	}
 
@@ -90,12 +91,12 @@ func Put(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	}
 
 	if !itemFound && goldAmt == 0 {
-		user.SendText(`You don't seem to be carrying that.`)
+		user.SendText(messaging.CategorySystem, `You don't seem to be carrying that.`)
 		return true, nil
 	}
 
 	if goldAmt > user.Character.Gold {
-		user.SendText(`You don't have that much gold.`)
+		user.SendText(messaging.CategorySystem, `You don't have that much gold.`)
 		return true, nil
 	}
 
@@ -108,8 +109,8 @@ func Put(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		})
 
 		container.Gold += goldAmt
-		user.SendText(fmt.Sprintf(`You place <ansi fg="gold">%d gold</ansi> into the <ansi fg="container">%s</ansi>`, goldAmt, containerName))
-		room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> places some <ansi fg="gold">gold</ansi> into the <ansi fg="container">%s</ansi>`, user.Character.Name, containerName), user.UserId)
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You place <ansi fg="gold">%d gold</ansi> into the <ansi fg="container">%s</ansi>`, goldAmt, containerName))
+		room.SendTextVisual(messaging.CategoryLoot, fmt.Sprintf(`<ansi fg="username">%s</ansi> places some <ansi fg="gold">gold</ansi> into the <ansi fg="container">%s</ansi>`, user.Character.Name, containerName), user.UserId)
 	}
 
 	if itemFound {
@@ -123,8 +124,8 @@ func Put(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			Gained: false,
 		})
 
-		user.SendText(fmt.Sprintf(`You place your <ansi fg="itemname">%s</ansi> into the <ansi fg="container">%s</ansi>`, item.DisplayName(), containerName))
-		room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> places their <ansi fg="itemname">%s</ansi> into the <ansi fg="container">%s</ansi>`, user.Character.Name, item.DisplayName(), containerName), user.UserId)
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You place your <ansi fg="itemname">%s</ansi> into the <ansi fg="container">%s</ansi>`, item.DisplayName(), containerName))
+		room.SendTextVisual(messaging.CategoryLoot, fmt.Sprintf(`<ansi fg="username">%s</ansi> places their <ansi fg="itemname">%s</ansi> into the <ansi fg="container">%s</ansi>`, user.Character.Name, item.DisplayName(), containerName), user.UserId)
 
 		// Enforce container size limits
 
@@ -143,7 +144,7 @@ func Put(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			}
 
 			container.RemoveItem(oopsItem)
-			room.SendTextVisual(fmt.Sprintf(`The <ansi fg="container">%s</ansi> is too full and a <ansi fg="itemname">%s</ansi> falls out and onto the floor.`, containerName, oopsItem.DisplayName()))
+			room.SendTextVisual(messaging.CategoryLoot, fmt.Sprintf(`The <ansi fg="container">%s</ansi> is too full and a <ansi fg="itemname">%s</ansi> falls out and onto the floor.`, containerName, oopsItem.DisplayName()))
 			room.AddItem(oopsItem, false)
 		}
 	}

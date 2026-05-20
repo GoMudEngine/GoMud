@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -21,11 +22,11 @@ func Say(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	if result.IsSneaking {
 		anonMsg := fmt.Sprintf(`someone says, "<ansi fg="saytext-mob">%s</ansi>"`, result.Text)
-		room.SendTextVisual(util.SplitStringNL(anonMsg, 80))
+		room.SendText(messaging.CategorySpeech, util.SplitStringNL(anonMsg, 80))
 	} else {
 		anonMsg := actions.FormatSayText("", result.Text, true, "mobname", "saytext-mob")
 		namedMsg := actions.FormatSayText(mob.Character.Name, result.Text, false, "mobname", "saytext-mob")
-		sendAudioRoomText(room, mob, anonMsg, namedMsg)
+		sendAudioRoomText(room, mob, messaging.CategorySpeech, anonMsg, namedMsg)
 	}
 
 	return true, nil

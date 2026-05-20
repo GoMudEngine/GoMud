@@ -29,6 +29,9 @@ Fighting with fists, claws, or bare hands:
   - <ansi fg="stat">No Penalty:</ansi> Natural weapons ignore dual-wield penalty
   - <ansi fg="stat">Mixed Setup:</ansi> Sword in one hand + empty hand still
     punches with the free hand
+  - <ansi fg="stat">Grapple Advantage:</ansi> Fists and claws fit comfortably
+    in any grapple — long weapons lose effectiveness in close
+    quarters. See <ansi fg="command">help grapple</ansi>.
 
 <ansi fg="yellow">━━━ Layered Defense System ━━━</ansi>
 
@@ -66,12 +69,17 @@ Wield two weapons for extra attacks, but with tradeoffs:
 
 Tactical moves with cooldowns that can turn the tide:
 
-  <ansi fg="command">bash</ansi>   - Shield bash (50% dmg, 40% knockdown)
-  <ansi fg="command">trip</ansi>   - Leg sweep (25% dmg, 60% knockdown)
-  <ansi fg="command">kick</ansi>   - Power kick (40% dmg, 35% knockdown)
-  <ansi fg="command">taunt</ansi>  - Verbal assault (conviction damage)
+  <ansi fg="command">bash</ansi>    - Shield bash (50% dmg, 40% knockdown)
+  <ansi fg="command">trip</ansi>    - Leg sweep (25% dmg, 60% knockdown)
+  <ansi fg="command">kick</ansi>    - Power kick (40% dmg, 35% knockdown)
+  <ansi fg="command">taunt</ansi>   - Verbal assault (conviction damage)
+  <ansi fg="command">grapple</ansi> - Grabs and restrains an opponent.
 
 All share a <ansi fg="red">5-round cooldown</ansi>. Knockdowns apply prone.
+
+Submissions (joint locks, chokes) fire automatically when you
+decisively win a grapple round from a dominant position. See
+<ansi fg="command">help submission</ansi>.
 
 <ansi fg="yellow">━━━ Target Switching ━━━</ansi>
 
@@ -89,4 +97,6 @@ All share a <ansi fg="red">5-round cooldown</ansi>. Knockdowns apply prone.
 
   <ansi fg="command">help attack</ansi>, <ansi fg="command">help flee</ansi>, <ansi fg="command">help bash</ansi>, <ansi fg="command">help trip</ansi>
   <ansi fg="command">help kick</ansi>, <ansi fg="command">help taunt</ansi>, <ansi fg="command">help prone</ansi>
+  <ansi fg="command">help grapple</ansi>, <ansi fg="command">help submission</ansi>,
+  <ansi fg="command">help surrender</ansi>
   <ansi fg="command">help unarmed-combat</ansi>, <ansi fg="command">help skills</ansi>

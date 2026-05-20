@@ -13,6 +13,9 @@ func RegisterListeners() {
 	// RoomChange Listeners
 	events.RegisterListener(events.RoomChange{}, LocationMusicChange)
 	events.RegisterListener(events.RoomChange{}, CleanupEphemeralRooms)
+	events.RegisterListener(events.RoomChange{}, MobRoomChangeKnowledgeObservers)
+	events.RegisterListener(events.RoomChange{}, MobRoomChangeFactsAutoWithdraw)
+	events.RegisterListener(events.RoomChange{}, PresencePlayerEntry)
 
 	// NewRound Listeners
 	events.RegisterListener(events.NewRound{}, InactivePlayers)
@@ -31,6 +34,7 @@ func RegisterListeners() {
 	//
 	// Done with combat
 	//
+	events.RegisterListener(events.NewRound{}, PresenceTick)
 	events.RegisterListener(events.NewRound{}, AutoHeal)
 	events.RegisterListener(events.NewRound{}, BroadcastHints)
 	events.RegisterListener(events.NewRound{}, IdleMobs)
@@ -88,15 +92,17 @@ func RegisterListeners() {
 	// Mob death: companion cleanup (remove from owner's list + notify)
 	events.RegisterListener(events.MobDeath{}, CompanionCleanup)
 
+	// Mob death: faction rep bump for damagers + same-room party members
+	events.RegisterListener(events.MobDeath{}, MobDeathFactionRep)
+
+	// Mob death: auto-claim open bounties targeting the dead mob
+	events.RegisterListener(events.MobDeath{}, MobDeathBountyClaim)
+
 	// Skill use: quest engine notifications
 	events.RegisterListener(events.SkillUsed{}, SkillUseQuestNotify)
 
 	// Log tee to users
 	events.RegisterListener(events.Log{}, FollowLogs)
-
-	// Mob AI reactor — signal handler and per-turn reaction processor
-	events.RegisterListener(events.MobAISignal{}, HandleMobAISignal)
-	events.RegisterListener(events.NewTurn{}, ProcessMobReactions)
 
 	// Listener for debugging some stuff (catches all events)
 	/*

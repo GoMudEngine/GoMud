@@ -202,4 +202,3 @@ func countItemsById(itemSlice []items.Item, id int) int {
 // (consume) and subtest 2 leaves the mob holding the item — both are
 // scoped to this parent test and torn down by the outer defer cleanup().
 func cleanupTestItems(_, _ []items.Item) {}
-

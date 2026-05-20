@@ -158,6 +158,23 @@ tree:
 Any node may include `event: <type>` to skip that branch when the event
 does not match. Nodes without an `event` field evaluate on all events.
 
+### Combat Phase transition events (chunk 0)
+
+These events fire ONCE per state transition (not per round):
+
+- `mob_engaging` — fires when Combat Phase transitions Idle → Engaging
+  (e.g., on attack command or attack btree action).
+- `mob_engaged` — fires when Engaging → Engaged completes (after the
+  RoundsUntil weapon-wait countdown).
+- `mob_disengaging` — fires when Engaged → Disengaging (flee initiated).
+- `mob_combat_ended` — fires when any state transitions to Idle (combat
+  ends for any reason: target died, flee succeeded, force-idle, etc.).
+
+Tick events (`mob_combat_round`, `mob_idle`) fire per-round-while-in-state.
+Transition events fire at the moment of state change.
+
+Future chunks (1-5) will add transition events for their machines.
+
 ---
 
 ## Condition Reference
@@ -204,6 +221,92 @@ Condition nodes use `type: condition` with `check: <name>`.
 | `item_matches` | `item_id` (int) | Event ItemId matches. `player_give` only. |
 | `multiple_enemies` | none | More than one player + charmed mob in room. |
 
+### Combat Assessment
+
+| Condition | Params | Description |
+|-----------|--------|-------------|
+| `target_power_ratio_above` | `value` (float) | True when self_power / target_power > value. Target resolution: `Event.UserId` → `Aggro.MobInstanceId` → `Aggro.UserId`. Returns Failure if no target resolvable or value missing/zero. |
+| `target_power_ratio_below` | `value` (float) | Mirror of `_above`: true when ratio < value. |
+
+### Stealth & Visibility (chunk 1)
+
+Post-chunk-1, hidden-state conditions read via the `Character.IsHidden()`
+predicate, which consults the Awareness machine instead of the buff #9 flag.
+Conditions now reflect the canonical awareness state, not the side-effect
+buff.
+
+| Condition | Params | Description |
+|-----------|--------|-------------|
+| `mob_is_hidden` | none | True when self.Awareness.IsHidden() (previously checked buff #9). |
+| `target_is_hidden` | none | True when the resolved target.Awareness.IsHidden() (previously checked buff #9). |
+| `target_has_gold` | `min` (int) | True when the resolved PLAYER target has at least N gold. Mob targets always return Failure. |
+
+### Position & Grapple (chunks 4a + 4b)
+
+Registered in `conditions_position.go`. All conditions read the
+Position FSM via the `Character.IsXxx()` predicate family. The legacy
+`CombatPosition` enum is fully removed (T21 sunset).
+
+**Chunk 4a — per-state and rollup predicates (10):**
+
+| Condition | Params | Description |
+|-----------|--------|-------------|
+| `mob_is_standing` | none | True when `self.IsStanding()` (Position FSM Standing). |
+| `mob_is_prone` | none | True when `self.IsProne()` (face-down knockdown). |
+| `mob_is_grappling` | none | True when `self.IsGrappling()` (any of the 11 grapple states). |
+| `mob_in_mount` | none | True when `self.IsMount()`. |
+| `mob_in_guard` | none | True when `self.IsGuard()`. |
+| `mob_in_clinch` | none | True when `self.IsClinch()`. |
+| `mob_in_top_dominant` | none | True when `self.IsTopDominant()` (Mount / SideControl / KneeOnBelly / NorthSouth / Crucifix / BackGround). |
+| `target_is_standing` | none | True when aggro target `IsStanding()`. |
+| `target_is_prone` | none | True when aggro target `IsProne()`. |
+| `target_is_grappled` | none | True when aggro target `IsGrappling()`. |
+
+The chunk-4a predicates intentionally cover the commonly-queried
+positions only; the full 14-state predicate API is available on
+Character (`IsSupine`, `IsBackStanding`, `IsSideControl`,
+`IsKneeOnBelly`, `IsNorthSouth`, `IsCrucifix`, `IsBackGround`,
+`IsHalfGuard`, `IsTurtle`) for future primitives if archetype YAMLs
+need finer-grained checks.
+
+**Chunk 4b — control-axis predicates (5):**
+
+Note: `mob_control_at_least` was deleted in chunk 4b-fixup T19. The old
+`ControlLevel` gradient (a five-tier drift needle) was removed in T18
+and replaced with a simpler per-round outcome model (Hold / Advance /
+Degrade / Reversal / Escape) and `GrappleData.IsControllerRole` bool.
+Use `mob_is_in_control` / `mob_is_being_controlled` for binary
+controller checks, or `mob_low_grapple_stamina` for resource-based
+gating.
+
+| Condition | Params | Description |
+|-----------|--------|-------------|
+| `mob_is_in_control` | none | True when `self.IsController()` — controller side of a grapple pair. Replaced the deleted `HasCondition(ConditionGrappleController)` check (S4 shipped). |
+| `mob_is_being_controlled` | none | True when `self.IsBeingControlled()` — controlled side. |
+| `mob_low_grapple_stamina` | none | True when `self.IsLowGrappleStamina()` — stamina fraction below `GrappleStaminaLowThreshold` (config, default 0.25). Drives the "I'm gassed" archetype reactions. |
+| `target_is_in_control` | none | True when aggro target `IsController()`. |
+| `target_is_being_controlled` | none | True when aggro target `IsBeingControlled()`. |
+
+The control-axis primitives let mob archetypes react to the per-round
+drift mechanics introduced in chunk 4b — for example, a wrestler
+archetype can press the advantage when `target_is_being_controlled`,
+or a brawler archetype can disengage when `mob_low_grapple_stamina`
+fires.
+
+**Chunk 4d — submission primitives (3)** registered in
+`conditions_submission.go`:
+
+| Condition | Params | Description |
+|-----------|--------|-------------|
+| `mob_can_submit_top` | none | True when `self.IsController()` AND `position.IsTopSubEligible(state, controlLevel)` — mob is on the controller side with top-attack subs available at the current control level. |
+| `mob_can_submit_bottom` | none | True when `self.IsBeingControlled()` AND `position.IsBottomSubEligible(state, controlLevel)` — mob is on the controlled side with reversal subs available. |
+| `mob_submission_policy_is` | `policy` (string: "mercy"/"subdue"/"cripple"/"lethal") | True when `mob.Character.SubmissionPolicy` matches the given string. Used by archetype branches that vary tactics by policy (e.g., a boss that acts differently when set to lethal). |
+
+These primitives are informational — the submission itself fires
+automatically via `Position_SubmissionTick.go` regardless of btree
+state. Use them to branch on context (e.g., taunt before a sub attempt,
+or switch to a defensive posture when `mob_can_submit_bottom` is true).
+
 ---
 
 ## Action Reference
@@ -246,6 +349,23 @@ are subject to perception-scaled reaction delays (see below).
 | `attack` | none | Mob attacks the triggering player; if none, picks random player in room. |
 | `flee` | none | Mob flees combat. |
 | `cast` | `spell` (string) | Mob casts the named spell. |
+
+### Combat Targeting — instant
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `target_weakest_mob_in_room` | `ratio_below` (float, default 1.0) | Scans `room.GetMobs()`, picks the mob with the lowest power ratio relative to self that the caller's `HatesMob` returns true for, sets it as Aggro. Skips self, dead, non-combatant, same-owner companions, and mobs the caller doesn't hate. Players are NOT scanned. Returns Success on a pick, Failure otherwise. |
+| `target_random_player_in_room` | none | Picks a random player in the current room and sets them as Aggro. Returns Success on a pick, Failure if no players. |
+
+### Skullduggery — varied delays (chunk 2.7)
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `try_sneak` | none | Invoke `actions.Sneak` (delayed). Success when self enters or is already in the hidden state. |
+| `try_steal` | none | Invoke `actions.Steal` against the resolved target (delayed). Target resolution uses Event.UserId or Aggro fallback. |
+| `try_plant` | `item_tag` (string, e.g. "copper coin") | Invoke `actions.Plant` with the named item from backpack (delayed). Failure if item not found or not in backpack. |
+| `try_shadow` | none | Invoke `actions.Shadow` against the resolved target (delayed). Requires self already hidden. |
+| `try_defuse` | none | Invoke `actions.Defuse` on the first trap found in room (delayed). Scans containers then exits. |
 
 ### Boss & Companion Control — delayed
 
@@ -356,6 +476,13 @@ A mob with Perception 50 has:
 | `set_misc_data` | No |
 | `set_room_locked` | No |
 | `command` | No |
+| `target_weakest_mob_in_room` | No |
+| `target_random_player_in_room` | No |
+| `try_sneak` | Yes |
+| `try_steal` | Yes |
+| `try_plant` | Yes |
+| `try_shadow` | Yes |
+| `try_defuse` | Yes |
 
 ---
 
@@ -659,3 +786,86 @@ Key takeaway: room state (`ceremony_active`, `ceremony_ticks`) coordinates
 between the `room_enter` (which starts the ceremony) and `room_idle` (which
 ends it), demonstrating how to build timed multi-phase room events without any
 JavaScript.
+
+---
+
+## EvalContext.SoftTarget (chunk 2.7 fix)
+
+`SoftTarget state.ActorRef` is a non-combat target slot on `EvalContext`.
+It exists to solve the chunk-2.7 class of bugs where thief-archetype
+behavior trees used `target_random_player_in_room` to pick a target and
+then the steal/plant/shadow primitives read the wrong actor because there
+was no safe place to stash "player I want to pickpocket" that is separate
+from "player I am currently fighting."
+
+### Design contract
+
+- `target_random_player_in_room` stashes its pick in `ctx.SoftTarget`
+  and does **not** call `SetAggro` or `TransitionToEngaging`. The mob's
+  Combat Phase stays `Idle`; only the evaluation-local `SoftTarget` is set.
+- Skullduggery conditions and actions (`target_is_hidden`, `target_has_gold`,
+  `try_steal`, `try_plant`, `try_shadow`) read `resolveSkullduggeryTarget`,
+  whose priority chain is:
+  1. `ctx.SoftTarget` — non-combat pick from this evaluation round
+  2. `ctx.Event.UserId` — player who triggered the btree event
+  3. `CombatPhase` current target — attacker in combat
+
+`SoftTarget` always wins if set, so `target_random_player_in_room → try_steal`
+sequences work correctly even when the mob is simultaneously in combat with
+a different player.
+
+### What it prevents
+
+Before this fix, `target_random_player_in_room` called `SetAggro`, which
+set `CombatPhase` to `Engaging` for the picked player. This caused:
+1. A non-combat thief mob unexpectedly entering combat with a bystander.
+2. The steal action targeting the combat target (potentially a different
+   player) instead of the intended pickpocket target.
+
+The `SoftTarget` slot severs the non-combat targeting path from the
+combat state machine entirely.
+
+---
+
+## Panic-Flee Pattern (chunk 2.6)
+
+A shared `mob_hurt + mob_health_below:N → flee` branch is the FIRST
+child of the top-level selector in five core archetypes:
+`generic_fighter`, `predator`, `leader`, `lookout`, `tank_taunter`.
+Threshold defaults to 25% HP. Emergency flee outranks any combat
+action because it's the first matching branch in the selector
+evaluation order.
+
+Mobs that need a different threshold (e.g., Chrysalis Phantom at
+20%, Edrin's heal-at-50% sequence) author a per-boss archetype that
+overrides the default.
+
+---
+
+## New Archetypes (chunk 2.6)
+
+Added in the legacy tactics-engine sunset migration:
+
+- **`defensive_caster`** — Caster pattern with self-preservation:
+  panic-flee at HP<30, panic-buff (chrysalis-cocoon when
+  Chrysalis Shell buff 52 is missing), AoE on multiple targets
+  (conviction-barrage), single-target spike (conviction-spike).
+  Used by goblin_shaman (219), tunnel_shaman (74),
+  bandit_caster (285), elemental_queen (321). Absorbed the
+  legacy `defensive_caster` and `caster_backline` tactic presets.
+- **`boss_edrin`** — Old Edrin's fragile-caster rotation with
+  fold-recall at HP<30, panic-flee at HP<25, heal at HP<50,
+  opening conviction-ward (shield spell — no buff gate),
+  mind-spike on casters, hemorrhagic-burst on multi,
+  pyretic-surge single-target.
+- **`boss_sylara`** — Windwarden Sylara's heal-at-30 + panic
+  chrysalis-cocoon (buff 52) + conviction-ward opener
+  (shield spell — no buff gate) + bash interrupt.
+- **`boss_rhett`** — Geomancer Rhett's defense-only opener
+  (conviction-armor when buff 38 missing) + panic-flee.
+- **`boss_soren`** — Soren's leader-archetype combat plus a
+  call_for_help at HP<30 branch.
+- **`boss_chrysalis_phantom`** — Tight panic-flee (HP<20) +
+  target_casting → trip interrupt.
+
+Spec: `docs/superpowers/specs/2026-05-12-mob-aliveness-2.6-sunset-tactics-engine-design.md`

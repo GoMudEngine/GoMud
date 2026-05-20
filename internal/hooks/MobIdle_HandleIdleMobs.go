@@ -11,6 +11,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/facts"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobcommands"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -63,7 +65,7 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 					`A runner drops off a bundle of goods. <ansi fg="mobname">%s</ansi> checks the contents and nods.`,
 				}
 				msg := fmt.Sprintf(msgs[util.Rand(len(msgs))], mob.Character.Name)
-				sendVisualRoomText(room, msg)
+				sendVisualRoomText(room, messaging.CategoryMobIdle, msg)
 			}
 		}
 	}
@@ -94,11 +96,11 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 				for _, uid := range room.GetPlayers() {
 					u := users.GetByUserId(uid)
 					if u != nil && u.Character.HasFlagFromAnySource(buffs.NightVision) {
-						u.SendText(msg)
+						u.SendText(messaging.CategoryMobIdle, msg)
 					}
 				}
 			} else {
-				sendVisualRoomText(room, msg)
+				sendVisualRoomText(room, messaging.CategoryMobIdle, msg)
 			}
 		}
 		// Emit world event for rare crafts
@@ -126,6 +128,12 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 				})
 			}
 		}
+	}
+
+	// Floor-loot scan: wild non-charmed combat mobs pick up
+	// gear upgrades they find on the room floor (chunk 2.3).
+	if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
+		EquipBestFloorItem(mob, room)
 	}
 
 	// Stage 42.5: Gossiper mob tick — broadcast world event gossip
@@ -275,41 +283,46 @@ func buildGossipLine(mob *mobs.Mob) string {
 		return ""
 	}
 
-	// Filter out events this mob recently gossiped about (dedup window).
-	var recentEventKeys []string
-	if v := mob.GetTempData("recentGossipEvents"); v != nil {
-		recentEventKeys, _ = v.([]string)
-	}
+	// Filter out events this mob recently gossiped about (dedup via persistent facts substrate).
 	var candidates []worldevents.WorldEvent
 	for _, e := range evts {
-		eKey := fmt.Sprintf("%d-%s", e.Round, e.Description)
-		skip := false
-		for _, rk := range recentEventKeys {
-			if eKey == rk {
-				skip = true
-				break
-			}
+		if facts.HeardEvent(int(mob.MobId), e.Id) {
+			continue
 		}
-		if !skip {
-			candidates = append(candidates, e)
-		}
+		candidates = append(candidates, e)
 	}
 	if len(candidates) == 0 {
-		// All recent events already gossiped — clear history and retry
+		// All recent events already gossiped — reset by re-using full set
 		candidates = evts
-		recentEventKeys = nil
+	}
+
+	// Gather known facts as an additional candidate pool.
+	factCandidates := facts.KnownFactsOf(int(mob.MobId))
+
+	// Candidate-pool merging: prefer events 70%, facts 30%.
+	// If only one pool is non-empty, use it exclusively.
+	// If both are empty, fall through to event pick (candidates == evts at this point).
+	useFactPool := false
+	if len(factCandidates) > 0 && len(candidates) > 0 {
+		useFactPool = util.Rand(100) < 30
+	} else if len(factCandidates) > 0 {
+		useFactPool = true
+	}
+
+	if useFactPool {
+		kf := factCandidates[util.Rand(len(factCandidates))]
+		line := renderFactGossip(kf)
+		if line != "" {
+			return line
+		}
+		// renderFactGossip returned empty (no templates); fall through to event path
 	}
 
 	// Pick a random event from deduplicated candidates
 	evt := candidates[util.Rand(len(candidates))]
 
-	// Track this event as recently gossiped (keep last 5)
-	evtKey := fmt.Sprintf("%d-%s", evt.Round, evt.Description)
-	recentEventKeys = append(recentEventKeys, evtKey)
-	if len(recentEventKeys) > 5 {
-		recentEventKeys = recentEventKeys[len(recentEventKeys)-5:]
-	}
-	mob.SetTempData("recentGossipEvents", recentEventKeys)
+	// Record this event as heard via persistent facts substrate
+	facts.RecordHeardEvent(int(mob.MobId), evt.Id)
 
 	// Build the template key: "EventType-Significance"
 	typeStr, ok := eventTypeKey[evt.Type]
@@ -349,4 +362,23 @@ func buildGossipLine(mob *mobs.Mob) string {
 
 	tmpl := templates[util.Rand(len(templates))]
 	return strings.Replace(tmpl, "{desc}", evt.Description, 1)
+}
+
+// renderFactGossip picks a template for a known fact and returns the rendered
+// gossip line. Fallback chain: fact-{factId} → fact-{tag} → fact-default.
+// Substitutes {description} placeholder with the fact's Description.
+// Returns "" if no matching template is found.
+func renderFactGossip(kf facts.KnownFact) string {
+	if tmpls, ok := gossipTemplates["fact-"+kf.Fact.Id]; ok && len(tmpls) > 0 {
+		return strings.ReplaceAll(tmpls[util.Rand(len(tmpls))], "{description}", kf.Fact.Description)
+	}
+	for _, tag := range kf.Fact.Tags {
+		if tmpls, ok := gossipTemplates["fact-"+tag]; ok && len(tmpls) > 0 {
+			return strings.ReplaceAll(tmpls[util.Rand(len(tmpls))], "{description}", kf.Fact.Description)
+		}
+	}
+	if tmpls, ok := gossipTemplates["fact-default"]; ok && len(tmpls) > 0 {
+		return strings.ReplaceAll(tmpls[util.Rand(len(tmpls))], "{description}", kf.Fact.Description)
+	}
+	return ""
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -19,20 +20,20 @@ import (
 func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	if rest == "" {
-		user.SendText("Throw what? Specify a throwable item.")
+		user.SendText(messaging.CategorySystem, "Throw what? Specify a throwable item.")
 		return true, nil
 	}
 
 	// Must be in combat
-	if user.Character.Aggro == nil {
-		user.SendText("You must be in combat to throw something!")
+	if !user.Character.IsInCombat() {
+		user.SendText(messaging.CategorySystem, "You must be in combat to throw something!")
 		return true, nil
 	}
 
 	// Special-move cooldown
 	cfg := configs.GetBalanceConfig()
 	if !user.Character.Cooldowns.Try("special-move", fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
-		user.SendText("You need a moment to recover before attempting another special move.")
+		user.SendText(messaging.CategorySystem, "You need a moment to recover before attempting another special move.")
 		return true, nil
 	}
 
@@ -42,13 +43,13 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		matchItem, found = user.Character.FindInPotions(rest)
 	}
 	if !found {
-		user.SendText(fmt.Sprintf(`You don't have a "%s" to throw.`, rest))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You don't have a "%s" to throw.`, rest))
 		return true, nil
 	}
 
 	spec := matchItem.GetSpec()
 	if spec.Subtype != items.Throwable {
-		user.SendText(fmt.Sprintf(`<ansi fg="itemname">%s</ansi> isn't something you can throw.`, matchItem.DisplayName()))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="itemname">%s</ansi> isn't something you can throw.`, matchItem.DisplayName()))
 		return true, nil
 	}
 
@@ -63,7 +64,7 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		phase, _ := items.GetAgingPhase(elapsed, spec.Aging, effSpeed)
 		if phase == items.PhaseSpoiled {
 			user.Character.UseItem(matchItem)
-			user.SendText(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`<ansi fg="red-bold">You pull out the <ansi fg="itemname">%s</ansi> and it crumbles apart in your hand -- it's gone bad!</ansi>`,
 				matchItem.DisplayName()))
 			return true, nil
@@ -87,10 +88,10 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	attackerScore := float64(dexterity) + float64(skullduggery)*skillWeight
 
-	user.SendText(fmt.Sprintf(
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`<ansi fg="yellow-bold">You hurl the <ansi fg="itemname">%s</ansi> into the fray!</ansi>`,
 		matchItem.DisplayName()))
-	room.SendTextVisual(fmt.Sprintf(
+	room.SendTextVisual(messaging.CategoryHitRanged, fmt.Sprintf(
 		`<ansi fg="yellow-bold"><ansi fg="username">%s</ansi> hurls a <ansi fg="itemname">%s</ansi> into the fray!</ansi>`,
 		user.Character.Name, matchItem.DisplayName()),
 		user.UserId)
@@ -124,8 +125,8 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		// Fumble check: effect hits thrower instead
 		if atkRoll.ZScore <= -2.0 {
 			fumbled = true
-			user.SendText(`<ansi fg="red-bold">Your throw goes horribly wrong — the projectile detonates in your hand!</ansi>`)
-			room.SendTextVisual(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, `<ansi fg="red-bold">Your throw goes horribly wrong — the projectile detonates in your hand!</ansi>`)
+			room.SendTextVisual(messaging.CategoryHitRanged, fmt.Sprintf(
 				`<ansi fg="red"><ansi fg="username">%s</ansi>'s throw backfires spectacularly!</ansi>`,
 				user.Character.Name), user.UserId)
 
@@ -141,7 +142,7 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 					user.Character.Health = 0
 				}
 				dmgDesc := combat.GetDamageDescription(dmg, user.Character.HealthMax.Value)
-				user.SendText(fmt.Sprintf(
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(
 					`<ansi fg="red">The explosion sears you! (%s)</ansi>`, dmgDesc))
 			}
 			if hasBuffs {
@@ -174,7 +175,7 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				mob.Character.Health = 0
 			}
 			dmgDesc := combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value)
-			user.SendText(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`The explosion catches <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%s</ansi>)`,
 				mob.Character.Name, dmgDesc))
 		}
@@ -183,7 +184,7 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			for _, buffId := range spec.BuffIds {
 				mob.AddBuff(buffId, `grenade`)
 			}
-			user.SendText(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi> is caught in the blast!`,
 				mob.Character.Name))
 		}
@@ -194,12 +195,12 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	if !fumbled {
 		if hitCount == 0 {
-			user.SendText("The projectile misses everything and shatters harmlessly.")
+			user.SendText(messaging.CategorySystem, "The projectile misses everything and shatters harmlessly.")
 		} else if hitCount == 1 {
-			user.SendText(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`<ansi fg="green">Your throw strikes true!</ansi>`))
 		} else {
-			user.SendText(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`<ansi fg="green">Your throw catches multiple targets!</ansi>`))
 		}
 	}

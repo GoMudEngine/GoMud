@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -12,7 +13,7 @@ import (
 func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	// Must be in combat to use grapple
-	if mob.Character.Aggro == nil {
+	if !mob.Character.IsInCombat() {
 		return true, nil
 	}
 
@@ -40,40 +41,40 @@ func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	if result.Success {
 		if targetChar != nil {
 			if canSee {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> <ansi fg="yellow-bold">grapples</ansi> you, transitioning to <ansi fg="cyan">%s</ansi> position!`, mobName, result.PositionDesc))
+				targetChar.SendText(messaging.CategoryGrappleFlow, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> <ansi fg="yellow-bold">grapples</ansi> you, transitioning to <ansi fg="cyan">%s</ansi> position!`, mobName, result.PositionDesc))
 			} else {
-				targetChar.SendText(fmt.Sprintf(`Something <ansi fg="yellow-bold">grapples</ansi> you, transitioning to <ansi fg="cyan">%s</ansi> position!`, result.PositionDesc))
+				targetChar.SendText(messaging.CategoryGrappleFlow, fmt.Sprintf(`Something <ansi fg="yellow-bold">grapples</ansi> you, transitioning to <ansi fg="cyan">%s</ansi> position!`, result.PositionDesc))
 			}
 		}
-		sendRoomText(room,
+		sendRoomText(room, messaging.CategoryGrappleFlow,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> <ansi fg="yellow-bold">grapples</ansi> <ansi fg="username">%s</ansi> into <ansi fg="cyan">%s</ansi> position!`, mobName, targetName, result.PositionDesc),
 			targetPlayerId)
 
 		// Disarm messaging
 		if result.DisarmResult != nil {
 			if targetChar != nil {
-				targetChar.SendText(result.DisarmResult.TargetMsg)
+				targetChar.SendText(messaging.CategoryGrappleFlow, result.DisarmResult.TargetMsg)
 			}
-			sendRoomText(room, result.DisarmResult.RoomMessage, targetPlayerId)
+			sendRoomText(room, messaging.CategoryGrappleFlow, result.DisarmResult.RoomMessage, targetPlayerId)
 		}
 	} else {
 		if targetChar != nil {
 			if canSee {
-				targetChar.SendText(fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to grapple you, but you slip away!`, mobName))
+				targetChar.SendText(messaging.CategoryGrappleFlow, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to grapple you, but you slip away!`, mobName))
 			} else {
-				targetChar.SendText(`Something tries to grapple you, but you slip away!`)
+				targetChar.SendText(messaging.CategoryGrappleFlow, `Something tries to grapple you, but you slip away!`)
 			}
 		}
-		sendRoomText(room,
+		sendRoomText(room, messaging.CategoryGrappleFlow,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to grapple <ansi fg="username">%s</ansi>, but fails!`, mobName, targetName),
 			targetPlayerId)
 
 		// Critical failure messaging
 		if result.CritFailure != nil {
 			if targetChar != nil {
-				targetChar.SendText(result.CritFailure.TargetMessage)
+				targetChar.SendText(messaging.CategoryGrappleFlow, result.CritFailure.TargetMessage)
 			}
-			sendRoomText(room, result.CritFailure.RoomMessage, targetPlayerId)
+			sendRoomText(room, messaging.CategoryGrappleFlow, result.CritFailure.RoomMessage, targetPlayerId)
 		}
 	}
 

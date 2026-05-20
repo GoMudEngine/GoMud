@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -45,22 +46,22 @@ func enableMobProgression(t *testing.T) func() {
 	prevGp := configs.GetGamePlayConfig()
 
 	require.NoError(t, configs.AddOverlayOverrides(map[string]any{
-		"GamePlay.UseSkillProgression":   true,
-		"Balance.MobProgressionEnabled":  true,
-		"Balance.MobProgressionRate":     1.0,
-		"Balance.BaseProgressionChance":  1.0,
-		"Balance.MobStatCap":             10000,
-		"Balance.MobSkillCap":            10000,
+		"GamePlay.UseSkillProgression":  true,
+		"Balance.MobProgressionEnabled": true,
+		"Balance.MobProgressionRate":    1.0,
+		"Balance.BaseProgressionChance": 1.0,
+		"Balance.MobStatCap":            10000,
+		"Balance.MobSkillCap":           10000,
 	}))
 
 	return func() {
 		_ = configs.AddOverlayOverrides(map[string]any{
-			"GamePlay.UseSkillProgression":   bool(prevGp.UseSkillProgression),
-			"Balance.MobProgressionEnabled":  bool(prevBal.MobProgressionEnabled),
-			"Balance.MobProgressionRate":     float64(prevBal.MobProgressionRate),
-			"Balance.BaseProgressionChance":  float64(prevBal.BaseProgressionChance),
-			"Balance.MobStatCap":             int(prevBal.MobStatCap),
-			"Balance.MobSkillCap":            int(prevBal.MobSkillCap),
+			"GamePlay.UseSkillProgression":  bool(prevGp.UseSkillProgression),
+			"Balance.MobProgressionEnabled": bool(prevBal.MobProgressionEnabled),
+			"Balance.MobProgressionRate":    float64(prevBal.MobProgressionRate),
+			"Balance.BaseProgressionChance": float64(prevBal.BaseProgressionChance),
+			"Balance.MobStatCap":            int(prevBal.MobStatCap),
+			"Balance.MobSkillCap":           int(prevBal.MobSkillCap),
 		})
 	}
 }
@@ -210,10 +211,10 @@ func TestMvM_AttackerStatGainEmitsRoomMessage(t *testing.T) {
 	tmpl, ok := characters.MobStatGainMessages["strength"]
 	require.True(t, ok)
 
-	// Production line: mobRoom.SendText(fmt.Sprintf(tmpl, mmStatMobName))
+	// Production line: mobRoom.SendText(CategoryMobEmote, fmt.Sprintf(tmpl, mmStatMobName))
 	// We use the same SendText API the new MvM block calls. The events.Message
 	// listener registered above will capture this.
-	mobRoom.SendText(strings.Replace(tmpl, "%s", mob.Character.Name, 1))
+	mobRoom.SendText(messaging.CategoryMobEmote, strings.Replace(tmpl, "%s", mob.Character.Name, 1))
 
 	// Drain the events queue so the listener fires.
 	events.ProcessEvents()

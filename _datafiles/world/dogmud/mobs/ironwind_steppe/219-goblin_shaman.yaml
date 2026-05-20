@@ -1,6 +1,6 @@
 mobid: 219
 zone: Ironwind Steppe
-behavior_archetype: support_caster
+behavior_archetype: defensive_caster
 routine: goblin_warband
 statpool: 130
 itemdropchance: 25
@@ -19,9 +19,6 @@ idlecommands:
   - ''
   - 'emote traces a symbol in the air with a clawed finger'
 activitylevel: 20
-reaction_delay: 1.2
-tactical_discipline: 0.55
-tactic_preset: defensive_caster
 character:
   name: goblin shaman
   description: |

@@ -1,0 +1,6 @@
+mob_id: 1
+default_disposition: 0
+opinions:
+  1:
+    score: -30
+    last_updated_round: 1314000

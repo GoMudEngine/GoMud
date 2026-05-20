@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -135,7 +136,7 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	onlineResultsTable := templates.GetTable(`Spells`, headers, rows, rowFormatting...)
 	tplTxt, _ := templates.Process("tables/generic", onlineResultsTable, user.UserId)
-	user.SendText(tplTxt)
+	user.SendText(messaging.CategorySystem, tplTxt)
 
 	return true, nil
 }

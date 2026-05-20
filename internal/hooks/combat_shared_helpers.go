@@ -11,9 +11,14 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
+	"github.com/GoMudEngine/GoMud/internal/state/control"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -33,10 +38,11 @@ func calcSpellDamageForCharacter(spellData *spells.SpellData, caster *characters
 		skillLevel := caster.GetSkillLevel(skills.Spellcasting)
 		rawDmg := combat.CalcRawDamage(caster.Stats.Willpower.ValueAdj, skillLevel, spellData.DamageMultiplier, combat.ChannelMagical)
 
-		// Apply weapon spell damage multiplier (caster weapons)
+		// Apply weapon spell damage multiplier (caster weapons), scaled
+		// by gear-effectiveness for incorporeal casters.
 		if caster.Equipment.Weapon.ItemId > 0 {
 			if sdm := caster.Equipment.Weapon.GetSpec().SpellDamageMultiplier; sdm > 0 {
-				rawDmg *= sdm
+				rawDmg *= sdm * mutations.GearEffectivenessMultiplier(caster.Mutations)
 			}
 		}
 
@@ -93,9 +99,9 @@ func calcSpellDamageForCharacter(spellData *spells.SpellData, caster *characters
 
 // checkConcentrationBreak tests whether a casting character's concentration
 // breaks from taking damage. Returns true if concentration broke.
-// Caller is responsible for clearing CastingState and sending messages.
+// Caller is responsible for clearing Activity state and sending messages.
 func checkConcentrationBreak(ch *characters.Character, damage int) bool {
-	if ch.CastingState == nil || damage <= 0 {
+	if ch.Activity == nil || !ch.Activity.IsCasting() || damage <= 0 {
 		return false
 	}
 	maxHealth := ch.HealthMax.Value
@@ -165,15 +171,15 @@ type CritEffectResult struct {
 	RiposteDamage int
 	RiposteMaxHP  int
 	// Dodge crit → auto-trip (ignores cooldown)
-	AutoTrip      bool
-	TripResult    combat.SkillMoveResult
+	AutoTrip   bool
+	TripResult combat.SkillMoveResult
 	// Block crit → auto-bash (ignores cooldown)
-	AutoBash      bool
-	BashResult    combat.SkillMoveResult
+	AutoBash   bool
+	BashResult combat.SkillMoveResult
 	// Messages for all crit effects
-	DefenderMsg   string
-	AttackerMsg   string
-	RoomMsg       string
+	DefenderMsg string
+	AttackerMsg string
+	RoomMsg     string
 }
 
 // applyCritEffects processes parry/dodge/block crit effects for any combat
@@ -262,16 +268,17 @@ func applyCritEffects(attacker, defender *characters.Character, roundResult comb
 	// ── Block crit → auto-bash (ignores cooldown) ───────────────────────
 	if roundResult.BlockCritDetected {
 		bashResult := combat.ExecuteSkillMove(combat.SkillMoveParams{
-			Attacker:        defender,
-			Defender:        attacker,
-			AttackStat:      defender.Stats.Strength.ValueAdj,
-			AttackSkill:     defender.GetSkillLevel(skills.WeaponCombat),
-			DefenseStat:     attacker.Stats.Dexterity.ValueAdj,
-			DefenseSkill:    attacker.GetCombatSkillLevel(),
-			DamagePercent:   float64(cfg.BashDamagePercent),
-			KnockdownChance: int(cfg.BashKnockdownChance),
-			SkillRank:       defender.GetSkillLevel(skills.WeaponCombat),
-			DamageStat:      defender.Stats.Strength.ValueAdj,
+			Attacker:          defender,
+			Defender:          attacker,
+			AttackStat:        defender.Stats.Strength.ValueAdj,
+			AttackSkill:       defender.GetSkillLevel(skills.WeaponCombat),
+			DefenseStat:       attacker.Stats.Dexterity.ValueAdj,
+			DefenseSkill:      attacker.GetCombatSkillLevel(),
+			DamagePercent:     float64(cfg.BashDamagePercent),
+			KnockdownChance:   int(cfg.BashKnockdownChance),
+			SkillRank:         defender.GetSkillLevel(skills.WeaponCombat),
+			DamageStat:        defender.Stats.Strength.ValueAdj,
+			KnockdownToSupine: true, // bash sends attacker backward
 		})
 		result.AutoBash = true
 		result.BashResult = bashResult
@@ -308,7 +315,7 @@ func applyCritEffects(attacker, defender *characters.Character, roundResult comb
 // simulateFoldRound simulates the fold doubling loop to determine how many
 // folds will be gained this round (without actually modifying state).
 // Returns the foldDelta.
-func simulateFoldRound(cs *characters.CastingState) int {
+func simulateFoldRound(cs activity.CastingData) int {
 	simFolds := cs.FoldsAccumulated
 	for i := 0; i < cs.FoldsPerRound; i++ {
 		if simFolds == 0 {
@@ -326,7 +333,7 @@ func simulateFoldRound(cs *characters.CastingState) int {
 
 // calcFoldConvictionCost computes the conviction cost for a fold round,
 // proportional to folds gained vs total folds needed.
-func calcFoldConvictionCost(cs *characters.CastingState, foldDelta int) int {
+func calcFoldConvictionCost(cs activity.CastingData, foldDelta int) int {
 	if cs.TotalConvictionCost <= 0 || cs.FoldsNeeded <= 0 {
 		return 0
 	}
@@ -337,23 +344,39 @@ func calcFoldConvictionCost(cs *characters.CastingState, foldDelta int) int {
 	return roundCost
 }
 
-// advanceFolds performs the real fold doubling loop, advancing
-// FoldsAccumulated. Returns true when folds reach FoldsNeeded (spell ready).
-func advanceFolds(cs *characters.CastingState) bool {
-	for i := 0; i < cs.FoldsPerRound; i++ {
-		if cs.FoldsAccumulated == 0 {
-			cs.FoldsAccumulated = 1
-		} else {
-			cs.FoldsAccumulated *= 2
-		}
-		if cs.FoldsAccumulated > cs.FoldsNeeded {
-			cs.FoldsAccumulated = cs.FoldsNeeded
-		}
-		if cs.FoldsAccumulated >= cs.FoldsNeeded {
-			return true
-		}
+// clearCastingActivity fires Activity.TransitionToFree with the given trigger
+// if the character's Activity machine is currently in the Casting state.
+func clearCastingActivity(ch *characters.Character, trigger string) {
+	if ch.Activity != nil && ch.Activity.IsCasting() {
+		_ = ch.Activity.TransitionToFree(state.TransitionReason{
+			Trigger: trigger,
+			Actor:   ch.Activity.Self(),
+		})
 	}
-	return false
+}
+
+// cancelCraftOrSalvageOnDamage cancels the character's Activity if it is
+// Crafting or Salvaging. This is a hard cancel — no roll — because any
+// damage interrupts physical work immediately. Casting interrupts are
+// handled separately by clearCastingActivity (concentration break via
+// willpower roll). Both helpers may be called together at the same damage
+// site: they are independent and each no-ops when the state doesn't match.
+func cancelCraftOrSalvageOnDamage(ch *characters.Character) {
+	if ch.Activity == nil {
+		return
+	}
+	switch ch.Activity.State() {
+	case activity.Crafting:
+		_ = ch.Activity.TransitionToFree(state.TransitionReason{
+			Trigger: activity.TriggerDamageInterrupt,
+			Actor:   ch.Activity.Self(),
+		})
+	case activity.Salvaging:
+		_ = ch.Activity.TransitionToFree(state.TransitionReason{
+			Trigger: activity.TriggerDamageInterrupt,
+			Actor:   ch.Activity.Self(),
+		})
+	}
 }
 
 // =============================================================================
@@ -376,6 +399,7 @@ func advanceFolds(cs *characters.CastingState) bool {
 type FoldRoundResult struct {
 	// Terminal states — caller should return after messaging.
 	ProneBroke             bool // caster fell prone, concentration broken
+	GrappleBroke           bool // caster is in a grapple state, concentration broken (chunk 4e T4)
 	TargetGone             bool // all targets are dead/gone
 	SpellDataMissing       bool // spells.GetSpell returned nil
 	InsufficientConviction bool // not enough CP to pay this fold's cost
@@ -385,23 +409,63 @@ type FoldRoundResult struct {
 	CastComplete bool // folds complete; caller should resolve the spell
 
 	// Values the caller needs for messaging / resolution.
-	FoldDelta      int                  // folds simulated this round
-	ConvictionCost int                  // CP deducted from caster this round
-	SpellData      *spells.SpellData    // non-nil when SpellDataMissing==false
-	CastingState   *characters.CastingState // same pointer as char.CastingState
+	FoldDelta      int                   // folds simulated this round
+	ConvictionCost int                   // CP deducted from caster this round
+	SpellData      *spells.SpellData     // non-nil when SpellDataMissing==false
+	CastingData    activity.CastingData  // snapshot of casting state at decision time
 }
 
 // processFoldRound advances one round of fold casting for any caster character.
-// It mutates char.CastingState (deducting conviction, advancing folds, or
-// clearing the state on terminal conditions).  Returns a FoldRoundResult
-// describing what happened so the caller can emit the right messages.
+// It uses the Activity machine as sole source of truth for CastingData.
+// Returns a FoldRoundResult describing what happened so the caller can emit
+// the right messages.
 func processFoldRound(char *characters.Character) FoldRoundResult {
-	cs := char.CastingState // caller must have verified non-nil
+	if char.Activity == nil || !char.Activity.IsCasting() {
+		return FoldRoundResult{}
+	}
+	cs, _ := char.Activity.CastingData()
 
-	// Prone → immediate concentration break.
-	if char.CombatPosition == characters.PositionProne {
-		char.CastingState = nil
-		return FoldRoundResult{ProneBroke: true, CastingState: cs}
+	// Position-based concentration disruption (chunk 4f). Replaces the
+	// three deterministic 100% gates (Prone/Supine/Grapple) that chunks
+	// pre-4e shipped. Now: damage%-equivalent per (position, role) →
+	// existing CalcConcentrationChance(Wil, dmgPctEquiv) curve → roll.
+	// Standing returns 0 and skips the check entirely.
+	//
+	// The damage-path checkConcentrationBreak still fires independently
+	// when damage lands during a round — both paths can break a single
+	// cast (layered disruption).
+	if char.Position != nil {
+		posState := char.Position.State()
+		var ctrlState control.State
+		if char.Control != nil {
+			ctrlState = char.Control.State()
+		}
+		dmgPctEquiv := position.PositionDisruptionDmgEquiv(posState, ctrlState)
+		if dmgPctEquiv > 0 {
+			chance := characters.CalcConcentrationChance(
+				char.Stats.Willpower.ValueAdj, dmgPctEquiv)
+			roll := util.Rand(100)
+			util.LogRoll(`Position Concentration`, roll, chance)
+			if roll >= chance {
+				// Concentration broke. Route messaging by which break
+				// flag the caller expects for this position. Default
+				// falls back to GrappleBroke for any future non-Standing
+				// position that lands here without a Prone/Supine/Grapple
+				// classification.
+				clearCastingActivity(char, activity.TriggerConcentrationBreak)
+				result := FoldRoundResult{CastingData: cs}
+				switch {
+				case char.IsProne(), char.IsSupine():
+					result.ProneBroke = true
+				case char.IsGrappling():
+					result.GrappleBroke = true
+				default:
+					result.GrappleBroke = true
+				}
+				return result
+			}
+			// Roll passed — concentration held this round; fold continues.
+		}
 	}
 
 	// Target-gone check: any dead/nil target breaks the spell.
@@ -430,13 +494,13 @@ func processFoldRound(char *characters.Character) FoldRoundResult {
 		}
 	}
 	if targetGone {
-		char.CastingState = nil
-		return FoldRoundResult{TargetGone: true, CastingState: cs}
+		clearCastingActivity(char, activity.TriggerConcentrationBreak)
+		return FoldRoundResult{TargetGone: true, CastingData: cs}
 	}
 
 	if spellData == nil {
-		char.CastingState = nil
-		return FoldRoundResult{SpellDataMissing: true, CastingState: cs}
+		clearCastingActivity(char, activity.TriggerConcentrationBreak)
+		return FoldRoundResult{SpellDataMissing: true, CastingData: cs}
 	}
 
 	// Simulate fold advance → compute conviction cost.
@@ -444,29 +508,27 @@ func processFoldRound(char *characters.Character) FoldRoundResult {
 	roundCost := calcFoldConvictionCost(cs, foldDelta)
 
 	if roundCost > 0 && char.Conviction < roundCost {
-		char.CastingState = nil
+		clearCastingActivity(char, activity.TriggerConcentrationBreak)
 		return FoldRoundResult{
 			InsufficientConviction: true,
 			FoldDelta:              foldDelta,
 			ConvictionCost:         roundCost,
 			SpellData:              spellData,
-			CastingState:           cs,
+			CastingData:            cs,
 		}
 	}
 
-	// Deduct conviction and advance folds.
+	// Deduct conviction and advance folds via the Activity machine.
 	char.Conviction -= roundCost
-	cs.ConvictionSpent += roundCost
-
-	complete := advanceFolds(cs)
+	updatedCs, complete := char.Activity.AdvanceCastingFolds(foldDelta, roundCost)
 	if complete {
-		char.CastingState = nil
+		clearCastingActivity(char, activity.TriggerCastComplete)
 		return FoldRoundResult{
 			CastComplete:   true,
 			FoldDelta:      foldDelta,
 			ConvictionCost: roundCost,
 			SpellData:      spellData,
-			CastingState:   cs,
+			CastingData:    updatedCs,
 		}
 	}
 	return FoldRoundResult{
@@ -474,6 +536,6 @@ func processFoldRound(char *characters.Character) FoldRoundResult {
 		FoldDelta:      foldDelta,
 		ConvictionCost: roundCost,
 		SpellData:      spellData,
-		CastingState:   cs,
+		CastingData:    updatedCs,
 	}
 }

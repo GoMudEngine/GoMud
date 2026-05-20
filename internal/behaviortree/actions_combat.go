@@ -1,13 +1,16 @@
 package behaviortree
 
 // actions_combat.go — combat actions:
-// actAttack, actFlee, actCast, actAddBuff, actRemoveBuff
+// actAttack, actFlee, actCast, actAddBuff, actRemoveBuff,
+// actionCancelActivity
 
 import (
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -34,7 +37,7 @@ func actAttack(params map[string]any, ctx *EvalContext) Result {
 	// applies the backstab crit + "*[SURPRISE ATTACK]*" prefix.
 	// Mirrors the pattern in mobcommands/attack.go.
 	aggroType := characters.DefaultAttack
-	if mob.Character.HasBuffFlag(buffs.Hidden) {
+	if mob.Character.IsHidden() {
 		aggroType = characters.SurpriseAttack
 	}
 	mob.Character.SetAggro(targetUserId, 0, aggroType)
@@ -87,5 +90,165 @@ func actRemoveBuff(params map[string]any, ctx *EvalContext) Result {
 	}
 	buffId := getIntParam(params, "buff_id")
 	user.Character.RemoveBuff(buffId)
+	return Success
+}
+
+// actTargetRandomPlayerInRoom picks a random player in the
+// caller's current room and stashes them as the EvalContext's
+// SoftTarget. This is the non-combat target-picker primitive
+// used by skullduggery archetypes (thief, future shadow/plant
+// variants).
+//
+// CRITICAL: this action does NOT call SetAggro or transition
+// Combat Phase. The picked player is a "soft target" — the
+// caller's NEXT action (try_steal, try_plant, etc.) consumes
+// SoftTarget without triggering combat. This is the structural
+// fix for the chunk 2.7 thief-archetype bug; non-combat target
+// picking must not silently engage combat.
+//
+// Returns Failure when no players are present in the room.
+func actTargetRandomPlayerInRoom(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil {
+		return Failure
+	}
+	room := rooms.LoadRoom(mob.Character.RoomId)
+	if room == nil {
+		return Failure
+	}
+	playerIds := room.GetPlayers()
+	if len(playerIds) == 0 {
+		return Failure
+	}
+	idx := util.Rand(len(playerIds))
+	pickedId := playerIds[idx]
+
+	// CRITICAL: Stash in SoftTarget. Do NOT call SetAggro.
+	// Combat target lives on Combat Phase's Engaged state ONLY.
+	ctx.SoftTarget = state.ActorRef{UserId: pickedId}
+	return Success
+}
+
+// actTargetWeakestMobInRoom scans room.GetMobs(), computes
+// PowerScore(target) / PowerScore(self) for each candidate that
+// passes mob.HatesMob, picks the lowest ratio strictly below the
+// ratio_below ceiling (default 1.0), and sets it as Aggro.
+// Returns Success on a successful target pick, Failure otherwise.
+//
+// Skips: self, dead mobs, non-combatant mobs, mobs the caller's
+// HatesMob returns false for, and (if caller is itself charmed)
+// fellow companions of the same owner.
+//
+// Players are NOT scanned — predation is a mob-vs-mob action.
+// Player aggression continues through the standard hostile-mob
+// attack chain.
+func actTargetWeakestMobInRoom(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil || mob.IsNonCombatant() {
+		return Failure
+	}
+	room := rooms.LoadRoom(ctx.RoomId)
+	if room == nil {
+		return Failure
+	}
+
+	selfPower := combat.PowerScore(mob.Character)
+	if selfPower <= 0 {
+		return Failure
+	}
+	// ratio_below defaults to 1.0 (engage anyone strictly weaker).
+	ceiling := getFloatParam(params, "ratio_below", 1.0)
+
+	callerCharmedBy := mob.Character.GetCharmedUserId()
+	var bestId int
+	bestRatio := ceiling
+	for _, otherId := range room.GetMobs() {
+		if otherId == mob.InstanceId {
+			continue
+		}
+		other := mobs.GetInstance(otherId)
+		if other == nil || other.IsNonCombatant() {
+			continue
+		}
+		if other.Character.Health <= 0 {
+			continue
+		}
+		// Companion-allegiance skip: if caller is itself charmed,
+		// skip fellow companions of the same owner. A wild caller
+		// can still prey on a player's companion if HatesMob says
+		// so — companions of an enemy are still enemies.
+		if callerCharmedBy > 0 && other.Character.IsCharmed(callerCharmedBy) {
+			continue
+		}
+		if !mob.HatesMob(other) {
+			continue
+		}
+		targetPower := combat.PowerScore(other.Character)
+		if targetPower <= 0 {
+			continue
+		}
+		ratio := targetPower / selfPower
+		if ratio < bestRatio {
+			bestRatio = ratio
+			bestId = otherId
+		}
+	}
+	if bestId == 0 {
+		return Failure
+	}
+	mob.Character.SetAggro(0, bestId, characters.DefaultAttack)
+	return Success
+}
+
+// actionCancelActivity aborts the mob's current Activity if any is
+// in progress. Returns Success if an activity was cancelled, Failure
+// if the mob was already Free (or has no Activity machine).
+//
+// Inlines the refund + cleanup logic rather than delegating to
+// mobcommands.Cancel because mobcommands imports behaviortree
+// (callforhelp.go, flee.go), which would create a circular import.
+//
+// Use cases in behavior trees:
+//   - panic-flee on low HP: cancel offensive cast, then flee
+//   - swap to heal mid-cast when ally is dying
+//   - drop craft to defend when ambushed
+func actionCancelActivity(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil {
+		return Failure
+	}
+	a := mob.Character.Activity
+	if a == nil || a.IsFree() {
+		return Failure
+	}
+
+	switch a.State() {
+	case activity.Casting:
+		d, _ := a.CastingData()
+		unspent := d.TotalConvictionCost - d.ConvictionSpent
+		if unspent > 0 {
+			refund := unspent / 2
+			mob.Character.Conviction += refund
+			if mob.Character.Conviction > mob.Character.ConvictionMax.Value {
+				mob.Character.Conviction = mob.Character.ConvictionMax.Value
+			}
+		}
+		_ = a.TransitionToFree(state.TransitionReason{
+			Trigger: activity.TriggerCastCancel,
+			Actor:   state.ActorRef{MobInstanceId: mob.InstanceId},
+		})
+
+	case activity.Crafting:
+		_ = a.TransitionToFree(state.TransitionReason{
+			Trigger: activity.TriggerCraftCancel,
+			Actor:   state.ActorRef{MobInstanceId: mob.InstanceId},
+		})
+
+	case activity.Salvaging:
+		_ = a.TransitionToFree(state.TransitionReason{
+			Trigger: activity.TriggerSalvageCancel,
+			Actor:   state.ActorRef{MobInstanceId: mob.InstanceId},
+		})
+	}
 	return Success
 }

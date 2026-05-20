@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -21,13 +23,13 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	rest = strings.TrimSpace(rest)
 
 	if rest == "" {
-		user.SendText(`<ansi fg="command">salvage <item></ansi> - Break down an item for materials.`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="command">salvage <item></ansi> - Break down an item for materials.`)
 		return true, nil
 	}
 
-	// Already busy?
-	if user.Character.IsCrafting() {
-		user.SendText(`<ansi fg="red">You're already busy working on something.</ansi>`)
+	// Already busy? (Activity machine will also reject if not Free.)
+	if !user.Character.IsFree() {
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You're already busy working on something.</ansi>`)
 		return true, nil
 	}
 
@@ -37,7 +39,7 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	if !found {
 		corpse, corpseFound := room.FindCorpse(rest)
 		if !corpseFound {
-			user.SendText(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`<ansi fg="red">You don't have "%s" and there's no corpse of that name here.</ansi>`, rest))
 			return true, nil
 		}
@@ -46,7 +48,7 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	// Require item to be in backpack, not equipped
 	if source != "in your backpack" {
-		user.SendText(`<ansi fg="red">You need to remove that before you can salvage it.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You need to remove that before you can salvage it.</ansi>`)
 		return true, nil
 	}
 
@@ -76,7 +78,7 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	hasSalvageReturns := len(spec.SalvageReturns) > 0
 
 	if recipe == nil && !hasSalvageReturns && !isSpoiledPotion {
-		user.SendText(`<ansi fg="red">You can't find anything useful to salvage from that.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You can't find anything useful to salvage from that.</ansi>`)
 		return true, nil
 	}
 
@@ -93,17 +95,24 @@ func Salvage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	rounds := crafting.CalcSalvageRounds(totalGold,
 		int(bal.SalvageGoldPerRound), int(bal.SalvageMaxRounds))
 
-	// Store salvage target info for resolution
-	user.Character.SetMiscData("salvage_item_uuid", itm.UUID.String())
-	user.Character.SetMiscData("salvage_spoiled_potion", isSpoiledPotion)
-
-	// Start multi-round salvage activity using CraftingState
-	user.Character.CraftingState = &characters.CraftingState{
-		RecipeId:    fmt.Sprintf("salvage:%d", spec.ItemId),
-		RoundsTotal: rounds,
+	// Transition Activity machine to Salvaging.
+	salvageData := activity.SalvagingData{
+		ItemUuid:      itm.UUID.String(),
+		RoundsTotal:   rounds,
+		SpoiledPotion: isSpoiledPotion,
+	}
+	if err := user.Character.Activity.TransitionToSalvaging(
+		salvageData,
+		state.TransitionReason{
+			Trigger: activity.TriggerSalvageBegin,
+			Actor:   state.ActorRef{UserId: user.UserId},
+		},
+	); err != nil {
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You're already busy working on something.</ansi>`)
+		return true, nil
 	}
 
-	user.SendText(fmt.Sprintf(
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`<ansi fg="yellow">You begin carefully disassembling the <ansi fg="itemname">%s</ansi>...</ansi>`,
 		itm.DisplayName()))
 
@@ -117,19 +126,19 @@ func startCorpseSalvage(user *users.UserRecord, corpse rooms.Corpse) (bool, erro
 
 	// Player corpses are out of scope for v1.
 	if corpse.MobId <= 0 {
-		user.SendText(`<ansi fg="red">You can't bring yourself to salvage that.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You can't bring yourself to salvage that.</ansi>`)
 		return true, nil
 	}
 
 	mobSpec := mobs.GetMobSpec(mobs.MobId(corpse.MobId))
 	if mobSpec == nil {
-		user.SendText(`<ansi fg="red">Something is wrong with that corpse.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">Something is wrong with that corpse.</ansi>`)
 		return true, nil
 	}
 
 	returns := crafting.LookupCorpseSalvage(mobSpec.Groups)
 	if len(returns) == 0 {
-		user.SendText(`<ansi fg="red">There's nothing useful to recover here.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">There's nothing useful to recover here.</ansi>`)
 		return true, nil
 	}
 
@@ -138,19 +147,35 @@ func startCorpseSalvage(user *users.UserRecord, corpse rooms.Corpse) (bool, erro
 	rounds := crafting.CalcSalvageRounds(totalGold,
 		int(bal.SalvageGoldPerRound), int(bal.SalvageMaxRounds))
 
+	// Transition Activity machine to Salvaging (corpse variant).
+	// ItemUuid is unused for corpse salvage; the corpse is identified
+	// via MiscData keys below. RoundsTotal is set for data-shape parity.
+	corpseData := activity.SalvagingData{
+		ItemUuid:    fmt.Sprintf("corpse:%d", corpse.MobId),
+		RoundsTotal: rounds,
+	}
+	if err := user.Character.Activity.TransitionToSalvaging(
+		corpseData,
+		state.TransitionReason{
+			Trigger: activity.TriggerSalvageBegin,
+			Actor:   state.ActorRef{UserId: user.UserId},
+		},
+	); err != nil {
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You're already busy working on something.</ansi>`)
+		return true, nil
+	}
+
 	// Stash corpse identity for the resolver. mobid + roundCreated
 	// uniquely identifies the corpse within the room. Store as int to
 	// avoid type-assertion issues if MiscData ever round-trips through
 	// YAML (uint64 can come back coerced).
+	if user.Character.MiscData == nil {
+		user.Character.MiscData = map[string]any{}
+	}
 	user.Character.SetMiscData("salvage_corpse_round_created", int(corpse.RoundCreated))
 	user.Character.SetMiscData("salvage_corpse_name", corpse.Character.Name)
 
-	user.Character.CraftingState = &characters.CraftingState{
-		RecipeId:    fmt.Sprintf("salvage-corpse:%d", corpse.MobId),
-		RoundsTotal: rounds,
-	}
-
-	user.SendText(fmt.Sprintf(
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`<ansi fg="yellow">You begin carefully working over the <ansi fg="mobname">%s corpse</ansi>...</ansi>`,
 		corpse.Character.Name))
 

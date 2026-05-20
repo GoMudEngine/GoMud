@@ -6,10 +6,13 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -46,8 +49,10 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		switch {
 		case result.AlreadyCasting:
 			inProgress := ""
-			if mob.Character.CastingState != nil {
-				inProgress = mob.Character.CastingState.SpellId
+			if mob.Character.Activity != nil {
+				if cd, ok := mob.Character.Activity.CastingData(); ok {
+					inProgress = cd.SpellId
+				}
 			}
 			mudlog.Debug("mob.Cast",
 				"mob", mob.Character.Name,
@@ -96,7 +101,7 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		cfg := textutil.SendTextConfig{
 			RoomSendFunc: func(msg string, skip ...int) {
 				if castRoom != nil {
-					castRoom.SendText(msg, skip...)
+					castRoom.SendText(messaging.CategorySpellFold, msg, skip...)
 				}
 			},
 		}
@@ -110,11 +115,31 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 	mob.Character.Conviction -= firstRoundCost
 
-	// Commit CastingState, recording the first-round payment.
-	result.CastingState.ConvictionSpent = firstRoundCost
-	mob.Character.CastingState = result.CastingState
+	// Commit CastingState to Activity machine (sole truth).
+	castData := activity.CastingData{
+		SpellId:              result.SpellInfo.SpellId,
+		FoldsNeeded:          result.FoldsNeeded,
+		FoldsAccumulated:     0,
+		FoldsPerRound:        result.FoldsPerRound,
+		TotalConvictionCost:  result.TotalCost,
+		ConvictionSpent:      firstRoundCost,
+		TargetUserIds:        result.TargetUserIds,
+		TargetMobInstanceIds: result.TargetMobInstanceIds,
+		SpellRest:            result.SpellRest,
+	}
+	if err := mob.Character.Activity.TransitionToCasting(
+		castData,
+		state.TransitionReason{
+			Trigger: activity.TriggerCastBegin,
+			Actor:   state.ActorRef{MobInstanceId: mob.InstanceId},
+		},
+	); err != nil {
+		// Mob can't start cast — likely busy. Silent failure;
+		// btree will pick another action next tick.
+		return true, nil
+	}
 
-	sendRoomText(room, fmt.Sprintf(
+	sendRoomText(room, messaging.CategorySpellFold, fmt.Sprintf(
 		`<ansi fg="mobname">%s</ansi> begins weaving a spell.`, mob.Character.Name))
 
 	// Initiate combat aggro immediately when targeting a player with an offensive spell.
@@ -122,7 +147,7 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	// The casting block in the combat tick safely handles CastingState and skips melee.
 	switch spellInfo.Type {
 	case spells.HarmSingle, spells.HarmMulti, spells.HarmArea:
-		if mob.Character.Aggro == nil && len(result.TargetUserIds) > 0 {
+		if !mob.Character.IsInCombat() && len(result.TargetUserIds) > 0 {
 			mob.Character.SetAggro(result.TargetUserIds[0], 0, characters.DefaultAttack)
 		}
 	}

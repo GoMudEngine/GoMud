@@ -33,8 +33,13 @@ func init() {
 	conditionRegistry["target_is_casting"] = condTargetIsCasting
 	conditionRegistry["target_aggro_not_on_me"] = condTargetAggroNotOnMe
 	conditionRegistry["target_not_standing"] = condTargetNotStanding
+	conditionRegistry["target_power_ratio_above"] = condTargetPowerRatioAbove
+	conditionRegistry["target_power_ratio_below"] = condTargetPowerRatioBelow
 	conditionRegistry["packmate_below_hp_ratio"] = condPackmateBelowHpRatio
 	conditionRegistry["packmate_is_tanking"] = condPackmateIsTanking
+	conditionRegistry["mob_is_hidden"] = condMobIsHidden
+	conditionRegistry["target_is_hidden"] = condTargetIsHidden
+	conditionRegistry["target_has_gold"] = condTargetHasGold
 }
 
 // LookupCondition returns the condition function for the given name,

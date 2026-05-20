@@ -14,6 +14,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -52,7 +55,7 @@ func seedAllRegistries() func() {
 		1: {
 			MobId:         1,
 			Zone:          "TestZone",
-			Hostile:       true,
+			AutoAggro: true,
 			ActivityLevel: 50,
 			Groups:        []string{"undead"},
 			Character: characters.Character{
@@ -62,7 +65,7 @@ func seedAllRegistries() func() {
 		2: {
 			MobId:         2,
 			Zone:          "TestZone",
-			Hostile:       false,
+			AutoAggro: false,
 			ActivityLevel: 30,
 			Character: characters.Character{
 				Name: "Merchant",
@@ -74,7 +77,7 @@ func seedAllRegistries() func() {
 			MobId:      1,
 			InstanceId: 100,
 			HomeRoomId: 1,
-			Hostile:    true,
+			AutoAggro: true,
 			Groups:     []string{"undead"},
 			Character: characters.Character{
 				Name:      "Skeleton",
@@ -94,6 +97,7 @@ func seedAllRegistries() func() {
 	testMobInstances[100].Character.Stats.Strength.ValueAdj = 80
 	testMobInstances[100].Character.Stats.Dexterity.ValueAdj = 80
 	testMobInstances[100].Character.Stats.Willpower.ValueAdj = 60
+	testMobInstances[100].Character.Position = position.NewMachine()
 
 	cleanupMobs := mobs.SeedMobsForTest(testMobSpecs, testMobInstances)
 
@@ -170,16 +174,16 @@ func seedAllRegistries() func() {
 
 	cleanupSpells := spells.SeedSpellsForTest(map[string]*spells.SpellData{
 		"sparks": {
-			SpellId:          "sparks",
-			Name:             "Sparks",
-			Type:             spells.HarmSingle,
-			Cost:             3,
-			Difficulty:       10,
-			DamageMultiplier: 0.8,
-			BaseFolds:        4,
-			EffectType:       "damage",
+			SpellId:           "sparks",
+			Name:              "Sparks",
+			Type:              spells.HarmSingle,
+			Cost:              3,
+			Difficulty:        10,
+			DamageMultiplier:  0.8,
+			BaseFolds:         4,
+			EffectType:        "damage",
 			TargetDefenseType: "mental",
-			Schools:          []string{spells.SchoolElemental},
+			Schools:           []string{spells.SchoolElemental},
 		},
 	})
 
@@ -193,10 +197,43 @@ func seedAllRegistries() func() {
 	}
 }
 
+
+// setCombatPositionParallel sets the Position FSM to the given state. Seeds
+// Position if nil. Synthetic Partner ref for grapple states (FSM requires non-zero).
+func setCombatPositionParallel(c *characters.Character, pos position.State) {
+	if c.Position == nil {
+		c.Position = position.NewMachine()
+	}
+	r := state.TransitionReason{Trigger: "test_setup"}
+	switch pos {
+	case position.Standing:
+		c.Position.ForceStanding(r)
+	case position.Prone:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToProne(position.ProneData{}, r)
+	case position.Clinch:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+	case position.Mount:
+		c.Position.ForceStanding(r)
+		_ = c.Position.TransitionToClinch(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerGrappleEntry},
+		)
+		_ = c.Position.TransitionToMount(
+			position.GrappleData{Partner: state.ActorRef{UserId: 1}},
+			state.TransitionReason{Trigger: position.TriggerTakedownMount},
+		)
+	}
+}
+
 // ─── Combat Shared Helpers ────────────────────────────────────────────────────
 
 func TestSimulateFoldRound_FromZero(t *testing.T) {
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		FoldsAccumulated: 0,
 		FoldsPerRound:    1,
 		FoldsNeeded:      8,
@@ -207,7 +244,7 @@ func TestSimulateFoldRound_FromZero(t *testing.T) {
 }
 
 func TestSimulateFoldRound_Doubling(t *testing.T) {
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		FoldsAccumulated: 2,
 		FoldsPerRound:    1,
 		FoldsNeeded:      8,
@@ -217,7 +254,7 @@ func TestSimulateFoldRound_Doubling(t *testing.T) {
 }
 
 func TestSimulateFoldRound_MultipleFoldsPerRound(t *testing.T) {
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		FoldsAccumulated: 0,
 		FoldsPerRound:    3,
 		FoldsNeeded:      16,
@@ -228,7 +265,7 @@ func TestSimulateFoldRound_MultipleFoldsPerRound(t *testing.T) {
 }
 
 func TestSimulateFoldRound_CapsAtNeeded(t *testing.T) {
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		FoldsAccumulated: 4,
 		FoldsPerRound:    2,
 		FoldsNeeded:      8,
@@ -239,7 +276,7 @@ func TestSimulateFoldRound_CapsAtNeeded(t *testing.T) {
 }
 
 func TestCalcFoldConvictionCost_Basic(t *testing.T) {
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		TotalConvictionCost: 10,
 		FoldsNeeded:         4,
 	}
@@ -267,7 +304,7 @@ func TestHandleIdleMobs_SuppressesRestockInCaravanServedZones(t *testing.T) {
 }
 
 func TestCalcFoldConvictionCost_MinimumOne(t *testing.T) {
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		TotalConvictionCost: 1,
 		FoldsNeeded:         100,
 	}
@@ -276,7 +313,7 @@ func TestCalcFoldConvictionCost_MinimumOne(t *testing.T) {
 }
 
 func TestCalcFoldConvictionCost_ZeroCost(t *testing.T) {
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		TotalConvictionCost: 0,
 		FoldsNeeded:         4,
 	}
@@ -285,7 +322,7 @@ func TestCalcFoldConvictionCost_ZeroCost(t *testing.T) {
 }
 
 func TestCalcFoldConvictionCost_ZeroFoldsNeeded(t *testing.T) {
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		TotalConvictionCost: 10,
 		FoldsNeeded:         0,
 	}
@@ -293,83 +330,44 @@ func TestCalcFoldConvictionCost_ZeroFoldsNeeded(t *testing.T) {
 	assert.Equal(t, 0, cost)
 }
 
-func TestAdvanceFolds_FromZero(t *testing.T) {
-	cs := &characters.CastingState{
-		FoldsAccumulated: 0,
-		FoldsPerRound:    1,
-		FoldsNeeded:      4,
-	}
-	done := advanceFolds(cs)
-	assert.False(t, done)
-	assert.Equal(t, 1, cs.FoldsAccumulated)
+// TestAdvanceFolds_* tests removed — advanceFolds was deleted in Task 11
+// (Activity machine AdvanceCastingFolds replaces it).
+
+func newCastingChar(spellId string) *characters.Character {
+	ch := &characters.Character{}
+	ch.Activity = activity.NewMachine()
+	_ = ch.Activity.TransitionToCasting(
+		activity.CastingData{SpellId: spellId},
+		state.TransitionReason{Trigger: activity.TriggerCastBegin},
+	)
+	return ch
 }
 
-func TestAdvanceFolds_CompletesAtNeeded(t *testing.T) {
-	cs := &characters.CastingState{
-		FoldsAccumulated: 2,
-		FoldsPerRound:    1,
-		FoldsNeeded:      4,
-	}
-	done := advanceFolds(cs)
-	assert.True(t, done)
-	assert.Equal(t, 4, cs.FoldsAccumulated)
-}
-
-func TestAdvanceFolds_CapsOvershoot(t *testing.T) {
-	cs := &characters.CastingState{
-		FoldsAccumulated: 4,
-		FoldsPerRound:    2,
-		FoldsNeeded:      5,
-	}
-	// 4→8, capped to 5, done
-	done := advanceFolds(cs)
-	assert.True(t, done)
-	assert.Equal(t, 5, cs.FoldsAccumulated)
-}
-
-func TestAdvanceFolds_MultipleFoldsPerRound(t *testing.T) {
-	cs := &characters.CastingState{
-		FoldsAccumulated: 0,
-		FoldsPerRound:    4,
-		FoldsNeeded:      16,
-	}
-	// 0→1, 1→2, 2→4, 4→8. Needs 16, got 8.
-	done := advanceFolds(cs)
-	assert.False(t, done)
-	assert.Equal(t, 8, cs.FoldsAccumulated)
-}
-
-func TestCheckConcentrationBreak_NilCastingState(t *testing.T) {
+func TestCheckConcentrationBreak_NotCasting(t *testing.T) {
 	ch := &characters.Character{}
 	ch.HealthMax.Value = 100
 	broke := checkConcentrationBreak(ch, 10)
-	assert.False(t, broke, "nil CastingState should never break")
+	assert.False(t, broke, "not-casting character should never break")
 }
 
 func TestCheckConcentrationBreak_ZeroDamage(t *testing.T) {
-	ch := &characters.Character{
-		CastingState: &characters.CastingState{SpellId: "sparks"},
-	}
+	ch := newCastingChar("sparks")
 	ch.HealthMax.Value = 100
 	broke := checkConcentrationBreak(ch, 0)
 	assert.False(t, broke, "zero damage should never break")
 }
 
 func TestCheckConcentrationBreak_NegativeDamage(t *testing.T) {
-	ch := &characters.Character{
-		CastingState: &characters.CastingState{SpellId: "sparks"},
-	}
+	ch := newCastingChar("sparks")
 	ch.HealthMax.Value = 100
 	broke := checkConcentrationBreak(ch, -5)
 	assert.False(t, broke, "negative damage should never break")
 }
 
 func TestCheckConcentrationBreak_WithDamage(t *testing.T) {
-	// With a valid casting state and damage > 0, the function should run
+	// With an active cast and damage > 0, the function should run
 	// (result depends on RNG so we just verify it doesn't panic)
-	ch := &characters.Character{
-		CastingState: &characters.CastingState{SpellId: "sparks"},
-	}
+	ch := newCastingChar("sparks")
 	ch.HealthMax.Value = 100
 	ch.Stats.Willpower.ValueAdj = 100
 	// Just ensure no panic — result is probabilistic
@@ -1601,7 +1599,7 @@ func TestHandlePlayerFoldCasting_NoCastingState(t *testing.T) {
 	defer cleanup()
 
 	u := users.GetByUserId(1)
-	u.Character.CastingState = nil
+	// Leave Activity nil / Free — no cast in progress.
 
 	result := handlePlayerFoldCasting(u, 1)
 	assert.False(t, result, "no casting state should return false")
@@ -1613,11 +1611,16 @@ func TestHandlePlayerFoldCasting_DisabledPlayer(t *testing.T) {
 
 	u := users.GetByUserId(1)
 	u.Character.Health = 0 // disabled
-	u.Character.CastingState = &characters.CastingState{SpellId: "sparks"}
+	u.Character.Activity = activity.NewMachine()
+	_ = u.Character.Activity.TransitionToCasting(
+		activity.CastingData{SpellId: "sparks"},
+		state.TransitionReason{Trigger: activity.TriggerCastBegin},
+	)
 
 	result := handlePlayerFoldCasting(u, 1)
 	assert.True(t, result, "disabled player should skip combat")
-	assert.Nil(t, u.Character.CastingState, "casting state should be cleared")
+	assert.True(t, u.Character.Activity == nil || u.Character.Activity.IsFree(),
+		"Activity must be Free after disabled-player abort")
 }
 
 func TestHandlePlayerFoldCasting_PronePlayer(t *testing.T) {
@@ -1625,12 +1628,17 @@ func TestHandlePlayerFoldCasting_PronePlayer(t *testing.T) {
 	defer cleanup()
 
 	u := users.GetByUserId(1)
-	u.Character.CastingState = &characters.CastingState{SpellId: "sparks"}
-	u.Character.CombatPosition = characters.PositionProne
+	u.Character.Activity = activity.NewMachine()
+	_ = u.Character.Activity.TransitionToCasting(
+		activity.CastingData{SpellId: "sparks"},
+		state.TransitionReason{Trigger: activity.TriggerCastBegin},
+	)
+	setCombatPositionParallel(u.Character, position.Prone)
 
 	result := handlePlayerFoldCasting(u, 1)
 	assert.True(t, result, "prone player should skip combat")
-	assert.Nil(t, u.Character.CastingState, "casting state should be cleared")
+	assert.True(t, u.Character.Activity == nil || u.Character.Activity.IsFree(),
+		"Activity must be Free after prone-player abort")
 }
 
 // ─── HandleMobFoldCasting ─────────────────────────────────────────────────────
@@ -1640,7 +1648,7 @@ func TestHandleMobFoldCasting_NoCastingState(t *testing.T) {
 	defer cleanup()
 
 	mob := mobs.GetInstance(100)
-	mob.Character.CastingState = nil
+	// Leave Activity nil / Free — no cast in progress.
 	room := rooms.LoadRoom(1)
 
 	result := handleMobFoldCasting(mob, room)
@@ -1652,27 +1660,18 @@ func TestHandleMobFoldCasting_ProneMob(t *testing.T) {
 	defer cleanup()
 
 	mob := mobs.GetInstance(100)
-	mob.Character.CastingState = &characters.CastingState{SpellId: "sparks"}
-	mob.Character.CombatPosition = characters.PositionProne
+	mob.Character.Activity = activity.NewMachine()
+	_ = mob.Character.Activity.TransitionToCasting(
+		activity.CastingData{SpellId: "sparks"},
+		state.TransitionReason{Trigger: activity.TriggerCastBegin},
+	)
+	setCombatPositionParallel(&mob.Character, position.Prone)
 	room := rooms.LoadRoom(1)
 
 	result := handleMobFoldCasting(mob, room)
 	assert.True(t, result)
-	assert.Nil(t, mob.Character.CastingState)
-}
-
-// ─── ProcessGrappleProgression ────────────────────────────────────────────────
-
-func TestProcessGrappleProgression_NotGrappled(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	ch1 := &characters.Character{CombatPosition: characters.PositionStanding}
-	ch2 := &characters.Character{CombatPosition: characters.PositionStanding}
-	room := rooms.LoadRoom(1)
-
-	// Should return without doing anything (not in grapple)
-	processGrappleProgression(ch1, ch2, "Alice", "Bob", room, 1, 2)
+	assert.True(t, mob.Character.Activity == nil || mob.Character.Activity.IsFree(),
+		"Activity must be Free after prone-mob abort")
 }
 
 // ─── IdleMobs ─────────────────────────────────────────────────────────────────
@@ -1878,7 +1877,7 @@ func TestHandlePlayerConcentrationBreak_NoCasting(t *testing.T) {
 	defer cleanup()
 	u := users.GetByUserId(1)
 	room := rooms.LoadRoom(1)
-	u.Character.CastingState = nil
+	// Leave Activity nil / Free — no cast in progress.
 	handlePlayerConcentrationBreak(u, combat.AttackResult{DamageToTarget: 5}, room)
 	// Should not panic
 }
@@ -1888,9 +1887,11 @@ func TestHandlePlayerConcentrationBreak_WithCasting(t *testing.T) {
 	defer cleanup()
 	u := users.GetByUserId(1)
 	room := rooms.LoadRoom(1)
-	u.Character.CastingState = &characters.CastingState{
-		SpellId: "sparks",
-	}
+	u.Character.Activity = activity.NewMachine()
+	_ = u.Character.Activity.TransitionToCasting(
+		activity.CastingData{SpellId: "sparks"},
+		state.TransitionReason{Trigger: activity.TriggerCastBegin},
+	)
 	// Large damage to break concentration
 	handlePlayerConcentrationBreak(u, combat.AttackResult{DamageToTarget: 999}, room)
 }
@@ -1953,7 +1954,7 @@ func TestResolveSpell_HarmSingle(t *testing.T) {
 	spellData := spells.GetSpell("sparks")
 	require.NotNil(t, spellData)
 
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		SpellId:              "sparks",
 		TargetMobInstanceIds: []int{100},
 	}
@@ -1979,7 +1980,7 @@ func TestResolveSpell_TargetLeftRoom(t *testing.T) {
 	mob := mobs.GetInstance(100)
 	mob.Character.RoomId = 999
 
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		SpellId:              "sparks",
 		TargetMobInstanceIds: []int{100},
 	}
@@ -2009,7 +2010,7 @@ func TestResolveSpell_HarmArea(t *testing.T) {
 	})
 	defer cleanupSpells()
 
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		SpellId: "fireball",
 	}
 
@@ -2032,7 +2033,7 @@ func TestResolveSpell_HelpArea(t *testing.T) {
 		EffectMagnitude:   20,
 	}
 
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		SpellId:       "massHeal",
 		TargetUserIds: []int{},
 	}
@@ -2050,7 +2051,7 @@ func TestResolveSpell_DeadMobSkipped(t *testing.T) {
 	mob := mobs.GetInstance(100)
 	mob.Character.Health = 0
 
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		SpellId:              "sparks",
 		TargetMobInstanceIds: []int{100},
 	}
@@ -2160,7 +2161,7 @@ func TestApplyMobEffect_Knockdown(t *testing.T) {
 	}
 	dmg := applyMobEffect(u, u.Character, mob, room, kdSpell, 20, false)
 	assert.GreaterOrEqual(t, dmg, 0)
-	assert.Equal(t, characters.PositionProne, mob.Character.CombatPosition)
+	assert.True(t, mob.Character.IsSupine() || mob.Character.IsProne(), "mob should be knocked down")
 }
 
 func TestApplyMobEffect_Buff(t *testing.T) {
@@ -2376,7 +2377,7 @@ func TestResolveMobSpell_HarmSingle(t *testing.T) {
 	room := rooms.LoadRoom(1)
 	spellData := spells.GetSpell("sparks")
 
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		SpellId:       "sparks",
 		TargetUserIds: []int{1},
 	}
@@ -2398,7 +2399,7 @@ func TestResolveMobSpell_SelfCast(t *testing.T) {
 		EffectMagnitude: 3,
 	}
 
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		SpellId:              "mobheal",
 		TargetMobInstanceIds: []int{100}, // Self target
 	}
@@ -2431,7 +2432,7 @@ func TestResolveMobSpell_MobVsMob(t *testing.T) {
 	mobs.SeedMobsForTest(map[int]*mobs.Mob{1: {MobId: 1, Character: characters.Character{Name: "Skeleton"}}},
 		map[int]*mobs.Mob{100: mob, 101: mob2})
 
-	cs := &characters.CastingState{
+	cs := activity.CastingData{
 		SpellId:              "sparks",
 		TargetMobInstanceIds: []int{101},
 	}
@@ -2583,7 +2584,7 @@ func TestHandleIdleMobs_GossiperMob(t *testing.T) {
 		MobId:         114,
 		InstanceId:    200,
 		HomeRoomId:    1,
-		Hostile:       false,
+		AutoAggro: false,
 		ActivityLevel: 7,
 		Groups:        []string{"humanoid", "gossiper"},
 		Character: characters.Character{

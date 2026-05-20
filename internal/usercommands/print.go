@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -54,7 +55,7 @@ func PrintLine(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		}
 
 		finalOutput = strings.ReplaceAll(finalOutput, `=`, `<ansi fg="8">=</ansi>`)
-		user.SendText(finalOutput)
+		user.SendText(messaging.CategorySystem, finalOutput)
 	}
 
 	return true, nil

@@ -18,6 +18,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
@@ -209,7 +210,7 @@ func tickFernwayPickup(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext
 					persistCrate(ctx.RoomId, r.SealedCrate)
 				}
 				if stored > 0 {
-					r.SendText(fmt.Sprintf(
+					r.SendText(messaging.CategoryMobEmote, fmt.Sprintf(
 						`<ansi fg="yellow">The caravan pulls up to the roadside crate, breaks the seal,`+
 							` and loads its contents into the wagon — %d %s in all.</ansi>`,
 						stored, caravanPluralize("crate-load", stored)))
@@ -273,7 +274,7 @@ func tickRoute(cur caravan.CaravanState, mob *mobs.Mob, ctx *EvalContext) Result
 		)
 		if msg := caravan.FormatVisitMessage(delivered, pickedUp); msg != "" {
 			if r := rooms.LoadRoom(nextRoom); r != nil {
-				r.SendText(msg)
+				r.SendText(messaging.CategoryMobEmote, msg)
 			}
 		}
 		newIdx := idx + 1
@@ -368,7 +369,7 @@ func anyPartyMemberInCombat(callerInstId int) bool {
 	}
 	for _, m := range p.Members {
 		c := m.GetCharacter()
-		if c != nil && c.Aggro != nil {
+		if c != nil && c.IsInCombat() {
 			return true
 		}
 	}

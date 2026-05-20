@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -50,16 +51,16 @@ func Show(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		if showItem.ItemId > 0 {
 
 			// Tell the Showee
-			targetUser.SendText(
+			targetUser.SendText(messaging.CategoryMobEmote,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> shows you their <ansi fg="item">%s</ansi>.`, mob.Character.Name, showItem.DisplayName()),
 			)
 
-			targetUser.SendText(
-				"\n" + showItem.GetLongDescription() + "\n",
+			targetUser.SendText(messaging.CategoryEquipment,
+				"\n"+showItem.GetLongDescription()+"\n",
 			)
 
 			// Tell the rest of the room
-			room.SendTextVisual(
+			room.SendTextVisual(messaging.CategoryMobEmote,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, mob.Character.Name, showItem.DisplayName(), targetUser.Character.Name),
 				targetUser.UserId)
 
@@ -76,7 +77,7 @@ func Show(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	if showItem.ItemId > 0 {
 
-		room.SendTextVisual(
+		room.SendTextVisual(messaging.CategoryMobEmote,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, mob.Character.Name, showItem.DisplayName(), targetMob.Character.Name),
 		)
 

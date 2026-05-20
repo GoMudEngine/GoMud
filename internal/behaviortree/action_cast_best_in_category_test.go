@@ -8,6 +8,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 )
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
@@ -412,7 +414,11 @@ func TestActCastBestInCategory_FailureWhenAlreadyCasting(t *testing.T) {
 	mob := mobs.GetInstance(103)
 	mob.Character.Conviction = 500
 	mob.Character.SpellBook = map[string]int{"d1": 1}
-	mob.Character.CastingState = &characters.CastingState{}
+	mob.Character.Activity = activity.NewMachine()
+	_ = mob.Character.Activity.TransitionToCasting(
+		activity.CastingData{SpellId: "d1"},
+		state.TransitionReason{Trigger: activity.TriggerCastBegin},
+	)
 
 	ctx := &EvalContext{InstanceId: 103}
 	params := map[string]any{"category": "self_defense"}

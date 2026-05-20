@@ -23,8 +23,13 @@ The `internal/characters` package is the core character system for DOGMud, handl
 ### Character Statistics System
 - **Six core stats**: Strength, Dexterity, Perception, Vitality, Willpower, Charisma
 - **Stat scaling**: Stats over 100 use `SQRT(overage)*2` formula for diminishing returns
-- **Dynamic modifiers**: Equipment, buffs, and species bonuses affect final stats
+- **Dynamic modifiers**: Equipment, buffs, pets, and mutations affect final stats
 - **Use-based improvement**: Stats improve organically through gameplay
+
+**Gear-effectiveness integration (chunk 2.2a):** `Character.StatMod()` multiplies
+the Equipment portion of `Mods` by `mutations.GearEffectivenessMultiplier(c.Mutations)`
+before summing with Buffs and Pet contributions. This cascades through `RecalculateStats()`
+into all downstream consumers (stat values, mitigation, recovery, skills, spells).
 
 ### Skill System (`progression.go`)
 - **Use-based progression**: Skills improve through gameplay use, not training points
@@ -218,6 +223,54 @@ if !user.Character.Cooldowns.Try("combat-special", fmt.Sprintf("%d rounds", cfg.
 - `Try(key, period)` checks if cooldown expired and resets if action performed
 - `Get(key)` returns remaining rounds for display purposes
 
+## Mitigation System (Three Channels)
+
+The character package provides three mitigation getter methods that compute
+total damage reduction across all equipped items and modifications:
+
+**Three Methods:**
+- `GetPhysicalMitigation()` — defends against physical damage
+- `GetMagicalMitigation()` — defends against spells
+- `GetConvictionMitigation()` — defends against taunt/conviction damage
+
+**Gear-effectiveness integration (chunk 2.2a):** Each method separates
+gear-derived contributions (equipment slot mitigation) from non-gear
+contributions (natural armor from mutations, species baseline, shield spell
+magnitude, buff stat mods). The gear portion is multiplied by
+`mutations.GearEffectivenessMultiplier(c.Mutations)` before summing.
+
+**Slot coverage:** All 25 equipment slots are included in the three
+mitigation getters, completed during chunk 2.2a:
+- Physical mitigation: Shoulders, Back, Wrist1/2, Ring, Ring2, ExtraWrist1-4,
+  ExtraArm3-4, ComponentBag (all physical-type armor items).
+- Magical mitigation: same slots (all items can carry magical mitigation).
+- Conviction mitigation: same slots.
+
+This ensures characters with many-armed mutations or high-value jewelry can
+leverage their full equipment potential for defense.
+
+## Intrinsic Mutations (chunk 2.5)
+
+`Character.ApplyIntrinsicMutations(species *species.Species)` merges
+the species's intrinsic mutations additively into `Character.Mutations`.
+No-op on nil species or empty intrinsic map. Cap-aware via
+`MutationMaxRank = 4` (matches chunk-2.2a convention; no per-mutation
+max field exists today).
+
+Called once at character init AFTER all other mutation logic:
+1. Curated SpawnMutations from mob YAML (mob spawn only)
+2. Random-roll mutation acquisition (mob spawn + player round tick)
+3. Persistent acquired mutations from save file (players only)
+4. `ApplyIntrinsicMutations(species)` — this call
+
+Stacks ADDITIVELY: a wolf species with `intrinsic_mutations: { tail: 1 }`
+that also rolls `tail` rank 1 ends up with effective rank 2 in
+`Character.Mutations`.
+
+File: `internal/characters/intrinsic.go`
+
+Design: `docs/superpowers/specs/2026-05-12-mob-aliveness-2.5-mutations-on-mobs-design.md`
+
 ## Key Features
 
 ### Character Persistence
@@ -260,6 +313,583 @@ When reading or writing merchant code, always distinguish between these three
 gold/inventory sources to avoid double-counting or routing items to the
 wrong pool.
 
+## Combat Phase Machine Integration (chunk 0)
+
+### New field: CombatPhase
+
+```go
+CombatPhase *combatphase.Machine `yaml:"-"`
+```
+
+Initialized in `New()` and lazily in `Validate()` (for characters loaded
+from YAML without a direct `New()` path). `RegisterMachine` is called
+immediately after allocation so inbound-attacker tracking is active from
+the first combat action.
+
+### New flag: NonCombatant
+
+```go
+NonCombatant bool `yaml:"non_combatant,omitempty"`
+```
+
+`true` = character is immune to combat targeting (shops, quest-givers,
+etc.). Set from `Mob.NonCombatant` during `Mob.Validate()` for mob
+characters; set directly in player creation for any exempt player
+archetype.
+
+```go
+func (c *Character) IsCombatant() bool { return !c.NonCombatant }
+```
+
+The `RegisterCombatantVeto` wiring in `CombatPhase_Vetoes.go` calls this
+to block `TransitionToEngaging` for non-combatants.
+
+### Internal guard: combatPhaseWired
+
+```go
+combatPhaseWired bool `yaml:"-"`
+```
+
+Set to `true` the first time `fireCharacterCreated` runs. The `Validate()`
+path checks this flag to avoid double-firing `OnCharacterCreated` callbacks
+when `Validate()` is called multiple times during a character's lifetime.
+
+### Predicate methods
+
+All read from `CombatPhase` exclusively; they do not read the legacy
+`Aggro` field.
+
+```go
+func (c *Character) IsEngaged() bool
+    // true when Combat Phase == Engaged (actively fighting)
+
+func (c *Character) IsInCombat() bool
+    // true when Combat Phase != Idle (any non-idle combat state)
+
+func (c *Character) IsDisengaging() bool
+    // true when Combat Phase == Disengaging (flee in progress)
+
+func (c *Character) EngagedTarget() state.ActorRef
+    // current target when Engaged; zero when not Engaged
+
+func (c *Character) CurrentCombatTarget() state.ActorRef
+    // current target across all non-Idle states (Engaging/Engaged/Disengaging)
+
+func (c *Character) Attackers() []state.ActorRef
+    // snapshot of inbound attacker list from CombatPhase
+```
+
+### Legacy Aggro field (compat surface)
+
+The `Aggro *Aggro` field is kept in `combat_state_compat.go` for the
+~200 direct field reads in usercommands, hooks, combat, and mob-commands
+that were not migrated in chunk 0. **Do not add new reads against
+`Character.Aggro`** — use the predicate methods above.
+
+All writes go through `SetAggro` / `EndAggro`, which dual-write to both
+`Aggro` and `CombatPhase.TransitionToEngaging` / `ForceIdle`. Direct
+mutation of `Character.Aggro` (bypassing the wrappers) is forbidden.
+
+Field removal is scheduled for a cleanup chunk after chunks 1-5 land and
+the remaining reads are migrated.
+
+### OnCharacterCreated callback registry
+
+```go
+func OnCharacterCreated(fn func(*Character))
+```
+
+Registers a callback that fires once per `Character` the first time it
+is fully initialized (after `New()` or on first `Validate()` if loaded
+from YAML). Used by the hooks package to wire state-machine vetoes and
+observers without creating an import cycle (characters cannot import
+hooks; hooks import characters).
+
+Current registrations (all in `internal/hooks/`):
+- `wireCombatPhaseVetoes` — wires the seven veto closures
+- `wireCombatPhaseBtreeEvents` — wires the btree transition cascade
+- `wireCompanionAssist` — subscribes to Attackers-change events
+
+## Awareness Machine Integration (chunk 1)
+
+### New field: Awareness
+
+```go
+Awareness *awareness.Machine `yaml:"-"`
+```
+
+Initialized in `New()` and lazily in `Validate()` (for characters loaded
+from YAML without a direct `New()` path). The awareness machine tracks
+whether a character is currently hidden and coordinates state transitions
+for sneak attempts, detection, and revealing. It operates independently
+of Combat Phase but cascades through the same hook framework.
+
+### New predicate: IsHidden()
+
+```go
+func (c *Character) IsHidden() bool
+    // true when Awareness == Hidden
+    // replacement for the old HasBuffFlag(buffs.Hidden) pattern
+```
+
+The only canonical way to check if a character is hidden. It reads directly
+from the Awareness machine's state, not from buff #9 (which is now a
+side-effect carrier only).
+
+### Cascade pattern: Awareness to Buff #9
+
+The `Awareness_Cascades.go` hook ensures buff #9 ("Hidden" status effect)
+stays synchronized with the Awareness machine:
+
+- When Awareness transitions to `Hidden` state, the hook applies buff #9
+  to the character (providing stat mods and room broadcast text).
+- When Awareness transitions away from `Hidden`, the hook removes buff #9.
+
+This maintains backward compatibility with systems that check for buff #9
+while keeping the Awareness machine as the canonical state source.
+
+### Hidden movement stamina scaling
+
+When a character is `Hidden`, movement stamina cost is multiplied by
+`HiddenMoveStaminaMultiplier` (config default 1.0, tunable at runtime).
+This is read in `GetMovementStaminaCost()` and applied before returning
+the movement cost to the caller.
+
+### Integration with Combat Phase
+
+The Awareness machine subscribes to Combat Phase's `OnEndOfRoundIfSurprise`
+callback (wired in `Awareness_Cascades.go`). When a surprise engagement
+completes its first round of swings, the Awareness machine triggers a
+reveal cascade (`Hidden → Revealing → Visible`), forcing surprise-attacked
+sneakers out of hiding. The full cascade completes before the next round
+begins, ensuring surprised attackers are visible for retaliation.
+
+### Logout cleanup
+
+The `Logout_AwarenessCleanup.go` hook calls `ForceVisible()` on logout,
+ensuring the awareness machine doesn't leak state or block future character
+reuses (edge case safety).
+
+## Life Machine Integration (chunk 2)
+
+### New field: Life
+
+```go
+Life *life.Machine `yaml:"-"`
+```
+
+Initialized in `New()` and lazily in `Validate()` (for characters
+loaded from YAML without a direct `New()` path). `RegisterMachine`
+is called immediately after allocation. The Life machine is the
+canonical source of truth for "is this character alive?".
+
+### Predicate methods
+
+```go
+func (c *Character) IsAlive() bool
+    // true when Life == Alive
+
+func (c *Character) IsDead() bool
+    // true when Life == Dead
+
+func (c *Character) IsRespawning() bool
+    // true when Life == Respawning (player only)
+```
+
+Note: these predicates call through to the Life machine. Tests that
+exercise code paths gated by these predicates must initialize the
+Life machine (via `Validate()` or direct `NewMachine()` assignment)
+or the call will panic on a nil pointer.
+
+### Die helper (die.go)
+
+```go
+func (c *Character) Die(killer state.ActorRef, trigger string)
+```
+
+Chains all Life transitions in the correct order. Players complete
+all three states (`Dead → Respawning → Alive`) same-tick via
+synchronous `AfterTransition` observer chains. Mobs only transition
+to `Dead`; the instance-cleanup observer fires synchronously and
+despawns the mob.
+
+Callers MUST pre-check before calling `Die`:
+1. `ReviveOnDeath` buff (prevents death; callers bail early if set)
+2. `LastSuicideRound` dedupe (if the call site can double-fire)
+3. Shadow Realm zone guard (player call sites only)
+
+`Die` is idempotent: if the Life machine is already `Dead` or
+`Respawning` it returns immediately without firing observers.
+
+### ResolveRespawnRoom (respawn_home.go)
+
+```go
+func (c *Character) ResolveRespawnRoom() int
+```
+
+Reads the player's `"home"` setting, looks it up in
+`HomeLocations`, and falls back to `"default"` (Sanctum Basin
+entrance, room 0) if unset or unrecognized.
+
+`HomeLocations` maps setting key → room ID. `HomeLocationNames`
+maps setting key → display string. Both are exported maps consumed
+by `sethome.go` (key validation) and by `Respawn_PlayerTeleport.go`
+(destination resolution).
+
+Current entries:
+
+| Key | Room ID | Display Name |
+|-----|---------|--------------|
+| `"default"` | 0 | Sanctum Basin |
+| `"thornwall"` | 468 | Thornwall City (Temple Interior) |
+| `"stillwater"` | 4123 | Stillwater (Temple of Stillwater) |
+
+### MobInstanceId field
+
+```go
+MobInstanceId int `yaml:"-"`
+```
+
+Non-persisted field set to the mob's live `InstanceId` at
+character initialization. Used as a cheap gating check in Life
+machine observers (`c.MobInstanceId != 0` = mob) without requiring
+a cast or registry lookup.
+
+### OnCharacterCreated additions (chunk 2)
+
+The `OnCharacterCreated` registry gains Life-machine wire callbacks.
+New registrations (all in `internal/hooks/`):
+- `wireLifeMachine` — registers the Life machine and all Death +
+  Respawn observer chains
+
+## Activity Machine Integration (chunk 3)
+
+### New field: Activity
+
+```go
+Activity *activity.Machine `yaml:"-"`
+```
+
+Initialized in `New()` and nil-guarded in `Validate()` (for characters
+loaded from YAML without a direct `New()` path). The Activity machine
+is the canonical source of truth for "what multi-round action is this
+character locked into right now?"
+
+### Predicate methods
+
+```go
+func (c *Character) IsFree() bool
+    // true when Activity == Free (no activity in flight)
+
+func (c *Character) IsCasting() bool
+    // true when Activity == Casting
+    // replaces the old c.CastingState != nil check
+
+func (c *Character) IsCrafting() bool
+    // true when Activity == Crafting
+    // replaces the old c.CraftingState != nil check
+
+func (c *Character) IsSalvaging() bool
+    // true when Activity == Salvaging
+
+func (c *Character) IsActing() bool
+    // true when Activity != Free (any non-Free state)
+    // canonical "is busy" gate replacing the old IsCrafting() gate
+    // at special-moves check sites (13 call sites rewired in chunk 3)
+```
+
+`IsActing()` is preferred for "should this action be blocked because
+the character is busy?" checks. Use the specific predicates only when
+you need to distinguish which activity is running (e.g., the craft
+command's own re-entrancy check).
+
+### OnCharacterCreated additions (chunk 3)
+
+The `OnCharacterCreated` registry gains the Activity machine wire
+callback. New registration (in `internal/hooks/`):
+- `wireActivityCrossMachineCascades` — subscribes `activity_life_dead`
+  observer to the Life machine; wires the Activity machine's identity
+  via `RegisterMachine`.
+
+### Sunset notes (chunk 3)
+
+The following fields and files were deleted in chunk 3:
+- `Character.CastingState *characters.CastingState` field
+- `Character.CraftingState *characters.CraftingState` field
+- `internal/characters/casting.go` — `CastingState` struct
+- `internal/characters/crafting.go` — `CraftingState` struct
+- `CraftingState.MiscData["salvage_item_uuid"]` key pattern
+
+All call sites that read `c.CastingState != nil` or
+`c.CraftingState != nil` were migrated to `IsCasting()` / `IsCrafting()`
+/ `IsSalvaging()` / `IsFree()` / `IsActing()` predicates.
+
+## Position Machine Integration (chunk 4a — scaffold)
+
+### New field: Position
+
+```go
+Position *position.Machine `yaml:"-"`
+```
+
+Initialized in `New()` and nil-guarded in `Validate()` (for characters
+loaded from YAML without a direct `New()` path). The Position machine
+is the sole source of truth for body geometry and grapple state. Chunk
+4a scaffolded the machine; **chunk 4b completed the full cutover**:
+all production writers (W1-W8), all readers (R1-R6 including R4 Life
+cascade pre-wire deletion), and the legacy field sunsets (S1-S5) have
+all shipped. The legacy `CombatPosition` enum, `PositionRoundsMin`
+field, `GrappleControllerId` field, `ConditionGrappleController`
+constant, and `internal/characters/combatposition.go` are deleted.
+
+### Predicate methods (chunk 4a + 4b)
+
+**Chunk 4a — 19 predicates** in `position_predicates.go` delegate to
+the underlying machine with nil guards. Nil-guard convention:
+`IsStanding()` returns `true` on a nil machine (matches `NewMachine()`
+default); all others return `false`.
+
+14 per-state predicates: `IsStanding`, `IsProne`, `IsSupine`,
+`IsClinch`, `IsBackStanding`, `IsMount`, `IsSideControl`,
+`IsKneeOnBelly`, `IsNorthSouth`, `IsCrucifix`, `IsBackGround`,
+`IsHalfGuard`, `IsGuard`, `IsTurtle`.
+
+5 rollup predicates: `IsGrappling`, `IsStandingGrapple`,
+`IsGroundGrapple`, `IsTopDominant`, `IsOnFloor`.
+
+**Chunk 4b-fixup-2 — control-axis predicates and helpers:**
+
+- `IsController()` — true when `Character.Control.State() ==
+  control.Controlling`. Reads the `internal/state/control` FSM on
+  `Character.Control *control.Machine`. Replaced the deleted
+  `HasCondition(ConditionGrappleController)` check (S4 shipped).
+- `IsBeingControlled()` — true when `Character.Control.State() ==
+  control.Controlled` (symmetric to `IsController`).
+- `IsLowGrappleStamina()` — true when stamina fraction is below
+  `GrappleStaminaLowThreshold` (config, default 0.25). Used by
+  `mob_low_grapple_stamina` btree primitive and by
+  `Position_Messaging` for the once-per-grapple "you're getting
+  gassed" warning.
+- `GetPositionSpeedMultiplier()` — replaces the deleted
+  `CombatPosition.GetSpeedMultiplier()` helper (S5 shipped). Switches
+  on `Position.State()`: Standing 1.0, Prone/Supine/Turtle 0.5,
+  Clinch/BackStanding 0.6, ground grapples 0.3.
+
+**Legacy enum — fully removed (T21 sunset, 2026-05-16):** the
+`CombatPosition` enum, its `IsGroundPosition()` / `IsGrapplePosition()`
+/ `GetSpeedMultiplier()` / `GetPositionColor()` helpers, the
+`PositionRoundsMin` / `GrappleControllerId` fields, the
+`ConditionGrappleController` constant, and the file
+`internal/characters/combatposition.go` are all deleted. The mapping
+table below is kept for historical reference (chunk 4c/4d/4e writers
+should use these predicates from day one):
+
+| Deleted legacy API | Current FSM predicate |
+|--------------------|-----------------------|
+| `== PositionProne` | `IsProne() \|\| IsSupine()` |
+| `== PositionClinched` | `IsStandingGrapple()` |
+| `== PositionGrounded` | `IsGroundGrapple()` |
+| `!= PositionStanding` | `!IsStanding()` |
+| `.IsGrapplePosition()` | `IsGrappling()` |
+| `.IsGroundPosition()` | `IsOnFloor()` |
+| `.GetSpeedMultiplier()` | `GetPositionSpeedMultiplier()` |
+| `HasCondition(GrappleController)` | `IsController()` |
+
+Position predicates also drive the chunk-4c reach utility
+(`internal/combat/reach.go`): `IsGrappling()` + `State()` determine the
+grapple radius, which scales weapon damage per swing.
+
+### Prompt helpers (chunk 4b R6)
+
+The `{pos}` prompt-token cutover added two private helpers in
+`internal/users/userrecord.prompt.go`:
+
+- `positionPromptColor(position.State) string` — returns the ANSI
+  color name. Standing white, Prone/Supine yellow, Clinch/BackStanding
+  orange, ground grapples red. Replaces the legacy
+  `CombatPosition.GetPositionColor()`.
+- `positionPromptAbbrev(position.State) string` — abbreviates long
+  state names: BackStanding→B.Std, BackGround→B.Gnd, SideControl→SC,
+  KneeOnBelly→KOB, NorthSouth→N-S, HalfGuard→H.Gd. Other states
+  render verbatim via `State.String()`.
+
+These live in the users package (not characters) because they format
+the prompt-substitution output, not the underlying state.
+
+### Chunk-4d submission fields (T2, T5)
+
+Three fields added to the `Character` struct in chunk 4d:
+
+**`SubmissionPolicy SubmissionPolicy`** — controller-side disposition
+that resolves when the attempter locks a submission. Four values:
+`PolicyMercy` / `PolicySubdue` / `PolicyCripple` / `PolicyLethal`.
+Default for players: `PolicySubdue`. Set via `set submission` command.
+Mob defaults are archetype-driven via
+`DefaultSubmissionPolicyForArchetype(archetype)`.
+
+Persisted: `yaml:"submission_policy,omitempty"`.
+
+**`SurrenderPolicy SurrenderPolicy`** — controlled-side tap signal. A
+struct `{Mode SurrenderMode, HpPctThreshold int}`. Three modes:
+`SurrenderNever` / `SurrenderAlways` / `SurrenderAutoTap` (fires when
+HP% drops below `HpPctThreshold`). Default for players:
+`SurrenderAutoTap` at 15%. Set via `set surrender` command.
+
+Persisted: `yaml:"surrender_policy,omitempty"`.
+
+Only `mercy` policy on the attempter consults `SurrenderPolicy`. The
+other three policies proceed regardless of the defender's tap signal.
+
+**`LastDriftRoll DriftRollSnapshot`** — runtime-only snapshot of the
+most recent per-round grapple drift roll. Written by
+`Position_GrappleTick.go` at the end of each grapple round; read by
+`Position_SubmissionTick.go` to decide whether a sub-attempt window is
+open without re-rolling. The snapshot includes:
+- `Round uint64` — the round number when the snapshot was taken
+  (used by `EvaluateSubAttempt` to reject stale data).
+- `MarginAttacker float64` — attacker-side drift margin.
+- `AttackerZScore float64` — controller's z-score from the drift roll.
+- `DefenderZScore float64` — controlled side's z-score.
+
+Not persisted: `yaml:"-"`.
+
+**`LastSubmissionAttempted int`** — round-robin index into the current
+position's sub pool (`TopSubmissionsForPosition` or
+`BottomSubmissionsForPosition`). Advanced by
+`pickSubmissionRoundRobin` each time a sub attempt fires so the same
+sub type is not hammered every round. Not persisted: `yaml:"-"`.
+
+### CalcConcentrationChance (cast_helpers.go)
+
+```go
+func CalcConcentrationChance(willpower, damagePct int) int
+```
+
+Returns the % chance (0-100) that a caster maintains concentration given
+their Willpower and an incoming disruption expressed as a percentage of max
+HP. Higher Willpower → higher chance to hold; higher `damagePct` →
+lower chance to hold. The formula uses a Willpower divisor and a flat base,
+both tunable via config.
+
+**Consumed by two independent disruption paths:**
+
+1. **Damage-path** (`checkConcentrationBreak` in
+   `internal/hooks/combat_shared_helpers.go`): fires when the caster
+   takes damage mid-cast. `damagePct = (damage * 100) / maxHP`.
+2. **Position-path** (`processFoldRound`, chunk 4f): fires every fold
+   round when the caster is not `Standing`. `damagePct` comes from
+   `position.PositionDisruptionDmgEquiv(pos, role)` —
+   `internal/state/position/disruption.go`. Standing returns 0 (call
+   to `CalcConcentrationChance` is skipped entirely in that case).
+
+Both paths call `characters.CalcConcentrationChance` with the same
+Willpower curve; both can break a cast in the same round (layered
+disruption). Tests live in `internal/characters/casting_test.go`.
+
+### OnCharacterCreated additions (chunk 4a + 4b)
+
+The `OnCharacterCreated` registry gains four Position-related wire
+callbacks across chunks 4a and 4b:
+
+- **4a `wirePositionCrossMachineCascades`** — subscribes the
+  `position_life_dead` observer to the Life machine; handles
+  `Alive → Dead` cascade that resets Position to `Standing`.
+- **4b `wirePositionGrappleTick`** — registers the per-round drift
+  observer that fires opposed control rolls + grapple stamina cost +
+  threshold-triggered position transitions.
+- **4b `wirePositionMessaging`** — registers the per-round messaging
+  observer that fires gradient ("getting controlled"), transition
+  ("you scramble out of mount"), and stamina-warning text with
+  per-grapple cooldowns.
+- **4b `wirePositionConsistencyCheck`** — registers the periodic
+  invariant checker (`ValidateGrapplePair`) that catches pair drift
+  (e.g. controller's partner ref doesn't match controlled's ref).
+
+## Presence Machine Integration (chunk 5)
+
+### New field: Presence
+
+```go
+Presence *presence.Machine `yaml:"-"`
+```
+
+Initialized in `New()` (player path → `NewPlayerPresence()`, starts in
+`Connecting`) and in `mobs.Mob.Validate()` after the shallow copy (mob
+path → `NewMobPresence()`, starts in `Spawning`). The field is
+nil-guarded at all consumers via `m.State()` which returns `Active` on
+a nil machine. Not persisted: presence is transient session state that
+resets on disconnect/respawn.
+
+The Presence machine is the single canonical source for "is this
+character meaningfully present?" — replacing the ad-hoc
+`ManualAFK`/`BoredomCounter` fields that were removed in chunk 5.
+
+### CancelAllScheduled helper (T8)
+
+```go
+func (c *Character) CancelAllScheduled()
+```
+
+Called by the scheduler-cancel observer when Presence enters a terminal
+state (`Disconnected` for players, `Despawning` for mobs). Cancels all
+pending scheduled transitions across all machines on this character
+(Activity casting/crafting timers, Position recovery timers, etc.).
+Wired by `hooks.wirePresenceSchedulerObserver` via `OnCharacterCreated`.
+
+### OnCharacterCreated additions (chunk 5)
+
+New registrations (all in `internal/hooks/`):
+- `wirePresenceMobVetoes` — registers `Active→Dormant` and
+  `Active→Despawning` vetoes that return `ErrVetoed` when
+  `IsEssential() || IsCharmed()`.
+- `wireCombatPhasePresenceVeto` — populates
+  `CombatPhase.RegisterTargetPresenceCheck` with a closure that blocks
+  `Idle→Engaging` for `Disconnected`/`Despawning` targets.
+- `wirePresenceSchedulerObserver` — fires `CancelAllScheduled()` on
+  terminal-state entry.
+
+## Perception Machine Integration (chunk 6)
+
+### New field: Perception
+
+```go
+Perception *perception.Machine `yaml:"-"`
+```
+
+Initialized in `New()` and nil-guarded in `Validate()` (for characters
+loaded from YAML without a direct `New()` path). Also unconditionally
+overwritten in `mobs.Mob.Validate()` after the shallow copy, and reset
+to nil in `Character.ResetForMobInstance()` so fresh mob instances get
+their own machine. Not persisted: perception state is transient and
+reconstructed from active buffs/conditions at runtime.
+
+The Perception machine tracks whether a character can see — `Sighted`
+(default) or `Blinded` (any of three active sources: Buff 3, Buff 77,
+or ConditionBlinded). Chunk 6 ships DORMANT: transitions fire correctly
+via `AddBuff`/`RemoveBuff`/`AddCondition`/`RemoveCondition`, but no
+consumer reads `Perception.State()` yet. The future messaging framework
+chunk wires this into broadcast gating (visual broadcasts suppressed
+while Blinded), infrared "red shapes" rendering, and look-command
+blocking. See `internal/state/perception/context.md` for full details
+and `messaging-framework-chunk` project memory for the successor scope.
+
+### IsBlinded predicate
+
+No `IsBlinded()` predicate ships in chunk 6 — the dormant design omits
+it intentionally to avoid readers being added before the messaging
+framework context is in place. The predicate will land in the messaging
+framework chunk alongside the first real consumer.
+
+### HasAnyBlindSource helper (sight.go)
+
+`Character.HasAnyBlindSource()` in `internal/characters/sight.go` checks
+all three blind sources and returns true if any is currently active. Used
+by the expire-paths in `RemoveBuff` and `RemoveCondition` to determine
+whether to fire `Blinded→Sighted` when one of multiple overlapping
+sources clears. Uses `Buffs.TriggersLeft(id) > 0` rather than
+`HasBuff(id)` — see `internal/state/perception/context.md` for the
+implementation-detail rationale.
+
 ## Dependencies
 - `internal/stats`: Core statistics definitions
 - `internal/items`: Item system integration
@@ -271,3 +901,10 @@ wrong pool.
 - `internal/pets`: Pet system integration
 - `internal/gametime`: Time-based mechanics
 - `internal/colorpatterns`: Text formatting and colors
+- `internal/state/combatphase`: Combat Phase state machine (chunk 0)
+- `internal/state/awareness`: Awareness state machine (chunk 1)
+- `internal/state/life`: Life state machine (chunk 2)
+- `internal/state/activity`: Activity state machine (chunk 3)
+- `internal/state/position`: Position state machine (chunks 4a + 4b)
+- `internal/state/presence`: Presence state machine (chunk 5)
+- `internal/state/perception`: Perception state machine (chunk 6)

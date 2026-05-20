@@ -4,9 +4,12 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/life"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -80,7 +83,7 @@ func ApplyBuffs(e events.Event) events.ListenerReturn {
 				charPlainName = u.Character.GetCharacterName(false)
 				roomId = u.Character.RoomId
 				excludeId = u.UserId
-				sendFunc = func(msg string) { u.SendText(msg) }
+				sendFunc = func(msg string) { u.SendText(messaging.CategoryBuffApply, msg) }
 			}
 		} else if evt.MobInstanceId != 0 {
 			if m := mobs.GetInstance(evt.MobInstanceId); m != nil {
@@ -99,7 +102,7 @@ func ApplyBuffs(e events.Event) events.ListenerReturn {
 				UserSendFunc: sendFunc,
 				RoomSendFunc: func(msg string, skip ...int) {
 					if r := rooms.LoadRoom(roomId); r != nil {
-						r.SendText(msg, skip...)
+						r.SendText(messaging.CategoryBuffApply, msg, skip...)
 					}
 				},
 				ExcludeId: excludeId,
@@ -122,14 +125,13 @@ func ApplyBuffs(e events.Event) events.ListenerReturn {
 	//
 	if buffInfo.TriggerNow {
 
-		if evt.MobInstanceId > 0 && targetChar.Health <= 0 {
-			// Mob died
-			events.AddToQueue(events.Input{
-				MobInstanceId: evt.MobInstanceId,
-				InputText:     `suicide`,
-			})
-
+		if evt.MobInstanceId > 0 && targetChar.Health <= 0 && targetChar.IsAlive() {
+			// Buff-tick death (e.g. a DoT buff that fires TriggerNow):
+			// route through the Life machine for same-tick observer firing
+			// rather than queuing a suicide command for next tick.
+			targetChar.Die(state.ActorRef{}, life.TriggerHealthZero)
 		}
+
 	}
 
 	events.AddToQueue(events.BuffsTriggered{UserId: evt.UserId, MobInstanceId: evt.MobInstanceId, BuffIds: []int{evt.BuffId}})

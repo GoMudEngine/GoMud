@@ -1,13 +1,14 @@
 mobid: 74
 zone: Labyrinth of Low Tunnels
 archetype: casting
-behavior_archetype: support_caster
+behavior_archetype: defensive_caster
 statpool: 15
 hostile: false
 charm_immune: true
 maxwander: 0
 buffids: [29]
 groups:
+  - warren
   - humanoid
   - mutant
 idlecommands:
@@ -17,9 +18,6 @@ idlecommands:
   - ''
   - ''
 activitylevel: 15
-reaction_delay: 1.5
-tactical_discipline: 0.40
-tactic_preset: defensive_caster
 character:
   name: tunnel shaman
   description: |

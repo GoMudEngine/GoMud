@@ -8,6 +8,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -174,15 +176,16 @@ func TestTransportCompanions_CastInterrupt(t *testing.T) {
 
 	mob := mobs.GetInstance(200)
 	require.NotNil(t, mob)
-	mob.Character.CastingState = &characters.CastingState{
-		SpellId:     "sparks",
-		FoldsNeeded: 3,
-	}
+	mob.Character.Activity = activity.NewMachine()
+	_ = mob.Character.Activity.TransitionToCasting(
+		activity.CastingData{SpellId: "sparks", FoldsNeeded: 3},
+		state.TransitionReason{Trigger: activity.TriggerCastBegin},
+	)
 
 	TransportCompanions(owner, 1, 2)
 
-	assert.Nil(t, mob.Character.CastingState,
-		"CastingState must be cleared on move")
+	assert.True(t, mob.Character.Activity == nil || mob.Character.Activity.IsFree(),
+		"Activity must be Free (cast cleared) on move")
 	assert.Equal(t, 2, mob.Character.RoomId,
 		"companion must be in destination room after cast-interrupt")
 }

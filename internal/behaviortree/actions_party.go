@@ -20,6 +20,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -219,10 +220,10 @@ func engageHostilePlayerInRoom(mobInstanceId int, roomId int) bool {
 	if mob == nil {
 		return false
 	}
-	if mob.Character.Aggro != nil {
+	if mob.Character.IsInCombat() {
 		return true // already engaged
 	}
-	if !mob.Hostile {
+	if !mob.AutoAggro {
 		return false
 	}
 	room := rooms.LoadRoom(roomId)
@@ -234,13 +235,13 @@ func engageHostilePlayerInRoom(mobInstanceId int, roomId int) bool {
 		if u == nil {
 			continue
 		}
-		// Honor peacefulquest immunity — same gate as mobcommands.LookForTrouble.
-		if mob.PeacefulQuest != "" && u.Character.HasQuest(mob.PeacefulQuest) {
+		// Honor faction-rep peace gate — same as mobcommands.LookForTrouble.
+		if factions.IsPeacefulToward(mob, u.UserId) {
 			continue
 		}
 		mob.Character.SetAggro(uid, 0, characters.DefaultAttack)
 		// SetAggro silently no-ops on grace-protected players; verify it stuck.
-		if mob.Character.Aggro != nil {
+		if mob.Character.IsInCombat() {
 			return true
 		}
 	}
@@ -278,7 +279,7 @@ func actPartyAssistTarget(params map[string]any, ctx *EvalContext) Result {
 		return Failure
 	}
 	leaderChar := p.Leader.GetCharacter()
-	if leaderChar == nil || leaderChar.Aggro == nil {
+	if leaderChar == nil || !leaderChar.IsInCombat() {
 		return Failure
 	}
 	self := mobs.GetInstance(ctx.InstanceId)
@@ -286,8 +287,8 @@ func actPartyAssistTarget(params map[string]any, ctx *EvalContext) Result {
 		return Failure
 	}
 	self.Character.SetAggro(
-		leaderChar.Aggro.UserId,
-		leaderChar.Aggro.MobInstanceId,
+		leaderChar.CurrentCombatTarget().UserId,
+		leaderChar.CurrentCombatTarget().MobInstanceId,
 		characters.DefaultAttack,
 	)
 	return Success

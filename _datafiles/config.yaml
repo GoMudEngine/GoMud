@@ -63,7 +63,7 @@ Server:
   - checkclient
   # - Motd -
   #   Message of the day. This is displayed when the motd command is run.
-  Motd: '{{ t "LIVING TRADE NETWORK — A six-mob caravan now physically hauls goods between Thornwall and Stillwater (`look wagon` to see what''s on board). Three foragers gather raw materials in the wild and deliver to local shops: Tova in Stillwater Marsh, Halix in Ironwind Steppe, Kessa in the Fernway.\nDYNAMIC SHOP ECONOMY — Vendor prices flex with stock: 0.25x when overstocked, up to 5x when nearly empty. Stock caps now scale with item rarity (tier-50 commodities cap at 50, tier-20 specialties at 20). New characters start with 250 gold so they can try a mid-tier craft.\nTWO NEW WILDERNESS ZONES — Fernway South (south from Fox Den) and Stillwater Marsh (west from Mill Creek Footbridge). 40 rooms of forage country, mostly peaceful but watch for forest badgers and bog adders.\nQOL — Corpse salvage yields cloth, leather, sinew. Sanctuary mutator gives 5x regen at temples and foragers'' camps. Foragers fold-recall to sanctuary when wounded.\nNovel: https://github.com/pruuk/DOGMud/blob/master/what_the_moons_keep.md\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
+  Motd: '{{ t "COLOR-CODED COMBAT — Every swing now colors by weapon type (warhammer in warm orange-brown, sword in dusty rose, claws in dark red, fists in sandy brown, bows in sky blue). Defenses light up in greens (dodge / parry / block). Spells render in their school: elemental red, enhancement gold, vital sage, mental lavender, manifestation rose pink. A multi-weapon character can see four colors in a single round.\nSKILL & STAT BANNERS — Progression now renders as a boxed banner — `SKILL ADVANCEMENT` / `STATISTIC INCREASED` framed by rules. Quality-band crossings (apprentice → journeyman) add a transition line.\nCOMBAT STATE MACHINES — Mobs and players now run six FSMs under the hood (Combat Phase, Awareness, Life, Activity, Position, Presence, Perception). Mobs go dormant when no players are nearby; AFK players in safe rooms can no longer be attacked; sneak persists correctly instead of cancelling on its own.\nQOL — `set linewidth N` (40-240, default 80) controls per-player wrap width. Infrared observers in dark rooms see anonymized red figures instead of named characters. ANSI-aware wrapping means color tags no longer count against the wrap budget.\nNovel: https://github.com/pruuk/DOGMud/blob/master/what_the_moons_keep.md\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
   # - NextRoomID -
   # This number is auto-updated to the highest number of rooms in the game.
   #   If creating your own rooms but don't want to risk an update conflicting,
@@ -83,6 +83,13 @@ Server:
   - Server.Seed
   - Server.OnLoginCommands
   - Server.BannedNames
+  # Presence machine (chunk 5 — 2026-05-19) — replaces MaxMobBoredom +
+  # ad-hoc AFK computation. See internal/state/presence/context.md.
+  PresenceIdleAfterRounds: 8         # Active → Idle (~30s)
+  PresenceAFKAfterRounds: 75         # Idle → AFK (~5min)
+  PresenceDisconnectAfterRounds: 900 # AFK → Disconnected (~1h)
+  PresenceMobDormantAfterRounds: 30  # mob Active → Dormant
+  PresenceMobDespawnAfterRounds: 60  # mob Dormant → Despawning
 
 ################################################################################
 #
@@ -91,12 +98,6 @@ Server:
 #
 ################################################################################
 Memory:
-  # - MaxMobBoredom -
-  #   How many rounds a mob can go without seeing a player before a mob despawns.
-  #   This is mainly a resource management feature to keep the game from getting
-  #   bogged down with too many mobs in memory. If you want mobs to stick around
-  #   indefinitely, set this to 0. Certain mobs may never despawn, however.
-  MaxMobBoredom: 250
   # - MobUnloadThreshold -
   #   Do not unload any bots if the in-memory count is under this threshold.
   MobUnloadThreshold: 100
@@ -248,9 +249,6 @@ GamePlay:
     #   Players with total skill ranks at or below this value are protected
     #   from death penalties. Gives new players a grace period.
     ProtectionSkillRanks: 10
-    # - PermaDeath -
-    #   If true, players lose their character if they die with zero lives left.
-    PermaDeath: false
     # - CorpsesEnabled -
     #   If set to true, corpses are left behind by players or mobs that are killed.
     CorpsesEnabled: true
@@ -258,15 +256,6 @@ GamePlay:
     #   How long until corpses crumble to dust (Go away).
     #   See ShopRestockRate comments for time format.
     CorpseDecayTime: 4 hours
-  # - LivesStart -
-  #   (Req: PermaDeath) How many lives players start with before being reset.
-  LivesStart: 3
-  # - LivesMax -
-  #   (Req: PermaDeath) The maximum lives a player can have.
-  LivesMax: 3
-  # - PricePerLife -
-  #   (Req: PermaDeath) If non-zero, players can buy extra lives for this amount.
-  PricePerLife: 1000000
   # - ShopRestockRate -
   #   The default time for a shops to restock 1 item. This can still be
   #   overriden in character shop definitions if desired.
@@ -459,6 +448,18 @@ Balance:
   # See _datafiles/combat-messages/* for message definitions.
   ConsistentAttackMessages: false
 
+  # ── SKULLDUGGERY: LIGHT-CONDITIONAL SNEAK MODIFIERS ──────────────────────
+  # Four-way conditional applied in CalcSneakScore(effectiveLit).
+  # effectiveLit = room is lit OR observer has NightVision buff.
+  #   beacon in darkness: sneaker emits light, room dark  → 0.5x  (very hard to hide)
+  #   blend in:           sneaker emits light, room lit   → 0.85x (lit, but so is room)
+  #   alert observers:    sneaker dark, room lit          → 0.9x  (harder to hide)
+  #   baseline:           sneaker dark, room dark         → 1.0x  (best stealth)
+  HiddenMoveStaminaMultiplier: 3.0  # Extra stamina cost multiplier for hidden movement
+  SneakModEmitsLightDarkRoom: 0.5   # Beacon penalty: emitting light in a dark room
+  SneakModEmitsLightLitRoom: 0.85   # Blend-in modifier: emitting light in a lit room
+  SneakModNoLightLitRoom: 0.9       # Alert-observer modifier: dark sneaker in lit room
+
   # ── COMBAT: DARKNESS ───────────────────────────────────────────────────────
   # Multiplier on attack AND defense scores when fighting in a dark room
   # without nightvision. 0.80 = 20% penalty to hit and defend while blind.
@@ -467,7 +468,7 @@ Balance:
   # ── COMBAT: DAMAGE ────────────────────────────────────────────────────────
   # Global panic buttons. 1.0 = no change. GlobalDamageMultiplier is
   # applied to ALL damage channels in CalcRawDamage().
-  GlobalDamageMultiplier: 1.0
+  GlobalDamageMultiplier: 0.5  # Halved for chunk-4b-fixup smoke — let grapples develop before TTK
   GlobalDefenseMultiplier: 1.0
   #
   # Legacy unarmed knobs — still used by GetDefaultDistributionDamage()
@@ -559,6 +560,46 @@ Balance:
   HealthPenaltyMax: 0.28         # At 0% HP: melee damage reduced by 28%
   StaminaPenaltyMax: 0.28        # At 0% SP: attacks/hit rate reduced by 28%
   ConvictionPenaltyMax: 0.28     # At 0% CP: taunt/spell reduced by 28%
+
+  # ── Chunk 4e: Third-party interference ───────────────────────────────────
+  ControlDegradeOnOutsideHit: true     # chunk 4e §5; set false to disable 3rd-party hit → controller ControlLevel drift
+  SubInterruptDamageThresholdPct: 0.10  # chunk 4e §7; 10% of max HP triggers sub interrupt. Set 0 to disable threshold path (crit-only).
+
+  # ── Grapple Control Axis (chunk 4b — per-round drift mechanics) ──────────
+  # See docs/superpowers/specs/2026-05-16-state-chunk-4b-position-control-axis-design.md
+  # Penalty curves are deliberately steeper than the combat ResourcePenalty
+  # knobs above — grappling cardio-stresses faster than stand-up fighting.
+  GrappleStaminaPenaltyMax: 0.60        # Max roll-mult reduction at 0% stamina
+  GrappleStaminaPenaltyCurve: 1.5       # Exponent — higher = steeper near 0% stamina
+  GrappleEncumbrancePenaltyMax: 0.80    # Max roll-mult reduction at "crushed" encumbrance
+  GrappleEncumbrancePenaltyCurve: 1.5   # Exponent — higher = steeper near max
+  GrappleStaminaCostPerRound: 5         # Base per-round stamina cost in grapples
+  GrappleControllerCostMultiplier: 1.0  # Controller side multiplier (5 × 1.0 = 5/round)
+  GrappleControlledCostMultiplier: 2.0  # Controlled side multiplier (5 × 2.0 = 10/round)
+  GrappleStaminaLowThreshold: 0.25      # Stamina fraction below which "you're getting gassed" fires once per grapple
+  PositionConsistencyCheckRounds: 10    # How often the periodic invariant checker runs
+
+  # ── Reach Utility Curve (chunk 4c — weapon reach vs grapple radius) ────────
+  # Long weapons (spears, longswords) take a damage penalty when the attacker
+  # is grappling. Short weapons (daggers, fists) stay effective. The radius
+  # (meters) defines the space available in each grapple class; weapons whose
+  # reach exceeds the radius are penalized (radius/reach, floored at
+  # reach_utility_floor). See internal/combat/reach.go for formula details.
+  reach_standing_grapple_radius: 0.5  # Clinch / BackStanding: ~chest-to-chest
+  reach_ground_grapple_radius: 0.3    # Ground grapples: body-on-body distance
+  reach_utility_floor: 0.15          # Floor: even a pike can still poke (hilt-strike)
+
+  # ── Chunk 4d: Submission tick ─────────────────────────────────────────────
+  # Per-round opportunistic submission attempts gated on the chunk-4b
+  # control-axis drift roll. See spec
+  # docs/superpowers/specs/2026-05-18-state-chunk-4d-submission-rework-design.md
+  submission_attempt_alpha: 1.0          # Drift margin (std devs) that opens a sub window for the winning side
+  submission_attempt_crit_z: 2.0         # Defender-crit shortcut for bottom-sub windows
+  sub_skill_weight: 1.5                  # Unarmed-combat skill weight in the sub roll
+  sub_bad_z_threshold: -1.0              # Sub roll z < this → attempter falls prone, pair breaks
+  sub_crit_z_threshold: 2.0              # Sub roll z >= this → recipient stunned next round
+  sub_gold_loss_fraction: 0.20           # Fraction of carried gold transferred on subdue/cripple
+  broken_limb_buff_duration: 900         # Rounds (~60 min of play at 4s rounds); expires naturally
 
   # ── REGEN RATES (fraction of pool max per tick; 0.01 = 1%) ────────────────
   PlayerHealthRegenPct: 0.02     # Bumped from 1% to 2%; players needed faster recovery

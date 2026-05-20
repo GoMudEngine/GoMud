@@ -9,6 +9,7 @@ maxwander: 0
 groups:
   - humanoid
   - priest
+  - thornwall_citizens
 idlecommands:
   - 'emote adjusts a candle on the altar, centering it precisely'
   - 'cast conviction-ward'

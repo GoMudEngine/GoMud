@@ -160,7 +160,7 @@ func TestDeleteCharacter_WrongCase_Rejected(t *testing.T) {
 	DeleteCharacter("", user, room, events.EventFlag(0)) //nolint:errcheck
 	answerPromptQuestion(user, 0, "yes")
 	DeleteCharacter("", user, room, events.EventFlag(0)) //nolint:errcheck
-	answerPromptQuestion(user, 1, "ALICE") // wrong case
+	answerPromptQuestion(user, 1, "ALICE")               // wrong case
 
 	handled, err := DeleteCharacter("", user, room, events.EventFlag(0))
 	if err != nil {
@@ -191,7 +191,7 @@ func TestDeleteCharacter_CorrectName_DeletesUser(t *testing.T) {
 	DeleteCharacter("", user, room, events.EventFlag(0)) //nolint:errcheck
 	answerPromptQuestion(user, 0, "yes")
 	DeleteCharacter("", user, room, events.EventFlag(0)) //nolint:errcheck
-	answerPromptQuestion(user, 1, "Alice") // exact case-sensitive match
+	answerPromptQuestion(user, 1, "Alice")               // exact case-sensitive match
 
 	handled, err := DeleteCharacter("", user, room, events.EventFlag(0))
 	if err != nil {

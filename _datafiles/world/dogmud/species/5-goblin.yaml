@@ -1,6 +1,7 @@
 speciesid: 5
 name: goblin
 description: A small, cunning creature with pointy ears and sharp instincts.
+body_parts: [arms, hands, legs, eyes, mouth, skin]
 buffids:
   - 29 # Night Vision
 size: small

@@ -3,6 +3,9 @@ package combat
 import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/dice"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 )
 
 // SkillMoveResult holds the outcome of a bash/kick/trip execution.
@@ -27,11 +30,24 @@ type SkillMoveParams struct {
 	SkillRank       int     // for SkillMultiplier in damage calc
 	DamageStat           int     // stat for CalcRawDamage (always Strength)
 	MitigationMultiplier float64 // 1.0 = full, 0.5 = half mitigation (stomp)
+
+	// KnockdownToSupine: false (default) → defender falls face-forward
+	// to Prone (TriggerKnockdownFaceForward). true → defender knocked
+	// backward to Supine (TriggerKnockdownFaceBackward). Bash + charge
+	// opt into the Supine path; trip / kick / hamstring / bite stay
+	// face-forward.
+	KnockdownToSupine bool
 }
 
 // ExecuteSkillMove performs the core combat resolution for bash/kick/trip.
 // It handles the opposed roll, damage pipeline, knockdown determination,
 // and applies HP reduction + prone status. Callers handle messaging and analytics.
+//
+// Reach adjustment (chunk 4c): kick/stomp/knee variants are body-driven
+// (foot/knee impacts), not weapon-driven, so they do NOT apply the reach
+// utility curve. The knee variant's DamagePercent (KneeDamagePercent=1.00)
+// is already calibrated for the grapple context. Grapple-entry, trip,
+// and bash are force-driven and are similarly reach-agnostic.
 func ExecuteSkillMove(p SkillMoveParams) SkillMoveResult {
 	result := SkillMoveResult{}
 
@@ -73,10 +89,29 @@ func ExecuteSkillMove(p SkillMoveParams) SkillMoveResult {
 			p.Defender.Health = 0
 		}
 
-		// Apply prone if knocked down
+		// Apply knockdown if rolled. Chunk 4b W4 cutover: fire the
+		// FSM transition (Prone or Supine per KnockdownToSupine)
+		// alongside the legacy CombatPosition / PositionRoundsMin
+		// writes. If the FSM transition fails (e.g. target was
+		// already grappling and not in Standing), the legacy fields
+		// are NOT updated either so the two views stay consistent.
 		if result.KnockedDown {
-			p.Defender.CombatPosition = characters.PositionProne
-			p.Defender.PositionRoundsMin = 2
+			var fsmErr error
+			if p.KnockdownToSupine {
+				fsmErr = p.Defender.Position.TransitionToSupine(
+					position.SupineData{MinRecoveryRounds: 2},
+					state.TransitionReason{Trigger: position.TriggerKnockdownFaceBackward},
+				)
+			} else {
+				fsmErr = p.Defender.Position.TransitionToProne(
+					position.ProneData{MinRecoveryRounds: 2},
+					state.TransitionReason{Trigger: position.TriggerKnockdownFaceForward},
+				)
+			}
+			if fsmErr != nil {
+				mudlog.Warn("ExecuteSkillMove: knockdown transition failed",
+					"to_supine", p.KnockdownToSupine, "err", fsmErr)
+			}
 		}
 	}
 

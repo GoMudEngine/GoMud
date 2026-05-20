@@ -1,9 +1,0 @@
-buffid: 20
-name: Very Hidden
-description: You're very sneaky.
-secret: false
-triggerrate: 1 real minute
-triggercount: 5
-flags:
-  - hidden
-  - cancel-on-combat

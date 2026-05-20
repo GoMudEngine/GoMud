@@ -330,4 +330,47 @@ func (b *Balance) validateMisc() {
 	if b.EconomyScoreWeightForager <= 0 {
 		b.EconomyScoreWeightForager = 0.2
 	}
+
+	// ── OPINIONS / DISPOSITION ───────────────────────────────────────────────
+	if b.OpinionAttackBump == 0 {
+		b.OpinionAttackBump = -15
+	}
+	if b.DispositionDecayHalfLifeRounds == 0 {
+		b.DispositionDecayHalfLifeRounds = 100000
+	}
+
+	// ── FACTIONS ─────────────────────────────────────────────────────────────
+	if b.FactionMemberKillRep == 0 {
+		b.FactionMemberKillRep = -10
+	}
+	if b.CrimeRepDeltaMurder == 0 {
+		b.CrimeRepDeltaMurder = -25
+	}
+	if b.CrimeRepDeltaAssault == 0 {
+		b.CrimeRepDeltaAssault = -10
+	}
+	if b.CrimeRepDeltaTheft == 0 {
+		b.CrimeRepDeltaTheft = -5
+	}
+	if b.CrimeStaleAfterRounds == 0 {
+		b.CrimeStaleAfterRounds = 7884000 // ~365 game-days at 4-second rounds
+	}
+
+	// ── KNOWLEDGE ──────────────────────────────────────────────────────────
+	if b.KnowledgeObservationLogMax <= 0 {
+		b.KnowledgeObservationLogMax = 32
+	}
+
+	// ── BOUNTIES ────────────────────────────────────────────────────────
+	if b.BountyGoldDefaultMultiplier <= 0 {
+		b.BountyGoldDefaultMultiplier = 0.5
+	}
+	if b.BountyGoldFloor <= 0 {
+		b.BountyGoldFloor = 50
+	}
+
+	// ── FACTS & EVENTS ──────────────────────────────────────────────────────
+	if b.FactsHeardEventsMax <= 0 {
+		b.FactsHeardEventsMax = 32
+	}
 }

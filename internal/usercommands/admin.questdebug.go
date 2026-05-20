@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -19,8 +20,8 @@ func QuestDebug(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	rest = strings.TrimSpace(rest)
 
 	if rest == "" {
-		user.SendText(`<ansi fg="command">questdebug <player></ansi> - Enable verbose quest logging for a player.`)
-		user.SendText(`<ansi fg="command">questdebug <player> off</ansi> - Disable quest debug for a player.`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="command">questdebug <player></ansi> - Enable verbose quest logging for a player.`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="command">questdebug <player> off</ansi> - Disable quest debug for a player.`)
 		return true, nil
 	}
 
@@ -30,17 +31,17 @@ func QuestDebug(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 	target := users.GetByCharacterName(playerName)
 	if target == nil {
-		user.SendText(fmt.Sprintf(`<ansi fg="red">Player "%s" not found or not online.</ansi>`, playerName))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">Player "%s" not found or not online.</ansi>`, playerName))
 		return true, nil
 	}
 
 	if disable {
 		questengine.SetPlayerDebug(target.UserId, false)
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="yellow">Quest debug disabled for %s.</ansi>`, target.Character.Name))
 	} else {
 		questengine.SetPlayerDebug(target.UserId, true)
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="green">Quest debug enabled for %s. All quest evaluations will log at verbose.</ansi>`,
 			target.Character.Name))
 	}

@@ -4,27 +4,54 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 )
 
-// CalcSneakScore returns the stealth score for a character attempting to hide.
-// Higher values make the character harder to detect.
-// Formula: Dexterity + SkillMultiplier(skullduggery)*25 + mutation bonus,
-// then halved if the character emits light.
-func CalcSneakScore(c *characters.Character) float64 {
-	score := float64(c.Stats.Dexterity.ValueAdj) +
-		combat.SkillMultiplier(c.GetSkillLevel(skills.Skullduggery))*25.0
+// CalcSneakScore computes a sneak score with light-conditional modifier.
+// effectiveLit reflects the room visibility from the observer's POV —
+// true if the room is lit OR the observer has NightVision. Caller is
+// responsible for computing effectiveLit per observer.
+//
+// The conditional modifier:
+//   - sneaker emits light, room dark:  0.5x  (beacon in darkness)
+//   - sneaker emits light, room lit:   0.85x (blends in with the light)
+//   - sneaker dark, room lit:          0.9x  (alert observers)
+//   - sneaker dark, room dark:         1.0x  (best stealth, no penalty)
+//
+// Per-observer evaluation matters: the same sneaker may roll differently
+// against different observers in the same room (e.g., NightVision
+// observers see the room as lit; non-NightVision observers do not).
+func CalcSneakScore(c *characters.Character, effectiveLit bool) float64 {
+	base := float64(c.Stats.Dexterity.ValueAdj) +
+		combat.SkillMultiplier(c.GetSkillLevel(skills.Skullduggery))*25.0 +
+		mutations.GetStealthBonus(c.Mutations)
 
-	// Mutation stealth bonus (e.g. chameleon skin)
-	score += mutations.GetStealthBonus(c.Mutations)
+	cfg := configs.GetBalanceConfig()
+	emits := c.HasFlagFromAnySource(buffs.EmitsLight)
 
-	// Emitting light makes it much harder to hide
-	if c.HasBuffFlag(buffs.EmitsLight) {
-		score *= 0.5
+	switch {
+	case emits && !effectiveLit:
+		base *= float64(cfg.SneakModEmitsLightDarkRoom) // default 0.5
+	case emits && effectiveLit:
+		base *= float64(cfg.SneakModEmitsLightLitRoom) // default 0.85
+	case !emits && effectiveLit:
+		base *= float64(cfg.SneakModNoLightLitRoom) // default 0.9
+		// else: dark sneaker, dark room — baseline, no modifier applied
 	}
+	return base
+}
 
-	return score
+// CalcSneakScoreVsObserver is a convenience for the common detection-roll
+// case where the caller has sneaker + observer + room in scope. Computes
+// effectiveLit per-observer (NightVision counts as effectively lit for
+// that specific observer).
+func CalcSneakScoreVsObserver(sneaker, observer *characters.Character, room *rooms.Room) float64 {
+	effectiveLit := room.GetVisibility() >= 1 ||
+		observer.HasFlagFromAnySource(buffs.NightVision)
+	return CalcSneakScore(sneaker, effectiveLit)
 }
 
 // CalcSearchScore returns the observation score for a character detecting

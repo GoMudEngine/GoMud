@@ -3,16 +3,21 @@ package combat
 import (
 	"fmt"
 
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
-	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/control"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
+	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 type SourceTarget string
@@ -22,21 +27,24 @@ const (
 	Mob  SourceTarget = "mob"
 )
 
-// canSeeInRoom returns true if the character has nightvision or the room is lit.
-func canSeeInRoom(char *characters.Character, room *rooms.Room) bool {
-	if room == nil {
-		return true
-	}
-	return room.GetVisibility() >= 1 || char.HasFlagFromAnySource(buffs.NightVision)
-}
-
 // Performs a combat round from a player to a mob
 func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 
+	// Chunk 5 (Presence) T7: auto-wake Dormant mobs on incoming attack.
+	// The mob's per-round tick was being skipped while Dormant; receivability
+	// stays intact. Wake fires BEFORE damage so the target is Active when
+	// per-round logic runs. Reset LastDormantEntryRound so the next
+	// Active→Dormant timer starts fresh.
+	if mob.Character.Presence != nil && mob.Character.Presence.State() == presence.Dormant {
+		_ = mob.Character.Presence.TransitionTo(presence.Active,
+			state.TransitionReason{Trigger: presence.TriggerAttacked})
+		mob.Character.LastDormantEntryRound = 0
+	}
+
 	room := rooms.LoadRoom(user.Character.RoomId)
 	ctx := combatContext{
-		sourceCanSee: canSeeInRoom(user.Character, room),
-		targetCanSee: canSeeInRoom(&mob.Character, room),
+		sourceCanSee: messaging.CanSeeClearly(user.Character, room),
+		targetCanSee: messaging.CanSeeClearly(&mob.Character, room),
 	}
 	attackResult := calculateCombat(*user.Character, mob.Character, User, Mob, ctx)
 
@@ -49,6 +57,14 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 	}
 
 	mob.Character.ApplyHealthChange(attackResult.DamageToTarget * -1)
+
+	// Chunk 4e §5: third-party hit on grapple controller drifts their
+	// ControlLevel toward Neutral.
+	if attackResult.DamageToTarget > 0 {
+		chunk4eApplyOutsideHitDisruption(user.Character, &mob.Character)
+		// Chunk 4e §7: track third-party damage that would interrupt subs.
+		chunk4eAccumulateSubInterruptDamage(user.Character, &mob.Character, attackResult.DamageToTarget, attackResult.Crit)
+	}
 
 	// Remember who has hit him
 	mob.Character.TrackPlayerDamage(user.UserId, attackResult.DamageToTarget)
@@ -102,8 +118,8 @@ func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) 
 
 	room := rooms.LoadRoom(userAtk.Character.RoomId)
 	ctx := combatContext{
-		sourceCanSee: canSeeInRoom(userAtk.Character, room),
-		targetCanSee: canSeeInRoom(userDef.Character, room),
+		sourceCanSee: messaging.CanSeeClearly(userAtk.Character, room),
+		targetCanSee: messaging.CanSeeClearly(userDef.Character, room),
 	}
 	attackResult := calculateCombat(*userAtk.Character, *userDef.Character, User, User, ctx)
 
@@ -118,6 +134,11 @@ func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) 
 	if attackResult.DamageToTarget != 0 {
 		userDef.Character.ApplyHealthChange(attackResult.DamageToTarget * -1)
 		userDef.WimpyCheck()
+		// Chunk 4e §5: third-party hit on grapple controller drifts their
+		// ControlLevel toward Neutral.
+		chunk4eApplyOutsideHitDisruption(userAtk.Character, userDef.Character)
+		// Chunk 4e §7: track third-party damage that would interrupt subs.
+		chunk4eAccumulateSubInterruptDamage(userAtk.Character, userDef.Character, attackResult.DamageToTarget, attackResult.Crit)
 	}
 
 	// Track progression stats for the attacking player
@@ -173,8 +194,8 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 
 	room := rooms.LoadRoom(mob.Character.RoomId)
 	ctx := combatContext{
-		sourceCanSee: canSeeInRoom(&mob.Character, room),
-		targetCanSee: canSeeInRoom(user.Character, room),
+		sourceCanSee: messaging.CanSeeClearly(&mob.Character, room),
+		targetCanSee: messaging.CanSeeClearly(user.Character, room),
 	}
 	attackResult := calculateCombat(mob.Character, *user.Character, Mob, User, ctx)
 
@@ -186,6 +207,11 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 	if attackResult.DamageToTarget != 0 {
 		user.Character.ApplyHealthChange(attackResult.DamageToTarget * -1)
 		user.WimpyCheck()
+		// Chunk 4e §5: third-party hit on grapple controller drifts their
+		// ControlLevel toward Neutral.
+		chunk4eApplyOutsideHitDisruption(&mob.Character, user.Character)
+		// Chunk 4e §7: track third-party damage that would interrupt subs.
+		chunk4eAccumulateSubInterruptDamage(&mob.Character, user.Character, attackResult.DamageToTarget, attackResult.Crit)
 	}
 
 	// Track defender's dexterity use (reacting to attacks)
@@ -204,10 +230,18 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 // Performs a combat round from a mob to a mob
 func AttackMobVsMob(mobAtk *mobs.Mob, mobDef *mobs.Mob) AttackResult {
 
+	// Chunk 5 (Presence) T7: auto-wake Dormant mobs on incoming attack.
+	// Same semantics as AttackPlayerVsMob: defender wakes before damage applies.
+	if mobDef.Character.Presence != nil && mobDef.Character.Presence.State() == presence.Dormant {
+		_ = mobDef.Character.Presence.TransitionTo(presence.Active,
+			state.TransitionReason{Trigger: presence.TriggerAttacked})
+		mobDef.Character.LastDormantEntryRound = 0
+	}
+
 	room := rooms.LoadRoom(mobAtk.Character.RoomId)
 	ctx := combatContext{
-		sourceCanSee: canSeeInRoom(&mobAtk.Character, room),
-		targetCanSee: canSeeInRoom(&mobDef.Character, room),
+		sourceCanSee: messaging.CanSeeClearly(&mobAtk.Character, room),
+		targetCanSee: messaging.CanSeeClearly(&mobDef.Character, room),
 	}
 	attackResult := calculateCombat(mobAtk.Character, mobDef.Character, Mob, Mob, ctx)
 
@@ -216,6 +250,14 @@ func AttackMobVsMob(mobAtk *mobs.Mob, mobDef *mobs.Mob) AttackResult {
 
 	mobAtk.Character.ApplyHealthChange(attackResult.DamageToSource * -1)
 	mobDef.Character.ApplyHealthChange(attackResult.DamageToTarget * -1)
+
+	// Chunk 4e §5: third-party hit on grapple controller drifts their
+	// ControlLevel toward Neutral.
+	if attackResult.DamageToTarget > 0 {
+		chunk4eApplyOutsideHitDisruption(&mobAtk.Character, &mobDef.Character)
+		// Chunk 4e §7: track third-party damage that would interrupt subs.
+		chunk4eAccumulateSubInterruptDamage(&mobAtk.Character, &mobDef.Character, attackResult.DamageToTarget, attackResult.Crit)
+	}
 
 	// If attacking mob was player charmed, attribute damage done to that player
 	if charmedUserId := mobAtk.Character.GetCharmedUserId(); charmedUserId > 0 {
@@ -322,23 +364,30 @@ func GetWaitMessages(stepType items.Intensity, sourceChar *characters.Character,
 		}
 	}
 
-	if string(toAttackerMsg) != `` {
-		attackResult.SendToSource(string(toAttackerMsg))
+	// Wait-round messages: source's weapon category for hit-band
+	// color; falls back to CategoryHitMelee if no main weapon.
+	waitCat := messaging.CategoryHitMelee
+	if sourceChar.Equipment.Weapon.ItemId > 0 {
+		waitCat = CategoryForWeaponSubtype(sourceChar.Equipment.Weapon.GetSpec().Subtype)
 	}
 
-	if !sourceChar.HasBuffFlag(buffs.Hidden) {
+	if string(toAttackerMsg) != `` {
+		attackResult.SendToSource(waitCat, string(toAttackerMsg))
+	}
+
+	if !sourceChar.IsHidden() {
 
 		if string(toDefenderMsg) != `` {
-			attackResult.SendToTarget(string(toDefenderMsg))
+			attackResult.SendToTarget(waitCat, string(toDefenderMsg))
 		}
 
 		if string(toAttackerRoomMsg) != `` {
-			attackResult.SendToSourceRoom(string(toAttackerRoomMsg))
+			attackResult.SendToSourceRoom(waitCat, string(toAttackerRoomMsg))
 		}
 
 		if sourceChar.RoomId != targetChar.RoomId {
 			if string(toDefenderRoomMsg) != `` {
-				attackResult.SendToTargetRoom(string(toDefenderRoomMsg))
+				attackResult.SendToTargetRoom(waitCat, string(toDefenderRoomMsg))
 			}
 		}
 
@@ -400,6 +449,12 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			attackSourceReduction := 0
 
 			attackScore := calcAttackScore(&sourceChar, &targetChar, ws.penalty, ctx)
+
+			// Chunk 4e: position-tiered hit modifiers. Multiplies attackScore by
+			// the attacker's self-position modifier and the target's position
+			// modifier. Both default to 1.0 outside grapples. See
+			// internal/state/position/modifiers.go.
+			attackScore *= applyPositionHitModifiers(&sourceChar, &targetChar)
 
 			defenseSequence := targetChar.GetDefenseSequence()
 
@@ -473,4 +528,95 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 
 	return attackResult
 
+}
+
+// applyPositionHitModifiers returns the combined position-based hit
+// modifier for an attack from sourceChar to targetChar. Chunk 4e spec §3.
+// Both default to 1.0 if either character is missing position/control
+// state — equivalent to "outside a grapple, no modifier."
+func applyPositionHitModifiers(source, target *characters.Character) float64 {
+	if source == nil || target == nil {
+		return 1.0
+	}
+	srcPos := position.Standing
+	srcRole := control.Neutral
+	if source.Position != nil {
+		srcPos = source.Position.State()
+	}
+	if source.Control != nil {
+		srcRole = source.Control.State()
+	}
+	tgtPos := position.Standing
+	tgtRole := control.Neutral
+	if target.Position != nil {
+		tgtPos = target.Position.State()
+	}
+	if target.Control != nil {
+		tgtRole = target.Control.State()
+	}
+	return position.AttackerSelfHitModifier(srcPos, srcRole) *
+		position.TargetSideHitModifier(tgtPos, tgtRole)
+}
+
+// chunk4eAccumulateSubInterruptDamage fires §7 of the chunk 4e spec:
+// track third-party damage that would interrupt a sub attempt this
+// round. Damage qualifies if it's a crit OR exceeds
+// SubInterruptDamageThresholdPct × target.HealthMax. Accumulates on
+// Character.SubInterruptDamageThisRound, which Position_SubmissionTick
+// (T8) checks before resolving the sub outcome.
+func chunk4eAccumulateSubInterruptDamage(attacker, target *characters.Character, damage int, isCrit bool) {
+	if attacker == nil || target == nil {
+		return
+	}
+	if !IsThirdPartyAttack(attacker, target) {
+		return // partner hit — doesn't interrupt subs
+	}
+	bal := configs.GetBalanceConfig()
+	threshold := float64(bal.SubInterruptDamageThresholdPct)
+
+	qualifies := isCrit
+	if !qualifies && threshold > 0 && target.HealthMax.Value > 0 {
+		ratio := float64(damage) / float64(target.HealthMax.Value)
+		if ratio >= threshold {
+			qualifies = true
+		}
+	}
+	if qualifies {
+		target.SubInterruptDamageThisRound += float64(damage)
+	}
+}
+
+// chunk4eApplyOutsideHitDisruption fires §5 of the chunk 4e spec:
+// when a third party (non-grapple-partner) damages a grapple controller,
+// shift the controller's ControlLevel one step toward Neutral. Deduped
+// per round via Character.OutsideHitDisruptedRound. No-op if the config
+// knob is false, the target isn't a controller, or the attacker IS
+// the grapple partner.
+func chunk4eApplyOutsideHitDisruption(attacker, target *characters.Character) {
+	if !configs.GetBalanceConfig().ControlDegradeOnOutsideHit {
+		return
+	}
+	if attacker == nil || target == nil {
+		return
+	}
+	if !target.IsGrappling() {
+		return
+	}
+	if !target.IsController() {
+		return
+	}
+	if !IsThirdPartyAttack(attacker, target) {
+		return // attacker IS the partner — no disruption
+	}
+	round := int64(util.GetRoundCount())
+	if target.OutsideHitDisruptedRound == round {
+		return // already disrupted this round
+	}
+	target.OutsideHitDisruptedRound = round
+
+	// Shift one step toward Neutral. Fires gradient messaging via the
+	// chunk-4b-fixup-2 T13 boundary-cross callback automatically.
+	_ = target.GetControl().TransitionToNeutral(state.TransitionReason{
+		Trigger: control.TriggerDriftLoss,
+	})
 }

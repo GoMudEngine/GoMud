@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/term"
@@ -26,8 +27,8 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	cmdPrompt, isNew := user.StartPrompt(`start`, rest)
 
 	if isNew {
-		user.SendText(``)
-		user.SendText(fmt.Sprintf(`You'll need to answer some questions.%s`, term.CRLFStr))
+		user.SendText(messaging.CategorySystem, ``)
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You'll need to answer some questions.%s`, term.CRLFStr))
 	}
 
 	if user.Character.SpeciesId == 0 {
@@ -36,8 +37,8 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			user.Character.SpeciesId = humanSpecies.Id()
 			user.Character.Validate()
 
-			user.SendText(``)
-			user.SendText(fmt.Sprintf(`  <ansi fg="magenta">*** Your form takes shape on the world of Gaius ***</ansi>%s`, term.CRLFStr))
+			user.SendText(messaging.CategorySystem, ``)
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`  <ansi fg="magenta">*** Your form takes shape on the world of Gaius ***</ansi>%s`, term.CRLFStr))
 		}
 	}
 
@@ -52,21 +53,21 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		// is how the player replaces it. Prevent them from just re-entering
 		// their account Username (which would leave the placeholder unchanged).
 		if strings.EqualFold(question.Response, user.Username) {
-			user.SendText(`Your username cannot match your character name!`)
+			user.SendText(messaging.CategorySystem, `Your username cannot match your character name!`)
 			question.RejectResponse()
 			return true, nil
 		}
 
 		for _, c := range characters.LoadAlts(user.UserId) {
 			if strings.EqualFold(question.Response, c.Name) {
-				user.SendText(`Your already have a character named that!`)
+				user.SendText(messaging.CategorySystem, `Your already have a character named that!`)
 				question.RejectResponse()
 				return true, nil
 			}
 		}
 
 		if err := users.ValidateActorName(question.Response, users.ValidateActorOpts{}); err != nil {
-			user.SendText(`That name won't work: ` + err.Error())
+			user.SendText(messaging.CategorySystem, `That name won't work: ` + err.Error())
 			question.RejectResponse()
 			return true, nil
 		}
@@ -84,15 +85,13 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		}
 
 		if err := user.SetCharacterName(usernameSelected); err != nil {
-			user.SendText(err.Error())
+			user.SendText(messaging.CategorySystem, err.Error())
 			question.RejectResponse()
 			return true, nil
 		}
 
-		user.SendText(fmt.Sprintf(`You will be known as <ansi fg="yellow-bold">%s</ansi>!%s`, user.Character.Name, term.CRLFStr))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You will be known as <ansi fg="yellow-bold">%s</ansi>!%s`, user.Character.Name, term.CRLFStr))
 	}
-
-	user.Character.ExtraLives = int(configs.GetGamePlayConfig().LivesStart)
 
 	user.EventLog.Add(`char`, fmt.Sprintf(`Created a new character: <ansi fg="username">%s</ansi>`, user.Character.Name))
 
@@ -110,7 +109,7 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 			user.ClearPrompt()
 
-			user.SendText(fmt.Sprintf(`<ansi fg="magenta">Suddenly, a vortex appears before you, drawing you in before you have any chance to react!</ansi>%s`, term.CRLFStr))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="magenta">Suddenly, a vortex appears before you, drawing you in before you have any chance to react!</ansi>%s`, term.CRLFStr))
 
 			if destRoom := rooms.LoadRoom(rooms.StartRoomIdAlias); destRoom != nil {
 
@@ -118,7 +117,7 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 				// Tell the new room they have arrived
 
-				destRoom.SendText(
+				destRoom.SendText(messaging.CategorySystem, 
 					fmt.Sprintf(configs.GetTextFormatsConfig().EnterRoomMessageWrapper.String(),
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> enters from <ansi fg="exit">somewhere</ansi>.`, user.Character.Name),
 					),
@@ -152,13 +151,13 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	createdRoomIds, err := rooms.CreateEphemeralRoomIds(tutorialRoomIds...)
 	if err != nil {
-		user.SendText(`The Tutorial zone is fully occupied right now. Please try again in a few minutes`)
+		user.SendText(messaging.CategorySystem, `The Tutorial zone is fully occupied right now. Please try again in a few minutes`)
 		return true, nil
 	}
 
 	ephemeralStartRoomId := createdRoomIds[startRoom]
 
-	user.SendText(fmt.Sprintf(`<ansi fg="magenta">Suddenly, a vortex appears before you, drawing you in before you have any chance to react!</ansi>%s`, term.CRLFStr))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="magenta">Suddenly, a vortex appears before you, drawing you in before you have any chance to react!</ansi>%s`, term.CRLFStr))
 
 	rooms.MoveToRoom(user.UserId, ephemeralStartRoomId)
 

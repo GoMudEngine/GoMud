@@ -1,0 +1,200 @@
+description: |
+  Smoke test for chunk 4c (Position × Weapon Utility — reach model).
+
+  Chunk 4c added a `Reach float64` (meters) field on `ItemSpec` with
+  a default-by-subtype lookup, a position-radius curve in the combat
+  package, and a `radius/reach` formula that multiplies the per-swing
+  damage. The big behavior change: long weapons (sword, spear,
+  greatsword, staff) take a significant damage penalty when the
+  attacker is grappling; short weapons (dagger, fist, claws, wand)
+  stay at full effectiveness. When the penalty fires on a BLADED
+  weapon (Slashing/Cleaving/Stabbing/Shooting), the attack-message
+  vocabulary swaps to Bludgeoning so the fiction tracks the math
+  ("you bash the iron longsword's pommel..." instead of "you slash
+  awkwardly with the iron longsword..."). Natural-blunt (Slam, Gore,
+  Whipping, Fist) and caster (Wand, Sceptre, Staff) subtypes are
+  EXEMPT from the narration swap — they keep their own vocabulary.
+
+  Position radii (in meters):
+    - Standing / Prone / Supine / Turtle    → ∞ (no penalty)
+    - Clinch / BackStanding (standing grap) → 0.5 m
+    - 8 ground-grapple states (Mount, etc.) → 0.3 m
+  Floor on the multiplier: 0.15 (so a 3m pike in mount still pokes
+  for ~15% damage).
+
+  The smoketester account has been promoted to admin and given a
+  pre-stocked weapon kit covering the full reach spectrum:
+    - iron dagger          (Stabbing, 0.30 m) — fits everything
+    - iron short sword     (Slashing, 1.00 m) — penalized in mount
+    - steel longsword      (Slashing, 1.00 m) — same
+    - lake iron hook spear (Stabbing, 2.00 m) — severely penalized
+    - steel warhammer      (Bludgeoning, 0.80 m) — already-blunt
+    - willow wand          (Wand, 0.40 m) — caster, short
+    - oak staff            (Staff, 1.50 m) — caster, long melee
+
+  IMPORTANT — observe only. DO NOT modify code, YAML files, or
+  helpfiles even if you spot what looks like a bug. Write it up in
+  the report; never edit.
+
+  IMPORTANT — if any of the kit weapons are MISSING from your
+  inventory at login (server may have had the user cached and not
+  re-read the YAML), use the admin `item give <id>` command (or
+  whatever the syntax turns out to be — discover it via
+  `help admin`) to grant yourself the missing items. Don't grind
+  on tooling; flag and proceed.
+
+goals:
+  # ── 0. Login + inventory verify ──────────────────────────────
+  - Log in as smoketester (host localhost, port 55555,
+    password smoke123test). Run `set charset` to switch to ASCII.
+    Run `look` to confirm starting room.
+    Run `inventory` and confirm you have the 7 chunk-4c kit
+    weapons listed above. If any are MISSING, use admin commands
+    to grant them (try `item give 10009` or
+    `spawnitem 10009` or similar — discover via `help admin`).
+
+  # ── 1. Helpfile sanity check ─────────────────────────────────
+  - Run `help reach`. Capture the FULL output. Verify it exists,
+    reads cleanly, and covers: what reach is, how it affects
+    grapples, examples for short vs long weapons, tactical
+    advice (carry a dagger as offhand).
+  - Run `help grapple`. Capture the output. Verify the new
+    "Weapon Reach in Grapples" section is present and reads
+    cleanly.
+  - Run `help attack` and `help weapon-combat`. Capture the new
+    reach-related sections from each.
+
+  # ── 2. Baseline standing combat (no penalty) ─────────────────
+  - Find a sparring target. Try `goto 202` or look for
+    "sparring partner" in the test arena. The mob to spar with
+    is `sparring_partner` (mob 60). It should be a non-lethal
+    target with high HP that won't kill you.
+  - Wield the steel longsword: `wield steel longsword`. Confirm
+    via `inventory` / `equipment`.
+  - Attack the sparring partner. Capture 3-5 rounds of combat
+    output (the attack messages, damage descriptions).
+  - Expected: standard slashing vocabulary, full damage. You're
+    standing, not grappling — reach has no effect.
+
+  # ── 3. Initiate grapple → observe weapon downgrade ───────────
+  - Still wielding the longsword, initiate a grapple via
+    `grapple <target>`. Capture the entry message + your
+    position after (use prompt token {pos} or the `position`
+    command if it exists).
+  - Attack a few rounds while in the standing-grapple
+    (Clinch). Capture attack messages.
+  - Expected: longsword damage degraded (reach 1.0m, radius
+    0.5m → multiplier ~0.5). Vocabulary may already swap to
+    bludgeoning ("you bash..." or "you smash..." with the
+    longsword name interpolated). Note whether the messages
+    feel natural or jarring.
+
+  # ── 4. Force or drift into ground grapple → observe more ─────
+  - If the grapple progresses (per chunk-4b control axis,
+    you'll drift toward a Mount or get sidecontrol after a
+    few rounds of winning the control roll), continue
+    attacking with the longsword. Capture messages.
+  - If the grapple BREAKS before you reach a ground state,
+    re-grapple and try again. Or use whatever admin command
+    forces a position transition (e.g. `mob position <self>
+    mount` — discover via help admin).
+  - Expected: longsword damage SEVERELY degraded (reach 1.0m,
+    radius 0.3m → multiplier 0.3). Bludgeoning narration
+    very obvious.
+
+  # ── 5. Weapon swap: longsword → dagger in same grapple ───────
+  - While in a ground grapple, swap to the iron dagger
+    (`remove longsword`, `wield iron dagger`). Attack a few
+    rounds.
+  - Expected: dagger damage UNAFFECTED (reach 0.3m = radius
+    0.3m, no penalty). Vocabulary: standard stabbing — NOT
+    bludgeoning swap. Damage descriptions should noticeably
+    improve compared to the longsword swings.
+  - Capture 2-3 rounds for comparison.
+
+  # ── 6. Worst-case: lake iron hook spear in mount ─────────────
+  - Disengage / restart. Re-grapple, drift to ground state.
+  - Swap to the lake iron hook spear (`wield hook spear` or
+    similar). Attack a few rounds.
+  - Expected: SEVERELY degraded damage (reach 2.0m, radius
+    0.3m → floored at 0.15 = 15% damage). Bludgeoning
+    narration. The spear should feel almost useless.
+  - Capture 2-3 rounds.
+
+  # ── 7. Bludgeoning weapon (baseline narration check) ─────────
+  - Disengage, then wield the steel warhammer. Attack standing
+    (capture baseline message — should be standard bludgeoning
+    vocabulary).
+  - Grapple, drift to ground, attack with warhammer.
+  - Expected: damage penalized (reach 0.8m, radius 0.3m → ~0.375
+    multiplier). Vocabulary: SAME bludgeoning set as standing
+    (no narration swap fires because warhammer is already
+    bludgeoning). This verifies the swap-exemption logic.
+  - Capture 1-2 rounds.
+
+  # ── 8. Caster weapons: wand vs staff narration ──────────────
+  - Disengage. Wield the willow wand. Attack standing (capture
+    baseline message — should be wand-specific vocabulary, NOT
+    bludgeoning swap).
+  - Grapple, drift to ground, attack with wand.
+  - Expected: wand damage UNAFFECTED (reach 0.4m, radius 0.3m
+    → no penalty — 0.4 > 0.3 but the formula returns
+    radius/reach = 0.75). Vocabulary stays as wand-specific
+    even in ground grapple (caster exemption).
+  - Capture 1-2 rounds.
+  - Swap to the oak staff. Standing attack: capture (staff
+    vocabulary). Ground-grapple attack: capture.
+  - Expected: staff damage degraded in grapple (reach 1.5m,
+    radius 0.3m → 0.20 multiplier). Vocabulary: KEEPS staff
+    vocabulary even when penalized (caster exemption — the
+    bludgeoning narration swap should NOT fire). This is the
+    key caster-exemption test.
+
+  # ── 9. Unarmed in grapple (sanity) ───────────────────────────
+  - Remove all weapons. Attack with fists.
+  - Expected: full damage regardless of position (fist reach
+    0.1m fits any radius). Standard unarmed vocabulary.
+  - Capture 1-2 rounds in ground grapple.
+
+  # ── 10. Smoke verdict ────────────────────────────────────────
+  - Write a "Smoke verdict" paragraph at the top of your
+    report. Use this template:
+
+      Smoke verdict: PASS | PARTIAL | FAIL
+
+      Per-test breakdown:
+      - Helpfile content (help reach, grapple, attack, weapon-combat): PASS/PARTIAL/FAIL
+      - Standing baseline (longsword): PASS/FAIL
+      - Standing-grapple penalty (longsword in clinch): PASS/PARTIAL/FAIL — note multiplier feels right or wrong
+      - Ground-grapple penalty (longsword in mount): PASS/PARTIAL/FAIL
+      - Weapon swap mid-grapple (longsword → dagger): PASS/FAIL
+        (damage should noticeably improve)
+      - Worst-case (hook spear in mount): PASS/FAIL — does it feel "barely useful" as intended?
+      - Bludgeoning warhammer (no narration swap): PASS/FAIL
+      - Caster weapon exemption (wand stays wand-narration, staff
+        stays staff-narration even when penalized): PASS/FAIL
+      - Unarmed in grapple (full damage): PASS/FAIL
+
+      Narrative quality:
+      - 2-3 sentences on whether the bludgeoning narration for
+        bladed weapons reads naturally or jarringly. Quote 1-2
+        example messages.
+      - 1-2 sentences on whether players will INTUITIVELY learn
+        the "carry a dagger as offhand" lesson from gameplay
+        alone, or whether the helpfile is essential.
+
+      Recommended balance tweaks (if any):
+      - Reach floor (0.15) too high / too low?
+      - Standing-grapple radius (0.5m) right?
+      - Ground-grapple radius (0.3m) right?
+
+  # ── 11. Blockers ─────────────────────────────────────────────
+  - If you can't find a sparring target, the grapple command
+    misbehaves, position transitions don't fire, or any other
+    tooling failure blocks observation — document the failure
+    mode in a "Blockers" section and flag what you couldn't
+    verify. Don't grind; flag.
+
+  - If any of the kit weapons isn't in your inventory and you
+    can't admin-grant them, log that in Blockers too and proceed
+    with whatever you have.

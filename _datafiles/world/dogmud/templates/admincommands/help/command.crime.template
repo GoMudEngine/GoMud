@@ -1,0 +1,40 @@
+The <ansi fg="command">crime</ansi> command inspects and adjusts
+the per-faction crime log written by the chunk-1.3 substrate.
+
+<ansi fg="yellow-bold">Usage:</ansi>
+
+<ansi fg="command">crime list <factionId> [--all]</ansi>
+  List unresolved crimes against the named faction. Pass --all
+  to include resolved rows.
+
+<ansi fg="command">crime show <playerName> [--all]</ansi>
+  List every faction's unresolved crimes naming this player as the
+  identified perpetrator. Crimes with perpetrator=unknown do NOT
+  appear here. Pass --all to include resolved rows.
+
+<ansi fg="command">crime resolve <factionId> <crimeId> <reason></ansi>
+  Mark a specific crime as resolved. Idempotent — re-resolving a
+  cleared row is a no-op.
+
+<ansi fg="command">crime prune-stale <factionId></ansi>
+  Apply the 365-day game-time safety net pass: snap any unresolved
+  crime older than Balance.CrimeStaleAfterRounds to resolved with
+  reason "stale".
+
+<ansi fg="yellow-bold">Crime kinds:</ansi>
+  murder    — kill of a faction member with witness present
+              (rep impact: CrimeRepDeltaMurder, default -25)
+  assault   — first-aggression on a faction member
+              (rep impact: CrimeRepDeltaAssault, default -10)
+  theft     — failed steal/pickpocket of a faction member
+              (rep impact: CrimeRepDeltaTheft, default -5)
+
+<ansi fg="yellow-bold">Notes:</ansi>
+  - Crimes with no witness present are recorded with
+    perpetrator=unknown and produce NO rep impact. They are still
+    queryable via crime list but absent from crime show <player>.
+  - Storage: _datafiles/world/dogmud/factions.crimes/<faction>.yaml
+    (gitignored runtime state).
+  - Resolution is record-keeping; rep is NOT auto-restored.
+    Town justice (chunk 5.1) decides whether resolution restores
+    rep too.

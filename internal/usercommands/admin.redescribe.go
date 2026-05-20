@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -22,7 +23,7 @@ func Redescribe(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	if len(args) < 2 {
 		// send some sort of help info?
 		infoOutput, _ := templates.Process("admincommands/help/command.rename", nil, user.UserId)
-		user.SendText(infoOutput)
+		user.SendText(messaging.CategorySystem, infoOutput)
 		return true, nil
 	}
 
@@ -31,7 +32,7 @@ func Redescribe(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	rest = strings.Join(args[1:], " ")
 
 	if !found {
-		user.SendText(fmt.Sprintf("You don't have a %s to rename.", rest))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("You don't have a %s to rename.", rest))
 	} else {
 		// Swap the item location
 		user.Character.RemoveItem(matchItem)
@@ -44,10 +45,10 @@ func Redescribe(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 		user.Character.StoreItem(matchItem)
 
-		user.SendText(
+		user.SendText(messaging.CategorySystem, 
 			fmt.Sprintf(`You chant softly and wave your hand over the <ansi fg="item">%s</ansi>. Success! It now has a new description!`, oldNameSimple),
 		)
-		room.SendTextVisual(
+		room.SendTextVisual(messaging.CategoryMobEmote, 
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> chants softly and waves their hand over <ansi fg="item">%s</ansi>, causing it to glow briefly.`, user.Character.Name, oldName),
 			user.UserId,
 		)

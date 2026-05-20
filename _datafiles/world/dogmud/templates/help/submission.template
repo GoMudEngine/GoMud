@@ -1,0 +1,53 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">submission</ansi>
+
+When you grapple an opponent on the ground, your character may lock
+in a submission — a joint lock or choke that finishes the fight
+without further trading of blows. Submissions fire AUTOMATICALLY
+when you're decisively winning a grapple round; you don't type
+a command.
+
+What HAPPENS when a submission lands is determined by your
+<ansi fg="command">submission policy</ansi> — set ahead of time, no
+in-round prompts. Combat is too fast for that.
+
+<ansi fg="yellow">━━━ Submission Policies ━━━</ansi>
+
+  <ansi fg="command">mercy</ansi>    — Release the opponent cleanly. They go on living.
+            Brief recovery debuff. No persistent damage.
+
+  <ansi fg="command">subdue</ansi>   <ansi fg="white">(default)</ansi> Choke them out. They lose
+            consciousness, wake up at the temple. You take some of
+            their gold. No persistent injury.
+
+  <ansi fg="command">cripple</ansi>  — Break the joint. They lose consciousness, wake up
+            at the temple with a broken arm or shoulder. The debuff
+            persists for around an hour of play. You take some gold.
+
+  <ansi fg="command">lethal</ansi>   — Finish them. Full death — including for players,
+            with full deprogression and corpse loot. Requires
+            confirmation the first time you set it.
+
+<ansi fg="yellow">━━━ Position Matters ━━━</ansi>
+
+Each grapple position has its own submission types. Mount opens
+armbar / americana / triangle; back-control opens the rear-naked
+choke; the bottom of mount (when YOU are being controlled) opens
+reversal submissions like the triangle from below. See
+<ansi fg="command">help grapple</ansi> for position dynamics and
+<ansi fg="command">help reach</ansi> for how weapon choice
+interacts with grapples.
+
+<ansi fg="yellow">━━━ Setting Your Policy ━━━</ansi>
+
+  <ansi fg="command">set submission</ansi>
+    Show current policy.
+
+  <ansi fg="command">set submission &lt;mercy|subdue|cripple|lethal&gt;</ansi>
+    Set policy. Lethal requires two-step confirmation.
+
+Your policy applies to ALL submissions you successfully lock in,
+against all opponents. Choose based on the kind of person your
+character is.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help surrender</ansi>, <ansi fg="command">help grapple</ansi>,
+  <ansi fg="command">help reach</ansi>

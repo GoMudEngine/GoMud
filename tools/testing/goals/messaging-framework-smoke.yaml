@@ -1,0 +1,82 @@
+goals:
+  - Engage a humanoid combat-archetype mob and trade a few rounds.
+    Inspect the raw output (if your bridge surfaces ANSI tags) for
+    `<ansi fg="hit-melee">`, `<ansi fg="dodge">`, `<ansi fg="parry">`,
+    `<ansi fg="block">` etc. Confirm damage lines, defense lines, and
+    special-move lines carry distinct color categories. No raw
+    `category-XXX` debug strings should appear in delivered text.
+
+  - Cast a spell from each of the five schools — elemental (e.g. fire
+    bolt), enhancement (a buff), mental (an illusion or charm), vital
+    (a heal), manifestation (a summon). Verify each carries a
+    different color tag (`spell-elemental`, `spell-enhancement`,
+    `spell-mental`, `spell-vital`, `spell-manifestation`) and that
+    fold-lines + cast-init lines use `spell-fold` / steel-cyan family.
+
+  - Trigger a skill advancement (use a skill enough times to roll the
+    progression check; salvage / barter / a combat skill all work).
+    Confirm the legacy `*** sharpening ***` (or equivalent) text still
+    fires — the new `messaging.SendProgression` banner format is
+    built but currently orphaned by an import cycle. This is a known
+    deferral; failure to see the new banner is expected.
+
+  - Acquire or admin-grant a companion (pet). Move to a dark room
+    (a room with no light source, like a cave interior). Have another
+    player or admin observer in the same room WITHOUT nightvision.
+    Verify the observer feed does NOT contain the companion's name —
+    the companion-name leak fix from T11c/T17 is the load-bearing fix
+    here. The observer should see "a figure" or generic shape text
+    instead.
+
+  - Have the dark-room observer toggle on the InfraredVision buff
+    (admin grant: `buff list` then locate the InfraredVision buff id;
+    or use a mutation/spell that grants it). Confirm subsequent
+    combat broadcasts in the dark room show "a figure" or similar
+    anonymized text instead of player/mob/pet names. The anonymizer
+    strips username / mobname / petname ANSI tags before delivery.
+
+  - Issue `set linewidth 120` as a player. Trigger a long-line
+    broadcast (a multi-paragraph room description works, or a long
+    combat round). Confirm wrapping occurs at column 120, not 80.
+
+  - Issue `set linewidth 60`. Repeat the long-line trigger. Confirm
+    wrapping tightens to column 60.
+
+  - Issue `set linewidth 40` and `set linewidth 240` (the documented
+    range bounds). Confirm both accepted. Try `set linewidth 39` and
+    `set linewidth 241` — expect a range error message.
+
+  - Run `inventory`, `status`, `who`, `help`. Confirm tabular Go-side
+    column widths honor the current linewidth (per T15). Note: the
+    visual box-drawing templates themselves still hardcode 80 cols —
+    that's a documented deferral, not a bug.
+
+  - Trigger a "a aggressive" or "damage damage" or missing-period
+    scenario — easiest is an emote like `emote slams the door`
+    (verify trailing period auto-appended) or a buff-apply that
+    historically read "a aggressive stance" (verify it reads "an").
+    Confirm normalize stages fire.
+
+  - Trigger a sight-blocked broadcast: use the `blind` admin command
+    or apply Buff 3 / 77 to yourself, then have another character
+    perform a visual action in the same room. Confirm visual lines
+    are gated (you don't see them) but audio lines (speech, shouts)
+    still arrive.
+
+  - Sample 10+ minutes of normal play. Watch for:
+      (a) no panic stack traces in the server output
+      (b) no missing-template debug strings (`[[missing X]]`)
+      (c) no raw `category-XXX` strings appearing in delivered text
+      (d) no double-anonymization (e.g. "a a figure")
+      (e) no `messaging legacy call` warnings (these should be zero
+          after T16 sunset)
+      (f) no per-recipient fan-out issues where one observer sees a
+          line that another should also see but doesn't
+
+  - Read `help set` and confirm `set linewidth` is documented. Read
+    `help linewidth` if it exists.
+
+  - Report: panics, missing templates, debug-color leaks, sight-gate
+    misses, anonymizer double-fires, companion-name leaks, line-
+    wrapping math errors, and any color category that looks visually
+    wrong (clashing with the palette, hard to read, etc.).

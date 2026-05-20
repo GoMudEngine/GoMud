@@ -1,6 +1,10 @@
 speciesid: 21
 name: reptile
 description: A cold-blooded lizard creature, quick and elusive.
+body_parts: [legs, eyes, mouth, skin, tail]
+intrinsic_mutations:
+  tail: 1
+  cold-blooded: 1
 size: small
 unarmedname: teeth
 angrycommands: [emote hisses.]

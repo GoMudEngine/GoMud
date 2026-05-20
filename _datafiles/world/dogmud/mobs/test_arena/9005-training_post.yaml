@@ -1,0 +1,40 @@
+mobid: 9005
+zone: Test Arena
+itemdropchance: 0
+hostile: true
+maxwander: 0
+activitylevel: 50
+statpool: 0
+aiprofile: "brawler"
+specialmovechance: 25
+health_max: 5000
+stamina_max: 5000
+character:
+  name: training post
+  description: A reinforced training post the size of a man, animated by enchantment
+    for combat-mechanic testing. Wrapped in layered hide and padded armor over an
+    iron frame, it hits like a polite teacher and absorbs everything a fighter can
+    throw at it. Built for sustained sparring — round after round, swing after
+    swing — to let testers observe combat mechanics that need a long fight to
+    surface (grapple drift, weapon-reach narration, control-axis cascades). Will
+    return blows but pulls every punch.
+  speciesid: 1
+  stats:
+    strength:
+      training: 5
+    dexterity:
+      training: 0
+    perception:
+      training: 0
+    vitality:
+      training: 100
+    willpower:
+      training: 0
+    charisma:
+      training: 0
+  skills:
+    weapon-combat: 10
+    unarmed-combat: 10
+  equipment:
+    weapon:
+      itemid: 10001

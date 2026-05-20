@@ -5,6 +5,7 @@ description: Your skin shifts colour and pattern to match your surroundings,
   comes with a cost -- your skin becomes thinner and more sensitive,
   leaving you vulnerable to temperature extremes.
 rarity: 7
+requires_body_parts: [skin]
 visual: Their skin ripples with faint colour shifts, blending into the
   background like a living camouflage.
 conflicts:

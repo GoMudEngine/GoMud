@@ -13,6 +13,10 @@
  ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Info</ansi> ────────────────────────────────────────────────────────────────────┐
  │ <ansi fg="yellow">Species:    </ansi>{{ padRight 13 .Character.Species }}<ansi fg="yellow">Gold:       </ansi>{{ padRight 13 (numberFormat .Character.Gold) }}<ansi fg="yellow">Bank:       </ansi>{{ padRight 13 (numberFormat .Character.Bank) }} │
  └─────────────────────────────────────────────────────────────────────────────┘
+ <ansi fg="yellow">Submission policy:</ansi> {{ .Character.SubmissionPolicy }}    <ansi fg="yellow">Surrender policy:</ansi> {{ .Character.SurrenderPolicy }}
+{{- if .Character.Buffs.HasBuff 83 }}
+ <ansi fg="red-bold">Broken limb: {{ .Character.Buffs.TriggersLeft 83 }} rounds remaining</ansi>
+{{- end }}
 {{- if .Character.Mutations }}
  <ansi fg="black-bold">.:</ansi><ansi fg="20">Mutations</ansi><ansi fg="black-bold">:.</ansi>
 {{- range $id, $level := .Character.Mutations }}

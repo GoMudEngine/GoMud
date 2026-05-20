@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -21,21 +22,21 @@ func clearRoomAggroOnDeparture(room *rooms.Room, departingInstanceId int) {
 	// Clear player aggro targeting this mob
 	for _, uid := range room.GetPlayers(rooms.FindFighting) {
 		u := users.GetByUserId(uid)
-		if u == nil || u.Character.Aggro == nil {
+		if u == nil || !u.Character.IsInCombat() {
 			continue
 		}
-		if u.Character.Aggro.MobInstanceId == departingInstanceId {
+		if u.Character.CurrentCombatTarget().MobInstanceId == departingInstanceId {
 			// Try to retarget another hostile mob in the room
 			retargeted := false
 			for _, mId := range room.GetMobs(rooms.FindFighting) {
 				m := mobs.GetInstance(mId)
-				if m == nil || m.Character.Aggro == nil || mId == departingInstanceId {
+				if m == nil || !m.Character.IsInCombat() || mId == departingInstanceId {
 					continue
 				}
 				// Is this mob attacking us or one of our companions?
-				if m.Character.Aggro.UserId == uid {
+				if m.Character.CurrentCombatTarget().UserId == uid {
 					u.Character.SetAggro(0, mId, characters.DefaultAttack)
-					u.SendText(fmt.Sprintf(
+					u.SendText(messaging.CategorySystem, fmt.Sprintf(
 						"You turn your attention to <ansi fg=\"mobname\">%s</ansi>!",
 						m.Character.Name))
 					retargeted = true
@@ -43,9 +44,9 @@ func clearRoomAggroOnDeparture(room *rooms.Room, departingInstanceId int) {
 				}
 				// Check if attacking one of our companions
 				for _, comp := range u.Character.Companions {
-					if comp.InstanceId > 0 && m.Character.Aggro.MobInstanceId == comp.InstanceId {
+					if comp.InstanceId > 0 && m.Character.CurrentCombatTarget().MobInstanceId == comp.InstanceId {
 						u.Character.SetAggro(0, mId, characters.DefaultAttack)
-						u.SendText(fmt.Sprintf(
+						u.SendText(messaging.CategorySystem, fmt.Sprintf(
 							"You turn your attention to <ansi fg=\"mobname\">%s</ansi>!",
 							m.Character.Name))
 						retargeted = true
@@ -65,10 +66,10 @@ func clearRoomAggroOnDeparture(room *rooms.Room, departingInstanceId int) {
 	// Clear mob aggro targeting the departing mob
 	for _, mId := range room.GetMobs(rooms.FindFighting) {
 		m := mobs.GetInstance(mId)
-		if m == nil || m.Character.Aggro == nil {
+		if m == nil || !m.Character.IsInCombat() {
 			continue
 		}
-		if m.Character.Aggro.MobInstanceId == departingInstanceId {
+		if m.Character.CurrentCombatTarget().MobInstanceId == departingInstanceId {
 			m.Character.EndAggro()
 		}
 	}
@@ -76,11 +77,14 @@ func clearRoomAggroOnDeparture(room *rooms.Room, departingInstanceId int) {
 
 // sendMovementMessage sends a visual movement message to players who can see
 // and a sound-based fallback to players in darkness without night vision.
-func sendMovementMessage(room *rooms.Room, visualMsg string, soundMsg string) {
+//
+// visualCat tags the visual (entry/exit) line; the audio soundMsg uses
+// CategorySystem since it's an environment-cue ("you hear footsteps").
+func sendMovementMessage(room *rooms.Room, visualCat messaging.Category, visualMsg string, soundMsg string) {
 	vis := room.GetVisibility()
 	if vis >= 1 {
 		// Room is lit enough — everyone sees the message
-		room.SendTextVisual(visualMsg)
+		room.SendTextVisual(visualCat, visualMsg)
 		return
 	}
 	// Room is dark — send per-player based on night vision
@@ -90,9 +94,9 @@ func sendMovementMessage(room *rooms.Room, visualMsg string, soundMsg string) {
 			continue
 		}
 		if u.Character.HasFlagFromAnySource(buffs.NightVision) {
-			u.SendText(visualMsg)
+			u.SendText(visualCat, visualMsg)
 		} else if soundMsg != "" {
-			u.SendText(soundMsg)
+			u.SendText(messaging.CategorySystem, soundMsg)
 		}
 	}
 }
@@ -132,14 +136,14 @@ func Go(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			destRoom.AddMob(mob.InstanceId)
 
 			// Tell the old room they are leaving
-			sendMovementMessage(room,
+			sendMovementMessage(room, messaging.CategoryRoomExit,
 				fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> runs off suddenly.`, mob.Character.Name),
 				),
 				`You hear hurried footsteps receding.`)
 
 			// Tell the new room they have arrived
-			sendMovementMessage(destRoom,
+			sendMovementMessage(destRoom, messaging.CategoryRoomEntry,
 				fmt.Sprintf(string(c.EnterRoomMessageWrapper),
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> enters from nearby.`, mob.Character.Name),
 				),
@@ -203,14 +207,14 @@ func Go(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		c := configs.GetTextFormatsConfig()
 
 		// Tell the old room they are leaving
-		sendMovementMessage(room,
+		sendMovementMessage(room, messaging.CategoryRoomExit,
 			fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> leaves towards the <ansi fg="exit">%s</ansi> exit.`, mob.Character.Name, exitName),
 			),
 			`You hear footsteps moving away.`)
 
 		// Tell the new room they have arrived
-		sendMovementMessage(destRoom,
+		sendMovementMessage(destRoom, messaging.CategoryRoomEntry,
 			fmt.Sprintf(string(c.EnterRoomMessageWrapper),
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> enters from %s.`, mob.Character.Name, enterFromExit),
 			),
@@ -251,7 +255,7 @@ func Go(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 						continue
 					}
 					// Don't drag in-combat members out of their fight.
-					if memberMob.Character.Aggro != nil {
+					if memberMob.Character.IsInCombat() {
 						continue
 					}
 					memberMob.Command(exitName)

@@ -4,12 +4,10 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
-	"github.com/GoMudEngine/GoMud/internal/characters"
-	"github.com/GoMudEngine/GoMud/internal/dice"
+	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/skills"
-	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
 // Flee makes a mob disengage from combat and move to a random adjacent room.
@@ -23,76 +21,47 @@ func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	// Can't flee while grappled
-	if mob.Character.CombatPosition == characters.PositionClinched ||
-		mob.Character.CombatPosition == characters.PositionGrounded {
+	// Can't flee while grappled. Chunk 4b R3: FSM-driven — covers all
+	// 11 grapple states via the two rollups (legacy enum only knew the
+	// Clinched / Grounded buckets). Mirrors the player-flee
+	// grapple-block UX in handlePlayerFlee — the player needs to see
+	// that their grapple is holding the mob even when the mob tries
+	// to break free. Pre-chunk-4b this returned silently, which made
+	// the grapple feel passive.
+	if mob.Character.IsStandingGrapple() || mob.Character.IsGroundGrapple() {
+		sendRoomText(room, messaging.CategoryGrappleFlow,
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to break free but you've got them locked down!`, mob.Character.Name))
 		return true, nil
 	}
 
-	// Prone penalty applied to flee score below
-	pronePenalty := 1.0
-	if mob.Character.CombatPosition == characters.PositionProne {
-		pronePenalty = 0.5
-	}
-
-	// Check players fighting this mob
-	for _, uId := range room.GetPlayers(rooms.FindFightingMob) {
-		u := users.GetByUserId(uId)
-		if u == nil {
-			continue
-		}
-		if u.Character.Aggro == nil || u.Character.Aggro.MobInstanceId != mob.InstanceId {
-			continue
-		}
-
-		fleeScore := float64(mob.Character.Stats.Dexterity.ValueAdj+
-			mob.Character.GetSkillLevel(skills.Skullduggery)*25) * pronePenalty
-		blockScore := float64(u.Character.Stats.Dexterity.ValueAdj +
-			u.Character.GetSkillLevel(skills.UnarmedCombat)*25)
-		success, _, _, _ := dice.OpposedRollStat(fleeScore, blockScore)
-		if !success {
-			sendRoomText(room,
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to flee but is blocked!`, mob.Character.Name))
-			return true, nil
-		}
-	}
-
-	// Check mobs fighting this mob
-	for _, mId := range room.GetMobs(rooms.FindFightingMob) {
-		m := mobs.GetInstance(mId)
-		if m == nil {
-			continue
-		}
-		if m.Character.Aggro == nil || m.Character.Aggro.MobInstanceId != mob.InstanceId {
-			continue
-		}
-
-		fleeScore := float64(mob.Character.Stats.Dexterity.ValueAdj+
-			mob.Character.GetSkillLevel(skills.Skullduggery)*25) * pronePenalty
-		blockScore := float64(m.Character.Stats.Dexterity.ValueAdj +
-			m.Character.GetSkillLevel(skills.UnarmedCombat)*25)
-		success, _, _, _ := dice.OpposedRollStat(fleeScore, blockScore)
-		if !success {
-			sendRoomText(room,
-				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to flee but is blocked!`, mob.Character.Name))
-			return true, nil
-		}
+	// Shared opposed-roll blocker resolution (combat.ResolveFleeBlockers).
+	// Identical math to the player-flee path in handlePlayerFlee; the
+	// helper handles both player and mob blockers, the prone penalty,
+	// and the targeting filter.
+	if combat.ResolveFleeBlockers(&mob.Character, room) != nil {
+		sendRoomText(room, messaging.CategoryRoomExit,
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to flee but is blocked!`, mob.Character.Name))
+		return true, nil
 	}
 
 	// If in combat, clear aggro
-	if mob.Character.Aggro != nil {
+	if mob.Character.IsInCombat() {
 		mob.Character.EndAggro()
 	}
 
 	// Get a random exit (skips secret and locked exits)
 	exitName, _ := room.GetRandomExit()
 	if exitName == "" {
-		// Cornered — no exits available
+		// Cornered — no exits available. Surface the panic visibly so
+		// the room knows the mob tried and failed (pre-fix this was
+		// silent, making the mob appear to randomly exit combat).
+		sendRoomText(room, messaging.CategoryMobEmote,
+			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> looks around frantically for an escape but finds none!`, mob.Character.Name))
 		return true, nil
 	}
 
 	// Send flee message before moving
-	sendRoomText(room,
+	sendRoomText(room, messaging.CategoryRoomExit,
 		fmt.Sprintf(`<ansi fg="mobname">%s</ansi> flees!`, mob.Character.Name))
 
 	// Move via the existing Go command

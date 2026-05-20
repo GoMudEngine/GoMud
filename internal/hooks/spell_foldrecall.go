@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
 
@@ -21,21 +22,21 @@ func validateFoldRecall(actor actions.Actor) bool {
 	// allow_recall: false).
 	if currentRoom := rooms.LoadRoom(currentRoomId); currentRoom != nil {
 		if blocked, ok := currentRoom.GetTempData("allow_recall").(bool); ok && !blocked {
-			actor.SendText("Something about this place prevents you from recalling.")
+			actor.SendText(messaging.CategorySpellFold, "Something about this place prevents you from recalling.")
 			return false
 		}
 	}
 
 	anchorRoom := getMiscDataInt(char, "fold-anchor-room")
 	if anchorRoom <= 0 {
-		actor.SendText(`You reach for the Veil, but there is no anchor to ` +
-			`pull you. Set one first with ` +
+		actor.SendText(messaging.CategorySpellFold, `You reach for the Veil, but there is no anchor to `+
+			`pull you. Set one first with `+
 			`<ansi fg="command">cast fold-anchor</ansi>.`)
 		return false
 	}
 
 	if anchorRoom == currentRoomId {
-		actor.SendText("You are already standing on your anchor.")
+		actor.SendText(messaging.CategorySpellFold, "You are already standing on your anchor.")
 		return false
 	}
 
@@ -52,7 +53,7 @@ func resolveFoldRecall(actor actions.Actor) {
 	currentRoomId := char.RoomId
 
 	if anchorRoom <= 0 || anchorRoom == currentRoomId {
-		actor.SendText("The fold collapses — no valid anchor found.")
+		actor.SendText(messaging.CategorySpellFold, "The fold collapses — no valid anchor found.")
 		return
 	}
 
@@ -62,23 +63,23 @@ func resolveFoldRecall(actor actions.Actor) {
 	// Move the actor first; only broadcast on success so a failed teleport
 	// doesn't leave the departure room thinking the actor vanished.
 	if !teleportActor(actor, anchorRoom) {
-		actor.SendText("The fold collapses — no valid anchor found.")
+		actor.SendText(messaging.CategorySpellFold, "The fold collapses — no valid anchor found.")
 		return
 	}
 
 	// Departure broadcast on the room the actor LEFT (use the snapshotted
 	// currentRoomId — char.RoomId has been updated by teleport).
 	if oldRoom := rooms.LoadRoom(currentRoomId); oldRoom != nil {
-		oldRoom.SendText(fmt.Sprintf(
+		oldRoom.SendText(messaging.CategorySpellManifestation, fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> folds through the Veil and vanishes!`,
 			actor.GetName()), actor.GetUserId())
 	}
 
-	actor.SendText("You fold through the Veil and arrive at your anchor point!")
+	actor.SendText(messaging.CategorySpellFold, "You fold through the Veil and arrive at your anchor point!")
 
 	// Arrival broadcast on the new room.
 	if newRoom := rooms.LoadRoom(anchorRoom); newRoom != nil {
-		newRoom.SendText(fmt.Sprintf(
+		newRoom.SendText(messaging.CategorySpellManifestation, fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> folds through the Veil and appears!`,
 			actor.GetName()), actor.GetUserId())
 	}

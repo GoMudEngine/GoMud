@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/dice"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -26,13 +27,13 @@ func resolveCharmSpell(user *users.UserRecord, targetMob *mobs.Mob, room *rooms.
 
 	// ── 1. Charm immunity ──────────────────────────────────────────────
 	if targetMob.CharmImmune {
-		user.SendText(`That creature's mind is impervious to charm.`)
+		user.SendText(messaging.CategorySpellMental, `That creature's mind is impervious to charm.`)
 		return false
 	}
 
 	// ── 2. Companion cap ───────────────────────────────────────────────
 	if len(ch.Companions) >= ch.GetMaxCompanions() {
-		user.SendText(`You cannot maintain any more companions.`)
+		user.SendText(messaging.CategorySystem, `You cannot maintain any more companions.`)
 		return false
 	}
 
@@ -53,8 +54,8 @@ func resolveCharmSpell(user *users.UserRecord, targetMob *mobs.Mob, room *rooms.
 		int(math.Round(float64(statTrainingTotal)*0.10))
 
 	// ── 5. Aggro penalty ───────────────────────────────────────────────
-	if targetMob.Character.Aggro != nil {
-		if targetMob.Character.Aggro.UserId == user.UserId {
+	if targetMob.Character.IsInCombat() {
+		if targetMob.Character.CurrentCombatTarget().UserId == user.UserId {
 			// Fighting the caster — steepest penalty
 			attackScore = int(math.Round(float64(attackScore) * 0.75))
 		} else {
@@ -85,7 +86,7 @@ func resolveCharmSpell(user *users.UserRecord, targetMob *mobs.Mob, room *rooms.
 			AutoAssist: true,
 		}
 		if !ch.AddCompanion(info) {
-			user.SendText(`You cannot maintain any more companions.`)
+			user.SendText(messaging.CategorySystem, `You cannot maintain any more companions.`)
 			return false
 		}
 
@@ -95,22 +96,22 @@ func resolveCharmSpell(user *users.UserRecord, targetMob *mobs.Mob, room *rooms.
 				continue
 			}
 			if companion := mobs.GetInstance(charmId); companion != nil {
-				if companion.Character.Aggro != nil &&
-					companion.Character.Aggro.MobInstanceId == targetMob.InstanceId {
+				if companion.Character.IsInCombat() &&
+					companion.Character.CurrentCombatTarget().MobInstanceId == targetMob.InstanceId {
 					companion.Character.EndAggro()
 				}
 			}
 		}
 
 		// Clear the owner's own aggro if targeting the new mob
-		if ch.Aggro != nil && ch.Aggro.MobInstanceId == targetMob.InstanceId {
+		if ch.IsInCombat() && ch.CurrentCombatTarget().MobInstanceId == targetMob.InstanceId {
 			ch.EndAggro()
 		}
 
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySpellMental, fmt.Sprintf(
 			`<ansi fg="cyan">%s's eyes glaze as your will takes hold. It is yours.</ansi>`,
 			targetName))
-		sendVisualRoomText(room, fmt.Sprintf(
+		sendVisualRoomText(room, messaging.CategorySpellMental, fmt.Sprintf(
 			`<ansi fg="cyan"><ansi fg="username">%s</ansi> bends %s to their will!</ansi>`,
 			user.Character.Name, targetName), user.UserId)
 
@@ -118,10 +119,10 @@ func resolveCharmSpell(user *users.UserRecord, targetMob *mobs.Mob, room *rooms.
 	}
 
 	// ── Failure ────────────────────────────────────────────────────────
-	user.SendText(fmt.Sprintf(
+	user.SendText(messaging.CategorySpellMental, fmt.Sprintf(
 		`<ansi fg="yellow">You reach for %s's mind, but its will is iron. The spell shatters.</ansi>`,
 		targetName))
-	sendVisualRoomText(room, fmt.Sprintf(
+	sendVisualRoomText(room, messaging.CategorySpellMental, fmt.Sprintf(
 		`<ansi fg="yellow"><ansi fg="username">%s</ansi>'s charm spell breaks against %s's resolve!</ansi>`,
 		user.Character.Name, targetName), user.UserId)
 

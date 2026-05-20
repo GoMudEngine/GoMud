@@ -6,6 +6,7 @@ import (
 	"sort"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -107,7 +108,7 @@ func Quests(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	})
 
 	questTxt, _ := templates.Process("character/quests", qInfo, user.UserId)
-	user.SendText(questTxt)
+	user.SendText(messaging.CategorySystem, questTxt)
 
 	return true, nil
 }

@@ -22,12 +22,14 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -319,7 +321,7 @@ func tickForagerDeliveringFernway(
 	room := rooms.LoadRoom(ctx.RoomId)
 	if dumped := dumpFernwayLoadIntoCrate(p, mob, room); dumped > 0 {
 		persistCrate(ctx.RoomId, room.SealedCrate)
-		room.SendText(fmt.Sprintf(
+		room.SendText(messaging.CategoryMobEmote, fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> hauls a satchel up to the crate, latches it shut, and turns for home.`,
 			p.Name))
 	}
@@ -403,7 +405,13 @@ func tickForagerRecalling(
 		toRoom := rooms.LoadRoom(anchorRoomId)
 		if toRoom != nil {
 			mob.Character.EndAggro()
-			mob.Character.CastingState = nil // clear any stale cast
+			// Clear any stale cast via Activity machine.
+			if mob.Character.Activity != nil && mob.Character.Activity.IsCasting() {
+				mob.Character.Activity.ForceFree(state.TransitionReason{
+					Trigger: "forager_teleport",
+					Actor:   mob.Character.Activity.Self(),
+				})
+			}
 			if fromRoom != nil {
 				fromRoom.RemoveMob(mob.InstanceId)
 			}
@@ -446,7 +454,7 @@ func npcAttemptForage(
 		return
 	}
 	mob.Character.StoreItem(item)
-	room.SendText(fmt.Sprintf(
+	room.SendText(messaging.CategoryMobIdle, fmt.Sprintf(
 		`<ansi fg="mobname">%s</ansi> stoops over a patch of growth`+
 			` and tucks something into a satchel.`,
 		p.Name))
@@ -496,7 +504,7 @@ func dumpSatchelToLockbox(mob *mobs.Mob, ctx *EvalContext) bool {
 	if dumped {
 		box.Lock.SetLocked() // bumps RotationSeed
 		room.Containers["lockbox"] = box
-		room.SendText(`<ansi fg="yellow">A latch clicks shut from somewhere in the sanctuary.</ansi>`)
+		room.SendText(messaging.CategoryMobEmote, `<ansi fg="yellow">A latch clicks shut from somewhere in the sanctuary.</ansi>`)
 	}
 	return dumped
 }
@@ -551,7 +559,7 @@ func npcVisitVendorsInRoom(
 				}
 				forager.AddLbsDelivered(mob.Zone, int(mob.MobId), uint64(math.Round(spec.Weight)))
 			}
-			room.SendText(fmt.Sprintf(
+			room.SendText(messaging.CategoryMobEmote, fmt.Sprintf(
 				`<ansi fg="mobname">%s</ansi> hands a %s to`+
 					` <ansi fg="mobname">%s</ansi>.`,
 				p.Name, item.DisplayName(), vendor.Character.Name,

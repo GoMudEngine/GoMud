@@ -1,6 +1,14 @@
 package questengine
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+
+	"github.com/GoMudEngine/GoMud/internal/bounties"
+	"github.com/GoMudEngine/GoMud/internal/knowledge"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/util"
+)
 
 // ActionContext is the interface actions use to modify game state.
 // Implemented by the real game bridge (Phase 2) and mocks (tests).
@@ -9,7 +17,7 @@ type ActionContext interface {
 	ConsumeItem(itemId int)
 	GiveItem(itemId int)
 	GiveGold(amount int)
-	SendText(text string)
+	SendText(cat messaging.Category, text string)
 	RoomText(text string)
 	SpawnMob(s SpawnDef)
 	SpawnItem(s SpawnDef)
@@ -23,6 +31,7 @@ type ActionContext interface {
 	QueueSequence(s SequenceDef)
 	GiveMutation()
 	SetQuestFlag(key, value string)
+	BumpRep(factionId string, delta int)
 	GetUserId() int
 }
 
@@ -49,7 +58,7 @@ func ExecuteAction(a ActionDef, ctx ActionContext) error {
 		return nil
 	}
 	if a.SendText != "" {
-		ctx.SendText(a.SendText)
+		ctx.SendText(messaging.CategoryNPCDialogue, a.SendText)
 		return nil
 	}
 	if a.RoomText != "" {
@@ -109,6 +118,78 @@ func ExecuteAction(a ActionDef, ctx ActionContext) error {
 	if a.SetFlag != nil {
 		LogVerboseF(ctx.GetUserId(), "set quest flag %s=%s", a.SetFlag.Key, a.SetFlag.Value)
 		ctx.SetQuestFlag(a.SetFlag.Key, a.SetFlag.Value)
+		return nil
+	}
+	if a.BumpRep != nil {
+		LogVerboseF(ctx.GetUserId(), "bump_rep %s %+d", a.BumpRep.Faction, a.BumpRep.Delta)
+		ctx.BumpRep(a.BumpRep.Faction, a.BumpRep.Delta)
+		return nil
+	}
+	if a.DeclareBounty != nil {
+		def := a.DeclareBounty
+
+		// Resolve issuer.
+		var issuer bounties.Issuer
+		switch def.Issuer.Type {
+		case "faction":
+			issuer = bounties.FactionIssuer(def.Issuer.Id)
+		case "quest":
+			qid := def.Issuer.Id
+			intId, err := strconv.Atoi(qid)
+			if err != nil {
+				return fmt.Errorf("declare_bounty: bad quest issuer id %q: %w", qid, err)
+			}
+			issuer = bounties.QuestIssuer(intId)
+		case "npc":
+			intId, err := strconv.Atoi(def.Issuer.Id)
+			if err != nil {
+				return fmt.Errorf("declare_bounty: bad npc issuer id %q: %w", def.Issuer.Id, err)
+			}
+			issuer = bounties.NPCIssuer(intId)
+		default:
+			return fmt.Errorf("declare_bounty: unknown issuer type %q", def.Issuer.Type)
+		}
+
+		// Resolve target.
+		var target knowledge.Subject
+		switch {
+		case def.TargetPlayer:
+			target = knowledge.PlayerSubject(ctx.GetUserId())
+		case def.Target != nil:
+			switch def.Target.Type {
+			case "player":
+				target = knowledge.PlayerSubject(def.Target.Id)
+			case "mob":
+				target = knowledge.MobSubject(def.Target.Id)
+			default:
+				return fmt.Errorf("declare_bounty: unknown target type %q", def.Target.Type)
+			}
+		default:
+			return fmt.Errorf("declare_bounty: must set target_player or target")
+		}
+
+		// Compute expiry round.
+		expiryRound := uint64(0)
+		if def.ExpiryRounds > 0 {
+			expiryRound = util.GetRoundCount() + def.ExpiryRounds
+		}
+
+		condition := bounties.Condition(def.Condition)
+		if condition == "" {
+			condition = bounties.ConditionKill
+		}
+
+		id, err := bounties.Declare(issuer, target, condition, expiryRound,
+			bounties.DeclareOpts{
+				GoldOverride:   def.GoldOverride,
+				RepOverride:    def.RepOverride,
+				DeclaredReason: def.Reason,
+			})
+		if err != nil {
+			return fmt.Errorf("declare_bounty: %w", err)
+		}
+		LogVerboseF(ctx.GetUserId(), "declare_bounty id=%d issuer=%s:%s target=%s:%d",
+			id, string(issuer.Type), issuer.Id, string(target.Type), target.Id)
 		return nil
 	}
 	if a.Sequence != nil {

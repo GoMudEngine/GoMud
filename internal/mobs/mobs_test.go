@@ -6,6 +6,9 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
+	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v2"
 )
@@ -27,7 +30,7 @@ func seedRegistry() func() {
 			Zone:          "Sanctum Basin",
 			StatPool:      100,
 			ActivityLevel: 50,
-			Hostile:       true,
+			AutoAggro: true,
 			Groups:        []string{"undead", "dungeon"},
 			Hates:         []string{"townfolk"},
 			IdleCommands:  []string{"emote lurks in the shadows.", "emote growls softly."},
@@ -43,7 +46,7 @@ func seedRegistry() func() {
 			Zone:          "Sanctum Basin",
 			StatPool:      120,
 			ActivityLevel: 30,
-			Hostile:       false,
+			AutoAggro: false,
 			Groups:        []string{"townfolk"},
 			Hates:         []string{},
 			IdleCommands:  []string{"emote hums a tune."},
@@ -61,7 +64,7 @@ func seedRegistry() func() {
 			Zone:          "Dark Forest",
 			StatPool:      80,
 			ActivityLevel: 70,
-			Hostile:       true,
+			AutoAggro: true,
 			Groups:        []string{"beasts"},
 			Hates:         []string{"*"},
 			IdleCommands:  []string{},
@@ -77,7 +80,7 @@ func seedRegistry() func() {
 			Zone:          "Sanctum Basin",
 			StatPool:      60,
 			ActivityLevel: 0, // should clamp to 10 on Validate
-			Hostile:       false,
+			AutoAggro: false,
 			Groups:        []string{"undead"},
 			Hates:         []string{"beasts"},
 			Character: characters.Character{
@@ -90,7 +93,7 @@ func seedRegistry() func() {
 			Zone:          "Sanctum Basin",
 			StatPool:      200,
 			ActivityLevel: 150, // should clamp to 100 on Validate
-			Hostile:       true,
+			AutoAggro: true,
 			Groups:        []string{},
 			Hates:         []string{},
 			Character: characters.Character{
@@ -1609,5 +1612,316 @@ zone: Test Zone
 	}
 	if m.CorpseDescription != "" {
 		t.Errorf("CorpseDescription default = %q, want empty", m.CorpseDescription)
+	}
+}
+
+// ─── Phase 2.5 spawn mutation gate tests ─────────────────────────────────────
+
+// TestMobSpawn_CanineNeverGetsExtraArms verifies that GetWeightedPool never
+// returns arm-requiring or hand-requiring mutations for a species that lacks
+// those body parts. Seeds a controlled mutations registry with known IDs.
+func TestMobSpawn_CanineNeverGetsExtraArms(t *testing.T) {
+	// Seed a controlled mutations registry: arm-requiring, hand-requiring,
+	// and one universal mutation (no body-part requirements).
+	cleanup := mutations.SeedMutationsForTest(map[string]*mutations.MutationSpec{
+		"extra-arms": {
+			MutationId:        "extra-arms",
+			Name:              "Extra Arms",
+			Rarity:            9,
+			RequiresBodyParts: []string{"arms"},
+		},
+		"elongated-limbs": {
+			MutationId:        "elongated-limbs",
+			Name:              "Elongated Limbs",
+			Rarity:            5,
+			RequiresBodyParts: []string{"arms"},
+		},
+		"clawed-hands": {
+			MutationId:        "clawed-hands",
+			Name:              "Clawed Hands",
+			Rarity:            4,
+			RequiresBodyParts: []string{"hands"},
+		},
+		"tough-skin": {
+			MutationId: "tough-skin",
+			Name:       "Tough Skin",
+			Rarity:     3,
+		},
+	})
+	defer cleanup()
+
+	// Canine-like species: intentionally omits arms and hands.
+	sp := &species.Species{
+		SpeciesId: 999,
+		Name:      "canine-test",
+		BodyParts: []string{"legs", "eyes", "mouth", "skin", "tail"},
+	}
+	current := map[string]int{}
+	seen := map[string]int{}
+	for i := 0; i < 500; i++ {
+		pool := mutations.GetWeightedPool(current, sp)
+		if len(pool) == 0 {
+			continue
+		}
+		picked := pool[util.Rand(len(pool))]
+		seen[picked]++
+	}
+	if seen["extra-arms"] > 0 {
+		t.Errorf("canine-shaped species should NEVER roll extra-arms, got %d times", seen["extra-arms"])
+	}
+	if seen["elongated-limbs"] > 0 {
+		t.Errorf("canine-shaped species should NEVER roll elongated-limbs, got %d times", seen["elongated-limbs"])
+	}
+	if seen["clawed-hands"] > 0 {
+		t.Errorf("canine-shaped species should NEVER roll clawed-hands, got %d times", seen["clawed-hands"])
+	}
+	// Sanity check: the universal mutation must appear at least sometimes.
+	if seen["tough-skin"] == 0 {
+		t.Error("expected tough-skin (no body-part requirements) to appear at least once in 500 rolls")
+	}
+}
+
+// TestMobSpawn_IntrinsicStackingWithAcquired verifies that ApplyIntrinsicMutations
+// stacks additively with already-acquired mutation ranks.
+func TestMobSpawn_IntrinsicStackingWithAcquired(t *testing.T) {
+	// Species with intrinsic tail rank 1; character already has acquired rank 1.
+	sp := &species.Species{
+		SpeciesId:          999,
+		IntrinsicMutations: map[string]int{"tail": 1},
+	}
+	c := &characters.Character{Mutations: map[string]int{"tail": 1}}
+	c.ApplyIntrinsicMutations(sp)
+	if c.Mutations["tail"] != 2 {
+		t.Errorf("expected tail rank 2 (1 acquired + 1 intrinsic), got %d", c.Mutations["tail"])
+	}
+}
+
+// ─── Submission / Surrender policy at spawn ──────────────────────────────────
+
+// TestNewMobById_SubmissionPolicyFromArchetypeDefault verifies that a mob
+// with no submission_policy YAML override inherits the archetype default
+// when spawned via NewMobById.
+func TestNewMobById_SubmissionPolicyFromArchetypeDefault(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	// Seed a mob with BehaviorArchetype "civilian" → expects PolicyMercy.
+	mobsMu.Lock()
+	mobs[50] = &Mob{
+		MobId:             50,
+		Zone:              "Test",
+		StatPool:          10,
+		ActivityLevel:     50,
+		BehaviorArchetype: "civilian",
+		Character: characters.Character{
+			Name:      "Test Civilian",
+			SpeciesId: 0,
+		},
+	}
+	mobsMu.Unlock()
+
+	mob := NewMobById(50, 100)
+	if mob == nil {
+		t.Fatal("NewMobById returned nil for mob 50")
+	}
+	defer DestroyInstance(mob.InstanceId)
+
+	assert.Equal(t, characters.PolicyMercy, mob.Character.SubmissionPolicy,
+		"civilian archetype should default to PolicyMercy")
+	assert.Equal(t, characters.SurrenderAlways, mob.Character.SurrenderPolicy.Mode,
+		"civilian archetype should default to SurrenderAlways")
+}
+
+// TestNewMobById_SubmissionPolicyDefaultFallback verifies that a mob with
+// no BehaviorArchetype (blank) falls through to the generic_fighter default.
+func TestNewMobById_SubmissionPolicyDefaultFallback(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	// Mob 4 (Ghostly Wisp) has no BehaviorArchetype set → generic default.
+	mob := NewMobById(4, 100)
+	if mob == nil {
+		t.Fatal("NewMobById returned nil for mob 4")
+	}
+	defer DestroyInstance(mob.InstanceId)
+
+	// "" archetype → DefaultSubmissionPolicyForArchetype("") → PolicySubdue
+	assert.Equal(t, characters.PolicySubdue, mob.Character.SubmissionPolicy,
+		"blank archetype should default to PolicySubdue")
+	// "" archetype → DefaultSurrenderPolicyForArchetype("") → SurrenderAutoTap
+	assert.Equal(t, characters.SurrenderAutoTap, mob.Character.SurrenderPolicy.Mode,
+		"blank archetype should default to SurrenderAutoTap")
+}
+
+// TestNewMobById_SubmissionPolicyYAMLOverride verifies that a mob with a
+// valid submission_policy YAML field uses that value rather than the
+// archetype default.
+func TestNewMobById_SubmissionPolicyYAMLOverride(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	// Seed a mob with BehaviorArchetype "predator" (default → PolicySubdue)
+	// but YAML override "lethal".
+	mobsMu.Lock()
+	mobs[51] = &Mob{
+		MobId:             51,
+		Zone:              "Test",
+		StatPool:          10,
+		ActivityLevel:     50,
+		BehaviorArchetype: "predator",
+		SubmissionPolicy:  "lethal",
+		SurrenderPolicy:   "never",
+		Character: characters.Character{
+			Name:      "Test Predator",
+			SpeciesId: 0,
+		},
+	}
+	mobsMu.Unlock()
+
+	mob := NewMobById(51, 100)
+	if mob == nil {
+		t.Fatal("NewMobById returned nil for mob 51")
+	}
+	defer DestroyInstance(mob.InstanceId)
+
+	assert.Equal(t, characters.PolicyLethal, mob.Character.SubmissionPolicy,
+		"YAML override 'lethal' should win over predator archetype default (subdue)")
+	assert.Equal(t, characters.SurrenderNever, mob.Character.SurrenderPolicy.Mode,
+		"YAML override 'never' should win over predator archetype default")
+}
+
+// TestNewMobById_SubmissionPolicyInvalidFallsBack verifies that an invalid
+// YAML submission_policy value logs a warning and falls back to the archetype
+// default rather than panicking or using the zero value.
+func TestNewMobById_SubmissionPolicyInvalidFallsBack(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	// Seed a mob with an invalid policy string; BehaviorArchetype "leader"
+	// → archetype default is PolicyCripple.
+	mobsMu.Lock()
+	mobs[52] = &Mob{
+		MobId:             52,
+		Zone:              "Test",
+		StatPool:          10,
+		ActivityLevel:     50,
+		BehaviorArchetype: "leader",
+		SubmissionPolicy:  "eviscerate", // invalid
+		SurrenderPolicy:   "bogus",      // invalid
+		Character: characters.Character{
+			Name:      "Test Leader",
+			SpeciesId: 0,
+		},
+	}
+	mobsMu.Unlock()
+
+	mob := NewMobById(52, 100)
+	if mob == nil {
+		t.Fatal("NewMobById returned nil for mob 52")
+	}
+	defer DestroyInstance(mob.InstanceId)
+
+	// Invalid → falls back to archetype default for "leader" → PolicyCripple
+	assert.Equal(t, characters.PolicyCripple, mob.Character.SubmissionPolicy,
+		"invalid YAML override should fall back to leader archetype default (cripple)")
+	// Invalid surrender → falls back to "leader" archetype default → SurrenderNever
+	assert.Equal(t, characters.SurrenderNever, mob.Character.SurrenderPolicy.Mode,
+		"invalid surrender YAML override should fall back to leader archetype default (never)")
+}
+
+// TestMob_SubmissionPolicyYAMLRoundtrip verifies the two new fields survive
+// a yaml.Unmarshal round-trip on the Mob struct.
+func TestMob_SubmissionPolicyYAMLRoundtrip(t *testing.T) {
+	src := `mobid: 9999
+zone: Test
+submission_policy: cripple
+surrender_policy: never
+`
+	var m Mob
+	if err := yaml.Unmarshal([]byte(src), &m); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if m.SubmissionPolicy != "cripple" {
+		t.Errorf("SubmissionPolicy = %q, want cripple", m.SubmissionPolicy)
+	}
+	if m.SurrenderPolicy != "never" {
+		t.Errorf("SurrenderPolicy = %q, want never", m.SurrenderPolicy)
+	}
+
+	// Defaults to blank when omitted.
+	var m2 Mob
+	if err := yaml.Unmarshal([]byte("mobid: 9998\n"), &m2); err != nil {
+		t.Fatalf("unmarshal m2: %v", err)
+	}
+	if m2.SubmissionPolicy != "" {
+		t.Errorf("SubmissionPolicy default = %q, want empty", m2.SubmissionPolicy)
+	}
+	if m2.SurrenderPolicy != "" {
+		t.Errorf("SurrenderPolicy default = %q, want empty", m2.SurrenderPolicy)
+	}
+}
+
+// TestMobSpawn_CuratedGateSkipsIncompatibleMutation verifies that the curated
+// SpawnMutations gate (in newMobByIdInternal) correctly filters out mutations
+// that require body parts the species lacks. This exercises the gate logic
+// that CanApplyTo enforces when processing mob template SpawnMutations.
+func TestMobSpawn_CuratedGateSkipsIncompatibleMutation(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	// Seed mutations: extra-arms (requires arms), tough-skin (universal).
+	cleanMut := mutations.SeedMutationsForTest(map[string]*mutations.MutationSpec{
+		"extra-arms": {
+			MutationId:        "extra-arms",
+			Name:              "Extra Arms",
+			Rarity:            9,
+			RequiresBodyParts: []string{"arms"},
+		},
+		"tough-skin": {
+			MutationId: "tough-skin",
+			Name:       "Tough Skin",
+			Rarity:     3,
+		},
+	})
+	defer cleanMut()
+
+	// Seed canine-like species (no arms).
+	cleanSp := species.SeedSpeciesForTest(map[int]*species.Species{
+		999: {
+			SpeciesId: 999,
+			Name:      "test-canine",
+			BodyParts: []string{"legs", "eyes", "mouth", "skin", "tail"},
+		},
+	})
+	defer cleanSp()
+
+	// Create a mob template with both mutations in SpawnMutations.
+	mobsMu.Lock()
+	mobs[999] = &Mob{
+		MobId:           999,
+		Zone:            "test",
+		StatPool:        100,
+		SpawnMutations:  []string{"extra-arms", "tough-skin"},
+		ActivityLevel:   50,
+		Character: characters.Character{
+			Name:      "Test Canine",
+			SpeciesId: 999,
+		},
+	}
+	mobsMu.Unlock()
+
+	// Spawn the mob (calls newMobByIdInternal with the curated gate).
+	mob := NewMobById(999, 100)
+	if mob == nil {
+		t.Fatal("NewMobById returned nil")
+	}
+	defer DestroyInstance(mob.InstanceId)
+
+	// Verify: tough-skin applied, extra-arms blocked.
+	if mob.Character.Mutations["tough-skin"] != 1 {
+		t.Errorf("tough-skin should be applied, got rank %d", mob.Character.Mutations["tough-skin"])
+	}
+	if mob.Character.Mutations["extra-arms"] > 0 {
+		t.Errorf("extra-arms should NOT be applied to canine, got rank %d", mob.Character.Mutations["extra-arms"])
 	}
 }

@@ -7,13 +7,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/GoMudEngine/GoMud/internal/buffs"
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/term"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -207,7 +206,13 @@ func (u *UserRecord) GetCommandPrompt() string {
 		}
 
 		var customPrompt any = nil
-		var inCombat bool = u.Character.Aggro != nil
+		// Use IsInCombat() (CombatPhase-aware) instead of the raw
+		// Aggro field — the prompt should render the fight format
+		// whenever the player is engaged, even if the legacy Aggro
+		// pointer happens to be transiently nil between rounds.
+		// IsInCombat falls back to Aggro for legacy code paths that
+		// haven't wired CombatPhase yet.
+		var inCombat bool = u.Character.IsInCombat()
 
 		if inCombat {
 			customPrompt = u.GetConfigOption(`fprompt-compiled`)
@@ -407,60 +412,65 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 				}
 
 			case `{target}`:
-				if u.Character.Aggro != nil {
-					if u.Character.Aggro.MobInstanceId > 0 {
-						if m := mobs.GetInstance(u.Character.Aggro.MobInstanceId); m != nil {
-							promptOut.WriteString(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>`, m.Character.Name))
-						}
-					} else if u.Character.Aggro.UserId > 0 {
-						if target := GetByUserId(u.Character.Aggro.UserId); target != nil {
-							promptOut.WriteString(fmt.Sprintf(`<ansi fg="username">%s</ansi>`, target.Character.Name))
-						}
+				// Source target from CombatPhase (canonical) with
+				// fallback to legacy Aggro inside CurrentCombatTarget.
+				// Robust against transient Aggro=nil between rounds.
+				tRef := u.Character.CurrentCombatTarget()
+				if tRef.MobInstanceId > 0 {
+					if m := mobs.GetInstance(tRef.MobInstanceId); m != nil {
+						promptOut.WriteString(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>`, m.Character.Name))
+					}
+				} else if tRef.UserId > 0 {
+					if target := GetByUserId(tRef.UserId); target != nil {
+						promptOut.WriteString(fmt.Sprintf(`<ansi fg="username">%s</ansi>`, target.Character.Name))
 					}
 				}
 
 			case `{targethealth}`:
-				if u.Character.Aggro != nil {
-					var tHealth, tMax int
-					if u.Character.Aggro.MobInstanceId > 0 {
-						if m := mobs.GetInstance(u.Character.Aggro.MobInstanceId); m != nil {
-							tHealth, tMax = m.Character.Health, m.Character.HealthMax.Value
-						}
-					} else if u.Character.Aggro.UserId > 0 {
-						if target := GetByUserId(u.Character.Aggro.UserId); target != nil {
-							tHealth, tMax = target.Character.Health, target.Character.HealthMax.Value
-						}
+				tRef := u.Character.CurrentCombatTarget()
+				var tHealth, tMax int
+				if tRef.MobInstanceId > 0 {
+					if m := mobs.GetInstance(tRef.MobInstanceId); m != nil {
+						tHealth, tMax = m.Character.Health, m.Character.HealthMax.Value
 					}
-					if tMax > 0 {
-						desc, color := targetHealthDesc(tHealth, tMax)
-						promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, color, desc))
+				} else if tRef.UserId > 0 {
+					if target := GetByUserId(tRef.UserId); target != nil {
+						tHealth, tMax = target.Character.Health, target.Character.HealthMax.Value
 					}
+				}
+				if tMax > 0 {
+					desc, color := targetHealthDesc(tHealth, tMax)
+					promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, color, desc))
 				}
 
 			case `{targetpos}`:
-				if u.Character.Aggro != nil {
-					var tPos characters.CombatPosition
-					if u.Character.Aggro.MobInstanceId > 0 {
-						if m := mobs.GetInstance(u.Character.Aggro.MobInstanceId); m != nil {
-							tPos = m.Character.CombatPosition
-						}
-					} else if u.Character.Aggro.UserId > 0 {
-						if target := GetByUserId(u.Character.Aggro.UserId); target != nil {
-							tPos = target.Character.CombatPosition
-						}
+				// FSM-driven: same color/abbrev helpers used by {pos}.
+				tRef := u.Character.CurrentCombatTarget()
+				var tPos position.State
+				var tPosFound bool
+				if tRef.MobInstanceId > 0 {
+					if m := mobs.GetInstance(tRef.MobInstanceId); m != nil && m.Character.Position != nil {
+						tPos = m.Character.Position.State()
+						tPosFound = true
 					}
-					if tPos != `` {
-						promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`,
-							tPos.GetPositionColor(), tPos.String()))
+				} else if tRef.UserId > 0 {
+					if target := GetByUserId(tRef.UserId); target != nil && target.Character.Position != nil {
+						tPos = target.Character.Position.State()
+						tPosFound = true
 					}
+				}
+				if tPosFound && tPos != position.Standing {
+					promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`,
+						positionPromptColor(tPos), positionPromptAbbrev(tPos)))
 				}
 
 			case `{tank}`:
-				if u.Character.Aggro != nil && u.Character.Aggro.MobInstanceId > 0 {
-					if m := mobs.GetInstance(u.Character.Aggro.MobInstanceId); m != nil {
-						if m.Character.Aggro != nil && m.Character.Aggro.UserId > 0 &&
-							m.Character.Aggro.UserId != u.UserId {
-							if tankUser := GetByUserId(m.Character.Aggro.UserId); tankUser != nil {
+				tRef := u.Character.CurrentCombatTarget()
+				if tRef.MobInstanceId > 0 {
+					if m := mobs.GetInstance(tRef.MobInstanceId); m != nil {
+						mRef := m.Character.CurrentCombatTarget()
+						if mRef.UserId > 0 && mRef.UserId != u.UserId {
+							if tankUser := GetByUserId(mRef.UserId); tankUser != nil {
 								tankBar := renderVitalBar(
 									tankUser.Character.Health,
 									tankUser.Character.HealthMax.Value,
@@ -479,28 +489,35 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 
 			case `{h}`:
 				hiddenFlag := ``
-				if u.Character.HasBuffFlag(buffs.Hidden) {
+				if u.Character.IsHidden() {
 					hiddenFlag = `H`
 				}
 				promptOut.WriteString(hiddenFlag)
 
 			case `{pos}`:
-				// Combat position (Standing/Prone/Clinched/Grounded) - Stage 8.1
-				if u.Character.CombatPosition != characters.PositionStanding {
-					posColor := u.Character.CombatPosition.GetPositionColor()
-					promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, posColor, u.Character.CombatPosition.String()))
+				// Combat position prompt. Chunk 4b R6: FSM-driven (14 states
+				// — Standing / Prone / Supine / 11 grapples). Hidden when
+				// Standing to keep the prompt short.
+				if !u.Character.IsStanding() && u.Character.Position != nil {
+					s := u.Character.Position.State()
+					promptOut.WriteString(fmt.Sprintf(
+						`<ansi fg="%s">%s</ansi>`,
+						positionPromptColor(s),
+						positionPromptAbbrev(s),
+					))
 				}
 
 			case `{casting}`:
-				if u.Character.CastingState != nil {
-					cs := u.Character.CastingState
-					spellName := cs.SpellId
-					if sd := spells.GetSpell(cs.SpellId); sd != nil {
-						spellName = sd.Name
+				if u.Character.Activity != nil {
+					if cs, ok := u.Character.Activity.CastingData(); ok {
+						spellName := cs.SpellId
+						if sd := spells.GetSpell(cs.SpellId); sd != nil {
+							spellName = sd.Name
+						}
+						promptOut.WriteString(fmt.Sprintf(
+							`<ansi fg="cyan"> [%s %d/%d]</ansi>`,
+							spellName, cs.FoldsAccumulated, cs.FoldsNeeded))
 					}
-					promptOut.WriteString(fmt.Sprintf(
-						`<ansi fg="cyan"> [%s %d/%d]</ansi>`,
-						spellName, cs.FoldsAccumulated, cs.FoldsNeeded))
 				}
 
 			case `{g}`:
@@ -561,4 +578,43 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 	}
 
 	return promptOut.String()
+}
+
+// positionPromptColor returns the ANSI color name for the {pos}
+// prompt token, replacing the legacy
+// CombatPosition.GetPositionColor (sunset in chunk 4b S5).
+func positionPromptColor(s position.State) string {
+	switch s {
+	case position.Standing:
+		return "white"
+	case position.Prone, position.Supine:
+		return "yellow"
+	case position.Clinch, position.BackStanding:
+		return "orange"
+	default: // all 9 ground-grapple states
+		return "red"
+	}
+}
+
+// positionPromptAbbrev keeps the {pos} token narrow. State names
+// longer than ~5 chars get an abbreviated form; the full names are
+// available via Position.State().String() for any caller that
+// needs them.
+func positionPromptAbbrev(s position.State) string {
+	switch s {
+	case position.BackStanding:
+		return "B.Std"
+	case position.BackGround:
+		return "B.Gnd"
+	case position.SideControl:
+		return "SC"
+	case position.KneeOnBelly:
+		return "KOB"
+	case position.NorthSouth:
+		return "N-S"
+	case position.HalfGuard:
+		return "H.Gd"
+	default:
+		return s.String()
+	}
 }

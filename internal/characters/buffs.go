@@ -8,6 +8,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/perception"
 )
 
 func (c *Character) IsDisabled() bool {
@@ -79,6 +81,13 @@ func (c *Character) AddBuff(buffId int, isPermanent bool) error {
 	if !c.Buffs.AddBuff(buffId, isPermanent) {
 		return fmt.Errorf(`failed to add buff. target: "%s" buffId: %d`, c.Name, buffId)
 	}
+	// Chunk 6 (Perception): blind-source buffs trigger Sighted → Blinded.
+	// Guard against re-entry: only fire if state is currently Sighted.
+	if (buffId == perception.BuffIdBlinded || buffId == perception.BuffIdFlashbangBlindness) &&
+		c.Perception != nil && c.Perception.State() == perception.Sighted {
+		_ = c.Perception.TransitionTo(perception.Blinded,
+			state.TransitionReason{Trigger: perception.TriggerBuffApplied, Metadata: map[string]any{"buffId": buffId}})
+	}
 	c.Validate()
 	return nil
 }
@@ -88,6 +97,12 @@ func (c *Character) AddBuffScaled(buffId int, durationMult float64) error {
 	buffId = int(math.Abs(float64(buffId)))
 	if !c.Buffs.AddBuffScaled(buffId, durationMult) {
 		return fmt.Errorf(`failed to add buff. target: "%s" buffId: %d`, c.Name, buffId)
+	}
+	// Chunk 6 (Perception): see AddBuff above.
+	if (buffId == perception.BuffIdBlinded || buffId == perception.BuffIdFlashbangBlindness) &&
+		c.Perception != nil && c.Perception.State() == perception.Sighted {
+		_ = c.Perception.TransitionTo(perception.Blinded,
+			state.TransitionReason{Trigger: perception.TriggerBuffApplied, Metadata: map[string]any{"buffId": buffId}})
 	}
 	c.Validate()
 	return nil
@@ -104,6 +119,13 @@ func (c *Character) GetBuffs(buffId ...int) []*buffs.Buff {
 func (c *Character) RemoveBuff(buffId int) {
 	buffId = int(math.Abs(float64(buffId)))
 	c.Buffs.RemoveBuff(buffId)
+	// Chunk 6 (Perception): clearing a blind-source buff may flip
+	// Blinded → Sighted, but only if no other blind source remains.
+	if (buffId == perception.BuffIdBlinded || buffId == perception.BuffIdFlashbangBlindness) &&
+		c.Perception != nil && c.Perception.State() == perception.Blinded && !c.HasAnyBlindSource() {
+		_ = c.Perception.TransitionTo(perception.Sighted,
+			state.TransitionReason{Trigger: perception.TriggerBuffExpired, Metadata: map[string]any{"buffId": buffId}})
+	}
 	c.Validate()
 }
 

@@ -3,9 +3,11 @@ package hooks
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -43,15 +45,22 @@ func TransportCompanions(owner *users.UserRecord, oldRoomId, newRoomId int) {
 		}
 
 		// Interrupt any in-progress cast (spent conviction is forfeit).
-		if mob.Character.CastingState != nil {
-			mob.Character.CastingState = nil
+		if mob.Character.Activity != nil && mob.Character.Activity.IsCasting() {
+			mob.Character.Activity.ForceFree(state.TransitionReason{
+				Trigger: "companion_follow",
+				Actor:   mob.Character.Activity.Self(),
+			})
 		}
 
 		// Remove from current room.
 		curRoom := rooms.LoadRoom(mob.Character.RoomId)
 		if curRoom != nil {
 			curRoom.RemoveMob(mob.InstanceId)
-			curRoom.SendText(
+			// COMPANION-NAME-LEAK FIX (T11c): named companion mention is
+			// visual content — route through SendTextVisual so infrared
+			// observers see the anonymized form, and blind observers don't
+			// see a free identification.
+			curRoom.SendTextVisual(messaging.CategoryMobEmote,
 				fmt.Sprintf("%s follows %s.", mob.Character.Name, owner.Character.Name),
 				owner.UserId,
 			)
@@ -68,11 +77,12 @@ func TransportCompanions(owner *users.UserRecord, oldRoomId, newRoomId int) {
 		destRoom.AddMob(mob.InstanceId)
 		mob.Character.RoomId = newRoomId
 
-		// Inform owner.
-		owner.SendText(fmt.Sprintf("Your %s rejoins you.", mob.Character.Name))
+		// Inform owner. Owner-private channel — owner-knowable companion
+		// name is fine over audio (no infrared / blind observer to leak to).
+		owner.SendText(messaging.CategorySystem, fmt.Sprintf("Your %s rejoins you.", mob.Character.Name))
 
 		// End aggro if the current target is no longer in the destination room.
-		if mob.Character.Aggro != nil {
+		if mob.Character.IsInCombat() {
 			aggro := mob.Character.Aggro
 			// Only strip aggro when it has a concrete target to check for;
 			// an Aggro struct with both IDs zero is mid-setup state and

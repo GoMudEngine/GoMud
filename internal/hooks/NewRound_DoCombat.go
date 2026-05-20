@@ -8,14 +8,14 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
-	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
-	"github.com/GoMudEngine/GoMud/internal/mobai"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/life"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -58,7 +58,7 @@ func DoCombat(e events.Event) events.ListenerReturn {
 					targetName = u.Character.Name
 				}
 			}
-			user.SendText(fmt.Sprintf("You shift your focus to <ansi fg=\"mobname\">%s</ansi>!", targetName))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf("You shift your focus to <ansi fg=\"mobname\">%s</ansi>!", targetName))
 		}
 	}
 
@@ -83,6 +83,14 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			continue
 		}
 
+		// Task 15: tick the Combat Phase machine every round for every
+		// player. This advances Engaging→Engaged countdowns and fires
+		// registered DispatchTickEvent listeners.
+		if user.Character.CombatPhase != nil {
+			user.Character.CombatPhase.OnRoundTick()
+			user.Character.CombatPhase.DispatchTickEvent()
+		}
+
 		handlePlayerShieldDecay(user)
 
 		if handlePlayerFoldCasting(user, userId) {
@@ -99,9 +107,9 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 			if uRoom != nil {
 				if RetargetOrEnd(user.Character, uRoom, user.UserId, 0) {
 					if mob := mobs.GetInstance(user.Character.Aggro.MobInstanceId); mob != nil {
-						user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"mobname\">%s</ansi>!", mob.Character.Name))
+						user.SendText(messaging.CategorySystem, fmt.Sprintf("You turn your attention to <ansi fg=\"mobname\">%s</ansi>!", mob.Character.Name))
 					} else if defUser := users.GetByUserId(user.Character.Aggro.UserId); defUser != nil {
-						user.SendText(fmt.Sprintf("You turn your attention to <ansi fg=\"username\">%s</ansi>!", defUser.Character.Name))
+						user.SendText(messaging.CategorySystem, fmt.Sprintf("You turn your attention to <ansi fg=\"username\">%s</ansi>!", defUser.Character.Name))
 					}
 				}
 			}
@@ -159,8 +167,11 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 	// Sweep runs for every mob regardless of zone activity — dead mobs
 	// should not linger even in idle zones.
 	for _, mobId := range mobs.GetAllMobInstanceIds() {
-		if mob := mobs.GetInstance(mobId); mob != nil && mob.Character.Health <= 0 {
-			mob.Command(`suicide`)
+		if mob := mobs.GetInstance(mobId); mob != nil && mob.Character.Health <= 0 && mob.Character.IsAlive() {
+			// No killer attribution available in the sweep pass — the
+			// mob died from a prior-round effect and the attacker is
+			// no longer recoverable from context here.
+			mob.Character.Die(state.ActorRef{}, life.TriggerHealthZero)
 		}
 	}
 
@@ -183,6 +194,13 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 				mob.Character.EndAggro()
 			}
 			continue
+		}
+
+		// Task 15: tick the Combat Phase machine every round for every mob.
+		// Advances Engaging→Engaged countdowns and fires tick event listeners.
+		if mob.Character.CombatPhase != nil {
+			mob.Character.CombatPhase.OnRoundTick()
+			mob.Character.CombatPhase.DispatchTickEvent()
 		}
 
 		mobRoom := rooms.LoadRoom(mob.Character.RoomId)
@@ -211,7 +229,7 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 			if mob.Character.HasCondition(characters.ConditionShield) {
 				if mob.Character.GetConditionDuration(characters.ConditionShield) <= 1 {
 					mob.Character.RemoveCondition(characters.ConditionShield)
-					mobRoom.SendText(fmt.Sprintf(
+					mobRoom.SendText(messaging.CategoryBuffExpire, fmt.Sprintf(
 						`<ansi fg="blue"><ansi fg="mobname">%s</ansi>'s Minor Shield dissipates.</ansi>`,
 						mob.Character.Name))
 				} else {
@@ -241,33 +259,15 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 			continue
 		}
 
-		// Emit combat_start signal on the first round of engagement.
-		// CombatMemory being nil indicates the mob has not yet been in combat
-		// with this target, so we set the memory and fire the signal once.
+		// Initialize CombatMemory on the first round of engagement so
+		// the mob can track its aggro target across flee/re-engage cycles.
 		if mob.CombatMemory == nil && mob.Character.Aggro != nil {
-			mudlog.Debug("MobAI", "emit", "combat_start", "mob", mob.Character.Name, "mobId", mob.InstanceId)
-			mob.CombatMemory = mobai.SetMemory(
+			mob.CombatMemory = mobs.SetCombatMemory(
 				mob.Character.Aggro.UserId,
 				mob.Character.Aggro.MobInstanceId,
 				mob.Character.RoomId,
 				evt.RoundNumber,
 			)
-			events.AddToQueue(events.MobAISignal{
-				MobInstanceId: mob.InstanceId,
-				SignalType:    "combat_start",
-				RoomId:        mob.Character.RoomId,
-			})
-		}
-
-		// Emit combat_round signal every round for mobs already in combat.
-		// This allows per-round triggers (health_below, multiple_targets, etc.)
-		// to fire the reactive AI on an ongoing basis.
-		if mob.CombatMemory != nil && mob.Character.Aggro != nil {
-			events.AddToQueue(events.MobAISignal{
-				MobInstanceId: mob.InstanceId,
-				SignalType:    "combat_round",
-				RoomId:        mob.Character.RoomId,
-			})
 		}
 
 		// Fire mob_combat_round for the attacking mob BEFORE the legacy
@@ -321,61 +321,12 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 	return affectedPlayerIds, affectedMobInstanceIds
 }
 
-// processGrappleProgression handles automatic position changes for grappled fighters
-// Stage 8.3: Clinched → attempts to advance to Grounded or break free
-// Grounded → controlled fighter attempts to escape
-func processGrappleProgression(char1 *characters.Character, char2 *characters.Character, char1Name string, char2Name string, room *rooms.Room, user1Id int, user2Id int) {
-	// Only process if both are in a grapple position
-	if !char1.CombatPosition.IsGrapplePosition() || !char2.CombatPosition.IsGrapplePosition() {
-		return
-	}
-
-	// Determine who is controller and who is controlled
-	var controller, controlled *characters.Character
-	var controllerName, controlledName string
-
-	if char1.HasCondition(characters.ConditionGrappleController) {
-		controller = char1
-		controlled = char2
-		controllerName = char1Name
-		controlledName = char2Name
-	} else {
-		controller = char2
-		controlled = char1
-		controllerName = char2Name
-		controlledName = char1Name
-	}
-
-	var result combat.PositionProgressionResult
-
-	// Check position and perform appropriate progression
-	if char1.CombatPosition == characters.PositionClinched {
-		result = combat.CheckClinchProgression(controller, controlled)
-	} else if char1.CombatPosition == characters.PositionGrounded {
-		result = combat.CheckGroundedEscape(controller, controlled)
-	} else {
-		return // Not in a grapple position that needs processing
-	}
-
-	// Apply the result
-	combat.ApplyPositionProgression(char1, char2, result)
-
-	// Send messages if position changed
-	if result.Changed {
-		if result.NewPosition == characters.PositionStanding {
-			// Both broke apart
-			sendVisualRoomText(room, 
-				fmt.Sprintf(`<ansi fg="combat">%s</ansi>`, result.RoomMessage),
-			)
-		} else if result.NewPosition == characters.PositionGrounded {
-			// Advanced to grounded
-			sendVisualRoomText(room, 
-				fmt.Sprintf(`<ansi fg="combat"><ansi fg="username">%s</ansi> takes <ansi fg="mobname">%s</ansi> to the ground!</ansi>`,
-					controllerName, controlledName),
-			)
-		}
-	}
-}
+// processGrappleProgression was the chunk-2-era binary single-roll
+// progression scanner: every round, take a clinched pair to Grounded
+// or break it. Chunk 4b replaces it with the per-round drift tick in
+// Position_GrappleTick.go (T6) — graduated multi-round ControlLevel
+// shifts that fire threshold-triggered transitions when either side
+// hits Controlled. Deleted here in T10.
 
 func handleAffected(affectedPlayerIds []int, affectedMobInstanceIds []int) {
 
@@ -387,10 +338,12 @@ func handleAffected(affectedPlayerIds []int, affectedMobInstanceIds []int) {
 		playersHandled[userId] = struct{}{}
 
 		if user := users.GetByUserId(userId); user != nil {
-			if user.Character.Health < 1 {
-				// Death on zero: suicide drops all money/items and
-				// transports the player to the land of the dead.
-				user.Command(`suicide`)
+			if user.Character.Health < 1 && user.Character.IsAlive() {
+				// Death on zero: route through Life cascade for same-tick
+				// observer firing (teleport, stat decay, loot, etc.).
+				// Killer attribution: the attacker is tracked via
+				// PlayerDamage (snapshotted inside Die).
+				user.Character.Die(state.ActorRef{}, life.TriggerHealthZero)
 			}
 		}
 	}
@@ -403,10 +356,8 @@ func handleAffected(affectedPlayerIds []int, affectedMobInstanceIds []int) {
 		mobsHandled[mobId] = struct{}{}
 
 		if mob := mobs.GetInstance(mobId); mob != nil {
-			if mob.Character.Health < 1 {
-
-				mob.Command(`suicide`)
-
+			if mob.Character.Health < 1 && mob.Character.IsAlive() {
+				mob.Character.Die(state.ActorRef{}, life.TriggerHealthZero)
 			}
 		}
 

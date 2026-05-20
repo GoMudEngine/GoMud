@@ -1,12 +1,13 @@
 mobid: 242
-behavior_archetype: noncombat_questgiver
+behavior_archetype: boss_rhett
+submission_policy: lethal
+surrender_policy: never
 zone: Ironwind Steppe
 statpool: 90
 itemdropchance: 0
 hostile: false
 charm_immune: true
 maxwander: 0
-archetype: casting
 groups:
   - humanoid
 idlecommands:
@@ -27,13 +28,6 @@ combatcommands:
   - 'cast sparks'
   - ''
 activitylevel: 25
-reaction_delay: 1.0
-tactical_discipline: 0.70
-tactic_preset: aggressive_melee
-tactics:
-  - trigger: combat_start
-    action: cast conviction-armor
-    priority: 11
 character:
   name: Geomancer Rhett
   description: |

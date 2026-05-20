@@ -4,6 +4,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/species"
@@ -68,7 +69,7 @@ func Aid(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		cfg := textutil.SendTextConfig{
 			RoomSendFunc: func(msg string, skip ...int) {
 				if castRoom != nil {
-					castRoom.SendText(msg, skip...)
+					castRoom.SendText(messaging.CategorySpellVital, msg, skip...)
 				}
 			},
 		}

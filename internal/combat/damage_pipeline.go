@@ -3,7 +3,9 @@ package combat
 import (
 	"math"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/items"
 )
 
 // DamageChannel represents the type of damage being dealt.
@@ -125,6 +127,44 @@ func MitigationCap(channel DamageChannel) float64 {
 	default:
 		return 0.75
 	}
+}
+
+// CalcReachAdjustedItemMult returns the weapon's effective damage
+// multiplier with the reach-utility factor applied for the
+// attacker's current Position. Use this everywhere CalcRawDamage's
+// itemMult argument was previously fed weaponSpec.DamageMultiplier
+// directly.
+//
+// For attackers in non-grapple positions, ReachUtility returns 1.0
+// and the result equals weaponSpec.DamageMultiplier — zero behavior
+// change. For attackers in grapples, long weapons (reach exceeding
+// the position's radius) take a multiplicative penalty.
+//
+// Natural-attack call paths (mob fist/claws/bite) compose directly:
+//
+//	naturalReach := items.ResolveNaturalReach(subtype)
+//	posRadius := combat.PositionReachRadius(attacker.Position.State())
+//	mult := combat.ReachUtility(naturalReach, posRadius)
+func CalcReachAdjustedItemMult(
+	weapon items.Item,
+	attacker *characters.Character,
+) float64 {
+	// GetSpec() returns by value; handle unarmed (ItemId == 0) by
+	// falling back to a 1.0 base multiplier.
+	if weapon.ItemId == 0 {
+		return 1.0
+	}
+	spec := weapon.GetSpec()
+	baseMult := spec.DamageMultiplier
+	if baseMult == 0 {
+		baseMult = 1.0 // weapons without explicit multiplier default to 1×
+	}
+	if attacker == nil || attacker.Position == nil {
+		return baseMult
+	}
+	reach := items.ResolveReach(&spec)
+	posRadius := PositionReachRadius(attacker.Position.State())
+	return baseMult * ReachUtility(reach, posRadius)
 }
 
 // GetConvictionDamageDescription converts conviction damage to descriptive text.

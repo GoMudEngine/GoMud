@@ -1,0 +1,176 @@
+# Position control-axis message templates (chunk 4b).
+# Substitution tokens:
+#   {position}      — display name of the current grapple position
+#   {old_position}  — pre-transition position (transition_messages only)
+#   {new_position}  — post-transition position (transition_messages only)
+#   {Character}     — single-character broadcasts
+#   {Controller}    — name of the controller side
+#   {Controlled}    — name of the controlled side
+#
+# Starter copy; polished in 4f balance pass.
+
+gradient_messages:
+  controller:
+    in_control:
+      self: "You settle into a dominating {position}."
+      room: "{Controller} settles into a dominating {position}."
+    losing_control:
+      self: "You feel your {position} slipping."
+      room: "{Controller} struggles to maintain {position}."
+    neutral:
+      self: "The {position} is even — it's all up for grabs."
+      room: "The {position} between {Controller} and {Controlled} is even."
+    becoming_controlled:
+      self: "You're about to lose the {position}."
+      room: "{Controller} is losing {position}."
+    controlled:
+      self: "You've lost the {position}!"
+      room: "{Controller} has lost {position}."
+
+  controlled:
+    losing_control:
+      self: "You feel an opening — they're losing the position."
+      room: ""
+    neutral:
+      self: "The {position} is even — it's all up for grabs."
+      room: ""
+    becoming_controlled:
+      self: "You're starting to control the position!"
+      room: ""
+    controlled:
+      self: "You're about to escape!"
+      room: ""
+
+transition_messages:
+  controller:
+    self: "You lose the {old_position} as they recover to {new_position}."
+    room: "{Controller} loses the {old_position} to {Controlled}, who recovers to {new_position}."
+  controlled:
+    self: "You escape the {old_position} to {new_position}!"
+    room: ""
+
+stamina_warning:
+  self: "You're getting gassed — your {position} is hard to maintain."
+  room: "{Character} looks exhausted in the {position}."
+
+# Submission attempt + resolution templates (chunk 4d T11).
+# Substitution tokens:
+#   {attacker}  — name of the character applying the submission
+#   {target}    — name of the character receiving the submission
+#
+# opening: per-sub-type attacker/target/room texts that fire when
+#   the submission window opens (before the outcome resolves).
+# escape_bad: fires on SubTierBad — attempter overcommits.
+# neutral: fires on SubTierNeutral — attempt fails to lock.
+# outcome_*: fires on SubTierSuccess/Crit per policy path.
+# crit_flag: attacker-only prefix prepended on crit outcomes.
+
+submission:
+  opening:
+    armbar:
+      attacker: "You isolate {target}'s arm and crank — they
+        feel the joint go past its limit!"
+      target: "{attacker} isolates your arm and cranks — pain
+        shoots through the elbow!"
+      room: "{attacker} isolates {target}'s arm in a brutal
+        armbar."
+    rnc:
+      attacker: "You wrap an arm around {target}'s neck and
+        squeeze."
+      target: "{attacker}'s arm tightens around your neck.
+        The world begins to dim."
+      room: "{attacker} sinks a rear-naked choke on {target}."
+    triangle:
+      attacker: "Your legs lock around {target}'s neck and arm
+        — the squeeze is on."
+      target: "{attacker}'s legs trap your neck and one arm.
+        You can barely breathe."
+      room: "{attacker} locks a triangle choke around
+        {target}'s neck."
+    kimura:
+      attacker: "You twist {target}'s shoulder into an
+        unnatural angle."
+      target: "{attacker} twists your shoulder. The joint
+        screams."
+      room: "{attacker} cranks a kimura on {target}'s
+        shoulder."
+    americana:
+      attacker: "You crank {target}'s shoulder backwards with
+        savage pressure."
+      target: "{attacker} cranks your shoulder. The joint is
+        about to give."
+      room: "{attacker} cranks an americana on {target}'s
+        shoulder."
+    omoplata:
+      attacker: "You trap {target}'s shoulder with your leg
+        — the angle is impossible."
+      target: "{attacker}'s leg traps your shoulder at an
+        impossible angle."
+      room: "{attacker} locks an omoplata on {target}'s
+        shoulder."
+    anaconda:
+      attacker: "You roll and snake your arms around
+        {target}'s neck."
+      target: "{attacker} rolls and your neck disappears into
+        a vise."
+      room: "{attacker} sinks an anaconda choke on {target}."
+
+  escape_bad:
+    attacker: "Your submission attempt overcommits — {target}
+      exploits the opening and breaks free!"
+    target: "You feel {attacker} overcommit on the submission.
+      You twist free and they hit the ground!"
+    room: "{attacker} overcommits on the submission — {target}
+      escapes the grapple entirely."
+
+  neutral:
+    attacker: "Your submission attempt fails to lock in.
+      {target} survives the round."
+    target: "You feel {attacker} threaten a submission but
+      it doesn't fully lock."
+    room: "{attacker}'s submission attempt on {target} fails
+      to fully lock in."
+
+  outcome_mercy:
+    attacker: "You ease off and let {target} up. They live
+      to fight another day."
+    target: "{attacker} eases off the submission and lets
+      you up. You owe them your life."
+    room: "{attacker} releases {target} from the submission.
+      Mercy."
+
+  outcome_subdue:
+    attacker: "You hold the choke until {target}'s body goes
+      limp. They're done."
+    target: "{attacker} holds the choke until everything goes
+      black."
+    room: "{attacker} holds the submission until {target}
+      loses consciousness."
+
+  outcome_cripple_arm:
+    attacker: "You crank {target}'s arm until you hear bone
+      crack. They scream and pass out."
+    target: "You hear the bone in your arm crack. The pain
+      takes you under."
+    room: "Bone cracks. {target} screams and goes limp in
+      {attacker}'s grip."
+
+  outcome_cripple_shoulder:
+    attacker: "You crank {target}'s shoulder until it pops
+      out of the socket."
+    target: "Your shoulder pops out of the socket. The pain
+      takes you under."
+    room: "{target}'s shoulder pops sickeningly. They go
+      limp."
+
+  outcome_lethal:
+    attacker: "You hold the lock until {target} stops
+      twitching. They will not be getting up."
+    target: "Everything fades to black. Cold."
+    room: "{attacker} holds the submission past survival.
+      {target} is dead."
+
+  crit_flag:
+    attacker: "With brutal precision — "
+    target: ""
+    room: ""

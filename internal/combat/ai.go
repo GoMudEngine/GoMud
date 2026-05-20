@@ -167,7 +167,7 @@ func CanUseTrip(char *characters.Character) bool {
 		return false
 	}
 	// Can't trip if in grapple
-	if char.CombatPosition.IsGrapplePosition() {
+	if char.IsGrappling() {
 		return false
 	}
 	return true
@@ -187,7 +187,7 @@ func CanUseGrapple(char *characters.Character) bool {
 		return false
 	}
 	// Can't grapple if already in grapple
-	if char.CombatPosition.IsGrapplePosition() {
+	if char.IsGrappling() {
 		return false
 	}
 	// Grapple-immune species can't initiate grapple either
@@ -198,12 +198,12 @@ func CanUseGrapple(char *characters.Character) bool {
 }
 
 func CanUseSubmit(char *characters.Character) bool {
-	// Must be in grounded position
-	if char.CombatPosition != characters.PositionGrounded {
+	// Must be in a ground grapple
+	if !char.IsGroundGrapple() {
 		return false
 	}
 	// Must be grapple controller
-	if !char.HasCondition(characters.ConditionGrappleController) {
+	if !char.IsController() {
 		return false
 	}
 	// Must not be on cooldown
@@ -235,7 +235,7 @@ func ScoreBash(mob *mobs.Mob, target *characters.Character) int {
 	}
 
 	// Penalty if target is already on the ground (prone or grounded)
-	if target.CombatPosition.IsGroundPosition() {
+	if target.IsOnFloor() {
 		score -= 50
 	}
 
@@ -264,12 +264,12 @@ func ScoreTrip(mob *mobs.Mob, target *characters.Character) int {
 	}
 
 	// Can't trip someone already on the ground
-	if target.CombatPosition.IsGroundPosition() {
+	if target.IsOnFloor() {
 		return 0
 	}
 
 	// Penalty if in grapple
-	if mob.Character.CombatPosition.IsGrapplePosition() {
+	if mob.Character.IsGrappling() {
 		score -= 50
 	}
 
@@ -324,7 +324,7 @@ func ScoreGrapple(mob *mobs.Mob, target *characters.Character) int {
 	}
 
 	// Can't grapple if already in grapple
-	if mob.Character.CombatPosition.IsGrapplePosition() {
+	if mob.Character.IsGrappling() {
 		return 0
 	}
 
@@ -342,7 +342,7 @@ func ScoreGrapple(mob *mobs.Mob, target *characters.Character) int {
 
 // CanUseCast returns true if the mob has spells, is not already casting, and has conviction.
 func CanUseCast(char *characters.Character) bool {
-	if char.CastingState != nil {
+	if char.Activity != nil && char.Activity.IsCasting() {
 		return false
 	}
 	if len(char.SpellBook) == 0 {
@@ -397,11 +397,11 @@ func ChooseCastAction(mob *mobs.Mob) string {
 }
 
 func ScoreSubmit(mob *mobs.Mob, target *characters.Character) int {
-	// Only viable if in grounded position and controlling
-	if !mob.Character.HasCondition(characters.ConditionGrappleController) {
+	// Only viable if in a ground grapple and controlling
+	if !mob.Character.IsController() {
 		return 0
 	}
-	if mob.Character.CombatPosition != characters.PositionGrounded {
+	if !mob.Character.IsGroundGrapple() {
 		return 0
 	}
 

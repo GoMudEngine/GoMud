@@ -10,8 +10,12 @@ same window.
   <ansi fg="command">kick</ansi>      - A fast kick aimed to disorient or knock back an enemy.
   <ansi fg="command">trip</ansi>      - Attempts to knock an opponent off their feet.
   <ansi fg="command">grapple</ansi>   - Grabs and restrains an opponent.
-  <ansi fg="command">submit</ansi>    - Attempts to force a restrained opponent into submission.
-  <ansi fg="command">cast</ansi>      - Initiates spellcasting. Counts as a special move on initiation.
+  <ansi fg="command">cast</ansi>      - Initiates spellcasting. Counts as a special move on
+              initiation.
+
+Submissions (chokes, joint locks) fire automatically when you
+have dominant control in a grapple — no command needed. See
+<ansi fg="command">help submission</ansi>.
 
 <ansi fg="yellow">Why shared cooldown?</ansi>
 
@@ -24,4 +28,6 @@ attack normally between special moves.
   Use <ansi fg="command">cooldowns</ansi> to see all active cooldowns, including how many rounds
   remain before your next special move is available.
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help bash</ansi>, <ansi fg="command">help kick</ansi>, <ansi fg="command">help cast</ansi>, <ansi fg="command">help cooldowns</ansi>
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help bash</ansi>, <ansi fg="command">help kick</ansi>,
+  <ansi fg="command">help cast</ansi>, <ansi fg="command">help cooldowns</ansi>,
+  <ansi fg="command">help submission</ansi>

@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -17,20 +18,20 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 	// Can't pick things up if you can't see
 	if room.GetVisibility() < 1 && !user.Character.HasFlagFromAnySource(buffs.NightVision) {
-		user.SendText("You can't see anything to pick up!")
+		user.SendText(messaging.CategorySystem, "You can't see anything to pick up!")
 		return true, nil
 	}
 
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) == 0 {
-		user.SendText("Get what?")
+		user.SendText(messaging.CategorySystem, "Get what?")
 		return true, nil
 	}
 
 	// Sealed crate short-circuit — players can't `get` from it.
 	if len(args) > 0 && room.MatchesSealedCrate(strings.ToLower(args[len(args)-1])) {
-		user.SendText(`The shipping crate is sealed and bound for the caravan; you can't get into it.`)
+		user.SendText(messaging.CategorySystem, `The shipping crate is sealed and bound for the caravan; you can't get into it.`)
 		return true, nil
 	}
 
@@ -41,23 +42,23 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			allLastArg := args[len(args)-1]
 			if allLastArg == "bag" || allLastArg == "case" || allLastArg == "pouch" || allLastArg == "components" {
 				if len(user.Character.ComponentItems) == 0 {
-					user.SendText(`Your component bag is empty.`)
+					user.SendText(messaging.CategorySystem, `Your component bag is empty.`)
 				} else {
 					ct := len(user.Character.ComponentItems)
 					user.Character.Items = append(user.Character.Items, user.Character.ComponentItems...)
 					user.Character.ComponentItems = nil
-					user.SendText(fmt.Sprintf(`You move %d item(s) from your component bag to your backpack.`, ct))
+					user.SendText(messaging.CategorySystem, fmt.Sprintf(`You move %d item(s) from your component bag to your backpack.`, ct))
 				}
 				return true, nil
 			}
 			if allLastArg == "bandolier" || allLastArg == "potions" {
 				if len(user.Character.PotionItems) == 0 {
-					user.SendText(`Your bandolier is empty.`)
+					user.SendText(messaging.CategorySystem, `Your bandolier is empty.`)
 				} else {
 					ct := len(user.Character.PotionItems)
 					user.Character.Items = append(user.Character.Items, user.Character.PotionItems...)
 					user.Character.PotionItems = nil
-					user.SendText(fmt.Sprintf(`You move %d potion(s) from your bandolier to your backpack.`, ct))
+					user.SendText(messaging.CategorySystem, fmt.Sprintf(`You move %d potion(s) from your bandolier to your backpack.`, ct))
 				}
 				return true, nil
 			}
@@ -85,7 +86,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 					}
 				}
 				if container.Gold < 1 && len(container.Items) < 1 {
-					user.SendText(fmt.Sprintf(`There's nothing in the <ansi fg="container">%s</ansi>.`, cName))
+					user.SendText(messaging.CategorySystem, fmt.Sprintf(`There's nothing in the <ansi fg="container">%s</ansi>.`, cName))
 				}
 				return true, nil
 			}
@@ -135,17 +136,17 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 					picked++
 				} else {
-					user.SendText(
+					user.SendText(messaging.CategorySystem, 
 						fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
 					)
 					break
 				}
 			}
 			if picked == 0 {
-				user.SendText(fmt.Sprintf(`You don't see any "%s" to pick up.`, itemName))
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(`You don't see any "%s" to pick up.`, itemName))
 			} else {
-				user.SendText(fmt.Sprintf(`You pick up %d item(s).`, picked))
-				room.SendTextVisual(
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(`You pick up %d item(s).`, picked))
+				room.SendTextVisual(messaging.CategoryLoot, 
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up some items.`, user.Character.Name),
 					user.UserId,
 				)
@@ -208,7 +209,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			}
 
 			if foundItem.ItemId == 0 {
-				user.SendText(fmt.Sprintf(`You don't see a "%s" in your %s.`, rest, label))
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(`You don't see a "%s" in your %s.`, rest, label))
 				return true, nil
 			}
 
@@ -220,7 +221,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				}
 			}
 			user.Character.Items = append(user.Character.Items, foundItem)
-			user.SendText(fmt.Sprintf(`You move the <ansi fg="itemname">%s</ansi> from your %s to your backpack.`, foundItem.DisplayName(), label))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You move the <ansi fg="itemname">%s</ansi> from your %s to your backpack.`, foundItem.DisplayName(), label))
 			return true, nil
 		}
 
@@ -251,7 +252,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		if petUserId > 0 {
 
 			if petUserId != user.UserId {
-				user.SendText(`You can't do that!`)
+				user.SendText(messaging.CategorySystem, `You can't do that!`)
 				return true, nil
 			}
 
@@ -271,13 +272,13 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 		matchItem, found := user.Character.Pet.FindItem(rest)
 		if !found {
-			user.SendText(fmt.Sprintf(`You don't see a %s carried by %s.`, rest, user.Character.Pet.DisplayName()))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You don't see a %s carried by %s.`, rest, user.Character.Pet.DisplayName()))
 		} else {
 
 			if user.Character.Pet.RemoveItem(matchItem) {
 				if !user.Character.StoreItem(matchItem) {
 					user.Character.Pet.StoreItem(matchItem)
-					user.SendText(
+					user.SendText(messaging.CategorySystem, 
 						fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
 					)
 				} else {
@@ -288,10 +289,10 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 						Gained: true,
 					})
 
-					user.SendText(
+					user.SendText(messaging.CategorySystem, 
 						fmt.Sprintf(`You remove a <ansi fg="itemname">%s</ansi> from %s.`, matchItem.DisplayName(), user.Character.Pet.DisplayName()),
 					)
-					room.SendTextVisual(
+					room.SendTextVisual(messaging.CategoryLoot, 
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> removes a <ansi fg="itemname">%s</ansi> from %s...`, user.Character.Name, matchItem.DisplayName(), user.Character.Pet.DisplayName()),
 						user.UserId,
 					)
@@ -314,7 +315,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		if args[0] == goldName || (len(args[0]) < 5 && goldName[0:len(args[0])-1] == args[0]) {
 
 			if container.Gold < 1 {
-				user.SendText("There's no gold to grab.")
+				user.SendText(messaging.CategorySystem, "There's no gold to grab.")
 			} else {
 
 				user.Character.CancelBuffsWithFlag(buffs.Hidden) // No longer sneaking
@@ -329,10 +330,10 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 					GoldChange: -goldAmt,
 				})
 
-				user.SendText(
+				user.SendText(messaging.CategorySystem, 
 					fmt.Sprintf(`You pick up <ansi fg="gold">%d gold</ansi> from the <ansi fg="container">%s</ansi>.`, goldAmt, containerName),
 				)
-				room.SendTextVisual(
+				room.SendTextVisual(messaging.CategoryLoot, 
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up some <ansi fg="gold">gold</ansi> from the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName),
 					user.UserId,
 				)
@@ -344,7 +345,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		matchItem, found := container.FindItem(rest)
 
 		if !found {
-			user.SendText(fmt.Sprintf(`You don't see a %s in the <ansi fg="container">%s</ansi>.`, rest, containerName))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You don't see a %s in the <ansi fg="container">%s</ansi>.`, rest, containerName))
 		} else {
 
 			user.Character.CancelBuffsWithFlag(buffs.Hidden) // No longer sneaking
@@ -362,10 +363,10 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				container.RemoveItem(matchItem)
 				room.Containers[containerName] = container
 
-				user.SendText(
+				user.SendText(messaging.CategorySystem, 
 					fmt.Sprintf(`You take the <ansi fg="itemname">%s</ansi> from the <ansi fg="container">%s</ansi>.`, matchItem.DisplayName(), containerName),
 				)
-				room.SendTextVisual(
+				room.SendTextVisual(messaging.CategoryLoot, 
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up the <ansi fg="itemname">%s</ansi> from the <ansi fg="container">%s</ansi>...`, user.Character.Name, matchItem.DisplayName(), containerName),
 					user.UserId,
 				)
@@ -376,7 +377,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				return true, nil
 
 			} else {
-				user.SendText(
+				user.SendText(messaging.CategorySystem, 
 					fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
 				)
 			}
@@ -389,7 +390,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		if args[0] == goldName || (len(args[0]) < 5 && goldName[0:len(args[0])-1] == args[0]) {
 
 			if room.Gold < 1 {
-				user.SendText("There's no gold to grab.")
+				user.SendText(messaging.CategorySystem, "There's no gold to grab.")
 			} else {
 
 				user.Character.CancelBuffsWithFlag(buffs.Hidden) // No longer sneaking
@@ -401,10 +402,10 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 						GoldChange: -goldAmt,
 					})
 
-					user.SendText(
+					user.SendText(messaging.CategorySystem, 
 						fmt.Sprintf(`You pick up <ansi fg="gold">%d gold</ansi>.`, goldAmt),
 					)
-					room.SendTextVisual(
+					room.SendTextVisual(messaging.CategoryLoot, 
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up some <ansi fg="gold">gold</ansi>.`, user.Character.Name),
 						user.UserId,
 					)
@@ -423,7 +424,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			// Peek at the item before transferring so we can guard against exploding items
 			peekItem, peekFound := room.FindOnFloor(rest, getFromStash)
 			if peekFound && peekItem.HasAdjective(`exploding`) {
-				user.SendText(`You can't pick that up, it's about to explode!`)
+				user.SendText(messaging.CategorySystem, `You can't pick that up, it's about to explode!`)
 				return true, nil
 			}
 			if peekFound {
@@ -433,7 +434,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 					found = true
 					if result.Err != nil {
 						// Capacity exceeded — item was rolled back to floor
-						user.SendText(
+						user.SendText(messaging.CategorySystem, 
 							fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
 						)
 						return true, nil
@@ -452,7 +453,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 					found = true
 					matchItem = result.Item
 					if result.Err != nil {
-						user.SendText(
+						user.SendText(messaging.CategorySystem, 
 							fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
 						)
 						return true, nil
@@ -473,18 +474,18 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			user.Character.CancelBuffsWithFlag(buffs.Hidden) // No longer sneaking
 
 			if getFromStash {
-				user.SendText(
+				user.SendText(messaging.CategorySystem, 
 					fmt.Sprintf(`You dig out the <ansi fg="itemname">%s</ansi> from where it was stashed.`, matchItem.DisplayName()),
 				)
-				room.SendTextVisual(
+				room.SendTextVisual(messaging.CategoryLoot, 
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> digs around in the area and picks something up...`, user.Character.Name),
 					user.UserId,
 				)
 			} else {
-				user.SendText(
+				user.SendText(messaging.CategorySystem, 
 					fmt.Sprintf(`You pick up the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()),
 				)
-				room.SendTextVisual(
+				room.SendTextVisual(messaging.CategoryLoot, 
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up the <ansi fg="itemname">%s</ansi>...`, user.Character.Name, matchItem.DisplayName()),
 					user.UserId,
 				)
@@ -502,8 +503,8 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		foundNoun, _ := room.FindNoun(rest)
 		if len(foundNoun) > 0 {
 
-			user.SendText(fmt.Sprintf(`You can't get the <ansi fg="noun">%s</ansi>`, foundNoun))
-			room.SendTextVisual(fmt.Sprintf(`<ansi fg="username">%s</ansi> is grasping at the air.`, user.Character.Name), user.UserId)
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You can't get the <ansi fg="noun">%s</ansi>`, foundNoun))
+			room.SendTextVisual(messaging.CategoryLoot, fmt.Sprintf(`<ansi fg="username">%s</ansi> is grasping at the air.`, user.Character.Name), user.UserId)
 
 			return true, nil
 		}
@@ -511,7 +512,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	}
 
 	if _, corpseFound := room.FindCorpse(rest); corpseFound {
-		user.SendText(`You can't pick up corpses. What would people think?`)
+		user.SendText(messaging.CategorySystem, `You can't pick up corpses. What would people think?`)
 		return true, nil
 	}
 
@@ -524,9 +525,9 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		}
 	}
 	if containerName != `` {
-		user.SendText(fmt.Sprintf(`You can't pick up the <ansi fg="container">%s</ansi>. Try looking at it.`, containerName))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You can't pick up the <ansi fg="container">%s</ansi>. Try looking at it.`, containerName))
 	} else {
-		user.SendText(fmt.Sprintf("You don't see a %s around.", rest))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("You don't see a %s around.", rest))
 	}
 
 	return true, nil
@@ -539,13 +540,13 @@ func sendEncumbranceWarning(user *users.UserRecord) {
 	encPct := weight / capacity
 
 	if encPct >= 2.0 {
-		user.SendText(`<ansi fg="red-bold">You are severely overloaded!</ansi> Your combat and movement are heavily penalized.`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red-bold">You are severely overloaded!</ansi> Your combat and movement are heavily penalized.`)
 	} else if encPct >= 1.5 {
-		user.SendText(`<ansi fg="red">You are heavily encumbered.</ansi> Your combat and movement are significantly penalized.`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You are heavily encumbered.</ansi> Your combat and movement are significantly penalized.`)
 	} else if encPct >= 1.0 {
-		user.SendText(`<ansi fg="yellow">You are encumbered.</ansi> Your combat and movement are penalized.`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="yellow">You are encumbered.</ansi> Your combat and movement are penalized.`)
 	} else if encPct >= 0.75 {
-		user.SendText(`<ansi fg="yellow">You are carrying a moderate load.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="yellow">You are carrying a moderate load.</ansi>`)
 	}
 	// No message for light load or unencumbered
 }

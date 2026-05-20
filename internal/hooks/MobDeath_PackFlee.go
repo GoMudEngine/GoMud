@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -100,7 +101,7 @@ func PackFlee(e events.Event) events.ListenerReturn {
 		if speciesName == "" {
 			speciesName = "creatures"
 		}
-		sendVisualRoomText(room, 
+		sendVisualRoomText(room, messaging.CategoryMobEmote,
 			fmt.Sprintf(`<ansi fg="yellow">Sensing the death of their packmate, the remaining %s scatter!</ansi>`, speciesName),
 		)
 	}

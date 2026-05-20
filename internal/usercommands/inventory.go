@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
@@ -61,7 +62,7 @@ func checkSpoiledGrenades(user *users.UserRecord, room *rooms.Room) {
 					dmg = 1
 				}
 				user.Character.Health -= dmg
-				user.SendText(fmt.Sprintf(
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(
 					`<ansi fg="red-bold">A <ansi fg="itemname">%s</ansi> in your pack detonates! (%s)</ansi>`,
 					item.DisplayName(),
 					combat.GetDamageDescription(dmg, user.Character.HealthMax.Value)))
@@ -70,7 +71,7 @@ func checkSpoiledGrenades(user *users.UserRecord, room *rooms.Room) {
 				for _, buffId := range spec.BuffIds {
 					user.AddBuff(buffId, "grenade-accident")
 				}
-				user.SendText(fmt.Sprintf(
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(
 					`<ansi fg="red-bold">A <ansi fg="itemname">%s</ansi> in your pack goes off!</ansi>`,
 					item.DisplayName()))
 			}
@@ -87,12 +88,12 @@ func checkSpoiledGrenades(user *users.UserRecord, room *rooms.Room) {
 	if detonated > 0 || fizzled > 0 {
 		user.Character.Items = remaining
 		if fizzled > 0 {
-			user.SendText(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`<ansi fg="yellow">%d grenade(s) have destabilized and dissolved into putrid residue.</ansi>`,
 				fizzled))
 		}
 		if room != nil {
-			room.SendTextVisual(
+			room.SendTextVisual(messaging.CategoryMobEmote, 
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> fumbles with something in their pack...`,
 					user.Character.Name),
 				user.UserId)
@@ -229,9 +230,9 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 	// they share the same spoiled status (so spoiled potions don't merge
 	// with fresh ones).
 	type stackEntry struct {
-		name          string
-		nameFormatted string
-		count         int
+		name           string
+		nameFormatted  string
+		count          int
 		representative items.Item // first item seen for this stack key
 		spoiled        bool
 	}
@@ -459,7 +460,7 @@ func Inventory(rest string, user *users.UserRecord, room *rooms.Room, flags even
 	}
 
 	tplTxt, _ := templates.Process("character/inventory", invData, user.UserId)
-	user.SendText(tplTxt)
+	user.SendText(messaging.CategorySystem, tplTxt)
 
 	return true, nil
 }

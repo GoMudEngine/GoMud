@@ -4,24 +4,12 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
-
-// Valid home locations: name -> room ID
-var homeLocations = map[string]int{
-	"default":    0,    // Sanctum Basin entrance (room 0 = engine default)
-	"thornwall":  468,  // Temple Interior, Thornwall City
-	"stillwater": 4123, // Temple of Stillwater
-}
-
-// Display names for the locations
-var homeLocationNames = map[string]string{
-	"default":    "Sanctum Basin",
-	"thornwall":  "Thornwall City (Temple Interior)",
-	"stillwater": "Stillwater (Temple of Stillwater)",
-}
 
 func SetHome(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
@@ -33,30 +21,30 @@ func SetHome(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		if current == "" {
 			current = "default"
 		}
-		currentName := homeLocationNames[current]
+		currentName := characters.HomeLocationNames[current]
 		if currentName == "" {
-			currentName = homeLocationNames["default"]
+			currentName = characters.HomeLocationNames["default"]
 		}
 
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="yellow-bold">Current home:</ansi> %s`,
 			currentName))
-		user.SendText(``)
-		user.SendText(`<ansi fg="yellow-bold">Available locations:</ansi>`)
-		for key, name := range homeLocationNames {
+		user.SendText(messaging.CategorySystem, ``)
+		user.SendText(messaging.CategorySystem, `<ansi fg="yellow-bold">Available locations:</ansi>`)
+		for key, name := range characters.HomeLocationNames {
 			marker := ""
 			if key == current {
 				marker = ` <ansi fg="green">(current)</ansi>`
 			}
-			user.SendText(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`  <ansi fg="command">sethome %s</ansi> - %s%s`,
 				key, name, marker))
 		}
 		return true, nil
 	}
 
-	if _, valid := homeLocations[args]; !valid {
-		user.SendText(fmt.Sprintf(
+	if _, valid := characters.HomeLocations[args]; !valid {
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="red">Unknown location "%s".</ansi> Type `+
 				`<ansi fg="command">sethome</ansi> to see options.`,
 			args))
@@ -64,10 +52,10 @@ func SetHome(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	}
 
 	user.Character.SetSetting("home", args)
-	user.SendText(fmt.Sprintf(
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`<ansi fg="green">Home set to %s.</ansi> `+
 			`You will return here when you die.`,
-		homeLocationNames[args]))
+		characters.HomeLocationNames[args]))
 
 	return true, nil
 }

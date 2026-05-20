@@ -31,16 +31,6 @@ combatcommands:
   - 'emote feints left and strikes right'
   - ''
 activitylevel: 15
-reaction_delay: 0.5
-tactical_discipline: 0.80
-tactic_preset: ambusher
-tactics:
-  - trigger: combat_start
-    action: call_for_help
-    priority: 10
-  - trigger: health_below:25
-    action: flee
-    priority: 11
 character:
   name: bandit lookout
   description: |

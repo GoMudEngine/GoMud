@@ -10,11 +10,14 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -27,7 +30,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	// 0. Dead characters can't cast (Health <= 0).
 	if user.Character.IsDisabled() {
-		user.SendText(`<ansi fg="red">You can't cast — you're dead.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You can't cast — you're dead.</ansi>`)
 		return true, nil
 	}
 
@@ -36,14 +39,14 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	skillLevel := user.Character.GetSkillLevel(skills.Spellcasting)
 	manifestLevel := user.Character.GetSkillLevel(skills.Manifestation)
 	if skillLevel == 0 && manifestLevel == 0 {
-		user.SendText(`<ansi fg="red">You have no spellcasting skill.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">You have no spellcasting skill.</ansi>`)
 		return true, nil
 	}
 
 	// 2. Parse spell name and optional target from rest
 	rest = strings.TrimSpace(rest)
 	if rest == `` {
-		user.SendText(`<ansi fg="red">Cast what? (Usage: cast <spell> [target])</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">Cast what? (Usage: cast <spell> [target])</ansi>`)
 		return true, nil
 	}
 
@@ -62,7 +65,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		spellInfo = spells.FindSpellByName(spellName)
 	}
 	if spellInfo == nil {
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="red">No spell found for "%s". Use the spell ID (e.g. `+
 				`<ansi fg="cyan-bold">mm</ansi>, <ansi fg="cyan-bold">heal</ansi>). `+
 				`Type <ansi fg="cyan-bold">spells</ansi> to list what you know.</ansi>`,
@@ -70,33 +73,35 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 	if !user.Character.HasSpell(spellInfo.SpellId) {
-		user.SendText(fmt.Sprintf(`<ansi fg="red">You haven't learned the spell "%s".</ansi>`, spellInfo.Name))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">You haven't learned the spell "%s".</ansi>`, spellInfo.Name))
 		return true, nil
 	}
 
 	// 3b. Verify the player has the skill appropriate for this spell's school.
 	if spellInfo.HasSchool(spells.SchoolManifestation) {
 		if manifestLevel == 0 {
-			user.SendText(`<ansi fg="red">You have no manifestation skill.</ansi>`)
+			user.SendText(messaging.CategorySystem, `<ansi fg="red">You have no manifestation skill.</ansi>`)
 			return true, nil
 		}
 	} else {
 		if skillLevel == 0 {
-			user.SendText(`<ansi fg="red">You have no spellcasting skill.</ansi>`)
+			user.SendText(messaging.CategorySystem, `<ansi fg="red">You have no spellcasting skill.</ansi>`)
 			return true, nil
 		}
 	}
 
 	// 4. Already casting?
-	if user.Character.CastingState != nil {
-		cs := user.Character.CastingState
-		user.SendText(`<ansi fg="cyan">` + spells.GetCastMessage("already_casting", cs.SpellId) + `</ansi>`)
+	if user.Character.Activity != nil && user.Character.Activity.IsCasting() {
+		cs, _ := user.Character.Activity.CastingData()
+		user.SendText(messaging.CategorySpellFold, spells.GetCastMessage("already_casting", cs.SpellId))
 		return true, nil
 	}
 
-	// 4.5. Can't cast while crafting
-	if user.Character.CraftingState != nil {
-		user.SendText(`You are busy crafting.`)
+	// 4.5. Can't cast while doing anything else (crafting, salvaging, etc.)
+	// Use IsFree() rather than checking CraftingState directly so that all
+	// Activity machine states are covered through the migration window.
+	if !user.Character.IsFree() {
+		user.SendText(messaging.CategorySystem, `You are too busy to cast right now.`)
 		return true, nil
 	}
 
@@ -105,7 +110,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	convMult := 1.0 + mutations.GetConvictionCostMultiplier(user.Character.Mutations)
 	totalConvictionCost := spellInfo.GetTotalConvictionCost(convMult)
 	if totalConvictionCost > 0 && user.Character.Conviction < totalConvictionCost {
-		user.SendText(fmt.Sprintf(
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="red">You don't have the conviction to cast %s.</ansi>`,
 			spellInfo.Name))
 		return true, nil
@@ -113,7 +118,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	// 6. Check initiation cooldown (blocks if a prior attempt failed)
 	if user.Character.GetCooldown(`cast-init`) > 0 {
-		user.SendText(`<ansi fg="red">Your mind is still recovering from the effort.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">Your mind is still recovering from the effort.</ansi>`)
 		return true, nil
 	}
 
@@ -131,7 +136,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			}
 		}
 		if !found {
-			user.SendText(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`<ansi fg="red">%s requires a %s in your inventory.</ansi>`,
 				spellInfo.Name, spellInfo.ComponentTag))
 			return true, nil
@@ -152,7 +157,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			} else if spec != nil && spec.Name != "" {
 				componentName = spec.Name
 			}
-			user.SendText(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`<ansi fg="red">%s requires a %s in your inventory.</ansi>`,
 				spellInfo.Name, componentName))
 			return true, nil
@@ -167,8 +172,8 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if roll >= initiationChance {
 		// Failed — apply 2-round cooldown and inform user
 		user.Character.TryCooldown(`cast-init`, `2 rounds`)
-		user.SendText(`<ansi fg="red">` + spells.GetCastMessage("concentration_slipped", spellInfo.Name) + `</ansi>`)
-		room.SendTextVisual(fmt.Sprintf(
+		user.SendText(messaging.CategorySpellDisruption, `<ansi fg="red">`+spells.GetCastMessage("concentration_slipped", spellInfo.Name)+`</ansi>`)
+		room.SendTextVisual(messaging.CategorySpellDisruption, fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> <ansi fg="red">loses their concentration.</ansi>`,
 			user.Character.Name), user.UserId)
 		return true, nil
@@ -195,14 +200,14 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	switch {
 	case result.OnCooldown:
-		user.SendText(`You need a moment before you can do that.`)
+		user.SendText(messaging.CategorySystem, `You need a moment before you can do that.`)
 		return true, nil
 	case result.NoTarget:
 		// HarmSingle / HelpSingle can set this; supply a context-aware message.
 		if spellInfo.Type == spells.HelpSingle {
-			user.SendText(fmt.Sprintf(`<ansi fg="red">You don't see "%s" here.</ansi>`, targetName))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">You don't see "%s" here.</ansi>`, targetName))
 		} else {
-			user.SendText(`<ansi fg="red">You need a target to cast that spell.</ansi>`)
+			user.SendText(messaging.CategorySystem, `<ansi fg="red">You need a target to cast that spell.</ansi>`)
 		}
 		return true, nil
 	case !result.Initiated:
@@ -211,10 +216,10 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	// 10. Apply stat override for folds-per-round.
-	// For traditional spells, this captures The Eye modulation of Perception.
-	// For manifestation spells, this ensures Charisma is used (InitiateCast
-	// already used it, but we recompute with the correct skill level here).
+	// 10. Compute final folds-per-round and total conviction cost.
+	// Apply stat override for folds-per-round when The Eye (or manifestation
+	// path) requires a different stat than what InitiateCast used.
+	foldsPerRound := result.FoldsPerRound
 	var baseStatForCast int
 	if isManifestation {
 		baseStatForCast = user.Character.Stats.Charisma.ValueAdj
@@ -230,15 +235,34 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		} else {
 			overrideSkill = castSkill
 		}
-		result.CastingState.FoldsPerRound = characters.CalcFoldsPerRound(
-			primaryStatForCast, overrideSkill)
+		foldsPerRound = characters.CalcFoldsPerRound(primaryStatForCast, overrideSkill)
 	}
 
-	// 11. Apply conviction cost multiplier to the CastingState.
-	result.CastingState.TotalConvictionCost = totalConvictionCost
-
-	// 12. Commit CastingState.
-	user.Character.CastingState = result.CastingState
+	// 11 + 12. Build CastingData and commit to Activity machine (sole truth).
+	castData := activity.CastingData{
+		SpellId:              result.SpellInfo.SpellId,
+		FoldsNeeded:          result.FoldsNeeded,
+		FoldsAccumulated:     0,
+		FoldsPerRound:        foldsPerRound,
+		TotalConvictionCost:  totalConvictionCost,
+		ConvictionSpent:      0,
+		TargetUserIds:        result.TargetUserIds,
+		TargetMobInstanceIds: result.TargetMobInstanceIds,
+		SpellRest:            result.SpellRest,
+	}
+	if err := user.Character.Activity.TransitionToCasting(
+		castData,
+		state.TransitionReason{
+			Trigger: activity.TriggerCastBegin,
+			Actor:   state.ActorRef{UserId: user.UserId},
+		},
+	); err != nil {
+		// Activity machine refused — already busy with something. This
+		// path should not be reached (IsFree() check above guards it),
+		// but handle defensively.
+		user.SendText(messaging.CategorySystem, `You're already busy with something else.`)
+		return true, nil
+	}
 
 	// 12b. Send YAML cast text (if defined).
 	if spellInfo.CastUserText != "" || spellInfo.CastRoomText != "" {
@@ -259,15 +283,15 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			}
 		}
 		cfg := textutil.SendTextConfig{
-			UserSendFunc: func(msg string) { user.SendText(msg) },
+			UserSendFunc: func(msg string) { user.SendText(messaging.CategorySpellFold, msg) },
 			RoomSendFunc: func(msg string, skip ...int) {
 				if castRoom != nil {
-					castRoom.SendText(msg, skip...)
+					castRoom.SendText(messaging.CategorySpellFold, msg, skip...)
 				}
 			},
 			ExcludeId: user.UserId,
 		}
-		textutil.SendPhaseText(spellInfo.CastUserText, spellInfo.CastRoomText, tCtx, "pink", cfg)
+		textutil.SendPhaseText(spellInfo.CastUserText, spellInfo.CastRoomText, tCtx, "", cfg)
 	}
 
 	// 13. Go onCast hooks — run before JS, can abort the cast.
@@ -276,7 +300,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		blocked := false
 		if currentRoom := rooms.LoadRoom(currentRoomId); currentRoom != nil {
 			if allowed, ok := currentRoom.GetTempData("allow_recall").(bool); ok && !allowed {
-				user.SendText("Something about this place prevents you from recalling.")
+				user.SendText(messaging.CategorySystem, "Something about this place prevents you from recalling.")
 				blocked = true
 			}
 		}
@@ -291,24 +315,30 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				}
 			}
 			if anchorRoom <= 0 {
-				user.SendText(`You reach for the Veil, but there is no anchor to ` +
+				user.SendText(messaging.CategorySystem, `You reach for the Veil, but there is no anchor to ` +
 					`pull you. Set one first with ` +
 					`<ansi fg="command">cast fold-anchor</ansi>.`)
 				blocked = true
 			} else if anchorRoom == currentRoomId {
-				user.SendText("You are already standing on your anchor.")
+				user.SendText(messaging.CategorySystem, "You are already standing on your anchor.")
 				blocked = true
 			}
 		}
 		if blocked {
-			user.Character.CastingState = nil
+			// Abort the cast — undo Activity machine.
+			if user.Character.Activity != nil && user.Character.Activity.IsCasting() {
+				_ = user.Character.Activity.TransitionToFree(state.TransitionReason{
+					Trigger: activity.TriggerCastCancel,
+					Actor:   state.ActorRef{UserId: user.UserId},
+				})
+			}
 			return true, nil
 		}
 	}
 
 	// 14. Announce the cast start (skill progression now fires in InitiateCast).
-	user.SendText(`<ansi fg="cyan">` + spells.GetCastMessage("cast_started", spellInfo.Name) + `</ansi>`)
-	room.SendTextVisual(fmt.Sprintf(
+	user.SendText(messaging.CategorySpellFold, spells.GetCastMessage("cast_started", spellInfo.Name))
+	room.SendTextVisual(messaging.CategorySpellFold, fmt.Sprintf(
 		`<ansi fg="username">%s</ansi> closes their eyes in concentration.`,
 		user.Character.Name), user.UserId)
 

@@ -23,22 +23,6 @@ idlecommands:
   - ''
   - 'emote rumbles low and deep from somewhere underwater — felt through the boots more than heard'
 activitylevel: 5
-reaction_delay: 0.5
-tactical_discipline: 0.85
-tactic_preset: aggressive_melee
-tactics:
-  - trigger: combat_start
-    action: bash
-    priority: 12
-  - trigger: target_prone
-    action: kick
-    priority: 11
-  - trigger: health_below:50
-    action: call_for_help
-    priority: 10
-  - trigger: health_below:25
-    action: retarget_strongest
-    priority: 9
 combatcommands:
   - bash
   - bite

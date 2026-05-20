@@ -1,0 +1,8 @@
+facts:
+    - id: test-mayor
+      description: The Thornwall mayor has resigned in disgrace.
+      significance: 1
+      declared_round: 2077194
+      tags:
+        - politics
+      status: active
