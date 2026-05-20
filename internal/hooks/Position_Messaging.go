@@ -168,10 +168,15 @@ func sendCharacterMsg(c *characters.Character, selfMsg, roomMsg string) {
 	if r == nil {
 		return
 	}
+	// COMPANION-NAME-LEAK SIBLING FIX (T11-followup): grapple prose names
+	// both grapplers via {Controller}/{Controlled}/{Character} substitutions
+	// — route through SendTextVisual so infrared observers see anonymized
+	// text and blind observers don't get a free identification. Same class
+	// as companion_follow.go:55.
 	if excludeId > 0 {
-		r.SendText(messaging.CategoryGrappleFlow, roomMsg, excludeId)
+		r.SendTextVisual(messaging.CategoryGrappleFlow, roomMsg, excludeId)
 	} else {
-		r.SendText(messaging.CategoryGrappleFlow, roomMsg)
+		r.SendTextVisual(messaging.CategoryGrappleFlow, roomMsg)
 	}
 }
 
@@ -243,13 +248,16 @@ func sendSubmissionTriple(
 	if r == nil {
 		return
 	}
+	// Submission room broadcasts substitute {attacker}/{target} names,
+	// so they fall in the same name-leak class as the gradient room
+	// broadcasts above — route through SendTextVisual.
 	switch len(excludeIds) {
 	case 0:
-		r.SendText(messaging.CategorySubmission, roomMsg)
+		r.SendTextVisual(messaging.CategorySubmission, roomMsg)
 	case 1:
-		r.SendText(messaging.CategorySubmission, roomMsg, excludeIds[0])
+		r.SendTextVisual(messaging.CategorySubmission, roomMsg, excludeIds[0])
 	default:
-		r.SendText(messaging.CategorySubmission, roomMsg, excludeIds[0], excludeIds[1])
+		r.SendTextVisual(messaging.CategorySubmission, roomMsg, excludeIds[0], excludeIds[1])
 	}
 }
 

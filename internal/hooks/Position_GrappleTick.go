@@ -599,13 +599,18 @@ func broadcastToRoomExcluding(controller, controlled *characters.Character,
 	if controlled != nil && controlled.GetUserId() > 0 {
 		excludeIds = append(excludeIds, controlled.GetUserId())
 	}
+	// COMPANION-NAME-LEAK SIBLING FIX (T11-followup): grapple prose names
+	// both grapplers (controllerName/controlledName rendered into msg by
+	// callers in this file) — route through SendTextVisual so infrared
+	// observers see anonymized text and blind observers don't get a free
+	// identification. Same class as companion_follow.go:55.
 	switch len(excludeIds) {
 	case 0:
-		r.SendText(messaging.CategoryGrappleFlow, msg)
+		r.SendTextVisual(messaging.CategoryGrappleFlow, msg)
 	case 1:
-		r.SendText(messaging.CategoryGrappleFlow, msg, excludeIds[0])
+		r.SendTextVisual(messaging.CategoryGrappleFlow, msg, excludeIds[0])
 	default:
-		r.SendText(messaging.CategoryGrappleFlow, msg, excludeIds[0], excludeIds[1])
+		r.SendTextVisual(messaging.CategoryGrappleFlow, msg, excludeIds[0], excludeIds[1])
 	}
 }
 
