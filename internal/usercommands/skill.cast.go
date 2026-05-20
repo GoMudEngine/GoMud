@@ -283,15 +283,15 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			}
 		}
 		cfg := textutil.SendTextConfig{
-			UserSendFunc: func(msg string) { user.SendText(messaging.CategorySystem, msg) },
+			UserSendFunc: func(msg string) { user.SendText(messaging.CategorySpellFold, msg) },
 			RoomSendFunc: func(msg string, skip ...int) {
 				if castRoom != nil {
-					castRoom.SendText(messaging.CategorySystem, msg, skip...)
+					castRoom.SendText(messaging.CategorySpellFold, msg, skip...)
 				}
 			},
 			ExcludeId: user.UserId,
 		}
-		textutil.SendPhaseText(spellInfo.CastUserText, spellInfo.CastRoomText, tCtx, "pink", cfg)
+		textutil.SendPhaseText(spellInfo.CastUserText, spellInfo.CastRoomText, tCtx, "", cfg)
 	}
 
 	// 13. Go onCast hooks — run before JS, can abort the cast.
