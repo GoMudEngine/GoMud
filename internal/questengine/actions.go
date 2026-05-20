@@ -59,7 +59,7 @@ func ExecuteAction(a ActionDef, ctx ActionContext) error {
 		return nil
 	}
 	if a.SendText != "" {
-		ctx.SendTextLegacy(a.SendText)
+		ctx.SendText(messaging.CategoryNPCDialogue, a.SendText)
 		return nil
 	}
 	if a.RoomText != "" {

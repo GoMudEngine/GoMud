@@ -98,7 +98,7 @@ func (b *GameBridge) GrantQuest(token string) {
 
 	if questInfo != nil && !questInfo.Secret {
 		questUpTxt, _ := templates.Process("character/questup", bannerMsg, b.user.UserId)
-		b.user.SendTextLegacy(questUpTxt)
+		b.user.SendText(messaging.CategorySystem, questUpTxt)
 		b.user.EventLog.Add("quest", bannerMsg)
 	}
 
@@ -124,13 +124,13 @@ func (b *GameBridge) GiveItem(itemId int) {
 		return
 	}
 	b.user.Character.StoreItem(newItem)
-	b.user.SendTextLegacy(fmt.Sprintf("You receive a <ansi fg=\"item\">%s</ansi>.", newItem.DisplayName()))
+	b.user.SendText(messaging.CategoryLoot, fmt.Sprintf("You receive a <ansi fg=\"item\">%s</ansi>.", newItem.DisplayName()))
 }
 
 // GiveGold adds gold to the player's character and notifies the client.
 func (b *GameBridge) GiveGold(amount int) {
 	b.user.Character.Gold += amount
-	b.user.SendTextLegacy(fmt.Sprintf("You receive <ansi fg=\"gold\">%d gold</ansi>.", amount))
+	b.user.SendText(messaging.CategoryLoot, fmt.Sprintf("You receive <ansi fg=\"gold\">%d gold</ansi>.", amount))
 	events.AddToQueue(events.EquipmentChange{
 		UserId:     b.user.UserId,
 		GoldChange: amount,
@@ -154,7 +154,7 @@ func (b *GameBridge) RoomText(text string) {
 		mudlog.Error("GameBridge.RoomText", "error", fmt.Sprintf("room %d not found", b.roomId))
 		return
 	}
-	room.SendTextLegacy(text, b.user.UserId)
+	room.SendText(messaging.CategoryNPCDialogue, text, b.user.UserId)
 }
 
 // SpawnMob creates a new mob instance and places it in the target room.
@@ -190,7 +190,7 @@ func (b *GameBridge) SpawnItem(s SpawnDef) {
 // TeachSpell grants the player a new spell, notifying them if it was learned.
 func (b *GameBridge) TeachSpell(spellId string) {
 	if b.user.Character.LearnSpell(spellId) {
-		b.user.SendTextLegacy(fmt.Sprintf("You have learned the <ansi fg=\"spellname\">%s</ansi> spell.", spellId))
+		b.user.SendText(messaging.CategorySystem, fmt.Sprintf("You have learned the <ansi fg=\"spellname\">%s</ansi> spell.", spellId))
 	}
 }
 
@@ -336,11 +336,11 @@ func (b *GameBridge) QueueSequence(s SequenceDef) {
 				go func() {
 					<-time.After(time.Duration(delay) * time.Second)
 					if u := users.GetByUserId(userId); u != nil {
-						u.SendTextLegacy(text)
+						u.SendText(messaging.CategoryNPCDialogue, text)
 					}
 				}()
 			} else {
-				b.user.SendTextLegacy(line.Text)
+				b.user.SendText(messaging.CategoryNPCDialogue, line.Text)
 			}
 		}
 	}
