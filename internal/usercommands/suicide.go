@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
@@ -15,7 +16,7 @@ import (
 func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	if user.Character.Zone == `Shadow Realm` {
-		user.SendTextLegacy(`You're already dead!`)
+		user.SendText(messaging.CategorySystem, `You're already dead!`)
 		return true, errors.New(`already dead`)
 	}
 
@@ -35,8 +36,8 @@ func Suicide(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	// character Alive.
 	if user.Character.HasBuffFlag(buffs.ReviveOnDeath) {
 		user.Character.Health = user.Character.HealthMax.Value
-		user.SendTextLegacy(`You are revived in a shower of magical sparks!`)
-		room.SendTextVisualLegacy(
+		user.SendText(messaging.CategoryBuffApply, `You are revived in a shower of magical sparks!`)
+		room.SendTextVisual(messaging.CategoryBuffApply,
 			`<ansi fg="username">`+user.Character.Name+`</ansi> is suddenly revived in a shower of sparks!`,
 			user.UserId,
 		)

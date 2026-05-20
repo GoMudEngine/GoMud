@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -82,13 +83,13 @@ func Help(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		helpTxt, err = GetHelpContents(rest)
 		if err != nil {
-			user.SendTextLegacy(fmt.Sprintf(`No help found for "%s"`, rest))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`No help found for "%s"`, rest))
 			return true, err
 		}
 
 	}
 
-	user.SendTextLegacy(helpTxt)
+	user.SendText(messaging.CategorySystem, helpTxt)
 
 	return true, nil
 }

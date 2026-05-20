@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -19,22 +20,22 @@ func Bug(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 	rest = strings.TrimSpace(rest)
 	if rest == `` {
-		user.SendTextLegacy(`<ansi fg="yellow">Usage: <ansi fg="cyan-bold">bug <description></ansi>`)
-		user.SendTextLegacy(`<ansi fg="yellow">Use this command to report bugs or typos you encounter in the game.</ansi>`)
-		user.SendTextLegacy(`<ansi fg="yellow">Your character name, location, and timestamp will be recorded automatically.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="yellow">Usage: <ansi fg="cyan-bold">bug <description></ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="yellow">Use this command to report bugs or typos you encounter in the game.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="yellow">Your character name, location, and timestamp will be recorded automatically.</ansi>`)
 		return true, nil
 	}
 
 	feedbackDir := util.FilePath(`_datafiles/feedback`)
 	if err := os.MkdirAll(feedbackDir, 0755); err != nil {
-		user.SendTextLegacy(`<ansi fg="red">Could not save bug report. Please notify an admin.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">Could not save bug report. Please notify an admin.</ansi>`)
 		return true, nil
 	}
 
 	filePath := util.FilePath(`_datafiles/feedback/bugs.txt`)
 	f, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		user.SendTextLegacy(`<ansi fg="red">Could not save bug report. Please notify an admin.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">Could not save bug report. Please notify an admin.</ansi>`)
 		return true, nil
 	}
 	defer f.Close()
@@ -49,12 +50,12 @@ func Bug(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	)
 
 	if _, err := f.WriteString(entry); err != nil {
-		user.SendTextLegacy(`<ansi fg="red">Could not save bug report. Please notify an admin.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="red">Could not save bug report. Please notify an admin.</ansi>`)
 		return true, nil
 	}
 
-	user.SendTextLegacy(`<ansi fg="green">Bug report submitted. Thank you for helping improve the game!</ansi>`)
-	user.SendTextLegacy(`<ansi fg="yellow">(You can also use <ansi fg="cyan-bold">bug</ansi> to report typos.)</ansi>`)
+	user.SendText(messaging.CategorySystem, `<ansi fg="green">Bug report submitted. Thank you for helping improve the game!</ansi>`)
+	user.SendText(messaging.CategorySystem, `<ansi fg="yellow">(You can also use <ansi fg="cyan-bold">bug</ansi> to report typos.)</ansi>`)
 
 	return true, nil
 }

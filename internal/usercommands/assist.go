@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -18,7 +19,7 @@ func Assist(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	partyInfo := parties.Get(user.UserId)
 	if partyInfo == nil {
-		user.SendTextLegacy(`You are not in a party.`)
+		user.SendText(messaging.CategorySystem, `You are not in a party.`)
 		return true, nil
 	}
 
@@ -59,17 +60,17 @@ func Assist(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	if assistTarget == nil {
-		user.SendTextLegacy(`No party member found to assist.`)
+		user.SendText(messaging.CategorySystem, `No party member found to assist.`)
 		return true, nil
 	}
 
 	if !assistTarget.Character.IsInCombat() {
-		user.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> is not fighting anyone.`, assistTarget.Character.Name))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> is not fighting anyone.`, assistTarget.Character.Name))
 		return true, nil
 	}
 
 	if assistTarget.Character.RoomId != user.Character.RoomId {
-		user.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> is not here.`, assistTarget.Character.Name))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> is not here.`, assistTarget.Character.Name))
 		return true, nil
 	}
 
@@ -86,7 +87,7 @@ func Assist(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		}
 	}
 
-	user.SendTextLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi>'s target is no longer here.`, assistTarget.Character.Name))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi>'s target is no longer here.`, assistTarget.Character.Name))
 	return true, nil
 }
 

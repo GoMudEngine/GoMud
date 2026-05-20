@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -23,7 +24,7 @@ func DeleteCharacter(rest string, user *users.UserRecord, room *rooms.Room, flag
 		return true, nil
 	}
 	if q1.Response != `yes` {
-		user.SendTextLegacy(`Aborted.`)
+		user.SendText(messaging.CategorySystem, `Aborted.`)
 		user.ClearPrompt()
 		return true, nil
 	}
@@ -36,7 +37,7 @@ func DeleteCharacter(rest string, user *users.UserRecord, room *rooms.Room, flag
 		return true, nil
 	}
 	if q2.Response != user.Character.Name { // case-sensitive
-		user.SendTextLegacy(`That doesn't match. Aborted.`)
+		user.SendText(messaging.CategorySystem, `That doesn't match. Aborted.`)
 		user.ClearPrompt()
 		return true, nil
 	}
@@ -44,10 +45,10 @@ func DeleteCharacter(rest string, user *users.UserRecord, room *rooms.Room, flag
 	oldName := user.Character.Name
 	user.EventLog.Add(`char`, `Account deleted by user.`)
 
-	room.SendTextVisualLegacy(
+	room.SendTextVisual(messaging.CategoryMobEmote, 
 		fmt.Sprintf(`<ansi fg="username">%s</ansi>'s form dissolves into shimmering dust.`, oldName),
 		user.UserId)
-	user.SendTextLegacy(fmt.Sprintf(
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`Your form dissolves into shimmering dust. Farewell, <ansi fg="username">%s</ansi>.`,
 		oldName))
 

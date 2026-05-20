@@ -7,6 +7,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -26,10 +27,10 @@ func Alias(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			addedAlias, deletedAlias := user.AddCommandAlias(aliasName, aliasVal)
 
 			if addedAlias != `` {
-				user.SendTextLegacy(fmt.Sprintf(`<ansi fg="yellow">Custom Alias Added:</ansi> <ansi fg="command">%s</ansi>=<ansi fg="command">%s</ansi>`, addedAlias, aliasVal))
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="yellow">Custom Alias Added:</ansi> <ansi fg="command">%s</ansi>=<ansi fg="command">%s</ansi>`, addedAlias, aliasVal))
 			}
 			if deletedAlias != `` {
-				user.SendTextLegacy(fmt.Sprintf(`<ansi fg="yellow">Custom Alias Removed:</ansi> <ansi fg="command">%s</ansi>`, deletedAlias))
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="yellow">Custom Alias Removed:</ansi> <ansi fg="command">%s</ansi>`, deletedAlias))
 			}
 			return true, nil
 
@@ -64,7 +65,7 @@ func Alias(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	aliasTableData := templates.GetTable(`Built in Aliases`, headers, rows, tableFormatting)
 	aliasTxt, _ := templates.Process("tables/generic", aliasTableData, user.UserId)
-	user.SendTextLegacy(aliasTxt)
+	user.SendText(messaging.CategorySystem, aliasTxt)
 
 	if len(user.Aliases) > 0 {
 
@@ -77,11 +78,11 @@ func Alias(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 		aliasTableData := templates.GetTable(`Custom Aliases`, headers, rows, tableFormatting)
 		aliasTxt, _ := templates.Process("tables/generic", aliasTableData, user.UserId)
-		user.SendTextLegacy(aliasTxt)
+		user.SendText(messaging.CategorySystem, aliasTxt)
 	}
 
-	user.SendTextLegacy(`<ansi fg="yellow"><ansi fg="command">help alias</ansi> for more information on setting custom aliases.</ansi>`)
-	user.SendTextLegacy(``)
+	user.SendText(messaging.CategorySystem, `<ansi fg="yellow"><ansi fg="command">help alias</ansi> for more information on setting custom aliases.</ansi>`)
+	user.SendText(messaging.CategorySystem, ``)
 
 	return true, nil
 }

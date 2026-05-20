@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -401,17 +402,17 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 				Trigger: activity.TriggerCastCancel,
 				Actor:   state.ActorRef{UserId: user.UserId},
 			})
-			user.SendTextLegacy(fmt.Sprintf(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
 				`<ansi fg="cyan">You lose your concentration as you flee! %d conviction is lost.</ansi>`,
 				cs.ConvictionSpent))
-			room.SendTextVisualLegacy(fmt.Sprintf(
+			room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> breaks their concentration.`,
 				user.Character.Name), user.UserId)
 			// Fall through — let the flee command execute normally
 		} else if cmd != `cancel` {
 			if cmdInfo, hasCmdInfo := userCommands[cmd]; !hasCmdInfo || !cmdInfo.AllowedWhenDowned {
 				cs, _ := user.Character.Activity.CastingData()
-				user.SendTextLegacy(fmt.Sprintf(
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(
 					`<ansi fg="cyan">You are holding <ansi fg="cyan-bold">%d/%d</ansi> folds. Type <ansi fg="cyan-bold">cancel</ansi> to stop.</ansi>`,
 					cs.FoldsAccumulated,
 					cs.FoldsNeeded))
@@ -447,7 +448,7 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 			_ = user.Character.Presence.TransitionTo(presence.Active,
 				state.TransitionReason{Trigger: presence.TriggerInputReceived})
 			if hadData && d.Manual {
-				user.SendTextLegacy(`<ansi fg="8">You are no longer AFK.</ansi>`)
+				user.SendText(messaging.CategorySystem, `<ansi fg="8">You are no longer AFK.</ansi>`)
 			}
 		}
 	}
@@ -458,7 +459,7 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 
 			// If actually downed, prevent it (unless admin)
 			if userDisabled && !cmdInfo.AdminOnly {
-				user.SendTextLegacy("You are unable to do that while downed.")
+				user.SendText(messaging.CategorySystem, "You are unable to do that while downed.")
 				return true, nil
 			}
 
@@ -472,7 +473,7 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 		if !cmdInfo.AllowedInCombat {
 			// If in combat, prevent it (unless admin)
 			if user.Character.IsInCombat() && !cmdInfo.AdminOnly {
-				user.SendTextLegacy("You can't do that while fighting!")
+				user.SendText(messaging.CategorySystem, "You can't do that while fighting!")
 				return true, nil
 			}
 		}
