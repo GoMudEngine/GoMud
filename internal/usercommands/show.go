@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -20,7 +21,7 @@ func Show(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) < 2 {
-		user.SendTextLegacy("Show what? To whom?")
+		user.SendText(messaging.CategorySystem, "Show what? To whom?")
 		return true, nil
 	}
 
@@ -35,20 +36,20 @@ func Show(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	showItem, found = user.Character.FindInBackpack(objectName)
 
 	if !found {
-		user.SendTextLegacy(fmt.Sprintf("You don't have a %s to show.", objectName))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("You don't have a %s to show.", objectName))
 		return true, nil
 	}
 
 	target, err := actions.ResolveTargetActor(room, targetName)
 	if err != nil {
-		user.SendTextLegacy("Who???")
+		user.SendText(messaging.CategorySystem, "Who???")
 		return true, nil
 	}
 
 	user.Character.CancelBuffsWithFlag(buffs.Hidden)
 
 	if showItem.ItemId == 0 {
-		user.SendTextLegacy("Something went wrong.")
+		user.SendText(messaging.CategorySystem, "Something went wrong.")
 		return true, nil
 	}
 
@@ -57,21 +58,21 @@ func Show(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		targetUser := target.(*actions.UserActor).User
 
 		// Tell the shower
-		user.SendTextLegacy(
+		user.SendText(messaging.CategorySystem, 
 			fmt.Sprintf(`You show the <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, showItem.DisplayName(), targetUser.Character.Name),
 		)
 
 		// Tell the Showee
-		targetUser.SendTextLegacy(
+		targetUser.SendText(messaging.CategorySystem, 
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> shows you their <ansi fg="item">%s</ansi>.`, user.Character.Name, showItem.DisplayName()),
 		)
 
-		targetUser.SendTextLegacy(
+		targetUser.SendText(messaging.CategorySystem, 
 			"\n" + showItem.GetLongDescription() + "\n",
 		)
 
 		// Tell the rest of the room
-		room.SendTextVisualLegacy(
+		room.SendTextVisual(messaging.CategoryMobEmote, 
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, user.Character.Name, showItem.DisplayName(), targetUser.Character.Name),
 			targetUser.UserId,
 			user.UserId)
@@ -80,11 +81,11 @@ func Show(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		targetMob := target.(*actions.MobActor).Mob
 
-		user.SendTextLegacy(
+		user.SendText(messaging.CategorySystem, 
 			fmt.Sprintf(`You show the <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, showItem.DisplayName(), targetMob.Character.Name),
 		)
 
-		room.SendTextVisualLegacy(
+		room.SendTextVisual(messaging.CategoryMobEmote, 
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, showItem.DisplayName(), targetMob.Character.Name),
 			user.UserId,
 		)

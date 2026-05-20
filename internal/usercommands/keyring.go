@@ -7,6 +7,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -162,7 +163,7 @@ func KeyRing(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	keyRingTable := templates.GetTable(`Your Keyring:`, headers, rows, allFormatting...)
 	tplTxt, _ := templates.Process("tables/generic", keyRingTable, user.UserId)
-	user.SendTextLegacy(tplTxt)
+	user.SendText(messaging.CategorySystem, tplTxt)
 
 	return true, nil
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -38,9 +39,9 @@ func Gearup(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	if !wornSomething {
 		if wearableCount == 0 {
-			user.SendTextLegacy("You have nothing to wear.")
+			user.SendText(messaging.CategorySystem, "You have nothing to wear.")
 		} else {
-			user.SendTextLegacy("You're already wearing everything you can!")
+			user.SendText(messaging.CategorySystem, "You're already wearing everything you can!")
 		}
 	}
 

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -17,7 +18,7 @@ func Share(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	party := parties.Get(user.UserId)
 	if party == nil {
-		user.SendTextLegacy("You can only share in a party.")
+		user.SendText(messaging.CategorySystem, "You can only share in a party.")
 		return true, nil
 	}
 
@@ -34,12 +35,12 @@ func Share(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		}
 
 		if giveGoldAmount < 0 {
-			user.SendTextLegacy("You can't share a negative amount of gold.")
+			user.SendText(messaging.CategorySystem, "You can't share a negative amount of gold.")
 			return true, nil
 		}
 
 		if giveGoldAmount > user.Character.Gold {
-			user.SendTextLegacy("You don't have that much gold to share.")
+			user.SendText(messaging.CategorySystem, "You don't have that much gold to share.")
 			return true, nil
 		}
 
@@ -72,7 +73,7 @@ func Share(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	} else {
 
-		user.SendTextLegacy(`You can share gold by typing <ansi fg="command">share [amt] gold</ansi>?`)
+		user.SendText(messaging.CategorySystem, `You can share gold by typing <ansi fg="command">share [amt] gold</ansi>?`)
 	}
 
 	return true, nil

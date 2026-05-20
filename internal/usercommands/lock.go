@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -16,12 +17,12 @@ func Lock(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) < 1 {
-		user.SendTextLegacy("Unlock what?")
+		user.SendText(messaging.CategorySystem, "Unlock what?")
 		return true, nil
 	}
 
 	if room.MatchesSealedCrate(strings.ToLower(args[0])) {
-		user.SendTextLegacy(`The shipping crate is already sealed.`)
+		user.SendText(messaging.CategorySystem, `The shipping crate is already sealed.`)
 		return true, nil
 	}
 
@@ -40,7 +41,7 @@ func Lock(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		container := room.Containers[containerName]
 
 		if container.Lock.IsLocked() {
-			user.SendTextLegacy("That's already locked.")
+			user.SendText(messaging.CategorySystem, "That's already locked.")
 			return true, nil
 		}
 
@@ -59,8 +60,8 @@ func Lock(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 			room.PlaySound(`change`, `other`)
 
-			user.SendTextLegacy(fmt.Sprintf(`You use a key to relock the <ansi fg="container">%s</ansi>.`, containerName))
-			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to relock the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName), user.UserId)
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You use a key to relock the <ansi fg="container">%s</ansi>.`, containerName))
+			room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to relock the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName), user.UserId)
 		} else if hasBackpackKey {
 
 			itmSpec := backpackKeyItm.GetSpec()
@@ -81,12 +82,12 @@ func Lock(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 			room.PlaySound(`change`, `other`)
 
-			user.SendTextLegacy(fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to lock the <ansi fg="container">%s</ansi>, and add it to your key ring for the future.`, itmSpec.Name, containerName))
-			room.SendTextVisualLegacy(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to lock the <ansi fg="container">%s</ansi>, and add it to your key ring for the future.`, itmSpec.Name, containerName))
+			room.SendTextVisual(messaging.CategoryMobEmote, 
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to lock the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName),
 				user.UserId)
 		} else {
-			user.SendTextLegacy(`You do not have the key for that.`)
+			user.SendText(messaging.CategorySystem, `You do not have the key for that.`)
 		}
 
 		return true, nil
@@ -96,7 +97,7 @@ func Lock(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		exitInfo, _ := room.GetExitInfo(exitName)
 
 		if exitInfo.Lock.IsLocked() {
-			user.SendTextLegacy("That's already locked.")
+			user.SendText(messaging.CategorySystem, "That's already locked.")
 			return true, nil
 		}
 
@@ -115,8 +116,8 @@ func Lock(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 			room.PlaySound(`change`, `other`)
 
-			user.SendTextLegacy(fmt.Sprintf(`You use a key to relock the <ansi fg="exit">%s</ansi> lock.`, exitName))
-			room.SendTextVisualLegacy(fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to relock the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You use a key to relock the <ansi fg="exit">%s</ansi> lock.`, exitName))
+			room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to relock the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName), user.UserId)
 		} else if hasBackpackKey {
 
 			itmSpec := backpackKeyItm.GetSpec()
@@ -137,19 +138,19 @@ func Lock(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 			room.PlaySound(`change`, `other`)
 
-			user.SendTextLegacy(fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to lock the <ansi fg="exit">%s</ansi> exit, and add it to your key ring for the future.`, itmSpec.Name, exitName))
-			room.SendTextVisualLegacy(
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to lock the <ansi fg="exit">%s</ansi> exit, and add it to your key ring for the future.`, itmSpec.Name, exitName))
+			room.SendTextVisual(messaging.CategoryMobEmote, 
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to lock the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
 				user.UserId)
 		} else {
-			user.SendTextLegacy(`You do not have the key for that.`)
+			user.SendText(messaging.CategorySystem, `You do not have the key for that.`)
 		}
 
 		return true, nil
 
 	}
 
-	user.SendTextLegacy("There is no such exit or container.")
+	user.SendText(messaging.CategorySystem, "There is no such exit or container.")
 	return true, nil
 
 }

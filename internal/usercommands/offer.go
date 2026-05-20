@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -14,7 +15,7 @@ func Offer(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	item, found := user.Character.FindInBackpack(rest)
 	if !found {
-		user.SendTextLegacy("You don't have that item.")
+		user.SendText(messaging.CategorySystem, "You don't have that item.")
 		return true, nil
 	}
 

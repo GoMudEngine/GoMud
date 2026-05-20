@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -17,23 +18,23 @@ func Assess(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	rest = strings.TrimSpace(rest)
 	if rest == `` {
-		user.SendTextLegacy(`Assess what?`)
+		user.SendText(messaging.CategorySystem, `Assess what?`)
 		return true, nil
 	}
 
 	corpse, found := room.FindCorpse(rest)
 	if !found {
-		user.SendTextLegacy(`You don't see those remains here.`)
+		user.SendText(messaging.CategorySystem, `You don't see those remains here.`)
 		return true, nil
 	}
 
 	if corpse.Character.IsCharmed() {
-		user.SendTextLegacy(`These remains were bound to a master. The essence is spent — there is nothing left to raise.`)
+		user.SendText(messaging.CategorySystem, `These remains were bound to a master. The essence is spent — there is nothing left to raise.`)
 		return true, nil
 	}
 
 	if !user.Character.TryCooldown(`assess`, "6 rounds") {
-		user.SendTextLegacy(
+		user.SendText(messaging.CategorySystem, 
 			fmt.Sprintf("You need to wait %d more rounds before you can assess again.", user.Character.GetCooldown(`assess`)),
 		)
 		return true, nil
@@ -67,8 +68,8 @@ func Assess(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		essenceDesc = `barely a trace of essence`
 	}
 
-	user.SendTextLegacy(`You study the remains of <ansi fg="mob-corpse">` + corpse.Character.Name + `</ansi>.`)
-	user.SendTextLegacy(`You sense ` + essenceDesc + ` within.`)
+	user.SendText(messaging.CategorySystem, `You study the remains of <ansi fg="mob-corpse">` + corpse.Character.Name + `</ansi>.`)
+	user.SendText(messaging.CategorySystem, `You sense ` + essenceDesc + ` within.`)
 
 	// List which undead types this corpse could support.
 	var supported []string
@@ -92,9 +93,9 @@ func Assess(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	if len(supported) == 0 {
-		user.SendTextLegacy(`The essence is too faint to animate any form.`)
+		user.SendText(messaging.CategorySystem, `The essence is too faint to animate any form.`)
 	} else {
-		user.SendTextLegacy(`It could sustain: ` + strings.Join(supported, `, `) + `.`)
+		user.SendText(messaging.CategorySystem, `It could sustain: ` + strings.Join(supported, `, `) + `.`)
 	}
 
 	// Trigger manifestation skill progression.

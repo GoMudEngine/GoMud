@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -19,7 +20,7 @@ func Sort(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	if !hasBag && !hasBandolier {
-		user.SendTextLegacy(`You don't have a component bag or bandolier equipped.`)
+		user.SendText(messaging.CategorySystem, `You don't have a component bag or bandolier equipped.`)
 		return true, nil
 	}
 
@@ -34,7 +35,7 @@ func Sort(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	if materialsMoved == 0 && potionsMoved == 0 {
-		user.SendTextLegacy(`No items found to sort.`)
+		user.SendText(messaging.CategorySystem, `No items found to sort.`)
 		return true, nil
 	}
 
@@ -50,7 +51,7 @@ func Sort(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			potionsMoved, user.Character.Equipment.Belt.DisplayName()))
 	}
 
-	user.SendTextLegacy(fmt.Sprintf(
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`<ansi fg="green">Sorted %s.</ansi>`,
 		strings.Join(parts, " and ")))
 
