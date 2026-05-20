@@ -640,6 +640,49 @@ Validate the framework against real content, then scale.
 
 ---
 
+## Parallel arc — Combat state machines + messaging framework
+
+A multi-chunk infrastructure arc that ran in parallel with Phase 1
+substrate work on the `feature/mob-aliveness-1.3-crimes` branch. Not
+part of any aliveness phase, but tracked here because it shipped on
+the same branch and unblocks downstream aliveness work (mob position
+narration, dormant-mob hibernation, sight-gated infrared rendering,
+color-coded combat text, etc.).
+
+| Sub-chunk | Title | Date | Status |
+|-----------|-------|------|--------|
+| 0  | Combat state-machine framework (chunk 0 substrate) | 2026-05-13 | Done |
+| 1  | Awareness state machine | 2026-05-14 | Done |
+| 2  | Combat-phase state machine | 2026-05-15 | Done |
+| 3  | Life state machine | 2026-05-15 | Done |
+| 4a | Position FSM scaffold (dormant) | 2026-05-16 | Done |
+| 4b | Position writers + readers cutover | 2026-05-16 | Done |
+| 4c | Weapon-reach utility + position rebalance | 2026-05-16 | Done |
+| 4d | Submissions + outside-damage drift | 2026-05-17 | Done |
+| 4e | Third-party interactions | 2026-05-18 | Done |
+| 4f | Position balance + spell disruption | 2026-05-19 | Done |
+| 5  | Presence state machine (AFK + mob hibernation) | 2026-05-19 | Done |
+| 6  | Perception state machine (dormant) | 2026-05-19 | Done |
+| 7  | Centralized messaging framework | 2026-05-20 | Done |
+
+**Chunk 7 — Centralized messaging framework (2026-05-20):**
+Successor to chunk 6's dormant Perception FSM. Built
+`internal/messaging/` (Category enum, 7-stage pipeline,
+sight predicates, infrared anonymizer, ANSI-aware wrapper,
+categorized SendText API). Migrated ~2300 callsites across
+combat/, hooks/, mobcommands/, usercommands/, rooms/, actions/,
+behaviortree/, questengine/, modules/, world.go. Deleted all
+legacy SendText shims and duplicate helpers (canSeeInRoom × 2,
+sendRoomTextDarknessAware, wrapText, *.SendTextLegacy, etc.).
+Fixed the long-standing companion-name leak (pet names no longer
+visible to blind/dark-room observers). Spec at
+`docs/superpowers/specs/2026-05-19-messaging-framework-design.md`.
+
+Arc complete: chunks 0-7 all shipped on the same feature branch.
+Mob-aliveness Phase 1 substrate work fully resumes from here.
+
+---
+
 ## Absorbed from MEMORY.md
 
 These items were tracked in MEMORY.md before this roadmap existed. Each fits

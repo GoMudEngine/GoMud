@@ -1,5 +1,61 @@
 # DOGMud Patch Notes
 
+## 2026-05-20 — Chunk 7: Centralized messaging framework
+
+**Every player-facing line of text now flows through a single
+pipeline** (compose → normalize → anonymize → color → wrap →
+deliver). The chunk-6 Perception state machine (shipped dormant last
+week) is now its consumer.
+
+**Color-coded combat narration.** Damage bands by weapon subtype
+(light claws, heavy bludgeon, blade); defense in the green family
+(dodge / parry / block); specials in their existing hues; grapple in
+warm taupe; spells in a five-school palette (elemental, enhancement,
+mental, vital, manifestation); fold and cast lines in steel-cyan.
+Username (yellow → cool blue), mobname (cyan → warm tan), petname
+(orange → teal-cyan) retuned to match.
+
+**Style auto-corrects on every broadcast.** "A aggressive" → "an
+aggressive", "damage damage" → "damage", missing periods auto-
+appended, sentence starts auto-capitalized for combat prose.
+
+**Per-player line wrapping.** `set linewidth N` (range 40–240,
+default 80) matches your terminal. ANSI-aware, so color tags don't
+get counted against the wrap budget.
+
+**Infrared observers see "a figure".** Players using infrared vision
+in a dark room now see anonymized red shapes instead of named
+characters — names and pet names are stripped from the visual feed
+before delivery.
+
+**Bug fixes.**
+- Companion-name leak: a player's pet name no longer appears in feeds
+  of blind or dark-room observers who shouldn't be able to see it.
+- Grapple-position name leak (sibling fix): grapplers' names also
+  route through the sight gate properly.
+
+**Internal cleanup.** Duplicate `canSeeInRoom` helpers consolidated.
+`sendRoomTextDarknessAware`, the naive byte-count `wrapText`, and
+all `SendTextLegacy` shims deleted. ~2300 callsites migrated to the
+categorized API.
+
+**Known deferrals** (logged as followups):
+- Progression banner format (SKILL ADVANCEMENT / STATISTIC INCREASED)
+  is built but unused — `messaging.SendProgression` is orphaned by an
+  import cycle with `internal/characters/`. Legacy `*** sharpening ***`
+  text still fires.
+- Tabular renderers (status / inventory / who / help) honor
+  `set linewidth` for Go-side widths, but the templates themselves
+  still draw 80-column boxes.
+- Pre-T9 IsQuiet / Deafened filter logic on the `RoomId` events
+  branch may be partially bypassed by the per-recipient fan-out;
+  affected callers are out of scope for this chunk.
+
+The combat-state-machines arc that began with chunk 0 (2026-05-13) is
+fully wired up: chunks 0-6 built the substrate (Combat Phase,
+Awareness, Life, Activity, Position, Presence, Perception); chunk 7
+ties it together and is what the player sees.
+
 ## 2026-05-19 — Chunk 6: Perception state machine (dormant)
 
 **Internal-only change.** The engine now tracks every character's

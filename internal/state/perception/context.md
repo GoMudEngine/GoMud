@@ -7,19 +7,20 @@ The `internal/state/perception` package is the seventh consumer of the
 (chunks 0-6). It defines a two-state FSM (`Sighted | Blinded`) that
 gates "does this character's eyes work?" semantics.
 
-**Status (shipped DORMANT, 2026-05-19):**
+**Status (shipped 2026-05-19, consumer landed 2026-05-20):**
 
 The machine transitions correctly via existing buff/condition lifecycle
 hooks (Buff 3 Blinded, Buff 77 Flashbang Blindness, ConditionBlinded).
-NO CONSUMER reads the state yet. The future centralized messaging
-framework chunk wires this primitive into broadcast gating, infrared
-"red shapes" rendering, look-command blocking, color coding by event
-category, and centralized line wrapping. See the
-`messaging-framework-chunk` project memory for the full scope of that
-successor work.
+Originally shipped DORMANT in chunk 6 (2026-05-19) with no consumer.
+Now consumed by the centralized messaging framework chunk (2026-05-20,
+T3 of that chunk) via `internal/messaging/predicates.go:CanSeeClearly`
+/ `CanSeeShapes`. Sight-gated visual broadcasts route through the
+messaging pipeline; infrared "red shapes" rendering, color coding by
+event category, and centralized line wrapping all sit on top of these
+predicates.
 
-The dormant ship follows the chunk-4a precedent (Position FSM shipped
-DORMANT before chunk 4b wired writers + readers).
+The dormant-then-consumed lifecycle follows the chunk-4a precedent
+(Position FSM shipped DORMANT before chunk 4b wired writers + readers).
 
 ---
 
@@ -96,12 +97,12 @@ Presence).
 
 ---
 
-## Integration points (current and future)
+## Integration points
 
 | When | Where |
 |---|---|
-| **Now (dormant)** | Transitions fire correctly; no consumer reads state. |
-| **Future (messaging framework chunk)** | `room.SendTextVisual` consults `Perception.State()`; `look` command blocked when Blinded; infrared anonymizer transforms visual broadcasts. See `messaging-framework-chunk` project memory. |
+| **Chunk 6 (2026-05-19)** | Transitions fire correctly; no consumer yet. |
+| **Messaging framework chunk (2026-05-20)** | `messaging.CanSeeClearly` / `CanSeeShapes` in `internal/messaging/predicates.go` read `Perception.State()` to gate visual broadcasts and route infrared observers through the anonymizer. Every `Room.SendTextVisual` call now consults the FSM. |
 
 ---
 
@@ -113,5 +114,7 @@ Presence).
   through PE-INT-007): overlap + single-source paths via `AddBuff`
   / `AddCondition` / etc.
 
-No smoke pass — chunk 6 ships dormant; no player-visible behavior
-to verify in-game.
+No smoke pass at chunk-6 ship — dormant. The messaging framework
+chunk (2026-05-20) authored its own AI feature-tester goal at
+`tools/testing/goals/messaging-framework-smoke.yaml` covering
+sight-gating + infrared rendering end-to-end.
