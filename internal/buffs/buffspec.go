@@ -59,6 +59,7 @@ const (
 	EmitsLight   Flag = `lightsource`
 	SuperHearing Flag = `superhearing`
 	NightVision  Flag = `nightvision`
+	InfraredVision Flag = `infraredvision`
 	Warmed       Flag = `warmed`
 	Hydrated     Flag = `hydrated`
 	Thirsty      Flag = `thirsty`

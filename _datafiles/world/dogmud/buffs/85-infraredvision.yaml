@@ -1,0 +1,13 @@
+buffid: 85
+name: InfraredVision
+description: "You can see heat signatures in total darkness."
+visible: true
+sequential: false
+expireMessage: ""
+statmods: {}
+roundinterval: 0
+triggernow: false
+flags:
+  - infraredvision
+secret: false
+permabuff: true
