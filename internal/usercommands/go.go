@@ -17,6 +17,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -465,7 +466,15 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				}
 
 				if spotted {
-					user.Character.CancelBuffsWithFlag(buffs.Hidden)
+					// Drive the Awareness FSM out of Hidden — the mirror
+					// cascade in Awareness_Cascades.go handles
+					// CancelBuffsWithFlag(buffs.Hidden) and clears the
+					// hidden state. Calling CancelBuffsWithFlag directly
+					// here would expire buff 9 but leave the FSM in
+					// Hidden, so IsHidden() would still return true and
+					// the next attack would still surprise-strike.
+					_ = user.Character.Awareness.TransitionToRevealing(
+						state.TransitionReason{Trigger: awareness.TriggerObserverSearch})
 					user.Character.SetMiscData(`sneaking`, nil)
 					isSneaking = false
 					user.SendText(messaging.CategorySystem, fmt.Sprintf(
@@ -489,7 +498,8 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					hiddenScore := actions.CalcSneakScoreVsObserver(hiddenP.Character, user.Character, destRoom)
 					success, _, _, _ := dice.OpposedRollStat(observerScore, hiddenScore)
 					if success {
-						hiddenP.Character.CancelBuffsWithFlag(buffs.Hidden)
+						_ = hiddenP.Character.Awareness.TransitionToRevealing(
+							state.TransitionReason{Trigger: awareness.TriggerObserverSearch})
 						hiddenP.Character.SetMiscData(`sneaking`, nil)
 						hiddenP.SendText(messaging.CategorySystem, fmt.Sprintf(
 							"%s enters the room and notices you!", user.Character.Name))
@@ -508,10 +518,8 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					hiddenScore := actions.CalcSneakScoreVsObserver(&mob.Character, user.Character, destRoom)
 					success, _, _, _ := dice.OpposedRollStat(observerScore, hiddenScore)
 					if success {
-						mob.Character.RemovePermaBuff(9)
-						mob.Character.CancelBuffsWithFlag(buffs.Hidden)
-						mob.Character.Buffs.RemoveBuff(9)
-						mob.Character.Validate(true)
+						_ = mob.Character.Awareness.TransitionToRevealing(
+							state.TransitionReason{Trigger: awareness.TriggerObserverSearch})
 						user.SendText(messaging.CategorySystem, fmt.Sprintf(
 							`You notice <ansi fg="mobname">%s</ansi> lurking in the shadows!`,
 							mob.Character.Name))

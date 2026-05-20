@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/state/perception"
 )
 
@@ -33,6 +34,21 @@ func (c *Character) HasFlagFromAnySource(buffFlag buffs.Flag) bool {
 func (c *Character) CancelBuffsWithFlag(buffFlag buffs.Flag) bool {
 	if c.Buffs.HasFlag(buffFlag, true) {
 		c.Validate(true)
+		// Hidden flag is special: the Awareness FSM mirrors the buff
+		// via Awareness_Cascades.go. If a caller cancels the buff
+		// directly (eat/drink/give/get/equip/spotted-on-entry/etc.)
+		// without driving the FSM, IsHidden() stays true because the
+		// FSM is still in Hidden — split source of truth. Drive the
+		// FSM out here so every caller gets correct behavior without
+		// having to know about the cascade. Re-entrancy: the cascade
+		// re-fires CancelBuffsWithFlag(Hidden), but the buff is
+		// already cancelled by the Validate above so HasFlag returns
+		// false → no recursion.
+		if buffFlag == buffs.Hidden && c.Awareness != nil &&
+			c.Awareness.State() == awareness.Hidden {
+			_ = c.Awareness.TransitionToRevealing(
+				state.TransitionReason{Trigger: awareness.TriggerObserverSearch})
+		}
 		return true
 	}
 	return false
