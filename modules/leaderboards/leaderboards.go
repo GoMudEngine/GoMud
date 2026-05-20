@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -144,8 +145,8 @@ func (l *LeaderboardModule) leaderboardCommand(rest string, user *users.UserReco
 
 		searchResultsTable := templates.GetTable(title, headers, rows, formatting)
 		tplTxt, _ := templates.Process("tables/generic", searchResultsTable, user.UserId)
-		user.SendTextLegacy("\n")
-		user.SendTextLegacy(tplTxt)
+		user.SendText(messaging.CategorySystem, "\n")
+		user.SendText(messaging.CategorySystem, tplTxt)
 
 	}
 	return true, nil
