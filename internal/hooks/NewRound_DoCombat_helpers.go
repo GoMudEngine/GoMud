@@ -102,15 +102,6 @@ func sendDarkRoomCombatFallback(room *rooms.Room, excludeUserIds ...int) {
 	}
 }
 
-// canSeeInRoom returns true if the character has nightvision or the room
-// has enough visibility for sight.
-func canSeeInRoom(char *characters.Character, room *rooms.Room) bool {
-	if room == nil {
-		return true
-	}
-	return room.GetVisibility() >= 1 || char.HasFlagFromAnySource(buffs.NightVision)
-}
-
 // replaceDarknessMessages replaces detailed combat messages with generic
 // darkness text for combatants who cannot see.
 func replaceDarknessMessages(result *combat.AttackResult, sourceCanSee bool, targetCanSee bool) {

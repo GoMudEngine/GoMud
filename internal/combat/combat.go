@@ -3,10 +3,10 @@ package combat
 import (
 	"fmt"
 
-	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -27,14 +27,6 @@ const (
 	Mob  SourceTarget = "mob"
 )
 
-// canSeeInRoom returns true if the character has nightvision or the room is lit.
-func canSeeInRoom(char *characters.Character, room *rooms.Room) bool {
-	if room == nil {
-		return true
-	}
-	return room.GetVisibility() >= 1 || char.HasFlagFromAnySource(buffs.NightVision)
-}
-
 // Performs a combat round from a player to a mob
 func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 
@@ -51,8 +43,8 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 
 	room := rooms.LoadRoom(user.Character.RoomId)
 	ctx := combatContext{
-		sourceCanSee: canSeeInRoom(user.Character, room),
-		targetCanSee: canSeeInRoom(&mob.Character, room),
+		sourceCanSee: messaging.CanSeeClearly(user.Character, room),
+		targetCanSee: messaging.CanSeeClearly(&mob.Character, room),
 	}
 	attackResult := calculateCombat(*user.Character, mob.Character, User, Mob, ctx)
 
@@ -126,8 +118,8 @@ func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) 
 
 	room := rooms.LoadRoom(userAtk.Character.RoomId)
 	ctx := combatContext{
-		sourceCanSee: canSeeInRoom(userAtk.Character, room),
-		targetCanSee: canSeeInRoom(userDef.Character, room),
+		sourceCanSee: messaging.CanSeeClearly(userAtk.Character, room),
+		targetCanSee: messaging.CanSeeClearly(userDef.Character, room),
 	}
 	attackResult := calculateCombat(*userAtk.Character, *userDef.Character, User, User, ctx)
 
@@ -202,8 +194,8 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 
 	room := rooms.LoadRoom(mob.Character.RoomId)
 	ctx := combatContext{
-		sourceCanSee: canSeeInRoom(&mob.Character, room),
-		targetCanSee: canSeeInRoom(user.Character, room),
+		sourceCanSee: messaging.CanSeeClearly(&mob.Character, room),
+		targetCanSee: messaging.CanSeeClearly(user.Character, room),
 	}
 	attackResult := calculateCombat(mob.Character, *user.Character, Mob, User, ctx)
 
@@ -248,8 +240,8 @@ func AttackMobVsMob(mobAtk *mobs.Mob, mobDef *mobs.Mob) AttackResult {
 
 	room := rooms.LoadRoom(mobAtk.Character.RoomId)
 	ctx := combatContext{
-		sourceCanSee: canSeeInRoom(&mobAtk.Character, room),
-		targetCanSee: canSeeInRoom(&mobDef.Character, room),
+		sourceCanSee: messaging.CanSeeClearly(&mobAtk.Character, room),
+		targetCanSee: messaging.CanSeeClearly(&mobDef.Character, room),
 	}
 	attackResult := calculateCombat(mobAtk.Character, mobDef.Character, Mob, Mob, ctx)
 

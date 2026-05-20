@@ -465,10 +465,10 @@ func dispatchCritAndMessaging(atk, def actions.Actor, res *combat.AttackResult) 
 	srcCanSee := true
 	tgtCanSee := true
 	if atk.IsPlayer() {
-		srcCanSee = canSeeInRoom(atkChar, atkRoom)
+		srcCanSee = messaging.CanSeeClearly(atkChar, atkRoom)
 	}
 	if def.IsPlayer() {
-		tgtCanSee = canSeeInRoom(defChar, defRoom)
+		tgtCanSee = messaging.CanSeeClearly(defChar, defRoom)
 	}
 	if !srcCanSee || !tgtCanSee {
 		replaceDarknessMessages(res, srcCanSee, tgtCanSee)
