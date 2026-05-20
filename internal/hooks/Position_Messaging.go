@@ -21,6 +21,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -157,7 +158,7 @@ func sendCharacterMsg(c *characters.Character, selfMsg, roomMsg string) {
 	if u := userForCharacter(c); u != nil {
 		excludeId = u.UserId
 		if selfMsg != "" {
-			u.SendTextLegacy(selfMsg)
+			u.SendText(messaging.CategoryGrappleFlow, selfMsg)
 		}
 	}
 	if roomMsg == "" {
@@ -168,9 +169,9 @@ func sendCharacterMsg(c *characters.Character, selfMsg, roomMsg string) {
 		return
 	}
 	if excludeId > 0 {
-		r.SendTextLegacy(roomMsg, excludeId)
+		r.SendText(messaging.CategoryGrappleFlow, roomMsg, excludeId)
 	} else {
-		r.SendTextLegacy(roomMsg)
+		r.SendText(messaging.CategoryGrappleFlow, roomMsg)
 	}
 }
 
@@ -224,13 +225,13 @@ func sendSubmissionTriple(
 	var excludeIds []int
 	if ua := userForCharacter(attempter); ua != nil {
 		if atkMsg != "" {
-			ua.SendTextLegacy(atkMsg)
+			ua.SendText(messaging.CategorySubmission, atkMsg)
 		}
 		excludeIds = append(excludeIds, ua.UserId)
 	}
 	if ur := userForCharacter(recipient); ur != nil {
 		if tgtMsg != "" {
-			ur.SendTextLegacy(tgtMsg)
+			ur.SendText(messaging.CategorySubmission, tgtMsg)
 		}
 		excludeIds = append(excludeIds, ur.UserId)
 	}
@@ -244,11 +245,11 @@ func sendSubmissionTriple(
 	}
 	switch len(excludeIds) {
 	case 0:
-		r.SendTextLegacy(roomMsg)
+		r.SendText(messaging.CategorySubmission, roomMsg)
 	case 1:
-		r.SendTextLegacy(roomMsg, excludeIds[0])
+		r.SendText(messaging.CategorySubmission, roomMsg, excludeIds[0])
 	default:
-		r.SendTextLegacy(roomMsg, excludeIds[0], excludeIds[1])
+		r.SendText(messaging.CategorySubmission, roomMsg, excludeIds[0], excludeIds[1])
 	}
 }
 

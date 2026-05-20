@@ -31,6 +31,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/grapplemessaging"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -567,7 +568,7 @@ func characterDisplayName(c *characters.Character) string {
 // userForCharacter helper from Position_Messaging.go (same package).
 func sendToCharacter(c *characters.Character, msg string) {
 	if u := userForCharacter(c); u != nil {
-		u.SendTextLegacy(msg)
+		u.SendText(messaging.CategoryGrappleFlow, msg)
 	}
 	// Mobs don't receive text.
 }
@@ -600,11 +601,11 @@ func broadcastToRoomExcluding(controller, controlled *characters.Character,
 	}
 	switch len(excludeIds) {
 	case 0:
-		r.SendTextLegacy(msg)
+		r.SendText(messaging.CategoryGrappleFlow, msg)
 	case 1:
-		r.SendTextLegacy(msg, excludeIds[0])
+		r.SendText(messaging.CategoryGrappleFlow, msg, excludeIds[0])
 	default:
-		r.SendTextLegacy(msg, excludeIds[0], excludeIds[1])
+		r.SendText(messaging.CategoryGrappleFlow, msg, excludeIds[0], excludeIds[1])
 	}
 }
 

@@ -4,6 +4,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -82,7 +83,7 @@ func ApplyBuffs(e events.Event) events.ListenerReturn {
 				charPlainName = u.Character.GetCharacterName(false)
 				roomId = u.Character.RoomId
 				excludeId = u.UserId
-				sendFunc = func(msg string) { u.SendTextLegacy(msg) }
+				sendFunc = func(msg string) { u.SendText(messaging.CategoryBuffApply, msg) }
 			}
 		} else if evt.MobInstanceId != 0 {
 			if m := mobs.GetInstance(evt.MobInstanceId); m != nil {
@@ -101,7 +102,7 @@ func ApplyBuffs(e events.Event) events.ListenerReturn {
 				UserSendFunc: sendFunc,
 				RoomSendFunc: func(msg string, skip ...int) {
 					if r := rooms.LoadRoom(roomId); r != nil {
-						r.SendTextLegacy(msg, skip...)
+						r.SendText(messaging.CategoryBuffApply, msg, skip...)
 					}
 				},
 				ExcludeId: excludeId,

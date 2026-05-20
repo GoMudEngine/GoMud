@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
 
@@ -69,7 +70,7 @@ func resolveFoldRecall(actor actions.Actor) {
 	// Departure broadcast on the room the actor LEFT (use the snapshotted
 	// currentRoomId — char.RoomId has been updated by teleport).
 	if oldRoom := rooms.LoadRoom(currentRoomId); oldRoom != nil {
-		oldRoom.SendTextLegacy(fmt.Sprintf(
+		oldRoom.SendText(messaging.CategorySpellManifestation, fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> folds through the Veil and vanishes!`,
 			actor.GetName()), actor.GetUserId())
 	}
@@ -78,7 +79,7 @@ func resolveFoldRecall(actor actions.Actor) {
 
 	// Arrival broadcast on the new room.
 	if newRoom := rooms.LoadRoom(anchorRoom); newRoom != nil {
-		newRoom.SendTextLegacy(fmt.Sprintf(
+		newRoom.SendText(messaging.CategorySpellManifestation, fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> folds through the Veil and appears!`,
 			actor.GetName()), actor.GetUserId())
 	}
