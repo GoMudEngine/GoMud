@@ -5,7 +5,6 @@ import (
 	"math"
 	"strings"
 
-	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -99,9 +98,7 @@ func Track(actor Actor, opts TrackOptions) TrackResult {
 	targetNoun := opts.TargetNoun
 
 	// Roll the Perception+Search score.
-	searchRank := char.GetSkillLevel(skills.Search)
-	searchScore := float64(char.Stats.Perception.ValueAdj) +
-		combat.SkillMultiplier(searchRank)*25.0
+	searchScore := CalcSearchScore(char)
 	roll := dice.RollStat(searchScore)
 	result.RollValue = roll.Value
 

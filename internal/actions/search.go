@@ -5,7 +5,6 @@ import (
 	"sort"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
-	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
@@ -61,9 +60,7 @@ func Search(actor Actor, opts SearchOptions) SearchResult {
 		return result
 	}
 
-	searchRank := char.GetSkillLevel(skills.Search)
-	searchScore := float64(char.Stats.Perception.ValueAdj) +
-		combat.SkillMultiplier(searchRank)*25.0
+	searchScore := CalcSearchScore(char)
 
 	if actor.IsPlayer() {
 		actor.SendText(messaging.CategorySystem, "You snoop around for a bit...\n")

@@ -483,6 +483,12 @@ scout, ranger archetypes in other zones) follow in a content pass.
 
 ## Buff 26 mob compatibility
 
+**Implementation note (2026-05-22):** Plan-writing discovered that buff 26 is `Conviction Surge` — a +15 strength combat buff. It was being misused in `skill.track.go` as a "tracking is active" duration token. Per the user's direction, this chunk authored a dedicated **buff 86 (Active Tracking)** in Task 1 and migrated all tracking AddBuff/RemoveBuff sites from 26 to 86. The "buff 26" references in the architectural musts and section headings below refer to the historical buff number; the implementation uses buff 86. A sister buff 87 (Shadowing) was added in Task 17 for the shadow lifecycle. See `docs/superpowers/plans/2026-05-22-mob-aliveness-2.8-scout-track-scan.md` for the bug-discovery context and the buff-86/87 design.
+
+Risk surface: the original plan called for buff 26 symmetric with players, but buff 26's tick handler is player-coupled. The actual implementation uses buff 86, a new tracking-only buff with no player-side display loop.
+
+Plan (historical):
+
 Risk surface: buff 26 was authored for the player active-tracking
 display loop. Its tick handler may be player-coupled in ways that
 break or silently no-op for mob owners.
