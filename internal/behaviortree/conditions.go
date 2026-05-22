@@ -40,6 +40,10 @@ func init() {
 	conditionRegistry["mob_is_hidden"] = condMobIsHidden
 	conditionRegistry["target_is_hidden"] = condTargetIsHidden
 	conditionRegistry["target_has_gold"] = condTargetHasGold
+
+	// Scout / track / scan (2.8)
+	conditionRegistry["room_has_hidden_entity"] = condRoomHasHiddenEntity
+	conditionRegistry["mob_is_tracking"] = condMobIsTracking
 }
 
 // LookupCondition returns the condition function for the given name,

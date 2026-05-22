@@ -1,0 +1,7 @@
+buffid: 86
+name: Active Tracking
+description: You are following a quarry's trail with heightened awareness.
+triggerrate: 1 round
+triggercount: 25
+start_user_text: You commit the trail to memory and steady your senses.
+end_user_text: Your focus on the trail breaks.

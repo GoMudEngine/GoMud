@@ -15,6 +15,7 @@ func RegisterListeners() {
 	events.RegisterListener(events.RoomChange{}, CleanupEphemeralRooms)
 	events.RegisterListener(events.RoomChange{}, MobRoomChangeKnowledgeObservers)
 	events.RegisterListener(events.RoomChange{}, MobRoomChangeFactsAutoWithdraw)
+	events.RegisterListener(events.RoomChange{}, MobRoomChangeShadowFollow)
 	events.RegisterListener(events.RoomChange{}, PresencePlayerEntry)
 
 	// NewRound Listeners
@@ -55,6 +56,8 @@ func RegisterListeners() {
 	events.RegisterListener(events.Quest{}, HandleQuestUpdate)
 	// Spawn events
 	events.RegisterListener(events.PlayerSpawn{}, HandleJoin)
+	// Player despawn: clear tracking/shadow state pointing at the leaving player
+	events.RegisterListener(events.PlayerDespawn{}, PlayerDespawnTrackingCleanup)
 	events.RegisterListener(events.PlayerDespawn{}, HandleLeave, events.Last) // This is a final listener, has to happen last
 
 	// Day/Night cycle
@@ -97,6 +100,9 @@ func RegisterListeners() {
 
 	// Mob death: auto-claim open bounties targeting the dead mob
 	events.RegisterListener(events.MobDeath{}, MobDeathBountyClaim)
+
+	// Mob death: clear tracking/shadow state pointing at the dead mob
+	events.RegisterListener(events.MobDeath{}, MobDeathTrackingCleanup)
 
 	// Skill use: quest engine notifications
 	events.RegisterListener(events.SkillUsed{}, SkillUseQuestNotify)

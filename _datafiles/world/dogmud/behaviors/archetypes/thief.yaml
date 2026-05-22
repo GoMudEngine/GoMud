@@ -8,10 +8,18 @@
 #   1. Panic-flee at critical HP (shared pattern with other archetypes).
 #   2. Power-overmatch combat (player_enter + power ratio > 1.5 → attack).
 #   3. Self-defense (mob_hurt → attack, no health gate).
-#   4. Steal-and-flee loop (mob_idle + hidden + player in room → steal,
+#   4. Silent search (mob_idle + hidden rival present → search).
+#      The thief gains soft-target awareness of the hidden entity but
+#      takes no visible action — visibly fleeing or calling for help
+#      would betray the detection, contradicting the scout-only-
+#      awareness contract (the target's Hidden buff is preserved, and
+#      no other observable behavior should leak the detection either).
+#      The thief's other branches govern normal behavior; future ticks
+#      may consume the soft-target via other mechanisms.
+#   5. Steal-and-flee loop (mob_idle + hidden + player in room → steal,
 #      flee).
-#   5. Re-stealth (mob_idle + not hidden → try_sneak).
-#   6. (Fallback: engine default idle wander.)
+#   6. Re-stealth (mob_idle + not hidden → try_sneak).
+#   7. (Fallback: engine default idle wander.)
 #
 # Note: "mob_attacked" is not a btree event. Self-defense uses mob_hurt
 # (the same event as panic-flee) without a health-below condition gate,
@@ -51,7 +59,20 @@ tree:
         - type: action
           do: attack
 
-    # 4. Core loop: idle + hidden + gold-bearing player in room →
+    # 4. Silent search (chunk 2.8): catch hidden rivals before stealing.
+    # The thief gains soft-target awareness via try_search but takes NO
+    # visible action — visibly fleeing would betray the detection and
+    # contradict the scout-only-awareness contract. The thief's other
+    # branches govern normal behavior.
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: condition
+          check: room_has_hidden_entity
+        - type: action
+          do: try_search
+
+    # 5. Core loop: idle + hidden + gold-bearing player in room →
     # pick a player, attempt theft, flee.
     - type: sequence
       event: mob_idle
@@ -68,7 +89,7 @@ tree:
         - type: action
           do: flee
 
-    # 5. Re-stealth when uncovered.
+    # 6. Re-stealth when uncovered.
     - type: sequence
       event: mob_idle
       children:

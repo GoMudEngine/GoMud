@@ -17,6 +17,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -392,6 +393,15 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				if !shadowIsTargetingUser(shadowP, user.UserId) {
 					continue
 				}
+				// Buff-absent guard: misc data set but buff 87 gone means the
+				// shadow expired or was cancelled out-of-band. Clear stale state
+				// and skip the auto-follow so a dead/logged-off target can't drag
+				// the player to an unexpected room.
+				if !shadowP.Character.HasBuff(87) {
+					shadowP.Character.SetMiscData("shadow-target-user", nil)
+					shadowP.Character.SetMiscData("shadow-target-mob", nil)
+					continue
+				}
 				// Shadower is in the old room and tracking the mover -- follow.
 				shadowP.Command(rest)
 
@@ -421,7 +431,6 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				}
 
 				spotted := false
-				spotterName := ""
 
 				// Check player observers. Sneak score is computed per-observer so
 				// NightVision observers apply the correct light modifier.
@@ -441,7 +450,6 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 							`<ansi fg="username">%s</ansi> slips into the room but you notice them.`,
 							user.Character.Name))
 						spotted = true
-						spotterName = p.Character.Name
 						break
 					}
 				}
@@ -458,18 +466,28 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						success, _, _, _ := dice.OpposedRollStat(sneakScore, observerScore)
 						if !success {
 							spotted = true
-							spotterName = mob.Character.Name
 							break
 						}
 					}
 				}
 
 				if spotted {
-					user.Character.CancelBuffsWithFlag(buffs.Hidden)
+					// Drive the Awareness FSM out of Hidden — the mirror
+					// cascade in Awareness_Cascades.go handles
+					// CancelBuffsWithFlag(buffs.Hidden) and clears the
+					// hidden state. Calling CancelBuffsWithFlag directly
+					// here would expire buff 9 but leave the FSM in
+					// Hidden, so IsHidden() would still return true and
+					// the next attack would still surprise-strike.
+					_ = user.Character.Awareness.TransitionToRevealing(
+						state.TransitionReason{Trigger: awareness.TriggerObserverSearch})
 					user.Character.SetMiscData(`sneaking`, nil)
 					isSneaking = false
-					user.SendText(messaging.CategorySystem, fmt.Sprintf(
-						"You slip into the room but %s notices you.", spotterName))
+					// Intentionally silent — if the observer is itself hidden,
+					// surfacing their name leaks information the player can't
+					// see. The Hidden buff's end_user_text ("You no longer feel
+					// sneaky.") on the next tick is sufficient signal that
+					// stealth dropped.
 				}
 			}
 
@@ -489,7 +507,8 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					hiddenScore := actions.CalcSneakScoreVsObserver(hiddenP.Character, user.Character, destRoom)
 					success, _, _, _ := dice.OpposedRollStat(observerScore, hiddenScore)
 					if success {
-						hiddenP.Character.CancelBuffsWithFlag(buffs.Hidden)
+						_ = hiddenP.Character.Awareness.TransitionToRevealing(
+							state.TransitionReason{Trigger: awareness.TriggerObserverSearch})
 						hiddenP.Character.SetMiscData(`sneaking`, nil)
 						hiddenP.SendText(messaging.CategorySystem, fmt.Sprintf(
 							"%s enters the room and notices you!", user.Character.Name))
@@ -508,10 +527,8 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					hiddenScore := actions.CalcSneakScoreVsObserver(&mob.Character, user.Character, destRoom)
 					success, _, _, _ := dice.OpposedRollStat(observerScore, hiddenScore)
 					if success {
-						mob.Character.RemovePermaBuff(9)
-						mob.Character.CancelBuffsWithFlag(buffs.Hidden)
-						mob.Character.Buffs.RemoveBuff(9)
-						mob.Character.Validate(true)
+						_ = mob.Character.Awareness.TransitionToRevealing(
+							state.TransitionReason{Trigger: awareness.TriggerObserverSearch})
 						user.SendText(messaging.CategorySystem, fmt.Sprintf(
 							`You notice <ansi fg="mobname">%s</ansi> lurking in the shadows!`,
 							mob.Character.Name))

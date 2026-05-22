@@ -1,0 +1,67 @@
+# scout archetype
+#
+# Patrol-flavored mob. Scans adjacent rooms each idle tick; on
+# hostile sighting, alerts pack and moves toward target. Searches
+# current room periodically for hidden threats. Pursues fleeing
+# aggro targets across room boundaries via try_track +
+# move_toward_tracked.
+#
+# Spec: docs/superpowers/specs/
+#       2026-05-22-mob-aliveness-2.8-scout-track-scan-design.md
+
+tree:
+  type: selector
+  children:
+    # 1. Panic-flee at critical HP (shared pattern with other archetypes).
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 25
+        - type: action
+          do: flee
+
+    # 2. Self-defense (no health gate).
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: action
+          do: attack
+
+    # 3. Active-track loop — aggro target fled the room.
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: condition
+          check: mob_is_tracking
+        - type: action
+          do: move_toward_tracked
+
+    # 4. Search current room for hidden threats.
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: condition
+          check: room_has_hidden_entity
+        - type: action
+          do: try_search
+        - type: action
+          do: command
+          cmd: callforhelp
+
+    # 5. Scan adjacent rooms; on hostile, alert + chase.
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: action
+          do: try_scan
+          hostile_only: true
+        - type: action
+          do: try_track
+          target_from: soft_target
+        - type: action
+          do: command
+          cmd: callforhelp
+        - type: action
+          do: move_toward_tracked

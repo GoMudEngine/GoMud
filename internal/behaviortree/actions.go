@@ -78,6 +78,12 @@ func init() {
 
 	// Activity control
 	actionRegistry["cancel_activity"] = actionCancelActivity
+
+	// Scout / track / scan (2.8)
+	actionRegistry["try_scan"] = actTryScan
+	actionRegistry["try_track"] = actTryTrack
+	actionRegistry["try_search"] = actTrySearch
+	actionRegistry["move_toward_tracked"] = actMoveTowardTracked
 }
 
 // LookupAction returns the action function for the given name,
