@@ -99,6 +99,23 @@ func condMobHPBelowRecallThreshold(
 	return Failure
 }
 
+// condForagerStateIsForaging returns Success when the mob's
+// forager state machine is currently in StateForaging. Lets the
+// archetype YAML branch the per-tick foraging loop.
+func condForagerStateIsForaging(params map[string]any, ctx *EvalContext) Result {
+	if ctx.MobState == nil {
+		return Failure
+	}
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil {
+		return Failure
+	}
+	if readForagerState(ctx.MobState) == forager.StateForaging {
+		return Success
+	}
+	return Failure
+}
+
 // npcStatSum returns the sum of all six adjusted stat values for the
 // given mob. Used by condMobCanSafelyEngage for the relative-power gate.
 func npcStatSum(m *mobs.Mob) int {
