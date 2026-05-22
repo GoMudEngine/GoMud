@@ -194,7 +194,7 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		user.Character.SetMiscData("tracking-mob", nil)
 		user.Character.SetMiscData("tracking-user", nil)
 		user.Character.SetMiscData("tracking-display-count", nil)
-		user.Character.RemoveBuff(26)
+		user.Character.RemoveBuff(86)
 		user.SendText(messaging.CategorySystem, `You stop tracking.`)
 		return true, nil
 	}
