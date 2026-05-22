@@ -55,6 +55,8 @@ func RegisterListeners() {
 	events.RegisterListener(events.Quest{}, HandleQuestUpdate)
 	// Spawn events
 	events.RegisterListener(events.PlayerSpawn{}, HandleJoin)
+	// Player despawn: clear tracking/shadow state pointing at the leaving player
+	events.RegisterListener(events.PlayerDespawn{}, PlayerDespawnTrackingCleanup)
 	events.RegisterListener(events.PlayerDespawn{}, HandleLeave, events.Last) // This is a final listener, has to happen last
 
 	// Day/Night cycle
