@@ -275,3 +275,17 @@ func TestSalvageCommandRegistered(t *testing.T) {
 	}
 	assert.True(t, found, "salvage must be registered in the mob command map")
 }
+
+// ── Test 7: forage is registered in the mob command map ──────────────────────
+
+func TestForageCommandRegistered(t *testing.T) {
+	cmds := GetAllMobCommands()
+	found := false
+	for _, c := range cmds {
+		if c == "forage" {
+			found = true
+			break
+		}
+	}
+	assert.True(t, found, "forage must be registered in the mob command map")
+}

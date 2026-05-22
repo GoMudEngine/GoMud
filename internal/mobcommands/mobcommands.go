@@ -47,6 +47,7 @@ var (
 		"emote":          {Emote, true},
 		"equip":          {Equip, false},
 		"flee":           {Flee, false},
+		"forage":         {Forage, false},
 		"get":            {Get, false},
 		"give":           {Give, false},
 		"givequest":      {GiveQuest, false},
