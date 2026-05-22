@@ -695,11 +695,6 @@ Cross-machine cleanup that fires on two Life transitions:
 | `Respawn_PlayerAutoLook.go` | Fires `u.Command("look")` for room-render UX after respawn teleport |
 | `PlayerDespawn_TrackingCleanup.go` | Clears `tracking-user` / `shadow-target-user` misc-data + buff 86/87 from all characters pointing to the departing user (chunk 2.8) |
 
-| File | Purpose |
-|------|---------|
-| `Respawn_PlayerTeleport.go` | `rooms.MoveToRoom` to `c.ResolveRespawnRoom()` destination; belt-and-suspenders `EndAggro` |
-| `Respawn_PlayerAutoLook.go` | Fires `u.Command("look")` for room-render UX after respawn teleport |
-
 ### Wiring pattern
 
 All fourteen files follow the same registration pattern:
