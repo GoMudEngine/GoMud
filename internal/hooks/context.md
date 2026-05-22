@@ -685,8 +685,15 @@ Cross-machine cleanup that fires on two Life transitions:
 | `Death_MobBehaviorTree.go` | Fires `mob_die` btree event with primary killer's `UserId` |
 | `Death_MobKillCredit.go` | `EndAggro` on killers, `KD.AddMobKill`, `OnFirstMobKill`, party kill credit |
 | `Death_MobCharmCleanup.go` | `TrackRecentDeath`, `RemoveCharm`, reverse-track player `TrackCharmed` |
+| `Death_MobTracking_Cleanup.go` | Clears `tracking-mob` / `shadow-target-mob` misc-data + buff 86/87 from all characters pointing to the dying mob (chunk 2.8) |
 
 ### Respawn observers
+
+| File | Purpose |
+|------|---------|
+| `Respawn_PlayerTeleport.go` | `rooms.MoveToRoom` to `c.ResolveRespawnRoom()` destination; belt-and-suspenders `EndAggro` |
+| `Respawn_PlayerAutoLook.go` | Fires `u.Command("look")` for room-render UX after respawn teleport |
+| `PlayerDespawn_TrackingCleanup.go` | Clears `tracking-user` / `shadow-target-user` misc-data + buff 86/87 from all characters pointing to the departing user (chunk 2.8) |
 
 | File | Purpose |
 |------|---------|
