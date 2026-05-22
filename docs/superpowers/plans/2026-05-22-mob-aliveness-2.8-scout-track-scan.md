@@ -26,7 +26,8 @@ Throughout this plan, references to "the tracking buff" mean buff 86 (authored i
 4. **Mob wrappers (Task 10):** Depends on actions; trivially small.
 5. **Btree primitives (Tasks 11-12):** Depends on actions. Adds the four action primitives + two conditions.
 6. **Archetype YAMLs (Tasks 13-16):** Depends on btree primitives. Each graft is independent.
-7. **Docs + smoke (Tasks 17-18):** context.md updates + the smoke plan from the spec.
+7. **Shadow parity + universal cleanup hooks (Tasks 17-20):** Buff 87 authoring + shadow.go audit + the two cleanup hooks. Lands BEFORE docs/smoke because the smoke plan exercises the cleanup paths.
+8. **Docs + smoke (Tasks 21-22):** context.md updates + the smoke plan (13 scenarios, including the 4 escape-gate regressions).
 
 ## Task table-of-contents
 
@@ -48,8 +49,12 @@ Throughout this plan, references to "the tracking buff" mean buff 86 (authored i
 | 14 | Graft scan-before-ambush onto lookout.yaml | behaviors/archetypes/lookout.yaml | 12 |
 | 15 | Graft search-before-steal onto thief.yaml | behaviors/archetypes/thief.yaml | 12 |
 | 16 | Graft track-on-aggro-lost onto leader.yaml | behaviors/archetypes/leader.yaml | 12 |
-| 17 | Update context.md files | behaviortree/context.md, actions/context.md | 11-16 |
-| 18 | Boot + run smoke + mark roadmap done | server boot, MOB_ALIVENESS_ROADMAP.md | all |
+| 17 | Author `87-shadowing.yaml` (sister buff to 86) | New buff YAML | — |
+| 18 | Audit + amend shadow.go for buff 87 lifecycle | actions/shadow.go, usercommands/skill.skullduggery.shadow.go, mobcommands/shadow.go, usercommands/go.go | 17 |
+| 19 | Add MobDeath_TrackingCleanup hook | hooks/MobDeath_TrackingCleanup.go | 1, 17 |
+| 20 | Add PlayerDespawn_TrackingCleanup hook | hooks/PlayerDespawn_TrackingCleanup.go (or augment HandleLeave) | 1, 17 |
+| 21 | Update context.md files | behaviortree/context.md, actions/context.md, hooks/context.md | 11-20 |
+| 22 | Boot + run smoke + mark roadmap done (S→M size update) | server boot, MOB_ALIVENESS_ROADMAP.md | all |
 
 ---
 
@@ -69,7 +74,7 @@ buffid: 86
 name: Active Tracking
 description: You are following a quarry's trail with heightened awareness.
 triggerrate: 1 round
-triggercount: 16
+triggercount: 25
 start_user_text: You commit the trail to memory and steady your senses.
 end_user_text: The trail grows cold; your focus slips.
 ```
@@ -2456,13 +2461,394 @@ EOF
 
 ---
 
-## Phase 7 — Docs + smoke + roadmap
+## Phase 7 — Shadow parity + universal cleanup hooks
 
-### Task 17: Update context.md files
+These four tasks fold the buff-87 (Shadowing) sister mechanic into the same cleanup contract as buff 86, then add universal death/logoff cleanup hooks that drop both buffs and clear both misc-data namespaces when the target ceases to exist.
+
+### Task 17: Author `87-shadowing.yaml`
+
+**Files:**
+- Create: `_datafiles/world/dogmud/buffs/87-shadowing.yaml`
+
+- [ ] **Step 1: Create the buff YAML**
+
+Write `_datafiles/world/dogmud/buffs/87-shadowing.yaml` with this content:
+
+```yaml
+buffid: 87
+name: Shadowing
+description: You are stalking a quarry from the shadows, matching their every step.
+triggerrate: 1 round
+triggercount: 25
+start_user_text: You fall into your quarry's wake, footfalls silenced to match theirs.
+end_user_text: Your quarry slips from view; your focus breaks.
+```
+
+No statmods, no flags. Same duration as buff 86 (25 rounds).
+
+- [ ] **Step 2: Boot the server, confirm load**
+
+Run: `go run . 2>&1 | head -120`
+
+Expected: `buffs.LoadDataFiles() loadedCount=71` (was 70 after Task 1). No panics. Kill the server.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add _datafiles/world/dogmud/buffs/87-shadowing.yaml
+git commit -m "$(cat <<'EOF'
+feat(buffs): add 87 Shadowing (sister buff to 86 Active Tracking)
+
+Adds a 25-round duration token for the shadow mechanic. Previously
+shadow had no auto-expiry — only manual stop + losing the hidden
+buff cleared it. Sets up Task 18's audit + cleanup-on-buff-absence
+contract.
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
+EOF
+)"
+```
+
+### Task 18: Audit + amend shadow.go for buff 87 lifecycle
+
+**Files:**
+- Modify: `internal/actions/shadow.go` (apply buff 87 on success)
+- Modify: `internal/usercommands/skill.skullduggery.shadow.go` (endShadow cleanup)
+- Modify: `internal/usercommands/go.go:381` (auto-follow consumer — gate on buff 87)
+
+**Context:** Shadow today has no auto-expiry. The auto-follow logic in `go.go:381` reads shadow-target-* misc data and auto-moves shadowers when a target moves. With buff 87 in place, that consumer should also enforce the cleanup contract: misc data without buff = stale = clear it and skip.
+
+- [ ] **Step 1: Apply buff 87 on Shadow success — `actions/shadow.go`**
+
+In `shadowMob()` (around line 82), after the misc-data SetMiscData calls and before the success message, add:
+
+```go
+actor.AddBuff(87, "skill")
+```
+
+In `shadowPlayer()` (around line 130), apply the same addition at the equivalent spot (after SetMiscData, before the success message). Note: `shadowPlayer` performs the detection roll AFTER setting state today; place the AddBuff call alongside the SetMiscData calls so the buff is set whether or not detection fires.
+
+- [ ] **Step 2: Remove buff 87 in endShadow — `skill.skullduggery.shadow.go`**
+
+Edit `endShadow()` (around line 90). After the two SetMiscData(nil) calls and before the cooldown set, add:
+
+```go
+user.Character.RemoveBuff(87)
+```
+
+- [ ] **Step 3: Gate the auto-follow consumer on buff 87**
+
+Open `internal/usercommands/go.go` and find the shadowing block around line 381 (the comment says "shadowing the mover (user)"). Wrap the existing auto-move logic with a `HasBuff(87)` gate. When misc data is set but buff is absent, clear misc data and skip:
+
+**Before** (paraphrased structure — confirm exact shape during implementation):
+```go
+if shadowIsTargetingUser(shadower, moverUserId) {
+    // ... auto-move logic ...
+}
+```
+
+**After:**
+```go
+if shadowIsTargetingUser(shadower, moverUserId) {
+    if !shadower.Character.HasBuff(87) {
+        // Buff absent — clear stale shadow state and skip.
+        shadower.Character.SetMiscData("shadow-target-user", nil)
+        shadower.Character.SetMiscData("shadow-target-mob", nil)
+        // skip the auto-move
+    } else {
+        // ... existing auto-move logic unchanged ...
+    }
+}
+```
+
+If there's a sibling block for the mob-target shadow path in the same file, apply the same gating.
+
+- [ ] **Step 4: Find and gate any other shadow consumers**
+
+Run: Grep tool with pattern `shadow-target-user|shadow-target-mob` in path `internal`, output_mode `content`, `-n: true`.
+
+Expected matches: `actions/shadow.go`, `usercommands/skill.skullduggery.shadow.go`, `usercommands/go.go`, `actions/shadow_test.go`. If any other consumer reads these keys without buff gating (excluding test files), apply the same fix.
+
+- [ ] **Step 5: Build + test**
+
+Run: `go build ./... && go test ./internal/actions/... ./internal/usercommands/...`
+
+Expected: clean exit. The existing shadow tests in `actions/shadow_test.go` should still pass (buff application is additive, doesn't change success criteria). If a test asserts no buff is applied, update it to assert buff 87 IS applied.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add internal/actions/shadow.go internal/usercommands/skill.skullduggery.shadow.go internal/usercommands/go.go internal/actions/shadow_test.go
+git commit -m "$(cat <<'EOF'
+feat(shadow): apply buff 87 lifecycle + gate auto-follow consumer
+
+Shadow now applies buff 87 on success (matching track's buff 86
+pattern). endShadow removes buff 87. The auto-follow consumer in
+go.go gates on HasBuff(87) — stale misc data without a live buff
+is cleared and skipped, preventing phantom shadows from dragging
+players to dead/logged-off targets.
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
+EOF
+)"
+```
+
+### Task 19: Add MobDeath_TrackingCleanup hook
+
+**Files:**
+- Create: `internal/hooks/MobDeath_TrackingCleanup.go`
+- Modify: `internal/hooks/hooks.go` (register the new listener — confirm registration pattern from existing MobDeath_* hooks)
+
+- [ ] **Step 1: Find the existing registration pattern**
+
+Open `internal/hooks/hooks.go` and locate where existing `MobDeath_*` hooks are registered (e.g., `MobDeathFactionRep`, `MobDeathBountyClaim`). The pattern is likely a call to `events.RegisterListener(events.MobDeath, ...)` or similar. Copy the surrounding lines so the new hook can be added in the same style.
+
+- [ ] **Step 2: Create MobDeath_TrackingCleanup.go**
+
+```go
+package hooks
+
+import (
+	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/users"
+)
+
+// MobDeathTrackingCleanup clears tracking/shadow state on any character
+// (player or mob) that was tracking or shadowing the now-dead mob. Pairs
+// with PlayerDespawn_TrackingCleanup for the symmetric logoff path.
+//
+// State cleared per pointing character:
+//   - tracking-mob misc (string match on mob name)
+//   - shadow-target-mob misc (int match on InstanceId)
+//   - buff 86 (Active Tracking) — only if tracking-* state was on this mob
+//   - buff 87 (Shadowing) — only if shadow-target-* state was on this mob
+func MobDeathTrackingCleanup(e events.Event) events.ListenerReturn {
+	evt, ok := e.(events.MobDeath)
+	if !ok {
+		return events.Continue
+	}
+
+	// The mob instance is destroyed by the time this fires for some
+	// downstream listeners; resolve the dying mob's name + InstanceId
+	// from the event payload. evt.MobInstanceId is always set. For the
+	// name we need to fetch the template if the instance is gone.
+	dyingInstanceId := evt.MobInstanceId
+	dyingName := ""
+	if m := mobs.GetInstance(dyingInstanceId); m != nil {
+		dyingName = m.Character.Name
+	} else if tmpl := mobs.GetMobSpec(evt.MobId); tmpl != nil {
+		dyingName = tmpl.Character.Name
+	}
+
+	clearPointersTo := func(getMisc func(string) any, setMisc func(string, any), removeBuff func(int)) {
+		// Tracking by name.
+		if dyingName != "" {
+			if v := getMisc("tracking-mob"); v != nil {
+				if s, ok := v.(string); ok && s == dyingName {
+					setMisc("tracking-mob", nil)
+					setMisc("tracking-display-count", nil)
+					removeBuff(86)
+				}
+			}
+		}
+		// Shadow by InstanceId.
+		if v := getMisc("shadow-target-mob"); v != nil {
+			if id, ok := v.(int); ok && id == dyingInstanceId {
+				setMisc("shadow-target-mob", nil)
+				removeBuff(87)
+			}
+		}
+	}
+
+	// Walk all online users.
+	for _, u := range users.GetAllActiveUsers() {
+		if u == nil {
+			continue
+		}
+		c := &u.Character
+		clearPointersTo(c.GetMiscData, c.SetMiscData, c.RemoveBuff)
+	}
+
+	// Walk all active mob instances.
+	for _, m := range mobs.GetAllMobInstances() {
+		if m == nil || m.InstanceId == dyingInstanceId {
+			continue
+		}
+		c := &m.Character
+		clearPointersTo(c.GetMiscData, c.SetMiscData, c.RemoveBuff)
+	}
+
+	return events.Continue
+}
+```
+
+**Note on `users.GetAllActiveUsers()` / `mobs.GetAllMobInstances()`:** these helper names may differ in the actual codebase. During implementation, grep for the existing iteration patterns (e.g., what does `MobDeath_FactionRep.go` use to walk damager users? what walks all mobs in similar contexts?). Common candidates: `users.GetOnlineUserIds()`, `mobs.GetAllMobs()`, or similar. Use whatever is canonical.
+
+**Note on `mobs.GetMobSpec`:** confirm the function name for fetching a template by MobId. Likely candidates: `mobs.GetMobSpec`, `mobs.GetTemplate`, or similar.
+
+- [ ] **Step 3: Register the listener in hooks.go**
+
+Following the pattern found in Step 1, add a registration line. Likely shape:
+
+```go
+events.RegisterListener(events.MobDeath{}, MobDeathTrackingCleanup)
+```
+
+Place it alphabetically or alongside the other `MobDeath*` registrations.
+
+- [ ] **Step 4: Build**
+
+Run: `go build ./...`
+
+Expected: clean exit. If function names from the notes above are wrong, the build will surface them — fix and re-run.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add internal/hooks/MobDeath_TrackingCleanup.go internal/hooks/hooks.go
+git commit -m "$(cat <<'EOF'
+feat(hooks): clear tracking/shadow state on mob death
+
+When a mob dies, walk all online users + active mob instances and
+clear tracking-mob (by name) or shadow-target-mob (by InstanceId)
+on any character pointing to the dying mob. Also removes buff 86
+or buff 87 from those characters. Symmetric with the player-logoff
+hook in Task 20.
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
+EOF
+)"
+```
+
+### Task 20: Add PlayerDespawn_TrackingCleanup hook
+
+**Files:**
+- Create: `internal/hooks/PlayerDespawn_TrackingCleanup.go`
+- Modify: `internal/hooks/hooks.go` (register the new listener)
+
+This task could alternatively augment `HandleLeave` in `PlayerDespawn_HandleLeave.go` rather than creating a new file. Standalone file is cleaner — `HandleLeave` is already doing a lot of work and tracking-cleanup is orthogonal to its concerns.
+
+- [ ] **Step 1: Create PlayerDespawn_TrackingCleanup.go**
+
+```go
+package hooks
+
+import (
+	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/users"
+)
+
+// PlayerDespawnTrackingCleanup clears tracking/shadow state on any
+// character (player or mob) that was tracking or shadowing the now-
+// despawning player. Pairs with MobDeath_TrackingCleanup for the
+// symmetric mob-death path.
+//
+// State cleared per pointing character:
+//   - tracking-user misc (string match on user name)
+//   - shadow-target-user misc (int match on UserId)
+//   - buff 86 (Active Tracking) — only if tracking-* state was on this user
+//   - buff 87 (Shadowing) — only if shadow-target-* state was on this user
+func PlayerDespawnTrackingCleanup(e events.Event) events.ListenerReturn {
+	evt, ok := e.(events.PlayerDespawn)
+	if !ok {
+		return events.Continue
+	}
+
+	leavingUser := users.GetByUserId(evt.UserId)
+	if leavingUser == nil {
+		return events.Continue
+	}
+	leavingName := leavingUser.Character.Name
+	leavingUserId := leavingUser.UserId
+
+	clearPointersTo := func(getMisc func(string) any, setMisc func(string, any), removeBuff func(int)) {
+		// Tracking by name.
+		if v := getMisc("tracking-user"); v != nil {
+			if s, ok := v.(string); ok && s == leavingName {
+				setMisc("tracking-user", nil)
+				setMisc("tracking-display-count", nil)
+				removeBuff(86)
+			}
+		}
+		// Shadow by UserId.
+		if v := getMisc("shadow-target-user"); v != nil {
+			if id, ok := v.(int); ok && id == leavingUserId {
+				setMisc("shadow-target-user", nil)
+				removeBuff(87)
+			}
+		}
+	}
+
+	// Walk all other online users.
+	for _, u := range users.GetAllActiveUsers() {
+		if u == nil || u.UserId == leavingUserId {
+			continue
+		}
+		c := &u.Character
+		clearPointersTo(c.GetMiscData, c.SetMiscData, c.RemoveBuff)
+	}
+
+	// Walk all active mob instances.
+	for _, m := range mobs.GetAllMobInstances() {
+		if m == nil {
+			continue
+		}
+		c := &m.Character
+		clearPointersTo(c.GetMiscData, c.SetMiscData, c.RemoveBuff)
+	}
+
+	return events.Continue
+}
+```
+
+Same caveats on helper-function names as Task 19 — confirm during implementation.
+
+- [ ] **Step 2: Register the listener in hooks.go**
+
+Find the registration line for `HandleLeave` (the existing PlayerDespawn listener) and register the new one alongside:
+
+```go
+events.RegisterListener(events.PlayerDespawn{}, PlayerDespawnTrackingCleanup)
+```
+
+Order matters slightly — register AFTER `HandleLeave` so HandleLeave's user lookups still see the leaving user in `users.GetByUserId` (this hook uses GetByUserId BEFORE the user is fully removed; HandleLeave is the one that calls `users.LogOutUserByConnectionId`). If event ordering proves brittle, refactor to inline the cleanup into HandleLeave before the LogOutUser call.
+
+- [ ] **Step 3: Build**
+
+Run: `go build ./...`
+
+Expected: clean exit.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add internal/hooks/PlayerDespawn_TrackingCleanup.go internal/hooks/hooks.go
+git commit -m "$(cat <<'EOF'
+feat(hooks): clear tracking/shadow state on player despawn
+
+When a player logs off (or otherwise despawns), walk all other
+online users + active mob instances and clear tracking-user (by
+name) or shadow-target-user (by UserId) on any character pointing
+to the leaving user. Also removes buff 86 or buff 87. Symmetric
+with MobDeath_TrackingCleanup.
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
+EOF
+)"
+```
+
+---
+
+## Phase 8 — Docs + smoke + roadmap
+
+### Task 21: Update context.md files
 
 **Files:**
 - Modify: `internal/behaviortree/context.md`
 - Modify: `internal/actions/context.md`
+- Modify: `internal/hooks/context.md` (add the two new cleanup hooks)
 
 - [ ] **Step 1: Update behaviortree/context.md**
 
@@ -2485,19 +2871,28 @@ Open `internal/actions/context.md`. Add entries for the three new actions in the
 - `Track(actor, opts) TrackResult` — trail-read (no-arg) or active-track (TargetNoun); applies buff 86 + misc data on active-track success
 - `Search(actor, opts) SearchResult` — three-tier discovery (exits, stashed/hidden, nouns); 2-round cooldown
 
-- [ ] **Step 3: Commit**
+Update the `Shadow` entry to note that it now applies buff 87 on success and that the auto-follow consumer in `usercommands/go.go` gates on `HasBuff(87)`.
+
+- [ ] **Step 3: Update hooks/context.md**
+
+Open `internal/hooks/context.md`. Add brief entries (alphabetical insertion):
+
+- `MobDeath_TrackingCleanup` — clears `tracking-mob`/`shadow-target-mob` misc + buff 86/87 from all characters pointing to the dying mob
+- `PlayerDespawn_TrackingCleanup` — clears `tracking-user`/`shadow-target-user` misc + buff 86/87 from all characters pointing to the leaving user
+
+- [ ] **Step 4: Commit**
 
 ```bash
-git add internal/behaviortree/context.md internal/actions/context.md
+git add internal/behaviortree/context.md internal/actions/context.md internal/hooks/context.md
 git commit -m "$(cat <<'EOF'
-docs(2.8): update context.md for scout primitives + lifted actions
+docs(2.8): update context.md for scout primitives, lifted actions, and cleanup hooks
 
 Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
 EOF
 )"
 ```
 
-### Task 18: Boot + smoke + mark roadmap done
+### Task 22: Boot + smoke + mark roadmap done
 
 **Files:**
 - Modify: `MOB_ALIVENESS_ROADMAP.md`
@@ -2530,12 +2925,30 @@ The smoke test plan is documented in section "Smoke test plan" of `docs/superpow
 5. Leader track-on-aggro-lost (any leader-archetype mob, e.g., bandit chief)
 6. Active-tracking buff observability (verify buff 86 applies on mob)
 
-7. **Regression check — tracking auto-expires after 16 rounds.** As a player, `track <some_name_with_trail>` and confirm the buff applies (`buffs` command) and the tracking direction renders in subsequent room views. Wait out the 16-round buff duration (or use admin tooling to fast-expire). Confirm:
+7. **Regression check — tracking auto-expires after 25 rounds.** As a player, `track <some_name_with_trail>` and confirm the buff applies (`buffs` command) and the tracking direction renders in subsequent room views. Wait out the 25-round buff duration (or use admin tooling to fast-expire). Confirm:
    - The buff-end text "The trail grows cold; your focus slips." fires.
    - The next room view shows NO tracking-direction line.
    - The misc data is cleared (admin `inspect player` or equivalent — verify `tracking-mob` / `tracking-user` keys are absent or nil).
 
 8. **Regression check — tracking ends when target found.** As a player, `track <target>` toward someone, then walk to their room. Confirm the "they are here!" message fires once, the buff is removed, and subsequent room views do NOT re-render tracking direction.
+
+9. **Escape gate — tracked mob dies.** As a player, `track <mob_name>` on a nearby low-HP mob. Then kill the mob (combat or admin slay). Confirm immediately after death:
+   - Buff 86 is removed.
+   - `tracking-mob` misc is cleared.
+   - Subsequent room views show no zombie tracking line.
+
+10. **Escape gate — tracked player logs off.** Have a second test player walk through some rooms (laying a trail) then log off. Active-track them from a different character. Confirm immediately after the logoff:
+    - Buff 86 is removed.
+    - `tracking-user` misc is cleared.
+
+11. **Escape gate — shadowed mob dies.** Sneak (buff 9) near a low-HP mob, `shadow <mob>`. Confirm buff 87 applied. Kill the mob. Confirm:
+    - Buff 87 is removed.
+    - `shadow-target-mob` misc is cleared.
+    - The auto-follow consumer does not fire on the next room transition.
+
+12. **Escape gate — shadowed player logs off.** Sneak, `shadow <test_player>`, have the test player log off. Confirm buff 87 + `shadow-target-user` are cleared. Move the shadower one room over and confirm no phantom auto-follow.
+
+13. **Shadow basic smoke.** Audit pass — sneak, shadow a moving NPC across 3+ rooms, confirm the shadower auto-moves with the target. Use admin `inspect` to confirm buff 87 stays alive throughout. Wait out the 25-round expiry and confirm the buff naturally ends with cleanup.
 
 Document results in a smoke report:
 `tools/testing/reports/2026-05-22-local-feature-tester-chunk-2.8-scout.md`
@@ -2552,16 +2965,18 @@ Run: `tasklist | findstr -i "dogmud go" 2>&1` then `taskkill /F /PID <pid>` for 
 
 Edit `MOB_ALIVENESS_ROADMAP.md`:
 
-1. **Progress tracker row** — change `| 2.8 | Tactical | Mob scout / track / scan | S | — | Not started |` to `| 2.8 | Tactical | Mob scout / track / scan | S | — | Done |`.
+1. **Progress tracker row** — change `| 2.8 | Tactical | Mob scout / track / scan | S | — | Not started |` to `| 2.8 | Tactical | Mob scout / track / scan | M | — | Done |` (note S → M size update reflecting the scope expansion).
 
 2. **Roll-up line** — change `**Roll-up:** 15 / 41 done • 0 in progress • 26 not started.` to `**Roll-up:** 16 / 41 done • 0 in progress • 25 not started.`.
 
-3. **Chunk 2.8 mini-brief** — change `**Status:** Not started • **Size:** S` to `**Status:** Done (2026-05-22) • **Size:** S` and append a `**Shipped:**` bullet capturing:
+3. **Chunk 2.8 mini-brief** — change `**Status:** Not started • **Size:** S` to `**Status:** Done (2026-05-22) • **Size:** M (originally scoped S; expanded during plan-writing)` and append a `**Shipped:**` bullet capturing:
    - Three actions lifted into `internal/actions/` (`Scan`, `Track`, `Search`).
    - Four btree action primitives (`try_scan`, `try_track`, `try_search`, `move_toward_tracked`) + two conditions (`room_has_hidden_entity`, `mob_is_tracking`).
    - New `scout` archetype + flip on goblin_scout (217).
    - Single-branch grafts onto `lookout` (scan-before-ambush), `thief` (search-before-steal), `leader` (track-on-aggro-lost).
-   - Bug fix bundled: authored buff 86 (Active Tracking) replacing buff 26 (Conviction Surge) misuse in skill.track.go. Migrated 4 AddBuff + 5 RemoveBuff call sites.
+   - **Bundled bug fix #1:** authored buff 86 (Active Tracking, 25-round duration) replacing buff 26 (Conviction Surge) misuse in skill.track.go. Migrated 4 AddBuff + 5 RemoveBuff call sites. Fixed the "tracking forever" bug by adding a `HasBuff(86)` outer gate at the roomdetails.go renderer that clears misc data on buff absence.
+   - **Bundled bug fix #2:** authored buff 87 (Shadowing, 25-round duration). Shadow now applies buff 87 on success and the auto-follow consumer in go.go gates on buff presence, preventing phantom shadows from dragging players to dead/logged-off targets.
+   - **Universal escape gates:** new hooks `MobDeath_TrackingCleanup` and `PlayerDespawn_TrackingCleanup` clear tracking/shadow misc data + buffs 86/87 on any character pointing to the dying mob / leaving user.
    - Spec + plan paths.
 
 - [ ] **Step 6: Final commit**
@@ -2584,19 +2999,22 @@ EOF
 
 ## Self-review checklist (for the implementing engineer)
 
-After all 18 tasks land, before declaring 2.8 done:
+After all 22 tasks land, before declaring 2.8 done:
 
 - [ ] All three actions registered via the actor pattern (`internal/actions/{scan,track,search}.go`).
-- [ ] Buff 86 authored; 4 AddBuff + 5 RemoveBuff calls migrated.
+- [ ] Buff 86 authored (25-round duration); 4 AddBuff + 5 RemoveBuff calls migrated.
+- [ ] Buff 87 authored (25-round duration); shadow path applies + removes it.
 - [ ] Player wrappers thinned (~25 LoC each).
 - [ ] Mob wrappers added and registered.
 - [ ] Four btree actions + two conditions registered in init().
 - [ ] `scout.yaml` archetype authored; goblin_scout (217) flipped.
 - [ ] Three grafts applied (lookout/thief/leader).
-- [ ] context.md files updated.
-- [ ] Smoke plan run end-to-end with results documented.
-- [ ] Roadmap row + roll-up + mini-brief all updated.
+- [ ] Shadow auto-follow consumer in `go.go` gates on `HasBuff(87)`.
+- [ ] `MobDeath_TrackingCleanup` + `PlayerDespawn_TrackingCleanup` hooks registered.
+- [ ] context.md files updated (behaviortree, actions, hooks).
+- [ ] Smoke plan run end-to-end (all 13 scenarios) with results documented.
+- [ ] Roadmap row + roll-up + mini-brief all updated; size noted as S → M.
 - [ ] `go build ./...` clean.
 - [ ] `go test ./...` clean.
-- [ ] Server boots cleanly past all `LoadDataFiles()` calls.
+- [ ] Server boots cleanly past all `LoadDataFiles()` calls (loadedCount=71 buffs after both new buffs land).
 - [ ] No remaining `AddBuff(26)` / `RemoveBuff(26)` references in non-Conviction-Surge code.
