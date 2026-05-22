@@ -15,6 +15,7 @@ func RegisterListeners() {
 	events.RegisterListener(events.RoomChange{}, CleanupEphemeralRooms)
 	events.RegisterListener(events.RoomChange{}, MobRoomChangeKnowledgeObservers)
 	events.RegisterListener(events.RoomChange{}, MobRoomChangeFactsAutoWithdraw)
+	events.RegisterListener(events.RoomChange{}, MobRoomChangeShadowFollow)
 	events.RegisterListener(events.RoomChange{}, PresencePlayerEntry)
 
 	// NewRound Listeners
