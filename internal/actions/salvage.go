@@ -112,6 +112,15 @@ func salvageCorpse(actor Actor, room *rooms.Room, opts SalvageOptions, chance fl
 	}
 
 	if !found {
+		// Player-path UX: when the player started salvaging a specific
+		// corpse (TargetCorpseMobId != 0) and finished the multi-round
+		// activity but the corpse has vanished, surface the failure.
+		// The mob path (TargetCorpseMobId == 0, "first eligible") fails
+		// silently because finding nothing is the normal idle outcome.
+		if actor.IsPlayer() && opts.TargetCorpseMobId != 0 {
+			actor.SendText(messaging.CategoryError,
+				`<ansi fg="red">You can no longer find the corpse you were working on.</ansi>`)
+		}
 		result.Reason = "no eligible corpse"
 		return result
 	}
