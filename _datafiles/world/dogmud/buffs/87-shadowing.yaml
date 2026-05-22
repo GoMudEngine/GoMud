@@ -1,0 +1,7 @@
+buffid: 87
+name: Shadowing
+description: You are stalking a quarry from the shadows, matching their every step.
+triggerrate: 1 round
+triggercount: 25
+start_user_text: You fall into your quarry's wake, footfalls silenced to match theirs.
+end_user_text: Your quarry slips from view; your focus breaks.
