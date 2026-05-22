@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -16,7 +17,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
-	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/species"
@@ -497,173 +497,39 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 }
 
 // resolveSalvageFromData resolves salvage completion using Activity SalvagingData
-// as the sole source of truth. The item is located by UUID from SalvagingData.
+// as the sole source of truth. Delegates to actions.Salvage for roll, storage,
+// messaging, and skill progression.
 func resolveSalvageFromData(user *users.UserRecord, sd activity.SalvagingData) {
-	uuidStr := sd.ItemUuid
-
-	// Find item in backpack by UUID.
-	found := false
-	var targetItem items.Item
-	for _, itm := range user.Character.Items {
-		if itm.UUID.String() == uuidStr {
-			targetItem = itm
-			found = true
-			break
-		}
+	actor := &actions.UserActor{
+		User: user,
+		Room: rooms.LoadRoom(user.Character.RoomId),
 	}
-	if !found {
-		user.SendText(messaging.CategoryError, `<ansi fg="red">The item you were salvaging is no longer in your backpack.</ansi>`)
-		return
-	}
-
-	itemId := targetItem.ItemId
-	spec := items.GetItemSpec(itemId)
-	if spec == nil {
-		user.SendText(messaging.CategoryError, `<ansi fg="red">Something went wrong with your salvage attempt.</ansi>`)
-		return
-	}
-
-	// Calculate salvage chance from skill
-	bal := configs.GetBalanceConfig()
-	salvageSkill := user.Character.GetSkillLevel(skills.Salvage)
-	chance := crafting.CalcSalvageChance(salvageSkill,
-		float64(bal.SalvageMinChance), float64(bal.SalvageMaxChance),
-		int(bal.SalvageSoftCap))
-
-	// Roll returns from recipe, tagged salvage_returns, or spoiled potion
-	var recovered []crafting.RecipeIngredient
-	if sd.SpoiledPotion {
-		// Spoiled/declining potions always return 1-2 binding paste
-		qty := 1
-		if chance > 0.5 {
-			qty = 2
-		}
-		recovered = []crafting.RecipeIngredient{
-			{ItemTag: "binding-paste", Quantity: qty},
-		}
-	} else {
-		recipe := crafting.GetRecipeByOutputItemId(itemId)
-		if recipe != nil {
-			recovered = crafting.RollSalvageReturns(recipe.Ingredients, chance)
-		} else if len(spec.SalvageReturns) > 0 {
-			recovered = crafting.RollSalvageReturnsFromSpec(spec.SalvageReturns, chance)
-		}
-	}
-
-	// Destroy the item (always consumed)
-	user.Character.RemoveItem(targetItem)
-
-	// Give recovered materials
-	if len(recovered) > 0 {
-		var parts []string
-		for _, ing := range recovered {
-			for i := 0; i < ing.Quantity; i++ {
-				matSpec := items.FindSpecByComponentTag(ing.ItemTag)
-				if matSpec != nil {
-					newItem := items.New(matSpec.ItemId)
-					user.Character.StoreItem(newItem)
-				}
-			}
-			parts = append(parts, fmt.Sprintf("%dx %s",
-				ing.Quantity, ing.ItemTag))
-		}
-		user.SendText(messaging.CategorySystem, fmt.Sprintf(
-			`<ansi fg="green">You salvage the <ansi fg="itemname">%s</ansi> and recover: %s.</ansi>`,
-			targetItem.DisplayName(),
-			strings.Join(parts, ", ")))
-	} else {
-		user.SendText(messaging.CategorySystem, fmt.Sprintf(
-			`<ansi fg="red">You attempt to salvage the <ansi fg="itemname">%s</ansi> but recover nothing useful.</ansi>`,
-			targetItem.DisplayName()))
-	}
-
-	// Track skill use for progression
-	user.Character.OnSkillUse("salvage", user.UserId)
+	_ = actions.Salvage(actor, actions.SalvageOptions{
+		TargetItemUuid: sd.ItemUuid,
+		SpoiledPotion:  sd.SpoiledPotion,
+	})
 }
 
 // resolveCorpseSalvage handles corpse salvage completion when CraftingState
-// finishes. The corpse is removed from the room on completion (matches
-// existing tagged-item salvage that fully consumes its target).
+// finishes. Delegates to actions.Salvage for roll, storage, messaging, and
+// skill progression. Corpse identity keys are cleared from player MiscData
+// here (activity teardown), then passed as filter opts to the action.
 func resolveCorpseSalvage(user *users.UserRecord, mobIdStr string) {
 	var mobId int
 	fmt.Sscanf(mobIdStr, "%d", &mobId)
 
-	// Pull stashed corpse identity.
+	// Pull stashed corpse identity (existing logic).
 	roundCreatedInt, _ := user.Character.GetMiscData("salvage_corpse_round_created").(int)
-	corpseName, _ := user.Character.GetMiscData("salvage_corpse_name").(string)
-	roundCreated := uint64(roundCreatedInt)
 	user.Character.SetMiscData("salvage_corpse_round_created", nil)
 	user.Character.SetMiscData("salvage_corpse_name", nil)
 
-	room := rooms.LoadRoom(user.Character.RoomId)
-	if room == nil {
-		user.SendText(messaging.CategoryError, `<ansi fg="red">Something went wrong with your salvage attempt.</ansi>`)
-		return
+	actor := &actions.UserActor{
+		User: user,
+		Room: rooms.LoadRoom(user.Character.RoomId),
 	}
-
-	// Locate the corpse by mobId + roundCreated (unique within a room).
-	var target rooms.Corpse
-	found := false
-	for _, c := range room.Corpses {
-		if c.MobId == mobId && c.RoundCreated == roundCreated && !c.Prunable {
-			target = c
-			found = true
-			break
-		}
-	}
-	if !found {
-		user.SendText(messaging.CategoryError, fmt.Sprintf(
-			`<ansi fg="red">The %s corpse is no longer here.</ansi>`, corpseName))
-		return
-	}
-
-	mobSpec := mobs.GetMobSpec(mobs.MobId(mobId))
-	if mobSpec == nil {
-		user.SendText(messaging.CategoryError, `<ansi fg="red">Something went wrong with your salvage attempt.</ansi>`)
-		return
-	}
-
-	returns := crafting.LookupCorpseSalvage(mobSpec.Groups)
-	if len(returns) == 0 {
-		user.SendText(messaging.CategorySystem, `<ansi fg="red">There's nothing useful to recover here.</ansi>`)
-		room.RemoveCorpse(target)
-		return
-	}
-
-	// Skill chance.
-	bal := configs.GetBalanceConfig()
-	salvageSkill := user.Character.GetSkillLevel(skills.Salvage)
-	chance := crafting.CalcSalvageChance(salvageSkill,
-		float64(bal.SalvageMinChance), float64(bal.SalvageMaxChance),
-		int(bal.SalvageSoftCap))
-
-	recovered := crafting.RollSalvageReturnsFromSpec(returns, chance)
-
-	// Remove the corpse regardless of roll outcome (matches tagged-item
-	// salvage behavior — the activity has cost regardless of result).
-	room.RemoveCorpse(target)
-
-	if len(recovered) > 0 {
-		var parts []string
-		for _, ing := range recovered {
-			for i := 0; i < ing.Quantity; i++ {
-				matSpec := items.FindSpecByComponentTag(ing.ItemTag)
-				if matSpec != nil {
-					newItem := items.New(matSpec.ItemId)
-					user.Character.StoreItem(newItem)
-				}
-			}
-			parts = append(parts, fmt.Sprintf("%dx %s", ing.Quantity, ing.ItemTag))
-		}
-		user.SendText(messaging.CategorySystem, fmt.Sprintf(
-			`<ansi fg="green">You finish working over the <ansi fg="mobname">%s corpse</ansi> and recover: %s.</ansi>`,
-			corpseName,
-			strings.Join(parts, ", ")))
-	} else {
-		user.SendText(messaging.CategorySystem, fmt.Sprintf(
-			`<ansi fg="red">You work over the <ansi fg="mobname">%s corpse</ansi> but recover nothing useful.</ansi>`,
-			corpseName))
-	}
-
-	user.Character.OnSkillUse("salvage", user.UserId)
+	_ = actions.Salvage(actor, actions.SalvageOptions{
+		TargetCorpse:             true,
+		TargetCorpseMobId:        mobId,
+		TargetCorpseRoundCreated: uint64(roundCreatedInt),
+	})
 }
