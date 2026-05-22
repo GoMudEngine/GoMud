@@ -1,7 +1,7 @@
 mobid: 371
 zone: Stillwater Marsh
 archetype: fighting
-behavior_archetype: ""
+behavior_archetype: forager
 statpool: 150
 itemdropchance: 0
 groups:
