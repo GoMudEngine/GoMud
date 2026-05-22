@@ -98,6 +98,9 @@ func RegisterListeners() {
 	// Mob death: auto-claim open bounties targeting the dead mob
 	events.RegisterListener(events.MobDeath{}, MobDeathBountyClaim)
 
+	// Mob death: clear tracking/shadow state pointing at the dead mob
+	events.RegisterListener(events.MobDeath{}, MobDeathTrackingCleanup)
+
 	// Skill use: quest engine notifications
 	events.RegisterListener(events.SkillUsed{}, SkillUseQuestNotify)
 
