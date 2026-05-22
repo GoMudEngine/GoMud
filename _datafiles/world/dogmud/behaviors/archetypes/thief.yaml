@@ -8,11 +8,14 @@
 #   1. Panic-flee at critical HP (shared pattern with other archetypes).
 #   2. Power-overmatch combat (player_enter + power ratio > 1.5 → attack).
 #   3. Self-defense (mob_hurt → attack, no health gate).
-#   4. Search-and-flee (mob_idle + hidden rival present → search, flee).
-#      A thief catching a sneaking rival doesn't fight or call guards —
-#      they bail. Was originally search+callforhelp; resolving via
-#      callforhelp pulls faction-allied mobs which for Thornwall mobs
-#      means the city guard, which is narratively wrong.
+#   4. Silent search (mob_idle + hidden rival present → search).
+#      The thief gains soft-target awareness of the hidden entity but
+#      takes no visible action — visibly fleeing or calling for help
+#      would betray the detection, contradicting the scout-only-
+#      awareness contract (the target's Hidden buff is preserved, and
+#      no other observable behavior should leak the detection either).
+#      The thief's other branches govern normal behavior; future ticks
+#      may consume the soft-target via other mechanisms.
 #   5. Steal-and-flee loop (mob_idle + hidden + player in room → steal,
 #      flee).
 #   6. Re-stealth (mob_idle + not hidden → try_sneak).
@@ -56,10 +59,11 @@ tree:
         - type: action
           do: attack
 
-    # 4. Search-and-flee (chunk 2.8): catch hidden rivals before stealing,
-    # then bail. A thief avoids confrontation — they don't fight stealthers
-    # and they don't summon city guards (the original callforhelp pulled
-    # the wrong faction in Thornwall).
+    # 4. Silent search (chunk 2.8): catch hidden rivals before stealing.
+    # The thief gains soft-target awareness via try_search but takes NO
+    # visible action — visibly fleeing would betray the detection and
+    # contradict the scout-only-awareness contract. The thief's other
+    # branches govern normal behavior.
     - type: sequence
       event: mob_idle
       children:
@@ -67,8 +71,6 @@ tree:
           check: room_has_hidden_entity
         - type: action
           do: try_search
-        - type: action
-          do: flee
 
     # 5. Core loop: idle + hidden + gold-bearing player in room →
     # pick a player, attempt theft, flee.

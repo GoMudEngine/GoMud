@@ -7,5 +7,8 @@ flags:
   - cancel-on-combat
 start_user_text: "You feel sneaky."
 start_room_text: "{source_plain} disappears into the shadows."
-end_user_text: "You no longer feel sneaky."
+# Intentionally no end_user_text — if you can't know who spotted you,
+# you can't know you've been spotted. Players who care can check
+# conditions. The room observers still get the end_room_text since
+# from their POV the sneaker just visibly emerged.
 end_room_text: "{source_plain} emerges from the shadows."
