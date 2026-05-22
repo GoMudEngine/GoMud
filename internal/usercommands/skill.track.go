@@ -264,7 +264,7 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				user.Character.SetMiscData("tracking-user", match)
 				user.Character.SetMiscData("tracking-mob", nil)
 
-				user.AddBuff(26, `skill`) // 26 is the buff for active tracking
+				user.AddBuff(86, `skill`) // 86 is the Active Tracking buff
 
 				// Quest engine: command notification
 				bridge := questengine.NewGameBridge(user, room.RoomId)
@@ -281,7 +281,7 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				user.Character.SetMiscData("tracking-user", closeMatch)
 				user.Character.SetMiscData("tracking-mob", nil)
 
-				user.AddBuff(26, `skill`) // 26 is the buff for active tracking
+				user.AddBuff(86, `skill`) // 86 is the Active Tracking buff
 
 				// Quest engine: command notification
 				bridge := questengine.NewGameBridge(user, room.RoomId)
@@ -309,7 +309,7 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				user.Character.SetMiscData("tracking-user", nil)
 				user.Character.SetMiscData("tracking-mob", match)
 
-				user.AddBuff(26, `skill`) // 26 is the buff for active tracking
+				user.AddBuff(86, `skill`) // 86 is the Active Tracking buff
 
 				// Quest engine: command notification
 				bridge := questengine.NewGameBridge(user, room.RoomId)
@@ -326,7 +326,7 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				user.Character.SetMiscData("tracking-user", nil)
 				user.Character.SetMiscData("tracking-mob", closeMatch)
 
-				user.AddBuff(26, `skill`) // 26 is the buff for active tracking
+				user.AddBuff(86, `skill`) // 86 is the Active Tracking buff
 
 				// Quest engine: command notification
 				bridge := questengine.NewGameBridge(user, room.RoomId)
