@@ -44,3 +44,27 @@ tree:
           cmds: [rally, warcry]
         - type: action
           do: attack
+
+    # NEW (chunk 2.8): chase a fleeing target via active tracking.
+    # When aggro target is no longer in the room, the scan/track
+    # chain finds them in adjacent rooms and follows. The
+    # mob_is_tracking gate keeps the chase alive across ticks.
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: action
+          do: try_scan
+          hostile_only: true
+        - type: action
+          do: try_track
+          target_from: soft_target
+        - type: action
+          do: move_toward_tracked
+
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: condition
+          check: mob_is_tracking
+        - type: action
+          do: move_toward_tracked
