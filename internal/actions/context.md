@@ -285,6 +285,67 @@ type SearchResult struct {
 }
 ```
 
+---
+
+## Foraging & Salvage Actions (chunk 2.9)
+
+### Forage
+
+**Function:** `Forage(actor, opts) ForageResult`
+
+Single forage attempt in the current room's biome. Gated by biome availability
+and shared cooldown.
+
+**Mechanics:**
+- **Biome check:** Actor must have forager profile data for the room's biome.
+  Returns Failure if biome not found in profile (wrong terrain type).
+- **Cooldown:** Shares the `forage` key (6 rounds, config:
+  `ForageActionCooldown`).
+- **Item discovery:** On success, generates item based on biome's forage table.
+  Returns `ForageResult.ItemId` and `ItemName`. On miss (roll failure) or
+  cooldown, returns Failure.
+- **Progression:** Triggers `actor.OnSkillUse("foraging")`.
+
+**Result struct:**
+```go
+type ForageResult struct {
+	Success   bool
+	ItemId    int
+	ItemName  string
+	Message   string
+}
+```
+
+### Salvage
+
+**Function:** `Salvage(actor, opts) SalvageResult`
+
+Single-tick salvage attempt. Modes: default targets first eligible corpse
+(mob death items in room), optional `ItemUuid` targets a specific item.
+
+**Mechanics:**
+- **Corpse mode** (`opts.ItemUuid` empty): Scans room for corpse items
+  (items with `on_corpse: true`). Salvages the first match. Returns Failure
+  if no corpse items found.
+- **Item mode** (`opts.ItemUuid` set): Salvages the specified item UUID
+  directly (player per-tick invocation path).
+- **Multi-round activity:** Salvage takes 1-5 rounds depending on ingredient
+  gold value. Each ingredient is rolled independently per the skill-based
+  recovery table.
+- **Progression:** Triggers `actor.OnStatUse("perception")` and
+  `actor.OnSkillUse("salvage")`.
+- **Result:** Returns `SalvageResult` with success flag and recovered
+  materials list (empty if roll failures on all ingredients).
+
+**Result struct:**
+```go
+type SalvageResult struct {
+	Success     bool
+	Message     string
+	RecoveredCount int  // number of materials recovered
+}
+```
+
 ### Shadow
 
 **Function:** `Shadow(actor, opts) ShadowResult`
@@ -369,7 +430,9 @@ type TrackResult struct {
 |--------|---------|---|---|---|---|
 | Consider | actions | self vs target | ConsiderResult | player only | none |
 | Defuse | actions | self vs trap | DefuseResult | varies | none |
+| Forage | actions | self vs biome | ForageResult | varies | shared |
 | Plant | actions | self vs mob/container | PlantResult | varies | shared |
+| Salvage | actions | self vs corpse/item | SalvageResult | varies | none |
 | Scan | actions | self → adjacent | ScanResult | user only | none |
 | Search | actions | self vs room | SearchResult | user only | shared |
 | Shadow | actions | self→target | ShadowResult | varies | none |
