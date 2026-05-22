@@ -8,8 +8,11 @@
 #   1. Panic-flee at critical HP (shared pattern with other archetypes).
 #   2. Power-overmatch combat (player_enter + power ratio > 1.5 → attack).
 #   3. Self-defense (mob_hurt → attack, no health gate).
-#   4. Search-before-steal (mob_idle + hidden rival present → search,
-#      callforhelp).
+#   4. Search-and-flee (mob_idle + hidden rival present → search, flee).
+#      A thief catching a sneaking rival doesn't fight or call guards —
+#      they bail. Was originally search+callforhelp; resolving via
+#      callforhelp pulls faction-allied mobs which for Thornwall mobs
+#      means the city guard, which is narratively wrong.
 #   5. Steal-and-flee loop (mob_idle + hidden + player in room → steal,
 #      flee).
 #   6. Re-stealth (mob_idle + not hidden → try_sneak).
@@ -53,9 +56,10 @@ tree:
         - type: action
           do: attack
 
-    # 4. Search-before-steal (chunk 2.8): catch hidden rivals or hidden
-    # players before stealing. If a hidden hostile is present, abandon
-    # stealth long enough to alert.
+    # 4. Search-and-flee (chunk 2.8): catch hidden rivals before stealing,
+    # then bail. A thief avoids confrontation — they don't fight stealthers
+    # and they don't summon city guards (the original callforhelp pulled
+    # the wrong faction in Thornwall).
     - type: sequence
       event: mob_idle
       children:
@@ -64,8 +68,7 @@ tree:
         - type: action
           do: try_search
         - type: action
-          do: command
-          cmd: callforhelp
+          do: flee
 
     # 5. Core loop: idle + hidden + gold-bearing player in room →
     # pick a player, attempt theft, flee.
