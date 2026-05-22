@@ -393,6 +393,15 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				if !shadowIsTargetingUser(shadowP, user.UserId) {
 					continue
 				}
+				// Buff-absent guard: misc data set but buff 87 gone means the
+				// shadow expired or was cancelled out-of-band. Clear stale state
+				// and skip the auto-follow so a dead/logged-off target can't drag
+				// the player to an unexpected room.
+				if !shadowP.Character.HasBuff(87) {
+					shadowP.Character.SetMiscData("shadow-target-user", nil)
+					shadowP.Character.SetMiscData("shadow-target-mob", nil)
+					continue
+				}
 				// Shadower is in the old room and tracking the mover -- follow.
 				shadowP.Command(rest)
 

@@ -89,6 +89,7 @@ func shadowMob(actor Actor, mobInstanceId int, cfg configs.Balance) ShadowResult
 	char := actor.GetCharacter()
 	char.SetMiscData("shadow-target-user", nil)
 	char.SetMiscData("shadow-target-mob", m.InstanceId)
+	actor.AddBuff(87, "skill")
 
 	actor.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`You begin shadowing <ansi fg="mobname">%s</ansi>, `+
@@ -137,6 +138,7 @@ func shadowPlayer(actor Actor, targetUserId int, cfg configs.Balance) ShadowResu
 	char := actor.GetCharacter()
 	char.SetMiscData("shadow-target-user", targetUser.UserId)
 	char.SetMiscData("shadow-target-mob", nil)
+	actor.AddBuff(87, "skill")
 
 	actor.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`You begin shadowing <ansi fg="username">%s</ansi>, `+
