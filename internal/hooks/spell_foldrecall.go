@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
 // validateFoldRecall is called during the onCast phase. Returns false to
@@ -82,6 +83,14 @@ func resolveFoldRecall(actor actions.Actor) {
 		newRoom.SendText(messaging.CategorySpellManifestation, fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> folds through the Veil and appears!`,
 			actor.GetName()), actor.GetUserId())
+	}
+
+	// Auto-look so the player sees their new room without typing it manually.
+	// Mirrors the death-respawn auto-look pattern in Respawn_PlayerAutoLook.go.
+	if actor.IsPlayer() {
+		if u := users.GetByUserId(actor.GetUserId()); u != nil {
+			u.Command("look")
+		}
 	}
 }
 
