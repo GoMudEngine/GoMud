@@ -929,9 +929,6 @@ Balance:
   FernwayPickupDwellRounds: 6
 
   # ── Forager system (Stage 3.1) ─────────────────────────────────────
-  # Rounds between forage attempts in the forager's territory.
-  ForagerForageDwellRounds: 8
-
   # Carry-capacity ratio (0-1) at which the forager heads home.
   ForagerCarryThresholdPct: 0.75
 
