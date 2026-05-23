@@ -219,6 +219,133 @@ type DefuseResult struct {
 }
 ```
 
+### Scan
+
+**Function:** `Scan(actor, opts) ScanResult`
+
+Sweeps adjacent rooms for visible entities (non-hidden mobs/players).
+
+**Mechanics:**
+- **Adjacent rooms:** Scans in all four cardinal directions; lists any
+  non-hidden mobs and players in the returned room descriptions.
+- **Visibility:** Does not bypass hidden state — only visible entities are
+  reported. Mobs/players who are hidden (buff 9) are not seen.
+- **UserActor behavior:** Renders a "You sense:" list of adjacent-room
+  entities with flavor text.
+- **MobActor behavior:** Silent (no feedback).
+- **Hostile-only mode:** `opts.HostileOnly = true` filters results to only
+  entities the actor hates.
+
+**Messaging:** UserActor receives "You sense: [adjacent rooms with entities]."
+MobActor silent.
+
+**Progression:** No stat/skill use triggered.
+
+**Cooldown:** No cooldown.
+
+**Result struct:**
+```go
+type ScanResult struct {
+	Success        bool
+	SightingFound  bool  // true if at least one entity seen
+	Message        string
+}
+```
+
+### Search
+
+**Function:** `Search(actor, opts) SearchResult`
+
+Three-tier discovery system: exits, stashed/hidden objects, and nouns.
+
+**Mechanics:**
+- **Tier 1 (Exits):** Lists all room exits (always succeeds for UserActor).
+- **Tier 2 (Stashed items):** Searches containers and ground for hidden items.
+- **Tier 3 (Hidden entities):** Detects hidden mobs/players in the room.
+  Promoted to `ctx.SoftTarget` if hostile.
+- **Ignores non-hostile Tier-3 hits:** If a hidden entity is not hostile,
+  it is not set as SoftTarget.
+- **UserActor behavior:** Renders progressive search feedback (what tiers
+  were discovered, what was found).
+- **MobActor behavior:** Silent; just seeds SoftTarget if hostile found.
+
+**Messaging:** UserActor receives discovery feedback per tier. MobActor silent.
+
+**Progression:** No stat/skill use triggered.
+
+**Cooldown:** Shares the `search` key (configurable duration, typically
+  2 rounds).
+
+**Result struct:**
+```go
+type SearchResult struct {
+	Success         bool
+	HiddenHostile   bool  // true if hidden entity promoted to SoftTarget
+	Message         string
+}
+```
+
+---
+
+## Foraging & Salvage Actions (chunk 2.9)
+
+### Forage
+
+**Function:** `Forage(actor, opts) ForageResult`
+
+Single forage attempt in the current room's biome. Gated by biome availability
+and shared cooldown.
+
+**Mechanics:**
+- **Biome check:** Actor must have forager profile data for the room's biome.
+  Returns Failure if biome not found in profile (wrong terrain type).
+- **Cooldown:** Shares the `forage` key (6 rounds, config:
+  `ForageActionCooldown`).
+- **Item discovery:** On success, generates item based on biome's forage table.
+  Returns `ForageResult.ItemId` and `ItemName`. On miss (roll failure) or
+  cooldown, returns Failure.
+- **Progression:** Triggers `actor.OnSkillUse("foraging")`.
+
+**Result struct:**
+```go
+type ForageResult struct {
+	Success   bool
+	ItemId    int
+	ItemName  string
+	Message   string
+}
+```
+
+### Salvage
+
+**Function:** `Salvage(actor, opts) SalvageResult`
+
+Single-tick salvage attempt. Modes: default targets first eligible corpse
+(mob death items in room), optional `ItemUuid` targets a specific item.
+
+**Mechanics:**
+- **Corpse mode** (`opts.ItemUuid` empty): Scans room for corpse items
+  (items with `on_corpse: true`). Salvages the first match. Returns Failure
+  if no corpse items found.
+- **Item mode** (`opts.ItemUuid` set): Salvages the specified item UUID
+  directly (player per-tick invocation path).
+- **Multi-round activity:** Salvage takes 1-5 rounds depending on ingredient
+  gold value. Each ingredient is rolled independently per the skill-based
+  recovery table.
+- **Progression:** Triggers `actor.OnStatUse("perception")` and
+  `actor.OnSkillUse("salvage")`.
+- **Result:** Returns `SalvageResult` with success flag and recovered
+  materials list (empty if roll failures on all ingredients).
+
+**Result struct:**
+```go
+type SalvageResult struct {
+	Success     bool
+	Message     string
+	RecoveredCount int  // number of materials recovered
+}
+```
+
 ### Shadow
 
 **Function:** `Shadow(actor, opts) ShadowResult`
@@ -232,10 +359,12 @@ ID 9) for Shadow to succeed.
 - **Target resolution:** `opts.TargetUserId` or `opts.TargetMobId` sets the
   follow target.
 - **Storage:** On success, stores the target ID in the actor's misc-data
-  under key `"shadow:target"`.
+  under key `"shadow-target-mob"` or `"shadow-target-user"` depending on
+  target type. Also applies buff 87 (Shadow status buff).
 - **Auto-follow:** When the target moves to a new room, the actor's
   auto-follow system (in `modules/follow/`) automatically moves the actor
-  with them, maintaining the hidden state.
+  with them if the actor carries buff 87 (`HasBuff(87)` gating in
+  `usercommands/go.go`), maintaining the hidden state.
 - **Reveal on attack:** If the hidden actor attacks before Shadow completes,
   the Hidden buff is cancelled and Shadow ends.
 
@@ -256,27 +385,98 @@ type ShadowResult struct {
 }
 ```
 
+### Track
+
+**Function:** `Track(actor, opts) TrackResult`
+
+Trail-read (passive sniffing) or active tracking on a resolved target.
+
+**Mechanics:**
+- **Trail-sniff (no-arg):** `opts.TargetNoun` empty; reads the room's trail
+  data (bloodstain, scent, tracks left by previous passage). Returns success
+  if a trail exists; failure if none.
+- **Active track (target noun):** `opts.TargetNoun` or target from Event/Aggro;
+  enters tracking mode on the target. On success (adjacent trail/recent
+  sighting), applies buff 86 (Track status) and misc-data pair
+  (`tracking-<userId>` or `tracking-<mobId>` with arrival timestamp).
+  Seeds `ctx.SoftTarget` for downstream scout actions.
+- **UserActor behavior:** Renders trail-sniff results or tracking status.
+- **MobActor behavior:** Silent; just applies buff/misc-data and seeds
+  SoftTarget.
+
+**Messaging:** UserActor receives trail feedback or tracking status. MobActor
+silent.
+
+**Progression:** No stat/skill use triggered (scout actions planned as
+  skill-less in Phase 1).
+
+**Cooldown:** Shares the `search` key (typically 2 rounds).
+
+**Result struct:**
+```go
+type TrackResult struct {
+	Success        bool
+	TrailFound     bool  // true if trail exists (sniff) or track active (active)
+	TargetName     string
+	Message        string
+}
+```
+
 ---
 
 ## Available Actions Summary
 
 | Action | Package | Actor→Target | Returns | Messaging | Cooldown |
 |--------|---------|---|---|---|---|
+| Consider | actions | self vs target | ConsiderResult | player only | none |
+| Defuse | actions | self vs trap | DefuseResult | varies | none |
+| Forage | actions | self vs biome | ForageResult | varies | shared |
+| Plant | actions | self vs mob/container | PlantResult | varies | shared |
+| Salvage | actions | self vs corpse/item | SalvageResult | varies | none |
+| Scan | actions | self → adjacent | ScanResult | user only | none |
+| Search | actions | self vs room | SearchResult | user only | shared |
+| Shadow | actions | self→target | ShadowResult | varies | none |
 | Sneak | actions | self vs room | SneakResult | silent | shared |
 | Steal | actions | self vs mob/player/container | StealResult | varies | shared |
-| Plant | actions | self vs mob/container | PlantResult | varies | shared |
-| Defuse | actions | self vs trap | DefuseResult | varies | none |
-| Shadow | actions | self→target | ShadowResult | varies | none |
-| Consider | actions | self vs target | ConsiderResult | player only | none |
+| Track | actions | self vs trail/target | TrackResult | user only | shared |
 
 ---
 
 ## Options Structs
 
-All chunk 2.7 actions expose `<Verb>Options` structs for caller-side target
+All chunk 2.7+ actions expose `<Verb>Options` structs for caller-side target
 structuring:
 
 ```go
+type DefuseOptions struct {
+	ContainerId int    // container with trap
+	Direction   string // cardinal (north/south/east/west)
+	ExitName    string // friendly exit name
+	UseKit      bool   // whether to consume disarm kit
+	// ContainerId checked first; if 0, uses Direction+ExitName
+}
+
+type PlantOptions struct {
+	ItemTag           string // noun phrase from command
+	TargetMobId       int    // mob to plant on
+	RoomContainerId   int    // container to plant in
+	// Only one of the two should be set; TargetMobId checked first
+}
+
+type ScanOptions struct {
+	HostileOnly bool // if true, only return entities actor hates
+}
+
+type SearchOptions struct {
+	// No options — Search discovers all tiers in the room
+}
+
+type ShadowOptions struct {
+	TargetUserId string // player to shadow
+	TargetMobId  int    // mob to shadow
+	// Only one should be set; TargetUserId checked first
+}
+
 type SneakOptions struct {
 	// No options — Sneak targets self against all observers in room
 }
@@ -288,25 +488,9 @@ type StealOptions struct {
 	// Only one of the three should be set; first non-zero wins
 }
 
-type PlantOptions struct {
-	ItemTag           string // noun phrase from command
-	TargetMobId       int    // mob to plant on
-	RoomContainerId   int    // container to plant in
-	// Only one of the two should be set; TargetMobId checked first
-}
-
-type DefuseOptions struct {
-	ContainerId int    // container with trap
-	Direction   string // cardinal (north/south/east/west)
-	ExitName    string // friendly exit name
-	UseKit      bool   // whether to consume disarm kit
-	// ContainerId checked first; if 0, uses Direction+ExitName
-}
-
-type ShadowOptions struct {
-	TargetUserId string // player to shadow
-	TargetMobId  int    // mob to shadow
-	// Only one should be set; TargetUserId checked first
+type TrackOptions struct {
+	TargetNoun string // optional target noun for active track
+	// Empty = trail-sniff; non-empty = active track on resolved target
 }
 ```
 

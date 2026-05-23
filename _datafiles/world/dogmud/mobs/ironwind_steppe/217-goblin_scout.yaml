@@ -1,6 +1,6 @@
 mobid: 217
 zone: Ironwind Steppe
-behavior_archetype: lookout
+behavior_archetype: scout
 routine: watch_ironwind_goblins
 routine_links:
   - goblin_warband
@@ -47,3 +47,4 @@ character:
       training: -3
   skills:
     skullduggery: 6
+    search: 1

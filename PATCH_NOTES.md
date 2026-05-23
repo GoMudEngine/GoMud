@@ -1,5 +1,177 @@
 # DOGMud Patch Notes
 
+## 2026-05-22 — Mob Aliveness 2.9: Mob Forage + Salvage
+
+**Foragers join the unified action pipeline.** Tova (Stillwater Marsh),
+Halix (Ironwind Steppe), and Kessa (Fernway South) — the three routine
+forager NPCs — now run their per-tick forage roll through the same
+`actions.Forage` entry point that the player `forage` command uses.
+Previously each forager mob had its own per-mob behavior YAML driving
+a Go state machine with private foraging logic. Now they share a single
+`forager` archetype whose YAML composes `try_forage`, `try_salvage`,
+and `wander_territory` btree primitives. The multi-state daily cycle
+(Resting → Traveling → Foraging → Delivering → Recalling) stays in
+Go via `forager_step`; only the per-tick Foraging loop dissolved into
+YAML.
+
+**Salvage is a real verb on the mob side.** The existing mob
+`salvage corpse` mobcommand always worked, but its corpse-finding and
+yield-rolling logic was its own self-contained code path that didn't
+share anything with the player's multi-round Activity-machine version.
+Both paths now converge on a new `actions.Salvage` single-tick core.
+Player wrapper retains the multi-round CraftingState scheduling (so
+the progress UX is unchanged); each per-tick resolve calls into the
+shared action. Mob path calls it directly. The `salvage_returns` and
+recipe-reverse-lookup yield math is now the same code regardless of
+who's salvaging.
+
+**Forage and salvage as btree primitives.** Strategic NPCs can now
+compose `try_forage` and `try_salvage` in their archetype trees
+without re-implementing the gathering logic. The `try_forage`
+primitive returns Success on item found, Failure on miss / cooldown
+/ wrong-biome. The `try_salvage` primitive defaults to "first eligible
+corpse in room"; an `item_uuid` parameter overrides to specific-item
+mode. The `wander_territory` primitive delegates to the existing
+forager profile's territory-neighbor logic so a foraging mob still
+respects its assigned patrol bounds.
+
+**Latent bug fix bundled in.** The previous mob salvage path emitted a
+"The X corpse is no longer here." message when a player's targeted
+corpse disappeared between activity start and the final tick. The
+initial Task 4 refactor dropped that message; the follow-up restored
+a cause-agnostic equivalent ("You can no longer find the corpse you
+were working on.") so multi-round salvage activities always close
+with player-facing feedback.
+
+**Internal cleanup.** `tickForagerForaging` (~40 lines of Go) and
+`npcAttemptForage` (~35 lines) deleted from `behaviortree/actions_forager.go`.
+The fatigue counter and carry-cap transition triggers moved to the
+top of `actForagerStep` as state-entry guards. Three per-mob behavior
+YAMLs removed. ~62 net lines deleted from the state machine code.
+
+**Known deferrals** (logged as followups in MEMORY.md):
+- Forager fatigue cadence now ticks only when `forager_step` is
+  invoked (full-fallthrough of the YAML foraging selector), not on
+  every Foraging-state tick. The 600-round watchdog still prevents
+  runaway state. Observable cadence change for foragers in workable
+  territories — they may stay in Foraging longer than before. Fixable
+  via a dedicated `forager_foraging_tick_bookkeeping` primitive if
+  smoke reveals impact.
+- The `ForagerForageDwellRounds` config knob and `keyForageTimer`
+  constant are now orphaned (written but never read). Mark deprecated
+  or remove in a cleanup pass.
+- The restored corpse-vanished message is generic — the mob's name
+  is no longer threaded through. Wire `SalvageOptions.TargetCorpseName`
+  in a follow-up if the specific message matters.
+
+## 2026-05-22 — Mob Aliveness 2.8: Scout / Track / Scan
+
+**Scouts that actually patrol.** Goblin scouts on the Ironwind steppe
+now sweep adjacent rooms each idle tick, spot approaching travelers
+one room out, and close the distance to engage instead of standing
+frozen until you walk onto their tile. The new `scout` archetype runs
+a five-branch loop: panic-flee at critical HP, self-defense, search
+the current room for hidden threats, scan adjacent rooms for hostiles,
+or pursue a fleeing aggro target across room boundaries via active
+tracking.
+
+**Three new mob-callable verbs.** `scan`, `track`, and `search` are
+now first-class behavior-tree actions — mobs can peek into adjacent
+rooms, read visitor trails, or sweep the current room for hidden
+entities. The player-side commands lift the same logic into a shared
+`internal/actions/` layer, so every behavior is symmetric between
+player and mob paths.
+
+**Lookouts get scan-before-ambush.** Bandit lookouts, tunnel watchers,
+goblin sentries — any `lookout`-archetype mob — now sees you coming
+one room out via `try_scan` and calls for help before you arrive. The
+existing `player_enter` ambush still fires; the new branch just lights
+up earlier.
+
+**Thieves get silent stealth detection.** A thief that's about to lift
+your coin purse first checks the room for hidden rivals via
+`try_search`. The detection is **completely silent** — no flee, no
+call for help, no behavioral leak — because betraying the detection
+would contradict the scout-only-awareness contract. The thief gains
+internal soft-target awareness and continues normal thief behavior;
+you can't tell from outside whether you've been spotted.
+
+**Leaders chase fleeing aggro targets.** Pack alphas and bandit
+chiefs no longer give up at the room threshold. When a target flees
+combat, the leader's idle branch runs `try_track` to read the
+adjacent-room visitor trail, then `move_toward_tracked` to pursue.
+
+**Active Tracking is a real buff now.** Previously the player `track`
+command silently applied buff 26 (Conviction Surge — a +15 strength
+combat buff) as a duration token, gifting any player running
+forensic recon a free damage bonus. Authored a dedicated buff 86
+(Active Tracking, 25-round duration, no statmods) and migrated the
+four AddBuff sites + six RemoveBuff sites away from the misuse.
+
+**"Tracking forever" bug fixed.** The room-description renderer in
+`roomdetails.go` was gating only on misc-data, never on the buff
+itself. When the buff expired or was removed, the misc data persisted
+and the "Tracking X… they went north" line kept firing indefinitely.
+Added a `HasBuff(86)` outer gate that clears stale misc data on next
+room view, plus symmetric cleanup at every existing RemoveBuff site.
+
+**Shadow lifecycle.** Buff 87 (Shadowing) is a sister to buff 86 —
+25-round duration, applied on a successful `shadow <target>` and
+removed on stop, spotted, or natural expiry. The shadow auto-follow
+consumer in `go.go` now gates on `HasBuff(87)` so a stale shadow
+state can't drag the player to a phantom destination.
+
+**Mob-target shadow finally works.** Chunk 2.7 added the shadow verb
+but only wired auto-follow for player targets — shadow on a mob
+applied the buff and set misc data, then went silent when the mob
+moved. New `MobRoomChange_ShadowFollow` hook closes the gap: when a
+shadowed mob moves, any hidden shadower in the old room auto-moves
+with them and gets the same post-move spotted-check as the player-
+target path.
+
+**Universal escape gates.** Two new hooks (`MobDeath_TrackingCleanup`
++ `PlayerDespawn_TrackingCleanup`) clear tracking/shadow misc-data
+and buffs 86/87 from every character pointing at a dying mob or
+leaving player. No more phantom tracking on a corpse or a logged-off
+friend.
+
+**Stealth-detection messaging dropped.** When a hidden mob spots
+you sneaking into their room, you no longer see "X notices you" —
+that message leaked the mob's name when the mob was itself hidden to
+you. Same drop for "You no longer feel sneaky" — if you can't see
+who spotted you, you can't really know you've been spotted from your
+own POV either. The Hidden buff just disappears from your conditions
+display. Room observers still see the sneaker visibly emerge.
+
+**Cause-agnostic buff end text.** Buff 86's "The trail grows cold;
+your focus slips" and buff 87's "Your quarry slips from view; your
+focus breaks" both implied a specific cause (the target got away)
+even when fired on timer expiry next to a still-present target. Now
+both read "Your focus on the trail/quarry breaks" — fits every
+cleanup path (timer, target found, target died, manual stop).
+
+**Thief no longer summons the city guard.** The thief archetype's
+`search-before-steal` graft originally called for help on detection,
+which for Thornwall mobs resolved via faction allies to the city
+gate guard — narratively wrong, since bandits don't summon law
+enforcement. The branch is now silent search only.
+
+**Internal cleanup.** `track.go` and `search.go` use the shared
+`CalcSearchScore` helper instead of inlining the Perception +
+SkillMultiplier formula. The `combat` package import was dropped
+from both files as a result.
+
+**Known deferrals** (logged as followups):
+- `has_aggro` btree condition doesn't exist; the scout and leader
+  archetypes use scan-based detection instead of a direct "do I
+  have aggro" gate. Adding the condition would let archetypes
+  branch more precisely on combat-state.
+- `mob_target_lost` event doesn't exist either; combat-aggro-lost
+  is detected indirectly via the scan/track chain on `mob_idle`.
+- Faction-rep-based hostile determination on the mob side falls
+  back to "any non-charmed player counts as hostile" — proper
+  per-faction hostility checking is logged for a future pass.
+
 ## 2026-05-20 — Chunk 7: Centralized messaging framework
 
 **Every player-facing line of text now flows through a single

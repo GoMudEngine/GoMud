@@ -393,6 +393,15 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				if !shadowIsTargetingUser(shadowP, user.UserId) {
 					continue
 				}
+				// Buff-absent guard: misc data set but buff 87 gone means the
+				// shadow expired or was cancelled out-of-band. Clear stale state
+				// and skip the auto-follow so a dead/logged-off target can't drag
+				// the player to an unexpected room.
+				if !shadowP.Character.HasBuff(87) {
+					shadowP.Character.SetMiscData("shadow-target-user", nil)
+					shadowP.Character.SetMiscData("shadow-target-mob", nil)
+					continue
+				}
 				// Shadower is in the old room and tracking the mover -- follow.
 				shadowP.Command(rest)
 
@@ -422,7 +431,6 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				}
 
 				spotted := false
-				spotterName := ""
 
 				// Check player observers. Sneak score is computed per-observer so
 				// NightVision observers apply the correct light modifier.
@@ -442,7 +450,6 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 							`<ansi fg="username">%s</ansi> slips into the room but you notice them.`,
 							user.Character.Name))
 						spotted = true
-						spotterName = p.Character.Name
 						break
 					}
 				}
@@ -459,7 +466,6 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						success, _, _, _ := dice.OpposedRollStat(sneakScore, observerScore)
 						if !success {
 							spotted = true
-							spotterName = mob.Character.Name
 							break
 						}
 					}
@@ -477,8 +483,11 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						state.TransitionReason{Trigger: awareness.TriggerObserverSearch})
 					user.Character.SetMiscData(`sneaking`, nil)
 					isSneaking = false
-					user.SendText(messaging.CategorySystem, fmt.Sprintf(
-						"You slip into the room but %s notices you.", spotterName))
+					// Intentionally silent — if the observer is itself hidden,
+					// surfacing their name leaks information the player can't
+					// see. The Hidden buff's end_user_text ("You no longer feel
+					// sneaky.") on the next tick is sufficient signal that
+					// stealth dropped.
 				}
 			}
 

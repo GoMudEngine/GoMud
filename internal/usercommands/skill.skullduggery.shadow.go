@@ -90,6 +90,7 @@ func Shadow(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 func endShadow(user *users.UserRecord, reason string) {
 	user.Character.SetMiscData("shadow-target-user", nil)
 	user.Character.SetMiscData("shadow-target-mob", nil)
+	user.Character.RemoveBuff(87)
 
 	cfg := configs.GetBalanceConfig()
 	cooldownKey := skills.Skullduggery.String(`shadow`)

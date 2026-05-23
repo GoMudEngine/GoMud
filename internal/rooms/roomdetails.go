@@ -412,14 +412,23 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 
 	if searchMobName := user.Character.GetMiscData(`tracking-mob`); searchMobName != nil {
 
-		if searchMobNameStr, ok := searchMobName.(string); ok {
+		// Buff-absent cleanup: if tracking misc data was set but the
+		// active-tracking buff expired or was removed, drop the misc
+		// data so the render doesn't fire forever.
+		if !user.Character.HasBuff(86) {
+			user.Character.SetMiscData("tracking-mob", nil)
+			user.Character.SetMiscData("tracking-user", nil)
+			user.Character.SetMiscData("tracking-display-count", nil)
+		} else if searchMobNameStr, ok := searchMobName.(string); ok {
 
 			if r.isInRoom(searchMobNameStr, ``) {
 
 				// Always show when target is found in the room
 				details.TrackingString = `Tracking <ansi fg="mobname">` + searchMobNameStr + `</ansi>... They are here!`
-				user.Character.RemoveBuff(26)
+				user.Character.RemoveBuff(86)
 				user.Character.SetMiscData("tracking-display-count", nil)
+				user.Character.SetMiscData("tracking-mob", nil)
+				user.Character.SetMiscData("tracking-user", nil)
 
 			} else {
 
@@ -436,8 +445,10 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 
 					// Always show when trail is lost
 					details.TrackingString = `You lost the trail of <ansi fg="mobname">` + searchMobNameStr + `</ansi>`
-					user.Character.RemoveBuff(26)
+					user.Character.RemoveBuff(86)
 					user.Character.SetMiscData("tracking-display-count", nil)
+					user.Character.SetMiscData("tracking-mob", nil)
+					user.Character.SetMiscData("tracking-user", nil)
 
 				} else {
 
@@ -446,8 +457,10 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 
 						// Always show when trail is lost
 						details.TrackingString = `You lost the trail of <ansi fg="username">` + searchMobNameStr + `</ansi>`
-						user.Character.RemoveBuff(26)
+						user.Character.RemoveBuff(86)
 						user.Character.SetMiscData("tracking-display-count", nil)
+						user.Character.SetMiscData("tracking-mob", nil)
+						user.Character.SetMiscData("tracking-user", nil)
 
 					} else {
 
@@ -472,14 +485,24 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 	}
 
 	if searchUserName := user.Character.GetMiscData(`tracking-user`); searchUserName != nil {
-		if searchUserNameStr, ok := searchUserName.(string); ok {
+
+		// Buff-absent cleanup: if tracking misc data was set but the
+		// active-tracking buff expired or was removed, drop the misc
+		// data so the render doesn't fire forever.
+		if !user.Character.HasBuff(86) {
+			user.Character.SetMiscData("tracking-mob", nil)
+			user.Character.SetMiscData("tracking-user", nil)
+			user.Character.SetMiscData("tracking-display-count", nil)
+		} else if searchUserNameStr, ok := searchUserName.(string); ok {
 
 			if r.isInRoom(``, searchUserNameStr) {
 
 				// Always show when target is found in the room
 				details.TrackingString = `Tracking <ansi fg="username">` + searchUserNameStr + `</ansi>... They are here!`
-				user.Character.RemoveBuff(26)
+				user.Character.RemoveBuff(86)
 				user.Character.SetMiscData("tracking-display-count", nil)
+				user.Character.SetMiscData("tracking-mob", nil)
+				user.Character.SetMiscData("tracking-user", nil)
 
 			} else {
 
@@ -496,8 +519,10 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 
 					// Always show when trail is lost
 					details.TrackingString = `You lost the trail of <ansi fg="username">` + searchUserNameStr + `</ansi>`
-					user.Character.RemoveBuff(26)
+					user.Character.RemoveBuff(86)
 					user.Character.SetMiscData("tracking-display-count", nil)
+					user.Character.SetMiscData("tracking-mob", nil)
+					user.Character.SetMiscData("tracking-user", nil)
 
 				} else {
 
@@ -506,8 +531,10 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 
 						// Always show when trail is lost
 						details.TrackingString = `You lost the trail of <ansi fg="username">` + searchUserNameStr + `</ansi>`
-						user.Character.RemoveBuff(26)
+						user.Character.RemoveBuff(86)
 						user.Character.SetMiscData("tracking-display-count", nil)
+						user.Character.SetMiscData("tracking-mob", nil)
+						user.Character.SetMiscData("tracking-user", nil)
 
 					} else {
 

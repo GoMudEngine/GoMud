@@ -209,6 +209,7 @@ Condition nodes use `type: condition` with `check: <name>`.
 | `mob_has_buff` | `buff_id` (int) | Mob currently has the buff. |
 | `state_equals` | `key`, `value` (strings) | BehaviorState string equals. |
 | `state_greater_than` | `key` (string), `value` (int) | BehaviorState int > value. |
+| `forager_state_is_foraging` | none | True when forager state machine is in Foraging state (chunk 2.9). |
 
 ### Environment
 
@@ -238,8 +239,10 @@ buff.
 | Condition | Params | Description |
 |-----------|--------|-------------|
 | `mob_is_hidden` | none | True when self.Awareness.IsHidden() (previously checked buff #9). |
-| `target_is_hidden` | none | True when the resolved target.Awareness.IsHidden() (previously checked buff #9). |
+| `mob_is_tracking` | none | True when self carries buff 86 (Track status). Used to gate track-related actions. |
+| `room_has_hidden_entity` | none | True when room contains at least one hidden mob or hidden player. |
 | `target_has_gold` | `min` (int) | True when the resolved PLAYER target has at least N gold. Mob targets always return Failure. |
+| `target_is_hidden` | none | True when the resolved target.Awareness.IsHidden() (previously checked buff #9). |
 
 ### Position & Grapple (chunks 4a + 4b)
 
@@ -361,11 +364,28 @@ are subject to perception-scaled reaction delays (see below).
 
 | Action | Params | Description |
 |--------|--------|-------------|
+| `try_defuse` | none | Invoke `actions.Defuse` on the first trap found in room (delayed). Scans containers then exits. |
+| `try_plant` | `item_tag` (string, e.g. "copper coin") | Invoke `actions.Plant` with the named item from backpack (delayed). Failure if item not found or not in backpack. |
 | `try_sneak` | none | Invoke `actions.Sneak` (delayed). Success when self enters or is already in the hidden state. |
 | `try_steal` | none | Invoke `actions.Steal` against the resolved target (delayed). Target resolution uses Event.UserId or Aggro fallback. |
-| `try_plant` | `item_tag` (string, e.g. "copper coin") | Invoke `actions.Plant` with the named item from backpack (delayed). Failure if item not found or not in backpack. |
 | `try_shadow` | none | Invoke `actions.Shadow` against the resolved target (delayed). Requires self already hidden. |
-| `try_defuse` | none | Invoke `actions.Defuse` on the first trap found in room (delayed). Scans containers then exits. |
+
+### Scout — varied delays (chunk 2.8)
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `move_toward_tracked` | none | Reads buff 86 + tracking misc data; dispatches `go <direction>` toward the tracked entity (delayed). Fails silently if buff/data missing. |
+| `try_scan` | none | Invoke `actions.Scan` (no delay). Sweeps adjacent rooms; on hostile sighting sets ctx.SoftTarget; returns Success on any sighting (Failure when HostileOnly and no hostile found). |
+| `try_search` | none | Invoke `actions.Search` (no delay). Three-tier discovery (exits/stashed/hidden nouns); promotes first hidden hostile to ctx.SoftTarget; ignores Tier-1/Tier-3 non-hostiles. |
+| `try_track` | `target_from` (optional string: "event" or "aggro") | Invoke `actions.Track` (no delay). Reads trail from target (trail-sniff); or activates tracking on resolved target. On adjacent-trail hit applies buff 86; seeds ctx.SoftTarget. |
+
+### Foraging & Salvage — varied delays (chunk 2.9)
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `try_forage` | none | Invoke `actions.Forage` (instant). Success on item found, Failure on miss/cooldown/wrong-biome. Requires mob to have forager profile for the current biome. |
+| `try_salvage` | `item_uuid` (optional string) | Invoke `actions.Salvage` (instant). Default mode targets first eligible corpse in room (mob death items); optional `item_uuid` param targets a specific item. |
+| `wander_territory` | none | Delegates to territory-aware movement (delayed). Uses forager profile neighbor list to pick an adjacent room within home territory. Failure without forager profile. |
 
 ### Boss & Companion Control — delayed
 
@@ -483,6 +503,13 @@ A mob with Perception 50 has:
 | `try_plant` | Yes |
 | `try_shadow` | Yes |
 | `try_defuse` | Yes |
+| `try_scan` | No |
+| `try_search` | No |
+| `try_track` | No |
+| `move_toward_tracked` | Yes |
+| `try_forage` | No |
+| `try_salvage` | No |
+| `wander_territory` | Yes |
 
 ---
 

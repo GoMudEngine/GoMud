@@ -5945,24 +5945,6 @@ func TestTalkMoreBranches(t *testing.T) {
 
 // ─── Track utility functions ───────────────────────────────────────────────
 
-func TestTrailStrengthToString(t *testing.T) {
-	tests := []struct {
-		strength float64
-		expected string
-	}{
-		{0.9, "very fresh"},
-		{0.7, "fresh"},
-		{0.5, "fading"},
-		{0.3, "faint"},
-		{0.1, "very faint"},
-	}
-
-	for _, tc := range tests {
-		result := trailStrengthToString(tc.strength)
-		assert.NotEmpty(t, result)
-	}
-}
-
 // ─── Admin server config ───────────────────────────────────────────────────
 
 func TestAdminServerConfig(t *testing.T) {

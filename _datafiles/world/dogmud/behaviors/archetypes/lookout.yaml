@@ -26,6 +26,19 @@ tree:
         - type: action
           do: flee
 
+    # NEW (chunk 2.8): early-warning scan on idle. If a hostile is
+    # sighted in an adjacent room, set SoftTarget and call for help
+    # before they walk in.
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: action
+          do: try_scan
+          hostile_only: true
+        - type: action
+          do: command
+          cmd: callforhelp
+
     # NEW: ambush only if I outmatch the entering player.
     # target_power_ratio_above: self_power / target_power > value.
     # value=1.0 means self is strictly stronger than target.

@@ -1,7 +1,7 @@
 mobid: 372
 zone: Ironwind Steppe
 archetype: fighting
-behavior_archetype: ""
+behavior_archetype: forager
 statpool: 225
 itemdropchance: 0
 groups:

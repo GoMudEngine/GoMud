@@ -90,8 +90,8 @@ should always agree.
 | 2.5 | Tactical | Mutations on mobs | L | — | Done |
 | 2.6 | Tactical | Sunset legacy tactics engine | L | — | Done |
 | 2.7 | Tactical | Mob skullduggery suite | M | — | Done |
-| 2.8 | Tactical | Mob scout / track / scan | S | — | Not started |
-| 2.9 | Tactical | Mob `forage` as a command | S | — | Not started |
+| 2.8 | Tactical | Mob scout / track / scan | M | — | Done |
+| 2.9 | Tactical | Mob `forage` as a command | M | — | Done |
 | 2.10 | Tactical | PvM/MvP/PvP/MvM parity audit | M | 2.1–2.9 | Not started |
 | 3.1 | Routine | Game-time hook | S | — | Not started |
 | 3.2 | Routine | NPC schedules | L | 3.1 | Not started |
@@ -117,7 +117,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 15 / 41 done • 0 in progress • 26 not started.
+**Roll-up:** 17 / 41 done • 0 in progress • 24 not started.
 
 ---
 
@@ -368,22 +368,24 @@ Build vocabulary before the planner.
 - **Shipped:** All 5 skullduggery verbs lifted into `internal/actions/` via the actor pattern (Sneak/Steal/Plant/Defuse/Shadow). Player wrappers thinned; mob wrappers added; btree primitives (`try_steal`, `try_sneak`, `try_plant`, `try_shadow`, `try_defuse`) + state-query conditions (`mob_is_hidden`, `target_is_hidden`, `target_has_gold`) + new picker (`target_random_player_in_room`) added. New `thief` archetype with steal-and-flee loop (panic-flee, power-overmatch combat, self-defense, steal+flee, re-stealth). Thornwall highwayman flipped to thief archetype. Mob-on-player detection roll (search vs sneak) on Steal mirror to the existing player-on-mob path; gold transfer happens regardless of detection, only the victim's awareness is detection-gated. Legacy `stealth_detection.go` shim + pickpocket test placeholder sunset (triple-removal in go.go left intact — load-bearing for permabuffs, see followup memory). **In-game smoke validated 2026-05-15** after the combat-state-machines side quest (chunk 0) landed: Thornwall highwayman attempts hide → steals 73 gold from smoketester → flees, never enters combat. Originally (2026-05-13) the highwayman picked up a sword, hid, then opened with grapple — root cause was `target_random_player_in_room` calling `SetAggro`, which is the in-combat flag. The chunk-0 `EvalContext.SoftTarget` slot structurally prevents that bug class. Spec at `docs/superpowers/specs/2026-05-13-mob-aliveness-2.7-skullduggery-suite-design.md`, plan at `docs/superpowers/plans/2026-05-13-mob-aliveness-2.7-skullduggery-suite.md`, smoke report at `tools/testing/reports/2026-05-15-local-feature-tester-chunk-0-combat-state-machines.md`.
 
 ### 2.8 Mob scout / track / scan
-**Status:** Not started • **Size:** S
+**Status:** Done (2026-05-22) • **Size:** M (originally scoped S; expanded during plan-writing)
 
 - **Goal:** Information-gathering verbs available to mobs.
 - **In:** Mobcommands for `track`, `scan`, `search`, `consider`.
 - **Out:** —
 - **Depends on:** —
 - **Why:** Bounty hunters and patrols need to find things. Quest-NPC scouts feel passive without these.
+- **Shipped:** Three actions lifted into `internal/actions/` (`Scan`, `Track`, `Search`). Four btree action primitives (`try_scan`, `try_track`, `try_search`, `move_toward_tracked`) + two conditions (`room_has_hidden_entity`, `mob_is_tracking`). New `scout` archetype + flip on goblin_scout (217). Single-branch grafts onto `lookout` (scan-before-ambush), `thief` (search-before-steal), `leader` (track-on-aggro-lost). **Bundled bug fix #1:** authored buff 86 (Active Tracking, 25-round duration) replacing buff 26 (Conviction Surge) misuse in skill.track.go. Migrated 4 AddBuff + 6 RemoveBuff call sites (one extra discovered in skill.track.go's `track stop/clear` handler). Fixed the "tracking forever" bug by adding a `HasBuff(86)` outer gate at the roomdetails.go renderer that clears misc data on buff absence. **Bundled bug fix #2:** authored buff 87 (Shadowing, 25-round duration). Shadow now applies buff 87 on success and the auto-follow consumer in go.go gates on buff presence, preventing phantom shadows from dragging players to dead/logged-off targets. **Universal escape gates:** new hooks `MobDeath_TrackingCleanup` and `PlayerDespawn_TrackingCleanup` clear tracking/shadow misc data + buffs 86/87 on any character pointing to the dying mob / leaving user. **Smoke testing deferred to user** (13-scenario in-game validation, see plan section "Smoke test plan"). Spec at `docs/superpowers/specs/2026-05-22-mob-aliveness-2.8-scout-track-scan-design.md`, plan at `docs/superpowers/plans/2026-05-22-mob-aliveness-2.8-scout-track-scan.md`.
 
 ### 2.9 Mob `forage` as a command
-**Status:** Not started • **Size:** S
+**Status:** Done (2026-05-22) • **Size:** M (originally scoped S; expanded during brainstorming to include salvage parallel + forager archetype migration + state-machine refactor)
 
 - **Goal:** Promote forage from routine-only behavior to a callable verb.
 - **In:** Mobcommand wrapper around existing forage skill, btree integration.
 - **Out:** —
 - **Depends on:** —
 - **Why:** Strategic NPCs that decide "I'm out of leather, let me forage" need the verb.
+- **Shipped:** Two actions lifted into `internal/actions/` (`Forage`, `Salvage` single-tick core). Three btree primitives (`try_forage`, `try_salvage`, `wander_territory`) + one condition (`forager_state_is_foraging`). Hybrid forager state-machine refactor: Foraging-state per-tick loop dissolved into YAML, multi-state daily cycle preserved in Go via `forager_step`. New shared `forager` archetype replaces three per-mob behavior YAMLs for Tova (371), Halix (372), Kessa (373). Player per-tick salvage resolve in `hooks/NewRound_UserRoundTick.go` refactored to call `actions.Salvage`. Includes follow-up fix to restore the "corpse no longer here" player message that the lift initially dropped. Spec at `docs/superpowers/specs/2026-05-22-mob-aliveness-2.9-mob-forage-salvage-design.md`, plan at `docs/superpowers/plans/2026-05-22-mob-aliveness-2.9-mob-forage-salvage.md`. **In-game smoke testing deferred to user.**
 
 ### 2.10 PvM/MvP/PvP/MvM parity audit
 **Status:** Not started • **Size:** M
