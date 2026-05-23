@@ -4,7 +4,35 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
+
+// ---------------------------------------------------------------------------
+// Test stub — minimal player Actor for victimEngagedWithActor tests
+// ---------------------------------------------------------------------------
+
+// testPlayerActor satisfies the Actor interface with a fixed user ID. Only
+// IsPlayer() and GetUserId() are meaningful; all other methods are no-ops or
+// return zero values.
+type testPlayerActor struct {
+	userId int
+	room   *rooms.Room
+}
+
+func (a *testPlayerActor) GetCharacter() *characters.Character { return nil }
+func (a *testPlayerActor) GetRoom() *rooms.Room                { return a.room }
+func (a *testPlayerActor) SendText(_ messaging.Category, _ string) {}
+func (a *testPlayerActor) SendRoomCommunication(_ string, _ bool)  {}
+func (a *testPlayerActor) GetName() string                         { return "TestPlayer" }
+func (a *testPlayerActor) IsPlayer() bool                          { return true }
+func (a *testPlayerActor) GetUserId() int                          { return a.userId }
+func (a *testPlayerActor) GetMobInstanceId() int                   { return 0 }
+func (a *testPlayerActor) AddBuff(_ int, _ string)                 {}
+func (a *testPlayerActor) OnSkillUse(_ string) bool                { return false }
+func (a *testPlayerActor) OnStatUse(_ string) bool                 { return false }
+func (a *testPlayerActor) OnCriticalSuccess(_ string)              {}
+func (a *testPlayerActor) OnCriticalFailure(_ string)              {}
 
 // ---------------------------------------------------------------------------
 // TriggerPacifismAura tests
@@ -84,5 +112,56 @@ func TestTriggerPacifismAura_SelfPenalty(t *testing.T) {
 	}
 	if mob.Character.IsInCombat() {
 		t.Error("expected actor Aggro to be cleared (EndAggro) after firing pacifism-aura")
+	}
+}
+
+// TestVictimEngagedWithActor_PlayerActor verifies that a player actor matches
+// victims engaged by UserId, and does not match unrelated victims (UserId 0).
+func TestVictimEngagedWithActor_PlayerActor(t *testing.T) {
+	// testPlayerActor is the local stub defined at the top of this file.
+	actor := &testPlayerActor{userId: 42}
+
+	engaged := newTestMobBare(t)
+	engaged.Character.SetAggro(42, 0, characters.DefaultAttack)
+
+	unrelated := newTestMobBare(t)
+	unrelated.Character.SetAggro(0, 99, characters.DefaultAttack)
+
+	if !victimEngagedWithActor(&engaged.Character, actor) {
+		t.Error("expected victim engaged with player actor UserId=42 to match")
+	}
+	if victimEngagedWithActor(&unrelated.Character, actor) {
+		t.Error("expected victim engaged with mob (UserId=0) NOT to match player actor")
+	}
+}
+
+// TestVictimEngagedWithActor_MobActor verifies that a mob actor matches only
+// victims engaged by matching MobInstanceId, and does not accidentally match
+// victims whose EngagedTarget has UserId == 0 (mob-vs-mob fights with a
+// different target or no target at all).
+func TestVictimEngagedWithActor_MobActor(t *testing.T) {
+	caster := newTestMobBare(t)
+	caster.InstanceId = 55
+	actor := NewMobActorInRoom(caster, newTestRoomBare(t))
+
+	// Victim engaged with caster (MobInstanceId=55).
+	engaged := newTestMobBare(t)
+	engaged.Character.SetAggro(0, 55, characters.DefaultAttack)
+
+	// Victim engaged with a different mob (MobInstanceId=99 != 55).
+	otherMob := newTestMobBare(t)
+	otherMob.Character.SetAggro(0, 99, characters.DefaultAttack)
+
+	// Victim not engaged with anyone.
+	idle := newTestMobBare(t)
+
+	if !victimEngagedWithActor(&engaged.Character, actor) {
+		t.Error("expected victim engaged with caster mob (MobInstanceId=55) to match")
+	}
+	if victimEngagedWithActor(&otherMob.Character, actor) {
+		t.Error("expected victim engaged with different mob (MobInstanceId=99) NOT to match")
+	}
+	if victimEngagedWithActor(&idle.Character, actor) {
+		t.Error("expected idle victim (no engaged target) NOT to match")
 	}
 }

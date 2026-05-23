@@ -8,6 +8,15 @@ package behaviortree
 // `keys: [<key1>, <key2>, ...]` (ordered preference list). At least
 // one of the two must be set; nodes with neither are rejected at
 // call time with a log + Failure.
+//
+// Single-target mutations (blinding-spit, toxic-bite) are intentionally
+// excluded from this map. They require a resolved target actor before
+// dispatch; without one the mutationPreamble succeeds (consuming stamina
+// and the special-move cooldown) and then TriggerXxx immediately returns
+// BlockReason="no-target", wasting both resources. A future
+// try_mutation_active_at_target primitive will add target resolution
+// before dispatch. See the project_mutation_active_runtime_evolution_btree
+// memory entry for design details.
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/actions"
@@ -17,19 +26,19 @@ import (
 )
 
 // mutationTriggers maps mutation key → action invocation. Add a row
-// when lifting a new mutation_* command into the actions package.
+// when lifting a new SELF or AoE mutation into the actions package.
 //
-// Single-target mutations (blinding-spit, toxic-bite) are listed but
-// cannot be fully fired through this action — they Failure-out with
-// "no-target" because v1 doesn't resolve mob targets here. A future
-// chunk will add a target-aware variant.
+// Single-target mutations (blinding-spit, toxic-bite) are intentionally
+// excluded — they need a target-resolving primitive that does not exist
+// yet. See the file-level godoc above for the full rationale.
 var mutationTriggers = map[string]func(actions.Actor, actions.MutationOpts) actions.MutationResult{
 	"blinding-flash": actions.TriggerBlindingFlash,
-	"blinding-spit":  actions.TriggerBlindingSpit,
 	"healing-gel":    actions.TriggerHealingGel,
 	"pacifism-aura":  actions.TriggerPacifismAura,
 	"sonic-shout":    actions.TriggerSonicShout,
-	"toxic-bite":     actions.TriggerToxicBite,
+	// blinding-spit and toxic-bite intentionally excluded — they require
+	// a resolved target. A future try_mutation_active_at_target primitive
+	// will dispatch them with target resolution.
 }
 
 // actTryMutationActive fires the first available mutation in the

@@ -391,7 +391,7 @@ are subject to perception-scaled reaction delays (see below).
 
 | Action | Params | Description |
 |--------|--------|-------------|
-| `try_mutation_active` | `key` (string, optional) OR `keys` ([]string, optional). At least one required; nodes with neither are rejected with a log + Failure. | Invoke `actions.TriggerXxx` for the first available mutation in the preference list. Success on triggered; Failure if no candidate fires (missing mutation, on cooldown, low stamina, not in combat). Single-target mutations (`blinding-spit`, `toxic-bite`) cannot use this action without a target resolver — they Failure-out with "no-target". |
+| `try_mutation_active` | `key` (string, optional) OR `keys` ([]string, optional). At least one required; nodes with neither are rejected with a log + Failure. | Invoke `actions.TriggerXxx` for the first available SELF/AoE mutation in the preference list. Success on triggered; Failure if no candidate fires (missing mutation, on cooldown, low stamina, not in combat). **Single-target mutations (`blinding-spit`, `toxic-bite`) are NOT dispatchable here** — they require a resolved target actor; without one the preamble consumes stamina and the special-move cooldown before Failure, leaking both resources. A future `try_mutation_active_at_target` primitive will add target resolution before dispatch. |
 
 ### Boss & Companion Control — delayed
 

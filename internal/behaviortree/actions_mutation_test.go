@@ -167,20 +167,31 @@ func TestCollectMutationKeys_Empty(t *testing.T) {
 	}
 }
 
-// TestMutationTriggers_AllSixPresent verifies that all six expected
-// mutation keys are registered in the mutationTriggers map.
-func TestMutationTriggers_AllSixPresent(t *testing.T) {
+// TestMutationTriggers_SelfAoEPresent verifies that all four SELF/AoE
+// mutations are registered in mutationTriggers, and that the two single-target
+// mutations (blinding-spit, toxic-bite) are intentionally absent. Absent
+// entries would consume stamina + cooldown via the preamble and then fail
+// with BlockReason="no-target", wasting resources with no observable effect.
+func TestMutationTriggers_SelfAoEPresent(t *testing.T) {
 	expected := []string{
 		"blinding-flash",
-		"blinding-spit",
 		"healing-gel",
 		"pacifism-aura",
 		"sonic-shout",
-		"toxic-bite",
 	}
 	for _, key := range expected {
 		if _, ok := mutationTriggers[key]; !ok {
-			t.Errorf("mutationTriggers missing key %q", key)
+			t.Errorf("mutationTriggers missing SELF/AoE key %q", key)
+		}
+	}
+
+	// Single-target mutations must be absent — they need a target-resolving
+	// primitive that doesn't exist yet. Their presence would cause a
+	// resource-leak bug (stamina + cooldown consumed, then "no-target" block).
+	excluded := []string{"blinding-spit", "toxic-bite"}
+	for _, key := range excluded {
+		if _, ok := mutationTriggers[key]; ok {
+			t.Errorf("mutationTriggers must NOT contain single-target key %q (resource leak)", key)
 		}
 	}
 }

@@ -10,6 +10,25 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/skills"
 )
 
+// victimEngagedWithActor reports whether the given victim mob's current combat
+// target is the actor. Handles both player and mob actors correctly:
+//   - For player actors, matches on UserId (non-zero).
+//   - For mob actors, matches on MobInstanceId (non-zero). This is necessary
+//     because MobActor.GetUserId() always returns 0, so a bare UserId comparison
+//     would incorrectly match every mob engaged with another mob (UserId == 0
+//     for mob-vs-mob fights).
+//
+// Uses CurrentCombatTarget (not EngagedTarget) so the Aggro field fallback
+// works in test fixtures where CombatPhase is nil.
+func victimEngagedWithActor(victim *characters.Character, actor Actor) bool {
+	target := victim.CurrentCombatTarget()
+	if actor.IsPlayer() {
+		return target.UserId != 0 && target.UserId == actor.GetUserId()
+	}
+	// Mob actor — match on mob instance id.
+	return target.MobInstanceId != 0 && target.MobInstanceId == actor.GetMobInstanceId()
+}
+
 // TriggerPacifismAura fires the pacifism-aura mutation for any Actor (player
 // or mob). AoE de-aggro: any mob in the room that is attacking the actor has
 // its Aggro cleared. The actor always receives ConditionRecoveryPenalty
@@ -56,14 +75,16 @@ func TriggerPacifismAura(actor Actor, opts MutationOpts) MutationResult {
 	)
 
 	// AoE de-aggro: clear Aggro on any room mob that is targeting the actor.
-	actorUserId := actor.GetUserId()
+	// victimEngagedWithActor handles both player and mob actors correctly:
+	// a bare UserId comparison would match every mob-vs-mob fight in the
+	// room when actor is a mob (GetUserId() == 0 for all mob actors).
 	deAggroCount := 0
 	for _, mobInstId := range room.GetMobs(rooms.FindAll) {
 		victim := mobs.GetInstance(mobInstId)
 		if victim == nil || !victim.Character.IsInCombat() {
 			continue
 		}
-		if victim.Character.EngagedTarget().UserId == actorUserId {
+		if victimEngagedWithActor(&victim.Character, actor) {
 			victim.Character.EndAggro()
 			deAggroCount++
 		}
