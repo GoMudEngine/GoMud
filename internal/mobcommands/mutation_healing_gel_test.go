@@ -24,16 +24,16 @@ func TestHealingGel_RoutesToAction(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-// TestHealingGel_CommandRegistered verifies that "healing_gel" is
+// TestHealingGel_CommandRegistered verifies that "healing-gel" is
 // present in the mob command registry.
 func TestHealingGel_CommandRegistered(t *testing.T) {
 	cmds := GetAllMobCommands()
 	found := false
 	for _, c := range cmds {
-		if c == "healing_gel" {
+		if c == "healing-gel" {
 			found = true
 			break
 		}
 	}
-	assert.True(t, found, "healing_gel must be registered in the mob command map")
+	assert.True(t, found, "healing-gel must be registered in the mob command map")
 }

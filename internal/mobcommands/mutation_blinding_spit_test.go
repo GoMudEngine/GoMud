@@ -24,16 +24,16 @@ func TestBlindingSpit_RoutesToAction(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-// TestBlindingSpit_CommandRegistered verifies that "blinding_spit" is
+// TestBlindingSpit_CommandRegistered verifies that "blinding-spit" is
 // present in the mob command registry.
 func TestBlindingSpit_CommandRegistered(t *testing.T) {
 	cmds := GetAllMobCommands()
 	found := false
 	for _, c := range cmds {
-		if c == "blinding_spit" {
+		if c == "blinding-spit" {
 			found = true
 			break
 		}
 	}
-	assert.True(t, found, "blinding_spit must be registered in the mob command map")
+	assert.True(t, found, "blinding-spit must be registered in the mob command map")
 }

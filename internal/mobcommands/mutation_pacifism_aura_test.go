@@ -24,16 +24,16 @@ func TestPacifismAura_RoutesToAction(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-// TestPacifismAuraCommandRegistered verifies that "pacifism_aura" is
+// TestPacifismAuraCommandRegistered verifies that "pacifism-aura" is
 // present in the mob command registry.
 func TestPacifismAuraCommandRegistered(t *testing.T) {
 	cmds := GetAllMobCommands()
 	found := false
 	for _, c := range cmds {
-		if c == "pacifism_aura" {
+		if c == "pacifism-aura" {
 			found = true
 			break
 		}
 	}
-	assert.True(t, found, "pacifism_aura must be registered in the mob command map")
+	assert.True(t, found, "pacifism-aura must be registered in the mob command map")
 }

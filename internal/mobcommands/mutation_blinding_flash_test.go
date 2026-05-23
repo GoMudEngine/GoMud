@@ -24,16 +24,16 @@ func TestBlindingFlash_RoutesToAction(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-// TestBlindingFlashCommandRegistered verifies that "blinding_flash" is
+// TestBlindingFlashCommandRegistered verifies that "blinding-flash" is
 // present in the mob command registry.
 func TestBlindingFlashCommandRegistered(t *testing.T) {
 	cmds := GetAllMobCommands()
 	found := false
 	for _, c := range cmds {
-		if c == "blinding_flash" {
+		if c == "blinding-flash" {
 			found = true
 			break
 		}
 	}
-	assert.True(t, found, "blinding_flash must be registered in the mob command map")
+	assert.True(t, found, "blinding-flash must be registered in the mob command map")
 }

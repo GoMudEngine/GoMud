@@ -24,16 +24,16 @@ func TestSonicShout_RoutesToAction(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-// TestSonicShoutCommandRegistered verifies that "sonic_shout" is present
+// TestSonicShoutCommandRegistered verifies that "sonic-shout" is present
 // in the mob command registry.
 func TestSonicShoutCommandRegistered(t *testing.T) {
 	cmds := GetAllMobCommands()
 	found := false
 	for _, c := range cmds {
-		if c == "sonic_shout" {
+		if c == "sonic-shout" {
 			found = true
 			break
 		}
 	}
-	assert.True(t, found, "sonic_shout must be registered in the mob command map")
+	assert.True(t, found, "sonic-shout must be registered in the mob command map")
 }
