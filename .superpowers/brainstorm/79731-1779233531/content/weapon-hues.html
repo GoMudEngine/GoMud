@@ -1,0 +1,174 @@
+<h2>Weapon damage hues — by ItemSubType band</h2>
+<p class="subtitle" style="color:#aaa">Using the real ItemSubType taxonomy. Five visible bands; small hue variation between subtypes within a band so a sword vs dagger reads slightly different but as the same family. Surprise prefix shifted from pink-magenta to true red.</p>
+
+<style>
+  .mockup {
+    background: #0c0c0c;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    font-family: "Cascadia Mono", "Consolas", "Menlo", monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #d4d4d4;
+    white-space: pre-wrap;
+  }
+  .mockup .label {
+    display: block;
+    color: #888;
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed #333;
+  }
+  .swatch-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0 14px 0;
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 12px;
+  }
+  .swatch {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 5px 9px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #ddd;
+  }
+  .chip {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .band-header {
+    color: #ffc107;
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-weight: 600;
+    margin: 14px 0 4px 0;
+    font-size: 13px;
+  }
+
+  /* Actor name hues */
+  .name-p   { color: #93c5fd; }
+  .name-c   { color: #7fc4b5; }
+  .name-m   { color: #d4a373; }
+
+  /* === Bladed band (rose / red) === */
+  .slashing  { color: #c47a78; }   /* dusty rose */
+  .cleaving  { color: #b56466; }   /* deeper rose / wine */
+  .stabbing  { color: #c98a8a; }   /* dusty pink-red */
+
+  /* === Blunt band (warm brown) === */
+  .bludgeoning { color: #b18556; }   /* rust */
+  .slam        { color: #a47950; }   /* warm taupe */
+  .fist        { color: #d68a5b; }   /* dusty orange — same as unarmed */
+  .gore        { color: #966040; }   /* dark brown */
+
+  /* === Natural sharp band (dark red) === */
+  .claws  { color: #a45353; }   /* dusty red-brown */
+  .bite   { color: #8c4949; }   /* deeper red-brown */
+  .sting  { color: #a06070; }   /* dusty violet-red */
+
+  /* === Ranged band (warm tan / coffee) === */
+  .shooting { color: #b88454; }   /* warm coffee */
+  .whipping { color: #a08868; }   /* dusty tan */
+
+  /* === Caster-melee band (lavender-tinged) === */
+  .wand     { color: #b09bc1; }   /* light lavender */
+  .sceptre  { color: #a08bb1; }
+  .staff    { color: #9580a0; }   /* slightly darker */
+
+  /* === Unarmed (kept from v2) === */
+  .unarmed  { color: #d68a5b; }
+
+  /* === Surprise (now more red, less pink) === */
+  .surprise-prefix { color: #e63946; font-weight: bold; }   /* true bright red */
+  .crit            { font-weight: bold; }
+  .crit-flash      { color: #f5d77a; font-weight: bold; }
+
+  .damage   { color: #c47a78; }
+  .death    { color: #6b7280; }
+</style>
+
+<div class="band-header">Bladed</div>
+<div class="swatch-row">
+  <div class="swatch"><span class="chip" style="background:#c47a78"></span> Slashing — sword, scimitar</div>
+  <div class="swatch"><span class="chip" style="background:#b56466"></span> Cleaving — axe, halberd</div>
+  <div class="swatch"><span class="chip" style="background:#c98a8a"></span> Stabbing — dagger, spear</div>
+</div>
+
+<div class="band-header">Blunt</div>
+<div class="swatch-row">
+  <div class="swatch"><span class="chip" style="background:#b18556"></span> Bludgeoning — mace, club</div>
+  <div class="swatch"><span class="chip" style="background:#a47950"></span> Slam — body checks, oozes</div>
+  <div class="swatch"><span class="chip" style="background:#d68a5b"></span> Fist — same as Unarmed</div>
+  <div class="swatch"><span class="chip" style="background:#966040"></span> Gore — horns, tusks</div>
+</div>
+
+<div class="band-header">Natural sharp</div>
+<div class="swatch-row">
+  <div class="swatch"><span class="chip" style="background:#a45353"></span> Claws</div>
+  <div class="swatch"><span class="chip" style="background:#8c4949"></span> Bite</div>
+  <div class="swatch"><span class="chip" style="background:#a06070"></span> Sting</div>
+</div>
+
+<div class="band-header">Ranged</div>
+<div class="swatch-row">
+  <div class="swatch"><span class="chip" style="background:#b88454"></span> Shooting — bow, crossbow</div>
+  <div class="swatch"><span class="chip" style="background:#a08868"></span> Whipping</div>
+</div>
+
+<div class="band-header">Caster melee</div>
+<div class="swatch-row">
+  <div class="swatch"><span class="chip" style="background:#b09bc1"></span> Wand</div>
+  <div class="swatch"><span class="chip" style="background:#a08bb1"></span> Sceptre</div>
+  <div class="swatch"><span class="chip" style="background:#9580a0"></span> Staff</div>
+</div>
+
+<div class="band-header">Unarmed (own band, dusty orange)</div>
+<div class="swatch-row">
+  <div class="swatch"><span class="chip" style="background:#d68a5b"></span> Unarmed strike</div>
+</div>
+
+<div class="mockup">
+  <span class="label">Different weapons in the same combat round — same family hues, distinct subtypes</span>
+<span class="name-p">You</span> swing your steel longsword in a wide arc — <span class="slashing">it CARVES across</span> <span class="name-m">Thornwall Thug</span>! (<span class="damage">moderate wounds</span>)
+<span class="name-p">You</span> bring your battle-axe down in a brutal arc — <span class="cleaving">it BITES DEEP</span> into <span class="name-m">Thornwall Thug</span>'s shoulder! (<span class="damage">serious wounds</span>)
+<span class="name-p">You</span> thrust your dagger fast and low — <span class="stabbing">it punches through</span> <span class="name-m">Thornwall Thug</span>'s guard! (<span class="damage">light wounds</span>)
+<span class="name-p">You</span> swing your mace heavy and round — <span class="bludgeoning">it SLAMS into</span> <span class="name-m">Thornwall Thug</span>! (<span class="damage">moderate wounds</span>)
+<span class="name-p">You</span> snap an arrow from your bow — <span class="shooting">it punches through</span> <span class="name-m">Thornwall Thug</span>! (<span class="damage">moderate wounds</span>)
+<span class="name-p">You</span> drive your fist into <span class="name-m">Thornwall Thug</span> — <span class="unarmed">a clean knockout punch</span>! (<span class="damage">serious wounds</span>)
+<span class="name-p">You</span> sweep your staff in a low arc — <span class="staff">it cracks across</span> <span class="name-m">Thornwall Thug</span>'s knees! (<span class="damage">light wounds</span>)
+</div>
+
+<div class="mockup">
+  <span class="label">Mob natural attacks — distinct band from player weapons</span>
+<span class="name-m">Steppe wolf</span>'s jaws snap shut — <span class="bite">CRUSHING DOWN</span> on your arm! (<span class="damage">serious wounds</span>)
+<span class="name-m">Feral cat</span> rakes you — <span class="claws">claws tear deep</span>! (<span class="damage">light wounds</span>)
+<span class="name-m">Bog adder</span>'s tail-spike whips out — <span class="sting">a pinprick into your calf</span>! (<span class="damage">light wounds</span>) Something burns where the spike struck.
+<span class="name-m">Forest badger</span> charges you, head down — <span class="gore">tusks rip across your shins</span>! (<span class="damage">moderate wounds</span>)
+</div>
+
+<div class="mockup">
+  <span class="label">Surprise — more red, less pink (compare to earlier mock)</span>
+<span class="surprise-prefix">*[SURPRISE ATTACK]*</span> <span class="name-p">You</span> step out of the shadows; <span class="stabbing crit-flash">YOUR DAGGER CARVES A DEEP LINE</span> across <span class="name-m">Thornwall Thug</span>'s back!
+<span class="surprise-prefix">*[SURPRISE ATTACK]*</span> <span class="name-m">Thornwall Thug</span> erupts from cover; <span class="bludgeoning crit-flash">A CLUB CRACKS INTO YOUR SHOULDER</span>!
+</div>
+
+<p class="subtitle" style="margin-top:18px"><strong>Open questions:</strong></p>
+<ul style="color:#ddd">
+  <li>Surprise red — closer to in-game now? Or push redder still (#dc2626) / brighter (#ff3838)?</li>
+  <li>5 bands feel like the right granularity, or too many subtle hues? Could collapse natural-sharp into the blunt/bladed bands.</li>
+  <li>Caster melee (wand/sceptre/staff struck as a club) — keep the lavender hint, or fold into Blunt since that's what they're being used as?</li>
+  <li>Fist is shown identical to Unarmed (#d68a5b) — that's intentional. Do we want any visual hint that Fist is a "natural" attack vs an explicit Unarmed roll, or are they the same thing?</li>
+</ul>

@@ -1,0 +1,21 @@
+Connecting to dogmud.org:55555...
+Connected.
+����"������*��Z�������Z!!MUSIC(static/audio/music/intro.mp3 V=20 L=-1 C=1)��
+
+      .    *      .       *    .           *      .       *    .     
+          *      .                   .          *                    
+   .          .       *        .          .            *        .    
+        *           .      *         *          .      *            
+             .            .      .         .              .     *    
+
+ ____   ___   ____ __  __           _ 
+|  _ \ / _ \ / ___|  \/  |_  
+[LOGIN_USER] password:
+[LOGIN_PASS] ��Z!!MUSIC(Off)��
+Warning: This account is not flagged as AI but connected on the AI port.
+ +==============================================================================+
+ |  .:  M E S S A G E   O F
+
+Logged in. Polling for commands...
+
+Bridge closed.

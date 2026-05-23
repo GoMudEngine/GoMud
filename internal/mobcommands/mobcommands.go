@@ -79,7 +79,6 @@ var (
 		"say":            {Say, true},
 		"sayto":          {SayTo, true},
 		"search":         {Search, false},
-		"selljunk":       {Selljunk, false},
 		"saytoonly":      {SayToOnly, true},
 		"shout":          {Shout, true},
 		"shoot":          {Shoot, false},

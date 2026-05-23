@@ -1,0 +1,124 @@
+<h2>Combat narration — color palette mock</h2>
+<p class="subtitle">Same combat round rendered three ways. Current (mostly white/grey), proposed Palette A (saturated by category), proposed Palette B (muted family hues). Capitalization for crits + special hits applied in both proposals.</p>
+
+<style>
+  .mockup {
+    background: #0c0c0c;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    font-family: "Cascadia Mono", "Consolas", "Menlo", monospace;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #d4d4d4;
+    white-space: pre-wrap;
+  }
+  .mockup .label {
+    display: block;
+    color: #888;
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed #333;
+  }
+  /* Current (mostly default-white) */
+  .cur { color: #c8c8c8; }
+  .cur .crit { color: #fff; font-weight: bold; }
+  .cur .name-p { color: #5fafff; }     /* username */
+  .cur .name-m { color: #cc8800; }     /* mobname */
+
+  /* Palette A — saturated by category */
+  .a .name-p     { color: #5fafff; font-weight: bold; }
+  .a .name-m     { color: #cc8800; font-weight: bold; }
+  .a .strike     { color: #ff9844; }   /* unarmed orange */
+  .a .strike-c   { color: #ffb070; }   /* unarmed counter (lighter) */
+  .a .grapple    { color: #a8804a; }   /* grapple brown */
+  .a .grapple-c  { color: #bf9460; }
+  .a .defense    { color: #4ade80; }   /* defense green */
+  .a .defense-c  { color: #6ee097; }
+  .a .melee      { color: #f87171; }   /* melee weapon red */
+  .a .melee-c    { color: #fca5a5; }
+  .a .spell-evoc { color: #c084fc; }   /* spell — evocation purple */
+  .a .spell-disp { color: #818cf8; }   /* disruption — indigo */
+  .a .special    { color: #facc15; }   /* special / signature */
+  .a .submission { color: #ec4899; }   /* submission pink-red */
+  .a .death      { color: #6b7280; }   /* faded grey */
+  .a .crit       { font-weight: bold; }
+  .a .crit-flash { color: #ffe066; font-weight: bold; text-shadow: 0 0 6px rgba(255,224,102,0.45); }
+  .a .surprise   { color: #ff66cc; font-weight: bold; }
+
+  /* Palette B — muted hue families (lower saturation) */
+  .b .name-p     { color: #93c5fd; }
+  .b .name-m     { color: #d4a373; }
+  .b .strike     { color: #d68a5b; }   /* dusty orange */
+  .b .strike-c   { color: #c97e4b; }
+  .b .grapple    { color: #927159; }   /* warm taupe */
+  .b .grapple-c  { color: #7e6149; }
+  .b .defense    { color: #8fbf94; }   /* sage */
+  .b .defense-c  { color: #7eae84; }
+  .b .melee      { color: #c47a78; }   /* dusty rose */
+  .b .melee-c    { color: #b4625f; }
+  .b .spell-evoc { color: #a99ad1; }   /* dusty plum */
+  .b .spell-disp { color: #8b96bf; }
+  .b .special    { color: #d4b35a; }   /* old gold */
+  .b .submission { color: #c97a91; }   /* faded rose */
+  .b .death      { color: #6b7280; }
+  .b .crit       { font-weight: bold; }
+  .b .crit-flash { color: #f5d77a; font-weight: bold; }
+  .b .surprise   { color: #d28dbf; font-weight: bold; }
+</style>
+
+<div class="mockup cur">
+  <span class="label">Today (close to current — mostly default white, occasional accents)</span>
+You prepare to enter into mortal combat with <span class="name-m">Thornwall Thug</span>.
+You throw a desperate swing that <span class="crit">CONNECTS PERFECTLY</span> with <span class="name-m">Thornwall Thug</span>!
+<span class="name-m">Thornwall Thug</span> dodges your attack!
+You grapple <span class="name-m">Thornwall Thug</span>, transitioning to clinched position!
+Their stance breaks. You drag them flat and climb on top, knees high in mount.
+You ride high in mount and rain elbows down.
+You drive a devastating overhand right into <span class="name-m">Thornwall Thug</span>'s chest!
+You focus a needle of psionic force toward your target.
+Your concentration shatters — you cannot hold the fold while grappled!
+<span class="name-m">Thornwall Thug</span> has died.
+</div>
+
+<div class="mockup a">
+  <span class="label">Palette A — saturated by category (subcategory family colors)</span>
+You prepare to enter into mortal combat with <span class="name-m">Thornwall Thug</span>.
+You throw a desperate swing that <span class="melee crit-flash">CONNECTS PERFECTLY</span> with <span class="name-m">Thornwall Thug</span>!
+<span class="name-m">Thornwall Thug</span> <span class="defense">dodges</span> your attack!
+You <span class="grapple">grapple</span> <span class="name-m">Thornwall Thug</span>, <span class="grapple">transitioning to clinched position</span>!
+<span class="grapple">Their stance breaks. You drag them flat and climb on top, knees high in mount.</span>
+<span class="grapple">You ride high in mount and rain elbows down.</span>
+You drive a <span class="melee">devastating overhand right</span> into <span class="name-m">Thornwall Thug</span>'s chest!
+<span class="spell-evoc">You focus a needle of psionic force toward your target.</span>
+<span class="spell-disp">Your concentration shatters — you cannot hold the fold while grappled!</span>
+<span class="death"><span class="name-m">Thornwall Thug</span> has died.</span>
+</div>
+
+<div class="mockup b">
+  <span class="label">Palette B — muted hue families (lower saturation, easier on eyes for long sessions)</span>
+You prepare to enter into mortal combat with <span class="name-m">Thornwall Thug</span>.
+You throw a desperate swing that <span class="melee crit-flash">CONNECTS PERFECTLY</span> with <span class="name-m">Thornwall Thug</span>!
+<span class="name-m">Thornwall Thug</span> <span class="defense">dodges</span> your attack!
+You <span class="grapple">grapple</span> <span class="name-m">Thornwall Thug</span>, <span class="grapple">transitioning to clinched position</span>!
+<span class="grapple">Their stance breaks. You drag them flat and climb on top, knees high in mount.</span>
+<span class="grapple">You ride high in mount and rain elbows down.</span>
+You drive a <span class="melee">devastating overhand right</span> into <span class="name-m">Thornwall Thug</span>'s chest!
+<span class="spell-evoc">You focus a needle of psionic force toward your target.</span>
+<span class="spell-disp">Your concentration shatters — you cannot hold the fold while grappled!</span>
+<span class="death"><span class="name-m">Thornwall Thug</span> has died.</span>
+</div>
+
+<p class="subtitle" style="margin-top:18px"><strong>Open questions for combat:</strong></p>
+<ul style="color:#ddd">
+  <li>Saturated (A) vs muted (B)? Or different mix?</li>
+  <li>Are the family hues right? Unarmed orange ✓, grappling brown ✓, defense green (vs blue?), melee red, spells purple-family?</li>
+  <li>How emphasized should crits be? Just bold (current), bold + bright color (A/B "CONNECTS PERFECTLY"), or text glow / inverse?</li>
+  <li>Surprise attacks haven't been shown — should they get their own pink-red highlight?</li>
+  <li>Names — keep blue/orange for player/mob, or push them to neutral so combat verbs pop more?</li>
+</ul>

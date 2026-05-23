@@ -138,7 +138,6 @@ var mobOnlyCommands = map[string]string{
 	"replyto":        "mob-ai",
 	"sayto":          "mob-ai",
 	"saytoonly":      "mob-ai",
-	"selljunk":       "mob-ai: converts inventory items to gold",
 	"wander":         "mob-ai",
 }
 

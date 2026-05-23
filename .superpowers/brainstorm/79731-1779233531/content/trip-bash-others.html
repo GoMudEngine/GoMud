@@ -1,0 +1,216 @@
+<h2>Trip / bash gradient + remaining categories</h2>
+<p class="subtitle" style="color:#aaa">Trip and bash sit between kick (sharp yellow) and grapple (warm brown). Both are damage + knockdown, less progressive than grapple, more rooted than kick. Also covering speech / mob idles / dialogue / broadcasts.</p>
+
+<style>
+  .mockup {
+    background: #0c0c0c;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    font-family: "Cascadia Mono", "Consolas", "Menlo", monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #d4d4d4;
+    white-space: pre-wrap;
+  }
+  .mockup .label {
+    display: block;
+    color: #888;
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed #333;
+  }
+  .swatch-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0 14px 0;
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 12px;
+  }
+  .swatch {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 5px 9px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #ddd;
+  }
+  .chip {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .gradient-row {
+    display: flex;
+    margin: 14px 0;
+    font-size: 12px;
+    color: #ddd;
+    text-align: center;
+  }
+  .gradient-row > div {
+    flex: 1;
+    padding: 8px 4px;
+    border: 1px solid #333;
+    background: #1a1a1a;
+  }
+  .gradient-row > div + div { border-left: none; }
+  .band-header {
+    color: #ffc107;
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-weight: 600;
+    margin: 18px 0 4px 0;
+    font-size: 13px;
+  }
+
+  /* Actor name hues */
+  .name-p { color: #93c5fd; }
+  .name-c { color: #7fc4b5; }
+  .name-m { color: #d4a373; }
+
+  /* Knockdown-skill gradient */
+  .kick-verb { color: #f5d77a; font-weight: bold; }   /* yellow-bold — sharp/quick */
+  .trip-verb { color: #d6a85a; font-weight: bold; }   /* amber */
+  .bash-verb { color: #b88940; font-weight: bold; }   /* deeper amber / copper */
+  .grapple   { color: #927159; }                       /* warm taupe — progressive */
+  .grapple-h { color: #a8825f; }                       /* slightly brighter — outcome change */
+
+  /* Speech/comm */
+  .say       { color: #d4d4d4; }                       /* mostly default, neutral */
+  .say-text  { color: #b8d4f5; }                       /* quoted speech in light blue */
+  .whisper   { color: #b08fc7; }                       /* dusty lavender, hushed */
+  .shout     { color: #e8b75a; font-weight: bold; }    /* warm amber, bold for emphasis */
+  .yell      { color: #e8b75a; font-weight: bold; }    /* same as shout */
+  .ooc       { color: #6c8ea4; }                       /* desaturated blue-grey */
+
+  /* Quest dialogue */
+  .npc-name  { color: #d4a373; }                       /* same as mobname */
+  .npc-quote { color: #d4c5a8; }                       /* parchment-ish */
+  .hint      { color: #8a9a8a; font-style: italic; }   /* greenish-grey for hint lines */
+
+  /* Mob idles */
+  .mob-idle  { color: #a09080; }                       /* warm grey — ambient */
+  .mob-emote { color: #b09a85; }                       /* slightly warmer — directed */
+
+  /* Broadcasts / system */
+  .broadcast { color: #5da3c4; }                       /* sky-blue — server-wide announcement */
+  .tip       { color: #8aac8a; }                       /* sage — helpful nudge */
+  .system    { color: #8a8a8a; }                       /* dim grey — engine messages */
+  .error     { color: #d96a5a; }                       /* warm red — errors */
+  .warn      { color: #d6a85a; }                       /* amber — warnings */
+
+  /* Skill progression */
+  .skill-up  { color: #d4b35a; font-weight: bold; }    /* gold — same as special */
+
+  /* Login/logout */
+  .login     { color: #8aac8a; }                       /* sage — friendly */
+  .logout    { color: #8a8a8a; }                       /* dim grey */
+
+  .damage    { color: #c47a78; }
+  .unarmed   { color: #d68a5b; }
+</style>
+
+<div class="band-header">Knockdown-skill gradient (kick → trip → bash → grapple)</div>
+<div class="gradient-row">
+  <div style="background:#f5d77a; color:#000">Kick<br><code style="color:#000">#f5d77a</code></div>
+  <div style="background:#d6a85a; color:#000">Trip<br><code style="color:#000">#d6a85a</code></div>
+  <div style="background:#b88940; color:#000">Bash<br><code style="color:#000">#b88940</code></div>
+  <div style="background:#a8825f; color:#000">Grapple (high)<br><code style="color:#000">#a8825f</code></div>
+  <div style="background:#927159; color:#fff">Grapple (flow)<br><code style="color:#fff">#927159</code></div>
+</div>
+<p style="font-size:12px; color:#aaa; margin-top:0">Sharp/instant → progressive/sustained, warm yellow → warm brown. Trip slightly more golden; bash more coppery.</p>
+
+<div class="mockup">
+  <span class="label">Kick / Trip / Bash / Grapple side-by-side — verb-only emphasis like kick</span>
+Your <span class="kick-verb">kick</span> strikes <span class="name-m">Thornwall Thug</span>! (<span class="damage">light wounds</span>)
+Your <span class="trip-verb">trip</span> sweeps <span class="name-m">Thornwall Thug</span>'s leg out from under them! (<span class="damage">moderate wounds</span>)
+Your shield <span class="bash-verb">bash</span> rocks <span class="name-m">Thornwall Thug</span> backward! (<span class="damage">moderate wounds</span>)
+You <span class="grapple">grapple</span> <span class="name-m">Thornwall Thug</span>, transitioning to clinched position!
+</div>
+
+<div class="band-header">Speech &amp; communication</div>
+<div class="swatch-row">
+  <div class="swatch"><span class="chip" style="background:#b8d4f5"></span> Says (quoted text) — light blue</div>
+  <div class="swatch"><span class="chip" style="background:#b08fc7"></span> Whispers — dusty lavender</div>
+  <div class="swatch"><span class="chip" style="background:#e8b75a"></span> Shouts / yells — amber bold</div>
+  <div class="swatch"><span class="chip" style="background:#6c8ea4"></span> OOC channel — desaturated blue-grey</div>
+</div>
+
+<div class="mockup">
+  <span class="label">Says / shouts / whispers / OOC</span>
+<span class="name-p">Calabe</span> says, <span class="say-text">"Hello there, stranger."</span>
+<span class="name-m">Thornwall Thug</span> says, <span class="say-text">"You shouldn't be here."</span>
+<span class="name-c">Rufus</span> says, <span class="say-text">"Stay close to me."</span>
+
+<span class="name-p">Calabe</span> whispers to you, <span class="whisper">"Did you see what's in the alley?"</span>
+You whisper to <span class="name-p">Calabe</span>, <span class="whisper">"I saw it. We should leave."</span>
+
+<span class="name-p">Calabe</span> <span class="shout">SHOUTS: "Look out behind you!"</span>
+
+<span class="ooc">[OOC] Calabe: anyone want to group up for the marsh quest?</span>
+</div>
+
+<div class="band-header">Quest dialogue (NPC speaks)</div>
+<div class="mockup">
+  <span class="label">Tavern keeper Marek's dialogue tree</span>
+<span class="npc-name">Tavern Keeper Marek</span> looks up from polishing a mug.
+
+<span class="npc-quote">"You're new around here. Looking for work, or just passing through?"</span>
+
+<span class="hint">[ You could ask about <em>work</em>, the <em>marsh</em>, or the <em>warren</em>. ]</span>
+</div>
+
+<div class="band-header">Mob idles &amp; emotes</div>
+<div class="mockup">
+  <span class="label">Ambient — warm grey, neutral weight</span>
+<span class="mob-idle"><span class="name-m">Thornwall Thug</span> cracks knuckles with deliberate slowness.</span>
+<span class="mob-idle"><span class="name-m">Thornwall Thug</span> leans against the alley wall, watching the street.</span>
+<span class="mob-idle">A rat scurries along the base of the wall and vanishes into a crack.</span>
+<span class="mob-emote"><span class="name-m">Thornwall Thug</span> spits on the cobblestones and glares at you.</span>
+</div>
+
+<div class="band-header">Broadcasts, tips, system, errors, warnings</div>
+<div class="swatch-row">
+  <div class="swatch"><span class="chip" style="background:#5da3c4"></span> Broadcast (server-wide)</div>
+  <div class="swatch"><span class="chip" style="background:#8aac8a"></span> Tip (helpful nudge)</div>
+  <div class="swatch"><span class="chip" style="background:#8a8a8a"></span> System (engine)</div>
+  <div class="swatch"><span class="chip" style="background:#d96a5a"></span> Error</div>
+  <div class="swatch"><span class="chip" style="background:#d6a85a"></span> Warning</div>
+</div>
+
+<div class="mockup">
+  <span class="label">Mixed system signals</span>
+<span class="broadcast">[Broadcast] The moon is reaching its zenith. Witnesses stir.</span>
+<span class="tip">[Tip] Having trouble finding quests? Try ask [npc-name] quest at any quest giver.</span>
+<span class="system">You sit down and begin your meditation.</span>
+<span class="warn">WARNING: You are about to be kicked for inactivity!</span>
+<span class="error">You can't do that while fighting!</span>
+</div>
+
+<div class="band-header">Skill progression / login &amp; logout</div>
+<div class="mockup">
+  <span class="label">Personal-progression callouts, friendly login/logout</span>
+<span class="skill-up">*** You feel your unarmed-combat skills sharpening! ***</span>
+<span class="skill-up">*** You feel your spellcasting skills sharpening! ***</span>
+<span class="login"><span class="name-p">Calabe</span> has logged in.</span>
+<span class="logout"><span class="name-p">Calabe</span> has gone offline.</span>
+</div>
+
+<p class="subtitle" style="margin-top:18px"><strong>Open questions across this batch:</strong></p>
+<ul style="color:#ddd">
+  <li>Knockdown gradient — does trip / bash sit visually right between kick (sharp yellow) and grapple (warm brown)?</li>
+  <li>Says — should the quoted text portion be colored (light blue), or stay default-white?</li>
+  <li>Shouts — bold amber feels right, or push redder (more alarm) / warmer (more excited)?</li>
+  <li>Whispers — dusty lavender (proposed) vs current default? Anything that visually says "this was meant just for me"?</li>
+  <li>NPC dialogue parchment color (#d4c5a8) — appropriate "wisdom tone" or too earthy?</li>
+  <li>Tips — sage green vs current treatment? Currently shows as `<ansi fg="hint">[Tip]</ansi>` so there's already SOME color.</li>
+</ul>
