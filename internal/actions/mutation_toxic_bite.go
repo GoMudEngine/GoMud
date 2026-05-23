@@ -2,6 +2,7 @@ package actions
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
@@ -25,10 +26,12 @@ import (
 // preamble (matching the original player command ordering where target
 // resolution follows the stamina deduction).
 //
-// NOTE: The bite damage formula (Strength × 0.06) and poison magnitude
-// (Vitality × 0.04) are inherited from the original player command and
-// bypass the unified combat.CalcRawDamage pipeline. This is a pre-existing
-// design debt flagged here for a future balance pass.
+// NOTE: Bite damage is routed through combat.CalcRawDamage(Str,
+// UnarmedCombat rank, 1.0, ChannelPhysical) → ApplyMitigation against the
+// victim's physical_mitigation → dice.RollStat for variance. Poison DoT
+// magnitude (Vitality × 0.04) still uses raw arithmetic — pipeline routing
+// for over-time damage is a separate followup
+// (project_poison_dot_magnitude_pipeline).
 //
 // Player actors receive descriptive messages; mob actors are silent (MobActor
 // SendText is a no-op). Damage amounts are reported via
@@ -61,8 +64,20 @@ func TriggerToxicBite(actor Actor, opts MutationOpts) MutationResult {
 
 	attackSuccess, _, _, _ := dice.OpposedRollStat(attackerScore, defenderScore)
 
-	// Pre-existing: raw arithmetic, not combat.CalcRawDamage. See NOTE above.
-	biteDamage := int(float64(char.Stats.Strength.ValueAdj) * 0.06)
+	// Bite damage: routed through the unified Physical pipeline.
+	// Strength is the input stat; UnarmedCombat skill rank scales via the
+	// sqrt curve; no item multiplier for mutations.
+	rawBiteDmg := combat.CalcRawDamage(
+		char.Stats.Strength.ValueAdj,
+		char.GetSkillLevel(skills.UnarmedCombat),
+		1.0,                    // no item multiplier for mutations
+		combat.ChannelPhysical, // bite is physical impact
+	)
+	mitPct := opts.TargetActor.GetCharacter().GetPhysicalMitigation()
+	mitCap := combat.MitigationCap(combat.ChannelPhysical)
+	mitigatedBite := combat.ApplyMitigation(rawBiteDmg, mitPct, mitCap)
+	biteRoll := dice.RollStat(mitigatedBite)
+	biteDamage := int(math.Round(biteRoll.Value))
 	if biteDamage < 1 {
 		biteDamage = 1
 	}
