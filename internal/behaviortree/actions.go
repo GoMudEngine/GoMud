@@ -90,6 +90,9 @@ func init() {
 	actionRegistry["try_salvage"] = actTrySalvage
 	actionRegistry["wander_territory"] = actWanderTerritory
 
+	// Forager storage (2.10-followups)
+	actionRegistry["try_store_excess"] = actTryStoreExcess
+
 	// Mutation actives (2.10)
 	actionRegistry["try_mutation_active"] = actTryMutationActive
 	// Autonomous mutation dispatch (2.10-followups)

@@ -387,6 +387,12 @@ are subject to perception-scaled reaction delays (see below).
 | `try_salvage` | `item_uuid` (optional string) | Invoke `actions.Salvage` (instant). Default mode targets first eligible corpse in room (mob death items); optional `item_uuid` param targets a specific item. |
 | `wander_territory` | none | Delegates to territory-aware movement (delayed). Uses forager profile neighbor list to pick an adjacent room within home territory. Failure without forager profile. |
 
+### Forager Storage — multi-tick (chunk 2.10-followups)
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `try_store_excess` | `chest_room` (int, required) | Forager chest-deposit workflow. Multi-tick: each tick advances one step — pathto chest room → unlock lockbox → put items in lockbox → lock lockbox. Returns Failure if `chest_room` param is missing, satchel is empty, or the chest room has no lockbox container. Engine handles chest-full gracefully: failed puts are no-ops and items remain in satchel for the next cycle. |
+
 ### Mutation Actives — instant (chunk 2.10 / 2.10-followups)
 
 | Action | Params | Description |
@@ -517,6 +523,7 @@ A mob with Perception 50 has:
 | `try_forage` | No |
 | `try_salvage` | No |
 | `wander_territory` | Yes |
+| `try_store_excess` | No |
 | `try_mutation_active` | No |
 | `try_any_active_mutation` | No |
 
