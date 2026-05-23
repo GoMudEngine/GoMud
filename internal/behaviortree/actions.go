@@ -89,6 +89,9 @@ func init() {
 	actionRegistry["try_forage"] = actTryForage
 	actionRegistry["try_salvage"] = actTrySalvage
 	actionRegistry["wander_territory"] = actWanderTerritory
+
+	// Mutation actives (2.10)
+	actionRegistry["try_mutation_active"] = actTryMutationActive
 }
 
 // LookupAction returns the action function for the given name,

@@ -387,6 +387,12 @@ are subject to perception-scaled reaction delays (see below).
 | `try_salvage` | `item_uuid` (optional string) | Invoke `actions.Salvage` (instant). Default mode targets first eligible corpse in room (mob death items); optional `item_uuid` param targets a specific item. |
 | `wander_territory` | none | Delegates to territory-aware movement (delayed). Uses forager profile neighbor list to pick an adjacent room within home territory. Failure without forager profile. |
 
+### Mutation Actives — instant (chunk 2.10)
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `try_mutation_active` | `key` (string, optional) OR `keys` ([]string, optional). At least one required; nodes with neither are rejected with a log + Failure. | Invoke `actions.TriggerXxx` for the first available mutation in the preference list. Success on triggered; Failure if no candidate fires (missing mutation, on cooldown, low stamina, not in combat). Single-target mutations (`blinding-spit`, `toxic-bite`) cannot use this action without a target resolver — they Failure-out with "no-target". |
+
 ### Boss & Companion Control — delayed
 
 | Action | Params | Description |
@@ -510,6 +516,7 @@ A mob with Perception 50 has:
 | `try_forage` | No |
 | `try_salvage` | No |
 | `wander_territory` | Yes |
+| `try_mutation_active` | No |
 
 ---
 
