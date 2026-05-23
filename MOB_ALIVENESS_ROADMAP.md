@@ -92,7 +92,7 @@ should always agree.
 | 2.7 | Tactical | Mob skullduggery suite | M | — | Done |
 | 2.8 | Tactical | Mob scout / track / scan | M | — | Done |
 | 2.9 | Tactical | Mob `forage` as a command | M | — | Done |
-| 2.10 | Tactical | PvM/MvP/PvP/MvM parity audit | M | 2.1–2.9 | Not started |
+| 2.10 | Tactical | PvM/MvP/PvP/MvM parity audit | M | 2.1–2.9 | Done |
 | 3.1 | Routine | Game-time hook | S | — | Not started |
 | 3.2 | Routine | NPC schedules | L | 3.1 | Not started |
 | 3.3 | Routine | Sleeping / wake states | S | 3.1 | Not started |
@@ -117,7 +117,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 17 / 41 done • 0 in progress • 24 not started.
+**Roll-up:** 18 / 41 done • 0 in progress • 23 not started.
 
 ---
 
@@ -388,13 +388,16 @@ Build vocabulary before the planner.
 - **Shipped:** Two actions lifted into `internal/actions/` (`Forage`, `Salvage` single-tick core). Three btree primitives (`try_forage`, `try_salvage`, `wander_territory`) + one condition (`forager_state_is_foraging`). Hybrid forager state-machine refactor: Foraging-state per-tick loop dissolved into YAML, multi-state daily cycle preserved in Go via `forager_step`. New shared `forager` archetype replaces three per-mob behavior YAMLs for Tova (371), Halix (372), Kessa (373). Player per-tick salvage resolve in `hooks/NewRound_UserRoundTick.go` refactored to call `actions.Salvage`. Includes follow-up fix to restore the "corpse no longer here" player message that the lift initially dropped. Spec at `docs/superpowers/specs/2026-05-22-mob-aliveness-2.9-mob-forage-salvage-design.md`, plan at `docs/superpowers/plans/2026-05-22-mob-aliveness-2.9-mob-forage-salvage.md`. **In-game smoke testing deferred to user.**
 
 ### 2.10 PvM/MvP/PvP/MvM parity audit
-**Status:** Not started • **Size:** M
+**Status:** Done (2026-05-23) • **Size:** M
 
 - **Goal:** Sweep remaining parity gaps after 2.1–2.9 land.
 - **In:** Walk every player command, classify it (mob-equivalent / orthogonal / never-relevant), patch concrete gaps.
 - **Out:** Forced parity for every player command — only what's relevant to mob behavior.
 - **Depends on:** 2.1–2.9 (do the obvious ones first, then audit the long tail)
 - **Why:** Catches verbs we didn't think to add. (Absorbed from MEMORY.md.)
+- **Shipped:** **Audit deliverable:** 119 player commands + 63 mob commands classified against a 6-bucket parity scheme (Equivalent / Orthogonal / Never-relevant / Gap: patch inline / Gap: delete divergent verb / Gap: defer). Player-side: 44 Equivalent, 28 Orthogonal, 37 Never-relevant, 0 Gap-patch-inline (the 6 mutation_* gaps handled via Stage B), 0 Gap-delete, 4 Gap-defer (lock/picklock/throw/unlock — surprise_attack reclassified to Equivalent after triage). Mob-side: 44 Equivalent, 18 Orthogonal, 0 Never-relevant, 0 Gap-patch-inline, 1 Gap-delete (selljunk), 0 Gap-defer. Tables embedded in the design spec at `docs/superpowers/specs/2026-05-23-mob-aliveness-2.10-pvm-mvp-parity-audit-design.md`. **Mutation_* actions-lift (closes Companion Phase 5 mob half):** 6 new `actions.TriggerXxx` functions: blinding_flash (AoE), blinding_spit (single-target), healing_gel (self, out-of-combat), pacifism_aura (AoE de-aggro), sonic_shout (AoE damage+prone+self-deafen), toxic_bite (single-target damage+poison). Shared `actions/mutation_helpers.go` with `mutationPreamble(actor, key, combatRequired, staminaCost)` running the 4 gate checks (mutation presence, in-combat, cooldown, stamina) used by all 6. Player wrappers collapsed (~480 LoC deleted from `internal/usercommands/`); new mob wrappers added (~120 LoC) registered in `mobcommands.go`. New btree action `try_mutation_active` accepting `key` (single) or `keys` (ordered list); rejects nodes with neither at first-call time with logged error + Failure. Single-target mutations (`blinding-spit`, `toxic-bite`) fail-out with "no-target" via this action — separate primitive with target resolution is a deferred followup. `MutationOpts` / `MutationResult` types live in `mutation_blinding_flash.go` (defined first as the worked example). **selljunk deletion:** Phantom verb with zero callers — deleted from `mobcommands/selljunk.go`, registration in `mobcommands.go`, test in `mobcommands_test.go`, and divergences entry in `actions/divergences.go`. Case study for the new "delete divergent verb" verdict from the audit. **Pre-existing bugs surfaced + preserved verbatim (followups logged):** sonic-shout damage = `int(Wil × 0.08)` raw arithmetic, not `combat.CalcRawDamage` ([[project_mutation_damage_pipeline_bypass]]); toxic-bite damage = `int(Str × 0.06)` + poison magnitude = `int(Vit × 0.04)` — same pipeline bypass; sonic-shout "stun" is actually `TransitionToProne` + self-deafen (`ConditionBlinded` 3 rounds), NOT `ConditionStunned` (which doesn't exist); charge.go reimplements trip math instead of delegating to actions.ExecuteTrip ([[project_charge_trip_math_duplication]]). **Pre-existing bug FIXED during the lift:** mutation_healing_gel was computing `int(Vitality × 0.15)` — a stat-derived flat value violating the CLAUDE.md no-flat-heal rule. Corrected to `floor(HealthMax × 25 / 100)` (25% of pool). Balance change worth flagging at prod-push time — [[project_healing_gel_balance_change]]. **Deferred-gap triage outcomes (user-triaged 2026-05-23):** surprise_attack reclassified to Equivalent (mobs already have parity via `mobcommands/attack.go:64` + Awareness_Cascades); picklock wontfix (intentional design misalignment; minigame is player-only); lock + unlock bundled into the forager locked-chest workflow chunk ([[project_forager_locked_chest_workflow]]); throw deferred to future ranged weapon system ([[project_throwable_mobs_ranged_dependency]]). Review doc retained at `docs/superpowers/specs/2026-05-23-mob-aliveness-2.10-deferred-gaps-review.md`. **Additional followup logged:** runtime-evolved mutations don't auto-flow into btree dispatch ([[project_mutation_active_runtime_evolution_btree]]). **Closes:** Companion Phase 5 (player-facing UI was already wontfix per `feedback_companion_autonomy`; mutation actives on mobs now shipped). **Manual in-game smoke testing deferred to user** (per the chunk 2.9 precedent). Design spec: `docs/superpowers/specs/2026-05-23-mob-aliveness-2.10-pvm-mvp-parity-audit-design.md`. Plan: `docs/superpowers/plans/2026-05-23-mob-aliveness-2.10-pvm-mvp-parity-audit.md`. Deferred-gap review: `docs/superpowers/specs/2026-05-23-mob-aliveness-2.10-deferred-gaps-review.md`.
+
+**Phase 2 tactical fill-in complete.** All ten Phase 2 chunks shipped (2.1 buy, 2.2 item-comparison, 2.2a incorporeal mutation, 2.3 equip-if-better, 2.4 consider, 2.5 mutations, 2.6 sunset legacy tactics, 2.7 skullduggery, 2.8 scout/track/scan, 2.9 forage, 2.10 parity audit). Mob tactical vocabulary substantially closes the gap with player verbs; remaining gaps are tracked in [[project_pvm_mvp_parity_gaps]] and the chunk-2.10 deferred-gaps review doc.
 
 ---
 
