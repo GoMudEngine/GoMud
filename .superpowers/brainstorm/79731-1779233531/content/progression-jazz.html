@@ -1,0 +1,124 @@
+<h2>Skill-progression callouts — jazz levels</h2>
+<p class="subtitle" style="color:#aaa">Current treatment shares the same `*** ... ***` border as combat crits, so it doesn't feel distinct from a great hit. Showing four levels of decoration: A current, B brighter+banner, C iconographic (UTF-8), D iconographic + multi-line. Pick a direction or mix.</p>
+
+<style>
+  .mockup {
+    background: #0c0c0c;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    font-family: "Cascadia Mono", "Consolas", "Menlo", monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #d4d4d4;
+    white-space: pre-wrap;
+  }
+  .mockup .label {
+    display: block;
+    color: #888;
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed #333;
+  }
+
+  /* Level A — current (muted gold, *** borders, same as combat) */
+  .a { color: #d4b35a; font-weight: bold; }
+
+  /* Level B — brighter saturated gold, banner with horizontal rules */
+  .b-rule  { color: #d4b35a; }
+  .b-text  { color: #ffd44a; font-weight: bold; }   /* brighter saturated gold */
+  .b-label { color: #b89030; font-weight: bold; letter-spacing: 1.5px; }
+
+  /* Level C — UTF-8 iconographic, single line */
+  .c-icon  { color: #ffd44a; font-weight: bold; }
+  .c-text  { color: #ffe089; font-weight: bold; }
+  .c-skill { color: #d4b35a; font-weight: bold; }
+
+  /* Level D — UTF-8 iconographic, multi-line block */
+  .d-rule    { color: #806020; }
+  .d-banner  { color: #ffd44a; font-weight: bold; letter-spacing: 1px; }
+  .d-skill   { color: #ffe089; font-weight: bold; }
+  .d-detail  { color: #b89a55; }
+
+  /* Combat lines for contrast */
+  .name-p { color: #93c5fd; }
+  .name-m { color: #d4a373; }
+  .crit-flash { color: #f5d77a; font-weight: bold; }
+  .melee-weapon { color: #c47a78; }
+</style>
+
+<div class="mockup">
+  <span class="label">Level A — current treatment (gold-bold + *** borders)</span>
+<span class="name-p">You</span> throw a desperate swing that <span class="melee-weapon crit-flash">CONNECTS PERFECTLY</span> with <span class="name-m">Thornwall Thug</span>!
+<span class="a">*** You feel your unarmed-combat skills sharpening! ***</span>
+<span class="name-p">You</span> follow up with a brutal elbow into the thug's ribs.
+
+<span class="a">*** You feel your spellcasting skills sharpening! ***</span>
+<span class="a">*** You feel your weapon-combat skills sharpening! ***</span>
+</div>
+<p class="subtitle" style="margin:-8px 0 14px 0; color:#888">↑ Issue: visually identical to combat-crit emphasis. Skill rank-up gets lost in fast combat scrolling.</p>
+
+<div class="mockup">
+  <span class="label">Level B — banner with rules + brighter color</span>
+<span class="name-p">You</span> throw a desperate swing that <span class="melee-weapon crit-flash">CONNECTS PERFECTLY</span> with <span class="name-m">Thornwall Thug</span>!
+<span class="b-rule">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+                  <span class="b-label">SKILL ADVANCEMENT</span>
+       <span class="b-text">Your unarmed-combat technique grows sharper.</span>
+<span class="b-rule">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="name-p">You</span> follow up with a brutal elbow into the thug's ribs.
+
+<span class="b-rule">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+                  <span class="b-label">SKILL ADVANCEMENT</span>
+       <span class="b-text">Your spellcasting reaches deeper.</span>
+<span class="b-rule">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+</div>
+<p class="subtitle" style="margin:-8px 0 14px 0; color:#888">↑ Stops the eye. Could feel heavy if rank-ups are frequent (3-4 per fight at low skill).</p>
+
+<div class="mockup">
+  <span class="label">Level C — UTF-8 iconographic, single line</span>
+<span class="name-p">You</span> throw a desperate swing that <span class="melee-weapon crit-flash">CONNECTS PERFECTLY</span> with <span class="name-m">Thornwall Thug</span>!
+<span class="c-icon">✦ ✧ ★</span>  <span class="c-text">Your <span class="c-skill">unarmed-combat</span> grows sharper.</span>  <span class="c-icon">★ ✧ ✦</span>
+<span class="name-p">You</span> follow up with a brutal elbow into the thug's ribs.
+
+<span class="c-icon">✦ ✧ ★</span>  <span class="c-text">Your <span class="c-skill">spellcasting</span> reaches deeper.</span>  <span class="c-icon">★ ✧ ✦</span>
+<span class="c-icon">✦ ✧ ★</span>  <span class="c-text">Your <span class="c-skill">weapon-combat</span> finds rhythm.</span>  <span class="c-icon">★ ✧ ✦</span>
+</div>
+<p class="subtitle" style="margin:-8px 0 14px 0; color:#888">↑ Distinct from combat. Visually playful. Requires UTF-8 client (ASCII fallback would be `*** ... ***` or `>>> ... <<<`).</p>
+
+<div class="mockup">
+  <span class="label">Level D — multi-line block, iconographic + skill-name + flavor</span>
+<span class="name-p">You</span> throw a desperate swing that <span class="melee-weapon crit-flash">CONNECTS PERFECTLY</span> with <span class="name-m">Thornwall Thug</span>!
+<span class="d-rule">    ╭─────────────────────────────────────────────╮</span>
+<span class="d-rule">    │</span>  <span class="d-banner">✦  SKILL ADVANCED  ✦</span>                       <span class="d-rule">│</span>
+<span class="d-rule">    │</span>  <span class="d-skill">Unarmed Combat</span>                            <span class="d-rule">│</span>
+<span class="d-rule">    │</span>  <span class="d-detail">Your technique grows sharper with each blow.</span> <span class="d-rule">│</span>
+<span class="d-rule">    ╰─────────────────────────────────────────────╯</span>
+<span class="name-p">You</span> follow up with a brutal elbow into the thug's ribs.
+</div>
+<p class="subtitle" style="margin:-8px 0 14px 0; color:#888">↑ Boxed banner. Heaviest. Could be overkill mid-combat; works well in calmer contexts (post-craft, post-cast).</p>
+
+<div class="mockup">
+  <span class="label">Mixed-level proposal — different jazz for different milestones</span>
+<span class="name-p">You</span> throw a desperate swing that <span class="melee-weapon crit-flash">CONNECTS PERFECTLY</span> with <span class="name-m">Thornwall Thug</span>!
+<span class="c-icon">✦ ✧ ★</span>  <span class="c-text">Your <span class="c-skill">unarmed-combat</span> grows sharper.</span>  <span class="c-icon">★ ✧ ✦</span>
+
+<span class="d-rule">    ╭─────────────────────────────────────────────╮</span>
+<span class="d-rule">    │</span>  <span class="d-banner">✦✦  RANK INCREASE  ✦✦</span>                      <span class="d-rule">│</span>
+<span class="d-rule">    │</span>  <span class="d-skill">Unarmed Combat  →  rank 11</span>                <span class="d-rule">│</span>
+<span class="d-rule">    │</span>  <span class="d-detail">Hooks and elbows feel natural now.</span>           <span class="d-rule">│</span>
+<span class="d-rule">    ╰─────────────────────────────────────────────╯</span>
+</div>
+<p class="subtitle" style="margin:-8px 0 14px 0; color:#888">↑ Lightweight icon-line for the per-progression-tick callout (frequent). Heavier boxed banner reserved for actual rank changes (rare).</p>
+
+<p class="subtitle" style="margin-top:18px"><strong>Pick a direction:</strong></p>
+<ul style="color:#ddd">
+  <li><strong>B</strong> — banner with rules; serious, slightly heavy</li>
+  <li><strong>C</strong> — iconographic single line; playful, light</li>
+  <li><strong>D</strong> — boxed multi-line; ceremonial, heaviest</li>
+  <li><strong>Mixed</strong> — C for frequent ticks ("you feel X sharpening"), D for actual rank changes (rare milestone). Best signal-to-frequency balance.</li>
+</ul>

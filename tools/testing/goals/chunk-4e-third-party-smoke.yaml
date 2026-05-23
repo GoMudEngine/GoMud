@@ -1,0 +1,34 @@
+goals:
+  - Engage a humanoid grappling-archetype mob and advance to Mount.
+    Run a few `combatstats` (or just observe round-by-round hit
+    rates) to verify your hit rate against the mounted defender is
+    meaningfully higher than your hit rate while standing against
+    the same type of mob. Compare pre-mount swing-hit rate to
+    post-mount; should be a clear jump.
+
+  - With a mounted defender, try to eat or drink something. Verify
+    the command is rejected with a flavor message about hands being
+    committed to the grapple.
+
+  - From a Mount position, try to flee. Verify it remains blocked
+    (no regression from earlier chunks).
+
+  - If you can engineer a scenario where a third party attacks a
+    grappled defender (e.g., spawn a second hostile mob in the room),
+    observe whether the third party hits the mounted defender easily
+    (target-side bonus) AND whether the controller's grip seems to
+    loosen over time (chunk 4e §5 outside-damage disruption — look
+    for gradient flavor like "your control slips").
+
+  - If you can reach a sub attempt, observe whether outside damage
+    during that round causes the sub to fail (chunk 4e §7 sub
+    interrupt). Hard to engineer reliably; report whatever you can
+    observe.
+
+  - Try casting a spell while grappled. Verify it is disrupted
+    (chunk 4e T4 fix to the spell-disruption gap; was a real bug
+    where Mount-pinned casters could complete spells unimpeded).
+
+  - Report no panics, no missing-template debug strings, no
+    "unexpected position state" log spam, no zero-config or
+    nil-pointer issues.

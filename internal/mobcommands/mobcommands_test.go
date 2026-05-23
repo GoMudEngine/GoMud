@@ -1002,17 +1002,6 @@ func TestGiveQuest(t *testing.T) {
 	})
 }
 
-func TestSelljunk(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	mob, room := getTestMobAndRoom(t)
-
-	handled, err := Selljunk("health potion", mob, room)
-	_ = handled
-	_ = err
-}
-
 // ─── TryCommand routing tests ───────────────────────────────────────────────
 
 func TestTryCommandRouting(t *testing.T) {
