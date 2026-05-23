@@ -215,7 +215,7 @@ Condition nodes use `type: condition` with `check: <name>`.
 
 | Condition | Params | Description |
 |-----------|--------|-------------|
-| `time_of_day` | `period` ("day" or "night") | In-game time of day. |
+| `time_of_day` | `period` ("day" or "night") OR `range` ("`<start>-<end>`", 24h format, e.g., `"9-17"`; wraps midnight when start > end). When both set, `range` takes precedence. | In-game time of day. Range uses `[start, end)` semantics (inclusive start, exclusive end). Empty range (`"5-5"`) always Failure; full-day range (`"0-24"`) always Success — both log a warning once. Malformed ranges log an error once and return Failure. |
 | `round_mod` | `n` (int) | `round % n == 0`. |
 | `random_chance` | `percent` (int) | N% probability. |
 | `players_in_room` | none | At least one player in the room. |
