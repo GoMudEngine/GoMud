@@ -61,6 +61,7 @@ var (
 		"taunt":          {Taunt, false},
 		"go":             {Go, false},
 		"kick":           {Kick, false},
+		"lock":           {Lock, false},
 		"look":           {Look, false},
 		"lookforaid":     {LookForAid, false},
 		"lookfortrouble": {LookForTrouble, false},
@@ -91,6 +92,7 @@ var (
 		"toxic-bite":     {ToxicBite, false},
 		"track":          {Track, false},
 		"trip":           {Trip, false},
+		"unlock":         {Unlock, false},
 		"warcry":  {Warcry, false},
 		"wander":  {Wander, false},
 	}
