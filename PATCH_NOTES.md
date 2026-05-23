@@ -1,5 +1,73 @@
 # DOGMud Patch Notes
 
+## 2026-05-23 — Mob Aliveness 2.10 Followups
+
+**Foragers stash their overflow.** Tova, Halix, and Kessa now bring
+their unsold goods home to a locked chest at the end of each vendor
+trip — unlocking, depositing, and re-locking before settling in to
+rest. Tova gained a new private reedwoven hut deep in Stillwater
+Marsh (just north of Spring Pool) where her lockbox lives; Halix
+and Kessa use the chests they already had in the steppe alcove and
+fernway camp respectively. The chests are real locks: players with
+picklock skill or a stolen key can break in, but doing so is theft
+and the foragers don't forget.
+
+**Companions and mobs use any mutation they've evolved.** A new
+behavior-tree primitive lets mobs autonomously fire whichever
+active mutation they currently have, preferring rarer mutations
+first. This matters for companions: a companion who evolves a new
+active mutation during play will start using it in combat without
+requiring their archetype to be hand-edited.
+
+**Sonic shout and toxic bite hit harder against the right defenses.**
+Both mutations previously dealt raw stat-derived damage that ignored
+target armor. They now flow through the unified damage pipeline:
+- Sonic shout (Willpower-driven) is gated by Conviction mitigation —
+  resistance comes from mental resilience, not physical armor.
+- Toxic bite's bite damage (Strength-driven) is gated by Physical
+  mitigation — armor matters now.
+- Toxic bite's poison DoT magnitude is unchanged (DoT pipeline
+  routing is a separate followup).
+
+Net effect: damage magnitudes shift in both directions depending on
+the target's mitigation. High-mitigation targets take less; bare
+targets take roughly what they took before.
+
+**Hidden mobs now strike with every weapon, not just one.** Mobs that
+ambush from stealth previously got a single backstab-crit-promoted
+swing on their opening round. They now fire a full per-weapon burst
+from concealment, matching the player path exactly. Most stealth mobs
+wield a single weapon so the difference is small; multi-weapon stealth
+mobs (rare) get a meaningful burst on their first round.
+
+**Internal cleanup.**
+- Surprise attack lifted to `internal/actions/surprise_attack.go` —
+  player and mob paths now share one implementation.
+- `mobcommands/charge.go` delegates trip resolution to
+  `actions.ExecuteTrip` instead of reimplementing the math.
+- New `lock` and `unlock` mob verbs (standalone implementations;
+  the player keyring concept doesn't apply to mobs).
+- New `try_any_active_mutation` and `try_store_excess` btree
+  primitives.
+- New forager state `StateStoring` inserted between Delivering and
+  Recalling for foragers with `storage_chest_room` configured.
+
+**Known limitation flagged for future work:**
+- **Forager chests are deposit-only right now.** Items go in but
+  don't come back out — there's no chest-to-vendor flow mechanism
+  yet. Without that, chests accumulate indefinitely and don't
+  actually backfill vendor inventory the way the "overflow cache"
+  design promised. A followup chunk will add one of four sketched
+  solutions (forager-withdraws-on-next-vendor-trip is the leading
+  candidate).
+
+**Deferred to followup chunks:**
+- Vendor backfill from forager chests (the missing other half of the
+  overflow design — critical, high priority).
+- Poison DoT magnitude pipeline routing.
+- Single-target mutation btree dispatch
+  (`try_mutation_active_at_target`).
+
 ## 2026-05-23 — Mob Aliveness 2.10: PvM/MvP/PvP/MvM Parity Audit
 
 **Mobs can now use mutation abilities in combat.** All six active
