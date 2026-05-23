@@ -41,6 +41,7 @@ const (
 	keyFatigueTimer      = "forager_fatigue_timer"
 	keyVisitIndex        = "forager_visit_index"
 	keyWaitTimer         = "forager_wait_timer"
+	keyStoringTurns      = "forager_storing_turns"
 )
 
 func actForagerStep(params map[string]any, ctx *EvalContext) Result {
@@ -120,6 +121,8 @@ func actForagerStep(params map[string]any, ctx *EvalContext) Result {
 		return tickForagerTravelingToDropoff(profile, mob, ctx)
 	case forager.StateDelivering:
 		return tickForagerDelivering(profile, mob, ctx)
+	case forager.StateStoring:
+		return tickForagerStoring(profile, mob, ctx)
 	case forager.StateRecalling:
 		return tickForagerRecalling(profile, mob, ctx)
 	}
@@ -266,7 +269,14 @@ func tickForagerDeliveringTown(
 ) Result {
 	idx := getIntFromState(ctx.MobState, keyVisitIndex)
 	if idx >= len(p.VendorRooms) {
-		transitionForager(ctx.MobState, forager.StateRecalling)
+		// Route through Storing when the forager has a personal lockbox
+		// and still carries unsold items — otherwise head straight home.
+		if mob.StorageChestRoom > 0 && len(mob.Character.Items) > 0 {
+			ctx.MobState.Set(keyStoringTurns, "0")
+			transitionForager(ctx.MobState, forager.StateStoring)
+		} else {
+			transitionForager(ctx.MobState, forager.StateRecalling)
+		}
 		return Success
 	}
 	target := p.VendorRooms[idx]
@@ -298,9 +308,64 @@ func tickForagerDeliveringFernway(
 			`<ansi fg="mobname">%s</ansi> hauls a satchel up to the crate, latches it shut, and turns for home.`,
 			p.Name))
 	}
-	// Always advance to Recalling — no more 150-round wait timer.
-	transitionForager(ctx.MobState, forager.StateRecalling)
+	// Route through Storing when the forager has a personal lockbox
+	// and still carries items (e.g. non-bucket items not dumped into crate).
+	// Otherwise head straight home.
+	if mob.StorageChestRoom > 0 && len(mob.Character.Items) > 0 {
+		ctx.MobState.Set(keyStoringTurns, "0")
+		transitionForager(ctx.MobState, forager.StateStoring)
+	} else {
+		transitionForager(ctx.MobState, forager.StateRecalling)
+	}
 	return Success
+}
+
+// tickForagerStoring runs one tick of the Storing state. Foragers
+// with a StorageChestRoom deposit unsold satchel items into their
+// personal lockbox via the try_store_excess primitive before heading
+// home to rest.
+//
+// Exit paths:
+//   - No chest configured (StorageChestRoom == 0): skip straight to Recalling.
+//   - Satchel already empty: deposit complete, transition to Recalling.
+//   - 20-round watchdog: prevents infinite loops if chest is persistently
+//     full or mob cannot path to chest room.
+//   - Otherwise: delegate one tick to actTryStoreExcess and return its result.
+func tickForagerStoring(
+	p *forager.ForagerProfile,
+	mob *mobs.Mob,
+	ctx *EvalContext,
+) Result {
+	// No chest — nothing to store; skip straight to Recalling.
+	if mob.StorageChestRoom == 0 {
+		transitionForager(ctx.MobState, forager.StateRecalling)
+		return Success
+	}
+
+	// Satchel already empty — deposit complete (or nothing was leftover).
+	if len(mob.Character.Items) == 0 {
+		transitionForager(ctx.MobState, forager.StateRecalling)
+		return Success
+	}
+
+	// Watchdog: bail after 20 ticks spent in this state so a full or
+	// unreachable chest can't park the forager here indefinitely.
+	storingTurns := getIntFromState(ctx.MobState, keyStoringTurns) + 1
+	ctx.MobState.Set(keyStoringTurns, strconv.Itoa(storingTurns))
+	if storingTurns >= 20 {
+		mudlog.Warn("forager.tickForagerStoring: watchdog triggered, bailing to Recalling",
+			"mobId", mob.MobId, "name", p.Name,
+			"chest_room", mob.StorageChestRoom,
+			"satchel_items", len(mob.Character.Items))
+		ctx.MobState.Set(keyStoringTurns, "0")
+		transitionForager(ctx.MobState, forager.StateRecalling)
+		return Success
+	}
+
+	// Delegate one tick to the chest-deposit primitive.
+	return actTryStoreExcess(map[string]any{
+		"chest_room": mob.StorageChestRoom,
+	}, ctx)
 }
 
 // dumpFernwayLoadIntoCrate transfers fernway-bucket items from the
