@@ -124,6 +124,7 @@ var userOnlyCommands = map[string]string{
 	"disenchant": "player-mechanic",
 	"offer":      "player-mechanic",
 	"party":      "player-mechanic",
+	"picklock":   "player-mechanic: wontfix per chunk 2.10 deferred-gaps review — interactive minigame is intentional player-only design",
 	"reply":      "player-mechanic",
 	"sell":       "player-mechanic",
 	"share":      "player-mechanic",
