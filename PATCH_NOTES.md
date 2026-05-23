@@ -1,5 +1,86 @@
 # DOGMud Patch Notes
 
+## 2026-05-23 — Mob Aliveness 2.10: PvM/MvP/PvP/MvM Parity Audit
+
+**Mobs can now use mutation abilities in combat.** All six active
+mutations — blinding flash, blinding spit, healing gel, pacifism aura,
+sonic shout, toxic bite — work identically whether a player triggers
+them or a mob does. Companions inherit this naturally: any companion
+with an evolved active mutation now uses it autonomously per its
+archetype's combat AI. Mob archetypes opt in via a new behavior-tree
+action `try_mutation_active`, which can list a single preferred mutation
+key or an ordered fallback list (first available wins).
+
+**Healing-gel re-balance.** The mutation was secretly using a flat
+stat-derived heal (15% of Vitality) instead of the percentage-of-pool
+heal the rest of the regen system uses. Corrected to 25% of HealthMax,
+which scales with character power rather than just Vitality. For most
+characters this is a small buff; for high-HealthMax / low-Vitality
+builds it's a noticeable one.
+
+**Sonic shout and toxic bite still bypass the unified damage pipeline.**
+Surfaced during the lift but intentionally preserved verbatim — these
+will be re-balanced in a future cleanup pass alongside other
+pipeline-bypass cases. No observable change to current behavior.
+
+**Sonic shout's "stun" is not actually a stun.** Documented as
+prone-knockdown + caster self-deafen (the `ConditionStunned` referenced
+in older help text doesn't exist as a code constant). No behavior
+change — just naming/help clarity for future updates.
+
+**Surprise attack confirmed to have full parity.** The audit initially
+flagged this as a gap; verified that both player and mob paths
+implement identical mechanics (per-weapon strikes from hidden state
+when the special-move cooldown is available). Unifying the two parallel
+implementations into one shared helper is queued as a refactor
+followup.
+
+**Companion gear loss reminder.** Heads up — when you dismiss a
+companion, any gear they're carrying or wearing is destroyed. Strip
+them first if you want to keep it. (Existing behavior; a helpfile
+update is queued so this is clearer in-game.)
+
+**Internal cleanup.**
+- Six `mutation_*` commands lifted from `internal/usercommands/` into
+  the shared `internal/actions/` package (~480 LoC deleted on the
+  player side, ~120 LoC added on the mob side, robust shared preamble
+  helper).
+- Dead `selljunk` mob command deleted — registered but had zero callers
+  in any YAML, hook, or AI code. First case study for the new
+  "delete divergent verb" parity verdict.
+- Full audit of all 119 non-admin player commands and 63 mob commands
+  classified against a 6-bucket parity scheme. Tables embedded in the
+  chunk spec.
+- Runtime parity checker (`AuditCommandParity` startup hook) cleaned
+  up: ~40 commands the audit identified as Orthogonal were never added
+  to the allowlist; backfilled. 50 startup warnings → 3 (the three
+  remaining are deliberate reminders of queued followup chunks).
+
+**Phase 2 of the mob aliveness roadmap is complete** (chunks 2.1–2.10
++ 2.2a, 11 total). Tactical-verb vocabulary substantially closes the
+gap between player and mob commands; remaining gaps are tracked as
+followup chunks in MEMORY.md.
+
+**Deferred to followup chunks:**
+- **Forager locked-chest workflow** — extend forager NPCs to unlock
+  their owned storage chest, place/remove goods, re-lock. Bundles the
+  `lock` and `unlock` mob verbs.
+- **Throwable mobs** — gated on a future "real ranged weapon system"
+  design pass so projectile mechanics are designed once for both
+  thrown and ranged.
+- **Picklock parity** — wontfix. The interactive minigame is intentional
+  player-only design; mob lock-bypassing will use a different model when
+  needed.
+- **Runtime-evolved mutation btree dispatch** — currently a mob (or
+  companion) that evolves a new active mutation at runtime won't fire
+  it until its archetype's `try_mutation_active` node lists the new
+  key. Three fix paths sketched in the followup memory entry.
+- **Surprise-attack unification refactor** — extract a shared
+  `actions.SurpriseAttack` helper so the player and mob paths can't
+  drift.
+- **charge.go trip-math duplication** — mob `charge` reimplements trip
+  resolution instead of delegating to the shared `actions.ExecuteTrip`.
+
 ## 2026-05-22 — Mob Aliveness 2.9: Mob Forage + Salvage
 
 **Foragers join the unified action pipeline.** Tova (Stillwater Marsh),
