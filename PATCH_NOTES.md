@@ -1,5 +1,69 @@
 # DOGMud Patch Notes
 
+## 2026-05-22 — Mob Aliveness 2.9: Mob Forage + Salvage
+
+**Foragers join the unified action pipeline.** Tova (Stillwater Marsh),
+Halix (Ironwind Steppe), and Kessa (Fernway South) — the three routine
+forager NPCs — now run their per-tick forage roll through the same
+`actions.Forage` entry point that the player `forage` command uses.
+Previously each forager mob had its own per-mob behavior YAML driving
+a Go state machine with private foraging logic. Now they share a single
+`forager` archetype whose YAML composes `try_forage`, `try_salvage`,
+and `wander_territory` btree primitives. The multi-state daily cycle
+(Resting → Traveling → Foraging → Delivering → Recalling) stays in
+Go via `forager_step`; only the per-tick Foraging loop dissolved into
+YAML.
+
+**Salvage is a real verb on the mob side.** The existing mob
+`salvage corpse` mobcommand always worked, but its corpse-finding and
+yield-rolling logic was its own self-contained code path that didn't
+share anything with the player's multi-round Activity-machine version.
+Both paths now converge on a new `actions.Salvage` single-tick core.
+Player wrapper retains the multi-round CraftingState scheduling (so
+the progress UX is unchanged); each per-tick resolve calls into the
+shared action. Mob path calls it directly. The `salvage_returns` and
+recipe-reverse-lookup yield math is now the same code regardless of
+who's salvaging.
+
+**Forage and salvage as btree primitives.** Strategic NPCs can now
+compose `try_forage` and `try_salvage` in their archetype trees
+without re-implementing the gathering logic. The `try_forage`
+primitive returns Success on item found, Failure on miss / cooldown
+/ wrong-biome. The `try_salvage` primitive defaults to "first eligible
+corpse in room"; an `item_uuid` parameter overrides to specific-item
+mode. The `wander_territory` primitive delegates to the existing
+forager profile's territory-neighbor logic so a foraging mob still
+respects its assigned patrol bounds.
+
+**Latent bug fix bundled in.** The previous mob salvage path emitted a
+"The X corpse is no longer here." message when a player's targeted
+corpse disappeared between activity start and the final tick. The
+initial Task 4 refactor dropped that message; the follow-up restored
+a cause-agnostic equivalent ("You can no longer find the corpse you
+were working on.") so multi-round salvage activities always close
+with player-facing feedback.
+
+**Internal cleanup.** `tickForagerForaging` (~40 lines of Go) and
+`npcAttemptForage` (~35 lines) deleted from `behaviortree/actions_forager.go`.
+The fatigue counter and carry-cap transition triggers moved to the
+top of `actForagerStep` as state-entry guards. Three per-mob behavior
+YAMLs removed. ~62 net lines deleted from the state machine code.
+
+**Known deferrals** (logged as followups in MEMORY.md):
+- Forager fatigue cadence now ticks only when `forager_step` is
+  invoked (full-fallthrough of the YAML foraging selector), not on
+  every Foraging-state tick. The 600-round watchdog still prevents
+  runaway state. Observable cadence change for foragers in workable
+  territories — they may stay in Foraging longer than before. Fixable
+  via a dedicated `forager_foraging_tick_bookkeeping` primitive if
+  smoke reveals impact.
+- The `ForagerForageDwellRounds` config knob and `keyForageTimer`
+  constant are now orphaned (written but never read). Mark deprecated
+  or remove in a cleanup pass.
+- The restored corpse-vanished message is generic — the mob's name
+  is no longer threaded through. Wire `SalvageOptions.TargetCorpseName`
+  in a follow-up if the specific message matters.
+
 ## 2026-05-22 — Mob Aliveness 2.8: Scout / Track / Scan
 
 **Scouts that actually patrol.** Goblin scouts on the Ironwind steppe
