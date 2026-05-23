@@ -93,7 +93,7 @@ should always agree.
 | 2.8 | Tactical | Mob scout / track / scan | M | — | Done |
 | 2.9 | Tactical | Mob `forage` as a command | M | — | Done |
 | 2.10 | Tactical | PvM/MvP/PvP/MvM parity audit | M | 2.1–2.9 | Done |
-| 3.1 | Routine | Game-time hook | S | — | Not started |
+| 3.1 | Routine | Game-time hook | S | — | Done |
 | 3.2 | Routine | NPC schedules | L | 3.1 | Not started |
 | 3.3 | Routine | Sleeping / wake states | S | 3.1 | Not started |
 | 3.4 | Routine | Waypoint patrols | M | — | Not started |
@@ -117,7 +117,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 18 / 41 done • 0 in progress • 23 not started.
+**Roll-up:** 19 / 41 done • 0 in progress • 22 not started.
 
 ---
 
@@ -408,13 +408,14 @@ Scheduled and repeating procedural behaviors. Adds time-of-day texture to the
 world.
 
 ### 3.1 Game-time hook
-**Status:** Not started • **Size:** S
+**Status:** Done (2026-05-23) • **Size:** S
 
 - **Goal:** Expose time-of-day to behaviors (clock primitive — extend the existing time system if needed).
 - **In:** Time tick, day/night flag, configurable day length, btree condition `time_of_day_is`.
 - **Out:** Visible time-of-day UI for players (could come with content pass).
 - **Depends on:** —
 - **Why:** Without time, schedules are meaningless. Cheap foundation.
+- **Shipped:** Extended the existing `time_of_day` btree condition (`internal/behaviortree/conditions_state.go:64`) with a `range:` parameter for hour-precise time gating that chunk 3.2 schedules will use. Range format `"<start>-<end>"` with `[start, end)` semantics, wraps midnight when `start > end` (e.g., `"22-6"` for nightwatch). When both `period:` and `range:` are set, `range:` wins. Empty range (`"5-5"`) always Failure + warning; full-day (`"0-24"`) always Success + warning; malformed strings log an error once and return Failure. `sync.Map` dedup prevents log spam. Most of the roadmap requirements were already in place: `util.GetRoundCount()` provides the time tick, `gametime.IsNight()` + `GameDate.Night` provide the day/night flag, `configs.GetTimingConfig().RoundsPerDay` provides configurable day length, and `modules/time/time.go` already gives players a `time` command. The only new code was the `range:` parser + wrap-around comparator + 20 unit tests. Spec at `docs/superpowers/specs/2026-05-23-mob-aliveness-3.1-game-time-hook-design.md`, plan at `docs/superpowers/plans/2026-05-23-mob-aliveness-3.1-game-time-hook.md`.
 
 ### 3.2 NPC schedules
 **Status:** Not started • **Size:** L
