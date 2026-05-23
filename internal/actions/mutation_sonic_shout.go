@@ -2,6 +2,7 @@ package actions
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
@@ -18,19 +19,23 @@ import (
 // TriggerSonicShout fires the sonic-shout mutation for any Actor (player or
 // mob). AoE attack: rolls an opposed Wil+UnarmedCombat vs Wil+CombatSkill
 // check against every mob in the room. On hit, each victim takes Willpower-
-// scaled damage and has a chance of being knocked prone. The attacker always
-// takes a self-deafen (ConditionBlinded, duration 3, magnitude 0.7) after the
-// shout regardless of how many targets were hit.
+// scaled damage (routed through the Conviction channel) and has a chance of
+// being knocked prone. The attacker always takes a self-deafen
+// (ConditionBlinded, duration 3, magnitude 0.7) after the shout regardless
+// of how many targets were hit.
 //
 // Gates: must have "sonic-shout" mutation + be in combat + pass the shared
 // special-move cooldown + have at least 15 stamina. Stamina is only deducted
 // on full success.
 //
-// NOTE: The damage formula (Willpower × 0.08) is inherited from the original
-// player command and bypasses the unified combat.CalcRawDamage pipeline. This
-// is a pre-existing design debt flagged here for a future balance pass. The
-// "stun" effect is implemented as knockdown (TransitionToProne) rather than
-// ConditionStunned — also inherited from the original implementation.
+// Damage is routed through combat.CalcRawDamage(Wil, UnarmedCombat rank,
+// 1.0, ChannelConviction) → combat.ApplyMitigation against each victim's
+// conviction_mitigation → dice.RollStat for variance. The Conviction channel
+// preserves the "willful sonic disruption" theme — sonic shouts disrupt
+// morale and concentration rather than dealing raw physical or magical harm.
+// Mitigation is computed per-victim inside the AoE loop. The "stun" effect
+// is implemented as knockdown (TransitionToProne), inherited from the original
+// implementation.
 //
 // Player actors receive descriptive messages; mob actors are silent (MobActor
 // SendText is a no-op). Damage amounts are reported via
@@ -51,11 +56,15 @@ func TriggerSonicShout(actor Actor, opts MutationOpts) MutationResult {
 	attackerScore := float64(char.GetSkillLevel(skills.UnarmedCombat)) +
 		float64(char.Stats.Willpower.ValueAdj)
 
-	// Pre-existing: raw arithmetic, not combat.CalcRawDamage. See NOTE above.
-	baseDamage := int(float64(char.Stats.Willpower.ValueAdj) * 0.08)
-	if baseDamage < 1 {
-		baseDamage = 1
-	}
+	// Pre-compute attacker's raw conviction damage (before per-victim mitigation).
+	// Willpower is the input stat; Conviction channel routes damage through each
+	// victim's conviction_mitigation rather than physical or magical defenses.
+	rawDamageBase := combat.CalcRawDamage(
+		char.Stats.Willpower.ValueAdj,
+		char.GetSkillLevel(skills.UnarmedCombat),
+		1.0,                      // no item multiplier for mutations
+		combat.ChannelConviction, // sonic disruption → conviction channel
+	)
 
 	if actor.IsPlayer() {
 		actor.SendText(messaging.CategorySystem,
@@ -93,11 +102,22 @@ func TriggerSonicShout(actor Actor, opts MutationOpts) MutationResult {
 
 		shoutDmg := 0
 		if attackSuccess {
-			victim.Character.Health -= baseDamage
+			// Apply per-victim conviction mitigation. Each mob may have
+			// different equipment or buff-based conviction_mitigation values.
+			mitigPct := victim.Character.GetConvictionMitigation()
+			cap := combat.MitigationCap(combat.ChannelConviction)
+			dmgMean := combat.ApplyMitigation(rawDamageBase, mitigPct, cap)
+			dmgRoll := dice.RollStat(dmgMean)
+			dmg := int(math.Round(dmgRoll.Value))
+			if dmg < 1 {
+				dmg = 1
+			}
+
+			victim.Character.Health -= dmg
 			if victim.Character.Health < 1 {
 				victim.Character.Health = 0
 			}
-			shoutDmg = baseDamage
+			shoutDmg = dmg
 
 			// Knockdown chance: this implements the "stun" effect from the
 			// original command. A low dice roll knocks the victim prone.
@@ -114,7 +134,7 @@ func TriggerSonicShout(actor Actor, opts MutationOpts) MutationResult {
 					fmt.Sprintf(
 						`The shout staggers <ansi fg="mobname">%s</ansi>! (<ansi fg="damage">%s</ansi>)`,
 						victim.Character.Name,
-						combat.GetDamageDescription(baseDamage, victim.Character.HealthMax.Value),
+						combat.GetDamageDescription(dmg, victim.Character.HealthMax.Value),
 					))
 			}
 			affectedCount++

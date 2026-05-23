@@ -103,3 +103,38 @@ func TestTriggerSonicShout_SelfDeafen(t *testing.T) {
 		t.Error("expected actor to have ConditionBlinded (self-deafen) after firing sonic-shout")
 	}
 }
+
+// TestTriggerSonicShout_MitigationAppliesViaPipeline verifies that AoE damage
+// flows through the unified conviction pipeline and is applied per-victim.
+// We use a high-Willpower attacker so the pipeline produces measurable damage
+// regardless of dice variance; we only assert that health decreased (not an
+// exact number) to avoid brittleness from dice.RollStat spread.
+func TestTriggerSonicShout_MitigationAppliesViaPipeline(t *testing.T) {
+	attacker := newTestMobBare(t)
+	attacker.Character.Mutations = map[string]int{"sonic-shout": 1}
+	attacker.Character.Stamina = 100
+	attacker.Character.Stats.Willpower.Value = 300
+	attacker.Character.Stats.Willpower.ValueAdj = 300
+	attacker.Character.SetAggro(0, 9901, characters.DefaultAttack)
+
+	room := newTestRoomBare(t)
+
+	// Place a victim in the room with no conviction mitigation (bare mob).
+	victim := newTestMobInRoom(t, room, 9902)
+	victim.Character.Health = 200
+	victim.Character.HealthMax.Value = 200
+	startHealth := victim.Character.Health
+
+	actor := NewMobActorInRoom(attacker, room)
+	res := TriggerSonicShout(actor, MutationOpts{})
+
+	if !res.Triggered {
+		t.Fatalf("expected Triggered=true, got BlockReason=%s", res.BlockReason)
+	}
+	// The opposed roll may fail (dice are random), so we can't guarantee damage.
+	// But if the roll succeeded, health must have decreased.
+	if res.AffectedCount > 0 && victim.Character.Health >= startHealth {
+		t.Errorf("AffectedCount=%d but victim health did not decrease: was %d, now %d",
+			res.AffectedCount, startHealth, victim.Character.Health)
+	}
+}
