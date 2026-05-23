@@ -525,3 +525,109 @@ both literal name matches and purpose-based cross-reference against
 - Gap: defer: 5 (`lock`, `picklock`, `surprise_attack`, `throw`, `unlock`)
 - **Total: 119** (118 non-admin, non-meta player command files after exclusions; `print.go` defines
   both `print` and `printline`, giving 119 distinct command functions)
+
+## Mob-side audit table
+
+Walked the ~62 mob commands in `internal/mobcommands/`. The classification
+scheme is documented in the spec's "Classification scheme" section.
+Direction reversed from the player-side: "does the player side have a
+counterpart, and if not, is that a gap?"
+
+Note: `darkness.go` is a shared-helper file (exports `sendRoomText`,
+`sendAudioRoomText`, `canSeeInDark`, `isExcludedId`) — not a command.
+It is excluded from the audit table. `sayto.go` defines three functions:
+`SayTo`, `SayToOnly`, and `ReplyTo`. All three are registered commands and
+appear as separate rows.
+
+| Command | Player counterpart | Verdict | Notes / file refs |
+|---------|-------------------|---------|-------------------|
+| `aid` | (none) | Orthogonal | Mob first-aid (`aidskill` spell) targets downed players; player has `assist` (join combat) but no explicit first-aid command. `Aid` is species-gated (`KnowsFirstAid`); player healing is handled by spells/potions, not a command. |
+| `attack` | `attack` | Equivalent | Both resolve via `actions.FindAttackTarget` + `Character.SetAggro`; mob supports hidden-state surprise-attack bonus. `mobcommands/attack.go` ↔ `usercommands/attack.go` |
+| `bash` | `bash` | Equivalent | Both call `actions.ExecuteBash`; mob wraps darkness-aware messaging. `mobcommands/bash.go` ↔ `usercommands/bash.go` |
+| `befriend` | (none) | Orthogonal | Engine plumbing: charms a player as a companion. Player has `companion` UI (posture toggle, dismiss) but cannot initiate a charm — that is a mob-only action by design. Actively used: `divergences.go:124` notes it as mob-AI. |
+| `bite` | (none) | Orthogonal | Vampire-exclusive natural attack: physical damage + life-drain via `actions.ExecuteBite`. No player counterpart; design intent is a mob-specific special tied to vampire species. Not a gap — no player character has fangs. |
+| `break` | `break` | Equivalent | Both call `Character.EndAggro()` and emit a disengage message. `mobcommands/break.go` ↔ `usercommands/break.go` |
+| `broadcast` | `broadcast` | Equivalent | Both emit global chat via `events.Broadcast`. `mobcommands/broadcast.go` ↔ `usercommands/broadcast.go` |
+| `buy` | `buy` | Equivalent | Both route through `actions.Buy`. `mobcommands/buy.go` ↔ `usercommands/buy.go` |
+| `callforhelp` | (none) | Orthogonal | Mob AI coordination verb: broadcasts a `heard_callforhelp` btree event to nearby same-routine mobs and physically moves allies to the caller's room. Actively used by lookout archetype (verified: `behaviortree/lookout_archetype_test.go`). No player equivalent is a design goal — player party is managed via `party` command. |
+| `cancel` | `cancel` | Equivalent | Both abort casting/crafting/salvaging via `Activity.TransitionToFree`. `mobcommands/cancel.go` ↔ `usercommands/cancel.go` |
+| `cast` | `skill.cast` | Equivalent | Both route through `actions.InitiateCast` + `Activity.TransitionToCasting`. `mobcommands/cast.go` ↔ `usercommands/skill.cast.go` |
+| `charge` | (none) | Orthogonal | Boar/ram-species trip variant: same math as `trip` but distinct flavor text ("charges and slams"). Player `trip` is the species-agnostic equivalent; adding a player `charge` would be redundant. Species-gated by btree archetype dispatch. |
+| `consider` | `consider` | Equivalent | Both route through `actions.Consider`. Mob `MobActor.SendText` is a no-op, so math runs silently. `mobcommands/consider.go` ↔ `usercommands/consider.go` |
+| `consume` | (none) | Orthogonal | Mob eats a room corpse to gain a `ConditionRegen` buff. Players have no equivalent corpse-eating design goal; food/potions cover the regen niche for players. Flesh-golem variant has enhanced absorption. |
+| `converse` | (none) | Orthogonal | Mob-to-mob dialogue origination via the `conversations` subsystem. Player dialogue is player-to-mob only via `ask`/`talk`; mob-to-mob scripted conversation is a world-flavor feature with no player counterpart. |
+| `craft` | `craft` | Equivalent | Both route through `actions.InitiateCraft`. `mobcommands/craft.go` ↔ `usercommands/craft.go` |
+| `defuse` | `skill.skullduggery.defuse` | Equivalent | Both route through `actions.Defuse`. `mobcommands/defuse.go` ↔ `usercommands/skill.skullduggery.defuse.go` |
+| `despawn` | (none) | Orthogonal | Engine plumbing: destroys the mob instance, deletes instance save, cleans room spawn slot. No player equivalent concept (player `quit` / `deletecharacter` are entirely separate flows). |
+| `drink` | `drink` | Equivalent | Both consume drinkable items from backpack, apply buff IDs, grapple-blocked. `mobcommands/drink.go` ↔ `usercommands/drink.go` |
+| `drop` | `drop` | Equivalent | Both drop items and gold to room floor via `actions.DropItem` / `actions.FloorDropGold`. `mobcommands/drop.go` ↔ `usercommands/drop.go` |
+| `eat` | `eat` | Equivalent | Both consume edible items from backpack, apply buff IDs, grapple-blocked. `mobcommands/eat.go` ↔ `usercommands/eat.go` |
+| `emote` | `emote` | Equivalent | Both emit free-form emote text via `actions.Emote` + `actions.FormatEmoteText`. `mobcommands/emote.go` ↔ `usercommands/emote.go` |
+| `equip` | `equip` | Equivalent | Both equip/wield items via `actions.EquipItem`; mob has same-item no-op guard. `mobcommands/equip.go` ↔ `usercommands/equip.go` |
+| `flee` | `flee` | Equivalent | Both use `combat.ResolveFleeBlockers`; grapple-blocked, movement-buff-blocked; random exit selection. `mobcommands/flee.go` ↔ `usercommands/flee.go` |
+| `forage` | `skill.forage` | Equivalent | Both route through `actions.Forage`. `mobcommands/forage.go` ↔ `usercommands/skill.forage.go` |
+| `gearup` | `gearup` | Equivalent | Both equip best items from backpack via `itemvalue.IsUpgrade`; mob has charmed-mob displaced-item drop logic. `mobcommands/gearup.go` ↔ `usercommands/gearup.go` |
+| `get` | `get` | Equivalent | Both pick items and gold from room via `actions.GetItemFromFloor` / `actions.GetGoldFromFloor`. `mobcommands/get.go` ↔ `usercommands/get.go` |
+| `give` | `give` | Equivalent | Both transfer items/gold to targets via `actions.GiveItemToChar` / `actions.GiveGoldToChar`; mob supports mob-to-mob give. `mobcommands/give.go` ↔ `usercommands/give.go` |
+| `givequest` | (none) | Orthogonal | Engine plumbing: enqueues a `events.Quest` token for target players. Quest granting is an NPC-to-player operation; players receive quests, not give them. |
+| `go` | `go` | Equivalent | Both traverse room exits; mob additionally supports `go <roomId>` teleport and NPC party coupled-movement. `mobcommands/go.go` ↔ `usercommands/go.go` |
+| `grapple` | `grapple` | Equivalent | Both route through `actions.ExecuteGrapple`. `mobcommands/grapple.go` ↔ `usercommands/grapple.go` |
+| `hamstring` | (none) | Orthogonal | Wolf-species natural attack: physical damage + bleed condition via `actions.ExecuteHamstring`. Species-gated; no player character has a wolf's bite-and-rake anatomy. Not a gap — comparable to `bite`. |
+| `howl` | `taunt` | Equivalent | Both call `actions.ExecuteTaunt`; `howl` is the wolf-flavored taunt reskin for mob use. `mobcommands/howl.go` ↔ `usercommands/taunt.go` (`taunt` mob command is the generic flavor; `howl` is wolf-specific — both are Equivalent). |
+| `kick` | `kick` | Equivalent | Both call `actions.ExecuteKick` with stomp/knee/standard variant detection. `mobcommands/kick.go` ↔ `usercommands/kick.go` |
+| `look` | `look` | Equivalent | Both inspect rooms, targets, items, nouns. Mob look suppresses output when sneaking; includes `lookRoom` helper for peering through exits. `mobcommands/look.go` ↔ `usercommands/look.go` |
+| `lookforaid` | (none) | Orthogonal | Mob AI scan: charmed mob searches room for downed companions and issues `aid` commands. No player equivalent needed — players use `assist` / `aid` manually. |
+| `lookfortrouble` | (none) | Orthogonal | Mob AI aggro-scan: evaluates all players/mobs in room against faction, hate, and auto-aggro rules, then issues `attack`. Core of the hostile mob loop; no player equivalent by design. |
+| `pathto` | (none) | Orthogonal | Mob AI pathfinding: uses `mapper.GetPath` to compute a route and stamps `mob.Path`; the movement loop executes it. No player equivalent — players move manually via `go`. |
+| `plant` | `skill.skullduggery.plant` | Equivalent | Both route through `actions.Plant`. `mobcommands/plant.go` ↔ `usercommands/skill.skullduggery.plant.go` |
+| `portal` | (none) | Orthogonal | Mob-specific temporary-exit creation (`exit.TemporaryRoomExit`). Used by the loot goblin AI; the `portal loot` and `portal home` modes are mob-AI idioms with no player equivalent. Player `cast` can produce portal-like effects via spells, which is the player-side design. |
+| `put` | `put` | Equivalent | Both place items into room containers. `mobcommands/put.go` ↔ `usercommands/put.go` |
+| `rally` | `rally` | Equivalent | Both call `actions.ExecuteRally`; mob applies self-buff only (no ally fan-out). `mobcommands/rally.go` ↔ `usercommands/rally.go` |
+| `remove` | `remove` | Equivalent | Both unequip items via `actions.RemoveEquipment`. `mobcommands/remove.go` ↔ `usercommands/remove.go` |
+| `replyto` | `reply` (partial) | Orthogonal | Mob directed reply verb: sends `"<mob> replies to <player>"` with room broadcast. Player `reply` is a private whisper-reply UI mechanism. Purpose differs enough that no direct counterpart is a design goal; mob speech is always room-visible. |
+| `salvage` | `salvage` | Equivalent | Both route through `actions.Salvage`. Mob wraps `Activity` transitions explicitly. `mobcommands/salvage.go` ↔ `usercommands/salvage.go` |
+| `say` | `say` | Equivalent | Both route through `actions.Say` with darkness-aware audio dispatch. `mobcommands/say.go` ↔ `usercommands/say.go` |
+| `sayto` | `whisper` (partial) | Orthogonal | Mob directed speech visible to the room; player `whisper` is private. Player side has no room-visible directed-speech command (just `say` which is undirected). Purposeful asymmetry: mob speech is always observable. No gap. |
+| `saytoonly` | (none) | Orthogonal | Mob private-channel directed speech: sends only to the target player, no room broadcast. Used for dialogue-engine responses. No player counterpart by design — players have `whisper`/`reply` for private messages. Distinct from `sayto`. |
+| `scan` | `scan` | Equivalent | Both route through `actions.Scan`. `mobcommands/scan.go` ↔ `usercommands/scan.go` |
+| `search` | `skill.search` | Equivalent | Both route through `actions.Search`. `mobcommands/search.go` ↔ `usercommands/skill.search.go` |
+| `selljunk` | (none) | Gap: delete divergent verb | Converts mob inventory items to 1 gold/item via a light-flash emote. Grep verification: no callers in `_datafiles/` YAML or `internal/` Go (excluding `mobcommands/selljunk.go` and `mobcommands/mobcommands.go` registration). Only surfaces are: `actions/divergences.go:141` (documentation comment), `mobcommands_test.go:1005` (unit test). Zero live behavioral callers. No mob behavior YAML calls `selljunk`. Stage C deletes this file + its test. |
+| `shadow` | `skill.skullduggery.shadow` | Equivalent | Both route through `actions.Shadow`. `mobcommands/shadow.go` ↔ `usercommands/skill.skullduggery.shadow.go` |
+| `shoot` | `shoot` | Equivalent | Both route through `actions.ExecuteShoot`. `mobcommands/shoot.go` ↔ `usercommands/shoot.go` |
+| `shout` | `shout` | Equivalent | Both emit zone-speech with adjacent-room bleed. `mobcommands/shout.go` ↔ `usercommands/shout.go` |
+| `show` | `show` | Equivalent | Both display an item from backpack to a target. `mobcommands/show.go` ↔ `usercommands/show.go` |
+| `sneak` | `skill.skullduggery.sneak` | Equivalent | Both route through `actions.Sneak`. `mobcommands/sneak.go` ↔ `usercommands/skill.skullduggery.sneak.go` |
+| `steal` | `skill.skullduggery.steal` | Equivalent | Both route through `actions.Steal`. `mobcommands/steal.go` ↔ `usercommands/skill.skullduggery.steal.go` |
+| `suicide` | `suicide` | Equivalent | Both trigger the Life machine death path (`Character.Die`); mob supports `vanish` variant for admin-style forced removal. `mobcommands/suicide.go` ↔ `usercommands/suicide.go` |
+| `taunt` | `taunt` | Equivalent | Both call `actions.ExecuteTaunt`; `taunt` is the generic-flavor mob taunt (used by golems, elementals). `mobcommands/taunt.go` ↔ `usercommands/taunt.go` |
+| `track` | `skill.track` | Equivalent | Both route through `actions.Track`. `mobcommands/track.go` ↔ `usercommands/skill.track.go` |
+| `trip` | `trip` | Equivalent | Both call `actions.ExecuteTrip`; mob supports tail-sweep variant when mob has the tail mutation. `mobcommands/trip.go` ↔ `usercommands/trip.go` |
+| `wander` | (none) | Orthogonal | Mob AI roaming: picks a random adjacent room exit and issues `go`; respects MaxWander, zone restriction, pack-roaming logic. No player equivalent — players choose their own movement. Actively used across most mob YAML files. |
+| `warcry` | `warcry` | Equivalent | Both call `actions.ExecuteWarcry`; mob applies self-buff only. `mobcommands/warcry.go` ↔ `usercommands/warcry.go` |
+
+**Mob-side audit summary:**
+- Equivalent: 44 (`attack`, `bash`, `break`, `broadcast`, `buy`, `cancel`,
+  `cast`, `consider`, `craft`, `defuse`, `drink`, `drop`, `eat`, `emote`,
+  `equip`, `flee`, `forage`, `gearup`, `get`, `give`, `go`, `grapple`,
+  `howl`, `kick`, `look`, `plant`, `put`, `rally`, `remove`, `salvage`,
+  `say`, `scan`, `search`, `shadow`, `shoot`, `shout`, `show`, `sneak`,
+  `steal`, `suicide`, `taunt`, `track`, `trip`, `warcry`) — note: `howl`
+  and `taunt` are both Equivalent; both call `actions.ExecuteTaunt` with
+  different flavor text, and both map to the player-side `taunt` command
+- Orthogonal: 18 (`aid`, `befriend`, `bite`, `callforhelp`, `charge`,
+  `consume`, `converse`, `despawn`, `givequest`, `hamstring`, `lookforaid`,
+  `lookfortrouble`, `pathto`, `portal`, `replyto`, `sayto`, `saytoonly`,
+  `wander`)
+- Never-relevant: 0 (mob commands have no session-management, UI-display,
+  or account-management equivalents — those are all player-side
+  Never-relevant entries)
+- Gap: patch inline: 0 (no mob-side commands are missing a player
+  counterpart that would be a quick lift; the mutation gaps flow the other
+  direction — player-side missing mob-side — handled in Stage B)
+- Gap: delete divergent verb: 1 (`selljunk` — zero live YAML/Go callers
+  confirmed by grep; only `divergences.go` doc comment + unit test remain)
+- Gap: defer: 0 (no mob-side commands surfaced a deferred gap in the
+  player direction; all asymmetries are Orthogonal by design)
+- **Total: 63** (62 command files; `sayto.go` exports three registered
+  commands — `SayTo`, `SayToOnly`, `ReplyTo` — counted separately;
+  `darkness.go` is a shared-helper file, excluded)
