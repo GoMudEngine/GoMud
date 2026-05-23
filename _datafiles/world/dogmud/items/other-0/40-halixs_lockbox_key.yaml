@@ -1,0 +1,15 @@
+itemid: 40
+name: Halix's Lockbox Key
+not_salable: true
+namesimple: key
+keylockid: 3040-lockbox
+description: |
+  A flat iron key sheathed in oiled waxed leather to keep it from
+  rusting in the steppe wind. The bow is notched twice for grip in
+  cold fingers; the bit is filed sharp and kept free of grit. It
+  rides at Halix's belt, always within reach.
+type: key
+subtype: holdable
+uses: 0
+weight: 0.1
+value: 0

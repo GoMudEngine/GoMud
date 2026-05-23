@@ -13,6 +13,7 @@ maxwander: -1
 activitylevel: 20
 charm_immune: true
 fold_anchor_room: 4198
+storage_chest_room: 4198
 buffids: []
 idlecommands:
   - 'emote checks the satchel at her hip, eyes scanning the reedline'
@@ -34,6 +35,8 @@ character:
   speciesid: 1
   level: 1
   gold: 30
+  items:
+    - itemid: 39    # Tova's Lockbox Key
   stats:
     strength:    {training: 25}
     dexterity:   {training: 25}
