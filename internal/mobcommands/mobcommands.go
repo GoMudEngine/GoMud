@@ -85,6 +85,7 @@ var (
 		"shoot":          {Shoot, false},
 		"show":           {Show, false},
 		"sneak":          {Sneak, false},
+		"sonic_shout":    {SonicShout, false},
 		"steal":          {Steal, false},
 		"suicide":        {Suicide, true},
 		//		"stash":  {Stash, false},
