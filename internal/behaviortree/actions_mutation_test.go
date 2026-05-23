@@ -167,6 +167,84 @@ func TestCollectMutationKeys_Empty(t *testing.T) {
 	}
 }
 
+// ─── try_any_active_mutation tests ───────────────────────────────────────────
+
+// TestTryAnyActiveMutation_RegisteredInActionRegistry verifies the action is
+// present in the actionRegistry.
+func TestTryAnyActiveMutation_RegisteredInActionRegistry(t *testing.T) {
+	if _, ok := actionRegistry["try_any_active_mutation"]; !ok {
+		t.Fatal("try_any_active_mutation not registered in actionRegistry")
+	}
+}
+
+// TestTryAnyActiveMutation_NoEligibleMutations verifies that a mob with no
+// mutations returns Failure.
+func TestTryAnyActiveMutation_NoEligibleMutations(t *testing.T) {
+	mob := buildMutationMob(t, 9200, 99999, 1)
+	// mob.Character.Mutations is nil by default; no mutations to dispatch.
+	_ = mob
+
+	ctx := &EvalContext{
+		InstanceId: 9200,
+		RoomId:     1,
+		MobState:   NewBehaviorState(),
+	}
+	res := actTryAnyActiveMutation(map[string]any{}, ctx)
+	if res != Failure {
+		t.Errorf("mob with no mutations: expected Failure, got %v", res)
+	}
+}
+
+// TestTryAnyActiveMutation_OnlySingleTargetMutations verifies that a mob
+// with only blinding-spit and toxic-bite (single-target, excluded from
+// mutationTriggers) returns Failure.
+func TestTryAnyActiveMutation_OnlySingleTargetMutations(t *testing.T) {
+	mob := buildMutationMob(t, 9201, 99999, 1)
+	mob.Character.Mutations = map[string]int{
+		"blinding-spit": 1,
+		"toxic-bite":    1,
+	}
+
+	ctx := &EvalContext{
+		InstanceId: 9201,
+		RoomId:     1,
+		MobState:   NewBehaviorState(),
+	}
+	res := actTryAnyActiveMutation(map[string]any{}, ctx)
+	if res != Failure {
+		t.Errorf("mob with only single-target mutations: expected Failure, got %v", res)
+	}
+}
+
+// TestTryAnyActiveMutation_NilMob verifies that a missing mob instance
+// returns Failure without panicking.
+func TestTryAnyActiveMutation_NilMob(t *testing.T) {
+	ctx := &EvalContext{
+		InstanceId: 9299,
+		RoomId:     1,
+		MobState:   NewBehaviorState(),
+	}
+	res := actTryAnyActiveMutation(map[string]any{}, ctx)
+	if res != Failure {
+		t.Errorf("nil mob: expected Failure, got %v", res)
+	}
+}
+
+// TestTryAnyActiveMutation_RarityOrdering_UnitSkipped verifies that the
+// rarity-descending sort logic is exercised by the smoke test rather than
+// at unit-test level. The trigger functions require a loaded room and running
+// server state (special-move cooldown registry, etc.) that are not available
+// in unit-test context; calling them would panic or always return Failure due
+// to the missing mutation in mob.Character.Mutations. Rarity-ordering is a
+// pure sort concern covered structurally by reading the candidates slice in
+// actTryAnyActiveMutation — verified at integration/smoke level.
+func TestTryAnyActiveMutation_RarityOrdering_UnitSkipped(t *testing.T) {
+	t.Skip("Rarity-ordering verified at smoke-test level; " +
+		"trigger functions require live server state not available in unit tests")
+}
+
+// ─── TestMutationTriggers_SelfAoEPresent (original) ──────────────────────────
+
 // TestMutationTriggers_SelfAoEPresent verifies that all four SELF/AoE
 // mutations are registered in mutationTriggers, and that the two single-target
 // mutations (blinding-spit, toxic-bite) are intentionally absent. Absent

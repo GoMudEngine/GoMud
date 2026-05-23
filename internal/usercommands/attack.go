@@ -178,12 +178,10 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 							partyUser.Character.GetSetting("autoattack") != "off" &&
 							!partyUser.Character.IsInCombat() {
 							// Surprise attack for hidden party members before they join combat
-							if partyUser.Character.IsHidden() {
-								partyCfg := configs.GetBalanceConfig()
-								if partyUser.Character.TryCooldown("special-move",
-									fmt.Sprintf("%d rounds", partyCfg.SpecialMoveCooldown)) {
-									executeSurpriseAttack(partyUser, room, attackMobInstanceId, 0)
-								}
+							if targetMob := mobs.GetInstance(attackMobInstanceId); targetMob != nil {
+								partyActor := actions.NewUserActorInRoom(partyUser, room)
+								targetActor := actions.NewMobActorInRoom(targetMob, room)
+								actions.SurpriseAttack(partyActor, actions.SurpriseAttackOpts{Target: targetActor})
 							}
 							partyUser.Command(fmt.Sprintf(`attack #%d`, attackMobInstanceId))
 						}
@@ -191,13 +189,12 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				}
 			}
 
-			// Surprise attack from stealth — fires before normal combat begins
-			if isSneaking {
-				cfg := configs.GetBalanceConfig()
-				if user.Character.TryCooldown("special-move",
-					fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
-					executeSurpriseAttack(user, room, attackMobInstanceId, 0)
-				}
+			// Surprise attack from stealth — fires before normal combat begins.
+			// SurpriseAttack gates on IsHidden() internally; call unconditionally.
+			if targetMob := mobs.GetInstance(attackMobInstanceId); targetMob != nil {
+				actor := actions.NewUserActorInRoom(user, room)
+				targetActor := actions.NewMobActorInRoom(targetMob, room)
+				actions.SurpriseAttack(actor, actions.SurpriseAttackOpts{Target: targetActor})
 			}
 
 			// Detect "fresh aggression" before SetAggro overwrites prior state:
@@ -276,13 +273,12 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				}
 			}
 
-			// Surprise attack from stealth — fires before normal combat begins
-			if isSneaking {
-				cfg := configs.GetBalanceConfig()
-				if user.Character.TryCooldown("special-move",
-					fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
-					executeSurpriseAttack(user, room, 0, attackPlayerId)
-				}
+			// Surprise attack from stealth — fires before normal combat begins.
+			// SurpriseAttack gates on IsHidden() internally; call unconditionally.
+			if targetUser := users.GetByUserId(attackPlayerId); targetUser != nil {
+				actor := actions.NewUserActorInRoom(user, room)
+				targetActor := actions.NewUserActorInRoom(targetUser, room)
+				actions.SurpriseAttack(actor, actions.SurpriseAttackOpts{Target: targetActor})
 			}
 
 			user.Character.SetAggro(attackPlayerId, 0, characters.DefaultAttack)

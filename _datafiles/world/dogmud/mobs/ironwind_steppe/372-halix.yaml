@@ -13,6 +13,7 @@ maxwander: -1
 activitylevel: 20
 charm_immune: true
 fold_anchor_room: 3040
+storage_chest_room: 3040
 buffids: []
 idlecommands:
   - 'emote shades his eyes against the wind and scans the long grass'
@@ -36,6 +37,8 @@ character:
   speciesid: 1
   level: 1
   gold: 35
+  items:
+    - itemid: 40    # Halix's Lockbox Key
   stats:
     strength:    {training: 35}
     dexterity:   {training: 35}

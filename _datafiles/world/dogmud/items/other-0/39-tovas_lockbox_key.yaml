@@ -1,0 +1,15 @@
+itemid: 39
+name: Tova's Lockbox Key
+not_salable: true
+namesimple: key
+keylockid: 4198-lockbox
+description: |
+  A small brass key on a leather thong, worn smooth from years of
+  patient use. The bit is hand-cut to a single careful pattern, the
+  bow stamped faintly with a reed-and-wave mark in Tova's own hand.
+  The thong smells faintly of marsh water and wood smoke.
+type: key
+subtype: holdable
+uses: 0
+weight: 0.1
+value: 0

@@ -13,6 +13,7 @@ maxwander: -1
 activitylevel: 20
 charm_immune: true
 fold_anchor_room: 4197
+storage_chest_room: 4197
 buffids: []
 idlecommands:
   - 'emote checks the satchel at her hip and adjusts the strap'
@@ -36,6 +37,8 @@ character:
   speciesid: 1
   level: 1
   gold: 30
+  items:
+    - itemid: 41    # Kessa's Lockbox Key
   stats:
     strength:    {training: 25}
     dexterity:   {training: 28}

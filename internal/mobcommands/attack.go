@@ -68,6 +68,12 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			aggroType := characters.DefaultAttack
 			if mob.Character.IsHidden() {
 				aggroType = characters.SurpriseAttack
+				// Pre-combat burst: fire per-weapon strikes from stealth.
+				if targetUser := users.GetByUserId(attackPlayerId); targetUser != nil {
+					mobActor := actions.NewMobActorInRoom(mob, room)
+					targetActor := actions.NewUserActorInRoom(targetUser, room)
+					actions.SurpriseAttack(mobActor, actions.SurpriseAttackOpts{Target: targetActor})
+				}
 			}
 			// Only announce if not already fighting this target
 			alreadyFighting := mob.Character.IsInCombat() && mob.Character.CurrentCombatTarget().UserId == attackPlayerId
@@ -100,6 +106,10 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			if mob.Character.IsHidden() {
 				mobAggroType = characters.SurpriseAttack
 				mob.Character.Validate(true)
+				// Pre-combat burst: fire per-weapon strikes from stealth.
+				mobActor := actions.NewMobActorInRoom(mob, room)
+				targetActor := actions.NewMobActorInRoom(m, room)
+				actions.SurpriseAttack(mobActor, actions.SurpriseAttackOpts{Target: targetActor})
 			}
 			mob.Character.SetAggro(0, attackMobInstanceId, mobAggroType)
 

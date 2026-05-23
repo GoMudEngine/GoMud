@@ -437,6 +437,12 @@ type Balance struct {
 	// re-cycles. Logs a Warn on reset for ops visibility.
 	ForagerStuckThresholdRounds ConfigInt `yaml:"ForagerStuckThresholdRounds"`
 
+	// ForagerStoringWatchdogRounds is the maximum number of rounds a
+	// forager will spend in StateStoring before bailing to StateRecalling.
+	// Prevents infinite loops if the chest workflow stalls (e.g.,
+	// persistently full chest or unreachable chest room).
+	ForagerStoringWatchdogRounds ConfigInt `yaml:"ForagerStoringWatchdogRounds"`
+
 	// ── ECONOMY HEALTH DASHBOARD ─────────────────────────────────────────────
 	EconomySnapshotIntervalHours ConfigInt   `yaml:"EconomySnapshotIntervalHours"` // Wall-clock cadence (default 1)
 	EconomySnapshotRetentionDays ConfigInt   `yaml:"EconomySnapshotRetentionDays"` // Auto-snapshot retention (default 30)

@@ -966,6 +966,12 @@ Balance:
   # heads home, dumps satchel, and re-cycles. Logs a warning on reset.
   ForagerStuckThresholdRounds: 600
 
+  # - ForagerStoringWatchdogRounds -
+  # Maximum rounds a forager spends in StateStoring before bailing back
+  # to StateRecalling. Prevents infinite loops if the chest workflow stalls
+  # (e.g., persistently full chest or unreachable chest room).
+  ForagerStoringWatchdogRounds: 20
+
   # ── ECONOMY HEALTH DASHBOARD ────────────────────────────────────────────────
   # Wall-clock cadence for auto-snapshots (hours). Default 1.
   EconomySnapshotIntervalHours: 1

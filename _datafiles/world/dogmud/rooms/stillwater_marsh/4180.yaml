@@ -25,6 +25,8 @@ coord:
 exits:
   south:
     roomid: 4179
+  north:
+    roomid: 4198
 nouns:
   spring-pool: |
     The creek's actual birth — a small deep pool perhaps four

@@ -1,0 +1,16 @@
+itemid: 41
+name: Kessa's Lockbox Key
+not_salable: true
+namesimple: key
+keylockid: 4197-lockbox
+description: |
+  A small brass key smelling faintly of cedar and pine resin, worn
+  smooth from handling. The bow is wrapped with a loop of leather
+  cord knotted at the end, and the bit is hand-filed to a single
+  careful pattern that matches the lockbox tucked under Kessa's
+  lean-to bedding.
+type: key
+subtype: holdable
+uses: 0
+weight: 0.1
+value: 0
