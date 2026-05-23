@@ -1,9 +1,12 @@
 package behaviortree
 
 import (
+	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -61,7 +64,54 @@ func condItemMatches(params map[string]any, ctx *EvalContext) Result {
 	return Failure
 }
 
+// loggedTimeOfDayMisconfigs tracks already-logged misconfigured range
+// strings so warnings don't spam every btree tick. sync.Map gives
+// lock-free reads for this low-cardinality set.
+var loggedTimeOfDayMisconfigs sync.Map
+
 func condTimeOfDay(params map[string]any, ctx *EvalContext) Result {
+	rangeStr := getStringParam(params, "range")
+
+	// range parameter takes precedence over period when both are set.
+	if rangeStr != "" {
+		start, end, valid := parseHourRange(rangeStr)
+		if !valid {
+			if _, already := loggedTimeOfDayMisconfigs.LoadOrStore("err:"+rangeStr, true); !already {
+				mudlog.Error("time_of_day",
+					"error", "invalid `range` parameter",
+					"value", rangeStr)
+			}
+			return Failure
+		}
+
+		// Empty range (start == end) always Failure.
+		if start == end {
+			if _, already := loggedTimeOfDayMisconfigs.LoadOrStore("empty:"+rangeStr, true); !already {
+				mudlog.Warn("time_of_day",
+					"warn", "empty `range` (start == end) always returns Failure",
+					"value", rangeStr)
+			}
+			return Failure
+		}
+
+		// Full-day range (0-24) always Success.
+		if start == 0 && end == 24 {
+			if _, already := loggedTimeOfDayMisconfigs.LoadOrStore("full:"+rangeStr, true); !already {
+				mudlog.Warn("time_of_day",
+					"warn", "full-day `range` (0-24) always returns Success — consider removing the gate",
+					"value", rangeStr)
+			}
+			return Success
+		}
+
+		hour := gametime.GetDate().Hour24
+		if inHourRange(hour, start, end) {
+			return Success
+		}
+		return Failure
+	}
+
+	// Existing binary form (period: day / period: night) — unchanged.
 	period := getStringParam(params, "period")
 	isNight := gametime.IsNight()
 	switch strings.ToLower(period) {
@@ -75,6 +125,49 @@ func condTimeOfDay(params map[string]any, ctx *EvalContext) Result {
 		}
 	}
 	return Failure
+}
+
+// parseHourRange parses a "start-end" hour string. Hours are in 0-23
+// 24h format; end=24 is allowed to mean "end of day". Returns
+// (start, end, true) on success; (0, 0, false) on any malformed input.
+//
+// Wrap-around (start > end, e.g., "22-6") is valid and handled by
+// inHourRange.
+func parseHourRange(s string) (int, int, bool) {
+	parts := strings.SplitN(s, "-", 2)
+	if len(parts) != 2 {
+		return 0, 0, false
+	}
+	startStr := strings.TrimSpace(parts[0])
+	endStr := strings.TrimSpace(parts[1])
+	if startStr == "" || endStr == "" {
+		return 0, 0, false
+	}
+	start, err := strconv.Atoi(startStr)
+	if err != nil {
+		return 0, 0, false
+	}
+	end, err := strconv.Atoi(endStr)
+	if err != nil {
+		return 0, 0, false
+	}
+	if start < 0 || start > 23 {
+		return 0, 0, false
+	}
+	if end < 0 || end > 24 {
+		return 0, 0, false
+	}
+	return start, end, true
+}
+
+// inHourRange reports whether hour falls within [start, end). Handles
+// wrap-around when start > end (e.g., 22-6 covers 22, 23, 0, 1, 2, 3, 4, 5).
+func inHourRange(hour, start, end int) bool {
+	if start <= end {
+		return hour >= start && hour < end
+	}
+	// Wrap-around: in range if at or after start, OR strictly before end.
+	return hour >= start || hour < end
 }
 
 func condRoundMod(params map[string]any, ctx *EvalContext) Result {
