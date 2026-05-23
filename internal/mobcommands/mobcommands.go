@@ -56,6 +56,7 @@ var (
 		"grapple":        {Grapple, false},
 		"gearup":         {Gearup, false},
 		"hamstring":      {Hamstring, false},
+		"healing_gel":    {HealingGel, false},
 		"howl":           {Howl, false},
 		"taunt":          {Taunt, false},
 		"go":             {Go, false},
