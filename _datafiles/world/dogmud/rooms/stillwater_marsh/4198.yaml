@@ -1,0 +1,72 @@
+roomid: 4198
+zone: Stillwater Marsh
+title: Tova's Reedwoven Hut
+description: >
+  A small <ansi fg="itemname">stilted hut</ansi> woven from reed-bundles
+  and lashed cane, built on a low platform above the marsh shallows at
+  the head of the spring pool. The inside is dim and dry, the floor
+  close-cut pine plank set on cross-timbers just above the waterline.
+  A rolled <ansi fg="itemname">bedding pallet</ansi> lies against the
+  north wall, a small <ansi fg="itemname">drying-rack</ansi> hung above
+  it with bundles of marsh herbs — sweetflag, calamus, marshmallow root
+  — and a half-cleaned fish-skin in slow patient curing. A tin
+  <ansi fg="itemname">kettle</ansi> sits on a flat stone shelf near the
+  entrance, cold but waiting. The place has the particular quiet of
+  someone who has lived alone in the reeds long enough that the marsh's
+  own silence has soaked in. An ironbound
+  <ansi fg="itemname">lockbox</ansi> sits tucked beneath the bedding
+  pallet, hand-cut hardwood with a brass hasp worn smooth from use.
+biome: marsh
+coord:
+  x: -21
+  y: 4
+  z: 0
+exits:
+  south:
+    roomid: 4180
+nouns:
+  stilted hut: |
+    A small hut of woven reed-bundles and lashed cane, built on a low
+    platform above the marsh shallows. The roof is thatched with the
+    same reed; the floor is dry pine plank set on cross-timbers above
+    the waterline. The construction is patient and practiced — every
+    bundle tied tight, every joint sound, nothing wasted.
+  bedding pallet: |
+    A rolled pallet of canvas-wrapped marsh-down with a folded wool
+    blanket at the foot. Beneath the pallet, an ironbound lockbox is
+    tucked away out of casual sight.
+  drying-rack: |
+    A simple frame of hazel rods strung across the north wall, hung
+    with bundles of marsh herbs — sweetflag, calamus, marshmallow root
+    — a half-cleaned fish-skin in slow patient curing, and a coil of
+    reed-cord for the next bundle of cuttings. The work is undisturbed
+    and methodical.
+  kettle: |
+    A small tin kettle on a flat stone shelf near the entrance. Tova
+    boils her tea here when she comes home from the marsh; the stone
+    holds a little warmth even when the fire is out, and a handful of
+    dry reed will catch it quickly again.
+  lockbox: |
+    A small ironbound lockbox tucked beneath the bedding pallet —
+    Tova the marsh forager's, hand-cut hardwood with a brass hasp and
+    a lock kept well-oiled but worn smooth from patient use. She keeps
+    the overflow of her cycles here.
+mutators:
+- mutatorid: sanctuary
+idlemessages:
+- a reed sways and clicks softly against the platform outside
+- ''
+- water laps quietly at the stilts below
+- ''
+- a marsh-bird calls once, far off, then answers itself
+- ''
+- the flat stone shelf is cold to the touch but the hut is dry
+spawninfo:
+- mobid: 371        # Tova, Marsh Forager
+containers:
+  lockbox:
+    lock:
+      difficulty: 10
+      relockinterval: 24 hours
+      rotationseed: 1
+    items: []
