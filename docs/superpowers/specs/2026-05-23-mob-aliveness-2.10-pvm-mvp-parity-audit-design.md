@@ -382,7 +382,7 @@ both literal name matches and purpose-based cross-reference against
 | `ask` | `converse` (loose) | Orthogonal | Mob dialogue acquisition is not a design goal; `ask` is player-side dialogue driver |
 | `assess` | (none) | Orthogonal | Necromantic corpse evaluation to choose `raise` spell; mob necromancers use scripted cast sequences |
 | `assist` | (none) | Orthogonal | Party-join-combat shortcut; mobs use `lookforaid` / `lookfortrouble` / btree `join_combat` equivalents |
-| `attack` | `attack` | Equivalent | Both sides via `actions.ExecuteAttack`; `mobcommands/attack.go` ↔ `usercommands/attack.go` |
+| `attack` | `attack` | Equivalent | Both sides resolve via `actions.FindAttackTarget` then `Character.SetAggro`; `mobcommands/attack.go` ↔ `usercommands/attack.go` |
 | `bank` | (none) | Never-relevant | Player account management; mobs have no bank account |
 | `bash` | `bash` | Equivalent | Both sides call `actions.ExecuteBash`; `mobcommands/bash.go` ↔ `usercommands/bash.go` |
 | `biome` | (none) | Never-relevant | Player UI info display; mobs don't inspect biome data |
@@ -512,7 +512,7 @@ both literal name matches and purpose-based cross-reference against
   `skill.disenchant`, `skills`, `sort`, `spells`, `stand`, `stash`,
   `talk`, `target`, `use`, `whisper`)
 - Never-relevant: 37 (`afk`, `alias`, `bank`, `biome`, `bug`,
-  `character`, `deletecharacter`, `help`, `hint`, `history`, `inbox`,
+  `character`, `companion`, `deletecharacter`, `help`, `hint`, `history`, `inbox`,
   `keyring`, `killstats`, `macros`, `motd`, `online`, `password`,
   `print`, `printline`, `pvp`, `quests`, `quit`, `renameself`, `reply`,
   `save`, `set`, `setdesc`, `sethome`, `skill.map`, `start`, `status`,
@@ -523,6 +523,5 @@ both literal name matches and purpose-based cross-reference against
 - Gap: delete divergent verb: 0 (player-side has no dead verbs; `selljunk`
   is mob-side only and handled in Stage C)
 - Gap: defer: 5 (`lock`, `picklock`, `surprise_attack`, `throw`, `unlock`)
-- **Total: 119** (113 candidate files after exclusions; `print.go` defines
-  two registered commands `print` + `printline`, giving 119 distinct
-  command functions)
+- **Total: 119** (118 non-admin, non-meta player command files after exclusions; `print.go` defines
+  both `print` and `printline`, giving 119 distinct command functions)
