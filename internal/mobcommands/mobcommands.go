@@ -89,6 +89,7 @@ var (
 		"steal":          {Steal, false},
 		"suicide":        {Suicide, true},
 		//		"stash":  {Stash, false},
+		"toxic_bite":     {ToxicBite, false},
 		"track":          {Track, false},
 		"trip":           {Trip, false},
 		"warcry":  {Warcry, false},
