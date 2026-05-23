@@ -65,6 +65,32 @@ func TestMutationPreamble_NotInCombat(t *testing.T) {
 	}
 }
 
+// TestMutationPreamble_OnCooldown verifies that an actor with an active
+// special-move cooldown is blocked with BlockReason="on-cooldown".
+// healing-gel uses combatRequired=false so we skip the combat gate.
+func TestMutationPreamble_OnCooldown(t *testing.T) {
+	mob := newTestMobBare(t)
+	mob.Character.Mutations = map[string]int{"healing-gel": 1}
+	mob.Character.Stamina = 100
+	// Pre-seed the cooldown so Try() returns false.
+	mob.Character.Cooldowns["special-move"] = 5
+
+	room := newTestRoomBare(t)
+	actor := NewMobActorInRoom(mob, room)
+
+	res := mutationPreamble(actor, "healing-gel", false, 14)
+	if res.OK {
+		t.Fatal("expected preamble to fail when on cooldown")
+	}
+	if res.BlockReason != "on-cooldown" {
+		t.Errorf("expected BlockReason=on-cooldown, got %s", res.BlockReason)
+	}
+	// Verify stamina was NOT deducted (it's an early-out before the stamina gate)
+	if mob.Character.Stamina != 100 {
+		t.Errorf("expected stamina unchanged at 100, got %d", mob.Character.Stamina)
+	}
+}
+
 // TestMutationPreamble_LowStamina verifies that an actor with insufficient
 // stamina is blocked with BlockReason="low-stamina".
 // healing-gel uses combatRequired=false so we skip the combat gate.
