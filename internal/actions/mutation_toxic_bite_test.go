@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
-	"github.com/GoMudEngine/GoMud/internal/mobs"
 )
 
 // ---------------------------------------------------------------------------
@@ -167,5 +166,4 @@ func TestTriggerToxicBite_BiteDamageViaPipeline(t *testing.T) {
 		t.Errorf("AffectedCount=%d but victim health did not decrease: was %d, now %d",
 			res.AffectedCount, startHealth, victim.Character.Health)
 	}
-	_ = mobs.GetInstance // ensure mobs import is exercised
 }

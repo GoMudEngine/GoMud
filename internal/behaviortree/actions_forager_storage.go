@@ -3,9 +3,16 @@ package behaviortree
 // actions_forager_storage.go — btree action primitive for the forager
 // chest-deposit workflow (chunk 2.10-followups, Task 7).
 //
-// try_store_excess is a multi-tick action: each btree tick advances ONE
-// step of the pathto → unlock → put items → lock pipeline. The btree
-// re-evaluates on the next game tick, picking up where it left off.
+// try_store_excess is a multi-tick state machine: each btree tick advances
+// the workflow as far as it can. Examples:
+//   - Tick 1: not in chest_room — issue pathto, return Success.
+//   - Tick 2: in chest_room, chest is locked — issue unlock, return Success.
+//   - Tick 3: chest unlocked, satchel has items — issue all `put` commands
+//     followed by `lock`, return Success. (mob.Command queues, so the puts
+//     and lock resolve sequentially in subsequent rounds.)
+//
+// The forager state machine's StateStoring branch consults this primitive
+// each tick until the satchel is empty or the watchdog fires.
 //
 // Required param:
 //

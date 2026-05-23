@@ -348,11 +348,12 @@ func tickForagerStoring(
 		return Success
 	}
 
-	// Watchdog: bail after 20 ticks spent in this state so a full or
-	// unreachable chest can't park the forager here indefinitely.
+	// Watchdog: bail after ForagerStoringWatchdogRounds ticks spent in this
+	// state so a full or unreachable chest can't park the forager here indefinitely.
 	storingTurns := getIntFromState(ctx.MobState, keyStoringTurns) + 1
 	ctx.MobState.Set(keyStoringTurns, strconv.Itoa(storingTurns))
-	if storingTurns >= 20 {
+	cfg := configs.GetBalanceConfig()
+	if storingTurns >= int(cfg.ForagerStoringWatchdogRounds) {
 		mudlog.Warn("forager.tickForagerStoring: watchdog triggered, bailing to Recalling",
 			"mobId", mob.MobId, "name", p.Name,
 			"chest_room", mob.StorageChestRoom,
