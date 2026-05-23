@@ -365,3 +365,164 @@ locked.
   (`actions.Forage`, `actions.Salvage`)
 - Actor abstraction: `internal/actions/actor.go`,
   `internal/actions/actor_user.go`, `internal/actions/actor_mob.go`
+
+## Player-side audit table
+
+Walked the ~95 non-admin, non-meta player commands in
+`internal/usercommands/`. The classification scheme is documented in
+the spec's "Classification scheme" section. Counterpart lookup used
+both literal name matches and purpose-based cross-reference against
+`internal/mobcommands/`.
+
+| Command | Mob counterpart | Verdict | Notes / file refs |
+|---------|----------------|---------|-------------------|
+| `afk` | (none) | Never-relevant | Session-presence state only; mobs are always "present" |
+| `alias` | (none) | Never-relevant | Client input substitution; mobs parse command strings directly |
+| `appraise` | (none) | Orthogonal | Player-merchant UX convenience; mobs set prices, don't query them |
+| `ask` | `converse` (loose) | Orthogonal | Mob dialogue acquisition is not a design goal; `ask` is player-side dialogue driver |
+| `assess` | (none) | Orthogonal | Necromantic corpse evaluation to choose `raise` spell; mob necromancers use scripted cast sequences |
+| `assist` | (none) | Orthogonal | Party-join-combat shortcut; mobs use `lookforaid` / `lookfortrouble` / btree `join_combat` equivalents |
+| `attack` | `attack` | Equivalent | Both sides via `actions.ExecuteAttack`; `mobcommands/attack.go` ↔ `usercommands/attack.go` |
+| `bank` | (none) | Never-relevant | Player account management; mobs have no bank account |
+| `bash` | `bash` | Equivalent | Both sides call `actions.ExecuteBash`; `mobcommands/bash.go` ↔ `usercommands/bash.go` |
+| `biome` | (none) | Never-relevant | Player UI info display; mobs don't inspect biome data |
+| `break` | `break` | Equivalent | Both call `Character.EndAggro()`; `mobcommands/break.go` ↔ `usercommands/break.go` |
+| `broadcast` | `broadcast` | Equivalent | Both emit global chat; `mobcommands/broadcast.go` ↔ `usercommands/broadcast.go` |
+| `bug` | (none) | Never-relevant | Player bug reporting to flat file; mobs can't file bugs |
+| `buy` | `buy` | Equivalent | Both route through `actions.Buy`; `mobcommands/buy.go` ↔ `usercommands/buy.go` |
+| `cancel` | `cancel` | Equivalent | Both abort casting/crafting/salvage activities; `mobcommands/cancel.go` ↔ `usercommands/cancel.go` |
+| `character` | (none) | Never-relevant | Player character sheet display; mobs have no UI |
+| `companion` | (none) | Never-relevant | Player companion roster / posture-toggle UI; mobs are companions, they don't manage them |
+| `conditions` | (none) | Orthogonal | Player buff display; mobs query buffs via code, no command needed |
+| `consider` | `consider` | Equivalent | Both route through `actions.Consider`; `mobcommands/consider.go` ↔ `usercommands/consider.go` |
+| `cooldowns` | (none) | Orthogonal | Player cooldown display; mobs check cooldowns in code via `Cooldowns.Try()` |
+| `craft` | `craft` | Equivalent | Both create items from recipes; `mobcommands/craft.go` ↔ `usercommands/craft.go` |
+| `deletecharacter` | (none) | Never-relevant | Account deletion flow; mobs use `despawn` / `DestroyInstance` |
+| `dismiss` | (none) | Orthogonal | Player severs companion bond; there is no mob-dismissing-a-companion design goal |
+| `drink` | `drink` | Equivalent | Both consume potions from backpack; `mobcommands/drink.go` ↔ `usercommands/drink.go` |
+| `drop` | `drop` | Equivalent | Both drop items to room floor; `mobcommands/drop.go` ↔ `usercommands/drop.go` |
+| `eat` | `eat` | Equivalent | Both consume food items from backpack; `mobcommands/eat.go` ↔ `usercommands/eat.go` |
+| `emote` | `emote` | Equivalent | Both emit free-form emote text; `mobcommands/emote.go` ↔ `usercommands/emote.go` |
+| `equip` | `equip` | Equivalent | Both wield/wear items; `mobcommands/equip.go` ↔ `usercommands/equip.go` |
+| `exits` | (none) | Orthogonal | Player room-exit display; mobs navigate by `pathto` and internal graph |
+| `flee` | `flee` | Equivalent | Both disengage and run; `mobcommands/flee.go` ↔ `usercommands/flee.go` |
+| `gearup` | `gearup` | Equivalent | Both equip best items from backpack; `mobcommands/gearup.go` ↔ `usercommands/gearup.go` |
+| `get` | `get` | Equivalent | Both pick items from room; `mobcommands/get.go` ↔ `usercommands/get.go` |
+| `give` | `give` | Equivalent | Both transfer items to targets; `mobcommands/give.go` ↔ `usercommands/give.go` |
+| `go` | `go` | Equivalent | Both move between rooms via exits; `mobcommands/go.go` ↔ `usercommands/go.go` |
+| `grapple` | `grapple` | Equivalent | Both initiate grapple; `mobcommands/grapple.go` ↔ `usercommands/grapple.go` |
+| `help` | (none) | Never-relevant | Player help-file browser; mobs don't read help |
+| `hint` | (none) | Never-relevant | Player quest-hint display; mobs don't track quests from the player side |
+| `history` | (none) | Never-relevant | Player combat-log display; mobs have no session history UI |
+| `inbox` | (none) | Never-relevant | Player message inbox; mobs have no inbox |
+| `inventory` | (none) | Orthogonal | Player inventory display; mobs query inventory in code, no display needed |
+| `keyring` | (none) | Never-relevant | Player key/lock tracking display; mobs don't maintain a keyring |
+| `kick` | `kick` | Equivalent | Both call `actions.ExecuteKick`; `mobcommands/kick.go` ↔ `usercommands/kick.go` |
+| `killstats` | (none) | Never-relevant | Player kill-count display; mobs don't inspect their own kill history |
+| `list` | (none) | Orthogonal | Player shop-listing UI; mobs ARE the shop; merchant behavior is server-side |
+| `lock` | (none) | Gap: defer | Mobs can pick locks (`defuse`, `picklock` via skullduggery) but can't lock containers/exits. Mob locking would require btree authoring context. Lift is non-trivial: needs room-exit lock state mutation + mob permission model. |
+| `look` | `look` | Equivalent | Both inspect rooms/targets; `mobcommands/look.go` ↔ `usercommands/look.go` |
+| `macros` | (none) | Never-relevant | Player macro display; mobs don't use macros |
+| `motd` | (none) | Never-relevant | Server MOTD display; player-only |
+| `mutation_blinding_flash` | (none yet) | Gap: patch inline | → Stage B lift; six `mutation_*` commands lifted into `actions/` package and mob wrappers added |
+| `mutation_blinding_spit` | (none yet) | Gap: patch inline | → Stage B lift |
+| `mutation_healing_gel` | (none yet) | Gap: patch inline | → Stage B lift |
+| `mutation_pacifism_aura` | (none yet) | Gap: patch inline | → Stage B lift |
+| `mutation_sonic_shout` | (none yet) | Gap: patch inline | → Stage B lift |
+| `mutation_toxic_bite` | (none yet) | Gap: patch inline | → Stage B lift |
+| `mutations` | (none) | Orthogonal | Player mutation-roster display; mobs query mutations in code via `mutations.HasMutation()` |
+| `offer` | (none) | Orthogonal | Player pre-sell price-check UI (mob says offer price but doesn't transfer); mobs are the price-givers, not price-askers |
+| `online` | (none) | Never-relevant | Server player-list display; player-only meta |
+| `party` | (none) | Orthogonal | Player party management UI (invite, kick, leave, list); mobs join parties implicitly as charmed companions, no command surface needed |
+| `password` | (none) | Never-relevant | Account credential management; mobs have no passwords |
+| `pet` | (none) | Orthogonal | Player affection gesture toward a pet; mobs don't pet other mobs as a command |
+| `picklock` | (none) | Gap: defer | Mobs with skullduggery could plausibly pick locks to pursue fleeing players. Lift needs btree action + skill-rank check + room-exit lock mutation. Non-trivial (>30 LoC, needs design decision on which mobs get this). |
+| `print` | (none) | Never-relevant | Admin/debug text-echo tool; player UI utility with no mob analog |
+| `printline` | (none) | Never-relevant | Admin/debug line-ruler tool (companion to `print`); no mob analog |
+| `put` | `put` | Equivalent | Both place items into containers; `mobcommands/put.go` ↔ `usercommands/put.go` |
+| `pvp` | (none) | Never-relevant | Player PvP flag display; mobs have no PvP concept |
+| `quests` | (none) | Never-relevant | Player quest-log display; mobs don't hold quests (they grant them) |
+| `quit` | (none) | Never-relevant | Player session exit; mobs use `despawn` |
+| `rally` | `rally` | Equivalent | Both call `actions.ExecuteRally`; mob rally is self-only buff variant; `mobcommands/rally.go` ↔ `usercommands/rally.go` |
+| `read` | (none) | Orthogonal | Reads item lore text from player's backpack; mobs don't read item descriptions |
+| `remove` | `remove` | Equivalent | Both unequip items; `mobcommands/remove.go` ↔ `usercommands/remove.go` |
+| `renameself` | (none) | Never-relevant | Account name-change flow; mobs are named at spawn from template |
+| `reply` | (none) | Never-relevant | Player-to-player whisper reply; mobs use `sayto` / `say` |
+| `report` | (none) | Orthogonal | Reports player's own HP/SP/CP to party; mobs communicate state internally, no chat-report needed |
+| `salvage` | `salvage` | Equivalent | Both call `actions.Salvage`; `mobcommands/salvage.go` ↔ `usercommands/salvage.go` |
+| `save` | (none) | Never-relevant | Player character persistence trigger; mobs auto-save via instance saves |
+| `say` | `say` | Equivalent | Both emit room speech; `mobcommands/say.go` ↔ `usercommands/say.go` |
+| `scan` | `scan` | Equivalent | Both call `actions.Scan`; `mobcommands/scan.go` ↔ `usercommands/scan.go` |
+| `sell` | (none) | Orthogonal | Player sells items to merchant; mobs use `selljunk` (being deleted in Stage C) or internal gold-add; no mob-to-shop sale command is a design goal |
+| `set` | (none) | Never-relevant | Player client-preference settings (ansi, linewidth, etc.); mobs have no client preferences |
+| `setdesc` | (none) | Never-relevant | Player self-description edit; mobs have static descriptions in YAML |
+| `sethome` | (none) | Never-relevant | Player home-room preference; mobs use `homeRoomId` field |
+| `share` | (none) | Orthogonal | Player splits gold with party; mobs don't initiate gold sharing |
+| `shoot` | `shoot` | Equivalent | Both call `actions.ExecuteShoot`; `mobcommands/shoot.go` ↔ `usercommands/shoot.go` |
+| `shout` | `shout` | Equivalent | Both emit zone-wide speech; `mobcommands/shout.go` ↔ `usercommands/shout.go` |
+| `show` | `show` | Equivalent | Both display an item to a target; `mobcommands/show.go` ↔ `usercommands/show.go` |
+| `skill.cast` | `cast` | Equivalent | Both call spell resolution hooks; `mobcommands/cast.go` ↔ `usercommands/skill.cast.go` |
+| `skill.disenchant` | (none) | Orthogonal | Removes Chrysalis enchantment at enchanting circle; requires player enchantment ownership model; no mob-enchantment-stripping design goal |
+| `skill.forage` | `forage` | Equivalent | Both call `actions.Forage`; `mobcommands/forage.go` ↔ `usercommands/skill.forage.go` |
+| `skill.map` | (none) | Never-relevant | Renders ASCII map to player terminal; mobs navigate via pathfinding graph, not map rendering |
+| `skill.search` | `search` | Equivalent | Both call `actions.Search`; `mobcommands/search.go` ↔ `usercommands/skill.search.go` |
+| `skill.skullduggery.defuse` | `defuse` | Equivalent | Both route through `actions.Defuse`; `mobcommands/defuse.go` ↔ `usercommands/skill.skullduggery.defuse.go` |
+| `skill.skullduggery.plant` | `plant` | Equivalent | Both plant items on targets/containers; `mobcommands/plant.go` ↔ `usercommands/skill.skullduggery.plant.go` |
+| `skill.skullduggery.shadow` | `shadow` | Equivalent | Both follow a target while hidden; `mobcommands/shadow.go` ↔ `usercommands/skill.skullduggery.shadow.go` |
+| `skill.skullduggery.sneak` | `sneak` | Equivalent | Both enter hidden state; `mobcommands/sneak.go` ↔ `usercommands/skill.skullduggery.sneak.go` |
+| `skill.skullduggery.steal` | `steal` | Equivalent | Both route through `actions.Steal`; `mobcommands/steal.go` ↔ `usercommands/skill.skullduggery.steal.go` |
+| `skill.track` | `track` | Equivalent | Both call `actions.Track`; `mobcommands/track.go` ↔ `usercommands/skill.track.go` |
+| `skills` | (none) | Orthogonal | Player skill-rank display; mobs query skill ranks in code |
+| `sort` | (none) | Orthogonal | Player sorts component bag / bandolier contents; mobs have no bandolier/bag slot UI |
+| `spells` | (none) | Orthogonal | Player spell-list display; mobs pick spells via btree/cooldown logic |
+| `stand` | (auto) | Orthogonal | Mobs recover from prone automatically each round via `Character.AttemptRecovery()` in `NewRound_MobRoundTick.go:152`; no explicit mob `stand` command needed |
+| `start` | (none) | Never-relevant | New-character creation and tutorial flow; mobs are spawned, not created via a tutorial |
+| `stash` | (none) | Orthogonal | Player plants an item in the room disguised as a non-item; thematic player-only deception tool; no mob-stashing design goal |
+| `status` | (none) | Never-relevant | Player stat-sheet display; mobs have no UI terminal |
+| `storage` | (none) | Never-relevant | Player storage-room item deposit/withdraw; mobs have no storage accounts |
+| `suggest` | (none) | Never-relevant | Player suggestion filing to flat file; mobs can't make suggestions |
+| `suicide` | `suicide` | Equivalent | Both trigger self-death path; `mobcommands/suicide.go` ↔ `usercommands/suicide.go` |
+| `surprise_attack` | (none) | Gap: defer | Stealth-initiated bonus attack from hidden state; mobs can enter hidden state (`sneak`) and initiate combat (`lookfortrouble`) but lack a combined sneak-burst opener. Lift requires hidden-state gate + multi-weapon swing + crit damage calc shared with player path. Larger than 30 LoC; needs btree action design. |
+| `talk` | `converse` (loose) | Orthogonal | `talk` initiates a dialogue session with an NPC; mobs initiate speech via `converse` / `say` / btree events. Mob-to-player dialogue origination is already handled by those commands; no `talk` mob command needed. |
+| `target` | (none) | Orthogonal | Player switches combat target mid-fight; mobs select targets via `lookfortrouble` / `SetAggro` in btree/AI. No explicit `target` command needed: mob target-switching happens in code, not via a command. |
+| `taunt` | `taunt` | Equivalent | Both call `actions.ExecuteTaunt`; `mobcommands/taunt.go` ↔ `usercommands/taunt.go` |
+| `throw` | (none) | Gap: defer | Throws grenade/throwable items at room hostiles; mobs have no grenade-holding or throwable-item-selection model. Lift needs inventory scan for `Throwable` subtype + AoE resolution + skill check. Non-trivial; needs design decision on which mobs get this. |
+| `title` | (none) | Never-relevant | Player-computed title display (skill tier + mutation tier); mobs have no player-facing title UI |
+| `trip` | `trip` | Equivalent | Both call `actions.ExecuteTrip`; `mobcommands/trip.go` ↔ `usercommands/trip.go` |
+| `unlock` | (none) | Gap: defer | Players unlock exits/containers with keys; mobs currently only interact with locks via `defuse` (trap-disarm) and `picklock` (not yet a mob command). Mob key-carrying + unlock is a more involved design decision. |
+| `use` | (none) | Orthogonal | Interacts with room containers / crafting stations; mobs use `craft` directly and don't need a meta `use` dispatcher |
+| `warcry` | `warcry` | Equivalent | Both call `actions.ExecuteWarcry`; `mobcommands/warcry.go` ↔ `usercommands/warcry.go` |
+| `whisper` | `sayto` (loose) | Orthogonal | `whisper` sends private player-to-player messages; mobs use `sayto` for directed speech to a player, which is emitted as room-visible by design. True private mob whisper is not a design goal. |
+| `who` | (none) | Never-relevant | Player online-list display; mobs don't query who is online |
+| `zombieact` | (none) | Never-relevant | Player zombie-state flavor emote (dead-man's-land stub); mob zombie behavior is handled by btree archetypes |
+
+**Player-side audit summary:**
+- Equivalent: 43 (`attack`, `bash`, `break`, `broadcast`, `buy`, `cancel`,
+  `consider`, `craft`, `drink`, `drop`, `eat`, `emote`, `equip`, `flee`,
+  `gearup`, `get`, `give`, `go`, `grapple`, `kick`, `look`, `put`,
+  `rally`, `remove`, `salvage`, `say`, `scan`, `shoot`, `shout`, `show`,
+  `skill.cast`, `skill.forage`, `skill.search`,
+  `skill.skullduggery.defuse`, `skill.skullduggery.plant`,
+  `skill.skullduggery.shadow`, `skill.skullduggery.sneak`,
+  `skill.skullduggery.steal`, `skill.track`, `suicide`, `taunt`,
+  `trip`, `warcry`)
+- Orthogonal: 28 (`appraise`, `ask`, `assess`, `assist`, `conditions`,
+  `cooldowns`, `dismiss`, `exits`, `inventory`, `list`, `mutations`,
+  `offer`, `party`, `pet`, `read`, `report`, `sell`, `share`,
+  `skill.disenchant`, `skills`, `sort`, `spells`, `stand`, `stash`,
+  `talk`, `target`, `use`, `whisper`)
+- Never-relevant: 37 (`afk`, `alias`, `bank`, `biome`, `bug`,
+  `character`, `deletecharacter`, `help`, `hint`, `history`, `inbox`,
+  `keyring`, `killstats`, `macros`, `motd`, `online`, `password`,
+  `print`, `printline`, `pvp`, `quests`, `quit`, `renameself`, `reply`,
+  `save`, `set`, `setdesc`, `sethome`, `skill.map`, `start`, `status`,
+  `storage`, `suggest`, `title`, `who`, `zombieact`)
+- Gap: patch inline: 6 (`mutation_blinding_flash`, `mutation_blinding_spit`,
+  `mutation_healing_gel`, `mutation_pacifism_aura`, `mutation_sonic_shout`,
+  `mutation_toxic_bite`) — all → Stage B lift
+- Gap: delete divergent verb: 0 (player-side has no dead verbs; `selljunk`
+  is mob-side only and handled in Stage C)
+- Gap: defer: 5 (`lock`, `picklock`, `surprise_attack`, `throw`, `unlock`)
+- **Total: 119** (113 candidate files after exclusions; `print.go` defines
+  two registered commands `print` + `printline`, giving 119 distinct
+  command functions)
