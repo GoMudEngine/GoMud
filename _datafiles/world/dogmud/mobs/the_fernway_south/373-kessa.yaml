@@ -1,7 +1,7 @@
 mobid: 373
 zone: The Fernway South
 archetype: fighting
-behavior_archetype: ""
+behavior_archetype: forager
 statpool: 150
 itemdropchance: 0
 groups:

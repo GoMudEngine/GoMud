@@ -16,11 +16,9 @@ import (
 	"slices"
 	"strconv"
 
-	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/economy"
 	"github.com/GoMudEngine/GoMud/internal/forager"
-	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -28,7 +26,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
 	"github.com/GoMudEngine/GoMud/internal/shops"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -92,13 +89,33 @@ func actForagerStep(params map[string]any, ctx *EvalContext) Result {
 		}
 	}
 
+	// Foraging-state per-tick coordination. The per-tick foraging
+	// loop (forage roll, salvage, wander) now runs in YAML via
+	// try_forage / try_salvage / wander_territory primitives.
+	// The state machine still owns the transition triggers OUT of
+	// Foraging — fatigue limit or carry threshold sends the mob
+	// to TravelingToDropoff.
+	if cur == forager.StateForaging {
+		// Fatigue tick (was inside tickForagerForaging).
+		fatigue := getIntFromState(ctx.MobState, keyFatigueTimer) + 1
+		ctx.MobState.Set(keyFatigueTimer, strconv.Itoa(fatigue))
+
+		// Carry-cap or fatigue → head to dropoff.
+		if fatigue >= fatigueLimit ||
+			carryRatio(mob) >= float64(cfg.ForagerCarryThresholdPct) {
+			transitionForager(ctx.MobState, forager.StateTravelingToDropoff)
+			return Success
+		}
+
+		// YAML handles try_forage / try_salvage / wander_territory.
+		return Success
+	}
+
 	switch cur {
 	case forager.StateResting:
 		return tickForagerResting(profile, mob, ctx)
 	case forager.StateTravelingToTerritory:
 		return tickForagerTravelingToTerritory(profile, mob, ctx)
-	case forager.StateForaging:
-		return tickForagerForaging(profile, mob, ctx, cfg)
 	case forager.StateTravelingToDropoff:
 		return tickForagerTravelingToDropoff(profile, mob, ctx)
 	case forager.StateDelivering:
@@ -207,50 +224,6 @@ func tickForagerTravelingToTerritory(
 }
 
 const fatigueLimit = 480
-
-func tickForagerForaging(
-	p *forager.ForagerProfile,
-	mob *mobs.Mob,
-	ctx *EvalContext,
-	cfg configs.Balance,
-) Result {
-	// Fatigue tick.
-	fatigue := getIntFromState(ctx.MobState, keyFatigueTimer) + 1
-	ctx.MobState.Set(keyFatigueTimer, strconv.Itoa(fatigue))
-
-	// Carry-cap or fatigue → head to dropoff.
-	carry := carryRatio(mob)
-	if fatigue >= fatigueLimit ||
-		carry >= float64(cfg.ForagerCarryThresholdPct) {
-		transitionForager(ctx.MobState, forager.StateTravelingToDropoff)
-		return Success
-	}
-
-	// Forage tick.
-	forageT := getIntFromState(ctx.MobState, keyForageTimer) + 1
-	if forageT >= int(cfg.ForagerForageDwellRounds) {
-		ctx.MobState.Set(keyForageTimer, "0")
-		npcAttemptForage(p, mob, ctx)
-	} else {
-		ctx.MobState.Set(keyForageTimer, strconv.Itoa(forageT))
-	}
-
-	// Salvage any corpse in current room. Guard prevents dispatch noise
-	// in rooms with no corpses; the handler also returns handled=true
-	// silently on no-op, so this is belt-and-suspenders.
-	if salvageRoom := rooms.LoadRoom(ctx.RoomId); salvageRoom != nil && len(salvageRoom.Corpses) > 0 {
-		mob.Command("salvage corpse")
-	}
-
-	// Wander to a random adjacent territory neighbor.
-	npcWanderTerritoryNeighbor(p, mob, ctx)
-
-	// Return Failure to let the legacy idle path fire lookfortrouble,
-	// which sets aggro on prey wildlife in the room — without that,
-	// the mob_can_safely_engage condition would never have an aggro
-	// target to evaluate. Mirror's the caravan tickDwell pattern.
-	return Failure
-}
 
 func tickForagerTravelingToDropoff(
 	p *forager.ForagerProfile,
@@ -424,41 +397,6 @@ func tickForagerRecalling(
 	return Success
 }
 
-func npcAttemptForage(
-	p *forager.ForagerProfile,
-	mob *mobs.Mob,
-	ctx *EvalContext,
-) {
-	room := rooms.LoadRoom(ctx.RoomId)
-	if room == nil {
-		return
-	}
-	biome := room.GetBiome()
-	if biome == nil {
-		return
-	}
-	searchRank := mob.Character.GetSkillLevel(skills.Search)
-	searchScore := float64(mob.Character.Stats.Perception.ValueAdj) +
-		combat.SkillMultiplier(searchRank)*25.0
-
-	result := forager.ForageCore(forager.ForageAttempt{
-		Biome:       biome.BiomeId,
-		SearchScore: searchScore,
-		AtNight:     gametime.IsNight(),
-	})
-	if !result.Found {
-		return
-	}
-	item := items.New(result.ItemId)
-	if !item.IsValid() {
-		return
-	}
-	mob.Character.StoreItem(item)
-	room.SendText(messaging.CategoryMobIdle, fmt.Sprintf(
-		`<ansi fg="mobname">%s</ansi> stoops over a patch of growth`+
-			` and tucks something into a satchel.`,
-		p.Name))
-}
 
 // dumpSatchelToLockbox transfers every item in the forager's satchel
 // into the room's "lockbox" container, then bumps the lockbox lock's

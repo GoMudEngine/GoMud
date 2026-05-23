@@ -1,0 +1,49 @@
+# forager archetype
+#
+# Routine NPC foragers (Tova 371, Halix 372, Kessa 373). The
+# high-level daily cycle (Resting → Traveling → Foraging →
+# Delivering → Recalling) stays in the Go state machine via
+# forager_step. The per-tick Foraging loop runs here in YAML so
+# the verb calls (try_forage, try_salvage) flow through the
+# unified actions.Forage / actions.Salvage pipeline.
+#
+# Spec: docs/superpowers/specs/
+#       2026-05-22-mob-aliveness-2.9-mob-forage-salvage-design.md
+
+tree:
+  type: selector
+  children:
+
+    # 1. Self-defense — fight back if attacked.
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: action
+          do: attack
+
+    # 2. Foraging-state per-tick loop: salvage opportunistically,
+    # then try a forage roll, then wander within territory. Each
+    # step returns Failure cleanly when nothing's available, so
+    # the inner selector falls through.
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: condition
+          check: forager_state_is_foraging
+        - type: selector
+          children:
+            - type: action
+              do: try_salvage
+            - type: action
+              do: try_forage
+            - type: action
+              do: wander_territory
+
+    # 3. All non-Foraging states (Resting, TravelingToTerritory,
+    # TravelingToDropoff, Delivering, Recalling) flow through the
+    # Go state machine.
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: action
+          do: forager_step

@@ -209,6 +209,7 @@ Condition nodes use `type: condition` with `check: <name>`.
 | `mob_has_buff` | `buff_id` (int) | Mob currently has the buff. |
 | `state_equals` | `key`, `value` (strings) | BehaviorState string equals. |
 | `state_greater_than` | `key` (string), `value` (int) | BehaviorState int > value. |
+| `forager_state_is_foraging` | none | True when forager state machine is in Foraging state (chunk 2.9). |
 
 ### Environment
 
@@ -378,6 +379,14 @@ are subject to perception-scaled reaction delays (see below).
 | `try_search` | none | Invoke `actions.Search` (no delay). Three-tier discovery (exits/stashed/hidden nouns); promotes first hidden hostile to ctx.SoftTarget; ignores Tier-1/Tier-3 non-hostiles. |
 | `try_track` | `target_from` (optional string: "event" or "aggro") | Invoke `actions.Track` (no delay). Reads trail from target (trail-sniff); or activates tracking on resolved target. On adjacent-trail hit applies buff 86; seeds ctx.SoftTarget. |
 
+### Foraging & Salvage — varied delays (chunk 2.9)
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `try_forage` | none | Invoke `actions.Forage` (instant). Success on item found, Failure on miss/cooldown/wrong-biome. Requires mob to have forager profile for the current biome. |
+| `try_salvage` | `item_uuid` (optional string) | Invoke `actions.Salvage` (instant). Default mode targets first eligible corpse in room (mob death items); optional `item_uuid` param targets a specific item. |
+| `wander_territory` | none | Delegates to territory-aware movement (delayed). Uses forager profile neighbor list to pick an adjacent room within home territory. Failure without forager profile. |
+
 ### Boss & Companion Control — delayed
 
 | Action | Params | Description |
@@ -498,6 +507,9 @@ A mob with Perception 50 has:
 | `try_search` | No |
 | `try_track` | No |
 | `move_toward_tracked` | Yes |
+| `try_forage` | No |
+| `try_salvage` | No |
+| `wander_territory` | Yes |
 
 ---
 
