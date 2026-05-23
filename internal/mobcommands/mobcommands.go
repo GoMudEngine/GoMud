@@ -65,6 +65,7 @@ var (
 		"lookforaid":     {LookForAid, false},
 		"lookfortrouble": {LookForTrouble, false},
 		"noop":           {Noop, true},
+		"pacifism_aura":  {PacifismAura, false},
 		"pathto":         {Pathto, false},
 		"portal":         {Portal, false},
 		"plant":          {Plant, false},
