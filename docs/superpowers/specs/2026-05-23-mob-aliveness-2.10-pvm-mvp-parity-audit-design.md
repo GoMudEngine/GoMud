@@ -482,7 +482,7 @@ both literal name matches and purpose-based cross-reference against
 | `storage` | (none) | Never-relevant | Player storage-room item deposit/withdraw; mobs have no storage accounts |
 | `suggest` | (none) | Never-relevant | Player suggestion filing to flat file; mobs can't make suggestions |
 | `suicide` | `suicide` | Equivalent | Both trigger self-death path; `mobcommands/suicide.go` ↔ `usercommands/suicide.go` |
-| `surprise_attack` | (none) | Gap: defer | Stealth-initiated bonus attack from hidden state; mobs can enter hidden state (`sneak`) and initiate combat (`lookfortrouble`) but lack a combined sneak-burst opener. Lift requires hidden-state gate + multi-weapon swing + crit damage calc shared with player path. Larger than 30 LoC; needs btree action design. |
+| `surprise_attack` | `attack` (mob path) | Equivalent | Both sides fire per-weapon surprise attack from hidden state when special-move cooldown is available. Mob path via mobcommands/attack.go:64 + hooks/Awareness_Cascades.go. Player path via usercommands/attack.go's executeSurpriseAttack helper. Unification refactor opportunity tracked separately (see deferred-gaps review). |
 | `talk` | `converse` (loose) | Orthogonal | `talk` initiates a dialogue session with an NPC; mobs initiate speech via `converse` / `say` / btree events. Mob-to-player dialogue origination is already handled by those commands; no `talk` mob command needed. |
 | `target` | (none) | Orthogonal | Player switches combat target mid-fight; mobs select targets via `lookfortrouble` / `SetAggro` in btree/AI. No explicit `target` command needed: mob target-switching happens in code, not via a command. |
 | `taunt` | `taunt` | Equivalent | Both call `actions.ExecuteTaunt`; `mobcommands/taunt.go` ↔ `usercommands/taunt.go` |
@@ -497,15 +497,15 @@ both literal name matches and purpose-based cross-reference against
 | `zombieact` | (none) | Never-relevant | Player zombie-state flavor emote (dead-man's-land stub); mob zombie behavior is handled by btree archetypes |
 
 **Player-side audit summary:**
-- Equivalent: 43 (`attack`, `bash`, `break`, `broadcast`, `buy`, `cancel`,
+- Equivalent: 44 (`attack`, `bash`, `break`, `broadcast`, `buy`, `cancel`,
   `consider`, `craft`, `drink`, `drop`, `eat`, `emote`, `equip`, `flee`,
   `gearup`, `get`, `give`, `go`, `grapple`, `kick`, `look`, `put`,
   `rally`, `remove`, `salvage`, `say`, `scan`, `shoot`, `shout`, `show`,
   `skill.cast`, `skill.forage`, `skill.search`,
   `skill.skullduggery.defuse`, `skill.skullduggery.plant`,
   `skill.skullduggery.shadow`, `skill.skullduggery.sneak`,
-  `skill.skullduggery.steal`, `skill.track`, `suicide`, `taunt`,
-  `trip`, `warcry`)
+  `skill.skullduggery.steal`, `skill.track`, `suicide`, `surprise_attack`,
+  `taunt`, `trip`, `warcry`)
 - Orthogonal: 28 (`appraise`, `ask`, `assess`, `assist`, `conditions`,
   `cooldowns`, `dismiss`, `exits`, `inventory`, `list`, `mutations`,
   `offer`, `party`, `pet`, `read`, `report`, `sell`, `share`,
@@ -522,7 +522,7 @@ both literal name matches and purpose-based cross-reference against
   `mutation_toxic_bite`) — all → Stage B lift
 - Gap: delete divergent verb: 0 (player-side has no dead verbs; `selljunk`
   is mob-side only and handled in Stage C)
-- Gap: defer: 5 (`lock`, `picklock`, `surprise_attack`, `throw`, `unlock`)
+- Gap: defer: 4 (`lock`, `picklock`, `throw`, `unlock`)
 - **Total: 119** (118 non-admin, non-meta player command files after exclusions; `print.go` defines
   both `print` and `printline`, giving 119 distinct command functions)
 

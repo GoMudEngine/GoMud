@@ -20,6 +20,19 @@ After triage, Stage F memory writes capture the per-verdict followups.
 
 ---
 
+## Triage results (2026-05-23)
+
+User triaged all 5 entries:
+- `surprise_attack`: change-verdict → memory-entry-only (audit row was wrong; mobs already have parity; capture refactor opportunity)
+- `picklock`: change-verdict → wontfix (intentional design misalignment)
+- `lock`: change-verdict → patch-as-followup-chunk (bundle with `unlock` as forager-chest workflow)
+- `unlock`: change-verdict → patch-as-followup-chunk (bundle with `lock`)
+- `throw`: accept (memory-entry-only) with dependency on future ranged weapon system
+
+Stage F memory writes follow.
+
+---
+
 ## Player-side deferred gaps
 
 ### Direction: mob-side missing (player has the verb, mob doesn't)
@@ -55,6 +68,7 @@ After triage, Stage F memory writes capture the per-verdict followups.
 - **Proposed verdict:** patch-as-followup-chunk
 - **Estimated size:** M (actions lift ~150 LoC, mob wrapper + btree
   action ~60 LoC, integration + tests ~80 LoC)
+- **Final verdict (user triage 2026-05-23):** **change-verdict to memory-entry-only.** User confirmed mobs ALREADY have surprise-attack behavior (per-weapon attack from hidden state when special-move cooldown is available, identical to the player path) — see `internal/mobcommands/attack.go:64` and the Awareness_Cascades hook. This is not a parity gap; the A1 audit row was factually wrong and is being corrected separately. What remains is a refactor opportunity: unify the mechanism (extract a shared `actions.SurpriseAttack` helper) so the two paths can't drift. User strongly prefers the unification, but it's not blocking.
 
 #### picklock
 
@@ -86,6 +100,7 @@ After triage, Stage F memory writes capture the per-verdict followups.
 - **Proposed verdict:** patch-as-followup-chunk
 - **Estimated size:** M (action ~50 LoC, btree action ~40 LoC, design
   doc for lockpick-item-vs-innate decision ~30 LoC)
+- **Final verdict (user triage 2026-05-23):** **change-verdict to wontfix.** Intentional misalignment by design. The player picklock command is an interactive minigame with up/down gates — that surface only makes sense for a human player. A mob equivalent would by necessity be a single-roll simplification, which isn't worth maintaining as a separate "mob picklock" verb when the design intent is that picklock IS the player-only minigame.
 
 #### lock
 
@@ -116,6 +131,7 @@ After triage, Stage F memory writes capture the per-verdict followups.
 - **Proposed verdict:** memory-entry-only
 - **Estimated size:** S-M (action ~60 LoC, btree action ~30 LoC, but
   needs the `on_exit` event hook which may not exist yet)
+- **Final verdict (user triage 2026-05-23):** **change-verdict to patch-as-followup-chunk.** Concrete world use case: foragers keep their extra goods in locked chests. A future chunk would extend forager behavior to unlock the chest they own with a carried key → place/remove items in/from the chest → lock it again. Bundle with `unlock` in the same chunk — same NPCs are the standard-bearer for both verbs.
 
 #### unlock
 
@@ -140,6 +156,7 @@ After triage, Stage F memory writes capture the per-verdict followups.
 - **Proposed verdict:** memory-entry-only
 - **Estimated size:** S-M (action ~60 LoC; effectively free once `lock`
   is done, since the logic is symmetric — same chunk)
+- **Final verdict (user triage 2026-05-23):** **change-verdict to patch-as-followup-chunk.** Bundled with `lock` — same forager-locked-chest workflow chunk. Both verbs needed together; splitting would leave the pattern half-done.
 
 #### throw
 
@@ -174,3 +191,4 @@ After triage, Stage F memory writes capture the per-verdict followups.
 - **Proposed verdict:** memory-entry-only
 - **Estimated size:** M (actions lift ~120 LoC, btree action ~40 LoC,
   balance design ~30 LoC of spec, plus the friendly-fire design decision)
+- **Final verdict (user triage 2026-05-23):** **accept-proposed-verdict (memory-entry-only) with dependency note.** Deferred until DOGMud builds a real ranged weapon system; throw is conceptually adjacent to ranged combat and the design pass for one should inform the other. Memory entry should note this dependency.
