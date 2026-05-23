@@ -92,6 +92,8 @@ func init() {
 
 	// Mutation actives (2.10)
 	actionRegistry["try_mutation_active"] = actTryMutationActive
+	// Autonomous mutation dispatch (2.10-followups)
+	actionRegistry["try_any_active_mutation"] = actTryAnyActiveMutation
 }
 
 // LookupAction returns the action function for the given name,
