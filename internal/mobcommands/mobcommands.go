@@ -28,6 +28,7 @@ var (
 		"bash":           {Bash, false},
 		"bite":           {Bite, false},
 		"befriend":       {Befriend, false},
+		"blinding_flash": {BlindingFlash, false},
 		"break":          {Break, false},
 		"broadcast":      {Broadcast, false},
 		"buy":            {Buy, false},
