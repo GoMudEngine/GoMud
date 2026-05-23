@@ -29,6 +29,7 @@ var (
 		"bite":           {Bite, false},
 		"befriend":       {Befriend, false},
 		"blinding_flash": {BlindingFlash, false},
+		"blinding_spit":  {BlindingSpit, false},
 		"break":          {Break, false},
 		"broadcast":      {Broadcast, false},
 		"buy":            {Buy, false},
