@@ -37,7 +37,6 @@ func init() {
 const (
 	keyForagerState      = "forager_state"
 	keyStateStartedRound = "forager_state_started_round"
-	keyForageTimer       = "forager_forage_timer"
 	keyFatigueTimer      = "forager_fatigue_timer"
 	keyVisitIndex        = "forager_visit_index"
 	keyWaitTimer         = "forager_wait_timer"
@@ -155,7 +154,6 @@ func transitionForager(s *BehaviorState, next forager.ForagerState) {
 	s.Set(keyForagerState, next.Name())
 	s.Set(keyStateStartedRound,
 		strconv.FormatUint(util.GetRoundCount(), 10))
-	s.Set(keyForageTimer, "0")
 	s.Set(keyFatigueTimer, "0")
 	s.Set(keyVisitIndex, "0")
 	s.Set(keyWaitTimer, "0")

@@ -391,9 +391,6 @@ type Balance struct {
 	FernwayPickupDwellRounds ConfigInt `yaml:"FernwayPickupDwellRounds"`
 
 	// ── FORAGER SYSTEM (Stage 3.1) ───────────────────────────────────────────
-	// ForagerForageDwellRounds is the rounds between forage attempts in
-	// the forager's territory. Default 8.
-	ForagerForageDwellRounds ConfigInt `yaml:"ForagerForageDwellRounds"`
 
 	// ForagerCarryThresholdPct is the carry-capacity ratio (0.0-1.0) at
 	// which the forager heads home for delivery. Default 0.75.

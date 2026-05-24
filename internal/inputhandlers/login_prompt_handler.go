@@ -9,7 +9,6 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
-	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/term"
@@ -370,19 +369,22 @@ func sendPrompt(step *PromptStep, clientInput *connections.ClientInput, results 
 	}
 
 	parsedPrompt := templates.AnsiParse(promptTxt)
-	connections.SendTo([]byte(parsedPrompt), clientInput.ConnectionId)
 
-	// Handle websocket masking command
+	// Send TEXTMASK FIRST (synchronously) so the websocket input field
+	// switches to type="password" BEFORE the prompt arrives. Previously
+	// TEXTMASK was queued via events.AddToQueue, which dispatched
+	// asynchronously after the prompt — leaving a race window where the
+	// user could type into a plaintext input field and see their password
+	// echoed on screen.
 	if connections.IsWebsocket(clientInput.ConnectionId) {
 		maskCmd := "TEXTMASK:false"
 		if step.MaskInput {
 			maskCmd = "TEXTMASK:true"
 		}
-		events.AddToQueue(events.WebClientCommand{
-			ConnectionId: clientInput.ConnectionId,
-			Text:         maskCmd,
-		})
+		connections.SendTo([]byte(maskCmd), clientInput.ConnectionId)
 	}
+
+	connections.SendTo([]byte(parsedPrompt), clientInput.ConnectionId)
 }
 
 // advanceAndSendPrompt finds the next valid step and sends its prompt.

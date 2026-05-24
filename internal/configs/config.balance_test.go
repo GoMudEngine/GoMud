@@ -33,7 +33,6 @@ func TestBalanceConfig_ForagerDefaults(t *testing.T) {
 		want any
 	}{
 		{"FernwayPickupDwellRounds", cfg.FernwayPickupDwellRounds, ConfigInt(6)},
-		{"ForagerForageDwellRounds", cfg.ForagerForageDwellRounds, ConfigInt(8)},
 		{"ForagerCarryThresholdPct", cfg.ForagerCarryThresholdPct, ConfigFloat(0.75)},
 		{"ForagerHPRecallThresholdPct", cfg.ForagerHPRecallThresholdPct, ConfigFloat(0.50)},
 		{"ForagerHealPotionThresholdPct", cfg.ForagerHealPotionThresholdPct, ConfigFloat(0.75)},

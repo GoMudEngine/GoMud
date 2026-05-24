@@ -178,6 +178,12 @@ func (l *LeaderboardModule) Update() {
 
 	for _, u := range users.GetAllActiveUsers() {
 
+		// Exclude admins and AI-flagged accounts from leaderboards so they
+		// don't pollute real-player rankings.
+		if u.Role == users.RoleAdmin || u.IsAI {
+			continue
+		}
+
 		userCount++
 		characterCount++
 
@@ -200,6 +206,11 @@ func (l *LeaderboardModule) Update() {
 
 	// Check offline users
 	users.SearchOfflineUsers(func(u *users.UserRecord) bool {
+
+		// Same admin/AI exclusion as the active-users loop above.
+		if u.Role == users.RoleAdmin || u.IsAI {
+			return true // continue the search; just don't consider this user
+		}
 
 		userCount++
 		characterCount++

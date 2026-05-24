@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
@@ -120,8 +121,41 @@ func applyCompanionState(mob *mobs.Mob, comp *characters.CompanionInfo) {
 	}
 	mob.Character.MutationProgress = comp.MutationProgress
 
+	// Restore gear snapshot from the previous logout. Items REPLACES the
+	// mob template's default carried items — companion takes what the
+	// player left them with, not what the template ships. Same for
+	// Equipment: the saved worn slots replace the template defaults.
+	if comp.Items != nil {
+		mob.Character.Items = make([]items.Item, len(comp.Items))
+		copy(mob.Character.Items, comp.Items)
+	}
+	// Worn is a value type; direct assignment replaces all slots.
+	// Only restore if any slot was non-zero on the saved snapshot,
+	// otherwise leave the template defaults intact.
+	if compHasEquipment(comp) {
+		mob.Character.Equipment = comp.Equipment
+	}
+
 	// Recalculate derived stats from the applied training.
 	mob.Character.Validate()
+}
+
+// compHasEquipment reports whether the saved Equipment snapshot has any
+// non-zero item slot. Avoids stomping a fresh template's equipment with
+// an all-empty Worn struct when the companion never carried gear.
+func compHasEquipment(comp *characters.CompanionInfo) bool {
+	e := comp.Equipment
+	return e.Weapon.ItemId != 0 || e.Offhand.ItemId != 0 ||
+		e.Head.ItemId != 0 || e.Neck.ItemId != 0 || e.Body.ItemId != 0 ||
+		e.Belt.ItemId != 0 || e.Shoulders.ItemId != 0 || e.Back.ItemId != 0 ||
+		e.Gloves.ItemId != 0 || e.Legs.ItemId != 0 || e.Feet.ItemId != 0 ||
+		e.Ring.ItemId != 0 || e.Ring2.ItemId != 0 ||
+		e.Wrist1.ItemId != 0 || e.Wrist2.ItemId != 0 ||
+		e.ExtraArm1.ItemId != 0 || e.ExtraArm2.ItemId != 0 ||
+		e.ExtraArm3.ItemId != 0 || e.ExtraArm4.ItemId != 0 ||
+		e.ExtraWrist1.ItemId != 0 || e.ExtraWrist2.ItemId != 0 ||
+		e.ExtraWrist3.ItemId != 0 || e.ExtraWrist4.ItemId != 0 ||
+		e.Tail.ItemId != 0 || e.ComponentBag.ItemId != 0
 }
 
 //
