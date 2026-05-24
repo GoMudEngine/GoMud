@@ -1,5 +1,108 @@
 # DOGMud Patch Notes
 
+## 2026-05-23 — End-of-day hotfix bundle + chunk 3.1
+
+**SECURITY: web client login password no longer mirrored on screen.**
+Two-part race condition fixed in the web client login flow. Part one:
+the `TEXTMASK` command that switches the input box to password mode
+was sent AFTER the password prompt, so anything typed before the
+event-loop drained showed as plaintext in the input box. TEXTMASK is
+now sent synchronously BEFORE the prompt. Part two: even with a
+masked input box, hitting Enter echoed the typed buffer back to the
+main MUD scrollback (separate code path from the input-box mask). The
+submission-time echo now renders mask characters per byte instead of
+the raw password buffer. Telnet clients were never affected (they use
+per-character echo + IAC ECHO suppression). Web client users who
+played in the last few weeks should consider changing their password.
+
+**Heals no longer help your enemies.** Communion of Flesh and any
+other `helparea` spell would heal the mob you were currently fighting
+in addition to your allies — the dispatch code populated the player
+target list but left the existing aggro-target mob in the heal target
+list. Heals now only reach allies (charmed companions) plus players
+in the room; hostile mobs are correctly skipped.
+
+**Apex Ironwind drops now respect their declared rarity.** The
+Windscour Wyrm and Stone Beetle Queen were dropping their Chrysalis
+Core at 100% instead of the intended 5% / 10%. Carried items always
+drop at 100% by engine design; per-item dropchance overrides that.
+Both apex mobs now carry the core with explicit dropchance values
+matching the mob's overall itemdropchance. (9 other mobs world-wide
+have similar patterns; logged for content audit, not auto-changed
+since some are intentional always-drops.)
+
+**Mob surprise attack now does per-weapon strikes.** When a hidden
+mob ambushes you, it now fires a surprise attack PER weapon wielded
+— the same mechanic players have always had. Previously mobs only
+got the backstab-crit promotion on a single swing. Most stealth mobs
+in the world wield a single weapon so the difference is small; rare
+multi-weapon stealth mobs got a meaningful damage boost on the
+opening round. (Companion mobs benefit too.)
+
+**Companions keep their gear through logout.** Items handed to a
+companion, and gear they have equipped, now persist across logout
+and login. Previously the gear was attached to the runtime mob
+instance which was destroyed at logout. Saved state writes to the
+character file alongside the existing companion progression. Note:
+the `dismiss` command still destroys companion gear (release is the
+explicit "lose the gear" path); only the implicit logout path is
+fixed.
+
+**Picking up gear no longer blocked by combat.** You can now `get`
+items while fighting. Realism takes a hit (you'd probably keep
+swinging, not pause to pick up a sword), but the alternative —
+watching wandering mobs walk off with the gear from kills you just
+made — felt worse. Other combat-time restrictions (drop, gearup,
+equip) are unchanged.
+
+**Sonic shout and toxic bite now respect the right defenses.** Both
+mutations previously dealt raw stat-derived damage that ignored
+defender mitigation. They now flow through the unified damage
+pipeline: sonic shout is gated by Conviction mitigation (mental
+resilience), toxic bite's bite damage is gated by Physical mitigation
+(armor). High-mitigation targets take less; bare targets take roughly
+what they took before. Toxic bite's poison DoT magnitude is
+unchanged (DoT pipeline routing is a separate followup).
+
+**Internal cleanup.**
+- New `time_of_day` `range:` parameter on the btree condition for
+  hour-precise gating (chunk 3.1, foundation for upcoming NPC
+  schedules). Existing `period: day` / `period: night` binary form
+  unchanged.
+- Fold-recall now auto-looks the destination room on arrival (mirrors
+  the existing death-respawn auto-look pattern).
+- Leaderboards no longer include admin or AI-flagged accounts.
+- 36 invalid biome typos fixed across 6 zones (`marsh`/`river`/
+  `plains`/`ruins` → registered biome names). 4 warren NPCs in the
+  Labyrinth of Low Tunnels reclassified from `aberration` species to
+  `human` so they can wear gear properly.
+- Orphaned `ForagerForageDwellRounds` + `keyForageTimer` config knobs
+  deleted (left over from chunk 2.9's dissolve-cadence-into-YAML
+  refactor; future devs tuning them would have seen no effect).
+- Surprise-attack lifted to shared `actions.SurpriseAttack` helper so
+  player and mob paths can't drift.
+- `mobcommands/charge.go` delegates trip resolution to
+  `actions.ExecuteTrip` instead of reimplementing the math.
+- New `lock` and `unlock` mob verbs (standalone, since player keyring
+  logic doesn't apply to mobs).
+- New `try_any_active_mutation` btree primitive — mobs and companions
+  that evolve new active mutations at runtime can now fire them
+  autonomously, preferring rarer ones first.
+
+**Deferred to followup chunks (known gaps):**
+- Vendor backfill from forager chests — chests are deposit-only right
+  now; the "overflow" promise still needs a chest→vendor flow
+  mechanism. Critical.
+- Poison DoT magnitude pipeline routing (toxic-bite's DoT half).
+- Single-target mutation btree dispatch (`blinding-spit` +
+  `toxic-bite` can't yet be fired from `try_mutation_active*`).
+- Web client vitals bar doesn't visualize the reserved-pool portion
+  yet (server-side reserved-pool getter + GMCP payload + client
+  rendering needed).
+- 9 other mobs world-wide with carried items + non-100
+  `itemdropchance` may have the same drop-rate mismatch as the apex
+  Ironwind pair; per-mob triage queued.
+
 ## 2026-05-23 — Mob Aliveness 2.10 Followups
 
 **Foragers stash their overflow.** Tova, Halix, and Kessa now bring
