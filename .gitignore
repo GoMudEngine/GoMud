@@ -26,10 +26,17 @@ tmp-gomud.exe
 go-mud-server.exe
 go-mud-server
 GoMud.exe
+dogmud
+dogmud.exe
+dogmud-t3-review.exe
 __debug*
 .aider*
 .claude/settings.local.json
 startup.log
+server_boot.log
+boot_err.txt
+boot_out.txt
+smoke_out.txt
 GoMud.exe~
 _datafiles/logs/
 _datafilesfeedbackbugs.txt
