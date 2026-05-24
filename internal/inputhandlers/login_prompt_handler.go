@@ -270,8 +270,24 @@ func CreatePromptHandler(steps []*PromptStep, onComplete CompletionFunc) connect
 			return false
 		}
 
+		// Websocket clients don't get per-character echo during typing (the
+		// client only sends data on Enter), so we render the submitted input
+		// here once for visual feedback in the scrollback. For masked steps
+		// (passwords), render the mask template once per byte instead of the
+		// raw buffer — otherwise the password ends up in the main scrollback
+		// even though the input field obscured it. (The TEXTMASK protocol
+		// only switches the input field's type, not the output stream.)
 		if connections.IsWebsocket(clientInput.ConnectionId) {
-			connections.SendTo(clientInput.Buffer, clientInput.ConnectionId) // Echo newline
+			if currentStep.MaskInput {
+				if state.maskTemplate == "" {
+					state.maskTemplate = "*"
+				}
+				for range clientInput.Buffer {
+					connections.SendTo([]byte(state.maskTemplate), clientInput.ConnectionId)
+				}
+			} else {
+				connections.SendTo(clientInput.Buffer, clientInput.ConnectionId)
+			}
 		}
 
 		// Enter Pressed: Process Input
