@@ -5,13 +5,15 @@ package forager
 // (internal/behaviortree/actions_forager.go in Task 8) decides WHEN
 // to advance.
 
-// ForagerState enumerates the six phases of one forager cycle.
+// ForagerState enumerates the seven phases of one forager cycle.
 //
 // The cycle is:
 //
 //	Resting → TravelingToTerritory → Foraging → TravelingToDropoff →
-//	Delivering → Recalling → (back to Resting)
+//	Delivering → Storing → Recalling → (back to Resting)
 //
+// Storing is skipped for foragers without a storage_chest_room
+// configured — those go directly Delivering → Recalling.
 // Most transitions are linear; the HP-emergency branch in
 // forager_step can short-circuit any state to Recalling.
 type ForagerState int
@@ -22,6 +24,7 @@ const (
 	StateForaging                                 // wandering + foraging
 	StateTravelingToDropoff                       // pathto vendors / meeting point
 	StateDelivering                               // visiting vendors / waiting for caravan
+	StateStoring                                  // depositing unsold items into personal lockbox
 	StateRecalling                                // casting fold-recall home
 )
 
@@ -31,6 +34,7 @@ var stateNames = map[ForagerState]string{
 	StateForaging:             "foraging",
 	StateTravelingToDropoff:   "traveling_to_dropoff",
 	StateDelivering:           "delivering",
+	StateStoring:              "storing",
 	StateRecalling:            "recalling",
 }
 
@@ -59,5 +63,5 @@ func ParseState(name string) (ForagerState, bool) {
 // AdvanceState returns the next state in the cycle. After Recalling
 // it wraps back to Resting.
 func AdvanceState(cur ForagerState) ForagerState {
-	return (cur + 1) % 6
+	return (cur + 1) % 7
 }

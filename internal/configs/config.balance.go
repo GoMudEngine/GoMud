@@ -391,9 +391,6 @@ type Balance struct {
 	FernwayPickupDwellRounds ConfigInt `yaml:"FernwayPickupDwellRounds"`
 
 	// ── FORAGER SYSTEM (Stage 3.1) ───────────────────────────────────────────
-	// ForagerForageDwellRounds is the rounds between forage attempts in
-	// the forager's territory. Default 8.
-	ForagerForageDwellRounds ConfigInt `yaml:"ForagerForageDwellRounds"`
 
 	// ForagerCarryThresholdPct is the carry-capacity ratio (0.0-1.0) at
 	// which the forager heads home for delivery. Default 0.75.
@@ -436,6 +433,12 @@ type Balance struct {
 	// force-reset to Recalling so it heads home, dumps satchel, and
 	// re-cycles. Logs a Warn on reset for ops visibility.
 	ForagerStuckThresholdRounds ConfigInt `yaml:"ForagerStuckThresholdRounds"`
+
+	// ForagerStoringWatchdogRounds is the maximum number of rounds a
+	// forager will spend in StateStoring before bailing to StateRecalling.
+	// Prevents infinite loops if the chest workflow stalls (e.g.,
+	// persistently full chest or unreachable chest room).
+	ForagerStoringWatchdogRounds ConfigInt `yaml:"ForagerStoringWatchdogRounds"`
 
 	// ── ECONOMY HEALTH DASHBOARD ─────────────────────────────────────────────
 	EconomySnapshotIntervalHours ConfigInt   `yaml:"EconomySnapshotIntervalHours"` // Wall-clock cadence (default 1)

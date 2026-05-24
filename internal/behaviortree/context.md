@@ -215,7 +215,7 @@ Condition nodes use `type: condition` with `check: <name>`.
 
 | Condition | Params | Description |
 |-----------|--------|-------------|
-| `time_of_day` | `period` ("day" or "night") | In-game time of day. |
+| `time_of_day` | `period` ("day" or "night") OR `range` ("`<start>-<end>`", 24h format, e.g., `"9-17"`; wraps midnight when start > end). When both set, `range` takes precedence. | In-game time of day. Range uses `[start, end)` semantics (inclusive start, exclusive end). Empty range (`"5-5"`) always Failure; full-day range (`"0-24"`) always Success — both log a warning once. Malformed ranges log an error once and return Failure. |
 | `round_mod` | `n` (int) | `round % n == 0`. |
 | `random_chance` | `percent` (int) | N% probability. |
 | `players_in_room` | none | At least one player in the room. |
@@ -387,6 +387,19 @@ are subject to perception-scaled reaction delays (see below).
 | `try_salvage` | `item_uuid` (optional string) | Invoke `actions.Salvage` (instant). Default mode targets first eligible corpse in room (mob death items); optional `item_uuid` param targets a specific item. |
 | `wander_territory` | none | Delegates to territory-aware movement (delayed). Uses forager profile neighbor list to pick an adjacent room within home territory. Failure without forager profile. |
 
+### Forager Storage — multi-tick (chunk 2.10-followups)
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `try_store_excess` | `chest_room` (int, required) | Forager chest-deposit workflow. Multi-tick: each tick advances one step — pathto chest room → unlock lockbox → put items in lockbox → lock lockbox. Returns Failure if `chest_room` param is missing, satchel is empty, or the chest room has no lockbox container. Engine handles chest-full gracefully: failed puts are no-ops and items remain in satchel for the next cycle. |
+
+### Mutation Actives — instant (chunk 2.10 / 2.10-followups)
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `try_mutation_active` | `key` (string, optional) OR `keys` ([]string, optional). At least one required; nodes with neither are rejected with a log + Failure. | Invoke `actions.TriggerXxx` for the first available SELF/AoE mutation in the preference list. Success on triggered; Failure if no candidate fires (missing mutation, on cooldown, low stamina, not in combat). **Single-target mutations (`blinding-spit`, `toxic-bite`) are NOT dispatchable here** — they require a resolved target actor; without one the preamble consumes stamina and the special-move cooldown before Failure, leaking both resources. A future `try_mutation_active_at_target` primitive will add target resolution before dispatch. |
+| `try_any_active_mutation` | none | Enumerates the mob's current self/AoE mutations at tick time, sorted by rarity descending (alphabetical key tiebreak), and fires the first one that successfully triggers. Single-target mutations (`blinding-spit`, `toxic-bite`) are excluded — they need a target-resolving primitive. Coexists with `try_mutation_active`: use `try_mutation_active` for curated explicit-keys archetypes; use this action for autonomous "use whatever I have" archetypes where mobs should pick up newly evolved mutations at runtime without manual YAML edits. |
+
 ### Boss & Companion Control — delayed
 
 | Action | Params | Description |
@@ -510,6 +523,9 @@ A mob with Perception 50 has:
 | `try_forage` | No |
 | `try_salvage` | No |
 | `wander_territory` | Yes |
+| `try_store_excess` | No |
+| `try_mutation_active` | No |
+| `try_any_active_mutation` | No |
 
 ---
 

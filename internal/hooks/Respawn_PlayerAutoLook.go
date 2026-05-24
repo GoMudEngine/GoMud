@@ -11,8 +11,8 @@ import (
 // transitions and queues a `look` command so the new room description
 // renders without the player typing it manually.
 //
-// Note: a parallel auto-look fix for fold-recall is logged as
-// followup memory `auto-look-after-room-change`.
+// The parallel auto-look for fold-recall lives in spell_foldrecall.go
+// (resolveFoldRecall trailing block, IsPlayer-gated).
 func wireRespawnAutoLook(c *characters.Character) {
 	c.Life.Inner().AfterTransition("respawn_auto_look",
 		func(from, to life.State, r state.TransitionReason) {

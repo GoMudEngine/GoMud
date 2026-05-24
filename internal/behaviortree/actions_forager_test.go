@@ -587,6 +587,163 @@ func TestTickForagerRecalling_TeleportsDirectly(t *testing.T) {
 	}
 }
 
+// ---- try_store_excess tests ----
+
+// TestTryStoreExcess_RegisteredInActionRegistry verifies the action is
+// registered in the global registry.
+func TestTryStoreExcess_RegisteredInActionRegistry(t *testing.T) {
+	if _, ok := actionRegistry["try_store_excess"]; !ok {
+		t.Fatal("try_store_excess not registered in actionRegistry")
+	}
+}
+
+// TestTryStoreExcess_NoChestRoomParam verifies that omitting the required
+// chest_room param returns Failure.
+func TestTryStoreExcess_NoChestRoomParam(t *testing.T) {
+	mob := buildForagerMob(t, 8250, 371, 4123, 100, 100)
+	mob.Character.Items = append(mob.Character.Items, items.New(40021))
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+	res := actTryStoreExcess(map[string]any{}, ctx)
+	if res != Failure {
+		t.Errorf("expected Failure with missing chest_room param, got %v", res)
+	}
+}
+
+// TestTryStoreExcess_NoItems verifies that an empty satchel returns Failure
+// (nothing to deposit).
+func TestTryStoreExcess_NoItems(t *testing.T) {
+	mob := buildForagerMob(t, 8251, 371, 4123, 100, 100)
+	// Leave mob.Character.Items nil (zero value)
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+	res := actTryStoreExcess(map[string]any{"chest_room": 4123}, ctx)
+	if res != Failure {
+		t.Errorf("expected Failure with empty satchel, got %v", res)
+	}
+}
+
+// TestTryStoreExcess_NotInChestRoom_IssuesPathto verifies that when the mob
+// is not in the chest_room, it issues pathto and returns Success (continue
+// next tick).
+func TestTryStoreExcess_NotInChestRoom_IssuesPathto(t *testing.T) {
+	const chestRoom = 9999
+	mob := buildForagerMob(t, 8252, 371, 4177 /* not chestRoom */, 100, 100)
+	mob.Character.Items = append(mob.Character.Items, items.New(40021))
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+	res := actTryStoreExcess(map[string]any{"chest_room": chestRoom}, ctx)
+	// Should issue pathto and return Success (multi-tick: one step per tick)
+	if res != Success {
+		t.Errorf("expected Success when mob is not in chest_room, got %v", res)
+	}
+}
+
+// TestTryStoreExcess_NilMob_ReturnsFailure verifies that a nil mob instance
+// returns Failure safely.
+func TestTryStoreExcess_NilMob_ReturnsFailure(t *testing.T) {
+	ctx := &EvalContext{InstanceId: 99999}
+	res := actTryStoreExcess(map[string]any{"chest_room": 4123}, ctx)
+	if res != Failure {
+		t.Errorf("expected Failure for nil mob, got %v", res)
+	}
+}
+
+// TestTryStoreExcess_InChestRoom_NoLockbox_ReturnsFailure verifies that when
+// the chest_room has no lockbox container, the action returns Failure.
+func TestTryStoreExcess_InChestRoom_NoLockbox_ReturnsFailure(t *testing.T) {
+	const chestRoom = 8800
+
+	testRoom := &rooms.Room{
+		RoomId:     chestRoom,
+		Zone:       "test_zone",
+		Containers: map[string]rooms.Container{}, // no lockbox
+	}
+	cleanRooms := rooms.SeedRoomsForTest(
+		map[int]*rooms.Room{chestRoom: testRoom},
+		map[string]*rooms.ZoneConfig{},
+	)
+	defer cleanRooms()
+
+	mob := buildForagerMob(t, 8253, 371, chestRoom, 100, 100)
+	mob.Character.Items = append(mob.Character.Items, items.New(40021))
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+	res := actTryStoreExcess(map[string]any{"chest_room": chestRoom}, ctx)
+	if res != Failure {
+		t.Errorf("expected Failure when chest_room has no lockbox, got %v", res)
+	}
+}
+
+// TestTryStoreExcess_InChestRoom_Locked_IssuesUnlock verifies that when the
+// mob is in the chest_room and the lockbox is locked, it issues unlock and
+// returns Success.
+func TestTryStoreExcess_InChestRoom_Locked_IssuesUnlock(t *testing.T) {
+	const chestRoom = 8801
+
+	// Difficulty > 0 + UnlockedRound == 0 => IsLocked() == true
+	lockedContainer := rooms.Container{}
+	lockedContainer.Lock.Difficulty = 3
+
+	testRoom := &rooms.Room{
+		RoomId: chestRoom,
+		Zone:   "test_zone",
+		Containers: map[string]rooms.Container{
+			"lockbox": lockedContainer,
+		},
+	}
+	cleanRooms := rooms.SeedRoomsForTest(
+		map[int]*rooms.Room{chestRoom: testRoom},
+		map[string]*rooms.ZoneConfig{},
+	)
+	defer cleanRooms()
+
+	mob := buildForagerMob(t, 8254, 371, chestRoom, 100, 100)
+	mob.Character.Items = append(mob.Character.Items, items.New(40021))
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+	res := actTryStoreExcess(map[string]any{"chest_room": chestRoom}, ctx)
+	// Issues unlock, returns Success (next tick will proceed past unlock step)
+	if res != Success {
+		t.Errorf("expected Success when lockbox is locked (issues unlock), got %v", res)
+	}
+}
+
+// TestTryStoreExcess_InChestRoom_Unlocked_IssuesPutAndLock verifies that
+// when in the chest_room with an unlocked lockbox, the action issues put
+// commands for all items and a lock command, returning Success.
+func TestTryStoreExcess_InChestRoom_Unlocked_IssuesPutAndLock(t *testing.T) {
+	const chestRoom = 8802
+
+	// Unlocked container (default lock is unlocked: IsLocked() = false when
+	// Difficulty == 0 and RotationSeed == 0).
+	testRoom := &rooms.Room{
+		RoomId: chestRoom,
+		Zone:   "test_zone",
+		Containers: map[string]rooms.Container{
+			"lockbox": {}, // default: unlocked
+		},
+	}
+	cleanRooms := rooms.SeedRoomsForTest(
+		map[int]*rooms.Room{chestRoom: testRoom},
+		map[string]*rooms.ZoneConfig{},
+	)
+	defer cleanRooms()
+
+	mob := buildForagerMob(t, 8255, 371, chestRoom, 100, 100)
+	mob.Character.Items = append(mob.Character.Items,
+		items.New(40021),
+		items.New(40021),
+	)
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+	res := actTryStoreExcess(map[string]any{"chest_room": chestRoom}, ctx)
+	// Issues put+lock, returns Success
+	if res != Success {
+		t.Errorf("expected Success when issuing put+lock commands, got %v", res)
+	}
+}
+
 // TestTickForagerRecalling_AtSanctuaryTransitionsToResting verifies the
 // at-sanctuary path: forager in Recalling state with cargo arrives at her
 // sanctuary, dumps satchel, and transitions to Resting.

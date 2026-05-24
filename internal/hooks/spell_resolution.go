@@ -90,6 +90,18 @@ func resolveSpell(user *users.UserRecord, cs activity.CastingData, spellData *sp
 	// --- Populate area targets for HelpArea ---
 	if spellData.Type == spells.HelpArea {
 		cs.TargetUserIds = room.GetPlayers(rooms.FindAll)
+		// Apply to ally mobs only (charmed/companion). REPLACES any residual
+		// TargetMobInstanceIds from the cast's pre-resolution step —
+		// otherwise the caster's pre-spell aggro target (an enemy mob) gets
+		// healed alongside intended allies. Symmetric with HarmArea above.
+		allMobs := room.GetMobs(rooms.FindAll)
+		allies := make([]int, 0, len(allMobs))
+		for _, mId := range allMobs {
+			if m := mobs.GetInstance(mId); m != nil && m.Character.IsCharmed() {
+				allies = append(allies, mId)
+			}
+		}
+		cs.TargetMobInstanceIds = allies
 	}
 
 	// --- Resolve against mob targets ---

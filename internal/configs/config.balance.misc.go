@@ -286,9 +286,6 @@ func (b *Balance) validateMisc() {
 	}
 
 	// ── FORAGER SYSTEM (Stage 3.1) ───────────────────────────────────────────
-	if b.ForagerForageDwellRounds <= 0 {
-		b.ForagerForageDwellRounds = 8
-	}
 	if b.ForagerCarryThresholdPct <= 0 || b.ForagerCarryThresholdPct > 1.0 {
 		b.ForagerCarryThresholdPct = 0.75
 	}

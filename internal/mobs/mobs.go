@@ -94,7 +94,8 @@ type Mob struct {
 	PackFleeImmune  bool     `yaml:"pack_flee_immune,omitempty"` // if true, won't flee when packmates die
 	LastIdleCommand uint8    `yaml:"-"`                          // Track what hte last used idlecommand was
 	Groups          []string // What group do they identify with? Helps with teamwork
-	FoldAnchorRoom  int      `yaml:"fold_anchor_room,omitempty"` // Spawn-time fold-recall anchor (room ID)
+	FoldAnchorRoom    int `yaml:"fold_anchor_room,omitempty"`    // Spawn-time fold-recall anchor (room ID)
+	StorageChestRoom  int `yaml:"storage_chest_room,omitempty"`  // Room ID of forager's personal lockbox (0 = none)
 	// Pack-combat routine (v2-ready — see docs/superpowers/specs/2026-04-22-pack-tactics-revamp-design.md).
 	// Freeform string compared with equality to other mobs' Routine for pack
 	// identification. Mobs without a routine don't participate in packs.

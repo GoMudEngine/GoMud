@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -47,6 +48,18 @@ func saveCompanionState(user *users.UserRecord) {
 		comp.Mutations = copyIntMap(mob.Character.Mutations)
 		comp.SpellBook = copyIntMap(mob.Character.SpellBook)
 		comp.MutationProgress = mob.Character.MutationProgress
+
+		// Snapshot carried + equipped gear so it survives logout. Shallow-copy
+		// the Items slice (Item is a value type; the slice itself owns its
+		// elements). Equipment is a struct of Item values — direct assignment
+		// is a full copy.
+		if len(mob.Character.Items) > 0 {
+			comp.Items = make([]items.Item, len(mob.Character.Items))
+			copy(comp.Items, mob.Character.Items)
+		} else {
+			comp.Items = nil
+		}
+		comp.Equipment = mob.Character.Equipment
 
 		// Remove charm so the mob does not flag as charmed in any cleanup loops.
 		mob.Character.RemoveCharm()

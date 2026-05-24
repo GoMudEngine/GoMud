@@ -9,7 +9,7 @@ description: A muddy path leads down from the road to the river's edge, where th
   and the current quickens, pulling at anything that strays too far from shore.
   A narrower track branches south from the river bank, marked by a leaning
   signpost.
-biome: river
+biome: water
 coord:
   x: -8
   y: -1

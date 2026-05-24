@@ -3,74 +3,46 @@ package mobcommands
 import (
 	"fmt"
 
-	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/combat"
-	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
-	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
-// Charge is a boar trip variant — same mechanics, different messages.
+// Charge is a boar trip variant — same mechanics as trip, charge-specific
+// narration. Trip resolution (skill move, knockdown roll, prone application,
+// analytics, round consumption) is delegated to actions.ExecuteTrip; only
+// the charge-specific messages are handled here.
 func Charge(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	if !mob.Character.IsInCombat() {
 		return true, nil
 	}
 
-	cfg := configs.GetBalanceConfig()
-	if !mob.Character.Cooldowns.Try("special-move", fmt.Sprintf("%d rounds", cfg.SpecialMoveCooldown)) {
+	res := actions.ExecuteTrip(actions.NewMobActorInRoom(mob, room))
+
+	if res.OnCooldown || res.NoTarget || !res.Executed {
 		return true, nil
 	}
 
-	// Resolve target
-	targetPlayerId := mob.Character.CurrentCombatTarget().UserId
-	targetMobId := mob.Character.CurrentCombatTarget().MobInstanceId
+	target := res.Target
+	result := res.MoveResult
 
-	var targetChar *users.UserRecord
-	var targetMob *mobs.Mob
-	var targetName string
-	var defender *characters.Character
-
-	if targetMobId > 0 {
-		targetMob = mobs.GetInstance(targetMobId)
-		if targetMob == nil {
-			return true, nil
-		}
-		targetName = targetMob.Character.Name
-		defender = &targetMob.Character
-	} else if targetPlayerId > 0 {
-		targetChar = users.GetByUserId(targetPlayerId)
-		if targetChar == nil {
-			return true, nil
-		}
-		targetName = targetChar.Character.Name
-		defender = targetChar.Character
-	} else {
-		return true, nil
-	}
-
-	// Execute skill move (same params as trip)
-	result := combat.ExecuteSkillMove(combat.SkillMoveParams{
-		Attacker:        &mob.Character,
-		Defender:        defender,
-		AttackStat:      mob.Character.Stats.Dexterity.ValueAdj,
-		AttackSkill:     mob.Character.GetSkillLevel(skills.UnarmedCombat),
-		DefenseStat:     defender.Stats.Dexterity.ValueAdj,
-		DefenseSkill:    defender.GetCombatSkillLevel(),
-		DamagePercent:   float64(cfg.TripDamagePercent),
-		KnockdownChance: int(cfg.TripKnockdownChance),
-		SkillRank:       mob.Character.GetSkillLevel(skills.UnarmedCombat),
-		DamageStat:      mob.Character.Stats.Strength.ValueAdj,
-	})
-
-	// Send messages
 	mobName := mob.Character.Name
+	targetName := target.Name
+	targetPlayerId := target.UserId
+
+	// Resolve the target user record for direct messaging (player targets only).
+	var targetChar *users.UserRecord
+	if target.UserId > 0 {
+		targetChar = users.GetByUserId(target.UserId)
+	}
+
 	canSee := targetChar == nil || canSeeInDark(targetChar, room)
 	dmgDesc := combat.GetDamageDescription(result.Damage, result.TargetMaxHP)
+
 	if result.Hit {
 		if result.KnockedDown {
 			if targetChar != nil {
@@ -106,21 +78,6 @@ func Charge(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		sendRoomText(room, messaging.CategoryTrip,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges past <ansi fg="username">%s</ansi>, missing entirely!`, mobName, targetName),
 			targetPlayerId)
-	}
-
-	// Record combat analytics
-	dmgRecorded := 0
-	if result.Hit {
-		dmgRecorded = result.Damage
-	}
-	tgtType := combat.Mob
-	if targetMob == nil {
-		tgtType = combat.User
-	}
-	combat.RecordSpecialMove(combat.Mob, tgtType, "charge", result.Hit, dmgRecorded, &mob.Character, defender, util.GetRoundCount())
-
-	if mob.Character.Aggro != nil {
-		mob.Character.Aggro.RoundsWaiting = 1
 	}
 
 	return true, nil
