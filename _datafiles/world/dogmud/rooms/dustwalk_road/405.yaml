@@ -7,7 +7,7 @@ description: A small waystation stands beside the road -- a stone-walled shelter
   of the destinations are illegible. The shelter is well-maintained despite its remote
   location. A bedroll, a water skin, and a stack of patrol reports occupy the interior.
   Someone is stationed here, and takes the posting seriously.
-biome: plains
+biome: land
 coord:
   x: -10
   y: 1

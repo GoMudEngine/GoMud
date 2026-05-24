@@ -9,7 +9,7 @@ description: A stone bridge spans the river here, wide enough for two carts to p
   is solid but not without concern -- a crack runs along the eastern rail, and several
   capstones have been replaced with newer, lighter-coloured stone. Watchtowers stand
   at each end, their upper windows dark and empty.
-biome: river
+biome: water
 coord:
   x: -6
   y: 0
