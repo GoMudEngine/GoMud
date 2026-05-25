@@ -64,11 +64,6 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 			continue
 		}
 
-		if mob.InConversation() {
-			mob.Converse()
-			continue
-		}
-
 		// Chunk 3.2: schedule executor. Runs before the path-walker so it can
 		// clear stale paths on segment transitions and queue new pathtos before
 		// the walker consumes them.

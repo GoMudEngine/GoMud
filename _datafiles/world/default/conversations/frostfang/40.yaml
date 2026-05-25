@@ -1,9 +1,0 @@
-- 
-  Supported: # A map of lowercase names of "Initiator" (#1) to array of "Participant" (#2) names allowed to use this conversation. 
-    "rodric": ["wench"]
-  Conversation:
-    - ["#1 sayto #2 I'll 'ave a mug 'o ale, wench!"]
-    - ["#2 say Very well, Rodric, but be off with you. We don't need you lingering around the guests smelling like death."]
-    - ["#2 emote hands Rodric a mug."]
-    - ["#1 say Aye, i'll be off, then."]
-    - ["#2 emote mumbles something under their breath."]

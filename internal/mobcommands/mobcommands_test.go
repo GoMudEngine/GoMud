@@ -800,17 +800,6 @@ func TestBefriendMob(t *testing.T) {
 	_ = err
 }
 
-func TestConverseMob(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	mob, room := getTestMobAndRoom(t)
-
-	handled, err := Converse("", mob, room)
-	_ = handled
-	_ = err
-}
-
 func TestDespawnMob(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
@@ -1198,19 +1187,6 @@ func TestShootInCombat(t *testing.T) {
 	_ = handled
 	_ = err
 	mob.Character.Aggro = nil
-}
-
-func TestConverseBranches(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	mob, room := getTestMobAndRoom(t)
-
-	t.Run("no_converse_file", func(t *testing.T) {
-		handled, err := Converse("", mob, room)
-		assert.True(t, handled)
-		_ = err
-	})
 }
 
 func TestCallForHelpInCombat(t *testing.T) {
