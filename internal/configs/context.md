@@ -537,3 +537,9 @@ value of 1.0 — adjusted at validation time in
 
 See `internal/combat/context.md` "Submission System (chunk 4d)" for the
 full resolution flow and policy matrix.
+
+### NPC Schedules (chunk 3.2)
+
+| Knob | Default | Effect |
+|------|---------|--------|
+| `ScheduleMaxPathRetries` | 20 | After N consecutive failed `pathto` attempts, a scheduled mob falls back to `pathto home`. Chunk 3.2. |

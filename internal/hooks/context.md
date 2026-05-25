@@ -415,6 +415,18 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 }
 ```
 
+### Schedule executor (chunk 3.2)
+
+- `NewRound_IdleMobs_schedule.go`: schedule executor branch inserted
+  between the conversation guard and path-walker in `HandleIdleMobs`.
+  On every tick: resolves the current segment via `mobs.CurrentSegment`,
+  swaps `mob.IdleCommands` on segment transition, queues a `pathto`
+  toward the segment `target_room`, falls back to `pathto home` after
+  `ScheduleMaxPathRetries` consecutive failed path attempts.
+- `MobIdle_HandleIdleMobs`: `TickMobCraft` now respects the schedule
+  `activity:` gate — it returns nil immediately when the mob's current
+  segment `activity` is not `"craft"`.
+
 ## Integration Patterns
 
 ### Event System Integration

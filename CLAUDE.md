@@ -51,6 +51,17 @@ quantity. Config knobs: `ShopBuyRatio`, `ShopPriceFloor`, `ShopPriceCeiling`,
 Non-combatant mobs (`non_combatant: true` in YAML) cannot be attacked,
 stolen from, or targeted by harm spells.
 
+## NPC Schedules
+Townspeople NPCs can carry a `schedule_id:` field that references
+a daily routine in
+`_datafiles/world/dogmud/schedules/<zone>/<id>.yaml`. Schedules
+cover all 24 hours, swap the mob's idle command pool per segment,
+steer the mob between rooms via the existing `pathto` plumbing,
+and gate `TickMobCraft` via segment `activity:`. Schedule
+validators panic at startup on coverage gaps, unreachable target
+rooms, or unresolved `schedule_id` references — pre-push SOP
+boot-test catches these. See `docs/schemas/schedule.md`.
+
 ## Project Context
 - DOGMud (Delusions of Grandeur) is a MUD built on the GoMud engine
 - World design document: `world.md`
