@@ -89,8 +89,9 @@ func applyScheduleSpawnOverride(scheduleId string, homeRoomId int, hour24 int) i
 	return seg.TargetRoom
 }
 
-// registerScheduleForTest / unregisterScheduleForTest are test-only helpers
-// for injecting schedules into the package-level registry.
+// registerScheduleForTest / unregisterScheduleForTest are unexported helpers
+// used by tests within this package. RegisterScheduleForTest / Unregister are
+// the exported variants for cross-package test injection (hooks tests, etc.).
 func registerScheduleForTest(s *Schedule) {
 	schedulesMu.Lock()
 	defer schedulesMu.Unlock()
@@ -101,4 +102,17 @@ func unregisterScheduleForTest(id string) {
 	schedulesMu.Lock()
 	defer schedulesMu.Unlock()
 	delete(schedules, id)
+}
+
+// RegisterScheduleForTest injects a Schedule into the registry so that
+// tests in other packages can exercise schedule-dependent code paths
+// without writing fixture YAML files. Call t.Cleanup(UnregisterScheduleForTest)
+// after each call to avoid cross-test pollution.
+func RegisterScheduleForTest(s *Schedule) {
+	registerScheduleForTest(s)
+}
+
+// UnregisterScheduleForTest removes a previously injected schedule.
+func UnregisterScheduleForTest(id string) {
+	unregisterScheduleForTest(id)
 }

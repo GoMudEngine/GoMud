@@ -7,6 +7,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state/presence"
@@ -66,6 +67,14 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 		if mob.InConversation() {
 			mob.Converse()
 			continue
+		}
+
+		// Chunk 3.2: schedule executor. Runs before the path-walker so it can
+		// clear stale paths on segment transitions and queue new pathtos before
+		// the walker consumes them.
+		if mob.ScheduleId != "" {
+			plan := scheduleTickPlan(mob, gametime.GetDate().Hour24)
+			applySchedulePlan(mob, plan)
 		}
 
 		// Check whether they are currently in the middle of a path, or have one waiting to start.
