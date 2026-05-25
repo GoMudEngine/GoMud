@@ -396,6 +396,17 @@ func pickSelfGearRecipe(mob *Mob, recipeIds []string, shopInv *shops.ShopInvento
 			continue
 		}
 
+		// Skip if shop output is already at MaxStock. Without this, mobs
+		// with self-gear-able recipes spam-craft forever — the 2026-05-06
+		// routing fix sends crafted self-gear to the shop instead of the
+		// mob's body, so IsUpgrade keeps returning true (the mob never
+		// actually equips). Stock caps silently in AddStockAtRound; the
+		// craft message still fires, ingredients are still consumed, but
+		// nothing visible appears. Mirrors EvaluateCraftOptions:160.
+		if entry := shopInv.GetStock(recipe.Output.ItemId); entry != nil && entry.Current >= entry.MaxStock {
+			continue
+		}
+
 		// Check materials are available (backpack for legacy; shopInv for shop path)
 		if !shops.HasMaterialsWithReservePct(recipe, shopInv, reservePct) {
 			continue
