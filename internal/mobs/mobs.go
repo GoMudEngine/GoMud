@@ -653,6 +653,27 @@ func GetAllMobInstanceIds() []int {
 	return ids
 }
 
+// FindLiveInstanceByHomeAndId returns the first live mob instance whose
+// HomeRoomId matches roomId AND whose MobId matches mobId. Returns nil if
+// none exists. Used by the room spawn loop to detect orphans before
+// creating a duplicate — a scheduled mob that has walked away from its
+// home (e.g., to a sleep loft) is still "the" spawn for that room and
+// must not be re-spawned just because the SpawnInfo.InstanceId reference
+// was lost across a room unload/reload cycle.
+func FindLiveInstanceByHomeAndId(roomId int, mobId MobId) *Mob {
+	mobInstancesMu.RLock()
+	defer mobInstancesMu.RUnlock()
+	for _, m := range mobInstances {
+		if m == nil {
+			continue
+		}
+		if m.HomeRoomId == roomId && m.MobId == mobId {
+			return m
+		}
+	}
+	return nil
+}
+
 func DestroyInstance(instanceId int) {
 	mobInstancesMu.Lock()
 	delete(mobInstances, instanceId)
