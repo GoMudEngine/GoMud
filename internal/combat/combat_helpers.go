@@ -26,6 +26,12 @@ import (
 type combatContext struct {
 	sourceCanSee bool // source has nightvision OR room visibility >= 1
 	targetCanSee bool // target has nightvision OR room visibility >= 1
+	// Chunk 3.3: when true, the first hit of this round is guaranteed to
+	// crit regardless of the z-score threshold. Set by the round dispatcher
+	// when the defender was snapshotted as Sleeping at round start.
+	// Uses combatContext (not a separate parameter) so it threads through
+	// calculateCombat without touching Attack*Vs* signatures.
+	forceCrit bool
 }
 
 // weaponSetup holds pre-computed weapon info for a single weapon swing.
