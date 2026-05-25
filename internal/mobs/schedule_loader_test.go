@@ -96,3 +96,10 @@ func TestValidateSchedule_MissingTargetRoom_Panics(t *testing.T) {
 func TestValidateScheduleAgainstWorld_RoomDoesNotExist(t *testing.T) {
 	t.Skip("requires rooms fixture — covered by boot smoke in T13")
 }
+
+func TestMobScheduleIdCrossCheck_Stub(t *testing.T) {
+	// Cross-check is wired in LoadDataFiles and is exercised by the boot
+	// smoke at T13. Stub here as a documentation hook — if we add a
+	// LoadDataFiles unit-test fixture later this is where it slots in.
+	t.Skip("covered by boot smoke in T13")
+}

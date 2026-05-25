@@ -155,6 +155,7 @@ type Mob struct {
 	ScatterRounds           int    `yaml:"-"` // Rounds remaining where mob skips wander (after alpha death)
 	crafterLastRestockRound uint64 // Last round materials were restocked (transient)
 	BehaviorArchetype       string `yaml:"behavior_archetype,omitempty"` // Archetype name (e.g., "melee_self_buff") — resolved to behaviors/archetypes/<name>.yaml if per-mob tree absent.
+	ScheduleId              string `yaml:"schedule_id,omitempty"`        // chunk 3.2: daily routine reference
 	SubmissionPolicy        string `yaml:"submission_policy,omitempty"`  // chunk 4d T12: override archetype default; "mercy"/"subdue"/"cripple"/"lethal"
 	SurrenderPolicy         string `yaml:"surrender_policy,omitempty"`   // chunk 4d T12: override archetype default; "never"/"always"/"auto-tap-below <N>"
 	BTreeState              any    `yaml:"-"`                            // Behavior tree per-instance state (*behaviortree.BehaviorState)
@@ -1191,6 +1192,20 @@ func LoadDataFiles() {
 
 	// Load NPC daily schedules. Optional content — no panic if directory absent.
 	LoadSchedules()
+
+	// Cross-check: every mob's schedule_id must resolve to a loaded schedule.
+	mobsMu.RLock()
+	for _, mob := range mobs {
+		if mob.ScheduleId == "" {
+			continue
+		}
+		if GetSchedule(mob.ScheduleId) == nil {
+			mobsMu.RUnlock()
+			panic(fmt.Errorf("mob %d (%s): schedule_id %q does not resolve to a loaded schedule",
+				mob.MobId, mob.Character.Name, mob.ScheduleId))
+		}
+	}
+	mobsMu.RUnlock()
 
 	// Populate the relationships graph from authored YAML edges.
 	mobsMu.RLock()
