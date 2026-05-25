@@ -326,6 +326,23 @@ type Balance struct {
 	// at default tick rate). Chunk 3.3.
 	ScheduleWakeGraceRounds ConfigInt `yaml:"ScheduleWakeGraceRounds"`
 
+	// ── NPC-NPC IDLE CONVERSATIONS (chunk 3.6) ───────────────────────────────────
+	// ConversationBaseChancePct is the per-tick percentage chance that a
+	// fully-idle NPC will attempt to start an idle conversation with an
+	// in-room partner that has a relationship edge. Default 1.0 → ~once
+	// per 100 ticks per NPC. Chunk 3.6.
+	ConversationBaseChancePct ConfigFloat `yaml:"ConversationBaseChancePct"`
+
+	// ConversationPlayerArrivalBoostPct is the percentage chance that
+	// a conversation will start when a player arrives in a room with 2+
+	// relateable, idle NPCs. Default 25. Chunk 3.6.
+	ConversationPlayerArrivalBoostPct ConfigInt `yaml:"ConversationPlayerArrivalBoostPct"`
+
+	// ConversationCooldownRounds is the cooldown applied to both NPCs
+	// after a conversation completes, before either can initiate another.
+	// Default 50 (~200 sec real-time). Chunk 3.6.
+	ConversationCooldownRounds ConfigInt `yaml:"ConversationCooldownRounds"`
+
 	// ── PACK SCALING ─────────────────────────────────────────────────────────
 	PackScalingEnabled   ConfigBool `yaml:"PackScalingEnabled"`   // Enable pack survival bonuses (default true)
 	PackSurvivalRounds   ConfigInt  `yaml:"PackSurvivalRounds"`   // Consecutive rounds together before bonus (default 10)
