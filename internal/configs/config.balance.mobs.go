@@ -28,6 +28,14 @@ func (b *Balance) validateMobs() {
 		b.ScheduleMaxPathRetries = 20
 	}
 
+	// ── MOB SLEEP & WAKE ─────────────────────────────────────────────────────
+	if b.SleepRegenMultiplier <= 0 {
+		b.SleepRegenMultiplier = 5.0
+	}
+	if b.ScheduleWakeGraceRounds < 1 {
+		b.ScheduleWakeGraceRounds = 50
+	}
+
 	// ── MOB REGEN ────────────────────────────────────────────────────────────
 	clampPct := func(v *ConfigFloat, def ConfigFloat) {
 		if *v <= 0 {
