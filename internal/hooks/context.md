@@ -427,6 +427,18 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
   `activity:` gate — it returns nil immediately when the mob's current
   segment `activity` is not `"craft"`.
 
+### Patrol executor (chunk 3.4)
+
+- `NewRound_IdleMobs_patrol.go`: `patrolTickPlan` (pure decision)
+  + `applyPatrolPlan` (side effects). Runs in IdleMobs AFTER the
+  schedule branch, so a schedule-stamped `active_patrol_id`
+  (from an `activity: patrol` segment) is visible. Reads-and-
+  clears the stamp; falls back to `mob.PatrolId` for standalone
+  patrols.
+- `NewRound_IdleMobs_schedule.go`: stamps `active_patrol_id`
+  MiscData in `applySchedulePlan` when the current segment has
+  `activity: patrol`.
+
 ## Integration Patterns
 
 ### Event System Integration
