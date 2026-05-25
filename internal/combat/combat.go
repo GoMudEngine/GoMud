@@ -465,7 +465,7 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			best := runBestOfAllDefense(&attackResult, &sourceChar, &targetChar, defenseSequence, attackScore, isThirdParty, ctx)
 
 			// New resolution order: fumbles → crits → normal → floors
-			res := resolveDefenseOutcome(&attackResult, best, &sourceChar, &targetChar, critThreshold, isThirdParty)
+			res := resolveDefenseOutcome(&attackResult, best, &sourceChar, &targetChar, critThreshold, isThirdParty, false)
 
 			sourceChar.UpdateMomentum(res.hit)
 
