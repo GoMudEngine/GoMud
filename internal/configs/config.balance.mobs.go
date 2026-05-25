@@ -23,6 +23,11 @@ func (b *Balance) validateMobs() {
 		b.MobBTreeReactionPerceptionScale = 100
 	}
 
+	// ── MOB SCHEDULES ────────────────────────────────────────────────────────
+	if b.ScheduleMaxPathRetries < 1 {
+		b.ScheduleMaxPathRetries = 20
+	}
+
 	// ── MOB REGEN ────────────────────────────────────────────────────────────
 	clampPct := func(v *ConfigFloat, def ConfigFloat) {
 		if *v <= 0 {

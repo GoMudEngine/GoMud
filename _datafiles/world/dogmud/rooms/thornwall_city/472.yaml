@@ -23,6 +23,8 @@ exits:
     roomid: 481
   south:
     roomid: 484
+  up:
+    roomid: 5102
 nouns:
   sign: A painted wooden sign showing a fence post in brown water, the waterline
     rising to the crossbar. The paint is fresh -- someone keeps the sign maintained

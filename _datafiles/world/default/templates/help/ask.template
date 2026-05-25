@@ -9,3 +9,6 @@ for getting information about quests, or when you have a hired mercenary, to giv
   <ansi fg="command">ask Why are you sad?</ansi>
   <ansi fg="command">ask buddy to drop sword</ansi>
 
+NPCs follow daily routines. The smith might not be at the forge
+after sunset -- try the tavern or come back in the morning.
+

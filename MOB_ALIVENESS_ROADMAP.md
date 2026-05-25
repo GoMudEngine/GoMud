@@ -94,7 +94,7 @@ should always agree.
 | 2.9 | Tactical | Mob `forage` as a command | M | — | Done |
 | 2.10 | Tactical | PvM/MvP/PvP/MvM parity audit | M | 2.1–2.9 | Done |
 | 3.1 | Routine | Game-time hook | S | — | Done |
-| 3.2 | Routine | NPC schedules | L | 3.1 | Not started |
+| 3.2 | Routine | NPC schedules | L | 3.1 | Done |
 | 3.3 | Routine | Sleeping / wake states | S | 3.1 | Not started |
 | 3.4 | Routine | Waypoint patrols | M | — | Not started |
 | 3.5 | Routine | Maintenance routines | M | 3.2 | Not started |
@@ -418,13 +418,14 @@ world.
 - **Shipped:** Extended the existing `time_of_day` btree condition (`internal/behaviortree/conditions_state.go:64`) with a `range:` parameter for hour-precise time gating that chunk 3.2 schedules will use. Range format `"<start>-<end>"` with `[start, end)` semantics, wraps midnight when `start > end` (e.g., `"22-6"` for nightwatch). When both `period:` and `range:` are set, `range:` wins. Empty range (`"5-5"`) always Failure + warning; full-day (`"0-24"`) always Success + warning; malformed strings log an error once and return Failure. `sync.Map` dedup prevents log spam. Most of the roadmap requirements were already in place: `util.GetRoundCount()` provides the time tick, `gametime.IsNight()` + `GameDate.Night` provide the day/night flag, `configs.GetTimingConfig().RoundsPerDay` provides configurable day length, and `modules/time/time.go` already gives players a `time` command. The only new code was the `range:` parser + wrap-around comparator + 20 unit tests. Spec at `docs/superpowers/specs/2026-05-23-mob-aliveness-3.1-game-time-hook-design.md`, plan at `docs/superpowers/plans/2026-05-23-mob-aliveness-3.1-game-time-hook.md`.
 
 ### 3.2 NPC schedules
-**Status:** Not started • **Size:** L
+**Status:** Done • **Size:** L
 
 - **Goal:** Timed routines: "smith works 9–5, home 5–8, tavern 8–11, sleep."
 - **In:** Schedule YAML, schedule executor, behaviors for "go to room" and "perform activity at room."
 - **Out:** Per-day variation (weekday/weekend/holiday) — start with single daily routine.
 - **Depends on:** 3.1
 - **Why:** A town that empties at night and fills in the morning feels a thousand percent more alive than a static town.
+- **Shipped:** Schedule loader + 24h-coverage validator + pathfinding sanity in `internal/mobs/schedule.go` and `internal/mobs/schedule_loader.go`. Go-side executor in `internal/hooks/NewRound_IdleMobs_schedule.go` steers scheduled mobs via existing `pathto` plumbing, swaps per-segment `IdleCommands`, falls back to home after `ScheduleMaxPathRetries` failures. Spawn override in `newMobByIdInternal` places scheduled mobs at the current segment's target room. `TickMobCraft` respects per-segment `activity: craft` so Blacksmith Kerra only forges at the forge. New `mob_at_target_room` btree condition. New `mob schedule <instId>` admin inspector. Three Thornwall pilots: Blacksmith Kerra, Tavern Keeper Marek, Temple Priest Olen, each with a new above-shop home room. Spec at `docs/superpowers/specs/completed/2026-05-25-mob-aliveness-3.2-npc-schedules-design.md`, plan at `docs/superpowers/plans/completed/2026-05-25-mob-aliveness-3.2-npc-schedules.md`.
 
 ### 3.3 Sleeping / wake states
 **Status:** Not started • **Size:** S
@@ -452,6 +453,7 @@ world.
 - **Out:** Activities producing real economic output (crafting restock can be a follow-on chunk).
 - **Depends on:** 3.2 (maintenance often slots inside schedules)
 - **Why:** Walking into the smithy and seeing the smith working tells the player the world isn't waiting on them.
+- **Builds on:** Chunk 3.2's per-segment `activity:` field. New maintenance verbs (`tend_crops`, `shelve_books`, etc.) will be dispatched when a segment declares them.
 
 ### 3.6 NPC↔NPC idle conversation
 **Status:** Not started • **Size:** M

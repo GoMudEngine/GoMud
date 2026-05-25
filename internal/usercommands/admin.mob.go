@@ -8,6 +8,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -64,6 +65,17 @@ func Mob(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		}
 
 		return mob_Heal(args[1:], user, room, flags)
+	}
+
+	// Inspect a mob's schedule state
+	if args[0] == `schedule` {
+
+		if !user.HasRolePermission(`mob.spawn`) {
+			user.SendText(messaging.CategorySystem, `you do not have <ansi fg="command">mob.spawn</ansi> permission`)
+			return true, nil
+		}
+
+		return mob_Schedule(args[1:], user, room, flags)
 	}
 
 	return true, nil
@@ -200,9 +212,126 @@ func mob_Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		}
 	}
 
-	user.SendText(messaging.CategorySystem, 
+	user.SendText(messaging.CategorySystem,
 		fmt.Sprintf(`Mob <ansi fg="mobname">%s</ansi> not found.`, rest),
 	)
 
 	return true, nil
+}
+
+// mob_Schedule prints the schedule debug summary for a single mob instance.
+// Usage: mob schedule <instId>
+func mob_Schedule(args []string, user *users.UserRecord, room *rooms.Room, _ events.EventFlag) (bool, error) {
+	if len(args) == 0 {
+		user.SendText(messaging.CategorySystem,
+			`Usage: <ansi fg="command">mob schedule [instId]</ansi>`)
+		return true, nil
+	}
+	instId, err := strconv.Atoi(args[0])
+	if err != nil || instId < 1 {
+		user.SendText(messaging.CategorySystem,
+			`Usage: <ansi fg="command">mob schedule [instId]</ansi>`)
+		return true, nil
+	}
+	m := mobs.GetInstance(instId)
+	if m == nil {
+		user.SendText(messaging.CategorySystem,
+			fmt.Sprintf(`No mob instance with id %d.`, instId))
+		return true, nil
+	}
+	if m.ScheduleId == "" {
+		user.SendText(messaging.CategorySystem,
+			fmt.Sprintf(`%s (mob %d, instance %d) has no schedule.`,
+				m.Character.Name, m.MobId, instId))
+		return true, nil
+	}
+	s := mobs.GetSchedule(m.ScheduleId)
+	if s == nil {
+		user.SendText(messaging.CategorySystem,
+			fmt.Sprintf(`%s references unknown schedule %q.`,
+				m.Character.Name, m.ScheduleId))
+		return true, nil
+	}
+	hour := gametime.GetDate().Hour24
+	cur := s.CurrentSegment(hour)
+	if cur == nil {
+		user.SendText(messaging.CategorySystem,
+			fmt.Sprintf(`Schedule %q has no segment for hour %d (coverage bug).`,
+				m.ScheduleId, hour))
+		return true, nil
+	}
+
+	next := nextSegmentAfter(s, cur)
+	hoursUntilNext := hoursUntil(hour, next.Start)
+
+	atTarget := "AT TARGET"
+	if m.Character.RoomId != cur.TargetRoom {
+		atTarget = fmt.Sprintf("EN ROUTE (current room %d)", m.Character.RoomId)
+	}
+
+	out := fmt.Sprintf(
+		"Schedule for %s (mob %d, instance %d):\n"+
+			"  schedule_id:     %s\n"+
+			"  current hour:    %d\n"+
+			"  current segment: (%d-%d)\n"+
+			"    target_room:   %d\n"+
+			"    activity:      %s\n"+
+			"  next segment:    (%d-%d) in %d hours\n"+
+			"  mob location:    %s (target %d)\n"+
+			"  path queue:      %d steps remaining",
+		m.Character.Name, m.MobId, instId,
+		m.ScheduleId,
+		hour,
+		cur.Start, cur.End,
+		cur.TargetRoom,
+		mobScheduleIfEmpty(cur.Activity, "(none)"),
+		next.Start, next.End,
+		hoursUntilNext,
+		atTarget, cur.TargetRoom,
+		m.Path.Len(),
+	)
+	user.SendText(messaging.CategorySystem, out)
+	return true, nil
+}
+
+// nextSegmentAfter returns the schedule's segment that starts after the
+// current one in chronological order, wrapping around to the earliest
+// segment after the day boundary.
+func nextSegmentAfter(s *mobs.Schedule, current *mobs.ScheduleSegment) *mobs.ScheduleSegment {
+	var earliest, found *mobs.ScheduleSegment
+	for i := range s.Segments {
+		seg := &s.Segments[i]
+		if earliest == nil || seg.Start < earliest.Start {
+			earliest = seg
+		}
+		if seg.Start > current.Start {
+			if found == nil || seg.Start < found.Start {
+				found = seg
+			}
+		}
+	}
+	if found != nil {
+		return found
+	}
+	return earliest
+}
+
+// hoursUntil returns the number of hours from now until targetHour, wrapping
+// past midnight. Returns 24 if target equals now (next occurrence is a day
+// from now, not "right now"); returns 1-23 for normal cases.
+func hoursUntil(now, target int) int {
+	diff := target - now
+	if diff <= 0 {
+		diff += 24
+	}
+	return diff
+}
+
+// mobScheduleIfEmpty returns s if non-empty, otherwise fallback.
+// Named to avoid collision with any future package-level ifEmpty helper.
+func mobScheduleIfEmpty(s, fallback string) string {
+	if s == "" {
+		return fallback
+	}
+	return s
 }

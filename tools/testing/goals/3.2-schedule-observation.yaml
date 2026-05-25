@@ -1,0 +1,32 @@
+description: "Observe Blacksmith Kerra for one full game-day and verify her schedule resolves correctly at each segment, including the crafter activity gate."
+
+goals:
+  - "On session start, locate Kerra (mob 97). Run `look` in her starting room, then run `time` to capture the current game hour. Log both in the report."
+  - "Every ~2 game hours (RoundsPerDay/12 rounds ≈ 1-2 minutes real-time at default tick rate), recheck Kerra's location and note the current game hour. Log any room change or lack thereof."
+  - "When Kerra should be at the forge (game hours 9-18): confirm she is in the forge room (smithy/forge area in Thornwall). Watch for crafting flavor messages in the room — lines like 'finishes crafting' or 'frowns at a failed attempt'. These confirm the activity:craft gate is firing."
+  - "When Kerra should be at the tavern (game hours 18-22): confirm she is in the Thornwall tavern room. Confirm NO crafting output appears during this segment."
+  - "When Kerra should be in the loft (game hours 22-6 and 6-9): confirm she is in her above-shop home room (the new loft added in chunk 3.2). Confirm NO crafting output."
+  - "Run `mob schedule <kerraInstId>` (admin command added in chunk 3.2) to inspect her schedule state mid-session. Log the output — it should show the active segment, target room, and path retry count."
+  - "If Kerra appears stuck (same room across multiple samples during a segment she should have left), flag it as FAIL with timestamps."
+  - "If Kerra acquires a 'lost' adjective or the admin inspector shows MaxPathRetries exceeded, flag it."
+  - "If any error or panic message appears in room text or server output, flag it immediately."
+  - "Bonus: watch for Kerra's idle flavor emotes (she talks to customers, examines her work, wipes soot from her brow) to confirm idle commands are swapping per-segment."
+
+notes:
+  - "Server runs locally at localhost:55555. Freshly booted with chunk 3.2 changes."
+  - "Use `set charset` ASCII setting per the test-mud SOP."
+  - "Kerra's mob ID is 97. To find her instance ID for `mob schedule`, run `look kerra` in her room and check the instance ID in the admin output, or scan `who` output."
+  - "Game day length: configs.GetTimingConfig().RoundsPerDay (default 20) × ~4s/round ≈ 80 seconds per game-day. Verify with `time` command output — confirm the in-game hours are advancing."
+  - "Sampling cadence: RoundsPerDay/12 ≈ ~6-7 seconds between samples. You can poll faster if Kerra is in a transition window."
+  - "Kerra's expected schedule: loft 22-6 (sleep), loft 6-9 (morning prep), forge 9-18 (work), tavern 18-22 (evening). She was the primary pilot NPC for 3.2."
+  - "If Kerra is mid-transit between rooms when you check, note it — path-following in progress is expected behavior, not a bug."
+  - "Do NOT attack or steal from Kerra — she is not player_attack_immune, but she IS a key quest NPC and harming her will corrupt test state."
+  - "Report each goal as PASS / FAIL / BLOCKED with timestamps and verbatim log excerpts where relevant."
+  - "Save report to tools/testing/reports/3.2-schedule-observation-<timestamp>.md."
+
+pass_criteria:
+  - "All 4 schedule segments visited in their correct hour ranges (loft 6-9, forge 9-18, tavern 18-22, loft sleep 22-6) across a full game-day observation."
+  - "Server shows no panic or fatal error during the session."
+  - "Kerra never acquires the 'lost' adjective."
+  - "Crafting flavor messages appear ONLY during the forge segment (9-18) and are absent during tavern and loft segments."
+  - "`mob schedule` admin inspector returns a valid schedule state (not an error) when queried."

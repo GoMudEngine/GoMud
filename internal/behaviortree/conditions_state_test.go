@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -344,5 +345,97 @@ func TestInHourRange_LinearAndWrapAround(t *testing.T) {
 		if inHourRange(h, 5, 5) {
 			t.Errorf("inHourRange(%d, 5, 5) should be false (empty range)", h)
 		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+// condMobAtTargetRoom tests
+// ---------------------------------------------------------------------------
+
+func TestCondMobAtTargetRoom_AtTarget(t *testing.T) {
+	// Pin the clock to hour 10 so segment [9,18) is active.
+	defer mustHour(t, 10)()
+
+	mobs.RegisterScheduleForTest(&mobs.Schedule{
+		Id: "test_schedule_at_target",
+		Segments: []mobs.ScheduleSegment{
+			{Start: 0, End: 9, TargetRoom: 1111},
+			{Start: 9, End: 18, TargetRoom: 5678},
+			{Start: 18, End: 24, TargetRoom: 9999},
+		},
+	})
+	defer mobs.UnregisterScheduleForTest("test_schedule_at_target")
+
+	cleanMob := seedTestMob(t, 7, 700, 5678, "TestSmith")
+	defer cleanMob()
+
+	// Set the schedule and place the mob at the forge (target_room 5678).
+	mob := mobs.GetInstance(700)
+	mob.ScheduleId = "test_schedule_at_target"
+	mob.Character.RoomId = 5678
+
+	ctx := &EvalContext{InstanceId: 700, RoomId: 5678}
+	if res := condMobAtTargetRoom(nil, ctx); res != Success {
+		t.Errorf("expected Success when mob is at target room, got %v", res)
+	}
+}
+
+func TestCondMobAtTargetRoom_NotAtTarget(t *testing.T) {
+	// Pin to hour 10 so segment [9,18) is active (target_room 5678).
+	defer mustHour(t, 10)()
+
+	mobs.RegisterScheduleForTest(&mobs.Schedule{
+		Id: "test_schedule_not_at_target",
+		Segments: []mobs.ScheduleSegment{
+			{Start: 0, End: 9, TargetRoom: 1111},
+			{Start: 9, End: 18, TargetRoom: 5678},
+			{Start: 18, End: 24, TargetRoom: 9999},
+		},
+	})
+	defer mobs.UnregisterScheduleForTest("test_schedule_not_at_target")
+
+	cleanMob := seedTestMob(t, 8, 800, 1000, "TestSmithWalking")
+	defer cleanMob()
+
+	mob := mobs.GetInstance(800)
+	mob.ScheduleId = "test_schedule_not_at_target"
+	mob.Character.RoomId = 1000 // in transit, not at target
+
+	ctx := &EvalContext{InstanceId: 800, RoomId: 1000}
+	if res := condMobAtTargetRoom(nil, ctx); res != Failure {
+		t.Errorf("expected Failure when mob is not at target room, got %v", res)
+	}
+}
+
+func TestCondMobAtTargetRoom_NoSchedule(t *testing.T) {
+	cleanMob := seedTestMob(t, 9, 900, 1000, "TestSmithNoSched")
+	defer cleanMob()
+
+	// Instance has no ScheduleId — should always Fail.
+	mob := mobs.GetInstance(900)
+	mob.ScheduleId = ""
+
+	ctx := &EvalContext{InstanceId: 900, RoomId: 1000}
+	if res := condMobAtTargetRoom(nil, ctx); res != Failure {
+		t.Errorf("expected Failure with no schedule, got %v", res)
+	}
+}
+
+func TestCondMobAtTargetRoom_NilCtx(t *testing.T) {
+	if res := condMobAtTargetRoom(nil, nil); res != Failure {
+		t.Errorf("expected Failure for nil context, got %v", res)
+	}
+}
+
+func TestCondMobAtTargetRoom_UnknownScheduleId(t *testing.T) {
+	cleanMob := seedTestMob(t, 10, 1000, 1234, "TestSmithBadSched")
+	defer cleanMob()
+
+	mob := mobs.GetInstance(1000)
+	mob.ScheduleId = "nonexistent_schedule_xyz"
+
+	ctx := &EvalContext{InstanceId: 1000, RoomId: 1234}
+	if res := condMobAtTargetRoom(nil, ctx); res != Failure {
+		t.Errorf("expected Failure for unknown schedule id, got %v", res)
 	}
 }

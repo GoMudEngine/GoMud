@@ -26,6 +26,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -155,6 +156,7 @@ type Mob struct {
 	ScatterRounds           int    `yaml:"-"` // Rounds remaining where mob skips wander (after alpha death)
 	crafterLastRestockRound uint64 // Last round materials were restocked (transient)
 	BehaviorArchetype       string `yaml:"behavior_archetype,omitempty"` // Archetype name (e.g., "melee_self_buff") — resolved to behaviors/archetypes/<name>.yaml if per-mob tree absent.
+	ScheduleId              string `yaml:"schedule_id,omitempty"`        // chunk 3.2: daily routine reference
 	SubmissionPolicy        string `yaml:"submission_policy,omitempty"`  // chunk 4d T12: override archetype default; "mercy"/"subdue"/"cripple"/"lethal"
 	SurrenderPolicy         string `yaml:"surrender_policy,omitempty"`   // chunk 4d T12: override archetype default; "never"/"always"/"auto-tap-below <N>"
 	BTreeState              any    `yaml:"-"`                            // Behavior tree per-instance state (*behaviortree.BehaviorState)
@@ -356,6 +358,15 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 			}
 		} else {
 			mob.Character.SurrenderPolicy = characters.DefaultSurrenderPolicyForArchetype(mob.BehaviorArchetype)
+		}
+
+		// Chunk 3.2: scheduled mob spawn override. If the mob has a
+		// schedule_id, place it at the current segment's target room
+		// instead of HomeRoomId. HomeRoomId is preserved as the "true
+		// home" for pathto-home semantics.
+		if mob.ScheduleId != "" {
+			hour := gametime.GetDate().Hour24
+			mob.Character.RoomId = applyScheduleSpawnOverride(mob.ScheduleId, mob.HomeRoomId, hour)
 		}
 
 		// State-machine pointers and the OnCharacterCreated wiring
@@ -1188,6 +1199,23 @@ func LoadDataFiles() {
 	mobNameCacheMu.Unlock()
 
 	mudlog.Info("mobs.LoadDataFiles()", "loadedCount", len(tmpMobs), "Time Taken", time.Since(start))
+
+	// Load NPC daily schedules. Optional content — no panic if directory absent.
+	LoadSchedules()
+
+	// Cross-check: every mob's schedule_id must resolve to a loaded schedule.
+	mobsMu.RLock()
+	for _, mob := range mobs {
+		if mob.ScheduleId == "" {
+			continue
+		}
+		if GetSchedule(mob.ScheduleId) == nil {
+			mobsMu.RUnlock()
+			panic(fmt.Errorf("mob %d (%s): schedule_id %q does not resolve to a loaded schedule",
+				mob.MobId, mob.Character.Name, mob.ScheduleId))
+		}
+	}
+	mobsMu.RUnlock()
 
 	// Populate the relationships graph from authored YAML edges.
 	mobsMu.RLock()

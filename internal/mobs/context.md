@@ -1074,3 +1074,24 @@ candidates in this order:
 The `ShopMaterialReserve` limit prevents NPCs from consuming all materials
 on self-gear. The `ShopGoldReserveRatio × StartingGold` floor prevents
 NPCs from spending themselves into poverty on gear upgrades.
+
+---
+
+## Schedules (chunk 3.2)
+
+Mobs with `schedule_id:` set follow daily routines authored in
+`_datafiles/world/dogmud/schedules/<zone>/<id>.yaml`. See
+`docs/schemas/schedule.md` for the full schema.
+
+- `schedule.go`: `Schedule`, `ScheduleSegment`, `GetSchedule`,
+  `CurrentSegment`, `applyScheduleSpawnOverride`, test helpers
+  (`RegisterScheduleForTest`, `UnregisterScheduleForTest`).
+- `schedule_loader.go`: `LoadSchedules`, `validateScheduleStandalone`,
+  `validateScheduleAgainstWorld`, `SetScheduleWorldValidator` (DI
+  injection used in main.go to break the `mobs ← rooms` import cycle).
+  Called from `LoadDataFiles` after mob templates load.
+- Spawn override: `newMobByIdInternal` calls
+  `applyScheduleSpawnOverride` to place scheduled mobs at the
+  current segment's target room.
+- Crafter activity gate: `TickMobCraft` returns nil when a
+  scheduled mob's current segment activity != "craft".

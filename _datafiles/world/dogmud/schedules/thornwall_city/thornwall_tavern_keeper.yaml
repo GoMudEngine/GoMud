@@ -1,0 +1,27 @@
+id: thornwall_tavern_keeper
+description: "Tavern Keeper Marek's daily routine: long shift on the floor, prep in the morning, sleep upstairs."
+segments:
+  - start: 6
+    end: 10
+    target_room: 5102
+    activity: ""
+    idlecommands:
+      - emote scribbles in a ledger.
+      - emote counts out coins from a small purse.
+      - say Slow morning, that's how I like it.
+  - start: 10
+    end: 22
+    target_room: 472
+    activity: ""
+    idlecommands:
+      - emote wipes down the bar with a worn rag.
+      - emote pulls a fresh tap.
+      - say What'll it be, friend?
+      - emote shouts an order back to the kitchen.
+  - start: 22
+    end: 6
+    target_room: 5102
+    activity: ""
+    idlecommands:
+      - emote sleeps soundly under a worn blanket.
+      - emote mumbles in a dream.

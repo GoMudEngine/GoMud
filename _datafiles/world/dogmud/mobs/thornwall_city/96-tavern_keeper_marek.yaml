@@ -1,6 +1,7 @@
 mobid: 96
 zone: Thornwall City
 behavior_archetype: noncombat_questgiver
+schedule_id: thornwall_tavern_keeper
 statpool: 120
 itemdropchance: 0
 hostile: false

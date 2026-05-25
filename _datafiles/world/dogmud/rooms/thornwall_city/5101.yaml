@@ -1,0 +1,17 @@
+roomid: 5101
+zone: Thornwall City
+title: A Loft Above the Forge
+description: A narrow loft tucked beneath the forge's rafters, warmed by the
+  banked coals below. A straw mattress lies under a single thick blanket; a
+  battered chest holds a change of work clothes. The faint smell of iron and
+  woodsmoke drifts up through the floorboards.
+biome: city
+mapsymbol: h
+maplegend: Home
+coord:
+  x: 3
+  y: -1
+  z: 1
+exits:
+  down:
+    roomid: 470

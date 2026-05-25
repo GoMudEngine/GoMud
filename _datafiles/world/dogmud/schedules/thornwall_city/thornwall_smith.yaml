@@ -1,0 +1,35 @@
+id: thornwall_smith
+description: "Blacksmith Kerra's daily routine: forge by day, tavern by evening, loft by night."
+segments:
+  - start: 6
+    end: 9
+    target_room: 5101
+    activity: ""
+    idlecommands:
+      - emote rubs sleep from her eyes.
+      - emote pulls on her boots and apron.
+      - emote stretches with a yawn.
+  - start: 9
+    end: 18
+    target_room: 470
+    activity: craft
+    idlecommands:
+      - emote raises the hammer once more.
+      - emote tongs a glowing bar from the coals.
+      - say I'll have it done by sunset.
+      - emote wipes soot from her brow.
+  - start: 18
+    end: 22
+    target_room: 472
+    activity: ""
+    idlecommands:
+      - emote sips from a tankard.
+      - say Long day at the forge.
+      - emote rolls a stiff shoulder.
+  - start: 22
+    end: 6
+    target_room: 5101
+    activity: ""
+    idlecommands:
+      - emote breathes evenly, asleep on the cot.
+      - emote turns over with a soft snore.
