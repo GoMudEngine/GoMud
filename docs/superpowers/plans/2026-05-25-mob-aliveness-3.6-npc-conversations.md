@@ -14,11 +14,20 @@
 
 ---
 
+## Replanning note (added mid-execution after T1)
+
+**Discovered during T1 execution:** A pre-existing `internal/conversations/` package already exists (217 LOC) — a name-keyed NPC↔NPC scripted conversation system inherited from upstream GoMud. It is dormant in DOGMud (only 11 tiny Frostfang sample YAMLs use it; no DOGMud mob references it; no players interact with it directly). Decision: **replace it.** Old code and Frostfang content retire as part of the chunk.
+
+T1 already shipped (commit `f80c147d`) — it added our new types alongside the old code (no language-level conflict). We insert a new task T1.5 between T1 and T2 to delete the old system and migrate its 4 callers. T2 onward unchanged in shape; T6's `isFullyIdle()` helper must use `mob.Character.InConversation()` (the player-dialogue check from `internal/dialogue/`) instead of the now-removed `mob.InConversation()` from the old conversations system.
+
+---
+
 ## Stage map
 
 | Stage | Task | Description |
 |---|---|---|
 | 1 | T1 | Package skeleton — types + registry + pair-key normalization (TDD) |
+| 1.5 | T1.5 | **NEW** — remove legacy conversations system + 4 callers + 11 Frostfang YAMLs + `MobConverseChance` knob |
 | 2 | T2 | YAML loader + standalone validators + DI cross-checks |
 | 3 | T3 | Three Conversation* config knobs |
 | 4 | T4 | Picker — choose exchange from type pool ∪ subtype ∪ pair override (TDD) |
@@ -32,7 +41,130 @@
 | 12 | T12 | Documentation pass |
 | 13 | T13 | Smoketester goal file + roadmap closeout |
 
-13 tasks. Sequential: T1 is foundation; T2 needs T1; T4 needs T1; T5 needs T1 + T4; T6 needs T4 + T5; T7 needs T6 + T3; T8 needs T6; T9-T11 are content; T12-T13 closeout.
+14 tasks. Sequential: T1 done; T1.5 removes legacy; T2 needs T1; T4 needs T1; T5 needs T1 + T4; T6 needs T4 + T5; T7 needs T6 + T3; T8 needs T6; T9-T11 are content; T12-T13 closeout.
+
+---
+
+## Task 1.5: Remove pre-existing `internal/conversations` system
+
+**Context:** Upstream GoMud shipped a name-keyed NPC↔NPC scripted conversation system in `internal/conversations/`. It is dormant in DOGMud (only 11 Frostfang sample YAMLs reference it; no DOGMud mob YAML touches it; the `converse` mob command is mob-only and never invoked by players). Chunk 3.6 ships a relationship-keyed replacement. This task tears out the old code, retires the legacy YAMLs, and migrates the 4 callers.
+
+**Files to delete:**
+- `internal/conversations/conversations.go` (217 LOC of old logic)
+- `internal/conversations/conversation_datafile.go` (old `ConversationData` struct)
+- `internal/conversations/context.md` (re-authored in T12)
+- `_datafiles/world/default/conversations/frostfang/` (8 YAMLs)
+- `_datafiles/world/default/conversations/frostfang_slums/` (3 YAMLs)
+- `internal/mobcommands/converse.go` (mob-only command; only the old system called it)
+
+**Files to modify:**
+- `internal/dialogue/loader.go` — only uses `conversations.ZoneNameSanitize()`. Inline that helper at the call site.
+- `internal/hooks/MobIdle_HandleIdleMobs.go` — remove the random-trigger block referencing `HasConverseFile()` + `MobConverseChance`. Leave the rest of the file alone if it has unrelated content; delete the whole file if not.
+- `internal/mobs/mobs.go` — remove the `Conversation int` field on the `Mob` struct, plus `SetConversation`, `InConversation`, and `Converse` methods.
+- `internal/configs/config.balance.mobs.go` (or peer) — remove the `MobConverseChance` field + default.
+
+- [ ] **Step 1: Audit cross-references**
+
+```bash
+cd "C:/Users/Calabe Davis/workspace/DOGMud"
+grep -rn "ZoneNameSanitize" --include="*.go" internal/
+grep -rn "InConversation\|SetConversation\|\.Converse(" --include="*.go" internal/
+grep -rn "MobConverseChance" --include="*.go" internal/
+grep -rn "GoMudEngine/GoMud/internal/conversations" --include="*.go" internal/
+```
+
+The last grep should return exactly 4 files (the documented callers). If it returns more, surface those before proceeding. `InConversation` may exist on BOTH `*mobs.Mob` (old, removing) and `*characters.Character` (player-dialogue check from `internal/dialogue/`, totally separate). Distinguish the two — only remove the mob-level one.
+
+- [ ] **Step 2: Inline ZoneNameSanitize in `internal/dialogue/loader.go`**
+
+Read the function body in `internal/conversations/conversations.go`. It's small (lowercase + replace separators or similar). Copy it as an unexported helper inside `dialogue/loader.go`, update the call site, remove the `conversations` import. If grep showed other callers outside `internal/conversations/`, replicate the inline at each site.
+
+- [ ] **Step 3: Strip the old converse mob command + idle trigger**
+
+Delete `internal/mobcommands/converse.go` outright. Check `internal/mobcommands/` for a dispatcher table that lists commands and remove the `converse` entry if present.
+
+In `internal/hooks/MobIdle_HandleIdleMobs.go`, find the `MobConverseChance` / `HasConverseFile` block (per audit, ~line 50) and delete it. If the file becomes empty or pointless, delete it entirely and remove its hook registration. If it still does other work, leave the rest.
+
+- [ ] **Step 4: Strip Conversation state from `internal/mobs/mobs.go`**
+
+- Remove the `Conversation int` field from the `Mob` struct (audit said ~line 165).
+- Remove the `SetConversation(id int)`, `InConversation() bool`, and `Converse()` methods.
+- Search for other references in `internal/mobs/` and clean up (likely none after Step 1's audit).
+
+- [ ] **Step 5: Remove `MobConverseChance` config knob**
+
+Find and remove:
+- The field declaration in `internal/configs/config.balance.go` (or wherever it lives)
+- The default-setter line in `internal/configs/config.balance.mobs.go` (or peer)
+- Any documentation references in `internal/configs/context.md` if present
+
+- [ ] **Step 6: Delete legacy data files**
+
+```bash
+git rm -r _datafiles/world/default/conversations/frostfang
+git rm -r _datafiles/world/default/conversations/frostfang_slums
+```
+
+Leave `_datafiles/world/dogmud/conversations/` alone — T10 fills it.
+
+- [ ] **Step 7: Delete legacy code files**
+
+```bash
+git rm internal/conversations/conversations.go
+git rm internal/conversations/conversation_datafile.go
+git rm internal/conversations/context.md
+git rm internal/mobcommands/converse.go
+```
+
+- [ ] **Step 8: Build + test**
+
+```bash
+go build ./...
+go test ./internal/conversations/ -v
+go test ./internal/dialogue/ -v
+go test ./internal/mobs/ -v
+go test ./internal/hooks/ -v
+go test ./internal/mobcommands/ -v
+```
+
+Expected: all green. The 4 tests from T1's commit still pass. If anything fails, fix it before committing.
+
+- [ ] **Step 9: Commit**
+
+```bash
+git add -A
+git status   # sanity check — only expected files
+git commit -m "$(cat <<'EOF'
+refactor(conversations): remove legacy name-keyed system
+
+Tears out the upstream GoMud NPC<->NPC scripted conversation
+system (217 LOC across conversations.go +
+conversation_datafile.go) and its 11 Frostfang sample YAMLs.
+The system was dormant in DOGMud — no DOGMud mob YAML
+referenced it, and the `converse` mob command was never
+invoked by players.
+
+Chunk 3.6 ships a relationship-keyed replacement using the
+same package name (internal/conversations/, types from T1's
+commit f80c147d).
+
+Migration:
+- dialogue/loader.go: ZoneNameSanitize inlined as
+  unexported helper at the call site.
+- hooks/MobIdle_HandleIdleMobs.go: MobConverseChance trigger
+  block removed.
+- mobcommands/converse.go: deleted (mob-only command, no
+  player path).
+- mobs/mobs.go: Conversation field + Set/InConversation +
+  Converse methods removed.
+- Config: MobConverseChance knob removed.
+- Frostfang sample YAMLs (8 + 3) retired — see PATCH_NOTES
+  at push time.
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
+EOF
+)"
+```
 
 ---
 
@@ -1516,7 +1648,7 @@ func isFullyIdle(m *mobs.Mob) bool {
 		return false
 	}
 	// In a player dialogue
-	if m.InConversation() {
+	if m.Character.InConversation() {
 		return false
 	}
 	return true
@@ -1534,8 +1666,8 @@ func isFullyIdleForConversation(m *mobs.Mob) bool {
 	if m.Character.HasBuffFlag(buffsSleepingFlag()) {
 		return false
 	}
-	if m.InConversation() {
-		// In a PLAYER conversation — abort the NPC↔NPC one
+	if m.Character.InConversation() {
+		// In a PLAYER dialogue — abort the NPC↔NPC conversation
 		return false
 	}
 	return true
@@ -1856,7 +1988,7 @@ func findRelateableEligiblePairsInRoom(room *rooms.Room) []relateableMobPair {
 		if m.Path.Len() > 0 || m.Path.Current() != nil {
 			continue
 		}
-		if m.InConversation() {
+		if m.Character.InConversation() {
 			continue
 		}
 		if pid, ok := m.Character.GetMiscData(conversations.MiscDataPartnerId).(int); ok && pid > 0 {
