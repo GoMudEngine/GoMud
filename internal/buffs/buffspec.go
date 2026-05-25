@@ -39,6 +39,7 @@ const (
 	NoAggroTarget  Flag = `no-aggro-target` // grace-period protection: mobs cannot acquire aggro on the bearer
 	CancelIfCombat Flag = `cancel-on-combat`
 	CancelOnAction Flag = `cancel-on-action`
+	CancelOnDamage Flag = `cancel-on-damage` // chunk 3.3: cancels on any damage event
 	CancelOnWater  Flag = `cancel-on-water`
 
 	// Death preventing
@@ -54,6 +55,7 @@ const (
 
 	// Useful flags
 	Hidden         Flag = `hidden`
+	Sleeping       Flag = `sleeping` // chunk 3.3: bearer is asleep
 	Accuracy       Flag = `accuracy`
 	Blink          Flag = `blink`
 	EmitsLight     Flag = `lightsource`
