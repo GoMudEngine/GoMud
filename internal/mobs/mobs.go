@@ -157,6 +157,7 @@ type Mob struct {
 	crafterLastRestockRound uint64 // Last round materials were restocked (transient)
 	BehaviorArchetype       string `yaml:"behavior_archetype,omitempty"` // Archetype name (e.g., "melee_self_buff") — resolved to behaviors/archetypes/<name>.yaml if per-mob tree absent.
 	ScheduleId              string `yaml:"schedule_id,omitempty"`        // chunk 3.2: daily routine reference
+	PatrolId                string `yaml:"patrol_id,omitempty"`          // chunk 3.4: patrol route reference
 	SubmissionPolicy        string `yaml:"submission_policy,omitempty"`  // chunk 4d T12: override archetype default; "mercy"/"subdue"/"cripple"/"lethal"
 	SurrenderPolicy         string `yaml:"surrender_policy,omitempty"`   // chunk 4d T12: override archetype default; "never"/"always"/"auto-tap-below <N>"
 	BTreeState              any    `yaml:"-"`                            // Behavior tree per-instance state (*behaviortree.BehaviorState)
@@ -1238,6 +1239,20 @@ func LoadDataFiles() {
 			mobsMu.RUnlock()
 			panic(fmt.Errorf("mob %d (%s): schedule_id %q does not resolve to a loaded schedule",
 				mob.MobId, mob.Character.Name, mob.ScheduleId))
+		}
+	}
+	mobsMu.RUnlock()
+
+	// Cross-check: every mob's patrol_id must resolve to a loaded patrol.
+	mobsMu.RLock()
+	for _, mob := range mobs {
+		if mob.PatrolId == "" {
+			continue
+		}
+		if GetPatrol(mob.PatrolId) == nil {
+			mobsMu.RUnlock()
+			panic(fmt.Errorf("mob %d (%s): patrol_id %q does not resolve to a loaded patrol",
+				mob.MobId, mob.Character.Name, mob.PatrolId))
 		}
 	}
 	mobsMu.RUnlock()
