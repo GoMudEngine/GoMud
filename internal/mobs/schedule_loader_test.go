@@ -97,6 +97,19 @@ func TestValidateScheduleAgainstWorld_RoomDoesNotExist(t *testing.T) {
 	t.Skip("requires rooms fixture — covered by boot smoke in T13")
 }
 
+func TestValidateSchedule_AcceptsSleepingActivity(t *testing.T) {
+	s := &Schedule{
+		Id: "sleeper_test",
+		Segments: []ScheduleSegment{
+			{Start: 0, End: 24, TargetRoom: 1, Activity: "sleeping",
+				IdleCommands: []string{"emote snores."}},
+		},
+	}
+	if err := validateScheduleStandalone(s); err != nil {
+		t.Errorf("expected sleeping activity to validate, got %v", err)
+	}
+}
+
 func TestMobScheduleIdCrossCheck_Stub(t *testing.T) {
 	// Cross-check is wired in LoadDataFiles and is exercised by the boot
 	// smoke at T13. Stub here as a documentation hook — if we add a
