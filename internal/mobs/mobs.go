@@ -1221,6 +1221,10 @@ func LoadDataFiles() {
 
 	mudlog.Info("mobs.LoadDataFiles()", "loadedCount", len(tmpMobs), "Time Taken", time.Since(start))
 
+	// Load patrol routes. Must run BEFORE LoadSchedules so that T5's
+	// patrol_id cross-check in LoadSchedules finds patrols already registered.
+	LoadPatrols()
+
 	// Load NPC daily schedules. Optional content — no panic if directory absent.
 	LoadSchedules()
 
