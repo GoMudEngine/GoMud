@@ -1,0 +1,24 @@
+roomid: 5104
+zone: Thornwall City
+title: Guard Barracks, Sleeping Quarters
+description: The upper floor of the guard barracks is a long, low-ceilinged room
+  lined with wooden bunks, each with a straw mattress, a coarse wool blanket, and
+  a small shelf holding a guard's personal effects. Boots are lined up under each
+  bunk in a soldier's habit too ingrained to break. The smell is familiar: leather
+  polish, sweat, and the faint tang of the city drifting up through the floor.
+  A rack near the door holds off-duty tabards. A narrow window at the far end
+  looks out over the Gate Ward below.
+biome: city
+mapsymbol: h
+maplegend: Barracks
+coord:
+  x: 0
+  y: 1
+  z: 1
+exits:
+  down:
+    roomid: 473
+idlemessages:
+- A bunk creaks as the building settles in the night air.
+- Moonlight falls in a thin bar through the narrow window onto the floorboards.
+- The distant sound of a watch bell carries faintly from the gate below.
