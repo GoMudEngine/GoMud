@@ -179,6 +179,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				}
 				user.Character.Health -= poisonDmg
 				cancelCraftOrSalvageOnDamage(user.Character)
+				cancelDamageBuffs(user.Character)
 				user.SendText(messaging.CategoryToxin, `<ansi fg="green">The poison burns through your veins!</ansi>`)
 			}
 
@@ -190,6 +191,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 				}
 				user.Character.Health -= bleedDmg
 				cancelCraftOrSalvageOnDamage(user.Character)
+				cancelDamageBuffs(user.Character)
 				user.SendText(messaging.CategoryToxin, `<ansi fg="red">Blood seeps from your wounds!</ansi>`)
 			}
 		}
@@ -353,6 +355,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			}
 			mob.Character.Health -= poisonDmg
 			cancelCraftOrSalvageOnDamage(&mob.Character)
+			cancelDamageBuffs(&mob.Character)
 			if mob.Character.Health < 1 {
 				mob.Character.Health = 0
 			}
@@ -366,6 +369,7 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			}
 			mob.Character.Health -= bleedDmg
 			cancelCraftOrSalvageOnDamage(&mob.Character)
+			cancelDamageBuffs(&mob.Character)
 			if mob.Character.Health < 1 {
 				mob.Character.Health = 0
 			}

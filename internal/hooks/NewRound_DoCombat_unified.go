@@ -550,6 +550,13 @@ func applyCombatProgression(atk, def actions.Actor, res *combat.AttackResult) {
 	atkUid := atk.GetUserId()
 	defUid := def.GetUserId()
 
+	// Cancel sleeping / cancel-on-damage buffs for any defender that took
+	// damage this round (chunk 3.3). Fires before concentration-break so
+	// that a waking defender's buffs are cleaned up in the same phase.
+	if res.DamageToTarget > 0 {
+		cancelDamageBuffs(defChar)
+	}
+
 	// Defender player concentration break (Divergence: player defender only).
 	if def.IsPlayer() {
 		handlePlayerConcentrationBreak(asUser(def), *res, def.GetRoom())
