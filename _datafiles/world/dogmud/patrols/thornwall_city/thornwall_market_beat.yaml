@@ -1,0 +1,14 @@
+id: thornwall_market_beat
+description: "City guard's market square perimeter beat."
+loop_shape: strict
+waypoints:
+  - room: 460
+    dwell_rounds: 5
+  - room: 461
+    dwell_rounds: 3
+  - room: 464
+    dwell_rounds: 10
+  - room: 465
+    dwell_rounds: 8
+  - room: 466
+    dwell_rounds: 5

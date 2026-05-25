@@ -200,3 +200,87 @@ func registerSleepyScheduleForTest(t *testing.T) {
 	})
 	t.Cleanup(func() { mobs.UnregisterScheduleForTest("sleepy_test") })
 }
+
+func TestApplySchedulePlan_StampsActivePatrolId_OnPatrolSegment(t *testing.T) {
+	mobs.RegisterScheduleForTest(&mobs.Schedule{
+		Id: "guard_sched",
+		Segments: []mobs.ScheduleSegment{
+			{Start: 0, End: 12, Activity: "patrol", PatrolId: "guard_patrol",
+				IdleCommands: []string{"watches."}},
+			{Start: 12, End: 24, TargetRoom: 9999, Activity: "",
+				IdleCommands: []string{"sleeps."}},
+		},
+	})
+	defer mobs.UnregisterScheduleForTest("guard_sched")
+
+	mob := &mobs.Mob{ScheduleId: "guard_sched"}
+	mob.Character.RoomId = 1000
+
+	plan := scheduleTickPlan(mob, 8) // patrol segment
+
+	applySchedulePlan(mob, plan)
+
+	got := mob.Character.GetMiscData("active_patrol_id")
+	if got == nil || got.(string) != "guard_patrol" {
+		t.Errorf("expected active_patrol_id=guard_patrol, got %v", got)
+	}
+}
+
+// TestScheduleTickPlan_PatrolSegmentDoesNotSetWantsPath is a regression test
+// for the runtime mis-pathing bug (chunk 3.4): scheduleTickPlan must not set
+// WantsPath for patrol segments. Before the fix, TargetRoom==0 for patrol
+// segments caused WantsPath=true every tick, and the applier queued
+// `pathto 0`, sending the guard toward the start-room alias instead of
+// patrolling.
+func TestScheduleTickPlan_PatrolSegmentDoesNotSetWantsPath(t *testing.T) {
+	mobs.RegisterScheduleForTest(&mobs.Schedule{
+		Id: "patrol_only_sched",
+		Segments: []mobs.ScheduleSegment{
+			{Start: 0, End: 24, Activity: "patrol", PatrolId: "some_patrol",
+				IdleCommands: []string{"x"}},
+		},
+	})
+	defer mobs.UnregisterScheduleForTest("patrol_only_sched")
+
+	mob := &mobs.Mob{ScheduleId: "patrol_only_sched"}
+	mob.Character.RoomId = 9999 // not room 0 — would set WantsPath=true if patrol-skip is missing
+
+	plan := scheduleTickPlan(mob, 8)
+
+	if plan.WantsPath {
+		t.Errorf("expected WantsPath=false for patrol segment (patrol executor handles movement), got %+v", plan)
+	}
+	if plan.WantsHomeFallback {
+		t.Errorf("expected WantsHomeFallback=false for patrol segment, got %+v", plan)
+	}
+	if plan.TargetRoom != 0 {
+		t.Errorf("expected TargetRoom=0 for patrol segment (no target_room), got %d", plan.TargetRoom)
+	}
+}
+
+func TestApplySchedulePlan_StampsEmptyOnNonPatrolSegment(t *testing.T) {
+	mobs.RegisterScheduleForTest(&mobs.Schedule{
+		Id: "non_patrol_sched",
+		Segments: []mobs.ScheduleSegment{
+			{Start: 0, End: 24, TargetRoom: 9999, Activity: "",
+				IdleCommands: []string{"x"}},
+		},
+	})
+	defer mobs.UnregisterScheduleForTest("non_patrol_sched")
+
+	mob := &mobs.Mob{ScheduleId: "non_patrol_sched"}
+	mob.Character.RoomId = 1000
+
+	plan := scheduleTickPlan(mob, 8)
+
+	applySchedulePlan(mob, plan)
+
+	// Stamp should be empty string (or unset == empty when read). Patrol
+	// executor reads-and-clears so empty/unset both mean "no patrol".
+	got := mob.Character.GetMiscData("active_patrol_id")
+	if got != nil {
+		if s, ok := got.(string); ok && s != "" {
+			t.Errorf("expected empty active_patrol_id on non-patrol segment, got %q", s)
+		}
+	}
+}

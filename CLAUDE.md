@@ -75,6 +75,22 @@ immediate re-sleep after a wake event. Use
 `actions.Sleep(actor, opts) SleepResult` for the actor-parity
 entry point. State queryable via `HasBuffFlag(buffs.Sleeping)`.
 
+## NPC Patrols
+Patrol routes (multi-room loops) are authored at
+`_datafiles/world/dogmud/patrols/<zone>/<id>.yaml`. A mob can
+reference one directly via `patrol_id:` (always-on patrol), or
+a schedule segment can opt in via `activity: patrol` +
+`patrol_id:` (patrol runs during the segment only). Two loop
+shapes: `strict` (loop back to start) and `yo-yo` (flip
+direction at endpoints). Per-waypoint `dwell_rounds`. Combat
+interrupts patrols; the executor resumes to the same target
+waypoint on the next idle tick. Path retries use the chunk 3.2
+`ScheduleMaxPathRetries` knob, falling back to `pathto home`
+after the threshold. See `docs/schemas/patrol.md`.
+
+Inter-zone patrols and caravan unification onto the patrol
+layer are deferred to chunk 3.7.
+
 ## Project Context
 - DOGMud (Delusions of Grandeur) is a MUD built on the GoMud engine
 - World design document: `world.md`

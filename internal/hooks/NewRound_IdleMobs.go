@@ -77,6 +77,26 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 			applySchedulePlan(mob, plan)
 		}
 
+		// Chunk 3.4: patrol executor. Reads active_patrol_id stamped by the
+		// schedule branch above (if the current schedule segment has
+		// activity: patrol), otherwise falls back to mob.PatrolId for
+		// standalone patrols. Reads-and-clears the stamp so it doesn't
+		// linger across ticks.
+		{
+			var activePatrolId string
+			if id := getMiscDataString(&mob.Character, "active_patrol_id"); id != "" {
+				activePatrolId = id
+				mob.Character.SetMiscData("active_patrol_id", "")
+			}
+			if activePatrolId == "" && mob.PatrolId != "" {
+				activePatrolId = mob.PatrolId
+			}
+			if activePatrolId != "" {
+				plan := patrolTickPlan(mob, activePatrolId)
+				applyPatrolPlan(mob, plan)
+			}
+		}
+
 		// Check whether they are currently in the middle of a path, or have one waiting to start.
 		// This comes after checks for whether they are currently in a conersation, or in combat, etc.
 		if currentStep := mob.Path.Current(); currentStep != nil || mob.Path.Len() > 0 {

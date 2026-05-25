@@ -13,10 +13,11 @@ type Schedule struct {
 // ScheduleSegment covers a contiguous hour range [Start, End). When Start > End
 // the segment wraps midnight (e.g. Start=22 End=6 covers 22-23 and 0-5).
 type ScheduleSegment struct {
-	Start        int      `yaml:"start"`              // 0-23 inclusive
-	End          int      `yaml:"end"`                // 1-24 inclusive
-	TargetRoom   int      `yaml:"target_room"`        // room the mob should occupy
-	Activity     string   `yaml:"activity,omitempty"` // "" | "craft" | future maintenance verbs
+	Start        int      `yaml:"start"`                   // 0-23 inclusive
+	End          int      `yaml:"end"`                     // 1-24 inclusive
+	TargetRoom   int      `yaml:"target_room,omitempty"`   // room the mob should occupy; optional for activity: patrol
+	Activity     string   `yaml:"activity,omitempty"`      // "" | "craft" | "sleeping" | "patrol"
+	PatrolId     string   `yaml:"patrol_id,omitempty"`     // chunk 3.4: required when activity is "patrol"
 	IdleCommands []string `yaml:"idlecommands,omitempty"`
 }
 
@@ -86,7 +87,23 @@ func applyScheduleSpawnOverride(scheduleId string, homeRoomId int, hour24 int) i
 	if seg == nil {
 		return homeRoomId
 	}
-	return seg.TargetRoom
+
+	// Explicit target_room wins (works for all activities).
+	if seg.TargetRoom != 0 {
+		return seg.TargetRoom
+	}
+
+	// Chunk 3.4: patrol segment without explicit target_room falls back
+	// to the patrol's first waypoint so guards start at the beginning of
+	// their beat instead of at the barracks.
+	if seg.Activity == "patrol" && seg.PatrolId != "" {
+		if p := GetPatrol(seg.PatrolId); p != nil && len(p.Waypoints) > 0 {
+			return p.Waypoints[0].Room
+		}
+	}
+
+	// Defensive: no target, no patrol fallback → home.
+	return homeRoomId
 }
 
 // registerScheduleForTest / unregisterScheduleForTest are unexported helpers

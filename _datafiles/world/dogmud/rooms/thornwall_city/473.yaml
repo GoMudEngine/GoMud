@@ -17,6 +17,8 @@ coord:
 exits:
   south:
     roomid: 460
+  up:
+    roomid: 5104
 nouns:
   table: A heavy oak table scarred by knife marks and ink stains. Duty rosters are
     pinned under a mug, incident reports are stacked in rough piles, and a half-eaten

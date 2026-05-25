@@ -97,6 +97,53 @@ func TestValidateScheduleAgainstWorld_RoomDoesNotExist(t *testing.T) {
 	t.Skip("requires rooms fixture — covered by boot smoke in T13")
 }
 
+// TestValidateScheduleAgainstWorld_PatrolSegmentSkipped is a regression test
+// for the boot-panic bug (chunk 3.4): validateScheduleAgainstWorld must not
+// call roomExists(0) or hasPath(0, X) for patrol segments. A patrol+sleep
+// schedule must pass world validation even though the patrol segment has no
+// target_room.
+func TestValidateScheduleAgainstWorld_PatrolSegmentSkipped(t *testing.T) {
+	s := &Schedule{
+		Id: "guard_patrol_schedule",
+		Segments: []ScheduleSegment{
+			// patrol segment — TargetRoom intentionally 0
+			{Start: 6, End: 22, Activity: "patrol", PatrolId: "guard_patrol",
+				IdleCommands: []string{"emote watches."}},
+			// sleep segment — TargetRoom 5104 (barracks)
+			{Start: 22, End: 6, TargetRoom: 5104, Activity: "sleeping",
+				IdleCommands: []string{"emote snores."}},
+		},
+	}
+
+	roomExistsCalled := false
+	hasPathCalled := false
+
+	roomExists := func(id int) bool {
+		roomExistsCalled = true
+		if id == 0 {
+			t.Errorf("roomExists called with room 0 — patrol segment must be skipped")
+		}
+		return id == 5104
+	}
+	hasPath := func(from, to int) bool {
+		hasPathCalled = true
+		if from == 0 || to == 0 {
+			t.Errorf("hasPath called with room 0 (from=%d, to=%d) — patrol segment must be skipped", from, to)
+		}
+		return true
+	}
+
+	if err := validateScheduleAgainstWorld(s, roomExists, hasPath); err != nil {
+		t.Errorf("expected no error for patrol+sleep schedule, got: %v", err)
+	}
+
+	// roomExists must have been called for the sleep segment (5104) but not for
+	// the patrol segment (0). hasPath may or may not be called depending on
+	// whether the sleep segment forms a pair with another non-patrol segment.
+	_ = roomExistsCalled
+	_ = hasPathCalled
+}
+
 func TestValidateSchedule_AcceptsSleepingActivity(t *testing.T) {
 	s := &Schedule{
 		Id: "sleeper_test",
@@ -115,4 +162,45 @@ func TestMobScheduleIdCrossCheck_Stub(t *testing.T) {
 	// smoke at T13. Stub here as a documentation hook — if we add a
 	// LoadDataFiles unit-test fixture later this is where it slots in.
 	t.Skip("covered by boot smoke in T13")
+}
+
+func TestValidateSchedule_PatrolSegmentWithoutTargetRoom_OK(t *testing.T) {
+	s := &Schedule{
+		Id: "patrol_schedule_test",
+		Segments: []ScheduleSegment{
+			{Start: 0, End: 24, Activity: "patrol", PatrolId: "some_patrol",
+				IdleCommands: []string{"emote watches."}},
+		},
+	}
+	if err := validateScheduleStandalone(s); err != nil {
+		t.Errorf("patrol segment without target_room should validate, got: %v", err)
+	}
+}
+
+func TestValidateSchedule_PatrolSegmentWithoutPatrolId_Fails(t *testing.T) {
+	s := &Schedule{
+		Id: "broken_patrol_schedule",
+		Segments: []ScheduleSegment{
+			{Start: 0, End: 24, TargetRoom: 100, Activity: "patrol", PatrolId: "",
+				IdleCommands: []string{"x"}},
+		},
+	}
+	err := validateScheduleStandalone(s)
+	if err == nil || !strings.Contains(err.Error(), "patrol_id is empty") {
+		t.Errorf("expected patrol_id-empty error, got: %v", err)
+	}
+}
+
+func TestValidateSchedule_NonPatrolSegmentWithTargetRoomZero_Fails(t *testing.T) {
+	// Regression: target_room must still be required for non-patrol activities.
+	s := &Schedule{
+		Id: "broken",
+		Segments: []ScheduleSegment{
+			{Start: 0, End: 24, TargetRoom: 0, Activity: "", IdleCommands: []string{"x"}},
+		},
+	}
+	err := validateScheduleStandalone(s)
+	if err == nil || !strings.Contains(err.Error(), "target_room is 0") {
+		t.Errorf("expected target_room=0 error for non-patrol activity, got: %v", err)
+	}
 }

@@ -1,0 +1,41 @@
+description: "Observe Thornwall city guard (mob 106) for ~2 full patrol loops +
+  day/night transition + combat interrupt."
+
+goals:
+  - "Find the city guard (mob 106) in Thornwall. Use 'mob schedule <inst>' to
+    see patrol state."
+  - "Watch the guard for one full patrol loop. Confirm all waypoints visited
+    in order."
+  - "Confirm dwell timing at the longer-dwell waypoints (10 / 8 round dwells
+    should be visibly longer than 3 / 5)."
+  - "Use 'time set 23' to trigger the night transition. Confirm the guard heads
+    to the barracks and sleeps (uses chunk 3.3 mechanics)."
+  - "Use 'time set 7' to trigger the day transition. Confirm the guard resumes
+    patrolling."
+  - "Mid-patrol, attack the guard. Disengage or 'flee'. Confirm: next idle
+    tick, guard resumes pathing toward the same waypoint."
+
+pass_criteria:
+  - "All patrol waypoints visited in order during a full loop"
+  - "Day/night schedule transitions work (patrol -> barracks sleep -> patrol)"
+  - "Combat interrupt + resume to same waypoint works"
+  - "No 'lost' adjective acquired on the guard"
+  - "Admin 'mob schedule' inspector renders patrol state correctly"
+
+notes:
+  - "Server runs locally at localhost:55555. Freshly booted with chunk 3.4
+    changes."
+  - "Use `set charset` ASCII setting per the test-mud SOP."
+  - "If 'time set <hour>' admin command isn't available, observe in real-time."
+  - "The guard's patrol covers the Thornwall market beat (rooms 370-374) from
+    hours 6-22, then sleeps at the new guard barracks (room 5104, above the
+    constabulary 473) from hours 22-6."
+  - "Double-spawn fix (commit 31cbc3b1) should prevent guard duplication on
+    schedule transitions."
+  - "Game day length: configs.GetTimingConfig().RoundsPerDay (default 20) x
+    ~4s/round ~= 80 seconds per game-day. Verify with 'time' command."
+  - "If admin is not flagged on the test character, skip 'mob schedule' steps
+    and rely on observable movement behavior."
+  - "Report each goal as PASS / FAIL / BLOCKED with timestamps and verbatim
+    log excerpts where relevant."
+  - "Save report to tools/testing/reports/3.4-patrol-observation-<timestamp>.md."

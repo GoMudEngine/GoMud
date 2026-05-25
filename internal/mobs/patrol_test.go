@@ -1,0 +1,101 @@
+package mobs
+
+import (
+	"testing"
+)
+
+// Fixture: 4-waypoint patrol covering all combinations.
+//
+// rooms: 100 → 101 → 102 → 103
+// dwell: 5 / 10 / 5 / 0
+func fourWaypointPatrol(loopShape string) *Patrol {
+	return &Patrol{
+		Id:          "test_patrol",
+		Description: "4-waypoint fixture",
+		LoopShape:   loopShape,
+		Waypoints: []PatrolWaypoint{
+			{Room: 100, DwellRounds: 5},
+			{Room: 101, DwellRounds: 10},
+			{Room: 102, DwellRounds: 5},
+			{Room: 103, DwellRounds: 0},
+		},
+	}
+}
+
+func TestPatrol_NextWaypoint_StrictLoop(t *testing.T) {
+	p := fourWaypointPatrol("strict")
+	cases := []struct {
+		currentIdx int
+		direction  int
+		wantIdx    int
+		wantDir    int
+	}{
+		{0, +1, 1, +1},
+		{1, +1, 2, +1},
+		{2, +1, 3, +1},
+		{3, +1, 0, +1}, // wrap to start
+	}
+	for _, c := range cases {
+		gotIdx, gotDir := p.NextWaypoint(c.currentIdx, c.direction)
+		if gotIdx != c.wantIdx || gotDir != c.wantDir {
+			t.Errorf("strict from idx=%d dir=%+d: want (%d, %+d), got (%d, %+d)",
+				c.currentIdx, c.direction, c.wantIdx, c.wantDir, gotIdx, gotDir)
+		}
+	}
+}
+
+func TestPatrol_NextWaypoint_YoYoForwardAndReverse(t *testing.T) {
+	p := fourWaypointPatrol("yo-yo")
+	// Forward up to the end, then flip and reverse back.
+	cases := []struct {
+		currentIdx int
+		direction  int
+		wantIdx    int
+		wantDir    int
+	}{
+		{0, +1, 1, +1},
+		{1, +1, 2, +1},
+		{2, +1, 3, +1},
+		{3, +1, 2, -1}, // at last, flip to reverse
+		{2, -1, 1, -1},
+		{1, -1, 0, -1},
+		{0, -1, 1, +1}, // at first going reverse, flip to forward
+	}
+	for _, c := range cases {
+		gotIdx, gotDir := p.NextWaypoint(c.currentIdx, c.direction)
+		if gotIdx != c.wantIdx || gotDir != c.wantDir {
+			t.Errorf("yo-yo from idx=%d dir=%+d: want (%d, %+d), got (%d, %+d)",
+				c.currentIdx, c.direction, c.wantIdx, c.wantDir, gotIdx, gotDir)
+		}
+	}
+}
+
+func TestPatrol_NextWaypoint_StrictEmptyDirectionIgnored(t *testing.T) {
+	// Strict loops ignore direction — always +1, always wraps end → start.
+	p := fourWaypointPatrol("strict")
+	gotIdx, gotDir := p.NextWaypoint(3, -1)
+	if gotIdx != 0 || gotDir != +1 {
+		t.Errorf("strict with dir=-1: want (0, +1), got (%d, %+d)", gotIdx, gotDir)
+	}
+}
+
+func TestPatrol_NextWaypoint_DefaultsToStrictWhenLoopShapeEmpty(t *testing.T) {
+	p := fourWaypointPatrol("") // empty loop_shape → defaults to strict
+	gotIdx, gotDir := p.NextWaypoint(3, +1)
+	if gotIdx != 0 || gotDir != +1 {
+		t.Errorf("empty loop_shape with idx=3 dir=+1: want (0, +1), got (%d, %+d)",
+			gotIdx, gotDir)
+	}
+}
+
+func TestGetPatrol_EmptyReturnsNil(t *testing.T) {
+	if got := GetPatrol(""); got != nil {
+		t.Errorf("GetPatrol(\"\"): want nil, got %+v", got)
+	}
+}
+
+func TestGetPatrol_UnknownReturnsNil(t *testing.T) {
+	if got := GetPatrol("definitely_not_real"); got != nil {
+		t.Errorf("unknown patrol id: want nil, got %+v", got)
+	}
+}

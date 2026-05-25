@@ -291,6 +291,49 @@ func mob_Schedule(args []string, user *users.UserRecord, room *rooms.Room, _ eve
 		m.Path.Len(),
 	)
 	user.SendText(messaging.CategorySystem, out)
+
+	// Chunk 3.4: also show patrol state if the mob has one (either via
+	// PatrolId directly or via the active schedule segment's patrol_id).
+	activePatrolId := m.PatrolId
+	if cur.Activity == "patrol" && cur.PatrolId != "" {
+		activePatrolId = cur.PatrolId
+	}
+	if activePatrolId != "" {
+		p := mobs.GetPatrol(activePatrolId)
+		if p == nil {
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
+				"  (patrol_id %q does not resolve)", activePatrolId))
+		} else {
+			idx := m.Character.GetMiscData("patrol_waypoint_idx")
+			dir := m.Character.GetMiscData("patrol_direction")
+			dwell := m.Character.GetMiscData("patrol_dwell_remaining")
+			fails := m.Character.GetMiscData("patrol_path_fail_count")
+
+			loopShape := p.LoopShape
+			if loopShape == "" {
+				loopShape = "strict"
+			}
+
+			waypointRoom := 0
+			if len(p.Waypoints) > 0 {
+				waypointRoom = p.Waypoints[normalizeIdxForDisplay(idx, len(p.Waypoints))].Room
+			}
+
+			patrolOut := fmt.Sprintf(
+				"Patrol state:\n"+
+					"  patrol_id:           %s\n"+
+					"  loop_shape:          %s\n"+
+					"  current waypoint:    %v (room %d)\n"+
+					"  direction:           %v\n"+
+					"  dwell remaining:     %v rounds\n"+
+					"  path retries:        %v",
+				activePatrolId, loopShape,
+				idx, waypointRoom,
+				dir, dwell, fails)
+			user.SendText(messaging.CategorySystem, patrolOut)
+		}
+	}
+
 	return true, nil
 }
 
@@ -334,4 +377,17 @@ func mobScheduleIfEmpty(s, fallback string) string {
 		return fallback
 	}
 	return s
+}
+
+// normalizeIdxForDisplay clamps an interface{} (likely int) waypoint
+// index into a safe slice index for display purposes only. Returns 0
+// for nil / non-int / out-of-range values.
+func normalizeIdxForDisplay(v any, length int) int {
+	if length == 0 {
+		return 0
+	}
+	if i, ok := v.(int); ok && i >= 0 && i < length {
+		return i
+	}
+	return 0
 }

@@ -20,7 +20,8 @@ segments: [<segment>, ...]        # must cover all 24 hours, no overlaps
   end: <int 1-24>                 # exclusive; end may equal 24 for the
                                   # day-boundary
   target_room: <int>              # must exist; mob is steered here
-  activity: <"" | "craft" | "sleeping">  # gates engine-side activity verbs
+                                  # (optional when activity: patrol)
+  activity: <"" | "craft" | "sleeping" | "patrol">  # gates engine-side activity verbs
   idlecommands:                   # mob's idle pool while in this segment
     - emote <text>
     - say <text>
@@ -58,10 +59,17 @@ temple twice with different `idlecommands`).
   auto-crits. After a forced wake during a sleep segment, the
   schedule executor will not re-sleep the mob for
   `ScheduleWakeGraceRounds` rounds (default 50).
+- `"patrol"` — When the segment is active, the schedule executor
+  stamps the segment's `patrol_id` into MiscData; the patrol
+  executor consumes it and drives the patrol. `target_room` becomes
+  optional for patrol segments (the patrol's first waypoint serves
+  as the spawn-override anchor when omitted). Requires `patrol_id`
+  to be set; loader panics if it's empty or unresolved.
+  See `docs/schemas/patrol.md`.
 
 ## Validation (load-time, warn-only)
 
-- `activity:` value not in `{"", "craft", "sleeping"}`.
+- `activity:` value not in `{"", "craft", "sleeping", "patrol"}`.
 - `activity: craft` on a mob that lacks `crafter: true`.
 - `target_room` is outside the mob's `zone`.
 - Segment has zero `idlecommands` (mob will be silent).
@@ -107,3 +115,4 @@ schedule `id` is the stable reference; mob YAMLs do not move.
 - Loader: `internal/mobs/schedule_loader.go`
 - Executor: `internal/hooks/NewRound_IdleMobs_schedule.go`
 - Admin inspector: `mob schedule <instId>`
+- Patrol schema: `docs/schemas/patrol.md` (for `activity: patrol` segments)

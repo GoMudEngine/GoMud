@@ -27,5 +27,9 @@ Inspect a scheduled mob's current segment, target room, next
 transition, and path queue. Useful for debugging schedule drift,
 spawn-override placement, or pathto failures.
     <ansi fg="command">mob schedule 142</ansi>    Inspect mob instance 142.
+For mobs with a patrol (standalone via patrol_id on the mob or via
+an active schedule segment with activity: patrol), the inspector
+also shows the patrol's current waypoint, loop_shape, direction
+(for yo-yo loops), dwell remaining, and path retry count.
 
 

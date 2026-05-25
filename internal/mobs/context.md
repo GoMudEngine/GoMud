@@ -1110,3 +1110,22 @@ Mobs with `schedule_id:` set follow daily routines authored in
 - Grace cooldown: after a forced wake the executor reads
   `schedule_wake_round` from MiscData and suppresses re-sleep for
   `ScheduleWakeGraceRounds` rounds (config, default 50).
+
+---
+
+## Patrols (chunk 3.4)
+
+Mobs with `patrol_id:` set follow waypoint patrols authored in
+`_datafiles/world/dogmud/patrols/<zone>/<id>.yaml`. See
+`docs/schemas/patrol.md` for the full schema.
+
+- `patrol.go`: `Patrol`, `PatrolWaypoint`, `GetPatrol`,
+  `NextWaypoint`, test helpers.
+- `patrol_loader.go`: `LoadPatrols`, `validatePatrolStandalone`,
+  `validatePatrolAgainstWorld`, `SetPatrolWorldValidator` (DI
+  injection used in main.go to break the mobs ← rooms import
+  cycle). Called from `LoadDataFiles` before `LoadSchedules`
+  (schedule loader cross-checks segment patrol_ids).
+- Spawn override: `applyScheduleSpawnOverride` falls back to
+  the patrol's first waypoint when a patrol segment has no
+  `target_room`.

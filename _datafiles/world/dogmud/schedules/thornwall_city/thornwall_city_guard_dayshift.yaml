@@ -1,0 +1,18 @@
+id: thornwall_city_guard_dayshift
+description: "City guard's day shift -- patrol the market beat 6-22, sleep at the barracks 22-6."
+segments:
+  - start: 6
+    end: 22
+    activity: patrol
+    patrol_id: thornwall_market_beat
+    idlecommands:
+      - say All clear here.
+      - emote scans the square.
+      - emote nods to a passing merchant.
+  - start: 22
+    end: 6
+    target_room: 5104
+    activity: sleeping
+    idlecommands:
+      - emote sleeps soundly under a coarse blanket.
+      - emote shifts in sleep, murmuring something inaudible.

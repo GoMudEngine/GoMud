@@ -95,12 +95,18 @@ func LoadSchedules() {
 
 		// Warn on activity/idlecommands issues (non-fatal).
 		for i, seg := range s.Segments {
-			if seg.Activity != "" && seg.Activity != "craft" && seg.Activity != "sleeping" {
+			if seg.Activity != "" && seg.Activity != "craft" && seg.Activity != "sleeping" && seg.Activity != "patrol" {
 				mudlog.Warn("mobs.LoadSchedules()",
 					"scheduleId", s.Id,
 					"segment", i,
 					"activity", seg.Activity,
-					"warning", "unknown activity value (expected '', 'craft', or 'sleeping')")
+					"warning", "unknown activity value (expected '', 'craft', 'sleeping', or 'patrol')")
+			}
+			if seg.PatrolId != "" && seg.Activity != "patrol" {
+				mudlog.Warn("mobs.LoadSchedules()",
+					"scheduleId", s.Id,
+					"segment", i,
+					"warning", "patrol_id set but activity is not \"patrol\" — field has no effect")
 			}
 			if len(seg.IdleCommands) == 0 {
 				mudlog.Warn("mobs.LoadSchedules()",
@@ -143,6 +149,23 @@ func LoadSchedules() {
 	schedules = tmp
 	schedulesMu.Unlock()
 
+	// Chunk 3.4: cross-check schedule segment patrol_id references.
+	schedulesMu.RLock()
+	for _, s := range schedules {
+		for i, seg := range s.Segments {
+			if seg.PatrolId == "" {
+				continue
+			}
+			if GetPatrol(seg.PatrolId) == nil {
+				schedulesMu.RUnlock()
+				panic(fmt.Sprintf(
+					"mobs.LoadSchedules() schedule %q segment %d: patrol_id %q does not resolve to a loaded patrol",
+					s.Id, i, seg.PatrolId))
+			}
+		}
+	}
+	schedulesMu.RUnlock()
+
 	mudlog.Info("mobs.LoadSchedules()", "loadedCount", len(tmp), "Time Taken", time.Since(start))
 }
 
@@ -173,8 +196,12 @@ func validateScheduleStandalone(s *Schedule) error {
 			return fmt.Errorf("schedule %q segment %d: start equals end (%d), zero-duration segment",
 				s.Id, i, seg.Start)
 		}
-		if seg.TargetRoom == 0 {
-			return fmt.Errorf("schedule %q segment %d: target_room is 0 (must be a valid room id)",
+		if seg.TargetRoom == 0 && seg.Activity != "patrol" {
+			return fmt.Errorf("schedule %q segment %d: target_room is 0 (must be a valid room id, except for activity: patrol)",
+				s.Id, i)
+		}
+		if seg.Activity == "patrol" && seg.PatrolId == "" {
+			return fmt.Errorf("schedule %q segment %d: activity is \"patrol\" but patrol_id is empty",
 				s.Id, i)
 		}
 	}
@@ -220,8 +247,12 @@ func validateScheduleAgainstWorld(s *Schedule, roomExists func(int) bool, hasPat
 		return nil
 	}
 
-	// Check every target_room exists.
+	// Check every target_room exists. Patrol segments have target_room==0 by
+	// design — their waypoints are validated separately by the patrol loader.
 	for i, seg := range s.Segments {
+		if seg.Activity == "patrol" || seg.TargetRoom == 0 {
+			continue // patrol segments have optional target_room; patrol loader validates waypoints separately
+		}
 		if !roomExists(seg.TargetRoom) {
 			return fmt.Errorf("segment %d: target_room %d does not exist in rooms registry", i, seg.TargetRoom)
 		}
@@ -238,6 +269,9 @@ func validateScheduleAgainstWorld(s *Schedule, roomExists func(int) bool, hasPat
 	for i := 0; i < n; i++ {
 		fromRoom := sorted[i].TargetRoom
 		toRoom := sorted[(i+1)%n].TargetRoom
+		if fromRoom == 0 || toRoom == 0 {
+			continue // patrol segments have no target_room; patrol loader validates pathing internally
+		}
 		if fromRoom == toRoom {
 			continue
 		}
