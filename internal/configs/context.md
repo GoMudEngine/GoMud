@@ -543,3 +543,5 @@ full resolution flow and policy matrix.
 | Knob | Default | Effect |
 |------|---------|--------|
 | `ScheduleMaxPathRetries` | 20 | After N consecutive failed `pathto` attempts, a scheduled mob falls back to `pathto home`. Chunk 3.2. |
+| `SleepRegenMultiplier` | 5.0 | HP/SP/CP per-round regen multiplier when bearer has the Sleeping buff. Chunk 3.3. |
+| `ScheduleWakeGraceRounds` | 50 | After a forced wake during a sleep segment, suppress re-sleep for N rounds (~200 sec real-time at default tick rate). Chunk 3.3. |

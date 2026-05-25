@@ -37,8 +37,10 @@ Use <ansi fg="command">stand</ansi> when you must get up immediately and have st
 spare. Otherwise, save your stamina and let automatic recovery handle
 it — you still get one attack while scrambling up.
 
+If you are sleeping, <ansi fg="command">stand</ansi> will wake you up.
+
 <ansi fg="yellow">See Also:</ansi>
 
   <ansi fg="command">help prone</ansi>, <ansi fg="command">help bash</ansi>,
   <ansi fg="command">help trip</ansi>, <ansi fg="command">help kick</ansi>,
-  <ansi fg="command">help combat</ansi>
+  <ansi fg="command">help sleep</ansi>, <ansi fg="command">help combat</ansi>

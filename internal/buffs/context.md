@@ -731,3 +731,33 @@ send the defender through the death cascade and the buff would be a no-op.
 
 See `internal/combat/context.md` "Submission System" for the full
 context in which these buffs are applied.
+
+---
+
+## DOGMud chunk-3.3 buffs (Sleeping)
+
+### New flags
+
+| Flag | String value | Purpose |
+|------|-------------|---------|
+| `Sleeping` | `"sleeping"` | Bearer is asleep — gates regen boost, first-hit-crit, room rendering. Chunk 3.3. |
+| `CancelOnDamage` | `"cancel-on-damage"` | Buff cancels when any damage is applied to bearer. Wired in damage pipeline. Chunk 3.3. |
+
+### New buff
+
+| ID | Name | Duration | Source | Effect |
+|----|------|----------|--------|--------|
+| 15 | Sleeping | Unlimited (until woken) | `actions.Sleep`, sleep user command, sleep mob command, schedule executor | Applies `Sleeping` + `CancelOnDamage` + `NoCombat` + `NoMovement` flags; triggers `SleepRegenMultiplier` (5×) regen; forces first-hit-crit on all attackers for the round the buff is active. Cancelled by damage, failed steal, shout-in-room, light source entering room, `stand`, or schedule segment end. |
+
+### Usage pattern
+
+```go
+// Check if character is asleep
+if c.HasBuffFlag(buffs.Sleeping) { ... }
+
+// Wake a sleeper (central hook)
+mobs.OnSleeperWoken(c)
+
+// Cancel all sleeping buffs (schedule exit path)
+c.CancelBuffsWithFlag(buffs.Sleeping)
+```

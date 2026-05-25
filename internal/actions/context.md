@@ -287,6 +287,42 @@ type SearchResult struct {
 
 ---
 
+## Sleep Action (chunk 3.3)
+
+### Sleep
+
+**Function:** `Sleep(actor, opts) SleepResult`
+
+Applies buff 15 (Sleeping) to the actor. Combat-gated: fails if the
+actor is currently in combat (`Aggro != nil`). Idempotent: if the
+actor already has the Sleeping buff, returns `SleepResult.AlreadyAsleep
+= true` with no additional buff applied.
+
+- **Success:** Actor receives buff 15; returns `SleepResult.Success = true`.
+- **Failure (combat):** Returns `Success = false` with messaging.
+- **Messaging:** UserActor receives a "You lie down and close your eyes."
+  message; the room sees "<Actor> lies down to sleep." MobActor messaging
+  goes to the room only.
+- **Progression:** No stat/skill progression triggered.
+- **Cooldown:** None.
+
+Entry points that call `Sleep`:
+- `usercommands/sleep.go` — player `sleep` command
+- `mobcommands/sleep.go` — mob `sleep` command
+- `hooks/NewRound_IdleMobs_schedule.go` — schedule executor for
+  `activity: sleeping` segments
+
+**Result struct:**
+```go
+type SleepResult struct {
+    Success       bool
+    AlreadyAsleep bool
+    Message       string
+}
+```
+
+---
+
 ## Foraging & Salvage Actions (chunk 2.9)
 
 ### Forage
@@ -438,6 +474,7 @@ type TrackResult struct {
 | Shadow | actions | self→target | ShadowResult | varies | none |
 | Sneak | actions | self vs room | SneakResult | silent | shared |
 | Steal | actions | self vs mob/player/container | StealResult | varies | shared |
+| Sleep | actions | self | SleepResult | varies | none |
 | Track | actions | self vs trail/target | TrackResult | user only | shared |
 
 ---
