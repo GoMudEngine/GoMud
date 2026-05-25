@@ -6,6 +6,8 @@ description: A narrow loft tucked beneath the forge's rafters, warmed by the
   battered chest holds a change of work clothes. The faint smell of iron and
   woodsmoke drifts up through the floorboards.
 biome: city
+mapsymbol: h
+maplegend: Home
 coord:
   x: 3
   y: -1

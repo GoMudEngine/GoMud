@@ -6,6 +6,8 @@ description: A spare cell of a room above the temple, scarcely larger than the
   single tall window admits a slant of pale light. Even here the air smells of
   beeswax and old incense.
 biome: city
+mapsymbol: h
+maplegend: Home
 coord:
   x: 2
   y: 2
