@@ -1,5 +1,77 @@
 # DOGMud Patch Notes
 
+## 2026-05-25 — NPC schedules + sleeping mechanics (chunks 3.2 + 3.3)
+
+**Townspeople have daily routines now.** Blacksmith Kerra, Tavern
+Keeper Marek, and Temple Priest Olen in Thornwall City follow
+hour-by-hour schedules. Kerra wakes in her new loft above the
+forge at 6, hammers at the anvil 9-6 (with active crafting
+output), drinks at the tavern 6-10pm, sleeps in the loft 10pm-6am.
+Marek opens up at 10am after a slow morning in his quarters above
+the tavern, works the long shift, sleeps upstairs. Olen rises
+before dawn, runs dawn and afternoon prayers at the temple, joins
+the regulars at the tavern for an evening cup, sleeps in his cell.
+Three new "above-shop" home rooms added (Kerra's loft above the
+forge, Marek's quarters above the tavern, Olen's chamber above
+the temple). Find the smith outside of work hours and you'll need
+to track her down somewhere else.
+
+**Schedule infrastructure.** New schedule YAML format in
+`_datafiles/world/dogmud/schedules/<zone>/<id>.yaml`. Schedules
+cover all 24 hours, swap idle commands per segment, steer the
+NPC between rooms via existing pathto plumbing, and gate
+crafter ticks via per-segment activity. Validators panic at boot
+on coverage gaps, unreachable target rooms, or unresolved
+references — pre-push boot-test catches authoring drift. Spawn
+override places scheduled NPCs at the current segment's target
+room on cold start and on respawn, so the world feels "already
+in motion" at any hour. New admin command
+`mob schedule <instId>` for debugging.
+
+**Sleep is a real mechanic.** Players can `sleep` (no slash) in
+any room. While asleep, all pools (health, stamina, conviction)
+regenerate **five times faster** than normal. But sleep is
+dangerous: the entire first round of attacks against a sleeper
+**automatically critical-hits**. Sleeping in hostile territory
+is an invitation to assassination. Wake by taking any damage, by
+someone failing a steal or pickpocket against you, by a shout in
+your room, by a player entering your room carrying a light source,
+or by typing `stand`. NPCs follow the same mechanics: scheduled
+NPCs at their sleep segments are asleep (visible as `(asleep)`
+in the room's "Also here:" line), wake on the same triggers, and
+re-sleep automatically after a grace cooldown if the segment is
+still active. Crime severity uplift for attacks against sleepers
+is deferred to a later chunk (Town Justice) — the data is already
+queryable at crime-record time when that lands.
+
+**Combat: damage piping + first-hit-crit.** The damage pipeline
+gained a forceCrit parameter that bypasses the normal Z-score
+threshold. `handleCombatRound` now snapshots victims with the
+Sleeping flag at start-of-round so all attackers in the round
+share the crit payoff before the cancel-on-damage flag clears
+the buff mid-round. Other future first-hit-crit triggers
+(surprise attack, backstab) can hook the same snapshot site
+without further pipeline changes.
+
+**Fixed: NPC double-spawn at home rooms.** Pre-existing latent
+bug exposed by the new schedule system. When a scheduled NPC
+walked away from their home room for hours (Kerra at her loft
+overnight), the home room could unload from memory; on reload,
+the spawn loop didn't recognize the still-alive scheduled NPC
+and spawned a duplicate. The fix adds an orphan check: before
+spawning, the engine looks for any live mob already matching
+this room's home + mob id, and reattaches the spawn slot
+instead of duplicating. Also resolves a related "crafter NPC
+emits crafting messages outside their workshop" symptom — the
+duplicate NPC had no proper schedule context and would craft
+from wherever it was.
+
+**Fixed: `.gitignore` was silently ignoring content.** The bare
+`dogmud` pattern was catching every path with `_datafiles/world/dogmud/`
+in it, requiring `git add -f` for every world content commit and
+risking silent loss of new YAMLs. Anchored to `/dogmud` so it only
+matches the binary at repo root, as intended.
+
 ## 2026-05-23 — End-of-day hotfix bundle + chunk 3.1
 
 **SECURITY: web client login password no longer mirrored on screen.**
