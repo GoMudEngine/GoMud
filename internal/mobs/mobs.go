@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/perception"
 	"github.com/GoMudEngine/GoMud/internal/state/presence"
@@ -1248,6 +1249,11 @@ func LoadDataFiles() {
 		}
 		return ""
 	})
+
+	// Chunk 3.6: load conversation pools and pair overrides. Must run AFTER
+	// relationships.LoadFromMobs so that the world-aware validator can cross-
+	// check pair overrides against real relationship edges.
+	conversations.Load()
 
 }
 
