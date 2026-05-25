@@ -33,6 +33,12 @@ type schedulePlan struct {
 	// (the prior segment had activity sleeping; this tick's segment
 	// does not). Triggers explicit CancelBuffsWithFlag(Sleeping).
 	WantsWake bool
+
+	// Chunk 3.4: current segment patrol context. Empty for non-patrol
+	// segments. applySchedulePlan stamps `active_patrol_id` MiscData
+	// so the patrol executor (NewRound_IdleMobs_patrol.go) can consume
+	// it the same tick.
+	ActivePatrolId string
 }
 
 // scheduleTickPlan computes the desired tick action for a scheduled mob. Pure
@@ -108,6 +114,12 @@ func scheduleTickPlan(mob *mobs.Mob, hour24 int) schedulePlan {
 			plan.TargetRoom = seg.TargetRoom
 		}
 	}
+
+	// Chunk 3.4: capture patrol context so applySchedulePlan can stamp it.
+	if seg.Activity == "patrol" {
+		plan.ActivePatrolId = seg.PatrolId
+	}
+
 	return plan
 }
 
@@ -157,4 +169,9 @@ func applySchedulePlan(mob *mobs.Mob, plan schedulePlan) {
 
 	// Suppress wander while a schedule is active.
 	mob.MaxWander = 0
+
+	// Chunk 3.4: stamp active_patrol_id for the patrol executor to consume.
+	// Empty string is fine — patrol executor reads-and-clears each tick,
+	// so an empty stamp simply means "no active patrol context this tick."
+	mob.Character.SetMiscData("active_patrol_id", plan.ActivePatrolId)
 }

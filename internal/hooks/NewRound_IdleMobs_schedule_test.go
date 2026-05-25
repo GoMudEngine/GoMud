@@ -200,3 +200,55 @@ func registerSleepyScheduleForTest(t *testing.T) {
 	})
 	t.Cleanup(func() { mobs.UnregisterScheduleForTest("sleepy_test") })
 }
+
+func TestApplySchedulePlan_StampsActivePatrolId_OnPatrolSegment(t *testing.T) {
+	mobs.RegisterScheduleForTest(&mobs.Schedule{
+		Id: "guard_sched",
+		Segments: []mobs.ScheduleSegment{
+			{Start: 0, End: 12, Activity: "patrol", PatrolId: "guard_patrol",
+				IdleCommands: []string{"watches."}},
+			{Start: 12, End: 24, TargetRoom: 9999, Activity: "",
+				IdleCommands: []string{"sleeps."}},
+		},
+	})
+	defer mobs.UnregisterScheduleForTest("guard_sched")
+
+	mob := &mobs.Mob{ScheduleId: "guard_sched"}
+	mob.Character.RoomId = 1000
+
+	plan := scheduleTickPlan(mob, 8) // patrol segment
+
+	applySchedulePlan(mob, plan)
+
+	got := mob.Character.GetMiscData("active_patrol_id")
+	if got == nil || got.(string) != "guard_patrol" {
+		t.Errorf("expected active_patrol_id=guard_patrol, got %v", got)
+	}
+}
+
+func TestApplySchedulePlan_StampsEmptyOnNonPatrolSegment(t *testing.T) {
+	mobs.RegisterScheduleForTest(&mobs.Schedule{
+		Id: "non_patrol_sched",
+		Segments: []mobs.ScheduleSegment{
+			{Start: 0, End: 24, TargetRoom: 9999, Activity: "",
+				IdleCommands: []string{"x"}},
+		},
+	})
+	defer mobs.UnregisterScheduleForTest("non_patrol_sched")
+
+	mob := &mobs.Mob{ScheduleId: "non_patrol_sched"}
+	mob.Character.RoomId = 1000
+
+	plan := scheduleTickPlan(mob, 8)
+
+	applySchedulePlan(mob, plan)
+
+	// Stamp should be empty string (or unset == empty when read). Patrol
+	// executor reads-and-clears so empty/unset both mean "no patrol".
+	got := mob.Character.GetMiscData("active_patrol_id")
+	if got != nil {
+		if s, ok := got.(string); ok && s != "" {
+			t.Errorf("expected empty active_patrol_id on non-patrol segment, got %q", s)
+		}
+	}
+}
