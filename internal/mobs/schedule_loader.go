@@ -79,12 +79,15 @@ func LoadSchedules() {
 			return fmt.Errorf("schedule: unmarshal %s: %w", path, unmarshalErr)
 		}
 
-		// Filename ↔ id consistency check.
-		expectedSuffix := filepath.FromSlash(util.ConvertForFilename(s.Id) + ".yaml")
-		if !strings.HasSuffix(path, expectedSuffix) {
+		// Filename ↔ id consistency check: base name (without extension) must
+		// exactly equal ConvertForFilename(id). HasSuffix would pass a file like
+		// "my_thornwall_smith.yaml" for id "thornwall_smith" — reject that.
+		base := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
+		expected := util.ConvertForFilename(s.Id)
+		if base != expected {
 			return fmt.Errorf(
-				"schedule: filename mismatch: file %q does not end in %q (derived from id %q)",
-				path, expectedSuffix, s.Id,
+				"schedule: filename mismatch: file %q has base name %q but expected %q (derived from id %q)",
+				path, base, expected, s.Id,
 			)
 		}
 
@@ -212,8 +215,8 @@ func validateScheduleStandalone(s *Schedule) error {
 
 // validateScheduleAgainstWorld checks that every target_room exists in the
 // rooms registry, and that consecutive segment room pairs are reachable via
-// the mapper. Inter-segment pathfinding failures are warn-only advisory
-// (teleport-style transitions are a valid design choice).
+// the mapper. A missing path between consecutive segments is a hard error —
+// all schedule transitions must be walkable.
 //
 // roomExists and hasPath are injected to avoid import cycles.
 func validateScheduleAgainstWorld(s *Schedule, roomExists func(int) bool, hasPath func(from, to int) bool) error {
@@ -243,11 +246,8 @@ func validateScheduleAgainstWorld(s *Schedule, roomExists func(int) bool, hasPat
 			continue
 		}
 		if !hasPath(fromRoom, toRoom) {
-			mudlog.Warn("mobs.LoadSchedules() pathfinding advisory",
-				"scheduleId", s.Id,
-				"fromRoom", fromRoom,
-				"toRoom", toRoom,
-				"note", "no direct path found between consecutive segments — teleport transition assumed")
+			return fmt.Errorf("segment transition %d→%d: no path from room %d to room %d",
+				i, (i+1)%n, fromRoom, toRoom)
 		}
 	}
 

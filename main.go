@@ -1149,6 +1149,18 @@ func loadAllDataFiles(isReload bool) {
 	buffs.LoadDataFiles() // Load buffs before items for cost calculation reasons
 	items.LoadDataFiles()
 	species.LoadDataFiles()
+	// Chunk 3.2: inject world-aware schedule validation. Done here in main.go
+	// to break the rooms ← mobs import cycle (mobs cannot directly import
+	// rooms/mapper since rooms imports mobs).
+	mobs.SetScheduleWorldValidator(
+		func(roomId int) bool {
+			return rooms.LoadRoom(roomId) != nil
+		},
+		func(from, to int) bool {
+			_, err := mapper.GetPath(from, to)
+			return err == nil
+		},
+	)
 	mobs.LoadDataFiles()
 
 	// Cross-reference validation: body-part tags and intrinsic
