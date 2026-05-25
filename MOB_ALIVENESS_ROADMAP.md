@@ -96,7 +96,7 @@ should always agree.
 | 3.1 | Routine | Game-time hook | S | — | Done |
 | 3.2 | Routine | NPC schedules | L | 3.1 | Done |
 | 3.3 | Routine | Sleeping / wake states | M | 3.1 | Done |
-| 3.4 | Routine | Waypoint patrols | M | — | Not started |
+| 3.4 | Routine | Waypoint patrols | M | — | Done |
 | 3.5 | Routine | Maintenance routines | M | 3.2 | Not started |
 | 3.6 | Routine | NPC↔NPC idle conversation | M | 1.6 | Not started |
 | 3.7 | Routine | Inter-zone patrols + caravan unification | L | 3.4 | Not started |
@@ -456,13 +456,31 @@ world.
   `crimes.Record(...)` is called; no Crime-schema change is required up front.
 
 ### 3.4 Waypoint patrols
-**Status:** Not started • **Size:** M
+**Status:** Done • **Size:** M
 
 - **Goal:** Looped multi-room routes with optional dwell times.
 - **In:** Patrol route YAML, executor, interrupt-handling (combat aborts patrol; resume after).
 - **Out:** Dynamic re-routing when paths blocked (start with hard-failure on blocked path).
 - **Depends on:** —
 - **Why:** Guards that actually walk a beat. Town justice (5.1) consumes this.
+- **Shipped:** Patrol primitive — multi-room routes with strict +
+  yo-yo loop shapes, per-waypoint dwell, combat interrupt with
+  resume-to-same-waypoint, retry-then-pathto-home fallback (reuses
+  chunk 3.2 `ScheduleMaxPathRetries`). Two integration paths:
+  standalone (`patrol_id` on mob) and composed (`activity: patrol`
+  segment via chunk 3.2 schedules). New
+  `internal/mobs/patrol.go` + `patrol_loader.go`, new
+  `internal/hooks/NewRound_IdleMobs_patrol.go`. Schedule schema
+  gains `target_room`-optional for patrol segments and a
+  `patrol_id` field; spawn override falls back to the patrol's
+  first waypoint when a patrol segment has no explicit target.
+  Admin `mob schedule <instId>` inspector extended to render
+  patrol state. Pilot: Thornwall city guard (mob 106) with a
+  6-22 patrol of the market beat + 22-6 sleep at a new guard
+  barracks room (5104, above existing constabulary 473). Spec
+  at `docs/superpowers/specs/completed/2026-05-25-mob-aliveness-3.4-waypoint-patrols-design.md`,
+  plan at
+  `docs/superpowers/plans/completed/2026-05-25-mob-aliveness-3.4-waypoint-patrols.md`.
 
 ### 3.5 Maintenance routines
 **Status:** Not started • **Size:** M
@@ -491,6 +509,9 @@ world.
 - **Out:** Multi-stop caravan optimization (pathfinding "best order" of stops), seasonal route variation.
 - **Depends on:** 3.4 (patrols)
 - **Why:** Caravans currently maintain their own movement logic, parallel to mob wandering and (now) patrols. Unifying onto patrol primitives reduces drift, lets caravan routes be authored as standard patrol files, and surfaces inter-zone routing as a first-class engine feature for both caravans and future zone-spanning NPCs (traveling merchants, pilgrim NPCs, etc.). Decision deferred from chunk 3.4 to focus that chunk on the single-zone patrol primitive.
+- **3.4 satisfied:** Single-zone patrol primitive shipped in
+  3.4. 3.7 lifts the single-zone restriction and migrates
+  caravan movement onto the shared layer.
 
 ---
 
