@@ -116,3 +116,44 @@ func TestMobScheduleIdCrossCheck_Stub(t *testing.T) {
 	// LoadDataFiles unit-test fixture later this is where it slots in.
 	t.Skip("covered by boot smoke in T13")
 }
+
+func TestValidateSchedule_PatrolSegmentWithoutTargetRoom_OK(t *testing.T) {
+	s := &Schedule{
+		Id: "patrol_schedule_test",
+		Segments: []ScheduleSegment{
+			{Start: 0, End: 24, Activity: "patrol", PatrolId: "some_patrol",
+				IdleCommands: []string{"emote watches."}},
+		},
+	}
+	if err := validateScheduleStandalone(s); err != nil {
+		t.Errorf("patrol segment without target_room should validate, got: %v", err)
+	}
+}
+
+func TestValidateSchedule_PatrolSegmentWithoutPatrolId_Fails(t *testing.T) {
+	s := &Schedule{
+		Id: "broken_patrol_schedule",
+		Segments: []ScheduleSegment{
+			{Start: 0, End: 24, TargetRoom: 100, Activity: "patrol", PatrolId: "",
+				IdleCommands: []string{"x"}},
+		},
+	}
+	err := validateScheduleStandalone(s)
+	if err == nil || !strings.Contains(err.Error(), "patrol_id is empty") {
+		t.Errorf("expected patrol_id-empty error, got: %v", err)
+	}
+}
+
+func TestValidateSchedule_NonPatrolSegmentWithTargetRoomZero_Fails(t *testing.T) {
+	// Regression: target_room must still be required for non-patrol activities.
+	s := &Schedule{
+		Id: "broken",
+		Segments: []ScheduleSegment{
+			{Start: 0, End: 24, TargetRoom: 0, Activity: "", IdleCommands: []string{"x"}},
+		},
+	}
+	err := validateScheduleStandalone(s)
+	if err == nil || !strings.Contains(err.Error(), "target_room is 0") {
+		t.Errorf("expected target_room=0 error for non-patrol activity, got: %v", err)
+	}
+}
