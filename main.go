@@ -1161,6 +1161,18 @@ func loadAllDataFiles(isReload bool) {
 			return err == nil
 		},
 	)
+	// Chunk 3.4: same DI pattern for patrol world validation. Patrols
+	// also need room-existence + pathfinding checks, and the same
+	// rooms ← mobs import cycle applies.
+	mobs.SetPatrolWorldValidator(
+		func(roomId int) bool {
+			return rooms.LoadRoom(roomId) != nil
+		},
+		func(from, to int) bool {
+			_, err := mapper.GetPath(from, to)
+			return err == nil
+		},
+	)
 	mobs.LoadDataFiles()
 
 	// Cross-reference validation: body-part tags and intrinsic
