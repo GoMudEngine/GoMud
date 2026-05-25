@@ -274,6 +274,10 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 						}
 					}
 				}
+				// Chunk 3.3: sleeping suffix
+				if player.Character != nil && player.Character.HasBuffFlag(buffs.Sleeping) {
+					playerEntry += ` <ansi fg="8">(asleep)</ansi>`
+				}
 				details.VisiblePlayers = append(details.VisiblePlayers, playerEntry)
 			}
 		}
@@ -334,10 +338,18 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 				}
 			}
 
+			// Build the mob name string once, then optionally decorate.
+			mobNameStr := mobName.String()
+
+			// Chunk 3.3: sleeping suffix
+			if mob.Character.HasBuffFlag(buffs.Sleeping) {
+				mobNameStr += ` <ansi fg="8">(asleep)</ansi>`
+			}
+
 			if mob.Character.IsCharmed() {
-				visibleFriendlyMobs = append(visibleFriendlyMobs, mobName.String())
+				visibleFriendlyMobs = append(visibleFriendlyMobs, mobNameStr)
 			} else {
-				details.VisibleMobs = append(details.VisibleMobs, mobName.String())
+				details.VisibleMobs = append(details.VisibleMobs, mobNameStr)
 			}
 		} else {
 			r.mobs = append(r.mobs[:idx], r.mobs[idx+1:]...)
