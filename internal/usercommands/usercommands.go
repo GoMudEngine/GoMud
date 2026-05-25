@@ -190,6 +190,7 @@ var (
 		`sort`:            {Sort, false, false, false},  // Can't sort items in combat
 		`stash`:           {Stash, false, false, false}, // Can't manipulate stash in combat
 		`status`:          {Status, true, true, false},
+		`sleep`:           {Sleep, false, false, false}, // Can't sleep in combat (actions.Sleep enforces)
 		`stand`:           {Stand, true, true, false}, // Can stand when downed
 		`suggest`:         {Suggest, true, true, false},
 		`storage`:         {Storage, false, false, false}, // Can't manipulate storage in combat
