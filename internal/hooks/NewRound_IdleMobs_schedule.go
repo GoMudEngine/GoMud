@@ -96,7 +96,11 @@ func scheduleTickPlan(mob *mobs.Mob, hour24 int) schedulePlan {
 		}
 	}
 
-	if mob.Character.RoomId != seg.TargetRoom {
+	// Skip pathing for patrol segments — the patrol executor (T8/T9)
+	// handles all movement. TargetRoom is 0 for patrol segments; without
+	// this guard we'd compute WantsPath=true with TargetRoom=0 and the
+	// applier would queue `pathto 0` every tick.
+	if seg.Activity != "patrol" && mob.Character.RoomId != seg.TargetRoom {
 		var fails int
 		if !plan.SegmentChanged {
 			fails = getMiscDataInt(&mob.Character, "schedule_path_fail_count")

@@ -247,8 +247,12 @@ func validateScheduleAgainstWorld(s *Schedule, roomExists func(int) bool, hasPat
 		return nil
 	}
 
-	// Check every target_room exists.
+	// Check every target_room exists. Patrol segments have target_room==0 by
+	// design — their waypoints are validated separately by the patrol loader.
 	for i, seg := range s.Segments {
+		if seg.Activity == "patrol" || seg.TargetRoom == 0 {
+			continue // patrol segments have optional target_room; patrol loader validates waypoints separately
+		}
 		if !roomExists(seg.TargetRoom) {
 			return fmt.Errorf("segment %d: target_room %d does not exist in rooms registry", i, seg.TargetRoom)
 		}
@@ -265,6 +269,9 @@ func validateScheduleAgainstWorld(s *Schedule, roomExists func(int) bool, hasPat
 	for i := 0; i < n; i++ {
 		fromRoom := sorted[i].TargetRoom
 		toRoom := sorted[(i+1)%n].TargetRoom
+		if fromRoom == 0 || toRoom == 0 {
+			continue // patrol segments have no target_room; patrol loader validates pathing internally
+		}
 		if fromRoom == toRoom {
 			continue
 		}
