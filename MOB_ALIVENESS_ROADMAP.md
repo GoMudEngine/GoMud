@@ -99,6 +99,7 @@ should always agree.
 | 3.4 | Routine | Waypoint patrols | M | — | Not started |
 | 3.5 | Routine | Maintenance routines | M | 3.2 | Not started |
 | 3.6 | Routine | NPC↔NPC idle conversation | M | 1.6 | Not started |
+| 3.7 | Routine | Inter-zone patrols + caravan unification | L | 3.4 | Not started |
 | 4.1 | Strategic | Goal representation | M | 1.1, 1.4 | Not started |
 | 4.2 | Strategic | Goal selection | L | 4.1 | Not started |
 | 4.3 | Strategic | Goal types catalog | M | 4.1 | Not started |
@@ -481,6 +482,15 @@ world.
 - **Out:** Player-overheard "spoken about you" gossip (later, ties to 1.4 knowledge spread).
 - **Depends on:** 1.6
 - **Why:** A guard and a baker chatting in the square is the highest-bang-for-buck aliveness signal.
+
+### 3.7 Inter-zone patrols + caravan unification
+**Status:** Not started • **Size:** L
+
+- **Goal:** Extend chunk 3.4 patrols to cross zone boundaries, and migrate caravan movement code onto the shared patrol layer (caravans become a specialized yo-yo patrol with cargo + vendor semantics layered on top).
+- **In:** Cross-zone waypoint references in patrol YAML, patrol-executor handling of zone-boundary pathing, caravan movement code refactored to call the patrol executor (caravan-specific concerns — cargo, vendor visits, gold exchange — stay in `internal/caravan/`).
+- **Out:** Multi-stop caravan optimization (pathfinding "best order" of stops), seasonal route variation.
+- **Depends on:** 3.4 (patrols)
+- **Why:** Caravans currently maintain their own movement logic, parallel to mob wandering and (now) patrols. Unifying onto patrol primitives reduces drift, lets caravan routes be authored as standard patrol files, and surfaces inter-zone routing as a first-class engine feature for both caravans and future zone-spanning NPCs (traveling merchants, pilgrim NPCs, etc.). Decision deferred from chunk 3.4 to focus that chunk on the single-zone patrol primitive.
 
 ---
 
