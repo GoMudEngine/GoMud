@@ -42,7 +42,7 @@ segments:
   - start: 22
     end: 4
     target_room: 5103
-    activity: ""
+    activity: sleeping
     idlecommands:
       - emote sleeps with hands folded over the breviary.
       - emote breathes slow and even.

@@ -21,7 +21,7 @@ segments:
   - start: 22
     end: 6
     target_room: 5102
-    activity: ""
+    activity: sleeping
     idlecommands:
       - emote sleeps soundly under a worn blanket.
       - emote mumbles in a dream.
