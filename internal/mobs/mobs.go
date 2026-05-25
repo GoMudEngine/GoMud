@@ -26,6 +26,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -357,6 +358,15 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 			}
 		} else {
 			mob.Character.SurrenderPolicy = characters.DefaultSurrenderPolicyForArchetype(mob.BehaviorArchetype)
+		}
+
+		// Chunk 3.2: scheduled mob spawn override. If the mob has a
+		// schedule_id, place it at the current segment's target room
+		// instead of HomeRoomId. HomeRoomId is preserved as the "true
+		// home" for pathto-home semantics.
+		if mob.ScheduleId != "" {
+			hour := gametime.GetDate().Hour24
+			mob.Character.RoomId = applyScheduleSpawnOverride(mob.ScheduleId, mob.HomeRoomId, hour)
 		}
 
 		// State-machine pointers and the OnCharacterCreated wiring

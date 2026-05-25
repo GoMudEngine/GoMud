@@ -68,3 +68,37 @@ func segContainsHour(seg *ScheduleSegment, hour24 int) bool {
 	// Wraps midnight: covers [Start, 24) and [0, End).
 	return hour24 >= seg.Start || hour24 < seg.End
 }
+
+// applyScheduleSpawnOverride returns the room a scheduled mob should spawn
+// at given the current hour. Returns homeRoomId unchanged when the mob has
+// no schedule, when the schedule is unknown, or when the schedule has no
+// segment covering the current hour. Called from newMobByIdInternal during
+// instance creation.
+func applyScheduleSpawnOverride(scheduleId string, homeRoomId int, hour24 int) int {
+	if scheduleId == "" {
+		return homeRoomId
+	}
+	s := GetSchedule(scheduleId)
+	if s == nil {
+		return homeRoomId
+	}
+	seg := s.CurrentSegment(hour24)
+	if seg == nil {
+		return homeRoomId
+	}
+	return seg.TargetRoom
+}
+
+// registerScheduleForTest / unregisterScheduleForTest are test-only helpers
+// for injecting schedules into the package-level registry.
+func registerScheduleForTest(s *Schedule) {
+	schedulesMu.Lock()
+	defer schedulesMu.Unlock()
+	schedules[s.Id] = s
+}
+
+func unregisterScheduleForTest(id string) {
+	schedulesMu.Lock()
+	defer schedulesMu.Unlock()
+	delete(schedules, id)
+}
