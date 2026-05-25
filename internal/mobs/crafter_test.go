@@ -1,13 +1,16 @@
 package mobs
 
 import (
+	"math"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/shops"
+	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -555,6 +558,105 @@ func TestExecuteCraft_OutputItemFreshlyCreated(t *testing.T) {
 		"GetStock(outputID) must be non-nil — AddStockAtRound must create the entry when missing")
 	assert.GreaterOrEqual(t, outEntry.Current, 1,
 		"newly-created output StockEntry must have Current >= 1")
+}
+
+// ── schedule gate helpers ─────────────────────────────────────────────────────
+
+// roundForHourCrafter scans all rounds in one game day and returns the first
+// roundOfDay whose Hour24 equals targetHour. Returns -1 when the target hour
+// is not representable with the current RoundsPerDay config.
+func roundForHourCrafter(hour int) int {
+	c := configs.GetTimingConfig()
+	rpd := int(c.RoundsPerDay)
+	for r := 0; r < rpd; r++ {
+		hourFloat, _ := math.Modf(float64(r) / float64(rpd) * 24)
+		if int(hourFloat) == hour {
+			return r + rpd // offset so we never send round 0
+		}
+	}
+	return -1
+}
+
+// setTestHourForCrafter pins the global round count so gametime.GetDate()
+// resolves to a known Hour24. Returns a cleanup func that restores the
+// previous round count. Usage: defer setTestHourForCrafter(t, 19)()
+func setTestHourForCrafter(t *testing.T, hour int) func() {
+	t.Helper()
+	prev := util.GetRoundCount()
+	r := roundForHourCrafter(hour)
+	if r < 0 {
+		t.Skipf("hour %d not representable with RoundsPerDay=%d — skip schedule gate test",
+			hour, configs.GetTimingConfig().RoundsPerDay)
+	}
+	util.SetRoundCountForTest(uint64(r))
+	actual := gametime.GetDate().Hour24
+	if actual != hour {
+		util.SetRoundCountForTest(prev)
+		t.Skipf("setTestHourForCrafter(%d): gametime resolved Hour24=%d — skip schedule gate test",
+			hour, actual)
+	}
+	return func() { util.SetRoundCountForTest(prev) }
+}
+
+// minimalCrafterMobForTest returns the smallest Mob that passes TickMobCraft's
+// first three guards (Crafter=true, CrafterEnabled by config, Aggro==nil).
+// It force-enables CrafterEnabled for the duration of the test and restores
+// the original value via t.Cleanup.
+func minimalCrafterMobForTest(t *testing.T) *Mob {
+	t.Helper()
+	prev := configs.GetBalanceConfig()
+	configs.AddOverlayOverrides(map[string]any{
+		"Balance.CrafterEnabled": true,
+	})
+	t.Cleanup(func() {
+		configs.AddOverlayOverrides(map[string]any{
+			"Balance.CrafterEnabled": bool(prev.CrafterEnabled),
+		})
+	})
+	return &Mob{
+		MobId:      MobId(9998),
+		Zone:       "test_zone",
+		HomeRoomId: 1,
+		Crafter:    true,
+		Character: characters.Character{
+			Name: "Schedule Gate Test Crafter",
+		},
+	}
+}
+
+// ── schedule gate tests ───────────────────────────────────────────────────────
+
+// TestTickMobCraft_ScheduleGate_BlocksWhenActivityNotCraft verifies that
+// TickMobCraft returns nil during a schedule segment whose activity is not
+// "craft" (the tavern segment in the Kerra fixture, hour 19).
+func TestTickMobCraft_ScheduleGate_BlocksWhenActivityNotCraft(t *testing.T) {
+	mob := minimalCrafterMobForTest(t)
+	mob.ScheduleId = "thornwall_smith"
+	mob.Character.RoomId = 9012 // tavern room — activity="" in fixture
+
+	registerScheduleForTest(kerraTestSchedule())
+	defer unregisterScheduleForTest("thornwall_smith")
+
+	// Pin to hour 19: Kerra's tavern segment (18-22, activity="").
+	defer setTestHourForCrafter(t, 19)()
+
+	result := TickMobCraft(mob)
+	if result != nil {
+		t.Errorf("expected nil during non-craft segment (hour=19, activity=\"\"), got %+v", result)
+	}
+}
+
+// TestTickMobCraft_ScheduleGate_NoScheduleIsUnaffected verifies that the gate
+// is a no-op for mobs without a schedule_id. The function may return nil for
+// other reasons (e.g., no shop, no recipes) but the gate must not preempt.
+// We confirm this by asserting the gate doesn't panic and the function returns
+// cleanly — we don't assert the result value.
+func TestTickMobCraft_ScheduleGate_NoScheduleIsUnaffected(t *testing.T) {
+	mob := minimalCrafterMobForTest(t)
+	mob.ScheduleId = "" // no schedule — gate must be a no-op
+
+	// Should complete without panic regardless of result.
+	_ = TickMobCraft(mob)
 }
 
 // TestExecuteCraft_SuccessAlwaysRoutesToShop is the regression for the

@@ -3,6 +3,7 @@ package mobs
 import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/itemvalue"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -201,6 +202,18 @@ func TickMobCraft(mob *Mob) *CraftResult {
 	}
 	if mob.Character.Aggro != nil {
 		return nil
+	}
+
+	// Chunk 3.2: schedule activity gate. If the mob has a schedule, crafting
+	// only fires when the current segment has activity: craft. Mobs without
+	// a schedule_id are unaffected.
+	if mob.ScheduleId != "" {
+		if s := GetSchedule(mob.ScheduleId); s != nil {
+			seg := s.CurrentSegment(gametime.GetDate().Hour24)
+			if seg == nil || seg.Activity != "craft" {
+				return nil
+			}
+		}
 	}
 
 	roundCount := util.GetRoundCount()
