@@ -71,6 +71,36 @@ func TestScheduleTick_SegmentTransitionDetected(t *testing.T) {
 	}
 }
 
+func TestScheduleTick_SegmentTransitionResetsFailCount(t *testing.T) {
+	registerKerraScheduleForTest(t)
+
+	mob := &mobs.Mob{ScheduleId: "thornwall_smith"}
+	mob.Character.RoomId = 1111 // not at any target
+
+	// Pretend last tick was forge segment with 99 path failures (max retries
+	// would be 20 in production config).
+	mob.Character.SetMiscData("schedule_last_seg_start", 9)
+	mob.Character.SetMiscData("schedule_path_fail_count", 99)
+
+	// Now hour=19 (tavern) — segment transition. The 99-fail count from the
+	// previous segment must NOT trigger WantsHomeFallback; the new segment
+	// should get WantsPath against its target room (9012).
+	plan := scheduleTickPlan(mob, 19)
+
+	if !plan.SegmentChanged {
+		t.Fatalf("expected SegmentChanged=true, got %+v", plan)
+	}
+	if plan.WantsHomeFallback {
+		t.Errorf("expected WantsHomeFallback=false on segment transition with stale fail count, got %+v", plan)
+	}
+	if !plan.WantsPath {
+		t.Errorf("expected WantsPath=true to new segment target, got %+v", plan)
+	}
+	if plan.TargetRoom != 9012 {
+		t.Errorf("expected target=9012 (tavern), got %d", plan.TargetRoom)
+	}
+}
+
 // registerKerraScheduleForTest injects the Kerra fixture and registers cleanup.
 func registerKerraScheduleForTest(t *testing.T) {
 	t.Helper()

@@ -90,8 +90,9 @@ func applyScheduleSpawnOverride(scheduleId string, homeRoomId int, hour24 int) i
 }
 
 // registerScheduleForTest / unregisterScheduleForTest are unexported helpers
-// used by tests within this package. RegisterScheduleForTest / Unregister are
-// the exported variants for cross-package test injection (hooks tests, etc.).
+// used by tests within this package. RegisterScheduleForTest /
+// UnregisterScheduleForTest are the exported variants for cross-package test
+// injection (hooks tests, etc.).
 func registerScheduleForTest(s *Schedule) {
 	schedulesMu.Lock()
 	defer schedulesMu.Unlock()

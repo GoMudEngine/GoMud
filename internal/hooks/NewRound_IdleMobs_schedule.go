@@ -59,7 +59,12 @@ func scheduleTickPlan(mob *mobs.Mob, hour24 int) schedulePlan {
 	}
 
 	if mob.Character.RoomId != seg.TargetRoom {
-		fails := getMiscDataInt(&mob.Character, "schedule_path_fail_count")
+		var fails int
+		if !plan.SegmentChanged {
+			fails = getMiscDataInt(&mob.Character, "schedule_path_fail_count")
+		}
+		// On segment transition, fails is treated as 0 — the new segment
+		// gets a clean retry budget against its new target_room.
 		maxRetries := int(configs.GetBalanceConfig().ScheduleMaxPathRetries)
 		if maxRetries > 0 && fails >= maxRetries {
 			plan.WantsHomeFallback = true
