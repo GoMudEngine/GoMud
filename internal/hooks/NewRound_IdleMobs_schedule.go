@@ -3,9 +3,11 @@ package hooks
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // schedulePlan describes what the executor wants to do for a mob this tick.
@@ -20,6 +22,17 @@ type schedulePlan struct {
 	TargetRoom        int
 	WantsHomeFallback bool   // true after MaxPathRetries failures
 	FailureMessage    string // set when WantsHomeFallback fires
+
+	// WantsSleep: current segment is activity: sleeping AND mob is at
+	// segment target_room AND not within ScheduleWakeGraceRounds of a
+	// recent wake event. Idempotent per-tick check; safe to fire even
+	// if mob is already sleeping (applySchedulePlan checks).
+	WantsSleep bool
+
+	// WantsWake: transitioning OUT of an activity: sleeping segment
+	// (the prior segment had activity sleeping; this tick's segment
+	// does not). Triggers explicit CancelBuffsWithFlag(Sleeping).
+	WantsWake bool
 }
 
 // scheduleTickPlan computes the desired tick action for a scheduled mob. Pure
@@ -58,6 +71,25 @@ func scheduleTickPlan(mob *mobs.Mob, hour24 int) schedulePlan {
 		plan.NewIdleCommands = seg.IdleCommands
 	}
 
+	// Chunk 3.3: detect wake transition (prior segment was activity: sleeping;
+	// new is not).
+	if plan.SegmentChanged {
+		if prior := s.SegmentByStart(lastSegStart); prior != nil &&
+			prior.Activity == "sleeping" && seg.Activity != "sleeping" {
+			plan.WantsWake = true
+		}
+	}
+
+	// Chunk 3.3: detect sleep desire (current segment is activity: sleeping;
+	// at target; past grace cooldown).
+	if seg.Activity == "sleeping" && mob.Character.RoomId == seg.TargetRoom {
+		lastWoken := getMiscDataInt(&mob.Character, "schedule_wake_round")
+		grace := int(configs.GetBalanceConfig().ScheduleWakeGraceRounds)
+		if lastWoken == 0 || int(util.GetRoundCount())-lastWoken >= grace {
+			plan.WantsSleep = true
+		}
+	}
+
 	if mob.Character.RoomId != seg.TargetRoom {
 		var fails int
 		if !plan.SegmentChanged {
@@ -86,6 +118,12 @@ func applySchedulePlan(mob *mobs.Mob, plan schedulePlan) {
 	if !plan.HasSchedule {
 		return
 	}
+
+	// Chunk 3.3: wake first — clear stale sleep from a prior sleep segment.
+	if plan.WantsWake {
+		mob.Character.CancelBuffsWithFlag(buffs.Sleeping)
+	}
+
 	if plan.SegmentChanged {
 		mob.Character.SetMiscData("schedule_last_seg_start", plan.NewSegmentStart)
 		mob.Character.SetMiscData("schedule_path_fail_count", 0) // reset on transition
@@ -112,6 +150,11 @@ func applySchedulePlan(mob *mobs.Mob, plan schedulePlan) {
 		// At target — reset retry counter.
 		mob.Character.SetMiscData("schedule_path_fail_count", 0)
 	}
+	// Chunk 3.3: sleep last — only if at target and not already sleeping.
+	if plan.WantsSleep && !mob.Character.HasBuffFlag(buffs.Sleeping) {
+		mob.Command("sleep")
+	}
+
 	// Suppress wander while a schedule is active.
 	mob.MaxWander = 0
 }

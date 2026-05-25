@@ -639,6 +639,30 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 			}
 
+			// Chunk 3.3: a player arriving with a light source wakes any
+			// sleepers in the destination room. False positives possible if
+			// the room was already lit; acceptable for chunk 3.3 scope (most
+			// NPC sleep rooms are dim/dark indoors).
+			if user.Character.HasFlagFromAnySource(buffs.EmitsLight) {
+				for _, otherUserId := range destRoom.GetPlayers() {
+					if otherUserId == user.UserId {
+						continue
+					}
+					if other := users.GetByUserId(otherUserId); other != nil &&
+						other.Character.HasBuffFlag(buffs.Sleeping) {
+						other.Character.CancelBuffsWithFlag(buffs.Sleeping)
+						mobs.OnSleeperWoken(other.Character)
+					}
+				}
+				for _, mobInstId := range destRoom.GetMobs() {
+					if m := mobs.GetInstance(mobInstId); m != nil &&
+						m.Character.HasBuffFlag(buffs.Sleeping) {
+						m.Character.CancelBuffsWithFlag(buffs.Sleeping)
+						mobs.OnSleeperWoken(&m.Character)
+					}
+				}
+			}
+
 			handled = true
 
 			// Skip onEnter scripts when hidden — NPCs shouldn't react

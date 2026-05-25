@@ -1095,3 +1095,18 @@ Mobs with `schedule_id:` set follow daily routines authored in
   current segment's target room.
 - Crafter activity gate: `TickMobCraft` returns nil when a
   scheduled mob's current segment activity != "craft".
+
+---
+
+## Sleeping (chunk 3.3)
+
+- `sleeper.go`: `OnSleeperWoken(c *characters.Character)` — central
+  wake-event hook. Stamps `schedule_wake_round` MiscData for
+  scheduled mobs so the schedule executor's grace cooldown can
+  suppress re-sleep. No-op for players and unscheduled mobs.
+- Schedule executor (`internal/hooks/NewRound_IdleMobs_schedule.go`)
+  recognizes `activity: sleeping` segments. On entry: `mob.Command("sleep")`
+  once at target. On exit: `CancelBuffsWithFlag(buffs.Sleeping)`.
+- Grace cooldown: after a forced wake the executor reads
+  `schedule_wake_round` from MiscData and suppresses re-sleep for
+  `ScheduleWakeGraceRounds` rounds (config, default 50).

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -377,6 +378,22 @@ func cancelCraftOrSalvageOnDamage(ch *characters.Character) {
 			Actor:   ch.Activity.Self(),
 		})
 	}
+}
+
+// cancelDamageBuffs fires the Sleeping wake hook (if the character is asleep)
+// and then cancels all active buffs with the CancelOnDamage flag.
+//
+// Call this immediately after any damage > 0 is committed to a character's
+// Health — melee hits, spell hits, DoT ticks.
+//
+// Order matters: HasBuffFlag(Sleeping) is read BEFORE CancelBuffsWithFlag
+// removes the buff; if we checked after the cancel, the flag would already
+// be gone and OnSleeperWoken would never fire.
+func cancelDamageBuffs(ch *characters.Character) {
+	if ch.HasBuffFlag(buffs.Sleeping) {
+		mobs.OnSleeperWoken(ch)
+	}
+	ch.CancelBuffsWithFlag(buffs.CancelOnDamage)
 }
 
 // =============================================================================

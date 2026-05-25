@@ -95,7 +95,7 @@ should always agree.
 | 2.10 | Tactical | PvM/MvP/PvP/MvM parity audit | M | 2.1–2.9 | Done |
 | 3.1 | Routine | Game-time hook | S | — | Done |
 | 3.2 | Routine | NPC schedules | L | 3.1 | Done |
-| 3.3 | Routine | Sleeping / wake states | S | 3.1 | Not started |
+| 3.3 | Routine | Sleeping / wake states | M | 3.1 | Done |
 | 3.4 | Routine | Waypoint patrols | M | — | Not started |
 | 3.5 | Routine | Maintenance routines | M | 3.2 | Not started |
 | 3.6 | Routine | NPC↔NPC idle conversation | M | 1.6 | Not started |
@@ -117,7 +117,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 19 / 41 done • 0 in progress • 22 not started.
+**Roll-up:** 20 / 41 done • 0 in progress • 21 not started.
 
 ---
 
@@ -428,13 +428,31 @@ world.
 - **Shipped:** Schedule loader + 24h-coverage validator + pathfinding sanity in `internal/mobs/schedule.go` and `internal/mobs/schedule_loader.go`. Go-side executor in `internal/hooks/NewRound_IdleMobs_schedule.go` steers scheduled mobs via existing `pathto` plumbing, swaps per-segment `IdleCommands`, falls back to home after `ScheduleMaxPathRetries` failures. Spawn override in `newMobByIdInternal` places scheduled mobs at the current segment's target room. `TickMobCraft` respects per-segment `activity: craft` so Blacksmith Kerra only forges at the forge. New `mob_at_target_room` btree condition. New `mob schedule <instId>` admin inspector. Three Thornwall pilots: Blacksmith Kerra, Tavern Keeper Marek, Temple Priest Olen, each with a new above-shop home room. Spec at `docs/superpowers/specs/completed/2026-05-25-mob-aliveness-3.2-npc-schedules-design.md`, plan at `docs/superpowers/plans/completed/2026-05-25-mob-aliveness-3.2-npc-schedules.md`.
 
 ### 3.3 Sleeping / wake states
-**Status:** Not started • **Size:** S
+**Status:** Done (2026-05-25) • **Size:** M
 
 - **Goal:** NPCs visibly asleep at night; wakeable by sound, light, attack.
 - **In:** Sleeping condition, room descriptions for sleeping NPCs, wake triggers, combat-on-sleeper consequences (more crime severity).
 - **Out:** —
 - **Depends on:** 3.1
 - **Why:** A sleeping NPC is a tiny piece of fiction that compounds well — assassinations, theft, pickpocket-while-sleeping.
+- **Shipped:** Sleeping is a queryable state-flag (`buffs.Sleeping`) applied via
+  `actions.Sleep(actor)` from both player `sleep` and mob `sleep` commands, and
+  from the schedule executor's `activity: sleeping` segment hook. Sleepers gain
+  5× HP/SP/CP regen (`SleepRegenMultiplier`, default 5.0). Attackers in the first
+  round against a sleeper auto-crit via a start-of-round victim snapshot +
+  `forceCrit bool` on the damage pipeline. Wake triggers: damage (new
+  `cancel-on-damage` flag), failed steal, shout-in-room, light source on room
+  entry (via the existing `EmitsLight` buff flag), `stand` command. Schedule
+  executor honors a grace cooldown (`ScheduleWakeGraceRounds`, default 50) after
+  a forced wake. Room render appends `(asleep)` to occupant names. Three
+  Thornwall pilots retrofit. Spec at
+  `docs/superpowers/specs/completed/2026-05-25-mob-aliveness-3.3-sleeping-wake-states-design.md`,
+  plan at
+  `docs/superpowers/plans/completed/2026-05-25-mob-aliveness-3.3-sleeping-wake-states.md`.
+- **3.3 leaves available for 5.1:** Town Justice may wish to scale faction
+  response by victim state at crime time. The data is queryable live
+  (`victim.Character.HasBuffFlag(buffs.Sleeping)`) at the moment
+  `crimes.Record(...)` is called; no Crime-schema change is required up front.
 
 ### 3.4 Waypoint patrols
 **Status:** Not started • **Size:** M

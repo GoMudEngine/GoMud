@@ -62,6 +62,19 @@ validators panic at startup on coverage gaps, unreachable target
 rooms, or unresolved `schedule_id` references — pre-push SOP
 boot-test catches these. See `docs/schemas/schedule.md`.
 
+## Sleep Mechanics
+Players and NPCs can `sleep` (the verb — no slash). Sleepers gain
+5× HP/SP/CP regen but the entire first round of attacks against
+them auto-crits. Wake triggers: any damage, failed steal,
+shout-in-room, light source entering room (via EmitsLight buff
+flag), the `stand` command, or schedule segment end for scheduled
+mobs. Scheduled NPCs sleep during segments with
+`activity: sleeping` (see `docs/schemas/schedule.md`); a grace
+cooldown (`ScheduleWakeGraceRounds`, default 50) prevents
+immediate re-sleep after a wake event. Use
+`actions.Sleep(actor, opts) SleepResult` for the actor-parity
+entry point. State queryable via `HasBuffFlag(buffs.Sleeping)`.
+
 ## Project Context
 - DOGMud (Delusions of Grandeur) is a MUD built on the GoMud engine
 - World design document: `world.md`

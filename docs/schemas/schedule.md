@@ -20,7 +20,7 @@ segments: [<segment>, ...]        # must cover all 24 hours, no overlaps
   end: <int 1-24>                 # exclusive; end may equal 24 for the
                                   # day-boundary
   target_room: <int>              # must exist; mob is steered here
-  activity: <"" | "craft">        # gates engine-side activity verbs
+  activity: <"" | "craft" | "sleeping">  # gates engine-side activity verbs
   idlecommands:                   # mob's idle pool while in this segment
     - emote <text>
     - say <text>
@@ -44,9 +44,24 @@ temple twice with different `idlecommands`).
   (chronological order, including the wrap-around transition).
 - The mob's `schedule_id` (in its mob YAML) must resolve.
 
+## Activity vocabulary
+
+- `""` (empty) — no engine-side activity; idle commands only.
+- `"craft"` — crafter mobs craft when at the segment's `target_room`.
+  See `internal/mobs/context.md` "Crafter Mob System".
+- `"sleeping"` — When the segment is active and the mob is at the
+  segment's `target_room`, the schedule executor applies the
+  Sleeping buff. The buff cancels on segment exit and on any
+  wake trigger (damage, failed steal, shout in room, light source
+  entering, the `stand` command). Sleeping characters receive 5×
+  regen on all pools and any attacker's first round of attacks
+  auto-crits. After a forced wake during a sleep segment, the
+  schedule executor will not re-sleep the mob for
+  `ScheduleWakeGraceRounds` rounds (default 50).
+
 ## Validation (load-time, warn-only)
 
-- `activity:` value not in `{"", "craft"}`.
+- `activity:` value not in `{"", "craft", "sleeping"}`.
 - `activity: craft` on a mob that lacks `crafter: true`.
 - `target_room` is outside the mob's `zone`.
 - Segment has zero `idlecommands` (mob will be silent).

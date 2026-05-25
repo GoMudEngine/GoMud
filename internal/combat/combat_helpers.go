@@ -26,6 +26,12 @@ import (
 type combatContext struct {
 	sourceCanSee bool // source has nightvision OR room visibility >= 1
 	targetCanSee bool // target has nightvision OR room visibility >= 1
+	// Chunk 3.3: when true, the first hit of this round is guaranteed to
+	// crit regardless of the z-score threshold. Set by the round dispatcher
+	// when the defender was snapshotted as Sleeping at round start.
+	// Uses combatContext (not a separate parameter) so it threads through
+	// calculateCombat without touching Attack*Vs* signatures.
+	forceCrit bool
 }
 
 // weaponSetup holds pre-computed weapon info for a single weapon swing.
@@ -656,10 +662,23 @@ func handleDoubleFumble(result *AttackResult, sourceChar *characters.Character, 
 // resolveDefenseOutcome processes the best defense result with the new
 // crit/fumble priority: fumbles → crits → normal → floors.
 // Returns the full hitResolution including crit/fumble flags.
-func resolveDefenseOutcome(result *AttackResult, best bestDefenseResult, sourceChar *characters.Character, targetChar *characters.Character, critThreshold float64, isThirdParty bool) hitResolution {
+//
+// forceCrit bypasses the Z-score threshold check and treats the attack as a
+// confirmed crit regardless of the roll result. The stored ZScore is bumped to
+// critThreshold+0.5 so downstream crit-magnitude logic sees a confident crit.
+// Pass false for all normal combat rounds; T14 passes true for sleeping-victim
+// first-hit-crit.
+func resolveDefenseOutcome(result *AttackResult, best bestDefenseResult, sourceChar *characters.Character, targetChar *characters.Character, critThreshold float64, isThirdParty bool, forceCrit bool) hitResolution {
 	bal := configs.GetBalanceConfig()
 	fumbleThreshold := -2.0
 	defCritThreshold := 2.0
+
+	// forceCrit: override the attack roll's Z-score before any threshold check
+	// so every downstream branch (fumble guards, crit vs crit comparisons, etc.)
+	// sees a clearly-crit roll.
+	if forceCrit && best.hitRoll.ZScore < critThreshold+0.5 {
+		best.hitRoll.ZScore = critThreshold + 0.5
+	}
 
 	res := hitResolution{
 		hitRoll: best.hitRoll,

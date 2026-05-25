@@ -105,6 +105,21 @@ func unregisterScheduleForTest(id string) {
 	delete(schedules, id)
 }
 
+// SegmentByStart returns the segment whose Start hour matches the given
+// hour, or nil. Used by the schedule executor to look up the prior
+// segment's activity for transition detection (chunk 3.3 wake-on-exit).
+func (s *Schedule) SegmentByStart(startHour int) *ScheduleSegment {
+	if s == nil {
+		return nil
+	}
+	for i := range s.Segments {
+		if s.Segments[i].Start == startHour {
+			return &s.Segments[i]
+		}
+	}
+	return nil
+}
+
 // RegisterScheduleForTest injects a Schedule into the registry so that
 // tests in other packages can exercise schedule-dependent code paths
 // without writing fixture YAML files. Call t.Cleanup(UnregisterScheduleForTest)

@@ -355,6 +355,7 @@ func applyMobEffect_damage(
 		}
 	}
 	mob.Character.Health -= dmg
+	cancelDamageBuffs(&mob.Character)
 	setMobSpellAggro(user, mob)
 	if user != nil {
 		if critDeflect {
@@ -444,6 +445,7 @@ func applyMobEffect_knockdown(
 		}
 	}
 	mob.Character.Health -= dmg
+	cancelDamageBuffs(&mob.Character)
 	// Chunk 4b W5 cutover: spell knockdowns default to Supine (the
 	// "slams to the ground" wording fits backward force). Skip the
 	// legacy parallel-write if the FSM transition fails so the two
@@ -667,6 +669,7 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 			return
 		}
 		target.Character.Health -= dmg
+		cancelDamageBuffs(target.Character)
 		dmgDesc := combat.GetDamageDescription(dmg, target.Character.HealthMax.Value)
 		if deflected {
 			target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
@@ -1103,6 +1106,7 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 		}
 		mobSpellDmg = dmg
 		target.Character.Health -= dmg
+		cancelDamageBuffs(target.Character)
 		if deflected {
 			target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="green">You partially deflect `+

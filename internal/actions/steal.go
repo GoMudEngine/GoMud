@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crimes"
@@ -256,6 +257,12 @@ func stealFromMob(actor Actor, mobInstanceId int, attackerScore float64,
 		Trigger: awareness.TriggerSkullduggeryFailed,
 	})
 
+	// Chunk 3.3: failed theft wakes a sleeping victim.
+	if m.Character.HasBuffFlag(buffs.Sleeping) {
+		m.Character.CancelBuffsWithFlag(buffs.Sleeping)
+		mobs.OnSleeperWoken(&m.Character)
+	}
+
 	// chunk 1.3: record theft crime on faction-aligned victim.
 	if factionIds := factions.FactionsForMob(m); len(factionIds) > 0 {
 		// All witnesses including the victim (excludeInstanceId=0).
@@ -334,6 +341,13 @@ func stealFromPlayer(actor Actor, targetUserId int, attackerScore float64,
 		actor.GetCharacter().Awareness.TransitionToRevealing(state.TransitionReason{
 			Trigger: awareness.TriggerSkullduggeryFailed,
 		})
+
+		// Chunk 3.3: failed theft wakes a sleeping victim.
+		if targetUser.Character.HasBuffFlag(buffs.Sleeping) {
+			targetUser.Character.CancelBuffsWithFlag(buffs.Sleeping)
+			mobs.OnSleeperWoken(targetUser.Character)
+		}
+
 		return StealResult{
 			Detected:     true,
 			DefenderName: targetUser.Character.Name,

@@ -28,7 +28,9 @@ const (
 )
 
 // Performs a combat round from a player to a mob
-func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
+// forceCrit is true when the defender was snapshotted as Sleeping at
+// round start (chunk 3.3); all swings this round against them crit.
+func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob, forceCrit bool) AttackResult {
 
 	// Chunk 5 (Presence) T7: auto-wake Dormant mobs on incoming attack.
 	// The mob's per-round tick was being skipped while Dormant; receivability
@@ -45,6 +47,7 @@ func AttackPlayerVsMob(user *users.UserRecord, mob *mobs.Mob) AttackResult {
 	ctx := combatContext{
 		sourceCanSee: messaging.CanSeeClearly(user.Character, room),
 		targetCanSee: messaging.CanSeeClearly(&mob.Character, room),
+		forceCrit:    forceCrit,
 	}
 	attackResult := calculateCombat(*user.Character, mob.Character, User, Mob, ctx)
 
@@ -114,12 +117,15 @@ func isDualWieldingWeaponCombat(c *characters.Character) bool {
 }
 
 // Performs a combat round from a player to a player
-func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord) AttackResult {
+// forceCrit is true when the defender was snapshotted as Sleeping at
+// round start (chunk 3.3); all swings this round against them crit.
+func AttackPlayerVsPlayer(userAtk *users.UserRecord, userDef *users.UserRecord, forceCrit bool) AttackResult {
 
 	room := rooms.LoadRoom(userAtk.Character.RoomId)
 	ctx := combatContext{
 		sourceCanSee: messaging.CanSeeClearly(userAtk.Character, room),
 		targetCanSee: messaging.CanSeeClearly(userDef.Character, room),
+		forceCrit:    forceCrit,
 	}
 	attackResult := calculateCombat(*userAtk.Character, *userDef.Character, User, User, ctx)
 
@@ -190,12 +196,15 @@ func trackMobAttackProgression(mob *mobs.Mob, result AttackResult) {
 }
 
 // Performs a combat round from a mob to a player
-func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
+// forceCrit is true when the defender was snapshotted as Sleeping at
+// round start (chunk 3.3); all swings this round against them crit.
+func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord, forceCrit bool) AttackResult {
 
 	room := rooms.LoadRoom(mob.Character.RoomId)
 	ctx := combatContext{
 		sourceCanSee: messaging.CanSeeClearly(&mob.Character, room),
 		targetCanSee: messaging.CanSeeClearly(user.Character, room),
+		forceCrit:    forceCrit,
 	}
 	attackResult := calculateCombat(mob.Character, *user.Character, Mob, User, ctx)
 
@@ -228,7 +237,9 @@ func AttackMobVsPlayer(mob *mobs.Mob, user *users.UserRecord) AttackResult {
 }
 
 // Performs a combat round from a mob to a mob
-func AttackMobVsMob(mobAtk *mobs.Mob, mobDef *mobs.Mob) AttackResult {
+// forceCrit is true when the defender was snapshotted as Sleeping at
+// round start (chunk 3.3); all swings this round against them crit.
+func AttackMobVsMob(mobAtk *mobs.Mob, mobDef *mobs.Mob, forceCrit bool) AttackResult {
 
 	// Chunk 5 (Presence) T7: auto-wake Dormant mobs on incoming attack.
 	// Same semantics as AttackPlayerVsMob: defender wakes before damage applies.
@@ -242,6 +253,7 @@ func AttackMobVsMob(mobAtk *mobs.Mob, mobDef *mobs.Mob) AttackResult {
 	ctx := combatContext{
 		sourceCanSee: messaging.CanSeeClearly(&mobAtk.Character, room),
 		targetCanSee: messaging.CanSeeClearly(&mobDef.Character, room),
+		forceCrit:    forceCrit,
 	}
 	attackResult := calculateCombat(mobAtk.Character, mobDef.Character, Mob, Mob, ctx)
 
@@ -465,7 +477,9 @@ func calculateCombat(sourceChar characters.Character, targetChar characters.Char
 			best := runBestOfAllDefense(&attackResult, &sourceChar, &targetChar, defenseSequence, attackScore, isThirdParty, ctx)
 
 			// New resolution order: fumbles → crits → normal → floors
-			res := resolveDefenseOutcome(&attackResult, best, &sourceChar, &targetChar, critThreshold, isThirdParty)
+			// Chunk 3.3: ctx.forceCrit is true when the defender was snapshotted
+			// as Sleeping at round start; every swing against them this round crits.
+			res := resolveDefenseOutcome(&attackResult, best, &sourceChar, &targetChar, critThreshold, isThirdParty, ctx.forceCrit)
 
 			sourceChar.UpdateMomentum(res.hit)
 

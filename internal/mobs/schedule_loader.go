@@ -95,12 +95,12 @@ func LoadSchedules() {
 
 		// Warn on activity/idlecommands issues (non-fatal).
 		for i, seg := range s.Segments {
-			if seg.Activity != "" && seg.Activity != "craft" {
+			if seg.Activity != "" && seg.Activity != "craft" && seg.Activity != "sleeping" {
 				mudlog.Warn("mobs.LoadSchedules()",
 					"scheduleId", s.Id,
 					"segment", i,
 					"activity", seg.Activity,
-					"warning", "unknown activity value (expected '' or 'craft')")
+					"warning", "unknown activity value (expected '', 'craft', or 'sleeping')")
 			}
 			if len(seg.IdleCommands) == 0 {
 				mudlog.Warn("mobs.LoadSchedules()",

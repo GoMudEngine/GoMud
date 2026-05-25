@@ -697,6 +697,70 @@ func TestStand(t *testing.T) {
 	})
 }
 
+// TestStand_CancelsSleeping verifies chunk 3.3: stand cancels the Sleeping
+// buff before the "already standing" bail, so a standing-but-sleeping player
+// wakes on `stand` even though their position state would otherwise short-
+// circuit the handler.
+func TestStand_CancelsSleeping(t *testing.T) {
+	// Seed standard registries plus the Sleeping buff (id 15).
+	cleanupKeywords := keywords.SeedKeywordsForTest()
+	defer cleanupKeywords()
+
+	cleanupBuffs := buffs.SeedBuffsForTest(map[int]*buffs.BuffSpec{
+		15: {
+			BuffId:        15,
+			Name:          "Sleeping",
+			Description:   "You are getting much needed rest.",
+			RoundInterval: 1,
+			TriggerCount:  100000,
+			Flags:         []buffs.Flag{buffs.Sleeping, buffs.CancelOnAction, buffs.CancelIfCombat, buffs.CancelOnDamage},
+		},
+	})
+	defer cleanupBuffs()
+
+	u := users.NewTestUser(99, "sleeper", "Sleeperton", 9999)
+	u.Character.Buffs = buffs.New()
+	u.Character.StaminaMax.Value = 100
+	u.Character.Stamina = 100
+
+	cleanupUsers := users.SeedUsersForTest(map[int]*users.UserRecord{99: u})
+	defer cleanupUsers()
+
+	room := &rooms.Room{
+		RoomId:  99,
+		Zone:    "TestZone",
+		Title:   "Test Room",
+		Biome:   "default",
+	}
+	cleanupBiomes := rooms.SeedBiomesForTest(map[string]*rooms.BiomeInfo{
+		"default": {BiomeId: "default", Name: "Default", Symbol: ".", LitArea: true, MovementCost: 1.0},
+	})
+	defer cleanupBiomes()
+	cleanupRooms := rooms.SeedRoomsForTest(
+		map[int]*rooms.Room{99: room},
+		map[string]*rooms.ZoneConfig{
+			"TestZone": {Name: "TestZone", RoomId: 99, RoomIds: map[int]struct{}{99: {}}},
+		},
+	)
+	defer cleanupRooms()
+	room.AddPlayer(99)
+
+	// Apply the Sleeping buff so the player is standing-but-asleep.
+	setCombatPositionParallel(u.Character, position.Standing)
+	u.Character.Buffs.AddBuff(15, false)
+
+	require.True(t, u.Character.HasBuffFlag(buffs.Sleeping),
+		"test setup: Sleeping buff must be applied before calling Stand")
+	require.True(t, u.Character.IsStanding(),
+		"test setup: character must be standing (not prone/supine)")
+
+	handled, err := Stand("", u, room, 0)
+	assert.True(t, handled)
+	assert.NoError(t, err)
+	assert.False(t, u.Character.HasBuffFlag(buffs.Sleeping),
+		"Sleeping buff must be cancelled by stand")
+}
+
 // ─── Consider ───────────────────────────────────────────────────────────────
 
 func TestConsider(t *testing.T) {

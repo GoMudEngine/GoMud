@@ -1049,3 +1049,26 @@ updated at validation time).
 See `internal/configs/context.md` "Submission System (chunk 4d)" for
 the config-level documentation and `internal/state/position/context.md`
 for the submission-type mapping and eligibility predicates.
+
+---
+
+## First-hit crit on sleepers (chunk 3.3)
+
+The damage pipeline accepts a `forceCrit bool` parameter on
+`resolveDefenseOutcome` (in `combat_helpers.go`) that bypasses
+the Z-score threshold and bumps to threshold+0.5 (clearly-crit).
+
+`handleCombatRound` receives `forceCrit` from
+`NewRound_DoCombat.snapshotSleepingVictims()` — a start-of-round
+snapshot of all players + mobs with the Sleeping flag. All
+damage events in the round against snapshotted victims force-crit,
+even after cancel-on-damage clears the buff mid-round.
+
+The snapshot approach means: the sleeper is asleep at round start →
+the entire first round crits → the first hit wakes them
+(`CancelOnDamage` fires) → subsequent hits in the same round still
+force-crit from the snapshot, but the sleeper is now active and can
+start fighting back next round.
+
+Other future first-hit-crit triggers (surprise attack, backstab)
+can add parallel snapshot checks at the same start-of-round site.

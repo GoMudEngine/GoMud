@@ -313,6 +313,19 @@ type Balance struct {
 	// See chunk 3.2 spec.
 	ScheduleMaxPathRetries ConfigInt `yaml:"ScheduleMaxPathRetries"`
 
+	// ── MOB SLEEP & WAKE (chunk 3.3) ──────────────────────────────────────────
+	// SleepRegenMultiplier multiplies HP/SP/CP per-round percentage regen
+	// when the bearer has the Sleeping flag. Default 5.0 — sleep is the
+	// dominant recovery mechanic. Chunk 3.3.
+	SleepRegenMultiplier ConfigFloat `yaml:"SleepRegenMultiplier"`
+
+	// ScheduleWakeGraceRounds is the cooldown (in rounds) during which a
+	// scheduled mob will not re-sleep after a forced wake. Prevents the
+	// schedule executor from immediately re-applying Sleeping when the
+	// player interacts with a sleeping NPC. Default 50 (~200 sec real-time
+	// at default tick rate). Chunk 3.3.
+	ScheduleWakeGraceRounds ConfigInt `yaml:"ScheduleWakeGraceRounds"`
+
 	// ── PACK SCALING ─────────────────────────────────────────────────────────
 	PackScalingEnabled   ConfigBool `yaml:"PackScalingEnabled"`   // Enable pack survival bonuses (default true)
 	PackSurvivalRounds   ConfigInt  `yaml:"PackSurvivalRounds"`   // Consecutive rounds together before bonus (default 10)
