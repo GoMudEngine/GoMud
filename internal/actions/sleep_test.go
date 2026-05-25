@@ -96,8 +96,8 @@ func TestSleep_AppliesBuffOnSuccess(t *testing.T) {
 
 	res := Sleep(actor, SleepOptions{})
 
-	if res != Success {
-		t.Fatalf("expected Success, got %v", res)
+	if !res.Success {
+		t.Fatalf("expected Success, got %+v", res)
 	}
 	if !actor.char.HasBuffFlag(buffs.Sleeping) {
 		t.Errorf("expected Sleeping flag applied after Sleep()")
@@ -114,8 +114,8 @@ func TestSleep_BlocksInCombat(t *testing.T) {
 
 	res := Sleep(actor, SleepOptions{})
 
-	if res != Failure {
-		t.Errorf("expected Failure when in combat, got %v", res)
+	if res.Success {
+		t.Errorf("expected failure when in combat, got %+v", res)
 	}
 	if actor.char.HasBuffFlag(buffs.Sleeping) {
 		t.Errorf("expected Sleeping NOT applied during combat")
@@ -135,8 +135,8 @@ func TestSleep_MobActorSilentInCombat(t *testing.T) {
 
 	res := Sleep(actor, SleepOptions{})
 
-	if res != Failure {
-		t.Errorf("expected Failure for mob in combat, got %v", res)
+	if res.Success {
+		t.Errorf("expected failure for mob in combat, got %+v", res)
 	}
 	if len(actor.sent) != 0 {
 		t.Errorf("mob actor should be silent; got messages: %v", actor.sent)
@@ -153,13 +153,13 @@ func TestSleep_IdempotentWhenAlreadySleeping(t *testing.T) {
 
 	// First call applies the buff.
 	first := Sleep(actor, SleepOptions{})
-	if first != Success {
-		t.Fatalf("first Sleep() expected Success, got %v", first)
+	if !first.Success {
+		t.Fatalf("first Sleep() expected Success, got %+v", first)
 	}
 
 	// Second call should be a no-op success.
 	second := Sleep(actor, SleepOptions{})
-	if second != Success {
-		t.Errorf("idempotent re-sleep expected Success, got %v", second)
+	if !second.Success {
+		t.Errorf("idempotent re-sleep expected Success, got %+v", second)
 	}
 }

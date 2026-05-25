@@ -7,22 +7,15 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 )
 
-// Result is the binary outcome of an actor function call.
-// It mirrors the behaviortree Success/Failure vocabulary so that
-// mob-schedule callers can forward the value directly without
-// importing behaviortree.
-type Result int
-
-const (
-	// Success indicates the action completed without error.
-	Success Result = iota
-	// Failure indicates the action was blocked or could not complete.
-	Failure
-)
-
 // SleepOptions is reserved for future authoring knobs (bed-item
 // bonus, custom emote prose, etc.). Empty for chunk 3.3.
 type SleepOptions struct{}
+
+// SleepResult is the structured outcome of a Sleep call.
+type SleepResult struct {
+	Success bool   // true if the buff was applied (or was already applied — idempotent)
+	Reason  string // empty on success; populated on failure (e.g., "in combat")
+}
 
 // Sleep applies the Sleeping buff (id 15) to the actor's character. Used by
 // the player sleep command, the mob sleep command, and the schedule executor
@@ -35,15 +28,15 @@ type SleepOptions struct{}
 //
 // Idempotent: if the actor is already sleeping, returns Success without
 // re-applying the buff or re-emitting the room emote.
-func Sleep(actor Actor, opts SleepOptions) Result {
+func Sleep(actor Actor, opts SleepOptions) SleepResult {
 	c := actor.GetCharacter()
 	if c == nil {
-		return Failure
+		return SleepResult{Success: false, Reason: "no character"}
 	}
 
 	// Idempotent: already sleeping — nothing to do.
 	if c.HasBuffFlag(buffs.Sleeping) {
-		return Success
+		return SleepResult{Success: true}
 	}
 
 	// Combat gate.
@@ -52,7 +45,7 @@ func Sleep(actor Actor, opts SleepOptions) Result {
 			actor.SendText(messaging.CategorySystem,
 				"You can't sleep right now.")
 		}
-		return Failure
+		return SleepResult{Success: false, Reason: "in combat"}
 	}
 
 	// Apply buff 15 (Sleeping). The buff YAML includes the room-broadcast
@@ -63,7 +56,7 @@ func Sleep(actor Actor, opts SleepOptions) Result {
 			actor.SendText(messaging.CategorySystem,
 				fmt.Sprintf("Something prevented you from sleeping: %v", err))
 		}
-		return Failure
+		return SleepResult{Success: false, Reason: err.Error()}
 	}
 
 	// Emit third-person room visual to other occupants.
@@ -76,5 +69,5 @@ func Sleep(actor Actor, opts SleepOptions) Result {
 		)
 	}
 
-	return Success
+	return SleepResult{Success: true}
 }
