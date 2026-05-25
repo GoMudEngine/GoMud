@@ -3,6 +3,7 @@ zone: Thornwall City
 craft_support: blacksmithing
 archetype: fighting
 behavior_archetype: noncombat_shopkeeper
+schedule_id: thornwall_smith
 statpool: 66
 itemdropchance: 0
 hostile: false

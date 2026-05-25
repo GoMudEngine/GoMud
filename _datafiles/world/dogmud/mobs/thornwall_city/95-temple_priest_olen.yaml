@@ -1,6 +1,7 @@
 mobid: 95
 zone: Thornwall City
 archetype: casting
+schedule_id: thornwall_temple_priest
 statpool: 88
 itemdropchance: 0
 hostile: false
