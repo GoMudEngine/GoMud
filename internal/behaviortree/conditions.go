@@ -47,6 +47,9 @@ func init() {
 
 	// Forager suite (2.9)
 	conditionRegistry["forager_state_is_foraging"] = condForagerStateIsForaging
+
+	// Schedule suite (3.2)
+	conditionRegistry["mob_at_target_room"] = condMobAtTargetRoom
 }
 
 // LookupCondition returns the condition function for the given name,
