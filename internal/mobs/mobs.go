@@ -1189,6 +1189,9 @@ func LoadDataFiles() {
 
 	mudlog.Info("mobs.LoadDataFiles()", "loadedCount", len(tmpMobs), "Time Taken", time.Since(start))
 
+	// Load NPC daily schedules. Optional content — no panic if directory absent.
+	LoadSchedules()
+
 	// Populate the relationships graph from authored YAML edges.
 	mobsMu.RLock()
 	edges := make([]relationships.MobEdges, 0, len(mobs))
