@@ -97,7 +97,7 @@ should always agree.
 | 3.2 | Routine | NPC schedules | L | 3.1 | Done |
 | 3.3 | Routine | Sleeping / wake states | M | 3.1 | Done |
 | 3.4 | Routine | Waypoint patrols | M | — | Done |
-| 3.5 | Routine | Maintenance routines | M | 3.2 | Not started |
+| 3.5 | Routine | Maintenance routines | M | 3.2 | Deferred |
 | 3.6 | Routine | NPC↔NPC idle conversation | M | 1.6 | Not started |
 | 3.7 | Routine | Inter-zone patrols + caravan unification | L | 3.4 | Not started |
 | 4.1 | Strategic | Goal representation | M | 1.1, 1.4 | Not started |
@@ -483,7 +483,7 @@ world.
   `docs/superpowers/plans/completed/2026-05-25-mob-aliveness-3.4-waypoint-patrols.md`.
 
 ### 3.5 Maintenance routines
-**Status:** Not started • **Size:** M
+**Status:** Deferred • **Size:** M
 
 - **Goal:** Smith repairs gear, farmer tends crops, librarian shelves books — flavor activity tied to NPC role.
 - **In:** Activity YAML, emote-driven flavor, optional integration with crafting (smith actually crafts inventory restock).
@@ -491,6 +491,7 @@ world.
 - **Depends on:** 3.2 (maintenance often slots inside schedules)
 - **Why:** Walking into the smithy and seeing the smith working tells the player the world isn't waiting on them.
 - **Builds on:** Chunk 3.2's per-segment `activity:` field. New maintenance verbs (`tend_crops`, `shelve_books`, etc.) will be dispatched when a segment declares them.
+- **Deferred (2026-05-25):** Chunk 3.2's per-segment `idlecommands:` field already delivers the canonical "see the smith working" experience for Kerra (and will for future similarly-authored NPCs). The reusable activity-library angle has no consumers yet — we only have one smith in one zone. Re-evaluate this chunk when content authoring hits real duplication pain across multiple smiths/farmers/librarians in multiple zones. The concrete "crafter ticks but item doesn't appear in shop list" complaint that surfaced during this triage is being tracked separately (see follow-up bug fix).
 
 ### 3.6 NPC↔NPC idle conversation
 **Status:** Not started • **Size:** M
