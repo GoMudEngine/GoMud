@@ -3,9 +3,11 @@ package usercommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
@@ -14,6 +16,14 @@ import (
 )
 
 func Stand(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+
+	// Chunk 3.3: stand wakes a sleeping player. Cancel BEFORE the
+	// "already standing" bail so a standing-but-sleeping player can
+	// still wake via stand.
+	if user.Character.HasBuffFlag(buffs.Sleeping) {
+		user.Character.CancelBuffsWithFlag(buffs.Sleeping)
+		mobs.OnSleeperWoken(user.Character)
+	}
 
 	// Chunk 4b W7: gate on the new Position FSM (Prone or Supine).
 	if !user.Character.IsProne() && !user.Character.IsSupine() {
