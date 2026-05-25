@@ -315,22 +315,31 @@ dispatcher, light-room-entry) plus the `stand` extension.
 
 ### Room rendering
 
-Find the room-occupants line assembly in look output. Per-mob
-and per-player rendering checks the Sleeping flag:
+The existing room template (`_datafiles/world/dogmud/templates/descriptions/who.template`)
+emits a comma-separated "Also here:" list, not per-occupant
+sentences. Occupant names are built in `internal/rooms/roomdetails.go`
+(`VisiblePlayers` and `VisibleMobs` slices). The closest precedent
+is the `(AFK)` suffix appended to player names in the same loop.
+
+Sleeping rendering follows the same pattern — append an
+`<ansi fg="8">(asleep)</ansi>` suffix to the name string when
+the occupant has `buffs.Sleeping`:
 
 ```go
-// Pseudocode — exact file TBD during implementation.
-for _, mobId := range room.GetMobs() {
-    m := mobs.GetInstance(mobId)
-    if m == nil { continue }
-    if m.Character.HasBuffFlag(buffs.Sleeping) {
-        emit(fmt.Sprintf("%s is sleeping here.", m.Character.Name))
-    } else {
-        emit(fmt.Sprintf("%s is here.", m.Character.Name))
-    }
+// In the VisiblePlayers loop, after AFK suffix:
+if player.Character != nil && player.Character.HasBuffFlag(buffs.Sleeping) {
+    playerEntry += ` <ansi fg="8">(asleep)</ansi>`
 }
-// Symmetric for players: "X is asleep." vs the default presence line.
+
+// In the VisibleMobs loop, after the mob name is built:
+if mob.Character.HasBuffFlag(buffs.Sleeping) {
+    nameStr += ` <ansi fg="8">(asleep)</ansi>`
+}
 ```
+
+Schedule idle-commands (e.g., "emote turns over with a soft snore.")
+continue firing as usual — they add per-tick texture on top of the
+static `(asleep)` marker that a player sees in the "Also here:" list.
 
 ### Wake-trigger hooks
 
