@@ -86,6 +86,7 @@ var (
 		"show":           {Show, false},
 		"sleep":          {Sleep, false},
 		"sneak":          {Sneak, false},
+		"stand":          {Stand, false},
 		"sonic-shout":    {SonicShout, false},
 		"steal":          {Steal, false},
 		"suicide":        {Suicide, true},
