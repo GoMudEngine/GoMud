@@ -44,9 +44,7 @@ func SetScheduleWorldValidator(roomExists func(int) bool, hasPath func(from, to 
 func LoadSchedules() {
 	start := time.Now()
 
-	dataPath := filepath.FromSlash(
-		string(configs.GetFilePathsConfig().DataFiles) + `/world/dogmud/schedules`,
-	)
+	dataPath := configs.GetFilePathsConfig().DataFiles.String() + `/schedules`
 
 	// Directory is optional — no schedules yet is fine.
 	if _, err := os.Stat(dataPath); os.IsNotExist(err) {
