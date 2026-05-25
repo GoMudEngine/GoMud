@@ -306,6 +306,13 @@ type Balance struct {
 	MobBTreeReactionBase            ConfigFloat `yaml:"MobBTreeReactionBase"`            // Base reaction delay in seconds for behavior tree mobs (default 3.0)
 	MobBTreeReactionPerceptionScale ConfigInt   `yaml:"MobBTreeReactionPerceptionScale"` // Perception divisor for reaction delay (default 100)
 
+	// ── MOB SCHEDULES (chunk 3.2) ────────────────────────────────────────────
+	// ScheduleMaxPathRetries is the number of consecutive failed pathto
+	// attempts a scheduled mob will tolerate before falling back to
+	// `pathto home`. Default 20 (≈80 seconds at the default tick rate).
+	// See chunk 3.2 spec.
+	ScheduleMaxPathRetries ConfigInt `yaml:"ScheduleMaxPathRetries"`
+
 	// ── PACK SCALING ─────────────────────────────────────────────────────────
 	PackScalingEnabled   ConfigBool `yaml:"PackScalingEnabled"`   // Enable pack survival bonuses (default true)
 	PackSurvivalRounds   ConfigInt  `yaml:"PackSurvivalRounds"`   // Consecutive rounds together before bonus (default 10)
