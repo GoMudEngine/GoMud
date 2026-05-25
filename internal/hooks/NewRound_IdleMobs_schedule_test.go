@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func TestScheduleTick_NoScheduleReturnsEmptyPlan(t *testing.T) {
@@ -114,4 +115,88 @@ func registerKerraScheduleForTest(t *testing.T) {
 		},
 	})
 	t.Cleanup(func() { mobs.UnregisterScheduleForTest("thornwall_smith") })
+}
+
+func TestScheduleTick_WantsSleep_AtTargetDuringSleepSegment(t *testing.T) {
+	registerSleepyScheduleForTest(t)
+
+	mob := &mobs.Mob{ScheduleId: "sleepy_test"}
+	mob.Character.RoomId = 1234
+
+	plan := scheduleTickPlan(mob, 23)
+	if !plan.HasSchedule {
+		t.Fatalf("expected HasSchedule=true")
+	}
+	if !plan.WantsSleep {
+		t.Errorf("expected WantsSleep=true at target during sleep segment, got %+v", plan)
+	}
+}
+
+func TestScheduleTick_WantsSleep_FalseWhenAwayFromTarget(t *testing.T) {
+	registerSleepyScheduleForTest(t)
+
+	mob := &mobs.Mob{ScheduleId: "sleepy_test"}
+	mob.Character.RoomId = 5678
+
+	plan := scheduleTickPlan(mob, 23)
+	if plan.WantsSleep {
+		t.Errorf("expected WantsSleep=false away from target, got %+v", plan)
+	}
+}
+
+func TestScheduleTick_WantsSleep_FalseDuringGraceCooldown(t *testing.T) {
+	registerSleepyScheduleForTest(t)
+	util.SetRoundCountForTest(1000)
+	defer util.SetRoundCountForTest(0)
+
+	mob := &mobs.Mob{ScheduleId: "sleepy_test"}
+	mob.Character.RoomId = 1234
+	mob.Character.SetMiscData("schedule_wake_round", 980)
+
+	plan := scheduleTickPlan(mob, 23)
+	if plan.WantsSleep {
+		t.Errorf("expected WantsSleep=false during grace cooldown, got %+v", plan)
+	}
+}
+
+func TestScheduleTick_WantsSleep_TrueAfterGraceCooldown(t *testing.T) {
+	registerSleepyScheduleForTest(t)
+	util.SetRoundCountForTest(1100)
+	defer util.SetRoundCountForTest(0)
+
+	mob := &mobs.Mob{ScheduleId: "sleepy_test"}
+	mob.Character.RoomId = 1234
+	mob.Character.SetMiscData("schedule_wake_round", 1000)
+
+	plan := scheduleTickPlan(mob, 23)
+	if !plan.WantsSleep {
+		t.Errorf("expected WantsSleep=true after grace cooldown, got %+v", plan)
+	}
+}
+
+func TestScheduleTick_WantsWake_OnExitFromSleepSegment(t *testing.T) {
+	registerSleepyScheduleForTest(t)
+
+	mob := &mobs.Mob{ScheduleId: "sleepy_test"}
+	mob.Character.RoomId = 1234
+	mob.Character.SetMiscData("schedule_last_seg_start", 22)
+
+	plan := scheduleTickPlan(mob, 6)
+	if !plan.WantsWake {
+		t.Errorf("expected WantsWake=true on exit from sleep segment, got %+v", plan)
+	}
+}
+
+func registerSleepyScheduleForTest(t *testing.T) {
+	t.Helper()
+	mobs.RegisterScheduleForTest(&mobs.Schedule{
+		Id: "sleepy_test",
+		Segments: []mobs.ScheduleSegment{
+			{Start: 6, End: 22, TargetRoom: 1234, Activity: "",
+				IdleCommands: []string{"emote wakes."}},
+			{Start: 22, End: 6, TargetRoom: 1234, Activity: "sleeping",
+				IdleCommands: []string{"emote snores."}},
+		},
+	})
+	t.Cleanup(func() { mobs.UnregisterScheduleForTest("sleepy_test") })
 }
