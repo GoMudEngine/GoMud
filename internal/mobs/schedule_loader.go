@@ -127,7 +127,7 @@ func LoadSchedules() {
 
 	// World-aware validation: confirm rooms exist and consecutive segments are
 	// reachable via the mapper. Only runs when the validator has been wired in.
-	if scheduleWorldValidator.roomExists != nil {
+	if scheduleWorldValidator.roomExists != nil && scheduleWorldValidator.hasPath != nil {
 		for _, s := range tmp {
 			if valErr := validateScheduleAgainstWorld(s,
 				scheduleWorldValidator.roomExists,
@@ -142,9 +142,7 @@ func LoadSchedules() {
 	}
 
 	schedulesMu.Lock()
-	for id, s := range tmp {
-		schedules[id] = s
-	}
+	schedules = tmp
 	schedulesMu.Unlock()
 
 	mudlog.Info("mobs.LoadSchedules()", "loadedCount", len(tmp), "Time Taken", time.Since(start))
