@@ -19,6 +19,8 @@ mutators:
 exits:
   south:
     roomid: 467
+  up:
+    roomid: 5103
 nouns:
   altar: A plain stone altar, unadorned except for a brass incense bowl and a pair
     of candlesticks. The altar has been scrubbed so many times that the stone has
