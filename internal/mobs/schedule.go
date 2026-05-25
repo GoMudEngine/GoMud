@@ -87,7 +87,23 @@ func applyScheduleSpawnOverride(scheduleId string, homeRoomId int, hour24 int) i
 	if seg == nil {
 		return homeRoomId
 	}
-	return seg.TargetRoom
+
+	// Explicit target_room wins (works for all activities).
+	if seg.TargetRoom != 0 {
+		return seg.TargetRoom
+	}
+
+	// Chunk 3.4: patrol segment without explicit target_room falls back
+	// to the patrol's first waypoint so guards start at the beginning of
+	// their beat instead of at the barracks.
+	if seg.Activity == "patrol" && seg.PatrolId != "" {
+		if p := GetPatrol(seg.PatrolId); p != nil && len(p.Waypoints) > 0 {
+			return p.Waypoints[0].Room
+		}
+	}
+
+	// Defensive: no target, no patrol fallback → home.
+	return homeRoomId
 }
 
 // registerScheduleForTest / unregisterScheduleForTest are unexported helpers

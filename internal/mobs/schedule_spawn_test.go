@@ -38,3 +38,69 @@ func TestApplyScheduleSpawnOverride_UnknownScheduleReturnsHome(t *testing.T) {
 		t.Errorf("unknown schedule: expected home %d, got %d", 9999, got)
 	}
 }
+
+func TestApplyScheduleSpawnOverride_PatrolSegmentFallsBackToFirstWaypoint(t *testing.T) {
+	// Patrol segment with no target_room — spawn should land at the
+	// patrol's first waypoint.
+	RegisterScheduleForTest(&Schedule{
+		Id: "guard_sched",
+		Segments: []ScheduleSegment{
+			{Start: 0, End: 24, Activity: "patrol", PatrolId: "guard_patrol",
+				IdleCommands: []string{"watches."}},
+		},
+	})
+	defer UnregisterScheduleForTest("guard_sched")
+
+	registerPatrolForTest(&Patrol{
+		Id:        "guard_patrol",
+		Waypoints: []PatrolWaypoint{{Room: 4200, DwellRounds: 5}, {Room: 4201, DwellRounds: 5}},
+	})
+	defer unregisterPatrolForTest("guard_patrol")
+
+	got := applyScheduleSpawnOverride("guard_sched", 9999 /* home */, 8 /* hour */)
+	if got != 4200 {
+		t.Errorf("expected first waypoint 4200, got %d", got)
+	}
+}
+
+func TestApplyScheduleSpawnOverride_PatrolSegmentWithTargetRoomPrefersTarget(t *testing.T) {
+	// If a patrol segment happens to set both target_room AND patrol_id,
+	// the explicit target_room wins.
+	RegisterScheduleForTest(&Schedule{
+		Id: "guard_sched2",
+		Segments: []ScheduleSegment{
+			{Start: 0, End: 24, TargetRoom: 8888, Activity: "patrol", PatrolId: "guard_patrol2",
+				IdleCommands: []string{"x"}},
+		},
+	})
+	defer UnregisterScheduleForTest("guard_sched2")
+
+	registerPatrolForTest(&Patrol{
+		Id:        "guard_patrol2",
+		Waypoints: []PatrolWaypoint{{Room: 4200, DwellRounds: 5}},
+	})
+	defer unregisterPatrolForTest("guard_patrol2")
+
+	got := applyScheduleSpawnOverride("guard_sched2", 9999, 8)
+	if got != 8888 {
+		t.Errorf("expected explicit target_room 8888 to win, got %d", got)
+	}
+}
+
+func TestApplyScheduleSpawnOverride_PatrolSegmentNoPatrolFallsBackToHome(t *testing.T) {
+	// Defensive case: patrol segment with unresolved patrol_id → home.
+	// Shouldn't happen post-load-time cross-check, but exercised here for safety.
+	RegisterScheduleForTest(&Schedule{
+		Id: "guard_sched3",
+		Segments: []ScheduleSegment{
+			{Start: 0, End: 24, Activity: "patrol", PatrolId: "does_not_exist",
+				IdleCommands: []string{"x"}},
+		},
+	})
+	defer UnregisterScheduleForTest("guard_sched3")
+
+	got := applyScheduleSpawnOverride("guard_sched3", 9999, 8)
+	if got != 9999 {
+		t.Errorf("expected fallback to home 9999, got %d", got)
+	}
+}

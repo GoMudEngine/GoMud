@@ -79,3 +79,23 @@ func (p *Patrol) NextWaypoint(currentIdx, currentDir int) (nextIdx, nextDir int)
 	}
 	return next, currentDir
 }
+
+// registerPatrolForTest / unregisterPatrolForTest are test-only helpers
+// for injecting patrols into the package-level registry.
+func registerPatrolForTest(p *Patrol) {
+	patrolsMu.Lock()
+	defer patrolsMu.Unlock()
+	patrols[p.Id] = p
+}
+
+func unregisterPatrolForTest(id string) {
+	patrolsMu.Lock()
+	defer patrolsMu.Unlock()
+	delete(patrols, id)
+}
+
+// RegisterPatrolForTest / UnregisterPatrolForTest are exported wrappers
+// for cross-package tests (e.g., hooks tests). Matches the chunk 3.2
+// RegisterScheduleForTest pattern.
+func RegisterPatrolForTest(p *Patrol)   { registerPatrolForTest(p) }
+func UnregisterPatrolForTest(id string) { unregisterPatrolForTest(id) }
