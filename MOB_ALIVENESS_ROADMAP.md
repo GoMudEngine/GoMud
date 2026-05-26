@@ -99,7 +99,7 @@ should always agree.
 | 3.4 | Routine | Waypoint patrols | M | — | Done |
 | 3.5 | Routine | Maintenance routines | M | 3.2 | Deferred |
 | 3.6 | Routine | NPC↔NPC idle conversation | M | 1.6 | Done |
-| 3.7 | Routine | Inter-zone patrols + caravan unification | L | 3.4 | Not started |
+| 3.7 | Routine | Inter-zone patrols + caravan unification | L | 3.4 | Done |
 | 3.8 | Routine | One-shot sub-patrols (caravan runner + forager delivery) | M | 3.7 | Done |
 | 4.1 | Strategic | Goal representation | M | 1.1, 1.4 | Not started |
 | 4.2 | Strategic | Goal selection | L | 4.1 | Not started |
@@ -119,7 +119,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 21 / 42 done • 0 in progress • 21 not started.
+**Roll-up:** 22 / 42 done • 0 in progress • 20 not started.
 
 ---
 
