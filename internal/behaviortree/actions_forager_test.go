@@ -744,6 +744,72 @@ func TestTryStoreExcess_InChestRoom_Unlocked_IssuesPutAndLock(t *testing.T) {
 	}
 }
 
+// TestTickForagerRecalling_ClearsStalePatrolId verifies that entering
+// Recalling with a stale delivery PatrolId (e.g., HP-emergency or home-
+// fallback fired without a clean PatrolCompleted) causes ClearOneshotPatrol
+// to run so the patrol executor cannot read the stale id on the next tick
+// and emit a phantom PatrolCompleted event.
+func TestTickForagerRecalling_ClearsStalePatrolId(t *testing.T) {
+	mob := buildForagerMob(t, 8245, 371, 4200 /* not sanctuary */, 100, 100)
+	mob.PatrolId = "marsh_forager_delivery"
+	mob.Character.SetMiscData("patrol_waypoint_idx", 3)
+	mob.Character.SetMiscData("patrol_dwell_remaining", 0)
+
+	p := forager.ProfileFor(371)
+	if p == nil {
+		t.Fatal("no forager profile for mob 371")
+	}
+
+	bs := NewBehaviorState()
+	bs.Set(keyForagerState, forager.StateRecalling.Name())
+	ctx := &EvalContext{
+		InstanceId: mob.InstanceId,
+		RoomId:     4200, // not at sanctuary; teleport path
+		MobState:   bs,
+	}
+
+	_ = tickForagerRecalling(p, mob, ctx)
+
+	if mob.PatrolId != "" {
+		t.Errorf("expected PatrolId cleared after tickForagerRecalling, got %q", mob.PatrolId)
+	}
+	if got, _ := mob.Character.GetMiscData("patrol_waypoint_idx").(int); got != 0 {
+		t.Errorf("expected patrol_waypoint_idx reset to 0, got %d", got)
+	}
+}
+
+// TestActForagerStep_HPEmergency_ClearsStalePatrolId verifies that the
+// HP-emergency short-circuit also clears a stale delivery PatrolId before
+// transitioning to Recalling.
+func TestActForagerStep_HPEmergency_ClearsStalePatrolId(t *testing.T) {
+	fn := LookupAction("forager_step")
+
+	// Mob 371 at 10% HP — well below the 50% threshold.
+	mob := buildForagerMob(t, 8246, 371, 4177 /* territory room */, 10, 100)
+	mob.PatrolId = "marsh_forager_delivery"
+	mob.Character.SetMiscData("patrol_waypoint_idx", 2)
+
+	bs := NewBehaviorState()
+	bs.Set(keyForagerState, forager.StateForaging.Name())
+
+	ctx := &EvalContext{
+		InstanceId: mob.InstanceId,
+		RoomId:     4177,
+		MobState:   bs,
+	}
+	result := fn(nil, ctx)
+	if result != Success {
+		t.Errorf("HP emergency: expected Success, got %v", result)
+	}
+	if got := bs.GetString(keyForagerState); got != forager.StateRecalling.Name() {
+		t.Errorf("HP emergency: forager_state = %q, want %q",
+			got, forager.StateRecalling.Name())
+	}
+	if mob.PatrolId != "" {
+		t.Errorf("HP emergency: expected PatrolId cleared, got %q", mob.PatrolId)
+	}
+}
+
 // TestTickForagerRecalling_AtSanctuaryTransitionsToResting verifies the
 // at-sanctuary path: forager in Recalling state with cargo arrives at her
 // sanctuary, dumps satchel, and transitions to Resting.

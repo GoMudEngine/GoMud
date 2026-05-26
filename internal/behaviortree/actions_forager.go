@@ -61,6 +61,12 @@ func actForagerStep(params map[string]any, ctx *EvalContext) Result {
 	// — no need to issue it here too.
 	if cur != forager.StateRecalling &&
 		hpRatio(mob) <= float64(cfg.ForagerHPRecallThresholdPct) {
+		// 3.8 hotfix: clear any in-flight oneshot patrol so the patrol
+		// executor cannot read a stale PatrolId after this state
+		// transition and emit a phantom PatrolCompleted from sanctuary.
+		if mob.PatrolId != "" {
+			mobs.ClearOneshotPatrol(mob)
+		}
 		transitionForager(ctx.MobState, forager.StateRecalling)
 		return Success
 	}
@@ -81,6 +87,10 @@ func actForagerStep(params map[string]any, ctx *EvalContext) Result {
 				"mobId", mob.MobId, "name", profile.Name,
 				"state", ctx.MobState.GetString(keyForagerState),
 				"stuckRounds", now-started)
+			// 3.8 hotfix: same patrol-leak guard as HP-emergency above.
+			if mob.PatrolId != "" {
+				mobs.ClearOneshotPatrol(mob)
+			}
 			transitionForager(ctx.MobState, forager.StateRecalling)
 			return Success
 		}
@@ -273,6 +283,11 @@ func tickForagerDeliveringTown(
 			ctx.MobState.Set(keyStoringTurns, "0")
 			transitionForager(ctx.MobState, forager.StateStoring)
 		} else {
+			// 3.8 hotfix: no patrol to clear here (PatrolId == "" by
+			// the condition above), but keep the guard for safety.
+			if mob.PatrolId != "" {
+				mobs.ClearOneshotPatrol(mob)
+			}
 			transitionForager(ctx.MobState, forager.StateRecalling)
 		}
 		return Success
@@ -290,11 +305,19 @@ func tickForagerDeliveringTown(
 		// Defensive: shouldn't happen for KindMarsh/KindSteppe since
 		// territory.go populates these. Fall through to Recalling so
 		// the cycle doesn't stall.
+		// 3.8 hotfix: clear any stale patrol before falling back.
+		if mob.PatrolId != "" {
+			mobs.ClearOneshotPatrol(mob)
+		}
 		transitionForager(ctx.MobState, forager.StateRecalling)
 		return Success
 	}
 	if !mobs.StartOneshotPatrol(mob, p.DeliveryPatrolId) {
 		// Patrol id didn't resolve or isn't oneshot — log + give up.
+		// 3.8 hotfix: clear any stale patrol before falling back.
+		if mob.PatrolId != "" {
+			mobs.ClearOneshotPatrol(mob)
+		}
 		transitionForager(ctx.MobState, forager.StateRecalling)
 		return Success
 	}
@@ -327,6 +350,11 @@ func tickForagerDeliveringFernway(
 		ctx.MobState.Set(keyStoringTurns, "0")
 		transitionForager(ctx.MobState, forager.StateStoring)
 	} else {
+		// 3.8 hotfix: Fernway foragers don't use delivery PatrolId, but
+		// add the guard defensively.
+		if mob.PatrolId != "" {
+			mobs.ClearOneshotPatrol(mob)
+		}
 		transitionForager(ctx.MobState, forager.StateRecalling)
 	}
 	return Success
@@ -350,12 +378,20 @@ func tickForagerStoring(
 ) Result {
 	// No chest — nothing to store; skip straight to Recalling.
 	if mob.StorageChestRoom == 0 {
+		// 3.8 hotfix: clear any stale delivery patrol before recalling.
+		if mob.PatrolId != "" {
+			mobs.ClearOneshotPatrol(mob)
+		}
 		transitionForager(ctx.MobState, forager.StateRecalling)
 		return Success
 	}
 
 	// Satchel already empty — deposit complete (or nothing was leftover).
 	if len(mob.Character.Items) == 0 {
+		// 3.8 hotfix: clear any stale delivery patrol before recalling.
+		if mob.PatrolId != "" {
+			mobs.ClearOneshotPatrol(mob)
+		}
 		transitionForager(ctx.MobState, forager.StateRecalling)
 		return Success
 	}
@@ -371,6 +407,10 @@ func tickForagerStoring(
 			"chest_room", mob.StorageChestRoom,
 			"satchel_items", len(mob.Character.Items))
 		ctx.MobState.Set(keyStoringTurns, "0")
+		// 3.8 hotfix: clear any stale delivery patrol before recalling.
+		if mob.PatrolId != "" {
+			mobs.ClearOneshotPatrol(mob)
+		}
 		transitionForager(ctx.MobState, forager.StateRecalling)
 		return Success
 	}
@@ -430,6 +470,13 @@ func tickForagerRecalling(
 	mob *mobs.Mob,
 	ctx *EvalContext,
 ) Result {
+	// 3.8 hotfix: clear any in-flight oneshot patrol so the patrol
+	// executor doesn't read a stale PatrolId after this state
+	// transition and emit a phantom PatrolCompleted from sanctuary.
+	if mob.PatrolId != "" {
+		mobs.ClearOneshotPatrol(mob)
+	}
+
 	if ctx.RoomId == p.SanctuaryRoom {
 		// Dump remaining satchel into the sanctuary lockbox before
 		// resting. Surplus accumulates in the lockbox where players
