@@ -1,6 +1,7 @@
 package goals
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 	"time"
@@ -140,6 +141,112 @@ func TestAdd_PersistsAcrossClearCache(t *testing.T) {
 	got := GoalsOf(99005, "persistmob")
 	if len(got) != 1 || got[0].Type != "alpha" {
 		t.Fatalf("did not persist: %+v", got)
+	}
+}
+
+func TestAdd_SameTypeBlockedByHigherOrEqualPriority(t *testing.T) {
+	ClearCache()
+	resetRegistry()
+	if _, err := Add(99006, "conflict1", &Goal{Type: "revenge", Priority: 70}); err != nil {
+		t.Fatal(err)
+	}
+	_, err := Add(99006, "conflict1", &Goal{Type: "revenge", Priority: 70})
+	var ce *ConflictError
+	if !errors.As(err, &ce) {
+		t.Fatalf("expected ConflictError, got %v", err)
+	}
+	if ce.BlockerGoalId != "g1" || ce.BlockerType != "revenge" || ce.BlockerPrio != 70 {
+		t.Errorf("ConflictError fields wrong: %+v", ce)
+	}
+	if len(GoalsOf(99006, "conflict1")) != 1 {
+		t.Error("blocked Add should not have appended")
+	}
+}
+
+func TestAdd_SameTypeDisplacesLowerPriority(t *testing.T) {
+	ClearCache()
+	resetRegistry()
+	if _, err := Add(99007, "conflict2", &Goal{Type: "revenge", Priority: 30}); err != nil {
+		t.Fatal(err)
+	}
+	res, err := Add(99007, "conflict2", &Goal{Type: "revenge", Priority: 70})
+	if err != nil {
+		t.Fatalf("higher-prio Add: %v", err)
+	}
+	if len(res.Displaced) != 1 || res.Displaced[0] != "g1" {
+		t.Errorf("expected displaced=[g1], got %v", res.Displaced)
+	}
+	got := GoalsOf(99007, "conflict2")
+	if len(got) != 1 || got[0].Id != "g2" || got[0].Priority != 70 {
+		t.Errorf("after displacement, expected single g2 priority=70; got %+v", got)
+	}
+}
+
+func TestAdd_CrossTypeConflict_BothDirectionsDeclared(t *testing.T) {
+	ClearCache()
+	resetRegistry()
+	RegisterGoalType("revenge", GoalTypeMeta{ConflictsWith: []string{"protection"}})
+	RegisterGoalType("protection", GoalTypeMeta{ConflictsWith: []string{"revenge"}})
+
+	if _, err := Add(99008, "crossA", &Goal{Type: "revenge", Priority: 50}); err != nil {
+		t.Fatal(err)
+	}
+	_, err := Add(99008, "crossA", &Goal{Type: "protection", Priority: 40})
+	var ce *ConflictError
+	if !errors.As(err, &ce) {
+		t.Fatalf("expected ConflictError, got %v", err)
+	}
+}
+
+func TestAdd_CrossTypeConflict_SymmetrySafetyNet(t *testing.T) {
+	// "revenge" declares protection as a conflict, but "protection"
+	// does NOT declare revenge. Adding protection while revenge exists
+	// should still be blocked, because the existing type's metadata
+	// gets checked for the reverse edge by the safety net.
+	//
+	// Note: in this scenario the safety net path triggers because the
+	// EXISTING goal type (revenge) has the declaration, and the NEW
+	// goal type (protection) does not. isConflict's third branch (look
+	// up the existing type's meta and check its ConflictsWith for the
+	// new type) catches this.
+	ClearCache()
+	resetRegistry()
+	RegisterGoalType("revenge", GoalTypeMeta{ConflictsWith: []string{"protection"}})
+	RegisterGoalType("protection", GoalTypeMeta{ConflictsWith: nil})
+
+	if _, err := Add(99009, "crossB", &Goal{Type: "revenge", Priority: 50}); err != nil {
+		t.Fatal(err)
+	}
+	_, err := Add(99009, "crossB", &Goal{Type: "protection", Priority: 40})
+	var ce *ConflictError
+	if !errors.As(err, &ce) {
+		t.Fatalf("expected ConflictError via symmetry safety net, got %v", err)
+	}
+}
+
+func TestAdd_DisplacesMultipleConflicts(t *testing.T) {
+	ClearCache()
+	resetRegistry()
+	RegisterGoalType("a", GoalTypeMeta{ConflictsWith: []string{"b", "c"}})
+	RegisterGoalType("b", GoalTypeMeta{ConflictsWith: []string{"a"}})
+	RegisterGoalType("c", GoalTypeMeta{ConflictsWith: []string{"a"}})
+
+	if _, err := Add(99010, "multi", &Goal{Type: "b", Priority: 30}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Add(99010, "multi", &Goal{Type: "c", Priority: 40}); err != nil {
+		t.Fatal(err)
+	}
+	res, err := Add(99010, "multi", &Goal{Type: "a", Priority: 70})
+	if err != nil {
+		t.Fatalf("Add a: %v", err)
+	}
+	if len(res.Displaced) != 2 {
+		t.Errorf("expected 2 displaced, got %v", res.Displaced)
+	}
+	got := GoalsOf(99010, "multi")
+	if len(got) != 1 || got[0].Type != "a" {
+		t.Errorf("expected only type=a remaining, got %+v", got)
 	}
 }
 
