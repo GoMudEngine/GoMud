@@ -1174,6 +1174,13 @@ func loadAllDataFiles(isReload bool) {
 			_, err := mapper.GetPath(from, to)
 			return err == nil
 		},
+		func(id int) string { // chunk 3.7: zone name for boot-log visibility
+			r := rooms.LoadRoom(id)
+			if r == nil {
+				return ""
+			}
+			return r.Zone
+		},
 	)
 	// Chunk 3.6: conversations world validator. Cross-checks that pair
 	// overrides reference real mobs with real relationship edges.
