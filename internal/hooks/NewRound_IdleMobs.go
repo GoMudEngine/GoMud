@@ -7,6 +7,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/conversationadapter"
 	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
@@ -98,7 +99,7 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 		// Phase 1: if this mob is already in a conversation, advance the
 		// state machine one tick (fires the next line or finalises/aborts).
 		if partnerId, ok := mob.Character.GetMiscData(conversations.MiscDataPartnerId).(int); ok && partnerId > 0 {
-			conversations.TickConversation(adaptMob(mob), partnerId)
+			conversations.TickConversation(conversationadapter.AdaptMob(mob), partnerId)
 		}
 
 		// Phase 2: if fully idle and not on cooldown, roll for a new
@@ -109,7 +110,7 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 			cfg := configs.GetBalanceConfig()
 			if util.Rand(10000) < int(float64(cfg.ConversationBaseChancePct)*100) {
 				if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
-					conversations.TryStart(adaptMob(mob), room.GetMobs())
+					conversations.TryStart(conversationadapter.AdaptMob(mob), room.GetMobs())
 				}
 			}
 		}

@@ -7,6 +7,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/conversationadapter"
+	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -15,6 +17,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
+	"github.com/GoMudEngine/GoMud/internal/relationships"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/awareness"
@@ -663,6 +666,25 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				}
 			}
 
+			// Chunk 3.6: player-arrival conversation boost. When the player
+			// lands in a room with 2+ NPCs that are related and fully idle,
+			// roll once at the boosted chance for an opening exchange so the
+			// player is more likely to witness conversations rather than
+			// always arriving between them.
+			{
+				cfg := configs.GetBalanceConfig()
+				boostPct := int(cfg.ConversationPlayerArrivalBoostPct)
+				if boostPct > 0 && util.Rand(100) < boostPct {
+					if pairs := findRelateableEligiblePairsInRoom(destRoom); len(pairs) > 0 {
+						p := pairs[util.Rand(len(pairs))]
+						conversations.TryStartBetween(
+							conversationadapter.AdaptMob(p.A),
+							conversationadapter.AdaptMob(p.B),
+						)
+					}
+				}
+			}
+
 			handled = true
 
 			// Skip onEnter scripts when hidden — NPCs shouldn't react
@@ -706,4 +728,65 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 	}
 
 	return handled, nil
+}
+
+// relateableMobPair holds an unordered pair of mobs that share a
+// relationship edge and are both eligible to start a conversation.
+type relateableMobPair struct {
+	A *mobs.Mob
+	B *mobs.Mob
+}
+
+// findRelateableEligiblePairsInRoom enumerates all unordered (a, b) mob
+// pairs in the room where both mobs:
+//   - have a relationship edge per chunk 1.6 (relationships.AreRelated)
+//   - are not in combat and have no pending aggro
+//   - are not sleeping
+//   - have no in-flight path step
+//   - are not already in a conversation (partner_id MiscData check)
+//   - are not on conversation cooldown
+func findRelateableEligiblePairsInRoom(room *rooms.Room) []relateableMobPair {
+	if room == nil {
+		return nil
+	}
+	mobIds := room.GetMobs()
+	if len(mobIds) < 2 {
+		return nil
+	}
+
+	mobList := make([]*mobs.Mob, 0, len(mobIds))
+	for _, id := range mobIds {
+		m := mobs.GetInstance(id)
+		if m == nil {
+			continue
+		}
+		if m.Character.Aggro != nil || m.Character.IsInCombat() {
+			continue
+		}
+		if m.Character.HasBuffFlag(buffs.Sleeping) {
+			continue
+		}
+		if m.Path.Len() > 0 || m.Path.Current() != nil {
+			continue
+		}
+		if pid, ok := m.Character.GetMiscData(conversations.MiscDataPartnerId).(int); ok && pid > 0 {
+			continue
+		}
+		if until, ok := m.Character.GetMiscData(conversations.MiscDataCooldownUntilRound).(uint64); ok &&
+			uint64(util.GetRoundCount()) < until {
+			continue
+		}
+		mobList = append(mobList, m)
+	}
+
+	var out []relateableMobPair
+	for i := 0; i < len(mobList); i++ {
+		for j := i + 1; j < len(mobList); j++ {
+			a, b := mobList[i], mobList[j]
+			if relationships.AreRelated(int(a.MobId), int(b.MobId)) {
+				out = append(out, relateableMobPair{A: a, B: b})
+			}
+		}
+	}
+	return out
 }
