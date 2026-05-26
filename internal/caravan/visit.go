@@ -23,13 +23,17 @@ type ItemMove struct {
 // caravan: deliver wagon items whose bucket is in deliveryBuckets,
 // and pick up vendor items whose bucket is in pickupBuckets.
 //
-// Pickup is gated by entry.Current >= entry.MaxStock/2 — caravan
-// won't extract from a starving vendor (narrative: wholesalers
-// don't loot a struggling shop).
+// Pickup is gated by entry.Current > entry.RestockQty — the vendor
+// keeps at least one normal restock-batch as buffer for local
+// customers. Anything beyond that is fair game for cross-city
+// distribution. Pre-3.8 the gate was entry.MaxStock/2 which was
+// too restrictive against player-driven stock depletion, leaving
+// cross-city flow effectively dead for partly-stocked vendors.
 //
-// Pickup quantity is RestockQty per matching stock entry, capped
-// at the wagon's CarryCapacity remaining (StoreItem returns false
-// when full).
+// Pickup quantity is max(1, Current/10) — gently drain 10% of
+// available stock, with a 1-unit floor so partially-stocked
+// vendors still contribute. Slowly builds the wagon's cross-city
+// surplus without looting any single vendor.
 //
 // Returns (nil, nil) if the room doesn't exist OR the wagon is nil.
 //
@@ -95,8 +99,11 @@ func VisitVendorsInRoom(
 		}
 
 		// PICKUP pass: vendor → wagon.
-		// Iterate vendor stock; extract bucket-matching entries when
-		// Current >= MaxStock/2 (the supply-floor gate).
+		// Iterate vendor stock; extract bucket-matching entries with
+		// Current > RestockQty (vendor keeps one restock-batch buffer
+		// for local customers). Take 10% of available stock, floor of 1.
+		// Chunk 3.8: tuned vs the pre-3.8 MaxStock/2 gate which was
+		// too restrictive given player-driven stock depletion.
 		if len(pickupBuckets) > 0 {
 			for i := range shop.Stock {
 				entry := &shop.Stock[i]
@@ -104,12 +111,12 @@ func VisitVendorsInRoom(
 				if bucket == "" || !slices.Contains(pickupBuckets, bucket) {
 					continue
 				}
-				if entry.Current < entry.MaxStock/2 {
-					continue
+				if entry.Current <= entry.RestockQty {
+					continue // keep at least one restock batch for local
 				}
-				qty := entry.RestockQty
-				if qty <= 0 {
-					continue
+				qty := entry.Current / 10
+				if qty < 1 {
+					qty = 1
 				}
 				if qty > entry.Current {
 					qty = entry.Current
