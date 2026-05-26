@@ -108,6 +108,8 @@ func RegisterListeners() {
 
 	// Caravan: patrol-waypoint arrival drives vendor restocks + Fernway pickup
 	events.RegisterListener(events.PatrolWaypointArrival{}, caravan.CaravanArrivalListener)
+	// Caravan: runner-circuit completion returns residual cargo from Lars to wagon
+	events.RegisterListener(events.PatrolCompleted{}, caravan.CaravanRunnerCompletionListener)
 
 	// Forager: patrol-waypoint arrival drives per-vendor sell handoff
 	events.RegisterListener(events.PatrolWaypointArrival{}, forager.ForagerArrivalListener)
