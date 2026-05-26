@@ -38,3 +38,10 @@ character:
       training: 8
     charisma:
       training: 4
+relationships:
+  - to: 115
+    type: friend
+  - to: 116
+    type: friend
+  - to: 117
+    type: friend
