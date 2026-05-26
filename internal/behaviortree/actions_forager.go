@@ -272,27 +272,6 @@ func tickForagerDeliveringTown(
 	mob *mobs.Mob,
 	ctx *EvalContext,
 ) Result {
-	// Chunk 3.8 5.4 sanctuary-fallback safety: if the forager has
-	// somehow ended up at the sanctuary while StateDelivering with
-	// no active oneshot patrol (e.g., patrol home-fallback fired
-	// and never produced a PatrolCompleted), advance state
-	// directly. Cargo, if any, carries through to Storing or
-	// Recalling.
-	if mob.Character.RoomId == p.SanctuaryRoom && mob.PatrolId == "" {
-		if mob.StorageChestRoom > 0 && len(mob.Character.Items) > 0 {
-			ctx.MobState.Set(keyStoringTurns, "0")
-			transitionForager(ctx.MobState, forager.StateStoring)
-		} else {
-			// 3.8 hotfix: no patrol to clear here (PatrolId == "" by
-			// the condition above), but keep the guard for safety.
-			if mob.PatrolId != "" {
-				mobs.ClearOneshotPatrol(mob)
-			}
-			transitionForager(ctx.MobState, forager.StateRecalling)
-		}
-		return Success
-	}
-
 	// If a oneshot delivery patrol is already running, the executor
 	// will drive movement and the arrival listener will fire vendor
 	// sells. Nothing for this tick to do.
