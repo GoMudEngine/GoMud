@@ -235,10 +235,10 @@ func Go(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		//
 		// Skip in-combat followers: a follower with non-nil Aggro is
 		// engaged with a target. Following the leader out of the room
-		// would break combat and let the attacker disengage. The leader's
-		// caravan_step will halt for the combat (party-in-combat check)
-		// so the leader shouldn't be moving anyway, but defensive in case
-		// a path step from a previous tick is in flight.
+		// would break combat and let the attacker disengage. The patrol
+		// executor pauses the leader during combat so the leader
+		// shouldn't be moving anyway, but defensive in case a path step
+		// from a previous tick is in flight.
 		if p := parties.GetByMobInstanceId(mob.InstanceId); p != nil {
 			if p.Leader != nil && p.Leader.GetMobInstanceId() == mob.InstanceId {
 				for _, member := range p.Members {

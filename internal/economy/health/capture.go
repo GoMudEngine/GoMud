@@ -157,8 +157,10 @@ func computeMedianTtRForTiers(snap ShopSnapshot, currentRound uint64, commons bo
 }
 
 // captureCaravans walks every live mob instance and emits one
-// CaravanSnapshot per mob whose BTreeState has a non-empty
-// "caravan_state" key (the convention used by actions_caravan.go).
+// CaravanSnapshot per mob whose PatrolId is the caravan patrol
+// (chunk 3.7+). State is synthesized from patrol position by
+// caravan.SynthesizeStateForLeader; the JSON schema is byte-identical
+// to the pre-3.7 output so the dashboard UI is unchanged.
 // Cargo is read from the wagon mob co-located in the same room.
 func captureCaravans() []CaravanSnapshot {
 	out := []CaravanSnapshot{}
@@ -167,16 +169,16 @@ func captureCaravans() []CaravanSnapshot {
 		if m == nil {
 			continue
 		}
-		bs, ok := m.BTreeState.(*behaviortree.BehaviorState)
-		if !ok || bs == nil {
+		state, ok := caravan.SynthesizeStateForLeader(m)
+		if !ok {
 			continue
 		}
-		stateName := bs.GetString("caravan_state")
-		if stateName == "" {
-			continue
-		}
+		stateName := state.Name()
 
-		startedRound, _ := strconv.ParseUint(bs.GetString("caravan_state_started_round"), 10, 64)
+		var startedRound uint64
+		if v, ok2 := m.Character.GetMiscData("caravan_state_started_round").(uint64); ok2 {
+			startedRound = v
+		}
 
 		cs := CaravanSnapshot{
 			InstId:            instId,

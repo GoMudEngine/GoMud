@@ -18,6 +18,42 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/shops"
 )
 
+// registerTestCaravanPatrolForCapture registers a minimal caravan patrol
+// for capture_test fixtures. Mirrors the real patrol shape so
+// SynthesizeStateForLeader can resolve waypoint indices.
+func registerTestCaravanPatrolForCapture(t *testing.T) {
+	t.Helper()
+	mobs.RegisterPatrolForTest(&mobs.Patrol{
+		Id:        caravan.CaravanPatrolId,
+		LoopShape: "strict",
+		Waypoints: []mobs.PatrolWaypoint{
+			{Room: 465, DwellRounds: 360, ArrivalEvent: "caravan_depot"},         // wp0
+			{Room: 4038, DwellRounds: 8, ArrivalEvent: "caravan_fernway_pickup"}, // wp1
+			{Room: 4109, DwellRounds: 20, ArrivalEvent: "caravan_depot"},         // wp2
+			{Room: 4102, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},         // wp3
+			{Room: 4103, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},
+			{Room: 4105, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},
+			{Room: 4106, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},
+			{Room: 4125, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},
+			{Room: 4126, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},
+			{Room: 4135, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},
+			{Room: 4143, DwellRounds: 5, ArrivalEvent: "caravan_vendor"}, // wp10
+			{Room: 4109, DwellRounds: 20, ArrivalEvent: "caravan_depot"}, // wp11
+			{Room: 4038, DwellRounds: 8, ArrivalEvent: "caravan_fernway_pickup"}, // wp12
+			{Room: 465, DwellRounds: 20, ArrivalEvent: "caravan_depot"},          // wp13
+			{Room: 464, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},          // wp14
+			{Room: 470, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},
+			{Room: 471, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},
+			{Room: 475, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},
+			{Room: 480, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},
+			{Room: 481, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},
+			{Room: 482, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},
+			{Room: 483, DwellRounds: 5, ArrivalEvent: "caravan_vendor"}, // wp21
+		},
+	})
+	t.Cleanup(func() { mobs.UnregisterPatrolForTest(caravan.CaravanPatrolId) })
+}
+
 func TestMain(m *testing.M) {
 	mudlog.SetupLogger(nil, "", "", false)
 	os.Exit(m.Run())
@@ -97,7 +133,12 @@ func TestCaptureSnapshot_Caravans(t *testing.T) {
 	defer mobs.SetInstanceForTest(wagon.InstanceId, nil)
 	r.AddMob(wagon.InstanceId)
 
-	// Build a leader mob literal with caravan_state stamped on BTreeState.
+	// Chunk 3.7: caravan state is synthesized from patrol position, not
+	// read from BTreeState. Register the patrol, put Ketil on it, and
+	// place him in an in-transit room (not at any waypoint) so
+	// SynthesizeStateForLeader returns OutboundTransit.
+	registerTestCaravanPatrolForCapture(t)
+
 	const leaderInstanceId = 90002
 	leader := &mobs.Mob{
 		MobId:      mobs.MobId(357),
@@ -107,12 +148,15 @@ func TestCaptureSnapshot_Caravans(t *testing.T) {
 	}
 	leader.Character.Name = "TestLeader"
 	leader.Character.Buffs = buffs.New()
-	leader.Character.RoomId = roomId
-
-	bs := behaviortree.NewBehaviorState()
-	bs.Set("caravan_state", "outbound_transit")
-	bs.Set("caravan_state_started_round", strconv.FormatUint(12100, 10))
-	leader.BTreeState = bs
+	// RoomId 999 is not at any patrol waypoint → in-transit toward wp1
+	// (idx=1, <=10) → SynthesizeStateForLeader returns OutboundTransit.
+	leader.Character.RoomId = 999
+	leader.PatrolId = caravan.CaravanPatrolId
+	leader.Character.SetMiscData("patrol_waypoint_idx", 1)
+	// caravan_state_started_round is stored as uint64 in MiscData (set
+	// by CaravanArrivalListener.stampStateStartedRound on real arrivals;
+	// set directly here to match the pre-3.7 fixture assertion).
+	leader.Character.SetMiscData("caravan_state_started_round", uint64(12100))
 
 	mobs.SetInstanceForTest(leader.InstanceId, leader)
 	defer mobs.SetInstanceForTest(leader.InstanceId, nil)

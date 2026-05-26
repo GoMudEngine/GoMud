@@ -11,7 +11,6 @@ import (
 const WagonMobId = 374
 
 // LeaderMobId is the mob template ID of the caravan leader (Ketil).
-// The leader drives the caravan_step state machine.
 const LeaderMobId = 357
 
 // caravanMobIds is the complete set of mob template IDs that make up

@@ -1,6 +1,7 @@
 mobid: 357
 zone: Thornwall City
 archetype: fighting
+patrol_id: caravan_thornwall_stillwater
 behavior_archetype: ""           # per-mob btree handles all behavior
 statpool: 220                    # leader, statted to anchor a 3v4 win
 itemdropchance: 0
