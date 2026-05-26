@@ -1,6 +1,7 @@
 package goals
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -83,6 +84,62 @@ func TestIsExpired_FutureTime(t *testing.T) {
 	g := &Goal{Id: "g1", ExpiresAt: time.Now().Add(time.Hour)}
 	if IsExpired(g, time.Now()) {
 		t.Error("expected not expired")
+	}
+}
+
+func TestAdd_HappyPath(t *testing.T) {
+	ClearCache()
+	resetRegistry()
+	g := &Goal{Type: "revenge", Priority: 70, Params: map[string]any{"k": "v"}}
+	res, err := Add(99003, "addmob", g)
+	if err != nil {
+		t.Fatalf("Add: %v", err)
+	}
+	if res.Added == nil || res.Added.Id != "g1" {
+		t.Errorf("expected Id=g1, got %+v", res.Added)
+	}
+	if res.Added.OwnerMobId != 99003 {
+		t.Errorf("OwnerMobId not stamped: got %d", res.Added.OwnerMobId)
+	}
+	if res.Added.CreatedAt.IsZero() {
+		t.Error("CreatedAt not stamped")
+	}
+	if len(res.Displaced) != 0 {
+		t.Errorf("expected no displacements, got %v", res.Displaced)
+	}
+	got := GoalsOf(99003, "addmob")
+	if len(got) != 1 {
+		t.Fatalf("expected 1 goal, got %d", len(got))
+	}
+}
+
+func TestAdd_AssignsSequentialIds(t *testing.T) {
+	ClearCache()
+	resetRegistry()
+	for i, want := range []string{"g1", "g2", "g3"} {
+		res, err := Add(99004, "seqmob", &Goal{
+			Type:     fmt.Sprintf("type%d", i),
+			Priority: 50 - i, // descending so no conflicts within the test
+		})
+		if err != nil {
+			t.Fatalf("Add %d: %v", i, err)
+		}
+		if res.Added.Id != want {
+			t.Errorf("Add %d: id=%q, want %q", i, res.Added.Id, want)
+		}
+	}
+}
+
+func TestAdd_PersistsAcrossClearCache(t *testing.T) {
+	ClearCache()
+	resetRegistry()
+	if _, err := Add(99005, "persistmob", &Goal{Type: "alpha", Priority: 50}); err != nil {
+		t.Fatalf("Add: %v", err)
+	}
+	ClearCache()
+	got := GoalsOf(99005, "persistmob")
+	if len(got) != 1 || got[0].Type != "alpha" {
+		t.Fatalf("did not persist: %+v", got)
 	}
 }
 

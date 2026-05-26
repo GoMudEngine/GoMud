@@ -1,10 +1,12 @@
 package goals
 
 import (
+	"fmt"
 	"sort"
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 )
 
 // loadOrLazyInit returns the cached MobGoals for mobId, loading from
@@ -72,4 +74,104 @@ func IsExpired(g *Goal, now time.Time) bool {
 		return false
 	}
 	return !now.Before(g.ExpiresAt)
+}
+
+// Add appends a goal to the mob's list, resolving conflicts by
+// priority. Returns *ConflictError if any conflicting existing goal
+// has priority >= the new goal's priority. Persists to disk under the
+// write mutex.
+//
+// g.Id is ignored on entry and assigned by Add; g.OwnerMobId is set
+// from mobId; g.CreatedAt is stamped to time.Now().UTC() if zero.
+func Add(mobId int, namesimple string, g *Goal) (AddResult, error) {
+	mg := loadOrLazyInit(mobId, namesimple)
+
+	cacheMu.Lock()
+
+	// Detect conflicting existing goals. "Same type" always conflicts
+	// (no AllowMultiple opt-in in 4.1). Cross-type uses the registered
+	// ConflictsWith list, with a symmetry safety net checking both
+	// directions.
+	newMeta, _ := lookupMeta(g.Type)
+	var conflicting []*Goal
+	for _, e := range mg.Goals {
+		if isConflict(g.Type, e.Type, newMeta) {
+			conflicting = append(conflicting, e)
+		}
+	}
+
+	// Priority resolution: every conflicting existing goal must have
+	// strictly lower priority for the new goal to win.
+	for _, e := range conflicting {
+		if g.Priority <= e.Priority {
+			cacheMu.Unlock()
+			return AddResult{}, &ConflictError{
+				BlockerGoalId: e.Id,
+				BlockerType:   e.Type,
+				BlockerPrio:   e.Priority,
+			}
+		}
+	}
+
+	// Displace lower-priority conflicting goals in place.
+	displaced := make([]string, 0, len(conflicting))
+	if len(conflicting) > 0 {
+		mg.Goals = removeGoals(mg.Goals, conflicting)
+		for _, e := range conflicting {
+			displaced = append(displaced, e.Id)
+		}
+	}
+
+	// Assign id, owner, timestamp, and append.
+	g.Id = fmt.Sprintf("g%d", mg.NextGoalId)
+	g.OwnerMobId = mobId
+	if g.CreatedAt.IsZero() {
+		g.CreatedAt = time.Now().UTC()
+	}
+	mg.NextGoalId++
+	mg.Goals = append(mg.Goals, g)
+	nameByMobId[mobId] = namesimple
+	cacheMu.Unlock()
+
+	if err := saveToDisk(mobId, namesimple); err != nil {
+		mudlog.Warn("goals.Add: save failed", "mob_id", mobId, "error", err)
+		// Cache is still authoritative; caller treats as success.
+	}
+	return AddResult{Added: g, Displaced: displaced}, nil
+}
+
+// isConflict reports whether existingType conflicts with newType per
+// the registry. Same-type is always a conflict in 4.1. Cross-type
+// checks newMeta.ConflictsWith and also looks up the existing type's
+// metadata as a symmetry safety net (so a one-sided declaration still
+// catches the conflict).
+func isConflict(newType, existingType string, newMeta GoalTypeMeta) bool {
+	if newType == existingType {
+		return true
+	}
+	if sliceContains(newMeta.ConflictsWith, existingType) {
+		return true
+	}
+	if existingMeta, ok := lookupMeta(existingType); ok {
+		if sliceContains(existingMeta.ConflictsWith, newType) {
+			return true
+		}
+	}
+	return false
+}
+
+// removeGoals returns goals with the items in drop removed, preserving
+// order. O(n*m) but n and m are small (goals-per-mob ≤ ~10 in practice).
+func removeGoals(goals []*Goal, drop []*Goal) []*Goal {
+	dropIds := make(map[string]bool, len(drop))
+	for _, d := range drop {
+		dropIds[d.Id] = true
+	}
+	out := goals[:0:0]
+	for _, g := range goals {
+		if !dropIds[g.Id] {
+			out = append(out, g)
+		}
+	}
+	return out
 }
