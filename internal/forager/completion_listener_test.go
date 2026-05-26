@@ -22,7 +22,7 @@ func TestForagerCompletionListener_IgnoresMissingMob(t *testing.T) {
 	e := events.PatrolCompleted{
 		MobInstanceId: 999999,
 		PatrolId:      "marsh_forager_delivery",
-		RoomId:        4123,
+		RoomId:        4198,
 	}
 	got := ForagerCompletionListener(e)
 	if got != events.Continue {

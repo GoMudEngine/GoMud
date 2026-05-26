@@ -11,4 +11,4 @@ waypoints:
   - { room: 4126, dwell_rounds: 3, arrival_event: forager_vendor }
   - { room: 4135, dwell_rounds: 3, arrival_event: forager_vendor }
   - { room: 4143, dwell_rounds: 3, arrival_event: forager_vendor }
-  - { room: 4123, dwell_rounds: 1, arrival_event: "" }
+  - { room: 4198, dwell_rounds: 1, arrival_event: "" }

@@ -32,7 +32,7 @@ var profiles = map[int]*ForagerProfile{
 		Kind:             KindMarsh,
 		MobId:            371,
 		Name:             "Tova",
-		SanctuaryRoom:    4123,
+		SanctuaryRoom:    4198,
 		TerritoryRooms:   []int{4177, 4178, 4179, 4180, 4181, 4182, 4183, 4184, 4185, 4186, 4187, 4188, 4189, 4190, 4191, 4192, 4193, 4194, 4195, 4196},
 		PreyWhitelist:    []int{367 /*marsh rat*/, 368 /*dragonfly swarm*/},
 		VendorRooms:      []int{4102, 4103, 4105, 4106, 4125, 4126, 4135, 4143},

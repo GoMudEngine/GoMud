@@ -82,7 +82,7 @@ func TestSanctuaryRoomsAssigned(t *testing.T) {
 		anchor int
 		name   string
 	}{
-		{371, 4123, "Tova → Stillwater Temple"},
+		{371, 4198, "Tova → Reedwoven Hut"},
 		{372, 3040, "Halix → Kael's camp (Sheltered Ridge Alcove)"},
 		{373, 4197, "Kessa → Forager's Camp"},
 	}
