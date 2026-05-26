@@ -70,3 +70,26 @@ func TestValidatePatrol_SingleWaypoint_WarnsButValidates(t *testing.T) {
 func TestValidatePatrolAgainstWorld_Stub(t *testing.T) {
 	t.Skip("requires rooms + mapper fixtures — covered by boot smoke in T13")
 }
+
+func TestPatrolWaypoint_ArrivalEventFieldRoundTrip(t *testing.T) {
+	p := &Patrol{
+		Id: "test_arrival_event",
+		Waypoints: []PatrolWaypoint{
+			{Room: 100, DwellRounds: 5, ArrivalEvent: "vendor_visit"},
+			{Room: 101, DwellRounds: 0},
+		},
+	}
+	RegisterPatrolForTest(p)
+	t.Cleanup(func() { UnregisterPatrolForTest("test_arrival_event") })
+
+	got := GetPatrol("test_arrival_event")
+	if got == nil {
+		t.Fatal("patrol not registered")
+	}
+	if got.Waypoints[0].ArrivalEvent != "vendor_visit" {
+		t.Errorf("waypoint 0 ArrivalEvent = %q, want %q", got.Waypoints[0].ArrivalEvent, "vendor_visit")
+	}
+	if got.Waypoints[1].ArrivalEvent != "" {
+		t.Errorf("waypoint 1 ArrivalEvent = %q, want empty string", got.Waypoints[1].ArrivalEvent)
+	}
+}

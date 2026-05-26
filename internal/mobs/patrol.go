@@ -14,8 +14,9 @@ type Patrol struct {
 
 // PatrolWaypoint is one stop on a patrol route.
 type PatrolWaypoint struct {
-	Room        int `yaml:"room"`
-	DwellRounds int `yaml:"dwell_rounds,omitempty"` // 0 = move on immediately
+	Room         int    `yaml:"room"`
+	DwellRounds  int    `yaml:"dwell_rounds,omitempty"`  // 0 = move on immediately
+	ArrivalEvent string `yaml:"arrival_event,omitempty"` // chunk 3.7: emitted via PatrolWaypointArrival on first-dwell-tick
 }
 
 // Package-level registry, populated by LoadPatrols at startup.
