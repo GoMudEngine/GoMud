@@ -1,9 +1,0 @@
-- 
-  Supported: # A map of lowercase names of "Initiator" (#1) to array of "Participant" (#2) names allowed to use this conversation. 
-    "shadow trainee": ["shadow master"]
-  Conversation:
-    - ["#1 sayto #2 have you had any luck locating the amethyst?"]
-    - ["#2 say Yes, it is in the bank vault."]
-    - ["#1 say Well then, what is the plan to retrieve it?"]
-    - ["#2 say We learned recently of a secret tunnel below it."]
-    - ["#1 say Interesting, then lets talk more about it later in private."]

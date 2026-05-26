@@ -27,6 +27,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -57,6 +58,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/plugins"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/quests"
+	"github.com/GoMudEngine/GoMud/internal/relationships"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
@@ -1171,6 +1173,16 @@ func loadAllDataFiles(isReload bool) {
 		func(from, to int) bool {
 			_, err := mapper.GetPath(from, to)
 			return err == nil
+		},
+	)
+	// Chunk 3.6: conversations world validator. Cross-checks that pair
+	// overrides reference real mobs with real relationship edges.
+	conversations.SetConversationWorldValidator(
+		func(mobId int) bool {
+			return mobs.GetMobSpec(mobs.MobId(mobId)) != nil
+		},
+		func(a, b int) bool {
+			return relationships.AreRelated(a, b)
 		},
 	)
 	mobs.LoadDataFiles()

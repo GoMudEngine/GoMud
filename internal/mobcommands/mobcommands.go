@@ -39,7 +39,6 @@ var (
 		"charge":         {Charge, false},
 		"consume":        {Consume, false},
 		"consider":       {Consider, false},
-		"converse":       {Converse, false},
 		"callforhelp":    {CallForHelp, false},
 		"defuse":         {Defuse, false},
 		"despawn":        {Despawn, false},

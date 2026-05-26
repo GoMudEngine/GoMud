@@ -5,7 +5,10 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/conversationadapter"
+	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -64,11 +67,6 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 			continue
 		}
 
-		if mob.InConversation() {
-			mob.Converse()
-			continue
-		}
-
 		// Chunk 3.2: schedule executor. Runs before the path-walker so it can
 		// clear stale paths on segment transitions and queue new pathtos before
 		// the walker consumes them.
@@ -94,6 +92,26 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 			if activePatrolId != "" {
 				plan := patrolTickPlan(mob, activePatrolId)
 				applyPatrolPlan(mob, plan)
+			}
+		}
+
+		// Chunk 3.6: NPC↔NPC idle conversations.
+		// Phase 1: if this mob is already in a conversation, advance the
+		// state machine one tick (fires the next line or finalises/aborts).
+		if partnerId, ok := mob.Character.GetMiscData(conversations.MiscDataPartnerId).(int); ok && partnerId > 0 {
+			conversations.TickConversation(conversationadapter.AdaptMob(mob), partnerId)
+		}
+
+		// Phase 2: if fully idle and not on cooldown, roll for a new
+		// conversation. ConversationBaseChancePct is a float percent
+		// (1.0 = 1 %), so multiply by 100 and roll out of 10 000 to
+		// preserve fractional precision.
+		if conversationsTriggerEligible(mob) {
+			cfg := configs.GetBalanceConfig()
+			if util.Rand(10000) < int(float64(cfg.ConversationBaseChancePct)*100) {
+				if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
+					conversations.TryStart(conversationadapter.AdaptMob(mob), room.GetMobs())
+				}
 			}
 		}
 
@@ -164,4 +182,34 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 	util.TrackTime(`IdleMobs()`, time.Since(tStart).Seconds())
 
 	return events.Continue
+}
+
+// conversationsTriggerEligible gates the per-tick conversation trigger for a
+// mob. It duplicates the conversations package's isFullyIdle logic so the hot
+// path doesn't allocate an adapter just to peek at eligibility.
+func conversationsTriggerEligible(mob *mobs.Mob) bool {
+	if mob == nil {
+		return false
+	}
+	// Already in a conversation.
+	if partnerId, ok := mob.Character.GetMiscData(conversations.MiscDataPartnerId).(int); ok && partnerId > 0 {
+		return false
+	}
+	// On cooldown from a recently completed conversation.
+	if until, ok := mob.Character.GetMiscData(conversations.MiscDataCooldownUntilRound).(uint64); ok && uint64(util.GetRoundCount()) < until {
+		return false
+	}
+	// Combat or pending aggro.
+	if mob.Character.Aggro != nil || mob.Character.IsInCombat() {
+		return false
+	}
+	// Sleeping mob shouldn't start chatting.
+	if mob.Character.HasBuffFlag(buffs.Sleeping) {
+		return false
+	}
+	// Mid-walk on a path — let the mob arrive before striking up a chat.
+	if mob.Path.Len() > 0 || mob.Path.Current() != nil {
+		return false
+	}
+	return true
 }

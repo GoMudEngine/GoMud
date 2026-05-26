@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
-	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"gopkg.in/yaml.v2"
@@ -30,7 +29,7 @@ func Load(mobId int, zone string) *DialogueFile {
 		return df
 	}
 
-	sanitizedZone := conversations.ZoneNameSanitize(zone)
+	sanitizedZone := zoneNameSanitize(zone)
 	dataFiles := string(configs.GetFilePathsConfig().DataFiles)
 	path := util.FilePath(dataFiles + `/dialogue/` + sanitizedZone + `/` + fmt.Sprintf("%d", mobId) + `.yaml`)
 
@@ -57,6 +56,16 @@ func Load(mobId int, zone string) *DialogueFile {
 
 	dialogueCache[key] = &df
 	return &df
+}
+
+// zoneNameSanitize converts a zone display name to the lowercase
+// underscore form used in file paths (e.g. "Sanctum Basin" → "sanctum_basin").
+func zoneNameSanitize(zone string) string {
+	if zone == "" {
+		return ""
+	}
+	zone = strings.ReplaceAll(zone, " ", "_")
+	return strings.ToLower(zone)
 }
 
 // validateQuestExclusions warns if any grantsQuest node is missing the

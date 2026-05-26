@@ -13,10 +13,10 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/perception"
 	"github.com/GoMudEngine/GoMud/internal/state/presence"
-	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/facts"
 	"github.com/GoMudEngine/GoMud/internal/llm"
@@ -162,7 +162,6 @@ type Mob struct {
 	SurrenderPolicy         string `yaml:"surrender_policy,omitempty"`   // chunk 4d T12: override archetype default; "never"/"always"/"auto-tap-below <N>"
 	BTreeState              any    `yaml:"-"`                            // Behavior tree per-instance state (*behaviortree.BehaviorState)
 	tempDataStore           map[string]any
-	conversationId          int              // Identifier of conversation currently involved in.
 	Path                    PathQueue        `yaml:"-"` // a pre-calculated path the mob is following.
 	lastCommandTurn         uint64           // The last turn a command was scheduled for
 	playersAttacked         map[int]struct{} // all players this mob has attacked at some point
@@ -710,65 +709,6 @@ func (m *Mob) HasAttackedPlayer(userId int) bool {
 	return ok
 }
 
-func (m *Mob) InConversation() bool {
-	return m.conversationId > 0
-}
-
-func (m *Mob) SetConversation(id int) {
-	m.conversationId = id
-}
-
-func (m *Mob) Converse() {
-
-	mobInst1, mobInst2, actions := conversations.GetNextActions(m.conversationId)
-
-	var mob1 *Mob = nil
-	var mob2 *Mob = nil
-
-	if mobInst1 == int(m.InstanceId) {
-		mob1 = m
-		mob2 = GetInstance(mobInst2)
-	} else {
-		mob1 = GetInstance(mobInst1)
-		mob2 = m
-	}
-
-	if mob1 == nil || mob2 == nil {
-		conversations.Destroy(m.conversationId)
-		if mob1 != nil {
-			mob1.SetConversation(0)
-		}
-		if mob2 != nil {
-			mob2.SetConversation(0)
-		}
-		return
-	}
-
-	for _, act := range actions {
-		if len(act) >= 3 {
-
-			target := act[0:3]
-			cmd := act[3:]
-
-			cmd = strings.ReplaceAll(cmd, ` #1 `, ` `+mob1.ShorthandId()+` `)
-			cmd = strings.ReplaceAll(cmd, ` #2 `, ` `+mob2.ShorthandId()+` `)
-
-			if target == `#1 ` {
-				mob1.Command(cmd)
-			} else {
-				mob2.Command(cmd, 1)
-			}
-		}
-	}
-
-	if conversations.IsComplete(m.conversationId) {
-		conversations.Destroy(m.conversationId)
-		mob1.SetConversation(0)
-		mob2.SetConversation(0)
-		return
-	}
-}
-
 // GetLastCommandTurn returns the turn at which the mob's last scheduled command will execute.
 func (m *Mob) GetLastCommandTurn() uint64 {
 	return m.lastCommandTurn
@@ -1309,6 +1249,11 @@ func LoadDataFiles() {
 		}
 		return ""
 	})
+
+	// Chunk 3.6: load conversation pools and pair overrides. Must run AFTER
+	// relationships.LoadFromMobs so that the world-aware validator can cross-
+	// check pair overrides against real relationship edges.
+	conversations.Load()
 
 }
 

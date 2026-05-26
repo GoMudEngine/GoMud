@@ -1,0 +1,37 @@
+id: rival
+description: "Pointed jabs and old disagreements between rivals."
+
+exchanges:
+  - lines:
+      - speaker: A
+        text: "Still wrong, after all these years."
+      - speaker: B
+        text: "And you, still right. Funny how it works out."
+  - lines:
+      - speaker: A
+        text: "You always did tell that story wrong."
+      - speaker: B
+        text: "Tell it your way, then. I've heard it enough times."
+      - speaker: A
+        text: "Maybe I will."
+  - lines:
+      - speaker: A
+        text: "I notice you're drinking the cheap stuff."
+      - speaker: B
+        text: "Tastes the same as your fancy stuff, to me."
+      - speaker: A
+        text: "That's because your tongue's gone."
+  - lines:
+      - speaker: A
+        text: "You owe me a copper from the spring fair."
+      - speaker: B
+        text: "I owe you nothing of the kind."
+      - speaker: A
+        text: "Liar."
+      - speaker: B
+        text: "Cheat."
+  - lines:
+      - speaker: A
+        text: "Hmph."
+      - speaker: B
+        text: "Hmph yourself."

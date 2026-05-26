@@ -36,6 +36,17 @@ func (b *Balance) validateMobs() {
 		b.ScheduleWakeGraceRounds = 50
 	}
 
+	// ── NPC-NPC IDLE CONVERSATIONS ───────────────────────────────────────────
+	if b.ConversationBaseChancePct <= 0 {
+		b.ConversationBaseChancePct = 1.0
+	}
+	if b.ConversationPlayerArrivalBoostPct <= 0 {
+		b.ConversationPlayerArrivalBoostPct = 25
+	}
+	if b.ConversationCooldownRounds < 1 {
+		b.ConversationCooldownRounds = 50
+	}
+
 	// ── MOB REGEN ────────────────────────────────────────────────────────────
 	clampPct := func(v *ConfigFloat, def ConfigFloat) {
 		if *v <= 0 {

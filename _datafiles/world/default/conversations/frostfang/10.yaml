@@ -1,8 +1,0 @@
-- 
-  Supported: # A map of lowercase names of "Initiator" (#1) to array of "Participant" (#2) names allowed to use this conversation. 
-    "ivar froststeel": ["guard"]
-  Conversation:
-    - ["#1 sayto #2 How's that sword you bought here treating you?"]
-    - ["#2 sayto #1 So far so good, it's mostly seen it's fair share of rats disposed of."]
-    - ["#1 emote grimmaces disappointedly."]
-

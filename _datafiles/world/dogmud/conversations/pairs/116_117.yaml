@@ -1,0 +1,21 @@
+id: dal_and_wrex
+mob_a: 116
+mob_b: 117
+exchanges:
+  - lines:
+      - speaker: A
+        text: "The usual?"
+      - speaker: B
+        text: "You know me too well."
+  - lines:
+      - speaker: A
+        text: "Mind the spill on table three — I'll get to it."
+      - speaker: B
+        text: "Take your time. We've got nowhere to be."
+  - lines:
+      - speaker: A
+        text: "Your tab's getting long."
+      - speaker: B
+        text: "I'm good for it. Always have been."
+      - speaker: A
+        text: "Aye, you have."

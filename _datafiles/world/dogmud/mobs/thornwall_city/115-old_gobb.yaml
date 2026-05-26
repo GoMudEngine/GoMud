@@ -38,3 +38,8 @@ character:
       training: 6
     strength:
       training: 8
+relationships:
+  - to: 116
+    type: friend
+  - to: 117
+    type: friend
