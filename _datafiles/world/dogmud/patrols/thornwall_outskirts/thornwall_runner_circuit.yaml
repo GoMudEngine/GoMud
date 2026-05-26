@@ -4,11 +4,11 @@ loop_shape: oneshot
 max_path_retries: 40
 waypoints:
   - { room: 464, dwell_rounds: 3, arrival_event: caravan_vendor }
-  - { room: 470, dwell_rounds: 3, arrival_event: caravan_vendor }
   - { room: 471, dwell_rounds: 3, arrival_event: caravan_vendor }
+  - { room: 470, dwell_rounds: 3, arrival_event: caravan_vendor }
+  - { room: 481, dwell_rounds: 3, arrival_event: caravan_vendor }
   - { room: 475, dwell_rounds: 3, arrival_event: caravan_vendor }
   - { room: 480, dwell_rounds: 3, arrival_event: caravan_vendor }
-  - { room: 481, dwell_rounds: 3, arrival_event: caravan_vendor }
   - { room: 482, dwell_rounds: 3, arrival_event: caravan_vendor }
   - { room: 483, dwell_rounds: 3, arrival_event: caravan_vendor }
   - { room: 465, dwell_rounds: 1, arrival_event: "" }
