@@ -1,5 +1,60 @@
 # DOGMud Patch Notes
 
+## 2026-05-26 — Aliveness 3.8 hotfix (caravan + forager + dashboard)
+
+**Lars stops at every vendor now.** A one-line bug in
+`StartOneshotPatrol` initialized the dwell counter to 0, so when
+Lars arrived at his first vendor the executor immediately advanced
+him to the next waypoint without dwelling or firing the
+`caravan_vendor` arrival event. Same bug also made Tova appear to
+"vanish" from her first vendor — she'd arrive and walk off without
+selling. Fixed.
+
+**Lars actually trades materials with every vendor.** Pre-fix the
+cross-city pickup filter only accepted items whose bucket was in
+the zone-source list. Iron ingot, steel ingot, coal dust — all
+standard crafting materials — were skipped because their bucket is
+`base` or `overlap`. Expanded the filter: any item flagged as a
+component (and not a finished good — no weapons, armor, potions,
+etc.) now qualifies for caravan cross-city distribution. Smith
+Brindle's 80 steel ingots no longer sit untouched while Lars
+walks past.
+
+**Foragers don't accumulate cargo forever now.** The carry-cap and
+fatigue threshold check that triggers a forager's "head back to
+town" transition lived inside `actForagerStep`, but the YAML
+archetype's inner selector short-circuited on every successful
+forage attempt and never reached that code. Foragers in workable
+territory therefore never transitioned out of Foraging. Extracted
+the check into a new `forager_check_thresholds` btree primitive
+that runs first in the foraging selector every tick.
+
+**Forager state-machine integrity.** If a delivery patrol got
+interrupted by HP-emergency recall or hit a path-retry budget
+without producing a clean `PatrolCompleted`, the mob ended up at
+sanctuary with a stale `PatrolId`. The patrol executor would then
+read the stale id, see the mob at a terminal-shaped waypoint,
+and fire a phantom `PatrolCompleted` from sanctuary. Cleared the
+patrol id at every transition into the Recalling state. Also
+removed the now-redundant sanctuary-fallback in
+`tickForagerDeliveringTown` (the completion listener it was
+guarding against being dead is no longer dead).
+
+**Economy dashboard shows forager throughput now.** Two bugs in
+`internal/economy/health/`: capture.go read throughput records
+under `m.Character.Zone` (current room — mutates as the mob walks)
+when the records are written under `m.Zone` (template-stable);
+scoring.go compared snake-case territory keys against display-case
+shop zone names with a case-sensitive prefix compare that was
+always false. The dashboard's `FromForagers` column was always 0
+by construction, regardless of actual deliveries. Both fixed.
+
+**Lars walks shorter circuits.** Greedy nearest-neighbor reorder of
+the Stillwater and Thornwall runner-circuit waypoints. No
+mechanical change, just less zig-zagging.
+
+---
+
 ## 2026-05-26 — Mob aliveness 3.8 (one-shot sub-patrols: caravan runner + forager delivery)
 
 **Caravan runs are richer now.** Ketil's caravan rolls into Thornwall
