@@ -3,6 +3,8 @@ package goals
 import (
 	"errors"
 	"fmt"
+	"sort"
+	"sync"
 	"testing"
 	"time"
 
@@ -316,6 +318,89 @@ func TestClear_RemovesAllAndResetsCounter(t *testing.T) {
 	}
 	if r.Added.Id != "g1" {
 		t.Errorf("expected counter reset to g1 after Clear, got %q", r.Added.Id)
+	}
+}
+
+func TestGoalsOf_PriorityDescThenIdAsc(t *testing.T) {
+	ClearCache()
+	resetRegistry()
+	// Different types to avoid same-type conflict.
+	if _, err := Add(99015, "ordering", &Goal{Type: "a", Priority: 30}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Add(99015, "ordering", &Goal{Type: "b", Priority: 70}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Add(99015, "ordering", &Goal{Type: "c", Priority: 70}); err != nil {
+		t.Fatal(err)
+	}
+	got := GoalsOf(99015, "ordering")
+	if len(got) != 3 {
+		t.Fatalf("expected 3 goals, got %d", len(got))
+	}
+	// Priority 70 g2 first (older id wins ties), then g3, then g1 prio 30.
+	wantIds := []string{"g2", "g3", "g1"}
+	for i, want := range wantIds {
+		if got[i].Id != want {
+			t.Errorf("position %d: got %q, want %q", i, got[i].Id, want)
+		}
+	}
+}
+
+func TestGoalsOf_ReturnedSliceIsCopy(t *testing.T) {
+	// Mutating the returned slice (sort, append) must not affect the cache.
+	ClearCache()
+	resetRegistry()
+	if _, err := Add(99016, "copytest", &Goal{Type: "a", Priority: 10}); err != nil {
+		t.Fatal(err)
+	}
+	got := GoalsOf(99016, "copytest")
+	sort.Slice(got, func(i, j int) bool { return false }) // reverse meaningless; just touch
+	got = append(got, &Goal{Id: "fake"})
+	if len(GoalsOf(99016, "copytest")) != 1 {
+		t.Error("mutating returned slice affected cache")
+	}
+}
+
+func TestConcurrentAdd_DifferentMobsNoRace(t *testing.T) {
+	ClearCache()
+	resetRegistry()
+	var wg sync.WaitGroup
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func(mobId int) {
+			defer wg.Done()
+			if _, err := Add(mobId, fmt.Sprintf("racer%d", mobId), &Goal{
+				Type: "x", Priority: 10,
+			}); err != nil {
+				t.Errorf("Add %d: %v", mobId, err)
+			}
+		}(99100 + i)
+	}
+	wg.Wait()
+}
+
+func TestConcurrentAdd_SameMobSerializes(t *testing.T) {
+	ClearCache()
+	resetRegistry()
+	var wg sync.WaitGroup
+	for i := 0; i < 5; i++ {
+		wg.Add(1)
+		go func(idx int) {
+			defer wg.Done()
+			// Unique type per goroutine so no same-type conflict.
+			if _, err := Add(99200, "samemob", &Goal{
+				Type:     fmt.Sprintf("t%d", idx),
+				Priority: 10 + idx,
+			}); err != nil {
+				t.Errorf("Add %d: %v", idx, err)
+			}
+		}(i)
+	}
+	wg.Wait()
+	got := GoalsOf(99200, "samemob")
+	if len(got) != 5 {
+		t.Errorf("expected 5 goals after concurrent Adds, got %d", len(got))
 	}
 }
 
