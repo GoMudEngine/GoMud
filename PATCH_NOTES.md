@@ -1,5 +1,34 @@
 # DOGMud Patch Notes
 
+## 2026-05-26 — Mob aliveness 3.8 (one-shot sub-patrols: caravan runner + forager delivery)
+
+**Caravan runs are richer now.** Ketil's caravan rolls into Thornwall
+or Stillwater depot, parks the wagon (with Hob and Bran the horses
+and Marta the guard), and Lars (Ketil's son) walks the goods out
+to each vendor while the rest of the crew rests. The wagon never
+gets dragged into an alchemy shop again. What doesn't sell comes
+back to the wagon when Lars returns.
+
+**Foragers stop getting hung up on the delivery loop.** Marsh
+(Tova) and Steppe (Halix) foragers now use the same patrol-layer
+machinery for their vendor circuit — retry-then-home-fallback,
+combat-interrupt-and-resume, and standardized waypoint dwell.
+Fernway forager (Kessa) keeps her single-stop sealed-crate handoff.
+
+**Under the hood:** new `loop_shape: oneshot` patrol mode, new
+`events.PatrolCompleted` event, `mobs.StartOneshotPatrol` /
+`ClearOneshotPatrol` runtime helpers. Caravan main route shrinks
+from 22 waypoints to 4 (depots + Fernway pickups). Vendor stops
+live entirely on Lars's runner-circuit sub-patrols. Lars gains a
+strength bump so he can actually carry a wagon's worth of cargo
+between depot and vendors.
+
+**Looking ahead:** attacking the caravan crew or wagon will carry
+severe consequences once Town Justice (chunk 5.1) lands — massive
+Thornwall guard faction rep loss, murder records, the works.
+Don't roleplay yourself into a permanent rep hole on the way to
+the next bandit ambush.
+
 ## 2026-05-26 — Scheduled NPC pacing fix (chunk 3.6 follow-up)
 
 **Townspeople stay where their schedule put them now.** Before this
