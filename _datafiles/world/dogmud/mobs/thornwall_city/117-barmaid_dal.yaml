@@ -1,9 +1,10 @@
 mobid: 117
 zone: Thornwall City
+schedule_id: thornwall_barmaid
 statpool: 30
 itemdropchance: 0
 hostile: false
-maxwander: 1
+maxwander: 0
 groups:
   - humanoid
   - barmaid

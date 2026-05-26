@@ -1,0 +1,38 @@
+id: thornwall_barmaid
+description: "Barmaid Dal's daily routine: long shift on the main floor with an afternoon break in the back corner with the old regulars, sleep upstairs."
+segments:
+  - start: 7
+    end: 14
+    target_room: 472
+    activity: ""
+    idlecommands:
+      - emote wipes down a table with a rag that has seen better days.
+      - emote gathers empty cups onto a tray balanced on one hip.
+      - emote pushes a strand of hair from her face and glances toward the back corner.
+      - emote sets a fresh cup on the bar without being asked.
+  - start: 14
+    end: 16
+    target_room: 484
+    activity: ""
+    idlecommands:
+      - emote pulls up a chair at the back table for a quick break.
+      - say Anything else, gentlemen?
+      - emote slides three fresh cups onto the scarred table.
+      - emote rolls her eyes at something one of the old men said.
+      - emote leans back, listening to the murmur.
+  - start: 16
+    end: 23
+    target_room: 472
+    activity: ""
+    idlecommands:
+      - emote wipes down a table with a rag that has seen better days.
+      - emote gathers empty cups onto a tray balanced on one hip.
+      - emote pushes a strand of hair from her face and glances toward the back corner.
+      - emote sets a fresh cup on the bar without being asked.
+  - start: 23
+    end: 7
+    target_room: 5102
+    activity: sleeping
+    idlecommands:
+      - emote sleeps curled under a thin blanket, one arm slung over her face.
+      - emote mumbles something irritable in her sleep.
