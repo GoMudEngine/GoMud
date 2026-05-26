@@ -369,6 +369,16 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 			mob.Character.RoomId = applyScheduleSpawnOverride(mob.ScheduleId, mob.HomeRoomId, hour)
 		}
 
+		// Chunk 3.7 follow-up: stamp a fresh-respawn marker on every
+		// patrol-bearing mob at spawn time. Consumers (e.g. the caravan
+		// arrival listener) use this to distinguish "first cycle after
+		// respawn — pull stragglers home" from "completed a full cycle
+		// and looped back — no action needed." Cleared by the consumer
+		// after firing once.
+		if mob.PatrolId != "" {
+			mob.Character.SetMiscData("patrol_fresh_respawn", true)
+		}
+
 		// State-machine pointers and the OnCharacterCreated wiring
 		// guard are shallow-copied above. Null them out so the
 		// upcoming Validate() builds new machines for this instance

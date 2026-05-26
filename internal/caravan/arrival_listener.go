@@ -74,51 +74,29 @@ func stampStateStartedRound(leader *mobs.Mob) {
 	leader.Character.SetMiscData("caravan_state_last", state.Name())
 }
 
-// handleDepotArrival fires the crew-regroup mechanism when the leader is
-// at wp0 (the long-dwell Thornwall start — also the post-respawn landing
-// point). At other depot waypoints the leader stamp has already been
-// recorded above; no further action needed until cargo settlement is
-// designed for future chunks.
+// handleDepotArrival fires the crew-regroup mechanism only when the
+// leader arrives at wp0 carrying the patrol_fresh_respawn marker —
+// i.e. this is the first cycle after the leader was newly spawned (or
+// respawned post-death). Pre-tighten, regroup fired on every wp0
+// arrival including every nominal end-of-cycle loop, which silently
+// teleported any crew member who had taken a different path back to
+// the depot. With the marker gate, the regroup only runs when it
+// actually solves a problem: leader is fresh, crew may be stranded.
+//
+// At non-wp0 depot waypoints the leader stamp has already been
+// recorded by stampStateStartedRound; no further action needed until
+// cargo settlement is designed for future chunks.
 func handleDepotArrival(leader *mobs.Mob, arrival events.PatrolWaypointArrival) {
 	if arrival.WaypointIdx != 0 {
 		return // only wp0 triggers the fresh-cycle regroup
 	}
-	// Force-move wagon + any in-world crew to the leader's room so a
-	// fresh cycle starts with everyone co-located. This also covers the
-	// "leader died mid-route and respawned at depot" contingency — on
-	// next wp0 arrival all stragglers are pulled home.
-	leaderRoom := leader.Character.RoomId
-	for templateId := range caravanMobIds {
-		if templateId == int(leader.MobId) {
-			continue // skip the leader itself
-		}
-		for _, instId := range mobs.GetAllMobInstanceIds() {
-			m := mobs.GetInstance(instId)
-			if m == nil || int(m.MobId) != templateId {
-				continue
-			}
-			if m.Character.RoomId == leaderRoom {
-				continue // already co-located, nothing to do
-			}
-			oldRoomId := m.Character.RoomId
-			oldRoom := rooms.LoadRoom(oldRoomId)
-			newRoom := rooms.LoadRoom(leaderRoom)
-			if newRoom == nil {
-				continue
-			}
-			if oldRoom != nil {
-				oldRoom.RemoveMob(m.InstanceId)
-			}
-			newRoom.AddMob(m.InstanceId) // sets m.Character.RoomId internally
-			mudlog.Info("caravan crew regroup",
-				"leader", leader.Character.Name,
-				"crew_template", templateId,
-				"crew_instance", m.InstanceId,
-				"from_room", oldRoomId,
-				"to_room", leaderRoom,
-			)
-		}
+	fresh, _ := leader.Character.GetMiscData("patrol_fresh_respawn").(bool)
+	if !fresh {
+		return // normal cycle loop — crew is already where they should be
 	}
+	// Clear the marker first so we don't regroup again on the next loop.
+	leader.Character.SetMiscData("patrol_fresh_respawn", false)
+	ForceRegroupCrew(leader)
 }
 
 // handleVendorArrival fires the bidirectional vendor trade and prints the
