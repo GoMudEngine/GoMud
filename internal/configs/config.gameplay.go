@@ -13,7 +13,6 @@ type GamePlay struct {
 	// PVP Restrictions
 	PVP             ConfigString `yaml:"PVP"`
 	PVPMinimumSkillRanks ConfigInt `yaml:"PVPMinimumSkillRanks"` // Minimum total skill ranks to engage in PVP
-	MobConverseChance    ConfigInt `yaml:"MobConverseChance"` // Chance 1-100 of attempting to converse when idle
 
 	// Skill Progression
 	UseSkillProgression ConfigBool `yaml:"UseSkillProgression"` // Enable skill/stat progression checks on skill/stat use
@@ -107,13 +106,6 @@ func (g *GamePlay) Validate() {
 	if int(g.PVPMinimumSkillRanks) < 0 {
 		g.PVPMinimumSkillRanks = 0
 	}
-
-	if g.MobConverseChance < 0 {
-		g.MobConverseChance = 0
-	} else if g.MobConverseChance > 100 {
-		g.MobConverseChance = 100
-	}
-
 
 }
 

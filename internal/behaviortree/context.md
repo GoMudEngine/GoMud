@@ -206,6 +206,7 @@ Condition nodes use `type: condition` with `check: <name>`.
 | `mob_in_combat` | none | Mob's Aggro field is non-nil. |
 | `mob_health_below` | `percent` (int) | Health < N% of max HP. |
 | `mob_at_home` | none | Mob is in its home room. |
+| `mob_at_target_room` | none | Success when mob is at its current schedule segment's target_room; Failure when no schedule, no current segment, or in transit. |
 | `mob_has_buff` | `buff_id` (int) | Mob currently has the buff. |
 | `state_equals` | `key`, `value` (strings) | BehaviorState string equals. |
 | `state_greater_than` | `key` (string), `value` (int) | BehaviorState int > value. |

@@ -415,6 +415,47 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 }
 ```
 
+### Schedule executor (chunk 3.2)
+
+- `NewRound_IdleMobs_schedule.go`: schedule executor branch inserted
+  between the conversation guard and path-walker in `HandleIdleMobs`.
+  On every tick: resolves the current segment via `mobs.CurrentSegment`,
+  swaps `mob.IdleCommands` on segment transition, queues a `pathto`
+  toward the segment `target_room`, falls back to `pathto home` after
+  `ScheduleMaxPathRetries` consecutive failed path attempts.
+- `MobIdle_HandleIdleMobs`: `TickMobCraft` now respects the schedule
+  `activity:` gate — it returns nil immediately when the mob's current
+  segment `activity` is not `"craft"`.
+
+### Patrol executor (chunk 3.4)
+
+- `NewRound_IdleMobs_patrol.go`: `patrolTickPlan` (pure decision)
+  + `applyPatrolPlan` (side effects). Runs in IdleMobs AFTER the
+  schedule branch, so a schedule-stamped `active_patrol_id`
+  (from an `activity: patrol` segment) is visible. Reads-and-
+  clears the stamp; falls back to `mob.PatrolId` for standalone
+  patrols.
+- `NewRound_IdleMobs_schedule.go`: stamps `active_patrol_id`
+  MiscData in `applySchedulePlan` when the current segment has
+  `activity: patrol`.
+
+### Conversation executor (chunk 3.6)
+
+- `NewRound_IdleMobs_conversations.go`: conversation branch runs in
+  the idle-mob per-tick handler AFTER schedule and patrol branches.
+  Calls `conversations.TryStart(mob, roomMobIds)` to attempt starting
+  a new conversation; if successful, skips idle command dispatch for
+  this round. Per-round during an active conversation, calls
+  `conversations.TickConversation(mob, partnerId)` to advance one line,
+  returning control when the exchange finishes. Gating: both NPCs must
+  be fully idle (no combat, no sleep, no existing conversation, off
+  cooldown) and have an active relationship edge.
+- Player-arrival boost: `internal/usercommands/go.go` calls
+  `conversations.TryStart(character, room.GetMobIds())` when a player
+  enters a room, applying `ConversationPlayerArrivalBoostPct` chance to
+  trigger a conversation between cohabiting NPCs. This adds ambient life
+  to busy rooms without burdening the continuous idle tick.
+
 ## Integration Patterns
 
 ### Event System Integration

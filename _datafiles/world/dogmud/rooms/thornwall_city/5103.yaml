@@ -1,0 +1,17 @@
+roomid: 5103
+zone: Thornwall City
+title: Olen's Chamber Above the Temple
+description: A spare cell of a room above the temple, scarcely larger than the
+  cot it holds. A worn breviary rests on a small shelf beside a clay basin. A
+  single tall window admits a slant of pale light. Even here the air smells of
+  beeswax and old incense.
+biome: city
+mapsymbol: h
+maplegend: Home
+coord:
+  x: 2
+  y: 2
+  z: 1
+exits:
+  down:
+    roomid: 468

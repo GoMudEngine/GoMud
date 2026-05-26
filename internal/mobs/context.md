@@ -1074,3 +1074,58 @@ candidates in this order:
 The `ShopMaterialReserve` limit prevents NPCs from consuming all materials
 on self-gear. The `ShopGoldReserveRatio × StartingGold` floor prevents
 NPCs from spending themselves into poverty on gear upgrades.
+
+---
+
+## Schedules (chunk 3.2)
+
+Mobs with `schedule_id:` set follow daily routines authored in
+`_datafiles/world/dogmud/schedules/<zone>/<id>.yaml`. See
+`docs/schemas/schedule.md` for the full schema.
+
+- `schedule.go`: `Schedule`, `ScheduleSegment`, `GetSchedule`,
+  `CurrentSegment`, `applyScheduleSpawnOverride`, test helpers
+  (`RegisterScheduleForTest`, `UnregisterScheduleForTest`).
+- `schedule_loader.go`: `LoadSchedules`, `validateScheduleStandalone`,
+  `validateScheduleAgainstWorld`, `SetScheduleWorldValidator` (DI
+  injection used in main.go to break the `mobs ← rooms` import cycle).
+  Called from `LoadDataFiles` after mob templates load.
+- Spawn override: `newMobByIdInternal` calls
+  `applyScheduleSpawnOverride` to place scheduled mobs at the
+  current segment's target room.
+- Crafter activity gate: `TickMobCraft` returns nil when a
+  scheduled mob's current segment activity != "craft".
+
+---
+
+## Sleeping (chunk 3.3)
+
+- `sleeper.go`: `OnSleeperWoken(c *characters.Character)` — central
+  wake-event hook. Stamps `schedule_wake_round` MiscData for
+  scheduled mobs so the schedule executor's grace cooldown can
+  suppress re-sleep. No-op for players and unscheduled mobs.
+- Schedule executor (`internal/hooks/NewRound_IdleMobs_schedule.go`)
+  recognizes `activity: sleeping` segments. On entry: `mob.Command("sleep")`
+  once at target. On exit: `CancelBuffsWithFlag(buffs.Sleeping)`.
+- Grace cooldown: after a forced wake the executor reads
+  `schedule_wake_round` from MiscData and suppresses re-sleep for
+  `ScheduleWakeGraceRounds` rounds (config, default 50).
+
+---
+
+## Patrols (chunk 3.4)
+
+Mobs with `patrol_id:` set follow waypoint patrols authored in
+`_datafiles/world/dogmud/patrols/<zone>/<id>.yaml`. See
+`docs/schemas/patrol.md` for the full schema.
+
+- `patrol.go`: `Patrol`, `PatrolWaypoint`, `GetPatrol`,
+  `NextWaypoint`, test helpers.
+- `patrol_loader.go`: `LoadPatrols`, `validatePatrolStandalone`,
+  `validatePatrolAgainstWorld`, `SetPatrolWorldValidator` (DI
+  injection used in main.go to break the mobs ← rooms import
+  cycle). Called from `LoadDataFiles` before `LoadSchedules`
+  (schedule loader cross-checks segment patrol_ids).
+- Spawn override: `applyScheduleSpawnOverride` falls back to
+  the patrol's first waypoint when a patrol segment has no
+  `target_room`.

@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -190,6 +191,31 @@ func condRandomChance(params map[string]any, ctx *EvalContext) Result {
 		return Success
 	}
 	if util.Rand(100) < pct {
+		return Success
+	}
+	return Failure
+}
+
+// condMobAtTargetRoom returns Success when the mob is at the room its current
+// schedule segment names as target_room. Returns Failure when the mob has no
+// schedule, no current segment, or is in transit. See chunk 3.2 spec.
+func condMobAtTargetRoom(_ map[string]any, ctx *EvalContext) Result {
+	if ctx == nil {
+		return Failure
+	}
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil || mob.ScheduleId == "" {
+		return Failure
+	}
+	s := mobs.GetSchedule(mob.ScheduleId)
+	if s == nil {
+		return Failure
+	}
+	seg := s.CurrentSegment(gametime.GetDate().Hour24)
+	if seg == nil {
+		return Failure
+	}
+	if mob.Character.RoomId == seg.TargetRoom {
 		return Success
 	}
 	return Failure

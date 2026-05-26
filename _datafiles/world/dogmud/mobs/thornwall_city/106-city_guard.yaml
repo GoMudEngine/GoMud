@@ -1,6 +1,7 @@
 mobid: 106
 zone: Thornwall City
 archetype: fighting
+schedule_id: thornwall_city_guard_dayshift
 behavior_archetype: noncombat_questgiver
 statpool: 60
 itemdropchance: 0

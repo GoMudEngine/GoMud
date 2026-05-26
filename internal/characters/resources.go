@@ -3,6 +3,7 @@ package characters
 import (
 	"math"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
@@ -199,6 +200,12 @@ func (c *Character) HealthPerRound() int {
 	if base < 1 {
 		base = 1
 	}
+	// Chunk 3.3: 5× regen while sleeping.
+	if c.HasBuffFlag(buffs.Sleeping) {
+		if mult := float64(b.SleepRegenMultiplier); mult > 0 {
+			base = int(float64(base) * mult)
+		}
+	}
 	return base
 }
 
@@ -220,6 +227,12 @@ func (c *Character) StaminaPerRound() int {
 			base = 1
 		}
 	}
+	// Chunk 3.3: 5× regen while sleeping (composes on top of mutation modifier).
+	if c.HasBuffFlag(buffs.Sleeping) {
+		if mult := float64(b.SleepRegenMultiplier); mult > 0 {
+			base = int(float64(base) * mult)
+		}
+	}
 	return base
 }
 
@@ -233,6 +246,12 @@ func (c *Character) ConvictionPerRound() int {
 	base := int(pct * float64(c.ConvictionMax.Value))
 	if base < 1 {
 		base = 1
+	}
+	// Chunk 3.3: 5× regen while sleeping.
+	if c.HasBuffFlag(buffs.Sleeping) {
+		if mult := float64(b.SleepRegenMultiplier); mult > 0 {
+			base = int(float64(base) * mult)
+		}
 	}
 	return base
 }

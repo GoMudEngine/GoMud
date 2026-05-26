@@ -51,6 +51,81 @@ quantity. Config knobs: `ShopBuyRatio`, `ShopPriceFloor`, `ShopPriceCeiling`,
 Non-combatant mobs (`non_combatant: true` in YAML) cannot be attacked,
 stolen from, or targeted by harm spells.
 
+## NPC Schedules
+Townspeople NPCs can carry a `schedule_id:` field that references
+a daily routine in
+`_datafiles/world/dogmud/schedules/<zone>/<id>.yaml`. Schedules
+cover all 24 hours, swap the mob's idle command pool per segment,
+steer the mob between rooms via the existing `pathto` plumbing,
+and gate `TickMobCraft` via segment `activity:`. Schedule
+validators panic at startup on coverage gaps, unreachable target
+rooms, or unresolved `schedule_id` references — pre-push SOP
+boot-test catches these. See `docs/schemas/schedule.md`.
+
+## Sleep Mechanics
+Players and NPCs can `sleep` (the verb — no slash). Sleepers gain
+5× HP/SP/CP regen but the entire first round of attacks against
+them auto-crits. Wake triggers: any damage, failed steal,
+shout-in-room, light source entering room (via EmitsLight buff
+flag), the `stand` command, or schedule segment end for scheduled
+mobs. Scheduled NPCs sleep during segments with
+`activity: sleeping` (see `docs/schemas/schedule.md`); a grace
+cooldown (`ScheduleWakeGraceRounds`, default 50) prevents
+immediate re-sleep after a wake event. Use
+`actions.Sleep(actor, opts) SleepResult` for the actor-parity
+entry point. State queryable via `HasBuffFlag(buffs.Sleeping)`.
+
+## NPC Patrols
+Patrol routes (multi-room loops) are authored at
+`_datafiles/world/dogmud/patrols/<zone>/<id>.yaml`. A mob can
+reference one directly via `patrol_id:` (always-on patrol), or
+a schedule segment can opt in via `activity: patrol` +
+`patrol_id:` (patrol runs during the segment only). Two loop
+shapes: `strict` (loop back to start) and `yo-yo` (flip
+direction at endpoints). Per-waypoint `dwell_rounds`. Combat
+interrupts patrols; the executor resumes to the same target
+waypoint on the next idle tick. Path retries use the chunk 3.2
+`ScheduleMaxPathRetries` knob, falling back to `pathto home`
+after the threshold. See `docs/schemas/patrol.md`.
+
+Inter-zone patrols and caravan unification onto the patrol
+layer are deferred to chunk 3.7.
+
+## NPC↔NPC Conversations
+Townspeople with relationship edges (chunk 1.6) occasionally
+exchange 2-4 line conversations drawn from a relationship-type-
+keyed library at `_datafiles/world/dogmud/conversations/`.
+Type pools (`types/<relationship-type>.yaml`) hold generic
+exchanges per relationship type. Optional pair overrides
+(`pairs/<lower>_<higher>.yaml`) add per-pair-specific
+exchanges (extending the type pool). Optional subtype sub-pools
+add flavor variation per relationship subtype string.
+
+Triggers: low per-tick chance (`ConversationBaseChancePct`,
+default 1%) per fully-idle NPC + a higher player-arrival boost
+(`ConversationPlayerArrivalBoostPct`, default 25%). Pacing: one
+line per round, shared `conversation_line_idx` MiscData counter
+drives speaker alternation deterministically. Cooldown
+(`ConversationCooldownRounds`, default 50) on both NPCs after
+an exchange completes.
+
+Gating: conversations only fire when both NPCs are fully idle
+(no combat, no sleep, no patrol mid-walk, no existing
+conversation, no cooldown). Mid-exchange interruption (partner
+leaves the room / sleeps / enters combat) aborts gracefully
+without applying a cooldown.
+
+Script semantics: speaker "A" is the initiator-role, "B" is
+the partner-role; the engine randomizes which physical NPC
+plays "A" per conversation, so author role-agnostic scripts
+(don't bake mob names into pair overrides). MobConversant
+interface decouples this package from internal/mobs/ to keep
+the import graph acyclic; `internal/conversationadapter` is
+the bridge.
+
+NPC↔NPC opinion store and "spoken about you" gossip are
+deferred (see chunk 3.6 spec for rationale).
+
 ## Project Context
 - DOGMud (Delusions of Grandeur) is a MUD built on the GoMud engine
 - World design document: `world.md`

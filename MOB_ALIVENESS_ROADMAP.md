@@ -94,11 +94,12 @@ should always agree.
 | 2.9 | Tactical | Mob `forage` as a command | M | — | Done |
 | 2.10 | Tactical | PvM/MvP/PvP/MvM parity audit | M | 2.1–2.9 | Done |
 | 3.1 | Routine | Game-time hook | S | — | Done |
-| 3.2 | Routine | NPC schedules | L | 3.1 | Not started |
-| 3.3 | Routine | Sleeping / wake states | S | 3.1 | Not started |
-| 3.4 | Routine | Waypoint patrols | M | — | Not started |
-| 3.5 | Routine | Maintenance routines | M | 3.2 | Not started |
-| 3.6 | Routine | NPC↔NPC idle conversation | M | 1.6 | Not started |
+| 3.2 | Routine | NPC schedules | L | 3.1 | Done |
+| 3.3 | Routine | Sleeping / wake states | M | 3.1 | Done |
+| 3.4 | Routine | Waypoint patrols | M | — | Done |
+| 3.5 | Routine | Maintenance routines | M | 3.2 | Deferred |
+| 3.6 | Routine | NPC↔NPC idle conversation | M | 1.6 | Done |
+| 3.7 | Routine | Inter-zone patrols + caravan unification | L | 3.4 | Not started |
 | 4.1 | Strategic | Goal representation | M | 1.1, 1.4 | Not started |
 | 4.2 | Strategic | Goal selection | L | 4.1 | Not started |
 | 4.3 | Strategic | Goal types catalog | M | 4.1 | Not started |
@@ -117,7 +118,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 19 / 41 done • 0 in progress • 22 not started.
+**Roll-up:** 20 / 41 done • 0 in progress • 21 not started.
 
 ---
 
@@ -418,49 +419,127 @@ world.
 - **Shipped:** Extended the existing `time_of_day` btree condition (`internal/behaviortree/conditions_state.go:64`) with a `range:` parameter for hour-precise time gating that chunk 3.2 schedules will use. Range format `"<start>-<end>"` with `[start, end)` semantics, wraps midnight when `start > end` (e.g., `"22-6"` for nightwatch). When both `period:` and `range:` are set, `range:` wins. Empty range (`"5-5"`) always Failure + warning; full-day (`"0-24"`) always Success + warning; malformed strings log an error once and return Failure. `sync.Map` dedup prevents log spam. Most of the roadmap requirements were already in place: `util.GetRoundCount()` provides the time tick, `gametime.IsNight()` + `GameDate.Night` provide the day/night flag, `configs.GetTimingConfig().RoundsPerDay` provides configurable day length, and `modules/time/time.go` already gives players a `time` command. The only new code was the `range:` parser + wrap-around comparator + 20 unit tests. Spec at `docs/superpowers/specs/2026-05-23-mob-aliveness-3.1-game-time-hook-design.md`, plan at `docs/superpowers/plans/2026-05-23-mob-aliveness-3.1-game-time-hook.md`.
 
 ### 3.2 NPC schedules
-**Status:** Not started • **Size:** L
+**Status:** Done • **Size:** L
 
 - **Goal:** Timed routines: "smith works 9–5, home 5–8, tavern 8–11, sleep."
 - **In:** Schedule YAML, schedule executor, behaviors for "go to room" and "perform activity at room."
 - **Out:** Per-day variation (weekday/weekend/holiday) — start with single daily routine.
 - **Depends on:** 3.1
 - **Why:** A town that empties at night and fills in the morning feels a thousand percent more alive than a static town.
+- **Shipped:** Schedule loader + 24h-coverage validator + pathfinding sanity in `internal/mobs/schedule.go` and `internal/mobs/schedule_loader.go`. Go-side executor in `internal/hooks/NewRound_IdleMobs_schedule.go` steers scheduled mobs via existing `pathto` plumbing, swaps per-segment `IdleCommands`, falls back to home after `ScheduleMaxPathRetries` failures. Spawn override in `newMobByIdInternal` places scheduled mobs at the current segment's target room. `TickMobCraft` respects per-segment `activity: craft` so Blacksmith Kerra only forges at the forge. New `mob_at_target_room` btree condition. New `mob schedule <instId>` admin inspector. Three Thornwall pilots: Blacksmith Kerra, Tavern Keeper Marek, Temple Priest Olen, each with a new above-shop home room. Spec at `docs/superpowers/specs/completed/2026-05-25-mob-aliveness-3.2-npc-schedules-design.md`, plan at `docs/superpowers/plans/completed/2026-05-25-mob-aliveness-3.2-npc-schedules.md`.
 
 ### 3.3 Sleeping / wake states
-**Status:** Not started • **Size:** S
+**Status:** Done (2026-05-25) • **Size:** M
 
 - **Goal:** NPCs visibly asleep at night; wakeable by sound, light, attack.
 - **In:** Sleeping condition, room descriptions for sleeping NPCs, wake triggers, combat-on-sleeper consequences (more crime severity).
 - **Out:** —
 - **Depends on:** 3.1
 - **Why:** A sleeping NPC is a tiny piece of fiction that compounds well — assassinations, theft, pickpocket-while-sleeping.
+- **Shipped:** Sleeping is a queryable state-flag (`buffs.Sleeping`) applied via
+  `actions.Sleep(actor)` from both player `sleep` and mob `sleep` commands, and
+  from the schedule executor's `activity: sleeping` segment hook. Sleepers gain
+  5× HP/SP/CP regen (`SleepRegenMultiplier`, default 5.0). Attackers in the first
+  round against a sleeper auto-crit via a start-of-round victim snapshot +
+  `forceCrit bool` on the damage pipeline. Wake triggers: damage (new
+  `cancel-on-damage` flag), failed steal, shout-in-room, light source on room
+  entry (via the existing `EmitsLight` buff flag), `stand` command. Schedule
+  executor honors a grace cooldown (`ScheduleWakeGraceRounds`, default 50) after
+  a forced wake. Room render appends `(asleep)` to occupant names. Three
+  Thornwall pilots retrofit. Spec at
+  `docs/superpowers/specs/completed/2026-05-25-mob-aliveness-3.3-sleeping-wake-states-design.md`,
+  plan at
+  `docs/superpowers/plans/completed/2026-05-25-mob-aliveness-3.3-sleeping-wake-states.md`.
+- **3.3 leaves available for 5.1:** Town Justice may wish to scale faction
+  response by victim state at crime time. The data is queryable live
+  (`victim.Character.HasBuffFlag(buffs.Sleeping)`) at the moment
+  `crimes.Record(...)` is called; no Crime-schema change is required up front.
 
 ### 3.4 Waypoint patrols
-**Status:** Not started • **Size:** M
+**Status:** Done • **Size:** M
 
 - **Goal:** Looped multi-room routes with optional dwell times.
 - **In:** Patrol route YAML, executor, interrupt-handling (combat aborts patrol; resume after).
 - **Out:** Dynamic re-routing when paths blocked (start with hard-failure on blocked path).
 - **Depends on:** —
 - **Why:** Guards that actually walk a beat. Town justice (5.1) consumes this.
+- **Shipped:** Patrol primitive — multi-room routes with strict +
+  yo-yo loop shapes, per-waypoint dwell, combat interrupt with
+  resume-to-same-waypoint, retry-then-pathto-home fallback (reuses
+  chunk 3.2 `ScheduleMaxPathRetries`). Two integration paths:
+  standalone (`patrol_id` on mob) and composed (`activity: patrol`
+  segment via chunk 3.2 schedules). New
+  `internal/mobs/patrol.go` + `patrol_loader.go`, new
+  `internal/hooks/NewRound_IdleMobs_patrol.go`. Schedule schema
+  gains `target_room`-optional for patrol segments and a
+  `patrol_id` field; spawn override falls back to the patrol's
+  first waypoint when a patrol segment has no explicit target.
+  Admin `mob schedule <instId>` inspector extended to render
+  patrol state. Pilot: Thornwall city guard (mob 106) with a
+  6-22 patrol of the market beat + 22-6 sleep at a new guard
+  barracks room (5104, above existing constabulary 473). Spec
+  at `docs/superpowers/specs/completed/2026-05-25-mob-aliveness-3.4-waypoint-patrols-design.md`,
+  plan at
+  `docs/superpowers/plans/completed/2026-05-25-mob-aliveness-3.4-waypoint-patrols.md`.
 
 ### 3.5 Maintenance routines
-**Status:** Not started • **Size:** M
+**Status:** Deferred • **Size:** M
 
 - **Goal:** Smith repairs gear, farmer tends crops, librarian shelves books — flavor activity tied to NPC role.
 - **In:** Activity YAML, emote-driven flavor, optional integration with crafting (smith actually crafts inventory restock).
 - **Out:** Activities producing real economic output (crafting restock can be a follow-on chunk).
 - **Depends on:** 3.2 (maintenance often slots inside schedules)
 - **Why:** Walking into the smithy and seeing the smith working tells the player the world isn't waiting on them.
+- **Builds on:** Chunk 3.2's per-segment `activity:` field. New maintenance verbs (`tend_crops`, `shelve_books`, etc.) will be dispatched when a segment declares them.
+- **Deferred (2026-05-25):** Chunk 3.2's per-segment `idlecommands:` field already delivers the canonical "see the smith working" experience for Kerra (and will for future similarly-authored NPCs). The reusable activity-library angle has no consumers yet — we only have one smith in one zone. Re-evaluate this chunk when content authoring hits real duplication pain across multiple smiths/farmers/librarians in multiple zones. The concrete "crafter ticks but item doesn't appear in shop list" complaint that surfaced during this triage is being tracked separately (see follow-up bug fix).
 
 ### 3.6 NPC↔NPC idle conversation
-**Status:** Not started • **Size:** M
+**Status:** Done • **Size:** M
 
 - **Goal:** NPCs occasionally talk to each other (canned exchanges, mood-aware).
 - **In:** Pair-conversation YAML (paired with 1.6 relationships), trigger logic (proximity + cooldown), mood-aware variants.
 - **Out:** Player-overheard "spoken about you" gossip (later, ties to 1.4 knowledge spread).
 - **Depends on:** 1.6
 - **Why:** A guard and a baker chatting in the square is the highest-bang-for-buck aliveness signal.
+- **Shipped:** New `internal/conversations/` package (replaces
+  legacy upstream system retired in T1.5) with type pools
+  (`types/<relationship-type>.yaml`) and per-pair overrides
+  (`pairs/<lower>_<higher>.yaml`). Loader with filename↔id
+  check, speaker validation, mob existence + relationship edge
+  cross-check via DI. Picker draws uniformly from
+  `type_pool ∪ matching_subtype ∪ pair_override`. State machine
+  runs in `NewRound_IdleMobs`: per-tick trigger
+  (`ConversationBaseChancePct`, default 1%) + player-arrival
+  boost (`ConversationPlayerArrivalBoostPct`, default 25%) in
+  `go.go`. Line-per-round pacing via shared
+  `conversation_line_idx` MiscData; deterministic speaker
+  alternation. Graceful abort on partner moves / sleeps /
+  combats / player dialogue. Cooldown
+  (`ConversationCooldownRounds`, default 50) on both NPCs
+  after completion. `MobConversant` interface +
+  `internal/conversationadapter/` keep the import graph
+  acyclic. Pilot: Thornwall tavern back-room — Dal + Fen +
+  Gobb + Wrex friend edges (6 pairs) + optional rival edge
+  Fen↔Wrex + friend pool (11 exchanges + 2 fond-subtype) +
+  optional rival pool (5 exchanges) + optional Dal↔Wrex pair
+  override (3 exchanges, role-agnostic). NPC↔NPC opinion store
+  and "spoken about you" gossip explicitly deferred (see
+  spec). Spec at
+  `docs/superpowers/specs/completed/2026-05-25-mob-aliveness-3.6-npc-conversations-design.md`,
+  plan at
+  `docs/superpowers/plans/completed/2026-05-25-mob-aliveness-3.6-npc-conversations.md`.
+
+### 3.7 Inter-zone patrols + caravan unification
+**Status:** Not started • **Size:** L
+
+- **Goal:** Extend chunk 3.4 patrols to cross zone boundaries, and migrate caravan movement code onto the shared patrol layer (caravans become a specialized yo-yo patrol with cargo + vendor semantics layered on top).
+- **In:** Cross-zone waypoint references in patrol YAML, patrol-executor handling of zone-boundary pathing, caravan movement code refactored to call the patrol executor (caravan-specific concerns — cargo, vendor visits, gold exchange — stay in `internal/caravan/`).
+- **Out:** Multi-stop caravan optimization (pathfinding "best order" of stops), seasonal route variation.
+- **Depends on:** 3.4 (patrols)
+- **Why:** Caravans currently maintain their own movement logic, parallel to mob wandering and (now) patrols. Unifying onto patrol primitives reduces drift, lets caravan routes be authored as standard patrol files, and surfaces inter-zone routing as a first-class engine feature for both caravans and future zone-spanning NPCs (traveling merchants, pilgrim NPCs, etc.). Decision deferred from chunk 3.4 to focus that chunk on the single-zone patrol primitive.
+- **3.4 satisfied:** Single-zone patrol primitive shipped in
+  3.4. 3.7 lifts the single-zone restriction and migrates
+  caravan movement onto the shared layer.
 
 ---
 

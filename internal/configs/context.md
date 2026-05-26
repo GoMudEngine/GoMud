@@ -537,3 +537,14 @@ value of 1.0 — adjusted at validation time in
 
 See `internal/combat/context.md` "Submission System (chunk 4d)" for the
 full resolution flow and policy matrix.
+
+### NPC Schedules (chunk 3.2)
+
+| Knob | Default | Effect |
+|------|---------|--------|
+| `ScheduleMaxPathRetries` | 20 | After N consecutive failed `pathto` attempts, a scheduled mob falls back to `pathto home`. Chunk 3.2. Also governs patrol path retries (chunk 3.4 reuses the same threshold; no separate knob). |
+| `SleepRegenMultiplier` | 5.0 | HP/SP/CP per-round regen multiplier when bearer has the Sleeping buff. Chunk 3.3. |
+| `ScheduleWakeGraceRounds` | 50 | After a forced wake during a sleep segment, suppress re-sleep for N rounds (~200 sec real-time at default tick rate). Chunk 3.3. |
+| `ConversationBaseChancePct` | 1.0 | Per-tick % chance a fully-idle NPC attempts to start an idle conversation. Chunk 3.6. |
+| `ConversationPlayerArrivalBoostPct` | 25 | On player arrival in a room with relateable, idle NPCs, % chance to start one. Chunk 3.6. |
+| `ConversationCooldownRounds` | 50 | Cooldown applied to both NPCs after a conversation completes. Chunk 3.6. |

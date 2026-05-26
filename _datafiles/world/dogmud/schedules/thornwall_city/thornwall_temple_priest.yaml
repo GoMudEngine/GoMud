@@ -1,0 +1,48 @@
+id: thornwall_temple_priest
+description: "Temple Priest Olen's daily routine: dawn and afternoon prayers, an evening at the tavern, sleep in the chamber."
+segments:
+  - start: 4
+    end: 6
+    target_room: 5103
+    activity: ""
+    idlecommands:
+      - emote rises in the dark and washes at the basin.
+      - emote whispers a private prayer.
+  - start: 6
+    end: 10
+    target_room: 468
+    activity: ""
+    idlecommands:
+      - emote intones the dawn prayer.
+      - emote bows toward the altar.
+      - say May the morning light keep you.
+  - start: 10
+    end: 12
+    target_room: 5103
+    activity: ""
+    idlecommands:
+      - emote pages through his breviary.
+      - emote rests with eyes closed.
+  - start: 12
+    end: 18
+    target_room: 468
+    activity: ""
+    idlecommands:
+      - emote tends to a guttering candle.
+      - emote speaks a quiet blessing over a passerby.
+      - say Peace be with you.
+  - start: 18
+    end: 22
+    target_room: 472
+    activity: ""
+    idlecommands:
+      - emote sips a thin cup of wine.
+      - say Even priests get thirsty.
+      - emote nods quietly to those around him.
+  - start: 22
+    end: 4
+    target_room: 5103
+    activity: sleeping
+    idlecommands:
+      - emote sleeps with hands folded over the breviary.
+      - emote breathes slow and even.

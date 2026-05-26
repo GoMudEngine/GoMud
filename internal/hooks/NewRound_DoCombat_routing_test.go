@@ -261,6 +261,7 @@ func TestHandleCombatRound_AllQuadrantsRouteCorrectly(t *testing.T) {
 				&cfg,
 				&affPlayers,
 				&affMobs,
+				false, // forceCrit: defender not sleeping
 			)
 
 			// Drain the events queue so listeners see everything emitted

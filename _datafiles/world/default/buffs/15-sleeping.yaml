@@ -2,7 +2,9 @@ buffid: 15
 name: Sleeping
 description: You are getting much needed rest.
 triggerrate: 1 round
-triggercount: 50
+triggercount: 100000
 flags:
+- sleeping
 - cancel-on-action
 - cancel-on-combat
+- cancel-on-damage

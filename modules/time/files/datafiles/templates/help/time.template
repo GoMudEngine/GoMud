@@ -6,5 +6,8 @@ In-game time may pass faster (or slower) than real world time, so checking the t
 
 Day and Night fall at specific times of day.
 
+Many townspeople follow daily routines -- they work, eat, drink,
+and sleep at different times of day.
+
 You can also add the time of day to your in-game prompt. See <ansi fg="command">help prompt</ansi>
 

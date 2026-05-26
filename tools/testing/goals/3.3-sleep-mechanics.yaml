@@ -1,0 +1,49 @@
+description: "Exercise chunk 3.3 sleep mechanics: player sleep + regen, sleeper
+  crit, NPC sleep cycle, wake triggers."
+
+goals:
+  - "Sleep as the test character via the `sleep` command; confirm the room emote
+    'lies down to sleep' fires."
+  - "Wait 5-10 rounds. Compare HP/SP/CP regen to baseline — expect roughly 5x
+    normal rate (visible via status display)."
+  - "Take any action (move, look, attack); confirm Sleeping cancels (existing
+    cancel-on-action flag)."
+  - "Sleep again. Have an admin spawn a hostile mob or attack a sleeping NPC.
+    Confirm the first round of attacks against the sleeping target crits."
+  - "Use `time set 23` (if available) or wait real-time to game-hour 22+. Look
+    at Blacksmith Kerra in her loft (room 5101). Confirm the `(asleep)` suffix
+    in the 'Also here:' line."
+  - "Successfully pickpocket Kerra at 23 — Kerra stays asleep."
+  - "Fail a pickpocket on Kerra at 23 — Kerra wakes (cancel-on-failed-steal)."
+  - "Wait ScheduleWakeGraceRounds (~50 rounds). Confirm Kerra re-sleeps
+    automatically."
+  - "Enter Marek's quarters at 23 carrying a lit torch / EmitsLight buff.
+    Confirm Marek wakes."
+  - "Use `stand` while sleeping. Confirm Sleeping cancels."
+
+pass_criteria:
+  - "sleep command applies the Sleeping buff and 5x regen visibly accelerates
+    pools"
+  - "first-round attacks against sleepers crit"
+  - "Scheduled NPC sleep segments render with (asleep) suffix"
+  - "All wake triggers function (damage, failed steal, shout, light, stand)"
+  - "Grace cooldown prevents immediate re-sleep after a wake event"
+
+notes:
+  - "Server runs locally at localhost:55555. Freshly booted with chunk 3.3
+    changes."
+  - "Use `set charset` ASCII setting per the test-mud SOP."
+  - "If admin time-set is not available, observe Kerra at a natural 22-6 hour
+    by waiting real-time."
+  - "If the test character isn't admin-flagged, skip the admin-spawn steps and
+    rely on natural mob encounters."
+  - "Kerra's expected sleep window: loft (room 5101) hours 22-6. She is the
+    primary pilot NPC for 3.2/3.3."
+  - "Smoketester from 3.2 found a double-spawn bug in room 470 (forge) — be
+    aware multiple Kerras may be visible; the sleeping one is the scheduled
+    instance (room 5101 at sleep hours)."
+  - "Game day length: configs.GetTimingConfig().RoundsPerDay (default 20) x
+    ~4s/round ~= 80 seconds per game-day. Verify with `time` command."
+  - "Report each goal as PASS / FAIL / BLOCKED with timestamps and verbatim
+    log excerpts where relevant."
+  - "Save report to tools/testing/reports/3.3-sleep-mechanics-<timestamp>.md."

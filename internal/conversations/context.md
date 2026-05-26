@@ -1,288 +1,235 @@
-# Conversations System Context
+# DOGMud NPC↔NPC Conversation System Context
 
 ## Overview
 
-The `internal/conversations` package provides a dynamic NPC conversation system for the GoMud game engine. It manages scripted dialogues between NPCs, supports conversation selection based on participant names, tracks conversation usage for variety, and provides turn-based conversation execution with automatic cleanup.
+The conversations package provides relationship-keyed idle dialogue between
+NPCs. Two mobs with an active relationship edge can randomly exchange 2-4
+line conversations drawn from a library organized by relationship type
+(friend, rival, professional, etc.). Pair overrides allow per-pair-specific
+scripting.
 
-## Key Components
+The system decouples from `internal/mobs/` via a `MobConversant` interface
+to keep the import graph acyclic; `internal/conversationadapter` is the
+bridge.
 
-### Core Files
-- **conversations.go**: Complete conversation management and execution system
-- **conversation_datafile.go**: Data structure definitions for conversation files
+## Public API Surface
 
-### Key Structures
+### Main Entry Points
 
-#### Conversation
 ```go
-type Conversation struct {
-    Id             int
-    MobInstanceId1 int
-    MobInstanceId2 int
-    StartRound     uint64
-    LastRound      uint64
-    Position       int
-    ActionList     [][]string
+// Load all type pools and pair overrides from YAML
+func Load()
+
+// Set up DI hooks for world validation (mob existence, relationship edge lookup)
+func SetConversationWorldValidator(mobExists func(int) bool,
+                                   relationshipBetween func(int, int) *relationships.Edge)
+
+// Attempt to start a conversation between initiator and one randomly-chosen
+// partner from the room's fully-idle, relateable mobs
+func TryStart(initiator MobConversant, roomMobIds []int) bool
+
+// Explicit pair entry point; returns false if gating fails
+func TryStartBetween(a, b MobConversant) bool
+
+// Per-round driver; increments line index and fires mob commands
+func TickConversation(self MobConversant, partnerId int) bool
+
+// Finalize a conversation (clear state, apply cooldown)
+func FinishConversation(mobA, mobB MobConversant)
+
+// Abort (no cooldown applied)
+func AbortConversation(mobA, mobB MobConversant)
+```
+
+### Read Accessors
+
+```go
+// Fetch type pool by relationship type (e.g., "friend")
+func GetPool(t relationships.Type) *Pool
+
+// Fetch pair-specific override if present; nil if not found
+func GetPairOverride(mobA, mobB int) *PairOverride
+
+// Query conversation state (prefer MobConversant methods)
+func IsInConversationChar(c *characters.Character) bool
+func IsOnCooldownChar(c *characters.Character) bool
+```
+
+### MobConversant Interface
+
+Any type with this shape can participate in conversations. Decouples the
+conversations package from mobs:
+
+```go
+type MobConversant interface {
+    GetId() int                              // Instance ID
+    GetRoom() int                            // Current room ID
+    GetCharacter() *characters.Character     // Reference to character
+    Command(cmd string)                      // Execute a command
 }
 ```
-Runtime conversation instance containing:
-- **Participant IDs**: Two mob instance IDs for conversation participants
-- **Timing**: Start and last activity rounds for lifecycle management
-- **Progress**: Current position in conversation action sequence
-- **Actions**: List of command sequences to execute
 
-#### ConversationData
-```go
-type ConversationData struct {
-    Supported    map[string][]string `yaml:"Supported"`
-    Conversation [][]string          `yaml:"Conversation"`
-}
-```
-YAML-loadable conversation definition:
-- **Supported**: Map of initiator names to allowed participant names
-- **Conversation**: Sequence of command lists for conversation execution
+## Internal Flow
 
-### Global State
-- **conversations**: `map[int]*Conversation` - Active conversation instances
-- **conversationCounter**: `map[string]int` - Usage tracking for conversation variety
-- **converseCheckCache**: `map[string]bool` - File existence cache for performance
-- **conversationUniqueId**: Global ID counter for conversation instances
+### Startup: `Load()`
 
-## Core Functions
+1. Walk `_datafiles/world/dogmud/conversations/types/` and load all
+   type-pool YAMLs into a registry map (keyed by relationship type).
+2. Walk `_datafiles/world/dogmud/conversations/pairs/` and load all
+   pair-override YAMLs; store them in a pair map (keyed by sorted
+   `(mobA, mobB)` tuple).
+3. Call validators (panics on filename mismatch, missing edges, etc.).
+4. Log summary: `conversations.Load() loadedCount=<types>/<pairs>`.
 
-### Conversation Initiation
-- **AttemptConversation(initiatorMobId, initiatorInstanceId int, initiatorName string, participantInstanceId int, participantName string, zone string, forceIndex ...int) int**: Main conversation starter
-  - Loads conversation definitions from zone-specific YAML files
-  - Matches participants against supported name combinations
-  - Selects least-used conversation for variety
-  - Creates new conversation instance and returns unique ID
-  - Returns 0 if no suitable conversation found
+### Trigger: `TryStart(initiator, roomMobIds)`
 
-### Conversation Management
-- **IsComplete(conversationId int) bool**: Checks if conversation is finished
-  - Returns true if conversation doesn't exist or has reached end
-  - Automatically destroys completed conversations
-  - Used for conversation lifecycle management
+1. Filter `roomMobIds` to mobs with an active relationship edge to initiator.
+2. Filter to fully-idle mobs (no conversation, no combat, no sleep, off cooldown).
+3. If none found, return false.
+4. Randomize selection or pick first; call `TryStartBetween(initiator, partner)`.
 
-- **Destroy(conversationId int)**: Manually destroys conversation instance
-  - Removes conversation from active conversations map
-  - Used for cleanup and forced conversation termination
+### Picker: `TryStartBetween(a, b)`
 
-### Action Execution
-- **GetNextActions(convId int) (mob1, mob2 int, actions []string)**: Retrieves next conversation actions
-  - Returns participant mob IDs and command list for current turn
-  - Advances conversation position automatically
-  - Prevents duplicate action execution within same round
-  - Returns empty actions if conversation is complete
+1. Guard: both mobs same room, both idle, relationship edge exists, neither on cooldown.
+2. Pick exchange uniformly from the union of:
+   - Type pool for the relationship type (required)
+   - Pair override exchanges (if the override exists for this pair)
+3. If the NPCs' relationship has a subtype, prefer the subtype's exchange
+   pool first; fall back to base `exchanges` if subtype missing.
+4. Cache the selected exchange (copy all lines) into `ActiveExchange` keyed
+   by synthesized exchange ID.
+5. Stamp both mobs' MiscData: `conversation_partner_id`, `conversation_exchange_id`,
+   `conversation_line_idx=0`.
+6. Return true.
 
-### File System Integration
-- **HasConverseFile(mobId int, zone string) bool**: Checks for conversation file existence
-  - Caches file existence checks for performance
-  - Uses zone-specific file organization
-  - Sanitizes zone names for consistent file paths
+### Tick: `TickConversation(self, partnerId)`
 
-### Utility Functions
-- **ZoneNameSanitize(zone string) string**: Normalizes zone names for file paths
-  - Converts spaces to underscores
-  - Converts to lowercase
-  - Ensures consistent file naming
+1. Guard: both mobs still exist, still in same room, still idle.
+2. Read `conversation_line_idx` from MiscData.
+3. Compute the current line: `lines[idx]` from the cached exchange.
+4. Compute the speaker: if `idx % 2 == 0`, speaker is "A"; else "B".
+5. Determine who plays "A": the NPC with the lower ID.
+6. Route the command to the correct NPC: `Command("say <text>")`.
+7. Increment `conversation_line_idx` in both MiscData.
+8. If incremented idx equals `len(lines)`, call `FinishConversation(a, b)`.
+9. Return true if conversation is still active, false if finalized.
 
-## Conversation Features
+### Finalize: `FinishConversation(a, b)`
 
-### Dynamic Selection
-- **Name Matching**: Conversations selected based on participant names
-- **Wildcard Support**: `*` wildcard for universal participant matching
-- **Usage Balancing**: Least-used conversations selected for variety
-- **Forced Selection**: Optional manual conversation index selection
+1. Clear both NPCs' MiscData: conversation keys.
+2. Apply cooldown: stamp `conversation_cooldown_round` on both to
+   `util.GetRoundCount() + ConversationCooldownRounds`.
+3. Unset `IsInConversation` state.
 
-### File Organization
-- **Zone-Based**: Conversations organized by game zones
-- **Mob-Specific**: Each mob can have its own conversation file
-- **YAML Format**: Human-readable conversation definitions
-- **Hierarchical Structure**: `conversations/zone/mobid.yaml` organization
+### Abort: `AbortConversation(a, b)`
 
-### Execution Control
-- **Turn-Based**: Conversations progress one step per game round
-- **Duplicate Prevention**: Prevents multiple actions in same round
-- **Automatic Cleanup**: Inactive conversations automatically removed
-- **Position Tracking**: Maintains current conversation position
+1. Clear both NPCs' MiscData: conversation keys.
+2. Do **not** apply cooldown.
+3. Unset `IsInConversation` state.
 
-### Performance Optimization
-- **File Caching**: Conversation file existence cached for performance
-- **Lazy Loading**: Conversations loaded only when needed
-- **Automatic Cleanup**: Periodic cleanup of stale conversations (2% chance per access)
-- **Memory Management**: Efficient storage and cleanup of conversation data
+## MiscData Keys
+
+Eight MiscData keys are used for state tracking. All keys are string
+constants exported from the package:
+
+| Key | Type | Semantics |
+|-----|------|-----------|
+| `ConversationPartnerId` | int | NPC instance ID of the conversation partner |
+| `ConversationExchangeId` | string | Synthesized ID for the cached exchange (constructed at conversation start) |
+| `ConversationLineIdx` | int | Current line index (0-based); shared with partner; increments each round |
+| `ConversationCooldownRound` | uint64 | Round number at which cooldown expires; `> currentRound` blocks new conversations |
+| `ConversationState` | string | enum-like ("active", "finalizing", "aborted") for edge-case tracing |
+| `ConversationInitiator` | int | Which NPC instance started the conversation (bookkeeping; not load-bearing) |
+| `ConversationStartRound` | uint64 | Round number at conversation start (bookkeeping; log only) |
+| `ConversationLastTickRound` | uint64 | Last round we ticked this conversation (guard against double-tick) |
+
+## Active-Exchange Cache
+
+At conversation start, a shallow copy of the selected `Exchange` is stored
+in an in-memory cache, keyed by a synthesized `exchange_id` (e.g.,
+`"friend-7"` for the 7th exchange in the friend pool). This cache lives
+for the duration of the exchange; when the conversation finishes, the entry
+is deleted.
+
+Cache is accessed by `TickConversation` to fetch the current line without
+re-searching the registry. Cheap operation; small universe (2-4 lines per
+conversation).
+
+## Abort Triggers
+
+Conversation silently aborts (no cooldown) when:
+
+1. **Partner moved room** — partner's `GetRoom()` != initiator's
+2. **Partner sleeps** — partner has Sleeping buff
+3. **Partner enters combat** — partner's `Character.Aggro != nil`
+4. **Partner starts player dialogue** — (future: hooks from dialogue engine)
+5. **Line out of range** — `conversation_line_idx >= len(lines)` (shouldn't happen; guard)
+6. **Partner disappeared** — partner lookup returns nil (mob despawned)
+
+Detection happens in `TickConversation` at round start. On abort, call
+`AbortConversation`, log a one-line trace, and let the initiator resume
+normal idle ticking.
+
+## Config Knobs
+
+All live under `Balance` in `_datafiles/config.yaml`:
+
+| Knob | Default | Purpose |
+|------|---------|---------|
+| `ConversationBaseChancePct` | 1.0 | Per-tick % chance a fully-idle NPC attempts to start a conversation. |
+| `ConversationPlayerArrivalBoostPct` | 25 | When a player enters a room with relateable, idle NPCs, % chance to start one. |
+| `ConversationCooldownRounds` | 50 | Cooldown (rounds) applied to both NPCs after a conversation completes. |
+
+## Hook Integration Points
+
+**Trigger wiring:** `internal/hooks/NewRound_IdleMobs.go` calls
+`conversations.TryStart(mob, roomMobIds)` after the patrol branch and before
+the path-walker. If TryStart returns true, skip normal idle command dispatch
+for this round (NPC is busy talking).
+
+**Tick wiring:** Same hook calls `conversations.TickConversation(mob, partnerId)`
+each round while the mob is in a conversation, returning false when the
+exchange finishes.
+
+**Player-arrival boost:** `internal/usercommands/go.go` calls
+`conversations.TryStart(initiator, room.GetMobIds())` with elevated %
+chance (the `ConversationPlayerArrivalBoostPct` knob is read and applied
+as a per-attempt override).
+
+**Relationship edge validation:** At load time, `SetConversationWorldValidator`
+is called from `main.go` with DI callbacks so the package can validate that
+all mobs and edges exist without importing `mobs` or `relationships`.
 
 ## Dependencies
 
-### Internal Dependencies
-- `internal/configs`: For accessing configuration file paths
-- `internal/mudlog`: For logging conversation errors and operations
-- `internal/util`: For utility functions, file paths, and random number generation
+- `internal/relationships` — relationship type constants, Edge lookup
+- `internal/characters` — Character interface (buff checks)
+- `internal/util` — `GetRoundCount()`, logging
+- `internal/fileloader` — YAML parsing (via loader.go)
+- `sync` — read-write lock for registry
 
-### External Dependencies
-- `gopkg.in/yaml.v2`: For YAML conversation file parsing
-- Standard library: `fmt`, `os`, `strconv`, `strings`
+## Testing Hooks
 
-## File Format
+Two test-registration functions:
 
-### Conversation YAML Structure
-```yaml
-# Example conversation file: conversations/frostfang/123.yaml
-- Supported:
-    "guard": ["player", "visitor"]
-    "*": ["*"]  # Universal conversation
-  Conversation:
-    - ["#1", "say Hello there, traveler!"]
-    - ["#2", "say Greetings, guard."]
-    - ["#1", "say Welcome to our town."]
-    - ["#2", "emote nods politely"]
-
-- Supported:
-    "guard": ["merchant"]
-  Conversation:
-    - ["#1", "say Any goods to declare?"]
-    - ["#2", "say Just the usual wares."]
-```
-
-### Command Format
-- **Participant Prefix**: `#1` (initiator) or `#2` (participant)
-- **Command Structure**: `["#1", "command arguments"]`
-- **Action Types**: Any valid mob command (say, emote, look, etc.)
-
-## Usage Patterns
-
-### Basic Conversation Initiation
 ```go
-// Attempt to start conversation between NPCs
-conversationId := conversations.AttemptConversation(
-    guardMobId,           // Initiator mob ID
-    guardInstanceId,      // Initiator instance ID
-    "guard",              // Initiator name
-    visitorInstanceId,    // Participant instance ID
-    "visitor",            // Participant name
-    "frostfang",          // Zone name
-)
+// Register a test pool (bypasses file I/O)
+func RegisterPoolForTest(t relationships.Type, pool *Pool)
 
-if conversationId > 0 {
-    // Conversation successfully started
-}
+// Unregister
+func UnregisterPoolForTest(t relationships.Type)
 ```
 
-### Conversation Execution Loop
-```go
-// In game loop, process active conversations
-for conversationId := range activeConversations {
-    if conversations.IsComplete(conversationId) {
-        continue // Conversation finished
-    }
-    
-    mob1, mob2, actions := conversations.GetNextActions(conversationId)
-    if len(actions) > 0 {
-        // Execute actions for appropriate mob
-        executeMobActions(mob1, mob2, actions)
-    }
-}
-```
+Use in unit tests to inject mock pools without a full load.
 
-### File Existence Checking
-```go
-// Check if mob has conversation file before attempting
-if conversations.HasConverseFile(mobId, zoneName) {
-    // Mob has conversations available
-    conversationId := conversations.AttemptConversation(...)
-}
-```
+## Future Scope
 
-## Integration Points
+**Opinion store:** NPC↔NPC relationships tracked via a persistent store
+(what NPC A thinks of NPC B, including spoken-about-you gossip). Deferred
+beyond chunk 3.6.
 
-### NPC AI System
-- **Behavior Triggers**: Conversations triggered by NPC AI decisions
-- **Social Interactions**: NPCs can initiate conversations with players or other NPCs
-- **Contextual Responses**: Conversations based on game state and relationships
-- **Dynamic Storytelling**: NPCs tell stories through scripted conversations
+**Conversation chains:** Multi-exchange sequences triggered by ambient
+conditions (e.g., a thief overhears merchant complaints). Deferred.
 
-### Event System
-- **Conversation Events**: Events triggered by conversation start/end
-- **Action Integration**: Conversation actions integrate with mob command system
-- **State Changes**: Conversations can trigger game state changes
-- **Quest Integration**: Conversations can advance quest objectives
-
-### Zone Management
-- **Zone-Specific Content**: Conversations tailored to specific game areas
-- **Cultural Context**: Zone-appropriate dialogue and interactions
-- **Immersion**: Rich, contextual NPC interactions enhance world building
-- **Scalable Content**: Easy addition of new conversations per zone
-
-## Performance Considerations
-
-### Caching Strategy
-- **File Existence**: Cache file existence checks to reduce filesystem access
-- **Conversation Loading**: Load conversations only when needed
-- **Memory Cleanup**: Automatic cleanup of inactive conversations
-- **Usage Tracking**: Efficient tracking of conversation usage patterns
-
-### Memory Management
-- **Lightweight Storage**: Minimal memory footprint per active conversation
-- **Automatic Cleanup**: Periodic removal of stale conversations
-- **Efficient Indexing**: Fast lookup of active conversations by ID
-- **Resource Limits**: Implicit limits through automatic cleanup
-
-### File System Optimization
-- **Organized Structure**: Hierarchical file organization for efficient access
-- **Lazy Loading**: Conversations loaded only when participants match
-- **Error Handling**: Graceful handling of missing or malformed files
-- **Path Sanitization**: Consistent file path generation
-
-## Future Enhancements
-
-### Advanced Features
-- **Branching Conversations**: Multiple conversation paths based on conditions
-- **Dynamic Content**: Conversations that change based on game state
-- **Emotional States**: NPC mood affecting conversation selection
-- **Relationship Tracking**: Conversation history affecting future interactions
-
-### Enhanced Selection
-- **Weighted Selection**: Probability-based conversation selection
-- **Conditional Conversations**: Conversations requiring specific conditions
-- **Time-Based Conversations**: Conversations available at certain times
-- **Reputation-Based**: Conversations based on player reputation
-
-### Content Management
-- **Conversation Editor**: Visual tool for creating conversations
-- **Validation Tools**: Tools for validating conversation syntax
-- **Import/Export**: Tools for sharing conversations between servers
-- **Version Control**: Track changes to conversation content
-
-### Performance Improvements
-- **Preloading**: Preload frequently used conversations
-- **Compression**: Compressed storage for large conversation sets
-- **Database Integration**: Optional database storage for conversations
-- **Streaming**: Stream large conversations for memory efficiency
-
-## Security and Validation
-
-### Input Validation
-- **Name Sanitization**: Ensure participant names are properly sanitized
-- **Command Validation**: Validate conversation commands for safety
-- **Path Security**: Prevent path traversal attacks through zone names
-- **Resource Limits**: Prevent resource exhaustion through conversation abuse
-
-### Content Safety
-- **Command Filtering**: Filter dangerous or inappropriate commands
-- **Content Validation**: Validate conversation content for appropriateness
-- **Error Handling**: Safe handling of malformed conversation files
-- **Access Control**: Ensure only authorized conversations are accessible
-
-## Administrative Features
-
-### Monitoring and Analytics
-- **Usage Statistics**: Track conversation usage patterns
-- **Performance Metrics**: Monitor conversation system performance
-- **Error Tracking**: Log and track conversation-related errors
-- **Content Analysis**: Analyze conversation effectiveness and popularity
-
-### Content Management
-- **Dynamic Loading**: Hot-reload conversations without server restart
-- **Content Validation**: Validate conversation files before deployment
-- **Backup and Recovery**: Backup and restore conversation content
-- **Version Management**: Track conversation content versions
+**Dynamic topics:** Conversations referencing world events or quest state.
+Deferred.

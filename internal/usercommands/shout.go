@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/awareness"
@@ -79,6 +80,28 @@ func Shout(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	selfMsg := fmt.Sprintf(`You shout, "<ansi fg="yellow">%s</ansi>"`, rest)
 	user.SendText(messaging.CategoryShout, util.SplitStringNL(selfMsg, 80))
+
+	// Chunk 3.3: shout wakes sleepers in the same room. Same-room only —
+	// adjacent-room sound propagation is out of scope.
+	for _, otherUserId := range room.GetPlayers() {
+		if otherUserId == user.UserId {
+			continue
+		}
+		if other := users.GetByUserId(otherUserId); other != nil {
+			if other.Character.HasBuffFlag(buffs.Sleeping) {
+				other.Character.CancelBuffsWithFlag(buffs.Sleeping)
+				mobs.OnSleeperWoken(other.Character)
+			}
+		}
+	}
+	for _, mobInstanceId := range room.GetMobs() {
+		if m := mobs.GetInstance(mobInstanceId); m != nil {
+			if m.Character.HasBuffFlag(buffs.Sleeping) {
+				m.Character.CancelBuffsWithFlag(buffs.Sleeping)
+				mobs.OnSleeperWoken(&m.Character)
+			}
+		}
+	}
 
 	return true, nil
 }

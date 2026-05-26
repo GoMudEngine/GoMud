@@ -703,6 +703,37 @@ func (r *Room) Prepare(checkAdjacentRooms bool) {
 		// New instances needed? Spawn them
 		if spawnInfo.MobId > 0 {
 
+			// Orphan check: if a live mob already has this room as its home
+			// and matches this MobId, reattach instead of duplicating. This
+			// catches the case where SpawnInfo.InstanceId was reset (e.g.,
+			// the room unloaded while a scheduled mob was visiting another
+			// room and reloaded with a fresh template, since SpawnInfo has
+			// the instance:"skip" tag). Without this check, scheduled NPCs
+			// that systematically leave their home room (chunk 3.2) get
+			// duplicated by every room reload.
+			if existing := mobs.FindLiveInstanceByHomeAndId(r.RoomId, mobs.MobId(spawnInfo.MobId)); existing != nil {
+				spawnInfo.InstanceId = existing.InstanceId
+				spawnInfo.DespawnedRound = 0
+				r.SpawnInfo[idx] = spawnInfo
+				// If the existing mob is currently in this room (e.g., a
+				// non-scheduled mob that never left), make sure r.mobs
+				// reflects that. If she's away (scheduled and en-route),
+				// her current room already lists her — don't dual-list.
+				if existing.Character.RoomId == r.RoomId {
+					alreadyListed := false
+					for _, id := range r.mobs {
+						if id == existing.InstanceId {
+							alreadyListed = true
+							break
+						}
+					}
+					if !alreadyListed {
+						r.mobs = append(r.mobs, existing.InstanceId)
+					}
+				}
+				continue
+			}
+
 			forceStatPool := 0
 
 			if spawnInfo.StatPool > 0 {

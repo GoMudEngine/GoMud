@@ -58,6 +58,7 @@ func handleCombatRound(
 	cfg *configs.Config,
 	affectedPlayerIds *[]int,
 	affectedMobInstanceIds *[]int,
+	forceCrit bool,
 ) {
 	// Phase 0: defender lookup + alive/in-room validation.
 	if !resolveCombatTarget(atk, def, evt.RoundNumber) {
@@ -124,7 +125,10 @@ func handleCombatRound(
 	}
 
 	// Phase 2: roll the attack (with moon-mod wrap).
-	res := rollCombatAttack(atk, def, moonMod)
+	// Chunk 3.3: forceCrit is true when the defender was Sleeping at round
+	// start; passed through to calculateCombat via rollCombatAttack so every
+	// swing against the snapshotted target crits regardless of z-score.
+	res := rollCombatAttack(atk, def, moonMod, forceCrit)
 
 	// Phase 3: damage-layer bonuses (Conviction / Adrenaline / Return / Lifesteal).
 	applyCombatDamageBonuses(atk, def, &res)
@@ -283,19 +287,21 @@ func phase1WaitRound(atk, def actions.Actor) bool {
 
 // rollCombatAttack runs the moon-mod-wrapped attack roll and returns the
 // AttackResult. Polymorphic over combat.Attack{P,M}vs{P,M}.
-func rollCombatAttack(atk, def actions.Actor, moonMod float64) combat.AttackResult {
+// forceCrit is true when the defender was snapshotted as Sleeping at
+// round start (chunk 3.3); all swings this round against them crit.
+func rollCombatAttack(atk, def actions.Actor, moonMod float64, forceCrit bool) combat.AttackResult {
 	restore := applyMoonMods(atk.GetCharacter(), moonMod)
 	defer restore()
 
 	switch {
 	case atk.IsPlayer() && def.IsPlayer():
-		return combat.AttackPlayerVsPlayer(asUser(atk), asUser(def))
+		return combat.AttackPlayerVsPlayer(asUser(atk), asUser(def), forceCrit)
 	case atk.IsPlayer() && !def.IsPlayer():
-		return combat.AttackPlayerVsMob(asUser(atk), asMob(def))
+		return combat.AttackPlayerVsMob(asUser(atk), asMob(def), forceCrit)
 	case !atk.IsPlayer() && def.IsPlayer():
-		return combat.AttackMobVsPlayer(asMob(atk), asUser(def))
+		return combat.AttackMobVsPlayer(asMob(atk), asUser(def), forceCrit)
 	default:
-		return combat.AttackMobVsMob(asMob(atk), asMob(def))
+		return combat.AttackMobVsMob(asMob(atk), asMob(def), forceCrit)
 	}
 }
 
@@ -549,6 +555,13 @@ func applyCombatProgression(atk, def actions.Actor, res *combat.AttackResult) {
 	defChar := def.GetCharacter()
 	atkUid := atk.GetUserId()
 	defUid := def.GetUserId()
+
+	// Cancel sleeping / cancel-on-damage buffs for any defender that took
+	// damage this round (chunk 3.3). Fires before concentration-break so
+	// that a waking defender's buffs are cleaned up in the same phase.
+	if res.DamageToTarget > 0 {
+		cancelDamageBuffs(defChar)
+	}
 
 	// Defender player concentration break (Divergence: player defender only).
 	if def.IsPlayer() {

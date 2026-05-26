@@ -1,0 +1,26 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">sleep</ansi>
+
+The <ansi fg="command">sleep</ansi> command lies you down to rest. You can sleep in
+any room -- there is no safe-room gate.
+
+While asleep, all your pools (health, stamina, conviction)
+regenerate <ansi fg="white-bold">five times faster</ansi> than normal.
+
+But sleep is dangerous: the entire first round of attacks
+against a sleeper <ansi fg="red">automatically critical-hits</ansi>. Sleeping in
+hostile territory is an invitation to assassination.
+
+<ansi fg="yellow">You wake when:</ansi>
+
+  - You take any damage.
+  - Someone fails a steal or pickpocket against you.
+  - Someone shouts in your room.
+  - Someone enters your room carrying a light source.
+  - You use <ansi fg="command">stand</ansi>.
+
+NPCs follow daily routines and may be asleep at night. See
+<ansi fg="command">help time</ansi>.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help stand</ansi>, <ansi fg="command">help combat</ansi>

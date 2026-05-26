@@ -38,3 +38,6 @@ character:
       training: 10
     vitality:
       training: 6
+relationships:
+  - to: 117
+    type: friend

@@ -1,6 +1,0 @@
-- 
-  Supported: # A map of lowercase names of "Initiator" (#1) to array of "Participant" (#2) names allowed to use this conversation. 
-    "captain of the guard": ["guard", "master-at-arms"]
-  Conversation:
-    - ["#1 say Look alive! Frostfang depends on your vigilance!"]
-    - ["#2 emote stands up at attention."]

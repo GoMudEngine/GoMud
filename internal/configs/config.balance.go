@@ -306,6 +306,43 @@ type Balance struct {
 	MobBTreeReactionBase            ConfigFloat `yaml:"MobBTreeReactionBase"`            // Base reaction delay in seconds for behavior tree mobs (default 3.0)
 	MobBTreeReactionPerceptionScale ConfigInt   `yaml:"MobBTreeReactionPerceptionScale"` // Perception divisor for reaction delay (default 100)
 
+	// ── MOB SCHEDULES (chunk 3.2) ────────────────────────────────────────────
+	// ScheduleMaxPathRetries is the number of consecutive failed pathto
+	// attempts a scheduled mob will tolerate before falling back to
+	// `pathto home`. Default 20 (≈80 seconds at the default tick rate).
+	// See chunk 3.2 spec.
+	ScheduleMaxPathRetries ConfigInt `yaml:"ScheduleMaxPathRetries"`
+
+	// ── MOB SLEEP & WAKE (chunk 3.3) ──────────────────────────────────────────
+	// SleepRegenMultiplier multiplies HP/SP/CP per-round percentage regen
+	// when the bearer has the Sleeping flag. Default 5.0 — sleep is the
+	// dominant recovery mechanic. Chunk 3.3.
+	SleepRegenMultiplier ConfigFloat `yaml:"SleepRegenMultiplier"`
+
+	// ScheduleWakeGraceRounds is the cooldown (in rounds) during which a
+	// scheduled mob will not re-sleep after a forced wake. Prevents the
+	// schedule executor from immediately re-applying Sleeping when the
+	// player interacts with a sleeping NPC. Default 50 (~200 sec real-time
+	// at default tick rate). Chunk 3.3.
+	ScheduleWakeGraceRounds ConfigInt `yaml:"ScheduleWakeGraceRounds"`
+
+	// ── NPC-NPC IDLE CONVERSATIONS (chunk 3.6) ───────────────────────────────────
+	// ConversationBaseChancePct is the per-tick percentage chance that a
+	// fully-idle NPC will attempt to start an idle conversation with an
+	// in-room partner that has a relationship edge. Default 1.0 → ~once
+	// per 100 ticks per NPC. Chunk 3.6.
+	ConversationBaseChancePct ConfigFloat `yaml:"ConversationBaseChancePct"`
+
+	// ConversationPlayerArrivalBoostPct is the percentage chance that
+	// a conversation will start when a player arrives in a room with 2+
+	// relateable, idle NPCs. Default 25. Chunk 3.6.
+	ConversationPlayerArrivalBoostPct ConfigInt `yaml:"ConversationPlayerArrivalBoostPct"`
+
+	// ConversationCooldownRounds is the cooldown applied to both NPCs
+	// after a conversation completes, before either can initiate another.
+	// Default 50 (~200 sec real-time). Chunk 3.6.
+	ConversationCooldownRounds ConfigInt `yaml:"ConversationCooldownRounds"`
+
 	// ── PACK SCALING ─────────────────────────────────────────────────────────
 	PackScalingEnabled   ConfigBool `yaml:"PackScalingEnabled"`   // Enable pack survival bonuses (default true)
 	PackSurvivalRounds   ConfigInt  `yaml:"PackSurvivalRounds"`   // Consecutive rounds together before bonus (default 10)

@@ -23,6 +23,30 @@ func (b *Balance) validateMobs() {
 		b.MobBTreeReactionPerceptionScale = 100
 	}
 
+	// ── MOB SCHEDULES ────────────────────────────────────────────────────────
+	if b.ScheduleMaxPathRetries < 1 {
+		b.ScheduleMaxPathRetries = 20
+	}
+
+	// ── MOB SLEEP & WAKE ─────────────────────────────────────────────────────
+	if b.SleepRegenMultiplier <= 0 {
+		b.SleepRegenMultiplier = 5.0
+	}
+	if b.ScheduleWakeGraceRounds < 1 {
+		b.ScheduleWakeGraceRounds = 50
+	}
+
+	// ── NPC-NPC IDLE CONVERSATIONS ───────────────────────────────────────────
+	if b.ConversationBaseChancePct <= 0 {
+		b.ConversationBaseChancePct = 1.0
+	}
+	if b.ConversationPlayerArrivalBoostPct <= 0 {
+		b.ConversationPlayerArrivalBoostPct = 25
+	}
+	if b.ConversationCooldownRounds < 1 {
+		b.ConversationCooldownRounds = 50
+	}
+
 	// ── MOB REGEN ────────────────────────────────────────────────────────────
 	clampPct := func(v *ConfigFloat, def ConfigFloat) {
 		if *v <= 0 {

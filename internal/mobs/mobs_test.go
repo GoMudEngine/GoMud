@@ -612,26 +612,6 @@ func TestDespawns(t *testing.T) {
 	})
 }
 
-// ─── Conversation ──────────────────────────────────────────────────────────
-
-func TestConversation(t *testing.T) {
-	mob := &Mob{InstanceId: 1}
-
-	t.Run("not in conversation initially", func(t *testing.T) {
-		assert.False(t, mob.InConversation())
-	})
-
-	t.Run("set conversation", func(t *testing.T) {
-		mob.SetConversation(5)
-		assert.True(t, mob.InConversation())
-	})
-
-	t.Run("clear conversation", func(t *testing.T) {
-		mob.SetConversation(0)
-		assert.False(t, mob.InConversation())
-	})
-}
-
 // ─── TempData ──────────────────────────────────────────────────────────────
 
 func TestTempData(t *testing.T) {

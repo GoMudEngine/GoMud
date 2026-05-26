@@ -1,0 +1,17 @@
+roomid: 5102
+zone: Thornwall City
+title: Marek's Quarters Above the Tavern
+description: A snug room above the common floor. A neatly made bed, a small
+  table with a half-finished ledger, and a window looking out over the alley.
+  Muffled voices and the clatter of crockery drift up through the boards. Marek
+  keeps his livelihood close enough to hear, even when he sleeps.
+biome: city
+mapsymbol: h
+maplegend: Home
+coord:
+  x: 2
+  y: -2
+  z: 1
+exits:
+  down:
+    roomid: 472

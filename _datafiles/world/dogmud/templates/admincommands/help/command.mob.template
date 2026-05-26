@@ -22,3 +22,14 @@ die in a few rounds.
     <ansi fg="command">mob heal 12</ansi>    Heal a specific mob instance.
     <ansi fg="command">mob heal</ansi>       (no id) Heal every mob in the current room.
 
+<ansi fg="command">mob schedule [instId]</ansi>
+Inspect a scheduled mob's current segment, target room, next
+transition, and path queue. Useful for debugging schedule drift,
+spawn-override placement, or pathto failures.
+    <ansi fg="command">mob schedule 142</ansi>    Inspect mob instance 142.
+For mobs with a patrol (standalone via patrol_id on the mob or via
+an active schedule segment with activity: patrol), the inspector
+also shows the patrol's current waypoint, loop_shape, direction
+(for yo-yo loops), dwell remaining, and path retry count.
+
+

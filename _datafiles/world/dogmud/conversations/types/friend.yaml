@@ -1,0 +1,104 @@
+id: friend
+description: |
+  Generic friend banter — small talk, gossip, weather, drink,
+  complaints. Suitable for old men in a tavern back room or
+  any two NPCs in friendly relation.
+
+exchanges:
+  - lines:
+      - speaker: A
+        text: "How's the brew today?"
+      - speaker: B
+        text: "Same as ever, thank the gods."
+      - speaker: A
+        text: "Could be worse."
+  - lines:
+      - speaker: A
+        text: "Bones aching with the weather?"
+      - speaker: B
+        text: "Aye. Cold mornings tell their tale."
+      - speaker: A
+        text: "Hot tea fixes more than the apothecary admits."
+      - speaker: B
+        text: "Truer words."
+  - lines:
+      - speaker: A
+        text: "Heard about the wagon out by the gate?"
+      - speaker: B
+        text: "Half the wheel gone, they say."
+      - speaker: A
+        text: "That's the third one this season."
+  - lines:
+      - speaker: A
+        text: "You look tired."
+      - speaker: B
+        text: "Slept poorly. Old men and old beds."
+      - speaker: A
+        text: "Old beds you can fix."
+  - lines:
+      - speaker: A
+        text: "Another?"
+      - speaker: B
+        text: "Aye, but small. The boy's waiting on me."
+  - lines:
+      - speaker: A
+        text: "The river's running low."
+      - speaker: B
+        text: "Dry summer coming, mark me."
+      - speaker: A
+        text: "Hope you're wrong."
+      - speaker: B
+        text: "I usually am."
+  - lines:
+      - speaker: A
+        text: "What's that you've got there?"
+      - speaker: B
+        text: "Just a letter. Nothing important."
+      - speaker: A
+        text: "If you say so."
+  - lines:
+      - speaker: A
+        text: "Saw the priest at the temple this morning."
+      - speaker: B
+        text: "Out so early? On what business?"
+      - speaker: A
+        text: "Didn't ask. Wasn't mine to ask."
+  - lines:
+      - speaker: A
+        text: "My back's at me again."
+      - speaker: B
+        text: "Sit down, then. Drink and complain like the rest of us."
+  - lines:
+      - speaker: A
+        text: "Quiet today."
+      - speaker: B
+        text: "Quiet's good. Loud means trouble."
+      - speaker: A
+        text: "Loud means custom, too."
+      - speaker: B
+        text: "Hmph. Same coin, different side."
+  - lines:
+      - speaker: A
+        text: "You're up early."
+      - speaker: B
+        text: "Couldn't sleep. The dreams."
+      - speaker: A
+        text: "Same ones?"
+      - speaker: B
+        text: "Same ones."
+
+subtypes:
+  fond:
+    exchanges:
+      - lines:
+          - speaker: A
+            text: "Always good to share a quiet hour with you."
+          - speaker: B
+            text: "Same, friend. Same."
+      - lines:
+          - speaker: A
+            text: "What would I do without you?"
+          - speaker: B
+            text: "Drink alone, like a sad old fool."
+          - speaker: A
+            text: "Ha."

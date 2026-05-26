@@ -137,3 +137,16 @@ func getMiscDataInt(char *characters.Character, key string) int {
 	}
 	return 0
 }
+
+// getMiscDataString retrieves a string stored in MiscData; returns "" for
+// unset keys or non-string values.
+func getMiscDataString(char *characters.Character, key string) string {
+	v := char.GetMiscData(key)
+	if v == nil {
+		return ""
+	}
+	if s, ok := v.(string); ok {
+		return s
+	}
+	return ""
+}

@@ -3,6 +3,7 @@ package mobs
 import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/itemvalue"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -203,6 +204,18 @@ func TickMobCraft(mob *Mob) *CraftResult {
 		return nil
 	}
 
+	// Chunk 3.2: schedule activity gate. If the mob has a schedule, crafting
+	// only fires when the current segment has activity: craft. Mobs without
+	// a schedule_id are unaffected.
+	if mob.ScheduleId != "" {
+		if s := GetSchedule(mob.ScheduleId); s != nil {
+			seg := s.CurrentSegment(gametime.GetDate().Hour24)
+			if seg == nil || seg.Activity != "craft" {
+				return nil
+			}
+		}
+	}
+
 	roundCount := util.GetRoundCount()
 	// Integer division: RoundsPerDay is typically not divisible by 24
 	// (e.g., 900/24=37, truncating from 37.5). The sub-round-per-hour
@@ -380,6 +393,17 @@ func pickSelfGearRecipe(mob *Mob, recipeIds []string, shopInv *shops.ShopInvento
 		profile := itemvalue.ProfileFor(mob.Archetype, mob.BehaviorArchetype)
 		candidate := items.New(recipe.Output.ItemId)
 		if !itemvalue.IsUpgrade(&mob.Character, profile, candidate) {
+			continue
+		}
+
+		// Skip if shop output is already at MaxStock. Without this, mobs
+		// with self-gear-able recipes spam-craft forever — the 2026-05-06
+		// routing fix sends crafted self-gear to the shop instead of the
+		// mob's body, so IsUpgrade keeps returning true (the mob never
+		// actually equips). Stock caps silently in AddStockAtRound; the
+		// craft message still fires, ingredients are still consumed, but
+		// nothing visible appears. Mirrors EvaluateCraftOptions:160.
+		if entry := shopInv.GetStock(recipe.Output.ItemId); entry != nil && entry.Current >= entry.MaxStock {
 			continue
 		}
 

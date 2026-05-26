@@ -1,7 +1,0 @@
-- 
-  Supported: # A map of lowercase names of "Initiator" (#1) to array of "Participant" (#2) names allowed to use this conversation. 
-    "moilyn the wizard": ["guard", "captain of the guard"]
-  Conversation:
-    - ["#1 say Oooooh! You accursed soldiers tracking mud and dirt into my shop!"]
-    - ["#2 emote grins sheepishly."]
-    - ["#2 say My apologies Moilyn."]

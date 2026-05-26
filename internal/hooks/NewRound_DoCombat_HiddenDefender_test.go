@@ -106,6 +106,7 @@ func TestHandleCombatRound_HiddenDefenderClearsHiddenState(t *testing.T) {
 		&cfg,
 		&affPlayers,
 		&affMobs,
+		false, // forceCrit: defender not sleeping
 	)
 
 	// Fix invariant: defender's Awareness FSM is no longer Hidden.

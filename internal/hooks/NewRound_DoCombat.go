@@ -24,12 +24,23 @@ func DoCombat(e events.Event) events.ListenerReturn {
 
 	evt := e.(events.NewRound)
 
+	// Chunk 3.3: snapshot victims with the Sleeping buff flag BEFORE any
+	// damage events resolve this round. cancel-on-damage (in
+	// applyCombatProgression) fires mid-round after each attacker's turn;
+	// without a snapshot, later attackers would miss the forceCrit window
+	// because the buff was already cleared by the first hit. Taking the
+	// snapshot here — once, at the very start of the round, before
+	// handlePlayerCombat and handleMobCombat both run — ensures every
+	// attacker in both passes sees a consistent, unmodified set of sleeping
+	// defenders.
+	sleepingUserIds, sleepingMobInstanceIds := snapshotSleepingVictims()
+
 	//
 	// Combat rounds
 	//
-	affectedPlayers1, affectedMobs1 := handlePlayerCombat(evt)
+	affectedPlayers1, affectedMobs1 := handlePlayerCombat(evt, sleepingUserIds, sleepingMobInstanceIds)
 
-	affectedPlayers2, affectedMobs2 := handleMobCombat(evt)
+	affectedPlayers2, affectedMobs2 := handleMobCombat(evt, sleepingUserIds, sleepingMobInstanceIds)
 
 	// Do any resolution or extra checks based on everyone that has been involved in combat this round.
 	handleAffected(append(affectedPlayers1, affectedPlayers2...), append(affectedMobs1, affectedMobs2...))
@@ -65,7 +76,7 @@ func DoCombat(e events.Event) events.ListenerReturn {
 	return events.Continue
 }
 
-func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobInstanceIds []int) {
+func handlePlayerCombat(evt events.NewRound, sleepingUserIds map[int]bool, sleepingMobInstanceIds map[int]bool) (affectedPlayerIds []int, affectedMobInstanceIds []int) {
 
 	moonMod := float64(configs.GetBalanceConfig().MoonStatModMax)
 
@@ -132,21 +143,24 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 		// Unified combat dispatch (replaces PvP/PvM branch).
 		if user.Character.Aggro != nil {
 			var def actions.Actor
+			var defForceCrit bool
 			if user.Character.Aggro.UserId > 0 {
 				if defUser := users.GetByUserId(user.Character.Aggro.UserId); defUser != nil {
 					defRoom := rooms.LoadRoom(defUser.Character.RoomId)
 					def = actions.NewUserActorInRoom(defUser, defRoom)
+					defForceCrit = sleepingUserIds[user.Character.Aggro.UserId]
 				}
 			} else if user.Character.Aggro.MobInstanceId > 0 {
 				if defMob := mobs.GetInstance(user.Character.Aggro.MobInstanceId); defMob != nil {
 					defRoom := rooms.LoadRoom(defMob.Character.RoomId)
 					def = actions.NewMobActorInRoom(defMob, defRoom)
+					defForceCrit = sleepingMobInstanceIds[user.Character.Aggro.MobInstanceId]
 				}
 			}
 			if def != nil {
 				atk := actions.NewUserActorInRoom(user, uRoom)
 				cfg := configs.GetConfig()
-				handleCombatRound(atk, def, evt, moonMod, &cfg, &affectedPlayerIds, &affectedMobInstanceIds)
+				handleCombatRound(atk, def, evt, moonMod, &cfg, &affectedPlayerIds, &affectedMobInstanceIds, defForceCrit)
 			}
 		}
 	}
@@ -156,7 +170,7 @@ func handlePlayerCombat(evt events.NewRound) (affectedPlayerIds []int, affectedM
 	return affectedPlayerIds, affectedMobInstanceIds
 }
 
-func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobInstanceIds []int) {
+func handleMobCombat(evt events.NewRound, sleepingUserIds map[int]bool, sleepingMobInstanceIds map[int]bool) (affectedPlayerIds []int, affectedMobInstanceIds []int) {
 
 	moonMod := float64(configs.GetBalanceConfig().MoonStatModMax)
 	tStart := time.Now()
@@ -297,21 +311,24 @@ func handleMobCombat(evt events.NewRound) (affectedPlayerIds []int, affectedMobI
 		// Unified combat dispatch (replaces MvP/MvM branch).
 		if mob.Character.Aggro != nil {
 			var def actions.Actor
+			var defForceCrit bool
 			if mob.Character.Aggro.UserId > 0 {
 				if defUser := users.GetByUserId(mob.Character.Aggro.UserId); defUser != nil {
 					defRoom := rooms.LoadRoom(defUser.Character.RoomId)
 					def = actions.NewUserActorInRoom(defUser, defRoom)
+					defForceCrit = sleepingUserIds[mob.Character.Aggro.UserId]
 				}
 			} else if mob.Character.Aggro.MobInstanceId > 0 {
 				if defMob := mobs.GetInstance(mob.Character.Aggro.MobInstanceId); defMob != nil {
 					defRoom := rooms.LoadRoom(defMob.Character.RoomId)
 					def = actions.NewMobActorInRoom(defMob, defRoom)
+					defForceCrit = sleepingMobInstanceIds[mob.Character.Aggro.MobInstanceId]
 				}
 			}
 			if def != nil {
 				atk := actions.NewMobActorInRoom(mob, mobRoom)
 				cfg := configs.GetConfig()
-				handleCombatRound(atk, def, evt, moonMod, &cfg, &affectedPlayerIds, &affectedMobInstanceIds)
+				handleCombatRound(atk, def, evt, moonMod, &cfg, &affectedPlayerIds, &affectedMobInstanceIds, defForceCrit)
 			}
 		}
 	}
@@ -394,4 +411,31 @@ func applyMoonMods(ch *characters.Character, moonMod float64) func() {
 		ch.Stats.Perception.ValueAdj -= per
 		ch.Stats.Charisma.ValueAdj -= cha
 	}
+}
+
+// snapshotSleepingVictims walks all online users and all mob instances and
+// records which ones currently have the Sleeping buff flag. The two maps are
+// passed into handlePlayerCombat and handleMobCombat so that both combat
+// passes can resolve forceCrit=true for any defender that was asleep at the
+// very start of the round.
+//
+// Chunk 3.3: this must be called ONCE at the top of DoCombat, before either
+// combat pass runs, so that cancel-on-damage (fired mid-round inside
+// applyCombatProgression) does not blunt later attackers' crit payoff in the
+// same round. Future first-hit-crit triggers (surprise attack, backstab, etc.)
+// can add parallel snapshot checks at this same site.
+func snapshotSleepingVictims() (sleepingUserIds map[int]bool, sleepingMobInstanceIds map[int]bool) {
+	sleepingUserIds = map[int]bool{}
+	sleepingMobInstanceIds = map[int]bool{}
+	for _, uid := range users.GetOnlineUserIds() {
+		if u := users.GetByUserId(uid); u != nil && u.Character.HasBuffFlag(buffs.Sleeping) {
+			sleepingUserIds[uid] = true
+		}
+	}
+	for _, mobId := range mobs.GetAllMobInstanceIds() {
+		if m := mobs.GetInstance(mobId); m != nil && m.Character.HasBuffFlag(buffs.Sleeping) {
+			sleepingMobInstanceIds[mobId] = true
+		}
+	}
+	return sleepingUserIds, sleepingMobInstanceIds
 }

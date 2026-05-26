@@ -13,10 +13,10 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/perception"
 	"github.com/GoMudEngine/GoMud/internal/state/presence"
-	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/facts"
 	"github.com/GoMudEngine/GoMud/internal/llm"
@@ -26,6 +26,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -155,11 +156,12 @@ type Mob struct {
 	ScatterRounds           int    `yaml:"-"` // Rounds remaining where mob skips wander (after alpha death)
 	crafterLastRestockRound uint64 // Last round materials were restocked (transient)
 	BehaviorArchetype       string `yaml:"behavior_archetype,omitempty"` // Archetype name (e.g., "melee_self_buff") — resolved to behaviors/archetypes/<name>.yaml if per-mob tree absent.
+	ScheduleId              string `yaml:"schedule_id,omitempty"`        // chunk 3.2: daily routine reference
+	PatrolId                string `yaml:"patrol_id,omitempty"`          // chunk 3.4: patrol route reference
 	SubmissionPolicy        string `yaml:"submission_policy,omitempty"`  // chunk 4d T12: override archetype default; "mercy"/"subdue"/"cripple"/"lethal"
 	SurrenderPolicy         string `yaml:"surrender_policy,omitempty"`   // chunk 4d T12: override archetype default; "never"/"always"/"auto-tap-below <N>"
 	BTreeState              any    `yaml:"-"`                            // Behavior tree per-instance state (*behaviortree.BehaviorState)
 	tempDataStore           map[string]any
-	conversationId          int              // Identifier of conversation currently involved in.
 	Path                    PathQueue        `yaml:"-"` // a pre-calculated path the mob is following.
 	lastCommandTurn         uint64           // The last turn a command was scheduled for
 	playersAttacked         map[int]struct{} // all players this mob has attacked at some point
@@ -356,6 +358,15 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 			}
 		} else {
 			mob.Character.SurrenderPolicy = characters.DefaultSurrenderPolicyForArchetype(mob.BehaviorArchetype)
+		}
+
+		// Chunk 3.2: scheduled mob spawn override. If the mob has a
+		// schedule_id, place it at the current segment's target room
+		// instead of HomeRoomId. HomeRoomId is preserved as the "true
+		// home" for pathto-home semantics.
+		if mob.ScheduleId != "" {
+			hour := gametime.GetDate().Hour24
+			mob.Character.RoomId = applyScheduleSpawnOverride(mob.ScheduleId, mob.HomeRoomId, hour)
 		}
 
 		// State-machine pointers and the OnCharacterCreated wiring
@@ -642,6 +653,27 @@ func GetAllMobInstanceIds() []int {
 	return ids
 }
 
+// FindLiveInstanceByHomeAndId returns the first live mob instance whose
+// HomeRoomId matches roomId AND whose MobId matches mobId. Returns nil if
+// none exists. Used by the room spawn loop to detect orphans before
+// creating a duplicate — a scheduled mob that has walked away from its
+// home (e.g., to a sleep loft) is still "the" spawn for that room and
+// must not be re-spawned just because the SpawnInfo.InstanceId reference
+// was lost across a room unload/reload cycle.
+func FindLiveInstanceByHomeAndId(roomId int, mobId MobId) *Mob {
+	mobInstancesMu.RLock()
+	defer mobInstancesMu.RUnlock()
+	for _, m := range mobInstances {
+		if m == nil {
+			continue
+		}
+		if m.HomeRoomId == roomId && m.MobId == mobId {
+			return m
+		}
+	}
+	return nil
+}
+
 func DestroyInstance(instanceId int) {
 	mobInstancesMu.Lock()
 	delete(mobInstances, instanceId)
@@ -675,65 +707,6 @@ func (m *Mob) HasAttackedPlayer(userId int) bool {
 	}
 	_, ok := m.playersAttacked[userId]
 	return ok
-}
-
-func (m *Mob) InConversation() bool {
-	return m.conversationId > 0
-}
-
-func (m *Mob) SetConversation(id int) {
-	m.conversationId = id
-}
-
-func (m *Mob) Converse() {
-
-	mobInst1, mobInst2, actions := conversations.GetNextActions(m.conversationId)
-
-	var mob1 *Mob = nil
-	var mob2 *Mob = nil
-
-	if mobInst1 == int(m.InstanceId) {
-		mob1 = m
-		mob2 = GetInstance(mobInst2)
-	} else {
-		mob1 = GetInstance(mobInst1)
-		mob2 = m
-	}
-
-	if mob1 == nil || mob2 == nil {
-		conversations.Destroy(m.conversationId)
-		if mob1 != nil {
-			mob1.SetConversation(0)
-		}
-		if mob2 != nil {
-			mob2.SetConversation(0)
-		}
-		return
-	}
-
-	for _, act := range actions {
-		if len(act) >= 3 {
-
-			target := act[0:3]
-			cmd := act[3:]
-
-			cmd = strings.ReplaceAll(cmd, ` #1 `, ` `+mob1.ShorthandId()+` `)
-			cmd = strings.ReplaceAll(cmd, ` #2 `, ` `+mob2.ShorthandId()+` `)
-
-			if target == `#1 ` {
-				mob1.Command(cmd)
-			} else {
-				mob2.Command(cmd, 1)
-			}
-		}
-	}
-
-	if conversations.IsComplete(m.conversationId) {
-		conversations.Destroy(m.conversationId)
-		mob1.SetConversation(0)
-		mob2.SetConversation(0)
-		return
-	}
 }
 
 // GetLastCommandTurn returns the turn at which the mob's last scheduled command will execute.
@@ -1189,6 +1162,41 @@ func LoadDataFiles() {
 
 	mudlog.Info("mobs.LoadDataFiles()", "loadedCount", len(tmpMobs), "Time Taken", time.Since(start))
 
+	// Load patrol routes. Must run BEFORE LoadSchedules so that T5's
+	// patrol_id cross-check in LoadSchedules finds patrols already registered.
+	LoadPatrols()
+
+	// Load NPC daily schedules. Optional content — no panic if directory absent.
+	LoadSchedules()
+
+	// Cross-check: every mob's schedule_id must resolve to a loaded schedule.
+	mobsMu.RLock()
+	for _, mob := range mobs {
+		if mob.ScheduleId == "" {
+			continue
+		}
+		if GetSchedule(mob.ScheduleId) == nil {
+			mobsMu.RUnlock()
+			panic(fmt.Errorf("mob %d (%s): schedule_id %q does not resolve to a loaded schedule",
+				mob.MobId, mob.Character.Name, mob.ScheduleId))
+		}
+	}
+	mobsMu.RUnlock()
+
+	// Cross-check: every mob's patrol_id must resolve to a loaded patrol.
+	mobsMu.RLock()
+	for _, mob := range mobs {
+		if mob.PatrolId == "" {
+			continue
+		}
+		if GetPatrol(mob.PatrolId) == nil {
+			mobsMu.RUnlock()
+			panic(fmt.Errorf("mob %d (%s): patrol_id %q does not resolve to a loaded patrol",
+				mob.MobId, mob.Character.Name, mob.PatrolId))
+		}
+	}
+	mobsMu.RUnlock()
+
 	// Populate the relationships graph from authored YAML edges.
 	mobsMu.RLock()
 	edges := make([]relationships.MobEdges, 0, len(mobs))
@@ -1241,6 +1249,11 @@ func LoadDataFiles() {
 		}
 		return ""
 	})
+
+	// Chunk 3.6: load conversation pools and pair overrides. Must run AFTER
+	// relationships.LoadFromMobs so that the world-aware validator can cross-
+	// check pair overrides against real relationship edges.
+	conversations.Load()
 
 }
 
