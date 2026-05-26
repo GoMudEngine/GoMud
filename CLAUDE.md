@@ -27,13 +27,33 @@ Before pushing to prod (origin/master):
    `quests.LoadDataFiles() loadedCount=...`, etc. without panics
    is the only reliable check before promoting to prod.
 
-## Room Instance Saves (Important!)
-When editing room YAML templates in `_datafiles/world/dogmud/rooms/`, always check for **instance saves** in `_datafiles/world/dogmud/rooms.instances/` that may override your changes. The engine loads templates first, then overwrites with instance data if present. After editing room templates:
-1. Check `rooms.instances/<zone>/` for matching room files
-2. Delete any stale instance saves so the engine loads fresh templates
-3. Remind the user to restart the server after cleanup
+## Instance Saves & Smoke-Test SOP (Important!)
 
-Known issue: The instance save system can silently override template edits, making it appear that file changes aren't taking effect.
+The engine loads YAML templates first, then overwrites with instance
+data from `_datafiles/world/dogmud/mobs.instances/` and
+`_datafiles/world/dogmud/rooms.instances/` if present. **Stale instance
+saves silently shadow template edits** — including new
+`schedule_id:`, `patrol_id:`, `maxwander:`, idle commands, room
+spawn lists, exits, etc. This has been a recurring source of
+"my change isn't taking effect" frustration.
+
+**SOP: nuke instance saves before every local smoke test.** Mirror
+the prod policy where these directories are not deployed. Run:
+
+```bash
+rm -rf _datafiles/world/dogmud/mobs.instances/* \
+       _datafiles/world/dogmud/rooms.instances/*
+```
+
+Then restart the server. The engine will re-spawn mobs and re-build
+rooms from the (updated) templates. **Do NOT also wipe
+`_datafiles/world/dogmud/shops/`** — that's persistent living-economy
+state, not instance overrides (see Shop Persistence below).
+
+When making content changes you intend to smoke-test, run the wipe
+as part of your pre-smoke ritual before the user is involved. When
+the user reports "my change isn't taking effect," instance saves
+should be your first guess.
 
 ## Shop Persistence (Living Economy)
 Shop economic state (stock levels, NPC gold, restock timers) persists in
