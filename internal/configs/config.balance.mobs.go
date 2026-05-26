@@ -40,7 +40,7 @@ func (b *Balance) validateMobs() {
 	if b.ConversationBaseChancePct <= 0 {
 		b.ConversationBaseChancePct = 1.0
 	}
-	if b.ConversationPlayerArrivalBoostPct < 0 {
+	if b.ConversationPlayerArrivalBoostPct <= 0 {
 		b.ConversationPlayerArrivalBoostPct = 25
 	}
 	if b.ConversationCooldownRounds < 1 {
