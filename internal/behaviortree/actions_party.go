@@ -251,7 +251,17 @@ func engageHostilePlayerInRoom(mobInstanceId int, roomId int) bool {
 // actPartyFollowLeader navigates the caller one step toward the leader's
 // current room. Returns Success if already there or if movement was
 // initiated; Failure if no party / no leader / no path.
+//
+// Chunk 3.8: when the caller has an active PatrolId (e.g., Lars running
+// his runner-circuit oneshot patrol while Ketil dwells at the depot),
+// the patrol executor is the source of truth for movement — return
+// Success without queueing a pathto-leader command that would
+// overwrite the patrol's pathto-vendor command in the same round.
 func actPartyFollowLeader(params map[string]any, ctx *EvalContext) Result {
+	self := mobs.GetInstance(ctx.InstanceId)
+	if self != nil && self.PatrolId != "" {
+		return Success // patrol layer owns movement; party-follow defers
+	}
 	p := parties.GetByMobInstanceId(ctx.InstanceId)
 	if p == nil || p.Leader == nil {
 		return Failure

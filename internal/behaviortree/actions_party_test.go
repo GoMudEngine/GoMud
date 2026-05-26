@@ -264,6 +264,32 @@ func TestActPartyFollowLeader_LeaderRoomNilReturnsFailure(t *testing.T) {
 	}
 }
 
+func TestActPartyFollowLeader_NoOpsWhenCallerHasActivePatrol(t *testing.T) {
+	fn := LookupAction("party_follow_leader")
+	if fn == nil {
+		t.Fatal("party_follow_leader not registered")
+	}
+
+	// Seed a mob with an active PatrolId — the guard should fire before
+	// party / leader lookups, so no party fixture is needed.
+	const instId = 92359
+	m := &mobs.Mob{
+		MobId:      mobs.MobId(359),
+		InstanceId: instId,
+		PatrolId:   "thornwall_runner_circuit",
+	}
+	m.Character.Name = "Lars"
+	m.Character.Buffs = buffs.New()
+	mobs.SetInstanceForTest(instId, m)
+	t.Cleanup(func() { mobs.SetInstanceForTest(instId, nil) })
+
+	ctx := &EvalContext{InstanceId: instId, RoomId: 100}
+	got := fn(nil, ctx)
+	if got != Success {
+		t.Errorf("expected Success (patrol-active no-op), got %v", got)
+	}
+}
+
 func TestActPartyFollowLeader_AlreadyWithLeaderReturnsSuccess(t *testing.T) {
 	fn := LookupAction("party_follow_leader")
 

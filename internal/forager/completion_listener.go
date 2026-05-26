@@ -22,7 +22,7 @@ var foragerDeliveryPatrols = map[string]struct{}{
 // to avoid an internal/forager -> internal/behaviortree import cycle
 // (behaviortree already imports forager).
 type behaviorStateSetter interface {
-	Set(key string, value string)
+	Set(key string, value any)
 }
 
 // ForagerCompletionListener consumes events.PatrolCompleted for the
