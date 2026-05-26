@@ -1,5 +1,53 @@
 # DOGMud Patch Notes
 
+## 2026-05-25 — NPC↔NPC idle conversations (chunk 3.6)
+
+**Townspeople chat with each other now.** Find your way to the back
+room of the Thornwall tavern and you'll catch Dal the barmaid trading
+small talk with the three old men who hold down the corner table —
+Fen, Gobb, and Wrex. They complain about the weather, gripe about
+their backs, gossip about wagons and priests, and (if you stick around
+long enough) trade pointed jabs about an old argument between Fen and
+Wrex. None of it advances any quest. It's just the world being lived in.
+
+**How it works.** Conversations are drawn from a relationship-keyed
+library at `_datafiles/world/dogmud/conversations/`. Two NPCs in the
+same room with a relationship edge (friend, rival, family, lover,
+employer, employee per chunk 1.6) occasionally roll for a 2-4 line
+exchange. Each line is one game round. The first line picks A or B at
+random and the second NPC takes the next, alternating until done. If
+either NPC enters combat, walks out, or falls asleep mid-exchange, the
+conversation aborts silently. Both NPCs cool down 50 rounds after a
+complete exchange. Walking into a room with two eligible NPCs gives
+the trigger a 25% boost — observed worlds are slightly louder than
+unobserved ones, which is the point.
+
+**Authoring shape.** Type pools live at `types/<relationship-type>.yaml`
+(generic banter per relationship type). Per-pair overrides live at
+`pairs/<lower>_<higher>.yaml` and stack on top of the type pool. An
+optional `subtypes:` map on a type pool varies flavor by the
+relationship's subtype string (`fond`, `estranged`, `professional`,
+`bitter`). All three knobs live under `Balance`:
+`ConversationBaseChancePct` (default 1.0), `ConversationPlayerArrivalBoostPct`
+(default 25), `ConversationCooldownRounds` (default 50). Full schema
+in `docs/schemas/conversation.md`.
+
+**Retired: upstream GoMud's old conversation system.** The replaced
+system was name-keyed (matching initiator/participant by mob name)
+rather than relationship-keyed, lived in the same package path
+(`internal/conversations/`), and was dormant in DOGMud — no DOGMud mob
+authored conversation files; only 11 small Frostfang sample YAMLs
+referenced it (rats squeaking at rats, beggars muttering at beggars).
+Those samples are retired. The `converse` mob command is removed.
+`MobConverseChance` config knob is removed.
+
+**Architecture note: import cycle.** The replacement package needed to
+sit next to `internal/mobs/` without forming a cycle (mobs imports
+conversations for the loader). Solved with a small `MobConversant`
+interface in conversations + a `internal/conversationadapter/` bridge
+package that both `internal/hooks/` and `internal/usercommands/` use.
+No production behavior change vs the alternative.
+
 ## 2026-05-25 — NPC schedules + sleeping mechanics (chunks 3.2 + 3.3)
 
 **Townspeople have daily routines now.** Blacksmith Kerra, Tavern
