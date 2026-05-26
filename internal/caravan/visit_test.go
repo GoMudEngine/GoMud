@@ -2,19 +2,39 @@ package caravan
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/exit"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/shops"
 )
 
 func TestMain(m *testing.M) {
 	mudlog.SetupLogger(nil, "", "", false)
-	os.Exit(m.Run())
+
+	// Redirect FilePaths.DataFiles to an OS-temp subdir so any
+	// shops.SaveShop / SaveThroughput calls triggered by the pickup
+	// loop write to a throwaway location instead of polluting the
+	// repo at _datafiles/world/default/shops/.
+	tmpRoot := filepath.Join(os.TempDir(), "gomud-caravan-test-datafiles")
+	_ = os.RemoveAll(tmpRoot)
+	_ = os.MkdirAll(tmpRoot, 0755)
+	if err := configs.AddOverlayOverrides(map[string]any{
+		"FilePaths.DataFiles": tmpRoot,
+	}); err != nil {
+		panic(err)
+	}
+
+	code := m.Run()
+	_ = os.RemoveAll(tmpRoot)
+	os.Exit(code)
 }
 
 // ─── VisitVendorsInRoom ──────────────────────────────────────────────────────
@@ -133,6 +153,123 @@ func contains(s, sub string) bool {
 	}()
 }
 
+// ─── Pickup-filter expansion (3.8 hotfix H2) ─────────────────────────────────
+
+// TestVisitVendorsInRoom_PicksUpComponentsBeyondZoneBucket verifies the H2
+// hotfix: items flagged is_component=true should be picked up by the caravan
+// pickup pass even when their economy bucket is NOT in pickupBuckets, as long
+// as their ItemType is a raw-material type (object) rather than a finished
+// good. Models real-world steel/iron ingots at Smith Brindle — bucket "base"
+// or "thornwall", but pickupBuckets is ["stillwater"]. Pre-fix: 0 picked up.
+func TestVisitVendorsInRoom_PicksUpComponentsBeyondZoneBucket(t *testing.T) {
+	cleanup := setupPickupTestFixtures(t, []shops.StockEntry{
+		// Iron ingot: bucket "base", is_component=true, type=object.
+		// 80 current, RestockQty 5 -> qty = max(1, 80/10) = 8.
+		{ItemId: 40001, RestockQty: 5, MaxStock: 100, Current: 80},
+	}, map[int]*items.ItemSpec{
+		40001: {
+			ItemId:      40001,
+			Name:        "iron ingot",
+			Type:        items.Object,
+			Subtype:     items.Mundane,
+			IsComponent: true,
+		},
+	})
+	defer cleanup()
+
+	wagon := buildPickupTestWagon(t)
+	_, picked := VisitVendorsInRoom(pickupTestRoomId, wagon,
+		nil, []string{"stillwater"})
+
+	if got := len(picked); got != 8 {
+		t.Errorf("expected 8 iron ingots picked up, got %d (items=%v)", got, picked)
+	}
+}
+
+// TestVisitVendorsInRoom_SkipsFinishedGoodsEvenIfComponent is the defensive
+// case: if a finished-good item (Type=weapon) were ever mis-tagged
+// is_component=true, the Type filter must still exclude it from caravan
+// pickup. Finished goods stay where they're crafted.
+func TestVisitVendorsInRoom_SkipsFinishedGoodsEvenIfComponent(t *testing.T) {
+	cleanup := setupPickupTestFixtures(t, []shops.StockEntry{
+		// Mis-tagged "iron dagger": Type=weapon BUT IsComponent=true.
+		{ItemId: 10500, RestockQty: 5, MaxStock: 50, Current: 40},
+	}, map[int]*items.ItemSpec{
+		10500: {
+			ItemId:      10500,
+			Name:        "iron dagger",
+			Type:        items.Weapon,
+			Subtype:     items.Stabbing,
+			IsComponent: true,
+		},
+	})
+	defer cleanup()
+
+	wagon := buildPickupTestWagon(t)
+	_, picked := VisitVendorsInRoom(pickupTestRoomId, wagon,
+		nil, []string{"stillwater"})
+
+	if got := len(picked); got != 0 {
+		t.Errorf("expected 0 iron daggers picked up (finished good), got %d", got)
+	}
+}
+
+// TestVisitVendorsInRoom_StillRespectsZoneBucketForNonComponents verifies the
+// original zone-source bucket-match path keeps working post-fix. Items in
+// pickupBuckets are picked up regardless of IsComponent (the original gate
+// is the fast path; the new path is purely additive).
+func TestVisitVendorsInRoom_StillRespectsZoneBucketForNonComponents(t *testing.T) {
+	cleanup := setupPickupTestFixtures(t, []shops.StockEntry{
+		// Lake-iron nodule: bucket "stillwater", is_component=true, type=object.
+		// Current=20, RestockQty=5 -> qty = max(1, 20/10) = 2.
+		{ItemId: 40059, RestockQty: 5, MaxStock: 50, Current: 20},
+	}, map[int]*items.ItemSpec{
+		40059: {
+			ItemId:      40059,
+			Name:        "lake-iron nodule",
+			Type:        items.Object,
+			Subtype:     items.Mundane,
+			IsComponent: true,
+		},
+	})
+	defer cleanup()
+
+	wagon := buildPickupTestWagon(t)
+	_, picked := VisitVendorsInRoom(pickupTestRoomId, wagon,
+		nil, []string{"stillwater"})
+
+	if got := len(picked); got != 2 {
+		t.Errorf("expected 2 lake-iron nodules picked up via bucket match, got %d", got)
+	}
+}
+
+// TestVisitVendorsInRoom_SkipsNonComponentNonBucketItems is the negative
+// guard: items that are NEITHER bucket-matching NOR is_component should
+// still be ignored. Confirms the helper isn't accidentally too permissive.
+func TestVisitVendorsInRoom_SkipsNonComponentNonBucketItems(t *testing.T) {
+	cleanup := setupPickupTestFixtures(t, []shops.StockEntry{
+		// Some plain object that's NOT a component and NOT bucketed.
+		{ItemId: 11111, RestockQty: 5, MaxStock: 50, Current: 30},
+	}, map[int]*items.ItemSpec{
+		11111: {
+			ItemId:      11111,
+			Name:        "trinket",
+			Type:        items.Object,
+			Subtype:     items.Mundane,
+			IsComponent: false,
+		},
+	})
+	defer cleanup()
+
+	wagon := buildPickupTestWagon(t)
+	_, picked := VisitVendorsInRoom(pickupTestRoomId, wagon,
+		nil, []string{"stillwater"})
+
+	if got := len(picked); got != 0 {
+		t.Errorf("expected 0 trinkets picked up (no bucket, not component), got %d", got)
+	}
+}
+
 // ─── Test helpers ────────────────────────────────────────────────────────────
 
 // seedTestRoomWithMobs creates a fresh rooms.Room at roomId, seeds one
@@ -232,4 +369,103 @@ func buildShopBearingTestMob(t *testing.T, name string) *mobs.Mob {
 		{ItemId: 1, QuantityMax: 5, Quantity: 5},
 	}
 	return mob
+}
+
+// ─── Pickup-filter test fixtures (3.8 hotfix H2) ─────────────────────────────
+
+const (
+	pickupTestRoomId       = 7780
+	pickupTestVendorMobId  = 9002
+	pickupTestVendorInstId = 99002
+	pickupTestZone         = "PickupTestZone"
+)
+
+// setupPickupTestFixtures wires everything needed for a vendor-pickup
+// integration test: a room, a shop-bearing vendor mob in the room, a
+// registered shop inventory with the given stock, and a temporary
+// items-package seed so items.New produces valid items in the pickup
+// loop. Returns a single cleanup function that tears down all of it.
+//
+// Note on shop-cache isolation: shops.SaveShop writes the shop state to
+// disk (configs.DataFiles, redirected to a temp dir in TestMain).
+// shops.RegisterShop will load that file back on subsequent calls,
+// which would leak the previous test's stock into the next one. We
+// scrub the on-disk shop file in both setup and cleanup so each test
+// starts with a clean slate.
+func setupPickupTestFixtures(
+	t *testing.T,
+	stock []shops.StockEntry,
+	specs map[int]*items.ItemSpec,
+) func() {
+	t.Helper()
+
+	cleanupItems := items.SeedItemsForTest(specs)
+
+	shops.ClearCache()
+	wipePickupTestShopFile(t)
+
+	tmpl := shops.ShopInventory{
+		Gold:         500,
+		StartingGold: 500,
+		CraftSupport: shops.CraftSupportGeneral,
+		Stock:        stock,
+	}
+	// RegisterShop seeds Current to RestockQty by default; force the
+	// authored Current values so tests have deterministic stock levels.
+	inv := shops.RegisterShop(pickupTestZone, pickupTestVendorMobId, pickupTestRoomId, tmpl)
+	for i, want := range stock {
+		inv.Stock[i].Current = want.Current
+	}
+
+	vendor := &mobs.Mob{
+		MobId:      mobs.MobId(pickupTestVendorMobId),
+		InstanceId: pickupTestVendorInstId,
+		HomeRoomId: pickupTestRoomId,
+		Zone:       pickupTestZone,
+	}
+	vendor.Character.Name = "TestVendor"
+	vendor.Character.Buffs = buffs.New()
+	vendor.Character.Shop = characters.Shop{
+		{ItemId: stock[0].ItemId, QuantityMax: 5, Quantity: 5},
+	}
+	cleanupRoom := seedTestRoomWithExistingMobs(
+		t, pickupTestRoomId, pickupTestZone, []*mobs.Mob{vendor})
+
+	return func() {
+		cleanupRoom()
+		shops.ClearCache()
+		wipePickupTestShopFile(t)
+		cleanupItems()
+	}
+}
+
+// wipePickupTestShopFile removes the on-disk shop YAML produced by
+// shops.SaveShop during the pickup test. Used by setup AND cleanup so
+// no test leaks shop state into the next.
+func wipePickupTestShopFile(t *testing.T) {
+	t.Helper()
+	zoneDir := filepath.Join(
+		configs.GetFilePathsConfig().DataFiles.String(),
+		"shops",
+		pickupTestZone,
+	)
+	_ = os.RemoveAll(zoneDir)
+}
+
+// buildPickupTestWagon builds a wagon mob with enough carry capacity to
+// receive picked-up items in the test pickup loop. Item specs are seeded
+// with weight=0 by default, so capacity above zero is sufficient.
+func buildPickupTestWagon(t *testing.T) *mobs.Mob {
+	t.Helper()
+	wagon := &mobs.Mob{
+		MobId:      mobs.MobId(9003),
+		InstanceId: 99003,
+		HomeRoomId: pickupTestRoomId,
+		Zone:       pickupTestZone,
+	}
+	wagon.Character.Name = "TestWagon"
+	wagon.Character.Buffs = buffs.New()
+	wagon.Character.RoomId = pickupTestRoomId
+	characters.ApplyMobOverrides(&wagon.Character, 0, 0, 5000)
+	return wagon
 }
