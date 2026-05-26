@@ -169,6 +169,20 @@ type MobIdle struct {
 
 func (i MobIdle) Type() string { return `MobIdle` }
 
+// PatrolWaypointArrival fires once when a patrol-running mob reaches a
+// waypoint room and enters the dwell phase. Consumers filter by
+// ArrivalEvent name. Empty ArrivalEvent fires regardless — useful for
+// debug subscribers but skipped by name-filtered consumers. Chunk 3.7.
+type PatrolWaypointArrival struct {
+	MobInstanceId int
+	PatrolId      string
+	WaypointIdx   int
+	RoomId        int
+	ArrivalEvent  string
+}
+
+func (e PatrolWaypointArrival) Type() string { return "PatrolWaypointArrival" }
+
 // Gained or lost an item
 type EquipmentChange struct {
 	UserId        int
