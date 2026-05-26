@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/GoMudEngine/GoMud/internal/relationships"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // ConversationLine is one line in an exchange. Speaker is "A" or "B"
@@ -116,3 +117,33 @@ func RegisterTestPool(p *Pool)                { registerTestPool(p) }
 func UnregisterTestPool(id string)            { unregisterTestPool(id) }
 func RegisterTestPairOverride(po *PairOverride) { registerTestPairOverride(po) }
 func UnregisterTestPairOverride(a, b int)     { unregisterTestPairOverride(a, b) }
+
+// pickExchange picks an exchange uniformly from the union of:
+//   - the relationship-type pool's default exchanges (if registered)
+//   - the matching subtype sub-pool's exchanges (if subtype matches)
+//   - the pair override's exchanges (if registered for this mob pair)
+//
+// Returns (Exchange{}, false) if no exchanges are eligible.
+func pickExchange(poolId, subtype string, mobA, mobB int) (Exchange, bool) {
+	var eligible []Exchange
+
+	if p := GetPool(relationships.Type(poolId)); p != nil {
+		eligible = append(eligible, p.Exchanges...)
+		if subtype != "" {
+			if sub, ok := p.Subtypes[subtype]; ok {
+				eligible = append(eligible, sub.Exchanges...)
+			}
+		}
+	}
+
+	if po := GetPairOverride(mobA, mobB); po != nil {
+		eligible = append(eligible, po.Exchanges...)
+	}
+
+	if len(eligible) == 0 {
+		return Exchange{}, false
+	}
+
+	idx := util.Rand(len(eligible))
+	return eligible[idx], true
+}
