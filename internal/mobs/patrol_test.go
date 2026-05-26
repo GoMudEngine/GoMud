@@ -99,3 +99,24 @@ func TestGetPatrol_UnknownReturnsNil(t *testing.T) {
 		t.Errorf("unknown patrol id: want nil, got %+v", got)
 	}
 }
+
+func TestPatrol_OneshotLoopShape_RoundTrips(t *testing.T) {
+	p := &Patrol{
+		Id:        "test_oneshot",
+		LoopShape: "oneshot",
+		Waypoints: []PatrolWaypoint{
+			{Room: 100, DwellRounds: 3},
+			{Room: 101, DwellRounds: 1},
+		},
+	}
+	RegisterPatrolForTest(p)
+	t.Cleanup(func() { UnregisterPatrolForTest("test_oneshot") })
+
+	got := GetPatrol("test_oneshot")
+	if got == nil {
+		t.Fatal("patrol not registered")
+	}
+	if got.LoopShape != "oneshot" {
+		t.Errorf("LoopShape = %q, want %q", got.LoopShape, "oneshot")
+	}
+}
