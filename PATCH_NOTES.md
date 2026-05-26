@@ -1,5 +1,32 @@
 # DOGMud Patch Notes
 
+## 2026-05-26 — Scheduled NPC pacing fix (chunk 3.6 follow-up)
+
+**Townspeople stay where their schedule put them now.** Before this
+fix, Kerra paced in and out of the tavern during her evening shift
+instead of nursing her tankard, and Dal bounced between the main
+floor and the back corner so often she never lingered with the old
+men — which made the chunk 3.6 conversation pilot effectively
+invisible.
+
+**Root cause.** Two systems both claimed authority over "where this
+mob should be" and fought each other every other tick. The schedule
+executor (chunk 3.2) force-sets `MaxWander=0` while a schedule is
+active to suppress wander. The legacy `MobIdle` displacement guard
+then read that as "this mob must never leave home" and queued
+`pathto home` whenever the mob's room didn't match its original
+placement room — but `HomeRoomId` was set at spawn time and never
+moved, while the schedule's segment target shifts hour by hour.
+So a scheduled NPC at her current segment target was perpetually
+"displaced" in the eyes of the legacy guard.
+
+**Fix.** Scheduled and patrol mobs now opt out of the legacy
+displacement guard. Their executors are the movement authority and
+already re-path to the correct target on the next tick if displaced
+— the legacy `pathto home` was redundant for these mobs and
+actively harmful. Non-scheduled, non-patrol mobs (the cases the
+guard was originally written for) still get the recovery behavior.
+
 ## 2026-05-25 — NPC↔NPC idle conversations (chunk 3.6)
 
 **Townspeople chat with each other now.** Find your way to the back

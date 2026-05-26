@@ -39,10 +39,8 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 	// if a mob shouldn't be allowed to leave their area (via wandering)
 	// but has somehow been displaced, such as pulling through combat, spells, or otherwise
 	// tell them to path back home
-	if mob.MaxWander == 0 && mob.Character.RoomId != mob.HomeRoomId {
-		if !isCharmed {
-			mob.Command("pathto home")
-		}
+	if !isCharmed && shouldRecoverDisplacedHome(mob) {
+		mob.Command("pathto home")
 	}
 
 	// Non-crafter merchant restock (supply cart delivery for regular shops).
@@ -191,6 +189,29 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 	}
 
 	return events.Continue
+}
+
+// shouldRecoverDisplacedHome reports whether MobIdle's legacy "pathto home"
+// displacement guard should fire for this mob. The guard exists to recover
+// mobs with MaxWander==0 that got pulled out of their home room by combat,
+// spells, or other forced movement.
+//
+// Mobs with their own movement authority (schedule executor or standalone
+// patrol executor) opt out: their executors are the source of truth for
+// "where this mob should be" at any given tick, and a redundant home-pull
+// would fight the schedule/patrol target every other tick. Chunk 3.2's
+// schedule executor force-sets MaxWander=0 every tick to suppress wander,
+// which used to make the legacy guard ping-pong scheduled NPCs between
+// their current segment target and their original placement room
+// (Kerra in/out of tavern; Dal main↔back).
+func shouldRecoverDisplacedHome(mob *mobs.Mob) bool {
+	if mob == nil {
+		return false
+	}
+	if mob.ScheduleId != "" || mob.PatrolId != "" {
+		return false
+	}
+	return mob.MaxWander == 0 && mob.Character.RoomId != mob.HomeRoomId
 }
 
 // ── Gossiper helpers ─────────────────────────────────────────────────────────
