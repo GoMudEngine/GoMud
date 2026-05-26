@@ -29,6 +29,7 @@ import (
 
 func init() {
 	actionRegistry["forager_step"] = actForagerStep
+	actionRegistry["forager_check_thresholds"] = actForagerCheckThresholds
 }
 
 const (
@@ -96,27 +97,15 @@ func actForagerStep(params map[string]any, ctx *EvalContext) Result {
 		}
 	}
 
-	// Foraging-state per-tick coordination. The per-tick foraging
-	// loop (forage roll, salvage, wander) now runs in YAML via
-	// try_forage / try_salvage / wander_territory primitives.
-	// The state machine still owns the transition triggers OUT of
-	// Foraging — fatigue limit or carry threshold sends the mob
-	// to TravelingToDropoff.
-	if cur == forager.StateForaging {
-		// Fatigue tick (was inside tickForagerForaging).
-		fatigue := getIntFromState(ctx.MobState, keyFatigueTimer) + 1
-		ctx.MobState.Set(keyFatigueTimer, strconv.Itoa(fatigue))
-
-		// Carry-cap or fatigue → head to dropoff.
-		if fatigue >= fatigueLimit ||
-			carryRatio(mob) >= float64(cfg.ForagerCarryThresholdPct) {
-			transitionForager(ctx.MobState, forager.StateTravelingToDropoff)
-			return Success
-		}
-
-		// YAML handles try_forage / try_salvage / wander_territory.
-		return Success
-	}
+	// Foraging-state per-tick coordination now runs entirely in YAML
+	// via the inner selector:
+	//   forager_check_thresholds → try_salvage → try_forage → wander_territory
+	//
+	// The threshold check (fatigue limit + carry-cap) was extracted out
+	// of this function into actForagerCheckThresholds (3.8 hotfix H8)
+	// because the inner selector short-circuited on try_forage /
+	// wander_territory Success and the in-body check was never reached
+	// in workable territory.
 
 	switch cur {
 	case forager.StateResting:
@@ -131,6 +120,43 @@ func actForagerStep(params map[string]any, ctx *EvalContext) Result {
 		return tickForagerStoring(profile, mob, ctx)
 	case forager.StateRecalling:
 		return tickForagerRecalling(profile, mob, ctx)
+	}
+	return Failure
+}
+
+// actForagerCheckThresholds is the chunk 3.8 hotfix replacement for the
+// fatigue/carry-cap check that used to live at the top of actForagerStep
+// but never fired because the YAML archetype's inner selector
+// short-circuited on try_forage / wander_territory Success before reaching
+// forager_step.
+//
+// Registered as a btree action so it runs as the FIRST child of the
+// foraging selector. Returns:
+//   - Success if a threshold was hit and state was transitioned to
+//     TravelingToDropoff. The selector short-circuits Success, which is
+//     correct — the mob is no longer in Foraging next tick.
+//   - Failure if thresholds are not yet hit. The selector falls through
+//     to try_salvage / try_forage / wander_territory as normal. The
+//     fatigue counter still gets incremented on the Failure path.
+func actForagerCheckThresholds(params map[string]any, ctx *EvalContext) Result {
+	if ctx.MobState == nil {
+		return Failure
+	}
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil {
+		return Failure
+	}
+	cfg := configs.GetBalanceConfig()
+
+	// Fatigue tick (was inside actForagerStep's StateForaging branch).
+	fatigue := getIntFromState(ctx.MobState, keyFatigueTimer) + 1
+	ctx.MobState.Set(keyFatigueTimer, strconv.Itoa(fatigue))
+
+	// Carry-cap or fatigue → head to dropoff.
+	if fatigue >= fatigueLimit ||
+		carryRatio(mob) >= float64(cfg.ForagerCarryThresholdPct) {
+		transitionForager(ctx.MobState, forager.StateTravelingToDropoff)
+		return Success
 	}
 	return Failure
 }

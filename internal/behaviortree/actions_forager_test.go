@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/forager"
@@ -869,5 +870,157 @@ func TestTickForagerRecalling_AtSanctuaryTransitionsToResting(t *testing.T) {
 	// Satchel should be empty (dumped to lockbox).
 	if len(mob.Character.Items) != 0 {
 		t.Errorf("satchel after dump = %d items, want 0", len(mob.Character.Items))
+	}
+}
+
+// ---- forager_check_thresholds tests (3.8 hotfix H8) ----
+
+// TestActForagerCheckThresholds_Registered verifies the action is registered.
+func TestActForagerCheckThresholds_Registered(t *testing.T) {
+	if _, ok := actionRegistry["forager_check_thresholds"]; !ok {
+		t.Fatal("forager_check_thresholds not registered in actionRegistry")
+	}
+}
+
+// TestActForagerCheckThresholds_TransitionsAtCarryCap verifies that when the
+// mob's carry ratio meets the threshold, the primitive transitions state to
+// TravelingToDropoff and returns Success.
+func TestActForagerCheckThresholds_TransitionsAtCarryCap(t *testing.T) {
+	// Register a heavy test item spec so GetCarriedWeight() returns a
+	// real (non-zero) weight. Without a spec, item weight resolves to 0.
+	const heavyItemId = 99701
+	items.RegisterTestItemSpec(&items.ItemSpec{
+		ItemId: heavyItemId,
+		Name:   "test heavy ingot",
+		Weight: 50.0,
+	})
+
+	mob := buildForagerMob(t, 8260, 371, 4177 /* territory room */, 100, 100)
+	// Override carry capacity to a small fixed value so the ratio math
+	// doesn't depend on Strength × CarryCapacityMultiplier defaults.
+	// 50 weight / 60 capacity ≈ 0.83 > 0.75 threshold default.
+	characters.ApplyMobOverrides(&mob.Character, 0, 0, 60.0)
+	mob.Character.Items = append(mob.Character.Items, items.Item{ItemId: heavyItemId})
+
+	bs := NewBehaviorState()
+	bs.Set(keyForagerState, forager.StateForaging.Name())
+	ctx := &EvalContext{
+		InstanceId: mob.InstanceId,
+		RoomId:     4177,
+		MobState:   bs,
+	}
+
+	fn := LookupAction("forager_check_thresholds")
+	if fn == nil {
+		t.Fatal("forager_check_thresholds not registered")
+	}
+	res := fn(nil, ctx)
+
+	if res != Success {
+		t.Errorf("expected Success at carry-cap, got %v", res)
+	}
+	if got := bs.GetString(keyForagerState); got != forager.StateTravelingToDropoff.Name() {
+		t.Errorf("state = %q, want %q", got, forager.StateTravelingToDropoff.Name())
+	}
+}
+
+// TestActForagerCheckThresholds_TransitionsAtFatigueLimit verifies that when
+// the fatigue counter reaches the limit, the primitive transitions state to
+// TravelingToDropoff and returns Success.
+func TestActForagerCheckThresholds_TransitionsAtFatigueLimit(t *testing.T) {
+	mob := buildForagerMob(t, 8261, 371, 4177 /* territory room */, 100, 100)
+	_ = mob
+
+	bs := NewBehaviorState()
+	bs.Set(keyForagerState, forager.StateForaging.Name())
+	// Pre-stuff fatigue to one tick below the limit so this call
+	// increments-then-transitions in one go.
+	bs.Set(keyFatigueTimer, strconv.Itoa(fatigueLimit-1))
+	ctx := &EvalContext{
+		InstanceId: mob.InstanceId,
+		RoomId:     4177,
+		MobState:   bs,
+	}
+
+	fn := LookupAction("forager_check_thresholds")
+	res := fn(nil, ctx)
+
+	if res != Success {
+		t.Errorf("expected Success at fatigue limit, got %v", res)
+	}
+	if got := bs.GetString(keyForagerState); got != forager.StateTravelingToDropoff.Name() {
+		t.Errorf("state = %q, want %q", got, forager.StateTravelingToDropoff.Name())
+	}
+}
+
+// TestActForagerCheckThresholds_FailureLetsSelectorContinue verifies that
+// when neither threshold is hit, the primitive increments fatigue but
+// returns Failure so the YAML selector falls through to the next primitive
+// (try_salvage / try_forage / wander_territory).
+func TestActForagerCheckThresholds_FailureLetsSelectorContinue(t *testing.T) {
+	mob := buildForagerMob(t, 8262, 371, 4177 /* territory room */, 100, 100)
+	// Capacity > 0 with empty satchel keeps carryRatio at 0.
+	characters.ApplyMobOverrides(&mob.Character, 0, 0, 100.0)
+
+	bs := NewBehaviorState()
+	bs.Set(keyForagerState, forager.StateForaging.Name())
+	bs.Set(keyFatigueTimer, "0")
+	ctx := &EvalContext{
+		InstanceId: mob.InstanceId,
+		RoomId:     4177,
+		MobState:   bs,
+	}
+
+	fn := LookupAction("forager_check_thresholds")
+	res := fn(nil, ctx)
+
+	if res != Failure {
+		t.Errorf("expected Failure under thresholds, got %v", res)
+	}
+	if got, _ := strconv.Atoi(bs.GetString(keyFatigueTimer)); got != 1 {
+		t.Errorf("expected fatigue incremented to 1, got %d", got)
+	}
+	// State must NOT have changed.
+	if got := bs.GetString(keyForagerState); got != forager.StateForaging.Name() {
+		t.Errorf("state changed under threshold: got %q, want %q",
+			got, forager.StateForaging.Name())
+	}
+}
+
+// TestActForagerCheckThresholds_NilMobReturnsFailure verifies the nil-guard.
+func TestActForagerCheckThresholds_NilMobReturnsFailure(t *testing.T) {
+	bs := NewBehaviorState()
+	bs.Set(keyForagerState, forager.StateForaging.Name())
+	ctx := &EvalContext{
+		InstanceId: 99999, // not registered
+		RoomId:     4177,
+		MobState:   bs,
+	}
+
+	fn := LookupAction("forager_check_thresholds")
+	res := fn(nil, ctx)
+
+	if res != Failure {
+		t.Errorf("expected Failure for nil mob, got %v", res)
+	}
+}
+
+// TestActForagerCheckThresholds_NilMobStateReturnsFailure verifies the
+// nil-MobState guard.
+func TestActForagerCheckThresholds_NilMobStateReturnsFailure(t *testing.T) {
+	mob := buildForagerMob(t, 8263, 371, 4177, 100, 100)
+	_ = mob
+
+	ctx := &EvalContext{
+		InstanceId: 8263,
+		RoomId:     4177,
+		MobState:   nil,
+	}
+
+	fn := LookupAction("forager_check_thresholds")
+	res := fn(nil, ctx)
+
+	if res != Failure {
+		t.Errorf("expected Failure for nil MobState, got %v", res)
 	}
 }
