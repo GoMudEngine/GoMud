@@ -111,6 +111,8 @@ func RegisterListeners() {
 
 	// Forager: patrol-waypoint arrival drives per-vendor sell handoff
 	events.RegisterListener(events.PatrolWaypointArrival{}, forager.ForagerArrivalListener)
+	// Forager: oneshot delivery patrol completion advances forager_state
+	events.RegisterListener(events.PatrolCompleted{}, forager.ForagerCompletionListener)
 
 	// Skill use: quest engine notifications
 	events.RegisterListener(events.SkillUsed{}, SkillUseQuestNotify)
