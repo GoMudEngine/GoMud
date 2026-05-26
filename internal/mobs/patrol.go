@@ -37,6 +37,47 @@ func GetPatrol(id string) *Patrol {
 	return patrols[id]
 }
 
+// StartOneshotPatrol assigns a oneshot patrol to a mob at runtime and
+// resets the patrol MiscData so the executor begins from waypoint 0 on
+// the next idle tick. Returns false if the patrol id doesn't resolve or
+// isn't loop_shape: oneshot.
+//
+// Used by outer state machines (caravan arrival listener, forager
+// forager_step btree action) to dispatch a sub-patrol when their
+// routine reaches a delivery phase. The executor emits
+// events.PatrolCompleted and calls ClearOneshotPatrol when the
+// terminal waypoint's dwell expires. Chunk 3.8.
+func StartOneshotPatrol(mob *Mob, patrolId string) bool {
+	if mob == nil {
+		return false
+	}
+	p := GetPatrol(patrolId)
+	if p == nil || p.LoopShape != "oneshot" {
+		return false
+	}
+	mob.PatrolId = patrolId
+	mob.Character.SetMiscData("patrol_waypoint_idx", 0)
+	mob.Character.SetMiscData("patrol_direction", 1)
+	mob.Character.SetMiscData("patrol_dwell_remaining", 0)
+	mob.Character.SetMiscData("patrol_path_fail_count", 0)
+	return true
+}
+
+// ClearOneshotPatrol clears mob.PatrolId and resets the four patrol
+// MiscData keys. Called by the executor on PatrolCompleted; also
+// exposed for explicit cancellation (e.g., outer state machine aborts
+// mid-circuit). Chunk 3.8.
+func ClearOneshotPatrol(mob *Mob) {
+	if mob == nil {
+		return
+	}
+	mob.PatrolId = ""
+	mob.Character.SetMiscData("patrol_waypoint_idx", 0)
+	mob.Character.SetMiscData("patrol_direction", 0)
+	mob.Character.SetMiscData("patrol_dwell_remaining", 0)
+	mob.Character.SetMiscData("patrol_path_fail_count", 0)
+}
+
 // NextWaypoint returns the next (waypoint index, direction) given the
 // current index and direction. Direction is meaningful only for yo-yo
 // patrols; strict patrols always loop forward.
