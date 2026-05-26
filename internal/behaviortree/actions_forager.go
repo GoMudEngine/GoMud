@@ -520,7 +520,9 @@ func dumpSatchelToLockbox(mob *mobs.Mob, ctx *EvalContext) bool {
 	if dumped {
 		box.Lock.SetLocked() // bumps RotationSeed
 		room.Containers["lockbox"] = box
-		room.SendText(messaging.CategoryMobEmote, `<ansi fg="yellow">A latch clicks shut from somewhere in the sanctuary.</ansi>`)
+		room.SendText(messaging.CategoryMobEmote, fmt.Sprintf(
+			`<ansi fg="mobname">%s</ansi> empties her satchel into the lockbox and latches it shut.`,
+			mob.Character.Name))
 	}
 	return dumped
 }

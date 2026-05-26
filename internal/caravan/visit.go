@@ -1,6 +1,7 @@
 package caravan
 
 import (
+	"fmt"
 	"math"
 	"slices"
 
@@ -152,18 +153,42 @@ func VisitVendorsInRoom(
 // FormatVisitMessage builds the room-flavor text for a vendor stop.
 // Returns "" when no transfers happened (caller should skip sending).
 //
+// runnerName is the visible source mob — chunk 3.8 makes Lars (Ketil's
+// son) the runner who carries cargo wagon↔vendor while the wagon stays
+// parked at the depot. Pre-3.8 the message said "the caravan crew" but
+// only one mob is actually in the room with the vendor now; naming the
+// runner reads better.
+//
+// Vendor name pulled from the first ItemMove's Vendor field (all moves
+// in a single call are at the same vendor). Falls back to "the local
+// merchant" if both slices are empty (defensive — caller skips on
+// empty).
+//
 // Three flavor variants:
-//   - Both delivered + picked up — "in trade" wording
-//   - Delivery only — "unloads supplies"
-//   - Pickup only — "loads up cargo"
-func FormatVisitMessage(delivered, pickedUp []ItemMove) string {
+//   - Both delivered + picked up — "trades supplies for cargo" wording
+//   - Delivery only — "unloads a satchel of supplies"
+//   - Pickup only — "loads up a satchel of cargo"
+func FormatVisitMessage(runnerName string, delivered, pickedUp []ItemMove) string {
+	vendor := "the local merchant"
+	switch {
+	case len(delivered) > 0:
+		vendor = delivered[0].Vendor
+	case len(pickedUp) > 0:
+		vendor = pickedUp[0].Vendor
+	}
 	switch {
 	case len(delivered) > 0 && len(pickedUp) > 0:
-		return `<ansi fg="yellow">Marta hands a small purse across the counter; the caravan unloads and reloads in trade.</ansi>`
+		return fmt.Sprintf(
+			`<ansi fg="yellow"><ansi fg="mobname">%s</ansi> trades a satchel of supplies for fresh cargo with <ansi fg="mobname">%s</ansi>.</ansi>`,
+			runnerName, vendor)
 	case len(delivered) > 0:
-		return `<ansi fg="yellow">The caravan crew unloads supplies for the local merchants.</ansi>`
+		return fmt.Sprintf(
+			`<ansi fg="yellow"><ansi fg="mobname">%s</ansi> unloads a satchel of supplies for <ansi fg="mobname">%s</ansi>.</ansi>`,
+			runnerName, vendor)
 	case len(pickedUp) > 0:
-		return `<ansi fg="yellow">The caravan crew loads up cargo from the local merchants for the road.</ansi>`
+		return fmt.Sprintf(
+			`<ansi fg="yellow"><ansi fg="mobname">%s</ansi> loads up a satchel of fresh cargo from <ansi fg="mobname">%s</ansi>.</ansi>`,
+			runnerName, vendor)
 	}
 	return ""
 }

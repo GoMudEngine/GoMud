@@ -177,7 +177,7 @@ func handleVendorArrival(leader *mobs.Mob, arrival events.PatrolWaypointArrival)
 	deliveryBuckets, pickupBuckets := bucketsForRunnerPatrol(arrival.PatrolId)
 
 	delivered, pickedUp := VisitVendorsInRoom(arrival.RoomId, lars, deliveryBuckets, pickupBuckets)
-	if msg := FormatVisitMessage(delivered, pickedUp); msg != "" {
+	if msg := FormatVisitMessage(lars.Character.Name, delivered, pickedUp); msg != "" {
 		if r := rooms.LoadRoom(arrival.RoomId); r != nil {
 			r.SendText(messaging.CategoryMobEmote, msg)
 		}
