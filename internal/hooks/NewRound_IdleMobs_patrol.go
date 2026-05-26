@@ -67,7 +67,11 @@ func patrolTickPlan(mob *mobs.Mob, patrolId string) patrolPlan {
 	}
 
 	// Not at target — path or fallback.
-	maxRetries := int(configs.GetBalanceConfig().ScheduleMaxPathRetries)
+	// Chunk 3.7: honor per-patrol MaxPathRetries override; 0 = use global default.
+	maxRetries := p.MaxPathRetries
+	if maxRetries == 0 {
+		maxRetries = int(configs.GetBalanceConfig().ScheduleMaxPathRetries)
+	}
 	if maxRetries > 0 && failCount >= maxRetries {
 		plan.WantsHomeFallback = true
 		plan.FailureMessage = fmt.Sprintf(

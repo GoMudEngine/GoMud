@@ -116,3 +116,36 @@ func TestApplyPatrolPlan_ResetsRetryAtTarget(t *testing.T) {
 		t.Errorf("expected patrol_path_fail_count reset to 0 at target, got %v", got)
 	}
 }
+
+func TestPatrolTickPlan_RespectsPerPatrolMaxRetries(t *testing.T) {
+	mobs.RegisterPatrolForTest(&mobs.Patrol{
+		Id:             "test_high_retry_patrol",
+		LoopShape:      "strict",
+		MaxPathRetries: 40,
+		Waypoints: []mobs.PatrolWaypoint{
+			{Room: 100, DwellRounds: 0},
+			{Room: 200, DwellRounds: 0},
+		},
+	})
+	t.Cleanup(func() { mobs.UnregisterPatrolForTest("test_high_retry_patrol") })
+
+	mob := &mobs.Mob{PatrolId: "test_high_retry_patrol"}
+	mob.Character.RoomId = 999 // not at waypoint 0 (room 100) — wants path
+
+	// At fail count 39, should still want path (under custom 40 cap)
+	mob.Character.SetMiscData("patrol_path_fail_count", 39)
+	plan := patrolTickPlan(mob, "test_high_retry_patrol")
+	if plan.WantsHomeFallback {
+		t.Errorf("expected WantsHomeFallback=false at fails=39 with cap=40, got %+v", plan)
+	}
+	if !plan.WantsPath {
+		t.Errorf("expected WantsPath=true at fails=39 under cap=40, got %+v", plan)
+	}
+
+	// At fail count 40, should trigger home fallback
+	mob.Character.SetMiscData("patrol_path_fail_count", 40)
+	plan = patrolTickPlan(mob, "test_high_retry_patrol")
+	if !plan.WantsHomeFallback {
+		t.Errorf("expected WantsHomeFallback=true at fails=40 with cap=40, got %+v", plan)
+	}
+}
