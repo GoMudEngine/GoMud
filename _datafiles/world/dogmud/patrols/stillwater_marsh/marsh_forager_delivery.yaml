@@ -1,0 +1,14 @@
+id: marsh_forager_delivery
+description: "Tova's vendor circuit through Stillwater: deliver foraged goods, return to sanctuary. Chunk 3.8 oneshot."
+loop_shape: oneshot
+max_path_retries: 40
+waypoints:
+  - { room: 4102, dwell_rounds: 3, arrival_event: forager_vendor }
+  - { room: 4103, dwell_rounds: 3, arrival_event: forager_vendor }
+  - { room: 4105, dwell_rounds: 3, arrival_event: forager_vendor }
+  - { room: 4106, dwell_rounds: 3, arrival_event: forager_vendor }
+  - { room: 4125, dwell_rounds: 3, arrival_event: forager_vendor }
+  - { room: 4126, dwell_rounds: 3, arrival_event: forager_vendor }
+  - { room: 4135, dwell_rounds: 3, arrival_event: forager_vendor }
+  - { room: 4143, dwell_rounds: 3, arrival_event: forager_vendor }
+  - { room: 4123, dwell_rounds: 1, arrival_event: "" }
