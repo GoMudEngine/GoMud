@@ -214,6 +214,70 @@ func TestApplyPatrolPlan_EmitsArrivalEventOnFirstDwellTick(t *testing.T) {
 	}
 }
 
+func TestApplyPatrolPlan_OneshotTerminal_EmitsCompletedAndClears(t *testing.T) {
+	mobs.RegisterPatrolForTest(&mobs.Patrol{
+		Id:        "test_oneshot_complete",
+		LoopShape: "oneshot",
+		Waypoints: []mobs.PatrolWaypoint{
+			{Room: 100, DwellRounds: 1},
+			{Room: 200, DwellRounds: 1},
+		},
+	})
+	t.Cleanup(func() { mobs.UnregisterPatrolForTest("test_oneshot_complete") })
+
+	events.DrainQueuedPatrolCompletedForTest(0)
+
+	mob := &mobs.Mob{InstanceId: 9100, PatrolId: "test_oneshot_complete"}
+	mob.Character.RoomId = 200
+	mob.Character.SetMiscData("patrol_waypoint_idx", 1)
+	mob.Character.SetMiscData("patrol_dwell_remaining", 0)
+
+	plan := patrolTickPlan(mob, "test_oneshot_complete")
+	if !plan.WantsComplete {
+		t.Fatalf("expected WantsComplete=true at oneshot terminal, got %+v", plan)
+	}
+	applyPatrolPlan(mob, plan, "test_oneshot_complete")
+
+	if mob.PatrolId != "" {
+		t.Errorf("expected PatrolId cleared, got %q", mob.PatrolId)
+	}
+
+	completed := events.DrainQueuedPatrolCompletedForTest(mob.InstanceId)
+	if len(completed) != 1 {
+		t.Fatalf("expected 1 PatrolCompleted event for instance %d, got %d",
+			mob.InstanceId, len(completed))
+	}
+	if completed[0].PatrolId != "test_oneshot_complete" {
+		t.Errorf("PatrolId in event = %q, want %q",
+			completed[0].PatrolId, "test_oneshot_complete")
+	}
+	if completed[0].RoomId != 200 {
+		t.Errorf("RoomId in event = %d, want 200", completed[0].RoomId)
+	}
+}
+
+func TestApplyPatrolPlan_StrictPatrol_DoesNotComplete(t *testing.T) {
+	mobs.RegisterPatrolForTest(&mobs.Patrol{
+		Id:        "test_strict_no_complete",
+		LoopShape: "strict",
+		Waypoints: []mobs.PatrolWaypoint{
+			{Room: 100, DwellRounds: 1},
+			{Room: 200, DwellRounds: 1},
+		},
+	})
+	t.Cleanup(func() { mobs.UnregisterPatrolForTest("test_strict_no_complete") })
+
+	mob := &mobs.Mob{InstanceId: 9101, PatrolId: "test_strict_no_complete"}
+	mob.Character.RoomId = 200
+	mob.Character.SetMiscData("patrol_waypoint_idx", 1)
+	mob.Character.SetMiscData("patrol_dwell_remaining", 0)
+
+	plan := patrolTickPlan(mob, "test_strict_no_complete")
+	if plan.WantsComplete {
+		t.Errorf("expected WantsComplete=false for strict patrol at last waypoint, got true")
+	}
+}
+
 // TestApplyPatrolPlan_EmitsArrivalEventOnZeroDwellWaypoint verifies that
 // PatrolWaypointArrival fires when the mob is at a zero-dwell waypoint and
 // the executor takes the WantsAdvance path. Chunk 3.7.

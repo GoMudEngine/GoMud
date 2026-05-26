@@ -23,6 +23,7 @@ type patrolPlan struct {
 	NextDwellRounds   int // dwell for the new waypoint after advance
 	WantsHomeFallback bool // after MaxPathRetries
 	FailureMessage    string
+	WantsComplete     bool // chunk 3.8: oneshot patrol reached its terminal waypoint
 }
 
 // patrolTickPlan computes the desired tick action for a patrol mob.
@@ -56,6 +57,13 @@ func patrolTickPlan(mob *mobs.Mob, patrolId string) patrolPlan {
 		// At target. Dwell or advance?
 		if dwellRemaining > 0 {
 			plan.WantsDwellWait = true
+			return plan
+		}
+		// Chunk 3.8: oneshot terminal — at the last waypoint of a
+		// oneshot patrol, with dwell expired, signal completion
+		// instead of advancing.
+		if p.LoopShape == "oneshot" && idx == len(p.Waypoints)-1 {
+			plan.WantsComplete = true
 			return plan
 		}
 		// Advance.
@@ -95,6 +103,15 @@ func applyPatrolPlan(mob *mobs.Mob, plan patrolPlan, activePatrolId string) {
 	}
 
 	switch {
+	case plan.WantsComplete:
+		events.AddToQueue(events.PatrolCompleted{
+			MobInstanceId: mob.InstanceId,
+			PatrolId:      activePatrolId,
+			RoomId:        mob.Character.RoomId,
+		})
+		mobs.ClearOneshotPatrol(mob)
+		return
+
 	case plan.WantsHomeFallback:
 		mudlog.Warn("patrol", "msg", plan.FailureMessage)
 		mob.Command("pathto home")

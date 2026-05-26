@@ -327,6 +327,34 @@ func DrainQueuedPatrolWaypointArrivalsForTest(instanceId int) []PatrolWaypointAr
 	return found
 }
 
+// DrainQueuedPatrolCompletedForTest pops and returns every queued
+// PatrolCompleted event whose MobInstanceId matches. Mirrors the
+// drain pattern used by other test helpers in this file. Pass 0
+// to drain all (for a global reset between tests). Chunk 3.8.
+//
+// FOR TEST USE ONLY. Mutates the queue.
+func DrainQueuedPatrolCompletedForTest(instanceId int) []PatrolCompleted {
+	qLock.Lock()
+	defer qLock.Unlock()
+	var found []PatrolCompleted
+	remaining := make(priorityQueue, 0, len(globalQueue))
+	for _, pe := range globalQueue {
+		pc, ok := pe.event.(PatrolCompleted)
+		if !ok {
+			remaining = append(remaining, pe)
+			continue
+		}
+		if instanceId == 0 || pc.MobInstanceId == instanceId {
+			found = append(found, pc)
+			continue
+		}
+		remaining = append(remaining, pe)
+	}
+	globalQueue = remaining
+	heap.Init(&globalQueue)
+	return found
+}
+
 // Initialize the priority queue.
 func init() {
 	heap.Init(&globalQueue)
