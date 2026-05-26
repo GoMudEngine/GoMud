@@ -100,6 +100,7 @@ should always agree.
 | 3.5 | Routine | Maintenance routines | M | 3.2 | Deferred |
 | 3.6 | Routine | NPC↔NPC idle conversation | M | 1.6 | Done |
 | 3.7 | Routine | Inter-zone patrols + caravan unification | L | 3.4 | Not started |
+| 3.8 | Routine | Caravan runner-delivery + foragers-on-patrols | M | 3.7 | Not started |
 | 4.1 | Strategic | Goal representation | M | 1.1, 1.4 | Not started |
 | 4.2 | Strategic | Goal selection | L | 4.1 | Not started |
 | 4.3 | Strategic | Goal types catalog | M | 4.1 | Not started |
@@ -118,7 +119,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 20 / 41 done • 0 in progress • 21 not started.
+**Roll-up:** 20 / 42 done • 0 in progress • 22 not started.
 
 ---
 
@@ -540,6 +541,60 @@ world.
 - **3.4 satisfied:** Single-zone patrol primitive shipped in
   3.4. 3.7 lifts the single-zone restriction and migrates
   caravan movement onto the shared layer.
+
+### 3.8 Caravan runner-delivery + foragers-on-patrols
+**Status:** Not started • **Size:** M
+
+- **Goal:** Two related routine-layer refinements that share
+  the post-3.7 patrol substrate:
+  1. **Caravan runner-delivery flavor pass.** The 3.7
+     migration preserves the existing "wagon visits every
+     vendor room" pattern as a faithful refactor — but
+     semantically the wagon shouldn't be dragged into an
+     alchemy shop. Resurrect the original design intent
+     (lost in the first caravan implementation) where
+     Ketil's son acts as a runner, walking supplies from the
+     parked wagon at the depot out to each vendor.
+  2. **Explore moving foragers onto the patrol layer.**
+     Foragers currently use a custom state-machine for
+     wander-a-territory movement and are still getting hung
+     up on prod (stranding, edge-case pathto failures). The
+     patrol layer's retry-then-home-fallback + standardized
+     interrupt handling may offer a more robust substrate.
+     "Wander a territory" isn't a straight-line patrol, so
+     this is exploration first — design a probabilistic or
+     territory-aware patrol variant, then decide whether to
+     port foragers.
+- **In:**
+  - Runner mob (Ketil's son) authored + slotted into caravan
+    crew; vendor-stop waypoints in the caravan patrol
+    collapse to just the depot, with restock dispatched via
+    a depot-arrival listener that walks the runner through
+    the local vendor circuit.
+  - Forager-territory pattern investigation: prototype a
+    `loop_shape: random` or `wander_territory` patrol mode,
+    A/B against the current forager state machine in
+    smoke testing, decide whether the engine extension is
+    worth the migration.
+  - If foragers migrate: per-forager territory definition as
+    patrol YAML, deletion of the current forager wander
+    state machine in `internal/forager/` (parallel to the
+    caravan reduction in 3.7).
+- **Out:** Multi-runner per caravan (one runner is enough for
+  the proof-of-concept). Generalized "delegate vendor visits
+  to a runner crew member" abstraction beyond caravans
+  (defer until a second consumer materializes).
+- **Depends on:** 3.7 (cross-zone patrols + caravan unification).
+- **Why:** 3.7 ships engine unification but accepts the
+  wagon-in-shops semantic compromise as a faithful refactor.
+  3.8 closes the flavor loop and explores whether the same
+  unification path makes sense for foragers, which have been
+  a recurring source of prod stability issues since chunk
+  2.9. Bundling the two reduces context-switching cost —
+  both share the same patrol-substrate mental model.
+- **Memory references:** `caravan-runner-delivery-flavor`,
+  `forager_fatigue_cadence` (chunk 2.9 follow-up bug
+  tracking).
 
 ---
 
