@@ -61,14 +61,14 @@ func TestForagerStep_Registered(t *testing.T) {
 func TestForagerStep_DefaultsToResting(t *testing.T) {
 	fn := LookupAction("forager_step")
 
-	// Mob 371 = Tova (Marsh forager). Sanctuary room = 4123.
-	mob := buildForagerMob(t, 8200, 371, 4123, 100, 100)
+	// Mob 371 = Tova (Marsh forager). Sanctuary room = 4198.
+	mob := buildForagerMob(t, 8200, 371, 4198, 100, 100)
 	_ = mob
 
 	state := NewBehaviorState()
 	ctx := &EvalContext{
 		InstanceId: 8200,
-		RoomId:     4123,
+		RoomId:     4198,
 		MobState:   state,
 	}
 	fn(nil, ctx)
@@ -137,8 +137,8 @@ func TestForagerStep_HPEmergencyTransitionsToRecalling(t *testing.T) {
 func TestForagerStep_RestingFullHPAdvances(t *testing.T) {
 	fn := LookupAction("forager_step")
 
-	// Mob 371, full HP, at sanctuary (4123).
-	mob := buildForagerMob(t, 8203, 371, 4123, 100, 100)
+	// Mob 371, full HP, at sanctuary (4198).
+	mob := buildForagerMob(t, 8203, 371, 4198, 100, 100)
 	_ = mob
 
 	state := NewBehaviorState()
@@ -153,7 +153,7 @@ func TestForagerStep_RestingFullHPAdvances(t *testing.T) {
 
 	ctx := &EvalContext{
 		InstanceId: 8203,
-		RoomId:     4123, // sanctuary
+		RoomId:     4198, // sanctuary
 		MobState:   state,
 	}
 	result := fn(nil, ctx)
@@ -173,7 +173,7 @@ func TestForagerStep_RestingNotFullHPStaysResting(t *testing.T) {
 	fn := LookupAction("forager_step")
 
 	// Mob 371, partial HP, at sanctuary.
-	mob := buildForagerMob(t, 8204, 371, 4123, 80, 100)
+	mob := buildForagerMob(t, 8204, 371, 4198, 80, 100)
 	_ = mob
 
 	state := NewBehaviorState()
@@ -183,7 +183,7 @@ func TestForagerStep_RestingNotFullHPStaysResting(t *testing.T) {
 
 	ctx := &EvalContext{
 		InstanceId: 8204,
-		RoomId:     4123,
+		RoomId:     4198,
 		MobState:   state,
 	}
 	result := fn(nil, ctx)
@@ -231,7 +231,7 @@ func TestForagerStep_TravelingArrivesInTerritory(t *testing.T) {
 func TestForagerStep_RecallingAtSanctuaryTransitionsToResting(t *testing.T) {
 	fn := LookupAction("forager_step")
 
-	mob := buildForagerMob(t, 8206, 371, 4123 /* sanctuary */, 100, 100)
+	mob := buildForagerMob(t, 8206, 371, 4198 /* sanctuary */, 100, 100)
 	_ = mob
 
 	state := NewBehaviorState()
@@ -239,7 +239,7 @@ func TestForagerStep_RecallingAtSanctuaryTransitionsToResting(t *testing.T) {
 
 	ctx := &EvalContext{
 		InstanceId: 8206,
-		RoomId:     4123,
+		RoomId:     4198,
 		MobState:   state,
 	}
 	result := fn(nil, ctx)
@@ -256,11 +256,11 @@ func TestForagerStep_RecallingAtSanctuaryTransitionsToResting(t *testing.T) {
 // TestForagerStep_NilMobStateReturnsFailure ensures the nil-guard fires.
 func TestForagerStep_NilMobStateReturnsFailure(t *testing.T) {
 	fn := LookupAction("forager_step")
-	mob := buildForagerMob(t, 8207, 371, 4123, 100, 100)
+	mob := buildForagerMob(t, 8207, 371, 4198, 100, 100)
 	_ = mob
 	ctx := &EvalContext{
 		InstanceId: 8207,
-		RoomId:     4123,
+		RoomId:     4198,
 		MobState:   nil, // deliberately nil
 	}
 	if got := fn(nil, ctx); got != Failure {
@@ -273,7 +273,7 @@ func TestForagerStep_NilMobStateReturnsFailure(t *testing.T) {
 // satchel are transferred into the room's "lockbox" container, the lock's
 // RotationSeed is bumped, and the state transitions to Resting.
 func TestTickForagerRecalling_DumpsSurplusIntoLockbox(t *testing.T) {
-	const sanctuaryRoom = 4123
+	const sanctuaryRoom = 4198
 
 	// Build a synthetic room with a lockbox container (difficulty 3,
 	// RotationSeed 1 as per Task 7 YAML template).
@@ -297,7 +297,7 @@ func TestTickForagerRecalling_DumpsSurplusIntoLockbox(t *testing.T) {
 	)
 	defer cleanRooms()
 
-	// Mob 371 = Tova (Marsh forager). Sanctuary room = 4123.
+	// Mob 371 = Tova (Marsh forager). Sanctuary room = 4198.
 	mob := buildForagerMob(t, 8210, 371, sanctuaryRoom, 100, 100)
 
 	// Stash two items directly into the satchel (Items slice, bypassing
@@ -335,11 +335,11 @@ func TestTickForagerRecalling_DumpsSurplusIntoLockbox(t *testing.T) {
 	// Lockbox should contain the dumped items.
 	room := rooms.LoadRoom(sanctuaryRoom)
 	if room == nil {
-		t.Fatal("room 4123 missing")
+		t.Fatal("room 4198 missing")
 	}
 	box, ok := room.Containers["lockbox"]
 	if !ok {
-		t.Fatal("room 4123 has no lockbox")
+		t.Fatal("room 4198 has no lockbox")
 	}
 	if len(box.Items) < 2 {
 		t.Errorf("lockbox after dump = %d items, want at least 2",
@@ -437,8 +437,8 @@ func TestTickForagerDeliveringFernway_DumpsIntoSealedCrate(t *testing.T) {
 func TestForagerWatchdog_ResetsStuckMobToRecalling(t *testing.T) {
 	fn := LookupAction("forager_step")
 
-	// Mob 371 = Tova (Marsh forager). Sanctuary room = 4123.
-	mob := buildForagerMob(t, 8230, 371, 4123, 100, 100)
+	// Mob 371 = Tova (Marsh forager). Sanctuary room = 4198.
+	mob := buildForagerMob(t, 8230, 371, 4198, 100, 100)
 	_ = mob
 
 	state := NewBehaviorState()
@@ -451,7 +451,7 @@ func TestForagerWatchdog_ResetsStuckMobToRecalling(t *testing.T) {
 
 	ctx := &EvalContext{
 		InstanceId: 8230,
-		RoomId:     4123, // sanctuary
+		RoomId:     4198, // sanctuary
 		MobState:   state,
 	}
 	result := fn(nil, ctx)
@@ -511,7 +511,7 @@ func TestForagerWatchdog_DoesNotResetActiveForager(t *testing.T) {
 func TestTickForagerRecalling_TeleportsDirectly(t *testing.T) {
 	const (
 		territoryRoom = 4177 // somewhere in Tova's territory (not sanctuary)
-		sanctuaryRoom = 4123 // Tova's sanctuary
+		sanctuaryRoom = 4198 // Tova's sanctuary
 	)
 
 	// Build two rooms: the forager's current location and the anchor destination.
@@ -600,7 +600,7 @@ func TestTryStoreExcess_RegisteredInActionRegistry(t *testing.T) {
 // TestTryStoreExcess_NoChestRoomParam verifies that omitting the required
 // chest_room param returns Failure.
 func TestTryStoreExcess_NoChestRoomParam(t *testing.T) {
-	mob := buildForagerMob(t, 8250, 371, 4123, 100, 100)
+	mob := buildForagerMob(t, 8250, 371, 4198, 100, 100)
 	mob.Character.Items = append(mob.Character.Items, items.New(40021))
 
 	ctx := &EvalContext{InstanceId: mob.InstanceId}
@@ -613,11 +613,11 @@ func TestTryStoreExcess_NoChestRoomParam(t *testing.T) {
 // TestTryStoreExcess_NoItems verifies that an empty satchel returns Failure
 // (nothing to deposit).
 func TestTryStoreExcess_NoItems(t *testing.T) {
-	mob := buildForagerMob(t, 8251, 371, 4123, 100, 100)
+	mob := buildForagerMob(t, 8251, 371, 4198, 100, 100)
 	// Leave mob.Character.Items nil (zero value)
 
 	ctx := &EvalContext{InstanceId: mob.InstanceId}
-	res := actTryStoreExcess(map[string]any{"chest_room": 4123}, ctx)
+	res := actTryStoreExcess(map[string]any{"chest_room": 4198}, ctx)
 	if res != Failure {
 		t.Errorf("expected Failure with empty satchel, got %v", res)
 	}
@@ -643,7 +643,7 @@ func TestTryStoreExcess_NotInChestRoom_IssuesPathto(t *testing.T) {
 // returns Failure safely.
 func TestTryStoreExcess_NilMob_ReturnsFailure(t *testing.T) {
 	ctx := &EvalContext{InstanceId: 99999}
-	res := actTryStoreExcess(map[string]any{"chest_room": 4123}, ctx)
+	res := actTryStoreExcess(map[string]any{"chest_room": 4198}, ctx)
 	if res != Failure {
 		t.Errorf("expected Failure for nil mob, got %v", res)
 	}
@@ -748,7 +748,7 @@ func TestTryStoreExcess_InChestRoom_Unlocked_IssuesPutAndLock(t *testing.T) {
 // at-sanctuary path: forager in Recalling state with cargo arrives at her
 // sanctuary, dumps satchel, and transitions to Resting.
 func TestTickForagerRecalling_AtSanctuaryTransitionsToResting(t *testing.T) {
-	const sanctuaryRoom = 4123
+	const sanctuaryRoom = 4198
 
 	testRoom := &rooms.Room{
 		RoomId: sanctuaryRoom,
