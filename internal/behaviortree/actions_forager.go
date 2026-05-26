@@ -262,10 +262,13 @@ func tickForagerDeliveringTown(
 	mob *mobs.Mob,
 	ctx *EvalContext,
 ) Result {
-	idx := getIntFromState(ctx.MobState, keyVisitIndex)
-	if idx >= len(p.VendorRooms) {
-		// Route through Storing when the forager has a personal lockbox
-		// and still carries unsold items — otherwise head straight home.
+	// Chunk 3.8 5.4 sanctuary-fallback safety: if the forager has
+	// somehow ended up at the sanctuary while StateDelivering with
+	// no active oneshot patrol (e.g., patrol home-fallback fired
+	// and never produced a PatrolCompleted), advance state
+	// directly. Cargo, if any, carries through to Storing or
+	// Recalling.
+	if mob.Character.RoomId == p.SanctuaryRoom && mob.PatrolId == "" {
 		if mob.StorageChestRoom > 0 && len(mob.Character.Items) > 0 {
 			ctx.MobState.Set(keyStoringTurns, "0")
 			transitionForager(ctx.MobState, forager.StateStoring)
@@ -274,13 +277,27 @@ func tickForagerDeliveringTown(
 		}
 		return Success
 	}
-	target := p.VendorRooms[idx]
-	if ctx.RoomId != target {
-		mob.Command(fmt.Sprintf("pathto %d", target))
+
+	// If a oneshot delivery patrol is already running, the executor
+	// will drive movement and the arrival listener will fire vendor
+	// sells. Nothing for this tick to do.
+	if mob.PatrolId == p.DeliveryPatrolId && mob.PatrolId != "" {
 		return Success
 	}
-	forager.SellToVendor(target, p, mob)
-	ctx.MobState.Set(keyVisitIndex, strconv.Itoa(idx+1))
+
+	// First entry to StateDelivering — start the oneshot patrol.
+	if p.DeliveryPatrolId == "" {
+		// Defensive: shouldn't happen for KindMarsh/KindSteppe since
+		// territory.go populates these. Fall through to Recalling so
+		// the cycle doesn't stall.
+		transitionForager(ctx.MobState, forager.StateRecalling)
+		return Success
+	}
+	if !mobs.StartOneshotPatrol(mob, p.DeliveryPatrolId) {
+		// Patrol id didn't resolve or isn't oneshot — log + give up.
+		transitionForager(ctx.MobState, forager.StateRecalling)
+		return Success
+	}
 	return Success
 }
 
