@@ -101,7 +101,7 @@ should always agree.
 | 3.6 | Routine | NPC↔NPC idle conversation | M | 1.6 | Done |
 | 3.7 | Routine | Inter-zone patrols + caravan unification | L | 3.4 | Done |
 | 3.8 | Routine | One-shot sub-patrols (caravan runner + forager delivery) | M | 3.7 | Done |
-| 4.1 | Strategic | Goal representation | M | 1.1, 1.4 | Not started |
+| 4.1 | Strategic | Goal representation | M | 1.1, 1.4 | Done |
 | 4.2 | Strategic | Goal selection | L | 4.1 | Not started |
 | 4.3 | Strategic | Goal types catalog | M | 4.1 | Not started |
 | 4.4 | Strategic | Strategic→tactical translation | L | 4.3, Phase 2 | Not started |
@@ -119,7 +119,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 22 / 42 done • 0 in progress • 20 not started.
+**Roll-up:** 23 / 42 done • 0 in progress • 19 not started.
 
 ---
 
@@ -649,13 +649,21 @@ The new "what do I want?" engine. Builds on substrate state and tactical
 verbs.
 
 ### 4.1 Goal representation
-**Status:** Not started • **Size:** M
+**Status:** Done • **Size:** M
 
 - **Goal:** Define what a goal is in code — type, target, satisfaction predicate, expiry, priority.
 - **In:** Goal struct/interface, registration, persistence, debug command.
 - **Out:** Goal selection logic (4.2).
 - **Depends on:** 1.1, 1.4 (goals reference state)
 - **Why:** Foundation for the strategic layer. Without this, "drives" stay vibes.
+- **Shipped:** `internal/goals/` package — `Goal` struct + YAML round-trip, per-NPC `MobGoals` store with atomic-write
+  persistence to `_datafiles/world/dogmud/goals/{mobId}-{namesimple}.yaml` (gitignored), type-metadata
+  registry with symmetry check at init, `Add/Remove/Clear/GoalsOf/IsSatisfied/IsExpired` store API,
+  conflict-resolution (highest-priority wins on duplicate target+type), concurrent-safe cache.
+  Admin command `goal list/show/add/remove/clear` for live inspection and testing. No change to
+  observable NPC behavior — foundation only. Spec at
+  `docs/superpowers/specs/2026-05-26-mob-aliveness-4.1-goal-representation-design.md`, plan at
+  `docs/superpowers/plans/2026-05-26-mob-aliveness-4.1-goal-representation.md`.
 
 ### 4.2 Goal selection
 **Status:** Not started • **Size:** L
