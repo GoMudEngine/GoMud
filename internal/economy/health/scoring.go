@@ -1,6 +1,9 @@
 package health
 
-import "github.com/GoMudEngine/GoMud/internal/configs"
+import (
+	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/util"
+)
 
 // ScoringConfig is a small DI shim around the global balance config.
 // Passing it explicitly to score functions keeps the math testable
@@ -441,19 +444,39 @@ func zoneInputTarget(zone string, cur *Snapshot, cfg ScoringConfig) float64 {
 	return target
 }
 
-// territoryMatchesZone checks if the forager's territory string belongs
-// to a zone. Foragers don't have a Zone field, so we compare the
-// territory prefix to the zone name (underscore-joined).
+// territoryMatchesZone reports whether a forager territory key (always
+// snake_case, e.g. "stillwater_marsh") belongs to a shop zone (which
+// comes in display-case, e.g. "Stillwater" or "Thornwall City").
+//
+// Normalizes both sides through util.ConvertForFilename so the compare
+// is case-insensitive and word-boundary-aware (display "Thornwall City"
+// → "thornwall_city").
+//
+// Additionally consults a territory→zone alias map so non-prefix-match
+// pairings work (e.g., Halix's "thornwall_steppe" delivers to
+// "Thornwall City" / "thornwall_city").
 func territoryMatchesZone(territory, zone string) bool {
-	if territory == zone {
+	t := util.ConvertForFilename(territory)
+	z := util.ConvertForFilename(zone)
+	if t == z {
 		return true
 	}
-	// territory like "stillwater_marsh" should match zone "stillwater"
-	if len(territory) > len(zone) && territory[:len(zone)] == zone &&
-		territory[len(zone)] == '_' {
+	if alias, ok := territoryZoneAlias[t]; ok && alias == z {
+		return true
+	}
+	// Prefix match (territory begins with zone + "_"), case-normalized.
+	if len(t) > len(z) && t[:len(z)] == z && t[len(z)] == '_' {
 		return true
 	}
 	return false
+}
+
+// territoryZoneAlias maps forager territory keys to shop-zone keys
+// when the prefix-match heuristic doesn't apply. Add an entry per
+// forager whose territory name doesn't share a prefix with the city
+// they deliver to.
+var territoryZoneAlias = map[string]string{
+	"thornwall_steppe": "thornwall_city", // Halix delivers here
 }
 
 // InputRateScore measures items entering a zone's supply per game-day,
