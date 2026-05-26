@@ -250,3 +250,72 @@ func TestAdd_DisplacesMultipleConflicts(t *testing.T) {
 	}
 }
 
+func TestRemove_HappyPath(t *testing.T) {
+	ClearCache()
+	resetRegistry()
+	res, err := Add(99011, "removable", &Goal{Type: "alpha", Priority: 50})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := Remove(99011, "removable", res.Added.Id); err != nil {
+		t.Fatalf("Remove: %v", err)
+	}
+	if len(GoalsOf(99011, "removable")) != 0 {
+		t.Error("expected empty after Remove")
+	}
+}
+
+func TestRemove_MissingIdReturnsErrGoalNotFound(t *testing.T) {
+	ClearCache()
+	resetRegistry()
+	err := Remove(99012, "empty", "g999")
+	if !errors.Is(err, ErrGoalNotFound) {
+		t.Errorf("expected ErrGoalNotFound, got %v", err)
+	}
+}
+
+func TestRemove_DoesNotResetNextGoalId(t *testing.T) {
+	// Ids are never reused even after Remove. After Add → Remove → Add,
+	// the second Add should produce g2, not g1.
+	ClearCache()
+	resetRegistry()
+	r1, _ := Add(99013, "noreuse", &Goal{Type: "x", Priority: 10})
+	if err := Remove(99013, "noreuse", r1.Added.Id); err != nil {
+		t.Fatal(err)
+	}
+	r2, err := Add(99013, "noreuse", &Goal{Type: "y", Priority: 20})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r2.Added.Id != "g2" {
+		t.Errorf("expected g2 after Remove+Add, got %q", r2.Added.Id)
+	}
+}
+
+func TestClear_RemovesAllAndResetsCounter(t *testing.T) {
+	// Note: spec says ids never reused for the lifetime of a mob's file.
+	// Clear is admin-only and intentionally heavy-hand — it wipes the
+	// file AND resets NextGoalId to 1 so the operator gets a clean slate.
+	ClearCache()
+	resetRegistry()
+	if _, err := Add(99014, "clearable", &Goal{Type: "a", Priority: 10}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Add(99014, "clearable", &Goal{Type: "b", Priority: 20}); err != nil {
+		t.Fatal(err)
+	}
+	if err := Clear(99014, "clearable"); err != nil {
+		t.Fatal(err)
+	}
+	if len(GoalsOf(99014, "clearable")) != 0 {
+		t.Error("expected empty after Clear")
+	}
+	r, err := Add(99014, "clearable", &Goal{Type: "c", Priority: 30})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r.Added.Id != "g1" {
+		t.Errorf("expected counter reset to g1 after Clear, got %q", r.Added.Id)
+	}
+}
+

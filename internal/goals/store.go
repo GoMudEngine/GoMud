@@ -175,3 +175,49 @@ func removeGoals(goals []*Goal, drop []*Goal) []*Goal {
 	}
 	return out
 }
+
+// Remove deletes a goal by id. Returns ErrGoalNotFound if the id is
+// not present on the mob. NextGoalId is NOT decremented — ids are
+// never reused within the lifetime of a mob's file.
+func Remove(mobId int, namesimple, goalId string) error {
+	mg := loadOrLazyInit(mobId, namesimple)
+	cacheMu.Lock()
+	found := false
+	out := mg.Goals[:0:0]
+	for _, g := range mg.Goals {
+		if g.Id == goalId {
+			found = true
+			continue
+		}
+		out = append(out, g)
+	}
+	if !found {
+		cacheMu.Unlock()
+		return ErrGoalNotFound
+	}
+	mg.Goals = out
+	nameByMobId[mobId] = namesimple
+	cacheMu.Unlock()
+
+	if err := saveToDisk(mobId, namesimple); err != nil {
+		mudlog.Warn("goals.Remove: save failed", "mob_id", mobId, "error", err)
+	}
+	return nil
+}
+
+// Clear removes every goal from the mob and resets NextGoalId to 1.
+// Admin-only — intentionally heavy-hand for resetting a mob's goal
+// state to defaults.
+func Clear(mobId int, namesimple string) error {
+	mg := loadOrLazyInit(mobId, namesimple)
+	cacheMu.Lock()
+	mg.Goals = nil
+	mg.NextGoalId = 1
+	nameByMobId[mobId] = namesimple
+	cacheMu.Unlock()
+
+	if err := saveToDisk(mobId, namesimple); err != nil {
+		mudlog.Warn("goals.Clear: save failed", "mob_id", mobId, "error", err)
+	}
+	return nil
+}
