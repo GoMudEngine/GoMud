@@ -210,7 +210,16 @@ func captureCaravans() []CaravanSnapshot {
 		}
 
 		// Populate DeliveriesByTier and LbsDelivered from caravan throughput.
-		tp := caravan.GetThroughput(m.Character.Zone, instId)
+		// Use wagon.Zone + wagon.MobId — throughput is written by visit.go
+		// under those keys (IncrementDelivery(wagon.Zone, wagon.MobId, ...)).
+		// m.Character.Zone is the leader's current-room zone (mutates as the
+		// caravan walks) and instId is the leader's instance ID; both are
+		// wrong for this lookup. Wagon may be nil when the caravan is between
+		// depot arrivals; skip throughput in that case.
+		var tp *caravan.Throughput
+		if wagon != nil {
+			tp = caravan.GetThroughput(wagon.Zone, int(wagon.MobId))
+		}
 		if tp != nil {
 			cs.LbsDelivered = tp.LbsDelivered
 			if tp.DeliveriesByTier != nil {
@@ -326,7 +335,10 @@ func captureForagers() []ForagerSnapshot {
 			}
 		}
 		// Populate DeliveriesByTier and LbsDelivered from forager throughput.
-		tp := forager.GetThroughput(m.Character.Zone, p.MobId)
+		// Use m.Zone (template-stable home zone) not m.Character.Zone
+		// (current-room zone, mutates as the forager walks). Throughput is
+		// written under mob.Zone by vendor_sell.go:IncrementDelivery.
+		tp := forager.GetThroughput(m.Zone, p.MobId)
 		if tp != nil {
 			fs.LbsDelivered = tp.LbsDelivered
 			if tp.DeliveriesByTier != nil {
