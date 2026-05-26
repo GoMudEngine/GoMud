@@ -439,6 +439,23 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
   MiscData in `applySchedulePlan` when the current segment has
   `activity: patrol`.
 
+### Conversation executor (chunk 3.6)
+
+- `NewRound_IdleMobs_conversations.go`: conversation branch runs in
+  the idle-mob per-tick handler AFTER schedule and patrol branches.
+  Calls `conversations.TryStart(mob, roomMobIds)` to attempt starting
+  a new conversation; if successful, skips idle command dispatch for
+  this round. Per-round during an active conversation, calls
+  `conversations.TickConversation(mob, partnerId)` to advance one line,
+  returning control when the exchange finishes. Gating: both NPCs must
+  be fully idle (no combat, no sleep, no existing conversation, off
+  cooldown) and have an active relationship edge.
+- Player-arrival boost: `internal/usercommands/go.go` calls
+  `conversations.TryStart(character, room.GetMobIds())` when a player
+  enters a room, applying `ConversationPlayerArrivalBoostPct` chance to
+  trigger a conversation between cohabiting NPCs. This adds ambient life
+  to busy rooms without burdening the continuous idle tick.
+
 ## Integration Patterns
 
 ### Event System Integration
