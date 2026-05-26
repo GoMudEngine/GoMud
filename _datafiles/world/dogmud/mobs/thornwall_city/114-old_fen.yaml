@@ -45,3 +45,6 @@ relationships:
     type: friend
   - to: 117
     type: friend
+  - to: 116
+    type: rival
+    subtype: "old argument"
