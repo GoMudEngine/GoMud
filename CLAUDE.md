@@ -5,10 +5,11 @@ Always use `model: "haiku"` when spawning subagents via the Task tool, unless th
 
 ## Git Workflow
 Follow the branch strategy in `github_guide.md`:
-- `master` tracks upstream GoMud exactly — never commit directly
-- `development` is the main integration branch
+- `master` is the main integration branch + production. `origin` = pruuk/DOGMud
+- NEVER push to upstream (GoMudEngine/GoMud); cherry-pick from upstream only
+- `development` is legacy from when the project still pulled from upstream — no longer used as the integration branch
 - Feature branches: `feature/stage-X.Y-description`
-- Merge features into development with `--no-ff`
+- Merge features into master with `--no-ff`
 - Use conventional commit messages (feat:, fix:, refactor:, docs:, chore:)
 
 ## Pre-Push SOP
