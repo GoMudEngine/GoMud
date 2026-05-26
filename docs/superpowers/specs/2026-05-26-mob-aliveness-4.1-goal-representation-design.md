@@ -59,12 +59,12 @@ package goals
 //
 // Immutable once added — "updates" are Remove + Add new.
 type Goal struct {
-    Id          string         // ULID (sortable, unique across the world)
+    Id          string         // sequential per-mob string ("g1", "g2", ...); never reused
     OwnerMobId  int            // mob TEMPLATE id (not instance id)
     Type        string         // registry key, e.g. "revenge", "wealth-target"
-    Priority    int            // 0..100; ties broken by ULID (older wins)
+    Priority    int            // 0..100; ties broken by Id (older = lower number wins)
     Params      map[string]any // type-specific payload; YAML-friendly types
-    CreatedAt   time.Time      // for audit / ordering / future TTL grace
+    CreatedAt   time.Time      // for audit / future TTL grace
     ExpiresAt   time.Time      // zero value = never expires
 }
 ```
@@ -79,22 +79,24 @@ a 4.3 concern bound to the predicate registration.
 ### 1.2 On-disk layout
 
 ```
-_datafiles/world/dogmud/goals/<zone>/<mobid>-<namesimple>.yaml
+_datafiles/world/dogmud/goals/<mobid>-<namesimple>.yaml
 ```
 
-Mirrors the opinion / knowledge / fact-store layouts. Zone derives from the
-mob template's source zone (the directory the template YAML lives in under
-`_datafiles/world/dogmud/mobs/`). `namesimple` runs through
-`util.ConvertForFilename`.
+Flat directory, matching the existing opinion / knowledge / facts-awareness
+stores. `namesimple` runs through `util.ConvertForFilename`. The file
+itself carries the `mob_id` and the per-mob `next_goal_id` counter
+(monotonic; never reused across the lifetime of this mob's file).
 
-Empty file = "this mob has no goals" (still written so the on-disk presence
-indicates the mob is goal-tracked).
+Empty `goals:` list = "this mob has no goals" (file still written so disk
+presence indicates the mob is goal-tracked).
 
 File contents:
 
 ```yaml
+mob_id: 371
+next_goal_id: 3
 goals:
-  - id: 01J9X7K3M2QH8WZN4RB5VFTPYA
+  - id: g1
     type: revenge
     priority: 70
     params:
@@ -103,7 +105,7 @@ goals:
       observed_round: 12345
     created_at: 2026-05-26T14:30:00Z
     expires_at: 2026-06-25T14:30:00Z
-  - id: 01J9X7K3M2QH8WZN4RB5VFTPYB
+  - id: g2
     type: wealth-target
     priority: 30
     params:
@@ -111,8 +113,8 @@ goals:
     created_at: 2026-05-26T14:31:00Z
 ```
 
-`OwnerMobId` is not stored in each entry — the filename already encodes it,
-and we trust the load path to set it.
+`OwnerMobId` is not stored in each `Goal` entry — the top-level `mob_id`
+covers it; the load path stamps each Goal's `OwnerMobId` after read.
 
 ### 1.3 Gitignore
 
@@ -195,25 +197,28 @@ duration of the disk write. Matches the opinions / knowledge stores.
 
 ### 3.1 Command surface
 
-`goal` admin command (`internal/usercommands/admin_goal.go`), gated by
-admin role like `admin opinion` / `admin bounty`:
+`goal` admin command (`internal/usercommands/admin.goal.go`), registered
+under the `goal` keyword in `usercommands.go`'s command table with the
+admin-only flag triple (matching `opinion`):
 
 ```
-admin goal list <mob-instance>
-admin goal show <mob-instance> <goal-id-prefix>
-admin goal add <mob-instance> <type> <priority> [key=value ...]
-admin goal remove <mob-instance> <goal-id-prefix>
-admin goal clear <mob-instance>
+goal list <mob-ident>
+goal show <mob-ident> <goal-id>
+goal add <mob-ident> <type> <priority> [key=value ...]
+goal remove <mob-ident> <goal-id>
+goal clear <mob-ident>
 ```
 
-- `<mob-instance>` is whatever the existing admin commands accept for
-  targeting an in-room mob. Internally resolves to the template id before
-  hitting `goals.GoalsOf`.
-- `<goal-id-prefix>` accepts the leading characters of a ULID; ambiguous
-  prefixes print all matches and abort.
-- `add`'s `key=value` pairs build `Params`. Values parsed as JSON-style
-  scalars (`"foo"`, `42`, `3.14`, `true`) so admins can express ints vs
-  strings unambiguously. Unknown / unparseable values fall back to string.
+- `<mob-ident>` is a numeric mob template id OR a name (matched via
+  `util.ConvertForFilename` against `mobs.AllMobTemplates()`). The
+  resolution helper lives next to the command and mirrors
+  `opinionResolveMobIdent` shape (returns `(id int, displayName string,
+  ok bool)`).
+- `<goal-id>` is the exact short id (e.g. `g3`). No prefix matching —
+  ids are short by design.
+- `add`'s `key=value` pairs build `Params`. Values parsed as scalars:
+  `42` → int, `3.14` → float, `true`/`false` → bool, otherwise string.
+  Quoting not required.
 - `add` output:
   - On success: `Added goal <id> (type=<t>, priority=<p>)`.
   - With displacement: `... — displaced goals: <id1>, <id2>`.
@@ -245,9 +250,10 @@ serialize per-package, not per-mob; mob counts are low enough that a
 single mutex is fine.
 
 ### 4.2 Mob template id vs instance id
-Goals owned by template id. Admin command accepts an instance for ergonomics
-and resolves to template internally. Matches the chunk 1.4 knowledge-store
-pattern.
+Goals owned by template id, persisted under the template id's filename.
+The admin command takes `<mob-ident>` (numeric template id OR namesimple)
+and resolves to the template id via an opinion-style helper. Matches the
+chunk 1.4 knowledge-store / opinions-store pattern.
 
 ### 4.3 Predicate registered after goals already exist
 Order of registration vs goal creation is independent. Predicates are looked
@@ -405,16 +411,19 @@ populated with revenge, debt, wealth-target, status, etc.).
 ## File touch list
 
 **New:**
-- `internal/goals/types.go` — `Goal`, `GoalTypeMeta`, `PredicateFn`,
-  `AddResult`, `ConflictError`.
+- `internal/goals/types.go` — `Goal`, `MobGoals` (per-mob file struct),
+  `GoalTypeMeta`, `PredicateFn`, `AddResult`, `ConflictError`.
 - `internal/goals/registry.go` — `RegisterGoalType`, lookup,
   symmetric-conflict validation.
 - `internal/goals/store.go` — `Add`, `Remove`, `Clear`, `GoalsOf`,
   `IsSatisfied`, `IsExpired`. Cache + mutex.
-- `internal/goals/persistence.go` — load / save / atomic-rename plumbing.
+- `internal/goals/persistence.go` — load / save / atomic-rename plumbing,
+  `DOGMUD_GOALS_DIR_OVERRIDE` test seam.
+- `internal/goals/test_main_test.go` — temp-dir setup mirroring
+  opinions/knowledge.
 - `internal/goals/types_test.go`, `registry_test.go`, `store_test.go`,
   `persistence_test.go`.
-- `internal/usercommands/admin_goal.go` + `_test.go`.
+- `internal/usercommands/admin.goal.go` + `_test.go`.
 
 **Modified:**
 - `.gitignore` — add `_datafiles/world/dogmud/goals/`.
