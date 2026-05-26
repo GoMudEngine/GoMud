@@ -1,6 +1,7 @@
 package hooks
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/events"
 )
 
@@ -103,6 +104,9 @@ func RegisterListeners() {
 
 	// Mob death: clear tracking/shadow state pointing at the dead mob
 	events.RegisterListener(events.MobDeath{}, MobDeathTrackingCleanup)
+
+	// Caravan: patrol-waypoint arrival drives vendor restocks + Fernway pickup
+	events.RegisterListener(events.PatrolWaypointArrival{}, caravan.CaravanArrivalListener)
 
 	// Skill use: quest engine notifications
 	events.RegisterListener(events.SkillUsed{}, SkillUseQuestNotify)

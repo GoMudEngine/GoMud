@@ -91,7 +91,7 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 			}
 			if activePatrolId != "" {
 				plan := patrolTickPlan(mob, activePatrolId)
-				applyPatrolPlan(mob, plan)
+				applyPatrolPlan(mob, plan, activePatrolId)
 			}
 		}
 

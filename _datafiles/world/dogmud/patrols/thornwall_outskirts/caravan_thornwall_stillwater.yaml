@@ -1,0 +1,55 @@
+id: caravan_thornwall_stillwater
+description: "Ketil's caravan crew: Thornwall depot → Stillwater vendors → back. Authored 3.7 (mob aliveness chunk 3.7 — replaces internal/caravan/routes.go state machine)."
+loop_shape: strict
+max_path_retries: 40   # cross-zone transits need more headroom than the 20 default
+waypoints:
+  # ── wp0: Thornwall depot — long dwell before next departure ───
+  - room: 465
+    dwell_rounds: 360
+    arrival_event: caravan_depot
+
+  # ── wp1: Outbound Fernway pickup (forager handoff) ────────────
+  - room: 4038
+    dwell_rounds: 8
+    arrival_event: caravan_fernway_pickup
+
+  # ── wp2: Stillwater arrival depot ─────────────────────────────
+  - room: 4109
+    dwell_rounds: 20
+    arrival_event: caravan_depot
+
+  # ── wp3-wp10: Stillwater vendor circuit ───────────────────────
+  - { room: 4102, dwell_rounds: 5, arrival_event: caravan_vendor }
+  - { room: 4103, dwell_rounds: 5, arrival_event: caravan_vendor }
+  - { room: 4105, dwell_rounds: 5, arrival_event: caravan_vendor }
+  - { room: 4106, dwell_rounds: 5, arrival_event: caravan_vendor }
+  - { room: 4125, dwell_rounds: 5, arrival_event: caravan_vendor }
+  - { room: 4126, dwell_rounds: 5, arrival_event: caravan_vendor }
+  - { room: 4135, dwell_rounds: 5, arrival_event: caravan_vendor }
+  - { room: 4143, dwell_rounds: 5, arrival_event: caravan_vendor }
+
+  # ── wp11: Stillwater departure depot ──────────────────────────
+  - room: 4109
+    dwell_rounds: 20
+    arrival_event: caravan_depot
+
+  # ── wp12: Inbound Fernway pickup ──────────────────────────────
+  - room: 4038
+    dwell_rounds: 8
+    arrival_event: caravan_fernway_pickup
+
+  # ── wp13: Thornwall arrival depot ─────────────────────────────
+  - room: 465
+    dwell_rounds: 20
+    arrival_event: caravan_depot
+
+  # ── wp14-wp21: Thornwall vendor circuit ───────────────────────
+  - { room: 464, dwell_rounds: 5, arrival_event: caravan_vendor }
+  - { room: 470, dwell_rounds: 5, arrival_event: caravan_vendor }
+  - { room: 471, dwell_rounds: 5, arrival_event: caravan_vendor }
+  - { room: 475, dwell_rounds: 5, arrival_event: caravan_vendor }
+  - { room: 480, dwell_rounds: 5, arrival_event: caravan_vendor }
+  - { room: 481, dwell_rounds: 5, arrival_event: caravan_vendor }
+  - { room: 482, dwell_rounds: 5, arrival_event: caravan_vendor }
+  - { room: 483, dwell_rounds: 5, arrival_event: caravan_vendor }
+  # loops back to wp0 (Thornwall depot, 360-round dwell)

@@ -21,13 +21,16 @@ import (
 var patrolWorldValidator struct {
 	roomExists func(id int) bool
 	hasPath    func(from, to int) bool
+	roomZone   func(id int) string // chunk 3.7: resolve room id → zone name for boot log
 }
 
-// SetPatrolWorldValidator wires in the room-existence and pathfinding
-// checks for patrol validation. Must be called before LoadPatrols.
-func SetPatrolWorldValidator(roomExists func(int) bool, hasPath func(from, to int) bool) {
+// SetPatrolWorldValidator wires in the room-existence, pathfinding, and
+// zone-resolution checks for patrol validation. Must be called before
+// LoadPatrols.
+func SetPatrolWorldValidator(roomExists func(int) bool, hasPath func(from, to int) bool, roomZone func(int) string) {
 	patrolWorldValidator.roomExists = roomExists
 	patrolWorldValidator.hasPath = hasPath
+	patrolWorldValidator.roomZone = roomZone
 }
 
 // LoadPatrols walks _datafiles/world/dogmud/patrols/**/*.yaml, parses
@@ -117,6 +120,23 @@ func LoadPatrols() {
 					"mobs.LoadPatrols() world validation failed for patrol %q: %v",
 					p.Id, valErr,
 				))
+			}
+
+			// Chunk 3.7: log resolved zones for human-readable boot-log
+			// sanity-checking of cross-zone patrols. No validation panics
+			// — zone resolution failures just log an empty zone name. Room
+			// existence is already validated above.
+			for idx, wp := range p.Waypoints {
+				zoneName := ""
+				if patrolWorldValidator.roomZone != nil {
+					zoneName = patrolWorldValidator.roomZone(wp.Room)
+				}
+				mudlog.Info("patrol waypoint",
+					"patrol", p.Id,
+					"waypoint", idx,
+					"room", wp.Room,
+					"zone", zoneName,
+				)
 			}
 		}
 	}

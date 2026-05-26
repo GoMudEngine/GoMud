@@ -4,7 +4,7 @@ package behaviortree
 //
 // forager_step is the workhorse action that drives a forager NPC's
 // daily cycle (forage → deliver → recall → rest → repeat). Mirrors
-// the caravan_step pattern from actions_caravan.go.
+// the now-removed caravan state machine pattern.
 //
 // Forage roll logic and yield tables live in internal/forager/forage_core.go
 // (the leaf forager package), shared by both this file and
@@ -172,7 +172,7 @@ func hpRatio(mob *mobs.Mob) float64 {
 // Each handler returns Success when it did meaningful work (state
 // transition issued or action queued). Returns Failure to fall through
 // to the legacy idle path (idlecommands + lookfortrouble), matching
-// the caravan_step pattern.
+// the legacy idle-fallthrough pattern.
 
 
 func tickForagerResting(

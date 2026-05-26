@@ -21,8 +21,16 @@ func actAttack(params map[string]any, ctx *EvalContext) Result {
 		return Failure
 	}
 	targetUserId := ctx.Event.UserId
-	// If no specific target, pick a random player in the room
-	if targetUserId == 0 {
+	targetMobId := ctx.Event.MobId
+	// If the event carries a specific attacker (player OR mob), use it
+	// directly. Only fall back to "random player in room" when neither
+	// is set (e.g., a heuristic trigger with no specific attacker).
+	//
+	// Regression guard: pre-2026-05-26, this fell back to the random-
+	// player picker whenever UserId==0, even when MobId was set. That
+	// caused caravan leaders (Ketil) to aggro any player following them
+	// the moment a hostile mob (bandit lookout) ambushed the crew.
+	if targetUserId == 0 && targetMobId == 0 {
 		room := rooms.LoadRoom(ctx.RoomId)
 		if room == nil {
 			return Failure
@@ -40,7 +48,7 @@ func actAttack(params map[string]any, ctx *EvalContext) Result {
 	if mob.Character.IsHidden() {
 		aggroType = characters.SurpriseAttack
 	}
-	mob.Character.SetAggro(targetUserId, 0, aggroType)
+	mob.Character.SetAggro(targetUserId, targetMobId, aggroType)
 	return Success
 }
 

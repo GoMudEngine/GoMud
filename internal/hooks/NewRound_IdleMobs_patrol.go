@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 )
@@ -67,7 +68,11 @@ func patrolTickPlan(mob *mobs.Mob, patrolId string) patrolPlan {
 	}
 
 	// Not at target — path or fallback.
-	maxRetries := int(configs.GetBalanceConfig().ScheduleMaxPathRetries)
+	// Chunk 3.7: honor per-patrol MaxPathRetries override; 0 = use global default.
+	maxRetries := p.MaxPathRetries
+	if maxRetries == 0 {
+		maxRetries = int(configs.GetBalanceConfig().ScheduleMaxPathRetries)
+	}
 	if maxRetries > 0 && failCount >= maxRetries {
 		plan.WantsHomeFallback = true
 		plan.FailureMessage = fmt.Sprintf(
@@ -82,7 +87,9 @@ func patrolTickPlan(mob *mobs.Mob, patrolId string) patrolPlan {
 
 // applyPatrolPlan mutates the mob (updates MiscData, queues commands)
 // based on the plan. Side-effecting; not pure.
-func applyPatrolPlan(mob *mobs.Mob, plan patrolPlan) {
+// activePatrolId is threaded in so the WantsDwellWait and WantsAdvance
+// branches can emit PatrolWaypointArrival events (chunk 3.7).
+func applyPatrolPlan(mob *mobs.Mob, plan patrolPlan, activePatrolId string) {
 	if !plan.HasPatrol {
 		return
 	}
@@ -95,6 +102,25 @@ func applyPatrolPlan(mob *mobs.Mob, plan patrolPlan) {
 		return
 
 	case plan.WantsAdvance:
+		// Chunk 3.7: emit arrival event for zero-dwell waypoints, which
+		// skip the WantsDwellWait branch. Guard on RoomId == waypoint room
+		// so we only fire when actually at the waypoint, not on a path-walk
+		// step that happened to call applyPatrolPlan with WantsAdvance.
+		p := mobs.GetPatrol(activePatrolId)
+		if p != nil {
+			idx := getMiscDataInt(&mob.Character, "patrol_waypoint_idx")
+			if idx >= 0 && idx < len(p.Waypoints) &&
+				p.Waypoints[idx].DwellRounds == 0 &&
+				mob.Character.RoomId == p.Waypoints[idx].Room {
+				events.AddToQueue(events.PatrolWaypointArrival{
+					MobInstanceId: mob.InstanceId,
+					PatrolId:      activePatrolId,
+					WaypointIdx:   idx,
+					RoomId:        mob.Character.RoomId,
+					ArrivalEvent:  p.Waypoints[idx].ArrivalEvent,
+				})
+			}
+		}
 		mob.Character.SetMiscData("patrol_waypoint_idx", plan.NextWaypointIdx)
 		mob.Character.SetMiscData("patrol_direction", plan.NextDirection)
 		mob.Character.SetMiscData("patrol_dwell_remaining", plan.NextDwellRounds)
@@ -103,6 +129,24 @@ func applyPatrolPlan(mob *mobs.Mob, plan patrolPlan) {
 
 	case plan.WantsDwellWait:
 		current := getMiscDataInt(&mob.Character, "patrol_dwell_remaining")
+		// Chunk 3.7: emit the per-waypoint arrival event on the first dwell
+		// tick. Detected by comparing current dwell to the authored value;
+		// they match only on the tick immediately after arrival (before
+		// the decrement below). Idempotent: subsequent ticks have a smaller
+		// current value and won't re-emit.
+		p := mobs.GetPatrol(activePatrolId)
+		if p != nil {
+			idx := getMiscDataInt(&mob.Character, "patrol_waypoint_idx")
+			if idx >= 0 && idx < len(p.Waypoints) && current == p.Waypoints[idx].DwellRounds {
+				events.AddToQueue(events.PatrolWaypointArrival{
+					MobInstanceId: mob.InstanceId,
+					PatrolId:      activePatrolId,
+					WaypointIdx:   idx,
+					RoomId:        mob.Character.RoomId,
+					ArrivalEvent:  p.Waypoints[idx].ArrivalEvent,
+				})
+			}
+		}
 		if current > 0 {
 			mob.Character.SetMiscData("patrol_dwell_remaining", current-1)
 		}

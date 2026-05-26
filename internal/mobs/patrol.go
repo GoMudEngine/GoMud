@@ -6,16 +6,18 @@ import "sync"
 // or via a schedule segment with activity: patrol + patrol_id.
 // Loaded from _datafiles/world/dogmud/patrols/<zone>/<id>.yaml at startup.
 type Patrol struct {
-	Id          string           `yaml:"id"`
-	Description string           `yaml:"description,omitempty"`
-	LoopShape   string           `yaml:"loop_shape,omitempty"` // "strict" (default) | "yo-yo"
-	Waypoints   []PatrolWaypoint `yaml:"waypoints"`
+	Id             string           `yaml:"id"`
+	Description    string           `yaml:"description,omitempty"`
+	LoopShape      string           `yaml:"loop_shape,omitempty"`        // "strict" (default) | "yo-yo"
+	MaxPathRetries int              `yaml:"max_path_retries,omitempty"` // chunk 3.7: override global ScheduleMaxPathRetries; 0 = use global default
+	Waypoints      []PatrolWaypoint `yaml:"waypoints"`
 }
 
 // PatrolWaypoint is one stop on a patrol route.
 type PatrolWaypoint struct {
-	Room        int `yaml:"room"`
-	DwellRounds int `yaml:"dwell_rounds,omitempty"` // 0 = move on immediately
+	Room         int    `yaml:"room"`
+	DwellRounds  int    `yaml:"dwell_rounds,omitempty"`  // 0 = move on immediately
+	ArrivalEvent string `yaml:"arrival_event,omitempty"` // chunk 3.7: emitted via PatrolWaypointArrival on first-dwell-tick
 }
 
 // Package-level registry, populated by LoadPatrols at startup.

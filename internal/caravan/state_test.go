@@ -2,50 +2,18 @@ package caravan
 
 import "testing"
 
-func TestCaravanState_NameRoundTrip(t *testing.T) {
-	// Every state must have a unique name; ParseState(NameOf(s)) == s.
+func TestCaravanState_Name(t *testing.T) {
+	// Every state must have a unique non-empty name.
+	seen := map[string]bool{}
 	for s := StateThornwallDwell; s < 8; s++ {
 		name := s.Name()
 		if name == "" {
 			t.Errorf("state %d has empty name", s)
 		}
-		parsed, ok := ParseState(name)
-		if !ok {
-			t.Errorf("ParseState(%q) returned ok=false", name)
+		if seen[name] {
+			t.Errorf("duplicate state name %q", name)
 		}
-		if parsed != s {
-			t.Errorf("ParseState(%q) = %v, want %v", name, parsed, s)
-		}
-	}
-}
-
-func TestCaravanState_ParseUnknownReturnsFalse(t *testing.T) {
-	if _, ok := ParseState("not_a_state"); ok {
-		t.Error("ParseState(\"not_a_state\") should return ok=false")
-	}
-	if _, ok := ParseState(""); ok {
-		t.Error("ParseState(\"\") should return ok=false")
-	}
-}
-
-func TestCaravanState_AdvanceCycles(t *testing.T) {
-	// Eight states form a cycle that loops back to the first.
-	expected := []CaravanState{
-		StateOutboundTransit,
-		StateOutboundFernwayPickup,
-		StateStillwaterRoute,
-		StateStillwaterDwell,
-		StateInboundTransit,
-		StateInboundFernwayPickup,
-		StateThornwallRoute,
-		StateThornwallDwell, // wraps
-	}
-	cur := StateThornwallDwell
-	for i, want := range expected {
-		cur = AdvanceState(cur)
-		if cur != want {
-			t.Errorf("step %d: AdvanceState gave %v, want %v", i, cur, want)
-		}
+		seen[name] = true
 	}
 }
 
@@ -76,30 +44,6 @@ func TestCaravanState_Classifiers(t *testing.T) {
 	}
 }
 
-func TestCaravanState_RouteFor(t *testing.T) {
-	if RouteForState(StateOutboundTransit) != &OutboundRoute {
-		t.Error("OutboundTransit should map to OutboundRoute")
-	}
-	if RouteForState(StateOutboundFernwayPickup) != &OutboundRoute {
-		t.Error("OutboundFernwayPickup should map to OutboundRoute")
-	}
-	if RouteForState(StateStillwaterRoute) != &OutboundRoute {
-		t.Error("StillwaterRoute should map to OutboundRoute (continues outbound leg)")
-	}
-	if RouteForState(StateInboundTransit) != &InboundRoute {
-		t.Error("InboundTransit should map to InboundRoute")
-	}
-	if RouteForState(StateInboundFernwayPickup) != &InboundRoute {
-		t.Error("InboundFernwayPickup should map to InboundRoute")
-	}
-	if RouteForState(StateThornwallRoute) != &InboundRoute {
-		t.Error("ThornwallRoute should map to InboundRoute")
-	}
-	if RouteForState(StateThornwallDwell) != nil {
-		t.Error("ThornwallDwell should map to no route (nil)")
-	}
-}
-
 func TestIsFernwayPickupState(t *testing.T) {
 	if !IsFernwayPickupState(StateOutboundFernwayPickup) {
 		t.Error("OutboundFernwayPickup should be a pickup state")
@@ -124,14 +68,5 @@ func TestIsTransitState_IncludesPickup(t *testing.T) {
 		if !IsTransitState(s) {
 			t.Errorf("IsTransitState(%v) = false, want true", s)
 		}
-	}
-}
-
-func TestRouteForState_FernwayPickupMaps(t *testing.T) {
-	if RouteForState(StateOutboundFernwayPickup) != &OutboundRoute {
-		t.Error("OutboundFernwayPickup should map to OutboundRoute")
-	}
-	if RouteForState(StateInboundFernwayPickup) != &InboundRoute {
-		t.Error("InboundFernwayPickup should map to InboundRoute")
 	}
 }

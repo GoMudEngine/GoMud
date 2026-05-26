@@ -1,7 +1,6 @@
-# Caravan master Ketil (357) -- Stage 2 caravan leader.
-# Drives the state machine via caravan_step. Engages bandits via
-# Stage 1 party_assist_target when in combat. Forms the caravan party
-# at first idle tick.
+# Caravan master Ketil (357) -- chunk 3.7 patrol-driven caravan leader.
+# Movement is handled by the patrol layer (patrol_id on the mob YAML).
+# This tree handles party formation, combat response only.
 
 tree:
   type: sequence
@@ -27,13 +26,6 @@ tree:
               check: party_in_combat
             - type: action
               do: party_assist_target
-
-        # -- DRIVE THE CARAVAN STATE MACHINE
-        - type: sequence
-          event: mob_idle
-          children:
-            - type: action
-              do: caravan_step
 
         # -- On hit: counter-attack (sets Aggro on the attacker so the
         #    combat loop engages them; followers will then assist via
