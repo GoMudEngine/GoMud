@@ -305,6 +305,28 @@ func DrainQueuedMessagesForTest(userId int) []string {
 	return found
 }
 
+// DrainQueuedPatrolWaypointArrivalsForTest removes all PatrolWaypointArrival
+// events from the global queue for the given mob instance id and returns them.
+//
+// FOR TEST USE ONLY. Mutates the queue.
+func DrainQueuedPatrolWaypointArrivalsForTest(instanceId int) []PatrolWaypointArrival {
+	qLock.Lock()
+	defer qLock.Unlock()
+	var found []PatrolWaypointArrival
+	remaining := make(priorityQueue, 0, len(globalQueue))
+	for _, pe := range globalQueue {
+		arr, ok := pe.event.(PatrolWaypointArrival)
+		if ok && arr.MobInstanceId == instanceId {
+			found = append(found, arr)
+			continue
+		}
+		remaining = append(remaining, pe)
+	}
+	globalQueue = remaining
+	heap.Init(&globalQueue)
+	return found
+}
+
 // Initialize the priority queue.
 func init() {
 	heap.Init(&globalQueue)
