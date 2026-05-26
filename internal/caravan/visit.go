@@ -1,6 +1,7 @@
 package caravan
 
 import (
+	"fmt"
 	"math"
 	"slices"
 
@@ -22,13 +23,17 @@ type ItemMove struct {
 // caravan: deliver wagon items whose bucket is in deliveryBuckets,
 // and pick up vendor items whose bucket is in pickupBuckets.
 //
-// Pickup is gated by entry.Current >= entry.MaxStock/2 — caravan
-// won't extract from a starving vendor (narrative: wholesalers
-// don't loot a struggling shop).
+// Pickup is gated by entry.Current > entry.RestockQty — the vendor
+// keeps at least one normal restock-batch as buffer for local
+// customers. Anything beyond that is fair game for cross-city
+// distribution. Pre-3.8 the gate was entry.MaxStock/2 which was
+// too restrictive against player-driven stock depletion, leaving
+// cross-city flow effectively dead for partly-stocked vendors.
 //
-// Pickup quantity is RestockQty per matching stock entry, capped
-// at the wagon's CarryCapacity remaining (StoreItem returns false
-// when full).
+// Pickup quantity is max(1, Current/10) — gently drain 10% of
+// available stock, with a 1-unit floor so partially-stocked
+// vendors still contribute. Slowly builds the wagon's cross-city
+// surplus without looting any single vendor.
 //
 // Returns (nil, nil) if the room doesn't exist OR the wagon is nil.
 //
@@ -94,8 +99,11 @@ func VisitVendorsInRoom(
 		}
 
 		// PICKUP pass: vendor → wagon.
-		// Iterate vendor stock; extract bucket-matching entries when
-		// Current >= MaxStock/2 (the supply-floor gate).
+		// Iterate vendor stock; extract bucket-matching entries with
+		// Current > RestockQty (vendor keeps one restock-batch buffer
+		// for local customers). Take 10% of available stock, floor of 1.
+		// Chunk 3.8: tuned vs the pre-3.8 MaxStock/2 gate which was
+		// too restrictive given player-driven stock depletion.
 		if len(pickupBuckets) > 0 {
 			for i := range shop.Stock {
 				entry := &shop.Stock[i]
@@ -103,12 +111,12 @@ func VisitVendorsInRoom(
 				if bucket == "" || !slices.Contains(pickupBuckets, bucket) {
 					continue
 				}
-				if entry.Current < entry.MaxStock/2 {
-					continue
+				if entry.Current <= entry.RestockQty {
+					continue // keep at least one restock batch for local
 				}
-				qty := entry.RestockQty
-				if qty <= 0 {
-					continue
+				qty := entry.Current / 10
+				if qty < 1 {
+					qty = 1
 				}
 				if qty > entry.Current {
 					qty = entry.Current
@@ -152,18 +160,42 @@ func VisitVendorsInRoom(
 // FormatVisitMessage builds the room-flavor text for a vendor stop.
 // Returns "" when no transfers happened (caller should skip sending).
 //
+// runnerName is the visible source mob — chunk 3.8 makes Lars (Ketil's
+// son) the runner who carries cargo wagon↔vendor while the wagon stays
+// parked at the depot. Pre-3.8 the message said "the caravan crew" but
+// only one mob is actually in the room with the vendor now; naming the
+// runner reads better.
+//
+// Vendor name pulled from the first ItemMove's Vendor field (all moves
+// in a single call are at the same vendor). Falls back to "the local
+// merchant" if both slices are empty (defensive — caller skips on
+// empty).
+//
 // Three flavor variants:
-//   - Both delivered + picked up — "in trade" wording
-//   - Delivery only — "unloads supplies"
-//   - Pickup only — "loads up cargo"
-func FormatVisitMessage(delivered, pickedUp []ItemMove) string {
+//   - Both delivered + picked up — "trades supplies for cargo" wording
+//   - Delivery only — "unloads a satchel of supplies"
+//   - Pickup only — "loads up a satchel of cargo"
+func FormatVisitMessage(runnerName string, delivered, pickedUp []ItemMove) string {
+	vendor := "the local merchant"
+	switch {
+	case len(delivered) > 0:
+		vendor = delivered[0].Vendor
+	case len(pickedUp) > 0:
+		vendor = pickedUp[0].Vendor
+	}
 	switch {
 	case len(delivered) > 0 && len(pickedUp) > 0:
-		return `<ansi fg="yellow">Marta hands a small purse across the counter; the caravan unloads and reloads in trade.</ansi>`
+		return fmt.Sprintf(
+			`<ansi fg="yellow"><ansi fg="mobname">%s</ansi> trades a satchel of supplies for fresh cargo with <ansi fg="mobname">%s</ansi>.</ansi>`,
+			runnerName, vendor)
 	case len(delivered) > 0:
-		return `<ansi fg="yellow">The caravan crew unloads supplies for the local merchants.</ansi>`
+		return fmt.Sprintf(
+			`<ansi fg="yellow"><ansi fg="mobname">%s</ansi> unloads a satchel of supplies for <ansi fg="mobname">%s</ansi>.</ansi>`,
+			runnerName, vendor)
 	case len(pickedUp) > 0:
-		return `<ansi fg="yellow">The caravan crew loads up cargo from the local merchants for the road.</ansi>`
+		return fmt.Sprintf(
+			`<ansi fg="yellow"><ansi fg="mobname">%s</ansi> loads up a satchel of fresh cargo from <ansi fg="mobname">%s</ansi>.</ansi>`,
+			runnerName, vendor)
 	}
 	return ""
 }

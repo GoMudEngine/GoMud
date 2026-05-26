@@ -13,6 +13,11 @@ const WagonMobId = 374
 // LeaderMobId is the mob template ID of the caravan leader (Ketil).
 const LeaderMobId = 357
 
+// RunnerMobId is the mob template ID of the caravan runner — Ketil's
+// son Lars, who carries cargo wagon ↔ vendor during depot stops.
+// Chunk 3.8.
+const RunnerMobId = 359
+
 // caravanMobIds is the complete set of mob template IDs that make up
 // the caravan crew: leader, wagon, and guards.
 var caravanMobIds = map[int]struct{}{
@@ -48,6 +53,26 @@ func FindWagonInRoom(roomId int) *mobs.Mob {
 			continue
 		}
 		if int(m.MobId) == WagonMobId {
+			return m
+		}
+	}
+	return nil
+}
+
+// FindRunnerInRoom returns the runner mob (RunnerMobId) co-located in
+// the given room, or nil if Lars is not present. Mirrors
+// FindWagonInRoom. Chunk 3.8.
+func FindRunnerInRoom(roomId int) *mobs.Mob {
+	room := rooms.LoadRoom(roomId)
+	if room == nil {
+		return nil
+	}
+	for _, instId := range room.GetMobs(rooms.FindAll) {
+		m := mobs.GetInstance(instId)
+		if m == nil {
+			continue
+		}
+		if int(m.MobId) == RunnerMobId {
 			return m
 		}
 	}

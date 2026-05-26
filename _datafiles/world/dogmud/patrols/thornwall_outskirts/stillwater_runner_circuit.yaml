@@ -1,0 +1,14 @@
+id: stillwater_runner_circuit
+description: "Lars's vendor-delivery circuit in Stillwater — wagon parks at the depot, Lars runs the goods out. Chunk 3.8 oneshot."
+loop_shape: oneshot
+max_path_retries: 40
+waypoints:
+  - { room: 4102, dwell_rounds: 3, arrival_event: caravan_vendor }
+  - { room: 4103, dwell_rounds: 3, arrival_event: caravan_vendor }
+  - { room: 4105, dwell_rounds: 3, arrival_event: caravan_vendor }
+  - { room: 4106, dwell_rounds: 3, arrival_event: caravan_vendor }
+  - { room: 4125, dwell_rounds: 3, arrival_event: caravan_vendor }
+  - { room: 4126, dwell_rounds: 3, arrival_event: caravan_vendor }
+  - { room: 4135, dwell_rounds: 3, arrival_event: caravan_vendor }
+  - { room: 4143, dwell_rounds: 3, arrival_event: caravan_vendor }
+  - { room: 4109, dwell_rounds: 1, arrival_event: "" }

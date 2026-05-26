@@ -15,24 +15,36 @@ import (
 
 // CaravanArrivalListener consumes events.PatrolWaypointArrival and
 // dispatches caravan-specific bookkeeping based on the event's
-// ArrivalEvent name. Filters on the caravan patrol id; ignores
-// arrivals from any other patrol.
+// ArrivalEvent name. Accepts both the main caravan patrol and Lars's
+// runner-circuit oneshot patrols.
 //
-// Dispatches:
-//   - caravan_depot at wp0 (long-dwell Thornwall start) → crew regroup
-//     (handles the "leader died mid-route, respawned at depot, fresh
-//      cycle starts" contingency self-healingly).
-//   - caravan_depot at any other wp → state-name transition stamp.
-//   - caravan_vendor → bidirectional VisitVendorsInRoom + room flavor.
-//   - caravan_fernway_pickup → forager handoff bookkeeping.
-//   - empty / unknown → no-op (free-form arrival_event contract).
+// Dispatches for main caravan patrol (CaravanPatrolId):
+//   - caravan_depot → crew regroup (if fresh-respawn) + start Lars runner circuit
+//   - caravan_fernway_pickup → forager handoff bookkeeping
+//   - empty / unknown → no-op
 //
-// Chunk 3.7. Registered with the event bus in hooks.RegisterListeners (T9).
+// Dispatches for runner-circuit patrols (thornwall/stillwater_runner_circuit):
+//   - caravan_vendor → bidirectional VisitVendorsInRoom + room flavor via Lars
+//
+// Chunk 3.7/3.8. Registered with the event bus in hooks.RegisterListeners.
 func CaravanArrivalListener(e events.Event) events.ListenerReturn {
 	arrival, ok := e.(events.PatrolWaypointArrival)
 	if !ok {
 		return events.Continue
 	}
+
+	// Runner-circuit vendor stops (chunk 3.8): Lars walks vendor rooms on
+	// his oneshot circuit; dispatch directly without the main-caravan leader lookup.
+	if _, isRunner := runnerCircuitPatrols[arrival.PatrolId]; isRunner {
+		if arrival.ArrivalEvent == "caravan_vendor" {
+			mob := mobs.GetInstance(arrival.MobInstanceId)
+			if mob != nil {
+				handleVendorArrival(mob, arrival)
+			}
+		}
+		return events.Continue
+	}
+
 	if arrival.PatrolId != CaravanPatrolId {
 		return events.Continue
 	}
@@ -49,8 +61,6 @@ func CaravanArrivalListener(e events.Event) events.ListenerReturn {
 	switch arrival.ArrivalEvent {
 	case "caravan_depot":
 		handleDepotArrival(leader, arrival)
-	case "caravan_vendor":
-		handleVendorArrival(leader, arrival)
 	case "caravan_fernway_pickup":
 		handleFernwayPickupArrival(leader, arrival)
 	}
@@ -74,72 +84,124 @@ func stampStateStartedRound(leader *mobs.Mob) {
 	leader.Character.SetMiscData("caravan_state_last", state.Name())
 }
 
-// handleDepotArrival fires the crew-regroup mechanism only when the
-// leader arrives at wp0 carrying the patrol_fresh_respawn marker —
-// i.e. this is the first cycle after the leader was newly spawned (or
-// respawned post-death). Pre-tighten, regroup fired on every wp0
-// arrival including every nominal end-of-cycle loop, which silently
-// teleported any crew member who had taken a different path back to
-// the depot. With the marker gate, the regroup only runs when it
-// actually solves a problem: leader is fresh, crew may be stranded.
+// handleDepotArrival kicks off Lars's runner circuit when the leader
+// arrives at a depot waypoint. Chunk 3.8: with the truncated
+// 4-waypoint main route, wp0 (Thornwall, 360-round dwell) starts the
+// Thornwall vendor circuit; wp2 (Stillwater, 180-round dwell) starts
+// the Stillwater vendor circuit.
 //
-// At non-wp0 depot waypoints the leader stamp has already been
-// recorded by stampStateStartedRound; no further action needed until
-// cargo settlement is designed for future chunks.
+// Also handles two safeties:
+//   5.2 (chunk 3.7 carryover): if the leader carries the
+//   patrol_fresh_respawn marker (just respawned at depot after a
+//   death), regroup any stranded crew via ForceRegroupCrew.
+//   5.3 (chunk 3.8): if Lars is co-located at the depot with cargo
+//   in his inventory and no active patrol (e.g., his oneshot
+//   home-fallback fired and never produced a PatrolCompleted),
+//   transfer his cargo back to the wagon now.
 func handleDepotArrival(leader *mobs.Mob, arrival events.PatrolWaypointArrival) {
-	if arrival.WaypointIdx != 0 {
-		return // only wp0 triggers the fresh-cycle regroup
+	// 5.2 fresh-respawn regroup (chunk 3.7 carryover).
+	if arrival.WaypointIdx == 0 {
+		if fresh, _ := leader.Character.GetMiscData("patrol_fresh_respawn").(bool); fresh {
+			leader.Character.SetMiscData("patrol_fresh_respawn", false)
+			ForceRegroupCrew(leader)
+		}
 	}
-	fresh, _ := leader.Character.GetMiscData("patrol_fresh_respawn").(bool)
-	if !fresh {
-		return // normal cycle loop — crew is already where they should be
+
+	// 5.3 stranded-cargo safety: pull Lars's cargo back to the wagon
+	// if he's at the depot carrying inventory with no active patrol.
+	lars := FindRunnerInRoom(leader.Character.RoomId)
+	wagon := FindWagonInRoom(leader.Character.RoomId)
+	if lars != nil && wagon != nil && len(lars.Character.Items) > 0 && lars.PatrolId == "" {
+		TransferAllCargoBack(lars, wagon)
 	}
-	// Clear the marker first so we don't regroup again on the next loop.
-	leader.Character.SetMiscData("patrol_fresh_respawn", false)
-	ForceRegroupCrew(leader)
+
+	// Start Lars's runner circuit at wp0 (Thornwall) and wp2 (Stillwater).
+	switch arrival.WaypointIdx {
+	case 0:
+		startRunnerCircuit(leader, arrival, "thornwall_runner_circuit", []string{"stillwater", "fernway"})
+	case 2:
+		startRunnerCircuit(leader, arrival, "stillwater_runner_circuit", []string{"thornwall", "fernway"})
+	}
 }
 
-// handleVendorArrival fires the bidirectional vendor trade and prints the
-// room flavor message. Bucket lists match the legacy bucketsForRouteState
-// logic lifted from internal/behaviortree/actions_caravan.go.
-func handleVendorArrival(leader *mobs.Mob, arrival events.PatrolWaypointArrival) {
+// startRunnerCircuit transfers outbound-bucket cargo from wagon → Lars
+// and assigns him the oneshot runner-circuit patrol. No-op if Lars is
+// not in the depot, the wagon is not in the depot, or Lars already has
+// a patrol assigned (don't double-start). Chunk 3.8.
+func startRunnerCircuit(leader *mobs.Mob, arrival events.PatrolWaypointArrival, circuitPatrolId string, outboundBuckets []string) {
+	lars := FindRunnerInRoom(arrival.RoomId)
+	if lars == nil {
+		mudlog.Warn("caravan depot without runner",
+			"leader", leader.Character.Name,
+			"room", arrival.RoomId,
+			"circuit", circuitPatrolId,
+		)
+		return
+	}
+	if lars.PatrolId != "" {
+		return // already on a circuit — don't double-start
+	}
 	wagon := FindWagonInRoom(arrival.RoomId)
 	if wagon == nil {
-		mudlog.Warn("caravan vendor stop without wagon",
+		mudlog.Warn("caravan depot without wagon",
+			"leader", leader.Character.Name,
+			"room", arrival.RoomId,
+		)
+		return
+	}
+	TransferCargoToRunner(wagon, lars, outboundBuckets)
+	mobs.StartOneshotPatrol(lars, circuitPatrolId)
+}
+
+// handleVendorArrival fires the bidirectional vendor trade and prints
+// the room flavor message. Chunk 3.8: the source mob is Lars (runner),
+// not the wagon — the wagon is parked back at the depot. Lars's oneshot
+// patrol queues caravan_vendor arrival events as he walks the circuit;
+// each event invokes this handler to drive a sell.
+//
+// The `leader` argument is the patrol-running mob (Lars at this point,
+// not Ketil) because the arrival event is emitted off the runner's
+// patrol. We use FindRunnerInRoom for consistency with FindWagonInRoom
+// but the leader argument already IS the runner — keep both lookups
+// defensively in case the listener gets re-purposed.
+func handleVendorArrival(leader *mobs.Mob, arrival events.PatrolWaypointArrival) {
+	lars := FindRunnerInRoom(arrival.RoomId)
+	if lars == nil {
+		mudlog.Warn("caravan vendor stop without runner",
 			"leader", leader.Character.Name,
 			"room", arrival.RoomId,
 		)
 		return
 	}
 
-	deliveryBuckets, pickupBuckets := bucketsForWaypointIdx(arrival.WaypointIdx)
+	deliveryBuckets, pickupBuckets := bucketsForRunnerPatrol(arrival.PatrolId)
 
-	delivered, pickedUp := VisitVendorsInRoom(arrival.RoomId, wagon, deliveryBuckets, pickupBuckets)
-	if msg := FormatVisitMessage(delivered, pickedUp); msg != "" {
+	delivered, pickedUp := VisitVendorsInRoom(arrival.RoomId, lars, deliveryBuckets, pickupBuckets)
+	if msg := FormatVisitMessage(lars.Character.Name, delivered, pickedUp); msg != "" {
 		if r := rooms.LoadRoom(arrival.RoomId); r != nil {
 			r.SendText(messaging.CategoryMobEmote, msg)
 		}
 	}
 }
 
-// bucketsForWaypointIdx returns the (delivery, pickup) bucket lists for
-// a caravan vendor stop based on the waypoint index in the patrol.
+// bucketsForRunnerPatrol returns the (delivery, pickup) bucket lists
+// for a caravan_vendor arrival, keyed by the patrol id rather than
+// the waypoint index. Chunk 3.8: caravan vendor stops live entirely
+// on Lars's runner-circuit oneshot patrols, so the dispatch key is
+// which circuit fired the event.
 //
-// Waypoints 3-10 are Stillwater vendor stops (outbound leg):
-//   deliver thornwall + fernway, pick up stillwater.
-// Waypoints 14-21 are Thornwall vendor stops (inbound leg):
-//   deliver stillwater + fernway, pick up thornwall.
-//
-// This mirrors the legacy bucketsForRouteState in
-// internal/behaviortree/actions_caravan.go.
-func bucketsForWaypointIdx(idx int) (delivery, pickup []string) {
-	switch {
-	case idx >= 3 && idx <= 10:
-		// Stillwater vendor circuit (outbound)
-		return []string{"thornwall", "fernway"}, []string{"stillwater"}
-	case idx >= 14 && idx <= 21:
-		// Thornwall vendor circuit (inbound)
+//	thornwall_runner_circuit: Lars is in Thornwall — wagon brought
+//	  stillwater + fernway goods on the inbound leg; we deliver
+//	  those and pick up thornwall.
+//	stillwater_runner_circuit: Lars is in Stillwater — wagon brought
+//	  thornwall + fernway goods on the outbound leg; we deliver
+//	  those and pick up stillwater.
+func bucketsForRunnerPatrol(patrolId string) (delivery, pickup []string) {
+	switch patrolId {
+	case "thornwall_runner_circuit":
 		return []string{"stillwater", "fernway"}, []string{"thornwall"}
+	case "stillwater_runner_circuit":
+		return []string{"thornwall", "fernway"}, []string{"stillwater"}
 	}
 	return nil, nil
 }

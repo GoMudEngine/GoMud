@@ -401,6 +401,7 @@ type Balance struct {
 	// where players can't buy. Per-ingredient check, floor of 1.
 	CrafterIngredientReservePct ConfigFloat `yaml:"CrafterIngredientReservePct"` // Fraction of MaxStock kept as reserve (default 0.25)
 	ShopGoldReserveRatio   ConfigFloat `yaml:"ShopGoldReserveRatio,omitempty"`   // Fraction of gold pool a shop keeps in reserve before buying (default 0.50)
+	ShopMaxStockMultiplier ConfigFloat `yaml:"ShopMaxStockMultiplier,omitempty"` // Global multiplier on EffectiveMaxStock — chunk 3.8 bumped to 2.0 to give the cross-city caravan room to build surplus (default 2.0)
 	BarterMaxDiscount      ConfigFloat `yaml:"BarterMaxDiscount,omitempty"`      // Max fractional price reduction a player can get via bartering (default 0.15)
 	BarterMaxBonus         ConfigFloat `yaml:"BarterMaxBonus,omitempty"`         // Max fractional sell-price bonus a player can get via bartering (default 0.15)
 	StorageFeePerItem      ConfigInt   `yaml:"StorageFeePerItem"`                // Gold charged per stored item per game month (default 1)

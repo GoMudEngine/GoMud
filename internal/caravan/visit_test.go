@@ -66,45 +66,57 @@ func TestVisitVendorsInRoom_ShopMobNoInventory(t *testing.T) {
 // ─── FormatVisitMessage ──────────────────────────────────────────────────────
 
 func TestFormatVisitMessage_EmptyReturnsEmpty(t *testing.T) {
-	if got := FormatVisitMessage(nil, nil); got != "" {
+	if got := FormatVisitMessage("Lars", nil, nil); got != "" {
 		t.Errorf("FormatVisitMessage(nil, nil) = %q, want empty", got)
 	}
-	if got := FormatVisitMessage([]ItemMove{}, []ItemMove{}); got != "" {
+	if got := FormatVisitMessage("Lars", []ItemMove{}, []ItemMove{}); got != "" {
 		t.Errorf("FormatVisitMessage(empty, empty) = %q, want empty", got)
 	}
 }
 
 func TestFormatVisitMessage_DeliveryOnly(t *testing.T) {
 	delivered := []ItemMove{{Vendor: "Brindle", ItemName: "iron ingot"}}
-	got := FormatVisitMessage(delivered, nil)
+	got := FormatVisitMessage("Lars", delivered, nil)
 	if got == "" {
 		t.Error("FormatVisitMessage(delivery, nil) returned empty")
 	}
 	if !contains(got, "unloads") {
 		t.Errorf("delivery-only message %q does not match expected wording", got)
 	}
+	if !contains(got, "Lars") {
+		t.Errorf("delivery-only message %q does not name the runner", got)
+	}
+	if !contains(got, "Brindle") {
+		t.Errorf("delivery-only message %q does not name the vendor", got)
+	}
 }
 
 func TestFormatVisitMessage_PickupOnly(t *testing.T) {
 	pickedUp := []ItemMove{{Vendor: "Brindle", ItemName: "lake-iron nodule"}}
-	got := FormatVisitMessage(nil, pickedUp)
+	got := FormatVisitMessage("Lars", nil, pickedUp)
 	if got == "" {
 		t.Error("FormatVisitMessage(nil, pickup) returned empty")
 	}
 	if !contains(got, "loads up") {
 		t.Errorf("pickup-only message %q does not match expected wording", got)
 	}
+	if !contains(got, "Lars") {
+		t.Errorf("pickup-only message %q does not name the runner", got)
+	}
 }
 
 func TestFormatVisitMessage_BothDeliveryAndPickup(t *testing.T) {
 	delivered := []ItemMove{{Vendor: "Brindle", ItemName: "steel"}}
 	pickedUp := []ItemMove{{Vendor: "Brindle", ItemName: "lake-iron"}}
-	got := FormatVisitMessage(delivered, pickedUp)
+	got := FormatVisitMessage("Lars", delivered, pickedUp)
 	if got == "" {
 		t.Error("FormatVisitMessage(both) returned empty")
 	}
 	if !contains(got, "trade") {
 		t.Errorf("both message %q does not match expected 'in trade' wording", got)
+	}
+	if !contains(got, "Lars") {
+		t.Errorf("both message %q does not name the runner", got)
 	}
 }
 

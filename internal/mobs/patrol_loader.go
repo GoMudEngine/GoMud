@@ -162,8 +162,8 @@ func validatePatrolStandalone(p *Patrol) error {
 		return errors.New("patrol has no waypoints")
 	}
 
-	if p.LoopShape != "" && p.LoopShape != "strict" && p.LoopShape != "yo-yo" {
-		return fmt.Errorf("invalid loop_shape %q (want \"\" | \"strict\" | \"yo-yo\")", p.LoopShape)
+	if p.LoopShape != "" && p.LoopShape != "strict" && p.LoopShape != "yo-yo" && p.LoopShape != "oneshot" {
+		return fmt.Errorf("invalid loop_shape %q (want \"\" | \"strict\" | \"yo-yo\" | \"oneshot\")", p.LoopShape)
 	}
 
 	for i, w := range p.Waypoints {

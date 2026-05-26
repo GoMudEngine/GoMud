@@ -183,6 +183,19 @@ type PatrolWaypointArrival struct {
 
 func (e PatrolWaypointArrival) Type() string { return "PatrolWaypointArrival" }
 
+// PatrolCompleted fires once when a oneshot patrol exhausts its last
+// waypoint's dwell. Consumers (outer state machines) read this to
+// advance their own state. The patrol executor clears the mob's
+// PatrolId before emitting, so the mob is back in the "no patrol"
+// state when the listener sees the event. Chunk 3.8.
+type PatrolCompleted struct {
+	MobInstanceId int
+	PatrolId      string
+	RoomId        int
+}
+
+func (e PatrolCompleted) Type() string { return "PatrolCompleted" }
+
 // Gained or lost an item
 type EquipmentChange struct {
 	UserId        int

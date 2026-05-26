@@ -99,8 +99,8 @@ should always agree.
 | 3.4 | Routine | Waypoint patrols | M | — | Done |
 | 3.5 | Routine | Maintenance routines | M | 3.2 | Deferred |
 | 3.6 | Routine | NPC↔NPC idle conversation | M | 1.6 | Done |
-| 3.7 | Routine | Inter-zone patrols + caravan unification | L | 3.4 | Not started |
-| 3.8 | Routine | Caravan runner-delivery + foragers-on-patrols | M | 3.7 | Not started |
+| 3.7 | Routine | Inter-zone patrols + caravan unification | L | 3.4 | Done |
+| 3.8 | Routine | One-shot sub-patrols (caravan runner + forager delivery) | M | 3.7 | Done |
 | 4.1 | Strategic | Goal representation | M | 1.1, 1.4 | Not started |
 | 4.2 | Strategic | Goal selection | L | 4.1 | Not started |
 | 4.3 | Strategic | Goal types catalog | M | 4.1 | Not started |
@@ -119,7 +119,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 20 / 42 done • 0 in progress • 22 not started.
+**Roll-up:** 22 / 42 done • 0 in progress • 20 not started.
 
 ---
 
@@ -542,8 +542,8 @@ world.
   3.4. 3.7 lifts the single-zone restriction and migrates
   caravan movement onto the shared layer.
 
-### 3.8 Caravan runner-delivery + foragers-on-patrols
-**Status:** Not started • **Size:** M
+### 3.8 One-shot sub-patrols (caravan runner + forager delivery)
+**Status:** Done (2026-05-26) • **Size:** M
 
 - **Goal:** Two related routine-layer refinements that share
   the post-3.7 patrol substrate:
@@ -595,6 +595,51 @@ world.
 - **Memory references:** `caravan-runner-delivery-flavor`,
   `forager_fatigue_cadence` (chunk 2.9 follow-up bug
   tracking).
+- **Shipped:** Reframed during brainstorming from "two
+  related refinements" into a single unifying engine
+  primitive — a one-shot sub-patrol invoked from within a
+  larger NPC routine. New `loop_shape: oneshot` patrol mode
+  emits `events.PatrolCompleted` on final dwell and clears
+  itself via `mobs.ClearOneshotPatrol`. Runtime assignment
+  via `mobs.StartOneshotPatrol(mob, patrolId)`.
+
+  Caravan consumer: Lars (mob 359, Ketil's son, previously
+  tagged as a guard but canonically the runner) becomes the
+  depot-to-vendor runner. Cargo transfers wagon→Lars at
+  depot arrival (outbound buckets only); Lars walks the
+  town's vendor circuit; on `PatrolCompleted`, residual
+  cargo returns to wagon. Caravan main route shrinks from
+  22 waypoints to 4 (depots + Fernway pickups). Stillwater
+  dwell bumps 20→180 to fit Lars's circuit. Hob and Bran
+  identified as horses (not guards); Marta is the only
+  proper guard. Lars's strength training bumped 18→60 for
+  carry capacity. New `bucketsForRunnerPatrol` keyed by
+  patrol id (not waypoint idx). Synthesizer evolution keeps
+  dashboard JSON schema byte-identical — `*Route` shows
+  while Lars is mid-circuit, `*Dwell` while resting.
+
+  Forager consumer: Marsh (Tova) and Steppe (Halix) Delivering
+  phase collapses from internal vendor-room loop to
+  oneshot sub-patrol. `tickForagerDeliveringTown` reduces to
+  ~3 branches: 5.4 sanctuary-fallback safety, no-op if patrol
+  already active, otherwise start patrol. Wander+forage phase
+  stays in `internal/forager/` unchanged. Fernway forager
+  (Kessa) keeps her existing single-stop sealed-crate handoff.
+
+  Refactor: `npcVisitVendorsInRoom` moved from
+  `internal/behaviortree/actions_forager.go` to
+  `internal/forager/vendor_sell.go` (renamed to exported
+  `SellToVendor`) — required to break the import cycle the
+  forager listener would have introduced.
+
+  Forward-looking note: attacking the caravan crew or wagon
+  will carry severe consequences once Town Justice (chunk
+  5.1) lands. No 1.3 crime hooks wired in 3.8; flagged in
+  PATCH_NOTES and spec.
+
+  17-task plan executed via subagent-driven development.
+  Spec at `docs/superpowers/specs/2026-05-26-mob-aliveness-3.8-oneshot-subpatrols-design.md`,
+  plan at `docs/superpowers/plans/2026-05-26-mob-aliveness-3.8-oneshot-subpatrols.md`.
 
 ---
 

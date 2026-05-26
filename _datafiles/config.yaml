@@ -709,6 +709,7 @@ Balance:
   # Default 0.25 keeps at least 25% of each ingredient available for players.
   CrafterIngredientReservePct: 0.25
   ShopGoldReserveRatio: 0.50    # Fraction of gold pool kept in reserve before buying
+  ShopMaxStockMultiplier: 2.0   # Chunk 3.8: global 2x cap on EffectiveMaxStock to give caravan room to build cross-city surplus
   BarterMaxDiscount: 0.15       # Max fractional buy-price discount from bartering
   BarterMaxBonus: 0.15          # Max fractional sell-price bonus from bartering
 

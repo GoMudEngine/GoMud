@@ -99,3 +99,124 @@ func TestGetPatrol_UnknownReturnsNil(t *testing.T) {
 		t.Errorf("unknown patrol id: want nil, got %+v", got)
 	}
 }
+
+func TestStartOneshotPatrol_AssignsAndResetsMiscData(t *testing.T) {
+	RegisterPatrolForTest(&Patrol{
+		Id:        "test_oneshot_assign",
+		LoopShape: "oneshot",
+		Waypoints: []PatrolWaypoint{{Room: 100, DwellRounds: 2}},
+	})
+	t.Cleanup(func() { UnregisterPatrolForTest("test_oneshot_assign") })
+
+	mob := &Mob{InstanceId: 90100}
+	// Pre-seed dirty MiscData to verify reset.
+	mob.Character.SetMiscData("patrol_waypoint_idx", 7)
+	mob.Character.SetMiscData("patrol_direction", -1)
+	mob.Character.SetMiscData("patrol_dwell_remaining", 99)
+	mob.Character.SetMiscData("patrol_path_fail_count", 5)
+
+	ok := StartOneshotPatrol(mob, "test_oneshot_assign")
+	if !ok {
+		t.Fatal("StartOneshotPatrol returned false for valid oneshot patrol")
+	}
+	if mob.PatrolId != "test_oneshot_assign" {
+		t.Errorf("PatrolId = %q, want %q", mob.PatrolId, "test_oneshot_assign")
+	}
+	if v, _ := mob.Character.GetMiscData("patrol_waypoint_idx").(int); v != 0 {
+		t.Errorf("patrol_waypoint_idx = %d, want 0", v)
+	}
+	if v, _ := mob.Character.GetMiscData("patrol_direction").(int); v != 1 {
+		t.Errorf("patrol_direction = %d, want 1", v)
+	}
+	if v, _ := mob.Character.GetMiscData("patrol_dwell_remaining").(int); v != 0 {
+		t.Errorf("patrol_dwell_remaining = %d, want 0", v)
+	}
+	if v, _ := mob.Character.GetMiscData("patrol_path_fail_count").(int); v != 0 {
+		t.Errorf("patrol_path_fail_count = %d, want 0", v)
+	}
+}
+
+func TestStartOneshotPatrol_RejectsNonOneshot(t *testing.T) {
+	RegisterPatrolForTest(&Patrol{
+		Id:        "test_strict_patrol",
+		LoopShape: "strict",
+		Waypoints: []PatrolWaypoint{{Room: 100, DwellRounds: 2}},
+	})
+	t.Cleanup(func() { UnregisterPatrolForTest("test_strict_patrol") })
+
+	mob := &Mob{InstanceId: 90101}
+	ok := StartOneshotPatrol(mob, "test_strict_patrol")
+	if ok {
+		t.Errorf("StartOneshotPatrol should return false for strict patrol, got true")
+	}
+	if mob.PatrolId != "" {
+		t.Errorf("PatrolId should remain empty after rejection, got %q", mob.PatrolId)
+	}
+}
+
+func TestStartOneshotPatrol_RejectsUnknownPatrol(t *testing.T) {
+	mob := &Mob{InstanceId: 90102}
+	ok := StartOneshotPatrol(mob, "does_not_exist")
+	if ok {
+		t.Errorf("StartOneshotPatrol should return false for unknown patrol, got true")
+	}
+}
+
+func TestStartOneshotPatrol_NilMobReturnsFalse(t *testing.T) {
+	ok := StartOneshotPatrol(nil, "anything")
+	if ok {
+		t.Errorf("StartOneshotPatrol should return false for nil mob, got true")
+	}
+}
+
+func TestClearOneshotPatrol_ClearsAllPatrolMiscData(t *testing.T) {
+	mob := &Mob{InstanceId: 90103, PatrolId: "test_patrol"}
+	mob.Character.SetMiscData("patrol_waypoint_idx", 5)
+	mob.Character.SetMiscData("patrol_direction", -1)
+	mob.Character.SetMiscData("patrol_dwell_remaining", 3)
+	mob.Character.SetMiscData("patrol_path_fail_count", 2)
+
+	ClearOneshotPatrol(mob)
+
+	if mob.PatrolId != "" {
+		t.Errorf("PatrolId = %q, want empty", mob.PatrolId)
+	}
+	if v, _ := mob.Character.GetMiscData("patrol_waypoint_idx").(int); v != 0 {
+		t.Errorf("patrol_waypoint_idx = %d, want 0", v)
+	}
+	if v, _ := mob.Character.GetMiscData("patrol_direction").(int); v != 0 {
+		t.Errorf("patrol_direction = %d, want 0", v)
+	}
+	if v, _ := mob.Character.GetMiscData("patrol_dwell_remaining").(int); v != 0 {
+		t.Errorf("patrol_dwell_remaining = %d, want 0", v)
+	}
+	if v, _ := mob.Character.GetMiscData("patrol_path_fail_count").(int); v != 0 {
+		t.Errorf("patrol_path_fail_count = %d, want 0", v)
+	}
+}
+
+func TestClearOneshotPatrol_NilMobNoOps(t *testing.T) {
+	// Just verify no panic.
+	ClearOneshotPatrol(nil)
+}
+
+func TestPatrol_OneshotLoopShape_RoundTrips(t *testing.T) {
+	p := &Patrol{
+		Id:        "test_oneshot",
+		LoopShape: "oneshot",
+		Waypoints: []PatrolWaypoint{
+			{Room: 100, DwellRounds: 3},
+			{Room: 101, DwellRounds: 1},
+		},
+	}
+	RegisterPatrolForTest(p)
+	t.Cleanup(func() { UnregisterPatrolForTest("test_oneshot") })
+
+	got := GetPatrol("test_oneshot")
+	if got == nil {
+		t.Fatal("patrol not registered")
+	}
+	if got.LoopShape != "oneshot" {
+		t.Errorf("LoopShape = %q, want %q", got.LoopShape, "oneshot")
+	}
+}

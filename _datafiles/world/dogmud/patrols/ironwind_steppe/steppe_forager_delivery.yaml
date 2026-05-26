@@ -1,0 +1,15 @@
+id: steppe_forager_delivery
+description: "Halix's vendor circuit through Thornwall: deliver foraged goods, return to sanctuary. Chunk 3.8 oneshot."
+loop_shape: oneshot
+max_path_retries: 40
+waypoints:
+  - { room: 464, dwell_rounds: 3, arrival_event: forager_vendor }
+  - { room: 470, dwell_rounds: 3, arrival_event: forager_vendor }
+  - { room: 471, dwell_rounds: 3, arrival_event: forager_vendor }
+  - { room: 475, dwell_rounds: 3, arrival_event: forager_vendor }
+  - { room: 480, dwell_rounds: 3, arrival_event: forager_vendor }
+  - { room: 481, dwell_rounds: 3, arrival_event: forager_vendor }
+  - { room: 482, dwell_rounds: 3, arrival_event: forager_vendor }
+  - { room: 483, dwell_rounds: 3, arrival_event: forager_vendor }
+  - { room: 507, dwell_rounds: 3, arrival_event: forager_vendor }
+  - { room: 3040, dwell_rounds: 1, arrival_event: "" }

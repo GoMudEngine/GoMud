@@ -97,7 +97,6 @@ idlemessages:
 spawninfo:
 - mobid: 344
   cooldown: 600 rounds
-- mobid: 371        # Tova, Marsh Forager (Stage 3.1)
 containers:
   lockbox:
     lock:

@@ -11,6 +11,7 @@
 package shops
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/items"
 )
 
@@ -18,7 +19,12 @@ import (
 // the vendor's stock multiplier. Returns 0 if the item has no
 // rarity_tier — caller decides the fallback policy.
 //
+// Final cap = RarityTier × stockMultiplier × ShopMaxStockMultiplier.
+//
 // A stockMultiplier of 0 (unset on the mob) is treated as 1.0.
+// ShopMaxStockMultiplier is a global knob — chunk 3.8 bumped to 2.0
+// so the caravan has room to build cross-city surplus without
+// vendors hitting their cap immediately on a single restock cycle.
 func EffectiveMaxStock(itemId int, stockMultiplier float64) int {
 	spec := items.GetItemSpec(itemId)
 	if spec == nil || spec.RarityTier <= 0 {
@@ -28,5 +34,9 @@ func EffectiveMaxStock(itemId int, stockMultiplier float64) int {
 	if mult <= 0 {
 		mult = 1.0
 	}
-	return int(float64(spec.RarityTier) * mult)
+	globalMult := float64(configs.GetBalanceConfig().ShopMaxStockMultiplier)
+	if globalMult <= 0 {
+		globalMult = 1.0
+	}
+	return int(float64(spec.RarityTier) * mult * globalMult)
 }

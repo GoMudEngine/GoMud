@@ -3,6 +3,7 @@ package hooks
 import (
 	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/forager"
 )
 
 // Register hooks here...
@@ -107,6 +108,13 @@ func RegisterListeners() {
 
 	// Caravan: patrol-waypoint arrival drives vendor restocks + Fernway pickup
 	events.RegisterListener(events.PatrolWaypointArrival{}, caravan.CaravanArrivalListener)
+	// Caravan: runner-circuit completion returns residual cargo from Lars to wagon
+	events.RegisterListener(events.PatrolCompleted{}, caravan.CaravanRunnerCompletionListener)
+
+	// Forager: patrol-waypoint arrival drives per-vendor sell handoff
+	events.RegisterListener(events.PatrolWaypointArrival{}, forager.ForagerArrivalListener)
+	// Forager: oneshot delivery patrol completion advances forager_state
+	events.RegisterListener(events.PatrolCompleted{}, forager.ForagerCompletionListener)
 
 	// Skill use: quest engine notifications
 	events.RegisterListener(events.SkillUsed{}, SkillUseQuestNotify)

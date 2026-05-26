@@ -28,8 +28,10 @@ type ForageResult struct {
 // Forage runs a Perception+Search forage attempt scoped to the
 // actor's current room biome. Cooldown key "forage" shared with
 // the player path (6 rounds). UserActor emits the existing
-// snooping emote + "you find X" message; MobActor SendText is a
-// no-op (silent).
+// "you crouch low..." actor-direct message + room broadcast.
+// MobActor's actor-direct SendText is a no-op (silent), but the
+// room broadcast emits regardless (chunk 3.8) so players can
+// observe forager NPCs working in their territory.
 func Forage(actor Actor, opts ForageOptions) ForageResult {
 	result := ForageResult{}
 
@@ -62,15 +64,25 @@ func Forage(actor Actor, opts ForageOptions) ForageResult {
 
 	searchScore := CalcSearchScore(char)
 
+	// Actor-direct message: player-only ("you crouch low" reads from
+	// the actor's perspective; mobs have no perspective to address).
 	if actor.IsPlayer() {
 		actor.SendText(messaging.CategorySystem,
 			`You crouch low and begin searching the ground carefully...`)
-		room.SendTextVisual(messaging.CategoryMobEmote,
-			fmt.Sprintf(`<ansi fg="username">%s</ansi> is searching the ground for something.`,
-				char.Name),
-			actor.GetUserId(),
-		)
 	}
+	// Room broadcast: emits for both player and mob actors. Chunk 3.8
+	// made this visible for mob foragers (Tova/Halix/Kessa) so players
+	// observing their territory can see them working. Username vs
+	// mobname ANSI tag picked per actor type.
+	nameTag := "mobname"
+	if actor.IsPlayer() {
+		nameTag = "username"
+	}
+	room.SendTextVisual(messaging.CategoryMobEmote,
+		fmt.Sprintf(`<ansi fg="%s">%s</ansi> is searching the ground for something.`,
+			nameTag, char.Name),
+		actor.GetUserId(),
+	)
 
 	coreResult := forager.ForageCore(forager.ForageAttempt{
 		Biome:       biome.BiomeId,

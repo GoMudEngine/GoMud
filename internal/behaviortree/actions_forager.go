@@ -12,20 +12,17 @@ package behaviortree
 
 import (
 	"fmt"
-	"math"
 	"slices"
 	"strconv"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/economy"
 	"github.com/GoMudEngine/GoMud/internal/forager"
-	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
-	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -265,10 +262,13 @@ func tickForagerDeliveringTown(
 	mob *mobs.Mob,
 	ctx *EvalContext,
 ) Result {
-	idx := getIntFromState(ctx.MobState, keyVisitIndex)
-	if idx >= len(p.VendorRooms) {
-		// Route through Storing when the forager has a personal lockbox
-		// and still carries unsold items — otherwise head straight home.
+	// Chunk 3.8 5.4 sanctuary-fallback safety: if the forager has
+	// somehow ended up at the sanctuary while StateDelivering with
+	// no active oneshot patrol (e.g., patrol home-fallback fired
+	// and never produced a PatrolCompleted), advance state
+	// directly. Cargo, if any, carries through to Storing or
+	// Recalling.
+	if mob.Character.RoomId == p.SanctuaryRoom && mob.PatrolId == "" {
 		if mob.StorageChestRoom > 0 && len(mob.Character.Items) > 0 {
 			ctx.MobState.Set(keyStoringTurns, "0")
 			transitionForager(ctx.MobState, forager.StateStoring)
@@ -277,13 +277,27 @@ func tickForagerDeliveringTown(
 		}
 		return Success
 	}
-	target := p.VendorRooms[idx]
-	if ctx.RoomId != target {
-		mob.Command(fmt.Sprintf("pathto %d", target))
+
+	// If a oneshot delivery patrol is already running, the executor
+	// will drive movement and the arrival listener will fire vendor
+	// sells. Nothing for this tick to do.
+	if mob.PatrolId == p.DeliveryPatrolId && mob.PatrolId != "" {
 		return Success
 	}
-	npcVisitVendorsInRoom(target, p, mob)
-	ctx.MobState.Set(keyVisitIndex, strconv.Itoa(idx+1))
+
+	// First entry to StateDelivering — start the oneshot patrol.
+	if p.DeliveryPatrolId == "" {
+		// Defensive: shouldn't happen for KindMarsh/KindSteppe since
+		// territory.go populates these. Fall through to Recalling so
+		// the cycle doesn't stall.
+		transitionForager(ctx.MobState, forager.StateRecalling)
+		return Success
+	}
+	if !mobs.StartOneshotPatrol(mob, p.DeliveryPatrolId) {
+		// Patrol id didn't resolve or isn't oneshot — log + give up.
+		transitionForager(ctx.MobState, forager.StateRecalling)
+		return Success
+	}
 	return Success
 }
 
@@ -506,80 +520,11 @@ func dumpSatchelToLockbox(mob *mobs.Mob, ctx *EvalContext) bool {
 	if dumped {
 		box.Lock.SetLocked() // bumps RotationSeed
 		room.Containers["lockbox"] = box
-		room.SendText(messaging.CategoryMobEmote, `<ansi fg="yellow">A latch clicks shut from somewhere in the sanctuary.</ansi>`)
+		room.SendText(messaging.CategoryMobEmote, fmt.Sprintf(
+			`<ansi fg="mobname">%s</ansi> empties her satchel into the lockbox and latches it shut.`,
+			mob.Character.Name))
 	}
 	return dumped
-}
-
-// npcVisitVendorsInRoom (Stage 3.4): physically transfers items from the
-// forager's satchel (mob.Character.Items) into matching vendor stock entries
-// at the given room. Items whose bucket isn't in p.Buckets are skipped.
-// Items that don't fit (vendor at MaxStock, or no matching stock entry)
-// stay in the satchel for the next vendor or next delivery cycle.
-//
-// Replaces the abstract RestockBuckets call from Stage 3.1.
-func npcVisitVendorsInRoom(
-	roomId int,
-	p *forager.ForagerProfile,
-	mob *mobs.Mob,
-) {
-	room := rooms.LoadRoom(roomId)
-	if room == nil {
-		return
-	}
-	for _, instId := range room.GetMobs(rooms.FindAll) {
-		vendor := mobs.GetInstance(instId)
-		if vendor == nil || !vendor.HasShop() {
-			continue
-		}
-		shop := shops.GetShopInventory(vendor.Zone, int(vendor.MobId), roomId)
-		if shop == nil {
-			continue
-		}
-		// Track whether we mutated this vendor's stock so we only
-		// persist when something actually transferred.
-		mutated := false
-		// Walk forager satchel in reverse so RemoveItem is index-safe.
-		for i := len(mob.Character.Items) - 1; i >= 0; i-- {
-			item := mob.Character.Items[i]
-			bucket := economy.BucketFor(item.ItemId)
-			if bucket == "" || !slices.Contains(p.Buckets, bucket) {
-				continue
-			}
-			entry := shop.GetStock(item.ItemId)
-			if entry == nil || entry.Current >= entry.MaxStock {
-				continue
-			}
-			mob.Character.RemoveItem(item)
-			entry.Current++
-			mutated = true
-			// Increment throughput counters for delivery tracking.
-			spec := items.GetItemSpec(item.ItemId)
-			if spec != nil {
-				if spec.RarityTier > 0 {
-					forager.IncrementDelivery(mob.Zone, int(mob.MobId), spec.RarityTier)
-				}
-				forager.AddLbsDelivered(mob.Zone, int(mob.MobId), uint64(math.Round(spec.Weight)))
-			}
-			room.SendText(messaging.CategoryMobEmote, fmt.Sprintf(
-				`<ansi fg="mobname">%s</ansi> hands a %s to`+
-					` <ansi fg="mobname">%s</ansi>.`,
-				p.Name, item.DisplayName(), vendor.Character.Name,
-			))
-		}
-		// Persist when stock actually changed. Mirrors the caravan-side
-		// crash-safety pattern in internal/caravan/visit.go — without
-		// this, forager restocks only hit disk on graceful shutdown
-		// and a panic loses an in-flight cycle's deliveries.
-		if mutated {
-			if err := shops.SaveShop(vendor.Zone, int(vendor.MobId), roomId); err != nil {
-				mudlog.Error("forager.npcVisitVendorsInRoom", "forager", p.Name, "vendor", vendor.Character.Name, "error", err)
-			}
-			if err := forager.SaveThroughput(mob.Zone, int(mob.MobId)); err != nil {
-				mudlog.Error("forager.SaveThroughput", "forager", p.Name, "error", err)
-			}
-		}
-	}
 }
 
 func npcWanderTerritoryNeighbor(
