@@ -128,8 +128,11 @@ func TestStartOneshotPatrol_AssignsAndResetsMiscData(t *testing.T) {
 	if v, _ := mob.Character.GetMiscData("patrol_direction").(int); v != 1 {
 		t.Errorf("patrol_direction = %d, want 1", v)
 	}
-	if v, _ := mob.Character.GetMiscData("patrol_dwell_remaining").(int); v != 0 {
-		t.Errorf("patrol_dwell_remaining = %d, want 0", v)
+	// After the H1 hotfix, patrol_dwell_remaining is initialized to
+	// wp0.DwellRounds (2), NOT 0. The executor must dwell at wp0 before
+	// advancing, so the arrival event fires correctly.
+	if v, _ := mob.Character.GetMiscData("patrol_dwell_remaining").(int); v != 2 {
+		t.Errorf("patrol_dwell_remaining = %d, want 2 (wp0.DwellRounds)", v)
 	}
 	if v, _ := mob.Character.GetMiscData("patrol_path_fail_count").(int); v != 0 {
 		t.Errorf("patrol_path_fail_count = %d, want 0", v)
@@ -198,6 +201,35 @@ func TestClearOneshotPatrol_ClearsAllPatrolMiscData(t *testing.T) {
 func TestClearOneshotPatrol_NilMobNoOps(t *testing.T) {
 	// Just verify no panic.
 	ClearOneshotPatrol(nil)
+}
+
+func TestStartOneshotPatrol_StampsFirstWaypointDwell(t *testing.T) {
+	// Regression for the 3.8 hotfix: StartOneshotPatrol previously
+	// initialized patrol_dwell_remaining=0, which caused the executor
+	// to fire WantsAdvance instead of WantsDwellWait when the mob
+	// arrived at wp0 — skipping both the dwell and the arrival event.
+	const patrolId = "test_oneshot_dwell_init"
+	RegisterPatrolForTest(&Patrol{
+		Id:        patrolId,
+		LoopShape: "oneshot",
+		Waypoints: []PatrolWaypoint{
+			{Room: 100, DwellRounds: 5, ArrivalEvent: "test_event"},
+			{Room: 101, DwellRounds: 0},
+		},
+	})
+	t.Cleanup(func() { UnregisterPatrolForTest(patrolId) })
+
+	mob := &Mob{InstanceId: 1, MobId: 999}
+	mob.Character.Name = "test runner"
+
+	if ok := StartOneshotPatrol(mob, patrolId); !ok {
+		t.Fatalf("StartOneshotPatrol returned false")
+	}
+
+	got, _ := mob.Character.GetMiscData("patrol_dwell_remaining").(int)
+	if got != 5 {
+		t.Errorf("patrol_dwell_remaining = %d, want 5 (wp0.DwellRounds)", got)
+	}
 }
 
 func TestPatrol_OneshotLoopShape_RoundTrips(t *testing.T) {
