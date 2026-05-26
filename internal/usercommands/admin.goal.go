@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -60,6 +61,10 @@ func Goal(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 }
 
 func goalShowUsage(user *users.UserRecord) {
+	if out, err := templates.Process("admincommands/help/command.goal", nil, user.UserId); err == nil && strings.TrimSpace(out) != "" {
+		user.SendText(messaging.CategorySystem, out)
+		return
+	}
 	user.SendText(messaging.CategorySystem,
 		"Usage:\r\n"+
 			"  goal list <mob-ident>\r\n"+
