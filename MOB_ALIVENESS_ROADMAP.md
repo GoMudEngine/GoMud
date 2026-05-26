@@ -98,7 +98,7 @@ should always agree.
 | 3.3 | Routine | Sleeping / wake states | M | 3.1 | Done |
 | 3.4 | Routine | Waypoint patrols | M | — | Done |
 | 3.5 | Routine | Maintenance routines | M | 3.2 | Deferred |
-| 3.6 | Routine | NPC↔NPC idle conversation | M | 1.6 | Not started |
+| 3.6 | Routine | NPC↔NPC idle conversation | M | 1.6 | Done |
 | 3.7 | Routine | Inter-zone patrols + caravan unification | L | 3.4 | Not started |
 | 4.1 | Strategic | Goal representation | M | 1.1, 1.4 | Not started |
 | 4.2 | Strategic | Goal selection | L | 4.1 | Not started |
@@ -494,13 +494,40 @@ world.
 - **Deferred (2026-05-25):** Chunk 3.2's per-segment `idlecommands:` field already delivers the canonical "see the smith working" experience for Kerra (and will for future similarly-authored NPCs). The reusable activity-library angle has no consumers yet — we only have one smith in one zone. Re-evaluate this chunk when content authoring hits real duplication pain across multiple smiths/farmers/librarians in multiple zones. The concrete "crafter ticks but item doesn't appear in shop list" complaint that surfaced during this triage is being tracked separately (see follow-up bug fix).
 
 ### 3.6 NPC↔NPC idle conversation
-**Status:** Not started • **Size:** M
+**Status:** Done • **Size:** M
 
 - **Goal:** NPCs occasionally talk to each other (canned exchanges, mood-aware).
 - **In:** Pair-conversation YAML (paired with 1.6 relationships), trigger logic (proximity + cooldown), mood-aware variants.
 - **Out:** Player-overheard "spoken about you" gossip (later, ties to 1.4 knowledge spread).
 - **Depends on:** 1.6
 - **Why:** A guard and a baker chatting in the square is the highest-bang-for-buck aliveness signal.
+- **Shipped:** New `internal/conversations/` package (replaces
+  legacy upstream system retired in T1.5) with type pools
+  (`types/<relationship-type>.yaml`) and per-pair overrides
+  (`pairs/<lower>_<higher>.yaml`). Loader with filename↔id
+  check, speaker validation, mob existence + relationship edge
+  cross-check via DI. Picker draws uniformly from
+  `type_pool ∪ matching_subtype ∪ pair_override`. State machine
+  runs in `NewRound_IdleMobs`: per-tick trigger
+  (`ConversationBaseChancePct`, default 1%) + player-arrival
+  boost (`ConversationPlayerArrivalBoostPct`, default 25%) in
+  `go.go`. Line-per-round pacing via shared
+  `conversation_line_idx` MiscData; deterministic speaker
+  alternation. Graceful abort on partner moves / sleeps /
+  combats / player dialogue. Cooldown
+  (`ConversationCooldownRounds`, default 50) on both NPCs
+  after completion. `MobConversant` interface +
+  `internal/conversationadapter/` keep the import graph
+  acyclic. Pilot: Thornwall tavern back-room — Dal + Fen +
+  Gobb + Wrex friend edges (6 pairs) + optional rival edge
+  Fen↔Wrex + friend pool (11 exchanges + 2 fond-subtype) +
+  optional rival pool (5 exchanges) + optional Dal↔Wrex pair
+  override (3 exchanges, role-agnostic). NPC↔NPC opinion store
+  and "spoken about you" gossip explicitly deferred (see
+  spec). Spec at
+  `docs/superpowers/specs/completed/2026-05-25-mob-aliveness-3.6-npc-conversations-design.md`,
+  plan at
+  `docs/superpowers/plans/completed/2026-05-25-mob-aliveness-3.6-npc-conversations.md`.
 
 ### 3.7 Inter-zone patrols + caravan unification
 **Status:** Not started • **Size:** L

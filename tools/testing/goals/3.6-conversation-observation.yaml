@@ -1,0 +1,31 @@
+description: "Observe Thornwall tavern back-room NPCs (Dal 117, Fen 114, Gobb 115,
+  Wrex 116) for 30-50 rounds; assert at least one multi-line idle conversation
+  between two of them completes."
+
+goals:
+  - "Locate the Thornwall tavern back room (look up the room id by walking the
+    tavern from room 472)."
+  - "Stand idle for ~30 game rounds. Watch the room output."
+  - "Count `say` broadcasts from the four target NPCs (Dal, Fen, Gobb, Wrex).
+    A multi-line exchange will look like two NPCs alternating say-lines across
+    consecutive rounds."
+  - "If at least one full multi-line exchange completes within the observation
+    window, PASS the trigger test."
+  - "Leave the room, wait 10 game rounds, re-enter (player-arrival boost test).
+    Confirm increased likelihood of immediate exchange vs the passive baseline."
+  - "If the rival pool was authored (T11), check whether any rival exchange
+    between Fen and Wrex fires across multiple observation windows."
+
+pass_criteria:
+  - "At least one full multi-line exchange observed between two of the target
+    NPCs"
+  - "No `say`-line cross-contamination from non-conversation idlecommands
+    (existing chunk 3.2 idlecommands are independent)"
+  - "Player-arrival boost demonstrably triggers earlier than the passive
+    baseline"
+
+notes:
+  - "If 'time set <hour>' admin command isn't available, observe in real-time."
+  - "Background activity: chunk 3.4's city guard may be patrolling through the
+    tavern -- that's expected and shouldn't interfere with the back-room
+    observation."
