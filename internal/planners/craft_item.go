@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/goals"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/seeders"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 )
 
@@ -55,8 +56,12 @@ func craftItemPlanner(mob *mobs.Mob, goal *goals.Goal) PlanResult {
 		return PlanResult{Status: StatusFailure}
 	}
 
-	// Materials missing → Failure (4.5 will seed wealth-item).
+	// Materials missing → seed wealth-item goals for the missing
+	// ingredient tags so the mob has a productive next-tick goal
+	// instead of spinning, then return Failure. The seeders package's
+	// DedupKey on wealth-item collapses repeat seedings.
 	if !craftPlannerMobHasMaterials(mob, r) {
+		seeders.SeedMaterialsForRecipe(mob, rid)
 		return PlanResult{Status: StatusFailure}
 	}
 
