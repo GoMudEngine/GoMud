@@ -207,6 +207,15 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			user.Character.SetAggro(0, attackMobInstanceId, characters.DefaultAttack)
 
+			// Chunk 4.5: notify seeders that a player engaged a mob.
+			// Fires on every attack commitment, not just fresh aggro,
+			// so rules 6 + 9 see repeated aggressive actions too.
+			// Only fires for mob targets (player-vs-player handled above).
+			events.AddToQueue(events.PlayerAttackedMob{
+				UserId:        user.UserId,
+				MobInstanceId: attackMobInstanceId,
+			})
+
 			if isFreshAggro {
 				if mob := mobs.GetInstance(attackMobInstanceId); mob != nil {
 					// Per-NPC opinion (chunk 1.1).

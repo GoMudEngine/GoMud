@@ -36,6 +36,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/goals"
 	_ "github.com/GoMudEngine/GoMud/internal/goals/catalog" // chunk 4.3 — fire type registrations
 	"github.com/GoMudEngine/GoMud/internal/planners"        // chunk 4.4 — fire planner init()s + expose ClearPlanState
+	"github.com/GoMudEngine/GoMud/internal/seeders"        // chunk 4.5 — rule init()s + Dispatch listener
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/hooks"
 	"github.com/GoMudEngine/GoMud/internal/inputhandlers"
@@ -303,6 +304,18 @@ func main() {
 	// 4.2 SetWeightsLookup + 4.3 SetArchetypeDefaultsLookup patterns.
 	// Chunk 4.4.
 	goals.SetPlanStateClear(planners.ClearPlanState)
+
+	// Wire seeders.Dispatch as a listener for every event type that chunk-4.5
+	// rules subscribe to. Hand-maintained: add a line when a new rule
+	// subscribes to a new event type. seeders.Dispatch is a no-op for any
+	// event type with no registered rules. Chunk 4.5.
+	events.RegisterListener(events.MobDeath{}, seeders.Dispatch)
+	events.RegisterListener(events.Communication{}, seeders.Dispatch)
+	events.RegisterListener(events.Quest{}, seeders.Dispatch)
+	events.RegisterListener(events.PlayerAttackedMob{}, seeders.Dispatch)
+	events.RegisterListener(events.GiftAccepted{}, seeders.Dispatch)
+	events.RegisterListener(events.SkillUsed{}, seeders.Dispatch)
+	events.RegisterListener(events.ItemOwnership{}, seeders.Dispatch) // for rule 5 (theft witness)
 
 	// Discord integration
 	if webhookUrl := string(c.Integrations.Discord.WebhookUrl); webhookUrl != "" {
