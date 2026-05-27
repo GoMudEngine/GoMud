@@ -10,6 +10,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
+// Note: resolveTargetRoomId, targetAlive, targetInCombat live in
+// helpers.go (extracted from Task 13 onward).
+
 func init() {
 	goals.RegisterGoalType("revenge-mob", goals.GoalTypeMeta{
 		Predicate:     revengeMobPredicate,
@@ -80,8 +83,8 @@ func revengeMobContextScore(g *goals.Goal, mob *mobs.Mob) float64 {
 	return targetProximityScore(mob, kind, id)
 }
 
-// ─── Shared helpers — used by revenge-mob, protection-mob, befriend ──────────
-// Extract to internal/goals/catalog/helpers.go when Tasks 13/15 need them.
+// ─── Shared helpers — targetRecentlySeen lives here; resolveTargetRoomId,
+// targetAlive, targetInCombat extracted to helpers.go (Task 13). ─────────────
 
 // targetRecentlySeen returns true when mob's CombatMemory records a sighting
 // of the given target within the last 1000 rounds (spec §ContextScore window).
@@ -141,22 +144,4 @@ func targetProximityScore(mob *mobs.Mob, kind string, id int) float64 {
 	}
 
 	return 0.1
-}
-
-// resolveTargetRoomId returns the room id of the given target, or 0 if
-// the target cannot be located.
-func resolveTargetRoomId(kind string, id int) int {
-	switch kind {
-	case "mob":
-		for _, instId := range mobs.GetAllMobInstanceIds() {
-			if inst := mobs.GetInstance(instId); inst != nil && inst.MobId == mobs.MobId(id) {
-				return inst.Character.RoomId
-			}
-		}
-	case "player":
-		if u := users.GetByUserId(id); u != nil {
-			return u.Character.RoomId
-		}
-	}
-	return 0
 }
