@@ -78,9 +78,11 @@ func (e *ErrBadParams) Error() string {
 // GoalTypeMeta is registered once per goal type by chunk 4.3's catalog.
 type GoalTypeMeta struct {
 	Predicate     PredicateFn
-	ConflictsWith []string       // type names this goal type conflicts with
-	ContextScore  ContextScoreFn // chunk 4.2 — optional; nil = always 1.0
-	Params        []ParamSchema  // chunk 4.3 — optional; nil = no validation
+	ConflictsWith []string             // type names this goal type conflicts with
+	ContextScore  ContextScoreFn       // chunk 4.2 — optional; nil = always 1.0
+	Params        []ParamSchema        // chunk 4.3 — optional; nil = no validation
+	AllowMultiple bool                 // chunk 4.3 — multi-instance allowed
+	DedupKey      func(g *Goal) string // chunk 4.3 — when AllowMultiple, returns dedup key
 }
 
 // AddResult reports what happened on a successful Add.

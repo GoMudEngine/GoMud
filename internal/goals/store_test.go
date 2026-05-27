@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"strconv"
 	"sync"
 	"testing"
 	"time"
@@ -621,5 +622,139 @@ func TestAdd_ParamSchemaViolation_RejectsGoal(t *testing.T) {
 	}
 	if got := GoalsOf(mobId, name); len(got) != 0 {
 		t.Errorf("goal added despite validation failure: %v", got)
+	}
+}
+
+func TestAdd_AllowMultiple_DifferentDedupKeys_BothAdded(t *testing.T) {
+	ClearCache()
+	RegisterGoalType("test-multi", GoalTypeMeta{
+		AllowMultiple: true,
+		DedupKey: func(g *Goal) string {
+			if tgt, ok := g.Params["target"].(int); ok {
+				return strconv.Itoa(tgt)
+			}
+			return ""
+		},
+	})
+	defer resetRegistry()
+
+	mobId := 99401
+	name := "multi_diff_mob"
+	g1 := &Goal{Type: "test-multi", Priority: 50, Params: map[string]any{"target": 1}}
+	g2 := &Goal{Type: "test-multi", Priority: 50, Params: map[string]any{"target": 2}}
+	if _, err := Add(mobId, name, g1); err != nil {
+		t.Fatalf("Add g1: %v", err)
+	}
+	if _, err := Add(mobId, name, g2); err != nil {
+		t.Fatalf("Add g2 (different dedup key): %v", err)
+	}
+	if got := GoalsOf(mobId, name); len(got) != 2 {
+		t.Errorf("expected 2 coexisting goals, got %d: %v", len(got), got)
+	}
+}
+
+func TestAdd_AllowMultiple_SameDedupKey_ConflictsByPriority(t *testing.T) {
+	ClearCache()
+	RegisterGoalType("test-multi2", GoalTypeMeta{
+		AllowMultiple: true,
+		DedupKey: func(g *Goal) string {
+			if tgt, ok := g.Params["target"].(int); ok {
+				return strconv.Itoa(tgt)
+			}
+			return ""
+		},
+	})
+	defer resetRegistry()
+
+	mobId := 99402
+	name := "multi_same_mob"
+	g1 := &Goal{Type: "test-multi2", Priority: 90, Params: map[string]any{"target": 1}}
+	g2 := &Goal{Type: "test-multi2", Priority: 30, Params: map[string]any{"target": 1}}
+	if _, err := Add(mobId, name, g1); err != nil {
+		t.Fatalf("Add g1: %v", err)
+	}
+	_, err := Add(mobId, name, g2)
+	if err == nil {
+		t.Fatalf("Add g2 (same dedup key, lower priority) should have conflicted")
+	}
+	var ce *ConflictError
+	if !errors.As(err, &ce) {
+		t.Fatalf("err type: got %T, want *ConflictError", err)
+	}
+	if got := GoalsOf(mobId, name); len(got) != 1 {
+		t.Errorf("expected 1 goal (blocker preserved), got %d", len(got))
+	}
+}
+
+func TestAdd_AllowMultiple_SameDedupKey_HigherPriority_Displaces(t *testing.T) {
+	ClearCache()
+	RegisterGoalType("test-multi3", GoalTypeMeta{
+		AllowMultiple: true,
+		DedupKey: func(g *Goal) string {
+			if tgt, ok := g.Params["target"].(int); ok {
+				return strconv.Itoa(tgt)
+			}
+			return ""
+		},
+	})
+	defer resetRegistry()
+
+	mobId := 99403
+	name := "multi_displace_mob"
+	g1 := &Goal{Type: "test-multi3", Priority: 30, Params: map[string]any{"target": 1}}
+	g2 := &Goal{Type: "test-multi3", Priority: 90, Params: map[string]any{"target": 1}}
+	if _, err := Add(mobId, name, g1); err != nil {
+		t.Fatalf("Add g1: %v", err)
+	}
+	res, err := Add(mobId, name, g2)
+	if err != nil {
+		t.Fatalf("Add g2 (same dedup, higher priority): %v", err)
+	}
+	if len(res.Displaced) != 1 {
+		t.Errorf("expected 1 displaced, got %v", res.Displaced)
+	}
+}
+
+func TestAdd_AllowMultipleFalse_StillBlocksSameType(t *testing.T) {
+	// Confirms 4.1 behavior preserved for types that don't opt in.
+	ClearCache()
+	RegisterGoalType("test-singleton", GoalTypeMeta{})
+	defer resetRegistry()
+
+	mobId := 99404
+	name := "single_mob"
+	g1 := &Goal{Type: "test-singleton", Priority: 50}
+	g2 := &Goal{Type: "test-singleton", Priority: 50}
+	if _, err := Add(mobId, name, g1); err != nil {
+		t.Fatalf("Add g1: %v", err)
+	}
+	_, err := Add(mobId, name, g2)
+	if err == nil {
+		t.Fatalf("expected ConflictError on second add of singleton type")
+	}
+}
+
+func TestAdd_DedupKey_PanicRecovered_FallsThroughToNoKeyCollision(t *testing.T) {
+	ClearCache()
+	RegisterGoalType("test-panicky", GoalTypeMeta{
+		AllowMultiple: true,
+		DedupKey: func(g *Goal) string {
+			panic("dedup-key boom")
+		},
+	})
+	defer resetRegistry()
+
+	mobId := 99405
+	name := "panicky_mob"
+	g1 := &Goal{Type: "test-panicky", Priority: 50, Params: map[string]any{"a": 1}}
+	g2 := &Goal{Type: "test-panicky", Priority: 50, Params: map[string]any{"a": 2}}
+	if _, err := Add(mobId, name, g1); err != nil {
+		t.Fatalf("Add g1 with panicking dedup-key: %v", err)
+	}
+	if _, err := Add(mobId, name, g2); err != nil {
+		t.Fatalf("Add g2 with panicking dedup-key: %v", err)
+	}
+	if got := GoalsOf(mobId, name); len(got) != 2 {
+		t.Errorf("expected 2 goals (panic → empty key → coexist), got %d", len(got))
 	}
 }

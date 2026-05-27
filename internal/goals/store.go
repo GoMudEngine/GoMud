@@ -101,8 +101,30 @@ func Add(mobId int, namesimple string, g *Goal) (AddResult, error) {
 	// ConflictsWith list, with a symmetry safety net checking both
 	// directions.
 	newMeta, _ := lookupMeta(g.Type)
+	var newKey string
+	if newMeta.AllowMultiple && newMeta.DedupKey != nil {
+		newKey = invokeDedupKey(newMeta.DedupKey, g)
+	}
 	var conflicting []*Goal
 	for _, e := range mg.Goals {
+		if g.Type == e.Type {
+			// Chunk 4.3: same-type pair. AllowMultiple=true + matching
+			// DedupKey collides; AllowMultiple=false keeps 4.1's
+			// "same type always conflicts" semantics.
+			if newMeta.AllowMultiple {
+				if newMeta.DedupKey != nil && newKey != "" {
+					existingKey := invokeDedupKey(newMeta.DedupKey, e)
+					if existingKey == newKey {
+						conflicting = append(conflicting, e)
+					}
+				}
+				// AllowMultiple + no key match → coexist (do nothing).
+				continue
+			}
+			conflicting = append(conflicting, e)
+			continue
+		}
+		// Cross-type: 4.1's type-name-based ConflictsWith lookup.
 		if isConflict(g.Type, e.Type, newMeta) {
 			conflicting = append(conflicting, e)
 		}
@@ -359,4 +381,22 @@ func instanceForRecompute(mobId int) *mobs.Mob {
 		}
 	}
 	return nil
+}
+
+// invokeDedupKey calls a registered DedupKey func under panic recovery.
+// A panic logs a single-line warning and returns "" (collapses to
+// "no key" — same-type goals fall through to coexist freely under
+// AllowMultiple semantics). Mirrors how invokeContextScore handles
+// panics. Chunk 4.3.
+func invokeDedupKey(fn func(g *Goal) string, g *Goal) (key string) {
+	defer func() {
+		if r := recover(); r != nil {
+			mudlog.Warn("goals.dedup_key panic",
+				"type", g.Type,
+				"goal_id", g.Id,
+				"panic", fmt.Sprintf("%v", r))
+			key = ""
+		}
+	}()
+	return fn(g)
 }
