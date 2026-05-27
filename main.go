@@ -35,6 +35,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/goals"
 	_ "github.com/GoMudEngine/GoMud/internal/goals/catalog" // chunk 4.3 — fire type registrations
+	"github.com/GoMudEngine/GoMud/internal/planners"        // chunk 4.4 — fire planner init()s + expose ClearPlanState
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/hooks"
 	"github.com/GoMudEngine/GoMud/internal/inputhandlers"
@@ -295,6 +296,13 @@ func main() {
 		}
 		return out
 	})
+
+	// Wire the goals → planners plan-state clear callback. Fires on every
+	// goal switch (inside Recompute) to wipe per-plan MiscData keys so the
+	// incoming planner starts with a clean slate. Mirrors the
+	// 4.2 SetWeightsLookup + 4.3 SetArchetypeDefaultsLookup patterns.
+	// Chunk 4.4.
+	goals.SetPlanStateClear(planners.ClearPlanState)
 
 	// Discord integration
 	if webhookUrl := string(c.Integrations.Discord.WebhookUrl); webhookUrl != "" {
