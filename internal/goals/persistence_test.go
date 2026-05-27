@@ -6,6 +6,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"gopkg.in/yaml.v3"
 )
 
 func resetCache() {
@@ -88,5 +90,67 @@ func TestGoalPath_UsesOverride(t *testing.T) {
 	got := goalPath(371, "tova")
 	if !strings.HasPrefix(got, override) {
 		t.Errorf("goalPath = %q, want prefix %q", got, override)
+	}
+}
+
+func TestMobGoals_NewSelectionFields_RoundTrip(t *testing.T) {
+	mg := &MobGoals{
+		MobId:             371,
+		NextGoalId:        4,
+		CurrentGoalId:     "g2",
+		CurrentSinceRound: 12450,
+		LastSwitchRound:   12450,
+		Goals: []*Goal{
+			{Id: "g1", Type: "revenge", Priority: 70, CreatedAt: time.Date(2026, 5, 26, 14, 30, 0, 0, time.UTC)},
+			{Id: "g2", Type: "wealth-target", Priority: 30, CreatedAt: time.Date(2026, 5, 26, 14, 31, 0, 0, time.UTC)},
+		},
+	}
+	out, err := yaml.Marshal(mg)
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
+	var got MobGoals
+	if err := yaml.Unmarshal(out, &got); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if got.CurrentGoalId != "g2" {
+		t.Errorf("CurrentGoalId: got %q, want %q", got.CurrentGoalId, "g2")
+	}
+	if got.CurrentSinceRound != 12450 {
+		t.Errorf("CurrentSinceRound: got %d, want %d", got.CurrentSinceRound, 12450)
+	}
+	if got.LastSwitchRound != 12450 {
+		t.Errorf("LastSwitchRound: got %d, want %d", got.LastSwitchRound, 12450)
+	}
+	if len(got.Goals) != 2 {
+		t.Fatalf("Goals: got %d, want 2", len(got.Goals))
+	}
+}
+
+func TestMobGoals_LegacyFile_LoadsWithZeroSelectionFields(t *testing.T) {
+	// A 4.1-era file with no selection fields.
+	legacy := `mob_id: 371
+next_goal_id: 2
+goals:
+  - id: g1
+    type: revenge
+    priority: 70
+    created_at: 2026-05-26T14:30:00Z
+`
+	var got MobGoals
+	if err := yaml.Unmarshal([]byte(legacy), &got); err != nil {
+		t.Fatalf("unmarshal legacy: %v", err)
+	}
+	if got.MobId != 371 || got.NextGoalId != 2 {
+		t.Errorf("legacy fields: got mob=%d next=%d, want mob=371 next=2", got.MobId, got.NextGoalId)
+	}
+	if got.CurrentGoalId != "" {
+		t.Errorf("CurrentGoalId: got %q, want empty", got.CurrentGoalId)
+	}
+	if got.CurrentSinceRound != 0 || got.LastSwitchRound != 0 {
+		t.Errorf("round fields: got since=%d switch=%d, want 0/0", got.CurrentSinceRound, got.LastSwitchRound)
+	}
+	if len(got.Goals) != 1 {
+		t.Fatalf("Goals: got %d, want 1", len(got.Goals))
 	}
 }
