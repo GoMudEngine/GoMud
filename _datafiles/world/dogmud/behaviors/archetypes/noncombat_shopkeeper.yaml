@@ -31,3 +31,11 @@ tree:
           text: "declines politely and hands it back."
         - type: action
           do: return_item
+
+default_goals:
+  - type: survival
+    priority: 80
+  - type: wealth-gold
+    priority: 30
+    params:
+      target: 1000

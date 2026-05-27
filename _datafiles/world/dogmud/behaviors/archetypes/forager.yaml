@@ -55,3 +55,7 @@ tree:
       children:
         - type: action
           do: forager_step
+
+default_goals:
+  - type: survival
+    priority: 80

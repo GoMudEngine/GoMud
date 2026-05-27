@@ -46,3 +46,7 @@ tree:
         # 3. Fallthrough: engage the attacker.
         - type: action
           do: attack
+
+default_goals:
+  - type: survival
+    priority: 80

@@ -68,3 +68,7 @@ tree:
           check: mob_is_tracking
         - type: action
           do: move_toward_tracked
+
+default_goals:
+  - type: survival
+    priority: 80

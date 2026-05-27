@@ -65,3 +65,7 @@ tree:
           cmd: callforhelp
         - type: action
           do: move_toward_tracked
+
+default_goals:
+  - type: survival
+    priority: 80

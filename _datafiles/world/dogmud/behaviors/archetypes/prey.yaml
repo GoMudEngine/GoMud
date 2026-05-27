@@ -11,3 +11,7 @@ tree:
   type: action
   event: mob_hurt
   do: flee
+
+default_goals:
+  - type: survival
+    priority: 80

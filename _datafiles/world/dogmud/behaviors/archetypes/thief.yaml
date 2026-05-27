@@ -100,3 +100,11 @@ tree:
             check: mob_is_hidden
         - type: action
           do: try_sneak
+
+default_goals:
+  - type: survival
+    priority: 80
+  - type: wealth-gold
+    priority: 40
+    params:
+      target: 500
