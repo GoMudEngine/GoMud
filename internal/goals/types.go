@@ -28,12 +28,13 @@ type Goal struct {
 
 // MobGoals is the on-disk shape — one file per mob template.
 type MobGoals struct {
-	MobId             int     `yaml:"mob_id"`
-	NextGoalId        int     `yaml:"next_goal_id"`
-	CurrentGoalId     string  `yaml:"current_goal_id,omitempty"`     // chunk 4.2 — selection state
-	CurrentSinceRound uint64  `yaml:"current_since_round,omitempty"` // chunk 4.2 — round when current became current
-	LastSwitchRound   uint64  `yaml:"last_switch_round,omitempty"`   // chunk 4.2 — round of most recent switch
-	Goals             []*Goal `yaml:"goals"`
+	MobId               int     `yaml:"mob_id"`
+	NextGoalId          int     `yaml:"next_goal_id"`
+	CurrentGoalId       string  `yaml:"current_goal_id,omitempty"`       // chunk 4.2 — selection state
+	CurrentSinceRound   uint64  `yaml:"current_since_round,omitempty"`   // chunk 4.2 — round when current became current
+	LastSwitchRound     uint64  `yaml:"last_switch_round,omitempty"`     // chunk 4.2 — round of most recent switch
+	SeededFromArchetype bool    `yaml:"seeded_from_archetype,omitempty"` // chunk 4.3 — lazy-seed sentinel
+	Goals               []*Goal `yaml:"goals"`
 }
 
 // PredicateFn evaluates whether a goal is currently satisfied. Same

@@ -13,6 +13,10 @@ import (
 // loadOrLazyInit returns the cached MobGoals for mobId, loading from
 // disk on first access. Returns a fresh empty MobGoals if neither
 // cache nor disk has data. Mirrors the chunk-1.3 double-check pattern.
+//
+// For truly fresh mobs (no file on disk), calls seedFromArchetype after
+// releasing the write lock — so that Add re-entrancy inside the seed is
+// safe (cache entry already present, mutex free). Chunk 4.3.
 func loadOrLazyInit(mobId int, namesimple string) *MobGoals {
 	cacheMu.RLock()
 	if mg, ok := cache[mobId]; ok {
@@ -22,17 +26,25 @@ func loadOrLazyInit(mobId int, namesimple string) *MobGoals {
 	cacheMu.RUnlock()
 
 	cacheMu.Lock()
-	defer cacheMu.Unlock()
 	// Double-check after upgrading to write lock.
 	if mg, ok := cache[mobId]; ok {
+		cacheMu.Unlock()
 		return mg
 	}
 	mg := loadFromDisk(mobId, namesimple)
-	if mg == nil {
+	freshMob := mg == nil
+	if freshMob {
 		mg = &MobGoals{MobId: mobId, NextGoalId: 1, Goals: nil}
 	}
 	cache[mobId] = mg
 	nameByMobId[mobId] = namesimple
+	cacheMu.Unlock() // release BEFORE seedFromArchetype so Add re-entrancy is safe
+
+	if freshMob {
+		// Chunk 4.3: seed archetype defaults. Runs outside the lock.
+		// seedFromArchetype checks mg.SeededFromArchetype for idempotency.
+		seedFromArchetype(mobId, namesimple, mg)
+	}
 	return mg
 }
 
@@ -255,6 +267,10 @@ func Remove(mobId int, namesimple, goalId string) error {
 // Clear removes every goal from the mob, resets NextGoalId to 1, and
 // zeros the chunk-4.2 selection state. Admin-only — intentionally
 // heavy-hand for resetting a mob's goal state to defaults.
+//
+// SeededFromArchetype is intentionally preserved: the sentinel records
+// that the archetype-seed already ran for this mob template, so a
+// subsequent loadOrLazyInit does NOT re-seed. Chunk 4.3.
 func Clear(mobId int, namesimple string) error {
 	mg := loadOrLazyInit(mobId, namesimple)
 	cacheMu.Lock()
@@ -263,6 +279,7 @@ func Clear(mobId int, namesimple string) error {
 	mg.CurrentGoalId = ""
 	mg.CurrentSinceRound = 0
 	mg.LastSwitchRound = 0
+	// SeededFromArchetype is NOT cleared here — see doc comment above.
 	nameByMobId[mobId] = namesimple
 	cacheMu.Unlock()
 
@@ -381,6 +398,37 @@ func instanceForRecompute(mobId int) *mobs.Mob {
 		}
 	}
 	return nil
+}
+
+// seedFromArchetype runs the chunk-4.3 lazy seed for a fresh MobGoals.
+// Idempotent under the SeededFromArchetype sentinel. Always flips the
+// sentinel and persists once at the end, regardless of seed outcome —
+// so the file records "seeding was attempted" even if no defaults are
+// registered. Add failures are logged at warn level and skipped —
+// partial seeding is preferable to bailing entirely.
+//
+// Must be called OUTSIDE any cache lock — it calls Add which calls
+// loadOrLazyInit which acquires the read lock.
+func seedFromArchetype(mobId int, namesimple string, mg *MobGoals) {
+	if mg.SeededFromArchetype {
+		return
+	}
+	mob := instanceForRecompute(mobId)
+	defaults := resolveArchetypeDefaults(mob)
+	for _, d := range defaults {
+		g := &Goal{Type: d.Type, Priority: d.Priority, Params: d.Params}
+		if _, err := Add(mobId, namesimple, g); err != nil {
+			mudlog.Warn("goals.seedFromArchetype: Add failed (skipping)",
+				"mob_id", mobId, "type", d.Type, "error", err)
+		}
+	}
+	cacheMu.Lock()
+	mg.SeededFromArchetype = true
+	cacheMu.Unlock()
+	if err := saveToDisk(mobId, namesimple); err != nil {
+		mudlog.Warn("goals.seedFromArchetype: save failed",
+			"mob_id", mobId, "error", err)
+	}
 }
 
 // invokeDedupKey calls a registered DedupKey func under panic recovery.

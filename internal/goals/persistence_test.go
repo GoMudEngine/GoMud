@@ -127,6 +127,47 @@ func TestMobGoals_NewSelectionFields_RoundTrip(t *testing.T) {
 	}
 }
 
+func TestMobGoals_SeededFromArchetype_RoundTrip(t *testing.T) {
+	mg := &MobGoals{
+		MobId:               371,
+		NextGoalId:          2,
+		SeededFromArchetype: true,
+		Goals: []*Goal{
+			{Id: "g1", Type: "survival", Priority: 80,
+				CreatedAt: time.Date(2026, 5, 27, 10, 0, 0, 0, time.UTC)},
+		},
+	}
+	out, err := yaml.Marshal(mg)
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
+	var got MobGoals
+	if err := yaml.Unmarshal(out, &got); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if !got.SeededFromArchetype {
+		t.Errorf("SeededFromArchetype: got false, want true")
+	}
+}
+
+func TestMobGoals_LegacyFile_LoadsWithSentinelFalse(t *testing.T) {
+	legacy := `mob_id: 371
+next_goal_id: 2
+goals:
+  - id: g1
+    type: survival
+    priority: 80
+    created_at: 2026-05-27T10:00:00Z
+`
+	var got MobGoals
+	if err := yaml.Unmarshal([]byte(legacy), &got); err != nil {
+		t.Fatalf("unmarshal legacy: %v", err)
+	}
+	if got.SeededFromArchetype {
+		t.Errorf("SeededFromArchetype: got true, want false (legacy file)")
+	}
+}
+
 func TestMobGoals_LegacyFile_LoadsWithZeroSelectionFields(t *testing.T) {
 	// A 4.1-era file with no selection fields.
 	legacy := `mob_id: 371

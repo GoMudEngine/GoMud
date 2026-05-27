@@ -758,3 +758,113 @@ func TestAdd_DedupKey_PanicRecovered_FallsThroughToNoKeyCollision(t *testing.T) 
 		t.Errorf("expected 2 goals (panic → empty key → coexist), got %d", len(got))
 	}
 }
+
+func TestLoadOrLazyInit_FreshMob_NoLookup_SetsSentinelTrueNoSeeds(t *testing.T) {
+	ClearCache()
+	SetArchetypeDefaultsLookup(nil)
+	mobId := 99501
+	name := "fresh_no_lookup"
+	mg := loadOrLazyInit(mobId, name)
+	if !mg.SeededFromArchetype {
+		t.Errorf("SeededFromArchetype=false, want true (sentinel must flip even with nil lookup)")
+	}
+	if len(mg.Goals) != 0 {
+		t.Errorf("expected 0 goals, got %d", len(mg.Goals))
+	}
+}
+
+func TestLoadOrLazyInit_FreshMob_WithLookup_SeedsAndPersists(t *testing.T) {
+	ClearCache()
+	RegisterGoalType("test-seedable", GoalTypeMeta{})
+	defer resetRegistry()
+	SetArchetypeDefaultsLookup(func(mob *mobs.Mob) []GoalDefault {
+		return []GoalDefault{{Type: "test-seedable", Priority: 80}}
+	})
+	defer SetArchetypeDefaultsLookup(nil)
+
+	mobId := 99502
+	name := "fresh_with_seeds"
+	mg := loadOrLazyInit(mobId, name)
+	if !mg.SeededFromArchetype {
+		t.Errorf("SeededFromArchetype=false, want true")
+	}
+	if len(mg.Goals) != 1 {
+		t.Fatalf("expected 1 seeded goal, got %d", len(mg.Goals))
+	}
+	if mg.Goals[0].Type != "test-seedable" || mg.Goals[0].Priority != 80 {
+		t.Errorf("seeded goal mismatch: %+v", mg.Goals[0])
+	}
+}
+
+func TestLoadOrLazyInit_ExistingFileWithSentinelTrue_SkipsSeed(t *testing.T) {
+	ClearCache()
+	RegisterGoalType("test-skipseed", GoalTypeMeta{})
+	defer resetRegistry()
+	called := 0
+	SetArchetypeDefaultsLookup(func(mob *mobs.Mob) []GoalDefault {
+		called++
+		return []GoalDefault{{Type: "test-skipseed", Priority: 80}}
+	})
+	defer SetArchetypeDefaultsLookup(nil)
+
+	mobId := 99503
+	name := "skip_seed_mob"
+	cacheStoreForTest(name, &MobGoals{MobId: mobId, NextGoalId: 1, SeededFromArchetype: true})
+	mg := loadOrLazyInit(mobId, name)
+	if len(mg.Goals) != 0 {
+		t.Errorf("expected 0 goals (no seed), got %d", len(mg.Goals))
+	}
+	if called > 0 {
+		t.Errorf("lookup called %d times; expected 0", called)
+	}
+}
+
+func TestClear_PreservesSentinel(t *testing.T) {
+	ClearCache()
+	RegisterGoalType("test-preserve", GoalTypeMeta{})
+	defer resetRegistry()
+	SetArchetypeDefaultsLookup(func(mob *mobs.Mob) []GoalDefault {
+		return []GoalDefault{{Type: "test-preserve", Priority: 80}}
+	})
+	defer SetArchetypeDefaultsLookup(nil)
+
+	mobId := 99504
+	name := "clear_preserve_mob"
+	_ = loadOrLazyInit(mobId, name)
+	if err := Clear(mobId, name); err != nil {
+		t.Fatalf("Clear: %v", err)
+	}
+	mg := loadOrLazyInit(mobId, name)
+	if !mg.SeededFromArchetype {
+		t.Errorf("sentinel cleared by Clear — should be preserved")
+	}
+	if len(mg.Goals) != 0 {
+		t.Errorf("expected 0 goals after Clear+reload, got %d", len(mg.Goals))
+	}
+}
+
+func TestLoadOrLazyInit_SeededDefaultFailsValidation_LogsAndContinues(t *testing.T) {
+	ClearCache()
+	RegisterGoalType("test-strict", GoalTypeMeta{
+		Params: []ParamSchema{{Key: "target", Required: true, GoType: "int"}},
+	})
+	RegisterGoalType("test-loose", GoalTypeMeta{})
+	defer resetRegistry()
+	SetArchetypeDefaultsLookup(func(mob *mobs.Mob) []GoalDefault {
+		return []GoalDefault{
+			{Type: "test-strict", Priority: 80}, // missing required param
+			{Type: "test-loose", Priority: 40},  // seeds successfully
+		}
+	})
+	defer SetArchetypeDefaultsLookup(nil)
+
+	mobId := 99505
+	name := "partial_seed_mob"
+	mg := loadOrLazyInit(mobId, name)
+	if !mg.SeededFromArchetype {
+		t.Errorf("sentinel should flip even when one default failed")
+	}
+	if len(mg.Goals) != 1 || mg.Goals[0].Type != "test-loose" {
+		t.Errorf("expected only test-loose to seed, got %v", mg.Goals)
+	}
+}
