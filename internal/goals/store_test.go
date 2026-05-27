@@ -600,3 +600,26 @@ func TestClear_ZerosAllSelectionFields(t *testing.T) {
 		t.Errorf("round fields not zeroed: since=%d switch=%d", mg.CurrentSinceRound, mg.LastSwitchRound)
 	}
 }
+
+func TestAdd_ParamSchemaViolation_RejectsGoal(t *testing.T) {
+	ClearCache()
+	RegisterGoalType("test-paramreq", GoalTypeMeta{
+		Params: []ParamSchema{{Key: "target", Required: true, GoType: "int"}},
+	})
+	defer resetRegistry()
+
+	mobId := 99301
+	name := "param_test_mob"
+	bad := &Goal{Type: "test-paramreq", Priority: 50, Params: map[string]any{}}
+	_, err := Add(mobId, name, bad)
+	if err == nil {
+		t.Fatalf("Add returned nil error for missing required param")
+	}
+	var bpe *ErrBadParams
+	if !errors.As(err, &bpe) {
+		t.Fatalf("err type: got %T, want *ErrBadParams", err)
+	}
+	if got := GoalsOf(mobId, name); len(got) != 0 {
+		t.Errorf("goal added despite validation failure: %v", got)
+	}
+}

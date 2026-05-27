@@ -87,6 +87,13 @@ func IsExpired(g *Goal, now time.Time) bool {
 func Add(mobId int, namesimple string, g *Goal) (AddResult, error) {
 	mg := loadOrLazyInit(mobId, namesimple)
 
+	// Chunk 4.3: validate params against the registered type's schema.
+	if meta, ok := lookupMeta(g.Type); ok {
+		if err := ValidateParams(g, meta.Params); err != nil {
+			return AddResult{}, err
+		}
+	}
+
 	cacheMu.Lock()
 
 	// Detect conflicting existing goals. "Same type" always conflicts

@@ -50,11 +50,37 @@ type PredicateFn func(g *Goal, mob *mobs.Mob) bool
 // Chunk 4.2 — 4.3 will register concrete implementations per goal type.
 type ContextScoreFn func(g *Goal, mob *mobs.Mob) float64
 
+// ParamSchema declares one expected key on Goal.Params for type-aware
+// validation. Used by ValidateParams (chunk 4.3).
+type ParamSchema struct {
+	Key      string
+	Required bool
+	GoType   string // "int" | "string" | "[]string" | "float64" | "bool"
+}
+
+// ErrBadParams is returned by Add when a goal's params don't match its
+// type's declared ParamSchema.
+type ErrBadParams struct {
+	Key          string
+	ExpectedType string
+	GotType      string
+	Reason       string // optional — e.g. "missing required key"
+}
+
+func (e *ErrBadParams) Error() string {
+	if e.Reason != "" {
+		return fmt.Sprintf("goals.ErrBadParams: key=%q %s", e.Key, e.Reason)
+	}
+	return fmt.Sprintf("goals.ErrBadParams: key=%q expected=%s got=%s",
+		e.Key, e.ExpectedType, e.GotType)
+}
+
 // GoalTypeMeta is registered once per goal type by chunk 4.3's catalog.
 type GoalTypeMeta struct {
 	Predicate     PredicateFn
 	ConflictsWith []string       // type names this goal type conflicts with
 	ContextScore  ContextScoreFn // chunk 4.2 — optional; nil = always 1.0
+	Params        []ParamSchema  // chunk 4.3 — optional; nil = no validation
 }
 
 // AddResult reports what happened on a successful Add.
