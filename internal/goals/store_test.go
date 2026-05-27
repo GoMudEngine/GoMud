@@ -3,7 +3,9 @@ package goals
 import (
 	"errors"
 	"fmt"
+	"os"
 	"sort"
+	"strconv"
 	"sync"
 	"testing"
 	"time"
@@ -404,3 +406,465 @@ func TestConcurrentAdd_SameMobSerializes(t *testing.T) {
 	}
 }
 
+func TestRecompute_FreshSelection_PersistsCurrentGoal(t *testing.T) {
+	ClearCache()
+	mobId := 99001
+	name := "recompute_fresh"
+	g := &Goal{Type: "wealth", Priority: 50}
+	if _, err := Add(mobId, name, g); err != nil {
+		t.Fatalf("seed Add: %v", err)
+	}
+	// After Add's eager Recompute (Task 7), this would already be set,
+	// but for THIS task we test Recompute in isolation.
+	mg := loadOrLazyInit(mobId, name)
+	mg.CurrentGoalId = "" // simulate cold state
+	mg.CurrentSinceRound = 0
+	mg.LastSwitchRound = 0
+
+	mob := &mobs.Mob{}
+	Recompute(mobId, name, mob, 12345)
+
+	mg = loadOrLazyInit(mobId, name)
+	if mg.CurrentGoalId == "" {
+		t.Errorf("CurrentGoalId not set after Recompute")
+	}
+	if mg.CurrentSinceRound != 12345 {
+		t.Errorf("CurrentSinceRound=%d, want 12345", mg.CurrentSinceRound)
+	}
+	if mg.LastSwitchRound != 12345 {
+		t.Errorf("LastSwitchRound=%d, want 12345", mg.LastSwitchRound)
+	}
+}
+
+func TestRecompute_NoSwitch_DoesNotRewriteFile(t *testing.T) {
+	ClearCache()
+	mobId := 99002
+	name := "recompute_nochange"
+	g := &Goal{Type: "wealth", Priority: 50}
+	if _, err := Add(mobId, name, g); err != nil {
+		t.Fatalf("seed Add: %v", err)
+	}
+	mob := &mobs.Mob{}
+	Recompute(mobId, name, mob, 1000)
+
+	path := goalPath(mobId, name)
+	info1, err := os.Stat(path)
+	if err != nil {
+		t.Fatalf("stat after first Recompute: %v", err)
+	}
+
+	// Second Recompute with the same goal list — should NOT rewrite.
+	time.Sleep(20 * time.Millisecond) // ensure mtime would change if write happened
+	Recompute(mobId, name, mob, 1001)
+	info2, err := os.Stat(path)
+	if err != nil {
+		t.Fatalf("stat after second Recompute: %v", err)
+	}
+	if !info1.ModTime().Equal(info2.ModTime()) {
+		t.Errorf("file mtime changed without a switch: %v → %v", info1.ModTime(), info2.ModTime())
+	}
+}
+
+func TestCurrentGoalOf_AfterRecompute_ReturnsCurrentGoal(t *testing.T) {
+	ClearCache()
+	mobId := 99003
+	name := "currentof_test"
+	g := &Goal{Type: "wealth", Priority: 50}
+	added, err := Add(mobId, name, g)
+	if err != nil {
+		t.Fatalf("Add: %v", err)
+	}
+	Recompute(mobId, name, &mobs.Mob{}, 1000)
+	got := CurrentGoalOf(mobId, name)
+	if got == nil {
+		t.Fatalf("CurrentGoalOf returned nil")
+	}
+	if got.Id != added.Added.Id {
+		t.Errorf("got id=%s, want %s", got.Id, added.Added.Id)
+	}
+}
+
+func TestCurrentGoalOf_NoGoals_ReturnsNil(t *testing.T) {
+	ClearCache()
+	got := CurrentGoalOf(99004, "no_goals_mob")
+	if got != nil {
+		t.Errorf("got=%v, want nil (no goals)", got)
+	}
+}
+
+func TestCurrentGoalOf_StaleId_ReturnsNil(t *testing.T) {
+	ClearCache()
+	mobId := 99005
+	name := "stale_id_test"
+	// Seed the file with a current_goal_id that doesn't exist in goals slice.
+	mg := &MobGoals{
+		MobId:         mobId,
+		NextGoalId:    2,
+		CurrentGoalId: "g99",
+		Goals:         []*Goal{{Id: "g1", Type: "wealth", Priority: 50}},
+	}
+	cacheStoreForTest(name, mg)
+	got := CurrentGoalOf(mobId, name)
+	if got != nil {
+		t.Errorf("got=%v, want nil (stale current_goal_id)", got)
+	}
+}
+
+func TestAdd_EagerRecompute_FirstGoalBecomesCurrent(t *testing.T) {
+	ClearCache()
+	mobId := 99101
+	name := "eager_first"
+	g := &Goal{Type: "wealth", Priority: 50}
+	if _, err := Add(mobId, name, g); err != nil {
+		t.Fatalf("Add: %v", err)
+	}
+	got := CurrentGoalOf(mobId, name)
+	if got == nil {
+		t.Fatalf("CurrentGoalOf nil — Add did not eager-recompute")
+	}
+	if got.Type != "wealth" {
+		t.Errorf("current.Type=%q, want wealth", got.Type)
+	}
+}
+
+func TestRemove_OfCurrent_ClearsSelection_ThenEagerRecomputeSelectsFresh(t *testing.T) {
+	ClearCache()
+	mobId := 99102
+	name := "eager_remove"
+	g1 := &Goal{Type: "wealth", Priority: 30}
+	g2 := &Goal{Type: "revenge", Priority: 90}
+	r1, err := Add(mobId, name, g1)
+	if err != nil {
+		t.Fatalf("Add g1: %v", err)
+	}
+	// Backdate currentSinceRound so hysteresis min-hold is satisfied
+	// before we add g2 (which has higher priority and should displace g1).
+	mg := loadOrLazyInit(mobId, name)
+	cacheMu.Lock()
+	mg.CurrentSinceRound = 0 // held "forever" — far back enough to pass min-hold
+	cacheMu.Unlock()
+	if _, err := Add(mobId, name, g2); err != nil {
+		t.Fatalf("Add g2: %v", err)
+	}
+	// After both Adds (with min-hold satisfied), current should be g2 (priority 90 > 30).
+	if cur := CurrentGoalOf(mobId, name); cur == nil || cur.Type != "revenge" {
+		t.Fatalf("pre-remove current = %v, want revenge", cur)
+	}
+	// Remove a non-current goal (g1) — should not disturb current (g2).
+	if err := Remove(mobId, name, r1.Added.Id); err != nil {
+		t.Fatalf("Remove g1: %v", err)
+	}
+	if cur := CurrentGoalOf(mobId, name); cur == nil || cur.Type != "revenge" {
+		t.Errorf("after non-current remove, current = %v, want revenge", cur)
+	}
+}
+
+func TestRemove_OfNonCurrent_DoesNotChangeCurrent(t *testing.T) {
+	ClearCache()
+	mobId := 99103
+	name := "eager_remove_noncurr"
+	g1 := &Goal{Type: "wealth", Priority: 90}
+	g2 := &Goal{Type: "revenge", Priority: 30}
+	r1, _ := Add(mobId, name, g1)
+	r2, _ := Add(mobId, name, g2)
+	currentBefore := CurrentGoalOf(mobId, name)
+	if currentBefore == nil || currentBefore.Id != r1.Added.Id {
+		t.Fatalf("pre-remove current=%v, want g1", currentBefore)
+	}
+	if err := Remove(mobId, name, r2.Added.Id); err != nil {
+		t.Fatalf("Remove g2: %v", err)
+	}
+	currentAfter := CurrentGoalOf(mobId, name)
+	if currentAfter == nil || currentAfter.Id != r1.Added.Id {
+		t.Errorf("after non-current remove, current=%v, want g1", currentAfter)
+	}
+}
+
+func TestClear_ZerosAllSelectionFields(t *testing.T) {
+	ClearCache()
+	mobId := 99104
+	name := "eager_clear"
+	if _, err := Add(mobId, name, &Goal{Type: "wealth", Priority: 50}); err != nil {
+		t.Fatalf("Add: %v", err)
+	}
+	if cur := CurrentGoalOf(mobId, name); cur == nil {
+		t.Fatalf("pre-clear current nil")
+	}
+	if err := Clear(mobId, name); err != nil {
+		t.Fatalf("Clear: %v", err)
+	}
+	if cur := CurrentGoalOf(mobId, name); cur != nil {
+		t.Errorf("post-clear current=%v, want nil", cur)
+	}
+	mg := loadOrLazyInit(mobId, name)
+	if mg.CurrentSinceRound != 0 || mg.LastSwitchRound != 0 {
+		t.Errorf("round fields not zeroed: since=%d switch=%d", mg.CurrentSinceRound, mg.LastSwitchRound)
+	}
+}
+
+func TestAdd_ParamSchemaViolation_RejectsGoal(t *testing.T) {
+	ClearCache()
+	RegisterGoalType("test-paramreq", GoalTypeMeta{
+		Params: []ParamSchema{{Key: "target", Required: true, GoType: "int"}},
+	})
+	defer resetRegistry()
+
+	mobId := 99301
+	name := "param_test_mob"
+	bad := &Goal{Type: "test-paramreq", Priority: 50, Params: map[string]any{}}
+	_, err := Add(mobId, name, bad)
+	if err == nil {
+		t.Fatalf("Add returned nil error for missing required param")
+	}
+	var bpe *ErrBadParams
+	if !errors.As(err, &bpe) {
+		t.Fatalf("err type: got %T, want *ErrBadParams", err)
+	}
+	if got := GoalsOf(mobId, name); len(got) != 0 {
+		t.Errorf("goal added despite validation failure: %v", got)
+	}
+}
+
+func TestAdd_AllowMultiple_DifferentDedupKeys_BothAdded(t *testing.T) {
+	ClearCache()
+	RegisterGoalType("test-multi", GoalTypeMeta{
+		AllowMultiple: true,
+		DedupKey: func(g *Goal) string {
+			if tgt, ok := g.Params["target"].(int); ok {
+				return strconv.Itoa(tgt)
+			}
+			return ""
+		},
+	})
+	defer resetRegistry()
+
+	mobId := 99401
+	name := "multi_diff_mob"
+	g1 := &Goal{Type: "test-multi", Priority: 50, Params: map[string]any{"target": 1}}
+	g2 := &Goal{Type: "test-multi", Priority: 50, Params: map[string]any{"target": 2}}
+	if _, err := Add(mobId, name, g1); err != nil {
+		t.Fatalf("Add g1: %v", err)
+	}
+	if _, err := Add(mobId, name, g2); err != nil {
+		t.Fatalf("Add g2 (different dedup key): %v", err)
+	}
+	if got := GoalsOf(mobId, name); len(got) != 2 {
+		t.Errorf("expected 2 coexisting goals, got %d: %v", len(got), got)
+	}
+}
+
+func TestAdd_AllowMultiple_SameDedupKey_ConflictsByPriority(t *testing.T) {
+	ClearCache()
+	RegisterGoalType("test-multi2", GoalTypeMeta{
+		AllowMultiple: true,
+		DedupKey: func(g *Goal) string {
+			if tgt, ok := g.Params["target"].(int); ok {
+				return strconv.Itoa(tgt)
+			}
+			return ""
+		},
+	})
+	defer resetRegistry()
+
+	mobId := 99402
+	name := "multi_same_mob"
+	g1 := &Goal{Type: "test-multi2", Priority: 90, Params: map[string]any{"target": 1}}
+	g2 := &Goal{Type: "test-multi2", Priority: 30, Params: map[string]any{"target": 1}}
+	if _, err := Add(mobId, name, g1); err != nil {
+		t.Fatalf("Add g1: %v", err)
+	}
+	_, err := Add(mobId, name, g2)
+	if err == nil {
+		t.Fatalf("Add g2 (same dedup key, lower priority) should have conflicted")
+	}
+	var ce *ConflictError
+	if !errors.As(err, &ce) {
+		t.Fatalf("err type: got %T, want *ConflictError", err)
+	}
+	if got := GoalsOf(mobId, name); len(got) != 1 {
+		t.Errorf("expected 1 goal (blocker preserved), got %d", len(got))
+	}
+}
+
+func TestAdd_AllowMultiple_SameDedupKey_HigherPriority_Displaces(t *testing.T) {
+	ClearCache()
+	RegisterGoalType("test-multi3", GoalTypeMeta{
+		AllowMultiple: true,
+		DedupKey: func(g *Goal) string {
+			if tgt, ok := g.Params["target"].(int); ok {
+				return strconv.Itoa(tgt)
+			}
+			return ""
+		},
+	})
+	defer resetRegistry()
+
+	mobId := 99403
+	name := "multi_displace_mob"
+	g1 := &Goal{Type: "test-multi3", Priority: 30, Params: map[string]any{"target": 1}}
+	g2 := &Goal{Type: "test-multi3", Priority: 90, Params: map[string]any{"target": 1}}
+	if _, err := Add(mobId, name, g1); err != nil {
+		t.Fatalf("Add g1: %v", err)
+	}
+	res, err := Add(mobId, name, g2)
+	if err != nil {
+		t.Fatalf("Add g2 (same dedup, higher priority): %v", err)
+	}
+	if len(res.Displaced) != 1 {
+		t.Errorf("expected 1 displaced, got %v", res.Displaced)
+	}
+}
+
+func TestAdd_AllowMultipleFalse_StillBlocksSameType(t *testing.T) {
+	// Confirms 4.1 behavior preserved for types that don't opt in.
+	ClearCache()
+	RegisterGoalType("test-singleton", GoalTypeMeta{})
+	defer resetRegistry()
+
+	mobId := 99404
+	name := "single_mob"
+	g1 := &Goal{Type: "test-singleton", Priority: 50}
+	g2 := &Goal{Type: "test-singleton", Priority: 50}
+	if _, err := Add(mobId, name, g1); err != nil {
+		t.Fatalf("Add g1: %v", err)
+	}
+	_, err := Add(mobId, name, g2)
+	if err == nil {
+		t.Fatalf("expected ConflictError on second add of singleton type")
+	}
+}
+
+func TestAdd_DedupKey_PanicRecovered_FallsThroughToNoKeyCollision(t *testing.T) {
+	ClearCache()
+	RegisterGoalType("test-panicky", GoalTypeMeta{
+		AllowMultiple: true,
+		DedupKey: func(g *Goal) string {
+			panic("dedup-key boom")
+		},
+	})
+	defer resetRegistry()
+
+	mobId := 99405
+	name := "panicky_mob"
+	g1 := &Goal{Type: "test-panicky", Priority: 50, Params: map[string]any{"a": 1}}
+	g2 := &Goal{Type: "test-panicky", Priority: 50, Params: map[string]any{"a": 2}}
+	if _, err := Add(mobId, name, g1); err != nil {
+		t.Fatalf("Add g1 with panicking dedup-key: %v", err)
+	}
+	if _, err := Add(mobId, name, g2); err != nil {
+		t.Fatalf("Add g2 with panicking dedup-key: %v", err)
+	}
+	if got := GoalsOf(mobId, name); len(got) != 2 {
+		t.Errorf("expected 2 goals (panic → empty key → coexist), got %d", len(got))
+	}
+}
+
+func TestLoadOrLazyInit_FreshMob_NoLookup_SetsSentinelTrueNoSeeds(t *testing.T) {
+	ClearCache()
+	SetArchetypeDefaultsLookup(nil)
+	mobId := 99501
+	name := "fresh_no_lookup"
+	mg := loadOrLazyInit(mobId, name)
+	if !mg.SeededFromArchetype {
+		t.Errorf("SeededFromArchetype=false, want true (sentinel must flip even with nil lookup)")
+	}
+	if len(mg.Goals) != 0 {
+		t.Errorf("expected 0 goals, got %d", len(mg.Goals))
+	}
+}
+
+func TestLoadOrLazyInit_FreshMob_WithLookup_SeedsAndPersists(t *testing.T) {
+	ClearCache()
+	RegisterGoalType("test-seedable", GoalTypeMeta{})
+	defer resetRegistry()
+	SetArchetypeDefaultsLookup(func(mob *mobs.Mob) []GoalDefault {
+		return []GoalDefault{{Type: "test-seedable", Priority: 80}}
+	})
+	defer SetArchetypeDefaultsLookup(nil)
+
+	mobId := 99502
+	name := "fresh_with_seeds"
+	mg := loadOrLazyInit(mobId, name)
+	if !mg.SeededFromArchetype {
+		t.Errorf("SeededFromArchetype=false, want true")
+	}
+	if len(mg.Goals) != 1 {
+		t.Fatalf("expected 1 seeded goal, got %d", len(mg.Goals))
+	}
+	if mg.Goals[0].Type != "test-seedable" || mg.Goals[0].Priority != 80 {
+		t.Errorf("seeded goal mismatch: %+v", mg.Goals[0])
+	}
+}
+
+func TestLoadOrLazyInit_ExistingFileWithSentinelTrue_SkipsSeed(t *testing.T) {
+	ClearCache()
+	RegisterGoalType("test-skipseed", GoalTypeMeta{})
+	defer resetRegistry()
+	called := 0
+	SetArchetypeDefaultsLookup(func(mob *mobs.Mob) []GoalDefault {
+		called++
+		return []GoalDefault{{Type: "test-skipseed", Priority: 80}}
+	})
+	defer SetArchetypeDefaultsLookup(nil)
+
+	mobId := 99503
+	name := "skip_seed_mob"
+	cacheStoreForTest(name, &MobGoals{MobId: mobId, NextGoalId: 1, SeededFromArchetype: true})
+	mg := loadOrLazyInit(mobId, name)
+	if len(mg.Goals) != 0 {
+		t.Errorf("expected 0 goals (no seed), got %d", len(mg.Goals))
+	}
+	if called > 0 {
+		t.Errorf("lookup called %d times; expected 0", called)
+	}
+}
+
+func TestClear_PreservesSentinel(t *testing.T) {
+	ClearCache()
+	RegisterGoalType("test-preserve", GoalTypeMeta{})
+	defer resetRegistry()
+	SetArchetypeDefaultsLookup(func(mob *mobs.Mob) []GoalDefault {
+		return []GoalDefault{{Type: "test-preserve", Priority: 80}}
+	})
+	defer SetArchetypeDefaultsLookup(nil)
+
+	mobId := 99504
+	name := "clear_preserve_mob"
+	_ = loadOrLazyInit(mobId, name)
+	if err := Clear(mobId, name); err != nil {
+		t.Fatalf("Clear: %v", err)
+	}
+	mg := loadOrLazyInit(mobId, name)
+	if !mg.SeededFromArchetype {
+		t.Errorf("sentinel cleared by Clear — should be preserved")
+	}
+	if len(mg.Goals) != 0 {
+		t.Errorf("expected 0 goals after Clear+reload, got %d", len(mg.Goals))
+	}
+}
+
+func TestLoadOrLazyInit_SeededDefaultFailsValidation_LogsAndContinues(t *testing.T) {
+	ClearCache()
+	RegisterGoalType("test-strict", GoalTypeMeta{
+		Params: []ParamSchema{{Key: "target", Required: true, GoType: "int"}},
+	})
+	RegisterGoalType("test-loose", GoalTypeMeta{})
+	defer resetRegistry()
+	SetArchetypeDefaultsLookup(func(mob *mobs.Mob) []GoalDefault {
+		return []GoalDefault{
+			{Type: "test-strict", Priority: 80}, // missing required param
+			{Type: "test-loose", Priority: 40},  // seeds successfully
+		}
+	})
+	defer SetArchetypeDefaultsLookup(nil)
+
+	mobId := 99505
+	name := "partial_seed_mob"
+	mg := loadOrLazyInit(mobId, name)
+	if !mg.SeededFromArchetype {
+		t.Errorf("sentinel should flip even when one default failed")
+	}
+	if len(mg.Goals) != 1 || mg.Goals[0].Type != "test-loose" {
+		t.Errorf("expected only test-loose to seed, got %v", mg.Goals)
+	}
+}

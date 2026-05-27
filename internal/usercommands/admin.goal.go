@@ -54,6 +54,10 @@ func Goal(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return goalRemove(args[1:], user)
 	case "clear":
 		return goalClear(args[1:], user)
+	case "current":
+		return goalCurrent(args[1:], user)
+	case "scores":
+		return goalScores(args[1:], user)
 	default:
 		goalShowUsage(user)
 		return true, nil
@@ -259,6 +263,105 @@ func goalClear(args []string, user *users.UserRecord) (bool, error) {
 	user.SendText(messaging.CategorySystem,
 		fmt.Sprintf("Cleared all goals from %s (%d).\r\n", name, mobId))
 	return true, nil
+}
+
+// goalCurrent renders the cached selection state for a mob template.
+func goalCurrent(args []string, user *users.UserRecord) (bool, error) {
+	if len(args) != 1 {
+		goalShowUsage(user)
+		return true, nil
+	}
+	mobId, name, ok := goalResolveMobIdent(args[0])
+	if !ok {
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Unknown mob: %s\r\n", args[0]))
+		return true, nil
+	}
+	ns := util.ConvertForFilename(name)
+	all := goals.GoalsOf(mobId, ns)
+	if len(all) == 0 {
+		user.SendText(messaging.CategorySystem,
+			fmt.Sprintf("Current goal for %s (mob %d): none\r\n  (0 goals on file)\r\n", name, mobId))
+		return true, nil
+	}
+	current := goals.CurrentGoalOf(mobId, ns)
+	if current == nil {
+		user.SendText(messaging.CategorySystem,
+			fmt.Sprintf("Current goal for %s (mob %d): none\r\n  (%d goal(s) on file; selection has not landed on one)\r\n",
+				name, mobId, len(all)))
+		return true, nil
+	}
+	var b strings.Builder
+	fmt.Fprintf(&b, "Current goal for %s (mob %d): %s %s priority=%d\r\n",
+		name, mobId, current.Id, current.Type, current.Priority)
+	user.SendText(messaging.CategorySystem, b.String())
+	return true, nil
+}
+
+// goalScores renders the full score breakdown table for a mob.
+// Output format per spec §8.2. At 4.2 ship the goal-type registry is
+// empty (4.3 fills it), so weights and CtxMod columns display defaults.
+func goalScores(args []string, user *users.UserRecord) (bool, error) {
+	if len(args) != 1 {
+		goalShowUsage(user)
+		return true, nil
+	}
+	mobId, name, ok := goalResolveMobIdent(args[0])
+	if !ok {
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Unknown mob: %s\r\n", args[0]))
+		return true, nil
+	}
+	ns := util.ConvertForFilename(name)
+	all := goals.GoalsOf(mobId, ns)
+	if len(all) == 0 {
+		user.SendText(messaging.CategorySystem,
+			fmt.Sprintf("Score breakdown for %s (mob %d): no goals on file.\r\n", name, mobId))
+		return true, nil
+	}
+	// Resolve the live mob instance (best-effort) so we can show the archetype.
+	var mob *mobs.Mob
+	for _, instId := range mobs.GetAllMobInstanceIds() {
+		if inst := mobs.GetInstance(instId); inst != nil && int(inst.MobId) == mobId {
+			mob = inst
+			break
+		}
+	}
+	archetype := ""
+	if mob != nil {
+		archetype = mob.BehaviorArchetype
+	}
+	currentGoal := goals.CurrentGoalOf(mobId, ns)
+	var b strings.Builder
+	fmt.Fprintf(&b, "Score breakdown for %s (mob %d):\r\n", name, mobId)
+	fmt.Fprintf(&b, "  Archetype: %s\r\n", archetypeOrDefault(archetype))
+	fmt.Fprintf(&b, "  %-4s  %-20s  %-4s  %-7s  %-7s  %-10s  %s\r\n",
+		"ID", "Type", "Pri", "Weight", "CtxMod", "Effective", "Status")
+	fmt.Fprintf(&b, "  %-4s  %-20s  %-4s  %-7s  %-7s  %-10s  %s\r\n",
+		strings.Repeat("-", 4), strings.Repeat("-", 20), "----",
+		"-------", "-------", "----------", "------")
+
+	// Note: weights and CtxMod are displayed as defaults at 4.2 ship —
+	// the goal-type registry is empty until 4.3. The CURRENT marker and
+	// effective-score columns are the load-bearing pieces for now.
+	for _, g := range all {
+		w := 1.0
+		ctxMod := 1.0
+		eff := float64(g.Priority) * w * ctxMod
+		status := "candidate"
+		if currentGoal != nil && g.Id == currentGoal.Id {
+			status = "CURRENT"
+		}
+		fmt.Fprintf(&b, "  %-4s  %-20s  %-4d  %-7.2f  %-7.2f  %-10.2f  %s\r\n",
+			g.Id, g.Type, g.Priority, w, ctxMod, eff, status)
+	}
+	user.SendText(messaging.CategorySystem, b.String())
+	return true, nil
+}
+
+func archetypeOrDefault(a string) string {
+	if a == "" {
+		return "(none)"
+	}
+	return a
 }
 
 // parseScalar converts an unquoted token to int / float / bool /

@@ -41,3 +41,7 @@ tree:
           do: cast_best_in_category
           category: self_defense
           target: self
+
+default_goals:
+  - type: survival
+    priority: 80

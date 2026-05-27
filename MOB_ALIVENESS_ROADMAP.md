@@ -102,8 +102,8 @@ should always agree.
 | 3.7 | Routine | Inter-zone patrols + caravan unification | L | 3.4 | Done |
 | 3.8 | Routine | One-shot sub-patrols (caravan runner + forager delivery) | M | 3.7 | Done |
 | 4.1 | Strategic | Goal representation | M | 1.1, 1.4 | Done |
-| 4.2 | Strategic | Goal selection | L | 4.1 | Not started |
-| 4.3 | Strategic | Goal types catalog | M | 4.1 | Not started |
+| 4.2 | Strategic | Goal selection | L | 4.1 | Done |
+| 4.3 | Strategic | Goal types catalog | L | 4.1 | Done |
 | 4.4 | Strategic | Strategic→tactical translation | L | 4.3, Phase 2 | Not started |
 | 4.5 | Strategic | Reactive goal generation | M | 1.6, 4.1 | Not started |
 | 4.6 | Strategic | Goal satisfaction & pruning | S | 4.1 | Not started |
@@ -119,7 +119,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 23 / 42 done • 0 in progress • 19 not started.
+**Roll-up:** 25 / 42 done • 0 in progress • 17 not started.
 
 ---
 
@@ -666,22 +666,52 @@ verbs.
   `docs/superpowers/plans/2026-05-26-mob-aliveness-4.1-goal-representation.md`.
 
 ### 4.2 Goal selection
-**Status:** Not started • **Size:** L
+**Status:** Done • **Size:** L
 
 - **Goal:** NPC picks a current goal from a candidate set based on priority, context, and recent state.
 - **In:** Selection function, hysteresis (don't goal-thrash), per-archetype weighting.
 - **Out:** Multi-goal pursuit (start single-goal-at-a-time).
 - **Depends on:** 4.1
 - **Why:** The "pick what to want" engine. Without it, NPCs have goals but never act on them.
+- **Shipped:** Pure `Select` function in `internal/goals/select.go` over the 4.1 substrate; per-archetype
+  `goal_weights:` map (parsed by `behaviortree.LoadArchetypeYAMLFromFile`); optional per-type `ContextScore`
+  hook on `GoalTypeMeta` (registry empty until 4.3; panic-recovered); two-gate hysteresis (margin +
+  min-hold) with config knobs `GoalSelectSwitchMargin`/`GoalSelectMinHoldRounds`/`GoalSelectTickEnabled`;
+  `Recompute` orchestrator persists `current_goal_id` / `current_since_round` / `last_switch_round` to
+  the `MobGoals` YAML on switch; per-round tick hook `tickMobRecomputeGoals` (idle lane, cheap-paths on
+  empty goal list); eager `Recompute` on `Add`/`Remove`/`Clear`; `goals.SetWeightsLookup` boot-wired in
+  `main.go` to bridge → `behaviortree.Engine.GetArchetypeGoalWeights` without an import cycle; admin
+  subcommands `goal current` / `goal scores` + helpfile updates; structured `goals.switch` debug log
+  line per selection switch. No btree integration yet (4.4's job). Spec at
+  `docs/superpowers/specs/2026-05-27-mob-aliveness-4.2-goal-selection-design.md`, plan at
+  `docs/superpowers/plans/2026-05-27-mob-aliveness-4.2-goal-selection.md`.
 
 ### 4.3 Goal types catalog
-**Status:** Not started • **Size:** M
+**Status:** Done • **Size:** L (upsized from M during brainstorming — all 6 categories shipped deep)
 
-- **Goal:** Concrete goal types: survival, wealth, revenge, protection, social, mastery.
+- **Goal:** Concrete goal types: survival, wealth, revenge, protection, social, mastery, exploration.
 - **In:** YAML for each type, archetype-default goal sets, parameters per goal.
 - **Out:** Player-authored custom goals (deferred).
 - **Depends on:** 4.1
 - **Why:** Without concrete types, the strategic layer is empty scaffolding.
+- **Shipped:** 13 narrow goal types in `internal/goals/catalog/`: `survival`, `wealth-gold`,
+  `wealth-item`, `craft-item`, `revenge-mob`, `revenge-faction`, `protection-mob`, `protection-faction`,
+  `befriend`, `befriend-faction`, `mastery-skill`, `mastery-equip`, `visit-zone`. Each has its own
+  Predicate + ContextScore + optional DedupKey + ParamSchema, registered via `init()`. Engine deltas:
+  declarative `ParamSchema` validation at `Add` time; `AllowMultiple` + `DedupKey` on `GoalTypeMeta`
+  for multi-instance types; archetype lazy-seed sentinel (`SeededFromArchetype` on `MobGoals`) so
+  defaults seed once per template and survive admin Clear. `behaviortree.LoadArchetypeYAMLFromFile`
+  parses a new top-level `default_goals:` block; `goals.SetArchetypeDefaultsLookup` boot-wired in
+  `main.go` to bridge without an import cycle. New `Mob.VisitedZones` instance state + room-change
+  hook in `rooms.AddMob` to feed `visit-zone`. Sparse archetype defaults: `survival` seeded on
+  every combat-capable archetype + generic `wealth-gold` for thief / shopkeeper (16 archetypes).
+  `gossip` goal type intentionally dropped during brainstorming — existing MobIdle gossiper system
+  (`buildGossipLine` in `NewRound_HandleIdleMobs.go`) stays as-is; goal-driven directed-gossip
+  belongs in a future gossip-system refinement chunk. Cross-type conflict mechanism deferred.
+  Closed `internal/goals/context.md` documentation gap from 4.1/4.2; new
+  `internal/goals/catalog/context.md`. Spec at
+  `docs/superpowers/specs/2026-05-27-mob-aliveness-4.3-goal-types-catalog-design.md`, plan at
+  `docs/superpowers/plans/2026-05-27-mob-aliveness-4.3-goal-types-catalog.md`.
 
 ### 4.4 Strategic→tactical translation
 **Status:** Not started • **Size:** L

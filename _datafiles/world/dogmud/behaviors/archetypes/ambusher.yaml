@@ -70,3 +70,7 @@ tree:
         - type: action
           do: add_buff
           buff_id: 9
+
+default_goals:
+  - type: survival
+    priority: 80

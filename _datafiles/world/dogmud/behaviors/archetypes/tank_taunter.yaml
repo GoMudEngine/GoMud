@@ -98,3 +98,7 @@ tree:
         - type: action
           do: command_best_of
           cmds: [trip]
+
+default_goals:
+  - type: survival
+    priority: 80

@@ -185,3 +185,50 @@ func TestGoalCmd_RemoveMissingGoalNoError(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
+
+func TestGoalCmd_CurrentReportsNoneWhenEmpty(t *testing.T) {
+	defer goalTestSetup(t)()
+	admin, room := getTestUserAndRoom(t)
+	if _, err := Goal("current 1", admin, room, 0); err != nil {
+		t.Fatalf("Goal current: %v", err)
+	}
+	// Nothing seeded — current command must complete cleanly without error.
+}
+
+func TestGoalCmd_CurrentReportsAfterAdd(t *testing.T) {
+	defer goalTestSetup(t)()
+	admin, room := getTestUserAndRoom(t)
+	mobId, ns := goalFixtureMobIdent(t)
+	if _, err := Goal("add 1 alpha 50", admin, room, 0); err != nil {
+		t.Fatalf("Goal add: %v", err)
+	}
+	// After Add's eager Recompute (Task 7), current should be set.
+	if cur := goals.CurrentGoalOf(mobId, ns); cur == nil {
+		t.Fatalf("expected CurrentGoalOf to be set after Add")
+	}
+	if _, err := Goal("current 1", admin, room, 0); err != nil {
+		t.Fatalf("Goal current: %v", err)
+	}
+}
+
+func TestGoalCmd_ScoresReportsRunsWithoutError(t *testing.T) {
+	defer goalTestSetup(t)()
+	admin, room := getTestUserAndRoom(t)
+	if _, err := Goal("add 1 alpha 50", admin, room, 0); err != nil {
+		t.Fatalf("Goal add a: %v", err)
+	}
+	if _, err := Goal("add 1 beta 30", admin, room, 0); err != nil {
+		t.Fatalf("Goal add b (different type, no conflict): %v", err)
+	}
+	if _, err := Goal("scores 1", admin, room, 0); err != nil {
+		t.Fatalf("Goal scores: %v", err)
+	}
+}
+
+func TestGoalCmd_ScoresNoGoals(t *testing.T) {
+	defer goalTestSetup(t)()
+	admin, room := getTestUserAndRoom(t)
+	if _, err := Goal("scores 1", admin, room, 0); err != nil {
+		t.Fatalf("Goal scores (no goals): %v", err)
+	}
+}

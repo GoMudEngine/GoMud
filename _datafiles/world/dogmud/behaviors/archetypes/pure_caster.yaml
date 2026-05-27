@@ -82,3 +82,7 @@ tree:
         - type: action
           do: cast_best_in_category
           category: harm_single
+
+default_goals:
+  - type: survival
+    priority: 80

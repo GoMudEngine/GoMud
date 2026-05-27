@@ -25,6 +25,16 @@ for inspection, smoke-testing, and one-off seeding.
   Wipe every goal on the mob and reset the goal-id counter to 1.
   Intentionally heavy-hand — admin-only reset.
 
+<ansi fg="command">goal current <mob-ident></ansi>
+  Show the cached selection state for a mob — which goal is current,
+  when it became current, and the reason it won the last selection
+  cycle. Chunk 4.2.
+
+<ansi fg="command">goal scores <mob-ident></ansi>
+  Show the full score breakdown table for a mob: every goal's
+  effective score (priority x archetype weight x contextMod), the
+  CURRENT marker, and which goals are filtered out. Chunk 4.2.
+
 <ansi fg="yellow-bold">Mob identifier:</ansi>
   Numeric template id (e.g. <ansi fg="cyan">371</ansi>) or namesimple
   (e.g. <ansi fg="cyan">tova</ansi>, <ansi fg="cyan">stillwater_smith</ansi>).

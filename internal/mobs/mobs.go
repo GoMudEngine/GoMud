@@ -167,6 +167,12 @@ type Mob struct {
 	playersAttacked         map[int]struct{} // all players this mob has attacked at some point
 	Relationships           []RelationshipYAMLEntry `yaml:"relationships,omitempty"` // Authored relationship edges; consumed by relationships.LoadFromMobs at startup.
 	KnowsFacts              []string                `yaml:"knows_facts,omitempty"`   // Fact IDs this mob knows at startup; consumed by facts.LoadFromMobs at startup.
+	// VisitedZones tracks zone names this instance has entered. Persisted
+	// via mobs.instances/ alongside other instance state. Read by the
+	// chunk-4.3 visit-zone goal-type Predicate. Updated in Room.AddMob
+	// whenever a mob enters a room in a new zone. Lazily initialized —
+	// nil counts as empty. Chunk 4.3.
+	VisitedZones map[string]bool `yaml:"visited_zones,omitempty"`
 }
 
 func MobInstanceExists(instanceId int) bool {

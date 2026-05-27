@@ -292,6 +292,53 @@ same time, see the same "next free ID," and collide. Two options:
 Code-only subagents (no YAML creation) can always run in parallel —
 this only matters for content tasks.
 
+## Codegraph MCP — Code Intelligence
+
+The `codegraph` MCP server indexes every Go symbol in the repo into a
+local SQLite knowledge graph (~4.6k files, ~18k nodes, ~60k edges).
+Sub-millisecond queries return signatures, sources, callers, callees,
+and trails. Use it BEFORE writing code, not during.
+
+**Use it for:**
+- **Pre-dispatch verification.** Before sending a subagent off, run 2–3
+  `codegraph_node` / `codegraph_search` calls to confirm the struct
+  shapes, function signatures, and field names the plan references.
+  Cheaper than letting a subagent waste turns rediscovering or, worse,
+  shipping code against a stale plan. (Caught a real `Engine` field
+  rename during 4.2 — plan said `mobTrees`/`noMobTree`, actual is
+  `trees`/`noTree`.)
+- **Symbol-trail navigation.** `codegraph_node Foo` with `includeCode:true`
+  returns the source + callers/callees with file:line. Replaces
+  grep + 5–10 Reads.
+- **Disambiguation.** Code-base has many `Add` / `Remove` / `Clear` /
+  `ClearCache` symbols across packages. `codegraph_node` lists all
+  matches and shows the one you asked for, so you don't accidentally
+  Read the wrong file.
+- **Front-loading subagent prompts.** Paste the verified struct/signature
+  into the prompt's "context I've already verified for you" block so
+  the subagent skips exploration.
+
+**Don't use it for:**
+- File authoring that doesn't reference Go symbols — YAML data files,
+  templates, prose docs.
+- "Find me the test helper that looks similar to X" — codegraph models
+  structure, not similarity. Glob + Read is right for that.
+- Confirming code you JUST edited — the index lags ~1s; trust your edit
+  + file state over the index for symbols you touched this turn.
+
+**Tool selection by intent (lifted from the codegraph server docs):**
+- "What's the deal with this task/feature/area?" → `codegraph_context`
+  (composes search + node + callers + callees in one call).
+- "What is/calls/triggers this symbol?" → `codegraph_node` (with
+  `includeCode:true` for source).
+- "Find a symbol by name" → `codegraph_search`.
+- "Trace from X to Y" → `codegraph_trace`.
+
+**Subagent guidance.** When dispatching a subagent that needs to touch
+unfamiliar code, instruct it to prefer codegraph MCP tools over Read/Grep
+for symbol verification — saves their context window and reduces
+back-and-forth.
+
 ## Data File Naming Convention
 Before creating any new data file, verify the expected filename from the loader's `Filepath()` method:
 - **Zone folder names must use underscores, not hyphens.** The engine derives the expected path by calling `ConvertForFilename()` on the zone's display name (e.g., `"Sanctum Basin"` → folder `sanctum_basin/`). A mismatch causes a startup panic: `filesystem path "..." did not end in Filepath() "..."`. This applies to both `rooms/` and `mobs/` subdirectories.

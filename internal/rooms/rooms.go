@@ -931,6 +931,15 @@ func (r *Room) AddMob(mobInstanceId int) {
 	mob.Character.RoomId = r.RoomId
 	mob.Character.Zone = r.Zone
 
+	// Chunk 4.3: record zone visits for the visit-zone goal type.
+	// Lazily initialize the map; nil counts as "no zones visited".
+	if r.Zone != "" {
+		if mob.VisitedZones == nil {
+			mob.VisitedZones = map[string]bool{}
+		}
+		mob.VisitedZones[r.Zone] = true
+	}
+
 	r.mobs = append(r.mobs, mobInstanceId)
 
 	roomManager.roomsWithMobs[r.RoomId] = len(r.mobs)

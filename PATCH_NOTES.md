@@ -1,5 +1,64 @@
 # DOGMud Patch Notes
 
+## 2026-05-27 — Mob aliveness 4.3 (goal types catalog)
+
+13 concrete goal types now register with the strategic-layer
+substrate: survival, wealth-gold, wealth-item, craft-item,
+revenge-mob, revenge-faction, protection-mob, protection-faction,
+befriend, befriend-faction, mastery-skill, mastery-equip,
+visit-zone. Each has a Predicate (when satisfied), ContextScore
+(relevance multiplier), and — where multi-instance makes sense —
+an AllowMultiple flag plus DedupKey func so the same mob can
+hold goals against multiple targets without collapsing.
+
+Engine deltas: declarative ParamSchema validation at Add time
+(rejects malformed goals); AllowMultiple + DedupKey for
+multi-instance types; archetype lazy-seed sentinel so default
+goals seed once per mob template on first access and survive
+admin Clear.
+
+Sparse archetype defaults: every combat-capable archetype defaults
+to a survival goal (kicks in when HP drops to ~25%); thieves and
+shopkeepers add a generic wealth-gold goal. Mob-specific param
+goals (revenge targets, befriend targets) arrive via 4.5 reactive
+event hooks.
+
+Substrate-only — chosen goals aren't wired into behavior-tree
+execution yet (chunk 4.4). Observable change: `goal current <mob>`
+now returns a real current goal for most loaded mobs; the
+`goals.switch` debug log fires when survival kicks in during combat.
+No player-facing change.
+
+Note: the existing MobIdle gossiper system
+(`buildGossipLine` in `NewRound_HandleIdleMobs.go`) is intentionally
+untouched. A goal-driven directed-gossip mechanism belongs in a
+future gossip-system refinement chunk, not 4.3.
+
+---
+
+## 2026-05-27 — Mob aliveness 4.2 (goal selection)
+
+Adds the strategic-layer selection function over chunk 4.1's goal
+substrate. NPCs now pick one current goal from their goal list per
+round, weighted by priority, per-archetype multipliers, and an
+optional per-type context-score hook. Hysteresis (margin + min-hold)
+prevents goal-thrash.
+
+Substrate-only — the chosen goal isn't wired into behavior-tree
+execution yet (chunk 4.4's job). Two new admin subcommands surface
+the selection state for inspection: `goal current <mob>` and
+`goal scores <mob>`. A `goals.switch` debug log line fires per
+strategic switch.
+
+Config knobs in `Balance` (defaults conservative): `GoalSelectSwitchMargin`
+(5.0), `GoalSelectMinHoldRounds` (100), `GoalSelectTickEnabled` (true).
+Archetype YAML can now optionally carry a `goal_weights:` map (4.3
+will start using it).
+
+No player-facing change.
+
+---
+
 ## 2026-05-26 — Mob aliveness 4.1 (goal representation substrate)
 
 **No change to NPC behavior yet — this is foundations work.** Chunk 4.1

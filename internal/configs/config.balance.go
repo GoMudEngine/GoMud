@@ -343,6 +343,24 @@ type Balance struct {
 	// Default 50 (~200 sec real-time). Chunk 3.6.
 	ConversationCooldownRounds ConfigInt `yaml:"ConversationCooldownRounds"`
 
+	// ── GOAL SELECTION (chunk 4.2) ────────────────────────────────────────────
+	// GoalSelectSwitchMargin is the minimum effective-score advantage a
+	// challenger goal must have over the current goal to displace it.
+	// Hysteresis safety against goal-thrash on noisy scoring inputs.
+	// Default 5.0; floats so weights/contextMod can produce fractional
+	// scores. Chunk 4.2.
+	GoalSelectSwitchMargin ConfigFloat `yaml:"GoalSelectSwitchMargin"`
+
+	// GoalSelectMinHoldRounds is the minimum number of rounds the
+	// current goal must be held before any switch is allowed. ≈ 5 min
+	// at default tick rate (default 100). Chunk 4.2.
+	GoalSelectMinHoldRounds ConfigInt `yaml:"GoalSelectMinHoldRounds"`
+
+	// GoalSelectTickEnabled is the master kill-switch for the tick-driven
+	// recompute path. Eager recompute on Add/Remove/Clear still fires
+	// when false (cache stays consistent). Default true. Chunk 4.2.
+	GoalSelectTickEnabled ConfigBool `yaml:"GoalSelectTickEnabled"`
+
 	// ── PACK SCALING ─────────────────────────────────────────────────────────
 	PackScalingEnabled   ConfigBool `yaml:"PackScalingEnabled"`   // Enable pack survival bonuses (default true)
 	PackSurvivalRounds   ConfigInt  `yaml:"PackSurvivalRounds"`   // Consecutive rounds together before bonus (default 10)

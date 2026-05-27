@@ -13,3 +13,7 @@
 tree:
   type: selector
   children: []
+
+default_goals:
+  - type: survival
+    priority: 80

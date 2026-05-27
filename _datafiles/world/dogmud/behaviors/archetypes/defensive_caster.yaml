@@ -54,3 +54,7 @@ tree:
         - type: action
           do: cast
           spell: conviction-spike
+
+default_goals:
+  - type: survival
+    priority: 80

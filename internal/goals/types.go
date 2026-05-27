@@ -28,9 +28,13 @@ type Goal struct {
 
 // MobGoals is the on-disk shape — one file per mob template.
 type MobGoals struct {
-	MobId      int     `yaml:"mob_id"`
-	NextGoalId int     `yaml:"next_goal_id"`
-	Goals      []*Goal `yaml:"goals"`
+	MobId               int     `yaml:"mob_id"`
+	NextGoalId          int     `yaml:"next_goal_id"`
+	CurrentGoalId       string  `yaml:"current_goal_id,omitempty"`       // chunk 4.2 — selection state
+	CurrentSinceRound   uint64  `yaml:"current_since_round,omitempty"`   // chunk 4.2 — round when current became current
+	LastSwitchRound     uint64  `yaml:"last_switch_round,omitempty"`     // chunk 4.2 — round of most recent switch
+	SeededFromArchetype bool    `yaml:"seeded_from_archetype,omitempty"` // chunk 4.3 — lazy-seed sentinel
+	Goals               []*Goal `yaml:"goals"`
 }
 
 // PredicateFn evaluates whether a goal is currently satisfied. Same
@@ -38,10 +42,48 @@ type MobGoals struct {
 // may be called from any context.
 type PredicateFn func(g *Goal, mob *mobs.Mob) bool
 
+// ContextScoreFn returns a non-negative multiplier for a goal in the
+// current mob context. 0 effectively suppresses the goal from selection
+// this tick (e.g. "revenge target not in zone"). Must be pure(ish):
+// same goal + same mob state → same answer. Side effects forbidden —
+// may be called from any context.
+//
+// Chunk 4.2 — 4.3 will register concrete implementations per goal type.
+type ContextScoreFn func(g *Goal, mob *mobs.Mob) float64
+
+// ParamSchema declares one expected key on Goal.Params for type-aware
+// validation. Used by ValidateParams (chunk 4.3).
+type ParamSchema struct {
+	Key      string
+	Required bool
+	GoType   string // "int" | "string" | "[]string" | "float64" | "bool"
+}
+
+// ErrBadParams is returned by Add when a goal's params don't match its
+// type's declared ParamSchema.
+type ErrBadParams struct {
+	Key          string
+	ExpectedType string
+	GotType      string
+	Reason       string // optional — e.g. "missing required key"
+}
+
+func (e *ErrBadParams) Error() string {
+	if e.Reason != "" {
+		return fmt.Sprintf("goals.ErrBadParams: key=%q %s", e.Key, e.Reason)
+	}
+	return fmt.Sprintf("goals.ErrBadParams: key=%q expected=%s got=%s",
+		e.Key, e.ExpectedType, e.GotType)
+}
+
 // GoalTypeMeta is registered once per goal type by chunk 4.3's catalog.
 type GoalTypeMeta struct {
 	Predicate     PredicateFn
-	ConflictsWith []string // type names this goal type conflicts with
+	ConflictsWith []string             // type names this goal type conflicts with
+	ContextScore  ContextScoreFn       // chunk 4.2 — optional; nil = always 1.0
+	Params        []ParamSchema        // chunk 4.3 — optional; nil = no validation
+	AllowMultiple bool                 // chunk 4.3 — multi-instance allowed
+	DedupKey      func(g *Goal) string // chunk 4.3 — when AllowMultiple, returns dedup key
 }
 
 // AddResult reports what happened on a successful Add.
@@ -68,3 +110,13 @@ func (e *ConflictError) Error() string {
 // match it via errors.Is. Production callers usually ignore Remove's
 // error since "remove what's not there" is a no-op.
 var ErrGoalNotFound = errors.New("goals: goal id not found")
+
+// GoalDefault is the goals-package mirror of behaviortree.GoalDefault.
+// Kept separate (rather than imported across the package boundary) to
+// avoid an internal/goals → internal/behaviortree import cycle.
+// Chunk 4.3.
+type GoalDefault struct {
+	Type     string
+	Priority int
+	Params   map[string]any
+}
