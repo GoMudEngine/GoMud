@@ -576,36 +576,151 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 
 ---
 
-## Task 3 — main.go boot wiring
+## Task 3 — New event types + firer wiring + main.go boot
 
-Registers `seeders.Dispatch` as the listener for each event type seeders care about. At Task 3 ship, no rules are registered yet (Tasks 4-13 add them), but the dispatcher path is live end-to-end.
+Three new event types in `internal/events/eventtypes.go` that rules 6/7/9 will subscribe to. Wire each event's firer at the appropriate source (give.go, attack.go/taunt.go, btree's keep-action). Then add `seeders.Dispatch` as the listener for every event type seeders care about.
+
+This is the Option-B (events-everywhere) architectural choice — all rules except rule 3 go through the same dispatcher. Rule 3 stays a direct planner call because it's an internal planner state, not a world event.
 
 **Files:**
-- Modify: `main.go`
+- Modify: `internal/events/eventtypes.go` (add three new event struct types)
+- Modify: `internal/usercommands/give.go` (or wherever the give action lives — verify) — fire `GiftOffered` on every give; fire `GiftAccepted` if the receiver has no consider-keep btree path (quest-givers etc.)
+- Modify: `internal/actions/attack.go` and `internal/actions/taunt.go` — fire `PlayerAttackedMob` when player engages a mob
+- Modify: `internal/behaviortree/actions_*.go` — find the btree action that decides keep-or-return on offered items (per chunk 2.3 equip-if-better) and fire `GiftAccepted` in the keep branch
+- Modify: `main.go` (add seeders import + listener wiring)
 
-- [ ] **Step 3.1: Identify the boot-wiring insertion point**
+- [ ] **Step 3.1: Add the three new event types**
 
-In `main.go`, find the existing chunk-4.4 wiring block:
+In `internal/events/eventtypes.go`, append (placement: after `ItemOwnership` or wherever world-event types cluster — read the file to pick the right spot):
 
 ```go
-goals.SetPlanStateClear(planners.ClearPlanState)
+// PlayerAttackedMob fires when a player initiates a combat action
+// (attack, taunt, etc.) against a mob. Consumed by chunk-4.5 seeders:
+//   - aggressive_action_to_revenge (rule 6) — seeds revenge-mob into
+//     the attacked mob + non-hostile witnesses.
+//   - combat_assist_to_opinion_boost (rule 9) — if the attacked mob
+//     was already engaged with another non-player mob, bumps the
+//     beneficiary's opinion of the attacking player.
+//
+// Chunk 4.5.
+type PlayerAttackedMob struct {
+	UserId        int // player initiating the attack
+	MobInstanceId int // mob being attacked
+}
+
+func (p PlayerAttackedMob) Type() string { return `PlayerAttackedMob` }
+
+// GiftOffered fires when a player runs `give <item> <mob>`. Fires
+// unconditionally on every give. No consumers in chunk 4.5 — reserved
+// slot for future rules (analytics, tutorial hints) that want to react
+// to the offer regardless of whether the mob keeps it.
+//
+// For opinion-boost purposes, use GiftAccepted instead — GiftOffered
+// is gameable (worthless-rock spam still fires it).
+//
+// Chunk 4.5.
+type GiftOffered struct {
+	UserId        int
+	MobInstanceId int
+	ItemId        int
+}
+
+func (g GiftOffered) Type() string { return `GiftOffered` }
+
+// GiftAccepted fires when a mob decides to KEEP an item offered by a
+// player. Fired by the btree action that decides keep-or-return
+// (chunk 2.3 equip-if-better), OR by the give-action handler when the
+// receiver has no consider path (e.g., quest-givers, certain
+// flavor NPCs). NOT fired when the mob returns the item.
+//
+// Consumed by chunk-4.5 seeders:
+//   - gift_to_opinion_boost (rule 7) — value-tiered opinion bump.
+//
+// Chunk 4.5.
+type GiftAccepted struct {
+	UserId        int
+	MobInstanceId int
+	ItemId        int
+}
+
+func (g GiftAccepted) Type() string { return `GiftAccepted` }
 ```
 
-Insert the seeders wiring immediately after.
+⚠️ Verify the `Type()` method pattern matches the existing event types (e.g., `func (r RoomChange) Type() string { return ``RoomChange`` }` from `eventtypes.go:147`). Match the receiver-naming convention used elsewhere in the file.
 
-- [ ] **Step 3.2: Add the seeders import**
+- [ ] **Step 3.2: Fire `PlayerAttackedMob` from attack action**
 
-In `main.go`'s imports block, add:
+Find the attack-action handler via codegraph: `codegraph_search attack` and look in `internal/actions/attack.go` or `internal/usercommands/attack.go`. Identify the line where the player's attack is fully committed (after target resolution, before any damage rolls).
+
+Insert (adapt to local variable names):
+
+```go
+// Chunk 4.5: notify seeders that a player engaged a mob.
+events.AddToQueue(events.PlayerAttackedMob{
+    UserId:        user.UserId,
+    MobInstanceId: targetMob.InstanceId,
+})
+```
+
+Skip when target is a player, not a mob — only mobs receive seeded revenge / opinion shifts. Verify the handler's existing target-type branching.
+
+- [ ] **Step 3.3: Fire `PlayerAttackedMob` from taunt action**
+
+Find `internal/actions/taunt.go` (or wherever the taunt logic lives — `codegraph_search taunt`). Insert the same `events.AddToQueue(events.PlayerAttackedMob{...})` at the point taunt commits its effect on a mob target. Taunt is symmetric to attack for rule 9's purposes — it's also "player engaged with a mob," and combat-assist should fire when a player taunts an attacker to draw aggro off a friendly mob.
+
+- [ ] **Step 3.4: Fire `GiftOffered` from give action**
+
+Find the give-action handler — likely `internal/usercommands/give.go`. After the item-transfer to the mob succeeds (item now in mob's inventory), insert:
+
+```go
+// Chunk 4.5: notify seeders of every give.
+events.AddToQueue(events.GiftOffered{
+    UserId:        user.UserId,
+    MobInstanceId: targetMob.InstanceId,
+    ItemId:        item.ItemId,
+})
+```
+
+Skip if target is a player.
+
+- [ ] **Step 3.5: Fire `GiftAccepted` from btree's keep-action**
+
+Per chunk 2.3 (equip-if-better), most combat-capable mobs have a btree action that decides whether to keep an offered item or return it. Find it via codegraph — `codegraph_search equip_if_better` or similar; likely a file like `internal/behaviortree/actions_equip_if_better.go`.
+
+In the branch where the mob decides to KEEP the item (or where the keep-action's effect is applied), insert:
+
+```go
+// Chunk 4.5: notify seeders that a gift was accepted (mob kept the item).
+events.AddToQueue(events.GiftAccepted{
+    UserId:        offeringUserId,        // verify variable name
+    MobInstanceId: mob.InstanceId,
+    ItemId:        item.ItemId,
+})
+```
+
+The `offeringUserId` may not be directly available in the btree action — it depends on how the give-considered-item state is propagated. Options:
+- If the give-action handler stores the offering user id in the item's metadata or the mob's MiscData under a `pending_gift_from_user:` key, the btree action reads it.
+- If no such state exists, may need to add it in the give-action handler (Step 3.4): set `mob.Character.SetMiscData("pending_gift_from_user:"+strconv.Itoa(item.ItemId), user.UserId)` and the btree keep-action reads + clears it.
+
+Implementer verifies the existing flow + chooses the cleanest path.
+
+- [ ] **Step 3.6: Fire `GiftAccepted` for mobs without a consider-keep btree path**
+
+Quest-givers and certain flavor NPCs don't run the equip-if-better btree action — they just accept the item silently. For these, the give-action handler itself fires `GiftAccepted` immediately after the give (in addition to `GiftOffered`).
+
+Detection: if the mob's archetype doesn't include the equip-if-better action OR the mob's `BehaviorArchetype` is in a known-list of "always-accepts" archetypes (noncombat_questgiver, noncombat_passive). Cheapest pragmatic check: fire `GiftAccepted` immediately ONLY when the mob doesn't have the consider-keep behavior. If implementer can't cleanly detect this, alternative: fire `GiftAccepted` for ALL gives in the give-handler PLUS the btree path; rule 7 dedups via its cooldown so a double-fire only bumps once. (Slightly noisier but always correct.)
+
+Document the chosen approach in a code comment + commit message.
+
+- [ ] **Step 3.7: Wire seeders.Dispatch listeners in main.go**
+
+Add the seeders import + listener wiring. In `main.go`'s imports block, add:
 
 ```go
 "github.com/GoMudEngine/GoMud/internal/seeders"
 ```
 
-A single regular import — same pattern as 4.4. The import fires per-rule `init()`s as Tasks 4-13 add them; the package's exported names (`Dispatch`, `SeedMaterialsForRecipe`, etc.) become callable.
-
-- [ ] **Step 3.3: Add the listener wiring**
-
-After the `goals.SetPlanStateClear(...)` line, insert:
+After the existing chunk-4.4 `goals.SetPlanStateClear(planners.ClearPlanState)` line, insert:
 
 ```go
 // Wire seeders.Dispatch to every event type the chunk-4.5 seeders
@@ -614,40 +729,56 @@ After the `goals.SetPlanStateClear(...)` line, insert:
 events.AddListener(events.MobDeath{}, seeders.Dispatch)
 events.AddListener(events.Communication{}, seeders.Dispatch)
 events.AddListener(events.Quest{}, seeders.Dispatch)
-events.AddListener(events.ItemOwnership{}, seeders.Dispatch)
+events.AddListener(events.PlayerAttackedMob{}, seeders.Dispatch)
+events.AddListener(events.GiftAccepted{}, seeders.Dispatch)
 events.AddListener(events.SkillUsed{}, seeders.Dispatch)
 ```
 
-⚠️ Verify event type names via `codegraph_search`. The list above matches the spec's expected subscriptions. Some event types may not exist with these exact names — adapt at impl time. If `events.SkillUsed` doesn't exist as a struct, omit that line (Task 13 covers the deferral case).
+⚠️ Verify the `events.AddListener` API signature via codegraph. The list intentionally OMITS `events.GiftOffered` (no consumers in 4.5) and `events.ItemOwnership` (was in the original plan but rule 5 has been moved to its own event or stays on ItemOwnership depending on Step 8.1 verification — keep ItemOwnership in this list if rule 5 still subscribes to it):
 
-⚠️ Verify the `events.AddListener` signature via codegraph. The pattern `events.AddListener(events.X{}, listenerFn)` is common — pass a zero-value struct as the type witness. If the API is different (e.g., string-typed), adapt the call sites.
+```go
+events.AddListener(events.ItemOwnership{}, seeders.Dispatch) // for rule 5 (theft)
+```
 
-- [ ] **Step 3.4: Build**
+If `events.SkillUsed` doesn't exist, omit that line (rule 10 covers the deferral).
+
+- [ ] **Step 3.8: Build + boot smoke**
 
 Run: `go build ./...`
 Expected: clean build.
-
-- [ ] **Step 3.5: Boot sanity check**
 
 Run: `timeout 30 go run . 2>&1 | grep -iE "panic|started|fatal" | head -10`
 Expected: `MainWorker state="Started"` with no panic.
 
 Stop with Ctrl+C.
 
-- [ ] **Step 3.6: Commit**
+- [ ] **Step 3.9: Commit**
 
 ```bash
-git add main.go
-git commit -m "feat(boot): wire seeders.Dispatch as event listener (4.5)" -m "Adds events.AddListener calls per event type seeders subscribe to
-(MobDeath, Communication, Quest, ItemOwnership, SkillUsed). Regular
-import of internal/seeders pulls per-rule init() registrations as
-they're added in Tasks 4-13.
+git add internal/events/eventtypes.go internal/actions/attack.go internal/actions/taunt.go internal/usercommands/give.go internal/behaviortree/ main.go
+git commit -m "feat(events): add PlayerAttackedMob + GiftOffered + GiftAccepted (4.5)" -m "Three new event types for chunk-4.5 seeders to subscribe to (the
+Option-B architectural choice — all rules except rule 3 go through
+the unified Dispatch path).
 
-At Task 3 ship, no rules are registered yet — Dispatch is a no-op
-on every event. Per-rule tasks fill the registry.
+PlayerAttackedMob: fired by attack.go + taunt.go when player engages
+a mob. Consumed by rules 6 (aggressive-action revenge) + 9 (combat-
+assist opinion).
+
+GiftOffered: fired by give.go unconditionally on every give. No
+4.5 consumers; reserved slot for future rules.
+
+GiftAccepted: fired by btree's keep-action (or give-handler when
+the mob has no consider-keep path). Consumed by rule 7 (gift opinion
+boost) — only fires on actually-kept gifts, not on declined offers.
+Prevents worthless-rock spam-bumping.
+
+main.go wires seeders.Dispatch listeners for every event type rules
+4-13 subscribe to.
 
 Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 ```
+
+---
 
 ---
 
@@ -1355,23 +1486,16 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 **Files:**
 - Create: `internal/seeders/aggressive_action_to_revenge.go`
 - Create: `internal/seeders/aggressive_action_to_revenge_test.go`
-- Possibly modify: action handler files (`internal/actions/attack.go`, etc.) if no clean event exists
 
-- [ ] **Step 9.1: Verify the aggressive-action event**
+Event-subscribed rule (Option B architecture per Task 3). Subscribes to `PlayerAttackedMob` — the firers are already in attack.go + taunt.go from Task 3, no action-handler edits needed in this task.
 
-No standard event fires "player attacks NPC" cleanly. Check via codegraph:
-- Does `events.Communication` have a combat-initiation subtype?
-- Does the `SetAggro` call on `Character` fire any event?
-- Is there a `events.AggroChanged` or similar?
-
-If no clean event exists, the rule needs an exported function (`seeders.OnAggressiveAction(playerUserId int, attackedMob *mobs.Mob)`) called from the attack-action handlers. Same pattern as Task 12's combat-assist.
-
-- [ ] **Step 9.2: Create aggressive_action_to_revenge.go**
+- [ ] **Step 9.1: Create aggressive_action_to_revenge.go**
 
 ```go
 package seeders
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
@@ -1380,14 +1504,27 @@ const ruleNameAggressiveActionToRevenge = "aggressive_action_to_revenge"
 const aggressiveVictimRevengePriority = 75
 const aggressiveWitnessRevengePriority = 50
 
-// OnAggressiveAction is called from action handlers when a player
-// engages a non-hostile mob in combat. Seeds revenge-mob into the
-// attacked mob (priority 75) and witnesses in the room (priority 50).
+func init() {
+	Register(ruleNameAggressiveActionToRevenge, aggressiveActionToRevenge, "PlayerAttackedMob")
+}
+
+// aggressiveActionToRevenge: on PlayerAttackedMob, seed revenge-mob
+// into the attacked mob (priority 75) and non-hostile witnesses in
+// the room (priority 50). Skips already-auto-hostile mobs (revenge
+// would be redundant noise — they already attack on sight).
 //
-// Filter: if attackedMob is auto-hostile to all players, no seed needed
-// (mob would attack on sight regardless).
-func OnAggressiveAction(playerUserId int, attackedMob *mobs.Mob) {
-	if playerUserId == 0 || attackedMob == nil {
+// Shares the PlayerAttackedMob event with rule 9 (combat_assist).
+// Both rules fire on the same event; their logic is independent.
+func aggressiveActionToRevenge(event events.Event) {
+	pa, ok := event.(events.PlayerAttackedMob)
+	if !ok {
+		return
+	}
+	if pa.UserId == 0 || pa.MobInstanceId == 0 {
+		return
+	}
+	attackedMob := mobs.GetInstance(pa.MobInstanceId)
+	if attackedMob == nil {
 		return
 	}
 	if attackedMob.AutoAggro {
@@ -1395,7 +1532,7 @@ func OnAggressiveAction(playerUserId int, attackedMob *mobs.Mob) {
 	}
 
 	// Seed revenge into the attacked mob.
-	seedRevengeGoalIfAbsent(attackedMob, "player", playerUserId, aggressiveVictimRevengePriority)
+	seedRevengeGoalIfAbsent(attackedMob, "player", pa.UserId, aggressiveVictimRevengePriority)
 
 	// Seed revenge into non-hostile witnesses in the room.
 	room := rooms.LoadRoom(attackedMob.Character.RoomId)
@@ -1410,25 +1547,14 @@ func OnAggressiveAction(playerUserId int, attackedMob *mobs.Mob) {
 		if witness == nil || witness.AutoAggro {
 			continue
 		}
-		seedRevengeGoalIfAbsent(witness, "player", playerUserId, aggressiveWitnessRevengePriority)
+		seedRevengeGoalIfAbsent(witness, "player", pa.UserId, aggressiveWitnessRevengePriority)
 	}
 }
 ```
 
-⚠️ This rule has NO `init() { Register(...) }` if it's invoked from action handlers directly. The exported function pattern matches rule 3 (`SeedMaterialsForRecipe`) and rule 9 (`OnCombatAssist`).
+⚠️ TODO-ADAPT on `room.GetMobs()` — verify the room API for enumerating mob instance ids. May be `room.MobInstanceIds`, `room.GetMobIds()`, or similar.
 
-- [ ] **Step 9.3: Wire into action handlers**
-
-Find the attack action handler — `internal/actions/attack.go` or whatever the canonical "player initiates combat" entry point is. After the SetAggro call fires (when a player attacks a mob), insert:
-
-```go
-// Chunk 4.5: reactive seed.
-seeders.OnAggressiveAction(player.UserId, attackedMob)
-```
-
-Add the import. ⚠️ If the action handler doesn't have direct access to both `playerUserId` and `*mobs.Mob` at one point, the wiring may be more involved. Trace via codegraph and adapt.
-
-- [ ] **Step 9.4: Write tests**
+- [ ] **Step 9.2: Write tests**
 
 ```go
 package seeders
@@ -1436,37 +1562,49 @@ package seeders
 import (
 	"testing"
 
-	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/events"
 )
 
-func TestOnAggressiveAction_NilMob_NoPanic(t *testing.T) {
-	OnAggressiveAction(5, nil)
+func TestAggressiveActionToRevenge_Registered(t *testing.T) {
+	registryMu.RLock()
+	defer registryMu.RUnlock()
+	found := false
+	for _, reg := range registry["PlayerAttackedMob"] {
+		if reg.name == ruleNameAggressiveActionToRevenge {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Errorf("aggressive_action_to_revenge not registered for PlayerAttackedMob")
+	}
 }
 
-func TestOnAggressiveAction_AutoAggroMob_Skipped(t *testing.T) {
-	mob := &mobs.Mob{MobId: mobs.MobId(99100)}
-	mob.Character.Name = "auto_aggro_fixture"
-	mob.AutoAggro = true
-	OnAggressiveAction(5, mob)
-	// No assertion — early-return path. Confirms no panic.
+func TestAggressiveActionToRevenge_ZeroFields_NoPanic(t *testing.T) {
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("panic: %v", r)
+		}
+	}()
+	aggressiveActionToRevenge(events.PlayerAttackedMob{})
 }
 
-// Full seed test requires room fixture; deferred to Task 15 smoke.
+// Full seed test requires live mob + room fixtures; deferred to Task 15 smoke.
 ```
 
-- [ ] **Step 9.5: Run + commit**
+- [ ] **Step 9.3: Run + commit**
 
 Run: `go test ./internal/seeders/ -v` → PASS.
 
 ```bash
-git add internal/seeders/aggressive_action_to_revenge.go internal/seeders/aggressive_action_to_revenge_test.go internal/actions/attack.go
-git commit -m "feat(seeders): aggressive_action_to_revenge rule (4.5)" -m "Public OnAggressiveAction(playerUserId, attackedMob) called from
-attack action handler. Seeds revenge-mob into attacked mob
-(priority 75) and non-hostile witnesses (priority 50). Skips
-already-auto-hostile mobs (revenge would be redundant noise).
+git add internal/seeders/aggressive_action_to_revenge.go internal/seeders/aggressive_action_to_revenge_test.go
+git commit -m "feat(seeders): aggressive_action_to_revenge rule (4.5)" -m "Subscribes to PlayerAttackedMob event (fired by attack.go + taunt.go
+per Task 3). Seeds revenge-mob into attacked mob (priority 75) and
+non-hostile witnesses (priority 50). Skips already-auto-hostile mobs
+(revenge would be redundant noise).
 
-Action handler wired to call seeders.OnAggressiveAction when a
-player initiates combat against a mob.
+Shares the PlayerAttackedMob event with rule 9 (combat_assist) — the
+multi-consumer payoff of Option B's events-everywhere architecture.
 
 Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 ```
@@ -1479,21 +1617,15 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 - Create: `internal/seeders/gift_to_opinion_boost.go`
 - Create: `internal/seeders/gift_to_opinion_boost_test.go`
 
-- [ ] **Step 10.1: Verify the give-item event**
+Event-subscribed on `GiftAccepted` (NOT `GiftOffered` — the latter is gameable since a worthless-rock spam still fires it; `GiftAccepted` fires only when the mob actually keeps the item per Task 3). The firers are already wired in Task 3 (give.go + btree keep-action); no action-handler edits in this task.
 
-Check via codegraph:
-- `codegraph_search give` for action handlers.
-- `codegraph_node Communication` for give-action subtypes.
-- `codegraph_node ItemOwnership` for "given" reasons.
-
-The `give` command likely fires an `events.ItemOwnership` with a `Reason: "given"` or similar. If unclear, the give-action handler can call `seeders.OnGift(userId, mob, item)` directly (same pattern as Tasks 6, 9, 12).
-
-- [ ] **Step 10.2: Create gift_to_opinion_boost.go**
+- [ ] **Step 10.1: Create gift_to_opinion_boost.go**
 
 ```go
 package seeders
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/opinions"
@@ -1502,22 +1634,43 @@ import (
 const ruleNameGiftToOpinionBoost = "gift_to_opinion_boost"
 const giftCooldownRounds uint64 = 100
 
-// OnGift is called from the give-action handler (verify path at impl
-// time) when a player gives an item to a mob. Bumps opinion based on
-// item value, with per-(giver, receiver) cooldown to prevent spam.
+func init() {
+	Register(ruleNameGiftToOpinionBoost, giftToOpinionBoost, "GiftAccepted")
+}
+
+// giftToOpinionBoost: on GiftAccepted (mob KEPT the item — not just
+// received it), bump the mob's opinion of the giving player by N
+// scaled to item value. Per-(giver, receiver) cooldown prevents spam.
 //
 // Value tiers per spec §3.7:
 //   value 1-49     → +1
 //   value 50-199   → +3
 //   value 200-999  → +5
 //   value 1000+    → +8
-func OnGift(playerUserId int, receiverMob *mobs.Mob, item *items.Item) {
-	if playerUserId == 0 || receiverMob == nil || item == nil {
+//
+// Subscribes to GiftAccepted, NOT GiftOffered — the latter fires on
+// every give regardless of whether the mob valued the item. Worthless-
+// rock spam doesn't bump opinion because the mob's consider-keep btree
+// (chunk 2.3 equip-if-better) won't keep worthless items.
+func giftToOpinionBoost(event events.Event) {
+	ga, ok := event.(events.GiftAccepted)
+	if !ok {
 		return
 	}
-	spec := item.GetSpec()
+	if ga.UserId == 0 || ga.MobInstanceId == 0 || ga.ItemId == 0 {
+		return
+	}
+	receiver := mobs.GetInstance(ga.MobInstanceId)
+	if receiver == nil {
+		return
+	}
+
+	// Resolve item value via the items registry.
+	// TODO-ADAPT: verify items.FindSpecByItemId or equivalent. May
+	// already exist as items.GetItemSpec(itemId) — codegraph_search.
+	spec := items.GetSpec(ga.ItemId)
 	if spec.Value <= 0 {
-		return // worthless items don't boost opinion
+		return // defensive — mob shouldn't have accepted a worthless item
 	}
 
 	bump := giftValueToOpinionBump(spec.Value)
@@ -1526,11 +1679,11 @@ func OnGift(playerUserId int, receiverMob *mobs.Mob, item *items.Item) {
 	}
 
 	// Cooldown: once per 100 rounds per (giver, receiver).
-	if !applyCooldown(receiverMob, ruleNameGiftToOpinionBoost, userIdAsKey(playerUserId), giftCooldownRounds) {
+	if !applyCooldown(receiver, ruleNameGiftToOpinionBoost, userIdAsKey(ga.UserId), giftCooldownRounds) {
 		return // cooldown active
 	}
 
-	opinions.Bump(int(receiverMob.MobId), playerUserId, bump)
+	opinions.Bump(int(receiver.MobId), ga.UserId, bump)
 }
 
 // giftValueToOpinionBump implements the value-tier table.
@@ -1549,22 +1702,33 @@ func giftValueToOpinionBump(value int) int {
 }
 ```
 
-- [ ] **Step 10.3: Wire into give-action handler**
+⚠️ TODO-ADAPT on `items.GetSpec(itemId)` — verify the actual lookup function name via codegraph (`codegraph_search items.GetSpec` or `codegraph_search GetItemSpec`). The 4.4 catalog used `item.GetSpec()` on an existing item; here we need a lookup-by-id since the event carries only the item id, not the item pointer.
 
-Find the give-action handler (likely `internal/actions/give.go` or `internal/usercommands/give.go`). After the item transfer succeeds, call:
-
-```go
-seeders.OnGift(player.UserId, receiverMob, &item)
-```
-
-Add the import.
-
-- [ ] **Step 10.4: Write tests**
+- [ ] **Step 10.2: Write tests**
 
 ```go
 package seeders
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/GoMudEngine/GoMud/internal/events"
+)
+
+func TestGiftToOpinionBoost_Registered(t *testing.T) {
+	registryMu.RLock()
+	defer registryMu.RUnlock()
+	found := false
+	for _, reg := range registry["GiftAccepted"] {
+		if reg.name == ruleNameGiftToOpinionBoost {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Errorf("gift_to_opinion_boost not registered for GiftAccepted")
+	}
+}
 
 func TestGiftValueToOpinionBump_Tiers(t *testing.T) {
 	cases := []struct {
@@ -1589,21 +1753,32 @@ func TestGiftValueToOpinionBump_Tiers(t *testing.T) {
 	}
 }
 
-func TestOnGift_NilReceiver_NoPanic(t *testing.T) {
-	OnGift(5, nil, nil)
+func TestGiftToOpinionBoost_ZeroFields_NoPanic(t *testing.T) {
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("panic: %v", r)
+		}
+	}()
+	giftToOpinionBoost(events.GiftAccepted{})
 }
+
+// End-to-end (item-value lookup + cooldown round-trip) requires live
+// items registry + mob fixture; deferred to Task 15 smoke.
 ```
 
-- [ ] **Step 10.5: Run + commit**
+- [ ] **Step 10.3: Run + commit**
 
 Run: `go test ./internal/seeders/ -v` → PASS.
 
 ```bash
-git add internal/seeders/gift_to_opinion_boost.go internal/seeders/gift_to_opinion_boost_test.go internal/actions/give.go
-git commit -m "feat(seeders): gift_to_opinion_boost rule (4.5)" -m "Public OnGift(playerUserId, receiverMob, item) called from give-action
-handler. Bumps opinions.Bump on receiver per value-tier table
-(1/3/5/8 for thresholds at 1/50/200/1000 item value). Per-pair
-cooldown of 100 rounds prevents spam-gifting.
+git add internal/seeders/gift_to_opinion_boost.go internal/seeders/gift_to_opinion_boost_test.go
+git commit -m "feat(seeders): gift_to_opinion_boost rule (4.5)" -m "Subscribes to GiftAccepted (NOT GiftOffered) — only fires when the
+mob actually KEEPS the item, per the consider-keep-or-return btree
+action wired in Task 3. Worthless-rock spam doesn't bump opinion
+because the mob's btree won't keep worthless items in the first place.
+
+Value-tier bump (+1/+3/+5/+8 for value thresholds 1/50/200/1000) with
+100-round per-pair cooldown to prevent legitimate-gift spam.
 
 Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 ```
@@ -1747,21 +1922,17 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 **Files:**
 - Create: `internal/seeders/combat_assist_to_opinion_boost.go`
 - Create: `internal/seeders/combat_assist_to_opinion_boost_test.go`
-- Possibly modify: `internal/actions/attack.go`, `internal/actions/taunt.go` (call into seeders)
 
-- [ ] **Step 12.1: Identify the trigger point**
+Event-subscribed on `PlayerAttackedMob` — **shares the event with rule 6 (aggressive-action)**. Two rules consume the same event with independent logic; this is the multi-consumer payoff of Option B's events-everywhere architecture. The firers are already wired in Task 3; no action-handler edits in this task.
 
-Per spec §3.9: when a player attacks or taunts a mob whose `Aggro` already points at another non-player mob, bump the helped mob's opinion of the player.
-
-No clean event hook exists. Use the same pattern as Task 9's aggressive-action rule: exported function `seeders.OnCombatAssist(playerUserId, attackerMob)` called from `attack.go` and `taunt.go` action handlers.
-
-- [ ] **Step 12.2: Create combat_assist_to_opinion_boost.go**
+- [ ] **Step 12.1: Create combat_assist_to_opinion_boost.go**
 
 ```go
 package seeders
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/opinions"
@@ -1771,20 +1942,32 @@ const ruleNameCombatAssistToOpinion = "combat_assist_to_opinion_boost"
 const combatAssistBump = 3
 const combatAssistCooldownRounds uint64 = 50
 
-// OnCombatAssist is called from attack/taunt action handlers when a
-// player engages a mob that's currently in combat with another non-
-// player mob. Bumps the helped (beneficiary) mob's opinion of the
-// player.
+func init() {
+	Register(ruleNameCombatAssistToOpinion, combatAssistToOpinion, "PlayerAttackedMob")
+}
+
+// combatAssistToOpinion: on PlayerAttackedMob, if the attacked mob is
+// currently in combat with another non-player mob, bump the beneficiary
+// mob's opinion of the player.
 //
-// Filter: helped mob must NOT be hostile to the player (factions.
-// IsPeacefulToward check — prevents fake credit for attacking one of
-// two hostile mobs that happen to be fighting each other).
+// Filter: beneficiary mob must NOT be hostile to the player
+// (factions.IsPeacefulToward — prevents fake credit for attacking one
+// of two hostile mobs that happen to be fighting each other).
 // Cooldown: once per (beneficiary, attacker) pair per 50 rounds.
-func OnCombatAssist(playerUserId int, attackerMob *mobs.Mob) {
-	if playerUserId == 0 || attackerMob == nil {
+//
+// Shares the PlayerAttackedMob event with rule 6 (aggressive_action).
+func combatAssistToOpinion(event events.Event) {
+	pa, ok := event.(events.PlayerAttackedMob)
+	if !ok {
 		return
 	}
-	// Was attacker engaged with a mob (not a player)?
+	if pa.UserId == 0 || pa.MobInstanceId == 0 {
+		return
+	}
+	attackerMob := mobs.GetInstance(pa.MobInstanceId)
+	if attackerMob == nil {
+		return
+	}
 	beneficiaryId := resolveAttackerMobTarget(attackerMob.Character.Aggro)
 	if beneficiaryId == 0 {
 		return // not engaged with a mob
@@ -1793,19 +1976,15 @@ func OnCombatAssist(playerUserId int, attackerMob *mobs.Mob) {
 	if beneficiary == nil {
 		return
 	}
-
-	// Filter: beneficiary must not be hostile to the player.
-	if !factions.IsPeacefulToward(beneficiary, playerUserId) {
-		return
+	if !factions.IsPeacefulToward(beneficiary, pa.UserId) {
+		return // beneficiary is hostile to player; no fake credit
 	}
-
-	// Cooldown.
 	if !applyCooldown(beneficiary, ruleNameCombatAssistToOpinion,
 		instanceIdAsKey(attackerMob.InstanceId), combatAssistCooldownRounds) {
-		return
+		return // cooldown active
 	}
 
-	opinions.Bump(int(beneficiary.MobId), playerUserId, combatAssistBump)
+	opinions.Bump(int(beneficiary.MobId), pa.UserId, combatAssistBump)
 }
 
 // resolveAttackerMobTarget returns the MobInstanceId from an Aggro
@@ -1818,18 +1997,7 @@ func resolveAttackerMobTarget(a *characters.Aggro) int {
 }
 ```
 
-- [ ] **Step 12.3: Wire into action handlers**
-
-Find `internal/actions/attack.go` and (if separate) `internal/actions/taunt.go`. After the attack/taunt action's effect is determined (after `SetAggro` or whatever the engagement marker is), insert:
-
-```go
-// Chunk 4.5: combat-assist opinion seed.
-seeders.OnCombatAssist(player.UserId, attackedMob)
-```
-
-Add the import.
-
-- [ ] **Step 12.4: Write tests**
+- [ ] **Step 12.2: Write tests**
 
 ```go
 package seeders
@@ -1837,35 +2005,60 @@ package seeders
 import (
 	"testing"
 
-	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/events"
 )
 
-func TestOnCombatAssist_NilAttacker_NoPanic(t *testing.T) {
-	OnCombatAssist(5, nil)
+func TestCombatAssistToOpinion_Registered(t *testing.T) {
+	registryMu.RLock()
+	defer registryMu.RUnlock()
+	found := false
+	for _, reg := range registry["PlayerAttackedMob"] {
+		if reg.name == ruleNameCombatAssistToOpinion {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Errorf("combat_assist_to_opinion_boost not registered for PlayerAttackedMob")
+	}
 }
 
-func TestOnCombatAssist_AttackerNotInCombat_NoOp(t *testing.T) {
-	mob := &mobs.Mob{MobId: mobs.MobId(99200)}
-	mob.Character.Name = "no_aggro_test"
-	// mob.Character.Aggro is nil.
-	OnCombatAssist(5, mob)
+func TestCombatAssistToOpinion_ZeroFields_NoPanic(t *testing.T) {
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("panic: %v", r)
+		}
+	}()
+	combatAssistToOpinion(events.PlayerAttackedMob{})
 }
 
-// Full assist-flow test requires real attacker with non-nil Aggro
-// pointing to a peaceful beneficiary mob; deferred to Task 15 smoke.
+func TestCombatAssistToOpinion_BothRulesRegisteredForSameEvent(t *testing.T) {
+	// Sanity check: rule 6 + rule 9 both fire on PlayerAttackedMob.
+	registryMu.RLock()
+	defer registryMu.RUnlock()
+	count := len(registry["PlayerAttackedMob"])
+	if count < 2 {
+		t.Errorf("expected ≥2 rules on PlayerAttackedMob, got %d (rule 6 + rule 9 should both register)", count)
+	}
+}
+
+// Full assist-flow test (peaceful beneficiary + IsPeacefulToward gate)
+// requires live mob + faction fixtures; deferred to Task 15 smoke.
 ```
 
-- [ ] **Step 12.5: Run + commit**
+- [ ] **Step 12.3: Run + commit**
 
 Run: `go test ./internal/seeders/ -v` → PASS.
 
 ```bash
-git add internal/seeders/combat_assist_to_opinion_boost.go internal/seeders/combat_assist_to_opinion_boost_test.go internal/actions/attack.go
-git commit -m "feat(seeders): combat_assist_to_opinion_boost rule (4.5)" -m "Public OnCombatAssist(playerUserId, attackerMob) called from
-attack/taunt action handlers. When player engages a mob currently
-fighting another non-player mob, bumps the beneficiary's opinion of
-the player (+3) with a 50-round per-pair cooldown. IsPeacefulToward
-filter prevents fake credit for attacking mutually-hostile mobs.
+git add internal/seeders/combat_assist_to_opinion_boost.go internal/seeders/combat_assist_to_opinion_boost_test.go
+git commit -m "feat(seeders): combat_assist_to_opinion_boost rule (4.5)" -m "Subscribes to PlayerAttackedMob (shared with rule 6 — the multi-
+consumer payoff of Option B). When player engages a mob currently
+fighting another non-player mob, bumps the beneficiary mob's opinion
+of the player (+3) with a 50-round per-pair cooldown.
+
+IsPeacefulToward filter prevents fake credit for attacking one of two
+mutually-hostile mobs.
 
 Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 ```
@@ -2021,7 +2214,7 @@ Match the voice and structure of `internal/goals/context.md`, `internal/goals/ca
 
 Cover (~100-150 lines):
 - Package purpose: chunk-4.5 reactive goal generation; subscribes to world events + invoked from a few action/planner hooks; produces effects via goals.Add / MiscData / opinions.Bump
-- Activation: regular import from `main.go` fires per-rule `init()` registrations + makes exported entry points (`Dispatch`, `SeedMaterialsForRecipe`, `OnAggressiveAction`, `OnGift`, `OnCombatAssist`) callable
+- Activation: regular import from `main.go` fires per-rule `init()` registrations + makes exported entry points (`Dispatch`, `SeedMaterialsForRecipe`) callable. Other rules are pure event subscribers — no exported per-rule API.
 - File layout: `seeders.go` (framework), `state.go` (shared helpers + MiscData utilities + revenge dedup), 10 per-rule files + tests
 - The 10 rules as a table (rule name, trigger, effect)
 - How to add a new rule: file naming, init() registration with event type names, RuleFn signature, MiscData key conventions
@@ -2029,7 +2222,7 @@ Cover (~100-150 lines):
   - `CooldownKeyPrefix = "seed_cooldown:"` — distinct from 4.4's `plan:` so cooldowns survive goal switches
   - `applyCooldown(mob, rule, key, window)` for per-pair throttling
   - `seedRevengeGoalIfAbsent(mob, kind, id, priority)` for the multi-revenge rules
-- Architectural exceptions: rules 3, 6, 7, 9 invoked directly via exported `On...` / `Seed...` functions rather than event subscriptions
+- Architectural exception: rule 3 (craft-item materials) invoked directly via exported `SeedMaterialsForRecipe` function — it's an internal planner state, not a world event. All 9 other rules are event-subscribed via Dispatch (Option B). Three new event types defined in Task 3 (`PlayerAttackedMob`, `GiftOffered`, `GiftAccepted`) carry the signals rules 6, 7, 9 need.
 - Out-of-scope: 4.6 prune sweep, cross-type conflict mechanism (deferred from 4.3), per-archetype gating, content-side trigger lists
 - Reference the spec: `docs/superpowers/specs/2026-05-27-mob-aliveness-4.5-reactive-goal-generation-design.md`
 
@@ -2178,8 +2371,8 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 
 **Placeholder scan:** every TODO-ADAPT marker has clear "verify via codegraph at impl time + how to adapt" directives. None are open-ended "fill in later" placeholders. The two heaviest TODO-ADAPT rules (rule 2 `faction_rep_counter` and rule 10 `mastery_milestone`) are explicitly documented as "may ship as stub if the verified event doesn't exist cleanly" — this is the right tradeoff for an L chunk where some event shapes are speculative.
 
-**Type consistency:** `RuleFn`, `Register`, `Dispatch`, `applyCooldown`, `seedRevengeGoalIfAbsent`, `bumpMiscInt`, `OnAggressiveAction`, `OnGift`, `OnCombatAssist`, `SeedMaterialsForRecipe` consistent across tasks 1-13. Constants like `CooldownKeyPrefix`, rule-name constants, and priority constants follow consistent naming patterns. MiscData key prefixes match between rules and the catalog/planners reads (`faction_kills_inflicted:`, `faction_rep_built_with:`, `seed_cooldown:`).
+**Type consistency:** `RuleFn`, `Register`, `Dispatch`, `applyCooldown`, `seedRevengeGoalIfAbsent`, `bumpMiscInt`, `SeedMaterialsForRecipe` consistent across tasks 1-13. New event types `PlayerAttackedMob`, `GiftOffered`, `GiftAccepted` defined in Task 3 and consumed by rules 6, 7, 9. Constants like `CooldownKeyPrefix`, rule-name constants, and priority constants follow consistent naming patterns. MiscData key prefixes match between rules and the catalog/planners reads (`faction_kills_inflicted:`, `faction_rep_built_with:`, `seed_cooldown:`).
 
-**Scope:** 15 tasks, single feature branch, L sized chunk. Per-rule tasks are simpler than 4.4's planner tasks (each is one Go file with init + per-rule logic + minimal tests; deeper coverage deferred to Task 15 smoke). Architectural exceptions for rules 3, 6, 7, 9 (planner-invoked + action-handler-invoked) explicitly documented.
+**Scope:** 15 tasks, single feature branch, L sized chunk. Per-rule tasks are simpler than 4.4's planner tasks (each is one Go file with init + per-rule logic + minimal tests; deeper coverage deferred to Task 15 smoke). Task 3 absorbs the events package additions + firer wiring + main.go listeners (was originally three separate concerns; bundled to keep task count at 15). The architectural exception is rule 3 (planner-invoked); all other rules are uniform event subscribers per Option B.
 
 
