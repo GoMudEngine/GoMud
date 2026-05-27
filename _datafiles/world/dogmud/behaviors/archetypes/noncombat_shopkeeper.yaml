@@ -13,6 +13,11 @@
 tree:
   type: selector
   children:
+    # chunk 4.4: strategic goal pursuit (near top — primary idle behavior)
+    - type: action
+      event: mob_idle
+      do: try_goal_planner
+
     - type: action
       event: player_enter
       do: emote

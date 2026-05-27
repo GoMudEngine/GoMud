@@ -94,6 +94,11 @@ tree:
           do: command_best_of
           cmds: [trip]
 
+    # chunk 4.4: strategic goal pursuit (after reflex/combat, before idle end)
+    - type: action
+      event: mob_idle
+      do: try_goal_planner
+
 default_goals:
   - type: survival
     priority: 80

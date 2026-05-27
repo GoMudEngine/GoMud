@@ -8,9 +8,17 @@
 # Spec: docs/superpowers/plans/2026-04-24-ironwind-steppe-mob-audit.md
 
 tree:
-  type: action
-  event: mob_hurt
-  do: flee
+  type: selector
+  children:
+    # Flee when hurt — core prey behavior
+    - type: action
+      event: mob_hurt
+      do: flee
+
+    # chunk 4.4: strategic goal pursuit (after flee reflex, before idle end)
+    - type: action
+      event: mob_idle
+      do: try_goal_planner
 
 default_goals:
   - type: survival
