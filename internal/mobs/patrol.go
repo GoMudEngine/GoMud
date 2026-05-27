@@ -58,7 +58,7 @@ func StartOneshotPatrol(mob *Mob, patrolId string) bool {
 	mob.PatrolId = patrolId
 	mob.Character.SetMiscData("patrol_waypoint_idx", 0)
 	mob.Character.SetMiscData("patrol_direction", 1)
-	mob.Character.SetMiscData("patrol_dwell_remaining", 0)
+	mob.Character.SetMiscData("patrol_dwell_remaining", p.Waypoints[0].DwellRounds)
 	mob.Character.SetMiscData("patrol_path_fail_count", 0)
 	return true
 }

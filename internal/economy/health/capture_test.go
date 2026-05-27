@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/economy/health"
 	"github.com/GoMudEngine/GoMud/internal/exit"
+	foragerPkg "github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -515,5 +516,167 @@ func TestCaptureForagers_DistinguishesDespawnedFromIdle(t *testing.T) {
 		if idle.CargoByBucket == nil {
 			t.Error("idle CargoByBucket: got nil, want initialized map")
 		}
+	}
+}
+
+// TestCaptureForager_UsesTemplateZoneNotCharacterZone is the H3 regression
+// test. Throughput is written under mob.Zone (template-stable), but the
+// pre-fix code read under m.Character.Zone (current-room zone, mutates as
+// the mob walks). When a snapshot fires mid-walk in a city, the lookup
+// misses and the dashboard's DeliveriesByTier is always zero.
+func TestCaptureForager_UsesTemplateZoneNotCharacterZone(t *testing.T) {
+	const roomId = 9400
+
+	r := &rooms.Room{
+		RoomId: roomId,
+		Zone:   "stillwater",
+		Title:  "Test Room",
+		Exits:  map[string]exit.RoomExit{},
+	}
+	cleanRoom := rooms.SeedRoomsForTest(
+		map[int]*rooms.Room{roomId: r},
+		map[string]*rooms.ZoneConfig{},
+	)
+	defer cleanRoom()
+
+	// Pre-seed a throughput record under the TEMPLATE zone (the stable
+	// key that vendor_sell.go uses when writing deliveries).
+	const templateZone = "stillwater_marsh"
+	const mobId = 371
+	foragerPkg.ClearThroughputCache()
+	t.Cleanup(foragerPkg.ClearThroughputCache)
+	foragerPkg.IncrementDelivery(templateZone, mobId, 50)
+
+	// Construct a mob whose Character.Zone is "stillwater" (the mob
+	// walked into town — current room's zone), but whose template Zone
+	// is "stillwater_marsh".
+	const foragerInstanceId = 94371
+	foragerMob := &mobs.Mob{
+		MobId:      mobs.MobId(mobId),
+		InstanceId: foragerInstanceId,
+		HomeRoomId: roomId,
+		Zone:       templateZone, // template-stable — used when writing throughput
+	}
+	foragerMob.Character.Name = "Tova"
+	foragerMob.Character.Buffs = buffs.New()
+	foragerMob.Character.RoomId = roomId
+	foragerMob.Character.Zone = "stillwater" // current room's zone — wrong key pre-fix
+
+	bs := behaviortree.NewBehaviorState()
+	bs.Set("forager_state", "delivering")
+	bs.Set("forager_state_started_round", strconv.FormatUint(100, 10))
+	foragerMob.BTreeState = bs
+
+	mobs.SetInstanceForTest(foragerMob.InstanceId, foragerMob)
+	defer mobs.SetInstanceForTest(foragerMob.InstanceId, nil)
+	r.AddMob(foragerMob.InstanceId)
+
+	snap := health.CaptureSnapshot()
+
+	// Find the live Tova row.
+	var f *health.ForagerSnapshot
+	for i := range snap.Foragers {
+		if snap.Foragers[i].MobId == mobId && snap.Foragers[i].State != "(despawned)" {
+			f = &snap.Foragers[i]
+			break
+		}
+	}
+	if f == nil {
+		t.Fatal("live forager row not found in snapshot")
+	}
+
+	// Pre-fix: capture read GetThroughput("stillwater", 371) → empty record
+	// → DeliveriesByTier is nil. Post-fix: reads GetThroughput("stillwater_marsh",
+	// 371) → our seeded record → DeliveriesByTier[50] == 1.
+	if f.DeliveriesByTier == nil || f.DeliveriesByTier[50] == 0 {
+		t.Errorf("DeliveriesByTier[50] = %d, want 1 — capture used "+
+			"Character.Zone (%q) instead of template Zone (%q)",
+			f.DeliveriesByTier[50], "stillwater", templateZone)
+	}
+}
+
+// TestCaptureCaravan_UsesWagonZoneNotLeaderCharacterZone is the H3 regression
+// test for the caravan capture path. Caravan throughput is written under
+// wagon.Zone + wagon.MobId (by visit.go:IncrementDelivery), but the pre-fix
+// code read under m.Character.Zone + instId (leader's current-room zone +
+// leader's instance ID). Both fields are wrong.
+func TestCaptureCaravan_UsesWagonZoneNotLeaderCharacterZone(t *testing.T) {
+	const roomId = 9500
+
+	r := &rooms.Room{
+		RoomId: roomId,
+		Zone:   "transit_road",
+		Title:  "Test Room",
+		Exits:  map[string]exit.RoomExit{},
+	}
+	cleanRoom := rooms.SeedRoomsForTest(
+		map[int]*rooms.Room{roomId: r},
+		map[string]*rooms.ZoneConfig{},
+	)
+	defer cleanRoom()
+
+	// Pre-seed throughput under the wagon's template zone + wagon mob ID,
+	// matching how visit.go writes it: IncrementDelivery(wagon.Zone, wagon.MobId, ...).
+	const wagonTemplateZone = "thornwall_city"
+	caravan.ClearThroughputCache()
+	t.Cleanup(caravan.ClearThroughputCache)
+	caravan.IncrementDelivery(wagonTemplateZone, caravan.WagonMobId, 50)
+
+	// Build the wagon with its template zone.
+	wagon := &mobs.Mob{
+		MobId:      mobs.MobId(caravan.WagonMobId),
+		InstanceId: 95374,
+		HomeRoomId: roomId,
+		Zone:       wagonTemplateZone,
+	}
+	wagon.Character.Name = "TestWagon"
+	wagon.Character.Buffs = buffs.New()
+	wagon.Character.RoomId = roomId
+	characters.ApplyMobOverrides(&wagon.Character, 0, 0, 5000)
+	mobs.SetInstanceForTest(wagon.InstanceId, wagon)
+	defer mobs.SetInstanceForTest(wagon.InstanceId, nil)
+	r.AddMob(wagon.InstanceId)
+
+	// Register the caravan patrol so SynthesizeStateForLeader works.
+	registerTestCaravanPatrolForCapture(t)
+
+	// Build the leader in a different zone ("transit_road") to force the
+	// bug: pre-fix code used m.Character.Zone ("transit_road") + instId
+	// (95357), not wagonTemplateZone + wagon.MobId (374).
+	const leaderInstanceId = 95357
+	leader := &mobs.Mob{
+		MobId:      mobs.MobId(caravan.LeaderMobId),
+		InstanceId: leaderInstanceId,
+		HomeRoomId: roomId,
+		Zone:       wagonTemplateZone,
+	}
+	leader.Character.Name = "TestKetil"
+	leader.Character.Buffs = buffs.New()
+	leader.Character.RoomId = roomId
+	// Set Character.Zone to a different value to expose the bug:
+	// pre-fix capture.go used m.Character.Zone here.
+	leader.Character.Zone = "transit_road"
+	leader.PatrolId = caravan.CaravanPatrolId
+	leader.Character.SetMiscData("patrol_waypoint_idx", 1)
+	leader.Character.SetMiscData("caravan_state_started_round", uint64(5000))
+	mobs.SetInstanceForTest(leader.InstanceId, leader)
+	defer mobs.SetInstanceForTest(leader.InstanceId, nil)
+	r.AddMob(leader.InstanceId)
+
+	snap := health.CaptureSnapshot()
+
+	if len(snap.Caravans) != 1 {
+		t.Fatalf("Caravans: got %d, want 1", len(snap.Caravans))
+	}
+	c := snap.Caravans[0]
+
+	// Pre-fix: GetThroughput("transit_road", 95357) → empty → DeliveriesByTier nil.
+	// Post-fix: GetThroughput("thornwall_city", 374) → seeded → DeliveriesByTier[50]==1.
+	if c.DeliveriesByTier == nil || c.DeliveriesByTier[50] == 0 {
+		t.Errorf("DeliveriesByTier[50] = %d, want 1 — capture used "+
+			"leader Character.Zone (%q)+instId (%d) instead of "+
+			"wagon.Zone (%q)+wagon.MobId (%d)",
+			c.DeliveriesByTier[50], "transit_road", leaderInstanceId,
+			wagonTemplateZone, caravan.WagonMobId)
 	}
 }

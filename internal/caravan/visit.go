@@ -99,16 +99,27 @@ func VisitVendorsInRoom(
 		}
 
 		// PICKUP pass: vendor → wagon.
-		// Iterate vendor stock; extract bucket-matching entries with
+		// Iterate vendor stock; extract qualifying entries with
 		// Current > RestockQty (vendor keeps one restock-batch buffer
 		// for local customers). Take 10% of available stock, floor of 1.
+		//
+		// "Qualifying" (see pickupQualifies) is EITHER:
+		//   1. The item's bucket is in pickupBuckets (zone-source path),
+		//      OR
+		//   2. The item is flagged IsComponent and its ItemType is a
+		//      raw-material type (not a finished good). This lets common
+		//      crafting materials (iron ingot, steel ingot, coal dust)
+		//      flow freely cross-city even when their bucket is "base"
+		//      or "overlap" and not in pickupBuckets.
+		//
 		// Chunk 3.8: tuned vs the pre-3.8 MaxStock/2 gate which was
 		// too restrictive given player-driven stock depletion.
+		// Chunk 3.8 hotfix (H2): expanded qualifying gate to include
+		// any IsComponent raw material, not just zone-source bucket.
 		if len(pickupBuckets) > 0 {
 			for i := range shop.Stock {
 				entry := &shop.Stock[i]
-				bucket := economy.BucketFor(entry.ItemId)
-				if bucket == "" || !slices.Contains(pickupBuckets, bucket) {
+				if !pickupQualifies(entry.ItemId, pickupBuckets) {
 					continue
 				}
 				if entry.Current <= entry.RestockQty {
@@ -198,4 +209,76 @@ func FormatVisitMessage(runnerName string, delivered, pickedUp []ItemMove) strin
 			runnerName, vendor)
 	}
 	return ""
+}
+
+// pickupQualifies reports whether the vendor stock entry should be
+// considered for caravan pickup. Two qualifying paths:
+//
+//  1. Zone-source bucket match — the item is in pickupBuckets per
+//     economy.BucketFor. Pre-3.8-hotfix this was the only path.
+//
+//  2. Component-and-not-finished-good — the item is flagged
+//     IsComponent (raw material), AND its Type is not a finished
+//     good (weapon, armor, etc.). Lets crafting materials flow
+//     freely cross-city without sweeping up crafted output.
+//
+// Returns false defensively when the item spec can't be resolved.
+func pickupQualifies(itemId int, pickupBuckets []string) bool {
+	bucket := economy.BucketFor(itemId)
+	if bucket != "" && slices.Contains(pickupBuckets, bucket) {
+		return true
+	}
+	spec := items.GetItemSpec(itemId)
+	if spec == nil || !spec.IsComponent {
+		return false
+	}
+	return !isFinishedGood(spec.Type)
+}
+
+// isFinishedGood reports whether an item type represents a player-
+// usable end-product (worn, wielded, consumed, otherwise crafted-into-
+// existence) rather than a raw crafting material. Caravan cross-city
+// distribution moves raw materials only — finished goods stay where
+// they're crafted.
+//
+// Raw-material item types that may carry IsComponent=true and SHOULD
+// flow through cross-city distribution (and so are absent from this
+// list): Object (catch-all for ingots, ores, raw mats), Gemstone (raw
+// gems), Botanical (herbs).
+func isFinishedGood(itemType items.ItemType) bool {
+	switch itemType {
+	// Wearables / equipment
+	case items.Weapon,
+		items.Offhand,
+		items.Head,
+		items.Neck,
+		items.Body,
+		items.Belt,
+		items.Gloves,
+		items.Ring,
+		items.Wrist,
+		items.Back,
+		items.Shoulders,
+		items.ComponentBag,
+		items.Legs,
+		items.Feet,
+		items.Tail:
+		return true
+	// Consumables
+	case items.Potion,
+		items.Food,
+		items.Drink,
+		items.Scroll,
+		items.Grenade,
+		items.Junk:
+		return true
+	// Other end-product types
+	case items.Readable,
+		items.Key,
+		items.Lockpicks,
+		items.Service,
+		items.Ammo:
+		return true
+	}
+	return false
 }

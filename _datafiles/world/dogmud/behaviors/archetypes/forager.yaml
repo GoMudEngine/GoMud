@@ -21,10 +21,16 @@ tree:
         - type: action
           do: attack
 
-    # 2. Foraging-state per-tick loop: salvage opportunistically,
-    # then try a forage roll, then wander within territory. Each
-    # step returns Failure cleanly when nothing's available, so
-    # the inner selector falls through.
+    # 2. Foraging-state per-tick loop: first check carry-cap +
+    # fatigue thresholds (transitions out of Foraging when hit),
+    # then salvage opportunistically, try a forage roll, and finally
+    # wander within territory. Each step returns Failure cleanly
+    # when nothing's available, so the inner selector falls through.
+    #
+    # forager_check_thresholds MUST be first — try_forage /
+    # wander_territory succeed in workable territory and would
+    # short-circuit the selector before the threshold check ran.
+    # (3.8 hotfix H8.)
     - type: sequence
       event: mob_idle
       children:
@@ -32,6 +38,8 @@ tree:
           check: forager_state_is_foraging
         - type: selector
           children:
+            - type: action
+              do: forager_check_thresholds
             - type: action
               do: try_salvage
             - type: action

@@ -29,6 +29,7 @@ import (
 
 func init() {
 	actionRegistry["forager_step"] = actForagerStep
+	actionRegistry["forager_check_thresholds"] = actForagerCheckThresholds
 }
 
 const (
@@ -61,6 +62,12 @@ func actForagerStep(params map[string]any, ctx *EvalContext) Result {
 	// — no need to issue it here too.
 	if cur != forager.StateRecalling &&
 		hpRatio(mob) <= float64(cfg.ForagerHPRecallThresholdPct) {
+		// 3.8 hotfix: clear any in-flight oneshot patrol so the patrol
+		// executor cannot read a stale PatrolId after this state
+		// transition and emit a phantom PatrolCompleted from sanctuary.
+		if mob.PatrolId != "" {
+			mobs.ClearOneshotPatrol(mob)
+		}
 		transitionForager(ctx.MobState, forager.StateRecalling)
 		return Success
 	}
@@ -81,32 +88,24 @@ func actForagerStep(params map[string]any, ctx *EvalContext) Result {
 				"mobId", mob.MobId, "name", profile.Name,
 				"state", ctx.MobState.GetString(keyForagerState),
 				"stuckRounds", now-started)
+			// 3.8 hotfix: same patrol-leak guard as HP-emergency above.
+			if mob.PatrolId != "" {
+				mobs.ClearOneshotPatrol(mob)
+			}
 			transitionForager(ctx.MobState, forager.StateRecalling)
 			return Success
 		}
 	}
 
-	// Foraging-state per-tick coordination. The per-tick foraging
-	// loop (forage roll, salvage, wander) now runs in YAML via
-	// try_forage / try_salvage / wander_territory primitives.
-	// The state machine still owns the transition triggers OUT of
-	// Foraging — fatigue limit or carry threshold sends the mob
-	// to TravelingToDropoff.
-	if cur == forager.StateForaging {
-		// Fatigue tick (was inside tickForagerForaging).
-		fatigue := getIntFromState(ctx.MobState, keyFatigueTimer) + 1
-		ctx.MobState.Set(keyFatigueTimer, strconv.Itoa(fatigue))
-
-		// Carry-cap or fatigue → head to dropoff.
-		if fatigue >= fatigueLimit ||
-			carryRatio(mob) >= float64(cfg.ForagerCarryThresholdPct) {
-			transitionForager(ctx.MobState, forager.StateTravelingToDropoff)
-			return Success
-		}
-
-		// YAML handles try_forage / try_salvage / wander_territory.
-		return Success
-	}
+	// Foraging-state per-tick coordination now runs entirely in YAML
+	// via the inner selector:
+	//   forager_check_thresholds → try_salvage → try_forage → wander_territory
+	//
+	// The threshold check (fatigue limit + carry-cap) was extracted out
+	// of this function into actForagerCheckThresholds (3.8 hotfix H8)
+	// because the inner selector short-circuited on try_forage /
+	// wander_territory Success and the in-body check was never reached
+	// in workable territory.
 
 	switch cur {
 	case forager.StateResting:
@@ -121,6 +120,43 @@ func actForagerStep(params map[string]any, ctx *EvalContext) Result {
 		return tickForagerStoring(profile, mob, ctx)
 	case forager.StateRecalling:
 		return tickForagerRecalling(profile, mob, ctx)
+	}
+	return Failure
+}
+
+// actForagerCheckThresholds is the chunk 3.8 hotfix replacement for the
+// fatigue/carry-cap check that used to live at the top of actForagerStep
+// but never fired because the YAML archetype's inner selector
+// short-circuited on try_forage / wander_territory Success before reaching
+// forager_step.
+//
+// Registered as a btree action so it runs as the FIRST child of the
+// foraging selector. Returns:
+//   - Success if a threshold was hit and state was transitioned to
+//     TravelingToDropoff. The selector short-circuits Success, which is
+//     correct — the mob is no longer in Foraging next tick.
+//   - Failure if thresholds are not yet hit. The selector falls through
+//     to try_salvage / try_forage / wander_territory as normal. The
+//     fatigue counter still gets incremented on the Failure path.
+func actForagerCheckThresholds(params map[string]any, ctx *EvalContext) Result {
+	if ctx.MobState == nil {
+		return Failure
+	}
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil {
+		return Failure
+	}
+	cfg := configs.GetBalanceConfig()
+
+	// Fatigue tick (was inside actForagerStep's StateForaging branch).
+	fatigue := getIntFromState(ctx.MobState, keyFatigueTimer) + 1
+	ctx.MobState.Set(keyFatigueTimer, strconv.Itoa(fatigue))
+
+	// Carry-cap or fatigue → head to dropoff.
+	if fatigue >= fatigueLimit ||
+		carryRatio(mob) >= float64(cfg.ForagerCarryThresholdPct) {
+		transitionForager(ctx.MobState, forager.StateTravelingToDropoff)
+		return Success
 	}
 	return Failure
 }
@@ -262,22 +298,6 @@ func tickForagerDeliveringTown(
 	mob *mobs.Mob,
 	ctx *EvalContext,
 ) Result {
-	// Chunk 3.8 5.4 sanctuary-fallback safety: if the forager has
-	// somehow ended up at the sanctuary while StateDelivering with
-	// no active oneshot patrol (e.g., patrol home-fallback fired
-	// and never produced a PatrolCompleted), advance state
-	// directly. Cargo, if any, carries through to Storing or
-	// Recalling.
-	if mob.Character.RoomId == p.SanctuaryRoom && mob.PatrolId == "" {
-		if mob.StorageChestRoom > 0 && len(mob.Character.Items) > 0 {
-			ctx.MobState.Set(keyStoringTurns, "0")
-			transitionForager(ctx.MobState, forager.StateStoring)
-		} else {
-			transitionForager(ctx.MobState, forager.StateRecalling)
-		}
-		return Success
-	}
-
 	// If a oneshot delivery patrol is already running, the executor
 	// will drive movement and the arrival listener will fire vendor
 	// sells. Nothing for this tick to do.
@@ -290,11 +310,19 @@ func tickForagerDeliveringTown(
 		// Defensive: shouldn't happen for KindMarsh/KindSteppe since
 		// territory.go populates these. Fall through to Recalling so
 		// the cycle doesn't stall.
+		// 3.8 hotfix: clear any stale patrol before falling back.
+		if mob.PatrolId != "" {
+			mobs.ClearOneshotPatrol(mob)
+		}
 		transitionForager(ctx.MobState, forager.StateRecalling)
 		return Success
 	}
 	if !mobs.StartOneshotPatrol(mob, p.DeliveryPatrolId) {
 		// Patrol id didn't resolve or isn't oneshot — log + give up.
+		// 3.8 hotfix: clear any stale patrol before falling back.
+		if mob.PatrolId != "" {
+			mobs.ClearOneshotPatrol(mob)
+		}
 		transitionForager(ctx.MobState, forager.StateRecalling)
 		return Success
 	}
@@ -327,6 +355,11 @@ func tickForagerDeliveringFernway(
 		ctx.MobState.Set(keyStoringTurns, "0")
 		transitionForager(ctx.MobState, forager.StateStoring)
 	} else {
+		// 3.8 hotfix: Fernway foragers don't use delivery PatrolId, but
+		// add the guard defensively.
+		if mob.PatrolId != "" {
+			mobs.ClearOneshotPatrol(mob)
+		}
 		transitionForager(ctx.MobState, forager.StateRecalling)
 	}
 	return Success
@@ -350,12 +383,20 @@ func tickForagerStoring(
 ) Result {
 	// No chest — nothing to store; skip straight to Recalling.
 	if mob.StorageChestRoom == 0 {
+		// 3.8 hotfix: clear any stale delivery patrol before recalling.
+		if mob.PatrolId != "" {
+			mobs.ClearOneshotPatrol(mob)
+		}
 		transitionForager(ctx.MobState, forager.StateRecalling)
 		return Success
 	}
 
 	// Satchel already empty — deposit complete (or nothing was leftover).
 	if len(mob.Character.Items) == 0 {
+		// 3.8 hotfix: clear any stale delivery patrol before recalling.
+		if mob.PatrolId != "" {
+			mobs.ClearOneshotPatrol(mob)
+		}
 		transitionForager(ctx.MobState, forager.StateRecalling)
 		return Success
 	}
@@ -371,6 +412,10 @@ func tickForagerStoring(
 			"chest_room", mob.StorageChestRoom,
 			"satchel_items", len(mob.Character.Items))
 		ctx.MobState.Set(keyStoringTurns, "0")
+		// 3.8 hotfix: clear any stale delivery patrol before recalling.
+		if mob.PatrolId != "" {
+			mobs.ClearOneshotPatrol(mob)
+		}
 		transitionForager(ctx.MobState, forager.StateRecalling)
 		return Success
 	}
@@ -430,6 +475,13 @@ func tickForagerRecalling(
 	mob *mobs.Mob,
 	ctx *EvalContext,
 ) Result {
+	// 3.8 hotfix: clear any in-flight oneshot patrol so the patrol
+	// executor doesn't read a stale PatrolId after this state
+	// transition and emit a phantom PatrolCompleted from sanctuary.
+	if mob.PatrolId != "" {
+		mobs.ClearOneshotPatrol(mob)
+	}
+
 	if ctx.RoomId == p.SanctuaryRoom {
 		// Dump remaining satchel into the sanctuary lockbox before
 		// resting. Surplus accumulates in the lockbox where players
