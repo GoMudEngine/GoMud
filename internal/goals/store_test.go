@@ -3,6 +3,7 @@ package goals
 import (
 	"errors"
 	"fmt"
+	"os"
 	"sort"
 	"sync"
 	"testing"
@@ -404,3 +405,106 @@ func TestConcurrentAdd_SameMobSerializes(t *testing.T) {
 	}
 }
 
+func TestRecompute_FreshSelection_PersistsCurrentGoal(t *testing.T) {
+	ClearCache()
+	mobId := 99001
+	name := "recompute_fresh"
+	g := &Goal{Type: "wealth", Priority: 50}
+	if _, err := Add(mobId, name, g); err != nil {
+		t.Fatalf("seed Add: %v", err)
+	}
+	// After Add's eager Recompute (Task 7), this would already be set,
+	// but for THIS task we test Recompute in isolation.
+	mg := loadOrLazyInit(mobId, name)
+	mg.CurrentGoalId = "" // simulate cold state
+	mg.CurrentSinceRound = 0
+	mg.LastSwitchRound = 0
+
+	mob := &mobs.Mob{}
+	Recompute(mobId, name, mob, 12345)
+
+	mg = loadOrLazyInit(mobId, name)
+	if mg.CurrentGoalId == "" {
+		t.Errorf("CurrentGoalId not set after Recompute")
+	}
+	if mg.CurrentSinceRound != 12345 {
+		t.Errorf("CurrentSinceRound=%d, want 12345", mg.CurrentSinceRound)
+	}
+	if mg.LastSwitchRound != 12345 {
+		t.Errorf("LastSwitchRound=%d, want 12345", mg.LastSwitchRound)
+	}
+}
+
+func TestRecompute_NoSwitch_DoesNotRewriteFile(t *testing.T) {
+	ClearCache()
+	mobId := 99002
+	name := "recompute_nochange"
+	g := &Goal{Type: "wealth", Priority: 50}
+	if _, err := Add(mobId, name, g); err != nil {
+		t.Fatalf("seed Add: %v", err)
+	}
+	mob := &mobs.Mob{}
+	Recompute(mobId, name, mob, 1000)
+
+	path := goalPath(mobId, name)
+	info1, err := os.Stat(path)
+	if err != nil {
+		t.Fatalf("stat after first Recompute: %v", err)
+	}
+
+	// Second Recompute with the same goal list — should NOT rewrite.
+	time.Sleep(20 * time.Millisecond) // ensure mtime would change if write happened
+	Recompute(mobId, name, mob, 1001)
+	info2, err := os.Stat(path)
+	if err != nil {
+		t.Fatalf("stat after second Recompute: %v", err)
+	}
+	if !info1.ModTime().Equal(info2.ModTime()) {
+		t.Errorf("file mtime changed without a switch: %v → %v", info1.ModTime(), info2.ModTime())
+	}
+}
+
+func TestCurrentGoalOf_AfterRecompute_ReturnsCurrentGoal(t *testing.T) {
+	ClearCache()
+	mobId := 99003
+	name := "currentof_test"
+	g := &Goal{Type: "wealth", Priority: 50}
+	added, err := Add(mobId, name, g)
+	if err != nil {
+		t.Fatalf("Add: %v", err)
+	}
+	Recompute(mobId, name, &mobs.Mob{}, 1000)
+	got := CurrentGoalOf(mobId, name)
+	if got == nil {
+		t.Fatalf("CurrentGoalOf returned nil")
+	}
+	if got.Id != added.Added.Id {
+		t.Errorf("got id=%s, want %s", got.Id, added.Added.Id)
+	}
+}
+
+func TestCurrentGoalOf_NoGoals_ReturnsNil(t *testing.T) {
+	ClearCache()
+	got := CurrentGoalOf(99004, "no_goals_mob")
+	if got != nil {
+		t.Errorf("got=%v, want nil (no goals)", got)
+	}
+}
+
+func TestCurrentGoalOf_StaleId_ReturnsNil(t *testing.T) {
+	ClearCache()
+	mobId := 99005
+	name := "stale_id_test"
+	// Seed the file with a current_goal_id that doesn't exist in goals slice.
+	mg := &MobGoals{
+		MobId:         mobId,
+		NextGoalId:    2,
+		CurrentGoalId: "g99",
+		Goals:         []*Goal{{Id: "g1", Type: "wealth", Priority: 50}},
+	}
+	cacheStoreForTest(name, mg)
+	got := CurrentGoalOf(mobId, name)
+	if got != nil {
+		t.Errorf("got=%v, want nil (stale current_goal_id)", got)
+	}
+}

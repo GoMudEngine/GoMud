@@ -221,3 +221,98 @@ func Clear(mobId int, namesimple string) error {
 	}
 	return nil
 }
+
+// CurrentGoalOf returns the cached current goal for the mob template,
+// or nil if there is no current goal or the cached id is stale (the
+// referenced goal was removed). Lazy-loads MobGoals on first access
+// (matches GoalsOf semantics). Cheap accessor — chunk 4.4 will read
+// this from the btree.
+func CurrentGoalOf(mobId int, namesimple string) *Goal {
+	mg := loadOrLazyInit(mobId, namesimple)
+	cacheMu.RLock()
+	defer cacheMu.RUnlock()
+	if mg.CurrentGoalId == "" {
+		return nil
+	}
+	for _, g := range mg.Goals {
+		if g.Id == mg.CurrentGoalId {
+			return g
+		}
+	}
+	return nil // stale id (goal removed since last Recompute)
+}
+
+// Recompute runs the chunk-4.2 selection pipeline for the mob:
+//  1. Snapshot the goal list and selection state under the read lock.
+//  2. Call the pure Select with archetype weights resolved via the
+//     registered WeightsLookupFn.
+//  3. On a switch, update CurrentGoalId / CurrentSinceRound /
+//     LastSwitchRound under the write lock, persist the file, and
+//     emit a debug-level structured log line.
+//  4. On no switch, do not rewrite the file (avoid per-tick churn).
+//
+// Called by the per-round tick hook (Task 8) and eagerly from
+// Add/Remove/Clear (Task 7). Safe to call with a nil mob — registered
+// ContextScore funcs that need mob state should defend themselves.
+func Recompute(mobId int, namesimple string, mob *mobs.Mob, nowRound uint64) {
+	mg := loadOrLazyInit(mobId, namesimple)
+
+	// Snapshot under read lock.
+	cacheMu.RLock()
+	goalsSnap := make([]*Goal, len(mg.Goals))
+	copy(goalsSnap, mg.Goals)
+	prevId := mg.CurrentGoalId
+	currentSince := mg.CurrentSinceRound
+	lastSwitch := mg.LastSwitchRound
+	cacheMu.RUnlock()
+
+	var prev *Goal
+	for _, g := range goalsSnap {
+		if g.Id == prevId {
+			prev = g
+			break
+		}
+	}
+	weights := resolveWeights(mob)
+
+	current, switched, reason := Select(goalsSnap, weights, mob, prev,
+		currentSince, lastSwitch, nowRound)
+
+	if !switched {
+		return // no file write, no log
+	}
+
+	// Apply switch under write lock + persist.
+	cacheMu.Lock()
+	if current == nil {
+		mg.CurrentGoalId = ""
+		mg.CurrentSinceRound = 0
+		mg.LastSwitchRound = 0
+	} else {
+		mg.CurrentGoalId = current.Id
+		mg.CurrentSinceRound = nowRound
+		mg.LastSwitchRound = nowRound
+	}
+	cacheMu.Unlock()
+
+	if err := saveToDisk(mobId, namesimple); err != nil {
+		mudlog.Warn("goals.Recompute: save failed", "mob_id", mobId, "error", err)
+	}
+
+	// Structured switch log line.
+	fromStr := "none"
+	if prev != nil {
+		fromStr = fmt.Sprintf("g%s(%s,%d)", prev.Id, prev.Type, prev.Priority)
+	}
+	toStr := "none"
+	if current != nil {
+		toStr = fmt.Sprintf("g%s(%s,%d)", current.Id, current.Type, current.Priority)
+	}
+	mudlog.Debug("goals.switch",
+		"mob_id", mobId,
+		"from", fromStr,
+		"to", toStr,
+		"reason_kind", reason.Kind,
+		"reason_detail", reason.Detail,
+		"round", nowRound)
+}
