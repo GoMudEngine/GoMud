@@ -67,7 +67,14 @@ type NodeDef struct {
 	Params   map[string]any `yaml:",inline"`
 }
 
-// TreeDef is the top-level YAML structure.
+// TreeDef is the top-level YAML structure for archetype + room +
+// per-mob behavior trees.
+//
+// GoalWeights is chunk-4.2 archetype metadata: per-goal-type score
+// multipliers consumed by the goals package's Select function via a
+// registered weights-lookup callback. Optional; missing or empty map
+// means selection scores at default 1.0 for every goal type.
 type TreeDef struct {
-	Tree NodeDef `yaml:"tree"`
+	Tree        NodeDef            `yaml:"tree"`
+	GoalWeights map[string]float64 `yaml:"goal_weights,omitempty"`
 }

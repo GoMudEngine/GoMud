@@ -33,6 +33,7 @@ func LoadArchetypeForTest(t *testing.T, name string, path string) {
 		e.mu.Lock()
 		delete(e.archetypes, name)
 		delete(e.noArchetype, name)
+		delete(e.archetypeGoalWeights, name)
 		e.mu.Unlock()
 	})
 }

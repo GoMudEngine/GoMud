@@ -16,9 +16,10 @@ type Engine struct {
 	noTree      map[int]bool    // mobId → no behavior file exists on disk
 	roomTrees   map[int]Node    // roomId → compiled root node
 	noRoomTree  map[int]bool    // roomId → no behavior file exists on disk
-	archetypes  map[string]Node // archetype name → compiled root node
-	noArchetype map[string]bool // archetype name → no archetype file exists on disk
-	queue       []DelayedAction
+	archetypes           map[string]Node                    // archetype name → compiled root node
+	noArchetype          map[string]bool                    // archetype name → no archetype file exists on disk
+	archetypeGoalWeights map[string]map[string]float64      // chunk 4.2 — per-archetype goal-type weight multipliers
+	queue                []DelayedAction
 }
 
 type DelayedAction struct {
@@ -30,12 +31,13 @@ var globalEngine *Engine
 
 func init() {
 	globalEngine = &Engine{
-		trees:       make(map[int]Node),
-		noTree:      make(map[int]bool),
-		roomTrees:   make(map[int]Node),
-		noRoomTree:  make(map[int]bool),
-		archetypes:  make(map[string]Node),
-		noArchetype: make(map[string]bool),
+		trees:                make(map[int]Node),
+		noTree:               make(map[int]bool),
+		roomTrees:            make(map[int]Node),
+		noRoomTree:           make(map[int]bool),
+		archetypes:           make(map[string]Node),
+		noArchetype:          make(map[string]bool),
+		archetypeGoalWeights: make(map[string]map[string]float64),
 	}
 	// Register the attack rejection callback so FireAttackRejected can fire btree events
 	mobs.AttackRejectedTryMobBehavior = func(mobInstanceId int, ctx mobs.EventContext) bool {
@@ -141,18 +143,41 @@ func (e *Engine) GetRoomTree(roomId int) Node {
 	return e.roomTrees[roomId]
 }
 
-// LoadArchetype loads and caches a behavior tree for an archetype name.
-// Clears any negative-cache entry so newly added files are picked up at runtime.
+// LoadArchetype loads and caches a behavior tree (and any chunk-4.2
+// goal_weights map) for an archetype name. Clears any negative-cache
+// entry so newly added files are picked up at runtime.
 func (e *Engine) LoadArchetype(name string, path string) error {
-	node, err := LoadTreeFromFile(path)
+	tree, weights, err := LoadArchetypeYAMLFromFile(path)
 	if err != nil {
 		return err
 	}
 	e.mu.Lock()
-	e.archetypes[name] = node
+	e.archetypes[name] = tree
+	if e.archetypeGoalWeights == nil {
+		e.archetypeGoalWeights = map[string]map[string]float64{}
+	}
+	e.archetypeGoalWeights[name] = weights
 	delete(e.noArchetype, name)
 	e.mu.Unlock()
 	return nil
+}
+
+// GetArchetypeGoalWeights returns the cached goal_weights map for the
+// named archetype, or an empty map if the archetype is unknown or
+// declared no weights. Safe to call from any goroutine; returns a
+// copy so callers can't mutate the cache.
+func (e *Engine) GetArchetypeGoalWeights(name string) map[string]float64 {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
+	raw := e.archetypeGoalWeights[name]
+	if len(raw) == 0 {
+		return map[string]float64{}
+	}
+	out := make(map[string]float64, len(raw))
+	for k, v := range raw {
+		out[k] = v
+	}
+	return out
 }
 
 // HasNoArchetype reports whether the negative cache has recorded that
