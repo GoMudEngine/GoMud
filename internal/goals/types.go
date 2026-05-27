@@ -109,3 +109,13 @@ func (e *ConflictError) Error() string {
 // match it via errors.Is. Production callers usually ignore Remove's
 // error since "remove what's not there" is a no-op.
 var ErrGoalNotFound = errors.New("goals: goal id not found")
+
+// GoalDefault is the goals-package mirror of behaviortree.GoalDefault.
+// Kept separate (rather than imported across the package boundary) to
+// avoid an internal/goals → internal/behaviortree import cycle.
+// Chunk 4.3.
+type GoalDefault struct {
+	Type     string
+	Priority int
+	Params   map[string]any
+}

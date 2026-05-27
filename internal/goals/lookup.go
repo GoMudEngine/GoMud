@@ -40,3 +40,32 @@ func resolveWeights(mob *mobs.Mob) map[string]float64 {
 	}
 	return fn(mob)
 }
+
+// ArchetypeDefaultsLookupFn returns the archetype's default goal list
+// for the given mob. Registered once at boot from main.go as a thin
+// adapter over behaviortree.GetEngine().GetArchetypeDefaultGoals
+// (returning the goals-package mirror type). Chunk 4.3.
+type ArchetypeDefaultsLookupFn func(mob *mobs.Mob) []GoalDefault
+
+var archetypeDefaultsLookup ArchetypeDefaultsLookupFn // guarded by lookupMu
+
+// SetArchetypeDefaultsLookup registers the archetype-defaults resolver.
+// Pass nil to unregister (tests use this for isolation). Chunk 4.3.
+func SetArchetypeDefaultsLookup(fn ArchetypeDefaultsLookupFn) {
+	lookupMu.Lock()
+	archetypeDefaultsLookup = fn
+	lookupMu.Unlock()
+}
+
+// resolveArchetypeDefaults returns the archetype defaults for a mob,
+// or nil if no lookup is registered. Internal — called by the lazy-
+// seed path in loadOrLazyInit. Chunk 4.3.
+func resolveArchetypeDefaults(mob *mobs.Mob) []GoalDefault {
+	lookupMu.RLock()
+	fn := archetypeDefaultsLookup
+	lookupMu.RUnlock()
+	if fn == nil {
+		return nil
+	}
+	return fn(mob)
+}
