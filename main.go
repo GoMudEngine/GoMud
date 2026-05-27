@@ -100,7 +100,7 @@ var (
 // state machines must run continuously regardless of player presence.
 var systemNPCAnchorRooms = []int{
 	465,  // Thornwall depot — Ketil 357 (caravan master) + wagon 374 + Hob 375 + Bran 376
-	4123, // Stillwater Temple — Tova, Marsh forager 371
+	4198, // Reedwoven Hut, Stillwater Marsh — Tova, Marsh forager 371 (moved 4123→4198 in commit 0ef0d3fe; this anchor list missed the update until 2026-05-26)
 	3040, // Ironwind Steppe sanctuary — Halix, Steppe forager 372
 	4197, // Forager's Camp, Fernway South — Kessa, Fernway forager 373
 }
