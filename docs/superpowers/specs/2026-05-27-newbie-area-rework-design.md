@@ -171,7 +171,8 @@ skill multiply on top. The Folding instructor in Spoke E demonstrates the
   religion. The newbie area plants exactly one tease of this: an Orbital
   Stone in Spoke F (Lore), discoverable as a quiet moment with no fight
   attached. The player who finds and reads it will not understand it. The
-  player who comes back later (after Stage X content lands) will.
+  player who comes back later (after Stage X content lands) may, if they 
+  have really explored the world in complete depth through to the end game.
 
 ---
 
@@ -187,6 +188,10 @@ out of scope.
 **Awakening & identity**
 - The Awakening Rite (random mutation granted)
 - `mutations` command — see what you got and what it does
+- Mention (in-character only) that mutations evolve with use and that
+  new mutations can unlock naturally over time. **Concept only** —
+  the underlying mechanics (catalysts, evolution stages) remain Tier 4
+  out-of-scope for this zone. An NPC line, not a demonstration.
 - Stats centered around a human baseline — taught in-character ("you are
   slightly stronger than most" never "Str 112")
 - The 9 skills concept, use-based growth
@@ -238,16 +243,29 @@ out of scope.
 - Hint-reading
 - Reward + turn-in flow
 
+**Helpfiles and self-help literacy**
+- The `help` command and `help <topic>` syntax
+- How the helpfiles are structured and cross-referenced
+- Encouragement to read more — the in-game help system is the player's
+  long-term reference, not just a beginner crutch
+- **Placement:** primary teaching in the hub (Chunk 1 — school cleric
+  walks the player through `help` as part of orientation); reinforcement
+  in Spoke F (Lore), where reading and discovery are already thematic
+
 ### Tier 2 — Should teach
 
 **The shared cooldown** (key teaching beat, often missed by new players)
-- All special moves (kick, bash, trip, rally, hamstring, bite) **and**
-  spellcasting share a single cooldown timer (`special-move`, currently
-  `SpecialMoveCooldown` rounds)
+- All special moves (kick, bash, trip, rally, hamstring, bite), **thrown
+  alchemical grenades**, and **spellcasting** share a single cooldown
+  timer (`special-move`, currently `SpecialMoveCooldown` rounds —
+  verified at `internal/usercommands/throw.go:35`)
 - Taught in-character as "you can only attempt one feat of will or
   technique per few breaths" — the concept is pacing, not the number
 - A failed special on cooldown still triggers combat (no risk-free
   probing) — surface that lesson explicitly
+- Spoke C (Alchemy) is responsible for the grenades-share-this-cooldown
+  beat, since grenades originate there; throwing a grenade locks out
+  spellcasting and special moves for the same window
 
 **Crafting & gathering**
 - `recipes`, `craft <recipe>`
@@ -269,6 +287,7 @@ out of scope.
 - Toxicity ("your gut churns")
 - Potion bandolier (belt slot)
 - Healing salves vs. heal-spell buffs
+- Grenades (alchemical throwables; see the shared-cooldown beat above)
 
 **Advanced combat**
 - `kick` (auto-routes to stomp/knee based on position)
@@ -297,7 +316,7 @@ out of scope.
 
 - Mutation evolution / chrysalis catalysts
 - Aging-optimized alchemy
-- Combat-position dominance math
+- Combat-position dominance math (never explained, no hard numbers)
 - Faction-specific quest chains
 - Anything that doesn't already ship in DOGMud (no inventing systems here)
 
@@ -344,7 +363,11 @@ awakening site (the central plunge pool itself), the portal room, and
 several side streets / alleys / shore paths to provide texture.
 
 The hub is **sanctuary-flagged** (mutator). The player cannot be attacked
-here. NPCs cannot drag combat into the hub.
+here. NPCs cannot drag combat into the hub. The `sanctuary` mutator
+(`_datafiles/world/dogmud/mutators/sanctuary.yaml`) also bakes in a 5×
+regen multiplier for HP / SP / CP, so first-hour respite — wounds close,
+breath deepens, resolve returns — is automatic. Sanctum Basin used the
+same mutator on Academy Hall; the behavior carries over.
 
 ### 6.3 Spoke roster — 6 active + 1 reserved
 
@@ -535,12 +558,22 @@ blockers to this spec.
 
 ### 11.1 Exit destination (resolve in Chunk 1)
 
-Where does the hub portal land? Where does the long-hike-out exit?
-Candidates: The Confluence (current Sanctum Basin exit target), Thornwall
-City (busiest existing city), Stillwater (lake town). Both portal and
-hike-out should probably land at the same place to avoid splintering the
-world map. **Default**: The Confluence, since that's where the old
-Sanctum Basin pointed and it preserves existing world geography.
+The hub **portal** lands at **Thornwall City — Temple Interior
+(room 468)**, where Temple Priest Olen tends the altar. The temple is
+non-denominational ("a place for contemplation, community, and the
+management of tithes"), which gives the new arrival a tonal shift away
+from the Chrysalis-Church-sponsored hub and into the wider world's
+communal mode. Olen becomes the player's first wider-world NPC —
+calm, welcoming, sanctuary-feeling — without re-firehosing tutorial
+content.
+
+The **long-hike-out** destination is still open. Likely the
+`thornwall_outskirts` zone or the existing road network feeding into
+Thornwall City, to be confirmed in the Chunk 9 cutover sub-spec.
+
+(Splitting portal and hike-out landings is acceptable — the portal
+delivers a controlled "safe spot" arrival, the hike delivers a more
+adventurous "you walked here" arrival.)
 
 ### 11.2 Death-recovery room (resolve in Chunk 1)
 
