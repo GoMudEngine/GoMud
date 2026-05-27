@@ -33,6 +33,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/flags"
 	"github.com/GoMudEngine/GoMud/internal/forager"
+	"github.com/GoMudEngine/GoMud/internal/goals"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/hooks"
 	"github.com/GoMudEngine/GoMud/internal/inputhandlers"
@@ -263,6 +264,17 @@ func main() {
 			return false
 		}
 		return user.Character.HasBuffFlag(buffs.NoAggroTarget)
+	})
+
+	// Wire the goals → behaviortree archetype-weights resolver. Avoids
+	// the internal/goals → internal/behaviortree import cycle (goals
+	// is a leaf; behaviortree imports rooms, characters, etc.).
+	// Chunk 4.2.
+	goals.SetWeightsLookup(func(mob *mobs.Mob) map[string]float64 {
+		if mob == nil || mob.BehaviorArchetype == "" {
+			return nil
+		}
+		return behaviortree.GetEngine().GetArchetypeGoalWeights(mob.BehaviorArchetype)
 	})
 
 	// Discord integration
