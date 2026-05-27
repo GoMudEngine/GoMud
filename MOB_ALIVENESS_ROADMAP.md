@@ -105,7 +105,7 @@ should always agree.
 | 4.2 | Strategic | Goal selection | L | 4.1 | Done |
 | 4.3 | Strategic | Goal types catalog | L | 4.1 | Done |
 | 4.4 | Strategic | Strategic→tactical translation | XL | 4.3, Phase 2 | Done |
-| 4.5 | Strategic | Reactive goal generation | M | 1.6, 4.1 | Not started |
+| 4.5 | Strategic | Reactive goal generation | L | 1.6, 4.1 | Done |
 | 4.6 | Strategic | Goal satisfaction & pruning | S | 4.1 | Not started |
 | 5.1 | Cross-cut | Town justice | XL | 1.2, 1.3, 1.5, 3.4, Phase 4 | Not started |
 | 5.2 | Cross-cut | Bounty hunting | L | 1.4, 1.5, 2.8, 4.4 | Not started |
@@ -119,7 +119,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 26 / 42 done • 0 in progress • 16 not started.
+**Roll-up:** 27 / 42 done • 0 in progress • 15 not started.
 
 ---
 
@@ -739,13 +739,28 @@ verbs.
   plan at `docs/superpowers/plans/2026-05-27-mob-aliveness-4.4-strategic-tactical-translation.md`.
 
 ### 4.5 Reactive goal generation
-**Status:** Not started • **Size:** M
+**Status:** Done • **Size:** L (upsized from M during brainstorming — Option B all-events architecture)
 
 - **Goal:** Events seed new goals (player kills NPC's friend → revenge goal seeded into the friend's NPCs).
 - **In:** Event hooks (combat death, theft, faction insult), goal-seeding rules, goal deduplication.
 - **Out:** —
 - **Depends on:** 1.6, 4.1
 - **Why:** Goals that *react* to player actions are what make the world feel responsive.
+- **Shipped:** 10 rules in `internal/seeders/` package. Live: rule 1 (faction_kill_counter, MobDeath),
+  rule 3 (craft_materials_to_wealth_item, planner-invoked), rule 4 (friend_killed_to_revenge,
+  MobDeath + relationships walk), rule 5 (witness_of_theft_to_revenge, steal-action invoked),
+  rule 6 (aggressive_action_to_revenge, new PlayerAttackedMob event), rule 7 (gift_to_opinion_boost,
+  new GiftAccepted event with value-tiered bumps + cooldown), rule 9 (combat_assist_to_opinion_boost,
+  shares PlayerAttackedMob with rule 6 — multi-consumer payoff of Option B). Stubbed for follow-up:
+  rule 2 (faction_rep_counter — no clean positive-interaction event signal), rule 8
+  (quest_completion_to_opinion_boost — no quest-giver field on quest YAML), rule 10
+  (mastery_milestone_to_priority_bump — events.SkillUsed is player-only with no NewRank).
+  Three new event types added to events package: `PlayerAttackedMob`, `GiftOffered`, `GiftAccepted`.
+  Centralized dispatcher with panic recovery; main.go wires `events.RegisterListener` per type.
+  Cross-package follow-up logged: witness-of-theft archetype split (some mobs report crime instead
+  of personal revenge) — wait on 5.1 Town Justice. Spec at
+  `docs/superpowers/specs/2026-05-27-mob-aliveness-4.5-reactive-goal-generation-design.md`,
+  plan at `docs/superpowers/plans/2026-05-27-mob-aliveness-4.5-reactive-goal-generation.md`.
 
 ### 4.6 Goal satisfaction & pruning
 **Status:** Not started • **Size:** S
