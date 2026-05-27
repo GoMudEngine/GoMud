@@ -71,7 +71,9 @@ goal (usually `survival`), visible via `goal current <mob>`, and the
 
 ```
 internal/goals/                    (4.1 substrate + 4.2 selection)
+    context.md                       NEW — close documentation gap from 4.1/4.2
 internal/goals/catalog/            (NEW — 4.3)
+    context.md                       package overview (per project convention)
     catalog.go                       package-level helpers
     survival.go                      one file per type, init() registers
     wealth_gold.go
@@ -803,7 +805,9 @@ ordering for the plan:
 20. Catalog package blank-import in `main.go`.
 21. Archetype YAML edits: add `default_goals:` block to the 16
    defaulted-archetypes per Section 5.1.
-22. Smoke checklist + roadmap rollup (24/42 → 25/42) + PATCH_NOTES entry.
+22. Author `internal/goals/context.md` (closes 4.1/4.2 gap) +
+   `internal/goals/catalog/context.md` (new package).
+23. Smoke checklist + roadmap rollup (24/42 → 25/42) + PATCH_NOTES entry.
 
 **Push to prod is safe** — selection runs, archetype-seeded survival goals
 exist, but nothing tactical reads them yet (4.4 wires btree). Observable
@@ -822,13 +826,19 @@ satisfaction & pruning.
 ## File touch list
 
 **New:**
-- `internal/goals/lookup.go` — extend with `ArchetypeDefaultsLookupFn`,
-  `SetArchetypeDefaultsLookup`, internal `resolveArchetypeDefaults`.
+- `internal/goals/context.md` — close 4.1/4.2 documentation gap (per
+  `internal/relationships/`, `internal/knowledge/`, `internal/conversations/`
+  package convention).
 - `internal/goals/catalog/` subpackage — 13 type files + tests + a
-  `catalog.go` with package doc + shared helpers.
+  `catalog.go` with package doc + shared helpers + `context.md`.
 - `internal/behaviortree/engine_default_goals_test.go`.
 
+**Modified (engine — goals package):**
+- `internal/goals/lookup.go` — extend with `ArchetypeDefaultsLookupFn`,
+  `SetArchetypeDefaultsLookup`, internal `resolveArchetypeDefaults`.
+
 **Modified:**
+
 - `internal/goals/types.go` — `ParamSchema`, extend `GoalTypeMeta` with
   `Params`, `AllowMultiple`, `DedupKey`; extend `MobGoals` with
   `SeededFromArchetype`.
