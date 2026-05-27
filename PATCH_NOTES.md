@@ -1,5 +1,28 @@
 # DOGMud Patch Notes
 
+## 2026-05-27 — Mob aliveness 4.2 (goal selection)
+
+Adds the strategic-layer selection function over chunk 4.1's goal
+substrate. NPCs now pick one current goal from their goal list per
+round, weighted by priority, per-archetype multipliers, and an
+optional per-type context-score hook. Hysteresis (margin + min-hold)
+prevents goal-thrash.
+
+Substrate-only — the chosen goal isn't wired into behavior-tree
+execution yet (chunk 4.4's job). Two new admin subcommands surface
+the selection state for inspection: `goal current <mob>` and
+`goal scores <mob>`. A `goals.switch` debug log line fires per
+strategic switch.
+
+Config knobs in `Balance` (defaults conservative): `GoalSelectSwitchMargin`
+(5.0), `GoalSelectMinHoldRounds` (100), `GoalSelectTickEnabled` (true).
+Archetype YAML can now optionally carry a `goal_weights:` map (4.3
+will start using it).
+
+No player-facing change.
+
+---
+
 ## 2026-05-26 — Mob aliveness 4.1 (goal representation substrate)
 
 **No change to NPC behavior yet — this is foundations work.** Chunk 4.1
