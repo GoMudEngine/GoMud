@@ -71,3 +71,11 @@ func sliceContains(s []string, needle string) bool {
 	}
 	return false
 }
+
+// LookupGoalType returns the registered metadata for a goal type and
+// whether it was found. Exported variant of the internal lookupMeta —
+// catalog tests and future consumers may need to inspect the registry.
+// Chunk 4.3.
+func LookupGoalType(name string) (GoalTypeMeta, bool) {
+	return lookupMeta(name)
+}
