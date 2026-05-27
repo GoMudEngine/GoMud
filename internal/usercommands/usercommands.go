@@ -104,6 +104,7 @@ var (
 		`get`:             {Get, false, true, false},     // Pick up allowed in combat — wandering mobs can loot your kills otherwise
 		`give`:            {Give, false, true, false},
 		`go`:              {Go, false, true, false},
+		`goal`:            {Goal, true, true, true}, // Admin only
 		`grapple`:         {Grapple, false, true, false},
 		`healing-gel`:     {HealingGel, false, true, false},
 		`help`:            {Help, true, true, false},

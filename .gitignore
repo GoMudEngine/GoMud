@@ -17,6 +17,8 @@ _datafiles/**/knowledge/
 _datafiles/**/opinions/
 # Runtime NPC fact awareness state — not committed
 _datafiles/**/facts.awareness/
+# Runtime NPC goal state — not committed
+_datafiles/**/goals/
 .worktrees/
 tools/testing/reports/*.md
 vendor/

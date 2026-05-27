@@ -1,0 +1,38 @@
+The <ansi fg="command">goal</ansi> command inspects and seeds the
+strategic-layer goals held by a mob template. Goals drive future
+behavior-tree planning (chunk 4.4+); this admin entry point exists
+for inspection, smoke-testing, and one-off seeding.
+
+<ansi fg="yellow-bold">Usage:</ansi>
+
+<ansi fg="command">goal list <mob-ident></ansi>
+  List every goal on the mob, sorted priority-desc then id-asc.
+
+<ansi fg="command">goal show <mob-ident> <goal-id></ansi>
+  Show one goal's full record (type, priority, params,
+  timestamps).
+
+<ansi fg="command">goal add <mob-ident> <type> <priority> [key=value ...]</ansi>
+  Append a new goal. Conflicting existing goals with strictly
+  lower priority are displaced; equal-or-higher priority blocks
+  the Add. key=value params parse as int -> float -> bool ->
+  string (no quoting needed).
+
+<ansi fg="command">goal remove <mob-ident> <goal-id></ansi>
+  Delete a single goal by id (e.g. <ansi fg="cyan">g3</ansi>).
+
+<ansi fg="command">goal clear <mob-ident></ansi>
+  Wipe every goal on the mob and reset the goal-id counter to 1.
+  Intentionally heavy-hand — admin-only reset.
+
+<ansi fg="yellow-bold">Mob identifier:</ansi>
+  Numeric template id (e.g. <ansi fg="cyan">371</ansi>) or namesimple
+  (e.g. <ansi fg="cyan">tova</ansi>, <ansi fg="cyan">stillwater_smith</ansi>).
+
+<ansi fg="yellow-bold">Notes:</ansi>
+  - Changes persist immediately to
+    <ansi fg="cyan">_datafiles/world/dogmud/goals/{mobId}-{namesimple}.yaml</ansi>.
+  - Goal ids are short and stable (<ansi fg="cyan">g1</ansi>, <ansi fg="cyan">g2</ansi>, ...) and
+    never reuse within a file's lifetime (except via <ansi fg="command">clear</ansi>).
+  - The goal-type registry is empty at chunk 4.1 ship; chunk 4.3
+    fills it with concrete goal types.

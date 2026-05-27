@@ -1,5 +1,30 @@
 # DOGMud Patch Notes
 
+## 2026-05-26 — Mob aliveness 4.1 (goal representation substrate)
+
+**No change to NPC behavior yet — this is foundations work.** Chunk 4.1
+lays the substrate for the strategic layer: a typed goal store that lets
+NPCs hold persistent, prioritized goals (revenge, wealth, protection,
+survival, etc.) with satisfaction predicates and expiry. The store
+persists per-NPC on disk, is concurrent-safe, and resolves conflicts by
+priority when the same target receives two goals of the same type.
+
+**Why it matters.** The current behavior tree answers "what do I do
+*right now*?" A goal store answers "what do I *want*?" Without it,
+NPCs react but never *pursue*. Chunk 4.2 (goal selection) will wire the
+store into the behavior tick so NPCs actually act on what they want —
+that's when the observable change lands. Chunks 4.3–4.6 build out the
+goal-type catalog, strategic-to-tactical translation, reactive goal
+generation (NPCs form grudges from world events), and automatic
+satisfaction pruning.
+
+**Admin tooling.** `goal list <mob>`, `goal show <mob> <id>`,
+`goal add <mob> <type> ...`, `goal remove <mob> <id>`, and
+`goal clear <mob>` are available for inspection and testing during
+development. Visible only to admins; players have no new UI.
+
+---
+
 ## 2026-05-26 — Aliveness 3.8 hotfix (caravan + forager + dashboard)
 
 **Lars stops at every vendor now.** A one-line bug in
