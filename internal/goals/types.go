@@ -41,10 +41,20 @@ type MobGoals struct {
 // may be called from any context.
 type PredicateFn func(g *Goal, mob *mobs.Mob) bool
 
+// ContextScoreFn returns a non-negative multiplier for a goal in the
+// current mob context. 0 effectively suppresses the goal from selection
+// this tick (e.g. "revenge target not in zone"). Must be pure(ish):
+// same goal + same mob state → same answer. Side effects forbidden —
+// may be called from any context.
+//
+// Chunk 4.2 — 4.3 will register concrete implementations per goal type.
+type ContextScoreFn func(g *Goal, mob *mobs.Mob) float64
+
 // GoalTypeMeta is registered once per goal type by chunk 4.3's catalog.
 type GoalTypeMeta struct {
 	Predicate     PredicateFn
-	ConflictsWith []string // type names this goal type conflicts with
+	ConflictsWith []string       // type names this goal type conflicts with
+	ContextScore  ContextScoreFn // chunk 4.2 — optional; nil = always 1.0
 }
 
 // AddResult reports what happened on a successful Add.
