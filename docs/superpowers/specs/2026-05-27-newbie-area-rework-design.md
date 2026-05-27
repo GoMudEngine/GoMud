@@ -80,6 +80,18 @@ These are non-negotiable rules that bind every chunk:
 7. **In-character lore wherever possible.** Folding, mutations, the
    Chrysalis, factions — all delivered through NPC dialogue, environmental
    storytelling, and quest framing.
+8. **Zero geographic coordinate overlaps.** **Hard requirement.** No two
+   rooms in the newbie area may share an `(x, y, z)` coordinate tuple,
+   and no newbie-area room may share an `(x, y, z)` tuple with any
+   existing room anywhere else in the world. This is strictest during
+   Chunks 1–8 when the new zone coexists with Sanctum Basin — both must
+   remain collision-free against each other and against every other
+   zone. A coordinate-uniqueness audit is part of every chunk's
+   acceptance criteria (see §10.1) and the global coordinate budget for
+   the new zone is reserved in Chunk 0 (see §10).
+   Baseline: 402 existing unique coordinates across 15 zones, zero
+   current collisions; ample empty space east/north of the current
+   world for a 150-room block.
 
 ---
 
@@ -194,7 +206,11 @@ out of scope.
   out-of-scope for this zone. An NPC line, not a demonstration.
 - Stats centered around a human baseline — taught in-character ("you are
   slightly stronger than most" never "Str 112")
-- The 9 skills concept, use-based growth
+- The skill roster — **15 skills total**, use-based growth (full
+  list in `internal/skills/skills.go`: WeaponCombat, UnarmedCombat,
+  Spellcasting, Rhetoric, Skullduggery, Search, Bartering,
+  Blacksmithing, Alchemy, Tailoring, Cooking, Jewelcrafting,
+  Enchanting, Salvage, Manifestation)
 - No XP, no levels — change comes from use
 
 **Movement & exploration**
@@ -202,6 +218,7 @@ out of scope.
 - `look`, `look <target>`, `examine`
 - `map` (visited-room map)
 - `pathto <room>` for long-distance routing
+- `scan` — peek into adjacent rooms without moving
 - `hint` (the quest/dialogue hint system)
 - `who`, `time`, `weather`, `help`, `help <topic>`
 
@@ -212,9 +229,17 @@ out of scope.
 - Encumbrance tiers (light → crushed) — descriptive, never raw weight
 - Equipment-slot overview (which slots exist, what goes where)
 - Component-bag concept (auto-route on pickup, `sort` for migration)
+- Unidentified items reveal their stats via `cast identify` — granted
+  to every new character as a starter spell (works at trivial
+  difficulty regardless of the player's spellcasting investment)
 
 **Combat basics**
 - `attack <target>`, `flee`, `surrender`
+- **Combat is player-initiated.** Most mobs do not auto-aggro on entry
+  — the player must `attack` to start a fight. Some hostile types
+  (bandits, predators in outer rings) are exceptions, and learning to
+  spot them is itself a Tier 1 lesson. The default keeps the early
+  game forgiving and reinforces the "soft first hour" tenet.
 - Three resource pools — HP / SP / CP — taught in-character ("a deep
   ache in your bones / a burning in your lungs / your resolve falters")
 - Defense is automatic (dodge/parry/block) — no command, no input
@@ -242,6 +267,12 @@ out of scope.
 - `quest` / `quests`, `ask <npc> quest`
 - Hint-reading
 - Reward + turn-in flow
+
+**Character management**
+- `renameself <newname>` — change your character's display name
+  (touched lightly during onboarding)
+- Account deletion is supported (irrevocable; framed in lore as
+  "passing back into the Chrysalis dream")
 
 **Helpfiles and self-help literacy**
 - The `help` command and `help <topic>` syntax
@@ -295,11 +326,41 @@ out of scope.
 - Grapple basics: `takedown`, `escape`, `reversal`
 - Positions: standing / prone / grappled
 
+**Skullduggery family** (the sneak/steal/utility skill cluster)
+- `search` — find hidden objects, passages, and creatures
+  (skill: Search)
+- `picklock <chest>` — open locked containers (skill: Skullduggery)
+- `throw <item>` — hurl alchemical grenades and other throwables
+  (skill: Skullduggery, shares `special-move` cooldown — see above)
+- The teaching beat is light at the newbie level: a single hidden
+  passage in one spoke, one locked-but-pickable chest, one grenade
+  in the Spoke C alchemy reward chain. Mastery is wider-world content.
+
+**Quality-of-life**
+- `set linewidth <N>` — per-character terminal width (40–240, default
+  80). Surfaced once at the school as "if your client wraps text
+  oddly, you can adjust it here."
+
 ### Tier 3 — Tease only (player sees, does not master)
 
-- **Living NPCs.** Schedules (NPCs come and go by time of day), sleeping
-  at night, NPC↔NPC conversations, caravans passing through the area
-  (not boardable — just visible)
+- **Living NPCs.** The aliveness system visibly drives:
+  - Schedules — townsfolk come and go by time of day; the smith
+    works the forge during work hours and drinks at the inn after
+  - Sleeping at night — NPCs visibly lie down, sleep, and can be
+    observed (and, for the curious player, woken)
+  - NPC↔NPC conversations — relationship-keyed exchanges between
+    townsfolk overheard by the player
+  - Caravans passing through — visible caravans on the road; a
+    caravan runner shuttles goods between depot and vendors
+  - Foragers visibly working their territories (gathering, salvaging)
+  - Patrols crossing the outer rings
+  None of these are boardable, hireable, or commandable here — they
+  are texture, not affordances. Mastery is wider-world content.
+- **Infrared vision.** A few mutations grant infrared sight, which
+  renders dark-room observers as anonymized "a figure" instead of
+  named NPCs. If a player rolls such a mutation, they see it in
+  action; otherwise it's mentioned in passing as one possible
+  expression of the Awakening.
 - **Factions & reputation.** The concept is flagged. Mutations cause
   reactions. No deep faction quests here.
 - **Companions.** The player sees one in the world. The
@@ -521,7 +582,7 @@ The old Sanctum Basin only disappears in the final chunk.
 
 | Chunk | Scope | Approx new rooms | Sub-spec needed? |
 |---|---|---|---|
-| **0** | This spec; per-chunk specs sketched at outline level | 0 | (this doc) |
+| **0** | This spec; per-chunk specs sketched at outline level; **coordinate budget allocated** — a contiguous `(x, y, z)` region of the world map is reserved for the new zone (e.g., somewhere east of Ironwind Steppe). Documented in the zone-config or a coord-budget sidecar. Re-run the global coord scanner to confirm zero collisions with existing zones. | 0 | (this doc) |
 | **1** | **Hub town authored end-to-end.** Awakening site + rite. Portal mechanic. Veteran skip path works end-to-end. **All six active spokes stubbed** as single placeholder rooms with "under construction" flavor — playable, walkable, but no real content. (Spoke G — the reserved future slot — has *no exit* from the hub until a future-system chunk claims it; it does not get a stub.) School cleric, innkeeper, healer, banker, general-store merchant, folk-tradition NPC, hub-square crier all authored. | ~20 + 6 stubs | Yes |
 | **2** | **Spoke A — Martial.** Full inner/middle/outer + boss + repeatable + cert rewards. Combat-system teaching beats. Replaces the Spoke A stub. | ~20 | Yes |
 | **3** | **Spoke B — Forge & Forge-Craft.** | ~20 | Yes |
@@ -546,6 +607,9 @@ Each chunk's sub-spec must define:
 - **Lesson coverage** (which Tier 1 / Tier 2 items from §5 are touched
   by this spoke and where)
 - **No-hard-numbers audit** (every player-facing string sweeps clean)
+- **Coordinate-uniqueness audit** — run the global coord scanner; the
+  chunk fails if any of its new rooms collide with each other or with
+  any existing room anywhere in the world (per tenet 8 in §3)
 - **Smoke-test plan** (the specific things a tester verifies before
   declaring the chunk done)
 
@@ -617,7 +681,16 @@ authoring work. Doing it lightly is high-impact flavor.
 Default: **lightly**. One or two NPCs per spoke notice the player's
 mutation. The rest treat the player as a generic Opened.
 
-### 11.6 Future-slot placeholder
+### 11.6 Bounty system (conditional)
+
+`admin.bounty.go` exists today but the player-facing `bounty` command
+does not. If the aliveness work or a subsequent chunk ships a player-
+facing bounty system before this rework lands, the tutorial should
+add a Tier 2 teaching beat for it (likely in Spoke F or as a hub
+crier announcement). Until then, omit. Re-check at the end of the
+aliveness rollout.
+
+### 11.7 Future-slot placeholder
 
 The reserved Spoke G slot — should the spec lock in *where* it attaches
 geographically (between which existing spokes)? Knowing the slot in
