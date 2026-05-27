@@ -11,11 +11,13 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/factions"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/knowledge"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
+	"github.com/GoMudEngine/GoMud/internal/seeders"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/awareness"
@@ -233,6 +235,13 @@ func stealFromMob(actor Actor, mobInstanceId int, attackerScore float64,
 			actor.SendText(messaging.CategoryLoot, fmt.Sprintf(
 				`You successfully steal %s from <ansi fg="mobname">%s</ansi>.`,
 				strings.Join(stolenStuff, ` and `), m.Character.Name))
+
+			// Rule 5: seed revenge goals on the victim and any witnesses
+			// in the same room. Only fires for player thieves; mob-on-mob
+			// theft is not a supported use-case for this path.
+			if actor.IsPlayer() {
+				seeders.OnTheft(actor.GetUserId(), m, items.Item{})
+			}
 		}
 
 		return result
