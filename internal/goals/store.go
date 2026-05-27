@@ -370,11 +370,11 @@ func Recompute(mobId int, namesimple string, mob *mobs.Mob, nowRound uint64) {
 	// Structured switch log line.
 	fromStr := "none"
 	if prev != nil {
-		fromStr = fmt.Sprintf("g%s(%s,%d)", prev.Id, prev.Type, prev.Priority)
+		fromStr = fmt.Sprintf("%s(%s,%d)", prev.Id, prev.Type, prev.Priority)
 	}
 	toStr := "none"
 	if current != nil {
-		toStr = fmt.Sprintf("g%s(%s,%d)", current.Id, current.Type, current.Priority)
+		toStr = fmt.Sprintf("%s(%s,%d)", current.Id, current.Type, current.Priority)
 	}
 	mudlog.Debug("goals.switch",
 		"mob_id", mobId,
