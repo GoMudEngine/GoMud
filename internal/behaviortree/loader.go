@@ -29,22 +29,22 @@ func LoadTreeFromFile(path string) (Node, error) {
 }
 
 // LoadArchetypeYAMLFromFile reads an archetype YAML file and returns
-// both the compiled tree Node AND any chunk-4.2 goal_weights map
-// declared at the top level.
-func LoadArchetypeYAMLFromFile(path string) (Node, map[string]float64, error) {
+// the compiled tree Node, the chunk-4.2 goal_weights map, AND any
+// chunk-4.3 default_goals list.
+func LoadArchetypeYAMLFromFile(path string) (Node, map[string]float64, []GoalDefault, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	var def TreeDef
 	if err := yaml.Unmarshal(data, &def); err != nil {
-		return nil, nil, fmt.Errorf("parse error: %w", err)
+		return nil, nil, nil, fmt.Errorf("parse error: %w", err)
 	}
 	tree, err := compileNode(def.Tree, "root")
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
-	return tree, def.GoalWeights, nil
+	return tree, def.GoalWeights, def.DefaultGoals, nil
 }
 
 // LoadTreeFromBytes parses YAML bytes and compiles into a Node tree.

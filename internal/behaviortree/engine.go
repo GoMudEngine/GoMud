@@ -19,6 +19,7 @@ type Engine struct {
 	archetypes           map[string]Node                    // archetype name → compiled root node
 	noArchetype          map[string]bool                    // archetype name → no archetype file exists on disk
 	archetypeGoalWeights map[string]map[string]float64      // chunk 4.2 — per-archetype goal-type weight multipliers
+	archetypeDefaultGoals map[string][]GoalDefault           // chunk 4.3 — per-archetype default goals
 	queue                []DelayedAction
 }
 
@@ -31,13 +32,14 @@ var globalEngine *Engine
 
 func init() {
 	globalEngine = &Engine{
-		trees:                make(map[int]Node),
-		noTree:               make(map[int]bool),
-		roomTrees:            make(map[int]Node),
-		noRoomTree:           make(map[int]bool),
-		archetypes:           make(map[string]Node),
-		noArchetype:          make(map[string]bool),
-		archetypeGoalWeights: make(map[string]map[string]float64),
+		trees:                 make(map[int]Node),
+		noTree:                make(map[int]bool),
+		roomTrees:             make(map[int]Node),
+		noRoomTree:            make(map[int]bool),
+		archetypes:            make(map[string]Node),
+		noArchetype:           make(map[string]bool),
+		archetypeGoalWeights:  make(map[string]map[string]float64),
+		archetypeDefaultGoals: make(map[string][]GoalDefault),
 	}
 	// Register the attack rejection callback so FireAttackRejected can fire btree events
 	mobs.AttackRejectedTryMobBehavior = func(mobInstanceId int, ctx mobs.EventContext) bool {
@@ -143,11 +145,12 @@ func (e *Engine) GetRoomTree(roomId int) Node {
 	return e.roomTrees[roomId]
 }
 
-// LoadArchetype loads and caches a behavior tree (and any chunk-4.2
-// goal_weights map) for an archetype name. Clears any negative-cache
-// entry so newly added files are picked up at runtime.
+// LoadArchetype loads and caches a behavior tree (chunk-4.2
+// goal_weights map, and chunk-4.3 default_goals list) for an
+// archetype name. Clears any negative-cache entry so newly added
+// files are picked up at runtime.
 func (e *Engine) LoadArchetype(name string, path string) error {
-	tree, weights, err := LoadArchetypeYAMLFromFile(path)
+	tree, weights, defaults, err := LoadArchetypeYAMLFromFile(path)
 	if err != nil {
 		return err
 	}
@@ -157,6 +160,10 @@ func (e *Engine) LoadArchetype(name string, path string) error {
 		e.archetypeGoalWeights = map[string]map[string]float64{}
 	}
 	e.archetypeGoalWeights[name] = weights
+	if e.archetypeDefaultGoals == nil {
+		e.archetypeDefaultGoals = map[string][]GoalDefault{}
+	}
+	e.archetypeDefaultGoals[name] = defaults
 	delete(e.noArchetype, name)
 	e.mu.Unlock()
 	return nil
@@ -177,6 +184,21 @@ func (e *Engine) GetArchetypeGoalWeights(name string) map[string]float64 {
 	for k, v := range raw {
 		out[k] = v
 	}
+	return out
+}
+
+// GetArchetypeDefaultGoals returns the cached default_goals list for
+// the named archetype, or an empty slice if the archetype is unknown
+// or declared no defaults. Returns a shallow copy. Chunk 4.3.
+func (e *Engine) GetArchetypeDefaultGoals(name string) []GoalDefault {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
+	raw := e.archetypeDefaultGoals[name]
+	if len(raw) == 0 {
+		return []GoalDefault{}
+	}
+	out := make([]GoalDefault, len(raw))
+	copy(out, raw)
 	return out
 }
 

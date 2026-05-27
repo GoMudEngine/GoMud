@@ -71,12 +71,13 @@ func TestGetArchetypeGoalWeights_UnknownArchetype_EmptyMap(t *testing.T) {
 // newEngineForTest returns a fresh Engine for isolated goal-weights tests.
 func newEngineForTest() *Engine {
 	return &Engine{
-		trees:                map[int]Node{},
-		noTree:               map[int]bool{},
-		roomTrees:            map[int]Node{},
-		noRoomTree:           map[int]bool{},
-		archetypes:           map[string]Node{},
-		noArchetype:          map[string]bool{},
-		archetypeGoalWeights: map[string]map[string]float64{},
+		trees:                 map[int]Node{},
+		noTree:                map[int]bool{},
+		roomTrees:             map[int]Node{},
+		noRoomTree:            map[int]bool{},
+		archetypes:            map[string]Node{},
+		noArchetype:           map[string]bool{},
+		archetypeGoalWeights:  map[string]map[string]float64{},
+		archetypeDefaultGoals: map[string][]GoalDefault{},
 	}
 }

@@ -74,7 +74,21 @@ type NodeDef struct {
 // multipliers consumed by the goals package's Select function via a
 // registered weights-lookup callback. Optional; missing or empty map
 // means selection scores at default 1.0 for every goal type.
+//
+// DefaultGoals is chunk-4.3 archetype metadata: default goals seeded
+// onto fresh mobs whose template references this archetype. Consumed
+// by internal/goals/ via the SetArchetypeDefaultsLookup callback.
 type TreeDef struct {
-	Tree        NodeDef            `yaml:"tree"`
-	GoalWeights map[string]float64 `yaml:"goal_weights,omitempty"`
+	Tree         NodeDef            `yaml:"tree"`
+	GoalWeights  map[string]float64 `yaml:"goal_weights,omitempty"`  // chunk 4.2
+	DefaultGoals []GoalDefault      `yaml:"default_goals,omitempty"` // chunk 4.3
+}
+
+// GoalDefault declares one default goal to seed on a fresh mob whose
+// template uses this archetype. Consumed by internal/goals/ via the
+// SetArchetypeDefaultsLookup callback. Chunk 4.3.
+type GoalDefault struct {
+	Type     string         `yaml:"type"`
+	Priority int            `yaml:"priority"`
+	Params   map[string]any `yaml:"params,omitempty"`
 }
