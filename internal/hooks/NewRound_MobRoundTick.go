@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/goals"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -104,6 +105,7 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 		tickMobCharmDuration(mob)
 		tickMobBuffs(mob, mobInstanceId)
 		tickMobConditions(mob)
+		tickMobRecomputeGoals(mob, roundCount) // chunk 4.2 — strategic-layer selection
 
 		// Death check always runs — a DoT tick in an idle zone should
 		// still kill the mob. Skip the rest of the loop when the mob dies.
@@ -454,4 +456,21 @@ func tickMobConditions(mob *mobs.Mob) {
 // revalidateMobStats — current inline line 402.
 func revalidateMobStats(mob *mobs.Mob) {
 	mob.Character.Validate()
+}
+
+// tickMobRecomputeGoals runs the chunk-4.2 goal-selection pipeline
+// once per round for the given mob. Cheap-paths to no-op when the
+// mob has zero goals (the common case at 4.2 ship — 4.3/4.5 populate
+// goals). The configs.Balance.GoalSelectTickEnabled gate is wired in
+// Task 9 when the field exists.
+func tickMobRecomputeGoals(mob *mobs.Mob, nowRound uint64) {
+	if mob == nil {
+		return
+	}
+	templateId := int(mob.MobId)
+	name := util.ConvertForFilename(mob.Character.Name)
+	if len(goals.GoalsOf(templateId, name)) == 0 {
+		return // cheap path: no goals to select among
+	}
+	goals.Recompute(templateId, name, mob, nowRound)
 }
