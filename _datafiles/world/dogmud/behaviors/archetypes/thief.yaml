@@ -101,6 +101,11 @@ tree:
         - type: action
           do: try_sneak
 
+    # chunk 4.4: strategic goal pursuit (after reflex/stealth, before idle end)
+    - type: action
+      event: mob_idle
+      do: try_goal_planner
+
 default_goals:
   - type: survival
     priority: 80

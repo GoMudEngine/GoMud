@@ -21,6 +21,11 @@ tree:
         - type: action
           do: attack
 
+    # chunk 4.4: strategic goal pursuit (before forage loop, after self-defense)
+    - type: action
+      event: mob_idle
+      do: try_goal_planner
+
     # 2. Foraging-state per-tick loop: first check carry-cap +
     # fatigue thresholds (transitions out of Foraging when hit),
     # then salvage opportunistically, try a forage roll, and finally

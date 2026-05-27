@@ -71,7 +71,7 @@ func Select(
 		if prevValid {
 			return prev, false, SelectReason{
 				Kind: "kept_no_candidates",
-				Detail: fmt.Sprintf("all %d goal(s) filtered out (satisfied/expired/contextMod=0); prev g%s still valid",
+				Detail: fmt.Sprintf("all %d goal(s) filtered out (satisfied/expired/contextMod=0); prev %s still valid",
 					len(goals), prev.Id),
 			}
 		}
@@ -96,13 +96,13 @@ func Select(
 	if prev == nil {
 		return top, true, SelectReason{
 			Kind:   "switched",
-			Detail: fmt.Sprintf("g%s won fresh selection (score=%.2f)", top.Id, effectiveScore(top, weights, mob)),
+			Detail: fmt.Sprintf("%s won fresh selection (score=%.2f)", top.Id, effectiveScore(top, weights, mob)),
 		}
 	}
 	if !prevValid {
 		return top, true, SelectReason{
 			Kind: "switched_prev_invalid",
-			Detail: fmt.Sprintf("prev g%s no longer valid (removed/satisfied/expired); g%s wins (score=%.2f)",
+			Detail: fmt.Sprintf("prev %s no longer valid (removed/satisfied/expired); %s wins (score=%.2f)",
 				prev.Id, top.Id, effectiveScore(top, weights, mob)),
 		}
 	}
@@ -111,7 +111,7 @@ func Select(
 	if top == prev {
 		return prev, false, SelectReason{
 			Kind:   "kept_top_unchanged",
-			Detail: fmt.Sprintf("g%s remains top (score=%.2f)", prev.Id, effectiveScore(prev, weights, mob)),
+			Detail: fmt.Sprintf("%s remains top (score=%.2f)", prev.Id, effectiveScore(prev, weights, mob)),
 		}
 	}
 
@@ -124,7 +124,7 @@ func Select(
 	if heldRounds < minHold {
 		return prev, false, SelectReason{
 			Kind:   "kept_hysteresis_min_hold",
-			Detail: fmt.Sprintf("g%s wants to displace g%s but held only %d/%d rounds", top.Id, prev.Id, heldRounds, minHold),
+			Detail: fmt.Sprintf("%s wants to displace %s but held only %d/%d rounds", top.Id, prev.Id, heldRounds, minHold),
 		}
 	}
 	topScore := effectiveScore(top, weights, mob)
@@ -134,13 +134,13 @@ func Select(
 	if scoreGap < margin {
 		return prev, false, SelectReason{
 			Kind: "kept_hysteresis_margin",
-			Detail: fmt.Sprintf("g%s(%.2f) beat g%s(%.2f) by only %.2fpts; margin %.2f required",
+			Detail: fmt.Sprintf("%s(%.2f) beat %s(%.2f) by only %.2fpts; margin %.2f required",
 				top.Id, topScore, prev.Id, prevScore, scoreGap, margin),
 		}
 	}
 	return top, true, SelectReason{
 		Kind: "switched",
-		Detail: fmt.Sprintf("g%s(%.2f) displaced g%s(%.2f) by %.2fpts after %d held rounds",
+		Detail: fmt.Sprintf("%s(%.2f) displaced %s(%.2f) by %.2fpts after %d held rounds",
 			top.Id, topScore, prev.Id, prevScore, scoreGap, heldRounds),
 	}
 }

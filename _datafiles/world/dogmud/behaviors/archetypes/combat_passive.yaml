@@ -12,7 +12,11 @@
 
 tree:
   type: selector
-  children: []
+  children:
+    # chunk 4.4: strategic goal pursuit
+    - type: action
+      event: mob_idle
+      do: try_goal_planner
 
 default_goals:
   - type: survival

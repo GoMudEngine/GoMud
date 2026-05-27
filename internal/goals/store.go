@@ -383,6 +383,11 @@ func Recompute(mobId int, namesimple string, mob *mobs.Mob, nowRound uint64) {
 		"reason_kind", reason.Kind,
 		"reason_detail", reason.Detail,
 		"round", nowRound)
+
+	// Chunk 4.4: invoke registered plan-state cleanup so the new goal's
+	// planner starts with fresh MiscData. Best-effort; nil callback is
+	// fine (tests, unboot).
+	invokePlanStateClear(mob)
 }
 
 // instanceForRecompute returns the first loaded mob instance for the

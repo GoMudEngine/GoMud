@@ -104,7 +104,7 @@ should always agree.
 | 4.1 | Strategic | Goal representation | M | 1.1, 1.4 | Done |
 | 4.2 | Strategic | Goal selection | L | 4.1 | Done |
 | 4.3 | Strategic | Goal types catalog | L | 4.1 | Done |
-| 4.4 | Strategic | Strategic→tactical translation | L | 4.3, Phase 2 | Not started |
+| 4.4 | Strategic | Strategic→tactical translation | XL | 4.3, Phase 2 | Done |
 | 4.5 | Strategic | Reactive goal generation | M | 1.6, 4.1 | Not started |
 | 4.6 | Strategic | Goal satisfaction & pruning | S | 4.1 | Not started |
 | 5.1 | Cross-cut | Town justice | XL | 1.2, 1.3, 1.5, 3.4, Phase 4 | Not started |
@@ -119,7 +119,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 25 / 42 done • 0 in progress • 17 not started.
+**Roll-up:** 26 / 42 done • 0 in progress • 16 not started.
 
 ---
 
@@ -714,13 +714,29 @@ verbs.
   `docs/superpowers/plans/2026-05-27-mob-aliveness-4.3-goal-types-catalog.md`.
 
 ### 4.4 Strategic→tactical translation
-**Status:** Not started • **Size:** L
+**Status:** Done • **Size:** XL (upsized from L during brainstorming — all 13 planners shipped deep)
 
 - **Goal:** Planner that turns a goal into routine/tactical actions (e.g., "save for armor" → walk to shop, check stock, sell loot, save gold, buy when affordable).
 - **In:** Per-goal-type planners, fallback to btree, plan-failure recovery.
 - **Out:** General-purpose planner (HTN, GOAP) — start with hand-authored per-goal planners.
 - **Depends on:** 4.3, Phase 2 verbs
 - **Why:** Bridges desire to action. The whole point of the strategic layer.
+- **Shipped:** 13 deep planners in `internal/planners/`: `survival`, `wealth-gold`, `wealth-item`,
+  `craft-item`, `revenge-mob`, `revenge-faction`, `protection-mob`, `protection-faction`,
+  `befriend`, `befriend-faction`, `mastery-skill`, `mastery-equip`, `visit-zone`. Each is a
+  stateless Go function (`PlanFn`) called per-tick when a goal of its type is current; intermediate
+  progress lives in `mob.Character.MiscData` under a `plan:<goal_type>:` key prefix wiped on goal
+  switch via `SetPlanStateClear` callback registered in `main.go`. New `try_goal_planner` btree
+  action (`internal/behaviortree/actions_goal.go`) dispatches per `goals.CurrentGoalOf`; inserted
+  into all 18 non-boss archetype trees at author-chosen positions. 15 supporting helpers
+  (`shop-in-zone selling/buying`, faction member filters, hostile finder, crafting-station
+  finder, zone-adjacency BFS cache, gift picker, random-exit picker, social-emote rotation,
+  recipe-by-skill picker, MiscData read/write helpers). Skill training table maps the canonical
+  `skills.SkillTag` values to TrainingContext kinds for the mastery-skill planner. Reactive seeding
+  hooks for `craft-item` (materials missing → seed wealth-item), `revenge-faction` /
+  `befriend-faction` (counter writes) deferred to 4.5. Permanent-stuck-goal pruning deferred to 4.6.
+  Spec at `docs/superpowers/specs/2026-05-27-mob-aliveness-4.4-strategic-tactical-translation-design.md`,
+  plan at `docs/superpowers/plans/2026-05-27-mob-aliveness-4.4-strategic-tactical-translation.md`.
 
 ### 4.5 Reactive goal generation
 **Status:** Not started • **Size:** M

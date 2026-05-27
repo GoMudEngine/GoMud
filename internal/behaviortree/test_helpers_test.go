@@ -18,6 +18,18 @@ import (
 func TestMain(m *testing.M) {
 	mudlog.SetupLogger(nil, "", "", false)
 
+	// Point the goals disk layer at a per-process temp dir so tests that
+	// call goals.Add don't read/write the real datafiles directory.
+	// Without this, saveToDisk persists test goals across runs and
+	// loadFromDisk on a second run re-loads them — causing "blocked by
+	// existing goal" conflicts after ClearCache() drops only the in-memory
+	// cache. Mirrors the goals/test_main_test.go pattern.
+	goalsDir, err := os.MkdirTemp("", "behaviortree-goals-test-*")
+	if err != nil {
+		panic("behaviortree test: mkdirtemp for goals: " + err.Error())
+	}
+	os.Setenv("DOGMUD_GOALS_DIR_OVERRIDE", goalsDir)
+
 	// Seed a default biome so GetVisibility() / GetBiome() don't return nil
 	// when rooms are created with no explicit Biome field. Without this,
 	// any code path that calls room.GetBiome().IsDark() panics.
@@ -32,7 +44,9 @@ func TestMain(m *testing.M) {
 		},
 	})
 
-	os.Exit(m.Run())
+	code := m.Run()
+	os.RemoveAll(goalsDir)
+	os.Exit(code)
 }
 
 // seedTestMob seeds a single mob spec at templateId and a single instance

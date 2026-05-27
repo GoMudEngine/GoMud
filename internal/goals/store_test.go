@@ -868,3 +868,57 @@ func TestLoadOrLazyInit_SeededDefaultFailsValidation_LogsAndContinues(t *testing
 		t.Errorf("expected only test-loose to seed, got %v", mg.Goals)
 	}
 }
+
+func TestRecompute_SwitchInvokesPlanStateClear(t *testing.T) {
+	ClearCache()
+	called := false
+	SetPlanStateClear(func(mob *mobs.Mob) {
+		called = true
+	})
+	defer SetPlanStateClear(nil)
+
+	mobId := 99601
+	name := "switch_invokes_clear"
+	g := &Goal{Type: "wealth", Priority: 50}
+	if _, err := Add(mobId, name, g); err != nil {
+		t.Fatalf("Add: %v", err)
+	}
+	// Add's eager Recompute will fire a switch (nil → new goal) and
+	// invoke the callback.
+	if !called {
+		t.Errorf("PlanStateClear callback not invoked on switch")
+	}
+}
+
+func TestRecompute_NoSwitch_DoesNotInvokeCallback(t *testing.T) {
+	ClearCache()
+	mobId := 99602
+	name := "noswitch_callback"
+	g := &Goal{Type: "wealth", Priority: 50}
+	if _, err := Add(mobId, name, g); err != nil {
+		t.Fatalf("Add: %v", err)
+	}
+	// Switch happened during Add. Now register the callback and force
+	// a no-switch Recompute (same goal still wins).
+	calls := 0
+	SetPlanStateClear(func(mob *mobs.Mob) {
+		calls++
+	})
+	defer SetPlanStateClear(nil)
+	Recompute(mobId, name, &mobs.Mob{}, 1000)
+	if calls != 0 {
+		t.Errorf("callback fired on no-switch tick: %d call(s)", calls)
+	}
+}
+
+func TestRecompute_NoCallbackRegistered_NoError(t *testing.T) {
+	ClearCache()
+	SetPlanStateClear(nil)
+	mobId := 99603
+	name := "no_callback"
+	g := &Goal{Type: "wealth", Priority: 50}
+	// Must not panic / error even without a callback.
+	if _, err := Add(mobId, name, g); err != nil {
+		t.Fatalf("Add: %v", err)
+	}
+}

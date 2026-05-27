@@ -75,6 +75,11 @@ tree:
       event: heard_callforhelp
       do: go_to_caller_room
 
+    # chunk 4.4: strategic goal pursuit (after patrol/callforhelp step)
+    - type: action
+      event: mob_idle
+      do: try_goal_planner
+
 default_goals:
   - type: survival
     priority: 80
