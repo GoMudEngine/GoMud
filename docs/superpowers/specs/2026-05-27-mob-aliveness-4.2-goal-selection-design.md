@@ -197,7 +197,9 @@ Select(goals, weights, mob, prev, currentSince, lastSwitch, now):
      → keep prev. reason = "kept_top_unchanged".
 
 7. Otherwise compute hysteresis gates:
-     a. heldRounds = nowRound - currentSinceRound
+     a. heldRounds = max(0, nowRound - currentSinceRound)
+        (clamp guards against stale currentSinceRound > nowRound — see
+         edge case 10. In normal operation, currentSinceRound ≤ nowRound.)
      b. scoreGap  = effectiveScore(top) - effectiveScore(prev)
      c. If heldRounds < GoalSelectMinHoldRounds:
           → keep prev. reason = "kept_hysteresis_min_hold"
@@ -263,6 +265,14 @@ After persistence write succeeds (or fails with logged warning):
     goals.Recompute(instance, currentRound)
 ```
 
+**Instance lookup:** there is no direct `GetInstancesByTemplate` helper
+on the `mobs` package today. 4.2 iterates `mobs.GetAllMobInstanceIds()`
+and filters by `mobs.GetInstance(id).MobId == templateId`. With
+instance counts in the low thousands and mutations being rare admin
+or future-4.5 events (not per-tick hot path), this is fine. If
+profiling later shows it as a hotspot, add a maintained
+`GetInstancesByTemplate` index in `mobs/`.
+
 Best-effort: if no instances are loaded (e.g. admin adds a goal for an
 offline mob), the recompute happens naturally on next tick when an
 instance loads.
@@ -320,7 +330,8 @@ afresh and writes the fields. No migration needed.
 
 **On `Remove(goalId)`:** if the removed goal was `CurrentGoalId`, clear
 `CurrentGoalId` and zero the round fields under the same write lock.
-Next tick's `Recompute` sees `prev == nil` and selects fresh.
+The eager `Recompute` fired by `Remove` (§5.2) then runs immediately
+with `prev == nil` and selects fresh from whatever remains.
 
 **On `Clear()`:** zeros all three fields plus the goal list.
 
@@ -456,10 +467,10 @@ subcommands).
 | 4 | Archetype YAML has malformed `goal_weights:` | Loader logs warning, treats as empty map. Other archetype fields load normally. |
 | 5 | `ContextScore` registered but panics on a particular mob state | Recovered by `Recompute`'s deferred panic catch (mirrors how `actBtreeStep` handles action panics). Logs `goals.context_score panic` with type + mob id; that goal scored 0 for this tick. |
 | 6 | `current_goal_id` in MobGoals file points to a goal id that no longer exists (manual file edit, version drift) | `Select` sees `prev=nil` (lookup miss), branches to `switched_prev_invalid`, picks fresh. File self-heals on next switch. |
-| 7 | Two instances of same mob template tick in same round | First instance's `Recompute` writes cache + file. Second instance's `Recompute` sees `held=0` rounds (just updated) and won't switch again. Idempotent. |
+| 7 | Two instances of same mob template tick in same round | First instance's `Recompute` writes cache + file. Second instance's `Recompute` sees `top == prev` (the same goal was just selected) and short-circuits at step 6 with `kept_top_unchanged`. Idempotent regardless of hysteresis state. |
 | 8 | Goal added with priority high enough to beat current goal mid-min-hold-window | Eager `Recompute` after `Add()` fires. Min-hold gate still applies — new goal must wait out the cooldown unless `prev_invalid`. Authoring escape hatch: admin can `goal remove` the current goal first, which clears prev and lets the new goal win immediately. |
 | 9 | Mob in combat when `Recompute` fires | Selection runs normally; current goal can switch. Tactical (btree) decisions stay tactical — 4.4 will decide whether a goal switch *during* combat re-routes the tactical loop. 4.2 just updates state. |
-| 10 | Server boot before round counter is initialized | `nowRound = 0` at first few ticks. Min-hold using `nowRound - currentSinceRound` works fine with `currentSinceRound = 0` (gap = 0, gate fails, prev held). First real switch happens once round counter increments past `GoalSelectMinHoldRounds`. |
+| 10 | Stale `CurrentSinceRound` > `nowRound` (e.g. round-counter file got reset or restored from an older snapshot than the goals file) | uint64 subtraction would underflow. `Select` clamps `heldRounds = max(0, nowRound - currentSinceRound)` — if currentSince > now, treat held = 0 (min-hold blocks). On the next switch, the stale value is overwritten. The clamp keeps `Select` defensive against any future plumbing that lets these get out of sync. (Normal operation: `roundCount` is persisted and clamped to `RoundCountMinimum = 1,314,000` at boot, so it never goes backward from a clean shutdown.) |
 | 11 | `goal scores` invoked from admin command during heavy contention | `Select` is pure and uses passed-in args; the admin command takes its own read-lock snapshot of `MobGoals` then releases before calling `Select`. No write contention from the read path. |
 | 12 | Schedule activity changes mid-round (e.g. mob enters sleep segment) | Schedules and goals are orthogonal layers — selection runs whether or not the mob is sleeping. `ContextScore` for individual goal types can consult `mob.HasBuffFlag(buffs.Sleeping)` if they want to score themselves to 0 while sleeping. 4.2 doesn't filter on activity. |
 | 13 | Mob dies and respawns | Goal list is per-template (4.1 contract) — survives automatically. Selection state (`current_goal_id`, round fields) also preserved; no special respawn hook. First post-respawn `Recompute` sees prev still valid in most cases, heldRounds spans the death window so min-hold gate trivially passes, same goal stays current unless a higher-scoring goal was added during the death window. If prev was removed during the death window, `switched_prev_invalid` branch picks fresh. Shared-template instances share selection state — accepted limitation. |
@@ -487,6 +498,8 @@ subcommands).
 - `ContextScore` of 0 fully filters a goal.
 - `ContextScore` multiplier > 1 elevates appropriately.
 - Tie-break stability: equal effective scores → priority desc, id asc.
+- Stale `currentSinceRound > nowRound` clamps `heldRounds` to 0 (no
+  uint64 underflow); min-hold gate blocks; no panic.
 
 `internal/goals/store_test.go` — `Recompute` integration tests (FS-spy fake):
 
