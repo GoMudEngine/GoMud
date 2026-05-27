@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 )
 
 // SelectReason explains why the selector picked what it did. Surfaced
@@ -184,9 +185,25 @@ func goalInList(g *Goal, slice []*Goal) bool {
 // var if a deterministic clock is needed (no test relies on this yet).
 var nowTime = func() time.Time { return time.Now().UTC() }
 
-// invokeContextScore is the panic-recovered wrapper around a registered
-// ContextScoreFn. Task 3 fills it in; for now, call directly (no recovery).
-func invokeContextScore(fn ContextScoreFn, g *Goal, mob *mobs.Mob) float64 {
+// invokeContextScore invokes a registered ContextScoreFn with panic
+// recovery. A panicking ContextScore logs a single-line warning and
+// returns 0 (filters the goal for this tick). One bad type does not
+// crash Recompute or the tick hook.
+func invokeContextScore(fn ContextScoreFn, g *Goal, mob *mobs.Mob) (result float64) {
+	defer func() {
+		if r := recover(); r != nil {
+			mobIdInfo := -1
+			if mob != nil {
+				mobIdInfo = int(mob.MobId)
+			}
+			mudlog.Warn("goals.context_score panic",
+				"type", g.Type,
+				"goal_id", g.Id,
+				"mob_id", mobIdInfo,
+				"panic", fmt.Sprintf("%v", r))
+			result = 0
+		}
+	}()
 	return fn(g, mob)
 }
 

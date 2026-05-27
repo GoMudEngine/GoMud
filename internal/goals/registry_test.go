@@ -81,3 +81,23 @@ func contains(haystack, needle string) bool {
 	}
 	return false
 }
+
+func TestInvokeContextScore_PanicRecoveredReturnsZero(t *testing.T) {
+	panicking := func(g *Goal, m *mobs.Mob) float64 {
+		panic("context score boom")
+	}
+	got := invokeContextScore(panicking, &Goal{Id: "g1", Type: "boom"}, &mobs.Mob{})
+	if got != 0 {
+		t.Errorf("got=%f, want 0 (panic should be recovered → 0)", got)
+	}
+	// Note: log emission check is best-effort — the package's existing
+	// tests don't fake mudlog, so we just verify the no-panic + zero return.
+}
+
+func TestInvokeContextScore_NoPanic_ReturnsFnResult(t *testing.T) {
+	fn := func(g *Goal, m *mobs.Mob) float64 { return 2.5 }
+	got := invokeContextScore(fn, &Goal{Id: "g1", Type: "calm"}, &mobs.Mob{})
+	if got != 2.5 {
+		t.Errorf("got=%f, want 2.5", got)
+	}
+}
