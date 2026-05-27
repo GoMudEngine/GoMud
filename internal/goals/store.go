@@ -7,6 +7,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // loadOrLazyInit returns the cached MobGoals for mobId, loading from
@@ -137,6 +138,13 @@ func Add(mobId int, namesimple string, g *Goal) (AddResult, error) {
 		mudlog.Warn("goals.Add: save failed", "mob_id", mobId, "error", err)
 		// Cache is still authoritative; caller treats as success.
 	}
+	// Eager Recompute so callers see consistent CurrentGoalOf state
+	// immediately (next tick will re-Recompute too — idempotent).
+	// Best-effort: if no instance is loaded for this template, we
+	// still want the file's CurrentGoalId to reflect the new top.
+	// Pass nil mob — ContextScore funcs that need mob state will
+	// score the goal at 1.0 (the panic-recovered default).
+	Recompute(mobId, namesimple, instanceForRecompute(mobId), util.GetRoundCount())
 	return AddResult{Added: g, Displaced: displaced}, nil
 }
 
@@ -179,6 +187,10 @@ func removeGoals(goals []*Goal, drop []*Goal) []*Goal {
 // Remove deletes a goal by id. Returns ErrGoalNotFound if the id is
 // not present on the mob. NextGoalId is NOT decremented — ids are
 // never reused within the lifetime of a mob's file.
+//
+// If the removed goal was current (chunk 4.2 selection state),
+// clear CurrentGoalId / round fields under the same write lock so
+// the eager Recompute that follows starts fresh.
 func Remove(mobId int, namesimple, goalId string) error {
 	mg := loadOrLazyInit(mobId, namesimple)
 	cacheMu.Lock()
@@ -196,29 +208,39 @@ func Remove(mobId int, namesimple, goalId string) error {
 		return ErrGoalNotFound
 	}
 	mg.Goals = out
+	if mg.CurrentGoalId == goalId {
+		mg.CurrentGoalId = ""
+		mg.CurrentSinceRound = 0
+		mg.LastSwitchRound = 0
+	}
 	nameByMobId[mobId] = namesimple
 	cacheMu.Unlock()
 
 	if err := saveToDisk(mobId, namesimple); err != nil {
 		mudlog.Warn("goals.Remove: save failed", "mob_id", mobId, "error", err)
 	}
+	Recompute(mobId, namesimple, instanceForRecompute(mobId), util.GetRoundCount())
 	return nil
 }
 
-// Clear removes every goal from the mob and resets NextGoalId to 1.
-// Admin-only — intentionally heavy-hand for resetting a mob's goal
-// state to defaults.
+// Clear removes every goal from the mob, resets NextGoalId to 1, and
+// zeros the chunk-4.2 selection state. Admin-only — intentionally
+// heavy-hand for resetting a mob's goal state to defaults.
 func Clear(mobId int, namesimple string) error {
 	mg := loadOrLazyInit(mobId, namesimple)
 	cacheMu.Lock()
 	mg.Goals = nil
 	mg.NextGoalId = 1
+	mg.CurrentGoalId = ""
+	mg.CurrentSinceRound = 0
+	mg.LastSwitchRound = 0
 	nameByMobId[mobId] = namesimple
 	cacheMu.Unlock()
 
 	if err := saveToDisk(mobId, namesimple); err != nil {
 		mudlog.Warn("goals.Clear: save failed", "mob_id", mobId, "error", err)
 	}
+	// No eager Recompute needed — there are no goals to select.
 	return nil
 }
 
@@ -315,4 +337,19 @@ func Recompute(mobId int, namesimple string, mob *mobs.Mob, nowRound uint64) {
 		"reason_kind", reason.Kind,
 		"reason_detail", reason.Detail,
 		"round", nowRound)
+}
+
+// instanceForRecompute returns the first loaded mob instance for the
+// given template id, or nil if none. The goals package can't import
+// behaviortree but CAN import mobs; we use the latter to give
+// Recompute a real *mobs.Mob whenever possible so registered
+// ContextScore hooks can read live state.
+func instanceForRecompute(mobId int) *mobs.Mob {
+	for _, instId := range mobs.GetAllMobInstanceIds() {
+		inst := mobs.GetInstance(instId)
+		if inst != nil && int(inst.MobId) == mobId {
+			return inst
+		}
+	}
+	return nil
 }

@@ -508,3 +508,95 @@ func TestCurrentGoalOf_StaleId_ReturnsNil(t *testing.T) {
 		t.Errorf("got=%v, want nil (stale current_goal_id)", got)
 	}
 }
+
+func TestAdd_EagerRecompute_FirstGoalBecomesCurrent(t *testing.T) {
+	ClearCache()
+	mobId := 99101
+	name := "eager_first"
+	g := &Goal{Type: "wealth", Priority: 50}
+	if _, err := Add(mobId, name, g); err != nil {
+		t.Fatalf("Add: %v", err)
+	}
+	got := CurrentGoalOf(mobId, name)
+	if got == nil {
+		t.Fatalf("CurrentGoalOf nil — Add did not eager-recompute")
+	}
+	if got.Type != "wealth" {
+		t.Errorf("current.Type=%q, want wealth", got.Type)
+	}
+}
+
+func TestRemove_OfCurrent_ClearsSelection_ThenEagerRecomputeSelectsFresh(t *testing.T) {
+	ClearCache()
+	mobId := 99102
+	name := "eager_remove"
+	g1 := &Goal{Type: "wealth", Priority: 30}
+	g2 := &Goal{Type: "revenge", Priority: 90}
+	r1, err := Add(mobId, name, g1)
+	if err != nil {
+		t.Fatalf("Add g1: %v", err)
+	}
+	// Backdate currentSinceRound so hysteresis min-hold is satisfied
+	// before we add g2 (which has higher priority and should displace g1).
+	mg := loadOrLazyInit(mobId, name)
+	cacheMu.Lock()
+	mg.CurrentSinceRound = 0 // held "forever" — far back enough to pass min-hold
+	cacheMu.Unlock()
+	if _, err := Add(mobId, name, g2); err != nil {
+		t.Fatalf("Add g2: %v", err)
+	}
+	// After both Adds (with min-hold satisfied), current should be g2 (priority 90 > 30).
+	if cur := CurrentGoalOf(mobId, name); cur == nil || cur.Type != "revenge" {
+		t.Fatalf("pre-remove current = %v, want revenge", cur)
+	}
+	// Remove a non-current goal (g1) — should not disturb current (g2).
+	if err := Remove(mobId, name, r1.Added.Id); err != nil {
+		t.Fatalf("Remove g1: %v", err)
+	}
+	if cur := CurrentGoalOf(mobId, name); cur == nil || cur.Type != "revenge" {
+		t.Errorf("after non-current remove, current = %v, want revenge", cur)
+	}
+}
+
+func TestRemove_OfNonCurrent_DoesNotChangeCurrent(t *testing.T) {
+	ClearCache()
+	mobId := 99103
+	name := "eager_remove_noncurr"
+	g1 := &Goal{Type: "wealth", Priority: 90}
+	g2 := &Goal{Type: "revenge", Priority: 30}
+	r1, _ := Add(mobId, name, g1)
+	r2, _ := Add(mobId, name, g2)
+	currentBefore := CurrentGoalOf(mobId, name)
+	if currentBefore == nil || currentBefore.Id != r1.Added.Id {
+		t.Fatalf("pre-remove current=%v, want g1", currentBefore)
+	}
+	if err := Remove(mobId, name, r2.Added.Id); err != nil {
+		t.Fatalf("Remove g2: %v", err)
+	}
+	currentAfter := CurrentGoalOf(mobId, name)
+	if currentAfter == nil || currentAfter.Id != r1.Added.Id {
+		t.Errorf("after non-current remove, current=%v, want g1", currentAfter)
+	}
+}
+
+func TestClear_ZerosAllSelectionFields(t *testing.T) {
+	ClearCache()
+	mobId := 99104
+	name := "eager_clear"
+	if _, err := Add(mobId, name, &Goal{Type: "wealth", Priority: 50}); err != nil {
+		t.Fatalf("Add: %v", err)
+	}
+	if cur := CurrentGoalOf(mobId, name); cur == nil {
+		t.Fatalf("pre-clear current nil")
+	}
+	if err := Clear(mobId, name); err != nil {
+		t.Fatalf("Clear: %v", err)
+	}
+	if cur := CurrentGoalOf(mobId, name); cur != nil {
+		t.Errorf("post-clear current=%v, want nil", cur)
+	}
+	mg := loadOrLazyInit(mobId, name)
+	if mg.CurrentSinceRound != 0 || mg.LastSwitchRound != 0 {
+		t.Errorf("round fields not zeroed: since=%d switch=%d", mg.CurrentSinceRound, mg.LastSwitchRound)
+	}
+}
