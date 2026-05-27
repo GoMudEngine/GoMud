@@ -3,6 +3,7 @@ package seeders
 import (
 	"strconv"
 
+	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/goals"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -156,18 +157,22 @@ func paramAsInt(raw any) int {
 
 // resolveKillerFromMobDeath inspects a MobDeath event and returns the
 // killer's (kind, id) tuple. Returns ("", 0) if the event doesn't
-// identify a killer or the type assertions fail.
+// identify a mob killer or the type assertion fails.
 //
-// TODO-ADAPT: Task 4 wires this against the verified events.MobDeath
-// struct shape. Common shapes: KillerUserId, KillerMobInstanceId.
-// Adapt the extraction to whatever the real struct exposes.
-func resolveKillerFromMobDeath(event interface{}) (kind string, id int) {
-	// TODO-ADAPT: replace with concrete field reads against events.MobDeath.
-	// Example shape:
-	//   md := event.(events.MobDeath)
-	//   if md.KillerUserId > 0 { return "player", md.KillerUserId }
-	//   if md.KillerMobInstanceId > 0 { return "mob", int(md.KillerMobInstanceId) }
-	_ = event
+// events.MobDeath has KillerMobInstanceId (0 = player or unclear).
+// There is no KillerUserId field on the struct — player-kill attribution
+// is implicit (non-zero PlayerDamage map). For chunk 4.5 rule 1 we only
+// care about mob killers, so player kills return ("", 0) and the rule
+// skips. Future rules wanting player-killer attribution can add a
+// separate resolver helper that walks the PlayerDamage map.
+func resolveKillerFromMobDeath(event events.Event) (kind string, id int) {
+	md, ok := event.(events.MobDeath)
+	if !ok {
+		return "", 0
+	}
+	if md.KillerMobInstanceId != 0 {
+		return "mob", md.KillerMobInstanceId
+	}
 	return "", 0
 }
 
