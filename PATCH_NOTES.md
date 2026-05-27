@@ -1,5 +1,38 @@
 # DOGMud Patch Notes
 
+## 2026-05-27 — Mob aliveness 4.4 (strategic → tactical translation)
+
+NPCs now actually pursue the goals 4.2 selects from 4.3's catalog.
+Combat-capable mobs flee when HP drops below the survival threshold.
+Thieves wander to vendors and sell loot when seeded with wealth-gold.
+Named NPCs path to and attack revenge targets, defend protection
+targets, walk among faction members for befriend / protection / revenge
+goals. Foragers move toward unvisited zones for visit-zone goals.
+Crafters seek stations to produce known recipes.
+
+13 hand-authored per-type planners in the new internal/planners/
+package, dispatched via one new behavior-tree action `try_goal_planner`
+inserted into 18 non-boss archetype trees at the priority position
+each archetype's author chose. Planners are pure Go functions returning
+one command + status per tick; intermediate state lives in
+mob.Character.MiscData under a `plan:<goal_type>:` key prefix that's
+wiped automatically on goal switch.
+
+Boot wiring registers planners.ClearPlanState as a callback into
+goals.Recompute (mirrors 4.2's SetWeightsLookup and 4.3's
+SetArchetypeDefaultsLookup patterns). Bridges the goals → planners
+direction without an import cycle.
+
+Permanent-stuck-goal detection (planner-perpetually-fails) is deferred
+to 4.6's pruning sweep; reactive seeding of coexisting goals (e.g.,
+craft-item triggers a wealth-item for missing materials) is deferred
+to 4.5. Cross-zone pursuit, plan visualization admin command, and
+schedule-aware planning are all out of 4.4 scope.
+
+No schema change. Player-facing impact: noticeable NPC liveness.
+
+---
+
 ## 2026-05-27 — Mob aliveness 4.3 (goal types catalog)
 
 13 concrete goal types now register with the strategic-layer
