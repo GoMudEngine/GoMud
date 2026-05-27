@@ -277,6 +277,24 @@ func main() {
 		return behaviortree.GetEngine().GetArchetypeGoalWeights(mob.BehaviorArchetype)
 	})
 
+	// Wire the goals → behaviortree archetype-defaults resolver. Mirrors
+	// SetWeightsLookup (chunk 4.2) — bridges goals → behaviortree without
+	// an import cycle. Chunk 4.3.
+	goals.SetArchetypeDefaultsLookup(func(mob *mobs.Mob) []goals.GoalDefault {
+		if mob == nil || mob.BehaviorArchetype == "" {
+			return nil
+		}
+		btDefaults := behaviortree.GetEngine().GetArchetypeDefaultGoals(mob.BehaviorArchetype)
+		if len(btDefaults) == 0 {
+			return nil
+		}
+		out := make([]goals.GoalDefault, len(btDefaults))
+		for i, d := range btDefaults {
+			out[i] = goals.GoalDefault{Type: d.Type, Priority: d.Priority, Params: d.Params}
+		}
+		return out
+	})
+
 	// Discord integration
 	if webhookUrl := string(c.Integrations.Discord.WebhookUrl); webhookUrl != "" {
 		discord.Init(webhookUrl)
