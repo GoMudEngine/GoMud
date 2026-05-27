@@ -124,4 +124,16 @@ func (b *Balance) validateMobs() {
 	if b.ManifestStatScaleSkillFactor <= 0 {
 		b.ManifestStatScaleSkillFactor = 0.02
 	}
+
+	// ── GOAL SELECTION ───────────────────────────────────────────────────────
+	if b.GoalSelectSwitchMargin <= 0 {
+		b.GoalSelectSwitchMargin = 5.0
+	}
+	if b.GoalSelectMinHoldRounds < 1 {
+		b.GoalSelectMinHoldRounds = 100
+	}
+	if !bool(b.GoalSelectTickEnabled) {
+		// Default true: most installs want the tick path on.
+		b.GoalSelectTickEnabled = true
+	}
 }

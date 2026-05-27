@@ -5,6 +5,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 )
@@ -207,10 +208,23 @@ func invokeContextScore(fn ContextScoreFn, g *Goal, mob *mobs.Mob) (result float
 	return fn(g, mob)
 }
 
-// switchMarginConfig reads GoalSelectSwitchMargin. Task 9 wires the
-// real config knob; default mirrors the spec's default of 5.0.
-func switchMarginConfig() float64 { return 5.0 }
+// switchMarginConfig reads GoalSelectSwitchMargin from the live balance
+// config. Defaults to 5.0 if zero/negative (matches the validateMobs
+// guard, but defends against tests that bypass config validation).
+func switchMarginConfig() float64 {
+	v := float64(configs.GetBalanceConfig().GoalSelectSwitchMargin)
+	if v <= 0 {
+		return 5.0
+	}
+	return v
+}
 
-// minHoldRoundsConfig reads GoalSelectMinHoldRounds. Task 9 wires the
-// real config knob; default mirrors the spec's default of 100.
-func minHoldRoundsConfig() int { return 100 }
+// minHoldRoundsConfig reads GoalSelectMinHoldRounds. Defaults to 100
+// if zero/negative.
+func minHoldRoundsConfig() int {
+	v := int(configs.GetBalanceConfig().GoalSelectMinHoldRounds)
+	if v < 1 {
+		return 100
+	}
+	return v
+}

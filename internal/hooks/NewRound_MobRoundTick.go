@@ -467,6 +467,11 @@ func tickMobRecomputeGoals(mob *mobs.Mob, nowRound uint64) {
 	if mob == nil {
 		return
 	}
+	// Config gate — disabled means tick path is off (eager mutation
+	// recompute still runs to keep cache consistent).
+	if !bool(configs.GetBalanceConfig().GoalSelectTickEnabled) {
+		return
+	}
 	templateId := int(mob.MobId)
 	name := util.ConvertForFilename(mob.Character.Name)
 	if len(goals.GoalsOf(templateId, name)) == 0 {
