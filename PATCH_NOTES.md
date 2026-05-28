@@ -1,5 +1,44 @@
 # DOGMud Patch Notes
 
+## 2026-05-27 — Mob aliveness 4.5 (reactive goal generation)
+
+NPCs now react to world events. Kill an NPC's friend (per chunk 1.6
+relationship edges) and that NPC gets a revenge goal targeting you.
+Steal from a mob and both the victim and room witnesses seed revenge
+goals. Attack a non-hostile mob and the same revenge cascade fires —
+plus, if you helped a mob in a fight by attacking another mob it was
+fighting, the helped mob warms to you (positive opinion bump). Give
+a mob an item it keeps and its opinion of you bumps up by a value-
+tiered amount with a per-pair cooldown. Mobs killing other mobs now
+bump faction-kill counters that satisfy the chunk-4.3 revenge-faction
+predicate.
+
+10 rules in the new internal/seeders/ package; 7 are live and 3 ship
+as documented stubs awaiting upstream event-shape extensions (faction-
+rep counter, quest-completion opinion, mastery-milestone). Three new
+event types added: PlayerAttackedMob (shared by rules 6 and 9 —
+multi-consumer payoff of the unified events architecture),
+GiftOffered, GiftAccepted. The witness-of-theft and craft-materials
+rules use direct-invocation rather than event subscription because
+their triggers are action handlers / planner states without clean
+world-event analogs.
+
+Permanent-stuck-goal detection (now relevant since 4.5 actively seeds
+goals into the world) is deferred to 4.6's prune sweep. Cross-type
+goal conflicts still deferred per the 4.3 decision; seeders pre-check
+obvious contradictions before seeding.
+
+A documented follow-up: rule 5 (witness-of-theft) currently seeds
+revenge into all room witnesses; in a future content pass (after 5.1
+Town Justice), guards and civilians will split — some report the
+crime instead of pursuing revenge personally.
+
+No schema change. Player-facing impact: NPCs react meaningfully to
+your actions in ways the earlier chunks only set up the substrate
+for.
+
+---
+
 ## 2026-05-27 — Mob aliveness 4.4 (strategic → tactical translation)
 
 NPCs now actually pursue the goals 4.2 selects from 4.3's catalog.

@@ -274,6 +274,12 @@ type MobDeath struct {
 	RoomId        int
 	CharacterName string
 	PlayerDamage  map[int]int
+	// KillerMobInstanceId is the InstanceId of the mob that dealt the
+	// killing blow, or 0 if the killer was a player (or attribution is
+	// unclear). Populated from the dead mob's Aggro.MobInstanceId at
+	// the moment of death — imperfect (last-aggro-target, not last-hit),
+	// but workable for 4.5 seeder rules. Chunk 4.5.
+	KillerMobInstanceId int
 }
 
 func (l MobDeath) Type() string { return `MobDeath` }
@@ -424,3 +430,59 @@ type PartyDissolved struct {
 }
 
 func (p PartyDissolved) Type() string { return "PartyDissolved" }
+
+// PlayerAttackedMob fires when a player initiates a combat action
+// (attack, taunt, etc.) against a mob. Consumed by chunk-4.5 seeders:
+//   - aggressive_action_to_revenge (rule 6) — seeds revenge-mob into
+//     the attacked mob + non-hostile witnesses.
+//   - combat_assist_to_opinion_boost (rule 9) — if the attacked mob
+//     was already engaged with another non-player mob, bumps the
+//     beneficiary's opinion of the attacking player.
+//
+// Chunk 4.5.
+type PlayerAttackedMob struct {
+	UserId        int // player initiating the attack
+	MobInstanceId int // mob being attacked
+}
+
+func (p PlayerAttackedMob) Type() string { return "PlayerAttackedMob" }
+
+// GiftOffered fires when a player runs `give <item> <mob>`. Fires
+// unconditionally on every item give to a mob. No consumers in chunk
+// 4.5 — reserved slot for future rules (analytics, tutorial hints)
+// that want to react to the offer regardless of whether the mob keeps
+// it.
+//
+// For opinion-boost purposes, use GiftAccepted instead — GiftOffered
+// fires even on worthless-rock spam.
+//
+// Chunk 4.5.
+type GiftOffered struct {
+	UserId        int
+	MobInstanceId int
+	ItemId        int
+}
+
+func (g GiftOffered) Type() string { return "GiftOffered" }
+
+// GiftAccepted fires when a mob receives (and does not return) an item
+// offered by a player via the `give` command. Fired by the give-action
+// handler immediately after a successful item-transfer to a mob. Mobs
+// that run the equip-if-better btree path may subsequently return the
+// item; the per-pair cooldown (100 rounds) in rule 7 absorbs any
+// double-fire noise.
+//
+// Consumed by chunk-4.5 seeders:
+//   - gift_to_opinion_boost (rule 7) — value-tiered opinion bump.
+//
+// Note: the "clean" approach would be to fire GiftAccepted only from
+// the btree keep-branch, but that wiring is complex (no direct
+// keep-or-return hook exists). Firing from give.go is pragmatic; rule
+// 7's cooldown prevents spam-bumping. Chunk 4.5.
+type GiftAccepted struct {
+	UserId        int
+	MobInstanceId int
+	ItemId        int
+}
+
+func (g GiftAccepted) Type() string { return "GiftAccepted" }

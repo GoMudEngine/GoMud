@@ -211,13 +211,31 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				// Update giveItem so onGive scripting below has the live value.
 				giveItem = result.Item
 
-				user.SendText(messaging.CategorySystem, 
+				user.SendText(messaging.CategorySystem,
 					fmt.Sprintf(`You give the <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, giveItem.DisplayName(), m.Character.Name),
 				)
-				room.SendTextVisual(messaging.CategoryLoot, 
+				room.SendTextVisual(messaging.CategoryLoot,
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> gave their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, giveItem.DisplayName(), m.Character.Name),
 					user.UserId,
 				)
+
+				// Chunk 4.5: notify seeders of every item give to a mob.
+				// GiftOffered: fires unconditionally (no consumers in 4.5;
+				//   reserved for future analytics / tutorial rules).
+				// GiftAccepted: fires immediately because there is no clean
+				//   "mob decided to keep" btree hook. Mobs that run the
+				//   equip-if-better path may subsequently return the item;
+				//   rule 7's per-pair cooldown (100 rounds) absorbs the noise.
+				events.AddToQueue(events.GiftOffered{
+					UserId:        user.UserId,
+					MobInstanceId: m.InstanceId,
+					ItemId:        giveItem.ItemId,
+				})
+				events.AddToQueue(events.GiftAccepted{
+					UserId:        user.UserId,
+					MobInstanceId: m.InstanceId,
+					ItemId:        giveItem.ItemId,
+				})
 
 			}
 
