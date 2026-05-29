@@ -19,9 +19,10 @@ const (
 
 // PruneRecord reports one removed goal (returned for logging/tests).
 type PruneRecord struct {
-	GoalId string
-	Type   string
-	Reason PruneReason
+	GoalId   string
+	Type     string
+	Priority int
+	Reason   PruneReason
 }
 
 // Prune evaluates every goal on the mob template and removes those that
@@ -40,12 +41,12 @@ func Prune(mobId int, namesimple string, mob *mobs.Mob, now time.Time, nowRound 
 
 	for _, g := range mg.Goals {
 		if IsSatisfied(g, mob) {
-			records = append(records, PruneRecord{g.Id, g.Type, ReasonSatisfied})
+			records = append(records, PruneRecord{g.Id, g.Type, g.Priority, ReasonSatisfied})
 			removeIds[g.Id] = true
 			continue
 		}
 		if IsExpired(g, now) {
-			records = append(records, PruneRecord{g.Id, g.Type, ReasonExpired})
+			records = append(records, PruneRecord{g.Id, g.Type, g.Priority, ReasonExpired})
 			removeIds[g.Id] = true
 			continue
 		}
@@ -63,7 +64,7 @@ func Prune(mobId int, namesimple string, mob *mobs.Mob, now time.Time, nowRound 
 		}
 		if abandonRounds > 0 && nowRound >= g.DormantSinceRound &&
 			nowRound-g.DormantSinceRound >= uint64(abandonRounds) {
-			records = append(records, PruneRecord{g.Id, g.Type, ReasonAbandoned})
+			records = append(records, PruneRecord{g.Id, g.Type, g.Priority, ReasonAbandoned})
 			removeIds[g.Id] = true
 		}
 	}
@@ -96,6 +97,7 @@ func Prune(mobId int, namesimple string, mob *mobs.Mob, now time.Time, nowRound 
 			"mob_id", mobId,
 			"goal", r.GoalId,
 			"type", r.Type,
+			"prio", r.Priority,
 			"reason", string(r.Reason),
 			"round", nowRound)
 	}
