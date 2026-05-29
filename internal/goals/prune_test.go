@@ -44,6 +44,9 @@ func TestPrune_RemovesSatisfied(t *testing.T) {
 	if len(recs) != 1 || recs[0].Reason != ReasonSatisfied {
 		t.Fatalf("want 1 satisfied record, got %+v", recs)
 	}
+	if recs[0].Priority != 50 {
+		t.Errorf("PruneRecord.Priority not populated: got %d, want 50", recs[0].Priority)
+	}
 	if len(GoalsOf(99301, "p-sat")) != 0 {
 		t.Error("satisfied goal not removed")
 	}
@@ -155,5 +158,29 @@ func TestPrune_DormantAlreadyStamped_NotRestamped(t *testing.T) {
 	got := GoalsOf(99307, "p-nochurn")
 	if len(got) != 1 || got[0].DormantSinceRound != 100 {
 		t.Fatalf("DormantSinceRound must stay 100 (not re-stamped), got %+v", got)
+	}
+}
+
+// TestPrune_LiveBackseatGoalKept documents that pruning keys on context
+// score, NOT on selection: a live (score > 0) goal that is NOT the current
+// goal — a lower-priority "backseat" goal waiting its turn — is kept.
+func TestPrune_LiveBackseatGoalKept(t *testing.T) {
+	registerPruneType(t)
+	pruneCtxScore = 1.0 // both goals live (never satisfied, score > 0)
+	ClearCache()
+	mg := &MobGoals{MobId: 99308, NextGoalId: 3, CurrentGoalId: "g1", Goals: []*Goal{
+		{Id: "g1", Type: "prune-live", Priority: 70, CreatedAt: time.Now().UTC()},
+		{Id: "g2", Type: "prune-live", Priority: 30, CreatedAt: time.Now().UTC()}, // backseat, not current
+	}}
+	cacheStoreForTest("p-backseat", mg)
+	if err := saveToDisk(99308, "p-backseat"); err != nil {
+		t.Fatalf("seed save: %v", err)
+	}
+	recs := Prune(99308, "p-backseat", nil, time.Now().UTC(), 1000)
+	if len(recs) != 0 {
+		t.Fatalf("want no removals, got %+v", recs)
+	}
+	if len(GoalsOf(99308, "p-backseat")) != 2 {
+		t.Error("both live goals (incl. non-current backseat) must be kept")
 	}
 }
