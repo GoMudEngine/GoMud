@@ -24,6 +24,7 @@ type Goal struct {
 	Params     map[string]any `yaml:"params,omitempty"`
 	CreatedAt  time.Time      `yaml:"created_at"`
 	ExpiresAt  time.Time      `yaml:"expires_at,omitempty"`
+	DormantSinceRound uint64         `yaml:"dormant_since_round,omitempty"` // chunk 4.6 — round dormancy began; 0 = live
 }
 
 // MobGoals is the on-disk shape — one file per mob template.

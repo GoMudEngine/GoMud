@@ -62,3 +62,19 @@ func TestTickMobRecomputeGoals_WithGoals_RecomputesCurrent(t *testing.T) {
 		t.Errorf("CurrentGoalOf nil after tick — hook did not Recompute")
 	}
 }
+
+func TestShouldPruneGoals_CadenceAndStagger(t *testing.T) {
+	// interval 0 disables.
+	if shouldPruneGoals(100, 5, 0) {
+		t.Error("interval 0 must disable pruning")
+	}
+	// (nowRound + templateId) % interval == 0 → prune.
+	// nowRound=45, templateId=5, interval=50 → 50%50==0 → true.
+	if !shouldPruneGoals(45, 5, 50) {
+		t.Error("expected prune on cadence boundary")
+	}
+	// nowRound=46, templateId=5, interval=50 → 51%50==1 → false.
+	if shouldPruneGoals(46, 5, 50) {
+		t.Error("expected no prune off cadence")
+	}
+}
