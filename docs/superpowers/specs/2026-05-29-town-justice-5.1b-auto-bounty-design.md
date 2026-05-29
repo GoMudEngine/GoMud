@@ -29,7 +29,7 @@ persist as institutional memory; clearing one's name is 5.1d redemption).
 | Reward | `powerBase × max(crimeMult, repMult)` (whichever is higher) |
 | Dedup | One open faction bounty per (faction, player) — skip if already open |
 | Expiry | `now + JusticeBountyExpiryRounds` |
-| Death-resolution | In 5.1b. Third-party (player) kill → claim + payout; guard/env/self → `MarkExpired`, no payout |
+| Death-resolution | In 5.1b. Killing-blow attribution: issuing-faction guard → pay the **guard mob** (gear fund for 5.3); third-party player → pay the player; other mob / env / self → `MarkExpired` |
 
 ---
 
@@ -85,17 +85,30 @@ the crime, so firing at the crime site is the precise trigger.)
 
 ### 5. `PlayerDeath_BountyResolve` hook
 
-On player death (reading the killer `ActorRef`), for each open bounty against the
-dead player (`bounties.OpenAgainstPlayer`):
-- **killer is a player and killer ≠ target** → `bounties.TryClaim(id,
-  PlayerSubject(killerUserId))`; on success, transfer `GoldReward` to the killer
-  and, if the issuer is a faction, `factions.BumpRep(issuerFaction, killer,
-  RepReward)` (mirrors `MobDeath_BountyClaim`). Status → Claimed ("turned in").
-- **otherwise** (guard/other mob, environment, self) → `bounties.MarkExpired(id)`,
-  no payout.
+Wired on the Life `Alive→Dead` transition for player characters (alongside the
+existing `wirePlayerDeathCleanup` in `Death_PlayerCleanup.go`), reading
+`DeadData.Killer` (the killing-blow `state.ActorRef`) and `DeadData.DamageMap`
+(player damagers). For each open bounty against the dead player
+(`bounties.OpenAgainstPlayer`), attribute by killing blow:
 
-NPC bounty-hunter pursuit + their claim payout is 5.2; 5.1b only needs the
-player-death close so bounties don't leak.
+1. **Issuing-faction guard mob landed the kill** — `DeadData.Killer` resolves to
+   a mob instance whose `factions.FactionsForMob` includes the bounty's issuer
+   faction: `TryClaim(id, knowledge.MobSubject(killerTemplateId))`, then pay the
+   reward to that **guard instance** (`killerInst.Character.Gold += GoldReward`).
+   This is the guards' self-funding gear pool consumed by 5.3. Status → Claimed.
+2. **Third-party player landed/contributed the kill** — killer is a player ≠
+   target, or (fallback) the highest player damager in `DamageMap`:
+   `TryClaim(id, PlayerSubject(killerUserId))`, transfer `GoldReward` to the
+   player and `factions.BumpRep(issuerFaction, killerUserId, RepReward)` when the
+   issuer is a faction (mirrors `MobDeath_BountyClaim`). Status → Claimed ("turned
+   in").
+3. **Other mob / environment / self** — `bounties.MarkExpired(id)`, no payout.
+
+Attribution order: guard-kill (1) takes precedence when the killing blow is a
+guard; else fall to player attribution (2); else expire (3). Paying a mob
+records the claimer as `MobSubject(templateId)` but credits the killing
+*instance's* gold. NPC bounty-hunter *pursuit* + their claim payout is 5.2; 5.1b
+only adds the player-death close so bounties don't leak and guards self-fund.
 
 ### 6. Config (Balance)
 
@@ -112,8 +125,11 @@ player-death close so bounties don't leak.
   reward = powerBase × max(crimeMult, repMult) for murder-vs-rep-dominant cases.
 - `bounties.DefaultGoldFor` matches `computeDefaultGold`.
 - Reward formula pure helper (crimeMult/repMult/max) — table tests.
-- `PlayerDeath_BountyResolve`: player-killer→Claimed+payout; guard/mob/env
-  killer→MarkExpired no payout; no open bounty→no-op.
+- `PlayerDeath_BountyResolve`: issuing-faction-guard killer → Claimed + gold to
+  the guard instance; third-party player killer → Claimed + player payout +
+  faction rep; other-mob/environment killer → MarkExpired, no payout; no open
+  bounty → no-op. (Killer-attribution helper is the pure unit; the hook wiring is
+  thin glue, covered by the helper + boot smoke.)
 - Boot smoke: config knobs load; no panic.
 
 ---
