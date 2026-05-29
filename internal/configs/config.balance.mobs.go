@@ -136,4 +136,10 @@ func (b *Balance) validateMobs() {
 		// Default true: most installs want the tick path on.
 		b.GoalSelectTickEnabled = true
 	}
+	if b.GoalPruneIntervalRounds < 1 {
+		b.GoalPruneIntervalRounds = 50
+	}
+	if b.GoalAbandonDormantRounds < 1 {
+		b.GoalAbandonDormantRounds = 600
+	}
 }

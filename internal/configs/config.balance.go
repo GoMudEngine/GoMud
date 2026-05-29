@@ -361,6 +361,16 @@ type Balance struct {
 	// when false (cache stays consistent). Default true. Chunk 4.2.
 	GoalSelectTickEnabled ConfigBool `yaml:"GoalSelectTickEnabled"`
 
+	// GoalPruneIntervalRounds is how often (in rounds) the per-mob goal
+	// prune sweep runs. Staggered per mob to avoid a synchronized spike.
+	// chunk 4.6.
+	GoalPruneIntervalRounds ConfigInt `yaml:"GoalPruneIntervalRounds"`
+
+	// GoalAbandonDormantRounds is how many consecutive rounds a goal's
+	// context score may stay at ~0 before it is abandoned (pruned).
+	// chunk 4.6.
+	GoalAbandonDormantRounds ConfigInt `yaml:"GoalAbandonDormantRounds"`
+
 	// ── PACK SCALING ─────────────────────────────────────────────────────────
 	PackScalingEnabled   ConfigBool `yaml:"PackScalingEnabled"`   // Enable pack survival bonuses (default true)
 	PackSurvivalRounds   ConfigInt  `yaml:"PackSurvivalRounds"`   // Consecutive rounds together before bonus (default 10)
