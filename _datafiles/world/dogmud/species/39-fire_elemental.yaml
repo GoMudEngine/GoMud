@@ -31,6 +31,5 @@ stats:
 damage:
   basedamage: 3
   variance: 2
-disabledslots: ['weapon', 'offhand', 'head', 'neck', 'back',
-  'belt', 'gloves', 'ring', 'legs', 'feet']
+disabledslots: []  # companion-gearable summon; see PATCH_NOTES 2026-05-29
 grapple_immune: true

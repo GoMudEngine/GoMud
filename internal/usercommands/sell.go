@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -17,6 +18,29 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
+
+// merchantSay makes the merchant speak a line to the room immediately.
+//
+// Merchant refusals ("I'm not interested in that.", "I can't afford that
+// right now.", etc.) were previously delivered via mob.Command("say ..."),
+// which enqueues the line on the mob's ASYNC command pipeline (events.Input,
+// gated on the mob's next turn). On busy shopkeepers — scheduled townsfolk and
+// autonomous crafters like Kerra and Voss — that pipeline can defer the line
+// for many turns, long enough that the seller never associates it with their
+// sell attempt and the sale appears to fail silently. Every other sell outcome
+// (success, no-item, no-merchant, quest-item) reports synchronously, so the
+// refusal path was the lone async outlier. Speak synchronously instead — the
+// same broadcast mobcommands.Say performs — so the seller always gets
+// immediate, reliable feedback.
+func merchantSay(room *rooms.Room, mob *mobs.Mob, line string) {
+	if mob == nil || room == nil {
+		return
+	}
+	actor := &actions.MobActor{Mob: mob, Room: room}
+	result := actions.Say(actor, line)
+	room.SendText(messaging.CategorySpeech,
+		actions.FormatSayText(mob.Character.Name, result.Text, false, "mobname", "saytext-mob"))
+}
 
 // sellFindItem searches backpack → potions → components for a matching item.
 func sellFindItem(user *users.UserRecord, name string) (items.Item, bool) {
@@ -62,7 +86,7 @@ func trySellOne(itemName string, user *users.UserRecord, room *rooms.Room,
 	user.Character.CancelBuffsWithFlag(buffs.Hidden)
 
 	if item.IsSpecial() {
-		mob.Command(`say I'm afraid I don't buy those.`)
+		merchantSay(room, mob, "I'm afraid I don't buy those.")
 		return 0, sellRejected
 	}
 
@@ -91,7 +115,7 @@ func trySellOne(itemName string, user *users.UserRecord, room *rooms.Room,
 	}
 
 	if sellValue <= 0 {
-		mob.Command(`say I'm not interested in that.`)
+		merchantSay(room, mob, "I'm not interested in that.")
 		return 0, sellRejected
 	}
 
@@ -100,7 +124,7 @@ func trySellOne(itemName string, user *users.UserRecord, room *rooms.Room,
 		merchantGold = shopInv.Gold
 	}
 	if merchantGold < sellValue {
-		mob.Command(`say I can't afford that right now.`)
+		merchantSay(room, mob, "I can't afford that right now.")
 		return 0, sellMerchantBroke
 	}
 
@@ -272,11 +296,9 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	if selectedMob == nil {
-		// No merchant wants it — let the first mob say so.
+		// No merchant wants it — let the first mob say so, synchronously.
 		firstMob := mobs.GetInstance(merchantMobs[0])
-		if firstMob != nil {
-			firstMob.Command(`say I'm not interested in that.`)
-		}
+		merchantSay(room, firstMob, "I'm not interested in that.")
 		return true, nil
 	}
 

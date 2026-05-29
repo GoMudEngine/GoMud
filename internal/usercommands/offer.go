@@ -35,7 +35,7 @@ func Offer(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 		if item.IsSpecial() {
 
-			mob.Command(`say I'm afraid I don't buy those.`)
+			merchantSay(room, mob, "I'm afraid I don't buy those.")
 
 			continue
 		}
@@ -44,12 +44,12 @@ func Offer(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 		if sellValue <= 0 {
 
-			mob.Command(`say I'm not interested in that.`)
+			merchantSay(room, mob, "I'm not interested in that.")
 
 			continue
 		}
 
-		mob.Command(fmt.Sprintf(`say I can give you <ansi fg="gold">%d gold</ansi> for that <ansi fg="itemname">%s</ansi>.`, sellValue, item.DisplayName()))
+		merchantSay(room, mob, fmt.Sprintf(`I can give you <ansi fg="gold">%d gold</ansi> for that <ansi fg="itemname">%s</ansi>.`, sellValue, item.DisplayName()))
 
 		break
 	}

@@ -1,5 +1,43 @@
 # DOGMud Patch Notes
 
+## 2026-05-29 — Playtest bug fixes (sell feedback, companion gear, death buffs)
+
+Three fixes from playtesting:
+
+- **Selling to crafter shops no longer fails silently.** Merchant
+  refusals ("I'm not interested in that.", "I can't afford that right
+  now.", "I'm afraid I don't buy those.") and offer quotes were delivered
+  through the merchant's asynchronous command pipeline (`mob.Command`),
+  which on busy shopkeepers — scheduled townsfolk and autonomous crafters
+  like blacksmith Kerra and apothecary Voss — could defer the line for
+  many turns, long enough that the sale appeared to do nothing. The
+  refusal path was the lone async outlier; every other sell outcome
+  already reported synchronously. Refusals now speak immediately (`sell`
+  and `offer` commands).
+
+- **Companions can now wear (and show) a full set of equipment slots.**
+  Summoned companions — flesh golem, the elementals (water/earth/air/
+  fire/magma), skeleton, zombie, wraith, spectre, vampire, the steppe
+  spirit wolf (canine), and the hive swarm (insectoid) — previously had
+  most equipment slots disabled at the species level, so gear handed to
+  them had nowhere to go and the `look` panel hid the slots. Those 13
+  species now enable all standard slots. NOTE: canine and insectoid are
+  shared with wild mobs, so wild wolves/dogs/insects now display an empty
+  equipment panel when looked at (cosmetic only; they carry no gear). If
+  that's undesirable, the spirit wolf / hive swarm can be split into
+  dedicated companion species.
+
+- **Potion (and other flagless) buffs now clear on death.** `Buffs.HasFlag`
+  skipped any buff that declared no flags, so `CancelBuffsWithFlag(buffs.All)`
+  in the death cascade left flagless buffs — pure regen potions like
+  Healing Salve (buff 54) and the rest of buffs 54–60 — active across
+  death/respawn. `HasFlag` now matches flagless buffs under the `All`
+  wildcard.
+
+Known unrelated: enchanting/cooking/general-store restocking under the
+living-economy system needs a considered fix (tracked separately, not in
+this batch).
+
 ## 2026-05-27 — Mob aliveness 4.5 (reactive goal generation)
 
 NPCs now react to world events. Kill an NPC's friend (per chunk 1.6
