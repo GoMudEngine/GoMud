@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	cubeSize  = 4
-	cubeTotal = cubeSize * cubeSize * cubeSize // 64
+	cubeSize  = 5
+	cubeTotal = cubeSize * cubeSize * cubeSize // 125
 )
 
 // Trash elemental mob IDs.
@@ -20,7 +20,7 @@ var cubeTrashMobs = []int{310, 311, 312, 313, 314}
 var cubeToughMobs = []int{318, 319}
 
 // Boss mob IDs.
-var cubeBossMobs = []int{320, 321, 322}
+var cubeBossMobs = []int{320, 321, 322, 377}
 
 var cubeDescriptions = []string{
 	"Crystalline sand stretches in every direction, each grain a tiny prism. The air hums with planar energy.",
@@ -35,7 +35,7 @@ var cubeDescriptions = []string{
 	"The sand gives way to packed clay veined with glowing mineral deposits. The warmth here is almost pleasant.",
 }
 
-var cubeTitles = []string{"Elemental Depths", "Lower Wastes", "Upper Wastes", "Elemental Heights"}
+var cubeTitles = []string{"Elemental Depths", "Lower Wastes", "Upper Wastes", "Elemental Heights", "Elemental Apex"}
 
 // wrapCoord wraps a coordinate into [0, size).
 func wrapCoord(v, size int) int {
@@ -160,12 +160,12 @@ func GenerateOasisCube(
 		}
 	}
 
-	// Pick 1 random room for a boss (different from tough rooms).
-	bossIndices := pickUniqueIndices(1, cubeTotal, toughIndices)
-	for _, idx := range bossIndices {
+	// Place every boss, each in its own room (distinct from tough rooms).
+	bossIndices := pickUniqueIndices(len(cubeBossMobs), cubeTotal, toughIndices)
+	for i, idx := range bossIndices {
 		rooms[idx].SpawnInfo = []SpawnInfo{
 			{
-				MobId:        cubeBossMobs[util.Rand(len(cubeBossMobs))],
+				MobId:        cubeBossMobs[i],
 				StatPool:     4,
 				RespawnRate:  "2 real hours",
 				ForceHostile: true,
