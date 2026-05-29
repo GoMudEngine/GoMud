@@ -10,7 +10,7 @@
 
 **Spec:** `docs/superpowers/specs/2026-05-29-oasis-all-bosses-princess-design.md`
 
-**IDs (verified free):** princess mob **377**, claws **10036**, neck torc **20077**.
+**IDs (verified free):** princess mob **377**, claws **10036**, neck torc **20079**.
 
 ---
 
@@ -19,7 +19,7 @@
 | File | Responsibility |
 |------|----------------|
 | `_datafiles/world/dogmud/items/weapons-10000/10036-drowned_claws.yaml` | New unarmed claws base item (affix-scaled in instances) |
-| `_datafiles/world/dogmud/items/armor-20000/neck/20077-tidal_torc.yaml` | New neck base item (affix-scaled in instances) |
+| `_datafiles/world/dogmud/items/armor-20000/neck/20079-tidal_torc.yaml` | New neck base item (affix-scaled in instances) |
 | `_datafiles/world/dogmud/mobs/instance_planar_oasis/377-elemental_princess.yaml` | New 4th boss; drops the two items above |
 | `internal/rooms/cubegen.go` | Grid size 4→5, 5th layer title, all bosses spawn each in own room |
 | `internal/rooms/cubegen_test.go` | Update size-dependent tests; add all-bosses integration test |
@@ -72,15 +72,15 @@ git commit -m "feat(oasis): add drowned claws (unarmed boss-drop weapon, 10036)"
 
 ---
 
-### Task 2: Neck torc base item (20077)
+### Task 2: Neck torc base item (20079)
 
 **Files:**
-- Create: `_datafiles/world/dogmud/items/armor-20000/neck/20077-tidal_torc.yaml`
+- Create: `_datafiles/world/dogmud/items/armor-20000/neck/20079-tidal_torc.yaml`
 
 - [ ] **Step 1: Create the item file**
 
 ```yaml
-itemid: 20077
+itemid: 20079
 name: tidal torc
 namesimple: torc
 vendor_categories:
@@ -101,8 +101,8 @@ description: >-
 - [ ] **Step 2: Commit**
 
 ```bash
-git add _datafiles/world/dogmud/items/armor-20000/neck/20077-tidal_torc.yaml
-git commit -m "feat(oasis): add tidal torc (neck boss-drop, 20077)"
+git add _datafiles/world/dogmud/items/armor-20000/neck/20079-tidal_torc.yaml
+git commit -m "feat(oasis): add tidal torc (neck boss-drop, 20079)"
 ```
 
 ---
@@ -154,7 +154,7 @@ character:
 itemdropchance: 75
 loot_pool:
   - 10036
-  - 20077
+  - 20079
 ```
 
 Note: species 36 (water elemental) already has all equipment slots enabled (2026-05-29 companion-gear fix), so she equips the claws + torc. Filename `377-elemental_princess.yaml` matches `ConvertForFilename("elemental princess")`.
@@ -362,7 +362,7 @@ git commit -m "feat(oasis): spawn all bosses + grow cube to 5x5x5 (125 rooms)"
 - [ ] **Step 1: ID collision check**
 
 Run: `python tools/id_inventory.py`
-Expected: no duplicate-ID warnings; 377 / 10036 / 20077 present, no collisions.
+Expected: no duplicate-ID warnings; 377 / 10036 / 20079 present, no collisions.
 
 - [ ] **Step 2: Build**
 

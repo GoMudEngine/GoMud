@@ -43,7 +43,7 @@ templates; the affix engine does the scaling. No new scaling mechanic.
 ### New IDs (verified free)
 - Princess mob: **377** (`instance_planar_oasis/377-elemental_princess.yaml`)
 - Claws weapon: **10036** (`weapons-10000/`)
-- Neck armor: **20077** (`armor-20000/neck/`)
+- Neck armor: **20079** (`armor-20000/neck/`)
 
 ---
 
@@ -102,7 +102,7 @@ templates; the affix engine does the scaling. No new scaling mechanic.
   perception (mirrors the prince's profile).
 - `skills: { unarmed-combat: 5 }` — she fights with claws.
 - `itemdropchance: 75` (matches the other bosses).
-- `loot_pool: [10036, 20077]` — claws + neck, both affix-scaled on spawn.
+- `loot_pool: [10036, 20079]` — claws + neck, both affix-scaled on spawn.
 - Water/claw-themed `combatcommands` (strike-and-retreat flavor).
 - Species 36 already has all equipment slots enabled (from the 2026-05-29
   companion-gear fix), so she can equip the claws and neck piece.
@@ -161,12 +161,12 @@ faster swing) as the added reward.
 
 ---
 
-## Change 4 — Neck piece (item 20077)
+## Change 4 — Neck piece (item 20079)
 
-`_datafiles/world/dogmud/items/armor-20000/neck/20077-tidal_torc.yaml`
+`_datafiles/world/dogmud/items/armor-20000/neck/20079-tidal_torc.yaml`
 
 ```yaml
-itemid: 20077
+itemid: 20079
 name: tidal torc
 namesimple: torc
 vendor_categories: [jewelcrafting]
@@ -197,7 +197,7 @@ adds the scaled power. Fills the previously-uncovered **neck** slot.
 | `internal/rooms/cubegen_test.go` | New/updated assertions (see Testing) |
 | `mobs/instance_planar_oasis/377-elemental_princess.yaml` | New boss |
 | `items/weapons-10000/10036-drowned_claws.yaml` | New claws |
-| `items/armor-20000/neck/20077-tidal_torc.yaml` | New neck piece |
+| `items/armor-20000/neck/20079-tidal_torc.yaml` | New neck piece |
 
 ---
 
@@ -206,7 +206,7 @@ adds the scaled power. Fills the previously-uncovered **neck** slot.
 1. **Unit (`cubegen_test.go`):** after `GenerateOasisCube`, assert exactly
    125 rooms; exactly 4 boss spawns present (mob ids {320,321,322,377}),
    each in a distinct room, none colliding with the 2 tough-mob rooms.
-2. **`id_inventory.py`** collision pass after authoring (377 / 10036 / 20077).
+2. **`id_inventory.py`** collision pass after authoring (377 / 10036 / 20079).
 3. **Boot smoke** (instance saves wiped per SOP): server boots clean past
    data-file loading — validates the new mob + item YAMLs and the
    `subtype: claws` weapon load without panics.
