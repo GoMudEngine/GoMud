@@ -787,7 +787,15 @@ Compose layers into player-facing systems. These wait until the layers exist
 to compose.
 
 ### 5.1 Town justice
-**Status:** Not started • **Size:** XL
+**Status:** In progress — decomposed into 5.1a–d; **5.1a (guard enforcement)
+shipped 2026-05-29** • **Size:** XL
+
+Decomposition (each its own spec→plan→build): **5.1a** wanted-verdict + guard
+warn→attack (DONE — `internal/justice`, per-round guard tick; spec/plan at
+`docs/superpowers/{specs,plans}/2026-05-29-town-justice-5.1a-guard-enforcement*`).
+5.1b crime→auto-bounty trigger. 5.1c arrest mechanic. 5.1d redemption
+(pay-fine/serve/quest). Followups logged in MEMORY (Drunn/Stillwater faction,
+warn-stamp pruning).
 
 - **Goal:** Replace `peacefulquest` placeholder with real citizenship + faction guards + crime detection + bounty workflow.
 - **In:** Citizenship-by-faction, guard archetypes that react to crimes against citizens, escalation (warn → arrest → kill), bounty placement on offenders, redemption (pay fine, complete quest, etc.).

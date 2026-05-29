@@ -1,5 +1,23 @@
 # DOGMud Patch Notes
 
+## 2026-05-29 — Town justice 5.1a (guard enforcement)
+
+The city watch now actually watches. Thornwall guards recognize **wanted**
+characters — anyone with bad standing with the guards (or their allied
+citizenry), an open faction bounty on their head, or a fresh unresolved crime
+against a townsperson — and respond. A merely-disliked offender gets a verbal
+warning to move along; ignore it and linger, or show up genuinely hostile or
+with a price on your head, and the guards draw steel. Because a crime against a
+citizen is recorded the moment it happens, a guard on the beat will turn on a
+mugger within moments of the act.
+
+Friendly, in-good-standing characters are treated as citizens and left in
+peace, as before. This is the first slice of the larger town-justice system;
+auto-bounties for repeat offenders, arrest, and ways to clear your name are
+coming in later slices. (Internally: a new `internal/justice` "wanted" verdict
+over the existing faction/crime/bounty data, fired by a per-round guard tick;
+knobs `GuardWarnGraceRounds` and `JusticeCrimeLookbackRounds`.)
+
 ## 2026-05-29 — Mob aliveness 4.6 (goal satisfaction & pruning)
 
 NPCs no longer hoard dead ambitions. The strategic goal layer (chunks
