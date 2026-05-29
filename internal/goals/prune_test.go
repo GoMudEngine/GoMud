@@ -7,6 +7,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 )
 
+// NOTE: package-global driven by serial tests via defer-restore. Do NOT
+// mark tests in this file t.Parallel() while this global exists.
+//
 // pruneCtxScore lets tests drive a goal type's context score.
 var pruneCtxScore = 1.0
 
@@ -134,5 +137,23 @@ func TestGoal_DormantSinceRound_Persists(t *testing.T) {
 	}
 	if got[0].DormantSinceRound != 4242 {
 		t.Errorf("DormantSinceRound not persisted: got %d", got[0].DormantSinceRound)
+	}
+}
+
+func TestPrune_DormantAlreadyStamped_NotRestamped(t *testing.T) {
+	registerPruneType(t)
+	pruneCtxScore = 0.0
+	defer func() { pruneCtxScore = 1.0 }()
+	// Stamped at round 100; sweep at 200 (under the 600 default threshold).
+	seedGoals(t, 99307, "p-nochurn",
+		&Goal{Id: "g1", Type: "prune-live", Priority: 50, CreatedAt: time.Now().UTC(),
+			DormantSinceRound: 100})
+	recs := Prune(99307, "p-nochurn", nil, time.Now().UTC(), 200)
+	if len(recs) != 0 {
+		t.Fatalf("want no removals, got %+v", recs)
+	}
+	got := GoalsOf(99307, "p-nochurn")
+	if len(got) != 1 || got[0].DormantSinceRound != 100 {
+		t.Fatalf("DormantSinceRound must stay 100 (not re-stamped), got %+v", got)
 	}
 }

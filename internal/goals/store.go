@@ -54,6 +54,11 @@ func loadOrLazyInit(mobId int, namesimple string) *MobGoals {
 //
 // The returned slice is a copy — callers can sort or slice it freely
 // without affecting the cache.
+//
+// The returned slice is a fresh copy of the POINTERS — the *Goal values
+// still share the cache's backing objects. Fields mutated by Prune under
+// cacheMu (e.g. DormantSinceRound) may be torn if read from these pointers
+// without holding cacheMu; treat such fields as lock-guarded.
 func GoalsOf(mobId int, namesimple string) []*Goal {
 	mg := loadOrLazyInit(mobId, namesimple)
 	cacheMu.RLock()
