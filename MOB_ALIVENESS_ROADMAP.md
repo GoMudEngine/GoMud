@@ -106,7 +106,7 @@ should always agree.
 | 4.3 | Strategic | Goal types catalog | L | 4.1 | Done |
 | 4.4 | Strategic | Strategic→tactical translation | XL | 4.3, Phase 2 | Done |
 | 4.5 | Strategic | Reactive goal generation | L | 1.6, 4.1 | Done |
-| 4.6 | Strategic | Goal satisfaction & pruning | S | 4.1 | Not started |
+| 4.6 | Strategic | Goal satisfaction & pruning | S | 4.1 | Done |
 | 5.1 | Cross-cut | Town justice | XL | 1.2, 1.3, 1.5, 3.4, Phase 4 | Not started |
 | 5.2 | Cross-cut | Bounty hunting | L | 1.4, 1.5, 2.8, 4.4 | Not started |
 | 5.3 | Cross-cut | Equipment-aware shopping | L | 2.1, 2.2, 2.3, 4.4 | Not started |
@@ -763,7 +763,15 @@ verbs.
   plan at `docs/superpowers/plans/2026-05-27-mob-aliveness-4.5-reactive-goal-generation.md`.
 
 ### 4.6 Goal satisfaction & pruning
-**Status:** Not started • **Size:** S
+**Status:** Done (2026-05-29) • **Size:** S
+
+Shipped: throttled per-mob `goals.Prune` sweep retiring satisfied
+(`IsSatisfied`) and expired (`IsExpired`) goals, plus dormancy-based
+abandonment (per-goal `DormantSinceRound`; abandoned once context score
+has been ~0 for `GoalAbandonDormantRounds`). Runs from the goals tick on a
+staggered cadence (`GoalPruneIntervalRounds`). Spec at
+`docs/superpowers/specs/2026-05-29-mob-aliveness-4.6-goal-pruning-design.md`,
+plan at `docs/superpowers/plans/2026-05-29-mob-aliveness-4.6-goal-pruning.md`.
 
 - **Goal:** Cleanup — when is a goal done? Prune dead goals so NPCs don't accumulate ghost desires.
 - **In:** Per-type satisfaction predicates, expiry, "abandoned" reasons.
