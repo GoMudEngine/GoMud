@@ -77,17 +77,36 @@ can read the statpool-derived base without duplicating the formula.
   perp is an identified player, call with `crimes.KindMurder`.
 - `internal/usercommands/attack.go` (assault recording) — after the assault
   rep-bump, call with `crimes.KindAssault` (rep-path only).
-- **Theft is deferred** (not wired in 5.1b). Theft is recorded in
-  `internal/actions/steal.go` + `plant.go`, and `internal/justice` already
-  imports `internal/actions` (5.1a `guardSay`), so an `actions → justice` call
-  would be an import cycle. Theft still lowers faction rep, which 5.1a guards
-  react to and which feeds the assault-accumulated rep-path here — so the only
-  gap is a *pure-theft* offender getting no posted bounty (still guard-attacked
-  via rep). Wiring theft later means decoupling `justice` from `actions` first
-  (a `guardSay` seam).
+- `internal/actions/steal.go` + `internal/actions/plant.go` (theft recording) —
+  after the theft rep-bump (inside the `perp.Type == crimes.PerpPlayer` block,
+  using `actor.GetUserId()`), call with `crimes.KindTheft` (rep-path only). This
+  depends on the justice↔actions decouple below (§4b), because `actions` must
+  import `justice`.
 
 (Unlike 5.1a's spatial guard reaction, an auto-bounty is a direct consequence of
 the crime, so firing at the crime site is the precise trigger.)
+
+### 4b. Decouple `justice` from `actions` (enables theft firing)
+
+Today `internal/justice` imports `internal/actions` — only for 5.1a's
+`guardSay`, which speaks a guard's warning via `actions.MobActor`/`actions.Say`/
+`actions.FormatSayText`. The theft crime is recorded inside `internal/actions`,
+so for theft to post a bounty `actions` must import `justice` — which would form
+an `actions → justice → actions` import cycle.
+
+Break it by turning `guardSay` into an injected seam:
+- In `justice/enforce.go`, replace the `guardSay` function (and its `actions` +
+  `messaging` imports) with a package-level `var guardSayFn = func(room
+  *rooms.Room, mob *mobs.Mob, line string) {}` (no-op default) plus an exported
+  `SetGuardSay(fn)` setter. `RunGuardEnforcement` calls `guardSayFn(...)`.
+- Add `internal/hooks/justice_wiring.go` with an `init()` that calls
+  `justice.SetGuardSay(...)` with the original `actions`-based broadcaster.
+  `hooks` already imports both `justice` (the 5.1a per-round tick) and
+  `actions`, so no cycle.
+
+After this, `justice` imports no `actions`, so `actions/steal.go`/`plant.go` can
+call `MaybeDeclareBounty` freely. This also unblocks any future `actions→justice`
+need (e.g. 5.2 hunter actions).
 
 ### 5. `PlayerDeath_BountyResolve` hook
 
@@ -136,14 +155,17 @@ only adds the player-death close so bounties don't leak and guards self-fund.
   faction rep; other-mob/environment killer → MarkExpired, no payout; no open
   bounty → no-op. (Killer-attribution helper is the pure unit; the hook wiring is
   thin glue, covered by the helper + boot smoke.)
-- Boot smoke: config knobs load; no panic.
+- Decouple (§4b): `justice` no longer imports `actions` (build proves it); the
+  existing `RunGuardEnforcement` warn-path test still passes with the no-op
+  `guardSayFn` (it asserts on the returned `EnforceAction` + the MiscData stamp,
+  not on spoken output); the `internal/hooks` wiring sets `guardSayFn` at `init`.
+- Boot smoke: config knobs load; guard warns still speak in-game (wiring fired);
+  no panic.
 
 ---
 
 ## Out of scope
 
-- **Theft-triggered bounties** — deferred (would need `justice`↔`actions`
-  decoupling; theft already feeds the rep path).
 - NPC bounty-hunter seeking + their claim payout (5.2).
 - Redemption / clearing rep+crimes (5.1d) — death does NOT clear the underlying
   wanted status.
