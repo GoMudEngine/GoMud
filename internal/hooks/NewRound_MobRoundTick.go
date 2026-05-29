@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"strings"
+	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
@@ -477,5 +478,18 @@ func tickMobRecomputeGoals(mob *mobs.Mob, nowRound uint64) {
 	if len(goals.GoalsOf(templateId, name)) == 0 {
 		return // cheap path: no goals to select among
 	}
+	if shouldPruneGoals(nowRound, templateId, int(configs.GetBalanceConfig().GoalPruneIntervalRounds)) {
+		goals.Prune(templateId, name, mob, time.Now().UTC(), nowRound)
+	}
 	goals.Recompute(templateId, name, mob, nowRound)
+}
+
+// shouldPruneGoals gates the 4.6 prune sweep: runs every `interval`
+// rounds, staggered per mob template so all mobs don't prune on the same
+// tick. interval <= 0 disables pruning.
+func shouldPruneGoals(nowRound uint64, templateId, interval int) bool {
+	if interval <= 0 {
+		return false
+	}
+	return (nowRound+uint64(templateId))%uint64(interval) == 0
 }
