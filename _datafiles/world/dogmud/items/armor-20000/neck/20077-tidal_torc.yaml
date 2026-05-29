@@ -1,0 +1,16 @@
+itemid: 20077
+name: tidal torc
+namesimple: torc
+vendor_categories:
+- jewelcrafting
+type: neck
+subtype: wearable
+magical_mitigation: 6
+physical_mitigation: 3
+weight: 1.0
+value: 85
+description: >-
+  A circlet of ever-flowing oasis water held in a perfect ring by
+  some quiet planar will. It turns and ripples against the wearer's
+  throat without spilling, and the air around it carries the cool,
+  mineral smell of deep water.
