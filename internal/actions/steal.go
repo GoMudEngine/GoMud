@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/justice"
 	"github.com/GoMudEngine/GoMud/internal/knowledge"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -286,6 +287,7 @@ func stealFromMob(actor Actor, mobInstanceId int, attackerScore float64,
 				m, m.InstanceId, room.RoomId, m.Character.Zone, hadExternal)
 			if perp.Type == crimes.PerpPlayer {
 				factions.BumpRep(fid, actor.GetUserId(), delta)
+				justice.MaybeDeclareBounty(fid, actor.GetUserId(), crimes.KindTheft)
 				// Knowledge: each witness records the player as the perp of
 				// these crimes.
 				subject := knowledge.PlayerSubject(actor.GetUserId())

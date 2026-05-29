@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/justice"
 	"github.com/GoMudEngine/GoMud/internal/knowledge"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -227,6 +228,7 @@ func plantOnMob(actor Actor, mobInstanceId int, plantItem items.Item,
 				m, m.InstanceId, room.RoomId, m.Character.Zone, hadExternal)
 			if perp.Type == crimes.PerpPlayer {
 				factions.BumpRep(fid, actor.GetUserId(), delta)
+				justice.MaybeDeclareBounty(fid, actor.GetUserId(), crimes.KindTheft)
 				subject := knowledge.PlayerSubject(actor.GetUserId())
 				for _, witnessInstId := range witnesses {
 					w := mobs.GetInstance(witnessInstId)
