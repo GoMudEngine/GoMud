@@ -1,5 +1,20 @@
 # DOGMud Patch Notes
 
+## 2026-05-29 — Mob aliveness 4.6 (goal satisfaction & pruning)
+
+NPCs no longer hoard dead ambitions. The strategic goal layer (chunks
+4.1–4.5) gained a cleanup sweep: goals that have been **achieved** (a
+revenge target died, a wealth target was reached) or have **expired** are
+retired, and goals that have gone permanently **unreachable** — a guardian
+whose ward is long dead, a grudge against someone never seen again — are
+abandoned once they've sat dormant past a threshold. This keeps NPC
+decision-making sharp and stops mobs from fixating on impossible aims.
+
+Internally: a throttled, per-mob prune sweep runs from the goals tick and
+keys abandonment off how long a goal's relevance has been zero (tracked per
+goal). Two config knobs tune it — `GoalPruneIntervalRounds` (50, sweep
+cadence) and `GoalAbandonDormantRounds` (600, dormancy threshold).
+
 ## 2026-05-29 — Planar Oasis: all bosses + Elemental Princess
 
 The Planar Oasis instance is bigger and meaner. The procedurally-generated
