@@ -72,7 +72,7 @@ func warnGraceRounds() uint64 {
 // guard's MiscData. Returns the actions taken (for tests). Both the per-round
 // tick (now) and a future protection-faction btree action (later) call this.
 func RunGuardEnforcement(mob *mobs.Mob, room *rooms.Room, nowRound uint64) []EnforceAction {
-	if mob == nil || room == nil || mob.Character.IsInCombat() {
+	if mob == nil || room == nil || mob.Character.IsInCombat() || mob.Character.IsCharmed() {
 		return nil
 	}
 	guardFactions := factions.FactionsForMob(mob)
