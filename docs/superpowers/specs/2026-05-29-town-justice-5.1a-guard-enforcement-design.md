@@ -19,8 +19,11 @@ untouched.
 5.1a adds that reaction: a **shared "wanted" verdict** computed from the
 existing substrate, and a **reactive guard enforcement path** that escalates
 **warn → attack** against wanted players (with an `Arrest` rung reserved for
-5.1c). It also does the concrete citizenship cleanup: migrating the two
-`peacefulquest` mobs to faction-rep gating.
+5.1c). Citizenship needs no new migration — the `peacefulquest` placeholder was
+already fully retired in chunk 1.2 (field deleted, gate replaced with
+`factions.IsPeacefulToward`, warren mobs migrated + a rep-seed migration
+shipped). "Citizen" is now simply a player at Neutral-or-better rep, which the
+verdict already treats as `None` (leave alone).
 
 This is the first of four 5.1 slices. Later: crime→auto-bounty (5.1b), arrest
 (5.1c), redemption (5.1d).
@@ -31,7 +34,7 @@ This is the first of four 5.1 slices. Later: crime→auto-bounty (5.1b), arrest
 
 | Decision | Value |
 |----------|-------|
-| Guard mechanism | Reactive per-tick enforcement (sibling to `lookfortrouble`), not a Phase-4 goal |
+| Guard mechanism | Reactive per-round enforcement tick (in `NewRound_MobRoundTick`, keyed off the existing `guard` group), not a Phase-4 goal |
 | Wanted signal | Faction rep tier **+** open faction/ally bounty **+** unresolved recent crime against faction/allies |
 | Escalation | Tier sets starting rung; warned player still present past grace → escalate to attack |
 | Crime-in-progress | In scope, handled reactively-via-tick (≤1 round), no coupling to combat/steal code |
@@ -103,46 +106,42 @@ Per visible, non-grace-protected, non-hidden player:
 Skips charmed guards, `NoAggroTarget`-grace players, hidden players, and
 already-in-combat guards — same guards as `LookForTrouble`.
 
-### `enforcelaw` mob command (`internal/mobcommands/enforcelaw.go`)
+### Per-round enforcement tick (`internal/hooks/NewRound_MobRoundTick.go`)
 
-Thin wrapper: `return justice.RunGuardEnforcement(mob, room)` semantics
-(handled/err signature like other mob commands). Registered in the mob command
-registry.
+Guards are **scheduled `noncombat_questgiver` mobs** (e.g. city_guard 106 with a
+`schedule_id`), so the legacy random idle-command path won't reliably fire an
+enforcement command. Instead, hook the **per-round mob tick** — the same place
+the 4.6 goal tick runs, which fires for every mob each round regardless of
+schedule/btree/legacy path. For any non-combat mob in the **`guard` group**,
+call `justice.RunGuardEnforcement(mob, room)` (room loaded from
+`mob.Character.RoomId`). No new mob command or archetype YAML is needed —
+detection keys off the existing `guard` group that guard mobs already carry
+(city_guard 106, city_gate_guard 92, guard_captain_velk 94, constable_drunn
+335 — confirm each has the `guard` group at plan time). Guards remain
+`IsPeacefulToward`-friendly to citizens (unchanged); enforcement is additive.
 
-### `guard` behavior archetype (`_datafiles/world/dogmud/behaviors/archetypes/guard.yaml`)
-
-Wires `enforcelaw` into the guard's idle command pool so it runs each idle tick
-(the same idle-invocation mechanism aggressive mobs use to run
-`lookfortrouble` — exact hook confirmed at plan time). Applied to existing
-guard mobs: city_guard (106), city_gate_guard (92), guard_captain_velk (94),
-constable_drunn (335). Guards remain `IsPeacefulToward`-friendly to citizens
-(unchanged); enforcement is purely additive.
-
-### Citizenship + `peacefulquest` migration
+### Citizenship (already operational — no work)
 
 "Citizen" is operational, not a new data structure: a player at `TierNeutral`
 or better with the guard faction yields `SeverityNone` (left alone). The
-concrete cleanup:
-- The warren scout (72) and warrior (73) mobs currently use the `peacefulquest`
-  token (checked in `lookfortrouble.go`) to skip quest-holders. Migrate: the
-  quest that granted the token instead **bumps warren faction rep** to
-  `TierWarm` on completion, so `IsPeacefulToward` grants peace through the
-  faction system.
-- Remove the `peacefulquest` mob field, its `lookfortrouble.go` check, and the
-  token grant; verify warren mobs carry the `warren` group so the rep gate
-  applies.
+`peacefulquest` placeholder was already fully retired in chunk 1.2 — field
+deleted, `lookfortrouble`/`actions_party` gates replaced with
+`factions.IsPeacefulToward`, warren mobs 72/73 migrated to the `warren` group,
+and a rep-seed migration (`internal/migration/0.13.0.go`) shipped. Nothing to
+migrate here.
 
 ---
 
 ## Data Flow
 
 ### Wanted player walks into a guarded room
-Player enters → guard idle tick → `RunGuardEnforcement` → `Verdict` (rep
-Hostile / open faction bounty → Attack; rep Cold → Warn) → warn or attack.
+Player enters → guard's per-round enforcement tick → `RunGuardEnforcement` →
+`Verdict` (rep Hostile / open faction bounty → Attack; rep Cold → Warn) → warn
+or attack.
 
 ### Crime in progress (reactive intervention, ≤1 round)
 Player assaults/steals from a citizen → existing crime call site records the
-crime synchronously (**unchanged**) → guard's next idle tick → `Verdict` sees
+crime synchronously (**unchanged**) → guard's next per-round tick → `Verdict` sees
 the unresolved crime against an allied faction → `SeverityAttack` → guard
 engages. No coupling to combat/steal code; the ≤1-round latency is the
 deliberate tradeoff. (A future synchronous "tackle mid-crime" can add a
@@ -165,10 +164,12 @@ crime-recorded event without changing this baseline.)
 
 - `GuardWarnGraceRounds` (default 50) — rounds a warned player may linger before
   warn escalates to attack.
-- `JusticeAttackTier` (default `Hostile`) and `JusticeWarnTier` (default `Cold`)
-  — rep tiers mapping to Attack / Warn. Stored as the tier name/threshold.
-- `JusticeCrimeLookbackRounds` (default ~1000) — recency window for the
+- `JusticeCrimeLookbackRounds` (default 1000) — recency window for the
   unresolved-crime signal.
+
+The rep-tier → severity mapping (`TierHostile` → Attack, `TierCold` → Warn,
+`TierNeutral`+ → None) is a hardcoded constant in `internal/justice` for 5.1a;
+tier-threshold tuning can become config later if needed (YAGNI).
 
 ---
 
@@ -183,12 +184,11 @@ crime-recorded event without changing this baseline.)
 - `RunGuardEnforcement`: Attack verdict issues `attack @id`; Warn verdict says a
   warning + stamps MiscData; warned-past-grace escalates to attack; citizen
   (None) ignored; hidden / grace / charmed skipped.
-
-Migration: a test (or boot check) that warren peace flows through faction rep
-after the `peacefulquest` removal.
+- Per-round tick: the enforcement tick fires `RunGuardEnforcement` only for
+  `guard`-group mobs, and skips guards already in combat.
 
 Boot smoke (instance wipe per SOP): server boots clean; new config knobs load;
-guard archetype + mobs load without panic.
+guard mobs load and enforce without panic.
 
 ---
 
