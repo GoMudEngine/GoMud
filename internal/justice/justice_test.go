@@ -87,3 +87,33 @@ func TestVerdict_AllyCrime_Attack(t *testing.T) {
 		t.Errorf("got %v, want Attack (ally crime)", got)
 	}
 }
+
+func TestVerdict_EmptyGuardFactions_None(t *testing.T) {
+	defer installSeams(t)()
+	// repTierFn would say Attack, but with no factions the loop never runs.
+	repTierFn = func(string, int) opinions.Tier { return opinions.TierHostile }
+	alliesFn = func(string) []string { return nil }
+	openFactionBountyFn = func(int, map[string]bool) bool { return false }
+	unresolvedCrimeFn = func(string, int, uint64, uint64) bool { return false }
+	nowRoundFn = func() uint64 { return 1000 }
+	lookbackFn = func() uint64 { return 1000 }
+	if got := Verdict(nil, 17); got != SeverityNone {
+		t.Errorf("nil guardFactions: got %v, want None", got)
+	}
+	if got := Verdict([]string{}, 17); got != SeverityNone {
+		t.Errorf("empty guardFactions: got %v, want None", got)
+	}
+}
+
+func TestVerdict_FriendlyRep_None(t *testing.T) {
+	defer installSeams(t)()
+	repTierFn = func(string, int) opinions.Tier { return opinions.TierFriendly }
+	alliesFn = func(string) []string { return nil }
+	openFactionBountyFn = func(int, map[string]bool) bool { return false }
+	unresolvedCrimeFn = func(string, int, uint64, uint64) bool { return false }
+	nowRoundFn = func() uint64 { return 1000 }
+	lookbackFn = func() uint64 { return 1000 }
+	if got := Verdict([]string{"thornwall_guards"}, 17); got != SeverityNone {
+		t.Errorf("friendly rep: got %v, want None", got)
+	}
+}

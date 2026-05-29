@@ -49,6 +49,7 @@ var (
 			if c.Perpetrator.Type != crimes.PerpPlayer || c.Perpetrator.Id != userId {
 				continue
 			}
+			// now >= c.Round guards against uint64 underflow on the subtraction.
 			if now >= c.Round && now-c.Round <= lookback {
 				return true
 			}
