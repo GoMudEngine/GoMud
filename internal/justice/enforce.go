@@ -59,10 +59,14 @@ func miscDataRound(misc map[string]any, key string) (uint64, bool) {
 	return 0, false
 }
 
+// defaultGuardWarnGraceRounds mirrors the GuardWarnGraceRounds config default
+// (internal/configs/config.balance.mobs.go); used when the knob is unset.
+const defaultGuardWarnGraceRounds = 50
+
 func warnGraceRounds() uint64 {
 	v := configs.GetBalanceConfig().GuardWarnGraceRounds
 	if v < 1 {
-		return 50
+		return defaultGuardWarnGraceRounds
 	}
 	return uint64(v)
 }
@@ -95,6 +99,8 @@ func RunGuardEnforcement(mob *mobs.Mob, room *rooms.Room, nowRound uint64) []Enf
 		sev := Verdict(guardFactions, uid)
 		switch sev {
 		case SeverityAttack:
+			// Intentionally leaves any prior warn-stamp in MiscData; it is
+			// inert while SeverityAttack applies and harmless if rep recovers.
 			mob.Command(fmt.Sprintf("attack @%d", uid))
 			acts = append(acts, EnforceAction{uid, SeverityAttack, false})
 		case SeverityWarn:
@@ -117,6 +123,9 @@ func RunGuardEnforcement(mob *mobs.Mob, room *rooms.Room, nowRound uint64) []Enf
 // guardSay broadcasts a guard's line synchronously (the merchantSay pattern) so
 // a scheduled guard's warning is never delayed by the mob command queue.
 func guardSay(room *rooms.Room, mob *mobs.Mob, line string) {
+	if mob == nil || room == nil {
+		return
+	}
 	actor := &actions.MobActor{Mob: mob, Room: room}
 	result := actions.Say(actor, line)
 	room.SendText(messaging.CategorySpeech,
