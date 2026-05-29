@@ -29,4 +29,4 @@ stats:
 damage:
   basedamage: 5
   variance: 2
-disabledslots: ['neck', 'belt', 'gloves', 'legs', 'feet']
+disabledslots: []  # companion-gearable summon; see PATCH_NOTES 2026-05-29

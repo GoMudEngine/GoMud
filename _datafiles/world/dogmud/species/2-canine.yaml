@@ -32,4 +32,4 @@ damage:
   basedamage: 5
   variance: 2
 damage_multiplier: 0.65
-disabledslots: ['weapon', 'offhand', 'head', 'neck', 'belt', 'gloves', 'ring', 'legs', 'feet']
+disabledslots: []  # companion-gearable (steppe spirit wolf summon); see PATCH_NOTES 2026-05-29

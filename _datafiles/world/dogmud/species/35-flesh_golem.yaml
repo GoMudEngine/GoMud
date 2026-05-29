@@ -31,5 +31,4 @@ stats:
 damage:
   basedamage: 8
   variance: 3
-disabledslots: ['weapon', 'offhand', 'head', 'neck', 'back',
-  'belt', 'gloves', 'ring', 'legs', 'feet']
+disabledslots: []  # companion-gearable summon; see PATCH_NOTES 2026-05-29
