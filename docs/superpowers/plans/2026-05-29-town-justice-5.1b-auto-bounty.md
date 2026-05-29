@@ -22,7 +22,10 @@
 - `mobs.GetInstance(instanceId) *mobs.Mob`; `mob.MobId` (template id, type `mobs.MobId`); `mob.Character.Gold int`.
 - `util.GetRoundCount() uint64`. Config: `ConfigInt`/`ConfigFloat` fields in `config.balance.go`, defaults in `config.balance.mobs.go`'s validate.
 - `MobDeath_BountyClaim.go` is the claim/payout reference (`TryClaim` → `user.Character.Gold += claimed.GoldReward` → `factions.BumpRep(claimed.Issuer.Id, killerUserId, claimed.RepReward)`).
-- Assault recorded by `recordAssaultCrime` (`internal/usercommands/attack.go:332`); rep bumped at `attack.go:351` `factions.BumpRep(fid, user.UserId, delta)` inside `if perp.Type == crimes.PerpPlayer` within the `for _, fid` loop. Murder in `internal/hooks/MobDeath_FactionRep.go` (identified-perp branches that call `factions.BumpRep(fid, userId, ...)`). **Theft is NOT wired in 5.1b** — it lives in `internal/actions/steal.go`/`plant.go`, and `internal/justice` imports `internal/actions` (5.1a `guardSay`), so `actions→justice` would be an import cycle; deferred.
+- Assault recorded by `recordAssaultCrime` (`internal/usercommands/attack.go:332`); rep bumped at `attack.go:351` `factions.BumpRep(fid, user.UserId, delta)` inside `if perp.Type == crimes.PerpPlayer` within the `for _, fid` loop.
+- Murder in `internal/hooks/MobDeath_FactionRep.go` (identified-perp branches that call `factions.BumpRep(fid, userId, ...)`).
+- Theft recorded in `internal/actions/steal.go:285` AND `internal/actions/plant.go:226` — each does `crimes.Record([]string{fid}, crimes.KindTheft, perp, ...)` then, inside `if perp.Type == crimes.PerpPlayer`, `factions.BumpRep(fid, actor.GetUserId(), delta)` (within a `for _, fid` loop). Wired only AFTER the justice↔actions decouple (Task 2).
+- **justice↔actions decouple:** `internal/justice/enforce.go` is the ONLY file in package `justice` importing `actions`/`messaging` — solely for `guardSay(room, mob, line)` (lines 125-133): `actor := &actions.MobActor{Mob: mob, Room: room}` → `result := actions.Say(actor, line)` → `room.SendText(messaging.CategorySpeech, actions.FormatSayText(mob.Character.Name, result.Text, false, "mobname", "saytext-mob"))`. Called once at `enforce.go:111` in the warn branch. `internal/hooks` already imports both `justice` (5.1a per-round tick) and `actions`.
 
 ---
 
@@ -36,8 +39,11 @@
 | `internal/bounties/bounties_test.go` | `DefaultGoldFor` test |
 | `internal/justice/bounty.go` (new) | `bountyGold` (pure), `shouldDeclare` (pure), `MaybeDeclareBounty` + seams |
 | `internal/justice/bounty_test.go` (new) | reward/gate/declare tests |
+| `internal/justice/enforce.go` | `guardSay` → injected `guardSayFn` seam + `SetGuardSay`; drop `actions`/`messaging` imports |
+| `internal/hooks/justice_wiring.go` (new) | `init()` wires `justice.SetGuardSay` to the `actions`-based broadcaster |
 | `internal/hooks/MobDeath_FactionRep.go` | call `MaybeDeclareBounty` on identified murder |
-| `internal/usercommands/attack.go` | call `MaybeDeclareBounty` after the assault rep-bump (theft deferred — cycle) |
+| `internal/usercommands/attack.go` | call `MaybeDeclareBounty` after the assault rep-bump |
+| `internal/actions/steal.go`, `internal/actions/plant.go` | call `MaybeDeclareBounty` after the theft rep-bump |
 | `internal/hooks/PlayerDeath_BountyResolve.go` (new) | death-resolution observer + pure `attributeBountyKill` |
 | `internal/hooks/PlayerDeath_BountyResolve_test.go` (new) | attribution tests |
 
@@ -85,7 +91,80 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 
 ---
 
-### Task 2: `bounties.DefaultGoldFor`
+### Task 2: Decouple `justice` from `actions` (guardSay seam)
+
+**Files:** Modify `internal/justice/enforce.go`; Create `internal/hooks/justice_wiring.go`
+
+Required so `internal/actions` (theft sites, Task 5) can import `internal/justice` without an `actions→justice→actions` cycle.
+
+- [ ] **Step 1** — In `internal/justice/enforce.go`, replace the `guardSay` function (≈lines 123-133) with a seam + setter:
+```go
+// guardSayFn speaks a guard's line. Default is a no-op so package justice has no
+// dependency on internal/actions; internal/hooks wires the real broadcaster at
+// init (hooks/justice_wiring.go). Injectability also breaks the actions↔justice
+// import cycle so crime sites in internal/actions can call MaybeDeclareBounty.
+var guardSayFn = func(room *rooms.Room, mob *mobs.Mob, line string) {}
+
+// SetGuardSay installs the guard-speech implementation (called once from
+// internal/hooks at init). A nil fn is ignored, keeping the no-op default.
+func SetGuardSay(fn func(room *rooms.Room, mob *mobs.Mob, line string)) {
+	if fn != nil {
+		guardSayFn = fn
+	}
+}
+```
+
+- [ ] **Step 2** — In `RunGuardEnforcement`, change the warn-branch call `guardSay(room, mob, "Move along — you're not welcome here.")` (≈line 111) to `guardSayFn(room, mob, "Move along — you're not welcome here.")`.
+
+- [ ] **Step 3** — Remove the now-unused imports from `enforce.go`: `"github.com/GoMudEngine/GoMud/internal/actions"` and `"github.com/GoMudEngine/GoMud/internal/messaging"`. Keep `"fmt"` (still used for the `attack @%d` command + `justice_warned_%d` key).
+
+- [ ] **Step 4** — Create `internal/hooks/justice_wiring.go`:
+```go
+package hooks
+
+import (
+	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/justice"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
+)
+
+// init wires justice's guard-speech seam to the actions-based broadcaster. It
+// lives in hooks (not justice) so package justice imports no actions, keeping
+// the actions→justice direction (theft bounty firing) cycle-free.
+func init() {
+	justice.SetGuardSay(func(room *rooms.Room, mob *mobs.Mob, line string) {
+		if mob == nil || room == nil {
+			return
+		}
+		actor := &actions.MobActor{Mob: mob, Room: room}
+		result := actions.Say(actor, line)
+		room.SendText(messaging.CategorySpeech,
+			actions.FormatSayText(mob.Character.Name, result.Text, false, "mobname", "saytext-mob"))
+	})
+}
+```
+
+- [ ] **Step 5** — `go build ./...` (clean); `go test ./internal/justice/` (the existing `RunGuardEnforcement` warn-path test still passes — it asserts on the returned `EnforceAction` + the `justice_warned_<id>` MiscData stamp, not spoken output, so the no-op default is fine).
+
+- [ ] **Step 6** — Confirm the cycle is gone:
+```bash
+go list -deps ./internal/justice/ | grep -q 'internal/actions$' && echo "STILL IMPORTS ACTIONS (bad)" || echo "decoupled OK"
+```
+Expected: `decoupled OK`.
+
+- [ ] **Step 7** — Commit:
+```bash
+git add internal/justice/enforce.go internal/hooks/justice_wiring.go
+git commit -m "refactor(justice): guardSay -> injected seam (decouple from actions)
+
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
+```
+
+---
+
+### Task 3: `bounties.DefaultGoldFor`
 
 - [ ] **Step 1** — Append to `internal/bounties/bounties_test.go`:
 ```go
@@ -126,7 +205,7 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 
 ---
 
-### Task 3: `justice.MaybeDeclareBounty` + reward/gate helpers
+### Task 4: `justice.MaybeDeclareBounty` + reward/gate helpers
 
 **Files:** Create `internal/justice/bounty.go`, `internal/justice/bounty_test.go`
 
@@ -331,7 +410,7 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 
 ---
 
-### Task 4: Fire `MaybeDeclareBounty` from crime sites
+### Task 5: Fire `MaybeDeclareBounty` from crime sites
 
 **Read each file first** (env was flaky during plan-prep) and place the call immediately after the crime is recorded + rep bumped, once per affected faction id.
 
@@ -346,21 +425,29 @@ Add the `justice` import. Do NOT add it to the unknown-perp branches (Case C / u
 				justice.MaybeDeclareBounty(fid, user.UserId, crimes.KindAssault)
 ```
 
-- [ ] **Step 3** — Add the `justice` import to both files, then `go build ./...` (expect clean). If in-scope names differ, use the actual ones; if no post-rep anchor exists, STOP and report BLOCKED.
+- [ ] **Step 3 — theft (`internal/actions/steal.go`)**: at `steal.go:285`, inside `if perp.Type == crimes.PerpPlayer` immediately after `factions.BumpRep(fid, actor.GetUserId(), delta)` (within the `for _, fid` loop), add:
+```go
+				justice.MaybeDeclareBounty(fid, actor.GetUserId(), crimes.KindTheft)
+```
 
-(Theft is intentionally NOT wired — it lives in `internal/actions`, which would form an `actions→justice` import cycle. Murder exercises the murder-trigger; assault + accumulated rep exercise the rep-trigger.)
+- [ ] **Step 4 — theft (`internal/actions/plant.go`)**: at `plant.go:226`, same pattern — after `factions.BumpRep(fid, actor.GetUserId(), delta)` inside the `perp.Type == crimes.PerpPlayer` block, add:
+```go
+				justice.MaybeDeclareBounty(fid, actor.GetUserId(), crimes.KindTheft)
+```
 
-- [ ] **Step 4** — Commit:
+- [ ] **Step 5** — Add the `justice` import (`"github.com/GoMudEngine/GoMud/internal/justice"`) to all four files, then `go build ./...` (expect clean — Task 2's decouple makes the `actions→justice` imports legal). If in-scope names differ, use the actual ones; if no post-rep anchor exists, STOP and report BLOCKED.
+
+- [ ] **Step 6** — Commit:
 ```bash
-git add internal/hooks/MobDeath_FactionRep.go internal/usercommands/attack.go
-git commit -m "feat(justice): fire MaybeDeclareBounty from murder + assault sites
+git add internal/hooks/MobDeath_FactionRep.go internal/usercommands/attack.go internal/actions/steal.go internal/actions/plant.go
+git commit -m "feat(justice): fire MaybeDeclareBounty from murder/assault/theft sites
 
 Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 ```
 
 ---
 
-### Task 5: `PlayerDeath_BountyResolve`
+### Task 6: `PlayerDeath_BountyResolve`
 
 **Files:** Create `internal/hooks/PlayerDeath_BountyResolve.go`, `internal/hooks/PlayerDeath_BountyResolve_test.go`
 
@@ -544,7 +631,7 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 
 ---
 
-### Task 6: Verification
+### Task 7: Verification
 
 - [ ] **Step 1** — `go build ./...`; `go vet ./internal/justice/ ./internal/bounties/ ./internal/hooks/` (clean).
 - [ ] **Step 2** — `go test ./internal/justice/ ./internal/bounties/ ./internal/configs/` and `go test ./internal/hooks/ -run 'AttributeBountyKill|IsGuardMob|RecomputeGoals'` (ok; note the pre-existing flaky `TestHandlePlayerFoldCasting_*`).
