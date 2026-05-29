@@ -114,6 +114,10 @@ func wirePlayerDeathBountyResolve(c *characters.Character) {
 					}
 					if _, ok := bounties.TryClaim(b.Id, knowledge.MobSubject(int(inst.MobId))); ok {
 						inst.Character.Gold += b.GoldReward
+					} else {
+						// Claim lost to a race (already claimed/withdrawn);
+						// don't leak the bounty open. Mirrors the killPlayer path.
+						bounties.MarkExpired(b.Id)
 					}
 
 				case killPlayer:
