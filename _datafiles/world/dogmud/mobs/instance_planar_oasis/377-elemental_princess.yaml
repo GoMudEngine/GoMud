@@ -1,0 +1,40 @@
+mobid: 377
+zone: Instance Planar Oasis
+archetype: fighting
+behavior_archetype: leader
+routine: planar_oasis_pack
+statpool: 4
+hostile: true
+groups:
+  - elemental
+activitylevel: 30
+combatcommands:
+  - 'emote slips sideways like a current and rakes with liquid talons'
+  - ''
+  - 'emote coils a whip of water around its prey before striking'
+  - 'trip'
+  - 'emote dissolves to spray and reforms at your flank, claws first'
+  - ''
+character:
+  name: elemental princess
+  description: >-
+    A lithe figure of clear running water held in the shape of a
+    woman, her edges never quite still. She circles rather than
+    charges, watching with the patient attention of something that
+    has drowned patient things before. Where her hands should be,
+    four curved talons of hardened water catch the twilight. The
+    air around her smells of cold deep water.
+  speciesid: 36
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 12
+    perception:
+      training: 8
+  skills:
+    unarmed-combat: 5
+itemdropchance: 75
+loot_pool:
+  - 10036
+  - 20077
