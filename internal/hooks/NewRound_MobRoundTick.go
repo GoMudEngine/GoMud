@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
+	"github.com/GoMudEngine/GoMud/internal/justice"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -107,6 +108,9 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 		tickMobBuffs(mob, mobInstanceId)
 		tickMobConditions(mob)
 		tickMobRecomputeGoals(mob, roundCount) // chunk 4.2 — strategic-layer selection
+		if room != nil && isGuardMob(mob.Groups) {
+			justice.RunGuardEnforcement(mob, room, roundCount)
+		}
 
 		// Death check always runs — a DoT tick in an idle zone should
 		// still kill the mob. Skip the rest of the loop when the mob dies.
@@ -457,6 +461,17 @@ func tickMobConditions(mob *mobs.Mob) {
 // revalidateMobStats — current inline line 402.
 func revalidateMobStats(mob *mobs.Mob) {
 	mob.Character.Validate()
+}
+
+// isGuardMob reports whether a mob's groups include the law-enforcement
+// "guard" marker (5.1a town justice).
+func isGuardMob(groups []string) bool {
+	for _, g := range groups {
+		if g == "guard" {
+			return true
+		}
+	}
+	return false
 }
 
 // tickMobRecomputeGoals runs the chunk-4.2 goal-selection pipeline

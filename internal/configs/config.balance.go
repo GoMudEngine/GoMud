@@ -371,6 +371,14 @@ type Balance struct {
 	// chunk 4.6.
 	GoalAbandonDormantRounds ConfigInt `yaml:"GoalAbandonDormantRounds"`
 
+	// GuardWarnGraceRounds is how many rounds a warned (Cold-rep) player may
+	// remain present before a guard escalates the warning to an attack. 5.1a.
+	GuardWarnGraceRounds ConfigInt `yaml:"GuardWarnGraceRounds"`
+
+	// JusticeCrimeLookbackRounds is the recency window for the unresolved-crime
+	// "wanted" signal used by guard enforcement. 5.1a.
+	JusticeCrimeLookbackRounds ConfigInt `yaml:"JusticeCrimeLookbackRounds"`
+
 	// ── PACK SCALING ─────────────────────────────────────────────────────────
 	PackScalingEnabled   ConfigBool `yaml:"PackScalingEnabled"`   // Enable pack survival bonuses (default true)
 	PackSurvivalRounds   ConfigInt  `yaml:"PackSurvivalRounds"`   // Consecutive rounds together before bonus (default 10)

@@ -142,4 +142,10 @@ func (b *Balance) validateMobs() {
 	if b.GoalAbandonDormantRounds < 1 {
 		b.GoalAbandonDormantRounds = 600
 	}
+	if b.GuardWarnGraceRounds < 1 {
+		b.GuardWarnGraceRounds = 50
+	}
+	if b.JusticeCrimeLookbackRounds < 1 {
+		b.JusticeCrimeLookbackRounds = 1000
+	}
 }
