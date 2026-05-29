@@ -1,5 +1,18 @@
 # DOGMud Patch Notes
 
+## 2026-05-29 — Planar Oasis: all bosses + Elemental Princess
+
+The Planar Oasis instance is bigger and meaner. The procedurally-generated
+cube grew from 4×4×4 (64 rooms) to 5×5×5 (125 rooms), and instead of one
+randomly-chosen boss per run, **all** of the elemental royalty now appear —
+each wandering its own corner of the cube.
+
+A fourth boss joins the king, queen, and prince: the **Elemental Princess**,
+a water-form skirmisher who fights with a set of unarmed claws. She drops two
+instance-scaled pieces — the **drowned claws** (a clawed weapon that trains
+unarmed-combat) and a **tidal torc** for the neck. Like all instance gear,
+both scale with the gold paid to open the instance.
+
 ## 2026-05-29 — Playtest bug fixes (sell feedback, companion gear, death buffs)
 
 Three fixes from playtesting:
