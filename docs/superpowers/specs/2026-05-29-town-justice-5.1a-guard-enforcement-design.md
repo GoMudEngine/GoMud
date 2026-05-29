@@ -200,3 +200,12 @@ guard mobs load and enforce without panic.
 - Redemption / fine-paying (5.1d).
 - Stillwater constabulary rollout and per-zone justice tuning.
 - Synchronous (same-round) crime intervention.
+- **Goal-driven / btree-routed enforcement — deferred deliberately.** The
+  per-round tick was chosen over a btree node / `protection-faction` goal
+  because it fires reliably even on mid-patrol-walk rounds (the btree idle
+  branch is skipped then), is path-agnostic for scheduled guards, and is far
+  smaller. `Verdict` + `RunGuardEnforcement` are extracted so a future btree
+  action can adopt the same logic with ~10 lines of rework. **Revisit trigger:**
+  when guards must weigh enforcement against *other* priorities (e.g. 5.1c
+  arrest decisions, or a Phase-4 guard-goal pass) — at that point routing
+  through the goal/btree layer earns its cost.
