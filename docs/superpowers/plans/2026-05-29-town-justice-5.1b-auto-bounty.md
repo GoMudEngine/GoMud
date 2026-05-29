@@ -11,10 +11,10 @@
 **Spec:** `docs/superpowers/specs/2026-05-29-town-justice-5.1b-auto-bounty-design.md`
 
 **Verified facts (use; the env was flaky during plan-prep — confirm any file:line by reading before editing):**
-- `state.ActorRef{ Kind state.ActorKind; InstanceId int; UserId int; Name string }`; `state.ActorKindMob = "mob"`, `state.ActorKindUser = "user"`.
+- `state.ActorRef{ UserId int; MobInstanceId int }` with helpers `IsZero()`, `IsPlayer()`, `IsMob()` (NO `Kind`/`InstanceId`/`Name` fields).
 - `life.DeadData{ Killer state.ActorRef; DamageMap map[int]int; NoDeprogression bool }`; obtained in the player-death observer via `c.Life.DeadData()`.
 - Player death observer pattern: `Death_PlayerCleanup.go` wires `wirePlayerDeathCleanup(c *characters.Character)` via `characters.OnCharacterCreated`, using `c.Life.Inner().AfterTransition(name, func(from,to life.State, r state.TransitionReason){ if from!=life.Alive||to!=life.Dead {return}; if c.GetUserId()==0 {return}; ... })`.
-- `bounties.computeDefaultGold(statpool int, scalar float64, floor int) int`, `bounties.statpoolFor(target knowledge.Subject) int`, and internal seam getters `goldMultiplier()` / `goldFloor()` (used by `Declare`).
+- `bounties.computeDefaultGold(statpool int) int` (reads `goldMultiplier()`/`goldFloor()` internally — takes ONLY statpool); `bounties.statpoolFor(target knowledge.Subject) int`; test seam `statpoolForTest`.
 - `bounties.Declare(issuer Issuer, target knowledge.Subject, condition Condition, expiryRound uint64, opts DeclareOpts) (int, error)`; `DeclareOpts{ GoldOverride int; RepOverride int; DeclaredReason string }`; `bounties.FactionIssuer(slug)`, `bounties.ConditionKill`, `bounties.IssuerFaction`.
 - `bounties.OpenAgainstPlayer(userId) []*Bounty`; `bounties.TryClaim(id int, claimer knowledge.Subject) (*Bounty, bool)`; `bounties.MarkExpired(id int)`; `Bounty{ Id int; Issuer Issuer; GoldReward int; RepReward int; ... }`.
 - `knowledge.PlayerSubject(userId) Subject`, `knowledge.MobSubject(templateId) Subject`.
@@ -22,7 +22,7 @@
 - `mobs.GetInstance(instanceId) *mobs.Mob`; `mob.MobId` (template id, type `mobs.MobId`); `mob.Character.Gold int`.
 - `util.GetRoundCount() uint64`. Config: `ConfigInt`/`ConfigFloat` fields in `config.balance.go`, defaults in `config.balance.mobs.go`'s validate.
 - `MobDeath_BountyClaim.go` is the claim/payout reference (`TryClaim` → `user.Character.Gold += claimed.GoldReward` → `factions.BumpRep(claimed.Issuer.Id, killerUserId, claimed.RepReward)`).
-- The assault crime is recorded by `recordAssaultCrime` in `internal/usercommands/attack.go`; theft is recorded in `internal/usercommands/skill.skullduggery.steal.go`. **Confirm exact lines by reading before inserting (Task 4).**
+- Assault recorded by `recordAssaultCrime` (`internal/usercommands/attack.go:332`); rep bumped at `attack.go:351` `factions.BumpRep(fid, user.UserId, delta)` inside `if perp.Type == crimes.PerpPlayer` within the `for _, fid` loop. Murder in `internal/hooks/MobDeath_FactionRep.go` (identified-perp branches that call `factions.BumpRep(fid, userId, ...)`). **Theft is NOT wired in 5.1b** — it lives in `internal/actions/steal.go`/`plant.go`, and `internal/justice` imports `internal/actions` (5.1a `guardSay`), so `actions→justice` would be an import cycle; deferred.
 
 ---
 
@@ -37,7 +37,7 @@
 | `internal/justice/bounty.go` (new) | `bountyGold` (pure), `shouldDeclare` (pure), `MaybeDeclareBounty` + seams |
 | `internal/justice/bounty_test.go` (new) | reward/gate/declare tests |
 | `internal/hooks/MobDeath_FactionRep.go` | call `MaybeDeclareBounty` on identified murder |
-| `internal/usercommands/attack.go`, `skill.skullduggery.steal.go` | call `MaybeDeclareBounty` after assault/theft record |
+| `internal/usercommands/attack.go` | call `MaybeDeclareBounty` after the assault rep-bump (theft deferred — cycle) |
 | `internal/hooks/PlayerDeath_BountyResolve.go` (new) | death-resolution observer + pure `attributeBountyKill` |
 | `internal/hooks/PlayerDeath_BountyResolve_test.go` (new) | attribution tests |
 
@@ -94,7 +94,7 @@ func TestDefaultGoldFor_MatchesComputeDefault(t *testing.T) {
 	statpoolForTest = func(knowledge.Subject) int { return 600 }
 	defer func() { statpoolForTest = restore }()
 	got := DefaultGoldFor(knowledge.PlayerSubject(17))
-	want := computeDefaultGold(600, goldMultiplier(), goldFloor())
+	want := computeDefaultGold(600)
 	if got != want {
 		t.Errorf("DefaultGoldFor = %d, want %d", got, want)
 	}
@@ -110,7 +110,7 @@ func TestDefaultGoldFor_MatchesComputeDefault(t *testing.T) {
 // exposing the same computation Declare uses (so callers like internal/justice
 // can scale it without duplicating the formula).
 func DefaultGoldFor(target knowledge.Subject) int {
-	return computeDefaultGold(statpoolFor(target), goldMultiplier(), goldFloor())
+	return computeDefaultGold(statpoolFor(target))
 }
 ```
 
@@ -341,22 +341,19 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 ```
 Add the `justice` import. Do NOT add it to the unknown-perp branches (Case C / unknown fresh murder) — there's no identified target.
 
-- [ ] **Step 2 — assault (`internal/usercommands/attack.go`)**: inside `recordAssaultCrime` (or immediately after its call), after the assault crime + rep are recorded, for each faction id `fid` add:
+- [ ] **Step 2 — assault (`internal/usercommands/attack.go`)**: in `recordAssaultCrime`, immediately after `factions.BumpRep(fid, user.UserId, delta)` (≈line 351, inside `if perp.Type == crimes.PerpPlayer` within the `for _, fid := range factionIds` loop), add:
 ```go
-			justice.MaybeDeclareBounty(fid, userId, crimes.KindAssault)
+				justice.MaybeDeclareBounty(fid, user.UserId, crimes.KindAssault)
 ```
 
-- [ ] **Step 3 — theft (`internal/usercommands/skill.skullduggery.steal.go`)**: after the theft crime is recorded, for each faction id `fid` add:
-```go
-			justice.MaybeDeclareBounty(fid, userId, crimes.KindTheft)
-```
+- [ ] **Step 3** — Add the `justice` import to both files, then `go build ./...` (expect clean). If in-scope names differ, use the actual ones; if no post-rep anchor exists, STOP and report BLOCKED.
 
-- [ ] **Step 4** — `go build ./...` (expect clean; resolves the new `justice` imports). If a site's variable names differ (faction id / userId), use the actual in-scope names; if no clear post-record/rep anchor exists, STOP and report BLOCKED.
+(Theft is intentionally NOT wired — it lives in `internal/actions`, which would form an `actions→justice` import cycle. Murder exercises the murder-trigger; assault + accumulated rep exercise the rep-trigger.)
 
-- [ ] **Step 5** — Commit:
+- [ ] **Step 4** — Commit:
 ```bash
-git add internal/hooks/MobDeath_FactionRep.go internal/usercommands/attack.go internal/usercommands/skill.skullduggery.steal.go
-git commit -m "feat(justice): fire MaybeDeclareBounty from crime sites
+git add internal/hooks/MobDeath_FactionRep.go internal/usercommands/attack.go
+git commit -m "feat(justice): fire MaybeDeclareBounty from murder + assault sites
 
 Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 ```
@@ -380,7 +377,7 @@ import (
 func TestAttributeBountyKill(t *testing.T) {
 	// guard mob of the issuer faction landed the kill
 	gk := attributeBountyKill(
-		state.ActorRef{Kind: state.ActorKindMob, InstanceId: 5},
+		state.ActorRef{MobInstanceId: 5},
 		"thornwall_guards", nil,
 		func(int) []string { return []string{"thornwall_guards"} }, // killer mob factions
 	)
@@ -389,7 +386,7 @@ func TestAttributeBountyKill(t *testing.T) {
 	}
 	// third-party player landed the kill
 	pk := attributeBountyKill(
-		state.ActorRef{Kind: state.ActorKindUser, UserId: 42},
+		state.ActorRef{UserId: 42},
 		"thornwall_guards", nil, nil,
 	)
 	if pk.kind != killPlayer || pk.userId != 42 {
@@ -397,7 +394,7 @@ func TestAttributeBountyKill(t *testing.T) {
 	}
 	// non-issuer mob, but a player damager exists -> player attribution
 	dm := attributeBountyKill(
-		state.ActorRef{Kind: state.ActorKindMob, InstanceId: 7},
+		state.ActorRef{MobInstanceId: 7},
 		"thornwall_guards", map[int]int{42: 10},
 		func(int) []string { return []string{"warren"} }, // killer mob not in issuer faction
 	)
@@ -450,14 +447,14 @@ type bountyKill struct {
 // dies. issuerFaction is the bounty's issuing faction; killerFactions resolves a
 // mob instance's faction memberships (nil ok). Pure.
 func attributeBountyKill(killer state.ActorRef, issuerFaction string, damageMap map[int]int, killerFactions func(instanceId int) []string) bountyKill {
-	if killer.Kind == state.ActorKindMob && killer.InstanceId > 0 && killerFactions != nil {
-		for _, f := range killerFactions(killer.InstanceId) {
+	if killer.IsMob() && killer.MobInstanceId > 0 && killerFactions != nil {
+		for _, f := range killerFactions(killer.MobInstanceId) {
 			if f == issuerFaction {
-				return bountyKill{kind: killGuard, mobInstanceId: killer.InstanceId}
+				return bountyKill{kind: killGuard, mobInstanceId: killer.MobInstanceId}
 			}
 		}
 	}
-	if killer.Kind == state.ActorKindUser && killer.UserId > 0 {
+	if killer.IsPlayer() && killer.UserId > 0 {
 		return bountyKill{kind: killPlayer, userId: killer.UserId}
 	}
 	// Fallback: highest player damager (covers player kills not captured as the

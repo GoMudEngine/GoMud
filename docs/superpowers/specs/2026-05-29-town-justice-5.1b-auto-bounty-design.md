@@ -77,8 +77,14 @@ can read the statpool-derived base without duplicating the formula.
   perp is an identified player, call with `crimes.KindMurder`.
 - `internal/usercommands/attack.go` (assault recording) — after the assault
   rep-bump, call with `crimes.KindAssault` (rep-path only).
-- `internal/usercommands/skill.skullduggery.steal.go` (theft) — after recording,
-  call with `crimes.KindTheft` (rep-path only).
+- **Theft is deferred** (not wired in 5.1b). Theft is recorded in
+  `internal/actions/steal.go` + `plant.go`, and `internal/justice` already
+  imports `internal/actions` (5.1a `guardSay`), so an `actions → justice` call
+  would be an import cycle. Theft still lowers faction rep, which 5.1a guards
+  react to and which feeds the assault-accumulated rep-path here — so the only
+  gap is a *pure-theft* offender getting no posted bounty (still guard-attacked
+  via rep). Wiring theft later means decoupling `justice` from `actions` first
+  (a `guardSay` seam).
 
 (Unlike 5.1a's spatial guard reaction, an auto-bounty is a direct consequence of
 the crime, so firing at the crime site is the precise trigger.)
@@ -136,6 +142,8 @@ only adds the player-death close so bounties don't leak and guards self-fund.
 
 ## Out of scope
 
+- **Theft-triggered bounties** — deferred (would need `justice`↔`actions`
+  decoupling; theft already feeds the rep path).
 - NPC bounty-hunter seeking + their claim payout (5.2).
 - Redemption / clearing rep+crimes (5.1d) — death does NOT clear the underlying
   wanted status.
