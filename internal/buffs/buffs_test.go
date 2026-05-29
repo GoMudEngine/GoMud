@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // seedRegistry populates the global buffs map with diverse specs for testing.
@@ -162,6 +163,32 @@ func TestBuffs_HasFlag(t *testing.T) {
 		idx := bs2.buffIds[105]
 		assert.Equal(t, TriggersLeftExpired, bs2.List[idx].TriggersLeft)
 	})
+}
+
+// TestBuffs_HasFlag_AllMatchesFlaglessBuff verifies that action==All matches
+// (and can expire) a buff that declares NO flags — e.g. pure regen potion
+// buffs like Healing Salve (buff 54). Regression: the per-flag loop in
+// HasFlag skipped flagless buffs entirely, so CancelBuffsWithFlag(buffs.All)
+// on death left them active. Buff 108 ("Quick Heal") has no Flags, mirroring
+// the potion regen buffs.
+func TestBuffs_HasFlag_AllMatchesFlaglessBuff(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	bs := New()
+	require.True(t, bs.AddBuff(108, false)) // Quick Heal — no Flags
+
+	// The All wildcard must see a flagless buff.
+	assert.True(t, bs.HasFlag(All, false),
+		"All must match a buff that declares no flags")
+
+	// Expire mode must mark the flagless buff expired.
+	assert.True(t, bs.HasFlag(All, true),
+		"All+expire must match the flagless buff")
+	idx, ok := bs.buffIds[108]
+	require.True(t, ok)
+	assert.Equal(t, TriggersLeftExpired, bs.List[idx].TriggersLeft,
+		"flagless buff must be expired by HasFlag(All, true)")
 }
 
 // ─── Buffs.GetBuffIdsWithFlag ───────────────────────────────────────────────

@@ -1,6 +1,8 @@
 package buffs
 
 import (
+	"slices"
+
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 )
 
@@ -127,33 +129,41 @@ func (bs *Buffs) HasFlag(action Flag, expire bool) bool {
 
 	found := false
 	for index, b := range bs.List {
-		bSpec := GetBuffSpec(b.BuffId)
-		for _, p := range bSpec.Flags {
-
-			if b.Expired() {
-				continue
-			}
-			if p == action || action == All {
-				found = true
-
-				// If expire is set, need to check the rest of the buffs to possibly expire them too.
-				if expire {
-					// Buff zero is special, and if force cancelled, it will be removed from the list
-					if b.BuffId == 0 {
-						bs.List = append(bs.List[:index], bs.List[index+1:]...)
-					} else {
-						b.TriggersLeft = TriggersLeftExpired
-						bs.List[index] = b
-					}
-					break
-				}
-
-				// Otherwise just return found
-				return found
-
-			}
+		if b.Expired() {
+			continue
 		}
 
+		// Determine whether this buff matches the requested flag.
+		// action == All matches EVERY non-expired buff, including buffs
+		// that declare no flags at all — e.g. pure regen potion buffs
+		// like Healing Salve (buff 54). The old per-flag loop never ran
+		// for a flagless buff, so CancelBuffsWithFlag(buffs.All) on death
+		// silently left those buffs active.
+		matches := action == All
+		if !matches {
+			matches = slices.Contains(GetBuffSpec(b.BuffId).Flags, action)
+		}
+		if !matches {
+			continue
+		}
+
+		found = true
+
+		// If not expiring, the first match is enough.
+		if !expire {
+			return found
+		}
+
+		// Expire mode: mark/remove this buff and keep scanning so every
+		// matching buff is expired (required for action == All).
+		// Buff zero is special, and if force cancelled, it is removed
+		// from the list outright.
+		if b.BuffId == 0 {
+			bs.List = append(bs.List[:index], bs.List[index+1:]...)
+		} else {
+			b.TriggersLeft = TriggersLeftExpired
+			bs.List[index] = b
+		}
 	}
 
 	return found
