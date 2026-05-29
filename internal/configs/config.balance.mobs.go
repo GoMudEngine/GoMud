@@ -148,4 +148,13 @@ func (b *Balance) validateMobs() {
 	if b.JusticeCrimeLookbackRounds < 1 {
 		b.JusticeCrimeLookbackRounds = 1000
 	}
+	if b.JusticeBountyExpiryRounds < 1 {
+		b.JusticeBountyExpiryRounds = 5000
+	}
+	if b.JusticeBountyMurderMult < 1 {
+		b.JusticeBountyMurderMult = 2.0
+	}
+	if b.JusticeBountyRepMultMax < 1 {
+		b.JusticeBountyRepMultMax = 2.0
+	}
 }

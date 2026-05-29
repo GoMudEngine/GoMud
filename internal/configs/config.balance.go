@@ -32,12 +32,12 @@ type Balance struct {
 	StandStaminaCost             ConfigFloat `yaml:"StandStaminaCost"`             // Fraction of max stamina to stand up (default 0.15)
 	StandMinStamina              ConfigFloat `yaml:"StandMinStamina"`              // Minimum fraction of max SP to stand (default 0.15)
 	ThirdPartyGrapplePenalty     ConfigFloat `yaml:"ThirdPartyGrapplePenalty"`     // Defense multiplier when grappled vs third party (default 0.70)
-	ClinchDodgePenalty          ConfigFloat `yaml:"ClinchDodgePenalty"`          // Dodge score multiplier while clinched (default 0.80)
-	ClinchParryPenalty          ConfigFloat `yaml:"ClinchParryPenalty"`          // Parry score multiplier while clinched (default 0.83)
-	ClinchBlockPenalty          ConfigFloat `yaml:"ClinchBlockPenalty"`          // Block score multiplier while clinched (default 0.85)
-	GroundedDodgePenalty        ConfigFloat `yaml:"GroundedDodgePenalty"`        // Dodge score multiplier while grounded (default 0.75)
-	GroundedParryPenalty        ConfigFloat `yaml:"GroundedParryPenalty"`        // Parry score multiplier while grounded (default 0.77)
-	GroundedBlockPenalty        ConfigFloat `yaml:"GroundedBlockPenalty"`        // Block score multiplier while grounded (default 0.80)
+	ClinchDodgePenalty           ConfigFloat `yaml:"ClinchDodgePenalty"`           // Dodge score multiplier while clinched (default 0.80)
+	ClinchParryPenalty           ConfigFloat `yaml:"ClinchParryPenalty"`           // Parry score multiplier while clinched (default 0.83)
+	ClinchBlockPenalty           ConfigFloat `yaml:"ClinchBlockPenalty"`           // Block score multiplier while clinched (default 0.85)
+	GroundedDodgePenalty         ConfigFloat `yaml:"GroundedDodgePenalty"`         // Dodge score multiplier while grounded (default 0.75)
+	GroundedParryPenalty         ConfigFloat `yaml:"GroundedParryPenalty"`         // Parry score multiplier while grounded (default 0.77)
+	GroundedBlockPenalty         ConfigFloat `yaml:"GroundedBlockPenalty"`         // Block score multiplier while grounded (default 0.80)
 	// GrappleStaminaLowThreshold is the stamina fraction (0.0–1.0) below
 	// which a character is considered "low stamina" for grapple purposes.
 	// Used by IsLowGrappleStamina() and the mob_low_grapple_stamina btree
@@ -70,13 +70,13 @@ type Balance struct {
 	// Per-round opportunistic submission attempts gated on the chunk-4b
 	// control-axis drift roll. See spec
 	// docs/superpowers/specs/2026-05-18-state-chunk-4d-submission-rework-design.md
-	SubmissionAttemptAlpha   ConfigFloat `yaml:"submission_attempt_alpha"`     // Min drift-margin (std devs) that opens a sub window (either side)
-	SubmissionAttemptCritZ   ConfigFloat `yaml:"submission_attempt_crit_z"`    // Defender-side shortcut: drift z >= this opens a bottom-sub window regardless of margin
-	SubSkillWeight           ConfigFloat `yaml:"sub_skill_weight"`             // Unarmed-combat skill contribution multiplier in the sub roll
-	SubBadZThreshold         ConfigFloat `yaml:"sub_bad_z_threshold"`          // Z-score below which the sub roll's bad-tier (attempter falls prone) fires
-	SubCritZThreshold        ConfigFloat `yaml:"sub_crit_z_threshold"`         // Z-score at or above which the sub roll's crit-tier (recipient stunned) fires
-	SubGoldLossFraction      ConfigFloat `yaml:"sub_gold_loss_fraction"`       // Fraction of carried gold transferred to the aggressor on subdue/cripple
-	BrokenLimbBuffDuration   ConfigInt   `yaml:"broken_limb_buff_duration"`    // Duration in rounds for the broken-limb buff; expires naturally via standard buff tick
+	SubmissionAttemptAlpha ConfigFloat `yaml:"submission_attempt_alpha"`  // Min drift-margin (std devs) that opens a sub window (either side)
+	SubmissionAttemptCritZ ConfigFloat `yaml:"submission_attempt_crit_z"` // Defender-side shortcut: drift z >= this opens a bottom-sub window regardless of margin
+	SubSkillWeight         ConfigFloat `yaml:"sub_skill_weight"`          // Unarmed-combat skill contribution multiplier in the sub roll
+	SubBadZThreshold       ConfigFloat `yaml:"sub_bad_z_threshold"`       // Z-score below which the sub roll's bad-tier (attempter falls prone) fires
+	SubCritZThreshold      ConfigFloat `yaml:"sub_crit_z_threshold"`      // Z-score at or above which the sub roll's crit-tier (recipient stunned) fires
+	SubGoldLossFraction    ConfigFloat `yaml:"sub_gold_loss_fraction"`    // Fraction of carried gold transferred to the aggressor on subdue/cripple
+	BrokenLimbBuffDuration ConfigInt   `yaml:"broken_limb_buff_duration"` // Duration in rounds for the broken-limb buff; expires naturally via standard buff tick
 
 	// ── CHUNK 4E: THIRD-PARTY INTERFERENCE ──────────────────────────────────
 	// See docs/superpowers/specs/ chunk-4e design.
@@ -148,30 +148,30 @@ type Balance struct {
 	// Legacy unarmed knobs — still used by GetDefaultDistributionDamage() for
 	// attack count and crit buff calculation. Damage values are overridden by
 	// the unified pipeline (UnarmedDamageMultiplier + CalcRawDamage).
-	UnarmedBaseDamage       ConfigFloat `yaml:"UnarmedBaseDamage"`       // Base damage before stat bonuses (default 2.0)
-	UnarmedStrengthDivisor  ConfigFloat `yaml:"UnarmedStrengthDivisor"`  // Str / this = damage bonus (default 25.0)
-	UnarmedSkillDivisor     ConfigFloat `yaml:"UnarmedSkillDivisor"`     // Skill / this = damage bonus (default 10.0)
-	UnarmedBaseVariance        ConfigFloat `yaml:"UnarmedBaseVariance"`        // Base randomness of unarmed hits (default 3.0)
-	UnarmedDamageMultiplier    ConfigFloat `yaml:"UnarmedDamageMultiplier"`    // Fist damage multiplier for new pipeline (default 0.30)
-	UnarmedSpeedMultiplier     ConfigFloat `yaml:"UnarmedSpeedMultiplier"`     // Unarmed attack speed — slightly faster than light weapons (default 1.4)
-	HasteSwingMultiplier       ConfigFloat `yaml:"HasteSwingMultiplier"`       // Swing count multiplier when haste buff is active (default 1.50)
-	SkillMultiplierBase        ConfigFloat `yaml:"SkillMultiplierBase"`        // Skill multiplier at rank 0 (default 1.0)
-	SkillMultiplierMax         ConfigFloat `yaml:"SkillMultiplierMax"`         // Skill multiplier at soft cap (default 3.0)
-	SkillWeight                ConfigFloat `yaml:"SkillWeight"`                // Global multiplier on skill contributions in additive formulas (default 2.0)
-	MeleeDamageScale           ConfigFloat `yaml:"MeleeDamageScale"`            // Physical damage scale. Stats ~100, so 0.30 yields ~30 raw per swing (default 0.30)
-	SpellDamageScale           ConfigFloat `yaml:"SpellDamageScale"`            // Flat multiplier on spell damage output (default 1.0 = no change)
-	RhetoricDamageScale        ConfigFloat `yaml:"RhetoricDamageScale"`         // Flat multiplier on conviction/taunt damage output (default 1.0 = no change)
-	MobDamageMultiplier        ConfigFloat `yaml:"MobDamageMultiplier"`         // Extra multiplier applied to NPC melee damage only (default 1.0 = same as players)
-	GlobalDamageMultiplier     ConfigFloat `yaml:"GlobalDamageMultiplier"`      // Master multiplier applied to ALL damage channels (default 1.0)
-	PhysicalMitigationCap      ConfigFloat `yaml:"PhysicalMitigationCap"`     // Max physical mitigation % (default 0.75)
-	MagicalMitigationCap       ConfigFloat `yaml:"MagicalMitigationCap"`      // Max magical mitigation % (default 0.75)
-	ConvictionMitigationCap    ConfigFloat `yaml:"ConvictionMitigationCap"`   // Max conviction mitigation % (default 0.75)
+	UnarmedBaseDamage                 ConfigFloat `yaml:"UnarmedBaseDamage"`                 // Base damage before stat bonuses (default 2.0)
+	UnarmedStrengthDivisor            ConfigFloat `yaml:"UnarmedStrengthDivisor"`            // Str / this = damage bonus (default 25.0)
+	UnarmedSkillDivisor               ConfigFloat `yaml:"UnarmedSkillDivisor"`               // Skill / this = damage bonus (default 10.0)
+	UnarmedBaseVariance               ConfigFloat `yaml:"UnarmedBaseVariance"`               // Base randomness of unarmed hits (default 3.0)
+	UnarmedDamageMultiplier           ConfigFloat `yaml:"UnarmedDamageMultiplier"`           // Fist damage multiplier for new pipeline (default 0.30)
+	UnarmedSpeedMultiplier            ConfigFloat `yaml:"UnarmedSpeedMultiplier"`            // Unarmed attack speed — slightly faster than light weapons (default 1.4)
+	HasteSwingMultiplier              ConfigFloat `yaml:"HasteSwingMultiplier"`              // Swing count multiplier when haste buff is active (default 1.50)
+	SkillMultiplierBase               ConfigFloat `yaml:"SkillMultiplierBase"`               // Skill multiplier at rank 0 (default 1.0)
+	SkillMultiplierMax                ConfigFloat `yaml:"SkillMultiplierMax"`                // Skill multiplier at soft cap (default 3.0)
+	SkillWeight                       ConfigFloat `yaml:"SkillWeight"`                       // Global multiplier on skill contributions in additive formulas (default 2.0)
+	MeleeDamageScale                  ConfigFloat `yaml:"MeleeDamageScale"`                  // Physical damage scale. Stats ~100, so 0.30 yields ~30 raw per swing (default 0.30)
+	SpellDamageScale                  ConfigFloat `yaml:"SpellDamageScale"`                  // Flat multiplier on spell damage output (default 1.0 = no change)
+	RhetoricDamageScale               ConfigFloat `yaml:"RhetoricDamageScale"`               // Flat multiplier on conviction/taunt damage output (default 1.0 = no change)
+	MobDamageMultiplier               ConfigFloat `yaml:"MobDamageMultiplier"`               // Extra multiplier applied to NPC melee damage only (default 1.0 = same as players)
+	GlobalDamageMultiplier            ConfigFloat `yaml:"GlobalDamageMultiplier"`            // Master multiplier applied to ALL damage channels (default 1.0)
+	PhysicalMitigationCap             ConfigFloat `yaml:"PhysicalMitigationCap"`             // Max physical mitigation % (default 0.75)
+	MagicalMitigationCap              ConfigFloat `yaml:"MagicalMitigationCap"`              // Max magical mitigation % (default 0.75)
+	ConvictionMitigationCap           ConfigFloat `yaml:"ConvictionMitigationCap"`           // Max conviction mitigation % (default 0.75)
 	SpellAvoidanceDamageMultiplier    ConfigFloat `yaml:"SpellAvoidanceDamageMultiplier"`    // Damage multiplier on successful spell deflection (default 0.50)
 	RhetoricAvoidanceDamageMultiplier ConfigFloat `yaml:"RhetoricAvoidanceDamageMultiplier"` // Damage multiplier on successful stoic resolve (default 0.50)
-	ResourcePenaltyCurve       ConfigFloat `yaml:"ResourcePenaltyCurve"`     // Exponent for resource depletion penalty curve (default 2.0)
-	HealthPenaltyMax           ConfigFloat `yaml:"HealthPenaltyMax"`         // Max melee damage penalty at 0% HP (default 0.28)
-	StaminaPenaltyMax          ConfigFloat `yaml:"StaminaPenaltyMax"`        // Max attack count + hit rate penalty at 0% SP (default 0.28)
-	ConvictionPenaltyMax       ConfigFloat `yaml:"ConvictionPenaltyMax"`     // Max taunt/spell penalty at 0% CP (default 0.28)
+	ResourcePenaltyCurve              ConfigFloat `yaml:"ResourcePenaltyCurve"`              // Exponent for resource depletion penalty curve (default 2.0)
+	HealthPenaltyMax                  ConfigFloat `yaml:"HealthPenaltyMax"`                  // Max melee damage penalty at 0% HP (default 0.28)
+	StaminaPenaltyMax                 ConfigFloat `yaml:"StaminaPenaltyMax"`                 // Max attack count + hit rate penalty at 0% SP (default 0.28)
+	ConvictionPenaltyMax              ConfigFloat `yaml:"ConvictionPenaltyMax"`              // Max taunt/spell penalty at 0% CP (default 0.28)
 
 	// ── REGEN RATES ──────────────────────────────────────────────────────────
 	PlayerHealthRegenPct     ConfigFloat `yaml:"PlayerHealthRegenPct"`     // Fraction of HealthMax regen'd per tick — players (default 0.01)
@@ -198,14 +198,14 @@ type Balance struct {
 	ConvictionPerWilCha ConfigInt `yaml:"ConvictionPerWilCha"` // (Wil+Cha) multiplier toward ConvictionMax (default 2)
 
 	// ── PROGRESSION ───────────────────────────────────────────────────────────
-	SkillSoftCap              ConfigInt   `yaml:"SkillSoftCap"`              // Virtual ranks where progression slows sharply (default 50)
-	StatSoftCap               ConfigInt   `yaml:"StatSoftCap"`               // Stat value where progression slows sharply (default 150)
-	UsesPerRank               ConfigInt   `yaml:"UsesPerRank"`               // Skill/stat uses that equal one virtual rank (default 25)
-	BaseProgressionChance     ConfigFloat `yaml:"BaseProgressionChance"`     // Starting chance to progress at rank 0 (default 0.30)
-	ProgressionDecayBelowCap  ConfigFloat `yaml:"ProgressionDecayBelowCap"`  // Exponential steepness below soft cap (default 3.0)
-	ProgressionDecayAboveCap  ConfigFloat `yaml:"ProgressionDecayAboveCap"`  // Exponential steepness above soft cap (default 2.0)
-	StatSoftCapThreshold      ConfigInt   `yaml:"StatSoftCapThreshold"`      // Raw stat value where adjusted formula kicks in (default 105)
-	StatSoftCapMultiplier     ConfigFloat `yaml:"StatSoftCapMultiplier"`     // Multiplier in: 100 + sqrt(raw-100) * this (default 2.0)
+	SkillSoftCap             ConfigInt   `yaml:"SkillSoftCap"`             // Virtual ranks where progression slows sharply (default 50)
+	StatSoftCap              ConfigInt   `yaml:"StatSoftCap"`              // Stat value where progression slows sharply (default 150)
+	UsesPerRank              ConfigInt   `yaml:"UsesPerRank"`              // Skill/stat uses that equal one virtual rank (default 25)
+	BaseProgressionChance    ConfigFloat `yaml:"BaseProgressionChance"`    // Starting chance to progress at rank 0 (default 0.30)
+	ProgressionDecayBelowCap ConfigFloat `yaml:"ProgressionDecayBelowCap"` // Exponential steepness below soft cap (default 3.0)
+	ProgressionDecayAboveCap ConfigFloat `yaml:"ProgressionDecayAboveCap"` // Exponential steepness above soft cap (default 2.0)
+	StatSoftCapThreshold     ConfigInt   `yaml:"StatSoftCapThreshold"`     // Raw stat value where adjusted formula kicks in (default 105)
+	StatSoftCapMultiplier    ConfigFloat `yaml:"StatSoftCapMultiplier"`    // Multiplier in: 100 + sqrt(raw-100) * this (default 2.0)
 	MobProgressionEnabled    ConfigBool  `yaml:"MobProgressionEnabled"`    // Enable mob stat/skill progression (default true)
 	MobProgressionRate       ConfigFloat `yaml:"MobProgressionRate"`       // Multiplier on progression chance vs players (default 0.5)
 	MobStatCap               ConfigInt   `yaml:"MobStatCap"`               // Hard cap on mob stats from progression (default 200)
@@ -222,11 +222,11 @@ type Balance struct {
 	SkillProgressionMultipliers map[string]float64 `yaml:"SkillProgressionMultipliers"` // Per-skill multiplier on progression chance — overrides hardcoded defaults
 
 	// ── CHARACTER CREATION ────────────────────────────────────────────────────
-	StatRollMean      ConfigFloat `yaml:"StatRollMean"`      // Mean for stat rolls at character creation (default 100.0)
-	StatRollStdDev    ConfigFloat `yaml:"StatRollStdDev"`    // Std dev for stat rolls (default 15.0)
-	StatRollMin       ConfigFloat `yaml:"StatRollMin"`       // Minimum stat value from rolls (default 70.0)
-	StatRollMax       ConfigFloat `yaml:"StatRollMax"`       // Maximum stat value from rolls (default 130.0)
-	StartingHealth    ConfigInt   `yaml:"StartingHealth"`    // Initial health points at character creation (default 10)
+	StatRollMean   ConfigFloat `yaml:"StatRollMean"`   // Mean for stat rolls at character creation (default 100.0)
+	StatRollStdDev ConfigFloat `yaml:"StatRollStdDev"` // Std dev for stat rolls (default 15.0)
+	StatRollMin    ConfigFloat `yaml:"StatRollMin"`    // Minimum stat value from rolls (default 70.0)
+	StatRollMax    ConfigFloat `yaml:"StatRollMax"`    // Maximum stat value from rolls (default 130.0)
+	StartingHealth ConfigInt   `yaml:"StartingHealth"` // Initial health points at character creation (default 10)
 
 	// ── CRAFTING ──────────────────────────────────────────────────────────────
 	CraftingBaseSuccessChance  ConfigInt `yaml:"CraftingBaseSuccessChance"`  // % before skill adjustment (default 50)
@@ -262,8 +262,8 @@ type Balance struct {
 	MutationLevel4Multiplier     ConfigFloat `yaml:"MutationLevel4Multiplier"`     // Effect scaling at level 4 (default 2.5)
 
 	// ── SPELLCASTING ─────────────────────────────────────────────────────
-	SpellDiscoveryBaseChance        ConfigFloat `yaml:"SpellDiscoveryBaseChance"`        // Base % to discover a new spell per successful cast (default 5.0)
-	SpellDiscoveryDecayRate         ConfigFloat `yaml:"SpellDiscoveryDecayRate"`         // Decay per known spell: chance = base / (1 + known*this) (default 0.1)
+	SpellDiscoveryBaseChance ConfigFloat `yaml:"SpellDiscoveryBaseChance"` // Base % to discover a new spell per successful cast (default 5.0)
+	SpellDiscoveryDecayRate  ConfigFloat `yaml:"SpellDiscoveryDecayRate"`  // Decay per known spell: chance = base / (1 + known*this) (default 0.1)
 
 	// ── DISCOVERY OFFSET (shared: spells + recipes) ──────────────────────────
 	DiscoveryPerceptionScale ConfigFloat `yaml:"DiscoveryPerceptionScale"` // Raw Per contribution reaches 1.0 at (Per - 100) / this (default 200)
@@ -299,9 +299,9 @@ type Balance struct {
 	MobMutationRate    ConfigFloat `yaml:"MobMutationRate"`    // Multiplier on mutation progress vs players (default 0.3)
 
 	// ── MOB AI ───────────────────────────────────────────────────────────────
-	CombatMemoryDuration ConfigInt   `yaml:"CombatMemoryDuration"` // Rounds before combat memory expires (default 300)
-	MobAIEnabled         ConfigBool  `yaml:"MobAIEnabled"`         // Global toggle for reactive AI system (default true)
-	MobReactionDelayMin  ConfigFloat `yaml:"MobReactionDelayMin"`  // Min reaction delay in seconds (default 0.25)
+	CombatMemoryDuration            ConfigInt   `yaml:"CombatMemoryDuration"`            // Rounds before combat memory expires (default 300)
+	MobAIEnabled                    ConfigBool  `yaml:"MobAIEnabled"`                    // Global toggle for reactive AI system (default true)
+	MobReactionDelayMin             ConfigFloat `yaml:"MobReactionDelayMin"`             // Min reaction delay in seconds (default 0.25)
 	MobReactionDelayMax             ConfigFloat `yaml:"MobReactionDelayMax"`             // Max reaction delay in seconds (default 4.0)
 	MobBTreeReactionBase            ConfigFloat `yaml:"MobBTreeReactionBase"`            // Base reaction delay in seconds for behavior tree mobs (default 3.0)
 	MobBTreeReactionPerceptionScale ConfigInt   `yaml:"MobBTreeReactionPerceptionScale"` // Perception divisor for reaction delay (default 100)
@@ -379,6 +379,18 @@ type Balance struct {
 	// "wanted" signal used by guard enforcement. 5.1a.
 	JusticeCrimeLookbackRounds ConfigInt `yaml:"JusticeCrimeLookbackRounds"`
 
+	// JusticeBountyExpiryRounds is how long an auto-declared town-faction
+	// bounty stays open before lapsing. 5.1b.
+	JusticeBountyExpiryRounds ConfigInt `yaml:"JusticeBountyExpiryRounds"`
+
+	// JusticeBountyMurderMult scales an auto-bounty's gold when triggered by
+	// an identified murder. 5.1b.
+	JusticeBountyMurderMult ConfigFloat `yaml:"JusticeBountyMurderMult"`
+
+	// JusticeBountyRepMultMax is the max gold multiplier at maximum hostility
+	// (rep -100) for rep-triggered auto-bounties. 5.1b.
+	JusticeBountyRepMultMax ConfigFloat `yaml:"JusticeBountyRepMultMax"`
+
 	// ── PACK SCALING ─────────────────────────────────────────────────────────
 	PackScalingEnabled   ConfigBool `yaml:"PackScalingEnabled"`   // Enable pack survival bonuses (default true)
 	PackSurvivalRounds   ConfigInt  `yaml:"PackSurvivalRounds"`   // Consecutive rounds together before bonus (default 10)
@@ -435,12 +447,12 @@ type Balance struct {
 	// MaxStock the crafter mob keeps in reserve when deciding whether to
 	// craft. Prevents the crafter from consuming its own stock to a level
 	// where players can't buy. Per-ingredient check, floor of 1.
-	CrafterIngredientReservePct ConfigFloat `yaml:"CrafterIngredientReservePct"` // Fraction of MaxStock kept as reserve (default 0.25)
-	ShopGoldReserveRatio   ConfigFloat `yaml:"ShopGoldReserveRatio,omitempty"`   // Fraction of gold pool a shop keeps in reserve before buying (default 0.50)
-	ShopMaxStockMultiplier ConfigFloat `yaml:"ShopMaxStockMultiplier,omitempty"` // Global multiplier on EffectiveMaxStock — chunk 3.8 bumped to 2.0 to give the cross-city caravan room to build surplus (default 2.0)
-	BarterMaxDiscount      ConfigFloat `yaml:"BarterMaxDiscount,omitempty"`      // Max fractional price reduction a player can get via bartering (default 0.15)
-	BarterMaxBonus         ConfigFloat `yaml:"BarterMaxBonus,omitempty"`         // Max fractional sell-price bonus a player can get via bartering (default 0.15)
-	StorageFeePerItem      ConfigInt   `yaml:"StorageFeePerItem"`                // Gold charged per stored item per game month (default 1)
+	CrafterIngredientReservePct ConfigFloat `yaml:"CrafterIngredientReservePct"`      // Fraction of MaxStock kept as reserve (default 0.25)
+	ShopGoldReserveRatio        ConfigFloat `yaml:"ShopGoldReserveRatio,omitempty"`   // Fraction of gold pool a shop keeps in reserve before buying (default 0.50)
+	ShopMaxStockMultiplier      ConfigFloat `yaml:"ShopMaxStockMultiplier,omitempty"` // Global multiplier on EffectiveMaxStock — chunk 3.8 bumped to 2.0 to give the cross-city caravan room to build surplus (default 2.0)
+	BarterMaxDiscount           ConfigFloat `yaml:"BarterMaxDiscount,omitempty"`      // Max fractional price reduction a player can get via bartering (default 0.15)
+	BarterMaxBonus              ConfigFloat `yaml:"BarterMaxBonus,omitempty"`         // Max fractional sell-price bonus a player can get via bartering (default 0.15)
+	StorageFeePerItem           ConfigInt   `yaml:"StorageFeePerItem"`                // Gold charged per stored item per game month (default 1)
 
 	// ── LOOT ──────────────────────────────────────────────────────────────────
 	LootBudgetScalar ConfigFloat `yaml:"LootBudgetScalar"` // Multiplier for sqrt(goldPaid) loot budget (default 7.0)
@@ -539,7 +551,7 @@ type Balance struct {
 	// LogisticsStuckRounds is the round count after which a caravan or forager
 	// is considered stuck; the stuck multiplier is applied to its health score.
 	// Default 3000 (more aggressive than the MVP 5000).
-	LogisticsStuckRounds     ConfigInt   `yaml:"LogisticsStuckRounds"`
+	LogisticsStuckRounds ConfigInt `yaml:"LogisticsStuckRounds"`
 	// LogisticsStuckMultiplier scales the base logistics score when stuck
 	// (default 0.4 — a stuck entity reads ~40% of its healthy score).
 	LogisticsStuckMultiplier ConfigFloat `yaml:"LogisticsStuckMultiplier"`
@@ -557,12 +569,12 @@ type Balance struct {
 	DispositionDecayHalfLifeRounds ConfigInt `yaml:"DispositionDecayHalfLifeRounds"` // Rounds for one half-life of disposition decay toward default (default 100000; 0 disables decay)
 
 	// ── FACTIONS ─────────────────────────────────────────────────────────────
-	FactionMemberKillRep   ConfigInt `yaml:"FactionMemberKillRep"`   // Rep delta when a player kills a member of a defined faction (default -10) — DEPRECATED, retained for any non-citizen faction fallback path. Citizen factions use CrimeRepDeltaMurder via internal/crimes.
-	CrimeRepDeltaMurder    ConfigInt `yaml:"CrimeRepDeltaMurder"`    // Rep delta on murder crime with identified perpetrator (default -25)
-	CrimeRepDeltaAssault   ConfigInt `yaml:"CrimeRepDeltaAssault"`   // Rep delta on assault crime with identified perpetrator (default -10)
-	CrimeRepDeltaTheft     ConfigInt `yaml:"CrimeRepDeltaTheft"`     // Rep delta on theft crime with identified perpetrator (default -5)
-	CrimeStaleAfterRounds           ConfigInt `yaml:"CrimeStaleAfterRounds"`           // Rounds after which an unresolved crime is auto-snapped to stale (default 7884000 — ~365 game-days at 4-second rounds)
-	KnowledgeObservationLogMax      ConfigInt `yaml:"KnowledgeObservationLogMax"`      // Max observation log entries per record (FIFO) (default 32)
+	FactionMemberKillRep       ConfigInt `yaml:"FactionMemberKillRep"`       // Rep delta when a player kills a member of a defined faction (default -10) — DEPRECATED, retained for any non-citizen faction fallback path. Citizen factions use CrimeRepDeltaMurder via internal/crimes.
+	CrimeRepDeltaMurder        ConfigInt `yaml:"CrimeRepDeltaMurder"`        // Rep delta on murder crime with identified perpetrator (default -25)
+	CrimeRepDeltaAssault       ConfigInt `yaml:"CrimeRepDeltaAssault"`       // Rep delta on assault crime with identified perpetrator (default -10)
+	CrimeRepDeltaTheft         ConfigInt `yaml:"CrimeRepDeltaTheft"`         // Rep delta on theft crime with identified perpetrator (default -5)
+	CrimeStaleAfterRounds      ConfigInt `yaml:"CrimeStaleAfterRounds"`      // Rounds after which an unresolved crime is auto-snapped to stale (default 7884000 — ~365 game-days at 4-second rounds)
+	KnowledgeObservationLogMax ConfigInt `yaml:"KnowledgeObservationLogMax"` // Max observation log entries per record (FIFO) (default 32)
 
 	// ── BOUNTIES ────────────────────────────────────────────────────────────
 	BountyGoldDefaultMultiplier ConfigFloat `yaml:"BountyGoldDefaultMultiplier"` // Multiplier on statpool for default gold reward (default 0.5)
