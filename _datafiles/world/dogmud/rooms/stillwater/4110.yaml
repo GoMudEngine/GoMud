@@ -27,6 +27,8 @@ coord:
 exits:
   west:
     roomid: 4109
+  down:
+    roomid: 5106
 nouns:
   counter: A long pine counter dividing the room
     front-to-back, the surface kept oiled and the public

@@ -1,0 +1,32 @@
+roomid: 5106
+zone: Stillwater
+title: Holding Cell
+description: >
+  A single stone cell behind the constabulary's iron bars, barely wide
+  enough to pace. The walls are mortared lake-stone gone green at the
+  joints, and the only light comes from a narrow
+  <ansi fg="itemname">window</ansi> slit set high near the ceiling, too
+  small for anything but a wrist. A low wooden
+  <ansi fg="itemname">bench</ansi> runs along one wall, a fitted slop
+  <ansi fg="itemname">bucket</ansi> in the corner, and clean straw
+  scattered on the packed-earth floor. The barred door is the only way
+  out, and it opens only from the office above.
+biome: city
+allow_recall: false
+coord:
+  x: -17
+  y: 5
+  z: -1
+exits:
+  up:
+    roomid: 4110
+nouns:
+  window: A slit of a window high in the stone, no wider than a hand and
+    crossed by a single iron bar. It lets in a grey wedge of daylight and
+    the smell of the lake, and nothing else.
+  bench: A low bench of grey, water-stained planks bolted to the wall. The
+    wood is worn smooth in the middle where the town's drunks and brawlers
+    have slept off their nights.
+  bucket: A wooden slop bucket with a fitted lid in the corner. Someone
+    scours it out between occupants; it is, all things considered, not the
+    worst part of being here.
