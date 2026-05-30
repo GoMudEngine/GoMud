@@ -2,6 +2,72 @@ package justice
 
 import "testing"
 
+// ---------------------------------------------------------------------------
+// resolveArrest tests — pure helper, no live mobs/users required.
+// ---------------------------------------------------------------------------
+
+// (a) Surrender policy, first tick: guard should declare intent (stamp pending).
+func TestResolveArrest_Surrender_FirstTick_Declares(t *testing.T) {
+	out := resolveArrest(false, false, 0, 1000, 3)
+	if out != arrestOutcomeDeclare {
+		t.Errorf("first tick surrender: got %v, want Declare", out)
+	}
+}
+
+// (b) Surrender, pending within grace: no-op.
+func TestResolveArrest_Surrender_WithinGrace_NoOp(t *testing.T) {
+	out := resolveArrest(false, true, 1000, 1001, 3)
+	if out != arrestOutcomeNone {
+		t.Errorf("within-grace surrender: got %v, want None", out)
+	}
+}
+
+// (c) Surrender, pending past grace: haul off (executeArrest).
+func TestResolveArrest_Surrender_PastGrace_HaulOff(t *testing.T) {
+	out := resolveArrest(false, true, 1000, 1004, 3)
+	if out != arrestOutcomeHaul {
+		t.Errorf("past-grace surrender: got %v, want Haul", out)
+	}
+}
+
+// (d) Resist policy: should attack regardless of pending state.
+func TestResolveArrest_Resist_Attack(t *testing.T) {
+	out := resolveArrest(true, false, 0, 1000, 3)
+	if out != arrestOutcomeAttack {
+		t.Errorf("resist policy: got %v, want Attack", out)
+	}
+}
+
+// Resist with pending stamp: still attack (resist ignores grace window).
+func TestResolveArrest_Resist_AlreadyPending_Attack(t *testing.T) {
+	out := resolveArrest(true, true, 900, 1000, 3)
+	if out != arrestOutcomeAttack {
+		t.Errorf("resist+pending: got %v, want Attack", out)
+	}
+}
+
+// Grace boundary: exactly at grace rounds — should NOT haul (< not <=).
+func TestResolveArrest_Surrender_AtGraceBoundary_NoOp(t *testing.T) {
+	// now - pending == grace (3), but we need >= grace to haul, so at exactly 3 it SHOULD haul.
+	// The spec says nowRound-pending >= grace → haul.
+	out := resolveArrest(false, true, 1000, 1003, 3)
+	if out != arrestOutcomeHaul {
+		t.Errorf("at-grace-boundary: got %v, want Haul (>= grace)", out)
+	}
+}
+
+// One tick before grace expires: still no-op.
+func TestResolveArrest_Surrender_OneTick_Before_Grace_NoOp(t *testing.T) {
+	out := resolveArrest(false, true, 1000, 1002, 3)
+	if out != arrestOutcomeNone {
+		t.Errorf("one-tick-before-grace: got %v, want None", out)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Original resolveWarn tests (unchanged).
+// ---------------------------------------------------------------------------
+
 func TestResolveWarn_FirstSighting_WarnsAndStamps(t *testing.T) {
 	if out := resolveWarn(false, 0, 1000, 50); out != warnOutcomeWarn {
 		t.Errorf("got %v, want warn", out)

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -26,6 +27,15 @@ const (
 	warnOutcomeAttack
 )
 
+type arrestOutcome int
+
+const (
+	arrestOutcomeNone    arrestOutcome = iota // pending, still within grace
+	arrestOutcomeDeclare                      // first sight — stamp & say intent
+	arrestOutcomeHaul                         // past grace — call ExecuteArrest
+	arrestOutcomeAttack                       // resist policy — issue attack command
+)
+
 // resolveWarn is the pure escalation decision for a Warn-severity player.
 func resolveWarn(alreadyWarned bool, warnedRound, nowRound, grace uint64) warnOutcome {
 	if !alreadyWarned {
@@ -35,6 +45,22 @@ func resolveWarn(alreadyWarned bool, warnedRound, nowRound, grace uint64) warnOu
 		return warnOutcomeAttack
 	}
 	return warnOutcomeNone
+}
+
+// resolveArrest is the pure escalation decision for a SeverityArrest player.
+// resist=true means the player's ArrestPolicy is resist.
+// pending=true means the guard already stamped a pending-arrest round.
+func resolveArrest(resist, pending bool, pendingRound, nowRound, grace uint64) arrestOutcome {
+	if resist {
+		return arrestOutcomeAttack
+	}
+	if !pending {
+		return arrestOutcomeDeclare
+	}
+	if nowRound >= pendingRound && nowRound-pendingRound >= grace {
+		return arrestOutcomeHaul
+	}
+	return arrestOutcomeNone
 }
 
 // miscDataRound reads a round value stored in MiscData under key, tolerating
@@ -67,6 +93,22 @@ func warnGraceRounds() uint64 {
 		return defaultGuardWarnGraceRounds
 	}
 	return uint64(v)
+}
+
+// defaultArrestGraceRounds mirrors the ArrestResistGraceRounds config default.
+const defaultArrestGraceRounds = 3
+
+func arrestGraceRounds() uint64 {
+	v := configs.GetBalanceConfig().ArrestResistGraceRounds
+	if v < 1 {
+		return defaultArrestGraceRounds
+	}
+	return uint64(v)
+}
+
+// executeArrestFn seam — tests override to intercept without live mobs.
+var executeArrestFn = func(player *characters.Character, userId int, faction string, isMurder bool) bool {
+	return ExecuteArrest(player, userId, faction, isMurder)
 }
 
 // RunGuardEnforcement scans players in the room and applies warn/attack
@@ -112,6 +154,26 @@ func RunGuardEnforcement(mob *mobs.Mob, room *rooms.Room, nowRound uint64) []Enf
 			case warnOutcomeAttack:
 				mob.Command(fmt.Sprintf("attack @%d", uid))
 				acts = append(acts, EnforceAction{uid, SeverityAttack, true})
+			}
+		case SeverityArrest:
+			resist := user.Character.ArrestPolicy == characters.ArrestResist
+			pendingKey := fmt.Sprintf("justice_arrest_pending_%d", uid)
+			pendingRound, pending := miscDataRound(mob.Character.MiscData, pendingKey)
+			switch resolveArrest(resist, pending, pendingRound, nowRound, arrestGraceRounds()) {
+			case arrestOutcomeAttack:
+				mob.Command(fmt.Sprintf("attack @%d", uid))
+				acts = append(acts, EnforceAction{uid, SeverityAttack, false})
+			case arrestOutcomeDeclare:
+				guardSayFn(room, mob,
+					"Move along is past — you're under arrest. Come quietly.")
+				mob.Character.SetMiscData(pendingKey, nowRound)
+				acts = append(acts, EnforceAction{uid, SeverityArrest, false})
+			case arrestOutcomeHaul:
+				// Use the guard's own primary faction as the arresting faction.
+				faction := guardFactions[0]
+				executeArrestFn(user.Character, uid, faction, false)
+				mob.Character.SetMiscData(pendingKey, nil)
+				acts = append(acts, EnforceAction{uid, SeverityArrest, true})
 			}
 		}
 	}
