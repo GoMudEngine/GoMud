@@ -135,6 +135,12 @@ func RunGuardEnforcement(mob *mobs.Mob, room *rooms.Room, nowRound uint64) []Enf
 			user.Character.IsHidden() || user.Character.Health < 1 {
 			continue
 		}
+		// A player already serving a sentence is in custody — guards leave them
+		// be. Without this, a wandering guard enters the cell and re-arrests or
+		// attacks someone already locked up (5.1c smoke BUG-04).
+		if _, jailed := miscDataRound(user.Character.MiscData, keyJailUntilRound); jailed {
+			continue
+		}
 
 		sev := Verdict(guardFactions, uid)
 		switch sev {

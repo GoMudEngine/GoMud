@@ -74,6 +74,7 @@ var aRepResetFn = func() int {
 // ---------------------------------------------------------------------------
 
 var aResolveCrimeFn = crimes.Resolve
+var aCrimesForFactionFn = crimes.AllForFaction
 var aOpenBountiesFn = bounties.OpenAgainstPlayer
 var aWithdrawFn = bounties.Withdraw
 var aGetRepFn = factions.GetRep
@@ -308,24 +309,39 @@ func ResolveDetention(player *characters.Character, userId int) bool {
 	}
 
 	faction, _ := miscDataString(player.MiscData, keyJailFaction)
-	crimeIdsRaw, _ := miscDataString(player.MiscData, keyJailCrimeIds)
 
-	// Resolve each stamped crime.
-	for _, id := range parseCrimeIds(crimeIdsRaw) {
-		aResolveCrimeFn(faction, id, "served sentence")
+	// Serving the sentence answers for the arresting faction AND its allies —
+	// the same set Verdict checks. Guards belong to thornwall_guards AND
+	// thornwall_citizens, so clearing only the arresting faction left an
+	// unresolved crime against the ally that re-triggered arrest the instant
+	// the player was released (5.1c smoke BUG-03). Clear comprehensively via a
+	// live query rather than the crime ids stamped at arrest time.
+	factionSet := map[string]bool{faction: true}
+	for _, a := range alliesFn(faction) {
+		factionSet[a] = true
+	}
+	for f := range factionSet {
+		for _, c := range aCrimesForFactionFn(f, false) {
+			if c.Perpetrator.Type == crimes.PerpPlayer && c.Perpetrator.Id == userId {
+				aResolveCrimeFn(f, c.Id, "served sentence")
+			}
+		}
 	}
 
-	// Withdraw any open bounties issued by this faction against this player.
+	// Withdraw any open bounties issued by the faction set against this player.
 	for _, b := range aOpenBountiesFn(userId) {
-		if b.Issuer.Type == bounties.IssuerFaction && b.Issuer.Id == faction {
+		if b.Issuer.Type == bounties.IssuerFaction && factionSet[b.Issuer.Id] {
 			aWithdrawFn(b.Id)
 		}
 	}
 
-	// Reset rep to the floor only if the player's rep is currently below it.
+	// Reset rep to the floor for each faction in the set, only where the
+	// player's rep is currently below it (never lowers good standing).
 	floor := aRepResetFn()
-	if aGetRepFn(faction, userId) < floor {
-		aSetRepFn(faction, userId, floor)
+	for f := range factionSet {
+		if aGetRepFn(f, userId) < floor {
+			aSetRepFn(f, userId, floor)
+		}
 	}
 
 	// Remove the Jailed buff.
@@ -342,11 +358,10 @@ func ResolveDetention(player *characters.Character, userId int) bool {
 	// Move the player to the barracks (release destination).
 	_ = aMoveFn(userId, barracksRoomId)
 
-	// Release flavor.
-	if u := users.GetByUserId(userId); u != nil {
-		u.SendText(messaging.CategorySystem,
-			"The cell door swings open. You are free to go.")
-	}
+	// No release flavor here: removing the Jailed buff (above) fires its
+	// end_user_text ("The cell door swings open. You are free to go."), which
+	// covers both the payfine and timer-expiry paths. Sending it again here
+	// double-printed the line (5.1c smoke BUG-01).
 
 	return true
 }

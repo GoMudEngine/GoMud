@@ -1,12 +1,12 @@
 package justice
 
 import (
-	"strconv"
-	"strings"
+	"fmt"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/bounties"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/crimes"
 )
 
 // ---------------------------------------------------------------------------
@@ -43,6 +43,8 @@ func TestResolveDetention_Seams(t *testing.T) {
 	origDecay := aDecayFn
 	origRepReset := aRepResetFn
 	origResolve := aResolveCrimeFn
+	origCrimesForFaction := aCrimesForFactionFn
+	origAllies := alliesFn
 	origOpenBounties := aOpenBountiesFn
 	origWithdraw := aWithdrawFn
 	origGetRep := aGetRepFn
@@ -52,6 +54,8 @@ func TestResolveDetention_Seams(t *testing.T) {
 		aDecayFn = origDecay
 		aRepResetFn = origRepReset
 		aResolveCrimeFn = origResolve
+		aCrimesForFactionFn = origCrimesForFaction
+		alliesFn = origAllies
 		aOpenBountiesFn = origOpenBounties
 		aWithdrawFn = origWithdraw
 		aGetRepFn = origGetRep
@@ -66,24 +70,52 @@ func TestResolveDetention_Seams(t *testing.T) {
 	ch.SetMiscData(keyJailDecayPerRound, 5)
 	ch.SetMiscData(keyJailFaction, "thornwall_guards")
 	ch.SetMiscData(keyJailCellRoom, 5105)
-	// Two crime ids: 7 and 12.
-	ch.SetMiscData(keyJailCrimeIds, "7,12")
 
 	// Wire seams.
 	aDecayFn = func() int { return 5 }
 	aRepResetFn = func() int { return -10 }
 
-	var resolvedFaction string
-	var resolvedIds []int
-	aResolveCrimeFn = func(factionId string, crimeId int, resolvedBy string) {
-		resolvedFaction = factionId
-		resolvedIds = append(resolvedIds, crimeId)
+	// The arresting faction has one ally — release must clear the player's
+	// record across BOTH (the BUG-03 fix). Crime 7 is against the guards,
+	// crime 12 against the allied citizens; an other-faction crime (99) and an
+	// other-player crime (13) must NOT be resolved.
+	alliesFn = func(faction string) []string {
+		if faction == "thornwall_guards" {
+			return []string{"thornwall_citizens"}
+		}
+		return nil
+	}
+	userId := 42
+	aCrimesForFactionFn = func(factionId string, includeResolved bool) []*crimes.Crime {
+		switch factionId {
+		case "thornwall_guards":
+			return []*crimes.Crime{
+				{Id: 7, Perpetrator: crimes.Perpetrator{Type: crimes.PerpPlayer, Id: userId}},
+				{Id: 13, Perpetrator: crimes.Perpetrator{Type: crimes.PerpPlayer, Id: 99}}, // other player
+			}
+		case "thornwall_citizens":
+			return []*crimes.Crime{
+				{Id: 12, Perpetrator: crimes.Perpetrator{Type: crimes.PerpPlayer, Id: userId}},
+			}
+		}
+		return nil
 	}
 
-	// One matching bounty from thornwall_guards, one from another faction.
+	type resolved struct {
+		faction string
+		id      int
+	}
+	var resolvedList []resolved
+	aResolveCrimeFn = func(factionId string, crimeId int, resolvedBy string) {
+		resolvedList = append(resolvedList, resolved{factionId, crimeId})
+	}
+
+	// Bounties: one from the arresting faction, one from the ally, one from an
+	// unrelated faction (must be left alone).
 	aOpenBountiesFn = func(userId int) []*bounties.Bounty {
 		return []*bounties.Bounty{
 			{Id: 42, Issuer: bounties.Issuer{Type: bounties.IssuerFaction, Id: "thornwall_guards"}},
+			{Id: 43, Issuer: bounties.Issuer{Type: bounties.IssuerFaction, Id: "thornwall_citizens"}},
 			{Id: 99, Issuer: bounties.Issuer{Type: bounties.IssuerFaction, Id: "other_faction"}},
 		}
 	}
@@ -93,13 +125,11 @@ func TestResolveDetention_Seams(t *testing.T) {
 		withdrawnIds = append(withdrawnIds, bountyId)
 	}
 
-	// Rep below floor — should be reset.
+	// Rep below floor — should be reset for each faction in the set.
 	aGetRepFn = func(factionId string, userId int) int { return -50 }
-	var setRepFaction string
-	var setRepValue int
+	repSet := map[string]int{}
 	aSetRepFn = func(factionId string, userId int, rep int) {
-		setRepFaction = factionId
-		setRepValue = rep
+		repSet[factionId] = rep
 	}
 
 	var movedTo int
@@ -108,32 +138,43 @@ func TestResolveDetention_Seams(t *testing.T) {
 		return nil
 	}
 
-	userId := 42
 	ok := ResolveDetention(ch, userId)
 
 	if !ok {
 		t.Fatal("ResolveDetention returned false; expected true")
 	}
 
-	// Both crimes should be resolved.
-	if resolvedFaction != "thornwall_guards" {
-		t.Errorf("resolvedFaction=%q want thornwall_guards", resolvedFaction)
+	// The player's crimes against the guards (7) AND the ally citizens (12)
+	// must both be resolved; the other-player crime (13) must not.
+	gotResolved := map[string]bool{}
+	for _, r := range resolvedList {
+		gotResolved[fmt.Sprintf("%s:%d", r.faction, r.id)] = true
 	}
-	if len(resolvedIds) != 2 || resolvedIds[0] != 7 || resolvedIds[1] != 12 {
-		t.Errorf("resolvedIds=%v want [7 12]", resolvedIds)
+	if !gotResolved["thornwall_guards:7"] {
+		t.Errorf("guards crime 7 should be resolved; got %+v", resolvedList)
+	}
+	if !gotResolved["thornwall_citizens:12"] {
+		t.Errorf("ally citizens crime 12 should be resolved (BUG-03); got %+v", resolvedList)
+	}
+	if gotResolved["thornwall_guards:13"] {
+		t.Errorf("other player's crime 13 must NOT be resolved; got %+v", resolvedList)
 	}
 
-	// Only the thornwall_guards bounty should be withdrawn.
-	if len(withdrawnIds) != 1 || withdrawnIds[0] != 42 {
-		t.Errorf("withdrawnIds=%v want [42]", withdrawnIds)
+	// Both faction-set bounties withdrawn; the unrelated one left alone.
+	gotWithdrawn := map[int]bool{}
+	for _, id := range withdrawnIds {
+		gotWithdrawn[id] = true
+	}
+	if !gotWithdrawn[42] || !gotWithdrawn[43] {
+		t.Errorf("faction-set bounties 42,43 should be withdrawn; got %v", withdrawnIds)
+	}
+	if gotWithdrawn[99] {
+		t.Errorf("unrelated bounty 99 must NOT be withdrawn; got %v", withdrawnIds)
 	}
 
-	// Rep should be reset to floor (-10) because current (-50) < floor (-10).
-	if setRepFaction != "thornwall_guards" {
-		t.Errorf("setRepFaction=%q want thornwall_guards", setRepFaction)
-	}
-	if setRepValue != -10 {
-		t.Errorf("setRepValue=%d want -10", setRepValue)
+	// Rep reset to floor (-10) for each faction in the set (current -50 < -10).
+	if repSet["thornwall_guards"] != -10 || repSet["thornwall_citizens"] != -10 {
+		t.Errorf("rep should be reset to -10 for both factions; got %v", repSet)
 	}
 
 	// Player should be moved to barracks room 473.
@@ -146,14 +187,6 @@ func TestResolveDetention_Seams(t *testing.T) {
 	if jailed {
 		t.Errorf("JailInfo should return false after ResolveDetention, got %+v", info)
 	}
-
-	// Sanity: crime id parsing helper round-trip.
-	ids := parseCrimeIds("7,12")
-	if len(ids) != 2 || ids[0] != 7 || ids[1] != 12 {
-		t.Errorf("parseCrimeIds round-trip failed: %v", ids)
-	}
-	_ = strconv.Itoa(0) // suppress import-unused if parseCrimeIds is unexported
-	_ = strings.Join(nil, "")
 }
 
 // TestResolveDetention_NoJailRecord verifies the guard: returns false when no
