@@ -1,0 +1,37 @@
+mobid: 110
+zone: Thornwall City
+archetype: fighting
+behavior_archetype: bounty_hunter
+statpool: 300
+hostile: false
+charm_immune: true
+itemdropchance: 3
+groups:
+  - humanoid
+loot_pool:
+  - 10037
+  - 20080
+  - 20081
+  - 20082
+  - 20083
+  - 20084
+  - 20085
+  - 20086
+character:
+  name: bounty hunter
+  description: |
+    A lean, hard-eyed figure in travel-worn leathers, a notched blade at
+    the hip and a folded contract tucked into one glove. They move like
+    someone who has done this many times and expects to again.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 10
+    vitality:
+      training: 8
+    perception:
+      training: 8
+    willpower:
+      training: 6
