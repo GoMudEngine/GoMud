@@ -23,6 +23,32 @@ func TestBalanceConfig_CaravanDefaults(t *testing.T) {
 	}
 }
 
+func TestBalance_BountyHunterDefaults(t *testing.T) {
+	b := &Balance{}
+	b.validateMisc()
+	if b.BountyHunterGoldThreshold != 500 {
+		t.Fatalf("BountyHunterGoldThreshold = %d, want 500", int(b.BountyHunterGoldThreshold))
+	}
+	if b.BountyHunterBaseStatpool != 250 {
+		t.Fatalf("BountyHunterBaseStatpool = %d, want 250", int(b.BountyHunterBaseStatpool))
+	}
+	if b.BountyHunterStatpoolPerGold != 0.25 {
+		t.Fatalf("BountyHunterStatpoolPerGold = %v, want 0.25", float64(b.BountyHunterStatpoolPerGold))
+	}
+	if b.BountyHunterMinStatpool != 300 || b.BountyHunterMaxStatpool != 500 {
+		t.Fatalf("min/max statpool = %d/%d, want 300/500", int(b.BountyHunterMinStatpool), int(b.BountyHunterMaxStatpool))
+	}
+	if b.BountyHunterRepathRounds != 5 {
+		t.Fatalf("BountyHunterRepathRounds = %d, want 5", int(b.BountyHunterRepathRounds))
+	}
+	if b.BountyHunterRedispatchCooldown != 500 {
+		t.Fatalf("BountyHunterRedispatchCooldown = %d, want 500", int(b.BountyHunterRedispatchCooldown))
+	}
+	if b.BountyHunterGearGoldDivisor != 5 {
+		t.Fatalf("BountyHunterGearGoldDivisor = %d, want 5", int(b.BountyHunterGearGoldDivisor))
+	}
+}
+
 func TestBalanceConfig_ForagerDefaults(t *testing.T) {
 	cfg := &Balance{}
 	cfg.Validate()

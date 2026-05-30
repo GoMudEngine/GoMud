@@ -592,6 +592,16 @@ type Balance struct {
 	BountyGoldDefaultMultiplier ConfigFloat `yaml:"BountyGoldDefaultMultiplier"` // Multiplier on statpool for default gold reward (default 0.5)
 	BountyGoldFloor             ConfigInt   `yaml:"BountyGoldFloor"`             // Minimum gold floor for any bounty (default 50)
 
+	// ── BOUNTY HUNTING (5.2) ────────────────────────────────────────────
+	BountyHunterGoldThreshold      ConfigInt   `yaml:"BountyHunterGoldThreshold"`      // Single open bounty >= this dispatches a hunter (default 500)
+	BountyHunterBaseStatpool       ConfigInt   `yaml:"BountyHunterBaseStatpool"`       // Base of hunter scaled statpool (default 250)
+	BountyHunterStatpoolPerGold    ConfigFloat `yaml:"BountyHunterStatpoolPerGold"`    // Statpool added per gold of triggering bounty (default 0.25)
+	BountyHunterMinStatpool        ConfigInt   `yaml:"BountyHunterMinStatpool"`        // Clamp floor for hunter statpool (default 300)
+	BountyHunterMaxStatpool        ConfigInt   `yaml:"BountyHunterMaxStatpool"`        // Clamp ceiling for hunter statpool (default 500)
+	BountyHunterRepathRounds       ConfigInt   `yaml:"BountyHunterRepathRounds"`       // Rounds between pursuit re-paths (default 5)
+	BountyHunterRedispatchCooldown ConfigInt   `yaml:"BountyHunterRedispatchCooldown"` // Rounds before re-dispatch after a hunter dies (default 500)
+	BountyHunterGearGoldDivisor    ConfigInt   `yaml:"BountyHunterGearGoldDivisor"`    // gearGold = statpool / this, fed to GenerateAffixedItem (default 5)
+
 	// ── FACTS & EVENTS ──────────────────────────────────────────────────────
 	FactsHeardEventsMax ConfigInt `yaml:"FactsHeardEventsMax"` // Max facts_heard events per mobs instance (default 32)
 }

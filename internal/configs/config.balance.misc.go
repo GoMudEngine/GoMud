@@ -366,6 +366,32 @@ func (b *Balance) validateMisc() {
 		b.BountyGoldFloor = 50
 	}
 
+	// ── BOUNTY HUNTING (5.2) ────────────────────────────────────────────
+	if b.BountyHunterGoldThreshold <= 0 {
+		b.BountyHunterGoldThreshold = 500
+	}
+	if b.BountyHunterBaseStatpool <= 0 {
+		b.BountyHunterBaseStatpool = 250
+	}
+	if b.BountyHunterStatpoolPerGold <= 0 {
+		b.BountyHunterStatpoolPerGold = 0.25
+	}
+	if b.BountyHunterMinStatpool <= 0 {
+		b.BountyHunterMinStatpool = 300
+	}
+	if b.BountyHunterMaxStatpool <= 0 {
+		b.BountyHunterMaxStatpool = 500
+	}
+	if b.BountyHunterRepathRounds <= 0 {
+		b.BountyHunterRepathRounds = 5
+	}
+	if b.BountyHunterRedispatchCooldown <= 0 {
+		b.BountyHunterRedispatchCooldown = 500
+	}
+	if b.BountyHunterGearGoldDivisor <= 0 {
+		b.BountyHunterGearGoldDivisor = 5
+	}
+
 	// ── FACTS & EVENTS ──────────────────────────────────────────────────────
 	if b.FactsHeardEventsMax <= 0 {
 		b.FactsHeardEventsMax = 32
