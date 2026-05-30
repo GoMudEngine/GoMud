@@ -380,6 +380,135 @@ func TestResolveDetention_FallsBackToBarracksWhenNoReleaseRoom(t *testing.T) {
 	}
 }
 
+// ---------------------------------------------------------------------------
+// ClearFactionRecord tests (Task 2)
+// ---------------------------------------------------------------------------
+
+// TestClearFactionRecord_ResolvesCrimesWithdrawsBountiesResetsRep verifies that
+// ClearFactionRecord resolves crimes, withdraws bounties, and resets rep for
+// the given faction and its allies, without touching unrelated factions/players.
+func TestClearFactionRecord_ResolvesCrimesWithdrawsBountiesResetsRep(t *testing.T) {
+	// Save and restore all seams touched by ClearFactionRecord.
+	origAllies := alliesFn
+	origCrimesForFaction := aCrimesForFactionFn
+	origResolve := aResolveCrimeFn
+	origOpenBounties := aOpenBountiesFn
+	origWithdraw := aWithdrawFn
+	origGetRep := aGetRepFn
+	origSetRep := aSetRepFn
+	origRepReset := aRepResetFn
+	t.Cleanup(func() {
+		alliesFn = origAllies
+		aCrimesForFactionFn = origCrimesForFaction
+		aResolveCrimeFn = origResolve
+		aOpenBountiesFn = origOpenBounties
+		aWithdrawFn = origWithdraw
+		aGetRepFn = origGetRep
+		aSetRepFn = origSetRep
+		aRepResetFn = origRepReset
+	})
+
+	const userId = 7
+
+	// "f" has one ally "f_ally".
+	alliesFn = func(faction string) []string {
+		if faction == "f" {
+			return []string{"f_ally"}
+		}
+		return nil
+	}
+
+	// Crime 1 against faction "f" by player 7 (should be resolved).
+	// Crime 2 against faction "f_ally" by player 7 (should be resolved).
+	// Crime 3 against faction "f" by another player (must NOT be resolved).
+	aCrimesForFactionFn = func(factionId string, includeResolved bool) []*crimes.Crime {
+		switch factionId {
+		case "f":
+			return []*crimes.Crime{
+				{Id: 1, Perpetrator: crimes.Perpetrator{Type: crimes.PerpPlayer, Id: userId}},
+				{Id: 3, Perpetrator: crimes.Perpetrator{Type: crimes.PerpPlayer, Id: 99}},
+			}
+		case "f_ally":
+			return []*crimes.Crime{
+				{Id: 2, Perpetrator: crimes.Perpetrator{Type: crimes.PerpPlayer, Id: userId}},
+			}
+		}
+		return nil
+	}
+
+	type resolvedCall struct {
+		faction string
+		id      int
+	}
+	var resolvedList []resolvedCall
+	aResolveCrimeFn = func(factionId string, crimeId int, resolvedBy string) {
+		resolvedList = append(resolvedList, resolvedCall{factionId, crimeId})
+	}
+
+	// Bounty 10 from faction "f", bounty 11 from "f_ally", bounty 99 from
+	// unrelated faction (must be left alone).
+	aOpenBountiesFn = func(uid int) []*bounties.Bounty {
+		return []*bounties.Bounty{
+			{Id: 10, Issuer: bounties.Issuer{Type: bounties.IssuerFaction, Id: "f"}},
+			{Id: 11, Issuer: bounties.Issuer{Type: bounties.IssuerFaction, Id: "f_ally"}},
+			{Id: 99, Issuer: bounties.Issuer{Type: bounties.IssuerFaction, Id: "other"}},
+		}
+	}
+
+	var withdrawnIds []int
+	aWithdrawFn = func(bountyId int) {
+		withdrawnIds = append(withdrawnIds, bountyId)
+	}
+
+	// Rep below floor — should be reset for both factions.
+	aRepResetFn = func() int { return -10 }
+	aGetRepFn = func(factionId string, uid int) int { return -50 }
+
+	repSet := map[string]int{}
+	aSetRepFn = func(factionId string, uid int, rep int) {
+		repSet[factionId] = rep
+	}
+
+	// Execute the function under test.
+	ClearFactionRecord("f", userId)
+
+	// Crime 1 (f, player 7) and crime 2 (f_ally, player 7) must be resolved.
+	gotResolved := map[string]bool{}
+	for _, r := range resolvedList {
+		gotResolved[fmt.Sprintf("%s:%d", r.faction, r.id)] = true
+	}
+	if !gotResolved["f:1"] {
+		t.Errorf("crime 1 against faction f should be resolved; got %+v", resolvedList)
+	}
+	if !gotResolved["f_ally:2"] {
+		t.Errorf("crime 2 against faction f_ally should be resolved; got %+v", resolvedList)
+	}
+	// Crime 3 belongs to another player — must NOT be resolved.
+	if gotResolved["f:3"] {
+		t.Errorf("crime 3 (other player) must NOT be resolved; got %+v", resolvedList)
+	}
+
+	// Bounties 10 and 11 withdrawn; unrelated bounty 99 left alone.
+	gotWithdrawn := map[int]bool{}
+	for _, id := range withdrawnIds {
+		gotWithdrawn[id] = true
+	}
+	if !gotWithdrawn[10] || !gotWithdrawn[11] {
+		t.Errorf("faction-set bounties 10,11 should be withdrawn; got %v", withdrawnIds)
+	}
+	if gotWithdrawn[99] {
+		t.Errorf("unrelated bounty 99 must NOT be withdrawn; got %v", withdrawnIds)
+	}
+
+	// Rep reset to floor (-10) for both factions (current -50 < -10).
+	if repSet["f"] != -10 {
+		t.Errorf("rep for f should be reset to -10; got %v", repSet)
+	}
+	if repSet["f_ally"] != -10 {
+		t.Errorf("rep for f_ally should be reset to -10; got %v", repSet)
+	}
+}
+
 // TestResolveDetention_RepAboveFloor verifies that rep is NOT reset when
 // it is already at or above the floor.
 func TestResolveDetention_RepAboveFloor(t *testing.T) {
