@@ -279,18 +279,33 @@ with no ally cascade, so one line per faction.
 
 ## 7. Warn-stamp pruning (5.1 followup #2)
 
-`RunGuardEnforcement` writes `justice_warned_<userId>` keys to the guard's
-MiscData on first warn and never clears them — inert once grace expires, but
-they accumulate over a guard's life. Clear stale `justice_warned_*` keys for a
-released player inside `ResolveDetention` (the single release path for both
-timer-expiry and pay-fine). Scope it to the released player's key on the
-arresting guard where reachable; at minimum prune the released player's own
-`justice_warned_<userId>` stamps so a freed player starts clean.
+**Context — which stamp, and why release-time is the wrong seam.** Post-5.1c,
+`Verdict` returns only Arrest / Warn / None (never Attack). The enforcement
+switch (`enforce.go:146-184`) writes two distinct per-(guard, player) MiscData
+stamps:
 
-(If pruning the arresting guard's specific stamp is awkward from
-`ResolveDetention` — which operates on the player, not the guard — fall back to
-a guard-side sweep at guard save time or a bounded sweep keyed off the released
-player's userId. The plan will pick the cleanest seam.)
+- `justice_arrest_pending_<userId>` — Arrest tier (open bounty, Hostile rep, or
+  unresolved crime). **Already self-cleaned** — cleared on haul
+  (`enforce.go:181`). No work needed.
+- `justice_warned_<userId>` — Warn tier, which fires **only for TierCold rep**
+  (a disliked-but-not-criminal player). After the grace window it escalates to
+  attack (`warnOutcomeAttack`), but the stamp itself is **never cleared**.
+
+The accumulation in followup #2 is specifically the `justice_warned_*` stamp.
+A cold-rep player who keeps getting warned is **never jailed** (cold rep alone
+yields Warn, not Arrest), so they never pass through `ResolveDetention`.
+Hanging the prune off the release path would therefore miss the exact players
+who accumulate the stamp. Once a warned player's rep recovers above Cold, the
+Warn branch stops running and never revisits the stale key on its own.
+
+**Fix — guard-side sweep.** Prune the guard's own `justice_warned_*` entries
+that are older than a staleness threshold (reuse the crime-lookback window,
+`JusticeCrimeLookbackRounds`, or a dedicated knob) during guard save / a
+bounded per-guard sweep. This is keyed on the guard (where the stamps live),
+independent of whether any particular warned player is ever arrested. Leave the
+already-self-cleaning `justice_arrest_pending_*` stamps untouched. The plan
+will pick the exact sweep seam (guard save hook vs. a cheap in-tick sweep
+bounded to the guard's existing stamps).
 
 ---
 
@@ -339,7 +354,9 @@ In-game smoke (deferred to user, per chunk precedent):
   pass.
 - Complete quests 8 and 20 → confirm `faction show` reflects +15 with the
   mapped faction.
-- Verify a freed player's `justice_warned_*` stamps are gone.
+- Verify a guard's stale `justice_warned_*` stamps (cold-rep warnings whose
+  owner's rep has since recovered) are swept after the staleness threshold,
+  while fresh stamps and any `justice_arrest_pending_*` stamps are untouched.
 
 ---
 
