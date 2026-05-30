@@ -82,7 +82,9 @@ a faction → home-room lookup reusing/extending the justice faction-room regist
 (§6) — `NewMobById`/`NewMobByIdFresh` already accept a `forceStatPool` override,
 so no engine change is needed. Then generate + wear the affix-scaled gear kit
 (§5). Stamp the **target userId** and **triggering bounty id** onto the hunter
-(MiscData + the goal's params).
+**instance's MiscData** (`bh_target_user_id`, `bh_bounty_id`) — this is the
+per-instance target the planner reads (§3). Add the param-less
+`hunt_bounty_target` goal to the template so `try_goal_planner` fires.
 
 **Telegraph.** The targeted player receives a system line when a hunter is
 dispatched, e.g. *"Word reaches you that a hunter has taken the contract on your
@@ -110,14 +112,39 @@ manager never drives movement itself — that is the planner's job.
 
 ## 3. `hunt_bounty_target` goal + planner (pursuit)
 
+**Target lives on the hunter instance, not the goal.** The goals store is keyed
+by mob *template* id, so all live hunters of the hunter template share one goal
+record — a goal *parameter* cannot describe a different target per hunter.
+Rather than fight that, we separate concerns the way the engine already does for
+combat: the **goal models the strategic intent** (template-level: "I hunt my
+contract"), and the **specific target is per-instance runtime state** (like an
+aggro target), stamped on the hunter instance's MiscData at spawn
+(`bh_target_user_id`, `bh_bounty_id`). This keeps concurrent hunters correct
+(each pursues its own target) without touching the goals architecture. (See §9
+for the deferred "instance-keyed goal state" note.)
+
 **Goal** (new catalog type in `internal/goals/catalog/`):
-- Params: target subject (player userId) + triggering bounty id (stamped at
-  dispatch).
-- Predicate (still valid?): the bounty is still open AND the target is online.
-- Context-score: high/constant — this is the hunter's reason to exist; it
-  dominates the hunter's goal set. Conflicts with `survival` (hunter presses on
-  rather than fleeing at moderate HP; still allowed to panic-flee at the
-  archetype's hard floor).
+- **No params** — a pure strategic-intent marker for the hunter template.
+- Predicate: **always active** (never self-satisfies). Per-hunter lifecycle is
+  owned by the dispatch manager (it despawns each hunter when *its* bounty
+  closes), not by goal pruning — because the shared template goal can't track an
+  individual hunter's bounty.
+- Context-score: high constant — the hunter's reason to exist; dominates its
+  goal set. (Still allowed to panic-flee at the archetype's hard HP floor.)
+
+**Planner** (`internal/planners/hunt_bounty_target.go`, per-tick, returns a
+Command + Status). It reads the target from the **calling hunter instance's**
+MiscData (`bh_target_user_id`), not from goal params:
+0. **No target on this instance** (`bh_target_user_id` absent) → hold (Running,
+   no command). (Shouldn't happen — the manager stamps it at spawn — but safe.)
+1. **Jailed-target hold.** If the target is jailed (`jail_until_round` MiscData
+   present on the target user): return a *hold* — loiter; do **not** path into
+   the cell, do **not** attempt to engage. (The manager calls the hunt off once
+   serving/paying clears the bounty.)
+2. **Same room as target:** engage — `attack @<uid>` (subject to §7 safety).
+3. **Else (pursue):** `pathto <target's current room>` (a closing chase;
+   cross-zone supported via the mapper). `try_scan` / `try_track` add flavor and
+   handle a hidden target on the final approach.
 
 **Planner** (`internal/planners/hunt_bounty_target.go`, per-tick, returns a
 Command + Status):
@@ -275,6 +302,13 @@ instead of a hunter's blade.
   the track.)
 - **Criminal NPCs that commit witnessable crimes and then get hunted**
   (NPC-vs-NPC bounty hunting) — a noted followup, likely once more zones land.
+- **Instance-keyed goal state.** The goals store (chunk 4.x) is keyed by mob
+  *template* id, so goal *parameters* can't diverge per live instance of a
+  template. 5.2 sidesteps this correctly (target on instance MiscData, goal as
+  template-level intent — §3). If future work accumulates more instance-divergent
+  goal-param needs (e.g. many same-template NPCs each pursuing a *different*
+  goal target via the planner), invest in instance-keyable goal state then. Not
+  needed now — "current target" legitimately belongs on instance state.
 - **Bounty-board "pick up a contract"** UX for player hunters; NPC-bandit
   auto-bounty declaration; squad hunters.
 
