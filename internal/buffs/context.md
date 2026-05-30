@@ -761,3 +761,27 @@ mobs.OnSleeperWoken(c)
 // Cancel all sleeping buffs (schedule exit path)
 c.CancelBuffsWithFlag(buffs.Sleeping)
 ```
+
+---
+
+## DOGMud chunk-5.1c buffs (Jailed)
+
+### New buff
+
+| ID | Name | Duration | Source | Effect |
+|----|------|----------|--------|--------|
+| 88 | Jailed | Scaled to sentence rounds via `AddBuffScaled` | `internal/justice.ExecuteArrest` | Applies `no-go` (`NoMovement`) flag, preventing all movement. `TriggersLeft` is set to the sentence length in rounds so the buff expires naturally at sentence end. Removed explicitly by `internal/justice.ResolveDetention` on timer expiry or fine payment. |
+
+**`NoMovement` flag** (`no-go`) is listed in the buffs package flag
+constants as `NoMovement Flag = "no-go"`. It is checked by `go.go` to
+block room-exit commands while the player is jailed.
+
+**`AddBuffScaled(buffId int, scale float64)`** is the mechanism: passing
+`float64(rounds)` as scale sets `TriggersLeft = buff.TriggerCount * scale`.
+For buff 88 (TriggerCount=1, TriggerRate="1 round"), this yields exactly
+`rounds` triggers remaining — one per round of the sentence.
+
+The buff's `start_user_text` and `end_user_text` fire automatically via
+the buff system at cell entry and natural expiry. `ExecuteArrest` also
+sends an additional arrest-context message; `ResolveDetention` sends a
+release message on early fine payment.

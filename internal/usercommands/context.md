@@ -38,10 +38,22 @@ The `internal/usercommands` package implements the complete command system for p
 - **Banking**: `bank` - Financial management
 - **Services**: `train` - Character development
 
+#### **Town Justice Commands** (5.1c)
+- **`fine`** (`jail.go`): Shows a jailed player their current decaying fine
+  and how to pay it. Uses `justice.JailInfo` + round math to compute the
+  remaining gold owed.
+- **`payfine`** (`jail.go`): Deducts the current fine from the player's
+  on-person gold (bank as fallback) and calls `justice.ResolveDetention`
+  to immediately release them. Blocks if the player cannot cover the fine.
+
 #### **Social and Party Commands**
 - **Party system**: `party` - Group management and coordination
 - **Pets**: `pet`, `tame` - Animal companion system
-- **Character management**: `character`, `set`, `alias` - Character customization
+- **Character management**: `character`, `set`, `alias` - Character customization.
+  The `set` command supports a `set arrest <surrender|resist>` subcommand
+  (`cmdSetArrest` in `set.go`) that stores `characters.ArrestPolicy` on the
+  character. Default is `surrender`. The `resist` policy causes guards to
+  attack immediately rather than wait through the arrest grace window.
 
 #### **Administrative Commands** (Admin-only)
 - **World building**: `room`, `build`, `zone` - Environment creation and modification
