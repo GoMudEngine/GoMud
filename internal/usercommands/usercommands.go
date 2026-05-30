@@ -98,6 +98,8 @@ var (
 		`equip`:           {Equip, false, false, false}, // Can't equip in combat
 		`faction`:         {Faction, true, true, true},  // Admin only
 		`fact`:            {Fact, true, true, true},     // Admin only
+		`fine`:            {Fine, true, false, false},
+		`payfine`:         {PayFine, true, false, false},
 		`flee`:            {Flee, false, true, false},
 		`forage`:          {Forage, false, false, false}, // Can't forage in combat
 		`gearup`:          {Gearup, false, false, false}, // Can't equip in combat
@@ -114,7 +116,7 @@ var (
 		`stomp`:           {Kick, false, true, false},
 		`knee`:            {Kick, false, true, false},
 		`killstats`:       {Killstats, true, true, false},
-		`bounty`:          {Bounty, true, true, false}, // list/show for all; declare/withdraw/prune-expired admin-gated inside handler
+		`bounty`:          {Bounty, true, true, false},   // list/show for all; declare/withdraw/prune-expired admin-gated inside handler
 		`knowledge`:       {Knowledge, true, true, true}, // Admin only
 		`history`:         {History, true, true, false},
 		`inbox`:           {Inbox, true, true, false},
@@ -155,7 +157,7 @@ var (
 		`questdebug`:      {QuestDebug, false, true, true}, // Admin only
 		`questtoken`:      {QuestToken, false, true, true}, // Admin only
 		`read`:            {Read, false, true, false},
-		`reload`:          {Reload, true, true, true}, // Admin only
+		`reload`:          {Reload, true, true, true},       // Admin only
 		`relationship`:    {Relationship, true, true, true}, // Admin only
 		`rep`:             {Report, true, true, false},
 		`reply`:           {Reply, true, true, false},
@@ -192,7 +194,7 @@ var (
 		`stash`:           {Stash, false, false, false}, // Can't manipulate stash in combat
 		`status`:          {Status, true, true, false},
 		`sleep`:           {Sleep, false, false, false}, // Can't sleep in combat (actions.Sleep enforces)
-		`stand`:           {Stand, true, true, false}, // Can stand when downed
+		`stand`:           {Stand, true, true, false},   // Can stand when downed
 		`suggest`:         {Suggest, true, true, false},
 		`storage`:         {Storage, false, false, false}, // Can't manipulate storage in combat
 		`suicide`:         {Suicide, true, true, false},

@@ -1,0 +1,26 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">justice</ansi>
+
+Towns protect their own. Steal from, assault, or kill a town's
+citizens and your standing with that town's faction will fall, and
+word of what you did will spread among those who witnessed it.
+
+<ansi fg="yellow">Guards</ansi> patrol the streets. A guard who recognizes a wanted
+criminal will first warn them off. Press your luck -- linger while
+wanted, or commit something serious like murder -- and the guards
+will move to arrest you.
+
+<ansi fg="yellow">Arrest</ansi> is not death. If your <ansi fg="command">arrest policy</ansi> is surrender (the
+default), you are taken to a holding cell to serve a sentence rather
+than cut down in the street. You can wait out your time or buy your
+freedom early by paying a <ansi fg="command">fine</ansi> that shrinks the longer you sit.
+Choosing to resist arrest, however, means a real fight.
+
+<ansi fg="yellow">Redemption</ansi>: serving your sentence -- or paying your fine -- clears
+the crime, lifts any bounty that town's faction posted on you, and
+restores your standing with them to a wary neutral. Wrong them again
+and the cycle begins anew.
+
+<ansi fg="yellow">Bounties</ansi>: serious crimes can put a price on your head that others
+may collect. See <ansi fg="command">help bounty</ansi>.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">arrest</ansi>, <ansi fg="command">fine</ansi>, <ansi fg="command">payfine</ansi>, <ansi fg="command">bounty</ansi>

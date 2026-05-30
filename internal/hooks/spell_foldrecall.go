@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -26,6 +27,13 @@ func validateFoldRecall(actor actions.Actor) bool {
 			actor.SendText(messaging.CategorySpellFold, "Something about this place prevents you from recalling.")
 			return false
 		}
+	}
+
+	// A no-go root (Psychic Anchor, or a Jailed holding-cell buff — 5.1c) pins
+	// the body in place; recall can't slip free of it either.
+	if char.HasBuffFlag(buffs.NoMovement) {
+		actor.SendText(messaging.CategorySpellFold, "You are held fast and cannot recall away.")
+		return false
 	}
 
 	anchorRoom := getMiscDataInt(char, "fold-anchor-room")

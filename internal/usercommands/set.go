@@ -52,6 +52,8 @@ func Set(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		return cmdSetSubmission(user, args)
 	case `surrender`:
 		return cmdSetSurrender(user, args)
+	case `arrest`:
+		return cmdSetArrest(user, args)
 	case `linewidth`:
 		return cmdSetLineWidth(user, args)
 	default:
@@ -68,7 +70,7 @@ func displaySetStatus(user *users.UserRecord) {
 	c := configs.GetTextFormatsConfig()
 
 	user.SendText(messaging.CategorySystem, `<ansi fg="yellow-bold">description:</ansi>`)
-	user.SendText(messaging.CategorySystem, `<ansi fg="yellow">` + util.SplitStringNL(user.Character.Description, 80) + `</ansi>`)
+	user.SendText(messaging.CategorySystem, `<ansi fg="yellow">`+util.SplitStringNL(user.Character.Description, 80)+`</ansi>`)
 	user.SendText(messaging.CategorySystem, ``)
 
 	user.SendText(messaging.CategorySystem, `<ansi fg="yellow-bold">ScreenReader:</ansi> `)
@@ -133,7 +135,7 @@ func displayBoolSetting(user *users.UserRecord, settingName string, label string
 	if on == nil || on.(bool) {
 		onTxt = `<ansi fg="green">ON</ansi>`
 	}
-	user.SendText(messaging.CategorySystem, `<ansi fg="yellow-bold">` + label + `:</ansi> `)
+	user.SendText(messaging.CategorySystem, `<ansi fg="yellow-bold">`+label+`:</ansi> `)
 	user.SendText(messaging.CategorySystem, onTxt)
 	user.SendText(messaging.CategorySystem, ``)
 }
@@ -162,10 +164,10 @@ func cmdSetToggle(user *users.UserRecord, settingName string, displayName string
 	}
 	if !on.(bool) {
 		on = true
-		user.SendText(messaging.CategorySystem, displayName + ` toggled <ansi fg="red">ON</ansi>.`)
+		user.SendText(messaging.CategorySystem, displayName+` toggled <ansi fg="red">ON</ansi>.`)
 	} else {
 		on = false
-		user.SendText(messaging.CategorySystem, displayName + ` toggled <ansi fg="red">OFF</ansi>.`)
+		user.SendText(messaging.CategorySystem, displayName+` toggled <ansi fg="red">OFF</ansi>.`)
 	}
 
 	user.SetConfigOption(settingName, on)
@@ -204,7 +206,7 @@ func cmdSetPrompt(user *users.UserRecord, rest string, setTarget string, args []
 		}
 		user.SendText(messaging.CategorySystem, "Your current prompt:\n")
 		user.SendText(messaging.CategorySystem, currentPrompt.(string))
-		user.SendText(messaging.CategorySystem, "\n" + `Type <ansi fg="command">help set-prompt</ansi> for more info on customizing prompts.` + "\n")
+		user.SendText(messaging.CategorySystem, "\n"+`Type <ansi fg="command">help set-prompt</ansi> for more info on customizing prompts.`+"\n")
 		return true, nil
 	}
 
@@ -241,7 +243,7 @@ func cmdSetFprompt(user *users.UserRecord, rest string, setTarget string, args [
 		if customPrompt == nil {
 			user.SendText(messaging.CategorySystem, `  <ansi fg="8">[system default - toggle-driven]</ansi>`)
 		} else {
-			user.SendText(messaging.CategorySystem, `  ` + customPrompt.(string))
+			user.SendText(messaging.CategorySystem, `  `+customPrompt.(string))
 		}
 		user.SendText(messaging.CategorySystem, ``)
 		user.SendText(messaging.CategorySystem, `<ansi fg="yellow">Toggle Settings</ansi> <ansi fg="8">(set fprompt tog <name> to change):</ansi>`)
@@ -343,7 +345,7 @@ func cmdSetWimpy(user *users.UserRecord, rest string, setTarget string, args []s
 		}
 		user.SendText(messaging.CategorySystem, "Your current wimpy:\n")
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(`%d%%`, currentWimpy.(int)))
-		user.SendText(messaging.CategorySystem, "\n" + `Type <ansi fg="command">help wimpy</ansi> to learn about the wimpy setting.` + "\n")
+		user.SendText(messaging.CategorySystem, "\n"+`Type <ansi fg="command">help wimpy</ansi> to learn about the wimpy setting.`+"\n")
 		return true, nil
 	}
 
@@ -413,8 +415,8 @@ func cmdSetSubmission(user *users.UserRecord, args []string) (bool, error) {
 		if confirmed != "1" {
 			pending, _ := user.Character.GetMiscData("submission_lethal_pending").(string)
 			if pending != "1" {
-				user.SendText(messaging.CategorySystem, `<ansi fg="yellow-bold">WARNING:</ansi> Setting your submission policy to` +
-					` <ansi fg="red-bold">lethal</ansi> means your successful submissions will KILL` +
+				user.SendText(messaging.CategorySystem, `<ansi fg="yellow-bold">WARNING:</ansi> Setting your submission policy to`+
+					` <ansi fg="red-bold">lethal</ansi> means your successful submissions will KILL`+
 					` opponents — players included, with full deprogression and corpse loot.`)
 				user.SendText(messaging.CategorySystem, "If you're sure, run the command again to confirm.")
 				user.Character.SetMiscData("submission_lethal_pending", "1")
@@ -450,6 +452,28 @@ func cmdSetSurrender(user *users.UserRecord, args []string) (bool, error) {
 
 	user.Character.SurrenderPolicy = newPolicy
 	user.SendText(messaging.CategorySystem, fmt.Sprintf("Surrender policy set to <ansi fg=\"command\">%s</ansi>.", newPolicy))
+	return true, nil
+}
+
+func cmdSetArrest(user *users.UserRecord, args []string) (bool, error) {
+	if len(args) < 1 {
+		cur := user.Character.ArrestPolicy
+		if cur == "" {
+			cur = characters.ArrestSurrender
+		}
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Your arrest policy: <ansi fg=\"command\">%s</ansi>", cur))
+		user.SendText(messaging.CategorySystem, "Set with: <ansi fg=\"command\">set arrest &lt;surrender|resist&gt;</ansi>")
+		user.SendText(messaging.CategorySystem, "See <ansi fg=\"command\">help arrest</ansi> for details.")
+		return true, nil
+	}
+	newPolicy, ok := characters.ParseArrestPolicy(strings.ToLower(args[0]))
+	if !ok {
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Unknown arrest policy: <ansi fg=\"red\">%s</ansi>", args[0]))
+		user.SendText(messaging.CategorySystem, "Valid policies: surrender, resist.")
+		return true, nil
+	}
+	user.Character.ArrestPolicy = newPolicy
+	user.SendText(messaging.CategorySystem, fmt.Sprintf("Arrest policy set to <ansi fg=\"command\">%s</ansi>.", newPolicy))
 	return true, nil
 }
 

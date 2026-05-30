@@ -391,6 +391,18 @@ type Balance struct {
 	// (rep -100) for rep-triggered auto-bounties. 5.1b.
 	JusticeBountyRepMultMax ConfigFloat `yaml:"JusticeBountyRepMultMax"`
 
+	// ArrestResistGraceRounds is the window between a guard declaring an arrest
+	// and hauling the player off, during which the player may fight back. 5.1c.
+	ArrestResistGraceRounds ConfigInt `yaml:"ArrestResistGraceRounds"`
+
+	// JusticeFineDecayPerRound is gold the arrest fine drops per round served;
+	// sentence length = fine / this. 5.1c.
+	JusticeFineDecayPerRound ConfigInt `yaml:"JusticeFineDecayPerRound"`
+
+	// JusticeArrestRepReset is the reputation floor restored with the issuing
+	// faction when a sentence is served/paid (only raises, never lowers). 5.1c.
+	JusticeArrestRepReset ConfigInt `yaml:"JusticeArrestRepReset"`
+
 	// ── PACK SCALING ─────────────────────────────────────────────────────────
 	PackScalingEnabled   ConfigBool `yaml:"PackScalingEnabled"`   // Enable pack survival bonuses (default true)
 	PackSurvivalRounds   ConfigInt  `yaml:"PackSurvivalRounds"`   // Consecutive rounds together before bonus (default 10)

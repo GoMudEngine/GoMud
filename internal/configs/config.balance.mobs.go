@@ -157,4 +157,13 @@ func (b *Balance) validateMobs() {
 	if b.JusticeBountyRepMultMax < 1 {
 		b.JusticeBountyRepMultMax = 2.0
 	}
+	if b.ArrestResistGraceRounds < 1 {
+		b.ArrestResistGraceRounds = 3
+	}
+	if b.JusticeFineDecayPerRound < 1 {
+		b.JusticeFineDecayPerRound = 5
+	}
+	if b.JusticeArrestRepReset == 0 {
+		b.JusticeArrestRepReset = -10
+	}
 }

@@ -1,6 +1,7 @@
 package usercommands
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -10,6 +11,14 @@ import (
 )
 
 func Flee(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+
+	// A no-go root (e.g. a Jailed holding-cell buff — 5.1c) pins the player in
+	// place; flee must honor it too, or it becomes a jail-escape hole (the
+	// directional `go` block alone is bypassable via flee — smoke BUG-02).
+	if user.Character.HasBuffFlag(buffs.NoMovement) {
+		user.SendText(messaging.CategorySystem, `You're locked in — there's nowhere to flee to.`)
+		return true, nil
+	}
 
 	if !user.Character.IsDisengaging() {
 		// Fleeing costs stamina
