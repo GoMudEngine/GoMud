@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/knowledge"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -142,7 +143,7 @@ func bountyAdminList(args []string, user *users.UserRecord) (bool, error) {
 		fmt.Fprintf(&b, "  %4d  %-10s  %-22s  %-15s  %5d  %4d  %s\r\n",
 			r.Id, r.Status,
 			bountyTruncate(fmt.Sprintf("%s:%s", r.Issuer.Type, r.Issuer.Id), 22),
-			fmt.Sprintf("%s:%d", r.Target.Type, r.Target.Id),
+			bountyTruncate(bountyTargetLabel(r.Target), 15),
 			r.GoldReward, r.RepReward, r.DeclaredReason)
 	}
 	user.SendText(messaging.CategorySystem, b.String())
@@ -171,7 +172,7 @@ func bountyAdminShow(args []string, user *users.UserRecord) (bool, error) {
 	var sb strings.Builder
 	fmt.Fprintf(&sb, "Bounty #%d (%s)\r\n", b.Id, b.Status)
 	fmt.Fprintf(&sb, "  Issuer:    %s:%s\r\n", b.Issuer.Type, b.Issuer.Id)
-	fmt.Fprintf(&sb, "  Target:    %s:%d\r\n", b.Target.Type, b.Target.Id)
+	fmt.Fprintf(&sb, "  Target:    %s\r\n", bountyTargetLabel(b.Target))
 	fmt.Fprintf(&sb, "  Reward:    %dg + %d rep\r\n", b.GoldReward, b.RepReward)
 	fmt.Fprintf(&sb, "  Condition: %s\r\n", b.Condition)
 	fmt.Fprintf(&sb, "  Declared:  round %d (reason: %q)\r\n", b.DeclaredRound, b.DeclaredReason)
@@ -291,6 +292,26 @@ func parseIssuerSpec(s string) (bounties.Issuer, bool) {
 		return bounties.NPCIssuer(id), true
 	}
 	return bounties.Issuer{}, false
+}
+
+// bountyTargetLabel renders a bounty target for player-visible output,
+// resolving player/mob names instead of raw "<type>:<id>" ids (5.1b smoke
+// CONCERN-1). Falls back to the id form when the name can't be resolved.
+func bountyTargetLabel(s knowledge.Subject) string {
+	switch s.Type {
+	case knowledge.SubjectPlayer:
+		if u := users.GetByUserId(s.Id); u != nil && u.Character != nil && u.Character.Name != "" {
+			return u.Character.Name
+		}
+		return fmt.Sprintf("player:%d", s.Id)
+	case knowledge.SubjectMob:
+		if spec := mobs.GetMobSpec(mobs.MobId(s.Id)); spec != nil && spec.Character.Name != "" {
+			return spec.Character.Name
+		}
+		return fmt.Sprintf("mob:%d", s.Id)
+	default:
+		return fmt.Sprintf("%s:%d", s.Type, s.Id)
+	}
 }
 
 // parseTargetSpec parses "<type>:<id>" → knowledge.Subject.
