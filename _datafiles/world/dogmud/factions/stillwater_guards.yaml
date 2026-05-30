@@ -1,0 +1,9 @@
+faction_id: stillwater_guards
+display_name: "Stillwater Constabulary"
+description: |
+  The lone constable's office of Stillwater -- a quiet lake town that keeps
+  order with one tough lawman rather than a garrison.
+default_rep: 0
+allies: [stillwater_citizens]
+enemies: []
+holding_cell_room: 5106
