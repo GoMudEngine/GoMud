@@ -75,12 +75,14 @@ against a player has `GoldReward ≥ BountyHunterGoldThreshold`** and that playe
 has **no active hunter**. (Single-bounty, not summed — chosen for a clean
 per-faction model.) One active hunter per player, always.
 
-**Spawn.** Instantiate a `bounty_hunter` mob (fresh instance) at the **issuing
-faction's seat** — a faction → home-room lookup reusing/extending the justice
-faction-room registry (Thornwall barracks 473, Stillwater constabulary 4110).
-Stamp the **target userId** and **triggering bounty id** onto the hunter
-(MiscData + the goal's params). The hunter's statpool is set from the bounty
-(see §6). Equip the gear kit (§5).
+**Spawn.** Instantiate a `bounty_hunter` mob at the **issuing faction's seat** —
+a faction → home-room lookup reusing/extending the justice faction-room registry
+(Thornwall barracks 473, Stillwater constabulary 4110). Use
+`mobs.NewMobByIdFresh(id, homeRoom, forceStatPool)` with the **scaled statpool**
+(§6) — `NewMobById`/`NewMobByIdFresh` already accept a `forceStatPool` override,
+so no engine change is needed. Then generate + wear the affix-scaled gear kit
+(§5). Stamp the **target userId** and **triggering bounty id** onto the hunter
+(MiscData + the goal's params).
 
 **Telegraph.** The targeted player receives a system line when a hunter is
 dispatched, e.g. *"Word reaches you that a hunter has taken the contract on your
@@ -154,25 +156,41 @@ permadeath — consistent with the rest of the game.)
 
 ---
 
-## 5. Hunter gear kit
+## 5. Hunter gear kit (reuses the instance affix-scaling path)
 
-The hunter wears a **full dedicated kit** so it is mechanically formidable
-(weapon `damage_multiplier`, armor mitigation) — not merely high-statpool.
+The hunter wears a **full kit of affix-scaled gear generated at spawn**, scaled
+to its power — so a tougher bounty produces both a higher-statpool *and*
+better-geared hunter. This reuses the exact mechanism the planar-oasis instance
+uses for gold-scaled loot (`internal/rooms/rooms.go:786-795`):
+`items.GenerateAffixedItem(baseItemId, goldPaid, LootBudgetScalar)` →
+`Character.Wear(...)`, where the affix budget per item is
+`LootBudgetScalar × sqrt(goldPaid)` (`LootBudgetScalar` default 7.0).
 
-- **Items:** ~6 new items forming a cohesive "bounty hunter" set — weapon +
-  body + head + legs + feet + gloves — at a high `rarity_tier`. Stat budget /
-  tier chosen to suit a 400–500-statpool elite (above town-guard gear).
-- **Worn:** assigned via the hunter template's `equipment:` block (all hunters
-  share the kit; difficulty scaling lives on the statpool, §6). A single kit in
-  v1; tiered-by-bounty kits are a future refinement.
-- **Drops:** governed by the standard equipped-item drop path
-  (`hooks/Death_MobLoot.go`), which rolls **each equipped piece independently**
-  against the mob's `itemdropchance`. Set `itemdropchance: 4` → ~4% per piece.
-  Across ~6 pieces that is ~0.25 pieces per kill — a rare trophy, not a farm
-  (and you only face hunters by being repeatedly wanted, which is costly). The
-  hunter does **not** carry the `PermaGear` flag (that would drop nothing).
-- `loot_pool` (instance-loot generation) is **not** used — the worn-gear drop
-  path covers it.
+- **Base items (`loot_pool`):** ~8 new dedicated "bounty hunter" base items, one
+  per slot — weapon, body, head, legs, feet, gloves, neck, back — listed in the
+  hunter template's `loot_pool`. Base specs are modest (slot + base stats +
+  `rarity_tier`); the affixes carry the scaled power.
+- **Spawn-time generation + wear.** The dispatch manager replicates the instance
+  loot path (the hunter isn't in a `gold_paid` instance room, so the manager
+  drives it directly): for each `loot_pool` base item,
+  `GenerateAffixedItem(baseId, gearGold, LootBudgetScalar)` then `Wear` it. The
+  scale input is **`gearGold = hunterStatpool / BountyHunterGearGoldDivisor`**
+  (default divisor 5). The hunter **uses** this gear — its damage + mitigation
+  rise with the bounty, on top of the scaled statpool, making a high-bounty
+  hunter genuinely dangerous.
+- **Drops.** The standard equipped-item drop path (`hooks/Death_MobLoot.go`)
+  rolls **each worn piece independently** against the mob's `itemdropchance`.
+  Set `itemdropchance: 3` → ~3% per piece. Across ~8 pieces that is ~0.24
+  pieces per kill — a nice rare trophy for a hard fight, but no farm: you only
+  face hunters by being repeatedly wanted, which is costly. The dropped item is
+  the affix-scaled instance, so the trophy reflects how tough the hunter was.
+  The hunter does **not** carry the `PermaGear` flag (that would drop nothing).
+
+Worked budget: at hunter statpool 500, `gearGold = 500/5 = 100`, per-item affix
+budget ≈ `7 × sqrt(100) = 70`; at statpool 400, `gearGold = 80`, budget ≈
+`7 × sqrt(80) ≈ 62`. (For reference, a 300g oasis run yields ≈ `7 × sqrt(300) ≈
+121` per item — the hunter sits well below endgame-instance gear.) The divisor
+is the balance knob; tune in playtest.
 
 ---
 
@@ -191,7 +209,8 @@ max(JusticeBountyMurderMult(2.0), repMult≤2.0)`.
 | `BountyHunterMinStatpool` / `MaxStatpool` | 300 / 500 | Clamp. |
 | `BountyHunterRepathRounds` | 5 | Re-path cadence (closing chase). |
 | `BountyHunterRedispatchCooldown` | 500 | Rounds before a new hunter after one is killed. |
-| Hunter `itemdropchance` (data) | 4 | ~4% independent per-equipped-piece drop. |
+| `BountyHunterGearGoldDivisor` | 5 | Gear affix scale: `gearGold = statpool / divisor`, fed to `GenerateAffixedItem` (§5). |
+| Hunter `itemdropchance` (data) | 3 | ~3% independent per-worn-piece drop (~8 pieces). |
 
 Hunter statpool = `clamp(250 + gold × 0.25, 300, 500)`. Reference points:
 city/gate guard statpool 240, Guard Captain Velk 300.
@@ -204,8 +223,9 @@ city/gate guard statpool 240, Guard Captain Velk 300.
 | Heinous / very strong / multi-Hostile | ~900+ | ~1000+ | Yes | **500 (cap)** | apex "oh no" |
 
 So a town guard is 240, a captain 300, and a dispatched hunter runs **400–500**
-plus a real gear kit — a deliberate step above the watch, scaling with how
-wanted (and how strong) the offender is. All values tunable.
+plus an **affix-scaled gear kit (§5) that scales from the same statpool** — a
+deliberate step above the watch, scaling with how wanted (and how strong) the
+offender is. All values tunable.
 
 ---
 
@@ -255,7 +275,6 @@ instead of a hunter's blade.
   the track.)
 - **Criminal NPCs that commit witnessable crimes and then get hunted**
   (NPC-vs-NPC bounty hunting) — a noted followup, likely once more zones land.
-- **Tiered hunter gear kits** by bounty band (v1 ships one kit).
 - **Bounty-board "pick up a contract"** UX for player hunters; NPC-bandit
   auto-bounty declaration; squad hunters.
 
@@ -268,6 +287,9 @@ instead of a hunter's blade.
   does not; one-per-player (no second hunter while one is active);
   re-dispatch only after cooldown.
 - Statpool scaling: the §6 table rows (`clamp(250 + gold×0.25, 300, 500)`).
+- Gear generation: the spawn wear-loop produces an affixed piece per `loot_pool`
+  base item, scaled by `gearGold = statpool / BountyHunterGearGoldDivisor`
+  (assert the budget tracks the formula; higher statpool → larger affix budget).
 - Planner: jailed-target → hold (no engage, no path-in); same-room → engage;
   else → closing step toward target.
 - Claim-on-death: hunter kill resolves the bounty AND clears that faction's
