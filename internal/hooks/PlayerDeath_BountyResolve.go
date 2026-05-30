@@ -29,11 +29,15 @@ type bountyKill struct {
 }
 
 // attributeBountyKill decides who, if anyone, claims a bounty when the
-// target player dies. issuerFaction is the bounty's issuing faction id
-// (empty string for non-faction issuers). killerFactions resolves a mob
-// instance's faction memberships (may be nil). Pure — no side effects.
+// target player dies. targetUserId is the dead, wanted player — they can
+// never claim their own bounty (a self-kill / suicide is non-attributable,
+// else a player could murder, suicide, and collect their own bounty for net
+// gold). issuerFaction is the bounty's issuing faction id (empty string for
+// non-faction issuers). killerFactions resolves a mob instance's faction
+// memberships (may be nil). Pure — no side effects.
 func attributeBountyKill(
 	killer state.ActorRef,
+	targetUserId int,
 	issuerFaction string,
 	damageMap map[int]int,
 	killerFactions func(instanceId int) []string,
@@ -47,14 +51,18 @@ func attributeBountyKill(
 		}
 	}
 
-	// Direct player kill.
-	if killer.IsPlayer() && killer.UserId > 0 {
+	// Direct player kill — but never the target themselves (suicide).
+	if killer.IsPlayer() && killer.UserId > 0 && killer.UserId != targetUserId {
 		return bountyKill{kind: killPlayer, userId: killer.UserId}
 	}
 
-	// Fallback: highest-damage player in the damage map.
+	// Fallback: highest-damage player in the damage map, excluding the target
+	// (self-damage must not make the dead player their own bounty claimer).
 	top, topDmg := 0, 0
 	for uid, dmg := range damageMap {
+		if uid == targetUserId {
+			continue
+		}
 		if dmg > topDmg {
 			top, topDmg = uid, dmg
 		}
@@ -103,7 +111,7 @@ func wirePlayerDeathBountyResolve(c *characters.Character) {
 					issuerFaction = b.Issuer.Id
 				}
 
-				bk := attributeBountyKill(d.Killer, issuerFaction, d.DamageMap, killerMobFactions)
+				bk := attributeBountyKill(d.Killer, userId, issuerFaction, d.DamageMap, killerMobFactions)
 
 				switch bk.kind {
 				case killGuard:
