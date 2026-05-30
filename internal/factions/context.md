@@ -123,6 +123,7 @@ type Definition struct {
     Allies          []string `yaml:"allies"`
     Enemies         []string `yaml:"enemies"`
     HoldingCellRoom int      `yaml:"holding_cell_room"` // 0 = no jail
+    ReleaseRoom     int      `yaml:"release_room"`      // 0 = none (release falls back to default)
 }
 ```
 

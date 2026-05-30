@@ -307,8 +307,9 @@ func ExecuteArrest(player *characters.Character, userId int, faction string, isM
 // ResolveDetention ends a detention (timer expiry OR fine paid): resolves the
 // stamped crimes, withdraws the issuing faction's open bounties, resets rep
 // to the floor only if currently below it, removes the Jailed buff, clears
-// the jail record, and moves the player to the barracks. Returns false if
-// the player has no active jail record.
+// the jail record, and moves the player to the arresting faction's release
+// room (or barracksRoomId as a fallback). Returns false if the player has no
+// active jail record.
 func ResolveDetention(player *characters.Character, userId int) bool {
 	if player == nil || player.MiscData == nil {
 		return false
