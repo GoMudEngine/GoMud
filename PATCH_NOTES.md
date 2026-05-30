@@ -1,5 +1,33 @@
 # DOGMud Patch Notes
 
+## 2026-05-30 — Town justice comes to Stillwater (5.1 rollout)
+
+The watch now reaches a second town. **Constable Drunn** of Stillwater is no
+longer just a quest-giver — he's a combat-capable lawman who enforces the law
+the way Thornwall's guards do: warn, arrest, and (if you resist) fight. Wanted
+characters caught in Stillwater are hauled to a new **holding cell** beneath the
+lakeside constabulary, and — fixing a rollout gotcha — prisoners are now released
+back into the *town that jailed them* rather than always to Thornwall. Arrest
+messages now name the watch properly ("the Stillwater Constabulary") instead of
+an internal label.
+
+The town itself feels more aware: Stillwater's townsfolk, its wilderness
+foragers, and the Ketil trading family are now recognized **citizens**, so
+crimes committed in front of them are witnessed and reported — even out in the
+marsh. (Citizens watch and report; only guards enforce.)
+
+**Doing right by a town now pays off.** Completing civic quests in Thornwall and
+Stillwater raises your **standing** with the relevant guards or townsfolk —
+seven quests across both towns now grant reputation on completion, whether you
+finish them through dialogue or by the deed itself.
+
+(Internally: holding-cell and release rooms moved onto faction definitions
+(`holding_cell_room` / `release_room`), boot-validated against real rooms, so
+future towns are pure data — no code change. New `stillwater_guards` +
+`stillwater_citizens` factions. Quest reputation is a new `QuestReward` field
+applied in the completion handler. Stale guard warn-stamps are now swept
+in-tick. Closes the two Town Justice 5.1 followups.)
+
 ## 2026-05-29 — Town justice 5.1c (arrest, jail & fines)
 
 The watch no longer just kills you. Guards now **arrest** wanted characters
