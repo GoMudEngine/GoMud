@@ -770,11 +770,18 @@ c.CancelBuffsWithFlag(buffs.Sleeping)
 
 | ID | Name | Duration | Source | Effect |
 |----|------|----------|--------|--------|
-| 88 | Jailed | Scaled to sentence rounds via `AddBuffScaled` | `internal/justice.ExecuteArrest` | Applies `no-go` (`NoMovement`) flag, preventing all movement. `TriggersLeft` is set to the sentence length in rounds so the buff expires naturally at sentence end. Removed explicitly by `internal/justice.ResolveDetention` on timer expiry or fine payment. |
+| 88 | Jailed | Scaled to sentence rounds via `AddBuffScaled` | `internal/justice.ExecuteArrest` | Carries two flags: `no-go` (`NoMovement`) prevents all movement, and `no-aggro-target` makes the bearer invisible to mob aggro targeting. `TriggersLeft` is set to the sentence length in rounds so the buff expires naturally at sentence end. Removed explicitly by `internal/justice.ResolveDetention` on timer expiry or fine payment. |
 
-**`NoMovement` flag** (`no-go`) is listed in the buffs package flag
-constants as `NoMovement Flag = "no-go"`. It is checked by `go.go` to
-block room-exit commands while the player is jailed.
+**`NoMovement` flag** (`no-go`, `NoMovement Flag = "no-go"`) is checked by
+`go.go` (room-exit commands), `flee.go` (flee), and `spell_foldrecall.go`
+(recall) to keep a jailed player locked in by every egress path.
+
+**`NoAggroTarget` flag** (`no-aggro-target`) — the same flag respawn-grace
+uses — makes the jailed player un-targetable by all mob aggro paths
+(LookForTrouble, retarget, etc.). The combat round
+(`hooks/NewRound_DoCombat.go`) additionally drops a mob's *stale* aggro on
+a `no-aggro-target` player, so a guard that was already fighting the player
+before arrest stops pursuing them into the cell.
 
 **`AddBuffScaled(buffId int, scale float64)`** is the mechanism: passing
 `float64(rounds)` as scale sets `TriggersLeft = buff.TriggerCount * scale`.
@@ -782,6 +789,10 @@ For buff 88 (TriggerCount=1, TriggerRate="1 round"), this yields exactly
 `rounds` triggers remaining — one per round of the sentence.
 
 The buff's `start_user_text` and `end_user_text` fire automatically via
-the buff system at cell entry and natural expiry. `ExecuteArrest` also
-sends an additional arrest-context message; `ResolveDetention` sends a
-release message on early fine payment.
+the buff system at cell entry and at removal. Because `RemoveBuff` fires
+`end_user_text` ("The cell door swings open. You are free to go."), that is
+the single release line for BOTH the timer-expiry and pay-fine paths —
+`ResolveDetention` deliberately sends no release flavor of its own (avoids
+the duplicate-message bug). `ExecuteArrest` sends an additional
+arrest-context line at cell entry; `payfine` sends a payment line that does
+not mention the door.

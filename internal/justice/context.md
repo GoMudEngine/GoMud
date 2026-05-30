@@ -179,29 +179,44 @@ decay math; floors at zero.
 5. Applies buff 88 (Jailed) via `player.AddBuffScaled(88, float64(rounds))`
    — `TriggersLeft` is scaled to `rounds` so the buff expires naturally
    at sentence end.
-6. Moves the player to the cell via `rooms.MoveToRoom`.
-7. Sends arrest-flavor text to the player.
+6. `player.EndAggro()` — drops any fight the player was in (they are in
+   custody now, not brawling).
+7. Moves the player to the cell via `rooms.MoveToRoom`.
+8. Sends arrest-flavor text to the player.
 
-The Jailed buff (id 88, `no-go` / `NoMovement` flag) prevents movement
-for the duration. Its `end_user_text` fires automatically when the buff
-expires; `ExecuteArrest` also sends an additional arrest-context line.
+The Jailed buff (id 88) carries two flags: `no-go` / `NoMovement` prevents
+walking, fleeing, and recalling out (see flee.go + spell_foldrecall.go);
+`no-aggro-target` makes the jailed player invisible to all mob aggro
+targeting, so guards do not pursue prisoners into the cell. The combat
+round (`hooks/NewRound_DoCombat.go`) also drops a mob's stale aggro on a
+`no-aggro-target` player. The buff's `end_user_text` ("The cell door swings
+open. You are free to go.") fires automatically when the buff is removed —
+this is the single release line for both the timer and pay-fine paths, so
+`ResolveDetention` does NOT send its own.
 
 #### `ResolveDetention(player *characters.Character, userId int) bool`
 
-Ends detention on timer expiry or fine payment:
+Ends detention on timer expiry or fine payment. Crucially, it clears the
+player's record across the arresting faction **and its declared allies**
+(the same set `Verdict` checks) — guards belong to `thornwall_guards` AND
+`thornwall_citizens`, so clearing only one would leave an unresolved crime
+against the other that re-triggers arrest the instant the player is freed.
 1. Guards on `jail_until_round` presence; returns `false` if not jailed.
-2. Resolves each stamped crime via `crimes.Resolve(faction, id, "served
+2. Builds the faction set (arresting faction + `alliesFn`). For each
+   faction, live-queries `aCrimesForFactionFn` and resolves every
+   unresolved crime by that player via `crimes.Resolve(f, id, "served
    sentence")`.
-3. Withdraws all open faction bounties against the player.
-4. Resets rep to `JusticeArrestRepReset` floor only if currently below it
-   (default −10).
-5. Removes buff 88 via `player.RemoveBuff(88)`.
+3. Withdraws all open bounties issued by any faction in the set.
+4. Resets rep to `JusticeArrestRepReset` floor for each faction in the set,
+   only where currently below it (default −10; never lowers good standing).
+5. Removes buff 88 via `player.RemoveBuff(88)` — this fires the buff's
+   release line; `ResolveDetention` sends no flavor of its own.
 6. Clears all jail MiscData keys.
 7. Moves player to barracks (room 473).
-8. Sends release-flavor text.
 
-Release seams: `aResolveCrimeFn`, `aOpenBountiesFn`, `aWithdrawFn`,
-`aGetRepFn`, `aSetRepFn`, `aMoveFn`, `aDecayFn`, `aRepResetFn`.
+Release seams: `aResolveCrimeFn`, `aCrimesForFactionFn`, `alliesFn`,
+`aOpenBountiesFn`, `aWithdrawFn`, `aGetRepFn`, `aSetRepFn`, `aMoveFn`,
+`aDecayFn`, `aRepResetFn`.
 
 ---
 
@@ -252,6 +267,7 @@ player commands
 | `internal/actions/attack.go` | `MaybeDeclareBounty` (assault) |
 | `internal/actions/steal.go`, `plant.go` | `MaybeDeclareBounty` (theft) |
 | `internal/usercommands/jail.go` | `JailInfo`, `ResolveDetention` (fine/payfine) |
+| `internal/hooks/NewRound_DoCombat.go` | drops a mob's stale aggro on a `no-aggro-target` (jailed) player — no `justice` call, but part of the jail-lockdown contract |
 
 `justice` itself imports only: `bounties`, `configs`, `crimes`,
 `factions`, `knowledge`, `opinions`, `util`, `characters`, `rooms`,

@@ -1,5 +1,61 @@
 # DOGMud Patch Notes
 
+## 2026-05-29 — Town justice 5.1c (arrest, jail & fines)
+
+The watch no longer just kills you. Guards now **arrest** wanted characters
+instead of cutting them down on sight. How that plays out is up to you: a new
+**arrest policy** (`set arrest surrender|resist`, surrender by default) decides
+whether you go quietly or fight.
+
+**Surrender** and a guard hauls you off to a holding cell beneath the Thornwall
+guard barracks to serve a sentence. You can wait it out, or buy your freedom
+early — the cell door shows a **fine** that shrinks the longer you sit (`fine`
+to check it, `payfine` to pay, drawn from your pocket first and your bank if you
+come up short). Either way, answering for your crime **clears your record** with
+that town: the crimes are resolved, any bounty the town posted on you is lifted,
+and your standing with the guards *and* their citizenry resets to a wary
+neutral. Wrong them again and the cycle starts over.
+
+**Resist** and the guards fight you for real — and, thanks to the guard-combat
+work shipping alongside this, that is now a genuine threat. While jailed you're
+locked in: you can't walk out, flee, or recall away, and the guards leave you be
+in your cell rather than pile on.
+
+Help is in-game: `help justice`, `help arrest`, `help fine`. This is the third
+slice of town justice (after guard enforcement and auto-bounties); paying a fine
+or serving time now doubles as the way to clear your name. (Internally: an
+`Arrest` severity rung in the `internal/justice` verdict; `internal/justice/
+arrest.go` for the jail lifecycle; a Jailed buff with `no-go` + `no-aggro-target`;
+knobs `ArrestResistGraceRounds`, `JusticeFineDecayPerRound`, `JusticeArrestRepReset`.)
+
+## 2026-05-29 — Combat-capable town guards
+
+Thornwall's guards can finally fight. They were built as non-combatant
+quest-and-flavor NPCs, which meant the watch could threaten but never actually
+trade blows — attack a guard and the fight would simply stall. The three active
+Thornwall enforcers (the city guard, the gate guard, and Guard Captain Velk) are
+now proper combatants: they hold the line, call for backup, and hit hard enough
+to make crime in town a real risk. Velk keeps his quest-giver duties on top of a
+captain's fighting tree. This is the groundwork that makes resisting arrest (and
+the watch in general) mean something.
+
+## 2026-05-29 — Town justice 5.1b (crime → auto-bounty)
+
+Towns now put a price on serious offenders' heads. When a character commits an
+identified **murder** of a townsperson, or their standing with a town faction
+sinks to **hostile**, that faction automatically posts a kill-bounty on them —
+scaled to the offender's power and the severity of what they did. The bounty
+rides the existing bounty system, so guards treat a marked character as wanted
+and other hunters can collect.
+
+Those bounties resolve when the marked character dies: a town guard who lands the
+kill funds the watch (the guard pockets the reward to spend on better gear down
+the line), a third party who turns them in is paid out and earns faction favor,
+and otherwise the bounty simply lapses. A character can't collect a bounty on
+their own head. (Internally: `justice.MaybeDeclareBounty` fired from the crime
+sites; a `PlayerDeath_BountyResolve` hook for attribution; knobs
+`JusticeBountyExpiryRounds`, `JusticeBountyMurderMult`, `JusticeBountyRepMultMax`.)
+
 ## 2026-05-29 — Town justice 5.1a (guard enforcement)
 
 The city watch now actually watches. Thornwall guards recognize **wanted**
