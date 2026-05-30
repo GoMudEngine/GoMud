@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/crimes"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/factions"
+	"github.com/GoMudEngine/GoMud/internal/justice"
 	"github.com/GoMudEngine/GoMud/internal/knowledge"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -349,6 +350,7 @@ func recordAssaultCrime(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room)
 			mob, mob.InstanceId, room.RoomId, mob.Character.Zone, hadExternal)
 		if perp.Type == crimes.PerpPlayer {
 			factions.BumpRep(fid, user.UserId, delta)
+			justice.MaybeDeclareBounty(fid, user.UserId, crimes.KindAssault)
 			// Knowledge: each witness records the player as the perp of
 			// these crimes.
 			subject := knowledge.PlayerSubject(user.UserId)

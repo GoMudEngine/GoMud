@@ -36,11 +36,11 @@ func TestComputeDefaultRep(t *testing.T) {
 		statpool int
 		want     int
 	}{
-		{600, 6},    // 600 / 100 = 6
-		{100, 1},    // 100 / 100 = 1
-		{50, 1},     // floor of 1 (50 / 100 = 0 -> 1)
-		{0, 1},      // floor of 1
-		{1000, 10},  // 1000 / 100 = 10
+		{600, 6},   // 600 / 100 = 6
+		{100, 1},   // 100 / 100 = 1
+		{50, 1},    // floor of 1 (50 / 100 = 0 -> 1)
+		{0, 1},     // floor of 1
+		{1000, 10}, // 1000 / 100 = 10
 	}
 	for _, c := range cases {
 		if got := computeDefaultRep(c.statpool); got != c.want {
@@ -156,7 +156,7 @@ func TestPruneExpired(t *testing.T) {
 	idA, _ := Declare(FactionIssuer("thornwall_guards"),
 		knowledge.PlayerSubject(17), ConditionKill, 200, DeclareOpts{}) // expires at 200
 	idB, _ := Declare(FactionIssuer("thornwall_guards"),
-		knowledge.PlayerSubject(18), ConditionKill, 0, DeclareOpts{})   // never expires
+		knowledge.PlayerSubject(18), ConditionKill, 0, DeclareOpts{}) // never expires
 	idC, _ := Declare(FactionIssuer("thornwall_guards"),
 		knowledge.PlayerSubject(19), ConditionKill, 5000, DeclareOpts{}) // far future
 
@@ -239,6 +239,17 @@ func TestAllRows_IncludesNonOpen(t *testing.T) {
 		t.Errorf("expected 2 rows, got %d", len(rows))
 	}
 	_ = idA
+}
+
+func TestDefaultGoldFor_MatchesComputeDefault(t *testing.T) {
+	restore := statpoolForTest
+	statpoolForTest = func(knowledge.Subject) int { return 600 }
+	defer func() { statpoolForTest = restore }()
+	got := DefaultGoldFor(knowledge.PlayerSubject(17))
+	want := computeDefaultGold(600)
+	if got != want {
+		t.Errorf("DefaultGoldFor = %d, want %d", got, want)
+	}
 }
 
 func TestReadAPI(t *testing.T) {

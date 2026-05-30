@@ -48,6 +48,13 @@ func computeDefaultGold(statpool int) int {
 	return g
 }
 
+// DefaultGoldFor returns the statpool-derived default gold reward for a target,
+// exposing the same computation Declare uses (so callers like internal/justice
+// can scale it without duplicating the formula).
+func DefaultGoldFor(target knowledge.Subject) int {
+	return computeDefaultGold(statpoolFor(target))
+}
+
 // computeDefaultRep returns max(1, floor(statpool / 100)).
 func computeDefaultRep(statpool int) int {
 	r := statpool / 100

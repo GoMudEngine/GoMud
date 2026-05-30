@@ -5,6 +5,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/crimes"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/factions"
+	"github.com/GoMudEngine/GoMud/internal/justice"
 	"github.com/GoMudEngine/GoMud/internal/knowledge"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/parties"
@@ -90,6 +91,7 @@ func MobDeathFactionRep(e events.Event) events.ListenerReturn {
 					if perp.Type == crimes.PerpPlayer {
 						// Pay the incremental difference (assault already paid).
 						factions.BumpRep(fid, userId, deltaMurder-deltaAssault)
+						justice.MaybeDeclareBounty(fid, userId, crimes.KindMurder)
 					}
 					writeKnowledgeForWitnesses(witnesses, perp, []int{assault.Id}, evt.RoomId)
 				} else if assault.HadExternalWitness {
@@ -126,6 +128,7 @@ func MobDeathFactionRep(e events.Event) events.ListenerReturn {
 				spec, evt.InstanceId, evt.RoomId, spec.Zone, false)
 			if perp.Type == crimes.PerpPlayer {
 				factions.BumpRep(fid, userId, deltaMurder)
+				justice.MaybeDeclareBounty(fid, userId, crimes.KindMurder)
 			}
 			writeKnowledgeForWitnesses(witnesses, perp, crimeIds, evt.RoomId)
 		}

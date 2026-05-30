@@ -3,11 +3,9 @@ package justice
 import (
 	"fmt"
 
-	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/factions"
-	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -23,7 +21,7 @@ type EnforceAction struct {
 type warnOutcome int
 
 const (
-	warnOutcomeNone   warnOutcome = iota
+	warnOutcomeNone warnOutcome = iota
 	warnOutcomeWarn
 	warnOutcomeAttack
 )
@@ -108,7 +106,7 @@ func RunGuardEnforcement(mob *mobs.Mob, room *rooms.Room, nowRound uint64) []Enf
 			warnedRound, warned := miscDataRound(mob.Character.MiscData, key)
 			switch resolveWarn(warned, warnedRound, nowRound, grace) {
 			case warnOutcomeWarn:
-				guardSay(room, mob, "Move along — you're not welcome here.")
+				guardSayFn(room, mob, "Move along — you're not welcome here.")
 				mob.Character.SetMiscData(key, nowRound)
 				acts = append(acts, EnforceAction{uid, SeverityWarn, false})
 			case warnOutcomeAttack:
@@ -120,14 +118,16 @@ func RunGuardEnforcement(mob *mobs.Mob, room *rooms.Room, nowRound uint64) []Enf
 	return acts
 }
 
-// guardSay broadcasts a guard's line synchronously (the merchantSay pattern) so
-// a scheduled guard's warning is never delayed by the mob command queue.
-func guardSay(room *rooms.Room, mob *mobs.Mob, line string) {
-	if mob == nil || room == nil {
-		return
+// guardSayFn speaks a guard's line. Default is a no-op so package justice has no
+// dependency on internal/actions; internal/hooks wires the real broadcaster at
+// init (hooks/justice_wiring.go). Injectability also breaks the actions↔justice
+// import cycle so crime sites in internal/actions can call MaybeDeclareBounty.
+var guardSayFn = func(room *rooms.Room, mob *mobs.Mob, line string) {}
+
+// SetGuardSay installs the guard-speech implementation (called once from
+// internal/hooks at init). A nil fn is ignored, keeping the no-op default.
+func SetGuardSay(fn func(room *rooms.Room, mob *mobs.Mob, line string)) {
+	if fn != nil {
+		guardSayFn = fn
 	}
-	actor := &actions.MobActor{Mob: mob, Room: room}
-	result := actions.Say(actor, line)
-	room.SendText(messaging.CategorySpeech,
-		actions.FormatSayText(mob.Character.Name, result.Text, false, "mobname", "saytext-mob"))
 }
