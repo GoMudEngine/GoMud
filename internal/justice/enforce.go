@@ -111,6 +111,18 @@ var executeArrestFn = func(player *characters.Character, userId int, faction str
 	return ExecuteArrest(player, userId, faction, isMurder)
 }
 
+// firstFactionWithCell returns the first faction in order that owns a
+// holding cell, or "" if none do. Used to pick the arresting faction when a
+// guard belongs to several factions (e.g. guards + citizens).
+func firstFactionWithCell(guardFactions []string) string {
+	for _, f := range guardFactions {
+		if cellRoomFn(f) != 0 {
+			return f
+		}
+	}
+	return ""
+}
+
 // RunGuardEnforcement scans players in the room and applies warn/attack
 // against wanted players for this guard, managing warn-grace memory in the
 // guard's MiscData. Returns the actions taken (for tests). Both the per-round
@@ -175,8 +187,12 @@ func RunGuardEnforcement(mob *mobs.Mob, room *rooms.Room, nowRound uint64) []Enf
 				mob.Character.SetMiscData(pendingKey, nowRound)
 				acts = append(acts, EnforceAction{uid, SeverityArrest, false})
 			case arrestOutcomeHaul:
-				// Use the guard's own primary faction as the arresting faction.
-				faction := guardFactions[0]
+				faction := firstFactionWithCell(guardFactions)
+				if faction == "" {
+					// No arresting faction owns a cell — cannot haul; leave
+					// the pending stamp so the declaration line isn't lost.
+					break
+				}
 				executeArrestFn(user.Character, uid, faction, false)
 				mob.Character.SetMiscData(pendingKey, nil)
 				acts = append(acts, EnforceAction{uid, SeverityArrest, true})

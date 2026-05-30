@@ -65,6 +65,31 @@ func TestResolveArrest_Surrender_OneTick_Before_Grace_NoOp(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
+// firstFactionWithCell tests
+// ---------------------------------------------------------------------------
+
+func TestFirstFactionWithCell(t *testing.T) {
+	origCell := cellRoomFn
+	t.Cleanup(func() { cellRoomFn = origCell })
+
+	cellRoomFn = func(faction string) int {
+		if faction == "stillwater_guards" {
+			return 5106
+		}
+		return 0 // citizens / others: no cell
+	}
+
+	got := firstFactionWithCell([]string{"stillwater_citizens", "stillwater_guards"})
+	if got != "stillwater_guards" {
+		t.Fatalf("firstFactionWithCell = %q, want stillwater_guards", got)
+	}
+
+	if firstFactionWithCell([]string{"stillwater_citizens"}) != "" {
+		t.Fatalf("firstFactionWithCell should return \"\" when no faction owns a cell")
+	}
+}
+
+// ---------------------------------------------------------------------------
 // Original resolveWarn tests (unchanged).
 // ---------------------------------------------------------------------------
 
