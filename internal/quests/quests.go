@@ -38,6 +38,8 @@ type QuestReward struct {
 	PlayerMessage string // string to display to player
 	RoomMessage   string // string to display to room
 	RoomId        int    // roomId to move player to
+	RepFaction    string `yaml:"rep_faction"` // faction slug bumped on completion
+	RepAmount     int    `yaml:"rep_amount"`  // rep delta applied on completion
 }
 
 type Quest struct {

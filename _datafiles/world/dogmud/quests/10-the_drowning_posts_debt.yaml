@@ -34,6 +34,8 @@ rewards:
     leaving his shoulders."
   gold: 10
   itemid: 28
+  rep_faction: thornwall_citizens
+  rep_amount: 15
 
 triggers:
   # Notice delivery to Velk via give command

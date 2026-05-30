@@ -26,6 +26,8 @@ rewards:
   roommessage: "The tithe ledger changes hands, and the balance of power shifts."
   gold: 12
   itemid: 27
+  rep_faction: thornwall_citizens
+  rep_amount: 15
 
 triggers:
   # Ledger delivery to Olen via give command

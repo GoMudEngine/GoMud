@@ -53,6 +53,8 @@ rewards:
     respect."
   gold: 25
   itemid: 40037
+  rep_faction: thornwall_citizens
+  rep_amount: 15
 
 triggers:
   # ── CELLAR GATE: block descent without quest ──────────
