@@ -470,7 +470,7 @@ func TestClearFactionRecord_ResolvesCrimesWithdrawsBountiesResetsRep(t *testing.
 	}
 
 	// Execute the function under test.
-	ClearFactionRecord("f", userId)
+	ClearFactionRecord("f", userId, "served sentence")
 
 	// Crime 1 (f, player 7) and crime 2 (f_ally, player 7) must be resolved.
 	gotResolved := map[string]bool{}

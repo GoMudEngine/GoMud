@@ -308,7 +308,9 @@ func ExecuteArrest(player *characters.Character, userId int, faction string, isM
 // resolves their unresolved crimes, withdraws the faction set's open bounties
 // against them, and resets rep to the floor where currently below it. Shared by
 // serving a sentence (ResolveDetention) and a bounty-hunter claim (5.2).
-func ClearFactionRecord(faction string, userId int) {
+// reason is forwarded to crimes.Resolve as the resolution description
+// (e.g. "served sentence", "bounty claimed").
+func ClearFactionRecord(faction string, userId int, reason string) {
 	factionSet := map[string]bool{faction: true}
 	for _, a := range alliesFn(faction) {
 		factionSet[a] = true
@@ -316,7 +318,7 @@ func ClearFactionRecord(faction string, userId int) {
 	for f := range factionSet {
 		for _, c := range aCrimesForFactionFn(f, false) {
 			if c.Perpetrator.Type == crimes.PerpPlayer && c.Perpetrator.Id == userId {
-				aResolveCrimeFn(f, c.Id, "served sentence")
+				aResolveCrimeFn(f, c.Id, reason)
 			}
 		}
 	}
@@ -361,7 +363,7 @@ func ResolveDetention(player *characters.Character, userId int) bool {
 	// unresolved crime against the ally that re-triggered arrest the instant
 	// the player was released (5.1c smoke BUG-03). Clear comprehensively via a
 	// live query rather than the crime ids stamped at arrest time.
-	ClearFactionRecord(faction, userId)
+	ClearFactionRecord(faction, userId, "served sentence")
 
 	// Remove the Jailed buff.
 	player.RemoveBuff(jailedBuffId)
