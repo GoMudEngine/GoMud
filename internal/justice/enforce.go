@@ -109,15 +109,8 @@ func arrestGraceRounds() uint64 {
 
 // warnStampStaleAfter returns the number of rounds after which an unseen
 // justice_warned_* stamp is considered stale and eligible for pruning.
-// Reuses JusticeCrimeLookbackRounds (the same recency window the Verdict
-// function uses) so the two windows stay in sync with one config knob.
-func warnStampStaleAfter() uint64 {
-	v := configs.GetBalanceConfig().JusticeCrimeLookbackRounds
-	if v < 1 {
-		return 1000
-	}
-	return uint64(v)
-}
+// Delegates to lookbackFn so the two windows stay in sync with one config knob.
+func warnStampStaleAfter() uint64 { return lookbackFn() }
 
 // pruneStaleWarnStamps deletes justice_warned_* entries older than staleAfter
 // rounds. Cold-rep warn stamps are never revisited once a player's rep

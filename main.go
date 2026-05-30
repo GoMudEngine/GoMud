@@ -1199,8 +1199,8 @@ func loadAllDataFiles(isReload bool) {
 	enchantments.LoadEnchantmentFiles()
 	crafting.LoadRecipeFiles()
 	rooms.LoadDataFiles()
-	// Task 3: validate faction holding_cell_room references now that rooms are
-	// loaded. DI callback breaks the factions ← rooms import cycle.
+	// Town Justice 5.1: validate faction holding_cell_room references now that
+	// rooms are loaded. DI callback breaks the factions ← rooms import cycle.
 	factions.ValidateHoldingCells(func(roomId int) bool {
 		return rooms.LoadRoom(roomId) != nil
 	})
