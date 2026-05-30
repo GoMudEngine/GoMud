@@ -1,46 +1,34 @@
 package catalog
 
 import (
-	"github.com/GoMudEngine/GoMud/internal/bounties"
 	goals "github.com/GoMudEngine/GoMud/internal/goals"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
 func init() {
 	goals.RegisterGoalType("hunt_bounty_target", goals.GoalTypeMeta{
 		Predicate:    huntBountyTargetPredicate,
 		ContextScore: huntBountyTargetContextScore,
-		Params: []goals.ParamSchema{
-			{Key: "target_user_id", Required: true, GoType: "int"},
-			{Key: "bounty_id", Required: true, GoType: "int"},
-		},
+		// No Params: the goal is a param-less template-level intent marker.
+		// Per-hunter target lives in the hunter instance's MiscData
+		// (bh_target_user_id, bh_bounty_id), stamped by spawnHunter.
 	})
 }
 
-// huntBountyTargetPredicate: satisfied (goal should be dropped) when the
-// bounty no longer exists or is no longer open. While the bounty is open,
-// the goal stays alive and eligible for selection.
-func huntBountyTargetPredicate(g *goals.Goal, _ *mobs.Mob) bool {
-	bountyId := paramIntOr(g, "bounty_id", 0)
-	if bountyId == 0 {
-		return true // malformed goal — treat as satisfied so it gets cleaned up
-	}
-	b := bounties.Get(bountyId)
-	return b == nil || b.Status != bounties.StatusOpen
+// huntBountyTargetPredicate always returns false — this goal is a
+// template-level strategic-intent marker that is never self-satisfied.
+// Per-hunter lifecycle (target acquired, bounty closed) is owned by the
+// dispatch manager, which despawns each hunter instance when its bounty
+// closes. Keeping the goal alive on the template means the shared goal
+// is always selected whenever a hunter instance is running.
+func huntBountyTargetPredicate(_ *goals.Goal, _ *mobs.Mob) bool {
+	return false // always active; never self-pruned
 }
 
-// huntBountyTargetContextScore: 100 when the target player is online,
-// 0 otherwise. A high constant prioritises active pursuit while the
-// target is reachable; falling to 0 when the target is offline
-// effectively suspends the goal without removing it.
-func huntBountyTargetContextScore(g *goals.Goal, _ *mobs.Mob) float64 {
-	userId := paramIntOr(g, "target_user_id", 0)
-	if userId == 0 {
-		return 0
-	}
-	if users.GetByUserId(userId) != nil {
-		return 100
-	}
-	return 0
+// huntBountyTargetContextScore returns a high constant so the goal is
+// always preferred when selected. The per-hunter target is read from
+// instance MiscData (bh_target_user_id) by the planner, not from goal
+// params, so no param lookup is needed here.
+func huntBountyTargetContextScore(_ *goals.Goal, _ *mobs.Mob) float64 {
+	return 100
 }

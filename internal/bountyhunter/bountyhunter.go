@@ -90,19 +90,26 @@ func spawnHunter(targetUserId, bountyId, bountyGold int, issuerFaction string) i
 		}
 	}
 
-	// Add the hunt goal via the goals public API.
+	// Stamp the per-hunter target on the hunter INSTANCE's MiscData so that
+	// the planner (which has the live instance) can read it. The goal itself
+	// is param-less — it is a template-level intent marker shared across all
+	// concurrent hunter instances, so target_user_id / bounty_id cannot live
+	// in goal params (all instances share template 110's ONE goal record).
+	hunter.Character.SetMiscData("bh_target_user_id", targetUserId)
+	hunter.Character.SetMiscData("bh_bounty_id", bountyId)
+
+	// Add the hunt goal via the goals public API (param-less intent marker).
 	// mobId = template id (int), namesimple = ConvertForFilename(name).
 	g := &goals.Goal{
 		Type:     "hunt_bounty_target",
 		Priority: 100,
-		Params: map[string]any{
-			"target_user_id": targetUserId,
-			"bounty_id":      bountyId,
-		},
+		// No Params — per-hunter data lives in MiscData above.
 	}
 	if _, err := goals.Add(int(hunter.MobId), util.ConvertForFilename(hunter.Character.Name), g); err != nil {
-		// Goal conflict or validation failure — still place the hunter but log.
-		// The hunt proceeds; without the goal the hunter will idle harmlessly.
+		// ConflictError is expected when a second hunter is spawned while the
+		// first is still active — the goal already exists on template 110.
+		// Log-and-continue: the goal is already present and correctly selected,
+		// which is exactly what we want. Do NOT abort the spawn.
 		_ = err
 	}
 

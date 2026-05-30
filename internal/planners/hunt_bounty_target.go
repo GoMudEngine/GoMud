@@ -27,13 +27,18 @@ func huntDecision(targetJailed bool, hunterRoom, targetRoom, targetUserId int) (
 	return "pathto " + strconv.Itoa(targetRoom), StatusRunning
 }
 
-func huntBountyTargetPlanner(mob *mobs.Mob, goal *goals.Goal) PlanResult {
+func huntBountyTargetPlanner(mob *mobs.Mob, _ *goals.Goal) PlanResult {
 	if mob == nil {
 		return PlanResult{Status: StatusFailure}
 	}
-	uid := goalParamIntOr(goal, "target_user_id", 0)
+	// Read per-hunter target from instance MiscData, not from goal params.
+	// The goal is a param-less template-level intent marker; spawnHunter
+	// stamps bh_target_user_id onto each hunter instance's MiscData so
+	// concurrent hunters can each pursue a different target.
+	uid := mobMiscIntOr(mob, "bh_target_user_id", 0)
 	if uid == 0 {
-		return PlanResult{Status: StatusFailure}
+		// No target stamped yet — hold until the dispatch manager stamps one.
+		return PlanResult{Status: StatusRunning}
 	}
 	u := users.GetByUserId(uid)
 	if u == nil {
