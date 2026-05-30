@@ -250,10 +250,8 @@ Notes:
 
 ## 6. Quest-rep audit
 
-Only quest 2 (`bump_rep: {faction: warren, delta: 50}`) currently rewards
-reputation. Add a `bump_rep` completion action — flat **+15** — to each civic
-quest below, mapped by the giver's town and role. `bump_rep` is single-faction
-with no ally cascade, so one line per faction.
+Award flat **+15** faction reputation on completion of each civic quest below,
+mapped by the giver's town and role:
 
 | Quest | Name | Giver (town/role) | Faction | Delta |
 |-------|------|-------------------|---------|-------|
@@ -265,10 +263,48 @@ with no ally cascade, so one line per faction.
 | 19 | The Lake-Caves Bounty | Constable Drunn (Stillwater, guard) | `stillwater_guards` | +15 |
 | 20 | Ulla's Silence | Ulla (Stillwater) | `stillwater_citizens` | +15 |
 
-- The `bump_rep` action goes on each quest's terminal completion node, beside
-  the existing `grant: <quest>-end` (the quest-2 pattern at
-  `2-the_warren_compact.yaml:37-39`).
-- Quest 2 is left untouched.
+**Mechanism — quest Rewards field, not a `bump_rep` action.** The original
+plan was to add a quest-engine `bump_rep` action on each completion node (the
+quest-2 pattern). That only works when the quest's `-end` token is granted by a
+quest-engine action list. **Quests 8 and 10 grant their `-end` token through
+dialogue (`grantsQuest:`)**, which runs no quest-engine action list — so a
+`bump_rep` action there would never fire. (Discovered during implementation.)
+
+Both completion paths — dialogue `grantsQuest` and quest-engine `grant` action —
+converge on `hooks/Quest_HandleQuestUpdate.go`, whose `stepName == "end"` block
+already applies every other completion reward (gold, item, buff, spell,
+follow-up quest) uniformly. That is the correct home for rep:
+
+- Add two fields to `quests.QuestReward` (`internal/quests/quests.go:31`) with
+  **explicit yaml tags** (the loader is `gopkg.in/yaml.v2`, which lowercases —
+  not snake_cases — untagged field names, so a tag is required for a
+  snake_case key):
+  ```go
+  RepFaction string `yaml:"rep_faction"` // faction slug bumped on completion
+  RepAmount  int    `yaml:"rep_amount"`  // rep delta applied on completion
+  ```
+- In `Quest_HandleQuestUpdate.go`'s `stepName == "end"` block, alongside the
+  gold/item/buff reward handling, apply:
+  ```go
+  if questInfo.Rewards.RepFaction != "" && questInfo.Rewards.RepAmount != 0 {
+      factions.BumpRep(questInfo.Rewards.RepFaction, questUser.UserId, questInfo.Rewards.RepAmount)
+  }
+  ```
+  (`factions` is already a permissible import here — `MobDeath_FactionRep.go`
+  in the same package uses it.)
+- Each of the seven quests gets a `rewards:` entry (append to the existing
+  block, or add one):
+  ```yaml
+  rewards:
+    rep_faction: <faction>
+    rep_amount: 15
+  ```
+
+This fires on the actual completion event for **all seven** quests regardless
+of dialogue-vs-action completion, and puts rep where the other rewards live.
+
+- Quest 2 is left untouched — its `bump_rep` on an `item_give` trigger genuinely
+  works (item_give is a quest-engine trigger) and migrating it is out of scope.
 - Non-town quests (Ironwind 11-13, Dustwalk 4, Sanctum 1/3, Watchers 5/6,
   Ashwick 16, North Road 15/17/18) are **out of scope** — their factions do
   not exist yet (chunk 6.5a).

@@ -668,68 +668,125 @@ git commit -m "content(justice): citizen faction tags for Stillwater townsfolk, 
 
 ## Task 8: Quest-rep wiring (+15 on seven civic quests)
 
-Add a `bump_rep` action to each quest's terminal completion node, beside the
-existing `grant: <id>-end`, matching the quest-2 pattern
-(`2-the_warren_compact.yaml:37-39`).
+**REVISED approach (the original `bump_rep`-action plan was wrong).** A
+`bump_rep` quest-engine action only fires when a quest's `-end` token is granted
+by a quest-engine action list. **Quests 8 and 10 grant `-end` via dialogue
+(`grantsQuest:`)**, which runs no action list — so a `bump_rep` action there
+never fires. Instead, award rep through the quest **Rewards** system, which
+`hooks/Quest_HandleQuestUpdate.go` applies on the `-end` event for BOTH
+dialogue and action completion paths (same place gold/item/buff/spell rewards
+fire). This is uniform and correct for all seven quests.
+
+Quest→faction map (all `+15`): 7→`thornwall_citizens`, 8→`thornwall_guards`,
+9→`thornwall_citizens`, 10→`thornwall_citizens`, 14→`thornwall_citizens`,
+19→`stillwater_guards`, 20→`stillwater_citizens`.
 
 **Files:**
-- `_datafiles/world/dogmud/quests/7-the_fallow_field.yaml` → `thornwall_citizens`
-- `_datafiles/world/dogmud/quests/8-the_city_watchs_missing_person.yaml` → `thornwall_guards`
-- `_datafiles/world/dogmud/quests/9-the_temples_tithe_audit.yaml` → `thornwall_citizens`
-- `_datafiles/world/dogmud/quests/10-the_drowning_posts_debt.yaml` → `thornwall_citizens`
-- `_datafiles/world/dogmud/quests/14-the_undertow.yaml` → `thornwall_citizens`
-- `_datafiles/world/dogmud/quests/19-the_lake_caves_bounty.yaml` → `stillwater_guards`
-- `_datafiles/world/dogmud/quests/20-ullas_silence.yaml` → `stillwater_citizens`
+- Modify: `internal/quests/quests.go` (add fields to `QuestReward`)
+- Modify: `internal/hooks/Quest_HandleQuestUpdate.go` (apply rep in the end block)
+- Test: `internal/quests/quests_test.go` (or the existing quests test file)
+- Modify: the 7 quest YAMLs listed above (`_datafiles/world/dogmud/quests/`)
 
-- [ ] **Step 1: Locate each completion node**
+- [ ] **Step 1: Write the failing test (field unmarshal)**
 
-For each quest file, find the terminal `actions:` list that contains
-`grant: <questId>-end` (the node that completes the quest). Grep to confirm:
-```bash
-grep -n "grant:" _datafiles/world/dogmud/quests/{7,8,9,10,14,19,20}-*.yaml
+The loader is `gopkg.in/yaml.v2`, which lowercases (not snake_cases) untagged
+field names — so the new fields NEED explicit yaml tags. Prove the binding with
+a test. Add to the quests package test file (match the package clause — likely
+`package quests`):
+
+```go
+func TestQuestReward_RepFieldsUnmarshal(t *testing.T) {
+	raw := []byte("rep_faction: thornwall_guards\nrep_amount: 15\n")
+	var r QuestReward
+	if err := yaml.Unmarshal(raw, &r); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if r.RepFaction != "thornwall_guards" {
+		t.Fatalf("RepFaction = %q, want thornwall_guards", r.RepFaction)
+	}
+	if r.RepAmount != 15 {
+		t.Fatalf("RepAmount = %d, want 15", r.RepAmount)
+	}
+}
 ```
+(Import `gopkg.in/yaml.v2` in the test if not already imported.)
 
-- [ ] **Step 2: Add the `bump_rep` action to each**
+- [ ] **Step 2: Run it to verify it fails**
 
-In each quest's completion `actions:` list, add a line directly after the
-`grant: <id>-end` line. Use the faction from the table above and `delta: 15`.
-Example for `8-the_city_watchs_missing_person.yaml`:
+Run: `go test ./internal/quests/ -run TestQuestReward_RepFieldsUnmarshal -v`
+Expected: FAIL — `RepFaction`/`RepAmount` undefined.
 
+- [ ] **Step 3: Add the fields to `QuestReward`**
+
+In `internal/quests/quests.go`, in the `QuestReward` struct (line ~31):
+
+```go
+	RepFaction    string // faction slug to bump reputation with on completion
+	RepAmount     int    // reputation delta applied to RepFaction on completion
+```
+Give them explicit yaml tags so the snake_case keys bind under yaml.v2:
+```go
+	RepFaction    string `yaml:"rep_faction"` // faction slug bumped on completion
+	RepAmount     int    `yaml:"rep_amount"`  // rep delta applied on completion
+```
+(The existing fields have no tags; that is fine — only the new snake_case keys
+require tags. Place the two new fields at the end of the struct.)
+
+- [ ] **Step 4: Run the test to verify it passes**
+
+Run: `go test ./internal/quests/ -run TestQuestReward_RepFieldsUnmarshal -v`
+Expected: PASS.
+
+- [ ] **Step 5: Apply the reward in the quest-completion handler**
+
+In `internal/hooks/Quest_HandleQuestUpdate.go`, inside the `else if stepName ==
+\`end\` {` block, alongside the existing Gold/Item/Buff reward handling, add:
+
+```go
+		// Faction reputation reward?
+		if questInfo.Rewards.RepFaction != "" && questInfo.Rewards.RepAmount != 0 {
+			factions.BumpRep(questInfo.Rewards.RepFaction, questUser.UserId, questInfo.Rewards.RepAmount)
+		}
+```
+Add `"github.com/GoMudEngine/GoMud/internal/factions"` to the imports (the
+package `internal/hooks/MobDeath_FactionRep.go` already imports it, so there is
+no import-cycle risk).
+
+- [ ] **Step 6: Add the `rewards:` rep entry to each of the 7 quests**
+
+For each quest file, add (or extend its existing) top-level `rewards:` block:
 ```yaml
-    actions:
-      - grant: 8-end
-      - bump_rep: {faction: thornwall_guards, delta: 15}
+rewards:
+  rep_faction: <FACTION_FROM_MAP>
+  rep_amount: 15
 ```
+IMPORTANT: some of these quests ALREADY have a `rewards:` block (gold, item,
+player_message, etc.). In that case APPEND `rep_faction:`/`rep_amount:` to the
+existing block — do NOT add a second `rewards:` key. Read each file first.
+Use the correct faction per the map. Match indentation (2-space nesting, like
+the gold/player_message keys in other quests).
 
-And for `20-ullas_silence.yaml`:
-
-```yaml
-    actions:
-      - grant: 20-end
-      - bump_rep: {faction: stillwater_citizens, delta: 15}
-```
-
-Apply the matching faction for the other five quests. Match the existing
-indentation of each file exactly.
-
-- [ ] **Step 3: Boot smoke**
-
-Wipe instances, boot. Expected: `quests.LoadDataFiles() loadedCount=...` logs
-the same count as before with no parse error; no panic about unknown faction
-(all four referenced factions exist).
-
-- [ ] **Step 4: Verify**
+- [ ] **Step 7: Build + full boot smoke**
 
 ```bash
-grep -A1 "grant: \(7\|8\|9\|10\|14\|19\|20\)-end" _datafiles/world/dogmud/quests/{7,8,9,10,14,19,20}-*.yaml
+go build ./...
+rm -rf _datafiles/world/dogmud/mobs.instances/* _datafiles/world/dogmud/rooms.instances/*
+go build -o /tmp/dogmud_t8.exe . && timeout 35 /tmp/dogmud_t8.exe 2>&1 | grep -iE "quests.LoadDataFiles|loadedCount|panic|fatal|Server Ready" | head -20
 ```
-Expected: each shows the matching `bump_rep` line.
+Expected: `quests.LoadDataFiles() loadedCount=21` unchanged, `Server Ready`, no panic.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 8: Verify the YAML**
 
 ```bash
-git add _datafiles/world/dogmud/quests/7-the_fallow_field.yaml _datafiles/world/dogmud/quests/8-the_city_watchs_missing_person.yaml _datafiles/world/dogmud/quests/9-the_temples_tithe_audit.yaml _datafiles/world/dogmud/quests/10-the_drowning_posts_debt.yaml _datafiles/world/dogmud/quests/14-the_undertow.yaml _datafiles/world/dogmud/quests/19-the_lake_caves_bounty.yaml _datafiles/world/dogmud/quests/20-ullas_silence.yaml
-git commit -m "content(justice): +15 faction rep on seven civic quests (quest-rep audit)"
+grep -A2 "^rewards:" _datafiles/world/dogmud/quests/{7,8,9,10,14,19,20}-*.yaml | grep -E "rep_faction|rep_amount|rewards"
+```
+Expected: each of the 7 files shows `rep_faction: <correct faction>` and `rep_amount: 15`.
+
+- [ ] **Step 9: Commit**
+
+```bash
+git add internal/quests/quests.go internal/quests/quests_test.go internal/hooks/Quest_HandleQuestUpdate.go _datafiles/world/dogmud/quests/7-the_fallow_field.yaml _datafiles/world/dogmud/quests/8-the_city_watchs_missing_person.yaml _datafiles/world/dogmud/quests/9-the_temples_tithe_audit.yaml _datafiles/world/dogmud/quests/10-the_drowning_posts_debt.yaml _datafiles/world/dogmud/quests/14-the_undertow.yaml _datafiles/world/dogmud/quests/19-the_lake_caves_bounty.yaml _datafiles/world/dogmud/quests/20-ullas_silence.yaml
+git commit -m "feat(quests): faction-rep completion reward; +15 on seven civic quests"
 ```
 
 ---
