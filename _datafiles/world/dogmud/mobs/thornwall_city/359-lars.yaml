@@ -8,6 +8,8 @@ groups:
   - caravan
   - merchant_train
   - runner
+  - thornwall_citizens
+  - stillwater_citizens
 hates:
   - bandit
 hostile: false

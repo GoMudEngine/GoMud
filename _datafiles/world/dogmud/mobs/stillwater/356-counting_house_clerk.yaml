@@ -9,6 +9,7 @@ non_combatant: true
 maxwander: 0
 groups:
   - humanoid
+  - stillwater_citizens
 idlecommands:
   - 'emote draws a careful line beneath a column of figures
     and sets the pen down to check the sum'

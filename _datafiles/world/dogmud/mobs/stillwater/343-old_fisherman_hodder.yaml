@@ -10,6 +10,7 @@ maxwander: 0
 groups:
   - humanoid
   - gossiper
+  - stillwater_citizens
 idlecommands:
   - 'emote works a needle through a torn mesh with the slow patience of
     someone in no hurry to finish'

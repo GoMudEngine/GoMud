@@ -12,6 +12,7 @@ groups:
   - humanoid
   - merchant
   - blacksmith
+  - stillwater_citizens
 idlecommands:
   - 'emote works the bellows with steady, metronomic pulls, building the
     forge heat'

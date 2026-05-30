@@ -6,6 +6,7 @@ statpool: 225
 itemdropchance: 0
 groups:
   - forager
+  - thornwall_citizens
 hostile: false
 non_combatant: true
 player_attack_immune: true

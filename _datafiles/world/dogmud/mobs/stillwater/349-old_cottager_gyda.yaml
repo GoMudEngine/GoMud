@@ -10,6 +10,7 @@ maxwander: 0
 groups:
   - humanoid
   - gossiper
+  - stillwater_citizens
 idlecommands:
   - 'emote rocks slowly in her chair, watching the lane with half-lidded
     eyes'

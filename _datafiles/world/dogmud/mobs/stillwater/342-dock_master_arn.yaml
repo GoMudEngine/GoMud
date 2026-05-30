@@ -10,6 +10,7 @@ maxwander: 0
 groups:
   - humanoid
   - dockmaster
+  - stillwater_citizens
 idlecommands:
   - 'emote marks something in the dock ledger with a short, hard stroke'
   - ''

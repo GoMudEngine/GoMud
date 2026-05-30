@@ -11,6 +11,7 @@ maxwander: 0
 groups:
   - humanoid
   - merchant
+  - stillwater_citizens
 idlecommands:
   - 'emote threads the shuttle through a shed of cattail-dyed warp threads
     with a steady rhythm'

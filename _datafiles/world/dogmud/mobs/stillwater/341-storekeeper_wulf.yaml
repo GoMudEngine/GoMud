@@ -11,6 +11,7 @@ maxwander: 0
 groups:
   - humanoid
   - merchant
+  - stillwater_citizens
 idlecommands:
   - 'emote restacks a shelf of tin goods with methodical care, turning each
     label outward'

@@ -10,6 +10,7 @@ maxwander: 1
 groups:
   - humanoid
   - priest
+  - stillwater_citizens
 idlecommands:
   - 'emote sweeps the temple steps with a wide broom, working slowly
     toward the door'

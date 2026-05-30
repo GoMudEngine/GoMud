@@ -10,6 +10,7 @@ maxwander: 0
 groups:
   - humanoid
   - innkeeper
+  - stillwater_citizens
 idlecommands:
   - 'emote wipes the bar top in slow circles, eyes moving across the room'
   - 'emote sets a fresh candle in the iron bracket above the bar'

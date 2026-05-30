@@ -11,6 +11,7 @@ maxwander: 0
 groups:
   - humanoid
   - merchant
+  - stillwater_citizens
 idlecommands:
   - 'emote turns a pearl slowly under a lens, checking the nacre for
     blemishes'
