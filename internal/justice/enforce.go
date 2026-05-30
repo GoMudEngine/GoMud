@@ -2,6 +2,7 @@ package justice
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -106,6 +107,38 @@ func arrestGraceRounds() uint64 {
 	return uint64(v)
 }
 
+// warnStampStaleAfter returns the number of rounds after which an unseen
+// justice_warned_* stamp is considered stale and eligible for pruning.
+// Reuses JusticeCrimeLookbackRounds (the same recency window the Verdict
+// function uses) so the two windows stay in sync with one config knob.
+func warnStampStaleAfter() uint64 {
+	v := configs.GetBalanceConfig().JusticeCrimeLookbackRounds
+	if v < 1 {
+		return 1000
+	}
+	return uint64(v)
+}
+
+// pruneStaleWarnStamps deletes justice_warned_* entries older than staleAfter
+// rounds. Cold-rep warn stamps are never revisited once a player's rep
+// recovers (the Warn branch stops running), so they would otherwise leak.
+// Leaves justice_arrest_pending_* (self-cleaning on haul) and all other keys.
+// Deleting from a map during range over its keys is safe in Go.
+func pruneStaleWarnStamps(md map[string]any, now, staleAfter uint64) {
+	for key := range md {
+		if !strings.HasPrefix(key, "justice_warned_") {
+			continue
+		}
+		stamped, ok := miscDataRound(md, key)
+		if !ok {
+			continue
+		}
+		if now >= stamped && now-stamped > staleAfter {
+			delete(md, key)
+		}
+	}
+}
+
 // executeArrestFn seam — tests override to intercept without live mobs.
 var executeArrestFn = func(player *characters.Character, userId int, faction string, isMurder bool) bool {
 	return ExecuteArrest(player, userId, faction, isMurder)
@@ -135,6 +168,13 @@ func RunGuardEnforcement(mob *mobs.Mob, room *rooms.Room, nowRound uint64) []Enf
 	if len(guardFactions) == 0 {
 		return nil
 	}
+
+	// Sweep stale warn stamps once per tick per guard. Warn stamps are written
+	// when a Cold-rep player is first sighted, but never cleared once the
+	// player's rep recovers (the Warn branch simply stops firing). Without this
+	// sweep they accumulate on the guard's MiscData indefinitely.
+	pruneStaleWarnStamps(mob.Character.MiscData, nowRound, warnStampStaleAfter())
+
 	grace := warnGraceRounds()
 	var acts []EnforceAction
 

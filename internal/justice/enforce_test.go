@@ -111,6 +111,30 @@ func TestResolveWarn_PastGrace_Escalates(t *testing.T) {
 	}
 }
 
+func TestPruneStaleWarnStamps(t *testing.T) {
+	md := map[string]any{
+		"justice_warned_1":         uint64(100), // stale: now-100 > staleAfter(200)? 1000-100=900 > 200 -> pruned
+		"justice_warned_2":         uint64(950), // fresh: 1000-950=50 <= 200 -> kept
+		"justice_arrest_pending_3": uint64(100), // must be left alone
+		"some_other_key":           uint64(100), // must be left alone
+	}
+
+	pruneStaleWarnStamps(md, 1000, 200) // now=1000, staleAfter=200 rounds
+
+	if _, ok := md["justice_warned_1"]; ok {
+		t.Fatalf("stale justice_warned_1 should have been pruned")
+	}
+	if _, ok := md["justice_warned_2"]; !ok {
+		t.Fatalf("fresh justice_warned_2 must be kept")
+	}
+	if _, ok := md["justice_arrest_pending_3"]; !ok {
+		t.Fatalf("arrest-pending stamp must not be touched")
+	}
+	if _, ok := md["some_other_key"]; !ok {
+		t.Fatalf("unrelated key must not be touched")
+	}
+}
+
 func TestMiscDataRound_ParsesNumericKinds(t *testing.T) {
 	if r, ok := miscDataRound(map[string]any{"k": uint64(42)}, "k"); !ok || r != 42 {
 		t.Errorf("uint64: got %d,%v", r, ok)
