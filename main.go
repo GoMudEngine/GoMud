@@ -1199,6 +1199,11 @@ func loadAllDataFiles(isReload bool) {
 	enchantments.LoadEnchantmentFiles()
 	crafting.LoadRecipeFiles()
 	rooms.LoadDataFiles()
+	// Town Justice 5.1: validate faction holding_cell_room references now that
+	// rooms are loaded. DI callback breaks the factions ← rooms import cycle.
+	factions.ValidateHoldingCells(func(roomId int) bool {
+		return rooms.LoadRoom(roomId) != nil
+	})
 	rooms.RebuildZonePlayerCount() // build the zone → player-count index
 	buffs.LoadDataFiles() // Load buffs before items for cost calculation reasons
 	items.LoadDataFiles()

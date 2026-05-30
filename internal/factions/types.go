@@ -13,6 +13,15 @@ type Definition struct {
 	DefaultRep  int      `yaml:"default_rep"`
 	Allies      []string `yaml:"allies"`
 	Enemies     []string `yaml:"enemies"`
+	// HoldingCellRoom is the room id a guard of this faction hauls arrestees
+	// to. 0 / omitted means this faction has no jail (correct for citizen and
+	// non-guard factions). Read by internal/justice.
+	HoldingCellRoom int `yaml:"holding_cell_room"`
+	// ReleaseRoom is the room a freed prisoner of this faction is released to
+	// after serving a sentence or paying a fine. 0 / omitted means no
+	// faction-specific release room; internal/justice falls back to the
+	// hardcoded barracksRoomId default.
+	ReleaseRoom int `yaml:"release_room"`
 }
 
 // RepEntry is one player's rep with one faction.

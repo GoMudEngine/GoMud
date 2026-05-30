@@ -7,3 +7,5 @@ description: |
 default_rep: 0
 allies: [thornwall_citizens]
 enemies: [warren]
+holding_cell_room: 5105
+release_room: 473

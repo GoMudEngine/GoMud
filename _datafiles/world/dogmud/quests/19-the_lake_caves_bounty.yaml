@@ -48,6 +48,8 @@ rewards:
   playermessage: "The lake-caves bounty is closed. A purse changes hands."
   roommessage: "is paid out the lake-caves bounty."
   gold: 150
+  rep_faction: stillwater_guards
+  rep_amount: 15
 
 triggers:
   # ── SHRIMP: kill a skitter shrimp swarm (mob 330) ──

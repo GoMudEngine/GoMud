@@ -8,6 +8,8 @@ itemdropchance: 0
 groups:
   - caravan
   - merchant_train
+  - thornwall_citizens
+  - stillwater_citizens
 hates:
   - bandit
 hostile: false

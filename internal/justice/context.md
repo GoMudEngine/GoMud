@@ -91,6 +91,21 @@ arise because crime sites in `internal/actions` call `MaybeDeclareBounty`.
 **`executeArrestFn` seam**: Wraps `ExecuteArrest`; tests override to
 intercept without a live mob/world.
 
+**`firstFactionWithCell`**: When a guard belongs to multiple factions
+(e.g. `guards` + `citizens`), `firstFactionWithCell(guardFactions)` picks
+the first one that owns a holding cell via `cellRoomFn`. Used in the
+`arrestOutcomeHaul` branch so the correct arresting faction (and its cell)
+is selected; returns `""` if no faction owns a cell, which aborts the haul
+silently without losing the pending stamp.
+
+**`pruneStaleWarnStamps`**: Called once per guard-tick at the top of
+`RunGuardEnforcement`. Deletes `justice_warned_<uid>` entries older than
+`warnStampStaleAfter()` rounds (delegates to `lookbackFn` —
+`JusticeCrimeLookbackRounds`). Warn stamps are written on first Cold-rep
+sighting but never cleared once rep recovers; without this sweep they
+accumulate on guard MiscData indefinitely. Arrest-pending stamps
+(`justice_arrest_pending_*`) are self-cleaning on haul and are left alone.
+
 ---
 
 ### `bounty.go` — Auto-bounty declaration
@@ -143,9 +158,25 @@ player messages go through `users.GetByUserId(uid).SendText` directly.
 | `jail_cell_room` | int | Holding-cell room ID |
 | `jail_crime_ids` | string | Comma-separated unresolved crime IDs |
 
-**Holding-cell registry**: `jailCellFor` maps faction slug → cell room ID.
-Currently: `"thornwall_guards"` → room 5105. `ExecuteArrest` returns
-`false` (no-op) for factions without a registered cell.
+**Holding-cell registry**: Cell room IDs live on the faction definition
+YAML as a `holding_cell_room:` field (`factions.Definition.HoldingCellRoom`),
+read via the `cellRoomFn` seam in `justice.go`. `ExecuteArrest` returns
+`false` (no-op) for factions whose `holding_cell_room` is 0 (absent/omitted).
+Current cells: `thornwall_guards` → 5105, `stillwater_guards` → 5106.
+
+**Release-room registry**: Release room IDs live on the faction definition
+YAML as a `release_room:` field (`factions.Definition.ReleaseRoom`), read
+via the `releaseRoomFn` seam in `justice.go`. `ResolveDetention` uses the
+per-faction release room when non-zero, falling back to the hardcoded
+`barracksRoomId` (473) for factions that define none. Current values:
+`thornwall_guards` → 473, `stillwater_guards` → 4110. Boot-time validation
+panics on a dangling release_room (same `ValidateHoldingCells` call, see
+`internal/factions/registry.go`).
+
+Boot-time validation (`factions.ValidateHoldingCells`, called from main.go
+after `rooms.LoadDataFiles()`) panics if any faction's `holding_cell_room`
+references a room that doesn't exist. DI callback (`func(int) bool`)
+breaks the factions ← rooms import cycle.
 
 **`JailRecord` struct** (exported for commands):
 ```go
@@ -212,11 +243,12 @@ against the other that re-triggers arrest the instant the player is freed.
 5. Removes buff 88 via `player.RemoveBuff(88)` — this fires the buff's
    release line; `ResolveDetention` sends no flavor of its own.
 6. Clears all jail MiscData keys.
-7. Moves player to barracks (room 473).
+7. Moves player to the per-faction release room (via `releaseRoomFn`),
+   falling back to `barracksRoomId` (473) if the faction defines none.
 
 Release seams: `aResolveCrimeFn`, `aCrimesForFactionFn`, `alliesFn`,
 `aOpenBountiesFn`, `aWithdrawFn`, `aGetRepFn`, `aSetRepFn`, `aMoveFn`,
-`aDecayFn`, `aRepResetFn`.
+`aDecayFn`, `aRepResetFn`, `releaseRoomFn`.
 
 ---
 
@@ -246,7 +278,7 @@ per-round player tick (hooks/Jail_ExpiryRelease.go)
                                                ├─ bounty withdrawn
                                                ├─ rep floor restored
                                                ├─ buff 88 removed
-                                               └─ MoveToRoom(barracks 473)
+                                               └─ MoveToRoom(releaseRoomFn → 473/4110)
 
 player commands
   └─ fine    → currentJailFine → JailInfo → display decaying fine

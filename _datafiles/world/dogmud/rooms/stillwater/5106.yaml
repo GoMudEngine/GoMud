@@ -1,0 +1,51 @@
+roomid: 5106
+zone: Stillwater
+title: Holding Cell
+description: >
+  A single stone cell behind the constabulary's iron bars, barely wide
+  enough to pace. The walls are mortared lake-stone gone green at the
+  joints, and the only light comes from a narrow
+  <ansi fg="itemname">window</ansi> slit set high near the ceiling, too
+  small for anything but a wrist. A low wooden
+  <ansi fg="itemname">bench</ansi> runs along one wall, a fitted slop
+  <ansi fg="itemname">bucket</ansi> in the corner, and clean straw
+  scattered on the packed-earth floor. Someone has left their mark in
+  the mortar — faint <ansi fg="itemname">scratches</ansi> of tally-counts
+  and a small carved fish, patient work from a previous occupant's long
+  afternoon. The barred door is the only way out, and it opens only from
+  the office above.
+biome: city
+allow_recall: false
+coord:
+  x: -17
+  y: 5
+  z: -1
+exits:
+  up:
+    roomid: 4110
+nouns:
+  window: A slit of a window high in the stone, no wider than a hand and
+    crossed by a single iron bar. It lets in a grey wedge of daylight and
+    the smell of the lake, and nothing else.
+  bench: A low bench of grey, water-stained planks bolted to the wall. The
+    wood is worn smooth in the middle where the town's drunks and brawlers
+    have slept off their nights.
+  bucket: A wooden slop bucket with a fitted lid in the corner. Someone
+    scours it out between occupants; it is, all things considered, not the
+    worst part of being here.
+  scratches: Faint lines scratched into the mortar between the lake-stones —
+    tally-marks grouped in fives, dozens of them, running along the wall
+    beside the bench. Below the tallies, worked into a seam of softer
+    mortar, a small fish has been carved with real care — flat body, fan
+    tail, one eye a neat round divot. Someone had the time and the
+    patience to do it properly. You wonder how long they were here.
+  bars: Heavy iron bars set into stone sockets at the floor and ceiling,
+    sealing the cell from the passage beyond. The barred door at their
+    center has no handle on this side — only a keyhole, visible but
+    unreachable. The bars are polished smooth at shoulder-height where
+    every occupant has eventually stood and gripped them.
+idlemessages:
+- Footsteps cross the floor above, slow and unhurried.
+- A draft slips through the window slit, carrying the cold smell of the lake.
+- The scratch of a pen on paper drifts faintly through the ceiling.
+- Cook-smoke and lake-smell drift in together through the window slit.

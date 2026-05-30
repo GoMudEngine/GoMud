@@ -65,6 +65,31 @@ func TestResolveArrest_Surrender_OneTick_Before_Grace_NoOp(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
+// firstFactionWithCell tests
+// ---------------------------------------------------------------------------
+
+func TestFirstFactionWithCell(t *testing.T) {
+	origCell := cellRoomFn
+	t.Cleanup(func() { cellRoomFn = origCell })
+
+	cellRoomFn = func(faction string) int {
+		if faction == "stillwater_guards" {
+			return 5106
+		}
+		return 0 // citizens / others: no cell
+	}
+
+	got := firstFactionWithCell([]string{"stillwater_citizens", "stillwater_guards"})
+	if got != "stillwater_guards" {
+		t.Fatalf("firstFactionWithCell = %q, want stillwater_guards", got)
+	}
+
+	if firstFactionWithCell([]string{"stillwater_citizens"}) != "" {
+		t.Fatalf("firstFactionWithCell should return \"\" when no faction owns a cell")
+	}
+}
+
+// ---------------------------------------------------------------------------
 // Original resolveWarn tests (unchanged).
 // ---------------------------------------------------------------------------
 
@@ -83,6 +108,30 @@ func TestResolveWarn_WithinGrace_NoOp(t *testing.T) {
 func TestResolveWarn_PastGrace_Escalates(t *testing.T) {
 	if out := resolveWarn(true, 1000, 1060, 50); out != warnOutcomeAttack {
 		t.Errorf("got %v, want attack (past grace)", out)
+	}
+}
+
+func TestPruneStaleWarnStamps(t *testing.T) {
+	md := map[string]any{
+		"justice_warned_1":         uint64(100), // stale: now-100 > staleAfter(200)? 1000-100=900 > 200 -> pruned
+		"justice_warned_2":         uint64(950), // fresh: 1000-950=50 <= 200 -> kept
+		"justice_arrest_pending_3": uint64(100), // must be left alone
+		"some_other_key":           uint64(100), // must be left alone
+	}
+
+	pruneStaleWarnStamps(md, 1000, 200) // now=1000, staleAfter=200 rounds
+
+	if _, ok := md["justice_warned_1"]; ok {
+		t.Fatalf("stale justice_warned_1 should have been pruned")
+	}
+	if _, ok := md["justice_warned_2"]; !ok {
+		t.Fatalf("fresh justice_warned_2 must be kept")
+	}
+	if _, ok := md["justice_arrest_pending_3"]; !ok {
+		t.Fatalf("arrest-pending stamp must not be touched")
+	}
+	if _, ok := md["some_other_key"]; !ok {
+		t.Fatalf("unrelated key must not be touched")
 	}
 }
 

@@ -11,6 +11,7 @@ groups:
   - humanoid
   - barmaid
   - gossiper
+  - stillwater_citizens
 idlecommands:
   - 'emote collects empty cups from a table, stacking them on one arm'
   - ''

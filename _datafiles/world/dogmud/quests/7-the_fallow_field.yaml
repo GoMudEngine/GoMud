@@ -31,6 +31,8 @@ rewards:
     evident in his weathered face."
   gold: 8
   itemid: 23
+  rep_faction: thornwall_citizens
+  rep_amount: 15
 
 triggers:
   # Item delivery via give command

@@ -10,6 +10,7 @@ maxwander: 0
 groups:
   - humanoid
   - widow
+  - stillwater_citizens
 idlecommands:
   - 'emote sits at the parlor table with her hands folded around an empty
     cup, not drinking'

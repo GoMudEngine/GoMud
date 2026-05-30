@@ -198,6 +198,188 @@ func TestResolveDetention_NoJailRecord(t *testing.T) {
 	}
 }
 
+// ---------------------------------------------------------------------------
+// ExecuteArrest seam tests (Task 1 — holding-cell room via faction data)
+// ---------------------------------------------------------------------------
+
+func TestExecuteArrest_NoCellForFaction_NoOps(t *testing.T) {
+	origCell := cellRoomFn
+	origMove := aMoveFn
+	t.Cleanup(func() { cellRoomFn = origCell; aMoveFn = origMove })
+
+	moved := false
+	aMoveFn = func(int, int, ...bool) error { moved = true; return nil }
+	cellRoomFn = func(faction string) int { return 0 } // faction has no jail
+
+	ch := &characters.Character{}
+	ok := ExecuteArrest(ch, 1, "stillwater_citizens", false)
+
+	if ok {
+		t.Fatalf("ExecuteArrest should return false when faction has no cell")
+	}
+	if moved {
+		t.Fatalf("player must not be moved when faction has no cell")
+	}
+}
+
+func TestExecuteArrest_UsesFactionCellRoom(t *testing.T) {
+	origCell := cellRoomFn
+	origMove := aMoveFn
+	origDecay := aDecayFn
+	origNow := bNowFn
+	t.Cleanup(func() {
+		cellRoomFn = origCell
+		aMoveFn = origMove
+		aDecayFn = origDecay
+		bNowFn = origNow
+	})
+
+	var movedTo int
+	aMoveFn = func(userId int, toRoomId int, isSpawn ...bool) error { movedTo = toRoomId; return nil }
+	cellRoomFn = func(faction string) int { return 5106 }
+	aDecayFn = func() int { return 5 }
+	bNowFn = func() uint64 { return 100 }
+
+	ch := &characters.Character{}
+	ok := ExecuteArrest(ch, 1, "stillwater_guards", false)
+
+	if !ok {
+		t.Fatalf("ExecuteArrest should succeed when faction has a cell")
+	}
+	if movedTo != 5106 {
+		t.Fatalf("player hauled to %d, want 5106", movedTo)
+	}
+}
+
+// TestResolveDetention_UsesPerFactionReleaseRoom verifies that ResolveDetention
+// moves the player to the per-faction release room, not the hardcoded barracks.
+func TestResolveDetention_UsesPerFactionReleaseRoom(t *testing.T) {
+	origDecay := aDecayFn
+	origRepReset := aRepResetFn
+	origResolve := aResolveCrimeFn
+	origCrimesForFaction := aCrimesForFactionFn
+	origAllies := alliesFn
+	origOpenBounties := aOpenBountiesFn
+	origWithdraw := aWithdrawFn
+	origGetRep := aGetRepFn
+	origSetRep := aSetRepFn
+	origMove := aMoveFn
+	origReleaseRoom := releaseRoomFn
+	defer func() {
+		aDecayFn = origDecay
+		aRepResetFn = origRepReset
+		aResolveCrimeFn = origResolve
+		aCrimesForFactionFn = origCrimesForFaction
+		alliesFn = origAllies
+		aOpenBountiesFn = origOpenBounties
+		aWithdrawFn = origWithdraw
+		aGetRepFn = origGetRep
+		aSetRepFn = origSetRep
+		aMoveFn = origMove
+		releaseRoomFn = origReleaseRoom
+	}()
+
+	ch := &characters.Character{}
+	ch.SetMiscData(keyJailUntilRound, uint64(9999))
+	ch.SetMiscData(keyJailFineOriginal, 50)
+	ch.SetMiscData(keyJailDecayPerRound, 5)
+	ch.SetMiscData(keyJailFaction, "stillwater_guards")
+	ch.SetMiscData(keyJailCellRoom, 5106)
+
+	aDecayFn = func() int { return 5 }
+	aRepResetFn = func() int { return -10 }
+	aResolveCrimeFn = func(string, int, string) {}
+	aCrimesForFactionFn = func(string, bool) []*crimes.Crime { return nil }
+	alliesFn = func(faction string) []string { return nil }
+	aOpenBountiesFn = func(int) []*bounties.Bounty { return nil }
+	aWithdrawFn = func(int) {}
+	aGetRepFn = func(string, int) int { return 0 }
+	aSetRepFn = func(string, int, int) {}
+
+	// Stillwater release room is 4110.
+	releaseRoomFn = func(faction string) int {
+		if faction == "stillwater_guards" {
+			return 4110
+		}
+		return 0
+	}
+
+	var movedTo int
+	aMoveFn = func(userId int, toRoomId int, isSpawn ...bool) error {
+		movedTo = toRoomId
+		return nil
+	}
+
+	ok := ResolveDetention(ch, 42)
+	if !ok {
+		t.Fatal("ResolveDetention returned false; expected true")
+	}
+	if movedTo != 4110 {
+		t.Errorf("player moved to room %d, want 4110 (Stillwater release room)", movedTo)
+	}
+}
+
+// TestResolveDetention_FallsBackToBarracksWhenNoReleaseRoom verifies that when
+// the faction defines no release room (returns 0), the hardcoded barracksRoomId
+// is used as the fallback.
+func TestResolveDetention_FallsBackToBarracksWhenNoReleaseRoom(t *testing.T) {
+	origDecay := aDecayFn
+	origRepReset := aRepResetFn
+	origResolve := aResolveCrimeFn
+	origCrimesForFaction := aCrimesForFactionFn
+	origAllies := alliesFn
+	origOpenBounties := aOpenBountiesFn
+	origWithdraw := aWithdrawFn
+	origGetRep := aGetRepFn
+	origSetRep := aSetRepFn
+	origMove := aMoveFn
+	origReleaseRoom := releaseRoomFn
+	defer func() {
+		aDecayFn = origDecay
+		aRepResetFn = origRepReset
+		aResolveCrimeFn = origResolve
+		aCrimesForFactionFn = origCrimesForFaction
+		alliesFn = origAllies
+		aOpenBountiesFn = origOpenBounties
+		aWithdrawFn = origWithdraw
+		aGetRepFn = origGetRep
+		aSetRepFn = origSetRep
+		aMoveFn = origMove
+		releaseRoomFn = origReleaseRoom
+	}()
+
+	ch := &characters.Character{}
+	ch.SetMiscData(keyJailUntilRound, uint64(9999))
+	ch.SetMiscData(keyJailFineOriginal, 50)
+	ch.SetMiscData(keyJailDecayPerRound, 5)
+	ch.SetMiscData(keyJailFaction, "some_faction")
+	ch.SetMiscData(keyJailCellRoom, 999)
+
+	aDecayFn = func() int { return 5 }
+	aRepResetFn = func() int { return -10 }
+	aResolveCrimeFn = func(string, int, string) {}
+	aCrimesForFactionFn = func(string, bool) []*crimes.Crime { return nil }
+	alliesFn = func(faction string) []string { return nil }
+	aOpenBountiesFn = func(int) []*bounties.Bounty { return nil }
+	aWithdrawFn = func(int) {}
+	aGetRepFn = func(string, int) int { return 0 }
+	aSetRepFn = func(string, int, int) {}
+
+	// Faction returns 0 (no release room configured).
+	releaseRoomFn = func(faction string) int { return 0 }
+
+	var movedTo int
+	aMoveFn = func(userId int, toRoomId int, isSpawn ...bool) error {
+		movedTo = toRoomId
+		return nil
+	}
+
+	ResolveDetention(ch, 42)
+	if movedTo != barracksRoomId {
+		t.Errorf("player moved to room %d, want %d (barracks fallback)", movedTo, barracksRoomId)
+	}
+}
+
 // TestResolveDetention_RepAboveFloor verifies that rep is NOT reset when
 // it is already at or above the floor.
 func TestResolveDetention_RepAboveFloor(t *testing.T) {

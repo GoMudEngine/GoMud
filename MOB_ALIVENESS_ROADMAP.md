@@ -787,15 +787,28 @@ Compose layers into player-facing systems. These wait until the layers exist
 to compose.
 
 ### 5.1 Town justice
-**Status:** In progress — decomposed into 5.1a–d; **5.1a (guard enforcement)
-shipped 2026-05-29** • **Size:** XL
+**Status:** In progress — decomposed into 5.1a–d; **5.1a–c + Stillwater
+rollout shipped** • **Size:** XL
 
 Decomposition (each its own spec→plan→build): **5.1a** wanted-verdict + guard
 warn→attack (DONE — `internal/justice`, per-round guard tick; spec/plan at
 `docs/superpowers/{specs,plans}/2026-05-29-town-justice-5.1a-guard-enforcement*`).
-5.1b crime→auto-bounty trigger. 5.1c arrest mechanic. 5.1d redemption
-(pay-fine/serve/quest). Followups logged in MEMORY (Drunn/Stillwater faction,
-warn-stamp pruning).
+**5.1b** crime→auto-bounty trigger (DONE). **5.1c** arrest mechanic (DONE).
+5.1d redemption (pay-fine/serve/quest) — not yet started.
+
+**Stillwater rollout shipped 2026-05-30:** data-driven holding-cell registry
+(`HoldingCellRoom` field on faction definition YAML, boot-validated via
+`factions.ValidateHoldingCells`; replaces hardcoded `jailCellFor` map);
+arresting faction selected by `firstFactionWithCell`; new holding cell room
+5106 (down from Stillwater constabulary 4110); new `stillwater_guards`
+(holding_cell_room 5106, ally stillwater_citizens) + `stillwater_citizens`
+factions — guards+citizens now exist for **two** towns (Thornwall +
+Stillwater); Constable Drunn (mob 335) flipped to combat-capable
+`guard_captain` archetype with tank stats; 21 Stillwater townsfolk + 2
+foragers (Tova/Kessa) tagged `stillwater_citizens`; 3 caravan humans
+(Ketil/Marta/Lars) tagged both citizen factions; 7 civic quests grant +15
+rep via new `RepFaction`/`RepAmount` quest reward fields; stale
+`justice_warned_*` stamp pruning in per-guard-tick sweep (5.1 followup #2).
 
 - **Goal:** Replace `peacefulquest` placeholder with real citizenship + faction guards + crime detection + bounty workflow.
 - **In:** Citizenship-by-faction, guard archetypes that react to crimes against citizens, escalation (warn → arrest → kill), bounty placement on offenders, redemption (pay fine, complete quest, etc.).

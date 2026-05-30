@@ -12,6 +12,7 @@ groups:
   - humanoid
   - merchant
   - apothecary
+  - stillwater_citizens
 idlecommands:
   - 'emote crushes dried marsh-willow bark with a stone pestle, releasing
     a faint green smell'

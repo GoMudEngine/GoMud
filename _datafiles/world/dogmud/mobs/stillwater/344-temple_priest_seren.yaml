@@ -11,6 +11,7 @@ maxwander: 0
 groups:
   - humanoid
   - priest
+  - stillwater_citizens
 idlecommands:
   - 'emote lights a stick of lake-reed incense and places it in the brass
     holder at the altar base'

@@ -11,6 +11,7 @@ maxwander: 0
 groups:
   - humanoid
   - merchant
+  - stillwater_citizens
 idlecommands:
   - 'emote rearranges a tray of fish on chipped ice, nudging each one
     into a tighter row'

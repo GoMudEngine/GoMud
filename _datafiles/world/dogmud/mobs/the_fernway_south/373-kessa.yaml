@@ -6,6 +6,7 @@ statpool: 150
 itemdropchance: 0
 groups:
   - forager
+  - stillwater_citizens
 hostile: false
 non_combatant: false
 player_attack_immune: true

@@ -9,6 +9,7 @@ maxwander: 0
 groups:
   - humanoid
   - merchant
+  - stillwater_citizens
 idlecommands:
   - 'emote adjusts the millstone brake and listens to the wheel-creak
     change pitch'

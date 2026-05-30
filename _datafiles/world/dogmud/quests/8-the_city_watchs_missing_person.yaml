@@ -28,3 +28,5 @@ rewards:
   playermessage: "Velk listens to your report without interruption, his expression unreadable. When you finish, he makes a notation in the duty log. 'The case is closed. I will file it accordingly.' He does not ask for details beyond what you offered, and you get the sense that he has seen enough of these cases to know that the paperwork rarely captures the whole truth."
   roommessage: "Velk makes a notation in the duty log and files the report."
   gold: 15
+  rep_faction: thornwall_guards
+  rep_amount: 15

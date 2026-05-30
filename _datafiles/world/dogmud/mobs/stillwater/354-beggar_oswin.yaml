@@ -9,6 +9,7 @@ non_combatant: true
 maxwander: 0
 groups:
   - humanoid
+  - stillwater_citizens
 idlecommands:
   - 'emote pulls his coat tighter and stares at the ground between his
     feet'

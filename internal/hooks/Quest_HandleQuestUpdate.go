@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -176,6 +177,10 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 			}
 
 			rooms.MoveToRoom(questUser.UserId, questInfo.Rewards.RoomId)
+		}
+		// Faction reputation reward?
+		if questInfo.Rewards.RepFaction != "" && questInfo.Rewards.RepAmount != 0 {
+			factions.BumpRep(questInfo.Rewards.RepFaction, questUser.UserId, questInfo.Rewards.RepAmount)
 		}
 	} else {
 		if !questInfo.Secret {

@@ -113,6 +113,8 @@ rewards:
     hand over hers for a moment before letting go."
   gold: 100
   itemid: 10032
+  rep_faction: stillwater_citizens
+  rep_amount: 15
 
 triggers:
   # ============================================================

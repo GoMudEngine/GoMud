@@ -69,9 +69,32 @@ description: |
 default_rep: -25
 allies: []
 enemies: [thornwall_guards]
+# Optional — only guard factions set this:
+# holding_cell_room: 5106
 ```
 
 Stored eagerly at startup. The `faction_id` is the stable key (used internally). The `display_name` and `description` are for human-readable output. The `default_rep` is the starting point for new players (what `GetRep` returns when no row exists). The `allies` and `enemies` arrays list related factionIds — declarative only (rep changes do NOT auto-propagate through them).
+
+**`holding_cell_room` (optional, int):** Room ID of the faction's holding
+cell for arrested players. Omit (or set to 0) for non-guard factions —
+`ExecuteArrest` treats 0 as "no jail" and returns false. Only guard
+factions that actually jail players set this field. Current values:
+`thornwall_guards` → 5105, `stillwater_guards` → 5106.
+
+**`release_room` (optional, int):** Room ID where a freed prisoner of
+this faction is released after serving a sentence or paying a fine.
+Omit (or set to 0) for factions without a specific release destination;
+`ResolveDetention` falls back to the hardcoded `barracksRoomId` (473)
+when 0. Current values: `thornwall_guards` → 473,
+`stillwater_guards` → 4110. Read seam: `justice.releaseRoomFn` in
+`internal/justice/justice.go`.
+
+Boot-time validation (`factions.ValidateHoldingCells(roomExistsFn)`) is
+called from main.go after `rooms.LoadDataFiles()`. It iterates every
+loaded definition and panics if `holding_cell_room != 0` and the room
+doesn't exist, OR if `release_room != 0` and the room doesn't exist.
+The DI callback (`func(int) bool`) breaks the factions ← rooms import
+cycle. Read seam: `justice.cellRoomFn` in `internal/justice/justice.go`.
 
 ### Runtime Rep State (gitignored, not committed)
 ```yaml
@@ -93,12 +116,14 @@ Stored lazily on first mutation. The per-player `rep` scalar is clamped to [-100
 **Definition** (immutable after load):
 ```go
 type Definition struct {
-    FactionId   string   `yaml:"faction_id"`
-    DisplayName string   `yaml:"display_name"`
-    Description string   `yaml:"description"`
-    DefaultRep  int      `yaml:"default_rep"`
-    Allies      []string `yaml:"allies"`
-    Enemies     []string `yaml:"enemies"`
+    FactionId       string   `yaml:"faction_id"`
+    DisplayName     string   `yaml:"display_name"`
+    Description     string   `yaml:"description"`
+    DefaultRep      int      `yaml:"default_rep"`
+    Allies          []string `yaml:"allies"`
+    Enemies         []string `yaml:"enemies"`
+    HoldingCellRoom int      `yaml:"holding_cell_room"` // 0 = no jail
+    ReleaseRoom     int      `yaml:"release_room"`      // 0 = none (release falls back to default)
 }
 ```
 

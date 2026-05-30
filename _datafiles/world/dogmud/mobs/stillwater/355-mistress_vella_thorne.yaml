@@ -10,6 +10,7 @@ maxwander: 0
 groups:
   - humanoid
   - healer
+  - stillwater_citizens
 idlecommands:
   - 'emote tips a slow drop from the still''s collection-vial onto a small
     glass plate and watches the colour'

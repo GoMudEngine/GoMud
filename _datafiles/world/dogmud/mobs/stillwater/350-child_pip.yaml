@@ -9,6 +9,7 @@ non_combatant: true
 maxwander: 1
 groups:
   - humanoid
+  - stillwater_citizens
 idlecommands:
   - 'emote dangles bare feet over the water and watches the ripples'
   - ''
