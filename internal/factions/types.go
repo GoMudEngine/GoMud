@@ -13,6 +13,10 @@ type Definition struct {
 	DefaultRep  int      `yaml:"default_rep"`
 	Allies      []string `yaml:"allies"`
 	Enemies     []string `yaml:"enemies"`
+	// HoldingCellRoom is the room id a guard of this faction hauls arrestees
+	// to. 0 / omitted means this faction has no jail (correct for citizen and
+	// non-guard factions). Read by internal/justice.
+	HoldingCellRoom int `yaml:"holding_cell_room"`
 }
 
 // RepEntry is one player's rep with one faction.

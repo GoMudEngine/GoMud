@@ -36,6 +36,14 @@ var (
 		}
 		return d.Allies
 	}
+	// cellRoomFn returns the holding-cell room id for a faction (0 = none).
+	cellRoomFn = func(faction string) int {
+		d := factions.GetDefinition(faction)
+		if d == nil {
+			return 0
+		}
+		return d.HoldingCellRoom
+	}
 	openFactionBountyFn = func(userId int, factionSet map[string]bool) bool {
 		for _, b := range bounties.OpenAgainstPlayer(userId) {
 			if b.Issuer.Type == bounties.IssuerFaction && factionSet[b.Issuer.Id] {

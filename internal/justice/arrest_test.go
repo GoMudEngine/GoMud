@@ -198,6 +198,59 @@ func TestResolveDetention_NoJailRecord(t *testing.T) {
 	}
 }
 
+// ---------------------------------------------------------------------------
+// ExecuteArrest seam tests (Task 1 — holding-cell room via faction data)
+// ---------------------------------------------------------------------------
+
+func TestExecuteArrest_NoCellForFaction_NoOps(t *testing.T) {
+	origCell := cellRoomFn
+	origMove := aMoveFn
+	t.Cleanup(func() { cellRoomFn = origCell; aMoveFn = origMove })
+
+	moved := false
+	aMoveFn = func(int, int, ...bool) error { moved = true; return nil }
+	cellRoomFn = func(faction string) int { return 0 } // faction has no jail
+
+	ch := &characters.Character{}
+	ok := ExecuteArrest(ch, 1, "stillwater_citizens", false)
+
+	if ok {
+		t.Fatalf("ExecuteArrest should return false when faction has no cell")
+	}
+	if moved {
+		t.Fatalf("player must not be moved when faction has no cell")
+	}
+}
+
+func TestExecuteArrest_UsesFactionCellRoom(t *testing.T) {
+	origCell := cellRoomFn
+	origMove := aMoveFn
+	origDecay := aDecayFn
+	origNow := bNowFn
+	t.Cleanup(func() {
+		cellRoomFn = origCell
+		aMoveFn = origMove
+		aDecayFn = origDecay
+		bNowFn = origNow
+	})
+
+	var movedTo int
+	aMoveFn = func(userId int, toRoomId int, isSpawn ...bool) error { movedTo = toRoomId; return nil }
+	cellRoomFn = func(faction string) int { return 5106 }
+	aDecayFn = func() int { return 5 }
+	bNowFn = func() uint64 { return 100 }
+
+	ch := &characters.Character{}
+	ok := ExecuteArrest(ch, 1, "stillwater_guards", false)
+
+	if !ok {
+		t.Fatalf("ExecuteArrest should succeed when faction has a cell")
+	}
+	if movedTo != 5106 {
+		t.Fatalf("player hauled to %d, want 5106", movedTo)
+	}
+}
+
 // TestResolveDetention_RepAboveFloor verifies that rep is NOT reset when
 // it is already at or above the floor.
 func TestResolveDetention_RepAboveFloor(t *testing.T) {

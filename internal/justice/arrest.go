@@ -34,11 +34,6 @@ const (
 	keyJailCrimeIds      = "jail_crime_ids"
 )
 
-// Holding-cell registry: faction slug → holding-cell room ID.
-var jailCellFor = map[string]int{
-	"thornwall_guards": 5105,
-}
-
 // barracksRoomId is the release destination after a sentence is served.
 const barracksRoomId = 473
 
@@ -241,8 +236,8 @@ func JailInfo(player *characters.Character) (JailRecord, bool) {
 // jail_until_round MiscData key provides a parallel time-stamp so Task 9's
 // per-round release check can also fire when the buff has already expired.
 func ExecuteArrest(player *characters.Character, userId int, faction string, isMurder bool) bool {
-	cell, ok := jailCellFor[faction]
-	if !ok {
+	cell := cellRoomFn(faction)
+	if cell == 0 {
 		return false
 	}
 
