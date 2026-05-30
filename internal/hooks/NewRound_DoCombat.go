@@ -210,6 +210,19 @@ func handleMobCombat(evt events.NewRound, sleepingUserIds map[int]bool, sleeping
 			continue
 		}
 
+		// Drop stale aggro on a player who is now untargetable (e.g. a jailed
+		// player carrying the no-aggro-target flag, or one under respawn grace).
+		// Without this, a guard that held aggro from the pre-arrest fight keeps
+		// pursuing the prisoner into the cell and re-declaring combat each round
+		// even though its swings are already suppressed (5.1c smoke BUG-04).
+		if mob.Character.Aggro != nil && mob.Character.Aggro.UserId > 0 {
+			if tgt := users.GetByUserId(mob.Character.Aggro.UserId); tgt != nil &&
+				tgt.Character.HasBuffFlag(buffs.NoAggroTarget) {
+				mob.Character.EndAggro()
+				continue
+			}
+		}
+
 		// Task 15: tick the Combat Phase machine every round for every mob.
 		// Advances Engaging→Engaged countdowns and fires tick event listeners.
 		if mob.Character.CombatPhase != nil {
