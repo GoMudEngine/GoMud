@@ -1,0 +1,17 @@
+itemid: 20081
+name: bounty hunter's hood
+vendor_categories:
+- tailoring
+namesimple: hood
+description: >
+  A close-fitting hood of tightly-woven linen, dyed a muted grey
+  that reads as shadow in low light. A strip of folded leather
+  runs along the crown for modest impact padding, and the neck
+  flap laces tight enough to stay on in a scuffle. Functional
+  and forgettable — exactly what the wearer needs.
+type: head
+subtype: wearable
+weight: 0.8
+physical_mitigation: 2
+rarity_tier: 60
+value: 0

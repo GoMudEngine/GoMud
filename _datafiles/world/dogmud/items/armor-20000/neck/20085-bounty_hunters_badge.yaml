@@ -1,0 +1,17 @@
+itemid: 20085
+name: bounty hunter's badge
+vendor_categories:
+- jewelcrafting
+namesimple: badge
+description: >
+  A small disc of stamped brass suspended from a cord of braided
+  sinew, stamped with the sigil of whatever guild or authority
+  issued it. The face is worn smooth but the mark still reads
+  clearly. Worn under clothing most of the time — produced when
+  it matters, pocketed again quickly afterward.
+type: neck
+subtype: wearable
+weight: 0.2
+magical_mitigation: 2
+rarity_tier: 60
+value: 0
