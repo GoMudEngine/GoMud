@@ -109,3 +109,24 @@ func TestLoadAllDefinitions_MissingDirReturnsCleanly(t *testing.T) {
 		t.Errorf("AllDefinitions = %d, want 0", len(all))
 	}
 }
+
+func TestValidateHoldingCells(t *testing.T) {
+	clearRegistryForTest()
+	definitionsMu.Lock()
+	definitions = map[string]*Definition{
+		"good_guards": {FactionId: "good_guards", HoldingCellRoom: 100},
+		"no_cell":     {FactionId: "no_cell", HoldingCellRoom: 0},
+	}
+	definitionsMu.Unlock()
+
+	// Room 100 exists -> no panic.
+	ValidateHoldingCells(func(roomId int) bool { return roomId == 100 })
+
+	// Room 100 does NOT exist -> panic.
+	defer func() {
+		if recover() == nil {
+			t.Fatalf("ValidateHoldingCells must panic on a dangling cell room")
+		}
+	}()
+	ValidateHoldingCells(func(roomId int) bool { return false })
+}
