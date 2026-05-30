@@ -1,8 +1,8 @@
 mobid: 92
 zone: Thornwall Outskirts
-archetype: fighting
-behavior_archetype: noncombat_questgiver
-statpool: 75
+archetype: tank
+behavior_archetype: tank_taunter
+statpool: 240
 itemdropchance: 0
 hostile: false
 charm_immune: true

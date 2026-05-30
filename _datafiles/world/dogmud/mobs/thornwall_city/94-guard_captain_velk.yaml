@@ -1,8 +1,8 @@
 mobid: 94
 zone: Thornwall City
-archetype: fighting
-behavior_archetype: noncombat_questgiver
-statpool: 120
+archetype: tank
+behavior_archetype: guard_captain
+statpool: 300
 itemdropchance: 0
 hostile: false
 charm_immune: true

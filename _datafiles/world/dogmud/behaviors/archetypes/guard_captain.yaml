@@ -1,0 +1,115 @@
+# guard_captain archetype
+#
+# A quest-giving guard captain who ALSO fights. Combat nodes (copied from
+# tank_taunter) take priority when engaged; idle goal pursuit and a polite
+# gift-decline run otherwise.
+#
+# NOTE (Town Justice 5.1c precursor): quest item_give and `ask` dialogue both
+# BYPASS the behavior tree entirely — give.go fires the quest engine before the
+# btree (and returns on ConsumeItem), and ask.go loads dialogue YAML directly.
+# So this archetype needs NO special quest/dialogue handling; Velk's quests
+# (10, 14) and dialogue work regardless of his combat archetype.
+#
+# Decision order per mob_combat_round (same as tank_taunter):
+#   1. Interrupt — bash/trip a casting target
+#   2. Taunt — if I'm not already the target's aggro
+#   3. Bonus-damage kick — target prone (stomp) or clinched (knee)
+#   4. Rally — mitigation buff   5. Warcry — damage buff
+#   6-8. Knockdown cascade: bash -> grapple (single-enemy) -> trip
+#   fall through to legacy attack
+#
+# Used by: guard_captain_velk (94).
+
+tree:
+  type: selector
+  children:
+    # Call for help at low HP (tanks hold aggro rather than flee).
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 20
+        - type: action
+          do: command
+          cmd: callforhelp
+
+    # ── packmate_hurt: engage the attacker ───────────────────────
+    - type: action
+      event: packmate_hurt
+      do: attack
+
+    # ── mob_combat_round: taunt/interrupt/knockdown cascade ──────
+    - type: selector
+      event: mob_combat_round
+      children:
+        - type: sequence
+          children:
+            - type: condition
+              check: target_is_casting
+            - type: action
+              do: command_best_of
+              cmds: [bash, trip]
+
+        - type: sequence
+          children:
+            - type: condition
+              check: target_aggro_not_on_me
+            - type: action
+              do: command_best_of
+              cmds: [taunt]
+
+        - type: sequence
+          children:
+            - type: condition
+              check: target_not_standing
+            - type: action
+              do: command_best_of
+              cmds: [kick]
+
+        - type: action
+          do: command_best_of
+          cmds: [rally]
+
+        - type: action
+          do: command_best_of
+          cmds: [warcry]
+
+        - type: action
+          do: command_best_of
+          cmds: [bash]
+
+        - type: sequence
+          children:
+            - type: decorator
+              mod: invert
+              child:
+                type: condition
+                check: multiple_enemies
+            - type: action
+              do: command_best_of
+              cmds: [grapple]
+
+        - type: action
+          do: command_best_of
+          cmds: [trip]
+
+    # chunk 4.4: strategic goal pursuit (idle)
+    - type: action
+      event: mob_idle
+      do: try_goal_planner
+
+    # Politely decline non-quest gifts (quest item_give is handled before the
+    # btree in give.go, so this only fires for ordinary gifts).
+    - type: sequence
+      event: player_give
+      children:
+        - type: action
+          do: emote
+          text: "takes it with a curt nod, then hands it back."
+        - type: action
+          do: return_item
+
+default_goals:
+  - type: survival
+    priority: 80
