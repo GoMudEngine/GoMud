@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
+	"github.com/GoMudEngine/GoMud/internal/bountyhunter"
 	"github.com/GoMudEngine/GoMud/internal/justice"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -81,6 +82,10 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 	if mobs.PackRoamingEnabled() {
 		mobs.TickPackRoaming()
 	}
+
+	// Stage 5.2: Bounty-hunter dispatch sweep — runs ONCE per round, before
+	// the per-mob loop so it is never called N times per round.
+	bountyhunter.RunDispatchSweep(roundCount)
 
 	//
 	// Do mob round maintenance
