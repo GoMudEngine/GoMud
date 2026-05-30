@@ -42,7 +42,9 @@ func TestVerdict_ColdRep_Warn(t *testing.T) {
 	}
 }
 
-func TestVerdict_HostileRep_Attack(t *testing.T) {
+// 5.1c: Verdict now yields Arrest (not Attack) for the wanted signals;
+// Attack is produced only by the resist fork at enforcement time.
+func TestVerdict_HostileRep_Arrest(t *testing.T) {
 	defer installSeams(t)()
 	repTierFn = func(string, int) opinions.Tier { return opinions.TierHostile }
 	alliesFn = func(string) []string { return nil }
@@ -50,12 +52,12 @@ func TestVerdict_HostileRep_Attack(t *testing.T) {
 	unresolvedCrimeFn = func(string, int, uint64, uint64) bool { return false }
 	nowRoundFn = func() uint64 { return 1000 }
 	lookbackFn = func() uint64 { return 1000 }
-	if got := Verdict([]string{"thornwall_guards"}, 17); got != SeverityAttack {
-		t.Errorf("got %v, want Attack", got)
+	if got := Verdict([]string{"thornwall_guards"}, 17); got != SeverityArrest {
+		t.Errorf("got %v, want Arrest", got)
 	}
 }
 
-func TestVerdict_OpenBounty_Attack(t *testing.T) {
+func TestVerdict_OpenBounty_Arrest(t *testing.T) {
 	defer installSeams(t)()
 	repTierFn = func(string, int) opinions.Tier { return opinions.TierNeutral }
 	alliesFn = func(string) []string { return nil }
@@ -63,12 +65,12 @@ func TestVerdict_OpenBounty_Attack(t *testing.T) {
 	unresolvedCrimeFn = func(string, int, uint64, uint64) bool { return false }
 	nowRoundFn = func() uint64 { return 1000 }
 	lookbackFn = func() uint64 { return 1000 }
-	if got := Verdict([]string{"thornwall_guards"}, 17); got != SeverityAttack {
-		t.Errorf("got %v, want Attack (bounty)", got)
+	if got := Verdict([]string{"thornwall_guards"}, 17); got != SeverityArrest {
+		t.Errorf("got %v, want Arrest (bounty)", got)
 	}
 }
 
-func TestVerdict_AllyCrime_Attack(t *testing.T) {
+func TestVerdict_AllyCrime_Arrest(t *testing.T) {
 	defer installSeams(t)()
 	repTierFn = func(string, int) opinions.Tier { return opinions.TierNeutral }
 	alliesFn = func(f string) []string {
@@ -83,8 +85,8 @@ func TestVerdict_AllyCrime_Attack(t *testing.T) {
 	}
 	nowRoundFn = func() uint64 { return 1000 }
 	lookbackFn = func() uint64 { return 1000 }
-	if got := Verdict([]string{"thornwall_guards"}, 17); got != SeverityAttack {
-		t.Errorf("got %v, want Attack (ally crime)", got)
+	if got := Verdict([]string{"thornwall_guards"}, 17); got != SeverityArrest {
+		t.Errorf("got %v, want Arrest (ally crime)", got)
 	}
 }
 

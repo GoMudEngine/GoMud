@@ -78,7 +78,7 @@ func Verdict(guardFactions []string, userId int) Severity {
 		}
 	}
 	if openFactionBountyFn(userId, set) {
-		return SeverityAttack
+		return SeverityArrest
 	}
 	now := nowRoundFn()
 	lookback := lookbackFn()
@@ -86,14 +86,14 @@ func Verdict(guardFactions []string, userId int) Severity {
 	for f := range set {
 		switch repTierFn(f, userId) {
 		case opinions.TierHostile:
-			return SeverityAttack
+			return SeverityArrest
 		case opinions.TierCold:
 			if worst < SeverityWarn {
 				worst = SeverityWarn
 			}
 		}
 		if unresolvedCrimeFn(f, userId, lookback, now) {
-			return SeverityAttack
+			return SeverityArrest
 		}
 	}
 	return worst
