@@ -17,6 +17,11 @@ type Definition struct {
 	// to. 0 / omitted means this faction has no jail (correct for citizen and
 	// non-guard factions). Read by internal/justice.
 	HoldingCellRoom int `yaml:"holding_cell_room"`
+	// ReleaseRoom is the room a freed prisoner of this faction is released to
+	// after serving a sentence or paying a fine. 0 / omitted means no
+	// faction-specific release room; internal/justice falls back to the
+	// hardcoded barracksRoomId default.
+	ReleaseRoom int `yaml:"release_room"`
 }
 
 // RepEntry is one player's rep with one faction.

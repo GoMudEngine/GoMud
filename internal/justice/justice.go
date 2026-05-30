@@ -44,6 +44,15 @@ var (
 		}
 		return d.HoldingCellRoom
 	}
+	// releaseRoomFn returns the room a freed prisoner of a faction is released
+	// to (0 = none; caller falls back to barracksRoomId default).
+	releaseRoomFn = func(faction string) int {
+		d := factions.GetDefinition(faction)
+		if d == nil {
+			return 0
+		}
+		return d.ReleaseRoom
+	}
 	openFactionBountyFn = func(userId int, factionSet map[string]bool) bool {
 		for _, b := range bounties.OpenAgainstPlayer(userId) {
 			if b.Issuer.Type == bounties.IssuerFaction && factionSet[b.Issuer.Id] {

@@ -34,7 +34,9 @@ const (
 	keyJailCrimeIds      = "jail_crime_ids"
 )
 
-// barracksRoomId is the release destination after a sentence is served.
+// barracksRoomId is the fallback release destination when the arresting
+// faction does not define a release_room. Preserves existing Thornwall
+// behavior for any faction without an explicit release_room field.
 const barracksRoomId = 473
 
 // jailedBuffId is the buff applied to jailed players (88-jailed.yaml).
@@ -283,10 +285,16 @@ func ExecuteArrest(player *characters.Character, userId int, faction string, isM
 
 	// Arrival flavor (the buff's start_user_text fires via the buff system;
 	// send an additional arrest-context line here).
+	// Use the faction's human-readable DisplayName for the arrest message so
+	// the player sees "Stillwater Constabulary" instead of "stillwater_guards".
 	if u := users.GetByUserId(userId); u != nil {
+		factionName := faction
+		if d := factions.GetDefinition(faction); d != nil && d.DisplayName != "" {
+			factionName = d.DisplayName
+		}
 		u.SendText(messaging.CategorySystem,
 			fmt.Sprintf("A guard seizes you and hauls you to the holding cell. "+
-				"You have been placed under arrest by the %s.", faction))
+				"You have been placed under arrest by the %s.", factionName))
 	}
 
 	return true
@@ -358,8 +366,13 @@ func ResolveDetention(player *characters.Character, userId int) bool {
 	player.SetMiscData(keyJailCellRoom, nil)
 	player.SetMiscData(keyJailCrimeIds, nil)
 
-	// Move the player to the barracks (release destination).
-	_ = aMoveFn(userId, barracksRoomId)
+	// Move the player to the per-faction release room, falling back to
+	// barracksRoomId if the faction defines none.
+	releaseRoom := releaseRoomFn(faction)
+	if releaseRoom == 0 {
+		releaseRoom = barracksRoomId
+	}
+	_ = aMoveFn(userId, releaseRoom)
 
 	// No release flavor here: removing the Jailed buff (above) fires its
 	// end_user_text ("The cell door swings open. You are free to go."), which

@@ -119,18 +119,20 @@ func AllDefinitions() []*Definition {
 }
 
 // ValidateHoldingCells panics if any loaded faction declares a HoldingCellRoom
-// that roomExists reports as missing. Cells of 0 (no jail) are skipped. Called
-// from main.go after rooms load (DI breaks the factions<-rooms import edge).
+// or ReleaseRoom that roomExists reports as missing. Values of 0 (absent/omitted)
+// are skipped. Called from main.go after rooms load (DI breaks the
+// factions<-rooms import edge).
 func ValidateHoldingCells(roomExists func(roomId int) bool) {
 	definitionsMu.RLock()
 	defer definitionsMu.RUnlock()
 	for _, def := range definitions {
-		if def.HoldingCellRoom == 0 {
-			continue
-		}
-		if !roomExists(def.HoldingCellRoom) {
+		if def.HoldingCellRoom != 0 && !roomExists(def.HoldingCellRoom) {
 			panic(fmt.Sprintf("factions: faction %q holding_cell_room %d does not exist",
 				def.FactionId, def.HoldingCellRoom))
+		}
+		if def.ReleaseRoom != 0 && !roomExists(def.ReleaseRoom) {
+			panic(fmt.Sprintf("factions: faction %q release_room %d does not exist",
+				def.FactionId, def.ReleaseRoom))
 		}
 	}
 }

@@ -81,12 +81,20 @@ cell for arrested players. Omit (or set to 0) for non-guard factions —
 factions that actually jail players set this field. Current values:
 `thornwall_guards` → 5105, `stillwater_guards` → 5106.
 
+**`release_room` (optional, int):** Room ID where a freed prisoner of
+this faction is released after serving a sentence or paying a fine.
+Omit (or set to 0) for factions without a specific release destination;
+`ResolveDetention` falls back to the hardcoded `barracksRoomId` (473)
+when 0. Current values: `thornwall_guards` → 473,
+`stillwater_guards` → 4110. Read seam: `justice.releaseRoomFn` in
+`internal/justice/justice.go`.
+
 Boot-time validation (`factions.ValidateHoldingCells(roomExistsFn)`) is
 called from main.go after `rooms.LoadDataFiles()`. It iterates every
 loaded definition and panics if `holding_cell_room != 0` and the room
-doesn't exist. The DI callback (`func(int) bool`) breaks the
-factions ← rooms import cycle. Read seam: `justice.cellRoomFn` in
-`internal/justice/justice.go`.
+doesn't exist, OR if `release_room != 0` and the room doesn't exist.
+The DI callback (`func(int) bool`) breaks the factions ← rooms import
+cycle. Read seam: `justice.cellRoomFn` in `internal/justice/justice.go`.
 
 ### Runtime Rep State (gitignored, not committed)
 ```yaml

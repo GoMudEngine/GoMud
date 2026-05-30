@@ -7,3 +7,4 @@ default_rep: 0
 allies: [stillwater_citizens]
 enemies: []
 holding_cell_room: 5106
+release_room: 4110

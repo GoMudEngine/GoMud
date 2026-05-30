@@ -130,3 +130,25 @@ func TestValidateHoldingCells(t *testing.T) {
 	}()
 	ValidateHoldingCells(func(roomId int) bool { return false })
 }
+
+func TestValidateHoldingCells_PanicsOnDanglingReleaseRoom(t *testing.T) {
+	clearRegistryForTest()
+	definitionsMu.Lock()
+	definitions = map[string]*Definition{
+		"release_guards": {FactionId: "release_guards", HoldingCellRoom: 100, ReleaseRoom: 200},
+		"no_release":     {FactionId: "no_release", HoldingCellRoom: 0, ReleaseRoom: 0},
+	}
+	definitionsMu.Unlock()
+
+	// Both rooms exist -> no panic.
+	ValidateHoldingCells(func(roomId int) bool { return roomId == 100 || roomId == 200 })
+
+	// ReleaseRoom 200 does NOT exist -> panic.
+	defer func() {
+		if recover() == nil {
+			t.Fatalf("ValidateHoldingCells must panic on a dangling release_room")
+		}
+	}()
+	// room 100 exists but 200 does not
+	ValidateHoldingCells(func(roomId int) bool { return roomId == 100 })
+}

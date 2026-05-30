@@ -164,6 +164,15 @@ read via the `cellRoomFn` seam in `justice.go`. `ExecuteArrest` returns
 `false` (no-op) for factions whose `holding_cell_room` is 0 (absent/omitted).
 Current cells: `thornwall_guards` → 5105, `stillwater_guards` → 5106.
 
+**Release-room registry**: Release room IDs live on the faction definition
+YAML as a `release_room:` field (`factions.Definition.ReleaseRoom`), read
+via the `releaseRoomFn` seam in `justice.go`. `ResolveDetention` uses the
+per-faction release room when non-zero, falling back to the hardcoded
+`barracksRoomId` (473) for factions that define none. Current values:
+`thornwall_guards` → 473, `stillwater_guards` → 4110. Boot-time validation
+panics on a dangling release_room (same `ValidateHoldingCells` call, see
+`internal/factions/registry.go`).
+
 Boot-time validation (`factions.ValidateHoldingCells`, called from main.go
 after `rooms.LoadDataFiles()`) panics if any faction's `holding_cell_room`
 references a room that doesn't exist. DI callback (`func(int) bool`)
@@ -234,11 +243,12 @@ against the other that re-triggers arrest the instant the player is freed.
 5. Removes buff 88 via `player.RemoveBuff(88)` — this fires the buff's
    release line; `ResolveDetention` sends no flavor of its own.
 6. Clears all jail MiscData keys.
-7. Moves player to barracks (room 473).
+7. Moves player to the per-faction release room (via `releaseRoomFn`),
+   falling back to `barracksRoomId` (473) if the faction defines none.
 
 Release seams: `aResolveCrimeFn`, `aCrimesForFactionFn`, `alliesFn`,
 `aOpenBountiesFn`, `aWithdrawFn`, `aGetRepFn`, `aSetRepFn`, `aMoveFn`,
-`aDecayFn`, `aRepResetFn`.
+`aDecayFn`, `aRepResetFn`, `releaseRoomFn`.
 
 ---
 
@@ -268,7 +278,7 @@ per-round player tick (hooks/Jail_ExpiryRelease.go)
                                                ├─ bounty withdrawn
                                                ├─ rep floor restored
                                                ├─ buff 88 removed
-                                               └─ MoveToRoom(barracks 473)
+                                               └─ MoveToRoom(releaseRoomFn → 473/4110)
 
 player commands
   └─ fine    → currentJailFine → JailInfo → display decaying fine
