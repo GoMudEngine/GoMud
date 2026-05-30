@@ -1,8 +1,8 @@
 mobid: 335
 zone: Stillwater
-archetype: fighting
-behavior_archetype: noncombat_questgiver
-statpool: 80
+archetype: tank
+behavior_archetype: guard_captain
+statpool: 240
 itemdropchance: 0
 hostile: false
 charm_immune: true
@@ -10,6 +10,8 @@ maxwander: 2
 groups:
   - humanoid
   - guard
+  - stillwater_guards
+  - stillwater_citizens
 idlecommands:
   - 'emote stands at the door of the constabulary, arms folded, watching
     the square'
@@ -39,10 +41,10 @@ character:
       itemid: 20011
   stats:
     strength:
+      training: 10
+    vitality:
       training: 8
     perception:
       training: 8
-    vitality:
-      training: 5
-    charisma:
-      training: 5
+    willpower:
+      training: 6
