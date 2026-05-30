@@ -272,8 +272,16 @@ func ExecuteArrest(player *characters.Character, userId int, faction string, isM
 	player.SetMiscData(keyJailCrimeIds, idsStr)
 
 	// Apply the Jailed buff scaled to `rounds` triggers so it expires
-	// naturally at the end of the sentence.
+	// naturally at the end of the sentence. The buff also carries the
+	// no-aggro-target flag, which makes the jailed player invisible to ALL mob
+	// aggro paths (LookForTrouble, retarget, etc.) — without it, a guard that
+	// reaches the cell re-acquires aggro and fights the prisoner (smoke BUG-04;
+	// RunGuardEnforcement's own exemption only covered the justice tick, not the
+	// legacy group-hostile LookForTrouble path).
 	_ = player.AddBuffScaled(jailedBuffId, float64(rounds))
+
+	// Drop any combat the player was in — they're in custody now, not fighting.
+	player.EndAggro()
 
 	// Haul the player to the holding cell.
 	_ = aMoveFn(userId, cell)
