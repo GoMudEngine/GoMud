@@ -1,0 +1,17 @@
+itemid: 20083
+name: bounty hunter's boots
+vendor_categories:
+- tailoring
+namesimple: boots
+description: >
+  Knee-high boots of oiled leather, resoled more than once and
+  broken in to a second-skin fit. The heel is reinforced with a
+  steel strip for rough terrain, and the shaft buckles at mid-calf
+  to keep debris out on the road. They make almost no sound on
+  hard floors, which is less accident than intent.
+type: feet
+subtype: wearable
+weight: 3.0
+physical_mitigation: 2
+rarity_tier: 60
+value: 0

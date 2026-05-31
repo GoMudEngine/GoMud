@@ -1,0 +1,18 @@
+itemid: 20080
+name: bounty hunter's coat
+vendor_categories:
+- tailoring
+namesimple: coat
+description: >
+  A long coat of dense, waxed canvas over a padded leather lining,
+  cut with deep pockets and reinforced across the shoulders and
+  forearms. Road-dark in color, it shows its age in faded patches
+  and mended seams. Practical through and through — built to absorb
+  the wear of long travel and the occasional blade that finds its
+  mark.
+type: body
+subtype: wearable
+weight: 6.5
+physical_mitigation: 5
+rarity_tier: 60
+value: 0

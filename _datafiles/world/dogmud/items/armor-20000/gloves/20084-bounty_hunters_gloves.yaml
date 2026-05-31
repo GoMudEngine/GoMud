@@ -1,0 +1,17 @@
+itemid: 20084
+name: bounty hunter's gloves
+vendor_categories:
+- tailoring
+namesimple: gloves
+description: >
+  Fingerless gloves of thick, supple leather, with the exposed
+  knuckles reinforced by a row of riveted iron studs. They protect
+  the palm and back of the hand without sacrificing the grip
+  precision that comes from bare fingertips. Practical work
+  gear for someone who uses their hands in close quarters.
+type: gloves
+subtype: wearable
+weight: 0.6
+physical_mitigation: 2
+rarity_tier: 60
+value: 0

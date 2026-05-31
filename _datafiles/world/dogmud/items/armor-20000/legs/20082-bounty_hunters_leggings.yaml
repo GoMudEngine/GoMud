@@ -1,0 +1,17 @@
+itemid: 20082
+name: bounty hunter's leggings
+vendor_categories:
+- tailoring
+namesimple: leggings
+description: >
+  Sturdy leather leggings cut wide at the knee for ease of
+  movement and laced snug along the outer thigh. Double-layered
+  hide along the shins provides protection without the weight
+  of plate, and the inner seam is stitched flat so long rides
+  stay comfortable. Worn in but not worn out.
+type: legs
+subtype: wearable
+weight: 4.0
+physical_mitigation: 4
+rarity_tier: 60
+value: 0

@@ -301,6 +301,41 @@ func ExecuteArrest(player *characters.Character, userId int, faction string, isM
 }
 
 // ---------------------------------------------------------------------------
+// ClearFactionRecord
+// ---------------------------------------------------------------------------
+
+// ClearFactionRecord clears a player's standing with a faction and its allies:
+// resolves their unresolved crimes, withdraws the faction set's open bounties
+// against them, and resets rep to the floor where currently below it. Shared by
+// serving a sentence (ResolveDetention) and a bounty-hunter claim (5.2).
+// reason is forwarded to crimes.Resolve as the resolution description
+// (e.g. "served sentence", "bounty claimed").
+func ClearFactionRecord(faction string, userId int, reason string) {
+	factionSet := map[string]bool{faction: true}
+	for _, a := range alliesFn(faction) {
+		factionSet[a] = true
+	}
+	for f := range factionSet {
+		for _, c := range aCrimesForFactionFn(f, false) {
+			if c.Perpetrator.Type == crimes.PerpPlayer && c.Perpetrator.Id == userId {
+				aResolveCrimeFn(f, c.Id, reason)
+			}
+		}
+	}
+	for _, b := range aOpenBountiesFn(userId) {
+		if b.Issuer.Type == bounties.IssuerFaction && factionSet[b.Issuer.Id] {
+			aWithdrawFn(b.Id)
+		}
+	}
+	floor := aRepResetFn()
+	for f := range factionSet {
+		if aGetRepFn(f, userId) < floor {
+			aSetRepFn(f, userId, floor)
+		}
+	}
+}
+
+// ---------------------------------------------------------------------------
 // ResolveDetention
 // ---------------------------------------------------------------------------
 
@@ -328,33 +363,7 @@ func ResolveDetention(player *characters.Character, userId int) bool {
 	// unresolved crime against the ally that re-triggered arrest the instant
 	// the player was released (5.1c smoke BUG-03). Clear comprehensively via a
 	// live query rather than the crime ids stamped at arrest time.
-	factionSet := map[string]bool{faction: true}
-	for _, a := range alliesFn(faction) {
-		factionSet[a] = true
-	}
-	for f := range factionSet {
-		for _, c := range aCrimesForFactionFn(f, false) {
-			if c.Perpetrator.Type == crimes.PerpPlayer && c.Perpetrator.Id == userId {
-				aResolveCrimeFn(f, c.Id, "served sentence")
-			}
-		}
-	}
-
-	// Withdraw any open bounties issued by the faction set against this player.
-	for _, b := range aOpenBountiesFn(userId) {
-		if b.Issuer.Type == bounties.IssuerFaction && factionSet[b.Issuer.Id] {
-			aWithdrawFn(b.Id)
-		}
-	}
-
-	// Reset rep to the floor for each faction in the set, only where the
-	// player's rep is currently below it (never lowers good standing).
-	floor := aRepResetFn()
-	for f := range factionSet {
-		if aGetRepFn(f, userId) < floor {
-			aSetRepFn(f, userId, floor)
-		}
-	}
+	ClearFactionRecord(faction, userId, "served sentence")
 
 	// Remove the Jailed buff.
 	player.RemoveBuff(jailedBuffId)

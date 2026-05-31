@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/bounties"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/factions"
+	"github.com/GoMudEngine/GoMud/internal/justice"
 	"github.com/GoMudEngine/GoMud/internal/knowledge"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -13,6 +14,22 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/state/life"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
+
+// ---------------------------------------------------------------------------
+// Injectable seams (tests override).
+// ---------------------------------------------------------------------------
+
+// clearFactionRecordFn is the seam that allows tests to observe whether
+// ClearFactionRecord is called with the correct arguments after a
+// faction-dispatched hunter kills the wanted player.
+var clearFactionRecordFn = justice.ClearFactionRecord
+
+// openAgainstPlayerFn and getMobInstanceFn are seams so the killGuard
+// branch can be exercised hermetically in unit tests.
+var openAgainstPlayerFn = bounties.OpenAgainstPlayer
+var getMobInstanceFn = func(instanceId int) *mobs.Mob { return mobs.GetInstance(instanceId) }
+var tryClaimFn = bounties.TryClaim
+var markExpiredFn = bounties.MarkExpired
 
 type bountyKillKind int
 
@@ -74,9 +91,10 @@ func attributeBountyKill(
 	return bountyKill{kind: killNone}
 }
 
-// killerMobFactions resolves real mob-instance faction memberships via the
-// factions registry. Used as the killerFactions callback in production.
-func killerMobFactions(instanceId int) []string {
+// killerMobFactionsFn resolves real mob-instance faction memberships via the
+// factions registry. Package-level var so tests can override it without
+// seeding the real mobs/factions registries.
+var killerMobFactionsFn = func(instanceId int) []string {
 	inst := mobs.GetInstance(instanceId)
 	if inst == nil {
 		return nil
@@ -98,7 +116,7 @@ func wirePlayerDeathBountyResolve(c *characters.Character) {
 				return
 			}
 			userId := c.GetUserId()
-			open := bounties.OpenAgainstPlayer(userId)
+			open := openAgainstPlayerFn(userId)
 			if len(open) == 0 {
 				return
 			}
@@ -111,21 +129,26 @@ func wirePlayerDeathBountyResolve(c *characters.Character) {
 					issuerFaction = b.Issuer.Id
 				}
 
-				bk := attributeBountyKill(d.Killer, userId, issuerFaction, d.DamageMap, killerMobFactions)
+				bk := attributeBountyKill(d.Killer, userId, issuerFaction, d.DamageMap, killerMobFactionsFn)
 
 				switch bk.kind {
 				case killGuard:
-					inst := mobs.GetInstance(bk.mobInstanceId)
+					inst := getMobInstanceFn(bk.mobInstanceId)
 					if inst == nil {
-						bounties.MarkExpired(b.Id)
+						markExpiredFn(b.Id)
 						continue
 					}
-					if _, ok := bounties.TryClaim(b.Id, knowledge.MobSubject(int(inst.MobId))); ok {
+					if _, ok := tryClaimFn(b.Id, knowledge.MobSubject(int(inst.MobId))); ok {
 						inst.Character.Gold += b.GoldReward
+						// 5.2: a faction-dispatched hunter's kill clears the
+						// player's record with that faction (death pays the debt).
+						if issuerFaction != "" {
+							clearFactionRecordFn(issuerFaction, userId, "bounty claimed")
+						}
 					} else {
 						// Claim lost to a race (already claimed/withdrawn);
 						// don't leak the bounty open. Mirrors the killPlayer path.
-						bounties.MarkExpired(b.Id)
+						markExpiredFn(b.Id)
 					}
 
 				case killPlayer:

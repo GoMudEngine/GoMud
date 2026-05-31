@@ -21,6 +21,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/audio"
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
+	"github.com/GoMudEngine/GoMud/internal/bounties"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -1270,6 +1271,11 @@ func loadAllDataFiles(isReload bool) {
 	if err := factions.LoadAllDefinitions(); err != nil {
 		mudlog.Error("factions.LoadAllDefinitions", "error", err)
 	}
+
+	// Seed standing player-claimable bounties on notable hostile NPCs.
+	// Must come after mobs.LoadDataFiles() (statpool lookup) and
+	// factions.LoadAllDefinitions() (FactionIssuer resolution). Idempotent.
+	bounties.SeedStanding(configs.GetFilePathsConfig().DataFiles.String())
 
 	allMobTemplates := mobs.AllMobTemplates()
 	adapted := make([]shops.ShopBearingMob, 0, len(allMobTemplates))

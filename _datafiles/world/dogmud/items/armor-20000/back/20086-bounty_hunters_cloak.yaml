@@ -1,0 +1,18 @@
+itemid: 20086
+name: bounty hunter's cloak
+vendor_categories:
+- tailoring
+namesimple: cloak
+description: >
+  A travel-worn cloak of heavy wool, cut long enough to cover
+  gear and short enough to clear the knee when moving fast.
+  The color is an indistinct dark brown that blends with earth
+  and shadow equally well. An interior seam hides a row of
+  narrow loops sized for small tools or vials. Durable,
+  anonymous, and thoroughly broken in.
+type: back
+subtype: wearable
+weight: 2.0
+physical_mitigation: 1
+rarity_tier: 60
+value: 0

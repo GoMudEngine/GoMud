@@ -1,0 +1,91 @@
+# bounty_hunter archetype
+#
+# Dynamically-spawned contract hunter. On idle ticks, drives
+# the hunt_bounty_target goal planner (chunk 5.2) which pursues
+# the wanted player across zones. Falls through to the standard
+# generic_fighter combat cascade once in melee.
+#
+# Key properties vs. generic_fighter:
+#   - goal_weights boosts hunt_bounty_target to 5.0 so the planner
+#     always wins priority scoring against survival (80).
+#   - default_goals includes survival at 80 so the mob is not
+#     goal-less before dispatch adds the hunt goal at priority 100.
+#   - No predation (target_weakest_mob_in_room) — the hunter ignores
+#     opportunistic prey; it has a contract.
+#
+# Spec: docs/superpowers/plans/2026-05-30-mob-aliveness-5.2-bounty-hunting.md
+
+tree:
+  type: selector
+  children:
+    # 1. Panic-flee at critical HP (shared pattern with other archetypes).
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 25
+        - type: action
+          do: flee
+
+    # 2. packmate_hurt: engage the attacker.
+    - type: action
+      event: packmate_hurt
+      do: attack
+
+    # 3. heard_callforhelp: navigate toward an adjacent caller.
+    - type: action
+      event: heard_callforhelp
+      do: go_to_caller_room
+
+    # 4. mob_combat_round: standard combat cascade (verbatim from generic_fighter).
+    - type: selector
+      event: mob_combat_round
+      children:
+        - type: sequence
+          children:
+            - type: condition
+              check: target_is_casting
+            - type: action
+              do: command_best_of
+              cmds: [bash, trip]
+
+        - type: sequence
+          children:
+            - type: condition
+              check: target_not_standing
+            - type: action
+              do: command_best_of
+              cmds: [kick]
+
+        - type: action
+          do: command_best_of
+          cmds: [bash]
+
+        - type: sequence
+          children:
+            - type: decorator
+              mod: invert
+              child:
+                type: condition
+                check: multiple_enemies
+            - type: action
+              do: command_best_of
+              cmds: [grapple]
+
+        - type: action
+          do: command_best_of
+          cmds: [trip]
+
+    # 5. Strategic goal pursuit on idle ticks — hunt_bounty_target planner
+    #    drives pursuit; survival fallback while waiting for dispatch.
+    - type: action
+      event: mob_idle
+      do: try_goal_planner
+
+goal_weights:
+  hunt_bounty_target: 5.0
+
+default_goals:
+  - type: survival
+    priority: 80

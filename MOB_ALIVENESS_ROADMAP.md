@@ -108,7 +108,7 @@ should always agree.
 | 4.5 | Strategic | Reactive goal generation | L | 1.6, 4.1 | Done |
 | 4.6 | Strategic | Goal satisfaction & pruning | S | 4.1 | Done |
 | 5.1 | Cross-cut | Town justice | XL | 1.2, 1.3, 1.5, 3.4, Phase 4 | Not started |
-| 5.2 | Cross-cut | Bounty hunting | L | 1.4, 1.5, 2.8, 4.4 | Not started |
+| 5.2 | Cross-cut | Bounty hunting | L | 1.4, 1.5, 2.8, 4.4 | Done |
 | 5.3 | Cross-cut | Equipment-aware shopping | L | 2.1, 2.2, 2.3, 4.4 | Not started |
 | 5.4 | Cross-cut | NPC market participation | M | 5.3 | Not started |
 | 6.1 | Polish | Stillwater town-flavor pass | L | Phase 1, Phase 3 | Not started |
@@ -119,7 +119,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 27 / 42 done • 0 in progress • 15 not started.
+**Roll-up:** 28 / 42 done • 0 in progress • 14 not started.
 
 ---
 
@@ -817,13 +817,52 @@ rep via new `RepFaction`/`RepAmount` quest reward fields; stale
 - **Why:** The single biggest aliveness leap — the world reacts to player crimes meaningfully. (Absorbed from MEMORY.md — peacefulquest → faction system.)
 
 ### 5.2 Bounty hunting
-**Status:** Not started • **Size:** L
+**Status:** Done (2026-05-30) • **Size:** L
 
 - **Goal:** NPCs (and NPC archetypes) actively hunt declared-bounty targets — NPC bandits *or* wanted players.
 - **In:** Bounty hunter archetype, hunt-goal seeded from 1.5 bounty state, tracking via 2.8, encounter behavior, optional contract acquisition (pick up bounties from boards).
 - **Out:** Player-as-bounty-hunter system (player-facing flip side; could come later).
 - **Depends on:** 1.4, 1.5, 2.8, 4.4
 - **Why:** Bad actors can't safely hide. Wanted players get *chased*, not just yelled at by guards. NPC bad actors get hunted by their own world.
+- **Shipped:** Two halves. **Half A (NPC hunts wanted player):** a new
+  `internal/bountyhunter` package runs a per-round dispatch sweep
+  (`RunDispatchSweep`) that spawns ONE scaled, affix-geared hunter per
+  player whose single open faction bounty meets or exceeds
+  `BountyHunterGoldThreshold`; the hunter is placed at the issuer
+  faction's `release_room`, carries the faction group (so the
+  `PlayerDeath_BountyResolve` `killGuard` path credits the kill), and
+  has a param-less `hunt_bounty_target` goal added so `try_goal_planner`
+  fires. Per-hunter target lives in instance `MiscData`
+  (`bh_target_user_id`) — not in goal params — because the goals store is
+  template-keyed and cannot hold per-instance divergent state. New
+  `hunt_bounty_target` goal type + planner: pathto → attack; jailed target
+  → planner hold (never enters a cell); offline target → hold. On death,
+  `justice.ClearFactionRecord` clears the record — death pays the debt
+  identically to serving a sentence. Redispatch cooldown
+  (`BountyHunterRedispatchCooldown`) enforces a reprieve window after a
+  hunter is killed. **Not PvP** — only NPC hunters pursue wanted players.
+  **Half B (player-claimable standing bounties):** an authored
+  `bounties.standing.yaml` seed file (3 notable hostile NPCs) is loaded
+  idempotently at boot via `bounties.SeedStanding`; players claim by
+  killing the target and receive gold + faction rep via the existing
+  `MobDeath_BountyClaim` hook. Package context at
+  `internal/bountyhunter/context.md`. Spec at
+  `docs/superpowers/specs/2026-05-30-mob-aliveness-5.2-bounty-hunting-design.md`,
+  plan at
+  `docs/superpowers/plans/2026-05-30-mob-aliveness-5.2-bounty-hunting.md`.
+- **Deferred follow-ups:**
+  - **Disguise-kit evasion** — a skullduggery-skill item that hides the
+    player's identity from the hunter's pursuit check (the planner could
+    query a `hidden_identity` MiscData key set by the item).
+  - **Criminal NPCs hunted (NPC-vs-NPC)** — wanted mobs hunted by
+    faction-aligned hunters. Requires mob-target bounty dispatch, a
+    second dispatch branch in `RunDispatchSweep`, and planner support for
+    mob targets. No current content need; land when a faction-criminal NPC
+    archetype is authored.
+  - **Instance-keyed goal state** — 5.2 sidesteps the template-keyed
+    goal store via instance MiscData. If more instance-divergent
+    goal-param use cases accumulate, invest in per-instance goal state in
+    `internal/goals`.
 
 ### 5.3 Equipment-aware shopping
 **Status:** Not started • **Size:** L

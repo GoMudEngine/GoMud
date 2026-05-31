@@ -1,0 +1,26 @@
+itemid: 10037
+name: bounty hunter's blade
+vendor_categories:
+- blacksmithing
+namesimple: blade
+description: >
+  A short, straight sword built for utility rather than ceremony.
+  The blade is plain steel, unmarked and easy to clean, with a
+  modest crossguard and a grip of tightly-wound cord. There is
+  nothing showy about it — every design choice points toward
+  something that works reliably across many different encounters.
+  A tool, not a trophy.
+type: weapon
+hands: 1
+subtype: slashing
+weight: 5.5
+speedmultiplier: 0.8
+staminacost: 7
+grapplemodifier: 0.75
+damage:
+  basedamage: 6
+  variance: 2
+damage_multiplier: 1.00
+parryrating: 11
+rarity_tier: 60
+value: 0
