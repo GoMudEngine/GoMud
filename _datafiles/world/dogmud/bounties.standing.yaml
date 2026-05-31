@@ -1,0 +1,21 @@
+# Standing player-claimable bounties on notable hostile NPCs.
+# Seeded at boot by bounties.SeedStanding — idempotent (skips targets
+# that already have an open bounty).
+#
+# Rewards auto-compute from the target mob's statpool:
+#   gold = statpool * BountyGoldDefaultMultiplier (floor: BountyGoldFloor)
+#   rep  = max(1, statpool / 100)
+#
+# expiry_round 0 (default) means the bounty never expires.
+
+- target_mob_id: 272
+  issuer_faction: thornwall_guards
+  reason: "Standing contract: the Chrysalis Phantom"
+
+- target_mob_id: 286
+  issuer_faction: thornwall_guards
+  reason: "Standing contract: the bandit Soren"
+
+- target_mob_id: 219
+  issuer_faction: thornwall_guards
+  reason: "Standing contract: the goblin shaman of the Ironwind Steppe"
