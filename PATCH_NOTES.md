@@ -1,5 +1,34 @@
 # DOGMud Patch Notes
 
+## 2026-05-30 — Bounty hunters (5.2)
+
+The law no longer waits for you to wander back into town. Rack up a serious
+enough bounty — the kind a single heinous crime earns — and a **bounty hunter**
+takes the contract. Word reaches you that you're being hunted; then a tough,
+well-geared tracker sets out from the wronged town and closes in, room by room,
+wherever you run. You can't simply hide.
+
+Your ways out are real choices: turn yourself in and face **justice** (pay the
+fine or serve the time — which clears the bounty and calls the hunter off, so
+sprinting to a cell to get arrested is a legitimate, if humbling, escape), or
+stand and **fight** the hunter. Beating one buys a reprieve, not absolution —
+the bounty stands, and another will come. Falling to one settles the debt: your
+record with that town is wiped clean, the hard way. A hunter will never strike
+you down while you sit in a holding cell.
+
+The hunter scales to how wanted (and how dangerous) you are, and wears gear to
+match — gear that, on rare occasions, a victor might claim from the body.
+
+And it cuts both ways: notable threats now carry **standing bounties** you can
+collect. Check a bounty board (or `bounty list`) — the **Chrysalis Phantom**,
+the bandit **Soren**, and others have prices on their heads, payable to whoever
+brings them down.
+
+This is NPC-vs-player pursuit, not PvP — no player ever hunts another player.
+(Internally: `internal/bountyhunter` dispatch + a `hunt_bounty_target`
+goal/planner + `bounty_hunter` archetype; reuses the 1.5 bounty, 2.8 tracking,
+4.x goal, and 5.1 justice substrate.)
+
 ## 2026-05-30 — Town justice comes to Stillwater (5.1 rollout)
 
 The watch now reaches a second town. **Constable Drunn** of Stillwater is no
