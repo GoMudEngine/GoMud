@@ -225,6 +225,19 @@ open. You are free to go.") fires automatically when the buff is removed —
 this is the single release line for both the timer and pay-fine paths, so
 `ResolveDetention` does NOT send its own.
 
+#### `ClearFactionRecord(faction string, userId int)`
+
+Exported helper shared by **two** callers:
+- `ResolveDetention` — called when a player serves a sentence or pays a
+  fine (detention ends).
+- `internal/hooks/PlayerDeath_BountyResolve` — called in the `killGuard`
+  branch when a bounty-hunter mob claims a wanted player's death (5.2).
+  Death pays the debt in the same way as serving a sentence.
+
+Clears the player's standing with the given faction and all its declared
+allies: resolves unresolved crimes, withdraws open faction bounties, and
+resets rep to `JusticeArrestRepReset` floor where currently below it.
+
 #### `ResolveDetention(player *characters.Character, userId int) bool`
 
 Ends detention on timer expiry or fine payment. Crucially, it clears the
@@ -293,7 +306,7 @@ player commands
 |---------------|---------------|
 | `internal/hooks/NewRound_MobRoundTick.go` | `RunGuardEnforcement` (guard-group mobs) |
 | `internal/hooks/Jail_ExpiryRelease.go` | `JailInfo`, `ResolveDetention` (per-player tick) |
-| `internal/hooks/PlayerDeath_BountyResolve.go` | `bounties.Withdraw` (on wanted player's death) |
+| `internal/hooks/PlayerDeath_BountyResolve.go` | `ClearFactionRecord` (5.2: hunter kill clears the record, same as serving a sentence); `bounties.Withdraw` (on wanted player's death via other paths) |
 | `internal/hooks/justice_wiring.go` | `justice.SetGuardSay(fn)` at init |
 | `internal/hooks/MobDeath_FactionRep.go` | `MaybeDeclareBounty` (murder) |
 | `internal/actions/attack.go` | `MaybeDeclareBounty` (assault) |
