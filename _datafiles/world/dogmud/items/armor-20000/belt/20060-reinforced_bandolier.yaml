@@ -13,5 +13,5 @@ value: 35
 weight: 2.5
 physical_mitigation: 1
 is_bandolier: true
-bandolier_capacity: 12
+bandolier_capacity: 24
 weight_reduction: 0.40

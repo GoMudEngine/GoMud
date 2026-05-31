@@ -12,7 +12,7 @@ base_folds: 20
 target_defense_type: physical
 effect_type: damage
 effect_magnitude: 225
-damage_multiplier: 1.00
+damage_multiplier: 0.80
 categories:
   - harm_multi
 cast_user_text: "You channel a wave of rupturing force outward."

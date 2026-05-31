@@ -27,7 +27,7 @@ var ForageDifficulty = map[string]float64{
 // ForageYields maps biome IDs to lists of item IDs that can be found.
 // Duplicate entries increase the probability of that item appearing.
 var ForageYields = map[string][]int{
-	"forest":    {40004, 40004, 40005, 40005, 40049, 40049},
+	"forest":    {40004, 40004, 40005, 40005, 40049, 40049, 40067}, // 40067 pine pitch (tapped from forest pines, e.g. Fernway South)
 	"land":      {40004, 40005, 40049, 40047},
 	"farmland":  {40004, 40004, 40005, 40007},
 	"swamp":     {40005, 40005, 40004, 40055, 40055, 40056, 40057, 40057},
@@ -35,7 +35,7 @@ var ForageYields = map[string][]int{
 	"water":     {40058, 40058, 40058, 40058, 40058, 40059},
 	"mountains": {40001, 40004, 40005, 40020, 40024, 40025},
 	"cliffs":    {40005, 40020, 40024},
-	"cave":      {40001, 40001, 40020, 40020, 40005, 40024, 40025, 40026, 40027, 40029},
+	"cave":      {40001, 40001, 40020, 40020, 40005, 40024, 40025, 40026, 40027, 40029, 40011}, // 40011 hive fragment (crystallized hive matter, e.g. Ironwind Steppe caves)
 }
 
 // NightForageYields are appended to the yield table when it's night.

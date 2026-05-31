@@ -13,5 +13,5 @@ type: componentbag
 subtype: wearable
 value: 150
 weight: 2.0
-bag_capacity: 75
+bag_capacity: 225
 weight_reduction: 0.45

@@ -1,5 +1,21 @@
 # DOGMud Patch Notes
 
+## 2026-05-30 — Balance & quality-of-life tuning
+
+- **Magic damage up ~30%.** `SpellDamageScale` 1.2 → 1.56. To keep area-effect
+  spells from running away with the buff, every AoE damage spell's per-spell
+  `damage_multiplier` was cut 20% (conviction-barrage, hemorrhagic-burst,
+  hemorrhagic-wave, sparks, veil-rend) — net effect: single-target spells
+  ~+30%, AoE only ~+4%.
+- **Bigger crafting storage.** Component pouches now hold **3×** their old
+  capacity (component pouch 60, artisan's satchel 120, master's component case
+  225) and bandoliers **2×** (leather 12, reinforced 24).
+- **Two crafting staples are now forageable.** Previously vendor-only,
+  **pine pitch** now forages in forest biomes (e.g. the Fernway pines) and
+  **hive fragments** forage in cave biomes (e.g. the Ironwind Steppe caves), so
+  they no longer depend solely on shop stock. (A broader audit of every
+  crafting material's obtain path is queued.)
+
 ## 2026-05-30 — Bounty hunters (5.2)
 
 The law no longer waits for you to wander back into town. Rack up a serious

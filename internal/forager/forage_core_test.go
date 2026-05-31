@@ -49,9 +49,9 @@ func TestForageCore_NightYieldsAppendedForForestAtNight(t *testing.T) {
 		if !r.Found {
 			continue
 		}
-		// Acceptable IDs: forest day (40004, 40005, 40049) + night (40046)
+		// Acceptable IDs: forest day (40004, 40005, 40049, 40067 pine pitch) + night (40046)
 		switch r.ItemId {
-		case 40004, 40005, 40049:
+		case 40004, 40005, 40049, 40067:
 			// ok
 		case 40046:
 			moonpetalSeen = true

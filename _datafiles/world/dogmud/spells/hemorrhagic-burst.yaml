@@ -12,7 +12,7 @@ base_folds: 16
 target_defense_type: physical
 effect_type: damage
 effect_magnitude: 450
-damage_multiplier: 1.40
+damage_multiplier: 1.12
 categories:
   - harm_multi
 cast_user_text: "You focus on the blood of your enemies, willing it to boil and rupture outward!"
