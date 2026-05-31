@@ -38,9 +38,6 @@ func TestBalance_BountyHunterDefaults(t *testing.T) {
 	if b.BountyHunterMinStatpool != 300 || b.BountyHunterMaxStatpool != 500 {
 		t.Fatalf("min/max statpool = %d/%d, want 300/500", int(b.BountyHunterMinStatpool), int(b.BountyHunterMaxStatpool))
 	}
-	if b.BountyHunterRepathRounds != 5 {
-		t.Fatalf("BountyHunterRepathRounds = %d, want 5", int(b.BountyHunterRepathRounds))
-	}
 	if b.BountyHunterRedispatchCooldown != 500 {
 		t.Fatalf("BountyHunterRedispatchCooldown = %d, want 500", int(b.BountyHunterRedispatchCooldown))
 	}

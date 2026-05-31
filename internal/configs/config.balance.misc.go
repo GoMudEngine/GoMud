@@ -382,9 +382,6 @@ func (b *Balance) validateMisc() {
 	if b.BountyHunterMaxStatpool <= 0 {
 		b.BountyHunterMaxStatpool = 500
 	}
-	if b.BountyHunterRepathRounds <= 0 {
-		b.BountyHunterRepathRounds = 5
-	}
 	if b.BountyHunterRedispatchCooldown <= 0 {
 		b.BountyHunterRedispatchCooldown = 500
 	}

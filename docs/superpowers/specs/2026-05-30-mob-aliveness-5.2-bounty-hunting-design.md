@@ -44,7 +44,7 @@ already-shipped substrate.
 | Hunter gear kit | ~6 new dedicated items worn by the hunter; ~4% independent per-piece drop. |
 | Claim on player death | Extend `PlayerDeath_BountyResolve` so a hunter mob claims + clears the faction's crime record (death pays the debt). |
 | Half B content | Standing-bounty seed loader + authored NPC bounties + verify the player claim/board path. |
-| Config | Threshold, statpool scaling, re-path cadence, re-dispatch cooldown. |
+| Config | Threshold, statpool scaling, gear divisor, re-dispatch cooldown. |
 
 ---
 
@@ -146,19 +146,6 @@ MiscData (`bh_target_user_id`), not from goal params:
    cross-zone supported via the mapper). `try_scan` / `try_track` add flavor and
    handle a hidden target on the final approach.
 
-**Planner** (`internal/planners/hunt_bounty_target.go`, per-tick, returns a
-Command + Status):
-1. **Jailed-target hold.** If the target is jailed
-   (`HasBuffFlag(buffs.Jailed)` or jail MiscData present): return a *hold* —
-   loiter; do **not** path into the cell, do **not** attempt to engage. (The
-   manager will call the hunt off once serving/paying clears the bounty.)
-2. **Same room as target:** engage — `attack @<uid>` (subject to §7 safety).
-3. **Else (pursue):** pathfind toward the target's current room and step ~1
-   room/tick (a closing chase, not a teleport), re-pathing every
-   `BountyHunterRepathRounds`; cross-zone allowed (reuse the `pathto` /
-   `move_toward` plumbing the caravans/scout use). `try_scan` / `try_track`
-   add flavor and handle a hidden target on the final approach.
-
 The planner reads the engine's authoritative player-room (omniscient closing
 pursuit, per design) — you gain ground by moving but cannot simply hide. The
 future disguise-kit system (out of scope) is what will later break the track.
@@ -234,7 +221,6 @@ max(JusticeBountyMurderMult(2.0), repMult≤2.0)`.
 | `BountyHunterBaseStatpool` | 250 | Base of the hunter's scaled statpool. |
 | `BountyHunterStatpoolPerGold` | 0.25 | Statpool added per gold of the triggering bounty. |
 | `BountyHunterMinStatpool` / `MaxStatpool` | 300 / 500 | Clamp. |
-| `BountyHunterRepathRounds` | 5 | Re-path cadence (closing chase). |
 | `BountyHunterRedispatchCooldown` | 500 | Rounds before a new hunter after one is killed. |
 | `BountyHunterGearGoldDivisor` | 5 | Gear affix scale: `gearGold = statpool / divisor`, fed to `GenerateAffixedItem` (§5). |
 | Hunter `itemdropchance` (data) | 3 | ~3% independent per-worn-piece drop (~8 pieces). |

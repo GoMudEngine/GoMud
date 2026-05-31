@@ -93,8 +93,13 @@ player has multiple open faction bounties.
 ## Pursuit (Goal + Planner)
 
 The `hunt_bounty_target` goal type lives in
-`internal/goals/catalog/hunt_bounty_target.go`. Its predicate returns
-`true` (goal is still active) while the triggering bounty is open.
+`internal/goals/catalog/hunt_bounty_target.go`. It is a **param-less,
+template-level intent marker**: its predicate **always returns `false`**
+(never self-satisfies / never self-prunes), because the goal record is shared
+across all hunter instances of the template and per-hunter lifecycle is owned by
+the dispatch reaper (which despawns each hunter when *its* bounty closes), not by
+goal pruning. The per-hunter target lives on the instance's MiscData
+(`bh_target_user_id`), read by the planner — not in goal params.
 
 The planner (`internal/planners/hunt_bounty_target.go`) runs each tick
 the hunter is idle. Decision logic (`huntDecision`, pure + unit-testable):
@@ -118,7 +123,7 @@ faction (via the dynamically-appended `Groups` entry), the existing
 
 1. Calls `bounties.TryClaim(bountyId, MobSubject(killerMobId))`.
 2. Transfers `GoldReward` to the hunter.
-3. Calls `justice.ClearFactionRecord(issuerFaction, userId)` — resolves
+3. Calls `justice.ClearFactionRecord(issuerFaction, userId, "bounty claimed")` — resolves
    the player's crimes, withdraws the faction's open bounties, and resets
    rep to the floor. Identical clearing to serving a jail sentence.
 
@@ -173,7 +178,6 @@ bounty. The dispatch sweep then calls off the hunt at the next round.
 | `BountyHunterStatpoolPerGold` | 0.25 | Statpool added per gold of triggering bounty |
 | `BountyHunterMinStatpool` | 300 | Clamp floor for hunter statpool |
 | `BountyHunterMaxStatpool` | 500 | Clamp ceiling for hunter statpool |
-| `BountyHunterRepathRounds` | 5 | Rounds between pursuit re-paths (planner interval) |
 | `BountyHunterRedispatchCooldown` | 500 | Rounds before re-dispatch after a hunter dies |
 | `BountyHunterGearGoldDivisor` | 5 | `gearGold = statpool / divisor` fed to `GenerateAffixedItem` |
 
