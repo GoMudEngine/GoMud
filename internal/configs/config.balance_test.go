@@ -46,6 +46,17 @@ func TestBalance_BountyHunterDefaults(t *testing.T) {
 	}
 }
 
+func TestBalance_MobUpgradeDefaults(t *testing.T) {
+	b := &Balance{}
+	b.validateMisc()
+	if int(b.MobUpgradeGoldReserve) != 50 {
+		t.Fatalf("MobUpgradeGoldReserve = %d, want 50", int(b.MobUpgradeGoldReserve))
+	}
+	if float64(b.MobUpgradeMinDelta) != 1.0 {
+		t.Fatalf("MobUpgradeMinDelta = %v, want 1.0", float64(b.MobUpgradeMinDelta))
+	}
+}
+
 func TestBalanceConfig_ForagerDefaults(t *testing.T) {
 	cfg := &Balance{}
 	cfg.Validate()

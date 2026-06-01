@@ -107,9 +107,9 @@ should always agree.
 | 4.4 | Strategic | Strategic→tactical translation | XL | 4.3, Phase 2 | Done |
 | 4.5 | Strategic | Reactive goal generation | L | 1.6, 4.1 | Done |
 | 4.6 | Strategic | Goal satisfaction & pruning | S | 4.1 | Done |
-| 5.1 | Cross-cut | Town justice | XL | 1.2, 1.3, 1.5, 3.4, Phase 4 | Not started |
+| 5.1 | Cross-cut | Town justice | XL | 1.2, 1.3, 1.5, 3.4, Phase 4 | Done |
 | 5.2 | Cross-cut | Bounty hunting | L | 1.4, 1.5, 2.8, 4.4 | Done |
-| 5.3 | Cross-cut | Equipment-aware shopping | L | 2.1, 2.2, 2.3, 4.4 | Not started |
+| 5.3 | Cross-cut | Equipment-aware shopping | L | 2.1, 2.2, 2.3, 4.4 | Done |
 | 5.4 | Cross-cut | NPC market participation | M | 5.3 | Not started |
 | 6.1 | Polish | Stillwater town-flavor pass | L | Phase 1, Phase 3 | Not started |
 | 6.2 | Polish | Parity audit closeout | S | 6.1 | Not started |
@@ -119,7 +119,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 28 / 42 done • 0 in progress • 14 not started.
+**Roll-up:** 30 / 42 done • 0 in progress • 12 not started.
 
 ---
 
@@ -787,14 +787,20 @@ Compose layers into player-facing systems. These wait until the layers exist
 to compose.
 
 ### 5.1 Town justice
-**Status:** In progress — decomposed into 5.1a–d; **5.1a–c + Stillwater
-rollout shipped** • **Size:** XL
+**Status:** Done (2026-06-01) — 5.1a–c + Stillwater rollout shipped; 5.1d
+closed as "done as far as we are taking it" • **Size:** XL
 
 Decomposition (each its own spec→plan→build): **5.1a** wanted-verdict + guard
 warn→attack (DONE — `internal/justice`, per-round guard tick; spec/plan at
 `docs/superpowers/{specs,plans}/2026-05-29-town-justice-5.1a-guard-enforcement*`).
 **5.1b** crime→auto-bounty trigger (DONE). **5.1c** arrest mechanic (DONE).
-5.1d redemption (pay-fine/serve/quest) — not yet started.
+**5.1d** redemption (pay-fine/serve/quest) — **not built; closed 2026-06-01**
+per user decision that the current justice loop (warn → attack → arrest →
+detain, plus death-pays-the-debt via the 5.2 bounty-hunter `ClearFactionRecord`
+path) is sufficient. Death and serving a sentence already clear the faction
+record, so a dedicated pay-fine/quest redemption flow is deferred indefinitely;
+reopen as a fresh chunk if redemption UX is later wanted. The chunk-5.1-followup
+warn-stamp pruning already landed in the Stillwater rollout.
 
 **Stillwater rollout shipped 2026-05-30:** data-driven holding-cell registry
 (`HoldingCellRoom` field on faction definition YAML, boot-validated via
@@ -865,13 +871,53 @@ rep via new `RepFaction`/`RepAmount` quest reward fields; stale
     `internal/goals`.
 
 ### 5.3 Equipment-aware shopping
-**Status:** Not started • **Size:** L
+**Status:** Done (2026-06-01) • **Size:** L
 
 - **Goal:** NPCs save gold and visit shops to buy upgrades, applying 2.2's comparison logic.
 - **In:** "Upgrade my X slot" goal, gold-saving behavior, shop-route planning, archetype preferences.
 - **Out:** NPCs commissioning custom-craft from player-crafters (maybe later).
 - **Depends on:** 2.1, 2.2, 2.3, 4.4
 - **Why:** A bandit who keeps the steel sword you dropped and shows up in better gear next time is far more memorable than one in starter rags.
+- **Shipped:** Survey-worst-slot upgrade drive. New planner-local evaluator
+  `scanZoneUpgrades` (`internal/planners/shop_upgrade.go`) scores every in-stock
+  item across the mob's zone shops via `itemvalue.ItemValueDelta` — the highest
+  positive delta naturally targets whichever slot benefits most, so no per-slot
+  authoring — prices each with the buyer-side dynamic price `shops.CalcSellPrice`,
+  and returns the best affordable positive-delta candidate (tie-break cheaper).
+  New perpetual `upgrade-gear` goal type (`internal/goals/catalog/upgrade_gear.go`):
+  `Predicate` always false, `ContextScore` a non-zero floor (1.0, so 4.6 dormancy
+  never abandons it) rising to 2.5 when idle + has spendable gold or sellable
+  loot; optional `reserve` param; cheap and self-contained (no shop scan in
+  scoring — the planner owns stock decisions). New `upgrade-gear` planner
+  (`internal/planners/upgrade_gear.go`): pending-equip one-shot → `gearup`;
+  affordable upgrade → `buy <name>` at shop or `pathto`; unaffordable upgrade →
+  composes the existing wealth-gold sell loop to save up; nothing in stock →
+  idle. **Known gap (final-review):** the save-up `sell all` branch is a no-op
+  for mobs — there is no `sell` mob command / `actions.Sell` yet, so it emits a
+  confused emote (pre-existing in wealth-gold; [[project_mob_sell_command_missing]]).
+  So in practice mobs buy upgrades from gold they ALREADY carry; the
+  sell-to-fund path lands when the `sell` verb is lifted. Buy target rescanned
+  each tick (only the save-up sell vendor is sticky; the buy branch clears that
+  sticky to avoid stale vendors across cycles). The evaluator only considers
+  items `gearup` can actually wear (Weapon/Wearable) so a mis-tagged shop item
+  can't trigger a buy-but-can't-equip re-buy loop; the planner also idles for
+  mobs that can't equip-from-give (non-combat / animal species). Two
+  balance knobs `MobUpgradeGoldReserve` (50) + `MobUpgradeMinDelta` (1.0, may
+  retune after live smoke). Seeded as a low-priority `default_goals` entry on
+  `thief` + `guard_captain` (no btree edits — `try_goal_planner` already present
+  in every non-boss tree). **Out:** cross-respawn persistence of bought gear
+  (instance saves are wiped in prod/smoke, so upgrades persist only for the
+  instance's lifetime — a remembered-loadout system is a separate design);
+  adjacent-zone shopping (same-zone only); the legacy `mastery-equip`
+  planner left untouched (now partially redundant; candidate for later
+  deprecation). Follow-up logged: instance-zone items need to be sellable with
+  affix-scaled value (separate chunk). **Unit tests** cover the pure helper +
+  nil/empty/branch shapes; the live scoring/pricing path is validated by an
+  in-game smoke deferred to the user (per the 2.8/2.9/2.10 precedent). Boot
+  smoke clean (`Server Ready`, no panic). Spec at
+  `docs/superpowers/specs/2026-06-01-mob-aliveness-5.3-equipment-aware-shopping-design.md`,
+  plan at
+  `docs/superpowers/plans/2026-06-01-mob-aliveness-5.3-equipment-aware-shopping.md`.
 
 ### 5.4 NPC market participation
 **Status:** Not started • **Size:** M
