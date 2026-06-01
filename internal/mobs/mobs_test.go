@@ -1905,3 +1905,60 @@ func TestMobSpawn_CuratedGateSkipsIncompatibleMutation(t *testing.T) {
 		t.Errorf("extra-arms should NOT be applied to canine, got rank %d", mob.Character.Mutations["extra-arms"])
 	}
 }
+
+func TestNewMobById_RestoresGoldEquipmentPlanState(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+	withMobProgressionEnabled(t)
+
+	seed := NewMobById(1, 100)
+	if seed == nil {
+		t.Fatal("NewMobById returned nil")
+	}
+	seed.Character.Gold = 4242
+	seed.Character.Equipment.Body = items.Item{ItemId: 1, EnchantTier: 4}
+	seed.Character.SetMiscData("plan:upgrade-gear:worst_slot", "body")
+	if err := SaveMobInstance(seed); err != nil {
+		t.Fatalf("seed SaveMobInstance: %v", err)
+	}
+	path := instancePath(seed.MobId, seed.Zone, seed.Character.Name, seed.HomeRoomId)
+	t.Cleanup(func() { _ = os.Remove(path) })
+
+	got := NewMobById(1, 100)
+	if got == nil {
+		t.Fatal("NewMobById returned nil")
+	}
+	assert.Equal(t, 4242, got.Character.Gold, "gold must be restored")
+	assert.Equal(t, 1, got.Character.Equipment.Body.ItemId, "equipped item must be restored")
+	assert.Equal(t, 4, got.Character.Equipment.Body.EnchantTier, "enchant tier must be restored")
+	assert.Equal(t, "body", got.Character.GetMiscData("plan:upgrade-gear:worst_slot"), "plan state must be restored")
+}
+
+func TestNewMobById_OldFormatSaveLeavesTemplateGold(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+	withMobProgressionEnabled(t)
+
+	// Simulate an OLD-format save: training only, no gold/equipment/plan
+	// fields. Write it via a MobInstanceData with the new fields left nil.
+	seed := NewMobById(1, 100)
+	templateGold := seed.Character.Gold
+	seed.Character.Stats.Strength.Training = 12 // trips hasProgression
+	if err := SaveMobInstance(seed); err != nil {
+		t.Fatalf("seed SaveMobInstance: %v", err)
+	}
+	path := instancePath(seed.MobId, seed.Zone, seed.Character.Name, seed.HomeRoomId)
+	t.Cleanup(func() { _ = os.Remove(path) })
+
+	// Hand-rewrite the file to strip the gold/equipment/plan fields,
+	// emulating a file written before this feature existed.
+	old := MobInstanceData{StrengthTraining: 12}
+	b, _ := yaml.Marshal(&old)
+	if err := os.WriteFile(path, b, 0644); err != nil {
+		t.Fatalf("rewrite old-format file: %v", err)
+	}
+
+	got := NewMobById(1, 100)
+	assert.Equal(t, 12, got.Character.Stats.Strength.Training, "training restores")
+	assert.Equal(t, templateGold, got.Character.Gold, "old-format save must leave template gold untouched")
+}

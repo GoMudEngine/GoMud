@@ -435,6 +435,24 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 				mob.Character.Mutations = savedInstance.Mutations
 			}
 			mob.Character.MutationProgress = savedInstance.MutationProgress
+
+			// Goal-progress restore (2026-06-01). Each guarded by presence:
+			// nil means the field was absent in the save (old-format file or
+			// a non-goal mob) — leave the template value untouched.
+			if savedInstance.Gold != nil {
+				mob.Character.Gold = *savedInstance.Gold
+			}
+			if savedInstance.Equipment != nil {
+				mob.Character.Equipment = *savedInstance.Equipment
+			}
+			if savedInstance.PlanState != nil {
+				if mob.Character.MiscData == nil {
+					mob.Character.MiscData = map[string]any{}
+				}
+				for k, v := range savedInstance.PlanState {
+					mob.Character.MiscData[k] = v
+				}
+			}
 		} else {
 			// No saved instance — randomize stat pool as usual
 			statPool := mob.StatPool
