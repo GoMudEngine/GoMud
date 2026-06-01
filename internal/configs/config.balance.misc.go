@@ -389,6 +389,14 @@ func (b *Balance) validateMisc() {
 		b.BountyHunterGearGoldDivisor = 5
 	}
 
+	// ── EQUIPMENT-AWARE SHOPPING (5.3) ──────────────────────────────────
+	if b.MobUpgradeGoldReserve <= 0 {
+		b.MobUpgradeGoldReserve = 50
+	}
+	if b.MobUpgradeMinDelta <= 0 {
+		b.MobUpgradeMinDelta = 1.0
+	}
+
 	// ── FACTS & EVENTS ──────────────────────────────────────────────────────
 	if b.FactsHeardEventsMax <= 0 {
 		b.FactsHeardEventsMax = 32

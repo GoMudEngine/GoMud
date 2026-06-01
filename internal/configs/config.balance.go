@@ -601,6 +601,10 @@ type Balance struct {
 	BountyHunterRedispatchCooldown ConfigInt   `yaml:"BountyHunterRedispatchCooldown"` // Rounds before re-dispatch after a hunter dies (default 500)
 	BountyHunterGearGoldDivisor    ConfigInt   `yaml:"BountyHunterGearGoldDivisor"`    // gearGold = statpool / this, fed to GenerateAffixedItem (default 5)
 
+	// ── EQUIPMENT-AWARE SHOPPING (5.3) ──────────────────────────────────
+	MobUpgradeGoldReserve ConfigInt   `yaml:"MobUpgradeGoldReserve"` // Gold a shopping mob keeps in reserve, won't spend below (default 50)
+	MobUpgradeMinDelta    ConfigFloat `yaml:"MobUpgradeMinDelta"`    // Minimum itemvalue swap delta worth buying (default 1.0)
+
 	// ── FACTS & EVENTS ──────────────────────────────────────────────────────
 	FactsHeardEventsMax ConfigInt `yaml:"FactsHeardEventsMax"` // Max facts_heard events per mobs instance (default 32)
 }
