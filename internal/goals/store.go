@@ -1,6 +1,7 @@
 package goals
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 	"time"
@@ -38,12 +39,21 @@ func loadOrLazyInit(mobId int, namesimple string) *MobGoals {
 	}
 	cache[mobId] = mg
 	nameByMobId[mobId] = namesimple
-	cacheMu.Unlock() // release BEFORE seedFromArchetype so Add re-entrancy is safe
+	cacheMu.Unlock() // release BEFORE seeding so Add re-entrancy is safe
 
 	if freshMob {
-		// Chunk 4.3: seed archetype defaults. Runs outside the lock.
-		// seedFromArchetype checks mg.SeededFromArchetype for idempotency.
+		// Chunk 4.3: seed archetype defaults for brand-new files. Runs
+		// outside the lock. seedFromArchetype checks SeededFromArchetype
+		// for idempotency and flips the sentinel when done.
 		seedFromArchetype(mobId, namesimple, mg)
+	} else {
+		// 5.3 fixup A: merge-seed — runs on EVERY load of an existing
+		// file (sentinel already set or not). Additively adds any archetype
+		// default type not already present on the mob. Existing goals are
+		// never removed; admin-set goals at >= priority block the merge via
+		// the normal Add conflict logic. Idempotent for fully-seeded mobs.
+		// Must run outside the lock (Add acquires cacheMu internally).
+		mergeSeedFromArchetype(mobId, namesimple, mg)
 	}
 	return mg
 }
@@ -438,6 +448,47 @@ func seedFromArchetype(mobId int, namesimple string, mg *MobGoals) {
 	if err := saveToDisk(mobId, namesimple); err != nil {
 		mudlog.Warn("goals.seedFromArchetype: save failed",
 			"mob_id", mobId, "error", err)
+	}
+}
+
+// mergeSeedFromArchetype is the 5.3 fixup A complement to seedFromArchetype.
+// It runs on EVERY load of an existing goals file (not just fresh mobs) and
+// additively adds any archetype default-goal TYPE that is not already present
+// on the mob.
+//
+// Conflict semantics mirror the normal Add path:
+//   - AllowMultiple=false types: "present" = any goal of that type exists →
+//     Add returns a ConflictError, which we silently skip.
+//   - AllowMultiple=true types: Add's DedupKey logic determines whether the
+//     incoming default coexists or conflicts; ConflictError = silently skip.
+//
+// A ConflictError from Add is the expected signal that the type is already
+// covered — it is logged at debug level and skipped. Any other Add error
+// (param validation failure, etc.) is logged at warn level and skipped.
+// The existing goal list is never modified or removed by this function.
+//
+// Must be called OUTSIDE any cache lock — it calls Add which acquires
+// cacheMu internally. Mirrors the lock discipline of seedFromArchetype.
+func mergeSeedFromArchetype(mobId int, namesimple string, mg *MobGoals) {
+	mob := instanceForRecompute(mobId)
+	defaults := resolveArchetypeDefaults(mob)
+	if len(defaults) == 0 {
+		return
+	}
+	for _, d := range defaults {
+		g := &Goal{Type: d.Type, Priority: d.Priority, Params: d.Params}
+		if _, err := Add(mobId, namesimple, g); err != nil {
+			var ce *ConflictError
+			if errors.As(err, &ce) {
+				// Type already covered by an existing goal — expected, skip.
+				mudlog.Debug("goals.mergeSeedFromArchetype: type already present (skipping)",
+					"mob_id", mobId, "type", d.Type,
+					"blocked_by", ce.BlockerGoalId, "blocker_prio", ce.BlockerPrio)
+				continue
+			}
+			mudlog.Warn("goals.mergeSeedFromArchetype: Add failed (skipping)",
+				"mob_id", mobId, "type", d.Type, "error", err)
+		}
 	}
 }
 

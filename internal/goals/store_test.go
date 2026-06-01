@@ -796,7 +796,14 @@ func TestLoadOrLazyInit_FreshMob_WithLookup_SeedsAndPersists(t *testing.T) {
 	}
 }
 
-func TestLoadOrLazyInit_ExistingFileWithSentinelTrue_SkipsSeed(t *testing.T) {
+// TestLoadOrLazyInit_ExistingFileWithSentinelTrue_MergeSeeds is the 5.3 fixup A
+// replacement for the old SkipsSeed test. The fresh-file sentinel (SeededFromArchetype)
+// no longer suppresses seeding for existing files — instead the merge-seed path
+// runs on every load and additively fills in any missing archetype defaults.
+//
+// Previously this test asserted "lookup not called, 0 goals" — that behaviour
+// was the bug.  After the fix, the lookup IS called and the missing goal IS added.
+func TestLoadOrLazyInit_ExistingFileWithSentinelTrue_MergeSeeds(t *testing.T) {
 	ClearCache()
 	RegisterGoalType("test-skipseed", GoalTypeMeta{})
 	defer resetRegistry()
@@ -809,13 +816,26 @@ func TestLoadOrLazyInit_ExistingFileWithSentinelTrue_SkipsSeed(t *testing.T) {
 
 	mobId := 99503
 	name := "skip_seed_mob"
+	// Existing file: sentinel already set, no goals (old-archetype scenario).
+	// Write to disk and clear cache so loadOrLazyInit takes the disk-load path.
 	cacheStoreForTest(name, &MobGoals{MobId: mobId, NextGoalId: 1, SeededFromArchetype: true})
-	mg := loadOrLazyInit(mobId, name)
-	if len(mg.Goals) != 0 {
-		t.Errorf("expected 0 goals (no seed), got %d", len(mg.Goals))
+	if err := saveToDisk(mobId, name); err != nil {
+		t.Fatalf("saveToDisk: %v", err)
 	}
-	if called > 0 {
-		t.Errorf("lookup called %d times; expected 0", called)
+	ClearCache()
+
+	mg := loadOrLazyInit(mobId, name)
+	// After the merge-seed the missing default must now be present.
+	if len(mg.Goals) != 1 {
+		t.Errorf("expected 1 goal after merge-seed, got %d", len(mg.Goals))
+	}
+	// The lookup must have been called (once, to retrieve defaults).
+	if called == 0 {
+		t.Errorf("lookup not called; merge-seed should have invoked the resolver")
+	}
+	// Sentinel must remain true (merge-seed does not clear it).
+	if !mg.SeededFromArchetype {
+		t.Errorf("SeededFromArchetype cleared by merge-seed — should remain true")
 	}
 }
 
@@ -866,6 +886,216 @@ func TestLoadOrLazyInit_SeededDefaultFailsValidation_LogsAndContinues(t *testing
 	}
 	if len(mg.Goals) != 1 || mg.Goals[0].Type != "test-loose" {
 		t.Errorf("expected only test-loose to seed, got %v", mg.Goals)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// merge-seed tests (5.3 fixup A)
+// ---------------------------------------------------------------------------
+
+// TestMergeSeed_MissingDefaultSeededOntoPreviouslySeededMob verifies that a
+// mob whose goals file already has SeededFromArchetype=true but is MISSING an
+// archetype default type receives that type after the merge-seed runs.
+// This is the Drunn scenario: file existed from noncombat_questgiver era
+// (no defaults → sentinel set, empty goals), then archetype changed to
+// guard_captain which declares default goals.
+func TestMergeSeed_MissingDefaultSeededOntoPreviouslySeededMob(t *testing.T) {
+	ClearCache()
+	resetRegistry()
+	RegisterGoalType("test-merge-survival", GoalTypeMeta{})
+	RegisterGoalType("test-merge-upgrade", GoalTypeMeta{})
+	defer resetRegistry()
+
+	SetArchetypeDefaultsLookup(func(mob *mobs.Mob) []GoalDefault {
+		return []GoalDefault{
+			{Type: "test-merge-survival", Priority: 80},
+			{Type: "test-merge-upgrade", Priority: 30},
+		}
+	})
+	defer SetArchetypeDefaultsLookup(nil)
+
+	mobId := 99701
+	name := "drunn_scenario"
+
+	// Simulate a mob whose file was created while it was noncombat_questgiver:
+	// sentinel is set, no goals present. Write it to disk and clear the cache
+	// so loadOrLazyInit takes the disk-load path (which triggers merge-seed).
+	mg := &MobGoals{
+		MobId:               mobId,
+		NextGoalId:          1,
+		SeededFromArchetype: true, // sentinel already set
+		Goals:               nil,  // no goals (empty file from old archetype)
+	}
+	cacheStoreForTest(name, mg)
+	if err := saveToDisk(mobId, name); err != nil {
+		t.Fatalf("saveToDisk: %v", err)
+	}
+	ClearCache()
+
+	// loadOrLazyInit should now merge-seed the missing defaults.
+	mg = loadOrLazyInit(mobId, name)
+
+	goals := GoalsOf(mobId, name)
+	if len(goals) != 2 {
+		t.Fatalf("expected 2 goals after merge-seed, got %d: %v", len(goals), goals)
+	}
+	types := make(map[string]bool)
+	for _, g := range goals {
+		types[g.Type] = true
+	}
+	if !types["test-merge-survival"] {
+		t.Errorf("test-merge-survival not present after merge-seed")
+	}
+	if !types["test-merge-upgrade"] {
+		t.Errorf("test-merge-upgrade not present after merge-seed")
+	}
+	// Sentinel should still be true (merge-seed does not clear it).
+	if !mg.SeededFromArchetype {
+		t.Errorf("SeededFromArchetype should remain true after merge-seed")
+	}
+}
+
+// TestMergeSeed_AlreadyPresentTypeNotDuplicated verifies that a default type
+// already present on the mob is not added again.
+func TestMergeSeed_AlreadyPresentTypeNotDuplicated(t *testing.T) {
+	ClearCache()
+	resetRegistry()
+	RegisterGoalType("test-merge-dup", GoalTypeMeta{})
+	defer resetRegistry()
+
+	SetArchetypeDefaultsLookup(func(mob *mobs.Mob) []GoalDefault {
+		return []GoalDefault{
+			{Type: "test-merge-dup", Priority: 80},
+		}
+	})
+	defer SetArchetypeDefaultsLookup(nil)
+
+	mobId := 99702
+	name := "already_present_mob"
+
+	// Simulate a mob that already has the default type seeded. Write to disk
+	// and clear cache so loadOrLazyInit takes the disk-load path.
+	mg := &MobGoals{
+		MobId:               mobId,
+		NextGoalId:          2,
+		SeededFromArchetype: true,
+		Goals: []*Goal{
+			{Id: "g1", Type: "test-merge-dup", Priority: 80},
+		},
+	}
+	cacheStoreForTest(name, mg)
+	if err := saveToDisk(mobId, name); err != nil {
+		t.Fatalf("saveToDisk: %v", err)
+	}
+	ClearCache()
+
+	loadOrLazyInit(mobId, name)
+
+	goals := GoalsOf(mobId, name)
+	if len(goals) != 1 {
+		t.Errorf("expected 1 goal (no duplicate added), got %d: %v", len(goals), goals)
+	}
+}
+
+// TestMergeSeed_AdminSetHigherPriorityNotClobbered verifies that when an admin
+// has set a goal of the same type at HIGHER priority than the archetype default,
+// the merge-seed does NOT replace or displace it.
+func TestMergeSeed_AdminSetHigherPriorityNotClobbered(t *testing.T) {
+	ClearCache()
+	resetRegistry()
+	RegisterGoalType("test-merge-admin", GoalTypeMeta{})
+	defer resetRegistry()
+
+	// Archetype default is priority 80; admin set priority 95.
+	SetArchetypeDefaultsLookup(func(mob *mobs.Mob) []GoalDefault {
+		return []GoalDefault{
+			{Type: "test-merge-admin", Priority: 80},
+		}
+	})
+	defer SetArchetypeDefaultsLookup(nil)
+
+	mobId := 99703
+	name := "admin_priority_mob"
+
+	// Admin set a goal of the same type at higher priority. Write to disk
+	// and clear cache so loadOrLazyInit takes the disk-load path.
+	mg := &MobGoals{
+		MobId:               mobId,
+		NextGoalId:          2,
+		SeededFromArchetype: true,
+		Goals: []*Goal{
+			{Id: "g1", Type: "test-merge-admin", Priority: 95},
+		},
+	}
+	cacheStoreForTest(name, mg)
+	if err := saveToDisk(mobId, name); err != nil {
+		t.Fatalf("saveToDisk: %v", err)
+	}
+	ClearCache()
+
+	loadOrLazyInit(mobId, name)
+
+	goals := GoalsOf(mobId, name)
+	if len(goals) != 1 {
+		t.Fatalf("expected 1 goal (admin goal preserved), got %d: %v", len(goals), goals)
+	}
+	if goals[0].Priority != 95 {
+		t.Errorf("admin goal displaced: got id=%s prio=%d, want prio=95",
+			goals[0].Id, goals[0].Priority)
+	}
+}
+
+// TestMergeSeed_PartiallySeeded_OnlyMissingTypesAdded verifies that when a mob
+// has some (but not all) archetype defaults, only the missing ones are seeded.
+func TestMergeSeed_PartiallySeeded_OnlyMissingTypesAdded(t *testing.T) {
+	ClearCache()
+	resetRegistry()
+	RegisterGoalType("test-merge-present", GoalTypeMeta{})
+	RegisterGoalType("test-merge-absent", GoalTypeMeta{})
+	defer resetRegistry()
+
+	SetArchetypeDefaultsLookup(func(mob *mobs.Mob) []GoalDefault {
+		return []GoalDefault{
+			{Type: "test-merge-present", Priority: 80},
+			{Type: "test-merge-absent", Priority: 40},
+		}
+	})
+	defer SetArchetypeDefaultsLookup(nil)
+
+	mobId := 99704
+	name := "partial_seeded_mob"
+
+	// Mob already has test-merge-present but not test-merge-absent.
+	// Write to disk and clear cache so loadOrLazyInit takes the disk-load path.
+	mg := &MobGoals{
+		MobId:               mobId,
+		NextGoalId:          2,
+		SeededFromArchetype: true,
+		Goals: []*Goal{
+			{Id: "g1", Type: "test-merge-present", Priority: 80},
+		},
+	}
+	cacheStoreForTest(name, mg)
+	if err := saveToDisk(mobId, name); err != nil {
+		t.Fatalf("saveToDisk: %v", err)
+	}
+	ClearCache()
+
+	loadOrLazyInit(mobId, name)
+
+	goals := GoalsOf(mobId, name)
+	if len(goals) != 2 {
+		t.Fatalf("expected 2 goals after partial merge-seed, got %d: %v", len(goals), goals)
+	}
+	types := make(map[string]bool)
+	for _, g := range goals {
+		types[g.Type] = true
+	}
+	if !types["test-merge-present"] {
+		t.Errorf("test-merge-present unexpectedly removed")
+	}
+	if !types["test-merge-absent"] {
+		t.Errorf("test-merge-absent not added by merge-seed")
 	}
 }
 
