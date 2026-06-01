@@ -892,8 +892,16 @@ rep via new `RepFaction`/`RepAmount` quest reward fields; stale
   (`internal/planners/upgrade_gear.go`): pending-equip one-shot → `gearup`;
   affordable upgrade → `buy <name>` at shop or `pathto`; unaffordable upgrade →
   composes the existing wealth-gold sell loop to save up; nothing in stock →
-  idle. Buy target rescanned each tick (only the save-up sell vendor is sticky;
-  the buy branch clears that sticky to avoid stale vendors across cycles). Two
+  idle. **Known gap (final-review):** the save-up `sell all` branch is a no-op
+  for mobs — there is no `sell` mob command / `actions.Sell` yet, so it emits a
+  confused emote (pre-existing in wealth-gold; [[project_mob_sell_command_missing]]).
+  So in practice mobs buy upgrades from gold they ALREADY carry; the
+  sell-to-fund path lands when the `sell` verb is lifted. Buy target rescanned
+  each tick (only the save-up sell vendor is sticky; the buy branch clears that
+  sticky to avoid stale vendors across cycles). The evaluator only considers
+  items `gearup` can actually wear (Weapon/Wearable) so a mis-tagged shop item
+  can't trigger a buy-but-can't-equip re-buy loop; the planner also idles for
+  mobs that can't equip-from-give (non-combat / animal species). Two
   balance knobs `MobUpgradeGoldReserve` (50) + `MobUpgradeMinDelta` (1.0, may
   retune after live smoke). Seeded as a low-priority `default_goals` entry on
   `thief` + `guard_captain` (no btree edits — `try_goal_planner` already present
