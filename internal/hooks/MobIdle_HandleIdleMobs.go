@@ -166,6 +166,15 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 		return events.Continue
 	}
 
+	// Per-mob-tree mobs (and any mob whose btree lacks a try_goal_planner node)
+	// don't run their goal planner via the tree. If this mob has a current goal
+	// and the btree didn't already dispatch the planner this round, run it here
+	// so named NPCs pursue goals too. Out-of-combat only (matches idle semantics).
+	if !isCharmed && mob.Character.Aggro == nil &&
+		mobGoalPlannerRanRound(mob) != util.GetRoundCount() {
+		behaviortree.RunGoalPlanner(mob, util.GetRoundCount())
+	}
+
 	// "Planner owns the tick": TryMobBehavior returns false while a goal
 	// planner is actively pursuing a goal (the planner returns Running, not
 	// Success). If the planner ISSUED A COMMAND this very round (e.g. a
@@ -246,6 +255,22 @@ func mobGoalActedRound(mob *mobs.Mob) uint64 {
 		return 0
 	}
 	if v := mob.GetTempData("goalActedRound"); v != nil {
+		if r, ok := v.(uint64); ok {
+			return r
+		}
+	}
+	return 0
+}
+
+// mobGoalPlannerRanRound returns the round the goal planner last ran for this
+// mob (set by behaviortree.RunGoalPlanner), 0 if absent/wrong type. Mirrors
+// mobGoalActedRound. The idle handler uses this to avoid double-dispatching the
+// planner for archetype mobs whose btree already ran try_goal_planner.
+func mobGoalPlannerRanRound(mob *mobs.Mob) uint64 {
+	if mob == nil {
+		return 0
+	}
+	if v := mob.GetTempData("goalPlannerRanRound"); v != nil {
 		if r, ok := v.(uint64); ok {
 			return r
 		}

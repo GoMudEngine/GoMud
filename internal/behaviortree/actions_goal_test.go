@@ -248,6 +248,95 @@ func TestTryGoalPlanner_NoStamp_WhenCommandEmpty(t *testing.T) {
 	}
 }
 
+// TestRunGoalPlanner_NilMob_Failure verifies the exported dispatcher returns
+// Failure for a nil mob without panicking.
+func TestRunGoalPlanner_NilMob_Failure(t *testing.T) {
+	if got := RunGoalPlanner(nil, 100); got != Failure {
+		t.Errorf("nil mob: got %v, want Failure", got)
+	}
+}
+
+// TestRunGoalPlanner_CommandIssued_StampsBothMarkers verifies that when a
+// registered planner returns a non-empty Command, RunGoalPlanner issues it and
+// stamps BOTH goalPlannerRanRound (dedup marker) and goalActedRound (planner-
+// owns-the-tick marker) with the caller-supplied round.
+func TestRunGoalPlanner_CommandIssued_StampsBothMarkers(t *testing.T) {
+	goals.ClearCache()
+	const testGoalType = "test-run-goal-planner-cmd-9910"
+	planners.RegisterPlanner(testGoalType, func(*mobs.Mob, *goals.Goal) planners.PlanResult {
+		return planners.PlanResult{Command: "pathto 100", Status: planners.StatusRunning}
+	})
+	t.Cleanup(func() { planners.RegisterPlanner(testGoalType, nil) })
+
+	mob := buildGoalMob(t, 9910, 99710, "run_planner_cmd_test", 1)
+	t.Cleanup(func() { goals.ClearCache() })
+
+	if _, err := goals.Add(int(mob.MobId), "run_planner_cmd_test",
+		&goals.Goal{Type: testGoalType, Priority: 50}); err != nil {
+		t.Fatalf("goals.Add: %v", err)
+	}
+
+	res := RunGoalPlanner(mob, 7777)
+	if res != Running {
+		t.Errorf("running planner with command: got %v, want Running", res)
+	}
+
+	if v, ok := mob.GetTempData(goalPlannerRanRoundKey).(uint64); !ok || v != 7777 {
+		t.Errorf("goalPlannerRanRound = %v (ok=%v), want 7777", v, ok)
+	}
+	if v, ok := mob.GetTempData("goalActedRound").(uint64); !ok || v != 7777 {
+		t.Errorf("goalActedRound = %v (ok=%v), want 7777", v, ok)
+	}
+}
+
+// TestRunGoalPlanner_EmptyCommand_StampsRanNotActed verifies that when the
+// planner returns an empty Command (idle-Running), RunGoalPlanner stamps the
+// dedup marker (goalPlannerRanRound) but NOT goalActedRound — so legacy idle
+// stays free to emit flavor emotes.
+func TestRunGoalPlanner_EmptyCommand_StampsRanNotActed(t *testing.T) {
+	goals.ClearCache()
+	const testGoalType = "test-run-goal-planner-empty-9911"
+	planners.RegisterPlanner(testGoalType, func(*mobs.Mob, *goals.Goal) planners.PlanResult {
+		return planners.PlanResult{Command: "", Status: planners.StatusRunning}
+	})
+	t.Cleanup(func() { planners.RegisterPlanner(testGoalType, nil) })
+
+	mob := buildGoalMob(t, 9911, 99711, "run_planner_empty_test", 1)
+	t.Cleanup(func() { goals.ClearCache() })
+
+	if _, err := goals.Add(int(mob.MobId), "run_planner_empty_test",
+		&goals.Goal{Type: testGoalType, Priority: 50}); err != nil {
+		t.Fatalf("goals.Add: %v", err)
+	}
+
+	res := RunGoalPlanner(mob, 8888)
+	if res != Running {
+		t.Errorf("running planner with empty command: got %v, want Running", res)
+	}
+
+	if v, ok := mob.GetTempData(goalPlannerRanRoundKey).(uint64); !ok || v != 8888 {
+		t.Errorf("goalPlannerRanRound = %v (ok=%v), want 8888", v, ok)
+	}
+	if v := mob.GetTempData("goalActedRound"); v != nil {
+		t.Errorf("goalActedRound should be unset for empty command, got %v", v)
+	}
+}
+
+// TestRunGoalPlanner_NoCurrentGoal_Failure verifies that a mob with no goal
+// returns Failure and does NOT stamp the dedup marker.
+func TestRunGoalPlanner_NoCurrentGoal_Failure(t *testing.T) {
+	goals.ClearCache()
+	mob := buildGoalMob(t, 9912, 99712, "run_planner_nogoal_test", 1)
+	t.Cleanup(func() { goals.ClearCache() })
+
+	if got := RunGoalPlanner(mob, 1234); got != Failure {
+		t.Errorf("no current goal: got %v, want Failure", got)
+	}
+	if v := mob.GetTempData(goalPlannerRanRoundKey); v != nil {
+		t.Errorf("goalPlannerRanRound should be unset when no goal, got %v", v)
+	}
+}
+
 // TestTryGoalPlanner_PlannerPanic_RecoveredFailure verifies that a panic
 // inside the planner is recovered and maps to Failure, not a crash.
 func TestTryGoalPlanner_PlannerPanic_RecoveredFailure(t *testing.T) {

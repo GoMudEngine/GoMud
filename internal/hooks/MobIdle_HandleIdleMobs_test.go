@@ -138,3 +138,39 @@ func TestMobGoalActedRound(t *testing.T) {
 		}
 	})
 }
+
+// TestMobGoalPlannerRanRound covers the goal-planner dedup-marker reader. The
+// marker is written by behaviortree.RunGoalPlanner via the "goalPlannerRanRound"
+// TempData key every round the planner is dispatched. The idle handler compares
+// it against the current round so archetype mobs whose btree already ran
+// try_goal_planner aren't re-dispatched. Mirrors TestMobGoalActedRound.
+func TestMobGoalPlannerRanRound(t *testing.T) {
+	t.Run("nil mob returns 0", func(t *testing.T) {
+		if got := mobGoalPlannerRanRound(nil); got != 0 {
+			t.Errorf("nil mob: got %d, want 0", got)
+		}
+	})
+
+	t.Run("absent stamp returns 0", func(t *testing.T) {
+		m := &mobs.Mob{}
+		if got := mobGoalPlannerRanRound(m); got != 0 {
+			t.Errorf("unstamped: got %d, want 0", got)
+		}
+	})
+
+	t.Run("present uint64 stamp is returned", func(t *testing.T) {
+		m := &mobs.Mob{}
+		m.SetTempData("goalPlannerRanRound", uint64(909))
+		if got := mobGoalPlannerRanRound(m); got != 909 {
+			t.Errorf("stamped: got %d, want 909", got)
+		}
+	})
+
+	t.Run("wrong-type stamp returns 0", func(t *testing.T) {
+		m := &mobs.Mob{}
+		m.SetTempData("goalPlannerRanRound", "not-a-uint64")
+		if got := mobGoalPlannerRanRound(m); got != 0 {
+			t.Errorf("wrong type: got %d, want 0", got)
+		}
+	})
+}
