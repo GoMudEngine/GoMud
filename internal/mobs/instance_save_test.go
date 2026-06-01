@@ -248,3 +248,61 @@ func TestEquipmentDiffers(t *testing.T) {
 	f := characters.Worn{Body: items.New(1)}
 	assert.False(t, equipmentDiffers(e, f), "differing UUIDs alone must not register as a difference")
 }
+
+// clearProgression zeroes every field hasProgression looks at, plus
+// MiscData. NewMobById with no saved instance RANDOMIZES the stat pool
+// into training (mobs.go else-branch), so each gate sub-case must start
+// from a clean slate to isolate the specific path under test.
+func clearProgression(m *Mob) {
+	m.Character.Stats.Strength.Training = 0
+	m.Character.Stats.Dexterity.Training = 0
+	m.Character.Stats.Perception.Training = 0
+	m.Character.Stats.Vitality.Training = 0
+	m.Character.Stats.Willpower.Training = 0
+	m.Character.Stats.Charisma.Training = 0
+	m.Character.Skills = nil
+	m.Character.SkillUseCount = nil
+	m.Character.StatUseCount = nil
+	m.Character.Mutations = nil
+	m.Character.MutationProgress = 0
+	m.Character.MiscData = nil
+}
+
+func TestHasPersistableState(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	// Clean mob: no progression, gold == template, equipment == template,
+	// no plan state → not persistable. Gold/equipment are copied verbatim
+	// from the template at construction, so they match GetMobSpec(1).
+	base := NewMobById(1, 100)
+	if base == nil {
+		t.Fatal("NewMobById returned nil")
+	}
+	clearProgression(base)
+	assert.False(t, hasPersistableState(base), "clean template-equal mob must not be persistable")
+
+	// Gold change alone trips the gate.
+	goldMob := NewMobById(1, 100)
+	clearProgression(goldMob)
+	goldMob.Character.Gold = goldMob.Character.Gold + 500
+	assert.True(t, hasPersistableState(goldMob), "gold change must be persistable")
+
+	// Plan state alone trips the gate.
+	planMob := NewMobById(1, 100)
+	clearProgression(planMob)
+	planMob.Character.SetMiscData("plan:wealth-gold:target_shop_room", 4101)
+	assert.True(t, hasPersistableState(planMob), "plan state must be persistable")
+
+	// Equipment change alone trips the gate.
+	eqMob := NewMobById(1, 100)
+	clearProgression(eqMob)
+	eqMob.Character.Equipment.Body = items.Item{ItemId: 99999, EnchantTier: 5}
+	assert.True(t, hasPersistableState(eqMob), "equipment change must be persistable")
+
+	// Training alone still trips the gate (existing hasProgression path).
+	trainMob := NewMobById(1, 100)
+	clearProgression(trainMob)
+	trainMob.Character.Stats.Strength.Training = 5
+	assert.True(t, hasPersistableState(trainMob), "training must remain persistable")
+}
