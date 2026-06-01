@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -212,6 +213,30 @@ func NukeSummonsInstances() int {
 	}
 
 	return pruned
+}
+
+// planKeyPrefix MUST match planners.PlanKeyPrefix. It is duplicated here
+// rather than imported because internal/planners imports internal/mobs;
+// referencing it the other way would form an import cycle.
+const planKeyPrefix = "plan:"
+
+// collectPlanState returns a copy of every "plan:"-prefixed MiscData entry
+// on the mob — the planners' working state (target shop room, worst slot,
+// etc.). Returns nil if the mob has no MiscData or no plan keys.
+func collectPlanState(mob *Mob) map[string]any {
+	if mob.Character.MiscData == nil {
+		return nil
+	}
+	out := map[string]any{}
+	for k, v := range mob.Character.MiscData {
+		if strings.HasPrefix(k, planKeyPrefix) {
+			out[k] = v
+		}
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
 }
 
 // hasProgression returns true if the mob has any non-zero progression data

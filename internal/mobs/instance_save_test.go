@@ -208,3 +208,25 @@ func TestMobInstanceData_GoldZero_RoundTrips(t *testing.T) {
 	assert.NotNil(t, out.Gold, "non-nil *int(0) must survive marshal (presence semantics)")
 	assert.Equal(t, 0, *out.Gold)
 }
+
+func TestCollectPlanState_OnlyPlanPrefixedKeys(t *testing.T) {
+	mob := &Mob{}
+	mob.Character.MiscData = map[string]any{
+		"plan:wealth-gold:target_shop_room": 4101,
+		"plan:upgrade-gear:worst_slot":      "body",
+		"conversation_line_idx":             2,
+		"faction_kills:bandits":             3,
+	}
+
+	got := collectPlanState(mob)
+	assert.Len(t, got, 2)
+	assert.Equal(t, 4101, got["plan:wealth-gold:target_shop_room"])
+	assert.Equal(t, "body", got["plan:upgrade-gear:worst_slot"])
+	_, hasNonPlan := got["conversation_line_idx"]
+	assert.False(t, hasNonPlan)
+}
+
+func TestCollectPlanState_NilMiscData(t *testing.T) {
+	mob := &Mob{}
+	assert.Nil(t, collectPlanState(mob))
+}
