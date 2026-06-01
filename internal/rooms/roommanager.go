@@ -494,6 +494,15 @@ func removeRoomFromMemory(r *Room) {
 	}
 
 	for _, mobInstanceId := range room.mobs {
+		// Save goal progress (gold/equipment/plan-state) before destroying
+		// the instance, so a purchase made since the last periodic save
+		// survives the perf despawn. Gated internally (no-op for unchanged
+		// mobs). A save failure must not block room unload.
+		if m := mobs.GetInstance(mobInstanceId); m != nil {
+			if err := mobs.SaveMobInstance(m); err != nil {
+				mudlog.Error("removeRoomFromMemory", "save_instance", mobInstanceId, "error", err)
+			}
+		}
 		mobs.DestroyInstance(mobInstanceId)
 	}
 
@@ -502,6 +511,9 @@ func removeRoomFromMemory(r *Room) {
 
 			if m := mobs.GetInstance(spawnDetails.InstanceId); m != nil {
 				if m.Character.RoomId == room.RoomId {
+					if err := mobs.SaveMobInstance(m); err != nil {
+						mudlog.Error("removeRoomFromMemory", "save_spawn_instance", spawnDetails.InstanceId, "error", err)
+					}
 					mobs.DestroyInstance(spawnDetails.InstanceId)
 				}
 			}

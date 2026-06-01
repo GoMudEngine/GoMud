@@ -1,11 +1,14 @@
 package mobs
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -27,6 +30,13 @@ type MobInstanceData struct {
 	StatUseCount       map[string]int `yaml:"stat_use_count,omitempty"`
 	Mutations          map[string]int `yaml:"mutations,omitempty"`
 	MutationProgress   float64        `yaml:"mutation_progress,omitempty"`
+
+	// Goal-progress persistence (2026-06-01). Pointers / nil-able so that
+	// "absent in the save" (old file or non-goal mob) is distinguishable
+	// from a real zero value (mob spent all gold / stripped all gear).
+	Gold      *int             `yaml:"gold,omitempty"`
+	Equipment *characters.Worn `yaml:"equipment,omitempty"`
+	PlanState map[string]any   `yaml:"plan_state,omitempty"`
 }
 
 // instanceFilename returns the base filename for a mob instance save.
@@ -62,8 +72,9 @@ func SaveMobInstance(mob *Mob) error {
 		return nil
 	}
 
-	// Only save if the mob has gained any training beyond zero
-	if !hasProgression(mob) {
+	// Only save if the mob has progression, planner working state, or
+	// gold/equipment that differs from its template.
+	if !hasPersistableState(mob) {
 		return nil
 	}
 
@@ -88,6 +99,20 @@ func SaveMobInstance(mob *Mob) error {
 	}
 	if len(mob.Character.Mutations) > 0 {
 		data.Mutations = mob.Character.Mutations
+	}
+
+	// Goal-progress capture (2026-06-01). Captured unconditionally for a
+	// persistable mob — the live value IS the truth, so capturing even when
+	// it equals the template is harmless (restore becomes a no-op). Pointers
+	// preserve the spent-all-gold (0) and stripped-gear (empty) cases.
+	gold := mob.Character.Gold
+	data.Gold = &gold
+
+	eq := mob.Character.Equipment
+	data.Equipment = &eq
+
+	if planState := collectPlanState(mob); planState != nil {
+		data.PlanState = planState
 	}
 
 	savePath := instancePath(mob.MobId, mob.Zone, mob.Character.Name, mob.HomeRoomId)
@@ -204,6 +229,72 @@ func NukeSummonsInstances() int {
 	}
 
 	return pruned
+}
+
+// planKeyPrefix MUST match planners.PlanKeyPrefix. It is duplicated here
+// rather than imported because internal/planners imports internal/mobs;
+// referencing it the other way would form an import cycle.
+const planKeyPrefix = "plan:"
+
+// collectPlanState returns a copy of every "plan:"-prefixed MiscData entry
+// on the mob — the planners' working state (target shop room, worst slot,
+// etc.). Returns nil if the mob has no MiscData or no plan keys.
+func collectPlanState(mob *Mob) map[string]any {
+	if mob.Character.MiscData == nil {
+		return nil
+	}
+	out := map[string]any{}
+	for k, v := range mob.Character.MiscData {
+		if strings.HasPrefix(k, planKeyPrefix) {
+			out[k] = v
+		}
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
+}
+
+// equipmentDiffers reports whether two worn loadouts differ in any
+// persistent field. It compares marshaled YAML bytes: items.Item.UUID is
+// yaml:"-" (excluded) and the unexported tempDataStore is not marshaled,
+// so this is a value comparison that ignores per-instance identity and
+// correctly detects a changed itemId or enchant tier in any slot.
+// EnableAll() normalizes species-disabled slot sentinels (ItemId < 0,
+// stamped by validateDisabledSlotsForSpecies at spawn) to the zero item
+// on the local copies first, so species-gated slot disabling does not
+// count as an equipment change. a and b are value parameters, so this
+// does not mutate the caller's equipment.
+func equipmentDiffers(a, b characters.Worn) bool {
+	a.EnableAll()
+	b.EnableAll()
+	ab, _ := yaml.Marshal(&a)
+	bb, _ := yaml.Marshal(&b)
+	return !bytes.Equal(ab, bb)
+}
+
+// hasPersistableState reports whether a mob has any state worth saving to
+// its instance file: stat/skill/mutation progression (hasProgression),
+// planner working state, gold that differs from its template, or an
+// equipment loadout that differs from its template. The template
+// comparison keeps the gate meaningful — without it every mob in the
+// world (all of which carry template gold/equipment) would write a file
+// every save interval.
+func hasPersistableState(mob *Mob) bool {
+	if hasProgression(mob) {
+		return true
+	}
+	if collectPlanState(mob) != nil {
+		return true
+	}
+	tmpl := GetMobSpec(mob.MobId)
+	if tmpl == nil {
+		return false
+	}
+	if mob.Character.Gold != tmpl.Character.Gold {
+		return true
+	}
+	return equipmentDiffers(mob.Character.Equipment, tmpl.Character.Equipment)
 }
 
 // hasProgression returns true if the mob has any non-zero progression data

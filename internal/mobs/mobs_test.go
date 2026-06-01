@@ -1905,3 +1905,97 @@ func TestMobSpawn_CuratedGateSkipsIncompatibleMutation(t *testing.T) {
 		t.Errorf("extra-arms should NOT be applied to canine, got rank %d", mob.Character.Mutations["extra-arms"])
 	}
 }
+
+func TestNewMobById_RestoresGoldEquipmentPlanState(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+	withMobProgressionEnabled(t)
+
+	seed := NewMobById(1, 100)
+	if seed == nil {
+		t.Fatal("NewMobById returned nil")
+	}
+	seed.Character.Gold = 4242
+	seed.Character.Equipment.Body = items.Item{ItemId: 1, EnchantTier: 4}
+	seed.Character.SetMiscData("plan:upgrade-gear:worst_slot", "body")
+	if err := SaveMobInstance(seed); err != nil {
+		t.Fatalf("seed SaveMobInstance: %v", err)
+	}
+	path := instancePath(seed.MobId, seed.Zone, seed.Character.Name, seed.HomeRoomId)
+	t.Cleanup(func() { _ = os.Remove(path) })
+
+	got := NewMobById(1, 100)
+	if got == nil {
+		t.Fatal("NewMobById returned nil")
+	}
+	assert.Equal(t, 4242, got.Character.Gold, "gold must be restored")
+	assert.Equal(t, 1, got.Character.Equipment.Body.ItemId, "equipped item must be restored")
+	assert.Equal(t, 4, got.Character.Equipment.Body.EnchantTier, "enchant tier must be restored")
+	assert.Equal(t, "body", got.Character.GetMiscData("plan:upgrade-gear:worst_slot"), "plan state must be restored")
+}
+
+func TestNewMobById_OldFormatSaveLeavesTemplateGold(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+	withMobProgressionEnabled(t)
+
+	// Simulate an OLD-format save: training only, no gold/equipment/plan
+	// fields. Write it via a MobInstanceData with the new fields left nil.
+	seed := NewMobById(1, 100)
+	templateGold := seed.Character.Gold
+	seed.Character.Stats.Strength.Training = 12 // trips hasProgression
+	if err := SaveMobInstance(seed); err != nil {
+		t.Fatalf("seed SaveMobInstance: %v", err)
+	}
+	path := instancePath(seed.MobId, seed.Zone, seed.Character.Name, seed.HomeRoomId)
+	t.Cleanup(func() { _ = os.Remove(path) })
+
+	// Hand-rewrite the file to strip the gold/equipment/plan fields,
+	// emulating a file written before this feature existed.
+	old := MobInstanceData{StrengthTraining: 12}
+	b, _ := yaml.Marshal(&old)
+	if err := os.WriteFile(path, b, 0644); err != nil {
+		t.Fatalf("rewrite old-format file: %v", err)
+	}
+
+	got := NewMobById(1, 100)
+	assert.Equal(t, 12, got.Character.Stats.Strength.Training, "training restores")
+	assert.Equal(t, templateGold, got.Character.Gold, "old-format save must leave template gold untouched")
+}
+
+// TestNewMobById_SpentAllGold_RestoresZeroNotTemplate proves the core
+// purpose of the *int presence pointer: a mob that spent ALL its gold
+// (Gold == 0) must restore to 0, NOT fall back to its template gold. This
+// requires a template with non-zero gold so 0-spent is distinguishable
+// from the template baseline (the default fixture has gold 0, which can't
+// express this case). clearProgression isolates the gold path so the save
+// gate (hasPersistableState) trips via the gold-differs-from-template
+// branch (0 != 500) rather than via training.
+func TestNewMobById_SpentAllGold_RestoresZeroNotTemplate(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+	withMobProgressionEnabled(t)
+
+	// Give template 1 a non-zero gold (the fixture default is 0). Mutating
+	// the seeded template is test-local — seedRegistry rebuilds it next call.
+	mobs[1].Character.Gold = 500
+
+	seed := NewMobById(1, 100)
+	if seed == nil {
+		t.Fatal("NewMobById returned nil")
+	}
+	clearProgression(seed)       // isolate the gold path (no training/plan)
+	seed.Character.Gold = 0       // spent everything; template is 500
+	if err := SaveMobInstance(seed); err != nil {
+		t.Fatalf("seed SaveMobInstance: %v", err)
+	}
+	path := instancePath(seed.MobId, seed.Zone, seed.Character.Name, seed.HomeRoomId)
+	t.Cleanup(func() { _ = os.Remove(path) })
+
+	got := NewMobById(1, 100)
+	if got == nil {
+		t.Fatal("NewMobById returned nil")
+	}
+	assert.Equal(t, 0, got.Character.Gold,
+		"spent-all-gold (0) must restore to 0, not fall back to template gold 500")
+}
