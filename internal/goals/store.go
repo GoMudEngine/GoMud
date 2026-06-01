@@ -4,12 +4,19 @@ import (
 	"errors"
 	"fmt"
 	"sort"
+	"sync"
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
+
+// mergeSeedDone tracks which mob ids have had merge-seed run from Recompute
+// (i.e. with a live mob). Keyed by mobId (int). Resets on server restart
+// (in-memory only), which is the desired behavior — fresh boot re-attempts
+// once on the first tick that a live instance exists.
+var mergeSeedDone sync.Map
 
 // loadOrLazyInit returns the cached MobGoals for mobId, loading from
 // disk on first access. Returns a fresh empty MobGoals if neither
@@ -53,7 +60,9 @@ func loadOrLazyInit(mobId int, namesimple string) *MobGoals {
 		// never removed; admin-set goals at >= priority block the merge via
 		// the normal Add conflict logic. Idempotent for fully-seeded mobs.
 		// Must run outside the lock (Add acquires cacheMu internally).
-		mergeSeedFromArchetype(mobId, namesimple, mg)
+		// Pass nil mob — the live instance may not exist yet at load time;
+		// Recompute will retry with a live mob via mergeSeedDone gating.
+		mergeSeedFromArchetype(mobId, namesimple, mg, nil)
 	}
 	return mg
 }
@@ -340,6 +349,23 @@ func CurrentGoalOf(mobId int, namesimple string) *Goal {
 func Recompute(mobId int, namesimple string, mob *mobs.Mob, nowRound uint64) {
 	mg := loadOrLazyInit(mobId, namesimple)
 
+	// 5.3 fixup A v2: run merge-seed exactly once per mob-instance per boot,
+	// on the first Recompute tick where a live mob exists. This fixes the
+	// nil-instance window: loadOrLazyInit's merge-seed call passes nil and
+	// falls back to instanceForRecompute, which returns nil when the mob
+	// hasn't been loaded yet (e.g. Constable Drunn at server boot). Here we
+	// have the live mob from the per-round tick hook, so we can pass it
+	// directly. mergeSeedDone resets on server restart (sync.Map is in-memory),
+	// so this re-runs once per boot — cheap and idempotent for fully-seeded mobs.
+	// Called OUTSIDE any cacheMu hold; mergeSeedFromArchetype calls Add which
+	// acquires cacheMu internally.
+	if mob != nil {
+		if _, done := mergeSeedDone.Load(mobId); !done {
+			mergeSeedFromArchetype(mobId, namesimple, mg, mob)
+			mergeSeedDone.Store(mobId, true)
+		}
+	}
+
 	// Snapshot under read lock.
 	cacheMu.RLock()
 	goalsSnap := make([]*Goal, len(mg.Goals))
@@ -467,10 +493,18 @@ func seedFromArchetype(mobId int, namesimple string, mg *MobGoals) {
 // (param validation failure, etc.) is logged at warn level and skipped.
 // The existing goal list is never modified or removed by this function.
 //
+// The mob parameter is optional. When non-nil it is passed directly to
+// resolveArchetypeDefaults, letting the lookup read live archetype state.
+// When nil, instanceForRecompute is called as a best-effort fallback (the
+// original behavior before the 5.3 fixup A v2 change). Callers that already
+// have a live *mobs.Mob should pass it; callers without one should pass nil.
+//
 // Must be called OUTSIDE any cache lock — it calls Add which acquires
 // cacheMu internally. Mirrors the lock discipline of seedFromArchetype.
-func mergeSeedFromArchetype(mobId int, namesimple string, mg *MobGoals) {
-	mob := instanceForRecompute(mobId)
+func mergeSeedFromArchetype(mobId int, namesimple string, mg *MobGoals, mob *mobs.Mob) {
+	if mob == nil {
+		mob = instanceForRecompute(mobId)
+	}
 	defaults := resolveArchetypeDefaults(mob)
 	if len(defaults) == 0 {
 		return

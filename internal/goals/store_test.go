@@ -1099,6 +1099,76 @@ func TestMergeSeed_PartiallySeeded_OnlyMissingTypesAdded(t *testing.T) {
 	}
 }
 
+// TestMergeSeed_RecomputeWithLiveMob_SeedsMissingDefault is the 5.3 fixup A v2
+// regression test. It simulates the Constable Drunn scenario:
+//
+//  1. A mob goals file exists on disk with SeededFromArchetype=true but no
+//     goals (created when the mob had a different archetype with no defaults).
+//  2. loadOrLazyInit runs merge-seed with nil mob (instanceForRecompute returns
+//     nil because the mob instance doesn't exist yet at load time). The lookup
+//     receives nil → returns nil → no defaults resolved → goals stay empty.
+//  3. On the first Recompute tick a live mob is present. The mergeSeedDone gate
+//     fires merge-seed once with the live mob → defaults resolved → missing
+//     type added.
+//
+// This test FAILS before the fix (step 3 didn't exist) and PASSES after.
+func TestMergeSeed_RecomputeWithLiveMob_SeedsMissingDefault(t *testing.T) {
+	ClearCache()
+	resetRegistry()
+	RegisterGoalType("test-recompute-seed", GoalTypeMeta{})
+	defer resetRegistry()
+
+	// Lookup returns defaults only when mob is non-nil (simulating the real
+	// archetypeDefaultsLookup which reads mob.BehaviorArchetype).
+	SetArchetypeDefaultsLookup(func(mob *mobs.Mob) []GoalDefault {
+		if mob == nil {
+			return nil // instanceForRecompute returned nil — no defaults
+		}
+		return []GoalDefault{{Type: "test-recompute-seed", Priority: 80}}
+	})
+	defer SetArchetypeDefaultsLookup(nil)
+
+	mobId := 99801
+	name := "drunn_recompute_scenario"
+
+	// Write an existing file with sentinel set but no goals.
+	cacheStoreForTest(name, &MobGoals{
+		MobId:               mobId,
+		NextGoalId:          1,
+		SeededFromArchetype: true,
+		Goals:               nil,
+	})
+	if err := saveToDisk(mobId, name); err != nil {
+		t.Fatalf("saveToDisk: %v", err)
+	}
+	// Clear cache so loadOrLazyInit re-loads from disk (with nil mob → no seed).
+	ClearCache()
+
+	// loadOrLazyInit triggers merge-seed with nil → lookup returns nil → empty.
+	mg := loadOrLazyInit(mobId, name)
+	if len(mg.Goals) != 0 {
+		t.Fatalf("pre-condition violated: expected 0 goals after nil-mob merge-seed, got %d", len(mg.Goals))
+	}
+
+	// Now call Recompute with a live mob — the mergeSeedDone gate should fire.
+	liveMob := &mobs.Mob{}
+	Recompute(mobId, name, liveMob, 100)
+
+	goals := GoalsOf(mobId, name)
+	if len(goals) != 1 {
+		t.Fatalf("expected 1 goal after Recompute with live mob, got %d: %v", len(goals), goals)
+	}
+	if goals[0].Type != "test-recompute-seed" {
+		t.Errorf("goal type: got %q, want test-recompute-seed", goals[0].Type)
+	}
+
+	// Second Recompute must NOT add the goal again (mergeSeedDone guards it).
+	Recompute(mobId, name, liveMob, 101)
+	if got := GoalsOf(mobId, name); len(got) != 1 {
+		t.Errorf("expected exactly 1 goal after second Recompute, got %d", len(got))
+	}
+}
+
 func TestRecompute_SwitchInvokesPlanStateClear(t *testing.T) {
 	ClearCache()
 	called := false

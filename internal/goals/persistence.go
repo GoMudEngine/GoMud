@@ -96,11 +96,16 @@ func cacheStoreForTest(namesimple string, mg *MobGoals) {
 	cacheMu.Unlock()
 }
 
-// ClearCache drops every cached entry. Tests use this to isolate
-// cases; production code should not call it.
+// ClearCache drops every cached entry and resets the merge-seed-done
+// tracker. Tests use this to isolate cases; production code should not
+// call it.
 func ClearCache() {
 	cacheMu.Lock()
 	cache = map[int]*MobGoals{}
 	nameByMobId = map[int]string{}
 	cacheMu.Unlock()
+	mergeSeedDone.Range(func(k, _ any) bool {
+		mergeSeedDone.Delete(k)
+		return true
+	})
 }
