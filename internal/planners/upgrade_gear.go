@@ -7,7 +7,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/goals"
 	"github.com/GoMudEngine/GoMud/internal/itemvalue"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/mudlog"
 )
 
 const (
@@ -51,21 +50,9 @@ func upgradeGearPlanner(mob *mobs.Mob, goal *goals.Goal) PlanResult {
 	profile := itemvalue.ProfileFor(mob.Archetype, mob.BehaviorArchetype)
 	budget := mob.Character.Gold - reserve
 
-	// TEMP 5.3dbg — remove after diagnosis
-	mudlog.Info("[5.3dbg] upgradeGearPlanner entry",
-		"mob", mob.Character.Name, "mob_id", mob.MobId,
-		"gold", mob.Character.Gold, "reserve", reserve,
-		"budget", budget, "minDelta", minDelta)
-
 	// (2) Affordable upgrade?
 	if budget > 0 {
-		cand, ok := scanZoneUpgrades(mob, profile, budget, true, minDelta)
-		// TEMP 5.3dbg — remove after diagnosis
-		mudlog.Info("[5.3dbg] upgradeGearPlanner affordable-scan",
-			"mob", mob.Character.Name, "mob_id", mob.MobId,
-			"ok", ok,
-			"item", cand.ItemName, "delta", cand.Delta, "price", cand.Price, "shop_room", cand.ShopRoom)
-		if ok {
+		if cand, ok := scanZoneUpgrades(mob, profile, budget, true, minDelta); ok {
 			// Entering the buy flow: drop any stale save-up sell-shop room.
 			// This goal's predicate is always false, so ClearPlanState only
 			// fires on a goal SWITCH — within a continuous run across multiple
@@ -80,13 +67,7 @@ func upgradeGearPlanner(mob *mobs.Mob, goal *goals.Goal) PlanResult {
 	}
 
 	// (3) Upgrade exists but unaffordable → save up by selling loot.
-	saveUpCand, exists := scanZoneUpgrades(mob, profile, 0, false, minDelta)
-	// TEMP 5.3dbg — remove after diagnosis
-	mudlog.Info("[5.3dbg] upgradeGearPlanner saveup-scan",
-		"mob", mob.Character.Name, "mob_id", mob.MobId,
-		"ok", exists,
-		"item", saveUpCand.ItemName, "delta", saveUpCand.Delta, "price", saveUpCand.Price)
-	if exists {
+	if _, exists := scanZoneUpgrades(mob, profile, 0, false, minDelta); exists {
 		if mobHasSellableItems(mob) {
 			if mobInVendorRoom(mob) {
 				return PlanResult{Command: "sell all", Status: StatusRunning}
@@ -107,8 +88,5 @@ func upgradeGearPlanner(mob *mobs.Mob, goal *goals.Goal) PlanResult {
 	}
 
 	// (4) Nothing in stock anywhere in zone → idle.
-	// TEMP 5.3dbg — remove after diagnosis
-	mudlog.Info("[5.3dbg] upgradeGearPlanner idle: no candidate, no surplus",
-		"mob", mob.Character.Name, "mob_id", mob.MobId)
 	return PlanResult{Status: StatusRunning}
 }

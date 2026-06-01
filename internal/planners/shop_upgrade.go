@@ -4,7 +4,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/itemvalue"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 )
 
@@ -53,33 +52,16 @@ func scanZoneUpgrades(mob *mobs.Mob, profile itemvalue.WeightProfile, budget int
 	var best upgradeCandidate
 	found := false
 
-	allShops := shops.AllShops()
-	// TEMP 5.3dbg — remove after diagnosis
-	mudlog.Info("[5.3dbg] scanZoneUpgrades entry",
-		"mob", mob.Character.Name, "mob_id", mob.MobId,
-		"zone", mob.Character.Zone, "totalShops", len(allShops),
-		"budget", budget, "onlyAffordable", onlyAffordable, "minDelta", minDelta)
-
-	inZone := 0
-	for _, shop := range allShops {
+	for _, shop := range shops.AllShops() {
 		if shop.Zone != mob.Character.Zone {
 			continue
 		}
-		inZone++
 		for _, e := range shop.Stock {
 			if e.Current <= 0 {
-				// TEMP 5.3dbg — remove after diagnosis
-				mudlog.Info("[5.3dbg] scanZoneUpgrades reject",
-					"mob_id", mob.MobId, "item_id", e.ItemId,
-					"reason", "out-of-stock")
 				continue
 			}
 			spec := items.GetItemSpec(e.ItemId)
 			if spec == nil {
-				// TEMP 5.3dbg — remove after diagnosis
-				mudlog.Info("[5.3dbg] scanZoneUpgrades reject",
-					"mob_id", mob.MobId, "item_id", e.ItemId,
-					"reason", "spec-nil")
 				continue
 			}
 			// Only consider items `gearup` will actually wear. Otherwise the
@@ -87,37 +69,21 @@ func scanZoneUpgrades(mob *mobs.Mob, profile itemvalue.WeightProfile, budget int
 			// and it re-buys the same item every tick (a gold-drain loop).
 			// Mirrors the bare-gearup wear filter in mobcommands/gearup.go.
 			if spec.Type != items.Weapon && spec.Subtype != items.Wearable {
-				// TEMP 5.3dbg — remove after diagnosis
-				mudlog.Info("[5.3dbg] scanZoneUpgrades reject",
-					"mob_id", mob.MobId, "item_id", e.ItemId,
-					"reason", "eligibility")
 				continue
 			}
 			candidate := items.New(e.ItemId)
 			delta := itemvalue.ItemValueDelta(&mob.Character, profile, candidate)
 			if delta.Slot == "" || delta.Score <= minDelta {
-				// TEMP 5.3dbg — remove after diagnosis
-				mudlog.Info("[5.3dbg] scanZoneUpgrades reject",
-					"mob_id", mob.MobId, "item_id", e.ItemId,
-					"reason", "delta<=min", "delta", delta.Score, "slot", delta.Slot)
 				continue
 			}
 			price := shops.CalcSellPrice(spec.Value, e.Current, stockRestockNorm(e), cfg)
 			if onlyAffordable && price > budget {
-				// TEMP 5.3dbg — remove after diagnosis
-				mudlog.Info("[5.3dbg] scanZoneUpgrades reject",
-					"mob_id", mob.MobId, "item_id", e.ItemId,
-					"reason", "price>budget", "price", price)
 				continue
 			}
 			better := !found ||
 				delta.Score > best.Delta ||
 				(delta.Score == best.Delta && price < best.Price)
 			if better {
-				// TEMP 5.3dbg — remove after diagnosis
-				mudlog.Info("[5.3dbg] scanZoneUpgrades accept",
-					"mob_id", mob.MobId, "item_id", e.ItemId,
-					"delta", delta.Score, "price", price, "room", shop.RoomId)
 				best = upgradeCandidate{
 					ShopRoom: shop.RoomId,
 					ItemId:   e.ItemId,
@@ -129,13 +95,5 @@ func scanZoneUpgrades(mob *mobs.Mob, profile itemvalue.WeightProfile, budget int
 			}
 		}
 	}
-	// TEMP 5.3dbg — remove after diagnosis
-	bestItemId := 0
-	if found {
-		bestItemId = best.ItemId
-	}
-	mudlog.Info("[5.3dbg] scanZoneUpgrades result",
-		"mob_id", mob.MobId, "zone", mob.Character.Zone,
-		"in_zone_shops", inZone, "best_item_id", bestItemId, "delta", best.Delta)
 	return best, found
 }
