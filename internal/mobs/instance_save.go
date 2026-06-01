@@ -1,6 +1,7 @@
 package mobs
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -237,6 +238,17 @@ func collectPlanState(mob *Mob) map[string]any {
 		return nil
 	}
 	return out
+}
+
+// equipmentDiffers reports whether two worn loadouts differ in any
+// persistent field. It compares marshaled YAML bytes: items.Item.UUID is
+// yaml:"-" (excluded) and the unexported tempDataStore is not marshaled,
+// so this is a value comparison that ignores per-instance identity and
+// correctly detects a changed itemId or enchant tier in any slot.
+func equipmentDiffers(a, b characters.Worn) bool {
+	ab, _ := yaml.Marshal(&a)
+	bb, _ := yaml.Marshal(&b)
+	return !bytes.Equal(ab, bb)
 }
 
 // hasProgression returns true if the mob has any non-zero progression data

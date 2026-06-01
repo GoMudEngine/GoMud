@@ -230,3 +230,21 @@ func TestCollectPlanState_NilMiscData(t *testing.T) {
 	mob := &Mob{}
 	assert.Nil(t, collectPlanState(mob))
 }
+
+func TestEquipmentDiffers(t *testing.T) {
+	a := characters.Worn{Body: items.Item{ItemId: 1}}
+	b := characters.Worn{Body: items.Item{ItemId: 1}}
+	assert.False(t, equipmentDiffers(a, b), "identical loadouts must not differ")
+
+	c := characters.Worn{Body: items.Item{ItemId: 2}}
+	assert.True(t, equipmentDiffers(a, c), "different itemId in a slot must differ")
+
+	// Enchant tier change on the same item must register as a difference.
+	d := characters.Worn{Body: items.Item{ItemId: 1, EnchantTier: 1}}
+	assert.True(t, equipmentDiffers(a, d), "different enchant tier must differ")
+
+	// UUID must NOT count as a difference (it is yaml:"-").
+	e := characters.Worn{Body: items.New(1)}
+	f := characters.Worn{Body: items.New(1)}
+	assert.False(t, equipmentDiffers(e, f), "differing UUIDs alone must not register as a difference")
+}
