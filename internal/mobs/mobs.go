@@ -449,9 +449,7 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 				if mob.Character.MiscData == nil {
 					mob.Character.MiscData = map[string]any{}
 				}
-				for k, v := range savedInstance.PlanState {
-					mob.Character.MiscData[k] = v
-				}
+				maps.Copy(mob.Character.MiscData, savedInstance.PlanState)
 			}
 		} else {
 			// No saved instance — randomize stat pool as usual
