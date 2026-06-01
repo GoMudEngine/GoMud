@@ -167,11 +167,14 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 	}
 
 	// Per-mob-tree mobs (and any mob whose btree lacks a try_goal_planner node)
-	// don't run their goal planner via the tree. If this mob has a current goal
-	// and the btree didn't already dispatch the planner this round, run it here
-	// so named NPCs pursue goals too. Out-of-combat only (matches idle semantics).
-	if !isCharmed && mob.Character.Aggro == nil &&
-		mobGoalPlannerRanRound(mob) != util.GetRoundCount() {
+	// don't run their goal planner via the tree. If the btree didn't already
+	// dispatch the planner this round, run it here so named NPCs pursue goals
+	// too. We're inside the MobIdle handler, which only fires for idle mobs, so
+	// no explicit combat gate is needed (matches the archetype try_goal_planner
+	// node, which is implicitly idle-gated by the mob_idle event). Some idle
+	// mobs (e.g. on-duty guards) hold a standing non-nil Aggro, so we must NOT
+	// gate on Aggro==nil here or they never pursue goals.
+	if !isCharmed && mobGoalPlannerRanRound(mob) != util.GetRoundCount() {
 		behaviortree.RunGoalPlanner(mob, util.GetRoundCount())
 	}
 
