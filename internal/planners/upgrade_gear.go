@@ -30,6 +30,14 @@ func upgradeGearPlanner(mob *mobs.Mob, goal *goals.Goal) PlanResult {
 		return PlanResult{Status: StatusFailure}
 	}
 
+	// Eligibility gate: if this mob can never wear bought gear (non-combat
+	// archetype, or animal species with a disabled weapon slot), don't shop.
+	// Defensive — the shipped archetypes (thief, guard_captain) all pass; this
+	// guards against future seeding of upgrade-gear onto an ineligible mob.
+	if !itemvalue.CanEquipFromGive(&mob.Character, mob.BehaviorArchetype) {
+		return PlanResult{Status: StatusRunning}
+	}
+
 	// (1) Equip what we bought last tick.
 	if mobMiscIntOr(mob, upgradePendingEquipKey, 0) == 1 {
 		mobSetMisc(mob, upgradePendingEquipKey, 0)

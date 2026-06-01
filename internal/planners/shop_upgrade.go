@@ -64,6 +64,13 @@ func scanZoneUpgrades(mob *mobs.Mob, profile itemvalue.WeightProfile, budget int
 			if spec == nil {
 				continue
 			}
+			// Only consider items `gearup` will actually wear. Otherwise the
+			// mob buys an item it can't equip, the target slot never changes,
+			// and it re-buys the same item every tick (a gold-drain loop).
+			// Mirrors the bare-gearup wear filter in mobcommands/gearup.go.
+			if spec.Type != items.Weapon && spec.Subtype != items.Wearable {
+				continue
+			}
 			candidate := items.New(e.ItemId)
 			delta := itemvalue.ItemValueDelta(&mob.Character, profile, candidate)
 			if delta.Slot == "" || delta.Score <= minDelta {
