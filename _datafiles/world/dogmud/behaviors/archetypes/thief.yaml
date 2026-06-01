@@ -113,3 +113,5 @@ default_goals:
     priority: 40
     params:
       target: 500
+  - type: upgrade-gear
+    priority: 30
