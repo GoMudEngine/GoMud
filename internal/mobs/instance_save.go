@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -27,6 +28,13 @@ type MobInstanceData struct {
 	StatUseCount       map[string]int `yaml:"stat_use_count,omitempty"`
 	Mutations          map[string]int `yaml:"mutations,omitempty"`
 	MutationProgress   float64        `yaml:"mutation_progress,omitempty"`
+
+	// Goal-progress persistence (2026-06-01). Pointers / nil-able so that
+	// "absent in the save" (old file or non-goal mob) is distinguishable
+	// from a real zero value (mob spent all gold / stripped all gear).
+	Gold      *int             `yaml:"gold,omitempty"`
+	Equipment *characters.Worn `yaml:"equipment,omitempty"`
+	PlanState map[string]any   `yaml:"plan_state,omitempty"`
 }
 
 // instanceFilename returns the base filename for a mob instance save.

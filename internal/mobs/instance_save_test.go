@@ -5,8 +5,11 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v2"
 )
 
 // withMobProgressionEnabled turns on Balance.MobProgressionEnabled for
@@ -167,4 +170,41 @@ func TestNukeSummonsInstances_NoDirectory(t *testing.T) {
 
 	pruned := NukeSummonsInstances()
 	assert.Equal(t, 0, pruned)
+}
+
+func TestMobInstanceData_GoalProgressFields_RoundTrip(t *testing.T) {
+	gold := 999
+	in := MobInstanceData{
+		Gold: &gold,
+		Equipment: &characters.Worn{
+			Body: items.Item{ItemId: 1, EnchantTier: 3, EnchantType: "frost"},
+		},
+		PlanState: map[string]any{"plan:wealth-gold:target_shop_room": 4101},
+	}
+
+	bytes, err := yaml.Marshal(&in)
+	assert.NoError(t, err)
+
+	var out MobInstanceData
+	assert.NoError(t, yaml.Unmarshal(bytes, &out))
+
+	assert.NotNil(t, out.Gold)
+	assert.Equal(t, 999, *out.Gold)
+	assert.NotNil(t, out.Equipment)
+	assert.Equal(t, 1, out.Equipment.Body.ItemId)
+	assert.Equal(t, 3, out.Equipment.Body.EnchantTier)
+	assert.Equal(t, "frost", out.Equipment.Body.EnchantType)
+	assert.Equal(t, 4101, out.PlanState["plan:wealth-gold:target_shop_room"])
+}
+
+func TestMobInstanceData_GoldZero_RoundTrips(t *testing.T) {
+	zero := 0
+	in := MobInstanceData{Gold: &zero}
+	b, err := yaml.Marshal(&in)
+	assert.NoError(t, err)
+
+	var out MobInstanceData
+	assert.NoError(t, yaml.Unmarshal(b, &out))
+	assert.NotNil(t, out.Gold, "non-nil *int(0) must survive marshal (presence semantics)")
+	assert.Equal(t, 0, *out.Gold)
 }
