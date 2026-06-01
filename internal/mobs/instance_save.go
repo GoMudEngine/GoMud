@@ -10,7 +10,6 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
-	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"gopkg.in/yaml.v2"
@@ -241,59 +240,21 @@ func collectPlanState(mob *Mob) map[string]any {
 	return out
 }
 
-// normalizeWornForCompare replaces disabled-slot sentinels (ItemId == -1,
-// set by characters.validateDisabledSlotsForSpecies at spawn time) with
-// zero-value items. Disabled slots and empty slots are semantically
-// equivalent for persistence purposes: neither has an item worth saving.
-// Without this normalization the raw template Worn (all zeros) would
-// always differ from a spawned mob's Worn (species-disabled slots set to
-// ItemId: -1), causing a spurious "equipment changed" result.
-func normalizeWornForCompare(w characters.Worn) characters.Worn {
-	empty := func(it items.Item) items.Item {
-		if it.ItemId == -1 {
-			return items.Item{}
-		}
-		return it
-	}
-	w.Weapon = empty(w.Weapon)
-	w.Offhand = empty(w.Offhand)
-	w.ExtraArm1 = empty(w.ExtraArm1)
-	w.ExtraArm2 = empty(w.ExtraArm2)
-	w.ExtraArm3 = empty(w.ExtraArm3)
-	w.ExtraArm4 = empty(w.ExtraArm4)
-	w.Head = empty(w.Head)
-	w.Neck = empty(w.Neck)
-	w.Shoulders = empty(w.Shoulders)
-	w.Body = empty(w.Body)
-	w.Back = empty(w.Back)
-	w.Belt = empty(w.Belt)
-	w.Wrist1 = empty(w.Wrist1)
-	w.Wrist2 = empty(w.Wrist2)
-	w.ExtraWrist1 = empty(w.ExtraWrist1)
-	w.ExtraWrist2 = empty(w.ExtraWrist2)
-	w.ExtraWrist3 = empty(w.ExtraWrist3)
-	w.ExtraWrist4 = empty(w.ExtraWrist4)
-	w.Gloves = empty(w.Gloves)
-	w.Ring = empty(w.Ring)
-	w.Ring2 = empty(w.Ring2)
-	w.Legs = empty(w.Legs)
-	w.Feet = empty(w.Feet)
-	w.Tail = empty(w.Tail)
-	w.ComponentBag = empty(w.ComponentBag)
-	return w
-}
-
 // equipmentDiffers reports whether two worn loadouts differ in any
 // persistent field. It compares marshaled YAML bytes: items.Item.UUID is
 // yaml:"-" (excluded) and the unexported tempDataStore is not marshaled,
 // so this is a value comparison that ignores per-instance identity and
 // correctly detects a changed itemId or enchant tier in any slot.
-// Disabled-slot sentinels (ItemId == -1) are normalized to zero before
-// comparison so that species-gated slot disabling at spawn time does not
-// count as an equipment change.
+// EnableAll() normalizes species-disabled slot sentinels (ItemId < 0,
+// stamped by validateDisabledSlotsForSpecies at spawn) to the zero item
+// on the local copies first, so species-gated slot disabling does not
+// count as an equipment change. a and b are value parameters, so this
+// does not mutate the caller's equipment.
 func equipmentDiffers(a, b characters.Worn) bool {
-	ab, _ := yaml.Marshal(normalizeWornForCompare(a))
-	bb, _ := yaml.Marshal(normalizeWornForCompare(b))
+	a.EnableAll()
+	b.EnableAll()
+	ab, _ := yaml.Marshal(&a)
+	bb, _ := yaml.Marshal(&b)
 	return !bytes.Equal(ab, bb)
 }
 
