@@ -38,9 +38,11 @@ real decision loop on top of it.
   `WeightProfile`. `IsUpgrade(char, profile, candidate)` is the boolean wrapper.
 - **`shops` package:** `shops.AllShops()` exposes per-shop `Zone`, `RoomId`,
   `Gold`, and stock entries; `ShopInventory.GetStock(itemId)` returns the live
-  entry (`Current`, `RestockQty`, `MaxStock`); `shops.CalcBuyPrice(value,
-  current, restockQty, cfg)` computes the price a buyer pays under dynamic
-  pricing; `PricingConfigFromBalance()` builds the config.
+  entry (`Current`, `RestockQty`, `MaxStock`); `shops.CalcSellPrice(value,
+  current, restockQty, cfg)` computes the price a buyer **pays** under dynamic
+  pricing (it is "what the NPC charges a player to buy an item" — note
+  `CalcBuyPrice` is the opposite direction, what the shop pays when buying
+  *from* the player); `PricingConfigFromBalance()` builds the config.
 - **`wealth-gold` planner (4.4):** a working sell-loot-to-accumulate-gold loop
   (`pathto` a buying vendor → `sell all`), with `mobHasSellableItems` and
   `mobInVendorRoom` / `findShopInZoneBuying` helpers. 5.3 composes its logic for
@@ -110,16 +112,14 @@ Algorithm:
    - Track the best by delta (tie-break: lower price).
 2. Return the best, with its shop room, or `ok=false`.
 
-Also a cheaper companion used by `ContextScore` and the "save toward it"
-branch:
+The same primitive serves the "save toward it" branch by passing
+`onlyAffordable=false` (ignore budget): if it finds a positive-delta upgrade the
+mob can't yet afford, the planner runs the sell loop to save up. So there is one
+evaluator, not two — `findBestUpgradeInZoneShops` is just the
+`onlyAffordable=true` wrapper.
 
-```go
-// bestUpgradePrice returns the price of the cheapest positive-delta in-stock
-// upgrade in the zone IGNORING current gold (so the goal can decide whether
-// it is worth saving toward). ok=false when no positive-delta upgrade exists
-// in stock at any price.
-func cheapestUpgradePrice(mob *mobs.Mob, profile itemvalue.WeightProfile, minDelta float64) (price int, ok bool)
-```
+`ContextScore` does **not** call the evaluator (it stays cheap and self-
+contained — see §2); the planner is the sole consumer of stock state.
 
 ### 2. Goal type — `upgrade-gear` (`internal/goals/catalog/upgrade_gear.go`)
 
@@ -130,12 +130,14 @@ better gear.
   default gold floor.
 - **`IsSatisfied`:** always `false`. The drive never completes; activation is
   governed entirely by `ContextScore`.
-- **`ContextScore`:** returns a small positive **floor** (e.g. `1.0`) in all
-  cases so the 4.6 dormancy sweep never abandons a standing default goal, and
-  a meaningfully higher score when an affordable in-stock upgrade exists and
-  the mob is idle + out of combat. This makes goal-selection surface
-  `upgrade-gear` only when it is actionable, while keeping it alive as a low-
-  priority background want otherwise.
+- **`ContextScore`:** returns a small positive **floor** (`1.0`) in all cases
+  so the 4.6 dormancy sweep never abandons a standing default goal, and a
+  higher score (`2.5`) when the mob is idle/out-of-combat AND has a plausible
+  path to a purchase — spendable gold above the reserve, or sellable loot to
+  fund saving. It deliberately stays **cheap and self-contained (no shop
+  scan)**, matching the 4.3 `mastery-equip` precedent that avoided cross-package
+  shop scans in context scoring; the planner is the authority on whether
+  anything is actually in stock.
 - **`AllowMultiple`: false.** One per mob.
 - **Seeding:** archetype default via the existing `default_goals:` block. The
   `SeededFromArchetype` sentinel means it survives admin `goal clear` and
@@ -161,14 +163,16 @@ when a planner runs):
    profile, budget, minDelta)`.
    - **Affordable upgrade found:**
      - At its shop room (`mob.RoomId == cand.ShopRoom`)? → emit
-       `buy <cand.ItemName>`; on the **next tick** emit `gearup` to wear it,
-       then clear the sticky room. (Buying lands the item in the backpack;
-       `gearup` is the 2.3 itemvalue-aware wear step. We do **not** rely on the
-       floor-loot auto-equip path, which only fires on room pickup.)
-     - Not there? → sticky-cache `cand.ShopRoom` + emit
-       `pathto <cand.ShopRoom>`. `Running`.
+       `buy <cand.ItemName>`; on the **next tick** emit `gearup` to wear it.
+       (Buying lands the item in the backpack; `gearup` is the 2.3 itemvalue-
+       aware wear step. We do **not** rely on the floor-loot auto-equip path,
+       which only fires on room pickup.)
+     - Not there? → emit `pathto <cand.ShopRoom>`. The buy target is
+       **rescanned each tick** (zone shops are few; avoids stale-target bugs),
+       so no buy-shop sticky is kept — only the save-up sell loop caches a
+       sticky vendor room. `Running`.
 4. **No *affordable* upgrade, but a positive-delta upgrade exists in stock**
-   (`cheapestUpgradePrice` returns `ok` with `price > budget`) → **save toward
+   (re-run the evaluator with `onlyAffordable=false`; it returns `ok`) → **save toward
    it** by composing the `wealth-gold` sell loop:
    - Has sellable junk + in a buying vendor room → `sell all`.
    - Has sellable junk + not at a vendor → sticky `findShopInZoneBuying` +
