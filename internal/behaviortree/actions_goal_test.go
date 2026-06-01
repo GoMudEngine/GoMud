@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/goals"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/planners"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // buildGoalMob creates a minimal mob instance for goal-action tests.
@@ -167,6 +168,83 @@ func TestTryGoalPlanner_RegisteredPlanner_PropagatesSuccess(t *testing.T) {
 	res := actGoalPlanner(nil, ctx)
 	if res != Success {
 		t.Errorf("planner Success: got %v, want Success", res)
+	}
+}
+
+// TestTryGoalPlanner_StampsGoalActedRound_WhenCommandIssued verifies the
+// "planner owns the tick" stamp: when the dispatched planner returns a
+// non-empty Command, actGoalPlanner records the current round in the
+// "goalActedRound" TempData key. The idle handler reads this to suppress its
+// legacy idle block on ticks the planner is actively acting on.
+func TestTryGoalPlanner_StampsGoalActedRound_WhenCommandIssued(t *testing.T) {
+	goals.ClearCache()
+	util.SetRoundCountForTest(4242)
+	const testGoalType = "test-goal-planner-stamp-9905"
+	planners.RegisterPlanner(testGoalType, func(*mobs.Mob, *goals.Goal) planners.PlanResult {
+		return planners.PlanResult{Command: "pathto 100", Status: planners.StatusRunning}
+	})
+	t.Cleanup(func() { planners.RegisterPlanner(testGoalType, nil) })
+
+	mob := buildGoalMob(t, 9905, 99705, "planner_stamp_test", 1)
+	t.Cleanup(func() { goals.ClearCache() })
+
+	if _, err := goals.Add(int(mob.MobId), "planner_stamp_test",
+		&goals.Goal{Type: testGoalType, Priority: 50}); err != nil {
+		t.Fatalf("goals.Add: %v", err)
+	}
+
+	ctx := &EvalContext{
+		InstanceId: 9905,
+		RoomId:     1,
+		MobState:   NewBehaviorState(),
+	}
+	res := actGoalPlanner(nil, ctx)
+	if res != Running {
+		t.Errorf("running planner with command: got %v, want Running", res)
+	}
+
+	v := mob.GetTempData("goalActedRound")
+	got, ok := v.(uint64)
+	if !ok {
+		t.Fatalf("goalActedRound TempData not set as uint64: %v (%T)", v, v)
+	}
+	if got != 4242 {
+		t.Errorf("goalActedRound = %d, want 4242", got)
+	}
+}
+
+// TestTryGoalPlanner_NoStamp_WhenCommandEmpty verifies that when the planner
+// returns an empty Command (idle-Running, e.g. nothing to buy), actGoalPlanner
+// does NOT stamp goalActedRound — leaving legacy idle free to emit emotes.
+func TestTryGoalPlanner_NoStamp_WhenCommandEmpty(t *testing.T) {
+	goals.ClearCache()
+	util.SetRoundCountForTest(5555)
+	const testGoalType = "test-goal-planner-nostamp-9906"
+	planners.RegisterPlanner(testGoalType, func(*mobs.Mob, *goals.Goal) planners.PlanResult {
+		return planners.PlanResult{Command: "", Status: planners.StatusRunning}
+	})
+	t.Cleanup(func() { planners.RegisterPlanner(testGoalType, nil) })
+
+	mob := buildGoalMob(t, 9906, 99706, "planner_nostamp_test", 1)
+	t.Cleanup(func() { goals.ClearCache() })
+
+	if _, err := goals.Add(int(mob.MobId), "planner_nostamp_test",
+		&goals.Goal{Type: testGoalType, Priority: 50}); err != nil {
+		t.Fatalf("goals.Add: %v", err)
+	}
+
+	ctx := &EvalContext{
+		InstanceId: 9906,
+		RoomId:     1,
+		MobState:   NewBehaviorState(),
+	}
+	res := actGoalPlanner(nil, ctx)
+	if res != Running {
+		t.Errorf("running planner with empty command: got %v, want Running", res)
+	}
+
+	if v := mob.GetTempData("goalActedRound"); v != nil {
+		t.Errorf("goalActedRound should be unset for empty command, got %v", v)
 	}
 }
 

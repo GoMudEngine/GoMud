@@ -59,6 +59,16 @@ func actGoalPlanner(params map[string]any, ctx *EvalContext) Result {
 
 	if result.Command != "" {
 		mob.Command(result.Command)
+		// "Planner owns the tick" stamp: record the round on which the
+		// planner actually ISSUED a command. The idle handler reads this
+		// (goalActedRound == GetRoundCount()) to suppress its legacy idle
+		// block (WanderCount home-pull + idle emote) so it doesn't fight the
+		// command the planner just queued (e.g. a pathto-to-shop). It also
+		// reads it one round stale (== GetRoundCount()-1) in the displacement
+		// guard so a mid-journey MaxWander==0 mob isn't yanked home. We do NOT
+		// stamp on an empty Command (idle-Running) — in that case legacy idle
+		// SHOULD still fire so the mob emits its flavor emotes.
+		mob.SetTempData("goalActedRound", util.GetRoundCount())
 	}
 	return translatePlannerStatus(result.Status)
 }

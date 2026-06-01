@@ -38,8 +38,18 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 
 	// if a mob shouldn't be allowed to leave their area (via wandering)
 	// but has somehow been displaced, such as pulling through combat, spells, or otherwise
-	// tell them to path back home
-	if !isCharmed && shouldRecoverDisplacedHome(mob) {
+	// tell them to path back home.
+	//
+	// EXCEPTION: a goal planner that issued a movement command on the
+	// immediately preceding idle round owns this mob's journey. The path
+	// walker suppresses MobIdle while a path is active, so the previous idle
+	// round (GetRoundCount()-1) is the most recent the planner could have
+	// acted on; if it did, this is a mid-trip mob (e.g. MaxWander==0 guard
+	// walking to a shop for upgrade-gear), not a combat-displaced one — don't
+	// yank it home. Genuinely combat-displaced mobs have no recent planner
+	// action and still get recovered.
+	if !isCharmed && shouldRecoverDisplacedHome(mob) &&
+		mobGoalActedRound(mob) != util.GetRoundCount()-1 {
 		mob.Command("pathto home")
 	}
 
@@ -156,6 +166,18 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 		return events.Continue
 	}
 
+	// "Planner owns the tick": TryMobBehavior returns false while a goal
+	// planner is actively pursuing a goal (the planner returns Running, not
+	// Success). If the planner ISSUED A COMMAND this very round (e.g. a
+	// pathto-to-shop), that tick belongs to the planner — the legacy idle
+	// block below (WanderCount home-pull + idle emote) must NOT also fire and
+	// fight it. When the planner idled (returned no command), the stamp is
+	// stale and legacy idle proceeds so the mob still emits flavor emotes.
+	// Charmed mobs are excluded here so their first-aid path below is intact.
+	if !isCharmed && mobGoalActedRound(mob) == util.GetRoundCount() {
+		return events.Continue
+	}
+
 	{
 		if isCharmed {
 			// Only some mobs can apply first aid
@@ -212,6 +234,23 @@ func shouldRecoverDisplacedHome(mob *mobs.Mob) bool {
 		return false
 	}
 	return mob.MaxWander == 0 && mob.Character.RoomId != mob.HomeRoomId
+}
+
+// mobGoalActedRound returns the round on which this mob's goal planner last
+// ISSUED a command (stamped by actGoalPlanner via the "goalActedRound"
+// TempData key). Returns 0 if the stamp is absent or the wrong type. The
+// idle handler compares this against the current round to tell when a goal
+// planner owns the tick. Mirrors the lastGossipRound TempData read above.
+func mobGoalActedRound(mob *mobs.Mob) uint64 {
+	if mob == nil {
+		return 0
+	}
+	if v := mob.GetTempData("goalActedRound"); v != nil {
+		if r, ok := v.(uint64); ok {
+			return r
+		}
+	}
+	return 0
 }
 
 // ── Gossiper helpers ─────────────────────────────────────────────────────────
