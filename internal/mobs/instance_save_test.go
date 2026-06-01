@@ -268,6 +268,59 @@ func clearProgression(m *Mob) {
 	m.Character.MiscData = nil
 }
 
+func TestSaveMobInstance_CapturesGoldEquipmentPlanState(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+	withMobProgressionEnabled(t)
+
+	mob := NewMobById(1, 100)
+	if mob == nil {
+		t.Fatal("NewMobById returned nil")
+	}
+	path := instancePath(mob.MobId, mob.Zone, mob.Character.Name, mob.HomeRoomId)
+	_ = os.Remove(path)
+	t.Cleanup(func() { _ = os.Remove(path) })
+
+	mob.Character.Gold = 1234
+	mob.Character.Equipment.Body = items.Item{ItemId: 1, EnchantTier: 2}
+	mob.Character.SetMiscData("plan:wealth-gold:target_shop_room", 4101)
+
+	assert.NoError(t, SaveMobInstance(mob))
+
+	loaded := LoadMobInstance(mob.MobId, mob.Zone, mob.Character.Name, mob.HomeRoomId)
+	assert.NotNil(t, loaded)
+	assert.NotNil(t, loaded.Gold)
+	assert.Equal(t, 1234, *loaded.Gold)
+	assert.NotNil(t, loaded.Equipment)
+	assert.Equal(t, 1, loaded.Equipment.Body.ItemId)
+	assert.Equal(t, 2, loaded.Equipment.Body.EnchantTier)
+	assert.Equal(t, 4101, loaded.PlanState["plan:wealth-gold:target_shop_room"])
+}
+
+func TestSaveMobInstance_GoldChangeAloneWritesFile(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+	withMobProgressionEnabled(t)
+
+	mob := NewMobById(1, 100)
+	if mob == nil {
+		t.Fatal("NewMobById returned nil")
+	}
+	path := instancePath(mob.MobId, mob.Zone, mob.Character.Name, mob.HomeRoomId)
+	_ = os.Remove(path)
+	t.Cleanup(func() { _ = os.Remove(path) })
+
+	// Zero all progression fields so only the gold change can trip the gate.
+	clearProgression(mob)
+
+	// No training — only a gold change. Old gate (hasProgression) would skip.
+	mob.Character.Gold = mob.Character.Gold + 777
+	assert.NoError(t, SaveMobInstance(mob))
+
+	_, statErr := os.Stat(path)
+	assert.NoError(t, statErr, "gold-change-only mob must now write an instance file")
+}
+
 func TestHasPersistableState(t *testing.T) {
 	cleanup := seedRegistry()
 	defer cleanup()

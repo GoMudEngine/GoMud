@@ -72,8 +72,9 @@ func SaveMobInstance(mob *Mob) error {
 		return nil
 	}
 
-	// Only save if the mob has gained any training beyond zero
-	if !hasProgression(mob) {
+	// Only save if the mob has progression, planner working state, or
+	// gold/equipment that differs from its template.
+	if !hasPersistableState(mob) {
 		return nil
 	}
 
@@ -98,6 +99,20 @@ func SaveMobInstance(mob *Mob) error {
 	}
 	if len(mob.Character.Mutations) > 0 {
 		data.Mutations = mob.Character.Mutations
+	}
+
+	// Goal-progress capture (2026-06-01). Captured unconditionally for a
+	// persistable mob — the live value IS the truth, so capturing even when
+	// it equals the template is harmless (restore becomes a no-op). Pointers
+	// preserve the spent-all-gold (0) and stripped-gear (empty) cases.
+	gold := mob.Character.Gold
+	data.Gold = &gold
+
+	eq := mob.Character.Equipment
+	data.Equipment = &eq
+
+	if planState := collectPlanState(mob); planState != nil {
+		data.PlanState = planState
 	}
 
 	savePath := instancePath(mob.MobId, mob.Zone, mob.Character.Name, mob.HomeRoomId)
