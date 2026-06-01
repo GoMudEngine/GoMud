@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/stretchr/testify/assert"
@@ -200,4 +201,60 @@ func TestRoomHasEssentialMob_ShopMobPinsRoom(t *testing.T) {
 		assert.NotEqual(t, 9003, id,
 			"RoomMaintenance must not unload a room containing a shopkeeper mob")
 	}
+}
+
+func TestRemoveRoomFromMemory_SavesChangedMob(t *testing.T) {
+	cleanupMobs := mobs.SeedMobsForTest(map[int]*mobs.Mob{}, map[int]*mobs.Mob{})
+	defer cleanupMobs()
+
+	// Enable mob progression so SaveMobInstance writes.
+	configs.AddOverlayOverrides(map[string]any{"Balance.MobProgressionEnabled": true})
+	t.Cleanup(func() {
+		configs.AddOverlayOverrides(map[string]any{"Balance.MobProgressionEnabled": false})
+	})
+
+	const instId = 2002
+	mob := &mobs.Mob{
+		MobId:      50,
+		Zone:       "TestZone",
+		HomeRoomId: 9100,
+		Groups:     []string{"bandit"}, // non-essential → room unloads
+	}
+	mob.Character.Name = "Testmob"
+	mob.Character.Stats.Strength.Training = 1 // trips hasPersistableState
+	mob.Character.Gold = 999
+	mobs.SetInstanceForTest(instId, mob)
+
+	cleanupRooms := SeedRoomsForTest(
+		map[int]*Room{
+			9100: {
+				RoomId:      9100,
+				Zone:        "TestZone",
+				Title:       "Dark Alley",
+				Description: "A shadowy alley.",
+				mobs:        []int{instId},
+				lastVisited: 0,
+			},
+		},
+		map[string]*ZoneConfig{
+			"TestZone": {Name: "TestZone", RoomId: 9100, RoomIds: map[int]struct{}{9100: {}}},
+		},
+	)
+	defer cleanupRooms()
+
+	// Clean any stale save, and ensure cleanup after.
+	mobs.DeleteMobInstance(50, "TestZone", "Testmob", 9100)
+	t.Cleanup(func() { mobs.DeleteMobInstance(50, "TestZone", "Testmob", 9100) })
+
+	r := roomManager.rooms[9100]
+	removeRoomFromMemory(r)
+
+	// Room unloaded AND the mob's current gold was saved on the way out.
+	_, stillLoaded := roomManager.rooms[9100]
+	assert.False(t, stillLoaded, "non-essential room must unload")
+
+	saved := mobs.LoadMobInstance(50, "TestZone", "Testmob", 9100)
+	assert.NotNil(t, saved, "removeRoomFromMemory must save the mob before destroying it")
+	assert.NotNil(t, saved.Gold)
+	assert.Equal(t, 999, *saved.Gold, "saved gold must reflect the mob's current gold")
 }
