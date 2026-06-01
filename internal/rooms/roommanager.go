@@ -493,9 +493,20 @@ func removeRoomFromMemory(r *Room) {
 		return
 	}
 
+	keptMobs := room.mobs[:0:0]
 	for _, mobInstanceId := range room.mobs {
+		// Only destroy mobs actually in this room. A scheduled/patrolling mob
+		// may be listed here but have already moved on (its Character.RoomId
+		// points elsewhere); its schedule/patrol executor owns it in its
+		// current room, so destroying it here would orphan-kill it. Drop the
+		// stale listing without destroying the instance.
+		if m := mobs.GetInstance(mobInstanceId); m != nil && m.Character.RoomId != room.RoomId {
+			continue
+		}
 		mobs.DestroyInstance(mobInstanceId)
+		keptMobs = append(keptMobs, mobInstanceId)
 	}
+	room.mobs = keptMobs
 
 	for _, spawnDetails := range room.SpawnInfo {
 		if spawnDetails.InstanceId > 0 {
