@@ -12,7 +12,7 @@ type upgradeCandidate struct {
 	ShopRoom int
 	ItemId   int
 	ItemName string  // canonical item name, used for the `buy <name>` command
-	Price    int     // what the mob pays (CalcSellPrice)
+	Price    int     // what the mob pays to buy from shop (CalcSellPrice = buyer-side price)
 	Delta    float64 // itemvalue swap delta (gain)
 }
 
@@ -56,8 +56,7 @@ func scanZoneUpgrades(mob *mobs.Mob, profile itemvalue.WeightProfile, budget int
 		if shop.Zone != mob.Character.Zone {
 			continue
 		}
-		for i := range shop.Stock {
-			e := shop.Stock[i]
+		for _, e := range shop.Stock {
 			if e.Current <= 0 {
 				continue
 			}
