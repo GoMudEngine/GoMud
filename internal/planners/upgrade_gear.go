@@ -45,6 +45,11 @@ func upgradeGearPlanner(mob *mobs.Mob, goal *goals.Goal) PlanResult {
 	// (2) Affordable upgrade?
 	if budget > 0 {
 		if cand, ok := scanZoneUpgrades(mob, profile, budget, true, minDelta); ok {
+			// Entering the buy flow: drop any stale save-up sell-shop room.
+			// This goal's predicate is always false, so ClearPlanState only
+			// fires on a goal SWITCH — within a continuous run across multiple
+			// buy/sell cycles the sticky would otherwise persist a stale vendor.
+			mobSetMisc(mob, upgradeSellShopRoomKey, 0)
 			if mob.Character.RoomId == cand.ShopRoom {
 				mobSetMisc(mob, upgradePendingEquipKey, 1)
 				return PlanResult{Command: "buy " + cand.ItemName, Status: StatusRunning}
@@ -70,7 +75,7 @@ func upgradeGearPlanner(mob *mobs.Mob, goal *goals.Goal) PlanResult {
 				return PlanResult{Command: "pathto " + strconv.Itoa(room), Status: StatusRunning}
 			}
 		}
-		// Nothing to sell (or no buying vendor) → wander hoping for loot.
+		// No buying vendor found (or nothing to sell) → wander hoping for loot.
 		return PlanResult{Command: "wander", Status: StatusRunning}
 	}
 

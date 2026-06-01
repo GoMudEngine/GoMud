@@ -54,6 +54,26 @@ func TestUpgradeGear_PendingEquip_EmitsGearup(t *testing.T) {
 	}
 }
 
+// The pending-equip one-shot must clear ONLY its own flag and leave the
+// save-up sell-shop sticky untouched (that sticky is cleared instead when the
+// mob enters the buy branch). Guards the Issue-I fix region against a future
+// over-broad clear in the pending-equip path.
+func TestUpgradeGear_PendingEquip_LeavesSellShopStickyUntouched(t *testing.T) {
+	fn := LookupPlanner("upgrade-gear")
+	mob := &mobs.Mob{}
+	mob.Character.MiscData = map[string]any{
+		upgradePendingEquipKey: 1,
+		upgradeSellShopRoomKey: 4110,
+	}
+	_ = fn(mob, &goals.Goal{Type: "upgrade-gear"})
+	if mobMiscIntOr(mob, upgradePendingEquipKey, 0) != 0 {
+		t.Errorf("pending-equip flag should be cleared")
+	}
+	if got := mobMiscIntOr(mob, upgradeSellShopRoomKey, 0); got != 4110 {
+		t.Errorf("sell-shop sticky = %d, want 4110 (untouched by pending-equip path)", got)
+	}
+}
+
 func TestUpgradeGear_MiscKeys_HavePlanPrefix(t *testing.T) {
 	for _, k := range []string{upgradePendingEquipKey, upgradeSellShopRoomKey} {
 		if !strings.HasPrefix(k, PlanKeyPrefix) {
