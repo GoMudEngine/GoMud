@@ -153,6 +153,19 @@ the selection engine; they just never complete.
   In 4.3 there is no "enemy faction member" filter — correction
   belongs in 4.5 when opinion scores are available.
 
+## chunk 5.3 — upgrade-gear goal type
+
+`upgrade_gear.go` — a perpetual "want better gear" drive. `Predicate` always
+returns false (no terminal state); activation is governed entirely by
+`ContextScore`, which returns a positive floor (`1.0`) in all cases so the 4.6
+dormancy sweep never abandons this standing default, rising to `2.5` when the
+mob is idle/out-of-combat AND has a plausible path to a purchase (spendable gold
+above the reserve, or sellable loot to fund saving). Deliberately cheap and
+self-contained — no shop scan in scoring (the chunk-5.3 planner owns stock
+decisions, mirroring the `mastery-equip` precedent). Optional `reserve` int
+param overrides the `MobUpgradeGoldReserve` config default. `AllowMultiple:
+false`. The matching planner lives in `internal/planners/upgrade_gear.go`.
+
 ## Out of Scope
 
 - **Planner (4.4)**: btree actions that read `CurrentGoalOf` and

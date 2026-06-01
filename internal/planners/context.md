@@ -205,6 +205,32 @@ append a row to `skillTrainingTable` in this file.
    package). The `try_goal_planner` btree action falls through gracefully for
    unregistered types, so adding a new planner is non-breaking.
 
+## chunk 5.3 — upgrade-gear (equipment-aware shopping)
+
+`upgrade_gear.go` — the survey-worst-slot equipment-shopping planner. It does
+not target a pre-chosen slot; `shop_upgrade.go`'s `scanZoneUpgrades` scores
+every in-stock item across the mob's zone shops via `itemvalue.ItemValueDelta`
+(so the highest positive delta naturally targets whichever slot benefits most),
+prices each with `shops.CalcSellPrice` (the buyer-side dynamic price — NOT
+`CalcBuyPrice`), and returns the best affordable positive-delta candidate
+(tie-break lower price).
+
+Per-tick state machine: (1) `pending_equip` flag set last tick → `gearup`;
+(2) affordable upgrade → `buy <name>` at the shop (set the equip flag for next
+tick) or `pathto` it; (3) upgrade exists but unaffordable → compose the
+wealth-gold sell loop to save up (`sell all` / `pathto` a buying vendor /
+`wander`); (4) nothing in stock → idle. The buy target is rescanned each tick
+(zone shops are few), so only the save-up sell vendor is sticky
+(`plan:upgrade-gear:sell_shop_room`); `plan:upgrade-gear:pending_equip` is the
+one-shot equip flag. Because the goal's predicate is always false (perpetual
+drive), `ClearPlanState` only fires on a goal SWITCH — so the buy branch
+explicitly clears the sell-shop sticky to prevent a stale vendor persisting
+across buy/sell cycles within one continuous run. Config knobs:
+`MobUpgradeGoldReserve`, `MobUpgradeMinDelta`. Seeded as a low-priority
+`default_goals` entry on `thief` and `guard_captain`. Same-zone only;
+cross-respawn persistence of bought gear is out of scope (instance saves are
+wiped in prod / smoke).
+
 ## Out of Scope
 
 - **Reactive goal seeding (4.5)**: hooks that call `goals.Add` when an ally
