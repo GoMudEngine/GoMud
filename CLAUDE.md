@@ -1,7 +1,23 @@
 # DOGMud - Claude Code Project Memory
 
 ## Subagent Model Preference
-Always use `model: "haiku"` when spawning subagents via the Task tool, unless the task clearly requires deeper reasoning (complex refactoring, architectural decisions, multi-step code writing). Default to haiku for exploration, search, and simple research tasks.
+Pick the model that fits the task — don't reflexively pin everything to haiku.
+
+- **haiku** — trivial mechanical work: a single-file grep/glob, a one-shot
+  symbol lookup, a fixed-recipe edit. Cheap and fine when there's no judgment
+  involved.
+- **sonnet / opus** — exploration or implementation that benefits from
+  reasoning: tracing how a subsystem fits together, multi-file searches where
+  the answer requires synthesis, refactoring, architectural decisions,
+  multi-step code writing, or executing a plan task with real logic.
+
+We added the **codegraph MCP** specifically to cut token use on code
+intelligence (sub-millisecond symbol/caller/callee queries instead of grep +
+many Reads). That headroom means using a stronger exploration agent is usually
+the right call when the task warrants deeper reasoning — instruct those agents
+to prefer codegraph tools for symbol verification so the stronger model spends
+its budget on thinking, not file-spelunking. When in doubt for a non-trivial
+task, default up (sonnet), not down.
 
 ## Git Workflow
 Follow the branch strategy in `github_guide.md`:
