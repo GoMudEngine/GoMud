@@ -123,6 +123,12 @@ func sellNamed(seller Actor, room *rooms.Room, itemName string, quantity int) Se
 		}
 		return SellResult{Reason: SellStopNoItem}
 	}
+	if probe.GetSpec().QuestToken != "" {
+		if seller.IsPlayer() {
+			seller.SendText(messaging.CategorySystem, "Quest items cannot be sold!")
+		}
+		return SellResult{Reason: SellStopRejected}
+	}
 	mob, shopInv := resolveMerchant(room, probe)
 	if mob == nil {
 		return SellResult{Reason: SellStopNoMerchant}
