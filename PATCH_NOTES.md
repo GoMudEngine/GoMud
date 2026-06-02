@@ -1,5 +1,37 @@
 # DOGMud Patch Notes
 
+## 2026-06-01 — NPCs keep what they earn (goal-progress persistence)
+
+NPC goal pursuit now *sticks*. The engine quietly unloads idle, empty rooms
+to save memory and rebuilds them from templates when someone returns — and
+until now that wiped whatever a mob had worked toward. A thief who sold
+stolen loot to build up gold, or an NPC who saved up and bought better gear,
+reverted to its starting state the next time its corner of the map respawned.
+
+Now a mob's **gold, equipment, and in-flight goal plans persist** across that
+performance despawn, so an NPC that works toward something keeps the result —
+the thief stays richer, the upgrader stays better-armed. Death and
+admin-despawn still reset a mob, so a foe you cut down comes back fresh; only
+the routine memory-saving despawn preserves progress. (Old save data migrates
+transparently — nothing to wipe.)
+
+Two supporting fixes ride along:
+
+- **Named NPCs now actually pursue their goals.** Townspeople and threats that
+  run their own behavior scripts previously never reached the strategic-goal
+  planner — only generic archetype mobs did — so much of the "NPCs pursue
+  their own goals" feature was silently inert for the exact named characters
+  it was meant for. They now run the planner like everyone else.
+- **No more duplicate guards.** A scheduled guard whose post differs from its
+  spawn point could appear twice ("ghost" guards). Fixed — a scheduled mob is
+  now listed only in the room it is actually standing in.
+
+(Internally: `MobInstanceData` gains gold/equipment/plan-state with
+presence-pointer semantics + save-at-despawn in `removeRoomFromMemory`; the
+idle handler dispatches the goal planner for per-mob-tree NPCs; and
+`removeRoomFromMemory`/`Prepare` no longer double-list schedule-relocated
+spawns. Aliveness 5.3 + goal-pipeline & ghost-guard fixes.)
+
 ## 2026-05-30 — Balance & quality-of-life tuning
 
 - **Magic damage up ~30%.** `SpellDamageScale` 1.2 → 1.56. To keep area-effect
