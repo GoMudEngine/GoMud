@@ -629,7 +629,7 @@ func containsInt(haystack []int, needle int) bool {
 
 // chestFillRatio returns the fill fraction (0..1) of the forager's storage
 // lockbox, or 0 if it has no chest / the chest can't be loaded. Capacity is
-// the chest room's StorageCapacity (default 20 when unset).
+// ForagerLockboxCapacity (default 500), matching dumpSatchelToLockbox.
 func chestFillRatio(mob *mobs.Mob) float64 {
 	if mob.StorageChestRoom == 0 {
 		return 0
@@ -643,9 +643,9 @@ func chestFillRatio(mob *mobs.Mob) float64 {
 		return 0
 	}
 	c := room.Containers[key]
-	capacity := room.StorageCapacity
+	capacity := int(configs.GetBalanceConfig().ForagerLockboxCapacity)
 	if capacity <= 0 {
-		capacity = 20
+		capacity = 500
 	}
 	return float64(len(c.Items)) / float64(capacity)
 }
