@@ -493,15 +493,39 @@ func removeRoomFromMemory(r *Room) {
 		return
 	}
 
+	keptMobs := room.mobs[:0:0]
 	for _, mobInstanceId := range room.mobs {
+		m := mobs.GetInstance(mobInstanceId)
+		// Ghost-guards: a scheduled/patrolling mob may be listed here but have
+		// already moved on (its Character.RoomId points elsewhere); its
+		// schedule/patrol executor owns it in its current room, so destroying
+		// it here would orphan-kill it. Drop the stale listing without
+		// destroying the instance.
+		if m != nil && m.Character.RoomId != room.RoomId {
+			continue
+		}
+		// Persistence: save goal progress (gold/equipment/plan-state) before
+		// destroying, so a purchase made since the last periodic save survives
+		// the perf despawn. Gated internally (no-op for unchanged mobs). A save
+		// failure must not block room unload.
+		if m != nil {
+			if err := mobs.SaveMobInstance(m); err != nil {
+				mudlog.Error("removeRoomFromMemory", "save_instance", mobInstanceId, "error", err)
+			}
+		}
 		mobs.DestroyInstance(mobInstanceId)
+		keptMobs = append(keptMobs, mobInstanceId)
 	}
+	room.mobs = keptMobs
 
 	for _, spawnDetails := range room.SpawnInfo {
 		if spawnDetails.InstanceId > 0 {
 
 			if m := mobs.GetInstance(spawnDetails.InstanceId); m != nil {
 				if m.Character.RoomId == room.RoomId {
+					if err := mobs.SaveMobInstance(m); err != nil {
+						mudlog.Error("removeRoomFromMemory", "save_spawn_instance", spawnDetails.InstanceId, "error", err)
+					}
 					mobs.DestroyInstance(spawnDetails.InstanceId)
 				}
 			}

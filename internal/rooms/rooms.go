@@ -655,6 +655,64 @@ func (r *Room) SpawnTempContainer(name string, duration string, lockDifficulty i
 	return containerName
 }
 
+// placementDecision describes where a freshly-spawned SpawnInfo mob should be
+// listed and whether its Character.RoomId needs correcting.
+type placementDecision struct {
+	// listRoomId is the room whose mobs list should receive the InstanceId.
+	listRoomId int
+	// resetRoomIdToSpawn is true when the override room could not be loaded
+	// and we are falling back to the spawn room: the caller must reset
+	// mob.Character.RoomId to the spawn room so the mob isn't stranded in a
+	// non-existent room.
+	resetRoomIdToSpawn bool
+}
+
+// placementRoomFor decides which room a SpawnInfo mob's InstanceId should be
+// appended to after NewMobById returns.
+//
+// Normally a SpawnInfo mob is listed in the spawn room (spawnRoomId == the
+// mob's Character.RoomId). But a schedule_id can drive applyScheduleSpawnOverride
+// inside NewMobById to set the mob's Character.RoomId to a DIFFERENT room (the
+// schedule segment target, patrol first waypoint, or sleep room). In that case
+// the InstanceId must be listed in the OVERRIDE room — listing it in the spawn
+// room produces a "ghost" (a stale entry in the spawn room while the real mob
+// lives elsewhere).
+//
+// roomExists reports whether the override room is loadable; it's injected so
+// this decision is unit-testable without disk I/O.
+func placementRoomFor(spawnRoomId, mobRoomId int, roomExists func(int) bool) placementDecision {
+	// No override (or override resolved back to the spawn room): list here.
+	if mobRoomId == 0 || mobRoomId == spawnRoomId {
+		return placementDecision{listRoomId: spawnRoomId}
+	}
+	// Override placed the mob elsewhere. Prefer listing it in that room.
+	if roomExists(mobRoomId) {
+		return placementDecision{listRoomId: mobRoomId}
+	}
+	// Override room can't be loaded — fall back to the spawn room AND reset
+	// the mob's RoomId so it isn't stranded in a non-existent room. HomeRoomId
+	// is left untouched (orphan-check + respawn accounting depend on it).
+	return placementDecision{listRoomId: spawnRoomId, resetRoomIdToSpawn: true}
+}
+
+// listMobInRoom appends a mob InstanceId to the target room's mobs list,
+// avoiding duplicate entries, and refreshes the roomsWithMobs counter. Unlike
+// AddMob it does NOT emit a RoomChange event or rewrite the mob's RoomId/Zone —
+// it is a quiet list-membership fixup used by Prepare when a mob's
+// Character.RoomId is already authoritative.
+func listMobInRoom(target *Room, mobInstanceId int) {
+	if target == nil {
+		return
+	}
+	for _, id := range target.mobs {
+		if id == mobInstanceId {
+			return
+		}
+	}
+	target.mobs = append(target.mobs, mobInstanceId)
+	roomManager.roomsWithMobs[target.RoomId] = len(target.mobs)
+}
+
 // The purpose of Prepare() is to ensure a room is properly setup before anyone looks into it or enters it
 // That way if there should be anything in the room prior, it will already be there.
 // For example, mobs shouldn't ENTER the room right as the player arrives, they should already be there.
@@ -797,7 +855,26 @@ func (r *Room) Prepare(checkAdjacentRooms bool) {
 
 				mob.Validate()
 
-				r.mobs = append(r.mobs, mob.InstanceId)
+				// A schedule_id can have moved the mob to a different room
+				// inside NewMobById (applyScheduleSpawnOverride). List the
+				// instance in its ACTUAL room, not the spawn room, so the
+				// spawn room doesn't render a ghost. See placementRoomFor.
+				decision := placementRoomFor(r.RoomId, mob.Character.RoomId, func(roomId int) bool {
+					return LoadRoom(roomId) != nil
+				})
+				if decision.resetRoomIdToSpawn {
+					mob.Character.RoomId = r.RoomId
+				}
+				if decision.listRoomId == r.RoomId {
+					listMobInRoom(r, mob.InstanceId)
+				} else if target := LoadRoom(decision.listRoomId); target != nil {
+					listMobInRoom(target, mob.InstanceId)
+				} else {
+					// Defensive: room vanished between the decision and now.
+					// Strand-proof the mob in the spawn room.
+					mob.Character.RoomId = r.RoomId
+					listMobInRoom(r, mob.InstanceId)
+				}
 
 				spawnInfo.InstanceId = mob.InstanceId
 				spawnInfo.DespawnedRound = 0

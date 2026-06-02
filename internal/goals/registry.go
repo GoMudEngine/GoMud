@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 )
 
@@ -78,4 +79,36 @@ func sliceContains(s []string, needle string) bool {
 // Chunk 4.3.
 func LookupGoalType(name string) (GoalTypeMeta, bool) {
 	return lookupMeta(name)
+}
+
+// ContextScoreFor returns the live context-score multiplier for goal g
+// against mob. It delegates to effectiveContextMod, which:
+//   - returns 1.0 when no ContextScore is registered for g.Type
+//   - returns 0  when the registered ContextScore panics
+//   - returns 1.0 when mob is nil and the registered fn is nil
+//
+// When mob is nil and a ContextScore IS registered, the fn receives nil —
+// well-authored ContextScore functions guard for nil mob and return 1.0.
+// The panic-recovery in invokeContextScore converts any nil-deref to 0.
+//
+// Chunk 5.3 — used by the `goal scores` admin diagnostic.
+func ContextScoreFor(g *Goal, mob *mobs.Mob) float64 {
+	return effectiveContextMod(g, mob)
+}
+
+// WeightFor returns the archetype weight for goal g against mob.
+// Resolves via the registered WeightsLookupFn (wired at boot by main.go).
+// Returns 1.0 when no lookup is registered, when mob is nil, or when
+// the goal type is absent from the archetype's weight map.
+//
+// Chunk 5.3 — used by the `goal scores` admin diagnostic.
+func WeightFor(g *Goal, mob *mobs.Mob) float64 {
+	if mob == nil {
+		return 1.0
+	}
+	weights := resolveWeights(mob)
+	if w, ok := weights[g.Type]; ok {
+		return w
+	}
+	return 1.0
 }

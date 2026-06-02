@@ -339,12 +339,12 @@ func goalScores(args []string, user *users.UserRecord) (bool, error) {
 		strings.Repeat("-", 4), strings.Repeat("-", 20), "----",
 		"-------", "-------", "----------", "------")
 
-	// Note: weights and CtxMod are displayed as defaults at 4.2 ship —
-	// the goal-type registry is empty until 4.3. The CURRENT marker and
-	// effective-score columns are the load-bearing pieces for now.
+	// CtxMod and Weight are resolved live from the registered goal-type
+	// registry (chunk 4.3+) and the archetype weights lookup (chunk 4.2+).
+	// When mob is nil (no live instance), both fall back to 1.0 safely.
 	for _, g := range all {
-		w := 1.0
-		ctxMod := 1.0
+		w := goals.WeightFor(g, mob)
+		ctxMod := goals.ContextScoreFor(g, mob)
 		eff := float64(g.Priority) * w * ctxMod
 		status := "candidate"
 		if currentGoal != nil && g.Id == currentGoal.Id {

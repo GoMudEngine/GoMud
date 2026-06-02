@@ -1,14 +1,22 @@
 package goals
 
 import (
+	"errors"
 	"fmt"
 	"sort"
+	"sync"
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
+
+// mergeSeedDone tracks which mob ids have had merge-seed run from Recompute
+// (i.e. with a live mob). Keyed by mobId (int). Resets on server restart
+// (in-memory only), which is the desired behavior — fresh boot re-attempts
+// once on the first tick that a live instance exists.
+var mergeSeedDone sync.Map
 
 // loadOrLazyInit returns the cached MobGoals for mobId, loading from
 // disk on first access. Returns a fresh empty MobGoals if neither
@@ -38,12 +46,23 @@ func loadOrLazyInit(mobId int, namesimple string) *MobGoals {
 	}
 	cache[mobId] = mg
 	nameByMobId[mobId] = namesimple
-	cacheMu.Unlock() // release BEFORE seedFromArchetype so Add re-entrancy is safe
+	cacheMu.Unlock() // release BEFORE seeding so Add re-entrancy is safe
 
 	if freshMob {
-		// Chunk 4.3: seed archetype defaults. Runs outside the lock.
-		// seedFromArchetype checks mg.SeededFromArchetype for idempotency.
+		// Chunk 4.3: seed archetype defaults for brand-new files. Runs
+		// outside the lock. seedFromArchetype checks SeededFromArchetype
+		// for idempotency and flips the sentinel when done.
 		seedFromArchetype(mobId, namesimple, mg)
+	} else {
+		// 5.3 fixup A: merge-seed — runs on EVERY load of an existing
+		// file (sentinel already set or not). Additively adds any archetype
+		// default type not already present on the mob. Existing goals are
+		// never removed; admin-set goals at >= priority block the merge via
+		// the normal Add conflict logic. Idempotent for fully-seeded mobs.
+		// Must run outside the lock (Add acquires cacheMu internally).
+		// Pass nil mob — the live instance may not exist yet at load time;
+		// Recompute will retry with a live mob via mergeSeedDone gating.
+		mergeSeedFromArchetype(mobId, namesimple, mg, nil)
 	}
 	return mg
 }
@@ -330,6 +349,23 @@ func CurrentGoalOf(mobId int, namesimple string) *Goal {
 func Recompute(mobId int, namesimple string, mob *mobs.Mob, nowRound uint64) {
 	mg := loadOrLazyInit(mobId, namesimple)
 
+	// 5.3 fixup A v2: run merge-seed exactly once per mob-instance per boot,
+	// on the first Recompute tick where a live mob exists. This fixes the
+	// nil-instance window: loadOrLazyInit's merge-seed call passes nil and
+	// falls back to instanceForRecompute, which returns nil when the mob
+	// hasn't been loaded yet (e.g. Constable Drunn at server boot). Here we
+	// have the live mob from the per-round tick hook, so we can pass it
+	// directly. mergeSeedDone resets on server restart (sync.Map is in-memory),
+	// so this re-runs once per boot — cheap and idempotent for fully-seeded mobs.
+	// Called OUTSIDE any cacheMu hold; mergeSeedFromArchetype calls Add which
+	// acquires cacheMu internally.
+	if mob != nil {
+		if _, done := mergeSeedDone.Load(mobId); !done {
+			mergeSeedFromArchetype(mobId, namesimple, mg, mob)
+			mergeSeedDone.Store(mobId, true)
+		}
+	}
+
 	// Snapshot under read lock.
 	cacheMu.RLock()
 	goalsSnap := make([]*Goal, len(mg.Goals))
@@ -438,6 +474,55 @@ func seedFromArchetype(mobId int, namesimple string, mg *MobGoals) {
 	if err := saveToDisk(mobId, namesimple); err != nil {
 		mudlog.Warn("goals.seedFromArchetype: save failed",
 			"mob_id", mobId, "error", err)
+	}
+}
+
+// mergeSeedFromArchetype is the 5.3 fixup A complement to seedFromArchetype.
+// It runs on EVERY load of an existing goals file (not just fresh mobs) and
+// additively adds any archetype default-goal TYPE that is not already present
+// on the mob.
+//
+// Conflict semantics mirror the normal Add path:
+//   - AllowMultiple=false types: "present" = any goal of that type exists →
+//     Add returns a ConflictError, which we silently skip.
+//   - AllowMultiple=true types: Add's DedupKey logic determines whether the
+//     incoming default coexists or conflicts; ConflictError = silently skip.
+//
+// A ConflictError from Add is the expected signal that the type is already
+// covered — it is logged at debug level and skipped. Any other Add error
+// (param validation failure, etc.) is logged at warn level and skipped.
+// The existing goal list is never modified or removed by this function.
+//
+// The mob parameter is optional. When non-nil it is passed directly to
+// resolveArchetypeDefaults, letting the lookup read live archetype state.
+// When nil, instanceForRecompute is called as a best-effort fallback (the
+// original behavior before the 5.3 fixup A v2 change). Callers that already
+// have a live *mobs.Mob should pass it; callers without one should pass nil.
+//
+// Must be called OUTSIDE any cache lock — it calls Add which acquires
+// cacheMu internally. Mirrors the lock discipline of seedFromArchetype.
+func mergeSeedFromArchetype(mobId int, namesimple string, mg *MobGoals, mob *mobs.Mob) {
+	if mob == nil {
+		mob = instanceForRecompute(mobId)
+	}
+	defaults := resolveArchetypeDefaults(mob)
+	if len(defaults) == 0 {
+		return
+	}
+	for _, d := range defaults {
+		g := &Goal{Type: d.Type, Priority: d.Priority, Params: d.Params}
+		if _, err := Add(mobId, namesimple, g); err != nil {
+			var ce *ConflictError
+			if errors.As(err, &ce) {
+				// Type already covered by an existing goal — expected, skip.
+				mudlog.Debug("goals.mergeSeedFromArchetype: type already present (skipping)",
+					"mob_id", mobId, "type", d.Type,
+					"blocked_by", ce.BlockerGoalId, "blocker_prio", ce.BlockerPrio)
+				continue
+			}
+			mudlog.Warn("goals.mergeSeedFromArchetype: Add failed (skipping)",
+				"mob_id", mobId, "type", d.Type, "error", err)
+		}
 	}
 }
 

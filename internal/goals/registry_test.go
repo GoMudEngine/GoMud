@@ -101,3 +101,91 @@ func TestInvokeContextScore_NoPanic_ReturnsFnResult(t *testing.T) {
 		t.Errorf("got=%f, want 2.5", got)
 	}
 }
+
+// ── ContextScoreFor tests (chunk 5.3) ────────────────────────────────
+
+func TestContextScoreFor_RegisteredType_ReturnsLiveScore(t *testing.T) {
+	resetRegistry()
+	RegisterGoalType("patrol", GoalTypeMeta{
+		ContextScore: func(g *Goal, m *mobs.Mob) float64 { return 3.7 },
+	})
+	defer resetRegistry()
+
+	got := ContextScoreFor(&Goal{Id: "g1", Type: "patrol"}, &mobs.Mob{})
+	if got != 3.7 {
+		t.Errorf("ContextScoreFor = %f, want 3.7", got)
+	}
+}
+
+func TestContextScoreFor_UnregisteredType_ReturnsOne(t *testing.T) {
+	resetRegistry()
+	got := ContextScoreFor(&Goal{Id: "g2", Type: "unknown"}, &mobs.Mob{})
+	if got != 1.0 {
+		t.Errorf("ContextScoreFor unregistered = %f, want 1.0", got)
+	}
+}
+
+func TestContextScoreFor_NilMob_RegisteredNilFn_ReturnsOne(t *testing.T) {
+	resetRegistry()
+	RegisterGoalType("defend", GoalTypeMeta{ContextScore: nil})
+	defer resetRegistry()
+
+	got := ContextScoreFor(&Goal{Id: "g3", Type: "defend"}, nil)
+	if got != 1.0 {
+		t.Errorf("ContextScoreFor nil-mob nil-fn = %f, want 1.0", got)
+	}
+}
+
+func TestContextScoreFor_PanicInFn_ReturnsZero(t *testing.T) {
+	resetRegistry()
+	RegisterGoalType("boom", GoalTypeMeta{
+		ContextScore: func(g *Goal, m *mobs.Mob) float64 { panic("ctx boom") },
+	})
+	defer resetRegistry()
+
+	got := ContextScoreFor(&Goal{Id: "g4", Type: "boom"}, &mobs.Mob{})
+	if got != 0 {
+		t.Errorf("ContextScoreFor panic = %f, want 0", got)
+	}
+}
+
+// ── WeightFor tests (chunk 5.3) ───────────────────────────────────────
+
+func TestWeightFor_NilMob_ReturnsOne(t *testing.T) {
+	got := WeightFor(&Goal{Id: "g5", Type: "patrol"}, nil)
+	if got != 1.0 {
+		t.Errorf("WeightFor nil mob = %f, want 1.0", got)
+	}
+}
+
+func TestWeightFor_NoLookupRegistered_ReturnsOne(t *testing.T) {
+	SetWeightsLookup(nil)
+	got := WeightFor(&Goal{Id: "g6", Type: "patrol"}, &mobs.Mob{})
+	if got != 1.0 {
+		t.Errorf("WeightFor no lookup = %f, want 1.0", got)
+	}
+}
+
+func TestWeightFor_LookupRegistered_ReturnsArchetypeWeight(t *testing.T) {
+	SetWeightsLookup(func(m *mobs.Mob) map[string]float64 {
+		return map[string]float64{"patrol": 2.5}
+	})
+	defer SetWeightsLookup(nil)
+
+	got := WeightFor(&Goal{Id: "g7", Type: "patrol"}, &mobs.Mob{})
+	if got != 2.5 {
+		t.Errorf("WeightFor registered = %f, want 2.5", got)
+	}
+}
+
+func TestWeightFor_TypeAbsentFromWeights_ReturnsOne(t *testing.T) {
+	SetWeightsLookup(func(m *mobs.Mob) map[string]float64 {
+		return map[string]float64{"other": 5.0}
+	})
+	defer SetWeightsLookup(nil)
+
+	got := WeightFor(&Goal{Id: "g8", Type: "patrol"}, &mobs.Mob{})
+	if got != 1.0 {
+		t.Errorf("WeightFor absent type = %f, want 1.0", got)
+	}
+}

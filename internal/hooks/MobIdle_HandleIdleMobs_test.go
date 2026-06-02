@@ -101,3 +101,76 @@ func TestShouldRecoverDisplacedHome(t *testing.T) {
 		})
 	}
 }
+
+// TestMobGoalActedRound covers the "planner owns the tick" stamp reader.
+// The stamp is written by behaviortree.actGoalPlanner via the
+// "goalActedRound" TempData key whenever a goal planner issues a command.
+// The idle handler compares the result against the current round (planner
+// acted this tick → suppress legacy idle) and round-1 (planner moved the
+// mob last idle round → don't yank it home mid-trip).
+func TestMobGoalActedRound(t *testing.T) {
+	t.Run("nil mob returns 0", func(t *testing.T) {
+		if got := mobGoalActedRound(nil); got != 0 {
+			t.Errorf("nil mob: got %d, want 0", got)
+		}
+	})
+
+	t.Run("absent stamp returns 0", func(t *testing.T) {
+		m := &mobs.Mob{}
+		if got := mobGoalActedRound(m); got != 0 {
+			t.Errorf("unstamped: got %d, want 0", got)
+		}
+	})
+
+	t.Run("present uint64 stamp is returned", func(t *testing.T) {
+		m := &mobs.Mob{}
+		m.SetTempData("goalActedRound", uint64(777))
+		if got := mobGoalActedRound(m); got != 777 {
+			t.Errorf("stamped: got %d, want 777", got)
+		}
+	})
+
+	t.Run("wrong-type stamp returns 0", func(t *testing.T) {
+		m := &mobs.Mob{}
+		m.SetTempData("goalActedRound", "not-a-uint64")
+		if got := mobGoalActedRound(m); got != 0 {
+			t.Errorf("wrong type: got %d, want 0", got)
+		}
+	})
+}
+
+// TestMobGoalPlannerRanRound covers the goal-planner dedup-marker reader. The
+// marker is written by behaviortree.RunGoalPlanner via the "goalPlannerRanRound"
+// TempData key every round the planner is dispatched. The idle handler compares
+// it against the current round so archetype mobs whose btree already ran
+// try_goal_planner aren't re-dispatched. Mirrors TestMobGoalActedRound.
+func TestMobGoalPlannerRanRound(t *testing.T) {
+	t.Run("nil mob returns 0", func(t *testing.T) {
+		if got := mobGoalPlannerRanRound(nil); got != 0 {
+			t.Errorf("nil mob: got %d, want 0", got)
+		}
+	})
+
+	t.Run("absent stamp returns 0", func(t *testing.T) {
+		m := &mobs.Mob{}
+		if got := mobGoalPlannerRanRound(m); got != 0 {
+			t.Errorf("unstamped: got %d, want 0", got)
+		}
+	})
+
+	t.Run("present uint64 stamp is returned", func(t *testing.T) {
+		m := &mobs.Mob{}
+		m.SetTempData("goalPlannerRanRound", uint64(909))
+		if got := mobGoalPlannerRanRound(m); got != 909 {
+			t.Errorf("stamped: got %d, want 909", got)
+		}
+	})
+
+	t.Run("wrong-type stamp returns 0", func(t *testing.T) {
+		m := &mobs.Mob{}
+		m.SetTempData("goalPlannerRanRound", "not-a-uint64")
+		if got := mobGoalPlannerRanRound(m); got != 0 {
+			t.Errorf("wrong type: got %d, want 0", got)
+		}
+	})
+}
