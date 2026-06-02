@@ -657,7 +657,12 @@ func (g *GMCPMudletModule) sendMapCommand(rest string, user *users.UserRecord, r
 		g.sendMudletMapConfig(user.UserId)
 		return true, nil
 	}
-	return false, nil
+	// Non-Mudlet clients (e.g. the web client): silent no-op. Return true
+	// ("handled") so the dispatcher doesn't fall through to the unknown-command
+	// error — `mudletmap` runs unconditionally via Server.OnLoginCommands, so a
+	// false return printed "Mudletmap not recognized..." to every non-Mudlet
+	// player at login. Matches the sibling checkClientCommand's no-op return.
+	return true, nil
 }
 
 // checkClientCommand checks if client is Mudlet and shows info
