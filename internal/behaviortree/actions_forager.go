@@ -207,7 +207,6 @@ func hpRatio(mob *mobs.Mob) float64 {
 // to the legacy idle path (idlecommands + lookfortrouble), matching
 // the legacy idle-fallthrough pattern.
 
-
 func tickForagerResting(
 	p *forager.ForagerProfile,
 	mob *mobs.Mob,
@@ -391,6 +390,9 @@ func tickForagerStoring(
 		return Success
 	}
 
+	// 5.4: make this forager's lockbox discoverable to the vendor backfill.
+	forager.RegisterChestRoom(mob.Zone, mob.StorageChestRoom)
+
 	// Satchel already empty — deposit complete (or nothing was leftover).
 	if len(mob.Character.Items) == 0 {
 		// 3.8 hotfix: clear any stale delivery patrol before recalling.
@@ -526,7 +528,6 @@ func tickForagerRecalling(
 	// (dump satchel → transition to resting).
 	return Success
 }
-
 
 // dumpSatchelToLockbox transfers every item in the forager's satchel
 // into the room's "lockbox" container, then bumps the lockbox lock's
