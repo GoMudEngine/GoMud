@@ -65,6 +65,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/relationships"
 	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
 	"github.com/GoMudEngine/GoMud/internal/shops"
@@ -268,6 +269,22 @@ func main() {
 			return false
 		}
 		return user.Character.HasBuffFlag(buffs.NoAggroTarget)
+	})
+
+	// Register the prompt visibility check so the fight prompt can hide
+	// the combat target's identity/health/position from blind or
+	// dark-room players, matching combat-text darkness gating. Lives here
+	// because users/ cannot import rooms/ (import cycle); main can import
+	// both rooms/ and messaging/.
+	users.SetCanSeeInRoomCheck(func(c *characters.Character) bool {
+		if c == nil {
+			return true
+		}
+		room := rooms.LoadRoom(c.RoomId)
+		if room == nil {
+			return true
+		}
+		return messaging.CanSeeClearly(c, room)
 	})
 
 	// Wire the goals → behaviortree archetype-weights resolver. Avoids
