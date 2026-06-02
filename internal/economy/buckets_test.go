@@ -45,6 +45,12 @@ func TestAllBuckets_StableOrder(t *testing.T) {
 //
 // Quest/specialty and Defer-to-3.0e items are exceptions and listed
 // explicitly.
+func TestBucketFor_WildHareMeatOverlap(t *testing.T) {
+	if got := BucketFor(40064); got != "overlap" {
+		t.Errorf("wild-hare-meat bucket = %q, want overlap", got)
+	}
+}
+
 func TestBucketMap_AuditMatrixCoverage(t *testing.T) {
 	knownExceptions := map[int]bool{
 		// Quest/specialty (15 items per audit matrix)
