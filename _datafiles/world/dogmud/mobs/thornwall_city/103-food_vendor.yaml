@@ -1,6 +1,18 @@
 mobid: 103
 zone: Thornwall City
 craft_support: cooking
+crafter: true
+crafterskill: cooking
+crafterrecipeids:
+  - grilled-meat
+  - trail-rations
+  - hearty-stew
+  - herbal-tea
+crafterrestockmaterials:
+  - 40017
+  - 40016
+  - 40004
+  - 40015
 behavior_archetype: noncombat_shopkeeper
 statpool: 36
 itemdropchance: 0
@@ -30,6 +42,8 @@ character:
   speciesid: 1
   level: 1
   gold: 1000
+  skills:
+    cooking: 12
   shop:
     # Existing prepared foods
     - itemid: 30022
