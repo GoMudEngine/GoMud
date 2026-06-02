@@ -105,13 +105,25 @@ and bucket data.
    `raw-meat`. Content cleanup: marsh rat (367) is mis-tagged to carry
    `wild-hare-meat`; its salvage should yield generic `raw-meat`, not hare meat.
 
-5. **Fernway forageables deferred.** `shadowcap` (40063) and `blood-moss` (40066)
-   are cooking ingredients in the `fernway` bucket that aren't in any forage-yield
-   table — but routing them to the cooks needs the Kessa→caravan mesh, and the
-   Fernway caravan's `deliveries_by_tier` is empty. That's a separate
-   caravan-supply problem. They are **cart-supplied today (RestockQty 5, not
-   starved)**, so v1 leaves them on the cart and logs the caravan gap as a
-   follow-up. (Same for any other `fernway`-bucket cooking input.)
+5. **Fernway forageables deferred — by zone alignment, not bucket.** `shadowcap`
+   (40063) and `blood-moss` (40066) are cooking ingredients not in any
+   forage-yield table. The 5.4 chest backfill is **bucket-agnostic** (it
+   distributes any same-zone forager-chest item to vendors that stock it), so the
+   `fernway` bucket is NOT the blocker. The real blocker is **zone alignment**:
+   - The only cook sharing a forager's chest zone is Tov Brann (336, Stillwater;
+     Tova's chest is room 4198) — and **336 doesn't stock** shadowcap/blood-moss,
+     so the backfill has no gap to fill there.
+   - The cooks that DO stock them — food vendor 103 (shadowcap) and tavern cook
+     Brynn 248 (shadowcap + blood-moss), both Thornwall — have **no
+     Thornwall-zone forager chest** (Tova=Stillwater, Halix=ironwind,
+     Kessa=fernway).
+   - And the items aren't in any forager's forage yield to enter a chest at all.
+
+   Delivering them to the Thornwall cooks therefore needs **cross-zone supply** (a
+   caravan route, a Thornwall-zone forager, or re-homing a chest) — separate
+   scope. They are **cart-supplied today (RestockQty 5, not starved)**, so the
+   cook-crafter loop functions without them being forager-sourced. Deferred to a
+   caravan / cross-zone-supply follow-up.
 
 ## Architecture / components
 
@@ -248,9 +260,11 @@ player → buy meal from cook
 
 - **Combat-looter salvage + sell** (the deferred sell-surplus goal) — dropped
   (decision 1); revisit with a higher-value surplus source.
-- **Fernway-bucket forageables (shadowcap, blood-moss) reaching cooks** — needs
-  the Kessa→caravan mesh + the empty Fernway `deliveries_by_tier`; deferred
-  (decision 5). They stay cart-supplied. Logged as a caravan-supply follow-up.
+- **Forager-sourcing shadowcap/blood-moss to the cooks** — blocked by zone
+  alignment, not bucket (decision 5): the cooks that stock them have no
+  same-zone forager chest, and the chest backfill is same-zone only. Needs
+  cross-zone supply (caravan route / Thornwall-zone forager / re-homed chest).
+  They stay cart-supplied (not starved). Logged as a cross-zone-supply follow-up.
 - **Enchanting supply (decayed potions → enchanter)** — the second half of the
   economy-fix split; separate chunk.
 - **General-store restock** — also flagged in [[project_store_restock_considered_fix]];
