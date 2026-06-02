@@ -21,6 +21,14 @@ exits:
     roomid: 5104
   down:
     roomid: 5105
+    # The holding cell door is locked; only the guards carry the key.
+    # The arrest system places prisoners via a direct room move
+    # (rooms.MoveToRoom), which bypasses exit locks, so this only blocks
+    # ORGANIC entry — wandering NPCs (e.g. a hostile-flagged townsperson
+    # pursuing a wanted player) and random players. difficulty 255 =
+    # effectively unpickable / key-only (no key item targets this lock).
+    lock:
+      difficulty: 255
 nouns:
   table: A heavy oak table scarred by knife marks and ink stains. Duty rosters are
     pinned under a mug, incident reports are stacked in rough piles, and a half-eaten

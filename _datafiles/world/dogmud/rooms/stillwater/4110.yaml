@@ -29,6 +29,13 @@ exits:
     roomid: 4109
   down:
     roomid: 5106
+    # The holding cell door is locked; only the constabulary carry the
+    # key. Arrest/release use a direct room move (rooms.MoveToRoom) that
+    # bypasses exit locks, so this only blocks ORGANIC entry — wandering
+    # NPCs pursuing a wanted player, and random players. difficulty 255 =
+    # effectively unpickable / key-only (no key item targets this lock).
+    lock:
+      difficulty: 255
 nouns:
   counter: A long pine counter dividing the room
     front-to-back, the surface kept oiled and the public
