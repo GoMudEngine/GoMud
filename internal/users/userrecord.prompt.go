@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
@@ -31,6 +32,36 @@ var (
 	promptColorRegex           = regexp.MustCompile(`\{(\d*)(?::)?(\d*)?\}`)
 	promptFindTagsRegex        = regexp.MustCompile(`\{[a-zA-Z%:\-]+\}`)
 )
+
+// canSeeInRoomFn reports whether a character can clearly see in the
+// room they currently occupy (composes blindness, room lighting, and
+// NightVision — see messaging.CanSeeClearly). Registered at boot from
+// main.go, which can import rooms/ + messaging/ (users/ cannot import
+// rooms/ — that would be an import cycle). nil = "can see" (boot- and
+// test-safe default). Follows the same callback pattern as
+// characters.SetUserUntargetableCheck.
+//
+// The fight prompt uses this to hide the combat target's identity,
+// health, and position from blind / dark-room players, matching the
+// combat-text darkness gating in NewRound_DoCombat.
+var canSeeInRoomFn func(c *characters.Character) bool
+
+// SetCanSeeInRoomCheck registers the prompt visibility check. Repeated
+// registrations overwrite; pass nil to disable (tests).
+func SetCanSeeInRoomCheck(fn func(c *characters.Character) bool) {
+	canSeeInRoomFn = fn
+}
+
+// canSeeTargetForPrompt returns whether the player can currently see
+// well enough for the fight prompt to reveal the combat target's
+// identity / health / position. Defaults to true when no check is
+// registered (boot, tests).
+func (u *UserRecord) canSeeTargetForPrompt() bool {
+	if canSeeInRoomFn == nil {
+		return true
+	}
+	return canSeeInRoomFn(u.Character)
+}
 
 // RenderVitalBar is the exported version of renderVitalBar.
 func RenderVitalBar(current, max, reserved int) string {
@@ -264,6 +295,20 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 	var hpPct, mpPct int = -1, -1
 	var hpClass, mpClass string
 
+	// Lazily resolve whether the player can see their target (blindness /
+	// dark room without special vision). Computed at most once per render
+	// and only when a target-derived token is actually present, so the
+	// out-of-combat default prompt pays no room-lookup cost.
+	canSeeChecked := false
+	canSeeTarget := true
+	sees := func() bool {
+		if !canSeeChecked {
+			canSeeTarget = u.canSeeTargetForPrompt()
+			canSeeChecked = true
+		}
+		return canSeeTarget
+	}
+
 	promptLen := len(promptStr)
 	tagStartPos := -1
 
@@ -415,18 +460,29 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 				// Source target from CombatPhase (canonical) with
 				// fallback to legacy Aggro inside CurrentCombatTarget.
 				// Robust against transient Aggro=nil between rounds.
-				tRef := u.Character.CurrentCombatTarget()
-				if tRef.MobInstanceId > 0 {
-					if m := mobs.GetInstance(tRef.MobInstanceId); m != nil {
-						promptOut.WriteString(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>`, m.Character.Name))
-					}
-				} else if tRef.UserId > 0 {
-					if target := GetByUserId(tRef.UserId); target != nil {
-						promptOut.WriteString(fmt.Sprintf(`<ansi fg="username">%s</ansi>`, target.Character.Name))
+				//
+				// Hide the target's identity when the player can't see it
+				// (blind / dark room without special vision) — the name is
+				// info they don't have. Matches combat-text darkness gating.
+				if !sees() {
+					promptOut.WriteString(`<ansi fg="mobname">an unseen foe</ansi>`)
+				} else {
+					tRef := u.Character.CurrentCombatTarget()
+					if tRef.MobInstanceId > 0 {
+						if m := mobs.GetInstance(tRef.MobInstanceId); m != nil {
+							promptOut.WriteString(fmt.Sprintf(`<ansi fg="mobname">%s</ansi>`, m.Character.Name))
+						}
+					} else if tRef.UserId > 0 {
+						if target := GetByUserId(tRef.UserId); target != nil {
+							promptOut.WriteString(fmt.Sprintf(`<ansi fg="username">%s</ansi>`, target.Character.Name))
+						}
 					}
 				}
 
 			case `{targethealth}`:
+				if !sees() {
+					break // can't see the target — no health read
+				}
 				tRef := u.Character.CurrentCombatTarget()
 				var tHealth, tMax int
 				if tRef.MobInstanceId > 0 {
@@ -444,6 +500,9 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 				}
 
 			case `{targetpos}`:
+				if !sees() {
+					break // can't see the target — no position read
+				}
 				// FSM-driven: same color/abbrev helpers used by {pos}.
 				tRef := u.Character.CurrentCombatTarget()
 				var tPos position.State
@@ -465,6 +524,9 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 				}
 
 			case `{tank}`:
+				if !sees() {
+					break // can't see the target (or who it's fighting)
+				}
 				tRef := u.Character.CurrentCombatTarget()
 				if tRef.MobInstanceId > 0 {
 					if m := mobs.GetInstance(tRef.MobInstanceId); m != nil {

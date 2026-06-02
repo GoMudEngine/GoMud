@@ -1312,3 +1312,51 @@ func TestRemoveUserAndDisconnect_NotFound(t *testing.T) {
 		t.Fatal("expected error for unknown userId, got nil")
 	}
 }
+
+// TestPromptTargetVisibilityGating verifies the fight prompt hides the
+// combat target's identity from a player who can't see (blind / dark
+// room), and reveals it otherwise. Mirrors the combat-text darkness
+// gating in NewRound_DoCombat.
+func TestPromptTargetVisibilityGating(t *testing.T) {
+	// Restore the global check after the test so we don't leak state.
+	defer SetCanSeeInRoomCheck(nil)
+
+	u := &UserRecord{
+		UserId: 7001,
+		Character: &characters.Character{
+			Name: "seer",
+			// Combat target is a mob; CurrentCombatTarget reads Aggro
+			// when CombatPhase is unset.
+			Aggro: &characters.Aggro{MobInstanceId: 999999},
+		},
+	}
+
+	// Blind / dark room: the {target} token must NOT expose any name and
+	// must render the neutral placeholder instead.
+	SetCanSeeInRoomCheck(func(c *characters.Character) bool { return false })
+	blindOut := u.ProcessPromptString(`{target}`)
+	if !strings.Contains(blindOut, "an unseen foe") {
+		t.Errorf("blind prompt should render the unseen-foe placeholder, got %q", blindOut)
+	}
+
+	// Sighted: with no such mob instance registered, the lookup yields
+	// nothing — but crucially the placeholder must NOT be used (the
+	// sighted branch was taken). This proves the gate flips on visibility.
+	SetCanSeeInRoomCheck(func(c *characters.Character) bool { return true })
+	seeOut := u.ProcessPromptString(`{target}`)
+	if strings.Contains(seeOut, "an unseen foe") {
+		t.Errorf("sighted prompt must not use the unseen-foe placeholder, got %q", seeOut)
+	}
+
+	// targethealth / targetpos must be suppressed entirely when blind.
+	SetCanSeeInRoomCheck(func(c *characters.Character) bool { return false })
+	if out := u.ProcessPromptString(`{targethealth}{targetpos}`); out != "" {
+		t.Errorf("blind prompt should suppress targethealth/targetpos, got %q", out)
+	}
+
+	// Default (no check registered) defaults to "can see".
+	SetCanSeeInRoomCheck(nil)
+	if !u.canSeeTargetForPrompt() {
+		t.Error("canSeeTargetForPrompt should default to true when no check is registered")
+	}
+}
