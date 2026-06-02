@@ -665,11 +665,11 @@ Balance:
   # OnStatUse("dexterity") multiple times per combat round.
   StatProgressionMultipliers:
     strength: 0.20     # Tuned 39.2: combat stats fire many times/round; low mult prevents runaway growth
-    dexterity: 0.10    # Tuned 39.2: weapon + unarmed both fire dex; lowest mult to compensate
+    dexterity: 0.15    # Tuned 2026-06-02: dashboard showed dex as the slowest stat even at 0.10; bumped +50% (still lowest — weapon + unarmed both fire dex/round)
     perception: 1.0
-    vitality: 4.0      # Tuned 2026-04-25: vitality has no high-frequency caller (no skill primaries it), so call-count lags other 1.0-mult stats by ~4-5x. Bumped to compensate.
+    vitality: 4.5      # Tuned 2026-06-02: dashboard still showed vitality a bit slow at 4.0; bumped +12.5% (no skill primaries vit, so call-count lags other 1.0 stats)
     willpower: 1.0
-    charisma: 0.20     # Tuned 39.2: rhetoric fires often in group fights; low mult prevents runaway growth
+    charisma: 0.22     # Tuned 2026-06-02: dashboard showed charisma a tiny bit slow at 0.20; small +10% bump (rhetoric fires often in group fights, so kept modest)
 
   # ── PER-SKILL PROGRESSION MULTIPLIERS ───────────────────────────────────────
   # Overrides the hardcoded skill progression multipliers in skills.go.
