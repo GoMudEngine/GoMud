@@ -32,8 +32,7 @@ stats:
 damage:
   basedamage: 4
   variance: 2
-disabledslots: ['weapon', 'offhand', 'head', 'neck', 'back', 'body',
-  'belt', 'gloves', 'ring', 'legs', 'feet']
+disabledslots: []  # opened so loot_pool gear can equip + drop (oasis loot fix 2026-06-02)
 body_parts: []
 intrinsic_mutations:
   incorporeal: 4
