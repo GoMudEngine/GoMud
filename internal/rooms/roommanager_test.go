@@ -221,6 +221,7 @@ func TestRemoveRoomFromMemory_SavesChangedMob(t *testing.T) {
 		Groups:     []string{"bandit"}, // non-essential → room unloads
 	}
 	mob.Character.Name = "Testmob"
+	mob.Character.RoomId = 9100 // mob is actually in the room being unloaded
 	mob.Character.Stats.Strength.Training = 1 // trips hasPersistableState
 	mob.Character.Gold = 999
 	mobs.SetInstanceForTest(instId, mob)
