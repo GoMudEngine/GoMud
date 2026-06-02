@@ -23,9 +23,11 @@ only pure state logic and I/O.
   commands.
 - **vendor_sell.go**: `SellToVendor` — live delivery path.
 - **chest_backfill.go**: `BackfillVendorFromChests` + `selectBackfillTransfers`
-  (pure) + `chestPoolForZone` — lockbox-to-vendor supply drain (chunk 5.4).
-- **chest_index.go**: `RegisterChestRoom` / `ChestRoomsForZone` — the
-  zone-to-lockbox-room index (chunk 5.4).
+  (pure) + `chestPoolFromRooms` / `chestPoolAll` / `chestPoolForZone` —
+  lockbox-to-vendor supply drain (chunk 5.4). Backfill aggregates across ALL
+  forager chests globally (not per-zone).
+- **chest_index.go**: `RegisterChestRoom` / `ChestRoomsForZone` /
+  `ChestRoomsAll` — the zone-to-lockbox-room index (chunk 5.4).
 - **throughput.go**: Per-forager delivery metrics (rarity tier counts, lbs).
 - **arrival_listener.go**, **completion_listener.go**: World-event hooks that
   advance state on arrival / patrol completion.
@@ -51,17 +53,24 @@ only pure state logic and I/O.
 ### Supply Chain — Chest Backfill (chunk 5.4)
 - **`BackfillVendorFromChests(vendorMob *mobs.Mob, shopInv *shops.ShopInventory)`**:
   Top-off path called during shop restock ticks. Aggregates item counts from
-  all forager lockboxes in the vendor's zone (via the chest index), selects
-  transfers targeting the neediest stock gaps (widest `MaxStock - Current`
-  first), removes items from lockbox containers, and adds them to
-  `shopInv.Current`. Also **free — no gold**. Saves the shop on any mutation.
+  ALL forager lockboxes across all zones (global aggregation — not per-zone),
+  selects transfers targeting the neediest stock gaps (widest
+  `MaxStock - Current` first), removes items from lockbox containers, and adds
+  them to `shopInv.Current`. Also **free — no gold**. Saves the shop on any
+  mutation.
 - **`selectBackfillTransfers(si, pool) map[int]int`**: Pure helper. Given a
   vendor's `ShopInventory` and an item-count pool, returns a per-item transfer
   plan that fills gaps largest-first without exceeding pool availability. Pure
   function; injected into tests via `loadRoomFn` seam.
+- **`chestPoolFromRooms(chestRooms []int) (pool map[int]int, nonEmpty []int)`**:
+  Shared helper that aggregates item counts from lockbox containers across the
+  given room IDs. Uses `loadRoomFn` seam (default `rooms.LoadRoom`).
+- **`chestPoolAll() (map[int]int, []int)`**: Global pool — aggregates across
+  every registered chest room in all zones via `ChestRoomsAll()`. Used by
+  `BackfillVendorFromChests`.
 - **`chestPoolForZone(zone string) (pool map[int]int, chestRooms []int)`**:
-  Aggregates item counts from lockbox containers in every registered chest
-  room for the zone. Uses `loadRoomFn` seam (default `rooms.LoadRoom`).
+  Thin wrapper around `chestPoolFromRooms(ChestRoomsForZone(zone))`. Kept for
+  backward compatibility with existing tests.
 
 ### Chest Index (chunk 5.4)
 - **`RegisterChestRoom(zone string, chestRoom int)`**: Records that `zone` has
@@ -70,6 +79,9 @@ only pure state logic and I/O.
   Idempotent. No-op for zero values.
 - **`ChestRoomsForZone(zone string) []int`**: Returns registered chest-room
   IDs for the zone in stable (sorted) order.
+- **`ChestRoomsAll() []int`**: Returns every registered chest-room ID across
+  all zones, stable-sorted and deduped. Used by `chestPoolAll()` for global
+  backfill aggregation.
 
   **Chest index invariant:** The `zone → chest-rooms` index
   (`chest_index.go`) is the single source of truth for backfill lookup. It
@@ -77,10 +89,11 @@ only pure state logic and I/O.
   it is NOT duplicated into the static `profiles` registry or any other
   structure. Chest rooms are fixed for a server's lifetime (the index only
   grows). `TestForagerStoring_RegistersChestRoom` guards the write side;
-  `TestChestPoolForZone_AggregatesViaIndex` guards the read side. Anyone
-  moving or removing the `RegisterChestRoom` call in `tickForagerStoring` or
-  the `ChestRoomsForZone` lookup in `chestPoolForZone` must keep both tests
-  green so the map cannot silently drift from the YAML-authored chest rooms.
+  `TestChestPoolForZone_AggregatesViaIndex` and `TestBackfill_GlobalCrossZone`
+  guard the read side. Anyone moving or removing the `RegisterChestRoom` call
+  in `tickForagerStoring` or the `ChestRoomsAll` lookup in `chestPoolAll`
+  must keep all three tests green so the map cannot silently drift from the
+  YAML-authored chest rooms.
 
 ## Global State
 

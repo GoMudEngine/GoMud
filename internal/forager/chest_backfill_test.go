@@ -39,6 +39,30 @@ func TestSelectBackfillTransfers_OnlyStockedItems(t *testing.T) {
 	assert.Empty(t, got, "vendor only pulls items it already stocks")
 }
 
+func TestBackfill_GlobalCrossZone(t *testing.T) {
+	const chestZone, chestRoom = "zoneA-5.4cook", 51001
+	RegisterChestRoom(chestZone, chestRoom)
+
+	orig := loadRoomFn
+	defer func() { loadRoomFn = orig }()
+	loadRoomFn = func(id int) *rooms.Room {
+		if id != chestRoom {
+			return nil
+		}
+		return &rooms.Room{Containers: map[string]rooms.Container{
+			"lockbox": {Items: []items.Item{{ItemId: 40063}, {ItemId: 40063}}},
+		}}
+	}
+
+	pool, rooms2 := chestPoolAll()
+	if pool[40063] != 2 {
+		t.Fatalf("global pool should aggregate cross-zone chest, got %v", pool)
+	}
+	if len(rooms2) == 0 {
+		t.Fatalf("expected chest room in global list")
+	}
+}
+
 func TestChestPoolForZone_AggregatesViaIndex(t *testing.T) {
 	const zone = "test-zone-pool-5.4"
 	const chestRoom = 49901

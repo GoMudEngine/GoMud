@@ -55,13 +55,10 @@ func selectBackfillTransfers(si *shops.ShopInventory, pool map[int]int) map[int]
 // Production uses rooms.LoadRoom; tests override it.
 var loadRoomFn = rooms.LoadRoom
 
-// chestPoolForZone aggregates item counts across the forager lockboxes
-// registered for the given zone (via the chest index — no instance scan).
-// Returns the pool (itemId -> count) plus the chest room ids so the transfer
-// step can remove from the right container.
-func chestPoolForZone(zone string) (pool map[int]int, chestRooms []int) {
+// chestPoolFromRooms aggregates item counts across the given chest rooms.
+func chestPoolFromRooms(chestRooms []int) (pool map[int]int, nonEmpty []int) {
 	pool = map[int]int{}
-	for _, chestRoom := range ChestRoomsForZone(zone) {
+	for _, chestRoom := range chestRooms {
 		room := loadRoomFn(chestRoom)
 		if room == nil {
 			continue
@@ -77,11 +74,14 @@ func chestPoolForZone(zone string) (pool map[int]int, chestRooms []int) {
 			empty = false
 		}
 		if !empty {
-			chestRooms = append(chestRooms, chestRoom)
+			nonEmpty = append(nonEmpty, chestRoom)
 		}
 	}
-	return pool, chestRooms
+	return pool, nonEmpty
 }
+
+func chestPoolForZone(zone string) (map[int]int, []int) { return chestPoolFromRooms(ChestRoomsForZone(zone)) }
+func chestPoolAll() (map[int]int, []int)               { return chestPoolFromRooms(ChestRoomsAll()) }
 
 // BackfillVendorFromChests tops off vendorMob's shop from forager chests in its
 // zone. Free supply handoff — no gold. Mirrors SellToVendor's persistence.
@@ -89,7 +89,7 @@ func BackfillVendorFromChests(vendorMob *mobs.Mob, shopInv *shops.ShopInventory)
 	if vendorMob == nil || shopInv == nil {
 		return
 	}
-	pool, chestRooms := chestPoolForZone(vendorMob.Zone)
+	pool, chestRooms := chestPoolAll()
 	if len(pool) == 0 {
 		return
 	}
