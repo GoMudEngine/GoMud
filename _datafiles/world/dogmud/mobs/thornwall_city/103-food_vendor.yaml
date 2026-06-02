@@ -12,7 +12,6 @@ crafterrestockmaterials:
   - 40017
   - 40016
   - 40004
-  - 40015
 behavior_archetype: noncombat_shopkeeper
 statpool: 36
 itemdropchance: 0

@@ -48,8 +48,8 @@ func TestLookupCorpseSalvage_EmptyGroups(t *testing.T) {
 }
 
 func TestLookupCorpseSalvage_FirstTableEntryWins(t *testing.T) {
-	// animal appears before humanoid in the table — if a mob
-	// somehow has both, animal wins.
+	// table order: rodent, animal, humanoid — if a mob has both
+	// animal and humanoid groups, the animal entry wins.
 	got := LookupCorpseSalvage([]string{"humanoid", "animal"})
 	want := []items.SalvageReturn{
 		{ItemTag: "raw-meat", Quantity: 1},
