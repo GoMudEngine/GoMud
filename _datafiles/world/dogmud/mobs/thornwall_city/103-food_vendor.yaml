@@ -45,23 +45,6 @@ character:
   skills:
     cooking: 12
   shop:
-    # Existing prepared foods
-    - itemid: 30022
-      quantity: 0
-      quantitymax: 0
-      price: 4
-    - itemid: 30023
-      quantity: 0
-      quantitymax: 0
-      price: 4
-    - itemid: 30024
-      quantity: 0
-      quantitymax: 0
-      price: 4
-    - itemid: 30021
-      quantity: 0
-      quantitymax: 0
-      price: 4
     # Stillwater unique (caravan-fed from Tov Brann / Sigrid)
     - itemid: 40058    # freshwater clam
       quantity: 0
