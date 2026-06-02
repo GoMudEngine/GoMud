@@ -233,6 +233,13 @@ func tickForagerResting(
 		if carryRatio(mob) > restThreshold {
 			return Failure
 		}
+		// 5.4 back-pressure: don't start a new gather cycle while the storage
+		// chest is full. The vendor restock backfill drains it over time; once
+		// at/below the resume fraction, resume. Prevents foraging into a void.
+		resumePct := float64(configs.GetBalanceConfig().ChestBackpressureResumePct)
+		if chestFillRatio(mob) > resumePct {
+			return Failure // stay resting; legacy idle fires flavor emotes
+		}
 		transitionForager(ctx.MobState, forager.StateTravelingToTerritory)
 		return Success
 	}
@@ -618,6 +625,29 @@ func containsInt(haystack []int, needle int) bool {
 		}
 	}
 	return false
+}
+
+// chestFillRatio returns the fill fraction (0..1) of the forager's storage
+// lockbox, or 0 if it has no chest / the chest can't be loaded. Capacity is
+// the chest room's StorageCapacity (default 20 when unset).
+func chestFillRatio(mob *mobs.Mob) float64 {
+	if mob.StorageChestRoom == 0 {
+		return 0
+	}
+	room := rooms.LoadRoom(mob.StorageChestRoom)
+	if room == nil {
+		return 0
+	}
+	key := room.FindContainerByName("lockbox")
+	if key == "" {
+		return 0
+	}
+	c := room.Containers[key]
+	capacity := room.StorageCapacity
+	if capacity <= 0 {
+		capacity = 20
+	}
+	return float64(len(c.Items)) / float64(capacity)
 }
 
 // carryRatio returns carried-weight / carry-capacity. Uses the

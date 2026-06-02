@@ -515,6 +515,12 @@ type Balance struct {
 	// vendors are saturated (MaxStock cap reached). Default 0.5.
 	ForagerRestCarryThreshold ConfigFloat `yaml:"ForagerRestCarryThreshold"`
 
+	// ChestBackpressureResumePct (Stage 5.4) is the storage-lockbox fill
+	// fraction (0.0-1.0) at/below which a rested forager is allowed to
+	// start a new gather cycle. While the chest is fuller than this, the
+	// forager stays resting until the vendor-backfill drains it. Default 0.9.
+	ChestBackpressureResumePct ConfigFloat `yaml:"ChestBackpressureResumePct,omitempty"`
+
 	// ForagerRestDurationRounds is how long a forager stays at sanctuary
 	// before re-entering the territory. Gated by HP-full and carry-ratio
 	// checks too, so the actual rest can be longer if the forager
