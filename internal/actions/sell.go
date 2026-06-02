@@ -260,6 +260,8 @@ func sellOneToMerchant(seller Actor, itemName string, room *rooms.Room,
 	if seller.IsPlayer() {
 		events.AddToQueue(events.ItemOwnership{UserId: seller.GetUserId(), Item: item, Gained: false})
 		events.AddToQueue(events.EquipmentChange{UserId: seller.GetUserId(), GoldChange: sellValue})
+	} else {
+		events.AddToQueue(events.ItemOwnership{MobInstanceId: seller.GetMobInstanceId(), Item: item, Gained: false})
 	}
 
 	// Stock update (merchant side, unchanged from trySellOne).
