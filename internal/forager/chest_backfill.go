@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/shops"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // selectBackfillTransfers decides how many of each item to pull from the
@@ -127,6 +128,7 @@ func BackfillVendorFromChests(vendorMob *mobs.Mob, shopInv *shops.ShopInventory)
 					break
 				}
 				entry.Current++
+				entry.LastGrewRound = util.GetRoundCount()
 				moved++
 				mutated = true
 			}

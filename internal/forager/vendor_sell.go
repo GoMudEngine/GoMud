@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/shops"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // SellToVendor transfers bucket-matching items from the forager's
@@ -55,6 +56,7 @@ func SellToVendor(roomId int, p *ForagerProfile, mob *mobs.Mob) {
 			}
 			mob.Character.RemoveItem(item)
 			entry.Current++
+			entry.LastGrewRound = util.GetRoundCount()
 			mutated = true
 			// Increment throughput counters for delivery tracking.
 			spec := items.GetItemSpec(item.ItemId)
