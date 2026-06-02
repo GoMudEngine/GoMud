@@ -1,5 +1,50 @@
 # DOGMud Patch Notes
 
+## 2026-06-02 — The economy feeds itself (supply chains + market participation)
+
+Shopkeepers no longer run dry. Several merchant types — cooks and enchanters
+in particular — had no reliable way to replenish what they sold, so their
+shelves stayed bare once the opening stock was gone. The world now supplies
+them:
+
+- **Cooks are real cooks.** The tavern cook, the food vendor, and the camp
+  cook now prepare their dishes from ingredients, and the meat that feeds them
+  comes from the world — foragers haul it in and corpse salvage yields raw
+  meat and wild hare meat. Cooked meals restock as they are made.
+- **Enchanters draw on alchemy.** Spoiled and salvaged potions break down into
+  enchanting materials — cheap potions into binding paste, rarer and
+  harder-to-brew potions into higher-tier chrysalis materials. Decayed stock
+  from the town apothecaries flows into a shared reserve the enchanter draws
+  from, so chrysalis supplies trickle back over time.
+- **NPCs buy and sell.** Merchants and the townsfolk around them now take part
+  in their own economy — selling surplus, with foragers topping up whichever
+  vendors are emptiest from their storage caches.
+
+Alongside the economy work:
+
+- **Bosses wear their loot.** The elemental oasis champions were silently
+  dropping nothing because their equipment slots were disabled — the queen
+  never wore her crown. Their slots are open now, so their signature gear
+  actually drops.
+- **Combat in the dark stays dark.** Blinded, or in an unlit room without
+  special sight, your prompt no longer reveals the name, health, or stance of
+  your foe — information you should not have. (Matches the combat text, which
+  already hid this.)
+- **Faster growth where it lagged.** Dexterity, vitality, and charisma now
+  improve a little more quickly through use.
+- **Cleaner web login.** Web-client players no longer see a stray "Mudletmap
+  not recognized" line at login.
+- **Jails are secure.** Holding-cell doors are now locked — only an arrest
+  puts you inside, and serving your time or paying your fine releases you just
+  as before. No more wandering townsfolk turning up in the cells.
+
+(Internally: 5.4 NPC market participation — `actions.Sell` lift + overstock
+decay + globalized forager-chest backfill; cooking and enchanting supply
+chains via crafter conversion, corpse/potion salvage, and a shared
+enchanting-mat reserve; elemental species `DisabledSlots` cleared;
+fight-prompt visibility gating via `messaging.CanSeeClearly`; per-stat
+progression multiplier tuning; holding-cell exit locks.)
+
 ## 2026-06-01 — NPCs keep what they earn (goal-progress persistence)
 
 NPC goal pursuit now *sticks*. The engine quietly unloads idle, empty rooms
