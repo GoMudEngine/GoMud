@@ -48,3 +48,23 @@ func ChestRoomsForZone(zone string) []int {
 	sort.Ints(out)
 	return out
 }
+
+// ChestRoomsAll returns every registered chest room across all zones, stable-
+// sorted and deduped. Used by the global chest backfill so forager chests are
+// aggregated as one group (not per-zone).
+func ChestRoomsAll() []int {
+	chestIndexMu.RLock()
+	defer chestIndexMu.RUnlock()
+	seen := map[int]bool{}
+	var out []int
+	for _, set := range chestIndex {
+		for id := range set {
+			if !seen[id] {
+				seen[id] = true
+				out = append(out, id)
+			}
+		}
+	}
+	sort.Ints(out)
+	return out
+}

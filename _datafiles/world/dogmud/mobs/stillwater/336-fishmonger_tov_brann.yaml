@@ -1,6 +1,12 @@
 mobid: 336
 zone: Stillwater
 craft_support: cooking
+crafter: true
+crafterskill: cooking
+crafterrecipeids:
+  - grilled-meat
+  - trail-rations
+crafterrestockmaterials: []
 behavior_archetype: noncombat_shopkeeper
 statpool: 58
 itemdropchance: 0
@@ -35,6 +41,8 @@ character:
     back torn.
   speciesid: 1
   gold: 1000
+  skills:
+    cooking: 10
   stats:
     dexterity:
       training: 10

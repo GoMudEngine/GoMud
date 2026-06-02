@@ -27,7 +27,7 @@ var ForageDifficulty = map[string]float64{
 // ForageYields maps biome IDs to lists of item IDs that can be found.
 // Duplicate entries increase the probability of that item appearing.
 var ForageYields = map[string][]int{
-	"forest":    {40004, 40004, 40005, 40005, 40049, 40049, 40067}, // 40067 pine pitch (tapped from forest pines, e.g. Fernway South)
+	"forest":    {40004, 40004, 40005, 40005, 40049, 40049, 40067, 40063, 40066}, // 40067 pine pitch (tapped from forest pines, e.g. Fernway South); +40063 shadowcap, +40066 blood-moss (cooking chunk)
 	"land":      {40004, 40005, 40049, 40047},
 	"farmland":  {40004, 40004, 40005, 40007},
 	"swamp":     {40005, 40005, 40004, 40055, 40055, 40056, 40057, 40057},

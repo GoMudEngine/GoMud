@@ -59,7 +59,7 @@ var itemBucket = map[int]string{
 	40049: "fernway", // ironbark shaving
 	40062: "fernway", // oak bark (3.0b)
 	40063: "fernway", // shadowcap mushroom (3.0b)
-	40064: "fernway", // wild hare meat (3.0b)
+	40064: "overlap", // wild hare meat — forager-deliverable to cooks (cooking chunk)
 	40065: "fernway", // beeswax (3.0b)
 	40066: "fernway", // blood-moss (3.0b)
 	40067: "fernway", // pine pitch (3.0b)

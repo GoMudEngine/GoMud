@@ -1,6 +1,16 @@
 mobid: 248
 zone: Thornwall City
 craft_support: cooking
+crafter: true
+crafterskill: cooking
+crafterrecipeids:
+  - hearty-stew
+  - herbal-tea
+  - stillwater-lake-chowder
+  - antidote-broth
+  - spiced-wine
+  - energy-bread
+crafterrestockmaterials: []
 behavior_archetype: noncombat_shopkeeper
 statpool: 120
 itemdropchance: 0
@@ -31,6 +41,8 @@ character:
   speciesid: 1
   level: 1
   gold: 1000
+  skills:
+    cooking: 24
   stats:
     vitality:
       training: 5

@@ -139,9 +139,9 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 	}
 
 	// 5.4 NPC market participation: on a restock tick, drain stale non-material
-	// overstock and top the shop off from forager chests in this zone. Covers
-	// both crafter and non-crafter shopkeepers. Gated on restocked so the chest
-	// enumeration runs only on the slow restock cadence, not every idle tick.
+	// overstock and top the shop off from the global pool of all forager chests.
+	// Covers both crafter and non-crafter shopkeepers. Gated on restocked so the
+	// chest enumeration runs only on the slow restock cadence, not every idle tick.
 	if restocked {
 		if shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId); shopInv != nil {
 			shops.TickOverstockDecay(shopInv, util.GetRoundCount())

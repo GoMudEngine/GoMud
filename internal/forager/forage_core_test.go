@@ -39,6 +39,24 @@ func TestForageCore_LowScoreMisses(t *testing.T) {
 	}
 }
 
+func TestForageYields_ForestHasCookingFlora(t *testing.T) {
+	forest := ForageYields["forest"]
+	has := func(id int) bool {
+		for _, x := range forest {
+			if x == id {
+				return true
+			}
+		}
+		return false
+	}
+	if !has(40063) {
+		t.Error("forest forage should include shadowcap (40063)")
+	}
+	if !has(40066) {
+		t.Error("forest forage should include blood-moss (40066)")
+	}
+}
+
 func TestForageCore_NightYieldsAppendedForForestAtNight(t *testing.T) {
 	// At night, moonpetal (40046) is added to forest yields.
 	// We can't deterministically force a moonpetal, but we can confirm
@@ -49,9 +67,10 @@ func TestForageCore_NightYieldsAppendedForForestAtNight(t *testing.T) {
 		if !r.Found {
 			continue
 		}
-		// Acceptable IDs: forest day (40004, 40005, 40049, 40067 pine pitch) + night (40046)
+		// Acceptable IDs: forest day (40004, 40005, 40049, 40067 pine pitch,
+		// 40063 shadowcap, 40066 blood-moss) + night (40046)
 		switch r.ItemId {
-		case 40004, 40005, 40049, 40067:
+		case 40004, 40005, 40049, 40067, 40063, 40066:
 			// ok
 		case 40046:
 			moonpetalSeen = true
