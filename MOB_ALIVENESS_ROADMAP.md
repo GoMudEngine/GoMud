@@ -119,7 +119,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 31 / 42 done • 0 in progress • 11 not started.
+**Roll-up:** 35 / 42 done • 0 in progress • 7 not started (+1 deferred: 3.5).
 
 ---
 
