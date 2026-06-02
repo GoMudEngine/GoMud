@@ -889,6 +889,21 @@ Balance:
   EnchantRemovalPenaltyRounds: 50   # Rounds of withdrawal debuff after disenchant
   EnchantMaxTier: 4                 # Maximum tier (tiers 0–4 = 5 levels total)
 
+  # ── ENCHANT SALVAGE BANDS ───────────────────────────────────────────────────
+  # Tiered potion → enchanting-mat mapping, keyed by alchemy recipe
+  # skill_minimum. Band 1 (below Band2Min) always yields binding-paste.
+  # Higher bands add chances at chrysalis-setting, mutation-catalyst,
+  # and chrysalis-core. Band 4 is chrysalis-potion tier (skill_min >= 28).
+  EnchantSalvageBand2Min: 10          # skill_min >= 10 → band 2
+  EnchantSalvageBand3Min: 18          # skill_min >= 18 → band 3
+  EnchantSalvageBand4Min: 28          # skill_min >= 28 → band 4
+  EnchantSalvageBand2SettingPct: 25   # band 2: % chance for chrysalis-setting
+  EnchantSalvageBand3SettingPct: 35   # band 3: % chance for chrysalis-setting
+  EnchantSalvageBand3CatalystPct: 12  # band 3: % chance for mutation-catalyst
+  EnchantSalvageBand4CatalystPct: 40  # band 4: % chance for mutation-catalyst
+  EnchantSalvageBand4SettingPct: 30   # band 4: % chance for chrysalis-setting
+  EnchantSalvageBand4CorePct: 8       # band 4: % chance for chrysalis-core
+
   # ── CHARACTER MANAGEMENT ────────────────────────────────────────────────────
   # Hours between player rename uses. 0 disables the cooldown (rename
   # anytime). Default 168 (7 real-time days).

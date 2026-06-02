@@ -288,6 +288,19 @@ type Balance struct {
 	EnchantRemovalPenaltyRounds ConfigInt   `yaml:"EnchantRemovalPenaltyRounds"` // Rounds of withdrawal after disenchant (default 50)
 	EnchantMaxTier              ConfigInt   `yaml:"EnchantMaxTier"`              // Maximum tier enchantments can reach (default 4)
 
+	// ── ENCHANT SALVAGE BANDS ─────────────────────────────────────────────────
+	// Tiered potion → enchanting-mat mapping. Potions are bucketed by their
+	// alchemy-recipe skill_minimum into four bands, each with per-mat drop %s.
+	EnchantSalvageBand2Min         ConfigInt `yaml:"EnchantSalvageBand2Min,omitempty"`         // potion skill_min >= this → band 2 (default 10)
+	EnchantSalvageBand3Min         ConfigInt `yaml:"EnchantSalvageBand3Min,omitempty"`         // band 3 (default 18)
+	EnchantSalvageBand4Min         ConfigInt `yaml:"EnchantSalvageBand4Min,omitempty"`         // band 4 (default 28)
+	EnchantSalvageBand2SettingPct  ConfigInt `yaml:"EnchantSalvageBand2SettingPct,omitempty"`  // % chance to yield chrysalis-setting in band 2 (default 25)
+	EnchantSalvageBand3SettingPct  ConfigInt `yaml:"EnchantSalvageBand3SettingPct,omitempty"`  // % chance to yield chrysalis-setting in band 3 (default 35)
+	EnchantSalvageBand3CatalystPct ConfigInt `yaml:"EnchantSalvageBand3CatalystPct,omitempty"` // % chance to yield mutation-catalyst in band 3 (default 12)
+	EnchantSalvageBand4CatalystPct ConfigInt `yaml:"EnchantSalvageBand4CatalystPct,omitempty"` // % chance to yield mutation-catalyst in band 4 (default 40)
+	EnchantSalvageBand4SettingPct  ConfigInt `yaml:"EnchantSalvageBand4SettingPct,omitempty"`  // % chance to yield chrysalis-setting in band 4 (default 30)
+	EnchantSalvageBand4CorePct     ConfigInt `yaml:"EnchantSalvageBand4CorePct,omitempty"`     // % chance to yield chrysalis-core in band 4 (default 8)
+
 	// ── WORLD EVENTS ─────────────────────────────────────────────────────────
 	WorldEventBufferSize ConfigInt `yaml:"WorldEventBufferSize"` // Max events in the ring buffer (default 200)
 

@@ -97,6 +97,35 @@ func (b *Balance) validateShops() {
 		b.RecipeDiscoveryDecayRate = 0.1
 	}
 
+	// ── ENCHANT SALVAGE BANDS ─────────────────────────────────────────────────
+	if b.EnchantSalvageBand2Min <= 0 {
+		b.EnchantSalvageBand2Min = 10
+	}
+	if b.EnchantSalvageBand3Min <= 0 {
+		b.EnchantSalvageBand3Min = 18
+	}
+	if b.EnchantSalvageBand4Min <= 0 {
+		b.EnchantSalvageBand4Min = 28
+	}
+	if b.EnchantSalvageBand2SettingPct <= 0 {
+		b.EnchantSalvageBand2SettingPct = 25
+	}
+	if b.EnchantSalvageBand3SettingPct <= 0 {
+		b.EnchantSalvageBand3SettingPct = 35
+	}
+	if b.EnchantSalvageBand3CatalystPct <= 0 {
+		b.EnchantSalvageBand3CatalystPct = 12
+	}
+	if b.EnchantSalvageBand4CatalystPct <= 0 {
+		b.EnchantSalvageBand4CatalystPct = 40
+	}
+	if b.EnchantSalvageBand4SettingPct <= 0 {
+		b.EnchantSalvageBand4SettingPct = 30
+	}
+	if b.EnchantSalvageBand4CorePct <= 0 {
+		b.EnchantSalvageBand4CorePct = 8
+	}
+
 	// ── ECONOMY SCORING ───────────────────────────────────────────────────────
 	if b.TtRTargetTier50Hours == 0 {
 		b.TtRTargetTier50Hours = 3
