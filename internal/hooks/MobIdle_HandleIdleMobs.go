@@ -11,10 +11,12 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/facts"
+	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/GoMudEngine/GoMud/internal/worldevents"
@@ -56,8 +58,10 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 	// Non-crafter merchant restock (supply cart delivery for regular shops).
 	// Stage 2 caravan: vendors in caravan-served zones skip the per-mob
 	// restock tick — they restock only when the caravan visits.
+	restocked := false
 	if !configs.GetBalanceConfig().IsCaravanServedZone(mob.Zone) {
-		if mobs.TickMobShopRestock(mob) {
+		didRestock := mobs.TickMobShopRestock(mob)
+		if didRestock {
 			if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
 				msgs := []string{
 					`A supply cart pulls up outside. <ansi fg="mobname">%s</ansi> sorts through a fresh delivery.`,
@@ -67,6 +71,7 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 				msg := fmt.Sprintf(msgs[util.Rand(len(msgs))], mob.Character.Name)
 				sendVisualRoomText(room, messaging.CategoryMobIdle, msg)
 			}
+			restocked = true
 		}
 	}
 
@@ -103,6 +108,9 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 				sendVisualRoomText(room, messaging.CategoryMobIdle, msg)
 			}
 		}
+		if result.Restocked {
+			restocked = true
+		}
 		// Emit world event for rare crafts
 		if result.Success {
 			b := configs.GetBalanceConfig()
@@ -126,6 +134,20 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 					Description: fmt.Sprintf("%s has crafted a rare %s.",
 						result.MobName, result.RecipeName),
 				})
+			}
+		}
+	}
+
+	// 5.4 NPC market participation: on a restock tick, drain stale non-material
+	// overstock and top the shop off from forager chests in this zone. Covers
+	// both crafter and non-crafter shopkeepers. Gated on restocked so the chest
+	// enumeration runs only on the slow restock cadence, not every idle tick.
+	if restocked {
+		if shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId); shopInv != nil {
+			shops.TickOverstockDecay(shopInv, util.GetRoundCount())
+			forager.BackfillVendorFromChests(mob, shopInv)
+			if err := shops.SaveShop(mob.Zone, int(mob.MobId), mob.HomeRoomId); err != nil {
+				mudlog.Error("MobIdle.market", "error", err)
 			}
 		}
 	}

@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/economy"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // CraftSupport tags a shop with the crafting discipline its stock
@@ -67,10 +68,11 @@ type StockEvent struct {
 
 // StockEntry represents one item type in a shop's inventory.
 type StockEntry struct {
-	ItemId     int `yaml:"item_id"`
-	RestockQty int `yaml:"restock_qty"` // How many the supply cart brings (0 = NPC-crafted only)
-	MaxStock   int `yaml:"max_stock"`   // Hard cap on accumulation
-	Current    int `yaml:"current"`     // Actual current count (persisted)
+	ItemId        int    `yaml:"item_id"`
+	RestockQty    int    `yaml:"restock_qty"`               // How many the supply cart brings (0 = NPC-crafted only)
+	MaxStock      int    `yaml:"max_stock"`                 // Hard cap on accumulation
+	Current       int    `yaml:"current"`                   // Actual current count (persisted)
+	LastGrewRound uint64 `yaml:"last_grew_round,omitempty"` // Round Current last increased; drives overstock decay grace period.
 }
 
 // ShopInventory is the persistent economic state for one shop NPC.
@@ -162,6 +164,13 @@ func (si *ShopInventory) AddStockAtRound(itemId int, qty int, round uint64) {
 	if entry.Current > entry.MaxStock {
 		entry.Current = entry.MaxStock
 	}
+	if qty > 0 {
+		growRound := round
+		if growRound == 0 {
+			growRound = util.GetRoundCount()
+		}
+		entry.LastGrewRound = growRound
+	}
 	if !wasDepleted || qty <= 0 || round == 0 {
 		return
 	}
@@ -213,6 +222,7 @@ func (si *ShopInventory) RemoveStockAtRound(itemId int, qty int, round uint64) i
 // Returns true if any stock was added.
 func (si *ShopInventory) Restock() bool {
 	restocked := false
+	now := util.GetRoundCount()
 	for i := range si.Stock {
 		e := &si.Stock[i]
 		if e.RestockQty <= 0 {
@@ -227,6 +237,7 @@ func (si *ShopInventory) Restock() bool {
 			add = room
 		}
 		e.Current += add
+		e.LastGrewRound = now
 		si.RestockCount += add
 		restocked = true
 	}
@@ -247,6 +258,7 @@ func (si *ShopInventory) RestockBuckets(buckets []string) bool {
 		return false
 	}
 	restocked := false
+	now := util.GetRoundCount()
 	for i := range si.Stock {
 		e := &si.Stock[i]
 		if e.RestockQty <= 0 {
@@ -265,6 +277,7 @@ func (si *ShopInventory) RestockBuckets(buckets []string) bool {
 			add = room
 		}
 		e.Current += add
+		e.LastGrewRound = now
 		si.RestockCount += add
 		restocked = true
 	}
@@ -288,6 +301,7 @@ func (si *ShopInventory) GoldReserve(ratio float64) int {
 // remain dependent on caravan/forager flow.
 func (si *ShopInventory) RestockBaselineTiers() bool {
 	restocked := false
+	now := util.GetRoundCount()
 	for i := range si.Stock {
 		e := &si.Stock[i]
 		if e.RestockQty <= 0 {
@@ -309,6 +323,7 @@ func (si *ShopInventory) RestockBaselineTiers() bool {
 			add = room
 		}
 		e.Current += add
+		e.LastGrewRound = now
 		si.RestockCount += add
 		restocked = true
 	}
@@ -325,6 +340,7 @@ func (si *ShopInventory) RestockBaselineTiers() bool {
 // cadences (commons restock often, rares rarely).
 func (si *ShopInventory) RestockTier(rarityTier int) bool {
 	restocked := false
+	now := util.GetRoundCount()
 	for i := range si.Stock {
 		e := &si.Stock[i]
 		if e.RestockQty <= 0 {
@@ -354,6 +370,7 @@ func (si *ShopInventory) RestockTier(rarityTier int) bool {
 			add = room
 		}
 		e.Current += add
+		e.LastGrewRound = now
 		si.RestockCount += add
 		restocked = true
 	}

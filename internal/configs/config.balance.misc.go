@@ -301,6 +301,9 @@ func (b *Balance) validateMisc() {
 	if b.ForagerRestCarryThreshold <= 0 || b.ForagerRestCarryThreshold > 1.0 {
 		b.ForagerRestCarryThreshold = 0.5
 	}
+	if b.ChestBackpressureResumePct <= 0 || b.ChestBackpressureResumePct > 1.0 {
+		b.ChestBackpressureResumePct = 0.9
+	}
 	if b.ForagerRestDurationRounds <= 0 {
 		b.ForagerRestDurationRounds = 40
 	}

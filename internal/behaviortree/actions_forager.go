@@ -207,7 +207,6 @@ func hpRatio(mob *mobs.Mob) float64 {
 // to the legacy idle path (idlecommands + lookfortrouble), matching
 // the legacy idle-fallthrough pattern.
 
-
 func tickForagerResting(
 	p *forager.ForagerProfile,
 	mob *mobs.Mob,
@@ -233,6 +232,13 @@ func tickForagerResting(
 		restThreshold := float64(configs.GetBalanceConfig().ForagerRestCarryThreshold)
 		if carryRatio(mob) > restThreshold {
 			return Failure
+		}
+		// 5.4 back-pressure: don't start a new gather cycle while the storage
+		// chest is full. The vendor restock backfill drains it over time; once
+		// at/below the resume fraction, resume. Prevents foraging into a void.
+		resumePct := float64(configs.GetBalanceConfig().ChestBackpressureResumePct)
+		if chestFillRatio(mob) > resumePct {
+			return Failure // stay resting; legacy idle fires flavor emotes
 		}
 		transitionForager(ctx.MobState, forager.StateTravelingToTerritory)
 		return Success
@@ -391,6 +397,9 @@ func tickForagerStoring(
 		return Success
 	}
 
+	// 5.4: make this forager's lockbox discoverable to the vendor backfill.
+	forager.RegisterChestRoom(mob.Zone, mob.StorageChestRoom)
+
 	// Satchel already empty — deposit complete (or nothing was leftover).
 	if len(mob.Character.Items) == 0 {
 		// 3.8 hotfix: clear any stale delivery patrol before recalling.
@@ -527,7 +536,6 @@ func tickForagerRecalling(
 	return Success
 }
 
-
 // dumpSatchelToLockbox transfers every item in the forager's satchel
 // into the room's "lockbox" container, then bumps the lockbox lock's
 // RotationSeed so existing player keyring entries become invalid.
@@ -617,6 +625,29 @@ func containsInt(haystack []int, needle int) bool {
 		}
 	}
 	return false
+}
+
+// chestFillRatio returns the fill fraction (0..1) of the forager's storage
+// lockbox, or 0 if it has no chest / the chest can't be loaded. Capacity is
+// ForagerLockboxCapacity (default 500), matching dumpSatchelToLockbox.
+func chestFillRatio(mob *mobs.Mob) float64 {
+	if mob.StorageChestRoom == 0 {
+		return 0
+	}
+	room := rooms.LoadRoom(mob.StorageChestRoom)
+	if room == nil {
+		return 0
+	}
+	key := room.FindContainerByName("lockbox")
+	if key == "" {
+		return 0
+	}
+	c := room.Containers[key]
+	capacity := int(configs.GetBalanceConfig().ForagerLockboxCapacity)
+	if capacity <= 0 {
+		capacity = 500
+	}
+	return float64(len(c.Items)) / float64(capacity)
 }
 
 // carryRatio returns carried-weight / carry-capacity. Uses the

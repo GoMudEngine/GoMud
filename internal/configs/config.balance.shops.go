@@ -26,6 +26,14 @@ func (b *Balance) validateShops() {
 		b.ShopGoldReserveRatio = 0.50
 	}
 
+	// ── OVERSTOCK DECAY ──────────────────────────────────────────────────────
+	if b.ShopOverstockDecayRounds <= 0 {
+		b.ShopOverstockDecayRounds = 21600
+	}
+	if b.ShopOverstockDecayQty <= 0 {
+		b.ShopOverstockDecayQty = 1
+	}
+
 	// ── BARTERING ────────────────────────────────────────────────────────────
 	if b.BarterMaxDiscount <= 0 {
 		b.BarterMaxDiscount = 0.15

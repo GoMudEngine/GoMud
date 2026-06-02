@@ -4,6 +4,8 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -871,6 +873,20 @@ func TestTickForagerRecalling_AtSanctuaryTransitionsToResting(t *testing.T) {
 	if len(mob.Character.Items) != 0 {
 		t.Errorf("satchel after dump = %d items, want 0", len(mob.Character.Items))
 	}
+}
+
+func TestForagerStoring_RegistersChestRoom(t *testing.T) {
+	mob := newTestMob(t)
+	mob.Zone = "test-zone-store-5.4"
+	mob.StorageChestRoom = 49801
+	mob.PatrolId = ""
+	mob.Character.Items = nil // empty satchel → returns before any rooms.LoadRoom
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId, MobState: NewBehaviorState()}
+	tickForagerStoring(&forager.ForagerProfile{Name: "TestForager"}, mob, ctx)
+
+	assert.Contains(t, forager.ChestRoomsForZone("test-zone-store-5.4"), 49801,
+		"tickForagerStoring must register the forager's chest in the zone index")
 }
 
 // ---- forager_check_thresholds tests (3.8 hotfix H8) ----

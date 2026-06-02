@@ -459,12 +459,14 @@ type Balance struct {
 	// MaxStock the crafter mob keeps in reserve when deciding whether to
 	// craft. Prevents the crafter from consuming its own stock to a level
 	// where players can't buy. Per-ingredient check, floor of 1.
-	CrafterIngredientReservePct ConfigFloat `yaml:"CrafterIngredientReservePct"`      // Fraction of MaxStock kept as reserve (default 0.25)
-	ShopGoldReserveRatio        ConfigFloat `yaml:"ShopGoldReserveRatio,omitempty"`   // Fraction of gold pool a shop keeps in reserve before buying (default 0.50)
-	ShopMaxStockMultiplier      ConfigFloat `yaml:"ShopMaxStockMultiplier,omitempty"` // Global multiplier on EffectiveMaxStock — chunk 3.8 bumped to 2.0 to give the cross-city caravan room to build surplus (default 2.0)
-	BarterMaxDiscount           ConfigFloat `yaml:"BarterMaxDiscount,omitempty"`      // Max fractional price reduction a player can get via bartering (default 0.15)
-	BarterMaxBonus              ConfigFloat `yaml:"BarterMaxBonus,omitempty"`         // Max fractional sell-price bonus a player can get via bartering (default 0.15)
-	StorageFeePerItem           ConfigInt   `yaml:"StorageFeePerItem"`                // Gold charged per stored item per game month (default 1)
+	CrafterIngredientReservePct ConfigFloat `yaml:"CrafterIngredientReservePct"`        // Fraction of MaxStock kept as reserve (default 0.25)
+	ShopGoldReserveRatio        ConfigFloat `yaml:"ShopGoldReserveRatio,omitempty"`     // Fraction of gold pool a shop keeps in reserve before buying (default 0.50)
+	ShopMaxStockMultiplier      ConfigFloat `yaml:"ShopMaxStockMultiplier,omitempty"`   // Global multiplier on EffectiveMaxStock — chunk 3.8 bumped to 2.0 to give the cross-city caravan room to build surplus (default 2.0)
+	ShopOverstockDecayRounds    ConfigInt   `yaml:"ShopOverstockDecayRounds,omitempty"` // Rounds an over-baseline stock entry must sit un-grown before one unit decays (default 21600 ≈ several in-game days)
+	ShopOverstockDecayQty       ConfigInt   `yaml:"ShopOverstockDecayQty,omitempty"`    // Units removed per decay fire (default 1)
+	BarterMaxDiscount           ConfigFloat `yaml:"BarterMaxDiscount,omitempty"`        // Max fractional price reduction a player can get via bartering (default 0.15)
+	BarterMaxBonus              ConfigFloat `yaml:"BarterMaxBonus,omitempty"`           // Max fractional sell-price bonus a player can get via bartering (default 0.15)
+	StorageFeePerItem           ConfigInt   `yaml:"StorageFeePerItem"`                  // Gold charged per stored item per game month (default 1)
 
 	// ── LOOT ──────────────────────────────────────────────────────────────────
 	LootBudgetScalar ConfigFloat `yaml:"LootBudgetScalar"` // Multiplier for sqrt(goldPaid) loot budget (default 7.0)
@@ -512,6 +514,12 @@ type Balance struct {
 	// cycling back to forage. Prevents futile foraging loops when local
 	// vendors are saturated (MaxStock cap reached). Default 0.5.
 	ForagerRestCarryThreshold ConfigFloat `yaml:"ForagerRestCarryThreshold"`
+
+	// ChestBackpressureResumePct (Stage 5.4) is the storage-lockbox fill
+	// fraction (0.0-1.0) at/below which a rested forager is allowed to
+	// start a new gather cycle. While the chest is fuller than this, the
+	// forager stays resting until the vendor-backfill drains it. Default 0.9.
+	ChestBackpressureResumePct ConfigFloat `yaml:"ChestBackpressureResumePct,omitempty"`
 
 	// ForagerRestDurationRounds is how long a forager stays at sanctuary
 	// before re-entering the territory. Gated by HP-full and carry-ratio
