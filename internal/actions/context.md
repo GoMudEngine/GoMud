@@ -460,6 +460,78 @@ type TrackResult struct {
 
 ---
 
+## Sell Action (chunk 5.4)
+
+### Sell
+
+**Function:** `Sell(seller Actor, opts SellOptions) SellResult`
+
+Shared seller entry point for players and mobs. Resolves the first willing
+merchant in the seller's room, then sells matching items.
+
+**Two sell models — important distinction:**
+
+1. **SALE (gold transfer) via `actions.Sell`**: The merchant evaluates the
+   item via `EvaluateBuyRules` / `GetSellPrice`, returns an offer price, and
+   the item transfers to the shop's stock. For **player** sellers the merchant's
+   gold pool is drawn down by the sale price (`shopInv.Gold -= sellValue` or
+   `mob.Character.Gold -= sellValue`), and a merchant-broke gate prevents
+   sales the merchant can't afford. For **mob** sellers the seller is credited
+   (`char.Gold += sellValue`) but **shop gold is not touched** — mob sales
+   mint gold without bankrupting the shop (gated on `seller.IsPlayer()`).
+
+2. **SUPPLY HANDOFF (free, no gold) via `forager.SellToVendor` and
+   `forager.BackfillVendorFromChests`**: Forager delivery and chest backfill
+   transfer items directly into vendor stock with no price computation and no
+   gold movement. These are supply-side operations, not market transactions.
+
+**SellAllSellable mode** (`opts.SellAllSellable = true`): Mob inventory-sweep.
+Iterates every item in the seller's backpack that is not a quest token, not a
+crafting material, and has `Value > 0`; calls `sellOneToMerchant` for each.
+Used by the goal planner's wealth-gold sell step.
+
+**Options struct:**
+```go
+type SellOptions struct {
+    ItemName        string // ignored when SellAllSellable
+    Quantity        int    // 1, N, or UnlimitedSell (math.MaxInt)
+    SellAllSellable bool   // mob inventory-sweep mode
+    MerchantName    string // optional target; "" = first willing merchant
+}
+```
+
+**Result struct:**
+```go
+type SellResult struct {
+    Sold         int
+    TotalGold    int
+    Reason       SellStopReason
+    LastItemName string
+}
+```
+
+`SellStopReason` values: `SellStopSoldAll` (normal), `SellStopNoItem`,
+`SellStopNoMerchant`, `SellStopMerchantBroke` (player path only),
+`SellStopRejected`.
+
+**Messaging:** Player sellers receive "You don't have that item." and merchant
+speech lines synchronously (not via the mob's async command queue — see
+`merchantSay` in `sell.go`). Mob sellers receive no feedback text.
+
+**Progression:** Triggers `seller.OnSkillUse("bartering")` and
+`mob.Character.OnStatUse("charisma")` on each successful sale.
+
+Entry points that call `Sell`:
+- `usercommands/sell.go` — player `sell` command
+- `mobcommands/sell.go` — mob `sell` command
+- `internal/planners/` — goal planner's wealth-gold save-up sell step
+
+**See also:** `internal/forager/vendor_sell.go` (`forager.SellToVendor`) and
+`internal/forager/chest_backfill.go` (`forager.BackfillVendorFromChests`) for
+the free supply-handoff paths — these are NOT routed through `actions.Sell`.
+
+---
+
 ## Available Actions Summary
 
 | Action | Package | Actor→Target | Returns | Messaging | Cooldown |
@@ -474,6 +546,7 @@ type TrackResult struct {
 | Shadow | actions | self→target | ShadowResult | varies | none |
 | Sneak | actions | self vs room | SneakResult | silent | shared |
 | Steal | actions | self vs mob/player/container | StealResult | varies | shared |
+| Sell | actions | self vs merchant | SellResult | player only | none |
 | Sleep | actions | self | SleepResult | varies | none |
 | Track | actions | self vs trail/target | TrackResult | user only | shared |
 

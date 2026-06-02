@@ -110,7 +110,7 @@ should always agree.
 | 5.1 | Cross-cut | Town justice | XL | 1.2, 1.3, 1.5, 3.4, Phase 4 | Done |
 | 5.2 | Cross-cut | Bounty hunting | L | 1.4, 1.5, 2.8, 4.4 | Done |
 | 5.3 | Cross-cut | Equipment-aware shopping | L | 2.1, 2.2, 2.3, 4.4 | Done |
-| 5.4 | Cross-cut | NPC market participation | M | 5.3 | Not started |
+| 5.4 | Cross-cut | NPC market participation | M | 5.3 | Done (2026-06-02) |
 | 6.1 | Polish | Stillwater town-flavor pass | L | Phase 1, Phase 3 | Not started |
 | 6.2 | Polish | Parity audit closeout | S | 6.1 | Not started |
 | 6.3 | Polish | Per-zone tuning (1–2 zones) | M | 6.1 | Not started |
@@ -119,7 +119,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 30 / 42 done • 0 in progress • 12 not started.
+**Roll-up:** 31 / 42 done • 0 in progress • 11 not started.
 
 ---
 
@@ -920,13 +920,41 @@ rep via new `RepFaction`/`RepAmount` quest reward fields; stale
   `docs/superpowers/plans/2026-06-01-mob-aliveness-5.3-equipment-aware-shopping.md`.
 
 ### 5.4 NPC market participation
-**Status:** Not started • **Size:** M
+**Status:** Done (2026-06-02) • **Size:** M
 
 - **Goal:** NPCs sell looted/crafted goods through normal shop channels, contributing to the economy.
 - **In:** Sell-trigger behavior, integration with shop pricing/stock, decay/clearance rules.
 - **Out:** Player↔NPC barter beyond what shop UX already supports.
 - **Depends on:** 5.3 (similar plumbing)
 - **Why:** Living economy — shop stock reflects NPC activity, not just player drop-offs.
+- **Shipped:** Three integrated components: (1) **`actions.Sell` verb lift** —
+  shared seller entry point for players and mobs. Mob sales credit the seller's
+  gold via normal merchant pricing and buy-rules but do NOT drain shop/merchant
+  gold (`seller.IsPlayer()` gate), fixing the broken wealth-gold and
+  upgrade-gear goal planners that previously had no sell path. `SellAllSellable`
+  mode sweeps a mob's full backpack in one call. (2) **Time-based overstock
+  decay** (`TickOverstockDecay` / `TickOverstockDecayWith` in
+  `internal/shops/`) — unsold stock above the `RestockQty` baseline drains by
+  `ShopOverstockDecayQty` (default 1) per entry per `ShopOverstockDecayRounds`
+  (default 21600) rounds of inactivity (grace period measured from
+  `StockEntry.LastGrewRound`). Crafting materials (`is_component`) are always
+  excluded. NPC-dumped entries (RestockQty 0) drain fully to zero. (3)
+  **Forager-chest aggregate backfill** (`BackfillVendorFromChests` in
+  `internal/forager/`) — on restock ticks, pulls items from forager sanctuary
+  lockboxes into the neediest vendor stock gaps (largest `MaxStock - Current`
+  first), free of charge. Chest rooms are tracked via a self-populating
+  `zone → lockbox-room` index (`chest_index.go`; populated at `StateStoring`
+  time, not from the static profiles registry). Chest-full back-pressure:
+  when a forager's lockbox exceeds `ChestBackpressureResumePct × ForagerLockboxCapacity`
+  items, the forager stays resting until the backfill drains it to ≤ that
+  fraction (the chest "overflow cache" now actually drains).
+  **Deferred:** proactive surplus-offload goal (combat-looter/crafter
+  sell-surplus goal + anti-thrash + donation bins) — dropped because mob
+  sellable surplus is too thin today (mobs never inherit player gear); revisit
+  when mob corpse-salvage yields a richer surplus stream. Spec at
+  `docs/superpowers/specs/2026-06-02-mob-aliveness-5.4-npc-market-participation-design.md`,
+  plan at
+  `docs/superpowers/plans/2026-06-02-mob-aliveness-5.4-npc-market-participation.md`.
 
 ---
 
