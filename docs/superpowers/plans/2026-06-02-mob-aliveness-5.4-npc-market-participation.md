@@ -825,13 +825,33 @@ In `internal/behaviortree/actions_forager.go`, in `tickForagerStoring`, right af
 	forager.RegisterChestRoom(mob.Zone, mob.StorageChestRoom)
 ```
 
-(Place it immediately after the `if mob.StorageChestRoom == 0 { ... }` block at `actions_forager.go:~392`. `behaviortree` already imports `forager`.)
+(Place it immediately after the `if mob.StorageChestRoom == 0 { ... }` block at `actions_forager.go:~392` — i.e. BEFORE any `rooms.LoadRoom`/`actTryStoreExcess` call, so the registration is reached on the empty-satchel path too. `behaviortree` already imports `forager`.)
 
-Run: `go test ./internal/forager/ -run TestChestIndex -v` → PASS.
+**Write-side drift guard** — this test fails loudly if a future refactor drops the registration call (the silent-break scenario). Add to `internal/behaviortree/actions_forager_test.go` (create if absent; package `behaviortree`):
+
+```go
+func TestForagerStoring_RegistersChestRoom(t *testing.T) {
+	mob := newTestMob(t)
+	mob.Zone = "test-zone-store-5.4"
+	mob.StorageChestRoom = 49801
+	mob.PatrolId = ""
+	mob.Character.Items = nil // empty satchel → returns before any rooms.LoadRoom
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId, MobState: NewBehaviorState()}
+	tickForagerStoring(&forager.ForagerProfile{Name: "TestForager"}, mob, ctx)
+
+	assert.Contains(t, forager.ChestRoomsForZone("test-zone-store-5.4"), 49801,
+		"tickForagerStoring must register the forager's chest in the zone index")
+}
+```
+
+Imports for the test: `testing`, `github.com/stretchr/testify/assert`, `github.com/GoMudEngine/GoMud/internal/forager`. Use a zone name unique to this test (the index is a package global).
+
+Run: `go test ./internal/forager/ -run TestChestIndex -v && go test ./internal/behaviortree/ -run TestForagerStoring_RegistersChestRoom -v` → PASS.
 Commit checkpoint:
 ```bash
-git add internal/forager/chest_index.go internal/forager/chest_index_test.go internal/behaviortree/actions_forager.go
-git commit -m "feat(5.4): forager chest index (zone -> lockbox rooms), self-populated on storing"
+git add internal/forager/chest_index.go internal/forager/chest_index_test.go internal/behaviortree/actions_forager.go internal/behaviortree/actions_forager_test.go
+git commit -m "feat(5.4): forager chest index (zone -> lockbox rooms), self-populated on storing + drift guard"
 ```
 
 - [ ] **Step 3: Write a failing test for gap ordering + caps**
@@ -878,7 +898,41 @@ func TestSelectBackfillTransfers_OnlyStockedItems(t *testing.T) {
 	got := selectBackfillTransfers(si, pool)
 	assert.Empty(t, got, "vendor only pulls items it already stocks")
 }
+
+// Read-side drift guard: proves chestPoolForZone reads through the zone index
+// (ChestRoomsForZone) and aggregates the lockbox contents. Uses the loadRoomFn
+// seam so no disk room data is needed. If someone breaks the index→pool wiring,
+// this fails.
+func TestChestPoolForZone_AggregatesViaIndex(t *testing.T) {
+	const zone = "test-zone-pool-5.4"
+	const chestRoom = 49901
+	RegisterChestRoom(zone, chestRoom)
+
+	orig := loadRoomFn
+	defer func() { loadRoomFn = orig }()
+	loadRoomFn = func(id int) *rooms.Room {
+		if id != chestRoom {
+			return nil
+		}
+		return &rooms.Room{
+			Containers: map[string]rooms.Container{
+				"lockbox": {Items: []items.Item{{ItemId: 10}, {ItemId: 10}, {ItemId: 20}}},
+			},
+		}
+	}
+
+	pool, chestRooms := chestPoolForZone(zone)
+	assert.Equal(t, 2, pool[10])
+	assert.Equal(t, 1, pool[20])
+	assert.Contains(t, chestRooms, chestRoom)
+
+	// Unregistered zone → empty pool (index is consulted, not a global scan).
+	emptyPool, _ := chestPoolForZone("test-zone-unregistered-5.4")
+	assert.Empty(t, emptyPool)
+}
 ```
+
+Add `github.com/GoMudEngine/GoMud/internal/{items,rooms}` to the test imports. Note: `items.Item{ItemId: n}` is enough — the pool keys on `ItemId` only.
 
 - [ ] **Step 4: Run to verify it fails**
 
@@ -943,6 +997,10 @@ func selectBackfillTransfers(si *shops.ShopInventory, pool map[int]int) map[int]
 	return out
 }
 
+// loadRoomFn is a seam so chestPoolForZone is testable without disk room data.
+// Production uses rooms.LoadRoom; tests override it.
+var loadRoomFn = rooms.LoadRoom
+
 // chestPoolForZone aggregates item counts across the forager lockboxes
 // registered for the given zone (via the chest index — no instance scan).
 // Returns the pool (itemId -> count) plus the chest room ids so the transfer
@@ -950,7 +1008,7 @@ func selectBackfillTransfers(si *shops.ShopInventory, pool map[int]int) map[int]
 func chestPoolForZone(zone string) (pool map[int]int, chestRooms []int) {
 	pool = map[int]int{}
 	for _, chestRoom := range ChestRoomsForZone(zone) {
-		room := rooms.LoadRoom(chestRoom)
+		room := loadRoomFn(chestRoom)
 		if room == nil {
 			continue
 		}
@@ -993,7 +1051,7 @@ func BackfillVendorFromChests(vendorMob *mobs.Mob, shopInv *shops.ShopInventory)
 			if moved >= want {
 				break
 			}
-			room := rooms.LoadRoom(chestRoomId)
+			room := loadRoomFn(chestRoomId)
 			if room == nil {
 				continue
 			}
@@ -1197,7 +1255,7 @@ git commit -m "feat(5.4): forager rests while storage chest is full (drain-to-re
 
 - `internal/actions/context.md`: note `actions.Sell` and the sale-vs-supply split (mob sales don't drain shop gold; `forager.SellToVendor`/backfill are free handoffs).
 - `internal/shops/context.md`: document `LastGrewRound` + `TickOverstockDecay` (baseline = RestockQty, excludes `is_component`).
-- `internal/forager/context.md`: document `BackfillVendorFromChests` + the chest-full rest back-pressure and that the chest "overflow cache" now drains.
+- `internal/forager/context.md`: document `BackfillVendorFromChests` + the chest-full rest back-pressure and that the chest "overflow cache" now drains. **Explicitly document the chest index invariant:** the `zone → chest-rooms` index is the single source of truth for backfill lookup, is self-populated from `mob.StorageChestRoom` at `tickForagerStoring` (NOT duplicated into the static `profiles` registry), and is guarded by `TestForagerStoring_RegistersChestRoom` (write-side) + `TestChestPoolForZone_AggregatesViaIndex` (read-side) — note that anyone moving/removing the `RegisterChestRoom` call or the index lookup must keep both tests green, so the map can't silently drift out of sync with the YAML-authored chest rooms.
 
 - [ ] **Step 2: Full build + test sweep**
 
@@ -1236,7 +1294,7 @@ git commit -m "docs(5.4): context + roadmap for NPC market participation"
 
 ## Self-review notes (gaps flagged for the implementer)
 
-- **`room.Containers` element type** (value vs pointer) is unconfirmed — Task 4 Step 3 and Task 6 Step 2 read `room.Containers[key]`. Verify the field type in `internal/rooms/rooms.go`; if value-typed, the Task-4 transfer must write the container back into the map (shown) and Task-6 read-only is fine; if pointer-typed, drop the write-backs.
+- **`room.Containers` is `map[string]Container` — VALUE-typed** (confirmed, `rooms.go:89`). So the Task-4 backfill transfer MUST write the mutated container back (`room.Containers[key] = c`, already shown); Task-6's read-only `chestFillRatio` needs no write-back. `FindContainerByName` matches the map key via `util.FindMatchIn` (confirmed, `rooms.go:1763`), so a hand-built `Containers{"lockbox": ...}` resolves in tests.
 - **`RestockTier` vs `Restock` growth sites** (Task 3 Step 2): stamp `LastGrewRound` at every `Current` increase. Confirm both method bodies in `shopinventory.go` / wherever `RestockTier` lives.
 - **`SaveShop` of forager chest rooms:** the backfill mutates `room.Containers`; if container contents persist via room instance saves (which prod wipes), the drain is per-instance-lifetime only — acceptable and consistent with `SellToVendor` (same limitation). No extra chest persistence added.
 - **Chest index is lazily populated** (Task 4): a forager's chest only enters the index once that forager reaches its `storing` state at least once. On a freshly booted server, backfill pulls nothing until foragers have run a gather→deliver→store cycle — which is correct (an unvisited chest is empty anyway). The in-game smoke must let a forager complete a storing cycle before expecting backfill, and the vendor must share the chest room's registered zone (`mob.Zone` at storing time). Confirm Tova's chest zone matches her vendor rooms' zone during smoke; if they differ, index by the vendor-facing zone instead.
