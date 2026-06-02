@@ -33,7 +33,7 @@ func TickOverstockDecayWith(si *ShopInventory, round uint64, isComponent func(it
 		if isComponent(e.ItemId) {
 			continue
 		}
-		if e.LastGrewRound != 0 && round-e.LastGrewRound < decayRounds {
+		if e.LastGrewRound != 0 && round < e.LastGrewRound+decayRounds {
 			continue
 		}
 		drop := decayQty

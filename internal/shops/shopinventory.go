@@ -69,9 +69,9 @@ type StockEvent struct {
 // StockEntry represents one item type in a shop's inventory.
 type StockEntry struct {
 	ItemId        int    `yaml:"item_id"`
-	RestockQty    int    `yaml:"restock_qty"`              // How many the supply cart brings (0 = NPC-crafted only)
-	MaxStock      int    `yaml:"max_stock"`                // Hard cap on accumulation
-	Current       int    `yaml:"current"`                  // Actual current count (persisted)
+	RestockQty    int    `yaml:"restock_qty"`               // How many the supply cart brings (0 = NPC-crafted only)
+	MaxStock      int    `yaml:"max_stock"`                 // Hard cap on accumulation
+	Current       int    `yaml:"current"`                   // Actual current count (persisted)
 	LastGrewRound uint64 `yaml:"last_grew_round,omitempty"` // Round Current last increased; drives overstock decay grace period.
 }
 
