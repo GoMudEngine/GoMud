@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // SalvageOptions identifies the salvage target.
@@ -199,13 +200,12 @@ func salvageItem(actor Actor, uuid string, spoiledPotion bool, chance float64) S
 	// tagged salvage_returns.
 	var recovered []crafting.RecipeIngredient
 	if spoiledPotion {
-		qty := 1
+		qtyBonus := 0
 		if chance > 0.5 {
-			qty = 2
+			qtyBonus = 1 // preserve the existing salvage-skill bump
 		}
-		recovered = []crafting.RecipeIngredient{
-			{ItemTag: "binding-paste", Quantity: qty},
-		}
+		roll := func() float64 { return float64(util.Rand(10000)) / 10000.0 }
+		recovered = crafting.EnchantSalvageYield(itemId, roll, qtyBonus)
 	} else {
 		recipe := crafting.GetRecipeByOutputItemId(itemId)
 		if recipe != nil {

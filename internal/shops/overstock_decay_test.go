@@ -37,3 +37,12 @@ func TestOverstockDecay_GracePeriodNotElapsed(t *testing.T) {
 	TickOverstockDecayWith(si, 100000, func(int) bool { return false }, 21600, 1)
 	assert.Equal(t, 6, si.Stock[0].Current, "1000 < 21600 grace → no decay")
 }
+
+func TestOverstockDecay_ReturnsDecayedUnits(t *testing.T) {
+	si := &ShopInventory{Stock: []StockEntry{
+		{ItemId: 100, RestockQty: 2, MaxStock: 10, Current: 6, LastGrewRound: 0},
+	}}
+	got := TickOverstockDecayWith(si, 100000, func(int) bool { return false }, 21600, 1)
+	assert.Equal(t, []DecayedUnit{{ItemId: 100, Qty: 1}}, got)
+	assert.Equal(t, 5, si.Stock[0].Current)
+}
