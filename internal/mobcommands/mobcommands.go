@@ -33,6 +33,7 @@ var (
 		"break":          {Break, false},
 		"broadcast":      {Broadcast, false},
 		"buy":            {Buy, false},
+		"sell":           {Sell, false},
 		"cancel":         {Cancel, false},
 		"cast":           {Cast, false},
 		"craft":          {Craft, false},
