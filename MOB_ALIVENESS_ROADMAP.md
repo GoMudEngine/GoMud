@@ -956,19 +956,28 @@ rep via new `RepFaction`/`RepAmount` quest reward fields; stale
   plan at
   `docs/superpowers/plans/2026-06-02-mob-aliveness-5.4-npc-market-participation.md`.
 
-**Store-restock follow-ups (2026-06-02):** The COOKING half of the
-store-restock fix (`project_store_restock_considered_fix`) is now
-addressed — cooks are crafter mobs fed by `crafterrestockmaterials`
-(salt, water, healer's root) plus forager-salvaged meat (raw-meat from
-`animal` corpses, wild-hare-meat from `rodent` corpses) flowing through
-the chest-backfill pipe. Three remaining follow-ups:
-- **(a) Enchanting half** — decayed potions → enchanter restock path;
-  next chunk after cooking supply chain.
-- **(b) Fernway caravan `deliveries_by_tier` is empty** — the caravan
+**Store-restock follow-ups:** The COOKING and ENCHANTING halves of the
+store-restock fix (`project_store_restock_considered_fix`) are now
+addressed:
+- **Cooking (chunk 5.4):** cooks are crafter mobs fed by
+  `crafterrestockmaterials` (salt, water, healer's root) plus
+  forager-salvaged meat flowing through the chest-backfill pipe.
+- **Enchanting (chunk 5.4, 2026-06-02):** alchemy vendors' unsold
+  potions decay via `TickOverstockDecay`; the `[]DecayedUnit` return
+  is converted to enchanting mats by `crafting.EnchantSalvageYield`
+  (tiered by recipe `skill_minimum`, bands 1-4) and held in a global
+  in-memory reserve (`shops.AddToReserve`). Enchanters with
+  `craft_support: "enchanting"` draw from the reserve on their idle
+  tick via `shops.SelectStockTransfers`, neediest stock-gap first.
+  Player spoiled-potion salvage uses the same `EnchantSalvageYield`
+  logic.
+
+Two remaining open follow-ups:
+- **(a) Fernway caravan `deliveries_by_tier` is empty** — the caravan
   YAML has an empty delivery-tier block; no cooking goods reach Fernway
   vendors from the caravan route.
-- **(c) General-store restock** — broad restocking for non-cooking
-  merchant types remains open.
+- **(b) General-store restock** — broad restocking for non-cooking,
+  non-enchanting merchant types remains open.
 
 ---
 
