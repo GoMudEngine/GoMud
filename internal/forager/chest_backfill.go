@@ -1,55 +1,12 @@
 package forager
 
 import (
-	"sort"
-
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
-
-// selectBackfillTransfers decides how many of each item to pull from the
-// aggregate chest pool into the vendor, neediest stock gap first, capped by
-// each entry's MaxStock and by pool availability. Only items the vendor already
-// stocks (has a StockEntry for, below MaxStock) are eligible. Pure + testable.
-func selectBackfillTransfers(si *shops.ShopInventory, pool map[int]int) map[int]int {
-	type gap struct {
-		itemId int
-		gap    int
-	}
-	var gaps []gap
-	for i := range si.Stock {
-		e := &si.Stock[i]
-		g := e.MaxStock - e.Current
-		if g > 0 && pool[e.ItemId] > 0 {
-			gaps = append(gaps, gap{e.ItemId, g})
-		}
-	}
-	sort.Slice(gaps, func(a, b int) bool {
-		if gaps[a].gap != gaps[b].gap {
-			return gaps[a].gap > gaps[b].gap
-		}
-		return gaps[a].itemId < gaps[b].itemId
-	})
-	remaining := map[int]int{}
-	for id, n := range pool {
-		remaining[id] = n
-	}
-	out := map[int]int{}
-	for _, g := range gaps {
-		take := g.gap
-		if take > remaining[g.itemId] {
-			take = remaining[g.itemId]
-		}
-		if take > 0 {
-			out[g.itemId] = take
-			remaining[g.itemId] -= take
-		}
-	}
-	return out
-}
 
 // loadRoomFn is a seam so chestPoolForZone is testable without disk room data.
 // Production uses rooms.LoadRoom; tests override it.
@@ -94,7 +51,7 @@ func BackfillVendorFromChests(vendorMob *mobs.Mob, shopInv *shops.ShopInventory)
 	if len(pool) == 0 {
 		return
 	}
-	transfers := selectBackfillTransfers(shopInv, pool)
+	transfers := shops.SelectStockTransfers(shopInv, pool)
 	if len(transfers) == 0 {
 		return
 	}
@@ -123,7 +80,7 @@ func BackfillVendorFromChests(vendorMob *mobs.Mob, shopInv *shops.ShopInventory)
 				c.RemoveItem(it)
 				entry := shopInv.GetStock(itemId)
 				if entry == nil || entry.Current >= entry.MaxStock {
-					// Shouldn't happen (selectBackfillTransfers capped it), but
+					// Shouldn't happen (SelectStockTransfers capped it), but
 					// put the item back rather than vaporize it.
 					c.AddItem(it)
 					break

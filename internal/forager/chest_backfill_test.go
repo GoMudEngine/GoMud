@@ -16,7 +16,7 @@ func TestSelectBackfillTransfers_NeediestGapFirst(t *testing.T) {
 		{ItemId: 20, MaxStock: 10, Current: 2}, // gap 8 (neediest)
 	}}
 	pool := map[int]int{10: 5, 20: 5}
-	got := selectBackfillTransfers(si, pool)
+	got := shops.SelectStockTransfers(si, pool)
 	assert.Equal(t, 5, got[20])
 	assert.Equal(t, 1, got[10])
 }
@@ -26,7 +26,7 @@ func TestSelectBackfillTransfers_AllToppedOff(t *testing.T) {
 		{ItemId: 10, MaxStock: 10, Current: 10},
 	}}
 	pool := map[int]int{10: 5}
-	got := selectBackfillTransfers(si, pool)
+	got := shops.SelectStockTransfers(si, pool)
 	assert.Empty(t, got, "no gaps → nothing transferred")
 }
 
@@ -35,7 +35,7 @@ func TestSelectBackfillTransfers_OnlyStockedItems(t *testing.T) {
 		{ItemId: 10, MaxStock: 10, Current: 5},
 	}}
 	pool := map[int]int{99: 5}
-	got := selectBackfillTransfers(si, pool)
+	got := shops.SelectStockTransfers(si, pool)
 	assert.Empty(t, got, "vendor only pulls items it already stocks")
 }
 
