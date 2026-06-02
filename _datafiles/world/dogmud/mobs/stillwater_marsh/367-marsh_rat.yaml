@@ -9,10 +9,7 @@ charm_immune: false
 maxwander: 4
 groups:
   - animal
-  - rodent
   - prey
-items:
-  - itemid: 40064
 idlecommands:
   - 'emote freezes at a trail-mouth, ears twitching'
   - ''

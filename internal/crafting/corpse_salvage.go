@@ -13,11 +13,20 @@ type corpseSalvageEntry struct {
 
 // corpseSalvageTable is the static lookup table for corpse salvage.
 // Order matters: LookupCorpseSalvage returns the first matching entry.
+// Specific entries (rodent) must appear before broader ones (animal).
 // Future expansion (bird, insect, chrysalis, etc.) just appends here.
 var corpseSalvageTable = []corpseSalvageEntry{
 	{
-		Group: "animal",
+		Group: "rodent", // small game (wild hare, etc.) → hare meat
 		Returns: []items.SalvageReturn{
+			{ItemTag: "wild-hare-meat", Quantity: 1},
+			{ItemTag: "leather-strip", Quantity: 1},
+		},
+	},
+	{
+		Group: "animal", // generic game → raw meat
+		Returns: []items.SalvageReturn{
+			{ItemTag: "raw-meat", Quantity: 1},
 			{ItemTag: "leather-strip", Quantity: 2},
 			{ItemTag: "sinew", Quantity: 1},
 		},

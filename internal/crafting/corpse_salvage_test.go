@@ -9,6 +9,7 @@ import (
 func TestLookupCorpseSalvage_Animal(t *testing.T) {
 	got := LookupCorpseSalvage([]string{"animal", "canine", "predator"})
 	want := []items.SalvageReturn{
+		{ItemTag: "raw-meat", Quantity: 1},
 		{ItemTag: "leather-strip", Quantity: 2},
 		{ItemTag: "sinew", Quantity: 1},
 	}
@@ -51,11 +52,34 @@ func TestLookupCorpseSalvage_FirstTableEntryWins(t *testing.T) {
 	// somehow has both, animal wins.
 	got := LookupCorpseSalvage([]string{"humanoid", "animal"})
 	want := []items.SalvageReturn{
+		{ItemTag: "raw-meat", Quantity: 1},
 		{ItemTag: "leather-strip", Quantity: 2},
 		{ItemTag: "sinew", Quantity: 1},
 	}
 	if !equalReturns(got, want) {
 		t.Errorf("multi-group: got %+v, want %+v", got, want)
+	}
+}
+
+func TestLookupCorpseSalvage_AnimalYieldsRawMeat(t *testing.T) {
+	got := LookupCorpseSalvage([]string{"animal", "predator"})
+	tags := map[string]int{}
+	for _, r := range got {
+		tags[r.ItemTag] = r.Quantity
+	}
+	if tags["raw-meat"] < 1 {
+		t.Errorf("animal corpse should yield raw-meat, got %v", got)
+	}
+}
+
+func TestLookupCorpseSalvage_SmallGameYieldsHareMeat(t *testing.T) {
+	got := LookupCorpseSalvage([]string{"animal", "rodent", "prey"})
+	tags := map[string]int{}
+	for _, r := range got {
+		tags[r.ItemTag] = r.Quantity
+	}
+	if tags["wild-hare-meat"] < 1 {
+		t.Errorf("small-game corpse should yield wild-hare-meat, got %v", got)
 	}
 }
 
