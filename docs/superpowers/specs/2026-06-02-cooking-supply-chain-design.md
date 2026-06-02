@@ -105,25 +105,28 @@ and bucket data.
    `raw-meat`. Content cleanup: marsh rat (367) is mis-tagged to carry
    `wild-hare-meat`; its salvage should yield generic `raw-meat`, not hare meat.
 
-5. **Fernway forageables deferred — by zone alignment, not bucket.** `shadowcap`
-   (40063) and `blood-moss` (40066) are cooking ingredients not in any
-   forage-yield table. The 5.4 chest backfill is **bucket-agnostic** (it
-   distributes any same-zone forager-chest item to vendors that stock it), so the
-   `fernway` bucket is NOT the blocker. The real blocker is **zone alignment**:
-   - The only cook sharing a forager's chest zone is Tov Brann (336, Stillwater;
-     Tova's chest is room 4198) — and **336 doesn't stock** shadowcap/blood-moss,
-     so the backfill has no gap to fill there.
-   - The cooks that DO stock them — food vendor 103 (shadowcap) and tavern cook
-     Brynn 248 (shadowcap + blood-moss), both Thornwall — have **no
-     Thornwall-zone forager chest** (Tova=Stillwater, Halix=ironwind,
-     Kessa=fernway).
-   - And the items aren't in any forager's forage yield to enter a chest at all.
+5. **Globalize the 5.4 chest backfill, then forager-source shadowcap/blood-moss.**
+   The 5.4 chest backfill was intended to aggregate **all forager chests as one
+   group** and feed the neediest vendors, but it shipped **zone-scoped**
+   (`BackfillVendorFromChests` calls `chestPoolForZone(vendorMob.Zone)` —
+   `chest_backfill.go:92`). That's a deviation from intent. This chunk corrects it
+   to a **global** aggregation (pool across every registered forager chest, all
+   zones; keep the existing "only fill items the vendor stocks, neediest gap
+   first, no gold" logic). With global aggregation there is no zone-alignment
+   blocker: `shadowcap` (40063) and `blood-moss` (40066) just need to enter *some*
+   forager's chest, then the global backfill tops off whichever cooks stock them
+   (food vendor 103 stocks shadowcap; tavern cook Brynn 248 stocks both). So:
+   - Add 40063 + 40066 to the appropriate forager **forage-yield** biome(s) (they
+     are forest/fernway items → Kessa's forest yields) so a forager gathers them,
+     fails to hand them off via the bucket-gated `SellToVendor`, and deposits them
+     into its chest — where the global backfill picks them up.
+   - The chest backfill remains **bucket-agnostic** (it already is), so the
+     `fernway` bucket on these items is irrelevant to the chest path.
 
-   Delivering them to the Thornwall cooks therefore needs **cross-zone supply** (a
-   caravan route, a Thornwall-zone forager, or re-homing a chest) — separate
-   scope. They are **cart-supplied today (RestockQty 5, not starved)**, so the
-   cook-crafter loop functions without them being forager-sourced. Deferred to a
-   caravan / cross-zone-supply follow-up.
+   **Design implication (intended):** global aggregation means a forager's chest
+   in one zone can top off a vendor in another (goods effectively move across the
+   world via the shared forager stockpile). This matches the "aggregate the entire
+   group" intent; it is the mechanism, not a bug.
 
 ## Architecture / components
 
@@ -208,6 +211,47 @@ In each cook's shop file (`_datafiles/world/dogmud/shops/{zone}/{mobid}-room{roo
   directly changes live state; the boot/smoke must confirm the crafter actually
   produces meals so the `RestockQty: 0` meals don't sit empty.
 
+### Component 5 — Globalize the chest backfill (`internal/forager/chest_backfill.go` + `chest_index.go`)
+
+Correct the 5.4 deviation: aggregate across **all** forager chests, not the
+vendor's zone.
+
+- Add a global pool helper. Either a new `ChestRoomsAll() []int` on the index
+  (iterate every zone's set in `chestIndex`, dedup, stable-sorted) + a
+  `chestPoolAll()` mirroring `chestPoolForZone` but over `ChestRoomsAll()`; or
+  generalize `chestPoolForZone` to take the room list. Keep the `loadRoomFn` seam
+  and the non-empty-chest filter.
+- `BackfillVendorFromChests` calls the global pool instead of
+  `chestPoolForZone(vendorMob.Zone)`. The transfer loop and
+  `selectBackfillTransfers` (neediest-gap-first, vendor-stocks-it, MaxStock cap,
+  `LastGrewRound` stamp, no gold) are unchanged.
+- Update `chest_backfill_test.go`: a global test proving a chest registered in
+  zone A backfills a vendor whose zone is B (the cross-zone case the per-zone
+  version failed). Keep the existing gap-ordering / cap / stocked-only tests.
+- `internal/forager/context.md`: update the backfill description from "in its
+  zone" to "across all forager chests (global aggregation)".
+
+This is a correction to merged 5.4 code; it lands as part of this chunk because
+the cooking forageables depend on it.
+
+### Component 6 — Forage-yield additions for shadowcap + blood-moss
+
+Add `shadowcap` (40063) and `blood-moss` (40066) to the appropriate forager
+forage-yield biome so a forager gathers them (they then ride into a chest and the
+global backfill delivers them to the cooks that stock them).
+
+- Locate the forage-yield table (per the survey, biome→item-id lists in
+  `internal/forager/` forage core, e.g. a `forest:` slice). Add 40063 + 40066 to
+  the **forest** biome (Kessa's fernway territory) — both are forest/fernway
+  flavor items. Confirm the exact file + biome key at implementation; if
+  blood-moss reads better as a swamp item, add it to the biome Tova's marsh
+  territory covers instead (either way it reaches a chest → global backfill).
+- These remain `fernway`-bucket items; that is fine — `SellToVendor` won't
+  hand them off directly (bucket mismatch for non-fernway-route deliveries), but
+  the chest deposit + global backfill path does not care about buckets.
+- No new items; 40063/40066 already exist and the Thornwall cooks already stock
+  them.
+
 ## Data flow
 
 ```
@@ -221,6 +265,13 @@ cook idle tick → TickMobCraft → restock materials → EvaluateCraftOptions
   → ingredients present + meal < MaxStock + profitable → craft
       → consume ingredients, AddStockAtRound(meal)   (meal stock refills)
 player → buy meal from cook
+
+# shadowcap / blood-moss path (via global chest backfill):
+forager forages shadowcap/blood-moss → not handed off by SellToVendor (bucket)
+  → deposited into forager's chest (StateStoring)
+cook restock tick → BackfillVendorFromChests → GLOBAL chest pool (all foragers)
+  → cook stocks shadowcap/blood-moss with a gap → transfer in (no gold)
+  → cook crafts herbal-tea / chowder from them
 ```
 
 ## Testing
@@ -229,6 +280,9 @@ player → buy meal from cook
   a generic `animal` group, wild-hare-meat for the small-game/rodent group, and
   the small-game entry wins over `animal` when a mob has both (order). Humanoid
   unchanged. `buckets_test` (if present) — 40064 now `overlap`.
+- **Unit (global backfill):** a test proving a chest registered in zone A
+  backfills a vendor in zone B (the cross-zone case the per-zone version failed),
+  plus the retained gap-ordering / MaxStock-cap / stocked-only-items tests.
 - **Boot smoke (clean instances):** server boots past data-file load without
   panic; the three cooks load as crafters (no crafter-config validation panic);
   cooking recipe ids resolve.
@@ -238,7 +292,8 @@ player → buy meal from cook
   meal (cooked-meal stock rises from 0 over time); confirm players can buy the
   meal. Watch that `RestockQty: 0` meals don't stay empty (ingredient supply
   keeps up). Sanity-check new player cooking grind isn't more expensive (meat
-  value unchanged).
+  value unchanged). Confirm a forager-gathered shadowcap/blood-moss reaches a
+  Thornwall cook via the global chest backfill (cross-zone), restocking it.
 
 ## File touch list (anticipated; finalized in the plan)
 
@@ -250,6 +305,11 @@ player → buy meal from cook
 - **Modify:** the three cooks' shop files under
   `_datafiles/world/dogmud/shops/{stillwater,thornwall_city}/` — cooked-meal
   `RestockQty: 0`
+- **Modify:** `internal/forager/chest_backfill.go` + `chest_index.go` (+ tests) —
+  globalize the backfill (all-chests aggregation; Component 5)
+- **Modify:** the forager forage-yield table (forage core in `internal/forager/`)
+  — add shadowcap (40063) + blood-moss (40066) to the forest (or swamp) biome
+  (Component 6)
 - **Maybe modify:** marsh rat (367) groups / salvage mapping (content cleanup)
 - **Context docs:** `internal/crafting/context.md` (corpse salvage yields),
   forager/economy context as needed
@@ -260,11 +320,11 @@ player → buy meal from cook
 
 - **Combat-looter salvage + sell** (the deferred sell-surplus goal) — dropped
   (decision 1); revisit with a higher-value surplus source.
-- **Forager-sourcing shadowcap/blood-moss to the cooks** — blocked by zone
-  alignment, not bucket (decision 5): the cooks that stock them have no
-  same-zone forager chest, and the chest backfill is same-zone only. Needs
-  cross-zone supply (caravan route / Thornwall-zone forager / re-homed chest).
-  They stay cart-supplied (not starved). Logged as a cross-zone-supply follow-up.
+- **The Fernway caravan delivery gap** — the Fernway caravan's
+  `deliveries_by_tier` is empty; that's a separate caravan-content issue. This
+  chunk routes shadowcap/blood-moss to cooks via the global chest backfill
+  instead (Component 5/6), so it doesn't depend on the caravan — but the caravan
+  gap remains logged for the enchanting/caravan follow-up.
 - **Enchanting supply (decayed potions → enchanter)** — the second half of the
   economy-fix split; separate chunk.
 - **General-store restock** — also flagged in [[project_store_restock_considered_fix]];
