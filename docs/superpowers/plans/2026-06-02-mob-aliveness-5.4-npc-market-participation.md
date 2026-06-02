@@ -44,6 +44,8 @@
 | `internal/shops/shopinventory.go` (modify) | Add `LastGrewRound` to `StockEntry`; stamp it on growth |
 | `internal/shops/overstock_decay.go` (new) | `TickOverstockDecay(si, round)` |
 | `internal/shops/overstock_decay_test.go` (new) | Decay tests |
+| `internal/forager/chest_index.go` (new) | In-memory `zone → chest-room-set` index; `RegisterChestRoom` / `ChestRoomsForZone` |
+| `internal/forager/chest_index_test.go` (new) | Index register/lookup tests |
 | `internal/forager/chest_backfill.go` (new) | `BackfillVendorFromChests(vendorMob, shopInv)` + chest helpers |
 | `internal/forager/chest_backfill_test.go` (new) | Backfill tests |
 | `internal/behaviortree/actions_forager.go` (modify) | Chest-fullness gate in `tickForagerResting` |
@@ -725,15 +727,114 @@ git commit -m "feat(5.4): time-based overstock decay (excludes crafting material
 
 ---
 
-## Task 4: Forager-chest → vendor backfill
+## Task 4: Forager chest index + vendor backfill
 
-Aggregate forager-chest contents and top off the vendor's neediest stock gaps (free handoff, no gold).
+Build a `zone → chest-rooms` index (self-populated from the live foragers, so YAML stays the single source of truth — no static-registry duplication, no all-instance scan), then aggregate forager-chest contents and top off the vendor's neediest stock gaps (free handoff, no gold).
 
 **Files:**
+- Create: `internal/forager/chest_index.go`
+- Test: `internal/forager/chest_index_test.go`
 - Create: `internal/forager/chest_backfill.go`
 - Test: `internal/forager/chest_backfill_test.go`
+- Modify: `internal/behaviortree/actions_forager.go` (register the chest on storing)
 
-- [ ] **Step 1: Write a failing test for gap ordering + caps**
+- [ ] **Step 1: Write the chest index + test**
+
+`internal/forager/chest_index.go`:
+
+```go
+package forager
+
+import "sync"
+
+// chestIndex maps a zone to the set of forager storage-lockbox room IDs known
+// in that zone. Self-populated by RegisterChestRoom as foragers reach their
+// storing state, so the YAML-authored storage_chest_room stays the single
+// source of truth (no duplication into the static profiles registry, no
+// per-tick all-instance scan). Chest rooms are fixed for a server's lifetime,
+// so the set only grows.
+var (
+	chestIndexMu sync.RWMutex
+	chestIndex   = map[string]map[int]bool{}
+)
+
+// RegisterChestRoom records that zone has a forager lockbox in chestRoom.
+// Idempotent. No-op for zero values.
+func RegisterChestRoom(zone string, chestRoom int) {
+	if zone == "" || chestRoom == 0 {
+		return
+	}
+	chestIndexMu.Lock()
+	defer chestIndexMu.Unlock()
+	set := chestIndex[zone]
+	if set == nil {
+		set = map[int]bool{}
+		chestIndex[zone] = set
+	}
+	set[chestRoom] = true
+}
+
+// ChestRoomsForZone returns the chest room IDs registered for zone (stable
+// order by room id for determinism).
+func ChestRoomsForZone(zone string) []int {
+	chestIndexMu.RLock()
+	defer chestIndexMu.RUnlock()
+	set := chestIndex[zone]
+	if len(set) == 0 {
+		return nil
+	}
+	out := make([]int, 0, len(set))
+	for id := range set {
+		out = append(out, id)
+	}
+	sort.Ints(out)
+	return out
+}
+```
+
+Add `"sort"` to the import block. `internal/forager/chest_index_test.go`:
+
+```go
+package forager
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func TestChestIndex_RegisterAndLookup(t *testing.T) {
+	RegisterChestRoom("stillwater", 4198)
+	RegisterChestRoom("stillwater", 4198) // idempotent
+	RegisterChestRoom("stillwater", 4199)
+	RegisterChestRoom("", 5)              // ignored
+	RegisterChestRoom("ironwind", 0)      // ignored
+	assert.Equal(t, []int{4198, 4199}, ChestRoomsForZone("stillwater"))
+	assert.Nil(t, ChestRoomsForZone("nowhere"))
+}
+```
+
+> Test isolation: the index is package global. If other tests in the package register rooms, scope assertions to a unique zone name per test (e.g. `"test-zone-A"`).
+
+- [ ] **Step 2: Register the chest when a forager reaches storing**
+
+In `internal/behaviortree/actions_forager.go`, in `tickForagerStoring`, right after the `mob.StorageChestRoom == 0` guard returns (i.e. once we know the forager HAS a chest), register it:
+
+```go
+	// 5.4: make this forager's lockbox discoverable to the vendor backfill.
+	forager.RegisterChestRoom(mob.Zone, mob.StorageChestRoom)
+```
+
+(Place it immediately after the `if mob.StorageChestRoom == 0 { ... }` block at `actions_forager.go:~392`. `behaviortree` already imports `forager`.)
+
+Run: `go test ./internal/forager/ -run TestChestIndex -v` → PASS.
+Commit checkpoint:
+```bash
+git add internal/forager/chest_index.go internal/forager/chest_index_test.go internal/behaviortree/actions_forager.go
+git commit -m "feat(5.4): forager chest index (zone -> lockbox rooms), self-populated on storing"
+```
+
+- [ ] **Step 3: Write a failing test for gap ordering + caps**
 
 `internal/forager/chest_backfill_test.go` — the pure ranking/transfer core is testable without loaded data by injecting the chest pool. Test `selectBackfillTransfers`:
 
@@ -779,12 +880,12 @@ func TestSelectBackfillTransfers_OnlyStockedItems(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [ ] **Step 4: Run to verify it fails**
 
 Run: `go test ./internal/forager/ -run TestSelectBackfillTransfers -v`
 Expected: FAIL (undefined).
 
-- [ ] **Step 3: Implement the backfill**
+- [ ] **Step 5: Implement the backfill**
 
 `internal/forager/chest_backfill.go`:
 
@@ -842,23 +943,14 @@ func selectBackfillTransfers(si *shops.ShopInventory, pool map[int]int) map[int]
 	return out
 }
 
-// chestPoolForZone aggregates the item counts across all forager lockboxes in
-// the given zone. Returns the pool (itemId -> count) plus the per-itemId list
-// of (chestRoomId) sources so the transfer step can remove from the right
-// container.
+// chestPoolForZone aggregates item counts across the forager lockboxes
+// registered for the given zone (via the chest index — no instance scan).
+// Returns the pool (itemId -> count) plus the chest room ids so the transfer
+// step can remove from the right container.
 func chestPoolForZone(zone string) (pool map[int]int, chestRooms []int) {
 	pool = map[int]int{}
-	seen := map[int]bool{}
-	for _, instId := range mobs.GetAllMobInstanceIds() {
-		m := mobs.GetInstance(instId)
-		if m == nil || m.Zone != zone || !IsForagerMob(int(m.MobId)) {
-			continue
-		}
-		if m.StorageChestRoom == 0 || seen[m.StorageChestRoom] {
-			continue
-		}
-		seen[m.StorageChestRoom] = true
-		room := rooms.LoadRoom(m.StorageChestRoom)
+	for _, chestRoom := range ChestRoomsForZone(zone) {
+		room := rooms.LoadRoom(chestRoom)
 		if room == nil {
 			continue
 		}
@@ -867,10 +959,14 @@ func chestPoolForZone(zone string) (pool map[int]int, chestRooms []int) {
 			continue
 		}
 		c := room.Containers[key]
+		empty := true
 		for _, it := range c.Items {
 			pool[it.ItemId]++
+			empty = false
 		}
-		chestRooms = append(chestRooms, m.StorageChestRoom)
+		if !empty {
+			chestRooms = append(chestRooms, chestRoom)
+		}
 	}
 	return pool, chestRooms
 }
@@ -937,12 +1033,12 @@ func BackfillVendorFromChests(vendorMob *mobs.Mob, shopInv *shops.ShopInventory)
 
 > Note on `room.Containers[key] = c`: `Container` is a value type in the map; mutating `c` requires writing it back. Confirm whether `room.Containers` stores `Container` or `*Container` — if pointer, drop the write-backs. (Check `rooms.Room.Containers` field type; `actTryStoreExcess` reads `container := room.Containers[key]` then calls `container.Lock.IsLocked()`, suggesting value or pointer — verify and adjust.)
 
-- [ ] **Step 4: Run tests**
+- [ ] **Step 6: Run tests**
 
 Run: `go test ./internal/forager/ -run TestSelectBackfillTransfers -v`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 7: Commit**
 
 ```bash
 git add internal/forager/chest_backfill.go internal/forager/chest_backfill_test.go
@@ -951,29 +1047,41 @@ git commit -m "feat(5.4): forager-chest aggregate backfill into neediest vendor 
 
 ---
 
-## Task 5: Wire decay + backfill into the shopkeeper idle tick
+## Task 5: Wire decay + backfill into the shopkeeper restock tick
+
+Run market participation **only when a restock actually fired** this tick (the spec's "per-vendor restock tick"), not on every idle tick — restocks fire on a slow per-tier cadence, so the chest enumeration + decay stay infrequent.
 
 **Files:**
 - Modify: `internal/hooks/MobIdle_HandleIdleMobs.go`
 
-- [ ] **Step 1: Add the market-participation call after the restock branches**
+- [ ] **Step 1: Capture whether a restock fired, then run market participation**
 
-In `internal/hooks/MobIdle_HandleIdleMobs.go`, after the `TickMobCraft` block (~line 90, after both restock paths have run for this mob), add:
+In `internal/hooks/MobIdle_HandleIdleMobs.go`, the two restock paths are: the non-crafter branch `if mobs.TickMobShopRestock(mob) { ... }` (~line 50) and the crafter branch `if result := mobs.TickMobCraft(mob); result != nil { ... }` (~line 64). Capture a `restocked` flag from each:
+
+- In the non-crafter branch, set a `restocked := false` before the `if`, and inside the `if mobs.TickMobShopRestock(mob)` true-branch set `restocked = true`. (Restructure to `didRestock := mobs.TickMobShopRestock(mob); if didRestock { ...emote...; restocked = true }`.)
+- In the crafter branch, set `restocked = true` when `result != nil && result.Restocked`.
+
+Then, after both branches (~line 90), add:
 
 ```go
-	// 5.4 NPC market participation: drain stale non-material overstock and top
-	// the shop off from forager chests in this zone. Covers both crafter and
-	// non-crafter shopkeepers. Cheap no-op when the mob has no shop / no chests.
-	if shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId); shopInv != nil {
-		shops.TickOverstockDecay(shopInv, util.GetRoundCount())
-		forager.BackfillVendorFromChests(mob, shopInv)
-		if err := shops.SaveShop(mob.Zone, int(mob.MobId), mob.HomeRoomId); err != nil {
-			mudlog.Error("MobIdle.market", "error", err)
+	// 5.4 NPC market participation: on a restock tick, drain stale non-material
+	// overstock and top the shop off from forager chests in this zone. Covers
+	// both crafter and non-crafter shopkeepers. Gated on restocked so the chest
+	// enumeration runs only on the slow restock cadence, not every idle tick.
+	if restocked {
+		if shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId); shopInv != nil {
+			shops.TickOverstockDecay(shopInv, util.GetRoundCount())
+			forager.BackfillVendorFromChests(mob, shopInv)
+			if err := shops.SaveShop(mob.Zone, int(mob.MobId), mob.HomeRoomId); err != nil {
+				mudlog.Error("MobIdle.market", "error", err)
+			}
 		}
 	}
 ```
 
-Ensure imports include `github.com/GoMudEngine/GoMud/internal/{forager,shops}` (and `util`, `mudlog` if not already present). `BackfillVendorFromChests` already saves on mutation; the extra `SaveShop` here persists decay changes — if you prefer one save, have `TickOverstockDecay` return a `mutated bool` and save once. Keep it simple: a single `SaveShop` after both is fine.
+Ensure imports include `github.com/GoMudEngine/GoMud/internal/{forager,shops}` (and `util`, `mudlog` if not already present). `BackfillVendorFromChests` already saves on mutation; this single `SaveShop` also persists decay changes — one save after both is fine.
+
+> **Scope note:** the non-crafter branch is skipped in caravan-served zones (`IsCaravanServedZone`). In those zones a non-crafter vendor restocks only on caravan visits, so its market-participation also only runs then — acceptable (the caravan is that zone's supply line). Crafter shops always tick. If forager backfill is later wanted in caravan zones independent of caravan cadence, revisit here.
 
 - [ ] **Step 2: Build + boot smoke**
 
@@ -1131,3 +1239,4 @@ git commit -m "docs(5.4): context + roadmap for NPC market participation"
 - **`room.Containers` element type** (value vs pointer) is unconfirmed — Task 4 Step 3 and Task 6 Step 2 read `room.Containers[key]`. Verify the field type in `internal/rooms/rooms.go`; if value-typed, the Task-4 transfer must write the container back into the map (shown) and Task-6 read-only is fine; if pointer-typed, drop the write-backs.
 - **`RestockTier` vs `Restock` growth sites** (Task 3 Step 2): stamp `LastGrewRound` at every `Current` increase. Confirm both method bodies in `shopinventory.go` / wherever `RestockTier` lives.
 - **`SaveShop` of forager chest rooms:** the backfill mutates `room.Containers`; if container contents persist via room instance saves (which prod wipes), the drain is per-instance-lifetime only — acceptable and consistent with `SellToVendor` (same limitation). No extra chest persistence added.
+- **Chest index is lazily populated** (Task 4): a forager's chest only enters the index once that forager reaches its `storing` state at least once. On a freshly booted server, backfill pulls nothing until foragers have run a gather→deliver→store cycle — which is correct (an unvisited chest is empty anyway). The in-game smoke must let a forager complete a storing cycle before expecting backfill, and the vendor must share the chest room's registered zone (`mob.Zone` at storing time). Confirm Tova's chest zone matches her vendor rooms' zone during smoke; if they differ, index by the vendor-facing zone instead.
