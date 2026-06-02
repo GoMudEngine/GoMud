@@ -25,8 +25,8 @@ func Sell(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	// "sell N <item>" / "sell all <item>" / "sell <item>"
-	opts := actions.SellOptions{Quantity: 1, ItemName: rest}
 	parts := strings.SplitN(strings.TrimSpace(rest), " ", 2)
+	opts := actions.SellOptions{Quantity: 1, ItemName: rest}
 	if len(parts) == 2 {
 		if strings.ToLower(parts[0]) == "all" {
 			opts.Quantity = actions.UnlimitedSell
