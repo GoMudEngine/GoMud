@@ -83,8 +83,9 @@ func chestPoolFromRooms(chestRooms []int) (pool map[int]int, nonEmpty []int) {
 func chestPoolForZone(zone string) (map[int]int, []int) { return chestPoolFromRooms(ChestRoomsForZone(zone)) }
 func chestPoolAll() (map[int]int, []int)               { return chestPoolFromRooms(ChestRoomsAll()) }
 
-// BackfillVendorFromChests tops off vendorMob's shop from forager chests in its
-// zone. Free supply handoff — no gold. Mirrors SellToVendor's persistence.
+// BackfillVendorFromChests tops off vendorMob's shop from the global pool of
+// all forager chests (aggregated across every zone). Free supply handoff — no
+// gold. Mirrors SellToVendor's persistence.
 func BackfillVendorFromChests(vendorMob *mobs.Mob, shopInv *shops.ShopInventory) {
 	if vendorMob == nil || shopInv == nil {
 		return
