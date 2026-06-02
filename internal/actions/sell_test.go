@@ -27,10 +27,10 @@ import (
 // unchanged; player sale drains it) is what we assert here, on the legacy path
 // where merchant gold lives on mob.Character.Gold.
 
-const sellTestItemId = 70001        // normal sellable, Value=100
-const sellTestQuestItemId = 70002   // quest item (QuestToken set)
-const sellTestComponentId = 70003   // is_component material
-const sellTestZeroValueId = 70004   // Value==0
+const sellTestItemId = 70001      // normal sellable, Value=100
+const sellTestQuestItemId = 70002 // quest item (QuestToken set)
+const sellTestComponentId = 70003 // is_component material
+const sellTestZeroValueId = 70004 // Value==0
 
 // seedSellItemSpecs registers the item specs used by the sell tests.
 func seedSellItemSpecs() func() {
@@ -266,4 +266,42 @@ func TestSell_NoRoom(t *testing.T) {
 	res := Sell(seller, SellOptions{ItemName: "anything", Quantity: 1})
 	assert.Equal(t, SellStopNoMerchant, res.Reason)
 	assert.Equal(t, 0, res.Sold)
+}
+
+// TestSell_QuestItemRejectedNotNoMerchant verifies that selling a quest item
+// returns SellStopRejected (not SellStopNoMerchant) regardless of whether a
+// merchant is present. Regression guard for the 5.4 regression where
+// resolveMerchant returned nil for quest items (zero-price offer) before the
+// quest-token check was reached, causing the player to see "There's no merchant
+// here." instead of "Quest items cannot be sold!".
+func TestSell_QuestItemRejectedNotNoMerchant(t *testing.T) {
+	defer seedSellItemSpecs()()
+	defer seedSellRoom(t)()
+	defer seedSellMerchant(t, 1000)()
+
+	// Player seller with a quest item, merchant present in the room.
+	playerSeller := newSellerActor(t, true, sellTestQuestItemId)
+
+	res := Sell(playerSeller, SellOptions{ItemName: "sacred relic", Quantity: 1})
+
+	assert.Equal(t, 0, res.Sold, "quest item must never be sold")
+	assert.Equal(t, SellStopRejected, res.Reason,
+		"must report SellStopRejected, not SellStopNoMerchant")
+}
+
+// TestSell_QuestItemRejectedNoMerchantPresent verifies the same rejection even
+// when no merchant is in the room — the quest-token gate must fire BEFORE the
+// merchant resolution so the message is always correct.
+func TestSell_QuestItemRejectedNoMerchantPresent(t *testing.T) {
+	defer seedSellItemSpecs()()
+	defer seedSellRoom(t)()
+	// No merchant seeded.
+
+	playerSeller := newSellerActor(t, true, sellTestQuestItemId)
+
+	res := Sell(playerSeller, SellOptions{ItemName: "sacred relic", Quantity: 1})
+
+	assert.Equal(t, 0, res.Sold, "quest item must never be sold")
+	assert.Equal(t, SellStopRejected, res.Reason,
+		"must report SellStopRejected even when no merchant is present")
 }
