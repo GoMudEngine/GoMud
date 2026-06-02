@@ -9,9 +9,11 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/facts"
 	"github.com/GoMudEngine/GoMud/internal/forager"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -144,10 +146,44 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 	// chest enumeration runs only on the slow restock cadence, not every idle tick.
 	if restocked {
 		if shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId); shopInv != nil {
-			shops.TickOverstockDecay(shopInv, util.GetRoundCount())
+			decayed := shops.TickOverstockDecay(shopInv, util.GetRoundCount())
+			for _, du := range decayed {
+				if spec := items.GetItemSpec(du.ItemId); spec != nil && spec.Type == items.Potion {
+					roll := func() float64 { return float64(util.Rand(10000)) / 10000.0 }
+					for i := 0; i < du.Qty; i++ {
+						for _, mat := range crafting.EnchantSalvageYield(du.ItemId, roll, 0) {
+							if ms := items.FindSpecByComponentTag(mat.ItemTag); ms != nil {
+								shops.AddToReserve(ms.ItemId, mat.Quantity)
+							}
+						}
+					}
+				}
+			}
 			forager.BackfillVendorFromChests(mob, shopInv)
 			if err := shops.SaveShop(mob.Zone, int(mob.MobId), mob.HomeRoomId); err != nil {
 				mudlog.Error("MobIdle.market", "error", err)
+			}
+		}
+	}
+
+	// Enchanting supply: enchanters draw enchanting mats from the global reserve
+	// (fed by alchemy-vendor potion decay), neediest stock-gap first. Ungated by
+	// `restocked` — Vael is a non-crafter in a caravan-served zone, so its restock
+	// tick is skipped; this fires on the enchanter's idle tick. Cheap + self-
+	// limiting (only fills real gaps from a non-empty reserve).
+	if !isCharmed && mob.GetShopCraftSupport() == "enchanting" {
+		if eShop := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId); eShop != nil {
+			transfers := shops.SelectStockTransfers(eShop, shops.ReservePool())
+			mutated := false
+			for matId, qty := range transfers {
+				shops.DrainReserve(matId, qty)
+				eShop.AddStockAtRound(matId, qty, util.GetRoundCount())
+				mutated = true
+			}
+			if mutated {
+				if err := shops.SaveShop(mob.Zone, int(mob.MobId), mob.HomeRoomId); err != nil {
+					mudlog.Error("MobIdle.enchantDraw", "error", err)
+				}
 			}
 		}
 	}
