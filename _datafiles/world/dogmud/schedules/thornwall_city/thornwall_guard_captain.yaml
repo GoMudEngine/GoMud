@@ -1,0 +1,33 @@
+id: thornwall_guard_captain
+description: "Guard Captain Velk: morning muster at the barracks, a midday market beat, command by day, sleeps at the barracks."
+segments:
+  - start: 6
+    end: 10
+    target_room: 473
+    activity: ""
+    idlecommands:
+      - emote reviews the night's watch reports at the duty desk.
+      - emote inspects a recruit's kit with a hard eye.
+      - say A city this size, the watch is always stretched too thin.
+  - start: 10
+    end: 13
+    target_room: 465
+    activity: ""
+    idlecommands:
+      - emote walks the market with hands clasped behind his back.
+      - emote nods to a stallholder and notes who is missing.
+      - say Quiet's good. Quiet means folk are behaving.
+  - start: 13
+    end: 20
+    target_room: 473
+    activity: ""
+    idlecommands:
+      - emote signs a stack of patrol orders.
+      - emote frowns over a map of the lower passages.
+      - say Write it in the log or it never happened.
+  - start: 20
+    end: 6
+    target_room: 473
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the small room off the barracks armoury.

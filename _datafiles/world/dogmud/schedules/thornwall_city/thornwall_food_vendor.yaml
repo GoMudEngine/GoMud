@@ -1,0 +1,33 @@
+id: thornwall_food_vendor
+description: "Food Vendor: fires the braziers at dawn, sells hot food by day, banks the coals at night."
+segments:
+  - start: 6
+    end: 10
+    target_room: 464
+    activity: craft
+    idlecommands:
+      - emote stokes the brazier until the coals glow.
+      - emote ladles broth into a tasting cup and nods.
+      - say Hot and fresh! Best on Main Street.
+  - start: 10
+    end: 18
+    target_room: 464
+    activity: craft
+    idlecommands:
+      - emote turns skewers over the coals with quick fingers.
+      - say Mind the steam, friend. Worth the burn.
+      - emote calls a regular by name and starts their usual.
+      - emote sources a basket of clams from a caravan crate.
+  - start: 18
+    end: 22
+    target_room: 464
+    activity: ""
+    idlecommands:
+      - emote scrapes the griddle clean for the night.
+      - say Sold out of the good stuff. Come earlier tomorrow.
+  - start: 22
+    end: 6
+    target_room: 464
+    activity: sleeping
+    idlecommands:
+      - emote sleeps near the banked, still-warm brazier.

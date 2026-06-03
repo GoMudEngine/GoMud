@@ -1,0 +1,32 @@
+id: thornwall_jeweler
+description: "Jeweler Tess: precise bench work by day, closes the workshop, sleeps at the bench."
+segments:
+  - start: 7
+    end: 10
+    target_room: 482
+    activity: craft
+    idlecommands:
+      - emote sets a tiny stone into a setting with steady tweezers.
+      - emote squints through a loupe at a flawed gem.
+      - say Patience. The stone tells you where it wants to sit.
+  - start: 10
+    end: 18
+    target_room: 482
+    activity: craft
+    idlecommands:
+      - emote taps a setting closed with a jeweler's hammer.
+      - emote blows dust from a finished chrysalis-set ring.
+      - say Fine work can't be hurried, and I don't try.
+  - start: 18
+    end: 22
+    target_room: 482
+    activity: ""
+    idlecommands:
+      - emote locks the day's pieces into a velvet-lined case.
+      - emote rubs cramped, precise fingers.
+  - start: 22
+    end: 7
+    target_room: 482
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in a chair pulled close to the locked case.

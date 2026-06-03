@@ -6,6 +6,7 @@ itemdropchance: 0
 hostile: false
 non_combatant: true
 maxwander: 1
+schedule_id: thornwall_market_merchant
 groups:
   - humanoid
   - merchant
