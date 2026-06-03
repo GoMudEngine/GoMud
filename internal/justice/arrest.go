@@ -327,13 +327,20 @@ func ExecuteArrest(player *characters.Character, userId int, faction string, isM
 	player.SetMiscData(keyJailCrimeIds, idsStr)
 	player.SetMiscData(keyJailInstanceId, instanceId)
 
+	// Resolve the faction's human-readable name once; used in both the cell
+	// description and the arrest-flavor message below.
+	factionName := faction
+	if d := factions.GetDefinition(faction); d != nil && d.DisplayName != "" {
+		factionName = d.DisplayName
+	}
+
 	// Stamp a faction-flavored description on the instanced cell so the player
 	// sees something thematic rather than the zone template's default text.
 	if instanceId != 0 {
-		factionName := faction
-		if d := factions.GetDefinition(faction); d != nil && d.DisplayName != "" {
-			factionName = d.DisplayName
-		}
+		// NOTE: this prose intentionally mirrors the opening/closing sentences of
+		// the 5107.yaml template room description, replacing only the middle
+		// furnishings sentence with a faction-seal line. If the template prose
+		// changes, update this string to match.
 		aSetCellDescFn(instanceId, fmt.Sprintf(
 			"Four close walls of cold, mortared stone press in around a single "+
 				"iron-strapped door with no handle on this side. The seal of the %s "+
@@ -358,13 +365,7 @@ func ExecuteArrest(player *characters.Character, userId int, faction string, isM
 
 	// Arrival flavor (the buff's start_user_text fires via the buff system;
 	// send an additional arrest-context line here).
-	// Use the faction's human-readable DisplayName for the arrest message so
-	// the player sees "Stillwater Constabulary" instead of "stillwater_guards".
 	if u := users.GetByUserId(userId); u != nil {
-		factionName := faction
-		if d := factions.GetDefinition(faction); d != nil && d.DisplayName != "" {
-			factionName = d.DisplayName
-		}
 		u.SendText(messaging.CategorySystem,
 			fmt.Sprintf("A guard seizes you and hauls you to the holding cell. "+
 				"You have been placed under arrest by the %s.", factionName))

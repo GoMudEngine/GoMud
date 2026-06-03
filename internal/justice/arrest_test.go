@@ -2,6 +2,7 @@ package justice
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/bounties"
@@ -610,6 +611,9 @@ func TestExecuteArrest_UsesInstancedCell(t *testing.T) {
 	}
 	if descSet == "" {
 		t.Fatalf("expected faction-flavored cell description set")
+	}
+	if !strings.Contains(descSet, "thornwall_guards") {
+		t.Fatalf("expected cell description to contain faction name %q, got: %s", "thornwall_guards", descSet)
 	}
 }
 
