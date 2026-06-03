@@ -1,0 +1,5 @@
+name: Instance Jail Cell
+instanced: true
+death_policy: ejected
+allow_recall: false
+entry_room: 5107

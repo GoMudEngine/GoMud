@@ -1,0 +1,11 @@
+roomid: 5107
+zone: Instance Jail Cell
+title: A Holding Cell
+description: >-
+  Four close walls of cold, mortared stone press in around a single
+  iron-strapped door with no handle on this side. A narrow pallet, a tin
+  cup, and a barred slit too high to see through are the only furnishings.
+  There is no way out but the law's mercy and the slow passage of time.
+nouns:
+  door: A heavy iron-strapped door, barred from the far side.
+  pallet: A thin straw pallet against the wall.
