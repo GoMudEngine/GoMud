@@ -6,9 +6,9 @@ exchanges:
       - speaker: A
         text: "Your knots still hold better than mine."
       - speaker: B
-        text: "Same knots I was taught. Same I taught."
+        text: "Old ways. Can't improve on them."
       - speaker: A
-        text: "Then I had a good teacher."
+        text: "Taught well, somewhere down the line."
   - lines:
       - speaker: A
         text: "Catch was poor again."
@@ -24,9 +24,9 @@ exchanges:
       - speaker: A
         text: "..."
       - speaker: B
-        text: "Mend your nets. That much we can still do."
+        text: "Mend the nets. That much we can still do."
   - lines:
       - speaker: A
         text: "Cold coming off the water today."
       - speaker: B
-        text: "Wrong kind of cold. You learn the difference."
+        text: "Wrong kind of cold. You feel it different when you know what it means."
