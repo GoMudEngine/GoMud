@@ -305,8 +305,10 @@ description is patched at arrest time via `aSetCellDescFn` (see below).
 the ephemeral room — the prisoner cannot walk out; release is only via
 `ResolveDetention`.
 
-The zone has an empty `portal_duration`, so `CheckPortalTimers` ignores
-it entirely — no TTL eviction or "portal collapsing" warnings. Cell
+The zone sets `portal_duration: none`, so `CheckPortalTimers` skips it
+entirely — no TTL eviction or "portal collapsing" warnings. (An empty
+`portal_duration` would be auto-filled to `"30 real minutes"` by
+`ZoneConfig.Validate()` — the explicit `none` sentinel is required.) Cell
 lifetime is owned by explicit teardown on release or despawn.
 
 On failure, `ExecuteArrest` falls back to the faction's static
@@ -336,7 +338,7 @@ ID range.
 
 #### Logout / despawn — `HandleJailedDespawn(player *characters.Character)`
 
-Called from the `PlayerSpawn_HandleLeave` hook when a jailed player
+Called from the `PlayerDespawn_JailCleanup` hook when a jailed player
 disconnects:
 
 1. Tears down the ephemeral cell (`aTeardownCellFn`) to free the room ID.
@@ -400,7 +402,7 @@ per-round player tick (hooks/Jail_ExpiryRelease.go)
                                                ├─ aTeardownCellFn (if InstanceId≠0)
                                                └─ MoveToRoom(releaseRoomFn → 473/4110)
 
-player logout (hooks/PlayerSpawn_HandleLeave)
+player logout (hooks/PlayerDespawn_JailCleanup)
   └─ HandleJailedDespawn
        ├─ aTeardownCellFn (free ephemeral room)
        ├─ keep UntilRound on character (offline clock)
@@ -427,7 +429,7 @@ player commands
 | `internal/hooks/NewRound_MobRoundTick.go` | `RunGuardEnforcement` (guard-group mobs) |
 | `internal/hooks/Jail_ExpiryRelease.go` | `JailInfo`, `ResolveDetention` (per-player tick) |
 | `internal/hooks/PlayerDeath_BountyResolve.go` | `ClearFactionRecord` (5.2: hunter kill clears the record, same as serving a sentence); `bounties.Withdraw` (on wanted player's death via other paths) |
-| `internal/hooks/PlayerSpawn_HandleLeave.go` | `HandleJailedDespawn` — tears down ephemeral cell on logout, preserves `UntilRound` |
+| `internal/hooks/PlayerDespawn_JailCleanup.go` | `HandleJailedDespawn` — tears down ephemeral cell on logout, preserves `UntilRound` |
 | `internal/hooks/PlayerSpawn_HandleJoin.go` | `RestoreJailOnLogin` — re-creates cell or releases on reconnect/server restart |
 | `internal/hooks/justice_wiring.go` | `justice.SetGuardSay(fn)` at init |
 | `internal/hooks/MobDeath_FactionRep.go` | `MaybeDeclareBounty` (murder) |

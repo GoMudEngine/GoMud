@@ -159,7 +159,7 @@ func (ir *InstanceRegistry) CheckPortalTimers() {
 
 	var expired []*ZoneInstance
 	for _, inst := range ir.instances {
-		if inst.PortalDuration == `` {
+		if inst.PortalDuration == `` || inst.PortalDuration == `none` {
 			continue
 		}
 

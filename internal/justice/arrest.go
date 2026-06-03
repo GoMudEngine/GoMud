@@ -458,6 +458,7 @@ func HandleJailedDespawn(player *characters.Character) {
 		fallback = barracksRoomId
 	}
 	player.RoomId = fallback
+	player.SetMiscData(keyJailCellRoom, fallback)
 }
 
 // ---------------------------------------------------------------------------

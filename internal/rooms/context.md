@@ -82,13 +82,16 @@ func CreateZoneInstanceWithOpts(
   so all existing callers are unaffected.
 
 **Confinement zones and `CheckPortalTimers`:**
-A zone whose YAML has an empty `portal_duration` field is **skipped** by
+A zone whose YAML sets `portal_duration: none` is **skipped** by
 `CheckPortalTimers` — no TTL eviction and no "portal collapsing" warning
-messages. Such zones must be torn down explicitly (e.g. via
-`TryEphemeralCleanup` called from the owning subsystem's release/despawn
-path). The `instance_jail_cell` zone template uses this pattern: its
-lifetime is owned entirely by `internal/justice` (arrest creates, release
-or player-despawn destroys).
+messages. This is the explicit "no-TTL" sentinel. Note that an **empty**
+`portal_duration` field is auto-filled to `"30 real minutes"` by
+`ZoneConfig.Validate()`, so omitting the field does NOT disable TTL —
+you must set it to `none` explicitly. Such zones must be torn down
+explicitly (e.g. via `TryEphemeralCleanup` called from the owning
+subsystem's release/despawn path). The `instance_jail_cell` zone template
+uses this pattern: its lifetime is owned entirely by `internal/justice`
+(arrest creates, release or player-despawn destroys).
 
 ## Hidden Object Discovery System
 
