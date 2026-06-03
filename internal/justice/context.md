@@ -315,18 +315,18 @@ On failure, `ExecuteArrest` falls back to the faction's static
 #### Description seam — `aSetCellDescFn`
 
 ```go
-var aSetCellDescFn = func(roomId int, faction string)
+var aSetCellDescFn = func(roomId int, desc string)
 ```
 
 Mutates the ephemeral cell room's `Description` to faction-appropriate
-prose. `factionCellDescription(faction)` is the shared prose helper used
-by both this path and `RestoreJailOnLogin` so the description stays in
-sync with the `instance_jail_cell/5107.yaml` template room's own text.
+prose. The caller builds the description text via `factionCellDescription(faction)`
+and passes the result so it stays in sync with the `instance_jail_cell/5107.yaml`
+template room's own text.
 
 #### Teardown seam — `aTeardownCellFn`
 
 ```go
-var aTeardownCellFn = func(instanceId int)
+var aTeardownCellFn = func(entryRoomId int)
 ```
 
 Called by both `ResolveDetention` (release) and `HandleJailedDespawn`
@@ -334,7 +334,7 @@ Called by both `ResolveDetention` (release) and `HandleJailedDespawn`
 registry and calls `rooms.TryEphemeralCleanup` to reclaim the ephemeral
 ID range.
 
-#### Logout / despawn — `HandleJailedDespawn(player, userId)`
+#### Logout / despawn — `HandleJailedDespawn(player *characters.Character)`
 
 Called from the `PlayerSpawn_HandleLeave` hook when a jailed player
 disconnects:
