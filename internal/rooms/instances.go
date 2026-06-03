@@ -276,15 +276,27 @@ func ScaleSpawnStatPools(spawns []SpawnInfo, goldPaid int, cap int) {
 	}
 }
 
-// CreateZoneInstance clones a zone template into ephemeral rooms, wires up a
-// return portal in the entry room, stamps instance metadata on every ephemeral
-// room, and registers the instance in the global registry.
-func CreateZoneInstance(
+// ZoneInstanceOpts holds optional behavioural overrides for CreateZoneInstanceWithOpts.
+// The zero value reproduces the behaviour of the plain CreateZoneInstance call.
+type ZoneInstanceOpts struct {
+	// SuppressReturnPortal, when true, skips adding the "return portal"
+	// temporary exit to the entry room. Use this for jail cells or any
+	// instanced room that must have no escape exit.
+	SuppressReturnPortal bool
+}
+
+// CreateZoneInstanceWithOpts is identical to CreateZoneInstance but accepts an
+// additional ZoneInstanceOpts argument that lets callers suppress optional
+// behaviours (e.g. the return-portal exit). Existing callers that invoke
+// CreateZoneInstance are unaffected — that function delegates here with a
+// zero-value opts struct, which preserves the original behaviour.
+func CreateZoneInstanceWithOpts(
 	zoneName string,
 	goldPaid int,
 	ownerUserId int,
 	authorizedUsers []int,
 	overworldRoomId int,
+	opts ZoneInstanceOpts,
 ) (*ZoneInstance, error) {
 
 	// 1. Look up and validate the zone config.
@@ -371,21 +383,25 @@ func CreateZoneInstance(
 	}
 
 	// 4. Add a return portal in the ephemeral entry room pointing back to the
-	//    overworld. Expires is set very long; actual cleanup is handled by
-	//    the instance cleanup system when all players leave.
-	entryRoom := LoadRoom(ephemeralEntryId)
-	if entryRoom == nil {
-		return nil, fmt.Errorf("CreateZoneInstance: could not load ephemeral entry room %d", ephemeralEntryId)
-	}
+	//    overworld. Skipped when opts.SuppressReturnPortal is true (e.g. jail
+	//    cells that must not have an escape exit). Expires is set very long;
+	//    actual cleanup is handled by the instance cleanup system when all
+	//    players leave.
+	if !opts.SuppressReturnPortal {
+		entryRoom := LoadRoom(ephemeralEntryId)
+		if entryRoom == nil {
+			return nil, fmt.Errorf("CreateZoneInstance: could not load ephemeral entry room %d", ephemeralEntryId)
+		}
 
-	returnExit := exit.TemporaryRoomExit{
-		RoomId:       overworldRoomId,
-		Title:        "Return Portal",
-		UserId:       0, // system-created
-		SpawnedRound: inst.CreatedRound,
-		Expires:      "999 real hours",
+		returnExit := exit.TemporaryRoomExit{
+			RoomId:       overworldRoomId,
+			Title:        "Return Portal",
+			UserId:       0, // system-created
+			SpawnedRound: inst.CreatedRound,
+			Expires:      "999 real hours",
+		}
+		entryRoom.AddTemporaryExit("return portal", returnExit)
 	}
-	entryRoom.AddTemporaryExit("return portal", returnExit)
 
 	// 5. Scale mob stat pools based on gold paid.
 	cap := int(configs.GetBalanceConfig().InstanceStatPoolCap)
@@ -411,4 +427,20 @@ func CreateZoneInstance(
 	instanceRegistry.Add(inst)
 
 	return inst, nil
+}
+
+// CreateZoneInstance clones a zone template into ephemeral rooms, wires up a
+// return portal in the entry room, stamps instance metadata on every ephemeral
+// room, and registers the instance in the global registry.
+//
+// This is a convenience wrapper around CreateZoneInstanceWithOpts with a
+// zero-value opts struct, preserving all prior behaviour for existing callers.
+func CreateZoneInstance(
+	zoneName string,
+	goldPaid int,
+	ownerUserId int,
+	authorizedUsers []int,
+	overworldRoomId int,
+) (*ZoneInstance, error) {
+	return CreateZoneInstanceWithOpts(zoneName, goldPaid, ownerUserId, authorizedUsers, overworldRoomId, ZoneInstanceOpts{})
 }
