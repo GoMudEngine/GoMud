@@ -556,3 +556,92 @@ func TestResolveDetention_RepAboveFloor(t *testing.T) {
 		t.Error("SetRep should not be called when rep >= floor")
 	}
 }
+
+// ---------------------------------------------------------------------------
+// ExecuteArrest instanced-cell tests (Task 3)
+// ---------------------------------------------------------------------------
+
+func TestExecuteArrest_UsesInstancedCell(t *testing.T) {
+	origCell := cellRoomFn
+	origMove := aMoveFn
+	origCreate := aCreateCellFn
+	origDesc := aSetCellDescFn
+	origDecay := aDecayFn
+	origNow := bNowFn
+	defer func() {
+		cellRoomFn = origCell
+		aMoveFn = origMove
+		aCreateCellFn = origCreate
+		aSetCellDescFn = origDesc
+		aDecayFn = origDecay
+		bNowFn = origNow
+	}()
+
+	cellRoomFn = func(string) int { return 473 }
+	aDecayFn = func() int { return 5 }
+	bNowFn = func() uint64 { return 100 }
+
+	var movedTo int
+	aMoveFn = func(userId int, roomId int, isSpawn ...bool) error { movedTo = roomId; return nil }
+
+	var createdFor int
+	aCreateCellFn = func(prisonerUserId, releaseRoomId int) (int, bool) {
+		createdFor = prisonerUserId
+		return 60001, true
+	}
+
+	descSet := ""
+	aSetCellDescFn = func(roomId int, desc string) { descSet = desc }
+
+	ch := &characters.Character{}
+	ok := ExecuteArrest(ch, 42, "thornwall_guards", false)
+	if !ok {
+		t.Fatalf("arrest should succeed")
+	}
+	if createdFor != 42 {
+		t.Fatalf("expected cell created for 42, got %d", createdFor)
+	}
+	rec, jailed := JailInfo(ch)
+	if !jailed || rec.InstanceId != 60001 {
+		t.Fatalf("expected InstanceId 60001, got %+v", rec)
+	}
+	if movedTo != 60001 {
+		t.Fatalf("expected move to 60001, got %d", movedTo)
+	}
+	if descSet == "" {
+		t.Fatalf("expected faction-flavored cell description set")
+	}
+}
+
+func TestExecuteArrest_FallsBackToStaticCellOnInstanceFailure(t *testing.T) {
+	origCell := cellRoomFn
+	origMove := aMoveFn
+	origCreate := aCreateCellFn
+	origDecay := aDecayFn
+	origNow := bNowFn
+	defer func() {
+		cellRoomFn = origCell
+		aMoveFn = origMove
+		aCreateCellFn = origCreate
+		aDecayFn = origDecay
+		bNowFn = origNow
+	}()
+
+	cellRoomFn = func(string) int { return 473 }
+	aDecayFn = func() int { return 5 }
+	bNowFn = func() uint64 { return 100 }
+
+	var movedTo int
+	aMoveFn = func(userId int, roomId int, isSpawn ...bool) error { movedTo = roomId; return nil }
+	aCreateCellFn = func(int, int) (int, bool) { return 0, false }
+
+	ch := &characters.Character{}
+	ok := ExecuteArrest(ch, 42, "thornwall_guards", false)
+	if !ok {
+		t.Fatalf("arrest should succeed via static fallback")
+	}
+	rec, _ := JailInfo(ch)
+	if rec.InstanceId != 0 || rec.CellRoom != 473 || movedTo != 473 {
+		t.Fatalf("expected static fallback (cell 473, InstanceId 0), got %+v movedTo=%d", rec, movedTo)
+	}
+}

@@ -32,6 +32,7 @@ const (
 	keyJailFaction       = "jail_faction"
 	keyJailCellRoom      = "jail_cell_room"
 	keyJailCrimeIds      = "jail_crime_ids"
+	keyJailInstanceId    = "jail_instance_id"
 )
 
 // barracksRoomId is the fallback release destination when the arresting
@@ -77,6 +78,48 @@ var aWithdrawFn = bounties.Withdraw
 var aGetRepFn = factions.GetRep
 var aSetRepFn = factions.SetRep
 var aMoveFn = rooms.MoveToRoom
+
+// ---------------------------------------------------------------------------
+// Instanced jail cell seams (tests override).
+// ---------------------------------------------------------------------------
+
+const jailCellZoneName = "Instance Jail Cell"
+
+// aCreateCellFn creates a per-prisoner instanced jail cell zone and returns the
+// entry room id. Returns (0, false) on failure.
+var aCreateCellFn = func(prisonerUserId, releaseRoomId int) (int, bool) {
+	inst, err := rooms.CreateZoneInstanceWithOpts(
+		jailCellZoneName,
+		1,
+		prisonerUserId,
+		[]int{prisonerUserId},
+		releaseRoomId,
+		rooms.ZoneInstanceOpts{SuppressReturnPortal: true},
+	)
+	if err != nil || inst == nil {
+		return 0, false
+	}
+	return inst.EntryRoomId, true
+}
+
+// aTeardownCellFn tears down a previously created instanced cell.
+// Used by Task 4 (early release / fine payment) — defined here so it lives
+// next to aCreateCellFn. Package-level vars are never reported as unused by Go.
+var aTeardownCellFn = func(entryRoomId int) {
+	reg := rooms.GetInstanceRegistry()
+	if inst := reg.FindByRoomId(entryRoomId); inst != nil {
+		reg.Remove(inst)
+	}
+	rooms.TryEphemeralCleanup(entryRoomId)
+}
+
+// aSetCellDescFn stamps a faction-flavored description onto the instanced cell
+// room. Tests override this to capture the call without hitting room storage.
+var aSetCellDescFn = func(roomId int, desc string) {
+	if r := rooms.LoadRoom(roomId); r != nil {
+		r.Description = desc
+	}
+}
 
 // ---------------------------------------------------------------------------
 // Pure helpers (unit-tested in arrest_test.go).
@@ -198,6 +241,7 @@ type JailRecord struct {
 	UntilRound    uint64
 	Faction       string
 	CellRoom      int
+	InstanceId    int // entry room of the per-prisoner instanced cell, 0 = static
 }
 
 // JailInfo returns the jail record stamped on player's Character, and whether
@@ -214,12 +258,14 @@ func JailInfo(player *characters.Character) (JailRecord, bool) {
 	decay, _ := miscDataInt(player.MiscData, keyJailDecayPerRound)
 	faction, _ := miscDataString(player.MiscData, keyJailFaction)
 	cell, _ := miscDataInt(player.MiscData, keyJailCellRoom)
+	instId, _ := miscDataInt(player.MiscData, keyJailInstanceId)
 	return JailRecord{
 		FineOriginal:  fine,
 		DecayPerRound: decay,
 		UntilRound:    untilRound,
 		Faction:       faction,
 		CellRoom:      cell,
+		InstanceId:    instId,
 	}, true
 }
 
@@ -238,8 +284,20 @@ func JailInfo(player *characters.Character) (JailRecord, bool) {
 // jail_until_round MiscData key provides a parallel time-stamp so Task 9's
 // per-round release check can also fire when the buff has already expired.
 func ExecuteArrest(player *characters.Character, userId int, faction string, isMurder bool) bool {
-	cell := cellRoomFn(faction)
-	if cell == 0 {
+	staticCell := cellRoomFn(faction)
+	releaseRoom := releaseRoomFn(faction)
+	if releaseRoom == 0 {
+		releaseRoom = barracksRoomId
+	}
+
+	instanceId := 0
+	cell := 0
+	if entry, ok := aCreateCellFn(userId, releaseRoom); ok {
+		instanceId = entry
+		cell = entry
+	} else if staticCell != 0 {
+		cell = staticCell
+	} else {
 		return false
 	}
 
@@ -267,6 +325,21 @@ func ExecuteArrest(player *characters.Character, userId int, faction string, isM
 	player.SetMiscData(keyJailFaction, faction)
 	player.SetMiscData(keyJailCellRoom, cell)
 	player.SetMiscData(keyJailCrimeIds, idsStr)
+	player.SetMiscData(keyJailInstanceId, instanceId)
+
+	// Stamp a faction-flavored description on the instanced cell so the player
+	// sees something thematic rather than the zone template's default text.
+	if instanceId != 0 {
+		factionName := faction
+		if d := factions.GetDefinition(faction); d != nil && d.DisplayName != "" {
+			factionName = d.DisplayName
+		}
+		aSetCellDescFn(instanceId, fmt.Sprintf(
+			"Four close walls of cold, mortared stone press in around a single "+
+				"iron-strapped door with no handle on this side. The seal of the %s "+
+				"is stamped into the iron. There is no way out but the law's mercy "+
+				"and the slow passage of time.", factionName))
+	}
 
 	// Apply the Jailed buff scaled to `rounds` triggers so it expires
 	// naturally at the end of the sentence. The buff also carries the
@@ -375,6 +448,7 @@ func ResolveDetention(player *characters.Character, userId int) bool {
 	player.SetMiscData(keyJailFaction, nil)
 	player.SetMiscData(keyJailCellRoom, nil)
 	player.SetMiscData(keyJailCrimeIds, nil)
+	player.SetMiscData(keyJailInstanceId, nil)
 
 	// Move the player to the per-faction release room, falling back to
 	// barracksRoomId if the faction defines none.
