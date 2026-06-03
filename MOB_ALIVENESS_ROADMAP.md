@@ -112,14 +112,14 @@ should always agree.
 | 5.3 | Cross-cut | Equipment-aware shopping | L | 2.1, 2.2, 2.3, 4.4 | Done |
 | 5.4 | Cross-cut | NPC market participation | M | 5.3 | Done (2026-06-02) |
 | 6.1 | Polish | Stillwater town-flavor pass | L | Phase 1, Phase 3 | Done |
-| 6.2 | Polish | Parity audit closeout | S | 6.1 | Not started |
+| 6.2 | Polish | Parity audit closeout | S | 6.1 | Done |
 | 6.3 | Polish | Per-zone tuning (1–2 zones) | M | 6.1 | Not started |
 | 6.4 | Polish | Performance review (initial) | S | 6.3 | Not started |
 | 6.5 | Polish | Content pass — broader rollout | XL | 6.3 | Not started |
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 36 / 42 done • 0 in progress • 6 not started (+1 deferred: 3.5).
+**Roll-up:** 37 / 42 done • 0 in progress • 5 not started (+1 deferred: 3.5).
 
 ---
 
@@ -1027,13 +1027,26 @@ Validate the framework against real content, then scale.
   `docs/superpowers/plans/2026-06-03-mob-aliveness-6.1-stillwater-town-flavor.md`.
 
 ### 6.2 Parity audit closeout
-**Status:** Not started • **Size:** S
+**Status:** Done (2026-06-03) • **Size:** S
 
 - **Goal:** Final sweep of parity gaps after Stillwater pass exposes what's still missing.
 - **In:** Document remaining gaps, log next-tier ones to MEMORY for later.
 - **Out:** —
 - **Depends on:** 6.1
 - **Why:** Captures what we learned from real content use.
+- **Shipped:** Scoped (per user) to the `CommandParity` boot-audit warnings,
+  which had crept back up from the intended single `throw` warning. Three
+  aliveness-introduced verbs were firing un-allowlisted: `goal` (Phase 4 admin
+  mob-goal inspector), `fine` and `payfine` (5.1 jailed-player justice
+  interactions). None warrant a mob equivalent — all three added to
+  `userOnlyCommands` in `internal/actions/divergences.go` (`goal`=admin,
+  `fine`/`payfine`=player-mechanic). `throw` deliberately left un-listed (with
+  an explanatory comment) so it stays the single standing parity warning until
+  the ranged-weapon system lands. Boot-verified: only `throw` warns. The broader
+  combat-quadrant parity list is already structurally closed (four-handler split
+  unified into `handleCombatRound`, 2026-04-18). The 6.1 authorability lessons
+  (conversation A/B swap-safety, dead-pair co-location) are captured in the 6.1
+  record + smoke followups rather than re-audited here.
 
 ### 6.3 Per-zone tuning (1–2 zones)
 **Status:** Not started • **Size:** M
