@@ -51,6 +51,15 @@ func Taunt(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			fmt.Sprintf(`Something bellows a thunderous challenge at <ansi fg="username">%s</ansi>!`, targetName),
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> bellows a thunderous challenge at <ansi fg="username">%s</ansi>!`, mob.Character.Name, targetName))
 
+		// Aggro-pull confirmation: the taunt yanked the target off its prior
+		// foe and pinned it (taunt-hold). AggroPulled is only ever set when the
+		// target is a mob, so the name colors as a mobname.
+		if result.AggroPulled {
+			sendAudioRoomText(room, mob, messaging.CategoryTauntSuccess,
+				`Something wheels around, drawn to a new challenger.`,
+				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> wheels around and locks onto <ansi fg="mobname">%s</ansi>!`, targetName, mob.Character.Name))
+		}
+
 		// Stoic resolve messaging
 		if result.CritDeflected {
 			if targetPlayer != nil {

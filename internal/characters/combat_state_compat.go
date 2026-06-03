@@ -93,6 +93,15 @@ func (c *Character) SetAggro(userId int, mobInstanceId int, aggroType AggroType,
 		return
 	}
 
+	// Taunt-hold guard: while a taunt has this character pinned onto the
+	// taunter, ignore basic-attack re-aggro that would switch the target
+	// away (reactive `attack` re-aggro, per-round reciprocal, target-switch).
+	// ForceTauntAggro sets the lock to the taunter first, so its own set
+	// passes through. SpellCast/Flee and same-target sets are never blocked.
+	if c.tauntHoldBlocks(userId, mobInstanceId, aggroType) {
+		return
+	}
+
 	// Clear grapple state if switching targets
 	if c.Aggro != nil {
 		if c.Aggro.UserId != userId || c.Aggro.MobInstanceId != mobInstanceId {
@@ -150,6 +159,7 @@ func (c *Character) SetAggro(userId int, mobInstanceId int, aggroType AggroType,
 // EndAggro clears the character's combat target and forces Combat Phase to Idle.
 func (c *Character) EndAggro() {
 	c.Aggro = nil
+	c.clearTauntHold()
 	c.ClearGrappleState()
 	if c.CombatPhase != nil && c.CombatPhase.IsInCombat() {
 		c.CombatPhase.ForceIdle(state.TransitionReason{
