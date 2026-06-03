@@ -111,7 +111,7 @@ should always agree.
 | 5.2 | Cross-cut | Bounty hunting | L | 1.4, 1.5, 2.8, 4.4 | Done |
 | 5.3 | Cross-cut | Equipment-aware shopping | L | 2.1, 2.2, 2.3, 4.4 | Done |
 | 5.4 | Cross-cut | NPC market participation | M | 5.3 | Done (2026-06-02) |
-| 6.1 | Polish | Stillwater town-flavor pass | L | Phase 1, Phase 3 | Not started |
+| 6.1 | Polish | Stillwater town-flavor pass | L | Phase 1, Phase 3 | Done |
 | 6.2 | Polish | Parity audit closeout | S | 6.1 | Not started |
 | 6.3 | Polish | Per-zone tuning (1–2 zones) | M | 6.1 | Not started |
 | 6.4 | Polish | Performance review (initial) | S | 6.3 | Not started |
@@ -119,7 +119,7 @@ should always agree.
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 35 / 42 done • 0 in progress • 7 not started (+1 deferred: 3.5).
+**Roll-up:** 36 / 42 done • 0 in progress • 6 not started (+1 deferred: 3.5).
 
 ---
 
@@ -986,13 +986,43 @@ Two remaining open follow-ups:
 Validate the framework against real content, then scale.
 
 ### 6.1 Stillwater town-flavor pass
-**Status:** Not started • **Size:** L
+**Status:** Done (2026-06-03) • **Size:** L
 
 - **Goal:** First zone benchmark — every Stillwater NPC gets relationships, schedule, knowledge, optional goals.
 - **In:** 19 non-quest Stillwater NPCs (per MEMORY.md), idle dialogue, daily routines, mutual relationships.
 - **Out:** New quests (content separate).
 - **Depends on:** Phase 1, Phase 3, optionally Phase 4
 - **Why:** Validates the framework against real content. Catches what's hard to author. (Absorbed from MEMORY.md — Stillwater town-flavor pass.)
+- **Shipped:** "Layered-by-fit" benchmark — each substrate layer applied where it
+  earns its keep rather than uniformly. **Relationships (1.6):** ~10 edges across
+  12 NPCs authored one-side-per-edge (engine auto-mirrors) — Voss-family kinship
+  (Ulla↔Vella sister-in-law, plus cross-zone Ulla→Maren niece to Thornwall mob
+  113), employment (Sigrid→Neva, Seren→Finn), Hodder's mentorships (Tov, Luc),
+  healer/neighbor friendships (Ilsa/Vella, Gyda/Vella), Brindle/Hodder, and a
+  petty Sigrid/Wulf rivalry. **Schedules (3.2):** 8 full 24h daily routines
+  (Sigrid, Neva, Brindle, Seren, Arn, Ilsa, Bram, Vella) routing between existing
+  rooms only — **zero new rooms** (rest/sleep targets reuse work rooms or the
+  lodging loft; all routes pre-verified path-connected). `LoadSchedules` 5→13.
+  **Knowledge/facts (1.4/1.7):** 5 standing facts seeded into `facts.yaml`
+  (lake-decline, voss-death, spiral-motif, cave-creatures, pearl-divers-gone) with
+  role-gated `knows_facts:` on 10 NPCs (NOT universal — the knowledge-model point),
+  plus 2 new gossipers (Fenwick, Oswin) so the gossip pipeline spreads them.
+  **Conversations (3.6):** 3 new generic type-pools authored where none existed
+  (`employer`, `employee`, `family` — friend/rival already shipped) + 4 Stillwater
+  pair overrides (Sigrid/Neva, Tov/Hodder, Ilsa/Vella, and the gentle Ulla/Vella
+  grief pair that fires when Vella's schedule routes her to Ulla's parlor in the
+  evening). `conversations.Load` pools 2→5, pairs 1→5. **Benchmark lessons:** the
+  conversation engine randomizes speaker A/B, so all exchange lines must be
+  swap-safe — the voice review caught several mentor/employer lines that hard-coded
+  a speaker and they were rewritten role-agnostic; this is the chief authorability
+  gotcha for 6.5's broader rollout. Faction membership was already wired
+  (`groups: stillwater_citizens`/`stillwater_guards`); strategic goals (Phase 4)
+  left out of scope. No engine changes — pure data. Boot-validated clean after each
+  layer (no panics, `go test ./...` green). **Manual in-game smoke deferred to
+  user.** Spec at
+  `docs/superpowers/specs/2026-06-03-mob-aliveness-6.1-stillwater-town-flavor-design.md`,
+  plan at
+  `docs/superpowers/plans/2026-06-03-mob-aliveness-6.1-stillwater-town-flavor.md`.
 
 ### 6.2 Parity audit closeout
 **Status:** Not started • **Size:** S
