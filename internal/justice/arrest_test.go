@@ -716,6 +716,50 @@ func TestResolveDetention_LegacyStaticCellNoTeardown(t *testing.T) {
 	}
 }
 
+// ---------------------------------------------------------------------------
+// HandleJailedDespawn tests (Task 5)
+// ---------------------------------------------------------------------------
+
+func TestHandleJailedDespawn_TearsDownKeepsRecordRewritesRoom(t *testing.T) {
+	origTeardown, origCell := aTeardownCellFn, cellRoomFn
+	defer func() { aTeardownCellFn, cellRoomFn = origTeardown, origCell }()
+	var torndown int
+	aTeardownCellFn = func(id int) { torndown = id }
+	cellRoomFn = func(string) int { return 473 }
+
+	ch := &characters.Character{}
+	ch.SetMiscData(keyJailUntilRound, uint64(9999))
+	ch.SetMiscData(keyJailFaction, "thornwall_guards")
+	ch.SetMiscData(keyJailInstanceId, 60001)
+
+	HandleJailedDespawn(ch, 42)
+
+	if torndown != 60001 {
+		t.Fatalf("expected instance torn down, got %d", torndown)
+	}
+	if _, jailed := JailInfo(ch); !jailed {
+		t.Fatalf("jail record must survive logout")
+	}
+	if instId, _ := miscDataInt(ch.MiscData, keyJailInstanceId); instId != 0 {
+		t.Fatalf("InstanceId must be cleared, got %d", instId)
+	}
+	if ch.RoomId != 473 {
+		t.Fatalf("expected saved RoomId 473, got %d", ch.RoomId)
+	}
+}
+
+func TestHandleJailedDespawn_NotJailedNoOp(t *testing.T) {
+	origTeardown := aTeardownCellFn
+	defer func() { aTeardownCellFn = origTeardown }()
+	called := false
+	aTeardownCellFn = func(int) { called = true }
+	ch := &characters.Character{}
+	HandleJailedDespawn(ch, 42)
+	if called {
+		t.Fatalf("non-jailed despawn must be a no-op")
+	}
+}
+
 func TestExecuteArrest_FallsBackToStaticCellOnInstanceFailure(t *testing.T) {
 	origCell := cellRoomFn
 	origMove := aMoveFn

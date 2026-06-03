@@ -410,6 +410,35 @@ func ClearFactionRecord(faction string, userId int, reason string) {
 }
 
 // ---------------------------------------------------------------------------
+// HandleJailedDespawn
+// ---------------------------------------------------------------------------
+
+// HandleJailedDespawn is called when a jailed player logs out / disconnects.
+// The ephemeral cell instance can't survive the logout, so tear it down, but
+// KEEP the jail record (the UntilRound sentence clock is absolute and persists
+// with the character). Rewrite the saved room to the faction's static fallback
+// cell so the character is never saved pointing at a now-dead ephemeral room;
+// RestoreJailOnLogin (separate task) re-instances or releases on return.
+func HandleJailedDespawn(player *characters.Character, userId int) {
+	if player == nil || player.MiscData == nil {
+		return
+	}
+	if _, ok := miscDataRound(player.MiscData, keyJailUntilRound); !ok {
+		return // not jailed
+	}
+	if instId, _ := miscDataInt(player.MiscData, keyJailInstanceId); instId != 0 {
+		aTeardownCellFn(instId)
+		player.SetMiscData(keyJailInstanceId, 0)
+	}
+	faction, _ := miscDataString(player.MiscData, keyJailFaction)
+	fallback := cellRoomFn(faction)
+	if fallback == 0 {
+		fallback = barracksRoomId
+	}
+	player.RoomId = fallback
+}
+
+// ---------------------------------------------------------------------------
 // ResolveDetention
 // ---------------------------------------------------------------------------
 
