@@ -419,13 +419,18 @@ func ClearFactionRecord(faction string, userId int, reason string) {
 // with the character). Rewrite the saved room to the faction's static fallback
 // cell so the character is never saved pointing at a now-dead ephemeral room;
 // RestoreJailOnLogin (separate task) re-instances or releases on return.
-func HandleJailedDespawn(player *characters.Character, userId int) {
+func HandleJailedDespawn(player *characters.Character) {
 	if player == nil || player.MiscData == nil {
 		return
 	}
 	if _, ok := miscDataRound(player.MiscData, keyJailUntilRound); !ok {
 		return // not jailed
 	}
+	// instId is non-zero only when the player was held in an instanced cell.
+	// Static-cell jailed players have instId == 0 by construction (ExecuteArrest
+	// only sets keyJailInstanceId when aCreateCellFn succeeds), so there is
+	// nothing to tear down or clear for them — this branch is intentionally
+	// instance-only.
 	if instId, _ := miscDataInt(player.MiscData, keyJailInstanceId); instId != 0 {
 		aTeardownCellFn(instId)
 		player.SetMiscData(keyJailInstanceId, 0)

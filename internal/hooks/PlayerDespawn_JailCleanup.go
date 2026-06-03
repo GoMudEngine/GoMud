@@ -23,7 +23,7 @@ func PlayerDespawnJailCleanup(e events.Event) events.ListenerReturn {
 		return events.Continue
 	}
 
-	justice.HandleJailedDespawn(u.Character, evt.UserId)
+	justice.HandleJailedDespawn(u.Character)
 
 	return events.Continue
 }

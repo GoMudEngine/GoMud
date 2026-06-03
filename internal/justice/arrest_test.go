@@ -732,7 +732,7 @@ func TestHandleJailedDespawn_TearsDownKeepsRecordRewritesRoom(t *testing.T) {
 	ch.SetMiscData(keyJailFaction, "thornwall_guards")
 	ch.SetMiscData(keyJailInstanceId, 60001)
 
-	HandleJailedDespawn(ch, 42)
+	HandleJailedDespawn(ch)
 
 	if torndown != 60001 {
 		t.Fatalf("expected instance torn down, got %d", torndown)
@@ -754,9 +754,38 @@ func TestHandleJailedDespawn_NotJailedNoOp(t *testing.T) {
 	called := false
 	aTeardownCellFn = func(int) { called = true }
 	ch := &characters.Character{}
-	HandleJailedDespawn(ch, 42)
+	HandleJailedDespawn(ch)
 	if called {
 		t.Fatalf("non-jailed despawn must be a no-op")
+	}
+}
+
+// TestHandleJailedDespawn_StaticCellNoTeardown verifies the static-cell path:
+// when instId == 0 the teardown seam must NOT be called, the jail record must
+// survive, and RoomId must still be rewritten to the faction's fallback cell.
+func TestHandleJailedDespawn_StaticCellNoTeardown(t *testing.T) {
+	origTeardown, origCell := aTeardownCellFn, cellRoomFn
+	defer func() { aTeardownCellFn, cellRoomFn = origTeardown, origCell }()
+
+	teardownCalled := false
+	aTeardownCellFn = func(int) { teardownCalled = true }
+	cellRoomFn = func(string) int { return 473 }
+
+	ch := &characters.Character{}
+	ch.SetMiscData(keyJailUntilRound, uint64(9999))
+	ch.SetMiscData(keyJailFaction, "thornwall_guards")
+	ch.SetMiscData(keyJailInstanceId, 0)
+
+	HandleJailedDespawn(ch)
+
+	if teardownCalled {
+		t.Fatalf("static-cell despawn must NOT call aTeardownCellFn (instId == 0)")
+	}
+	if _, jailed := JailInfo(ch); !jailed {
+		t.Fatalf("jail record must survive logout for static-cell player")
+	}
+	if ch.RoomId != 473 {
+		t.Fatalf("expected saved RoomId 473 (fallback cell), got %d", ch.RoomId)
 	}
 }
 
