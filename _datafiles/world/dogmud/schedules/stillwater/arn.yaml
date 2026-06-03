@@ -1,0 +1,33 @@
+id: arn
+description: "Dock Master Arn: opens the docks, works the ledger and disputes by day, walks the promenade at dusk, sleeps at the dockhouse."
+segments:
+  - start: 6
+    end: 9
+    target_room: 4116
+    activity: ""
+    idlecommands:
+      - emote unlocks the gear shed and counts the drying racks.
+      - emote scans the water for the early boats.
+      - say Three out, two back so far. We'll see.
+  - start: 9
+    end: 17
+    target_room: 4116
+    activity: ""
+    idlecommands:
+      - emote runs a thumb down the boat ledger.
+      - emote settles a quarrel over a berth with a flat word.
+      - say Write it down or it didn't happen. That's the rule.
+  - start: 17
+    end: 20
+    target_room: 4113
+    activity: ""
+    idlecommands:
+      - emote walks the promenade with his hands behind his back.
+      - emote watches the light go long across the lake.
+      - say Quieter than it used to be out here.
+  - start: 20
+    end: 6
+    target_room: 4116
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the cramped room above the dock office.

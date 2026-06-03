@@ -7,10 +7,14 @@ hostile: false
 charm_immune: true
 non_combatant: true
 maxwander: 0
+schedule_id: arn
 groups:
   - humanoid
   - dockmaster
   - stillwater_citizens
+knows_facts:
+  - stillwater-lake-decline
+  - stillwater-cave-creatures
 idlecommands:
   - 'emote marks something in the dock ledger with a short, hard stroke'
   - ''

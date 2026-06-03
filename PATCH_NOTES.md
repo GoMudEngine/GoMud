@@ -1,5 +1,32 @@
 # DOGMud Patch Notes
 
+## 2026-06-03 — Stillwater comes to life
+
+The lakeside town of Stillwater is the first place where the townsfolk truly
+behave like a community rather than fixtures:
+
+- **They keep hours.** The innkeeper and her barmaid open the Pike & Lantern at
+  dawn and work it into the night before retiring to the loft; the smith stokes
+  his forge by day and nurses a quiet tankard in the evening; the priest holds
+  morning and evening rites; the dock master walks the promenade at dusk; the
+  apothecary, the miller, and the healer each keep their own working day. Visit
+  at different hours and you'll find different people doing different things —
+  and the sleepers really are asleep.
+- **They know each other.** The town now has a web of ties — kin, employers and
+  the people who work for them, an old fisherman and the tradesmen he taught, a
+  pair of healers who compare notes, neighbors who look in on one another. Idle
+  townsfolk strike up short conversations drawn from those relationships, so the
+  square and the tavern feel lived-in.
+- **They remember the town's troubles.** The fishermen and the constable speak
+  of the failing catch and the things coming out of the caves; the healer and
+  the priest carry the older grief of a man the lake took years ago. Gossips —
+  the barmaid, the old net-mender, the cottager on the lane, the beggar in the
+  square, and a passing pilgrim — carry that news around.
+
+This is a behind-the-scenes pass: no new quests, no map changes. It's the first
+full application of the NPC-aliveness systems to a single zone, and a template
+for bringing the rest of the world to life.
+
 ## 2026-06-02 — The economy feeds itself (supply chains + market participation)
 
 Shopkeepers no longer run dry. Several merchant types — cooks and enchanters

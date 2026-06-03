@@ -8,11 +8,17 @@ hostile: false
 charm_immune: true
 non_combatant: true
 maxwander: 0
+schedule_id: brindle
 groups:
   - humanoid
   - merchant
   - blacksmith
   - stillwater_citizens
+relationships:
+  - to: 343
+    type: friend
+knows_facts:
+  - stillwater-voss-death
 idlecommands:
   - 'emote works the bellows with steady, metronomic pulls, building the
     forge heat'

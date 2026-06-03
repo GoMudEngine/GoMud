@@ -11,6 +11,15 @@ groups:
   - humanoid
   - widow
   - stillwater_citizens
+relationships:
+  - to: 355
+    type: family
+    subtype: sister-in-law
+  - to: 113
+    type: family
+    subtype: niece
+knows_facts:
+  - stillwater-voss-death
 idlecommands:
   - 'emote sits at the parlor table with her hands folded around an empty
     cup, not drinking'

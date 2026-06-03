@@ -7,10 +7,18 @@ hostile: false
 charm_immune: true
 non_combatant: true
 maxwander: 0
+schedule_id: sigrid
 groups:
   - humanoid
   - innkeeper
   - stillwater_citizens
+relationships:
+  - to: 334
+    type: employer
+    subtype: barmaid
+  - to: 341
+    type: rival
+    subtype: petty
 idlecommands:
   - 'emote wipes the bar top in slow circles, eyes moving across the room'
   - 'emote sets a fresh candle in the iron bracket above the bar'

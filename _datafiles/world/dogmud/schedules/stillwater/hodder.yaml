@@ -1,0 +1,33 @@
+id: hodder
+description: "Old Fisherman Hodder: mends nets at the yard, takes the morning's gossip to the square, back to the yard, sleeps by the racks."
+segments:
+  - start: 6
+    end: 10
+    target_room: 4117
+    activity: ""
+    idlecommands:
+      - emote works a wooden needle through a torn net.
+      - emote squints at the weather over the water.
+      - say Knots first. The lake waits for no man's hurry.
+  - start: 10
+    end: 13
+    target_room: 4102
+    activity: ""
+    idlecommands:
+      - emote settles on the edge of the well with a coil of net.
+      - emote watches the square and misses nothing.
+      - say Heard the catch was thin again. Same as I said it'd be.
+  - start: 13
+    end: 20
+    target_room: 4117
+    activity: ""
+    idlecommands:
+      - emote stretches a mended net between two posts to check it.
+      - emote rubs an aching knee that knows the tides.
+      - say Forty years and the water still surprises me.
+  - start: 20
+    end: 6
+    target_room: 4117
+    activity: sleeping
+    idlecommands:
+      - emote dozes in the lee of the drying racks.

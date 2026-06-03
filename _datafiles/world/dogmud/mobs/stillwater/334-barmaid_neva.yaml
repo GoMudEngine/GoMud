@@ -6,7 +6,8 @@ itemdropchance: 0
 hostile: false
 charm_immune: true
 non_combatant: true
-maxwander: 1
+maxwander: 0
+schedule_id: neva
 groups:
   - humanoid
   - barmaid

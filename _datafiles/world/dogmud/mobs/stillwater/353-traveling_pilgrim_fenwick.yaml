@@ -10,6 +10,7 @@ maxwander: 1
 groups:
   - humanoid
   - traveler
+  - gossiper
   - stillwater_citizens
 idlecommands:
   - 'emote opens a small, well-read book and reads a passage with moving

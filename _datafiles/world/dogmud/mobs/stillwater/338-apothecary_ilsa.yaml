@@ -8,11 +8,16 @@ hostile: false
 charm_immune: true
 non_combatant: true
 maxwander: 0
+schedule_id: ilsa
 groups:
   - humanoid
   - merchant
   - apothecary
   - stillwater_citizens
+relationships:
+  - to: 355
+    type: friend
+    subtype: colleague
 idlecommands:
   - 'emote crushes dried marsh-willow bark with a stone pestle, releasing
     a faint green smell'

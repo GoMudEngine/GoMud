@@ -1,0 +1,30 @@
+id: ulla_and_vella
+mob_a: 347
+mob_b: 355
+exchanges:
+  - lines:
+      - speaker: A
+        text: "You didn't have to come tonight."
+      - speaker: B
+        text: "I know. I came anyway."
+  - lines:
+      - speaker: A
+        text: "Maren wrote. She asks after you."
+      - speaker: B
+        text: "Kind of her. Tell her I'm well."
+      - speaker: A
+        text: "I'll tell her you're stubborn. She'll know it's the same thing."
+  - lines:
+      - speaker: A
+        text: "Twelve years, this autumn."
+      - speaker: B
+        text: "I know what autumn it is."
+      - speaker: A
+        text: "...I know you do."
+  - lines:
+      - speaker: A
+        text: "The workshop's still locked."
+      - speaker: B
+        text: "Leave it locked, if it's easier."
+      - speaker: A
+        text: "Nothing about it is easier. But I'll leave it."

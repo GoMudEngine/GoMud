@@ -1,0 +1,30 @@
+id: ilsa_and_vella
+mob_a: 338
+mob_b: 355
+exchanges:
+  - lines:
+      - speaker: A
+        text: "Out of lake-mint again."
+      - speaker: B
+        text: "Try pond-willow at half the dose. It'll hold."
+      - speaker: A
+        text: "Crude, but it'll hold. You're right."
+  - lines:
+      - speaker: A
+        text: "Sent the Aldous boy across. Beyond my stitching."
+      - speaker: B
+        text: "You stitched fine. He just bleeds like his father."
+      - speaker: A
+        text: "Runs in the blood, then. Of course it does."
+  - lines:
+      - speaker: A
+        text: "Different methods, you and I."
+      - speaker: B
+        text: "Same patients, though. That's what matters."
+  - lines:
+      - speaker: A
+        text: "How does Ulla seem to you these days?"
+      - speaker: B
+        text: "Some days the chair by the window is enough. Some days it isn't."
+      - speaker: A
+        text: "We do what we can for her."

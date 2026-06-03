@@ -12,6 +12,13 @@ groups:
   - guard
   - stillwater_guards
   - stillwater_citizens
+relationships:
+  - to: 333
+    type: friend
+    subtype: regular
+knows_facts:
+  - stillwater-lake-decline
+  - stillwater-cave-creatures
 idlecommands:
   - 'emote stands at the door of the constabulary, arms folded, watching
     the square'

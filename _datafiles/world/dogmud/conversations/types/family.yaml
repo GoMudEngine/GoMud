@@ -1,0 +1,41 @@
+id: family
+description: |
+  Generic banter between kin — easy familiarity, old griefs left
+  half-spoken, care expressed sideways. Suitable for any related pair.
+exchanges:
+  - lines:
+      - speaker: A
+        text: "You eating enough?"
+      - speaker: B
+        text: "You ask me that every time."
+      - speaker: A
+        text: "And every time you dodge it."
+  - lines:
+      - speaker: A
+        text: "It's good to sit a while."
+      - speaker: B
+        text: "It is. We don't, often enough."
+  - lines:
+      - speaker: A
+        text: "I thought of him today."
+      - speaker: B
+        text: "I think of him most days."
+      - speaker: A
+        text: "Aye. I know you do."
+  - lines:
+      - speaker: A
+        text: "You'd tell me if something was wrong."
+      - speaker: B
+        text: "Would I?"
+      - speaker: A
+        text: "...You'd better."
+  - lines:
+      - speaker: A
+        text: "The years go quick now."
+      - speaker: B
+        text: "Quicker than they ought."
+  - lines:
+      - speaker: A
+        text: "Come by more. The door's always open."
+      - speaker: B
+        text: "I will. I mean it this time."
