@@ -789,6 +789,82 @@ func TestHandleJailedDespawn_StaticCellNoTeardown(t *testing.T) {
 	}
 }
 
+// ---------------------------------------------------------------------------
+// RestoreJailOnLogin tests (Task 6)
+// ---------------------------------------------------------------------------
+
+func TestRestoreJailOnLogin_ReleasesWhenSentenceServedOffline(t *testing.T) {
+	origNow, origMove, origCrimes := bNowFn, aMoveFn, aCrimesForFactionFn
+	origAllies := alliesFn
+	origOpenBounties, origWithdraw := aOpenBountiesFn, aWithdrawFn
+	origGetRep, origSetRep, origRepReset := aGetRepFn, aSetRepFn, aRepResetFn
+	origRelease := releaseRoomFn
+	defer func() {
+		bNowFn, aMoveFn, aCrimesForFactionFn = origNow, origMove, origCrimes
+		alliesFn = origAllies
+		aOpenBountiesFn, aWithdrawFn = origOpenBounties, origWithdraw
+		aGetRepFn, aSetRepFn, aRepResetFn = origGetRep, origSetRep, origRepReset
+		releaseRoomFn = origRelease
+	}()
+	bNowFn = func() uint64 { return 200 }
+	aMoveFn = func(int, int, ...bool) error { return nil }
+	aCrimesForFactionFn = func(string, bool) []*crimes.Crime { return nil }
+	alliesFn = func(string) []string { return nil }
+	aOpenBountiesFn = func(int) []*bounties.Bounty { return nil }
+	aWithdrawFn = func(int) {}
+	aGetRepFn = func(string, int) int { return 0 }
+	aSetRepFn = func(string, int, int) {}
+	aRepResetFn = func() int { return -10 }
+	releaseRoomFn = func(string) int { return 473 }
+
+	ch := &characters.Character{}
+	ch.SetMiscData(keyJailUntilRound, uint64(100)) // expired: 100 <= 200
+	ch.SetMiscData(keyJailFaction, "thornwall_guards")
+	ch.SetMiscData(keyJailInstanceId, 0)
+
+	RestoreJailOnLogin(ch, 42)
+	if _, jailed := JailInfo(ch); jailed {
+		t.Fatalf("expired sentence should be released on login")
+	}
+}
+
+func TestRestoreJailOnLogin_ReInstancesWhenStillServing(t *testing.T) {
+	origNow, origMove, origCreate, origRelease := bNowFn, aMoveFn, aCreateCellFn, releaseRoomFn
+	origDesc := aSetCellDescFn
+	defer func() {
+		bNowFn, aMoveFn, aCreateCellFn, releaseRoomFn = origNow, origMove, origCreate, origRelease
+		aSetCellDescFn = origDesc
+	}()
+	bNowFn = func() uint64 { return 50 } // still serving (until 100)
+	releaseRoomFn = func(string) int { return 473 }
+	var movedTo int
+	aMoveFn = func(_, roomId int, _ ...bool) error { movedTo = roomId; return nil }
+	aCreateCellFn = func(int, int) (int, bool) { return 60002, true }
+	aSetCellDescFn = func(int, string) {}
+
+	ch := &characters.Character{}
+	ch.SetMiscData(keyJailUntilRound, uint64(100))
+	ch.SetMiscData(keyJailFaction, "thornwall_guards")
+	ch.SetMiscData(keyJailInstanceId, 0) // stale (instance gone on logout)
+
+	RestoreJailOnLogin(ch, 42)
+	rec, jailed := JailInfo(ch)
+	if !jailed || rec.InstanceId != 60002 {
+		t.Fatalf("expected fresh instance 60002, got %+v", rec)
+	}
+	if movedTo != 60002 {
+		t.Fatalf("expected placed in fresh cell 60002, got %d", movedTo)
+	}
+}
+
+func TestRestoreJailOnLogin_NotJailedNoOp(t *testing.T) {
+	ch := &characters.Character{}
+	RestoreJailOnLogin(ch, 42) // must not panic / must no-op
+	if _, jailed := JailInfo(ch); jailed {
+		t.Fatalf("non-jailed login must stay non-jailed")
+	}
+}
+
 func TestExecuteArrest_FallsBackToStaticCellOnInstanceFailure(t *testing.T) {
 	origCell := cellRoomFn
 	origMove := aMoveFn

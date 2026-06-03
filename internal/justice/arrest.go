@@ -270,6 +270,27 @@ func JailInfo(player *characters.Character) (JailRecord, bool) {
 }
 
 // ---------------------------------------------------------------------------
+// factionCellDescription — shared prose for instanced jail cell descriptions.
+// ---------------------------------------------------------------------------
+
+// factionCellDescription returns the faction-flavored description stamped on an
+// instanced jail cell. The prose mirrors the 5107.yaml template room description
+// with only the furnishings line replaced by a faction-seal reference. Both
+// ExecuteArrest and RestoreJailOnLogin call this helper so the text stays
+// consistent.
+func factionCellDescription(faction string) string {
+	factionName := faction
+	if d := factions.GetDefinition(faction); d != nil && d.DisplayName != "" {
+		factionName = d.DisplayName
+	}
+	return fmt.Sprintf(
+		"Four close walls of cold, mortared stone press in around a single "+
+			"iron-strapped door with no handle on this side. The seal of the %s "+
+			"is stamped into the iron. There is no way out but the law's mercy "+
+			"and the slow passage of time.", factionName)
+}
+
+// ---------------------------------------------------------------------------
 // ExecuteArrest
 // ---------------------------------------------------------------------------
 
@@ -327,8 +348,7 @@ func ExecuteArrest(player *characters.Character, userId int, faction string, isM
 	player.SetMiscData(keyJailCrimeIds, idsStr)
 	player.SetMiscData(keyJailInstanceId, instanceId)
 
-	// Resolve the faction's human-readable name once; used in both the cell
-	// description and the arrest-flavor message below.
+	// Resolve the faction's human-readable name for the arrest-flavor message.
 	factionName := faction
 	if d := factions.GetDefinition(faction); d != nil && d.DisplayName != "" {
 		factionName = d.DisplayName
@@ -337,15 +357,7 @@ func ExecuteArrest(player *characters.Character, userId int, faction string, isM
 	// Stamp a faction-flavored description on the instanced cell so the player
 	// sees something thematic rather than the zone template's default text.
 	if instanceId != 0 {
-		// NOTE: this prose intentionally mirrors the opening/closing sentences of
-		// the 5107.yaml template room description, replacing only the middle
-		// furnishings sentence with a faction-seal line. If the template prose
-		// changes, update this string to match.
-		aSetCellDescFn(instanceId, fmt.Sprintf(
-			"Four close walls of cold, mortared stone press in around a single "+
-				"iron-strapped door with no handle on this side. The seal of the %s "+
-				"is stamped into the iron. There is no way out but the law's mercy "+
-				"and the slow passage of time.", factionName))
+		aSetCellDescFn(instanceId, factionCellDescription(faction))
 	}
 
 	// Apply the Jailed buff scaled to `rounds` triggers so it expires
@@ -504,4 +516,55 @@ func ResolveDetention(player *characters.Character, userId int) bool {
 	// double-printed the line (5.1c smoke BUG-01).
 
 	return true
+}
+
+// ---------------------------------------------------------------------------
+// RestoreJailOnLogin
+// ---------------------------------------------------------------------------
+
+// RestoreJailOnLogin reconciles a returning player's jail state. The sentence
+// clock (UntilRound) is absolute and persists across logout/restart; the
+// ephemeral cell does not. On login: if the sentence elapsed while away, release
+// the player; otherwise re-create a fresh cell instance, refresh the Jailed buff
+// to the remaining rounds, and place the player inside. No-op when not jailed.
+func RestoreJailOnLogin(player *characters.Character, userId int) {
+	if player == nil || player.MiscData == nil {
+		return
+	}
+	until, ok := miscDataRound(player.MiscData, keyJailUntilRound)
+	if !ok {
+		return
+	}
+	now := bNowFn()
+	if until <= now {
+		ResolveDetention(player, userId)
+		return
+	}
+
+	faction, _ := miscDataString(player.MiscData, keyJailFaction)
+	releaseRoom := releaseRoomFn(faction)
+	if releaseRoom == 0 {
+		releaseRoom = barracksRoomId
+	}
+
+	instanceId := 0
+	entry, created := aCreateCellFn(userId, releaseRoom)
+	if created {
+		instanceId = entry
+		aSetCellDescFn(entry, factionCellDescription(faction))
+	} else {
+		if sc := cellRoomFn(faction); sc != 0 {
+			entry = sc
+		} else {
+			entry = releaseRoom
+		}
+	}
+
+	player.SetMiscData(keyJailInstanceId, instanceId)
+	player.SetMiscData(keyJailCellRoom, entry)
+
+	player.RemoveBuff(jailedBuffId)
+	_ = player.AddBuffScaled(jailedBuffId, float64(until-now))
+
+	_ = aMoveFn(userId, entry)
 }
