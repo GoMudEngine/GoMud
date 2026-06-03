@@ -1,0 +1,32 @@
+id: seren
+description: "Temple Priest Seren: morning service, tends the altar by day, evening service, sleeps in the temple cell."
+segments:
+  - start: 5
+    end: 9
+    target_room: 4123
+    activity: ""
+    idlecommands:
+      - emote lights the morning incense at the altar.
+      - emote kneels a while in the grey early light.
+      - say The water hears, whether or not it answers.
+  - start: 9
+    end: 18
+    target_room: 4123
+    activity: ""
+    idlecommands:
+      - emote tends the candles and trims their wicks.
+      - emote traces the old spiral worn into the pillar, thoughtful.
+      - say Confession's open, if anyone's carrying weight.
+  - start: 18
+    end: 21
+    target_room: 4123
+    activity: ""
+    idlecommands:
+      - emote leads the evening rite in a low, even voice.
+      - emote marks the absent places in the pews without comment.
+  - start: 21
+    end: 5
+    target_room: 4123
+    activity: sleeping
+    idlecommands:
+      - emote rests in the narrow cell behind the altar.

@@ -1,0 +1,33 @@
+id: neva
+description: "Barmaid Neva: opens the room, serves through day and evening, sleeps in the loft."
+segments:
+  - start: 7
+    end: 11
+    target_room: 4103
+    activity: ""
+    idlecommands:
+      - emote stacks clean tankards behind the bar.
+      - emote sweeps last night's rushes toward the door.
+      - say Morning. Sigrid's in the back.
+  - start: 11
+    end: 18
+    target_room: 4103
+    activity: ""
+    idlecommands:
+      - emote carries plates two to a hand.
+      - emote pauses to look out the window at the lake.
+      - say Catch of the day's the catch of the week, truth be told.
+  - start: 18
+    end: 23
+    target_room: 4103
+    activity: ""
+    idlecommands:
+      - emote weaves between the crowded tables.
+      - say Last orders soon, lads.
+      - emote wipes a spill before it spreads.
+  - start: 23
+    end: 7
+    target_room: 4104
+    activity: sleeping
+    idlecommands:
+      - emote sleeps curled near the loft window.

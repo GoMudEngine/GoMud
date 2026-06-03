@@ -1,0 +1,32 @@
+id: bram
+description: "Miller Bram: starts the wheel at dawn, grinds grain by day, banks the wheel at dusk, sleeps at the mill."
+segments:
+  - start: 5
+    end: 9
+    target_room: 4135
+    activity: ""
+    idlecommands:
+      - emote opens the sluice and the wheel groans into motion.
+      - emote brushes old flour from the hopper.
+      - say Water's good and high today. Good grinding.
+  - start: 9
+    end: 17
+    target_room: 4135
+    activity: ""
+    idlecommands:
+      - emote feeds grain into the turning stones.
+      - emote hefts a full flour sack onto the stack with a grunt.
+      - say Bakehouse'll want this within the hour.
+  - start: 17
+    end: 20
+    target_room: 4135
+    activity: ""
+    idlecommands:
+      - emote closes the sluice and the wheel slows to a stop.
+      - emote sweeps the floury floor by lantern light.
+  - start: 20
+    end: 5
+    target_room: 4135
+    activity: sleeping
+    idlecommands:
+      - emote sleeps to the drip of the stilled wheel.

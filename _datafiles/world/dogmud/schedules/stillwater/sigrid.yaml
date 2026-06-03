@@ -1,0 +1,33 @@
+id: sigrid
+description: "Innkeeper Sigrid: bar prep at dawn, service through the day, evening rush, sleeps in the loft."
+segments:
+  - start: 6
+    end: 10
+    target_room: 4103
+    activity: ""
+    idlecommands:
+      - emote wipes down the bar with a grey rag.
+      - emote sets the morning's loaves out under a cloth.
+      - say Early yet. Kettle's on if you want it.
+  - start: 10
+    end: 18
+    target_room: 4103
+    activity: ""
+    idlecommands:
+      - emote draws a measure of ale without looking at the tap.
+      - emote keeps half an eye on the door.
+      - say Sit where you like. It's quiet enough.
+  - start: 18
+    end: 23
+    target_room: 4103
+    activity: ""
+    idlecommands:
+      - emote leans on the bar and listens more than she talks.
+      - say Mind your tab, now.
+      - emote nods to a regular by the hearth.
+  - start: 23
+    end: 6
+    target_room: 4104
+    activity: sleeping
+    idlecommands:
+      - emote breathes slow and even in the dark of the loft.

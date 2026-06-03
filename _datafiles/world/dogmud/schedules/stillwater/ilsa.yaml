@@ -1,0 +1,32 @@
+id: ilsa
+description: "Apothecary Ilsa: bottles tinctures in the morning, restocks by afternoon, closes at dusk, sleeps in the alcove."
+segments:
+  - start: 6
+    end: 9
+    target_room: 4125
+    activity: craft
+    idlecommands:
+      - emote decants a cooled tincture into small clay bottles.
+      - emote labels each stopper in a cramped, careful hand.
+      - say Morning's the time for the delicate work.
+  - start: 9
+    end: 15
+    target_room: 4125
+    activity: craft
+    idlecommands:
+      - emote grinds dried marsh-willow to a green dust.
+      - emote frowns at a near-empty jar of lake-mint.
+      - say Short on half of what I need since the caves turned.
+  - start: 15
+    end: 19
+    target_room: 4125
+    activity: ""
+    idlecommands:
+      - emote wipes down the worktable and stoppers the jars.
+      - say Come back tomorrow if it's not urgent.
+  - start: 19
+    end: 6
+    target_room: 4125
+    activity: sleeping
+    idlecommands:
+      - emote sleeps among the faint smell of crushed herbs.

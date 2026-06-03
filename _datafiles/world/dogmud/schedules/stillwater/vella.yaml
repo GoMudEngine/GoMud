@@ -1,0 +1,33 @@
+id: vella
+description: "Mistress Vella Thorne: stillroom work by day, sees patients, visits Ulla in the evening, sleeps at the cottage."
+segments:
+  - start: 6
+    end: 10
+    target_room: 4136
+    activity: craft
+    idlecommands:
+      - emote sets the still to a slow simmer.
+      - emote checks the patient bench is clean and ready.
+      - say Earliest hours are for the work that can't wait.
+  - start: 10
+    end: 16
+    target_room: 4136
+    activity: craft
+    idlecommands:
+      - emote strains a dark infusion through clean cloth.
+      - emote dresses a fisherman's gashed arm without fuss.
+      - say Hold still. I've stitched worse than you.
+  - start: 16
+    end: 20
+    target_room: 4137
+    activity: ""
+    idlecommands:
+      - emote sits with Ulla in the quiet parlor.
+      - emote pours two cups and says little.
+      - say Some evenings the sitting is the medicine.
+  - start: 20
+    end: 6
+    target_room: 4136
+    activity: sleeping
+    idlecommands:
+      - emote sleeps by the banked hearth of the cottage.

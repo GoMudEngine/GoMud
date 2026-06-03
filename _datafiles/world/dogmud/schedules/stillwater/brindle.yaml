@@ -1,0 +1,33 @@
+id: brindle
+description: "Smith Brindle: wakes at the forge, works lake-iron by day, drinks quietly in the evening, sleeps by the cooling anvil."
+segments:
+  - start: 6
+    end: 9
+    target_room: 4106
+    activity: ""
+    idlecommands:
+      - emote rakes the banked coals back to life.
+      - emote tests the bellows with a slow pull.
+      - say Fire first. Everything else after.
+  - start: 9
+    end: 18
+    target_room: 4106
+    activity: craft
+    idlecommands:
+      - emote hammers a glowing bar in steady, unhurried strokes.
+      - emote quenches the work with a hiss and a cloud of steam.
+      - emote glances at the half-finished hook-spear and says nothing.
+  - start: 18
+    end: 22
+    target_room: 4103
+    activity: ""
+    idlecommands:
+      - emote nurses a single tankard in the corner.
+      - say Long enough day. No need to make it longer.
+      - emote flexes a soot-stained hand.
+  - start: 22
+    end: 6
+    target_room: 4106
+    activity: sleeping
+    idlecommands:
+      - emote sleeps on the cot beside the cooling anvil.
