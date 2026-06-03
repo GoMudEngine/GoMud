@@ -19,6 +19,9 @@ relationships:
     subtype: guard
 hates:
   - bandit
+knows_facts:
+  - thornwall-road-bandits
+  - thornwall-caravan-trade
 hostile: false
 non_combatant: false             # crew fights bandits
 player_attack_immune: true       # players cannot attack -- rebuff like shopkeepers

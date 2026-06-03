@@ -7,11 +7,15 @@ hostile: false
 maxwander: 3
 groups:
   - humanoid
+  - gossiper
   - thornwall_citizens
 relationships:
   - to: 101
     type: friend
     subtype: street
+knows_facts:
+  - thornwall-hard-times
+  - thornwall-road-bandits
 idlecommands:
   - 'emote holds out a chipped cup, rattling the few coins inside'
   - 'emote huddles against the wall, pulling a thin blanket tighter'

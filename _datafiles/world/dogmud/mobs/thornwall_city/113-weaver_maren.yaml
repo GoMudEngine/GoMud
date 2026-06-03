@@ -12,6 +12,8 @@ groups:
   - humanoid
   - merchant
   - thornwall_citizens
+knows_facts:
+  - thornwall-steel-heritage
 idlecommands:
   - 'emote feeds cloth through the loom with practiced, rhythmic strokes'
   - 'emote holds a length of fabric taut and examines its weave against the light'

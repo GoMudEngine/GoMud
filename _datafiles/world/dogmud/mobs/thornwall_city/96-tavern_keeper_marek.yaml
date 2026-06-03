@@ -18,6 +18,9 @@ relationships:
   - to: 248
     type: employer
     subtype: cook
+knows_facts:
+  - thornwall-mayor-disgraced
+  - thornwall-hard-times
 idlecommands:
   - 'emote polishes a mug with a cloth, eyes on the room'
   - 'emote slides a drink across the bar without being asked'

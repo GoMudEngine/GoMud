@@ -19,6 +19,9 @@ relationships:
   - to: 102
     type: friend
     subtype: the-beat
+knows_facts:
+  - thornwall-road-bandits
+  - thornwall-mayor-disgraced
 idlecommands:
   - 'emote reviews a duty roster, making corrections with a quill'
   - 'emote drums fingers on the table, studying an incident report'

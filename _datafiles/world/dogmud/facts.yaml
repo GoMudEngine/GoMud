@@ -1,10 +1,11 @@
 facts:
-    - id: test-mayor
+    - id: thornwall-mayor-disgraced
       description: The Thornwall mayor has resigned in disgrace.
       significance: 1
       declared_round: 2077194
       tags:
         - politics
+        - thornwall
       status: active
     - id: stillwater-lake-decline
       description: Boats return half-empty from the lake; nets come up shredded by something out of the caves.
@@ -45,4 +46,36 @@ facts:
       tags:
         - stillwater
         - history
+      status: active
+    - id: thornwall-road-bandits
+      description: The road between Thornwall and Stillwater draws bandits; the caravans run guarded.
+      significance: 1
+      declared_round: 0
+      tags:
+        - thornwall
+        - road
+      status: active
+    - id: thornwall-hard-times
+      description: Taxes bite and folk grumble about paying for protection; trade is tight in the city.
+      significance: 1
+      declared_round: 0
+      tags:
+        - thornwall
+        - hardship
+      status: active
+    - id: thornwall-steel-heritage
+      description: Thornwall steel is an old guild craft, the technique passed hand to hand and never written down.
+      significance: 1
+      declared_round: 0
+      tags:
+        - thornwall
+        - craft
+      status: active
+    - id: thornwall-caravan-trade
+      description: A caravan runs the Thornwall-Stillwater road regularly, hauling lake-iron, pearls, and trade goods.
+      significance: 1
+      declared_round: 0
+      tags:
+        - thornwall
+        - trade
       status: active
