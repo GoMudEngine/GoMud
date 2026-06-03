@@ -11,6 +11,13 @@ groups:
   - humanoid
   - innkeeper
   - thornwall_citizens
+relationships:
+  - to: 117
+    type: employer
+    subtype: barmaid
+  - to: 248
+    type: employer
+    subtype: cook
 idlecommands:
   - 'emote polishes a mug with a cloth, eyes on the room'
   - 'emote slides a drink across the bar without being asked'

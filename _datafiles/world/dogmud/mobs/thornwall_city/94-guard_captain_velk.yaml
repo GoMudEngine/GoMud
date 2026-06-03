@@ -12,6 +12,13 @@ groups:
   - guard
   - thornwall_guards
   - thornwall_citizens
+relationships:
+  - to: 106
+    type: employer
+    subtype: captain
+  - to: 102
+    type: friend
+    subtype: the-beat
 idlecommands:
   - 'emote reviews a duty roster, making corrections with a quill'
   - 'emote drums fingers on the table, studying an incident report'
