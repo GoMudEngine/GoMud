@@ -10,6 +10,7 @@ intrinsic_mutations:
   iron-constitution: 1
 size: large
 unarmedname: fists
+naturalbash: true  # golem: slams ("crushing slam"), bashes without a shield
 selectable: false
 tameable: false
 angrycommands:

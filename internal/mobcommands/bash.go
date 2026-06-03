@@ -40,8 +40,8 @@ func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 	canSee := targetUser == nil || canSeeInDark(targetUser, room)
 
-	// Natural bashers (elementals, golems) slam instead of %s
-	bashLabel := "%s"
+	// Natural bashers (elementals, golems) slam instead of shield-bashing.
+	bashLabel := "shield bash"
 	bashVerb := "bashes"
 	bashWith := "with their shield"
 	if sp := species.GetSpecies(mob.Character.SpeciesId); sp != nil && sp.NaturalBash {
