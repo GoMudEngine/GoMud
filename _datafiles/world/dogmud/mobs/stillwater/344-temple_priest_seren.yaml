@@ -12,6 +12,10 @@ groups:
   - humanoid
   - priest
   - stillwater_citizens
+relationships:
+  - to: 345
+    type: employer
+    subtype: acolyte
 idlecommands:
   - 'emote lights a stick of lake-reed incense and places it in the brass
     holder at the altar base'

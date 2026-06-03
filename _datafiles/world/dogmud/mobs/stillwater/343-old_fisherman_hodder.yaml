@@ -11,6 +11,13 @@ groups:
   - humanoid
   - gossiper
   - stillwater_citizens
+relationships:
+  - to: 336
+    type: friend
+    subtype: mentor
+  - to: 346
+    type: friend
+    subtype: mentor
 idlecommands:
   - 'emote works a needle through a torn mesh with the slow patience of
     someone in no hurry to finish'

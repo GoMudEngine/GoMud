@@ -13,6 +13,9 @@ groups:
   - merchant
   - blacksmith
   - stillwater_citizens
+relationships:
+  - to: 343
+    type: friend
 idlecommands:
   - 'emote works the bellows with steady, metronomic pulls, building the
     forge heat'

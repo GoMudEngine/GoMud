@@ -13,6 +13,10 @@ groups:
   - merchant
   - apothecary
   - stillwater_citizens
+relationships:
+  - to: 355
+    type: friend
+    subtype: colleague
 idlecommands:
   - 'emote crushes dried marsh-willow bark with a stone pestle, releasing
     a faint green smell'
