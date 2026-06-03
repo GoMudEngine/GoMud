@@ -1,0 +1,32 @@
+id: tov_and_hodder
+mob_a: 336
+mob_b: 343
+exchanges:
+  - lines:
+      - speaker: A
+        text: "Your knots still hold better than mine."
+      - speaker: B
+        text: "Same knots I was taught. Same I taught."
+      - speaker: A
+        text: "Then I had a good teacher."
+  - lines:
+      - speaker: A
+        text: "Catch was poor again."
+      - speaker: B
+        text: "It's not the catch. It's what's eating the catch."
+      - speaker: A
+        text: "Don't let Arn hear you. He'll want it in the ledger."
+  - lines:
+      - speaker: A
+        text: "You remember when the deep shelves were full?"
+      - speaker: B
+        text: "I remember the men who fished them. Most are gone now."
+      - speaker: A
+        text: "..."
+      - speaker: B
+        text: "Mend your nets. That much we can still do."
+  - lines:
+      - speaker: A
+        text: "Cold coming off the water today."
+      - speaker: B
+        text: "Wrong kind of cold. You learn the difference."

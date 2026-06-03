@@ -1,0 +1,32 @@
+id: sigrid_and_neva
+mob_a: 333
+mob_b: 334
+exchanges:
+  - lines:
+      - speaker: A
+        text: "Wulf send that ale round yet?"
+      - speaker: B
+        text: "Says tomorrow. Said tomorrow yesterday too."
+      - speaker: A
+        text: "That man and his tomorrows."
+  - lines:
+      - speaker: A
+        text: "Hodder was in early, mending by the window."
+      - speaker: B
+        text: "He always knows the water before the boats do."
+      - speaker: A
+        text: "Forty years'll do that."
+  - lines:
+      - speaker: A
+        text: "Keep the corner table clear tonight."
+      - speaker: B
+        text: "For the constable?"
+      - speaker: A
+        text: "He likes to see the door. Let him."
+  - lines:
+      - speaker: A
+        text: "Fewer boats out than last spring."
+      - speaker: B
+        text: "Fewer every spring, seems like."
+      - speaker: A
+        text: "Pour 'em strong, then. It's that kind of season."
