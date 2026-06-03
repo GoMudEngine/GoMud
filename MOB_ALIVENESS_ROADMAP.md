@@ -999,10 +999,12 @@ Validate the framework against real content, then scale.
   (Ulla↔Vella sister-in-law, plus cross-zone Ulla→Maren niece to Thornwall mob
   113), employment (Sigrid→Neva, Seren→Finn), Hodder's mentorships (Tov, Luc),
   healer/neighbor friendships (Ilsa/Vella, Gyda/Vella), Brindle/Hodder, and a
-  petty Sigrid/Wulf rivalry. **Schedules (3.2):** 8 full 24h daily routines
-  (Sigrid, Neva, Brindle, Seren, Arn, Ilsa, Bram, Vella) routing between existing
+  petty Sigrid/Wulf rivalry. **Schedules (3.2):** 9 full 24h daily routines
+  (the 8 anchors Sigrid, Neva, Brindle, Seren, Arn, Ilsa, Bram, Vella, plus
+  Hodder added in review so the Tov/Hodder and Ilsa/Vella pairs co-locate)
+  routing between existing
   rooms only — **zero new rooms** (rest/sleep targets reuse work rooms or the
-  lodging loft; all routes pre-verified path-connected). `LoadSchedules` 5→13.
+  lodging loft; all routes pre-verified path-connected). `LoadSchedules` 5 to 14.
   **Knowledge/facts (1.4/1.7):** 5 standing facts seeded into `facts.yaml`
   (lake-decline, voss-death, spiral-motif, cave-creatures, pearl-divers-gone) with
   role-gated `knows_facts:` on 10 NPCs (NOT universal — the knowledge-model point),
