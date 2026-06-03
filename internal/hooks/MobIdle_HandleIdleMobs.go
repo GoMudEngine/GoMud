@@ -414,6 +414,13 @@ func buildGossipLine(mob *mobs.Mob) string {
 	evts := worldevents.GetRecentWorldEvents(10, filter)
 
 	if len(evts) == 0 {
+		// No recent world events — try the mob's known facts before the generic
+		// fallback, so seeded facts still gossip in quiet zones (6.3 E.1).
+		if fc := facts.KnownFactsOf(int(mob.MobId)); len(fc) > 0 {
+			if line := renderFactGossip(fc[util.Rand(len(fc))]); line != "" {
+				return line
+			}
+		}
 		// Use fallback templates
 		if fallbacks, ok := gossipTemplates["fallback"]; ok && len(fallbacks) > 0 {
 			return fallbacks[util.Rand(len(fallbacks))]

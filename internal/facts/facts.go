@@ -420,6 +420,19 @@ type MobAwarenessSeed struct {
 	KnowsFacts []string
 }
 
+// ResetForTest wipes the in-memory fact registry and awareness cache so that
+// each test starts from a clean state. It does NOT touch disk. Only call this
+// from tests.
+func ResetForTest() {
+	registryMu.Lock()
+	registry = nil
+	registryMu.Unlock()
+
+	awarenessCacheMu.Lock()
+	awarenessCache = make(map[int]*Awareness)
+	awarenessCacheMu.Unlock()
+}
+
 // LoadFromMobs seeds per-NPC awareness records from authored
 // `knows_facts:` declarations on mob YAMLs. Called by mobs.LoadDataFiles
 // after the mob registry is built. Wires the production observerNameFor
