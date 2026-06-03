@@ -617,6 +617,105 @@ func TestExecuteArrest_UsesInstancedCell(t *testing.T) {
 	}
 }
 
+// ---------------------------------------------------------------------------
+// ResolveDetention instanced-cell teardown tests (Task 4)
+// ---------------------------------------------------------------------------
+
+func TestResolveDetention_TearsDownInstance(t *testing.T) {
+	origMove, origTeardown := aMoveFn, aTeardownCellFn
+	origResolve, origCrimes := aResolveCrimeFn, aCrimesForFactionFn
+	origAllies := alliesFn
+	origReleaseRoom := releaseRoomFn
+	origRepReset := aRepResetFn
+	origGetRep := aGetRepFn
+	origSetRep := aSetRepFn
+	origOpenBounties := aOpenBountiesFn
+	origWithdraw := aWithdrawFn
+	defer func() {
+		aMoveFn, aTeardownCellFn = origMove, origTeardown
+		aResolveCrimeFn, aCrimesForFactionFn = origResolve, origCrimes
+		alliesFn = origAllies
+		releaseRoomFn = origReleaseRoom
+		aRepResetFn = origRepReset
+		aGetRepFn = origGetRep
+		aSetRepFn = origSetRep
+		aOpenBountiesFn = origOpenBounties
+		aWithdrawFn = origWithdraw
+	}()
+	aMoveFn = func(int, int, ...bool) error { return nil }
+	aCrimesForFactionFn = func(string, bool) []*crimes.Crime { return nil }
+	aResolveCrimeFn = func(string, int, string) {}
+	alliesFn = func(string) []string { return nil }
+	releaseRoomFn = func(string) int { return 0 }
+	aRepResetFn = func() int { return -10 }
+	aGetRepFn = func(string, int) int { return 0 }
+	aSetRepFn = func(string, int, int) {}
+	aOpenBountiesFn = func(int) []*bounties.Bounty { return nil }
+	aWithdrawFn = func(int) {}
+	var torndown int
+	aTeardownCellFn = func(entryRoomId int) { torndown = entryRoomId }
+
+	ch := &characters.Character{}
+	ch.SetMiscData(keyJailUntilRound, uint64(100))
+	ch.SetMiscData(keyJailFaction, "thornwall_guards")
+	ch.SetMiscData(keyJailInstanceId, 60001)
+
+	if !ResolveDetention(ch, 42) {
+		t.Fatalf("resolve should succeed")
+	}
+	if torndown != 60001 {
+		t.Fatalf("expected instance 60001 torn down, got %d", torndown)
+	}
+	if _, jailed := JailInfo(ch); jailed {
+		t.Fatalf("jail record should be cleared")
+	}
+}
+
+func TestResolveDetention_LegacyStaticCellNoTeardown(t *testing.T) {
+	origMove, origTeardown, origCrimes := aMoveFn, aTeardownCellFn, aCrimesForFactionFn
+	origResolve := aResolveCrimeFn
+	origAllies := alliesFn
+	origReleaseRoom := releaseRoomFn
+	origRepReset := aRepResetFn
+	origGetRep := aGetRepFn
+	origSetRep := aSetRepFn
+	origOpenBounties := aOpenBountiesFn
+	origWithdraw := aWithdrawFn
+	defer func() {
+		aMoveFn, aTeardownCellFn, aCrimesForFactionFn = origMove, origTeardown, origCrimes
+		aResolveCrimeFn = origResolve
+		alliesFn = origAllies
+		releaseRoomFn = origReleaseRoom
+		aRepResetFn = origRepReset
+		aGetRepFn = origGetRep
+		aSetRepFn = origSetRep
+		aOpenBountiesFn = origOpenBounties
+		aWithdrawFn = origWithdraw
+	}()
+	aMoveFn = func(int, int, ...bool) error { return nil }
+	aCrimesForFactionFn = func(string, bool) []*crimes.Crime { return nil }
+	aResolveCrimeFn = func(string, int, string) {}
+	alliesFn = func(string) []string { return nil }
+	releaseRoomFn = func(string) int { return 0 }
+	aRepResetFn = func() int { return -10 }
+	aGetRepFn = func(string, int) int { return 0 }
+	aSetRepFn = func(string, int, int) {}
+	aOpenBountiesFn = func(int) []*bounties.Bounty { return nil }
+	aWithdrawFn = func(int) {}
+	teardownCalled := false
+	aTeardownCellFn = func(int) { teardownCalled = true }
+
+	ch := &characters.Character{}
+	ch.SetMiscData(keyJailUntilRound, uint64(100))
+	ch.SetMiscData(keyJailFaction, "thornwall_guards")
+	ch.SetMiscData(keyJailInstanceId, 0)
+
+	ResolveDetention(ch, 42)
+	if teardownCalled {
+		t.Fatalf("legacy static-cell release must NOT call instance teardown")
+	}
+}
+
 func TestExecuteArrest_FallsBackToStaticCellOnInstanceFailure(t *testing.T) {
 	origCell := cellRoomFn
 	origMove := aMoveFn

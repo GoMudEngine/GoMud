@@ -439,6 +439,11 @@ func ResolveDetention(player *characters.Character, userId int) bool {
 	// live query rather than the crime ids stamped at arrest time.
 	ClearFactionRecord(faction, userId, "served sentence")
 
+	// Tear down the per-prisoner cell instance if this was an instanced cell.
+	if instId, _ := miscDataInt(player.MiscData, keyJailInstanceId); instId != 0 {
+		aTeardownCellFn(instId)
+	}
+
 	// Remove the Jailed buff.
 	player.RemoveBuff(jailedBuffId)
 
