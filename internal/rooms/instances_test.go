@@ -1,12 +1,17 @@
 package rooms
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v2"
 )
 
 // init wires up mudlog for the rooms test binary. Several code paths
@@ -527,4 +532,131 @@ func TestCheckPortalTimers_NotExpiredNoOp(t *testing.T) {
 
 	// No btree eviction calls — the chain only runs for expired instances.
 	assert.Empty(t, evicted)
+}
+
+// ─── CreateZoneInstanceWithOpts: SuppressReturnPortal ────────────────────────
+
+func TestCreateZoneInstanceWithOpts_SuppressReturnPortal(t *testing.T) {
+	// ── Filesystem fixture ────────────────────────────────────────────────────
+	// CreateEphemeralZone calls LoadRoomTemplate which reads YAML from disk.
+	// We write a minimal room YAML into a temp dir and point DataFiles at it.
+	const (
+		zoneName    = "Test Instance Zone"
+		entryRoomId = 9001
+		overworldId = 1
+		zoneFolder  = "test_instance_zone"
+	)
+
+	tempDir := t.TempDir()
+	roomsDir := filepath.Join(tempDir, "rooms", zoneFolder)
+	if err := os.MkdirAll(roomsDir, 0755); err != nil {
+		t.Fatalf("mkdir: %v", err)
+	}
+
+	templateRoom := &Room{
+		RoomId:      entryRoomId,
+		Zone:        zoneName,
+		Title:       "Test Cell",
+		Description: "A bare cell used only in tests.",
+		Exits:       map[string]exit.RoomExit{},
+		SpawnInfo:   []SpawnInfo{},
+	}
+	roomYAML, err := yaml.Marshal(templateRoom)
+	if err != nil {
+		t.Fatalf("yaml.Marshal: %v", err)
+	}
+	roomFile := filepath.Join(roomsDir, "9001.yaml")
+	if err := os.WriteFile(roomFile, roomYAML, 0644); err != nil {
+		t.Fatalf("write room file: %v", err)
+	}
+
+	// Override the DataFiles config to the temp dir so LoadRoomTemplate finds
+	// the file. Restore on test exit.
+	prevDataFiles := configs.GetFilePathsConfig().DataFiles.String()
+	if err := configs.AddOverlayOverrides(map[string]any{"FilePaths.DataFiles": tempDir}); err != nil {
+		t.Fatalf("AddOverlayOverrides: %v", err)
+	}
+	defer func() {
+		_ = configs.AddOverlayOverrides(map[string]any{"FilePaths.DataFiles": prevDataFiles})
+	}()
+
+	// ── Room manager fixture ───────────────────────────────────────────────────
+	// SeedRoomsForTest replaces the global roomManager. The zone config tells
+	// CreateZoneInstance which room IDs belong to the zone (for
+	// CreateEphemeralZone) and what the entry room is.
+	zCfg := &ZoneConfig{
+		Name:           zoneName,
+		Instanced:      true,
+		EntryRoom:      entryRoomId,
+		DeathPolicy:    "rejoin",
+		PortalDuration: "30 real minutes",
+		AllowRecall:    true,
+		RoomIds:        map[int]struct{}{entryRoomId: {}},
+	}
+	cleanupRooms := SeedRoomsForTest(
+		map[int]*Room{},
+		map[string]*ZoneConfig{zoneName: zCfg},
+	)
+	defer cleanupRooms()
+
+	// Seed the room path in the file cache so GetFilePath finds it without
+	// a filesystem walk (the walk uses the configs.DataFiles path, which we
+	// overrode, but the cache short-circuits it entirely).
+	roomManager.roomIdToFileCache[entryRoomId] = filepath.Join(zoneFolder, "9001.yaml")
+	defer delete(roomManager.roomIdToFileCache, entryRoomId)
+
+	// Reset ephemeral state and the package-level instance registry so the
+	// test is isolated and a latent Remove failure can't leak into other tests.
+	defer func() {
+		for i := range ephemeralRoomChunks {
+			ephemeralRoomChunks[i] = nil
+		}
+		originalRoomIdLookups = map[int]int{}
+		instanceRegistry = NewInstanceRegistry()
+	}()
+
+	// ── sub-case A: default CreateZoneInstance → return portal present ────────
+
+	instA, err := CreateZoneInstance(zoneName, 0, 1, []int{1}, overworldId)
+	if err != nil {
+		t.Fatalf("CreateZoneInstance (default) failed: %v", err)
+	}
+
+	entryA := LoadRoom(instA.EntryRoomId)
+	if entryA == nil {
+		t.Fatalf("could not load ephemeral entry room %d", instA.EntryRoomId)
+	}
+	_, hasPortalA := entryA.ExitsTemp["return portal"]
+	assert.True(t, hasPortalA, "default instance: entry room should have 'return portal' exit")
+
+	// Tear down instance A so the ephemeral chunk is free for instance B.
+	GetInstanceRegistry().Remove(instA)
+	TryEphemeralCleanup(instA.EntryRoomId)
+
+	// Re-seed the template room's file-cache entry. removeRoomFromMemory deletes
+	// by the EPHEMERAL room id (instA.EntryRoomId), but that ephemeral id was
+	// mapped from template id 9001. The second clone's LoadRoomTemplate call
+	// looks up the template id 9001 in the file cache, so we must restore it.
+	roomManager.roomIdToFileCache[entryRoomId] = filepath.Join(zoneFolder, "9001.yaml")
+
+	// ── sub-case B: CreateZoneInstanceWithOpts(SuppressReturnPortal=true) ─────
+
+	instB, err := CreateZoneInstanceWithOpts(
+		zoneName, 0, 1, []int{1}, overworldId,
+		ZoneInstanceOpts{SuppressReturnPortal: true},
+	)
+	if err != nil {
+		t.Fatalf("CreateZoneInstanceWithOpts (SuppressReturnPortal) failed: %v", err)
+	}
+
+	entryB := LoadRoom(instB.EntryRoomId)
+	if entryB == nil {
+		t.Fatalf("could not load ephemeral entry room %d (suppressed)", instB.EntryRoomId)
+	}
+	_, hasPortalB := entryB.ExitsTemp["return portal"]
+	assert.False(t, hasPortalB, "SuppressReturnPortal=true: entry room must NOT have a 'return portal' exit")
+
+	// Tear down instance B.
+	GetInstanceRegistry().Remove(instB)
+	TryEphemeralCleanup(instB.EntryRoomId)
 }

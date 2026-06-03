@@ -56,6 +56,43 @@ The `internal/rooms` package is the core world management system for GoMud, hand
 - **Zone duplication**: Creating temporary copies of entire zones
 - **ID mapping**: Tracking relationships between original and ephemeral rooms
 
+### Zone Instance Options (`instances.go`)
+
+`CreateZoneInstance` (legacy, existing callers unchanged) now delegates to:
+
+```go
+func CreateZoneInstanceWithOpts(
+    zoneName      string,
+    goldPaid      int,
+    ownerUserId   int,
+    authorizedUsers []int,
+    overworldRoomId int,
+    opts          ZoneInstanceOpts,
+) (int, bool)
+```
+
+- Returns the ephemeral entry room ID and `true` on success.
+- `ZoneInstanceOpts{SuppressReturnPortal bool}` — when `true`, the
+  auto-added "return portal" exit is **not** created. Use this for
+  confinement instances (e.g. instanced jail cells) where the occupant
+  must not be able to walk out; lifetime is controlled by explicit
+  teardown rather than portal expiry.
+- `CreateZoneInstance(zoneName, goldPaid, ownerUserId, overworldRoomId)`
+  passes a zero-value `ZoneInstanceOpts` (i.e. portal created as before),
+  so all existing callers are unaffected.
+
+**Confinement zones and `CheckPortalTimers`:**
+A zone whose YAML sets `portal_duration: none` is **skipped** by
+`CheckPortalTimers` — no TTL eviction and no "portal collapsing" warning
+messages. This is the explicit "no-TTL" sentinel. Note that an **empty**
+`portal_duration` field is auto-filled to `"30 real minutes"` by
+`ZoneConfig.Validate()`, so omitting the field does NOT disable TTL —
+you must set it to `none` explicitly. Such zones must be torn down
+explicitly (e.g. via `TryEphemeralCleanup` called from the owning
+subsystem's release/despawn path). The `instance_jail_cell` zone template
+uses this pattern: its lifetime is owned entirely by `internal/justice`
+(arrest creates, release or player-despawn destroys).
+
 ## Hidden Object Discovery System
 
 ### Overview

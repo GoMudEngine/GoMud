@@ -155,14 +155,17 @@ player messages go through `users.GetByUserId(uid).SendText` directly.
 | `jail_fine_original` | int | Fine at time of arrest |
 | `jail_decay_per_round` | int | Gold deducted per round served |
 | `jail_faction` | string | Arresting faction slug |
-| `jail_cell_room` | int | Holding-cell room ID |
+| `jail_cell_room` | int | Holding-cell room ID (static fallback; 0 if instanced) |
 | `jail_crime_ids` | string | Comma-separated unresolved crime IDs |
+| `jail_instance_id` | int | Ephemeral zone-instance ID (0 = static cell) |
 
 **Holding-cell registry**: Cell room IDs live on the faction definition
 YAML as a `holding_cell_room:` field (`factions.Definition.HoldingCellRoom`),
 read via the `cellRoomFn` seam in `justice.go`. `ExecuteArrest` returns
 `false` (no-op) for factions whose `holding_cell_room` is 0 (absent/omitted).
 Current cells: `thornwall_guards` → 5105, `stillwater_guards` → 5106.
+These rooms are retained only as the **static fallback** for when instance
+creation fails (see Instanced Jail Cells below).
 
 **Release-room registry**: Release room IDs live on the faction definition
 YAML as a `release_room:` field (`factions.Definition.ReleaseRoom`), read
@@ -186,6 +189,7 @@ type JailRecord struct {
     UntilRound    uint64
     Faction       string
     CellRoom      int
+    InstanceId    int  // 0 = static cell / not instanced
 }
 ```
 
@@ -202,18 +206,22 @@ decay math; floors at zero.
 
 #### `ExecuteArrest(player *characters.Character, userId int, faction string, isMurder bool) bool`
 
-1. Looks up the cell room for `faction`; returns `false` if none.
-2. Computes fine + sentence rounds.
-3. Collects unresolved crime IDs for the faction via
+1. Attempts to create a per-prisoner instanced cell via `aCreateCellFn`
+   (see Instanced Jail Cells below). On success, uses the ephemeral entry
+   room and stores the instance ID in `jail_instance_id`.
+2. Falls back to the faction's static `cellRoomFn` (HoldingCellRoom) if
+   instance creation fails. Returns `false` if neither path yields a cell.
+3. Computes fine + sentence rounds.
+4. Collects unresolved crime IDs for the faction via
    `crimeIdsForFactionPlayer`.
-4. Stamps all six jail MiscData keys.
-5. Applies buff 88 (Jailed) via `player.AddBuffScaled(88, float64(rounds))`
+5. Stamps all jail MiscData keys (including `jail_instance_id`).
+6. Applies buff 88 (Jailed) via `player.AddBuffScaled(88, float64(rounds))`
    — `TriggersLeft` is scaled to `rounds` so the buff expires naturally
    at sentence end.
-6. `player.EndAggro()` — drops any fight the player was in (they are in
+7. `player.EndAggro()` — drops any fight the player was in (they are in
    custody now, not brawling).
-7. Moves the player to the cell via `rooms.MoveToRoom`.
-8. Sends arrest-flavor text to the player.
+8. Moves the player to the cell via `rooms.MoveToRoom`.
+9. Sends arrest-flavor text to the player.
 
 The Jailed buff (id 88) carries two flags: `no-go` / `NoMovement` prevents
 walking, fleeing, and recalling out (see flee.go + spell_foldrecall.go);
@@ -255,13 +263,110 @@ against the other that re-triggers arrest the instant the player is freed.
    only where currently below it (default −10; never lowers good standing).
 5. Removes buff 88 via `player.RemoveBuff(88)` — this fires the buff's
    release line; `ResolveDetention` sends no flavor of its own.
-6. Clears all jail MiscData keys.
-7. Moves player to the per-faction release room (via `releaseRoomFn`),
+6. When `InstanceId != 0`, tears down the ephemeral cell via
+   `aTeardownCellFn` (registry Remove + `rooms.TryEphemeralCleanup`)
+   before moving the player. Static-cell prisoners (`InstanceId == 0`)
+   are simply teleported without any teardown.
+7. Clears all jail MiscData keys.
+8. Moves player to the per-faction release room (via `releaseRoomFn`),
    falling back to `barracksRoomId` (473) if the faction defines none.
 
 Release seams: `aResolveCrimeFn`, `aCrimesForFactionFn`, `alliesFn`,
 `aOpenBountiesFn`, `aWithdrawFn`, `aGetRepFn`, `aSetRepFn`, `aMoveFn`,
 `aDecayFn`, `aRepResetFn`, `releaseRoomFn`.
+
+---
+
+### Instanced Jail Cells
+
+Each arrest creates a **private ephemeral jail cell** owned by a single
+prisoner, rather than placing all prisoners in a shared static room.
+
+#### Creation seam — `aCreateCellFn`
+
+```go
+var aCreateCellFn = func(prisonerUserId, releaseRoomId int) (int, bool)
+```
+
+The default implementation calls:
+```go
+rooms.CreateZoneInstanceWithOpts(
+    "Instance Jail Cell", 1, prisoner, []int{prisoner},
+    releaseRoom,
+    rooms.ZoneInstanceOpts{SuppressReturnPortal: true},
+)
+```
+
+Returns the ephemeral entry room ID and `true` on success. The zone
+template (`instance_jail_cell/5107.yaml`) is a plain stone cell; the
+description is patched at arrest time via `aSetCellDescFn` (see below).
+
+`SuppressReturnPortal: true` ensures no "return portal" exit is added to
+the ephemeral room — the prisoner cannot walk out; release is only via
+`ResolveDetention`.
+
+The zone sets `portal_duration: none`, so `CheckPortalTimers` skips it
+entirely — no TTL eviction or "portal collapsing" warnings. (An empty
+`portal_duration` would be auto-filled to `"30 real minutes"` by
+`ZoneConfig.Validate()` — the explicit `none` sentinel is required.) Cell
+lifetime is owned by explicit teardown on release or despawn.
+
+On failure, `ExecuteArrest` falls back to the faction's static
+`HoldingCellRoom`. If that is also 0, the arrest is silently aborted.
+
+#### Description seam — `aSetCellDescFn`
+
+```go
+var aSetCellDescFn = func(roomId int, desc string)
+```
+
+Mutates the ephemeral cell room's `Description` to faction-appropriate
+prose. The caller builds the description text via `factionCellDescription(faction)`
+and passes the result so it stays in sync with the `instance_jail_cell/5107.yaml`
+template room's own text.
+
+#### Teardown seam — `aTeardownCellFn`
+
+```go
+var aTeardownCellFn = func(entryRoomId int)
+```
+
+Called by both `ResolveDetention` (release) and `HandleJailedDespawn`
+(logout) when `InstanceId != 0`. Removes the zone from the instance
+registry and calls `rooms.TryEphemeralCleanup` to reclaim the ephemeral
+ID range.
+
+#### Logout / despawn — `HandleJailedDespawn(player *characters.Character)`
+
+Called from the `PlayerDespawn_JailCleanup` hook when a jailed player
+disconnects:
+
+1. Tears down the ephemeral cell (`aTeardownCellFn`) to free the room ID.
+2. **Keeps the jail record intact** — the absolute `UntilRound` sentence
+   clock persists on the character so time continues to tick offline.
+3. Rewrites `jail_cell_room` to the faction's static fallback cell and
+   clears `jail_instance_id` so the character never loads into a dead
+   ephemeral room on the next login.
+
+The character's saved `RoomId` is also set to the static fallback, which
+is what the engine reads when the player next connects.
+
+#### Login restore — `RestoreJailOnLogin(player, userId)`
+
+Called from `PlayerSpawn_HandleJoin` (login hook) for any character whose
+jail record has a non-zero `UntilRound`:
+
+- **Sentence already served** (offline time ≥ `UntilRound`): calls
+  `ResolveDetention` immediately — the player is released on connect.
+- **Sentence still running**: creates a fresh ephemeral cell via
+  `aCreateCellFn`, refreshes buff 88 to the **remaining** rounds
+  (`UntilRound - nowRound`), applies `aSetCellDescFn`, and moves the
+  player inside. This path handles both normal logout/login and server
+  restarts (all ephemeral instances vanish on boot; `UntilRound` on the
+  character YAML is the authoritative clock).
+
+`RestoreJailOnLogin` is the single authoritative placement point for
+returning prisoners; no other login path touches cell assignment.
 
 ---
 
@@ -281,9 +386,12 @@ guard mob's per-round tick
             ├─ within grace → no-op
             └─ grace done   → executeArrestFn
                                └─ ExecuteArrest
+                                    ├─ aCreateCellFn → instanced cell
+                                    │    (falls back to static HoldingCellRoom)
+                                    ├─ aSetCellDescFn (patch cell description)
                                     ├─ buff 88 (Jailed, no-go)
-                                    ├─ jail MiscData record
-                                    └─ MoveToRoom(cell)
+                                    ├─ jail MiscData record (incl. InstanceId)
+                                    └─ MoveToRoom(ephemeral entry room)
 
 per-round player tick (hooks/Jail_ExpiryRelease.go)
   └─ releaseIfSentenceServed → jailExpired? → ResolveDetention
@@ -291,7 +399,21 @@ per-round player tick (hooks/Jail_ExpiryRelease.go)
                                                ├─ bounty withdrawn
                                                ├─ rep floor restored
                                                ├─ buff 88 removed
+                                               ├─ aTeardownCellFn (if InstanceId≠0)
                                                └─ MoveToRoom(releaseRoomFn → 473/4110)
+
+player logout (hooks/PlayerDespawn_JailCleanup)
+  └─ HandleJailedDespawn
+       ├─ aTeardownCellFn (free ephemeral room)
+       ├─ keep UntilRound on character (offline clock)
+       └─ rewrite RoomId → static fallback cell
+
+player login (hooks/PlayerSpawn_HandleJoin)
+  └─ RestoreJailOnLogin
+       ├─ sentence served offline? → ResolveDetention (release on connect)
+       └─ still jailed? → aCreateCellFn (fresh cell)
+                          + buff 88 refreshed to remaining rounds
+                          + MoveToRoom(new ephemeral cell)
 
 player commands
   └─ fine    → currentJailFine → JailInfo → display decaying fine
@@ -307,6 +429,8 @@ player commands
 | `internal/hooks/NewRound_MobRoundTick.go` | `RunGuardEnforcement` (guard-group mobs) |
 | `internal/hooks/Jail_ExpiryRelease.go` | `JailInfo`, `ResolveDetention` (per-player tick) |
 | `internal/hooks/PlayerDeath_BountyResolve.go` | `ClearFactionRecord` (5.2: hunter kill clears the record, same as serving a sentence); `bounties.Withdraw` (on wanted player's death via other paths) |
+| `internal/hooks/PlayerDespawn_JailCleanup.go` | `HandleJailedDespawn` — tears down ephemeral cell on logout, preserves `UntilRound` |
+| `internal/hooks/PlayerSpawn_HandleJoin.go` | `RestoreJailOnLogin` — re-creates cell or releases on reconnect/server restart |
 | `internal/hooks/justice_wiring.go` | `justice.SetGuardSay(fn)` at init |
 | `internal/hooks/MobDeath_FactionRep.go` | `MaybeDeclareBounty` (murder) |
 | `internal/actions/attack.go` | `MaybeDeclareBounty` (assault) |

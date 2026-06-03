@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/justice"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
@@ -195,7 +196,12 @@ func HandleJoin(e events.Event) events.ListenerReturn {
 	// Respawn any saved companions.
 	respawnCompanions(user)
 
-	// TODO HERE
+	// Reconcile jail state: if the sentence elapsed while the player was offline,
+	// release them; otherwise re-create a fresh instanced cell and place them
+	// inside. This must run after default room placement (above) so that
+	// RestoreJailOnLogin's MoveToRoom call is the authoritative final placement.
+	justice.RestoreJailOnLogin(user.Character, user.UserId)
+
 	loginCmds := configs.GetConfig().Server.OnLoginCommands
 	if len(loginCmds) > 0 {
 

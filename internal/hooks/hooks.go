@@ -60,6 +60,8 @@ func RegisterListeners() {
 	events.RegisterListener(events.PlayerSpawn{}, HandleJoin)
 	// Player despawn: clear tracking/shadow state pointing at the leaving player
 	events.RegisterListener(events.PlayerDespawn{}, PlayerDespawnTrackingCleanup)
+	// Player despawn: tear down ephemeral jail cell + preserve sentence record
+	events.RegisterListener(events.PlayerDespawn{}, PlayerDespawnJailCleanup)
 	events.RegisterListener(events.PlayerDespawn{}, HandleLeave, events.Last) // This is a final listener, has to happen last
 
 	// Day/Night cycle

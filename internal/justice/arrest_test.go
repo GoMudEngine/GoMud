@@ -2,6 +2,7 @@ package justice
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/bounties"
@@ -554,5 +555,385 @@ func TestResolveDetention_RepAboveFloor(t *testing.T) {
 
 	if setRepCalled {
 		t.Error("SetRep should not be called when rep >= floor")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// ExecuteArrest instanced-cell tests (Task 3)
+// ---------------------------------------------------------------------------
+
+func TestExecuteArrest_UsesInstancedCell(t *testing.T) {
+	origCell := cellRoomFn
+	origMove := aMoveFn
+	origCreate := aCreateCellFn
+	origDesc := aSetCellDescFn
+	origDecay := aDecayFn
+	origNow := bNowFn
+	defer func() {
+		cellRoomFn = origCell
+		aMoveFn = origMove
+		aCreateCellFn = origCreate
+		aSetCellDescFn = origDesc
+		aDecayFn = origDecay
+		bNowFn = origNow
+	}()
+
+	cellRoomFn = func(string) int { return 473 }
+	aDecayFn = func() int { return 5 }
+	bNowFn = func() uint64 { return 100 }
+
+	var movedTo int
+	aMoveFn = func(userId int, roomId int, isSpawn ...bool) error { movedTo = roomId; return nil }
+
+	var createdFor int
+	aCreateCellFn = func(prisonerUserId, releaseRoomId int) (int, bool) {
+		createdFor = prisonerUserId
+		return 60001, true
+	}
+
+	descSet := ""
+	aSetCellDescFn = func(roomId int, desc string) { descSet = desc }
+
+	ch := &characters.Character{}
+	ok := ExecuteArrest(ch, 42, "thornwall_guards", false)
+	if !ok {
+		t.Fatalf("arrest should succeed")
+	}
+	if createdFor != 42 {
+		t.Fatalf("expected cell created for 42, got %d", createdFor)
+	}
+	rec, jailed := JailInfo(ch)
+	if !jailed || rec.InstanceId != 60001 {
+		t.Fatalf("expected InstanceId 60001, got %+v", rec)
+	}
+	if movedTo != 60001 {
+		t.Fatalf("expected move to 60001, got %d", movedTo)
+	}
+	if descSet == "" {
+		t.Fatalf("expected faction-flavored cell description set")
+	}
+	if !strings.Contains(descSet, "thornwall_guards") {
+		t.Fatalf("expected cell description to contain faction name %q, got: %s", "thornwall_guards", descSet)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// ResolveDetention instanced-cell teardown tests (Task 4)
+// ---------------------------------------------------------------------------
+
+func TestResolveDetention_TearsDownInstance(t *testing.T) {
+	origMove, origTeardown := aMoveFn, aTeardownCellFn
+	origResolve, origCrimes := aResolveCrimeFn, aCrimesForFactionFn
+	origAllies := alliesFn
+	origReleaseRoom := releaseRoomFn
+	origRepReset := aRepResetFn
+	origGetRep := aGetRepFn
+	origSetRep := aSetRepFn
+	origOpenBounties := aOpenBountiesFn
+	origWithdraw := aWithdrawFn
+	defer func() {
+		aMoveFn, aTeardownCellFn = origMove, origTeardown
+		aResolveCrimeFn, aCrimesForFactionFn = origResolve, origCrimes
+		alliesFn = origAllies
+		releaseRoomFn = origReleaseRoom
+		aRepResetFn = origRepReset
+		aGetRepFn = origGetRep
+		aSetRepFn = origSetRep
+		aOpenBountiesFn = origOpenBounties
+		aWithdrawFn = origWithdraw
+	}()
+	aMoveFn = func(int, int, ...bool) error { return nil }
+	aCrimesForFactionFn = func(string, bool) []*crimes.Crime { return nil }
+	aResolveCrimeFn = func(string, int, string) {}
+	alliesFn = func(string) []string { return nil }
+	releaseRoomFn = func(string) int { return 0 }
+	aRepResetFn = func() int { return -10 }
+	aGetRepFn = func(string, int) int { return 0 }
+	aSetRepFn = func(string, int, int) {}
+	aOpenBountiesFn = func(int) []*bounties.Bounty { return nil }
+	aWithdrawFn = func(int) {}
+	var torndown int
+	aTeardownCellFn = func(entryRoomId int) { torndown = entryRoomId }
+
+	ch := &characters.Character{}
+	ch.SetMiscData(keyJailUntilRound, uint64(100))
+	ch.SetMiscData(keyJailFaction, "thornwall_guards")
+	ch.SetMiscData(keyJailInstanceId, 60001)
+
+	if !ResolveDetention(ch, 42) {
+		t.Fatalf("resolve should succeed")
+	}
+	if torndown != 60001 {
+		t.Fatalf("expected instance 60001 torn down, got %d", torndown)
+	}
+	if _, jailed := JailInfo(ch); jailed {
+		t.Fatalf("jail record should be cleared")
+	}
+}
+
+func TestResolveDetention_LegacyStaticCellNoTeardown(t *testing.T) {
+	origMove, origTeardown, origCrimes := aMoveFn, aTeardownCellFn, aCrimesForFactionFn
+	origResolve := aResolveCrimeFn
+	origAllies := alliesFn
+	origReleaseRoom := releaseRoomFn
+	origRepReset := aRepResetFn
+	origGetRep := aGetRepFn
+	origSetRep := aSetRepFn
+	origOpenBounties := aOpenBountiesFn
+	origWithdraw := aWithdrawFn
+	defer func() {
+		aMoveFn, aTeardownCellFn, aCrimesForFactionFn = origMove, origTeardown, origCrimes
+		aResolveCrimeFn = origResolve
+		alliesFn = origAllies
+		releaseRoomFn = origReleaseRoom
+		aRepResetFn = origRepReset
+		aGetRepFn = origGetRep
+		aSetRepFn = origSetRep
+		aOpenBountiesFn = origOpenBounties
+		aWithdrawFn = origWithdraw
+	}()
+	aMoveFn = func(int, int, ...bool) error { return nil }
+	aCrimesForFactionFn = func(string, bool) []*crimes.Crime { return nil }
+	aResolveCrimeFn = func(string, int, string) {}
+	alliesFn = func(string) []string { return nil }
+	releaseRoomFn = func(string) int { return 0 }
+	aRepResetFn = func() int { return -10 }
+	aGetRepFn = func(string, int) int { return 0 }
+	aSetRepFn = func(string, int, int) {}
+	aOpenBountiesFn = func(int) []*bounties.Bounty { return nil }
+	aWithdrawFn = func(int) {}
+	teardownCalled := false
+	aTeardownCellFn = func(int) { teardownCalled = true }
+
+	ch := &characters.Character{}
+	ch.SetMiscData(keyJailUntilRound, uint64(100))
+	ch.SetMiscData(keyJailFaction, "thornwall_guards")
+	ch.SetMiscData(keyJailInstanceId, 0)
+
+	ResolveDetention(ch, 42)
+	if teardownCalled {
+		t.Fatalf("legacy static-cell release must NOT call instance teardown")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// HandleJailedDespawn tests (Task 5)
+// ---------------------------------------------------------------------------
+
+func TestHandleJailedDespawn_TearsDownKeepsRecordRewritesRoom(t *testing.T) {
+	origTeardown, origCell := aTeardownCellFn, cellRoomFn
+	defer func() { aTeardownCellFn, cellRoomFn = origTeardown, origCell }()
+	var torndown int
+	aTeardownCellFn = func(id int) { torndown = id }
+	cellRoomFn = func(string) int { return 473 }
+
+	ch := &characters.Character{}
+	ch.SetMiscData(keyJailUntilRound, uint64(9999))
+	ch.SetMiscData(keyJailFaction, "thornwall_guards")
+	ch.SetMiscData(keyJailInstanceId, 60001)
+
+	HandleJailedDespawn(ch)
+
+	if torndown != 60001 {
+		t.Fatalf("expected instance torn down, got %d", torndown)
+	}
+	if _, jailed := JailInfo(ch); !jailed {
+		t.Fatalf("jail record must survive logout")
+	}
+	if instId, _ := miscDataInt(ch.MiscData, keyJailInstanceId); instId != 0 {
+		t.Fatalf("InstanceId must be cleared, got %d", instId)
+	}
+	if ch.RoomId != 473 {
+		t.Fatalf("expected saved RoomId 473, got %d", ch.RoomId)
+	}
+}
+
+func TestHandleJailedDespawn_NotJailedNoOp(t *testing.T) {
+	origTeardown := aTeardownCellFn
+	defer func() { aTeardownCellFn = origTeardown }()
+	called := false
+	aTeardownCellFn = func(int) { called = true }
+	ch := &characters.Character{}
+	HandleJailedDespawn(ch)
+	if called {
+		t.Fatalf("non-jailed despawn must be a no-op")
+	}
+}
+
+// TestHandleJailedDespawn_StaticCellNoTeardown verifies the static-cell path:
+// when instId == 0 the teardown seam must NOT be called, the jail record must
+// survive, and RoomId must still be rewritten to the faction's fallback cell.
+func TestHandleJailedDespawn_StaticCellNoTeardown(t *testing.T) {
+	origTeardown, origCell := aTeardownCellFn, cellRoomFn
+	defer func() { aTeardownCellFn, cellRoomFn = origTeardown, origCell }()
+
+	teardownCalled := false
+	aTeardownCellFn = func(int) { teardownCalled = true }
+	cellRoomFn = func(string) int { return 473 }
+
+	ch := &characters.Character{}
+	ch.SetMiscData(keyJailUntilRound, uint64(9999))
+	ch.SetMiscData(keyJailFaction, "thornwall_guards")
+	ch.SetMiscData(keyJailInstanceId, 0)
+
+	HandleJailedDespawn(ch)
+
+	if teardownCalled {
+		t.Fatalf("static-cell despawn must NOT call aTeardownCellFn (instId == 0)")
+	}
+	if _, jailed := JailInfo(ch); !jailed {
+		t.Fatalf("jail record must survive logout for static-cell player")
+	}
+	if ch.RoomId != 473 {
+		t.Fatalf("expected saved RoomId 473 (fallback cell), got %d", ch.RoomId)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// RestoreJailOnLogin tests (Task 6)
+// ---------------------------------------------------------------------------
+
+func TestRestoreJailOnLogin_ReleasesWhenSentenceServedOffline(t *testing.T) {
+	origNow, origMove, origCrimes := bNowFn, aMoveFn, aCrimesForFactionFn
+	origResolve := aResolveCrimeFn
+	origAllies := alliesFn
+	origOpenBounties, origWithdraw := aOpenBountiesFn, aWithdrawFn
+	origGetRep, origSetRep, origRepReset := aGetRepFn, aSetRepFn, aRepResetFn
+	origRelease := releaseRoomFn
+	defer func() {
+		bNowFn, aMoveFn, aCrimesForFactionFn = origNow, origMove, origCrimes
+		aResolveCrimeFn = origResolve
+		alliesFn = origAllies
+		aOpenBountiesFn, aWithdrawFn = origOpenBounties, origWithdraw
+		aGetRepFn, aSetRepFn, aRepResetFn = origGetRep, origSetRep, origRepReset
+		releaseRoomFn = origRelease
+	}()
+	bNowFn = func() uint64 { return 200 }
+	aMoveFn = func(int, int, ...bool) error { return nil }
+	aCrimesForFactionFn = func(string, bool) []*crimes.Crime { return nil }
+	aResolveCrimeFn = func(string, int, string) {}
+	alliesFn = func(string) []string { return nil }
+	aOpenBountiesFn = func(int) []*bounties.Bounty { return nil }
+	aWithdrawFn = func(int) {}
+	aGetRepFn = func(string, int) int { return 0 }
+	aSetRepFn = func(string, int, int) {}
+	aRepResetFn = func() int { return -10 }
+	releaseRoomFn = func(string) int { return 473 }
+
+	ch := &characters.Character{}
+	ch.SetMiscData(keyJailUntilRound, uint64(100)) // expired: 100 <= 200
+	ch.SetMiscData(keyJailFaction, "thornwall_guards")
+	ch.SetMiscData(keyJailInstanceId, 0)
+
+	RestoreJailOnLogin(ch, 42)
+	if _, jailed := JailInfo(ch); jailed {
+		t.Fatalf("expired sentence should be released on login")
+	}
+}
+
+func TestRestoreJailOnLogin_ReInstancesWhenStillServing(t *testing.T) {
+	origNow, origMove, origCreate, origRelease := bNowFn, aMoveFn, aCreateCellFn, releaseRoomFn
+	origDesc := aSetCellDescFn
+	defer func() {
+		bNowFn, aMoveFn, aCreateCellFn, releaseRoomFn = origNow, origMove, origCreate, origRelease
+		aSetCellDescFn = origDesc
+	}()
+	bNowFn = func() uint64 { return 50 } // still serving (until 100)
+	releaseRoomFn = func(string) int { return 473 }
+	var movedTo int
+	aMoveFn = func(_, roomId int, _ ...bool) error { movedTo = roomId; return nil }
+	aCreateCellFn = func(int, int) (int, bool) { return 60002, true }
+	aSetCellDescFn = func(int, string) {}
+
+	ch := &characters.Character{}
+	ch.SetMiscData(keyJailUntilRound, uint64(100))
+	ch.SetMiscData(keyJailFaction, "thornwall_guards")
+	ch.SetMiscData(keyJailInstanceId, 0) // stale (instance gone on logout)
+
+	RestoreJailOnLogin(ch, 42)
+	rec, jailed := JailInfo(ch)
+	if !jailed || rec.InstanceId != 60002 {
+		t.Fatalf("expected fresh instance 60002, got %+v", rec)
+	}
+	if movedTo != 60002 {
+		t.Fatalf("expected placed in fresh cell 60002, got %d", movedTo)
+	}
+}
+
+func TestRestoreJailOnLogin_NotJailedNoOp(t *testing.T) {
+	ch := &characters.Character{}
+	RestoreJailOnLogin(ch, 42) // must not panic / must no-op
+	if _, jailed := JailInfo(ch); jailed {
+		t.Fatalf("non-jailed login must stay non-jailed")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// HandleJailedDeath tests (I-1)
+// ---------------------------------------------------------------------------
+
+func TestHandleJailedDeath_TearsDownAndEndsDetention(t *testing.T) {
+	origTeardown := aTeardownCellFn
+	defer func() { aTeardownCellFn = origTeardown }()
+	var torndown int
+	aTeardownCellFn = func(id int) { torndown = id }
+
+	ch := &characters.Character{}
+	ch.SetMiscData(keyJailUntilRound, uint64(9999))
+	ch.SetMiscData(keyJailFaction, "thornwall_guards")
+	ch.SetMiscData(keyJailInstanceId, 60001)
+
+	HandleJailedDeath(ch)
+
+	if torndown != 60001 {
+		t.Fatalf("expected instance torn down, got %d", torndown)
+	}
+	if _, jailed := JailInfo(ch); jailed {
+		t.Fatalf("detention should be ended on death")
+	}
+}
+
+func TestHandleJailedDeath_NotJailedNoOp(t *testing.T) {
+	origTeardown := aTeardownCellFn
+	defer func() { aTeardownCellFn = origTeardown }()
+	called := false
+	aTeardownCellFn = func(int) { called = true }
+	ch := &characters.Character{}
+	HandleJailedDeath(ch)
+	if called {
+		t.Fatalf("non-jailed death must be a no-op")
+	}
+}
+
+func TestExecuteArrest_FallsBackToStaticCellOnInstanceFailure(t *testing.T) {
+	origCell := cellRoomFn
+	origMove := aMoveFn
+	origCreate := aCreateCellFn
+	origDecay := aDecayFn
+	origNow := bNowFn
+	defer func() {
+		cellRoomFn = origCell
+		aMoveFn = origMove
+		aCreateCellFn = origCreate
+		aDecayFn = origDecay
+		bNowFn = origNow
+	}()
+
+	cellRoomFn = func(string) int { return 473 }
+	aDecayFn = func() int { return 5 }
+	bNowFn = func() uint64 { return 100 }
+
+	var movedTo int
+	aMoveFn = func(userId int, roomId int, isSpawn ...bool) error { movedTo = roomId; return nil }
+	aCreateCellFn = func(int, int) (int, bool) { return 0, false }
+
+	ch := &characters.Character{}
+	ok := ExecuteArrest(ch, 42, "thornwall_guards", false)
+	if !ok {
+		t.Fatalf("arrest should succeed via static fallback")
+	}
+	rec, _ := JailInfo(ch)
+	if rec.InstanceId != 0 || rec.CellRoom != 473 || movedTo != 473 {
+		t.Fatalf("expected static fallback (cell 473, InstanceId 0), got %+v movedTo=%d", rec, movedTo)
 	}
 }
