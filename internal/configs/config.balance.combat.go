@@ -55,6 +55,9 @@ func (b *Balance) validateCombat() {
 	if b.SpecialMoveCooldown < 1 {
 		b.SpecialMoveCooldown = 5
 	}
+	if b.TauntHoldRounds < 1 {
+		b.TauntHoldRounds = 4
+	}
 
 	// ── SKULLDUGGERY ─────────────────────────────────────────────────────────
 	if b.SneakFailCooldown < 0 {

@@ -49,6 +49,15 @@ func Howl(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			fmt.Sprintf(`Something lets out a bone-chilling howl at <ansi fg="username">%s</ansi>!`, targetName),
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> throws back its head and lets out a bone-chilling howl at <ansi fg="username">%s</ansi>!`, mob.Character.Name, targetName))
 
+		// Aggro-pull confirmation: the howl yanked the target off its prior foe
+		// and pinned it (taunt-hold). AggroPulled is only ever set when the
+		// target is a mob, so the name colors as a mobname.
+		if result.AggroPulled {
+			sendAudioRoomText(room, mob, messaging.CategoryTauntSuccess,
+				`Something turns, drawn snarling toward a new foe.`,
+				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> turns from its prey and snarls at <ansi fg="mobname">%s</ansi>!`, targetName, mob.Character.Name))
+		}
+
 		// Stoic resolve messaging
 		if result.CritDeflected {
 			if targetPlayer != nil {

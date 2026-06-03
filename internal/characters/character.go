@@ -137,6 +137,13 @@ type Character struct {
 	ConvictionMax   stats.StatInfo `yaml:"-"`                        // The maximum conviction of the character. Don't write to yaml since is dynamically calculated.
 	ActionPointsMax stats.StatInfo `yaml:"-"`                        // The maximum actions of character. Don't write to yaml since is dynamically calculated.
 	Aggro           *Aggro         `yaml:"-"`                        // Runtime combat target. All writes go through SetAggro/EndAggro (dual-write to CombatPhase).
+	// Taunt-hold lock (transient, not serialized): a successful taunt pins
+	// this character's aggro onto the taunter until tauntHoldUntilRound, so
+	// reactive basic-attack re-aggro can't flip the target back. Set via
+	// ForceTauntAggro, read in SetAggro's gate, cleared in EndAggro.
+	tauntHoldUntilRound    uint64 `yaml:"-"`
+	tauntHoldUserId        int    `yaml:"-"`
+	tauntHoldMobInstanceId int    `yaml:"-"`
 	// CombatPhase is the canonical state machine for "am I in combat?" and
 	// "who am I targeting?". It runs alongside the Aggro field; both are
 	// kept in sync by SetAggro/EndAggro. Direct .Aggro reads remain valid.

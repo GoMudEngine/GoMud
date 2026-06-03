@@ -108,6 +108,7 @@ type Balance struct {
 
 	// ── COMBAT: SPECIAL MOVES ────────────────────────────────────────────────
 	SpecialMoveCooldown ConfigInt   `yaml:"SpecialMoveCooldown"` // Shared cooldown rounds for bash/trip/kick (default 5)
+	TauntHoldRounds     ConfigInt   `yaml:"TauntHoldRounds"`     // Rounds a successful taunt pins the target's aggro onto the taunter (default 4)
 	BashDamagePercent   ConfigFloat `yaml:"BashDamagePercent"`   // Fraction of normal melee damage (default 0.50)
 	BashKnockdownChance ConfigInt   `yaml:"BashKnockdownChance"` // Base % knockdown chance (default 40)
 	TripDamagePercent   ConfigFloat `yaml:"TripDamagePercent"`   // Fraction of normal melee damage (default 0.25)
