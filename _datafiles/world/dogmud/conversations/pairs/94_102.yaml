@@ -11,11 +11,11 @@ exchanges:
         text: "I'll take the nerves."
   - lines:
       - speaker: A
-        text: "Any trouble I should know about?"
+        text: "Heard there was a pickpocket working the east stalls."
       - speaker: B
-        text: "Pickpocket worked the east stalls last week. Gone now."
+        text: "Last week. Gone now, whoever it was."
       - speaker: A
-        text: "Tell me next time it's the same week."
+        text: "These things pass through and move on. Usually."
   - lines:
       - speaker: A
         text: "Caravan's running guarded these days."
