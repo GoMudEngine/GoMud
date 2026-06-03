@@ -4,9 +4,14 @@ When you commit crimes in a town, the local guards will eventually
 come for you. What happens then depends on your <ansi fg="command">arrest policy</ansi>.
 
 <ansi fg="yellow">Surrender</ansi> (the default): you go quietly. A guard hauls you off to
-a holding cell to serve a sentence. You can wait it out, or pay a
-<ansi fg="command">fine</ansi> to leave early (see <ansi fg="command">help fine</ansi>). Either way, serving your
-time clears your record with that faction.
+a private holding cell reserved for you alone. No other prisoners
+share it, there are no exits, and recall will not work from inside.
+You stay until you pay your fine or serve the full sentence.
+
+Your sentence runs in real time -- logging out does not pause it.
+If you log back in and the term has elapsed, you walk free. If not,
+you wake up right where you left off: behind bars. Either way,
+serving your time clears your record with that faction.
 
 <ansi fg="yellow">Resist</ansi>: you refuse to be taken. The guards drop the pretense and
 fight you for real. Guards are trained and well-equipped, and they
