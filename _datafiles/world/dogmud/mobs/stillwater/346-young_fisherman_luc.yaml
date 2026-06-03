@@ -10,6 +10,9 @@ maxwander: 1
 groups:
   - humanoid
   - stillwater_citizens
+knows_facts:
+  - stillwater-lake-decline
+  - stillwater-cave-creatures
 idlecommands:
   - 'emote casts a line out over the shallows with a practiced flick of
     the wrist'

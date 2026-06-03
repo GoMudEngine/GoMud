@@ -6,3 +6,43 @@ facts:
       tags:
         - politics
       status: active
+    - id: stillwater-lake-decline
+      description: Boats return half-empty from the lake; nets come up shredded by something out of the caves.
+      significance: 2
+      declared_round: 0
+      tags:
+        - stillwater
+        - crisis
+      status: active
+    - id: stillwater-voss-death
+      description: Elgar Voss was lost to the lake twelve years ago; his body was never recovered.
+      significance: 1
+      declared_round: 0
+      tags:
+        - stillwater
+        - history
+      status: active
+    - id: stillwater-spiral-motif
+      description: A spiral older than the Chrysalis order is carved on the temple, the garden marker, the old chapel ruin, and the wardstones.
+      significance: 1
+      declared_round: 0
+      tags:
+        - stillwater
+        - lore
+      status: active
+    - id: stillwater-cave-creatures
+      description: Drowned hunters and skitter-shrimp from the deep caves have pushed into the shallows.
+      significance: 2
+      declared_round: 0
+      tags:
+        - stillwater
+        - crisis
+      status: active
+    - id: stillwater-pearl-divers-gone
+      description: The black-pearl divers stopped coming years ago; folk say the water has gone strange.
+      significance: 1
+      declared_round: 0
+      tags:
+        - stillwater
+        - history
+      status: active

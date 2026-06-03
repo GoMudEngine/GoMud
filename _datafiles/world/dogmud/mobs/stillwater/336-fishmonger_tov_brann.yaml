@@ -18,6 +18,9 @@ groups:
   - humanoid
   - merchant
   - stillwater_citizens
+knows_facts:
+  - stillwater-lake-decline
+  - stillwater-cave-creatures
 idlecommands:
   - 'emote rearranges a tray of fish on chipped ice, nudging each one
     into a tighter row'

@@ -16,6 +16,8 @@ groups:
 relationships:
   - to: 343
     type: friend
+knows_facts:
+  - stillwater-voss-death
 idlecommands:
   - 'emote works the bellows with steady, metronomic pulls, building the
     forge heat'

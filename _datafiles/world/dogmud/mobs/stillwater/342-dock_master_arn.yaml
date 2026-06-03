@@ -11,6 +11,9 @@ groups:
   - humanoid
   - dockmaster
   - stillwater_citizens
+knows_facts:
+  - stillwater-lake-decline
+  - stillwater-cave-creatures
 idlecommands:
   - 'emote marks something in the dock ledger with a short, hard stroke'
   - ''

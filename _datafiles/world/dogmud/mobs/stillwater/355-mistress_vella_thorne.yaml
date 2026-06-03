@@ -11,6 +11,9 @@ groups:
   - humanoid
   - healer
   - stillwater_citizens
+knows_facts:
+  - stillwater-voss-death
+  - stillwater-spiral-motif
 idlecommands:
   - 'emote tips a slow drop from the still''s collection-vial onto a small
     glass plate and watches the colour'

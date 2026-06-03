@@ -18,6 +18,11 @@ relationships:
   - to: 346
     type: friend
     subtype: mentor
+knows_facts:
+  - stillwater-lake-decline
+  - stillwater-cave-creatures
+  - stillwater-voss-death
+  - stillwater-pearl-divers-gone
 idlecommands:
   - 'emote works a needle through a torn mesh with the slow patience of
     someone in no hurry to finish'

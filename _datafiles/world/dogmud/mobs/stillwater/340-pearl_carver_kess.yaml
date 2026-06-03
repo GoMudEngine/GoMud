@@ -12,6 +12,8 @@ groups:
   - humanoid
   - merchant
   - stillwater_citizens
+knows_facts:
+  - stillwater-pearl-divers-gone
 idlecommands:
   - 'emote turns a pearl slowly under a lens, checking the nacre for
     blemishes'
