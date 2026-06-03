@@ -17,6 +17,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/knowledge"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -274,10 +275,14 @@ func JailInfo(player *characters.Character) (JailRecord, bool) {
 // ---------------------------------------------------------------------------
 
 // factionCellDescription returns the faction-flavored description stamped on an
-// instanced jail cell. The prose mirrors the 5107.yaml template room description
-// with only the furnishings line replaced by a faction-seal reference. Both
-// ExecuteArrest and RestoreJailOnLogin call this helper so the text stays
-// consistent.
+// instanced jail cell. Both ExecuteArrest and RestoreJailOnLogin call this helper
+// so the text stays consistent.
+//
+// WARNING: the opening/closing prose INTENTIONALLY mirrors the description in
+// _datafiles/world/dogmud/rooms/thornwall_city/5107.yaml (the static fallback
+// cell template). If you edit the template room's description, you MUST update
+// the string literal here to match, or players will see different text depending
+// on whether they are in an instanced vs. static cell.
 func factionCellDescription(faction string) string {
 	factionName := faction
 	if d := factions.GetDefinition(faction); d != nil && d.DisplayName != "" {
@@ -552,12 +557,16 @@ func RestoreJailOnLogin(player *characters.Character, userId int) {
 	if created {
 		instanceId = entry
 		aSetCellDescFn(entry, factionCellDescription(faction))
+	} else if sc := cellRoomFn(faction); sc != 0 {
+		// Instance creation failed but a static fallback cell exists — use it.
+		entry = sc
 	} else {
-		if sc := cellRoomFn(faction); sc != 0 {
-			entry = sc
-		} else {
-			entry = releaseRoom
-		}
+		// Both instanced and static cell paths failed. The player remains jailed
+		// (buff + record intact) but will be placed in the release room until the
+		// timer fires. This is a soft-lock state — log a warning so operators can
+		// diagnose the misconfiguration.
+		mudlog.Warn("justice", "msg", "RestoreJailOnLogin: no cell available (instance + static both failed); placing jailed player in release room until timer release", "userId", userId, "faction", faction)
+		entry = releaseRoom
 	}
 
 	player.SetMiscData(keyJailInstanceId, instanceId)

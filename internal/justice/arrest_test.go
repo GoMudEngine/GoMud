@@ -795,12 +795,14 @@ func TestHandleJailedDespawn_StaticCellNoTeardown(t *testing.T) {
 
 func TestRestoreJailOnLogin_ReleasesWhenSentenceServedOffline(t *testing.T) {
 	origNow, origMove, origCrimes := bNowFn, aMoveFn, aCrimesForFactionFn
+	origResolve := aResolveCrimeFn
 	origAllies := alliesFn
 	origOpenBounties, origWithdraw := aOpenBountiesFn, aWithdrawFn
 	origGetRep, origSetRep, origRepReset := aGetRepFn, aSetRepFn, aRepResetFn
 	origRelease := releaseRoomFn
 	defer func() {
 		bNowFn, aMoveFn, aCrimesForFactionFn = origNow, origMove, origCrimes
+		aResolveCrimeFn = origResolve
 		alliesFn = origAllies
 		aOpenBountiesFn, aWithdrawFn = origOpenBounties, origWithdraw
 		aGetRepFn, aSetRepFn, aRepResetFn = origGetRep, origSetRep, origRepReset
@@ -809,6 +811,7 @@ func TestRestoreJailOnLogin_ReleasesWhenSentenceServedOffline(t *testing.T) {
 	bNowFn = func() uint64 { return 200 }
 	aMoveFn = func(int, int, ...bool) error { return nil }
 	aCrimesForFactionFn = func(string, bool) []*crimes.Crime { return nil }
+	aResolveCrimeFn = func(string, int, string) {}
 	alliesFn = func(string) []string { return nil }
 	aOpenBountiesFn = func(int) []*bounties.Bounty { return nil }
 	aWithdrawFn = func(int) {}
