@@ -14,17 +14,17 @@ import (
 
 // ZoneInstance tracks an active instanced zone.
 type ZoneInstance struct {
-	InstanceId      int   // ephemeral chunk ID (any ephemeral room ID works)
-	TemplateZone    string // zone name that was cloned
-	GoldPaid        int   // gold amount (for future scaling system)
-	AuthorizedUsers []int // userId snapshot at creation
-	OwnerUserId     int   // who paid
-	CreatedRound    uint64 // for timer tracking
-	PortalDuration  string // from zone config (e.g. "30m")
-	DeathPolicy     string // "rejoin" or "ejected"
-	AllowRecall     bool   // from zone config
-	OverworldRoomId int    // room where portal was created
-	EntryRoomId     int    // ephemeral entry room ID
+	InstanceId      int         // ephemeral chunk ID (any ephemeral room ID works)
+	TemplateZone    string      // zone name that was cloned
+	GoldPaid        int         // gold amount (for future scaling system)
+	AuthorizedUsers []int       // userId snapshot at creation
+	OwnerUserId     int         // who paid
+	CreatedRound    uint64      // for timer tracking
+	PortalDuration  string      // from zone config (e.g. "30m")
+	DeathPolicy     string      // "rejoin" or "ejected"
+	AllowRecall     bool        // from zone config
+	OverworldRoomId int         // room where portal was created
+	EntryRoomId     int         // ephemeral entry room ID
 	RoomIdMap       map[int]int // original → ephemeral room ID mapping
 }
 
@@ -276,8 +276,8 @@ func ScaleSpawnStatPools(spawns []SpawnInfo, goldPaid int, cap int) {
 	}
 }
 
-// ZoneInstanceOpts holds optional behavioural overrides for CreateZoneInstanceWithOpts.
-// The zero value reproduces the behaviour of the plain CreateZoneInstance call.
+// ZoneInstanceOpts holds optional behavioral overrides for CreateZoneInstanceWithOpts.
+// The zero value reproduces the behavior of the plain CreateZoneInstance call.
 type ZoneInstanceOpts struct {
 	// SuppressReturnPortal, when true, skips adding the "return portal"
 	// temporary exit to the entry room. Use this for jail cells or any
@@ -285,11 +285,15 @@ type ZoneInstanceOpts struct {
 	SuppressReturnPortal bool
 }
 
-// CreateZoneInstanceWithOpts is identical to CreateZoneInstance but accepts an
-// additional ZoneInstanceOpts argument that lets callers suppress optional
-// behaviours (e.g. the return-portal exit). Existing callers that invoke
-// CreateZoneInstance are unaffected — that function delegates here with a
-// zero-value opts struct, which preserves the original behaviour.
+// CreateZoneInstanceWithOpts clones a zone template into ephemeral rooms, wires
+// up a return portal in the entry room (unless opts.SuppressReturnPortal is
+// true), stamps instance metadata on every ephemeral room, and registers the
+// instance in the global registry.
+//
+// opts allows callers to suppress optional behaviors (e.g. the return-portal
+// exit). Existing callers that invoke CreateZoneInstance are unaffected — that
+// function delegates here with a zero-value opts struct, which preserves the
+// original behavior.
 func CreateZoneInstanceWithOpts(
 	zoneName string,
 	goldPaid int,
@@ -429,12 +433,8 @@ func CreateZoneInstanceWithOpts(
 	return inst, nil
 }
 
-// CreateZoneInstance clones a zone template into ephemeral rooms, wires up a
-// return portal in the entry room, stamps instance metadata on every ephemeral
-// room, and registers the instance in the global registry.
-//
-// This is a convenience wrapper around CreateZoneInstanceWithOpts with a
-// zero-value opts struct, preserving all prior behaviour for existing callers.
+// CreateZoneInstance is the backward-compatible wrapper that delegates to
+// CreateZoneInstanceWithOpts with a zero-value opts struct.
 func CreateZoneInstance(
 	zoneName string,
 	goldPaid int,

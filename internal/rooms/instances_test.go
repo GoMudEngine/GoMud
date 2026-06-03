@@ -605,17 +605,19 @@ func TestCreateZoneInstanceWithOpts_SuppressReturnPortal(t *testing.T) {
 	roomManager.roomIdToFileCache[entryRoomId] = filepath.Join(zoneFolder, "9001.yaml")
 	defer delete(roomManager.roomIdToFileCache, entryRoomId)
 
-	// Reset ephemeral state so the test is isolated and re-runnable.
+	// Reset ephemeral state and the package-level instance registry so the
+	// test is isolated and a latent Remove failure can't leak into other tests.
 	defer func() {
 		for i := range ephemeralRoomChunks {
 			ephemeralRoomChunks[i] = nil
 		}
 		originalRoomIdLookups = map[int]int{}
+		instanceRegistry = NewInstanceRegistry()
 	}()
 
 	// ── sub-case A: default CreateZoneInstance → return portal present ────────
 
-	instA, err := CreateZoneInstance(zoneName, 100, 1, []int{1}, overworldId)
+	instA, err := CreateZoneInstance(zoneName, 0, 1, []int{1}, overworldId)
 	if err != nil {
 		t.Fatalf("CreateZoneInstance (default) failed: %v", err)
 	}
@@ -631,14 +633,16 @@ func TestCreateZoneInstanceWithOpts_SuppressReturnPortal(t *testing.T) {
 	GetInstanceRegistry().Remove(instA)
 	TryEphemeralCleanup(instA.EntryRoomId)
 
-	// Re-seed the room cache entry (TryEphemeralCleanup evicts the room from
-	// memory; the cache entry was deleted by removeRoomFromMemory).
+	// Re-seed the template room's file-cache entry. removeRoomFromMemory deletes
+	// by the EPHEMERAL room id (instA.EntryRoomId), but that ephemeral id was
+	// mapped from template id 9001. The second clone's LoadRoomTemplate call
+	// looks up the template id 9001 in the file cache, so we must restore it.
 	roomManager.roomIdToFileCache[entryRoomId] = filepath.Join(zoneFolder, "9001.yaml")
 
 	// ── sub-case B: CreateZoneInstanceWithOpts(SuppressReturnPortal=true) ─────
 
 	instB, err := CreateZoneInstanceWithOpts(
-		zoneName, 100, 1, []int{1}, overworldId,
+		zoneName, 0, 1, []int{1}, overworldId,
 		ZoneInstanceOpts{SuppressReturnPortal: true},
 	)
 	if err != nil {
