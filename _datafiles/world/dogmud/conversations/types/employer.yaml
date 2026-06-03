@@ -1,0 +1,45 @@
+id: employer
+description: |
+  Generic banter between someone and the person who works for or
+  under them — work talk, small instructions, dry approval.
+exchanges:
+  - lines:
+      - speaker: A
+        text: "Slow morning?"
+      - speaker: B
+        text: "Slow enough. I'll find work if you'd rather."
+      - speaker: A
+        text: "It'll find you. It always does."
+  - lines:
+      - speaker: A
+        text: "You did well yesterday."
+      - speaker: B
+        text: "Didn't feel like it."
+      - speaker: A
+        text: "That's usually when it counts."
+  - lines:
+      - speaker: A
+        text: "Take your break when the room thins out."
+      - speaker: B
+        text: "And if it doesn't thin out?"
+      - speaker: A
+        text: "Then we're both lucky and both tired."
+  - lines:
+      - speaker: A
+        text: "Anything I should know about?"
+      - speaker: B
+        text: "Nothing that won't keep till morning."
+  - lines:
+      - speaker: A
+        text: "You're not paid to worry. That's my part."
+      - speaker: B
+        text: "Somebody has to help you with it."
+      - speaker: A
+        text: "Hmph. Fair."
+  - lines:
+      - speaker: A
+        text: "Long as the work's honest, the day's honest."
+      - speaker: B
+        text: "You say that every morning."
+      - speaker: A
+        text: "And it's true every morning."

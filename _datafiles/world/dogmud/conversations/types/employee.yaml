@@ -1,0 +1,39 @@
+id: employee
+description: |
+  Generic banter from the perspective of someone who works for
+  another — deference, gentle complaint, shared routine.
+exchanges:
+  - lines:
+      - speaker: A
+        text: "Where do you want this?"
+      - speaker: B
+        text: "Wherever it'll be out from underfoot."
+      - speaker: A
+        text: "That narrows it down."
+  - lines:
+      - speaker: A
+        text: "Same as yesterday?"
+      - speaker: B
+        text: "Same as every day. That's the trade."
+  - lines:
+      - speaker: A
+        text: "My back's telling me it's near closing."
+      - speaker: B
+        text: "Your back's an hour fast, as always."
+  - lines:
+      - speaker: A
+        text: "You ever think of doing something else?"
+      - speaker: B
+        text: "Every winter. Then spring comes."
+      - speaker: A
+        text: "Aye. Then spring comes."
+  - lines:
+      - speaker: A
+        text: "I'll lock up if you want to get on."
+      - speaker: B
+        text: "Good of you. I'll not argue."
+  - lines:
+      - speaker: A
+        text: "Quiet today."
+      - speaker: B
+        text: "Don't say it too loud. You'll wake the custom."
