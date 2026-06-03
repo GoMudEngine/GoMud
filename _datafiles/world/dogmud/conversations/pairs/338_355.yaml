@@ -23,8 +23,8 @@ exchanges:
         text: "Same patients, though. That's what matters."
   - lines:
       - speaker: A
-        text: "How's Ulla, truly?"
+        text: "How does Ulla seem to you these days?"
       - speaker: B
         text: "Some days the chair by the window is enough. Some days it isn't."
       - speaker: A
-        text: "You're good to sit with her."
+        text: "We do what we can for her."

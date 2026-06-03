@@ -1,15 +1,23 @@
 id: vella
-description: "Mistress Vella Thorne: stillroom work by day, sees patients, visits Ulla in the evening, sleeps at the cottage."
+description: "Mistress Vella Thorne: stillroom work, a morning consult with the apothecary, patients, evenings with Ulla, sleeps at the cottage."
 segments:
   - start: 6
-    end: 10
+    end: 9
     target_room: 4136
     activity: craft
     idlecommands:
       - emote sets the still to a slow simmer.
       - emote checks the patient bench is clean and ready.
       - say Earliest hours are for the work that can't wait.
-  - start: 10
+  - start: 9
+    end: 11
+    target_room: 4125
+    activity: ""
+    idlecommands:
+      - emote compares notes with the apothecary over a shared shelf.
+      - say Pond-willow where the lake-mint's run short. It'll serve.
+      - emote turns a stoppered bottle to the light.
+  - start: 11
     end: 16
     target_room: 4136
     activity: craft
