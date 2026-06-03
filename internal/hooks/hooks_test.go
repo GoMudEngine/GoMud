@@ -57,7 +57,7 @@ func seedAllRegistries() func() {
 		1: {
 			MobId:         1,
 			Zone:          "TestZone",
-			AutoAggro: true,
+			AutoAggro:     true,
 			ActivityLevel: 50,
 			Groups:        []string{"undead"},
 			Character: characters.Character{
@@ -67,7 +67,7 @@ func seedAllRegistries() func() {
 		2: {
 			MobId:         2,
 			Zone:          "TestZone",
-			AutoAggro: false,
+			AutoAggro:     false,
 			ActivityLevel: 30,
 			Character: characters.Character{
 				Name: "Merchant",
@@ -79,7 +79,7 @@ func seedAllRegistries() func() {
 			MobId:      1,
 			InstanceId: 100,
 			HomeRoomId: 1,
-			AutoAggro: true,
+			AutoAggro:  true,
 			Groups:     []string{"undead"},
 			Character: characters.Character{
 				Name:      "Skeleton",
@@ -198,7 +198,6 @@ func seedAllRegistries() func() {
 		cleanupBuffs()
 	}
 }
-
 
 // setCombatPositionParallel sets the Position FSM to the given state. Seeds
 // Position if nil. Synthetic Partner ref for grapple states (FSM requires non-zero).
@@ -2589,9 +2588,11 @@ func TestBuildGossipLine_KnownFactUsedWhenNoEvents(t *testing.T) {
 		"FilePaths.DataFiles": tmp,
 	}))
 	defer func() {
-		configs.AddOverlayOverrides(map[string]any{ //nolint:errcheck
+		if err := configs.AddOverlayOverrides(map[string]any{
 			"FilePaths.DataFiles": prev.DataFiles.String(),
-		})
+		}); err != nil {
+			t.Logf("failed to restore DataFiles override: %v", err)
+		}
 	}()
 
 	// Reset the facts in-memory caches so we start fresh.
@@ -2642,7 +2643,7 @@ func TestHandleIdleMobs_GossiperMob(t *testing.T) {
 		MobId:         114,
 		InstanceId:    200,
 		HomeRoomId:    1,
-		AutoAggro: false,
+		AutoAggro:     false,
 		ActivityLevel: 7,
 		Groups:        []string{"humanoid", "gossiper"},
 		Character: characters.Character{
