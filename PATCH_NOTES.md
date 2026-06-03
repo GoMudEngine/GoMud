@@ -1,5 +1,23 @@
 # DOGMud Patch Notes
 
+## 2026-06-03 — Private cells, taunts that stick, and combat polish
+
+- **Your own holding cell.** Getting arrested no longer drops you into a shared
+  room. Each prisoner is now taken to a private cell that only they can enter —
+  no cellmates, no one wandering in, no guard following you through the door. You
+  walk free by paying your fine or serving your time, and the cell is dismantled
+  when you go. Your sentence runs even while you are logged off, so if you
+  disconnect mid-sentence you return to a fresh cell with your time still ticking
+  down — or, if your term elapsed while you were away, you simply come back free.
+- **Taunts actually stick.** A companion or a taunting fighter now holds an
+  enemy's attention for a few rounds after a successful taunt, instead of the
+  enemy snapping straight back to whoever last hit it. Your golem can finally
+  stand in front and take the blows the way a tank should. (Tuning knob:
+  `TauntHoldRounds`, default 4.)
+- **No more "%s" in the brawl.** Golems and other natural bashers were printing a
+  raw placeholder where their attack name should be — they now "slam" with a
+  crushing slam, while shield-bearers land a proper shield bash.
+
 ## 2026-06-03 — Stillwater comes to life
 
 The lakeside town of Stillwater is the first place where the townsfolk truly
