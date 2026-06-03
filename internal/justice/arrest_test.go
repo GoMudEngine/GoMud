@@ -868,6 +868,43 @@ func TestRestoreJailOnLogin_NotJailedNoOp(t *testing.T) {
 	}
 }
 
+// ---------------------------------------------------------------------------
+// HandleJailedDeath tests (I-1)
+// ---------------------------------------------------------------------------
+
+func TestHandleJailedDeath_TearsDownAndEndsDetention(t *testing.T) {
+	origTeardown := aTeardownCellFn
+	defer func() { aTeardownCellFn = origTeardown }()
+	var torndown int
+	aTeardownCellFn = func(id int) { torndown = id }
+
+	ch := &characters.Character{}
+	ch.SetMiscData(keyJailUntilRound, uint64(9999))
+	ch.SetMiscData(keyJailFaction, "thornwall_guards")
+	ch.SetMiscData(keyJailInstanceId, 60001)
+
+	HandleJailedDeath(ch)
+
+	if torndown != 60001 {
+		t.Fatalf("expected instance torn down, got %d", torndown)
+	}
+	if _, jailed := JailInfo(ch); jailed {
+		t.Fatalf("detention should be ended on death")
+	}
+}
+
+func TestHandleJailedDeath_NotJailedNoOp(t *testing.T) {
+	origTeardown := aTeardownCellFn
+	defer func() { aTeardownCellFn = origTeardown }()
+	called := false
+	aTeardownCellFn = func(int) { called = true }
+	ch := &characters.Character{}
+	HandleJailedDeath(ch)
+	if called {
+		t.Fatalf("non-jailed death must be a no-op")
+	}
+}
+
 func TestExecuteArrest_FallsBackToStaticCellOnInstanceFailure(t *testing.T) {
 	origCell := cellRoomFn
 	origMove := aMoveFn

@@ -427,6 +427,35 @@ func ClearFactionRecord(faction string, userId int, reason string) {
 }
 
 // ---------------------------------------------------------------------------
+// HandleJailedDeath
+// ---------------------------------------------------------------------------
+
+// HandleJailedDeath is called when a jailed player dies. Per the cell zone's
+// death_policy (ejected), dying voids the remaining sentence: tear down the cell
+// instance and clear the jail record so the player respawns free with no orphan
+// instance. Crimes are NOT cleared — death is not absolution; a still-wanted
+// player can be re-arrested through the normal justice path. No-op when not jailed.
+func HandleJailedDeath(player *characters.Character) {
+	if player == nil || player.MiscData == nil {
+		return
+	}
+	if _, ok := miscDataRound(player.MiscData, keyJailUntilRound); !ok {
+		return
+	}
+	if instId, _ := miscDataInt(player.MiscData, keyJailInstanceId); instId != 0 {
+		aTeardownCellFn(instId)
+	}
+	player.RemoveBuff(jailedBuffId) // defensive; death cascade usually already cleared it
+	player.SetMiscData(keyJailUntilRound, nil)
+	player.SetMiscData(keyJailFineOriginal, nil)
+	player.SetMiscData(keyJailDecayPerRound, nil)
+	player.SetMiscData(keyJailFaction, nil)
+	player.SetMiscData(keyJailCellRoom, nil)
+	player.SetMiscData(keyJailCrimeIds, nil)
+	player.SetMiscData(keyJailInstanceId, nil)
+}
+
+// ---------------------------------------------------------------------------
 // HandleJailedDespawn
 // ---------------------------------------------------------------------------
 
