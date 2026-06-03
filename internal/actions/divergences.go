@@ -25,6 +25,7 @@ var userOnlyCommands = map[string]string{
 	"devtool":      "admin",
 	"fact":         "admin",
 	"faction":      "admin",
+	"goal":         "admin", // admin.goal.go: inspect/seed mob goals (Phase 4)
 	"item":         "admin",
 	"knowledge":    "admin",
 	"locate":       "admin",
@@ -122,7 +123,9 @@ var userOnlyCommands = map[string]string{
 	"assess":     "player-mechanic",
 	"assist":     "player-mechanic",
 	"disenchant": "player-mechanic",
+	"fine":       "player-mechanic: jailed-player justice interaction (5.1)",
 	"offer":      "player-mechanic",
+	"payfine":    "player-mechanic: jailed-player justice interaction (5.1)",
 	"party":      "player-mechanic",
 	"picklock":   "player-mechanic: wontfix per chunk 2.10 deferred-gaps review — interactive minigame is intentional player-only design",
 	"reply":      "player-mechanic",
@@ -137,6 +140,13 @@ var userOnlyCommands = map[string]string{
 	"use":        "player-mechanic",
 	"whisper":    "player-mechanic",
 	"zombieact":  "player-mechanic",
+
+	// --- Intentionally NOT allowlisted ---
+	// "throw" is deliberately omitted so the CommandParity boot audit keeps
+	// surfacing it as the single standing reminder that the ranged-weapon
+	// system (and a mob throw equivalent) is still owed. See
+	// [[project_throwable_mobs_ranged_dependency]]. Do not allowlist it until
+	// that system lands.
 
 	// --- Aliases (remapped to another command, no separate mob equivalent needed) ---
 	"knee":      "alias",
