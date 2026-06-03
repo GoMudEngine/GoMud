@@ -19,14 +19,14 @@ exchanges:
         text: "That's usually when it counts."
   - lines:
       - speaker: A
-        text: "Take your break when the room thins out."
+        text: "Take a breather when the room thins out."
       - speaker: B
         text: "And if it doesn't thin out?"
       - speaker: A
         text: "Then we're both lucky and both tired."
   - lines:
       - speaker: A
-        text: "Anything I should know about?"
+        text: "Anything new?"
       - speaker: B
         text: "Nothing that won't keep till morning."
   - lines:
