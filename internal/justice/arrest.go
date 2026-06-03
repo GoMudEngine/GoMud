@@ -279,10 +279,10 @@ func JailInfo(player *characters.Character) (JailRecord, bool) {
 // so the text stays consistent.
 //
 // WARNING: the opening/closing prose INTENTIONALLY mirrors the description in
-// _datafiles/world/dogmud/rooms/thornwall_city/5107.yaml (the static fallback
-// cell template). If you edit the template room's description, you MUST update
-// the string literal here to match, or players will see different text depending
-// on whether they are in an instanced vs. static cell.
+// _datafiles/world/dogmud/rooms/instance_jail_cell/5107.yaml (the per-prisoner
+// instanced cell template that gets cloned at arrest). If you edit that template
+// room's description, you MUST update the string literal here to match, or the
+// faction-flavored override will read inconsistently with the base cell prose.
 func factionCellDescription(faction string) string {
 	factionName := faction
 	if d := factions.GetDefinition(faction); d != nil && d.DisplayName != "" {
