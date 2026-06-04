@@ -45,6 +45,24 @@ This is a behind-the-scenes pass: no new quests, no map changes. It's the first
 full application of the NPC-aliveness systems to a single zone, and a template
 for bringing the rest of the world to life.
 
+## 2026-06-03 — Thornwall City wakes up too
+
+The same treatment now reaches the trade city of Thornwall — the second town
+brought to life with the NPC-aliveness systems:
+
+- **The market keeps hours.** The market merchant, food vendor, apothecary,
+  jeweler, and weaver each work their stalls through the day and close up at
+  night; the guard captain walks his rounds. Come back at different hours and
+  the market wears a different face.
+- **They're connected.** Traders, kin, and rivals across the city now share a
+  web of relationships, and idle neighbors trade short remarks drawn from those
+  ties — the market square and side streets feel populated rather than staffed.
+- **They talk about the city's troubles.** Word of Thornwall's public woes
+  passes mouth to mouth, carried by the city's gossips. (Nothing that spoils a
+  quest — just the open talk of the streets.)
+
+Like the Stillwater pass, this is content-only: no new quests, no map changes.
+
 ## 2026-06-02 — The economy feeds itself (supply chains + market participation)
 
 Shopkeepers no longer run dry. Several merchant types — cooks and enchanters

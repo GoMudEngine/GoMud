@@ -63,7 +63,7 @@ Server:
   - checkclient
   # - Motd -
   #   Message of the day. This is displayed when the motd command is run.
-  Motd: '{{ t "LIVING TOWNS — Stillwater is the first town whose people truly live: they keep daily hours, know one another, gossip the town news, and the sleepers really sleep. (Aliveness 6.1.)\nPRIVATE CELLS — Get arrested and you go to your own holding cell now, not a shared room. Your sentence runs even while you are logged off, so you return to your cell or walk free if your time ran out. (2026-06-03.)\nTAUNTS STICK — A companion or tank who taunts now holds the enemy attention for a few rounds, so your golem can finally take the hits for you. (2026-06-03.)\nNovel: https://github.com/pruuk/DOGMud/blob/master/what_the_moons_keep.md\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
+  Motd: '{{ t "LIVING TOWNS — Stillwater and now Thornwall City are coming alive: their people keep daily hours, know one another, gossip the town news, and the sleepers really sleep. (Aliveness 6.1 + 6.3.)\nPRIVATE CELLS — Get arrested and you go to your own holding cell now, not a shared room. Your sentence runs even while you are logged off, so you return to your cell or walk free if your time ran out. (2026-06-03.)\nTAUNTS STICK — A companion or tank who taunts now holds the enemy attention for a few rounds, so your golem can finally take the hits for you. (2026-06-03.)\nNovel: https://github.com/pruuk/DOGMud/blob/master/what_the_moons_keep.md\nFull patch notes: https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md" }}'
   # - NextRoomID -
   # This number is auto-updated to the highest number of rooms in the game.
   #   If creating your own rooms but don't want to risk an update conflicting,
