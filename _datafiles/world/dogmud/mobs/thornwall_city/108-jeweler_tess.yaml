@@ -8,10 +8,15 @@ hostile: false
 charm_immune: true
 non_combatant: true
 maxwander: 0
+schedule_id: thornwall_jeweler
 groups:
   - humanoid
   - merchant
   - thornwall_citizens
+relationships:
+  - to: 109
+    type: friend
+    subtype: colleague
 idlecommands:
   - 'emote holds a gem up to the lamplight, turning it slowly between her fingers'
   - 'emote polishes a silver setting with a soft cloth, working in tiny circles'

@@ -1,0 +1,32 @@
+id: thornwall_weaver
+description: "Weaver Maren: loom work by day, closes the cottage, sleeps by the loom."
+segments:
+  - start: 6
+    end: 10
+    target_room: 480
+    activity: craft
+    idlecommands:
+      - emote throws the shuttle in a steady, practiced rhythm.
+      - emote checks the tension of the warp with dye-stained fingers.
+      - say A good cloth is honest work, thread by thread.
+  - start: 10
+    end: 18
+    target_room: 480
+    activity: craft
+    idlecommands:
+      - emote treadles the loom without looking at her hands.
+      - emote holds a finished bolt to the light, judging the weave.
+      - say My niece down in Stillwater works the same trade, simpler patterns.
+  - start: 18
+    end: 22
+    target_room: 480
+    activity: ""
+    idlecommands:
+      - emote winds the day's thread back onto its spools.
+      - emote sweeps lint and clipped threads from the floorboards.
+  - start: 22
+    end: 6
+    target_room: 480
+    activity: sleeping
+    idlecommands:
+      - emote sleeps to the faint creak of the cooling loom.

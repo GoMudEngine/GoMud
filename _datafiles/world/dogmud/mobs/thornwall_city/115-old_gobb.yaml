@@ -10,6 +10,10 @@ groups:
   - humanoid
   - gossiper
   - thornwall_citizens
+knows_facts:
+  - thornwall-mayor-disgraced
+  - thornwall-hard-times
+  - thornwall-caravan-trade
 idlecommands:
   - 'emote slaps the table and barks a short laugh at something only he finds funny'
   - ''

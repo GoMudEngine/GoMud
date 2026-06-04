@@ -1,0 +1,25 @@
+id: velk_and_merchant
+mob_a: 94
+mob_b: 102
+exchanges:
+  - lines:
+      - speaker: A
+        text: "Quiet on the square today."
+      - speaker: B
+        text: "Quiet's good for nobody's purse but it's good for the nerves."
+      - speaker: A
+        text: "I'll take the nerves."
+  - lines:
+      - speaker: A
+        text: "Heard there was a pickpocket working the east stalls."
+      - speaker: B
+        text: "Last week. Gone now, whoever it was."
+      - speaker: A
+        text: "These things pass through and move on. Usually."
+  - lines:
+      - speaker: A
+        text: "Caravan's running guarded these days."
+      - speaker: B
+        text: "Road's not what it was. Bandits don't fear much."
+      - speaker: A
+        text: "They'll fear the gibbet if I catch them."

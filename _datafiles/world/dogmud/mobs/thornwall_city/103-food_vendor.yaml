@@ -19,6 +19,7 @@ hostile: false
 charm_immune: true
 non_combatant: true
 maxwander: 0
+schedule_id: thornwall_food_vendor
 groups:
   - humanoid
   - merchant

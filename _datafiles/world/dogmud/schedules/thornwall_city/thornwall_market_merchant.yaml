@@ -1,0 +1,35 @@
+id: thornwall_market_merchant
+description: "Market Merchant: opens the stall, trades through the day, closes at dusk, sleeps by the stall."
+segments:
+  - start: 6
+    end: 10
+    target_room: 465
+    activity: ""
+    idlecommands:
+      - emote lifts the shutters and sets out the day's wares.
+      - emote chalks fresh prices onto the board.
+      - say Fair prices, fair weight. Come and see.
+      - emote weighs a coin against the light, checking it.
+  - start: 10
+    end: 18
+    target_room: 465
+    activity: ""
+    idlecommands:
+      - emote haggles cheerfully over a bolt of cloth.
+      - say Everything's dearer this season. Don't blame the seller.
+      - emote counts the till with a practiced thumb.
+      - emote waves to a passing caravan hand.
+  - start: 18
+    end: 22
+    target_room: 465
+    activity: ""
+    idlecommands:
+      - emote packs the unsold goods into a locked chest.
+      - say Come back tomorrow. Same stall, same fair price.
+      - emote stretches a back stiff from standing.
+  - start: 22
+    end: 6
+    target_room: 465
+    activity: sleeping
+    idlecommands:
+      - emote dozes on a cot behind the stall, one eye on the strongbox.

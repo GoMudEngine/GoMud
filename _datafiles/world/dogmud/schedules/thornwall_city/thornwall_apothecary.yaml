@@ -1,0 +1,32 @@
+id: thornwall_apothecary
+description: "Apothecary Voss: clinical day work at the lane, closes at dusk, sleeps among the jars."
+segments:
+  - start: 6
+    end: 9
+    target_room: 471
+    activity: craft
+    idlecommands:
+      - emote measures a powder against a brass scale, exact to the grain.
+      - emote labels a vial in a precise, cramped hand.
+      - say Dosage is everything. A cure and a poison differ only by amount.
+  - start: 9
+    end: 17
+    target_room: 471
+    activity: craft
+    idlecommands:
+      - emote grinds a dark resin to fine dust without expression.
+      - say State your symptoms plainly. I have no time for drama.
+      - emote checks a chrysalis catalyst against the lamplight.
+  - start: 17
+    end: 21
+    target_room: 471
+    activity: ""
+    idlecommands:
+      - emote wipes the bench down with astringent spirits.
+      - say Closed. Come back when you are actually ill.
+  - start: 21
+    end: 6
+    target_room: 471
+    activity: sleeping
+    idlecommands:
+      - emote sleeps stiffly amid the sharp smell of herbs.

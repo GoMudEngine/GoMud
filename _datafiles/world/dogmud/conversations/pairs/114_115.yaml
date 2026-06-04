@@ -1,0 +1,30 @@
+id: fen_and_gobb
+mob_a: 114
+mob_b: 115
+exchanges:
+  - lines:
+      - speaker: A
+        text: "You hear the mayor finally stepped down?"
+      - speaker: B
+        text: "Heard it twice from you already, old man."
+      - speaker: A
+        text: "Worth hearing thrice. Disgrace, they say."
+  - lines:
+      - speaker: A
+        text: "My cousin's wife's brother works the docks now."
+      - speaker: B
+        text: "You've got a cousin's wife's brother for everything."
+      - speaker: A
+        text: "That's how I know everything."
+  - lines:
+      - speaker: A
+        text: "Prices up again at the market."
+      - speaker: B
+        text: "Everything's up but our luck."
+      - speaker: A
+        text: "Drink's still the same. Small mercies."
+  - lines:
+      - speaker: A
+        text: "Quiet in here tonight."
+      - speaker: B
+        text: "Quiet's fine. Loud means the watch is about."

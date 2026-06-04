@@ -7,11 +7,22 @@ itemdropchance: 0
 hostile: false
 charm_immune: true
 maxwander: 0
+schedule_id: thornwall_guard_captain
 groups:
   - humanoid
   - guard
   - thornwall_guards
   - thornwall_citizens
+relationships:
+  - to: 106
+    type: employer
+    subtype: captain
+  - to: 102
+    type: friend
+    subtype: the-beat
+knows_facts:
+  - thornwall-road-bandits
+  - thornwall-mayor-disgraced
 idlecommands:
   - 'emote reviews a duty roster, making corrections with a quill'
   - 'emote drums fingers on the table, studying an incident report'

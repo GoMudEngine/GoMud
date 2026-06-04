@@ -1,0 +1,28 @@
+id: marek_and_dal
+mob_a: 96
+mob_b: 117
+exchanges:
+  - lines:
+      - speaker: A
+        text: "Table four's been nursing one ale for an hour."
+      - speaker: B
+        text: "Then table four can keep nursing it. We're not a charity."
+      - speaker: A
+        text: "Ha. Cheap and shameless. My kind of regular."
+  - lines:
+      - speaker: A
+        text: "Tax man was sniffing round again this morning."
+      - speaker: B
+        text: "Smile, pay, and water the cheap stuff. Same as always."
+      - speaker: A
+        text: "Aye. Same as always."
+  - lines:
+      - speaker: A
+        text: "Brynn says we're low on the good flour."
+      - speaker: B
+        text: "Caravan's due. Lars'll have the good flour when he runs the orders."
+  - lines:
+      - speaker: A
+        text: "Long night ahead?"
+      - speaker: B
+        text: "They always are. Pour me a small one for the feet."

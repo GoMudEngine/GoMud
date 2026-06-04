@@ -113,13 +113,13 @@ should always agree.
 | 5.4 | Cross-cut | NPC market participation | M | 5.3 | Done (2026-06-02) |
 | 6.1 | Polish | Stillwater town-flavor pass | L | Phase 1, Phase 3 | Done |
 | 6.2 | Polish | Parity audit closeout | S | 6.1 | Done |
-| 6.3 | Polish | Per-zone tuning (1–2 zones) | M | 6.1 | Not started |
+| 6.3 | Polish | Per-zone tuning (Thornwall deepening) | M | 6.1 | Done (2026-06-03) |
 | 6.4 | Polish | Performance review (initial) | S | 6.3 | Not started |
 | 6.5 | Polish | Content pass — broader rollout | XL | 6.3 | Not started |
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 37 / 42 done • 0 in progress • 5 not started (+1 deferred: 3.5).
+**Roll-up:** 38 / 42 done • 0 in progress • 4 not started (+1 deferred: 3.5).
 
 ---
 
@@ -1048,12 +1048,19 @@ Validate the framework against real content, then scale.
   (conversation A/B swap-safety, dead-pair co-location) are captured in the 6.1
   record + smoke followups rather than re-audited here.
 
-### 6.3 Per-zone tuning (1–2 zones)
-**Status:** Not started • **Size:** M
+### 6.3 Per-zone tuning (Thornwall deepening)
+**Status:** Done (2026-06-03) • **Size:** M
 
-- **Goal:** Apply the framework to one or two more zones (e.g., Sanctum Basin, Dustwalk), tuning archetype defaults.
-- **In:** Two zone passes, before-and-after notes on what worked.
-- **Out:** Every zone — that's 6.5.
+- **Goal:** Apply the 6.1 framework to a second zone — Thornwall City. (Sanctum
+  Basin was dropped: it's being fully replaced by the newbie-area rework.)
+- **Shipped:** Relationship edges on 7 mobs; 5 new facts (renamed
+  test-mayor→thornwall-mayor-disgraced) + knows_facts on 11 mobs + gossiper
+  group on 2; 6 new schedules (market merchant/food vendor/apothecary/jeweler/
+  weaver/guard captain) wired onto 6 mobs; 3 conversation pairs (marek_and_dal,
+  fen_and_gobb, velk_and_merchant), all swap-safe. Flavor = public troubles
+  only, no quest spoilers. Plus a gossip fix in MobIdle: the no-room-events
+  branch now tries known facts before the generic idle fallback.
+- **Out:** Every zone — that's 6.5. Sanctum Basin — newbie rework.
 - **Depends on:** 6.1
 - **Why:** Two zones reveal pattern. Three+ becomes process to delegate.
 

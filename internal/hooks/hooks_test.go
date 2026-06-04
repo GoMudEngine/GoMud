@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/exit"
+	"github.com/GoMudEngine/GoMud/internal/facts"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -18,6 +19,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/worldevents"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -55,7 +57,7 @@ func seedAllRegistries() func() {
 		1: {
 			MobId:         1,
 			Zone:          "TestZone",
-			AutoAggro: true,
+			AutoAggro:     true,
 			ActivityLevel: 50,
 			Groups:        []string{"undead"},
 			Character: characters.Character{
@@ -65,7 +67,7 @@ func seedAllRegistries() func() {
 		2: {
 			MobId:         2,
 			Zone:          "TestZone",
-			AutoAggro: false,
+			AutoAggro:     false,
 			ActivityLevel: 30,
 			Character: characters.Character{
 				Name: "Merchant",
@@ -77,7 +79,7 @@ func seedAllRegistries() func() {
 			MobId:      1,
 			InstanceId: 100,
 			HomeRoomId: 1,
-			AutoAggro: true,
+			AutoAggro:  true,
 			Groups:     []string{"undead"},
 			Character: characters.Character{
 				Name:      "Skeleton",
@@ -196,7 +198,6 @@ func seedAllRegistries() func() {
 		cleanupBuffs()
 	}
 }
-
 
 // setCombatPositionParallel sets the Position FSM to the given state. Seeds
 // Position if nil. Synthetic Partner ref for grapple states (FSM requires non-zero).
@@ -2575,6 +2576,64 @@ func TestBuildGossipLine_EmptyTemplatesEmptyEvents(t *testing.T) {
 	assert.Equal(t, "", line)
 }
 
+// TestBuildGossipLine_KnownFactUsedWhenNoEvents verifies that a mob with a
+// known fact gossips the fact description even when there are no recent world
+// events for its zone (6.3 E.1 fix).
+func TestBuildGossipLine_KnownFactUsedWhenNoEvents(t *testing.T) {
+	// Redirect facts disk I/O to a temp directory so the test doesn't pollute
+	// the real data files.
+	tmp := t.TempDir()
+	prev := configs.GetFilePathsConfig()
+	require.NoError(t, configs.AddOverlayOverrides(map[string]any{
+		"FilePaths.DataFiles": tmp,
+	}))
+	defer func() {
+		if err := configs.AddOverlayOverrides(map[string]any{
+			"FilePaths.DataFiles": prev.DataFiles.String(),
+		}); err != nil {
+			t.Logf("failed to restore DataFiles override: %v", err)
+		}
+	}()
+
+	// Reset the facts in-memory caches so we start fresh.
+	facts.ResetForTest()
+	defer facts.ResetForTest()
+
+	// Use a mob template ID that won't collide with other tests.
+	const mobTemplateId = 9901
+
+	// Seed gossipTemplates with distinguishable fact-default vs fallback
+	// entries: fact-default renders "{description}", fallback does not.
+	gossipTemplatesOnce.Do(func() {})
+	gossipTemplates = map[string][]string{
+		"fact-default": {"I heard that {description}"},
+		"fallback":     {"Nothing unusual happening."},
+	}
+	defer func() { gossipTemplates = nil }()
+
+	// Declare a fact and record it as known to our mob.
+	require.NoError(t, facts.Declare("test-gossip-fact-6.3", facts.DeclareOpts{
+		Description:  "the old bridge north of town is out",
+		Significance: worldevents.Local,
+		Zone:         "TestZone",
+	}))
+	facts.RecordKnowsFact(mobTemplateId, "test-gossip-fact-6.3", facts.SourceWitnessed)
+
+	mob := &mobs.Mob{
+		MobId: mobTemplateId,
+		Character: characters.Character{
+			Zone: "TestZone",
+		},
+	}
+
+	line := buildGossipLine(mob)
+
+	// The line must contain the fact's description, proving the fact path
+	// (not the generic fallback) was taken.
+	assert.Contains(t, line, "the old bridge north of town is out",
+		"expected fact description in gossip line, got: %q", line)
+}
+
 func TestHandleIdleMobs_GossiperMob(t *testing.T) {
 	cleanup := seedAllRegistries()
 	defer cleanup()
@@ -2584,7 +2643,7 @@ func TestHandleIdleMobs_GossiperMob(t *testing.T) {
 		MobId:         114,
 		InstanceId:    200,
 		HomeRoomId:    1,
-		AutoAggro: false,
+		AutoAggro:     false,
 		ActivityLevel: 7,
 		Groups:        []string{"humanoid", "gossiper"},
 		Character: characters.Character{

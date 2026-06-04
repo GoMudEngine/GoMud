@@ -6,10 +6,15 @@ itemdropchance: 0
 hostile: false
 non_combatant: true
 maxwander: 1
+schedule_id: thornwall_market_merchant
 groups:
   - humanoid
   - merchant
   - thornwall_citizens
+knows_facts:
+  - thornwall-mayor-disgraced
+  - thornwall-caravan-trade
+  - thornwall-hard-times
 idlecommands:
   - 'emote rearranges goods on the stall counter, frowning at the display'
   - 'emote calls out to a passing customer, gesturing at the merchandise'

@@ -10,8 +10,18 @@ groups:
   - merchant_train
   - thornwall_citizens
   - stillwater_citizens
+relationships:
+  - to: 359
+    type: family
+    subtype: son
+  - to: 358
+    type: employer
+    subtype: guard
 hates:
   - bandit
+knows_facts:
+  - thornwall-road-bandits
+  - thornwall-caravan-trade
 hostile: false
 non_combatant: false             # crew fights bandits
 player_attack_immune: true       # players cannot attack -- rebuff like shopkeepers
