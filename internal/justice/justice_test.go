@@ -3,8 +3,17 @@ package justice
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/opinions"
 )
+
+// init wires up mudlog for the justice test binary. Several code paths
+// exercised by these tests call mudlog.Warn/Info unconditionally, which
+// panics if the slog instance is nil. Mirrors the pattern in rooms and
+// other packages that use mudlog.
+func init() {
+	mudlog.SetupLogger(nil, "", "", false)
+}
 
 func installSeams(t *testing.T) func() {
 	t.Helper()

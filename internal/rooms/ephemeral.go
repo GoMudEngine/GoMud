@@ -140,12 +140,24 @@ func CreateEphemeralRoomIds(roomIds ...int) (map[int]int, error) {
 // accepts RoomId's as arguments, and creates ephemeral copies of them, returning the new ID's of the copies.
 func CreateEphemeralZone(zoneName string) (map[int]int, error) {
 
-	roomIds := make([]int, len(roomManager.zones[zoneName].RoomIds))
+	zone := roomManager.zones[zoneName]
+	if zone == nil {
+		return map[int]int{}, fmt.Errorf("CreateEphemeralZone: zone %q not found", zoneName)
+	}
 
-	idx := 0
-	for roomId, _ := range roomManager.zones[zoneName].RoomIds {
-		roomIds[idx] = roomId
-		idx++
+	roomIds := make([]int, 0, len(zone.RoomIds))
+	for roomId := range zone.RoomIds {
+		roomIds = append(roomIds, roomId)
+	}
+
+	// Fallback: if the zone's rooms aren't registered in memory yet — e.g. a
+	// force-created instance whose template room was never visited (the jail
+	// cell is created at arrest, not entered via a portal) — clone the
+	// configured entry room directly. CreateEphemeralRoomIds -> LoadRoomTemplate
+	// reads from the file cache, so no prior visit is required. Correct and
+	// complete for single-room zones; mirrors the oasis entry-room clone.
+	if len(roomIds) == 0 && zone.EntryRoom != 0 {
+		roomIds = append(roomIds, zone.EntryRoom)
 	}
 
 	return CreateEphemeralRoomIds(roomIds...)

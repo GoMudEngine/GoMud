@@ -98,6 +98,7 @@ var aCreateCellFn = func(prisonerUserId, releaseRoomId int) (int, bool) {
 		rooms.ZoneInstanceOpts{SuppressReturnPortal: true},
 	)
 	if err != nil || inst == nil {
+		mudlog.Warn("justice", "msg", "jail cell instance creation failed; using static fallback", "prisoner", prisonerUserId, "err", err)
 		return 0, false
 	}
 	return inst.EntryRoomId, true
