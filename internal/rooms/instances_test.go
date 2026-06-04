@@ -660,3 +660,103 @@ func TestCreateZoneInstanceWithOpts_SuppressReturnPortal(t *testing.T) {
 	GetInstanceRegistry().Remove(instB)
 	TryEphemeralCleanup(instB.EntryRoomId)
 }
+
+// ─── CreateEphemeralZone: empty RoomIds fallback ─────────────────────────────
+//
+// Regression test for BUG-1: when a zone's RoomIds map is empty (because the
+// template room was never visited — e.g. a jail cell instance force-created at
+// arrest rather than entered via a portal), CreateEphemeralZone must fall back
+// to cloning the zone's configured EntryRoom directly.
+
+func TestCreateEphemeralZone_EmptyRoomIdsFallsBackToEntryRoom(t *testing.T) {
+	const (
+		zoneName    = "Test Confinement Zone"
+		entryRoomId = 9002
+		zoneFolder  = "test_confinement_zone"
+	)
+
+	// ── Filesystem fixture ─────────────────────────────────────────────────────
+	tempDir := t.TempDir()
+	roomsDir := filepath.Join(tempDir, "rooms", zoneFolder)
+	if err := os.MkdirAll(roomsDir, 0755); err != nil {
+		t.Fatalf("mkdir: %v", err)
+	}
+
+	templateRoom := &Room{
+		RoomId:      entryRoomId,
+		Zone:        zoneName,
+		Title:       "Confinement Cell",
+		Description: "A bare cell used only in tests.",
+		Exits:       map[string]exit.RoomExit{},
+		SpawnInfo:   []SpawnInfo{},
+	}
+	roomYAML, err := yaml.Marshal(templateRoom)
+	if err != nil {
+		t.Fatalf("yaml.Marshal: %v", err)
+	}
+	roomFile := filepath.Join(roomsDir, "9002.yaml")
+	if err := os.WriteFile(roomFile, roomYAML, 0644); err != nil {
+		t.Fatalf("write room file: %v", err)
+	}
+
+	prevDataFiles := configs.GetFilePathsConfig().DataFiles.String()
+	if err := configs.AddOverlayOverrides(map[string]any{"FilePaths.DataFiles": tempDir}); err != nil {
+		t.Fatalf("AddOverlayOverrides: %v", err)
+	}
+	defer func() {
+		_ = configs.AddOverlayOverrides(map[string]any{"FilePaths.DataFiles": prevDataFiles})
+	}()
+
+	// ── Room manager fixture ────────────────────────────────────────────────────
+	// KEY DIFFERENCE vs the SuppressReturnPortal test: RoomIds is intentionally
+	// EMPTY. This mirrors the real jail-cell scenario where the template room is
+	// never entered via a portal before the arrest force-creates the instance.
+	zCfg := &ZoneConfig{
+		Name:      zoneName,
+		Instanced: true,
+		EntryRoom: entryRoomId,
+		RoomIds:   map[int]struct{}{}, // empty — the bug condition
+	}
+	cleanupRooms := SeedRoomsForTest(
+		map[int]*Room{},
+		map[string]*ZoneConfig{zoneName: zCfg},
+	)
+	defer cleanupRooms()
+
+	// Seed the file cache so LoadRoomTemplate can find the YAML without a walk.
+	roomManager.roomIdToFileCache[entryRoomId] = filepath.Join(zoneFolder, "9002.yaml")
+	defer delete(roomManager.roomIdToFileCache, entryRoomId)
+
+	// Isolate ephemeral state.
+	defer func() {
+		for i := range ephemeralRoomChunks {
+			ephemeralRoomChunks[i] = nil
+		}
+		originalRoomIdLookups = map[int]int{}
+		instanceRegistry = NewInstanceRegistry()
+	}()
+
+	// ── Exercise ────────────────────────────────────────────────────────────────
+	got, err := CreateEphemeralZone(zoneName)
+	if err != nil {
+		t.Fatalf("expected success via entry-room fallback, got %v", err)
+	}
+	if len(got) != 1 {
+		t.Fatalf("expected 1 cloned room, got %d", len(got))
+	}
+
+	// The map entry key is the original (template) room id; the value is the new
+	// ephemeral id. Both must be non-zero.
+	origId, ephId := func() (int, int) {
+		for k, v := range got {
+			return k, v
+		}
+		return 0, 0
+	}()
+	assert.Equal(t, entryRoomId, origId, "map key should be the template room id")
+	assert.NotZero(t, ephId, "ephemeral room id must be non-zero")
+	assert.True(t, IsEphemeralRoomId(ephId), "cloned room id should be in ephemeral range")
+
+	// Cleanup: remove the ephemeral room so later tests start clean.
+	TryEphemeralCleanup(ephId)
+}
