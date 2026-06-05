@@ -42,7 +42,7 @@ political map and reserves a slot for the Bloodline Agents (a future-major force
 **Correction to 1.2:** the mutual `warren ↔ thornwall_guards` enemy edge
 mischaracterizes the Warren — see the warren section below; 6.5a removes it.
 
-## New factions (6)
+## New factions (8)
 
 | faction_id | default_rep | role | bloc |
 |---|---|---|---|
@@ -51,28 +51,38 @@ mischaracterizes the Warren — see the warren section below; 6.5a removes it.
 | dustwalk_caravans | +10 | merchant trains on the trade roads | law bloc |
 | road_wardens | 0 | road law / patrol escorts | law bloc |
 | shopkeepers | 0 | chamber-of-commerce merchant solidarity | law bloc |
+| ashwick_villagers | 0 | the farming village of Ashwick | law bloc |
+| watchers_crossing | 0 | the waystation settlement at Watcher's Crossing | law bloc |
 | bloodline_agents | 0 | shadow force (future-major) | **neutral placeholder** |
+
+The two settlement factions came out of the 6.5b towns-batch NPC inventory:
+Ashwick (~4 townsfolk) and Watcher's Crossing (~4 townsfolk) are micro-settlements
+but get their own citizen factions for group cohesion, parity with
+Stillwater/Thornwall. They have no guards of their own — law-bloc membership means
+road_wardens + the town guards react to crimes against them.
 
 ## The ally/enemy graph
 
 ### Unified law bloc (mutually allied clique)
 
-These seven factions are **all mutually allied** — wronging one ripples across
+These nine factions are **all mutually allied** — wronging one ripples across
 the whole "civilization" bloc, and this links the previously-islanded Thornwall
 and Stillwater blocs:
 
 `thornwall_guards`, `stillwater_guards`, `road_wardens`,
-`thornwall_citizens`, `stillwater_citizens`, `dustwalk_caravans`, `shopkeepers`
+`thornwall_citizens`, `stillwater_citizens`, `dustwalk_caravans`, `shopkeepers`,
+`ashwick_villagers`, `watchers_crossing`
 
-Each lists the other six in its `allies:`. (Verbose but explicit, as the schema
+Each lists the other eight in its `allies:`. (Verbose but explicit, as the schema
 requires both-sided edges. This verbosity is the cost of the cohesive-bloc choice
-and is intentional.)
+and is intentional. Consider a brief authoring helper/comment block so the clique
+stays in sync if edited.)
 
 ### Outlaw cluster (enemies of the law bloc)
 
-- **bandits** — `enemies:` = the full law bloc (7); `allies:` = `[ironwind_tribe]`
+- **bandits** — `enemies:` = the full law bloc (9); `allies:` = `[ironwind_tribe]`
   (loose, circumstantial).
-- **ironwind_tribe** — `enemies:` = the law bloc (7); `allies:` = `[bandits]`
+- **ironwind_tribe** — `enemies:` = the law bloc (9); `allies:` = `[bandits]`
   (loose). Thematic note: ironwind goblins are remote steppe-dwellers, so the
   bandit alliance is "circumstantial enemy-of-civilization," not a coordinated
   pact.
@@ -129,7 +139,18 @@ Bloodline storyline is designed ("major force later").
   e.g. `337-smith_brindle`, `338-apothecary_ilsa`, `339-weaver_edda`,
   `340-pearl_carver_kess`, plus Thornwall + Ashwick merchants. Implementer
   enumerates by "has a shop."
+- **ashwick_villagers:** `259-delia`, `260-deacon_ferris`, `261-farmer_hesta`,
+  `262-the_forager` (the ashwick wildlife — fox/wolf/hawk/chicken/mouse — are NOT
+  members). `262-the_forager` likely runs the forager archetype; faction
+  membership is independent of behavior.
+- **watchers_crossing:** `84-innkeeper_tolva`, `86-toll_collector_harn`, plus
+  `85-merchant_brecca` and `88-traveling_merchant` as **dual members**
+  (`groups: [..., watchers_crossing, shopkeepers]`). `87-river_lurker` is wildlife.
 - **bloodline_agents:** `287-bloodline_agent` (the lone member).
+- **thornwall_outskirts** (not a town — light treatment): tag `89-farmer_dorn` →
+  `thornwall_citizens`, `92-city_gate_guard` → `thornwall_guards`,
+  `90-thornwall_highwayman` → `bandits` (`91-crop_pest` is wildlife). No
+  settlement faction; handled as light faction-tagging, not a town pass.
 
 Member enumeration is finalized at implementation via a per-zone scan; the anchors
 above are the confirmed seeds.
@@ -167,7 +188,7 @@ above are the confirmed seeds.
 
 ## Files touched
 
-- New: `_datafiles/world/dogmud/factions/{bandits,ironwind_tribe,dustwalk_caravans,road_wardens,shopkeepers,bloodline_agents}.yaml` (6).
+- New: `_datafiles/world/dogmud/factions/{bandits,ironwind_tribe,dustwalk_caravans,road_wardens,shopkeepers,ashwick_villagers,watchers_crossing,bloodline_agents}.yaml` (8).
 - Edit: the 5 existing faction YAMLs — extend `allies:`/`enemies:` for the law-bloc
   clique + warren decision.
 - Edit: member mob YAMLs — append faction ids to `groups:` (anchors above + the
