@@ -281,6 +281,12 @@ func (m *Mob) GetAngryCommand() string {
 ## Social Dynamics System
 
 ### Group Allegiances and Hostilities
+
+`IsGuardMob(groups []string) bool` (package func) reports whether a group list
+includes the law-enforcement `"guard"` marker (lifted from `internal/hooks` 2026-06-05
+so `internal/seeders` can share it). NB: distinct from a guard *faction* id and from
+the combat-stance `Character.IsGuard()` predicate.
+
 ```go
 // Check if two mobs are allies
 func (r *Mob) ConsidersAnAlly(m *Mob) bool {

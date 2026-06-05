@@ -73,8 +73,28 @@ why the listener alone is insufficient.
 | 2 | `faction_rep_counter` | `Communication` | Would bump `faction_rep_built_with:<fid>` on receiver for player→mob positive interaction | **STUB** — `Communication` carries no positive-interaction subtype; early-returns on every event |
 | 3 | `craft_materials_to_wealth_item` | Planner direct-invoke | Seeds `wealth-item` (priority 60) for each missing recipe ingredient when craft-item planner hits a missing-materials Failure | **LIVE** (architectural exception — `SeedMaterialsForRecipe`) |
 | 4 | `friend_killed_to_revenge` | `MobDeath` | Walks victim's chunk-1.6 relationship edges; seeds `revenge-mob` (priority 85) on each friend/family/lover targeting the killer | **LIVE** |
-| 5 | `witness_of_theft_to_revenge` | Steal-action direct-invoke | Seeds `revenge-mob` into victim (priority 90) and room witnesses (priority 60) on successful steal | **LIVE** (architectural exception — `OnTheft`) |
-| 6 | `aggressive_action_to_revenge` | `PlayerAttackedMob` | Seeds `revenge-mob` (priority 70) into the attacked mob | **LIVE** |
+| 5 | `witness_of_theft_to_revenge` | Steal-action direct-invoke | Victim (pri 90) + room witnesses (pri 60) on successful steal, **routed through the witness-response classifier** (see below) | **LIVE** (architectural exception — `OnTheft`) |
+| 6 | `aggressive_action_to_revenge` | `PlayerAttackedMob` | Attacked mob (pri 75) + non-`AutoAggro` room witnesses (pri 50), **routed through the witness-response classifier** | **LIVE** |
+
+### Witness-response classifier (`witness_response.go`, 2026-06-05)
+
+Rules 5 (theft) and 6 (assault) no longer blanket-seed `revenge-mob` into every
+room witness. Both route victim + witnesses through `seedWitnessResponse`, which
+calls the pure `classifyWitnessResponse(mob) WitnessResponse`:
+- **guard** (`mobs.IsGuardMob(groups)`) → `ResponseReportOnly` — seed nothing; the
+  5.1 crime record + `RunGuardEnforcement` handle it (a personal revenge goal would
+  derail proper enforcement).
+- **noncombatant** (`mob.IsNonCombatant()`) → `ResponseAlarm` — `alarmReaction`: a
+  fright emote + one step toward a random exit. No persistent goal (avoids the
+  survival-goal-pruned-at-full-HP behavior). The 5.1 crime record is the report.
+- **combat-capable non-guard** → `ResponseRevenge` — `seedRevengeGoalIfAbsent`
+  (unchanged).
+
+The victim is never a noncombatant (you cannot steal from / attack a
+`non_combatant`), so it only hits guard or revenge. Rule 4 (`friend_killed_to_revenge`)
+is **unchanged** — it is relationship/kin-scoped, not indiscriminate room-witness,
+so it already targets the right mobs. (Filename `witness_of_theft_to_revenge.go` is
+now slightly broad — it also reports/alarms — but kept to avoid churn.)
 | 7 | `gift_to_opinion_boost` | `GiftAccepted` | Value-tiered opinion bump (+1/+3/+5/+8) with per-(giver, receiver) cooldown of 100 rounds | **LIVE** |
 | 8 | `quest_completion_to_opinion_boost` | `Quest` (`-end` token) | Would bump quest-giver opinion on completion | **STUB** — `quests.Quest` struct carries no `GiverMobTemplateId`; returns 0 and logs at debug |
 | 9 | `combat_assist_to_opinion_boost` | `PlayerAttackedMob` | If the attacked mob was already in combat with a different mob, bumps that mob's opinion of the assisting player (cooldown 150 rounds) | **LIVE** (shared listener with rule 6) |
