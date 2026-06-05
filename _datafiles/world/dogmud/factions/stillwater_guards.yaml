@@ -4,7 +4,7 @@ description: |
   The lone constable's office of Stillwater -- a quiet lake town that keeps
   order with one tough lawman rather than a garrison.
 default_rep: 0
-allies: [stillwater_citizens]
-enemies: []
+allies: [thornwall_guards, road_wardens, thornwall_citizens, stillwater_citizens, dustwalk_caravans, shopkeepers, ashwick_villagers, watchers_crossing]
+enemies: [bandits, ironwind_tribe]
 holding_cell_room: 5106
 release_room: 4110

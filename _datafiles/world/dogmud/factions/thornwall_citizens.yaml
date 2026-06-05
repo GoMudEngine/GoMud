@@ -5,5 +5,5 @@ description: |
   city officials, the elders who gather at the gate. They keep
   the city alive and watch each other's backs in small ways.
 default_rep: 0
-allies: [thornwall_guards]
+allies: [thornwall_guards, stillwater_guards, road_wardens, stillwater_citizens, dustwalk_caravans, shopkeepers, ashwick_villagers, watchers_crossing]
 enemies: []
