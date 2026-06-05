@@ -478,6 +478,23 @@ func (p *PathQueue) Waypoints() []int {
 
 ## Shop and Trading System
 
+### Restock ticks (non-crafter vendors)
+
+`TickMobShopRestock(mob)` runs the full per-tier supply-cart restock for
+non-crafter vendors in **non-caravan-served** zones (cadence-gated per rarity tier
+via `shopInv.LastRestockByTier` + `shops.RestockCadenceHours`). In
+**caravan-served** zones (Stillwater, Thornwall City) the idle handler instead
+calls `TickMobShopBaselineRestock(mob)` (2026-06-05) — a cadence-gated (tier-50
+key) call to `shopInv.RestockBaselineTiers()` that tops up only common tier-50/40
+`RestockQty>0` items, so general-store basics replenish while rare goods (tier
+30/20/10) still arrive via the caravan. Both no-op for crafters (they use
+`TickMobCraft`) and for mobs without a shop. (Caravan-served vendors previously
+*skipped* restock entirely — the general-store-depletion bug.) Wired in
+`hooks/MobIdle_HandleIdleMobs.go`. NB: `TickMobShopBaselineRestock` has a
+`cadence == 0` guard (skip rather than restock-every-tick) for degenerate
+`RoundsPerDay < 24` configs; in the live config (RoundsPerDay 900) the tier-50
+cadence is ~37 rounds.
+
 ### NPC Merchant Behavior
 ```go
 // Check if mob has shop

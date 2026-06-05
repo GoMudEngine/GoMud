@@ -58,24 +58,29 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 		mob.Command("pathto home")
 	}
 
-	// Non-crafter merchant restock (supply cart delivery for regular shops).
-	// Stage 2 caravan: vendors in caravan-served zones skip the per-mob
-	// restock tick — they restock only when the caravan visits.
+	// Non-crafter merchant restock. Non-caravan zones get the full per-tier
+	// supply-cart restock; caravan-served zones get the baseline common-tier
+	// (50/40) self-refill so general-store basics replenish while rare goods
+	// still arrive via the caravan. Both helpers no-op for crafters and mobs
+	// without a shop.
 	restocked := false
-	if !configs.GetBalanceConfig().IsCaravanServedZone(mob.Zone) {
-		didRestock := mobs.TickMobShopRestock(mob)
-		if didRestock {
-			if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
-				msgs := []string{
-					`A supply cart pulls up outside. <ansi fg="mobname">%s</ansi> sorts through a fresh delivery.`,
-					`<ansi fg="mobname">%s</ansi> unpacks a crate of supplies and restocks the shelves.`,
-					`A runner drops off a bundle of goods. <ansi fg="mobname">%s</ansi> checks the contents and nods.`,
-				}
-				msg := fmt.Sprintf(msgs[util.Rand(len(msgs))], mob.Character.Name)
-				sendVisualRoomText(room, messaging.CategoryMobIdle, msg)
+	var didRestock bool
+	if configs.GetBalanceConfig().IsCaravanServedZone(mob.Zone) {
+		didRestock = mobs.TickMobShopBaselineRestock(mob)
+	} else {
+		didRestock = mobs.TickMobShopRestock(mob)
+	}
+	if didRestock {
+		if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
+			msgs := []string{
+				`A supply cart pulls up outside. <ansi fg="mobname">%s</ansi> sorts through a fresh delivery.`,
+				`<ansi fg="mobname">%s</ansi> unpacks a crate of supplies and restocks the shelves.`,
+				`A runner drops off a bundle of goods. <ansi fg="mobname">%s</ansi> checks the contents and nods.`,
 			}
-			restocked = true
+			msg := fmt.Sprintf(msgs[util.Rand(len(msgs))], mob.Character.Name)
+			sendVisualRoomText(room, messaging.CategoryMobIdle, msg)
 		}
+		restocked = true
 	}
 
 	// Stage 38.5.4: Crafter mob tick — background activity alongside normal idle

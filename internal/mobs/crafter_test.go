@@ -692,3 +692,69 @@ func TestExecuteCraft_SuccessAlwaysRoutesToShop(t *testing.T) {
 		"output must not be stored in mob's inventory; that was the Kerra "+
 			"regression where gear-grade crafts disappeared from the shop")
 }
+
+// ── TickMobShopBaselineRestock tests ─────────────────────────────────────────
+
+func TestTickMobShopBaselineRestock_NoOpForCrafter(t *testing.T) {
+	mob := &Mob{Crafter: true}
+	if TickMobShopBaselineRestock(mob) {
+		t.Fatal("crafter should no-op (uses TickMobCraft path)")
+	}
+}
+
+func TestTickMobShopBaselineRestock_RefillsCommonTiersOnCadence(t *testing.T) {
+	// Override RoundsPerDay to 48 so roundsPerHour=2 (non-zero). The default
+	// RoundsPerDay=20 gives roundsPerHour=0 which makes cadence=0 and breaks
+	// the before/after cadence assertions. Restore on cleanup.
+	prevRPD := int(configs.GetTimingConfig().RoundsPerDay)
+	if err := configs.AddOverlayOverrides(map[string]any{"Timing.RoundsPerDay": 48}); err != nil {
+		t.Fatalf("failed to override RoundsPerDay: %v", err)
+	}
+	t.Cleanup(func() {
+		_ = configs.AddOverlayOverrides(map[string]any{"Timing.RoundsPerDay": prevRPD})
+	})
+
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: 7001, RarityTier: 50})
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: 7002, RarityTier: 30})
+	shops.RegisterShop("gsr_zone", 7700, 1, shops.ShopInventory{
+		Zone:         "gsr_zone",
+		StartingGold: 500,
+		Stock: []shops.StockEntry{
+			{ItemId: 7001, MaxStock: 20, RestockQty: 5},
+			{ItemId: 7002, MaxStock: 20, RestockQty: 5},
+		},
+	})
+	inv := shops.GetShopInventory("gsr_zone", 7700, 1)
+	inv.RemoveStock(7001, inv.GetStock(7001).Current) // RegisterShop seeds Current; deplete to 0
+	inv.RemoveStock(7002, inv.GetStock(7002).Current)
+
+	mob := &Mob{Zone: "gsr_zone", HomeRoomId: 1}
+	mob.MobId = 7700
+
+	b := configs.GetBalanceConfig()
+	roundsPerHour := uint64(configs.GetTimingConfig().RoundsPerDay) / 24
+	cadence := uint64(shops.RestockCadenceHours(b, 50)) * roundsPerHour
+	if cadence == 0 {
+		t.Skip("cadence=0 even after RoundsPerDay override — skip cadence assertions")
+	}
+
+	util.SetRoundCountForTest(100000)
+	if TickMobShopBaselineRestock(mob) {
+		t.Fatal("first call should stamp, not restock")
+	}
+	util.SetRoundCountForTest(100000 + cadence - 1)
+	if TickMobShopBaselineRestock(mob) {
+		t.Fatal("before cadence should not restock")
+	}
+	util.SetRoundCountForTest(100000 + cadence + 1)
+	if !TickMobShopBaselineRestock(mob) {
+		t.Fatal("after cadence should restock the common tier")
+	}
+	inv = shops.GetShopInventory("gsr_zone", 7700, 1)
+	if got := inv.GetStock(7001).Current; got != 5 {
+		t.Fatalf("tier-50 entry: Current = %d, want 5", got)
+	}
+	if got := inv.GetStock(7002).Current; got != 0 {
+		t.Fatalf("tier-30 entry should stay caravan-gated: Current = %d, want 0", got)
+	}
+}

@@ -185,6 +185,50 @@ func TickMobShopRestock(mob *Mob) bool {
 	return anyFired
 }
 
+// TickMobShopBaselineRestock gives a non-crafter vendor in a caravan-served
+// zone the baseline common-tier (50/40) self-refill that crafters already get
+// via TickMobCraft. Cadence-gated on the tier-50 restock cadence (keyed in
+// LastRestockByTier[50]); tops up only RestockQty>0 tier-50/40 items via
+// RestockBaselineTiers -- rare goods (tier 30/20/10) stay caravan-gated. No-op
+// for crafters (they use the TickMobCraft path) and for mobs without a shop.
+// Returns true if any stock was added.
+func TickMobShopBaselineRestock(mob *Mob) bool {
+	if mob.Crafter {
+		return false
+	}
+	shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId)
+	if shopInv == nil {
+		return false
+	}
+	if shopInv.LastRestockByTier == nil {
+		shopInv.LastRestockByTier = map[int]uint64{}
+	}
+	b := configs.GetBalanceConfig()
+	roundCount := util.GetRoundCount()
+	roundsPerHour := uint64(configs.GetTimingConfig().RoundsPerDay) / 24
+	hours := shops.RestockCadenceHours(b, 50)
+	if hours <= 0 {
+		return false
+	}
+	cadence := uint64(hours) * roundsPerHour
+	if cadence == 0 {
+		// RoundsPerDay too coarse to represent a 1-hour cadence (e.g. default
+		// RoundsPerDay=20 gives roundsPerHour=0). Skip baseline restock rather
+		// than treating every tick as "past cadence".
+		return false
+	}
+	last := shopInv.LastRestockByTier[50]
+	if last == 0 {
+		shopInv.LastRestockByTier[50] = roundCount
+		return false
+	}
+	if roundCount-last < cadence {
+		return false
+	}
+	shopInv.LastRestockByTier[50] = roundCount
+	return shopInv.RestockBaselineTiers()
+}
+
 // TickMobCraft fires on every crafter mob idle tick. Per-tier
 // restock cadences gate actual stock additions (commons hourly,
 // rares every 5 days), but recipe evaluation and salvage logic
