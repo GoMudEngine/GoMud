@@ -31,13 +31,16 @@ political map and reserves a slot for the Bloodline Agents (a future-major force
 
 | faction_id | default_rep | current allies | current enemies |
 |---|---|---|---|
-| thornwall_guards | 0 | thornwall_citizens | warren |
+| thornwall_guards | 0 | thornwall_citizens | warren ← **REMOVE** |
 | thornwall_citizens | 0 | thornwall_guards | — |
 | stillwater_guards | 0 | stillwater_citizens | — |
 | stillwater_citizens | 0 | stillwater_guards | — |
-| warren | −25 | — | thornwall_guards |
+| warren | −25 | — | thornwall_guards ← **REMOVE** |
 
 (So "Stillwater militia & citizens" from the 6.5a brief already exist.)
+
+**Correction to 1.2:** the mutual `warren ↔ thornwall_guards` enemy edge
+mischaracterizes the Warren — see the warren section below; 6.5a removes it.
 
 ## New factions (6)
 
@@ -74,20 +77,30 @@ and is intentional.)
   bandit alliance is "circumstantial enemy-of-civilization," not a coordinated
   pact.
 
-### warren — REVIEW DECISION
+### warren — NOT an outlaw faction (reframed)
 
-warren is subterranean (Labyrinth of Low Tunnels), isolationist, and thematically
-distinct from the surface outlaws. Two options:
-- **(A, recommended)** Leave warren's graph essentially as-is (enemy of
-  thornwall_guards; optionally add road_wardens if wardens patrol near the
-  labyrinth mouth). Do NOT fold it into the surface outlaw alliance — tunnel
-  isolationists wouldn't coordinate with road bandits.
-- **(B)** Full cohesion: extend warren's `enemies:` to the entire law bloc and
-  ally it loosely with bandits/ironwind, matching the "(+warren) in the outlaw
-  cluster" framing.
+The Warren are **not outlaws and not enemies of the law**. They are an insular
+colony of small-folk who want to be left alone — *discriminated against and
+looked down upon*, rather than actively doing harm like bandits. So:
 
-Recommendation: **A** — preserves warren's coherent local character; avoids noise
-edges (warren vs stillwater_citizens it never meets). Flagged for your call.
+- **Remove** the mutual `warren ↔ thornwall_guards` enemy edge (a 1.2
+  mischaracterization). The Warren are mechanically **neutral** to the law bloc:
+  no enemy edges, no ally edges.
+- Keep `default_rep: -25` — this represents a stranger starting *mistrusted*
+  ("surface-dwellers are mistrusted on sight" per their description) and earnable
+  back via the Warren Compact (quest 2, `bump_rep: warren +30`). Mistrust, not
+  hostility.
+- The "discriminated against / looked down upon" theme is carried by **flavor**
+  (NPC dialogue, low NPC→player opinion, townsfolk attitudes) and by the negative
+  default_rep — **not** by a faction enemy edge. The faction allies/enemies model
+  is binary (hostile vs not); there's no "dislikes-but-tolerates" tier, and
+  forcing an enemy edge would make guards attack Warren on sight, which is wrong.
+
+**Behavior-change note:** removing the enemy edge means killing a Warren member no
+longer triggers thornwall_guards-enemy reactions / rep mechanics that keyed off
+that edge. This is the intended correction (the world should not treat the Warren
+as criminals), but flag it at merge so it's a conscious change, not a silent one.
+warren is NOT added to the outlaw cluster.
 
 ### bloodline_agents — neutral placeholder
 
