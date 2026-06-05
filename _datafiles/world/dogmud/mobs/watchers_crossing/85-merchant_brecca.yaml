@@ -8,6 +8,7 @@ hostile: false
 charm_immune: true
 non_combatant: true
 maxwander: 0
+schedule_id: watchers_brecca
 groups:
   - humanoid
   - merchant
