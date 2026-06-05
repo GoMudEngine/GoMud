@@ -1,0 +1,10 @@
+faction_id: dustwalk_caravans
+display_name: "Dustwalk Caravans"
+description: |
+  The merchant trains that haul goods along the Dustwalk Road and
+  beyond. Wary of strangers but quick to befriend those who help
+  keep the roads safe. They lean on the road wardens for protection
+  and trade with every town.
+default_rep: 10
+allies: [thornwall_guards, stillwater_guards, road_wardens, thornwall_citizens, stillwater_citizens, shopkeepers, ashwick_villagers, watchers_crossing]
+enemies: []

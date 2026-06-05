@@ -4,5 +4,5 @@ description: |
   The fishers, traders, and craftspeople of Stillwater. They keep the lake
   town alive and look out for one another.
 default_rep: 0
-allies: [stillwater_guards]
+allies: [thornwall_guards, stillwater_guards, road_wardens, thornwall_citizens, dustwalk_caravans, shopkeepers, ashwick_villagers, watchers_crossing]
 enemies: []

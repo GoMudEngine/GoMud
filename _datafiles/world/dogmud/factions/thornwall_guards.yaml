@@ -5,7 +5,7 @@ description: |
   gates manned. Indifferent to strangers; hostile to enemies of
   the city.
 default_rep: 0
-allies: [thornwall_citizens]
-enemies: [warren]
+allies: [stillwater_guards, road_wardens, thornwall_citizens, stillwater_citizens, dustwalk_caravans, shopkeepers, ashwick_villagers, watchers_crossing]
+enemies: [bandits, ironwind_tribe]
 holding_cell_room: 5105
 release_room: 473

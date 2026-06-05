@@ -1,0 +1,10 @@
+faction_id: ironwind_tribe
+display_name: "Ironwind Tribe"
+description: |
+  The goblin tribe of the Ironwind Steppe, led by their shaman.
+  Fiercely territorial and hostile to the settled folk who push
+  into the grasslands. They share no love for civilization and
+  raid alongside the bandits when their paths cross.
+default_rep: -25
+allies: [bandits]
+enemies: [thornwall_guards, stillwater_guards, road_wardens, thornwall_citizens, stillwater_citizens, dustwalk_caravans, shopkeepers, ashwick_villagers, watchers_crossing]

@@ -6,4 +6,4 @@ description: |
   Surface-dwellers are mistrusted on sight.
 default_rep: -25
 allies: []
-enemies: [thornwall_guards]
+enemies: []

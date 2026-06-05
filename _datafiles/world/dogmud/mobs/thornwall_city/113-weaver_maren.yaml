@@ -13,6 +13,7 @@ groups:
   - humanoid
   - merchant
   - thornwall_citizens
+  - shopkeepers
 knows_facts:
   - thornwall-steel-heritage
 idlecommands:

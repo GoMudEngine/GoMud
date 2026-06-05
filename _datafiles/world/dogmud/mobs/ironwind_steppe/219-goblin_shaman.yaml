@@ -9,6 +9,7 @@ maxwander: 2
 groups:
   - steppe-goblin
   - humanoid
+  - ironwind_tribe
 archetype: casting
 mutationchance: 35
 idlecommands:

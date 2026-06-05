@@ -9,6 +9,7 @@ charm_immune: true
 maxwander: 0
 groups:
   - humanoid
+  - dustwalk_caravans
 idlecommands:
   - 'emote checks a manifest, lips moving as he counts entries'
   - ''

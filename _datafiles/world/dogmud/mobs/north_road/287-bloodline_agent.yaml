@@ -9,6 +9,7 @@ charm_immune: true
 maxwander: 6
 groups:
   - humanoid
+  - bloodline_agents
 idlecommands:
   - 'emote scans the road ahead with unhurried attention'
   - 'wander'

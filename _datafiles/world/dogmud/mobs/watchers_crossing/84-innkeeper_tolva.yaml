@@ -9,6 +9,7 @@ maxwander: 0
 groups:
   - humanoid
   - innkeeper
+  - watchers_crossing
 idlecommands:
   - 'emote wipes the counter with a rag that has seen better days'
   - 'emote ladles stew from the pot by the hearth into a waiting bowl'

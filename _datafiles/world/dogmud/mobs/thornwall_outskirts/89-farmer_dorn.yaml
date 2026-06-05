@@ -9,6 +9,7 @@ maxwander: 0
 groups:
   - humanoid
   - farmer
+  - thornwall_citizens
 idlecommands:
   - 'emote pulls a weed from the garden bed and tosses it aside'
   - 'emote straightens up slowly, one hand pressed to the small of his back'

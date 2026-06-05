@@ -1,0 +1,9 @@
+faction_id: watchers_crossing
+display_name: "Watcher's Crossing"
+description: |
+  The innkeeper, traders, and toll-keeper of the waystation at
+  Watcher's Crossing. A small but vital stop on the trade roads,
+  bound to the wider web of guards, wardens, and merchants.
+default_rep: 0
+allies: [thornwall_guards, stillwater_guards, road_wardens, thornwall_citizens, stillwater_citizens, dustwalk_caravans, shopkeepers, ashwick_villagers]
+enemies: []

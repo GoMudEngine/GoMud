@@ -1,0 +1,9 @@
+faction_id: shopkeepers
+display_name: "Merchants' Concord"
+description: |
+  An informal chamber of commerce binding the towns' shopkeepers,
+  crafters, and traders. They look out for one another -- cheat or
+  rob one merchant and word travels fast through the Concord.
+default_rep: 0
+allies: [thornwall_guards, stillwater_guards, road_wardens, thornwall_citizens, stillwater_citizens, dustwalk_caravans, ashwick_villagers, watchers_crossing]
+enemies: []

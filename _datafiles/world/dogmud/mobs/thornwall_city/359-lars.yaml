@@ -10,6 +10,7 @@ groups:
   - runner
   - thornwall_citizens
   - stillwater_citizens
+  - dustwalk_caravans
 hates:
   - bandit
 hostile: false

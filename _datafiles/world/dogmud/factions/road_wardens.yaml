@@ -1,0 +1,10 @@
+faction_id: road_wardens
+display_name: "Road Wardens"
+description: |
+  Sworn keepers of the trade roads between the towns. They escort
+  caravans, patrol the waystations, and run down the bandits that
+  prey on travelers. Allied with the town guards and the merchant
+  trains they protect.
+default_rep: 0
+allies: [thornwall_guards, stillwater_guards, thornwall_citizens, stillwater_citizens, dustwalk_caravans, shopkeepers, ashwick_villagers, watchers_crossing]
+enemies: [bandits, ironwind_tribe]

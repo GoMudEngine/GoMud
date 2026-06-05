@@ -11,6 +11,8 @@ maxwander: 0
 groups:
   - humanoid
   - merchant
+  - watchers_crossing
+  - shopkeepers
 idlecommands:
   - 'emote slides an abacus bead with a precise click'
   - 'emote checks a slate tag against a list on the counter'

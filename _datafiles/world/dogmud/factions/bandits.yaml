@@ -1,0 +1,10 @@
+faction_id: bandits
+display_name: "Road Bandits"
+description: |
+  Brigands and highwaymen who prey on the trade roads and lonely
+  stretches of wilderness. They answer to no law and rob whoever
+  they can. Hunted by the wardens and guards; loosely thrown in
+  with the steppe tribes when it suits them.
+default_rep: -35
+allies: [ironwind_tribe]
+enemies: [thornwall_guards, stillwater_guards, road_wardens, thornwall_citizens, stillwater_citizens, dustwalk_caravans, shopkeepers, ashwick_villagers, watchers_crossing]

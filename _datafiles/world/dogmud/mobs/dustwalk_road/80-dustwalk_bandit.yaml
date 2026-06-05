@@ -9,6 +9,7 @@ maxwander: 1
 groups:
   - bandit
   - humanoid
+  - bandits
 idlecommands:
   - 'emote picks at its teeth with the point of a knife'
   - 'emote scans the road with a predatory squint'

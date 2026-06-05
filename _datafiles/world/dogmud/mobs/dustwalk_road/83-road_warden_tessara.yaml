@@ -9,6 +9,7 @@ maxwander: 0
 groups:
   - humanoid
   - warden
+  - road_wardens
 hates:
   - bandit
 idlecommands:

@@ -7,6 +7,7 @@ charm_immune: true
 maxwander: 0
 groups:
   - humanoid
+  - ashwick_villagers
 idlecommands:
   - 'emote grinds herbs in the mortar with practiced rhythm'
   - ''

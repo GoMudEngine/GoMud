@@ -8,6 +8,7 @@ behavior_archetype: generic_fighter
 groups:
   - humanoid
   - bandit
+  - bandits
 idlecommands:
   - 'emote scans the road, eyes narrowed against the dust'
   - ''
