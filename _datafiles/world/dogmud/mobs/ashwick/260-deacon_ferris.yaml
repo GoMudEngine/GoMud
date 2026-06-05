@@ -1,6 +1,7 @@
 mobid: 260
 zone: Ashwick
 behavior_archetype: noncombat_questgiver
+schedule_id: ashwick_ferris
 statpool: 30
 hostile: false
 charm_immune: true
@@ -8,6 +9,14 @@ maxwander: 0
 groups:
   - humanoid
   - ashwick_villagers
+  - gossiper
+knows_facts:
+  - ashwick-deep-woods-wolves
+  - ashwick-newcomer-forager
+relationships:
+  - to: 261
+    type: friend
+    subtype: congregation
 idlecommands:
   - 'emote straightens a prayer cushion with absent precision'
   - ''

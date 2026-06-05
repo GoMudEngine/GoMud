@@ -1,0 +1,26 @@
+id: watchers_brecca
+description: "Merchant Brecca: trading post all day, evening drink at the inn, sleeps in quarters behind the post."
+segments:
+  - start: 6
+    end: 18
+    target_room: 424
+    activity: ""
+    idlecommands:
+      - emote tags and shelves a crate, every item placed with deliberate precision.
+      - say Everything's priced. Haggle if you like -- I priced in the haggling.
+      - emote measures a customer with one glance and the goods with the next.
+      - emote slides an abacus bead and marks the total without looking up.
+  - start: 18
+    end: 22
+    target_room: 423
+    activity: ""
+    idlecommands:
+      - emote takes a corner table at the inn, ledger still tucked under her arm.
+      - say One cup. I've got numbers to balance before I sleep.
+      - emote drums her fingers on the closed ledger, thinking.
+  - start: 22
+    end: 6
+    target_room: 424
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the quarters behind the post, door barred from within.

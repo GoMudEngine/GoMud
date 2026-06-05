@@ -6,10 +6,22 @@ itemdropchance: 0
 hostile: false
 charm_immune: true
 maxwander: 0
+schedule_id: watchers_tolva
 groups:
   - humanoid
   - innkeeper
   - watchers_crossing
+  - gossiper
+knows_facts:
+  - watchers-road-bandits
+  - watchers-toll-grumbling
+relationships:
+  - to: 85
+    type: friend
+    subtype: crossing
+  - to: 86
+    type: friend
+    subtype: crossing
 idlecommands:
   - 'emote wipes the counter with a rag that has seen better days'
   - 'emote ladles stew from the pot by the hearth into a waiting bowl'

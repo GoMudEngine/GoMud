@@ -1,0 +1,19 @@
+id: watchers_tolva
+description: "Innkeeper Tolva: long shift running the common room from dawn, sleeps in the back room after last call."
+segments:
+  - start: 6
+    end: 22
+    target_room: 423
+    activity: ""
+    idlecommands:
+      - emote wipes down the bar without once looking at it, eyes on the room.
+      - say Room and a meal? Sit anywhere you can see the door.
+      - emote marks a tally on the slate behind the bar, watchful of every corner.
+      - emote ladles stew into a bowl and slides it down the counter without being asked.
+  - start: 22
+    end: 6
+    target_room: 423
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the back room, one ear still turned toward the common room.
+      - emote stirs at a sound, then settles again without waking.

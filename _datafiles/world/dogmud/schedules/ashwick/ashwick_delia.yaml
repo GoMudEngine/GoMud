@@ -1,0 +1,38 @@
+id: ashwick_delia
+description: "Herbalist Delia: grinds and sorts at the cottage in the morning,
+  tends the garden by afternoon, takes the air on the green at dusk,
+  sleeps at the cottage."
+segments:
+  - start: 6
+    end: 13
+    target_room: 4027
+    activity: craft
+    idlecommands:
+      - emote sorts dried bundles by smell, brisk and sure.
+      - emote grinds a pinch of root to powder and nods once.
+      - say No two seasons grow the same. You learn the plant, not the page.
+      - say These won't dry themselves. Move along.
+  - start: 13
+    end: 17
+    target_room: 4028
+    activity: craft
+    idlecommands:
+      - emote pinches back a seed-head and tucks it into her apron.
+      - emote crouches to check a low row, muttering about the drainage.
+      - say Mind where you step -- half of this bed isn't in any book.
+      - say I planted these from slips I dried myself. Don't touch.
+  - start: 17
+    end: 21
+    target_room: 4017
+    activity: ""
+    idlecommands:
+      - emote rolls a stiff shoulder, watching the light go.
+      - emote folds her stained apron over one arm and breathes the cooler air.
+      - say Long day. Still not long enough.
+      - emote tilts her head toward the treeline and counts the colors.
+  - start: 21
+    end: 6
+    target_room: 4027
+    activity: sleeping
+    idlecommands:
+      - emote sleeps amid the green smell of drying herbs.

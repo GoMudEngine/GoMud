@@ -1,0 +1,26 @@
+id: watchers_harn
+description: "Toll Collector Harn: long shift at the tollhouse, evening respite at the inn, sleeps on his cot by the ledger."
+segments:
+  - start: 6
+    end: 18
+    target_room: 421
+    activity: ""
+    idlecommands:
+      - emote records a payment in the heavy ledger, slow and exact.
+      - say A copper for the bridge. I don't set the rate, friend, I only keep it.
+      - emote offers an apologetic shrug to a grumbling traveler.
+      - emote peers at the bridge stones with a worried frown, counting cracks.
+  - start: 18
+    end: 22
+    target_room: 423
+    activity: ""
+    idlecommands:
+      - emote nurses a single cup in the corner, glad to be off the booth.
+      - say First time I've sat down since the morning ferry.
+      - emote stretches his hands out flat on the table, working the stiffness out.
+  - start: 22
+    end: 6
+    target_room: 421
+    activity: sleeping
+    idlecommands:
+      - emote sleeps on the cot by the tollhouse ledger, one hand near the coin box.

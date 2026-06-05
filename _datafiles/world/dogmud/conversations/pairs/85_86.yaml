@@ -1,0 +1,32 @@
+id: brecca_and_harn
+mob_a: 85
+mob_b: 86
+exchanges:
+  - lines:
+      - speaker: A
+        text: "Slow at the crossing today."
+      - speaker: B
+        text: "Slow everywhere the toll's involved."
+      - speaker: A
+        text: "Don't get me started on that bridge."
+  - lines:
+      - speaker: A
+        text: "You'd think one copper wouldn't turn a body around."
+      - speaker: B
+        text: "A copper, and the queue, and the principle of it."
+      - speaker: A
+        text: "The principle. Always the principle."
+  - lines:
+      - speaker: A
+        text: "Long memory, this crossing."
+      - speaker: B
+        text: "Longer ledger."
+      - speaker: A
+        text: "That it is. Every copper of it."
+  - lines:
+      - speaker: A
+        text: "Cup of the cheap stuff? No hard feelings over the bridge."
+      - speaker: B
+        text: "...decent of you. Unexpected."
+      - speaker: A
+        text: "Put it on credit. We're good at credit, here at the crossing."

@@ -1,0 +1,46 @@
+id: ashwick_ferris
+description: "Deacon Ferris: tends the chapel at dawn, walks the ritual circle
+  at midday, returns to the chapel in the afternoon, keeps company on the
+  green at dusk, sleeps in the chapel."
+segments:
+  - start: 6
+    end: 12
+    target_room: 4022
+    activity: ""
+    idlecommands:
+      - emote straightens the worn cloth on the little altar.
+      - emote lights a tallow candle and watches it catch.
+      - say Come in out of the wind. The door is always open here.
+      - say Ashwick is small, but what is kept here is kept honestly.
+  - start: 12
+    end: 14
+    target_room: 4021
+    activity: ""
+    idlecommands:
+      - emote walks the old ring slowly, naming each stone under his breath.
+      - emote pauses at one stone longer than the others, a hand resting on it.
+      - say These were placed before the chapel. Before the village, I think.
+  - start: 14
+    end: 17
+    target_room: 4022
+    activity: ""
+    idlecommands:
+      - emote trims a guttering candle with two careful fingers.
+      - emote refolds a cloth on the altar and smooths it twice.
+      - say Questions are not the same as doubt. I remind myself of that.
+      - emote reads a few lines from a worn book and closes it gently.
+  - start: 17
+    end: 21
+    target_room: 4017
+    activity: ""
+    idlecommands:
+      - emote nods a quiet greeting to each soul on the green.
+      - emote clasps his hands and watches the evening settle.
+      - say A good village keeps faith with its neighbors. That's all it is.
+      - emote listens to the distant treeline with a patient expression.
+  - start: 21
+    end: 6
+    target_room: 4022
+    activity: sleeping
+    idlecommands:
+      - emote sleeps on a narrow cot beside the altar.

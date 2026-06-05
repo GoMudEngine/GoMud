@@ -6,10 +6,14 @@ itemdropchance: 0
 hostile: false
 charm_immune: true
 maxwander: 0
+schedule_id: watchers_harn
 groups:
   - humanoid
   - warden
   - watchers_crossing
+  - gossiper
+knows_facts:
+  - watchers-road-bandits
 idlecommands:
   - 'emote writes a careful entry in the ledger, blotting the ink dry'
   - 'emote counts a small stack of coins, lips moving silently'

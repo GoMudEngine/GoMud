@@ -1,0 +1,32 @@
+id: delia_and_forager
+mob_a: 259
+mob_b: 262
+exchanges:
+  - lines:
+      - speaker: A
+        text: "The bitterroot came in good this week."
+      - speaker: B
+        text: "Long walk for it. Worth the boots."
+      - speaker: A
+        text: "Worth it. Don't make it the last walk, mind."
+  - lines:
+      - speaker: A
+        text: "Folk still ask questions down at the well."
+      - speaker: B
+        text: "Folk always will. Let them ask."
+      - speaker: A
+        text: "I tell them the work's honest. That ends it."
+  - lines:
+      - speaker: A
+        text: "Quiet suits this trade. Better hands, fewer mistakes."
+      - speaker: B
+        text: "Fewer mistakes, fewer regrets."
+      - speaker: A
+        text: "There's sense in that. Eat something between the quiet, though."
+  - lines:
+      - speaker: A
+        text: "Back to the wall, corner seat — same spot every time."
+      - speaker: B
+        text: "Best view of the door."
+      - speaker: A
+        text: "Spoken like someone who's needed one. There's a cot, when winter comes."

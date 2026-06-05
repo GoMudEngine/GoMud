@@ -1,6 +1,7 @@
 mobid: 259
 zone: Ashwick
 behavior_archetype: noncombat_questgiver
+schedule_id: ashwick_delia
 statpool: 36
 hostile: false
 charm_immune: true
@@ -8,6 +9,20 @@ maxwander: 0
 groups:
   - humanoid
   - ashwick_villagers
+  - gossiper
+knows_facts:
+  - ashwick-deep-woods-wolves
+  - ashwick-newcomer-forager
+relationships:
+  - to: 261
+    type: friend
+    subtype: neighbor
+  - to: 260
+    type: friend
+    subtype: village
+  - to: 262
+    type: employer
+    subtype: herb-work
 idlecommands:
   - 'emote grinds herbs in the mortar with practiced rhythm'
   - ''

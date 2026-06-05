@@ -1,6 +1,7 @@
 mobid: 261
 zone: Ashwick
 behavior_archetype: noncombat_questgiver
+schedule_id: ashwick_hesta
 statpool: 30
 hostile: false
 charm_immune: true
@@ -8,6 +9,10 @@ maxwander: 0
 groups:
   - humanoid
   - ashwick_villagers
+  - gossiper
+knows_facts:
+  - ashwick-deep-woods-wolves
+  - ashwick-newcomer-forager
 idlecommands:
   - 'emote leans on a fence post, surveying the crops with a practiced eye'
   - ''

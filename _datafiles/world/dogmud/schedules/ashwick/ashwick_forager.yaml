@@ -1,0 +1,38 @@
+id: ashwick_forager
+description: "The forager: works the herb clearing at dawn, delivers to
+  Delia's garden by early afternoon, returns to camp by late afternoon,
+  sleeps at camp."
+segments:
+  - start: 6
+    end: 13
+    target_room: 4032
+    activity: ""
+    idlecommands:
+      - emote moves through the clearing without bending a blade out of place.
+      - emote freezes at a far sound, then keeps gathering.
+      - emote separates stems by type with hands that barely need to look.
+      - emote checks over one shoulder before bundling the last of the harvest.
+  - start: 13
+    end: 16
+    target_room: 4028
+    activity: ""
+    idlecommands:
+      - emote lays a sorted bundle at the garden's edge for Delia.
+      - say Found the bitterroot. Three days east. I didn't stay.
+      - emote scans the treeline once before setting the bundle down.
+      - say It's clean. No contact on the trail.
+  - start: 16
+    end: 22
+    target_room: 4031
+    activity: ""
+    idlecommands:
+      - emote sits where the camp's back is to stone and the front to the path.
+      - emote keeps hands low and still, watching the light thin through the canopy.
+      - emote tends a small fire built just large enough and no larger.
+      - say It was quiet. That's all I needed today. Quiet.
+  - start: 22
+    end: 6
+    target_room: 4031
+    activity: sleeping
+    idlecommands:
+      - emote sleeps lightly, one boot still on.
