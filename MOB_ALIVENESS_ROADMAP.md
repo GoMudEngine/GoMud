@@ -114,12 +114,12 @@ should always agree.
 | 6.1 | Polish | Stillwater town-flavor pass | L | Phase 1, Phase 3 | Done |
 | 6.2 | Polish | Parity audit closeout | S | 6.1 | Done |
 | 6.3 | Polish | Per-zone tuning (Thornwall deepening) | M | 6.1 | Done (2026-06-03) |
-| 6.4 | Polish | Performance review (initial) | S | 6.3 | Not started |
+| 6.4 | Polish | Performance review (initial) | S | 6.3 | Done (2026-06-05) |
 | 6.5 | Polish | Content pass — broader rollout | XL | 6.3 | Not started |
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 38 / 42 done • 0 in progress • 4 not started (+1 deferred: 3.5).
+**Roll-up:** 39 / 42 done • 0 in progress • 3 not started (+1 deferred: 3.5).
 
 ---
 
@@ -1065,13 +1065,14 @@ Validate the framework against real content, then scale.
 - **Why:** Two zones reveal pattern. Three+ becomes process to delegate.
 
 ### 6.4 Performance review (initial)
-**Status:** Not started • **Size:** S
+**Status:** Done (2026-06-05) • **Size:** S
 
 - **Goal:** Measure substrate state size, persistence cost, and tick budget after the framework lands.
 - **In:** Profile, log key metrics, document baseline.
 - **Out:** —
 - **Depends on:** 6.3
 - **Why:** Can't optimize what we haven't measured. Catch regressions before content pass scales them up.
+- **Shipped:** Extended the existing always-on `util.TrackTime` / `util.AddMemoryReporter` infra (no new framework, no toggle — decision recorded in the baseline doc). 8 substrate memory reporters (opinions, factions, crimes, knowledge, bounties [nil-safe], facts [nil-safe], relationships, goals) surface store size + count in `server stats`; 5 tick sub-timers broken out of the lumped roll-ups (`IdleMobs::{schedule,patrol,conversation}`, `MobIdle::goalplanner`, `Enforcement`). Captured a re-runnable idle (Ct=524) + under-load (Ct=536, 1 player) baseline at `docs/perf/aliveness-perf-baseline.md`: aliveness substrate ~7 KB of a 2.1 MB non-Go total, every tick seam sub-microsecond avg — comfortable headroom before the 6.5 content pass. Conversations are the largest aliveness seam; the only large timer high (~67 ms `events.ProcessEvents()`) is an autosave/GC outlier, not aliveness. Spec at `docs/superpowers/specs/2026-06-05-mob-aliveness-6.4-performance-review-design.md`, plan at `docs/superpowers/plans/2026-06-05-mob-aliveness-6.4-performance-review.md`. **Bonus:** found a pre-existing concurrent-map-write crash in `templates.Process` (login path) during capture — fixed separately on `fix/templates-configcache-race`. Decomposed the follow-on 6.5 content pass + specced 6.5a faction definitions during the same session.
 
 ### 6.5 Content pass — broader rollout
 **Status:** Not started • **Size:** XL

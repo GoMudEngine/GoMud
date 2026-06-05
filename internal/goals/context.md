@@ -254,6 +254,14 @@ goal remove <mobId> <id>
 goal clear <mobId>
 ```
 
+## Memory Reporting
+
+`memory.go` registers a `util.AddMemoryReporter` under the section name
+`Goals`, surfacing the in-memory store size in the `server stats` admin
+command (mob-aliveness chunk 6.4). Two rows are reported: `cache`
+(number of mob templates with a loaded goal file) and `nameByMobId`
+(mob-name lookup map size).
+
 ## Out of Scope
 
 - **Behavior-tree integration (4.4)**: btree actions reading

@@ -245,6 +245,13 @@ The knowledge layer reads from two other v1 substrates but does not cascade writ
 - `internal/usercommands/admin.knowledge.go` (admin API)
 - `internal/modules/mob.room_change.go` or hook registration (forager/caravan observation auto-write)
 
+## Memory Reporting
+
+`memory.go` registers a `util.AddMemoryReporter` under the section name
+`Knowledge`, surfacing the in-memory store size in the `server stats` admin
+command (mob-aliveness chunk 6.4). One row is reported: `knowledgeCache`
+(number of observer mob files currently loaded in memory).
+
 ## Testing Notes
 
 ### Test Files

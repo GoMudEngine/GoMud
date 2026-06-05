@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
@@ -233,7 +234,9 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 	// mobs (e.g. on-duty guards) hold a standing non-nil Aggro, so we must NOT
 	// gate on Aggro==nil here or they never pursue goals.
 	if !isCharmed && mobGoalPlannerRanRound(mob) != util.GetRoundCount() {
+		tGoal := time.Now()
 		behaviortree.RunGoalPlanner(mob, util.GetRoundCount())
+		util.TrackTime(`MobIdle::goalplanner`, time.Since(tGoal).Seconds())
 	}
 
 	// "Planner owns the tick": TryMobBehavior returns false while a goal

@@ -35,6 +35,10 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 
 	// Handle idle mob behavior
 	tStart := time.Now()
+	// Chunk 6.4: per-tick sub-timers, broken out of the lumped IdleMobs()
+	// total so 6.6 can attribute growth. Accumulated across all mobs, recorded
+	// once after the loop (same denominator as the IdleMobs() parent).
+	var schedDur, patrolDur, convDur time.Duration
 	for _, mobId := range allMobInstances {
 
 		mob := mobs.GetInstance(mobId)
@@ -71,8 +75,10 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 		// clear stale paths on segment transitions and queue new pathtos before
 		// the walker consumes them.
 		if mob.ScheduleId != "" {
+			tSched := time.Now()
 			plan := scheduleTickPlan(mob, gametime.GetDate().Hour24)
 			applySchedulePlan(mob, plan)
+			schedDur += time.Since(tSched)
 		}
 
 		// Chunk 3.4: patrol executor. Reads active_patrol_id stamped by the
@@ -90,14 +96,18 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 				activePatrolId = mob.PatrolId
 			}
 			if activePatrolId != "" {
+				tPatrol := time.Now()
 				plan := patrolTickPlan(mob, activePatrolId)
 				applyPatrolPlan(mob, plan, activePatrolId)
+				patrolDur += time.Since(tPatrol)
 			}
 		}
 
 		// Chunk 3.6: NPC↔NPC idle conversations.
 		// Phase 1: if this mob is already in a conversation, advance the
 		// state machine one tick (fires the next line or finalises/aborts).
+		// Chunk 6.4: IdleMobs::conversation covers both Phase 1 and Phase 2 below.
+		tConv := time.Now()
 		if partnerId, ok := mob.Character.GetMiscData(conversations.MiscDataPartnerId).(int); ok && partnerId > 0 {
 			conversations.TickConversation(conversationadapter.AdaptMob(mob), partnerId)
 		}
@@ -114,6 +124,7 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 				}
 			}
 		}
+		convDur += time.Since(tConv)
 
 		// Check whether they are currently in the middle of a path, or have one waiting to start.
 		// This comes after checks for whether they are currently in a conersation, or in combat, etc.
@@ -179,6 +190,9 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 
 	}
 
+	util.TrackTime(`IdleMobs::schedule`, schedDur.Seconds())
+	util.TrackTime(`IdleMobs::patrol`, patrolDur.Seconds())
+	util.TrackTime(`IdleMobs::conversation`, convDur.Seconds())
 	util.TrackTime(`IdleMobs()`, time.Since(tStart).Seconds())
 
 	return events.Continue

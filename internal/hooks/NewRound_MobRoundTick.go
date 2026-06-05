@@ -114,7 +114,9 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 		tickMobConditions(mob)
 		tickMobRecomputeGoals(mob, roundCount) // chunk 4.2 — strategic-layer selection
 		if room != nil && isGuardMob(mob.Groups) {
+			tEnf := time.Now()
 			justice.RunGuardEnforcement(mob, room, roundCount)
+			util.TrackTime(`Enforcement`, time.Since(tEnf).Seconds())
 		}
 
 		// Death check always runs — a DoT tick in an idle zone should

@@ -187,6 +187,14 @@ fact forget-all <mobId>                  — call ForgetAll
 - **internal/usercommands**: Admin `fact` command.
 - **Future: dialogue, tactics, town memory**: Will query `KnownFactsOf`, `AllActiveFacts`, `HeardEvent`.
 
+## Memory Reporting
+
+`memory.go` registers a `util.AddMemoryReporter` under the section name
+`Facts`, surfacing the in-memory store size in the `server stats` admin
+command (mob-aliveness chunk 6.4). Two rows are reported: `registry`
+(number of facts loaded, nil-safe — 0 when not yet loaded) and
+`awarenessCache` (number of observer awareness files currently in memory).
+
 ## Testing Notes
 
 ### Test Files

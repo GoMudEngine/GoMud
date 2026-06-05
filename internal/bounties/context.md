@@ -244,6 +244,14 @@ Flavor text reads from `AllOpen()` and displays per-issuer sections.
 - `internal/questengine/actions` (declare_bounty action)
 - `internal/usercommands/admin.bounty` (admin API + player list/show commands)
 
+## Memory Reporting
+
+`memory.go` registers a `util.AddMemoryReporter` under the section name
+`Bounties`, surfacing the in-memory store size in the `server stats` admin
+command (mob-aliveness chunk 6.4). One row is reported: `registry`
+(total number of bounty rows loaded, nil-safe — 0 when the registry has
+not yet been loaded from disk).
+
 ## Testing Notes
 
 ### Test Files

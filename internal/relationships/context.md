@@ -210,6 +210,13 @@ Output uses display names (mob name lookup) and formats edges with types and sub
 - **internal/usercommands/admin.relationship**: Admin command implementation.
 - **Future: internal/hooks (4.5 reactive goals, 3.6 idle conversation)**: Will query via `AlliesOf`, `RivalsOf`, `RelationsBetween`.
 
+## Memory Reporting
+
+`memory.go` registers a `util.AddMemoryReporter` under the section name
+`Relationships`, surfacing the in-memory store size in the `server stats`
+admin command (mob-aliveness chunk 6.4). One row is reported: `graph`
+(number of mob template IDs that have at least one outgoing edge).
+
 ## Testing Notes
 
 ### Test Files
