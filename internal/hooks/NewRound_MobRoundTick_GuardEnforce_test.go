@@ -1,15 +1,19 @@
 package hooks
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/GoMudEngine/GoMud/internal/mobs"
+)
 
 func TestIsGuardMob(t *testing.T) {
-	if !isGuardMob([]string{"humanoid", "guard", "thornwall_guards"}) {
+	if !mobs.IsGuardMob([]string{"humanoid", "guard", "thornwall_guards"}) {
 		t.Error("expected guard group to be detected")
 	}
-	if isGuardMob([]string{"humanoid", "merchant"}) {
+	if mobs.IsGuardMob([]string{"humanoid", "merchant"}) {
 		t.Error("non-guard must not be detected")
 	}
-	if isGuardMob(nil) {
+	if mobs.IsGuardMob(nil) {
 		t.Error("nil groups must not be detected")
 	}
 }

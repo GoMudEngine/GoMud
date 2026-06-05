@@ -42,8 +42,8 @@ func aggressiveActionToRevenge(event events.Event) {
 		return
 	}
 
-	// Seed revenge into the attacked mob at victim priority.
-	seedRevengeGoalIfAbsent(attackedMob, "player", pa.UserId, aggressiveVictimRevengePriority)
+	// Classify and respond for the attacked mob at victim priority.
+	seedWitnessResponse(attackedMob, pa.UserId, aggressiveVictimRevengePriority)
 
 	// Seed revenge into non-hostile witnesses sharing the same room at
 	// witness priority (lower than the direct victim — they aren't the
@@ -60,6 +60,6 @@ func aggressiveActionToRevenge(event events.Event) {
 		if witness == nil || witness.AutoAggro {
 			continue
 		}
-		seedRevengeGoalIfAbsent(witness, "player", pa.UserId, aggressiveWitnessRevengePriority)
+		seedWitnessResponse(witness, pa.UserId, aggressiveWitnessRevengePriority)
 	}
 }

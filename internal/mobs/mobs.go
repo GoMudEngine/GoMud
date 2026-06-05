@@ -193,6 +193,19 @@ func (m *Mob) IsNonCombatant() bool {
 	return m.Character.NonCombatant || m.NonCombatant
 }
 
+// IsGuardMob reports whether a mob's groups include the law-enforcement
+// "guard" marker (5.1 town justice). Note: this is the literal "guard"
+// group tag, NOT a guard faction id and NOT the combat-stance
+// Character.IsGuard() predicate.
+func IsGuardMob(groups []string) bool {
+	for _, g := range groups {
+		if g == "guard" {
+			return true
+		}
+	}
+	return false
+}
+
 // GetZone returns the mob's zone name.
 func (m *Mob) GetZone() string {
 	return m.Zone

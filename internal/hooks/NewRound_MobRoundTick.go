@@ -113,7 +113,7 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 		tickMobBuffs(mob, mobInstanceId)
 		tickMobConditions(mob)
 		tickMobRecomputeGoals(mob, roundCount) // chunk 4.2 — strategic-layer selection
-		if room != nil && isGuardMob(mob.Groups) {
+		if room != nil && mobs.IsGuardMob(mob.Groups) {
 			tEnf := time.Now()
 			justice.RunGuardEnforcement(mob, room, roundCount)
 			util.TrackTime(`Enforcement`, time.Since(tEnf).Seconds())
@@ -468,17 +468,6 @@ func tickMobConditions(mob *mobs.Mob) {
 // revalidateMobStats — current inline line 402.
 func revalidateMobStats(mob *mobs.Mob) {
 	mob.Character.Validate()
-}
-
-// isGuardMob reports whether a mob's groups include the law-enforcement
-// "guard" marker (5.1a town justice).
-func isGuardMob(groups []string) bool {
-	for _, g := range groups {
-		if g == "guard" {
-			return true
-		}
-	}
-	return false
 }
 
 // tickMobRecomputeGoals runs the chunk-4.2 goal-selection pipeline
