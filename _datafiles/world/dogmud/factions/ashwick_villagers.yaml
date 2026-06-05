@@ -1,0 +1,10 @@
+faction_id: ashwick_villagers
+display_name: "Ashwick Villagers"
+description: |
+  The farmers, herbalists, and faithful of the little village of
+  Ashwick. They tend their fields and chapel and look out for their
+  own. They keep no guards and rely on the wardens and town watches
+  when trouble finds them.
+default_rep: 0
+allies: [thornwall_guards, stillwater_guards, road_wardens, thornwall_citizens, stillwater_citizens, dustwalk_caravans, shopkeepers, watchers_crossing]
+enemies: []

@@ -1,0 +1,9 @@
+faction_id: bloodline_agents
+display_name: "Bloodline Agents"
+description: |
+  Shadowy operatives moving quietly through the world on errands
+  whose purpose few can guess. For now they keep to themselves --
+  but those who watch closely sense a larger design taking shape.
+default_rep: 0
+allies: []
+enemies: []
