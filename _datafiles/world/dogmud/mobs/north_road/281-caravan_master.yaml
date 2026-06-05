@@ -10,6 +10,16 @@ maxwander: 0
 groups:
   - humanoid
   - dustwalk_caravans
+relationships:
+  - to: 357
+    type: employer
+    subtype: caravan
+  - to: 358
+    type: employer
+    subtype: caravan
+  - to: 359
+    type: employer
+    subtype: caravan
 idlecommands:
   - 'emote checks a manifest, lips moving as he counts entries'
   - ''
