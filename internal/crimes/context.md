@@ -182,6 +182,13 @@ When a player kills a faction-member mob in `MobDeath_FactionRep.go`, the engine
 - **Action**: Record a fresh murder row with `hadExternalWitness = false`. If witnesses are present, set perpetrator to identified; if not, set to unknown. Pay the full murder rep delta only if perpetrator is identified.
 - **Rationale**: Murder as a standalone act (not an escalation from assault). Rep applies only if identity is confirmed.
 
+## Memory Reporting
+
+`memory.go` registers a `util.AddMemoryReporter` under the section name
+`Crimes`, surfacing the in-memory store size in the `server stats` admin
+command (mob-aliveness chunk 6.4). One row is reported: `crimeCache`
+(number of factions with a loaded crime log in memory).
+
 ## Testing Notes
 
 ### Test Files

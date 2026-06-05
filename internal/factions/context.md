@@ -165,6 +165,14 @@ type FactionRep struct {
 - **util**: Uses `GetRoundCount()` for `last_updated_round` stamping and `ConvertForFilename` for path generation.
 - **mudlog**: Logs warnings on disk I/O errors and unknown faction references.
 
+## Memory Reporting
+
+`memory.go` registers a `util.AddMemoryReporter` under the section name
+`Factions`, surfacing the in-memory store size in the `server stats` admin
+command (mob-aliveness chunk 6.4). Two rows are reported: `definitions`
+(number of loaded faction definitions) and `repCache` (number of factions
+with a cached per-player rep table).
+
 ## Testing Notes
 
 ### Test Files

@@ -102,6 +102,14 @@ TierFriendly             // >= +50
 - **util**: Uses `GetRoundCount()` for time-based decay and `ConvertForFilename` for path generation.
 - **mudlog**: Logs warnings on disk I/O errors.
 
+## Memory Reporting
+
+`memory.go` registers a `util.AddMemoryReporter` under the section name
+`Opinions`, surfacing the in-memory store size in the `server stats` admin
+command (mob-aliveness chunk 6.4). Two rows are reported: `opinionCache`
+(number of loaded mob opinion tables) and `nameByMobId` (mob-name lookup
+map size).
+
 ## Testing Notes
 
 ### Test Files
