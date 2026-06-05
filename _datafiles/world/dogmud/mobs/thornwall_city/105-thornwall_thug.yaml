@@ -9,6 +9,7 @@ maxwander: 1
 groups:
   - humanoid
   - bandit
+  - bandits
 idlecommands:
   - 'emote leans against the alley wall, watching the street'
   - 'emote cracks knuckles with deliberate slowness'

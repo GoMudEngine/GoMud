@@ -10,6 +10,7 @@ groups:
   - merchant_train
   - thornwall_citizens
   - stillwater_citizens
+  - dustwalk_caravans
 relationships:
   - to: 359
     type: family

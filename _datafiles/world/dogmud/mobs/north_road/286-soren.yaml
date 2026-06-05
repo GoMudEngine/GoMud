@@ -15,6 +15,7 @@ maxwander: 0
 groups:
   - humanoid
   - bandit
+  - bandits
 hates:
   - caravan
 idlecommands:

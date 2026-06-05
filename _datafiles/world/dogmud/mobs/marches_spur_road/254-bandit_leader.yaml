@@ -10,6 +10,7 @@ behavior_archetype: leader
 groups:
   - humanoid
   - bandit
+  - bandits
 idlecommands:
   - 'emote leans against the barn wall with arms crossed'
   - ''

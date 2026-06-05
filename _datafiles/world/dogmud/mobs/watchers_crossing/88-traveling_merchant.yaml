@@ -9,6 +9,8 @@ maxwander: 3
 groups:
   - humanoid
   - merchant
+  - watchers_crossing
+  - shopkeepers
 idlecommands:
   - 'emote sips from a clay cup, watching the room over the rim'
   - 'emote adjusts the pack leaning against the table leg'

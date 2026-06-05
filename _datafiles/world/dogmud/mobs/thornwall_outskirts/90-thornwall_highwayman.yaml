@@ -8,6 +8,7 @@ maxwander: 2
 groups:
   - bandit
   - humanoid
+  - bandits
 idlecommands:
   # Hidden ambusher — visible idle emotes break the stealth illusion.
   # Keep `sneak` (re-hides when the buff/FSM lapses) and empty

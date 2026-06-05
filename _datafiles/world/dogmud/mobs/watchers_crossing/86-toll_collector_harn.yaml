@@ -9,6 +9,7 @@ maxwander: 0
 groups:
   - humanoid
   - warden
+  - watchers_crossing
 idlecommands:
   - 'emote writes a careful entry in the ledger, blotting the ink dry'
   - 'emote counts a small stack of coins, lips moving silently'
