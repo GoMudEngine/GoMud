@@ -53,7 +53,7 @@ func (t *cacheEntry) older(compareTime time.Time) bool {
 var (
 	cacheLock            sync.Mutex
 	templateCache        = make(map[string]cacheEntry)
-	templateConfigCache  = make(map[int]templateConfig)
+	templateConfigCache  sync.Map // key: int userId -> value: templateConfig (concurrency-safe)
 	forceAnsiFlags       = AnsiTagsParse
 	ansiLock             sync.RWMutex
 	ansiAliasFileModTime time.Time
@@ -111,7 +111,27 @@ type templateDetails struct {
 }
 
 func ClearTemplateConfigCache(userId int) {
-	delete(templateConfigCache, userId)
+	templateConfigCache.Delete(userId)
+}
+
+// getTemplateConfig returns the cached render config for userId, building and
+// caching it on first use. Safe for concurrent use (templateConfigCache is a
+// sync.Map). On a simultaneous first-use miss two callers may both build and
+// Store; harmless, the value is deterministic for a given userId.
+func getTemplateConfig(userId int) templateConfig {
+	if v, ok := templateConfigCache.Load(userId); ok {
+		return v.(templateConfig)
+	}
+	cfg := templateConfig{}
+	if userId > 0 {
+		if tmpU := users.GetByUserId(userId); tmpU != nil {
+			cfg.ScreenReader = tmpU.ScreenReader
+		}
+	} else if userId == ForceScreenReaderUserId {
+		cfg.ScreenReader = true
+	}
+	templateConfigCache.Store(userId, cfg)
+	return cfg
 }
 
 func processMarkdown(in string) string {
@@ -137,21 +157,7 @@ func Process(fname string, data any, receivingUserId ...int) (string, error) {
 		userId = receivingUserId[0]
 	}
 
-	tplConfig, configFound := templateConfigCache[userId]
-	if !configFound {
-
-		tplConfig = templateConfig{}
-
-		if userId > 0 {
-			if tmpU := users.GetByUserId(userId); tmpU != nil {
-				tplConfig.ScreenReader = tmpU.ScreenReader
-			}
-		} else if userId == ForceScreenReaderUserId {
-			tplConfig.ScreenReader = true
-		}
-
-		templateConfigCache[userId] = tplConfig
-	}
+	tplConfig := getTemplateConfig(userId)
 
 	var buf bytes.Buffer
 

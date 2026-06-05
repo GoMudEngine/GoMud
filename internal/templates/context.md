@@ -51,7 +51,7 @@ Cached template with metadata for efficient reuse and cache invalidation.
 
 ### Global State
 - **templateCache**: `map[string]cacheEntry` - Compiled template cache
-- **templateConfigCache**: `map[int]templateConfig` - Per-user configuration cache
+- **templateConfigCache**: `sync.Map` (key: int userId → value: templateConfig) — per-user configuration cache; concurrency-safe, accessed via the `getTemplateConfig(userId)` helper
 - **fileSystems**: `[]fs.ReadFileFS` - Registered file systems for template loading
 - **forceAnsiFlags**: Global ANSI flag override
 - **ansiLock**: Read-write mutex for thread-safe ANSI processing
