@@ -115,11 +115,12 @@ should always agree.
 | 6.2 | Polish | Parity audit closeout | S | 6.1 | Done |
 | 6.3 | Polish | Per-zone tuning (Thornwall deepening) | M | 6.1 | Done (2026-06-03) |
 | 6.4 | Polish | Performance review (initial) | S | 6.3 | Done (2026-06-05) |
-| 6.5 | Polish | Content pass — broader rollout | XL | 6.3 | Not started |
+| 6.5 | Polish | Content pass — broader rollout | XL | 6.3 | In progress (6.5a+6.5b done; 6.5c wilderness + 6.5d roads remain) |
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Done (2026-06-05) |
+| 6.5b | Polish | Towns batch (Ashwick + Watcher's Crossing) | M | 6.5a | Done (2026-06-05) |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 40 / 42 done • 0 in progress • 2 not started (+1 deferred: 3.5).
+**Roll-up:** 41 / 43 done • 1 in progress (6.5) • 1 not started (+1 deferred: 3.5).
 
 ---
 
@@ -1121,6 +1122,29 @@ Validate the framework against real content, then scale.
   authoring the rest now would risk schema churn — better to
   validate the substrate against two reference factions, then
   bulk-author once the pattern is settled.
+
+### 6.5b Towns batch (Ashwick + Watcher's Crossing)
+**Status:** Done (2026-06-05) • **Size:** M
+
+- **Goal:** Full aliveness framework for the two micro-settlements, at a scale
+  matched to their ~4-NPC size (the towns batch of the 6.5 content pass).
+- **Shipped:** Relationship edges across all 8 townsfolk (Delia→Forager
+  employer/mentor, village & crossing friendships, Brecca↔Harn & TravMerchant↔
+  Brecca rivalries). 7 medium-depth schedules (work → hub social beat → home-sleep)
+  targeting real settlement rooms — Ashwick gathers on Central Green, Watcher's at
+  the Crossing Inn; the Forager's afternoon co-locates with Delia at her garden;
+  the Traveling Merchant left schedule-less (transient). 4 facts + gossiper tags
+  (Deep-Woods wolves, the wary newcomer, **bandits on the roads** [cross-tie to the
+  6.5a `bandits` faction], toll grumbling); the Forager kept private (no gossip).
+  2 bespoke conversation pairs (Delia/Forager herb-trade, Brecca/Harn toll-friction)
+  — rewritten **swap-safe** after catching that the engine coin-flips speaker A/B
+  (state.go:159), with type pools covering the rest. Boot-validated (schedule
+  coverage, relationship/fact/conversation-pair refs all clean; 27 schedules /
+  10 pairs load). In-game behavioral smoke deferred to user. Spec at
+  `docs/superpowers/specs/2026-06-05-mob-aliveness-6.5b-towns-batch-design.md`,
+  plan at `docs/superpowers/plans/2026-06-05-mob-aliveness-6.5b-towns-batch.md`.
+- **Out:** Wilderness (6.5c) + roads (6.5d) batches; thornwall_outskirts (done
+  light in 6.5a).
 
 ### 6.6 Performance re-review
 **Status:** Not started • **Size:** S
