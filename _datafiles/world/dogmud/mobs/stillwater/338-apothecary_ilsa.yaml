@@ -14,6 +14,7 @@ groups:
   - merchant
   - apothecary
   - stillwater_citizens
+  - shopkeepers
 relationships:
   - to: 355
     type: friend

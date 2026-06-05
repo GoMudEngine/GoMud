@@ -18,6 +18,7 @@ groups:
   - humanoid
   - merchant
   - stillwater_citizens
+  - shopkeepers
 knows_facts:
   - stillwater-lake-decline
   - stillwater-cave-creatures

@@ -12,6 +12,7 @@ groups:
   - humanoid
   - merchant
   - stillwater_citizens
+  - shopkeepers
 knows_facts:
   - stillwater-pearl-divers-gone
 idlecommands:

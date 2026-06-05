@@ -14,6 +14,7 @@ groups:
   - merchant
   - blacksmith
   - stillwater_citizens
+  - shopkeepers
 relationships:
   - to: 343
     type: friend

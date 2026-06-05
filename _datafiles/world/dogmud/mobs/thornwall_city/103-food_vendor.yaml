@@ -24,6 +24,7 @@ groups:
   - humanoid
   - merchant
   - thornwall_citizens
+  - shopkeepers
 idlecommands:
   - 'emote turns a skewer over the brazier coals, basting it with oil'
   - 'emote wipes hands on an apron and calls out to passing customers'

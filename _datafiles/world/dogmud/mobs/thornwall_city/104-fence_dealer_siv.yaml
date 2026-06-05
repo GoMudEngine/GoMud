@@ -12,6 +12,7 @@ groups:
   - humanoid
   - merchant
   - thornwall_citizens
+  - shopkeepers
 idlecommands:
   - 'emote examines an item behind the counter, turning it in the lamplight'
   - 'emote makes a notation in a small, well-hidden notebook'
