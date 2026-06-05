@@ -10,6 +10,16 @@ groups:
   - warren
   - humanoid
   - mutant
+relationships:
+  - to: 74
+    type: friend
+    subtype: council
+  - to: 72
+    type: family
+    subtype: warren
+  - to: 73
+    type: family
+    subtype: warren
 hates:
   - canine
   - boar
