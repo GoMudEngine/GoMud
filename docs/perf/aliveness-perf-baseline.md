@@ -113,3 +113,64 @@ total, which is dominated by Mobs (~1.3 MB), Rooms (~0.3 MB), and Items (~0.14 M
   many more scheduled/relationship-bearing NPCs come online across zones — those
   are the most likely growth vectors — and whether the substrate subtotal moves
   off the KB scale.
+
+---
+
+## 2026-06-05 — 6.6 re-review (after the 6.5 content pass; same procedure, ~500 rounds)
+
+Captured after the full 6.5 content pass merged (6.5a factions, 6.5b towns,
+6.5c wilderness, 6.5d roads). Same local procedure as the 6.4 baseline. Idle
+snapshot at IdleMobs() Ct=539; load snapshot at Ct=536 with Users=1 (one player
+in Temple Interior 468, looking every 30s).
+
+### Substrate memory footprint (6.4 idle → 6.6 idle)
+
+| Section | Store | 6.4 | 6.6 | Δ |
+|---------|-------|-----|-----|---|
+| Factions | definitions | 5 / 1.1 KB | **13 / 3.2 KB** | +8 factions (6.5a) |
+| Relationships | graph | 34 / 0.7 KB | **57 / 1.2 KB** | +23 edges (6.5b/c/d) |
+| Facts | registry | 10 | **20** | +10 facts (6.5b/c/d) |
+| Facts | awarenessCache | 22 / 2.1 KB | **43 / 3.4 KB** | +21 (knows_facts) |
+| Goals | cache / nameByMobId | 31 / 31 | 30 / 30 | flat |
+| Knowledge | knowledgeCache | 22 | 21–22 | flat |
+| Crimes | crimeCache | 2 | 0–2 | flat |
+| Bounties | registry | 35 | 35 | flat |
+| Opinions | both | ~0 | ~0 | flat |
+| **Aliveness substrate subtotal** | | **~7 KB** | **~10 KB** | +~3 KB |
+| **Total (Non-Go, all sections)** | | 2.1 MB | **2.0 MB** | flat (rounding) |
+| Go HeapAlloc / Sys | | 15.1 / 45.5 MB | 14.9 / 45.5 MB (idle) · 15.1 / 41.9 MB (load) | flat |
+
+### Tick budget (avg ms; 6.4 idle → 6.6 idle → 6.6 load)
+
+| Seam | 6.4 idle | 6.6 idle | 6.6 load | high (6.6) |
+|------|----------|----------|----------|-----------|
+| IdleMobs() (roll-up) | 0.002 | 0.001 | 0.000 | 0.519 ms |
+| IdleMobs::schedule | 0.000 | 0.001 | 0.000 | 0.505 ms |
+| IdleMobs::conversation | 0.001 | 0.000 | 0.000 | 0.008 ms |
+| IdleMobs::patrol | 0.000 | 0.000 | 0.000 | 0.000 ms |
+| MobIdle::goalplanner | 0.000 | 0.000 | 0.000 | 1.001 ms |
+| Enforcement | 0.001 | 0.001 | 0.000 | 1.047 ms |
+| events.ProcessEvents() (roll-up) | 0.005 | 0.000 | 0.007 | 67–79 ms |
+| DoCombat::handlePlayerCombat() | — | — | 0.000 | — |
+
+### Reading
+
+- **No regression.** The 6.5 content shows up exactly where expected — factions
+  5→13, relationships 34→57, facts 10→20 (awareness 22→43) — but it's all KB-scale.
+  The aliveness substrate subtotal moved ~7 KB → ~10 KB; the Non-Go total is flat
+  at ~2.0 MB (still dominated by Mobs ~1.3 MB / Rooms ~0.3 MB / Items ~0.14 MB).
+- **Tick seams unchanged — still sub-microsecond avg.** The `IdleMobs::schedule`
+  seam ticked from ~0.000 to ~0.001 ms avg now that the 6.5b town schedules run
+  (7 new scheduled NPCs), exactly the predicted growth vector — still negligible.
+  `MobIdle::goalplanner` and `IdleMobs::conversation` are flat.
+- **The ~67–79 ms `events.ProcessEvents()` high is confirmed an outlier, not
+  aliveness.** It recurred under load (79 ms) but vanished in the 6.6 idle run
+  (2.3 ms) — consistent with an autosave/GC coincidence, with a 0.000–0.007 ms
+  *average* either way.
+- **Idle vs load identical**, as in 6.4 — one present player adds no measurable
+  per-tick cost.
+- **Conclusion:** the 6.5 content pass landed with **no memory or per-tick
+  regression** and comfortable headroom intact. The substrate is well off the
+  scale where it would matter; the schedule seam is the one to keep watching as
+  future zones get the town treatment, but at ~0.001 ms avg there's enormous room.
+  **Phase 6 / the mob-aliveness roadmap is performance-clean.**
