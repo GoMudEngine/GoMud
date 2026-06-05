@@ -8,6 +8,9 @@ charm_immune: true
 maxwander: 0
 groups:
   - humanoid
+  - gossiper
+knows_facts:
+  - roads-caravans-guarded
 idlecommands:
   - 'emote checks his inventory, counting crates with quiet precision'
   - ''

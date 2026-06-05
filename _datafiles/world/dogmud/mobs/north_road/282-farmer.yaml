@@ -9,6 +9,9 @@ charm_immune: true
 maxwander: 3
 groups:
   - humanoid
+  - gossiper
+knows_facts:
+  - roads-bandit-peril
 idlecommands:
   - 'emote adjusts a heavy sack across one shoulder'
   - 'wander'

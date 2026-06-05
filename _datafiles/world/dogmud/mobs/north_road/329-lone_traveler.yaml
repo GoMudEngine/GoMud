@@ -7,6 +7,9 @@ non_combatant: true
 charm_immune: true
 groups:
   - humanoid
+  - gossiper
+knows_facts:
+  - roads-bandit-peril
 activitylevel: 10
 idlecommands:
   - 'emote watches the road north with tired eyes'

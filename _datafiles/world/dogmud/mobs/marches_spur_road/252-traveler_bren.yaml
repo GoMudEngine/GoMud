@@ -9,6 +9,8 @@ maxwander: 2
 groups:
   - humanoid
   - gossiper
+knows_facts:
+  - roads-bandit-peril
 idlecommands:
   - 'emote adjusts his pack straps, shifting the weight'
   - ''

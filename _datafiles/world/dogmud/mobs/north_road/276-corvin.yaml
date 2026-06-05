@@ -9,6 +9,9 @@ charm_immune: true
 maxwander: 0
 groups:
   - humanoid
+  - gossiper
+knows_facts:
+  - roads-bandit-peril
 idlecommands:
   - 'emote whittles at a small piece of wood, tongue poking out in concentration'
   - ''

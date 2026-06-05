@@ -10,6 +10,9 @@ maxwander: 0
 groups:
   - humanoid
   - dustwalk_caravans
+  - gossiper
+knows_facts:
+  - roads-caravans-guarded
 relationships:
   - to: 357
     type: employer
