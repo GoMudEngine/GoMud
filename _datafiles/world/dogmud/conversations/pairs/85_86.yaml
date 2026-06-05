@@ -4,29 +4,29 @@ mob_b: 86
 exchanges:
   - lines:
       - speaker: A
-        text: "Half my buyers turn back at your booth, Harn."
+        text: "Slow at the crossing today."
       - speaker: B
-        text: "I only collect it. I didn't set it."
+        text: "Slow everywhere the toll's involved."
       - speaker: A
-        text: "Tell that to my empty shelves."
+        text: "Don't get me started on that bridge."
   - lines:
       - speaker: A
-        text: "Waive it for my regulars. Just the regulars."
+        text: "You'd think one copper wouldn't turn a body around."
       - speaker: B
-        text: "If I waived it for everyone's regulars, there'd be no bridge."
+        text: "A copper, and the queue, and the principle of it."
       - speaker: A
-        text: "There's a thought."
+        text: "The principle. Always the principle."
   - lines:
       - speaker: A
-        text: "You wrote me down twice last market-day."
+        text: "Long memory, this crossing."
       - speaker: B
-        text: "I did not. I never write a man down twice."
+        text: "Longer ledger."
       - speaker: A
-        text: "Check the ledger, then. I'll wait. I've got nothing but time, thanks to your queue."
+        text: "That it is. Every copper of it."
   - lines:
       - speaker: A
-        text: "Buy you a cup, toll-man. No hard feelings."
+        text: "Cup of the cheap stuff? No hard feelings over the bridge."
       - speaker: B
-        text: "...that's decent of you, Brecca."
+        text: "...decent of you. Unexpected."
       - speaker: A
-        text: "It's on credit. I'll add it to your bridge."
+        text: "Put it on credit. We're good at credit, here at the crossing."

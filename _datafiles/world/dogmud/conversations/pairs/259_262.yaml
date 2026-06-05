@@ -4,29 +4,29 @@ mob_b: 262
 exchanges:
   - lines:
       - speaker: A
-        text: "You can put your back to the wall here, you know. Nobody's coming."
+        text: "The bitterroot came in good this week."
       - speaker: B
-        text: "Habit. It's kept me breathing."
+        text: "Long walk for it. Worth the boots."
       - speaker: A
-        text: "Then keep it. But eat something too."
+        text: "Worth it. Don't make it the last walk, mind."
   - lines:
       - speaker: A
-        text: "Your hands know plants that don't grow in any garden I've seen."
+        text: "Folk still ask questions down at the well."
       - speaker: B
-        text: "Someone taught me. Before."
+        text: "Folk always will. Let them ask."
       - speaker: A
-        text: "Before's your business. The bitterroot's mine. Fair trade."
+        text: "I tell them the work's honest. That ends it."
   - lines:
       - speaker: A
-        text: "Folk ask where you came from."
+        text: "Quiet suits this trade. Better hands, fewer mistakes."
       - speaker: B
-        text: "Let them ask."
+        text: "Fewer mistakes, fewer regrets."
       - speaker: A
-        text: "I tell them you're mine to vouch for. That ends it."
+        text: "There's sense in that. Eat something between the quiet, though."
   - lines:
       - speaker: A
-        text: "Stay through winter. The clearing's no place to freeze."
+        text: "Back to the wall, corner seat — same spot every time."
       - speaker: B
-        text: "...I'll think on it."
+        text: "Best view of the door."
       - speaker: A
-        text: "Think warm. There's a cot."
+        text: "Spoken like someone who's needed one. There's a cot, when winter comes."
