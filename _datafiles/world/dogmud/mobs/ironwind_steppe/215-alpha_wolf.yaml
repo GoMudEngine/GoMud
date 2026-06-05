@@ -9,6 +9,16 @@ maxwander: 3
 groups:
   - steppe-wolf
   - canine
+relationships:
+  - to: 205
+    type: family
+    subtype: pack
+  - to: 206
+    type: family
+    subtype: offspring
+  - to: 223
+    type: family
+    subtype: pack
 hates:
   - boar
   - rodent

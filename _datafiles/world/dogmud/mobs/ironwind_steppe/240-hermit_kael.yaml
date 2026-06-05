@@ -3,12 +3,16 @@ behavior_archetype: noncombat_questgiver
 zone: Ironwind Steppe
 statpool: 100
 itemdropchance: 0
+knows_facts:
+  - ironwind-tribe-pressing
+  - ironwind-steppe-drying
 hostile: false
 charm_immune: true
 maxwander: 0
 archetype: fighting
 groups:
   - humanoid
+  - gossiper
 idlecommands:
   - 'emote stares out across the steppe, expression distant'
   - ''

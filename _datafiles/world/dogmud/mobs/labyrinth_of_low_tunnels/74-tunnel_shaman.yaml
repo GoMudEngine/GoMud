@@ -3,6 +3,8 @@ zone: Labyrinth of Low Tunnels
 archetype: casting
 behavior_archetype: defensive_caster
 statpool: 15
+knows_facts:
+  - warren-misjudged
 hostile: false
 charm_immune: true
 maxwander: 0
@@ -11,6 +13,7 @@ groups:
   - warren
   - humanoid
   - mutant
+  - gossiper
 idlecommands:
   - 'emote crouches at the edge of the junction, watching the passage above with cautious eyes'
   - 'emote grinds dried herbs between its palms, releasing a sharp medicinal scent'

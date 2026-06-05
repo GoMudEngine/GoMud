@@ -7,6 +7,10 @@ itemdropchance: 0
 groups:
   - forager
   - thornwall_citizens
+  - gossiper
+knows_facts:
+  - ironwind-tribe-pressing
+  - ironwind-steppe-drying
 hostile: false
 non_combatant: true
 player_attack_immune: true

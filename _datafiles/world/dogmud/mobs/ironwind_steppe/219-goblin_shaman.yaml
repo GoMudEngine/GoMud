@@ -10,6 +10,16 @@ groups:
   - steppe-goblin
   - humanoid
   - ironwind_tribe
+relationships:
+  - to: 217
+    type: family
+    subtype: tribe
+  - to: 218
+    type: family
+    subtype: tribe
+  - to: 222
+    type: family
+    subtype: tribe
 archetype: casting
 mutationchance: 35
 idlecommands:
