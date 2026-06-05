@@ -68,12 +68,26 @@ description: |
   Surface-dwellers are mistrusted on sight.
 default_rep: -25
 allies: []
-enemies: [thornwall_guards]
+enemies: []
 # Optional — only guard factions set this:
 # holding_cell_room: 5106
 ```
 
-Stored eagerly at startup. The `faction_id` is the stable key (used internally). The `display_name` and `description` are for human-readable output. The `default_rep` is the starting point for new players (what `GetRep` returns when no row exists). The `allies` and `enemies` arrays list related factionIds — declarative only (rep changes do NOT auto-propagate through them).
+Stored eagerly at startup. The `faction_id` is the stable key (used internally). The `display_name` and `description` are for human-readable output. The `default_rep` is the starting point for new players (what `GetRep` returns when no row exists). The `allies` and `enemies` arrays list related factionIds — declarative only (rep changes do NOT auto-propagate through them). Edges are **not** auto-mirrored: author both sides for a mutual relationship.
+
+**World roster (mob-aliveness 6.5a, 13 factions).** The world is organized as a
+unified **law bloc** (a mutually-allied clique: `thornwall_guards`,
+`stillwater_guards`, `road_wardens`, `thornwall_citizens`, `stillwater_citizens`,
+`dustwalk_caravans`, `shopkeepers` [the "Merchants' Concord"], `ashwick_villagers`,
+`watchers_crossing`) versus a loose **outlaw cluster** (`bandits` + `ironwind_tribe`,
+allied to each other, each enemy of all nine law-bloc factions). The enforcer
+law-bloc factions (the three guard/warden groups) list the outlaws as enemies;
+the civilian law-bloc factions keep `enemies: []`. `bloodline_agents` is a
+deliberate **neutral placeholder** (no edges) — a future-major force whose
+alignment is reserved for later content. `warren` is **not** an outlaw: it is an
+insular, discriminated-against colony (negative `default_rep` for mistrust, but no
+enemy edges — the 6.5a correction removed the legacy `warren ↔ thornwall_guards`
+edge shown in older docs).
 
 **`holding_cell_room` (optional, int):** Room ID of the faction's holding
 cell for arrested players. Omit (or set to 0) for non-guard factions —

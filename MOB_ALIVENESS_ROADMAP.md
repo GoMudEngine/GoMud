@@ -116,10 +116,10 @@ should always agree.
 | 6.3 | Polish | Per-zone tuning (Thornwall deepening) | M | 6.1 | Done (2026-06-03) |
 | 6.4 | Polish | Performance review (initial) | S | 6.3 | Done (2026-06-05) |
 | 6.5 | Polish | Content pass — broader rollout | XL | 6.3 | Not started |
-| 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Not started |
+| 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Done (2026-06-05) |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 39 / 42 done • 0 in progress • 3 not started (+1 deferred: 3.5).
+**Roll-up:** 40 / 42 done • 0 in progress • 2 not started (+1 deferred: 3.5).
 
 ---
 
@@ -1084,10 +1084,30 @@ Validate the framework against real content, then scale.
 - **Why:** Scaling the formula across the world. The "and now actually populate it" step.
 
 ### 6.5a Faction definitions content pass
-**Status:** Not started • **Size:** M
+**Status:** Done (2026-06-05) • **Size:** M
 
 - **Goal:** Author the rest of the world's factions on top of the
   1.2/1.3 substrate.
+- **Shipped:** 8 new factions (13 total) — `bandits` (-35), `ironwind_tribe`
+  (-25), `dustwalk_caravans` (+10), `road_wardens`, `shopkeepers` (the
+  "Merchants' Concord"), `ashwick_villagers`, `watchers_crossing`, and
+  `bloodline_agents` (neutral placeholder for the future-major Bloodline force;
+  lone member `north_road/287` tagged). Wired a **unified law-bloc clique** (9
+  civilization factions mutually allied, linking the previously-islanded
+  Thornwall/Stillwater blocs) vs a loose **outlaw cluster** (bandits ↔
+  ironwind_tribe, enemies of all 9). **Corrected warren** — removed the legacy
+  `warren ↔ thornwall_guards` enemy edge; the Warren are insular/discriminated-
+  against (negative default_rep) not outlaws. Member-tagged bounded factions
+  (bandits ×9, ironwind goblins ×4, caravan crew ×4 sentient, ashwick ×4,
+  watchers ×4 incl. 2 dual shopkeepers, road warden, bloodline) + scan-driven
+  `shopkeepers` on all 15 non-sanctum shop-owners (dual-membership with their
+  town citizenry); dropped the tag from caravan props (wagon/draft horses).
+  Boot-validated (loader panics on bad ally/enemy refs — clean; `faction list`
+  confirms the full graph in-game). Followups: `278-haral` (tavern) should join
+  shopkeepers once it gets a `shop:` block in the roads batch; combat-rep in-game
+  smoke deferred to user. Spec at
+  `docs/superpowers/specs/2026-06-05-mob-aliveness-6.5a-faction-definitions-design.md`,
+  plan at `docs/superpowers/plans/2026-06-05-mob-aliveness-6.5a-faction-definitions.md`.
 - **In:** YAML faction definitions for bandits, warden, ironwind
   shaman, Sanctum Basin guards, Dustwalk caravans, Stillwater
   militia & citizens, etc. Tag remaining faction-relevant mobs
