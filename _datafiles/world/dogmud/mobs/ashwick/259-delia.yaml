@@ -1,6 +1,7 @@
 mobid: 259
 zone: Ashwick
 behavior_archetype: noncombat_questgiver
+schedule_id: ashwick_delia
 statpool: 36
 hostile: false
 charm_immune: true

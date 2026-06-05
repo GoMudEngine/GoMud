@@ -1,0 +1,37 @@
+id: ashwick_hesta
+description: "Farmer Hesta: works the farmstead in the morning, tends the south
+  fields by midday, takes the green at dusk, sleeps at the farmstead."
+segments:
+  - start: 6
+    end: 12
+    target_room: 4020
+    activity: ""
+    idlecommands:
+      - emote hauls a feed sack onto one shoulder without slowing.
+      - emote mucks out a stall with the rhythm of long habit.
+      - say Work doesn't care how you feel about it. Get on.
+      - say Animals first. Always animals first.
+  - start: 12
+    end: 17
+    target_room: 4025
+    activity: ""
+    idlecommands:
+      - emote leans on a hoe and squints down the furrows.
+      - emote pulls a weed by its root and tosses it aside without looking.
+      - say Twenty years this dirt and me. It still surprises me. Rarely good.
+      - say Soil's damp enough. Won't be by tomorrow. Get it in today.
+  - start: 17
+    end: 21
+    target_room: 4017
+    activity: ""
+    idlecommands:
+      - emote settles onto the green with the groan of an honest day done.
+      - emote stretches her long arms overhead and rolls her neck.
+      - say There's worse things than tired. Tired means the work got done.
+      - emote watches the sky with a flat, professional gaze.
+  - start: 21
+    end: 6
+    target_room: 4020
+    activity: sleeping
+    idlecommands:
+      - emote sleeps hard and early, boots by the door.

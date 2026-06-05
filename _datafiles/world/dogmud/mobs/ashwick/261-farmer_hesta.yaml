@@ -1,6 +1,7 @@
 mobid: 261
 zone: Ashwick
 behavior_archetype: noncombat_questgiver
+schedule_id: ashwick_hesta
 statpool: 30
 hostile: false
 charm_immune: true

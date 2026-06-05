@@ -1,6 +1,7 @@
 mobid: 260
 zone: Ashwick
 behavior_archetype: noncombat_questgiver
+schedule_id: ashwick_ferris
 statpool: 30
 hostile: false
 charm_immune: true
