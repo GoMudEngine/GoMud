@@ -36,6 +36,26 @@ The upstream GoMud owner asked the community to test creating modules
 and using the module registry. This project both serves that request
 and produces a genuinely reusable tool for every GoMud server.
 
+### Upstream context (as of 2026-06-05)
+
+GoMud `master` (commit `bab2131f`, "moving module manager to main
+project/binary") just restructured the module ecosystem, and our design
+targets this current state:
+
+- Official modules were **removed from the engine repo** and now live in
+  the registry. A fresh checkout bundles only a minimal set
+  (`cleanup`, `follow`, `gmcp`, `webhelp`).
+- A **module manager is built into the server binary**, invoked as
+  `go run . module <subcommand>` (`list`, `info`, `install`, `remove`,
+  `update`, `package`). It fetches the registry live, verifies sha256,
+  extracts into `modules/<name>/`, and records installs in
+  `modules/modules.lock.yaml`.
+- `module package <name>` packages a local module into a `.tar.gz` and
+  prints its SHA256 — i.e. the publish step is one command.
+- Modules are compiled into the binary; any install/remove requires a
+  rebuild (`make build`, or `go generate && go build`). `go generate`
+  regenerates `all-modules.go` from installed modules (no hand-editing).
+
 ## Goals
 
 - Any AI agent framework can connect to a GoMud server on `:55555`, run
@@ -58,10 +78,13 @@ and produces a genuinely reusable tool for every GoMud server.
 
 ### A. `playtest` server module (the registry citizen)
 
-A GoMud module (Go) that compiles into the server. Registered the
-standard way: blank-import in `modules/all-modules.go`
-(`github.com/GoMudEngine/GoMud/modules/playtest`), shipped as a
-tarball + sha256 referenced from `module-registry.yaml`. Capabilities:
+A GoMud community module (Go) that compiles into the server. It
+registers itself via `init()` against
+`github.com/GoMudEngine/GoMud/internal/plugins` (the current plugin
+API), so once its source is present under `modules/playtest/`,
+`go generate` wires it into `all-modules.go` automatically — no manual
+blank-import. Published as a `.tar.gz` + sha256 (produced by
+`module package`) referenced from `module-registry.yaml`. Capabilities:
 
 1. **Test-account auto-provisioning.** At boot, idempotently ensure a
    configurable AI-test account exists, flagged as AI/test (so it is
@@ -79,8 +102,24 @@ tarball + sha256 referenced from `module-registry.yaml`. Capabilities:
    structured data instead of ANSI scraping. **Depends on the existing
    `gmcp` module** — it does not reimplement GMCP. (Phase-2 capability.)
 
-Module config defaults and help files ship in the module's `datafiles/`
-directory, per GoMud module conventions.
+Per current module conventions, the published archive extracts to:
+
+```
+playtest.go               # registers via init() against internal/plugins
+files/
+  datafiles/
+    templates/help/...    # help files
+    html/...              # optional admin/web assets
+  data-overlays/
+    config.yaml           # module config defaults (test account name,
+                          # sandbox zone tag, safe-mode toggles)
+    keywords.yaml         # optional
+```
+
+Because the registry schema carries no dependency field
+(name/description/version/author/url/sha256 only), the **`gmcp` module
+prerequisite** for the beacon capability is documented in the module's
+`info` description and README rather than auto-resolved.
 
 ### B. `mudagent` reference adapter (the "any agent" contract)
 
@@ -176,10 +215,12 @@ agent runner ──spawn──▶ mudagent --target host:55555 --manifest run.ya
    GMCP test-beacon enrichment in the module + adapter beacon plumbing +
    goal auto-scoring from structured state.
 3. **Phase 3 — Publish.**
-   Tarball packaging, sha256, registry PR to `module-registry.yaml`,
-   and documentation. Includes a validation pass confirming the harness
-   works against a clean GoMud server (the `~/GoMud` checkout already
-   provides this).
+   Run `go run . module package playtest` to produce the `.tar.gz` +
+   sha256, host the archive, and open a registry PR adding the
+   `playtest` entry to `module-registry.yaml`. Then validate the full
+   consumer path on a clean checkout: `module install playtest` →
+   `make build` → run → drive with `mudagent`. Documentation accompanies
+   the release.
 
 ## Repository & Development Setup
 
@@ -188,14 +229,20 @@ agent runner ──spawn──▶ mudagent --target host:55555 --manifest run.ya
   registry; its own README / issues / license / CI). Holds the adapter,
   the framework content + spec, and the `playtest` module source.
 - **Compile / run host:** the existing vanilla GoMud checkout at
-  `~/GoMud` (master, recent). The `playtest` module is a registry-style
-  package (`package playtest`, importing core GoMud packages); it only
-  compiles when wired into a GoMud checkout. During development, copy or
-  symlink the module source into `~/GoMud/modules/playtest` and add its
-  blank-import to `modules/all-modules.go` (or run `go generate`).
+  `~/GoMud` (master, pulled to `bab2131f` on 2026-06-05). The `playtest`
+  module only compiles when present under a GoMud checkout's `modules/`.
+  Development loop: keep the module source in the standalone repo and
+  copy/symlink it into `~/GoMud/modules/playtest`, then
+  `go generate && go build -o go-mud-server` (run `go mod tidy` first if
+  it introduces new deps). The `mudagent` binary and framework content
+  build and run entirely from the standalone repo, pointed at the
+  running `~/GoMud` server on `:55555`.
 - **Why vanilla GoMud, not DOGMud:** developing against `~/GoMud` proves
   the "works on any GoMud server" claim from day one and keeps the tool
   free of DOGMud coupling. DOGMud is out of this project's loop.
+- **Reference modules** (still bundled in `~/GoMud` after the restructure):
+  `follow` (scripting functions), `gmcp` (IAC/connection handling, our
+  beacon dependency), `cleanup` (event handling).
 
 ## Naming
 
