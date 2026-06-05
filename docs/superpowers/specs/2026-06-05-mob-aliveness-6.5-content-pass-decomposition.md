@@ -145,3 +145,40 @@ Add sub-chunk rows to `MOB_ALIVENESS_ROADMAP.md` when 6.5 is picked up:
 6.5a (faction definitions), 6.5b (towns batch), 6.5c (wilderness batch),
 6.5d (roads batch) — or keep 6.5a as-is and track the three batches under 6.5.
 Each gets its own `docs/superpowers/specs/` + `plans/` when started.
+
+## Appendix — 6.5b towns batch: NPC inventory + approved relationship sketches
+
+Discovered during the 2026-06-05 brainstorm. The "towns" are small:
+
+- **ashwick** (farming village) — townsfolk: Delia (259, herbalist), Deacon
+  Ferris (260, rural deacon), Farmer Hesta (261), The Forager (262, trained
+  herbalist, wary outsider). Wildlife (fox/timber_wolf/briar_hawk/chicken/mouse)
+  are NOT townsfolk.
+- **watchers_crossing** (waystation) — townsfolk: Innkeeper Tolva (84), Merchant
+  Brecca (85), Toll Collector Harn (86), Traveling Merchant (88). river_lurker
+  (87) is wildlife.
+- **thornwall_outskirts** — NOT a town (Farmer Dorn 89 + gate guard 92 + highwayman
+  90 + crop pest 91). Reclassified to the wilderness/roads light pass: faction-tag
+  only (Dorn→thornwall_citizens, guard→thornwall_guards, highwayman→bandits).
+
+**Approved relationship graphs** (user-confirmed 2026-06-05; verify against
+existing dialogue when authoring):
+
+*Ashwick:*
+- Delia → The Forager: **employer/mentor** (both herb-workers; Forager was
+  "trained," wary outsider Delia took in).
+- Delia ↔ Farmer Hesta: **friends** (long-time village women).
+- Deacon Ferris ↔ Hesta/Delia: **friend** (community connective figure).
+- Gossip/fact seed: the Forager's guarded "ready to run" backstory ("the newcomer
+  Delia took in").
+
+*Watcher's Crossing:*
+- Tolva ↔ Brecca: **friends** (the two established businesswomen).
+- Harn ↔ Brecca: **rivals (mild/friendly)** — the unpopular toll vexes the
+  merchant; Harn is apologetic. Good conversation-pair material.
+- Traveling Merchant ↔ Brecca: **rivals** (competing merchants).
+- Harn ↔ Tolva: **friends** (fixtures of the crossing).
+- Gossip/fact seed: the unpopular toll.
+
+These become `relationships:` edges + conversation pairs + fact seeds when 6.5b is
+authored.
