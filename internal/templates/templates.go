@@ -111,6 +111,7 @@ type templateDetails struct {
 }
 
 func ClearTemplateConfigCache(userId int) {
+	// templateConfigCache is a sync.Map; Delete is concurrency-safe, no lock needed.
 	templateConfigCache.Delete(userId)
 }
 
