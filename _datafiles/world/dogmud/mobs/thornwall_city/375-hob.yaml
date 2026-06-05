@@ -8,7 +8,6 @@ groups:
   - caravan
   - merchant_train
   - animal
-  - dustwalk_caravans
 hostile: false
 non_combatant: true
 player_attack_immune: true
