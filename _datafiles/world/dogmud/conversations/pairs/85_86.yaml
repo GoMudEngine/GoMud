@@ -1,0 +1,32 @@
+id: brecca_and_harn
+mob_a: 85
+mob_b: 86
+exchanges:
+  - lines:
+      - speaker: A
+        text: "Half my buyers turn back at your booth, Harn."
+      - speaker: B
+        text: "I only collect it. I didn't set it."
+      - speaker: A
+        text: "Tell that to my empty shelves."
+  - lines:
+      - speaker: A
+        text: "Waive it for my regulars. Just the regulars."
+      - speaker: B
+        text: "If I waived it for everyone's regulars, there'd be no bridge."
+      - speaker: A
+        text: "There's a thought."
+  - lines:
+      - speaker: A
+        text: "You wrote me down twice last market-day."
+      - speaker: B
+        text: "I did not. I never write a man down twice."
+      - speaker: A
+        text: "Check the ledger, then. I'll wait. I've got nothing but time, thanks to your queue."
+  - lines:
+      - speaker: A
+        text: "Buy you a cup, toll-man. No hard feelings."
+      - speaker: B
+        text: "...that's decent of you, Brecca."
+      - speaker: A
+        text: "It's on credit. I'll add it to your bridge."

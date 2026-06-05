@@ -1,0 +1,32 @@
+id: delia_and_forager
+mob_a: 259
+mob_b: 262
+exchanges:
+  - lines:
+      - speaker: A
+        text: "You can put your back to the wall here, you know. Nobody's coming."
+      - speaker: B
+        text: "Habit. It's kept me breathing."
+      - speaker: A
+        text: "Then keep it. But eat something too."
+  - lines:
+      - speaker: A
+        text: "Your hands know plants that don't grow in any garden I've seen."
+      - speaker: B
+        text: "Someone taught me. Before."
+      - speaker: A
+        text: "Before's your business. The bitterroot's mine. Fair trade."
+  - lines:
+      - speaker: A
+        text: "Folk ask where you came from."
+      - speaker: B
+        text: "Let them ask."
+      - speaker: A
+        text: "I tell them you're mine to vouch for. That ends it."
+  - lines:
+      - speaker: A
+        text: "Stay through winter. The clearing's no place to freeze."
+      - speaker: B
+        text: "...I'll think on it."
+      - speaker: A
+        text: "Think warm. There's a cot."
