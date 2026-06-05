@@ -112,3 +112,36 @@ facts:
         - watchers_crossing
         - people
       status: active
+    - id: ironwind-tribe-pressing
+      description: The goblins of the steppe have grown bolder, pushing toward the trails and the waterholes.
+      significance: 2
+      declared_round: 0
+      tags:
+        - ironwind_steppe
+        - ironwind_tribe
+        - crisis
+      status: active
+    - id: ironwind-steppe-drying
+      description: Water and game grow scarce on the steppe; every creature on it is pressed and hungry.
+      significance: 2
+      declared_round: 0
+      tags:
+        - ironwind_steppe
+        - crisis
+      status: active
+    - id: warren-misjudged
+      description: The surface folk fear the warren for no cause but their strangeness.
+      significance: 1
+      declared_round: 0
+      tags:
+        - labyrinth
+        - people
+      status: active
+    - id: fernway-wolves-ranging
+      description: The timber wolves range closer to the forest paths than they once did.
+      significance: 1
+      declared_round: 0
+      tags:
+        - the_fernway_south
+        - wildlife
+      status: active
