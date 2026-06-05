@@ -30,6 +30,14 @@ settlements have started to breathe the way Stillwater and Thornwall do.
   master all have something to say about the bandits working the trade roads —
   and the caravans now cross under hired guard, running the gauntlet between
   towns.
+- **Crimes get the right witnesses.** Rob or attack someone in town and the
+  guards now enforce the law — warn you, move to arrest — instead of chasing a
+  personal grudge, while ordinary townsfolk react with alarm and raise the cry
+  rather than forming a vigilante mob. Actual fighters who see it will still come
+  after you themselves.
+- **Shops keep their shelves stocked.** General stores in the trade towns no
+  longer run dry — their everyday basics now restock on a steady supply cadence,
+  joining the cooks and enchanters whose supply chains were sorted out earlier.
 - **Stability.** Fixed a rare crash that could take the server down if two people
   happened to connect at the exact same instant.
 
