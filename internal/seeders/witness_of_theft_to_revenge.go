@@ -26,8 +26,8 @@ func OnTheft(thiefUserId int, victimMob *mobs.Mob, item items.Item) {
 		return
 	}
 
-	// Seed revenge into the direct victim at high priority.
-	seedRevengeGoalIfAbsent(victimMob, "player", thiefUserId, theftVictimRevengePriority)
+	// Classify and respond for the direct victim at high priority.
+	seedWitnessResponse(victimMob, thiefUserId, theftVictimRevengePriority)
 
 	// Seed revenge into every other mob sharing the victim's room at
 	// a lower witness priority.
@@ -43,6 +43,6 @@ func OnTheft(thiefUserId int, victimMob *mobs.Mob, item items.Item) {
 		if witness == nil {
 			continue
 		}
-		seedRevengeGoalIfAbsent(witness, "player", thiefUserId, theftWitnessRevengePriority)
+		seedWitnessResponse(witness, thiefUserId, theftWitnessRevengePriority)
 	}
 }
