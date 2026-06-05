@@ -106,6 +106,7 @@ func IdleMobs(e events.Event) events.ListenerReturn {
 		// Chunk 3.6: NPC↔NPC idle conversations.
 		// Phase 1: if this mob is already in a conversation, advance the
 		// state machine one tick (fires the next line or finalises/aborts).
+		// Chunk 6.4: IdleMobs::conversation covers both Phase 1 and Phase 2 below.
 		tConv := time.Now()
 		if partnerId, ok := mob.Character.GetMiscData(conversations.MiscDataPartnerId).(int); ok && partnerId > 0 {
 			conversations.TickConversation(conversationadapter.AdaptMob(mob), partnerId)
