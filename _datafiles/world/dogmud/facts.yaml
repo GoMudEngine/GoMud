@@ -79,3 +79,36 @@ facts:
         - thornwall
         - trade
       status: active
+    - id: ashwick-deep-woods-wolves
+      description: Wolves have been prowling out of the Deep Woods, taking livestock from the outlying farms.
+      significance: 2
+      declared_round: 0
+      tags:
+        - ashwick
+        - crisis
+      status: active
+    - id: ashwick-newcomer-forager
+      description: Delia has taken in a wary newcomer, a skilled herb-gatherer no one knows the past of.
+      significance: 1
+      declared_round: 0
+      tags:
+        - ashwick
+        - people
+      status: active
+    - id: watchers-road-bandits
+      description: Bandits have grown bold on the trade roads; travelers and caravans cross with one hand on their purse.
+      significance: 2
+      declared_round: 0
+      tags:
+        - watchers_crossing
+        - crisis
+        - bandits
+      status: active
+    - id: watchers-toll-grumbling
+      description: Folk grumble over the bridge toll, though the collector only does as he is bid.
+      significance: 1
+      declared_round: 0
+      tags:
+        - watchers_crossing
+        - people
+      status: active

@@ -8,6 +8,10 @@ maxwander: 0
 groups:
   - humanoid
   - ashwick_villagers
+  - gossiper
+knows_facts:
+  - ashwick-deep-woods-wolves
+  - ashwick-newcomer-forager
 relationships:
   - to: 261
     type: friend

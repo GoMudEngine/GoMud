@@ -8,6 +8,10 @@ maxwander: 0
 groups:
   - humanoid
   - ashwick_villagers
+  - gossiper
+knows_facts:
+  - ashwick-deep-woods-wolves
+  - ashwick-newcomer-forager
 idlecommands:
   - 'emote leans on a fence post, surveying the crops with a practiced eye'
   - ''

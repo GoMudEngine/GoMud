@@ -10,6 +10,10 @@ groups:
   - humanoid
   - innkeeper
   - watchers_crossing
+  - gossiper
+knows_facts:
+  - watchers-road-bandits
+  - watchers-toll-grumbling
 relationships:
   - to: 85
     type: friend

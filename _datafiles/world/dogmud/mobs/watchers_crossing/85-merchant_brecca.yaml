@@ -13,6 +13,10 @@ groups:
   - merchant
   - watchers_crossing
   - shopkeepers
+  - gossiper
+knows_facts:
+  - watchers-road-bandits
+  - watchers-toll-grumbling
 relationships:
   - to: 86
     type: rival
