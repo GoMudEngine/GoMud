@@ -1,5 +1,38 @@
 # DOGMud Patch Notes
 
+## 2026-06-05 — A world that takes sides
+
+The living-world pass reaches across the whole map. Groups of people (and
+creatures) now have their own loyalties, and the back roads and outlying
+settlements have started to breathe the way Stillwater and Thornwall do.
+
+- **Friends and enemies between groups.** The town guards, road wardens, caravan
+  trains, the merchants' concord, and the village folk now stand together — wrong
+  one of them and word travels to all of them. Bandits and the steppe goblins
+  stand on the other side of that line. You can earn or lose standing with each,
+  and it colors how they treat you.
+- **The Warren, reconsidered.** The tunnel-folk of the Warren are no longer
+  treated as outlaws. They are an insular people who keep to themselves and are
+  more often looked down on than feared — mistrustful of surface-dwellers on
+  sight, but not your enemy unless you make them one. Their regard is something
+  you earn.
+- **Two more places that live.** The farming village of Ashwick and the
+  waystation at Watcher's Crossing now keep daily hours, know one another, trade
+  short conversations, and gossip their local troubles — the herbalist and the
+  wary newcomer she's taken in, the innkeeper and the toll-keeper and their
+  good-natured feud over the bridge fee.
+- **The wild looks after its own.** Wolf packs, the goblin tribe, and the Warren
+  now treat their members as kin — harm one and the others remember it. Out in
+  the wilds, a steppe hermit and the wandering foragers will share what they've
+  seen if you stop to listen: the goblins growing bolder, the steppe drying, the
+  timber wolves ranging closer to the paths.
+- **Word on the road.** Travelers, peddlers, the road warden, and the caravan
+  master all have something to say about the bandits working the trade roads —
+  and the caravans now cross under hired guard, running the gauntlet between
+  towns.
+- **Stability.** Fixed a rare crash that could take the server down if two people
+  happened to connect at the exact same instant.
+
 ## 2026-06-03 — Private cells, taunts that stick, and combat polish
 
 - **Your own holding cell.** Getting arrested no longer drops you into a shared

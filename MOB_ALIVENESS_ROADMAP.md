@@ -120,9 +120,9 @@ should always agree.
 | 6.5b | Polish | Towns batch (Ashwick + Watcher's Crossing) | M | 6.5a | Done (2026-06-05) |
 | 6.5c | Polish | Wilderness batch (light: pack-kin + facts) | S | 6.5a | Done (2026-06-05) |
 | 6.5d | Polish | Roads batch (light: road-danger gossip + rels) | S | 6.5a, 3.7 | Done (2026-06-05) |
-| 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
+| 6.6 | Polish | Performance re-review | S | 6.5 | Done (2026-06-05) |
 
-**Roll-up:** 44 / 45 done • 0 in progress • 1 not started (6.6) (+1 deferred: 3.5).
+**Roll-up:** 45 / 45 done • 0 in progress • 0 not started (+1 deferred: 3.5). **🎉 Roadmap complete.**
 
 ---
 
@@ -1193,13 +1193,23 @@ Validate the framework against real content, then scale.
 remains in Phase 6.
 
 ### 6.6 Performance re-review
-**Status:** Not started • **Size:** S
+**Status:** Done (2026-06-05) • **Size:** S
 
 - **Goal:** Re-profile after content pass — load profile changes once you have many active goal-driven NPCs across many zones.
 - **In:** Re-run profiling, compare against 6.4 baseline, optimize hot paths if needed.
 - **Out:** —
 - **Depends on:** 6.5
 - **Why:** Goal engines + persistent state + schedules can compound. Catch degradation while we still have headroom.
+- **Shipped:** Re-ran the 6.4 capture procedure verbatim (idle Ct=539 + under-load
+  Ct=536) against the now-populated world. **No regression:** the 6.5 content shows
+  up exactly where expected (factions 5→13, relationships 34→57, facts 10→20 /
+  awareness 22→43) but stays KB-scale — aliveness substrate subtotal ~7 KB → ~10 KB,
+  Non-Go total flat at ~2.0 MB. All tick seams still sub-microsecond avg; the
+  `IdleMobs::schedule` seam ticked to ~0.001 ms now that the 6.5b town schedules run
+  (the predicted growth vector, negligible). The ~67–79 ms `events.ProcessEvents()`
+  high confirmed an autosave/GC outlier (vanished in the idle run), not aliveness.
+  No optimization needed. Comparison appended to `docs/perf/aliveness-perf-baseline.md`.
+  **This closes Phase 6 and the mob-aliveness roadmap (45/45).**
 
 ---
 
