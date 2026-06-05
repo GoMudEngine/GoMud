@@ -8,6 +8,10 @@ maxwander: 0
 groups:
   - humanoid
   - ashwick_villagers
+relationships:
+  - to: 261
+    type: friend
+    subtype: congregation
 idlecommands:
   - 'emote straightens a prayer cushion with absent precision'
   - ''

@@ -10,6 +10,13 @@ groups:
   - humanoid
   - innkeeper
   - watchers_crossing
+relationships:
+  - to: 85
+    type: friend
+    subtype: crossing
+  - to: 86
+    type: friend
+    subtype: crossing
 idlecommands:
   - 'emote wipes the counter with a rag that has seen better days'
   - 'emote ladles stew from the pot by the hearth into a waiting bowl'

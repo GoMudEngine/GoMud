@@ -13,6 +13,13 @@ groups:
   - merchant
   - watchers_crossing
   - shopkeepers
+relationships:
+  - to: 86
+    type: rival
+    subtype: toll
+  - to: 88
+    type: rival
+    subtype: trade
 idlecommands:
   - 'emote slides an abacus bead with a precise click'
   - 'emote checks a slate tag against a list on the counter'

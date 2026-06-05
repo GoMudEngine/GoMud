@@ -8,6 +8,16 @@ maxwander: 0
 groups:
   - humanoid
   - ashwick_villagers
+relationships:
+  - to: 261
+    type: friend
+    subtype: neighbor
+  - to: 260
+    type: friend
+    subtype: village
+  - to: 262
+    type: employer
+    subtype: herb-work
 idlecommands:
   - 'emote grinds herbs in the mortar with practiced rhythm'
   - ''
