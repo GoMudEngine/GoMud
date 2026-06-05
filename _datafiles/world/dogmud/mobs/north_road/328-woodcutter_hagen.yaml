@@ -7,6 +7,9 @@ non_combatant: true
 charm_immune: true
 groups:
   - humanoid
+  - gossiper
+knows_facts:
+  - roads-bandit-peril
 activitylevel: 15
 idlecommands:
   - 'emote brings an axe down on a log with a solid crack'

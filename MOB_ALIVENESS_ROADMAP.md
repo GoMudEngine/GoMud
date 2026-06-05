@@ -115,13 +115,14 @@ should always agree.
 | 6.2 | Polish | Parity audit closeout | S | 6.1 | Done |
 | 6.3 | Polish | Per-zone tuning (Thornwall deepening) | M | 6.1 | Done (2026-06-03) |
 | 6.4 | Polish | Performance review (initial) | S | 6.3 | Done (2026-06-05) |
-| 6.5 | Polish | Content pass — broader rollout | XL | 6.3 | In progress (6.5a+6.5b+6.5c done; 6.5d roads remains) |
+| 6.5 | Polish | Content pass — broader rollout | XL | 6.3 | Done (2026-06-05) — all four sub-batches shipped |
 | 6.5a | Polish | Faction definitions content pass | M | 1.2, 1.3 | Done (2026-06-05) |
 | 6.5b | Polish | Towns batch (Ashwick + Watcher's Crossing) | M | 6.5a | Done (2026-06-05) |
 | 6.5c | Polish | Wilderness batch (light: pack-kin + facts) | S | 6.5a | Done (2026-06-05) |
+| 6.5d | Polish | Roads batch (light: road-danger gossip + rels) | S | 6.5a, 3.7 | Done (2026-06-05) |
 | 6.6 | Polish | Performance re-review | S | 6.5 | Not started |
 
-**Roll-up:** 42 / 44 done • 1 in progress (6.5) • 1 not started (+1 deferred: 3.5).
+**Roll-up:** 44 / 45 done • 0 in progress • 1 not started (6.6) (+1 deferred: 3.5).
 
 ---
 
@@ -1167,6 +1168,29 @@ Validate the framework against real content, then scale.
   `docs/superpowers/specs/2026-06-05-mob-aliveness-6.5c-wilderness-batch-design.md`,
   plan at `docs/superpowers/plans/2026-06-05-mob-aliveness-6.5c-wilderness-batch.md`.
 - **Out:** Empty zones + beast scatter (nothing to add); roads batch (6.5d).
+
+### 6.5d Roads batch (light)
+**Status:** Done (2026-06-05) • **Size:** S
+
+- **Goal:** Light roads pass — road-danger gossip + a couple relationships;
+  confirm the 3.7 caravan still resolves. Final batch of the 6.5 content pass.
+- **Shipped:** 2 road-scoped facts — `roads-bandit-peril` (cross-tie to the
+  `bandits` faction, which is co-located on these very roads) + `roads-caravans-
+  guarded` — voiced by 9 road-folk gossipers (road warden, lone traveler,
+  woodcutter, travellers, peddler, innkeeper, caravan master, corvin, farmer).
+  2 relationships: innkeeper Thessa ↔ peddler Malk (friend, Marches waystation)
+  and caravan_master → crew (employer→ ketil/marta/lars, auto-mirrored to
+  employee, confirmed in-game). Boot-validated; the 3.7
+  `caravan_thornwall_stillwater` patrol confirmed resolving (Thornwall→North
+  Road→Stillwater). world_road empty; no schedules/conversations/new patrols.
+  Spec at `docs/superpowers/specs/2026-06-05-mob-aliveness-6.5d-roads-batch-design.md`,
+  plan at `docs/superpowers/plans/2026-06-05-mob-aliveness-6.5d-roads-batch.md`.
+- **Out:** north_road "hamlet" fuller treatment (gossip-only by choice; logged as
+  possible future deepening); world_road (empty); new patrol authoring (3.7 owns).
+
+**6.5 content pass COMPLETE** — all four sub-batches (6.5a factions, 6.5b towns,
+6.5c wilderness, 6.5d roads) shipped 2026-06-05. Only 6.6 (performance re-review)
+remains in Phase 6.
 
 ### 6.6 Performance re-review
 **Status:** Not started • **Size:** S

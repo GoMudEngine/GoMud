@@ -9,6 +9,12 @@ maxwander: 0
 groups:
   - humanoid
   - gossiper
+knows_facts:
+  - roads-caravans-guarded
+relationships:
+  - to: 250
+    type: friend
+    subtype: waystation
 idlecommands:
   - 'emote wipes the bar with a rag in long, practiced strokes'
   - ''

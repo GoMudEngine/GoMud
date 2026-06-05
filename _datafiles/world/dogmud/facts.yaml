@@ -145,3 +145,20 @@ facts:
         - the_fernway_south
         - wildlife
       status: active
+    - id: roads-bandit-peril
+      description: The trade roads have grown dangerous; bandits ambush the lonely stretches, so folk travel in numbers.
+      significance: 2
+      declared_round: 0
+      tags:
+        - roads
+        - bandits
+        - crisis
+      status: active
+    - id: roads-caravans-guarded
+      description: The caravans cross under hired guard now, running the gauntlet between the towns.
+      significance: 1
+      declared_round: 0
+      tags:
+        - roads
+        - trade
+      status: active
