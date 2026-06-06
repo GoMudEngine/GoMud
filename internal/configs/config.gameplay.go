@@ -17,6 +17,9 @@ type GamePlay struct {
 	// Skill Progression
 	UseSkillProgression ConfigBool `yaml:"UseSkillProgression"` // Enable skill/stat progression checks on skill/stat use
 	DualProgressionMode ConfigBool `yaml:"DualProgressionMode"` // When true, progression checks grant actual skill/stat increases (requires UseSkillProgression)
+
+	// Cartesian map consistency enforcement
+	MapConsistencyEnforce ConfigString `yaml:"MapConsistencyEnforce"` // "off" | "warn" (default) | "panic" — startup Cartesian-consistency enforcement level
 }
 
 type GameplayDeath struct {
@@ -105,6 +108,13 @@ func (g *GamePlay) Validate() {
 
 	if int(g.PVPMinimumSkillRanks) < 0 {
 		g.PVPMinimumSkillRanks = 0
+	}
+
+	switch string(g.MapConsistencyEnforce) {
+	case "off", "warn", "panic":
+		// valid
+	default:
+		g.MapConsistencyEnforce = "warn"
 	}
 
 }
