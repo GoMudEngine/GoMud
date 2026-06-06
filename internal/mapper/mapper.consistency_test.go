@@ -23,6 +23,7 @@ func TestClassifyKind(t *testing.T) {
 		{"long-x3", d(0, -3, 0), d(0, -3, 0), ExitLong},
 		{"vertical-up", d(0, 0, 1), d(0, 0, 1), ExitVertical},
 		{"wrap", d(0, 1, 0), d(0, -4, 0), ExitWrap},
+		{"long-diagonal", d(-3, -3, 0), d(-3, -3, 0), ExitLong},
 	}
 	for _, c := range cases {
 		if got := classifyKind(c.nominal, c.actual); got != c.want {
@@ -32,13 +33,35 @@ func TestClassifyKind(t *testing.T) {
 }
 
 func TestFindCollisions(t *testing.T) {
+	// One collision group.
 	nodes := map[int]*mapNode{
 		1: {RoomId: 1, Pos: d(0, 0, 0)},
 		2: {RoomId: 2, Pos: d(1, 0, 0)},
 		3: {RoomId: 3, Pos: d(1, 0, 0)}, // collides with 2
 	}
 	groups := findCollisions(nodes)
-	if len(groups) != 1 || len(groups[0]) != 2 {
-		t.Fatalf("expected one collision group of 2, got %v", groups)
+	if len(groups) != 1 || len(groups[0]) != 2 || groups[0][0] != 2 || groups[0][1] != 3 {
+		t.Fatalf("expected one sorted collision group [2 3], got %v", groups)
+	}
+
+	// No collisions.
+	clean := map[int]*mapNode{
+		1: {RoomId: 1, Pos: d(0, 0, 0)},
+		2: {RoomId: 2, Pos: d(1, 0, 0)},
+	}
+	if g := findCollisions(clean); len(g) != 0 {
+		t.Fatalf("expected no collisions, got %v", g)
+	}
+
+	// Two distinct collision groups, returned in deterministic (ascending) order.
+	multi := map[int]*mapNode{
+		10: {RoomId: 10, Pos: d(0, 0, 0)},
+		11: {RoomId: 11, Pos: d(0, 0, 0)}, // group A @ (0,0,0)
+		20: {RoomId: 20, Pos: d(5, 5, 0)},
+		21: {RoomId: 21, Pos: d(5, 5, 0)}, // group B @ (5,5,0)
+	}
+	mg := findCollisions(multi)
+	if len(mg) != 2 || mg[0][0] != 10 || mg[1][0] != 20 {
+		t.Fatalf("expected two groups ordered [10..],[20..], got %v", mg)
 	}
 }

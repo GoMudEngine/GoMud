@@ -58,6 +58,7 @@ func findCollisions(nodes map[int]*mapNode) [][]int {
 			groups = append(groups, ids)
 		}
 	}
+	sort.Slice(groups, func(i, j int) bool { return groups[i][0] < groups[j][0] })
 	return groups
 }
 
