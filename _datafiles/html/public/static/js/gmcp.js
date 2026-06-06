@@ -20,7 +20,8 @@ class RoomGridSVG {
       this.connectionWidth = options.connectionWidth || 1.6;
       this.glyphColor = options.glyphColor || "#c9b48f";
       this.wrapColor = options.wrapColor || "#3fb0a0";          // toroidal wrap edge-stub color
-      this.verticalTickColor = options.verticalTickColor || "#8a6a3a"; // up/down tick color
+      this.verticalTickColor = options.verticalTickColor || "#5ad4e6"; // up/down tick (bright, stands out)
+      this.serviceColor = options.serviceColor || "#e8b94a";    // bank/shop/trainer marker (gold)
       this.biomeTints = options.biomeTints || RoomGridSVG.DEFAULT_BIOME_TINTS;
       // ── Internal state ────────────────────────────────────────────────
       // rooms: Map<RoomId, { room, group, defaultColor }>
@@ -102,7 +103,11 @@ class RoomGridSVG {
           entry.room.ExitsMeta = room.ExitsMeta || [];
           entry.room.Color = room.Color;
           entry.room.Text = room.Text;
+          entry.room.tags = room.tags;
+          entry.room.name = room.name;
           entry.defaultColor = defaultColor;
+
+          const svc = this._serviceFor(room.tags);
 
           // move & recolor rect (centered small node)
           const s = this.roomSize;
@@ -115,11 +120,11 @@ class RoomGridSVG {
               rect.setAttribute('fill', defaultColor);
           }
 
-          // move & update label
+          // move & update glyph (keep the service marker if this is a service room)
           const txtEl = this.svg.querySelector(`g[data-room-id="${id}"] text`);
           txtEl.setAttribute('x', room.x * this.spacing);
           txtEl.setAttribute('y', room.y * this.spacing + s * 0.25 + 1);
-          txtEl.textContent = room.symbol || '';
+          txtEl.textContent = svc ? svc.glyph : (room.symbol || '');
 
           // redraw any new edges (skipped during deferred two-pass placement)
           if (!deferEdges) this._drawEdgesForRoom(id);
@@ -138,13 +143,14 @@ class RoomGridSVG {
       const s = this.roomSize;
       const cx = room.x * this.spacing;
       const cy = room.y * this.spacing;
+      const svc = this._serviceFor(room.tags); // bank/shop/trainer/storage marker (or null)
       const rect = document.createElementNS(this.svg.namespaceURI, 'rect');
       rect.setAttribute('width', s);
       rect.setAttribute('height', s);
       rect.setAttribute('x', cx - s / 2);
       rect.setAttribute('y', cy - s / 2);
-      rect.setAttribute('stroke', this.roomEdgeColor);
-      rect.setAttribute('stroke-width', '1');
+      rect.setAttribute('stroke', svc ? this.serviceColor : this.roomEdgeColor);
+      rect.setAttribute('stroke-width', svc ? '2' : '1');
       rect.setAttribute('rx', '4');
       rect.setAttribute('ry', '4');
       rect.setAttribute('data-room-rect', id);
@@ -153,16 +159,22 @@ class RoomGridSVG {
       rect.addEventListener('click', () => this.onRoomClick(room));
       g.appendChild(rect);
 
-      // faint glyph (room.symbol) centered in the node
+      // hover tooltip with the room name (restores at-a-glance identify)
+      const title = document.createElementNS(this.svg.namespaceURI, 'title');
+      title.textContent = room.name || '';
+      g.appendChild(title);
+
+      // glyph: gold service marker if any (bold), else the faint biome symbol
       const glyph = document.createElementNS(this.svg.namespaceURI, 'text');
       glyph.setAttribute('x', cx);
       glyph.setAttribute('y', cy + s * 0.25 + 1);
       glyph.setAttribute('text-anchor', 'middle');
       glyph.setAttribute('font-size', s * 0.6);
-      glyph.setAttribute('fill', this.glyphColor);
-      glyph.setAttribute('opacity', '0.85');
+      glyph.setAttribute('fill', svc ? this.serviceColor : this.glyphColor);
+      glyph.setAttribute('opacity', svc ? '1' : '0.85');
+      if (svc) glyph.setAttribute('font-weight', 'bold');
       glyph.setAttribute('pointer-events', 'none');
-      glyph.textContent = room.symbol || '';
+      glyph.textContent = svc ? svc.glyph : (room.symbol || '');
       g.appendChild(glyph);
 
       this.roomsGroup.appendChild(g);
@@ -197,6 +209,7 @@ class RoomGridSVG {
       this.drawnWrapStubs.clear();
       this.drawnVerticalTicks.clear();
       this.currentCenterId = null;
+      this._z = null;
       this.zoomLevel = 1;
       this.svg.setAttribute('viewBox', '0 0 1 1');
       this.roomsGroup.innerHTML = '';
@@ -238,16 +251,21 @@ class RoomGridSVG {
   }
 
   /** Ingest a Zone.Map snapshot: [{num,x,y,z,symbol,biome,exits:[{to,dx,dy,dz,kind}]}]. */
-  setZoneSnapshot(zone, snapshotRooms) {
-      if (this._zone !== zone) {
+  setZoneSnapshot(zone, snapshotRooms, currentZ) {
+      currentZ = currentZ || 0;
+      // The map shows one floor at a time: reset on zone change OR floor (z) change.
+      if (this._zone !== zone || this._z !== currentZ) {
           this.reset();
           this._zone = zone;
+          this._z = currentZ;
       }
+      // Only render rooms on the current floor; up/down exits show as ▲/▼ ticks.
+      const floor = snapshotRooms.filter(r => (r.z || 0) === currentZ);
       // Pass 1: place/update every room node first (defer edge drawing) so that
       // when connectors are drawn, every endpoint already has its real coords.
       // Drawing an edge to a not-yet-placed room would anchor it at a stale
       // position and the edge-dedup would never repair it (the "streak" bug).
-      snapshotRooms.forEach(r => {
+      floor.forEach(r => {
           this.addRoom({
               RoomId: r.num,
               x: r.x,
@@ -255,13 +273,15 @@ class RoomGridSVG {
               z: r.z,
               symbol: r.symbol,
               biome: r.biome,
+              name: r.name,
+              tags: r.tags,
               Exits: (r.exits || []).map(e => ({ RoomId: e.to, kind: e.kind, dx: e.dx, dy: e.dy, dz: e.dz })),
               ExitsMeta: r.exits || [] // raw per-exit {to,dx,dy,dz,kind}; consumed by wrap-stub + vertical-tick rendering
           }, /* deferEdges = */ true);
       });
       // Pass 2: all nodes exist now — draw connectors/stubs/ticks (each dedups,
       // so repeated same-zone resends never duplicate or misplace lines).
-      snapshotRooms.forEach(r => this._drawEdgesForRoom(r.num));
+      floor.forEach(r => this._drawEdgesForRoom(r.num));
       this._applyZoom();
   }
 
@@ -445,9 +465,10 @@ class RoomGridSVG {
       t.setAttribute('x', cx + s * 0.42);
       t.setAttribute('y', cy + (dz > 0 ? -s * 0.30 : s * 0.46));
       t.setAttribute('text-anchor', 'middle');
-      t.setAttribute('font-size', s * 0.32);
+      t.setAttribute('font-size', s * 0.5);
       t.setAttribute('fill', this.verticalTickColor);
-      t.setAttribute('opacity', '0.6');
+      t.setAttribute('opacity', '0.95');
+      t.setAttribute('font-weight', 'bold');
       t.setAttribute('pointer-events', 'none');
       t.textContent = dz > 0 ? '▲' : '▼'; // ▲ up / ▼ down
       me.group.appendChild(t);
@@ -512,4 +533,16 @@ RoomGridSVG.prototype.tintFor = function (biome) {
   if (!biome) return this.biomeTints._default;
   const key = String(biome).toLowerCase();
   return this.biomeTints[key] || this.biomeTints._default;
+};
+
+// ── Service-room markers (bank / shop / trainer / storage) ────────────────────
+RoomGridSVG.SERVICE_GLYPHS = { bank: '$', shop: 'S', trainer: 'T', storage: '▢' };
+RoomGridSVG.SERVICE_ORDER  = ['bank', 'shop', 'trainer', 'storage'];
+RoomGridSVG.prototype._serviceFor = function (tags) {
+  if (!Array.isArray(tags) || !tags.length) return null;
+  for (let i = 0; i < RoomGridSVG.SERVICE_ORDER.length; i++) {
+    const k = RoomGridSVG.SERVICE_ORDER[i];
+    if (tags.indexOf(k) !== -1) return { key: k, glyph: RoomGridSVG.SERVICE_GLYPHS[k] };
+  }
+  return null;
 };

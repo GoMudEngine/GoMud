@@ -540,7 +540,7 @@
                     return;
                 }
                 if ( GMCPWindows['Map'] && gr && gr.setZoneSnapshot ) {
-                    gr.setZoneSnapshot(obj.Map.zone, obj.Map.rooms || []);
+                    gr.setZoneSnapshot(obj.Map.zone, obj.Map.rooms || [], obj.Map.cz || 0);
                     GMCPWindows['Map'].setTitle('Map (' + obj.Map.zone + ')');
                 }
             },

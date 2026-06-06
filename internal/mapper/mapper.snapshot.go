@@ -19,6 +19,8 @@ type SnapshotRoom struct {
 	Z      int            `json:"z"`
 	Symbol string         `json:"symbol"`
 	Biome  string         `json:"biome"`
+	Name   string         `json:"name"`           // room title (client tooltip / identify)
+	Tags   []string       `json:"tags,omitempty"` // service tags: bank | storage | trainer | shop
 	Exits  []SnapshotExit `json:"exits"`
 }
 
@@ -49,8 +51,22 @@ func (r *mapper) Snapshot(visited map[int]struct{}) []SnapshotRoom {
 		// Biome name comes from the room's biome (not n.Legend, which may hold a
 		// per-room MapLegend override like "Townsquare"); the client uses it for tinting.
 		if room := rooms.LoadRoom(id); room != nil {
+			sr.Name = room.Title
 			if b := room.GetBiome(); b != nil {
 				sr.Biome = b.Name
+			}
+			// Service tags so the client can highlight important rooms.
+			if room.IsBank {
+				sr.Tags = append(sr.Tags, "bank")
+			}
+			if room.IsStorage {
+				sr.Tags = append(sr.Tags, "storage")
+			}
+			if len(room.SkillTraining) > 0 {
+				sr.Tags = append(sr.Tags, "trainer")
+			}
+			if len(room.GetMobs(rooms.FindMerchant)) > 0 {
+				sr.Tags = append(sr.Tags, "shop")
 			}
 		}
 

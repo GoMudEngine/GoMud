@@ -21,8 +21,9 @@ type GMCPZoneUpdate struct {
 func (g GMCPZoneUpdate) Type() string { return `GMCPZoneUpdate` }
 
 type GMCPZoneModule_Payload struct {
-	Zone  string                `json:"zone"`
-	Rooms []mapper.SnapshotRoom `json:"rooms"`
+	Zone     string                `json:"zone"`
+	CurrentZ int                   `json:"cz"` // z-level (floor) of the player's current room
+	Rooms    []mapper.SnapshotRoom `json:"rooms"`
 }
 
 func init() {
@@ -77,9 +78,13 @@ func (g *GMCPZoneModule) buildAndSend(e events.Event) events.ListenerReturn {
 	// Always include the current room even before the move-handler marks it.
 	visited[room.RoomId] = struct{}{}
 
+	// Current floor (z) so the client shows only the level the player is on.
+	_, _, cz, _ := m.GetCoordinates(room.RoomId)
+
 	payload := GMCPZoneModule_Payload{
-		Zone:  room.Zone,
-		Rooms: m.Snapshot(visited),
+		Zone:     room.Zone,
+		CurrentZ: cz,
+		Rooms:    m.Snapshot(visited),
 	}
 
 	events.AddToQueue(GMCPOut{
