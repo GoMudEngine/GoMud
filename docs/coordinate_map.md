@@ -586,7 +586,9 @@ bad reciprocals, then flip to `panic` once the world is clean.
 
 ### Known Limitation: Cross-Zone Crawl
 
-The BFS crawl follows all exits and can cross zone boundaries. A room on
-a zone boundary may appear in findings for more than one zone — this is
-cosmetic duplication, not a real double-violation. Future refinement may
-scope the crawl to a single zone's room ID set.
+The BFS crawl follows all exits and can cross zone boundaries. This is
+mitigated at the reporting layer by `mapper.FilterFindingsToZone`, which
+drops any finding whose room's owning zone does not match the zone being
+checked. Both the startup pass (`ValidateZoneConsistency`) and the
+`cartcheck` admin command apply this filter, so findings are correctly
+attributed to the zone that owns each room.

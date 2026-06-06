@@ -398,7 +398,8 @@ The engine automatically skips:
 ### Known Limitation: Cross-Zone Crawl
 
 `CheckConsistency` operates on the BFS-populated `crawledRooms` map,
-which follows all exits and can cross zone boundaries. A boundary room may
-therefore appear in the findings for more than one zone — a cosmetic
-duplication. Future refinement may scope the crawl strictly to a single
-zone's room ID set.
+which follows all exits and can cross zone boundaries. This is mitigated
+at the reporting layer by `FilterFindingsToZone`, which drops any finding
+whose room's owning `zone:` field does not match the zone being checked.
+Both `ValidateZoneConsistency` (startup) and `CartCheck` (admin command)
+apply this filter, so findings are correctly scoped to their owning zone.

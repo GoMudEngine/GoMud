@@ -1,3 +1,4 @@
 name: Endless Trashheap
 roomid: 139
 region: Other Realm
+non_cartesian: true

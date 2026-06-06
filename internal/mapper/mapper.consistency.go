@@ -186,6 +186,20 @@ func sign(v int) int {
 	return 0
 }
 
+// FilterFindingsToZone drops findings whose room belongs to a different zone.
+// The per-zone crawl can cross zone boundaries, so CheckConsistency may return
+// findings for foreign rooms; this scopes them to their owning zone for accurate
+// reporting/attribution.
+func FilterFindingsToZone(findings []Finding, zone string) []Finding {
+	out := findings[:0:0] // new backing array, preserve nil-vs-empty sanity
+	for _, f := range findings {
+		if room := rooms.LoadRoom(f.RoomId); room != nil && room.Zone == zone {
+			out = append(out, f)
+		}
+	}
+	return out
+}
+
 // ValidateZoneConsistency runs CheckConsistency for every loaded zone and either
 // warns or panics per the MapConsistencyEnforce config knob. Called from PreCacheMaps
 // AFTER all zone mappers are built. non_cartesian zones are passed their flag.
@@ -206,7 +220,7 @@ func ValidateZoneConsistency() {
 			continue
 		}
 		nonCartesian := rooms.IsZoneNonCartesian(zoneName)
-		for _, f := range m.CheckConsistency(zoneName, nonCartesian) {
+		for _, f := range FilterFindingsToZone(m.CheckConsistency(zoneName, nonCartesian), zoneName) {
 			if f.Severity == "error" {
 				errorCount++
 				if firstError == "" {

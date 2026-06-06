@@ -46,7 +46,7 @@ func CartCheck(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		if m == nil {
 			continue
 		}
-		findings := m.CheckConsistency(zoneName, rooms.IsZoneNonCartesian(zoneName))
+		findings := mapper.FilterFindingsToZone(m.CheckConsistency(zoneName, rooms.IsZoneNonCartesian(zoneName)), zoneName)
 		if len(findings) == 0 {
 			continue
 		}
