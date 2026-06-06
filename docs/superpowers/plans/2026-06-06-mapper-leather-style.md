@@ -457,7 +457,7 @@ git commit -m "tune(webclient): leather mapper dials per smoke"
 
 **Files:** Modify `internal/mapper/context.md`, `CLAUDE.md`, `PATCH_NOTES.md`
 
-- [ ] **Step 1: `internal/mapper/context.md`** — note the new `SnapshotExit` fields (locked/secret/oneway/gate/toZone/stub) and `nodeExit.Gate`.
+- [ ] **Step 1: `internal/mapper/context.md`** — note the new `SnapshotExit` fields (locked/secret/oneway/gate/toZone/stub) and `nodeExit.Gate`. ALSO document that the mapper has **two consumers**: the in-game ASCII `map` command (`internal/usercommands/skill.map.go` → `GetLimitedMap`/`GetLegend`, Perception-scaled detail, symbols `@`=You / `☺`=Player·Party·NPC / `☠`=Mob / `☹`=Friend + biome/mapsymbol glyphs) and the web leather map (`Zone.Map` snapshot → `RoomGridSVG`). Briefly describe each and that connection-type/party data is web-only.
 - [ ] **Step 2: `CLAUDE.md`** — extend the map section: the web mapper renders an antique tooled-leather style; connection types are inferred per-exit; party positions come via `Zone.Map.party`; the visual source of truth is `docs/superpowers/specs/2026-06-06-mapper-leather-mockups/`.
 - [ ] **Step 3: `PATCH_NOTES.md`** — dated entry: leather mapper restyle, connection-type styling, party markers.
 - [ ] **Step 4: Commit.**
@@ -469,9 +469,28 @@ git commit -m "docs: leather mapper restyle, connection types, party markers"
 
 ---
 
+### Task 11: `help map` helpfile — both maps documented
+
+**Files:** Modify `_datafiles/world/dogmud/templates/help/map.template` (exists)
+
+The helpfile must clearly cover BOTH the in-game ASCII `map` command and the web-client leather map, so players understand every element of each.
+
+- [ ] **Step 1: Read the current file.** Read `_datafiles/world/dogmud/templates/help/map.template` and keep its `<ansi ...>` styling + the existing usage/related lines.
+- [ ] **Step 2: Document the in-game map.** Keep/expand the existing section: `map` / `map wide`; Perception-scaled detail; symbols — `@` = You, `☺` = Player / Party Member / NPC, `☠` = Mob, `☹` = Friend; biome glyphs + per-room map symbols + the legend; secret/hidden areas may not show. (Verify symbols against `internal/usercommands/skill.map.go` `OverrideSymbol` calls.)
+- [ ] **Step 3: Add a web-map section.** A clearly-headed section explaining the web client's leather map and EVERY element: the raised tile = your current room; gold `$`/`S`/`▢` = bank/shop/storage; the verdigris figure = a party member in that room; `▲`/`▼` = stairs up/down; path styles — solid road, dashed trail, dashed-blue waterway, ridge path, a long "highway"; a small door icon (red beyond it) = a **locked** exit; faint dotted + `?` = a **secret** passage; an arrowhead = a **one-way** passage; an archway = a **gated/threshold** exit; a dashed stub = an **unexplored** exit ("more this way"), labelled `→ Zone` when it leads to another area; dimmer rooms are farther from you; hover a room for its name; the `fit`/`ctr`/`−`/`+` controls. Note the map shows one floor at a time (use stairs to change levels).
+- [ ] **Step 4: Wrap at 80 cols; keep `<ansi>` styling consistent.** Confirm the template has no unclosed tags and reads cleanly.
+- [ ] **Step 5: Commit.**
+
+```bash
+git add _datafiles/world/dogmud/templates/help/map.template
+git commit -m "docs(help): document both the in-game ASCII map and the web leather map"
+```
+
+---
+
 ## Self-Review (completed by plan author)
 
-**Spec coverage:** §2 surface/frame → Tasks 4,5. §3 rooms (raised current, service, stairs, fog, tooltip) → Task 6. §4 party → Tasks 3,6,8. §5 connection types (all rows) → Tasks 2 (data) + 7 (render). §6 server data → Tasks 1,2,3. §7 client rewrite → Tasks 4–8. §8 out-of-scope respected. Docs → Task 10.
+**Spec coverage:** §2 surface/frame → Tasks 4,5. §3 rooms (raised current, service, stairs, fog, tooltip) → Task 6. §4 party → Tasks 3,6,8. §5 connection types (all rows) → Tasks 2 (data) + 7 (render). §6 server data → Tasks 1,2,3. §7 client rewrite → Tasks 4–8. §8 out-of-scope respected. Docs → Tasks 10, 11 (Task 11 = `help map` covering BOTH the in-game ASCII map and the web leather map; context.md covers both consumers).
 
 **Placeholder scan:** Server tasks have complete code + tests. Client tasks reference the **committed mockup files** for the bulky drawing routines (faithful ports, exact file + function named) rather than re-pasting ~400 lines — these are precise pointers to committed source, not "TBD". The one genuine judgment call (surface-fixed vs world-pannable layering, Task 8 Step 1) is called out explicitly with a recommended approach.
 
