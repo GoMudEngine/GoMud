@@ -252,6 +252,17 @@ class RoomGridSVG {
       this._applyZoom(); // addRoom refreshes per-room; this also covers the empty-snapshot/reset case
   }
 
+  /** Reset zoom so the whole explored map fits in view. */
+  fit() {
+      this._updateBounds();
+      this.zoomLevel = 1;
+      this.center = {
+          x: this.bounds.minX * this.spacing + this.worldWidth / 2,
+          y: this.bounds.minY * this.spacing + this.worldHeight / 2
+      };
+      this._applyZoom();
+  }
+
   zoomIn() {
       this.zoomLevel *= this.zoomStep;
       this._applyZoom();
@@ -289,7 +300,12 @@ class RoomGridSVG {
           b.addEventListener('click', cb);
           return b;
       };
-      div.append(mk('−', () => this.zoomOut()), mk('+', () => this.zoomIn()));
+      div.append(
+          mk('fit',    () => this.fit()),
+          mk('ctr',   () => this.centerOnRoom(this.currentCenterId)),
+          mk('−',     () => this.zoomOut()),
+          mk('+',     () => this.zoomIn())
+      );
       this.container.appendChild(div);
   }
 
