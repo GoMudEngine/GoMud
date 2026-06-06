@@ -221,6 +221,27 @@ class RoomGridSVG {
       this.currentCenterId = id;
   }
 
+  /** Ingest a Zone.Map snapshot: [{num,x,y,z,symbol,biome,exits:[{to,dx,dy,dz,kind}]}]. */
+  setZoneSnapshot(zone, snapshotRooms) {
+      if (this._zone !== zone) {
+          this.reset();
+          this._zone = zone;
+      }
+      snapshotRooms.forEach(r => {
+          this.addRoom({
+              RoomId: r.num,
+              x: r.x,
+              y: r.y,
+              z: r.z,
+              symbol: r.symbol,
+              biome: r.biome,
+              Exits: (r.exits || []).map(e => ({ RoomId: e.to, kind: e.kind, dx: e.dx, dy: e.dy, dz: e.dz })),
+              ExitsMeta: r.exits || []
+          });
+      });
+      this._applyZoom();
+  }
+
   zoomIn() {
       this.zoomLevel *= this.zoomStep;
       this._applyZoom();
