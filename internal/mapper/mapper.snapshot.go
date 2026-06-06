@@ -9,6 +9,12 @@ type SnapshotExit struct {
 	DY       int      `json:"dy"`
 	DZ       int      `json:"dz"`
 	Kind     ExitKind `json:"kind"`
+	Locked   bool     `json:"locked,omitempty"`
+	Secret   bool     `json:"secret,omitempty"`
+	OneWay   bool     `json:"oneway,omitempty"`
+	Gate     bool     `json:"gate,omitempty"`
+	Stub     bool     `json:"stub,omitempty"`   // destination not a visited same-zone room
+	ToZone   string   `json:"tozone,omitempty"` // set when the destination is in a different zone
 }
 
 // SnapshotRoom is one room placed in the zone coordinate space.
@@ -50,8 +56,10 @@ func (r *mapper) Snapshot(visited map[int]struct{}) []SnapshotRoom {
 		}
 		// Biome name comes from the room's biome (not n.Legend, which may hold a
 		// per-room MapLegend override like "Townsquare"); the client uses it for tinting.
+		srcZone := ""
 		if room := rooms.LoadRoom(id); room != nil {
 			sr.Name = room.Title
+			srcZone = room.Zone
 			if b := room.GetBiome(); b != nil {
 				sr.Biome = b.Name
 			}
@@ -71,21 +79,29 @@ func (r *mapper) Snapshot(visited map[int]struct{}) []SnapshotRoom {
 		}
 
 		for _, e := range n.Exits {
-			dst, ok := r.crawledRooms[e.RoomId]
-			if !ok {
-				continue
-			}
-			if _, ok := visited[e.RoomId]; !ok {
-				continue
-			}
-			actual := positionDelta{x: dst.Pos.x - n.Pos.x, y: dst.Pos.y - n.Pos.y, z: dst.Pos.z - n.Pos.z}
-			sr.Exits = append(sr.Exits, SnapshotExit{
+			se := SnapshotExit{
 				ToRoomId: e.RoomId,
 				DX:       e.Direction.x,
 				DY:       e.Direction.y,
 				DZ:       e.Direction.z,
-				Kind:     classifyKind(e.Direction, actual),
-			})
+				Locked:   e.LockDifficulty > 0,
+				Secret:   e.Secret,
+				OneWay:   e.OneWay,
+				Gate:     e.Gate,
+			}
+			dst, crawled := r.crawledRooms[e.RoomId]
+			_, vis := visited[e.RoomId]
+			if crawled && vis {
+				actual := positionDelta{x: dst.Pos.x - n.Pos.x, y: dst.Pos.y - n.Pos.y, z: dst.Pos.z - n.Pos.z}
+				se.Kind = classifyKind(e.Direction, actual)
+			} else {
+				se.Stub = true
+				se.Kind = classifyKind(e.Direction, e.Direction) // nominal placement
+			}
+			if dr := rooms.LoadRoom(e.RoomId); dr != nil && dr.Zone != "" && dr.Zone != srcZone {
+				se.ToZone = dr.Zone
+			}
+			sr.Exits = append(sr.Exits, se)
 		}
 		out = append(out, sr)
 	}
