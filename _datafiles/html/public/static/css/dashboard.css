@@ -1,0 +1,90 @@
+/* In-game dashboard — arrangement C (visuals left). Reuses gomud.css tokens. */
+#dashboard {
+  display: grid;
+  height: 100%;
+  width: 100%;
+  gap: var(--dash-gap, 6px);
+  padding: 6px;
+  box-sizing: border-box;
+  background: var(--bg-base, #191310);
+  /* columns: left visuals · center feed (dominant) · right social */
+  grid-template-columns:
+    minmax(200px, var(--col-l, 0.9fr))
+    minmax(0, var(--col-c, 2fr))
+    minmax(200px, var(--col-r, 0.9fr));
+  grid-template-rows:
+    auto                              /* session strip */
+    minmax(0, var(--row-t, 1fr))
+    minmax(0, var(--row-b, 1fr))
+    auto;                             /* command bar */
+  grid-template-areas:
+    "sess sess sess"
+    "map  feed vitals"
+    "art  feed status"
+    "trig cmd  chat";
+}
+
+/* Session strip */
+#dash-session {
+  grid-area: sess;
+  display: flex; align-items: center; gap: 12px;
+  padding: 4px 10px;
+  background: linear-gradient(var(--bar-top, #241813), var(--bar-bottom, #1a110b));
+  border: 1px solid var(--panel-border, #3a2a18);
+  border-radius: 5px;
+  font-family: var(--font-serif, Georgia, serif); font-size: 0.85rem;
+  color: var(--text-primary, #d2c3a4);
+}
+#dash-session .sess-name { color: var(--title-gold, #e8d2a0); font-style: italic; font-weight: bold; }
+#dash-session .sess-conn { color: var(--online-green, #7fae6a); }
+#dash-session .sess-spacer { margin-left: auto; }
+#dash-session button { font-size: 0.75rem; }
+
+/* Panel shell */
+.dash-panel {
+  display: flex; flex-direction: column; min-height: 0; min-width: 0;
+  background: var(--panel-bg, #201913);
+  border: 1px solid var(--panel-border, #3a2a18);
+  border-radius: 6px;
+  box-shadow: inset 0 1px 0 rgba(201,168,106,0.10);
+  overflow: hidden;
+}
+.dash-panel-head {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 8px;
+  background: linear-gradient(var(--bar-top, #241813), var(--bar-bottom, #1a110b));
+  border-bottom: 1px solid var(--panel-border, #3a2a18);
+  cursor: grab;            /* header is the drag handle for swap */
+  user-select: none;
+}
+.dash-panel-head .ph-title {
+  font-family: var(--font-serif, Georgia, serif); font-style: italic;
+  font-size: 0.82rem; color: var(--title-gold, #e8d2a0);
+}
+.dash-panel-head .ph-btns { margin-left: auto; display: flex; gap: 4px; }
+.dash-panel-head .ph-btn {
+  width: 18px; height: 18px; line-height: 16px; text-align: center;
+  font-size: 11px; cursor: pointer; border-radius: 3px;
+  color: var(--brass-text, #3b2a10);
+  background: var(--brass-grad, radial-gradient(circle at 34% 26%, #f4dd92, #cb9f42 46%, #8a6620));
+  border: 1px solid var(--brass-border, #5e431a);
+}
+.dash-panel-body { flex: 1 1 auto; min-height: 0; overflow: auto; position: relative; }
+
+/* Feed + command regions */
+#panel-feed { grid-area: feed; }
+#panel-feed .dash-panel-body { overflow: hidden; }   /* xterm manages its own scroll */
+#panel-cmd  { grid-area: cmd; }
+#panel-cmd .dash-panel-body { display: flex; padding: 4px; }
+#panel-map { grid-area: map; } #panel-art { grid-area: art; } #panel-trig { grid-area: trig; }
+#panel-vitals { grid-area: vitals; } #panel-status { grid-area: status; } #panel-chat { grid-area: chat; }
+
+/* Reserved slots (sub-projects #2/#3) */
+.dash-slot .dash-panel-body {
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-secondary, #9a8a6a); font-family: var(--font-serif, Georgia, serif);
+  font-style: italic; font-size: 0.8rem; text-align: center; padding: 8px;
+}
+
+/* Collapsed panels show only the header */
+.dash-panel.collapsed .dash-panel-body { display: none; }
