@@ -126,7 +126,7 @@ func (r *mapper) CheckConsistency(zone string, nonCartesian bool) []Finding {
 				if !samePos(e.Direction, actual) {
 					findings = append(findings, Finding{
 						Severity: "error", Kind: "deltamismatch", Zone: zone, RoomId: srcId, ExitName: exitName,
-						Detail: fmt.Sprintf("nominal delta (%d,%d,%d) != actual (%d,%d,%d) — wrap exit in a Cartesian zone (set non_cartesian or fix geometry)",
+						Detail: fmt.Sprintf("nominal delta (%d,%d,%d) != actual (%d,%d,%d) — wrap exit detected in a Cartesian zone; set non_cartesian: true on the zone or fix the geometry",
 							e.Direction.x, e.Direction.y, e.Direction.z, actual.x, actual.y, actual.z),
 					})
 				}
@@ -156,10 +156,7 @@ func (r *mapper) CheckConsistency(zone string, nonCartesian bool) []Finding {
 // straight line from start by delta (exclusive of endpoints), or 0 if none.
 // Only handles axis-aligned and pure-diagonal spans (the only shapes posDeltas produce).
 func (r *mapper) longSpanCrossesRoom(start, delta positionDelta, srcId, dstId int) int {
-	steps := absInt(delta.x)
-	if absInt(delta.y) > steps {
-		steps = absInt(delta.y)
-	}
+	steps := max(absInt(delta.x), absInt(delta.y))
 	if steps <= 1 {
 		return 0
 	}

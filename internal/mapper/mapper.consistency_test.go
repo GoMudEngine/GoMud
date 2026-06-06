@@ -121,6 +121,15 @@ func TestCheckConsistency_WrapFlaggedInCartesian(t *testing.T) {
 	if !saw {
 		t.Fatalf("expected a deltamismatch finding, got %v", f)
 	}
+	count := 0
+	for _, x := range f {
+		if x.Kind == "deltamismatch" {
+			count++
+		}
+	}
+	if count != 2 {
+		t.Fatalf("expected 2 deltamismatch findings (one per direction), got %d: %v", count, f)
+	}
 }
 
 func TestCheckConsistency_WrapAllowedInNonCartesian(t *testing.T) {
@@ -142,4 +151,42 @@ func TestCheckConsistency_Collision(t *testing.T) {
 	if len(f) != 1 || f[0].Kind != "collision" {
 		t.Fatalf("expected one collision finding, got %v", f)
 	}
+}
+
+func TestCheckConsistency_LongCrossing(t *testing.T) {
+	// A(0,0) --east-x3--> D(3,0), with B(1,0) sitting on the span: warn.
+	withMid := map[int]*mapNode{
+		1: node(1, 0, 0, 0, map[string]nodeExit{"east-x3": {RoomId: 4, Direction: d(3, 0, 0)}}),
+		2: node(2, 1, 0, 0, map[string]nodeExit{}), // sits on the span
+		4: node(4, 3, 0, 0, map[string]nodeExit{}),
+	}
+	f := mkMapper(withMid).CheckConsistency("test", false)
+	sawCross := false
+	for _, x := range f {
+		if x.Kind == "longcrossing" {
+			sawCross = true
+		}
+	}
+	if !sawCross {
+		t.Fatalf("expected a longcrossing warning, got %v", f)
+	}
+
+	// Same long exit but no room on the span: no longcrossing.
+	noMid := map[int]*mapNode{
+		1: node(1, 0, 0, 0, map[string]nodeExit{"east-x3": {RoomId: 4, Direction: d(3, 0, 0)}}),
+		4: node(4, 3, 0, 0, map[string]nodeExit{}),
+	}
+	for _, x := range mkMapper(noMid).CheckConsistency("test", false) {
+		if x.Kind == "longcrossing" {
+			t.Fatalf("did not expect a longcrossing warning, got %v", x)
+		}
+	}
+
+	// longcrossing must fire even in a non_cartesian zone (it's always-on).
+	for _, x := range mkMapper(withMid).CheckConsistency("test", true) {
+		if x.Kind == "longcrossing" {
+			return // good — present under nonCartesian too
+		}
+	}
+	t.Fatal("longcrossing should still fire in a non_cartesian zone")
 }
