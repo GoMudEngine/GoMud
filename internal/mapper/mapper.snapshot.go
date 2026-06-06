@@ -28,18 +28,26 @@ type SnapshotRoom struct {
 func (r *mapper) Snapshot(visited map[int]struct{}) []SnapshotRoom {
 	out := make([]SnapshotRoom, 0, len(visited))
 
+	// Iteration order is nondeterministic; that's fine — the client places rooms
+	// by (x,y,z), not by slice order.
 	for id, n := range r.crawledRooms {
 		if _, ok := visited[id]; !ok {
 			continue
 		}
 
+		sym := n.Symbol
+		if sym == 0 {
+			sym = defaultMapSymbol
+		}
 		sr := SnapshotRoom{
 			RoomId: id,
 			X:      n.Pos.x,
 			Y:      n.Pos.y,
 			Z:      n.Pos.z,
-			Symbol: string(n.Symbol),
+			Symbol: string(sym),
 		}
+		// Biome name comes from the room's biome (not n.Legend, which may hold a
+		// per-room MapLegend override like "Townsquare"); the client uses it for tinting.
 		if room := rooms.LoadRoom(id); room != nil {
 			if b := room.GetBiome(); b != nil {
 				sr.Biome = b.Name
