@@ -22,6 +22,11 @@ class RoomGridSVG {
       // rooms: Map<RoomId, { room, group, defaultColor }>
       this.rooms = new Map();
       this.drawnEdges = new Set(); // to avoid dup lines
+      // Dedup sets for wrap stubs and vertical ticks (keyed by "id:dx:dy" /
+      // "id:dz") — mirrors drawnEdges so repeated same-zone snapshots do NOT
+      // accumulate duplicate DOM elements (approach (a) from the task spec).
+      this.drawnWrapStubs = new Set();
+      this.drawnVerticalTicks = new Set();
       this.currentCenterId = null; // for highlight
       this._zone = null; // current zone of the loaded snapshot (Zone.Map)
 
@@ -181,6 +186,8 @@ class RoomGridSVG {
   reset() {
       this.rooms.clear();
       this.drawnEdges.clear();
+      this.drawnWrapStubs.clear();
+      this.drawnVerticalTicks.clear();
       this.currentCenterId = null;
       this.zoomLevel = 1;
       this.svg.setAttribute('viewBox', '0 0 1 1');
@@ -285,26 +292,36 @@ class RoomGridSVG {
   }
 
   _drawEdgesForRoom(id) {
-      const me = this.rooms.get(id)
-          .room;
-      const exits = Array.isArray(me.Exits) ? me.Exits : [];
+      const me = this.rooms.get(id).room;
 
-      // draw its own exits
-      exits.forEach(e => {
-          const to = (typeof e === 'object') ? e.RoomId : e;
-          if (this.rooms.has(to)) this._drawEdge(id, to);
-      });
+      if (Array.isArray(me.ExitsMeta) && me.ExitsMeta.length) {
+          // Kind-routing path: ExitsMeta is set by setZoneSnapshot (Zone.Map).
+          // Each entry is {to, dx, dy, dz, kind} where kind ∈ normal|long|wrap|vertical.
+          me.ExitsMeta.forEach(e => {
+              if (e.kind === 'vertical') { this._drawVerticalTick(id, e.dz); return; }
+              if (e.kind === 'wrap')     { this._drawWrapStub(id, e.dx, e.dy); return; }
+              // normal + long: full connector line (drawnEdges dedups already)
+              if (this.rooms.has(e.to))  { this._drawEdge(id, e.to); }
+          });
+      } else {
+          // Fallback path: rooms added via Room.Info (no ExitsMeta), use Exits array.
+          const exits = Array.isArray(me.Exits) ? me.Exits : [];
 
-      // draw others’ exits back to it
-      this.rooms.forEach(({
-          room
-      }, otherId) => {
-          if (otherId === id) return;
-          const oe = Array.isArray(room.Exits) ? room.Exits : [];
-          if (oe.some(x => ((typeof x === 'object') ? x.RoomId : x) === id)) {
-              this._drawEdge(otherId, id);
-          }
-      });
+          // draw its own exits
+          exits.forEach(e => {
+              const to = (typeof e === 'object') ? e.RoomId : e;
+              if (this.rooms.has(to)) this._drawEdge(id, to);
+          });
+
+          // draw others' exits back to it
+          this.rooms.forEach(({ room }, otherId) => {
+              if (otherId === id) return;
+              const oe = Array.isArray(room.Exits) ? room.Exits : [];
+              if (oe.some(x => ((typeof x === 'object') ? x.RoomId : x) === id)) {
+                  this._drawEdge(otherId, id);
+              }
+          });
+      }
   }
 
   _drawEdge(a, b) {
@@ -328,6 +345,71 @@ class RoomGridSVG {
       line.setAttribute('stroke', this.connectionColor);
       line.setAttribute('stroke-width', this.connectionWidth);
       this.connectionsGroup.appendChild(line);
+  }
+
+  /**
+   * Draw a teal stub + chevron for a wrap exit pointing off room's edge.
+   * Dedup: skipped if this room+direction combo was already drawn this zone
+   * (mirrors drawnEdges pattern — see drawnWrapStubs in constructor).
+   */
+  _drawWrapStub(id, dx, dy) {
+      const me = this.rooms.get(id); if (!me) return;
+      // Dedup: same approach as drawnEdges (approach (a)) — keyed by id:dx:dy
+      const key = `${id}:${dx}:${dy}`;
+      if (this.drawnWrapStubs.has(key)) return;
+      this.drawnWrapStubs.add(key);
+
+      const cx = me.room.x * this.spacing, cy = me.room.y * this.spacing;
+      const ux = dx === 0 ? 0 : (dx > 0 ? 1 : -1);
+      const uy = dy === 0 ? 0 : (dy > 0 ? 1 : -1);
+      const len = this.roomSize * 1.4, start = this.roomSize * 0.55;
+      const ex = cx + ux * (start + len), ey = cy + uy * (start + len);
+      const WC = '#3fb0a0';
+      const line = document.createElementNS(this.svg.namespaceURI, 'line');
+      line.setAttribute('x1', cx + ux * start); line.setAttribute('y1', cy + uy * start);
+      line.setAttribute('x2', ex); line.setAttribute('y2', ey);
+      line.setAttribute('stroke', WC); line.setAttribute('stroke-width', this.connectionWidth);
+      line.setAttribute('stroke-linecap', 'round');
+      this.connectionsGroup.appendChild(line);
+      // Chevron arms: perpendicular to the outward direction
+      const px = -uy, py = ux, c = this.roomSize * 0.28, b = this.roomSize * 0.34;
+      [1, -1].forEach(sgn => {
+          const ch = document.createElementNS(this.svg.namespaceURI, 'line');
+          ch.setAttribute('x1', ex); ch.setAttribute('y1', ey);
+          ch.setAttribute('x2', ex - ux * b + px * c * sgn);
+          ch.setAttribute('y2', ey - uy * b + py * c * sgn);
+          ch.setAttribute('stroke', WC); ch.setAttribute('stroke-width', this.connectionWidth);
+          ch.setAttribute('stroke-linecap', 'round');
+          this.connectionsGroup.appendChild(ch);
+      });
+  }
+
+  /**
+   * Draw a faint ▲/▼ tick on the room for vertical exits (up/down).
+   * Tick lives in the room's own <g> so it moves/clears with the room.
+   * Dedup: skipped if this room+dz-sign combo was already drawn this zone
+   * (mirrors drawnEdges pattern — see drawnVerticalTicks in constructor).
+   */
+  _drawVerticalTick(id, dz) {
+      const me = this.rooms.get(id); if (!me) return;
+      // Dedup: keyed by id:sign(dz) — one up-tick and one down-tick max per room
+      const sign = dz > 0 ? 'u' : 'd';
+      const key = `${id}:${sign}`;
+      if (this.drawnVerticalTicks.has(key)) return;
+      this.drawnVerticalTicks.add(key);
+
+      const s = this.roomSize;
+      const cx = me.room.x * this.spacing, cy = me.room.y * this.spacing;
+      const t = document.createElementNS(this.svg.namespaceURI, 'text');
+      t.setAttribute('x', cx + s * 0.42);
+      t.setAttribute('y', cy + (dz > 0 ? -s * 0.30 : s * 0.46));
+      t.setAttribute('text-anchor', 'middle');
+      t.setAttribute('font-size', s * 0.32);
+      t.setAttribute('fill', '#8a6a3a');
+      t.setAttribute('opacity', '0.6');
+      t.setAttribute('pointer-events', 'none');
+      t.textContent = dz > 0 ? '▲' : '▼'; // ▲ up / ▼ down
+      me.group.appendChild(t);
   }
 
   _updateBounds() {
