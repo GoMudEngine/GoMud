@@ -300,7 +300,7 @@ GamePlay:
   #     panic = block server boot on any inconsistency
   #   Toroidal/maze zones must set `non_cartesian: true` in their zone-config.yaml
   #   to be exempt; one-way exits use `oneway: true` on the exit.
-  MapConsistencyEnforce: warn
+  MapConsistencyEnforce: panic
 
 ################################################################################
 #
