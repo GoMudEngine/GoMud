@@ -17,14 +17,16 @@ class RoomGridSVG {
       this.connectionColor = options.connectionColor || "#b8893f"; // amber
       this.connectionWidth = options.connectionWidth || 1.6;
       this.glyphColor = options.glyphColor || "#c9b48f";
+      this.wrapColor = options.wrapColor || "#3fb0a0";          // toroidal wrap edge-stub color
+      this.verticalTickColor = options.verticalTickColor || "#8a6a3a"; // up/down tick color
       this.biomeTints = options.biomeTints || RoomGridSVG.DEFAULT_BIOME_TINTS;
       // ── Internal state ────────────────────────────────────────────────
       // rooms: Map<RoomId, { room, group, defaultColor }>
       this.rooms = new Map();
       this.drawnEdges = new Set(); // to avoid dup lines
       // Dedup sets for wrap stubs and vertical ticks (keyed by "id:dx:dy" /
-      // "id:dz") — mirrors drawnEdges so repeated same-zone snapshots do NOT
-      // accumulate duplicate DOM elements (approach (a) from the task spec).
+      // "id:u" / "id:d") — mirrors drawnEdges so repeated same-zone snapshots
+      // do NOT accumulate duplicate DOM elements (approach (a) from the task spec).
       this.drawnWrapStubs = new Set();
       this.drawnVerticalTicks = new Set();
       this.currentCenterId = null; // for highlight
@@ -360,11 +362,13 @@ class RoomGridSVG {
       this.drawnWrapStubs.add(key);
 
       const cx = me.room.x * this.spacing, cy = me.room.y * this.spacing;
-      const ux = dx === 0 ? 0 : (dx > 0 ? 1 : -1);
-      const uy = dy === 0 ? 0 : (dy > 0 ? 1 : -1);
+      let ux = dx === 0 ? 0 : (dx > 0 ? 1 : -1);
+      let uy = dy === 0 ? 0 : (dy > 0 ? 1 : -1);
+      const mag = Math.hypot(ux, uy) || 1;
+      ux /= mag; uy /= mag;
       const len = this.roomSize * 1.4, start = this.roomSize * 0.55;
       const ex = cx + ux * (start + len), ey = cy + uy * (start + len);
-      const WC = '#3fb0a0';
+      const WC = this.wrapColor;
       const line = document.createElementNS(this.svg.namespaceURI, 'line');
       line.setAttribute('x1', cx + ux * start); line.setAttribute('y1', cy + uy * start);
       line.setAttribute('x2', ex); line.setAttribute('y2', ey);
@@ -405,7 +409,7 @@ class RoomGridSVG {
       t.setAttribute('y', cy + (dz > 0 ? -s * 0.30 : s * 0.46));
       t.setAttribute('text-anchor', 'middle');
       t.setAttribute('font-size', s * 0.32);
-      t.setAttribute('fill', '#8a6a3a');
+      t.setAttribute('fill', this.verticalTickColor);
       t.setAttribute('opacity', '0.6');
       t.setAttribute('pointer-events', 'none');
       t.textContent = dz > 0 ? '▲' : '▼'; // ▲ up / ▼ down
