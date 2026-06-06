@@ -1,6 +1,8 @@
 class RoomGridSVG {
   constructor(selector, options = {}) {
       // ── Configurable options & defaults ───────────────────────────────
+      // cellSize + cellMargin set the grid pitch (spacing between node centres).
+      // Node display size is roomSize; cellSize itself is not the node size.
       this.cellSize = options.cellSize || 100;
       this.cellMargin = options.cellMargin || 20;
       this.spacing = this.cellSize + this.cellMargin;
@@ -76,9 +78,6 @@ class RoomGridSVG {
 
       // prepare defaults
       const defaultColor = room.Color || this.tintFor(room.biome);
-      const displayText = room.Text != null ?
-          room.Text :
-          String(room.RoomId);
 
       // 2) UPDATE existing
       if (this.rooms.has(id)) {
@@ -106,7 +105,7 @@ class RoomGridSVG {
           const txtEl = this.svg.querySelector(`g[data-room-id="${id}"] text`);
           txtEl.setAttribute('x', room.x * this.spacing);
           txtEl.setAttribute('y', room.y * this.spacing + s * 0.25 + 1);
-          txtEl.textContent = displayText;
+          txtEl.textContent = room.symbol || '';
 
           // redraw any new edges
           this._drawEdgesForRoom(id);
@@ -360,6 +359,6 @@ RoomGridSVG.DEFAULT_BIOME_TINTS = {
 
 RoomGridSVG.prototype.tintFor = function (biome) {
   if (!biome) return this.biomeTints._default;
-  var key = String(biome).toLowerCase();
+  const key = String(biome).toLowerCase();
   return this.biomeTints[key] || this.biomeTints._default;
 };
