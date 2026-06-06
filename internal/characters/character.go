@@ -257,6 +257,7 @@ type Character struct {
 	KD                      KDStats                        `yaml:"kd,omitempty"`               // Kill/Death stats
 	MiscData                map[string]any                 `yaml:"miscdata,omitempty"`         // Any random other data that needs to be stored
 	Discoveries             map[int][]string               `yaml:"discoveries,omitempty"`      // Per-room hidden object discoveries
+	VisitedRooms            map[string][]int               `yaml:"visitedrooms,omitempty"`     // zone name -> visited roomIds (fog-of-war for the web map)
 	MobMastery              MobMasteries                   `yaml:"mobmastery,omitempty"`       // Tracks particular masteries around a given mob
 	SkillUseCount           map[string]int                 `yaml:"skillusecount,omitempty"`    // Tracks how many times each skill has been used
 	StatUseCount            map[string]int                 `yaml:"statusecount,omitempty"`     // Tracks how many times each stat has been checked
@@ -555,6 +556,34 @@ func (c *Character) AddDiscovery(roomId int, key string) {
 		c.Discoveries = make(map[int][]string)
 	}
 	c.Discoveries[roomId] = append(c.Discoveries[roomId], key)
+}
+
+// MarkRoomVisited records that this character has seen roomId in zone (dedup'd).
+func (c *Character) MarkRoomVisited(zone string, roomId int) {
+	if c.VisitedRooms == nil {
+		c.VisitedRooms = map[string][]int{}
+	}
+	for _, id := range c.VisitedRooms[zone] {
+		if id == roomId {
+			return
+		}
+	}
+	c.VisitedRooms[zone] = append(c.VisitedRooms[zone], roomId)
+}
+
+// HasVisitedRoom reports whether roomId in zone has been seen.
+func (c *Character) HasVisitedRoom(zone string, roomId int) bool {
+	for _, id := range c.VisitedRooms[zone] {
+		if id == roomId {
+			return true
+		}
+	}
+	return false
+}
+
+// GetVisitedRooms returns the visited roomIds for a zone (nil if none).
+func (c *Character) GetVisitedRooms(zone string) []int {
+	return c.VisitedRooms[zone]
 }
 
 // AttemptRecovery tries to recover from a condition using a stat-based chance
