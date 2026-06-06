@@ -163,6 +163,21 @@ the bridge.
 NPC↔NPC opinion store and "spoken about you" gossip are
 deferred (see chunk 3.6 spec for rationale).
 
+## Map Consistency & the `non_cartesian` / `oneway` Flags
+The web mapper places rooms by crawling exit deltas (`internal/mapper`),
+so the world must stay Cartesian-consistent. A startup pass
+(`ValidateZoneConsistency`, gated by `GamePlay.MapConsistencyEnforce`:
+`off|warn|panic`, default `warn`) and the `cartcheck [zone]` admin command
+report coordinate collisions, non-reciprocal exits, wrap exits in
+non-wrap zones, and long connectors crossing rooms.
+
+Escape hatches: `oneway: true` on an exit (intentional one-way; skips the
+reciprocity check, still collision-checked) and `non_cartesian: true` in a
+zone's `zone-config.yaml` (intentionally toroidal/maze; skips the hard
+checks and renders wrap exits as edge stubs). Portal/named (non-compass)
+exits are automatically non-spatial and exempt. Flip the knob to `panic`
+only after `cartcheck` is clean world-wide.
+
 ## Project Context
 - DOGMud (Delusions of Grandeur) is a MUD built on the GoMud engine
 - World design document: `world.md`

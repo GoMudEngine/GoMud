@@ -527,3 +527,66 @@ All overlaps resolved. Previous conflicts and fixes:
   changed 3098↔3099 exits from east/west to south/north
 - (16, -9, 0): 3064 vs 3095 — Fixed: moved 3095 to (15, -8, 0),
   changed 3089↔3095 exits from east/west to north/south
+
+## Cartesian Consistency
+
+A startup pass (`mapper.ValidateZoneConsistency()`, called at the end of
+`PreCacheMaps()`) and the `cartcheck [zone]` admin command both run the
+same geometric validation over every zone's BFS-crawled room grid.
+Behavior is controlled by the config knob `GamePlay.MapConsistencyEnforce`
+in `_datafiles/config.yaml`:
+
+| Value   | Behavior                                  |
+|---------|-------------------------------------------|
+| `off`   | Validation skipped entirely               |
+| `warn`  | Findings logged as warnings (default)     |
+| `panic` | Server panics on first finding at startup |
+
+### Checks
+
+**Hard errors** (skipped for `non_cartesian` zones):
+
+- **Collision** — two distinct rooms occupy the same (x,y,z). The room
+  grid silently overwrites on duplicate key, so this requires a separate
+  scan of `crawledRooms`.
+- **No reciprocal** — a compass exit exists with no matching return exit
+  in the opposite direction, and the exit is not flagged `oneway: true`.
+- **Delta mismatch** — an exit's compass direction does not match the
+  actual coordinate delta between the two rooms (a "wrap" exit in a
+  zone that is not declared `non_cartesian`).
+
+**Soft warning** (always emitted, even in `non_cartesian` zones):
+
+- **Long crossing** — a multi-cell connector's straight span passes
+  through another room's occupied cell.
+
+### Exemptions
+
+The following are automatically excluded from all checks:
+
+- **Non-compass exits** (portals, named passages) — not spatial edges.
+- **Ephemeral / instance rooms** — checked via `rooms.IsEphemeralRoomId`.
+- **`oneway: true` exits** — exempt from the reciprocity check; still
+  collision-checked.
+- **`non_cartesian: true` zones** — all hard checks skipped; wrap exits
+  render as edge stubs in the web mapper.
+
+### Authoring Escape Hatches
+
+Add `oneway: true` to an exit YAML block when a one-way passage is
+intentional (e.g., a one-way drop or a trapdoor). Add
+`non_cartesian: true` to a zone's `zone-config.yaml` when the zone has
+toroidal or maze geometry that wraps deliberately.
+
+### Phased Rollout
+
+Ship with `MapConsistencyEnforce: warn` (the default). Triage the logged
+findings with `cartcheck` after each content push, resolve collisions and
+bad reciprocals, then flip to `panic` once the world is clean.
+
+### Known Limitation: Cross-Zone Crawl
+
+The BFS crawl follows all exits and can cross zone boundaries. A room on
+a zone boundary may appear in findings for more than one zone — this is
+cosmetic duplication, not a real double-violation. Future refinement may
+scope the crawl to a single zone's room ID set.

@@ -304,3 +304,91 @@ if shopResult.Found {
 - **Performance Metrics**: Analysis of pathfinding performance and efficiency
 - **Error Reporting**: Comprehensive error reporting and analysis
 - **Optimization Recommendations**: Automated suggestions for world optimization
+
+## Cartesian Consistency Engine
+
+The mapper enforces geometric coherence between room coordinates and
+declared exits. The entry point is `ValidateZoneConsistency()`, called
+at the tail of `PreCacheMaps()` and gated by the config knob
+`GamePlay.MapConsistencyEnforce` (`off` | `warn` (default) | `panic`).
+The same logic is exposed on demand via the `cartcheck [zone]` admin
+command (`internal/usercommands/admin.cartcheck.go`).
+
+### Core Method
+
+```go
+(*mapper).CheckConsistency(zone string, nonCartesian bool) []Finding
+```
+
+Crawls `crawledRooms` (the BFS-populated `RoomGrid`) for the zone and
+returns a slice of findings. The `nonCartesian` flag is sourced from the
+zone's `zone-config.yaml` field `non_cartesian: true`; when set, only
+`longcrossing` warnings are emitted (the hard checks are skipped).
+
+### Exit Kind Classification
+
+```go
+func classifyKind(nominal, actual positionDelta) ExitKind
+```
+
+Compares the nominal compass delta (what the exit direction implies) to
+the actual coordinate delta (the difference between the two rooms'
+positions). Returns one of four `ExitKind` values:
+
+| Kind       | Meaning                                                     |
+|------------|-------------------------------------------------------------|
+| `normal`   | Nominal == actual (standard single-cell step)               |
+| `long`     | Same direction, magnitude > 1 (multi-cell connector)        |
+| `vertical` | One axis is Z only (up/down exits)                          |
+| `wrap`     | Nominal and actual differ — toroidal or maze-style crossing |
+
+**Important:** `classifyKind` uses the helper `samePos(a, b positionDelta)`,
+which compares only the `x`, `y`, `z` fields. Never compare
+`positionDelta` values with `==` directly — the struct also carries an
+`arrow` display field that will cause false mismatches.
+
+### Finding Kinds
+
+| Kind            | Severity | Description                                              |
+|-----------------|----------|----------------------------------------------------------|
+| `collision`     | error    | Two distinct rooms share the same (x,y,z) coordinate.   |
+|                 |          | Detected by scanning `crawledRooms`; the `RoomGrid` map  |
+|                 |          | silently overwrites on duplicate key, so collisions must |
+|                 |          | be caught with a separate pass.                          |
+| `noreciprocal`  | error    | A spatial exit has no matching return exit in the        |
+|                 |          | opposite direction, and the exit is not marked           |
+|                 |          | `oneway: true`.                                          |
+| `deltamismatch` | error    | Exit's compass direction does not match the actual       |
+|                 |          | coordinate delta between the two rooms — a wrap exit     |
+|                 |          | inside a Cartesian zone.                                 |
+| `longcrossing`  | warning  | A long-connector exit's straight span passes through     |
+|                 |          | another room's occupied cell. Always emitted regardless  |
+|                 |          | of `non_cartesian` setting.                              |
+
+### Exemptions
+
+The engine automatically skips:
+- **Non-compass exits** (portals, named exits): filtered via the
+  `getMapNode` `mapdirection→name→skip` rule; they are not spatial edges.
+- **Ephemeral/instance rooms**: checked via `rooms.IsEphemeralRoomId`.
+- **`oneway: true` exits**: exempt from `noreciprocal`; still
+  collision-checked.
+- **`non_cartesian: true` zones**: exempt from `collision`,
+  `noreciprocal`, and `deltamismatch`; their wrap exits render as
+  edge stubs in the web mapper.
+
+### Authoring Primitives
+
+- **`oneway: true`** on an exit YAML field — marks an intentional
+  one-way passage; suppresses the reciprocity check for that exit.
+- **`non_cartesian: true`** in a zone's `zone-config.yaml` — marks the
+  entire zone as toroidal/maze geometry; skips the three hard checks
+  zone-wide.
+
+### Known Limitation: Cross-Zone Crawl
+
+`CheckConsistency` operates on the BFS `crawledRooms` grid, which
+follows all exits and can cross zone boundaries. A boundary room may
+therefore appear in the findings for more than one zone — a cosmetic
+duplication. Future refinement may scope the crawl strictly to a single
+zone's room ID set.

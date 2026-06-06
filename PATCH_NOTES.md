@@ -1,5 +1,31 @@
 # DOGMud Patch Notes
 
+## 2026-06-06 — Cartesian map consistency engine
+
+Under-the-hood infrastructure that keeps the world map geometrically
+coherent as new zones and rooms are added.
+
+- **Startup consistency pass.** When the server boots, every zone's room
+  grid is checked for coordinate collisions (two rooms on the same cell),
+  non-reciprocal exits, and exits whose compass direction contradicts the
+  actual coordinate delta between the rooms. A long-connector soft warning
+  fires when a multi-cell passage's straight span clips another room's
+  cell. Behavior is controlled by the new `GamePlay.MapConsistencyEnforce`
+  config knob (`off` | `warn` (default) | `panic`); the default logs
+  findings without interrupting startup.
+- **`cartcheck [zone]` admin command.** Runs the same check on demand and
+  prints findings to the admin's console, optionally scoped to a single
+  zone. Useful for triaging new content before promoting to production.
+- **`oneway: true` exit flag.** Marks an intentional one-way passage (a
+  trapdoor, a one-way drop, etc.). Suppresses the reciprocity check for
+  that exit while keeping it in the collision scan.
+- **`non_cartesian: true` zone flag.** Set in a zone's `zone-config.yaml`
+  to declare intentionally toroidal or maze geometry. Skips the three hard
+  checks for that zone; the web mapper will render its wrap exits as edge
+  stubs rather than misplaced connectors.
+- **Phased rollout.** Shipped at `warn`. Triage findings with `cartcheck`
+  after each content push, then flip to `panic` once the world is clean.
+
 ## 2026-06-05 — A world that takes sides
 
 The living-world pass reaches across the whole map. Groups of people (and
