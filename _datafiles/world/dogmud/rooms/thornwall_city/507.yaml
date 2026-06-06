@@ -18,6 +18,8 @@ coord:
   y: -5
   z: -3
 exits:
+  north:
+    roomid: 504
   west:
     roomid: 505
 spawninfo:

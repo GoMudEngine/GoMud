@@ -24,6 +24,8 @@ coord:
   y: -2
   z: 0
 exits:
+  north:
+    roomid: 4189
   east:
     roomid: 4192
 nouns:

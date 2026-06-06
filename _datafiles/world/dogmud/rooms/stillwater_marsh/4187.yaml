@@ -26,6 +26,8 @@ exits:
     roomid: 4183
   south:
     roomid: 4191
+  west:
+    roomid: 4188
 nouns:
   iron-tang: |
     The faint metallic smell that hangs over the seep — strong

@@ -19,7 +19,7 @@ exits:
   west:
     roomid: 502
   south:
-    roomid: 505
+    roomid: 507
 spawninfo:
   - mobid: 270
     respawnrate: 10 real minutes
