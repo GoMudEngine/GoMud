@@ -3,9 +3,11 @@ class RoomGridSVG {
       // ── Configurable options & defaults ───────────────────────────────
       // cellSize + cellMargin set the grid pitch (spacing between node centres).
       // Node display size is roomSize; cellSize itself is not the node size.
-      this.cellSize = options.cellSize || 100;
-      this.cellMargin = options.cellMargin || 20;
-      this.spacing = this.cellSize + this.cellMargin;
+      this.cellSize = options.cellSize || 100;     // legacy; no longer drives node size
+      this.cellMargin = options.cellMargin || 20;  // legacy
+      this.roomSize = options.roomSize || 24;      // hybrid node size (world units)
+      this.spacing = options.spacing || this.roomSize * 2; // grid pitch ~2x node => node fills ~half the gap
+      this.viewCells = options.viewCells || 6;     // cells across the default local view (stable; not whole-world)
       this.zoomStep = options.zoomStep || 1.2;
       this.zoomLevel = options.initialZoom || 1;
       this.onRoomClick = options.onRoomClick || (() => {});
@@ -13,7 +15,7 @@ class RoomGridSVG {
       this.controlsMargin = options.controlsMargin || 10;
       this.roomEdgeColor = options.roomEdgeColor || "#1c6b60";
       this.visitingColor = options.visitingColor || "#c20000";
-      this.roomSize = options.roomSize || 16;              // hybrid: small nodes
+      // (roomSize / spacing / viewCells defined above)
       this.connectionColor = options.connectionColor || "#b8893f"; // amber
       this.connectionWidth = options.connectionWidth || 1.6;
       this.glyphColor = options.glyphColor || "#c9b48f";
@@ -153,9 +155,9 @@ class RoomGridSVG {
       glyph.setAttribute('x', cx);
       glyph.setAttribute('y', cy + s * 0.25 + 1);
       glyph.setAttribute('text-anchor', 'middle');
-      glyph.setAttribute('font-size', s * 0.5);
+      glyph.setAttribute('font-size', s * 0.6);
       glyph.setAttribute('fill', this.glyphColor);
-      glyph.setAttribute('opacity', '0.75');
+      glyph.setAttribute('opacity', '0.85');
       glyph.setAttribute('pointer-events', 'none');
       glyph.textContent = room.symbol || '';
       g.appendChild(glyph);
@@ -253,14 +255,21 @@ class RoomGridSVG {
       this._applyZoom(); // addRoom refreshes per-room; this also covers the empty-snapshot/reset case
   }
 
-  /** Reset zoom so the whole explored map fits in view. */
+  /** Zoom out so the whole explored map fits in view. */
   fit() {
       this._updateBounds();
-      this.zoomLevel = 1;
       this.center = {
           x: this.bounds.minX * this.spacing + this.worldWidth / 2,
           y: this.bounds.minY * this.spacing + this.worldHeight / 2
       };
+      const cw = this.container.clientWidth || 1;
+      const ch = this.container.clientHeight || 1;
+      const ar = (cw > 1 && ch > 1) ? ch / cw : 1;
+      const span = this.viewCells * this.spacing;
+      // choose the zoom that makes the local window encompass the whole world
+      const zW = span / Math.max(this.worldWidth, 1);
+      const zH = (span * ar) / Math.max(this.worldHeight, 1);
+      this.zoomLevel = Math.min(zW, zH) * 0.92; // small margin around the edges
       this._applyZoom();
   }
 
@@ -285,9 +294,10 @@ class RoomGridSVG {
       const div = document.createElement('div');
       div.style.cssText = `
     position:absolute;
-    top:${this.controlsMargin}px;
-    right:${this.controlsMargin}px;
+    bottom:${this.controlsMargin}px;
+    left:${this.controlsMargin}px;
     display:flex; gap:5px;
+    z-index:5;
   `;
       const mk = (lbl, cb) => {
           const b = document.createElement('button');
@@ -463,11 +473,17 @@ class RoomGridSVG {
   }
 
   _applyZoom() {
-      const hw = this.worldWidth / (2 * this.zoomLevel);
-      const hh = this.worldHeight / (2 * this.zoomLevel);
-      const x0 = (this.center ? this.center.x : this.worldWidth / 2) - hw;
-      const y0 = (this.center ? this.center.y : this.worldHeight / 2) - hh;
-      this.svg.setAttribute('viewBox', `${x0} ${y0} ${hw*2} ${hh*2}`);
+      // Stable local window: show ~viewCells cells across, centred on the current
+      // room, regardless of how much of the zone has been explored. zoomLevel
+      // scales this window; fit() widens it to cover the whole world.
+      const baseW = (this.viewCells * this.spacing) / this.zoomLevel;
+      const cw = this.container.clientWidth || 1;
+      const ch = this.container.clientHeight || 1;
+      const ar = (cw > 1 && ch > 1) ? ch / cw : 1;
+      const baseH = baseW * ar;
+      const cx = this.center ? this.center.x : 0;
+      const cy = this.center ? this.center.y : 0;
+      this.svg.setAttribute('viewBox', `${cx - baseW / 2} ${cy - baseH / 2} ${baseW} ${baseH}`);
   }
 }
 
