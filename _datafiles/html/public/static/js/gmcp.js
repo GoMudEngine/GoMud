@@ -65,13 +65,16 @@ class RoomGridSVG {
    * - Pre-adds any Exits given as {RoomId,x,y,…}
    * - If room already exists, updates its position, color, text, & redraws edges.
    */
-  addRoom(room) {
+  addRoom(room, deferEdges = false) {
       const id = room.RoomId;
 
-      // 1) Pre-add exit-defined rooms
+      // 1) Pre-add exit-defined rooms — ONLY when the exit carries real coords.
+      //    Snapshot exits carry no x/y (the room arrives as its own entry), so
+      //    pre-adding them would create a ghost node at undefined coords.
       if (Array.isArray(room.Exits)) {
           room.Exits.forEach(e => {
-              if (e && typeof e === 'object' && e.RoomId != null) {
+              if (e && typeof e === 'object' && e.RoomId != null &&
+                  Number.isFinite(e.x) && Number.isFinite(e.y)) {
 
                   if (this.rooms.has(e.RoomId)) return;
 
@@ -118,8 +121,8 @@ class RoomGridSVG {
           txtEl.setAttribute('y', room.y * this.spacing + s * 0.25 + 1);
           txtEl.textContent = room.symbol || '';
 
-          // redraw any new edges
-          this._drawEdgesForRoom(id);
+          // redraw any new edges (skipped during deferred two-pass placement)
+          if (!deferEdges) this._drawEdgesForRoom(id);
 
           // refresh bounds & view
           this._updateBounds();
@@ -169,8 +172,8 @@ class RoomGridSVG {
           defaultColor
       });
 
-      // draw edges for this new room
-      this._drawEdgesForRoom(id);
+      // draw edges for this new room (skipped during deferred two-pass placement)
+      if (!deferEdges) this._drawEdgesForRoom(id);
 
       // refresh bounds & view
       this._updateBounds();
@@ -240,6 +243,10 @@ class RoomGridSVG {
           this.reset();
           this._zone = zone;
       }
+      // Pass 1: place/update every room node first (defer edge drawing) so that
+      // when connectors are drawn, every endpoint already has its real coords.
+      // Drawing an edge to a not-yet-placed room would anchor it at a stale
+      // position and the edge-dedup would never repair it (the "streak" bug).
       snapshotRooms.forEach(r => {
           this.addRoom({
               RoomId: r.num,
@@ -249,10 +256,13 @@ class RoomGridSVG {
               symbol: r.symbol,
               biome: r.biome,
               Exits: (r.exits || []).map(e => ({ RoomId: e.to, kind: e.kind, dx: e.dx, dy: e.dy, dz: e.dz })),
-              ExitsMeta: r.exits || [] // raw per-exit {to,dx,dy,dz,kind}; consumed by wrap-stub + vertical-tick rendering (next task)
-          });
+              ExitsMeta: r.exits || [] // raw per-exit {to,dx,dy,dz,kind}; consumed by wrap-stub + vertical-tick rendering
+          }, /* deferEdges = */ true);
       });
-      this._applyZoom(); // addRoom refreshes per-room; this also covers the empty-snapshot/reset case
+      // Pass 2: all nodes exist now — draw connectors/stubs/ticks (each dedups,
+      // so repeated same-zone resends never duplicate or misplace lines).
+      snapshotRooms.forEach(r => this._drawEdgesForRoom(r.num));
+      this._applyZoom();
   }
 
   /** Zoom out so the whole explored map fits in view. */
