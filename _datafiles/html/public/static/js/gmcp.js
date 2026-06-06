@@ -1,3 +1,197 @@
+// ── Leather drawing toolkit (dormant — consumed by later tasks) ───────────────
+// Ported verbatim from docs/superpowers/specs/2026-06-06-mapper-leather-mockups/
+// 03-emboss-craquelure.html and 02-connection-types.html.
+// None of these are called by the existing render path; they are helpers for
+// the aged tooled-leather style rewrite (future tasks).
+
+var LEATHER_NS = "http://www.w3.org/2000/svg";
+
+// Emboss highlight / shadow colors
+var LEATHER_HI = "#efce8c", LEATHER_SH = "#140b04";
+
+// Connection icon colors
+var LEATHER_INK = "#c9a86a", LEATHER_LOCK = "#d0633f";
+
+/** Seeded PRNG — returns a closure that produces deterministic floats in [0,1). */
+function rng(seed) {
+  return function() {
+    seed |= 0;
+    seed = seed + 0x6D2B79F5 | 0;
+    var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+/** SVG element factory using LEATHER_NS. */
+function lEl(tag, attrs) {
+  var e = document.createElementNS(LEATHER_NS, tag);
+  for (var k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+
+/** SVG text element factory using LEATHER_NS. */
+function lTxt(attrs, s) {
+  var e = lEl("text", attrs);
+  e.textContent = s;
+  return e;
+}
+
+// ── Emboss helpers (highlight up-left, shadow down-right, face on top) ────────
+
+function embLine(g, x1, y1, x2, y2, col, w, op, d) {
+  g.appendChild(lEl("line", { x1: x1 + d, y1: y1 + d, x2: x2 + d, y2: y2 + d, stroke: LEATHER_SH, "stroke-width": w, opacity: 0.55 * op, "stroke-linecap": "round" }));
+  g.appendChild(lEl("line", { x1: x1 - d, y1: y1 - d, x2: x2 - d, y2: y2 - d, stroke: LEATHER_HI, "stroke-width": w, opacity: 0.45 * op, "stroke-linecap": "round" }));
+  g.appendChild(lEl("line", { x1: x1, y1: y1, x2: x2, y2: y2, stroke: col, "stroke-width": w, opacity: op, "stroke-linecap": "round" }));
+}
+
+function embCirc(g, cx, cy, r, faceStroke, faceFill, w, d) {
+  g.appendChild(lEl("circle", { cx: cx + d, cy: cy + d, r: r, fill: "none", stroke: LEATHER_SH, "stroke-width": w, opacity: "0.55" }));
+  g.appendChild(lEl("circle", { cx: cx - d, cy: cy - d, r: r, fill: "none", stroke: LEATHER_HI, "stroke-width": w, opacity: "0.4" }));
+  g.appendChild(lEl("circle", { cx: cx, cy: cy, r: r, fill: faceFill, stroke: faceStroke, "stroke-width": w }));
+}
+
+function embText(g, x, y, attrs, s, face, d) {
+  function mk(xx, yy, col, op) {
+    var a = {};
+    for (var k in attrs) a[k] = attrs[k];
+    a.x = xx; a.y = yy; a.fill = col; a.opacity = op;
+    g.appendChild(lTxt(a, s));
+  }
+  mk(x + d, y + d, LEATHER_SH, 0.5);
+  mk(x - d, y - d, LEATHER_HI, 0.4);
+  mk(x, y, face, attrs.opacity != null ? attrs.opacity : 1);
+}
+
+// ── Hide-path (frayed border outline) ─────────────────────────────────────────
+
+function hidePath(W, H, m, fray, nickP, rnd) {
+  var pts = [], step = 12;
+  function edge(x0, y0, x1, y1, nx, ny) {
+    var len = Math.hypot(x1 - x0, y1 - y0), n = Math.max(3, Math.round(len / step));
+    for (var i = 0; i < n; i++) {
+      var t = i / n, x = x0 + (x1 - x0) * t, y = y0 + (y1 - y0) * t, off = rnd() * fray;
+      if (rnd() < nickP) off += fray * (1.4 + rnd() * 1.8);
+      pts.push([x + nx * off, y + ny * off]);
+    }
+  }
+  edge(m, m, W - m, m, 0, 1);
+  edge(W - m, m, W - m, H - m, -1, 0);
+  edge(W - m, H - m, m, H - m, 0, -1);
+  edge(m, H - m, m, m, 1, 0);
+  return "M" + pts.map(function(p) { return p[0].toFixed(1) + "," + p[1].toFixed(1); }).join(" L") + " Z";
+}
+
+// ── Craquelure (fine crack network pressed into the leather surface) ───────────
+
+function craquelure(g, W, H, step, jit, rnd) {
+  var nx = Math.floor((W - 48) / step), ny = Math.floor((H - 48) / step), grid = [];
+  for (var iy = 0; iy <= ny; iy++) {
+    grid[iy] = [];
+    for (var ix = 0; ix <= nx; ix++)
+      grid[iy][ix] = [24 + ix * step + (rnd() - 0.5) * jit, 24 + iy * step + (rnd() - 0.5) * jit];
+  }
+  function seg(a, b) {
+    if (rnd() < 0.16) return;
+    var mx = (a[0] + b[0]) / 2 + (rnd() - 0.5) * jit * 0.7,
+        my = (a[1] + b[1]) / 2 + (rnd() - 0.5) * jit * 0.7,
+        w  = (0.3 + rnd() * 0.4).toFixed(2),
+        pp = a[0].toFixed(1) + "," + a[1].toFixed(1) + " " + mx.toFixed(1) + "," + my.toFixed(1) + " " + b[0].toFixed(1) + "," + b[1].toFixed(1);
+    // dark groove + faint light lip just below-right for realism
+    g.appendChild(lEl("polyline", { points: pp, fill: "none", stroke: "#120a04", "stroke-width": w, opacity: "0.34", "stroke-linejoin": "round", "stroke-linecap": "round" }));
+    if (rnd() < 0.5)
+      g.appendChild(lEl("polyline", {
+        points: (a[0] + 0.5).toFixed(1) + "," + (a[1] + 0.5).toFixed(1) + " " +
+                (mx + 0.5).toFixed(1) + "," + (my + 0.5).toFixed(1) + " " +
+                (b[0] + 0.5).toFixed(1) + "," + (b[1] + 0.5).toFixed(1),
+        fill: "none", stroke: "#caa86a", "stroke-width": "0.3", opacity: "0.10"
+      }));
+  }
+  for (var iy2 = 0; iy2 <= ny; iy2++)
+    for (var ix2 = 0; ix2 <= nx; ix2++) {
+      if (ix2 < nx) seg(grid[iy2][ix2], grid[iy2][ix2 + 1]);
+      if (iy2 < ny) seg(grid[iy2][ix2], grid[iy2 + 1][ix2]);
+    }
+}
+
+// ── Connection icon helpers ───────────────────────────────────────────────────
+
+/** Arrowhead at pixel (x,y) pointing along angle `ang` (radians), in color `col`. */
+function arrowhead(g, x, y, ang, col) {
+  var b = 6, c2 = 4, px1 = -Math.sin(ang), py1 = Math.cos(ang);
+  [1, -1].forEach(function(sg) {
+    g.appendChild(lEl("line", {
+      x1: x, y1: y,
+      x2: x - Math.cos(ang) * b + px1 * c2 * sg,
+      y2: y - Math.sin(ang) * b + py1 * c2 * sg,
+      stroke: col, "stroke-width": 1.6, "stroke-linecap": "round"
+    }));
+  });
+}
+
+/** Linear interpolation between two [x,y] points at parameter t. */
+function mid(a, b, t) {
+  return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+}
+
+/**
+ * Draw a locked-door icon at the midpoint of segment a→b.
+ * a, b are pixel-coordinate arrays [x, y].
+ * Extracted from drawConn type==="locked" in 02-connection-types.html.
+ */
+function drawLockedDoor(g, a, b) {
+  var x1 = a[0], y1 = a[1], x2 = b[0], y2 = b[1];
+  var m = mid(a, b, 0.5);
+  var d = 0.6; // emboss offset
+  // near half (player side) normal; far half (beyond the locked door) rust-red
+  g.appendChild(lEl("line", { x1: x1, y1: y1, x2: m[0], y2: m[1], stroke: "#9c8048", "stroke-width": 1.4, "stroke-dasharray": "3 3", opacity: "0.8" }));
+  g.appendChild(lEl("line", { x1: m[0], y1: m[1], x2: x2, y2: y2, stroke: LEATHER_LOCK, "stroke-width": 1.4, "stroke-dasharray": "3 3", opacity: "0.9" }));
+  // door silhouette (shadow, face, highlight)
+  function dp(ox, oy) {
+    var L = m[0] - 3.6 + ox, Rt = m[0] + 3.6 + ox, bot = m[1] + 5.4 + oy, sh = m[1] - 2 + oy, top = m[1] - 5.6 + oy, cxx = m[0] + ox;
+    return "M" + L + "," + bot + " L" + L + "," + sh + " Q" + L + "," + top + " " + cxx + "," + top + " Q" + Rt + "," + top + " " + Rt + "," + sh + " L" + Rt + "," + bot + " Z";
+  }
+  g.appendChild(lEl("path", { d: dp(d, d), fill: LEATHER_SH, opacity: "0.5" }));
+  g.appendChild(lEl("path", { d: dp(0, 0), fill: "#2a1d12", stroke: LEATHER_INK, "stroke-width": 1.1 }));
+  g.appendChild(lEl("path", { d: dp(-d, -d), fill: "none", stroke: LEATHER_HI, "stroke-width": 0.8, opacity: "0.5" }));
+  g.appendChild(lEl("line", { x1: m[0], y1: m[1] - 4.4, x2: m[0], y2: m[1] + 4.8, stroke: LEATHER_INK, "stroke-width": 0.5, opacity: "0.55" })); // plank seam
+  g.appendChild(lEl("circle", { cx: m[0] + 1.7, cy: m[1] + 0.4, r: 0.95, fill: LEATHER_LOCK }));                                                   // keyhole circle
+  g.appendChild(lEl("line", { x1: m[0] + 1.7, y1: m[1] + 0.8, x2: m[0] + 1.7, y2: m[1] + 2.4, stroke: LEATHER_LOCK, "stroke-width": 0.7 }));       // keyhole slot
+}
+
+/**
+ * Draw an archway gate icon at the midpoint of segment a→b.
+ * a, b are pixel-coordinate arrays [x, y].
+ * Extracted from drawConn type==="gate" in 02-connection-types.html.
+ */
+function drawArchGate(g, a, b) {
+  var x1 = a[0], y1 = a[1], x2 = b[0], y2 = b[1];
+  var ang = Math.atan2(y2 - y1, x2 - x1);
+  var m = mid(a, b, 0.5);
+  var pxn = -Math.sin(ang), pyn = Math.cos(ang);
+  var ca = Math.cos(ang), sa = Math.sin(ang);
+  var d = 0.6; // emboss offset
+  // passage line (embossed)
+  embLine(g, x1, y1, x2, y2, LEATHER_INK, 2.2, 0.92, d);
+  // arch curve
+  var f1 = [m[0] + pxn * 6, m[1] + pyn * 6], f2 = [m[0] - pxn * 6, m[1] - pyn * 6];
+  var bow = 7, ctl = [m[0] + ca * bow, m[1] + sa * bow];
+  function ap(ox, oy) {
+    return "M" + (f1[0] + ox) + "," + (f1[1] + oy) +
+           " Q" + (ctl[0] + ox) + "," + (ctl[1] + oy) +
+           " " + (f2[0] + ox) + "," + (f2[1] + oy);
+  }
+  g.appendChild(lEl("path", { d: ap(d, d), fill: "none", stroke: LEATHER_SH, "stroke-width": 1.7, opacity: "0.55", "stroke-linecap": "round" }));
+  g.appendChild(lEl("path", { d: ap(-d, -d), fill: "none", stroke: LEATHER_HI, "stroke-width": 1.7, opacity: "0.45", "stroke-linecap": "round" }));
+  g.appendChild(lEl("path", { d: ap(0, 0), fill: "none", stroke: LEATHER_INK, "stroke-width": 1.7, "stroke-linecap": "round" }));
+  // little feet/posts at the arch base
+  [f1, f2].forEach(function(ff) {
+    g.appendChild(lEl("line", { x1: ff[0] - ca * 2, y1: ff[1] - sa * 2, x2: ff[0] + ca * 2, y2: ff[1] + sa * 2, stroke: LEATHER_INK, "stroke-width": 1.6, "stroke-linecap": "round" }));
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 class RoomGridSVG {
   constructor(selector, options = {}) {
       // ── Configurable options & defaults ───────────────────────────────
@@ -533,6 +727,15 @@ RoomGridSVG.prototype.tintFor = function (biome) {
   if (!biome) return this.biomeTints._default;
   const key = String(biome).toLowerCase();
   return this.biomeTints[key] || this.biomeTints._default;
+};
+
+// ── Leather style palette & render parameters ─────────────────────────────────
+RoomGridSVG.LEATHER = {
+  ink: "#c9a86a", ink2: "#9c8048", title: "#e8d2a0", roomFill: "#2a1d12",
+  label: "#e8d8b8", locked: "#d0633f", water: "#6f99c0", trail: "#a98a55",
+  road: "#c9a86a", ridge: "#a98a55", plain: "#9c8048",
+  legendBg: "#241810", party: "#6bb0a0", partyDk: "#243f3a",
+  emboss: 0.6, fray: 3.4, nickP: 0.08, crackStep: 24, crackJit: 9, vig: 0.5
 };
 
 // ── Service-room markers (bank / shop / trainer / storage) ────────────────────
