@@ -115,6 +115,7 @@
       SIDE_PANELS.forEach(function (name) {
         var panel = document.getElementById("panel-" + name);
         if (!panel) return;
+        if (panel.dataset.popped === "1") return; // skip popped-out panels
         var homeId = panel.dataset.homeCol;
         if (!homeId) return;
         var col = document.getElementById(homeId);
@@ -169,6 +170,7 @@
       SIDE_PANELS.forEach(function (name) {
         var panel = document.getElementById("panel-" + name);
         if (!panel) return;
+        if (panel.dataset.popped === "1") return; // skip popped-out panels
         // Return from drawer if it was there
         if (self._drawerBody && self._drawerBody.contains(panel)) {
           self._drawerBody.removeChild(panel);
@@ -208,6 +210,7 @@
       SIDE_PANELS.forEach(function (pName) {
         var panel = document.getElementById("panel-" + pName);
         if (!panel) return;
+        if (panel.dataset.popped === "1") return; // skip popped-out panels
         panel.style.display = (pName === name) ? "" : "none";
       });
     },
@@ -218,6 +221,7 @@
       SIDE_PANELS.forEach(function (name) {
         var panel = document.getElementById("panel-" + name);
         if (!panel) return;
+        if (panel.dataset.popped === "1") return; // skip popped-out panels
         if (self._railBody && self._railBody.contains(panel)) {
           self._railBody.removeChild(panel);
           var homeId = panel.dataset.homeCol;
@@ -302,6 +306,7 @@
       SIDE_PANELS.forEach(function (name) {
         var panel = document.getElementById("panel-" + name);
         if (!panel) return;
+        if (panel.dataset.popped === "1") return; // skip popped-out panels
         // If it's in rail body, move it home
         if (self._railBody && self._railBody.contains(panel)) {
           self._railBody.removeChild(panel);
@@ -392,6 +397,67 @@
       buttons.forEach(function (btn) {
         btn.classList.toggle("active", btn.dataset.panel === activeName);
       });
+    },
+
+    // ---------------------------------------------------------------
+    // Pop-out panels into floating WinBox windows
+    // ---------------------------------------------------------------
+    initPopout: function () {
+      var self = this;
+      this._popped = this._popped || {};
+
+      SIDE_PANELS.forEach(function (name) {
+        var panel = document.getElementById("panel-" + name);
+        if (!panel) return;
+        var btn = panel.querySelector(".ph-popout");
+        if (!btn) return;
+        btn.addEventListener("click", function (ev) {
+          ev.stopPropagation();
+          self.popout(name);
+        });
+      });
+    },
+
+    popout: function (name) {
+      var self = this;
+      if (this._popped[name]) return; // already floating
+
+      var panel = document.getElementById("panel-" + name);
+      if (!panel) return;
+
+      // Mark before creating the WinBox so reflow guards see it immediately
+      panel.dataset.popped = "1";
+
+      var titleEl = panel.querySelector(".ph-title");
+      var title = titleEl ? titleEl.textContent.trim() : name;
+
+      var wb = new WinBox({
+        title: title,
+        mount: panel,
+        class: "dash-winbox",
+        width: 360,
+        height: 300,
+        onclose: function () {
+          self.redock(name);
+          // return undefined → WinBox proceeds with close normally
+        }
+      });
+
+      this._popped[name] = wb;
+      this.saveLayout && this.saveLayout();
+    },
+
+    redock: function (name) {
+      var panel = document.getElementById("panel-" + name);
+      if (panel) {
+        var homeId = panel.dataset.homeCol;
+        var col = homeId ? document.getElementById(homeId) : null;
+        if (col) col.appendChild(panel);
+        panel.removeAttribute("data-popped");
+        panel.style.display = "";
+      }
+      delete this._popped[name];
+      this.saveLayout && this.saveLayout();
     },
 
     // ---------------------------------------------------------------

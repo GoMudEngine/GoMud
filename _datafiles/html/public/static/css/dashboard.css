@@ -283,3 +283,24 @@
   flex: 1 1 0;
   min-height: 0;
 }
+
+/* ------------------------------------------------------------------ */
+/* WinBox pop-out — leather theme overlay                              */
+/* ------------------------------------------------------------------ */
+.winbox.dash-winbox {
+  background: var(--ink-deep, #2b231d);
+  border: 1px solid var(--gold-rule, #c9a86a);
+}
+.winbox.dash-winbox .wb-header {
+  background: linear-gradient(
+    var(--bar-top, #241813),
+    var(--bar-bottom, #1a110b)
+  );
+}
+.winbox.dash-winbox .wb-title {
+  font-family: var(--font-serif, Georgia, serif);
+  color: var(--vellum, #d9c39e);
+}
+.winbox.dash-winbox .wb-body {
+  background: var(--panel-bg, #201913);
+}
