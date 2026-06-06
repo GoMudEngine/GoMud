@@ -109,19 +109,55 @@
     // Wide mode
     // ---------------------------------------------------------------
     _enterWide: function () {
-      // Move every side panel back to its home column in original order.
-      // SIDE_PANELS is defined in home-col grouping order
-      // (map/vitals/art → left, chat/status/trig → right)
-      SIDE_PANELS.forEach(function (name) {
-        var panel = document.getElementById("panel-" + name);
-        if (!panel) return;
-        if (panel.dataset.popped === "1") return; // skip popped-out panels
-        var homeId = panel.dataset.homeCol;
-        if (!homeId) return;
-        var col = document.getElementById(homeId);
-        if (col) col.appendChild(panel);
-        panel.style.display = "";
-      });
+      // Re-home side panels honoring the saved arrangement order when available
+      // (prevents a wide→rail→wide round-trip from resetting a custom layout).
+      // Falls back to the default SIDE_PANELS order when no saved arrange exists.
+      var arrange = this._savedArrange;
+      if (arrange && typeof arrange === "object") {
+        // Replay saved column order: for each column append panels in saved sequence.
+        // Any panel not listed in saved arrange falls through to the default below.
+        var placed = {};
+        ["dash-col-left", "dash-col-center", "dash-col-right"].forEach(function (colId) {
+          var col = document.getElementById(colId);
+          if (!col) return;
+          var names = arrange[colId];
+          if (!Array.isArray(names)) return;
+          names.forEach(function (name) {
+            var panel = document.getElementById("panel-" + name);
+            if (!panel) return;
+            if (panel.dataset.popped === "1") return;
+            col.appendChild(panel);
+            panel.dataset.homeCol = colId;
+            panel.style.display = "";
+            placed[name] = true;
+          });
+        });
+        // Catch any panels not covered by the saved arrange (new panels added after save)
+        SIDE_PANELS.forEach(function (name) {
+          if (placed[name]) return;
+          var panel = document.getElementById("panel-" + name);
+          if (!panel) return;
+          if (panel.dataset.popped === "1") return;
+          var homeId = panel.dataset.homeCol;
+          if (!homeId) return;
+          var col = document.getElementById(homeId);
+          if (col) col.appendChild(panel);
+          panel.style.display = "";
+        });
+      } else {
+        // No saved arrangement — use default SIDE_PANELS order
+        // (map/vitals/art → left, chat/status/trig → right)
+        SIDE_PANELS.forEach(function (name) {
+          var panel = document.getElementById("panel-" + name);
+          if (!panel) return;
+          if (panel.dataset.popped === "1") return; // skip popped-out panels
+          var homeId = panel.dataset.homeCol;
+          if (!homeId) return;
+          var col = document.getElementById(homeId);
+          if (col) col.appendChild(panel);
+          panel.style.display = "";
+        });
+      }
 
       // Hide rail, tabbar, drawer
       if (this._rail)   this._rail.style.display   = "none";
@@ -397,6 +433,132 @@
       buttons.forEach(function (btn) {
         btn.classList.toggle("active", btn.dataset.panel === activeName);
       });
+    },
+
+    // ---------------------------------------------------------------
+    // Layout persistence (localStorage key: dogmud.dashboard.layout.v1)
+    // ---------------------------------------------------------------
+
+    // In-memory copy of the last-saved arrange block so _enterWide can
+    // honor it after a wide→rail→wide round-trip without re-reading LS.
+    _savedArrange: null,
+
+    saveLayout: function () {
+      try {
+        var el = document.getElementById("dashboard");
+
+        // Column widths (always safe to capture from the #dashboard style)
+        var cols = {
+          l: el ? el.style.getPropertyValue("--col-l-w") : "",
+          r: el ? el.style.getPropertyValue("--col-r-w") : ""
+        };
+
+        // Collapsed panels (class survives mode changes — always safe)
+        var collapsed = [];
+        document.querySelectorAll(".dash-panel.collapsed").forEach(function (p) {
+          if (p.dataset.panel) collapsed.push(p.dataset.panel);
+        });
+
+        // Popped panels (always safe)
+        var popped = Object.keys(this._popped || {});
+
+        // Arrange: only valid in wide mode. In rail/phone the panels are
+        // relocated away from their columns, so DOM order is not the real
+        // arrangement. Preserve whatever was previously saved for arrange
+        // and only overwrite it when we're actually in wide mode.
+        var arrange;
+        if (this.mode === "wide") {
+          arrange = {};
+          ["dash-col-left", "dash-col-center", "dash-col-right"].forEach(function (colId) {
+            var col = document.getElementById(colId);
+            if (!col) return;
+            arrange[colId] = [];
+            col.querySelectorAll(".dash-panel").forEach(function (p) {
+              if (p.dataset.panel) arrange[colId].push(p.dataset.panel);
+            });
+          });
+          this._savedArrange = arrange;
+        } else {
+          // Read whatever was already persisted so we can write it back unchanged
+          try {
+            var existing = JSON.parse(localStorage.getItem("dogmud.dashboard.layout.v1") || "{}");
+            arrange = existing.arrange || this._savedArrange || null;
+          } catch (e) {
+            arrange = this._savedArrange || null;
+          }
+        }
+
+        var payload = { cols: cols, collapsed: collapsed, popped: popped };
+        if (arrange) payload.arrange = arrange;
+
+        localStorage.setItem("dogmud.dashboard.layout.v1", JSON.stringify(payload));
+      } catch (e) {
+        // localStorage may be unavailable (private browsing, quota, etc.) — ignore
+      }
+    },
+
+    restoreLayout: function () {
+      var self = this;
+      var data;
+      try {
+        var raw = localStorage.getItem("dogmud.dashboard.layout.v1");
+        if (!raw) return;
+        data = JSON.parse(raw);
+        if (!data || typeof data !== "object") return;
+      } catch (e) {
+        return;
+      }
+
+      // 1. Column widths
+      try {
+        var el = document.getElementById("dashboard");
+        if (el && data.cols) {
+          if (data.cols.l) el.style.setProperty("--col-l-w", data.cols.l);
+          if (data.cols.r) el.style.setProperty("--col-r-w", data.cols.r);
+        }
+      } catch (e) {}
+
+      // 2. Arrange — only apply if we're currently in wide mode
+      try {
+        if (this.mode === "wide" && data.arrange && typeof data.arrange === "object") {
+          this._savedArrange = data.arrange;
+          var arrange = data.arrange;
+          ["dash-col-left", "dash-col-center", "dash-col-right"].forEach(function (colId) {
+            var col = document.getElementById(colId);
+            if (!col) return;
+            var names = arrange[colId];
+            if (!Array.isArray(names)) return;
+            names.forEach(function (name) {
+              var panel = document.getElementById("panel-" + name);
+              if (!panel) return;
+              col.appendChild(panel);
+              panel.dataset.homeCol = colId;
+            });
+          });
+        } else if (data.arrange) {
+          // Cache it so _enterWide can use it later even if we're in rail/phone now
+          this._savedArrange = data.arrange;
+        }
+      } catch (e) {}
+
+      // 3. Collapsed panels
+      try {
+        if (Array.isArray(data.collapsed)) {
+          data.collapsed.forEach(function (name) {
+            var panel = document.getElementById("panel-" + name);
+            if (panel) panel.classList.add("collapsed");
+          });
+        }
+      } catch (e) {}
+
+      // 4. Popped panels — do this LAST (depends on panels being in place)
+      try {
+        if (Array.isArray(data.popped)) {
+          data.popped.forEach(function (name) {
+            self.popout && self.popout(name);
+          });
+        }
+      } catch (e) {}
     },
 
     // ---------------------------------------------------------------
