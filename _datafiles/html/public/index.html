@@ -1,13 +1,20 @@
 {{template "header" .}}
 
-  <div class="play-button">
-    <a href="/webclient">
-      <img src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/images/btn_play.png" alt="Play" />
-    </a>
-  </div>
-  <p>&nbsp;</p>
-  <div class="underlay">
-    <h3>Telnet Port{{ if gt (len .CONFIG.Network.TelnetPort) 1 }}s{{end}}: {{ join .CONFIG.Network.TelnetPort ", " }}</h3>
+  <div class="hero">
+    <h1 class="hero-title">{{ .CONFIG.Server.MudName }}</h1>
+    <p class="hero-tagline">A living world of use-based growth, factions, and consequence.</p>
+
+    <a class="brass hero-cta" href="/webclient">&#9654; Play in Browser</a>
+
+    <p class="hero-sub">or connect by telnet &mdash;
+      <b>Port{{ if gt (len .CONFIG.Network.TelnetPort) 1 }}s{{ end }}: {{ join .CONFIG.Network.TelnetPort ", " }}</b>
+    </p>
+
+    <div>
+      <span class="online-stat">&#9679;
+        {{ len .STATS.OnlineUsers }} adventurer{{ if ne (len .STATS.OnlineUsers) 1 }}s{{ end }} online
+      </span>
+    </div>
   </div>
 
 {{template "footer" .}}
