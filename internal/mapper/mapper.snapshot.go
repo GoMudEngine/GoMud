@@ -30,9 +30,11 @@ type SnapshotRoom struct {
 	Exits  []SnapshotExit `json:"exits"`
 }
 
-// Snapshot returns the visited rooms of this zone with classified exits to
-// other visited rooms. Exits to unvisited or uncrawled rooms are omitted (fog
-// of war). The exit Kind drives client rendering (normal/long/wrap/vertical).
+// Snapshot returns the visited rooms of this zone with classified exits. Exits
+// to visited same-zone rooms are full edges; exits to unvisited/uncrawled rooms
+// are emitted with Stub=true (a fog-of-war hint toward the unexplored region),
+// and ToZone is set when the destination is in a different zone. The exit Kind
+// drives client rendering (normal/long/wrap/vertical).
 func (r *mapper) Snapshot(visited map[int]struct{}) []SnapshotRoom {
 	out := make([]SnapshotRoom, 0, len(visited))
 
@@ -98,6 +100,7 @@ func (r *mapper) Snapshot(visited map[int]struct{}) []SnapshotRoom {
 				se.Stub = true
 				se.Kind = classifyKind(e.Direction, e.Direction) // nominal placement
 			}
+			// mapNode carries no Zone; LoadRoom is an in-memory cache hit.
 			if dr := rooms.LoadRoom(e.RoomId); dr != nil && dr.Zone != "" && dr.Zone != srcZone {
 				se.ToZone = dr.Zone
 			}

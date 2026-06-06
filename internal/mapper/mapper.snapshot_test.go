@@ -77,6 +77,9 @@ func TestSnapshotFiltersVisitedAndClassifies(t *testing.T) {
 	for _, e := range r1.Exits {
 		if e.Stub {
 			stubExits++
+			if e.Kind != ExitLong {
+				t.Fatalf("expected the east-x3 stub to be ExitLong, got %q", e.Kind)
+			}
 		} else {
 			normalExits++
 			if e.ToRoomId != 2 || e.Kind != ExitNormal {
@@ -129,5 +132,8 @@ func TestSnapshotExitFlagsAndStubs(t *testing.T) {
 	}
 	if byTo[2].Stub {
 		t.Error("north exit to visited room 2 should NOT be a stub")
+	}
+	if byTo[3].Stub || byTo[4].Stub {
+		t.Error("visited destinations (3,4) should NOT be stubs")
 	}
 }
