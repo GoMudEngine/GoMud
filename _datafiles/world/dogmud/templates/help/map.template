@@ -1,22 +1,89 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">map</ansi> (skill)
 
-The <ansi fg="skill">map</ansi> command displays a map of the area,
-centered on your character.
+<ansi fg="yellow">The in-game ASCII map:</ansi>
 
-Not everything is guaranteed to be shown on the map.
-Hidden areas and secret passages may remain concealed.
+The <ansi fg="skill">map</ansi> command draws a text map of the area centred on your
+character. Each room appears as a glyph; connecting exits are drawn
+as lines between them.
 
-As your mapping skill improves, you can see farther and
-reveal more of your surroundings. Higher Perception also
-expands what you can discern on the map.
+Your position and what you can see scale with your Perception stat.
+Higher Perception expands the visible range and reveals more detail.
+Biome glyphs mark terrain types (forest, dungeon, road, etc.), and
+any room with a custom map symbol uses that symbol instead. A legend
+below the map explains every glyph that appears.
 
-<ansi fg="yellow">Usage: </ansi>
+Hidden areas and secret passages may not appear on the map.
+
+<ansi fg="yellow">Map symbols:</ansi>
+
+  <ansi fg="white">@</ansi>   You (your current room)
+  <ansi fg="white">☺</ansi>   A player, party member, or non-hostile NPC
+  <ansi fg="white">☠</ansi>   A hostile or actively fighting mob
+  <ansi fg="white">☹</ansi>   A friend (a charmed mob travelling with
+      a party member)
+
+<ansi fg="yellow">Usage:</ansi>
 
   <ansi fg="skill">map</ansi>        Display a map of the nearby area.
   <ansi fg="skill">map wide</ansi>   Display a zoomed-out overview
-                 (requires advanced mapping skill).
+                 (requires advanced mapping skill /
+                 high Perception).
 
-<ansi fg="yellow">Related: </ansi>
+<ansi fg="yellow">The web client map:</ansi>
+
+Players using the browser-based web client also have a graphical
+"leather map" panel — an aged-parchment map that fills in as you
+explore the world (fog of war). Rooms you have not yet visited are
+hidden; rooms further from you appear slightly dimmed.
+
+<ansi fg="yellow">Your position:</ansi>
+  Your current room is the raised tile at the centre of the map.
+  The view follows you as you move. Hover any visible room tile
+  to see its name in a tooltip.
+
+<ansi fg="yellow">Markers on rooms:</ansi>
+  <ansi fg="white">$</ansi>   Bank — deposit/withdraw gold here
+  <ansi fg="white">S</ansi>   Shop — a merchant or vendor
+  <ansi fg="white">▢</ansi>   Storage — a storeroom or money-pouch
+  A small figure on a room means a party member is standing there.
+
+<ansi fg="yellow">Vertical connections (stairs):</ansi>
+  <ansi fg="white">▲</ansi>   Stairs up to the floor above
+  <ansi fg="white">▼</ansi>   Stairs down to the floor below
+  The map shows one floor (Z-level) at a time. Walk to a staircase
+  and use it to change levels; the map will update to show the
+  new floor.
+
+<ansi fg="yellow">Paths between rooms:</ansi>
+  The lines connecting rooms change style to show terrain type:
+  - Solid line       — paved road or corridor
+  - Dashed line      — forest trail, marsh path, or open ground
+  - Dashed blue line — river, waterway, or canal
+  - Rocky/jagged     — mountain ridge or cliff path
+  - Long dashed      — highway or long-distance connection
+
+<ansi fg="yellow">Special exits:</ansi>
+  A small door icon (with the path turning red beyond it) means a
+  locked exit — you need a key or the right skill to pass.
+
+  A faint dotted path ending in a <ansi fg="white">?</ansi> is a secret passage — it
+  appears only once you have discovered it.
+
+  An arrowhead on a path marks a one-way passage: you can travel
+  in one direction only.
+
+  A small archway indicates a gate or zone threshold.
+
+  A short dashed stub pointing off the edge of a room tile is an
+  unexplored exit — the area exists but you have not been there
+  yet. When the exit leads to a different zone it is labelled
+  with an arrow and the zone name (e.g. "→ Ironwind Steppe").
+
+<ansi fg="yellow">Map controls (bottom-left corner of the panel):</ansi>
+  <ansi fg="command">fit</ansi>   Zoom to fit the entire known map in the panel.
+  <ansi fg="command">ctr</ansi>   Re-centre the view on your current room.
+  <ansi fg="command">−</ansi> / <ansi fg="command">+</ansi>  Zoom out / zoom in one step.
+
+<ansi fg="yellow">Related:</ansi>
   <ansi fg="command">help map-examples</ansi>
   <ansi fg="command">help perception</ansi>
-
