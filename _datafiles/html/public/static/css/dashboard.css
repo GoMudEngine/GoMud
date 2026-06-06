@@ -1,22 +1,25 @@
 /* In-game dashboard — arrangement C (visuals left). Reuses gomud.css tokens. */
 #dashboard {
   display: grid;
+  position: relative;
   height: 100%;
   width: 100%;
-  gap: var(--dash-gap, 6px);
+  gap: var(--dash-gap, 6px) 0;   /* row-gap kept, col-gap=0 (splitter tracks handle spacing) */
   padding: 6px;
   box-sizing: border-box;
   background: var(--bg-base, #191310);
-  /* session strip on top; below it three independent column stacks so each
-     panel can size independently of the other columns */
+  /* session strip on top; below it five columns: left | ls-splitter | center | rs-splitter | right
+     so each panel can size independently and side columns are drag-resizable */
   grid-template-columns:
-    minmax(200px, var(--col-l, 0.95fr))
-    minmax(0, var(--col-c, 2fr))
-    minmax(200px, var(--col-r, 0.95fr));
+    minmax(180px, var(--col-l-w, 22vw))
+    6px
+    minmax(0, 1fr)
+    6px
+    minmax(180px, var(--col-r-w, 22vw));
   grid-template-rows: auto minmax(0, 1fr);
   grid-template-areas:
-    "sess sess   sess"
-    "left center right";
+    "sess sess sess   sess sess"
+    "left ls   center rs   right";
 }
 
 /* Independent vertical column stacks */
@@ -28,6 +31,17 @@
 #dash-col-left   { grid-area: left; }
 #dash-col-center { grid-area: center; }
 #dash-col-right  { grid-area: right; }
+
+/* Column-width splitters (wide mode only) */
+.dash-splitter { z-index: 5; align-self: stretch; }
+.dash-splitter.col { cursor: col-resize; background: transparent; }
+.dash-splitter.col:hover,
+.dash-splitter.col.dragging { background: rgba(201,168,106,0.30); }
+#dash-splitter-l { grid-area: ls; }
+#dash-splitter-r { grid-area: rs; }
+/* Hidden whenever not in the 3-column wide layout */
+#dashboard[data-mode="rail"] .dash-splitter,
+#dashboard[data-mode="phone"] .dash-splitter { display: none; }
 
 /* Session strip */
 #dash-session {

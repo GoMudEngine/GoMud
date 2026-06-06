@@ -393,6 +393,57 @@
         btn.classList.toggle("active", btn.dataset.panel === activeName);
       });
     },
+
+    // ---------------------------------------------------------------
+    // Column-width splitters (wide mode only)
+    // ---------------------------------------------------------------
+    initSplitters: function () {
+      var self = this;
+      var el = document.getElementById("dashboard");
+
+      function clamp(v, min, max) {
+        return Math.max(min, Math.min(max, v));
+      }
+
+      function makeSplitter(id, edge) {
+        var s = document.createElement("div");
+        s.id = id;
+        s.className = "dash-splitter col";
+        s.dataset.edge = edge;
+        el.appendChild(s);
+
+        var rect = null;
+
+        s.addEventListener("pointerdown", function (ev) {
+          if (self.mode !== "wide") return;
+          rect = el.getBoundingClientRect();
+          s.classList.add("dragging");
+          s.setPointerCapture(ev.pointerId);
+          ev.preventDefault();
+        });
+
+        s.addEventListener("pointermove", function (ev) {
+          if (!s.classList.contains("dragging")) return;
+          if (edge === "l") {
+            var w = clamp(ev.clientX - rect.left, 180, rect.width * 0.45);
+            el.style.setProperty("--col-l-w", w + "px");
+          } else {
+            var w = clamp(rect.right - ev.clientX, 180, rect.width * 0.45);
+            el.style.setProperty("--col-r-w", w + "px");
+          }
+        });
+
+        s.addEventListener("pointerup", function (ev) {
+          if (!s.classList.contains("dragging")) return;
+          s.classList.remove("dragging");
+          s.releasePointerCapture(ev.pointerId);
+          self.saveLayout && self.saveLayout();
+        });
+      }
+
+      makeSplitter("dash-splitter-l", "l");
+      makeSplitter("dash-splitter-r", "r");
+    },
   };
 
   window.Dashboard = Dashboard;
