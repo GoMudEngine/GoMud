@@ -74,6 +74,7 @@ var (
 		`buy`:             {Buy, false, true, false},
 		`caravan`:         {Caravan, true, true, true}, // Admin only
 		`cancel`:          {Cancel, true, true, false},
+		`cartcheck`:       {CartCheck, true, true, true}, // Admin only
 		`cast`:            {Cast, false, true, false},
 		`combatstats`:     {CombatStats, true, true, true}, // Admin only
 		`craft`:           {Craft, false, false, false},    // Can't start crafting in combat
