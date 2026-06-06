@@ -444,6 +444,105 @@
       makeSplitter("dash-splitter-l", "l");
       makeSplitter("dash-splitter-r", "r");
     },
+
+    // ---------------------------------------------------------------
+    // Drag-to-swap panel rearrange + collapse toggle (wide mode only)
+    // ---------------------------------------------------------------
+    initRearrange: function () {
+      var self = this;
+      var dragSourcePanel = null; // data-panel value of the panel being dragged
+
+      // Helper: swap two <section> elements in the DOM, regardless of
+      // whether they live in the same or different parent columns.
+      function swapNodes(a, b) {
+        var marker = document.createComment("swap");
+        a.parentNode.insertBefore(marker, a);
+        b.parentNode.insertBefore(a, b);
+        marker.parentNode.insertBefore(b, marker);
+        marker.parentNode.removeChild(marker);
+      }
+
+      // Update data-homeCol for a panel to reflect its current column.
+      function updateHomeCol(panel) {
+        var col = panel.closest(".dash-col");
+        if (col) panel.dataset.homeCol = col.id;
+      }
+
+      var panels = document.querySelectorAll(".dash-panel");
+
+      panels.forEach(function (panel) {
+        var head = panel.querySelector(".dash-panel-head");
+        if (!head) return;
+
+        // --- Drag handle: mark header as draggable ---
+        head.setAttribute("draggable", "true");
+
+        // Prevent the small button spans from initiating a swap drag
+        var btnSpans = head.querySelectorAll(".ph-collapse, .ph-popout");
+        btnSpans.forEach(function (span) {
+          span.setAttribute("draggable", "false");
+        });
+
+        // dragstart — only if wide mode
+        head.addEventListener("dragstart", function (ev) {
+          if (self.mode !== "wide") {
+            ev.preventDefault();
+            return;
+          }
+          dragSourcePanel = panel.dataset.panel;
+          ev.dataTransfer.effectAllowed = "move";
+          ev.dataTransfer.setData("text/plain", dragSourcePanel);
+        });
+
+        head.addEventListener("dragend", function () {
+          dragSourcePanel = null;
+        });
+
+        // --- Drop target: the entire panel section ---
+        panel.addEventListener("dragover", function (ev) {
+          if (!dragSourcePanel || self.mode !== "wide") return;
+          if (panel.dataset.panel === dragSourcePanel) return;
+          ev.preventDefault();
+          panel.classList.add("drag-over");
+        });
+
+        panel.addEventListener("dragleave", function () {
+          panel.classList.remove("drag-over");
+        });
+
+        panel.addEventListener("drop", function (ev) {
+          ev.preventDefault();
+          panel.classList.remove("drag-over");
+
+          if (!dragSourcePanel || self.mode !== "wide") return;
+          var targetPanelName = panel.dataset.panel;
+          if (targetPanelName === dragSourcePanel) return;
+
+          var srcPanel = document.getElementById("panel-" + dragSourcePanel);
+          var dstPanel = panel;
+          if (!srcPanel || !dstPanel) return;
+
+          swapNodes(srcPanel, dstPanel);
+
+          // Update data-homeCol for both panels (critical for responsive restore)
+          updateHomeCol(srcPanel);
+          updateHomeCol(dstPanel);
+
+          dragSourcePanel = null;
+          self.saveLayout && self.saveLayout();
+        });
+
+        // --- Collapse toggle ---
+        var collapseBtn = head.querySelector(".ph-collapse");
+        if (collapseBtn) {
+          collapseBtn.addEventListener("click", function (ev) {
+            ev.stopPropagation();
+            panel.classList.toggle("collapsed");
+            self.saveLayout && self.saveLayout();
+          });
+        }
+      });
+    },
   };
 
   window.Dashboard = Dashboard;

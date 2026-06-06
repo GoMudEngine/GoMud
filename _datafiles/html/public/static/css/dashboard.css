@@ -124,8 +124,16 @@
   font-style: italic; font-size: 0.8rem; text-align: center; padding: 8px;
 }
 
-/* Collapsed panels show only the header */
+/* Collapsed panels show only the header; !important overrides per-id flex rules */
 .dash-panel.collapsed .dash-panel-body { display: none; }
+.dash-panel.collapsed { flex: 0 0 auto !important; }
+
+/* Drag-to-swap highlight and grab cursor */
+.dash-panel.drag-over {
+  outline: 2px dashed var(--antique-gold, #b89047);
+  outline-offset: -2px;
+}
+.dash-panel-head[draggable="true"] { cursor: grab; }
 
 /* ------------------------------------------------------------------ */
 /* Responsive reflow — Rail mode (700–1100px)                          */
