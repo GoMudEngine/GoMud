@@ -44,6 +44,7 @@ hidden; rooms further from you appear slightly dimmed.
 <ansi fg="yellow">Markers on rooms:</ansi>
   <ansi fg="white">$</ansi>   Bank — deposit/withdraw gold here
   <ansi fg="white">S</ansi>   Shop — a merchant or vendor
+  <ansi fg="white">T</ansi>   Trainer — a skill instructor or master
   <ansi fg="white">▢</ansi>   Storage — a storeroom or money-pouch
   A small figure on a room means a party member is standing there.
 
