@@ -294,8 +294,29 @@
         term.loadAddon(fitAddon);
         term.open(document.getElementById('terminal'));
 
+        // Auto-size the font so ~80 columns always fit the feed panel. All MUD
+        // content is fixed-80 (room text + the inline ASCII minimap), so if the
+        // terminal is < 80 cols it wraps and the minimap misaligns. Shrink the
+        // font until >= 80 cols fit; grow it (capped) when there's spare room.
         function resizeTerminal() {
-            try { fitAddon.fit(); } catch (e) {}
+            if (!term || !fitAddon) return;
+            var TARGET = 80, MIN_FS = 10, MAX_FS = 20, guard = 0;
+            try {
+                fitAddon.fit();
+                while (term.cols < TARGET && term.getOption('fontSize') > MIN_FS && guard++ < 24) {
+                    term.setOption('fontSize', term.getOption('fontSize') - 1);
+                    fitAddon.fit();
+                }
+                while (term.cols > TARGET + 6 && term.getOption('fontSize') < MAX_FS && guard++ < 48) {
+                    term.setOption('fontSize', term.getOption('fontSize') + 1);
+                    fitAddon.fit();
+                    if (term.cols < TARGET) { // grew one step too far — back off
+                        term.setOption('fontSize', term.getOption('fontSize') - 1);
+                        fitAddon.fit();
+                        break;
+                    }
+                }
+            } catch (e) {}
         }
         window.addEventListener('resize', resizeTerminal);
         // Re-fit whenever the feed panel itself changes size (grid reflow,
