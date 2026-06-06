@@ -239,8 +239,8 @@ footer {
   text-align: center;
   color: var(--text-secondary);
   font-family: var(--font-serif);
-  padding: 16px 0;
-  font-size: 0.9rem;
+  padding: 5px 0;
+  font-size: 0.78rem;
 }
 footer a { color: var(--ink-gold); }
 footer a:hover { text-decoration: underline; }
