@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
 
@@ -182,4 +184,43 @@ func sign(v int) int {
 		return -1
 	}
 	return 0
+}
+
+// ValidateZoneConsistency runs CheckConsistency for every loaded zone and either
+// warns or panics per the MapConsistencyEnforce config knob. Called from PreCacheMaps
+// AFTER all zone mappers are built. non_cartesian zones are passed their flag.
+func ValidateZoneConsistency() {
+	mode := string(configs.GetGamePlayConfig().MapConsistencyEnforce)
+	if mode == "off" {
+		return
+	}
+
+	errorCount, warnCount := 0, 0
+	var firstError string
+
+	for _, zoneName := range rooms.GetAllZoneNames() {
+		rootRoomId, _ := rooms.GetZoneRoot(zoneName)
+		m := GetMapperIfExists(rootRoomId)
+		if m == nil {
+			continue
+		}
+		nonCartesian := rooms.IsZoneNonCartesian(zoneName)
+		for _, f := range m.CheckConsistency(zoneName, nonCartesian) {
+			if f.Severity == "error" {
+				errorCount++
+				if firstError == "" {
+					firstError = f.String()
+				}
+			} else {
+				warnCount++
+			}
+			mudlog.Warn("mapper.ValidateZoneConsistency", "finding", f.String())
+		}
+	}
+
+	mudlog.Info("mapper.ValidateZoneConsistency", "errors", errorCount, "warnings", warnCount, "mode", mode)
+
+	if mode == "panic" && errorCount > 0 {
+		panic(fmt.Sprintf("mapper.ValidateZoneConsistency: %d consistency error(s); first: %s", errorCount, firstError))
+	}
 }

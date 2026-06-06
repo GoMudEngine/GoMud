@@ -1005,6 +1005,8 @@ func PreCacheMaps() {
 	for _, roomId := range rooms.GetAllRoomIds() {
 		GetMapper(roomId)
 	}
+
+	ValidateZoneConsistency()
 }
 
 func validateRoomBiomes() {

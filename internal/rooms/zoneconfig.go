@@ -59,3 +59,11 @@ func NewZoneConfig(zName string) *ZoneConfig {
 		AllowRecall: true,
 	}
 }
+
+// IsZoneNonCartesian reports the non_cartesian flag for a zone (false if unknown).
+func IsZoneNonCartesian(zoneName string) bool {
+	if z, ok := roomManager.zones[zoneName]; ok {
+		return z.NonCartesian
+	}
+	return false
+}
