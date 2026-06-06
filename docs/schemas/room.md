@@ -54,6 +54,14 @@ _datafiles/world/dogmud/rooms/{zone_folder}/{roomid}.yaml
 | `skilltraining` | map | no | Skill → `{min: N, max: N}` range. Allows players to train here. |
 | `mutators` | list | no | Mutator tags applied when the room spawns. Each entry is `- mutatorid: <tag>`. Mutators can append flavor text, modify regen (`regenmultiplier` field on the mutator spec — e.g. `sanctuary` 5x), apply buffs, or override PvP. See `_datafiles/world/dogmud/mutators/`. |
 
+### Zone Config Fields
+
+Zone-config fields are defined at `_datafiles/world/dogmud/{zone_folder}/zone-config.yaml` (not per-room).
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `non_cartesian` | bool | Marks a zone whose exit graph is intentionally non-Euclidean (e.g. a toroidal zone where edge exits wrap to the opposite edge, or a deliberate maze). Exempts the zone from the collision + reciprocity consistency checks, and switches the web mapper to render wrap exits as edge stubs instead of long connectors. Default false. |
+
 ### Exit Sub-fields
 
 ```yaml

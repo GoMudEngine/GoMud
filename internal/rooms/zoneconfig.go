@@ -18,6 +18,7 @@ type ZoneConfig struct {
 	PortalDuration string               `yaml:"portal_duration,omitempty"`  // e.g. "30m", "1h"
 	EntryRoom      int                  `yaml:"entry_room,omitempty"`       // room ID where portal drops players
 	AllowRecall    bool                 `yaml:"allow_recall,omitempty"`     // whether recall works inside (default true)
+	NonCartesian   bool                 `yaml:"non_cartesian,omitempty"`    // true = zone is intentionally non-Euclidean (toroidal/maze); skip Cartesian consistency checks and render wrap exits as edge stubs
 	RoomIds        map[int]struct{}     `yaml:"-"`                          // Does not get written. Built dyanmically when rooms are loaded.
 }
 
