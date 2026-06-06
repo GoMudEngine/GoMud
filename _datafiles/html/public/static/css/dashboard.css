@@ -7,22 +7,27 @@
   padding: 6px;
   box-sizing: border-box;
   background: var(--bg-base, #191310);
-  /* columns: left visuals · center feed (dominant) · right social */
+  /* session strip on top; below it three independent column stacks so each
+     panel can size independently of the other columns */
   grid-template-columns:
-    minmax(200px, var(--col-l, 0.9fr))
+    minmax(200px, var(--col-l, 0.95fr))
     minmax(0, var(--col-c, 2fr))
-    minmax(200px, var(--col-r, 0.9fr));
-  grid-template-rows:
-    auto                              /* session strip */
-    minmax(0, var(--row-t, 1fr))
-    minmax(0, var(--row-b, 1fr))
-    auto;                             /* command bar */
+    minmax(200px, var(--col-r, 0.95fr));
+  grid-template-rows: auto minmax(0, 1fr);
   grid-template-areas:
-    "sess sess sess"
-    "map  feed vitals"
-    "art  feed status"
-    "trig cmd  chat";
+    "sess sess   sess"
+    "left center right";
 }
+
+/* Independent vertical column stacks */
+.dash-col {
+  display: flex; flex-direction: column;
+  gap: var(--dash-gap, 6px);
+  min-height: 0; min-width: 0;
+}
+#dash-col-left   { grid-area: left; }
+#dash-col-center { grid-area: center; }
+#dash-col-right  { grid-area: right; }
 
 /* Session strip */
 #dash-session {
@@ -71,8 +76,8 @@
 }
 .dash-panel-body { flex: 1 1 auto; min-height: 0; overflow: auto; position: relative; }
 
-/* Feed + command regions */
-#panel-feed { grid-area: feed; }
+/* Feed + command (center stack) */
+#panel-feed { flex: 1 1 0; }                          /* dominant */
 #panel-feed .dash-panel-body { overflow: hidden; }   /* xterm manages its own scroll */
 /* Terminal MUST be a bounded box, else xterm can't virtualize scrollback and
    re-renders every accumulated line on each write (progressive sluggishness). */
@@ -80,10 +85,18 @@
 #panel-feed #terminal .xterm,
 #panel-feed #terminal .xterm-viewport,
 #panel-feed #terminal .xterm-screen { height: 100%; }
-#panel-cmd  { grid-area: cmd; }
+#panel-cmd { flex: 0 0 auto; }
 #panel-cmd .dash-panel-body { display: flex; padding: 4px; }
-#panel-map { grid-area: map; } #panel-art { grid-area: art; } #panel-trig { grid-area: trig; }
-#panel-vitals { grid-area: vitals; } #panel-status { grid-area: status; } #panel-chat { grid-area: chat; }
+
+/* Per-panel stack proportions (flex-basis 0 → grow ratios set the heights;
+   splitters will later tune these --f-* vars). Left: Map / Vitals / Scene;
+   Right: Chat / Status / Triggers (~equal). */
+#panel-map    { flex: var(--f-map, 1.5) 1 0; }
+#panel-vitals { flex: var(--f-vitals, 1.15) 1 0; }   /* a touch bigger than triggers */
+#panel-art    { flex: var(--f-art, 0.7) 1 0; }       /* scene, shrunk */
+#panel-chat   { flex: var(--f-chat, 1) 1 0; }
+#panel-status { flex: var(--f-status, 1) 1 0; }
+#panel-trig   { flex: var(--f-trig, 1) 1 0; }
 
 /* Reserved slots (sub-projects #2/#3) */
 .dash-slot .dash-panel-body {

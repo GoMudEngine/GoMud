@@ -203,69 +203,78 @@
         <button class="brass" id="btn-reset-layout" onclick="window.Dashboard && Dashboard.resetLayout && Dashboard.resetLayout()">Reset layout</button>
       </div>
 
-      <section class="dash-panel" id="panel-map" data-panel="map">
-        <div class="dash-panel-head"><span class="ph-title">Map</span>
-          <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
-        <div class="dash-panel-body"><div id="map-render" style="width:100%;height:100%"></div></div>
-      </section>
+      <!-- LEFT column: Map · Vitals · Scene -->
+      <div class="dash-col" id="dash-col-left">
+        <section class="dash-panel" id="panel-map" data-panel="map">
+          <div class="dash-panel-head"><span class="ph-title">Map</span>
+            <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
+          <div class="dash-panel-body"><div id="map-render" style="width:100%;height:100%"></div></div>
+        </section>
 
-      <section class="dash-panel dash-slot" id="panel-art" data-panel="art">
-        <div class="dash-panel-head"><span class="ph-title">Scene</span>
-          <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span></span></div>
-        <div class="dash-panel-body">Scene art — coming soon</div>
-      </section>
+        <section class="dash-panel" id="panel-vitals" data-panel="vitals">
+          <div class="dash-panel-head"><span class="ph-title">Vitals</span>
+            <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
+          <div class="dash-panel-body"><div id="vitals-bars"></div></div>
+        </section>
 
-      <section class="dash-panel dash-slot" id="panel-trig" data-panel="trig">
-        <div class="dash-panel-head"><span class="ph-title">Triggers</span>
-          <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span></span></div>
-        <div class="dash-panel-body">Triggers &amp; timers — coming soon</div>
-      </section>
+        <section class="dash-panel dash-slot" id="panel-art" data-panel="art">
+          <div class="dash-panel-head"><span class="ph-title">Scene</span>
+            <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span></span></div>
+          <div class="dash-panel-body">Scene art — coming soon</div>
+        </section>
+      </div>
 
-      <section class="dash-panel" id="panel-feed" data-panel="feed">
-        <div class="dash-panel-head"><span class="ph-title">Game</span>
-          <span class="ph-btns"><span class="ph-btn ph-popout">⧉</span></span></div>
-        <div class="dash-panel-body"><div id="terminal"></div></div>
-      </section>
+      <!-- CENTER column: Game Feed · Command -->
+      <div class="dash-col" id="dash-col-center">
+        <section class="dash-panel" id="panel-feed" data-panel="feed">
+          <div class="dash-panel-head"><span class="ph-title">Game</span>
+            <span class="ph-btns"><span class="ph-btn ph-popout">⧉</span></span></div>
+          <div class="dash-panel-body"><div id="terminal"></div></div>
+        </section>
 
-      <section class="dash-panel" id="panel-cmd" data-panel="cmd">
-        <div class="dash-panel-body">
-          <input type="text" id="command-input" placeholder="Enter command..." style="flex:1">
-        </div>
-      </section>
+        <section class="dash-panel" id="panel-cmd" data-panel="cmd">
+          <div class="dash-panel-body">
+            <input type="text" id="command-input" placeholder="Enter command..." style="flex:1">
+          </div>
+        </section>
+      </div>
 
-      <section class="dash-panel" id="panel-vitals" data-panel="vitals">
-        <div class="dash-panel-head"><span class="ph-title">Vitals</span>
-          <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
-        <div class="dash-panel-body"><div id="vitals-bars"></div></div>
-      </section>
-
-      <section class="dash-panel" id="panel-status" data-panel="status">
-        <div class="dash-panel-head"><span class="ph-title">Status &amp; Conditions</span>
-          <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
-        <div class="dash-panel-body"><div id="status-conditions"></div></div>
-      </section>
-
-      <section class="dash-panel" id="panel-chat" data-panel="chat">
-        <div class="dash-panel-head"><span class="ph-title">Chat</span>
-          <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
-        <div class="dash-panel-body">
-          <!-- COMM window (tabs) — moved from hidden div into chat panel -->
-          <div id="comm-output" class="tabs">
-            <div class="tab-buttons">
-              <button id="comm-tab-say" class="tab-button active" data-tab="comm-say" data-label="Say" data-unread="0">Say</button>
-              <button id="comm-tab-whisper" class="tab-button" data-tab="comm-whisper" data-label="Whisper" data-unread="0">Whisper</button>
-              <button id="comm-tab-party" class="tab-button" data-tab="comm-party" data-label="Party" data-unread="0">Party</button>
-              <button id="comm-tab-broadcast" class="tab-button" data-tab="comm-broadcast" data-label="Broadcasts" data-unread="0">Broadcasts</button>
-            </div>
-            <div class="tab-contents">
-              <div id="comm-say" class="chat-window say tab-content active"></div>
-              <div id="comm-whisper" class="chat-window whisper tab-content"></div>
-              <div id="comm-party" class="chat-window party tab-content"></div>
-              <div id="comm-broadcast" class="chat-window broadcast tab-content"></div>
+      <!-- RIGHT column: Comms · Status · Triggers -->
+      <div class="dash-col" id="dash-col-right">
+        <section class="dash-panel" id="panel-chat" data-panel="chat">
+          <div class="dash-panel-head"><span class="ph-title">Comms</span>
+            <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
+          <div class="dash-panel-body">
+            <!-- COMM window (tabs) — moved from hidden div into chat panel -->
+            <div id="comm-output" class="tabs">
+              <div class="tab-buttons">
+                <button id="comm-tab-say" class="tab-button active" data-tab="comm-say" data-label="Say" data-unread="0">Say</button>
+                <button id="comm-tab-whisper" class="tab-button" data-tab="comm-whisper" data-label="Whisper" data-unread="0">Whisper</button>
+                <button id="comm-tab-party" class="tab-button" data-tab="comm-party" data-label="Party" data-unread="0">Party</button>
+                <button id="comm-tab-broadcast" class="tab-button" data-tab="comm-broadcast" data-label="Broadcasts" data-unread="0">Broadcasts</button>
+              </div>
+              <div class="tab-contents">
+                <div id="comm-say" class="chat-window say tab-content active"></div>
+                <div id="comm-whisper" class="chat-window whisper tab-content"></div>
+                <div id="comm-party" class="chat-window party tab-content"></div>
+                <div id="comm-broadcast" class="chat-window broadcast tab-content"></div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        <section class="dash-panel" id="panel-status" data-panel="status">
+          <div class="dash-panel-head"><span class="ph-title">Status &amp; Conditions</span>
+            <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
+          <div class="dash-panel-body"><div id="status-conditions"></div></div>
+        </section>
+
+        <section class="dash-panel dash-slot" id="panel-trig" data-panel="trig">
+          <div class="dash-panel-head"><span class="ph-title">Triggers</span>
+            <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span></span></div>
+          <div class="dash-panel-body">Triggers &amp; timers — coming soon</div>
+        </section>
+      </div>
     </div>
 
     <script>
