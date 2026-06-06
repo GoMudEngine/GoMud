@@ -55,15 +55,17 @@ header {
   background: linear-gradient(var(--bar-top), var(--bar-bottom));
   border-bottom: 2px solid var(--gold-rule);
   display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 24px;
+  padding: clamp(8px, 1.2vw, 12px) clamp(12px, 2vw, 24px);
 }
 .gomud-btn {
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: bold;
-  font-size: 1.6rem;
+  font-size: clamp(1.05rem, 2.2vw, 1.6rem);
   letter-spacing: 1px;
   color: var(--title-gold);
   text-shadow: 0 1px 0 #000;
@@ -103,22 +105,26 @@ header {
 nav {
   background: linear-gradient(var(--bar-top), var(--bar-bottom));
   border-bottom: 1px solid var(--panel-border);
-  padding: 10px 0;
+  padding: clamp(6px, 1vw, 10px) 0;
 }
 .nav-container {
   margin: 0 auto;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 0.9rem;
+  align-items: center;
+  gap: clamp(0.3rem, 0.8vw, 0.9rem);
+  padding: 0 10px;
 }
 .nav-container a {
   font-family: var(--font-serif);
-  font-size: 0.95rem;
+  font-size: clamp(0.72rem, 1.05vw, 0.95rem);
+  white-space: nowrap;
   color: var(--brass-text);
   background: var(--brass-grad);
   border: 1px solid var(--brass-border);
   border-radius: 5px;
-  padding: 6px 14px;
+  padding: clamp(4px, 0.5vw, 6px) clamp(8px, 1.1vw, 14px);
   text-shadow: 0 1px 0 rgba(255, 244, 206, 0.55);
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5),
               inset 0 1px 1px rgba(255, 246, 212, 0.7);
@@ -148,6 +154,13 @@ nav {
   padding: 24px;
 }
 .content-container[data-path="/"] { justify-content: center; }
+
+/* Web-client page: full-bleed, exact-fit. A block-level iframe removes the
+   inline descender gap that pushed the body a few px past 100vh (causing the
+   scroll + clipped header). overflow:hidden is a belt-and-suspenders against
+   sub-pixel rounding — the game view has its own internal scroll. */
+.content-container[data-path="/webclient"] { padding: 0; overflow: hidden; }
+#webclient-frame { display: block; border: 0; }
 
 .overlay, .underlay {
   width: 90%;
