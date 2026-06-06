@@ -63,9 +63,13 @@ exits:
     lock: true    # (optional) door is locked
     key: 10001    # (optional) item ID that unlocks this exit
     cost: 5       # (optional) gold cost to use this exit
+    oneway: true  # (optional) intentional one-way spatial exit; skips reciprocity check
 ```
 
 Valid directions: `north`, `south`, `east`, `west`, `up`, `down`, `enter`, `leave`, `northwest`, `northeast`, `southwest`, `southeast`
+
+**Exit field notes:**
+- `oneway` — Marks an intentional one-way spatial exit (e.g. a slippery slope). The mapper still checks the destination doesn't collide, but skips the requirement for a reciprocal return exit. Only needed for compass-direction exits; portal/named exits are non-spatial and already exempt.
 
 ### SpawnInfo Sub-fields
 

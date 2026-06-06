@@ -19,6 +19,7 @@ type RoomExit struct {
     MapDirection string        `yaml:"mapdirection,omitempty"`
     ExitMessage  string        `yaml:"exitmessage,omitempty"`
     Lock         gamelock.Lock `yaml:"lock,omitempty"`
+    OneWay       bool          `yaml:"oneway,omitempty"`
 }
 ```
 Represents a permanent room exit with the following features:
@@ -27,6 +28,7 @@ Represents a permanent room exit with the following features:
 - **MapDirection**: Optional mapping direction for cartography systems
 - **ExitMessage**: Custom message displayed before traversing the exit
 - **Lock**: Locking mechanism with difficulty-based security
+- **OneWay**: Marks an intentional one-way spatial exit (skips reciprocity check)
 
 #### TemporaryRoomExit
 ```go

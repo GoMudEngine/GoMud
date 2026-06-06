@@ -15,5 +15,6 @@ type nodeExit struct {
 	Secret         bool   // is it secret?
 	LockDifficulty int    // If > 0, the lock difficulty.
 	LockId         string // What's the lock id?
+	OneWay         bool   // intentional one-way spatial exit (skips reciprocity check)
 	Direction      positionDelta
 }
