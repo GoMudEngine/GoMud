@@ -1,4 +1,4 @@
-// ── Leather drawing toolkit (dormant — consumed by later tasks) ───────────────
+// ── Leather drawing toolkit (emboss / hide-fray / craquelure / icons) ─────────
 // Ported verbatim from docs/superpowers/specs/2026-06-06-mapper-leather-mockups/
 // 03-emboss-craquelure.html and 02-connection-types.html.
 // None of these are called by the existing render path; they are helpers for
@@ -742,8 +742,11 @@ class RoomGridSVG {
           return;
       }
 
-      // ── Cross-zone / stub exits ───────────────────────────────────────
-      if (e.stub || !this.rooms.has(e.to)) {
+      // ── Cross-zone / stub / wrap exits ────────────────────────────────
+      // Wrap exits (non_cartesian/toroidal zones) connect two placed rooms
+      // across a large coordinate gap; render them as a short outbound edge
+      // stub in the nominal direction rather than a misleading cross-map line.
+      if (e.kind === "wrap" || e.stub || !this.rooms.has(e.to)) {
           const key = srcId + ":" + e.dx + ":" + e.dy;
           if (this.drawnWrapStubs.has(key)) return;
           this.drawnWrapStubs.add(key);
