@@ -1,0 +1,55 @@
+<h2>Landing page (Home) — how far to take it?</h2>
+<p class="subtitle">Today it's just a Play-button image + a telnet-port line. Both options use the locked hybrid theme. Click your pick.</p>
+
+<style>
+  .lp{border-radius:8px;overflow:hidden;margin-bottom:6px;box-shadow:0 6px 16px rgba(0,0,0,.5);cursor:pointer;background:#191310}
+  .lp .bar{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;
+    background:linear-gradient(#241813,#1a110b);border-bottom:2px solid #c9a86a}
+  .lp .title{font-family:Georgia,serif;font-style:italic;font-weight:bold;color:#e8d2a0;font-size:15px}
+  .lp .nav{display:flex;gap:8px}
+  .lp .nav a{font-family:Georgia,serif;font-size:11px;padding:4px 11px;border-radius:5px;color:#3b2a10;border:1px solid #5e431a;
+    background:radial-gradient(circle at 34% 26%,#f4dd92,#cb9f42 46%,#8a6620);box-shadow:0 2px 3px rgba(0,0,0,.5),inset 0 1px 1px rgba(255,246,212,.7)}
+  .brass{display:inline-block;font-family:Georgia,serif;font-weight:bold;color:#3b2a10;border:1px solid #5e431a;border-radius:6px;
+    background:radial-gradient(circle at 34% 26%,#f4dd92,#cb9f42 46%,#8a6620);box-shadow:0 3px 4px rgba(0,0,0,.5),inset 0 1px 1px rgba(255,246,212,.7)}
+
+  /* A — faithful reskin */
+  .lpA .body{padding:34px 16px;text-align:center;background:radial-gradient(circle at 50% 30%,#241813,#120c07)}
+  .lpA .play{padding:13px 30px;font-size:17px;letter-spacing:1px}
+  .lpA .telnet{margin-top:18px;display:inline-block;padding:7px 14px;border:1px solid #3a2a18;border-radius:6px;
+    background:#201913;color:#cdbfa6;font-family:Georgia,serif;font-size:12px}
+
+  /* B — hero */
+  .lpB .body{padding:30px 26px;background:
+     radial-gradient(circle at 78% 22%,rgba(201,168,106,.10),transparent 45%),
+     radial-gradient(circle at 50% 35%,#251a12,#110b07)}
+  .lpB .htitle{font-family:Georgia,serif;font-style:italic;font-weight:bold;color:#e8d2a0;font-size:30px;margin:0;text-shadow:0 2px 4px #000}
+  .lpB .tag{font-family:Georgia,serif;color:#b9a983;font-size:13px;margin:6px 0 20px;font-style:italic}
+  .lpB .play{padding:14px 34px;font-size:18px;letter-spacing:1px}
+  .lpB .sub{margin-top:14px;color:#9a8a6a;font-family:Georgia,serif;font-size:12px}
+  .lpB .stat{display:inline-block;margin-top:16px;padding:6px 13px;border:1px solid #3a2a18;border-radius:20px;
+    background:#1d1610;color:#9bbf8a;font-family:Georgia,serif;font-size:12px}
+  .lpB .dot{color:#7fae6a}
+</style>
+
+<div class="lp lpA" data-choice="reskin" onclick="toggleSelect(this)">
+  <div class="bar"><span class="title">Delusions of Grandeur</span>
+    <span class="nav"><a>Home</a><a>Online</a><a>Play</a><a>Config</a></span></div>
+  <div class="body">
+    <span class="brass play">▶ Play in Browser</span>
+    <div class="telnet">Telnet: mud.example.com &nbsp;·&nbsp; Port 33333</div>
+  </div>
+</div>
+<div class="label" style="margin:-2px 0 12px">A · Faithful reskin — same sparse layout, themed: brass Play button + small telnet panel. Minimal, fast.</div>
+
+<div class="lp lpB" data-choice="hero" onclick="toggleSelect(this)">
+  <div class="bar"><span class="title">Delusions of Grandeur</span>
+    <span class="nav"><a>Home</a><a>Online</a><a>Play</a><a>Config</a></span></div>
+  <div class="body" style="text-align:center">
+    <p class="htitle">Delusions of Grandeur</p>
+    <p class="tag">A living world of use-based growth, factions, and consequence.</p>
+    <span class="brass play">▶ Play in Browser</span>
+    <div class="sub">or connect by telnet — <b style="color:#cdbfa6">mud.example.com&nbsp;:&nbsp;33333</b></div>
+    <div><span class="stat"><span class="dot">●</span> 7 adventurers online now</span></div>
+  </div>
+</div>
+<div class="label" style="margin:-2px 0 10px">B · Hero (recommended) — serif title + tagline, prominent Play CTA, telnet line, and a live "online now" count. A real front door.</div>
