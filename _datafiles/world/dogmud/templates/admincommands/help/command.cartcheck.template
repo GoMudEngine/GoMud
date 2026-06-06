@@ -1,0 +1,10 @@
+The <ansi fg="command">cartcheck</ansi> command reports Cartesian map
+consistency problems (coordinate collisions, non-reciprocal exits, wrap
+exits in non-wrap zones, and long connectors crossing rooms).
+
+<ansi fg="command">cartcheck</ansi> - Check every zone.
+<ansi fg="command">cartcheck [zone name]</ansi> - Check a single zone.
+
+Fixes: add <ansi fg="yellow">oneway: true</ansi> to an intentional one-way
+exit, or <ansi fg="yellow">non_cartesian: true</ansi> to a zone-config.yaml
+for an intentionally toroidal/maze zone.

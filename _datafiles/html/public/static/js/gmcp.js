@@ -1,6 +1,8 @@
 class RoomGridSVG {
   constructor(selector, options = {}) {
       // ── Configurable options & defaults ───────────────────────────────
+      // cellSize + cellMargin set the grid pitch (spacing between node centres).
+      // Node display size is roomSize; cellSize itself is not the node size.
       this.cellSize = options.cellSize || 100;
       this.cellMargin = options.cellMargin || 20;
       this.spacing = this.cellSize + this.cellMargin;
@@ -11,11 +13,24 @@ class RoomGridSVG {
       this.controlsMargin = options.controlsMargin || 10;
       this.roomEdgeColor = options.roomEdgeColor || "#1c6b60";
       this.visitingColor = options.visitingColor || "#c20000";
+      this.roomSize = options.roomSize || 16;              // hybrid: small nodes
+      this.connectionColor = options.connectionColor || "#b8893f"; // amber
+      this.connectionWidth = options.connectionWidth || 1.6;
+      this.glyphColor = options.glyphColor || "#c9b48f";
+      this.wrapColor = options.wrapColor || "#3fb0a0";          // toroidal wrap edge-stub color
+      this.verticalTickColor = options.verticalTickColor || "#8a6a3a"; // up/down tick color
+      this.biomeTints = options.biomeTints || RoomGridSVG.DEFAULT_BIOME_TINTS;
       // ── Internal state ────────────────────────────────────────────────
       // rooms: Map<RoomId, { room, group, defaultColor }>
       this.rooms = new Map();
       this.drawnEdges = new Set(); // to avoid dup lines
+      // Dedup sets for wrap stubs and vertical ticks (keyed by "id:dx:dy" /
+      // "id:u" / "id:d") — mirrors drawnEdges so repeated same-zone snapshots
+      // do NOT accumulate duplicate DOM elements (approach (a) from the task spec).
+      this.drawnWrapStubs = new Set();
+      this.drawnVerticalTicks = new Set();
       this.currentCenterId = null; // for highlight
+      this._zone = null; // current zone of the loaded snapshot (Zone.Map)
 
       // ── Build container & SVG ─────────────────────────────────────────
       this.container = document.querySelector(selector);
@@ -70,10 +85,7 @@ class RoomGridSVG {
       }
 
       // prepare defaults
-      const defaultColor = room.Color || '#fff';
-      const displayText = room.Text != null ?
-          room.Text :
-          String(room.RoomId);
+      const defaultColor = room.Color || this.tintFor(room.biome);
 
       // 2) UPDATE existing
       if (this.rooms.has(id)) {
@@ -82,14 +94,16 @@ class RoomGridSVG {
           entry.room.x = room.x;
           entry.room.y = room.y;
           entry.room.Exits = Array.isArray(room.Exits) ? room.Exits : [];
+          entry.room.ExitsMeta = room.ExitsMeta || [];
           entry.room.Color = room.Color;
           entry.room.Text = room.Text;
           entry.defaultColor = defaultColor;
 
-          // move & recolor rect
+          // move & recolor rect (centered small node)
+          const s = this.roomSize;
           const rect = this.svg.querySelector(`rect[data-room-rect="${id}"]`);
-          rect.setAttribute('x', room.x * this.spacing);
-          rect.setAttribute('y', room.y * this.spacing);
+          rect.setAttribute('x', room.x * this.spacing - s / 2);
+          rect.setAttribute('y', room.y * this.spacing - s / 2);
           if (this.currentCenterId === id) {
               rect.setAttribute('fill', this.visitingColor);
           } else {
@@ -98,9 +112,9 @@ class RoomGridSVG {
 
           // move & update label
           const txtEl = this.svg.querySelector(`g[data-room-id="${id}"] text`);
-          txtEl.setAttribute('x', room.x * this.spacing + this.cellSize / 2);
-          txtEl.setAttribute('y', room.y * this.spacing + this.cellSize / 2 + 5);
-          txtEl.textContent = displayText;
+          txtEl.setAttribute('x', room.x * this.spacing);
+          txtEl.setAttribute('y', room.y * this.spacing + s * 0.25 + 1);
+          txtEl.textContent = room.symbol || '';
 
           // redraw any new edges
           this._drawEdgesForRoom(id);
@@ -115,30 +129,36 @@ class RoomGridSVG {
       const g = document.createElementNS(this.svg.namespaceURI, 'g');
       g.setAttribute('data-room-id', id);
 
-      // square
+      // hybrid small centered node
+      const s = this.roomSize;
+      const cx = room.x * this.spacing;
+      const cy = room.y * this.spacing;
       const rect = document.createElementNS(this.svg.namespaceURI, 'rect');
-      rect.setAttribute('width', this.cellSize);
-      rect.setAttribute('height', this.cellSize);
-      rect.setAttribute('x', room.x * this.spacing);
-      rect.setAttribute('y', room.y * this.spacing);
+      rect.setAttribute('width', s);
+      rect.setAttribute('height', s);
+      rect.setAttribute('x', cx - s / 2);
+      rect.setAttribute('y', cy - s / 2);
       rect.setAttribute('stroke', this.roomEdgeColor);
-      rect.setAttribute('stroke-width', '4');
-      rect.setAttribute('rx', this.cellSize / 10); // corner radius X
-      rect.setAttribute('ry', this.cellSize / 10); // corner radius Y    
+      rect.setAttribute('stroke-width', '1');
+      rect.setAttribute('rx', '4');
+      rect.setAttribute('ry', '4');
       rect.setAttribute('data-room-rect', id);
-      rect.setAttribute('fill', defaultColor);
+      rect.setAttribute('fill', room.Color || this.tintFor(room.biome));
       rect.style.cursor = 'pointer';
       rect.addEventListener('click', () => this.onRoomClick(room));
       g.appendChild(rect);
 
-      // label
-      const label = document.createElementNS(this.svg.namespaceURI, 'text');
-      label.setAttribute('x', room.x * this.spacing + this.cellSize / 2);
-      label.setAttribute('y', room.y * this.spacing + this.cellSize / 2 + 5);
-      label.setAttribute('text-anchor', 'middle');
-      label.setAttribute('font-size', this.cellSize * 0.3);
-      label.textContent = displayText;
-      g.appendChild(label);
+      // faint glyph (room.symbol) centered in the node
+      const glyph = document.createElementNS(this.svg.namespaceURI, 'text');
+      glyph.setAttribute('x', cx);
+      glyph.setAttribute('y', cy + s * 0.25 + 1);
+      glyph.setAttribute('text-anchor', 'middle');
+      glyph.setAttribute('font-size', s * 0.5);
+      glyph.setAttribute('fill', this.glyphColor);
+      glyph.setAttribute('opacity', '0.75');
+      glyph.setAttribute('pointer-events', 'none');
+      glyph.textContent = room.symbol || '';
+      g.appendChild(glyph);
 
       this.roomsGroup.appendChild(g);
       this.rooms.set(id, {
@@ -169,6 +189,8 @@ class RoomGridSVG {
   reset() {
       this.rooms.clear();
       this.drawnEdges.clear();
+      this.drawnWrapStubs.clear();
+      this.drawnVerticalTicks.clear();
       this.currentCenterId = null;
       this.zoomLevel = 1;
       this.svg.setAttribute('viewBox', '0 0 1 1');
@@ -194,10 +216,10 @@ class RoomGridSVG {
           }
       }
 
-      // compute new view center
+      // compute new view center (rooms are centered on grid coords)
       this.center = {
-          x: entry.room.x * this.spacing + this.cellSize / 2,
-          y: entry.room.y * this.spacing + this.cellSize / 2
+          x: entry.room.x * this.spacing,
+          y: entry.room.y * this.spacing
       };
       this._applyZoom();
 
@@ -208,6 +230,38 @@ class RoomGridSVG {
       if (newRect) newRect.setAttribute('fill', this.visitingColor);
 
       this.currentCenterId = id;
+  }
+
+  /** Ingest a Zone.Map snapshot: [{num,x,y,z,symbol,biome,exits:[{to,dx,dy,dz,kind}]}]. */
+  setZoneSnapshot(zone, snapshotRooms) {
+      if (this._zone !== zone) {
+          this.reset();
+          this._zone = zone;
+      }
+      snapshotRooms.forEach(r => {
+          this.addRoom({
+              RoomId: r.num,
+              x: r.x,
+              y: r.y,
+              z: r.z,
+              symbol: r.symbol,
+              biome: r.biome,
+              Exits: (r.exits || []).map(e => ({ RoomId: e.to, kind: e.kind, dx: e.dx, dy: e.dy, dz: e.dz })),
+              ExitsMeta: r.exits || [] // raw per-exit {to,dx,dy,dz,kind}; consumed by wrap-stub + vertical-tick rendering (next task)
+          });
+      });
+      this._applyZoom(); // addRoom refreshes per-room; this also covers the empty-snapshot/reset case
+  }
+
+  /** Reset zoom so the whole explored map fits in view. */
+  fit() {
+      this._updateBounds();
+      this.zoomLevel = 1;
+      this.center = {
+          x: this.bounds.minX * this.spacing + this.worldWidth / 2,
+          y: this.bounds.minY * this.spacing + this.worldHeight / 2
+      };
+      this._applyZoom();
   }
 
   zoomIn() {
@@ -247,31 +301,46 @@ class RoomGridSVG {
           b.addEventListener('click', cb);
           return b;
       };
-      div.append(mk('−', () => this.zoomOut()), mk('+', () => this.zoomIn()));
+      div.append(
+          mk('fit',    () => this.fit()),
+          mk('ctr',   () => this.centerOnRoom(this.currentCenterId)),
+          mk('−',     () => this.zoomOut()),
+          mk('+',     () => this.zoomIn())
+      );
       this.container.appendChild(div);
   }
 
   _drawEdgesForRoom(id) {
-      const me = this.rooms.get(id)
-          .room;
-      const exits = Array.isArray(me.Exits) ? me.Exits : [];
+      const me = this.rooms.get(id).room;
 
-      // draw its own exits
-      exits.forEach(e => {
-          const to = (typeof e === 'object') ? e.RoomId : e;
-          if (this.rooms.has(to)) this._drawEdge(id, to);
-      });
+      if (Array.isArray(me.ExitsMeta) && me.ExitsMeta.length) {
+          // Kind-routing path: ExitsMeta is set by setZoneSnapshot (Zone.Map).
+          // Each entry is {to, dx, dy, dz, kind} where kind ∈ normal|long|wrap|vertical.
+          me.ExitsMeta.forEach(e => {
+              if (e.kind === 'vertical') { this._drawVerticalTick(id, e.dz); return; }
+              if (e.kind === 'wrap')     { this._drawWrapStub(id, e.dx, e.dy); return; }
+              // normal + long: full connector line (drawnEdges dedups already)
+              if (this.rooms.has(e.to))  { this._drawEdge(id, e.to); }
+          });
+      } else {
+          // Fallback path: rooms added via Room.Info (no ExitsMeta), use Exits array.
+          const exits = Array.isArray(me.Exits) ? me.Exits : [];
 
-      // draw others’ exits back to it
-      this.rooms.forEach(({
-          room
-      }, otherId) => {
-          if (otherId === id) return;
-          const oe = Array.isArray(room.Exits) ? room.Exits : [];
-          if (oe.some(x => ((typeof x === 'object') ? x.RoomId : x) === id)) {
-              this._drawEdge(otherId, id);
-          }
-      });
+          // draw its own exits
+          exits.forEach(e => {
+              const to = (typeof e === 'object') ? e.RoomId : e;
+              if (this.rooms.has(to)) this._drawEdge(id, to);
+          });
+
+          // draw others' exits back to it
+          this.rooms.forEach(({ room }, otherId) => {
+              if (otherId === id) return;
+              const oe = Array.isArray(room.Exits) ? room.Exits : [];
+              if (oe.some(x => ((typeof x === 'object') ? x.RoomId : x) === id)) {
+                  this._drawEdge(otherId, id);
+              }
+          });
+      }
   }
 
   _drawEdge(a, b) {
@@ -279,23 +348,89 @@ class RoomGridSVG {
       if (this.drawnEdges.has(key)) return;
       this.drawnEdges.add(key);
 
-      const ra = this.rooms.get(a)
-          .room;
-      const rb = this.rooms.get(b)
-          .room;
-      const x1 = ra.x * this.spacing + this.cellSize / 2;
-      const y1 = ra.y * this.spacing + this.cellSize / 2;
-      const x2 = rb.x * this.spacing + this.cellSize / 2;
-      const y2 = rb.y * this.spacing + this.cellSize / 2;
+      const ra = this.rooms.get(a).room;
+      const rb = this.rooms.get(b).room;
+      // rooms are centered on grid coords — no cellSize offset needed
+      const x1 = ra.x * this.spacing;
+      const y1 = ra.y * this.spacing;
+      const x2 = rb.x * this.spacing;
+      const y2 = rb.y * this.spacing;
 
       const line = document.createElementNS(this.svg.namespaceURI, 'line');
       line.setAttribute('x1', x1);
       line.setAttribute('y1', y1);
       line.setAttribute('x2', x2);
       line.setAttribute('y2', y2);
-      line.setAttribute('stroke', this.roomEdgeColor);
-      line.setAttribute('stroke-width', '20');
+      line.setAttribute('stroke', this.connectionColor);
+      line.setAttribute('stroke-width', this.connectionWidth);
       this.connectionsGroup.appendChild(line);
+  }
+
+  /**
+   * Draw a teal stub + chevron for a wrap exit pointing off room's edge.
+   * Dedup: skipped if this room+direction combo was already drawn this zone
+   * (mirrors drawnEdges pattern — see drawnWrapStubs in constructor).
+   */
+  _drawWrapStub(id, dx, dy) {
+      const me = this.rooms.get(id); if (!me) return;
+      // Dedup: same approach as drawnEdges (approach (a)) — keyed by id:dx:dy
+      const key = `${id}:${dx}:${dy}`;
+      if (this.drawnWrapStubs.has(key)) return;
+      this.drawnWrapStubs.add(key);
+
+      const cx = me.room.x * this.spacing, cy = me.room.y * this.spacing;
+      let ux = dx === 0 ? 0 : (dx > 0 ? 1 : -1);
+      let uy = dy === 0 ? 0 : (dy > 0 ? 1 : -1);
+      const mag = Math.hypot(ux, uy) || 1;
+      ux /= mag; uy /= mag;
+      const len = this.roomSize * 1.4, start = this.roomSize * 0.55;
+      const ex = cx + ux * (start + len), ey = cy + uy * (start + len);
+      const WC = this.wrapColor;
+      const line = document.createElementNS(this.svg.namespaceURI, 'line');
+      line.setAttribute('x1', cx + ux * start); line.setAttribute('y1', cy + uy * start);
+      line.setAttribute('x2', ex); line.setAttribute('y2', ey);
+      line.setAttribute('stroke', WC); line.setAttribute('stroke-width', this.connectionWidth);
+      line.setAttribute('stroke-linecap', 'round');
+      this.connectionsGroup.appendChild(line);
+      // Chevron arms: perpendicular to the outward direction
+      const px = -uy, py = ux, c = this.roomSize * 0.28, b = this.roomSize * 0.34;
+      [1, -1].forEach(sgn => {
+          const ch = document.createElementNS(this.svg.namespaceURI, 'line');
+          ch.setAttribute('x1', ex); ch.setAttribute('y1', ey);
+          ch.setAttribute('x2', ex - ux * b + px * c * sgn);
+          ch.setAttribute('y2', ey - uy * b + py * c * sgn);
+          ch.setAttribute('stroke', WC); ch.setAttribute('stroke-width', this.connectionWidth);
+          ch.setAttribute('stroke-linecap', 'round');
+          this.connectionsGroup.appendChild(ch);
+      });
+  }
+
+  /**
+   * Draw a faint ▲/▼ tick on the room for vertical exits (up/down).
+   * Tick lives in the room's own <g> so it moves/clears with the room.
+   * Dedup: skipped if this room+dz-sign combo was already drawn this zone
+   * (mirrors drawnEdges pattern — see drawnVerticalTicks in constructor).
+   */
+  _drawVerticalTick(id, dz) {
+      const me = this.rooms.get(id); if (!me) return;
+      // Dedup: keyed by id:sign(dz) — one up-tick and one down-tick max per room
+      const sign = dz > 0 ? 'u' : 'd';
+      const key = `${id}:${sign}`;
+      if (this.drawnVerticalTicks.has(key)) return;
+      this.drawnVerticalTicks.add(key);
+
+      const s = this.roomSize;
+      const cx = me.room.x * this.spacing, cy = me.room.y * this.spacing;
+      const t = document.createElementNS(this.svg.namespaceURI, 'text');
+      t.setAttribute('x', cx + s * 0.42);
+      t.setAttribute('y', cy + (dz > 0 ? -s * 0.30 : s * 0.46));
+      t.setAttribute('text-anchor', 'middle');
+      t.setAttribute('font-size', s * 0.32);
+      t.setAttribute('fill', this.verticalTickColor);
+      t.setAttribute('opacity', '0.6');
+      t.setAttribute('pointer-events', 'none');
+      t.textContent = dz > 0 ? '▲' : '▼'; // ▲ up / ▼ down
+      me.group.appendChild(t);
   }
 
   _updateBounds() {
@@ -335,3 +470,20 @@ class RoomGridSVG {
       this.svg.setAttribute('viewBox', `${x0} ${y0} ${hw*2} ${hh*2}`);
   }
 }
+
+// ── Biome tint lookup table ───────────────────────────────────────────────────
+RoomGridSVG.DEFAULT_BIOME_TINTS = {
+  "city":     "#3a342c", "town":     "#3a342c",
+  "forest":   "#25382a", "swamp":    "#243226", "marsh":    "#243226",
+  "water":    "#243246", "lake":     "#243246", "river":    "#243246",
+  "hills":    "#3e3422", "mountain": "#3e3422",
+  "cave":     "#2c2530", "dungeon":  "#2c2530",
+  "desert":   "#3e3622", "road":     "#3a3226",
+  "_default": "#2a2018"
+};
+
+RoomGridSVG.prototype.tintFor = function (biome) {
+  if (!biome) return this.biomeTints._default;
+  const key = String(biome).toLowerCase();
+  return this.biomeTints[key] || this.biomeTints._default;
+};

@@ -290,6 +290,9 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				RoomId: destRoom.RoomId,
 			}, bridge, bridge)
 
+			// Record this room as visited for fog-of-war web map.
+			user.Character.MarkRoomVisited(destRoom.Zone, destRoom.RoomId)
+
 			// Tell the player they are moving
 			if isSneaking {
 				user.SendText(messaging.CategoryRoomExit,

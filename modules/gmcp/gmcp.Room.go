@@ -354,6 +354,11 @@ func (g *GMCPRoomModule) GetRoomNode(user *users.UserRecord, gmcpModule string) 
 		payload.Description = room.Description
 		payload.Area = room.Zone
 		payload.Environment = room.GetBiome().Name
+		if room.MapSymbol != `` {
+			payload.Symbol = room.MapSymbol
+		} else if b := room.GetBiome(); b != nil {
+			payload.Symbol = b.SymbolString()
+		}
 		payload.Details = []string{}
 
 		// Coordinates
@@ -481,6 +486,7 @@ type GMCPRoomModule_Payload struct {
 	Description string                                              `json:"description"`
 	Area        string                                              `json:"area"`
 	Environment string                                              `json:"environment"`
+	Symbol      string                                              `json:"symbol"`
 	Coordinates string                                              `json:"coords"`
 	Exits       map[string]int                                      `json:"exits"`
 	ExitsV2     map[string]GMCPRoomModule_Payload_Contents_ExitInfo `json:"exitsv2"`

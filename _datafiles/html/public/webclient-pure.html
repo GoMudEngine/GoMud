@@ -531,6 +531,19 @@
             "Party.Vitals": function() {
                 updateVitalsWindow();
             },
+            "Zone.Map": function() {
+                var obj = GMCPStructs["Zone"];
+                if ( !obj || !obj.Map ) {
+                    return;
+                }
+                if ( GMCPWindows['Map'] === false ) {
+                    return;
+                }
+                if ( GMCPWindows['Map'] && gr && gr.setZoneSnapshot ) {
+                    gr.setZoneSnapshot(obj.Map.zone, obj.Map.rooms || []);
+                    GMCPWindows['Map'].setTitle('Map (' + obj.Map.zone + ')');
+                }
+            },
         };
 
         // Build a single vitals row DOM element

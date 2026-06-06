@@ -304,3 +304,150 @@ if shopResult.Found {
 - **Performance Metrics**: Analysis of pathfinding performance and efficiency
 - **Error Reporting**: Comprehensive error reporting and analysis
 - **Optimization Recommendations**: Automated suggestions for world optimization
+
+## Cartesian Consistency Engine
+
+The mapper enforces geometric coherence between room coordinates and
+declared exits. The entry point is `ValidateZoneConsistency()`, called
+at the tail of `PreCacheMaps()` and gated by the config knob
+`GamePlay.MapConsistencyEnforce` (`off` | `warn` (default) | `panic`).
+The same logic is exposed on demand via the `cartcheck [zone]` admin
+command (`internal/usercommands/admin.cartcheck.go`).
+
+### Core Method
+
+```go
+(*mapper).CheckConsistency(zone string, nonCartesian bool) []Finding
+```
+
+Scans `crawledRooms` (the `map[int]*mapNode` populated during BFS
+crawl) for the zone and returns a slice of findings. `RoomGrid` is a
+separate struct over a `[][][]*mapNode` 3D slice used for rendering, not
+for consistency checks. The `nonCartesian` flag is sourced from the
+zone's `zone-config.yaml` field `non_cartesian: true`; when set, only
+`longcrossing` warnings are emitted (the hard checks are skipped).
+
+### Exit Kind Classification
+
+```go
+func classifyKind(nominal, actual positionDelta) ExitKind
+```
+
+Exit-kind classifier used by the map snapshot/render layer (consumed in
+later tasks). Compares the nominal compass delta (what the exit direction
+implies) to the actual coordinate delta (the difference between the two
+rooms' positions). Returns one of four `ExitKind` values:
+
+**Note:** `CheckConsistency` does NOT call `classifyKind`. Detection of
+`deltamismatch` and `longcrossing` is performed via inline delta
+comparisons (`samePos`) directly inside `CheckConsistency`.
+
+| Kind       | Meaning                                                     |
+|------------|-------------------------------------------------------------|
+| `normal`   | Nominal == actual (standard single-cell step)               |
+| `long`     | Same direction, magnitude > 1 (multi-cell connector)        |
+| `vertical` | One axis is Z only (up/down exits)                          |
+| `wrap`     | Nominal and actual differ — toroidal or maze-style crossing |
+
+**Important:** `classifyKind` uses the helper `samePos(a, b positionDelta)`,
+which compares only the `x`, `y`, `z` fields. Never compare
+`positionDelta` values with `==` directly — the struct also carries an
+`arrow` display field that will cause false mismatches.
+
+### Finding Kinds
+
+| Kind            | Severity | Description                                              |
+|-----------------|----------|----------------------------------------------------------|
+| `collision`     | error    | Two distinct rooms share the same (x,y,z) coordinate.   |
+|                 |          | Detected by grouping `crawledRooms` nodes by their       |
+|                 |          | `(x,y,z)` Pos. Scanning `crawledRooms` (not `RoomGrid`)  |
+|                 |          | is required because `RoomGrid` is a 3D slice: when two   |
+|                 |          | rooms land on the same cell, the slice assignment keeps  |
+|                 |          | only the last writer, making the collision invisible     |
+|                 |          | there — every room is present in `crawledRooms`.         |
+| `noreciprocal`  | error    | A spatial exit has no matching return exit in the        |
+|                 |          | opposite direction, and the exit is not marked           |
+|                 |          | `oneway: true`.                                          |
+| `deltamismatch` | error    | Exit's compass direction does not match the actual       |
+|                 |          | coordinate delta between the two rooms — a wrap exit     |
+|                 |          | inside a Cartesian zone.                                 |
+| `longcrossing`  | warning  | A long-connector exit's straight span passes through     |
+|                 |          | another room's occupied cell. Always emitted regardless  |
+|                 |          | of `non_cartesian` setting.                              |
+
+### Exemptions
+
+The engine automatically skips:
+- **Non-compass exits** (portals, named exits): filtered via the
+  `getMapNode` `mapdirection→name→skip` rule; they are not spatial edges.
+- **Ephemeral/instance rooms**: checked via `rooms.IsEphemeralRoomId`.
+- **`oneway: true` exits**: exempt from `noreciprocal`; still
+  collision-checked.
+- **`non_cartesian: true` zones**: exempt from `collision`,
+  `noreciprocal`, and `deltamismatch`; their wrap exits render as
+  edge stubs in the web mapper.
+
+### Authoring Primitives
+
+- **`oneway: true`** on an exit YAML field — marks an intentional
+  one-way passage; suppresses the reciprocity check for that exit.
+- **`non_cartesian: true`** in a zone's `zone-config.yaml` — marks the
+  entire zone as toroidal/maze geometry; skips the three hard checks
+  zone-wide.
+
+### Known Limitation: Cross-Zone Crawl
+
+`CheckConsistency` operates on the BFS-populated `crawledRooms` map,
+which follows all exits and can cross zone boundaries. This is mitigated
+at the reporting layer by `FilterFindingsToZone`, which drops any finding
+whose room's owning `zone:` field does not match the zone being checked.
+Both `ValidateZoneConsistency` (startup) and `CartCheck` (admin command)
+apply this filter, so findings are correctly scoped to their owning zone.
+
+## Fog-of-War Snapshot (Web Map)
+
+### File
+
+`mapper.snapshot.go`
+
+### Types
+
+```go
+type SnapshotRoom struct {
+    RoomId int            `json:"num"`
+    X      int            `json:"x"`
+    Y      int            `json:"y"`
+    Z      int            `json:"z"`
+    Symbol string         `json:"symbol"`
+    Biome  string         `json:"biome"`
+    Exits  []SnapshotExit `json:"exits"`
+}
+
+type SnapshotExit struct {
+    ToRoomId int      `json:"to"`
+    DX       int      `json:"dx"`
+    DY       int      `json:"dy"`
+    DZ       int      `json:"dz"`
+    Kind     ExitKind `json:"kind"`
+}
+```
+
+### Method
+
+```go
+func (r *mapper) Snapshot(visited map[int]struct{}) []SnapshotRoom
+```
+
+Iterates `crawledRooms` and returns only rooms whose ID is present in
+`visited`. For each included room, exits are also filtered: an exit is
+included only if its destination room is in `visited` (fog of war — the
+client never learns about rooms the player hasn't been to). Each exit's
+`Kind` is set by `classifyKind(nominal, actual)` — the same classifier
+used by the consistency engine.
+
+This method is the sole output consumed by the `gmcp.Zone` module
+(`modules/gmcp/gmcp.Zone.go`), which builds the `Zone.Map` GMCP payload
+and sends it to the web client on every room change. The web client
+renderer (`RoomGridSVG` in `gmcp.js`) uses the `kind` field to route
+each exit to its correct visual treatment: connector line (`normal`/
+`long`), teal edge-stub with chevron (`wrap`), or ▲/▼ tick (`vertical`).

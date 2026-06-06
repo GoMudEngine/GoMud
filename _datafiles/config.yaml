@@ -293,6 +293,14 @@ GamePlay:
   #   Requires UseSkillProgression to be true. When enabled, progression
   #   checks grant actual skill/stat increases.
   DualProgressionMode: true
+  # - MapConsistencyEnforce -
+  #   Cartesian map consistency enforcement at startup:
+  #     off   = no checking
+  #     warn  = log collisions / non-reciprocal exits, server still boots (default)
+  #     panic = block server boot on any inconsistency
+  #   Toroidal/maze zones must set `non_cartesian: true` in their zone-config.yaml
+  #   to be exempt; one-way exits use `oneway: true` on the exit.
+  MapConsistencyEnforce: warn
 
 ################################################################################
 #
