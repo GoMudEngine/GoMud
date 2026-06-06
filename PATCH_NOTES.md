@@ -1,5 +1,36 @@
 # DOGMud Patch Notes
 
+## 2026-06-06 — Tooled-leather web mapper with connection types and party markers
+
+The web map got a full visual overhaul alongside new data from the server.
+
+- **Antique tooled-leather style.** The map now renders on a fixed
+  leather-textured SVG surface (the frame) with a nested pannable world
+  view. The aesthetic is hand-tooled parchment rather than a flat grid,
+  giving the map a world-artifact feel.
+- **Per-exit connection styling.** Every connection line is styled by
+  exit type: biome-aware roads, trails, and waterways; locked doors;
+  secret passages (dimmed/dashed); one-way arrows; gate/barrier exits;
+  cross-zone boundary stubs labeled with the destination zone; and
+  fog-of-war stubs that hint an unexplored passage continues beyond the
+  known edge.
+- **Stairs ticks.** Vertical exits (up/down) draw a faint ▲ or ▼ tick
+  on the room node — unchanged from the previous pass, but now correctly
+  styled against the leather background.
+- **Party-member markers.** The server now includes a `party` field in
+  the `Zone.Map` GMCP payload (a list of room IDs occupied by party
+  members). The client renders small figures on those nodes so you can
+  see where your group is on the map at a glance.
+- **Raised current-room node.** Your current room is rendered with a
+  drop-shadow lift, making it immediately distinguishable from adjacent
+  rooms.
+- **Server-side snapshot additions.** `SnapshotExit` gained `Locked`,
+  `Secret`, `OneWay`, `Gate`, `Stub`, and `ToZone` fields. Unvisited
+  and cross-zone exits are now emitted as stub entries (previously
+  dropped) so the client can render passage hints without revealing
+  unvisited room details. `nodeExit.Gate` is derived from the exit's
+  `ExitMessage` field.
+
 ## 2026-06-06 — Cartesian map consistency engine
 
 Under-the-hood infrastructure that keeps the world map geometrically

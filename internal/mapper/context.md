@@ -451,3 +451,102 @@ and sends it to the web client on every room change. The web client
 renderer (`RoomGridSVG` in `gmcp.js`) uses the `kind` field to route
 each exit to its correct visual treatment: connector line (`normal`/
 `long`), teal edge-stub with chevron (`wrap`), or ▲/▼ tick (`vertical`).
+
+### SnapshotExit Extended Fields
+
+`SnapshotExit` carries additional flags that inform per-exit visual
+styling on the client:
+
+```go
+type SnapshotExit struct {
+    ToRoomId int      `json:"to"`
+    DX       int      `json:"dx"`
+    DY       int      `json:"dy"`
+    DZ       int      `json:"dz"`
+    Kind     ExitKind `json:"kind"`
+    Locked   bool     `json:"locked,omitempty"`
+    Secret   bool     `json:"secret,omitempty"`
+    OneWay   bool     `json:"oneway,omitempty"`
+    Gate     bool     `json:"gate,omitempty"`
+    Stub     bool     `json:"stub,omitempty"`
+    ToZone   string   `json:"tozone,omitempty"`
+}
+```
+
+- `Locked` — exit has a key requirement (room has a lock or door key set).
+- `Secret` — exit is normally hidden from plain sight.
+- `OneWay` — exit is flagged `oneway: true`; no return exit expected.
+- `Gate` — set when the exit's `ExitMessage != ""`; indicates a barrier
+  or door with flavor text (portcullises, heavy doors, etc.).
+- `Stub` — the destination room is **not** in the visited set (unvisited)
+  or is in a different zone. Stub exits are now emitted by `Snapshot`
+  instead of being dropped, so the client can render a visual hint that
+  a passage continues beyond the fog boundary.
+- `ToZone` — populated on cross-zone stub exits; contains the destination
+  zone name. Allows the client to label or style zone-boundary exits
+  distinctly.
+
+**Prior behavior:** `Snapshot` dropped exits whose destination was not in
+the visited set. After this change it emits them as `Stub: true` entries,
+giving the client enough information to draw a "passage continues"
+indicator without revealing the destination room's details.
+
+### nodeExit.Gate
+
+`nodeExit` (the internal per-exit node built during BFS crawl) gained a
+`Gate bool` field set from `exit.ExitMessage != ""`. This propagates to
+`SnapshotExit.Gate` during snapshot construction.
+
+## Map Consumers
+
+The mapper data is consumed by two independent rendering paths:
+
+### (a) In-Game ASCII `map` Command
+
+`internal/usercommands/skill.map.go` calls `GetLimitedMap` and
+`GetLegend` to render a terminal-width ASCII map scaled by the player's
+Perception skill. Symbol legend:
+
+| Symbol | Meaning              |
+|--------|----------------------|
+| `@`    | You (current room)   |
+| `☺`    | Player / Party / NPC |
+| `☠`    | Hostile mob          |
+| `☹`    | Friendly NPC         |
+| *(biome/mapsymbol)* | Room terrain glyph |
+
+Detail level (visible radius, secret/locked display) scales with
+Perception. This path is text-only and has no awareness of the
+`SnapshotExit` extended flags or `Zone.Map.Party`.
+
+### (b) Web Leather Map (GMCP `Zone.Map`)
+
+The `Zone.Map` GMCP snapshot (`Snapshot`) feeds the browser client.
+The `Zone.Map` payload now includes a `Party []int` field — a list of
+room IDs currently occupied by party members — enabling the client to
+render party-member position markers on the map.
+
+The web renderer (`RoomGridSVG` in
+`_datafiles/html/public/static/js/gmcp.js`) presents an **antique
+tooled-leather** themed map: a fixed leather-textured SVG surface holds
+a nested pannable `worldSvg` containing the room grid. Connection
+styling is per-exit-type:
+
+- **Biome roads/trails/water** — line color/style derived from room biome.
+- **Locked** — distinctive styling for keyed doors.
+- **Secret** — rendered as a dimmed or dashed connector.
+- **One-way** — directional arrow or asymmetric line weight.
+- **Gate** — styled to suggest a barrier (portcullis texture or color).
+- **Stairs** — ▲/▼ ticks on the room node for `vertical` exits.
+- **Cross-zone stubs** — short labeled stubs at the zone boundary.
+- **Fog stubs** — dim stubs for unvisited exits (stub exits in the
+  snapshot).
+
+Party markers are small figures drawn on the room node for each room ID
+in `Zone.Map.party`. The current player's room is rendered with a raised
+(drop-shadow) treatment to distinguish it from adjacent rooms.
+
+Visual source of truth: `docs/superpowers/specs/2026-06-06-mapper-leather-mockups/`.
+
+Connection-type styling and party markers are **web-only** — the ASCII
+`map` command does not reflect these.

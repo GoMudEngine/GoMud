@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mapper — connection types v2</title>
+<style>
+  body{background:#0f0c08;color:#d8c9aa;font-family:Segoe UI,Arial,sans-serif;margin:0;padding:18px;}
+  h2{color:#e0b85a;margin:0 0 4px;font-size:20px;}
+  .sub{color:#9a8a6a;font-size:13px;margin:0 0 16px;line-height:1.4;max-width:880px;}
+  .wrap{max-width:560px;}
+  .mapbox{height:520px;background:#0a0806;border-radius:4px;box-shadow:0 6px 18px rgba(0,0,0,0.6);}
+</style>
+</head>
+<body>
+  <h2>Connection types &mdash; v2 (archway gate + locked door)</h2>
+  <p class="sub">Updated icons: <b>Gated Arch</b> now draws a small archway over the passage, and <b>Locked Door</b> draws a little keyholed door across the path. Everything else as approved.</p>
+  <div class="wrap"><div class="mapbox"><div id="m" style="width:100%;height:100%"></div></div></div>
+  <p class="sub" style="margin-top:14px">Good? Any size/shape tweaks to the arch or door, then I'll lock the full design and build it for real.</p>
+
+<script>
+"use strict";
+var NS="http://www.w3.org/2000/svg";
+var SP=78, SPY=70, OFFX=170, OFFY=210;
+function px(x){return x*SP+OFFX;}
+function py(y){return y*SPY+OFFY;}
+function el(t,a){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);return e;}
+function txt(a,s){var e=el("text",a);e.textContent=s;return e;}
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+var HI="#efce8c",SH="#140b04",INK="#c9a86a",INK2="#9c8048",LOCK="#d0633f",WATER="#6f99c0",TRAIL="#a98a55",PARTY="#6bb0a0";
+var d=0.6;
+function embLine(g,x1,y1,x2,y2,col,w,op){g.appendChild(el("line",{x1:x1+d,y1:y1+d,x2:x2+d,y2:y2+d,stroke:SH,"stroke-width":w,opacity:0.55*op,"stroke-linecap":"round"}));g.appendChild(el("line",{x1:x1-d,y1:y1-d,x2:x2-d,y2:y2-d,stroke:HI,"stroke-width":w,opacity:0.45*op,"stroke-linecap":"round"}));g.appendChild(el("line",{x1:x1,y1:y1,x2:x2,y2:y2,stroke:col,"stroke-width":w,opacity:op,"stroke-linecap":"round"}));}
+function embCirc(g,cx,cy,r,fs,ff,w,dd){dd=dd||d;g.appendChild(el("circle",{cx:cx+dd,cy:cy+dd,r:r,fill:"none",stroke:SH,"stroke-width":w,opacity:"0.55"}));g.appendChild(el("circle",{cx:cx-dd,cy:cy-dd,r:r,fill:"none",stroke:HI,"stroke-width":w,opacity:"0.4"}));g.appendChild(el("circle",{cx:cx,cy:cy,r:r,fill:ff,stroke:fs,"stroke-width":w}));}
+
+var c=document.getElementById("m"),W=440,H=440,rnd=rng(5);
+var svg=el("svg",{viewBox:"0 0 "+W+" "+H,preserveAspectRatio:"xMidYMid meet"});svg.style.width="100%";svg.style.height="100%";c.appendChild(svg);
+var defs=el("defs",{});
+var bg=el("radialGradient",{id:"bg",cx:"45%",cy:"36%",r:"82%"});[["0%","#43301d"],["55%","#2c1d11"],["100%","#170e07"]].forEach(function(s){bg.appendChild(el("stop",{offset:s[0],"stop-color":s[1]}));});defs.appendChild(bg);
+var f=el("filter",{id:"grain"});f.appendChild(el("feTurbulence",{type:"fractalNoise",baseFrequency:"0.85",numOctaves:"2",stitchTiles:"stitch",result:"n"}));f.appendChild(el("feColorMatrix",{in:"n",type:"matrix",values:"0 0 0 0 0.05  0 0 0 0 0.035  0 0 0 0 0.02  0 0 0 0.6 0"}));defs.appendChild(f);
+var vg=el("radialGradient",{id:"vig",cx:"50%",cy:"48%",r:"62%"});vg.appendChild(el("stop",{offset:"50%","stop-color":"#000","stop-opacity":"0"}));vg.appendChild(el("stop",{offset:"100%","stop-color":"#000","stop-opacity":"0.5"}));defs.appendChild(vg);
+svg.appendChild(defs);
+svg.appendChild(el("rect",{x:0,y:0,width:W,height:H,fill:"url(#bg)"}));
+svg.appendChild(el("rect",{x:0,y:0,width:W,height:H,filter:"url(#grain)",opacity:"0.4"}));
+(function(){var step=26,jit=10,nx=Math.floor((W-48)/step),ny=Math.floor((H-48)/step),grid=[];for(var iy=0;iy<=ny;iy++){grid[iy]=[];for(var ix=0;ix<=nx;ix++)grid[iy][ix]=[24+ix*step+(rnd()-0.5)*jit,24+iy*step+(rnd()-0.5)*jit];}function seg(a,b){if(rnd()<0.16)return;var mx=(a[0]+b[0])/2+(rnd()-0.5)*7,my=(a[1]+b[1])/2+(rnd()-0.5)*7;svg.appendChild(el("polyline",{points:a[0].toFixed(1)+","+a[1].toFixed(1)+" "+mx.toFixed(1)+","+my.toFixed(1)+" "+b[0].toFixed(1)+","+b[1].toFixed(1),fill:"none",stroke:"#120a04","stroke-width":(0.3+rnd()*0.4).toFixed(2),opacity:"0.30"}));}for(var iy2=0;iy2<=ny;iy2++)for(var ix2=0;ix2<=nx;ix2++){if(ix2<nx)seg(grid[iy2][ix2],grid[iy2][ix2+1]);if(iy2<ny)seg(grid[iy2][ix2],grid[iy2+1][ix2]);}})();
+[[18,18,W-18,18],[W-18,18,W-18,H-18],[W-18,H-18,18,H-18],[18,H-18,18,18]].forEach(function(L){embLine(svg,L[0],L[1],L[2],L[3],INK,2.2,1);});
+[[18,18,1,1],[W-18,18,-1,1],[18,H-18,1,-1],[W-18,H-18,-1,-1]].forEach(function(c4){embCirc(svg,c4[0]+c4[2]*16,c4[1]+c4[3]*16,2.6,INK,INK,0.6,0.5);});
+svg.appendChild(txt({x:W/2,y:40,"text-anchor":"middle","font-family":"Georgia,serif","font-size":15,fill:"#e8d2a0","font-style":"italic","font-weight":"bold"},"Connection Types"));
+
+function arrowhead(g,x,y,ang,col){var b=6,c2=4,px1=-Math.sin(ang),py1=Math.cos(ang);[1,-1].forEach(function(sg){g.appendChild(el("line",{x1:x,y1:y,x2:x-Math.cos(ang)*b+px1*c2*sg,y2:y-Math.sin(ang)*b+py1*c2*sg,stroke:col,"stroke-width":1.6,"stroke-linecap":"round"}));});}
+function mid(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];}
+
+function drawConn(a,b,type){
+  var x1=a[0],y1=a[1],x2=b[0],y2=b[1],ang=Math.atan2(y2-y1,x2-x1),m=mid(a,b,0.5),pxn=-Math.sin(ang),pyn=Math.cos(ang),ca=Math.cos(ang),sa=Math.sin(ang);
+  if(type==="road"||type==="road_long"){embLine(svg,x1,y1,x2,y2,INK,3.0,0.95);svg.appendChild(el("line",{x1:x1,y1:y1,x2:x2,y2:y2,stroke:"#241810","stroke-width":0.8,"stroke-dasharray":"1 3",opacity:"0.8"}));
+    if(type==="road_long"){[0.38,0.62].forEach(function(tt){var p=mid(a,b,tt);svg.appendChild(el("line",{x1:p[0]+pxn*4,y1:p[1]+pyn*4,x2:p[0]-pxn*4,y2:p[1]-pyn*4,stroke:INK,"stroke-width":1.2}));});}}
+  else if(type==="trail"){svg.appendChild(el("line",{x1:x1+d*0.6,y1:y1+d*0.6,x2:x2+d*0.6,y2:y2+d*0.6,stroke:SH,"stroke-width":1.5,"stroke-dasharray":"4 3",opacity:"0.4"}));svg.appendChild(el("line",{x1:x1,y1:y1,x2:x2,y2:y2,stroke:TRAIL,"stroke-width":1.5,"stroke-dasharray":"4 3",opacity:"0.92"}));}
+  else if(type==="water"){svg.appendChild(el("line",{x1:x1,y1:y1,x2:x2,y2:y2,stroke:WATER,"stroke-width":1.8,"stroke-dasharray":"2 3",opacity:"0.92"}));}
+  else if(type==="ridge"){embLine(svg,x1,y1,x2,y2,TRAIL,1.7,0.9);}
+  else if(type==="locked"){
+    // near half (player side) normal; far half (beyond the locked door) red
+    svg.appendChild(el("line",{x1:x1,y1:y1,x2:m[0],y2:m[1],stroke:INK2,"stroke-width":1.4,"stroke-dasharray":"3 3",opacity:"0.8"}));
+    svg.appendChild(el("line",{x1:m[0],y1:m[1],x2:x2,y2:y2,stroke:LOCK,"stroke-width":1.4,"stroke-dasharray":"3 3",opacity:"0.9"}));
+    function dp(ox,oy){var L=m[0]-3.6+ox,Rt=m[0]+3.6+ox,bot=m[1]+5.4+oy,sh=m[1]-2+oy,top=m[1]-5.6+oy,cxx=m[0]+ox;
+      return "M"+L+","+bot+" L"+L+","+sh+" Q"+L+","+top+" "+cxx+","+top+" Q"+Rt+","+top+" "+Rt+","+sh+" L"+Rt+","+bot+" Z";}
+    svg.appendChild(el("path",{d:dp(d,d),fill:SH,opacity:"0.5"}));
+    svg.appendChild(el("path",{d:dp(0,0),fill:"#2a1d12",stroke:INK,"stroke-width":1.1}));
+    svg.appendChild(el("path",{d:dp(-d,-d),fill:"none",stroke:HI,"stroke-width":0.8,opacity:"0.5"}));
+    svg.appendChild(el("line",{x1:m[0],y1:m[1]-4.4,x2:m[0],y2:m[1]+4.8,stroke:INK,"stroke-width":0.5,opacity:"0.55"})); // plank seam
+    svg.appendChild(el("circle",{cx:m[0]+1.7,cy:m[1]+0.4,r:0.95,fill:LOCK}));                                          // keyhole
+    svg.appendChild(el("line",{x1:m[0]+1.7,y1:m[1]+0.8,x2:m[0]+1.7,y2:m[1]+2.4,stroke:LOCK,"stroke-width":0.7}));
+  }
+  else if(type==="secret"){svg.appendChild(el("line",{x1:x1,y1:y1,x2:x2,y2:y2,stroke:"#8a7a55","stroke-width":1.1,"stroke-dasharray":"1 4",opacity:"0.6"}));svg.appendChild(txt({x:m[0],y:m[1]-3,"text-anchor":"middle","font-family":"Georgia,serif","font-size":10,"font-weight":"bold",fill:"#8a7a55",opacity:"0.85"},"?"));}
+  else if(type==="oneway"){embLine(svg,x1,y1,x2,y2,INK,1.6,0.9);var ap2=mid(a,b,0.72);arrowhead(svg,ap2[0],ap2[1],ang,INK);}
+  else if(type==="gate"){
+    // passage under a small archway
+    embLine(svg,x1,y1,x2,y2,INK,2.2,0.92);
+    var f1=[m[0]+pxn*6,m[1]+pyn*6], f2=[m[0]-pxn*6,m[1]-pyn*6], bow=7, ctl=[m[0]+ca*bow,m[1]+sa*bow];
+    function ap(ox,oy){return "M"+(f1[0]+ox)+","+(f1[1]+oy)+" Q"+(ctl[0]+ox)+","+(ctl[1]+oy)+" "+(f2[0]+ox)+","+(f2[1]+oy);}
+    svg.appendChild(el("path",{d:ap(d,d),fill:"none",stroke:SH,"stroke-width":1.7,opacity:"0.55","stroke-linecap":"round"}));
+    svg.appendChild(el("path",{d:ap(-d,-d),fill:"none",stroke:HI,"stroke-width":1.7,opacity:"0.45","stroke-linecap":"round"}));
+    svg.appendChild(el("path",{d:ap(0,0),fill:"none",stroke:INK,"stroke-width":1.7,"stroke-linecap":"round"}));
+    // little feet/posts at the arch base
+    [f1,f2].forEach(function(ff){svg.appendChild(el("line",{x1:ff[0]-ca*2,y1:ff[1]-sa*2,x2:ff[0]+ca*2,y2:ff[1]+sa*2,stroke:INK,"stroke-width":1.6,"stroke-linecap":"round"}));});
+  }
+}
+
+var spokes=[
+ {x:0,y:-2,name:"Highway",type:"road_long"},
+ {x:1,y:-1,name:"Forest Trail",type:"trail"},
+ {x:1,y:0,name:"Ford",type:"water"},
+ {x:1,y:1,name:"Ridge Path",type:"ridge"},
+ {x:0,y:1,name:"Locked Door",type:"locked"},
+ {x:-1,y:1,name:"One-way Chute",type:"oneway"},
+ {x:-1,y:0,name:"Secret Passage",type:"secret"},
+ {x:-1,y:-1,name:"Gated Arch",type:"gate"}
+];
+var cx0=px(0),cy0=py(0);
+spokes.forEach(function(s){drawConn([cx0,cy0],[px(s.x),py(s.y)],s.type);});
+(function(){var fx=px(1),fy=py(0);embLine(svg,fx+11,fy,fx+34,fy,INK,2.4,0.85);svg.appendChild(txt({x:fx+40,y:fy+3,"font-family":"Georgia,serif","font-size":9,"font-style":"italic",fill:INK},"→ Mire Road"));})();
+
+function roomToken(s){var cx=px(s.x),cy=py(s.y);embCirc(svg,cx,cy,6.5,INK,"#2a1d12",1.2,d*0.7);svg.appendChild(txt({x:cx,y:cy+18,"text-anchor":"middle","font-family":"Georgia,serif","font-size":9,"font-style":"italic",fill:"#e8d8b8"},s.name));}
+spokes.forEach(roomToken);
+svg.appendChild(el("circle",{cx:cx0,cy:cy0,r:13,fill:"#e8c98a",opacity:"0.07"}));
+embCirc(svg,cx0,cy0,10,INK,"none",0.7,d*1.3);
+embCirc(svg,cx0,cy0,7.5,INK,"#3a2a18",1.5,d*2.4);
+svg.appendChild(txt({x:cx0,y:cy0+20,"text-anchor":"middle","font-family":"Georgia,serif","font-size":9,"font-style":"italic",fill:"#e8d8b8"},"You (stairs ▲▼)"));
+svg.appendChild(txt({x:cx0+12,y:cy0-6,"text-anchor":"middle","font-size":9,"font-weight":"bold",fill:INK},"▲"));
+svg.appendChild(txt({x:cx0+12,y:cy0+9,"text-anchor":"middle","font-size":9,"font-weight":"bold",fill:INK},"▼"));
+(function(){var r=spokes[1],mx=px(r.x)+6.5,my=py(r.y)-6.5;svg.appendChild(el("circle",{cx:mx+0.5,cy:my+0.5,r:3.4,fill:SH,opacity:"0.5"}));svg.appendChild(el("circle",{cx:mx,cy:my,r:3.4,fill:"#1c2e2a",stroke:"#243f3a","stroke-width":0.6}));svg.appendChild(el("circle",{cx:mx,cy:my-1.1,r:1.25,fill:PARTY}));svg.appendChild(el("path",{d:"M"+(mx-2)+","+(my+2.6)+" Q"+mx+","+(my-0.4)+" "+(mx+2)+","+(my+2.6)+" Z",fill:PARTY}));})();
+svg.appendChild(el("rect",{x:0,y:0,width:W,height:H,fill:"url(#vig)","pointer-events":"none"}));
+</script>
+</body>
+</html>

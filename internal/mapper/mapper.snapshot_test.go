@@ -72,8 +72,68 @@ func TestSnapshotFiltersVisitedAndClassifies(t *testing.T) {
 	if r1.Symbol != "T" {
 		t.Errorf("room 1 symbol: got %q want T", r1.Symbol)
 	}
-	// Only exits to other *visited* rooms are included; east-x3 -> room 3 (unvisited) is dropped.
-	if len(r1.Exits) != 1 || r1.Exits[0].ToRoomId != 2 || r1.Exits[0].Kind != ExitNormal {
-		t.Fatalf("room 1 exits wrong: %+v", r1.Exits)
+	// north->2 is a full edge; east-x3->3 (unvisited) is now a stub.
+	var normalExits, stubExits int
+	for _, e := range r1.Exits {
+		if e.Stub {
+			stubExits++
+			if e.Kind != ExitLong {
+				t.Fatalf("expected the east-x3 stub to be ExitLong, got %q", e.Kind)
+			}
+		} else {
+			normalExits++
+			if e.ToRoomId != 2 || e.Kind != ExitNormal {
+				t.Fatalf("expected non-stub exit to room 2 normal, got %+v", e)
+			}
+		}
+	}
+	if normalExits != 1 || stubExits != 1 {
+		t.Fatalf("expected 1 normal + 1 stub exit, got %d/%d", normalExits, stubExits)
+	}
+}
+
+func TestSnapshotExitFlagsAndStubs(t *testing.T) {
+	nodes := map[int]*mapNode{
+		1: node(1, 0, 0, 0, map[string]nodeExit{
+			"north": {RoomId: 2, Direction: d(0, -1, 0)},                     // visited -> full edge
+			"east":  {RoomId: 3, Direction: d(1, 0, 0), LockDifficulty: 25},  // visited, locked
+			"south": {RoomId: 9, Direction: d(0, 1, 0)},                      // UNVISITED/uncrawled -> stub
+			"up":    {RoomId: 4, Direction: d(0, 0, 1), Secret: true, OneWay: true, Gate: true},
+		}),
+		2: node(2, 0, -1, 0, map[string]nodeExit{}),
+		3: node(3, 1, 0, 0, map[string]nodeExit{}),
+		4: node(4, 0, 0, 1, map[string]nodeExit{}),
+	}
+	m := mkMapper(nodes)
+	visited := map[int]struct{}{1: {}, 2: {}, 3: {}, 4: {}}
+
+	snap := m.Snapshot(visited)
+	var r1 *SnapshotRoom
+	for i := range snap {
+		if snap[i].RoomId == 1 {
+			r1 = &snap[i]
+		}
+	}
+	if r1 == nil {
+		t.Fatal("room 1 missing")
+	}
+	byTo := map[int]SnapshotExit{}
+	for _, e := range r1.Exits {
+		byTo[e.ToRoomId] = e
+	}
+	if !byTo[3].Locked {
+		t.Error("east exit to 3 should be Locked")
+	}
+	if e := byTo[4]; !e.Secret || !e.OneWay || !e.Gate {
+		t.Errorf("up exit flags wrong: %+v", e)
+	}
+	if !byTo[9].Stub {
+		t.Error("south exit to unvisited/uncrawled room 9 should be a Stub")
+	}
+	if byTo[2].Stub {
+		t.Error("north exit to visited room 2 should NOT be a stub")
+	}
+	if byTo[3].Stub || byTo[4].Stub {
+		t.Error("visited destinations (3,4) should NOT be stubs")
 	}
 }

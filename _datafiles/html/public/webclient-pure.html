@@ -91,24 +91,40 @@
             }
         }
 
-        /* Sound icon in top-right corner */
+        /* Sound icon — small brass map-instrument button, top-right corner */
         #menu-icon {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 26px;
-            color: white;
-            padding: 10px;
+            top: 46px;
+            right: 8px;
+            width: 34px;
+            height: 34px;
+            box-sizing: border-box;
+            font-size: 17px;
+            line-height: 32px;
+            text-align: center;
             cursor: pointer;
             z-index: 9999;
-            background-color: rgba(30,30,30, 0.8);
-            border-radius: 5px;
+            color: #3b2a10;
+            border: 1px solid #5e431a;
+            border-radius: 50%;
+            background: radial-gradient(circle at 34% 26%, #f4dd92 0%, #cb9f42 46%, #8a6620 100%);
+            box-shadow: 0 2px 3px rgba(0,0,0,0.55),
+                        inset 0 1px 1px rgba(255,246,212,0.7),
+                        inset 0 -2px 3px rgba(74,52,16,0.55);
+            transition: filter .08s ease, transform .08s ease;
+        }
+        #menu-icon:hover { filter: brightness(1.08); }
+        #menu-icon:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 1px rgba(0,0,0,0.4),
+                        inset 0 2px 4px rgba(74,52,16,0.7),
+                        inset 0 -1px 1px rgba(255,246,212,0.4);
         }
 
         /* The floating menu container */
         #floating-menu {
             position: absolute;
-            top: 60px; /* Just below the icon */
+            top: 88px; /* Just below the icon */
             right: 10px;
             width: 450px;
             padding: 10px;
@@ -540,7 +556,7 @@
                     return;
                 }
                 if ( GMCPWindows['Map'] && gr && gr.setZoneSnapshot ) {
-                    gr.setZoneSnapshot(obj.Map.zone, obj.Map.rooms || [], obj.Map.cz || 0);
+                    gr.setZoneSnapshot(obj.Map.zone, obj.Map.rooms || [], obj.Map.cz || 0, obj.Map.party || []);
                     GMCPWindows['Map'].setTitle('Map (' + obj.Map.zone + ')');
                 }
             },

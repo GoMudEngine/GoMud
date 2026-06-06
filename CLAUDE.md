@@ -192,6 +192,22 @@ filters out unvisited rooms and their exits before sending the payload.
 The client renderer (`RoomGridSVG` in `gmcp.js`) exposes `fit`, `centerOnRoom`,
 `zoomIn`, and `zoomOut` controls.
 
+The web mapper was subsequently restyled to an **antique tooled-leather**
+aesthetic. A fixed leather-textured SVG surface (the "frame") holds a
+nested pannable `worldSvg` containing the room grid. Connections are
+styled per-exit-type, inferred from flags now carried on `SnapshotExit`:
+biome roads/trails/water (color derived from room biome), locked, secret,
+one-way, gate (from `exit.ExitMessage != ""`), stairs (▲/▼ ticks for
+`vertical` exits), cross-zone boundary stubs (`ToZone` set), and fog
+stubs for unvisited exits (`Stub: true`). Party-member positions arrive
+via `Zone.Map.party` (a `[]int` of room IDs holding party members) and
+are rendered as small figures on those room nodes; the current player's
+room is given a raised (drop-shadow) treatment. Visual source of truth:
+`docs/superpowers/specs/2026-06-06-mapper-leather-mockups/`. Client
+renderer: `RoomGridSVG` in
+`_datafiles/html/public/static/js/gmcp.js`. Connection-type styling and
+party markers are web-only — the ASCII `map` command is unaffected.
+
 ## Project Context
 - DOGMud (Delusions of Grandeur) is a MUD built on the GoMud engine
 - World design document: `world.md`

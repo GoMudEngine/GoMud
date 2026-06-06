@@ -905,6 +905,7 @@ func (r *mapper) getMapNode(roomId int) *mapNode {
 			Secret:         exitInfo.Secret,
 			LockDifficulty: int(exitInfo.Lock.Difficulty),
 			OneWay:         exitInfo.OneWay,
+			Gate:           exitInfo.ExitMessage != ``,
 		}
 
 		if exitNode.LockDifficulty > 0 {

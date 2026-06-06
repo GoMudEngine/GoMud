@@ -4,6 +4,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mapper"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -22,7 +23,8 @@ func (g GMCPZoneUpdate) Type() string { return `GMCPZoneUpdate` }
 
 type GMCPZoneModule_Payload struct {
 	Zone     string                `json:"zone"`
-	CurrentZ int                   `json:"cz"` // z-level (floor) of the player's current room
+	CurrentZ int                   `json:"cz"`            // z-level (floor) of the player's current room
+	Party    []int                 `json:"party,omitempty"` // room IDs currently holding party members
 	Rooms    []mapper.SnapshotRoom `json:"rooms"`
 }
 
@@ -81,9 +83,28 @@ func (g *GMCPZoneModule) buildAndSend(e events.Event) events.ListenerReturn {
 	// Current floor (z) so the client shows only the level the player is on.
 	_, _, cz, _ := m.GetCoordinates(room.RoomId)
 
+	// Party-member room positions (excluding self), de-duplicated.
+	party := []int{}
+	if p := parties.Get(evt.UserId); p != nil {
+		seen := map[int]bool{}
+		for _, uId := range p.GetMembers() {
+			if uId == evt.UserId {
+				continue
+			}
+			if mu := users.GetByUserId(uId); mu != nil {
+				rid := mu.Character.RoomId
+				if !seen[rid] {
+					seen[rid] = true
+					party = append(party, rid)
+				}
+			}
+		}
+	}
+
 	payload := GMCPZoneModule_Payload{
 		Zone:     room.Zone,
 		CurrentZ: cz,
+		Party:    party,
 		Rooms:    m.Snapshot(visited),
 	}
 
