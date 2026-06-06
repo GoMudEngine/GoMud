@@ -35,7 +35,12 @@ func init() {
 
 func (g *GMCPZoneModule) roomChangeHandler(e events.Event) events.ListenerReturn {
 	evt, ok := e.(events.RoomChange)
-	if !ok || evt.UserId == 0 {
+	if !ok {
+		mudlog.Error("Event", "Expected Type", "RoomChange", "Actual Type", e.Type())
+		return events.Cancel
+	}
+	// Mob-only move (UserId == 0) — no connected user to send a map snapshot to.
+	if evt.UserId == 0 {
 		return events.Continue
 	}
 	events.AddToQueue(GMCPZoneUpdate{UserId: evt.UserId})
