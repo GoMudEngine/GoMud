@@ -67,11 +67,19 @@ tokens, service glyphs, legend title.
   with **corner stud circles** (embossed) and edge **graticule ticks**.
 - **Title:** serif italic bold (`#e8d2a0`), embossed — `"<Zone Name>"` with a
   `"~ Level N ~"` subtitle line (driven by `cz`).
-- **Compass rose:** embossed 4-point cross top-right, `"N"` label.
-- **Legend:** small leather card bottom-left (`#241810` bg, gold border),
-  embossed "Legend" title, rows: **Party member** (figure), **Bank/Shop/Store**
-  (token + `$`), **Stairs ▲▼**, **Road / trail / water** (sample). *No "You are
-  here" row — the current room is self-evident (raised).* Keep it small-scale.
+- **Compass rose:** embossed 4-point cross tucked into the **top-right corner**,
+  `"N"` label, on a small translucent leather backing disc so it stays legible
+  over rooms.
+- **Legend:** small leather card tucked into the **bottom-right corner**
+  (`#241810` bg, gold border), embossed "Legend" title, rows: **Party member**
+  (figure), **Bank/Shop/Store** (token + `$`), **Stairs ▲▼**, **Road / trail /
+  water** (sample). *No "You are here" row — the current room is self-evident
+  (raised).* Keep it small-scale.
+- **Overlay layering:** the legend and compass are drawn in a dedicated
+  `overlayGroup` appended **after** `worldSvg`, so the pannable room world never
+  covers them (the rest of the leather frame — border, title, vignette — stays
+  in `surfaceGroup` beneath the rooms). The current room remains dead-centre of
+  the view (`_applyZoom` centres the viewBox on `this.center`).
 
 **Palette tokens:** ink/gold `#c9a86a`, secondary `#9c8048`, title `#e8d2a0`,
 room fill `#2a1d12`, label cream `#e8d8b8`, locked red `#d0633f`, water

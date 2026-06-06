@@ -260,6 +260,11 @@ class RoomGridSVG {
       this.roomsGroup = document.createElementNS(LEATHER_NS, 'g');
       this.worldSvg.appendChild(this.roomsGroup);
 
+      // overlayGroup — legend + compass, drawn in 320×300 design coords on
+      // TOP of worldSvg so the pannable room world never covers them.
+      this.overlayGroup = document.createElementNS(LEATHER_NS, 'g');
+      this.svg.appendChild(this.overlayGroup);
+
       // ── HTML overlay zoom controls ────────────────────────────────────
       this._createHTMLControls();
   }
@@ -408,8 +413,9 @@ class RoomGridSVG {
           this.reset();
           this._zone = zone;
           this._z = currentZ;
-          // Clear surface group and re-render the leather frame
+          // Clear surface + overlay groups and re-render the leather frame
           this.surfaceGroup.innerHTML = '';
+          this.overlayGroup.innerHTML = '';
           this._renderSurface(zone, currentZ);
       }
 
@@ -473,6 +479,7 @@ class RoomGridSVG {
   _renderSurface(zone, level) {
       const W = 320, H = 300;
       const g = this.surfaceGroup;
+      const ov = this.overlayGroup;   // legend + compass float here, atop rooms
       const L = RoomGridSVG.LEATHER;
       const iid = this._iid;
 
@@ -564,23 +571,24 @@ class RoomGridSVG {
           "font-family": "Georgia,serif", "font-size": 8, fill: L.ink
       }, "~ Level " + level + " ~"));
 
-      // ── Embossed compass rose ─────────────────────────────────────────
-      const ccx = W - 36, ccy = 268, Rr = 11;
-      embCirc(g, ccx, ccy, Rr, L.ink, "none", 0.8, d * 0.6);
+      // ── Embossed compass rose (top-right corner, floats atop rooms) ────
+      const ccx = 279, ccy = 43, Rr = 9;
+      ov.appendChild(lEl("circle", { cx: ccx, cy: ccy, r: Rr + 4, fill: L.legendBg, stroke: L.ink, "stroke-width": 1, opacity: "0.9" }));
+      embCirc(ov, ccx, ccy, Rr, L.ink, "none", 0.8, d * 0.6);
       [[0, -1], [1, 0], [0, 1], [-1, 0]].forEach(function(dz) {
-          embLine(g, ccx, ccy, ccx + dz[0] * Rr, ccy + dz[1] * Rr, L.ink, 1.4, 1, d * 0.6);
+          embLine(ov, ccx, ccy, ccx + dz[0] * Rr, ccy + dz[1] * Rr, L.ink, 1.4, 1, d * 0.6);
       });
-      embText(g, ccx, ccy - Rr - 2, {
+      embText(ov, ccx, ccy - Rr - 2, {
           "text-anchor": "middle", "font-family": "Georgia,serif",
-          "font-size": 7.5, "font-weight": "bold"
+          "font-size": 6.5, "font-weight": "bold"
       }, "N", L.ink, d * 0.5);
 
-      // ── Legend card ──────────────────────────────────────────────────
+      // ── Legend card (bottom-right corner, floats atop rooms) ──────────
       // Rows: Party member | Bank/Shop/Store | Stairs | Road/trail/water
-      const lw = 104, lh = 50, lx = 28, ly = H - 66;
-      g.appendChild(lEl("rect", { x: lx, y: ly, width: lw, height: lh, rx: 3, fill: L.legendBg, stroke: L.ink, "stroke-width": 1, opacity: "0.92" }));
-      g.appendChild(lEl("rect", { x: lx + 2.5, y: ly + 2.5, width: lw - 5, height: lh - 5, rx: 2, fill: "none", stroke: L.ink, "stroke-width": 0.4 }));
-      embText(g, lx + lw / 2, ly + 11, {
+      const lw = 104, lh = 50, lx = 188, ly = 221;
+      ov.appendChild(lEl("rect", { x: lx, y: ly, width: lw, height: lh, rx: 3, fill: L.legendBg, stroke: L.ink, "stroke-width": 1, opacity: "0.92" }));
+      ov.appendChild(lEl("rect", { x: lx + 2.5, y: ly + 2.5, width: lw - 5, height: lh - 5, rx: 2, fill: "none", stroke: L.ink, "stroke-width": 0.4 }));
+      embText(ov, lx + lw / 2, ly + 11, {
           "text-anchor": "middle", "font-family": "Georgia,serif",
           "font-size": 8, "font-weight": "bold", "font-style": "italic"
       }, "Legend", L.label, d * 0.5);
@@ -595,19 +603,19 @@ class RoomGridSVG {
           var yy = ly + 20 + i * 8.5, sxc = lx + 11;
           if (rw[0] === "party") {
               // Tiny figure (verdigris)
-              g.appendChild(lEl("circle", { cx: sxc, cy: yy - 3, r: 1.2, fill: L.party }));
-              g.appendChild(lEl("path", { d: "M" + (sxc - 2) + "," + yy + " Q" + sxc + "," + (yy - 2.6) + " " + (sxc + 2) + "," + yy + " Z", fill: L.party }));
+              ov.appendChild(lEl("circle", { cx: sxc, cy: yy - 3, r: 1.2, fill: L.party }));
+              ov.appendChild(lEl("path", { d: "M" + (sxc - 2) + "," + yy + " Q" + sxc + "," + (yy - 2.6) + " " + (sxc + 2) + "," + yy + " Z", fill: L.party }));
           } else if (rw[0] === "svc") {
-              g.appendChild(lEl("circle", { cx: sxc, cy: yy - 2, r: 3.4, fill: L.roomFill, stroke: L.ink, "stroke-width": 0.9 }));
-              g.appendChild(lTxt({ x: sxc, y: yy + 0.2, "text-anchor": "middle", "font-size": 4.4, "font-weight": "bold", fill: L.ink }, "$"));
+              ov.appendChild(lEl("circle", { cx: sxc, cy: yy - 2, r: 3.4, fill: L.roomFill, stroke: L.ink, "stroke-width": 0.9 }));
+              ov.appendChild(lTxt({ x: sxc, y: yy + 0.2, "text-anchor": "middle", "font-size": 4.4, "font-weight": "bold", fill: L.ink }, "$"));
           } else if (rw[0] === "stairs") {
-              g.appendChild(lTxt({ x: sxc, y: yy + 1, "text-anchor": "middle", "font-size": 7, "font-weight": "bold", fill: L.ink }, "▲"));
+              ov.appendChild(lTxt({ x: sxc, y: yy + 1, "text-anchor": "middle", "font-size": 7, "font-weight": "bold", fill: L.ink }, "▲"));
           } else {
               // Road sample line
-              g.appendChild(lEl("line", { x1: sxc - 5, y1: yy - 2, x2: sxc + 5, y2: yy - 2, stroke: L.road, "stroke-width": 2.6 }));
-              g.appendChild(lEl("line", { x1: sxc - 5, y1: yy - 2, x2: sxc + 5, y2: yy - 2, stroke: "#241810", "stroke-width": 0.6, "stroke-dasharray": "1 3" }));
+              ov.appendChild(lEl("line", { x1: sxc - 5, y1: yy - 2, x2: sxc + 5, y2: yy - 2, stroke: L.road, "stroke-width": 2.6 }));
+              ov.appendChild(lEl("line", { x1: sxc - 5, y1: yy - 2, x2: sxc + 5, y2: yy - 2, stroke: "#241810", "stroke-width": 0.6, "stroke-dasharray": "1 3" }));
           }
-          g.appendChild(lTxt({ x: lx + 22, y: yy + 1, "font-family": "Georgia,serif", "font-size": 6.6, fill: L.label }, rw[1]));
+          ov.appendChild(lTxt({ x: lx + 22, y: yy + 1, "font-family": "Georgia,serif", "font-size": 6.6, fill: L.label }, rw[1]));
       });
 
       // ── Vignette (drawn last, on top, clipped to hide shape) ────────
@@ -954,23 +962,36 @@ class RoomGridSVG {
   // ── Private: HTML overlay controls ────────────────────────────────────────
 
   _createHTMLControls() {
+      // Brass map-instrument buttons — embossed engraved glyphs on a polished
+      // brass face, to match the tooled-leather surface. Stylesheet injected
+      // once per document; div positioning stays inline (per-instance margin).
+      if (!document.getElementById('rgsvg-ctl-style')) {
+          const st = document.createElement('style');
+          st.id = 'rgsvg-ctl-style';
+          st.textContent =
+".rgsvg-brass{min-width:24px;height:24px;padding:0 6px;font-family:Georgia,serif;" +
+"font-weight:bold;font-size:12px;line-height:1;color:#3b2a10;cursor:pointer;" +
+"border:1px solid #5e431a;border-radius:5px;" +
+"background:radial-gradient(circle at 34% 26%,#f4dd92 0%,#cb9f42 46%,#8a6620 100%);" +
+"text-shadow:0 1px 0 rgba(255,244,206,0.55);" +
+"box-shadow:0 2px 3px rgba(0,0,0,0.55),inset 0 1px 1px rgba(255,246,212,0.7)," +
+"inset 0 -2px 3px rgba(74,52,16,0.55);" +
+"transition:filter .08s ease,box-shadow .08s ease,transform .08s ease;}" +
+".rgsvg-brass:hover{filter:brightness(1.08);}" +
+".rgsvg-brass:active{transform:translateY(1px);" +
+"box-shadow:0 1px 1px rgba(0,0,0,0.4),inset 0 2px 4px rgba(74,52,16,0.7)," +
+"inset 0 -1px 1px rgba(255,246,212,0.4);}";
+          document.head.appendChild(st);
+      }
+
       const div = document.createElement('div');
-      div.style.cssText = `
-    position:absolute;
-    bottom:${this.controlsMargin}px;
-    left:${this.controlsMargin}px;
-    display:flex; gap:5px;
-    z-index:5;
-  `;
+      div.style.cssText =
+          `position:absolute;bottom:${this.controlsMargin}px;left:${this.controlsMargin}px;` +
+          `display:flex;gap:5px;z-index:5;`;
       const mk = (lbl, cb) => {
           const b = document.createElement('button');
           b.textContent = lbl;
-          b.style.cssText = `
-      width:${this.zoomButtonSize}px;
-      height:${this.zoomButtonSize}px;
-      font-size:${this.zoomButtonSize * 0.6}px;
-      line-height:1;
-    `;
+          b.className = 'rgsvg-brass';
           b.addEventListener('click', cb);
           return b;
       };
