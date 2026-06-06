@@ -592,3 +592,105 @@ drops any finding whose room's owning zone does not match the zone being
 checked. Both the startup pass (`ValidateZoneConsistency`) and the
 `cartcheck` admin command apply this filter, so findings are correctly
 attributed to the zone that owns each room.
+
+## Web Mapper (hybrid)
+
+The web client ships an SVG-based zone map driven by GMCP. It is
+zone-scoped — one zone at a time, matching the player's current zone.
+
+### Zone.Map GMCP Message
+
+Module: `gmcp.Zone` (`modules/gmcp/gmcp.Zone.go`). Sent on every room
+change (one `Zone.Map` per move; the full snapshot is re-sent each time
+as a deliberate simplicity tradeoff). Payload shape:
+
+```json
+{
+  "zone": "Stillwater",
+  "rooms": [
+    {
+      "num": 4102,
+      "x": -18, "y": 3, "z": 0,
+      "symbol": "T",
+      "biome": "town",
+      "exits": [
+        { "to": 4101, "dx": 0, "dy": -1, "dz": 0, "kind": "normal" }
+      ]
+    }
+  ]
+}
+```
+
+`symbol` mirrors the room's `mapsymbol` field (falls back to the
+engine default if unset). `biome` is used by the client for tinting.
+`kind` classifies each exit for rendering (see below). The `symbol`
+field is also added to the `Room.Info` GMCP payload so the client can
+update the current room's node glyph without waiting for a full snapshot.
+
+### Fog of War — Per-Character Visited Rooms
+
+Only rooms the player has visited are included in the snapshot.
+`Character.VisitedRooms` (`map[string][]int`, zone→roomIds) stores
+the explored set. Three methods on `*Character`:
+
+- `MarkRoomVisited(zone, roomId)` — called in `go.go` on every
+  successful move; deduplicates automatically.
+- `HasVisitedRoom(zone, roomId) bool` — point membership check.
+- `GetVisitedRooms(zone) []int` — returns the full visited list for
+  a zone (nil if never visited).
+
+The GMCP module always includes the player's current room in the
+`visited` set so the room appears immediately on entry, even before
+the move handler has recorded it.
+
+### Exit Kind → Render Mapping
+
+`(*mapper).Snapshot(visited)` classifies each exit via `classifyKind`:
+
+| `kind`     | Render                                                    |
+|------------|-----------------------------------------------------------|
+| `normal`   | Amber connector line to destination node                  |
+| `long`     | Amber connector line (length proportional to cell gap)    |
+| `wrap`     | Teal edge-stub + outward chevron (no destination node)    |
+| `vertical` | Faint ▲ (dz > 0) or ▼ (dz < 0) tick on the room node    |
+
+`normal` and `long` exits that lead to an unvisited room are omitted
+from the snapshot entirely (fog of war); the client sees only exits
+whose destination is in the visited set. `wrap` exits inside a
+`non_cartesian` zone render as teal stubs because the destination may
+be spatially discontinuous.
+
+### Biome Tint Table
+
+The client applies a dark background tint to each room node keyed on
+the `biome` string. Table defined in `RoomGridSVG.DEFAULT_BIOME_TINTS`
+(`_datafiles/html/public/static/js/gmcp.js`):
+
+| Biome(s)                    | Tint      |
+|-----------------------------|-----------|
+| city, town                  | `#3a342c` |
+| forest                      | `#25382a` |
+| swamp, marsh                | `#243226` |
+| water, lake, river          | `#243246` |
+| hills, mountain             | `#3e3422` |
+| cave, dungeon               | `#2c2530` |
+| desert, road                | `#3a3226` / `#3e3622` |
+| _(default / unknown)_       | `#2a2018` |
+
+Each node also renders a faint glyph from the room's `symbol` field
+over the biome-tinted background ("hybrid" style).
+
+### Client Renderer
+
+`RoomGridSVG` class in `gmcp.js`. Key methods:
+
+- `setZoneSnapshot(zone, rooms)` — ingests a full `Zone.Map` payload;
+  resets the canvas on zone change, then calls `addRoom` for each entry.
+- `fit()` — recalculates bounds and resets zoom so the full explored
+  zone fits in view.
+- `centerOnRoom(id)` — scrolls the viewport to the given room node.
+- `zoomIn()` / `zoomOut()` — stepwise zoom (default step 1.2×).
+- HTML overlay buttons: `fit`, `ctr` (center on current room), `−`, `+`.
+
+`webclient-pure.html` subscribes to `Zone.Map` GMCP and calls
+`setZoneSnapshot` on receipt.

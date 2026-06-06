@@ -26,6 +26,27 @@ coherent as new zones and rooms are added.
 - **Phased rollout.** Shipped at `warn`. Triage findings with `cartcheck`
   after each content push, then flip to `panic` once the world is clean.
 
+## 2026-06-06 — Hybrid web mapper with fog of war
+
+The web client now shows an explored-zone map that fills in as you move.
+
+- **Fog of war.** Only rooms you have visited appear on the map. Each
+  move marks the destination room in your character's per-zone visited
+  list; the map updates immediately on arrival.
+- **Hybrid node style.** Each room is a small biome-tinted circle with
+  a faint glyph overlay. Biome tints distinguish city, forest, cave,
+  water, marsh, and other terrain types at a glance.
+- **Wrap edge-stubs.** Toroidal or maze exits (zones declared
+  `non_cartesian`) render as teal stubs with outward chevrons rather
+  than dangling connectors, keeping the map readable.
+- **Up/down ticks.** Vertical exits draw a faint ▲ or ▼ on the room
+  node so multi-level areas are visible without cluttering the 2-D grid.
+- **Long-exit connectors.** Multi-cell spanning exits render as
+  proportionally longer amber lines.
+- **Fit, center, and zoom controls.** Overlay buttons let you fit the
+  whole explored zone into view, re-center on your current room, or
+  step the zoom in and out.
+
 ## 2026-06-05 — A world that takes sides
 
 The living-world pass reaches across the whole map. Groups of people (and

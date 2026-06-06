@@ -403,3 +403,51 @@ at the reporting layer by `FilterFindingsToZone`, which drops any finding
 whose room's owning `zone:` field does not match the zone being checked.
 Both `ValidateZoneConsistency` (startup) and `CartCheck` (admin command)
 apply this filter, so findings are correctly scoped to their owning zone.
+
+## Fog-of-War Snapshot (Web Map)
+
+### File
+
+`mapper.snapshot.go`
+
+### Types
+
+```go
+type SnapshotRoom struct {
+    RoomId int            `json:"num"`
+    X      int            `json:"x"`
+    Y      int            `json:"y"`
+    Z      int            `json:"z"`
+    Symbol string         `json:"symbol"`
+    Biome  string         `json:"biome"`
+    Exits  []SnapshotExit `json:"exits"`
+}
+
+type SnapshotExit struct {
+    ToRoomId int      `json:"to"`
+    DX       int      `json:"dx"`
+    DY       int      `json:"dy"`
+    DZ       int      `json:"dz"`
+    Kind     ExitKind `json:"kind"`
+}
+```
+
+### Method
+
+```go
+func (r *mapper) Snapshot(visited map[int]struct{}) []SnapshotRoom
+```
+
+Iterates `crawledRooms` and returns only rooms whose ID is present in
+`visited`. For each included room, exits are also filtered: an exit is
+included only if its destination room is in `visited` (fog of war — the
+client never learns about rooms the player hasn't been to). Each exit's
+`Kind` is set by `classifyKind(nominal, actual)` — the same classifier
+used by the consistency engine.
+
+This method is the sole output consumed by the `gmcp.Zone` module
+(`modules/gmcp/gmcp.Zone.go`), which builds the `Zone.Map` GMCP payload
+and sends it to the web client on every room change. The web client
+renderer (`RoomGridSVG` in `gmcp.js`) uses the `kind` field to route
+each exit to its correct visual treatment: connector line (`normal`/
+`long`), teal edge-stub with chevron (`wrap`), or ▲/▼ tick (`vertical`).

@@ -178,6 +178,20 @@ checks and renders wrap exits as edge stubs). Portal/named (non-compass)
 exits are automatically non-spatial and exempt. Flip the knob to `panic`
 only after `cartcheck` is clean world-wide.
 
+The web client renders an SVG map driven by the `Zone.Map` GMCP snapshot
+(`modules/gmcp/gmcp.Zone.go`, sent on every move). Each room node is a
+small biome-tinted circle with a faint glyph overlay ("hybrid" style);
+connections are thin amber lines. Exit `kind` routes rendering: `normal`
+and `long` exits draw a connector line (long exits render proportionally
+longer), `wrap` exits draw a teal edge-stub with an outward chevron (used
+for toroidal/maze zones declared `non_cartesian`), and `vertical` exits
+draw a faint ▲ or ▼ tick on the room node. Fog of war is enforced by
+`Character.VisitedRooms` (`map[string][]int`, zone→roomIds): `MarkRoomVisited`
+is called on every successful move in `go.go`, and `(*mapper).Snapshot(visited)`
+filters out unvisited rooms and their exits before sending the payload.
+The client renderer (`RoomGridSVG` in `gmcp.js`) exposes `fit`, `centerOnRoom`,
+`zoomIn`, and `zoomOut` controls.
+
 ## Project Context
 - DOGMud (Delusions of Grandeur) is a MUD built on the GoMud engine
 - World design document: `world.md`
