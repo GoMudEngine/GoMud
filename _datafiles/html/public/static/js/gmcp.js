@@ -11,6 +11,11 @@ class RoomGridSVG {
       this.controlsMargin = options.controlsMargin || 10;
       this.roomEdgeColor = options.roomEdgeColor || "#1c6b60";
       this.visitingColor = options.visitingColor || "#c20000";
+      this.roomSize = options.roomSize || 16;              // hybrid: small nodes
+      this.connectionColor = options.connectionColor || "#b8893f"; // amber
+      this.connectionWidth = options.connectionWidth || 1.6;
+      this.glyphColor = options.glyphColor || "#c9b48f";
+      this.biomeTints = options.biomeTints || RoomGridSVG.DEFAULT_BIOME_TINTS;
       // ── Internal state ────────────────────────────────────────────────
       // rooms: Map<RoomId, { room, group, defaultColor }>
       this.rooms = new Map();
@@ -70,7 +75,7 @@ class RoomGridSVG {
       }
 
       // prepare defaults
-      const defaultColor = room.Color || '#fff';
+      const defaultColor = room.Color || this.tintFor(room.biome);
       const displayText = room.Text != null ?
           room.Text :
           String(room.RoomId);
@@ -86,10 +91,11 @@ class RoomGridSVG {
           entry.room.Text = room.Text;
           entry.defaultColor = defaultColor;
 
-          // move & recolor rect
+          // move & recolor rect (centered small node)
+          const s = this.roomSize;
           const rect = this.svg.querySelector(`rect[data-room-rect="${id}"]`);
-          rect.setAttribute('x', room.x * this.spacing);
-          rect.setAttribute('y', room.y * this.spacing);
+          rect.setAttribute('x', room.x * this.spacing - s / 2);
+          rect.setAttribute('y', room.y * this.spacing - s / 2);
           if (this.currentCenterId === id) {
               rect.setAttribute('fill', this.visitingColor);
           } else {
@@ -98,8 +104,8 @@ class RoomGridSVG {
 
           // move & update label
           const txtEl = this.svg.querySelector(`g[data-room-id="${id}"] text`);
-          txtEl.setAttribute('x', room.x * this.spacing + this.cellSize / 2);
-          txtEl.setAttribute('y', room.y * this.spacing + this.cellSize / 2 + 5);
+          txtEl.setAttribute('x', room.x * this.spacing);
+          txtEl.setAttribute('y', room.y * this.spacing + s * 0.25 + 1);
           txtEl.textContent = displayText;
 
           // redraw any new edges
@@ -115,30 +121,36 @@ class RoomGridSVG {
       const g = document.createElementNS(this.svg.namespaceURI, 'g');
       g.setAttribute('data-room-id', id);
 
-      // square
+      // hybrid small centered node
+      const s = this.roomSize;
+      const cx = room.x * this.spacing;
+      const cy = room.y * this.spacing;
       const rect = document.createElementNS(this.svg.namespaceURI, 'rect');
-      rect.setAttribute('width', this.cellSize);
-      rect.setAttribute('height', this.cellSize);
-      rect.setAttribute('x', room.x * this.spacing);
-      rect.setAttribute('y', room.y * this.spacing);
+      rect.setAttribute('width', s);
+      rect.setAttribute('height', s);
+      rect.setAttribute('x', cx - s / 2);
+      rect.setAttribute('y', cy - s / 2);
       rect.setAttribute('stroke', this.roomEdgeColor);
-      rect.setAttribute('stroke-width', '4');
-      rect.setAttribute('rx', this.cellSize / 10); // corner radius X
-      rect.setAttribute('ry', this.cellSize / 10); // corner radius Y    
+      rect.setAttribute('stroke-width', '1');
+      rect.setAttribute('rx', '4');
+      rect.setAttribute('ry', '4');
       rect.setAttribute('data-room-rect', id);
-      rect.setAttribute('fill', defaultColor);
+      rect.setAttribute('fill', room.Color || this.tintFor(room.biome));
       rect.style.cursor = 'pointer';
       rect.addEventListener('click', () => this.onRoomClick(room));
       g.appendChild(rect);
 
-      // label
-      const label = document.createElementNS(this.svg.namespaceURI, 'text');
-      label.setAttribute('x', room.x * this.spacing + this.cellSize / 2);
-      label.setAttribute('y', room.y * this.spacing + this.cellSize / 2 + 5);
-      label.setAttribute('text-anchor', 'middle');
-      label.setAttribute('font-size', this.cellSize * 0.3);
-      label.textContent = displayText;
-      g.appendChild(label);
+      // faint glyph (room.symbol) centered in the node
+      const glyph = document.createElementNS(this.svg.namespaceURI, 'text');
+      glyph.setAttribute('x', cx);
+      glyph.setAttribute('y', cy + s * 0.25 + 1);
+      glyph.setAttribute('text-anchor', 'middle');
+      glyph.setAttribute('font-size', s * 0.5);
+      glyph.setAttribute('fill', this.glyphColor);
+      glyph.setAttribute('opacity', '0.75');
+      glyph.setAttribute('pointer-events', 'none');
+      glyph.textContent = room.symbol || '';
+      g.appendChild(glyph);
 
       this.roomsGroup.appendChild(g);
       this.rooms.set(id, {
@@ -194,10 +206,10 @@ class RoomGridSVG {
           }
       }
 
-      // compute new view center
+      // compute new view center (rooms are centered on grid coords)
       this.center = {
-          x: entry.room.x * this.spacing + this.cellSize / 2,
-          y: entry.room.y * this.spacing + this.cellSize / 2
+          x: entry.room.x * this.spacing,
+          y: entry.room.y * this.spacing
       };
       this._applyZoom();
 
@@ -279,22 +291,21 @@ class RoomGridSVG {
       if (this.drawnEdges.has(key)) return;
       this.drawnEdges.add(key);
 
-      const ra = this.rooms.get(a)
-          .room;
-      const rb = this.rooms.get(b)
-          .room;
-      const x1 = ra.x * this.spacing + this.cellSize / 2;
-      const y1 = ra.y * this.spacing + this.cellSize / 2;
-      const x2 = rb.x * this.spacing + this.cellSize / 2;
-      const y2 = rb.y * this.spacing + this.cellSize / 2;
+      const ra = this.rooms.get(a).room;
+      const rb = this.rooms.get(b).room;
+      // rooms are centered on grid coords — no cellSize offset needed
+      const x1 = ra.x * this.spacing;
+      const y1 = ra.y * this.spacing;
+      const x2 = rb.x * this.spacing;
+      const y2 = rb.y * this.spacing;
 
       const line = document.createElementNS(this.svg.namespaceURI, 'line');
       line.setAttribute('x1', x1);
       line.setAttribute('y1', y1);
       line.setAttribute('x2', x2);
       line.setAttribute('y2', y2);
-      line.setAttribute('stroke', this.roomEdgeColor);
-      line.setAttribute('stroke-width', '20');
+      line.setAttribute('stroke', this.connectionColor);
+      line.setAttribute('stroke-width', this.connectionWidth);
       this.connectionsGroup.appendChild(line);
   }
 
@@ -335,3 +346,20 @@ class RoomGridSVG {
       this.svg.setAttribute('viewBox', `${x0} ${y0} ${hw*2} ${hh*2}`);
   }
 }
+
+// ── Biome tint lookup table ───────────────────────────────────────────────────
+RoomGridSVG.DEFAULT_BIOME_TINTS = {
+  "city":     "#3a342c", "town":     "#3a342c",
+  "forest":   "#25382a", "swamp":    "#243226", "marsh":    "#243226",
+  "water":    "#243246", "lake":     "#243246", "river":    "#243246",
+  "hills":    "#3e3422", "mountain": "#3e3422",
+  "cave":     "#2c2530", "dungeon":  "#2c2530",
+  "desert":   "#3e3622", "road":     "#3a3226",
+  "_default": "#2a2018"
+};
+
+RoomGridSVG.prototype.tintFor = function (biome) {
+  if (!biome) return this.biomeTints._default;
+  var key = String(biome).toLowerCase();
+  return this.biomeTints[key] || this.biomeTints._default;
+};
