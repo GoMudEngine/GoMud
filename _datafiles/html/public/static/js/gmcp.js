@@ -23,6 +23,7 @@ class RoomGridSVG {
       this.rooms = new Map();
       this.drawnEdges = new Set(); // to avoid dup lines
       this.currentCenterId = null; // for highlight
+      this._zone = null; // current zone of the loaded snapshot (Zone.Map)
 
       // ── Build container & SVG ─────────────────────────────────────────
       this.container = document.querySelector(selector);
@@ -236,10 +237,10 @@ class RoomGridSVG {
               symbol: r.symbol,
               biome: r.biome,
               Exits: (r.exits || []).map(e => ({ RoomId: e.to, kind: e.kind, dx: e.dx, dy: e.dy, dz: e.dz })),
-              ExitsMeta: r.exits || []
+              ExitsMeta: r.exits || [] // raw per-exit {to,dx,dy,dz,kind}; consumed by wrap-stub + vertical-tick rendering (next task)
           });
       });
-      this._applyZoom();
+      this._applyZoom(); // addRoom refreshes per-room; this also covers the empty-snapshot/reset case
   }
 
   zoomIn() {
