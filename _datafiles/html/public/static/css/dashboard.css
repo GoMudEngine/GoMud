@@ -57,15 +57,20 @@
 .dash-panel-head {
   display: flex; align-items: center; gap: 6px;
   padding: 4px 8px;
-  background: linear-gradient(var(--bar-top, #241813), var(--bar-bottom, #1a110b));
-  border-bottom: 1px solid var(--panel-border, #3a2a18);
+  background: linear-gradient(var(--ink-deep, #2b231d), var(--bar-bottom, #1a110b));
+  border-bottom: 2px solid var(--panel-border, #3a2a18);   /* colored per column below */
   cursor: grab;            /* header is the drag handle for swap */
   user-select: none;
 }
 .dash-panel-head .ph-title {
   font-family: var(--font-serif, Georgia, serif); font-style: italic;
-  font-size: 0.82rem; color: var(--title-gold, #e8d2a0);
+  font-size: 0.82rem; color: var(--vellum, #d9c39e);
 }
+
+/* Column identity / pop — copper (left), antique gold (center), madder (right) */
+#dash-col-left   .dash-panel-head { border-bottom-color: var(--copper, #4a6b5d); }
+#dash-col-center .dash-panel-head { border-bottom-color: var(--antique-gold, #b89047); }
+#dash-col-right  .dash-panel-head { border-bottom-color: var(--madder, #8c3b30); }
 .dash-panel-head .ph-btns { margin-left: auto; display: flex; gap: 4px; }
 .dash-panel-head .ph-btn {
   width: 18px; height: 18px; line-height: 16px; text-align: center;
@@ -91,8 +96,8 @@
 /* Per-panel stack proportions (flex-basis 0 → grow ratios set the heights;
    splitters will later tune these --f-* vars). Left: Map / Vitals / Scene;
    Right: Chat / Status / Triggers (~equal). */
-#panel-map    { flex: var(--f-map, 1.5) 1 0; }
-#panel-vitals { flex: var(--f-vitals, 1.15) 1 0; }   /* a touch bigger than triggers */
+#panel-map    { flex: var(--f-map, 1.6) 1 0; }
+#panel-vitals { flex: 0 0 auto; }                    /* content-compact; grows with party rows */
 #panel-art    { flex: var(--f-art, 0.7) 1 0; }       /* scene, shrunk */
 #panel-chat   { flex: var(--f-chat, 1) 1 0; }
 #panel-status { flex: var(--f-status, 1) 1 0; }

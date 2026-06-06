@@ -60,19 +60,16 @@
             }
         }
 
-        /* Sound icon — small brass map-instrument button, top-right corner */
+        /* Sound icon — small brass button living inside the session strip */
         #menu-icon {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 34px;
-            height: 34px;
+            flex: 0 0 auto;
+            width: 26px;
+            height: 26px;
             box-sizing: border-box;
-            font-size: 17px;
-            line-height: 32px;
+            font-size: 14px;
+            line-height: 24px;
             text-align: center;
             cursor: pointer;
-            z-index: 9999;
             color: #3b2a10;
             border: 1px solid #5e431a;
             border-radius: 50%;
@@ -93,7 +90,7 @@
         /* The floating menu container */
         #floating-menu {
             position: absolute;
-            top: 50px; /* Just below the icon */
+            top: 40px; /* just below the session strip */
             right: 10px;
             width: 450px;
             padding: 10px;
@@ -173,9 +170,6 @@
 </head>
 <body onLoad="init(); return false;">
 
-    <!-- SOUND ICON (top-right). Click to toggle the volume sliders panel. -->
-    <div id="menu-icon" onclick="toggleMenu()">🔊</div>
-
     <!-- FLOATING MENU - MULTIPLE SLIDERS -->
     <div id="floating-menu">
         <h3>Volume Controls</h3>
@@ -199,6 +193,7 @@
         <span class="sess-name" id="sess-name">—</span>
         <span class="sess-conn" id="sess-conn">● Connected</span>
         <span class="sess-spacer"></span>
+        <div id="menu-icon" onclick="toggleMenu()" title="Toggle sound">🔊</div>
         <button class="brass" id="btn-reconnect" onclick="reconnect()">Reconnect</button>
         <button class="brass" id="btn-reset-layout" onclick="window.Dashboard && Dashboard.resetLayout && Dashboard.resetLayout()">Reset layout</button>
       </div>
