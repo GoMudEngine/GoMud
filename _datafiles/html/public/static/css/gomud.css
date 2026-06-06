@@ -1,121 +1,274 @@
 :root {
-  --header-background: #0e0e20;
-  --nav-background: #1a1a3e;
-  --footer-background: #0e0e20;
-  --button-background: #3b3b78;
-  --button-background-hover: #1a1a3e;
-  --button-shadow: #8888bb;
-  --text-primary-color: #d0d0e8;
-  --text-secondary-color: #7878a0;
-  /* Table Specific Colors */
+  /* ── Surfaces ── */
+  --bg-base: #191310;
+  --panel-bg: #201913;
+  --panel-bg-alt: #211a14;
+  --panel-border: #3a2a18;
+  --panel-border-soft: #2e251c;
+  --bar-top: #241813;
+  --bar-bottom: #1a110b;
+  --gold-rule: #c9a86a;
+
+  /* ── Ink / accents ── */
+  --ink-gold: #c9a86a;
+  --title-gold: #e8d2a0;
+  --text-primary: #d2c3a4;
+  --text-secondary: #9a8a6a;
+  --text-tagline: #b9a983;
+  --online-green: #7fae6a;
+
+  /* ── Brass (shared with the mapper controls) ── */
+  --brass-grad: radial-gradient(circle at 34% 26%, #f4dd92, #cb9f42 46%, #8a6620);
+  --brass-border: #5e431a;
+  --brass-text: #3b2a10;
+
+  /* ── Tables ── */
+  --table-row-alt: rgba(201, 168, 106, 0.05);
+
+  /* ── Fonts ── */
+  --font-serif: Georgia, 'Times New Roman', serif;
+  --font-mono: 'DejaVu Sans Mono', monospace;
+
+  /* Legacy table tokens kept so any stray references resolve */
   --table-border-color: #000;
-  --table-header-color: var(--header-background);
-  --table-cell-text-color: #d0d0e8;
-  --table-header-text-color: var(--text-primary-color);
-  --table-cell-color: #1e1e3a;
-  --table-cell-alt-color: #2a2a50;
+  --table-cell-text-color: var(--text-primary);
+  --table-header-text-color: var(--ink-gold);
 }
 
 body {
   margin: 0;
   padding: 0;
-  background: var(--background-image, url('/static/images/web_bg.png') center center / cover no-repeat fixed); /* This var is defined in _header.html so we can pull from config */
-  color: var(--text-primary-color);
-  font-family: 'Press Start 2P', monospace;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+  background-color: var(--bg-base);
+  /* --background-image is set in _header.html (CSS gradient); falls back here */
+  background: var(--background-image, radial-gradient(circle at 50% 22%, #251a12, #110b07)) fixed;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
+a { text-decoration: none; color: inherit; }
 
+/* ── Header bar + MUD-name title ── */
 header {
-  background-color: var(--header-background);
+  background: linear-gradient(var(--bar-top), var(--bar-bottom));
+  border-bottom: 2px solid var(--gold-rule);
   display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 24px;
+  padding: clamp(8px, 1.2vw, 12px) clamp(12px, 2vw, 24px);
 }
-
 .gomud-btn {
-  font-size: 1.5rem;
-  padding: 6px 10px;
-  color: var(--text-primary-color);
-  background-color: var(--button-background);
-  box-shadow: 2px 2px 0px 0px var(--button-shadow);
-  border-radius: 5px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  transition: all 0.2s ease; 
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: bold;
+  font-size: clamp(1.05rem, 2.2vw, 1.6rem);
+  letter-spacing: 1px;
+  color: var(--title-gold);
+  text-shadow: 0 1px 0 #000;
+  padding: 4px 6px;
+  background: none;
+  box-shadow: none;
+  border-radius: 4px;
+  transition: color 0.2s ease;
+}
+.gomud-btn:hover { color: #fff; background: none; }
+
+/* ── Brass component (buttons, nav pills, CTAs) ── */
+.brass {
+  display: inline-block;
+  font-family: var(--font-serif);
+  font-weight: bold;
+  color: var(--brass-text);
+  background: var(--brass-grad);
+  border: 1px solid var(--brass-border);
+  border-radius: 6px;
+  text-shadow: 0 1px 0 rgba(255, 244, 206, 0.55);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5),
+              inset 0 1px 1px rgba(255, 246, 212, 0.7),
+              inset 0 -2px 3px rgba(74, 52, 16, 0.55);
+  transition: filter 0.08s ease, transform 0.08s ease;
+  cursor: pointer;
+}
+.brass:hover { filter: brightness(1.08); }
+.brass:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4),
+              inset 0 2px 4px rgba(74, 52, 16, 0.7),
+              inset 0 -1px 1px rgba(255, 246, 212, 0.4);
 }
 
-.gomud-btn:hover {
-  color: var(--button-background);
-  background-color: var(--button-background-hover);
-}
-
+/* ── Nav bar (brass pills) ── */
 nav {
-  background-color: var(--nav-background);
-  padding: 12px 0;
+  background: linear-gradient(var(--bar-top), var(--bar-bottom));
+  border-bottom: 1px solid var(--panel-border);
+  padding: clamp(6px, 1vw, 10px) 0;
 }
-
 .nav-container {
   margin: 0 auto;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 2rem;
-  font-size: 1.125rem;
-  font-weight: 600;
+  align-items: center;
+  gap: clamp(0.3rem, 0.8vw, 0.9rem);
+  padding: 0 10px;
 }
-
 .nav-container a {
-  color: var(--text-primary-color);
-  background-color: var(--button-background);
-  box-shadow: 2px 2px 0px 0px var(--button-shadow);
-  text-decoration: none;
-  padding: 8px 16px;
-  height: 18px;
-  border-radius: 4px;
+  font-family: var(--font-serif);
+  font-size: clamp(0.72rem, 1.05vw, 0.95rem);
+  white-space: nowrap;
+  color: var(--brass-text);
+  background: var(--brass-grad);
+  border: 1px solid var(--brass-border);
+  border-radius: 5px;
+  padding: clamp(4px, 0.5vw, 6px) clamp(8px, 1.1vw, 14px);
+  text-shadow: 0 1px 0 rgba(255, 244, 206, 0.55);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5),
+              inset 0 1px 1px rgba(255, 246, 212, 0.7);
+  transition: filter 0.08s ease;
+}
+.nav-container a:hover { filter: brightness(1.08); }
+.nav-container a.selected {
+  filter: brightness(0.95);
+  box-shadow: inset 0 2px 4px rgba(74, 52, 16, 0.75),
+              inset 0 -1px 1px rgba(255, 246, 212, 0.4);
 }
 
-.nav-container a.selected  {
-  color: var(--button-background);
-  background-color: var(--button-background-hover);
-}
-
-.nav-container a:hover {
-  color: var(--button-background);
-  background-color: var(--button-background-hover);
-}
-
-/* Mobile Navigation */
-.nav-toggle {
-  display: none;
-  flex-direction: column;
-  cursor: pointer;
-}
-
+/* ── Mobile nav toggle ── */
+.nav-toggle { display: none; flex-direction: column; cursor: pointer; }
 .nav-toggle div {
-  width: 30px;
-  height: 4px;
-  background: var(--text-primary-color);
-  margin: 5px;
+  width: 30px; height: 4px; border-radius: 2px;
+  background: var(--ink-gold); margin: 5px;
 }
 
+/* ── Content + panels ── */
+.content-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 24px;
+}
+.content-container[data-path="/"] { justify-content: center; }
+
+/* Web-client page: full-bleed, exact-fit. A block-level iframe removes the
+   inline descender gap that pushed the body a few px past 100vh (causing the
+   scroll + clipped header). overflow:hidden is a belt-and-suspenders against
+   sub-pixel rounding — the game view has its own internal scroll. */
+.content-container[data-path="/webclient"] { padding: 0; overflow: hidden; }
+#webclient-frame { display: block; border: 0; }
+
+.overlay, .underlay {
+  width: 90%;
+  max-width: 1100px;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: inset 0 1px 0 rgba(201, 168, 106, 0.10),
+              0 6px 16px rgba(0, 0, 0, 0.5);
+}
+.overlay { overflow-y: auto; }
+.underlay { height: auto; max-height: 200px; }
+.overlay h3, .underlay h3 {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--title-gold);
+  margin: 0 0 12px;
+}
+
+/* ── Hero (landing) ── */
+.hero { text-align: center; padding: 30px 26px; }
+.hero-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: bold;
+  color: var(--title-gold);
+  font-size: 2.4rem;
+  margin: 0;
+  text-shadow: 0 2px 4px #000;
+}
+.hero-tagline {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--text-tagline);
+  font-size: 1.05rem;
+  margin: 8px 0 22px;
+}
+.hero-cta {
+  font-size: 1.15rem;
+  letter-spacing: 1px;
+  padding: 14px 34px;
+  text-decoration: none;
+}
+.hero-sub {
+  margin-top: 14px;
+  color: var(--text-secondary);
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+}
+.hero-sub b { color: var(--text-primary); }
+.online-stat {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 6px 14px;
+  border: 1px solid var(--panel-border);
+  border-radius: 20px;
+  background: #1d1610;
+  color: var(--online-green);
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+}
+
+/* ── Footer ── */
+footer {
+  background: linear-gradient(var(--bar-bottom), #120c07);
+  border-top: 1px solid var(--panel-border);
+  text-align: center;
+  color: var(--text-secondary);
+  font-family: var(--font-serif);
+  padding: 16px 0;
+  font-size: 0.9rem;
+}
+footer a { color: var(--ink-gold); }
+footer a:hover { text-decoration: underline; }
+
+/* ── Tables ── */
+table { width: 100%; border-collapse: collapse; }
+table th {
+  background: linear-gradient(var(--bar-top), var(--bar-bottom));
+  color: var(--ink-gold);
+  font-family: var(--font-serif);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0.7em;
+  text-align: left;
+  border-bottom: 1px solid var(--gold-rule);
+}
+table tr { background: var(--panel-bg-alt); }
+table tr:nth-child(even) { background: var(--table-row-alt); }
+table td {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  padding: 0.4em 0.7em;
+  text-align: left;
+  color: var(--text-primary);
+}
+/* Config dump values read better monospaced */
+table.config td { font-family: var(--font-mono); font-size: 0.95rem; }
+
+pre, code { font-family: var(--font-mono); }
+
+/* ── Responsive ── */
 @media (max-width: 768px) {
-  header {
-    padding: 8px 12px;
-  }
-
-  .gomud-btn {
-    font-size: 1rem;
-    padding: 4px 8px;
-    letter-spacing: 1px;
-  }
-
+  header { padding: 8px 12px; }
+  .gomud-btn { font-size: 1.1rem; letter-spacing: 1px; }
+  .hero-title { font-size: 1.7rem; }
   .nav-container {
     display: none;
     flex-direction: column;
@@ -123,141 +276,17 @@ nav {
     gap: 0.5rem;
     padding: 12px 0;
   }
-
-  .nav-container a {
-    display: block;
-    padding: 12px;
-  }
-
-  .nav-toggle {
-    display: flex;
-  }
-
-  .content-container {
-    padding: 10px;
-  }
-
-  .overlay, .underlay {
-    width: 95%;
-    padding: 12px;
-  }
-
-  .play-button img {
-    max-width: 200px;
-  }
-
-  footer {
-    font-size: 0.75rem;
-    padding: 10px 0;
-  }
-
-  table th {
-    padding: 0.5em;
-    font-size: 0.75em;
-  }
-
-  table td {
-    padding: 0.3em;
-  }
-}
-
-.content-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 20px;
-}
-
-.content-container[data-path="/"] {
-  justify-content: center
-}
-
-.overlay, .underlay {
-  width: 90%;
-  max-width: 1200px;
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-}
-
-.overlay {
-  overflow-y: auto;
-}
-
-.underlay {
-  height: auto;
-  max-height: 200px;
-}
-
-
-
-.play-button img {
-  width: 100%;
-  max-width: 300px;
-}
-.play-button img:hover {
-  filter: brightness(125%);
-}
-
-footer {
-  background-color: var(--footer-background);
-  text-align: center;
-  color: var(--text-primary-color);
-  padding: 16px 0;
-  font-size: 0.875rem;
-}
-
-footer a {
-  color: var(--text-secondary-color);
-  text-decoration: none;
-}
-
-footer a:hover {
-  text-decoration: underline;
-}
-
-
-table  {
-  width: 100%;
-}
-table th {
-  background-color:var(--header-background);
-  color:var(--table-header-text-color);
-  padding:1em;
-}
-table tr {
-  background-color: var(--table-cell-color);
-}
-table tr:nth-child(even) {
-  background-color: var(--table-cell-alt-color);
-}
-table td {
-  font-size: 1.5em;
-  padding:.1em;
-  font-family: monospace;
-  text-align:left;
-  color:var(--table-cell-text-color)
-}
-@media (max-width: 768px) {
-  table td {
-    font-size: 3.2vw;
-  }
+  .nav-container a { display: block; padding: 10px; }
+  .nav-toggle { display: flex; }
+  .content-container { padding: 12px; }
+  .overlay, .underlay { width: 95%; padding: 12px; }
+  footer { font-size: 0.8rem; padding: 12px 0; }
+  table th { padding: 0.5em; font-size: 0.8em; }
+  table td { padding: 0.3em; font-size: 3.2vw; }
 }
 
 @media (max-width: 480px) {
-  .gomud-btn {
-    font-size: 0.85rem;
-    padding: 3px 6px;
-  }
-
-  .overlay, .underlay {
-    padding: 8px;
-  }
-
-  .play-button img {
-    max-width: 150px;
-  }
+  .gomud-btn { font-size: 0.95rem; }
+  .overlay, .underlay { padding: 8px; }
+  .hero-cta { padding: 12px 24px; font-size: 1rem; }
 }

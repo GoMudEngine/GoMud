@@ -5,11 +5,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Welcome to {{ .CONFIG.Server.MudName }}</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" />
   <style>
     :root {
-      /* Setting CSS var here so we can prepend WebCDNLocation */
-      --background-image: url('{{ .CONFIG.FilePaths.WebCDNLocation }}/static/images/web_bg.png') center center / cover no-repeat fixed;
+      /* Warm-dark cartographer background (CSS gradient; no image asset) */
+      --background-image: radial-gradient(circle at 50% 22%, #251a12, #110b07);
     }
   </style>
   <link rel="icon" type="image/png" href="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/images/favicon.png">
