@@ -320,8 +320,10 @@ command (`internal/usercommands/admin.cartcheck.go`).
 (*mapper).CheckConsistency(zone string, nonCartesian bool) []Finding
 ```
 
-Crawls `crawledRooms` (the BFS-populated `RoomGrid`) for the zone and
-returns a slice of findings. The `nonCartesian` flag is sourced from the
+Scans `crawledRooms` (the `map[int]*mapNode` populated during BFS
+crawl) for the zone and returns a slice of findings. `RoomGrid` is a
+separate struct over a `[][][]*mapNode` 3D slice used for rendering, not
+for consistency checks. The `nonCartesian` flag is sourced from the
 zone's `zone-config.yaml` field `non_cartesian: true`; when set, only
 `longcrossing` warnings are emitted (the hard checks are skipped).
 
@@ -331,9 +333,14 @@ zone's `zone-config.yaml` field `non_cartesian: true`; when set, only
 func classifyKind(nominal, actual positionDelta) ExitKind
 ```
 
-Compares the nominal compass delta (what the exit direction implies) to
-the actual coordinate delta (the difference between the two rooms'
-positions). Returns one of four `ExitKind` values:
+Exit-kind classifier used by the map snapshot/render layer (consumed in
+later tasks). Compares the nominal compass delta (what the exit direction
+implies) to the actual coordinate delta (the difference between the two
+rooms' positions). Returns one of four `ExitKind` values:
+
+**Note:** `CheckConsistency` does NOT call `classifyKind`. Detection of
+`deltamismatch` and `longcrossing` is performed via inline delta
+comparisons (`samePos`) directly inside `CheckConsistency`.
 
 | Kind       | Meaning                                                     |
 |------------|-------------------------------------------------------------|
@@ -352,9 +359,12 @@ which compares only the `x`, `y`, `z` fields. Never compare
 | Kind            | Severity | Description                                              |
 |-----------------|----------|----------------------------------------------------------|
 | `collision`     | error    | Two distinct rooms share the same (x,y,z) coordinate.   |
-|                 |          | Detected by scanning `crawledRooms`; the `RoomGrid` map  |
-|                 |          | silently overwrites on duplicate key, so collisions must |
-|                 |          | be caught with a separate pass.                          |
+|                 |          | Detected by grouping `crawledRooms` nodes by their       |
+|                 |          | `(x,y,z)` Pos. Scanning `crawledRooms` (not `RoomGrid`)  |
+|                 |          | is required because `RoomGrid` is a 3D slice: when two   |
+|                 |          | rooms land on the same cell, the slice assignment keeps  |
+|                 |          | only the last writer, making the collision invisible     |
+|                 |          | there — every room is present in `crawledRooms`.         |
 | `noreciprocal`  | error    | A spatial exit has no matching return exit in the        |
 |                 |          | opposite direction, and the exit is not marked           |
 |                 |          | `oneway: true`.                                          |
@@ -387,8 +397,8 @@ The engine automatically skips:
 
 ### Known Limitation: Cross-Zone Crawl
 
-`CheckConsistency` operates on the BFS `crawledRooms` grid, which
-follows all exits and can cross zone boundaries. A boundary room may
+`CheckConsistency` operates on the BFS-populated `crawledRooms` map,
+which follows all exits and can cross zone boundaries. A boundary room may
 therefore appear in the findings for more than one zone — a cosmetic
 duplication. Future refinement may scope the crawl strictly to a single
 zone's room ID set.
