@@ -74,6 +74,12 @@
 /* Feed + command regions */
 #panel-feed { grid-area: feed; }
 #panel-feed .dash-panel-body { overflow: hidden; }   /* xterm manages its own scroll */
+/* Terminal MUST be a bounded box, else xterm can't virtualize scrollback and
+   re-renders every accumulated line on each write (progressive sluggishness). */
+#panel-feed #terminal { width: 100%; height: 100%; }
+#panel-feed #terminal .xterm,
+#panel-feed #terminal .xterm-viewport,
+#panel-feed #terminal .xterm-screen { height: 100%; }
 #panel-cmd  { grid-area: cmd; }
 #panel-cmd .dash-panel-body { display: flex; padding: 4px; }
 #panel-map { grid-area: map; } #panel-art { grid-area: art; } #panel-trig { grid-area: trig; }

@@ -295,9 +295,23 @@
         term.open(document.getElementById('terminal'));
 
         function resizeTerminal() {
-            fitAddon.fit();
+            try { fitAddon.fit(); } catch (e) {}
         }
         window.addEventListener('resize', resizeTerminal);
+        // Re-fit whenever the feed panel itself changes size (grid reflow,
+        // splitters, pop-out) so xterm tracks the bounded box and keeps its
+        // row count sane. Without this the terminal can over-size and lag.
+        if (window.ResizeObserver) {
+            var _feedPanel = document.getElementById('panel-feed');
+            if (_feedPanel) {
+                var _rafFit = null;
+                new ResizeObserver(function () {
+                    if (_rafFit) cancelAnimationFrame(_rafFit);
+                    _rafFit = requestAnimationFrame(resizeTerminal);
+                }).observe(_feedPanel);
+            }
+        }
+        requestAnimationFrame(resizeTerminal); // fit once after first grid paint
         resizeTerminal();
 
         /////////////////////////////////////////////
@@ -1421,34 +1435,36 @@
 
         .tab-buttons {
             display: flex;
-            border-bottom: 1px solid #0e0e20;
+            border-bottom: 1px solid var(--panel-border, #3a2a18);
         }
 
         .tab-button {
             flex: 1;
-            padding: 0.75em;
-            background: #3b3b78;
-            border: none;
-            cursor: pointer;
-            font: inherit;
+            padding: 0.4em 0.6em;
+            font-family: var(--font-serif, Georgia, serif);
             font-size: small;
-            transition: background 0.2s;
+            color: var(--brass-text, #3b2a10);
+            background: var(--brass-grad, radial-gradient(circle at 34% 26%, #f4dd92, #cb9f42 46%, #8a6620));
+            border: none;
+            border-right: 1px solid var(--brass-border, #5e431a);
+            cursor: pointer;
+            transition: filter 0.1s;
         }
 
         .tab-button:not(.active):hover {
-            background: #1a1a3e;
-            color:#d0d0e8;
+            filter: brightness(1.08);
         }
 
         .tab-button.active {
-            background: #d0d0e8;
-            border-bottom: 2px solid #3b3b78;
+            filter: brightness(0.9);
+            box-shadow: inset 0 2px 4px rgba(74,52,16,0.6),
+                        inset 0 -1px 1px rgba(255,246,212,0.4);
         }
 
         .tab-contents {
             flex: 1;
             padding: 0.25em;
-            background: #000;
+            background: var(--panel-bg, #201913);
             overflow: hidden;
             position: relative;
         }
@@ -1471,8 +1487,8 @@
         .chat-window {
             overflow-y:auto;
             height:100%;
-            background-color:#000;
-            color:#fff;
+            background-color: transparent;
+            color: var(--text-primary, #d2c3a4);
         }
         .chat-window.broadcast {
             color: #d700d7;
