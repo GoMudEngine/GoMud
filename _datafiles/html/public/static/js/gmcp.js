@@ -139,10 +139,10 @@ function mid(a, b, t) {
  * a, b are pixel-coordinate arrays [x, y].
  * Extracted from drawConn type==="locked" in 02-connection-types.html.
  */
-function drawLockedDoor(g, a, b) {
+function drawLockedDoor(g, a, b, emboss) {
   var x1 = a[0], y1 = a[1], x2 = b[0], y2 = b[1];
   var m = mid(a, b, 0.5);
-  var d = 0.6; // emboss offset
+  var d = (emboss != null) ? emboss : 0.6; // emboss offset
   // near half (player side) normal; far half (beyond the locked door) rust-red
   g.appendChild(lEl("line", { x1: x1, y1: y1, x2: m[0], y2: m[1], stroke: "#9c8048", "stroke-width": 1.4, "stroke-dasharray": "3 3", opacity: "0.8" }));
   g.appendChild(lEl("line", { x1: m[0], y1: m[1], x2: x2, y2: y2, stroke: LEATHER_LOCK, "stroke-width": 1.4, "stroke-dasharray": "3 3", opacity: "0.9" }));
@@ -164,13 +164,13 @@ function drawLockedDoor(g, a, b) {
  * a, b are pixel-coordinate arrays [x, y].
  * Extracted from drawConn type==="gate" in 02-connection-types.html.
  */
-function drawArchGate(g, a, b) {
+function drawArchGate(g, a, b, emboss) {
   var x1 = a[0], y1 = a[1], x2 = b[0], y2 = b[1];
   var ang = Math.atan2(y2 - y1, x2 - x1);
   var m = mid(a, b, 0.5);
   var pxn = -Math.sin(ang), pyn = Math.cos(ang);
   var ca = Math.cos(ang), sa = Math.sin(ang);
-  var d = 0.6; // emboss offset
+  var d = (emboss != null) ? emboss : 0.6; // emboss offset
   // passage line (embossed)
   embLine(g, x1, y1, x2, y2, LEATHER_INK, 2.2, 0.92, d);
   // arch curve
@@ -363,17 +363,20 @@ class RoomGridSVG {
       const entry = this.rooms.get(id);
       if (!entry) return;
 
-      // un-highlight previous — rebuild its token as non-current
-      if (this.currentCenterId != null && this.currentCenterId !== id) {
-          const prevEntry = this.rooms.get(this.currentCenterId);
+      // Set the new center FIRST so _fog() computes distances from the new room
+      // when we rebuild the previous room's token below.
+      const prevCenterId = this.currentCenterId;
+      this.currentCenterId = id;
+
+      // un-highlight previous — rebuild its token as non-current (fog now correct)
+      if (prevCenterId != null && prevCenterId !== id) {
+          const prevEntry = this.rooms.get(prevCenterId);
           if (prevEntry) {
               const prevSvc = this._serviceFor(prevEntry.room.tags);
               while (prevEntry.group.firstChild) prevEntry.group.removeChild(prevEntry.group.firstChild);
               this._buildRoomTokenInGroup(prevEntry.group, prevEntry.room, false, prevSvc);
           }
       }
-
-      this.currentCenterId = id;
 
       // re-draw new current room as raised token
       const svc = this._serviceFor(entry.room.tags);
@@ -648,10 +651,10 @@ class RoomGridSVG {
           }, room.name || ""));
       } else if (svc) {
           embCirc(g, cx, cy, 7, L.ink, L.roomFill, 1.3, d * 0.7);
-          g.appendChild(lEl("circle", { cx: cx, cy: cy, r: 9.5, fill: "none", stroke: L.ink, "stroke-width": 0.8, opacity: fog }));
+          g.appendChild(lEl("circle", { cx: cx, cy: cy, r: 9.5, fill: "none", stroke: L.ink, "stroke-width": 0.8 }));
           embText(g, cx, cy + 3.2, {
               "text-anchor": "middle", "font-family": "Georgia,serif",
-              "font-size": 9, "font-weight": "bold", opacity: fog
+              "font-size": 9, "font-weight": "bold"
           }, svc.glyph, L.ink, d * 0.6);
       } else {
           embCirc(g, cx, cy, 6.5, L.ink, L.roomFill, 1.2, d * 0.7);
@@ -778,7 +781,7 @@ class RoomGridSVG {
 
       // ── Special connection types (override biome styling) ────────────
       if (e.locked) {
-          drawLockedDoor(this.connectionsGroup, pt1, pt2);
+          drawLockedDoor(this.connectionsGroup, pt1, pt2, RoomGridSVG.LEATHER.emboss);
           return;
       }
       if (e.secret) {
@@ -802,7 +805,7 @@ class RoomGridSVG {
           return;
       }
       if (e.gate) {
-          drawArchGate(this.connectionsGroup, pt1, pt2);
+          drawArchGate(this.connectionsGroup, pt1, pt2, RoomGridSVG.LEATHER.emboss);
           return;
       }
 
@@ -890,14 +893,6 @@ class RoomGridSVG {
       const L = RoomGridSVG.LEATHER;
 
       embLine(this.connectionsGroup, x1, y1, x2, y2, L.plain, 1.5, 0.85, L.emboss * 0.6);
-  }
-
-  /**
-   * Wrap stubs are now handled by _drawConnection via the stub path.
-   * This method kept for legacy compatibility but is a no-op.
-   */
-  _drawWrapStub(id, dx, dy) {
-      // Handled by _drawConnection when e.stub===true or e.to not in rooms.
   }
 
   /**
