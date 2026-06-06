@@ -2,6 +2,7 @@ package usercommands
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -23,6 +24,14 @@ func CartCheck(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		zoneNames = []string{rest}
 	} else {
 		zoneNames = rooms.GetAllZoneNames()
+	}
+	sort.Strings(zoneNames)
+
+	if rest != "" {
+		if _, err := rooms.GetZoneRoot(rest); err != nil {
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`Zone "%s" not found.`, rest))
+			return true, nil
+		}
 	}
 
 	totalErr, totalWarn := 0, 0
