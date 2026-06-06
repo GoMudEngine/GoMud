@@ -95,3 +95,94 @@ func hasReturnExit(dst *mapNode, srcId int) bool {
 func roomCrawlable(roomId int) bool {
 	return !rooms.IsEphemeralRoomId(roomId)
 }
+
+// CheckConsistency walks the crawled rooms of this mapper and returns findings.
+// nonCartesian=true (zone flag) suppresses collision/reciprocity/deltamismatch
+// (the zone is intentionally non-Euclidean); the long-crossing warning still runs.
+func (r *mapper) CheckConsistency(zone string, nonCartesian bool) []Finding {
+	findings := []Finding{}
+
+	if !nonCartesian {
+		for _, group := range findCollisions(r.crawledRooms) {
+			findings = append(findings, Finding{
+				Severity: "error", Kind: "collision", Zone: zone, RoomId: group[0],
+				Detail: fmt.Sprintf("rooms %v occupy the same coordinate", group),
+			})
+		}
+	}
+
+	for srcId, src := range r.crawledRooms {
+		if !roomCrawlable(srcId) {
+			continue
+		}
+		for exitName, e := range src.Exits {
+			dst, ok := r.crawledRooms[e.RoomId]
+			if !ok {
+				continue // cross-zone or uncrawled — not part of this coordinate space
+			}
+			actual := positionDelta{x: dst.Pos.x - src.Pos.x, y: dst.Pos.y - src.Pos.y, z: dst.Pos.z - src.Pos.z}
+
+			if !nonCartesian {
+				if !samePos(e.Direction, actual) {
+					findings = append(findings, Finding{
+						Severity: "error", Kind: "deltamismatch", Zone: zone, RoomId: srcId, ExitName: exitName,
+						Detail: fmt.Sprintf("nominal delta (%d,%d,%d) != actual (%d,%d,%d) — wrap exit in a Cartesian zone (set non_cartesian or fix geometry)",
+							e.Direction.x, e.Direction.y, e.Direction.z, actual.x, actual.y, actual.z),
+					})
+				}
+				if !e.OneWay && !hasReturnExit(dst, srcId) {
+					findings = append(findings, Finding{
+						Severity: "error", Kind: "noreciprocal", Zone: zone, RoomId: srcId, ExitName: exitName,
+						Detail: fmt.Sprintf("exit to room %d has no return exit (use oneway: true if intentional)", e.RoomId),
+					})
+				}
+			}
+
+			// Soft, always-on: long exit whose straight span crosses an occupied cell.
+			if samePos(e.Direction, actual) && (absInt(actual.x) > 1 || absInt(actual.y) > 1) {
+				if crossed := r.longSpanCrossesRoom(src.Pos, actual, srcId, e.RoomId); crossed != 0 {
+					findings = append(findings, Finding{
+						Severity: "warn", Kind: "longcrossing", Zone: zone, RoomId: srcId, ExitName: exitName,
+						Detail: fmt.Sprintf("long exit connector passes over room %d", crossed),
+					})
+				}
+			}
+		}
+	}
+	return findings
+}
+
+// longSpanCrossesRoom returns the roomId of an intervening occupied cell on the
+// straight line from start by delta (exclusive of endpoints), or 0 if none.
+// Only handles axis-aligned and pure-diagonal spans (the only shapes posDeltas produce).
+func (r *mapper) longSpanCrossesRoom(start, delta positionDelta, srcId, dstId int) int {
+	steps := absInt(delta.x)
+	if absInt(delta.y) > steps {
+		steps = absInt(delta.y)
+	}
+	if steps <= 1 {
+		return 0
+	}
+	sx, sy := sign(delta.x), sign(delta.y)
+	byCell := map[[3]int]int{}
+	for id, n := range r.crawledRooms {
+		byCell[[3]int{n.Pos.x, n.Pos.y, n.Pos.z}] = id
+	}
+	for i := 1; i < steps; i++ {
+		cell := [3]int{start.x + sx*i, start.y + sy*i, start.z}
+		if id, ok := byCell[cell]; ok && id != srcId && id != dstId {
+			return id
+		}
+	}
+	return 0
+}
+
+func sign(v int) int {
+	if v > 0 {
+		return 1
+	}
+	if v < 0 {
+		return -1
+	}
+	return 0
+}

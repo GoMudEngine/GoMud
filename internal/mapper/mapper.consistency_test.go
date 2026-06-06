@@ -65,3 +65,81 @@ func TestFindCollisions(t *testing.T) {
 		t.Fatalf("expected two groups ordered [10..],[20..], got %v", mg)
 	}
 }
+
+// helper: build a minimal *mapper with hand-placed nodes (no crawl).
+func mkMapper(nodes map[int]*mapNode) *mapper {
+	return &mapper{crawledRooms: nodes}
+}
+
+func node(id, x, y, z int, exits map[string]nodeExit) *mapNode {
+	return &mapNode{RoomId: id, Pos: d(x, y, z), Exits: exits}
+}
+
+func TestCheckConsistency_CleanGrid(t *testing.T) {
+	nodes := map[int]*mapNode{
+		1: node(1, 0, 0, 0, map[string]nodeExit{"north": {RoomId: 2, Direction: d(0, -1, 0)}}),
+		2: node(2, 0, -1, 0, map[string]nodeExit{"south": {RoomId: 1, Direction: d(0, 1, 0)}}),
+	}
+	if f := mkMapper(nodes).CheckConsistency("test", false); len(f) != 0 {
+		t.Fatalf("clean grid should yield no findings, got %v", f)
+	}
+}
+
+func TestCheckConsistency_MissingReciprocal(t *testing.T) {
+	nodes := map[int]*mapNode{
+		1: node(1, 0, 0, 0, map[string]nodeExit{"north": {RoomId: 2, Direction: d(0, -1, 0)}}),
+		2: node(2, 0, -1, 0, map[string]nodeExit{}),
+	}
+	f := mkMapper(nodes).CheckConsistency("test", false)
+	if len(f) != 1 || f[0].Kind != "noreciprocal" {
+		t.Fatalf("expected one noreciprocal finding, got %v", f)
+	}
+}
+
+func TestCheckConsistency_OnewaySuppressesReciprocal(t *testing.T) {
+	nodes := map[int]*mapNode{
+		1: node(1, 0, 0, 0, map[string]nodeExit{"north": {RoomId: 2, Direction: d(0, -1, 0), OneWay: true}}),
+		2: node(2, 0, -1, 0, map[string]nodeExit{}),
+	}
+	if f := mkMapper(nodes).CheckConsistency("test", false); len(f) != 0 {
+		t.Fatalf("oneway should suppress reciprocity finding, got %v", f)
+	}
+}
+
+func TestCheckConsistency_WrapFlaggedInCartesian(t *testing.T) {
+	nodes := map[int]*mapNode{
+		1: node(1, 0, -2, 0, map[string]nodeExit{"south": {RoomId: 2, Direction: d(0, 1, 0)}}),
+		2: node(2, 0, 2, 0, map[string]nodeExit{"north": {RoomId: 1, Direction: d(0, -1, 0)}}),
+	}
+	f := mkMapper(nodes).CheckConsistency("test", false)
+	saw := false
+	for _, x := range f {
+		if x.Kind == "deltamismatch" {
+			saw = true
+		}
+	}
+	if !saw {
+		t.Fatalf("expected a deltamismatch finding, got %v", f)
+	}
+}
+
+func TestCheckConsistency_WrapAllowedInNonCartesian(t *testing.T) {
+	nodes := map[int]*mapNode{
+		1: node(1, 0, -2, 0, map[string]nodeExit{"south": {RoomId: 2, Direction: d(0, 1, 0)}}),
+		2: node(2, 0, 2, 0, map[string]nodeExit{"north": {RoomId: 1, Direction: d(0, -1, 0)}}),
+	}
+	if f := mkMapper(nodes).CheckConsistency("test", true); len(f) != 0 {
+		t.Fatalf("non_cartesian zone should suppress wrap/reciprocity findings, got %v", f)
+	}
+}
+
+func TestCheckConsistency_Collision(t *testing.T) {
+	nodes := map[int]*mapNode{
+		1: node(1, 0, 0, 0, map[string]nodeExit{}),
+		2: node(2, 0, 0, 0, map[string]nodeExit{}),
+	}
+	f := mkMapper(nodes).CheckConsistency("test", false)
+	if len(f) != 1 || f[0].Kind != "collision" {
+		t.Fatalf("expected one collision finding, got %v", f)
+	}
+}
