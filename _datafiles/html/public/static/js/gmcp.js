@@ -94,6 +94,7 @@ class RoomGridSVG {
           entry.room.x = room.x;
           entry.room.y = room.y;
           entry.room.Exits = Array.isArray(room.Exits) ? room.Exits : [];
+          entry.room.ExitsMeta = room.ExitsMeta || [];
           entry.room.Color = room.Color;
           entry.room.Text = room.Text;
           entry.defaultColor = defaultColor;
