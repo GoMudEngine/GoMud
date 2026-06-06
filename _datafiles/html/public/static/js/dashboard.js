@@ -405,25 +405,29 @@
     initPopout: function () {
       var self = this;
       this._popped = this._popped || {};
+      this._dockAnchor = this._dockAnchor || {};
 
-      SIDE_PANELS.forEach(function (name) {
-        var panel = document.getElementById("panel-" + name);
+      // Wire every pop-out button (side panels AND the game feed)
+      document.querySelectorAll("#dashboard .ph-popout").forEach(function (btn) {
+        var panel = btn.closest(".dash-panel");
         if (!panel) return;
-        var btn = panel.querySelector(".ph-popout");
-        if (!btn) return;
         btn.addEventListener("click", function (ev) {
           ev.stopPropagation();
-          self.popout(name);
+          self.popout(panel.dataset.panel);
         });
       });
     },
 
     popout: function (name) {
       var self = this;
-      if (this._popped[name]) return; // already floating
+      // Toggle: the ⧉ now lives in the floating window, so a second press re-docks.
+      if (this._popped[name]) { this._popped[name].close(); return; }
 
       var panel = document.getElementById("panel-" + name);
       if (!panel) return;
+
+      // Remember the slot so we can re-dock in the SAME position (not the bottom).
+      this._dockAnchor[name] = panel.nextElementSibling || null;
 
       // Mark before creating the WinBox so reflow guards see it immediately
       panel.dataset.popped = "1";
@@ -450,12 +454,17 @@
     redock: function (name) {
       var panel = document.getElementById("panel-" + name);
       if (panel) {
+        panel.removeAttribute("style");      // drop WinBox inline sizing → CSS flex governs again
+        panel.removeAttribute("data-popped");
         var homeId = panel.dataset.homeCol;
         var col = homeId ? document.getElementById(homeId) : null;
-        if (col) col.appendChild(panel);
-        panel.removeAttribute("data-popped");
-        panel.style.display = "";
+        if (col) {
+          var anchor = this._dockAnchor ? this._dockAnchor[name] : null;
+          if (anchor && anchor.parentNode === col) col.insertBefore(panel, anchor);
+          else col.appendChild(panel);
+        }
       }
+      if (this._dockAnchor) delete this._dockAnchor[name];
       delete this._popped[name];
       this.saveLayout && this.saveLayout();
     },
