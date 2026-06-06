@@ -67,3 +67,6 @@ _datafiles/economy/snapshots/
 # but the audiobook M4B (~340 MB) exceeds GitHub's 100 MB/file limit.
 book_build/
 *.m4b
+
+# Superpowers brainstorming artifacts
+.superpowers/
