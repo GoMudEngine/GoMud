@@ -190,6 +190,7 @@ func sign(v int) int {
 // warns or panics per the MapConsistencyEnforce config knob. Called from PreCacheMaps
 // AFTER all zone mappers are built. non_cartesian zones are passed their flag.
 func ValidateZoneConsistency() {
+	// MapConsistencyEnforce is normalized to off|warn|panic by GamePlay.Validate(); empty never reaches here.
 	mode := string(configs.GetGamePlayConfig().MapConsistencyEnforce)
 	if mode == "off" {
 		return
@@ -211,10 +212,11 @@ func ValidateZoneConsistency() {
 				if firstError == "" {
 					firstError = f.String()
 				}
+				mudlog.Error("mapper.ValidateZoneConsistency", "finding", f.String())
 			} else {
 				warnCount++
+				mudlog.Warn("mapper.ValidateZoneConsistency", "finding", f.String())
 			}
-			mudlog.Warn("mapper.ValidateZoneConsistency", "finding", f.String())
 		}
 	}
 

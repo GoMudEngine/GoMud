@@ -666,6 +666,14 @@ func GetZoneBiome(zone string) string {
 	return ``
 }
 
+// IsZoneNonCartesian reports the non_cartesian flag for a zone (false if unknown).
+func IsZoneNonCartesian(zoneName string) bool {
+	if z, ok := roomManager.zones[zoneName]; ok {
+		return z.NonCartesian
+	}
+	return false
+}
+
 func MoveToZone(roomId int, newZoneName string) error {
 
 	tplRoom := LoadRoomTemplate(roomId)
