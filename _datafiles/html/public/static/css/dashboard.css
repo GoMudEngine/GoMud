@@ -86,12 +86,23 @@
 #dash-col-center .dash-panel-head { border-bottom-color: var(--antique-gold, #b89047); }
 #dash-col-right  .dash-panel-head { border-bottom-color: var(--madder, #8c3b30); }
 
-/* Lighter vellum borders on a few key cards for extra contrast:
-   session strip (Reconnect), command input, and each column's middle card. */
+/* Parchment cards: vellum fill + brown leather outline + dark text, for
+   contrast against the dark leather cards. (session strip / command input /
+   each column's middle card.) The two panels keep their dark labeled headers. */
 #dash-session,
 #panel-cmd,
 #panel-vitals,
-#panel-status { border-color: var(--vellum, #d9c39e); }
+#panel-status {
+  background: var(--vellum, #d9c39e);
+  border-color: var(--panel-border, #3a2a18);
+  color: var(--ink-deep, #2b231d);
+}
+#panel-vitals .dash-panel-body,
+#panel-status .dash-panel-body { color: var(--ink-deep, #2b231d); }
+#panel-status .status-line { color: var(--ink-deep, #2b231d); }
+#panel-status .status-empty { color: #6e5a38; }
+#dash-session .sess-name { color: var(--ink-deep, #2b231d); }
+#dash-session .sess-conn { color: #356b3a; }
 
 .dash-panel-head .ph-btns { margin-left: auto; display: flex; gap: 4px; }
 .dash-panel-head .ph-btn {
