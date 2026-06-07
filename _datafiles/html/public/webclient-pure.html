@@ -718,34 +718,24 @@
                 }
                 var rawItems = cfg.data.items;
 
-                // Backpack only: collapse identical items (same name + uses) into
-                // a single tile with an xN stack badge. Other tabs show one tile
-                // per item since slot identity matters (bandolier order, component
-                // bag tags, etc.).
-                var displayItems = rawItems;
-                if (invActiveTab === "backpack") {
-                    var stackMap = {}; // key → { item, count }
-                    var stackOrder = [];
-                    for (var s = 0; s < rawItems.length; s++) {
-                        var ri = rawItems[s];
-                        var key = (ri.name || "") + "\x00" + (ri.uses || 0);
-                        if (stackMap[key]) {
-                            stackMap[key].count++;
-                        } else {
-                            stackMap[key] = { item: ri, count: 1 };
-                            stackOrder.push(key);
-                        }
+                // Collapse identical items (same name + uses) into one tile with
+                // an xN stack badge. Applies to backpack, bandolier, AND component
+                // bag — all hold stackable identical items (potions, materials).
+                var stackMap = {}; // key → { item, count }
+                var stackOrder = [];
+                for (var s = 0; s < rawItems.length; s++) {
+                    var ri = rawItems[s];
+                    var key = (ri.name || "") + "\x00" + (ri.uses || 0);
+                    if (stackMap[key]) {
+                        stackMap[key].count++;
+                    } else {
+                        stackMap[key] = { item: ri, count: 1 };
+                        stackOrder.push(key);
                     }
-                    displayItems = [];
-                    for (var k = 0; k < stackOrder.length; k++) {
-                        displayItems.push(stackMap[stackOrder[k]]);
-                    }
-                } else {
-                    // Non-backpack: wrap in same shape { item, count:1 } for uniform loop
-                    displayItems = [];
-                    for (var n = 0; n < rawItems.length; n++) {
-                        displayItems.push({ item: rawItems[n], count: 1 });
-                    }
+                }
+                var displayItems = [];
+                for (var k = 0; k < stackOrder.length; k++) {
+                    displayItems.push(stackMap[stackOrder[k]]);
                 }
 
                 for (var j = 0; j < displayItems.length; j++) {
@@ -772,8 +762,8 @@
                     // Charge meter (all container tabs — potions in bandolier have charges)
                     appendChargeMeter(tile, item.uses || 0, item.usesMax || 0);
 
-                    // xN stack badge — backpack only, when N > 1
-                    if (invActiveTab === "backpack" && count > 1) {
+                    // xN stack badge — any container tab, when N > 1
+                    if (count > 1) {
                         var qty = document.createElement("span");
                         qty.className = "inv-qty";
                         qty.textContent = "x" + count;
