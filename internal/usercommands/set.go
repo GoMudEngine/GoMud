@@ -557,5 +557,7 @@ func cmdSetMacro(user *users.UserRecord, setTarget string, args []string) (bool,
 		Name:   `macro`,
 	})
 
+	events.AddToQueue(events.AutomationChanged{UserId: user.UserId})
+
 	return true, nil
 }

@@ -32,6 +32,9 @@ func Alias(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			if deletedAlias != `` {
 				user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="yellow">Custom Alias Removed:</ansi> <ansi fg="command">%s</ansi>`, deletedAlias))
 			}
+
+			events.AddToQueue(events.AutomationChanged{UserId: user.UserId})
+
 			return true, nil
 
 		}
