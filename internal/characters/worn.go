@@ -333,43 +333,15 @@ func (c *Character) GetAllWornItems() []items.Item {
 	return wornItems
 }
 
+// GetGearValue sums the spec value of every equipped item across ALL slots
+// (via AllSlots(), so it can't drift when slots are added). Used by the
+// goal-planner's gear heuristic.
 func (c *Character) GetGearValue() int {
 	value := 0
-	if c.Equipment.Weapon.ItemId > 0 {
-		value += c.Equipment.Weapon.GetSpec().Value
-	}
-	if c.Equipment.Offhand.ItemId > 0 {
-		value += c.Equipment.Offhand.GetSpec().Value
-	}
-	if c.Equipment.ExtraArm1.ItemId > 0 {
-		value += c.Equipment.ExtraArm1.GetSpec().Value
-	}
-	if c.Equipment.ExtraArm2.ItemId > 0 {
-		value += c.Equipment.ExtraArm2.GetSpec().Value
-	}
-	if c.Equipment.Head.ItemId > 0 {
-		value += c.Equipment.Head.GetSpec().Value
-	}
-	if c.Equipment.Neck.ItemId > 0 {
-		value += c.Equipment.Neck.GetSpec().Value
-	}
-	if c.Equipment.Body.ItemId > 0 {
-		value += c.Equipment.Body.GetSpec().Value
-	}
-	if c.Equipment.Belt.ItemId > 0 {
-		value += c.Equipment.Belt.GetSpec().Value
-	}
-	if c.Equipment.Gloves.ItemId > 0 {
-		value += c.Equipment.Gloves.GetSpec().Value
-	}
-	if c.Equipment.Ring.ItemId > 0 {
-		value += c.Equipment.Ring.GetSpec().Value
-	}
-	if c.Equipment.Legs.ItemId > 0 {
-		value += c.Equipment.Legs.GetSpec().Value
-	}
-	if c.Equipment.Feet.ItemId > 0 {
-		value += c.Equipment.Feet.GetSpec().Value
+	for _, s := range c.Equipment.AllSlots() {
+		if s.Item.ItemId > 0 {
+			value += s.Item.GetSpec().Value
+		}
 	}
 	return value
 }
