@@ -7,7 +7,7 @@
   gap: var(--dash-gap, 6px) 0;   /* row-gap kept, col-gap=0 (splitter tracks handle spacing) */
   padding: 6px;
   box-sizing: border-box;
-  background: var(--bg-base, #191310);
+  background: var(--ink-deep, #2b231d);   /* ink field behind the cards, offset from the chrome */
   /* session strip on top; below it five columns: left | ls-splitter | center | rs-splitter | right
      so each panel can size independently and side columns are drag-resizable */
   grid-template-columns:
@@ -94,7 +94,7 @@
 #panel-vitals,
 #panel-status {
   background: var(--vellum, #d9c39e);
-  border-color: var(--antique-gold, #b89047);
+  border-color: var(--panel-border, #3a2a18);   /* dark leather frame — visible on the light vellum fill */
   color: var(--ink-deep, #2b231d);
 }
 #panel-vitals .dash-panel-body,
