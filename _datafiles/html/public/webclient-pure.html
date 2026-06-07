@@ -948,9 +948,35 @@
 
                     list.appendChild(tRow);
                 }
-            } else {
-                // triggers — Phase 3+
-                makeEmptyMsg("Coming soon.");
+            } else if (autoActiveTab === 'triggers') {
+                if (!a || !a.triggers || !a.triggers.length) {
+                    makeEmptyMsg("No triggers configured.");
+                    return;
+                }
+                for (var tri = 0; tri < a.triggers.length; tri++) {
+                    var trig = a.triggers[tri];
+                    var trRow = document.createElement("div");
+                    trRow.className = "auto-row";
+                    trRow.dataset.autoType = "trigger";
+                    trRow.dataset.autoId   = String(trig.id);
+                    trRow.dataset.autoKey  = String(trig.id);
+
+                    var trTog = document.createElement("span");
+                    trTog.className = "auto-tog" + (trig.enabled ? " on" : "");
+                    trRow.appendChild(trTog);
+
+                    var trName = document.createElement("span");
+                    trName.className = "name";
+                    trName.textContent = trig.name || "";
+                    trRow.appendChild(trName);
+
+                    var trSum = document.createElement("span");
+                    trSum.className = "sum";
+                    trSum.textContent = (trig.pattern || "") + (trig.enabled ? "" : " (off)");
+                    trRow.appendChild(trSum);
+
+                    list.appendChild(trRow);
+                }
             }
         }
 
@@ -1078,6 +1104,32 @@
                     e.stopPropagation();
                     return;
                 }
+                // ── Trigger enable toggle ─────────────────────────────────────
+                var trRow = togTarget.closest(".auto-row[data-auto-type='trigger']");
+                if (trRow) {
+                    var trid = parseInt(trRow.dataset.autoId, 10);
+                    var trAutomation = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
+                    var tTrig = null;
+                    if (trAutomation && trAutomation.triggers) {
+                        for (var tri = 0; tri < trAutomation.triggers.length; tri++) {
+                            if (trAutomation.triggers[tri].id === trid) { tTrig = trAutomation.triggers[tri]; break; }
+                        }
+                    }
+                    if (tTrig) {
+                        SendGMCP("Char.Automation.Set", {
+                            kind: "trigger",
+                            id: tTrig.id,
+                            name: tTrig.name,
+                            pattern: tTrig.pattern,
+                            condition: tTrig.condition || null,
+                            thenCmds: tTrig.thenCmds,
+                            elseCmds: tTrig.elseCmds || "",
+                            enabled: !tTrig.enabled
+                        });
+                    }
+                    e.stopPropagation();
+                    return;
+                }
             }
 
             // ── Tick fire-now (click anywhere else on the row) ───────────────
@@ -1085,6 +1137,26 @@
             if (tickRow) {
                 var cmds = tickRow.dataset.autoCmd || "";
                 cmds.split(";").forEach(function(c) { c = c.trim(); if (c) SendData(c); });
+                return;
+            }
+
+            // ── Trigger test-fire (click anywhere else on the row) ────────────
+            var trigRow = e.target.closest(".auto-row[data-auto-type='trigger']");
+            if (trigRow) {
+                var trfid = parseInt(trigRow.dataset.autoId, 10);
+                var trfAutomation = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
+                var trfTrig = null;
+                if (trfAutomation && trfAutomation.triggers) {
+                    for (var fi = 0; fi < trfAutomation.triggers.length; fi++) {
+                        if (trfAutomation.triggers[fi].id === trfid) { trfTrig = trfAutomation.triggers[fi]; break; }
+                    }
+                }
+                if (trfTrig) {
+                    // Test-fire: evaluate condition against live state with empty captures
+                    var emptyCaps = [];
+                    var ok = evalTriggerCondition(trfTrig.condition, emptyCaps);
+                    fireTriggerCommands(ok ? trfTrig.thenCmds : trfTrig.elseCmds, emptyCaps);
+                }
                 return;
             }
 
