@@ -365,6 +365,33 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 				mudlog.Debug("GMCP LOGIN", "username", decoded.Name, "password", strings.Repeat(`*`, len(decoded.Password)))
 			}
 
+		case `Char.Automation.Set`:
+			var decoded struct {
+				Kind string `json:"kind"`
+				users.UserTick
+			}
+			if err := json.Unmarshal(payload, &decoded); err == nil && decoded.Kind == `tick` {
+				if uid := userIdForConnection(connectionId); uid > 0 {
+					if u := users.GetByUserId(uid); u != nil {
+						u.SetTick(decoded.UserTick)
+						events.AddToQueue(events.AutomationChanged{UserId: uid})
+					}
+				}
+			}
+		case `Char.Automation.Remove`:
+			var decoded struct {
+				Kind string `json:"kind"`
+				Id   int    `json:"id"`
+			}
+			if err := json.Unmarshal(payload, &decoded); err == nil && decoded.Kind == `tick` {
+				if uid := userIdForConnection(connectionId); uid > 0 {
+					if u := users.GetByUserId(uid); u != nil {
+						u.RemoveTick(decoded.Id)
+						events.AddToQueue(events.AutomationChanged{UserId: uid})
+					}
+				}
+			}
+
 		// Handle Discord-related messages
 		default:
 			// Check if it's a Discord message
@@ -404,6 +431,16 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 	mudlog.Debug("Received", "type", "GMCP?", "data-size", len(iacCmd), "data-string", string(iacCmd), "data-bytes", iacCmd)
 
 	return true
+}
+
+// userIdForConnection resolves the active user behind a connection id, or 0.
+func userIdForConnection(connectionId uint64) int {
+	for _, user := range users.GetAllActiveUsers() {
+		if user.ConnectionId() == connectionId {
+			return user.UserId
+		}
+	}
+	return 0
 }
 
 // Checks whether their level is too high for a guide
