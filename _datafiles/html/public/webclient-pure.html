@@ -1047,6 +1047,13 @@
                 var inList = !!name && list.indexOf(name) >= 0;
                 return cond.op === "notoneof" ? !inList : inList;
             }
+            if (cond.sourceKind === "cooldown") {
+                var cds = (((GMCPStructs["Commands"] || {}).State) || {}).cooldowns || {};
+                var name = ((cond.values && cond.values[0]) || "").toLowerCase();
+                // ready/available == the cooldown name is NOT present in the live map
+                var ready = !Object.keys(cds).some(function(k){ return String(k).toLowerCase() === name; });
+                return cond.op === "notready" ? !ready : ready;
+            }
             return true;
         }
 
@@ -2928,7 +2935,8 @@
                     {v:"status:",       l:"my conditions"},
                     {v:"capture:$1",    l:"capture $1"},
                     {v:"capture:$2",    l:"capture $2"},
-                    {v:"target:",       l:"my target"}
+                    {v:"target:",       l:"my target"},
+                    {v:"cooldown:",     l:"an ability cooldown"}
                 ];
                 srcOptions.forEach(function(o) {
                     var opt = document.createElement("option");
@@ -2951,10 +2959,11 @@
 
                 // Op options per source kind
                 var opsByKind = {
-                    "pool":    [{v:"below",    l:"below %"}, {v:"above",    l:"above %"}, {v:"equals",  l:"equals %"}],
-                    "status":  [{v:"include",  l:"includes"}, {v:"exclude", l:"excludes"}],
-                    "capture": [{v:"equals",   l:"equals"},   {v:"contains",l:"contains"}],
-                    "target":  [{v:"oneof",    l:"is one of"}, {v:"notoneof",l:"is not one of"}]
+                    "pool":     [{v:"below",    l:"below %"}, {v:"above",    l:"above %"}, {v:"equals",  l:"equals %"}],
+                    "status":   [{v:"include",  l:"includes"}, {v:"exclude", l:"excludes"}],
+                    "capture":  [{v:"equals",   l:"equals"},   {v:"contains",l:"contains"}],
+                    "target":   [{v:"oneof",    l:"is one of"}, {v:"notoneof",l:"is not one of"}],
+                    "cooldown": [{v:"ready",    l:"is ready"}, {v:"notready",l:"is not ready"}]
                 };
 
                 function rebuildOps(kind) {
@@ -2973,6 +2982,9 @@
                     } else if (kind === "target") {
                         valInput.type = "text";
                         valInput.placeholder = "goblin, orc (comma list)";
+                    } else if (kind === "cooldown") {
+                        valInput.type = "text";
+                        valInput.placeholder = "ability or command name";
                     } else {
                         valInput.type = "text";
                         valInput.placeholder = "value";
@@ -3052,10 +3064,11 @@
                 if (hasCondition) {
                     var cond = prefillCondition;
                     // Map condition back to source select value
-                    var srcVal = cond.sourceKind === "pool"    ? ("pool:" + (cond.sourceKey || "hp"))
-                               : cond.sourceKind === "status"  ? "status:"
-                               : cond.sourceKind === "capture" ? ("capture:" + (cond.sourceKey || "$1"))
-                               : cond.sourceKind === "target"  ? "target:"
+                    var srcVal = cond.sourceKind === "pool"     ? ("pool:" + (cond.sourceKey || "hp"))
+                               : cond.sourceKind === "status"   ? "status:"
+                               : cond.sourceKind === "capture"  ? ("capture:" + (cond.sourceKey || "$1"))
+                               : cond.sourceKind === "target"   ? "target:"
+                               : cond.sourceKind === "cooldown" ? "cooldown:"
                                : "pool:hp";
                     srcSelect.value = srcVal;
                     rebuildOps(cond.sourceKind);
