@@ -2,11 +2,23 @@ package gmcp
 
 import (
 	"sort"
+	"sync"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
 	"github.com/GoMudEngine/GoMud/internal/users"
+)
+
+// pendingSpawnRefresh tracks userIds that spawned but may not have received
+// their initial Char.Automation push yet (e.g. a web client whose websocket
+// GMCP frame raced the login burst). The next NewRound re-pushes for these
+// users once and clears them, guaranteeing delivery after the connection is
+// fully GMCP-ready. Mirrors the single-shot-plus-NewRound pattern in
+// gmcp.World.go (World.Time). Steady-state cost is zero once drained.
+var (
+	pendingSpawnRefresh   = map[int]struct{}{}
+	pendingSpawnRefreshMu sync.Mutex
 )
 
 func init() {
@@ -18,6 +30,9 @@ func init() {
 	// Push on login and whenever a macro/alias (and later tick/trigger) changes.
 	events.RegisterListener(events.PlayerSpawn{}, g.playerSpawnHandler)
 	events.RegisterListener(events.AutomationChanged{}, g.automationChangedHandler)
+	// Re-push once on the round following spawn so the initial login push lands
+	// reliably even if the very first GMCP frame raced the connection setup.
+	events.RegisterListener(events.NewRound{}, g.newRoundHandler)
 }
 
 type GMCPAutomationModule struct {
@@ -35,7 +50,39 @@ func (g GMCPAutomationModule) playerSpawnHandler(e events.Event) events.Listener
 		return events.Continue
 	}
 
+	// Push now (covers telnet/Mudlet clients that have negotiated GMCP)...
 	g.sendAutomation(evt.UserId)
+
+	// ...and queue a one-shot re-push for the next round, which guarantees
+	// delivery for web clients once the connection is settled.
+	pendingSpawnRefreshMu.Lock()
+	pendingSpawnRefresh[evt.UserId] = struct{}{}
+	pendingSpawnRefreshMu.Unlock()
+
+	return events.Continue
+}
+
+func (g GMCPAutomationModule) newRoundHandler(e events.Event) events.ListenerReturn {
+
+	if _, typeOk := e.(events.NewRound); !typeOk {
+		return events.Continue
+	}
+
+	pendingSpawnRefreshMu.Lock()
+	if len(pendingSpawnRefresh) == 0 {
+		pendingSpawnRefreshMu.Unlock()
+		return events.Continue
+	}
+	userIds := make([]int, 0, len(pendingSpawnRefresh))
+	for userId := range pendingSpawnRefresh {
+		userIds = append(userIds, userId)
+	}
+	pendingSpawnRefresh = map[int]struct{}{}
+	pendingSpawnRefreshMu.Unlock()
+
+	for _, userId := range userIds {
+		g.sendAutomation(userId)
+	}
 
 	return events.Continue
 }
