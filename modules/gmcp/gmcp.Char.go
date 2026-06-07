@@ -720,6 +720,7 @@ type GMCPCharModule_Payload_Inventory_Worn struct {
 
 type GMCPCharModule_Payload_Inventory_Item struct {
 	Id      string   `json:"id"`
+	Handle  string   `json:"handle"`  // opaque per-instance target token (item UUID)
 	Name    string   `json:"name"`
 	Type    string   `json:"type"`
 	SubType string   `json:"subtype"`
@@ -732,6 +733,7 @@ func newInventory_Item(itm items.Item) GMCPCharModule_Payload_Inventory_Item {
 	itmSpec := itm.GetSpec()
 	d := GMCPCharModule_Payload_Inventory_Item{
 		Id:      itm.ShorthandId(),
+		Handle:  itm.UUID.String(),
 		Name:    itm.Name(),
 		Type:    string(itmSpec.Type),
 		SubType: string(itmSpec.Subtype),
