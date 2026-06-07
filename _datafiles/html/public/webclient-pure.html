@@ -301,10 +301,19 @@
           <div class="dash-panel-body"><div id="status-conditions"></div></div>
         </section>
 
-        <section class="dash-panel dash-slot" id="panel-trig" data-panel="trig">
-          <div class="dash-panel-head"><span class="ph-title">Triggers</span>
+        <section class="dash-panel" id="panel-trig" data-panel="trig">
+          <div class="dash-panel-head"><span class="ph-title">Automation</span>
             <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
-          <div class="dash-panel-body">Triggers &amp; timers — coming soon</div>
+          <div class="dash-panel-body" style="display:flex;flex-direction:column;padding:0;">
+            <div class="auto-tabs">
+              <span class="auto-tab" data-tab="ticks">Ticks</span>
+              <span class="auto-tab" data-tab="triggers">Triggers</span>
+              <span class="auto-tab active" data-tab="macros">Macros</span>
+              <span class="auto-tab" data-tab="aliases">Aliases</span>
+            </div>
+            <div class="auto-addbar"><span class="auto-add" title="Add">+ New</span></div>
+            <div id="auto-list" class="auto-list"></div>
+          </div>
         </section>
       </div>
     </div>
