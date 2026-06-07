@@ -1,0 +1,53 @@
+<h2>Dashboard panel inventory — what do we actually want?</h2>
+<p class="subtitle">We're taking the north-star's ambition but choosing our own elements. The four <strong>essentials</strong> are in no matter what. Below them, click every optional panel you'd like in the docked dashboard (multi-select). Tags: <em>Have</em> = exists today · <em>New</em> = UI-only build · <em>New + server</em> = also needs Go-side GMCP data.</p>
+
+<div class="section">
+  <div class="label">Essentials — always included</div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+    <div class="placeholder" style="flex:1;min-width:120px;padding:10px">Game Feed <span style="opacity:.6">(Have)</span></div>
+    <div class="placeholder" style="flex:1;min-width:120px;padding:10px">Command Bar <span style="opacity:.6">(Have)</span></div>
+    <div class="placeholder" style="flex:1;min-width:120px;padding:10px">Map <span style="opacity:.6">(Have)</span></div>
+    <div class="placeholder" style="flex:1;min-width:120px;padding:10px">Vitals <span style="opacity:.6">(Have)</span></div>
+  </div>
+</div>
+
+<div class="label" style="margin-top:18px">Optional panels — pick the ones you want</div>
+<div class="options" data-multiselect>
+  <div class="option" data-choice="chat" onclick="toggleSelect(this)">
+    <div class="letter">💬</div>
+    <div class="content"><h3>Chat / Comms — tabbed <span style="opacity:.6;font-size:.8em">(Have, enhance)</span></h3>
+      <p>The existing Communications panel, upgraded to channel tabs (Say / Tell / OOC / Trade) with its own input line, so chatter is separate from the game feed.</p></div>
+  </div>
+  <div class="option" data-choice="room" onclick="toggleSelect(this)">
+    <div class="letter">👥</div>
+    <div class="content"><h3>Room Contents <span style="opacity:.6;font-size:.8em">(New + server)</span></h3>
+      <p>Who/what is in your current room — denizens, players, items — ideally click-to-target. Needs new GMCP room-occupant data wired on the Go side.</p></div>
+  </div>
+  <div class="option" data-choice="macros" onclick="toggleSelect(this)">
+    <div class="letter">⌨️</div>
+    <div class="content"><h3>Macros / Quick Commands <span style="opacity:.6;font-size:.8em">(New)</span></h3>
+      <p>A grid of buttons that fire commands (Look, Inventory, Who, Time, Exp…), ideally user-editable. UI-only.</p></div>
+  </div>
+  <div class="option" data-choice="session" onclick="toggleSelect(this)">
+    <div class="letter">🪪</div>
+    <div class="content"><h3>Session strip <span style="opacity:.6;font-size:.8em">(New, small)</span></h3>
+      <p>Character name + title, connection status, and a Reconnect button. Small always-visible header element.</p></div>
+  </div>
+  <div class="option" data-choice="score" onclick="toggleSelect(this)">
+    <div class="letter">🖼️</div>
+    <div class="content"><h3>Character / Score art <span style="opacity:.6;font-size:.8em">(New, art asset)</span></h3>
+      <p>A portrait/artwork tile, optionally with a few key stats at a glance. The north-star's bottom-right "Score" image. Needs art.</p></div>
+  </div>
+  <div class="option" data-choice="status" onclick="toggleSelect(this)">
+    <div class="letter">⚔️</div>
+    <div class="content"><h3>Status &amp; Affects <span style="opacity:.6;font-size:.8em">(New)</span></h3>
+      <p>At-a-glance combat stance, active buffs/debuffs, light/dark, encumbrance — the little pills above the command bar in the north-star.</p></div>
+  </div>
+  <div class="option" data-choice="scripting" onclick="toggleSelect(this)">
+    <div class="letter">🎞️</div>
+    <div class="content"><h3>Scripting controls <span style="opacity:.6;font-size:.8em">(New, niche)</span></h3>
+      <p>Record / load / play / pause command scripts (the north-star's Scripts · Load · Play · Pause row). Power-user feature; easy to defer.</p></div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:14px">Click everything you want (click again to deselect). Tell me your picks in the terminal — and flag any element I haven't listed that you'd like.</p>

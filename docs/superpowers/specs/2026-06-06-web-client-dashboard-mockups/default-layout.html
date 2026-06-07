@@ -1,0 +1,59 @@
+<h2>Default docked layout — pick the starting arrangement</h2>
+<p class="subtitle">These place the core panels (Game Feed, Command Bar, Map, Vitals, Chat, Character Status &amp; Conditions) plus reserved slots for the Scene-Art and Triggers cards. Everything stays fluid-resize and rearrangeable — this is only the <em>default</em>. Click the one you like.</p>
+
+<style>
+  .dash{display:grid;gap:5px;height:236px;border:1px solid #3a2a18;padding:6px;background:#160f0a;border-radius:6px;cursor:pointer}
+  .dash > div{border-radius:4px;font-family:Georgia,serif;font-size:11px;color:#d2c3a4;display:flex;align-items:center;justify-content:center;text-align:center;padding:3px;border:1px solid #3a2a18}
+  .r-sess{background:linear-gradient(#241813,#1a110b);color:#e8d2a0;font-style:italic;border-color:#c9a86a55}
+  .r-feed{background:#0d0a07;color:#9a8a6a;font-style:italic}
+  .r-cmd{background:#211a14;color:#e8b94a}
+  .r-pan{background:#201913}
+  .r-slot{background:#1a130d;border-style:dashed;color:#9a8a6a}
+  .pvlabel{margin:-2px 0 12px;font-size:12px}
+</style>
+
+<!-- A: 3-column, north-star grouping -->
+<div class="dash" data-choice="A" onclick="toggleSelect(this)"
+     style="grid-template-columns:0.95fr 2fr 0.95fr;grid-template-rows:20px 1fr 1fr 26px;
+            grid-template-areas:'sess sess sess' 'chat feed map' 'stat feed vit' 'trig cmd art'">
+  <div class="r-sess" style="grid-area:sess">Session · connection</div>
+  <div class="r-pan" style="grid-area:chat">Chat (tabbed)</div>
+  <div class="r-pan" style="grid-area:stat">Status &amp; Conditions</div>
+  <div class="r-slot" style="grid-area:trig">Triggers slot</div>
+  <div class="r-feed" style="grid-area:feed">Game Feed (dominant)</div>
+  <div class="r-cmd" style="grid-area:cmd">Command bar</div>
+  <div class="r-pan" style="grid-area:map">Map</div>
+  <div class="r-pan" style="grid-area:vit">Vitals</div>
+  <div class="r-slot" style="grid-area:art">Scene-Art slot</div>
+</div>
+<div class="label pvlabel">A · Three columns — social/status left, feed center, map/vitals right (closest to the north-star grouping)</div>
+
+<!-- B: feed + single right rail -->
+<div class="dash" data-choice="B" onclick="toggleSelect(this)"
+     style="grid-template-columns:2.5fr 1fr;grid-template-rows:20px 1fr 26px;
+            grid-template-areas:'sess sess' 'feed rail' 'cmd rail'">
+  <div class="r-sess" style="grid-area:sess">Session · connection</div>
+  <div class="r-feed" style="grid-area:feed">Game Feed (dominant)</div>
+  <div class="r-cmd" style="grid-area:cmd">Command bar</div>
+  <div class="r-pan" style="grid-area:rail;flex-direction:column;gap:4px;font-size:10px">
+    <div>Map</div><div>Vitals</div><div>Status &amp; Conditions</div><div>Chat</div><div>Scene-Art</div><div>Triggers</div>
+    <div style="opacity:.6;font-style:italic">(stacked, scrollable rail)</div>
+  </div>
+</div>
+<div class="label pvlabel">B · Feed + one right rail — everything stacks in a single scrollable rail. Simplest, closest to today's right-docked panels</div>
+
+<!-- C: visuals left / social right -->
+<div class="dash" data-choice="C" onclick="toggleSelect(this)"
+     style="grid-template-columns:0.95fr 2fr 0.95fr;grid-template-rows:20px 1fr 1fr 26px;
+            grid-template-areas:'sess sess sess' 'map feed vit' 'art feed stat' 'trig cmd chat'">
+  <div class="r-sess" style="grid-area:sess">Session · connection</div>
+  <div class="r-pan" style="grid-area:map">Map</div>
+  <div class="r-slot" style="grid-area:art">Scene-Art slot</div>
+  <div class="r-slot" style="grid-area:trig">Triggers slot</div>
+  <div class="r-feed" style="grid-area:feed">Game Feed (dominant)</div>
+  <div class="r-cmd" style="grid-area:cmd">Command bar</div>
+  <div class="r-pan" style="grid-area:vit">Vitals</div>
+  <div class="r-pan" style="grid-area:stat">Status &amp; Conditions</div>
+  <div class="r-pan" style="grid-area:chat">Chat (tabbed)</div>
+</div>
+<div class="label pvlabel">C · Visuals left (map + scene-art), feed center, status/vitals/chat right — keeps the two "picture" panels together on the left</div>

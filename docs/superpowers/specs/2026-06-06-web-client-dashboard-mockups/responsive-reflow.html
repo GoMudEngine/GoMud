@@ -1,0 +1,72 @@
+<h2>Responsive reflow — how layout C adapts to screen size</h2>
+<p class="subtitle">Wide screens get the full 3-column C. As width shrinks, columns collapse fluidly. The one decision: what the side panels do on a phone. Click your preferred narrow-screen behavior at the bottom.</p>
+
+<style>
+  .frames{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px}
+  .scr{border:2px solid #5e431a;border-radius:6px;background:#160f0a;padding:5px;display:grid;gap:3px}
+  .scr > div{border-radius:3px;font-family:Georgia,serif;font-size:8px;color:#cdbfa6;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid #3a2a18;padding:1px}
+  .feed{background:#0d0a07;color:#9a8a6a;font-style:italic}
+  .cmd{background:#211a14;color:#e8b94a}
+  .pan{background:#201913}
+  .tabs{background:linear-gradient(#241813,#1a110b);color:#e8d2a0}
+  .cap{font-family:Georgia,serif;color:#b9a983;font-size:11px;text-align:center;margin-top:4px}
+  .devlabel{text-align:center;font-size:10px;color:#9a8a6a;margin-bottom:2px}
+</style>
+
+<div class="frames">
+  <!-- Desktop: full 3-col C -->
+  <div>
+    <div class="devlabel">Desktop ≥ ~1100px</div>
+    <div class="scr" style="width:300px;height:180px;grid-template-columns:0.8fr 1.9fr 0.8fr;grid-template-rows:1fr 1fr 20px;
+         grid-template-areas:'map feed vit' 'art feed stat' 'trig cmd chat'">
+      <div class="pan" style="grid-area:map">Map</div>
+      <div class="pan" style="grid-area:art">Art</div>
+      <div class="pan" style="grid-area:trig">Trig</div>
+      <div class="feed" style="grid-area:feed">Game Feed</div>
+      <div class="cmd" style="grid-area:cmd">Command</div>
+      <div class="pan" style="grid-area:vit">Vitals</div>
+      <div class="pan" style="grid-area:stat">Status</div>
+      <div class="pan" style="grid-area:chat">Chat</div>
+    </div>
+  </div>
+
+  <!-- Tablet: 2-col, visuals+social fold into one tabbed rail -->
+  <div>
+    <div class="devlabel">Tablet ~700–1100px</div>
+    <div class="scr" style="width:210px;height:180px;grid-template-columns:1.7fr 1fr;grid-template-rows:18px 1fr 20px;
+         grid-template-areas:'tabs rail' 'feed rail' 'cmd rail'">
+      <div class="tabs" style="grid-area:tabs">Map·Vit·Stat·Chat·Art·Trig ▸ tabs</div>
+      <div class="feed" style="grid-area:feed">Game Feed</div>
+      <div class="cmd" style="grid-area:cmd">Command</div>
+      <div class="pan" style="grid-area:rail;flex-direction:column;gap:2px">
+        <div style="font-size:7px">active panel</div>
+        <div style="opacity:.6;font-size:7px;font-style:italic">(one rail, tabbed)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phone: 1-col, feed full + bottom tab bar -->
+  <div>
+    <div class="devlabel">Phone &lt; ~700px</div>
+    <div class="scr" style="width:104px;height:180px;grid-template-rows:1fr 18px 16px;grid-template-areas:'feed' 'cmd' 'bar'">
+      <div class="feed" style="grid-area:feed">Game Feed (full)</div>
+      <div class="cmd" style="grid-area:cmd">Command</div>
+      <div class="tabs" style="grid-area:bar;font-size:9px">🗺 ❤ ⚔ 💬 🖼 ⌨</div>
+    </div>
+  </div>
+</div>
+<p class="cap">Columns collapse fluidly; tracks use clamp()/minmax so panels never get crushed before they reflow.</p>
+
+<div class="label" style="margin-top:16px">Phone / very-narrow behavior — pick one:</div>
+<div class="options">
+  <div class="option" data-choice="drawer" onclick="toggleSelect(this)">
+    <div class="letter">▾</div>
+    <div class="content"><h3>Bottom tab-bar + drawer (recommended)</h3>
+      <p>Feed stays full-screen and usable; a bottom icon bar (map / vitals / status / chat / art / triggers) slides a panel up over the feed on tap. Best for actually playing on a phone.</p></div>
+  </div>
+  <div class="option" data-choice="stack" onclick="toggleSelect(this)">
+    <div class="letter">≣</div>
+    <div class="content"><h3>Single stacked scroll</h3>
+      <p>Everything stacks in one column (feed on top, command, then panels below) and you scroll the whole page. Simpler, but you scroll a lot and the feed competes with panels for space.</p></div>
+  </div>
+</div>

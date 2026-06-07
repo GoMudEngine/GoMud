@@ -8,7 +8,7 @@
             margin: 0;
             padding: 0;
         }
- 
+
         body {
             margin: 0;
             padding: 0;
@@ -16,39 +16,8 @@
             font-family: 'DejaVu Sans Mono', monospace;
             display: flex;
             flex-direction: column;
-            background-color: #1e1e1e;
+            background-color: #191310;
             position: relative; /* So absolutely positioned children can be placed relative to <body> */
-        }
-
-        #main-container {
-            flex: 1;
-            position: relative;
-            display: flex;
-            flex-direction: row;
-            overflow: hidden;
-            background-color: #000;
-        }
-
-        #terminal {
-            flex: 1;
-        }
-
-        #input-area {
-            display: flex;
-            padding: 10px;
-            background-color: #1e1e1e;
-        }
-        #command-input {
-            flex: 1;
-            padding: 10px;
-            font-size: 16px;
-            border: none;
-            background-color: #333;
-            color: white;
-            border-radius: 0px 5px 5px 0px;
-        }
-        #command-input:focus {
-            outline: none;
         }
 
         /* FLOATING CONNECT BUTTON IN THE CENTER */
@@ -60,50 +29,46 @@
             transform: translate(-50%, -50%);
             z-index: 9999;
 
-            /* Larger styling */
-            padding: 20px 40px;
+            padding: 18px 42px;
+            font-family: var(--font-serif, Georgia, serif);
+            font-weight: bold;
             font-size: 20px;
+            letter-spacing: 1px;
 
-            background-color: #555;
-            color: white;
-            border: none;
+            color: var(--vellum, #d9c39e);
+            background-color: #4a6b5d;          /* oxidized copper */
+            border: 1px solid var(--gold-rule, #c9a86a);
+            border-radius: 6px;
             cursor: pointer;
-            border-radius: 5px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.6);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.55);
 
-            /* Keep the original pulsing effect */
-            animation: pulse 1s infinite alternate;
+            /* Flash copper → madder red */
+            animation: pulse 1.2s infinite alternate;
         }
         #connect-button:disabled {
-            color: #888;
+            color: var(--text-secondary, #9a8a6a);
             pointer-events: none;
             animation: none;
-            background-color: #555;
+            background-color: #2a2018;
+            border-color: var(--panel-border, #3a2a18);
             cursor: not-allowed;
         }
         @keyframes pulse {
-            0% {
-                background-color: #555;
-                color: white;
-            }
-            100% {
-                color: #d17a7a;
-                background-color: #9f4a4a;
-            }
+            0%   { background-color: #4a6b5d; }   /* oxidized copper */
+            100% { background-color: #8c3b30; }   /* madder root red */
         }
 
-        /* Sound icon — small brass map-instrument button, top-right corner */
+        /* Sound icon — small brass button living inside the session strip */
         #menu-icon {
-            position: absolute;
-            top: 46px;
-            right: 8px;
-            width: 34px;
-            height: 34px;
+            flex: 0 0 auto;
+            width: 26px;
+            height: 26px;
             box-sizing: border-box;
-            font-size: 17px;
-            line-height: 32px;
+            font-size: 14px;
+            line-height: 24px;
             text-align: center;
             cursor: pointer;
-            z-index: 9999;
             color: #3b2a10;
             border: 1px solid #5e431a;
             border-radius: 50%;
@@ -124,7 +89,7 @@
         /* The floating menu container */
         #floating-menu {
             position: absolute;
-            top: 88px; /* Just below the icon */
+            top: 40px; /* just below the session strip */
             right: 10px;
             width: 450px;
             padding: 10px;
@@ -175,9 +140,55 @@
             cursor: pointer;
         }
 
+        /* Command input inside cmd panel */
+        #command-input {
+            flex: 1;
+            padding: 6px 10px;
+            font-size: 14px;
+            border: 1px solid #3a2a18;
+            background-color: #150f0a;
+            color: #d2c3a4;
+            border-radius: 3px;
+            font-family: 'DejaVu Sans Mono', monospace;
+        }
+        #command-input:focus {
+            outline: none;
+            border-color: #cb9f42;
+        }
+
+        /* Comms panel: stack tabs + send input as a column */
+        #panel-chat .dash-panel-body {
+            display: flex;
+            flex-direction: column;
+        }
+        #comm-output {
+            flex: 1 1 auto;
+            min-height: 0;
+        }
+        #chat-input {
+            flex: 0 0 auto;
+            margin-top: 5px;
+            padding: 6px 10px;
+            font-size: 14px;
+            border: 1px solid #3a2a18;
+            background-color: #150f0a;
+            color: #d2c3a4;
+            border-radius: 3px;
+            font-family: 'DejaVu Sans Mono', monospace;
+            width: 100%;
+            box-sizing: border-box;
+            caret-color: #cb9f42;
+        }
+        #chat-input:focus {
+            outline: none;
+            border-color: #cb9f42;
+        }
+
     </style>
 
     <link rel="stylesheet" href="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/css/xterm.css" />
+    <link rel="stylesheet" href="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/css/gomud.css" />
+    <link rel="stylesheet" href="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/css/dashboard.css" />
     <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/xterm.4.19.0.js"></script>
     <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/xterm-addon-fit.js"></script>
     <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/mp3.js"></script>
@@ -185,9 +196,6 @@
     <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/gmcp.js"></script>
 </head>
 <body onLoad="init(); return false;">
-
-    <!-- SOUND ICON (top-right). Click to toggle the volume sliders panel. -->
-    <div id="menu-icon" onclick="toggleMenu()">🔊</div>
 
     <!-- FLOATING MENU - MULTIPLE SLIDERS -->
     <div id="floating-menu">
@@ -203,15 +211,93 @@
         </div>
     </div>
 
-    <div id="main-container">
-        <div id="terminal"></div>
-    </div>
-
     <!-- CONNECT BUTTON FLOATED IN CENTER -->
     <button id="connect-button">Connect to {{ .CONFIG.Server.MudName }}</button>
 
-    <div id="input-area">
-        <input type="text" id="command-input" placeholder="Enter command...">
+    <!-- DOCKED DASHBOARD GRID (arrangement C) -->
+    <div id="dashboard">
+      <div id="dash-session">
+        <span class="sess-name" id="sess-name">—</span>
+        <span class="sess-conn" id="sess-conn">● Connected</span>
+        <span class="sess-spacer"></span>
+        <div id="menu-icon" onclick="toggleMenu()" title="Toggle sound">🔊</div>
+        <button class="brass" id="btn-reconnect" onclick="reconnect()">Reconnect</button>
+        <button class="brass" id="btn-reset-layout" onclick="window.Dashboard && Dashboard.resetLayout && Dashboard.resetLayout()">Reset layout</button>
+      </div>
+
+      <!-- LEFT column: Map · Vitals · Scene -->
+      <div class="dash-col" id="dash-col-left">
+        <section class="dash-panel" id="panel-map" data-panel="map">
+          <div class="dash-panel-head"><span class="ph-title">Map</span>
+            <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
+          <div class="dash-panel-body"><div id="map-render" style="width:100%;height:100%"></div></div>
+        </section>
+
+        <section class="dash-panel" id="panel-vitals" data-panel="vitals">
+          <div class="dash-panel-head"><span class="ph-title">Vitals</span>
+            <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
+          <div class="dash-panel-body"><div id="vitals-bars"></div></div>
+        </section>
+
+        <section class="dash-panel dash-slot" id="panel-art" data-panel="art">
+          <div class="dash-panel-head"><span class="ph-title">Scene</span>
+            <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
+          <div class="dash-panel-body">Scene art — coming soon</div>
+        </section>
+      </div>
+
+      <!-- CENTER column: Game Feed · Command -->
+      <div class="dash-col" id="dash-col-center">
+        <section class="dash-panel" id="panel-feed" data-panel="feed">
+          <div class="dash-panel-head"><span class="ph-title">Game</span>
+            <span class="ph-btns"><span class="ph-btn ph-popout">⧉</span></span></div>
+          <div class="dash-panel-body"><div id="terminal"></div></div>
+        </section>
+
+        <section class="dash-panel" id="panel-cmd" data-panel="cmd">
+          <div class="dash-panel-body">
+            <input type="text" id="command-input" placeholder="Enter command..." style="flex:1">
+          </div>
+        </section>
+      </div>
+
+      <!-- RIGHT column: Comms · Status · Triggers -->
+      <div class="dash-col" id="dash-col-right">
+        <section class="dash-panel" id="panel-chat" data-panel="chat">
+          <div class="dash-panel-head"><span class="ph-title">Comms</span>
+            <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
+          <div class="dash-panel-body">
+            <!-- COMM window (tabs) — moved from hidden div into chat panel -->
+            <div id="comm-output" class="tabs">
+              <div class="tab-buttons">
+                <button id="comm-tab-say" class="tab-button active" data-tab="comm-say" data-label="Say" data-unread="0">Say</button>
+                <button id="comm-tab-whisper" class="tab-button" data-tab="comm-whisper" data-label="Whisper" data-unread="0">Whisper</button>
+                <button id="comm-tab-party" class="tab-button" data-tab="comm-party" data-label="Party" data-unread="0">Party</button>
+                <button id="comm-tab-broadcast" class="tab-button" data-tab="comm-broadcast" data-label="Broadcasts" data-unread="0">Broadcasts</button>
+              </div>
+              <div class="tab-contents">
+                <div id="comm-say" class="chat-window say tab-content active"></div>
+                <div id="comm-whisper" class="chat-window whisper tab-content"></div>
+                <div id="comm-party" class="chat-window party tab-content"></div>
+                <div id="comm-broadcast" class="chat-window broadcast tab-content"></div>
+              </div>
+            </div>
+            <input type="text" id="chat-input" placeholder="Say to the room…">
+          </div>
+        </section>
+
+        <section class="dash-panel" id="panel-status" data-panel="status">
+          <div class="dash-panel-head"><span class="ph-title">Status &amp; Conditions</span>
+            <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
+          <div class="dash-panel-body"><div id="status-conditions"></div></div>
+        </section>
+
+        <section class="dash-panel dash-slot" id="panel-trig" data-panel="trig">
+          <div class="dash-panel-head"><span class="ph-title">Triggers</span>
+            <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
+          <div class="dash-panel-body">Triggers &amp; timers — coming soon</div>
+        </section>
+      </div>
     </div>
 
     <script>
@@ -240,10 +326,45 @@
         term.loadAddon(fitAddon);
         term.open(document.getElementById('terminal'));
 
+        // Auto-size the font so ~80 columns always fit the feed panel. All MUD
+        // content is fixed-80 (room text + the inline ASCII minimap), so if the
+        // terminal is < 80 cols it wraps and the minimap misaligns. Shrink the
+        // font until >= 80 cols fit; grow it (capped) when there's spare room.
         function resizeTerminal() {
-            fitAddon.fit();
+            if (!term || !fitAddon) return;
+            var TARGET = 80, MIN_FS = 10, MAX_FS = 20, guard = 0;
+            try {
+                fitAddon.fit();
+                while (term.cols < TARGET && term.getOption('fontSize') > MIN_FS && guard++ < 24) {
+                    term.setOption('fontSize', term.getOption('fontSize') - 1);
+                    fitAddon.fit();
+                }
+                while (term.cols > TARGET + 6 && term.getOption('fontSize') < MAX_FS && guard++ < 48) {
+                    term.setOption('fontSize', term.getOption('fontSize') + 1);
+                    fitAddon.fit();
+                    if (term.cols < TARGET) { // grew one step too far — back off
+                        term.setOption('fontSize', term.getOption('fontSize') - 1);
+                        fitAddon.fit();
+                        break;
+                    }
+                }
+            } catch (e) {}
         }
         window.addEventListener('resize', resizeTerminal);
+        // Re-fit whenever the feed panel itself changes size (grid reflow,
+        // splitters, pop-out) so xterm tracks the bounded box and keeps its
+        // row count sane. Without this the terminal can over-size and lag.
+        if (window.ResizeObserver) {
+            var _feedPanel = document.getElementById('panel-feed');
+            if (_feedPanel) {
+                var _rafFit = null;
+                new ResizeObserver(function () {
+                    if (_rafFit) cancelAnimationFrame(_rafFit);
+                    _rafFit = requestAnimationFrame(resizeTerminal);
+                }).observe(_feedPanel);
+            }
+        }
+        requestAnimationFrame(resizeTerminal); // fit once after first grid paint
         resizeTerminal();
 
         /////////////////////////////////////////////
@@ -261,80 +382,14 @@
 
         /////////////////////////////////////////////
         //
-        // Side Panel Layout
+        // Map renderer — initialized unconditionally at startup
         //
         /////////////////////////////////////////////
-        const PANEL_WIDTH = 363;
-        const PANEL_HEADER = 20;
-        const PANEL_GAP = 7;
-        const INPUT_AREA_HEIGHT = 60;
-        const VITALS_BODY = 22;
-        // Below this width, hide side panels entirely (phones/small tablets)
-        const SMALL_SCREEN_WIDTH = 768;
-
-        function isTooSmallForPanels() {
-            return window.innerWidth < SMALL_SCREEN_WIDTH;
-        }
-
-        // Track the current number of vitals rows (self + companions + party)
-        var currentVitalsRowCount = 1;
-
-        function calcPanelLayout() {
-            var avail = window.innerHeight - INPUT_AREA_HEIGHT;
-            // Vitals height scales with the number of rows
-            var vitalsH = PANEL_HEADER + (currentVitalsRowCount * 22) + 4;
-            var remaining = avail - vitalsH - (PANEL_GAP * 2);
-            // Map gets 55% of remaining, comms gets 45%
-            var mapH = Math.max(80, Math.floor(remaining * 0.55));
-            var commsH = Math.max(80, remaining - mapH);
-            var mapY = 0;
-            var commsY = mapH + PANEL_GAP;
-            var vitalsY = commsY + commsH + PANEL_GAP;
-            return {
-                mapY: mapY, mapH: mapH,
-                commsY: commsY, commsH: commsH,
-                vitalsY: vitalsY, vitalsH: vitalsH
-            };
-        }
-
-        let GMCPWindows = {};
-
-        function setPanelVisibility(win, visible) {
-            if (!win || win === false) return;
-            if (visible) {
-                win.show();
-            } else {
-                win.hide();
-            }
-        }
-
-        function repositionPanels() {
-            var tooSmall = isTooSmallForPanels();
-
-            setPanelVisibility(GMCPWindows['Map'], !tooSmall);
-            setPanelVisibility(GMCPWindows['Comm'], !tooSmall);
-            setPanelVisibility(GMCPWindows['Char.Vitals'], !tooSmall);
-
-            if (tooSmall) return;
-
-            var layout = calcPanelLayout();
-            var xPos = window.innerWidth - PANEL_WIDTH;
-
-            if (GMCPWindows['Map'] && GMCPWindows['Map'] !== false) {
-                GMCPWindows['Map'].resize(PANEL_WIDTH, layout.mapH, true)
-                                  .move(xPos, layout.mapY, true);
-            }
-            if (GMCPWindows['Comm'] && GMCPWindows['Comm'] !== false) {
-                GMCPWindows['Comm'].resize(PANEL_WIDTH, layout.commsH, true)
-                                   .move(xPos, layout.commsY, true);
-            }
-            if (GMCPWindows['Char.Vitals'] && GMCPWindows['Char.Vitals'] !== false) {
-                GMCPWindows['Char.Vitals'].resize(PANEL_WIDTH, layout.vitalsH, true)
-                                          .move(xPos, layout.vitalsY, true);
-            }
-        }
-
-        window.addEventListener('resize', repositionPanels);
+        var gr = null;
+        (function initMap() {
+            var mapOptions = { cellSize: 80, cellMargin: 80, initialZoom: 0.5 };
+            gr = new RoomGridSVG('#map-render', mapOptions);
+        })();
 
         /////////////////////////////////////////////
         //
@@ -342,7 +397,6 @@
         //
         /////////////////////////////////////////////
         let GMCPStructs = {};
-        let gr = {};
         let allRooms = {
             currentZoneKey: "",
             roomZones: {},
@@ -355,61 +409,49 @@
                     return;
                 }
 
-                if ( !GMCPWindows['Comm'] && GMCPWindows['Comm'] !== false && !isTooSmallForPanels() ) {
+                // Deliver message directly to the comm-output tabs in #panel-chat
+                var channelName = obj.Channel.channel;
+                var fromName    = obj.Channel.sender;
+                var fromSource  = obj.Channel.source;
+                var message     = obj.Channel.text;
 
-                    var layout = calcPanelLayout();
-                    GMCPWindows['Comm'] = new WinBox({ title: "Communications",
-                                            mount: document.getElementById("comm-output"),
-                                            background: "#1a1a3e", border: 1,
-                                            x: "right", y: layout.commsY,
-                                            width: PANEL_WIDTH,  height: layout.commsH,
-                                            header: PANEL_HEADER,
-                                            bottom: 60, // Limit how far down it can go. This affects docking the minimized window.
-                                            // end limit position range
-                                            onclose: force => { GMCPWindows['Comm'] = false; return false; },
-                                        });
-                    
-                    GMCPWindows['Comm'].Message = function(channelName, fromName, fromSource, message) {
+                var tab   = document.getElementById("comm-tab-" + channelName);
+                var panel = document.getElementById("comm-" + channelName);
 
-                        // add new text output                
-                        var tab = document.getElementById("comm-tab-"+channelName);
-                        var panel = document.getElementById("comm-"+channelName);
+                if (!tab || !panel) return;
 
-                        if ( tab.classList.contains('active') ) {
-                            tab.dataset.unread = 0;
-                            tab.innerText = tab.dataset.label;
-                        } else {
-                            tab.dataset.unread = parseInt(tab.dataset.unread)+1;
-                            tab.innerText = tab.dataset.label + "(" + String(tab.dataset.unread) + ")";
-                        }                 
-
-                        var p = document.createElement('p');
-                        p.innerHTML =   '<span class="text-name '+fromSource+'">' + 
-                                            fromName + 
-                                        '</span>: ' + 
-                                        '<span class="text-body '+fromSource+'">' + 
-                                            message + 
-                                        '</span>';
-                        panel.appendChild(p);
-        
-                        // clean up overflow
-                        panelContainer = GMCPWindows['Comm'].window;
-                        while (panel.scrollHeight > panelContainer.clientHeight-58) {
-                            if ( panel.childElementCount < 1) {
-                                break;
-                            }
-                            panel.removeChild(panel.firstElementChild);
-                        }
-                        
-                    };
-
+                if ( tab.classList.contains('active') ) {
+                    tab.dataset.unread = 0;
+                    tab.innerText = tab.dataset.label;
+                } else {
+                    tab.dataset.unread = parseInt(tab.dataset.unread) + 1;
+                    tab.innerText = tab.dataset.label + "(" + String(tab.dataset.unread) + ")";
                 }
 
-                if ( GMCPWindows['Comm'] === false ) {
-                    return;
+                // Build via DOM + textContent (never innerHTML) — fromName/
+                // message/fromSource are player-controlled (stored-XSS otherwise).
+                var srcClass = String(fromSource || '').replace(/[^a-z0-9_-]/gi, '');
+                var p = document.createElement('p');
+                var nameSpan = document.createElement('span');
+                nameSpan.className = 'text-name ' + srcClass;
+                nameSpan.textContent = (fromName != null ? fromName : '');
+                var bodySpan = document.createElement('span');
+                bodySpan.className = 'text-body ' + srcClass;
+                bodySpan.textContent = (message != null ? message : '');
+                p.appendChild(nameSpan);
+                p.appendChild(document.createTextNode(': '));
+                p.appendChild(bodySpan);
+                panel.appendChild(p);
+
+                // Trim overflow — cap at 200 messages per channel
+                while (panel.childElementCount > 200) {
+                    panel.removeChild(panel.firstElementChild);
                 }
 
-                GMCPWindows['Comm'].Message(obj.Channel.channel, obj.Channel.sender, obj.Channel.source, obj.Channel.text);
+                // Auto-scroll the active channel
+                if (tab.classList.contains('active')) {
+                    panel.scrollTop = panel.scrollHeight;
+                }
 
             },
             "Room": function() {
@@ -419,44 +461,8 @@
                     return;
                 }
 
-                if ( !GMCPWindows['Map'] && GMCPWindows['Map'] !== false && !isTooSmallForPanels() ) {
-
-                    var layout = calcPanelLayout();
-                    GMCPWindows['Map'] = new WinBox({ title: "Map",
-                                            mount: document.getElementById("map-render"),
-                                            background: "#1a1a3e",
-                                            border: 1,
-                                            x: "right",
-                                            y: layout.mapY,
-                                            width: PANEL_WIDTH,
-                                            height: layout.mapH,
-                                            header: PANEL_HEADER,
-                                            bottom: 60, // Limit how far down it can go. This affects docking the minimized window.
-                                            // end limit position range
-                                            onclose: force => { GMCPWindows['Map'] = false; return false; },
-                                            oncreate: ops => {
-
-                                            var mapOptions = {  cellSize: 80,
-                                                                cellMargin: 80,
-                                                                initialZoom: 0.5 };
-                                            //mapOptions.onRoomClick = function(r) { alert(`Room ${r.RoomId} clicked`); }
-
-                                            gr = new RoomGridSVG('#map-render', mapOptions);
-
-
-                                            },
-                                        });
-
-
-                }
-
-                if ( GMCPWindows['Map'] === false ) {
-                    return;
-                }
-
                 if ( obj.Info ) {
 
-                    GMCPWindows['Map'].setTitle('Map ('+obj.Info.area+')');
                     var coords = obj.Info.coords.split(",");
                     for( var i=0; i<coords.length; i++ ) {
                         coords[i] = coords[i].trim();
@@ -474,12 +480,12 @@
                         gr.setRooms(allRooms.roomZones[zoneKey]);
                     }
 
-                    var r = { 
-                        RoomId: obj.Info.num, 
+                    var r = {
+                        RoomId: obj.Info.num,
                         Text: "",
-                        x: parseInt(coords[1]), 
-                        y: parseInt(coords[2]), 
-                        z: parseInt(coords[3]), 
+                        x: parseInt(coords[1]),
+                        y: parseInt(coords[2]),
+                        z: parseInt(coords[3]),
                         Exits: [],
                     }
 
@@ -496,7 +502,7 @@
                         }
 
                     }
-                    
+
                     if ( obj.Info.details ) {
 
                         if ( obj.Info.details.indexOf("bank") != -1 ) {
@@ -537,6 +543,17 @@
                 if ( obj.Vitals ) {
                     GMCPUpdateHandlers['Char.Vitals']();
                 }
+
+                // Populate session strip with character name when available
+                if ( obj.Name ) {
+                    var sessName = document.getElementById('sess-name');
+                    if (sessName) sessName.textContent = obj.Name;
+                }
+
+                updateStatusPanel();
+            },
+            "Char.Conditions": function() {
+                updateStatusPanel();
             },
             "Char.Vitals": function() {
                 updateVitalsWindow();
@@ -552,12 +569,11 @@
                 if ( !obj || !obj.Map ) {
                     return;
                 }
-                if ( GMCPWindows['Map'] === false ) {
-                    return;
-                }
-                if ( GMCPWindows['Map'] && gr && gr.setZoneSnapshot ) {
+                if ( gr && gr.setZoneSnapshot ) {
                     gr.setZoneSnapshot(obj.Map.zone, obj.Map.rooms || [], obj.Map.cz || 0, obj.Map.party || []);
-                    GMCPWindows['Map'].setTitle('Map (' + obj.Map.zone + ')');
+                    // Update map panel title if we can find it
+                    var mapTitle = document.querySelector('#panel-map .ph-title');
+                    if (mapTitle) mapTitle.textContent = 'Map (' + obj.Map.zone + ')';
                 }
             },
         };
@@ -632,32 +648,16 @@
             var charObj = GMCPStructs["Char"];
             if ( !charObj || !charObj.Vitals ) return;
 
-            // Ensure window exists
-            if ( !GMCPWindows['Char.Vitals'] && GMCPWindows['Char.Vitals'] !== false && !isTooSmallForPanels() ) {
-                var layout = calcPanelLayout();
-                GMCPWindows['Char.Vitals'] = new WinBox({
-                    title: "Vitals",
-                    mount: document.getElementById("vitals-bars"),
-                    background: "#1a1a3e",
-                    border: 1,
-                    x: "right",
-                    y: layout.vitalsY,
-                    width: PANEL_WIDTH,
-                    height: layout.vitalsH,
-                    header: PANEL_HEADER,
-                    bottom: 60,
-                    onclose: force => {
-                        GMCPWindows['Char.Vitals'] = false;
-                        return false;
-                    },
-                });
-            }
-
-            if ( GMCPWindows['Char.Vitals'] === false ) return;
-
             // Compute self vitals from exact Char.Vitals data
             var v = charObj.Vitals;
             var selfName = charObj.Name || 'You';
+
+            // Populate session strip name whenever we have it
+            if (charObj.Name) {
+                var sessName = document.getElementById('sess-name');
+                if (sessName) sessName.textContent = charObj.Name;
+            }
+
             var selfHp = Math.max(0, Math.min(100,
                 Math.floor(v.hp / v.hp_max * 100)));
             var selfSp = Math.max(0, Math.min(100,
@@ -757,7 +757,7 @@
                 }
             }
 
-            // Update DOM
+            // Update DOM — target #vitals-bars inside #panel-vitals
             var container = document.getElementById('vitals-bars');
             var existingRows = container.querySelectorAll('.vitals-row');
             var existingByName = {};
@@ -809,12 +809,6 @@
                     }
                 }
             }
-
-            // If row count changed, reposition all panels as a unit
-            if (members.length !== currentVitalsRowCount) {
-                currentVitalsRowCount = members.length;
-                repositionPanels();
-            }
         }
 
         function handleGMCP(objNamespace, objBody) {
@@ -823,10 +817,8 @@
             var nameParts = objNamespace.split(".");
             var lastProperty = nameParts.pop();
 
-            var rootName = nameParts[0];
             var cursor = GMCPStructs;
 
-            objectPosition = null;
             for (let propertyName of nameParts) {
 
                 if ( !cursor[propertyName] ) {
@@ -846,8 +838,67 @@
                 }
             }
 
-            console.log("GMCP:", gmcpNamespace, gmcpObject);
+            console.log("GMCP (unhandled):", objNamespace, objBody);
         }
+        function updateStatusPanel() {
+            var container = document.getElementById('status-conditions');
+            if (!container) return;
+
+            var charObj = GMCPStructs["Char"] || {};
+
+            // Build HTML into a fragment to replace in one shot
+            var html = '';
+
+            // Optional top line: name (Race Class)
+            var charName = charObj.Name || '';
+            var info = charObj.Info || null;
+            if (charName || info) {
+                var suffix = '';
+                if (info && (info.race || info['class'])) {
+                    var parts = [];
+                    if (info.race)          parts.push(info.race);
+                    if (info['class'])      parts.push(info['class']);
+                    if (parts.length)       suffix = ' (' + parts.join(' ') + ')';
+                }
+                if (charName || suffix) {
+                    html += '<div class="status-line">' +
+                                escapeHTML(charName) + escapeHTML(suffix) +
+                            '</div>';
+                }
+            }
+
+            // Conditions area
+            var conditions = charObj.Conditions || null;
+            if (!conditions || !Array.isArray(conditions) || conditions.length === 0) {
+                html += '<div class="status-empty">No active conditions.</div>';
+            } else {
+                html += '<div class="cond-chips">';
+                for (var i = 0; i < conditions.length; i++) {
+                    var cond = conditions[i];
+                    if (!cond) continue;
+                    var label    = escapeHTML(cond.type        || '');
+                    var tooltip  = escapeHTML(cond.description || '');
+                    var duration = escapeHTML(cond.duration    || '');
+                    html += '<span class="cond-chip" title="' + tooltip + '">' +
+                                label +
+                                (duration ? '<span class="cond-dur">' + duration + '</span>' : '') +
+                            '</span>';
+                }
+                html += '</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        function escapeHTML(str) {
+            if (typeof str !== 'string') return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
         /////////////////////////////////////////////
         //
         // WebSocket
@@ -901,6 +952,17 @@
             return false;
         }
 
+        function reconnect() {
+            // Close current socket if open, then trigger a fresh connect
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.close();
+            }
+            // Show the connect button so user can click it, or reconnect immediately
+            connectButton.style.display = 'block';
+            connectButton.disabled = false;
+            connectButton.click();
+        }
+
         connectButton.addEventListener('click', () => {
             if (socket && socket.readyState === WebSocket.OPEN) {
                 socket.close();
@@ -920,6 +982,11 @@
 
                 // We also disable it right away to prevent double-click confusion
                 connectButton.disabled = true;
+
+                // Update session strip connection indicator
+                var sessConn = document.getElementById('sess-conn');
+                if (sessConn) { sessConn.textContent = '● Connected'; sessConn.style.color = ''; }
+
                 textInput.focus();
             };
 
@@ -941,10 +1008,10 @@
                     if (event.data.slice(0, 7) === "!!GMCP(") {
                         var gmcpPayload = event.data.trim().slice(7, event.data.length - 1).trim()
                         var jsonIndex = 0;
-                        
+
                         if ( gmcpPayload[gmcpPayload.length-1] == "}" ) jsonIndex = gmcpPayload.indexOf("{");
                         else jsonIndex = gmcpPayload.indexOf("[");
-                        
+
                         if ( jsonIndex == -1 ) {
                             return;
                         }
@@ -953,9 +1020,9 @@
                         gmcpObject = JSON.parse(gmcpPayload.slice(jsonIndex, gmcpPayload.length).trim());
 
                         handleGMCP(gmcpNamespace, gmcpObject);
-                        
+
                         return;
-                    } 
+                    }
 
                     // Handle music events
                     if (event.data.slice(0, 8) === "!!MUSIC(") {
@@ -994,8 +1061,8 @@
                         }
 
                         return;
-                    } 
-                    
+                    }
+
                     // Handle a playersound event
                     if (event.data.slice(0, 8) === "!!SOUND(") {
                         const parts = event.data.slice(8, event.data.length - 1).split(" ");
@@ -1054,6 +1121,10 @@
                 // Show the button again when disconnected
                 connectButton.style.display = 'block';
                 connectButton.disabled = false;
+
+                // Update session strip
+                var sessConn = document.getElementById('sess-conn');
+                if (sessConn) { sessConn.textContent = '○ Disconnected'; sessConn.style.color = '#a06060'; }
 
                 if (textInput.type === "password") {
                     textInput.value = '';
@@ -1370,6 +1441,9 @@
                 MusicPlayer.setGlobalVolume(sliderValues["music"] / 100);
                 muteIcon.textContent = "🔊";
             }
+
+            // 5) Fit the terminal to its new panel container
+            resizeTerminal();
         }
     </script>
 
@@ -1477,39 +1551,41 @@
             width: 100%;
             display: flex;
             flex-direction: column;
-            height: 100%; /* if you want full‐height panels */
+            height: 100%; /* full-height comm panels */
         }
 
         .tab-buttons {
             display: flex;
-            border-bottom: 1px solid #0e0e20;
+            border-bottom: 1px solid var(--panel-border, #3a2a18);
         }
 
         .tab-button {
             flex: 1;
-            padding: 0.75em;
-            background: #3b3b78;
-            border: none;
-            cursor: pointer;
-            font: inherit;
+            padding: 0.4em 0.6em;
+            font-family: var(--font-serif, Georgia, serif);
             font-size: small;
-            transition: background 0.2s;
+            color: var(--brass-text, #3b2a10);
+            background: var(--brass-grad, radial-gradient(circle at 34% 26%, #f4dd92, #cb9f42 46%, #8a6620));
+            border: none;
+            border-right: 1px solid var(--brass-border, #5e431a);
+            cursor: pointer;
+            transition: filter 0.1s;
         }
 
         .tab-button:not(.active):hover {
-            background: #1a1a3e;
-            color:#d0d0e8;
+            filter: brightness(1.08);
         }
 
         .tab-button.active {
-            background: #d0d0e8;
-            border-bottom: 2px solid #3b3b78;
+            filter: brightness(0.9);
+            box-shadow: inset 0 2px 4px rgba(74,52,16,0.6),
+                        inset 0 -1px 1px rgba(255,246,212,0.4);
         }
 
         .tab-contents {
             flex: 1;
             padding: 0.25em;
-            background: #000;
+            background: var(--panel-bg, #201913);
             overflow: hidden;
             position: relative;
         }
@@ -1532,8 +1608,8 @@
         .chat-window {
             overflow-y:auto;
             height:100%;
-            background-color:#000;
-            color:#fff;
+            background-color: transparent;
+            color: var(--text-primary, #d2c3a4);
         }
         .chat-window.broadcast {
             color: #d700d7;
@@ -1541,16 +1617,73 @@
         .chat-window.whisper {
             color: #737670;
         }
+
+        /* Status & Conditions panel */
+        #status-conditions {
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .status-line {
+            font-family: var(--font-serif, Georgia, serif);
+            font-size: 0.85rem;
+            color: var(--vellum, #d9c39e);
+        }
+        .status-empty {
+            color: var(--text-secondary, #9a8a6a);
+            font-style: italic;
+            font-size: 0.8rem;
+        }
+        .cond-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .cond-chip {
+            font-size: 0.72rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            border: 1px solid var(--panel-border, #3a2a18);
+            background: #1d1610;
+            color: var(--ink-gold, #c9a86a);
+        }
+        .cond-chip .cond-dur {
+            color: var(--text-secondary, #9a8a6a);
+            margin-left: 4px;
+            font-size: 0.66rem;
+        }
     </style>
 
 
 
     <script>
-        // on DOM ready
+        // on DOM ready — wire comm tab buttons + chat send input
         document.addEventListener('DOMContentLoaded', () => {
-            const buttons = document.querySelectorAll('.tab-button');
-            const panels  = document.querySelectorAll('.tab-content');
-            
+            const buttons   = document.querySelectorAll('.tab-button');
+            const panels    = document.querySelectorAll('.tab-content');
+            const chatInput = document.getElementById('chat-input');
+
+            const channelPlaceholders = {
+                'say':       'Say to the room…',
+                'whisper':   'Whisper: <name> <message>…',
+                'party':     'Party chat…',
+                'broadcast': 'Broadcast…'
+            };
+
+            // Return the active comm channel name (e.g. "say", "whisper", …)
+            function activeCommChannel() {
+                var active = document.querySelector('#comm-output .tab-button.active');
+                if (!active) return 'say';
+                // data-tab is "comm-say", "comm-whisper", etc.
+                return active.dataset.tab.replace(/^comm-/, '');
+            }
+
+            function updateChatPlaceholder() {
+                var ch = activeCommChannel();
+                chatInput.placeholder = channelPlaceholders[ch] || (ch + '…');
+            }
+
             buttons.forEach(btn => {
                 btn.addEventListener('click', () => {
                 const target = btn.dataset.tab;
@@ -1558,42 +1691,35 @@
                 // deactivate all
                 buttons.forEach(b => b.classList.remove('active'));
                 panels.forEach(p => p.classList.remove('active'));
-            
+
                 // activate the clicked one and its panel
                 btn.classList.add('active');
                 btn.dataset.unread = 0;
                 btn.innerText = btn.dataset.label;
                 document.getElementById(target).classList.add('active');
+
+                // update send-input placeholder for the newly active channel
+                updateChatPlaceholder();
                 });
             });
+
+            // Send on Enter — read active channel at send time (not captured at setup)
+            chatInput.addEventListener('keydown', function(event) {
+                if (event.key !== 'Enter') return;
+                var text = chatInput.value.trim();
+                if (!text) return;
+                var ch = activeCommChannel();
+                if (SendData(ch + ' ' + text)) {
+                    chatInput.value = '';
+                }
+            });
+
+            // Set initial placeholder (say tab is active by default)
+            updateChatPlaceholder();
         });
     </script>
-    
-    <div style="display:none;">
 
-        <!-- VITALS window (party-aware, dynamically populated by JS) -->
-        <div id="vitals-bars"></div>
-
-        <!-- MAP window -->
-        <div id="map-render" style="width:100%; height:100%;"></div>
-    
-        <!-- COMM window -->
-        <div id="comm-output" class="tabs">
-            <div class="tab-buttons">
-                <button id="comm-tab-say" class="tab-button active" data-tab="comm-say" data-label="Say" data-unread="0">Say</button>
-                <button id="comm-tab-whisper" class="tab-button" data-tab="comm-whisper" data-label="Whisper" data-unread="0">Whisper</button>
-                <button id="comm-tab-party" class="tab-button" data-tab="comm-party" data-label="Party" data-unread="0">Party</button>
-                <button id="comm-tab-broadcast" class="tab-button" data-tab="comm-broadcast" data-label="Broadcasts" data-unread="0">Broadcasts</button>
-            </div>
-            <div class="tab-contents">
-                <div id="comm-say" class="chat-window say tab-content active"></div>
-                <div id="comm-whisper" class="chat-window whisper tab-content"></div>
-                <div id="comm-party" class="chat-window party tab-content"></div>
-                <div id="comm-broadcast" class="chat-window broadcast tab-content"></div>
-            </div>
-        </div>
-
-    </div>
+    <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/dashboard.js"></script>
 
 </body>
 </html>
