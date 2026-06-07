@@ -1,5 +1,30 @@
 # DOGMud Patch Notes
 
+## 2026-06-07 — Web client inventory & equipment panel
+
+The web client gained a graphical, interactive inventory panel.
+
+- **Tabbed Inventory panel.** A new panel (in the left column) shows your
+  gear across four tabs — **Equipped**, **Bandolier**, **Components**, and
+  **Backpack** — each as a grid of item tiles with a type icon.
+- **Equipped tab.** Lists every slot you're wearing in the same order as the
+  `eq` command, including mutation slots (extra arms/wrists, tail) when you
+  have them. Only filled slots are shown.
+- **Charge meters & stacks.** Items with limited charges show a small vertical
+  meter; identical items in your bag/bandolier/component bag collapse into one
+  tile with an `xN` count.
+- **Right-click to act.** Right-click any item for a context menu — Look,
+  Identify, Equip/Remove, Drink/Eat, Drop — which runs the command on that
+  exact item (no more grabbing the wrong duplicate). The result appears in
+  the game feed.
+- **Auto-sizing.** The panel grows to fit a long equipment list (e.g. an
+  extra-arms character), borrowing space from the map.
+- **Status panel freshness.** The Status & Conditions panel now updates
+  immediately when a condition wears off, instead of lagging.
+- **Under the hood.** Fixed a couple of latent bugs where gear in the newer
+  equipment slots (shoulders, back, wrists, extra arms, tail, component bag,
+  second ring) was not counted for worn buffs or gear value.
+
 ## 2026-06-06 — In-game web client dashboard
 
 The web client's play screen was rebuilt from a bare terminal with floating
