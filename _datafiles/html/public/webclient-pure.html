@@ -544,6 +544,11 @@
                     var sessName = document.getElementById('sess-name');
                     if (sessName) sessName.textContent = obj.Name;
                 }
+
+                updateStatusPanel();
+            },
+            "Char.Conditions": function() {
+                updateStatusPanel();
             },
             "Char.Vitals": function() {
                 updateVitalsWindow();
@@ -832,6 +837,65 @@
 
             console.log("GMCP:", gmcpNamespace, gmcpObject);
         }
+        function updateStatusPanel() {
+            var container = document.getElementById('status-conditions');
+            if (!container) return;
+
+            var charObj = GMCPStructs["Char"] || {};
+
+            // Build HTML into a fragment to replace in one shot
+            var html = '';
+
+            // Optional top line: name (Race Class)
+            var charName = charObj.Name || '';
+            var info = charObj.Info || null;
+            if (charName || info) {
+                var suffix = '';
+                if (info && (info.race || info['class'])) {
+                    var parts = [];
+                    if (info.race)          parts.push(info.race);
+                    if (info['class'])      parts.push(info['class']);
+                    if (parts.length)       suffix = ' (' + parts.join(' ') + ')';
+                }
+                if (charName || suffix) {
+                    html += '<div class="status-line">' +
+                                escapeHTML(charName) + escapeHTML(suffix) +
+                            '</div>';
+                }
+            }
+
+            // Conditions area
+            var conditions = charObj.Conditions || null;
+            if (!conditions || !Array.isArray(conditions) || conditions.length === 0) {
+                html += '<div class="status-empty">No active conditions.</div>';
+            } else {
+                html += '<div class="cond-chips">';
+                for (var i = 0; i < conditions.length; i++) {
+                    var cond = conditions[i];
+                    if (!cond) continue;
+                    var label    = escapeHTML(cond.type        || '');
+                    var tooltip  = escapeHTML(cond.description || '');
+                    var duration = escapeHTML(cond.duration    || '');
+                    html += '<span class="cond-chip" title="' + tooltip + '">' +
+                                label +
+                                (duration ? '<span class="cond-dur">' + duration + '</span>' : '') +
+                            '</span>';
+                }
+                html += '</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        function escapeHTML(str) {
+            if (typeof str !== 'string') return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
         /////////////////////////////////////////////
         //
         // WebSocket
@@ -1549,6 +1613,42 @@
         }
         .chat-window.whisper {
             color: #737670;
+        }
+
+        /* Status & Conditions panel */
+        #status-conditions {
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .status-line {
+            font-family: var(--font-serif, Georgia, serif);
+            font-size: 0.85rem;
+            color: var(--vellum, #d9c39e);
+        }
+        .status-empty {
+            color: var(--text-secondary, #9a8a6a);
+            font-style: italic;
+            font-size: 0.8rem;
+        }
+        .cond-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .cond-chip {
+            font-size: 0.72rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            border: 1px solid var(--panel-border, #3a2a18);
+            background: #1d1610;
+            color: var(--ink-gold, #c9a86a);
+        }
+        .cond-chip .cond-dur {
+            color: var(--text-secondary, #9a8a6a);
+            margin-left: 4px;
+            font-size: 0.66rem;
         }
     </style>
 
