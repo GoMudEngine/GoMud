@@ -329,7 +329,26 @@
             cols: 80,
             rows: 60,
             cursorBlink: true,
-            fontSize: 20
+            fontSize: 20,
+            fontFamily: '"IBM Plex Mono", "Courier New", Courier, monospace',
+            // Leather palette (harmonized "option B"). Cross-ref gomud.css :root
+            // tokens: --panel-bg #201913, warm-dark #191310, --ink-gold #c9a86a,
+            // title-gold #e8d2a0, --ink-deep #2b231d.
+            theme: {
+                background:   '#191310',
+                foreground:   '#e0d2b2',
+                cursor:       '#e8d2a0',
+                cursorAccent: '#191310',
+                selection:    'rgba(201,168,106,0.30)',
+                black:   '#3a2f25', brightBlack:   '#6b5a48',
+                red:     '#d6694e', brightRed:     '#e8745a',
+                green:   '#8a9a4e', brightGreen:   '#b3c06a',
+                yellow:  '#d9a441', brightYellow:  '#f0cf72',
+                blue:    '#88a9cf', brightBlue:    '#aecce8',
+                magenta: '#a8678f', brightMagenta: '#c890b0',
+                cyan:    '#5f9a93', brightCyan:    '#84c0b6',
+                white:   '#d8c8a8', brightWhite:   '#f2e6c8'
+            }
         });
         const fitAddon = new window.FitAddon.FitAddon();
         term.loadAddon(fitAddon);
@@ -375,6 +394,20 @@
         }
         requestAnimationFrame(resizeTerminal); // fit once after first grid paint
         resizeTerminal();
+
+        // The 80-col grid is measured from glyph width, so it must be computed
+        // against the real font, not the Courier fallback. font-display:swap
+        // renders in Courier until IBM Plex Mono loads; once it does, re-assign
+        // fontFamily (forces xterm to rebuild its glyph atlas) and refit.
+        if (document.fonts && document.fonts.load) {
+            Promise.all([
+                document.fonts.load('400 16px "IBM Plex Mono"'),
+                document.fonts.load('700 16px "IBM Plex Mono"')
+            ]).then(function () {
+                term.setOption('fontFamily', '"IBM Plex Mono", "Courier New", Courier, monospace');
+                resizeTerminal();
+            }).catch(function () { resizeTerminal(); });
+        }
 
         /////////////////////////////////////////////
         //

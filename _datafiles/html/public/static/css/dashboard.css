@@ -94,7 +94,10 @@
 #panel-vitals,
 #panel-status {
   background: var(--vellum, #d9c39e);
-  border-color: var(--panel-border, #3a2a18);   /* dark leather frame — visible on the light vellum fill */
+  /* Tooled-red leather frame (palette red). The old dark #3a2a18 was tuned for
+     the light vellum fill but vanished against the dark page outside the card,
+     so these read as frameless. The warm red reads clearly against both. */
+  border-color: var(--frame-red, #d6694e);
   color: var(--ink-deep, #2b231d);
 }
 #panel-vitals .dash-panel-body,
@@ -532,3 +535,22 @@
 .inv-ctx .ctx-sep {
   border-top: 1px solid rgba(58, 42, 24, 0.7);
 }
+
+/* ── IBM Plex Mono (self-hosted, OFL) — used by the game terminal ────────── */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal; font-weight: 400; font-display: swap;
+  src: url('../fonts/IBMPlexMono-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal; font-weight: 700; font-display: swap;
+  src: url('../fonts/IBMPlexMono-Bold.woff2') format('woff2');
+}
+
+/* Plug xterm.css's hardcoded cold-black surfaces (viewport behind the
+   scrollbar / below short content, and the IME composition box). #terminal
+   prefix wins on specificity over xterm.css's `.xterm .xterm-viewport`,
+   regardless of stylesheet load order, and survives an xterm upgrade. */
+#terminal .xterm-viewport   { background-color: #191310; }
+#terminal .composition-view { background: #2b231d; color: #e8d2a0; }
