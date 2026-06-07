@@ -655,32 +655,36 @@
                     grid.appendChild(msg);
                     return;
                 }
+                var wornShown = 0;
                 for (var i = 0; i < worn.length; i++) {
                     var entry = worn[i];
+                    // Only show slots that actually hold an item — skip empty
+                    // slots AND the "blocked" second slot of a two-handed weapon
+                    // (both arrive as item:null), so the panel shows just what's
+                    // equipped rather than a grid of open slots.
+                    if (!entry.item) continue;
+                    var item = entry.item;
+                    wornShown++;
+
                     var cell = document.createElement("div");
                     cell.className = "inv-cell";
 
                     var tile = document.createElement("div");
                     tile.className = "inv-tile";
-                    if (!entry.item) {
-                        tile.classList.add("empty");
-                    } else {
-                        var item = entry.item;
-                        // Icon from trusted local map — innerHTML is safe here
-                        var iconSVG = (typeof window.itemIconSVG === "function")
-                            ? window.itemIconSVG(item.type, item.subtype)
-                            : "";
-                        if (iconSVG) tile.innerHTML = iconSVG;
-                        tile.title = item.name || "";
-                        // Data attributes for Task 8 action menu
-                        tile.dataset.handle     = item.handle  || "";
-                        tile.dataset.name       = item.name    || "";
-                        tile.dataset.type       = item.type    || "";
-                        tile.dataset.subtype    = item.subtype || "";
-                        tile.dataset.collection = "worn";
-                        tile.dataset.slotkey    = entry.slotKey || "";
-                        appendChargeMeter(tile, item.uses || 0, item.usesMax || 0);
-                    }
+                    // Icon from trusted local map — innerHTML is safe here
+                    var iconSVG = (typeof window.itemIconSVG === "function")
+                        ? window.itemIconSVG(item.type, item.subtype)
+                        : "";
+                    if (iconSVG) tile.innerHTML = iconSVG;
+                    tile.title = item.name || "";
+                    // Data attributes for Task 8 action menu
+                    tile.dataset.handle     = item.handle  || "";
+                    tile.dataset.name       = item.name    || "";
+                    tile.dataset.type       = item.type    || "";
+                    tile.dataset.subtype    = item.subtype || "";
+                    tile.dataset.collection = "worn";
+                    tile.dataset.slotkey    = entry.slotKey || "";
+                    appendChargeMeter(tile, item.uses || 0, item.usesMax || 0);
 
                     var slab = document.createElement("div");
                     slab.className = "inv-slab" + (invSlotIsMutation(entry.slotKey) ? " mut" : "");
@@ -689,6 +693,12 @@
                     cell.appendChild(tile);
                     cell.appendChild(slab);
                     grid.appendChild(cell);
+                }
+                if (wornShown === 0) {
+                    var emptyW = document.createElement("div");
+                    emptyW.className = "inv-empty-msg";
+                    emptyW.textContent = "No equipped items.";
+                    grid.appendChild(emptyW);
                 }
 
             } else {
