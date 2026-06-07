@@ -94,7 +94,10 @@
 #panel-vitals,
 #panel-status {
   background: var(--vellum, #d9c39e);
-  border-color: var(--panel-border, #3a2a18);   /* dark leather frame — visible on the light vellum fill */
+  /* Tooled-red leather frame (palette red). The old dark #3a2a18 was tuned for
+     the light vellum fill but vanished against the dark page outside the card,
+     so these read as frameless. The warm red reads clearly against both. */
+  border-color: var(--frame-red, #d6694e);
   color: var(--ink-deep, #2b231d);
 }
 #panel-vitals .dash-panel-body,
