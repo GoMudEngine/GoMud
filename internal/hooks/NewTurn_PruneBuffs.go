@@ -67,6 +67,19 @@ func PruneBuffs(e events.Event) events.ListenerReturn {
 
 					user.Character.Validate()
 
+					// Push a Char update so the web client's Status &
+					// Conditions panel refreshes immediately on buff
+					// expiry. GMCP listens to BuffsTriggered and queues
+					// Char.Affects, Char.Conditions; reusing it here (on
+					// the removal batch) avoids a stale panel until some
+					// unrelated Char event fires. Player-only — the mob
+					// prune branch below has no UserId and is skipped.
+					prunedIds := make([]int, 0, len(buffsToPrune))
+					for _, buffInfo := range buffsToPrune {
+						prunedIds = append(prunedIds, buffInfo.BuffId)
+					}
+					events.AddToQueue(events.BuffsTriggered{UserId: user.UserId, BuffIds: prunedIds})
+
 					if logOff {
 						mudlog.Info("MEDITATION LOGOFF")
 						events.AddToQueue(events.System{Command: "logoff", Data: uId})
