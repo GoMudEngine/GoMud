@@ -725,6 +725,7 @@ type GMCPCharModule_Payload_Inventory_Item struct {
 	Type    string   `json:"type"`
 	SubType string   `json:"subtype"`
 	Uses    int      `json:"uses"`
+	UsesMax int      `json:"usesMax"` // spec starting/max charges; 0 = not a charged item
 	Details []string `json:"details"`
 }
 
@@ -738,6 +739,7 @@ func newInventory_Item(itm items.Item) GMCPCharModule_Payload_Inventory_Item {
 		Type:    string(itmSpec.Type),
 		SubType: string(itmSpec.Subtype),
 		Uses:    itm.Uses,
+		UsesMax: itmSpec.Uses, // spec's starting count = max charges
 		Details: []string{},
 	}
 

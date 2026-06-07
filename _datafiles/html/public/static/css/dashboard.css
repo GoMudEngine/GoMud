@@ -438,7 +438,7 @@
 /* Mutation-gated slots get a green tint */
 .inv-slab.mut { color: var(--copper, #7fae6a); }
 
-/* Corner quantity badge on stackable/multi-use items */
+/* Corner quantity badge — backpack stacks only (N identical items) */
 .inv-qty {
   position: absolute;
   bottom: 2px;
@@ -450,6 +450,28 @@
   padding: 0 2px;
   pointer-events: none;
   line-height: 1.3;
+}
+
+/* Vertical charge meter — thin bar on the left edge of a tile */
+.inv-charge {
+  position: absolute;
+  left: 3px;
+  top: 6px;
+  bottom: 6px;
+  width: 4px;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 2px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.inv-charge-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--ink-gold, #c9a86a);
+  border-radius: 2px;
+  transition: height 0.2s ease;
 }
 
 /* Empty-tab message */

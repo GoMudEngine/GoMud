@@ -610,6 +610,26 @@
                    sk === "tail";
         }
 
+        // Append a vertical charge meter to a tile when the item has charges.
+        // usesMax > 1 means the item is a charged consumable; render a thin bar
+        // on the left edge filled proportionally (anchored bottom = full).
+        // Low charge (<= 25%) tints the fill red for at-a-glance urgency.
+        function appendChargeMeter(tile, uses, usesMax) {
+            if (!usesMax || usesMax <= 1) return;
+            var pct = Math.min(100, Math.max(0, (uses / usesMax) * 100));
+            var track = document.createElement("div");
+            track.className = "inv-charge";
+            var fill = document.createElement("div");
+            fill.className = "inv-charge-fill";
+            fill.style.height = pct + "%";
+            if (pct <= 25) {
+                fill.style.background = "#b94040"; // low-charge red
+            }
+            track.title = "Charges: " + uses + " / " + usesMax;
+            track.appendChild(fill);
+            tile.appendChild(track);
+        }
+
         function renderInventory() {
             var inv = (GMCPStructs["Char"] || {}).Inventory;
             var grid = document.getElementById("inv-grid");
@@ -659,6 +679,7 @@
                         tile.dataset.subtype    = item.subtype || "";
                         tile.dataset.collection = "worn";
                         tile.dataset.slotkey    = entry.slotKey || "";
+                        appendChargeMeter(tile, item.uses || 0, item.usesMax || 0);
                     }
 
                     var slab = document.createElement("div");
@@ -685,9 +706,42 @@
                     grid.appendChild(msg);
                     return;
                 }
-                var items = cfg.data.items;
-                for (var j = 0; j < items.length; j++) {
-                    var item = items[j];
+                var rawItems = cfg.data.items;
+
+                // Backpack only: collapse identical items (same name + uses) into
+                // a single tile with an xN stack badge. Other tabs show one tile
+                // per item since slot identity matters (bandolier order, component
+                // bag tags, etc.).
+                var displayItems = rawItems;
+                if (invActiveTab === "backpack") {
+                    var stackMap = {}; // key → { item, count }
+                    var stackOrder = [];
+                    for (var s = 0; s < rawItems.length; s++) {
+                        var ri = rawItems[s];
+                        var key = (ri.name || "") + "\x00" + (ri.uses || 0);
+                        if (stackMap[key]) {
+                            stackMap[key].count++;
+                        } else {
+                            stackMap[key] = { item: ri, count: 1 };
+                            stackOrder.push(key);
+                        }
+                    }
+                    displayItems = [];
+                    for (var k = 0; k < stackOrder.length; k++) {
+                        displayItems.push(stackMap[stackOrder[k]]);
+                    }
+                } else {
+                    // Non-backpack: wrap in same shape { item, count:1 } for uniform loop
+                    displayItems = [];
+                    for (var n = 0; n < rawItems.length; n++) {
+                        displayItems.push({ item: rawItems[n], count: 1 });
+                    }
+                }
+
+                for (var j = 0; j < displayItems.length; j++) {
+                    var entry = displayItems[j];
+                    var item  = entry.item;
+                    var count = entry.count;
                     var cell = document.createElement("div");
                     cell.className = "inv-cell";
 
@@ -705,11 +759,14 @@
                     tile.dataset.collection = invActiveTab;
                     tile.dataset.slotkey    = "";
 
-                    // Optional quantity badge for items with uses > 1
-                    if (item.uses && item.uses > 1) {
+                    // Charge meter (all container tabs — potions in bandolier have charges)
+                    appendChargeMeter(tile, item.uses || 0, item.usesMax || 0);
+
+                    // xN stack badge — backpack only, when N > 1
+                    if (invActiveTab === "backpack" && count > 1) {
                         var qty = document.createElement("span");
                         qty.className = "inv-qty";
-                        qty.textContent = "x" + item.uses;
+                        qty.textContent = "x" + count;
                         tile.appendChild(qty);
                     }
 
