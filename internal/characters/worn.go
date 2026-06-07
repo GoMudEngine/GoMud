@@ -485,43 +485,25 @@ func (c *Character) IsUnarmedStyle() bool {
 	return sub == items.Fist || sub == items.Claws
 }
 
+// GetAllWornItems returns every equipped item across ALL slots, in Worn-struct
+// (eq) order. (Previously this omitted the slots added later — Shoulders, Back,
+// Wrist1/2, ExtraWrist1-4, ExtraArm3/4, Ring2, Tail, ComponentBag — which meant
+// items in those slots never contributed their WornBuffIds via buffs.go and
+// were missed by other callers. Now complete.)
 func (c *Character) GetAllWornItems() []items.Item {
 	wornItems := []items.Item{}
-	if c.Equipment.Weapon.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Weapon)
-	}
-	if c.Equipment.Offhand.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Offhand)
-	}
-	if c.Equipment.ExtraArm1.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.ExtraArm1)
-	}
-	if c.Equipment.ExtraArm2.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.ExtraArm2)
-	}
-	if c.Equipment.Head.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Head)
-	}
-	if c.Equipment.Neck.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Neck)
-	}
-	if c.Equipment.Body.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Body)
-	}
-	if c.Equipment.Belt.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Belt)
-	}
-	if c.Equipment.Gloves.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Gloves)
-	}
-	if c.Equipment.Ring.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Ring)
-	}
-	if c.Equipment.Legs.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Legs)
-	}
-	if c.Equipment.Feet.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Feet)
+	for _, itm := range []items.Item{
+		c.Equipment.Weapon, c.Equipment.Offhand,
+		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2, c.Equipment.ExtraArm3, c.Equipment.ExtraArm4,
+		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Shoulders, c.Equipment.Body, c.Equipment.Back,
+		c.Equipment.Belt, c.Equipment.Wrist1, c.Equipment.Wrist2,
+		c.Equipment.ExtraWrist1, c.Equipment.ExtraWrist2, c.Equipment.ExtraWrist3, c.Equipment.ExtraWrist4,
+		c.Equipment.Gloves, c.Equipment.Ring, c.Equipment.Ring2, c.Equipment.Legs, c.Equipment.Feet,
+		c.Equipment.Tail, c.Equipment.ComponentBag,
+	} {
+		if itm.ItemId > 0 {
+			wornItems = append(wornItems, itm)
+		}
 	}
 	return wornItems
 }
