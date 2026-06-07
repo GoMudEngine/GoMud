@@ -313,25 +313,34 @@ func (c *Character) validatePoolClamps() {
 	}
 }
 
-// validateEquipmentItems calls items.Item.Validate() on every backpack and
-// worn item to ensure all in-play items have a uid.
+// validateEquipmentItems calls items.Item.Validate() on every in-play item
+// (backpack, bandolier, component-bag contents, and EVERY worn slot) to ensure
+// they all have a uid. This MUST cover all slots: an un-validated item keeps a
+// nil UUID, which stringifies to a constant — so two such items collide for
+// @<handle> targeting (a missing slot here = the web inventory panel's actions
+// hitting the wrong item). Iterate via a pointer list so a forgotten slot is
+// obvious.
 func (c *Character) validateEquipmentItems() {
 	for i := range c.Items {
 		c.Items[i].Validate()
 	}
-	c.Equipment.Weapon.Validate()
-	c.Equipment.Offhand.Validate()
-	c.Equipment.ExtraArm1.Validate()
-	c.Equipment.ExtraArm2.Validate()
-	c.Equipment.Head.Validate()
-	c.Equipment.Neck.Validate()
-	c.Equipment.Body.Validate()
-	c.Equipment.Belt.Validate()
-	c.Equipment.Gloves.Validate()
-	c.Equipment.Ring.Validate()
-	c.Equipment.Legs.Validate()
-	c.Equipment.Feet.Validate()
-	c.Equipment.Tail.Validate()
+	for i := range c.PotionItems { // bandolier
+		c.PotionItems[i].Validate()
+	}
+	for i := range c.ComponentItems { // component-bag contents
+		c.ComponentItems[i].Validate()
+	}
+	for _, slot := range []*items.Item{
+		&c.Equipment.Weapon, &c.Equipment.Offhand,
+		&c.Equipment.ExtraArm1, &c.Equipment.ExtraArm2, &c.Equipment.ExtraArm3, &c.Equipment.ExtraArm4,
+		&c.Equipment.Head, &c.Equipment.Neck, &c.Equipment.Shoulders, &c.Equipment.Body, &c.Equipment.Back,
+		&c.Equipment.Belt, &c.Equipment.Wrist1, &c.Equipment.Wrist2,
+		&c.Equipment.ExtraWrist1, &c.Equipment.ExtraWrist2, &c.Equipment.ExtraWrist3, &c.Equipment.ExtraWrist4,
+		&c.Equipment.Gloves, &c.Equipment.Ring, &c.Equipment.Ring2, &c.Equipment.Legs, &c.Equipment.Feet,
+		&c.Equipment.Tail, &c.Equipment.ComponentBag,
+	} {
+		slot.Validate()
+	}
 }
 
 // validateDisabledSlotsForSpecies enables all slots, then disables the ones
