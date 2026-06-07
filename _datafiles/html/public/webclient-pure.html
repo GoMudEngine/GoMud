@@ -607,6 +607,11 @@
                 if ( obj.Inventory ) {
                     renderInventory();
                 }
+
+                // Refresh automation panel if automation data was bundled
+                if ( obj.Automation ) {
+                    renderAutomation();
+                }
             },
             "Char.Conditions": function() {
                 updateStatusPanel();
@@ -634,6 +639,9 @@
             },
             "Char.Inventory": function() {
                 renderInventory();
+            },
+            "Char.Automation": function() {
+                renderAutomation();
             },
         };
 
@@ -839,6 +847,125 @@
 
         // Render inventory panel once on load (will show empty state until GMCP arrives)
         renderInventory();
+
+        /////////////////////////////////////////////
+        //
+        // Automation Panel
+        //
+        /////////////////////////////////////////////
+        var autoActiveTab = 'macros';
+
+        function renderAutomation() {
+            var list = document.getElementById("auto-list");
+            if (!list) return;
+
+            // Clear previous content safely
+            while (list.firstChild) { list.removeChild(list.firstChild); }
+
+            var a = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
+
+            function makeEmptyMsg(text) {
+                var el = document.createElement("div");
+                el.className = "auto-empty";
+                el.textContent = text;
+                list.appendChild(el);
+            }
+
+            if (autoActiveTab === 'macros') {
+                if (!a || !a.macros || !a.macros.length) {
+                    makeEmptyMsg("No macros configured.");
+                    return;
+                }
+                for (var i = 0; i < a.macros.length; i++) {
+                    var m = a.macros[i];
+                    var row = document.createElement("div");
+                    row.className = "auto-row";
+                    // Store key in dataset (XSS-safe — never innerHTML for server data)
+                    row.dataset.autoType = "macro";
+                    row.dataset.autoKey  = m.key    || "";
+                    row.dataset.autoCmd  = m.commands || "";
+
+                    var nameEl = document.createElement("span");
+                    nameEl.className = "name";
+                    nameEl.textContent = m.key || "";
+
+                    var sumEl = document.createElement("span");
+                    sumEl.className = "sum";
+                    sumEl.textContent = m.commands || "";
+
+                    row.appendChild(nameEl);
+                    row.appendChild(sumEl);
+                    list.appendChild(row);
+                }
+
+            } else if (autoActiveTab === 'aliases') {
+                if (!a || !a.aliases || !a.aliases.length) {
+                    makeEmptyMsg("No aliases configured.");
+                    return;
+                }
+                for (var j = 0; j < a.aliases.length; j++) {
+                    var al = a.aliases[j];
+                    var row = document.createElement("div");
+                    row.className = "auto-row";
+                    row.dataset.autoType = "alias";
+                    row.dataset.autoKey  = al.name    || "";
+                    row.dataset.autoCmd  = al.command || "";
+
+                    var nameEl = document.createElement("span");
+                    nameEl.className = "name";
+                    nameEl.textContent = al.name || "";
+
+                    var sumEl = document.createElement("span");
+                    sumEl.className = "sum";
+                    sumEl.textContent = al.command || "";
+
+                    row.appendChild(nameEl);
+                    row.appendChild(sumEl);
+                    list.appendChild(row);
+                }
+
+            } else {
+                // ticks / triggers — Phase 2+
+                makeEmptyMsg("Coming soon.");
+            }
+        }
+
+        // Left-click on an auto-row fires the macro/alias immediately
+        document.getElementById("auto-list").addEventListener("click", function(e) {
+            var row = e.target.closest(".auto-row");
+            if (!row) return;
+            var type = row.dataset.autoType;
+            var key  = row.dataset.autoKey;
+            if (!key) return;
+            if (type === "macro") {
+                // Strip leading '=' if present, then send '=N'
+                var num = key.replace(/^=/, "");
+                SendData("=" + num);
+            } else if (type === "alias") {
+                SendData(key);
+            }
+        });
+
+        // Tab switching for the automation panel
+        (function() {
+            var autoTabBar = document.querySelector(".auto-tabs");
+            if (!autoTabBar) return;
+            autoTabBar.addEventListener("click", function(e) {
+                var btn = e.target.closest(".auto-tab");
+                if (!btn) return;
+                var newTab = btn.dataset.tab;
+                if (!newTab || newTab === autoActiveTab) return;
+                autoActiveTab = newTab;
+                var allTabs = autoTabBar.querySelectorAll(".auto-tab");
+                for (var i = 0; i < allTabs.length; i++) {
+                    allTabs[i].classList.toggle("active", allTabs[i] === btn);
+                }
+                renderAutomation();
+            });
+        })();
+
+        // Render once on load (empty state until GMCP arrives)
+        renderAutomation();
 
         // Build a single vitals row DOM element
         function createVitalsRow(name, hp, sp, cp, isSelf, isRemote) {
