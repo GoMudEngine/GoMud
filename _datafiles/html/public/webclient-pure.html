@@ -1004,9 +1004,13 @@
         function stripAnsi(s) { return String(s).replace(/\x1b\[[0-9;?]*[A-Za-z]/g, "").replace(/\x1b\][^\x07]*\x07/g, ""); }
 
         // Compile a "*"-wildcard pattern to a regex with capture groups.
+        // Escape every regex metacharacter EXCEPT "*", then turn "*" into a
+        // non-greedy capture group. Literal spaces stay literal (a pattern like
+        // "* tells you '*'" must match real spaces, and only the "*"s become
+        // $1..$n captures).
         function compileTriggerPattern(pat) {
-            var esc = String(pat).replace(/[.*+?^${}()|[\]\\]/g, function(ch){ return ch === "*" ? " " : "\\" + ch; });
-            esc = esc.replace(/ /g, "(.*?)");
+            var esc = String(pat).replace(/[.+?^${}()|[\]\\]/g, "\\$&");
+            esc = esc.replace(/\*/g, "(.*?)");
             try { return new RegExp(esc); } catch (e) { return null; }
         }
 
