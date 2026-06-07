@@ -733,6 +733,9 @@
 
         head.addEventListener("dragend", function () {
           dragSourcePanel = null;
+          // clear any lingering drop highlight (e.g. drag released off-window)
+          var hl = document.querySelectorAll("#dashboard .dash-panel.drag-over");
+          for (var i = 0; i < hl.length; i++) hl[i].classList.remove("drag-over");
         });
 
         // --- Drop target: the entire panel section ---

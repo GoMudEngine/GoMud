@@ -428,13 +428,19 @@
                     tab.innerText = tab.dataset.label + "(" + String(tab.dataset.unread) + ")";
                 }
 
+                // Build via DOM + textContent (never innerHTML) — fromName/
+                // message/fromSource are player-controlled (stored-XSS otherwise).
+                var srcClass = String(fromSource || '').replace(/[^a-z0-9_-]/gi, '');
                 var p = document.createElement('p');
-                p.innerHTML =   '<span class="text-name ' + fromSource + '">' +
-                                    fromName +
-                                '</span>: ' +
-                                '<span class="text-body ' + fromSource + '">' +
-                                    message +
-                                '</span>';
+                var nameSpan = document.createElement('span');
+                nameSpan.className = 'text-name ' + srcClass;
+                nameSpan.textContent = (fromName != null ? fromName : '');
+                var bodySpan = document.createElement('span');
+                bodySpan.className = 'text-body ' + srcClass;
+                bodySpan.textContent = (message != null ? message : '');
+                p.appendChild(nameSpan);
+                p.appendChild(document.createTextNode(': '));
+                p.appendChild(bodySpan);
                 panel.appendChild(p);
 
                 // Trim overflow — cap at 200 messages per channel
@@ -811,10 +817,8 @@
             var nameParts = objNamespace.split(".");
             var lastProperty = nameParts.pop();
 
-            var rootName = nameParts[0];
             var cursor = GMCPStructs;
 
-            objectPosition = null;
             for (let propertyName of nameParts) {
 
                 if ( !cursor[propertyName] ) {
@@ -834,7 +838,7 @@
                 }
             }
 
-            console.log("GMCP:", gmcpNamespace, gmcpObject);
+            console.log("GMCP (unhandled):", objNamespace, objBody);
         }
         function updateStatusPanel() {
             var container = document.getElementById('status-conditions');
