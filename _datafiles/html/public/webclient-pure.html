@@ -1947,6 +1947,156 @@
             // Set initial placeholder (say tab is active by default)
             updateChatPlaceholder();
         });
+
+        // ── Inventory right-click context menu ──────────────────────────────
+        // Single shared menu element (created once, reused per open).
+        (function() {
+            var menu = null;
+
+            function buildMenu() {
+                var el = document.createElement("div");
+                el.className = "inv-ctx";
+                el.style.display = "none";
+                document.body.appendChild(el);
+                return el;
+            }
+
+            function closeMenu() {
+                if (!menu) return;
+                menu.style.display = "none";
+                // Remove per-open listeners
+                document.removeEventListener("click",   closeOnOutside, true);
+                document.removeEventListener("keydown", closeOnEscape,  true);
+                document.removeEventListener("scroll",  closeMenu,      true);
+            }
+
+            function closeOnOutside(e) {
+                if (menu && !menu.contains(e.target)) closeMenu();
+            }
+            function closeOnEscape(e) {
+                if (e.key === "Escape") closeMenu();
+            }
+
+            // Equippable item types — "equip @<handle>" for these
+            var EQUIPPABLE_TYPES = {
+                weapon: true, offhand: true,
+                head: true, neck: true, shoulders: true, body: true,
+                back: true, belt: true, gloves: true, wrist: true,
+                ring: true, legs: true, feet: true, tail: true,
+                componentbag: true
+            };
+
+            // Consumable item types → verb
+            function consumeVerb(type, subtype) {
+                if (type === "potion" || type === "drink" || subtype === "potion" || subtype === "drink") return "drink";
+                if (type === "food"   || subtype === "food")   return "eat";
+                return null;   // "use" is for items with explicit use-ability — omit generic
+            }
+
+            function makeRow(label, isDefault, onAction) {
+                var row = document.createElement("div");
+                row.className = "ctx-row" + (isDefault ? " ctx-default" : "");
+                row.textContent = label;
+                row.addEventListener("click", function() {
+                    closeMenu();
+                    onAction();
+                });
+                return row;
+            }
+
+            function openMenu(e, tile) {
+                var handle = tile.dataset.handle;
+                if (!handle) return;                   // guard: skip empty tiles
+                var name       = tile.dataset.name       || "";
+                var type       = (tile.dataset.type      || "").toLowerCase();
+                var subtype    = (tile.dataset.subtype   || "").toLowerCase();
+                var collection = (tile.dataset.collection || "");
+
+                if (!menu) menu = buildMenu();
+
+                // Clear previous rows
+                while (menu.firstChild) menu.removeChild(menu.firstChild);
+
+                // Header — item name as non-interactive label
+                if (name) {
+                    var hdr = document.createElement("div");
+                    hdr.className = "ctx-header";
+                    hdr.textContent = name;
+                    menu.appendChild(hdr);
+                }
+
+                function send(verb) {
+                    SendData(verb + " @" + handle);
+                }
+
+                // Look (always — default/highlighted)
+                menu.appendChild(makeRow("Look", true,  function() { send("look"); }));
+
+                // Identify (always — it's a spell, but @handle-targeted)
+                menu.appendChild(makeRow("Identify", false, function() { send("cast identify"); }));
+
+                if (collection === "worn") {
+                    // Worn: offer Remove
+                    var sep = document.createElement("div");
+                    sep.className = "ctx-sep";
+                    menu.appendChild(sep);
+                    menu.appendChild(makeRow("Remove", false, function() { send("remove"); }));
+                } else {
+                    // Not worn: offer Equip if equippable
+                    if (EQUIPPABLE_TYPES[type]) {
+                        var sep2 = document.createElement("div");
+                        sep2.className = "ctx-sep";
+                        menu.appendChild(sep2);
+                        menu.appendChild(makeRow("Equip", false, function() { send("equip"); }));
+                    }
+                    // Consumable?
+                    var cv = consumeVerb(type, subtype);
+                    if (cv) {
+                        var sep3 = document.createElement("div");
+                        sep3.className = "ctx-sep";
+                        menu.appendChild(sep3);
+                        menu.appendChild(makeRow(
+                            cv.charAt(0).toUpperCase() + cv.slice(1), // Drink / Eat
+                            false,
+                            function() { send(cv); }
+                        ));
+                    }
+                }
+
+                // Drop (always, separator before it)
+                var sepDrop = document.createElement("div");
+                sepDrop.className = "ctx-sep";
+                menu.appendChild(sepDrop);
+                menu.appendChild(makeRow("Drop", false, function() { send("drop"); }));
+
+                // Position: clamp to viewport
+                menu.style.display = "block";
+                var vw = window.innerWidth  || document.documentElement.clientWidth;
+                var vh = window.innerHeight || document.documentElement.clientHeight;
+                var mw = menu.offsetWidth;
+                var mh = menu.offsetHeight;
+                var x  = Math.min(e.clientX, vw - mw - 4);
+                var y  = Math.min(e.clientY, vh - mh - 4);
+                if (x < 0) x = 0;
+                if (y < 0) y = 0;
+                menu.style.left = x + "px";
+                menu.style.top  = y + "px";
+
+                // Attach close listeners
+                document.addEventListener("click",   closeOnOutside, true);
+                document.addEventListener("keydown", closeOnEscape,  true);
+                document.addEventListener("scroll",  closeMenu,      true);
+            }
+
+            // Attach via event delegation on the inv-grid container
+            document.addEventListener("contextmenu", function(e) {
+                var tile = e.target.closest(".inv-tile[data-handle]");
+                if (!tile || !tile.dataset.handle) return;
+                e.preventDefault();
+                openMenu(e, tile);
+            });
+        })();
+        // ── End inventory context menu ───────────────────────────────────────
     </script>
 
     <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/dashboard.js"></script>
