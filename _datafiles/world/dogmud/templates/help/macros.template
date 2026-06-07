@@ -24,4 +24,8 @@
   with a semicolon - <ansi fg="yellow">;</ansi>
   e.g. <ansi fg="command">set =1 wave;say hi;emote sits down</ansi>
 
+  <ansi fg="black-bold">Web client:</ansi> your macros also appear in the
+  <ansi fg="command">Triggers &amp; Timers</ansi> panel, where you can add, edit,
+  and run them with the mouse.
+
   <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help set</ansi>
