@@ -1576,6 +1576,20 @@
             return true;
         }
 
+        // Send a client->server GMCP frame as a BINARY ws message so the 0xFF
+        // IAC byte survives (a text frame would UTF-8-mangle it).
+        function SendGMCP(pkg, obj) {
+            if (!socket || socket.readyState !== WebSocket.OPEN) return false;
+            var body = pkg + " " + JSON.stringify(obj);
+            var bodyBytes = new TextEncoder().encode(body); // UTF-8
+            var frame = new Uint8Array(bodyBytes.length + 5);
+            frame[0] = 255; frame[1] = 250; frame[2] = 201;               // IAC SB GMCP
+            frame.set(bodyBytes, 3);
+            frame[frame.length - 2] = 255; frame[frame.length - 1] = 240; // IAC SE
+            socket.send(frame);
+            return true;
+        }
+
         function printNetStats() {
             term.writeln("");
             term.writeln(" Request Ct: " + String(payloadsSent));
