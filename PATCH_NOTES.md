@@ -1,5 +1,23 @@
 # DOGMud Patch Notes
 
+## 2026-06-07 — Web client terminal theming
+
+The web client's game terminal now matches the antique tooled-leather UI.
+
+- **Leather color palette.** The terminal's background, text, and the 16 ANSI
+  colors were retuned to the warm parchment-and-leather theme — no more cold
+  black rectangle clashing with the brass-framed panels. Game colors (room
+  titles, exits, combat, gold, prompt) stay clearly readable and distinct.
+- **IBM Plex Mono.** The terminal switched from Courier to a self-hosted IBM
+  Plex Mono — a warmer, more legible monospace that pairs with the serif chrome
+  while keeping the fixed-width grid (room text, prompt bars, and the ASCII map
+  stay aligned).
+- **Brighter blue.** Blue was lifted so the connect splash and in-game exits
+  read clearly on the warm background.
+- **Card frames.** The vellum cards (session/reconnect strip, Vitals, Status &
+  Conditions, command input) gained a visible thin red frame; they previously
+  read as borderless against the dark page.
+
 ## 2026-06-07 — Web client inventory & equipment panel
 
 The web client gained a graphical, interactive inventory panel.
