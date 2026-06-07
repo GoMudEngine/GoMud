@@ -129,9 +129,13 @@
 /* Per-panel stack proportions (flex-basis 0 → grow ratios set the heights;
    splitters will later tune these --f-* vars). Left: Map / Vitals / Scene;
    Right: Chat / Status / Triggers (~equal). */
-#panel-map    { flex: var(--f-map, 1.6) 1 0; }
+/* Left column auto-balances by content: the Map absorbs slack (large when the
+   inventory is short) but keeps a min; the Inventory panel sizes to its content
+   (grows with a long eq list — e.g. extra-arms — and scrolls only once the Map
+   reaches its min). Vitals stays content-compact. */
+#panel-map    { flex: 1 1 0; min-height: 150px; }    /* fills / yields slack */
 #panel-vitals { flex: 0 0 auto; }                    /* content-compact; grows with party rows */
-#panel-art    { flex: var(--f-art, 0.7) 1 0; }       /* scene, shrunk */
+#panel-art    { flex: 0 1 auto; min-height: 120px; } /* inventory: content-sized, grows w/ eq list */
 #panel-chat   { flex: var(--f-chat, 1) 1 0; }
 #panel-status { flex: var(--f-status, 1) 1 0; }
 #panel-trig   { flex: var(--f-trig, 1) 1 0; }
