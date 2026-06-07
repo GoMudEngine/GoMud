@@ -27,23 +27,29 @@ Module name (as sent over GMCP): **`Char.Automation`**
 ```json
 {
   "macros":  [{ "key": "=1", "commands": "wave;say hi" }, ...],
-  "aliases": [{ "name": "ms",  "command": "cast mind-spike" }, ...]
+  "aliases": [{ "name": "ms",  "command": "cast mind-spike" }, ...],
+  "ticks":   [{ "id": "abc123", "name": "My Timer", "commands": "forage;rest",
+                "intervalSec": 30, "enabled": true }, ...]
 }
 ```
 
-Both arrays are sorted by key/name for stable ordering. Fields:
+All arrays are sorted by key/name/id for stable ordering. Fields:
 
-| Field              | Type     | Description                              |
-|--------------------|----------|------------------------------------------|
-| `macros[].key`     | string   | Macro slot identifier (e.g. `"=1"`)     |
-| `macros[].commands`| string   | Semicolon-delimited command string       |
-| `aliases[].name`   | string   | Alias name (e.g. `"ms"`)                |
-| `aliases[].command`| string   | Expanded command string                  |
+| Field                  | Type     | Description                                   |
+|------------------------|----------|-----------------------------------------------|
+| `macros[].key`         | string   | Macro slot identifier (e.g. `"=1"`)          |
+| `macros[].commands`    | string   | Semicolon-delimited command string            |
+| `aliases[].name`       | string   | Alias name (e.g. `"ms"`)                     |
+| `aliases[].command`    | string   | Expanded command string                       |
+| `ticks[].id`           | string   | Unique identifier for the tick                |
+| `ticks[].name`         | string   | Human-readable label shown in the panel       |
+| `ticks[].commands`     | string   | Semicolon-delimited command string            |
+| `ticks[].intervalSec`  | int      | Fire interval in seconds (minimum 1)          |
+| `ticks[].enabled`      | bool     | Whether the tick is currently active          |
 
-**Phase 2–3 additions:** `ticks` and `triggers` arrays will be appended
-to this payload when those subsystems are implemented. The struct is
-commented accordingly (`// Ticks/Triggers added in Phases 2-3.` in
-`GMCPAutomation_Payload`).
+**Phase 3 addition:** a `triggers` array will be appended when the
+trigger subsystem is implemented. The struct is commented accordingly
+(`// Triggers added in Phase 3.` in `GMCPAutomation_Payload`).
 
 ### Push Triggers
 
@@ -73,19 +79,34 @@ Both listeners call `sendAutomation(userId)`, which:
   `alias name=value` or `alias name=` that creates, updates, or
   removes a custom alias.
 
-### Inbound GMCP (Phases 2–3, Not Yet Built)
+### Inbound GMCP
 
-Ticks and triggers will be managed exclusively through the web panel via
-inbound GMCP messages (no telnet command is planned for these). The
-handlers will be added to the `HandleIAC` switch in `gmcp.go`:
+Ticks (Phase 2) are managed exclusively through the web panel via inbound
+GMCP messages — there is no typed command for them. Triggers (Phase 3) will
+use the same message names, gated by `kind`. The web client sends these as
+binary GMCP frames to `gmcp.go`'s `HandleIAC` switch:
 
-| Inbound message              | Action                                              |
-|------------------------------|-----------------------------------------------------|
-| `Char.Automation.Set`        | Create or update a tick or trigger for the user     |
-| `Char.Automation.Remove`     | Delete a tick or trigger by id                      |
+| Inbound message          | `kind` gate | Action                                         |
+|--------------------------|-------------|------------------------------------------------|
+| `Char.Automation.Set`    | `"tick"`    | Create or update a tick on the `UserRecord`    |
+| `Char.Automation.Remove` | `"tick"`    | Delete a tick by `id` from the `UserRecord`    |
 
-After processing, each handler will emit `events.AutomationChanged{UserId}`
-to trigger a re-push of the full `Char.Automation` payload.
+`Char.Automation.Set` payload shape:
+```json
+{ "kind": "tick", "id": "abc123", "name": "My Timer",
+  "commands": "forage;rest", "intervalSec": 30, "enabled": true }
+```
+
+`Char.Automation.Remove` payload shape:
+```json
+{ "kind": "tick", "id": "abc123" }
+```
+
+After processing either handler emits `events.AutomationChanged{UserId}` to
+trigger a re-push of the full `Char.Automation` payload to the client.
+
+Phase 3 will add `kind == "trigger"` cases to both handlers. Until then,
+unknown `kind` values are silently ignored.
 
 See `docs/superpowers/specs/2026-06-07-web-client-automation-panel-design.md`
 for the full Phase 2–3 design.
