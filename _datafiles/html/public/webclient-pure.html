@@ -157,6 +157,34 @@
             border-color: #cb9f42;
         }
 
+        /* Comms panel: stack tabs + send input as a column */
+        #panel-chat .dash-panel-body {
+            display: flex;
+            flex-direction: column;
+        }
+        #comm-output {
+            flex: 1 1 auto;
+            min-height: 0;
+        }
+        #chat-input {
+            flex: 0 0 auto;
+            margin-top: 5px;
+            padding: 6px 10px;
+            font-size: 14px;
+            border: 1px solid #3a2a18;
+            background-color: #150f0a;
+            color: #d2c3a4;
+            border-radius: 3px;
+            font-family: 'DejaVu Sans Mono', monospace;
+            width: 100%;
+            box-sizing: border-box;
+            caret-color: #cb9f42;
+        }
+        #chat-input:focus {
+            outline: none;
+            border-color: #cb9f42;
+        }
+
     </style>
 
     <link rel="stylesheet" href="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/css/xterm.css" />
@@ -255,6 +283,7 @@
                 <div id="comm-broadcast" class="chat-window broadcast tab-content"></div>
               </div>
             </div>
+            <input type="text" id="chat-input" placeholder="Say to the room…">
           </div>
         </section>
 
@@ -1526,10 +1555,31 @@
 
 
     <script>
-        // on DOM ready — wire comm tab buttons
+        // on DOM ready — wire comm tab buttons + chat send input
         document.addEventListener('DOMContentLoaded', () => {
-            const buttons = document.querySelectorAll('.tab-button');
-            const panels  = document.querySelectorAll('.tab-content');
+            const buttons   = document.querySelectorAll('.tab-button');
+            const panels    = document.querySelectorAll('.tab-content');
+            const chatInput = document.getElementById('chat-input');
+
+            const channelPlaceholders = {
+                'say':       'Say to the room…',
+                'whisper':   'Whisper: <name> <message>…',
+                'party':     'Party chat…',
+                'broadcast': 'Broadcast…'
+            };
+
+            // Return the active comm channel name (e.g. "say", "whisper", …)
+            function activeCommChannel() {
+                var active = document.querySelector('#comm-output .tab-button.active');
+                if (!active) return 'say';
+                // data-tab is "comm-say", "comm-whisper", etc.
+                return active.dataset.tab.replace(/^comm-/, '');
+            }
+
+            function updateChatPlaceholder() {
+                var ch = activeCommChannel();
+                chatInput.placeholder = channelPlaceholders[ch] || (ch + '…');
+            }
 
             buttons.forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -1544,8 +1594,25 @@
                 btn.dataset.unread = 0;
                 btn.innerText = btn.dataset.label;
                 document.getElementById(target).classList.add('active');
+
+                // update send-input placeholder for the newly active channel
+                updateChatPlaceholder();
                 });
             });
+
+            // Send on Enter — read active channel at send time (not captured at setup)
+            chatInput.addEventListener('keydown', function(event) {
+                if (event.key !== 'Enter') return;
+                var text = chatInput.value.trim();
+                if (!text) return;
+                var ch = activeCommChannel();
+                if (SendData(ch + ' ' + text)) {
+                    chatInput.value = '';
+                }
+            });
+
+            // Set initial placeholder (say tab is active by default)
+            updateChatPlaceholder();
         });
     </script>
 
