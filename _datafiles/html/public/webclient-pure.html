@@ -2044,7 +2044,22 @@
         }
     </style>
 
-
+    <!-- Automation modal overlay — hidden; JS drives visibility -->
+    <div id="auto-modal" style="display:none;position:fixed;inset:0;z-index:8000;
+         align-items:center;justify-content:center;">
+      <div class="auto-scrim"></div>
+      <div class="auto-modal">
+        <div class="auto-modal-head">
+          <span class="auto-modal-title"></span>
+          <span class="auto-modal-close" id="auto-modal-x">✕</span>
+        </div>
+        <div class="auto-modal-body"></div>
+        <div class="auto-modal-foot">
+          <button class="auto-modal-cancel">Cancel</button>
+          <button class="auto-modal-save">Save</button>
+        </div>
+      </div>
+    </div>
 
     <script>
         // on DOM ready — wire comm tab buttons + chat send input
@@ -2584,23 +2599,6 @@
     </script>
 
     <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/dashboard.js"></script>
-
-    <!-- Automation modal overlay — hidden; JS drives visibility -->
-    <div id="auto-modal" style="display:none;position:fixed;inset:0;z-index:8000;
-         align-items:center;justify-content:center;">
-      <div class="auto-scrim"></div>
-      <div class="auto-modal">
-        <div class="auto-modal-head">
-          <span class="auto-modal-title"></span>
-          <span class="auto-modal-close" id="auto-modal-x">✕</span>
-        </div>
-        <div class="auto-modal-body"></div>
-        <div class="auto-modal-foot">
-          <button class="auto-modal-cancel">Cancel</button>
-          <button class="auto-modal-save">Save</button>
-        </div>
-      </div>
-    </div>
 
 </body>
 </html>
