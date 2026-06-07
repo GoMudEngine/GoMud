@@ -63,7 +63,7 @@ tabbed-grid + right-click-action + GMCP-driven pattern is the template here.
    see" pattern → commands). A **"+ Add ▾" dropdown** inserts the optional
    if/else clause. The dropdown's greyed entries (Highlight, Play sound, extra
    conditions) are the documented Tier-2 seam.
-8. **Trigger condition sources (4 kinds);** operator + value adapt to the kind:
+8. **Trigger condition sources (5 kinds);** operator + value adapt to the kind:
    - **Live pool** — my HP% / SP% / CP% → `is below / above / equals` → a
      **percent** (never a raw number).
    - **Condition/status** — my conditions → `include / exclude` → a status name
@@ -72,6 +72,14 @@ tabbed-grid + right-click-action + GMCP-driven pattern is the template here.
    - **Pattern capture** — `$1`, `$2`… → `equals / contains` → text.
    - **Target** — my target → `is one of / is not one of` → a **list** of
      names, **OR semantics** (match any; never AND).
+   - **Ability cooldown** — an ability cooldown → `is ready / is not ready` →
+     the cooldown/ability name. Source data = the `Commands.State.cooldowns`
+     GMCP map (no new plumbing — a cooldown that's READY is absent from the
+     map). Qualitative, so still no-hard-numbers. (Added Phase 3 on user
+     request.)
+   - **"Do nothing" branch:** leaving the Then **or** Else command box empty =
+     fire nothing for that branch (already the natural behavior — the fire path
+     skips empty commands). Only Name + Pattern are required to save a trigger.
 9. **Pool % is measured against the AVAILABLE (unreserved) pool:**
    `pct = current ÷ (maxTotal − reserved) × 100`. This reflects usable health
    the player can actually act on, matches the usable part of the vitals bar,
