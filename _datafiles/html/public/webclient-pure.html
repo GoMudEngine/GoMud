@@ -395,6 +395,20 @@
         requestAnimationFrame(resizeTerminal); // fit once after first grid paint
         resizeTerminal();
 
+        // The 80-col grid is measured from glyph width, so it must be computed
+        // against the real font, not the Courier fallback. font-display:swap
+        // renders in Courier until IBM Plex Mono loads; once it does, re-assign
+        // fontFamily (forces xterm to rebuild its glyph atlas) and refit.
+        if (document.fonts && document.fonts.load) {
+            Promise.all([
+                document.fonts.load('400 16px "IBM Plex Mono"'),
+                document.fonts.load('700 16px "IBM Plex Mono"')
+            ]).then(function () {
+                term.setOption('fontFamily', '"IBM Plex Mono", "Courier New", Courier, monospace');
+                resizeTerminal();
+            }).catch(function () { resizeTerminal(); });
+        }
+
         /////////////////////////////////////////////
         //
         // Misc
