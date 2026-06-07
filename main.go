@@ -953,6 +953,13 @@ func HandleWebSocketConnection(conn *websocket.Conn) {
 	// Needs to be created BEFORE the first handler call
 	var sharedState map[string]any = make(map[string]any)
 
+	// Websocket clients send GMCP as binary IAC frames (e.g. the web automation
+	// panel's Char.Automation.Set/Remove). Without the IAC handler in the chain
+	// those frames fall through to the command parser as text. TelnetIACHandler
+	// passes non-IAC input through untouched, so normal commands are unaffected.
+	// (The telnet connection path registers this handler too.)
+	connDetails.AddInputHandler("TelnetIACHandler", inputhandlers.TelnetIACHandler)
+
 	loginHandler := inputhandlers.GetLoginPromptHandler()           // Get the configured handler func
 	connDetails.AddInputHandler("LoginPromptHandler", loginHandler) // Add it with a unique name
 
