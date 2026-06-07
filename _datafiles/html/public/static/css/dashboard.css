@@ -7,7 +7,7 @@
   gap: var(--dash-gap, 6px) 0;   /* row-gap kept, col-gap=0 (splitter tracks handle spacing) */
   padding: 6px;
   box-sizing: border-box;
-  background: var(--ink-deep, #2b231d);   /* ink field behind the cards, offset from the chrome */
+  background: #0e0a06;   /* deep ink-black field behind the cards, offset from the brown chrome */
   /* session strip on top; below it five columns: left | ls-splitter | center | rs-splitter | right
      so each panel can size independently and side columns are drag-resizable */
   grid-template-columns:
