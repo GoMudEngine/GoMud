@@ -33,6 +33,49 @@ type Worn struct {
 	ComponentBag items.Item `yaml:"componentbag,omitempty"`
 }
 
+// WornSlot describes one equipment slot: its yaml/slot key, its display
+// label, and a pointer to the real slot field on the Worn struct. The
+// pointer is live — mutating WornSlot.Item mutates the underlying field.
+type WornSlot struct {
+	Key   string      // slotKey, matches the yaml tag: "weapon","offhand","extraarm1",...
+	Label string      // display label
+	Item  *items.Item // pointer to the real slot field
+}
+
+// AllSlots returns every equipment slot in eq/struct order. This is the
+// SINGLE SOURCE OF TRUTH for the slot list + labels — enumeration sites
+// (GetAllWornItems, validateEquipmentItems, FindOnBody, the GMCP Worn
+// builder) iterate this instead of re-listing fields, so adding a slot
+// only requires touching the struct and this method. A reflection guard
+// test (worn_allslots_test.go) fails if a new items.Item field on Worn
+// is not registered here.
+func (w *Worn) AllSlots() []WornSlot {
+	return []WornSlot{
+		{"weapon", "Weapon", &w.Weapon},
+		{"offhand", "Offhand", &w.Offhand},
+		{"extraarm1", "Arm 3", &w.ExtraArm1}, {"extraarm2", "Arm 4", &w.ExtraArm2},
+		{"extraarm3", "Arm 5", &w.ExtraArm3}, {"extraarm4", "Arm 6", &w.ExtraArm4},
+		{"head", "Head", &w.Head}, {"neck", "Neck", &w.Neck}, {"shoulders", "Shoulders", &w.Shoulders},
+		{"body", "Body", &w.Body}, {"back", "Back", &w.Back}, {"belt", "Belt", &w.Belt},
+		{"wrist1", "Wrist", &w.Wrist1}, {"wrist2", "Wrist", &w.Wrist2},
+		{"extrawrist1", "Wrist 3", &w.ExtraWrist1}, {"extrawrist2", "Wrist 4", &w.ExtraWrist2},
+		{"extrawrist3", "Wrist 5", &w.ExtraWrist3}, {"extrawrist4", "Wrist 6", &w.ExtraWrist4},
+		{"gloves", "Gloves", &w.Gloves}, {"ring", "Ring", &w.Ring}, {"ring2", "Ring", &w.Ring2},
+		{"legs", "Legs", &w.Legs}, {"feet", "Feet", &w.Feet},
+		{"tail", "Tail", &w.Tail}, {"componentbag", "Component Bag", &w.ComponentBag},
+	}
+}
+
+// StatMod sums stat-mod contributions across every worn slot.
+//
+// NOTE: this deliberately keeps the explicit per-field sum rather than
+// iterating AllSlots(). It is a hot path — reached per stat-name lookup
+// via Character.StatMod from combat math (magical_mitigation,
+// conviction_mitigation) and per-tick regen (resources.go recovery
+// percentages), multiplied across every combatant/mob — and AllSlots()
+// allocates a 25-element slice per call. The reflection guard test on
+// AllSlots() still covers slot-list completeness.
+// (keep in sync with AllSlots())
 func (w *Worn) StatMod(stat ...string) int {
 
 	return w.Weapon.StatMod(stat...) +
@@ -63,159 +106,19 @@ func (w *Worn) StatMod(stat ...string) int {
 }
 
 func (w *Worn) EnableAll() {
-	if w.Weapon.ItemId < 0 {
-		w.Weapon = items.Item{}
-	}
-	if w.Offhand.ItemId < 0 {
-		w.Offhand = items.Item{}
-	}
-	if w.ExtraArm1.ItemId < 0 {
-		w.ExtraArm1 = items.Item{}
-	}
-	if w.ExtraArm2.ItemId < 0 {
-		w.ExtraArm2 = items.Item{}
-	}
-	if w.ExtraArm3.ItemId < 0 {
-		w.ExtraArm3 = items.Item{}
-	}
-	if w.ExtraArm4.ItemId < 0 {
-		w.ExtraArm4 = items.Item{}
-	}
-	if w.Head.ItemId < 0 {
-		w.Head = items.Item{}
-	}
-	if w.Neck.ItemId < 0 {
-		w.Neck = items.Item{}
-	}
-	if w.Shoulders.ItemId < 0 {
-		w.Shoulders = items.Item{}
-	}
-	if w.Body.ItemId < 0 {
-		w.Body = items.Item{}
-	}
-	if w.Back.ItemId < 0 {
-		w.Back = items.Item{}
-	}
-	if w.Belt.ItemId < 0 {
-		w.Belt = items.Item{}
-	}
-	if w.Wrist1.ItemId < 0 {
-		w.Wrist1 = items.Item{}
-	}
-	if w.Wrist2.ItemId < 0 {
-		w.Wrist2 = items.Item{}
-	}
-	if w.ExtraWrist1.ItemId < 0 {
-		w.ExtraWrist1 = items.Item{}
-	}
-	if w.ExtraWrist2.ItemId < 0 {
-		w.ExtraWrist2 = items.Item{}
-	}
-	if w.ExtraWrist3.ItemId < 0 {
-		w.ExtraWrist3 = items.Item{}
-	}
-	if w.ExtraWrist4.ItemId < 0 {
-		w.ExtraWrist4 = items.Item{}
-	}
-	if w.Gloves.ItemId < 0 {
-		w.Gloves = items.Item{}
-	}
-	if w.Ring.ItemId < 0 {
-		w.Ring = items.Item{}
-	}
-	if w.Ring2.ItemId < 0 {
-		w.Ring2 = items.Item{}
-	}
-	if w.Legs.ItemId < 0 {
-		w.Legs = items.Item{}
-	}
-	if w.Feet.ItemId < 0 {
-		w.Feet = items.Item{}
-	}
-	if w.Tail.ItemId < 0 {
-		w.Tail = items.Item{}
-	}
-	if w.ComponentBag.ItemId < 0 {
-		w.ComponentBag = items.Item{}
+	for _, s := range w.AllSlots() {
+		if s.Item.ItemId < 0 {
+			*s.Item = items.Item{}
+		}
 	}
 }
 
 func (w *Worn) GetAllItems() []items.Item {
 	iList := []items.Item{}
-	if w.Weapon.ItemId > 0 {
-		iList = append(iList, w.Weapon)
-	}
-	if w.Offhand.ItemId > 0 {
-		iList = append(iList, w.Offhand)
-	}
-	if w.ExtraArm1.ItemId > 0 {
-		iList = append(iList, w.ExtraArm1)
-	}
-	if w.ExtraArm2.ItemId > 0 {
-		iList = append(iList, w.ExtraArm2)
-	}
-	if w.ExtraArm3.ItemId > 0 {
-		iList = append(iList, w.ExtraArm3)
-	}
-	if w.ExtraArm4.ItemId > 0 {
-		iList = append(iList, w.ExtraArm4)
-	}
-	if w.Head.ItemId > 0 {
-		iList = append(iList, w.Head)
-	}
-	if w.Neck.ItemId > 0 {
-		iList = append(iList, w.Neck)
-	}
-	if w.Shoulders.ItemId > 0 {
-		iList = append(iList, w.Shoulders)
-	}
-	if w.Body.ItemId > 0 {
-		iList = append(iList, w.Body)
-	}
-	if w.Back.ItemId > 0 {
-		iList = append(iList, w.Back)
-	}
-	if w.Belt.ItemId > 0 {
-		iList = append(iList, w.Belt)
-	}
-	if w.Wrist1.ItemId > 0 {
-		iList = append(iList, w.Wrist1)
-	}
-	if w.Wrist2.ItemId > 0 {
-		iList = append(iList, w.Wrist2)
-	}
-	if w.ExtraWrist1.ItemId > 0 {
-		iList = append(iList, w.ExtraWrist1)
-	}
-	if w.ExtraWrist2.ItemId > 0 {
-		iList = append(iList, w.ExtraWrist2)
-	}
-	if w.ExtraWrist3.ItemId > 0 {
-		iList = append(iList, w.ExtraWrist3)
-	}
-	if w.ExtraWrist4.ItemId > 0 {
-		iList = append(iList, w.ExtraWrist4)
-	}
-	if w.Gloves.ItemId > 0 {
-		iList = append(iList, w.Gloves)
-	}
-	if w.Ring.ItemId > 0 {
-		iList = append(iList, w.Ring)
-	}
-	if w.Ring2.ItemId > 0 {
-		iList = append(iList, w.Ring2)
-	}
-	if w.Legs.ItemId > 0 {
-		iList = append(iList, w.Legs)
-	}
-	if w.Feet.ItemId > 0 {
-		iList = append(iList, w.Feet)
-	}
-	if w.Tail.ItemId > 0 {
-		iList = append(iList, w.Tail)
-	}
-	if w.ComponentBag.ItemId > 0 {
-		iList = append(iList, w.ComponentBag)
+	for _, s := range w.AllSlots() {
+		if s.Item.ItemId > 0 {
+			iList = append(iList, *s.Item)
+		}
 	}
 	return iList
 }
@@ -250,80 +153,10 @@ func (w *Worn) GetAllItemsWithEmptySlots() []items.Item {
 // Used by the enchantment tick system to modify items in-place.
 func (w *Worn) GetAllItemPtrs() []*items.Item {
 	ptrs := make([]*items.Item, 0, 24)
-	if w.Weapon.ItemId > 0 {
-		ptrs = append(ptrs, &w.Weapon)
-	}
-	if w.Offhand.ItemId > 0 {
-		ptrs = append(ptrs, &w.Offhand)
-	}
-	if w.ExtraArm1.ItemId > 0 {
-		ptrs = append(ptrs, &w.ExtraArm1)
-	}
-	if w.ExtraArm2.ItemId > 0 {
-		ptrs = append(ptrs, &w.ExtraArm2)
-	}
-	if w.ExtraArm3.ItemId > 0 {
-		ptrs = append(ptrs, &w.ExtraArm3)
-	}
-	if w.ExtraArm4.ItemId > 0 {
-		ptrs = append(ptrs, &w.ExtraArm4)
-	}
-	if w.Head.ItemId > 0 {
-		ptrs = append(ptrs, &w.Head)
-	}
-	if w.Neck.ItemId > 0 {
-		ptrs = append(ptrs, &w.Neck)
-	}
-	if w.Shoulders.ItemId > 0 {
-		ptrs = append(ptrs, &w.Shoulders)
-	}
-	if w.Body.ItemId > 0 {
-		ptrs = append(ptrs, &w.Body)
-	}
-	if w.Back.ItemId > 0 {
-		ptrs = append(ptrs, &w.Back)
-	}
-	if w.Belt.ItemId > 0 {
-		ptrs = append(ptrs, &w.Belt)
-	}
-	if w.Wrist1.ItemId > 0 {
-		ptrs = append(ptrs, &w.Wrist1)
-	}
-	if w.Wrist2.ItemId > 0 {
-		ptrs = append(ptrs, &w.Wrist2)
-	}
-	if w.ExtraWrist1.ItemId > 0 {
-		ptrs = append(ptrs, &w.ExtraWrist1)
-	}
-	if w.ExtraWrist2.ItemId > 0 {
-		ptrs = append(ptrs, &w.ExtraWrist2)
-	}
-	if w.ExtraWrist3.ItemId > 0 {
-		ptrs = append(ptrs, &w.ExtraWrist3)
-	}
-	if w.ExtraWrist4.ItemId > 0 {
-		ptrs = append(ptrs, &w.ExtraWrist4)
-	}
-	if w.Gloves.ItemId > 0 {
-		ptrs = append(ptrs, &w.Gloves)
-	}
-	if w.Ring.ItemId > 0 {
-		ptrs = append(ptrs, &w.Ring)
-	}
-	if w.Ring2.ItemId > 0 {
-		ptrs = append(ptrs, &w.Ring2)
-	}
-	if w.Legs.ItemId > 0 {
-		ptrs = append(ptrs, &w.Legs)
-	}
-	if w.Feet.ItemId > 0 {
-		ptrs = append(ptrs, &w.Feet)
-	}
-	if w.Tail.ItemId > 0 {
-		ptrs = append(ptrs, &w.Tail)
-	}
-	if w.ComponentBag.ItemId > 0 {
-		ptrs = append(ptrs, &w.ComponentBag)
+	for _, s := range w.AllSlots() {
+		if s.Item.ItemId > 0 {
+			ptrs = append(ptrs, s.Item)
+		}
 	}
 	return ptrs
 }
@@ -485,84 +318,30 @@ func (c *Character) IsUnarmedStyle() bool {
 	return sub == items.Fist || sub == items.Claws
 }
 
+// GetAllWornItems returns every equipped item across ALL slots, in Worn-struct
+// (eq) order. (Previously this omitted the slots added later — Shoulders, Back,
+// Wrist1/2, ExtraWrist1-4, ExtraArm3/4, Ring2, Tail, ComponentBag — which meant
+// items in those slots never contributed their WornBuffIds via buffs.go and
+// were missed by other callers. Now complete.)
 func (c *Character) GetAllWornItems() []items.Item {
 	wornItems := []items.Item{}
-	if c.Equipment.Weapon.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Weapon)
-	}
-	if c.Equipment.Offhand.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Offhand)
-	}
-	if c.Equipment.ExtraArm1.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.ExtraArm1)
-	}
-	if c.Equipment.ExtraArm2.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.ExtraArm2)
-	}
-	if c.Equipment.Head.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Head)
-	}
-	if c.Equipment.Neck.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Neck)
-	}
-	if c.Equipment.Body.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Body)
-	}
-	if c.Equipment.Belt.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Belt)
-	}
-	if c.Equipment.Gloves.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Gloves)
-	}
-	if c.Equipment.Ring.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Ring)
-	}
-	if c.Equipment.Legs.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Legs)
-	}
-	if c.Equipment.Feet.ItemId > 0 {
-		wornItems = append(wornItems, c.Equipment.Feet)
+	for _, s := range c.Equipment.AllSlots() {
+		if s.Item.ItemId > 0 {
+			wornItems = append(wornItems, *s.Item)
+		}
 	}
 	return wornItems
 }
 
+// GetGearValue sums the spec value of every equipped item across ALL slots
+// (via AllSlots(), so it can't drift when slots are added). Used by the
+// goal-planner's gear heuristic.
 func (c *Character) GetGearValue() int {
 	value := 0
-	if c.Equipment.Weapon.ItemId > 0 {
-		value += c.Equipment.Weapon.GetSpec().Value
-	}
-	if c.Equipment.Offhand.ItemId > 0 {
-		value += c.Equipment.Offhand.GetSpec().Value
-	}
-	if c.Equipment.ExtraArm1.ItemId > 0 {
-		value += c.Equipment.ExtraArm1.GetSpec().Value
-	}
-	if c.Equipment.ExtraArm2.ItemId > 0 {
-		value += c.Equipment.ExtraArm2.GetSpec().Value
-	}
-	if c.Equipment.Head.ItemId > 0 {
-		value += c.Equipment.Head.GetSpec().Value
-	}
-	if c.Equipment.Neck.ItemId > 0 {
-		value += c.Equipment.Neck.GetSpec().Value
-	}
-	if c.Equipment.Body.ItemId > 0 {
-		value += c.Equipment.Body.GetSpec().Value
-	}
-	if c.Equipment.Belt.ItemId > 0 {
-		value += c.Equipment.Belt.GetSpec().Value
-	}
-	if c.Equipment.Gloves.ItemId > 0 {
-		value += c.Equipment.Gloves.GetSpec().Value
-	}
-	if c.Equipment.Ring.ItemId > 0 {
-		value += c.Equipment.Ring.GetSpec().Value
-	}
-	if c.Equipment.Legs.ItemId > 0 {
-		value += c.Equipment.Legs.GetSpec().Value
-	}
-	if c.Equipment.Feet.ItemId > 0 {
-		value += c.Equipment.Feet.GetSpec().Value
+	for _, s := range c.Equipment.AllSlots() {
+		if s.Item.ItemId > 0 {
+			value += s.Item.GetSpec().Value
+		}
 	}
 	return value
 }

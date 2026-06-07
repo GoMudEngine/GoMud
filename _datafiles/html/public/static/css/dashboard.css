@@ -129,9 +129,13 @@
 /* Per-panel stack proportions (flex-basis 0 → grow ratios set the heights;
    splitters will later tune these --f-* vars). Left: Map / Vitals / Scene;
    Right: Chat / Status / Triggers (~equal). */
-#panel-map    { flex: var(--f-map, 1.6) 1 0; }
+/* Left column auto-balances by content: the Map absorbs slack (large when the
+   inventory is short) but keeps a min; the Inventory panel sizes to its content
+   (grows with a long eq list — e.g. extra-arms — and scrolls only once the Map
+   reaches its min). Vitals stays content-compact. */
+#panel-map    { flex: 1 1 0; min-height: 150px; }    /* fills / yields slack */
 #panel-vitals { flex: 0 0 auto; }                    /* content-compact; grows with party rows */
-#panel-art    { flex: var(--f-art, 0.7) 1 0; }       /* scene, shrunk */
+#panel-art    { flex: 0 1 auto; min-height: 120px; } /* inventory: content-sized, grows w/ eq list */
 #panel-chat   { flex: var(--f-chat, 1) 1 0; }
 #panel-status { flex: var(--f-status, 1) 1 0; }
 #panel-trig   { flex: var(--f-trig, 1) 1 0; }
@@ -322,4 +326,209 @@
 }
 .winbox.dash-winbox .wb-body {
   background: var(--panel-bg, #201913);
+}
+
+/* ------------------------------------------------------------------ */
+/* Inventory Panel (#panel-art)                                        */
+/* ------------------------------------------------------------------ */
+
+/* Tab strip */
+.inv-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 4px 4px 0;
+  background: linear-gradient(var(--ink-deep, #2b231d), var(--bar-bottom, #1a110b));
+  border-bottom: 1px solid var(--panel-border, #3a2a18);
+}
+
+/* Individual tab buttons — brass pill style */
+.inv-tab.brass {
+  flex: 1;
+  text-align: center;
+  font-size: 10px;
+  padding: 4px 2px;
+  border-radius: 4px 4px 0 0;
+  cursor: pointer;
+  border: 1px solid var(--brass-border, #5e431a);
+  color: var(--brass-text, #3b2a10);
+  background: var(--brass-grad,
+    radial-gradient(circle at 34% 26%, #f4dd92, #cb9f42 46%, #8a6620));
+  font-family: var(--font-serif, Georgia, serif);
+  font-style: italic;
+  filter: brightness(0.72);
+  opacity: 0.88;
+  transition: filter 0.08s, opacity 0.08s;
+}
+.inv-tab.brass:hover {
+  filter: brightness(0.85);
+  opacity: 1;
+}
+.inv-tab.brass.active {
+  filter: brightness(1);
+  opacity: 1;
+  box-shadow: inset 0 2px 4px rgba(74, 52, 16, 0.6),
+              inset 0 -1px 1px rgba(255, 246, 212, 0.4);
+}
+
+/* 5-column grid of item tiles */
+.inv-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 7px 5px;
+  padding: 8px;
+  overflow: auto;
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+/* A cell: icon tile stacked above label */
+.inv-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+/* The square tile — antique leather frame, icon centered */
+.inv-tile {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid var(--brass-border, #5e431a);
+  border-radius: 5px;
+  background: radial-gradient(circle at 35% 28%, #2a2016, #150f08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  color: var(--vellum, #d9c39e);     /* currentColor feeds SVG strokes */
+  transition: border-color 0.08s;
+  overflow: hidden;
+}
+.inv-tile:hover { border-color: var(--gold-rule, #c9a86a); }
+
+/* Icons are SVG strings from itemIconSVG — size them proportionally */
+.inv-tile > svg {
+  width: 58%;
+  height: 58%;
+  stroke: currentColor;
+  stroke-width: 6;
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* Empty slot — dashed outline, no icon */
+.inv-tile.empty {
+  background: #140f08;
+  border-style: dashed;
+  border-color: #3a2a18;
+  cursor: default;
+}
+.inv-tile.empty:hover { border-color: #3a2a18; }
+
+/* Slot label below the tile */
+.inv-slab {
+  font-size: 8px;
+  color: var(--text-secondary, #9a8a6a);
+  line-height: 1;
+  text-align: center;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Mutation-gated slots get a green tint */
+.inv-slab.mut { color: var(--copper, #7fae6a); }
+
+/* Corner quantity badge — backpack stacks only (N identical items) */
+.inv-qty {
+  position: absolute;
+  bottom: 2px;
+  right: 3px;
+  font-size: 8px;
+  color: var(--vellum, #d9c39e);
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 2px;
+  padding: 0 2px;
+  pointer-events: none;
+  line-height: 1.3;
+}
+
+/* Vertical charge meter — thin bar on the left edge of a tile */
+.inv-charge {
+  position: absolute;
+  left: 3px;
+  top: 6px;
+  bottom: 6px;
+  width: 4px;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 2px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.inv-charge-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--ink-gold, #c9a86a);
+  border-radius: 2px;
+  transition: height 0.2s ease;
+}
+
+/* Empty-tab message */
+.inv-empty-msg {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary, #9a8a6a);
+  font-family: var(--font-serif, Georgia, serif);
+  font-style: italic;
+  font-size: 0.8rem;
+  padding: 16px 8px;
+  text-align: center;
+}
+
+/* ── Inventory right-click context menu ─────────────────────────────────── */
+.inv-ctx {
+  position: fixed;
+  min-width: 120px;
+  background: var(--ink-deep, #1a110b);
+  border: 1px solid var(--gold-rule, #c9a86a);
+  border-radius: 5px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.65);
+  overflow: hidden;
+  z-index: 9000;
+  font-family: var(--font-serif, Georgia, serif);
+  font-size: 12px;
+}
+.inv-ctx .ctx-header {
+  padding: 5px 10px 4px;
+  font-size: 10px;
+  font-style: italic;
+  color: var(--text-secondary, #9a8a6a);
+  border-bottom: 1px solid rgba(58, 42, 24, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+  pointer-events: none;
+  user-select: none;
+}
+.inv-ctx .ctx-row {
+  padding: 5px 10px;
+  color: var(--vellum, #d9c39e);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.inv-ctx .ctx-row:hover,
+.inv-ctx .ctx-row.ctx-default {
+  background: var(--panel-border, #4a6b5d);
+  color: var(--ink-gold, #e8d2a0);
+}
+.inv-ctx .ctx-sep {
+  border-top: 1px solid rgba(58, 42, 24, 0.7);
 }

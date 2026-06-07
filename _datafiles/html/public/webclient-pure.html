@@ -194,6 +194,7 @@
     <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/mp3.js"></script>
     <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/winbox.bundle.min.js"></script>
     <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/gmcp.js"></script>
+    <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/item-icons.js"></script>
 </head>
 <body onLoad="init(); return false;">
 
@@ -239,10 +240,18 @@
           <div class="dash-panel-body"><div id="vitals-bars"></div></div>
         </section>
 
-        <section class="dash-panel dash-slot" id="panel-art" data-panel="art">
-          <div class="dash-panel-head"><span class="ph-title">Scene</span>
+        <section class="dash-panel" id="panel-art" data-panel="art">
+          <div class="dash-panel-head"><span class="ph-title">Inventory</span>
             <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
-          <div class="dash-panel-body">Scene art — coming soon</div>
+          <div class="dash-panel-body">
+            <div id="inv-tabs" class="inv-tabs">
+              <button class="inv-tab brass active" data-tab="worn">Equipped</button>
+              <button class="inv-tab brass" data-tab="bandolier">Bandolier</button>
+              <button class="inv-tab brass" data-tab="components">Components</button>
+              <button class="inv-tab brass" data-tab="backpack">Backpack</button>
+            </div>
+            <div id="inv-grid" class="inv-grid"></div>
+          </div>
         </section>
       </div>
 
@@ -551,6 +560,11 @@
                 }
 
                 updateStatusPanel();
+
+                // Refresh inventory panel if inventory data was bundled in this update
+                if ( obj.Inventory ) {
+                    renderInventory();
+                }
             },
             "Char.Conditions": function() {
                 updateStatusPanel();
@@ -576,7 +590,213 @@
                     if (mapTitle) mapTitle.textContent = 'Map (' + obj.Map.zone + ')';
                 }
             },
+            "Char.Inventory": function() {
+                renderInventory();
+            },
         };
+
+        /////////////////////////////////////////////
+        //
+        // Inventory Panel
+        //
+        /////////////////////////////////////////////
+        var invActiveTab = "worn";
+
+        // Mutation slot-key prefixes / exact values that get the .mut label tint
+        function invSlotIsMutation(slotKey) {
+            var sk = slotKey || "";
+            return sk.indexOf("extraarm") === 0 ||
+                   sk.indexOf("extrawrist") === 0 ||
+                   sk === "tail";
+        }
+
+        // Append a vertical charge meter to a tile when the item has charges.
+        // usesMax > 1 means the item is a charged consumable; render a thin bar
+        // on the left edge filled proportionally (anchored bottom = full).
+        // Low charge (<= 25%) tints the fill red for at-a-glance urgency.
+        function appendChargeMeter(tile, uses, usesMax) {
+            if (!usesMax || usesMax <= 1) return;
+            var pct = Math.min(100, Math.max(0, (uses / usesMax) * 100));
+            var track = document.createElement("div");
+            track.className = "inv-charge";
+            var fill = document.createElement("div");
+            fill.className = "inv-charge-fill";
+            fill.style.height = pct + "%";
+            if (pct <= 25) {
+                fill.style.background = "#b94040"; // low-charge red
+            }
+            track.title = "Charges: " + uses + " / " + usesMax;
+            track.appendChild(fill);
+            tile.appendChild(track);
+        }
+
+        function renderInventory() {
+            var inv = (GMCPStructs["Char"] || {}).Inventory;
+            var grid = document.getElementById("inv-grid");
+            if (!grid) return;
+
+            // Clear previous content safely
+            while (grid.firstChild) { grid.removeChild(grid.firstChild); }
+
+            if (!inv) {
+                var msg = document.createElement("div");
+                msg.className = "inv-empty-msg";
+                msg.textContent = "—";
+                grid.appendChild(msg);
+                return;
+            }
+
+            if (invActiveTab === "worn") {
+                var worn = inv.Worn;
+                if (!worn || !worn.length) {
+                    var msg = document.createElement("div");
+                    msg.className = "inv-empty-msg";
+                    msg.textContent = "No equipped items.";
+                    grid.appendChild(msg);
+                    return;
+                }
+                var wornShown = 0;
+                for (var i = 0; i < worn.length; i++) {
+                    var entry = worn[i];
+                    // Only show slots that actually hold an item — skip empty
+                    // slots AND the "blocked" second slot of a two-handed weapon
+                    // (both arrive as item:null), so the panel shows just what's
+                    // equipped rather than a grid of open slots.
+                    if (!entry.item) continue;
+                    var item = entry.item;
+                    wornShown++;
+
+                    var cell = document.createElement("div");
+                    cell.className = "inv-cell";
+
+                    var tile = document.createElement("div");
+                    tile.className = "inv-tile";
+                    // Icon from trusted local map — innerHTML is safe here
+                    var iconSVG = (typeof window.itemIconSVG === "function")
+                        ? window.itemIconSVG(item.type, item.subtype)
+                        : "";
+                    if (iconSVG) tile.innerHTML = iconSVG;
+                    tile.title = item.name || "";
+                    // Data attributes for Task 8 action menu
+                    tile.dataset.handle     = item.handle  || "";
+                    tile.dataset.name       = item.name    || "";
+                    tile.dataset.type       = item.type    || "";
+                    tile.dataset.subtype    = item.subtype || "";
+                    tile.dataset.collection = "worn";
+                    tile.dataset.slotkey    = entry.slotKey || "";
+                    appendChargeMeter(tile, item.uses || 0, item.usesMax || 0);
+
+                    var slab = document.createElement("div");
+                    slab.className = "inv-slab" + (invSlotIsMutation(entry.slotKey) ? " mut" : "");
+                    slab.textContent = entry.slot || "";
+
+                    cell.appendChild(tile);
+                    cell.appendChild(slab);
+                    grid.appendChild(cell);
+                }
+                if (wornShown === 0) {
+                    var emptyW = document.createElement("div");
+                    emptyW.className = "inv-empty-msg";
+                    emptyW.textContent = "No equipped items.";
+                    grid.appendChild(emptyW);
+                }
+
+            } else {
+                // Bandolier / Components / Backpack tabs
+                var containerMap = {
+                    "bandolier":  { data: inv.Bandolier,    emptyMsg: "No bandolier equipped." },
+                    "components": { data: inv.ComponentBag,  emptyMsg: "No component bag equipped." },
+                    "backpack":   { data: inv.Backpack,      emptyMsg: "Backpack is empty." },
+                };
+                var cfg = containerMap[invActiveTab];
+                if (!cfg || !cfg.data || !cfg.data.items || !cfg.data.items.length) {
+                    var msg = document.createElement("div");
+                    msg.className = "inv-empty-msg";
+                    msg.textContent = (cfg && cfg.emptyMsg) ? cfg.emptyMsg : "Nothing here.";
+                    grid.appendChild(msg);
+                    return;
+                }
+                var rawItems = cfg.data.items;
+
+                // Collapse identical items (same name + uses) into one tile with
+                // an xN stack badge. Applies to backpack, bandolier, AND component
+                // bag — all hold stackable identical items (potions, materials).
+                var stackMap = {}; // key → { item, count }
+                var stackOrder = [];
+                for (var s = 0; s < rawItems.length; s++) {
+                    var ri = rawItems[s];
+                    var key = (ri.name || "") + "\x00" + (ri.uses || 0);
+                    if (stackMap[key]) {
+                        stackMap[key].count++;
+                    } else {
+                        stackMap[key] = { item: ri, count: 1 };
+                        stackOrder.push(key);
+                    }
+                }
+                var displayItems = [];
+                for (var k = 0; k < stackOrder.length; k++) {
+                    displayItems.push(stackMap[stackOrder[k]]);
+                }
+
+                for (var j = 0; j < displayItems.length; j++) {
+                    var entry = displayItems[j];
+                    var item  = entry.item;
+                    var count = entry.count;
+                    var cell = document.createElement("div");
+                    cell.className = "inv-cell";
+
+                    var tile = document.createElement("div");
+                    tile.className = "inv-tile";
+                    var iconSVG = (typeof window.itemIconSVG === "function")
+                        ? window.itemIconSVG(item.type, item.subtype)
+                        : "";
+                    if (iconSVG) tile.innerHTML = iconSVG;
+                    tile.title = item.name || "";
+                    tile.dataset.handle     = item.handle  || "";
+                    tile.dataset.name       = item.name    || "";
+                    tile.dataset.type       = item.type    || "";
+                    tile.dataset.subtype    = item.subtype || "";
+                    tile.dataset.collection = invActiveTab;
+                    tile.dataset.slotkey    = "";
+
+                    // Charge meter (all container tabs — potions in bandolier have charges)
+                    appendChargeMeter(tile, item.uses || 0, item.usesMax || 0);
+
+                    // xN stack badge — any container tab, when N > 1
+                    if (count > 1) {
+                        var qty = document.createElement("span");
+                        qty.className = "inv-qty";
+                        qty.textContent = "x" + count;
+                        tile.appendChild(qty);
+                    }
+
+                    cell.appendChild(tile);
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        // Tab switching
+        (function() {
+            var tabBar = document.getElementById("inv-tabs");
+            if (!tabBar) return;
+            tabBar.addEventListener("click", function(e) {
+                var btn = e.target.closest(".inv-tab");
+                if (!btn) return;
+                var newTab = btn.dataset.tab;
+                if (!newTab || newTab === invActiveTab) return;
+                invActiveTab = newTab;
+                // Toggle active class
+                var allTabs = tabBar.querySelectorAll(".inv-tab");
+                for (var i = 0; i < allTabs.length; i++) {
+                    allTabs[i].classList.toggle("active", allTabs[i] === btn);
+                }
+                renderInventory();
+            });
+        })();
+
+        // Render inventory panel once on load (will show empty state until GMCP arrives)
+        renderInventory();
 
         // Build a single vitals row DOM element
         function createVitalsRow(name, hp, sp, cp, isSelf, isRemote) {
@@ -1717,6 +1937,156 @@
             // Set initial placeholder (say tab is active by default)
             updateChatPlaceholder();
         });
+
+        // ── Inventory right-click context menu ──────────────────────────────
+        // Single shared menu element (created once, reused per open).
+        (function() {
+            var menu = null;
+
+            function buildMenu() {
+                var el = document.createElement("div");
+                el.className = "inv-ctx";
+                el.style.display = "none";
+                document.body.appendChild(el);
+                return el;
+            }
+
+            function closeMenu() {
+                if (!menu) return;
+                menu.style.display = "none";
+                // Remove per-open listeners
+                document.removeEventListener("click",   closeOnOutside, true);
+                document.removeEventListener("keydown", closeOnEscape,  true);
+                document.removeEventListener("scroll",  closeMenu,      true);
+            }
+
+            function closeOnOutside(e) {
+                if (menu && !menu.contains(e.target)) closeMenu();
+            }
+            function closeOnEscape(e) {
+                if (e.key === "Escape") closeMenu();
+            }
+
+            // Equippable item types — "equip @<handle>" for these
+            var EQUIPPABLE_TYPES = {
+                weapon: true, offhand: true,
+                head: true, neck: true, shoulders: true, body: true,
+                back: true, belt: true, gloves: true, wrist: true,
+                ring: true, legs: true, feet: true, tail: true,
+                componentbag: true
+            };
+
+            // Consumable item types → verb
+            function consumeVerb(type, subtype) {
+                if (type === "potion" || type === "drink" || subtype === "potion" || subtype === "drink") return "drink";
+                if (type === "food"   || subtype === "food")   return "eat";
+                return null;   // "use" is for items with explicit use-ability — omit generic
+            }
+
+            function makeRow(label, isDefault, onAction) {
+                var row = document.createElement("div");
+                row.className = "ctx-row" + (isDefault ? " ctx-default" : "");
+                row.textContent = label;
+                row.addEventListener("click", function() {
+                    closeMenu();
+                    onAction();
+                });
+                return row;
+            }
+
+            function openMenu(e, tile) {
+                var handle = tile.dataset.handle;
+                if (!handle) return;                   // guard: skip empty tiles
+                var name       = tile.dataset.name       || "";
+                var type       = (tile.dataset.type      || "").toLowerCase();
+                var subtype    = (tile.dataset.subtype   || "").toLowerCase();
+                var collection = (tile.dataset.collection || "");
+
+                if (!menu) menu = buildMenu();
+
+                // Clear previous rows
+                while (menu.firstChild) menu.removeChild(menu.firstChild);
+
+                // Header — item name as non-interactive label
+                if (name) {
+                    var hdr = document.createElement("div");
+                    hdr.className = "ctx-header";
+                    hdr.textContent = name;
+                    menu.appendChild(hdr);
+                }
+
+                function send(verb) {
+                    SendData(verb + " @" + handle);
+                }
+
+                // Look (always — default/highlighted)
+                menu.appendChild(makeRow("Look", true,  function() { send("look"); }));
+
+                // Identify (always — it's a spell, but @handle-targeted)
+                menu.appendChild(makeRow("Identify", false, function() { send("cast identify"); }));
+
+                if (collection === "worn") {
+                    // Worn: offer Remove
+                    var sep = document.createElement("div");
+                    sep.className = "ctx-sep";
+                    menu.appendChild(sep);
+                    menu.appendChild(makeRow("Remove", false, function() { send("remove"); }));
+                } else {
+                    // Not worn: offer Equip if equippable
+                    if (EQUIPPABLE_TYPES[type]) {
+                        var sep2 = document.createElement("div");
+                        sep2.className = "ctx-sep";
+                        menu.appendChild(sep2);
+                        menu.appendChild(makeRow("Equip", false, function() { send("equip"); }));
+                    }
+                    // Consumable?
+                    var cv = consumeVerb(type, subtype);
+                    if (cv) {
+                        var sep3 = document.createElement("div");
+                        sep3.className = "ctx-sep";
+                        menu.appendChild(sep3);
+                        menu.appendChild(makeRow(
+                            cv.charAt(0).toUpperCase() + cv.slice(1), // Drink / Eat
+                            false,
+                            function() { send(cv); }
+                        ));
+                    }
+                }
+
+                // Drop (always, separator before it)
+                var sepDrop = document.createElement("div");
+                sepDrop.className = "ctx-sep";
+                menu.appendChild(sepDrop);
+                menu.appendChild(makeRow("Drop", false, function() { send("drop"); }));
+
+                // Position: clamp to viewport
+                menu.style.display = "block";
+                var vw = window.innerWidth  || document.documentElement.clientWidth;
+                var vh = window.innerHeight || document.documentElement.clientHeight;
+                var mw = menu.offsetWidth;
+                var mh = menu.offsetHeight;
+                var x  = Math.min(e.clientX, vw - mw - 4);
+                var y  = Math.min(e.clientY, vh - mh - 4);
+                if (x < 0) x = 0;
+                if (y < 0) y = 0;
+                menu.style.left = x + "px";
+                menu.style.top  = y + "px";
+
+                // Attach close listeners
+                document.addEventListener("click",   closeOnOutside, true);
+                document.addEventListener("keydown", closeOnEscape,  true);
+                document.addEventListener("scroll",  closeMenu,      true);
+            }
+
+            // Attach via event delegation on the inv-grid container
+            document.addEventListener("contextmenu", function(e) {
+                var tile = e.target.closest(".inv-tile[data-handle]");
+                if (!tile || !tile.dataset.handle) return;
+                e.preventDefault();
+                openMenu(e, tile);
+            });
+        })();
+        // ── End inventory context menu ───────────────────────────────────────
     </script>
 
     <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/dashboard.js"></script>

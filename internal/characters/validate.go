@@ -313,25 +313,26 @@ func (c *Character) validatePoolClamps() {
 	}
 }
 
-// validateEquipmentItems calls items.Item.Validate() on every backpack and
-// worn item to ensure all in-play items have a uid.
+// validateEquipmentItems calls items.Item.Validate() on every in-play item
+// (backpack, bandolier, component-bag contents, and EVERY worn slot) to ensure
+// they all have a uid. This MUST cover all slots: an un-validated item keeps a
+// nil UUID, which stringifies to a constant — so two such items collide for
+// @<handle> targeting (a missing slot here = the web inventory panel's actions
+// hitting the wrong item). Iterate via a pointer list so a forgotten slot is
+// obvious.
 func (c *Character) validateEquipmentItems() {
 	for i := range c.Items {
 		c.Items[i].Validate()
 	}
-	c.Equipment.Weapon.Validate()
-	c.Equipment.Offhand.Validate()
-	c.Equipment.ExtraArm1.Validate()
-	c.Equipment.ExtraArm2.Validate()
-	c.Equipment.Head.Validate()
-	c.Equipment.Neck.Validate()
-	c.Equipment.Body.Validate()
-	c.Equipment.Belt.Validate()
-	c.Equipment.Gloves.Validate()
-	c.Equipment.Ring.Validate()
-	c.Equipment.Legs.Validate()
-	c.Equipment.Feet.Validate()
-	c.Equipment.Tail.Validate()
+	for i := range c.PotionItems { // bandolier
+		c.PotionItems[i].Validate()
+	}
+	for i := range c.ComponentItems { // component-bag contents
+		c.ComponentItems[i].Validate()
+	}
+	for _, s := range c.Equipment.AllSlots() {
+		s.Item.Validate()
+	}
 }
 
 // validateDisabledSlotsForSpecies enables all slots, then disables the ones

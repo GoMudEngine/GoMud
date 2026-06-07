@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -147,9 +148,12 @@ func (g *GMCPCharModule) ownershipChangeHandler(e events.Event) events.ListenerR
 		return events.Continue // Return false to stop halt the event chain for this event
 	}
 
+	// Refresh the whole inventory: get/drop/give can move items between the
+	// backpack, the potion bandolier, and the component bag, so the worn
+	// sub-containers need to refresh too.
 	events.AddToQueue(GMCPCharUpdate{
 		UserId:     evt.UserId,
-		Identifier: `Char.Inventory.Backpack`,
+		Identifier: `Char.Inventory`,
 	})
 
 	return events.Continue
@@ -398,18 +402,9 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 				},
 			},
 
-			Worn: &GMCPCharModule_Payload_Inventory_Worn{
-				Weapon:  newInventory_Item(user.Character.Equipment.Weapon),
-				Offhand: newInventory_Item(user.Character.Equipment.Offhand),
-				Head:    newInventory_Item(user.Character.Equipment.Head),
-				Neck:    newInventory_Item(user.Character.Equipment.Neck),
-				Body:    newInventory_Item(user.Character.Equipment.Body),
-				Belt:    newInventory_Item(user.Character.Equipment.Belt),
-				Gloves:  newInventory_Item(user.Character.Equipment.Gloves),
-				Ring:    newInventory_Item(user.Character.Equipment.Ring),
-				Legs:    newInventory_Item(user.Character.Equipment.Legs),
-				Feet:    newInventory_Item(user.Character.Equipment.Feet),
-			},
+			Worn:         buildWornSlots(user.Character),
+			Bandolier:    buildBandolierContainer(user.Character),
+			ComponentBag: buildComponentBagContainer(user.Character),
 		}
 
 		// Fill the items list
@@ -691,8 +686,26 @@ type GMCPCharModule_Enemy struct {
 // Char.Inventory
 // /////////////////
 type GMCPCharModule_Payload_Inventory struct {
-	Backpack *GMCPCharModule_Payload_Inventory_Backpack `json:"Backpack,omitempty"`
-	Worn     *GMCPCharModule_Payload_Inventory_Worn     `json:"Worn"`
+	Worn         []GMCPCharModule_Payload_Slot              `json:"Worn"`
+	Bandolier    *GMCPCharModule_Payload_Container          `json:"Bandolier,omitempty"`
+	ComponentBag *GMCPCharModule_Payload_Container          `json:"ComponentBag,omitempty"`
+	Backpack     *GMCPCharModule_Payload_Inventory_Backpack `json:"Backpack,omitempty"`
+}
+
+// GMCPCharModule_Payload_Slot is one equipment slot in eq/worn order. Item is
+// null when the slot is empty. Mutation-gated slots (extra arms/wrists, tail)
+// are only emitted when the character actually has that slot.
+type GMCPCharModule_Payload_Slot struct {
+	Slot    string                                 `json:"slot"`    // display label e.g. "Weapon","Arm 3"
+	SlotKey string                                 `json:"slotKey"` // "weapon","offhand","extraarm1",...
+	Item    *GMCPCharModule_Payload_Inventory_Item `json:"item"`    // null when empty
+}
+
+// GMCPCharModule_Payload_Container is a sub-inventory carried by a worn item
+// (potion bandolier, component bag).
+type GMCPCharModule_Payload_Container struct {
+	Items   []GMCPCharModule_Payload_Inventory_Item           `json:"items,omitempty"`
+	Summary GMCPCharModule_Payload_Inventory_Backpack_Summary `json:"Summary,omitempty"`
 }
 
 type GMCPCharModule_Payload_Inventory_Backpack struct {
@@ -705,25 +718,14 @@ type GMCPCharModule_Payload_Inventory_Backpack_Summary struct {
 	Max   int `json:"max,omitempty"`
 }
 
-type GMCPCharModule_Payload_Inventory_Worn struct {
-	Weapon  GMCPCharModule_Payload_Inventory_Item `json:"weapon,omitempty"`
-	Offhand GMCPCharModule_Payload_Inventory_Item `json:"offhand,omitempty"`
-	Head    GMCPCharModule_Payload_Inventory_Item `json:"head,omitempty"`
-	Neck    GMCPCharModule_Payload_Inventory_Item `json:"neck,omitempty"`
-	Body    GMCPCharModule_Payload_Inventory_Item `json:"body,omitempty"`
-	Belt    GMCPCharModule_Payload_Inventory_Item `json:"belt,omitempty"`
-	Gloves  GMCPCharModule_Payload_Inventory_Item `json:"gloves,omitempty"`
-	Ring    GMCPCharModule_Payload_Inventory_Item `json:"ring,omitempty"`
-	Legs    GMCPCharModule_Payload_Inventory_Item `json:"legs,omitempty"`
-	Feet    GMCPCharModule_Payload_Inventory_Item `json:"feet,omitempty"`
-}
-
 type GMCPCharModule_Payload_Inventory_Item struct {
 	Id      string   `json:"id"`
+	Handle  string   `json:"handle"`  // opaque per-instance target token (item UUID)
 	Name    string   `json:"name"`
 	Type    string   `json:"type"`
 	SubType string   `json:"subtype"`
 	Uses    int      `json:"uses"`
+	UsesMax int      `json:"usesMax"` // spec starting/max charges; 0 = not a charged item
 	Details []string `json:"details"`
 }
 
@@ -732,10 +734,12 @@ func newInventory_Item(itm items.Item) GMCPCharModule_Payload_Inventory_Item {
 	itmSpec := itm.GetSpec()
 	d := GMCPCharModule_Payload_Inventory_Item{
 		Id:      itm.ShorthandId(),
+		Handle:  itm.UUID.String(),
 		Name:    itm.Name(),
 		Type:    string(itmSpec.Type),
 		SubType: string(itmSpec.Subtype),
 		Uses:    itm.Uses,
+		UsesMax: itmSpec.Uses, // spec's starting count = max charges
 		Details: []string{},
 	}
 
@@ -748,6 +752,111 @@ func newInventory_Item(itm items.Item) GMCPCharModule_Payload_Inventory_Item {
 	}
 
 	return d
+}
+
+// newInventory_ItemPtr returns a pointer to the item payload for an occupied
+// slot, or nil when the slot is empty/disabled (ItemId < 1 covers both the
+// empty zero-value and the negative ItemDisabledSlot sentinel).
+func newInventory_ItemPtr(itm items.Item) *GMCPCharModule_Payload_Inventory_Item {
+	if itm.ItemId < 1 {
+		return nil
+	}
+	d := newInventory_Item(itm)
+	return &d
+}
+
+// buildWornSlots emits the equipment slots in worn.go/eq order. Base slots are
+// always present (Item nil when empty); mutation-gated slots (extra arms,
+// extra wrists, tail) are only emitted when the character has them, so the
+// list stays in eq order.
+func buildWornSlots(c *characters.Character) []GMCPCharModule_Payload_Slot {
+
+	slots := make([]GMCPCharModule_Payload_Slot, 0, 26)
+
+	// Mutation-slot predicates: ExtraArms count is derived/capped in
+	// validateMutationSlots; tail presence is the "tail" mutation key.
+	_, hasTail := c.Mutations["tail"]
+
+	// includeSlot decides whether a given slot key is emitted for this
+	// character. Base slots are always present; mutation-gated slots
+	// (extra arms/wrists) appear per ExtraArms count, and tail/legs are
+	// XOR-gated on the tail mutation. The slot list + labels themselves
+	// come from characters.Worn.AllSlots() (single source of truth).
+	includeSlot := func(key string) bool {
+		switch key {
+		case `extraarm1`, `extrawrist1`:
+			return c.ExtraArms >= 1
+		case `extraarm2`, `extrawrist2`:
+			return c.ExtraArms >= 2
+		case `extraarm3`, `extrawrist3`:
+			return c.ExtraArms >= 3
+		case `extraarm4`, `extrawrist4`:
+			return c.ExtraArms >= 4
+		case `tail`:
+			return hasTail
+		case `legs`:
+			return !hasTail
+		default:
+			return true
+		}
+	}
+
+	for _, s := range c.Equipment.AllSlots() {
+		if !includeSlot(s.Key) {
+			continue
+		}
+		slots = append(slots, GMCPCharModule_Payload_Slot{
+			Slot:    s.Label,
+			SlotKey: s.Key,
+			Item:    newInventory_ItemPtr(*s.Item),
+		})
+	}
+
+	return slots
+}
+
+// buildBandolierContainer returns the potion bandolier sub-inventory when a
+// bandolier belt is worn, or nil otherwise.
+func buildBandolierContainer(c *characters.Character) *GMCPCharModule_Payload_Container {
+
+	beltSpec := c.Equipment.Belt.GetSpec()
+	if !beltSpec.IsBandolier {
+		return nil
+	}
+
+	cont := &GMCPCharModule_Payload_Container{
+		Items: []GMCPCharModule_Payload_Inventory_Item{},
+		Summary: GMCPCharModule_Payload_Inventory_Backpack_Summary{
+			Count: len(c.PotionItems),
+			Max:   beltSpec.BandolierCapacity,
+		},
+	}
+	for _, itm := range c.PotionItems {
+		cont.Items = append(cont.Items, newInventory_Item(itm))
+	}
+	return cont
+}
+
+// buildComponentBagContainer returns the component-bag sub-inventory when a
+// component bag is worn, or nil otherwise.
+func buildComponentBagContainer(c *characters.Character) *GMCPCharModule_Payload_Container {
+
+	if c.Equipment.ComponentBag.ItemId < 1 {
+		return nil
+	}
+
+	contents := c.GetComponentBagContents()
+	cont := &GMCPCharModule_Payload_Container{
+		Items: []GMCPCharModule_Payload_Inventory_Item{},
+		Summary: GMCPCharModule_Payload_Inventory_Backpack_Summary{
+			Count: len(contents),
+			Max:   c.Equipment.ComponentBag.GetSpec().BagCapacity,
+		},
+	}
+	for _, itm := range contents {
+		cont.Items = append(cont.Items, newInventory_Item(itm))
+	}
+	return cont
 }
 
 // /////////////////
