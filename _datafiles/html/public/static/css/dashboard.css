@@ -876,3 +876,16 @@
    regardless of stylesheet load order, and survives an xterm upgrade. */
 #terminal .xterm-viewport   { background-color: #191310; }
 #terminal .composition-view { background: #2b231d; color: #e8d2a0; }
+
+/* Automation macro/alias "sticker" chips — compact oval pills (mirrors the
+   Status & Conditions cond-chips). Shows only the shortcut/F-key; full
+   expansion is the hover title. Wraps to fit many in the panel. */
+.auto-chips { display: flex; flex-wrap: wrap; gap: 5px; padding: 2px; align-content: flex-start; }
+.auto-chip {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace; font-size: 0.72rem;
+  padding: 3px 9px; border-radius: 12px;
+  border: 1px solid var(--brass-border, #5e431a); background: #1f1812;
+  color: var(--title-gold, #e8d2a0);
+  cursor: pointer; white-space: nowrap; user-select: none; transition: border-color 0.08s;
+}
+.auto-chip:hover { border-color: var(--gold-rule, #c9a86a); }

@@ -871,58 +871,48 @@
                 list.appendChild(el);
             }
 
+            // A compact oval "sticker" chip (like the Status & Conditions panel).
+            // Shows only the shortcut/F-key; the full expansion is the hover tooltip.
+            // dataset carries the data for left-click fire + right-click menu.
+            function makeAutoChip(type, key, cmd, label) {
+                var chip = document.createElement("span");
+                chip.className = "auto-chip";
+                chip.dataset.autoType = type;
+                chip.dataset.autoKey  = key;   // XSS-safe: dataset/textContent, never innerHTML
+                chip.dataset.autoCmd  = cmd;
+                chip.title = (label && cmd) ? (label + " → " + cmd) : (cmd || label);
+                chip.textContent = label;
+                return chip;
+            }
+
             if (autoActiveTab === 'macros') {
                 if (!a || !a.macros || !a.macros.length) {
                     makeEmptyMsg("No macros configured.");
                     return;
                 }
+                var mChips = document.createElement("div");
+                mChips.className = "auto-chips";
                 for (var i = 0; i < a.macros.length; i++) {
                     var m = a.macros[i];
-                    var row = document.createElement("div");
-                    row.className = "auto-row";
-                    // Store key in dataset (XSS-safe — never innerHTML for server data)
-                    row.dataset.autoType = "macro";
-                    row.dataset.autoKey  = m.key    || "";
-                    row.dataset.autoCmd  = m.commands || "";
-
-                    var nameEl = document.createElement("span");
-                    nameEl.className = "name";
-                    nameEl.textContent = m.key || "";
-
-                    var sumEl = document.createElement("span");
-                    sumEl.className = "sum";
-                    sumEl.textContent = m.commands || "";
-
-                    row.appendChild(nameEl);
-                    row.appendChild(sumEl);
-                    list.appendChild(row);
+                    var mNum = (m.key || "").replace(/^=/, "");
+                    // Macro shortcut shows as its F-key (=1 -> F1).
+                    mChips.appendChild(makeAutoChip("macro", m.key || "", m.commands || "", "F" + mNum));
                 }
+                list.appendChild(mChips);
 
             } else if (autoActiveTab === 'aliases') {
                 if (!a || !a.aliases || !a.aliases.length) {
                     makeEmptyMsg("No aliases configured.");
                     return;
                 }
+                var aChips = document.createElement("div");
+                aChips.className = "auto-chips";
                 for (var j = 0; j < a.aliases.length; j++) {
                     var al = a.aliases[j];
-                    var row = document.createElement("div");
-                    row.className = "auto-row";
-                    row.dataset.autoType = "alias";
-                    row.dataset.autoKey  = al.name    || "";
-                    row.dataset.autoCmd  = al.command || "";
-
-                    var nameEl = document.createElement("span");
-                    nameEl.className = "name";
-                    nameEl.textContent = al.name || "";
-
-                    var sumEl = document.createElement("span");
-                    sumEl.className = "sum";
-                    sumEl.textContent = al.command || "";
-
-                    row.appendChild(nameEl);
-                    row.appendChild(sumEl);
-                    list.appendChild(row);
+                    // Alias chip shows just the shortcut name (war=warcry -> "war").
+                    aChips.appendChild(makeAutoChip("alias", al.name || "", al.command || "", al.name || ""));
                 }
+                list.appendChild(aChips);
 
             } else {
                 // ticks / triggers — Phase 2+
@@ -930,9 +920,9 @@
             }
         }
 
-        // Left-click on an auto-row fires the macro/alias immediately
+        // Left-click on an auto-chip fires the macro/alias immediately
         document.getElementById("auto-list").addEventListener("click", function(e) {
-            var row = e.target.closest(".auto-row");
+            var row = e.target.closest(".auto-chip");
             if (!row) return;
             var type = row.dataset.autoType;
             var key  = row.dataset.autoKey;
@@ -2422,7 +2412,7 @@
 
             // Delegation on #auto-list
             document.addEventListener("contextmenu", function(e) {
-                var row = e.target.closest(".auto-row[data-auto-type]");
+                var row = e.target.closest(".auto-chip[data-auto-type]");
                 if (!row) return;
                 e.preventDefault();
                 openMenu(e, row);
