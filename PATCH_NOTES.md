@@ -1,5 +1,20 @@
 # DOGMud Patch Notes
 
+## 2026-06-07 — Web client automation panel: Ticks
+
+The automation panel's **Ticks** tab is now live.
+
+- **Ticks** are timers you set up that automatically run one or more commands
+  every few seconds while you're playing in the web client — e.g. "sip a
+  healing potion every 30 seconds."
+- Manage them in the **Triggers & Timers** panel: **+ New** to add one (name,
+  the command(s), and the interval in seconds), an on/off toggle to pause it,
+  left-click to run it right now, right-click to Edit / Duplicate / Remove.
+- Separate multiple commands with `;`. Minimum interval is 1 second.
+- Tick definitions save to your account, but they only *run* in the web client.
+- Under the hood: the web client now talks back to the server over GMCP for
+  point-and-click editing (a fix also lets the web client send GMCP at all).
+
 ## 2026-06-07 — Web client automation panel (Macros & Aliases)
 
 The reserved right-column panel is now a working **Automation panel**.
