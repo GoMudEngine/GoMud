@@ -8,8 +8,8 @@ the server to GMCP-aware clients (web client, Mudlet, etc.). Each
 `gmcp.<Name>.go` file is a self-contained module: it registers event
 listeners in its `init()` function and emits `GMCPOut` events to deliver
 payloads to connected clients. All modules follow the same
-listener/payload pattern; this document currently focuses on the
-`Char.Automation` module added in the web automation panel (Phase 1).
+listener/payload pattern; this document covers the `Char.Automation`
+module (Phase 1–3) and the `Char.Vitals` additions from Phase 3.
 
 ## Char.Automation Module (`gmcp.Automation.go`)
 
@@ -26,46 +26,89 @@ Module name (as sent over GMCP): **`Char.Automation`**
 
 ```json
 {
-  "macros":  [{ "key": "=1", "commands": "wave;say hi" }, ...],
-  "aliases": [{ "name": "ms",  "command": "cast mind-spike" }, ...],
-  "ticks":   [{ "id": "abc123", "name": "My Timer", "commands": "forage;rest",
-                "intervalSec": 30, "enabled": true }, ...]
+  "macros":    [{ "key": "=1", "commands": "wave;say hi" }, ...],
+  "aliases":   [{ "name": "ms", "command": "cast mind-spike" }, ...],
+  "ticks":     [{ "id": "abc123", "name": "My Timer", "commands": "forage;rest",
+                  "intervalSec": 30, "enabled": true }, ...],
+  "triggers":  [{ "id": "def456", "name": "Auto-heal", "pattern": "* hits you*",
+                  "commands": "cast heal", "enabled": true,
+                  "condition": {
+                    "sourceKind": "pool_pct",
+                    "sourceKey":  "hp",
+                    "op":         "below",
+                    "values":     ["40"]
+                  },
+                  "thenCommands": "cast heal",
+                  "elseCommands": "" }, ...]
 }
 ```
 
 All arrays are sorted by key/name/id for stable ordering. Fields:
 
-| Field                  | Type     | Description                                   |
-|------------------------|----------|-----------------------------------------------|
-| `macros[].key`         | string   | Macro slot identifier (e.g. `"=1"`)          |
-| `macros[].commands`    | string   | Semicolon-delimited command string            |
-| `aliases[].name`       | string   | Alias name (e.g. `"ms"`)                     |
-| `aliases[].command`    | string   | Expanded command string                       |
-| `ticks[].id`           | string   | Unique identifier for the tick                |
-| `ticks[].name`         | string   | Human-readable label shown in the panel       |
-| `ticks[].commands`     | string   | Semicolon-delimited command string            |
-| `ticks[].intervalSec`  | int      | Fire interval in seconds (minimum 1)          |
-| `ticks[].enabled`      | bool     | Whether the tick is currently active          |
+| Field                       | Type     | Description                                        |
+|-----------------------------|----------|----------------------------------------------------|
+| `macros[].key`              | string   | Macro slot identifier (e.g. `"=1"`)               |
+| `macros[].commands`         | string   | Semicolon-delimited command string                 |
+| `aliases[].name`            | string   | Alias name (e.g. `"ms"`)                          |
+| `aliases[].command`         | string   | Expanded command string                            |
+| `ticks[].id`                | string   | Unique identifier for the tick                     |
+| `ticks[].name`              | string   | Human-readable label shown in the panel            |
+| `ticks[].commands`          | string   | Semicolon-delimited command string                 |
+| `ticks[].intervalSec`       | int      | Fire interval in seconds (minimum 1)               |
+| `ticks[].enabled`           | bool     | Whether the tick is currently active               |
+| `triggers[].id`             | string   | Unique identifier for the trigger                  |
+| `triggers[].name`           | string   | Human-readable label shown in the panel            |
+| `triggers[].pattern`        | string   | Wildcard pattern; `*` captures into `$1`, `$2`, … |
+| `triggers[].commands`       | string   | Commands run when pattern matches (no condition)   |
+| `triggers[].enabled`        | bool     | Whether the trigger is currently active            |
+| `triggers[].condition`      | object?  | Optional condition; `null` when not set            |
+| `triggers[].thenCommands`   | string   | Commands run when condition is true (may be empty) |
+| `triggers[].elseCommands`   | string   | Commands run when condition is false (may be empty)|
 
-**Phase 3 addition:** a `triggers` array will be appended when the
-trigger subsystem is implemented. The struct is commented accordingly
-(`// Triggers added in Phase 3.` in `GMCPAutomation_Payload`).
+**`triggers[].condition` shape** (when present):
+
+| Field        | Type     | Values / notes                                          |
+|--------------|----------|---------------------------------------------------------|
+| `sourceKind` | string   | `"pool_pct"` / `"conditions"` / `"capture"` / `"target"` / `"cooldown"` |
+| `sourceKey`  | string   | Disambiguator: pool name (`"hp"`, `"sp"`, `"cp"`), capture index (`"$1"`), ability name, or empty for others |
+| `op`         | string   | Operator string (see table below)                       |
+| `values`     | []string | Operand(s); single-element for most sources, multi for target list |
+
+Operators by `sourceKind`:
+
+| `sourceKind`  | Valid `op` values                    | `values` element(s)             |
+|---------------|--------------------------------------|---------------------------------|
+| `pool_pct`    | `"below"`, `"above"`, `"equals"`    | `["40"]` (percent, 0–100)      |
+| `conditions`  | `"includes"`, `"excludes"`          | `["poisoned"]`                  |
+| `capture`     | `"equals"`, `"contains"`            | `["some text"]`                 |
+| `target`      | `"is_one_of"`, `"is_not_one_of"`    | `["troll","orc","goblin"]`      |
+| `cooldown`    | `"ready"`, `"not_ready"`            | `["cast heal"]`                 |
+
+When a condition is present, `commands` is ignored; `thenCommands` and
+`elseCommands` drive behaviour. An empty string for either branch means
+"do nothing" for that outcome.
+
+**Available-pool-% note:** pool percentages for the `pool_pct` source
+are computed against the player's usable (unreserved) pool, not the
+raw total. The client derives this from `Char.Vitals` fields:
+`hp_reserved`, `stamina_reserved`, `conviction_reserved` (see
+`Char.Vitals` section below).
 
 ### Push Triggers
 
 The module registers two event listeners in `init()`:
 
-| Event                        | When it fires                                      |
-|------------------------------|----------------------------------------------------|
-| `events.PlayerSpawn{}`       | Player logs in — sends the full current state      |
-| `events.AutomationChanged{}` | Any macro or alias is added, edited, or removed    |
+| Event                        | When it fires                                         |
+|------------------------------|-------------------------------------------------------|
+| `events.PlayerSpawn{}`       | Player logs in — sends the full current state         |
+| `events.AutomationChanged{}` | Any macro, alias, tick, or trigger is changed/removed |
 
 Both listeners call `sendAutomation(userId)`, which:
 1. Looks up the `UserRecord` for the given `UserId`.
 2. Skips silently if GMCP is not enabled for that connection
    (`isGMCPEnabled(connectionId)`).
-3. Calls `buildAutomationPayload(user.Macros, user.Aliases)` to build a
-   sorted, stable payload.
+3. Calls `buildAutomationPayload(...)` to assemble a sorted, stable
+   payload including macros, aliases, ticks, and triggers.
 4. Enqueues a `GMCPOut{UserId, Module: "Char.Automation", Payload: ...}`
    event for delivery.
 
@@ -81,35 +124,81 @@ Both listeners call `sendAutomation(userId)`, which:
 
 ### Inbound GMCP
 
-Ticks (Phase 2) are managed exclusively through the web panel via inbound
-GMCP messages — there is no typed command for them. Triggers (Phase 3) will
-use the same message names, gated by `kind`. The web client sends these as
-binary GMCP frames to `gmcp.go`'s `HandleIAC` switch:
+Ticks and triggers are managed exclusively through the web panel via
+inbound GMCP messages — there is no typed command for either. The web
+client sends binary GMCP frames to `gmcp.go`'s `HandleIAC` switch:
 
-| Inbound message          | `kind` gate | Action                                         |
-|--------------------------|-------------|------------------------------------------------|
-| `Char.Automation.Set`    | `"tick"`    | Create or update a tick on the `UserRecord`    |
-| `Char.Automation.Remove` | `"tick"`    | Delete a tick by `id` from the `UserRecord`    |
+| Inbound message          | `kind` gate  | Action                                          |
+|--------------------------|--------------|-------------------------------------------------|
+| `Char.Automation.Set`    | `"tick"`     | Create or update a tick on the `UserRecord`     |
+| `Char.Automation.Remove` | `"tick"`     | Delete a tick by `id` from the `UserRecord`     |
+| `Char.Automation.Set`    | `"trigger"`  | Create or update a trigger on the `UserRecord`  |
+| `Char.Automation.Remove` | `"trigger"`  | Delete a trigger by `id` from the `UserRecord`  |
 
-`Char.Automation.Set` payload shape:
+`Char.Automation.Set` payload shape for a **tick**:
 ```json
 { "kind": "tick", "id": "abc123", "name": "My Timer",
   "commands": "forage;rest", "intervalSec": 30, "enabled": true }
 ```
 
-`Char.Automation.Remove` payload shape:
+`Char.Automation.Set` payload shape for a **trigger**:
 ```json
-{ "kind": "tick", "id": "abc123" }
+{ "kind": "trigger", "id": "def456", "name": "Auto-heal",
+  "pattern": "* hits you*", "commands": "cast heal", "enabled": true,
+  "condition": { "sourceKind": "pool_pct", "sourceKey": "hp",
+                 "op": "below", "values": ["40"] },
+  "thenCommands": "cast heal", "elseCommands": "" }
 ```
 
-After processing either handler emits `events.AutomationChanged{UserId}` to
-trigger a re-push of the full `Char.Automation` payload to the client.
+`Char.Automation.Remove` payload shape (same for tick and trigger):
+```json
+{ "kind": "trigger", "id": "def456" }
+```
 
-Phase 3 will add `kind == "trigger"` cases to both handlers. Until then,
-unknown `kind` values are silently ignored.
+After processing, either handler emits `events.AutomationChanged{UserId}`
+to re-push the full `Char.Automation` payload to the client. Unknown
+`kind` values are silently ignored.
 
 See `docs/superpowers/specs/2026-06-07-web-client-automation-panel-design.md`
 for the full Phase 2–3 design.
+
+## Char.Vitals — Reserved-Pool Fields (Phase 3)
+
+### Purpose
+
+The `Char.Vitals` payload was extended in Phase 3 to expose the
+**reserved** portion of each resource pool. The web client uses these
+values to compute a player's _usable_ pool for trigger condition
+evaluation: pool-percent conditions compare against the unreserved
+fraction, not the raw total.
+
+### Additional Fields
+
+These three fields were appended to the existing `Char.Vitals` payload
+(`gmcp.Char.go`) in Phase 3:
+
+| Field               | Type | Description                                        |
+|---------------------|------|----------------------------------------------------|
+| `hp_reserved`       | int  | HP currently set aside and unavailable for use     |
+| `stamina_reserved`  | int  | Stamina currently set aside and unavailable         |
+| `conviction_reserved` | int | Conviction currently set aside and unavailable    |
+
+### Client Usage
+
+The client trigger engine reads these fields from each incoming
+`Char.Vitals` event and caches them alongside the raw pool values.
+When evaluating a `pool_pct` condition the available (usable) value is:
+
+```
+usable     = current - reserved
+usable_max = max - reserved
+usable_pct = usable / usable_max   (clamped 0–1)
+```
+
+For example, if `hp = 120`, `hp_max = 200`, and `hp_reserved = 100`,
+then `usable = 20`, `usable_max = 100`, and `usable_pct = 20%`. A
+condition of "HP below 30%" would therefore be true in this state, even
+though raw HP (60%) is well above 30%.
 
 ## Other GMCP Modules
 
