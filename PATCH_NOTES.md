@@ -1,5 +1,47 @@
 # DOGMud Patch Notes
 
+## 2026-06-06 — In-game web client dashboard
+
+The web client's play screen was rebuilt from a bare terminal with floating
+windows into a docked, resizable dashboard.
+
+- **Docked panel layout.** Map, Vitals, Scene (placeholder), the game feed
+  + command bar, Comms, Status & Conditions, and Triggers (placeholder) now
+  sit in a tidy three-column layout instead of floating windows you had to
+  arrange yourself.
+- **Resize, rearrange, collapse, pop out.** Drag the dividers between
+  columns to resize them; drag a panel's title bar onto another to swap
+  their spots; collapse a panel to just its header; or pop any panel out
+  into a floating window and dock it back. Your arrangement is remembered
+  across reloads, with a "Reset layout" button to start fresh.
+- **Fits any screen.** The layout reflows as the window shrinks — three
+  columns on desktop, a tabbed side rail on smaller windows, and a bottom
+  tab-bar with a slide-up drawer on phones — so the client stays usable on
+  any device.
+- **Tabbed Comms with its own input.** Say, Whisper, Party, and Broadcasts
+  each get a tab, and a chat box sends to the active channel without leaving
+  the panel.
+- **Status & Conditions panel.** Shows your character and any active
+  conditions as at-a-glance chips.
+- **Auto-sized game text.** The feed font scales so a full 80 columns
+  always fit, keeping room descriptions and the inline map aligned.
+- **Themed to match.** The whole client wears the leather/brass look with
+  parchment accent cards and a re-themed connect button.
+
+## 2026-06-06 — Warm-dark web site theme
+
+The public web pages were rethemed from the old arcade-pixel look to a
+warm-dark cartographer style that matches the leather map.
+
+- **New site theme.** The nav, header, footer, and content panels now use a
+  warm-dark palette with brass buttons and a serif typeface, replacing the
+  indigo `Press Start 2P` pixel styling.
+- **Landing hero.** The home page leads with the MUD name, a tagline, a
+  prominent "Play in Browser" button, the telnet connection info, and a live
+  count of adventurers online.
+- **Themed info pages.** The Who's Online and configuration tables and the
+  404 page inherit the new look.
+
 ## 2026-06-06 — Tooled-leather web mapper with connection types and party markers
 
 The web map got a full visual overhaul alongside new data from the server.
