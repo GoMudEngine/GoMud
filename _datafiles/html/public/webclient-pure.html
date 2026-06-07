@@ -968,6 +968,86 @@
             });
         }
 
+        /////////////////////////////////////////////
+        //
+        // Trigger Engine — stream tap + wildcard match + condition eval + fire
+        //
+        /////////////////////////////////////////////
+
+        // Strip ANSI/escape sequences for trigger matching.
+        function stripAnsi(s) { return String(s).replace(/\x1b\[[0-9;?]*[A-Za-z]/g, "").replace(/\x1b\][^\x07]*\x07/g, ""); }
+
+        // Compile a "*"-wildcard pattern to a regex with capture groups.
+        function compileTriggerPattern(pat) {
+            var esc = String(pat).replace(/[.*+?^${}()|[\]\\]/g, function(ch){ return ch === "*" ? " " : "\\" + ch; });
+            esc = esc.replace(/ /g, "(.*?)");
+            try { return new RegExp(esc); } catch (e) { return null; }
+        }
+
+        function availablePct(cur, mx, reserved) {
+            var avail = Math.max(1, (mx || 0) - (reserved || 0));
+            return (Number(cur) || 0) / avail * 100;
+        }
+
+        function evalTriggerCondition(cond, caps) {
+            if (!cond) return true;
+            var a = (GMCPStructs["Char"] || {});
+            var v = (cond.values && cond.values[0]) || "";
+            if (cond.sourceKind === "pool") {
+                var vit = a.Vitals || {};
+                var pct = cond.sourceKey === "hp" ? availablePct(vit.hp, vit.hp_max, vit.hp_reserved)
+                        : cond.sourceKey === "sp" ? availablePct(vit.stamina, vit.stamina_max, vit.stamina_reserved)
+                        : availablePct(vit.conviction, vit.conviction_max, vit.conviction_reserved);
+                var n = parseFloat(v) || 0;
+                return cond.op === "below" ? pct < n : cond.op === "above" ? pct > n : Math.round(pct) === Math.round(n);
+            }
+            if (cond.sourceKind === "status") {
+                var has = (a.Conditions || []).some(function(c){ return c && String(c.type).toLowerCase() === v.toLowerCase(); });
+                return cond.op === "exclude" ? !has : has;
+            }
+            if (cond.sourceKind === "capture") {
+                var idx = parseInt(String(cond.sourceKey).replace("$",""), 10) || 0;
+                var capv = caps[idx] || "";
+                return cond.op === "contains" ? capv.toLowerCase().indexOf(v.toLowerCase()) >= 0 : capv.toLowerCase() === v.toLowerCase();
+            }
+            if (cond.sourceKind === "target") {
+                var eng = (a.Enemies || []).filter(function(e){ return e && e.engaged; })[0];
+                var name = eng ? String(eng.name).toLowerCase() : "";
+                var list = (cond.values || []).map(function(s){ return String(s).toLowerCase().trim(); });
+                var inList = !!name && list.indexOf(name) >= 0;
+                return cond.op === "notoneof" ? !inList : inList;
+            }
+            return true;
+        }
+
+        var triggerLastFire = {};   // id -> last fire ms (cooldown)
+        var TRIGGER_MIN_INTERVAL_MS = 1000; // per-trigger floor (runaway guard)
+
+        function fireTriggerCommands(cmds, caps) {
+            String(cmds || "").split(";").forEach(function(c){
+                c = c.trim();
+                if (!c) return;
+                c = c.replace(/\$([0-9])/g, function(_, d){ return caps[parseInt(d,10)] || ""; });
+                SendData(c);
+            });
+        }
+
+        function runTriggers(line, nowMs) {
+            var a = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
+            if (!a || !a.triggers) return;
+            a.triggers.forEach(function(t){
+                if (!t.enabled || !t.pattern) return;
+                var re = compileTriggerPattern(t.pattern);
+                if (!re) return;
+                var m = re.exec(line);
+                if (!m) return;
+                if (triggerLastFire[t.id] && (nowMs - triggerLastFire[t.id]) < TRIGGER_MIN_INTERVAL_MS) return; // cooldown
+                triggerLastFire[t.id] = nowMs;
+                var ok = evalTriggerCondition(t.condition, m); // m[1..n] are captures
+                fireTriggerCommands(ok ? t.thenCmds : t.elseCmds, m);
+            });
+        }
+
         // Left-click on an auto-chip fires the macro/alias immediately;
         // for tick rows, click on the toggle to enable/disable, or click the
         // row body to fire all tick commands immediately.
@@ -1573,6 +1653,8 @@
 
                 // Otherwise, just write to terminal
                 term.write(event.data);
+                // Tap text stream for trigger matching (read-only copy; does not affect terminal output)
+                stripAnsi(event.data).split(/\r?\n/).forEach(function(line){ if (line) runTriggers(line, Date.now()); });
             };
 
             socket.onerror = function(error) {
