@@ -63,7 +63,7 @@
 .dash-panel {
   display: flex; flex-direction: column; min-height: 0; min-width: 0;
   background: var(--panel-bg, #201913);
-  border: 1px solid var(--vellum, #d9c39e);   /* vellum outline on all cards */
+  border: 1px solid var(--ink-deep, #2b231d);   /* iron-gall ink outline on all cards */
   border-radius: 6px;
   box-shadow: inset 0 1px 0 rgba(201,168,106,0.10);
   overflow: hidden;
@@ -94,7 +94,7 @@
 #panel-vitals,
 #panel-status {
   background: var(--vellum, #d9c39e);
-  border-color: var(--panel-border, #3a2a18);
+  border-color: var(--ink-deep, #2b231d);
   color: var(--ink-deep, #2b231d);
 }
 #panel-vitals .dash-panel-body,
