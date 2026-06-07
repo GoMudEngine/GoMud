@@ -136,12 +136,15 @@ the way item UUIDs are used by the inventory panel).
 
 ## Part C — GMCP exposure
 
-A new GMCP package emits **`Char.Automation`** — a single payload with all four
-lists:
-`{ ticks:[…], triggers:[…], macros:[…], aliases:[…] }`, each entry carrying its
-id + fields the panel needs. Pushed on **login** and whenever any of the four
-collections changes (add/edit/remove of a tick/trigger; `set macro`; `alias`).
-Mirrors the `Char.Inventory` event-driven pattern.
+A new GMCP package handles **`Char.Automation`** in **both directions**:
+
+- **Outbound (read):** emits `{ ticks:[…], triggers:[…], macros:[…], aliases:[…] }`,
+  each entry carrying its id + fields the panel needs. Pushed on **login** and
+  whenever any collection changes (inbound tick/trigger Set/Remove; `set macro`;
+  `alias`). Mirrors the `Char.Inventory` event-driven pattern.
+- **Inbound (write, ticks/triggers only):** `Char.Automation.Set` /
+  `Char.Automation.Remove` handled in `gmcp.go`'s `HandleIAC` switch — see
+  Part D.
 
 **Vitals/conditions for trigger conditions:** the trigger engine reads live
 state from existing GMCP — `Char.Conditions` (status list) and the vitals feed
@@ -152,26 +155,50 @@ today — extend it (this overlaps [[project_webclient_vitals_reserved_pool_viz]
 the bar-rendering half of that followup can stay separate, but the
 reserved/available number must ship here).
 
-## Part D — Server commands (CRUD + persistence path)
+## Part D — Write path (RESOLVED: split by which client executes)
 
-Per the admin/command wiring checklist ([[feedback-admin-command-wiring-checklist]]):
-**every new command needs handler + registration + helpfile.**
+The two systems split cleanly by *where they run*, so they use different write
+paths:
 
-- **Macros / Aliases:** reuse existing `set macro` / `alias name=value` for
-  write; add removal where missing (`alias name=` already removes; confirm a
-  macro-clear path). GMCP read covers the list.
-- **Ticks:** new `tick` command — bare `tick` lists; `tick add|edit|remove …`
-  mutate. Usable from a plain telnet client, not just the web panel.
-- **Triggers:** new `trigger` command — bare `trigger` lists; `trigger
-  add|edit|remove …` mutate.
-- **Web panel persistence transport:** the modal's Save builds and sends the
-  corresponding command (mirroring how the inventory panel fires `@handle`
-  commands), so there is **one canonical write path** shared by telnet and web.
-  *Open item (resolve in plan):* if encoding a full trigger (pattern + condition
-  + then/else) as a single command string proves too fiddly to quote robustly,
-  evaluate an **inbound client→server GMCP set** message as the structured
-  alternative — confirm whether the GoMud GMCP layer accepts inbound custom
-  packages before committing either way.
+**Macros & Aliases — existing commands (server-executed, all clients).** Reuse
+`set =N <cmds>` (set.go `cmdSetMacro`; `set =N` with empty value deletes) and
+`alias name=value` (`alias name=` deletes). These work from telnet too, which
+matters because macros/aliases function on *any* client. GMCP read covers the
+list; no new write command.
+
+**Ticks & Triggers — inbound GMCP (client-executed, web-only).** These only
+*run* in the web client (a tick is a JS `setInterval`; the trigger engine
+watches the JS text stream), so a telnet user can't execute them anyway — there
+is no value in a telnet CRUD command, and we avoid building a command parser +
+quoting scheme entirely. CRUD goes over **inbound client→server GMCP**:
+
+- **Transport — VERIFIED available.** `main.go` feeds inbound websocket messages
+  (`conn.ReadMessage()`) straight into `connDetails.HandleInput(...)`, whose
+  handler chain includes the GMCP IAC handler (`gmcp.go` registers
+  `SetIACHandler(g.HandleIAC)`). `HandleIAC` splits each frame into a package
+  name + JSON payload and runs a `switch` already handling `Core.Hello`,
+  `Core.Supports.Set/Remove`, `Char.Login`, `External.Discord*`. **We add cases**
+  `Char.Automation.Set` and `Char.Automation.Remove` (same shape: `json.Unmarshal`
+  the payload, find the user by `connectionId` via the existing
+  `users.GetAllActiveUsers()` loop, mutate `user.Ticks` / `user.Triggers`, then
+  queue `AutomationChanged` so the read payload re-pushes).
+- **Client send — one detail.** The web client receives GMCP but doesn't send it
+  today, and `SendData` uses `socket.send(string)` — a *text* frame would
+  UTF-8-mangle the `0xFF` IAC byte. So add a small **`SendGMCP(pkg, obj)`**
+  helper that sends a **binary** frame:
+  `socket.send(new Uint8Array([255,250,201, ...utf8(pkg+" "+JSON.stringify(obj)), 255,240]))`.
+  gorilla's `ReadMessage` passes those raw bytes through unchanged; the JSON is
+  ASCII so nothing else needs escaping.
+- **Message shape:** `Char.Automation.Set` carries one full tick/trigger object
+  (`{kind:"tick"|"trigger", id?, …fields…}`; absent `id` = create, present =
+  update). `Char.Automation.Remove` carries `{kind, id}`. Duplicate is
+  client-side (read the def, Set a new one without an id).
+- **No telnet command for ticks/triggers** (deliberately dropped). Listing/
+  display is the GMCP read payload in the panel.
+
+(Phase 1 — macros & aliases — therefore needs **no** new write path; it reuses
+the existing commands. The `SendGMCP` helper and the inbound handler land in the
+Ticks phase, the first that needs them.)
 
 ## Part E — Client runtime (the "executes" half)
 
@@ -208,10 +235,12 @@ English in the editor. Removing the clause (✕) returns to the plain
 commands box. Exactly one condition in v1; the "+ Add" menu's greyed entries
 mark where Tier-2 grows.
 
-## Part G — Helpfiles (explicit, per user request)
+## Part G — Help topics (explicit, per user request)
 
-New helpfiles for `tick` and `trigger` (and updates to `macros`/`alias` help to
-cross-reference the panel). The trigger/`tick` help **must explicitly state**:
+Ticks/triggers have no command (they're managed via the panel + inbound GMCP),
+so these are **help *topics*** — `help triggers` / `help ticks` — plus a
+cross-reference from the existing `macros`/`alias` help to the panel. The
+trigger/tick help **must explicitly state**:
 
 - **Pool conditions are percentage of your *usable* (unreserved) pool, not the
   total.** Spell out an example: "If 50% of your health is reserved, 'HP below
@@ -224,17 +253,18 @@ cross-reference the panel). The trigger/`tick` help **must explicitly state**:
 
 ## Scope / boundaries
 
-- **In:** the 4-tab panel, modal editors, server storage + GMCP + CRUD commands
-  for ticks/triggers, GMCP read of macros/aliases (+ reused write commands), the
-  client tick/trigger runtime, the vitals-GMCP reserved/available addition,
-  helpfiles.
+- **In:** the 4-tab panel, modal editors, server storage for ticks/triggers,
+  the bidirectional `Char.Automation` GMCP (outbound read of all four;
+  inbound `Set`/`Remove` for ticks/triggers), GMCP read of macros/aliases
+  (+ reused `set`/`alias` write commands), the client `SendGMCP` helper + tick/
+  trigger runtime, the vitals-GMCP reserved/available addition, help topics.
 - **Out (Tier-2, deferred but architected-for):** regex patterns, multiple
   chained conditions (AND/OR), non-command actions (highlight, sound, set
   variable), game-round tick units. The vitals **bar** reserved-viz rendering
   stays in [[project_webclient_vitals_reserved_pool_viz]] (only the
-  reserved/available *number* ships here).
-- **Server work IS required** (new storage, GMCP, commands, vitals extension).
-  Pre-push SOP boot test exercises these.
+  reserved/available *number* ships here). No telnet command for ticks/triggers.
+- **Server work IS required** (new storage, bidirectional GMCP, vitals
+  extension). Pre-push SOP boot test exercises these.
 
 ## Phasing (build order — each its own task group, server-first)
 
@@ -242,11 +272,13 @@ cross-reference the panel). The trigger/`tick` help **must explicitly state**:
    editor scaffold, `Char.Automation` GMCP carrying macros+aliases, read +
    reused write commands. Proves the panel end-to-end against systems that
    already work.
-2. **Ticks.** `user.Ticks` storage + GMCP + `tick` CRUD command + client timer
-   runtime + tick editor + helpfile.
-3. **Triggers.** `user.Triggers` storage (+ Condition struct) + GMCP + `trigger`
-   CRUD + the vitals reserved/available GMCP addition + the client match/condition
-   engine + builder editor + helpfile (with the explicit reserved-% wording).
+2. **Ticks.** `user.Ticks` storage + outbound GMCP + the **inbound
+   `Char.Automation.Set/Remove` handler + `SendGMCP` client helper** (first phase
+   to need them) + client timer runtime + tick editor + `help ticks` topic.
+3. **Triggers.** `user.Triggers` storage (+ Condition struct) + GMCP (reuses the
+   Phase-2 inbound handler) + the vitals reserved/available GMCP addition + the
+   client match/condition engine + builder editor + `help triggers` topic (with
+   the explicit reserved-% wording).
 
 ## Acceptance / verification
 
@@ -264,14 +296,18 @@ cross-reference the panel). The trigger/`tick` help **must explicitly state**:
 - Pool conditions use available-% (verify with a reserved pool: a trigger at
   "HP below 30%" fires relative to usable health, not total).
 - Helpfiles state the available-% rule explicitly.
-- `go build ./...` clean; server boots clean (storage load + GMCP + new
-  commands + helpfiles); `/webclient` loads with no console errors.
+- `go build ./...` clean; server boots clean (storage load + GMCP modules +
+  inbound `Char.Automation` handler + help topics); `/webclient` loads with no
+  console errors, and a tick/trigger Set/Remove from the panel round-trips
+  through GMCP (verify the binary frame reaches `HandleIAC`).
 
 ## Risks / open items
 
-- **Persistence transport** (Part D open item): command-string encoding vs
-  inbound GMCP for structured trigger saves — resolve in the plan after
-  confirming GoMud's inbound-GMCP support.
+- **Persistence transport — RESOLVED:** inbound GMCP (`Char.Automation.Set/
+  Remove`) for ticks/triggers; existing `set`/`alias` commands for
+  macros/aliases. GoMud's inbound-GMCP support is verified (`HandleIAC` switch in
+  `gmcp.go`); the one detail is the client must send a **binary** ws frame so the
+  `0xFF` IAC byte survives (see Part D `SendGMCP`).
 - **Stream tap fidelity:** ANSI stripping + line assembly for trigger matching
   must handle partial/chunked websocket frames (buffer to line boundaries).
 - **Vitals GMCP extension** must land for the pool-% (available) source; coordinate

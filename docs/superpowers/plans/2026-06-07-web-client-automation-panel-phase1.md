@@ -335,22 +335,18 @@ Note any issues; if clean, Phase 1 is ready for finishing-a-development-branch (
 
 ---
 
-## Appendix — Trigger command syntax (design, for Phase 3)
+## Appendix — Ticks/Triggers write path (inbound GMCP, for Phases 2–3)
 
-Per the user's preference (command-string transport), Phase 3 will add a `trigger` command whose write form uses **quoted `key="…"` fields with a backslash escape**, so free-text patterns/commands can't break the parser:
+**SUPERSEDES the earlier command-string idea.** Inbound client→server GMCP is verified available (`gmcp.go` `HandleIAC` switch already handles `Core.Hello`, `Core.Supports.Set/Remove`, `Char.Login`; inbound ws → `HandleInput` → the registered IAC handler). Since ticks/triggers are *client-executed* (web-only), there is **no telnet command** for them — CRUD goes over GMCP:
 
-```
-trigger set <id|new> name="Low-HP autoheal" pattern="*you are bleeding*" \
-  cond="pool:hp<30" then="cast heal" else="bandage" on=1
-```
-- `cond` compact sub-syntax encodes the four sources: `pool:hp<30` / `pool:sp>50`, `status:include:poisoned` / `status:exclude:bleeding`, `cap:$1=Sariel` / `cap:$1~contains text`, `target:oneof:goblin,orc` / `target:notoneof:...`. (`<` `>` `=` `~` map to below/above/equals/contains; `include/exclude`, `oneof/notoneof` for sets.)
-- Inside a `key="…"` value, a literal `"` is `\"` and a literal `\` is `\\`. Commands keep `;` as the multi-command separator inside `then`/`else`.
-- The panel builds this string from the modal form; a telnet user can type it. Parsing lives in the `trigger` command handler (Phase 3). This appendix is the spec the Phase 3 plan will implement — not a Phase 1 task.
+- **Server (Phase 2 adds, Phase 3 reuses):** new cases in `HandleIAC` — `Char.Automation.Set` (payload = one full tick/trigger object; absent `id` = create, present = update) and `Char.Automation.Remove` (`{kind, id}`). Each unmarshals JSON, finds the user by `connectionId` (existing `users.GetAllActiveUsers()` loop), mutates `user.Ticks`/`user.Triggers`, and queues `events.AutomationChanged{UserId}` so the read payload re-pushes.
+- **Client (Phase 2 adds):** a `SendGMCP(pkg, obj)` helper sending a **binary** ws frame (so the `0xFF` IAC byte isn't UTF-8-mangled): `socket.send(new Uint8Array([255,250,201, ...utf8(pkg+" "+JSON.stringify(obj)), 255,240]))`. Save → `SendGMCP("Char.Automation.Set", {kind,…})`; Remove → `Char.Automation.Remove`; Duplicate → Set a copy without an `id`.
+- No quoting scheme, no command parser. Macros/aliases keep their existing `set`/`alias` commands (Phase 1, unchanged).
 
 ## Later phases (separate plans, written when each predecessor lands)
 
-- **Phase 2 — Ticks:** `user.Ticks` storage (+ user-save), extend `Char.Automation` payload with ticks, a `tick` CRUD command (+ helpfile), the client `setInterval` runtime + tick row (enable toggle, left-click fire-now) + tick editor.
-- **Phase 3 — Triggers:** `user.Triggers` storage (+ `Condition` struct), extend the payload, the `trigger` CRUD command using the Appendix syntax (+ helpfile with the explicit **available-pool %** wording), the vitals-GMCP reserved/available addition, the client stream-tap match/condition engine (with the runaway cooldown) + builder editor.
+- **Phase 2 — Ticks:** `user.Ticks` storage (+ user-save), extend the outbound `Char.Automation` payload with ticks, add the **inbound `Char.Automation.Set/Remove` handler + the `SendGMCP` client helper** (first phase to need them), the client `setInterval` runtime + tick row (enable toggle, left-click fire-now) + tick editor + `help ticks` topic.
+- **Phase 3 — Triggers:** `user.Triggers` storage (+ `Condition` struct), extend the payload, **reuse** the Phase-2 inbound GMCP handler/helper for trigger CRUD, the vitals-GMCP reserved/available addition, the client stream-tap match/condition engine (with the runaway cooldown) + builder editor + `help triggers` topic (with the explicit **available-pool %** wording).
 
 ---
 
