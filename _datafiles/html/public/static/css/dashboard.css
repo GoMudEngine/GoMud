@@ -85,6 +85,14 @@
 #dash-col-left   .dash-panel-head { border-bottom-color: var(--copper, #4a6b5d); }
 #dash-col-center .dash-panel-head { border-bottom-color: var(--antique-gold, #b89047); }
 #dash-col-right  .dash-panel-head { border-bottom-color: var(--madder, #8c3b30); }
+
+/* Lighter vellum borders on a few key cards for extra contrast:
+   session strip (Reconnect), command input, and each column's middle card. */
+#dash-session,
+#panel-cmd,
+#panel-vitals,
+#panel-status { border-color: var(--vellum, #d9c39e); }
+
 .dash-panel-head .ph-btns { margin-left: auto; display: flex; gap: 4px; }
 .dash-panel-head .ph-btn {
   width: 18px; height: 18px; line-height: 16px; text-align: center;
