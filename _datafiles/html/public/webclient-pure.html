@@ -611,6 +611,7 @@
                 // Refresh automation panel if automation data was bundled
                 if ( obj.Automation ) {
                     renderAutomation();
+                    rebuildTickTimers();
                 }
             },
             "Char.Conditions": function() {
@@ -642,6 +643,7 @@
             },
             "Char.Automation": function() {
                 renderAutomation();
+                rebuildTickTimers();
             },
         };
 
@@ -854,6 +856,7 @@
         //
         /////////////////////////////////////////////
         var autoActiveTab = 'macros';
+        var tickTimers = {};
 
         function renderAutomation() {
             var list = document.getElementById("auto-list");
@@ -914,14 +917,98 @@
                 }
                 list.appendChild(aChips);
 
+            } else if (autoActiveTab === 'ticks') {
+                if (!a || !a.ticks || !a.ticks.length) {
+                    makeEmptyMsg("No ticks configured.");
+                    return;
+                }
+                for (var ti = 0; ti < a.ticks.length; ti++) {
+                    var tick = a.ticks[ti];
+                    var tRow = document.createElement("div");
+                    tRow.className = "auto-row";
+                    tRow.dataset.autoType = "tick";
+                    tRow.dataset.autoId   = String(tick.id);
+                    tRow.dataset.autoKey  = String(tick.id); // ctx-menu uses autoKey as header
+                    tRow.dataset.autoCmd  = tick.commands || "";
+
+                    var tog = document.createElement("span");
+                    tog.className = "auto-tog" + (tick.enabled ? " on" : "");
+                    tRow.appendChild(tog);
+
+                    var nameSpan = document.createElement("span");
+                    nameSpan.className = "name";
+                    nameSpan.textContent = tick.name || "";
+                    tRow.appendChild(nameSpan);
+
+                    var sumSpan = document.createElement("span");
+                    sumSpan.className = "sum";
+                    sumSpan.textContent = "every " + (tick.intervalSec || 0) + "s" +
+                                          (tick.enabled ? "" : " (off)");
+                    tRow.appendChild(sumSpan);
+
+                    list.appendChild(tRow);
+                }
             } else {
-                // ticks / triggers — Phase 2+
+                // triggers — Phase 3+
                 makeEmptyMsg("Coming soon.");
             }
         }
 
-        // Left-click on an auto-chip fires the macro/alias immediately
+        function rebuildTickTimers() {
+            for (var id in tickTimers) { clearInterval(tickTimers[id]); }
+            tickTimers = {};
+            var a = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
+            if (!a || !a.ticks) return;
+            a.ticks.forEach(function(t) {
+                if (!t.enabled || !t.intervalSec || t.intervalSec < 1) return;
+                var cmds = String(t.commands || "");
+                tickTimers[t.id] = setInterval(function() {
+                    cmds.split(";").forEach(function(c) { c = c.trim(); if (c) SendData(c); });
+                }, t.intervalSec * 1000);
+            });
+        }
+
+        // Left-click on an auto-chip fires the macro/alias immediately;
+        // for tick rows, click on the toggle to enable/disable, or click the
+        // row body to fire all tick commands immediately.
         document.getElementById("auto-list").addEventListener("click", function(e) {
+            // ── Tick enable toggle ────────────────────────────────────────────
+            var togTarget = e.target.closest(".auto-tog");
+            if (togTarget) {
+                var tRow = togTarget.closest(".auto-row[data-auto-type='tick']");
+                if (tRow) {
+                    var tid = parseInt(tRow.dataset.autoId, 10);
+                    var tAutomation = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
+                    var tTick = null;
+                    if (tAutomation && tAutomation.ticks) {
+                        for (var ti = 0; ti < tAutomation.ticks.length; ti++) {
+                            if (tAutomation.ticks[ti].id === tid) { tTick = tAutomation.ticks[ti]; break; }
+                        }
+                    }
+                    if (tTick) {
+                        SendGMCP("Char.Automation.Set", {
+                            kind: "tick",
+                            id: tTick.id,
+                            name: tTick.name,
+                            commands: tTick.commands,
+                            intervalSec: tTick.intervalSec,
+                            enabled: !tTick.enabled
+                        });
+                    }
+                    e.stopPropagation();
+                    return;
+                }
+            }
+
+            // ── Tick fire-now (click anywhere else on the row) ───────────────
+            var tickRow = e.target.closest(".auto-row[data-auto-type='tick']");
+            if (tickRow) {
+                var cmds = tickRow.dataset.autoCmd || "";
+                cmds.split(";").forEach(function(c) { c = c.trim(); if (c) SendData(c); });
+                return;
+            }
+
+            // ── Macro / alias chip fire ───────────────────────────────────────
             var row = e.target.closest(".auto-chip");
             if (!row) return;
             var type = row.dataset.autoType;
@@ -956,6 +1043,7 @@
 
         // Render once on load (empty state until GMCP arrives)
         renderAutomation();
+        rebuildTickTimers();
 
         // Build a single vitals row DOM element
         function createVitalsRow(name, hp, sp, cp, isSelf, isRemote) {
@@ -1573,6 +1661,20 @@
             payloadsSent++;
             totalBytesSent += dataToSend.length;
             socket.send(dataToSend);
+            return true;
+        }
+
+        // Send a client->server GMCP frame as a BINARY ws message so the 0xFF
+        // IAC byte survives (a text frame would UTF-8-mangle it).
+        function SendGMCP(pkg, obj) {
+            if (!socket || socket.readyState !== WebSocket.OPEN) return false;
+            var body = pkg + " " + JSON.stringify(obj);
+            var bodyBytes = new TextEncoder().encode(body); // UTF-8
+            var frame = new Uint8Array(bodyBytes.length + 5);
+            frame[0] = 255; frame[1] = 250; frame[2] = 201;               // IAC SB GMCP
+            frame.set(bodyBytes, 3);
+            frame[frame.length - 2] = 255; frame[frame.length - 1] = 240; // IAC SE
+            socket.send(frame);
             return true;
         }
 
@@ -2410,9 +2512,9 @@
                 document.addEventListener("scroll",  closeMenu,      true);
             }
 
-            // Delegation on #auto-list
+            // Delegation on #auto-list — covers both chip and row element types
             document.addEventListener("contextmenu", function(e) {
-                var row = e.target.closest(".auto-chip[data-auto-type]");
+                var row = e.target.closest(".auto-chip[data-auto-type], .auto-row[data-auto-type]");
                 if (!row) return;
                 e.preventDefault();
                 openMenu(e, row);
@@ -2526,6 +2628,81 @@
                 });
             }
 
+            // ── Tick editor ────────────────────────────────────────────────
+
+            function openTickEditor(editingId, prefillName, prefillCmds, prefillInterval, prefillEnabled) {
+                var body = document.createElement("div");
+                body.style.cssText = "display:flex;flex-direction:column;gap:10px;";
+
+                var nameInput = document.createElement("input");
+                nameInput.type  = "text";
+                nameInput.value = prefillName || "";
+                nameInput.placeholder = "e.g. sip health";
+
+                var cmdsInput = document.createElement("textarea");
+                cmdsInput.value = prefillCmds || "";
+                cmdsInput.placeholder = "e.g. drink health;drink mana";
+                cmdsInput.rows = 3;
+
+                var secsInput = document.createElement("input");
+                secsInput.type  = "number";
+                secsInput.min   = "1";
+                secsInput.value = prefillInterval != null ? String(prefillInterval) : "30";
+                secsInput.placeholder = "30";
+
+                // Enabled toggle — a visual .auto-tog that also writes to a hidden checkbox
+                var enableWrap = document.createElement("div");
+                enableWrap.style.cssText = "display:flex;align-items:center;gap:8px;";
+                var enableTog = document.createElement("span");
+                var enabledState = (prefillEnabled !== false); // default on for new ticks
+                enableTog.className = "auto-tog" + (enabledState ? " on" : "");
+                enableTog.style.cursor = "pointer";
+                enableTog.addEventListener("click", function() {
+                    enabledState = !enabledState;
+                    enableTog.classList.toggle("on", enabledState);
+                });
+                var enableLabel = document.createElement("span");
+                enableLabel.textContent = "Enabled";
+                enableLabel.style.cssText = "font-family:Georgia,serif;font-size:0.85em;color:#c8b98a;";
+                enableWrap.appendChild(enableTog);
+                enableWrap.appendChild(enableLabel);
+
+                body.appendChild(makeField("Name", nameInput));
+                body.appendChild(makeField("Commands (semicolon-separated)", cmdsInput));
+                body.appendChild(makeField("Every N seconds", secsInput));
+                body.appendChild(enableWrap);
+
+                var title = editingId ? "Edit Tick" : "New Tick";
+                openAutoModal(title, body, function() {
+                    var name = nameInput.value.trim();
+                    if (!name) {
+                        alert("Tick name cannot be empty.");
+                        return;
+                    }
+                    var cmds = cmdsInput.value.trim();
+                    var secs = Math.max(1, parseInt(secsInput.value, 10) || 1);
+                    SendGMCP("Char.Automation.Set", {
+                        kind: "tick",
+                        id: editingId || 0,
+                        name: name,
+                        commands: cmds,
+                        intervalSec: secs,
+                        enabled: enabledState
+                    });
+                    // Modal infrastructure calls doClose() after this callback returns
+                });
+            }
+
+            // Lookup a tick by id from GMCPStructs (returns null if not found)
+            function findTick(id) {
+                var a = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
+                if (!a || !a.ticks) return null;
+                for (var i = 0; i < a.ticks.length; i++) {
+                    if (a.ticks[i].id === id) return a.ticks[i];
+                }
+                return null;
+            }
+
             // ── Public action handlers (called by context menu + "+ New") ──
 
             // Edit: open pre-filled editor
@@ -2535,10 +2712,16 @@
                     openMacroEditor(isNaN(num) ? "" : num, cmd);
                 } else if (type === "alias") {
                     openAliasEditor(key, cmd);
+                } else if (type === "tick") {
+                    var tid = parseInt(key, 10);
+                    var t = isNaN(tid) ? null : findTick(tid);
+                    if (t) {
+                        openTickEditor(t.id, t.name, t.commands, t.intervalSec, t.enabled);
+                    }
                 }
             };
 
-            // Duplicate: open editor pre-filled with same cmd + next free slot
+            // Duplicate: open editor pre-filled with same fields, id=0 (new)
             window.autoDuplicateRow = function(type, key, cmd) {
                 if (type === "macro") {
                     var srcNum = parseInt(key.replace(/^=/, ""), 10);
@@ -2548,6 +2731,13 @@
                     // Suffix the name with "2" (or increment) to avoid collision
                     var newName = key + "2";
                     openAliasEditor(newName, cmd);
+                } else if (type === "tick") {
+                    var tid = parseInt(key, 10);
+                    var t = isNaN(tid) ? null : findTick(tid);
+                    if (t) {
+                        // id=0 → server creates new tick
+                        openTickEditor(0, t.name, t.commands, t.intervalSec, t.enabled);
+                    }
                 }
             };
 
@@ -2558,6 +2748,11 @@
                     if (!isNaN(num)) SendData("set =" + num + " ");
                 } else if (type === "alias") {
                     SendData("alias " + key + "=");
+                } else if (type === "tick") {
+                    var tid = parseInt(key, 10);
+                    if (!isNaN(tid)) {
+                        SendGMCP("Char.Automation.Remove", { kind: "tick", id: tid });
+                    }
                 }
                 // Server pushes updated Char.Automation → renderAutomation() fires
             };
@@ -2570,8 +2765,10 @@
                     openMacroEditor(nextFreeMacroNum(-1), "");
                 } else if (autoActiveTab === "aliases") {
                     openAliasEditor("", "");
+                } else if (autoActiveTab === "ticks") {
+                    openTickEditor(0, "", "", 30, true);
                 } else {
-                    // ticks / triggers — Phase 2
+                    // triggers — Phase 3+
                     var msg = document.createElement("div");
                     msg.style.cssText = "padding:12px;font-family:Georgia,serif;font-style:italic;" +
                                         "color:#9a8a6a;text-align:center;";

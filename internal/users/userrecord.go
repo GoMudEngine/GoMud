@@ -38,6 +38,7 @@ type UserRecord struct {
 	LastRenameAt   time.Time             `yaml:"lastrenameat,omitempty"` // Last time the player used the rename command; cooldown uses this
 	Macros         map[string]string     `yaml:"macros,omitempty"`  // Up to 10 macros, just string commands.
 	Aliases        map[string]string     `yaml:"aliases,omitempty"` // string=>string remapping of commands
+	Ticks          []UserTick            `yaml:"ticks,omitempty"`   // client-run interval timers (web automation panel)
 	Character      *characters.Character `yaml:"character,omitempty"`
 	ItemStorage    Storage               `yaml:"itemstorage,omitempty"`
 	ConfigOptions  map[string]any        `yaml:"configoptions,omitempty"`
@@ -62,6 +63,54 @@ type UserRecord struct {
 	activePrompt   *prompt.Prompt
 	isZombie       bool // are they a zombie currently?
 	inputBlocked   bool // Whether input is currently intentionally turned off (for a certain category of commands)
+}
+
+// UserTick is a user-defined real-time-second timer that fires commands from
+// a capable client (the web automation panel). Stored per account; executed
+// client-side.
+type UserTick struct {
+	Id          int    `yaml:"id" json:"id"`
+	Name        string `yaml:"name" json:"name"`
+	Commands    string `yaml:"commands" json:"commands"` // ";"-separated
+	IntervalSec int    `yaml:"intervalsec" json:"intervalSec"`
+	Enabled     bool   `yaml:"enabled" json:"enabled"`
+}
+
+// SetTick creates (Id==0 → next id, append) or updates (matching Id) a tick,
+// enforcing a 1-second interval floor. Returns the stored tick.
+func (u *UserRecord) SetTick(t UserTick) UserTick {
+	if t.IntervalSec < 1 {
+		t.IntervalSec = 1
+	}
+	if t.Id == 0 {
+		maxId := 0
+		for _, ex := range u.Ticks {
+			if ex.Id > maxId {
+				maxId = ex.Id
+			}
+		}
+		t.Id = maxId + 1
+		u.Ticks = append(u.Ticks, t)
+		return t
+	}
+	for i := range u.Ticks {
+		if u.Ticks[i].Id == t.Id {
+			u.Ticks[i] = t
+			return t
+		}
+	}
+	u.Ticks = append(u.Ticks, t)
+	return t
+}
+
+// RemoveTick deletes the tick with the given id, if present.
+func (u *UserRecord) RemoveTick(id int) {
+	for i := range u.Ticks {
+		if u.Ticks[i].Id == id {
+			u.Ticks = append(u.Ticks[:i], u.Ticks[i+1:]...)
+			return
+		}
+	}
 }
 
 func NewUserRecord(userId int, connectionId uint64) *UserRecord {
