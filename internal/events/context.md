@@ -211,6 +211,25 @@ type Input struct {
 }
 ```
 
+### Automation Events
+
+```go
+// AutomationChanged fires when a user's macros/aliases (and, later,
+// ticks/triggers) change, so the Char.Automation GMCP payload can be
+// re-pushed to the web client.
+type AutomationChanged struct {
+    UserId int
+}
+```
+
+Emitted by `internal/usercommands/set.go` (`cmdSetMacro`) and
+`internal/usercommands/alias.go` (`Alias`) after any macro or alias
+mutation. The `gmcp.Automation` module listens for this event and
+calls `sendAutomation(userId)` to re-push `Char.Automation` over
+GMCP. In Phases 2–3 the same event will be emitted by inbound
+`Char.Automation.Set` / `Char.Automation.Remove` GMCP handlers when
+ticks or triggers are added or removed.
+
 ### Unique Events
 
 **Events with automatic deduplication:**

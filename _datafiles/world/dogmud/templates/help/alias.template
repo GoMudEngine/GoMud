@@ -27,4 +27,8 @@ sign, the replacement goes right.
 Aliases persist across sessions. Do not use brackets or
 quotes around the name or value — just plain text.
 
+<ansi fg="black-bold">Web client:</ansi> your custom aliases also appear in the
+<ansi fg="command">Triggers &amp; Timers</ansi> panel for point-and-click
+editing.
+
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help macros</ansi>, <ansi fg="command">help set</ansi>

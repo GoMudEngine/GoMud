@@ -1,5 +1,22 @@
 # DOGMud Patch Notes
 
+## 2026-06-07 — Web client automation panel (Macros & Aliases)
+
+The reserved right-column panel is now a working **Automation panel**.
+
+- **Macros & Aliases tabs.** Your macros and custom aliases appear as compact
+  sticker-chips — each shows just its shortcut (an alias like `war=warcry`
+  reads `war`; macros read `F1`, `F2`, …), with the full command on hover. They
+  populate on login and update instantly when you change one.
+- **Click to use, right-click to manage.** Left-click a chip to fire it
+  (a macro runs `=N`, an alias runs its expansion). Right-click for
+  Edit / Duplicate / Remove, or hit **+ New** to add one — all from the panel,
+  no typing required.
+- **Ticks & Triggers tabs** are present but show "coming soon" — those land in
+  the next phases.
+- Macros and aliases still work exactly as before from any client; the panel is
+  just a point-and-click front end for them.
+
 ## 2026-06-07 — Web client terminal theming
 
 The web client's game terminal now matches the antique tooled-leather UI.

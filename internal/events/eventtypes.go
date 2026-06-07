@@ -34,6 +34,14 @@ type BuffsTriggered struct {
 
 func (b BuffsTriggered) Type() string { return `BuffsTriggered` }
 
+// AutomationChanged fires when a user's macros/aliases/ticks/triggers change,
+// so the Char.Automation GMCP payload can be re-pushed.
+type AutomationChanged struct {
+	UserId int
+}
+
+func (a AutomationChanged) Type() string { return `AutomationChanged` }
+
 // Used for giving/taking quest progress
 type Quest struct {
 	UserId     int
