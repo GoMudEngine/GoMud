@@ -914,14 +914,84 @@
                 }
                 list.appendChild(aChips);
 
+            } else if (autoActiveTab === 'ticks') {
+                if (!a || !a.ticks || !a.ticks.length) {
+                    makeEmptyMsg("No ticks configured.");
+                    return;
+                }
+                for (var ti = 0; ti < a.ticks.length; ti++) {
+                    var tick = a.ticks[ti];
+                    var tRow = document.createElement("div");
+                    tRow.className = "auto-row";
+                    tRow.dataset.autoType = "tick";
+                    tRow.dataset.autoId   = String(tick.id);
+                    tRow.dataset.autoKey  = String(tick.id); // ctx-menu uses autoKey as header
+                    tRow.dataset.autoCmd  = tick.commands || "";
+
+                    var tog = document.createElement("span");
+                    tog.className = "auto-tog" + (tick.enabled ? " on" : "");
+                    tRow.appendChild(tog);
+
+                    var nameSpan = document.createElement("span");
+                    nameSpan.className = "name";
+                    nameSpan.textContent = tick.name || "";
+                    tRow.appendChild(nameSpan);
+
+                    var sumSpan = document.createElement("span");
+                    sumSpan.className = "sum";
+                    sumSpan.textContent = "every " + (tick.intervalSec || 0) + "s" +
+                                          (tick.enabled ? "" : " (off)");
+                    tRow.appendChild(sumSpan);
+
+                    list.appendChild(tRow);
+                }
             } else {
-                // ticks / triggers — Phase 2+
+                // triggers — Phase 3+
                 makeEmptyMsg("Coming soon.");
             }
         }
 
-        // Left-click on an auto-chip fires the macro/alias immediately
+        // Left-click on an auto-chip fires the macro/alias immediately;
+        // for tick rows, click on the toggle to enable/disable, or click the
+        // row body to fire all tick commands immediately.
         document.getElementById("auto-list").addEventListener("click", function(e) {
+            // ── Tick enable toggle ────────────────────────────────────────────
+            var togTarget = e.target.closest(".auto-tog");
+            if (togTarget) {
+                var tRow = togTarget.closest(".auto-row[data-auto-type='tick']");
+                if (tRow) {
+                    var tid = parseInt(tRow.dataset.autoId, 10);
+                    var tAutomation = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
+                    var tTick = null;
+                    if (tAutomation && tAutomation.ticks) {
+                        for (var ti = 0; ti < tAutomation.ticks.length; ti++) {
+                            if (tAutomation.ticks[ti].id === tid) { tTick = tAutomation.ticks[ti]; break; }
+                        }
+                    }
+                    if (tTick) {
+                        SendGMCP("Char.Automation.Set", {
+                            kind: "tick",
+                            id: tTick.id,
+                            name: tTick.name,
+                            commands: tTick.commands,
+                            intervalSec: tTick.intervalSec,
+                            enabled: !tTick.enabled
+                        });
+                    }
+                    e.stopPropagation();
+                    return;
+                }
+            }
+
+            // ── Tick fire-now (click anywhere else on the row) ───────────────
+            var tickRow = e.target.closest(".auto-row[data-auto-type='tick']");
+            if (tickRow) {
+                var cmds = tickRow.dataset.autoCmd || "";
+                cmds.split(";").forEach(function(c) { c = c.trim(); if (c) SendData(c); });
+                return;
+            }
+
+            // ── Macro / alias chip fire ───────────────────────────────────────
             var row = e.target.closest(".auto-chip");
             if (!row) return;
             var type = row.dataset.autoType;
@@ -2424,9 +2494,9 @@
                 document.addEventListener("scroll",  closeMenu,      true);
             }
 
-            // Delegation on #auto-list
+            // Delegation on #auto-list — covers both chip and row element types
             document.addEventListener("contextmenu", function(e) {
-                var row = e.target.closest(".auto-chip[data-auto-type]");
+                var row = e.target.closest(".auto-chip[data-auto-type], .auto-row[data-auto-type]");
                 if (!row) return;
                 e.preventDefault();
                 openMenu(e, row);
