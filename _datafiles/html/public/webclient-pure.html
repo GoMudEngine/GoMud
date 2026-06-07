@@ -240,10 +240,18 @@
           <div class="dash-panel-body"><div id="vitals-bars"></div></div>
         </section>
 
-        <section class="dash-panel dash-slot" id="panel-art" data-panel="art">
-          <div class="dash-panel-head"><span class="ph-title">Scene</span>
+        <section class="dash-panel" id="panel-art" data-panel="art">
+          <div class="dash-panel-head"><span class="ph-title">Inventory</span>
             <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
-          <div class="dash-panel-body">Scene art — coming soon</div>
+          <div class="dash-panel-body">
+            <div id="inv-tabs" class="inv-tabs">
+              <button class="inv-tab brass active" data-tab="worn">Equipped</button>
+              <button class="inv-tab brass" data-tab="bandolier">Bandolier</button>
+              <button class="inv-tab brass" data-tab="components">Components</button>
+              <button class="inv-tab brass" data-tab="backpack">Backpack</button>
+            </div>
+            <div id="inv-grid" class="inv-grid"></div>
+          </div>
         </section>
       </div>
 
@@ -552,6 +560,11 @@
                 }
 
                 updateStatusPanel();
+
+                // Refresh inventory panel if inventory data was bundled in this update
+                if ( obj.Inventory ) {
+                    renderInventory();
+                }
             },
             "Char.Conditions": function() {
                 updateStatusPanel();
@@ -577,7 +590,156 @@
                     if (mapTitle) mapTitle.textContent = 'Map (' + obj.Map.zone + ')';
                 }
             },
+            "Char.Inventory": function() {
+                renderInventory();
+            },
         };
+
+        /////////////////////////////////////////////
+        //
+        // Inventory Panel
+        //
+        /////////////////////////////////////////////
+        var invActiveTab = "worn";
+
+        // Mutation slot-key prefixes / exact values that get the .mut label tint
+        function invSlotIsMutation(slotKey) {
+            var sk = slotKey || "";
+            return sk.indexOf("extraarm") === 0 ||
+                   sk.indexOf("extrawrist") === 0 ||
+                   sk === "tail";
+        }
+
+        function renderInventory() {
+            var inv = (GMCPStructs["Char"] || {}).Inventory;
+            var grid = document.getElementById("inv-grid");
+            if (!grid) return;
+
+            // Clear previous content safely
+            while (grid.firstChild) { grid.removeChild(grid.firstChild); }
+
+            if (!inv) {
+                var msg = document.createElement("div");
+                msg.className = "inv-empty-msg";
+                msg.textContent = "—";
+                grid.appendChild(msg);
+                return;
+            }
+
+            if (invActiveTab === "worn") {
+                var worn = inv.Worn;
+                if (!worn || !worn.length) {
+                    var msg = document.createElement("div");
+                    msg.className = "inv-empty-msg";
+                    msg.textContent = "No equipped items.";
+                    grid.appendChild(msg);
+                    return;
+                }
+                for (var i = 0; i < worn.length; i++) {
+                    var entry = worn[i];
+                    var cell = document.createElement("div");
+                    cell.className = "inv-cell";
+
+                    var tile = document.createElement("div");
+                    tile.className = "inv-tile";
+                    if (!entry.item) {
+                        tile.classList.add("empty");
+                    } else {
+                        var item = entry.item;
+                        // Icon from trusted local map — innerHTML is safe here
+                        var iconSVG = (typeof window.itemIconSVG === "function")
+                            ? window.itemIconSVG(item.type, item.subtype)
+                            : "";
+                        if (iconSVG) tile.innerHTML = iconSVG;
+                        tile.title = item.name || "";
+                        // Data attributes for Task 8 action menu
+                        tile.dataset.handle     = item.handle  || "";
+                        tile.dataset.name       = item.name    || "";
+                        tile.dataset.type       = item.type    || "";
+                        tile.dataset.subtype    = item.subtype || "";
+                        tile.dataset.collection = "worn";
+                        tile.dataset.slotkey    = entry.slotKey || "";
+                    }
+
+                    var slab = document.createElement("div");
+                    slab.className = "inv-slab" + (invSlotIsMutation(entry.slotKey) ? " mut" : "");
+                    slab.textContent = entry.slot || "";
+
+                    cell.appendChild(tile);
+                    cell.appendChild(slab);
+                    grid.appendChild(cell);
+                }
+
+            } else {
+                // Bandolier / Components / Backpack tabs
+                var containerMap = {
+                    "bandolier":  { data: inv.Bandolier,    emptyMsg: "No bandolier equipped." },
+                    "components": { data: inv.ComponentBag,  emptyMsg: "No component bag equipped." },
+                    "backpack":   { data: inv.Backpack,      emptyMsg: "Backpack is empty." },
+                };
+                var cfg = containerMap[invActiveTab];
+                if (!cfg || !cfg.data || !cfg.data.items || !cfg.data.items.length) {
+                    var msg = document.createElement("div");
+                    msg.className = "inv-empty-msg";
+                    msg.textContent = (cfg && cfg.emptyMsg) ? cfg.emptyMsg : "Nothing here.";
+                    grid.appendChild(msg);
+                    return;
+                }
+                var items = cfg.data.items;
+                for (var j = 0; j < items.length; j++) {
+                    var item = items[j];
+                    var cell = document.createElement("div");
+                    cell.className = "inv-cell";
+
+                    var tile = document.createElement("div");
+                    tile.className = "inv-tile";
+                    var iconSVG = (typeof window.itemIconSVG === "function")
+                        ? window.itemIconSVG(item.type, item.subtype)
+                        : "";
+                    if (iconSVG) tile.innerHTML = iconSVG;
+                    tile.title = item.name || "";
+                    tile.dataset.handle     = item.handle  || "";
+                    tile.dataset.name       = item.name    || "";
+                    tile.dataset.type       = item.type    || "";
+                    tile.dataset.subtype    = item.subtype || "";
+                    tile.dataset.collection = invActiveTab;
+                    tile.dataset.slotkey    = "";
+
+                    // Optional quantity badge for items with uses > 1
+                    if (item.uses && item.uses > 1) {
+                        var qty = document.createElement("span");
+                        qty.className = "inv-qty";
+                        qty.textContent = "x" + item.uses;
+                        tile.appendChild(qty);
+                    }
+
+                    cell.appendChild(tile);
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        // Tab switching
+        (function() {
+            var tabBar = document.getElementById("inv-tabs");
+            if (!tabBar) return;
+            tabBar.addEventListener("click", function(e) {
+                var btn = e.target.closest(".inv-tab");
+                if (!btn) return;
+                var newTab = btn.dataset.tab;
+                if (!newTab || newTab === invActiveTab) return;
+                invActiveTab = newTab;
+                // Toggle active class
+                var allTabs = tabBar.querySelectorAll(".inv-tab");
+                for (var i = 0; i < allTabs.length; i++) {
+                    allTabs[i].classList.toggle("active", allTabs[i] === btn);
+                }
+                renderInventory();
+            });
+        })();
+
+        // Render inventory panel once on load (will show empty state until GMCP arrives)
+        renderInventory();
 
         // Build a single vitals row DOM element
         function createVitalsRow(name, hp, sp, cp, isSelf, isRemote) {
