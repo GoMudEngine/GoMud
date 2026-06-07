@@ -1737,7 +1737,9 @@
                 // Otherwise, just write to terminal
                 term.write(event.data);
                 // Tap text stream for trigger matching (read-only copy; does not affect terminal output)
-                stripAnsi(event.data).split(/\r?\n/).forEach(function(line){ if (line) runTriggers(line, Date.now()); });
+                try {
+                    stripAnsi(event.data).split(/\r?\n/).forEach(function(line){ if (line) runTriggers(line, Date.now()); });
+                } catch (e) { /* never let trigger matching break terminal output */ }
             };
 
             socket.onerror = function(error) {
@@ -3014,6 +3016,8 @@
                 removeClauseBtn.textContent = "✕ Remove condition";
                 removeClauseBtn.style.cssText = "align-self:flex-start;background:none;border:1px solid #5a3a18;color:#c8b98a;cursor:pointer;border-radius:3px;padding:2px 8px;font-size:0.8em;";
                 removeClauseBtn.addEventListener("click", function() {
+                    // Preserve any Then commands typed in the clause back into the simple area.
+                    simpleThenArea.value = thenArea.value;
                     clauseWrap.style.display = "none";
                     addClauseBtn.style.display = "";
                     simpleThenArea.style.display = "";
