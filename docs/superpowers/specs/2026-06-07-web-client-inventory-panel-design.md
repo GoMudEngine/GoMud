@@ -98,8 +98,13 @@ so the panel never grabs the wrong duplicate.
   is moot).
 - **Commands:** the handle works for `look`, `identify`, `wear`/`wield`,
   `remove`, `drop`, `use`/`drink`/`eat` (the verbs the action menu fires).
-  Command **output continues to describe the item by name** — the handle is
-  only the target token, never echoed raw.
+- **Silent echo (chosen):** handle-targeted (panel-fired) commands are **not
+  echoed** to the feed — the server suppresses the input echo
+  (`EchoInputHandler` / input pipeline) for any command line whose target is a
+  `@<handle>` token, so only the command's *result* appears (and that result
+  still names the item). Manually-typed commands are unaffected. (The web
+  client does not locally echo; the server is the only echo source, so the
+  suppression must happen server-side.)
 - **Open detail (spec-review):** whether the handle needs cryptographic
   signing/obfuscation beyond "opaque UUID, owner-scoped." Default: the raw
   UUID is already non-guessable and owner-scoped, so plain is sufficient;
@@ -168,8 +173,9 @@ unknown types.
 - Bandolier / Components / Backpack tabs show their real contents and update
   on change.
 - Right-click actions fire the correct command against the exact clicked item
-  (verified with duplicate-named items — the handle disambiguates); output
-  lands in the feed; the item is described by name.
+  (verified with duplicate-named items — the handle disambiguates); only the
+  *result* lands in the feed (the `@<handle>` command line is NOT echoed); the
+  item is described by name in that result.
 - Equipping/dropping/using reflects in the panel promptly (no multi-second
   lag), and the Status panel now updates on buff expiry.
 - `go build ./...` clean; server boots clean (data-file load + GMCP);
