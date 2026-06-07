@@ -611,6 +611,7 @@
                 // Refresh automation panel if automation data was bundled
                 if ( obj.Automation ) {
                     renderAutomation();
+                    rebuildTickTimers();
                 }
             },
             "Char.Conditions": function() {
@@ -642,6 +643,7 @@
             },
             "Char.Automation": function() {
                 renderAutomation();
+                rebuildTickTimers();
             },
         };
 
@@ -854,6 +856,7 @@
         //
         /////////////////////////////////////////////
         var autoActiveTab = 'macros';
+        var tickTimers = {};
 
         function renderAutomation() {
             var list = document.getElementById("auto-list");
@@ -951,6 +954,20 @@
             }
         }
 
+        function rebuildTickTimers() {
+            for (var id in tickTimers) { clearInterval(tickTimers[id]); }
+            tickTimers = {};
+            var a = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
+            if (!a || !a.ticks) return;
+            a.ticks.forEach(function(t) {
+                if (!t.enabled || !t.intervalSec || t.intervalSec < 1) return;
+                var cmds = String(t.commands || "");
+                tickTimers[t.id] = setInterval(function() {
+                    cmds.split(";").forEach(function(c) { c = c.trim(); if (c) SendData(c); });
+                }, t.intervalSec * 1000);
+            });
+        }
+
         // Left-click on an auto-chip fires the macro/alias immediately;
         // for tick rows, click on the toggle to enable/disable, or click the
         // row body to fire all tick commands immediately.
@@ -1026,6 +1043,7 @@
 
         // Render once on load (empty state until GMCP arrives)
         renderAutomation();
+        rebuildTickTimers();
 
         // Build a single vitals row DOM element
         function createVitalsRow(name, hp, sp, cp, isSelf, isRemote) {
