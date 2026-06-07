@@ -2256,9 +2256,185 @@
             });
         })();
         // ── End inventory context menu ───────────────────────────────────────
+
+        /////////////////////////////////////////////
+        //
+        // Automation Modal — reusable overlay editor
+        //
+        /////////////////////////////////////////////
+        (function() {
+            var _onSave = null;
+
+            // Build the modal DOM once (it lives in the document at all times, hidden)
+            var modal    = document.getElementById("auto-modal");
+            var scrim    = modal.querySelector(".auto-scrim");
+            var bodySlot = modal.querySelector(".auto-modal-body");
+            var titleEl  = modal.querySelector(".auto-modal-title");
+            var saveBtn  = modal.querySelector(".auto-modal-save");
+            var cancelBtn= modal.querySelector(".auto-modal-cancel");
+
+            function doClose() {
+                modal.style.display = "none";
+                // Clear body slot safely
+                while (bodySlot.firstChild) bodySlot.removeChild(bodySlot.firstChild);
+                _onSave = null;
+            }
+
+            function doSave() {
+                if (typeof _onSave === "function") _onSave();
+                doClose();
+            }
+
+            scrim.addEventListener("click",   doClose);
+            cancelBtn.addEventListener("click", doClose);
+            saveBtn.addEventListener("click",   doSave);
+            document.addEventListener("keydown", function(e) {
+                if (e.key === "Escape" && modal.style.display !== "none") doClose();
+            });
+
+            // Public API — attached to window so Task 7 code can call it
+            window.openAutoModal  = function(title, bodyEl, onSave) {
+                titleEl.textContent = title;
+                while (bodySlot.firstChild) bodySlot.removeChild(bodySlot.firstChild);
+                bodySlot.appendChild(bodyEl);
+                _onSave = onSave;
+                modal.style.display = "flex";
+                // Focus first input/textarea if present
+                var first = bodyEl.querySelector("input,textarea,select");
+                if (first) { setTimeout(function() { first.focus(); }, 50); }
+            };
+            window.closeAutoModal = doClose;
+        })();
+
+        /////////////////////////////////////////////
+        //
+        // Automation right-click context menu
+        //
+        /////////////////////////////////////////////
+        (function() {
+            var menu = null;
+
+            function buildMenu() {
+                var el = document.createElement("div");
+                el.className = "auto-ctx";
+                el.style.display = "none";
+                document.body.appendChild(el);
+                return el;
+            }
+
+            function closeMenu() {
+                if (!menu) return;
+                menu.style.display = "none";
+                document.removeEventListener("click",   closeOnOutside, true);
+                document.removeEventListener("keydown", closeOnEscape,  true);
+                document.removeEventListener("scroll",  closeMenu,      true);
+            }
+
+            function closeOnOutside(e) {
+                if (menu && !menu.contains(e.target)) closeMenu();
+            }
+            function closeOnEscape(e) {
+                if (e.key === "Escape") closeMenu();
+            }
+
+            function makeCtxRow(label, isDefault, onAction) {
+                var row = document.createElement("div");
+                row.className = "ctx-row" + (isDefault ? " ctx-default" : "");
+                row.textContent = label;
+                row.addEventListener("click", function() {
+                    closeMenu();
+                    onAction();
+                });
+                return row;
+            }
+
+            function openMenu(e, autoRow) {
+                var type = autoRow.dataset.autoType;
+                var key  = autoRow.dataset.autoKey;
+                var cmd  = autoRow.dataset.autoCmd;
+                if (!type || !key) return;
+
+                if (!menu) menu = buildMenu();
+                while (menu.firstChild) menu.removeChild(menu.firstChild);
+
+                // Header — key as non-interactive label
+                var hdr = document.createElement("div");
+                hdr.className = "ctx-header";
+                hdr.textContent = key;
+                menu.appendChild(hdr);
+
+                // Edit
+                menu.appendChild(makeCtxRow("Edit", true, function() {
+                    // Dispatched to Task 7 handler
+                    if (typeof window.autoEditRow === "function") window.autoEditRow(type, key, cmd);
+                }));
+
+                var sep1 = document.createElement("div");
+                sep1.className = "ctx-sep";
+                menu.appendChild(sep1);
+
+                // Duplicate
+                menu.appendChild(makeCtxRow("Duplicate", false, function() {
+                    if (typeof window.autoDuplicateRow === "function") window.autoDuplicateRow(type, key, cmd);
+                }));
+
+                var sep2 = document.createElement("div");
+                sep2.className = "ctx-sep";
+                menu.appendChild(sep2);
+
+                // Remove
+                menu.appendChild(makeCtxRow("Remove", false, function() {
+                    if (typeof window.autoRemoveRow === "function") window.autoRemoveRow(type, key);
+                }));
+
+                // Position: clamp to viewport
+                menu.style.display = "block";
+                var vw = window.innerWidth  || document.documentElement.clientWidth;
+                var vh = window.innerHeight || document.documentElement.clientHeight;
+                var mw = menu.offsetWidth;
+                var mh = menu.offsetHeight;
+                var x  = Math.min(e.clientX, vw - mw - 4);
+                var y  = Math.min(e.clientY, vh - mh - 4);
+                if (x < 0) x = 0;
+                if (y < 0) y = 0;
+                menu.style.left = x + "px";
+                menu.style.top  = y + "px";
+
+                document.addEventListener("click",   closeOnOutside, true);
+                document.addEventListener("keydown", closeOnEscape,  true);
+                document.addEventListener("scroll",  closeMenu,      true);
+            }
+
+            // Delegation on #auto-list
+            document.addEventListener("contextmenu", function(e) {
+                var row = e.target.closest(".auto-row[data-auto-type]");
+                if (!row) return;
+                e.preventDefault();
+                openMenu(e, row);
+            });
+        })();
+        // ── End automation context menu ──────────────────────────────────────
+
     </script>
 
     <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/dashboard.js"></script>
+
+    <!-- Automation modal overlay — hidden; JS drives visibility -->
+    <div id="auto-modal" style="display:none;position:fixed;inset:0;z-index:8000;
+         align-items:center;justify-content:center;">
+      <div class="auto-scrim"></div>
+      <div class="auto-modal">
+        <div class="auto-modal-head">
+          <span class="auto-modal-title"></span>
+          <span class="auto-modal-close" id="auto-modal-x">✕</span>
+        </div>
+        <div class="auto-modal-body"></div>
+        <div class="auto-modal-foot">
+          <button class="auto-modal-cancel">Cancel</button>
+          <button class="auto-modal-save">Save</button>
+        </div>
+      </div>
+    </div>
 
 </body>
 </html>
