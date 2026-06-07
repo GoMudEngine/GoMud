@@ -544,3 +544,10 @@
   font-style: normal; font-weight: 700; font-display: swap;
   src: url('../fonts/IBMPlexMono-Bold.woff2') format('woff2');
 }
+
+/* Plug xterm.css's hardcoded cold-black surfaces (viewport behind the
+   scrollbar / below short content, and the IME composition box). #terminal
+   prefix wins on specificity over xterm.css's `.xterm .xterm-viewport`,
+   regardless of stylesheet load order, and survives an xterm upgrade. */
+#terminal .xterm-viewport   { background-color: #191310; }
+#terminal .composition-view { background: #2b231d; color: #e8d2a0; }
