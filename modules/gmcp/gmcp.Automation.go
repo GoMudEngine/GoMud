@@ -119,17 +119,18 @@ func (g GMCPAutomationModule) sendAutomation(userId int) {
 	events.AddToQueue(GMCPOut{
 		UserId:  userId,
 		Module:  `Char.Automation`,
-		Payload: buildAutomationPayload(user.Macros, user.Aliases),
+		Payload: buildAutomationPayload(user.Macros, user.Aliases, user.Ticks),
 	})
 }
 
 // buildAutomationPayload converts the user's macro and alias maps into the
 // stable, sorted GMCP payload structure.
-func buildAutomationPayload(macros map[string]string, aliases map[string]string) GMCPAutomation_Payload {
+func buildAutomationPayload(macros map[string]string, aliases map[string]string, ticks []users.UserTick) GMCPAutomation_Payload {
 
 	payload := GMCPAutomation_Payload{
 		Macros:  make([]GMCPAutomation_Macro, 0, len(macros)),
 		Aliases: make([]GMCPAutomation_Alias, 0, len(aliases)),
+		Ticks:   make([]GMCPAutomation_Tick, 0, len(ticks)),
 	}
 
 	macroKeys := make([]string, 0, len(macros))
@@ -156,6 +157,16 @@ func buildAutomationPayload(macros map[string]string, aliases map[string]string)
 		})
 	}
 
+	for _, tk := range ticks {
+		payload.Ticks = append(payload.Ticks, GMCPAutomation_Tick{
+			Id:          tk.Id,
+			Name:        tk.Name,
+			Commands:    tk.Commands,
+			IntervalSec: tk.IntervalSec,
+			Enabled:     tk.Enabled,
+		})
+	}
+
 	return payload
 }
 
@@ -172,8 +183,17 @@ type GMCPAutomation_Alias struct {
 	Command string `json:"command"`
 }
 
+type GMCPAutomation_Tick struct {
+	Id          int    `json:"id"`
+	Name        string `json:"name"`
+	Commands    string `json:"commands"`
+	IntervalSec int    `json:"intervalSec"`
+	Enabled     bool   `json:"enabled"`
+}
+
 type GMCPAutomation_Payload struct {
 	Macros  []GMCPAutomation_Macro `json:"macros"`
 	Aliases []GMCPAutomation_Alias `json:"aliases"`
-	// Ticks/Triggers added in Phases 2-3.
+	Ticks   []GMCPAutomation_Tick  `json:"ticks"`
+	// Triggers added in Phase 3.
 }
