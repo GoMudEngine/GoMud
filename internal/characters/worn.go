@@ -33,6 +33,49 @@ type Worn struct {
 	ComponentBag items.Item `yaml:"componentbag,omitempty"`
 }
 
+// WornSlot describes one equipment slot: its yaml/slot key, its display
+// label, and a pointer to the real slot field on the Worn struct. The
+// pointer is live — mutating WornSlot.Item mutates the underlying field.
+type WornSlot struct {
+	Key   string      // slotKey, matches the yaml tag: "weapon","offhand","extraarm1",...
+	Label string      // display label
+	Item  *items.Item // pointer to the real slot field
+}
+
+// AllSlots returns every equipment slot in eq/struct order. This is the
+// SINGLE SOURCE OF TRUTH for the slot list + labels — enumeration sites
+// (GetAllWornItems, validateEquipmentItems, FindOnBody, the GMCP Worn
+// builder) iterate this instead of re-listing fields, so adding a slot
+// only requires touching the struct and this method. A reflection guard
+// test (worn_allslots_test.go) fails if a new items.Item field on Worn
+// is not registered here.
+func (w *Worn) AllSlots() []WornSlot {
+	return []WornSlot{
+		{"weapon", "Weapon", &w.Weapon},
+		{"offhand", "Offhand", &w.Offhand},
+		{"extraarm1", "Arm 3", &w.ExtraArm1}, {"extraarm2", "Arm 4", &w.ExtraArm2},
+		{"extraarm3", "Arm 5", &w.ExtraArm3}, {"extraarm4", "Arm 6", &w.ExtraArm4},
+		{"head", "Head", &w.Head}, {"neck", "Neck", &w.Neck}, {"shoulders", "Shoulders", &w.Shoulders},
+		{"body", "Body", &w.Body}, {"back", "Back", &w.Back}, {"belt", "Belt", &w.Belt},
+		{"wrist1", "Wrist", &w.Wrist1}, {"wrist2", "Wrist", &w.Wrist2},
+		{"extrawrist1", "Wrist 3", &w.ExtraWrist1}, {"extrawrist2", "Wrist 4", &w.ExtraWrist2},
+		{"extrawrist3", "Wrist 5", &w.ExtraWrist3}, {"extrawrist4", "Wrist 6", &w.ExtraWrist4},
+		{"gloves", "Gloves", &w.Gloves}, {"ring", "Ring", &w.Ring}, {"ring2", "Ring", &w.Ring2},
+		{"legs", "Legs", &w.Legs}, {"feet", "Feet", &w.Feet},
+		{"tail", "Tail", &w.Tail}, {"componentbag", "Component Bag", &w.ComponentBag},
+	}
+}
+
+// StatMod sums stat-mod contributions across every worn slot.
+//
+// NOTE: this deliberately keeps the explicit per-field sum rather than
+// iterating AllSlots(). It is a hot path — reached per stat-name lookup
+// via Character.StatMod from combat math (magical_mitigation,
+// conviction_mitigation) and per-tick regen (resources.go recovery
+// percentages), multiplied across every combatant/mob — and AllSlots()
+// allocates a 25-element slice per call. The reflection guard test on
+// AllSlots() still covers slot-list completeness.
+// (keep in sync with AllSlots())
 func (w *Worn) StatMod(stat ...string) int {
 
 	return w.Weapon.StatMod(stat...) +
@@ -492,17 +535,9 @@ func (c *Character) IsUnarmedStyle() bool {
 // were missed by other callers. Now complete.)
 func (c *Character) GetAllWornItems() []items.Item {
 	wornItems := []items.Item{}
-	for _, itm := range []items.Item{
-		c.Equipment.Weapon, c.Equipment.Offhand,
-		c.Equipment.ExtraArm1, c.Equipment.ExtraArm2, c.Equipment.ExtraArm3, c.Equipment.ExtraArm4,
-		c.Equipment.Head, c.Equipment.Neck, c.Equipment.Shoulders, c.Equipment.Body, c.Equipment.Back,
-		c.Equipment.Belt, c.Equipment.Wrist1, c.Equipment.Wrist2,
-		c.Equipment.ExtraWrist1, c.Equipment.ExtraWrist2, c.Equipment.ExtraWrist3, c.Equipment.ExtraWrist4,
-		c.Equipment.Gloves, c.Equipment.Ring, c.Equipment.Ring2, c.Equipment.Legs, c.Equipment.Feet,
-		c.Equipment.Tail, c.Equipment.ComponentBag,
-	} {
-		if itm.ItemId > 0 {
-			wornItems = append(wornItems, itm)
+	for _, s := range c.Equipment.AllSlots() {
+		if s.Item.ItemId > 0 {
+			wornItems = append(wornItems, *s.Item)
 		}
 	}
 	return wornItems

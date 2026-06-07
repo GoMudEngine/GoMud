@@ -340,32 +340,12 @@ func (c *Character) FindOnBody(itemName string) (items.Item, bool) {
 		return items.Item{}, false
 	}
 
-	partialMatch, fullMatch := items.FindMatchIn(itemName,
-		c.Equipment.Weapon,
-		c.Equipment.Offhand,
-		c.Equipment.ExtraArm1,
-		c.Equipment.ExtraArm2,
-		c.Equipment.ExtraArm3,
-		c.Equipment.ExtraArm4,
-		c.Equipment.Head,
-		c.Equipment.Neck,
-		c.Equipment.Shoulders,
-		c.Equipment.Body,
-		c.Equipment.Back,
-		c.Equipment.Belt,
-		c.Equipment.Wrist1,
-		c.Equipment.Wrist2,
-		c.Equipment.ExtraWrist1,
-		c.Equipment.ExtraWrist2,
-		c.Equipment.ExtraWrist3,
-		c.Equipment.ExtraWrist4,
-		c.Equipment.Gloves,
-		c.Equipment.Ring,
-		c.Equipment.Ring2,
-		c.Equipment.Legs,
-		c.Equipment.Feet,
-		c.Equipment.Tail,
-		c.Equipment.ComponentBag)
+	slots := c.Equipment.AllSlots()
+	matchItems := make([]items.Item, 0, len(slots))
+	for _, s := range slots {
+		matchItems = append(matchItems, *s.Item)
+	}
+	partialMatch, fullMatch := items.FindMatchIn(itemName, matchItems...)
 
 	if fullMatch.ItemId != 0 {
 		return fullMatch, true

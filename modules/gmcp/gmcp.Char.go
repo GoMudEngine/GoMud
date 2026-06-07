@@ -771,65 +771,46 @@ func newInventory_ItemPtr(itm items.Item) *GMCPCharModule_Payload_Inventory_Item
 // list stays in eq order.
 func buildWornSlots(c *characters.Character) []GMCPCharModule_Payload_Slot {
 
-	eq := &c.Equipment
 	slots := make([]GMCPCharModule_Payload_Slot, 0, 26)
-
-	add := func(label, key string, itm items.Item) {
-		slots = append(slots, GMCPCharModule_Payload_Slot{
-			Slot:    label,
-			SlotKey: key,
-			Item:    newInventory_ItemPtr(itm),
-		})
-	}
 
 	// Mutation-slot predicates: ExtraArms count is derived/capped in
 	// validateMutationSlots; tail presence is the "tail" mutation key.
 	_, hasTail := c.Mutations["tail"]
 
-	add(`Weapon`, `weapon`, eq.Weapon)
-	add(`Offhand`, `offhand`, eq.Offhand)
-	if c.ExtraArms >= 1 {
-		add(`Arm 3`, `extraarm1`, eq.ExtraArm1)
+	// includeSlot decides whether a given slot key is emitted for this
+	// character. Base slots are always present; mutation-gated slots
+	// (extra arms/wrists) appear per ExtraArms count, and tail/legs are
+	// XOR-gated on the tail mutation. The slot list + labels themselves
+	// come from characters.Worn.AllSlots() (single source of truth).
+	includeSlot := func(key string) bool {
+		switch key {
+		case `extraarm1`, `extrawrist1`:
+			return c.ExtraArms >= 1
+		case `extraarm2`, `extrawrist2`:
+			return c.ExtraArms >= 2
+		case `extraarm3`, `extrawrist3`:
+			return c.ExtraArms >= 3
+		case `extraarm4`, `extrawrist4`:
+			return c.ExtraArms >= 4
+		case `tail`:
+			return hasTail
+		case `legs`:
+			return !hasTail
+		default:
+			return true
+		}
 	}
-	if c.ExtraArms >= 2 {
-		add(`Arm 4`, `extraarm2`, eq.ExtraArm2)
+
+	for _, s := range c.Equipment.AllSlots() {
+		if !includeSlot(s.Key) {
+			continue
+		}
+		slots = append(slots, GMCPCharModule_Payload_Slot{
+			Slot:    s.Label,
+			SlotKey: s.Key,
+			Item:    newInventory_ItemPtr(*s.Item),
+		})
 	}
-	if c.ExtraArms >= 3 {
-		add(`Arm 5`, `extraarm3`, eq.ExtraArm3)
-	}
-	if c.ExtraArms >= 4 {
-		add(`Arm 6`, `extraarm4`, eq.ExtraArm4)
-	}
-	add(`Head`, `head`, eq.Head)
-	add(`Neck`, `neck`, eq.Neck)
-	add(`Shoulders`, `shoulders`, eq.Shoulders)
-	add(`Body`, `body`, eq.Body)
-	add(`Back`, `back`, eq.Back)
-	add(`Belt`, `belt`, eq.Belt)
-	add(`Wrist`, `wrist1`, eq.Wrist1)
-	add(`Wrist`, `wrist2`, eq.Wrist2)
-	if c.ExtraArms >= 1 {
-		add(`Wrist 3`, `extrawrist1`, eq.ExtraWrist1)
-	}
-	if c.ExtraArms >= 2 {
-		add(`Wrist 4`, `extrawrist2`, eq.ExtraWrist2)
-	}
-	if c.ExtraArms >= 3 {
-		add(`Wrist 5`, `extrawrist3`, eq.ExtraWrist3)
-	}
-	if c.ExtraArms >= 4 {
-		add(`Wrist 6`, `extrawrist4`, eq.ExtraWrist4)
-	}
-	add(`Gloves`, `gloves`, eq.Gloves)
-	add(`Ring`, `ring`, eq.Ring)
-	add(`Ring`, `ring2`, eq.Ring2)
-	if hasTail {
-		add(`Tail`, `tail`, eq.Tail)
-	} else {
-		add(`Legs`, `legs`, eq.Legs)
-	}
-	add(`Feet`, `feet`, eq.Feet)
-	add(`Component Bag`, `componentbag`, eq.ComponentBag)
 
 	return slots
 }
