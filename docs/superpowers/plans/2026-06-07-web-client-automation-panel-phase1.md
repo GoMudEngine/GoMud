@@ -313,7 +313,77 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 
 ---
 
-### Task 8: Boot + browser smoke
+### Task 8: Context docs (`context.md`)
+
+**Files:**
+- Modify: `internal/events/context.md`
+- Modify: `internal/usercommands/context.md`
+- Create: `modules/gmcp/context.md`
+
+- [ ] **Step 1: Document the new event**
+
+In `internal/events/context.md`, add an entry for `AutomationChanged` matching the format of the neighbouring event entries already in that file (name, fields, when it fires, who listens). One short entry: fires when a user's macros/aliases/ticks/triggers change; the `Char.Automation` GMCP module listens and re-pushes.
+
+- [ ] **Step 2: Note the command emissions**
+
+In `internal/usercommands/context.md`, add a line noting that `cmdSetMacro` (`set.go`) and `Alias` (`alias.go`) now emit `events.AutomationChanged{UserId}` so the web automation panel refreshes.
+
+- [ ] **Step 3: Create the gmcp context doc**
+
+Create `modules/gmcp/context.md` documenting the **`Char.Automation`** module (this package had no context.md; scope this file to the automation module + a one-line pointer that other `gmcp.*` modules follow the same listener/payload pattern). Cover: the outbound read payload (`{macros, aliases}` now; `ticks, triggers` added in Phases 2–3), the push triggers (`PlayerSpawn` + `AutomationChanged`), and a forward note that **inbound** `Char.Automation.Set`/`Remove` (ticks/triggers CRUD) lands in Phases 2–3 via `HandleIAC` (cross-ref the spec).
+
+- [ ] **Step 4: Commit**
+```
+git add internal/events/context.md internal/usercommands/context.md modules/gmcp/context.md
+git commit -m "docs(context): Char.Automation GMCP module + AutomationChanged event
+
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
+```
+
+---
+
+### Task 9: Help files (macros/alias panel cross-reference)
+
+**Files:**
+- Modify: `_datafiles/world/dogmud/templates/help/macros.template`
+- Modify: `_datafiles/world/dogmud/templates/help/alias.template`
+
+- [ ] **Step 1: Cross-reference the panel in `macros.template`**
+
+Before the final `See also:` line, add (80-col, matching the file's `<ansi>` style):
+```
+  <ansi fg="black-bold">Web client:</ansi> your macros also appear in the
+  <ansi fg="command">Triggers &amp; Timers</ansi> panel, where you can add, edit,
+  and run them with the mouse.
+
+```
+
+- [ ] **Step 2: Cross-reference the panel in `alias.template`**
+
+Before its final `See also:` line, add the same-style note:
+```
+  <ansi fg="black-bold">Web client:</ansi> your custom aliases also appear in the
+  <ansi fg="command">Triggers &amp; Timers</ansi> panel for point-and-click
+  editing.
+
+```
+
+- [ ] **Step 3: Verify**
+
+Grep both templates for `Triggers &amp; Timers`.
+Expected: present in each. (No new helpfiles in Phase 1 — `help ticks`/`help triggers` topics are Phases 2–3.)
+
+- [ ] **Step 4: Commit**
+```
+git add _datafiles/world/dogmud/templates/help/macros.template _datafiles/world/dogmud/templates/help/alias.template
+git commit -m "docs(help): cross-reference the web automation panel from macros/alias help
+
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
+```
+
+---
+
+### Task 10: Boot + browser smoke
 
 **Files:** none (verification only)
 
@@ -352,7 +422,7 @@ Note any issues; if clean, Phase 1 is ready for finishing-a-development-branch (
 
 ## Self-Review
 
-**Spec coverage (Phase 1 scope):** panel shell (Task 4) ✓; Macros/Aliases tabs render + fire (Task 5) ✓; modal + context menu (Task 6) ✓; add/edit/remove/duplicate via existing commands (Task 7) ✓; `Char.Automation` GMCP read + change-push (Tasks 1–3) ✓; smoke (Task 8) ✓. Ticks/Triggers correctly deferred to their phases with placeholders.
+**Spec coverage (Phase 1 scope):** panel shell (Task 4) ✓; Macros/Aliases tabs render + fire (Task 5) ✓; modal + context menu (Task 6) ✓; add/edit/remove/duplicate via existing commands (Task 7) ✓; `Char.Automation` GMCP read + change-push (Tasks 1–3) ✓; context docs (Task 8) ✓; macros/alias help panel cross-ref (Task 9) ✓; boot + smoke (Task 10) ✓. Ticks/Triggers correctly deferred to their phases with placeholders (incl. their `help ticks`/`help triggers` topics).
 
 **Placeholder scan:** no "TBD"/vague steps; commands and code shown. GMCP module boilerplate intentionally references `gmcp.Comm.go` as the concrete template + codegraph verification (the one area not fully quoted, because the module-registration skeleton must match the repo's exact pattern).
 
