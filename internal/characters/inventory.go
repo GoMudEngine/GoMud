@@ -300,6 +300,17 @@ func (c *Character) FindInBackpack(itemName string) (items.Item, bool) {
 		return items.Item{}, false
 	}
 
+	// Handle-first: resolve an exact item instance by opaque handle (UUID)
+	// against the backpack only. Owner-scoped by construction.
+	if handle, ok := isItemHandle(itemName); ok {
+		for _, item := range c.Items {
+			if itemMatchesHandle(item, handle) {
+				return item, true
+			}
+		}
+		return items.Item{}, false
+	}
+
 	closeMatchItem, matchItem := items.FindMatchIn(itemName, c.Items...)
 
 	if matchItem.ItemId != 0 {
@@ -316,6 +327,16 @@ func (c *Character) FindInBackpack(itemName string) (items.Item, bool) {
 func (c *Character) FindOnBody(itemName string) (items.Item, bool) {
 
 	if itemName == `` {
+		return items.Item{}, false
+	}
+
+	// Handle-first: resolve an exact worn item instance by opaque handle (UUID).
+	if handle, ok := isItemHandle(itemName); ok {
+		for _, item := range c.GetAllWornItems() {
+			if itemMatchesHandle(item, handle) {
+				return item, true
+			}
+		}
 		return items.Item{}, false
 	}
 
@@ -361,6 +382,33 @@ func (c *Character) FindOnBody(itemName string) (items.Item, bool) {
 // disambiguation. Returns the item, a source description, and whether found.
 func (c *Character) FindItem(itemName string) (items.Item, string, bool) {
 	if itemName == "" {
+		return items.Item{}, "", false
+	}
+
+	// Handle-first: resolve an exact item instance by opaque handle (UUID)
+	// across all of the actor's OWN reachable collections (backpack, worn,
+	// bandolier, component-bag contents). Owner-scoped by construction.
+	if handle, ok := isItemHandle(itemName); ok {
+		for _, item := range c.Items {
+			if itemMatchesHandle(item, handle) {
+				return item, "backpack", true
+			}
+		}
+		for _, item := range c.GetAllWornItems() {
+			if itemMatchesHandle(item, handle) {
+				return item, "worn", true
+			}
+		}
+		for _, item := range c.PotionItems {
+			if itemMatchesHandle(item, handle) {
+				return item, "bandolier", true
+			}
+		}
+		for _, item := range c.GetComponentBagContents() {
+			if itemMatchesHandle(item, handle) {
+				return item, "components", true
+			}
+		}
 		return items.Item{}, "", false
 	}
 
