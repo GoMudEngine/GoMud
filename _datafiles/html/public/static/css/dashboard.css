@@ -532,3 +532,15 @@
 .inv-ctx .ctx-sep {
   border-top: 1px solid rgba(58, 42, 24, 0.7);
 }
+
+/* ── IBM Plex Mono (self-hosted, OFL) — used by the game terminal ────────── */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal; font-weight: 400; font-display: swap;
+  src: url('../fonts/IBMPlexMono-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal; font-weight: 700; font-display: swap;
+  src: url('../fonts/IBMPlexMono-Bold.woff2') format('woff2');
+}
