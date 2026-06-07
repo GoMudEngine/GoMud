@@ -134,6 +134,10 @@ The `internal/usercommands` package implements the complete command system for p
 - **Custom shortcuts**: Players can create command aliases
 - **Macro support**: Complex command sequences through aliases
 - **Personal customization**: Per-character alias storage
+- **Web panel sync**: `cmdSetMacro` (`set.go`) and `Alias` (`alias.go`)
+  emit `events.AutomationChanged{UserId}` after every macro or alias
+  change so the `gmcp.Automation` module immediately re-pushes
+  `Char.Automation` and the web automation panel stays in sync.
 
 ## Dependencies
 - `internal/users`: User management and character data
