@@ -2415,6 +2415,172 @@
         })();
         // ── End automation context menu ──────────────────────────────────────
 
+        /////////////////////////////////////////////
+        //
+        // Automation Editors — Macro & Alias add/edit/remove/duplicate
+        //
+        /////////////////////////////////////////////
+        (function() {
+
+            // Wire modal ✕ close button (added in modal HTML above)
+            var xBtn = document.getElementById("auto-modal-x");
+            if (xBtn) xBtn.addEventListener("click", function() {
+                if (typeof window.closeAutoModal === "function") window.closeAutoModal();
+            });
+
+            // ── Helpers ────────────────────────────────────────────────────
+
+            // Build a labeled field group
+            function makeField(labelText, inputEl) {
+                var wrap = document.createElement("div");
+                wrap.className = "auto-field";
+                var lbl = document.createElement("label");
+                lbl.textContent = labelText;
+                wrap.appendChild(lbl);
+                wrap.appendChild(inputEl);
+                return wrap;
+            }
+
+            // Get the next free macro number (1-9) not already in use
+            function nextFreeMacroNum(excludeNum) {
+                var a = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
+                var used = {};
+                if (a && a.macros) {
+                    for (var i = 0; i < a.macros.length; i++) {
+                        var n = parseInt((a.macros[i].key || "").replace(/^=/, ""), 10);
+                        if (!isNaN(n) && n !== excludeNum) used[n] = true;
+                    }
+                }
+                for (var n = 1; n <= 9; n++) {
+                    if (!used[n]) return n;
+                }
+                return 1; // fallback — all taken, default to 1
+            }
+
+            // ── Macro editor ───────────────────────────────────────────────
+
+            function openMacroEditor(prefillNum, prefillCmd) {
+                var body = document.createElement("div");
+                body.style.cssText = "display:flex;flex-direction:column;gap:10px;";
+
+                var numInput = document.createElement("input");
+                numInput.type = "number";
+                numInput.min  = "1";
+                numInput.max  = "9";
+                numInput.value = prefillNum || "";
+                numInput.placeholder = "1–9";
+
+                var cmdInput = document.createElement("textarea");
+                cmdInput.value = prefillCmd || "";
+                cmdInput.placeholder = "e.g. get all;wield sword";
+                cmdInput.rows = 3;
+
+                body.appendChild(makeField("Macro Number (1–9)", numInput));
+                body.appendChild(makeField("Commands (semicolon-separated)", cmdInput));
+
+                openAutoModal("Macro Editor", body, function() {
+                    var num = parseInt(numInput.value, 10);
+                    if (isNaN(num) || num < 1 || num > 9) {
+                        alert("Please enter a number between 1 and 9.");
+                        return;
+                    }
+                    var cmds = cmdInput.value.trim();
+                    // 'set =N commands' — empty cmds string deletes the macro
+                    SendData("set =" + num + " " + cmds);
+                });
+            }
+
+            // ── Alias editor ───────────────────────────────────────────────
+
+            function openAliasEditor(prefillName, prefillCmd) {
+                var body = document.createElement("div");
+                body.style.cssText = "display:flex;flex-direction:column;gap:10px;";
+
+                var nameInput = document.createElement("input");
+                nameInput.type  = "text";
+                nameInput.value = prefillName || "";
+                nameInput.placeholder = "e.g. kk";
+
+                var cmdInput = document.createElement("input");
+                cmdInput.type  = "text";
+                cmdInput.value = prefillCmd || "";
+                cmdInput.placeholder = "e.g. kick goblin";
+
+                body.appendChild(makeField("Alias Name", nameInput));
+                body.appendChild(makeField("Expands To", cmdInput));
+
+                openAutoModal("Alias Editor", body, function() {
+                    var name = nameInput.value.trim();
+                    if (!name) {
+                        alert("Alias name cannot be empty.");
+                        return;
+                    }
+                    var cmd = cmdInput.value.trim();
+                    // 'alias name=command' — empty command deletes the alias
+                    SendData("alias " + name + "=" + cmd);
+                });
+            }
+
+            // ── Public action handlers (called by context menu + "+ New") ──
+
+            // Edit: open pre-filled editor
+            window.autoEditRow = function(type, key, cmd) {
+                if (type === "macro") {
+                    var num = parseInt(key.replace(/^=/, ""), 10);
+                    openMacroEditor(isNaN(num) ? "" : num, cmd);
+                } else if (type === "alias") {
+                    openAliasEditor(key, cmd);
+                }
+            };
+
+            // Duplicate: open editor pre-filled with same cmd + next free slot
+            window.autoDuplicateRow = function(type, key, cmd) {
+                if (type === "macro") {
+                    var srcNum = parseInt(key.replace(/^=/, ""), 10);
+                    var freeNum = nextFreeMacroNum(isNaN(srcNum) ? -1 : srcNum);
+                    openMacroEditor(freeNum, cmd);
+                } else if (type === "alias") {
+                    // Suffix the name with "2" (or increment) to avoid collision
+                    var newName = key + "2";
+                    openAliasEditor(newName, cmd);
+                }
+            };
+
+            // Remove: send delete command directly (no modal needed)
+            window.autoRemoveRow = function(type, key) {
+                if (type === "macro") {
+                    var num = parseInt(key.replace(/^=/, ""), 10);
+                    if (!isNaN(num)) SendData("set =" + num + " ");
+                } else if (type === "alias") {
+                    SendData("alias " + key + "=");
+                }
+                // Server pushes updated Char.Automation → renderAutomation() fires
+            };
+
+            // ── "+ New" button wiring ──────────────────────────────────────
+            document.addEventListener("click", function(e) {
+                var btn = e.target.closest(".auto-add");
+                if (!btn) return;
+                if (autoActiveTab === "macros") {
+                    openMacroEditor(nextFreeMacroNum(-1), "");
+                } else if (autoActiveTab === "aliases") {
+                    openAliasEditor("", "");
+                } else {
+                    // ticks / triggers — Phase 2
+                    var msg = document.createElement("div");
+                    msg.style.cssText = "padding:12px;font-family:Georgia,serif;font-style:italic;" +
+                                        "color:#9a8a6a;text-align:center;";
+                    msg.textContent = "Coming soon in a later phase.";
+                    openAutoModal("Not yet available", msg, null);
+                    // Override Save to just close
+                    var saveBtn = document.querySelector(".auto-modal-save");
+                    if (saveBtn) saveBtn.textContent = "OK";
+                }
+            });
+
+        })();
+        // ── End automation editors ────────────────────────────────────────
+
     </script>
 
     <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/dashboard.js"></script>
