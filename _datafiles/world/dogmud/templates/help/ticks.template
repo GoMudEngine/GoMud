@@ -38,4 +38,4 @@ connected through the web client.
   The shortest interval allowed is <ansi fg="command">1 second</ansi>. Most
   repeating tasks work well at 30–60 seconds or longer.
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help macros</ansi>, <ansi fg="command">help alias</ansi>
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help macros</ansi>, <ansi fg="command">help alias</ansi>, <ansi fg="command">help triggers</ansi>
