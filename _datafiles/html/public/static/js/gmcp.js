@@ -983,11 +983,16 @@ class RoomGridSVG {
 ".rgsvg-brass:hover{filter:brightness(1.08);}" +
 ".rgsvg-brass:active{transform:translateY(1px);" +
 "box-shadow:0 1px 1px rgba(0,0,0,0.4),inset 0 2px 4px rgba(74,52,16,0.7)," +
-"inset 0 -1px 1px rgba(255,246,212,0.4);}";
+"inset 0 -1px 1px rgba(255,246,212,0.4);}" +
+".rgsvg-controls{transition:opacity .15s ease,transform .15s ease;}" +
+".rgsvg-controls.compact{opacity:0.32;transform:scale(0.8);transform-origin:bottom left;}" +
+".rgsvg-controls.compact:hover,.rgsvg-controls.compact:focus-within{opacity:1;}";
           document.head.appendChild(st);
       }
 
       const div = document.createElement('div');
+      div.className = 'rgsvg-controls';
+      this.controlsEl = div;
       div.style.cssText =
           `position:absolute;bottom:${this.controlsMargin}px;left:${this.controlsMargin}px;` +
           `display:flex;gap:5px;z-index:5;`;
@@ -1005,6 +1010,22 @@ class RoomGridSVG {
           mk('+',    () => this.zoomIn())
       );
       this.container.appendChild(div);
+
+      // Keep the overlay from covering the map when the panel is small:
+      // re-evaluate the compact/normal mode whenever the container resizes.
+      this._applyControlsMode();
+      if (typeof ResizeObserver !== 'undefined' && !this._controlsRO) {
+          this._controlsRO = new ResizeObserver(() => this._applyControlsMode());
+          this._controlsRO.observe(this.container);
+      }
+  }
+
+  // Apply the size-driven controls mode (see RoomGridSVG.controlsModeForSize).
+  _applyControlsMode() {
+      if (!this.controlsEl) return;
+      const mode = RoomGridSVG.controlsModeForSize(
+          this.container.clientWidth, this.container.clientHeight);
+      this.controlsEl.className = 'rgsvg-controls ' + mode;
   }
 }
 
@@ -1045,3 +1066,17 @@ RoomGridSVG.prototype._serviceFor = function (tags) {
   }
   return null;
 };
+
+// ── Responsive controls mode ──────────────────────────────────────────────────
+// The fit/zoom controls are a fixed-pixel overlay while the map SVG scales to
+// fit its container. On a small map panel the full-size buttons cover too much
+// of the map, so below these thresholds the overlay switches to a compact,
+// translucent-at-rest treatment (full opacity on hover/focus). Pure function so
+// the threshold is unit-testable without a DOM.
+RoomGridSVG.controlsModeForSize = function (w, h) {
+  return (w < 240 || h < 180) ? 'compact' : 'normal';
+};
+
+// Test/diagnostic export — harmless in the browser (RoomGridSVG is already a
+// classic-script global); lets the Node harness reach the static above.
+if (typeof window !== 'undefined') { window.RoomGridSVG = RoomGridSVG; }
