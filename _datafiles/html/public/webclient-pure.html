@@ -948,9 +948,35 @@
 
                     list.appendChild(tRow);
                 }
-            } else {
-                // triggers — Phase 3+
-                makeEmptyMsg("Coming soon.");
+            } else if (autoActiveTab === 'triggers') {
+                if (!a || !a.triggers || !a.triggers.length) {
+                    makeEmptyMsg("No triggers configured.");
+                    return;
+                }
+                for (var tri = 0; tri < a.triggers.length; tri++) {
+                    var trig = a.triggers[tri];
+                    var trRow = document.createElement("div");
+                    trRow.className = "auto-row";
+                    trRow.dataset.autoType = "trigger";
+                    trRow.dataset.autoId   = String(trig.id);
+                    trRow.dataset.autoKey  = String(trig.id);
+
+                    var trTog = document.createElement("span");
+                    trTog.className = "auto-tog" + (trig.enabled ? " on" : "");
+                    trRow.appendChild(trTog);
+
+                    var trName = document.createElement("span");
+                    trName.className = "name";
+                    trName.textContent = trig.name || "";
+                    trRow.appendChild(trName);
+
+                    var trSum = document.createElement("span");
+                    trSum.className = "sum";
+                    trSum.textContent = (trig.pattern || "") + (trig.enabled ? "" : " (off)");
+                    trRow.appendChild(trSum);
+
+                    list.appendChild(trRow);
+                }
             }
         }
 
@@ -965,6 +991,97 @@
                 tickTimers[t.id] = setInterval(function() {
                     cmds.split(";").forEach(function(c) { c = c.trim(); if (c) SendData(c); });
                 }, t.intervalSec * 1000);
+            });
+        }
+
+        /////////////////////////////////////////////
+        //
+        // Trigger Engine — stream tap + wildcard match + condition eval + fire
+        //
+        /////////////////////////////////////////////
+
+        // Strip ANSI/escape sequences for trigger matching.
+        function stripAnsi(s) { return String(s).replace(/\x1b\[[0-9;?]*[A-Za-z]/g, "").replace(/\x1b\][^\x07]*\x07/g, ""); }
+
+        // Compile a "*"-wildcard pattern to a regex with capture groups.
+        // Escape every regex metacharacter EXCEPT "*", then turn "*" into a
+        // non-greedy capture group. Literal spaces stay literal (a pattern like
+        // "* tells you '*'" must match real spaces, and only the "*"s become
+        // $1..$n captures).
+        function compileTriggerPattern(pat) {
+            var esc = String(pat).replace(/[.+?^${}()|[\]\\]/g, "\\$&");
+            esc = esc.replace(/\*/g, "(.*?)");
+            try { return new RegExp(esc); } catch (e) { return null; }
+        }
+
+        function availablePct(cur, mx, reserved) {
+            var avail = Math.max(1, (mx || 0) - (reserved || 0));
+            return (Number(cur) || 0) / avail * 100;
+        }
+
+        function evalTriggerCondition(cond, caps) {
+            if (!cond) return true;
+            var a = (GMCPStructs["Char"] || {});
+            var v = (cond.values && cond.values[0]) || "";
+            if (cond.sourceKind === "pool") {
+                var vit = a.Vitals || {};
+                var pct = cond.sourceKey === "hp" ? availablePct(vit.hp, vit.hp_max, vit.hp_reserved)
+                        : cond.sourceKey === "sp" ? availablePct(vit.stamina, vit.stamina_max, vit.stamina_reserved)
+                        : availablePct(vit.conviction, vit.conviction_max, vit.conviction_reserved);
+                var n = parseFloat(v) || 0;
+                return cond.op === "below" ? pct < n : cond.op === "above" ? pct > n : Math.round(pct) === Math.round(n);
+            }
+            if (cond.sourceKind === "status") {
+                var has = (a.Conditions || []).some(function(c){ return c && String(c.type).toLowerCase() === v.toLowerCase(); });
+                return cond.op === "exclude" ? !has : has;
+            }
+            if (cond.sourceKind === "capture") {
+                var idx = parseInt(String(cond.sourceKey).replace("$",""), 10) || 0;
+                var capv = caps[idx] || "";
+                return cond.op === "contains" ? capv.toLowerCase().indexOf(v.toLowerCase()) >= 0 : capv.toLowerCase() === v.toLowerCase();
+            }
+            if (cond.sourceKind === "target") {
+                var eng = (a.Enemies || []).filter(function(e){ return e && e.engaged; })[0];
+                var name = eng ? String(eng.name).toLowerCase() : "";
+                var list = (cond.values || []).map(function(s){ return String(s).toLowerCase().trim(); });
+                var inList = !!name && list.indexOf(name) >= 0;
+                return cond.op === "notoneof" ? !inList : inList;
+            }
+            if (cond.sourceKind === "cooldown") {
+                // Kick/trip/bash/grapple/any spell/rally/warcry/taunt all share ONE
+                // cooldown ("special-move"). Ready == that tag is absent from the live map.
+                var cds = (((GMCPStructs["Commands"] || {}).State) || {}).cooldowns || {};
+                var ready = !cds["special-move"];
+                return cond.op === "notready" ? !ready : ready;
+            }
+            return true;
+        }
+
+        var triggerLastFire = {};   // id -> last fire ms (cooldown)
+        var TRIGGER_MIN_INTERVAL_MS = 1000; // per-trigger floor (runaway guard)
+
+        function fireTriggerCommands(cmds, caps) {
+            String(cmds || "").split(";").forEach(function(c){
+                c = c.trim();
+                if (!c) return;
+                c = c.replace(/\$([0-9])/g, function(_, d){ return caps[parseInt(d,10)] || ""; });
+                SendData(c);
+            });
+        }
+
+        function runTriggers(line, nowMs) {
+            var a = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
+            if (!a || !a.triggers) return;
+            a.triggers.forEach(function(t){
+                if (!t.enabled || !t.pattern) return;
+                var re = compileTriggerPattern(t.pattern);
+                if (!re) return;
+                var m = re.exec(line);
+                if (!m) return;
+                if (triggerLastFire[t.id] && (nowMs - triggerLastFire[t.id]) < TRIGGER_MIN_INTERVAL_MS) return; // cooldown
+                triggerLastFire[t.id] = nowMs;
+                var ok = evalTriggerCondition(t.condition, m); // m[1..n] are captures
+                fireTriggerCommands(ok ? t.thenCmds : t.elseCmds, m);
             });
         }
 
@@ -998,6 +1115,32 @@
                     e.stopPropagation();
                     return;
                 }
+                // ── Trigger enable toggle ─────────────────────────────────────
+                var trRow = togTarget.closest(".auto-row[data-auto-type='trigger']");
+                if (trRow) {
+                    var trid = parseInt(trRow.dataset.autoId, 10);
+                    var trAutomation = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
+                    var tTrig = null;
+                    if (trAutomation && trAutomation.triggers) {
+                        for (var tri = 0; tri < trAutomation.triggers.length; tri++) {
+                            if (trAutomation.triggers[tri].id === trid) { tTrig = trAutomation.triggers[tri]; break; }
+                        }
+                    }
+                    if (tTrig) {
+                        SendGMCP("Char.Automation.Set", {
+                            kind: "trigger",
+                            id: tTrig.id,
+                            name: tTrig.name,
+                            pattern: tTrig.pattern,
+                            condition: tTrig.condition || null,
+                            thenCmds: tTrig.thenCmds,
+                            elseCmds: tTrig.elseCmds || "",
+                            enabled: !tTrig.enabled
+                        });
+                    }
+                    e.stopPropagation();
+                    return;
+                }
             }
 
             // ── Tick fire-now (click anywhere else on the row) ───────────────
@@ -1005,6 +1148,26 @@
             if (tickRow) {
                 var cmds = tickRow.dataset.autoCmd || "";
                 cmds.split(";").forEach(function(c) { c = c.trim(); if (c) SendData(c); });
+                return;
+            }
+
+            // ── Trigger test-fire (click anywhere else on the row) ────────────
+            var trigRow = e.target.closest(".auto-row[data-auto-type='trigger']");
+            if (trigRow) {
+                var trfid = parseInt(trigRow.dataset.autoId, 10);
+                var trfAutomation = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
+                var trfTrig = null;
+                if (trfAutomation && trfAutomation.triggers) {
+                    for (var fi = 0; fi < trfAutomation.triggers.length; fi++) {
+                        if (trfAutomation.triggers[fi].id === trfid) { trfTrig = trfAutomation.triggers[fi]; break; }
+                    }
+                }
+                if (trfTrig) {
+                    // Test-fire: evaluate condition against live state with empty captures
+                    var emptyCaps = [];
+                    var ok = evalTriggerCondition(trfTrig.condition, emptyCaps);
+                    fireTriggerCommands(ok ? trfTrig.thenCmds : trfTrig.elseCmds, emptyCaps);
+                }
                 return;
             }
 
@@ -1573,6 +1736,10 @@
 
                 // Otherwise, just write to terminal
                 term.write(event.data);
+                // Tap text stream for trigger matching (read-only copy; does not affect terminal output)
+                try {
+                    stripAnsi(event.data).split(/\r?\n/).forEach(function(line){ if (line) runTriggers(line, Date.now()); });
+                } catch (e) { /* never let trigger matching break terminal output */ }
             };
 
             socket.onerror = function(error) {
@@ -2703,6 +2870,283 @@
                 return null;
             }
 
+            // Lookup a trigger by id from GMCPStructs (returns null if not found)
+            function findTrigger(id) {
+                var a = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
+                if (!a || !a.triggers) return null;
+                for (var i = 0; i < a.triggers.length; i++) {
+                    if (a.triggers[i].id === id) return a.triggers[i];
+                }
+                return null;
+            }
+
+            // ── Trigger editor (progressive if/else builder) ───────────────
+
+            function openTriggerEditor(editingId, prefillName, prefillPattern, prefillCondition, prefillThenCmds, prefillElseCmds, prefillEnabled) {
+                var body = document.createElement("div");
+                body.style.cssText = "display:flex;flex-direction:column;gap:10px;";
+
+                // Name input
+                var nameInput = document.createElement("input");
+                nameInput.type = "text";
+                nameInput.value = prefillName || "";
+                nameInput.placeholder = "e.g. Auto-heal on low HP";
+                body.appendChild(makeField("Name", nameInput));
+
+                // Pattern input
+                var patInput = document.createElement("input");
+                patInput.type = "text";
+                patInput.value = prefillPattern || "";
+                patInput.placeholder = "e.g. *You are badly wounded* (* becomes $1, $2…)";
+                body.appendChild(makeField("When I see (pattern)", patInput));
+
+                // ── Do section ────────────────────────────────────────────────
+                var doSection = document.createElement("div");
+                doSection.style.cssText = "display:flex;flex-direction:column;gap:6px;border:1px solid #3a2a18;border-radius:4px;padding:8px;";
+
+                var doLabel = document.createElement("div");
+                doLabel.textContent = "Do";
+                doLabel.style.cssText = "font-family:Georgia,serif;font-size:0.82em;color:#c8b98a;font-weight:bold;margin-bottom:2px;";
+                doSection.appendChild(doLabel);
+
+                // Simple ThenCmds textarea (shown when no clause)
+                var simpleThenArea = document.createElement("textarea");
+                simpleThenArea.value = prefillThenCmds || "";
+                simpleThenArea.placeholder = "Commands to run (semicolon-separated, $1 $2… for captures)";
+                simpleThenArea.rows = 3;
+                doSection.appendChild(simpleThenArea);
+
+                // If/else clause container (hidden by default until "+ Add ▾" clicked)
+                var clauseWrap = document.createElement("div");
+                clauseWrap.style.display = "none";
+                clauseWrap.style.cssText = "display:none;flex-direction:column;gap:6px;border-top:1px solid #3a2a18;padding-top:6px;margin-top:2px;";
+
+                // Source select
+                var sourceRow = document.createElement("div");
+                sourceRow.style.cssText = "display:flex;align-items:center;gap:6px;flex-wrap:wrap;";
+                var ifLabel = document.createElement("span");
+                ifLabel.textContent = "If";
+                ifLabel.style.cssText = "font-family:Georgia,serif;font-size:0.82em;color:#c8b98a;";
+                sourceRow.appendChild(ifLabel);
+
+                var srcSelect = document.createElement("select");
+                var srcOptions = [
+                    {v:"pool:hp",       l:"my HP %"},
+                    {v:"pool:sp",       l:"my SP %"},
+                    {v:"pool:cp",       l:"my CP %"},
+                    {v:"status:",       l:"my conditions"},
+                    {v:"capture:$1",    l:"capture $1"},
+                    {v:"capture:$2",    l:"capture $2"},
+                    {v:"target:",       l:"my target"},
+                    {v:"cooldown:",     l:"the ability cooldown"}
+                ];
+                srcOptions.forEach(function(o) {
+                    var opt = document.createElement("option");
+                    opt.value = o.v;
+                    opt.textContent = o.l;
+                    srcSelect.appendChild(opt);
+                });
+                sourceRow.appendChild(srcSelect);
+
+                var opSelect = document.createElement("select");
+                sourceRow.appendChild(opSelect);
+
+                var valInput = document.createElement("input");
+                valInput.type = "text";
+                valInput.placeholder = "value";
+                valInput.style.cssText = "width:90px;";
+                sourceRow.appendChild(valInput);
+
+                clauseWrap.appendChild(sourceRow);
+
+                // Op options per source kind
+                var opsByKind = {
+                    "pool":     [{v:"below",    l:"below %"}, {v:"above",    l:"above %"}, {v:"equals",  l:"equals %"}],
+                    "status":   [{v:"include",  l:"includes"}, {v:"exclude", l:"excludes"}],
+                    "capture":  [{v:"equals",   l:"equals"},   {v:"contains",l:"contains"}],
+                    "target":   [{v:"oneof",    l:"is one of"}, {v:"notoneof",l:"is not one of"}],
+                    "cooldown": [{v:"ready",    l:"is ready"}, {v:"notready",l:"is not ready"}]
+                };
+
+                function rebuildOps(kind) {
+                    while (opSelect.firstChild) opSelect.removeChild(opSelect.firstChild);
+                    var opts = opsByKind[kind] || opsByKind["pool"];
+                    opts.forEach(function(o) {
+                        var opt = document.createElement("option");
+                        opt.value = o.v;
+                        opt.textContent = o.l;
+                        opSelect.appendChild(opt);
+                    });
+                    // Update value input. Cooldown is the single shared "special-move"
+                    // timer — it needs no value, so hide the input for that kind.
+                    valInput.style.display = (kind === "cooldown") ? "none" : "";
+                    if (kind === "pool") {
+                        valInput.type = "number";
+                        valInput.placeholder = "0–100";
+                    } else if (kind === "target") {
+                        valInput.type = "text";
+                        valInput.placeholder = "goblin, orc (comma list)";
+                    } else {
+                        valInput.type = "text";
+                        valInput.placeholder = "value";
+                    }
+                }
+
+                srcSelect.addEventListener("change", function() {
+                    var parts = srcSelect.value.split(":");
+                    rebuildOps(parts[0]);
+                });
+
+                // Then / Else textareas (inside clause)
+                var thenArea = document.createElement("textarea");
+                thenArea.placeholder = "Then: commands (semicolon-separated)";
+                thenArea.rows = 2;
+
+                var elseArea = document.createElement("textarea");
+                elseArea.placeholder = "Else: commands (optional)";
+                elseArea.rows = 2;
+
+                clauseWrap.appendChild(makeField("Then", thenArea));
+                clauseWrap.appendChild(makeField("Else (optional)", elseArea));
+
+                // ✕ remove clause button
+                var removeClauseBtn = document.createElement("button");
+                removeClauseBtn.type = "button";
+                removeClauseBtn.textContent = "✕ Remove condition";
+                removeClauseBtn.style.cssText = "align-self:flex-start;background:none;border:1px solid #5a3a18;color:#c8b98a;cursor:pointer;border-radius:3px;padding:2px 8px;font-size:0.8em;";
+                removeClauseBtn.addEventListener("click", function() {
+                    // Preserve any Then commands typed in the clause back into the simple area.
+                    simpleThenArea.value = thenArea.value;
+                    clauseWrap.style.display = "none";
+                    addClauseBtn.style.display = "";
+                    simpleThenArea.style.display = "";
+                });
+                clauseWrap.appendChild(removeClauseBtn);
+
+                doSection.appendChild(clauseWrap);
+
+                // "+ Add ▾" button
+                var addClauseBtn = document.createElement("button");
+                addClauseBtn.type = "button";
+                addClauseBtn.textContent = "+ Add condition (if/else)";
+                addClauseBtn.style.cssText = "align-self:flex-start;background:none;border:1px solid #5a3a18;color:#c8b98a;cursor:pointer;border-radius:3px;padding:2px 10px;font-size:0.8em;margin-top:2px;";
+                addClauseBtn.addEventListener("click", function() {
+                    // Move then commands from simple area to the clause then area
+                    if (!thenArea.value && simpleThenArea.value) {
+                        thenArea.value = simpleThenArea.value;
+                    }
+                    simpleThenArea.style.display = "none";
+                    addClauseBtn.style.display = "none";
+                    clauseWrap.style.display = "";
+                    clauseWrap.style.cssText = "display:flex;flex-direction:column;gap:6px;border-top:1px solid #3a2a18;padding-top:6px;margin-top:2px;";
+                    rebuildOps("pool");
+                });
+                doSection.appendChild(addClauseBtn);
+                body.appendChild(doSection);
+
+                // Enabled toggle
+                var enableWrap = document.createElement("div");
+                enableWrap.style.cssText = "display:flex;align-items:center;gap:8px;";
+                var enableTog = document.createElement("span");
+                var enabledState = (prefillEnabled !== false);
+                enableTog.className = "auto-tog" + (enabledState ? " on" : "");
+                enableTog.style.cursor = "pointer";
+                enableTog.addEventListener("click", function() {
+                    enabledState = !enabledState;
+                    enableTog.classList.toggle("on", enabledState);
+                });
+                var enableLbl = document.createElement("span");
+                enableLbl.textContent = "Enabled";
+                enableLbl.style.cssText = "font-family:Georgia,serif;font-size:0.85em;color:#c8b98a;";
+                enableWrap.appendChild(enableTog);
+                enableWrap.appendChild(enableLbl);
+                body.appendChild(enableWrap);
+
+                // Pre-fill from existing condition if provided
+                var hasCondition = !!(prefillCondition && prefillCondition.sourceKind);
+                if (hasCondition) {
+                    var cond = prefillCondition;
+                    // Map condition back to source select value
+                    var srcVal = cond.sourceKind === "pool"     ? ("pool:" + (cond.sourceKey || "hp"))
+                               : cond.sourceKind === "status"   ? "status:"
+                               : cond.sourceKind === "capture"  ? ("capture:" + (cond.sourceKey || "$1"))
+                               : cond.sourceKind === "target"   ? "target:"
+                               : cond.sourceKind === "cooldown" ? "cooldown:"
+                               : "pool:hp";
+                    srcSelect.value = srcVal;
+                    rebuildOps(cond.sourceKind);
+                    opSelect.value = cond.op || "";
+                    valInput.value = (cond.values && cond.values.length) ? cond.values.join(", ") : "";
+                    // Pre-fill then/else
+                    thenArea.value  = prefillThenCmds  || "";
+                    elseArea.value  = prefillElseCmds  || "";
+                    simpleThenArea.value = "";
+                    // Show clause, hide simple
+                    simpleThenArea.style.display = "none";
+                    addClauseBtn.style.display = "none";
+                    clauseWrap.style.display = "";
+                    clauseWrap.style.cssText = "display:flex;flex-direction:column;gap:6px;border-top:1px solid #3a2a18;padding-top:6px;margin-top:2px;";
+                } else {
+                    // No condition — simple mode
+                    simpleThenArea.value = prefillThenCmds || "";
+                    rebuildOps("pool"); // default ops loaded for if clause opens later
+                }
+
+                var title = editingId ? "Edit Trigger" : "New Trigger";
+                openAutoModal(title, body, function() {
+                    var name = nameInput.value.trim();
+                    if (!name) { alert("Trigger name cannot be empty."); return; }
+                    var pattern = patInput.value.trim();
+                    if (!pattern) { alert("Pattern cannot be empty."); return; }
+
+                    var clauseVisible = clauseWrap.style.display !== "none";
+                    var condition = null;
+                    var finalThenCmds = "";
+                    var finalElseCmds = "";
+
+                    if (clauseVisible) {
+                        // Build condition from selects
+                        var srcParts = srcSelect.value.split(":");
+                        var srcKind = srcParts[0];
+                        var srcKey  = srcParts[1] || "";
+                        var op      = opSelect.value;
+                        var rawVal  = valInput.value.trim();
+                        var values  = [];
+                        if (srcKind === "cooldown") {
+                            values = []; // shared cooldown — no value needed
+                        } else if (srcKind === "target") {
+                            // comma-separated list
+                            values = rawVal.split(",").map(function(s){ return s.trim(); }).filter(Boolean);
+                        } else {
+                            values = rawVal ? [rawVal] : [];
+                        }
+                        condition = {
+                            sourceKind: srcKind,
+                            sourceKey:  srcKey,
+                            op:         op,
+                            values:     values
+                        };
+                        finalThenCmds = thenArea.value.trim();
+                        finalElseCmds = elseArea.value.trim();
+                    } else {
+                        // Simple: thenCmds from simple area, no condition, no elseCmds
+                        finalThenCmds = simpleThenArea.value.trim();
+                        finalElseCmds = "";
+                    }
+
+                    SendGMCP("Char.Automation.Set", {
+                        kind:      "trigger",
+                        id:        editingId || 0,
+                        name:      name,
+                        pattern:   pattern,
+                        condition: condition,
+                        thenCmds:  finalThenCmds,
+                        elseCmds:  finalElseCmds,
+                        enabled:   enabledState
+                    });
+                });
+            }
+
             // ── Public action handlers (called by context menu + "+ New") ──
 
             // Edit: open pre-filled editor
@@ -2717,6 +3161,12 @@
                     var t = isNaN(tid) ? null : findTick(tid);
                     if (t) {
                         openTickEditor(t.id, t.name, t.commands, t.intervalSec, t.enabled);
+                    }
+                } else if (type === "trigger") {
+                    var trid = parseInt(key, 10);
+                    var tr = isNaN(trid) ? null : findTrigger(trid);
+                    if (tr) {
+                        openTriggerEditor(tr.id, tr.name, tr.pattern, tr.condition || null, tr.thenCmds, tr.elseCmds || "", tr.enabled);
                     }
                 }
             };
@@ -2738,6 +3188,13 @@
                         // id=0 → server creates new tick
                         openTickEditor(0, t.name, t.commands, t.intervalSec, t.enabled);
                     }
+                } else if (type === "trigger") {
+                    var trid = parseInt(key, 10);
+                    var tr = isNaN(trid) ? null : findTrigger(trid);
+                    if (tr) {
+                        // id=0 → server creates new trigger
+                        openTriggerEditor(0, tr.name, tr.pattern, tr.condition || null, tr.thenCmds, tr.elseCmds || "", tr.enabled);
+                    }
                 }
             };
 
@@ -2753,6 +3210,11 @@
                     if (!isNaN(tid)) {
                         SendGMCP("Char.Automation.Remove", { kind: "tick", id: tid });
                     }
+                } else if (type === "trigger") {
+                    var trid = parseInt(key, 10);
+                    if (!isNaN(trid)) {
+                        SendGMCP("Char.Automation.Remove", { kind: "trigger", id: trid });
+                    }
                 }
                 // Server pushes updated Char.Automation → renderAutomation() fires
             };
@@ -2767,16 +3229,8 @@
                     openAliasEditor("", "");
                 } else if (autoActiveTab === "ticks") {
                     openTickEditor(0, "", "", 30, true);
-                } else {
-                    // triggers — Phase 3+
-                    var msg = document.createElement("div");
-                    msg.style.cssText = "padding:12px;font-family:Georgia,serif;font-style:italic;" +
-                                        "color:#9a8a6a;text-align:center;";
-                    msg.textContent = "Coming soon in a later phase.";
-                    openAutoModal("Not yet available", msg, null);
-                    // Override Save to just close
-                    var saveBtn = document.querySelector(".auto-modal-save");
-                    if (saveBtn) saveBtn.textContent = "OK";
+                } else if (autoActiveTab === "triggers") {
+                    openTriggerEditor(0, "", "", null, "", "", true);
                 }
             });
 

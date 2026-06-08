@@ -366,15 +366,31 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 			}
 
 		case `Char.Automation.Set`:
-			var decoded struct {
+			// Peek the kind, then unmarshal the payload into the matching type.
+			var kindOnly struct {
 				Kind string `json:"kind"`
-				users.UserTick
 			}
-			if err := json.Unmarshal(payload, &decoded); err == nil && decoded.Kind == `tick` {
-				if uid := userIdForConnection(connectionId); uid > 0 {
-					if u := users.GetByUserId(uid); u != nil {
-						u.SetTick(decoded.UserTick)
-						events.AddToQueue(events.AutomationChanged{UserId: uid})
+			if err := json.Unmarshal(payload, &kindOnly); err == nil {
+				switch kindOnly.Kind {
+				case `tick`:
+					var decoded users.UserTick
+					if err := json.Unmarshal(payload, &decoded); err == nil {
+						if uid := userIdForConnection(connectionId); uid > 0 {
+							if u := users.GetByUserId(uid); u != nil {
+								u.SetTick(decoded)
+								events.AddToQueue(events.AutomationChanged{UserId: uid})
+							}
+						}
+					}
+				case `trigger`:
+					var decoded users.UserTrigger
+					if err := json.Unmarshal(payload, &decoded); err == nil {
+						if uid := userIdForConnection(connectionId); uid > 0 {
+							if u := users.GetByUserId(uid); u != nil {
+								u.SetTrigger(decoded)
+								events.AddToQueue(events.AutomationChanged{UserId: uid})
+							}
+						}
 					}
 				}
 			}
@@ -383,11 +399,17 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 				Kind string `json:"kind"`
 				Id   int    `json:"id"`
 			}
-			if err := json.Unmarshal(payload, &decoded); err == nil && decoded.Kind == `tick` {
+			if err := json.Unmarshal(payload, &decoded); err == nil {
 				if uid := userIdForConnection(connectionId); uid > 0 {
 					if u := users.GetByUserId(uid); u != nil {
-						u.RemoveTick(decoded.Id)
-						events.AddToQueue(events.AutomationChanged{UserId: uid})
+						switch decoded.Kind {
+						case `tick`:
+							u.RemoveTick(decoded.Id)
+							events.AddToQueue(events.AutomationChanged{UserId: uid})
+						case `trigger`:
+							u.RemoveTrigger(decoded.Id)
+							events.AddToQueue(events.AutomationChanged{UserId: uid})
+						}
 					}
 				}
 			}

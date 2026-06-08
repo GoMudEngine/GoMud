@@ -24,3 +24,22 @@ func TestUserTicks_SetAssignsIdAndUpdates(t *testing.T) {
 		}
 	}
 }
+
+func TestUserTriggers_SetAssignsIdAndUpdates(t *testing.T) {
+	u := &UserRecord{}
+	a := u.SetTrigger(UserTrigger{Name: "heal", Pattern: "*bleeding*", ThenCmds: "cast heal", Enabled: true})
+	if a.Id == 0 || len(u.Triggers) != 1 {
+		t.Fatalf("create failed: %+v", u.Triggers)
+	}
+	a.Name = "heal2"
+	u.SetTrigger(a)
+	if len(u.Triggers) != 1 || u.Triggers[0].Name != "heal2" {
+		t.Fatalf("update dup: %+v", u.Triggers)
+	}
+	u.RemoveTrigger(a.Id)
+	for _, tr := range u.Triggers {
+		if tr.Id == a.Id {
+			t.Fatalf("remove failed")
+		}
+	}
+}

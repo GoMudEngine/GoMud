@@ -63,7 +63,7 @@ tabbed-grid + right-click-action + GMCP-driven pattern is the template here.
    see" pattern → commands). A **"+ Add ▾" dropdown** inserts the optional
    if/else clause. The dropdown's greyed entries (Highlight, Play sound, extra
    conditions) are the documented Tier-2 seam.
-8. **Trigger condition sources (4 kinds);** operator + value adapt to the kind:
+8. **Trigger condition sources (5 kinds);** operator + value adapt to the kind:
    - **Live pool** — my HP% / SP% / CP% → `is below / above / equals` → a
      **percent** (never a raw number).
    - **Condition/status** — my conditions → `include / exclude` → a status name
@@ -72,6 +72,16 @@ tabbed-grid + right-click-action + GMCP-driven pattern is the template here.
    - **Pattern capture** — `$1`, `$2`… → `equals / contains` → text.
    - **Target** — my target → `is one of / is not one of` → a **list** of
      names, **OR semantics** (match any; never AND).
+   - **Ability cooldown** — the (single, shared) ability cooldown →
+     `is ready / is not ready` → **no value**. Kick/trip/bash/grapple/any
+     spell/rally/warcry/taunt all share ONE cooldown (`special-move`); the
+     engine checks that tag in the `Commands.State.cooldowns` GMCP map (ready ==
+     absent). Qualitative, no-hard-numbers. (Added Phase 3 on user request; the
+     deliberate shared-cooldown design forces real tradeoff choices.) Potions
+     are NOT gated by it. The cooldown-gated **action queue** is Phase 4.
+   - **"Do nothing" branch:** leaving the Then **or** Else command box empty =
+     fire nothing for that branch (already the natural behavior — the fire path
+     skips empty commands). Only Name + Pattern are required to save a trigger.
 9. **Pool % is measured against the AVAILABLE (unreserved) pool:**
    `pct = current ÷ (maxTotal − reserved) × 100`. This reflects usable health
    the player can actually act on, matches the usable part of the vitals bar,

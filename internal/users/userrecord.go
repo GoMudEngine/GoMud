@@ -39,6 +39,7 @@ type UserRecord struct {
 	Macros         map[string]string     `yaml:"macros,omitempty"`  // Up to 10 macros, just string commands.
 	Aliases        map[string]string     `yaml:"aliases,omitempty"` // string=>string remapping of commands
 	Ticks          []UserTick            `yaml:"ticks,omitempty"`   // client-run interval timers (web automation panel)
+	Triggers       []UserTrigger         `yaml:"triggers,omitempty"`  // client-run text-pattern automation (web automation panel)
 	Character      *characters.Character `yaml:"character,omitempty"`
 	ItemStorage    Storage               `yaml:"itemstorage,omitempty"`
 	ConfigOptions  map[string]any        `yaml:"configoptions,omitempty"`
@@ -108,6 +109,64 @@ func (u *UserRecord) RemoveTick(id int) {
 	for i := range u.Ticks {
 		if u.Ticks[i].Id == id {
 			u.Ticks = append(u.Ticks[:i], u.Ticks[i+1:]...)
+			return
+		}
+	}
+}
+
+// TriggerCondition is the optional single if/else gate on a UserTrigger.
+// Open for Tier-2 without breaking v1. SourceKind: "pool"|"status"|"capture"|"target".
+// SourceKey: pool->"hp"/"sp"/"cp", capture->"$1"/"$2", else "". Op:
+// below|above|equals|contains|include|exclude|oneof|notoneof. Values: single for
+// pool/capture/status; list (OR) for target oneof/notoneof.
+type TriggerCondition struct {
+	SourceKind string   `yaml:"sourcekind" json:"sourceKind"`
+	SourceKey  string   `yaml:"sourcekey,omitempty" json:"sourceKey,omitempty"`
+	Op         string   `yaml:"op" json:"op"`
+	Values     []string `yaml:"values" json:"values"`
+}
+
+// UserTrigger is a wildcard text pattern that fires commands (optionally gated by
+// one condition) when matched against incoming game text. Executed client-side.
+type UserTrigger struct {
+	Id        int               `yaml:"id" json:"id"`
+	Name      string            `yaml:"name" json:"name"`
+	Pattern   string            `yaml:"pattern" json:"pattern"`
+	Condition *TriggerCondition `yaml:"condition,omitempty" json:"condition,omitempty"`
+	ThenCmds  string            `yaml:"thencmds" json:"thenCmds"`
+	ElseCmds  string            `yaml:"elsecmds,omitempty" json:"elseCmds,omitempty"`
+	Enabled   bool              `yaml:"enabled" json:"enabled"`
+}
+
+// SetTrigger creates (Id==0 → next id, append) or updates (matching Id) a trigger.
+// Returns the stored trigger.
+func (u *UserRecord) SetTrigger(t UserTrigger) UserTrigger {
+	if t.Id == 0 {
+		maxId := 0
+		for _, ex := range u.Triggers {
+			if ex.Id > maxId {
+				maxId = ex.Id
+			}
+		}
+		t.Id = maxId + 1
+		u.Triggers = append(u.Triggers, t)
+		return t
+	}
+	for i := range u.Triggers {
+		if u.Triggers[i].Id == t.Id {
+			u.Triggers[i] = t
+			return t
+		}
+	}
+	u.Triggers = append(u.Triggers, t)
+	return t
+}
+
+// RemoveTrigger deletes the trigger with the given id, if present.
+func (u *UserRecord) RemoveTrigger(id int) {
+	for i := range u.Triggers {
+		if u.Triggers[i].Id == id {
+			u.Triggers = append(u.Triggers[:i], u.Triggers[i+1:]...)
 			return
 		}
 	}

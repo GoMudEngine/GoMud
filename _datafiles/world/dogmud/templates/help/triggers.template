@@ -1,0 +1,101 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">triggers</ansi>
+
+A <ansi fg="command">trigger</ansi> watches incoming game text and runs one or
+more commands automatically when a line matches — with
+an optional condition to decide what to do.
+
+<ansi fg="yellow">How it works:</ansi>
+
+  When a line of text arrives from the game, each enabled
+  trigger checks whether the line matches its pattern. If
+  it does (and any condition is satisfied), the trigger
+  fires its commands — hands-free.
+
+  Triggers run only in the web client. Definitions save
+  to your account and sync across sessions.
+
+<ansi fg="yellow">Managing triggers:</ansi>
+
+  Triggers are created and managed in the
+  <ansi fg="command">Triggers &amp; Timers</ansi> panel — there is no typed
+  command for them.
+
+  <ansi fg="command">+ New</ansi>         Open the editor to create a trigger.
+  <ansi fg="command">Toggle</ansi>        Enable or disable a trigger without
+                 deleting it. Disabled triggers never fire.
+  <ansi fg="command">Left-click</ansi>    Test-fire the trigger's commands right now,
+                 once.
+  <ansi fg="command">Right-click</ansi>   Open the context menu to Edit, Duplicate,
+                 or Remove a trigger.
+
+<ansi fg="yellow">Patterns &amp; wildcards:</ansi>
+
+  A pattern is plain text with optional <ansi fg="command">*</ansi> wildcards.
+  Each <ansi fg="command">*</ansi> matches any run of characters and captures
+  what it matched into <ansi fg="command">$1</ansi>, <ansi fg="command">$2</ansi>, and so on, in the
+  order the wildcards appear.
+
+  You can use those captures inside your commands:
+
+    Pattern:  <ansi fg="command">* hits you for * damage.</ansi>
+    Command:  <ansi fg="command">say $1 just hit me!</ansi>
+
+  If the line <ansi fg="command">A troll hits you for heavy damage.</ansi>
+  matches, then <ansi fg="command">$1</ansi> is <ansi fg="command">A troll</ansi> and <ansi fg="command">$2</ansi> is <ansi fg="command">heavy</ansi>.
+
+  Separate multiple commands with a semicolon:
+
+    <ansi fg="command">cast heal;say Healing up!</ansi>
+
+<ansi fg="yellow">Optional condition (if/else):</ansi>
+
+  Each trigger may have one condition with a Then branch,
+  an Else branch, or both. An empty branch means: do
+  nothing for that outcome.
+
+  The condition has five sources:
+
+  <ansi fg="command">HP % / SP % / CP %</ansi>
+    Check your current usable pool percentage.
+    Operators: <ansi fg="command">is below</ansi>, <ansi fg="command">is above</ansi>, <ansi fg="command">equals</ansi>.
+    Value: a number from 0 to 100.
+
+    Pool percentages are measured against your
+    <ansi fg="command">usable (unreserved)</ansi> pool, not the full pool.
+    If half your health is reserved, "HP below 30%"
+    triggers at 30% of the remaining half — i.e. when
+    your usable health bar is below 30%, not the whole
+    bar.
+
+  <ansi fg="command">My conditions</ansi>
+    Check whether a status effect is active on you.
+    Operators: <ansi fg="command">includes</ansi>, <ansi fg="command">excludes</ansi>.
+    Value: a status name (e.g. <ansi fg="command">poisoned</ansi>, <ansi fg="command">bleeding</ansi>).
+
+  <ansi fg="command">A pattern capture</ansi>
+    Check the text captured by a wildcard (<ansi fg="command">$1</ansi>, <ansi fg="command">$2</ansi>...).
+    Operators: <ansi fg="command">equals</ansi>, <ansi fg="command">contains</ansi>.
+    Value: the text to compare against.
+
+  <ansi fg="command">My target</ansi>
+    Check the name of your current combat target.
+    Operators: <ansi fg="command">is one of</ansi>, <ansi fg="command">is not one of</ansi>.
+    Value: a comma-separated list of names. Matches
+    any name in the list.
+
+  <ansi fg="command">The ability cooldown</ansi>
+    Your special abilities — kick, trip, bash, grapple,
+    taunt, rally, warcry, and casting any spell — all share
+    one cooldown. This checks whether that shared cooldown
+    is free (no value to enter).
+    Operators: <ansi fg="command">is ready</ansi>, <ansi fg="command">is not ready</ansi>.
+    "Ready" means you are not currently on that cooldown.
+
+<ansi fg="yellow">Cooldown:</ansi>
+
+  After a trigger fires, it waits about one second
+  before it can fire again on the same incoming line.
+  This prevents a single matching line from looping
+  your commands.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help ticks</ansi>, <ansi fg="command">help macros</ansi>, <ansi fg="command">help alias</ansi>

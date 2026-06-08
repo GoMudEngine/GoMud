@@ -1,5 +1,24 @@
 # DOGMud Patch Notes
 
+## 2026-06-07 — Web client automation panel: Triggers
+
+The automation panel's **Triggers** tab is live — the panel's four tabs (Macros,
+Aliases, Ticks, Triggers) are now complete.
+
+- **Triggers** watch your game text and run command(s) when a pattern matches.
+  Use `*` wildcards to match anything; each `*` is captured as `$1`, `$2`, … for
+  use in the commands (e.g. pattern `* tells you '*'` → `reply got it, $1`).
+- **Optional if/else condition.** A trigger can branch on one condition:
+  your HP/SP/CP **percent** (measured against your *usable* pool), an active
+  **status/condition**, a **captured** value, your current **target**, or
+  whether your shared **ability cooldown** is ready. Leave a branch blank to do
+  nothing.
+- **Point-and-click builder** in the Triggers & Timers panel: + New, the if/else
+  builder, enable/disable toggle, left-click to test-fire, right-click to
+  Edit / Duplicate / Remove. Triggers run in the web client; definitions save to
+  your account. A short cooldown prevents a matching line from spamming.
+- See `help triggers` (and `help ticks`).
+
 ## 2026-06-07 — Web client automation panel: Ticks
 
 The automation panel's **Ticks** tab is now live.

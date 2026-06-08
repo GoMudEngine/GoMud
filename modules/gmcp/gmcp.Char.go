@@ -447,6 +447,10 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 			StaminaMax:    user.Character.StaminaMax.Value,
 			Conviction:    user.Character.Conviction,
 			ConvictionMax: user.Character.ConvictionMax.Value,
+
+			HpReserved:         user.Character.GetPoolReservation("health", user.Character.HealthMax.Value),
+			StaminaReserved:    user.Character.GetPoolReservation("stamina", user.Character.StaminaMax.Value),
+			ConvictionReserved: user.Character.GetPoolReservation("conviction", user.Character.ConvictionMax.Value),
 		}
 
 		if !all {
@@ -881,6 +885,10 @@ type GMCPCharModule_Payload_Vitals struct {
 	StaminaMax    int `json:"stamina_max,omitempty"`
 	Conviction    int `json:"conviction,omitempty"`
 	ConvictionMax int `json:"conviction_max,omitempty"`
+
+	HpReserved         int `json:"hp_reserved,omitempty"`
+	StaminaReserved    int `json:"stamina_reserved,omitempty"`
+	ConvictionReserved int `json:"conviction_reserved,omitempty"`
 }
 
 // /////////////////

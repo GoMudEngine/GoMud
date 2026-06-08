@@ -119,18 +119,19 @@ func (g GMCPAutomationModule) sendAutomation(userId int) {
 	events.AddToQueue(GMCPOut{
 		UserId:  userId,
 		Module:  `Char.Automation`,
-		Payload: buildAutomationPayload(user.Macros, user.Aliases, user.Ticks),
+		Payload: buildAutomationPayload(user.Macros, user.Aliases, user.Ticks, user.Triggers),
 	})
 }
 
 // buildAutomationPayload converts the user's macro and alias maps into the
 // stable, sorted GMCP payload structure.
-func buildAutomationPayload(macros map[string]string, aliases map[string]string, ticks []users.UserTick) GMCPAutomation_Payload {
+func buildAutomationPayload(macros map[string]string, aliases map[string]string, ticks []users.UserTick, triggers []users.UserTrigger) GMCPAutomation_Payload {
 
 	payload := GMCPAutomation_Payload{
-		Macros:  make([]GMCPAutomation_Macro, 0, len(macros)),
-		Aliases: make([]GMCPAutomation_Alias, 0, len(aliases)),
-		Ticks:   make([]GMCPAutomation_Tick, 0, len(ticks)),
+		Macros:   make([]GMCPAutomation_Macro, 0, len(macros)),
+		Aliases:  make([]GMCPAutomation_Alias, 0, len(aliases)),
+		Ticks:    make([]GMCPAutomation_Tick, 0, len(ticks)),
+		Triggers: make([]GMCPAutomation_Trigger, 0, len(triggers)),
 	}
 
 	macroKeys := make([]string, 0, len(macros))
@@ -167,6 +168,26 @@ func buildAutomationPayload(macros map[string]string, aliases map[string]string,
 		})
 	}
 
+	for _, tr := range triggers {
+		gt := GMCPAutomation_Trigger{
+			Id:       tr.Id,
+			Name:     tr.Name,
+			Pattern:  tr.Pattern,
+			ThenCmds: tr.ThenCmds,
+			ElseCmds: tr.ElseCmds,
+			Enabled:  tr.Enabled,
+		}
+		if tr.Condition != nil {
+			gt.Condition = &GMCPAutomation_Condition{
+				SourceKind: tr.Condition.SourceKind,
+				SourceKey:  tr.Condition.SourceKey,
+				Op:         tr.Condition.Op,
+				Values:     tr.Condition.Values,
+			}
+		}
+		payload.Triggers = append(payload.Triggers, gt)
+	}
+
 	return payload
 }
 
@@ -191,9 +212,26 @@ type GMCPAutomation_Tick struct {
 	Enabled     bool   `json:"enabled"`
 }
 
+type GMCPAutomation_Condition struct {
+	SourceKind string   `json:"sourceKind"`
+	SourceKey  string   `json:"sourceKey,omitempty"`
+	Op         string   `json:"op"`
+	Values     []string `json:"values"`
+}
+
+type GMCPAutomation_Trigger struct {
+	Id        int                       `json:"id"`
+	Name      string                    `json:"name"`
+	Pattern   string                    `json:"pattern"`
+	Condition *GMCPAutomation_Condition `json:"condition,omitempty"`
+	ThenCmds  string                    `json:"thenCmds"`
+	ElseCmds  string                    `json:"elseCmds,omitempty"`
+	Enabled   bool                      `json:"enabled"`
+}
+
 type GMCPAutomation_Payload struct {
-	Macros  []GMCPAutomation_Macro `json:"macros"`
-	Aliases []GMCPAutomation_Alias `json:"aliases"`
-	Ticks   []GMCPAutomation_Tick  `json:"ticks"`
-	// Triggers added in Phase 3.
+	Macros   []GMCPAutomation_Macro   `json:"macros"`
+	Aliases  []GMCPAutomation_Alias   `json:"aliases"`
+	Ticks    []GMCPAutomation_Tick    `json:"ticks"`
+	Triggers []GMCPAutomation_Trigger `json:"triggers"`
 }
