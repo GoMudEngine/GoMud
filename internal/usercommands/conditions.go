@@ -1,6 +1,8 @@
 package usercommands
 
 import (
+	"slices"
+
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
@@ -24,6 +26,17 @@ func Conditions(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	for _, buff := range charBuffs {
 
 		spec := buffs.GetBuffSpec(buff.BuffId)
+		if spec == nil {
+			continue
+		}
+
+		// Buffs that hide you (Empathic Shroud, the Hidden stealth state, etc.)
+		// are deliberately NOT shown: if you can't know who spotted you, you
+		// shouldn't be told you're hidden in the first place. Mirrors the
+		// no-end-message design on the hidden buff itself.
+		if slices.Contains(spec.Flags, buffs.Hidden) {
+			continue
+		}
 
 		roundsLeft, _ := buffs.GetDurations(buff, spec)
 

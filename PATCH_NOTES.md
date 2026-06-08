@@ -1,5 +1,13 @@
 # DOGMud Patch Notes
 
+## 2026-06-08 — Stealth no longer announces itself
+
+You're no longer told when you're hidden or when you stop being hidden — if you
+can't know who spotted you, you can't know you've been spotted. The `conditions`
+command no longer lists stealth effects (Hidden, Empathic Shroud), and Empathic
+Shroud no longer tells you when it lapses. Others in the room still see you slip
+into and out of the shadows.
+
 ## 2026-06-08 — Web client automation panel: action queue
 
 Triggers can now feed a shared **action queue** that respects your ability

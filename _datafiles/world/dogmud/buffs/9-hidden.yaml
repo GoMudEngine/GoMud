@@ -8,7 +8,8 @@ flags:
 start_user_text: "You feel sneaky."
 start_room_text: "{source_plain} disappears into the shadows."
 # Intentionally no end_user_text — if you can't know who spotted you,
-# you can't know you've been spotted. Players who care can check
-# conditions. The room observers still get the end_room_text since
-# from their POV the sneaker just visibly emerged.
+# you can't know you've been spotted. The conditions command also hides
+# stealth buffs (the `hidden` flag), so you're never told you're hidden at
+# all. Room observers still get the end_room_text since from their POV the
+# sneaker just visibly emerged.
 end_room_text: "{source_plain} emerges from the shadows."

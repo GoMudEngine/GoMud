@@ -7,5 +7,7 @@ flags:
   - hidden
 start_user_text: You wrap yourself in a psionic shroud, fading from perception.
 start_room_text: "{source} seems to shimmer and fade from view."
-end_user_text: The empathic shroud dissolves and you become visible again.
+# No end_user_text — like the Hidden buff, you are NOT told when the shroud
+# lapses (you can't know who or what perceived you). Room observers still get
+# end_room_text since, from their POV, you visibly shimmer back into sight.
 end_room_text: "{source} shimmers back into view."
