@@ -17,10 +17,15 @@ card so real items show painted icons, with the existing SVG glyphs as a
 guaranteed fallback.
 
 This is step #3 ("serving the icons in the card") of the icon pipeline
-tracked in the next-session plan. It is the **first pass**: it stands up
-the serving mechanism and maps the 31 new gap icons. Mapping the full
-261-item catalogue (and the 112 community icons) is an explicit
-follow-up that reuses this same mechanism.
+tracked in the next-session plan. **All 143 available icons are in
+scope** (112 community + 31 new) — the goal is for every item to show
+the best raster icon we have, falling back to the existing SVG glyph
+only when nothing fits. The serving mechanism is identical regardless of
+table size; the bulk of the work is the name/keyword/type mapping, and
+its source data already exists (`CATALOG.md` maps every community icon to
+its upstream item name; step #2 of the pipeline already cross-referenced
+all 261 DOGMud items against the pack: 15 exact-name + 2 name + 163
+keyword/type-coverable + 81 gap, now filled).
 
 ## Constraints / context
 
@@ -51,15 +56,14 @@ filenames** (the icon's basename, e.g. `metal_ingot.png`,
 Idempotent — safe to re-run. Prints a summary (copied / skipped /
 resized counts).
 
-- First pass: the 31 new gap icons are what the mapping references, but
-  the script copies the **entire pack** (cheap, ~tens of KB each) so the
-  community-icon follow-up needs only mapping-table additions, no
-  re-plumbing.
+- The script copies the **entire pack** (143 icons, ~tens of KB each) —
+  community + new — since all are in scope for the mapping.
 - Filename collisions across pack subfolders (same basename in two
   categories): first copy wins, the collision is logged as a warning,
-  and the source paths are listed so it can be resolved by hand. The 31
-  first-pass gap icons have unique basenames, so the mapping is
-  unaffected; collisions only matter when the full pack is later mapped.
+  and the source paths are listed so it can be resolved by hand. The
+  script also emits a `manifest.json` (list of served basenames) so the
+  mapping module and its test can assert every referenced icon actually
+  exists on disk.
 - The synced `static/images/items/` PNGs are committed (prod needs
   them); the script is the regenerator, not a build-time-only step.
 
@@ -68,24 +72,38 @@ Exposes `window.itemIconURL(item) -> string|null`. Pure data + one
 function; no DOM, no network.
 
 Resolution order (first hit wins):
-1. **Exact-name table** `NAME_MAP`: normalized `item.name` →
-   icon basename. Built from each icon's "covers" list in
-   `ICON_GENERATION_SPEC.md` (e.g. `"iron ingot"`, `"steel ingot"` →
-   `metal_ingot`).
+1. **Exact-name table** `NAME_MAP`: normalized `item.name` → icon
+   basename. Built from (a) each new icon's "covers" list in
+   `ICON_GENERATION_SPEC.md` and (b) the community icons whose upstream
+   name matches a DOGMud item name, per `CATALOG.md` (e.g.
+   `"iron ingot"`/`"steel ingot"`→`metal_ingot`, `"dagger"`→`dagger`,
+   `"mug of ale"`→`mug_of_ale`).
 2. **Keyword rules** `KEYWORD_RULES`: ordered `[regex, icon]` pairs
    tested against the normalized name (e.g. `/\bingot\b/→metal_ingot`,
    `/\bwire\b/→wire_coil`, `/bracer|bracelet/→bracer`,
-   `/\bcloak\b/→cloak`). Catches authored variants the exact table
+   `/\bdagger\b/→dagger`, `/broadsword|longsword|\bsword\b/→`a sword
+   icon, `/\bstew\b/→mutton_stew`). Extends specific-named community
+   icons to whole families. Catches authored variants the exact table
    misses.
-3. Return `null` → caller falls back to `itemIconSVG`.
+3. **Type/subtype category** `TYPE_MAP`: keyed on
+   `type + "-" + subtype` then `type` (mirroring `itemIconSVG`'s own
+   key scheme), mapping each ItemType / weapon-subtype / armor-slot to a
+   representative community icon (e.g. `potion`→`small_red_potion`,
+   `food`→`cheese_sandwich`, `head`→`leather_cap`, `body`→`leather_vest`,
+   `weapon-dagger`→`dagger`, `weapon-bludgeoning`→`cudgel`). This is the
+   broad backstop that gives almost every item *some* painted icon.
+4. Return `null` → caller falls back to `itemIconSVG` (true only for
+   types with no sensible pack representative).
 
 Normalization: lowercase, collapse whitespace, strip a leading article
 ("a "/"an "/"the "). Returns a path string
-`"/static/images/items/<icon>.png"` on match.
+`"/static/images/items/<icon>.png"` on match. Each tier's referenced
+basenames are validated against the sync `manifest.json` by the test
+harness, so a typo or un-synced icon is caught before it reaches the
+browser (where it would otherwise hit the `<img> onerror` SVG fallback).
 
-Type/subtype → category-icon resolution is intentionally **out of
-scope for this pass** (the SVG glyphs already cover type/subtype well);
-the module is structured to allow adding a `TYPE_MAP` tier later.
+The three tiers are plain data objects/arrays, so growing or correcting
+coverage later is a data edit, never a logic change.
 
 ### 3. Renderer helper — in `webclient-pure.html`
 Extract the icon-building block (currently **duplicated** at the worn
@@ -160,11 +178,15 @@ grid.
 
 ## Testing
 
-- **Unit (Node, no browser):** a small harness over `item-icon-map.js`
-  asserting representative names resolve to the right icon
-  (`"iron ingot"→metal_ingot`, `"bounty hunter's cloak"→cloak`,
-  `"copper wire"→wire_coil`), that an unmapped name (`"rusty sword"`)
-  returns `null`, and that normalization handles articles/case.
+- **Unit (Node, no browser):** a harness over `item-icon-map.js`
+  asserting each tier resolves correctly — exact-name
+  (`"iron ingot"→metal_ingot`, `"dagger"→dagger`), keyword
+  (`"bounty hunter's cloak"→cloak`, `"copper wire"→wire_coil`,
+  `"rusted broadsword"→`sword icon), and type/subtype
+  (`{type:"potion"}→small_red_potion`, `{type:"head"}→leather_cap`).
+  It also asserts every basename referenced by any tier exists in the
+  sync `manifest.json` (no dangling references), and that an item with a
+  type having no pack representative returns `null`.
 - **Manual local review (acceptance):** boot the server locally
   (instance-save wipe per SOP not needed — no data-file changes), open
   the web client, acquire/equip items whose names hit the map, and
@@ -175,9 +197,10 @@ grid.
 
 ## Out of scope (explicit follow-ups)
 
-- Mapping the full 261-item catalogue and the 112 community icons (same
-  mechanism, mapping-table additions only).
-- Type/subtype `TYPE_MAP` category tier.
+- **Bespoke per-item art** for items the pack doesn't depict — these are
+  served by the keyword/type tiers (an approximate-but-painted icon) or
+  the SVG glyph, not a dedicated drawing. Generating more icons to
+  raise exact-match coverage is a future content task, not this wiring.
 - Any server-side / GMCP change (this is entirely client + a copy
   script).
 - Reserved-pool vitals viz and other unrelated card polish.
@@ -187,6 +210,7 @@ grid.
 - **new** `tools/sync_item_icons.py`
 - **new** `static/js/item-icon-map.js` (+ a Node test harness)
 - **new (generated)** `_datafiles/html/public/static/images/items/*.png`
+  (143 icons) + `manifest.json`
 - **edit** `_datafiles/html/public/webclient-pure.html`
   (helper + dedupe + script include)
 - **edit** `_datafiles/html/public/static/css/dashboard.css` (img rule)
