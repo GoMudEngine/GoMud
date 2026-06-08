@@ -21,8 +21,11 @@ commands:
   special_moves: [kick, bash, taunt]     # stamina/positional specials
   cast: cast <spell> <target>
 
-# Run immediately after login — force ASCII so box-drawing/emoji don't corrupt output.
-setup_commands: ["set charset"]
+# Blind one-shot commands to run immediately after login. NOTE: charset is NOT
+# here — `set charset` is a TOGGLE (no get-state query), so the driver converges
+# it to ASCII by reading the response (see the /playtest driver step 4), rather
+# than blindly toggling once (which flips whatever state the session started in).
+setup_commands: []
 
 world:
   starting_area: >-

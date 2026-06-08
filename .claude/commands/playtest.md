@@ -85,8 +85,19 @@ in the world). Getting there depends on whether your character exists:
   `onboarding`). Take the tutorial or choose to start playing to become a full
   character before attempting goals that need stats or items.
 
-If `disconnected`/`error` arrives first, abort and report. Then run any
-`setup_commands` from the engine profile.
+If `disconnected`/`error` arrives first, abort and report.
+
+**Then ensure an ASCII charset (DOGMud).** `set charset` is a *toggle* with no
+"get current state" query, and a session can start in either mode — so don't send
+it blindly. **Converge to ASCII:** send `set charset`, read the response line, and
+inspect it:
+- "Charset mode set to ASCII." → done (ASCII confirmed).
+- "Charset mode set to UTF-8." → you were in ASCII and just flipped to UTF-8;
+  send `set charset` once more to return to ASCII, and confirm the ASCII line.
+
+Stop once you've confirmed ASCII (at most 2 sends). Box-drawing/emoji in the
+prompt otherwise arrive as mojibake. Then run any `setup_commands` from the
+engine profile (currently none for DOGMud — charset is handled here).
 
 ## 5. Play (main loop)
 

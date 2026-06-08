@@ -1,0 +1,47 @@
+name: Quick feel — first impressions (truncated)
+summary: A short new-player feel pass — connect, orient, do a few basic actions, and judge how it feels. Deliberately brief (~12-15 commands).
+goals:
+  - id: orient
+    do: >-
+      On login, read the starting room and surroundings (look). Get your
+      bearings — note the room description quality, visible exits, and anything
+      that signals "what do I do now?" to a new player.
+    verify: >-
+      A room description renders with exits; you can tell where you are and where
+      you can go. Note whether a brand-new player would feel oriented or lost.
+  - id: move-and-read
+    do: >-
+      Move through 2-3 rooms in any direction, reading each. Watch the beacon
+      room_id change as you move.
+    verify: >-
+      Movement works; rooms read coherently; the beacon room_id updates per move.
+      Note pacing/flow and whether the world feels alive or empty.
+  - id: status-and-vitals
+    do: >-
+      Check your character (status) and note your three pools (HP/SP/CP) against
+      the per-round beacon (hp/sp/cp).
+    verify: >-
+      Status shows your stats/pools; the beacon hp/sp/cp roughly match what status
+      reports. Note whether the vitals presentation is clear to a newcomer.
+  - id: one-interaction
+    do: >-
+      Try ONE light interaction appropriate to what's around — examine a noun in
+      the room, talk to / look at an NPC, or attempt a simple command. Don't seek
+      out combat; if a weak creature is obviously present and safe, a single
+      'consider' is fine.
+    verify: >-
+      The interaction returns a sensible, in-voice response (not a generic error
+      or 'looks confused'). Note how welcoming/legible it feels.
+notes:
+  - This is a TRUNCATED session — aim for ~12-15 commands total, then write the
+    report. Do not pursue a full exploration.
+  - You are a FEEL tester — grade the new-player experience (clarity, voice,
+    pacing, "what do I do next?"), not just whether commands work.
+  - DOGMud has no levels/XP and three pools (HP/SP/CP); death is non-permanent
+    (justice/jail). `set charset` ASCII is handled by the driver.
+pass_criteria:
+  - You oriented, moved, checked status/vitals, and did one interaction.
+  - You can summarize how the first few minutes FEEL for a new player, with at
+    least one concrete feel observation (positive or negative).
+  - No crash, disconnect, or 'looks confused'-style broken response.
+exit_after: ~12-15 commands or 5 minutes, whichever first.
