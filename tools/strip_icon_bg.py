@@ -23,10 +23,35 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PACK = os.path.join(REPO, "GoMudAssetsPack")
 THRESH = 175      # luma below this is treated as object/outline (flood stops)
 FEATHER_LUMA = 150  # boundary pixels lighter than this get alpha-softened
+CARD_TOLERANCE = 32  # RGB distance from the sampled card color to key out
 
 
 def _luma(r, g, b):
     return 0.299 * r + 0.587 * g + 0.114 * b
+
+
+def _card_color(px, w, h):
+    """Median color of the opaque-light border ring, or None if the border
+    isn't predominantly a baked card (so we skip the chroma-key)."""
+    rs, gs, bs = [], [], []
+    ring = []
+    for x in range(w):
+        ring.append((x, 0))
+        ring.append((x, h - 1))
+    for y in range(h):
+        ring.append((0, y))
+        ring.append((w - 1, y))
+    for x, y in ring:
+        r, g, b, a = px[x, y]
+        if a > 200 and _luma(r, g, b) > 170:
+            rs.append(r)
+            gs.append(g)
+            bs.append(b)
+    if len(rs) < w:        # border not mostly card -> no baked background
+        return None
+    rs.sort(); gs.sort(); bs.sort()
+    mid = len(rs) // 2
+    return (rs[mid], gs[mid], bs[mid])
 
 
 def strip_bg(im):
@@ -34,6 +59,20 @@ def strip_bg(im):
     w, h = im.size
     px = im.load()
     bg = [[False] * w for _ in range(h)]
+    # Pass 1 — chroma-key the baked card color everywhere (this is what
+    # reaches ENCLOSED holes the edge flood-fill below can't, e.g. the
+    # finger holes of knuckles or the gaps inside chain links). Object
+    # highlights survive because they're brighter/different from the card.
+    card = _card_color(px, w, h)
+    if card:
+        cr, cg, cb = card
+        tol2 = CARD_TOLERANCE * CARD_TOLERANCE
+        for y in range(h):
+            for x in range(w):
+                r, g, b, a = px[x, y]
+                if a > 0 and (r - cr) ** 2 + (g - cg) ** 2 + (b - cb) ** 2 < tol2:
+                    bg[y][x] = True
+    # Pass 2 — edge flood-fill for any non-card light background.
     dq = deque()
     for x in range(w):
         dq.append((x, 0))
