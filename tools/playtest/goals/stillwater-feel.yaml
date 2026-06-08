@@ -1,0 +1,149 @@
+name: Stillwater town flavor — schedules, sleep, conversations, gossip
+summary: >
+  Observation pass for chunk 6.1 Stillwater aliveness: verify 9 daily NPC
+  schedules, sleep states, NPC-to-NPC conversations (4 authored pairs),
+  gossip spreading 5 seeded facts, and admin substrate inspectors.
+goals:
+  - id: arrive-log-time
+    do: >
+      Get to Stillwater. If an admin teleport is available try `goto 4102`
+      or `teleport 4102` to jump to Lakefront Square (room 4102). Otherwise
+      navigate on foot. Run `time` on arrival and log the current game hour.
+    verify: >
+      Beacon `room_id` is 4102 (or nearby Stillwater room). `time` command
+      responds with a game hour. No navigation error or crash.
+
+  - id: game-time-advancing
+    do: >
+      Run `time` several times across the session — a full game-day is
+      short (~80s real-time at default RoundsPerDay). Log the hours you
+      observe so schedule transitions can be correlated.
+    verify: >
+      The game hour changes between `time` checks, confirming the clock is
+      advancing. At least two different game hours logged during the session.
+
+  - id: schedule-observation
+    do: >
+      Observe these 9 NPCs moving across the day. Sample each NPC's room
+      every minute or so across 2-3 game-days and confirm they occupy the
+      expected rooms per game hour:
+        - Innkeeper Sigrid (333): Pike & Lantern 4103 day/evening; loft 4104 at night (asleep).
+        - Barmaid Neva (334): Pike & Lantern 4103 daytime; loft 4104 at night.
+        - Smith Brindle (337): smithy 4106 by day (crafting); tavern 4103 evening (18-22); smithy at night.
+        - Temple Priest Seren (344): temple 4123 all day; asleep there at night (21-5).
+        - Dock Master Arn (342): docks 4116 by day; promenade 4113 at dusk (17-20); docks at night.
+        - Apothecary Ilsa (338): Healer's Alcove 4125 all day (craft morning); asleep there at night.
+        - Miller Bram (348): watermill 4135 all day; asleep there at night.
+        - Mistress Vella (355): Healer's Cottage 4136 by day; Ilsa's alcove 4125 (9-11); Ulla's Parlor 4137 (16-20); cottage at night.
+        - Old Fisherman Hodder (343): net yard 4117; Lakefront Square 4102 (10-13); net yard; asleep there at night.
+      Use `time set <hour>` admin command if available to jump to windows
+      of interest rather than waiting real-time.
+    verify: >
+      Observational — record each NPC's actual room vs. expected per
+      hour. At minimum confirm each NPC occupies their day-work room
+      at least once and their night/sleep room at least once during the
+      session. Note any NPC that never moves or is in the wrong room
+      all session. Beacon `room_id` changes confirm you navigated
+      between rooms correctly.
+
+  - id: sleep-states
+    do: >
+      During night game hours (~20-6), visit the scheduled NPCs in their
+      sleep rooms. Observe for sleeping-flavor text (e.g. "breathes
+      evenly" or similar idle emote). In the morning, confirm they wake
+      and move to their day rooms.
+    verify: >
+      At least one NPC is observed in a sleeping state during night hours.
+      The same NPC (or another) is observed in their day-work room after
+      dawn. If the session does not span a night→day transition, mark
+      BLOCKED with a note on which hours were observed.
+
+  - id: conversations
+    do: >
+      Stand idle in the following rooms during the overlap windows and
+      watch for multi-line NPC-to-NPC exchanges (two NPCs alternating
+      `say` lines across consecutive rounds):
+        - Pike & Lantern 4103 (Sigrid 333 + Neva 334) — daytime.
+        - Lakefront Square 4102 (Hodder 343 arrives 10-13, joins Tov 336).
+        - Healer's Alcove 4125 (Vella 355 visits Ilsa 338, game hours 9-11).
+        - Ulla's Parlor 4137 (Vella 355 visits Ulla 347, game hours 16-20) — should be gentle; Elgar never named outright.
+      Log any full exchange verbatim: note the pair and game hour.
+    verify: >
+      At least one full multi-line NPC-to-NPC conversation observed (any
+      of the 4 pairs). The exchange consists of at least 2 alternating
+      lines between the two NPCs. The Ulla/Vella parlor exchange is a
+      bonus — if observed, log the full text. Conversations that fire
+      only once and then go quiet (cooldown) are expected behavior.
+      Mark BLOCKED if the relevant NPCs are never co-located during
+      the session.
+
+  - id: gossip-facts
+    do: >
+      Listen for gossip from: Neva (334), Hodder (343), Gyda (349),
+      Fenwick (353), and Oswin (354). Watch for references to town
+      news: the failing catch or shredded nets, cave creatures in the
+      shallows, the man the lake took twelve years ago, the spiral motif,
+      the vanished pearl-divers.
+    verify: >
+      Log any gossip lines verbatim with speaker and approximate game
+      hour. At least one gossip line referencing one of the 5 seeded
+      facts is the pass condition. Mark BLOCKED if none of the five
+      gossipers are encountered or co-located with the agent during
+      the session.
+
+  - id: admin-substrate
+    do: >
+      Run these admin inspector commands and log the full output:
+        `relationship show 347`
+        `relationship between 347 355` (Ulla/Vella family)
+        `relationship between 333 334` (Sigrid/Neva employer)
+        `relationship show 343` (Hodder's mentorships + friendships)
+        `fact list` (should include the 5 stillwater- facts)
+        `fact awareness 343` (Hodder should know lake-decline, cave-creatures, voss-death, pearl-divers-gone)
+        `mob schedule <instId>` for Vella and Hodder to confirm active segment/target-room resolve
+    verify: >
+      All commands return structured state output (not an error or empty
+      response). `fact list` includes the 5 stillwater-* fact keys.
+      `fact awareness 343` lists at least the 4 facts Hodder should know.
+      `relationship` commands return edges, not errors. `mob schedule`
+      shows the active segment and the target room. Any error response
+      from these commands is a FAIL.
+
+  - id: stability
+    do: >
+      Watch throughout the session for any NPC acquiring a "lost"
+      adjective, getting stuck in one room across a full game-day it
+      should have left, or any error/panic text in server output.
+    verify: >
+      No NPC observed stuck, lost, or erroring during the session.
+      Any error or panic text should be flagged immediately with the
+      game hour and verbatim text. Beacon continues emitting Round
+      events throughout the session.
+
+notes:
+  - Server runs locally at localhost:55555, freshly booted with chunk 6.1
+    merged to master and instance saves wiped (rm -rf mobs.instances/*
+    rooms.instances/*).
+  - Use `set charset` (ASCII) immediately after login per test-mud SOP.
+  - Game-day is short at default RoundsPerDay (~20 rounds/day), so
+    schedule segments flip fast — sample frequently (~every 30-60s real).
+    Use `time set <hour>` admin command to jump to windows of interest.
+  - To find a mob's instance ID for `mob schedule`, run `look <name>` in
+    its room and read the admin output, or check `who`.
+  - >-
+    Key Stillwater rooms — 4100 gate, 4102 square, 4103 inn, 4104 loft,
+    4106 smithy, 4116 docks, 4113 promenade, 4117 net yard, 4123 temple,
+    4125 healer's alcove, 4135 watermill, 4136 healer's cottage,
+    4137 Ulla's parlor.
+  - DO NOT attack, steal from, or harm any Stillwater NPC — many are
+    quest-critical. This is an observation-only pass.
+  - Source: tools/testing/goals/stillwater-town-flavor.yaml
+
+pass_criteria:
+  - All 9 scheduled NPCs observed in at least their day-work room and their night/sleep state.
+  - Vella observed visiting BOTH Ilsa's alcove (4125, ~9-11) AND Ulla's parlor (4137, ~16-20).
+  - Hodder observed at Lakefront Square (4102) during ~10-13, co-located with Tov.
+  - At least one full multi-line NPC-to-NPC conversation observed (any of the 4 pairs).
+  - At least one gossip line referencing one of the 5 seeded facts observed.
+  - Admin inspectors (relationship, fact, mob schedule) all return valid state, not errors.
+  - No NPC stuck or lost; no panic or error text during the session.
