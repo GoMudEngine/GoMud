@@ -79,3 +79,8 @@ book_build/
 
 # Archived loose screenshots / stray images out of repo root
 _archive/
+
+# Playtest harness overlay — transient run state + generated reports
+tools/playtest/.run/
+tools/playtest/reports/*
+!tools/playtest/reports/.gitkeep

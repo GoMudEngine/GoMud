@@ -1,0 +1,11 @@
+# Connection targets. The DOGMud /playtest driver reads host/port/user/password.
+local:
+  host: localhost
+  port: 55555
+  user: smoketester
+  password: smoke123test
+prod:
+  host: dogmud.org
+  port: 55555
+  user: aitester
+  password: testpass123
