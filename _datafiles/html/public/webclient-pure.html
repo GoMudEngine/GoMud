@@ -961,21 +961,64 @@
                     list.appendChild(tRow);
                 }
             } else if (autoActiveTab === 'triggers') {
+                // Build a set of queued trigger IDs (in queue order for badge numbering)
+                var queuedIds = {};
+                for (var qi = 0; qi < actionQueue.length; qi++) {
+                    queuedIds[actionQueue[qi].triggerId] = qi + 1; // 1-based FIFO position
+                }
+
+                // Status bar — only when queue is non-empty
+                if (actionQueue.length) {
+                    var qbar = document.createElement("div");
+                    qbar.className = "auto-qbar";
+
+                    var qcount = document.createElement("span");
+                    qcount.className = "auto-qcount";
+                    qcount.textContent = "▸ " + actionQueue.length + " queued";
+                    qbar.appendChild(qcount);
+
+                    var qcd = document.createElement("span");
+                    qcd.className = "auto-qcd";
+                    qcd.textContent = cooldownReady() ? "ready" : "cooling…";
+                    qbar.appendChild(qcd);
+
+                    var qclear = document.createElement("button");
+                    qclear.type = "button";
+                    qclear.className = "auto-qclear";
+                    qclear.textContent = "Clear";
+                    qclear.addEventListener("click", function(e) {
+                        e.stopPropagation();
+                        clearActionQueue();
+                    });
+                    qbar.appendChild(qclear);
+
+                    list.appendChild(qbar);
+                }
+
                 if (!a || !a.triggers || !a.triggers.length) {
                     makeEmptyMsg("No triggers configured.");
                     return;
                 }
-                for (var tri = 0; tri < a.triggers.length; tri++) {
-                    var trig = a.triggers[tri];
+
+                // Helper: build one trigger row
+                function makeTriggerRow(trig, queuePos) {
                     var trRow = document.createElement("div");
-                    trRow.className = "auto-row";
+                    trRow.className = "auto-row" + (queuePos ? " pending" : "");
                     trRow.dataset.autoType = "trigger";
                     trRow.dataset.autoId   = String(trig.id);
                     trRow.dataset.autoKey  = String(trig.id);
 
-                    var trTog = document.createElement("span");
-                    trTog.className = "auto-tog" + (trig.enabled ? " on" : "");
-                    trRow.appendChild(trTog);
+                    if (queuePos) {
+                        // FIFO badge: position 1 = brass (.next), rest = red
+                        var badge = document.createElement("span");
+                        badge.className = "auto-badge" + (queuePos === 1 ? " next" : "");
+                        badge.textContent = String(queuePos);
+                        trRow.appendChild(badge);
+                    } else {
+                        var trTog = document.createElement("span");
+                        trTog.className = "auto-tog" + (trig.enabled ? " on" : "");
+                        trRow.appendChild(trTog);
+                    }
 
                     var trName = document.createElement("span");
                     trName.className = "name";
@@ -984,10 +1027,45 @@
 
                     var trSum = document.createElement("span");
                     trSum.className = "sum";
-                    trSum.textContent = (trig.pattern || "") + (trig.enabled ? "" : " (off)");
+                    if (queuePos) {
+                        trSum.textContent = "queued → " + (trig.thenCmds || "");
+                    } else {
+                        trSum.textContent = (trig.pattern || "") + (trig.enabled ? "" : " (off)");
+                    }
                     trRow.appendChild(trSum);
 
-                    list.appendChild(trRow);
+                    return trRow;
+                }
+
+                // 1) Render queued triggers first, in actionQueue order
+                for (var qi2 = 0; qi2 < actionQueue.length; qi2++) {
+                    var qentry = actionQueue[qi2];
+                    // Find the trigger in Automation to get its live data
+                    var qtrig = null;
+                    if (a && a.triggers) {
+                        for (var qti = 0; qti < a.triggers.length; qti++) {
+                            if (a.triggers[qti].id === qentry.triggerId) { qtrig = a.triggers[qti]; break; }
+                        }
+                    }
+                    if (!qtrig) {
+                        // Trigger deleted mid-queue — render with stored name only
+                        qtrig = { id: qentry.triggerId, name: qentry.name, thenCmds: qentry.commands, enabled: true };
+                    }
+                    list.appendChild(makeTriggerRow(qtrig, qi2 + 1));
+                }
+
+                // Divider between queued + normal (only when queue is non-empty)
+                if (actionQueue.length) {
+                    var qsep = document.createElement("hr");
+                    qsep.className = "auto-qsep";
+                    list.appendChild(qsep);
+                }
+
+                // 2) Render non-queued triggers normally
+                for (var tri = 0; tri < a.triggers.length; tri++) {
+                    var trig = a.triggers[tri];
+                    if (queuedIds[trig.id]) continue; // already rendered above
+                    list.appendChild(makeTriggerRow(trig, 0));
                 }
             }
         }
