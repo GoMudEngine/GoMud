@@ -613,6 +613,9 @@
                     renderAutomation();
                     rebuildTickTimers();
                 }
+
+                // Defensive drain — catches cooldown-clearing that arrives bundled with Char
+                drainQueue();
             },
             "Char.Conditions": function() {
                 updateStatusPanel();
@@ -644,6 +647,15 @@
             "Char.Automation": function() {
                 renderAutomation();
                 rebuildTickTimers();
+            },
+            // Commands.State carries the cooldowns map and mode — drain + death-clear here.
+            "Commands": function() {
+                drainQueue();
+                checkDeathClearsQueue();
+            },
+            "Commands.State": function() {
+                drainQueue();
+                checkDeathClearsQueue();
             },
         };
 
@@ -1104,6 +1116,25 @@
             drainQueue();
         }
 
+        // Queue processor — drains ONE command per special-move cooldown.
+        var QUEUE_MIN_FIRE_GAP_MS = 800; // ensure the cooldown registers before next fire
+        var lastQueueFireAt = 0;
+
+        function cooldownReady() {
+            var cds = (((GMCPStructs["Commands"] || {}).State) || {}).cooldowns || {};
+            return !cds["special-move"];
+        }
+
+        function drainQueue() {
+            if (!actionQueue.length) return;
+            if (!cooldownReady()) return;
+            if (Date.now() - lastQueueFireAt < QUEUE_MIN_FIRE_GAP_MS) return; // let prior fire register
+            var entry = actionQueue.shift();
+            lastQueueFireAt = Date.now();
+            String(entry.commands || "").split(";").forEach(function(c){ c = c.trim(); if (c) SendData(c); });
+            renderAutomation();
+        }
+
         function runTriggers(line, nowMs) {
             var a = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
             if (!a || !a.triggers) return;
@@ -1248,6 +1279,10 @@
         // Render once on load (empty state until GMCP arrives)
         renderAutomation();
         rebuildTickTimers();
+
+        // Safety drain — fires even if the Commands GMCP nudge doesn't arrive
+        // (e.g. cooldown freed between heartbeats).
+        setInterval(drainQueue, 500);
 
         // Build a single vitals row DOM element
         function createVitalsRow(name, hp, sp, cp, isSelf, isRemote) {
