@@ -386,8 +386,11 @@
 /* 5-column grid of item tiles */
 .inv-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 7px 5px;
+  /* Responsive: tiles stay compact (~46px) and the column count reflows
+     with the card width, so the panel packs more icons into less space
+     and doesn't crowd the vitals/map cards when the layout shrinks. */
+  grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
+  gap: 6px 4px;
   padding: 8px;
   overflow: auto;
   flex: 1 1 0;
@@ -429,6 +432,15 @@
   fill: none;
   stroke-linejoin: round;
   stroke-linecap: round;
+}
+
+/* Painted raster icons from itemIconURL — fill more of the tile than the
+   line-glyphs (58%); transparent PNGs sit on the tile gradient. */
+.inv-tile > img.inv-img {
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
+  pointer-events: none;   /* clicks fall through to the tile action menu */
 }
 
 /* Empty slot — dashed outline, no icon */

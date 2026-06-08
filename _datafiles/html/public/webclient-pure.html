@@ -195,6 +195,8 @@
     <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/winbox.bundle.min.js"></script>
     <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/gmcp.js"></script>
     <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/item-icons.js"></script>
+    <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/item-icon-map.js"></script>
+    <script>window.ITEM_ICON_BASE = "{{ .CONFIG.FilePaths.WebCDNLocation }}/static/images/items";</script>
 </head>
 <body onLoad="init(); return false;">
 
@@ -703,6 +705,33 @@
             tile.appendChild(track);
         }
 
+        // Render an item's icon into a tile: prefer a painted raster from
+        // itemIconURL, fall back to the monochrome SVG glyph. Both fallback
+        // paths use insertAdjacentHTML("afterbegin") so they never clobber
+        // the charge meter / stack badge appended to the tile afterward.
+        function renderTileIcon(tile, item) {
+            var url = (typeof window.itemIconURL === "function")
+                ? window.itemIconURL(item) : null;
+            if (url) {
+                var img = document.createElement("img");
+                img.className = "inv-img";
+                img.src = url;                 // src, not innerHTML — no injection surface
+                img.alt = item.name || "";
+                img.loading = "lazy";
+                img.onerror = function () {
+                    img.remove();
+                    var svg = (typeof window.itemIconSVG === "function")
+                        ? window.itemIconSVG(item.type, item.subtype) : "";
+                    if (svg) tile.insertAdjacentHTML("afterbegin", svg);
+                };
+                tile.appendChild(img);
+            } else {
+                var svg = (typeof window.itemIconSVG === "function")
+                    ? window.itemIconSVG(item.type, item.subtype) : "";
+                if (svg) tile.insertAdjacentHTML("afterbegin", svg);
+            }
+        }
+
         function renderInventory() {
             var inv = (GMCPStructs["Char"] || {}).Inventory;
             var grid = document.getElementById("inv-grid");
@@ -744,11 +773,7 @@
 
                     var tile = document.createElement("div");
                     tile.className = "inv-tile";
-                    // Icon from trusted local map — innerHTML is safe here
-                    var iconSVG = (typeof window.itemIconSVG === "function")
-                        ? window.itemIconSVG(item.type, item.subtype)
-                        : "";
-                    if (iconSVG) tile.innerHTML = iconSVG;
+                    renderTileIcon(tile, item);
                     tile.title = item.name || "";
                     // Data attributes for Task 8 action menu
                     tile.dataset.handle     = item.handle  || "";
@@ -820,10 +845,7 @@
 
                     var tile = document.createElement("div");
                     tile.className = "inv-tile";
-                    var iconSVG = (typeof window.itemIconSVG === "function")
-                        ? window.itemIconSVG(item.type, item.subtype)
-                        : "";
-                    if (iconSVG) tile.innerHTML = iconSVG;
+                    renderTileIcon(tile, item);
                     tile.title = item.name || "";
                     tile.dataset.handle     = item.handle  || "";
                     tile.dataset.name       = item.name    || "";
