@@ -36,6 +36,15 @@ eq(itemIconURL({ name: "rusted broadsword" }), urlFor("finely_crafted_shortsword
 eq(itemIconURL({ name: "copper wire" }), urlFor("wire_coil"), "kw: wire");
 eq(itemIconURL({ name: "gnarled oak bark" }), urlFor("tree_bark"), "kw: bark");
 
+// Keyword-shadow regressions (adjectives must not hijack later rules)
+eq(itemIconURL({ name: "dusty scroll" }), urlFor("note"), "kw-shadow: dusty scroll -> note");
+eq(itemIconURL({ name: "pitched battleaxe" }), urlFor("glowing_battleaxe"), "kw-shadow: pitched battleaxe -> axe");
+eq(itemIconURL({ name: "carved oak staff" }), urlFor("ancient_royal_scepter"), "kw-shadow: carved oak staff -> staff");
+
+// Null/undefined item contract
+eq(itemIconURL(null), null, "null item -> null");
+eq(itemIconURL(undefined), null, "undefined item -> null");
+
 // Type/subtype tier
 eq(itemIconURL({ name: "mystery brew", type: "potion" }), urlFor("small_red_potion"), "type: potion");
 eq(itemIconURL({ name: "odd hat", type: "head" }), urlFor("leather_cap"), "type: head");
