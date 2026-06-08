@@ -892,10 +892,23 @@
 .auto-chips { display: flex; flex-wrap: wrap; gap: 5px; padding: 2px; align-content: flex-start; }
 .auto-chip {
   font-family: 'IBM Plex Mono', 'Courier New', monospace; font-size: 0.72rem;
-  padding: 3px 9px; border-radius: 12px;
-  border: 1px solid var(--brass-border, #5e431a); background: #1f1812;
+  padding: 2px 9px; border-radius: 12px;
+  border: 1px solid var(--panel-border, #3a2a18); background: #1d1610;
+  color: var(--ink-gold, #c9a86a);
+  cursor: pointer; white-space: nowrap; user-select: none;
+  transition: border-color 0.1s, box-shadow 0.1s, color 0.1s;
+}
+/* Type accents — mirror the Status & Conditions panel's two-tone chips so the
+   automation tabs read with the same polish. Macros = warm brass (F-key action
+   keys); aliases = teal/copper, tying them to the status-panel buff chips. */
+.auto-chip[data-auto-type="macro"] {
+  border-color: var(--brass-border, #5e431a);
   color: var(--title-gold, #e8d2a0);
-  cursor: pointer; white-space: nowrap; user-select: none; transition: border-color 0.08s;
+}
+.auto-chip[data-auto-type="alias"] {
+  border-color: var(--copper, #4a6b5d);
+  background: #16201c;
+  color: #8fb3a6;
 }
 
 /* ── Action queue UI — queued/pending trigger rows, badges, status bar ──── */
@@ -974,4 +987,7 @@
 .auto-qclear:hover {
   filter: brightness(1.1);
 }
-.auto-chip:hover { border-color: var(--gold-rule, #c9a86a); }
+.auto-chip:hover {
+  border-color: var(--gold-rule, #c9a86a);
+  box-shadow: 0 0 0 1px rgba(201, 168, 106, 0.25), 0 1px 4px rgba(0, 0, 0, 0.4);
+}

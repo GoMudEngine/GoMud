@@ -57,32 +57,42 @@ body {
 
 a { text-decoration: none; color: inherit; }
 
-/* ── Header bar + MUD-name title ── */
+/* ── Unified console header (brand wordmark + chip nav in one bar) ──
+   Merged the old separate <nav> bar in here: matches the dashboard cards
+   (rounded, antique-gold outline, inset highlight) and reclaims a full row of
+   vertical height for the web-client dashboard below. */
 header {
-  background: linear-gradient(var(--bar-top), var(--bar-bottom));
-  border-bottom: 2px solid var(--gold-rule);
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 16px;
-  justify-content: space-between;
   align-items: center;
-  padding: clamp(8px, 1.2vw, 12px) clamp(12px, 2vw, 24px);
+  gap: 8px 14px;
+  margin: 7px 8px;
+  padding: 7px clamp(12px, 2vw, 18px);
+  background: linear-gradient(var(--ink-deep), #191009);
+  border: 1px solid var(--antique-gold);
+  border-radius: 8px;
+  box-shadow: inset 0 1px 0 rgba(201, 168, 106, 0.12), 0 2px 6px rgba(0, 0, 0, 0.4);
 }
+/* Gold-gradient wordmark (solid title-gold fallback where background-clip
+   isn't supported). */
 .gomud-btn {
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: bold;
-  font-size: clamp(1.05rem, 2.2vw, 1.6rem);
-  letter-spacing: 1px;
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  white-space: nowrap;
   color: var(--title-gold);
-  text-shadow: 0 1px 0 #000;
-  padding: 4px 6px;
-  background: none;
-  box-shadow: none;
-  border-radius: 4px;
-  transition: color 0.2s ease;
+  background: linear-gradient(#f3e3b6, #c9a86a 55%, #9c7b34);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+  padding: 2px;
+  transition: filter 0.15s ease;
 }
-.gomud-btn:hover { color: #fff; background: none; }
+.gomud-btn:hover { filter: brightness(1.08); }
 
 /* ── Brass component (buttons, nav pills, CTAs) ── */
 .brass {
@@ -108,40 +118,45 @@ header {
               inset 0 -1px 1px rgba(255, 246, 212, 0.4);
 }
 
-/* ── Nav bar (brass pills) ── */
+/* ── Nav (now inside the header bar, pushed right) ── */
 nav {
-  background: linear-gradient(var(--bar-top), var(--bar-bottom));
-  border-bottom: 1px solid var(--panel-border);
-  padding: clamp(6px, 1vw, 10px) 0;
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  background: none;
+  border: none;
+  padding: 0;
 }
 .nav-container {
-  margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
-  gap: clamp(0.3rem, 0.8vw, 0.9rem);
-  padding: 0 10px;
+  gap: 6px;
+  padding: 0;
 }
+/* Chip nav — same language as the dashboard status / automation chips. */
 .nav-container a {
   font-family: var(--font-serif);
-  font-size: clamp(0.72rem, 1.05vw, 0.95rem);
+  font-size: clamp(0.72rem, 1vw, 0.86rem);
   white-space: nowrap;
-  color: var(--brass-text);
-  background: var(--brass-grad);
-  border: 1px solid var(--brass-border);
-  border-radius: 5px;
-  padding: clamp(4px, 0.5vw, 6px) clamp(8px, 1.1vw, 14px);
-  text-shadow: 0 1px 0 rgba(255, 244, 206, 0.55);
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5),
-              inset 0 1px 1px rgba(255, 246, 212, 0.7);
-  transition: filter 0.08s ease;
+  color: var(--ink-gold);
+  background: rgba(20, 14, 9, 0.6);
+  border: 1px solid var(--panel-border);
+  border-radius: 13px;
+  padding: 3px 13px;
+  transition: border-color 0.1s ease, color 0.1s ease, box-shadow 0.1s ease;
 }
-.nav-container a:hover { filter: brightness(1.08); }
+.nav-container a:hover {
+  border-color: var(--gold-rule);
+  color: var(--title-gold);
+  box-shadow: 0 0 0 1px rgba(201, 168, 106, 0.22);
+}
 .nav-container a.selected {
-  filter: brightness(0.95);
-  box-shadow: inset 0 2px 4px rgba(74, 52, 16, 0.75),
-              inset 0 -1px 1px rgba(255, 246, 212, 0.4);
+  border-color: var(--antique-gold);
+  color: var(--title-gold);
+  background: #2a2114;
+  box-shadow: inset 0 0 0 1px rgba(184, 144, 71, 0.30);
 }
 
 /* ── Mobile nav toggle ── */
@@ -232,16 +247,21 @@ nav {
   font-size: 0.9rem;
 }
 
-/* ── Footer ── */
+/* ── Footer (matching console card — bookends the header; gradient flipped so
+   both plates face their lighter edge toward the content) ── */
 footer {
-  background: linear-gradient(var(--bar-bottom), #120c07);
-  border-top: 1px solid var(--panel-border);
+  margin: 7px 8px;
+  padding: 7px clamp(12px, 2vw, 18px);
+  background: linear-gradient(#191009, var(--ink-deep));
+  border: 1px solid var(--antique-gold);
+  border-radius: 8px;
+  box-shadow: inset 0 1px 0 rgba(201, 168, 106, 0.12), 0 2px 6px rgba(0, 0, 0, 0.4);
   text-align: center;
   color: var(--text-secondary);
   font-family: var(--font-serif);
-  padding: 5px 0;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
 }
+footer p { margin: 0; }
 footer a { color: var(--ink-gold); }
 footer a:hover { text-decoration: underline; }
 
@@ -273,21 +293,25 @@ pre, code { font-family: var(--font-mono); }
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
-  header { padding: 8px 12px; }
-  .gomud-btn { font-size: 1.1rem; letter-spacing: 1px; }
+  header { padding: 8px 12px; gap: 8px; }
+  .gomud-btn { font-size: 1.05rem; letter-spacing: 1.5px; }
   .hero-title { font-size: 1.7rem; }
+  /* Drop the nav to a full-width second row below the brand + hamburger. */
+  nav { flex-basis: 100%; order: 3; }
+  .nav-toggle { display: flex; margin-left: auto; }
   .nav-container {
     display: none;
     flex-direction: column;
+    align-items: stretch;
     text-align: center;
-    gap: 0.5rem;
-    padding: 12px 0;
+    width: 100%;
+    gap: 0.4rem;
+    padding: 6px 0 2px;
   }
-  .nav-container a { display: block; padding: 10px; }
-  .nav-toggle { display: flex; }
+  .nav-container a { display: block; padding: 9px; border-radius: 8px; }
   .content-container { padding: 12px; }
   .overlay, .underlay { width: 95%; padding: 12px; }
-  footer { font-size: 0.8rem; padding: 12px 0; }
+  footer { font-size: 0.8rem; padding: 9px 12px; }
   table th { padding: 0.5em; font-size: 0.8em; }
   table td { padding: 0.3em; font-size: 3.2vw; }
 }

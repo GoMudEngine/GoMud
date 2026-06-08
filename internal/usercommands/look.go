@@ -7,6 +7,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -510,6 +511,13 @@ func lookRoom(user *users.UserRecord, roomId int, secretLook bool) {
 	}
 
 	if user.ScreenReader {
+		tinyMapOn = false
+	}
+
+	// Web-client sessions already have the graphical Map panel, so the inline
+	// ASCII minimap beside room descriptions is redundant and only steals
+	// horizontal space from the room text. Suppress it automatically for them.
+	if connections.IsWebsocket(user.ConnectionId()) {
 		tinyMapOn = false
 	}
 
