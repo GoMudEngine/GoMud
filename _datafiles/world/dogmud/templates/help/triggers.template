@@ -83,11 +83,13 @@ an optional condition to decide what to do.
     Value: a comma-separated list of names. Matches
     any name in the list.
 
-  <ansi fg="command">An ability cooldown</ansi>
-    Check whether a named ability is cooling down.
+  <ansi fg="command">The ability cooldown</ansi>
+    Your special abilities — kick, trip, bash, grapple,
+    taunt, rally, warcry, and casting any spell — all share
+    one cooldown. This checks whether that shared cooldown
+    is free (no value to enter).
     Operators: <ansi fg="command">is ready</ansi>, <ansi fg="command">is not ready</ansi>.
-    Value: the ability or cooldown name. "Ready" means
-    the ability is not currently on cooldown.
+    "Ready" means you are not currently on that cooldown.
 
 <ansi fg="yellow">Cooldown:</ansi>
 

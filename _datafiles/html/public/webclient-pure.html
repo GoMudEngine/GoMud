@@ -1048,10 +1048,10 @@
                 return cond.op === "notoneof" ? !inList : inList;
             }
             if (cond.sourceKind === "cooldown") {
+                // Kick/trip/bash/grapple/any spell/rally/warcry/taunt all share ONE
+                // cooldown ("special-move"). Ready == that tag is absent from the live map.
                 var cds = (((GMCPStructs["Commands"] || {}).State) || {}).cooldowns || {};
-                var name = ((cond.values && cond.values[0]) || "").toLowerCase();
-                // ready/available == the cooldown name is NOT present in the live map
-                var ready = !Object.keys(cds).some(function(k){ return String(k).toLowerCase() === name; });
+                var ready = !cds["special-move"];
                 return cond.op === "notready" ? !ready : ready;
             }
             return true;
@@ -2938,7 +2938,7 @@
                     {v:"capture:$1",    l:"capture $1"},
                     {v:"capture:$2",    l:"capture $2"},
                     {v:"target:",       l:"my target"},
-                    {v:"cooldown:",     l:"an ability cooldown"}
+                    {v:"cooldown:",     l:"the ability cooldown"}
                 ];
                 srcOptions.forEach(function(o) {
                     var opt = document.createElement("option");
@@ -2977,16 +2977,15 @@
                         opt.textContent = o.l;
                         opSelect.appendChild(opt);
                     });
-                    // Update value placeholder
+                    // Update value input. Cooldown is the single shared "special-move"
+                    // timer — it needs no value, so hide the input for that kind.
+                    valInput.style.display = (kind === "cooldown") ? "none" : "";
                     if (kind === "pool") {
                         valInput.type = "number";
                         valInput.placeholder = "0–100";
                     } else if (kind === "target") {
                         valInput.type = "text";
                         valInput.placeholder = "goblin, orc (comma list)";
-                    } else if (kind === "cooldown") {
-                        valInput.type = "text";
-                        valInput.placeholder = "ability or command name";
                     } else {
                         valInput.type = "text";
                         valInput.placeholder = "value";
@@ -3113,7 +3112,9 @@
                         var op      = opSelect.value;
                         var rawVal  = valInput.value.trim();
                         var values  = [];
-                        if (srcKind === "target") {
+                        if (srcKind === "cooldown") {
+                            values = []; // shared cooldown — no value needed
+                        } else if (srcKind === "target") {
                             // comma-separated list
                             values = rawVal.split(",").map(function(s){ return s.trim(); }).filter(Boolean);
                         } else {

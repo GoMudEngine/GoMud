@@ -72,11 +72,13 @@ tabbed-grid + right-click-action + GMCP-driven pattern is the template here.
    - **Pattern capture** — `$1`, `$2`… → `equals / contains` → text.
    - **Target** — my target → `is one of / is not one of` → a **list** of
      names, **OR semantics** (match any; never AND).
-   - **Ability cooldown** — an ability cooldown → `is ready / is not ready` →
-     the cooldown/ability name. Source data = the `Commands.State.cooldowns`
-     GMCP map (no new plumbing — a cooldown that's READY is absent from the
-     map). Qualitative, so still no-hard-numbers. (Added Phase 3 on user
-     request.)
+   - **Ability cooldown** — the (single, shared) ability cooldown →
+     `is ready / is not ready` → **no value**. Kick/trip/bash/grapple/any
+     spell/rally/warcry/taunt all share ONE cooldown (`special-move`); the
+     engine checks that tag in the `Commands.State.cooldowns` GMCP map (ready ==
+     absent). Qualitative, no-hard-numbers. (Added Phase 3 on user request; the
+     deliberate shared-cooldown design forces real tradeoff choices.) Potions
+     are NOT gated by it. The cooldown-gated **action queue** is Phase 4.
    - **"Do nothing" branch:** leaving the Then **or** Else command box empty =
      fire nothing for that branch (already the natural behavior — the fire path
      skips empty commands). Only Name + Pattern are required to save a trigger.
