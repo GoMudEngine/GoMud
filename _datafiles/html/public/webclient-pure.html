@@ -1135,6 +1135,20 @@
             renderAutomation();
         }
 
+        // Clear the entire action queue (manual Clear button + death signal).
+        function clearActionQueue() {
+            actionQueue = [];
+            renderAutomation();
+        }
+
+        // Death-clear: when mode transitions to "downed", wipe the queue.
+        var _lastMode = "";
+        function checkDeathClearsQueue() {
+            var mode = (((GMCPStructs["Commands"] || {}).State) || {}).mode || "";
+            if (mode === "downed" && _lastMode !== "downed") clearActionQueue();
+            _lastMode = mode;
+        }
+
         function runTriggers(line, nowMs) {
             var a = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
             if (!a || !a.triggers) return;
