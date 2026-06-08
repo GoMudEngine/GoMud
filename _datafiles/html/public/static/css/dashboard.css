@@ -431,6 +431,15 @@
   stroke-linecap: round;
 }
 
+/* Painted raster icons from itemIconURL — fill more of the tile than the
+   line-glyphs (58%); transparent PNGs sit on the tile gradient. */
+.inv-tile > img.inv-img {
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+  pointer-events: none;   /* clicks fall through to the tile action menu */
+}
+
 /* Empty slot — dashed outline, no icon */
 .inv-tile.empty {
   background: #140f08;
