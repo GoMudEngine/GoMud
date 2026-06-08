@@ -12,18 +12,20 @@ func Password(rest string, user *users.UserRecord, room *rooms.Room, flags event
 	// Get if already exists, otherwise create new
 	cmdPrompt, _ := user.StartPrompt(`password`, rest)
 
-	question := cmdPrompt.Ask(`What is your current password?`, []string{})
-	if !question.Done {
-		return true, nil
+	if !user.HasPlaintextPassword() {
+		question := cmdPrompt.Ask(`What is your current password?`, []string{})
+		if !question.Done {
+			return true, nil
+		}
+
+		if !user.PasswordMatches(question.Response) {
+			user.SendText(messaging.CategorySystem, `<ansi fg="alert-5">Sorry, your password was incorrect.</ansi>`)
+			user.ClearPrompt()
+			return true, nil
+		}
 	}
 
-	if !user.PasswordMatches(question.Response) {
-		user.SendText(messaging.CategorySystem, `<ansi fg="alert-5">Sorry, your password was incorrect.</ansi>`)
-		user.ClearPrompt()
-		return true, nil
-	}
-
-	question = cmdPrompt.Ask(`What new password would you like?`, []string{})
+	question := cmdPrompt.Ask(`What new password would you like?`, []string{})
 	if !question.Done {
 		return true, nil
 	}

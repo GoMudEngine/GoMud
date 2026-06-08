@@ -1,11 +1,26 @@
 package users
 
 import (
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 )
+
+// testPasswordHash is a bcrypt hash of "testpassword" at MinCost for speed.
+// Pre-generated once at package init so NewTestUser doesn't pay bcrypt cost
+// per call.
+var testPasswordHash string
+
+func init() {
+	hash, err := bcrypt.GenerateFromPassword([]byte("testpassword"), bcrypt.MinCost)
+	if err != nil {
+		panic("test_helpers: failed to generate test password hash: " + err.Error())
+	}
+	testPasswordHash = string(hash)
+}
 
 // SeedUsersForTest replaces the global userManager with a fresh instance
 // populated from the supplied map and returns a cleanup function.
@@ -71,6 +86,7 @@ func NewTestUser(userId int, username string, charName string, connId uint64) *U
 		UserId:       userId,
 		Username:     username,
 		Role:         RoleUser,
+		Password:     testPasswordHash, // bcrypt hash — prevents HasPlaintextPassword gate
 		Character:    ch,
 		connectionId: connId,
 	}

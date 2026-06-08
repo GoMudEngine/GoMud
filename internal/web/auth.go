@@ -46,7 +46,7 @@ func doBasicAuth(next http.HandlerFunc) http.HandlerFunc {
 
 				if uRecord.PasswordMatches(password) {
 
-					if uRecord.Role != users.RoleUser {
+					if uRecord.Role == users.RoleAdmin {
 
 						mudlog.Warn("ADMIN LOGIN", "username", username, "success", true)
 
