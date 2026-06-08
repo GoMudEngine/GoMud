@@ -33,26 +33,24 @@
   </script>
 </head>
 <body>
+  <!-- Unified console header: gold-gradient wordmark + chip nav in one bar. -->
   <header>
-    <div>
-      <a class="gomud-btn" href="/">{{ .CONFIG.Server.MudName }}</a>
-    </div>
+    <a class="gomud-btn" href="/">{{ .CONFIG.Server.MudName }}</a>
+    <nav>
+      <div class="nav-container">
+        {{ $reqPath := .REQUEST.RequestURI }}
+        {{ range $idx, $navDetails := .NAV }}
+          <a href="{{ $navDetails.Target }}" {{ if eq $reqPath $navDetails.Target }}class="selected"{{end}}>{{ $navDetails.Name }}</a>
+        {{ end }}
+        {{ if eq .REQUEST.RequestURI "/webclient" }}<a id="hide-header-footer" href="/webclient-pure">⛶</a>{{ end }}
+      </div>
+    </nav>
     <div class="nav-toggle" onclick="toggleMenu()">
       <div></div>
       <div></div>
       <div></div>
     </div>
   </header>
-
-  <nav>
-    <div class="nav-container">
-      {{ $reqPath := .REQUEST.RequestURI }}
-      {{ range $idx, $navDetails := .NAV }}
-        <a href="{{ $navDetails.Target }}" {{ if eq $reqPath $navDetails.Target }}class="selected"{{end}}>{{ $navDetails.Name }}</a>
-      {{ end }}
-      {{ if eq .REQUEST.RequestURI "/webclient" }}<a id="hide-header-footer" href="/webclient-pure">⛶</a>{{ end }}
-    </div>
-  </nav>
 
   <div id="content-container" class="content-container" data-path="{{ .PATH }}">
 {{end}}
