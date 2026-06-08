@@ -100,6 +100,15 @@
   border-color: var(--frame-red, #d6694e);
   color: var(--ink-deep, #2b231d);
 }
+
+/* Ink cards: a near-neutral faded black for the map + automation panels.
+   The whole palette is warm, so every dark token (even the #0e0a06 field)
+   carries a brown tint that reads brown at near-black; this drops the warmth
+   so it actually reads as faded black/ink. */
+#panel-map,
+#panel-trig {
+  background: #0c0c0d;
+}
 #panel-vitals .dash-panel-body,
 #panel-status .dash-panel-body { color: var(--ink-deep, #2b231d); }
 #panel-status .status-line { color: var(--ink-deep, #2b231d); }
@@ -874,7 +883,7 @@
    scrollbar / below short content, and the IME composition box). #terminal
    prefix wins on specificity over xterm.css's `.xterm .xterm-viewport`,
    regardless of stylesheet load order, and survives an xterm upgrade. */
-#terminal .xterm-viewport   { background-color: #191310; }
+#terminal .xterm-viewport   { background-color: #0c0c0d; }
 #terminal .composition-view { background: #2b231d; color: #e8d2a0; }
 
 /* Automation macro/alias "sticker" chips — compact oval pills (mirrors the

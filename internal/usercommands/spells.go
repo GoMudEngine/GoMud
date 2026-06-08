@@ -66,7 +66,7 @@ func targetRank(sp *spells.SpellData) int {
 
 func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	headers := []string{`SpellId`, `Name`, `Target`, `Cost`, `Cast time`, `Difficulty`, `Reliability`}
+	headers := []string{`SpellId`, `Name`, `Target`, `Cost`}
 
 	entries := []spellEntry{}
 
@@ -87,9 +87,6 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				`<ansi fg="white-bold">%s</ansi>`,
 				`<ansi fg="` + targetColor + `">%s</ansi>`,
 				`<ansi fg="magenta">%s</ansi>`,
-				`<ansi fg="white">%s</ansi>`,
-				`<ansi fg="red">%s</ansi>`,
-				`<ansi fg="red">%s</ansi>`,
 			}
 
 			costStr := combat.GetConvictionCostDescription(sp.Cost)
@@ -101,9 +98,6 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				sp.Name,
 				target,
 				costStr,
-				combat.GetWaitRoundsDescription(sp.WaitRounds),
-				combat.GetDifficultyDescription(sp.Difficulty),
-				combat.GetSuccessChanceDescription(user.Character.GetBaseCastSuccessChance(sp.SpellId)),
 			}
 
 			entries = append(entries, spellEntry{

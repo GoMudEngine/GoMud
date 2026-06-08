@@ -344,10 +344,10 @@
             // tokens: --panel-bg #201913, warm-dark #191310, --ink-gold #c9a86a,
             // title-gold #e8d2a0, --ink-deep #2b231d.
             theme: {
-                background:   '#191310',
+                background:   '#0c0c0d',
                 foreground:   '#e0d2b2',
                 cursor:       '#e8d2a0',
-                cursorAccent: '#191310',
+                cursorAccent: '#0c0c0d',
                 selection:    'rgba(201,168,106,0.30)',
                 black:   '#3a2f25', brightBlack:   '#6b5a48',
                 red:     '#d6694e', brightRed:     '#e8745a',
@@ -1376,8 +1376,40 @@
         // (e.g. cooldown freed between heartbeats).
         setInterval(drainQueue, 500);
 
+        // Build one HP/SP/CP segment. The gradient lives in a "usable" region
+        // sized to the unreserved fraction; a dark drain masks the spent part of
+        // it; a crosshatched "reserved" block is fenced off after it (no gradient
+        // under the reserved portion). avail = % of the USABLE pool that's full;
+        // res = % of the WHOLE pool that's reserved/locked.
+        function buildVitalsSeg(poolClass, label, avail, res) {
+            res   = Math.max(0, Math.min(100, res   || 0));
+            avail = Math.max(0, Math.min(100, avail || 0));
+            var seg = document.createElement('div');
+            seg.className = 'vitals-segment ' + poolClass;
+
+            var usable = document.createElement('div');
+            usable.className = 'vitals-usable';
+            usable.style.width = (100 - res) + '%';
+            var drain = document.createElement('div');
+            drain.className = 'vitals-drain';
+            drain.style.width = (100 - avail) + '%';
+            usable.appendChild(drain);
+            seg.appendChild(usable);
+
+            var reserved = document.createElement('div');
+            reserved.className = 'vitals-reserved';
+            reserved.style.width = res + '%';
+            seg.appendChild(reserved);
+
+            var lbl = document.createElement('span');
+            lbl.className = 'vitals-label';
+            lbl.textContent = label;
+            seg.appendChild(lbl);
+            return seg;
+        }
+
         // Build a single vitals row DOM element
-        function createVitalsRow(name, hp, sp, cp, isSelf, isRemote) {
+        function createVitalsRow(name, hp, sp, cp, isSelf, isRemote, hpRes, spRes, cpRes) {
             var row = document.createElement('div');
             row.className = 'vitals-row' + (isRemote ? ' remote' : '');
             row.dataset.name = name;
@@ -1389,57 +1421,28 @@
 
             var composite = document.createElement('div');
             composite.className = 'vitals-composite';
-
-            // HP segment (50% width)
-            var hpSeg = document.createElement('div');
-            hpSeg.className = 'vitals-segment hp';
-            var hpFill = document.createElement('div');
-            hpFill.className = 'vitals-fill';
-            hpFill.style.width = (100 - hp) + '%';
-            var hpLabel = document.createElement('span');
-            hpLabel.className = 'vitals-label';
-            hpLabel.textContent = 'HP';
-            hpSeg.appendChild(hpFill);
-            hpSeg.appendChild(hpLabel);
-            composite.appendChild(hpSeg);
-
-            // SP segment (25% width)
-            var spSeg = document.createElement('div');
-            spSeg.className = 'vitals-segment sp';
-            var spFill = document.createElement('div');
-            spFill.className = 'vitals-fill';
-            spFill.style.width = (100 - sp) + '%';
-            var spLabel = document.createElement('span');
-            spLabel.className = 'vitals-label';
-            spLabel.textContent = 'SP';
-            spSeg.appendChild(spFill);
-            spSeg.appendChild(spLabel);
-            composite.appendChild(spSeg);
-
-            // CP segment (25% width)
-            var cpSeg = document.createElement('div');
-            cpSeg.className = 'vitals-segment cp';
-            var cpFill = document.createElement('div');
-            cpFill.className = 'vitals-fill';
-            cpFill.style.width = (100 - cp) + '%';
-            var cpLabel = document.createElement('span');
-            cpLabel.className = 'vitals-label';
-            cpLabel.textContent = 'CP';
-            cpSeg.appendChild(cpFill);
-            cpSeg.appendChild(cpLabel);
-            composite.appendChild(cpSeg);
-
+            composite.appendChild(buildVitalsSeg('hp', 'HP', hp, hpRes));
+            composite.appendChild(buildVitalsSeg('sp', 'SP', sp, spRes));
+            composite.appendChild(buildVitalsSeg('cp', 'CP', cp, cpRes));
             row.appendChild(composite);
             return row;
         }
 
-        // Update an existing vitals row in-place (animate fills)
-        function updateVitalsRow(row, hp, sp, cp, isRemote) {
+        // Update an existing vitals row in-place (animate usable / drain / reserved)
+        function updateVitalsRow(row, hp, sp, cp, isRemote, hpRes, spRes, cpRes) {
             row.className = 'vitals-row' + (isRemote ? ' remote' : '');
-            var fills = row.querySelectorAll('.vitals-fill');
-            if (fills[0]) fills[0].style.width = (100 - hp) + '%';
-            if (fills[1]) fills[1].style.width = (100 - sp) + '%';
-            if (fills[2]) fills[2].style.width = (100 - cp) + '%';
+            var segs = row.querySelectorAll('.vitals-segment');
+            var vals = [[hp, hpRes], [sp, spRes], [cp, cpRes]];
+            for (var i = 0; i < segs.length && i < 3; i++) {
+                var avail = Math.max(0, Math.min(100, vals[i][0] || 0));
+                var res   = Math.max(0, Math.min(100, vals[i][1] || 0));
+                var usable   = segs[i].querySelector('.vitals-usable');
+                var drain    = segs[i].querySelector('.vitals-drain');
+                var reserved = segs[i].querySelector('.vitals-reserved');
+                if (usable)   usable.style.width   = (100 - res) + '%';
+                if (drain)    drain.style.width    = (100 - avail) + '%';
+                if (reserved) reserved.style.width = res + '%';
+            }
         }
 
         function updateVitalsWindow() {
@@ -1456,12 +1459,25 @@
                 if (sessName) sessName.textContent = charObj.Name;
             }
 
+            // Percent of the USABLE (unreserved) pool, so the bar fill + its
+            // gradient color reflect how full your *usable* pool is, not the
+            // total. availablePct() = current / max(1, max - reserved) * 100 —
+            // the same definition the trigger pool conditions use.
             var selfHp = Math.max(0, Math.min(100,
-                Math.floor(v.hp / v.hp_max * 100)));
+                Math.floor(availablePct(v.hp, v.hp_max, v.hp_reserved))));
             var selfSp = Math.max(0, Math.min(100,
-                Math.floor(v.stamina / v.stamina_max * 100)));
+                Math.floor(availablePct(v.stamina, v.stamina_max, v.stamina_reserved))));
             var selfCp = Math.max(0, Math.min(100,
-                Math.floor(v.conviction / v.conviction_max * 100)));
+                Math.floor(availablePct(v.conviction, v.conviction_max, v.conviction_reserved))));
+
+            // Reserved fraction of each TOTAL pool — drives the crosshatched
+            // reserved block at the right of each bar.
+            var selfHpRes = Math.max(0, Math.min(100,
+                Math.round((v.hp_reserved || 0) / Math.max(1, v.hp_max) * 100)));
+            var selfSpRes = Math.max(0, Math.min(100,
+                Math.round((v.stamina_reserved || 0) / Math.max(1, v.stamina_max) * 100)));
+            var selfCpRes = Math.max(0, Math.min(100,
+                Math.round((v.conviction_reserved || 0) / Math.max(1, v.conviction_max) * 100)));
 
             // Current room title for same-room detection
             var selfRoom = '';
@@ -1528,14 +1544,18 @@
                     members.push({
                         name: mName, hp: mHp, sp: mSp,
                         cp: mCp, isSelf: isSelf,
-                        isRemote: mRemote
+                        isRemote: mRemote,
+                        hpRes: isSelf ? selfHpRes : 0,
+                        spRes: isSelf ? selfSpRes : 0,
+                        cpRes: isSelf ? selfCpRes : 0
                     });
                 }
             } else {
                 // Solo — self first
                 members.push({
                     name: selfName, hp: selfHp, sp: selfSp,
-                    cp: selfCp, isSelf: true, isRemote: false
+                    cp: selfCp, isSelf: true, isRemote: false,
+                    hpRes: selfHpRes, spRes: selfSpRes, cpRes: selfCpRes
                 });
 
                 // Append any companion entries from Party.Vitals
@@ -1550,7 +1570,8 @@
                         sp: Math.max(0, Math.min(100, cVitals.stamina || 0)),
                         cp: Math.max(0, Math.min(100, cVitals.conviction || 0)),
                         isSelf: false,
-                        isRemote: (cVitals.location !== selfRoom)
+                        isRemote: (cVitals.location !== selfRoom),
+                        hpRes: 0, spRes: 0, cpRes: 0
                     });
                 }
             }
@@ -1570,7 +1591,7 @@
                 activeNames[m.name] = true;
                 var existing = existingByName[m.name];
                 if (existing) {
-                    updateVitalsRow(existing, m.hp, m.sp, m.cp, m.isRemote);
+                    updateVitalsRow(existing, m.hp, m.sp, m.cp, m.isRemote, m.hpRes, m.spRes, m.cpRes);
                     // Update name class
                     var nameEl = existing.querySelector('.vitals-name');
                     if (nameEl) {
@@ -1580,7 +1601,8 @@
                 } else {
                     var newRow = createVitalsRow(
                         m.name, m.hp, m.sp, m.cp,
-                        m.isSelf, m.isRemote);
+                        m.isSelf, m.isRemote,
+                        m.hpRes, m.spRes, m.cpRes);
                     container.appendChild(newRow);
                 }
             }
@@ -1626,7 +1648,24 @@
                 cursor = cursor[propertyName];
             }
 
-            cursor[lastProperty] = objBody;
+            // GMCP sub-namespaces are independently owned: e.g. "Char.Automation"
+            // is pushed by the automation module and lives at GMCPStructs.Char.Automation,
+            // but the full "Char" payload (from the Char module) does NOT include it.
+            // A naive replace of GMCPStructs.Char on a full "Char" push would clobber
+            // the separately-pushed Automation sub-package (and the panel would blank
+            // out depending on push ordering). For a single-segment namespace, shallow-
+            // merge so a parent-package update only replaces the fields it actually
+            // carries and leaves sibling sub-packages intact. Dotted sub-package pushes
+            // (e.g. "Char.Automation", "Char.Conditions") still replace wholesale so
+            // deletions inside them propagate.
+            var existing = cursor[lastProperty];
+            if ( nameParts.length === 0
+                    && existing && typeof existing === 'object' && !Array.isArray(existing)
+                    && objBody && typeof objBody === 'object' && !Array.isArray(objBody) ) {
+                cursor[lastProperty] = Object.assign({}, existing, objBody);
+            } else {
+                cursor[lastProperty] = objBody;
+            }
             nameParts = objNamespace.split(".");
             for ( let i=nameParts.length-1; i>=0; i-- ) {
                 var path = nameParts.slice(0, i+1).join(".");
@@ -1665,27 +1704,61 @@
                 }
             }
 
-            // Conditions area
+            // Statuses (active buffs) + combat conditions, rendered as chips.
+            // Statuses come from Char.Affects (a name-keyed map; the server already
+            // omits stealth buffs like Hidden/Empathic Shroud). Conditions come from
+            // Char.Conditions (Bleeding, Poisoned, Rally, Warcry, Shield, etc.).
+            var chips = '';
+
+            var affects = charObj.Affects || null;
+            if (affects && typeof affects === 'object') {
+                var aNames = Object.keys(affects);
+                for (var ai = 0; ai < aNames.length; ai++) {
+                    var aff = affects[aNames[ai]];
+                    if (!aff) continue;
+                    var aLabel = escapeHTML(aff.name || aNames[ai]);
+                    var aTip   = escapeHTML(aff.description || '');
+                    var aDur   = escapeHTML(affectDurLabel(aff.duration_cur));
+                    chips += '<span class="cond-chip status-chip" title="' + aTip + '">' +
+                                aLabel +
+                                (aDur ? '<span class="cond-dur">' + aDur + '</span>' : '') +
+                             '</span>';
+                }
+            }
+
             var conditions = charObj.Conditions || null;
-            if (!conditions || !Array.isArray(conditions) || conditions.length === 0) {
-                html += '<div class="status-empty">No active conditions.</div>';
-            } else {
-                html += '<div class="cond-chips">';
+            if (conditions && Array.isArray(conditions)) {
                 for (var i = 0; i < conditions.length; i++) {
                     var cond = conditions[i];
                     if (!cond) continue;
                     var label    = escapeHTML(cond.type        || '');
                     var tooltip  = escapeHTML(cond.description || '');
                     var duration = escapeHTML(cond.duration    || '');
-                    html += '<span class="cond-chip" title="' + tooltip + '">' +
+                    chips += '<span class="cond-chip" title="' + tooltip + '">' +
                                 label +
                                 (duration ? '<span class="cond-dur">' + duration + '</span>' : '') +
-                            '</span>';
+                             '</span>';
                 }
-                html += '</div>';
+            }
+
+            if (chips) {
+                html += '<div class="cond-chips">' + chips + '</div>';
+            } else {
+                html += '<div class="status-empty">No active effects.</div>';
             }
 
             container.innerHTML = html;
+        }
+
+        // Vague, no-hard-numbers duration label for an active buff, given its
+        // remaining seconds (Char.Affects.duration_cur; -1 == permabuff). Mirrors
+        // the server-side conditionDurationLabel vibe so statuses and conditions
+        // read consistently.
+        function affectDurLabel(sec) {
+            if (typeof sec !== 'number' || sec < 0) return 'sustained';
+            if (sec <= 30)  return 'briefly';
+            if (sec <= 120) return 'for a while';
+            return 'extended';
         }
 
         function escapeHTML(str) {
@@ -2314,24 +2387,28 @@
         .vitals-segment {
             position: relative;
             overflow: hidden;
+            display: flex;
         }
 
-        .vitals-segment.hp {
-            flex: 2;
-            background: linear-gradient(to right, #f44336, #ffeb3b, #4caf50);
-        }
+        .vitals-segment.hp { flex: 2; }
+        .vitals-segment.sp { flex: 1; }
+        .vitals-segment.cp { flex: 1; }
 
-        .vitals-segment.sp {
-            flex: 1;
-            background: linear-gradient(to right, #8b4513, #d2691e, #daa520);
+        /* Usable region carries the gradient, sized to the unreserved fraction.
+           The gradient stops at the reserved boundary — it never runs under
+           the reserved block. */
+        .vitals-usable {
+            position: relative;
+            height: 100%;
+            overflow: hidden;
+            transition: width 0.4s ease-out;
         }
+        .vitals-segment.hp .vitals-usable { background: linear-gradient(to right, #f44336, #ffeb3b, #4caf50); }
+        .vitals-segment.sp .vitals-usable { background: linear-gradient(to right, #8b4513, #d2691e, #daa520); }
+        .vitals-segment.cp .vitals-usable { background: linear-gradient(to right, #ffd700, #ffeb8a, #ffffff); }
 
-        .vitals-segment.cp {
-            flex: 1;
-            background: linear-gradient(to right, #ffd700, #ffeb8a, #ffffff);
-        }
-
-        .vitals-segment .vitals-fill {
+        /* Drained part of the usable pool — dark mask from the right. */
+        .vitals-segment .vitals-drain {
             position: absolute;
             top: 0;
             right: 0;
@@ -2339,6 +2416,18 @@
             width: 0%;
             background: #222;
             transition: width 0.4s ease-out;
+        }
+
+        /* Reserved (locked) portion — crosshatch, NO gradient, fenced off after
+           the usable region. */
+        .vitals-segment .vitals-reserved {
+            height: 100%;
+            transition: width 0.4s ease-out;
+            background:
+                repeating-linear-gradient(45deg, rgba(255,255,255,.18) 0 1.5px, transparent 1.5px 5px),
+                repeating-linear-gradient(-45deg, rgba(255,255,255,.18) 0 1.5px, transparent 1.5px 5px),
+                #16181c;
+            border-left: 1px solid rgba(255,255,255,.30);
         }
 
         .vitals-segment .vitals-label {
@@ -2468,6 +2557,13 @@
             color: var(--text-secondary, #9a8a6a);
             margin-left: 4px;
             font-size: 0.66rem;
+        }
+        /* Active buffs (statuses) get a teal/copper tint so they read distinctly
+           from the gold combat-condition chips. */
+        .cond-chip.status-chip {
+            border-color: var(--copper, #4a6b5d);
+            background: #16201c;
+            color: #8fb3a6;
         }
     </style>
 

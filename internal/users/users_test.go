@@ -1057,19 +1057,19 @@ func TestRenderVitalBar(t *testing.T) {
 	t.Run("full health", func(t *testing.T) {
 		bar := renderVitalBar(100, 100, 0)
 		assert.Contains(t, bar, "█")
-		assert.Contains(t, bar, "82") // green
+		assert.Contains(t, bar, "71") // green (≈ vitals #4caf50)
 	})
 
 	t.Run("half health", func(t *testing.T) {
 		bar := renderVitalBar(50, 100, 0)
 		assert.Contains(t, bar, "█")
-		assert.Contains(t, bar, "226") // yellow
+		assert.Contains(t, bar, "221") // gold/yellow (≈ vitals #ffeb3b)
 	})
 
 	t.Run("low health", func(t *testing.T) {
 		bar := renderVitalBar(10, 100, 0)
 		assert.Contains(t, bar, "█")
-		assert.Contains(t, bar, "196") // red
+		assert.Contains(t, bar, "203") // red (≈ vitals #f44336)
 	})
 
 	t.Run("zero health", func(t *testing.T) {
