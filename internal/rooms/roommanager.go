@@ -267,6 +267,9 @@ func GetAllZoneRoomsIds(zoneName string) []int {
 func MoveToRoom(userId int, toRoomId int, isSpawn ...bool) error {
 
 	user := users.GetByUserId(userId)
+	if user == nil {
+		return fmt.Errorf("user %d not found", userId)
+	}
 
 	currentRoom := LoadRoom(user.Character.RoomId)
 

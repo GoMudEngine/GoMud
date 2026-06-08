@@ -215,6 +215,12 @@ func SaveRoomTemplate(roomTpl Room) error {
 	//
 	roomBeingReplaced := roomManager.rooms[roomTpl.RoomId]
 
+	if roomBeingReplaced == nil {
+		// New room not yet in memory — no live state to copy.
+		addRoomToMemory(&roomTpl, true)
+		return nil
+	}
+
 	// Copy container contents (if new vs. old room container names match)
 	for containerName, container := range roomBeingReplaced.Containers {
 
