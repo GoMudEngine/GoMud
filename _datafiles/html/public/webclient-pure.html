@@ -1069,6 +1069,41 @@
             });
         }
 
+        /////////////////////////////////////////////
+        //
+        // Action Queue — cooldown-gated ability FIFO
+        //
+        /////////////////////////////////////////////
+
+        var actionQueue = []; // entries: { triggerId, name, commands, _front }
+        var QUEUE_CAP = 10;
+
+        // Resolve $1..$9 captures into a command string (same logic as fireTriggerCommands).
+        function substituteCaptures(cmds, caps) {
+            return String(cmds || "").replace(/\$([0-9])/g, function(_, d){ return caps[parseInt(d,10)] || ""; });
+        }
+
+        // Enqueue a trigger action (dedup by triggerId, cap, priority-FIFO insert).
+        function enqueueTriggerAction(trigger, resolvedCmds) {
+            // dedup: one entry per trigger
+            for (var i = 0; i < actionQueue.length; i++) {
+                if (actionQueue[i].triggerId === trigger.id) return;
+            }
+            if (actionQueue.length >= QUEUE_CAP) return; // cap (quiet drop)
+            var entry = { triggerId: trigger.id, name: trigger.name, commands: resolvedCmds };
+            if (trigger.queueMode === "front") {
+                // priority FIFO: insert after the last existing front entry, before any back entries
+                var insertAt = 0;
+                while (insertAt < actionQueue.length && actionQueue[insertAt]._front) insertAt++;
+                entry._front = true;
+                actionQueue.splice(insertAt, 0, entry);
+            } else {
+                actionQueue.push(entry); // back
+            }
+            renderAutomation();
+            drainQueue();
+        }
+
         function runTriggers(line, nowMs) {
             var a = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
             if (!a || !a.triggers) return;
@@ -1081,7 +1116,13 @@
                 if (triggerLastFire[t.id] && (nowMs - triggerLastFire[t.id]) < TRIGGER_MIN_INTERVAL_MS) return; // cooldown
                 triggerLastFire[t.id] = nowMs;
                 var ok = evalTriggerCondition(t.condition, m); // m[1..n] are captures
-                fireTriggerCommands(ok ? t.thenCmds : t.elseCmds, m);
+                if (t.queueMode === "back" || t.queueMode === "front") {
+                    // Resolve captures NOW (they're gone by drain time)
+                    var resolved = substituteCaptures(ok ? t.thenCmds : t.elseCmds, m);
+                    enqueueTriggerAction(t, resolved);
+                } else {
+                    fireTriggerCommands(ok ? t.thenCmds : t.elseCmds, m);
+                }
             });
         }
 
