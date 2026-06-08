@@ -3,3 +3,4 @@ name: Rally
 description: An inspiring shout steadies your defenses.
 triggerrate: 1 round
 triggercount: 25
+end_user_text: "The strength of your rally drains away."

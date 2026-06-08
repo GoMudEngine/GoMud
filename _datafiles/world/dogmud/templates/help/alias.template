@@ -31,4 +31,4 @@ quotes around the name or value — just plain text.
 <ansi fg="command">Triggers &amp; Timers</ansi> panel for point-and-click
 editing.
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help macros</ansi>, <ansi fg="command">help set</ansi>
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help macros</ansi>, <ansi fg="command">help ticks</ansi>, <ansi fg="command">help triggers</ansi>, <ansi fg="command">help set</ansi>

@@ -136,6 +136,7 @@ type UserTrigger struct {
 	ThenCmds  string            `yaml:"thencmds" json:"thenCmds"`
 	ElseCmds  string            `yaml:"elsecmds,omitempty" json:"elseCmds,omitempty"`
 	Enabled   bool              `yaml:"enabled" json:"enabled"`
+	QueueMode string            `yaml:"queuemode,omitempty" json:"queueMode,omitempty"` // ""=fire now, "back", "front"
 }
 
 // SetTrigger creates (Id==0 → next id, append) or updates (matching Id) a trigger.

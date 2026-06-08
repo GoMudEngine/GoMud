@@ -9,7 +9,7 @@ the server to GMCP-aware clients (web client, Mudlet, etc.). Each
 listeners in its `init()` function and emits `GMCPOut` events to deliver
 payloads to connected clients. All modules follow the same
 listener/payload pattern; this document covers the `Char.Automation`
-module (Phase 1–3) and the `Char.Vitals` additions from Phase 3.
+module (Phase 1–4) and the `Char.Vitals` additions from Phase 3.
 
 ## Char.Automation Module (`gmcp.Automation.go`)
 
@@ -32,6 +32,7 @@ Module name (as sent over GMCP): **`Char.Automation`**
                   "intervalSec": 30, "enabled": true }, ...],
   "triggers":  [{ "id": "def456", "name": "Auto-heal", "pattern": "* hits you*",
                   "commands": "cast heal", "enabled": true,
+                  "queueMode": "back",
                   "condition": {
                     "sourceKind": "pool_pct",
                     "sourceKey":  "hp",
@@ -64,6 +65,7 @@ All arrays are sorted by key/name/id for stable ordering. Fields:
 | `triggers[].condition`      | object?  | Optional condition; `null` when not set            |
 | `triggers[].thenCommands`   | string   | Commands run when condition is true (may be empty) |
 | `triggers[].elseCommands`   | string   | Commands run when condition is false (may be empty)|
+| `triggers[].queueMode`      | string   | `""` (fire immediately, default), `"back"` (add to end of action queue), or `"front"` (add to front — priority) |
 
 **`triggers[].condition` shape** (when present):
 
@@ -145,6 +147,7 @@ client sends binary GMCP frames to `gmcp.go`'s `HandleIAC` switch:
 ```json
 { "kind": "trigger", "id": "def456", "name": "Auto-heal",
   "pattern": "* hits you*", "commands": "cast heal", "enabled": true,
+  "queueMode": "front",
   "condition": { "sourceKind": "pool_pct", "sourceKey": "hp",
                  "op": "below", "values": ["40"] },
   "thenCommands": "cast heal", "elseCommands": "" }
@@ -161,6 +164,53 @@ to re-push the full `Char.Automation` payload to the client. Unknown
 
 See `docs/superpowers/specs/2026-06-07-web-client-automation-panel-design.md`
 for the full Phase 2–3 design.
+
+## Char.Automation — Action Queue (Phase 4)
+
+### Purpose
+
+Phase 4 added a client-side FIFO action queue so that multiple triggers
+firing at once (e.g. several buffs expiring simultaneously) do not stomp
+each other. Instead of sending all commands immediately, each trigger with
+a non-empty `queueMode` pushes its resolved command onto the queue, which
+drains one entry per shared ability cooldown.
+
+### `queueMode` field
+
+The `queueMode` field is included on every trigger in both the outbound
+`Char.Automation` payload and the inbound `Char.Automation.Set` message.
+
+| Value      | Behaviour                                                         |
+|------------|-------------------------------------------------------------------|
+| `""`       | Fire immediately (default, backward-compatible)                   |
+| `"back"`   | Append to the end of the action queue                             |
+| `"front"`  | Prepend to the front of the queue (priority); multiple concurrent |
+|            | `"front"` entries preserve their arrival order (priority FIFO)   |
+
+### Client-side queue behaviour
+
+The queue is implemented entirely in the web client (not on the server).
+Key rules:
+
+- **Shared cooldown gate.** Kick, trip, bash, grapple, taunt, rally,
+  warcry, and every spell share one cooldown tracked as
+  `Commands.State.cooldowns["special-move"]`. The queue drains one entry
+  only when that cooldown is free.
+- **Dedup.** A trigger whose resolved command is already present in the
+  queue will not add a second entry.
+- **Cap.** The queue holds at most 10 entries.
+- **Ephemeral.** The queue is cleared on: the Clear button in the panel,
+  `Commands.State.mode == "downed"` (death), and any page reload or
+  reconnect. It is never persisted to the server.
+- **No auto-retry.** If a queued command fails (e.g. concentration lost),
+  the queue does not re-add it. Authors should write a companion trigger
+  that matches the failure message and re-queues the command.
+
+### Panel UI
+
+Triggers that are currently in the queue are highlighted and floated to
+the top of the Triggers tab. A badge on each shows its position (1 =
+next to fire).
 
 ## Char.Vitals — Reserved-Pool Fields (Phase 3)
 

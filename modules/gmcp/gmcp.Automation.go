@@ -170,12 +170,13 @@ func buildAutomationPayload(macros map[string]string, aliases map[string]string,
 
 	for _, tr := range triggers {
 		gt := GMCPAutomation_Trigger{
-			Id:       tr.Id,
-			Name:     tr.Name,
-			Pattern:  tr.Pattern,
-			ThenCmds: tr.ThenCmds,
-			ElseCmds: tr.ElseCmds,
-			Enabled:  tr.Enabled,
+			Id:        tr.Id,
+			Name:      tr.Name,
+			Pattern:   tr.Pattern,
+			ThenCmds:  tr.ThenCmds,
+			ElseCmds:  tr.ElseCmds,
+			Enabled:   tr.Enabled,
+			QueueMode: tr.QueueMode,
 		}
 		if tr.Condition != nil {
 			gt.Condition = &GMCPAutomation_Condition{
@@ -227,6 +228,7 @@ type GMCPAutomation_Trigger struct {
 	ThenCmds  string                    `json:"thenCmds"`
 	ElseCmds  string                    `json:"elseCmds,omitempty"`
 	Enabled   bool                      `json:"enabled"`
+	QueueMode string                    `json:"queueMode,omitempty"`
 }
 
 type GMCPAutomation_Payload struct {

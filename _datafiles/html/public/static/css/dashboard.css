@@ -888,4 +888,81 @@
   color: var(--title-gold, #e8d2a0);
   cursor: pointer; white-space: nowrap; user-select: none; transition: border-color 0.08s;
 }
+
+/* ── Action queue UI — queued/pending trigger rows, badges, status bar ──── */
+
+/* Pending row: red glow border, slightly warmer background */
+.auto-row.pending {
+  background: #2a1d12;
+  border-color: var(--madder, #8c3b30);
+  box-shadow: 0 0 0 1px rgba(214, 105, 78, 0.35), 0 0 9px rgba(214, 105, 78, 0.22);
+}
+.auto-row.pending .name {
+  color: var(--title-gold, #e8d2a0);
+}
+
+/* FIFO position badge — circular, red by default, brass for position 1 */
+.auto-badge {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 50%;
+  background: var(--madder, #8c3b30);
+  color: #fff;
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+/* Brass "next to fire" badge */
+.auto-badge.next {
+  background: radial-gradient(circle at 34% 26%, #f4dd92, #cb9f42 46%, #8a6620);
+  color: var(--brass-text, #3b2a10);
+}
+
+/* Dashed divider between queued and normal trigger rows */
+.auto-qsep {
+  border: none;
+  border-top: 1px dashed rgba(184, 144, 71, 0.3);
+  margin: 3px 2px;
+}
+
+/* Queue status bar — shown above the trigger list when queue is non-empty */
+.auto-qbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 9px;
+  background: #241a10;
+  border-bottom: 1px solid var(--brass-border, #5e431a);
+  flex-shrink: 0;
+}
+.auto-qcount {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 0.74rem;
+  color: var(--title-gold, #e8d2a0);
+}
+.auto-qcd {
+  font-size: 0.66rem;
+  color: var(--text-secondary, #9a8a6a);
+  font-style: italic;
+  flex: 1;
+}
+/* Brass Clear button */
+.auto-qclear {
+  font-size: 0.68rem;
+  color: var(--brass-text, #3b2a10);
+  background: radial-gradient(circle at 34% 26%, #f4dd92, #cb9f42 46%, #8a6620);
+  border: 1px solid var(--brass-border, #5e431a);
+  border-radius: 4px;
+  padding: 2px 9px;
+  cursor: pointer;
+  font-family: var(--font-serif, Georgia, serif);
+  font-style: italic;
+  transition: filter 0.08s;
+}
+.auto-qclear:hover {
+  filter: brightness(1.1);
+}
 .auto-chip:hover { border-color: var(--gold-rule, #c9a86a); }

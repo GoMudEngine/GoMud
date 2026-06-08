@@ -1,5 +1,25 @@
 # DOGMud Patch Notes
 
+## 2026-06-08 — Web client automation panel: action queue
+
+Triggers can now feed a shared **action queue** that respects your ability
+cooldown — so you can set up a rotation that auto-executes.
+
+- Your special abilities (kick, trip, bash, grapple, taunt, rally, warcry, and
+  casting any spell) all share one cooldown. A trigger set to **"Queue this
+  action"** drops its command into a queue instead of firing it right away; the
+  queue then runs **one ability each time the cooldown frees**, in order.
+- Use it to react to several things at once — e.g. a few buffs drop together and
+  their re-cast triggers all queue up, then fire one after another as fast as the
+  cooldown allows. **Queue at front** lets an urgent action (an emergency heal)
+  jump the line.
+- The queued triggers are highlighted and float to the top of the Triggers tab
+  with their place in line; a **Clear** button empties the queue, and dying (or
+  reloading) clears it too.
+- **Rally** and **warcry** now announce when they wear off, so a trigger can
+  catch it and re-cast.
+- See `help triggers` for the details and worked examples.
+
 ## 2026-06-07 — Web client automation panel: Triggers
 
 The automation panel's **Triggers** tab is live — the panel's four tabs (Macros,

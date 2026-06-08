@@ -613,6 +613,9 @@
                     renderAutomation();
                     rebuildTickTimers();
                 }
+
+                // Defensive drain — catches cooldown-clearing that arrives bundled with Char
+                drainQueue();
             },
             "Char.Conditions": function() {
                 updateStatusPanel();
@@ -644,6 +647,15 @@
             "Char.Automation": function() {
                 renderAutomation();
                 rebuildTickTimers();
+            },
+            // Commands.State carries the cooldowns map and mode — drain + death-clear here.
+            "Commands": function() {
+                drainQueue();
+                checkDeathClearsQueue();
+            },
+            "Commands.State": function() {
+                drainQueue();
+                checkDeathClearsQueue();
             },
         };
 
@@ -949,21 +961,64 @@
                     list.appendChild(tRow);
                 }
             } else if (autoActiveTab === 'triggers') {
+                // Build a set of queued trigger IDs (in queue order for badge numbering)
+                var queuedIds = {};
+                for (var qi = 0; qi < actionQueue.length; qi++) {
+                    queuedIds[actionQueue[qi].triggerId] = qi + 1; // 1-based FIFO position
+                }
+
+                // Status bar — only when queue is non-empty
+                if (actionQueue.length) {
+                    var qbar = document.createElement("div");
+                    qbar.className = "auto-qbar";
+
+                    var qcount = document.createElement("span");
+                    qcount.className = "auto-qcount";
+                    qcount.textContent = "▸ " + actionQueue.length + " queued";
+                    qbar.appendChild(qcount);
+
+                    var qcd = document.createElement("span");
+                    qcd.className = "auto-qcd";
+                    qcd.textContent = cooldownReady() ? "ready" : "cooling…";
+                    qbar.appendChild(qcd);
+
+                    var qclear = document.createElement("button");
+                    qclear.type = "button";
+                    qclear.className = "auto-qclear";
+                    qclear.textContent = "Clear";
+                    qclear.addEventListener("click", function(e) {
+                        e.stopPropagation();
+                        clearActionQueue();
+                    });
+                    qbar.appendChild(qclear);
+
+                    list.appendChild(qbar);
+                }
+
                 if (!a || !a.triggers || !a.triggers.length) {
                     makeEmptyMsg("No triggers configured.");
                     return;
                 }
-                for (var tri = 0; tri < a.triggers.length; tri++) {
-                    var trig = a.triggers[tri];
+
+                // Helper: build one trigger row
+                function makeTriggerRow(trig, queuePos) {
                     var trRow = document.createElement("div");
-                    trRow.className = "auto-row";
+                    trRow.className = "auto-row" + (queuePos ? " pending" : "");
                     trRow.dataset.autoType = "trigger";
                     trRow.dataset.autoId   = String(trig.id);
                     trRow.dataset.autoKey  = String(trig.id);
 
-                    var trTog = document.createElement("span");
-                    trTog.className = "auto-tog" + (trig.enabled ? " on" : "");
-                    trRow.appendChild(trTog);
+                    if (queuePos) {
+                        // FIFO badge: position 1 = brass (.next), rest = red
+                        var badge = document.createElement("span");
+                        badge.className = "auto-badge" + (queuePos === 1 ? " next" : "");
+                        badge.textContent = String(queuePos);
+                        trRow.appendChild(badge);
+                    } else {
+                        var trTog = document.createElement("span");
+                        trTog.className = "auto-tog" + (trig.enabled ? " on" : "");
+                        trRow.appendChild(trTog);
+                    }
 
                     var trName = document.createElement("span");
                     trName.className = "name";
@@ -972,10 +1027,45 @@
 
                     var trSum = document.createElement("span");
                     trSum.className = "sum";
-                    trSum.textContent = (trig.pattern || "") + (trig.enabled ? "" : " (off)");
+                    if (queuePos) {
+                        trSum.textContent = "queued → " + (trig.thenCmds || "");
+                    } else {
+                        trSum.textContent = (trig.pattern || "") + (trig.enabled ? "" : " (off)");
+                    }
                     trRow.appendChild(trSum);
 
-                    list.appendChild(trRow);
+                    return trRow;
+                }
+
+                // 1) Render queued triggers first, in actionQueue order
+                for (var qi2 = 0; qi2 < actionQueue.length; qi2++) {
+                    var qentry = actionQueue[qi2];
+                    // Find the trigger in Automation to get its live data
+                    var qtrig = null;
+                    if (a && a.triggers) {
+                        for (var qti = 0; qti < a.triggers.length; qti++) {
+                            if (a.triggers[qti].id === qentry.triggerId) { qtrig = a.triggers[qti]; break; }
+                        }
+                    }
+                    if (!qtrig) {
+                        // Trigger deleted mid-queue — render with stored name only
+                        qtrig = { id: qentry.triggerId, name: qentry.name, thenCmds: qentry.commands, enabled: true };
+                    }
+                    list.appendChild(makeTriggerRow(qtrig, qi2 + 1));
+                }
+
+                // Divider between queued + normal (only when queue is non-empty)
+                if (actionQueue.length) {
+                    var qsep = document.createElement("hr");
+                    qsep.className = "auto-qsep";
+                    list.appendChild(qsep);
+                }
+
+                // 2) Render non-queued triggers normally
+                for (var tri = 0; tri < a.triggers.length; tri++) {
+                    var trig = a.triggers[tri];
+                    if (queuedIds[trig.id]) continue; // already rendered above
+                    list.appendChild(makeTriggerRow(trig, 0));
                 }
             }
         }
@@ -1069,6 +1159,74 @@
             });
         }
 
+        /////////////////////////////////////////////
+        //
+        // Action Queue — cooldown-gated ability FIFO
+        //
+        /////////////////////////////////////////////
+
+        var actionQueue = []; // entries: { triggerId, name, commands, _front }
+        var QUEUE_CAP = 10;
+
+        // Resolve $1..$9 captures into a command string (same logic as fireTriggerCommands).
+        function substituteCaptures(cmds, caps) {
+            return String(cmds || "").replace(/\$([0-9])/g, function(_, d){ return caps[parseInt(d,10)] || ""; });
+        }
+
+        // Enqueue a trigger action (dedup by triggerId, cap, priority-FIFO insert).
+        function enqueueTriggerAction(trigger, resolvedCmds) {
+            // dedup: one entry per trigger
+            for (var i = 0; i < actionQueue.length; i++) {
+                if (actionQueue[i].triggerId === trigger.id) return;
+            }
+            if (actionQueue.length >= QUEUE_CAP) return; // cap (quiet drop)
+            var entry = { triggerId: trigger.id, name: trigger.name, commands: resolvedCmds };
+            if (trigger.queueMode === "front") {
+                // priority FIFO: insert after the last existing front entry, before any back entries
+                var insertAt = 0;
+                while (insertAt < actionQueue.length && actionQueue[insertAt]._front) insertAt++;
+                entry._front = true;
+                actionQueue.splice(insertAt, 0, entry);
+            } else {
+                actionQueue.push(entry); // back
+            }
+            renderAutomation();
+            drainQueue();
+        }
+
+        // Queue processor — drains ONE command per special-move cooldown.
+        var QUEUE_MIN_FIRE_GAP_MS = 800; // ensure the cooldown registers before next fire
+        var lastQueueFireAt = 0;
+
+        function cooldownReady() {
+            var cds = (((GMCPStructs["Commands"] || {}).State) || {}).cooldowns || {};
+            return !cds["special-move"];
+        }
+
+        function drainQueue() {
+            if (!actionQueue.length) return;
+            if (!cooldownReady()) return;
+            if (Date.now() - lastQueueFireAt < QUEUE_MIN_FIRE_GAP_MS) return; // let prior fire register
+            var entry = actionQueue.shift();
+            lastQueueFireAt = Date.now();
+            String(entry.commands || "").split(";").forEach(function(c){ c = c.trim(); if (c) SendData(c); });
+            renderAutomation();
+        }
+
+        // Clear the entire action queue (manual Clear button + death signal).
+        function clearActionQueue() {
+            actionQueue = [];
+            renderAutomation();
+        }
+
+        // Death-clear: when mode transitions to "downed", wipe the queue.
+        var _lastMode = "";
+        function checkDeathClearsQueue() {
+            var mode = (((GMCPStructs["Commands"] || {}).State) || {}).mode || "";
+            if (mode === "downed" && _lastMode !== "downed") clearActionQueue();
+            _lastMode = mode;
+        }
+
         function runTriggers(line, nowMs) {
             var a = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
             if (!a || !a.triggers) return;
@@ -1081,7 +1239,13 @@
                 if (triggerLastFire[t.id] && (nowMs - triggerLastFire[t.id]) < TRIGGER_MIN_INTERVAL_MS) return; // cooldown
                 triggerLastFire[t.id] = nowMs;
                 var ok = evalTriggerCondition(t.condition, m); // m[1..n] are captures
-                fireTriggerCommands(ok ? t.thenCmds : t.elseCmds, m);
+                if (t.queueMode === "back" || t.queueMode === "front") {
+                    // Resolve captures NOW (they're gone by drain time)
+                    var resolved = substituteCaptures(ok ? t.thenCmds : t.elseCmds, m);
+                    enqueueTriggerAction(t, resolved);
+                } else {
+                    fireTriggerCommands(ok ? t.thenCmds : t.elseCmds, m);
+                }
             });
         }
 
@@ -1207,6 +1371,10 @@
         // Render once on load (empty state until GMCP arrives)
         renderAutomation();
         rebuildTickTimers();
+
+        // Safety drain — fires even if the Commands GMCP nudge doesn't arrive
+        // (e.g. cooldown freed between heartbeats).
+        setInterval(drainQueue, 500);
 
         // Build a single vitals row DOM element
         function createVitalsRow(name, hp, sp, cp, isSelf, isRemote) {
@@ -2882,7 +3050,7 @@
 
             // ── Trigger editor (progressive if/else builder) ───────────────
 
-            function openTriggerEditor(editingId, prefillName, prefillPattern, prefillCondition, prefillThenCmds, prefillElseCmds, prefillEnabled) {
+            function openTriggerEditor(editingId, prefillName, prefillPattern, prefillCondition, prefillThenCmds, prefillElseCmds, prefillEnabled, prefillQueueMode) {
                 var body = document.createElement("div");
                 body.style.cssText = "display:flex;flex-direction:column;gap:10px;";
 
@@ -3062,6 +3230,30 @@
                 enableWrap.appendChild(enableLbl);
                 body.appendChild(enableWrap);
 
+                // Queue this action control
+                var queueWrap = document.createElement("div");
+                queueWrap.style.cssText = "display:flex;align-items:center;gap:8px;";
+                var queueLbl = document.createElement("span");
+                queueLbl.textContent = "Queue this action";
+                queueLbl.style.cssText = "font-family:Georgia,serif;font-size:0.85em;color:#c8b98a;";
+                var queueSelect = document.createElement("select");
+                queueSelect.style.cssText = "background:#150f08;border:1px solid #5e431a;border-radius:3px;color:#d9c39e;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:2px 6px;";
+                var queueOptions = [
+                    {v: "",      l: "Fire immediately"},
+                    {v: "back",  l: "Queue at back"},
+                    {v: "front", l: "Queue at front"}
+                ];
+                queueOptions.forEach(function(o) {
+                    var opt = document.createElement("option");
+                    opt.value = o.v;
+                    opt.textContent = o.l;
+                    queueSelect.appendChild(opt);
+                });
+                queueSelect.value = prefillQueueMode || "";
+                queueWrap.appendChild(queueLbl);
+                queueWrap.appendChild(queueSelect);
+                body.appendChild(queueWrap);
+
                 // Pre-fill from existing condition if provided
                 var hasCondition = !!(prefillCondition && prefillCondition.sourceKind);
                 if (hasCondition) {
@@ -3142,7 +3334,8 @@
                         condition: condition,
                         thenCmds:  finalThenCmds,
                         elseCmds:  finalElseCmds,
-                        enabled:   enabledState
+                        enabled:   enabledState,
+                        queueMode: queueSelect.value
                     });
                 });
             }
@@ -3166,7 +3359,7 @@
                     var trid = parseInt(key, 10);
                     var tr = isNaN(trid) ? null : findTrigger(trid);
                     if (tr) {
-                        openTriggerEditor(tr.id, tr.name, tr.pattern, tr.condition || null, tr.thenCmds, tr.elseCmds || "", tr.enabled);
+                        openTriggerEditor(tr.id, tr.name, tr.pattern, tr.condition || null, tr.thenCmds, tr.elseCmds || "", tr.enabled, tr.queueMode || "");
                     }
                 }
             };
@@ -3193,7 +3386,7 @@
                     var tr = isNaN(trid) ? null : findTrigger(trid);
                     if (tr) {
                         // id=0 → server creates new trigger
-                        openTriggerEditor(0, tr.name, tr.pattern, tr.condition || null, tr.thenCmds, tr.elseCmds || "", tr.enabled);
+                        openTriggerEditor(0, tr.name, tr.pattern, tr.condition || null, tr.thenCmds, tr.elseCmds || "", tr.enabled, tr.queueMode || "");
                     }
                 }
             };
