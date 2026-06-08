@@ -98,4 +98,77 @@ an optional condition to decide what to do.
   This prevents a single matching line from looping
   your commands.
 
+<ansi fg="yellow">Queue this action:</ansi>
+
+  Instead of firing a command the instant a trigger
+  matches, you can push it onto a shared action queue
+  that drains one command per ability cooldown.
+
+  <ansi fg="command">Fire immediately</ansi>  Default. The command runs right now.
+  <ansi fg="command">Queue at back</ansi>     Adds the command to the end of the queue.
+  <ansi fg="command">Queue at front</ansi>    Adds it to the front — priority. If several
+                     "front" items land at once they keep the
+                     order they arrived in (priority FIFO).
+
+  Kick, trip, bash, grapple, taunt, rally, warcry,
+  and every spell all share <ansi fg="command">one</ansi> ability cooldown. When
+  several buffs drop at the same moment, their re-cast
+  triggers can all queue up and fire in sequence as
+  the cooldown frees — instead of stomping each other.
+
+  <ansi fg="command">Dedup:</ansi> if the same command is already waiting in
+  the queue, the trigger will not add a second copy.
+  The queue holds at most <ansi fg="command">10</ansi> entries.
+
+  <ansi fg="command">Clear:</ansi> the panel has a Clear button that empties the
+  queue instantly. The queue also clears on death and
+  on any page reload or reconnect.
+
+  <ansi fg="command">No auto-retry.</ansi> If a queued action fails — say, you
+  lose concentration mid-cast — the queue does not
+  re-add it. Write a trigger that matches the failure
+  message and queues the command again (see Examples).
+
+  Triggers that are currently queued are highlighted
+  and floated to the top of the Triggers tab. A small
+  number shows each trigger's position in line.
+
+<ansi fg="yellow">Examples:</ansi>
+
+  <ansi fg="command">Auto-eat when hungry</ansi>
+    Pattern:  <ansi fg="command">*you are hungry*</ansi>
+    Command:  <ansi fg="command">eat ration</ansi>
+    Queue:    Fire immediately. No condition needed.
+
+  <ansi fg="command">Reply using a capture</ansi>
+    Pattern:  <ansi fg="command">* tells you '*'</ansi>
+    Command:  <ansi fg="command">reply $1, got it</ansi>
+    The first <ansi fg="command">*</ansi> captures the sender's name into
+    <ansi fg="command">$1</ansi>; the second <ansi fg="command">*</ansi> captures the message body
+    into <ansi fg="command">$2</ansi>. This example echoes the sender's name
+    back in the reply.
+
+  <ansi fg="command">Emergency heal at low HP (condition + priority queue)</ansi>
+    Pattern:  <ansi fg="command">*you are bleeding*</ansi>
+    If HP % is below <ansi fg="command">30</ansi>
+    Then:     <ansi fg="command">cast heal self</ansi>
+    Queue:    Queue at front
+    Jumps ahead of any pending re-buffs so the heal
+    fires as soon as the cooldown opens.
+
+  <ansi fg="command">Re-cast rally when it wears off (queue back)</ansi>
+    Pattern:  <ansi fg="command">*your rally drains away*</ansi>
+    Command:  <ansi fg="command">rally</ansi>
+    Queue:    Queue at back
+    Rally (and warcry) now print an expiry message
+    when they wear off, making this pattern reliable.
+
+  <ansi fg="command">Re-queue a failed cast (queue back)</ansi>
+    Pattern:  <ansi fg="command">*lose your concentration*</ansi>
+    Command:  <ansi fg="command">cast heal self</ansi>
+    Queue:    Queue at back
+    Because the queue never auto-retries, this trigger
+    catches the failure message and puts the cast back
+    in line for the next free cooldown.
+
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help ticks</ansi>, <ansi fg="command">help macros</ansi>, <ansi fg="command">help alias</ansi>
