@@ -43,3 +43,11 @@ func TestUserTriggers_SetAssignsIdAndUpdates(t *testing.T) {
 		}
 	}
 }
+
+func TestUserTriggers_QueueMode(t *testing.T) {
+	u := &UserRecord{}
+	u.SetTrigger(UserTrigger{Name: "rally", Pattern: "*rally fades*", ThenCmds: "rally", QueueMode: "back", Enabled: true})
+	if u.Triggers[0].QueueMode != "back" {
+		t.Fatalf("queueMode not stored: %+v", u.Triggers[0])
+	}
+}

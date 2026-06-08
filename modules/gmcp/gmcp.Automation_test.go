@@ -35,3 +35,11 @@ func TestBuildAutomationPayload_Triggers(t *testing.T) {
 		t.Fatalf("trigger not mapped: %+v", p.Triggers)
 	}
 }
+
+func TestBuildAutomationPayload_TriggerQueueMode(t *testing.T) {
+	trigs := []users.UserTrigger{{Id: 2, Name: "warcry", Pattern: "*fervor of your warcry fades*", ThenCmds: "warcry", QueueMode: "front", Enabled: true}}
+	p := buildAutomationPayload(nil, nil, nil, trigs)
+	if len(p.Triggers) != 1 || p.Triggers[0].QueueMode != "front" {
+		t.Fatalf("queueMode not propagated to GMCP payload: %+v", p.Triggers)
+	}
+}
