@@ -33,7 +33,7 @@ Server:
   # - MudName -
   #   Display name of the MUD.
   #   This will be used a few places by default (such as the web pages).
-  MudName: "DOGMud"
+  MudName: "Delusions of Grandeur"
   # - Seed -
   #   The seed used for certain types of content generation
   #   To prevent certain secrets or content from being spoiled, you can set this
