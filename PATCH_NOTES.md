@@ -1,5 +1,46 @@
 # DOGMud Patch Notes
 
+## 2026-06-08 — Web client: your buffs are back in the Status panel
+
+The **Status & Conditions** panel now lists your active buffs — Illumination,
+Iron Will, shields, and the rest — as teal "status" chips, right alongside your
+combat conditions. Stealth effects (Hidden, Empathic Shroud) stay hidden, as
+they should.
+
+- The panel now fills in **the moment you log in**, instead of sitting blank
+  until something next changed.
+- Your **aliases and triggers** also load reliably at login now — they no longer
+  occasionally come up empty in the automation panel.
+
+## 2026-06-08 — Web client: vitals show your locked pools
+
+- Each HP/SP/CP bar now fences off the **reserved** (locked-away) portion of the
+  pool as a cross-hatched segment, so a pool that's half-reserved no longer looks
+  full.
+- The bar's **color now tracks your usable pool** — the part you can actually
+  spend — instead of the whole pool.
+- The in-terminal **prompt bars** were brought in line with the same look: the
+  reserved blocks sit to the right in neutral grey, and the colors match the
+  vitals window.
+
+## 2026-06-08 — Web client look & feel
+
+- **One console header.** The brand bar and the page-nav bar are now a single
+  rounded console plate — a gold wordmark on the left, page chips on the right —
+  with a matching footer card. That frees up a row of height for the game cards
+  in the middle.
+- **The full name.** The site now shows **Delusions of Grandeur** throughout —
+  the header, the page titles, and the connect button.
+- **No doubled map.** In the web client (which already has the graphical map
+  panel), the small ASCII minimap next to room descriptions is now hidden, giving
+  room text the full width. Telnet and Mudlet keep their minimap.
+- **Readability & focus.** The starfield on the connect splash is visible again;
+  the game feed has more line spacing so fast text doesn't blur together; and the
+  command bar grabs focus as soon as you type — clicking the map or inventory
+  never leaves you unable to move.
+- The **known-spells** list (`spells`) was narrowed to fit a standard 80-column
+  screen.
+
 ## 2026-06-08 — Stealth no longer announces itself
 
 You're no longer told when you're hidden or when you stop being hidden — if you
