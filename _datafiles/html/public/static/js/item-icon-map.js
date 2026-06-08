@@ -1,18 +1,27 @@
 // item-icon-map.js — maps a GMCP item to a painted raster icon URL.
 // Returns null when no pack icon fits, so the caller falls back to the
-// monochrome SVG glyph from item-icons.js. Three tiers, all data:
-//   1. NAME_MAP    exact normalized item name -> icon basename
-//   2. KEYWORD_RULES ordered [regex, icon] on the normalized name
-//   3. TYPE_MAP    "type-subtype" then "type" -> representative icon
+// monochrome SVG glyph from item-icons.js.
+//
+// Resolution order (first hit wins):
+//   1. NAME_MAP         exact normalized item name -> icon basename
+//   2. EQUIP_KEYWORDS   weapon/armor nouns (dagger, staff, cloak…) — safe
+//                       to match on ANY item name
+//   3. TYPE_MAP (if the item's type is equipment) — so e.g. "chrysalis
+//      knuckles" resolves as a fist weapon, NOT the chrysalis material
+//   4. MATERIAL_KEYWORDS  material/consumable nouns (ingot, ore, herb…)
+//   5. TYPE_MAP (catch-all for non-equipment types: potion, food, key…)
+//   6. null  -> SVG glyph fallback
+//
+// The equipment-type tier (step 3) sits BEFORE material keywords so a
+// material word in an equipment NAME can't hijack the icon.
 // Icons are served from window.ITEM_ICON_BASE (set by the page template),
 // defaulting to "/static/images/items".
 "use strict";
 (function (global) {
 
-  // Exact item-name -> icon basename. Covers the 31 new gap icons (from
+  // Exact item-name -> icon basename. The 31 generated gap icons (from
   // ICON_GENERATION_SPEC covers-lists) plus generic community names.
   var NAME_MAP = {
-    // --- new gap icons ---
     "iron ingot": "metal_ingot", "steel ingot": "metal_ingot",
     "lake-iron nodule": "ore_nodule", "windstone sample": "ore_nodule", "polished stone": "ore_nodule",
     "raw gem": "raw_gem",
@@ -47,7 +56,7 @@
     "bitter thistle": "herb_sprig", "blood-moss": "herb_sprig", "dustwalk herb": "herb_sprig",
     "forest herbs": "herb_sprig", "healer's root": "herb_sprig", "lake mint": "herb_sprig",
     "moonpetal": "herb_sprig", "veilbloom petal": "herb_sprig",
-    // --- generic community names (match if DOGMud has same-named item) ---
+    // generic community names (match if DOGMud has same-named item)
     "dagger": "dagger", "crowbar": "crowbar", "sling": "sling", "cudgel": "cudgel",
     "rope": "rope", "waterskin": "waterskin", "mug of ale": "mug_of_ale",
     "cheese sandwich": "cheese_sandwich", "mutton stew": "mutton_stew",
@@ -57,9 +66,32 @@
     "copper ring": "copper_ring", "cloth belt": "cloth_belt"
   };
 
-  // Ordered keyword rules — first match wins. Extends specific-named
-  // community icons to whole item families.
-  var KEYWORD_RULES = [
+  // Weapon / armor nouns. Safe to test against ANY item name because these
+  // words don't appear in material names. Checked BEFORE material keywords.
+  var EQUIP_KEYWORDS = [
+    [/knuckle|cestus/, "spiked_knuckles"],
+    [/\bdagger\b|\bdirk\b|\bstiletto\b/, "dagger"],
+    [/broadsword|longsword|shortsword|\bsword\b|\bblade\b|\bsabre\b|scimitar|\brapier\b/, "finely_crafted_shortsword"],
+    [/battleaxe|\baxe\b|hatchet/, "glowing_battleaxe"],
+    [/\bspear\b|halberd|glaive|\bpike\b|polearm|trident|\blance\b|naginata/, "war_spear"],
+    [/\bwhip\b|\blash\b|\bflail\b/, "long_whip"],
+    [/\bsling\b|\bbow\b|crossbow|longbow|shortbow/, "sling"],
+    [/\bclaw\b|\btalon\b/, "wooden_claw"],
+    [/\bstaff\b|\bstave\b|quarterstaff/, "staff"],
+    [/scepter|sceptre|\bwand\b|\brod\b/, "ancient_royal_scepter"],
+    [/cudgel|\bclub\b|\bmace\b|mallet|\bbludgeon\b|warhammer|\bhammer\b/, "cudgel"],
+    [/\bshield\b|buckler/, "iron_shield"],
+    [/\bcloak\b|\bcape\b|\bmantle\b/, "cloak"],
+    [/backpack|rucksack|travel pack/, "backpack"],
+    [/pauldron|spaulder/, "pauldron"],
+    [/bracer|bracelet|vambrace/, "bracer"],
+    [/glove|gauntlet|\bmitt/, "torn_gloves"],
+    [/tail (cap|band|sheath|guard)/, "tail_guard"]
+  ];
+
+  // Material / consumable nouns. Only reached for items whose type is NOT
+  // equipment (so they can't override a weapon/armor icon).
+  var MATERIAL_KEYWORDS = [
     [/\bingot\b/, "metal_ingot"],
     [/nodule|\bore\b/, "ore_nodule"],
     [/\bwire\b/, "wire_coil"],
@@ -81,24 +113,10 @@
     [/chain link|\bchain\b/, "chain_link"],
     [/\bneedle\b|\bawl\b/, "bone_needle"],
     [/totem|fetish|figurine/, "carved_figurine"],
+    [/satchel|component bag|component pouch/, "component_satchel"],
     [/\bkey\b/, "key"],
-    [/\bcloak\b/, "cloak"],
-    [/backpack|rucksack|travel pack/, "backpack"],
-    [/pauldron|spaulder/, "pauldron"],
-    [/bracer|bracelet/, "bracer"],
-    [/tail (cap|band|sheath|guard)/, "tail_guard"],
     [/\bvial\b|\bphial\b|decanter/, "glass_vial"],
     [/\bflask\b/, "flask"],
-    [/\bdagger\b|\bdirk\b|\bstiletto\b/, "dagger"],
-    [/broadsword|longsword|shortsword|\bsword\b|\bblade\b|\bsabre\b|scimitar/, "finely_crafted_shortsword"],
-    [/battleaxe|\baxe\b|hatchet/, "glowing_battleaxe"],
-    [/\bwhip\b|\blash\b/, "long_whip"],
-    [/\bsling\b|\bbow\b/, "sling"],
-    [/\bclaw\b/, "wooden_claw"],
-    [/\bstaff\b|\bstave\b/, "ancient_royal_scepter"],
-    [/scepter|sceptre|\bwand\b/, "ancient_royal_scepter"],
-    [/cudgel|\bclub\b|\bmace\b|mallet|\bbludgeon\b/, "cudgel"],
-    [/\bshield\b|buckler/, "iron_shield"],
     [/\bale\b|\bbeer\b|\bmead\b|\bgrog\b/, "mug_of_ale"],
     [/\bstew\b|\bsoup\b|\bbroth\b/, "mutton_stew"],
     [/sandwich|\bbread\b|\bcheese\b|\bration\b/, "cheese_sandwich"],
@@ -114,6 +132,15 @@
     [/\bherb\b|thistle|\bmoss\b|petal|\bmint\b|\broot\b|bloom|sprig|leaf/, "herb_sprig"]
   ];
 
+  // Item types that are worn/wielded equipment. For these, TYPE_MAP is
+  // consulted before MATERIAL_KEYWORDS. Keys mirror the GMCP item.type
+  // values (ItemType strings in internal/items/itemspec.go).
+  var EQUIPMENT_TYPES = {
+    "weapon": 1, "offhand": 1, "head": 1, "neck": 1, "shoulders": 1,
+    "body": 1, "back": 1, "belt": 1, "wrist": 1, "gloves": 1, "ring": 1,
+    "legs": 1, "feet": 1, "tail": 1, "componentbag": 1
+  };
+
   // type-subtype (then type) -> representative icon. Keys mirror the SVG
   // glyph key scheme in item-icons.js so every glyphed item gets a raster.
   var TYPE_MAP = {
@@ -123,15 +150,15 @@
     "weapon-axe": "glowing_battleaxe",
     "weapon-bludgeoning": "cudgel",
     "weapon-cleaving": "captains_broadsword",
-    "weapon-stabbing": "dancing_needle",
+    "weapon-stabbing": "war_spear",
     "weapon-slashing": "captains_broadsword",
     "weapon-shooting": "sling",
     "weapon-claws": "wooden_claw",
-    "weapon-fist": "wooden_claw",
+    "weapon-fist": "spiked_knuckles",
     "weapon-whipping": "long_whip",
     "weapon-wand": "ancient_royal_scepter",
     "weapon-sceptre": "ancient_royal_scepter",
-    "weapon-staff": "ancient_royal_scepter",
+    "weapon-staff": "staff",
     "offhand": "iron_shield",
     "head": "leather_cap",
     "neck": "students_amulet",
@@ -140,10 +167,12 @@
     "back": "cloak",
     "belt": "cloth_belt",
     "wrist": "bracer",
+    "gloves": "torn_gloves",
     "ring": "copper_ring",
     "legs": "leather_pants",
     "feet": "worn_boots",
     "tail": "tail_guard",
+    "componentbag": "component_satchel",
     "potion": "small_red_potion",
     "food": "cheese_sandwich",
     "drink": "mug_of_ale",
@@ -158,8 +187,6 @@
     "botanical": "herb_sprig",
     "ammo": "spellbound_projectiles",
     "service": "stat_coupon"
-    // NOTE: "componentbag" intentionally omitted -> SVG glyph (no clean
-    // bag icon in the pack).
   };
 
   function normalize(name) {
@@ -170,22 +197,44 @@
       .replace(/^(a|an|the) /, "");
   }
 
+  function matchRules(rules, name) {
+    for (var i = 0; i < rules.length; i++) {
+      if (rules[i][0].test(name)) return rules[i][1];
+    }
+    return null;
+  }
+
+  function typeIcon(type, subtype) {
+    if (!type) return null;
+    var k = type + "-" + subtype;
+    if (subtype && TYPE_MAP[k]) return TYPE_MAP[k];
+    if (TYPE_MAP[type]) return TYPE_MAP[type];
+    return null;
+  }
+
   function lookupIcon(item) {
     var name = normalize(item && item.name);
     if (name && NAME_MAP[name]) return NAME_MAP[name];
-    if (name) {
-      for (var i = 0; i < KEYWORD_RULES.length; i++) {
-        if (KEYWORD_RULES[i][0].test(name)) return KEYWORD_RULES[i][1];
-      }
-    }
+
+    var hit = name ? matchRules(EQUIP_KEYWORDS, name) : null;
+    if (hit) return hit;
+
     var type = ((item && item.type) || "").toLowerCase();
     var subtype = ((item && item.subtype) || "").toLowerCase();
-    if (type) {
-      var k = type + "-" + subtype;
-      if (subtype && TYPE_MAP[k]) return TYPE_MAP[k];
-      if (TYPE_MAP[type]) return TYPE_MAP[type];
+
+    // Equipment types resolve via their type icon BEFORE material keywords,
+    // so a material word in the name can't hijack a weapon/armor icon.
+    if (EQUIPMENT_TYPES[type]) {
+      hit = typeIcon(type, subtype);
+      if (hit) return hit;
     }
-    return null;
+
+    if (name) {
+      hit = matchRules(MATERIAL_KEYWORDS, name);
+      if (hit) return hit;
+    }
+
+    return typeIcon(type, subtype);
   }
 
   global.itemIconURL = function (item) {
@@ -196,6 +245,11 @@
   };
 
   // Exposed for the Node test harness (manifest cross-check).
-  global.ITEM_ICON_TABLES = { NAME_MAP: NAME_MAP, KEYWORD_RULES: KEYWORD_RULES, TYPE_MAP: TYPE_MAP };
+  global.ITEM_ICON_TABLES = {
+    NAME_MAP: NAME_MAP,
+    EQUIP_KEYWORDS: EQUIP_KEYWORDS,
+    MATERIAL_KEYWORDS: MATERIAL_KEYWORDS,
+    TYPE_MAP: TYPE_MAP
+  };
 
 })(typeof window !== "undefined" ? window : globalThis);
