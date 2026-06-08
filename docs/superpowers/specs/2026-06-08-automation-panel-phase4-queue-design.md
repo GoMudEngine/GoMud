@@ -35,7 +35,10 @@ locally like the rest of the web overhaul. Two bundled workstreams: the **queue*
   helper + ws `TelnetIACHandler`) is wired (Phases 2–3) and reused for the new
   per-trigger field.
 - Most buffs emit an **expiry message** when they wear off (so a trigger can
-  match it); **rally and warcry do not** — that gap is fixed here.
+  match it); **rally and warcry do not** — that gap is fixed here. The live
+  field is **`end_user_text`** on the buff (sent via `CategoryBuffExpire` in
+  `NewTurn_PruneBuffs.go` on natural expiry); a stray `expireMessage` key in one
+  buff file is dead YAML — do NOT use it.
 
 ## Locked decisions (from the brainstorm)
 
@@ -132,10 +135,9 @@ In `webclient-pure.html`:
 ## Part E — Rally/warcry expiry echoes (server content)
 
 - Most buffs emit a message when they expire; **rally** and **warcry** don't.
-  Add expiry echoes to those two buffs using the **existing buff-expiry-message
-  mechanism** so a trigger can react. *Open item (resolve in plan):* locate the
-  buff field/hook that emits the wear-off message (read a buff that already has
-  one) and add an appropriate message to the rally + warcry buff definitions.
+  Add an **`end_user_text`** line (the live buff wear-off field, emitted by
+  `NewTurn_PruneBuffs.go` on natural expiry) to the rally (`80-rally.yaml`) and
+  warcry (`79-warcry.yaml`) buff definitions so a trigger can match the echo.
   Player-facing, first-person, no hard numbers.
 
 ## Scope / boundaries
