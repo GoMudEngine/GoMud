@@ -26,11 +26,14 @@ SIZE = 64
 
 def main():
     os.makedirs(DST, exist_ok=True)
+    if not os.path.isdir(SRC):
+        sys.exit(f"Source not found: {SRC}")
     served = {}        # basename -> source relpath (first wins)
     collisions = []
     copied = resized = 0
 
-    for root, _dirs, files in os.walk(SRC):
+    for root, dirs, files in os.walk(SRC):
+        dirs.sort()
         for fn in sorted(files):
             if not fn.lower().endswith(".png"):
                 continue
@@ -49,7 +52,7 @@ def main():
 
     manifest = sorted(served.keys())
     with open(os.path.join(DST, "manifest.json"), "w") as f:
-        json.dump(manifest, f, indent=0)
+        json.dump(manifest, f, indent=0)  # one entry per line — clean git diffs
 
     print(f"synced {copied} icons ({resized} resized) -> {DST}")
     if collisions:
