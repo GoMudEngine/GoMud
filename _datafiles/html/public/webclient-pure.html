@@ -706,9 +706,9 @@
         }
 
         // Render an item's icon into a tile: prefer a painted raster from
-        // itemIconURL, fall back to the monochrome SVG glyph. Must run
-        // BEFORE the charge meter / stack badge are appended (the onerror
-        // path uses insertAdjacentHTML so it never clobbers those siblings).
+        // itemIconURL, fall back to the monochrome SVG glyph. Both fallback
+        // paths use insertAdjacentHTML("afterbegin") so they never clobber
+        // the charge meter / stack badge appended to the tile afterward.
         function renderTileIcon(tile, item) {
             var url = (typeof window.itemIconURL === "function")
                 ? window.itemIconURL(item) : null;
@@ -728,7 +728,7 @@
             } else {
                 var svg = (typeof window.itemIconSVG === "function")
                     ? window.itemIconSVG(item.type, item.subtype) : "";
-                if (svg) tile.innerHTML = svg;
+                if (svg) tile.insertAdjacentHTML("afterbegin", svg);
             }
         }
 
