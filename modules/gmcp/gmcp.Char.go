@@ -2,8 +2,10 @@ package gmcp
 
 import (
 	"math"
+	"slices"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -17,6 +19,19 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
+)
+
+// pendingCharSpawnRefresh tracks userIds that spawned but may not have received
+// their initial full Char push yet (e.g. a web client whose websocket GMCP frame
+// raced the login burst, so isGMCPEnabled was still false at PlayerSpawn time).
+// Without this, the Status & Conditions header + conditions only recover when a
+// later CharacterChanged fires (e.g. a buff add/refresh). The next NewRound
+// re-pushes "Char" once for these users and clears them, guaranteeing delivery
+// after the connection is GMCP-ready. Mirrors the pattern in gmcp.Automation.go.
+// Steady-state cost is zero once drained.
+var (
+	pendingCharSpawnRefresh   = map[int]struct{}{}
+	pendingCharSpawnRefreshMu sync.Mutex
 )
 
 // ////////////////////////////////////////////////////////////////////
@@ -46,6 +61,11 @@ func init() {
 	events.RegisterListener(events.CharacterStatsChanged{}, g.statsChangeHandler)
 	events.RegisterListener(events.CharacterChanged{}, g.charChangeHandler)
 	events.RegisterListener(events.BuffsTriggered{}, g.buffTriggeredHandler)
+	// Re-push the full Char payload once on the round following spawn so the
+	// initial login push lands reliably even if the first GMCP frame raced the
+	// connection setup (otherwise the status panel header + conditions stay
+	// blank until a later CharacterChanged event).
+	events.RegisterListener(events.NewRound{}, g.newRoundHandler)
 
 	events.RegisterListener(events.Quest{}, g.questProgressHandler)
 
@@ -239,11 +259,46 @@ func (g *GMCPCharModule) playerSpawnHandler(e events.Event) events.ListenerRetur
 		return events.Continue
 	}
 
-	// Send full update
+	// Send full update now (covers telnet/Mudlet clients that have already
+	// negotiated GMCP)...
 	events.AddToQueue(GMCPCharUpdate{
 		UserId:     evt.UserId,
 		Identifier: `Char`,
 	})
+
+	// ...and queue a one-shot re-push for the next round, which guarantees
+	// delivery for web clients once the connection is settled.
+	pendingCharSpawnRefreshMu.Lock()
+	pendingCharSpawnRefresh[evt.UserId] = struct{}{}
+	pendingCharSpawnRefreshMu.Unlock()
+
+	return events.Continue
+}
+
+func (g *GMCPCharModule) newRoundHandler(e events.Event) events.ListenerReturn {
+
+	if _, typeOk := e.(events.NewRound); !typeOk {
+		return events.Continue
+	}
+
+	pendingCharSpawnRefreshMu.Lock()
+	if len(pendingCharSpawnRefresh) == 0 {
+		pendingCharSpawnRefreshMu.Unlock()
+		return events.Continue
+	}
+	userIds := make([]int, 0, len(pendingCharSpawnRefresh))
+	for userId := range pendingCharSpawnRefresh {
+		userIds = append(userIds, userId)
+	}
+	pendingCharSpawnRefresh = map[int]struct{}{}
+	pendingCharSpawnRefreshMu.Unlock()
+
+	for _, userId := range userIds {
+		events.AddToQueue(GMCPCharUpdate{
+			UserId:     userId,
+			Identifier: `Char`,
+		})
+	}
 
 	return events.Continue
 }
@@ -481,6 +536,14 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 
 			buffSpec := buffs.GetBuffSpec(buff.BuffId)
 			if buffSpec == nil {
+				continue
+			}
+
+			// Stealth buffs (Hidden, Empathic Shroud, etc.) are deliberately not
+			// surfaced to the client — mirrors the `conditions` command filter and
+			// the no-end-message design on the hidden buff. If you can't know who
+			// spotted you, you shouldn't be told you're hidden.
+			if slices.Contains(buffSpec.Flags, buffs.Hidden) {
 				continue
 			}
 
