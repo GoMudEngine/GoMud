@@ -339,6 +339,9 @@
             rows: 60,
             cursorBlink: true,
             fontSize: 20,
+            // Give rapid-fire feed text vertical breathing room so lines don't
+            // blend into a wall (affects row height only — not the 80-col fit).
+            lineHeight: 1.2,
             fontFamily: '"IBM Plex Mono", "Courier New", Courier, monospace',
             // Leather palette (harmonized "option B"). Cross-ref gomud.css :root
             // tokens: --panel-bg #201913, warm-dark #191310, --ink-gold #c9a86a,
@@ -1782,6 +1785,32 @@
         const connectButton = document.getElementById('connect-button');
         const textOutput = document.getElementById('terminal');
         const textInput = document.getElementById('command-input');
+
+        // Keep the command bar "hot": if the user starts typing while focus has
+        // drifted to a non-field element (they clicked the map / inventory) or to
+        // the xterm feed's hidden textarea, pull focus back to the command input
+        // so a quick movement key isn't swallowed. Real editable fields (comms
+        // chat, modal inputs) and shortcut combos (Ctrl/Meta/Alt) are left alone.
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+            if (e.key === 'Control' || e.key === 'Shift' || e.key === 'Alt' || e.key === 'Meta') return;
+            if (!textInput) return;
+
+            // Don't fight an open modal for focus.
+            var modal = document.getElementById('auto-modal');
+            if (modal && modal.style.display !== 'none') return;
+
+            var ae = document.activeElement;
+            var isRealField = ae && (
+                ae.tagName === 'INPUT' ||
+                (ae.tagName === 'TEXTAREA' && !(ae.classList && ae.classList.contains('xterm-helper-textarea'))) ||
+                ae.tagName === 'SELECT' ||
+                ae.isContentEditable
+            );
+            if (isRealField) return;
+
+            textInput.focus();
+        });
 
         const codeShortcuts = {
             "Numpad1": "southwest",
