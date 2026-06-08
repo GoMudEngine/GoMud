@@ -1,5 +1,12 @@
 # DOGMud Patch Notes
 
+## 2026-06-08 — Fix: web-client ticks now fire reliably
+
+Ticks (the automation panel's interval timers) could silently stop firing while
+you were actively playing — especially with triggers going off. Their countdowns
+were being reset every time your character changed. Ticks now keep running on
+schedule regardless of other activity.
+
 ## 2026-06-08 — Web client: your buffs are back in the Status panel
 
 The **Status & Conditions** panel now lists your active buffs — Illumination,

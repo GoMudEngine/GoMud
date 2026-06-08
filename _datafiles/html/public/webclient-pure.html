@@ -611,11 +611,17 @@
                     renderInventory();
                 }
 
-                // Refresh automation panel if automation data was bundled
-                if ( obj.Automation ) {
-                    renderAutomation();
-                    rebuildTickTimers();
-                }
+                // NOTE: do NOT refresh the automation panel or tick timers here.
+                // Automation (macros/aliases/ticks/triggers) is a separate module
+                // pushed as "Char.Automation"; it never arrives in the full "Char"
+                // payload. GMCPStructs.Char.Automation only persists across a full-
+                // Char push because handleGMCP shallow-merges it (so a Char update
+                // doesn't clobber it). Re-rendering / rebuilding from this path would
+                // fire on EVERY full-Char push (CharacterChanged fires constantly
+                // during play) — needless DOM churn, and it reset the tick setInterval
+                // countdowns before they could elapse (so ticks never fired while
+                // other triggers were active). Automation refresh is driven solely by
+                // the dedicated "Char.Automation" handler + init.
 
                 // Defensive drain — catches cooldown-clearing that arrives bundled with Char
                 drainQueue();
@@ -872,6 +878,7 @@
         /////////////////////////////////////////////
         var autoActiveTab = 'macros';
         var tickTimers = {};
+        var tickTimersSig = '';   // signature of the currently-running tick set (idempotency guard)
 
         function renderAutomation() {
             var list = document.getElementById("auto-list");
@@ -1074,11 +1081,27 @@
         }
 
         function rebuildTickTimers() {
+            var a = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
+            var ticks = (a && a.ticks) || [];
+
+            // Idempotency guard: only tear down + recreate timers when the enabled-
+            // tick set actually CHANGED. rebuildTickTimers runs on every automation-
+            // bearing GMCP push, and clearInterval()+setInterval() resets each timer's
+            // countdown to zero. Without this guard, frequent pushes (CharacterChanged
+            // fires constantly during play — and firing immediate triggers spams
+            // character-changing commands) reset the intervals before they ever elapse,
+            // so longer-interval ticks would never fire. Signature = enabled ticks'
+            // id/interval/commands; unchanged → leave the running timers alone.
+            var sig = ticks
+                .filter(function(t) { return t.enabled && t.intervalSec >= 1; })
+                .map(function(t) { return t.id + ':' + t.intervalSec + ':' + (t.commands || ''); })
+                .join('|');
+            if (sig === tickTimersSig) return;
+            tickTimersSig = sig;
+
             for (var id in tickTimers) { clearInterval(tickTimers[id]); }
             tickTimers = {};
-            var a = GMCPStructs["Char"] && GMCPStructs["Char"].Automation;
-            if (!a || !a.ticks) return;
-            a.ticks.forEach(function(t) {
+            ticks.forEach(function(t) {
                 if (!t.enabled || !t.intervalSec || t.intervalSec < 1) return;
                 var cmds = String(t.commands || "");
                 tickTimers[t.id] = setInterval(function() {
