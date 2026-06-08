@@ -1,5 +1,12 @@
 # DOGMud Patch Notes
 
+## 2026-06-08 — Fix: trigger action queue now paces on the cooldown
+
+The "Queue this action" trigger option could fire everything at once instead of
+releasing one ability per cooldown — especially outside of combat. The web client
+now tracks the shared special-move cooldown reliably (the server reports it every
+round) and releases exactly one queued action each time the cooldown frees.
+
 ## 2026-06-08 — Fix: web-client ticks now fire reliably
 
 Ticks (the automation panel's interval timers) could silently stop firing while

@@ -1220,9 +1220,19 @@
             drainQueue();
         }
 
-        // Queue processor — drains ONE command per special-move cooldown.
-        var QUEUE_MIN_FIRE_GAP_MS = 800; // ensure the cooldown registers before next fire
+        // Queue processor — drains ONE action per special-move cooldown CYCLE.
+        // Edge-triggered: after firing, we don't fire the next action until we've
+        // observed the shared special-move cooldown go ACTIVE (registered) and then
+        // CLEAR again. This replaces a fragile "wait 800ms then re-check" heuristic
+        // that raced the server's cooldown push — out of combat the push could lag
+        // past the gap, so the queue read a stale "ready" and drained instantly.
+        // Commands.State is now pushed every round (server), so the active→clear
+        // transition is observed reliably. A timeout fallback keeps a command that
+        // sets no cooldown from stalling the queue forever.
+        var QUEUE_REGISTER_TIMEOUT_MS = 4000;
         var lastQueueFireAt = 0;
+        var queueWaiting = false;     // true between firing an action and its cooldown completing
+        var queueSawCooldown = false; // observed special-move go ACTIVE since the last fire
 
         function cooldownReady() {
             var cds = (((GMCPStructs["Commands"] || {}).State) || {}).cooldowns || {};
@@ -1230,11 +1240,30 @@
         }
 
         function drainQueue() {
-            if (!actionQueue.length) return;
+            if (!actionQueue.length) { queueWaiting = false; return; }
+
+            if (queueWaiting) {
+                if (!cooldownReady()) {
+                    queueSawCooldown = true; // the fired action's cooldown registered — wait for it to clear
+                    return;
+                }
+                // Cooldown currently reads ready.
+                if (queueSawCooldown) {
+                    queueWaiting = false;    // saw it active, now clear → cooldown cycle complete
+                } else if (Date.now() - lastQueueFireAt < QUEUE_REGISTER_TIMEOUT_MS) {
+                    return;                  // cooldown may still be in flight (registers next round) — keep waiting
+                } else {
+                    queueWaiting = false;    // timeout: command set no special-move cooldown → don't stall
+                }
+            }
+
+            // Armed: only fire when the cooldown is actually ready.
             if (!cooldownReady()) return;
-            if (Date.now() - lastQueueFireAt < QUEUE_MIN_FIRE_GAP_MS) return; // let prior fire register
+
             var entry = actionQueue.shift();
             lastQueueFireAt = Date.now();
+            queueWaiting = true;
+            queueSawCooldown = false;
             String(entry.commands || "").split(";").forEach(function(c){ c = c.trim(); if (c) SendData(c); });
             renderAutomation();
         }

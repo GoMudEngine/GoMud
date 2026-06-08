@@ -20,6 +20,7 @@ func init() {
 	events.RegisterListener(events.PlayerSpawn{}, g.playerSpawnHandler)
 	events.RegisterListener(events.CharacterVitalsChanged{}, g.vitalsChangedHandler)
 	events.RegisterListener(events.CharacterChanged{}, g.charChangedHandler)
+	events.RegisterListener(events.NewRound{}, g.newRoundHandler)
 	events.RegisterListener(GMCPCommandsUpdate{}, g.buildAndSendGMCPPayload)
 }
 
@@ -88,6 +89,32 @@ func (g GMCPCommandsModule) charChangedHandler(e events.Event) events.ListenerRe
 		UserId:     evt.UserId,
 		Identifier: `Commands.State`,
 	})
+
+	return events.Continue
+}
+
+func (g GMCPCommandsModule) newRoundHandler(e events.Event) events.ListenerReturn {
+
+	if _, typeOk := e.(events.NewRound); !typeOk {
+		return events.Continue
+	}
+
+	// Push Commands.State (mode + cooldowns) every round to GMCP clients so the
+	// web client's action queue sees the shared special-move cooldown REGISTER and
+	// CLEAR promptly. Previously Commands.State only rode incidental
+	// CharacterVitalsChanged / CharacterChanged pushes, so out of combat (e.g. when
+	// queueing buff re-casts like rally/warcry) the cooldown never reached the
+	// client — the queue read a stale "ready" and drained immediately. Tiny payload;
+	// gated to GMCP-enabled connections so telnet users cost nothing.
+	for _, u := range users.GetAllActiveUsers() {
+		if u.UserId == 0 || !isGMCPEnabled(u.ConnectionId()) {
+			continue
+		}
+		events.AddToQueue(GMCPCommandsUpdate{
+			UserId:     u.UserId,
+			Identifier: `Commands.State`,
+		})
+	}
 
 	return events.Continue
 }
