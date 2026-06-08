@@ -1,0 +1,78 @@
+description: "Follow Lars (mob 359, Ketil's son, the caravan runner) for one full
+  Thornwall-Stillwater cycle. Observe deliveries (wagon-bucket items going to
+  vendors), pickups (vendor bucket-matching items coming to Lars), and the
+  bidirectional cross-city flow."
+
+goals:
+  - "Find Ketil (mob 357) and the caravan crew at the Thornwall depot (room
+    465). Confirm the wagon (374), Lars (359), Marta (358), Hob (375), Bran
+    (376) are co-located. Use 'mob schedule <ketil-inst>' if admin-flagged."
+  - "Watch Lars start a Thornwall runner circuit. Expect:
+       a) Cargo transfer flavor: not visible directly, but Lars's inventory
+          gains stillwater+fernway items from the wagon as wp0 arrival fires.
+       b) Lars walks the Thornwall vendor circuit (rooms 464, 470, 471, 475,
+          480, 481, 482, 483) one at a time, with 3-round dwells per stop."
+  - "At each Thornwall vendor, observe the trade flavor. Expected:
+       'Lars unloads a satchel of supplies for <vendor>.' (delivery only)
+       'Lars loads up a satchel of fresh cargo from <vendor>.' (pickup only)
+       'Lars trades a satchel of supplies for fresh cargo with <vendor>.' (both)
+    Look specifically for thornwall-bucket items being picked up (steel ingot,
+    chrysalis shard, copper wire, etc.). Capture verbatim 3-5 representative
+    lines."
+  - "Confirm Lars returns to the Thornwall depot (room 465) after the circuit
+    completes. His inventory should empty as cargo transfers back to the wagon
+    (silent operation, but his Items count drops)."
+  - "Watch the caravan depart Thornwall (after wp0 dwell expires). The crew
+    paths north toward Fernway (room 4038) for outbound pickup, then on to
+    Stillwater (room 4109)."
+  - "At the Fernway pickup (room 4038, wp1), expect a flavor message about
+    the caravan opening the sealed crate and loading its contents (if any
+    foragers have stocked it)."
+  - "Watch Lars start the Stillwater runner circuit at Stillwater depot
+    (wp2 = room 4109). Vendor rooms: 4102, 4103, 4105, 4106, 4125, 4126,
+    4135, 4143. Same flavor pattern as the Thornwall circuit. Look
+    specifically for stillwater-bucket items being picked up (lake-iron
+    nodule, marsh willow bark, freshwater clam, etc.)."
+  - "Capture the dashboard state at the /admin/economy/ endpoint at least
+    twice during the cycle: once during a Thornwall dwell (state should be
+    'thornwall_route' if Lars is mid-circuit, else 'thornwall_dwell'), once
+    during transit (state should be 'outbound_transit' or
+    'inbound_transit')."
+
+pass_criteria:
+  - "Lars visibly walks both Thornwall and Stillwater vendor circuits, dwelling
+    at each vendor for ~3 rounds, with named trade flavor messages firing."
+  - "At least one cross-city pickup is observed (a Thornwall vendor's
+    thornwall-bucket item going to Lars in Thornwall, OR a Stillwater vendor's
+    stillwater-bucket item going to Lars in Stillwater)."
+  - "At least one cross-city delivery is observed (Lars delivering an item
+    whose bucket matches the OTHER city's name at a vendor in his current
+    city)."
+  - "Lars returns to the depot terminal waypoint and the wagon stays parked
+    throughout (wagon's room stays at the depot during Lars's circuit)."
+  - "Dashboard state names cycle correctly through *Route / *Dwell / *Transit
+    / *FernwayPickup as Lars works."
+
+notes:
+  - "Server runs locally at localhost:55555. User just merged chunk 3.8 to
+    master and started their server (commit 2a53e72a)."
+  - "Use `set charset ascii` per the test-mud SOP."
+  - "Game-day length is short — a full cycle (Thornwall dwell 360 + transit
+    + Stillwater dwell 180 + transit) is roughly ~940 rounds × ~4 sec/round
+    ≈ 60 minutes real-time. You don't need to observe a full cycle; capture
+    one Thornwall circuit + one Stillwater circuit and the transit between."
+  - "If the caravan isn't visibly moving (e.g. Ketil mid-dwell with no
+    near-term departure), use `time` to check game time and decide whether
+    to wait or skip to the next phase."
+  - "Use 'look' often to capture room state. Watch for the named-actor
+    flavor messages (Lars / vendor names) — these are the chunk 3.8 visibility
+    additions."
+  - "If you observe Lars pathing back and forth between depot and a vendor
+    (oscillation), that's a critical regression — flag immediately. The fix
+    in commit 66336b98 should prevent this."
+  - "If Lars's inventory carries nothing during a vendor visit, that's a
+    sign cargo handoff or bucket categorization is broken — flag with the
+    affected vendor + item details."
+  - "Report each goal as PASS / FAIL / BLOCKED with timestamps and verbatim
+    log excerpts where relevant."
+  - "Save report to tools/testing/reports/3.8-caravan-runner-observation-<timestamp>.md."

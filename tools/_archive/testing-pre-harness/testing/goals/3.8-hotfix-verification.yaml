@@ -1,0 +1,97 @@
+description: "Verify the 3.8 hotfix branch (feature/aliveness-3.8-hotfix) fixed
+  the eight bugs from the prior smoke. Server is freshly running with the hotfix
+  code. The same caravan loop (Ketil → Lars → vendor circuits → wagon) needs
+  re-checking against the original smoketester's report at
+  tools/testing/reports/2026-05-26-local-feature-tester-3.8-caravan-runner-observation.md."
+
+goals:
+  - "Find Ketil (mob 357) and Lars (359) at one of the depots. Thornwall depot
+    is room 465, Stillwater depot is room 4109. The wagon (374) parks at
+    whichever depot Lars is currently running from. Use 'time' to gauge
+    cycle phase if needed."
+
+  - "BUG-01 (first-vendor-stop fix) — Watch Lars start a runner circuit from
+    the depot. The FIRST vendor he visits MUST produce a trade flavor message
+    of one of these three forms:
+       'Lars unloads a satchel of supplies for <vendor>.'   (delivery only)
+       'Lars loads up a satchel of fresh cargo from <vendor>.' (pickup only)
+       'Lars trades a satchel of supplies for fresh cargo with <vendor>.' (both)
+    Pre-fix Lars walked silently through the first vendor every circuit.
+    Capture the verbatim message + the vendor name."
+
+  - "BUG-02 (material pickup expansion) — Specifically follow Lars to Smith
+    Brindle in Stillwater (room 4106) and Storekeeper Wulf in Tinder & Tackle
+    (room 4103). At each, before AND after Lars's visit, do 'list' on the
+    vendor. Expected behavior (post-fix): Brindle's iron ingot / steel ingot /
+    coal dust counts should DECREASE by ~10% (max 1, current/10) when Lars
+    visits. Pre-fix these stocks were never touched because their bucket is
+    'base' or 'overlap' rather than zone-source. Capture both before-list
+    and after-list for each vendor in verbatim form. If you can't catch the
+    same circuit on both Brindle and Wulf, one of the two is enough."
+
+  - "H7 (waypoint reorder polish) — Observe Lars's path between vendors.
+    Pre-fix his circuit zig-zagged through Stillwater because waypoints
+    were unordered. Post-fix the order is greedy nearest-neighbor. Watch
+    whether he revisits the same room (e.g., back-tracking through
+    Lakefront Square multiple times) on a single circuit. ONE revisit may
+    happen due to graph shape; THREE or more is a sign of regression.
+    Note whether his transit feels efficient."
+
+  - "H8 (foragers stop hoarding) — Foragers Tova (371) and Halix (372)
+    should eventually transition out of StateForaging once cargo + fatigue
+    thresholds hit. Use admin 'mob status <inst>' or 'mob inv <inst>' to
+    inspect a forager's state and inventory. Goal: observe at least one
+    forager's state change OR confirm via inventory weight that cargo
+    isn't accumulating past the carry cap unbounded. Tova's territory
+    is rooms 4177-4196 (marsh); her sanctuary is 4198 (Reedwoven Hut).
+    Halix is in the steppe range 3000-3030 with sanctuary 3040. Visit
+    one of them; observe at least one foraging tick + one inventory
+    check. If they're in StateTravelingToDropoff or StateDelivering
+    (i.e. moving toward town), that's the post-fix transition working."
+
+  - "Economy dashboard verification — Hit the web dashboard at the
+    /admin/economy/ endpoint. Capture the FromForagers column for the
+    Stillwater and Thornwall City zones. Pre-fix this column was always
+    0 by construction (case-sensitivity bug in territoryMatchesZone).
+    Post-fix it should reflect Tova's stillwater_marsh deliveries
+    (currently 972 tier-30 in the on-disk record) and Halix's
+    ironwind_steppe deliveries (106 tier-40 on disk). Even a single
+    non-zero value in the FromForagers column for either zone is a
+    PASS for H3 + H4 combined."
+
+pass_criteria:
+  - "Lars's first vendor stop on a circuit produces a trade message
+    (BUG-01 fix confirmed)."
+  - "At least one of Brindle's or Wulf's base/overlap-bucket materials
+    (iron ingot, steel ingot, coal dust, or similar non-zone-source
+    item) decreases in count when Lars visits (BUG-02 / H2 fix confirmed)."
+  - "Dashboard FromForagers column shows non-zero for at least one
+    Stillwater-tagged or Thornwall-tagged zone row (H3 + H4 combined)."
+  - "No regressions on previously-working behavior: Lars still walks the
+    circuit; the wagon still parks at the depot; trade messages still
+    fire at vendors after the first."
+
+notes:
+  - "Server runs locally at localhost:55555. The user just merged 3.8
+    hotfix work locally and started their server on the hotfix branch."
+  - "Use `set charset ascii` per the test-mud SOP."
+  - "Game-day length is short — a full Thornwall+Stillwater cycle is
+    roughly 60 minutes real-time. You don't need to observe a full
+    cycle; capture one runner circuit + one Brindle visit + one
+    dashboard read."
+  - "If Lars is mid-dwell at the depot when you arrive, use 'time' to
+    check game time and decide whether to wait or skip to find the
+    foragers / dashboard instead."
+  - "Use 'list' often at vendor rooms to capture the before/after
+    delta cleanly. The trade messages can be missed if you're
+    typing — `list` immediately after the message gives you the
+    post-trade state."
+  - "The dashboard read is via the web admin endpoint — the bridge
+    can't navigate web pages, so you'll need to use the in-game
+    'economy' command if it exists, or note that the dashboard
+    portion can only be smoked manually by the user. Try the in-game
+    command first."
+  - "Report each goal as PASS / FAIL / BLOCKED with timestamps and
+    verbatim log excerpts."
+  - "Save report to
+    tools/testing/reports/2026-05-26-local-feature-tester-3.8-hotfix-verification.md"

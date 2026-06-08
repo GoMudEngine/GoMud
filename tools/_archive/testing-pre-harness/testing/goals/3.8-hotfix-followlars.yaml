@@ -1,0 +1,100 @@
+description: "Follow Lars on foot through one complete vendor circuit. Capture
+  the verbatim trade message at each vendor stop and the before/after `list`
+  delta. This is the rerun of 3.8-hotfix-verification on the MASTER branch (post
+  feature/aliveness-3.8-hotfix merge `c5a49e82`). The user is following Tova
+  manually in another session — focus on the caravan loop, not foragers."
+
+goals:
+  - "Start by locating Lars (mob 359, Ketil's son). Use 'goto 465' for the
+    Thornwall depot or 'goto 4109' for the Stillwater depot. Then move to
+    whichever depot Lars is currently at. Confirm via 'look' that Ketil
+    (357), Marta (358), the wagon (374), and Hob (375)/Bran (376) are
+    co-located. Use 'time' if you need to estimate where the caravan is
+    in its 360-round depot dwell."
+
+  - "STRATEGY: FOLLOW LARS ON FOOT. When Lars announces departure
+    (`>>> Lars leaves towards the X exit.`), follow him through the SAME
+    exit. Don't teleport ahead. At each vendor room:
+       (a) Arrive at the same time as or just after Lars.
+       (b) Watch for the trade flavor message in your output. The three
+           variants are:
+              'Lars unloads a satchel of supplies for <vendor>.'
+              'Lars loads up a satchel of fresh cargo from <vendor>.'
+              'Lars trades a satchel of supplies for fresh cargo with <vendor>.'
+       (c) Send `list` while still in the vendor room to capture the
+           POST-trade inventory snapshot.
+       (d) Note the vendor name + the verbatim trade message.
+    The trade fires in the room Lars enters; following him on foot means
+    you're in that room when it fires."
+
+  - "BUG-01 VERIFICATION: The FIRST vendor Lars visits MUST produce a
+    trade message. Pre-fix Lars walked silently through the first
+    vendor of every circuit. Capture the verbatim message + vendor name
+    for the FIRST stop. This is the load-bearing evidence for H1."
+
+  - "BUG-02 VERIFICATION: When Lars stops at Smith Brindle (Stillwater
+    circuit, room 4106) OR Storekeeper Wulf (Stillwater, room 4103) OR
+    a Thornwall vendor that carries materials, capture the FULL `list`
+    output BEFORE Lars's trade message fires (if you can — depends on
+    arriving slightly before him) AND AFTER. The key items to watch
+    for diffs on are:
+       - iron ingot (40001)
+       - steel ingot (40002)
+       - coal dust (40003)
+       - or any item whose name suggests crafting material
+    Pre-fix these were never picked up (their bucket is 'base' or
+    'overlap', not zone-source). Post-fix they should decrease by ~10%
+    (max(1, current/10)) when Lars visits IF he has wagon-cargo room.
+    Even ONE base/overlap material decrement is a PASS for H2."
+
+  - "DASHBOARD CHECK: After observing at least one full vendor stop,
+    use the in-game admin command (try `economy` first — if it
+    doesn't exist, fall back to 'admin economy', or just note that the
+    web dashboard is the only path and the user will check manually).
+    Look at the 'FromForagers' column for Stillwater and Thornwall City.
+    Pre-fix it was always 0. Post-fix at least one zone should show
+    non-zero. The on-disk forager YAMLs show 972 + 106 deliveries
+    pre-existing, so the value should be substantial if scoring.go's
+    fix lands."
+
+  - "OPTIONAL — Observe Lars's path between vendors for excessive
+    zig-zagging. H7 reordered the waypoints. If you see Lars revisit
+    the same room 3+ times in a single circuit (e.g., bouncing through
+    Lakefront Square repeatedly), flag as a regression. Otherwise
+    note that pathing felt efficient."
+
+pass_criteria:
+  - "FIRST vendor trade message captured verbatim (BUG-01 / H1 confirmed)."
+  - "At least one base/overlap-bucket material decreased at a vendor when
+    Lars visited (BUG-02 / H2 confirmed)."
+  - "Dashboard FromForagers shows non-zero for at least one Stillwater or
+    Thornwall zone (H3 + H4 combined) — OR you couldn't access the
+    dashboard via in-game command, in which case mark as BLOCKED and
+    note the user will verify manually."
+  - "No regression: no observed phantom-state oscillation, no Lars getting
+    stuck at one vendor, wagon stays parked at the depot."
+
+notes:
+  - "Server is freshly built from master at commit 6d30d671 or later
+    (hotfix + 4.1 both merged). 4-second round timer applies. Bridge
+    uses targets.yaml for credentials. `set charset ascii` per SOP."
+
+  - "The user is in the same server following Tova (mob 371) in
+    stillwater_marsh. They're watching foragers; you're watching the
+    caravan. Don't interact with their movements or compete for the
+    same rooms."
+
+  - "Critical reminder: DO NOT teleport between vendor rooms. The bridge's
+    `goto` is faster than Lars walks, so teleporting gets you there
+    before the trade message fires AND before `list` reflects the
+    delta. Following on foot keeps you in-sync."
+
+  - "If Lars is mid-dwell at a vendor when you arrive, you may have
+    missed the entry message — note this and follow him to the NEXT
+    vendor to catch the entry-message cleanly."
+
+  - "Save report to
+    tools/testing/reports/2026-05-26-local-feature-tester-3.8-hotfix-followlars.md"
+
+  - "Report each goal as PASS / FAIL / BLOCKED with verbatim log
+    excerpts. Verbatim messages are the high-value evidence."

@@ -1,0 +1,47 @@
+# Goal: Town Justice 5.1b — Crime → Auto-Bounty + Guard Enforcement Smoke Test
+name: Town Justice 5.1b Auto-Bounty Smoke Test
+goal: |
+  You are smoke-testing the Town Justice system in Thornwall (the
+  thornwall_guards faction). Recent work (5.1a + 5.1b) made town guards
+  react to wanted players (warn then attack) and made town factions
+  AUTO-POST kill-bounties on players who commit serious crimes or whose
+  reputation falls to Hostile. Your job is to exercise these paths and watch
+  for crashes, panics, stuck states, or behavior that feels broken/unfair.
+
+  What to exercise (in Thornwall, where the guards are):
+  - Find a Thornwall guard (city guard / gate guard / guard captain). Note
+    how it behaves toward you while you are law-abiding (it should leave you
+    alone / be friendly).
+  - Commit escalating crimes against Thornwall townsfolk / faction members:
+      * steal (or attempt to steal) from a citizen or merchant,
+      * assault (attack) a non-combatant citizen or faction member,
+      * if you can, kill one.
+    After each, watch the nearby guards. Expected: a wanted player gets a
+    spoken WARNING first, and if they linger while still wanted, the guard
+    escalates to ATTACK. A murder or Hostile reputation should make guards
+    attack on sight.
+  - Check your standing with the 'factions' / 'reputation' / 'rep' command
+    (whichever exists) before and after your crimes — confirm it drops.
+  - Look for any player-visible sign of a bounty (try commands like
+    'bounties', 'bounty', 'wanted', or check guard speech). Bounty internals
+    are mostly behind the scenes, so absence of a player command is fine —
+    the key observable is guard reaction + no crashes.
+  - Let a guard actually kill you (or get killed while wanted) and observe
+    what happens on death — there should be no crash, hang, or error spam.
+  - After dying/respawning, check whether guards still treat you as wanted
+    (reputation persists; the bounty itself resolves on death).
+
+  Take careful notes on: exact guard messages, escalation timing, whether
+  warnings/attacks fired when expected, any messages that show raw numbers
+  that shouldn't, any text that reads oddly, and ESPECIALLY any panic,
+  disconnect, error message, or stuck/no-response state.
+
+steps:
+  - "Connect; check starting location, stats, and current Thornwall reputation"
+  - "Travel to Thornwall and locate a guard; note its behavior while you are law-abiding"
+  - "Commit a theft against a Thornwall citizen/merchant; observe guard + reputation"
+  - "Assault a Thornwall citizen/faction member; observe the warn-then-attack escalation"
+  - "Push to a serious crime (murder if possible) or Hostile reputation; confirm guards attack on sight"
+  - "Probe for any bounty/wanted player command; record whatever is (or isn't) visible"
+  - "Allow a guard to kill you while wanted; confirm clean death/respawn with no crash or error spam"
+  - "After respawn, recheck reputation and guard treatment; report all findings, bugs, and rough edges"

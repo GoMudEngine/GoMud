@@ -1,0 +1,24 @@
+# Enchanting supply chain smoke goals
+#
+# NOTE: the NPC loop (alchemy-vendor potion decay -> global reserve -> enchanter
+# restock) is GLACIAL (decay over ~24 in-game days) and won't be observable in a
+# short session — don't expect Vael's stock to fill from it. Player potion-salvage
+# is the on-demand path. Spoiled potions also take in-game time to age, so the
+# tester may not easily produce one. Prioritize STABILITY + regression: the
+# salvage change and the new idle-hook wiring must not break anything.
+
+description: "Enchanting supply chain — salvage/enchanter stability + regression"
+
+goals:
+  - id: no-crash
+    text: "Play normally (move, look, buy, sell, salvage if possible, a little combat) for the session. Confirm NO server crash, panic, or disconnect — the new idle-hook wiring (decay->reserve feed + enchanter draw) runs every tick and must be stable."
+  - id: no-confused-emote
+    text: "CRITICAL: confirm NO mob/merchant ever emits 'looks a little confused' across all interactions."
+  - id: salvage-works
+    text: "If you can obtain any salvageable item (a crafted item or a potion), run 'salvage <item>' and confirm it works (yields materials, no error/crash). If you happen to have/buy a potion and it's declining/spoiled, salvaging it should yield enchanting mats (binding paste, possibly chrysalis-setting/mutation-catalyst for high-tier potions). Note what you salvaged and what you got."
+  - id: enchanter-shop
+    text: "Find enchanter Vael in Thornwall City. 'list' his wares (chrysalis core/shard, binding paste, mutation catalyst, chrysalis setting, hive fragment, etc.). Note stock levels (likely low/0 on a fresh boot — the reserve fills slowly). Confirm the shop is accessible and listing works (no error)."
+  - id: alchemy-shop
+    text: "Find an apothecary (Voss in Thornwall, or Ilsa in Stillwater). 'list' their potions; optionally buy one. Confirm normal shop behavior (these alchemy crafters feed the enchanting reserve when their potions decay — not observable now, just confirm they're functioning vendors)."
+
+exit_criteria: "Stable session with salvage + both shop types exercised, or 30 minutes elapsed."

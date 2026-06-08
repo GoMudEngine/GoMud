@@ -1,0 +1,34 @@
+# Chunk 5.4 — NPC Market Participation smoke goals
+#
+# NOTE: most 5.4 features are MOB-side (mobs selling, foragers resting,
+# overstock decaying over in-game days) and are hard for a player-tester to
+# observe directly in a short session. Prioritize the player-path REGRESSION
+# checks (the sell-verb lift could have broken player selling) and general
+# stability; treat the mob-behavior items as opportunistic observation.
+
+description: "Chunk 5.4 NPC market participation — player sell-path regression + mob-market observation"
+
+goals:
+  # --- Player sell-path regression (the actions.Sell lift) — PRIMARY ---
+  - id: sell-single
+    text: "Sell a single item to a merchant; confirm you receive gold and the success message renders ('You sell a <item> for N gold.')."
+  - id: sell-multi
+    text: "Sell multiple of one item with 'sell N <item>' and 'sell all <item>'; confirm the multi-sell message and that the count is correct."
+  - id: sell-quest-item
+    text: "Attempt to sell a quest item (if you hold one); confirm it is refused with 'Quest items cannot be sold!'."
+  - id: sell-no-merchant
+    text: "Try 'sell <item>' in a room with no merchant; confirm 'There's no merchant here.'"
+  - id: sell-then-buy-back
+    text: "After selling an item to a shop, check the shop list ('list') and confirm the sold item now appears in the merchant's stock (NPC/player sales feed shop stock)."
+
+  # --- Stability ---
+  - id: no-crash
+    text: "Play normally for the session (move, look, fight a little, buy/sell). Confirm no server crash, disconnect, or 'looks a little confused' emote from any merchant or mob."
+
+  # --- Mob-market observation (opportunistic — note if seen, don't force) ---
+  - id: observe-mob-merchant
+    text: "If you encounter a shopkeeper/merchant mob, 'list' its wares and note stock. Optionally revisit later to see if stock changed (decay/backfill/restock)."
+  - id: observe-thief
+    text: "If you encounter a thief-type mob, observe whether it steals and later behaves like it's heading to sell (a thief that fences loot). Note any 'looks a little confused (sell all)' emote — that would be a 5.4 FAILURE (the verb lift should have fixed it)."
+
+exit_criteria: "All player-sell-path goals attempted + a stable session, or 30 minutes elapsed."

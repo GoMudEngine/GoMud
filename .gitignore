@@ -77,8 +77,9 @@ book_build/
 # Local MCP config — contains a personal API key, never commit
 .mcp.json
 
-# Archived loose screenshots / stray images out of repo root
-_archive/
+# Archived loose screenshots / stray images out of repo root (root only —
+# tools/_archive/ holds retired source we DO track)
+/_archive/
 
 # Playtest harness overlay — transient run state + generated reports
 tools/playtest/.run/

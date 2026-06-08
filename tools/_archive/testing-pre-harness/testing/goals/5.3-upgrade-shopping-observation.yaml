@@ -1,0 +1,66 @@
+description: "Smoke-test mob aliveness 5.3 equipment-aware shopping. Gold-using
+  humanoid mobs (thief, guard_captain archetypes) carry a perpetual `upgrade-gear`
+  goal: when idle with spendable gold (above a reserve) and a zone shop stocks an
+  item that is an itemvalue upgrade for one of their slots, they path to the shop,
+  buy the best affordable upgrade, and `gearup` to wear it. If short on gold they
+  try to sell loot first (NOTE: the `sell all` step is a KNOWN no-op for mobs —
+  there is no mob sell command yet — so expect a confused emote on that path; do
+  NOT file that as a new bug, it's logged as project_mob_sell_command_missing)."
+
+setup_notes:
+  - "Server runs locally at localhost:55555. User just merged chunk 5.3 to master
+    (merge commit 34584a4e). Instance saves were wiped before boot."
+  - "Send `set charset` first (ASCII mode) per the test-mud SOP."
+  - "Archetypes carrying upgrade-gear: `thief` and `guard_captain`. Concrete
+    instances: Constable Drunn (mob 335, guard_captain, Stillwater) is the best
+    candidate — he is in a town with shops. Thornwall highwayman (thief) is in
+    thornwall_outskirts which may lack an in-zone shop."
+  - "The drive only fires when the mob is idle/out-of-combat AND has spendable
+    gold above MobUpgradeGoldReserve (default 50) AND a zone shop stocks a
+    positive-delta upgrade (> MobUpgradeMinDelta 1.0) it can afford and that
+    `gearup` can wear (Weapon or Wearable subtype)."
+
+goals:
+  - "Check whether your character is admin-flagged (try `goal` or `mob` — if you
+    get an unknown-command/permission error you are NOT admin). Report which mode
+    you ran in."
+  - "ADMIN PATH (preferred, if admin-flagged): Locate a guard_captain or thief
+    mob instance (e.g. Constable Drunn, mob 335, in Stillwater). Use admin
+    commands to (a) confirm it carries the upgrade-gear goal: `goal list <inst>`
+    and `goal current <inst>`; (b) give it spendable gold if it has none (use
+    whatever admin give-gold command exists — try `help` / `admin` to discover
+    it); (c) confirm a shop in its zone stocks a wearable/weapon it doesn't
+    already beat. Then watch it over many rounds: does `goal current` switch to
+    `upgrade-gear`? Does it `pathto` a shop room and emit a buy + then a gearup
+    (look for 'wields'/'puts on'/'picks up'/'equips' flavor)?"
+  - "ORGANIC PATH (if NOT admin): Travel to Stillwater, find Constable Drunn or
+    another guard_captain/thief, and observe it over a sustained period (many
+    4-second rounds) while staying in/near its room. Note any movement toward a
+    shop, buy messages, or equip/gearup flavor. If nothing shopping-related fires
+    within ~30 idle rounds, mark the goals BLOCKED (organic trigger needs the mob
+    to have spendable gold, which fresh mobs usually lack) and say so plainly."
+  - "Whichever path: capture verbatim any of these signals — `goal current`
+    showing `upgrade-gear`; a mob `pathto`-ing to a known shop room; a mob buy
+    message; a mob equip/gearup flavor line. Quote 3-5 representative lines."
+  - "Confirm the safety properties hold: the mob does NOT spend below its gold
+    reserve, does NOT loop-buy the same item repeatedly (buy → fail to equip →
+    re-buy), and does NOT buy items it can't wear. If you see a re-buy loop or a
+    mob's gold draining to ~0, that IS a real bug — report it with the item name."
+
+pass_criteria:
+  - "At least one of: (a) `goal current <inst>` shows `upgrade-gear` selected on a
+    seeded/funded mob, or (b) a guard_captain/thief mob is observed pathing to a
+    shop and buying + equipping an upgrade. PASS if either is observed."
+  - "No gold-drain re-buy loop and no spend-below-reserve observed (these would be
+    FAIL/bug)."
+  - "If the drive cannot be triggered without deeper admin seeding than the tester
+    can perform, a clear BLOCKED result documenting exactly what was missing is an
+    acceptable outcome (not a failure of the tester)."
+
+notes:
+  - "Do NOT file the `sell all` confused-emote as a bug — it is the known
+    project_mob_sell_command_missing gap; the save-up funding path is expected to
+    be a no-op until a mob `sell` verb ships."
+  - "Bail early and write the report if: the server isn't reachable, you can't
+    find any guard_captain/thief mob after a reasonable search, or you're stuck
+    10+ commands with no progress. A short honest BLOCKED report beats flailing."

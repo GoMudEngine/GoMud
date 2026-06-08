@@ -1,0 +1,78 @@
+description: "RE-SMOKE after the 5.3 goal-pipeline fixups (A merge-seed, B
+  planner-owns-tick, C live CtxMod). The prior smoke found goal-driven mobs never
+  traveled to shop because legacy idle co-fired and cancelled the planner's
+  pathto. The fix makes the planner own the idle tick when it issues a command.
+  This session must verify, with a player PRESENT (mobs only round-tick when a
+  player is in their zone), that: (A) archetype default goals auto-seed onto an
+  existing mob with no manual `goal add`; (B) a goal-mob with an affordable
+  in-stock upgrade ACTUALLY paths to the shop and buys+equips it; (C) `goal
+  scores` shows a live CtxMod (not a hardcoded 1.00)."
+
+setup_notes:
+  - "Server is ALREADY RUNNING at localhost:55555 (do NOT boot it). Send `set
+    charset` first (ASCII)."
+  - "smoketester is admin-flagged. Use admin commands."
+  - "CRITICAL: mobs only round-tick (and thus run goal recompute + planners) when
+    a player is in their zone/room. STAY in the target mob's room while observing,
+    or the mob will appear frozen (that is not a bug — it is the headless-tick
+    gate)."
+  - "Target mob: Constable Drunn (mob 335, guard_captain) in Stillwater, room
+    4110. guard_captain declares default_goals survival(80) + upgrade-gear(30)."
+
+goals:
+  - "VERIFY A (merge-seed): Teleport to room 4110 (Stillwater constabulary) so
+    Drunn ticks. Wait a few rounds, then `goal list 335`. EXPECTED (fix A): Drunn
+    now has BOTH survival AND upgrade-gear auto-seeded, even though you did NOT
+    run `goal add`. (Before the fix his file had no goals / only a manually-added
+    one.) Record what `goal list 335` shows. If survival+upgrade-gear are present
+    without any manual add → A PASS."
+  - "VERIFY C (live CtxMod): Run `goal scores 335`. EXPECTED (fix C): the CtxMod
+    column shows REAL values (e.g. upgrade-gear ~2.5 when Drunn is idle with
+    spendable gold, or ~1.0 floor; survival ~0 at full HP), NOT a hardcoded 1.00
+    on every row. Record the CtxMod column. If it varies by goal/state → C PASS."
+  - "STAGE a GUARANTEED upgrade for B: give Drunn ample gold so budget is not the
+    blocker: discover the admin give-gold command (try `help admin` / `help
+    goal` / `mob`), and give Drunn ~500 gold. Then ensure a Stillwater shop
+    stocks something Drunn can actually upgrade INTO. Drunn wears weapon 10010
+    (a club) + body 20011. The surest guaranteed upgrade is an EMPTY slot: if you
+    can use admin to remove one of Drunn's equipped items (e.g. unequip/strip his
+    body or weapon), do so — then ANY shop item for that slot is a large upgrade.
+    If you cannot strip equipment, instead pick a DIFFERENT goal-mob with a weak
+    or empty slot (e.g. a thief-archetype highwayman in thornwall_outskirts, or
+    another guard), and confirm a shop in THAT mob's zone stocks an affordable
+    wearable/weapon. Document exactly what you staged (mob, its empty/weak slot,
+    the shop room + item + price)."
+  - "VERIFY B (the headline): with the staged mob idle, out of combat, holding
+    gold, carrying the upgrade-gear goal as CURRENT (`goal current <id>`), and a
+    player (you) present in/near its room — observe over ~15-25 rounds. EXPECTED
+    (fix B): the mob PATHS toward the shop room (you should see it leave its
+    starting room / `locate` shows it moving), arrives, issues a buy, and then
+    `gearup`s (look for 'wields' / 'puts on' / 'examines ... and puts it on' /
+    equips flavor). Capture verbatim the movement + buy + equip lines. If the mob
+    visibly travels to the shop and buys+equips → B PASS. If it stays put emitting
+    only idle emotes despite a confirmed affordable upgrade + gold + current goal
+    → B FAIL (regression not fixed) — report exactly what you saw."
+  - "SAFETY checks (still apply): no gold-drain re-buy loop (buy → fail to equip →
+    re-buy same item); no spend below reserve; mob does not buy items it cannot
+    wear. Any of those = real bug, report with item name."
+
+pass_criteria:
+  - "A PASS: `goal list 335` shows survival + upgrade-gear auto-seeded with NO
+    manual `goal add` performed."
+  - "C PASS: `goal scores` CtxMod column shows live, varying values (not all 1.00)."
+  - "B PASS: a goal-mob with a confirmed affordable in-stock upgrade + gold +
+    current upgrade-gear goal + player present VISIBLY travels to the shop and
+    buys+equips. This is the core regression fix and the primary success signal."
+  - "An honest BLOCKED on B is acceptable ONLY if you genuinely could not stage a
+    guaranteed affordable upgrade (document precisely why); but exhaust the
+    empty-slot / alternate-mob staging options first."
+
+notes:
+  - "Do NOT file the `sell all` confused-emote as a bug (known: no mob sell verb
+    yet — project_mob_sell_command_missing). The upgrade-gear BUY path is what's
+    under test, not the save-up sell path."
+  - "If you observe the mob path partway then get yanked back home, that is the
+    OLD bug (B not fully fixed) — capture it precisely (which room it reached,
+    whether a 'pathto home'-like reversal happened)."
+  - "Bail + write the report if: server unreachable, can't find/stage any
+    goal-mob after reasonable effort, or stuck 10+ commands with no progress."

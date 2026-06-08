@@ -1,0 +1,78 @@
+description: "Validate the new per-prisoner INSTANCED jail cells (replaces the old
+  shared static holding cell). When a player is arrested they should be sent to
+  their OWN private single-room cell that only they can enter, with no exits and
+  no recall; paying the fine or serving the sentence releases them and tears the
+  cell down; logging out mid-sentence and back in should resume them in a fresh
+  private cell (the sentence clock runs while offline). This is an admin-capable
+  test character — use admin commands where needed to set up the arrest."
+
+goals:
+  - "Reach a guarded town. Stillwater (Constable Drunn, faction stillwater_guards)
+    and Thornwall (Guard Captain Velk, faction thornwall_guards) both have
+    combat-capable guards and holding cells. Get to one of them (try an admin
+    teleport like `goto`/`room`/`teleport` to a town square, or walk). Run `time`
+    and `look` on arrival."
+  - "TRIGGER AN ARREST. The arrest fires when a faction guard witnesses an
+    arrestable crime by you (assault/theft/murder) and the justice tick runs.
+    Try: with a guard in or near the room, `attack` a NON-guard town citizen
+    (e.g. a merchant/beggar) to commit assault, then wait several rounds for the
+    guard to issue the verdict and arrest you. If direct crime-commit doesn't
+    lead to an arrest within ~15 rounds, fall back to admin: inspect/seed your
+    wanted state with the `crime` and `faction` admin commands (e.g. lower your
+    rep with the guard faction and/or record a crime) so the guard's verdict
+    escalates to arrest. Log exactly what you did to get arrested."
+  - "ONCE ARRESTED — verify the cell is a PRIVATE INSTANCE:
+      * `look` — the room should read as a bare holding cell (title like 'A
+        Holding Cell') and the description should mention the arresting faction
+        (e.g. the faction's seal stamped in the iron). Quote it verbatim.
+      * Confirm there are NO exits out (try each direction: north/south/east/
+        west/up/down — all should fail / there should be no listed exits).
+      * Confirm you CANNOT recall out (try `recall` if available — it should be
+        blocked).
+      * Note the room id you're in (admin `room` or similar) — it should be a
+        high ephemeral/instance room id, NOT the static template room 5107 and
+        NOT a normal town room."
+  - "CHECK THE FINE + RELEASE: run `fine` to see your owed fine, then `payfine`
+    to pay it. Confirm you are released (moved out of the cell to a release room,
+    e.g. a barracks/constabulary). After release, confirm you are NO LONGER in a
+    cell and can move normally."
+  - "LOGOUT/LOGIN RESUME (the headline new behavior): get arrested again, then
+    while still serving, disconnect/log out and log back in (the bridge may let
+    you `quit` and reconnect; if not, simulate via admin if possible). On return
+    you should resume in a private cell with the sentence still in effect — NOT
+    walk free early (unless the full sentence elapsed while you were away). Log
+    what happened."
+  - "STABILITY: watch the server for any panic/error text, any 'portal
+    collapsing'/instance-eviction message appearing for the cell (it should
+    NEVER auto-evict — there is no TTL), or the cell failing to tear down on
+    release. Flag anything immediately with verbatim text."
+
+pass_criteria:
+  - "An arrest places you in a private, single-occupant cell with no exits and no
+    recall, whose description names the arresting faction."
+  - "The cell is an instanced/ephemeral room (not a shared static room) — ideally
+    confirmed by a high ephemeral room id."
+  - "`payfine` (or serving the sentence) releases you to a release room and you
+    can move normally afterward."
+  - "Logging out mid-sentence and back in resumes you in a fresh private cell
+    with the sentence intact (or releases you only if the term elapsed offline)."
+  - "No panic/error; the cell never auto-evicts via a portal/TTL timer; the cell
+    is torn down on release (no orphaned instance)."
+
+notes:
+  - "Server runs locally at localhost:55555, freshly booted with the instanced
+    jail cells merged to master."
+  - "Use `set charset` (ASCII) immediately after login per the test-mud SOP."
+  - "The smoketester is admin-flagged — admin commands (crime/faction/bounty/room/
+    goto/time) are available to set up and inspect state."
+  - "Do NOT harm guards directly if it derails the test; the goal is to provoke a
+    guard into arresting YOU, then inspect the resulting cell."
+  - "Key facts under test: arrest creates a per-prisoner instance of the
+    'Instance Jail Cell' zone (template room 5107) via the instance machinery; the
+    cell has SuppressReturnPortal (no return exit) and portal_duration:none (no
+    TTL); release/despawn/death tear it down; login restores or releases based on
+    the persisted sentence clock."
+  - "Report each goal PASS/FAIL/BLOCKED with verbatim log excerpts. If you can't
+    trigger an arrest at all, mark the cell-mechanic goals BLOCKED and clearly
+    explain the blocker (that's still useful signal). Save the report to
+    tools/testing/reports/ with a dated instanced-jail-cells name."
