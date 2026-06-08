@@ -2882,7 +2882,7 @@
 
             // ── Trigger editor (progressive if/else builder) ───────────────
 
-            function openTriggerEditor(editingId, prefillName, prefillPattern, prefillCondition, prefillThenCmds, prefillElseCmds, prefillEnabled) {
+            function openTriggerEditor(editingId, prefillName, prefillPattern, prefillCondition, prefillThenCmds, prefillElseCmds, prefillEnabled, prefillQueueMode) {
                 var body = document.createElement("div");
                 body.style.cssText = "display:flex;flex-direction:column;gap:10px;";
 
@@ -3062,6 +3062,30 @@
                 enableWrap.appendChild(enableLbl);
                 body.appendChild(enableWrap);
 
+                // Queue this action control
+                var queueWrap = document.createElement("div");
+                queueWrap.style.cssText = "display:flex;align-items:center;gap:8px;";
+                var queueLbl = document.createElement("span");
+                queueLbl.textContent = "Queue this action";
+                queueLbl.style.cssText = "font-family:Georgia,serif;font-size:0.85em;color:#c8b98a;";
+                var queueSelect = document.createElement("select");
+                queueSelect.style.cssText = "background:#150f08;border:1px solid #5e431a;border-radius:3px;color:#d9c39e;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:2px 6px;";
+                var queueOptions = [
+                    {v: "",      l: "Fire immediately"},
+                    {v: "back",  l: "Queue at back"},
+                    {v: "front", l: "Queue at front"}
+                ];
+                queueOptions.forEach(function(o) {
+                    var opt = document.createElement("option");
+                    opt.value = o.v;
+                    opt.textContent = o.l;
+                    queueSelect.appendChild(opt);
+                });
+                queueSelect.value = prefillQueueMode || "";
+                queueWrap.appendChild(queueLbl);
+                queueWrap.appendChild(queueSelect);
+                body.appendChild(queueWrap);
+
                 // Pre-fill from existing condition if provided
                 var hasCondition = !!(prefillCondition && prefillCondition.sourceKind);
                 if (hasCondition) {
@@ -3142,7 +3166,8 @@
                         condition: condition,
                         thenCmds:  finalThenCmds,
                         elseCmds:  finalElseCmds,
-                        enabled:   enabledState
+                        enabled:   enabledState,
+                        queueMode: queueSelect.value
                     });
                 });
             }
@@ -3166,7 +3191,7 @@
                     var trid = parseInt(key, 10);
                     var tr = isNaN(trid) ? null : findTrigger(trid);
                     if (tr) {
-                        openTriggerEditor(tr.id, tr.name, tr.pattern, tr.condition || null, tr.thenCmds, tr.elseCmds || "", tr.enabled);
+                        openTriggerEditor(tr.id, tr.name, tr.pattern, tr.condition || null, tr.thenCmds, tr.elseCmds || "", tr.enabled, tr.queueMode || "");
                     }
                 }
             };
@@ -3193,7 +3218,7 @@
                     var tr = isNaN(trid) ? null : findTrigger(trid);
                     if (tr) {
                         // id=0 → server creates new trigger
-                        openTriggerEditor(0, tr.name, tr.pattern, tr.condition || null, tr.thenCmds, tr.elseCmds || "", tr.enabled);
+                        openTriggerEditor(0, tr.name, tr.pattern, tr.condition || null, tr.thenCmds, tr.elseCmds || "", tr.enabled, tr.queueMode || "");
                     }
                 }
             };
