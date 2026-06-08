@@ -34,6 +34,7 @@ GoMud.exe
 __debug*
 .aider*
 .claude/settings.local.json
+.claude/worktrees/
 startup.log
 server_boot.log
 boot_err.txt
