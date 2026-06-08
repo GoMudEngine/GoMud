@@ -1,0 +1,5 @@
+Enabled: true
+SafeMode: true
+SandboxZoneTag: ""         # empty = no confinement
+DeathProtection: true
+Beacons: true              # emit Playtest.Round GMCP beacons (requires the gmcp module)
