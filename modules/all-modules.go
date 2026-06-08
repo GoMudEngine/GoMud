@@ -11,6 +11,7 @@ import (
 	_ "github.com/GoMudEngine/GoMud/modules/follow"
 	_ "github.com/GoMudEngine/GoMud/modules/gmcp"
 	_ "github.com/GoMudEngine/GoMud/modules/leaderboards"
+	_ "github.com/GoMudEngine/GoMud/modules/playtest"
 	_ "github.com/GoMudEngine/GoMud/modules/time"
 	_ "github.com/GoMudEngine/GoMud/modules/webhelp"
 )

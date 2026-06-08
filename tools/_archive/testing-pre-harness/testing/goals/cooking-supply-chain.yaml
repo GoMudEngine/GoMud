@@ -1,0 +1,25 @@
+# Cooking supply chain smoke goals
+#
+# NOTE: cooks now CRAFT meals (crafter-produced, RestockQty 0) rather than
+# cart-stocking them. On a fresh boot a cook may have 0 cooked meals until it
+# has crafted some (crafting fires on the cook's idle/craft tick when it has
+# ingredients). Some goals are observational/time-dependent — mark BLOCKED if a
+# behavior can't be observed in a short session rather than failing it.
+
+description: "Cooking supply chain — cooks as crafters, meal availability, stability"
+
+goals:
+  - id: cooks-exist
+    text: "Visit the three cooks and confirm they're present & shoppable: Tov Brann (Stillwater, fishmonger), food vendor and tavern cook Brynn (Thornwall City). 'list' each."
+  - id: meals-craftable
+    text: "At food vendor (103) and tavern cook Brynn (248), 'list' and check for cooked meals (grilled meat, hearty stew, herbal tea, trail rations, chowder, etc.). They are crafter-produced now — note whether any cooked meals are in stock. If a cook shows 0 cooked meals, revisit after several rounds to see if stock appears (the cook crafts over time). Note stock counts; don't fail if empty early — mark observational."
+  - id: buy-a-meal
+    text: "If any cook has a cooked meal in stock, buy one; confirm purchase succeeds and stock decrements."
+  - id: no-confused-emote
+    text: "CRITICAL: confirm no cook/merchant/mob ever emits 'looks a little confused' (would indicate a broken command path). Watch all cook interactions."
+  - id: forager-meat-delivery
+    text: "Opportunistic: if you encounter a forager (Tova in Stillwater marsh, Halix in steppe, Kessa in fernway) or a cook's raw-meat/wild-hare-meat stock, note stock levels; revisit to see if raw-meat rises (forager delivery). Hard to catch in a short session — observational."
+  - id: no-crash
+    text: "Play normally (move, look, buy, a little combat). Confirm no server crash, disconnect, or panic."
+
+exit_criteria: "Visited all three cooks + attempted a meal purchase + confirmed stability, or 30 minutes elapsed."

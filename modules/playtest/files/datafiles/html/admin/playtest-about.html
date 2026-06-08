@@ -1,0 +1,52 @@
+{{template "header" .}}
+
+<style>
+    .about-h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+    .about-subtitle { color: var(--color-text-muted); margin-bottom: 1.5rem; font-size: 0.9rem; }
+    .about-section { background: var(--color-surface-white); border: 1px solid var(--color-border); border-radius: 6px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; }
+    .about-section h2 { font-size: 1.05rem; margin: 0 0 0.6rem; color: var(--color-text-strong); }
+    .about-section p { font-size: 0.9rem; color: var(--color-text-secondary); line-height: 1.6; margin: 0 0 0.5rem; }
+    .about-section p:last-child { margin-bottom: 0; }
+    .about-section ul { font-size: 0.9rem; color: var(--color-text-secondary); line-height: 1.6; margin: 0.25rem 0 0.5rem 1.25rem; }
+    .about-section li { margin-bottom: 0.35rem; }
+    .about-section code { font-family: monospace; font-size: 0.85rem; color: var(--color-primary); }
+    .about-section a { color: var(--color-primary); }
+</style>
+
+<h1 class="about-h1">Playtest</h1>
+<p class="about-subtitle">AI playtest harness — module overview and configuration.</p>
+
+<div class="about-section">
+    <h2>Description</h2>
+    <p>The playtest module is the <strong>server side</strong> of an AI playtest harness: point an AI agent at this MUD, have it play through goals using standard tester "personalities," and get back a structured report. The agent connects on the dedicated <strong>AI port</strong> (<code>Network.AI.Port</code>), and everything this module does keys off that connection.</p>
+    <p>It does <strong>not</strong> create or provision any account — the agent logs into a character, or creates one via the normal new-player flow, exactly like a real player.</p>
+</div>
+
+<div class="about-section">
+    <h2>What it does (for any client on the AI port)</h2>
+    <ul>
+        <li><strong>Per-round beacons</strong> — a <code>Playtest.Round</code> GMCP package each round carrying <code>{round, hp, hp_max, sp, sp_max, room_id}</code>, giving the agent a reliable pacing tick and a state snapshot to verify goals against. Requires the bundled <code>gmcp</code> module.</li>
+        <li><strong>Structural safe mode</strong> — optional sandbox confinement: a tester that leaves a tagged zone is snapped back (fail-closed), keeping it away from live players.</li>
+        <li><strong>Death protection</strong> — a high extra-lives count so a tester survives within the server's permadeath setting.</li>
+        <li><strong>Admin commands</strong> — <code>ai-flag</code> / <code>ai-list</code> manage the engine's <code>IsAI</code> account flag (e.g. for leaderboard exclusion). Optional; the module's own behaviors don't depend on it.</li>
+    </ul>
+    <p>The agent side — the <code>mudagent</code> adapter, tester personalities, goals, worked examples, and a reference driver — ships at <a href="https://github.com/GoMudEngine/GoMud-Module-Playtest-Harness">GoMud-Module-Playtest-Harness</a>.</p>
+</div>
+
+<div class="about-section">
+    <h2>Configuration</h2>
+    <p>Set keys on the <strong>Config</strong> page (or in the module's <code>data-overlays/config.yaml</code>); changes take effect on the next server restart.</p>
+    <ul>
+        <li><code>Enabled</code> — master switch.</li>
+        <li><code>SafeMode</code> + <code>SandboxZoneTag</code> — confinement (needs a tag to confine to).</li>
+        <li><code>DeathProtection</code> — high extra-lives for testers.</li>
+        <li><code>Beacons</code> — per-round <code>Playtest.Round</code> beacons (needs the <code>gmcp</code> module).</li>
+    </ul>
+</div>
+
+<div class="about-section">
+    <h2>Room Tags</h2>
+    <p>When <code>SafeMode</code> is on and <code>SandboxZoneTag</code> is set, the module reserves that tag and confines AI-port testers to rooms carrying it. The tag value is operator-chosen — there is no fixed default.</p>
+</div>
+
+{{template "footer" .}}

@@ -1,0 +1,156 @@
+name: Messaging framework — color categories, linewidth, sight gates, anonymizer
+summary: >
+  Smoke the T9-T16 messaging framework: combat color categories, spell school
+  tags, linewidth/wrapping, companion-name anonymization in dark rooms, and
+  sight-gated broadcast filtering.
+goals:
+  - id: combat-color-categories
+    do: >
+      Engage a humanoid combat-archetype mob and trade several rounds of
+      combat. Inspect the raw output for ANSI color tags covering different
+      message types: hit-melee, dodge, parry, block, etc.
+    verify: >
+      Damage lines, defense lines, and special-move lines carry distinct
+      color categories. No raw `category-XXX` debug strings appear in
+      delivered text. Each defense type (dodge/parry/block) renders with
+      its own color rather than a single unified color, confirming T9
+      routing.
+
+  - id: spell-color-categories
+    do: >
+      Cast at least one spell from each of the five schools: elemental
+      (e.g. fire bolt), enhancement (a buff), mental (illusion or charm),
+      vital (a heal), manifestation (a summon). Observe the output tags.
+    verify: >
+      Each school carries its expected color tag — spell-elemental,
+      spell-enhancement, spell-mental, spell-vital, spell-manifestation.
+      Fold lines and cast-init lines use the spell-fold / steel-cyan
+      family. No debug string leaks.
+
+  - id: skill-progression-banner
+    do: >
+      Use a skill enough times to trigger the progression check (salvage,
+      barter, or a combat skill all work). Observe the advancement message.
+    verify: >
+      The legacy progression text (e.g. "*** sharpening ***" or
+      equivalent) fires on advancement. NOTE: the new
+      `messaging.SendProgression` banner format was built but is currently
+      orphaned by an import cycle — failure to see the new banner format
+      is EXPECTED and should be noted as a known deferral, not a FAIL.
+
+  - id: dark-room-companion-anonymizer
+    do: >
+      Acquire or admin-grant a companion (pet). Move to a dark room (no
+      light source, e.g. a cave interior). Have another player or admin
+      observer in the same room WITHOUT nightvision. Observe the
+      observer's feed for the companion's name.
+    verify: >
+      The observer's feed does NOT contain the companion's name. The
+      companion appears as "a figure" or generic shape text instead.
+      The companion-name leak fix from T11c/T17 is the key check here.
+      Any companion name appearing verbatim in the observer's dark-room
+      feed is a FAIL.
+
+  - id: dark-room-infrared-anonymizer
+    do: >
+      With the dark-room observer from the previous goal, toggle on the
+      InfraredVision buff (admin grant: find the InfraredVision buff id
+      via `buff list` or use a mutation/spell). Observe subsequent
+      combat broadcasts in the dark room.
+    verify: >
+      Combat broadcasts show "a figure" or similar anonymized text
+      instead of player/mob/pet names. The anonymizer strips username,
+      mobname, and petname ANSI tags before delivery. No double-
+      anonymization (e.g. "a a figure") should appear.
+
+  - id: linewidth-high
+    do: >
+      Issue `set linewidth 120`. Trigger a long-line broadcast — a multi-
+      paragraph room description or a long combat round works.
+    verify: >
+      Text wraps at column 120, not 80. Lines are visibly wider than
+      the default 80-col layout.
+
+  - id: linewidth-low
+    do: >
+      Issue `set linewidth 60`. Repeat the long-line trigger.
+    verify: >
+      Wrapping tightens to column 60. Lines are noticeably narrower than
+      the previous step.
+
+  - id: linewidth-bounds
+    do: >
+      Issue `set linewidth 40` and `set linewidth 240` (documented range
+      bounds). Then issue `set linewidth 39` and `set linewidth 241`
+      (out of range).
+    verify: >
+      40 and 240 are both accepted without error. 39 and 241 each return
+      a range error message — not a silent no-op or crash.
+
+  - id: tabular-linewidth
+    do: >
+      With a non-default linewidth active, run `inventory`, `status`,
+      `who`, and `help`.
+    verify: >
+      Go-side tabular column widths honor the current linewidth (per T15).
+      NOTE: the visual box-drawing templates themselves still hardcode
+      80 cols — that is a documented deferral, not a bug. Report the
+      observable behavior either way.
+
+  - id: normalize-stages
+    do: >
+      Trigger a text-normalization scenario: use an emote like
+      `emote slams the door` (should auto-append a period), or trigger a
+      buff-apply that historically read "a aggressive stance" (should now
+      read "an aggressive").
+    verify: >
+      Trailing period is auto-appended to emotes lacking one. Article
+      normalization fires ("an" before vowels). Both normalizations
+      should be invisible to the player — output reads grammatically
+      correct.
+
+  - id: sight-gate
+    do: >
+      Apply a blind debuff to yourself (admin `blind` command or apply
+      Buff 3 / 77). Have another character perform a visual action in
+      the same room.
+    verify: >
+      Visual lines do NOT reach you while blinded. Audio lines (speech,
+      shouts) still arrive normally. The sight gate fires correctly.
+
+  - id: stability-patrol
+    do: >
+      Sample 10+ minutes of normal play: move, look, cast spells,
+      engage mobs, run a few admin or status commands.
+    verify: >
+      No panic stack traces in server output. No missing-template debug
+      strings (`[[missing X]]`). No raw `category-XXX` strings in
+      delivered text. No double-anonymization ("a a figure"). No
+      `messaging legacy call` warnings (should be zero after T16 sunset).
+      No per-recipient fan-out issues where one observer misses a line
+      another received. Beacon continues emitting Round events throughout.
+
+  - id: linewidth-help
+    do: >
+      Read `help set` and `help linewidth` (if it exists).
+    verify: >
+      `help set` documents `set linewidth`. No error rendering either
+      help topic.
+
+notes:
+  - This is primarily a messaging-layer smoke, not a gameplay/content test.
+    Admin privileges may be needed for blind buff, InfraredVision grant,
+    and companion grant.
+  - The new `messaging.SendProgression` banner being absent is a known
+    deferral (import cycle) — do not mark it as a regression.
+  - Box-drawing templates hardcoded at 80 cols is also a known deferral —
+    do not mark as a bug.
+  - Source: tools/testing/goals/messaging-framework-smoke.yaml
+
+pass_criteria:
+  - Combat output carries distinct per-category color tags with no debug string leaks.
+  - All five spell schools carry correct color tags.
+  - linewidth 40, 120, 240 accepted; 39 and 241 produce range errors.
+  - Companion name does not appear in a dark-room observer's feed.
+  - Sight gate blocks visual lines for blinded characters; audio lines still arrive.
+  - No crash, panic, missing-template string, or debug-category leak during the session.

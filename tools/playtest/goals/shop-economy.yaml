@@ -1,0 +1,143 @@
+name: Shop economy — vendor buy/sell + tutorial regression
+summary: >
+  Validate the merchant buy/sell flow end-to-end from a fresh character
+  through Sanctum Basin, then spot-check Stillwater vendors for buy-rule
+  correctness (alchemy mats, multi-tagged items).
+goals:
+  - id: create-character
+    do: >
+      Create a fresh character. Stat allocation does not matter; complete
+      character creation fully so you enter the game as a new player.
+    verify: >
+      Character creation completes without error. Beacon emits the first
+      Round event (beacon `round` > 0 and `hp` > 0), confirming the
+      character is in-world.
+
+  - id: sanctum-spawn
+    do: >
+      Confirm spawn at the Sanctum Basin starter room. Run `look` to read
+      the room description and note any visible NPCs.
+    verify: >
+      Room description renders without error. Beacon `room_id` matches
+      a Sanctum Basin room (IDs ~100-199). No panic or error text.
+
+  - id: korvath-dialogue
+    do: >
+      Reach Chrysalis Priest Korvath (mob 52). Try `ask korvath quest` or
+      the dialogue trigger. Confirm he responds with questgiver dialogue
+      and grants the mutation step.
+    verify: >
+      Korvath replies with his normal questgiver text (mutation quest
+      offer or acknowledgment). No dialogue parser error or crash.
+
+  - id: korvath-protected
+    do: >
+      Try `attack korvath` and then `steal korvath`.
+    verify: >
+      Both attempts are refused with a "you can't attack" / "you can't
+      steal" style message. Combat does NOT start. Stealing does NOT
+      succeed. Korvath has `non_combatant: true` — any outcome other than
+      a clean rebuff is a FAIL.
+
+  - id: yenna-check
+    do: >
+      Reach Yenna (mob 53) and repeat the dialogue check and
+      attack/steal rebuff check from the Korvath goals.
+    verify: >
+      Yenna responds to quest dialogue normally. `attack yenna` and
+      `steal yenna` are both cleanly refused. No combat starts.
+
+  - id: adela-shop
+    do: >
+      Reach Merchant Adela (mob 63, room 108). Run `list` to browse her
+      wares. Confirm she has buyable items — at minimum a starter weapon,
+      starter armor, and a small healing potion.
+    verify: >
+      `list` renders a shop inventory with at least those three item
+      categories. No empty-shop or error response. Her starting gold
+      should be 5000 (general store baseline) — check via GMCP
+      Char/Room state if visible, or note the first sale's gold delta.
+
+  - id: buy-weapon
+    do: >
+      Buy at least one starter weapon from Adela. Equip it with
+      `wield <name>`. Confirm it is equipped.
+    verify: >
+      Purchase confirmation message appears. Gold decreases (beacon
+      or Char.Vitals gmcp shows lower gold, or `status` reflects change).
+      `inventory` or `status` confirms the weapon is now wielded.
+
+  - id: sell-to-adela
+    do: >
+      Sell something back to Adela (any tagged item — even what you
+      just bought). She is a general store and should accept any tagged
+      item under the new buy rule.
+    verify: >
+      Sell confirmation message appears. Gold increases. Item leaves
+      inventory. FAIL if Adela rejects everything with no purchase.
+
+  - id: combat-trainer
+    do: >
+      Reach the Combat Trainer step. Engage the training dummy or
+      tutorial mob and defeat it. Follow the standard tutorial flow.
+    verify: >
+      Combat completes. Tutorial mob is defeated. Beacon `hp` stays
+      above 0 throughout (or recovers). No crash or disconnect.
+
+  - id: leave-sanctum
+    do: >
+      Leave Sanctum Basin via the road to Stillwater or Thornwall.
+      Note the path taken.
+    verify: >
+      Beacon `room_id` changes to a non-Sanctum-Basin room (ID outside
+      ~100-199 range). Movement succeeds without error.
+
+  - id: gold-check
+    do: >
+      After leaving Sanctum Basin, check your gold (`status` or `gold`
+      command). Confirm you are not at 0 gold.
+    verify: >
+      Gold is non-zero. 0g after completing the tutorial indicates a
+      buy/sell pipeline regression — mark FAIL.
+
+  - id: ilsa-alchemy
+    do: >
+      Visit Stillwater. Find Apothecary Ilsa (mob 338). Try selling her
+      a basic alchemy mat (e.g., bitter thistle, healer's root, glass
+      vial). The buy rule should accept ALL alchemy-tagged mats now,
+      including ones not in her recipe list.
+    verify: >
+      Ilsa accepts the alchemy mat and the sale completes. Rejecting an
+      obviously-alchemy-tagged item is a FAIL. If you cannot reach
+      Stillwater in session time, mark BLOCKED and note it.
+
+  - id: brindle-multitype
+    do: >
+      Visit Stillwater Smith Brindle (mob 337). Try selling him a piece
+      of leather strip (item 40002, tagged blacksmithing+jewelcrafting+
+      tailoring). He should buy it because blacksmithing matches one of
+      the multi-tags.
+    verify: >
+      Brindle accepts the leather strip. Rejection is a FAIL. Mark
+      BLOCKED if you cannot reach Brindle in session time.
+
+notes:
+  - Run as a NEW character — character creation flow needs to work. Old
+    test characters bypass the tutorial and miss the regression surface.
+  - Use `set charset` (ASCII) immediately after login per test-mud SOP.
+  - DO NOT modify code — observe and report only. Capture exact dialogue
+    or error messages and the room ID where any issue occurred.
+  - >-
+    Failure conditions blocking prod push — Korvath or Yenna become
+    attackable/stealable; Adela has no buyable starter gear; player ends
+    Sanctum Basin tutorial with 0 gold; any NPC throws a dialogue error
+    or parser crash; Ilsa/Brindle reject obviously-tagged items.
+  - Source: tools/testing/goals/vendor-economy-polish-tutorial-regression.yaml
+
+pass_criteria:
+  - Fresh character creation completes and spawns in Sanctum Basin.
+  - Korvath and Yenna both refuse attack/steal cleanly (non_combatant gate holds).
+  - Adela has buyable starter gear and accepts sell-back of tagged items.
+  - Player exits Sanctum Basin tutorial with non-zero gold.
+  - At least one buy and one sell complete with correct gold delta and inventory change.
+  - No crash, disconnect, dialogue error, or parser crash during the session.

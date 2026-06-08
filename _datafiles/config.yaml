@@ -1338,4 +1338,10 @@ Roles:
 #   Empty here. Modules provide data for this.
 #
 ################################################################################
-Modules: {}
+Modules:
+  playtest:
+    Enabled: true
+    SafeMode: true
+    SandboxZoneTag: ""
+    DeathProtection: true
+    Beacons: true

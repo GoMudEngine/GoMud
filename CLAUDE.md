@@ -589,18 +589,34 @@ After generating any file: restart server. If editing an existing zone, check
 `_datafiles/world/dogmud/rooms.instances/` for stale instance saves.
 
 ## AI Testing
-Run autonomous AI testers against the MUD server:
-- `/test-mud local feature-tester phase2-summons.yaml` — test specific features locally
-- `/test-mud prod bug-finder` — exploratory bug hunting on production
-- `/test-mud local feel-tester` — natural play session for UX feedback
+Run autonomous AI testers against the MUD server via the **GoMud playtest
+harness** (`mudagent` adapter + `/playtest` driver). The old `/test-mud` +
+`tools/mud_bridge.py` + `tools/ai_player.py` stack was retired 2026-06-08
+(archived under `tools/_archive/testing-pre-harness/`).
 
-Config: `tools/testing/targets.yaml` (server credentials)
-Roles: `tools/testing/roles/` (bug-finder, feature-tester, feel-tester)
-Goals: `tools/testing/goals/` (session-specific test objectives)
-Reports: `tools/testing/reports/` (output, gitignored)
+- `/playtest local feature-tester shop-economy.yaml` — test specific features locally
+- `/playtest prod bug-finder` — exploratory bug hunting on production
+- `/playtest local feel-tester` — natural play session for UX feedback
 
-Prerequisites: test character must exist, be AI-flagged, and have
-tutorial completed. Edit player YAML directly for setup.
+Usage: `/playtest <local|prod> <personality> [goals-file]`. The driver spawns
+the harness's `mudagent` (located via `GOMUD_HARNESS_DIR`, default
+`../gomud-playtest-harness`) and drives it over a JSON event protocol
+(`output`/`gmcp`/`status`/`beacon`).
+
+Overlay (DOGMud-specific): `tools/playtest/`
+- `engine-profile.yaml` — DOGMud commands/world/mechanics (the one engine-specific file)
+- `targets.yaml` — local/prod server creds
+- `personalities/` (bug-finder, feature-tester, feel-tester)
+- `goals/` (migrated session objectives), `reports/` (output, gitignored)
+
+The vendored `playtest` server module (`modules/playtest/`) emits per-round
+`Playtest.Round` GMCP **beacons** (`hp/sp/cp + max`, room) for reliable pacing +
+structured verification, when enabled via `Modules.playtest.*`. Group/multi-agent
+scenarios (`ptorch`) are Phase 2 (not yet wired).
+
+Prerequisites: AI port enabled (`AIPort: 55555`); test character must be
+AI-flagged (or the agent creates one via the new-player flow). Edit player YAML
+directly for setup.
 
 ## Mob Stat Archetypes
 Mobs have an optional `archetype` field that controls stat pool distribution:

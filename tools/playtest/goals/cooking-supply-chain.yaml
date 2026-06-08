@@ -1,0 +1,86 @@
+name: Cooking supply chain — cooks as crafters, meal availability, stability
+summary: >
+  Verify the three DOGMud cooks are present and shoppable, confirm crafter-
+  produced cooked meals appear over time, and check no broken command paths
+  produce confused-emote messages.
+goals:
+  - id: cooks-exist
+    do: >
+      Visit the three cooks: Tov Brann (Stillwater, fishmonger), the food
+      vendor (room 103), and tavern cook Brynn (Thornwall City, mob 248).
+      Run `list` at each.
+    verify: >
+      Each cook is present in their expected room and responds to `list`
+      with a shop inventory (even if some categories show 0 stock). No
+      "mob not found" or navigation error. GMCP Room.Info confirms you
+      are in the correct room for each stop.
+
+  - id: meals-craftable
+    do: >
+      At the food vendor (room 103) and tavern cook Brynn (mob 248), run
+      `list` and look for cooked meals (grilled meat, hearty stew, herbal
+      tea, trail rations, chowder, etc.). If a cook shows 0 cooked meals,
+      wait several rounds and check again — cooks craft over time on their
+      idle/craft tick.
+    verify: >
+      This goal is observational and time-dependent. Note the stock count
+      on first visit and on each revisit. PASS if at least one cooked meal
+      appears in stock during the session. Mark BLOCKED (not FAIL) if 0
+      cooked meals are observed in the entire session — that is expected on
+      a fresh boot before the cook's first craft tick fires.
+
+  - id: buy-a-meal
+    do: >
+      If any cook has a cooked meal in stock, buy one.
+    verify: >
+      Purchase confirmation message appears. Beacon gold or Char.Vitals
+      gmcp shows reduced gold. The item appears in inventory. Stock
+      decrements by one. Mark BLOCKED if no cook had cooked meals during
+      the session.
+
+  - id: no-confused-emote
+    do: >
+      Interact with each cook (list, buy if possible, observe idle
+      emotes). Watch all cook-related output during the session.
+    verify: >
+      CRITICAL: no cook, merchant, or mob ever emits "looks a little
+      confused" — that string indicates a broken command path. Any
+      occurrence is an immediate FAIL regardless of other results.
+
+  - id: forager-meat-delivery
+    do: >
+      If you encounter a forager (Tova in Stillwater marsh, Halix in the
+      steppe, Kessa in the Fernway) or notice a cook's raw-meat or
+      wild-hare-meat stock levels, note the stock values. Revisit the
+      same cook after several minutes to see if raw-meat stock rises
+      (forager delivery).
+    verify: >
+      This goal is observational. Note whether raw-meat stock at a cook
+      is non-zero and whether it changes between visits. Hard to confirm
+      in a short session — mark BLOCKED if no forager is encountered
+      and raw-meat stock shows no change. Even a static non-zero stock
+      count is a positive signal.
+
+  - id: no-crash
+    do: >
+      Play normally for the session: move between towns, look around,
+      buy items, engage in a small amount of combat.
+    verify: >
+      No server crash, disconnect, or panic text in session output.
+      Beacon continues emitting Round events throughout. All commands
+      return sensible responses.
+
+notes:
+  - Cooks now CRAFT meals (crafter-produced, RestockQty 0) rather than
+    pre-stocking them. On a fresh boot a cook may have 0 cooked meals
+    until it has crafted some. Goals 2 and 3 are observational/time-
+    dependent — mark BLOCKED rather than FAIL if the behavior is not
+    observed in a short session.
+  - Source: tools/testing/goals/cooking-supply-chain.yaml
+
+pass_criteria:
+  - All three cooks visited and responding to `list` without errors.
+  - At least one cooked meal purchase completes (or goal marked BLOCKED
+    with a clear note on stock state at each cook).
+  - No "looks a little confused" emote observed from any mob.
+  - No server crash, disconnect, or panic during the session.

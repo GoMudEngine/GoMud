@@ -1,0 +1,66 @@
+# Engine profile — the ONE place DOGMud-specific facts live, so personalities
+# and the driver stay engine-agnostic. The agent reads this for command names,
+# world orientation, and mechanics.
+engine: DOGMud
+
+commands:
+  look: look
+  movement: [north, south, east, west, up, down]
+  inventory: inventory
+  status: status
+  examine: look <target>
+  get: get <item>
+  drop: drop <item>
+  attack: attack <target>
+  flee: flee
+  say: say <message>
+  recover: ["cast <heal-spell> me", "drink <potion>"]   # DOGMud heals via spells/potions
+  help: help
+  map: map
+  consider: consider <target>            # gauge relative strength before a fight
+  special_moves: [kick, bash, taunt]     # stamina/positional specials
+  cast: cast <spell> <target>
+
+# Blind one-shot commands to run immediately after login. NOTE: charset is NOT
+# here — `set charset` is a TOGGLE (no get-state query), so the driver converges
+# it to ASCII by reading the response (see the /playtest driver step 4), rather
+# than blindly toggling once (which flips whatever state the session started in).
+setup_commands: []
+
+world:
+  starting_area: >-
+    New DOGMud characters begin in Sanctum Basin (the newbie hub, around the
+    Town Square). Rooms describe their exits and any visible NPCs.
+  onboarding: >-
+    If you connect with no existing character, create one at the login prompt:
+    enter "new", then a username, password, password again, email (optional),
+    screen-reader y/n, and confirm. New characters may begin pre-tutorial — take
+    the tutorial or choose to start playing to become a full character.
+  orientation: >-
+    Movement is compass-based (north/south/east/west/up/down). `look` shows the
+    room, exits, and who/what is here; `look <noun>` examines a target. `map`
+    shows the local map.
+
+mechanics:
+  health: >-
+    Characters have THREE pools: Health (HP), Stamina (SP, physical energy), and
+    Conviction (CP, mental/spiritual energy). The per-round beacon reports all
+    three (hp/sp/cp + max). Pools regen over time; heal with spells (`cast`) or
+    potions (`drink`).
+  death: >-
+    DOGMud has NO permadeath and no bleedout/downed state. Lethal outcomes route
+    through a justice/jail system (arrest, bounties); a defeated character is not
+    permanently lost. Avoid attacking live players or important NPCs anyway.
+  combat: >-
+    `attack <target>` starts combat; `flee` escapes. Combat resolves per round on
+    a ~4-second timer. Specials: kick/bash/taunt; `cast <spell>` for magic.
+  progression: >-
+    There are NO levels or XP. The six stats (Strength, Dexterity, Perception,
+    Vitality, Willpower, Charisma, centered at 100) and nine skills improve by
+    USE, probabilistically. Don't look for an XP bar or level-ups.
+
+notes:
+  - The AI port already delivers ANSI-stripped output — do NOT file display
+    artifacts as bugs.
+  - NPC/target names must be exact keywords from the room description; `look` to
+    re-read if targeting fails.

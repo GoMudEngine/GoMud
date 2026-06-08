@@ -1,0 +1,54 @@
+# Goal: Town Justice 5.1c — Arrest / Jail / Fine + combat-capable guards
+name: Town Justice 5.1c Arrest Smoke Test
+goal: |
+  You are smoke-testing the new ARREST system in Thornwall. Recent work made
+  town guards combat-capable AND added an arrest flow: instead of being killed
+  on sight, a wanted player is now ARRESTED — hauled to a holding cell to serve
+  a timed sentence, with the option to pay a decaying fine to leave early.
+  Serving or paying clears the crime, lifts the faction bounty, and resets
+  reputation. A player can instead set a policy to RESIST arrest, which makes
+  the guards fight for real.
+
+  Your job is to exercise these paths and watch for crashes, panics, stuck
+  states, broken messages, or anything that feels wrong.
+
+  Things to exercise (in Thornwall):
+  - Check your arrest policy with `set arrest` (should default to surrender).
+    Try `set arrest resist` and `set arrest surrender` — confirm both set
+    cleanly and report back the messages.
+  - Read the help: `help arrest`, `help justice`, `help fine`. Confirm they
+    exist and read sensibly (note any typos / odd wording / 3rd-person voice).
+  - With arrest policy = surrender, commit a crime against a Thornwall citizen
+    or guard to become wanted (attack a city guard or guard captain Velk in the
+    Guard Barracks; or assault a citizen). Then let a guard catch you while
+    wanted. EXPECTED: the guard announces an arrest, gives you a moment, then
+    (if you don't fight) hauls you to a holding cell. Report the exact messages.
+  - Once jailed: confirm you CANNOT leave — try walking out (`go up`, other
+    directions), try `recall` / `cast fold-recall` if available. EXPECTED: all
+    blocked with a message. Try `fine` (shows current fine) and look around the
+    cell (`look`, `look bars`, `look door`).
+  - Try to wait out the sentence (idle several rounds, re-check `fine` — it
+    should shrink), OR use `payfine` to leave early (if you have gold). After
+    release: confirm you're back in the barracks/town, check whether guards
+    still treat you as wanted (they shouldn't, immediately after — rep was
+    reset). Report what you observe.
+  - Separately, set `set arrest resist`, become wanted again, and let a guard
+    engage. EXPECTED: the guard actually FIGHTS (real combat rounds, the guard
+    swings back — this is the combat-capable-guards fix). Report whether combat
+    actually happens (previously guards couldn't fight at all).
+  - Note: guards are now tough (a serious deterrent). You may lose. That's fine
+    — if you die, report the death was clean (no crash) and continue.
+
+  Record exact command output, any raw internal numbers/IDs leaking into player
+  text, any message that reads oddly, and ESPECIALLY any panic, disconnect,
+  stuck/no-response state, or place where the arrest/jail flow breaks.
+
+steps:
+  - "Connect; check arrest policy (set arrest) and read help arrest / help justice / help fine"
+  - "Confirm set arrest surrender / resist both work"
+  - "With surrender policy, commit a crime in Thornwall to become wanted"
+  - "Let a guard arrest you; record the declare -> grace -> haul-to-cell sequence and messages"
+  - "While jailed: confirm you can't walk out or recall out; check `fine`; look around the cell"
+  - "Serve the sentence OR payfine to leave early; confirm release + cleared wanted status"
+  - "Set resist policy, become wanted again, let a guard engage; confirm real combat happens"
+  - "Report all findings, bugs, broken messages, and rough edges"
