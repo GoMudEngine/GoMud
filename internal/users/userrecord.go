@@ -2,6 +2,7 @@ package users
 
 import (
 	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"math"
 	"math/big"
@@ -197,6 +198,24 @@ func (u *UserRecord) ClientSettings() connections.ClientSettings {
 	return connections.GetClientSettings(u.connectionId)
 }
 
+// HasPlaintextPassword reports whether the stored password is neither a
+// bcrypt hash nor a 64-char SHA-256 hex digest — i.e. a legacy/default
+// plaintext credential the user must replace.
+func (u *UserRecord) HasPlaintextPassword() bool {
+	p := u.Password
+	// bcrypt check
+	if strings.HasPrefix(p, "$2a$") || strings.HasPrefix(p, "$2b$") || strings.HasPrefix(p, "$2y$") {
+		return false
+	}
+	// SHA256 hex check: 64 chars of valid hex
+	if len(p) == 64 {
+		if _, err := hex.DecodeString(p); err == nil {
+			return false
+		}
+	}
+	return true
+}
+
 func (u *UserRecord) PasswordMatches(input string) bool {
 
 	// Try bcrypt first (new format).
@@ -213,7 +232,12 @@ func (u *UserRecord) PasswordMatches(input string) bool {
 		return true
 	}
 
-	// No plaintext fallback. No hash-of-hash bypass.
+	// Plaintext fallback: allows default/legacy plaintext credentials to
+	// authenticate once so the user can be forced to change their password.
+	if u.HasPlaintextPassword() && u.Password == input {
+		return true
+	}
+
 	return false
 }
 

@@ -578,9 +578,9 @@ func TestUserRecord_PasswordMatches(t *testing.T) {
 		assert.False(t, u.PasswordMatches("wrong"))
 	})
 
-	t.Run("plaintext no longer matches", func(t *testing.T) {
+	t.Run("plaintext password matches (so user can be forced to change it)", func(t *testing.T) {
 		u2 := &UserRecord{Password: "plaintext123"}
-		assert.False(t, u2.PasswordMatches("plaintext123"))
+		assert.True(t, u2.PasswordMatches("plaintext123"))
 	})
 
 	t.Run("sha256 migration", func(t *testing.T) {
@@ -1011,6 +1011,27 @@ func TestSetZombieUserNonexistent(t *testing.T) {
 
 	// Should not panic for unknown userId
 	SetZombieUser(999)
+}
+
+// ─── HasPlaintextPassword ─────────────────────────────────────────────────
+
+func TestHasPlaintextPassword(t *testing.T) {
+	t.Run("plaintext returns true", func(t *testing.T) {
+		u := &UserRecord{Password: "password"}
+		assert.True(t, u.HasPlaintextPassword())
+	})
+
+	t.Run("bcrypt hash returns false", func(t *testing.T) {
+		hash, _ := bcrypt.GenerateFromPassword([]byte("password"), bcrypt.DefaultCost)
+		u := &UserRecord{Password: string(hash)}
+		assert.False(t, u.HasPlaintextPassword())
+	})
+
+	t.Run("sha256 hex returns false", func(t *testing.T) {
+		// util.Hash returns a 64-char lowercase hex SHA-256 digest
+		u := &UserRecord{Password: util.Hash("anything")}
+		assert.False(t, u.HasPlaintextPassword())
+	})
 }
 
 // ─── PasswordMatches additional paths ─────────────────────────────────────

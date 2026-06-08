@@ -458,6 +458,12 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 		}
 	}
 
+	if user.HasPlaintextPassword() && cmd != `password` {
+		user.SendText(messaging.CategorySystem, `<ansi fg="alert-5">You must change your password before doing anything else.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="yellow">Type <ansi fg="yellow-bold">password</ansi> to set a new password.</ansi>`)
+		return true, nil
+	}
+
 	if cmdInfo, ok := userCommands[cmd]; ok {
 
 		if !cmdInfo.AllowedWhenDowned {
