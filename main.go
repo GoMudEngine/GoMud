@@ -809,7 +809,13 @@ func handleTelnetConnection(connDetails *connections.ConnectionDetails, wg *sync
 
 			// Retrieve the UserObject stored by the completion function
 			if uo, exists := sharedState["UserObject"]; exists {
-				userObject = uo.(*users.UserRecord)
+				var ok bool
+				userObject, ok = uo.(*users.UserRecord)
+				if !ok {
+					mudlog.Error("UserObject type assertion failed", "connectionId", clientInput.ConnectionId)
+					connections.Remove(clientInput.ConnectionId)
+					break
+				}
 				// Remove it from shared state if no longer needed there
 				delete(sharedState, "UserObject")
 			} else {
@@ -1084,7 +1090,13 @@ func HandleWebSocketConnection(conn *websocket.Conn) {
 
 			// Retrieve the UserObject stored by the completion function
 			if uo, exists := sharedState["UserObject"]; exists {
-				userObject = uo.(*users.UserRecord)
+				var ok bool
+				userObject, ok = uo.(*users.UserRecord)
+				if !ok {
+					mudlog.Error("UserObject type assertion failed", "connectionId", clientInput.ConnectionId)
+					connections.Remove(clientInput.ConnectionId)
+					break
+				}
 				// Remove it from shared state if no longer needed there
 				delete(sharedState, "UserObject")
 			} else {
