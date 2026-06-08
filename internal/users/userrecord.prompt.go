@@ -73,9 +73,10 @@ func RenderVitalBar(current, max, reserved int) string {
 //
 //	>60% → green (ANSI 82), >30% → yellow (ANSI 226), ≤30% → red (ANSI 196)
 //
-// The reserved parameter adds dark magenta blocks representing pool
-// reservation from Chrysalis enchantments. When reserved=0 the bar
-// renders identically to the original two-arg version.
+// The reserved parameter adds neutral-grey blocks (fenced off at the right,
+// after the drained portion) representing pool reservation from Chrysalis
+// enchantments — mirroring the crosshatched reserved region in the web vitals
+// bar. When reserved=0 the bar renders identically to the original two-arg version.
 func renderVitalBar(current, max, reserved int) string {
 	if max <= 0 {
 		max = 1
@@ -111,30 +112,35 @@ func renderVitalBar(current, max, reserved int) string {
 		emptyBlocks = 0
 	}
 
-	// Color based on current vs effective max
+	// Color based on current vs effective max. 256-color indices chosen to match
+	// the web vitals gradient (Material colors) as closely as the cube allows —
+	// softer than pure 82/226/196: green ≈ #4caf50, gold ≈ #ffeb3b, red ≈ #f44336.
 	effectivePct := float64(current) / float64(effectiveMax) * 100.0
 	var barColor string
 	switch {
 	case effectivePct > 60:
-		barColor = "82"  // bright green
+		barColor = "71"  // green ≈ vitals #4caf50
 	case effectivePct > 30:
-		barColor = "226" // yellow
+		barColor = "221" // gold/yellow ≈ vitals #ffeb3b
 	default:
-		barColor = "196" // red
+		barColor = "203" // red ≈ vitals #f44336
 	}
 
+	// Order matches the web vitals bar left-to-right: filled usable (level-
+	// colored), then drained usable (dark), then the reserved block fenced off
+	// at the right in neutral grey (mirrors the crosshatched reserved region).
 	result := fmt.Sprintf(`<ansi fg="%s">%s</ansi>`,
 		barColor,
 		strings.Repeat("█", usableBlocks))
 
-	if reservedBlocks > 0 {
-		result += fmt.Sprintf(`<ansi fg="53">%s</ansi>`,
-			strings.Repeat("▓", reservedBlocks))
-	}
-
 	if emptyBlocks > 0 {
 		result += fmt.Sprintf(`<ansi fg="238">%s</ansi>`,
 			strings.Repeat("░", emptyBlocks))
+	}
+
+	if reservedBlocks > 0 {
+		result += fmt.Sprintf(`<ansi fg="244">%s</ansi>`,
+			strings.Repeat("▓", reservedBlocks))
 	}
 
 	return result
