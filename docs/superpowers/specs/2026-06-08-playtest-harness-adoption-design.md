@@ -95,32 +95,41 @@ Vendor `module/playtest/` into DOGMud's `modules/` (matching how DOGMud bundles
 `internal/plugins`. Module config (`Enabled`/`SafeMode`/`SandboxZoneTag`/
 `DeathProtection`/`Beacons`) comes from the module's own
 `files/data-overlays/config.yaml` via the plugin config API — **independent of**
-DOGMud's `AIPort` server config (the earlier `Network.AI.*` concern was a red
-herring). **Known DOGMud adaptation surface (the plan verifies + adapts each):**
+DOGMud's `AIPort` server config (the `Network.AI.*` vs flat `AIPort` difference is
+a config-key name only; the module never reads it).
 
-- **AI-connection detection.** Module uses `connections.ConnType() ==
-  connections.ConnAI`. Verify DOGMud tags AI-port connections as `ConnAI`; if
-  not, adapt `isAIConnection`.
-- **Beacons.** Module calls the gmcp module's exported `SendGMCPEvent(int,
-  string, any)` via `plugins.GetPluginRegistry().GetExportedFunction`. Verify
-  DOGMud's (diverged) gmcp module exports it; adapt the payload to DOGMud's
-  `Character` fields and **add Conviction (CP)** to the beacon
-  (`{round,hp,hp_max,sp,sp_max,cp,cp_max,room_id}`) — DOGMud has three pools, the
-  stock beacon only carries two.
-- **Death protection.** Module's `onPlayerSpawn` grants extra-lives on
-  `events.PlayerSpawn`. Map to DOGMud's death model (justice/jail/respawn, no
-  bleedout) — confirm what "death protection" means for DOGMud and wire
-  accordingly (may be a no-op or a justice-exemption rather than extra-lives).
-- **Safe mode / sandbox.** Uses `events.RoomChange` + `rooms.LoadRoom/MoveToRoom`
-  + room `Tags` + `plug.ReserveTags`. DOGMud has all of these; define a DOGMud
-  **sandbox zone + tag** (or leave `SandboxZoneTag` empty to disable confinement
-  initially). Beacons + death-protection are the load-bearing parts; sandbox is
-  optional.
-- **Admin pages.** Module registers `plug.Web.AdminPage(...)`. Verify DOGMud's
-  plugin Web API matches that signature; adapt if diverged.
-- **Events/fields.** `events.NewRound.RoundNumber`, `events.RoomChange`,
-  `events.PlayerSpawn` — confirm presence/shape in DOGMud (all used elsewhere in
-  DOGMud, so expected present).
+**Verified 2026-06-08 — the engine primitives the module needs are ALREADY in
+DOGMud** (pruuk built DOGMud's AI port with the same primitives as upstream
+PR #601; see `gomud-playtest-harness/docs/pr/2026-06-05-engine-ai-port-pr.md`):
+`connections.ConnType`/`ConnAI` + `SetConnType` + `stripAnsi` +
+`AICommandAllowed` + `ActiveAIConnectionCount`; `UserRecord.IsAI` (set from
+`ConnType()==ConnAI`); the AI listener in `main.go` on `AIPort`; and the `gmcp`
+module **exports `SendGMCPEvent`** via the plugin registry. So the module's
+`isAIConnection` (keys off `ConnAI`) and its beacon export **work as-is** — the
+scary "integrate against diverged internals" risk is largely retired. The
+`events.NewRound`/`RoomChange`/`PlayerSpawn`, `rooms.LoadRoom`/`MoveToRoom`, and
+room `Tags`/`ReserveTags` APIs are all present.
+
+**The genuine adaptations (small, bounded):**
+
+- **Beacon payload fields.** The stock beacon reads `u.Character.Mana`/`ManaMax`;
+  DOGMud's second pool is `Stamina`/`StaminaMax` and it has a **third pool,
+  `Conviction`/`ConvictionMax`**. Adapt `beaconPayload` to
+  `{round, hp, hp_max, sp, sp_max, cp, cp_max, room_id}` reading
+  `Health`/`HealthMax.Value`, `Stamina`/`StaminaMax.Value`,
+  `Conviction`/`ConvictionMax.Value`, `RoomId`.
+- **Death protection.** Stock `applyDeathProtection` sets
+  `Character.ExtraLives = 999`, but **DOGMud's `Character` has no `ExtraLives`**
+  (justice/jail death model, no permadeath/bleedout). Map to DOGMud's actual
+  death model — likely a **no-op** (testers don't permadie) or a respawn/justice
+  exemption. Confirm DOGMud's death/respawn behavior and wire (or stub) the
+  protection accordingly. This is the one item needing a small design decision.
+- **Admin pages.** Verify DOGMud's `plug.Web.AdminPage(...)` signature matches
+  the module's call; adapt if the plugin Web API diverged (DOGMud modules use
+  `plug.Web` already, so expected compatible).
+- **Sandbox (optional).** `SafeMode` confinement needs a DOGMud **sandbox zone +
+  tag**; ship `SandboxZoneTag: ""` (disabled) initially — beacons +
+  death-protection are the load-bearing parts.
 
 ## 1C. DOGMud driver — `.claude/commands/playtest.md`
 Adapted from the harness reference driver: reads `tools/playtest/*` (not
@@ -201,15 +210,17 @@ wired into DOGMud's module load (matching other `modules/`).
 
 ## Risks
 
-- **Server-module integration (Phase 1B)** is the main risk — beacons (gmcp
-  export + Conviction field), AI-connection detection (`ConnAI`), and the death
-  model are the points most likely to need real adaptation against DOGMud's
-  divergence. Each is independently verifiable; the plan front-loads these
-  checks before wiring.
-- **gmcp divergence:** DOGMud's gmcp payloads differ; the adapter passes them
-  through generically, and beacons use the module's own `Playtest.Round` package,
-  so the agent doesn't depend on DOGMud's exact gmcp shapes — but the beacon
-  payload must read DOGMud's actual `Character` field names.
+- **Server-module integration (Phase 1B)** is now **low-risk** — the engine
+  primitives the module needs (`ConnAI`, gmcp `SendGMCPEvent` export, `IsAI`, the
+  AI listener, events/rooms) are verified present in DOGMud. The only real
+  adaptations are the **beacon payload fields** (`Mana`→`Stamina` + add
+  `Conviction`/CP) and the **death-protection model** (`Character.ExtraLives` is
+  absent in DOGMud → map to its justice/respawn model, likely a no-op). Both are
+  small and isolated.
+- **gmcp divergence:** DOGMud's gmcp payloads differ, but the adapter passes them
+  through generically and beacons use the module's own `Playtest.Round` package,
+  so the agent doesn't depend on DOGMud's exact gmcp shapes — only the beacon
+  payload reads DOGMud's `Character` fields (covered above).
 - **PvP availability (Phase 2)** may need a designated PvP room/zone.
 
 ## Out of scope
