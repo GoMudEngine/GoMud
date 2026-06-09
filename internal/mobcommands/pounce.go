@@ -23,6 +23,10 @@ func Pounce(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	res := actions.ExecutePounce(&actions.MobActor{Mob: mob, Room: room})
 
+	// Grappling gate: silently swallow so the btree can fall through.
+	if res.Grappling {
+		return true, nil
+	}
 	// Anatomy/identity refusal: silently swallow so the btree can fall through.
 	if res.NotPredator {
 		return true, nil

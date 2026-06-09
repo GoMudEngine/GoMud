@@ -375,6 +375,25 @@ func TestCommandReadinessDrift(t *testing.T) {
 			},
 			false, "NotPredator"},
 
+		// pounce_grappling: SpeciesId 7304 (predator) but the actor is in
+		// Clinch — CommandIsReady gates on !IsGrappling(), ExecutePounce gates
+		// after target resolution. A registered target ensures ResolveAggroTarget
+		// returns Found=true so the Grappling gate is what fires, not NoTarget.
+		{"pounce_grappling", "pounce",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7304 // clawed-test: legs + claws → predator
+				// Put the actor into a Clinch grapple so IsGrappling() returns true.
+				setCombatPositionParallel(&m.Character, position.Clinch)
+				// Register a target so ResolveAggroTarget returns Found=true and
+				// the Grappling gate (not NoTarget) is the blocking condition.
+				targetMob := &mobs.Mob{InstanceId: 215}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "Grappling"},
+
 		// ─── gore ────────────────────────────────────────────────────────────
 		// gore_ready: horned species + default aggro (user 1, not found) →
 		// CommandIsReady returns true (horned gate passes, aggro non-nil).
@@ -492,7 +511,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 			// The mutate function may set up target mobs via
 			// mobs.SetInstanceForTest; we clean them all up here.
 			defer func() {
-				for id := 200; id <= 214; id++ {
+				for id := 200; id <= 215; id++ {
 					mobs.SetInstanceForTest(id, nil)
 				}
 			}()
@@ -621,6 +640,8 @@ func runExecuteAndReadFlag(cmd string, actor Actor, flag string) bool {
 			return r.OnCooldown
 		case "NoTarget":
 			return r.NoTarget
+		case "Grappling":
+			return r.Grappling
 		case "NotPredator":
 			return r.NotPredator
 		}

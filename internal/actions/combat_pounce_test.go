@@ -105,6 +105,37 @@ func TestPounce_NotPredator(t *testing.T) {
 	})
 }
 
+// TestPounce_Grappling verifies that a grappling predator returns
+// Grappling=true and Executed=false — can't leap from a clinch.
+func TestPounce_Grappling(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		6201: {SpeciesId: 6201, Name: "grappling-wolf", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Bite},
+	})
+	defer cleanup()
+
+	// Register a target so ResolveAggroTarget returns Found=true and the
+	// Grappling gate (not NoTarget) is the blocking condition.
+	targetMob := &mobs.Mob{InstanceId: 6299}
+	targetMob.Character.Name = "Target"
+	targetMob.Character.HealthMax.Value = 100
+	targetMob.Character.Health = 100
+	setCombatPositionParallel(&targetMob.Character, position.Standing)
+	mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+	defer mobs.SetInstanceForTest(targetMob.InstanceId, nil)
+
+	char := characters.New()
+	char.SpeciesId = 6201 // wolf — legged + fanged → predator
+	char.Aggro = &characters.Aggro{MobInstanceId: targetMob.InstanceId}
+	// Put the attacker into a Clinch grapple so IsGrappling() is true.
+	setCombatPositionParallel(char, position.Clinch)
+
+	result := ExecutePounce(newStubActor(char, newTestRoom()))
+
+	assert.True(t, result.Grappling, "grappling predator should return Grappling=true")
+	assert.False(t, result.Executed, "grappling predator should not execute pounce")
+	assert.False(t, result.NotPredator, "Grappling gate fires before NotPredator gate")
+}
+
 // TestPounce_Executed verifies that a legged clawed actor in combat with a
 // valid target executes the pounce (Executed=true, NotPredator=false).
 func TestPounce_Executed(t *testing.T) {

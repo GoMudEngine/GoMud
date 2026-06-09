@@ -59,6 +59,10 @@ func Pounce(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	// Delegate core resolution to the shared action.
 	res := actions.ExecutePounce(&actions.UserActor{User: user, Room: room})
 
+	if res.Grappling {
+		user.SendText(messaging.CategorySystem, "You can't pounce from a clinch.")
+		return true, nil
+	}
 	if res.NotPredator {
 		user.SendText(messaging.CategorySystem, "You aren't built to pounce.")
 		return true, nil

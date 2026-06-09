@@ -20,7 +20,8 @@ type PounceResult struct {
 	MoveResult combat.SkillMoveResult
 
 	// Executed reports whether the pounce was actually performed. False when
-	// any early-exit condition fired (OnCooldown, NoTarget, NotPredator).
+	// any early-exit condition fired (OnCooldown, NoTarget, Grappling,
+	// NotPredator).
 	Executed bool
 
 	// OnCooldown is true when the special-move cooldown blocked the pounce.
@@ -28,6 +29,13 @@ type PounceResult struct {
 
 	// NoTarget is true when there is no aggro target or the target is gone.
 	NoTarget bool
+
+	// Grappling is true when the actor is in any grapple state (Clinch through
+	// Turtle). Pounce is a leaping move that requires freedom of movement —
+	// can't be executed from a clinch or ground grapple. Reachable via a
+	// direct player command or btree dispatch; unreachable via the AI path
+	// (CanUsePounce gates it).
+	Grappling bool
 
 	// NotPredator is true when the actor's species is not a quadruped predator
 	// (requires legs AND fanged-or-clawed). Reachable via a direct player
@@ -66,6 +74,13 @@ func ExecutePounce(actor Actor) PounceResult {
 	target := ResolveAggroTarget(char.Aggro)
 	if !target.Found {
 		return PounceResult{NoTarget: true}
+	}
+
+	// Grappling gate: pounce is a leaping move — can't execute from a clinch
+	// or any ground grapple. Unreachable via the AI path (CanUsePounce gates
+	// it) but reachable via a direct player command or btree dispatch.
+	if char.IsGrappling() {
+		return PounceResult{Grappling: true}
 	}
 
 	// Compound predator gate (defense-in-depth): only legged fanged-or-clawed

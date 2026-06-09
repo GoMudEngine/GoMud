@@ -9,7 +9,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/species"
-	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"github.com/stretchr/testify/assert"
@@ -257,8 +256,6 @@ func TestThrottle_CastInterrupt(t *testing.T) {
 	assert.GreaterOrEqual(t, targetMob.Character.Conviction, 0,
 		"target conviction should not be negative after refund")
 
-	// Access the bound ref test.
-	assert.Equal(t, state.ActorRef{}, state.ActorRef{}, "placeholder assertion for ref")
 }
 
 // TestThrottle_TargetGone verifies that when aggro is set to an invalid mob
