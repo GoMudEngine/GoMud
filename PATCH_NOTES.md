@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-06-09 — Fix: a merchant who won't buy your item now says so
+
+Trying to `sell` something to a merchant who is present but won't buy it — it's
+the wrong sort of goods for them, or they're already overstocked — used to
+wrongly report "There's no merchant here." Now the merchant gives the proper
+refusal ("I'm not interested in that."), and a merchant who's simply out of gold
+still says "I can't afford that right now." A genuinely empty room still reports
+no merchant, and "sell all" still quietly skips anything no one will buy.
+
 ## 2026-06-08 — CI fixes (round 2): the real -race culprit + a case-sensitivity test bug
 
 The earlier config-getter lock fix was real but was not the race CI was hitting.

@@ -289,6 +289,27 @@ func TestSell_QuestItemRejectedNotNoMerchant(t *testing.T) {
 		"must report SellStopRejected, not SellStopNoMerchant")
 }
 
+// TestSell_PresentMerchantWontBuy_RejectedNotNoMerchant verifies that when a
+// merchant IS present but won't pay for the offered item (non-positive offer —
+// here a zero-value trinket), the result is SellStopRejected (the merchant
+// gives a refusal) and NOT SellStopNoMerchant ("There's no merchant here.").
+// Regression guard for the resolveMerchant probe-gate shortcut that collapsed
+// a present-but-unwilling merchant into the no-merchant message.
+func TestSell_PresentMerchantWontBuy_RejectedNotNoMerchant(t *testing.T) {
+	defer seedSellItemSpecs()()
+	defer seedSellRoom(t)()
+	defer seedSellMerchant(t, 1000)() // present, stocks iron sword (Weapon) only
+
+	// Seller offers a zero-value item the merchant will never pay for.
+	seller := newSellerActor(t, true, sellTestZeroValueId)
+
+	res := Sell(seller, SellOptions{ItemName: "worthless trinket", Quantity: 1})
+
+	assert.Equal(t, 0, res.Sold, "an unwilling merchant buys nothing")
+	assert.Equal(t, SellStopRejected, res.Reason,
+		"merchant present but unwilling must report Rejected, not NoMerchant")
+}
+
 // TestSell_QuestItemRejectedNoMerchantPresent verifies the same rejection even
 // when no merchant is in the room — the quest-token gate must fire BEFORE the
 // merchant resolution so the message is always correct.
