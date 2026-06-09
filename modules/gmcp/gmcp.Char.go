@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/casing"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -364,7 +365,7 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 			Account:   user.Username,
 			Name:      user.Character.Name,
 			Class:     skills.GetTitle(user.Character.Mutations, user.Character.GetAllSkillRanks(), user.Character.Stats),
-			Race:      user.Character.Species(),
+			Race:      casing.Title(user.Character.Species()),
 		}
 
 		if !all {

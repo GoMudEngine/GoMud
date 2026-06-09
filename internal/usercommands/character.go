@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/GoMudEngine/GoMud/internal/casing"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -450,7 +451,7 @@ func getAltTable(nameToAlt map[string]characters.Character, charmedChars map[str
 		allRanks := char.GetAllSkillRanks()
 		raceName := `Unknown`
 		if speciesInfo := species.GetSpecies(char.SpeciesId); speciesInfo != nil {
-			raceName = speciesInfo.Name
+			raceName = casing.Title(speciesInfo.Name)
 		}
 
 		mobBusy := ``
