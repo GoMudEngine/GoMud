@@ -244,6 +244,7 @@ func seedAllRegistries() func() {
 		1: {
 			SpeciesId: 1,
 			Name:      "Human",
+			BodyParts: []string{"legs", "arms", "hands"},
 		},
 	})
 

@@ -55,6 +55,9 @@ func CommandIsReady(actor Actor, cmd string) bool {
 		if !target.Found {
 			return false
 		}
+		if !char.HasBodyPart("legs") {
+			return false
+		}
 		return !target.Char.IsOnFloor()
 
 	case "bash":
@@ -87,7 +90,10 @@ func CommandIsReady(actor Actor, cmd string) bool {
 		return !target.Char.IsGrappling()
 
 	case "kick":
-		return char.Aggro != nil
+		if char.Aggro == nil {
+			return false
+		}
+		return char.HasBodyPart("legs")
 	}
 
 	return false

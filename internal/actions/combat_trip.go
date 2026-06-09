@@ -83,6 +83,12 @@ func ExecuteTrip(actor Actor) TripResult {
 		return TripResult{NoTarget: true}
 	}
 
+	// Defense-in-depth anatomy gate; unreachable for players, AI/readiness gate upstream.
+	// Placed on the common path before the tailsweep variant split so both forms are gated.
+	if !char.HasBodyPart("legs") {
+		return TripResult{NoTarget: true}
+	}
+
 	// Determine trip variant and associated params.
 	variant := TripStandard
 	damagePercent := float64(cfg.TripDamagePercent)

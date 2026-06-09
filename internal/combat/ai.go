@@ -179,12 +179,20 @@ func CanUseTrip(char *characters.Character) bool {
 	if char.IsGrappling() {
 		return false
 	}
+	// Tripping sweeps the legs — requires legs to do.
+	if !char.HasBodyPart("legs") {
+		return false
+	}
 	return true
 }
 
 func CanUseKick(char *characters.Character) bool {
 	// Must not be on cooldown
 	if _, exists := char.Cooldowns["special-move"]; exists {
+		return false
+	}
+	// Kicking requires legs.
+	if !char.HasBodyPart("legs") {
 		return false
 	}
 	return true

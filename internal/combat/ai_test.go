@@ -128,6 +128,13 @@ func TestCanUseBash(t *testing.T) {
 // ─── CanUseTrip ─────────────────────────────────────────────────────────────
 
 func TestCanUseTrip(t *testing.T) {
+	// Seed species 0 (characters.New()) with legs so the anatomy gate does not
+	// block the "can trip" cases.
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		0: {SpeciesId: 0, Name: "human", BodyParts: []string{"legs"}},
+	})
+	defer cleanup()
+
 	tests := []struct {
 		name     string
 		pos position.State
@@ -155,6 +162,13 @@ func TestCanUseTrip(t *testing.T) {
 // ─── CanUseKick ─────────────────────────────────────────────────────────────
 
 func TestCanUseKick(t *testing.T) {
+	// Seed species 0 (characters.New()) with legs so the anatomy gate does not
+	// block the "can kick" cases.
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		0: {SpeciesId: 0, Name: "human", BodyParts: []string{"legs"}},
+	})
+	defer cleanup()
+
 	t.Run("no cooldown", func(t *testing.T) {
 		c := characters.New()
 		assert.True(t, CanUseKick(c))
@@ -494,6 +508,30 @@ func TestCanUseBash_ShieldOrNaturalAndArms(t *testing.T) {
 	}
 	if CanUseBash(shieldedNoArms) {
 		t.Error("shielded non-natural no-arms beast must NOT bash (lacks arms gate)")
+	}
+}
+
+// ─── CanUseTrip / CanUseKick (anatomy gate) ─────────────────────────────────
+
+func TestCanUseTrip_RequiresLegs(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		7301: {SpeciesId: 7301, Name: "wolf", BodyParts: []string{"legs", "mouth"}},
+		7302: {SpeciesId: 7302, Name: "serpent", BodyParts: []string{"mouth"}},
+	})
+	defer cleanup()
+	wolf := &characters.Character{SpeciesId: 7301}
+	serpent := &characters.Character{SpeciesId: 7302}
+	if !CanUseTrip(wolf) {
+		t.Error("legged wolf should trip")
+	}
+	if CanUseTrip(serpent) {
+		t.Error("legless serpent must NOT trip")
+	}
+	if !CanUseKick(wolf) {
+		t.Error("legged wolf should kick")
+	}
+	if CanUseKick(serpent) {
+		t.Error("legless serpent must NOT kick")
 	}
 }
 
