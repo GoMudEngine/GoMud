@@ -2457,8 +2457,11 @@
             gap: 2px;
         }
 
-        .vitals-row.remote {
-            opacity: 0.4;
+        /* De-emphasize a companion's BARS, but keep their NAME readable — opacity
+           on the whole row would also dim the name (and caps it: a child can't
+           exceed the parent's opacity). So dim only the composite bars. */
+        .vitals-row.remote .vitals-composite {
+            opacity: 0.5;
         }
 
         .vitals-name {
@@ -2466,7 +2469,10 @@
             min-width: 70px;
             font-family: monospace;
             font-size: 0.75em;
-            color: #ccc;
+            /* The vitals field background is vellum (light parchment), so names
+               must be DARK ink to read. Companions get a slightly softer brown
+               than self, but both stay high-contrast against the parchment. */
+            color: #4a3a28;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -2475,7 +2481,7 @@
         }
 
         .vitals-name.self {
-            color: #fff;
+            color: #1a1208;
             font-weight: bold;
         }
 

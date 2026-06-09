@@ -646,6 +646,10 @@
   cursor: pointer;
   transition: border-color 0.08s, background 0.08s;
   overflow: hidden;
+  /* Hold natural height — without this, the queue bar + divider steal vertical
+     space and the rows (flex-shrink:1 by default) compress, cramming the row
+     text. Keep rows rigid so the list scrolls (overflow-y:auto) instead. */
+  flex-shrink: 0;
 }
 .auto-row:hover {
   border-color: var(--ink-gold, #c9a86a);
@@ -960,6 +964,7 @@
   border: none;
   border-top: 1px dashed rgba(184, 144, 71, 0.3);
   margin: 3px 2px;
+  flex-shrink: 0;
 }
 
 /* Queue status bar — shown above the trigger list when queue is non-empty */
