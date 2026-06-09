@@ -21,6 +21,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -648,10 +649,17 @@ func TestActCommandBestOf_SkipsNotReadyFiresReady(t *testing.T) {
 }
 
 func TestActCommandBestOf_SkipsUnavailableCommands(t *testing.T) {
+	// kick requires the actor to have legs (Phase-2 anatomy gate); the default
+	// test mob has SpeciesId 0, so seed it a humanoid body so kick can be ready.
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		0: {SpeciesId: 0, Name: "test", BodyParts: []string{"arms", "hands", "legs"}},
+	})
+	defer cleanup()
+
 	mob := newTestMob(t)
 	// bash requires a shield, which the mob doesn't have
 	// trip requires standing target, which isn't set up
-	// kick just needs aggro, which we set up
+	// kick just needs aggro + legs, which we set up
 	mob.Character.Cooldowns = characters.Cooldowns{}
 	mob.Character.SetAggro(0, 0, characters.DefaultAttack)
 
