@@ -3,7 +3,6 @@ package hooks
 import (
 	"fmt"
 
-	"github.com/GoMudEngine/GoMud/internal/casing"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -98,9 +97,9 @@ func PackFlee(e events.Event) events.ListenerReturn {
 	}
 
 	if fleeCount > 0 {
-		speciesName := casing.Title(deadSpec.Character.Species())
+		speciesName := deadSpec.Character.Species()
 		if speciesName == "" {
-			speciesName = "Creatures"
+			speciesName = "creatures"
 		}
 		sendVisualRoomText(room, messaging.CategoryMobEmote,
 			fmt.Sprintf(`<ansi fg="yellow">Sensing the death of their packmate, the remaining %s scatter!</ansi>`, speciesName),
