@@ -616,6 +616,32 @@ func TestBeastIdentityPredicates(t *testing.T) {
 	}
 }
 
+// ─── CanUseRake ─────────────────────────────────────────────────────────────
+
+func TestCanUseRake_ClawedTrueOthersFalse(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		9001: {SpeciesId: 9001, Name: "feline", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Claws},
+		9002: {SpeciesId: 9002, Name: "wolf", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Bite},
+		9003: {SpeciesId: 9003, Name: "human", BodyParts: []string{"arms", "hands", "legs", "mouth"}},
+	})
+	defer cleanup()
+
+	feline := &characters.Character{SpeciesId: 9001, Cooldowns: characters.Cooldowns{}}
+	wolf := &characters.Character{SpeciesId: 9002, Cooldowns: characters.Cooldowns{}}
+	human := &characters.Character{SpeciesId: 9003, Cooldowns: characters.Cooldowns{}}
+
+	assert.True(t, CanUseRake(feline), "clawed feline should be able to rake")
+	assert.False(t, CanUseRake(wolf), "fanged wolf (not clawed) should not rake")
+	assert.False(t, CanUseRake(human), "no-natural-attack human should not rake")
+
+	// Cooldown gate.
+	felineOnCD := &characters.Character{
+		SpeciesId: 9001,
+		Cooldowns: characters.Cooldowns{"special-move": 3},
+	}
+	assert.False(t, CanUseRake(felineOnCD), "clawed feline on cooldown should not rake")
+}
+
 // ─── CanUseGrapple (anatomy gate) ───────────────────────────────────────────
 
 func TestCanUseGrapple_RequiresArms(t *testing.T) {

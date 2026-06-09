@@ -94,6 +94,10 @@ func ChooseSpecialMove(mob *mobs.Mob, target *characters.Character) string {
 		moveScores["hamstring"] = ScoreHamstring(mob, target)
 	}
 
+	if CanUseRake(&mob.Character) {
+		moveScores["rake"] = ScoreRake(mob, target)
+	}
+
 	// No viable moves
 	if len(moveScores) == 0 {
 		return ""
@@ -386,6 +390,29 @@ func ScoreHamstring(mob *mobs.Mob, target *characters.Character) int {
 	// Bonus when the target is healthy and mobile — hamstring to slow them.
 	targetHealthPercent := float64(target.Health) * 100.0 / float64(target.HealthMax.Value)
 	if targetHealthPercent > 50 {
+		score += 15
+	}
+
+	if score < 0 {
+		score = 0
+	}
+	return score
+}
+
+// CanUseRake reports whether the actor can rake a target. Rake is a clawed
+// beast move — a raking slash that opens bleeding wounds — so it requires a
+// clawed natural attack.
+func CanUseRake(char *characters.Character) bool {
+	if _, exists := char.Cooldowns["special-move"]; exists {
+		return false
+	}
+	return speciesIsClawed(char)
+}
+
+func ScoreRake(mob *mobs.Mob, target *characters.Character) int {
+	score := 45
+
+	if mob.Character.GetSkillLevel(skills.UnarmedCombat) > 40 {
 		score += 15
 	}
 

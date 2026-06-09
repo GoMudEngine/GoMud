@@ -94,6 +94,9 @@ func CommandIsReady(actor Actor, cmd string) bool {
 			return false
 		}
 		return char.HasBodyPart("legs")
+
+	case "rake":
+		return char.Aggro != nil
 	}
 
 	return false
