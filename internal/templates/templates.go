@@ -135,8 +135,18 @@ func getTemplateConfig(userId int) templateConfig {
 	return cfg
 }
 
+// markdownFormatterOnce installs the ANSI-tag markdown formatter exactly once.
+// processMarkdown previously called markdown.SetFormatter on every .md render,
+// mutating the markdown package's global formatter — two concurrent renders
+// raced on that write (CI -race flagged markdown.SetFormatter via
+// processMarkdown when a /shutdown countdown and a /quit goodbye rendered at
+// once). The templates package is the only production consumer of the markdown
+// package and always wants ANSITags, so installing it once is sufficient and
+// removes the racing write entirely.
+var markdownFormatterOnce sync.Once
+
 func processMarkdown(in string) string {
-	markdown.SetFormatter(markdown.ANSITags{})
+	markdownFormatterOnce.Do(func() { markdown.SetFormatter(markdown.ANSITags{}) })
 	p := markdown.NewParser(in)
 	return "\n" + divider + "\n" + p.Parse().String(0) + "\n"
 }
