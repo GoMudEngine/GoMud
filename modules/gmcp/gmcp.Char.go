@@ -547,6 +547,14 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 				continue
 			}
 
+			// Warcry/Rally are surfaced through Char.Conditions (the combat
+			// condition list); their mirror buff is skipped here so the web
+			// client doesn't render the same effect as both an Affect and a
+			// Condition chip.
+			if slices.Contains(buffSpec.Flags, buffs.ConditionMirror) {
+				continue
+			}
+
 			timeLeft, timeMax := -1, -1
 
 			if !buff.PermaBuff {

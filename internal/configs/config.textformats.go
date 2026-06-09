@@ -50,11 +50,9 @@ func (m *TextFormats) Validate() {
 }
 
 func GetTextFormatsConfig() TextFormats {
+	ensureConfigValidated()
+
 	configDataLock.RLock()
 	defer configDataLock.RUnlock()
-
-	if !configData.validated {
-		configData.Validate()
-	}
 	return configData.TextFormats
 }

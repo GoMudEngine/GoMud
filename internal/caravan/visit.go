@@ -67,6 +67,12 @@ func VisitVendorsInRoom(
 		// persist when something actually changed.
 		mutated := false
 
+		// Track whether we touched the wagon's throughput counters. Only the
+		// DELIVER pass updates throughput; a pickup-only stop must NOT call
+		// SaveThroughput, which would log a spurious "no cached entry" error
+		// because nothing seeded the wagon's throughput entry.
+		throughputChanged := false
+
 		// DELIVER pass: wagon → vendor.
 		// Walk wagon items in reverse so RemoveItem is index-safe.
 		if len(deliveryBuckets) > 0 {
@@ -88,8 +94,12 @@ func VisitVendorsInRoom(
 				if spec != nil {
 					if spec.RarityTier > 0 {
 						IncrementDelivery(wagon.Zone, int(wagon.MobId), spec.RarityTier)
+						throughputChanged = true
 					}
 					AddLbsDelivered(wagon.Zone, int(wagon.MobId), uint64(math.Round(spec.Weight)))
+					if spec.Weight > 0 {
+						throughputChanged = true
+					}
 				}
 				delivered = append(delivered, ItemMove{
 					Vendor:   vendor.Character.Name,
@@ -159,8 +169,11 @@ func VisitVendorsInRoom(
 			if err := shops.SaveShop(vendor.Zone, int(vendor.MobId), vendor.HomeRoomId); err != nil {
 				mudlog.Error("caravan.VisitVendorsInRoom", "vendor", vendor.Character.Name, "error", err)
 			}
-			if err := SaveThroughput(wagon.Zone, int(wagon.MobId)); err != nil {
-				mudlog.Error("caravan.SaveThroughput", "wagon", wagon.Character.Name, "error", err)
+			// Only persist throughput if the deliver pass actually updated it.
+			if throughputChanged {
+				if err := SaveThroughput(wagon.Zone, int(wagon.MobId)); err != nil {
+					mudlog.Error("caravan.SaveThroughput", "wagon", wagon.Character.Name, "error", err)
+				}
 			}
 		}
 	}

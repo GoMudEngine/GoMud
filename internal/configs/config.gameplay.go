@@ -120,11 +120,9 @@ func (g *GamePlay) Validate() {
 }
 
 func GetGamePlayConfig() GamePlay {
+	ensureConfigValidated()
+
 	configDataLock.RLock()
 	defer configDataLock.RUnlock()
-
-	if !configData.validated {
-		configData.Validate()
-	}
 	return configData.GamePlay
 }

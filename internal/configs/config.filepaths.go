@@ -26,11 +26,9 @@ func (f *FilePaths) Validate() {
 }
 
 func GetFilePathsConfig() FilePaths {
+	ensureConfigValidated()
+
 	configDataLock.RLock()
 	defer configDataLock.RUnlock()
-
-	if !configData.validated {
-		configData.Validate()
-	}
 	return configData.FilePaths
 }

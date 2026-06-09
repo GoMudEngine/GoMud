@@ -25,11 +25,9 @@ func (t *Translation) Validate() {
 }
 
 func GetTranslationConfig() Translation {
+	ensureConfigValidated()
+
 	configDataLock.RLock()
 	defer configDataLock.RUnlock()
-
-	if !configData.validated {
-		configData.Validate()
-	}
 	return configData.Translation
 }

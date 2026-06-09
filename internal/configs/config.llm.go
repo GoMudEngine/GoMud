@@ -18,11 +18,9 @@ func (l *LLM) Validate() {
 
 // GetLLMConfig returns a thread-safe copy of the LLM config section.
 func GetLLMConfig() LLM {
+	ensureConfigValidated()
+
 	configDataLock.RLock()
 	defer configDataLock.RUnlock()
-
-	if !configData.validated {
-		configData.Validate()
-	}
 	return configData.LLM
 }

@@ -30,11 +30,9 @@ func (l *LootGoblin) Validate() {
 }
 
 func GetLootGoblinConfig() LootGoblin {
+	ensureConfigValidated()
+
 	configDataLock.RLock()
 	defer configDataLock.RUnlock()
-
-	if !configData.validated {
-		configData.Validate()
-	}
 	return configData.LootGoblin
 }

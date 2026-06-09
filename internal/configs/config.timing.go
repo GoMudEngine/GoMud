@@ -81,11 +81,9 @@ func (e Timing) RoundsToSeconds(rounds int) int {
 }
 
 func GetTimingConfig() Timing {
+	ensureConfigValidated()
+
 	configDataLock.RLock()
 	defer configDataLock.RUnlock()
-
-	if !configData.validated {
-		configData.Validate()
-	}
 	return configData.Timing
 }

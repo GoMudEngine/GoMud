@@ -6,12 +6,10 @@ func (m *Roles) Validate() {
 }
 
 func GetRolesConfig() Roles {
+	ensureConfigValidated()
+
 	configDataLock.RLock()
 	defer configDataLock.RUnlock()
-
-	if !configData.validated {
-		configData.Validate()
-	}
 
 	return configData.Roles
 }

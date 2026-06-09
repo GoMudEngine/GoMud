@@ -66,8 +66,12 @@ type Config struct {
 }
 
 func AddOverlayOverrides(dotMap map[string]any) error {
-	configDataLock.RLock()
-	defer configDataLock.RUnlock()
+	// Write lock: this mutates configData (via OverlayOverrides) and the
+	// keyLookups/typeLookups/overrides maps. It previously held only RLock,
+	// racing with concurrent getters/readers. No config getter calls this, so
+	// upgrading to the write lock cannot deadlock.
+	configDataLock.Lock()
+	defer configDataLock.Unlock()
 
 	for k, v := range dotMap {
 
@@ -221,6 +225,31 @@ func (c *Config) Validate() {
 	c.validated = true
 }
 
+// ensureConfigValidated runs configData.Validate() exactly once before the
+// first config read, under the WRITE lock. Validate() mutates configData
+// (clamps fields, computes seedInt, sets validated=true). The getters used to
+// run it while holding only configDataLock.RLock(), so two goroutines hitting
+// any getter concurrently on first use both observed validated==false and both
+// mutated configData — a data race the -race detector flags (and a real
+// startup race, since many goroutines read config before it is validated).
+// Double-checked locking keeps the hot path (already validated) on the cheap
+// read lock. Safe from deadlock: Validate() and the subsection validators only
+// touch their own fields and never call a config getter.
+func ensureConfigValidated() {
+	configDataLock.RLock()
+	done := configData.validated
+	configDataLock.RUnlock()
+	if done {
+		return
+	}
+
+	configDataLock.Lock()
+	defer configDataLock.Unlock()
+	if !configData.validated {
+		configData.Validate()
+	}
+}
+
 func (c *Config) setEnvAssignments(clear bool) {
 
 	// We use reflect.Indirect to handle if cfg is a pointer or not
@@ -335,12 +364,11 @@ func SetVal(propertyPath string, newVal string) error {
 }
 
 func GetConfig() Config {
+	ensureConfigValidated()
+
 	configDataLock.RLock()
 	defer configDataLock.RUnlock()
 
-	if !configData.validated {
-		configData.Validate()
-	}
 	return configData
 }
 

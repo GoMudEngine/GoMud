@@ -38,6 +38,13 @@ func Conditions(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 			continue
 		}
 
+		// Warcry/Rally exist as both a buff (bookkeeping) and a combat
+		// condition (mechanical magnitude). The condition loop below already
+		// surfaces them, so skip the mirror buff to avoid a duplicate entry.
+		if slices.Contains(spec.Flags, buffs.ConditionMirror) {
+			continue
+		}
+
 		roundsLeft, _ := buffs.GetDurations(buff, spec)
 
 		newAffliction := buffInfo{
