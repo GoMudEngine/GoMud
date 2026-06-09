@@ -52,6 +52,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 	speciesCleanup := species.SeedSpeciesForTest(map[int]*species.Species{
 		7300: {SpeciesId: 7300, Name: "legged-test", BodyParts: []string{"legs"}},
 		7304: {SpeciesId: 7304, Name: "clawed-test", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Claws},
+		7305: {SpeciesId: 7305, Name: "fanged-test", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Bite},
 	})
 	defer speciesCleanup()
 
@@ -297,6 +298,43 @@ func TestCommandReadinessDrift(t *testing.T) {
 				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
 			},
 			false, "NotClawed"},
+
+		// ─── maul ─────────────────────────────────────────────────────────────
+		// maul_ready: fanged species + default aggro (user 1, not found) →
+		// CommandIsReady returns true (species gate passes, aggro non-nil).
+		// Execute is skipped for ready cases.
+		{"maul_ready", "maul",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7305 // fanged-test seeded above
+			},
+			true, ""},
+		{"maul_cooldown", "maul",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7305
+				m.Character.Cooldowns = characters.Cooldowns{"special-move": 3}
+			},
+			false, "OnCooldown"},
+		{"maul_no_aggro", "maul",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7305
+				m.Character.EndAggro()
+			},
+			false, "NoTarget"},
+		// maul_notfanged: SpeciesId 0 → nil species → not fanged. Default mob
+		// has aggro to user 1. CommandIsReady returns false. ExecuteMaul burns
+		// the cooldown, resolves the target (user 1 not found → NoTarget first),
+		// but with a registered target mob we can reach the NotFanged gate.
+		// Use a registered mob target so target resolution succeeds and NotFanged fires.
+		{"maul_notfanged", "maul",
+			func(m *mobs.Mob) {
+				// SpeciesId 0 → nil species → not fanged.
+				targetMob := &mobs.Mob{InstanceId: 210}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NotFanged"},
 	}
 
 	for _, tc := range cases {
@@ -416,6 +454,16 @@ func runExecuteAndReadFlag(cmd string, actor Actor, flag string) bool {
 			return r.NoTarget
 		case "NotClawed":
 			return r.NotClawed
+		}
+	case "maul":
+		r := ExecuteMaul(actor)
+		switch flag {
+		case "OnCooldown":
+			return r.OnCooldown
+		case "NoTarget":
+			return r.NoTarget
+		case "NotFanged":
+			return r.NotFanged
 		}
 	}
 	return false

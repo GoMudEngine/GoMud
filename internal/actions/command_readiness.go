@@ -100,6 +100,9 @@ func CommandIsReady(actor Actor, cmd string) bool {
 
 	case "rake":
 		return char.Aggro != nil && combat.SpeciesIsClawed(char)
+
+	case "maul":
+		return char.Aggro != nil && combat.SpeciesIsFanged(char)
 	}
 
 	return false

@@ -98,6 +98,10 @@ func ChooseSpecialMove(mob *mobs.Mob, target *characters.Character) string {
 		moveScores["rake"] = ScoreRake(mob, target)
 	}
 
+	if CanUseMaul(&mob.Character) {
+		moveScores["maul"] = ScoreMaul(mob, target)
+	}
+
 	// No viable moves
 	if len(moveScores) == 0 {
 		return ""
@@ -420,6 +424,35 @@ func ScoreRake(mob *mobs.Mob, target *characters.Character) int {
 
 	if mob.Character.GetSkillLevel(skills.UnarmedCombat) > 40 {
 		score += 15
+	}
+
+	if score < 0 {
+		score = 0
+	}
+	return score
+}
+
+// CanUseMaul reports whether the actor can maul a target. Maul is a fanged
+// beast move — a savage tearing flurry that deals heavy damage and opens deep
+// bleeding wounds — so it requires a fanged natural attack.
+func CanUseMaul(char *characters.Character) bool {
+	if _, exists := char.Cooldowns["special-move"]; exists {
+		return false
+	}
+	return SpeciesIsFanged(char)
+}
+
+func ScoreMaul(mob *mobs.Mob, target *characters.Character) int {
+	score := 55 // Higher base than rake — maul is the heavier move
+
+	if mob.Character.GetSkillLevel(skills.UnarmedCombat) > 40 {
+		score += 15
+	}
+
+	// Finisher bonus: target is below 50% health — savage the weakened prey.
+	targetHealthPercent := float64(target.Health) * 100.0 / float64(target.HealthMax.Value)
+	if targetHealthPercent < 50 {
+		score += 10
 	}
 
 	if score < 0 {

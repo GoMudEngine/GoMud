@@ -69,6 +69,7 @@ var (
 		"portal":         {Portal, false},
 		"plant":          {Plant, false},
 		"put":            {Put, false},
+		"maul":           {Maul, false},
 		"rake":           {Rake, false},
 		"rally":          {Rally, false},
 		"remove":         {Remove, false},
