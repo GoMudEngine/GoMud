@@ -185,6 +185,27 @@ func (s *Species) Save() error {
 	return nil
 }
 
+// validNaturalAttacks is the set of subtypes a species may declare for its
+// basic unarmed attacks. Each must have a loaded combat-message file of the
+// same name in _datafiles/world/dogmud/combat-messages/.
+var validNaturalAttacks = map[items.ItemSubType]struct{}{
+	items.Bite:  {},
+	items.Claws: {},
+	items.Slam:  {},
+	items.Gore:  {},
+	items.Sting: {},
+}
+
+func validateNaturalAttack(s *Species) error {
+	if s.NaturalAttack == "" || s.NaturalAttack == items.Unarmed {
+		return nil
+	}
+	if _, ok := validNaturalAttacks[s.NaturalAttack]; !ok {
+		return fmt.Errorf("species %d (%s): unknown natural_attack %q", s.SpeciesId, s.Name, s.NaturalAttack)
+	}
+	return nil
+}
+
 // file self loads due to init()
 func LoadDataFiles() {
 
@@ -197,6 +218,12 @@ func LoadDataFiles() {
 	}
 
 	allSpecies = tmpSpecies
+
+	for _, s := range allSpecies {
+		if err := validateNaturalAttack(s); err != nil {
+			panic(err)
+		}
+	}
 
 	mudlog.Info("species.LoadDataFiles()", "loadedCount", len(allSpecies), "Time Taken", time.Since(start))
 

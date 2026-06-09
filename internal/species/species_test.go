@@ -79,6 +79,21 @@ func TestSpecies_NaturalAttackUnmarshal(t *testing.T) {
 	}
 }
 
+func TestValidateNaturalAttack(t *testing.T) {
+	// Known subtype with a message file: OK.
+	if err := validateNaturalAttack(&Species{SpeciesId: 1, Name: "ok", NaturalAttack: items.Bite}); err != nil {
+		t.Errorf("expected nil for known subtype, got %v", err)
+	}
+	// Empty: OK (humanoid default).
+	if err := validateNaturalAttack(&Species{SpeciesId: 2, Name: "empty"}); err != nil {
+		t.Errorf("expected nil for empty, got %v", err)
+	}
+	// Unknown subtype: error.
+	if err := validateNaturalAttack(&Species{SpeciesId: 3, Name: "bad", NaturalAttack: items.ItemSubType("notarealsubtype")}); err == nil {
+		t.Error("expected error for unknown subtype")
+	}
+}
+
 func TestIsCanonicalBodyPart(t *testing.T) {
 	valid := []string{"arms", "hands", "legs", "eyes", "mouth", "skin", "tail"}
 	for _, v := range valid {
