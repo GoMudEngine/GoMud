@@ -30,6 +30,11 @@ type RakeResult struct {
 	// NoTarget is true when there is no aggro target or the target is gone.
 	NoTarget bool
 
+	// NotClawed is true when the actor's species lacks a clawed natural attack.
+	// Reachable via a direct player command or a btree/combatcommands dispatch
+	// to a non-clawed mob. Unreachable via the AI path (CanUseRake gates it).
+	NotClawed bool
+
 	// BleedDmg is the per-tick bleed damage applied on a hit
 	// (Strength/12, min 2).
 	BleedDmg int
@@ -66,6 +71,13 @@ func ExecuteRake(actor Actor) RakeResult {
 	target := ResolveAggroTarget(char.Aggro)
 	if !target.Found {
 		return RakeResult{NoTarget: true}
+	}
+
+	// Anatomy/identity gate (defense-in-depth): only clawed creatures rake.
+	// Unreachable via the AI path (CanUseRake gates it) but reachable via a
+	// direct player command or a btree/combatcommands dispatch to a non-clawed mob.
+	if !combat.SpeciesIsClawed(char) {
+		return RakeResult{NotClawed: true}
 	}
 
 	// Execute the skill move (reuse trip's config for damage percent, no

@@ -22,7 +22,11 @@ func Rake(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	res := actions.ExecuteRake(&actions.MobActor{Mob: mob, Room: room})
 
-	// Any early-exit condition: silently return.
+	// Anatomy/identity refusal: silently swallow so the btree can fall through.
+	if res.NotClawed {
+		return true, nil
+	}
+	// Any other early-exit condition (OnCooldown, NoTarget): silently return.
 	if !res.Executed {
 		return true, nil
 	}

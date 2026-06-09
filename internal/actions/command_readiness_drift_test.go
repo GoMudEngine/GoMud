@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/state"
@@ -47,8 +48,10 @@ func TestCommandReadinessDrift(t *testing.T) {
 	// Seed a legged species for the trip_ready / kick_ready "happy path" rows.
 	// SpeciesId 0 is intentionally left unseeded so the no_legs rows below can
 	// rely on the nil-species → no-legs behavior.
+	// SpeciesId 7304 is a clawed species for the rake_ready / rake_notclawed rows.
 	speciesCleanup := species.SeedSpeciesForTest(map[int]*species.Species{
 		7300: {SpeciesId: 7300, Name: "legged-test", BodyParts: []string{"legs"}},
+		7304: {SpeciesId: 7304, Name: "clawed-test", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Claws},
 	})
 	defer speciesCleanup()
 
@@ -257,6 +260,43 @@ func TestCommandReadinessDrift(t *testing.T) {
 				// SpeciesId stays 0 (nil species, no legs). Default aggro to user 1.
 			},
 			false, "NoTarget"},
+
+		// ─── rake ─────────────────────────────────────────────────
+		// rake_ready: clawed species + default aggro (user 1, not found) →
+		// CommandIsReady returns true (species gate passes, aggro non-nil).
+		// Execute is skipped for ready cases.
+		{"rake_ready", "rake",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7304 // clawed-test seeded above
+			},
+			true, ""},
+		{"rake_cooldown", "rake",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7304
+				m.Character.Cooldowns = characters.Cooldowns{"special-move": 3}
+			},
+			false, "OnCooldown"},
+		{"rake_no_aggro", "rake",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7304
+				m.Character.EndAggro()
+			},
+			false, "NoTarget"},
+		// rake_notclawed: SpeciesId 0 → nil species → not clawed. Default mob
+		// has aggro to user 1. CommandIsReady returns false. ExecuteRake burns
+		// the cooldown, resolves the target (user 1 not found → NoTarget first),
+		// but with a registered target mob we can reach the NotClawed gate.
+		// Use a registered mob target so target resolution succeeds and NotClawed fires.
+		{"rake_notclawed", "rake",
+			func(m *mobs.Mob) {
+				// SpeciesId 0 → nil species → not clawed.
+				targetMob := &mobs.Mob{InstanceId: 209}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NotClawed"},
 	}
 
 	for _, tc := range cases {
@@ -366,6 +406,16 @@ func runExecuteAndReadFlag(cmd string, actor Actor, flag string) bool {
 			return r.OnCooldown
 		case "NoTarget":
 			return r.NoTarget
+		}
+	case "rake":
+		r := ExecuteRake(actor)
+		switch flag {
+		case "OnCooldown":
+			return r.OnCooldown
+		case "NoTarget":
+			return r.NoTarget
+		case "NotClawed":
+			return r.NotClawed
 		}
 	}
 	return false

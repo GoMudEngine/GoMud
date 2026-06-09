@@ -1,6 +1,9 @@
 package actions
 
-import "github.com/GoMudEngine/GoMud/internal/species"
+import (
+	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/species"
+)
 
 // CommandIsReady returns true iff the named mob command would actually
 // execute its effect right now. Mirrors the early-return gates in each
@@ -96,7 +99,7 @@ func CommandIsReady(actor Actor, cmd string) bool {
 		return char.HasBodyPart("legs")
 
 	case "rake":
-		return char.Aggro != nil
+		return char.Aggro != nil && combat.SpeciesIsClawed(char)
 	}
 
 	return false

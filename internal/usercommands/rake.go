@@ -59,6 +59,10 @@ func Rake(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	// Delegate core resolution to the shared action.
 	res := actions.ExecuteRake(&actions.UserActor{User: user, Room: room})
 
+	if res.NotClawed {
+		user.SendText(messaging.CategorySystem, "You have no claws to rake with.")
+		return true, nil
+	}
 	if res.OnCooldown {
 		user.SendText(messaging.CategorySystem, "You need a moment to recover before attempting another special move.")
 		return true, nil

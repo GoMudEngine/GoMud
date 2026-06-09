@@ -160,19 +160,25 @@ func GetAIProfile(profileName string, customPreferences map[string]int) map[stri
 }
 
 // --- Beast-identity predicates (single source of truth for beast-move gating) ---
+// Exported so the actions package can use them for defense-in-depth gates at
+// the action-entry and CommandIsReady sync points without duplicating logic.
 
-func speciesNaturalAttack(char *characters.Character) items.ItemSubType {
+func SpeciesNaturalAttack(char *characters.Character) items.ItemSubType {
 	if sp := species.GetSpecies(char.SpeciesId); sp != nil {
 		return sp.NaturalAttack
 	}
 	return ""
 }
-func speciesIsFanged(char *characters.Character) bool { return speciesNaturalAttack(char) == items.Bite }
-func speciesIsClawed(char *characters.Character) bool {
-	return speciesNaturalAttack(char) == items.Claws
+func SpeciesIsFanged(char *characters.Character) bool {
+	return SpeciesNaturalAttack(char) == items.Bite
 }
-func speciesIsHorned(char *characters.Character) bool { return speciesNaturalAttack(char) == items.Gore }
-func speciesHasLifeDrain(char *characters.Character) bool {
+func SpeciesIsClawed(char *characters.Character) bool {
+	return SpeciesNaturalAttack(char) == items.Claws
+}
+func SpeciesIsHorned(char *characters.Character) bool {
+	return SpeciesNaturalAttack(char) == items.Gore
+}
+func SpeciesHasLifeDrain(char *characters.Character) bool {
 	sp := species.GetSpecies(char.SpeciesId)
 	return sp != nil && sp.LifeDrain
 }
@@ -406,7 +412,7 @@ func CanUseRake(char *characters.Character) bool {
 	if _, exists := char.Cooldowns["special-move"]; exists {
 		return false
 	}
-	return speciesIsClawed(char)
+	return SpeciesIsClawed(char)
 }
 
 func ScoreRake(mob *mobs.Mob, target *characters.Character) int {

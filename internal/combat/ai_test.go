@@ -602,16 +602,16 @@ func TestBeastIdentityPredicates(t *testing.T) {
 	feline := &characters.Character{SpeciesId: 8002}
 	boar := &characters.Character{SpeciesId: 8003}
 	vamp := &characters.Character{SpeciesId: 8004}
-	if !speciesIsFanged(wolf) || speciesIsFanged(feline) {
+	if !SpeciesIsFanged(wolf) || SpeciesIsFanged(feline) {
 		t.Error("fanged predicate wrong")
 	}
-	if !speciesIsClawed(feline) || speciesIsClawed(wolf) {
+	if !SpeciesIsClawed(feline) || SpeciesIsClawed(wolf) {
 		t.Error("clawed predicate wrong")
 	}
-	if !speciesIsHorned(boar) || speciesIsHorned(wolf) {
+	if !SpeciesIsHorned(boar) || SpeciesIsHorned(wolf) {
 		t.Error("horned predicate wrong")
 	}
-	if !speciesHasLifeDrain(vamp) || speciesHasLifeDrain(wolf) {
+	if !SpeciesHasLifeDrain(vamp) || SpeciesHasLifeDrain(wolf) {
 		t.Error("lifedrain predicate wrong")
 	}
 }
