@@ -43,8 +43,10 @@ are gated away from beasts.
    - **Beast special moves** are gated on the species' **`natural_attack`
      identity** (not raw `mouth`/`legs`, since humans have those too and must
      not bite/maul): fanged→bite/maul, clawed→rake, horned→gore.
-4. **Expansion depth:** wake the dormant beast moves (bite, hamstring) AND add
-   new beast specials — **pounce, maul, rake, gore**.
+4. **Expansion depth:** wake the dormant `hamstring` move; **retire the `bite`
+   special** (biting is now the Layer-1 basic attack for fanged creatures); and
+   add new beast specials — **`throttle`** (the fanged finisher: clamp the
+   throat / cut off airflow), **pounce, maul, rake, gore**.
 
 ## Architecture — two independent layers
 
@@ -83,17 +85,26 @@ identity (a species is "fanged" if `natural_attack==bite`, "clawed" if
 
 | Move | Status | Mechanic (follow existing ExecuteSkillMove patterns) | Gate | Message |
 |------|--------|------------------------------------------------------|------|---------|
-| `bite` | wake (exists) | heavy strike ~60% + partial life-drain | fanged (`natural_attack==bite`) | `bite.yaml` |
+| `throttle` | NEW (replaces bite special) | throat clamp / cut off airflow: a held, escalating choke — drains the victim's stamina and blocks shouting & spellcasting (no airflow); damage/effect ramps each round until the victim escapes. The beast analog of the humanoid chokeout/submit; best set up by a knockdown (`pounce`). | fanged (`natural_attack==bite`) | new `throttle.yaml` |
 | `hamstring` | wake (exists) | ~25% + bleed; slows | fanged or clawed, + `legs` | bleed/`claws` |
 | `pounce` | NEW | leap opener: knockdown + bonus dmg; only from non-grappled, opening rounds | quadruped predator: `legs` + (`natural_attack` in {bite,claws}) | new `pounce.yaml` |
 | `maul` | NEW | savage flurry: high dmg + bleed | fanged (`natural_attack==bite`) | new `maul.yaml` |
 | `rake` | NEW | claw rake: dmg + bleed | clawed (`natural_attack==claws`) | reuse `claws.yaml` or new `rake.yaml` |
 | `gore` | NEW | charge strike: dmg + knockback | horned (`natural_attack==gore`), add `horns` body part to horned species | `gore.yaml` (exists) |
 
+**Bite special retired.** Because fanged creatures now bite as their *basic*
+attack (Layer 1), a "bite harder" special is redundant. Retire the existing
+`bite` special move — `internal/actions/combat_bite.go`, its command
+registration, and its tests — and replace it with `throttle` (above). Biting is
+the basic attack; `throttle` is the distinct fanged finisher.
+
 New moves follow the established `actions.ExecuteSkillMove` / tailsweep-variant
 pattern (Execute* in `internal/actions/`, `CanUse*`+`Score*` in `combat/ai.go`,
 optional mobcommand wrapper). Use multipliers, no flat values; no raw numbers in
-player text; route damage through the unified pipeline (per CLAUDE.md).
+player text; route damage through the unified pipeline (per CLAUDE.md). The
+`throttle` hold/escalation can follow the grapple/submit control precedent for
+the "held until escape" mechanic, but gated on `natural_attack` (fanged), not on
+the arms-based grapple system.
 
 **2c. AI selection.** A mob's effective special set = (moves its profile
 weights) ∩ (moves its anatomy/`natural_attack` permits). Add beast moves to the
@@ -129,13 +140,14 @@ so no humanoid ever bites/mauls and no beast ever grapples.
   mob override wins over species.
 - Gating: canine (no arms) → `CanUseGrapple/Bash` false; `CanUseBite` true;
   human → grapple true, bite false; horned → gore true; ooze (`[]`) → only basic.
-- New moves: each Execute* applies its effect (knockdown/bleed/etc.) and is
-  AI-selectable for a permitted species; message renders the right file.
+- New moves: each Execute* applies its effect (knockdown/bleed/airflow-choke/
+  etc.) and is AI-selectable for a permitted species; message renders the right
+  file. `throttle` holds + escalates and blocks shout/cast until escape.
 - AI: a beast mob selects only permitted beast moves; a humanoid only humanoid
-  moves.
+  moves; no humanoid bites/throttles, no beast grapples.
 - Smoke: a wolf's basic attacks read as bites/claws (not punches), it
-  pounces/bites/hamstrings and never grapples; a bear mauls; a humanoid still
-  grapples/bashes; targeting unaffected.
+  pounces/throttles/hamstrings and never grapples; a bear mauls; a humanoid
+  still grapples/bashes; targeting unaffected.
 
 ## Rollout order (for the plan)
 
@@ -143,8 +155,9 @@ so no humanoid ever bites/mauls and no beast ever grapples.
    + tests. (Ship-able alone: fixes "wolves punch".)
 2. Layer 2a: anatomy gating of human technique moves + tests. (Fixes "wolves
    grapple".)
-3. Layer 2b: wake bite/hamstring into AI; then add pounce, maul, rake, gore
-   (one move per increment: Execute + CanUse/Score + message file + tests).
+3. Layer 2b: wake `hamstring` into AI and retire the `bite` special; then add
+   `throttle`, pounce, maul, rake, gore (one move per increment: Execute +
+   CanUse/Score + message file + tests).
 4. AI profiles + beast-profile assignment to mobs.
 5. Validation + full smoke + push per SOP.
 
