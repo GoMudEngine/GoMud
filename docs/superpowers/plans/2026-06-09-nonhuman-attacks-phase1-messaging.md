@@ -284,19 +284,58 @@ git commit -m "content(species): tag non-human species with natural_attack subty
 
 ---
 
-## Task 5: Verification + smoke
+## Task 5: Update context.md docs
+
+**Files:**
+- Modify: `internal/species/context.md`, `internal/combat/context.md`, `internal/items/context.md`
+
+- [ ] **Step 1: Document the natural-attack field + wiring**
+
+Update each touched package's `context.md` (established DOGMud norm) to reflect this change — short, factual additions:
+- `internal/species/context.md`: add the `NaturalAttack` field to the documented `Species` shape — the unarmed basic-attack message subtype (empty = humanoid/generic), one of `bite`/`claws`/`slam`/`gore`/`sting`, validated at load.
+- `internal/combat/context.md`: note that `buildWeaponSetup` resolves the unarmed (no-weapon) attack subtype from the attacker's species `NaturalAttack` (falling back to `Unarmed`→generic); an equipped weapon's subtype still overrides.
+- `internal/items/context.md`: note that the `bite`/`claws`/`slam`/`gore`/`sting` `ItemSubType`s are now used by mob natural attacks (not only hypothetical weapons), so their combat-message files are live for basic attacks.
+
+Match each file's existing tone/section structure; don't restructure.
+
+- [ ] **Step 2: Verify build (docs only, no code)**
+
+Run: `go build ./...`
+Expected: clean (docs changes don't affect build; this just confirms nothing else drifted).
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add internal/species/context.md internal/combat/context.md internal/items/context.md
+git commit -m "docs(context): natural-attack subtype field + buildWeaponSetup wiring"
+```
+(End with the Co-Authored-By line.)
+
+---
+
+## Task 6: Verification + smoke
 
 - [ ] **Step 1: Full build + targeted tests**
 
 Run: `go build ./... && go test ./internal/species/ ./internal/combat/ ./internal/items/`
 Expected: all green.
 
-- [ ] **Step 2: In-game smoke**
+- [ ] **Step 2: Confirm reused message files are complete (crit/fumble + skill tiers)**
 
-Boot (`go run .`), connect, and fight a non-human mob (e.g. a wolf). Confirm its BASIC attacks now read as bite/claws verbiage (from `bite.yaml`/`claws.yaml`), NOT "punch"/"fist". Confirm a humanoid NPC still reads as generic/fists. Kill the server + clear ports afterward.
-(Message coverage is guaranteed by Task 3's validator restricting to subtypes whose files exist.)
+The combat-message loader validates that every message file defines all 8
+intensities (`prepare, wait, miss, weak, normal, heavy, critical, fumble`) ×
+`beginner`/`expert`/`master`. The five reused subtypes (`bite`/`claws`/`slam`/
+`gore`/`sting`) are already complete, so a clean boot (no `missing option[...]`
+panic from `items/attack_messages.go`) is the proof — no new message authoring in
+Phase 1. (New message files are a Phase-3 concern; see the spec's cross-cutting
+section A.) Confirm the boot log shows the combat-messages loaded with no
+validation error.
 
-- [ ] **Step 3: (No push — local only)**
+- [ ] **Step 3: In-game smoke**
+
+Boot (`go run .`), connect, and fight a non-human mob (e.g. a wolf). Confirm its BASIC attacks now read as bite/claws verbiage (from `bite.yaml`/`claws.yaml`), NOT "punch"/"fist", across hit intensities including a crit/fumble if observed. Confirm a humanoid NPC still reads as generic/fists. Kill the server + clear ports afterward.
+
+- [ ] **Step 4: (No push — local only)**
 
 This phase merges into the running local feature work for a later bundle push. Stop here; Phase 2 is a separate plan.
 
@@ -304,7 +343,8 @@ This phase merges into the running local feature work for a later bundle push. S
 
 ## Self-review notes (controller)
 
-- **Spec coverage (Layer 1 only):** species `natural_attack` field (T1), `buildWeaponSetup` wiring (T2), validation (T3), species tagging + message-file coverage via the validator's allowed set (T4), smoke (T5). Per-mob override and message-file authoring are explicitly deferred (no new files needed — all five subtypes already have files).
-- **No new message files** needed in Phase 1 (bite/claws/slam/gore/sting all exist and are loaded).
+- **Spec coverage (Layer 1 only):** species `natural_attack` field (T1), `buildWeaponSetup` wiring (T2), validation (T3), species tagging (T4), context.md docs (T5), verification + message-completeness + smoke (T6). Per-mob override is deferred to Phase 4.
+- **Cross-cutting requirements that apply to Phase 1:** message-file completeness (covered — reused files are loader-validated complete; T6 Step 2) and context.md updates (T5). Parity-registry wiring and helpfiles do NOT apply — Phase 1 adds no command (it's basic-attack messaging via a species data field); those are enumerated in the spec for Phases 2–3.
+- **No new message files** needed in Phase 1 (bite/claws/slam/gore/sting all exist, loaded, and validated-complete).
 - **Boundary:** this phase does not touch move selection/gating (Phase 2) or add moves (Phase 3).
 - **Discovery steps** (T2 species seeder, T4 roster mapping) are verify-then-act, not placeholders.

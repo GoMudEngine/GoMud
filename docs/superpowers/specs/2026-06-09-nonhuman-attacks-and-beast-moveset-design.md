@@ -134,6 +134,51 @@ so no humanoid ever bites/mauls and no beast ever grapples.
   `combat.canUseBeastMove(char, move)`) so the anatomy/natural-attack rules are
   the single source of truth, mirrored by tests.
 
+## Cross-cutting wiring requirements (enumerated per phase)
+
+These DOGMud conventions are MANDATORY and each phase's plan must enumerate them
+explicitly (verified against the codebase 2026-06-09):
+
+**A. Combat-message files are validated-complete — Phases 1 & 3.**
+`internal/items/attack_messages.go` validation PANICS at load unless every
+message file defines all 8 intensities — `prepare, wait, miss, weak, normal,
+heavy, critical, fumble` — each with `beginner`/`expert`/`master` skill tiers
+under `toattacker`/`todefender`/`toroom` (and `separate` for ranged).
+- Phase 1 reuses `bite`/`claws`/`slam`/`gore`/`sting`, already complete
+  (verified) — the boot/load is the guard, no authoring.
+- Phase 3's NEW files (`throttle`, `pounce`, `maul`; `rake` if not reusing
+  `claws`; `gore` exists) MUST author the full matrix — **critical + fumble +
+  skill-segmented messaging are required, not optional** — or the server won't
+  boot.
+
+**B. New/removed combat commands — full player↔mob parity wiring — Phases 2 & 3.**
+Parity is enforced by `internal/mobcommands/command_parity_test.go` (its
+`supported` slice) against `actions.CommandIsReady`. To ADD a both-usable move
+command (`throttle`/`pounce`/`maul`/`rake`/`gore`), touch ALL of:
+ 1. player handler `internal/usercommands/<cmd>.go` + register in
+    `usercommands.go` `userCommands` map;
+ 2. mob handler `internal/mobcommands/<cmd>.go` + register in `mobcommands.go`
+    `mobCommands` map;
+ 3. `actions.CommandIsReady` case in `internal/actions/command_readiness.go`
+    (readiness gating used by the btree `command_best_of`);
+ 4. add the name to the `supported` slice in `command_parity_test.go`;
+ 5. helpfile `_datafiles/world/dogmud/templates/help/<cmd>.template`;
+ 6. register the topic under `_datafiles/world/dogmud/keywords.yaml`.
+To RETIRE `bite` (Phase 2): remove it from BOTH command maps + both handler
+files + any `command_readiness` case; confirm it's absent from the parity
+`supported` list (it currently is). (Note: plain `bite` has no helpfile/keywords
+entry today, so none to remove.)
+
+**C. context.md — every phase.** Update the touched packages' `context.md`:
+Phase 1 → `internal/species`, `internal/combat`, `internal/items`; Phase 2 →
+`internal/combat`, `internal/actions`, `internal/mobcommands` + `usercommands`;
+Phase 3 → those + per-move notes.
+
+**D. Helpfiles — Phase 3 (and any Phase-2 retired command that had one; `bite`
+does not).** Each new player command gets a `templates/help/<cmd>.template`
+(follow `bash.template`/`trip.template`) + a `keywords.yaml` entry under
+`help.command.combat`.
+
 ## Testing
 
 - `buildWeaponSetup`: unarmed canine → `bite` subtype; unarmed human → generic;
