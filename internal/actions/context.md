@@ -55,6 +55,24 @@ type Actor interface {
 Handled by the combat system (`internal/combat/`), not the actions package.
 See `internal/combat/context.md` for full details.
 
+### Special-Move Actions & Anatomy Gating (Phase 2)
+
+The shared special-move actions (`ExecuteGrapple`, `ExecuteBash`,
+`ExecuteTrip`, `ExecuteKick`, `ExecuteHamstring`) each carry a
+defense-in-depth anatomy guard mirroring the AI `CanUse*` gate in
+`internal/combat/ai.go` and the parity check in `command_readiness.go`:
+grapple/submit need `arms`, trip/kick need `legs`, bash needs
+`(shield|NaturalBash) AND (arms|NaturalBash)`. These three sites form a
+`// SYNC POINT` triad — change one, change all; `command_readiness_drift_test.go`
+asserts the gate and `CommandIsReady` stay in agreement (the `*_no_arms`
+/`*_no_legs` rows). The action-entry guard is unreachable for players
+(always humanoid) and reuses the nearest existing failure flag
+(`GrappleImmune`, `NoShield`, `NoTarget`) rather than minting a new one.
+
+**Retired:** `ExecuteBite`/`BiteResult` were removed — biting is now the
+Phase-1 basic attack for fanged species (species `NaturalAttack`).
+`mobOnlyCommands` no longer lists `bite`. `toxic-bite` (mutation) stays.
+
 ---
 
 ## Skill Actions

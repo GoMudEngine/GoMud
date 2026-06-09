@@ -19,6 +19,14 @@ The `internal/mobcommands` package implements the AI command system for non-play
 #### **Combat Intelligence**
 - **Threat assessment**: `lookfortrouble` - Advanced hostility detection and target selection
 - **Combat actions**: `attack`, `backstab`, `shoot`, `throw` - Offensive capabilities
+- **Special moves**: `bash`, `trip`, `kick`, `grapple`, `hamstring` - selected
+  by `combat.ChooseSpecialMove` and dispatched here via `mob.Command(name)`.
+  Each is anatomy-gated by the actor's species `body_parts` (grapple needs
+  `arms`, trip/kick need `legs`, hamstring needs `legs` + a `Bite`/`Claws`
+  natural attack; bash needs a shield-or-`NaturalBash` plus arms-or-`NaturalBash`).
+  The dedicated `bite` command was **retired** — biting is now the basic
+  attack for fanged species (see `internal/combat` Natural-Attack Subtype
+  Resolution). `toxic-bite` (mutation) is unaffected.
 - **Tactical support**: `callforhelp` - Coordinated group combat behaviors
 - **Self-preservation**: Retreat and defensive behaviors
 
