@@ -114,6 +114,25 @@ func resolveMerchant(room *rooms.Room, probe items.Item) (*mobs.Mob, *shops.Shop
 	return nil, nil
 }
 
+// firstMerchantInRoom returns the first merchant present in the room and its
+// ShopInventory (nil for legacy-shop merchants), regardless of whether it will
+// buy any particular item. Returns (nil, nil) only when no merchant is present
+// at all. Used by the named-sell path to distinguish "no merchant here" from
+// "a merchant is here but won't buy this", so the latter routes through
+// sellOneToMerchant for the proper spoken refusal instead of the misleading
+// "There's no merchant here." message.
+func firstMerchantInRoom(room *rooms.Room) (*mobs.Mob, *shops.ShopInventory) {
+	for _, mobId := range room.GetMobs(rooms.FindMerchant) {
+		mob := mobs.GetInstance(mobId)
+		if mob == nil {
+			continue
+		}
+		shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId)
+		return mob, shopInv
+	}
+	return nil, nil
+}
+
 func sellNamed(seller Actor, room *rooms.Room, itemName string, quantity int) SellResult {
 	char := seller.GetCharacter()
 	probe, found := sellFindItemInChar(char, itemName)
@@ -131,7 +150,17 @@ func sellNamed(seller Actor, room *rooms.Room, itemName string, quantity int) Se
 	}
 	mob, shopInv := resolveMerchant(room, probe)
 	if mob == nil {
-		return SellResult{Reason: SellStopNoMerchant}
+		// No WILLING merchant. Distinguish "no merchant present at all" from
+		// "a merchant is here but won't buy this item." For the latter, route
+		// through sellOneToMerchant so the merchant gives the right spoken
+		// refusal ("I'm not interested in that." / "I can't afford that right
+		// now.") and we return SellStopRejected / SellStopMerchantBroke —
+		// rather than the misleading SellStopNoMerchant ("There's no merchant
+		// here.").
+		mob, shopInv = firstMerchantInRoom(room)
+		if mob == nil {
+			return SellResult{Reason: SellStopNoMerchant}
+		}
 	}
 	var out SellResult
 	out.Reason = SellStopSoldAll
