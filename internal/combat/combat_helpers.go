@@ -253,6 +253,14 @@ func buildWeaponSetup(sourceChar *characters.Character, targetChar *characters.C
 
 	ws.attacks, ws.baseDmg, ws.dmgVariance, ws.critBuffs = sourceChar.GetDefaultDistributionDamage()
 
+	// Non-human basic attacks render through the species' natural-attack
+	// subtype (bite/claws/slam/...) instead of generic. A real equipped weapon
+	// overrides this below. Humanoids leave NaturalAttack empty and stay on
+	// Unarmed -> generic.
+	if raceInfo != nil && raceInfo.NaturalAttack != "" {
+		ws.weaponSubType = raceInfo.NaturalAttack
+	}
+
 	if weapon.ItemId > 0 {
 		itemSpec := weapon.GetSpec()
 		ws.weaponName = weapon.DisplayName()
