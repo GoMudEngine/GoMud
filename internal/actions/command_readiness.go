@@ -109,6 +109,9 @@ func CommandIsReady(actor Actor, cmd string) bool {
 
 	case "gore":
 		return char.Aggro != nil && combat.SpeciesIsHorned(char)
+
+	case "drain":
+		return char.Aggro != nil && combat.SpeciesHasLifeDrain(char)
 	}
 
 	return false

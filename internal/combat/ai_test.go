@@ -688,6 +688,32 @@ func TestCanUseGrapple_RequiresArms(t *testing.T) {
 	}
 }
 
+// ─── CanUseDrain ────────────────────────────────────────────────────────────
+
+func TestCanUseDrain_LifeDrainTrueOthersFalse(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		9401: {SpeciesId: 9401, Name: "vampire", BodyParts: []string{"arms", "hands", "legs", "mouth"}, NaturalAttack: items.Claws, LifeDrain: true},
+		9402: {SpeciesId: 9402, Name: "wolf", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Bite},
+		9403: {SpeciesId: 9403, Name: "human", BodyParts: []string{"arms", "hands", "legs", "mouth"}},
+	})
+	defer cleanup()
+
+	vamp := &characters.Character{SpeciesId: 9401, Cooldowns: characters.Cooldowns{}}
+	wolf := &characters.Character{SpeciesId: 9402, Cooldowns: characters.Cooldowns{}}
+	human := &characters.Character{SpeciesId: 9403, Cooldowns: characters.Cooldowns{}}
+
+	assert.True(t, CanUseDrain(vamp), "LifeDrain vampire should be able to drain")
+	assert.False(t, CanUseDrain(wolf), "fanged wolf (no LifeDrain flag) should not drain")
+	assert.False(t, CanUseDrain(human), "plain humanoid should not drain")
+
+	// Cooldown gate.
+	vampOnCD := &characters.Character{
+		SpeciesId: 9401,
+		Cooldowns: characters.Cooldowns{"special-move": 3},
+	}
+	assert.False(t, CanUseDrain(vampOnCD), "LifeDrain vampire on cooldown should not drain")
+}
+
 // ─── CanUseGore ─────────────────────────────────────────────────────────────
 
 func TestCanUseGore_HornedTrueOthersFalse(t *testing.T) {

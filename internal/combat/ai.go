@@ -110,6 +110,10 @@ func ChooseSpecialMove(mob *mobs.Mob, target *characters.Character) string {
 		moveScores["gore"] = ScoreGore(mob, target)
 	}
 
+	if CanUseDrain(&mob.Character) {
+		moveScores["drain"] = ScoreDrain(mob, target)
+	}
+
 	// No viable moves
 	if len(moveScores) == 0 {
 		return ""
@@ -563,6 +567,32 @@ func ScoreGore(mob *mobs.Mob, target *characters.Character) int {
 		score += 20 // wants a standing target to knock down
 	} else {
 		score -= 40
+	}
+
+	if score < 0 {
+		score = 0
+	}
+	return score
+}
+
+// CanUseDrain reports whether the actor can drain a target. Drain is a vampire
+// ability — a lifesteal strike that saps vitality and heals the attacker —
+// so it requires the LifeDrain species flag.
+func CanUseDrain(char *characters.Character) bool {
+	if _, exists := char.Cooldowns["special-move"]; exists {
+		return false
+	}
+	return SpeciesHasLifeDrain(char)
+}
+
+func ScoreDrain(mob *mobs.Mob, target *characters.Character) int {
+	score := 50
+
+	// Bonus when the vampire is hurt — drain recovers HP, so prioritize it
+	// when the attacker needs healing.
+	hpPct := float64(mob.Character.Health) * 100 / float64(mob.Character.HealthMax.Value)
+	if hpPct < 60 {
+		score += 25
 	}
 
 	if score < 0 {

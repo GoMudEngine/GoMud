@@ -54,6 +54,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 		7304: {SpeciesId: 7304, Name: "clawed-test", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Claws},
 		7305: {SpeciesId: 7305, Name: "fanged-test", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Bite},
 		7306: {SpeciesId: 7306, Name: "horned-test", BodyParts: []string{"legs", "mouth", "horns"}, NaturalAttack: items.Gore},
+		7307: {SpeciesId: 7307, Name: "vampire-test", BodyParts: []string{"arms", "hands", "legs", "mouth"}, NaturalAttack: items.Claws, LifeDrain: true},
 	})
 	defer speciesCleanup()
 
@@ -410,6 +411,43 @@ func TestCommandReadinessDrift(t *testing.T) {
 				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
 			},
 			false, "NotHorned"},
+
+		// ─── drain ───────────────────────────────────────────────────────────
+		// drain_ready: LifeDrain species + default aggro (user 1, not found) →
+		// CommandIsReady returns true (lifedrain gate passes, aggro non-nil).
+		// Execute is skipped for ready cases.
+		{"drain_ready", "drain",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7307 // lifedrain-test seeded above
+			},
+			true, ""},
+		{"drain_cooldown", "drain",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7307
+				m.Character.Cooldowns = characters.Cooldowns{"special-move": 3}
+			},
+			false, "OnCooldown"},
+		{"drain_no_aggro", "drain",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7307
+				m.Character.EndAggro()
+			},
+			false, "NoTarget"},
+		// drain_notlifedrainer: SpeciesId 0 → nil species → no LifeDrain.
+		// Default mob has aggro to user 1. CommandIsReady returns false.
+		// ExecuteDrain burns the cooldown, resolves the target (user 1 not
+		// found → NoTarget first), but with a registered target mob we can
+		// reach the NotLifeDrainer gate.
+		{"drain_notlifedrainer", "drain",
+			func(m *mobs.Mob) {
+				// SpeciesId 0 → nil species → no LifeDrain flag.
+				targetMob := &mobs.Mob{InstanceId: 213}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NotLifeDrainer"},
 	}
 
 	for _, tc := range cases {
@@ -418,7 +456,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 			// The mutate function may set up target mobs via
 			// mobs.SetInstanceForTest; we clean them all up here.
 			defer func() {
-				for id := 200; id <= 212; id++ {
+				for id := 200; id <= 213; id++ {
 					mobs.SetInstanceForTest(id, nil)
 				}
 			}()
@@ -559,6 +597,16 @@ func runExecuteAndReadFlag(cmd string, actor Actor, flag string) bool {
 			return r.NoTarget
 		case "NotHorned":
 			return r.NotHorned
+		}
+	case "drain":
+		r := ExecuteDrain(actor)
+		switch flag {
+		case "OnCooldown":
+			return r.OnCooldown
+		case "NoTarget":
+			return r.NoTarget
+		case "NotLifeDrainer":
+			return r.NotLifeDrainer
 		}
 	}
 	return false

@@ -22,7 +22,7 @@ func TestCommandIsReadyNamesAreMobCommands(t *testing.T) {
 	// in sync with the switch cases in
 	// internal/actions/command_readiness.go.
 	supported := []string{
-		"taunt", "rally", "warcry", "trip", "bash", "grapple", "kick", "rake", "maul", "pounce", "gore",
+		"taunt", "rally", "warcry", "trip", "bash", "grapple", "kick", "rake", "maul", "pounce", "gore", "drain",
 	}
 
 	// Verify each name IS in the mob command dispatcher.
