@@ -7,7 +7,7 @@ requires:
 roster:
   - id: explorer
     role: feel-tester
-    target: local
+    target: local-fresh
     onboarding: auto
     goals:
       - id: wander-stillwater
@@ -19,7 +19,7 @@ roster:
           coherently, no movement errors. Note overall feel.
   - id: shopper
     role: feature-tester
-    target: local
+    target: local-fresh
     onboarding: auto
     goals:
       - id: shop-thornwall

@@ -9,3 +9,11 @@ prod:
   port: 55555
   user: aitester
   password: testpass123
+# local-fresh: blank creds → each agent CREATES its own character on first run.
+# Use for multi-agent scenarios so concurrent agents don't collide on one shared
+# account (and to exercise the new-player onboarding flow).
+local-fresh:
+  host: localhost
+  port: 55555
+  user: ""
+  password: ""
