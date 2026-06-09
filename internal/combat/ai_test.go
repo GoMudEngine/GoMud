@@ -219,6 +219,13 @@ func TestCanUseGrapple(t *testing.T) {
 // ─── CanUseSubmit ───────────────────────────────────────────────────────────
 
 func TestCanUseSubmit(t *testing.T) {
+	// Seed SpeciesId 0 (characters.New default) with arms so these cases
+	// exercise the position/controller/cooldown logic, not the anatomy gate.
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		0: {SpeciesId: 0, Name: "test", BodyParts: []string{"arms", "hands", "legs"}},
+	})
+	defer cleanup()
+
 	tests := []struct {
 		name       string
 		pos        position.State
@@ -259,6 +266,29 @@ func TestCanUseSubmit(t *testing.T) {
 			}
 			assert.Equal(t, tt.want, CanUseSubmit(c))
 		})
+	}
+}
+
+func TestCanUseSubmit_RequiresArms(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		7401: {SpeciesId: 7401, Name: "humanoid", BodyParts: []string{"arms", "hands", "legs"}},
+		7402: {SpeciesId: 7402, Name: "noarms", BodyParts: []string{"legs", "mouth"}},
+	})
+	defer cleanup()
+
+	armed := characters.New()
+	armed.SpeciesId = 7401
+	setCombatPositionParallel(armed, position.Mount) // grounded + controller
+
+	beast := characters.New()
+	beast.SpeciesId = 7402
+	setCombatPositionParallel(beast, position.Mount)
+
+	if !CanUseSubmit(armed) {
+		t.Error("armed grappler-controller should be able to submit")
+	}
+	if CanUseSubmit(beast) {
+		t.Error("no-arms creature must NOT submit (submission holds need arms)")
 	}
 }
 

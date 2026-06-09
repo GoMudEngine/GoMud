@@ -231,6 +231,12 @@ func CanUseSubmit(char *characters.Character) bool {
 	if _, exists := char.Cooldowns["special-move"]; exists {
 		return false
 	}
+	// A submission hold clamps a limb — requires arms. (Already transitively
+	// gated, since reaching a controlling ground grapple needs arms to grapple,
+	// but make the requirement explicit and robust to future control paths.)
+	if !char.HasBodyPart("arms") {
+		return false
+	}
 	return true
 }
 
