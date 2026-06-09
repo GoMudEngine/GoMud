@@ -1,0 +1,110 @@
+# ============================================================
+# SERVER CONFIGURATION REQUIRED BEFORE RUNNING THIS SCENARIO
+# ============================================================
+# DOGMud PvP is OFF by default. A human must apply these
+# changes to _datafiles/config.yaml and restart the server:
+#
+#   GamePlay:
+#     PVP:
+#       Enabled: enabled           # or "limited" if using PvP rooms
+#       MinimumLevel: 1            # fresh testers are level 1
+#
+# DOGMud has NO permadeath — defeat always resolves as
+# defeat -> respawn. Leave Death.PermaDeath: false (default).
+#
+# For "limited" PvP: ensure both testers meet in a room
+# flagged for PvP (room YAML: pvp: true) or they cannot fight.
+# For "enabled": PvP works everywhere.
+#
+# After editing config.yaml, restart with:
+#   docker compose restart    (or your local go run command)
+# ============================================================
+
+name: adversarial-contest
+mode: adversarial
+summary: Two testers meet in a shared room and engage in PvP combat; verify damage exchange and clean defeat -> respawn (server-config-gated, see comment block above).
+requires:
+  pvp: enabled          # server GamePlay.PVP.Enabled — set this + restart before running
+  minimum_level: 1      # server GamePlay.PVP.MinimumLevel — lower from default 15
+  # permadeath is false (DOGMud default): defeat -> respawn, no permanent kill
+  max_connections: 20
+
+roster:
+  - id: red
+    role: bug-finder
+    target: local
+    onboarding: auto
+    goals:
+      - id: signal-ready
+        do: >-
+          After spawning, move to the central Sanctum Basin room (or any room
+          you share with blue). Signal 'red-ready' on the blackboard.
+        verify: >-
+          Blackboard signal 'red-ready' emitted. You are in the target room.
+      - id: engage-pvp
+        do: >-
+          Wait for 'blue-ready' on the blackboard. Then initiate PvP combat by
+          typing 'attack blue' (use blue's actual character name). Continue
+          fighting: use 'attack', defensive actions (flee if low HP), and basic
+          combat commands. Signal 'red-engaged' on the blackboard.
+        verify: >-
+          Combat rounds resolve (you see hit/miss messages). At least one side
+          loses HP (check status / Char.Vitals). No 'You cannot attack that
+          player' or 'PvP is disabled' error.
+      - id: post-defeat
+        do: >-
+          After a defeat or victory, observe the outcome. If you were defeated,
+          confirm you respawned at a valid location with your character intact.
+        verify: >-
+          No stuck state, no disconnection, no duplicate-character error.
+          Respawn room is valid (you can move). Gold/inventory roughly intact
+          (DOGMud defeat -> respawn does not strip gear by default).
+  - id: blue
+    role: bug-finder
+    target: local
+    onboarding: auto
+    goals:
+      - id: signal-ready
+        do: >-
+          After spawning, move to the central Sanctum Basin room (or the room
+          red is in — use 'who' or the mapper to locate red). Signal
+          'blue-ready' on the blackboard.
+        verify: >-
+          Blackboard signal 'blue-ready' emitted. You are in the same room as
+          red.
+      - id: engage-pvp
+        do: >-
+          Wait for 'red-engaged'. Then fight back: 'attack red' (use red's
+          actual character name). Use defensive commands (dodge, flee) and
+          healing items if available. Signal 'blue-engaged'.
+        verify: >-
+          Combat rounds resolve bidirectionally. You deal or receive damage.
+          No PvP-disabled or permissions error.
+      - id: post-defeat
+        do: >-
+          After a defeat or victory, observe the outcome and confirm a clean
+          state (same as red's post-defeat goal above).
+        verify: >-
+          No stuck state, disconnection, or duplication. Respawn completes if
+          defeated. You can issue commands normally after the fight.
+
+group_goals:
+  - id: pvp-round-resolves
+    do: >-
+      Both agents meet in the same room. red attacks first (waits on
+      'blue-ready', signals 'red-engaged'); blue retaliates (waits on
+      'red-engaged', signals 'blue-engaged'). Both fight until one side
+      is defeated or a natural pause occurs.
+    verify: >-
+      At least one full PvP combat round completes with damage on either side
+      (not blocked by a 'PvP disabled' gate). The defeated agent reaches a
+      respawn room without error — no stuck state, no duplication, no server
+      panic visible in output. Blackboard shows both 'red-engaged' and
+      'blue-engaged' signals.
+  - id: clean-respawn
+    do: >-
+      After defeat, the losing agent resumes normal play from the respawn
+      room within one session.
+    verify: >-
+      Losing agent can move and issue commands after respawning. No ghost
+      state, no lingering combat target, no disconnect.

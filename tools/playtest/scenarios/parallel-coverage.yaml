@@ -1,0 +1,37 @@
+name: parallel-coverage
+mode: parallel
+summary: Two testers independently exercise different DOGMud areas/systems at once — concurrency + coverage, no interaction expected.
+requires:
+  # DOGMud: no permadeath; defeat -> respawn. max_connections = Network.MaxAIConnections (20).
+  max_connections: 20
+roster:
+  - id: explorer
+    role: feel-tester
+    target: local-fresh
+    onboarding: auto
+    goals:
+      - id: wander-stillwater
+        do: >-
+          Explore the Stillwater area — move through several rooms reading each,
+          note the town's NPCs and flavor.
+        verify: >-
+          Visited 5+ distinct rooms (beacon room_id changes), descriptions read
+          coherently, no movement errors. Note overall feel.
+  - id: shopper
+    role: feature-tester
+    target: local-fresh
+    onboarding: auto
+    goals:
+      - id: shop-thornwall
+        do: >-
+          In Thornwall City, find a merchant, list wares, and buy then sell one item.
+        verify: >-
+          A shop listing renders; gold decreases on buy and increases on sell
+          (check status/Char.Vitals gold and the item entering/leaving inventory);
+          no 'looks confused' or generic error.
+group_goals:
+  - id: concurrency
+    do: Both agents play simultaneously for the session.
+    verify: >-
+      Both ran concurrently with no crash/disconnect; the server accepted two
+      AI connections at once (no AI-pool-full rejection).
