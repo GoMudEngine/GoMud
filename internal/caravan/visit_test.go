@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/shops"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func TestMain(m *testing.M) {
@@ -442,12 +443,20 @@ func setupPickupTestFixtures(
 // wipePickupTestShopFile removes the on-disk shop YAML produced by
 // shops.SaveShop during the pickup test. Used by setup AND cleanup so
 // no test leaks shop state into the next.
+//
+// The zone directory MUST be sanitized with util.ConvertForFilename, exactly
+// as shops.shopPath does when SaveShop writes the file — "PickupTestZone"
+// lands in a lowercase "pickuptestzone/" directory. Deleting the raw mixed-case
+// name only works on a case-insensitive filesystem (Windows); on Linux CI the
+// mismatch leaves the file behind, so a prior pickup test's saved stock leaks
+// into the next via RegisterShop -> loadFromDisk and the bucket assertion picks
+// up 0. Mirror the save-path sanitization here.
 func wipePickupTestShopFile(t *testing.T) {
 	t.Helper()
 	zoneDir := filepath.Join(
 		configs.GetFilePathsConfig().DataFiles.String(),
 		"shops",
-		pickupTestZone,
+		util.ConvertForFilename(pickupTestZone),
 	)
 	_ = os.RemoveAll(zoneDir)
 }
