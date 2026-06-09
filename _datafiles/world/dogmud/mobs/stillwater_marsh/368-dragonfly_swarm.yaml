@@ -1,6 +1,7 @@
 mobid: 368
 zone: Stillwater Marsh
 behavior_archetype: combat_passive
+aiprofile: skirmisher
 archetype: fighting
 statpool: 18
 itemdropchance: 0

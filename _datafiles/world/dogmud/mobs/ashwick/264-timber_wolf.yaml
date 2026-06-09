@@ -9,6 +9,7 @@ groups:
   - predator
 archetype: fighting
 behavior_archetype: generic_fighter
+aiprofile: skirmisher
 idlecommands:
   - 'emote paces at the edge of the clearing, hackles raised'
   - ''

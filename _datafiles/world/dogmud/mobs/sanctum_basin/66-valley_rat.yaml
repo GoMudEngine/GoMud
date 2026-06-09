@@ -5,6 +5,7 @@ statpool: 2
 itemdropchance: 5
 hostile: true
 behavior_archetype: generic_fighter
+aiprofile: skirmisher
 maxwander: 0
 groups:
   - rats

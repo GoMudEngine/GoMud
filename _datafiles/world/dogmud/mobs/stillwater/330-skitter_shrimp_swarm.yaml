@@ -1,6 +1,7 @@
 mobid: 330
 zone: Stillwater
 behavior_archetype: prey
+aiprofile: skirmisher
 statpool: 30
 itemdropchance: 60
 hostile: false

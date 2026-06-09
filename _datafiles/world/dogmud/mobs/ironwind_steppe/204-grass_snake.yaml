@@ -1,5 +1,6 @@
 mobid: 204
 behavior_archetype: generic_fighter
+aiprofile: serpent
 zone: Ironwind Steppe
 statpool: 35
 itemdropchance: 5

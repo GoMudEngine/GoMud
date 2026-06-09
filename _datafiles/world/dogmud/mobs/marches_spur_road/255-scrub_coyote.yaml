@@ -6,6 +6,7 @@ hostile: false
 maxwander: 2
 archetype: fighting
 behavior_archetype: generic_fighter
+aiprofile: skirmisher
 groups:
   - animal
   - canine

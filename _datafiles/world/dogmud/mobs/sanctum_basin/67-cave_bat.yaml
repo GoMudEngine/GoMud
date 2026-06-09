@@ -5,6 +5,7 @@ statpool: 3
 itemdropchance: 5
 hostile: true
 behavior_archetype: generic_fighter
+aiprofile: ambush_predator
 maxwander: 0
 groups:
   - bats

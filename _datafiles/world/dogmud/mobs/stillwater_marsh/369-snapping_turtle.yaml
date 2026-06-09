@@ -1,6 +1,7 @@
 mobid: 369
 zone: Stillwater Marsh
 behavior_archetype: combat_passive
+aiprofile: predator
 archetype: fighting
 statpool: 80
 itemdropchance: 0

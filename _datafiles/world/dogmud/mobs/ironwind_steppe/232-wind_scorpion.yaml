@@ -1,5 +1,6 @@
 mobid: 232
 behavior_archetype: generic_fighter
+aiprofile: ambush_predator
 zone: Ironwind Steppe
 statpool: 45
 itemdropchance: 5

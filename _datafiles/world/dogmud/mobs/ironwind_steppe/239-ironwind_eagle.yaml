@@ -1,6 +1,7 @@
 mobid: 239
 zone: Ironwind Steppe
 behavior_archetype: generic_fighter
+aiprofile: ambush_predator
 routine: raptor_flock
 statpool: 55
 itemdropchance: 5
