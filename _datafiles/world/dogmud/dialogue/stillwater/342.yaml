@@ -7,7 +7,7 @@ patterns:
     moods: ["neutral", "friendly"]
     responses:
       - "Welcome to the docks. Mind your step on the planks -- some are older than I am."
-      - "Dock master Arn. Looking for a boat, a fisherman, or just a quiet stretch of lake?"
+      - "Dock Master Arn. Looking for a boat, a fisherman, or just a quiet stretch of lake?"
 
   - keywords: ["hello", "hi"]
     moods: ["grateful"]
