@@ -194,6 +194,10 @@ func CanUseGrapple(char *characters.Character) bool {
 	if sp := species.GetSpecies(char.SpeciesId); sp != nil && sp.GrappleImmune {
 		return false
 	}
+	// Grappling is a humanoid technique — requires arms to seize/hold.
+	if !char.HasBodyPart("arms") {
+		return false
+	}
 	return true
 }
 

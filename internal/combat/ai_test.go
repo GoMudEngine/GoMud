@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
@@ -162,6 +163,13 @@ func TestCanUseKick(t *testing.T) {
 // ─── CanUseGrapple ──────────────────────────────────────────────────────────
 
 func TestCanUseGrapple(t *testing.T) {
+	// Seed the default species (SpeciesId 0, used by characters.New()) with
+	// arms so the anatomy gate does not block the "can grapple" cases.
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		0: {SpeciesId: 0, Name: "human", BodyParts: []string{"arms", "hands", "legs"}},
+	})
+	defer cleanup()
+
 	tests := []struct {
 		name     string
 		pos position.State
@@ -411,4 +419,24 @@ func TestScoreGrapple(t *testing.T) {
 		score := ScoreGrapple(makeMob(100, 0, 10, 100), target)
 		assert.Equal(t, 0, score) // 50 (base) - 50 (low hp) = 0, no str bonus since target stronger
 	})
+}
+
+// ─── CanUseGrapple (anatomy gate) ───────────────────────────────────────────
+
+func TestCanUseGrapple_RequiresArms(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		7101: {SpeciesId: 7101, Name: "humanoid", BodyParts: []string{"arms", "hands", "legs"}},
+		7102: {SpeciesId: 7102, Name: "wolf", BodyParts: []string{"legs", "mouth", "tail"}},
+	})
+	defer cleanup()
+
+	humanoid := &characters.Character{SpeciesId: 7101}
+	wolf := &characters.Character{SpeciesId: 7102}
+
+	if !CanUseGrapple(humanoid) {
+		t.Error("armed humanoid should be able to grapple")
+	}
+	if CanUseGrapple(wolf) {
+		t.Error("no-arms wolf must NOT be able to grapple")
+	}
 }
