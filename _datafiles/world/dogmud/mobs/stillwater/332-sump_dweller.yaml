@@ -25,7 +25,6 @@ idlecommands:
 activitylevel: 5
 combatcommands:
   - bash
-  - bite
   - ''
 character:
   name: Sump Dweller

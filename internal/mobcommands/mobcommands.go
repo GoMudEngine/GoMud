@@ -26,7 +26,6 @@ var (
 		"aid":            {Aid, false},
 		"attack":         {Attack, false},
 		"bash":           {Bash, false},
-		"bite":           {Bite, false},
 		"befriend":       {Befriend, false},
 		"blinding-flash": {BlindingFlash, false},
 		"blinding-spit":  {BlindingSpit, false},

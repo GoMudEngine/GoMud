@@ -23,7 +23,6 @@ idlecommands:
   - 'emote opens a wide pale mouth in a silent yawn, lined with backward-curving teeth'
 activitylevel: 8
 combatcommands:
-  - bite
   - ''
   - ''
 character:

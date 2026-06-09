@@ -164,13 +164,11 @@ var userOnlyCommands = map[string]string{
 // mobOnlyCommands lists mob commands that intentionally have no user equivalent.
 //
 // Future work candidates (not mob-only forever):
-//   - bite: shared action (ExecuteBite), future player species-gated ability
 //   - hamstring: shared action (ExecuteHamstring), future player species-gated ability
 var mobOnlyCommands = map[string]string{
 	// --- Mob AI behaviours ---
 	"aid":            "mob-ai",
 	"befriend":       "mob-ai",
-	"bite":           "mob-ai: shared ExecuteBite action, future player ability",
 	"callforhelp":    "mob-ai",
 	"charge":         "mob-ai",
 	"consume":        "mob-ai",
