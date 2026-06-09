@@ -34,3 +34,4 @@ damage:
   variance: 1
 disabledslots: []  # companion-gearable summon; see PATCH_NOTES 2026-05-29
 grapple_immune: true
+lifedrain: true    # spectral life-leech: enables the `drain` move (occasional, when not casting)

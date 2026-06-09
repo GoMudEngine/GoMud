@@ -13,9 +13,11 @@ import (
 // AI profile definitions with move preference weights
 var aiProfiles = map[string]map[string]int{
 	"caster": {
-		"kick": 10,
-		"trip": 10,
-		// prefers casting; ChooseCastAction() handles spell selection separately
+		"kick":  10,
+		"trip":  10,
+		"drain": 15, // lifedrain casters (wraith/spectre) leech occasionally when not casting
+		// prefers casting; ChooseCastAction() runs FIRST in handleMobAIDecision,
+		// so any special move (incl. drain) only fires when no spell is castable
 	},
 	"default": {
 		"bash":      25,

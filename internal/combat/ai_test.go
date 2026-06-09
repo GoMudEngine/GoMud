@@ -811,6 +811,13 @@ func TestBeastProfiles_SkirmisherAndSerpent(t *testing.T) {
 	if _, hasHamstring := serp["hamstring"]; hasHamstring {
 		t.Error("serpent profile should not weight hamstring (legless)")
 	}
+	// caster profile (wraith/spectre) carries a modest drain weight — drain only
+	// fires when no spell is castable (ChooseCastAction runs first), so it stays
+	// the occasional fallback.
+	cast := GetAIProfile("caster", nil)
+	if cast["drain"] != 15 {
+		t.Errorf("caster profile should weight drain 15, got %d", cast["drain"])
+	}
 }
 
 func TestChooseSpecialMove_SerpentNeverPounces(t *testing.T) {
