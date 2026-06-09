@@ -7,6 +7,7 @@ description: A lithe, shifting shape of smoke and flickering embers,
   in its wake.
 size: medium
 unarmedname: ember lash
+natural_attack: slam
 selectable: false
 tameable: false
 grapple_immune: true

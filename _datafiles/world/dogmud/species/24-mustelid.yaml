@@ -12,6 +12,7 @@ buffids:
   - 29 # Night Vision (mostly nocturnal hunters)
 size: small
 unarmedname: jaws
+natural_attack: bite
 selectable: false
 tameable: false
 angrycommands:

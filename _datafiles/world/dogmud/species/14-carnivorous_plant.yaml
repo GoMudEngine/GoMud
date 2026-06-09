@@ -9,6 +9,7 @@ intrinsic_mutations:
 naturalarmor: 6
 size: medium
 unarmedname: tendrils and maw
+natural_attack: bite
 selectable: false
 tameable: false
 angrycommands:

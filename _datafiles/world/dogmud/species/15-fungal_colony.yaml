@@ -10,6 +10,7 @@ intrinsic_mutations:
 naturalarmor: 4
 size: medium
 unarmedname: spore tendrils
+natural_attack: slam
 selectable: false
 tameable: false
 angrycommands:

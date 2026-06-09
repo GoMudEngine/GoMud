@@ -10,6 +10,7 @@ intrinsic_mutations:
   incorporeal: 4
 size: medium
 unarmedname: slicing gust
+natural_attack: slam
 selectable: false
 tameable: false
 angrycommands:

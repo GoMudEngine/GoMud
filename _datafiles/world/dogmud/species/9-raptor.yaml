@@ -10,6 +10,7 @@ buffids:
   - 29 # Night Vision
 size: small
 unarmedname: talons and beak
+natural_attack: claws
 selectable: false
 tameable: true
 angrycommands:

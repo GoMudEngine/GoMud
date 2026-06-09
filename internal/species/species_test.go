@@ -2,6 +2,9 @@ package species
 
 import (
 	"testing"
+
+	"github.com/GoMudEngine/GoMud/internal/items"
+	"gopkg.in/yaml.v2"
 )
 
 func TestHasBodyPart_NilBodyParts_FailOpen(t *testing.T) {
@@ -63,6 +66,31 @@ func TestHasAllBodyParts_SomeMissing(t *testing.T) {
 	s := &Species{BodyParts: []string{"arms", "legs"}}
 	if s.HasAllBodyParts([]string{"arms", "hands"}) {
 		t.Error("missing required part should return false")
+	}
+}
+
+func TestSpecies_NaturalAttackUnmarshal(t *testing.T) {
+	var s Species
+	if err := yaml.Unmarshal([]byte("speciesid: 99\nname: testcanine\nnatural_attack: bite\n"), &s); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if s.NaturalAttack != items.Bite {
+		t.Errorf("NaturalAttack = %q, want %q", s.NaturalAttack, items.Bite)
+	}
+}
+
+func TestValidateNaturalAttack(t *testing.T) {
+	// Known subtype with a message file: OK.
+	if err := validateNaturalAttack(&Species{SpeciesId: 1, Name: "ok", NaturalAttack: items.Bite}); err != nil {
+		t.Errorf("expected nil for known subtype, got %v", err)
+	}
+	// Empty: OK (humanoid default).
+	if err := validateNaturalAttack(&Species{SpeciesId: 2, Name: "empty"}); err != nil {
+		t.Errorf("expected nil for empty, got %v", err)
+	}
+	// Unknown subtype: error.
+	if err := validateNaturalAttack(&Species{SpeciesId: 3, Name: "bad", NaturalAttack: items.ItemSubType("notarealsubtype")}); err == nil {
+		t.Error("expected error for unknown subtype")
 	}
 }
 

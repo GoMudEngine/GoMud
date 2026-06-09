@@ -7,6 +7,7 @@ description: A slender humanoid figure of translucent crystal and
   of a glacier calving.
 size: medium
 unarmedname: crystal strike
+natural_attack: slam
 selectable: false
 tameable: false
 angrycommands:

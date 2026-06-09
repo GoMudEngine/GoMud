@@ -875,3 +875,14 @@ ground-grapple radius (0.3 m), so they pay no penalty — by design.
    `internal/items/reach.go` and update this table.
 5. Arm length / species reach is intentionally out of scope (chunk 4c
    decision). Weapon reach only.
+
+### Natural-attack subtypes: live for mob basic attacks
+
+The natural-attack `ItemSubType`s — `bite`, `claws`, `slam`, `gore`,
+and `sting` — and their combat-message files are now the standard
+rendering path for non-human mob melee (Phase 1 non-human attack
+messaging). When a species YAML sets `natural_attack:`, `buildWeaponSetup`
+in `internal/combat/combat_helpers.go` routes unarmed mob attacks through
+that subtype's message pool. Previously these subtypes were defined and
+used only for reach accounting or special-case weapon items; they are now
+actively selected at runtime for basic attacks on ~30 tagged species.

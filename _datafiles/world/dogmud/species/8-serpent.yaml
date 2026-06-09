@@ -8,6 +8,7 @@ buffids:
   - 29 # Night Vision
 size: small
 unarmedname: fangs
+natural_attack: bite
 selectable: false
 tameable: true
 angrycommands:

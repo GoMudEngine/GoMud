@@ -8,6 +8,7 @@ intrinsic_mutations:
   cold-blooded: 1
 size: small
 unarmedname: fins
+natural_attack: bite
 selectable: false
 tameable: true
 angrycommands:

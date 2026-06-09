@@ -10,6 +10,7 @@ intrinsic_mutations:
 naturalarmor: 5
 size: medium
 unarmedname: tusks
+natural_attack: gore
 selectable: false
 tameable: true
 angrycommands:
