@@ -73,10 +73,11 @@ func ExecuteRake(actor Actor) RakeResult {
 		return RakeResult{NoTarget: true}
 	}
 
-	// Anatomy/identity gate (defense-in-depth): only clawed creatures rake.
-	// Unreachable via the AI path (CanUseRake gates it) but reachable via a
-	// direct player command or a btree/combatcommands dispatch to a non-clawed mob.
-	if !combat.SpeciesIsClawed(char) {
+	// Anatomy/identity gate (defense-in-depth): only handless clawed creatures
+	// rake. Unreachable via the AI path (CanUseRake gates it) but reachable
+	// via a direct player command or a btree/combatcommands dispatch to a
+	// non-clawed or tool-using mob.
+	if char.HasBodyPart("hands") || !combat.SpeciesIsClawed(char) {
 		return RakeResult{NotClawed: true}
 	}
 

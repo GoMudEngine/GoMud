@@ -1,6 +1,7 @@
 mobid: 360
 zone: The Fernway South
 behavior_archetype: prey
+aiprofile: skirmisher
 archetype: fighting
 statpool: 25
 itemdropchance: 75

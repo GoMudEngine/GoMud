@@ -1,6 +1,7 @@
 mobid: 78
 zone: Labyrinth of Low Tunnels
 behavior_archetype: generic_fighter
+aiprofile: skirmisher
 statpool: 6
 itemdropchance: 20
 hostile: true

@@ -73,10 +73,11 @@ func ExecuteMaul(actor Actor) MaulResult {
 		return MaulResult{NoTarget: true}
 	}
 
-	// Anatomy/identity gate (defense-in-depth): only fanged creatures maul.
-	// Unreachable via the AI path (CanUseMaul gates it) but reachable via a
-	// direct player command or a btree/combatcommands dispatch to a non-fanged mob.
-	if !combat.SpeciesIsFanged(char) {
+	// Anatomy/identity gate (defense-in-depth): only handless fanged creatures
+	// maul. Unreachable via the AI path (CanUseMaul gates it) but reachable
+	// via a direct player command or a btree/combatcommands dispatch to a
+	// non-fanged or tool-using mob.
+	if char.HasBodyPart("hands") || !combat.SpeciesIsFanged(char) {
 		return MaulResult{NotFanged: true}
 	}
 

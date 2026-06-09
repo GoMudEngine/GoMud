@@ -55,6 +55,12 @@ func TestCommandReadinessDrift(t *testing.T) {
 		7305: {SpeciesId: 7305, Name: "fanged-test", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Bite},
 		7306: {SpeciesId: 7306, Name: "horned-test", BodyParts: []string{"legs", "mouth", "horns"}, NaturalAttack: items.Gore},
 		7307: {SpeciesId: 7307, Name: "vampire-test", BodyParts: []string{"arms", "hands", "legs", "mouth"}, NaturalAttack: items.Claws, LifeDrain: true},
+		// Hands-bearing beast-identity species for the _hashands drift rows.
+		// These have the correct identity (clawed/fanged/horned) but also have
+		// "hands", so all beast natural-weapon moves must be blocked.
+		7310: {SpeciesId: 7310, Name: "hands-clawed-test", BodyParts: []string{"arms", "hands", "legs", "mouth"}, NaturalAttack: items.Claws},
+		7311: {SpeciesId: 7311, Name: "hands-fanged-test", BodyParts: []string{"arms", "hands", "legs", "mouth"}, NaturalAttack: items.Bite},
+		7312: {SpeciesId: 7312, Name: "hands-horned-test", BodyParts: []string{"arms", "hands", "legs", "mouth", "horns"}, NaturalAttack: items.Gore},
 	})
 	defer speciesCleanup()
 
@@ -503,6 +509,78 @@ func TestCommandReadinessDrift(t *testing.T) {
 				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
 			},
 			false, "NotFanged"},
+
+		// ─── _hashands rows ───────────────────────────────────────────────────
+		// Each row seeds a species with the correct beast identity (clawed/fanged/
+		// horned) but also with "hands", so CommandIsReady must return false and
+		// the Execute* must return the move's Not<Identity> flag. This exercises
+		// the true-beast gate added in P4-T1.
+
+		{"rake_hashands", "rake",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7310 // hands+clawed-test
+				targetMob := &mobs.Mob{InstanceId: 216}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NotClawed"},
+
+		{"maul_hashands", "maul",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7311 // hands+fanged-test
+				targetMob := &mobs.Mob{InstanceId: 217}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NotFanged"},
+
+		{"gore_hashands", "gore",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7312 // hands+horned-test
+				targetMob := &mobs.Mob{InstanceId: 218}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NotHorned"},
+
+		{"throttle_hashands", "throttle",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7311 // hands+fanged-test
+				targetMob := &mobs.Mob{InstanceId: 219}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NotFanged"},
+
+		{"hamstring_hashands", "hamstring",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7311 // hands+fanged+legs-test
+				targetMob := &mobs.Mob{InstanceId: 220}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NotBeast"},
+
+		{"pounce_hashands", "pounce",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7310 // hands+clawed+legs-test
+				targetMob := &mobs.Mob{InstanceId: 221}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NotPredator"},
 	}
 
 	for _, tc := range cases {
@@ -511,7 +589,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 			// The mutate function may set up target mobs via
 			// mobs.SetInstanceForTest; we clean them all up here.
 			defer func() {
-				for id := 200; id <= 215; id++ {
+				for id := 200; id <= 221; id++ {
 					mobs.SetInstanceForTest(id, nil)
 				}
 			}()
@@ -674,6 +752,16 @@ func runExecuteAndReadFlag(cmd string, actor Actor, flag string) bool {
 			return r.NoTarget
 		case "NotFanged":
 			return r.NotFanged
+		}
+	case "hamstring":
+		r := ExecuteHamstring(actor)
+		switch flag {
+		case "OnCooldown":
+			return r.OnCooldown
+		case "NoTarget":
+			return r.NoTarget
+		case "NotBeast":
+			return r.NotBeast
 		}
 	}
 	return false

@@ -8,6 +8,7 @@ groups:
   - animal
   - feline
 behavior_archetype: prey
+aiprofile: predator
 idlecommands:
   - 'emote cleans one paw with deliberate attention'
   - ''

@@ -1,6 +1,7 @@
 mobid: 370
 zone: Stillwater Marsh
 behavior_archetype: ambusher
+aiprofile: serpent
 archetype: fighting
 statpool: 60
 itemdropchance: 0

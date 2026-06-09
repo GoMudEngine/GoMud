@@ -6,6 +6,7 @@ hostile: false
 maxwander: 0
 buffids: [29]
 behavior_archetype: prey
+aiprofile: skirmisher
 groups:
   - insect
   - animal

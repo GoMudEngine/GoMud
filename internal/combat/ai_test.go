@@ -794,6 +794,60 @@ func TestCanUsePounce(t *testing.T) {
 // wolf on the "predator" profile with SpecialMoveChance=100 (always pick) and
 // verifies over 200 iterations that it never selects "grapple" (needs arms)
 // and only picks from its anatomy-permitted move set.
+func TestBeastProfiles_SkirmisherAndSerpent(t *testing.T) {
+	// skirmisher harries (hamstring/trip dominant, light maul); serpent strikes
+	// (maul/throttle) with no pounce/hamstring weighting (legless).
+	skirm := GetAIProfile("skirmisher", nil)
+	if skirm["hamstring"] != 35 || skirm["trip"] != 30 || skirm["maul"] != 10 {
+		t.Errorf("skirmisher weights wrong: %+v", skirm)
+	}
+	serp := GetAIProfile("serpent", nil)
+	if serp["maul"] != 35 || serp["throttle"] != 35 {
+		t.Errorf("serpent weights wrong: %+v", serp)
+	}
+	if _, hasPounce := serp["pounce"]; hasPounce {
+		t.Error("serpent profile should not weight pounce (legless)")
+	}
+	if _, hasHamstring := serp["hamstring"]; hasHamstring {
+		t.Error("serpent profile should not weight hamstring (legless)")
+	}
+	// caster profile (wraith/spectre) carries a modest drain weight — drain only
+	// fires when no spell is castable (ChooseCastAction runs first), so it stays
+	// the occasional fallback.
+	cast := GetAIProfile("caster", nil)
+	if cast["drain"] != 15 {
+		t.Errorf("caster profile should weight drain 15, got %d", cast["drain"])
+	}
+}
+
+func TestChooseSpecialMove_SerpentNeverPounces(t *testing.T) {
+	// A legless fanged serpent on the serpent profile: maul/throttle only,
+	// never pounce/hamstring (anatomy gates them out).
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		9920: {SpeciesId: 9920, Name: "serpent", BodyParts: []string{"mouth", "skin"}, NaturalAttack: items.Bite},
+	})
+	defer cleanup()
+	mob := &mobs.Mob{}
+	mob.Character = *characters.New()
+	mob.Character.SpeciesId = 9920
+	mob.Character.HealthMax.Value = 100
+	mob.Character.Health = 100
+	mob.AIProfile = "serpent"
+	mob.SpecialMoveChance = 100
+
+	target := characters.New()
+	target.HealthMax.Value = 100
+	target.Health = 100
+	setCombatPositionParallel(target, position.Standing)
+
+	for i := 0; i < 100; i++ {
+		move := ChooseSpecialMove(mob, target)
+		if move == "pounce" || move == "hamstring" || move == "trip" || move == "kick" {
+			t.Errorf("legless serpent picked a legged move %q", move)
+		}
+	}
+}
+
 func TestChooseSpecialMove_PredatorProfile_NeverGrapple(t *testing.T) {
 	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
 		9901: {
@@ -891,4 +945,59 @@ func TestCanUseThrottle_FangedTrueClawedFalse(t *testing.T) {
 		Cooldowns: characters.Cooldowns{"special-move": 3},
 	}
 	assert.False(t, CanUseThrottle(wolfOnCD), "fanged wolf on cooldown should not throttle")
+}
+
+// ─── TestBeastMoves_RequireNoHands ──────────────────────────────────────────
+
+// TestBeastMoves_RequireNoHands verifies the "true beast" gate: beast
+// natural-weapon moves (rake/maul/pounce/gore/throttle/hamstring) require
+// the actor to have NO "hands" body part. Tool-using humanoids (goblin,
+// skeleton, vampire with claws/bite) are blocked even when they have the
+// matching identity. Drain is LifeDrain-gated and MUST stay exempt —
+// a hands-bearing LifeDrain vampire can still drain.
+func TestBeastMoves_RequireNoHands(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		// Hands-bearing humanoid-identity creatures — must be blocked from beast moves.
+		9001: {SpeciesId: 9001, Name: "goblinoid", BodyParts: []string{"arms", "hands", "legs", "mouth", "horns"}, NaturalAttack: items.Claws},
+		9002: {SpeciesId: 9002, Name: "fangedhumanoid", BodyParts: []string{"arms", "hands", "legs", "mouth"}, NaturalAttack: items.Bite},
+		// Clawed bear: has arms but NO hands — must still rake.
+		9003: {SpeciesId: 9003, Name: "bear_clawed", BodyParts: []string{"arms", "legs", "mouth"}, NaturalAttack: items.Claws},
+		// Fanged bear: has arms but NO hands — must still maul/throttle.
+		9006: {SpeciesId: 9006, Name: "bear_fanged", BodyParts: []string{"arms", "legs", "mouth"}, NaturalAttack: items.Bite},
+		// Handless horned beast — must still gore.
+		9004: {SpeciesId: 9004, Name: "hornedbeast", BodyParts: []string{"legs", "mouth", "horns"}, NaturalAttack: items.Gore},
+		// Hands-bearing LifeDrain vampire — drain must stay exempt from the hands rule.
+		9005: {SpeciesId: 9005, Name: "vamp", BodyParts: []string{"arms", "hands", "legs", "mouth"}, NaturalAttack: items.Claws, LifeDrain: true},
+	})
+	defer cleanup()
+	gob := &characters.Character{SpeciesId: 9001}
+	fang := &characters.Character{SpeciesId: 9002}
+	bearClawed := &characters.Character{SpeciesId: 9003}
+	bearFanged := &characters.Character{SpeciesId: 9006}
+	horned := &characters.Character{SpeciesId: 9004}
+	vamp := &characters.Character{SpeciesId: 9005}
+
+	// Hands-bearing creatures must NOT use beast natural-weapon moves.
+	if CanUseRake(gob) || CanUsePounce(gob) {
+		t.Error("hands goblinoid must not rake/pounce")
+	}
+	if CanUseMaul(fang) || CanUseThrottle(fang) || CanUseHamstring(fang) {
+		t.Error("hands fanged-humanoid must not maul/throttle/hamstring")
+	}
+
+	// Handless creatures with the matching identity MUST still use beast moves.
+	if !CanUseRake(bearClawed) {
+		t.Error("handless clawed bear must still rake")
+	}
+	if !CanUseMaul(bearFanged) {
+		t.Error("handless fanged bear must still maul")
+	}
+	if !CanUseGore(horned) {
+		t.Error("handless horned beast must still gore")
+	}
+
+	// Drain is LifeDrain-gated, NOT hands-gated — vampire with hands must drain.
+	if !CanUseDrain(vamp) {
+		t.Error("DRAIN MUST stay exempt — hands-bearing LifeDrain vampire still drains")
+	}
 }

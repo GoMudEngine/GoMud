@@ -24,7 +24,6 @@ idlecommands:
   - 'emote rumbles low and deep from somewhere underwater — felt through the boots more than heard'
 activitylevel: 5
 combatcommands:
-  - bash
   - ''
 character:
   name: Sump Dweller

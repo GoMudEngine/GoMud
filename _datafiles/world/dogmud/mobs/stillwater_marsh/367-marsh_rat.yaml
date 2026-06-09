@@ -1,6 +1,7 @@
 mobid: 367
 zone: Stillwater Marsh
 behavior_archetype: prey
+aiprofile: skirmisher
 archetype: fighting
 statpool: 20
 itemdropchance: 50

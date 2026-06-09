@@ -1,6 +1,7 @@
 mobid: 362
 zone: The Fernway South
 behavior_archetype: combat_passive
+aiprofile: skirmisher
 archetype: fighting
 statpool: 15
 itemdropchance: 50

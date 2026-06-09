@@ -6,6 +6,7 @@ hostile: true
 maxwander: 1
 archetype: fighting
 behavior_archetype: generic_fighter
+aiprofile: brute
 groups:
   - animal
   - boar

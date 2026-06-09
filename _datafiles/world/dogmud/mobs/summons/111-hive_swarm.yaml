@@ -4,6 +4,7 @@ archetype: fighting
 statpool: 18
 itemdropchance: 0
 hostile: false
+aiprofile: skirmisher
 maxwander: 0
 groups:
   - swarm

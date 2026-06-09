@@ -5,7 +5,9 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/exit"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -194,6 +196,15 @@ func TestHamstring_InCombat(t *testing.T) {
 	defer cleanup()
 
 	mob, room := getTestMobAndRoom(t)
+
+	// Hamstring is a beast move (Phase-4 hands rule): the default test mob is a
+	// humanoid (SpeciesId 1, has hands). Give it a fanged, no-hands beast species
+	// so it qualifies.
+	spCleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		2: {SpeciesId: 2, Name: "testbeast", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Bite},
+	})
+	defer spCleanup()
+	mob.Character.SpeciesId = 2
 
 	// Set up combat against player
 	mob.Character.Aggro = &characters.Aggro{UserId: 1}

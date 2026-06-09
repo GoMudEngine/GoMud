@@ -1,6 +1,7 @@
 mobid: 228
 zone: Ironwind Steppe
 behavior_archetype: leader
+aiprofile: skirmisher
 submission_policy: lethal
 surrender_policy: never
 routine: cave_pack_ironwind

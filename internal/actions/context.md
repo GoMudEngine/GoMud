@@ -84,6 +84,13 @@ same predicate is checked in `ai.go` (`CanUse*`) and
 `command_readiness.go`; drift rows in `command_readiness_drift_test.go`
 keep all three sync points in agreement.
 
+**Phase 4 — the `hands` gate.** Each of the six beast actions (incl.
+`ExecuteHamstring`, which gained an explicit identity gate in Phase 4)
+ALSO rejects an actor with a `hands` body part at the entry — beast
+natural-weapon moves are for true beasts, not tool-using humanoids. The
+`*_hashands` drift rows pin it. `ExecuteDrain` is EXEMPT (LifeDrain-flag
+gated), so armed undead still drain.
+
 | Action | Gate | Effects |
 |--------|------|---------|
 | `ExecuteRake` | clawed | Damage + short bleed |

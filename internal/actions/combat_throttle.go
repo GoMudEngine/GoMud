@@ -81,10 +81,11 @@ func ExecuteThrottle(actor Actor) ThrottleResult {
 		return ThrottleResult{NoTarget: true}
 	}
 
-	// Anatomy/identity gate (defense-in-depth): only fanged creatures throttle.
-	// Unreachable via the AI path (CanUseThrottle gates it) but reachable via a
-	// direct player command or a btree/combatcommands dispatch to a non-fanged mob.
-	if !combat.SpeciesIsFanged(char) {
+	// Anatomy/identity gate (defense-in-depth): only handless fanged creatures
+	// throttle. Unreachable via the AI path (CanUseThrottle gates it) but
+	// reachable via a direct player command or a btree/combatcommands dispatch
+	// to a non-fanged or tool-using mob.
+	if char.HasBodyPart("hands") || !combat.SpeciesIsFanged(char) {
 		return ThrottleResult{NotFanged: true}
 	}
 

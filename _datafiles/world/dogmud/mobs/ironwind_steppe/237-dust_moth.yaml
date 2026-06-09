@@ -1,5 +1,6 @@
 mobid: 237
 behavior_archetype: prey
+aiprofile: skirmisher
 zone: Ironwind Steppe
 statpool: 15
 itemdropchance: 0

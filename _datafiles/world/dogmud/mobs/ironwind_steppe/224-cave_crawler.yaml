@@ -1,6 +1,7 @@
 mobid: 224
 zone: Ironwind Steppe
 behavior_archetype: generic_fighter
+aiprofile: skirmisher
 routine: cave_pack_ironwind
 statpool: 140
 itemdropchance: 15

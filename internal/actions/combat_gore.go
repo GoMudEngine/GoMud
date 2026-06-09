@@ -68,10 +68,10 @@ func ExecuteGore(actor Actor) GoreResult {
 		return GoreResult{NoTarget: true}
 	}
 
-	// Horned gate (defense-in-depth): only horned creatures gore. Unreachable
-	// via the AI path (CanUseGore gates it) but reachable via a direct player
-	// command or btree dispatch to a non-horned mob.
-	if !combat.SpeciesIsHorned(char) {
+	// Horned gate (defense-in-depth): only handless horned creatures gore.
+	// Unreachable via the AI path (CanUseGore gates it) but reachable via a
+	// direct player command or btree dispatch to a non-horned or tool-using mob.
+	if char.HasBodyPart("hands") || !combat.SpeciesIsHorned(char) {
 		return GoreResult{NotHorned: true}
 	}
 

@@ -2,19 +2,19 @@ speciesid: 7
 name: deer
 description: A graceful, fleet-footed herbivore with large, watchful
   eyes. Deer rely on speed and acute senses to escape
-  danger, but will lash out with sharp hooves when cornered.
-body_parts: [legs, eyes, mouth, skin, tail]
+  danger, but a cornered buck will lower its antlers and gore.
+body_parts: [legs, eyes, mouth, skin, tail, horns]
 intrinsic_mutations:
   tail: 1
   keen-eyes: 1
 size: medium
-unarmedname: hooves
-natural_attack: slam
+unarmedname: antlers
+natural_attack: gore
 selectable: false
 tameable: true
 angrycommands:
   - emote stamps a hoof and snorts nervously.
-  - emote rears up, front hooves slashing the air.
+  - emote lowers its antlers and paws the ground.
 stats:
   strength:
     base: 70

@@ -13,9 +13,11 @@ import (
 // AI profile definitions with move preference weights
 var aiProfiles = map[string]map[string]int{
 	"caster": {
-		"kick": 10,
-		"trip": 10,
-		// prefers casting; ChooseCastAction() handles spell selection separately
+		"kick":  10,
+		"trip":  10,
+		"drain": 15, // lifedrain casters (wraith/spectre) leech occasionally when not casting
+		// prefers casting; ChooseCastAction() runs FIRST in handleMobAIDecision,
+		// so any special move (incl. drain) only fires when no spell is castable
 	},
 	"default": {
 		"bash":      25,
@@ -93,6 +95,17 @@ var aiProfiles = map[string]map[string]int{
 		"gore":   40,
 		"pounce": 25,
 		"bash":   10,
+	},
+	"skirmisher": { // small fanged vermin (rats, insects): harry, don't maul
+		"hamstring": 35,
+		"trip":      30,
+		"kick":      20,
+		"maul":      10,
+	},
+	"serpent": { // legless fanged (snakes, worms): strike + constrict
+		"maul":     35,
+		"throttle": 35,
+		// no pounce/hamstring — legless; anatomy gates them, don't weight them
 	},
 }
 
@@ -345,6 +358,9 @@ func CanUseHamstring(char *characters.Character) bool {
 	if !char.HasBodyPart("legs") {
 		return false
 	}
+	if char.HasBodyPart("hands") {
+		return false // beast natural-weapon moves are for true beasts, not tool-users
+	}
 	sp := species.GetSpecies(char.SpeciesId)
 	if sp == nil {
 		return false
@@ -470,6 +486,9 @@ func CanUseRake(char *characters.Character) bool {
 	if _, exists := char.Cooldowns["special-move"]; exists {
 		return false
 	}
+	if char.HasBodyPart("hands") {
+		return false // beast natural-weapon moves are for true beasts, not tool-users
+	}
 	return SpeciesIsClawed(char)
 }
 
@@ -493,6 +512,9 @@ func CanUseMaul(char *characters.Character) bool {
 	if _, exists := char.Cooldowns["special-move"]; exists {
 		return false
 	}
+	if char.HasBodyPart("hands") {
+		return false // beast natural-weapon moves are for true beasts, not tool-users
+	}
 	return SpeciesIsFanged(char)
 }
 
@@ -501,7 +523,7 @@ func CanUseMaul(char *characters.Character) bool {
 // package can use it for defense-in-depth gates at the action-entry and
 // CommandIsReady sync points without duplicating logic.
 func SpeciesIsQuadrupedPredator(char *characters.Character) bool {
-	return char.HasBodyPart("legs") && (SpeciesIsFanged(char) || SpeciesIsClawed(char))
+	return !char.HasBodyPart("hands") && char.HasBodyPart("legs") && (SpeciesIsFanged(char) || SpeciesIsClawed(char))
 }
 
 // CanUsePounce reports whether the actor can pounce on a target. Pounce is
@@ -598,6 +620,9 @@ func ScoreGrapple(mob *mobs.Mob, target *characters.Character) int {
 func CanUseGore(char *characters.Character) bool {
 	if _, exists := char.Cooldowns["special-move"]; exists {
 		return false
+	}
+	if char.HasBodyPart("hands") {
+		return false // beast natural-weapon moves are for true beasts, not tool-users
 	}
 	return SpeciesIsHorned(char)
 }
@@ -733,6 +758,9 @@ func ScoreSubmit(mob *mobs.Mob, target *characters.Character) int {
 func CanUseThrottle(char *characters.Character) bool {
 	if _, exists := char.Cooldowns["special-move"]; exists {
 		return false
+	}
+	if char.HasBodyPart("hands") {
+		return false // beast natural-weapon moves are for true beasts, not tool-users
 	}
 	return SpeciesIsFanged(char)
 }

@@ -1,5 +1,6 @@
 mobid: 214
 behavior_archetype: prey
+aiprofile: ambush_predator
 zone: Ironwind Steppe
 statpool: 35
 itemdropchance: 5
