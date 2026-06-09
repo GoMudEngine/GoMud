@@ -155,6 +155,24 @@ func GetAIProfile(profileName string, customPreferences map[string]int) map[stri
 	return result
 }
 
+// --- Beast-identity predicates (single source of truth for beast-move gating) ---
+
+func speciesNaturalAttack(char *characters.Character) items.ItemSubType {
+	if sp := species.GetSpecies(char.SpeciesId); sp != nil {
+		return sp.NaturalAttack
+	}
+	return ""
+}
+func speciesIsFanged(char *characters.Character) bool { return speciesNaturalAttack(char) == items.Bite }
+func speciesIsClawed(char *characters.Character) bool {
+	return speciesNaturalAttack(char) == items.Claws
+}
+func speciesIsHorned(char *characters.Character) bool { return speciesNaturalAttack(char) == items.Gore }
+func speciesHasLifeDrain(char *characters.Character) bool {
+	sp := species.GetSpecies(char.SpeciesId)
+	return sp != nil && sp.LifeDrain
+}
+
 // --- Viability checks ---
 
 func CanUseBash(char *characters.Character) bool {

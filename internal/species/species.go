@@ -51,6 +51,7 @@ type Species struct {
 	NaturalArmor     int              `yaml:"naturalarmor,omitempty"` // Innate damage reduction (chitin, thick hide, etc.)
 	DisabledSlots    []string         `yaml:"disabledslots,omitempty"`
 	NaturalBash      bool             `yaml:"naturalbash,omitempty"`    // Can bash without a shield (elementals, golems)
+	LifeDrain        bool             `yaml:"lifedrain,omitempty"`      // Drains life on its `drain` special (vampires, parasites)
 	ReturnDamage     int              `yaml:"return_damage,omitempty"`  // % of melee damage returned to attacker (fire elemental, etc.)
 	GrappleImmune    bool             `yaml:"grapple_immune,omitempty"` // Cannot be grappled (ethereal, fire, etc.)
 	BodyParts        []string         `yaml:"body_parts,omitempty"`     // Set of canonical body-part tags this species has
@@ -196,6 +197,20 @@ var validNaturalAttacks = map[items.ItemSubType]struct{}{
 	items.Sting: {},
 }
 
+// validateGoreHasHorns returns an error if a gore (horned) species does not
+// declare the "horns" body part — gore is anatomically a horn strike.
+func validateGoreHasHorns(s *Species) error {
+	if s.NaturalAttack != items.Gore {
+		return nil
+	}
+	for _, part := range s.BodyParts {
+		if part == "horns" {
+			return nil
+		}
+	}
+	return fmt.Errorf("species %d (%s): natural_attack gore requires \"horns\" in body_parts", s.SpeciesId, s.Name)
+}
+
 func validateNaturalAttack(s *Species) error {
 	if s.NaturalAttack == "" || s.NaturalAttack == items.Unarmed {
 		return nil
@@ -223,6 +238,9 @@ func LoadDataFiles() {
 		if err := validateNaturalAttack(s); err != nil {
 			panic(err)
 		}
+		if err := validateGoreHasHorns(s); err != nil {
+			panic(err)
+		}
 	}
 
 	mudlog.Info("species.LoadDataFiles()", "loadedCount", len(allSpecies), "Time Taken", time.Since(start))
@@ -240,6 +258,7 @@ var CanonicalBodyParts = []string{
 	"mouth", // biting/vocal apparatus
 	"skin",  // surface coverage
 	"tail",  // anatomical tail
+	"horns", // bony protrusions used for gore attacks
 }
 
 // IsCanonicalBodyPart reports whether the given tag is in the

@@ -588,6 +588,34 @@ func TestCanUseTrip_RequiresLegs(t *testing.T) {
 	}
 }
 
+// ─── Beast-identity predicates ──────────────────────────────────────────────
+
+func TestBeastIdentityPredicates(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		8001: {SpeciesId: 8001, Name: "wolf", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Bite},
+		8002: {SpeciesId: 8002, Name: "feline", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Claws},
+		8003: {SpeciesId: 8003, Name: "boar", BodyParts: []string{"legs", "mouth", "horns"}, NaturalAttack: items.Gore},
+		8004: {SpeciesId: 8004, Name: "vampire", BodyParts: []string{"arms", "hands", "legs"}, NaturalAttack: items.Claws, LifeDrain: true},
+	})
+	defer cleanup()
+	wolf := &characters.Character{SpeciesId: 8001}
+	feline := &characters.Character{SpeciesId: 8002}
+	boar := &characters.Character{SpeciesId: 8003}
+	vamp := &characters.Character{SpeciesId: 8004}
+	if !speciesIsFanged(wolf) || speciesIsFanged(feline) {
+		t.Error("fanged predicate wrong")
+	}
+	if !speciesIsClawed(feline) || speciesIsClawed(wolf) {
+		t.Error("clawed predicate wrong")
+	}
+	if !speciesIsHorned(boar) || speciesIsHorned(wolf) {
+		t.Error("horned predicate wrong")
+	}
+	if !speciesHasLifeDrain(vamp) || speciesHasLifeDrain(wolf) {
+		t.Error("lifedrain predicate wrong")
+	}
+}
+
 // ─── CanUseGrapple (anatomy gate) ───────────────────────────────────────────
 
 func TestCanUseGrapple_RequiresArms(t *testing.T) {
