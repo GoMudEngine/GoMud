@@ -23,7 +23,7 @@ combatcommands:
   - 'emote crackles and spins faster, striking from unexpected angles'
   - ''
 character:
-  name: air elemental
+  name: Air Elemental
   description: |
     A howling vortex of compressed wind that holds itself in a rough
     upright column, its edges fraying into wispy tendrils of current.

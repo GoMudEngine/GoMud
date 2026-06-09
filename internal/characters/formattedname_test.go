@@ -1,10 +1,22 @@
 package characters
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestFormattedName_MobUsesSmartTitleCase(t *testing.T) {
+	f := FormattedName{Name: "captain of the guard", Type: "mobname"}
+	out := f.String()
+	if !strings.Contains(out, "Captain of the Guard") {
+		t.Errorf("mob name not smart-title-cased; got %q", out)
+	}
+	if strings.Contains(out, "Of The") {
+		t.Errorf("minor words should be lowercased; got %q", out)
+	}
+}
 
 func TestGetFormattedAdjectives(t *testing.T) {
 	// Setup: populate adjectiveSwaps with test data

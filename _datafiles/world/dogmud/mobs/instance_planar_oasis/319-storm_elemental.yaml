@@ -19,7 +19,7 @@ combatcommands:
   - 'emote erupts in a burst of electrical fury'
   - ''
 character:
-  name: storm elemental
+  name: Storm Elemental
   description: >-
     A roiling mass of dark cloud and flickering lightning,
     compressed into a roughly bipedal shape. The air around

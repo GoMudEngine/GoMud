@@ -24,7 +24,7 @@ combatcommands:
 activitylevel: 35
 spawnmutations: [keen-eyes, fast-reflexes]
 character:
-  name: warren scout
+  name: Warren Scout
   description: |
     A small, wiry figure barely four feet tall, its skin pale as cave
     stone and faintly translucent at the temples where veins pulse visibly beneath.

@@ -1,5 +1,16 @@
 # DOGMud Patch Notes
 
+## 2026-06-09 — Consistent capitalization for names & titles
+
+Names and titles now use one consistent, polished capitalization everywhere —
+NPCs, items, rooms, spells, and your own character title. No more "human
+Ascendant master" or a mix of "Temple Priest Olen" and "temple priest olen" on
+different screens: it's smart Title Case throughout (with small connecting words
+like "of"/"the" kept lowercase, so it reads "Captain of the Guard"). Behind the
+scenes a guardrail keeps it that way — new content with sloppy casing is caught
+at startup. Targeting is unaffected (you can still `attack temple priest` or
+`get iron sword` in any case).
+
 ## 2026-06-09 — Bug sweep: sleep, town-square map tiles, salvage message
 
 - **You can sleep again.** The `sleep` command was failing outright (the

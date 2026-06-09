@@ -17,7 +17,7 @@ idlecommands:
   - 'emote picks at something on the ground with a sharp beak'
 activitylevel: 20
 character:
-  name: dust crow
+  name: Dust Crow
   description: |
     A large crow with dusty black plumage and a heavy, scarred beak.
     Dust crows are the steppe's most common scavengers -- bold,

@@ -23,7 +23,7 @@ activitylevel: 20
 spawnmutations: [thick-hide]
 mutationchance: 15
 character:
-  name: spore crawler
+  name: Spore Crawler
   description: |
     A flat, multi-legged creature the size of a large dog, its carapace
     crusted with the same pale fungus that grows on the hollow walls. It moves low

@@ -27,7 +27,7 @@ combatcommands:
   - 'emote absorbs the blow on the tower shield without flinching'
   - ''
 character:
-  name: arena champion
+  name: Arena Champion
   description: >-
     The arena champion is everything the pit produces at its
     best and worst: a fighter of terrible skill, shaped into

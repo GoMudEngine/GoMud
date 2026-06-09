@@ -8,7 +8,7 @@ statpool: 0
 aiprofile: "brawler"
 specialmovechance: 55
 character:
-  name: sparring partner
+  name: Sparring Partner
   description: A seasoned fighter wearing light training gear. They move with practiced
     ease, weapon held in a balanced guard stance. Their eyes track your movements
     carefully, ready to exploit any opening.

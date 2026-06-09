@@ -22,7 +22,7 @@ combatcommands:
   - 'emote reads the attack and angles away, counterstriking'
   - ''
 character:
-  name: arena veteran
+  name: Arena Veteran
   description: >-
     A fighter who has survived the pit long enough to carry
     permanent reminders of it — a jaw set crooked from a break

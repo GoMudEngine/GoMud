@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/casing"
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/ansitags"
@@ -46,23 +47,12 @@ type FormattedName struct {
 	DuplicateIndex     int    // When > 0, appends #N to name and shifts color for duplicates
 }
 
-// titleCase capitalizes the first letter of each word in a string.
-func titleCase(s string) string {
-	words := strings.Fields(s)
-	for i, w := range words {
-		if len(w) > 0 {
-			words[i] = strings.ToUpper(w[:1]) + w[1:]
-		}
-	}
-	return strings.Join(words, " ")
-}
-
 func (f FormattedName) String() string {
 
 	name := f.Name
-	// Title-case mob names for display (e.g., "valley rat" → "Valley Rat")
+	// Smart Title-Case mob names for display (single source of truth).
 	if strings.HasPrefix(f.Type, `mobname`) {
-		name = titleCase(name)
+		name = casing.Title(name)
 	}
 	ansiAlias := f.Type
 

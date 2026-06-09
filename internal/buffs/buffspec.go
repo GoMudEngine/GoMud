@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/GoMudEngine/GoMud/internal/casing"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
@@ -269,6 +270,12 @@ func LoadDataFiles() {
 	tmpBuffs, err := fileloader.LoadAllFlatFiles[int, *BuffSpec](dataPath)
 	if err != nil {
 		panic(errors.Wrap(err, `filepath: `+dataPath))
+	}
+
+	for id, b := range tmpBuffs {
+		if b.Name != "" {
+			casing.AssertCanonical(b.Name, "buff", fmt.Sprintf("%d", id))
+		}
 	}
 
 	buffs = tmpBuffs

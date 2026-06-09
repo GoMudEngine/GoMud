@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/casing"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -608,6 +609,15 @@ func LoadDataFiles() {
 	tmpItems, err := fileloader.LoadAllFlatFiles[int, *ItemSpec](dataPath + `/items`)
 	if err != nil {
 		panic(errors.Wrap(err, `filepath: `+dataPath+`/items`))
+	}
+
+	for id, spec := range tmpItems {
+		if spec.Name != "" {
+			casing.AssertCanonical(spec.Name, "item", fmt.Sprintf("%d", id))
+		}
+		if spec.DisplayName != "" {
+			casing.AssertCanonical(spec.DisplayName, "item displayname", fmt.Sprintf("%d", id))
+		}
 	}
 
 	items = tmpItems

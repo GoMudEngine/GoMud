@@ -25,7 +25,7 @@ combatcommands:
 activitylevel: 20
 spawnmutations: [thick-hide, cold-blooded]
 character:
-  name: river lurker
+  name: River Lurker
   description: |
     A low-slung creature somewhere between a crocodile and an eel,
     armoured in overlapping plates of dark, river-slicked hide. Its body is

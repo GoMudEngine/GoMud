@@ -23,7 +23,7 @@ combatcommands:
   - 'emote grasps with rotting fingers, pulling its target close'
   - ''
 character:
-  name: zombie
+  name: Zombie
   description: |
     A rotting corpse shambling forward with relentless, grinding purpose.
     Its flesh hangs loose, mottled grey and green, and the smell of decay

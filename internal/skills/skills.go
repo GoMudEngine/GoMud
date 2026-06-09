@@ -4,6 +4,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/casing"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/stats"
@@ -116,13 +117,13 @@ func GetMutationTier(owned map[string]int) string {
 	load := mutations.GetMutationLoad(owned)
 	switch {
 	case load >= 50:
-		return "Exalted"
+		return "exalted"
 	case load >= 30:
-		return "Ascendant"
+		return "ascendant"
 	case load >= 15:
-		return "Evolved"
+		return "evolved"
 	case load >= 1:
-		return "Awakened"
+		return "awakened"
 	default:
 		return ""
 	}
@@ -256,7 +257,7 @@ func GetTitle(owned map[string]int, allRanks map[string]int, s stats.Statistics)
 	parts = append(parts, skillTier)
 	parts = append(parts, archetype)
 
-	return strings.Join(parts, " ")
+	return casing.Title(strings.Join(parts, " "))
 }
 
 // SkillPrimaryStats maps each DOG skill to its primary governing stat.

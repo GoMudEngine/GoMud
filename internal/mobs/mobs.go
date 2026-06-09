@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/casing"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/conversations"
@@ -1185,6 +1186,13 @@ func LoadDataFiles() {
 	tmpMobs, err := fileloader.LoadAllFlatFiles[int, *Mob](dataPath)
 	if err != nil {
 		panic(errors.Wrap(err, `filepath: `+dataPath))
+	}
+
+	// Validate display names are canonical before building caches.
+	for id, mob := range tmpMobs {
+		if mob.Character.Name != "" {
+			casing.AssertCanonical(mob.Character.Name, "mob", fmt.Sprintf("%d", id))
+		}
 	}
 
 	// Build the derived caches outside the lock (no contention risk during startup).

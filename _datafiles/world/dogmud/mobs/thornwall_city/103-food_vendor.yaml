@@ -32,7 +32,7 @@ idlecommands:
   - 'say Hot food! Skewers, stew, tea -- come eat before it gets cold!'
 activitylevel: 20
 character:
-  name: food vendor
+  name: Food Vendor
   description: |
     A cheerful, round-faced woman in a stained apron, working a portable
     brazier cart at the edge of the market. She sells skewered meat, roasted

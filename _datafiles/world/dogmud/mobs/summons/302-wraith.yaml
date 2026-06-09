@@ -23,7 +23,7 @@ combatcommands:
   - 'emote phases through its target, trailing cold that cuts to the bone'
   - ''
 character:
-  name: wraith
+  name: Wraith
   description: |
     A spirit of pure necromantic fury, the wraith exists at the threshold
     between death and the mortal world. Its form is a suggestion of a figure —

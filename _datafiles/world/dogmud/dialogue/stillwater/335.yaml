@@ -146,7 +146,7 @@ tree:
         choice. Some of those caves are deeper than they look."
       hints: "Hand Drunn a leviathan tooth from the sump dweller for the
         full reward, or ask him about the bounty again to close it for
-        the partial payment now. Dock master Arn at the docks will also
+        the partial payment now. Dock Master Arn at the docks will also
         accept the tooth if you would rather."
       moodChange: friendly
 

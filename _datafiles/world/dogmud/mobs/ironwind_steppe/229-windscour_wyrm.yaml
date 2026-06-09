@@ -24,7 +24,7 @@ idlecommands:
   - 'emote shifts its bulk with a grinding of stone and scale'
 activitylevel: 10
 character:
-  name: windscour wyrm
+  name: Windscour Wyrm
   items:
     - itemid: 40010   # Chrysalis Core (Stage 3.4 — apex-tier rare drop)
       dropchance: 5   # match mob's itemdropchance; carried items default to 100%

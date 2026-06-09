@@ -19,7 +19,7 @@ idlecommands:
   - ''
 activitylevel: 20
 character:
-  name: city guard
+  name: City Guard
   description: |
     A guard in Thornwall livery. The city guard are a visible
     presence in the main streets and market, maintaining order through

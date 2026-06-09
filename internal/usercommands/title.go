@@ -3,6 +3,7 @@ package usercommands
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/casing"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
@@ -64,9 +65,9 @@ func Title(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	// Mutation tier progress
-	mutTierDisplay := mutTier
+	mutTierDisplay := casing.Title(mutTier)
 	if mutTierDisplay == "" {
-		mutTierDisplay = "none"
+		mutTierDisplay = "None"
 	}
 
 	// Stat lean - show top 3 stats
@@ -119,9 +120,9 @@ func Title(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		FullTitle: fullTitle,
 		MutTier:   mutTierDisplay,
 		MutLoad:   mutLoadDesc,
-		SkillTier: skillTier,
+		SkillTier: casing.Title(skillTier),
 		SkillPct:  skillProgress,
-		Archetype: archetype,
+		Archetype: casing.Title(archetype),
 		TopStats:  statVals[:3],
 	}
 

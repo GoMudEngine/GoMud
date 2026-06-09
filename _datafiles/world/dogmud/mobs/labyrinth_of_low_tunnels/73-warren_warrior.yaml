@@ -28,7 +28,7 @@ specialmovechance: 15
 spawnmutations: [dense-muscles, tough-skin]
 mutationchance: 20
 character:
-  name: warren warrior
+  name: Warren Warrior
   description: |
     Stockier than the scouts and half a head taller, this warren dweller
     has been bred -- or mutated -- for violence. Thick ridges of calcified tissue

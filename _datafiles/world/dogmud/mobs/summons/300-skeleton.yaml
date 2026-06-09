@@ -22,7 +22,7 @@ combatcommands:
   - 'emote drives its elbow into the attack with unnatural precision'
   - ''
 character:
-  name: skeleton
+  name: Skeleton
   description: |
     An animated skeleton, each bone scrubbed clean of flesh and bound by a pale
     necromantic fire that gutters in its empty eye sockets. It moves with
