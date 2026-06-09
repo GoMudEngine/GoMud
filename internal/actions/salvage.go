@@ -119,8 +119,17 @@ func salvageCorpse(actor Actor, room *rooms.Room, opts SalvageOptions, chance fl
 		// The mob path (TargetCorpseMobId == 0, "first eligible") fails
 		// silently because finding nothing is the normal idle outcome.
 		if actor.IsPlayer() && opts.TargetCorpseMobId != 0 {
-			actor.SendText(messaging.CategoryError,
-				`<ansi fg="red">You can no longer find the corpse you were working on.</ansi>`)
+			// Name the mob if we can resolve its spec (corpses inherit the
+			// mob's name), restoring the pre-2.9 "The <mob> corpse is no longer
+			// here." message; fall back to the generic line otherwise.
+			if spec := mobs.GetMobSpec(mobs.MobId(opts.TargetCorpseMobId)); spec != nil && spec.Character.Name != "" {
+				actor.SendText(messaging.CategoryError, fmt.Sprintf(
+					`<ansi fg="red">The <ansi fg="mobname">%s corpse</ansi> is no longer here.</ansi>`,
+					spec.Character.Name))
+			} else {
+				actor.SendText(messaging.CategoryError,
+					`<ansi fg="red">You can no longer find the corpse you were working on.</ansi>`)
+			}
 		}
 		result.Reason = "no eligible corpse"
 		return result

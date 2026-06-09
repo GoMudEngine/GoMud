@@ -524,7 +524,6 @@ func resolveCorpseSalvage(user *users.UserRecord, mobIdStr string) {
 	// Pull stashed corpse identity (existing logic).
 	roundCreatedInt, _ := user.Character.GetMiscData("salvage_corpse_round_created").(int)
 	user.Character.SetMiscData("salvage_corpse_round_created", nil)
-	user.Character.SetMiscData("salvage_corpse_name", nil)
 
 	actor := &actions.UserActor{
 		User: user,

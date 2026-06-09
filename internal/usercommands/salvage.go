@@ -173,7 +173,6 @@ func startCorpseSalvage(user *users.UserRecord, corpse rooms.Corpse) (bool, erro
 		user.Character.MiscData = map[string]any{}
 	}
 	user.Character.SetMiscData("salvage_corpse_round_created", int(corpse.RoundCreated))
-	user.Character.SetMiscData("salvage_corpse_name", corpse.Character.Name)
 
 	user.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`<ansi fg="yellow">You begin carefully working over the <ansi fg="mobname">%s corpse</ansi>...</ansi>`,
