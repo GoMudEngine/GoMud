@@ -106,6 +106,9 @@ func CommandIsReady(actor Actor, cmd string) bool {
 
 	case "pounce":
 		return char.Aggro != nil && combat.SpeciesIsQuadrupedPredator(char)
+
+	case "gore":
+		return char.Aggro != nil && combat.SpeciesIsHorned(char)
 	}
 
 	return false

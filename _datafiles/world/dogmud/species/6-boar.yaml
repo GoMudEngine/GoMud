@@ -3,7 +3,7 @@ name: boar
 description: A stocky, bristle-backed beast with curved tusks and a
   foul temper. Boars charge without hesitation and shrug
   off wounds that would fell lesser creatures.
-body_parts: [legs, eyes, mouth, skin, tail]
+body_parts: [legs, eyes, mouth, skin, tail, horns]
 intrinsic_mutations:
   tail: 1
   thick-hide: 1

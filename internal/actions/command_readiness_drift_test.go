@@ -53,6 +53,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 		7300: {SpeciesId: 7300, Name: "legged-test", BodyParts: []string{"legs"}},
 		7304: {SpeciesId: 7304, Name: "clawed-test", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Claws},
 		7305: {SpeciesId: 7305, Name: "fanged-test", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Bite},
+		7306: {SpeciesId: 7306, Name: "horned-test", BodyParts: []string{"legs", "mouth", "horns"}, NaturalAttack: items.Gore},
 	})
 	defer speciesCleanup()
 
@@ -372,6 +373,43 @@ func TestCommandReadinessDrift(t *testing.T) {
 				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
 			},
 			false, "NotPredator"},
+
+		// ─── gore ────────────────────────────────────────────────────────────
+		// gore_ready: horned species + default aggro (user 1, not found) →
+		// CommandIsReady returns true (horned gate passes, aggro non-nil).
+		// Execute is skipped for ready cases.
+		{"gore_ready", "gore",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7306 // horned-test seeded above
+			},
+			true, ""},
+		{"gore_cooldown", "gore",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7306
+				m.Character.Cooldowns = characters.Cooldowns{"special-move": 3}
+			},
+			false, "OnCooldown"},
+		{"gore_no_aggro", "gore",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7306
+				m.Character.EndAggro()
+			},
+			false, "NoTarget"},
+		// gore_nothorned: SpeciesId 0 → nil species → not horned.
+		// Default mob has aggro to user 1. CommandIsReady returns false.
+		// ExecuteGore burns the cooldown, resolves the target (user 1 not
+		// found → NoTarget first), but with a registered target mob we can
+		// reach the NotHorned gate.
+		{"gore_nothorned", "gore",
+			func(m *mobs.Mob) {
+				// SpeciesId 0 → nil species → not horned.
+				targetMob := &mobs.Mob{InstanceId: 212}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NotHorned"},
 	}
 
 	for _, tc := range cases {
@@ -380,7 +418,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 			// The mutate function may set up target mobs via
 			// mobs.SetInstanceForTest; we clean them all up here.
 			defer func() {
-				for id := 200; id <= 211; id++ {
+				for id := 200; id <= 212; id++ {
 					mobs.SetInstanceForTest(id, nil)
 				}
 			}()
@@ -511,6 +549,16 @@ func runExecuteAndReadFlag(cmd string, actor Actor, flag string) bool {
 			return r.NoTarget
 		case "NotPredator":
 			return r.NotPredator
+		}
+	case "gore":
+		r := ExecuteGore(actor)
+		switch flag {
+		case "OnCooldown":
+			return r.OnCooldown
+		case "NoTarget":
+			return r.NoTarget
+		case "NotHorned":
+			return r.NotHorned
 		}
 	}
 	return false

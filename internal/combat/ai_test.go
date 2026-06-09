@@ -688,6 +688,32 @@ func TestCanUseGrapple_RequiresArms(t *testing.T) {
 	}
 }
 
+// ─── CanUseGore ─────────────────────────────────────────────────────────────
+
+func TestCanUseGore_HornedTrueOthersFalse(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		9301: {SpeciesId: 9301, Name: "boar", BodyParts: []string{"legs", "mouth", "horns"}, NaturalAttack: items.Gore},
+		9302: {SpeciesId: 9302, Name: "wolf", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Bite},
+		9303: {SpeciesId: 9303, Name: "feline", BodyParts: []string{"legs", "paws"}, NaturalAttack: items.Claws},
+	})
+	defer cleanup()
+
+	boar := &characters.Character{SpeciesId: 9301, Cooldowns: characters.Cooldowns{}}
+	wolf := &characters.Character{SpeciesId: 9302, Cooldowns: characters.Cooldowns{}}
+	feline := &characters.Character{SpeciesId: 9303, Cooldowns: characters.Cooldowns{}}
+
+	assert.True(t, CanUseGore(boar), "horned boar should be able to gore")
+	assert.False(t, CanUseGore(wolf), "fanged wolf (not horned) should not gore")
+	assert.False(t, CanUseGore(feline), "clawed feline (not horned) should not gore")
+
+	// Cooldown gate.
+	boarOnCD := &characters.Character{
+		SpeciesId: 9301,
+		Cooldowns: characters.Cooldowns{"special-move": 3},
+	}
+	assert.False(t, CanUseGore(boarOnCD), "horned boar on cooldown should not gore")
+}
+
 // ─── CanUsePounce ───────────────────────────────────────────────────────────
 
 func TestCanUsePounce(t *testing.T) {

@@ -106,6 +106,10 @@ func ChooseSpecialMove(mob *mobs.Mob, target *characters.Character) string {
 		moveScores["pounce"] = ScorePounce(mob, target)
 	}
 
+	if CanUseGore(&mob.Character) {
+		moveScores["gore"] = ScoreGore(mob, target)
+	}
+
 	// No viable moves
 	if len(moveScores) == 0 {
 		return ""
@@ -534,6 +538,31 @@ func ScoreGrapple(mob *mobs.Mob, target *characters.Character) int {
 	mobHealthPercent := float64(mob.Character.Health) * 100.0 / float64(mob.Character.HealthMax.Value)
 	if mobHealthPercent < 20 {
 		score -= 50
+	}
+
+	if score < 0 {
+		score = 0
+	}
+	return score
+}
+
+// CanUseGore reports whether the actor can gore a target. Gore is a horned
+// beast move — a charging strike that drives the target backward — so it
+// requires a gore natural attack (i.e. the species is horned).
+func CanUseGore(char *characters.Character) bool {
+	if _, exists := char.Cooldowns["special-move"]; exists {
+		return false
+	}
+	return SpeciesIsHorned(char)
+}
+
+func ScoreGore(mob *mobs.Mob, target *characters.Character) int {
+	score := 50
+
+	if !target.IsOnFloor() {
+		score += 20 // wants a standing target to knock down
+	} else {
+		score -= 40
 	}
 
 	if score < 0 {
