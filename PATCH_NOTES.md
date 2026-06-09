@@ -1,5 +1,33 @@
 # DOGMud Patch Notes
 
+## 2026-06-08 — Web client: item icons in the equipment & inventory card
+
+The equipment/inventory card now shows a small painted **icon** for each item
+instead of a plain type glyph — drawn from a community icon pack plus a set of
+custom-generated icons filling the gaps (staffs, knuckles, hook-spears,
+component bags, and more). Icons pick the best match by equipment slot first,
+then material, with a clean SVG fallback when no art exists. The grid is denser
+and reflows to fit narrow panels.
+
+## 2026-06-08 — Web client: readability fixes
+
+- **Companion & party names in the Vitals card are legible again.** Their names
+  were nearly invisible (light text on the parchment field); they're now dark,
+  high-contrast ink, while their bars stay gently dimmed to set them apart from
+  your own.
+- **The Triggers card no longer cramps when actions are queued.** Adding a queue
+  bar used to squeeze the trigger rows; the list now scrolls instead, so the
+  rows keep their normal height.
+- **The graphical map controls stay out of the way** on small map panels —
+  they shrink and fade rather than overlapping the map itself.
+
+## 2026-06-08 — Under the hood: security & stability hardening
+
+Several defensive fixes hand-ported from upstream GoMud: admin-only gating on
+the web basic-auth and internal system commands, safer nil-handling when moving
+between or saving rooms, and a forced password change for any legacy
+plaintext-stored password on next login. No visible change in normal play.
+
 ## 2026-06-08 — Fix: trigger action queue now paces on the cooldown
 
 The "Queue this action" trigger option could fire everything at once instead of
