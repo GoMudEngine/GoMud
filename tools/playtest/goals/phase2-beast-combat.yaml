@@ -1,0 +1,46 @@
+# Phase 2 smoke: non-human anatomy-gated special moves + hamstring + bite retirement.
+# Goal: fight beasts and humanoids, observe combat narration, and report which
+# special moves each creature type uses. This confirms the anatomy gates behave
+# in live combat (negative assertions are hard to force, so report observations).
+
+session:
+  name: phase2-beast-combat
+  max_rounds: 220
+  notes: >
+    Verifying Phase 2 of the non-human combat work. Special moves are now gated
+    by species anatomy. Your job is to fight a variety of creatures and report,
+    per creature, what combat messages and special moves you observe.
+
+objectives:
+  - id: find-and-fight-a-beast
+    desc: >
+      Find a four-legged predator (wolf, dog, feline, boar, bear) and fight it.
+      Watch its attack narration closely. EXPECTED: its basic attacks should read
+      as bites/claws/gores (NOT punches). It may use "hamstring" (a low slash to
+      your legs) or "trip"/"kick". It must NEVER "grapple" you, apply a submission
+      hold, or "bash" with a shield. Report the exact combat lines you see it use.
+
+  - id: fight-a-legless-or-armless-creature
+    desc: >
+      If you can find a serpent/snake, slime, worm, or insect, fight it. EXPECTED:
+      it should NOT trip or kick you (no legs) and should NOT grapple (no arms).
+      Report what it does instead. (If none are reachable, say so.)
+
+  - id: fight-a-humanoid
+    desc: >
+      Fight a humanoid NPC (guard, bandit, townsperson that's attackable, or a
+      goblin). EXPECTED: humanoids can still grapple, bash (if shielded), trip,
+      and kick normally. Report the special moves you observe it use against you.
+
+  - id: confirm-bite-command-gone
+    desc: >
+      Biting is now a basic attack, not a special command. You should still SEE
+      fanged creatures bite during normal attacks. Just confirm bite narration
+      still appears for fanged creatures in your fights and note it.
+
+report:
+  - Per creature fought: name, species feel, and the exact special-move / attack
+    lines observed.
+  - Any creature that used a move that seems anatomically wrong (e.g. a wolf
+    grappling, a snake kicking) — call it out explicitly as a BUG.
+  - Overall: did combat feel stable, with no errors, raw buff IDs, or odd text?
