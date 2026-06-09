@@ -22,7 +22,7 @@ exits:
   south:
     roomid: 109
 idlemessages:
-- The <ansi fg="mobname">combat trainer</ansi> counts strikes under their breath.
+- The <ansi fg="mobname">Combat Trainer</ansi> counts strikes under their breath.
 - A <ansi fg="itemname">training dummy</ansi> sways slightly from a recent impact.
 - The sound of practiced footwork on packed basalt fills the air.
 spawninfo:
