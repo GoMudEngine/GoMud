@@ -1,5 +1,21 @@
 # DOGMud Patch Notes
 
+## 2026-06-08 — Bug fixes: duplicate warcry/rally conditions + CI data race
+
+- **Warcry and Rally no longer appear twice** in the conditions card and the
+  `conditions` command. Each effect existed as both a buff (bookkeeping) and a
+  combat condition (mechanics) with the same name; the display now shows it
+  once, via a new `condition-mirror` buff flag the buff-display loops skip.
+- **Fixed a data race in the config system.** Every config getter validated the
+  config (a one-time mutation) while holding only a read lock, so concurrent
+  first-use callers could mutate shared state simultaneously — a real
+  server-startup race the CI `-race` detector flagged. Validation now runs once
+  under a write lock (`ensureConfigValidated`, double-checked), and
+  `AddOverlayOverrides` takes the write lock it always needed.
+- **Quieted a spurious caravan log error.** Pickup-only vendor stops no longer
+  call `SaveThroughput` (which logged a harmless "no cached entry" error every
+  time); throughput is only persisted when a delivery actually changes it.
+
 ## 2026-06-08 — Web client: item icons in the equipment & inventory card
 
 The equipment/inventory card now shows a small painted **icon** for each item
