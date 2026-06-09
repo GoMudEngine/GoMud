@@ -61,6 +61,18 @@ The combat system is built around several key components:
 - Mob vs Player combat with AI integration
 - Mob vs Mob combat with charm attribution
 
+### Natural-Attack Subtype Resolution
+
+When an attacker has no equipped weapon, `buildWeaponSetup`
+(`combat_helpers.go`) resolves the attack-message subtype from the
+attacker's species `NaturalAttack` field (via `species.GetSpecies`).
+If non-empty, that subtype (`bite`, `claws`, `slam`, `gore`, `sting`)
+drives message selection instead of the generic-punch fallback
+(`items.Unarmed`). An equipped weapon's own `Subtype` always takes
+precedence — this path only fires when the weapon slot is empty. This
+is what makes non-human mobs' basic attacks read as bites or claws
+instead of punches.
+
 ## Key Features
 
 ### Advanced Combat Mechanics

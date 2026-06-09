@@ -29,6 +29,10 @@ contains:
   (e.g., "wolves get +10 Perception")
 - `body_parts` — canonical anatomy tags (chunk 2.5)
 - `intrinsic_mutations` — natural traits (chunk 2.5)
+- `natural_attack` — `ItemSubType` used for BASIC unarmed attack
+  combat messages (`bite`, `claws`, `slam`, `gore`, `sting`). Empty
+  means the humanoid default (generic-punch messaging). Validated at
+  load by `validateNaturalAttack`; panics on unknown values.
 
 ### Registry
 
@@ -68,6 +72,20 @@ Design: `docs/superpowers/specs/2026-05-12-mob-aliveness-2.5-mutations-on-mobs-d
 
 ---
 
+## Natural-Attack Subtype (Phase 1 non-human attacks)
+
+Non-human species declare their BASIC unarmed attack messaging style via
+`NaturalAttack items.ItemSubType` (YAML: `natural_attack:`). This field
+selects the combat-message file used when the mob has no equipped weapon.
+
+Valid values: `bite`, `claws`, `slam`, `gore`, `sting`. An empty string
+falls back to the humanoid default (generic-punch messaging). Unknown
+values cause a startup panic via `validateNaturalAttack`. The field has
+no effect on armed mobs — an equipped weapon's own `Subtype` always takes
+precedence.
+
+---
+
 ## Files in This Package
 
 | File | Purpose |
@@ -88,6 +106,9 @@ Species are consulted at:
    to fresh mob instances
 3. **Mutation acquisition** (`internal/mutations/mutations.go`,
    `GetWeightedPool()`) — filter candidates by body-part compatibility
+4. **Basic unarmed attacks** (`internal/combat/combat_helpers.go`) —
+   `buildWeaponSetup` reads `NaturalAttack` to select the attack-message
+   subtype for weapon-less mobs
 
 ---
 
