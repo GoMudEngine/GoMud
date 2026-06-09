@@ -10,7 +10,7 @@ specialmovechance: 25
 health_max: 5000
 stamina_max: 5000
 character:
-  name: training post
+  name: Training Post
   description: A reinforced training post the size of a man, animated by enchantment
     for combat-mechanic testing. Wrapped in layered hide and padded armor over an
     iron frame, it hits like a polite teacher and absorbs everything a fighter can

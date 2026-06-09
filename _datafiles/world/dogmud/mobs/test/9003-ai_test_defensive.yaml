@@ -8,7 +8,7 @@ statpool: 50
 combatcommands:
   - "say Testing defensive AI!"
 character:
-  name: ai_test_defensive
+  name: Ai_test_defensive
   description: "A combat training dummy configured with defensive AI behavior."
   speciesid: 1
   level: 10

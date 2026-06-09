@@ -8,7 +8,7 @@ statpool: 0
 aiprofile: "defensive"
 specialmovechance: 50
 character:
-  name: sparring archer
+  name: Sparring Archer
   description: A keen-eyed archer in light training gear, standing at the firing line
     with a bow drawn. They loose arrows with practiced precision, tracking targets
     downrange with calm focus.

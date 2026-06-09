@@ -26,7 +26,7 @@ combatcommands:
   - 'emote traces one finger along its jaw, watching with pale, flat eyes'
   - ''
 character:
-  name: vampire
+  name: Vampire
   description: |
     The vampire looks almost human until you notice the small things: the
     total stillness between movements, the way its eyes reflect light like a

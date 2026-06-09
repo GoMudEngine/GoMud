@@ -31,7 +31,7 @@ idlecommands:
   - 'emote traces a symbol in the air with a clawed finger'
 activitylevel: 20
 character:
-  name: goblin shaman
+  name: Goblin Shaman
   description: |
     Taller than the other goblins and draped in a cloak of stitched
     animal hides decorated with feathers, bones, and dried flowers.

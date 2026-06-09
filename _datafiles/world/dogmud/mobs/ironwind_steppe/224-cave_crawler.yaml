@@ -19,7 +19,7 @@ idlecommands:
   - 'emote scuttles across the ceiling, legs moving in a rippling wave'
 activitylevel: 15
 character:
-  name: cave crawler
+  name: Cave Crawler
   description: |
     A segmented, multi-legged creature adapted to life in total
     darkness. The cave crawler has a flattened body about two feet

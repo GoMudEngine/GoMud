@@ -23,7 +23,7 @@ combatcommands:
   - 'emote flares brightly, flames licking in all directions at once'
   - ''
 character:
-  name: fire elemental
+  name: Fire Elemental
   description: |
     A living column of flame that burns with unnatural focus, its fire
     deep orange at the core and shading to pale blue-white at the tips.

@@ -22,7 +22,7 @@ combatcommands:
   - 'emote takes the blow and answers with interest'
   - ''
 character:
-  name: arena veteran heavy
+  name: Arena Veteran Heavy
   description: >-
     A pit fighter who has traded speed for durability — iron
     plates cover the legs and torso over a base of chainmail,

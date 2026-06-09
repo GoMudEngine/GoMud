@@ -19,7 +19,7 @@ combatcommands:
   - 'emote hurls a spray of razor-sharp crystals'
   - ''
 character:
-  name: sand elemental
+  name: Sand Elemental
   description: >-
     A vaguely humanoid shape of swirling sand and crystalline
     grit. It moves in stuttering lurches, reforming after

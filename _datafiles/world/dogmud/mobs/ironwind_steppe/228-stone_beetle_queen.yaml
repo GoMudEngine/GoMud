@@ -25,7 +25,7 @@ idlecommands:
   - ''
 activitylevel: 10
 character:
-  name: stone beetle queen
+  name: Stone Beetle Queen
   items:
     - itemid: 40010   # Chrysalis Core (Stage 3.4 — re-sourced from Aberrant Chrysalis)
       dropchance: 10  # match mob's itemdropchance; carried items default to 100%

@@ -27,7 +27,7 @@ combatcommands:
   - 'emote drives a shoulder into its target with the force of falling stone'
   - ''
 character:
-  name: flesh golem
+  name: Flesh Golem
   description: |
     A massive construct of stitched and grafted corpse-parts, standing head
     and shoulders above a tall human. Its body is a patchwork of mismatched

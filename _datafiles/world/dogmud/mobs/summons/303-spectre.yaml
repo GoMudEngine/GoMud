@@ -23,7 +23,7 @@ combatcommands:
   - 'emote projects a wave of pure dread that presses on the chest like a stone'
   - ''
 character:
-  name: spectre
+  name: Spectre
   description: |
     The spectre makes no sound and casts no shadow. It moves through a room
     like a cold front, and where it lingers the courage drains from those

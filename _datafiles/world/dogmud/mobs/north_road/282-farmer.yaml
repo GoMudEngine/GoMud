@@ -21,7 +21,7 @@ idlecommands:
   - 'wander'
 activitylevel: 20
 character:
-  name: farmer
+  name: Farmer
   description: A weather-beaten figure in rough homespun, moving with the
     unhurried pace of someone who measures distance in daylight rather than
     miles. A sack of something heavy is slung over one shoulder. The kind of
