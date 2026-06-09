@@ -72,6 +72,11 @@ func ExecuteGrapple(actor Actor) GrappleResult {
 		return GrappleResult{OnCooldown: true}
 	}
 
+	// Grappling is a humanoid technique — requires arms to seize/hold.
+	if !char.HasBodyPart("arms") {
+		return GrappleResult{GrappleImmune: true}
+	}
+
 	// Resolve the aggro target.
 	target := ResolveAggroTarget(char.Aggro)
 	if !target.Found {

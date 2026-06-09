@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
@@ -85,6 +86,13 @@ func TestGetAIProfile_DoesNotMutateOriginal(t *testing.T) {
 // ─── CanUseBash ─────────────────────────────────────────────────────────────
 
 func TestCanUseBash(t *testing.T) {
+	// Seed SpeciesId 0 (used by characters.New()) with arms so the anatomy
+	// gate does not block the "can bash with shield" cases.
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		0: {SpeciesId: 0, Name: "human", BodyParts: []string{"arms", "hands", "legs"}},
+	})
+	defer cleanup()
+
 	tests := []struct {
 		name      string
 		hasShield bool
@@ -120,6 +128,13 @@ func TestCanUseBash(t *testing.T) {
 // ─── CanUseTrip ─────────────────────────────────────────────────────────────
 
 func TestCanUseTrip(t *testing.T) {
+	// Seed species 0 (characters.New()) with legs so the anatomy gate does not
+	// block the "can trip" cases.
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		0: {SpeciesId: 0, Name: "human", BodyParts: []string{"legs"}},
+	})
+	defer cleanup()
+
 	tests := []struct {
 		name     string
 		pos position.State
@@ -147,6 +162,13 @@ func TestCanUseTrip(t *testing.T) {
 // ─── CanUseKick ─────────────────────────────────────────────────────────────
 
 func TestCanUseKick(t *testing.T) {
+	// Seed species 0 (characters.New()) with legs so the anatomy gate does not
+	// block the "can kick" cases.
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		0: {SpeciesId: 0, Name: "human", BodyParts: []string{"legs"}},
+	})
+	defer cleanup()
+
 	t.Run("no cooldown", func(t *testing.T) {
 		c := characters.New()
 		assert.True(t, CanUseKick(c))
@@ -162,6 +184,13 @@ func TestCanUseKick(t *testing.T) {
 // ─── CanUseGrapple ──────────────────────────────────────────────────────────
 
 func TestCanUseGrapple(t *testing.T) {
+	// Seed the default species (SpeciesId 0, used by characters.New()) with
+	// arms so the anatomy gate does not block the "can grapple" cases.
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		0: {SpeciesId: 0, Name: "human", BodyParts: []string{"arms", "hands", "legs"}},
+	})
+	defer cleanup()
+
 	tests := []struct {
 		name     string
 		pos position.State
@@ -190,6 +219,13 @@ func TestCanUseGrapple(t *testing.T) {
 // ─── CanUseSubmit ───────────────────────────────────────────────────────────
 
 func TestCanUseSubmit(t *testing.T) {
+	// Seed SpeciesId 0 (characters.New default) with arms so these cases
+	// exercise the position/controller/cooldown logic, not the anatomy gate.
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		0: {SpeciesId: 0, Name: "test", BodyParts: []string{"arms", "hands", "legs"}},
+	})
+	defer cleanup()
+
 	tests := []struct {
 		name       string
 		pos        position.State
@@ -230,6 +266,52 @@ func TestCanUseSubmit(t *testing.T) {
 			}
 			assert.Equal(t, tt.want, CanUseSubmit(c))
 		})
+	}
+}
+
+func TestCanUseHamstring_FangedOrClawedWithLegs(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		7501: {SpeciesId: 7501, Name: "wolf", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Bite},
+		7502: {SpeciesId: 7502, Name: "human", BodyParts: []string{"arms", "hands", "legs", "mouth"}},
+		7503: {SpeciesId: 7503, Name: "serpent", BodyParts: []string{"mouth", "skin"}, NaturalAttack: items.Bite},
+	})
+	defer cleanup()
+
+	wolf := &characters.Character{SpeciesId: 7501, Cooldowns: characters.Cooldowns{}}
+	human := &characters.Character{SpeciesId: 7502, Cooldowns: characters.Cooldowns{}}
+	serpent := &characters.Character{SpeciesId: 7503, Cooldowns: characters.Cooldowns{}}
+
+	if !CanUseHamstring(wolf) {
+		t.Error("fanged, legged wolf should hamstring")
+	}
+	if CanUseHamstring(human) {
+		t.Error("plain humanoid (no natural fang/claw) should not hamstring")
+	}
+	if CanUseHamstring(serpent) {
+		t.Error("legless serpent should not hamstring (no legs to cut)")
+	}
+}
+
+func TestCanUseSubmit_RequiresArms(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		7401: {SpeciesId: 7401, Name: "humanoid", BodyParts: []string{"arms", "hands", "legs"}},
+		7402: {SpeciesId: 7402, Name: "noarms", BodyParts: []string{"legs", "mouth"}},
+	})
+	defer cleanup()
+
+	armed := characters.New()
+	armed.SpeciesId = 7401
+	setCombatPositionParallel(armed, position.Mount) // grounded + controller
+
+	beast := characters.New()
+	beast.SpeciesId = 7402
+	setCombatPositionParallel(beast, position.Mount)
+
+	if !CanUseSubmit(armed) {
+		t.Error("armed grappler-controller should be able to submit")
+	}
+	if CanUseSubmit(beast) {
+		t.Error("no-arms creature must NOT submit (submission holds need arms)")
 	}
 }
 
@@ -411,4 +493,117 @@ func TestScoreGrapple(t *testing.T) {
 		score := ScoreGrapple(makeMob(100, 0, 10, 100), target)
 		assert.Equal(t, 0, score) // 50 (base) - 50 (low hp) = 0, no str bonus since target stronger
 	})
+}
+
+// ─── CanUseBash (shield-or-naturalBash AND arms-or-naturalBash) ─────────────
+
+func TestCanUseBash_ShieldOrNaturalAndArms(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		7201: {SpeciesId: 7201, Name: "humanoid", BodyParts: []string{"arms", "hands"}},
+		7202: {SpeciesId: 7202, Name: "golem", BodyParts: []string{"arms"}, NaturalBash: true},
+		7203: {SpeciesId: 7203, Name: "noarms-elemental", BodyParts: []string{}, NaturalBash: true},
+		7204: {SpeciesId: 7204, Name: "wolf", BodyParts: []string{"legs", "mouth"}},
+		7205: {SpeciesId: 7205, Name: "shielded-noarms-beast", BodyParts: []string{"tentacles"}},
+	})
+	defer cleanup()
+
+	// Humanoid (has arms, no shield, not natural) — must NOT bash.
+	withNoShield := &characters.Character{SpeciesId: 7201}
+	if CanUseBash(withNoShield) {
+		t.Error("humanoid with no shield and not natural must NOT bash")
+	}
+
+	// Humanoid with shield equipped — CAN bash.
+	withShield := &characters.Character{SpeciesId: 7201}
+	withShield.Equipment.Offhand = items.Item{
+		ItemId: 1,
+		Spec: &items.ItemSpec{
+			Type:            items.Offhand,
+			DamageReduction: 5,
+			BlockRating:     10,
+		},
+	}
+	if !CanUseBash(withShield) {
+		t.Error("armed humanoid with shield should be able to bash")
+	}
+
+	// Golem: naturalBash + has arms — CAN bash without shield.
+	// Note: HasShield() already returns true for NaturalBash creatures; this
+	// tests that the arms gate passes too.
+	golem := &characters.Character{SpeciesId: 7202}
+	if !CanUseBash(golem) {
+		t.Error("golem (naturalBash) should bash without a shield")
+	}
+
+	// No-arms elemental: naturalBash + no arms — CAN bash (naturalBash bypasses both gates).
+	elemental := &characters.Character{SpeciesId: 7203}
+	if !CanUseBash(elemental) {
+		t.Error("no-arms elemental (naturalBash) should bash")
+	}
+
+	// Wolf: no arms, not natural, no shield — must NOT bash.
+	wolf := &characters.Character{SpeciesId: 7204}
+	if CanUseBash(wolf) {
+		t.Error("no-arms non-natural wolf must NOT bash")
+	}
+
+	// Shielded non-natural beast without arms — has a shield but cannot
+	// brace/drive forward without arms; must NOT bash. This is the case
+	// that the arms gate adds beyond the existing shield check.
+	shieldedNoArms := &characters.Character{SpeciesId: 7205}
+	shieldedNoArms.Equipment.Offhand = items.Item{
+		ItemId: 2,
+		Spec: &items.ItemSpec{
+			Type:            items.Offhand,
+			DamageReduction: 5,
+			BlockRating:     10,
+		},
+	}
+	if CanUseBash(shieldedNoArms) {
+		t.Error("shielded non-natural no-arms beast must NOT bash (lacks arms gate)")
+	}
+}
+
+// ─── CanUseTrip / CanUseKick (anatomy gate) ─────────────────────────────────
+
+func TestCanUseTrip_RequiresLegs(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		7301: {SpeciesId: 7301, Name: "wolf", BodyParts: []string{"legs", "mouth"}},
+		7302: {SpeciesId: 7302, Name: "serpent", BodyParts: []string{"mouth"}},
+	})
+	defer cleanup()
+	wolf := &characters.Character{SpeciesId: 7301}
+	serpent := &characters.Character{SpeciesId: 7302}
+	if !CanUseTrip(wolf) {
+		t.Error("legged wolf should trip")
+	}
+	if CanUseTrip(serpent) {
+		t.Error("legless serpent must NOT trip")
+	}
+	if !CanUseKick(wolf) {
+		t.Error("legged wolf should kick")
+	}
+	if CanUseKick(serpent) {
+		t.Error("legless serpent must NOT kick")
+	}
+}
+
+// ─── CanUseGrapple (anatomy gate) ───────────────────────────────────────────
+
+func TestCanUseGrapple_RequiresArms(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		7101: {SpeciesId: 7101, Name: "humanoid", BodyParts: []string{"arms", "hands", "legs"}},
+		7102: {SpeciesId: 7102, Name: "wolf", BodyParts: []string{"legs", "mouth", "tail"}},
+	})
+	defer cleanup()
+
+	humanoid := &characters.Character{SpeciesId: 7101}
+	wolf := &characters.Character{SpeciesId: 7102}
+
+	if !CanUseGrapple(humanoid) {
+		t.Error("armed humanoid should be able to grapple")
+	}
+	if CanUseGrapple(wolf) {
+		t.Error("no-arms wolf must NOT be able to grapple")
+	}
 }

@@ -1,5 +1,7 @@
 package actions
 
+import "github.com/GoMudEngine/GoMud/internal/species"
+
 // CommandIsReady returns true iff the named mob command would actually
 // execute its effect right now. Mirrors the early-return gates in each
 // Execute* function so the behavior tree's command_best_of action can
@@ -53,13 +55,26 @@ func CommandIsReady(actor Actor, cmd string) bool {
 		if !target.Found {
 			return false
 		}
+		if !char.HasBodyPart("legs") {
+			return false
+		}
 		return !target.Char.IsOnFloor()
 
 	case "bash":
 		if char.Aggro == nil {
 			return false
 		}
-		return char.HasShield()
+		naturalBash := false
+		if sp := species.GetSpecies(char.SpeciesId); sp != nil {
+			naturalBash = sp.NaturalBash
+		}
+		if !char.HasShield() && !naturalBash {
+			return false
+		}
+		if !char.HasBodyPart("arms") && !naturalBash {
+			return false
+		}
+		return true
 
 	case "grapple":
 		if char.Aggro == nil {
@@ -69,10 +84,16 @@ func CommandIsReady(actor Actor, cmd string) bool {
 		if !target.Found {
 			return false
 		}
+		if !char.HasBodyPart("arms") {
+			return false
+		}
 		return !target.Char.IsGrappling()
 
 	case "kick":
-		return char.Aggro != nil
+		if char.Aggro == nil {
+			return false
+		}
+		return char.HasBodyPart("legs")
 	}
 
 	return false

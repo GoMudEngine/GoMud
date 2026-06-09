@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -58,8 +59,19 @@ func ExecuteBash(actor Actor) BashResult {
 		return BashResult{NoTarget: true}
 	}
 
-	// Must have a shield equipped.
-	if !char.HasShield() {
+	// Must have a shield equipped — unless this creature bashes naturally
+	// (golems/elementals slam with their body).
+	naturalBash := false
+	if sp := species.GetSpecies(char.SpeciesId); sp != nil {
+		naturalBash = sp.NaturalBash
+	}
+	if !char.HasShield() && !naturalBash {
+		return BashResult{NoShield: true}
+	}
+	// Defense-in-depth: anatomy gate. Unreachable for players (always armed);
+	// AI/readiness gates already block no-arms mobs upstream. Reuse NoShield
+	// rather than add a flag for an unreachable branch.
+	if !char.HasBodyPart("arms") && !naturalBash {
 		return BashResult{NoShield: true}
 	}
 

@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
@@ -42,6 +43,14 @@ type driftCase struct {
 func TestCommandReadinessDrift(t *testing.T) {
 	cleanup := seedBuffsForTest()
 	defer cleanup()
+
+	// Seed a legged species for the trip_ready / kick_ready "happy path" rows.
+	// SpeciesId 0 is intentionally left unseeded so the no_legs rows below can
+	// rely on the nil-species → no-legs behavior.
+	speciesCleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		7300: {SpeciesId: 7300, Name: "legged-test", BodyParts: []string{"legs"}},
+	})
+	defer speciesCleanup()
 
 	cases := []driftCase{
 		// ─── taunt ────────────────────────────────────────────────
@@ -91,6 +100,8 @@ func TestCommandReadinessDrift(t *testing.T) {
 		// ─── trip ─────────────────────────────────────────────────
 		{"trip_ready", "trip",
 			func(m *mobs.Mob) {
+				// SpeciesId 7300 has legs (seeded above) so the anatomy gate passes.
+				m.Character.SpeciesId = 7300
 				// Target must be standing (not prone). newTestMob
 				// sets default aggro to user 1, but for trip we need
 				// a real target mob that's not prone.
@@ -144,6 +155,17 @@ func TestCommandReadinessDrift(t *testing.T) {
 				m.Character.SpeciesId = 1 // human, no naturalbash, no shield
 			},
 			false, "NoShield"},
+		// SpeciesId 0 → species.GetSpecies(0) returns nil in test context →
+		// HasBodyPart("arms") returns false, naturalBash=false. No shield
+		// equipped either. Both gates fire; the shield gate fires first so
+		// ExecuteBash returns NoShield=true (reused for the anatomy gate too).
+		// CommandIsReady likewise returns false. Boolean agreement is the goal.
+		{"bash_no_arms", "bash",
+			func(m *mobs.Mob) {
+				// SpeciesId stays 0 (nil species, no arms, not natural).
+				// Default test mob already has no shield and aggro set.
+			},
+			false, "NoShield"},
 
 		// ─── grapple ──────────────────────────────────────────────
 		{"grapple_crafting", "grapple",
@@ -169,10 +191,45 @@ func TestCommandReadinessDrift(t *testing.T) {
 		{"grapple_no_aggro", "grapple",
 			func(m *mobs.Mob) { m.Character.EndAggro() },
 			false, "NoTarget"},
+		// SpeciesId 0 → species.GetSpecies(0) returns nil (no species loaded in
+		// unit-test context) → HasBodyPart("arms") returns false. A valid
+		// non-grappling target is registered so target resolution succeeds and
+		// the arms gate is the sole blocking condition in CommandIsReady.
+		// ExecuteGrapple checks HasBodyPart before target resolution, so it
+		// also fires the arms gate and returns GrappleImmune:true.
+		{"grapple_no_arms", "grapple",
+			func(m *mobs.Mob) {
+				targetMob := &mobs.Mob{InstanceId: 206}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "GrappleImmune"},
+
+		// ─── trip anatomy gate ────────────────────────────────────
+		// SpeciesId 0 → species.GetSpecies(0) returns nil (no species loaded in
+		// unit-test context) → HasBodyPart("legs") returns false. A valid
+		// non-prone target is registered so target resolution succeeds and the
+		// legs gate is the sole blocking condition in CommandIsReady.
+		// ExecuteTrip also reaches the legs gate (after target resolution) and
+		// returns NoTarget:true (reused flag for the unreachable anatomy branch).
+		{"trip_no_legs", "trip",
+			func(m *mobs.Mob) {
+				targetMob := &mobs.Mob{InstanceId: 207}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NoTarget"},
 
 		// ─── kick ─────────────────────────────────────────────────
 		{"kick_ready", "kick",
-			func(m *mobs.Mob) { /* default has aggro */ },
+			func(m *mobs.Mob) {
+				// SpeciesId 7300 has legs (seeded above) so the anatomy gate passes.
+				m.Character.SpeciesId = 7300
+			},
 			true, ""},
 		{"kick_crafting", "kick",
 			func(m *mobs.Mob) {
@@ -187,6 +244,19 @@ func TestCommandReadinessDrift(t *testing.T) {
 		{"kick_no_aggro", "kick",
 			func(m *mobs.Mob) { m.Character.EndAggro() },
 			false, "NoTarget"},
+
+		// ─── kick anatomy gate ────────────────────────────────────
+		// SpeciesId 0 → nil species → no legs. Default mob has aggro set;
+		// CommandIsReady("kick") checks Aggro then HasBodyPart("legs") with no
+		// target resolution, so the legs gate is the blocking condition.
+		// ExecuteKick burns the cooldown, resolves the target (user 1 not found
+		// in test context → NoTarget:true), which coincidentally matches the
+		// reused flag for the anatomy gate. Boolean agreement is the goal.
+		{"kick_no_legs", "kick",
+			func(m *mobs.Mob) {
+				// SpeciesId stays 0 (nil species, no legs). Default aggro to user 1.
+			},
+			false, "NoTarget"},
 	}
 
 	for _, tc := range cases {
@@ -195,7 +265,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 			// The mutate function may set up target mobs via
 			// mobs.SetInstanceForTest; we clean them all up here.
 			defer func() {
-				for id := 200; id <= 205; id++ {
+				for id := 200; id <= 210; id++ {
 					mobs.SetInstanceForTest(id, nil)
 				}
 			}()
@@ -284,6 +354,8 @@ func runExecuteAndReadFlag(cmd string, actor Actor, flag string) bool {
 			return r.OnCooldown
 		case "NoTarget":
 			return r.NoTarget
+		case "GrappleImmune":
+			return r.GrappleImmune
 		}
 	case "kick":
 		r := ExecuteKick(actor)

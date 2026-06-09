@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
@@ -111,6 +112,11 @@ func TestCommandIsReady_Grapple_TargetAlreadyClinchedFalse(t *testing.T) {
 }
 
 func TestCommandIsReady_Kick_ReadyTrue(t *testing.T) {
+	// Seed species 0 with legs so the anatomy gate passes for the default test mob.
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		0: {SpeciesId: 0, Name: "human", BodyParts: []string{"legs"}},
+	})
+	defer cleanup()
 	m := newTestMob(t, nil)
 	actor := &MobActor{Mob: m, Room: nil}
 	assert.True(t, CommandIsReady(actor, "kick"))

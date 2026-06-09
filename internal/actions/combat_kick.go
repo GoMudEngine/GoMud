@@ -87,6 +87,11 @@ func ExecuteKick(actor Actor) KickResult {
 		return KickResult{NoTarget: true}
 	}
 
+	// Defense-in-depth anatomy gate; unreachable for players, AI/readiness gate upstream.
+	if !char.HasBodyPart("legs") {
+		return KickResult{NoTarget: true}
+	}
+
 	// Determine kick variant and associated params.
 	variant := KickStandard
 	damagePercent := float64(cfg.KickDamagePercent)

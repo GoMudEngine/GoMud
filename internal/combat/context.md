@@ -285,6 +285,43 @@ passive mob, walk away if on cooldown, repeat). The player learns to
 track their cooldown timing.
 - Prevents knockdown spam, encourages tactical timing
 
+### Anatomy-Gated Special Moves (non-human combat, Phase 2)
+
+Special moves are gated by the actor's species anatomy so non-humanoid
+creatures can't use human techniques. The predicate is
+`Character.HasBodyPart(part)` (reads the species `body_parts` list).
+The `CanUse*` viability checks in `ai.go` enforce:
+
+- **grapple / submit** → require `arms` (a beast with no arms can't
+  seize or apply a submission hold). `submit` is additionally
+  transitively gated (a controlling ground grapple already needs arms).
+- **bash** → requires `(HasShield OR NaturalBash) AND (arms OR
+  NaturalBash)`. `NaturalBash` species (golems, elementals) bash with
+  their whole body, bypassing both the shield and arms requirements.
+  Note `HasShield()` already returns true for `NaturalBash` species.
+- **trip / kick** → require `legs`. Wolves/felines (legged) trip and
+  kick naturally; serpents/oozes are blocked.
+- **hamstring** → requires `legs` AND a `Bite`/`Claws` natural attack.
+  It is a beast move (a low slash/bite to the leg tendons), now woken
+  into AI selection via `CanUseHamstring`/`ScoreHamstring` and weighted
+  in the `aggressive`/`brawler`/`default` AI profiles. `hamstring` is a
+  registered mob command, so `handleMobAIDecision` dispatches it like
+  the others.
+
+**Three sync points per gated move** (the `// SYNC POINT` contract):
+the AI `CanUse*` gate (`ai.go`), the parity check
+`actions.CommandIsReady` (`command_readiness.go`), and the action entry
+`actions.Execute*` (`combat_*.go`) must all agree. The action entry is
+defense-in-depth (unreachable for players, who are always humanoid);
+`TestCommandReadinessDrift` rows (`*_no_arms`/`*_no_legs`) assert the
+gate and readiness stay in sync.
+
+**Retired: the `bite` special.** Biting is now the Phase-1 basic attack
+for fanged species (see Natural-Attack Subtype Resolution above), so the
+dedicated `bite` special move (`actions.ExecuteBite` + the `bite` mob
+command) was removed. `items.Bite` (the natural-attack subtype) and
+`toxic-bite` (a mutation move) are unaffected.
+
 ### Target Switching
 Players can switch combat targets mid-fight using `attack <new-target>`:
 
