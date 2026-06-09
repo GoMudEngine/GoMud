@@ -322,6 +322,51 @@ dedicated `bite` special move (`actions.ExecuteBite` + the `bite` mob
 command) was removed. `items.Bite` (the natural-attack subtype) and
 `toxic-bite` (a mutation move) are unaffected.
 
+### Beast Moveset (Phase 3)
+
+Six beast special moves with full player↔mob command parity. Identity
+is gated at **three sync points** (the `// SYNC POINT` contract), the
+same pattern as Phase 2: the AI `CanUse*` viability check in `ai.go`,
+`CommandIsReady` in `command_readiness.go`, and the action entry
+`Execute*` (defense-in-depth, unreachable for ordinary humanoid players).
+`command_readiness_drift_test.go` rows assert all three sites agree.
+
+**Exported identity predicates** (single source of truth, `combat/ai.go`):
+- `SpeciesIsFanged` — species has a `bite`/`fangs` natural attack
+- `SpeciesIsClawed` — species has a `claws` natural attack
+- `SpeciesIsHorned` — species has `horns` in its `body_parts`
+- `SpeciesHasLifeDrain` — species carries `lifedrain: true`
+- `SpeciesIsQuadrupedPredator` — has `legs` AND (fanged OR clawed);
+  the gate for `pounce`
+
+| Move | Gate | Mechanic |
+|------|------|----------|
+| `rake` | clawed | Damage + short bleed (`claws.yaml` messages reused) |
+| `maul` | fanged | Heavier damage + stronger bleed (`maul.yaml`) |
+| `pounce` | quadruped predator, not already grappling | Leap opener: knockdown + damage, no bleed (`pounce.yaml`) |
+| `gore` | horned (`horns` body part — load-validated) | Charge: damage + knockback (`gore.yaml`) |
+| `drain` | `LifeDrain` flag (vampire) | Lifesteal: bleed target, heal attacker = `damage × DrainHealRatio` (0.75) via `Character.Heal` (`drain.yaml`) |
+| `throttle` | fanged | Damage + `ConditionBleeding` + Throttled buff #89 (stamina DoT) + high-probability cast interrupt via shared `actions.InterruptTargetCast` helper (`ThrottleInterruptChance` 0.75), which reuses the engine's existing `activity.TriggerCastCancel` cancel path (+ conviction refund). No new silence flag. (`throttle.yaml`) |
+
+**New species field:** `LifeDrain bool` (yaml `lifedrain`). Vampire
+(species 34) carries `lifedrain: true`; the boar (species 6) received
+`horns` added to its `body_parts`. Load validation: a species whose
+`natural_attack` is `gore` must declare `horns` in `body_parts` — the
+server panics at startup if the field is missing.
+
+**New AI profiles:** `predator` (fanged hunters), `ambush_predator`
+(clawed stalkers), `brute` (boars/bears). The new moves are also
+weighted into the existing `default` and `aggressive` profiles.
+
+**New config knobs** (`Balance` section):
+
+| Knob | Default | Effect |
+|------|---------|--------|
+| `DrainHealRatio` | 0.75 | Fraction of drain damage returned as healing to the attacker |
+| `ThrottleInterruptChance` | 0.75 | Probability throttle breaks the target's active cast |
+
+**New buff:** `89-throttled.yaml` — stamina tick DoT, no special flags.
+
 ### Target Switching
 Players can switch combat targets mid-fight using `attack <new-target>`:
 
