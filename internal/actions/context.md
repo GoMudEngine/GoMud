@@ -73,6 +73,31 @@ asserts the gate and `CommandIsReady` stay in agreement (the `*_no_arms`
 Phase-1 basic attack for fanged species (species `NaturalAttack`).
 `mobOnlyCommands` no longer lists `bite`. `toxic-bite` (mutation) stays.
 
+### Beast Special Moves (Phase 3)
+
+Six new `Execute*` actions gated by exported species-identity predicates
+from `internal/combat` (`SpeciesIsFanged`, `SpeciesIsClawed`,
+`SpeciesIsHorned`, `SpeciesHasLifeDrain`, `SpeciesIsQuadrupedPredator`).
+Each action checks the predicate at entry as defense-in-depth and returns
+a `Not<Identity>` result if the caller's species doesn't qualify. The
+same predicate is checked in `ai.go` (`CanUse*`) and
+`command_readiness.go`; drift rows in `command_readiness_drift_test.go`
+keep all three sync points in agreement.
+
+| Action | Gate | Effects |
+|--------|------|---------|
+| `ExecuteRake` | clawed | Damage + short bleed |
+| `ExecuteMaul` | fanged | Heavier damage + stronger bleed |
+| `ExecutePounce` | quadruped predator, not grappling | Knockdown + damage (no bleed) |
+| `ExecuteGore` | horned | Damage + knockback |
+| `ExecuteDrain` | `LifeDrain` flag | Damage + heal attacker (`damage × DrainHealRatio`) via `Character.Heal` |
+| `ExecuteThrottle` | fanged | Damage + bleed + Throttled buff #89 (stamina DoT) + cast interrupt via `InterruptTargetCast` |
+
+**`InterruptTargetCast`** is a shared helper that reuses the engine's
+existing `activity.TriggerCastCancel` cast-cancel path (conviction
+refund included). No new silence flag is introduced. `ExecuteThrottle`
+calls it with a `ThrottleInterruptChance` (0.75) probability gate.
+
 ---
 
 ## Skill Actions

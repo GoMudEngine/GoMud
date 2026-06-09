@@ -71,12 +71,17 @@ help:
       - consider
       - cooldowns
       - defense
+      - drain
       - flee
+      - gore
       - grapple
       - healing-gel
       - kick
       - pacifism-aura
       - pvp
+      - maul
+      - pounce
+      - rake
       - rally
       - shadow
       - shoot
@@ -88,6 +93,7 @@ help:
       - submit
       - target
       - taunt
+      - throttle
       - throw
       - toxic-bite
       - trip

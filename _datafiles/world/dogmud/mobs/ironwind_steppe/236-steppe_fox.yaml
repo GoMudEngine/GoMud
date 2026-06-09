@@ -12,6 +12,7 @@ hates:
   - rodent
   - insectoid
 archetype: fighting
+aiprofile: predator
 idlecommands:
   - 'emote watches from a distance, ears pricked forward'
   - ''

@@ -95,16 +95,31 @@ func TestValidateNaturalAttack(t *testing.T) {
 }
 
 func TestIsCanonicalBodyPart(t *testing.T) {
-	valid := []string{"arms", "hands", "legs", "eyes", "mouth", "skin", "tail"}
+	valid := []string{"arms", "hands", "legs", "eyes", "mouth", "skin", "tail", "horns"}
 	for _, v := range valid {
 		if !IsCanonicalBodyPart(v) {
 			t.Errorf("%q should be canonical", v)
 		}
 	}
-	invalid := []string{"wings", "horns", "fins", "tentacle", ""}
+	invalid := []string{"wings", "fins", "tentacle", ""}
 	for _, v := range invalid {
 		if IsCanonicalBodyPart(v) {
 			t.Errorf("%q should NOT be canonical", v)
 		}
+	}
+}
+
+func TestValidateGoreHasHorns(t *testing.T) {
+	horned := &Species{SpeciesId: 1, NaturalAttack: items.Gore, BodyParts: []string{"legs", "horns"}}
+	hornless := &Species{SpeciesId: 2, NaturalAttack: items.Gore, BodyParts: []string{"legs"}}
+	fanged := &Species{SpeciesId: 3, NaturalAttack: items.Bite, BodyParts: []string{"mouth"}}
+	if err := validateGoreHasHorns(horned); err != nil {
+		t.Errorf("horned gore should validate: %v", err)
+	}
+	if err := validateGoreHasHorns(hornless); err == nil {
+		t.Error("hornless gore must error")
+	}
+	if err := validateGoreHasHorns(fanged); err != nil {
+		t.Errorf("non-gore should validate: %v", err)
 	}
 }

@@ -19,6 +19,7 @@ idlecommands:
   - ''
 activitylevel: 65
 combatcommands:
+  - drain
   - ''
   - 'emote moves with impossible speed, closing distance in a single step'
   - ''

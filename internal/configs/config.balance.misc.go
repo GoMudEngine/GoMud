@@ -208,6 +208,18 @@ func (b *Balance) validateMisc() {
 	if b.KickKnockdownChance < 0 || b.KickKnockdownChance > 100 {
 		b.KickKnockdownChance = 35
 	}
+	if b.DrainHealRatio <= 0 {
+		b.DrainHealRatio = 0.75
+	}
+	if b.DrainHealRatio > 2.0 {
+		b.DrainHealRatio = 2.0
+	}
+	if b.ThrottleInterruptChance <= 0 {
+		b.ThrottleInterruptChance = 0.75
+	}
+	if b.ThrottleInterruptChance > 1.0 {
+		b.ThrottleInterruptChance = 1.0
+	}
 	if b.StompDamagePercent <= 0 || b.StompDamagePercent > 3.0 {
 		b.StompDamagePercent = 1.20
 	}

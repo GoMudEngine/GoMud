@@ -1,0 +1,8 @@
+buffid: 89
+name: Throttled
+description: A crushing grip on your throat -- you can barely breathe.
+triggerrate: 1 round
+triggercount: 3
+tick_pool: stamina
+tick_percent: -0.06
+tick_min: 2

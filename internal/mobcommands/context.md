@@ -27,6 +27,16 @@ The `internal/mobcommands` package implements the AI command system for non-play
   The dedicated `bite` command was **retired** — biting is now the basic
   attack for fanged species (see `internal/combat` Natural-Attack Subtype
   Resolution). `toxic-bite` (mutation) is unaffected.
+- **Beast moves (Phase 3)**: `rake` (clawed), `maul` (fanged), `pounce`
+  (quadruped predator, not grappling), `gore` (horned), `drain` (lifedrain
+  species flag), `throttle` (fanged) — registered as both mob and user
+  commands for full parity. Selected by `combat.ChooseSpecialMove` via the
+  new `predator`, `ambush_predator`, and `brute` AI profiles (also weighted
+  in `default`/`aggressive`). Each is gated by the exported predicates
+  `combat.SpeciesIsFanged` / `SpeciesIsClawed` / `SpeciesIsHorned` /
+  `SpeciesHasLifeDrain` / `SpeciesIsQuadrupedPredator` at three sync points:
+  `CanUse*` in `ai.go`, `CommandIsReady`, and the action entry. Drift rows
+  in `command_readiness_drift_test.go` keep all three in sync.
 - **Tactical support**: `callforhelp` - Coordinated group combat behaviors
 - **Self-preservation**: Retreat and defensive behaviors
 

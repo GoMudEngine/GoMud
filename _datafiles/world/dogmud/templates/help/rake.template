@@ -1,0 +1,34 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">rake</ansi>
+
+The <ansi fg="command">rake</ansi> command drives your natural claws across your opponent,
+tearing open wounds that continue to bleed. It deals moderate
+damage and applies a bleeding condition on a successful strike.
+
+<ansi fg="yellow">Requirements:</ansi>
+
+  - Must have natural claws (clawed species only)
+  - Must be in active combat
+  - Cannot be used if special move cooldown is active
+
+<ansi fg="yellow">Usage:</ansi>
+
+  <ansi fg="command">rake</ansi>
+  Attempt to rake your current combat target
+
+<ansi fg="yellow">Mechanics:</ansi>
+
+  <ansi fg="stat">Damage:</ansi> Moderate — the slashing strike itself deals real harm.
+  <ansi fg="stat">Bleed:</ansi> A successful rake opens wounds that continue to
+    bleed over several rounds, dealing additional damage beyond
+    the initial strike.
+  <ansi fg="stat">Cooldown:</ansi> Shared with other special moves.
+  <ansi fg="stat">Skill:</ansi> Progresses Unarmed Combat
+
+Rake's persistent bleed makes it valuable for wearing down
+opponents over the course of a longer fight. See
+<ansi fg="command">help conditions</ansi> for details on the bleeding effect.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help hamstring</ansi>, <ansi fg="command">help kick</ansi>,
+  <ansi fg="command">help conditions</ansi>, <ansi fg="command">help combat</ansi>

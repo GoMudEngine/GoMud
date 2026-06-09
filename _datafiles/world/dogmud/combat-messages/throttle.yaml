@@ -1,0 +1,350 @@
+# Possible tokens:
+# {itemname}    - name of weapon/object e.g. 'fangs'
+# {source}      - name of mob or user e.g. 'wolf'
+# {sourcetype}  - 'user' or 'mob'
+# {target}      - name of mob or user e.g. 'goblin'
+# {targettype}  - 'user' or 'mob'
+# {damage}      - damage dealt as an integer e.g. '5'
+# {exitname}    - name of exit for attack e.g. 'north'
+# {entrancename}- name of entrance for attack e.g. 'south'
+# {stance}      - combat stance
+# {position}    - combat position
+# {momentum}    - combat momentum
+optionid: throttle
+options:
+  prepare:
+    together:
+      toattacker:
+        beginner:
+        - 'You eye <ansi fg="{targettype}">{target}</ansi>''s throat, your <ansi fg="item">{itemname}</ansi> parting in anticipation.'
+        - 'You circle <ansi fg="{targettype}">{target}</ansi>, angling for a clear shot at their throat.'
+        - 'You lower your head and fix on <ansi fg="{targettype}">{target}</ansi>''s exposed neck.'
+        expert:
+        - 'From a {stance} stance, you close the distance, your <ansi fg="item">{itemname}</ansi> ready to clamp.'
+        - 'You feint high to draw <ansi fg="{targettype}">{target}</ansi>''s guard, positioning for the throat.'
+        - '{momentum}, you angle for the gap in <ansi fg="{targettype}">{target}</ansi>''s defense.'
+        master:
+        - 'With cold precision, you read <ansi fg="{targettype}">{target}</ansi>''s throat exposure while {position}.'
+        - 'Every movement of <ansi fg="{targettype}">{target}</ansi> gives you another angle — {momentum}.'
+        - 'You hold your patience, {momentum}, <ansi fg="item">{itemname}</ansi> coiled and ready.'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> eyes your throat with hungry intent.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> circles you, watching your neck.'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> part as it closes in.'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> feints to draw your guard and angles for your throat.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> closes from a {stance} stance, targeting your neck.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> reads your posture, angling for your exposed throat.'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> reads every shift of your head with terrifying patience.'
+        - 'With cold calm, <ansi fg="{sourcetype}">{source}</ansi> angles its <ansi fg="item">{itemname}</ansi> toward your windpipe.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> waits, {momentum}, for the precise moment to strike your throat.'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> circles <ansi fg="{targettype}">{target}</ansi>, eyes fixed on their throat.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> eyes <ansi fg="{targettype}">{target}</ansi>''s neck with dark focus.'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> feints to draw <ansi fg="{targettype}">{target}</ansi>''s guard and angles for the throat.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> closes from a {stance} stance, targeting the neck.'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> reads <ansi fg="{targettype}">{target}</ansi>''s posture with predatory patience.'
+        - 'With cold precision, <ansi fg="{sourcetype}">{source}</ansi> angles for the throat.'
+  wait:
+    together:
+      toattacker:
+        beginner:
+        - 'You circle <ansi fg="{targettype}">{target}</ansi>, waiting for their throat to be exposed.'
+        - 'You feint and watch for an opening at <ansi fg="{targettype}">{target}</ansi>''s neck.'
+        - 'You keep pressure on <ansi fg="{targettype}">{target}</ansi>, your <ansi fg="item">{itemname}</ansi> poised.'
+        expert:
+        - 'From your {stance} position, you probe <ansi fg="{targettype}">{target}</ansi>''s guard, {momentum}.'
+        - 'You circle <ansi fg="{targettype}">{target}</ansi> with patient focus while {position}.'
+        - 'You bait a high strike from <ansi fg="{targettype}">{target}</ansi>, waiting for the throat to open.'
+        master:
+        - 'Every feint <ansi fg="{targettype}">{target}</ansi> makes is catalogued — you wait for the perfect angle.'
+        - '{momentum}, you hold your ground and track the throat with predatory stillness.'
+        - 'Like a beast before a kill, you breathe and wait, {momentum}.'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> circles you, waiting for your guard to drop.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> watches your throat and waits.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> feints and holds, eyes on your neck.'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> probes your guard from a {stance} stance, {momentum}.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> circles you with patient focus, targeting your throat.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> baits your strike and watches for the opening.'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> catalogues every one of your feints with predatory precision.'
+        - '{momentum}, <ansi fg="{sourcetype}">{source}</ansi> holds with terrible patience.'
+        - 'Like a beast before a kill, <ansi fg="{sourcetype}">{source}</ansi> breathes and watches you.'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> circles <ansi fg="{targettype}">{target}</ansi>, waiting for an opening at the throat.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> watches <ansi fg="{targettype}">{target}</ansi>''s neck with dark patience.'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> probes <ansi fg="{targettype}">{target}</ansi>''s guard, waiting for the throat.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> circles <ansi fg="{targettype}">{target}</ansi> with predatory stillness.'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> catalogues every movement of <ansi fg="{targettype}">{target}</ansi>.'
+        - 'With terrible patience, <ansi fg="{sourcetype}">{source}</ansi> waits for the perfect angle.'
+  miss:
+    together:
+      toattacker:
+        beginner:
+        - 'Your <ansi fg="item">{itemname}</ansi> snap at <ansi fg="{targettype}">{target}</ansi>''s throat but find nothing!'
+        - 'You lunge for the throat but <ansi fg="{targettype}">{target}</ansi> pulls away!'
+        - '<ansi fg="{targettype}">{target}</ansi> twists clear before your <ansi fg="item">{itemname}</ansi> can close!'
+        - 'Your throttle lunge goes wide and your <ansi fg="item">{itemname}</ansi> clap on empty air!'
+        expert:
+        - 'Your calculated lunge falls short — <ansi fg="{targettype}">{target}</ansi> reads the angle!'
+        - 'Despite your {stance} approach, the throat slips your <ansi fg="item">{itemname}</ansi>!'
+        - 'You feint and drive, but <ansi fg="{targettype}">{target}</ansi> ducks away!'
+        - '{momentum}, your precise strike finds nothing but air!'
+        master:
+        - '<ansi fg="{targettype}">{target}</ansi>''s unexpected movement forces your perfect choke wide!'
+        - 'Despite flawless timing, <ansi fg="{targettype}">{target}</ansi> drops their chin and escapes the clamp!'
+        - 'A masterful angle undone by a faster dodge — your <ansi fg="item">{itemname}</ansi> miss!'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> snaps at your throat but misses!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> clamp on empty air as you twist away!'
+        - 'You pull your throat back as <ansi fg="{sourcetype}">{source}</ansi>''s jaws close on nothing!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> lunges for your windpipe but fails to connect!'
+        expert:
+        - 'You read <ansi fg="{sourcetype}">{source}</ansi>''s angle and slip the choke cleanly!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s calculated lunge falls short as you step aside!'
+        - 'You drop your chin and deny <ansi fg="{sourcetype}">{source}</ansi>''s throttle attempt!'
+        master:
+        - 'Your footwork forces <ansi fg="{sourcetype}">{source}</ansi>''s perfect throttle wide!'
+        - 'You slip the angle with masterful timing and deny the choke!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s flawless lunge meets an equally flawless defense!'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> snaps at <ansi fg="{targettype}">{target}</ansi>''s throat but misses!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> close on empty air!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> lunges for the windpipe but fails to connect!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s calculated lunge falls short as <ansi fg="{targettype}">{target}</ansi> steps aside!'
+        - '<ansi fg="{targettype}">{target}</ansi> drops their chin and denies the choke!'
+        - '<ansi fg="{targettype}">{target}</ansi> slips the angle cleanly!'
+        master:
+        - '<ansi fg="{targettype}">{target}</ansi>''s footwork forces the perfect throttle wide!'
+        - 'A masterful escape — <ansi fg="{targettype}">{target}</ansi> denies the choke entirely!'
+        - 'Flawless attack, flawless defense — <ansi fg="{sourcetype}">{source}</ansi> finds nothing!'
+  weak:
+    together:
+      toattacker:
+        beginner:
+        - 'Your <ansi fg="item">{itemname}</ansi> graze <ansi fg="{targettype}">{target}</ansi>''s throat.'
+        - 'You catch <ansi fg="{targettype}">{target}</ansi> with a glancing bite at the neck.'
+        - 'Your choke finds the edge of <ansi fg="{targettype}">{target}</ansi>''s throat.'
+        expert:
+        - 'You dart in and nick <ansi fg="{targettype}">{target}</ansi>''s neck with your <ansi fg="item">{itemname}</ansi>.'
+        - 'Angling from {stance}, you score a shallow graze at the windpipe.'
+        - 'You feint high and drive low, barely catching the throat.'
+        master:
+        - 'You draw the guard and catch the throat with a light clamp, {momentum}.'
+        - 'From your {stance} stance, you nick the windpipe and release.'
+        - 'You find a narrow opening and score a shallow choke.'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> grazes your throat with its <ansi fg="item">{itemname}</ansi>.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> catches you with a glancing bite at the neck.'
+        - 'You feel a shallow graze as <ansi fg="{sourcetype}">{source}</ansi>''s jaws barely catch your throat.'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> darts in and nicks your neck.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> angles in from {stance} and scores a shallow graze.'
+        - 'You feel a light clamp at your windpipe before <ansi fg="{sourcetype}">{source}</ansi> releases.'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> draws your guard and catches your throat lightly.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> finds the narrow opening and scores a shallow choke.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> nicks your windpipe with cold precision and withdraws.'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi> grazes <ansi fg="{targettype}">{target}</ansi>''s throat.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> catches <ansi fg="{targettype}">{target}</ansi> with a glancing bite.'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> darts in and nicks <ansi fg="{targettype}">{target}</ansi>''s neck.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> angles in and scores a shallow graze at the windpipe.'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> draws the guard and catches the throat lightly.'
+        - '<ansi fg="{sourcetype}">{source}</ansi> finds the narrow opening and scores a shallow choke.'
+  normal:
+    together:
+      toattacker:
+        beginner:
+        - 'Your <ansi fg="item">{itemname}</ansi> clamp around <ansi fg="{targettype}">{target}</ansi>''s throat!'
+        - 'You seize <ansi fg="{targettype}">{target}</ansi> by the windpipe!'
+        - 'Your jaws lock around <ansi fg="{targettype}">{target}</ansi>''s neck — they gasp!'
+        - 'You drive your <ansi fg="item">{itemname}</ansi> into <ansi fg="{targettype}">{target}</ansi>''s throat and squeeze!'
+        expert:
+        - 'You close from {stance} and clamp your <ansi fg="item">{itemname}</ansi> around the windpipe!'
+        - 'Stepping into the lunge, you drive your <ansi fg="item">{itemname}</ansi> through <ansi fg="{targettype}">{target}</ansi>''s guard to the throat!'
+        - 'You feint high and close low, {momentum}, jaws finding the neck!'
+        - 'Your <ansi fg="item">{itemname}</ansi> lock around <ansi fg="{targettype}">{target}</ansi>''s throat as they choke for air!'
+        master:
+        - 'You press the advantage and clamp the windpipe, {momentum}!'
+        - 'From {stance}, you seize <ansi fg="{targettype}">{target}</ansi>''s throat with crushing precision!'
+        - 'You exploit the gap and throttle decisively while {position}!'
+        - '{momentum}, your <ansi fg="item">{itemname}</ansi> lock tight around the throat!'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> clamp around your throat!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> seizes your windpipe — you gasp for air!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s jaws lock around your neck, cutting off your air!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> drives their <ansi fg="item">{itemname}</ansi> into your throat and squeezes!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> closes from {stance} and clamps your windpipe!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> drives through your guard and locks onto your throat!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> feints and closes low, {momentum}, finding your neck!'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> seizes your throat with crushing precision!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> presses the advantage and clamps the windpipe!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> exploits the gap and throttles you decisively!'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> clamp around <ansi fg="{targettype}">{target}</ansi>''s throat!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> seizes <ansi fg="{targettype}">{target}</ansi> by the windpipe!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s jaws lock around <ansi fg="{targettype}">{target}</ansi>''s neck!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> closes from {stance} and clamps the windpipe!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> drives through the guard and locks onto the throat!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> feints high and closes low, finding the neck!'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> seizes <ansi fg="{targettype}">{target}</ansi>''s throat with crushing precision!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> presses the advantage and clamps the windpipe!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> exploits the gap and throttles decisively!'
+  heavy:
+    together:
+      toattacker:
+        beginner:
+        - 'Your <ansi fg="item">{itemname}</ansi> crush <ansi fg="{targettype}">{target}</ansi>''s throat with brutal force!'
+        - 'You seize <ansi fg="{targettype}">{target}</ansi> by the windpipe and crush!'
+        - 'Your jaws close around <ansi fg="{targettype}">{target}</ansi>''s neck and squeeze savagely!'
+        - 'You drive deep and clamp <ansi fg="{targettype}">{target}</ansi>''s throat with overwhelming force!'
+        expert:
+        - 'From {stance}, you close and crush the windpipe with merciless pressure!'
+        - 'You pivot and drive your <ansi fg="item">{itemname}</ansi> deep into <ansi fg="{targettype}">{target}</ansi>''s throat, {momentum}!'
+        - 'You feint wide and slam your jaws around the neck with punishing force!'
+        - 'Reading the weakness, you close and crush with overwhelming weight!'
+        master:
+        - 'While {position} and {momentum}, you drive your <ansi fg="item">{itemname}</ansi> deep and hold!'
+        - 'From {stance}, you deliver a savage choke to <ansi fg="{targettype}">{target}</ansi>!'
+        - 'You exploit the position and crush the windpipe with beast-like efficiency!'
+        - '{momentum}, you clamp with overwhelming, suffocating force!'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> crush your throat with brutal force!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> seizes your windpipe and crushes!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s jaws close around your neck and squeeze savagely!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> clamps your throat with overwhelming force!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> closes from {stance} and crushes your windpipe!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> pivots and drives into your throat with brutal force!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> feints wide and slams their jaws around your neck!'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> drives their <ansi fg="item">{itemname}</ansi> deep and holds!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> exploits your position and crushes the windpipe!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> clamps your throat with overwhelming, suffocating force!'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> crush <ansi fg="{targettype}">{target}</ansi>''s throat!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> seizes <ansi fg="{targettype}">{target}</ansi>''s windpipe and crushes!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s jaws close around <ansi fg="{targettype}">{target}</ansi>''s neck savagely!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi> closes from {stance} and crushes the windpipe!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> pivots and drives into the throat with brutal force!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> feints wide and slams their jaws around the neck!'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> drives their <ansi fg="item">{itemname}</ansi> deep and holds!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> exploits the position and crushes the windpipe!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> clamps the throat with overwhelming, suffocating force!'
+  critical:
+    together:
+      toattacker:
+        beginner:
+        - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRUSH</ansi> <ansi fg="{targettype}">{target}</ansi>''s windpipe!'
+        - 'You deliver a <ansi fg="cyan-bold">CRITICAL CHOKE</ansi> to <ansi fg="{targettype}">{target}</ansi>!'
+        - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">DEVASTATE</ansi> <ansi fg="{targettype}">{target}</ansi>''s throat!'
+        - 'You land a <ansi fg="cyan-bold">CRUSHING THROTTLE</ansi> on <ansi fg="{targettype}">{target}</ansi>!'
+        expert:
+        - 'You close and your <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">OBLITERATE</ansi> <ansi fg="{targettype}">{target}</ansi>''s windpipe!'
+        - 'Lunging {momentum}, you deliver a <ansi fg="cyan-bold">PERFECT CHOKE</ansi>!'
+        - 'Your masterful feint opens <ansi fg="{targettype}">{target}</ansi> completely — you <ansi fg="cyan-bold">ANNIHILATE</ansi> the throat!'
+        - 'Reading every move, you deliver a <ansi fg="cyan-bold">FLAWLESS THROTTLE</ansi>!'
+        master:
+        - 'Your tactical pressure creates the perfect opening — you <ansi fg="cyan-bold">CRUSH</ansi> <ansi fg="{targettype}">{target}</ansi>''s throat!'
+        - 'Your {stance} precision culminates in a <ansi fg="cyan-bold">DEVASTATING CRITICAL</ansi> choke!'
+        - 'While {position}, {momentum}, you deliver a <ansi fg="cyan-bold">PERFECT EXECUTION</ansi>!'
+        - 'Exploiting total advantage, you <ansi fg="cyan-bold">THROTTLE</ansi> <ansi fg="{targettype}">{target}</ansi> with brutal precision!'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRUSH</ansi> your windpipe!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s choke delivers a <ansi fg="cyan-bold">CRITICAL THROTTLE</ansi>!'
+        - 'You are <ansi fg="cyan-bold">DEVASTATED</ansi> as <ansi fg="{sourcetype}">{source}</ansi> crushes your throat!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> lands a <ansi fg="cyan-bold">CRUSHING THROTTLE</ansi> on your windpipe!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">OBLITERATE</ansi> your windpipe!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> lunges and delivers a <ansi fg="cyan-bold">PERFECT CHOKE</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s masterful feint opens you completely — they <ansi fg="cyan-bold">ANNIHILATE</ansi> your throat!'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s tactical pressure creates the opening — you are <ansi fg="cyan-bold">THROTTLED</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> executes a <ansi fg="cyan-bold">DEVASTATING THROTTLE</ansi> from the perfect angle!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> exploits total advantage and <ansi fg="cyan-bold">CRUSHES</ansi> your windpipe!'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">CRUSH</ansi> <ansi fg="{targettype}">{target}</ansi>''s windpipe!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s choke delivers a <ansi fg="cyan-bold">CRITICAL THROTTLE</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="cyan-bold">DEVASTATES</ansi> <ansi fg="{targettype}">{target}</ansi>''s throat!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> <ansi fg="cyan-bold">OBLITERATE</ansi> <ansi fg="{targettype}">{target}</ansi>''s windpipe!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> lunges forward with a <ansi fg="cyan-bold">PERFECT CHOKE</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s masterful feint opens <ansi fg="{targettype}">{target}</ansi> — <ansi fg="cyan-bold">ANNIHILATION</ansi>!'
+        master:
+        - '<ansi fg="{sourcetype}">{source}</ansi> reads every move and delivers a <ansi fg="cyan-bold">FLAWLESS THROTTLE</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s tactical pressure creates the opening — <ansi fg="cyan-bold">DEVASTATION</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> exploits total advantage and <ansi fg="cyan-bold">CRUSHES</ansi> <ansi fg="{targettype}">{target}</ansi>''s throat!'
+  fumble:
+    together:
+      toattacker:
+        beginner:
+        - 'Your throttle lunge <ansi fg="red-bold">FUMBLES</ansi> as your <ansi fg="item">{itemname}</ansi> find nothing!'
+        - 'You <ansi fg="red-bold">FUMBLE</ansi> and stumble past your target off-balance!'
+        - 'Your <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">CLAP SHUT</ansi> on empty air!'
+        - 'You lose your angle and your throttle <ansi fg="red-bold">FUMBLES</ansi>!'
+        expert:
+        - 'Your tactical choke fails catastrophically — you <ansi fg="red-bold">FUMBLE</ansi>!'
+        - 'You misjudge the angle and <ansi fg="red-bold">FUMBLE</ansi> the throttle!'
+        - 'Your feint backfires and you <ansi fg="red-bold">FUMBLE</ansi> the lunge badly!'
+        master:
+        - '<ansi fg="{targettype}">{target}</ansi>''s unexpected movement forces you to <ansi fg="red-bold">FUMBLE</ansi>!'
+        - 'Despite perfect timing, a misstep causes you to <ansi fg="red-bold">FUMBLE</ansi>!'
+        - 'Your masterful choke is disrupted — you <ansi fg="red-bold">FUMBLE</ansi> entirely!'
+      todefender:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s throttle <ansi fg="red-bold">FUMBLES</ansi> as its <ansi fg="item">{itemname}</ansi> find nothing!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> the throttle in an embarrassing stumble!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s attack <ansi fg="red-bold">FUMBLES</ansi> as it loses its angle!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> clap shut on empty air!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s tactical approach fails — they <ansi fg="red-bold">FUMBLE</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> misjudges the angle and <ansi fg="red-bold">FUMBLES</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s feint backfires into a <ansi fg="red-bold">FUMBLE</ansi>!'
+        master:
+        - 'Your movement forces <ansi fg="{sourcetype}">{source}</ansi> to <ansi fg="red-bold">FUMBLE</ansi>!'
+        - 'Despite their skill, <ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> the choke!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s masterful throttle is disrupted — they <ansi fg="red-bold">FUMBLE</ansi>!'
+      toroom:
+        beginner:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s <ansi fg="item">{itemname}</ansi> <ansi fg="red-bold">FUMBLE</ansi> at <ansi fg="{targettype}">{target}</ansi>''s throat!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> the throttle and stumbles past!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi> the choke in a clumsy lurch!'
+        expert:
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s tactical approach fails — they <ansi fg="red-bold">FUMBLE</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi> misjudges the angle and <ansi fg="red-bold">FUMBLES</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s feint backfires catastrophically!'
+        master:
+        - '<ansi fg="{targettype}">{target}</ansi>''s movement forces <ansi fg="{sourcetype}">{source}</ansi> to <ansi fg="red-bold">FUMBLE</ansi>!'
+        - 'Despite masterful form, <ansi fg="{sourcetype}">{source}</ansi> <ansi fg="red-bold">FUMBLES</ansi>!'
+        - '<ansi fg="{sourcetype}">{source}</ansi>''s perfect choke is disrupted — a <ansi fg="red-bold">FUMBLE</ansi>!'

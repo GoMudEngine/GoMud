@@ -26,6 +26,16 @@ The `internal/usercommands` package implements the complete command system for p
 - **Direct combat**: `attack`, `shoot`, `throw` - Offensive actions
 - **Combat skills**: `disarm`, `tackle`, `backstab`, `recover` - Specialized combat techniques
 - **Defensive**: `flee`, `aid` - Escape and assistance mechanics
+- **Beast special moves (Phase 3)**: `rake`, `maul`, `pounce`, `gore`,
+  `drain`, `throttle` — registered as player commands for full
+  player↔mob parity, but gated at the action entry by species-identity
+  predicates (`combat.SpeciesIsFanged`, `SpeciesIsClawed`,
+  `SpeciesIsHorned`, `SpeciesHasLifeDrain`, `SpeciesIsQuadrupedPredator`).
+  Baseline humanoid players cannot use them; they are intended for beast
+  mobs and future beast-mutated players. The action returns a
+  `Not<Identity>` result for ineligible callers. See
+  `internal/combat/context.md` "Beast Moveset (Phase 3)" for full
+  gate and mechanic details.
 
 #### **Skill-Based Commands**
 - **Magic system**: `cast`, `enchant`, `unenchant`, `prepare` - Spellcasting mechanics

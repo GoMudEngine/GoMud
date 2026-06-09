@@ -23,7 +23,7 @@ combatcommands:
   - 'emote lunges for your throat with both forefeet off the ground'
   - ''
 activitylevel: 50
-aiprofile: aggressive
+aiprofile: predator
 character:
   name: Resin Hound
   description: |

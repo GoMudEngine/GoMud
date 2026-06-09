@@ -1,0 +1,37 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">gore</ansi>
+
+The <ansi fg="command">gore</ansi> command launches a horned creature into a
+charging strike that drives the target backward. It deals
+solid damage and has a strong chance to knock the target
+to the ground on a successful hit.
+
+<ansi fg="yellow">Requirements:</ansi>
+
+  - Must have a gore natural attack (horned species)
+  - Must be in active combat
+  - Cannot be used if special move cooldown is active
+
+<ansi fg="yellow">Usage:</ansi>
+
+  <ansi fg="command">gore</ansi>
+  Attempt to gore your current combat target
+
+<ansi fg="yellow">Mechanics:</ansi>
+
+  <ansi fg="stat">Damage:</ansi> Solid — the charging impact deals meaningful
+    harm on contact.
+  <ansi fg="stat">Knockdown:</ansi> A successful gore has a strong chance to
+    drive the target backward off their feet (Supine),
+    leaving them vulnerable to follow-up attacks.
+  <ansi fg="stat">Cooldown:</ansi> Shared with other special moves.
+  <ansi fg="stat">Skill:</ansi> Progresses Unarmed Combat
+
+Gore is a powerful opener that combines direct damage with
+a knockdown attempt. Unlike pounce, it relies on raw
+strength and momentum rather than agility. See
+<ansi fg="command">help conditions</ansi> for details on Supine.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help pounce</ansi>, <ansi fg="command">help maul</ansi>, <ansi fg="command">help rake</ansi>,
+  <ansi fg="command">help kick</ansi>, <ansi fg="command">help conditions</ansi>, <ansi fg="command">help combat</ansi>

@@ -1,0 +1,16 @@
+next_id: 2
+bounties:
+    - id: 1
+      issuer:
+        type: faction
+        id: thornwall_citizens
+      target:
+        type: player
+        id: 17
+      gold_reward: 100
+      rep_reward: 1
+      condition: kill
+      declared_round: 1314000
+      expiry_round: 1319000
+      status: open
+      declared_reason: Murder (faction thornwall_citizens)

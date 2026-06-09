@@ -11,6 +11,7 @@ hates:
   - rodent
   - insectoid
 archetype: fighting
+aiprofile: ambush_predator
 idlecommands:
   - 'emote crouches low in the grass, tail twitching'
   - ''

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/state"
@@ -47,8 +48,13 @@ func TestCommandReadinessDrift(t *testing.T) {
 	// Seed a legged species for the trip_ready / kick_ready "happy path" rows.
 	// SpeciesId 0 is intentionally left unseeded so the no_legs rows below can
 	// rely on the nil-species → no-legs behavior.
+	// SpeciesId 7304 is a clawed species for the rake_ready / rake_notclawed rows.
 	speciesCleanup := species.SeedSpeciesForTest(map[int]*species.Species{
 		7300: {SpeciesId: 7300, Name: "legged-test", BodyParts: []string{"legs"}},
+		7304: {SpeciesId: 7304, Name: "clawed-test", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Claws},
+		7305: {SpeciesId: 7305, Name: "fanged-test", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Bite},
+		7306: {SpeciesId: 7306, Name: "horned-test", BodyParts: []string{"legs", "mouth", "horns"}, NaturalAttack: items.Gore},
+		7307: {SpeciesId: 7307, Name: "vampire-test", BodyParts: []string{"arms", "hands", "legs", "mouth"}, NaturalAttack: items.Claws, LifeDrain: true},
 	})
 	defer speciesCleanup()
 
@@ -257,6 +263,246 @@ func TestCommandReadinessDrift(t *testing.T) {
 				// SpeciesId stays 0 (nil species, no legs). Default aggro to user 1.
 			},
 			false, "NoTarget"},
+
+		// ─── rake ─────────────────────────────────────────────────
+		// rake_ready: clawed species + default aggro (user 1, not found) →
+		// CommandIsReady returns true (species gate passes, aggro non-nil).
+		// Execute is skipped for ready cases.
+		{"rake_ready", "rake",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7304 // clawed-test seeded above
+			},
+			true, ""},
+		{"rake_cooldown", "rake",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7304
+				m.Character.Cooldowns = characters.Cooldowns{"special-move": 3}
+			},
+			false, "OnCooldown"},
+		{"rake_no_aggro", "rake",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7304
+				m.Character.EndAggro()
+			},
+			false, "NoTarget"},
+		// rake_notclawed: SpeciesId 0 → nil species → not clawed. Default mob
+		// has aggro to user 1. CommandIsReady returns false. ExecuteRake burns
+		// the cooldown, resolves the target (user 1 not found → NoTarget first),
+		// but with a registered target mob we can reach the NotClawed gate.
+		// Use a registered mob target so target resolution succeeds and NotClawed fires.
+		{"rake_notclawed", "rake",
+			func(m *mobs.Mob) {
+				// SpeciesId 0 → nil species → not clawed.
+				targetMob := &mobs.Mob{InstanceId: 209}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NotClawed"},
+
+		// ─── maul ─────────────────────────────────────────────────────────────
+		// maul_ready: fanged species + default aggro (user 1, not found) →
+		// CommandIsReady returns true (species gate passes, aggro non-nil).
+		// Execute is skipped for ready cases.
+		{"maul_ready", "maul",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7305 // fanged-test seeded above
+			},
+			true, ""},
+		{"maul_cooldown", "maul",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7305
+				m.Character.Cooldowns = characters.Cooldowns{"special-move": 3}
+			},
+			false, "OnCooldown"},
+		{"maul_no_aggro", "maul",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7305
+				m.Character.EndAggro()
+			},
+			false, "NoTarget"},
+		// maul_notfanged: SpeciesId 0 → nil species → not fanged. Default mob
+		// has aggro to user 1. CommandIsReady returns false. ExecuteMaul burns
+		// the cooldown, resolves the target (user 1 not found → NoTarget first),
+		// but with a registered target mob we can reach the NotFanged gate.
+		// Use a registered mob target so target resolution succeeds and NotFanged fires.
+		{"maul_notfanged", "maul",
+			func(m *mobs.Mob) {
+				// SpeciesId 0 → nil species → not fanged.
+				targetMob := &mobs.Mob{InstanceId: 210}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NotFanged"},
+
+		// ─── pounce ───────────────────────────────────────────────────────────
+		// pounce_ready: clawed legged species + default aggro (user 1, not found)
+		// → CommandIsReady returns true (predator gate passes, aggro non-nil).
+		// Execute is skipped for ready cases.
+		{"pounce_ready", "pounce",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7304 // clawed-test seeded above (has legs + claws)
+			},
+			true, ""},
+		{"pounce_cooldown", "pounce",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7304
+				m.Character.Cooldowns = characters.Cooldowns{"special-move": 3}
+			},
+			false, "OnCooldown"},
+		{"pounce_no_aggro", "pounce",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7304
+				m.Character.EndAggro()
+			},
+			false, "NoTarget"},
+		// pounce_notpredator: SpeciesId 0 → nil species → not a quadruped predator.
+		// Default mob has aggro to user 1. CommandIsReady returns false.
+		// ExecutePounce burns the cooldown, resolves the target (user 1 not
+		// found → NoTarget first), but with a registered target mob we can
+		// reach the NotPredator gate.
+		{"pounce_notpredator", "pounce",
+			func(m *mobs.Mob) {
+				// SpeciesId 0 → nil species → not a quadruped predator.
+				targetMob := &mobs.Mob{InstanceId: 211}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NotPredator"},
+
+		// pounce_grappling: SpeciesId 7304 (predator) but the actor is in
+		// Clinch — CommandIsReady gates on !IsGrappling(), ExecutePounce gates
+		// after target resolution. A registered target ensures ResolveAggroTarget
+		// returns Found=true so the Grappling gate is what fires, not NoTarget.
+		{"pounce_grappling", "pounce",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7304 // clawed-test: legs + claws → predator
+				// Put the actor into a Clinch grapple so IsGrappling() returns true.
+				setCombatPositionParallel(&m.Character, position.Clinch)
+				// Register a target so ResolveAggroTarget returns Found=true and
+				// the Grappling gate (not NoTarget) is the blocking condition.
+				targetMob := &mobs.Mob{InstanceId: 215}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "Grappling"},
+
+		// ─── gore ────────────────────────────────────────────────────────────
+		// gore_ready: horned species + default aggro (user 1, not found) →
+		// CommandIsReady returns true (horned gate passes, aggro non-nil).
+		// Execute is skipped for ready cases.
+		{"gore_ready", "gore",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7306 // horned-test seeded above
+			},
+			true, ""},
+		{"gore_cooldown", "gore",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7306
+				m.Character.Cooldowns = characters.Cooldowns{"special-move": 3}
+			},
+			false, "OnCooldown"},
+		{"gore_no_aggro", "gore",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7306
+				m.Character.EndAggro()
+			},
+			false, "NoTarget"},
+		// gore_nothorned: SpeciesId 0 → nil species → not horned.
+		// Default mob has aggro to user 1. CommandIsReady returns false.
+		// ExecuteGore burns the cooldown, resolves the target (user 1 not
+		// found → NoTarget first), but with a registered target mob we can
+		// reach the NotHorned gate.
+		{"gore_nothorned", "gore",
+			func(m *mobs.Mob) {
+				// SpeciesId 0 → nil species → not horned.
+				targetMob := &mobs.Mob{InstanceId: 212}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NotHorned"},
+
+		// ─── drain ───────────────────────────────────────────────────────────
+		// drain_ready: LifeDrain species + default aggro (user 1, not found) →
+		// CommandIsReady returns true (lifedrain gate passes, aggro non-nil).
+		// Execute is skipped for ready cases.
+		{"drain_ready", "drain",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7307 // lifedrain-test seeded above
+			},
+			true, ""},
+		{"drain_cooldown", "drain",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7307
+				m.Character.Cooldowns = characters.Cooldowns{"special-move": 3}
+			},
+			false, "OnCooldown"},
+		{"drain_no_aggro", "drain",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7307
+				m.Character.EndAggro()
+			},
+			false, "NoTarget"},
+		// drain_notlifedrainer: SpeciesId 0 → nil species → no LifeDrain.
+		// Default mob has aggro to user 1. CommandIsReady returns false.
+		// ExecuteDrain burns the cooldown, resolves the target (user 1 not
+		// found → NoTarget first), but with a registered target mob we can
+		// reach the NotLifeDrainer gate.
+		{"drain_notlifedrainer", "drain",
+			func(m *mobs.Mob) {
+				// SpeciesId 0 → nil species → no LifeDrain flag.
+				targetMob := &mobs.Mob{InstanceId: 213}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NotLifeDrainer"},
+
+		// ─── throttle ─────────────────────────────────────────────────────────
+		// throttle_ready: fanged species + default aggro (user 1, not found) →
+		// CommandIsReady returns true (species gate passes, aggro non-nil).
+		// Execute is skipped for ready cases.
+		{"throttle_ready", "throttle",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7305 // fanged-test seeded above
+			},
+			true, ""},
+		{"throttle_cooldown", "throttle",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7305
+				m.Character.Cooldowns = characters.Cooldowns{"special-move": 3}
+			},
+			false, "OnCooldown"},
+		{"throttle_no_aggro", "throttle",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7305
+				m.Character.EndAggro()
+			},
+			false, "NoTarget"},
+		// throttle_notfanged: SpeciesId 0 → nil species → not fanged. Default
+		// mob has aggro to user 1. CommandIsReady returns false. ExecuteThrottle
+		// burns the cooldown, resolves the target (user 1 not found → NoTarget
+		// first), but with a registered target mob we can reach the NotFanged gate.
+		{"throttle_notfanged", "throttle",
+			func(m *mobs.Mob) {
+				// SpeciesId 0 → nil species → not fanged.
+				targetMob := &mobs.Mob{InstanceId: 214}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NotFanged"},
 	}
 
 	for _, tc := range cases {
@@ -265,7 +511,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 			// The mutate function may set up target mobs via
 			// mobs.SetInstanceForTest; we clean them all up here.
 			defer func() {
-				for id := 200; id <= 210; id++ {
+				for id := 200; id <= 215; id++ {
 					mobs.SetInstanceForTest(id, nil)
 				}
 			}()
@@ -366,6 +612,68 @@ func runExecuteAndReadFlag(cmd string, actor Actor, flag string) bool {
 			return r.OnCooldown
 		case "NoTarget":
 			return r.NoTarget
+		}
+	case "rake":
+		r := ExecuteRake(actor)
+		switch flag {
+		case "OnCooldown":
+			return r.OnCooldown
+		case "NoTarget":
+			return r.NoTarget
+		case "NotClawed":
+			return r.NotClawed
+		}
+	case "maul":
+		r := ExecuteMaul(actor)
+		switch flag {
+		case "OnCooldown":
+			return r.OnCooldown
+		case "NoTarget":
+			return r.NoTarget
+		case "NotFanged":
+			return r.NotFanged
+		}
+	case "pounce":
+		r := ExecutePounce(actor)
+		switch flag {
+		case "OnCooldown":
+			return r.OnCooldown
+		case "NoTarget":
+			return r.NoTarget
+		case "Grappling":
+			return r.Grappling
+		case "NotPredator":
+			return r.NotPredator
+		}
+	case "gore":
+		r := ExecuteGore(actor)
+		switch flag {
+		case "OnCooldown":
+			return r.OnCooldown
+		case "NoTarget":
+			return r.NoTarget
+		case "NotHorned":
+			return r.NotHorned
+		}
+	case "drain":
+		r := ExecuteDrain(actor)
+		switch flag {
+		case "OnCooldown":
+			return r.OnCooldown
+		case "NoTarget":
+			return r.NoTarget
+		case "NotLifeDrainer":
+			return r.NotLifeDrainer
+		}
+	case "throttle":
+		r := ExecuteThrottle(actor)
+		switch flag {
+		case "OnCooldown":
+			return r.OnCooldown
+		case "NoTarget":
+			return r.NoTarget
+		case "NotFanged":
+			return r.NotFanged
 		}
 	}
 	return false

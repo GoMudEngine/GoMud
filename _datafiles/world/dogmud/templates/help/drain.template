@@ -1,0 +1,40 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">drain</ansi>
+
+The <ansi fg="command">drain</ansi> command is the vampire's signature lifesteal move.
+It strikes the target with raking <ansi fg="item">claws</ansi>, sapping their
+vitality and channeling it back into the vampire. A
+successful hit also leaves the target bleeding.
+
+<ansi fg="yellow">Requirements:</ansi>
+
+  - Must have the LifeDrain species flag (vampire only)
+  - Must be in active combat
+  - Cannot be used if special move cooldown is active
+
+<ansi fg="yellow">Usage:</ansi>
+
+  <ansi fg="command">drain</ansi>
+  Attempt to drain your current combat target
+
+<ansi fg="yellow">Mechanics:</ansi>
+
+  <ansi fg="stat">Damage:</ansi> Moderate — lighter than a full melee strike; the
+    lifesteal makes up the difference in sustained fights.
+  <ansi fg="stat">Lifesteal:</ansi> On a hit, the attacker heals for a fraction of
+    damage dealt (governed by the DrainHealRatio balance knob,
+    default 75%).
+  <ansi fg="stat">Bleed:</ansi> The target gains a Bleeding condition on hit,
+    dealing ongoing damage each round.
+  <ansi fg="stat">Cooldown:</ansi> Shared with other special moves.
+  <ansi fg="stat">Skill:</ansi> Progresses Unarmed Combat
+
+Drain is most effective when the vampire is wounded — the
+combined bleed and heal make it excellent for sustained
+pressure. Unlike most beast moves, drain is not gated on
+a natural attack type; it is gated on the LifeDrain species
+flag, making it the vampire's exclusive ability.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help maul</ansi>, <ansi fg="command">help rake</ansi>, <ansi fg="command">help conditions</ansi>,
+  <ansi fg="command">help combat</ansi>

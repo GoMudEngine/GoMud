@@ -1,0 +1,35 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">maul</ansi>
+
+The <ansi fg="command">maul</ansi> command drives your natural fangs into your opponent
+in a savage tearing flurry, worrying the wound. It deals heavy
+damage and applies a stronger bleeding condition on a successful
+strike than rake.
+
+<ansi fg="yellow">Requirements:</ansi>
+
+  - Must have natural fangs (fanged species only)
+  - Must be in active combat
+  - Cannot be used if special move cooldown is active
+
+<ansi fg="yellow">Usage:</ansi>
+
+  <ansi fg="command">maul</ansi>
+  Attempt to maul your current combat target
+
+<ansi fg="yellow">Mechanics:</ansi>
+
+  <ansi fg="stat">Damage:</ansi> Heavy — the savage bite deals significant harm.
+  <ansi fg="stat">Bleed:</ansi> A successful maul opens deep wounds that bleed
+    severely over several rounds, dealing substantial additional
+    damage beyond the initial strike.
+  <ansi fg="stat">Cooldown:</ansi> Shared with other special moves.
+  <ansi fg="stat">Skill:</ansi> Progresses Unarmed Combat
+
+Maul's heavy damage and persistent deep bleed make it a potent
+finisher for wearing down prey over a sustained fight. See
+<ansi fg="command">help conditions</ansi> for details on the bleeding effect.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help rake</ansi>, <ansi fg="command">help hamstring</ansi>, <ansi fg="command">help kick</ansi>,
+  <ansi fg="command">help conditions</ansi>, <ansi fg="command">help combat</ansi>

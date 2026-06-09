@@ -23,6 +23,14 @@ var aiProfiles = map[string]map[string]int{
 		"kick":      15,
 		"grapple":   40,
 		"hamstring": 25,
+		// Beast moves — anatomy gating filters these for mobs that lack the
+		// required species identity, so listing them here is harmless.
+		"rake":     20,
+		"maul":     20,
+		"pounce":   20,
+		"gore":     20,
+		"throttle": 20,
+		"drain":    20,
 	},
 	"aggressive": {
 		"bash":      40,
@@ -30,6 +38,14 @@ var aiProfiles = map[string]map[string]int{
 		"trip":      20,
 		"grapple":   10,
 		"hamstring": 35,
+		// Beast moves — anatomy gating filters these for mobs that lack the
+		// required species identity, so listing them here is harmless.
+		"rake":     20,
+		"maul":     20,
+		"pounce":   20,
+		"gore":     20,
+		"throttle": 20,
+		"drain":    20,
 	},
 	"defensive": {
 		"trip":    35,
@@ -55,6 +71,28 @@ var aiProfiles = map[string]map[string]int{
 		"trip":    20,
 		"kick":    15,
 		"grapple": 40,
+	},
+	// Beast profiles — anatomy gating in CanUse* is the real filter; listing a
+	// move a mob's species forbids is harmless (it scores 0 and is dropped).
+	"predator": { // fanged hunters (wolves, dogs): open with pounce, then maul / throttle
+		"pounce":    40,
+		"maul":      35,
+		"throttle":  30,
+		"hamstring": 25,
+		"kick":      10,
+		"trip":      10,
+	},
+	"ambush_predator": { // clawed stalkers (felines): pounce opener + rake bleed
+		"pounce":    45,
+		"rake":      40,
+		"hamstring": 20,
+		"trip":      10,
+	},
+	"brute": { // bears/boars: maul or gore, less finesse
+		"maul":   40,
+		"gore":   40,
+		"pounce": 25,
+		"bash":   10,
 	},
 }
 
@@ -92,6 +130,30 @@ func ChooseSpecialMove(mob *mobs.Mob, target *characters.Character) string {
 
 	if CanUseHamstring(&mob.Character) {
 		moveScores["hamstring"] = ScoreHamstring(mob, target)
+	}
+
+	if CanUseRake(&mob.Character) {
+		moveScores["rake"] = ScoreRake(mob, target)
+	}
+
+	if CanUseMaul(&mob.Character) {
+		moveScores["maul"] = ScoreMaul(mob, target)
+	}
+
+	if CanUsePounce(&mob.Character) {
+		moveScores["pounce"] = ScorePounce(mob, target)
+	}
+
+	if CanUseGore(&mob.Character) {
+		moveScores["gore"] = ScoreGore(mob, target)
+	}
+
+	if CanUseDrain(&mob.Character) {
+		moveScores["drain"] = ScoreDrain(mob, target)
+	}
+
+	if CanUseThrottle(&mob.Character) {
+		moveScores["throttle"] = ScoreThrottle(mob, target)
 	}
 
 	// No viable moves
@@ -153,6 +215,30 @@ func GetAIProfile(profileName string, customPreferences map[string]int) map[stri
 	}
 
 	return result
+}
+
+// --- Beast-identity predicates (single source of truth for beast-move gating) ---
+// Exported so the actions package can use them for defense-in-depth gates at
+// the action-entry and CommandIsReady sync points without duplicating logic.
+
+func SpeciesNaturalAttack(char *characters.Character) items.ItemSubType {
+	if sp := species.GetSpecies(char.SpeciesId); sp != nil {
+		return sp.NaturalAttack
+	}
+	return ""
+}
+func SpeciesIsFanged(char *characters.Character) bool {
+	return SpeciesNaturalAttack(char) == items.Bite
+}
+func SpeciesIsClawed(char *characters.Character) bool {
+	return SpeciesNaturalAttack(char) == items.Claws
+}
+func SpeciesIsHorned(char *characters.Character) bool {
+	return SpeciesNaturalAttack(char) == items.Gore
+}
+func SpeciesHasLifeDrain(char *characters.Character) bool {
+	sp := species.GetSpecies(char.SpeciesId)
+	return sp != nil && sp.LifeDrain
 }
 
 // --- Viability checks ---
@@ -377,6 +463,99 @@ func ScoreHamstring(mob *mobs.Mob, target *characters.Character) int {
 	return score
 }
 
+// CanUseRake reports whether the actor can rake a target. Rake is a clawed
+// beast move — a raking slash that opens bleeding wounds — so it requires a
+// clawed natural attack.
+func CanUseRake(char *characters.Character) bool {
+	if _, exists := char.Cooldowns["special-move"]; exists {
+		return false
+	}
+	return SpeciesIsClawed(char)
+}
+
+func ScoreRake(mob *mobs.Mob, target *characters.Character) int {
+	score := 45
+
+	if mob.Character.GetSkillLevel(skills.UnarmedCombat) > 40 {
+		score += 15
+	}
+
+	if score < 0 {
+		score = 0
+	}
+	return score
+}
+
+// CanUseMaul reports whether the actor can maul a target. Maul is a fanged
+// beast move — a savage tearing flurry that deals heavy damage and opens deep
+// bleeding wounds — so it requires a fanged natural attack.
+func CanUseMaul(char *characters.Character) bool {
+	if _, exists := char.Cooldowns["special-move"]; exists {
+		return false
+	}
+	return SpeciesIsFanged(char)
+}
+
+// SpeciesIsQuadrupedPredator reports a legged fanged-or-clawed beast — the
+// gate for pounce (a leaping knockdown opener). Exported so the actions
+// package can use it for defense-in-depth gates at the action-entry and
+// CommandIsReady sync points without duplicating logic.
+func SpeciesIsQuadrupedPredator(char *characters.Character) bool {
+	return char.HasBodyPart("legs") && (SpeciesIsFanged(char) || SpeciesIsClawed(char))
+}
+
+// CanUsePounce reports whether the actor can pounce on a target. Pounce is
+// a quadruped predator's leaping opener — a knockdown strike that requires
+// legs, a fanged or clawed natural attack, and a non-grappled stance
+// (can't leap from a clinch).
+func CanUsePounce(char *characters.Character) bool {
+	if _, exists := char.Cooldowns["special-move"]; exists {
+		return false
+	}
+	if char.IsGrappling() {
+		return false // can't leap from a clinch
+	}
+	return SpeciesIsQuadrupedPredator(char)
+}
+
+func ScorePounce(mob *mobs.Mob, target *characters.Character) int {
+	score := 50
+
+	if !target.IsOnFloor() {
+		score += 20 // wants a standing target to knock down
+	} else {
+		score -= 40
+	}
+
+	if mob.Character.GetSkillLevel(skills.UnarmedCombat) > 40 {
+		score += 10
+	}
+
+	if score < 0 {
+		score = 0
+	}
+	return score
+}
+
+func ScoreMaul(mob *mobs.Mob, target *characters.Character) int {
+	score := 55 // Higher base than rake — maul is the heavier move
+
+	if mob.Character.GetSkillLevel(skills.UnarmedCombat) > 40 {
+		score += 15
+	}
+
+	// Finisher bonus: target is below 50% health — savage the weakened prey.
+	targetHealthPercent := float64(target.Health) * 100.0 / float64(target.HealthMax.Value)
+	if targetHealthPercent < 50 {
+		score += 10
+	}
+
+	if score < 0 {
+		score = 0
+	}
+	return score
+}
+
 func ScoreGrapple(mob *mobs.Mob, target *characters.Character) int {
 	score := 50 // Base score
 
@@ -405,6 +584,57 @@ func ScoreGrapple(mob *mobs.Mob, target *characters.Character) int {
 	mobHealthPercent := float64(mob.Character.Health) * 100.0 / float64(mob.Character.HealthMax.Value)
 	if mobHealthPercent < 20 {
 		score -= 50
+	}
+
+	if score < 0 {
+		score = 0
+	}
+	return score
+}
+
+// CanUseGore reports whether the actor can gore a target. Gore is a horned
+// beast move — a charging strike that drives the target backward — so it
+// requires a gore natural attack (i.e. the species is horned).
+func CanUseGore(char *characters.Character) bool {
+	if _, exists := char.Cooldowns["special-move"]; exists {
+		return false
+	}
+	return SpeciesIsHorned(char)
+}
+
+func ScoreGore(mob *mobs.Mob, target *characters.Character) int {
+	score := 50
+
+	if !target.IsOnFloor() {
+		score += 20 // wants a standing target to knock down
+	} else {
+		score -= 40
+	}
+
+	if score < 0 {
+		score = 0
+	}
+	return score
+}
+
+// CanUseDrain reports whether the actor can drain a target. Drain is a vampire
+// ability — a lifesteal strike that saps vitality and heals the attacker —
+// so it requires the LifeDrain species flag.
+func CanUseDrain(char *characters.Character) bool {
+	if _, exists := char.Cooldowns["special-move"]; exists {
+		return false
+	}
+	return SpeciesHasLifeDrain(char)
+}
+
+func ScoreDrain(mob *mobs.Mob, target *characters.Character) int {
+	score := 50
+
+	// Bonus when the vampire is hurt — drain recovers HP, so prioritize it
+	// when the attacker needs healing.
+	hpPct := float64(mob.Character.Health) * 100 / float64(mob.Character.HealthMax.Value)
+	if hpPct < 60 {
+		score += 25
 	}
 
 	if score < 0 {
@@ -494,5 +724,37 @@ func ScoreSubmit(mob *mobs.Mob, target *characters.Character) int {
 		score += 15
 	}
 
+	return score
+}
+
+// CanUseThrottle reports whether the actor can throttle a target. Throttle is
+// a fanged beast's choke — clamping the windpipe to cut off air — so it
+// requires a fanged natural attack.
+func CanUseThrottle(char *characters.Character) bool {
+	if _, exists := char.Cooldowns["special-move"]; exists {
+		return false
+	}
+	return SpeciesIsFanged(char)
+}
+
+// ScoreThrottle returns the AI priority for using throttle against the target.
+// Throttle is valuable when the target is casting (interrupt bonus) or is
+// already on the floor (vulnerability bonus).
+func ScoreThrottle(mob *mobs.Mob, target *characters.Character) int {
+	score := 50 // Base score
+
+	// Strong bonus when the target is casting: throttle can interrupt the spell.
+	if target.IsCasting() {
+		score += 30
+	}
+
+	// Bonus if target is on the floor (prone/grounded): pile on the pressure.
+	if target.IsOnFloor() {
+		score += 20
+	}
+
+	if score < 0 {
+		score = 0
+	}
 	return score
 }

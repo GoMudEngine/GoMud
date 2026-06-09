@@ -11,6 +11,7 @@ groups:
 hates:
   - canine
 archetype: fighting
+aiprofile: brute
 mutationchance: 30
 combatcommands:
   - charge

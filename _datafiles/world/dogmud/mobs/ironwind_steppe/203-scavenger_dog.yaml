@@ -11,6 +11,7 @@ groups:
 hates:
   - rodent
 archetype: fighting
+aiprofile: predator
 idlecommands:
   - 'emote sniffs the air, hackles half-raised'
   - ''
