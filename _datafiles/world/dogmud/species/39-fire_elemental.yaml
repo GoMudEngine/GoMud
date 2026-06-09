@@ -9,6 +9,7 @@ intrinsic_mutations:
   incorporeal: 4
 size: medium
 unarmedname: scorching strike
+natural_attack: slam
 selectable: false
 tameable: false
 return_damage: 25

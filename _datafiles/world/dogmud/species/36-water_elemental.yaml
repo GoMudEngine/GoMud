@@ -9,6 +9,7 @@ intrinsic_mutations:
   regenerative-tissue: 1
 size: large
 unarmedname: watery surge
+natural_attack: slam
 selectable: false
 tameable: false
 angrycommands:

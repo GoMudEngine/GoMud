@@ -10,6 +10,7 @@ intrinsic_mutations:
 naturalarmor: 12
 size: medium
 unarmedname: pseudopods
+natural_attack: slam
 selectable: false
 tameable: false
 angrycommands:

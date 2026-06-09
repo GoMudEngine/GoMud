@@ -7,6 +7,7 @@ intrinsic_mutations:
   tremorsense: 1
 size: small
 unarmedname: wings and fangs
+natural_attack: claws
 angrycommands: [emote shrieks and beats its wings furiously.]
 damage:
   basedamage: 1

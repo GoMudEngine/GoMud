@@ -10,6 +10,7 @@ intrinsic_mutations:
   iron-constitution: 1
 size: large
 unarmedname: stone fists
+natural_attack: slam
 selectable: false
 tameable: false
 naturalbash: true

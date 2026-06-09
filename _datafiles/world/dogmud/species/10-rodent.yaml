@@ -7,6 +7,7 @@ intrinsic_mutations:
   small: 1
 size: small
 unarmedname: teeth and nails
+natural_attack: bite
 angrycommands: [emote squeeks angrily.]
 damage:
   basedamage: 1

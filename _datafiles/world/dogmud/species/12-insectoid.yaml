@@ -7,6 +7,7 @@ body_parts: [legs, eyes, mouth, skin]
 naturalarmor: 10
 size: small
 unarmedname: mandibles
+natural_attack: bite
 selectable: false
 tameable: true
 angrycommands:

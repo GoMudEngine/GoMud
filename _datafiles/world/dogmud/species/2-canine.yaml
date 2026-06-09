@@ -10,6 +10,7 @@ buffids:
   - 29 # Night Vision
 size: medium
 unarmedname: jaws
+natural_attack: bite
 selectable: false
 tameable: true
 angrycommands:

@@ -10,6 +10,7 @@ intrinsic_mutations:
   night-vision: 1
 size: medium
 unarmedname: claws
+natural_attack: claws
 selectable: false
 tameable: false
 angrycommands:

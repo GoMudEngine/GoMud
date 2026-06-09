@@ -7,6 +7,7 @@ intrinsic_mutations:
   cold-blooded: 1
 size: small
 unarmedname: teeth
+natural_attack: bite
 angrycommands: [emote hisses.]
 tameable: true
 stats:

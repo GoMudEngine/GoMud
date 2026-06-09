@@ -10,6 +10,7 @@ intrinsic_mutations:
   thick-hide: 1
 size: large
 unarmedname: molten slam
+natural_attack: slam
 selectable: false
 tameable: false
 naturalbash: true

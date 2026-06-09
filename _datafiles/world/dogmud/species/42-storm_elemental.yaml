@@ -7,6 +7,7 @@ description: A roaring vortex of charged wind and crawling lightning,
   too long in its path.
 size: large
 unarmedname: arcing strike
+natural_attack: slam
 selectable: false
 tameable: false
 grapple_immune: true

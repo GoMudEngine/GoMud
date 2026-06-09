@@ -9,6 +9,7 @@ intrinsic_mutations:
 naturalarmor: 8
 size: large
 unarmedname: claws and teeth
+natural_attack: claws
 selectable: false
 tameable: true
 angrycommands:

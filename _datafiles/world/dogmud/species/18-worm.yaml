@@ -10,6 +10,7 @@ intrinsic_mutations:
 naturalarmor: 7
 size: large
 unarmedname: maw
+natural_attack: bite
 selectable: false
 tameable: true
 angrycommands:
