@@ -102,6 +102,10 @@ func ChooseSpecialMove(mob *mobs.Mob, target *characters.Character) string {
 		moveScores["maul"] = ScoreMaul(mob, target)
 	}
 
+	if CanUsePounce(&mob.Character) {
+		moveScores["pounce"] = ScorePounce(mob, target)
+	}
+
 	// No viable moves
 	if len(moveScores) == 0 {
 		return ""
@@ -440,6 +444,47 @@ func CanUseMaul(char *characters.Character) bool {
 		return false
 	}
 	return SpeciesIsFanged(char)
+}
+
+// SpeciesIsQuadrupedPredator reports a legged fanged-or-clawed beast — the
+// gate for pounce (a leaping knockdown opener). Exported so the actions
+// package can use it for defense-in-depth gates at the action-entry and
+// CommandIsReady sync points without duplicating logic.
+func SpeciesIsQuadrupedPredator(char *characters.Character) bool {
+	return char.HasBodyPart("legs") && (SpeciesIsFanged(char) || SpeciesIsClawed(char))
+}
+
+// CanUsePounce reports whether the actor can pounce on a target. Pounce is
+// a quadruped predator's leaping opener — a knockdown strike that requires
+// legs, a fanged or clawed natural attack, and a non-grappled stance
+// (can't leap from a clinch).
+func CanUsePounce(char *characters.Character) bool {
+	if _, exists := char.Cooldowns["special-move"]; exists {
+		return false
+	}
+	if char.IsGrappling() {
+		return false // can't leap from a clinch
+	}
+	return SpeciesIsQuadrupedPredator(char)
+}
+
+func ScorePounce(mob *mobs.Mob, target *characters.Character) int {
+	score := 50
+
+	if !target.IsOnFloor() {
+		score += 20 // wants a standing target to knock down
+	} else {
+		score -= 40
+	}
+
+	if mob.Character.GetSkillLevel(skills.UnarmedCombat) > 40 {
+		score += 10
+	}
+
+	if score < 0 {
+		score = 0
+	}
+	return score
 }
 
 func ScoreMaul(mob *mobs.Mob, target *characters.Character) int {

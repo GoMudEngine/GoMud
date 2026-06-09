@@ -158,6 +158,7 @@ var (
 		`questdebug`:      {QuestDebug, false, true, true}, // Admin only
 		`questtoken`:      {QuestToken, false, true, true}, // Admin only
 		`maul`:            {Maul, false, true, false},
+		`pounce`:          {Pounce, false, true, false},
 		`rake`:            {Rake, false, true, false},
 		`read`:            {Read, false, true, false},
 		`reload`:          {Reload, true, true, true},       // Admin only

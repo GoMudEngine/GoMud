@@ -70,6 +70,7 @@ var (
 		"plant":          {Plant, false},
 		"put":            {Put, false},
 		"maul":           {Maul, false},
+		"pounce":         {Pounce, false},
 		"rake":           {Rake, false},
 		"rally":          {Rally, false},
 		"remove":         {Remove, false},

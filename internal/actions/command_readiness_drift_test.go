@@ -335,6 +335,43 @@ func TestCommandReadinessDrift(t *testing.T) {
 				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
 			},
 			false, "NotFanged"},
+
+		// ─── pounce ───────────────────────────────────────────────────────────
+		// pounce_ready: clawed legged species + default aggro (user 1, not found)
+		// → CommandIsReady returns true (predator gate passes, aggro non-nil).
+		// Execute is skipped for ready cases.
+		{"pounce_ready", "pounce",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7304 // clawed-test seeded above (has legs + claws)
+			},
+			true, ""},
+		{"pounce_cooldown", "pounce",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7304
+				m.Character.Cooldowns = characters.Cooldowns{"special-move": 3}
+			},
+			false, "OnCooldown"},
+		{"pounce_no_aggro", "pounce",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7304
+				m.Character.EndAggro()
+			},
+			false, "NoTarget"},
+		// pounce_notpredator: SpeciesId 0 → nil species → not a quadruped predator.
+		// Default mob has aggro to user 1. CommandIsReady returns false.
+		// ExecutePounce burns the cooldown, resolves the target (user 1 not
+		// found → NoTarget first), but with a registered target mob we can
+		// reach the NotPredator gate.
+		{"pounce_notpredator", "pounce",
+			func(m *mobs.Mob) {
+				// SpeciesId 0 → nil species → not a quadruped predator.
+				targetMob := &mobs.Mob{InstanceId: 211}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NotPredator"},
 	}
 
 	for _, tc := range cases {
@@ -343,7 +380,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 			// The mutate function may set up target mobs via
 			// mobs.SetInstanceForTest; we clean them all up here.
 			defer func() {
-				for id := 200; id <= 210; id++ {
+				for id := 200; id <= 211; id++ {
 					mobs.SetInstanceForTest(id, nil)
 				}
 			}()
@@ -464,6 +501,16 @@ func runExecuteAndReadFlag(cmd string, actor Actor, flag string) bool {
 			return r.NoTarget
 		case "NotFanged":
 			return r.NotFanged
+		}
+	case "pounce":
+		r := ExecutePounce(actor)
+		switch flag {
+		case "OnCooldown":
+			return r.OnCooldown
+		case "NoTarget":
+			return r.NoTarget
+		case "NotPredator":
+			return r.NotPredator
 		}
 	}
 	return false

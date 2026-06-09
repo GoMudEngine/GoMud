@@ -687,3 +687,49 @@ func TestCanUseGrapple_RequiresArms(t *testing.T) {
 		t.Error("no-arms wolf must NOT be able to grapple")
 	}
 }
+
+// ─── CanUsePounce ───────────────────────────────────────────────────────────
+
+func TestCanUsePounce(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		9201: {SpeciesId: 9201, Name: "wolf", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Bite},
+		9202: {SpeciesId: 9202, Name: "feline", BodyParts: []string{"legs", "paws"}, NaturalAttack: items.Claws},
+		9203: {SpeciesId: 9203, Name: "human", BodyParts: []string{"arms", "hands", "legs", "mouth"}},
+		9204: {SpeciesId: 9204, Name: "serpent", BodyParts: []string{"mouth"}, NaturalAttack: items.Bite},
+	})
+	defer cleanup()
+
+	t.Run("legged fanged → true", func(t *testing.T) {
+		c := &characters.Character{SpeciesId: 9201, Cooldowns: characters.Cooldowns{}}
+		assert.True(t, CanUsePounce(c), "legged fanged wolf should pounce")
+	})
+
+	t.Run("legged clawed → true", func(t *testing.T) {
+		c := &characters.Character{SpeciesId: 9202, Cooldowns: characters.Cooldowns{}}
+		assert.True(t, CanUsePounce(c), "legged clawed feline should pounce")
+	})
+
+	t.Run("humanoid (legged, no claws/fangs) → false", func(t *testing.T) {
+		c := &characters.Character{SpeciesId: 9203, Cooldowns: characters.Cooldowns{}}
+		assert.False(t, CanUsePounce(c), "humanoid with no natural attack should not pounce")
+	})
+
+	t.Run("no-legs fanged → false", func(t *testing.T) {
+		c := &characters.Character{SpeciesId: 9204, Cooldowns: characters.Cooldowns{}}
+		assert.False(t, CanUsePounce(c), "legless fanged serpent should not pounce")
+	})
+
+	t.Run("grappling → false", func(t *testing.T) {
+		c := &characters.Character{SpeciesId: 9201, Cooldowns: characters.Cooldowns{}}
+		setCombatPositionParallel(c, position.Clinch)
+		assert.False(t, CanUsePounce(c), "grappling predator should not pounce (can't leap from a clinch)")
+	})
+
+	t.Run("on cooldown → false", func(t *testing.T) {
+		c := &characters.Character{
+			SpeciesId: 9201,
+			Cooldowns: characters.Cooldowns{"special-move": 3},
+		}
+		assert.False(t, CanUsePounce(c), "legged fanged wolf on cooldown should not pounce")
+	})
+}
