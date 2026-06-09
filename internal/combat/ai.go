@@ -150,12 +150,21 @@ func GetAIProfile(profileName string, customPreferences map[string]int) map[stri
 // --- Viability checks ---
 
 func CanUseBash(char *characters.Character) bool {
-	// Must have a shield
-	if !char.HasShield() {
-		return false
-	}
 	// Must not be on cooldown
 	if _, exists := char.Cooldowns["special-move"]; exists {
+		return false
+	}
+	naturalBash := false
+	if sp := species.GetSpecies(char.SpeciesId); sp != nil {
+		naturalBash = sp.NaturalBash
+	}
+	// Need a shield to bash with — unless the creature bashes naturally
+	// (golems, elementals slam with their whole body).
+	if !char.HasShield() && !naturalBash {
+		return false
+	}
+	// Bashing braces and drives with the arms — unless naturally a bash creature.
+	if !char.HasBodyPart("arms") && !naturalBash {
 		return false
 	}
 	return true

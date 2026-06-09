@@ -86,6 +86,13 @@ func TestGetAIProfile_DoesNotMutateOriginal(t *testing.T) {
 // ─── CanUseBash ─────────────────────────────────────────────────────────────
 
 func TestCanUseBash(t *testing.T) {
+	// Seed SpeciesId 0 (used by characters.New()) with arms so the anatomy
+	// gate does not block the "can bash with shield" cases.
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		0: {SpeciesId: 0, Name: "human", BodyParts: []string{"arms", "hands", "legs"}},
+	})
+	defer cleanup()
+
 	tests := []struct {
 		name      string
 		hasShield bool
@@ -419,6 +426,75 @@ func TestScoreGrapple(t *testing.T) {
 		score := ScoreGrapple(makeMob(100, 0, 10, 100), target)
 		assert.Equal(t, 0, score) // 50 (base) - 50 (low hp) = 0, no str bonus since target stronger
 	})
+}
+
+// ─── CanUseBash (shield-or-naturalBash AND arms-or-naturalBash) ─────────────
+
+func TestCanUseBash_ShieldOrNaturalAndArms(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		7201: {SpeciesId: 7201, Name: "humanoid", BodyParts: []string{"arms", "hands"}},
+		7202: {SpeciesId: 7202, Name: "golem", BodyParts: []string{"arms"}, NaturalBash: true},
+		7203: {SpeciesId: 7203, Name: "noarms-elemental", BodyParts: []string{}, NaturalBash: true},
+		7204: {SpeciesId: 7204, Name: "wolf", BodyParts: []string{"legs", "mouth"}},
+		7205: {SpeciesId: 7205, Name: "shielded-noarms-beast", BodyParts: []string{"tentacles"}},
+	})
+	defer cleanup()
+
+	// Humanoid (has arms, no shield, not natural) — must NOT bash.
+	withNoShield := &characters.Character{SpeciesId: 7201}
+	if CanUseBash(withNoShield) {
+		t.Error("humanoid with no shield and not natural must NOT bash")
+	}
+
+	// Humanoid with shield equipped — CAN bash.
+	withShield := &characters.Character{SpeciesId: 7201}
+	withShield.Equipment.Offhand = items.Item{
+		ItemId: 1,
+		Spec: &items.ItemSpec{
+			Type:            items.Offhand,
+			DamageReduction: 5,
+			BlockRating:     10,
+		},
+	}
+	if !CanUseBash(withShield) {
+		t.Error("armed humanoid with shield should be able to bash")
+	}
+
+	// Golem: naturalBash + has arms — CAN bash without shield.
+	// Note: HasShield() already returns true for NaturalBash creatures; this
+	// tests that the arms gate passes too.
+	golem := &characters.Character{SpeciesId: 7202}
+	if !CanUseBash(golem) {
+		t.Error("golem (naturalBash) should bash without a shield")
+	}
+
+	// No-arms elemental: naturalBash + no arms — CAN bash (naturalBash bypasses both gates).
+	elemental := &characters.Character{SpeciesId: 7203}
+	if !CanUseBash(elemental) {
+		t.Error("no-arms elemental (naturalBash) should bash")
+	}
+
+	// Wolf: no arms, not natural, no shield — must NOT bash.
+	wolf := &characters.Character{SpeciesId: 7204}
+	if CanUseBash(wolf) {
+		t.Error("no-arms non-natural wolf must NOT bash")
+	}
+
+	// Shielded non-natural beast without arms — has a shield but cannot
+	// brace/drive forward without arms; must NOT bash. This is the case
+	// that the arms gate adds beyond the existing shield check.
+	shieldedNoArms := &characters.Character{SpeciesId: 7205}
+	shieldedNoArms.Equipment.Offhand = items.Item{
+		ItemId: 2,
+		Spec: &items.ItemSpec{
+			Type:            items.Offhand,
+			DamageReduction: 5,
+			BlockRating:     10,
+		},
+	}
+	if CanUseBash(shieldedNoArms) {
+		t.Error("shielded non-natural no-arms beast must NOT bash (lacks arms gate)")
+	}
 }
 
 // ─── CanUseGrapple (anatomy gate) ───────────────────────────────────────────

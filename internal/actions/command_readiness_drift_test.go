@@ -144,6 +144,17 @@ func TestCommandReadinessDrift(t *testing.T) {
 				m.Character.SpeciesId = 1 // human, no naturalbash, no shield
 			},
 			false, "NoShield"},
+		// SpeciesId 0 → species.GetSpecies(0) returns nil in test context →
+		// HasBodyPart("arms") returns false, naturalBash=false. No shield
+		// equipped either. Both gates fire; the shield gate fires first so
+		// ExecuteBash returns NoShield=true (reused for the anatomy gate too).
+		// CommandIsReady likewise returns false. Boolean agreement is the goal.
+		{"bash_no_arms", "bash",
+			func(m *mobs.Mob) {
+				// SpeciesId stays 0 (nil species, no arms, not natural).
+				// Default test mob already has no shield and aggro set.
+			},
+			false, "NoShield"},
 
 		// ─── grapple ──────────────────────────────────────────────
 		{"grapple_crafting", "grapple",
