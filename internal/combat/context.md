@@ -367,6 +367,43 @@ weighted into the existing `default` and `aggressive` profiles.
 
 **New buff:** `89-throttled.yaml` — stamina tick DoT, no special flags.
 
+### Beast Moveset Refinements (Phase 4)
+
+**The `hands` rule (true-beast gate).** The six beast natural-weapon moves
+— `rake`, `maul`, `pounce`, `gore`, `throttle`, and `hamstring` — additionally
+require the actor to have **no `hands` body part**, applied at all three sync
+points (`CanUse*`, `Execute*`, `CommandIsReady`) + `*_hashands` drift rows. This
+is the symmetric counterpart to Phase 2's "humanoid technique moves require
+`arms`": humanoid moves need `arms`; beast natural-weapon moves need no `hands`.
+Effect: tool-using (monster-)humanoids that carry a beast `natural_attack`
+(goblin/skeleton/vampire — they have `hands`) keep grapple/bash + their
+claw/bite BASIC-attack messaging but can NOT rake/pounce/etc.; **bears** (`arms`
+but no `hands`) stay maulers. **`drain` is EXEMPT** — it is `LifeDrain`-flag
+gated, not anatomy/`natural_attack` gated, so armed undead (vampire, wraith,
+spectre) still drain.
+
+**New AI profiles:** `skirmisher` (small fanged vermin — rats/insects:
+hamstring/trip dominant, light maul) and `serpent` (legless fanged —
+snakes/worms: maul/throttle, no pounce/hamstring). Species→profile assignment
+across the beast mobs: canine/reptile/mustelid→`predator`,
+feline/bat/raptor/arachnid→`ambush_predator`, boar/bear/deer→`brute`,
+rodent/insectoid→`skirmisher`, serpent/worm/fish/carnivorous-plant→`serpent`;
+slimes/elementals/humanoids stay `default`.
+
+**Content retags:** `deer` (species 7) → `gore` + `horns` (antlered charge);
+`wraith` (32) + `spectre` (33) → `lifedrain: true`. Wraith/spectre are
+`pure_caster`/`aiprofile: caster` with spellbooks; since `handleMobAIDecision`
+runs `ChooseCastAction` FIRST and only falls to `ChooseSpecialMove` when no
+spell is castable, `drain` is their natural OCCASIONAL fallback (their only
+viable special — no legs/arms). The `caster` profile carries a modest
+`drain: 15` weight.
+
+**Inert combatcommand cleanup:** mob `combatcommands` that listed a move the
+mob's anatomy now forbids (a no-op under gating) were removed — e.g.
+`sump_dweller`'s `bash` (aberration, no arms/naturalbash) and two legless
+elementals' `trip`. Valid ones kept (wolves' `hamstring`; naturalbash
+elementals' `bash`).
+
 ### Target Switching
 Players can switch combat targets mid-fight using `attack <new-target>`:
 
