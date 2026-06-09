@@ -345,6 +345,9 @@ func CanUseHamstring(char *characters.Character) bool {
 	if !char.HasBodyPart("legs") {
 		return false
 	}
+	if char.HasBodyPart("hands") {
+		return false // beast natural-weapon moves are for true beasts, not tool-users
+	}
 	sp := species.GetSpecies(char.SpeciesId)
 	if sp == nil {
 		return false
@@ -470,6 +473,9 @@ func CanUseRake(char *characters.Character) bool {
 	if _, exists := char.Cooldowns["special-move"]; exists {
 		return false
 	}
+	if char.HasBodyPart("hands") {
+		return false // beast natural-weapon moves are for true beasts, not tool-users
+	}
 	return SpeciesIsClawed(char)
 }
 
@@ -493,6 +499,9 @@ func CanUseMaul(char *characters.Character) bool {
 	if _, exists := char.Cooldowns["special-move"]; exists {
 		return false
 	}
+	if char.HasBodyPart("hands") {
+		return false // beast natural-weapon moves are for true beasts, not tool-users
+	}
 	return SpeciesIsFanged(char)
 }
 
@@ -501,7 +510,7 @@ func CanUseMaul(char *characters.Character) bool {
 // package can use it for defense-in-depth gates at the action-entry and
 // CommandIsReady sync points without duplicating logic.
 func SpeciesIsQuadrupedPredator(char *characters.Character) bool {
-	return char.HasBodyPart("legs") && (SpeciesIsFanged(char) || SpeciesIsClawed(char))
+	return !char.HasBodyPart("hands") && char.HasBodyPart("legs") && (SpeciesIsFanged(char) || SpeciesIsClawed(char))
 }
 
 // CanUsePounce reports whether the actor can pounce on a target. Pounce is
@@ -598,6 +607,9 @@ func ScoreGrapple(mob *mobs.Mob, target *characters.Character) int {
 func CanUseGore(char *characters.Character) bool {
 	if _, exists := char.Cooldowns["special-move"]; exists {
 		return false
+	}
+	if char.HasBodyPart("hands") {
+		return false // beast natural-weapon moves are for true beasts, not tool-users
 	}
 	return SpeciesIsHorned(char)
 }
@@ -733,6 +745,9 @@ func ScoreSubmit(mob *mobs.Mob, target *characters.Character) int {
 func CanUseThrottle(char *characters.Character) bool {
 	if _, exists := char.Cooldowns["special-move"]; exists {
 		return false
+	}
+	if char.HasBodyPart("hands") {
+		return false // beast natural-weapon moves are for true beasts, not tool-users
 	}
 	return SpeciesIsFanged(char)
 }

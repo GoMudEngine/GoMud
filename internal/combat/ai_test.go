@@ -892,3 +892,58 @@ func TestCanUseThrottle_FangedTrueClawedFalse(t *testing.T) {
 	}
 	assert.False(t, CanUseThrottle(wolfOnCD), "fanged wolf on cooldown should not throttle")
 }
+
+// ─── TestBeastMoves_RequireNoHands ──────────────────────────────────────────
+
+// TestBeastMoves_RequireNoHands verifies the "true beast" gate: beast
+// natural-weapon moves (rake/maul/pounce/gore/throttle/hamstring) require
+// the actor to have NO "hands" body part. Tool-using humanoids (goblin,
+// skeleton, vampire with claws/bite) are blocked even when they have the
+// matching identity. Drain is LifeDrain-gated and MUST stay exempt —
+// a hands-bearing LifeDrain vampire can still drain.
+func TestBeastMoves_RequireNoHands(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		// Hands-bearing humanoid-identity creatures — must be blocked from beast moves.
+		9001: {SpeciesId: 9001, Name: "goblinoid", BodyParts: []string{"arms", "hands", "legs", "mouth", "horns"}, NaturalAttack: items.Claws},
+		9002: {SpeciesId: 9002, Name: "fangedhumanoid", BodyParts: []string{"arms", "hands", "legs", "mouth"}, NaturalAttack: items.Bite},
+		// Clawed bear: has arms but NO hands — must still rake.
+		9003: {SpeciesId: 9003, Name: "bear_clawed", BodyParts: []string{"arms", "legs", "mouth"}, NaturalAttack: items.Claws},
+		// Fanged bear: has arms but NO hands — must still maul/throttle.
+		9006: {SpeciesId: 9006, Name: "bear_fanged", BodyParts: []string{"arms", "legs", "mouth"}, NaturalAttack: items.Bite},
+		// Handless horned beast — must still gore.
+		9004: {SpeciesId: 9004, Name: "hornedbeast", BodyParts: []string{"legs", "mouth", "horns"}, NaturalAttack: items.Gore},
+		// Hands-bearing LifeDrain vampire — drain must stay exempt from the hands rule.
+		9005: {SpeciesId: 9005, Name: "vamp", BodyParts: []string{"arms", "hands", "legs", "mouth"}, NaturalAttack: items.Claws, LifeDrain: true},
+	})
+	defer cleanup()
+	gob := &characters.Character{SpeciesId: 9001}
+	fang := &characters.Character{SpeciesId: 9002}
+	bearClawed := &characters.Character{SpeciesId: 9003}
+	bearFanged := &characters.Character{SpeciesId: 9006}
+	horned := &characters.Character{SpeciesId: 9004}
+	vamp := &characters.Character{SpeciesId: 9005}
+
+	// Hands-bearing creatures must NOT use beast natural-weapon moves.
+	if CanUseRake(gob) || CanUsePounce(gob) {
+		t.Error("hands goblinoid must not rake/pounce")
+	}
+	if CanUseMaul(fang) || CanUseThrottle(fang) || CanUseHamstring(fang) {
+		t.Error("hands fanged-humanoid must not maul/throttle/hamstring")
+	}
+
+	// Handless creatures with the matching identity MUST still use beast moves.
+	if !CanUseRake(bearClawed) {
+		t.Error("handless clawed bear must still rake")
+	}
+	if !CanUseMaul(bearFanged) {
+		t.Error("handless fanged bear must still maul")
+	}
+	if !CanUseGore(horned) {
+		t.Error("handless horned beast must still gore")
+	}
+
+	// Drain is LifeDrain-gated, NOT hands-gated — vampire with hands must drain.
+	if !CanUseDrain(vamp) {
+		t.Error("DRAIN MUST stay exempt — hands-bearing LifeDrain vampire still drains")
+	}
+}

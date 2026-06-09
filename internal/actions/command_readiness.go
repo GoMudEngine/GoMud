@@ -99,19 +99,32 @@ func CommandIsReady(actor Actor, cmd string) bool {
 		return char.HasBodyPart("legs")
 
 	case "rake":
-		return char.Aggro != nil && combat.SpeciesIsClawed(char)
+		return char.Aggro != nil && !char.HasBodyPart("hands") && combat.SpeciesIsClawed(char)
 
 	case "maul":
-		return char.Aggro != nil && combat.SpeciesIsFanged(char)
+		return char.Aggro != nil && !char.HasBodyPart("hands") && combat.SpeciesIsFanged(char)
 
 	case "throttle":
-		return char.Aggro != nil && combat.SpeciesIsFanged(char)
+		return char.Aggro != nil && !char.HasBodyPart("hands") && combat.SpeciesIsFanged(char)
 
 	case "pounce":
+		// SpeciesIsQuadrupedPredator already incorporates the !hands gate.
 		return char.Aggro != nil && !char.IsGrappling() && combat.SpeciesIsQuadrupedPredator(char)
 
 	case "gore":
-		return char.Aggro != nil && combat.SpeciesIsHorned(char)
+		return char.Aggro != nil && !char.HasBodyPart("hands") && combat.SpeciesIsHorned(char)
+
+	case "hamstring":
+		if char.Aggro == nil {
+			return false
+		}
+		if !char.HasBodyPart("legs") {
+			return false
+		}
+		if char.HasBodyPart("hands") {
+			return false
+		}
+		return combat.SpeciesIsFanged(char) || combat.SpeciesIsClawed(char)
 
 	case "drain":
 		return char.Aggro != nil && combat.SpeciesHasLifeDrain(char)

@@ -6,7 +6,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -28,6 +30,12 @@ type HamstringResult struct {
 
 	// NoTarget is true when there is no aggro target or the target is gone.
 	NoTarget bool
+
+	// NotBeast is true when the actor lacks the beast anatomy required for
+	// hamstring (not fanged-or-clawed, or has "hands" marking it as a
+	// tool-user). Returned by the defense-in-depth identity gate; the AI path
+	// is pre-gated by CanUseHamstring so this fires only on direct dispatch.
+	NotBeast bool
 
 	// BleedDmg is the per-tick bleed damage applied on a hit (Strength/10, min 2).
 	BleedDmg int
@@ -63,6 +71,15 @@ func ExecuteHamstring(actor Actor) HamstringResult {
 	target := ResolveAggroTarget(char.Aggro)
 	if !target.Found {
 		return HamstringResult{NoTarget: true}
+	}
+
+	// Beast identity gate (defense-in-depth): only handless fanged/clawed
+	// creatures hamstring. Unreachable via the AI path (CanUseHamstring gates
+	// it) but reachable via a direct player command or btree dispatch to a
+	// non-beast mob.
+	sp := species.GetSpecies(char.SpeciesId)
+	if sp == nil || (sp.NaturalAttack != items.Bite && sp.NaturalAttack != items.Claws) || char.HasBodyPart("hands") {
+		return HamstringResult{NotBeast: true}
 	}
 
 	// Execute the skill move (reuse trip's config for damage percent, no knockdown).
