@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/GoMudEngine/GoMud/internal/casing"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -326,6 +327,12 @@ func LoadSpellFiles() {
 	tmpAllSpells, err := fileloader.LoadAllFlatFiles[string, *SpellData](dataPath)
 	if err != nil {
 		panic(errors.Wrap(err, `filepath: `+dataPath))
+	}
+
+	for _, s := range tmpAllSpells {
+		if s.Name != "" {
+			casing.AssertCanonical(s.Name, "spell", s.SpellId)
+		}
 	}
 
 	allSpells = tmpAllSpells

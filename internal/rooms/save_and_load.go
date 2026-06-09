@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/GoMudEngine/GoMud/internal/casing"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
@@ -467,6 +468,10 @@ func loadAllRoomZones() error {
 		if _, ok := roomManager.zones[loadedRoom.Zone]; !ok {
 			// Form one?
 			return fmt.Errorf("No zone-config.yaml was loaded for roomId: %d zone: %s", loadedRoom.RoomId, loadedRoom.Zone)
+		}
+
+		if loadedRoom.Title != "" {
+			casing.AssertCanonical(loadedRoom.Title, "room", fmt.Sprintf("%d", loadedRoom.RoomId))
 		}
 	}
 
