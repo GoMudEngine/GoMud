@@ -36,6 +36,11 @@ type Species struct {
 	BuffIds          []int // Permabuffs this species always has
 	Size             Size
 	UnarmedName      string
+	// NaturalAttack is the combat-message subtype an unarmed member of this
+	// species uses for BASIC attacks (e.g. items.Bite, items.Claws). Empty =>
+	// humanoid default (Unarmed -> generic). Must be a known items.ItemSubType
+	// with a loaded combat-message file (validated at load in a later task).
+	NaturalAttack    items.ItemSubType `yaml:"natural_attack,omitempty"`
 	Tameable         bool
 	Damage           items.Damage
 	DamageMultiplier float64          `yaml:"damage_multiplier,omitempty"` // Natural weapon power (0=use config default)
