@@ -1,9 +1,23 @@
 # Non-human attack types & beast moveset — design
 
 **Date:** 2026-06-09
-**Status:** Approved (brainstorming) — pending spec review → writing-plans
+**Status:** Phase 1 + Phase 2 shipped (local master). Phase 3 planned.
 **Scope note:** Sub-project 2 of the immersion-polish pair. Sub-project 1
 (game-wide naming casing) shipped separately.
+
+> **Amendment (2026-06-09, during Phase 3 planning):**
+> 1. **Move parity:** all new beast-move commands (throttle/pounce/maul/rake/
+>    gore + drain) get **full player↔mob parity** (player handler + helpfile +
+>    keywords + parity-list entry), per §B — not mob-only. (Resolves the
+>    §B-vs-"out of scope" tension in favor of §B.)
+> 2. **`drain` (NEW move, vampire):** replaces the vampire's retired `bite`
+>    special. On a hit it applies a bleeding debuff to the target AND heals the
+>    attacker (lifesteal, a fraction of damage dealt via `Character.Heal`).
+>    Gated on a **new species `LifeDrain bool` flag** (set on species 34
+>    vampire), NOT on `natural_attack` — the vampire stays a weapon-using
+>    humanoid whose basic attacks remain `claws`; `body_parts` unchanged.
+>    Add a `drain` row to the moveset alongside throttle/pounce/maul/rake/gore.
+> Implementation plan: `docs/superpowers/plans/2026-06-09-nonhuman-attacks-phase3-beast-moveset.md`.
 
 ## Problem
 
