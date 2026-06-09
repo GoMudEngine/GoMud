@@ -1,5 +1,23 @@
 # DOGMud Patch Notes
 
+## 2026-06-08 — CI fixes (round 2): the real -race culprit + a case-sensitivity test bug
+
+The earlier config-getter lock fix was real but was not the race CI was hitting.
+The actual `-race` stack pointed elsewhere:
+
+- **Fixed the real data race: `markdown.SetFormatter`.** `processMarkdown`
+  re-installed the markdown package's global formatter on every `.md` template
+  render, so two concurrent renders (e.g. a `/shutdown` countdown and a `/quit`
+  goodbye) raced on that global write. The templates package is the markdown
+  package's only consumer and always wants the ANSI-tag formatter, so it is now
+  installed once via `sync.Once` — no per-render write, no race.
+- **Fixed a Linux-only caravan test failure.** The pickup-test cleanup deleted
+  the raw-cased `PickupTestZone` shop directory, but shops save to the
+  `ConvertForFilename`-lowercased `pickuptestzone`. On case-insensitive Windows
+  these match; on case-sensitive Linux CI the stale file survived and leaked a
+  prior test's stock into the next, so the bucket assertion picked up nothing.
+  The cleanup now sanitizes the path exactly as the save path does.
+
 ## 2026-06-08 — Bug fixes: duplicate warcry/rally conditions + CI data race
 
 - **Warcry and Rally no longer appear twice** in the conditions card and the
