@@ -1,0 +1,70 @@
+# DOGMud party commands (verified in internal/usercommands/party.go):
+#   Invite: party invite <name>       (leader; auto-creates party if none exists)
+#   Accept: party accept              (invitee runs this to join)
+#   Decline: party decline
+#   List:   party list
+#   Chat:   party say <message>
+
+name: party-formation
+mode: party
+summary: Two testers form a DOGMud party via 'party invite' / 'party accept' and verify shared membership via GMCP + party list.
+requires:
+  # DOGMud: no permadeath; defeat -> respawn.
+  max_connections: 20
+roster:
+  - id: leader
+    role: feature-tester
+    target: local
+    onboarding: auto
+    goals:
+      - id: invite-joiner
+        do: >-
+          Move to the starting room (Sanctum Basin central square or wherever you
+          spawned). Wait until the blackboard signals 'joiner-ready'. Then run
+          'party invite joiner' (use the joiner's actual character name) to send
+          the party invitation. Signal 'leader-invited' on the blackboard.
+        verify: >-
+          The system confirms 'You invited <joiner-name> to your party.'
+          No error message. Party list shows at minimum yourself.
+      - id: confirm-party
+        do: >-
+          After blackboard shows 'joiner-accepted', run 'party list' to confirm
+          two members. Send a party chat: 'party say Greetings from the leader'.
+        verify: >-
+          'party list' shows 2 members including the joiner. The chat message
+          does not produce an error.
+  - id: joiner
+    role: feature-tester
+    target: local
+    onboarding: auto
+    goals:
+      - id: signal-ready
+        do: >-
+          After spawning, signal 'joiner-ready' on the blackboard so the leader
+          can locate and invite you.
+        verify: >-
+          Blackboard signal 'joiner-ready' was emitted successfully.
+      - id: accept-invite
+        do: >-
+          Wait until the blackboard shows 'leader-invited'. Then run
+          'party accept' to join the party. Signal 'joiner-accepted' on the
+          blackboard.
+        verify: >-
+          The system says 'You joined the party!' No error. 'party list' shows
+          2 members including the leader.
+
+group_goals:
+  - id: party-formed
+    do: >-
+      Leader issues 'party invite <joiner-name>'; joiner runs 'party accept'.
+      Coordinate via blackboard: leader waits on 'joiner-ready', signals
+      'leader-invited'; joiner waits on 'leader-invited', signals
+      'joiner-accepted'.
+    verify: >-
+      Both agents end in the same party (GMCP PartyUpdated fires / 'party list'
+      shows 2 members on both sides). No connection errors or stuck-state.
+  - id: party-chat
+    do: Leader sends a party chat line after the party forms.
+    verify: >-
+      Leader's 'party say' does not error; member's event stream shows or
+      acknowledges the leader's party message.
