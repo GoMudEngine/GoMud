@@ -11,7 +11,7 @@
  │ <ansi fg="yellow">Physical:   </ansi>{{ padRight 13 (mitigationQuality (.Character.GetPhysicalMitigation)) }}<ansi fg="yellow">Magical:    </ansi>{{ padRight 13 (mitigationQuality (.Character.GetMagicalMitigation)) }}<ansi fg="yellow">Conviction: </ansi>{{ padRight 13 (mitigationQuality (.Character.GetConvictionMitigation)) }} │
  └─────────────────────────────────────────────────────────────────────────────┘
  ┌─ <ansi fg="black-bold">.:</ansi><ansi fg="20">Info</ansi> ────────────────────────────────────────────────────────────────────┐
- │ <ansi fg="yellow">Species:    </ansi>{{ padRight 13 .Character.Species }}<ansi fg="yellow">Gold:       </ansi>{{ padRight 13 (numberFormat .Character.Gold) }}<ansi fg="yellow">Bank:       </ansi>{{ padRight 13 (numberFormat .Character.Bank) }} │
+ │ <ansi fg="yellow">Species:    </ansi>{{ padRight 13 .Character.SpeciesDisplay }}<ansi fg="yellow">Gold:       </ansi>{{ padRight 13 (numberFormat .Character.Gold) }}<ansi fg="yellow">Bank:       </ansi>{{ padRight 13 (numberFormat .Character.Bank) }} │
  └─────────────────────────────────────────────────────────────────────────────┘
  <ansi fg="yellow">Submission policy:</ansi> {{ .Character.SubmissionPolicy }}    <ansi fg="yellow">Surrender policy:</ansi> {{ .Character.SurrenderPolicy }}
 {{- if .Character.Buffs.HasBuff 83 }}

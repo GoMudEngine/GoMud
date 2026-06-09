@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/casing"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -156,6 +157,15 @@ func (c *Character) Species() string {
 		return r.Name
 	}
 	return `Ghostly Spirit`
+}
+
+// SpeciesDisplay returns the species name in canonical Title-Case for
+// player-visible surfaces (status sheet, etc.). Species() itself stays
+// lowercase because it doubles as a lookup key (e.g. HatesSpecies, stat-mod
+// keys); display call sites use this instead. Mirrors the casing.Title wraps
+// at the GMCP and `character` command surfaces.
+func (c *Character) SpeciesDisplay() string {
+	return casing.Title(c.Species())
 }
 
 func (c *Character) BarterPrice(startPrice int) int {
