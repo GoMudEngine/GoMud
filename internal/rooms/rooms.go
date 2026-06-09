@@ -2533,6 +2533,28 @@ func (r *Room) GetMapSymbol() string {
 	return r.MapSymbol
 }
 
+// MapSymbolAndLegend resolves the room's map symbol and legend with the
+// per-room mapsymbol/maplegend taking priority over the room's biome, falling
+// back to the biome's glyph/name only when the room hasn't set its own. This
+// is the single source of truth for room display (GetDetails) so it can't drift
+// from the zone mapper's priority again (a city-biome room with mapsymbol:T was
+// rendering as the city glyph because GetDetails overwrote it with the biome).
+func (r *Room) MapSymbolAndLegend() (symbol string, legend string) {
+	symbol = r.MapSymbol
+	legend = r.MapLegend
+
+	b := r.GetBiome()
+	if b != nil {
+		if symbol == `` && b.GetSymbol() != 0 {
+			symbol = string(b.GetSymbol())
+		}
+		if legend == `` && b.Name != `` {
+			legend = b.Name
+		}
+	}
+	return symbol, legend
+}
+
 func (r *Room) Filename() string {
 	return fmt.Sprintf("%d.yaml", GetOriginalRoom(r.RoomId))
 }

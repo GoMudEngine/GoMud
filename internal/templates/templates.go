@@ -94,8 +94,14 @@ func Exists(name string) bool {
 	return err == nil
 }
 
-// Configure a forced ansi flag setting
+// Configure a forced ansi flag setting.
+//
+// forceAnsiFlags is read under ansiLock.RLock() by Process/ProcessText/
+// AnsiParse, so the write must take the write lock — the `server ansi ...`
+// admin command can flip it while other goroutines are rendering templates.
 func SetAnsiFlag(flag AnsiFlag) {
+	ansiLock.Lock()
+	defer ansiLock.Unlock()
 	forceAnsiFlags = flag
 }
 
@@ -471,15 +477,30 @@ func AnsiParse(input string) string {
 // Only if the file has been modified since the last load
 func LoadAliases(f ...fileloader.ReadableGroupFS) {
 
-	// Get the file info
+	// Get the file info (filesystem stat — no shared state).
 	fInfo, err := os.Stat(util.FilePath(string(configs.GetFilePathsConfig().DataFiles) + `/ansi-aliases.yaml`))
-	// check if filemtime is not ansiAliasFileModTime
-	if err != nil || fInfo.ModTime() == ansiAliasFileModTime {
+	if err != nil {
+		return
+	}
+
+	// Fast path: unchanged since the last load. ansiAliasFileModTime is shared
+	// state (this runs on the ansiAliasTimer AND from admin/reload paths), so
+	// read it under the read lock rather than racing the write below.
+	ansiLock.RLock()
+	unchanged := fInfo.ModTime().Equal(ansiAliasFileModTime)
+	ansiLock.RUnlock()
+	if unchanged {
 		return
 	}
 
 	ansiLock.Lock()
 	defer ansiLock.Unlock()
+
+	// Re-check under the write lock — another caller may have loaded it in the
+	// window between releasing the read lock and acquiring the write lock.
+	if fInfo.ModTime().Equal(ansiAliasFileModTime) {
+		return
+	}
 
 	start := time.Now()
 

@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 )
 
 // SleepOptions is reserved for future authoring knobs (bed-item
@@ -52,9 +53,12 @@ func Sleep(actor Actor, opts SleepOptions) SleepResult {
 	// "You are getting some much needed rest." message; we only need to emit
 	// the third-person room visual here.
 	if err := c.AddBuff(15, false); err != nil {
+		// Never surface the raw internal error (it leaks the buff id). Log it
+		// for ops and give the player clean flavor.
+		mudlog.Error("Sleep", "msg", "AddBuff(15 Sleeping) failed", "actor", actor.GetName(), "error", err)
 		if actor.IsPlayer() {
 			actor.SendText(messaging.CategorySystem,
-				fmt.Sprintf("Something prevented you from sleeping: %v", err))
+				"You can't seem to settle into sleep right now.")
 		}
 		return SleepResult{Success: false, Reason: err.Error()}
 	}

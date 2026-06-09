@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
@@ -138,6 +139,39 @@ func TestSalvage_ItemModeInvalidUuid(t *testing.T) {
 
 	if result.Succeeded {
 		t.Error("expected Succeeded=false for invalid UUID")
+	}
+}
+
+// TestSalvage_CorpseVanished_NamesTheMob verifies that when the player's
+// specific target corpse has vanished by the final activity tick, the failure
+// message names the mob ("The goblin corpse is no longer here.") rather than
+// the generic fallback. Regression guard for the 2.9 lift that dropped the
+// mob name from this message.
+func TestSalvage_CorpseVanished_NamesTheMob(t *testing.T) {
+	const mobId = 8801
+	goblin := &mobs.Mob{}
+	goblin.Character.Name = "goblin"
+	cleanup := mobs.SeedMobsForTest(map[int]*mobs.Mob{mobId: goblin}, map[int]*mobs.Mob{})
+	defer cleanup()
+
+	room := newSalvageTestRoom(t, 9405) // no corpses present
+	user := newSalvageFakeActor(t, "SalvageTester3", room, true, 3)
+
+	result := Salvage(user, SalvageOptions{
+		TargetCorpse:             true,
+		TargetCorpseMobId:        mobId,
+		TargetCorpseRoundCreated: 123,
+	})
+
+	if result.RollHappened {
+		t.Error("expected RollHappened=false when the corpse has vanished")
+	}
+	if len(user.sent) == 0 {
+		t.Fatal("expected a player-facing vanished-corpse message")
+	}
+	joined := strings.Join(user.sent, " ")
+	if !strings.Contains(joined, "goblin") {
+		t.Errorf("vanished-corpse message should name the mob 'goblin'; got %q", joined)
 	}
 }
 

@@ -1,0 +1,12 @@
+buffid: 15
+name: Sleeping
+description: You are getting much needed rest.
+triggerrate: 1 round
+triggercount: 100000
+start_user_text: "You lie down and let sleep take you."
+end_user_text: "You stir and wake."
+flags:
+- sleeping
+- cancel-on-action
+- cancel-on-combat
+- cancel-on-damage

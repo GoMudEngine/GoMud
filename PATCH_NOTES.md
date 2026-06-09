@@ -1,5 +1,22 @@
 # DOGMud Patch Notes
 
+## 2026-06-09 — Bug sweep: sleep, town-square map tiles, salvage message
+
+- **You can sleep again.** The `sleep` command was failing outright (the
+  underlying "sleeping" effect was missing from the world data), so it would
+  error instead of putting you to rest. Sleeping now works — 5× rest regen, with
+  the usual wake-on-anything — and the command no longer spits an internal error
+  if something ever does go wrong.
+- **Town-square map tiles show their proper symbol.** Rooms authored with a
+  custom map symbol/legend (e.g. a Townsquare "T") were being drawn with the
+  generic biome glyph instead. Per-room symbols now take priority over the
+  biome, matching the zone map.
+- **Salvage tells you which corpse vanished.** If a corpse you were salvaging
+  disappears before you finish, the message now names it again ("The <creature>
+  corpse is no longer here.") instead of a generic line.
+- Under the hood: closed a couple of rare server-side data races in the
+  text/ANSI rendering path (no visible change in normal play).
+
 ## 2026-06-09 — Fix: a merchant who won't buy your item now says so
 
 Trying to `sell` something to a merchant who is present but won't buy it — it's

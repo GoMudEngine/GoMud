@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
@@ -101,6 +102,32 @@ func TestSleep_AppliesBuffOnSuccess(t *testing.T) {
 	}
 	if !actor.char.HasBuffFlag(buffs.Sleeping) {
 		t.Errorf("expected Sleeping flag applied after Sleep()")
+	}
+}
+
+// TestSleep_BuffUnavailable_NoRawErrorLeak verifies that when the Sleeping
+// buff spec can't be applied (e.g. the buff is missing from the world data),
+// the player gets a clean message rather than the raw internal AddBuff error
+// that leaks the buff id ("...buffId: 15"). Regression guard for the dogmud
+// world shipping without buff 15.
+func TestSleep_BuffUnavailable_NoRawErrorLeak(t *testing.T) {
+	// Deliberately seed an EMPTY buff registry so AddBuff(15) fails.
+	cleanup := buffs.SeedBuffsForTest(map[int]*buffs.BuffSpec{})
+	defer cleanup()
+
+	actor := newSleepActor(t, false /* notInCombat */, true)
+
+	res := Sleep(actor, SleepOptions{})
+
+	if res.Success {
+		t.Fatalf("expected failure when the Sleeping buff is unavailable, got %+v", res)
+	}
+	if len(actor.sent) == 0 {
+		t.Fatal("expected a player-facing message on sleep failure")
+	}
+	joined := strings.Join(actor.sent, " ")
+	if strings.Contains(joined, "buffId") || strings.Contains(joined, "failed to add") {
+		t.Errorf("player message leaked the raw internal error: %q", joined)
 	}
 }
 

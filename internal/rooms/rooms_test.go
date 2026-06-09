@@ -1105,6 +1105,26 @@ func TestBiomeInfo_SymbolString(t *testing.T) {
 	assert.Equal(t, "T", bi.SymbolString())
 }
 
+// TestRoom_MapSymbolAndLegend_PerRoomOverridesBiome guards the city-biome
+// mapsymbol bug: a room's per-room mapsymbol/maplegend must win over the
+// biome's glyph/name; biome is only the fallback when the room sets neither.
+func TestRoom_MapSymbolAndLegend_PerRoomOverridesBiome(t *testing.T) {
+	cleanup := seedBiomes() // city Symbol "#" Name "City"; default "•"
+	defer cleanup()
+
+	// City-biome room WITH a per-room override — must keep T / Townsquare.
+	r := &Room{Biome: "city", MapSymbol: "T", MapLegend: "Townsquare"}
+	sym, legend := r.MapSymbolAndLegend()
+	assert.Equal(t, "T", sym, "per-room mapsymbol must win over the city biome glyph")
+	assert.Equal(t, "Townsquare", legend, "per-room maplegend must win over the biome name")
+
+	// City-biome room WITHOUT an override — falls back to the biome.
+	r2 := &Room{Biome: "city"}
+	sym2, legend2 := r2.MapSymbolAndLegend()
+	assert.Equal(t, "#", sym2, "no per-room mapsymbol falls back to the biome glyph")
+	assert.Equal(t, "City", legend2, "no per-room maplegend falls back to the biome name")
+}
+
 func TestBiomeInfo_IsLit(t *testing.T) {
 	t.Run("lit area", func(t *testing.T) {
 		bi := &BiomeInfo{LitArea: true, DarkArea: false}
