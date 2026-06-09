@@ -211,6 +211,9 @@ func (b *Balance) validateMisc() {
 	if b.DrainHealRatio <= 0 {
 		b.DrainHealRatio = 0.75
 	}
+	if b.ThrottleInterruptChance <= 0 {
+		b.ThrottleInterruptChance = 0.75
+	}
 	if b.StompDamagePercent <= 0 || b.StompDamagePercent > 3.0 {
 		b.StompDamagePercent = 1.20
 	}

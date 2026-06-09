@@ -118,7 +118,8 @@ type Balance struct {
 	StompDamagePercent  ConfigFloat `yaml:"StompDamagePercent"`  // Stomp damage when target is prone (default 1.20)
 	KneeDamagePercent   ConfigFloat `yaml:"KneeDamagePercent"`   // Knee damage in grapple (default 1.00)
 	CoupDeGraceRounds   ConfigInt   `yaml:"CoupDeGraceRounds"`   // Rounds before mob finishes downed player (default 1; 0=disabled)
-	DrainHealRatio      ConfigFloat `yaml:"DrainHealRatio"`      // Fraction of drain damage the attacker heals (lifesteal), default 0.75
+	DrainHealRatio           ConfigFloat `yaml:"DrainHealRatio"`           // Fraction of drain damage the attacker heals (lifesteal), default 0.75
+	ThrottleInterruptChance ConfigFloat `yaml:"ThrottleInterruptChance"` // Chance throttle interrupts a casting victim, default 0.75
 
 	// ── SKULLDUGGERY ─────────────────────────────────────────────────────────
 	SneakFailCooldown              ConfigInt   `yaml:"SneakFailCooldown"`              // Rounds before sneak retry after failure (default 3)

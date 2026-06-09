@@ -93,6 +93,7 @@ help:
       - submit
       - target
       - taunt
+      - throttle
       - throw
       - toxic-bite
       - trip

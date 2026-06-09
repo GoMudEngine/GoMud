@@ -72,6 +72,7 @@ var (
 		"drain":          {Drain, false},
 		"gore":           {Gore, false},
 		"maul":           {Maul, false},
+		"throttle":       {Throttle, false},
 		"pounce":         {Pounce, false},
 		"rake":           {Rake, false},
 		"rally":          {Rally, false},

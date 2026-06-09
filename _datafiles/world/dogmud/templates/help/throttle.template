@@ -1,0 +1,39 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">throttle</ansi>
+
+The <ansi fg="command">throttle</ansi> command drives your natural fangs into your
+opponent's throat in a crushing choke, cutting off their air.
+It deals direct damage, applies a lingering stamina drain, and
+has a strong chance to shatter any spell your victim is casting.
+
+<ansi fg="yellow">Requirements:</ansi>
+
+  - Must have natural fangs (fanged species only)
+  - Must be in active combat
+  - Cannot be used if special move cooldown is active
+
+<ansi fg="yellow">Usage:</ansi>
+
+  <ansi fg="command">throttle</ansi>
+  Attempt to throttle your current combat target
+
+<ansi fg="yellow">Mechanics:</ansi>
+
+  <ansi fg="stat">Damage:</ansi> Moderate — the choke bite deals direct harm.
+  <ansi fg="stat">Bleed:</ansi> A successful throttle opens shallow throat wounds
+    that bleed briefly.
+  <ansi fg="stat">Stamina Drain:</ansi> The Throttled condition saps stamina over
+    several rounds as the victim struggles for breath.
+  <ansi fg="stat">Cast Interrupt:</ansi> When the victim is casting a spell, throttle
+    has a high chance to shatter their concentration entirely.
+    Their unspent conviction is partially refunded but the spell
+    is lost.
+  <ansi fg="stat">Cooldown:</ansi> Shared with other special moves.
+  <ansi fg="stat">Skill:</ansi> Progresses Unarmed Combat
+
+Throttle rewards patience — most valuable when an opponent is
+mid-incantation, letting you silence the spell before it fires.
+
+<ansi fg="yellow">See Also:</ansi>
+
+  <ansi fg="command">help maul</ansi>, <ansi fg="command">help rake</ansi>, <ansi fg="command">help hamstring</ansi>,
+  <ansi fg="command">help conditions</ansi>, <ansi fg="command">help combat</ansi>

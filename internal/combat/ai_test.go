@@ -785,3 +785,28 @@ func TestCanUsePounce(t *testing.T) {
 		assert.False(t, CanUsePounce(c), "legged fanged wolf on cooldown should not pounce")
 	})
 }
+
+// ─── CanUseThrottle ─────────────────────────────────────────────────────────
+
+func TestCanUseThrottle_FangedTrueClawedFalse(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		9301: {SpeciesId: 9301, Name: "wolf", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Bite},
+		9302: {SpeciesId: 9302, Name: "feline", BodyParts: []string{"legs", "paws"}, NaturalAttack: items.Claws},
+		9303: {SpeciesId: 9303, Name: "human", BodyParts: []string{"arms", "hands", "legs", "mouth"}},
+	})
+	defer cleanup()
+
+	wolf := &characters.Character{SpeciesId: 9301, Cooldowns: characters.Cooldowns{}}
+	feline := &characters.Character{SpeciesId: 9302, Cooldowns: characters.Cooldowns{}}
+	human := &characters.Character{SpeciesId: 9303, Cooldowns: characters.Cooldowns{}}
+
+	assert.True(t, CanUseThrottle(wolf), "fanged wolf should be able to throttle")
+	assert.False(t, CanUseThrottle(feline), "clawed feline (not fanged) should not throttle")
+	assert.False(t, CanUseThrottle(human), "no-natural-attack human should not throttle")
+
+	wolfOnCD := &characters.Character{
+		SpeciesId: 9301,
+		Cooldowns: characters.Cooldowns{"special-move": 3},
+	}
+	assert.False(t, CanUseThrottle(wolfOnCD), "fanged wolf on cooldown should not throttle")
+}

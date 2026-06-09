@@ -448,6 +448,42 @@ func TestCommandReadinessDrift(t *testing.T) {
 				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
 			},
 			false, "NotLifeDrainer"},
+
+		// ─── throttle ─────────────────────────────────────────────────────────
+		// throttle_ready: fanged species + default aggro (user 1, not found) →
+		// CommandIsReady returns true (species gate passes, aggro non-nil).
+		// Execute is skipped for ready cases.
+		{"throttle_ready", "throttle",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7305 // fanged-test seeded above
+			},
+			true, ""},
+		{"throttle_cooldown", "throttle",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7305
+				m.Character.Cooldowns = characters.Cooldowns{"special-move": 3}
+			},
+			false, "OnCooldown"},
+		{"throttle_no_aggro", "throttle",
+			func(m *mobs.Mob) {
+				m.Character.SpeciesId = 7305
+				m.Character.EndAggro()
+			},
+			false, "NoTarget"},
+		// throttle_notfanged: SpeciesId 0 → nil species → not fanged. Default
+		// mob has aggro to user 1. CommandIsReady returns false. ExecuteThrottle
+		// burns the cooldown, resolves the target (user 1 not found → NoTarget
+		// first), but with a registered target mob we can reach the NotFanged gate.
+		{"throttle_notfanged", "throttle",
+			func(m *mobs.Mob) {
+				// SpeciesId 0 → nil species → not fanged.
+				targetMob := &mobs.Mob{InstanceId: 214}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "NotFanged"},
 	}
 
 	for _, tc := range cases {
@@ -456,7 +492,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 			// The mutate function may set up target mobs via
 			// mobs.SetInstanceForTest; we clean them all up here.
 			defer func() {
-				for id := 200; id <= 213; id++ {
+				for id := 200; id <= 214; id++ {
 					mobs.SetInstanceForTest(id, nil)
 				}
 			}()
@@ -607,6 +643,16 @@ func runExecuteAndReadFlag(cmd string, actor Actor, flag string) bool {
 			return r.NoTarget
 		case "NotLifeDrainer":
 			return r.NotLifeDrainer
+		}
+	case "throttle":
+		r := ExecuteThrottle(actor)
+		switch flag {
+		case "OnCooldown":
+			return r.OnCooldown
+		case "NoTarget":
+			return r.NoTarget
+		case "NotFanged":
+			return r.NotFanged
 		}
 	}
 	return false

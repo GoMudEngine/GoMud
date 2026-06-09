@@ -114,6 +114,10 @@ func ChooseSpecialMove(mob *mobs.Mob, target *characters.Character) string {
 		moveScores["drain"] = ScoreDrain(mob, target)
 	}
 
+	if CanUseThrottle(&mob.Character) {
+		moveScores["throttle"] = ScoreThrottle(mob, target)
+	}
+
 	// No viable moves
 	if len(moveScores) == 0 {
 		return ""
@@ -682,5 +686,37 @@ func ScoreSubmit(mob *mobs.Mob, target *characters.Character) int {
 		score += 15
 	}
 
+	return score
+}
+
+// CanUseThrottle reports whether the actor can throttle a target. Throttle is
+// a fanged beast's choke — clamping the windpipe to cut off air — so it
+// requires a fanged natural attack.
+func CanUseThrottle(char *characters.Character) bool {
+	if _, exists := char.Cooldowns["special-move"]; exists {
+		return false
+	}
+	return SpeciesIsFanged(char)
+}
+
+// ScoreThrottle returns the AI priority for using throttle against the target.
+// Throttle is valuable when the target is casting (interrupt bonus) or is
+// already on the floor (vulnerability bonus).
+func ScoreThrottle(mob *mobs.Mob, target *characters.Character) int {
+	score := 50 // Base score
+
+	// Strong bonus when the target is casting: throttle can interrupt the spell.
+	if target.IsCasting() {
+		score += 30
+	}
+
+	// Bonus if target is on the floor (prone/grounded): pile on the pressure.
+	if target.IsOnFloor() {
+		score += 20
+	}
+
+	if score < 0 {
+		score = 0
+	}
 	return score
 }

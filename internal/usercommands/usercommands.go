@@ -160,6 +160,7 @@ var (
 		`drain`:           {Drain, false, true, false},
 		`gore`:            {Gore, false, true, false},
 		`maul`:            {Maul, false, true, false},
+		`throttle`:        {Throttle, false, true, false},
 		`pounce`:          {Pounce, false, true, false},
 		`rake`:            {Rake, false, true, false},
 		`read`:            {Read, false, true, false},
