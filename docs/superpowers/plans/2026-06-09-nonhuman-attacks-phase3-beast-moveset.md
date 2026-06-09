@@ -58,6 +58,17 @@
 
 **Move complexity order (easiest → hardest), used as task order:** rake → maul → pounce → gore → drain → throttle.
 
+### Shared wiring pattern (established by `rake` in T2 — every move copies it)
+
+`rake` (commits `c72dad36` + `d2256edc`) is the reference implementation. Each beast move gates its identity at **three sync points on one exported predicate** (the Phase-2 defense-in-depth discipline — required because full parity makes every move a player command, so a non-qualifying player/btree/`combatcommands` dispatch must be refused at the action entry, not just the AI scorer):
+
+1. **AI gate** — `combat.CanUse<Move>` returns false unless the identity predicate holds (`combat.SpeciesIsFanged/Clawed/Horned/HasLifeDrain`, exported in T1/T2).
+2. **Action entry** — `actions.Execute<Move>`, after target resolution and before `ExecuteSkillMove`, returns `…Result{Not<Identity>: true}` if the predicate fails. Handlers message it (player: a refusal like "You have no claws to rake with."; mob: silent return).
+3. **Readiness** — `actions.CommandIsReady` `case "<move>": return char.Aggro != nil && combat.SpeciesIs<Identity>(char)` (+ any body-part/state gate the move needs). `command_readiness.go` imports `internal/combat`.
+4. **Drift rows** — add `<move>_ready` / `<move>_<refusal>` rows to `command_readiness_drift_test.go` + a case in `runExecuteAndReadFlag`, asserting `CommandIsReady` and `Execute*` agree.
+
+Mob beast moves have **no variant enum** — copy the `mobcommands/hamstring.go` + `actions/combat_rake.go` shapes, NOT `kick.go`. Room broadcasts use `messaging.CategoryHitNaturalSharp` (or the move's natural category). New predicates added by a later move (none expected — all four exist) must be exported.
+
 ---
 
 ## Task 1: Species `LifeDrain` flag + shared gating predicates + validation
