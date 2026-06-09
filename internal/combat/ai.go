@@ -2,6 +2,7 @@ package combat
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
@@ -17,16 +18,18 @@ var aiProfiles = map[string]map[string]int{
 		// prefers casting; ChooseCastAction() handles spell selection separately
 	},
 	"default": {
-		"bash":    25,
-		"trip":    20,
-		"kick":    15,
-		"grapple": 40,
+		"bash":      25,
+		"trip":      20,
+		"kick":      15,
+		"grapple":   40,
+		"hamstring": 25,
 	},
 	"aggressive": {
-		"bash":    40,
-		"kick":    30,
-		"trip":    20,
-		"grapple": 10,
+		"bash":      40,
+		"kick":      30,
+		"trip":      20,
+		"grapple":   10,
+		"hamstring": 35,
 	},
 	"defensive": {
 		"trip":    35,
@@ -40,10 +43,11 @@ var aiProfiles = map[string]map[string]int{
 		"trip":    10,
 	},
 	"brawler": {
-		"kick":    40,
-		"trip":    30,
-		"grapple": 20,
-		"bash":    10,
+		"kick":      40,
+		"trip":      30,
+		"grapple":   20,
+		"bash":      10,
+		"hamstring": 30,
 	},
 	"tactical": {
 		// Dynamic weights based on context (uses default for now)
@@ -84,6 +88,10 @@ func ChooseSpecialMove(mob *mobs.Mob, target *characters.Character) string {
 
 	if CanUseSubmit(&mob.Character) {
 		moveScores["submit"] = ScoreSubmit(mob, target)
+	}
+
+	if CanUseHamstring(&mob.Character) {
+		moveScores["hamstring"] = ScoreHamstring(mob, target)
 	}
 
 	// No viable moves
@@ -240,6 +248,24 @@ func CanUseSubmit(char *characters.Character) bool {
 	return true
 }
 
+// CanUseHamstring reports whether the actor can hamstring a target. Hamstring
+// is a beast move — a low slash/bite to the leg tendons that slows the prey —
+// so it requires legs to lunge with and a fanged or clawed natural attack.
+func CanUseHamstring(char *characters.Character) bool {
+	if _, exists := char.Cooldowns["special-move"]; exists {
+		return false
+	}
+	// Beast move: needs legs to cut, and a fanged/clawed natural attack.
+	if !char.HasBodyPart("legs") {
+		return false
+	}
+	sp := species.GetSpecies(char.SpeciesId)
+	if sp == nil {
+		return false
+	}
+	return sp.NaturalAttack == items.Bite || sp.NaturalAttack == items.Claws
+}
+
 // --- Scoring functions ---
 
 func ScoreBash(mob *mobs.Mob, target *characters.Character) int {
@@ -323,6 +349,26 @@ func ScoreKick(mob *mobs.Mob, target *characters.Character) int {
 	targetHealthPercent := float64(target.Health) * 100.0 / float64(target.HealthMax.Value)
 	if targetHealthPercent < 30 {
 		score += 10
+	}
+
+	if score < 0 {
+		score = 0
+	}
+	return score
+}
+
+func ScoreHamstring(mob *mobs.Mob, target *characters.Character) int {
+	score := 45 // Base score
+
+	// Bonus for high unarmed combat skill
+	if mob.Character.GetSkillLevel(skills.UnarmedCombat) > 40 {
+		score += 15
+	}
+
+	// Bonus when the target is healthy and mobile — hamstring to slow them.
+	targetHealthPercent := float64(target.Health) * 100.0 / float64(target.HealthMax.Value)
+	if targetHealthPercent > 50 {
+		score += 15
 	}
 
 	if score < 0 {

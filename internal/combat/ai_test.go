@@ -269,6 +269,29 @@ func TestCanUseSubmit(t *testing.T) {
 	}
 }
 
+func TestCanUseHamstring_FangedOrClawedWithLegs(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		7501: {SpeciesId: 7501, Name: "wolf", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Bite},
+		7502: {SpeciesId: 7502, Name: "human", BodyParts: []string{"arms", "hands", "legs", "mouth"}},
+		7503: {SpeciesId: 7503, Name: "serpent", BodyParts: []string{"mouth", "skin"}, NaturalAttack: items.Bite},
+	})
+	defer cleanup()
+
+	wolf := &characters.Character{SpeciesId: 7501, Cooldowns: characters.Cooldowns{}}
+	human := &characters.Character{SpeciesId: 7502, Cooldowns: characters.Cooldowns{}}
+	serpent := &characters.Character{SpeciesId: 7503, Cooldowns: characters.Cooldowns{}}
+
+	if !CanUseHamstring(wolf) {
+		t.Error("fanged, legged wolf should hamstring")
+	}
+	if CanUseHamstring(human) {
+		t.Error("plain humanoid (no natural fang/claw) should not hamstring")
+	}
+	if CanUseHamstring(serpent) {
+		t.Error("legless serpent should not hamstring (no legs to cut)")
+	}
+}
+
 func TestCanUseSubmit_RequiresArms(t *testing.T) {
 	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
 		7401: {SpeciesId: 7401, Name: "humanoid", BodyParts: []string{"arms", "hands", "legs"}},
