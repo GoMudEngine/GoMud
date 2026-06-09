@@ -13,6 +13,7 @@ hates:
   - boar
   - rodent
 archetype: fighting
+aiprofile: predator
 mutationchance: 15
 combatcommands:
   - howl

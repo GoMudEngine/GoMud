@@ -23,6 +23,14 @@ var aiProfiles = map[string]map[string]int{
 		"kick":      15,
 		"grapple":   40,
 		"hamstring": 25,
+		// Beast moves — anatomy gating filters these for mobs that lack the
+		// required species identity, so listing them here is harmless.
+		"rake":     20,
+		"maul":     20,
+		"pounce":   20,
+		"gore":     20,
+		"throttle": 20,
+		"drain":    20,
 	},
 	"aggressive": {
 		"bash":      40,
@@ -30,6 +38,14 @@ var aiProfiles = map[string]map[string]int{
 		"trip":      20,
 		"grapple":   10,
 		"hamstring": 35,
+		// Beast moves — anatomy gating filters these for mobs that lack the
+		// required species identity, so listing them here is harmless.
+		"rake":     20,
+		"maul":     20,
+		"pounce":   20,
+		"gore":     20,
+		"throttle": 20,
+		"drain":    20,
 	},
 	"defensive": {
 		"trip":    35,
@@ -55,6 +71,28 @@ var aiProfiles = map[string]map[string]int{
 		"trip":    20,
 		"kick":    15,
 		"grapple": 40,
+	},
+	// Beast profiles — anatomy gating in CanUse* is the real filter; listing a
+	// move a mob's species forbids is harmless (it scores 0 and is dropped).
+	"predator": { // fanged hunters (wolves, dogs): open with pounce, then maul / throttle
+		"pounce":    40,
+		"maul":      35,
+		"throttle":  30,
+		"hamstring": 25,
+		"kick":      10,
+		"trip":      10,
+	},
+	"ambush_predator": { // clawed stalkers (felines): pounce opener + rake bleed
+		"pounce":    45,
+		"rake":      40,
+		"hamstring": 20,
+		"trip":      10,
+	},
+	"brute": { // bears/boars: maul or gore, less finesse
+		"maul":   40,
+		"gore":   40,
+		"pounce": 25,
+		"bash":   10,
 	},
 }
 

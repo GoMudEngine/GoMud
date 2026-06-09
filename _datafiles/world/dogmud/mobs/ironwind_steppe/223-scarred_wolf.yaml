@@ -13,6 +13,7 @@ hates:
   - boar
   - rodent
 archetype: fighting
+aiprofile: predator
 mutationchance: 50
 spawnmutations:
   - dense-muscles

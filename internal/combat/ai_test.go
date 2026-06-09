@@ -788,6 +788,88 @@ func TestCanUsePounce(t *testing.T) {
 
 // ─── CanUseThrottle ─────────────────────────────────────────────────────────
 
+// ─── ChooseSpecialMove (beast profiles) ─────────────────────────────────────
+
+// TestChooseSpecialMove_PredatorProfile_NeverGrapple seeds a fanged, legged
+// wolf on the "predator" profile with SpecialMoveChance=100 (always pick) and
+// verifies over 200 iterations that it never selects "grapple" (needs arms)
+// and only picks from its anatomy-permitted move set.
+func TestChooseSpecialMove_PredatorProfile_NeverGrapple(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		9901: {
+			SpeciesId:     9901,
+			Name:          "wolf",
+			BodyParts:     []string{"legs", "mouth"},
+			NaturalAttack: items.Bite,
+		},
+	})
+	defer cleanup()
+
+	mob := &mobs.Mob{}
+	mob.Character = *characters.New()
+	mob.Character.SpeciesId = 9901
+	mob.Character.HealthMax.Value = 100
+	mob.Character.Health = 100
+	mob.AIProfile = "predator"
+	mob.SpecialMoveChance = 100 // always attempt a special move
+
+	target := characters.New()
+	target.HealthMax.Value = 100
+	target.Health = 100
+	setCombatPositionParallel(target, position.Standing)
+
+	// Moves a legged+fanged wolf may legally use on the predator profile.
+	validMoves := map[string]bool{
+		"pounce":    true,
+		"maul":      true,
+		"throttle":  true,
+		"hamstring": true,
+		"kick":      true,
+		"trip":      true,
+	}
+
+	seen := map[string]int{}
+	for i := 0; i < 200; i++ {
+		move := ChooseSpecialMove(mob, target)
+		if move != "" {
+			seen[move]++
+		}
+	}
+
+	// Grapple requires arms — a wolf has none; it must never appear.
+	if _, ok := seen["grapple"]; ok {
+		t.Error("predator wolf must NEVER choose grapple (no arms)")
+	}
+	// Every observed move must be in the valid set.
+	for move := range seen {
+		if !validMoves[move] {
+			t.Errorf("predator wolf chose invalid move %q", move)
+		}
+	}
+}
+
+// TestChooseSpecialMove_AmbushPredatorProfile_ClawedRakeNotMaul is a
+// deterministic anatomy check: a clawed feline can rake (CanUseRake=true)
+// but cannot maul (CanUseMaul=false, fanged-only).  This confirms that the
+// "ambush_predator" profile, even though it lists no "maul" weight, doesn't
+// accidentally unlock maul via anatomy gating.
+func TestChooseSpecialMove_AmbushPredatorProfile_ClawedRakeNotMaul(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		9902: {
+			SpeciesId:     9902,
+			Name:          "feline",
+			BodyParts:     []string{"legs", "paws"},
+			NaturalAttack: items.Claws,
+		},
+	})
+	defer cleanup()
+
+	feline := &characters.Character{SpeciesId: 9902, Cooldowns: characters.Cooldowns{}}
+
+	assert.True(t, CanUseRake(feline), "clawed feline (ambush_predator) can rake")
+	assert.False(t, CanUseMaul(feline), "clawed feline cannot maul — fanged-only move")
+}
+
 func TestCanUseThrottle_FangedTrueClawedFalse(t *testing.T) {
 	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
 		9301: {SpeciesId: 9301, Name: "wolf", BodyParts: []string{"legs", "mouth"}, NaturalAttack: items.Bite},
