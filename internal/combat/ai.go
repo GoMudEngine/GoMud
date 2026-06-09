@@ -94,6 +94,17 @@ var aiProfiles = map[string]map[string]int{
 		"pounce": 25,
 		"bash":   10,
 	},
+	"skirmisher": { // small fanged vermin (rats, insects): harry, don't maul
+		"hamstring": 35,
+		"trip":      30,
+		"kick":      20,
+		"maul":      10,
+	},
+	"serpent": { // legless fanged (snakes, worms): strike + constrict
+		"maul":     35,
+		"throttle": 35,
+		// no pounce/hamstring — legless; anatomy gates them, don't weight them
+	},
 }
 
 // ChooseSpecialMove is the main AI entry point

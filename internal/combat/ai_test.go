@@ -794,6 +794,53 @@ func TestCanUsePounce(t *testing.T) {
 // wolf on the "predator" profile with SpecialMoveChance=100 (always pick) and
 // verifies over 200 iterations that it never selects "grapple" (needs arms)
 // and only picks from its anatomy-permitted move set.
+func TestBeastProfiles_SkirmisherAndSerpent(t *testing.T) {
+	// skirmisher harries (hamstring/trip dominant, light maul); serpent strikes
+	// (maul/throttle) with no pounce/hamstring weighting (legless).
+	skirm := GetAIProfile("skirmisher", nil)
+	if skirm["hamstring"] != 35 || skirm["trip"] != 30 || skirm["maul"] != 10 {
+		t.Errorf("skirmisher weights wrong: %+v", skirm)
+	}
+	serp := GetAIProfile("serpent", nil)
+	if serp["maul"] != 35 || serp["throttle"] != 35 {
+		t.Errorf("serpent weights wrong: %+v", serp)
+	}
+	if _, hasPounce := serp["pounce"]; hasPounce {
+		t.Error("serpent profile should not weight pounce (legless)")
+	}
+	if _, hasHamstring := serp["hamstring"]; hasHamstring {
+		t.Error("serpent profile should not weight hamstring (legless)")
+	}
+}
+
+func TestChooseSpecialMove_SerpentNeverPounces(t *testing.T) {
+	// A legless fanged serpent on the serpent profile: maul/throttle only,
+	// never pounce/hamstring (anatomy gates them out).
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		9920: {SpeciesId: 9920, Name: "serpent", BodyParts: []string{"mouth", "skin"}, NaturalAttack: items.Bite},
+	})
+	defer cleanup()
+	mob := &mobs.Mob{}
+	mob.Character = *characters.New()
+	mob.Character.SpeciesId = 9920
+	mob.Character.HealthMax.Value = 100
+	mob.Character.Health = 100
+	mob.AIProfile = "serpent"
+	mob.SpecialMoveChance = 100
+
+	target := characters.New()
+	target.HealthMax.Value = 100
+	target.Health = 100
+	setCombatPositionParallel(target, position.Standing)
+
+	for i := 0; i < 100; i++ {
+		move := ChooseSpecialMove(mob, target)
+		if move == "pounce" || move == "hamstring" || move == "trip" || move == "kick" {
+			t.Errorf("legless serpent picked a legged move %q", move)
+		}
+	}
+}
+
 func TestChooseSpecialMove_PredatorProfile_NeverGrapple(t *testing.T) {
 	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
 		9901: {
