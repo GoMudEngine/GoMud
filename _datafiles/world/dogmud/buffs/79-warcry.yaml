@@ -4,3 +4,5 @@ description: A rallying battle cry bolsters your fighting spirit.
 triggerrate: 1 round
 triggercount: 25
 end_user_text: "The fervor of your warcry fades."
+flags:
+  - condition-mirror
