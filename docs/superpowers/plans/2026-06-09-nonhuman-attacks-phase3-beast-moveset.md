@@ -44,8 +44,7 @@
 - `internal/actions/command_readiness.go` — a `CommandIsReady` case per move.
 - `internal/usercommands/usercommands.go`, `internal/mobcommands/mobcommands.go` — register each handler.
 - `internal/mobcommands/command_parity_test.go` — add move names to `supported`.
-- `internal/buffs/buffspec.go` — add `Silenced` flag (throttle).
-- `internal/usercommands/skill.cast.go`, `internal/usercommands/shout.go`, `internal/hooks/spell_resolution.go` — honor the `Silenced` flag (throttle).
+- `internal/actions/cast_interrupt.go` (NEW small shared helper) — `InterruptTargetCast` reusing the engine's existing cast-cancel (`activity.TriggerCastCancel` transition + conviction refund), called by throttle.
 
 **Data/content:**
 - `_datafiles/world/dogmud/combat-messages/{maul,pounce,throttle,drain}.yaml` — NEW, full matrix. `rake` reuses `claws.yaml`; `gore.yaml` exists.
@@ -364,35 +363,61 @@ combatcommands:
 
 ---
 
-## Task 7: `throttle` — fanged choke (held, escalating; blocks shout/cast) + NEW `throttle.yaml`
+## Task 7: `throttle` — fanged choke (cast-interrupt + stamina/health DoT) + NEW `throttle.yaml`
 
-The heaviest move. Mechanic (spec): the fanged finisher — clamp the throat, cutting airflow: a held, escalating choke that drains the victim's stamina each round and BLOCKS shouting and spellcasting until they escape; damage/effect ramps each round. Gate: `speciesIsFanged`. Best set up after a knockdown (pounce). NEW `Silenced` buff flag + checks in cast/shout.
+Mechanic (per user, 2026-06-09 — simplified from the spec's "silence status"): the fanged finisher — clamp the throat. On a hit it (a) deals immediate damage, (b) applies a **stamina + health damage-over-time** effect, and (c) when the victim is mid-cast, has a **fairly high chance to interrupt their spellcast** using the engine's EXISTING cast-interruption mechanism (the `activity.TriggerCastCancel` transition + conviction refund — the same path `cancel.go` and the damage-driven `checkConcentrationBreak` use). **No new "silenced" status, no new buff flag, no edits to the cast/shout commands.** Gate: `speciesIsFanged`. Best set up after a knockdown (pounce).
 
-**Files:** Create `internal/actions/combat_throttle.go`, `internal/usercommands/throttle.go`, `internal/mobcommands/throttle.go`, `_datafiles/world/dogmud/combat-messages/throttle.yaml`, `templates/help/throttle.template`; Modify `internal/combat/ai.go`, `command_readiness.go`, both command maps, `command_parity_test.go`, `internal/buffs/buffspec.go`, `internal/usercommands/skill.cast.go`, `internal/usercommands/shout.go`, `internal/hooks/spell_resolution.go`, `keywords.yaml`.
+**Files:** Create `internal/actions/combat_throttle.go`, `internal/actions/cast_interrupt.go`, `internal/usercommands/throttle.go`, `internal/mobcommands/throttle.go`, `_datafiles/world/dogmud/combat-messages/throttle.yaml`, `_datafiles/world/dogmud/buffs/<id>-throttled.yaml`, `templates/help/throttle.template`; Modify `internal/combat/ai.go`, `internal/actions/command_readiness.go`, both command maps, `command_parity_test.go`, `internal/configs/config.balance.go`, `keywords.yaml`.
 
-- [ ] **Step 1: Add the `Silenced` buff flag.** In `internal/buffs/buffspec.go` add:
+- [ ] **Step 1: Shared cast-interrupt helper `internal/actions/cast_interrupt.go`.** The cast-cancel-with-refund pattern (`refund := unspent/2; char.Conviction += refund; clamp; Activity.TransitionToFree({Trigger: activity.TriggerCastCancel, Actor})`) is currently duplicated in `usercommands/cancel.go`, `mobcommands/cancel.go`, `behaviortree/actions_combat.go`, and `usercommands/skill.cast.go`. Add ONE reusable helper (do NOT refactor the existing 4 sites now — out of scope; just add the shared function for throttle to call):
 ```go
-	Silenced Flag = `silenced` // throat clamped (throttle): cannot shout or cast spells
+// InterruptTargetCast cancels target's in-progress spellcast using the engine's
+// standard cast-cancel path (conviction refund + activity TriggerCastCancel).
+// Returns true if the target was casting and the cast was interrupted.
+func InterruptTargetCast(target *characters.Character, byActor state.ActorRef) bool { ... }
 ```
+Read `usercommands/cancel.go` (the refund math) + `behaviortree/actions_combat.go:230-250` (the transition) and reproduce the exact refund + transition. TDD: a casting character → `InterruptTargetCast` returns true and leaves `IsCasting()` false; a non-casting character → returns false, no-op.
 
-- [ ] **Step 2: Create the Throttled buff data file.** Add a buff YAML under `_datafiles/world/dogmud/buffs/` (run `python tools/id_inventory.py --type buffs` for the next free id) named per the loader convention (`{id}-throttled.yaml`). It carries `flags: [silenced]`, a short duration (e.g. 2 rounds, refreshed each round the choke is maintained), and a per-round stamina drain (a `stamina_regen_multiplier` < 1 or a small DoT-style stamina cost — follow an existing debuff buff like the nausea/weakness buffs for the stamina-drain statmod). Document that the choke refreshes the buff each round it is maintained and it lapses when the victim escapes (buff expiry / `stand` / move).
+- [ ] **Step 2: Stamina-DoT "Throttled" buff data file.** Run `python tools/id_inventory.py --type buffs` for the next free id; create `_datafiles/world/dogmud/buffs/<id>-throttled.yaml` following the tick-buff schema (see `internal/buffs/buffspec.go` `tick_pool`/`tick_percent`/`tick_min` + `nausea.yaml` for shape):
+```yaml
+buffid: <id>
+name: Throttled
+description: A crushing grip on your throat — you can barely breathe.
+triggerrate: 1 round
+triggercount: 3
+tick_pool: stamina
+tick_percent: -0.06   # drains ~6% max stamina per round (negative = damage)
+tick_min: 2
+```
+(Health-over-time is handled by `ConditionBleeding` in Step 3, the established health-DoT used by hamstring/maul/rake — no second buff needed. NO `flags:` — this is a pure DoT, not a silence.)
 
-- [ ] **Step 3: Honor `Silenced` in shout + cast.** Failing tests first:
-  - `internal/usercommands/shout_test.go` (or inline): a user with `HasBuffFlag(buffs.Silenced)` who `shout`s gets a "you can't make a sound — something is crushing your throat" refusal and the shout does NOT broadcast.
-  - cast: in `internal/usercommands/skill.cast.go` (and the mob/hook cast path `internal/hooks/spell_resolution.go`), a caster with `HasBuffFlag(buffs.Silenced)` cannot cast (refusal message; spell not cast). Add the guard at the start of the cast resolution. TDD each guard.
-  Then implement the guards (`if char.HasBuffFlag(buffs.Silenced) { <refuse> }`).
+- [ ] **Step 3: Config knob.** Add `ThrottleInterruptChance float64` to `internal/configs/config.balance.go`, default `0.75` ("chance throttle interrupts a casting victim"), following the existing float-knob declaration+default pattern.
 
-- [ ] **Step 4: `ExecuteThrottle`** (`internal/actions/combat_throttle.go`) — the held/escalating mechanic. Follow the grapple/submit control precedent for "held until escape": on a successful throttle, (a) `ExecuteSkillMove` for damage (escalating: scale `DamagePercent` by how many consecutive rounds the choke has held — track via a MiscData counter on the attacker or a condition magnitude), (b) apply/refresh the Throttled buff on the target (`target.Char.AddBuff(<throttleBuffId>)` — confirm the AddBuff signature), (c) drain target stamina. Provide an escape path: the target's `stand`/move or a resisted roll removes the buff and ends the hold (wire the removal into the buff's wake/cancel triggers, mirroring how `Sleeping` is cleared). Return a `ThrottleResult` with `Executed`, `Escalation int`, `MoveResult`. Keep all numbers out of player text.
+- [ ] **Step 4: Failing test — `ExecuteThrottle` bleeds + applies the Throttled buff + interrupts a casting target.** Seed a fanged attacker + a target; on a forced hit assert the target gains `ConditionBleeding` and the Throttled buff; with the target mid-cast assert (deterministically, by setting `ThrottleInterruptChance: 1.0` via the config-override test helper) that the target's cast was interrupted (`IsCasting()` false). Follow the existing action-test harness (`combat_hamstring_test.go`).
 
-  NOTE: this is the most involved action. If, during implementation, the held-state bookkeeping proves to need more than a counter (e.g. a dedicated control axis like grapple's), STOP and report the options rather than half-building it — the controller will decide scope (a simpler "1-round silence + stamina hit, no multi-round escalation" fallback is acceptable if the full hold is too large for one task).
+- [ ] **Step 5: `ExecuteThrottle`** (`internal/actions/combat_throttle.go`) — copy `combat_hamstring.go`, rename, then on hit:
+```go
+	// Immediate bite damage already applied by ExecuteSkillMove.
+	// Health-over-time: bleed (reuse the established condition).
+	target.Char.AddCondition(characters.ConditionBleeding, 3, float64(max(2, char.Stats.Strength.ValueAdj/10)), "throttle")
+	// Stamina-over-time: the Throttled DoT buff.
+	target.Char.AddBuff(throttledBuffId, false) // confirm AddBuff signature/arg via a real call site
+	// Cast interrupt: fairly high chance, using the engine's existing mechanism.
+	interrupted := false
+	if target.Char.IsCasting() && dice.RollStat(... ) // OR a simple util.Rand(100) < int(cfg.ThrottleInterruptChance*100)
+	{
+		interrupted = InterruptTargetCast(target.Char, actorRef(actor))
+	}
+```
+Confirm the `AddBuff` signature against an existing caller (grep `AddBuff(` in actions/hooks). Use the project's standard roll (`util.Rand(100) < int(cfg.ThrottleInterruptChance*100)`) for the interrupt chance — this is a flat config probability, not a stat-opposed roll, matching the user's "fairly high chance" intent. Return `ThrottleResult{Executed, MoveResult, InterruptedCast bool, BleedDmg int}`. `RecordSpecialMove(...,"throttle",...)`.
 
-- [ ] **Step 5: `CanUseThrottle`/`ScoreThrottle`** — `return speciesIsFanged(char)` (cooldown first); `ScoreThrottle` base 50, +25 if `target.IsOnFloor()` (set up by a knockdown/pounce), +15 if target is a caster-type (deny their spells). Wire into `ChooseSpecialMove`.
+- [ ] **Step 6: `CanUseThrottle`/`ScoreThrottle`** in `ai.go` — `return speciesIsFanged(char)` (cooldown first). `ScoreThrottle` base 50, +30 if `target.IsCasting()` (the engine already values interrupting casters — see `condTargetIsCasting`), +20 if `target.IsOnFloor()` (set up by pounce). Wire into `ChooseSpecialMove`.
 
-- [ ] **Step 6: Author `throttle.yaml`** (complete matrix — clamping, crushing the windpipe, cutting off air; escalating desperation prose), per the completeness rule.
+- [ ] **Step 7: Author `throttle.yaml`** (complete matrix — clamping the windpipe, crushing the throat, the victim gasping/unable to make a sound; per the completeness rule). NOTE the messaging may *describe* the victim being unable to cry out, but there is no mechanical silence — only the DoT + cast-interrupt.
 
-- [ ] **Step 7–12: full parity** — readiness `case "throttle"`, player + mob handlers (messaging conveys the airflow-cut + escalation descriptively), register both maps, add `"throttle"` to `supported`, helpfile `throttle.template` (explain it blocks shout/cast), keywords entry.
+- [ ] **Step 8–12: full parity** — readiness `case "throttle"` (gate `char.Aggro != nil`; identity gate in `CanUseThrottle`), player + mob handlers (messaging conveys the choke + the DoT + "their spell collapses as they fight for air" when `InterruptedCast`), register both maps, add `"throttle"` to `supported`, helpfile `throttle.template` (describe: damage + lingering choke that saps stamina/health + interrupts spells), keywords entry.
 
-- [ ] **Step 13: tests + build + commit** (`feat(combat): add throttle fanged choke (silences shout/cast, escalating) + Silenced flag + throttle.yaml + parity`).
+- [ ] **Step 13: tests + build + commit** (`feat(combat): add throttle fanged choke (cast-interrupt + stamina/health DoT) + throttle.yaml + parity`). Include the throttled buff yaml + config knob.
 
 ---
 
@@ -470,7 +495,7 @@ Run: `rm -rf _datafiles/world/dogmud/mobs.instances/* _datafiles/world/dogmud/ro
 - **Cross-cutting wiring (spec §A–D), enumerated per task:** §A message-file completeness — every NEW file (maul/pounce/throttle/drain) authors the full intensity×tier×audience matrix or the loader panics (T3/4/6/7 step 1; T10 boot is the guard); rake reuses `claws.yaml`, gore uses existing `gore.yaml`. §B full parity — each move touches both command maps + both handlers + `CommandIsReady` + `supported` + helpfile + keywords. §C context.md (T9). §D helpfiles + keywords (each move task).
 - **Single source of truth:** beast-identity predicates (`speciesIsFanged/Clawed/Horned`, `speciesHasLifeDrain`) added once in T1, reused by every `CanUse*` — mirrors the spec's "keep gating predicates in one place."
 - **Conventions:** all moves route damage through `ExecuteSkillMove` (unified pipeline), use config-knobbed percentages/multipliers (no flat values), and emit only descriptive player text (`GetDamageDescription`/`GetHealDescription`, no raw numbers).
-- **Risk flagged for execution:** `throttle` (T7) is the heaviest — it adds a `Silenced` flag honored by the shout + cast paths and a held/escalating mechanic. The task carries an explicit STOP-and-report fallback (1-round silence + stamina hit, no multi-round hold) if the full held-state bookkeeping is too large for one increment.
+- **`throttle` (T7) simplified per user (2026-06-09):** no silence status / new buff flag / cast-shout system edits. It reuses the engine's EXISTING cast-interrupt (`activity.TriggerCastCancel` + conviction refund, via a new shared `actions.InterruptTargetCast` helper) with a flat high chance (`ThrottleInterruptChance` 0.75), plus `ConditionBleeding` (health DoT, reused) + a small stamina-DoT "Throttled" tick buff. Much lower risk than the original silence-flag design.
 - **Message-file authoring is large** (~300–500 lines each for maul/pounce/throttle/drain). Each is its own step copying `gore.yaml`'s structure; completeness is load-guaranteed by the boot test.
 
 ---

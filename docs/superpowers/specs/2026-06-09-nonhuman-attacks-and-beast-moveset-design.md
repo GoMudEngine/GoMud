@@ -17,6 +17,13 @@
 >    vampire), NOT on `natural_attack` — the vampire stays a weapon-using
 >    humanoid whose basic attacks remain `claws`; `body_parts` unchanged.
 >    Add a `drain` row to the moveset alongside throttle/pounce/maul/rake/gore.
+> 3. **`throttle` simplified:** instead of the original "blocks shouting &
+>    spellcasting" silence status, `throttle` reuses the engine's EXISTING
+>    spell-interruption mechanism (the `activity.TriggerCastCancel` cast-cancel
+>    path) with a fairly high chance to interrupt a casting victim, plus a
+>    stamina + health damage-over-time effect (`ConditionBleeding` + a small
+>    stamina-DoT tick buff). No new "silenced" buff flag and no edits to the
+>    cast/shout commands.
 > Implementation plan: `docs/superpowers/plans/2026-06-09-nonhuman-attacks-phase3-beast-moveset.md`.
 
 ## Problem
