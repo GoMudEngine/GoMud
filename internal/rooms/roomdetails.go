@@ -42,17 +42,11 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 
 	c := configs.GetGamePlayConfig()
 
-	var roomSymbol string = r.MapSymbol
-	var roomLegend string = r.MapLegend
+	// Per-room mapsymbol/maplegend take priority over the biome; see
+	// Room.MapSymbolAndLegend (shared with the zone mapper's priority).
+	roomSymbol, roomLegend := r.MapSymbolAndLegend()
 
 	b := r.GetBiome()
-
-	if b.GetSymbol() != 0 {
-		roomSymbol = string(b.GetSymbol())
-	}
-	if b.Name != `` {
-		roomLegend = b.Name
-	}
 
 	showPvp := false
 	// Don't need to show the PVP flag if Pvp is globally enabled or globally disabled
