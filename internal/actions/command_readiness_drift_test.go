@@ -169,6 +169,21 @@ func TestCommandReadinessDrift(t *testing.T) {
 		{"grapple_no_aggro", "grapple",
 			func(m *mobs.Mob) { m.Character.EndAggro() },
 			false, "NoTarget"},
+		// SpeciesId 0 → species.GetSpecies(0) returns nil (no species loaded in
+		// unit-test context) → HasBodyPart("arms") returns false. A valid
+		// non-grappling target is registered so target resolution succeeds and
+		// the arms gate is the sole blocking condition in CommandIsReady.
+		// ExecuteGrapple checks HasBodyPart before target resolution, so it
+		// also fires the arms gate and returns GrappleImmune:true.
+		{"grapple_no_arms", "grapple",
+			func(m *mobs.Mob) {
+				targetMob := &mobs.Mob{InstanceId: 206}
+				targetMob.Character.Name = "Target"
+				setCombatPositionParallel(&targetMob.Character, position.Standing)
+				mobs.SetInstanceForTest(targetMob.InstanceId, targetMob)
+				m.Character.SetAggro(0, targetMob.InstanceId, characters.DefaultAttack)
+			},
+			false, "GrappleImmune"},
 
 		// ─── kick ─────────────────────────────────────────────────
 		{"kick_ready", "kick",
@@ -195,7 +210,7 @@ func TestCommandReadinessDrift(t *testing.T) {
 			// The mutate function may set up target mobs via
 			// mobs.SetInstanceForTest; we clean them all up here.
 			defer func() {
-				for id := 200; id <= 205; id++ {
+				for id := 200; id <= 206; id++ {
 					mobs.SetInstanceForTest(id, nil)
 				}
 			}()
@@ -284,6 +299,8 @@ func runExecuteAndReadFlag(cmd string, actor Actor, flag string) bool {
 			return r.OnCooldown
 		case "NoTarget":
 			return r.NoTarget
+		case "GrappleImmune":
+			return r.GrappleImmune
 		}
 	case "kick":
 		r := ExecuteKick(actor)

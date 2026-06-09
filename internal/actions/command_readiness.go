@@ -69,6 +69,9 @@ func CommandIsReady(actor Actor, cmd string) bool {
 		if !target.Found {
 			return false
 		}
+		if !char.HasBodyPart("arms") {
+			return false
+		}
 		return !target.Char.IsGrappling()
 
 	case "kick":
