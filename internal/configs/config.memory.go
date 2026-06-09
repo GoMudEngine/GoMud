@@ -24,11 +24,9 @@ func (m *Memory) Validate() {
 }
 
 func GetMemoryConfig() Memory {
+	ensureConfigValidated()
+
 	configDataLock.RLock()
 	defer configDataLock.RUnlock()
-
-	if !configData.validated {
-		configData.Validate()
-	}
 	return configData.Memory
 }

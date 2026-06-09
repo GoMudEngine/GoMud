@@ -15,11 +15,9 @@ func (s *SpecialRooms) Validate() {
 }
 
 func GetSpecialRoomsConfig() SpecialRooms {
+	ensureConfigValidated()
+
 	configDataLock.RLock()
 	defer configDataLock.RUnlock()
-
-	if !configData.validated {
-		configData.Validate()
-	}
 	return configData.SpecialRooms
 }

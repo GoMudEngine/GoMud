@@ -15,11 +15,9 @@ func (i *Integrations) Validate() {
 }
 
 func GetIntegrationsConfig() Integrations {
+	ensureConfigValidated()
+
 	configDataLock.RLock()
 	defer configDataLock.RUnlock()
-
-	if !configData.validated {
-		configData.Validate()
-	}
 	return configData.Integrations
 }

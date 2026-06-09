@@ -48,11 +48,9 @@ func (v *Validation) Validate() {
 }
 
 func GetValidationConfig() Validation {
+	ensureConfigValidated()
+
 	configDataLock.RLock()
 	defer configDataLock.RUnlock()
-
-	if !configData.validated {
-		configData.Validate()
-	}
 	return configData.Validation
 }

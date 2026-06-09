@@ -7,11 +7,9 @@ func (p *Modules) Validate() {
 }
 
 func GetModulesConfig() Modules {
+	ensureConfigValidated()
+
 	configDataLock.RLock()
 	defer configDataLock.RUnlock()
-
-	if !configData.validated {
-		configData.Validate()
-	}
 	return configData.Modules
 }

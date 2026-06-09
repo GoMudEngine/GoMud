@@ -71,11 +71,9 @@ func (n *Network) Validate() {
 }
 
 func GetNetworkConfig() Network {
+	ensureConfigValidated()
+
 	configDataLock.RLock()
 	defer configDataLock.RUnlock()
-
-	if !configData.validated {
-		configData.Validate()
-	}
 	return configData.Network
 }

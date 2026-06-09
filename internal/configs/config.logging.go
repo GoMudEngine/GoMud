@@ -16,11 +16,9 @@ func (l *Logging) Validate() {
 }
 
 func GetLoggingConfig() Logging {
+	ensureConfigValidated()
+
 	configDataLock.RLock()
 	defer configDataLock.RUnlock()
-
-	if !configData.validated {
-		configData.Validate()
-	}
 	return configData.Logging
 }

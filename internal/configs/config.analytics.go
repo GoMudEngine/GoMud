@@ -22,11 +22,9 @@ func (a *Analytics) Validate() {
 
 // GetAnalyticsConfig returns a thread-safe copy of the Analytics config section.
 func GetAnalyticsConfig() Analytics {
+	ensureConfigValidated()
+
 	configDataLock.RLock()
 	defer configDataLock.RUnlock()
-
-	if !configData.validated {
-		configData.Validate()
-	}
 	return configData.Analytics
 }
