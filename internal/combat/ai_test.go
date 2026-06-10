@@ -1001,3 +1001,54 @@ func TestBeastMoves_RequireNoHands(t *testing.T) {
 		t.Error("DRAIN MUST stay exempt — hands-bearing LifeDrain vampire still drains")
 	}
 }
+
+// ─── SelectSpecialMove ───────────────────────────────────────────────────────
+
+// TestSelectSpecialMove_NoChanceRoll verifies that SelectSpecialMove bypasses
+// the SpecialMoveChance gate (always selects a move when anatomy permits),
+// while ChooseSpecialMove with chance=0 always returns "".
+func TestSelectSpecialMove_NoChanceRoll(t *testing.T) {
+	cleanup := species.SeedSpeciesForTest(map[int]*species.Species{
+		9901: {
+			SpeciesId:     9901,
+			Name:          "wolf",
+			BodyParts:     []string{"legs", "mouth"},
+			NaturalAttack: items.Bite,
+		},
+	})
+	defer cleanup()
+
+	mob := &mobs.Mob{}
+	mob.Character = *characters.New()
+	mob.Character.SpeciesId = 9901
+	mob.Character.HealthMax.Value = 100
+	mob.Character.Health = 100
+	mob.AIProfile = "predator"
+	mob.SpecialMoveChance = 0 // chance gate forces ChooseSpecialMove → ""
+
+	target := characters.New()
+	target.HealthMax.Value = 100
+	target.Health = 100
+	setCombatPositionParallel(target, position.Standing)
+
+	// ChooseSpecialMove must return "" every time when chance=0
+	for i := 0; i < 50; i++ {
+		move := ChooseSpecialMove(mob, target)
+		if move != "" {
+			t.Errorf("ChooseSpecialMove with chance=0 returned %q, want \"\"", move)
+		}
+	}
+
+	// SelectSpecialMove must return a valid beast move (bypasses chance gate)
+	found := false
+	for i := 0; i < 50; i++ {
+		move := SelectSpecialMove(mob, target)
+		if move != "" {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Error("SelectSpecialMove returned \"\" every time; expected a non-empty move for a viable predator")
+	}
+}

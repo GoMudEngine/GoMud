@@ -109,14 +109,12 @@ var aiProfiles = map[string]map[string]int{
 	},
 }
 
-// ChooseSpecialMove is the main AI entry point
-// Returns the name of a special move to use ("bash", "trip", etc.) or "" for none
-func ChooseSpecialMove(mob *mobs.Mob, target *characters.Character) string {
-
-	// Check if mob should attempt special move (based on SpecialMoveChance)
-	if util.Rand(100) >= mob.SpecialMoveChance {
-		return ""
-	}
+// SelectSpecialMove performs the weighted move-selection logic without
+// the SpecialMoveChance gate. Call this when the caller has already
+// decided that a special move should be attempted (e.g., the
+// try_special_move btree action). ChooseSpecialMove wraps this with
+// the probabilistic gate.
+func SelectSpecialMove(mob *mobs.Mob, target *characters.Character) string {
 
 	// Build list of viable moves with their scores
 	moveScores := make(map[string]int)
@@ -205,6 +203,18 @@ func ChooseSpecialMove(mob *mobs.Mob, target *characters.Character) string {
 	}
 
 	return bestMove
+}
+
+// ChooseSpecialMove is the main AI entry point for probabilistic special-move
+// selection. Returns a move name ("bash", "trip", etc.) or "" for none.
+// The SpecialMoveChance gate is applied first; call SelectSpecialMove
+// directly to bypass the chance roll.
+func ChooseSpecialMove(mob *mobs.Mob, target *characters.Character) string {
+	// Check if mob should attempt special move (based on SpecialMoveChance)
+	if util.Rand(100) >= mob.SpecialMoveChance {
+		return ""
+	}
+	return SelectSpecialMove(mob, target)
 }
 
 // GetAIProfile returns move preference weights for a profile
