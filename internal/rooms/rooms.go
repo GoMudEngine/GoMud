@@ -2589,8 +2589,10 @@ func (r *Room) ActiveMutators(yield func(mutators.Mutator) bool) {
 	}
 
 	indoor := false
-	if b := r.GetBiome(); b != nil {
-		indoor = b.Indoor
+	if len(activeMutators) > 0 {
+		if b := r.GetBiome(); b != nil {
+			indoor = b.Indoor
+		}
 	}
 
 	for _, mut := range activeMutators {

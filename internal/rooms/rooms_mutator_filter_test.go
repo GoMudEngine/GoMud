@@ -16,10 +16,11 @@ func TestActiveMutators_OutdoorOnlySkippedIndoors(t *testing.T) {
 	})
 	defer biomesCleanup()
 
-	mutators.SeedSpecsForTest(t,
+	cleanupSpecs := mutators.SeedSpecsForTest(
 		mutators.MutatorSpec{MutatorId: "weather-test-rain", OutdoorOnly: true},
 		mutators.MutatorSpec{MutatorId: "test-sanctuary"},
 	)
+	defer cleanupSpecs()
 
 	zc := GetZoneConfig("TestZone")
 	zc.Mutators.Add("weather-test-rain")
