@@ -64,6 +64,14 @@ The `internal/usercommands` package implements the complete command system for p
   (`cmdSetArrest` in `set.go`) that stores `characters.ArrestPolicy` on the
   character. Default is `surrender`. The `resist` policy causes guards to
   attack immediately rather than wait through the arrest grace window.
+  The `set combatverbosity <full|medium|light>` subcommand sets
+  `UserRecord.CombatVerbosity` (persisted in the user YAML). `full` is
+  the historical default; `medium` shows landed hits only (dodge/parry/block
+  lines suppressed); `light` replaces per-swing lines with one compact
+  summary per round. The viewer's floor rules (deaths, position-changing
+  moves, and blows directed at the viewer) always pass regardless of
+  setting; spectated fights render one step quieter than the viewer's own
+  setting.
 
 #### **Administrative Commands** (Admin-only)
 - **World building**: `room`, `build`, `zone` - Environment creation and modification

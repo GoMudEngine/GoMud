@@ -2691,6 +2691,10 @@ func TestSetSubCommands(t *testing.T) {
 		"auction off",
 		"screenreader on",
 		"screenreader off",
+		"combatverbosity full",
+		"combatverbosity medium",
+		"combatverbosity light",
+		"combatverbosity loud",
 	}
 
 	for _, sub := range subcmds {

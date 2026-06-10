@@ -56,6 +56,8 @@ func Set(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		return cmdSetArrest(user, args)
 	case `linewidth`:
 		return cmdSetLineWidth(user, args)
+	case `combatverbosity`:
+		return cmdSetCombatVerbosity(user, args)
 	default:
 		// Are they setting a macro? // setTarget should be "=1" etc
 		if len(setTarget) == 2 && setTarget[0] == '=' {
@@ -124,6 +126,10 @@ func displaySetStatus(user *users.UserRecord) {
 
 	user.SendText(messaging.CategorySystem, `<ansi fg="yellow-bold">surrender:</ansi> `)
 	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="green">%s</ansi>`, user.Character.SurrenderPolicy))
+	user.SendText(messaging.CategorySystem, ``)
+
+	user.SendText(messaging.CategorySystem, `<ansi fg="yellow-bold">combatverbosity:</ansi> `)
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="green">%s</ansi>`, user.GetCombatVerbosity().String()))
 	user.SendText(messaging.CategorySystem, ``)
 
 	user.SendText(messaging.CategorySystem, `See: <ansi fg="command">help set</ansi>`)
@@ -493,6 +499,34 @@ func cmdSetLineWidth(user *users.UserRecord, args []string) (bool, error) {
 	events.AddToQueue(events.UserSettingChanged{
 		UserId: user.UserId,
 		Name:   `linewidth`,
+	})
+
+	return true, nil
+}
+
+func cmdSetCombatVerbosity(user *users.UserRecord, args []string) (bool, error) {
+	if len(args) < 1 {
+		user.SendText(messaging.CategorySystem,
+			fmt.Sprintf("Combat verbosity is currently <ansi fg=\"yellow-bold\">%s</ansi>.", user.GetCombatVerbosity().String()))
+		user.SendText(messaging.CategorySystem, `Options: <ansi fg="command">full</ansi> (everything), <ansi fg="command">medium</ansi> (hits only), <ansi fg="command">light</ansi> (round summaries). See <ansi fg="command">help combatverbosity</ansi>.`)
+		return true, nil
+	}
+	choice := strings.ToLower(args[0])
+	if choice != `full` && choice != `medium` && choice != `light` {
+		user.SendText(messaging.CategorySystem, `Combat verbosity must be <ansi fg="command">full</ansi>, <ansi fg="command">medium</ansi>, or <ansi fg="command">light</ansi>.`)
+		return true, nil
+	}
+	if choice == `full` {
+		user.CombatVerbosity = `` // empty = default = full (omitempty keeps saves clean)
+	} else {
+		user.CombatVerbosity = choice
+	}
+	user.SendText(messaging.CategorySystem,
+		fmt.Sprintf("Combat verbosity set to <ansi fg=\"yellow-bold\">%s</ansi>.", choice))
+
+	events.AddToQueue(events.UserSettingChanged{
+		UserId: user.UserId,
+		Name:   `combatverbosity`,
 	})
 
 	return true, nil

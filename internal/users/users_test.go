@@ -1381,3 +1381,22 @@ func TestPromptTargetVisibilityGating(t *testing.T) {
 		t.Error("canSeeTargetForPrompt should default to true when no check is registered")
 	}
 }
+
+func TestUserRecord_GetCombatVerbosity(t *testing.T) {
+	u := &UserRecord{}
+	if got := u.GetCombatVerbosity(); got != messaging.VerbosityFull {
+		t.Errorf("empty setting should default to full, got %v", got)
+	}
+	u.CombatVerbosity = "light"
+	if got := u.GetCombatVerbosity(); got != messaging.VerbosityLight {
+		t.Errorf("light setting: got %v", got)
+	}
+	u.CombatVerbosity = "Medium"
+	if got := u.GetCombatVerbosity(); got != messaging.VerbosityMedium {
+		t.Errorf("case-insensitive medium: got %v", got)
+	}
+	var nilUser *UserRecord
+	if got := nilUser.GetCombatVerbosity(); got != messaging.VerbosityFull {
+		t.Errorf("nil receiver should default to full, got %v", got)
+	}
+}

@@ -40,6 +40,7 @@ const (
 	// Combat — submissions / death.
 	CategorySubmission
 	CategoryDeath
+	CategoryCombatSummary // per-round compact tally (light verbosity)
 
 	// Combat — special moves.
 	CategorySurpriseAttack
@@ -135,6 +136,8 @@ func (c Category) String() string {
 		return "submission"
 	case CategoryDeath:
 		return "death"
+	case CategoryCombatSummary:
+		return "combat-summary"
 	case CategorySurpriseAttack:
 		return "surprise"
 	case CategoryKick:

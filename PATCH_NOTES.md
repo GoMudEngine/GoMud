@@ -29,6 +29,24 @@ own, shaped by the terrain it moves through.
   automatically on first boot — this is by design and self-heals without
   intervention.
 
+## 2026-06-10 — Combat verbosity: choose how much fight text you see
+
+New `set combatverbosity` option. Pick one of three levels:
+
+- **`full`** — every swing, hit, dodge, and parry. The default, same as
+  before.
+- **`medium`** — landed hits only. Avoided swings (dodges, parries,
+  blocks) are skipped, so a fast duel stays readable without losing the
+  hit-by-hit story.
+- **`light`** — one compact summary line per round ("You hit the goblin
+  3 times, it hit you once") instead of individual swing lines.
+
+Whatever you choose, the floor rules always apply: you always see deaths,
+moves that change your footing (knockdowns, grapples, stuns, disarms),
+and every blow that lands on you personally. Fights you're just watching
+run one step quieter than your own setting, so a crowded room stays
+readable.
+
 ## 2026-06-09 — Creatures now fight like the creatures they are
 
 A top-to-bottom overhaul of non-human combat. Beasts no longer punch and wrestle

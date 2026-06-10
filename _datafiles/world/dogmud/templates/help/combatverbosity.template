@@ -1,0 +1,19 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">set combatverbosity</ansi>
+
+Controls how much combat text you see during fights.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">set combatverbosity full</ansi>   - Every swing, hit, and dodge. (default)
+  <ansi fg="command">set combatverbosity medium</ansi> - Landed hits only; avoided swings
+                                 (dodges, parries, blocks) are skipped.
+  <ansi fg="command">set combatverbosity light</ansi>  - One compact summary line per round.
+
+No matter the setting, you always see deaths, moves that change your
+footing (knockdowns, grapples, stuns, disarms), and every blow that
+lands on you personally.
+
+Fights you are merely watching are shown one step quieter than your
+setting, so a crowded room stays readable.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help set</ansi>
