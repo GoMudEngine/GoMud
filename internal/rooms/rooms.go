@@ -2588,7 +2588,17 @@ func (r *Room) ActiveMutators(yield func(mutators.Mutator) bool) {
 		activeMutators = append(r.Mutators.GetActive(), zoneConfig.Mutators.GetActive()...)
 	}
 
+	indoor := false
+	if b := r.GetBiome(); b != nil {
+		indoor = b.Indoor
+	}
+
 	for _, mut := range activeMutators {
+		if indoor {
+			if spec := mut.GetSpec(); spec != nil && spec.OutdoorOnly {
+				continue
+			}
+		}
 		if !yield(mut) {
 			return
 		}

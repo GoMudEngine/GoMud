@@ -72,6 +72,7 @@ type MutatorSpec struct {
 	RegenMultiplier float64                `yaml:"regenmultiplier,omitempty"` // multiplies HP/SP/CP regen for any actor in the room (1.0 / 0 = no bonus)
 	Exits         map[string]exit.RoomExit `yaml:"exits,omitempty"`         // name/roomId pairs of exits only available while mutator is live.
 	Pvp           PvpOverride              `yaml:"pvp,omitempty"`           // optionally force room pvp attributes.
+	OutdoorOnly   bool                     `yaml:"outdooronly,omitempty"`   // skip this mutator's effects in indoor-biome rooms (weather etc.)
 }
 
 func GetAllMutatorSpecs() []MutatorSpec {
