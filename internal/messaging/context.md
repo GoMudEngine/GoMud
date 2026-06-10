@@ -36,9 +36,16 @@ full per-recipient pipeline.
 
 Types and constants:
 
-- `Category` — enum of 58 text classes (combat hits, defense, grapple,
+- `Category` — enum of 59 text classes (combat hits, defense, grapple,
   submissions, specials, spells by school, social, system, environment,
-  loot/equipment/buff/mutation/toxin).
+  loot/equipment/buff/mutation/toxin; plus `CategoryCombatSummary` for
+  the per-round compact tally emitted by the light-verbosity path).
+- `Verbosity`, `ParseVerbosity`, `(Verbosity).Suppresses` — combat-text
+  verbosity primitives in `verbosity.go`. The allowlists
+  (`suppressibleAtMedium`, `suppressibleAtLight`) declare which
+  categories each level may drop. Suppression is applied by the combat
+  hooks (`internal/hooks/combat_verbosity.go`), not by this pipeline
+  itself — the pipeline delivers whatever the hook passes through.
 - `Channel` — `ChannelAudio`, `ChannelVisual`.
 - `SightDecision` — `SightFull`, `SightShapes`, `SightNone`.
 - `RenderInput` — bundles Category, Text, Channel, SightDecision,

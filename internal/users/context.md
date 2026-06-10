@@ -75,6 +75,7 @@ type UserRecord struct {
     Character      *characters.Character // Associated character data
     ItemStorage    Storage               // Personal item storage
     ConfigOptions  map[string]any        // User configuration preferences
+    CombatVerbosity string              // Combat text level: ""/full, medium, light
     Inbox          Inbox                 // Message inbox with attachments
     Muted          bool                  // Communication restrictions
     Deafened       bool                  // Communication filtering

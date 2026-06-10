@@ -632,6 +632,24 @@ The round driver reads Combat Phase state instead of legacy `Aggro`:
 - `c.CombatPhase.OnCombatRoundEnd()` clears the `SurpriseLeft` flag
   at end-of-round for surprise engagements.
 
+### Verbosity gating (combat_verbosity.go)
+
+Implements the player-configurable combat-text verbosity system (full /
+medium / light). Three touch-points in `NewRound_DoCombat.go`:
+
+- **`dispatchCritAndMessaging`** — checks each room observer's effective
+  verbosity (`user.GetCombatVerbosity()`, one step lower for spectators)
+  before sending per-swing text. Medium suppresses dodge/parry/block
+  lines; Light suppresses all individual hit lines. The floor rule
+  (damage directed at the viewer always passes regardless of setting)
+  is enforced here.
+- **`recordSwingForTally`** — when a viewer's effective verbosity is
+  Light, the swing's AttackResult data is recorded into a per-viewer
+  `combatTally` accumulator instead of being sent immediately.
+- **`flushCombatTallies`** — called once at the end of `DoCombat` after
+  all AttackResults for the round are processed. Renders and emits one
+  compact summary line per fight pair per viewer.
+
 ## Awareness State Machine Integration (chunk 1)
 
 Four files in the hooks package wire the Awareness machine into the

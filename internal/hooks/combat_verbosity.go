@@ -139,10 +139,11 @@ func pronounFails(f fighterRef) string {
 }
 
 // renderTally builds the tally line for one fight pair from a viewer's
-// perspective. viewerKey is "" for spectators, or the viewer's
-// fighterRef.Key when they are a participant (their side renders as
-// "You" and their incoming LANDED hits are omitted — full prose already
-// showed them under the floor rule).
+// perspective. viewerKey is the viewer's fighterRef.Key when they are a
+// participant (their side renders as "You" and their incoming LANDED
+// hits are omitted — full prose already showed them under the floor
+// rule). A spectator's key simply matches neither fighter, so they
+// render third-person; "" is the logged-off/cleanup path.
 func renderTally(t *combatTally, viewerKey string) string {
 	// Orient so X = viewer (participant) or t.A (spectator).
 	x, y := t.A, t.B
