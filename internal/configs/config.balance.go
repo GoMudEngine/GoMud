@@ -121,6 +121,10 @@ type Balance struct {
 	DrainHealRatio           ConfigFloat `yaml:"DrainHealRatio"`           // Fraction of drain damage the attacker heals (lifesteal), default 0.75
 	ThrottleInterruptChance ConfigFloat `yaml:"ThrottleInterruptChance"` // Chance throttle interrupts a casting victim, default 0.75
 
+	// ── COMBAT: RANGED ───────────────────────────────────────────────────────
+	RangedShotScale          ConfigFloat `yaml:"RangedShotScale"`          // Global multiplier on all ranged shot damage (default 1.0)
+	RangedShieldDefenseBonus ConfigInt   `yaml:"RangedShieldDefenseBonus"` // Flat defense-score bonus vs ranged when defender has a shield (default 15)
+
 	// ── SKULLDUGGERY ─────────────────────────────────────────────────────────
 	SneakFailCooldown              ConfigInt   `yaml:"SneakFailCooldown"`              // Rounds before sneak retry after failure (default 3)
 	SurpriseAttackOffhandPenalty   ConfigFloat `yaml:"SurpriseAttackOffhandPenalty"`   // Hit penalty for offhand surprise attack (default 0.10)

@@ -441,6 +441,12 @@ Balance:
   #   0 = disabled (mob disengages when player is downed).
   #   1 = mob finishes the player after 1 grace round of lying helpless.
   CoupDeGraceRounds: 1
+  # - RangedShotScale -
+  #   Global multiplier on ranged shot damage (tuning knob)
+  RangedShotScale: 1.0
+  # - RangedShieldDefenseBonus -
+  #   Defense bonus vs ranged shots when the defender holds a shield
+  RangedShieldDefenseBonus: 15
 
   # ── COMBAT: SPELL COSTS ───────────────────────────────────────────────────
   # Global multipliers for spell resource costs. Applied to ALL spells.
