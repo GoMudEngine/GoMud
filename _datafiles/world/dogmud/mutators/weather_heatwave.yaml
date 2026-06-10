@@ -1,0 +1,11 @@
+mutatorid: weather-heatwave
+outdooronly: true
+namemodifier:
+  behavior: append
+  text: (sweltering)
+  colorpattern: orange
+descriptionmodifier:
+  behavior: append
+  text: The air shimmers with heat; every breath feels drawn through a forge.
+  colorpattern: orange
+decayrate: 6 hours

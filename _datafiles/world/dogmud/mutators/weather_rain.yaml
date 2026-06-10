@@ -1,0 +1,11 @@
+mutatorid: weather-rain
+outdooronly: true
+namemodifier:
+  behavior: append
+  text: (raining)
+  colorpattern: blue
+descriptionmodifier:
+  behavior: append
+  text: A steady rain falls, beading and dripping from every surface.
+  colorpattern: blue
+decayrate: 4 hours

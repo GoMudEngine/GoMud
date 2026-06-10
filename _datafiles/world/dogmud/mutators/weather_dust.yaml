@@ -1,0 +1,16 @@
+mutatorid: weather-dust
+outdooronly: true
+namemodifier:
+  behavior: append
+  text: (dust-choked)
+  colorpattern: brown
+descriptionmodifier:
+  behavior: append
+  text: Wind-borne grit scours the air, stinging eyes and gritting teeth.
+  colorpattern: brown
+alertmodifier:
+  behavior: append
+  text: A dust storm scours the area.
+  colorpattern: brown
+lightmod: -1
+decayrate: 3 hours

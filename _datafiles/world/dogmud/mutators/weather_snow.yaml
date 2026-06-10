@@ -1,0 +1,11 @@
+mutatorid: weather-snow
+outdooronly: true
+namemodifier:
+  behavior: append
+  text: (snowing)
+  colorpattern: mute-lblue
+descriptionmodifier:
+  behavior: append
+  text: Snow drifts down in fat, silent flakes, softening every edge.
+  colorpattern: mute-lblue
+decayrate: 5 hours

@@ -1,0 +1,16 @@
+mutatorid: weather-blizzard
+outdooronly: true
+namemodifier:
+  behavior: append
+  text: (blizzard)
+  colorpattern: mute-lblue
+descriptionmodifier:
+  behavior: append
+  text: Howling wind drives the snow sideways, scouring everything it touches.
+  colorpattern: mute-lblue
+alertmodifier:
+  behavior: append
+  text: A blizzard howls through here.
+  colorpattern: mute-lblue
+lightmod: -1
+decayrate: 3 hours
