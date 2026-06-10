@@ -1,0 +1,53 @@
+# FOCUSED definitive check: do beast SPECIAL moves actually fire after the
+# btree-delegation fix? The tester (P2smoke) starts IN a wolf room (Wolf-Marked
+# Flats, 3 wolves) so there is NO navigation. Bounded to a short fight.
+#
+# CRITICAL METHODOLOGY: combat MESSAGE TEXT is misleading — the basic bite/claw
+# attack messages literally contain the words "maul", "rake", "savage", "jaws
+# clamp". DO NOT conclude a special move fired from message text. The ONLY
+# authoritative signal is the combat-analytics log
+# `_datafiles/logs/combat-analytics.jsonl`, where `RecordSpecialMove` writes the
+# real move name for each special move actually executed.
+
+session:
+  name: phase4-beastmove-firing-check
+  max_rounds: 40
+  notes: >
+    Verifying the fix that makes Phase-3/4 beast moves fire in combat. You begin
+    standing among three wolves. Fight them and determine — from the
+    combat-analytics log, NOT the on-screen text — whether the wolves use the
+    beast special moves maul / pounce / throttle / hamstring.
+
+objectives:
+  - id: fight-wolves-bounded
+    desc: >
+      You start in Wolf-Marked Flats with 2-3 wolves (Steppe Wolf / Young Wolf).
+      `attack steppe wolf` (or `attack young wolf`), then re-issue an attack each
+      round, pacing on the per-round beacon. Fight continuously — when one wolf
+      dies or a fresh one wanders in, attack the next — until you have logged
+      ABOUT 25-30 combat rounds total (or you die — there is no permadeath, that
+      is fine, the analytics are already recorded). Do NOT wander off; stay and
+      fight. Then STOP fighting.
+
+  - id: read-the-analytics-not-the-text
+    desc: >
+      This is the definitive step. Read the LAST ~120 lines of
+      `_datafiles/world/dogmud/../_datafiles/logs/combat-analytics.jsonl` (path:
+      `_datafiles/logs/combat-analytics.jsonl` from the repo root) and look for
+      records whose move/ability name is one of: maul, pounce, throttle,
+      hamstring, gore, rake. Count how many of each appear with a WOLF as the
+      attacker during your fight. (You may grep, e.g. for the move-name field.)
+      EXPECTED (fix working): at least one of maul / pounce / throttle / hamstring
+      appears. If ONLY bash/trip/kick/bite/claws appear and ZERO of
+      maul/pounce/throttle/hamstring, the fix is NOT working — report that
+      clearly.
+
+report:
+  - The exact beast-special-move records found in combat-analytics.jsonl (move
+    name + how many), attributed to the wolves.
+  - Your verdict: FIX CONFIRMED (>=1 of maul/pounce/throttle/hamstring fired) or
+    FIX NOT WORKING (zero beast specials in the analytics).
+  - Corroborating effects you saw in combat (a knockdown from pounce, a bleed
+    from maul/hamstring) — secondary evidence only.
+  - Note explicitly: do NOT cite "maul"/"rake" appearing in combat message TEXT
+    as evidence — that is basic-attack prose, not the special move.
