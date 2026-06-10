@@ -31,41 +31,41 @@ var (
 )
 
 type UserRecord struct {
-	UserId         int                   `yaml:"userid"`
-	Role           string                `yaml:"role"` // Roles group one or more admin commands
-	Username       string                `yaml:"username"`
-	Password       string                `yaml:"password"`
-	Joined         time.Time             `yaml:"joined"`
-	LastRenameAt   time.Time             `yaml:"lastrenameat,omitempty"` // Last time the player used the rename command; cooldown uses this
-	Macros         map[string]string     `yaml:"macros,omitempty"`  // Up to 10 macros, just string commands.
-	Aliases        map[string]string     `yaml:"aliases,omitempty"` // string=>string remapping of commands
-	Ticks          []UserTick            `yaml:"ticks,omitempty"`   // client-run interval timers (web automation panel)
-	Triggers       []UserTrigger         `yaml:"triggers,omitempty"`  // client-run text-pattern automation (web automation panel)
-	Character      *characters.Character `yaml:"character,omitempty"`
-	ItemStorage    Storage               `yaml:"itemstorage,omitempty"`
-	ConfigOptions  map[string]any        `yaml:"configoptions,omitempty"`
-	Inbox          Inbox                 `yaml:"inbox,omitempty"`
-	Muted          bool                  `yaml:"muted,omitempty"`        // Cannot SEND custom communications to anyone but admin/mods
-	Deafened       bool                  `yaml:"deafened,omitempty"`     // Cannot HEAR custom communications from anyone but admin/mods
-	IsAI           bool                  `yaml:"isai,omitempty"`         // Flagged as an AI account
-	ScreenReader   bool                  `yaml:"screenreader,omitempty"` // Are they using a screen reader? (We should remove excess symbols)
-	AsciiMode      bool                  `yaml:"asciimode,omitempty"`    // Convert UTF-8 decorative chars to ASCII for legacy clients
-	LineWidth      int                   `yaml:"linewidth,omitempty"`    // Column width for line wrapping; 0 = default 80
+	UserId          int                   `yaml:"userid"`
+	Role            string                `yaml:"role"` // Roles group one or more admin commands
+	Username        string                `yaml:"username"`
+	Password        string                `yaml:"password"`
+	Joined          time.Time             `yaml:"joined"`
+	LastRenameAt    time.Time             `yaml:"lastrenameat,omitempty"` // Last time the player used the rename command; cooldown uses this
+	Macros          map[string]string     `yaml:"macros,omitempty"`       // Up to 10 macros, just string commands.
+	Aliases         map[string]string     `yaml:"aliases,omitempty"`      // string=>string remapping of commands
+	Ticks           []UserTick            `yaml:"ticks,omitempty"`        // client-run interval timers (web automation panel)
+	Triggers        []UserTrigger         `yaml:"triggers,omitempty"`     // client-run text-pattern automation (web automation panel)
+	Character       *characters.Character `yaml:"character,omitempty"`
+	ItemStorage     Storage               `yaml:"itemstorage,omitempty"`
+	ConfigOptions   map[string]any        `yaml:"configoptions,omitempty"`
+	Inbox           Inbox                 `yaml:"inbox,omitempty"`
+	Muted           bool                  `yaml:"muted,omitempty"`           // Cannot SEND custom communications to anyone but admin/mods
+	Deafened        bool                  `yaml:"deafened,omitempty"`        // Cannot HEAR custom communications from anyone but admin/mods
+	IsAI            bool                  `yaml:"isai,omitempty"`            // Flagged as an AI account
+	ScreenReader    bool                  `yaml:"screenreader,omitempty"`    // Are they using a screen reader? (We should remove excess symbols)
+	AsciiMode       bool                  `yaml:"asciimode,omitempty"`       // Convert UTF-8 decorative chars to ASCII for legacy clients
+	LineWidth       int                   `yaml:"linewidth,omitempty"`       // Column width for line wrapping; 0 = default 80
 	CombatVerbosity string                `yaml:"combatverbosity,omitempty"` // Combat text level: ""/full, medium (hits only), light (round tally)
-	EmailAddress   string                `yaml:"emailaddress,omitempty"` // Email address (if provided)
-	TipsComplete   map[string]bool       `yaml:"tipscomplete,omitempty"` // Tips the user has followed/completed so they can be quiet
-	EventLog        UserLog               `yaml:"-"` // Do not retain in user file (for now)
-	LastMusic       string                `yaml:"-"` // Keeps track of the last music that was played
-	LastWhisperFrom int                   `yaml:"-"` // UserId of last person who whispered to us (don't save)
-	connectionId   uint64
-	unsentText     string
-	suggestText    string
-	connectionTime time.Time
-	lastInputRound uint64
-	tempDataStore  map[string]any
-	activePrompt   *prompt.Prompt
-	isZombie       bool // are they a zombie currently?
-	inputBlocked   bool // Whether input is currently intentionally turned off (for a certain category of commands)
+	EmailAddress    string                `yaml:"emailaddress,omitempty"`    // Email address (if provided)
+	TipsComplete    map[string]bool       `yaml:"tipscomplete,omitempty"`    // Tips the user has followed/completed so they can be quiet
+	EventLog        UserLog               `yaml:"-"`                         // Do not retain in user file (for now)
+	LastMusic       string                `yaml:"-"`                         // Keeps track of the last music that was played
+	LastWhisperFrom int                   `yaml:"-"`                         // UserId of last person who whispered to us (don't save)
+	connectionId    uint64
+	unsentText      string
+	suggestText     string
+	connectionTime  time.Time
+	lastInputRound  uint64
+	tempDataStore   map[string]any
+	activePrompt    *prompt.Prompt
+	isZombie        bool // are they a zombie currently?
+	inputBlocked    bool // Whether input is currently intentionally turned off (for a certain category of commands)
 }
 
 // UserTick is a user-defined real-time-second timer that fires commands from

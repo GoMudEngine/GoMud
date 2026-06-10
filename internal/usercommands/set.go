@@ -129,7 +129,7 @@ func displaySetStatus(user *users.UserRecord) {
 	user.SendText(messaging.CategorySystem, ``)
 
 	user.SendText(messaging.CategorySystem, `<ansi fg="yellow-bold">combatverbosity:</ansi> `)
-	user.SendText(messaging.CategorySystem, user.GetCombatVerbosity().String())
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="green">%s</ansi>`, user.GetCombatVerbosity().String()))
 	user.SendText(messaging.CategorySystem, ``)
 
 	user.SendText(messaging.CategorySystem, `See: <ansi fg="command">help set</ansi>`)

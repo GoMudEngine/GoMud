@@ -51,6 +51,9 @@ There are a handful of settings you can adjust with this command, including:
   Toggles between UTF-8 and ASCII display modes. If your client
   shows garbled characters in tables and borders, switch to ASCII.
 
+  <ansi fg="command">set combatverbosity &lt;full|medium|light&gt;</ansi>
+  Controls how much combat text you see. See <ansi fg="command">help combatverbosity</ansi>.
+
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help alias</ansi>, <ansi fg="command">help macros</ansi>,
   <ansi fg="command">help prompt</ansi>, <ansi fg="command">help submission</ansi>,
   <ansi fg="command">help surrender</ansi>
