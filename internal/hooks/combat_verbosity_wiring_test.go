@@ -276,4 +276,92 @@ func TestCombatVerbosityWiring(t *testing.T) {
 		assert.Equal(t, 1, countContaining(texts, "dust settles"),
 			"light: a category outside the suppress table must always pass")
 	})
+
+	// ── 8. Dark-room spectator: sight gate suppresses tally ───────────────
+	// Fix 1: recordSpectatorTallies must not record a tally for a spectator
+	// who cannot see the fight (dark room, no night-vision). The named
+	// summary would reveal combatant identities they have no line-of-sight to.
+	t.Run("DarkRoomSpectator_NoTally", func(t *testing.T) {
+		cleanup := seedAllRegistries()
+		defer cleanup()
+		roundTallies = newCombatTallies()
+
+		spectator := users.GetByUserId(2)
+		require.NotNil(t, spectator)
+		spectator.CombatVerbosity = "medium" // → effective light tier
+
+		// Make room 2 dark by setting the cave biome (DarkArea:true →
+		// GetVisibility() == 0 → CanSeeClearly returns false).
+		room1 := rooms.LoadRoom(1)
+		room2 := rooms.LoadRoom(2)
+		require.NotNil(t, room1)
+		require.NotNil(t, room2)
+		room2.Biome = "cave"
+		room1.RemovePlayer(2)
+		room2.AddPlayer(2)
+		spectator.Character.RoomId = 2
+
+		// Attacker = mob in dark room; defender = user 1 (excluded as combatant).
+		u1 := users.GetByUserId(1)
+		require.NotNil(t, u1)
+		mob := mobs.GetInstance(100)
+		require.NotNil(t, mob)
+		atk := actions.NewMobActorInRoom(mob, room2)
+		def := actions.NewUserActorInRoom(u1, room1)
+
+		captured, capCleanup := captureMessages(t)
+		defer capCleanup()
+
+		recordSpectatorTallies(room2, room1, atk, def, vbLandingResult(), []int{1})
+		flushCombatTallies()
+		events.ProcessEvents()
+
+		texts := textsForUser(*captured, 2)
+		assert.Equal(t, 0, len(texts),
+			"spectator in dark room must not receive any tally summary")
+	})
+
+	// ── 9. Blind attacker: participant tally gate blocks summary ──────────
+	// Fix 2: a light-verbosity attacker whose prose was darkness-substituted
+	// must not receive a named tally summary via the round-end flush either.
+	// Tested end-to-end through dispatchCritAndMessaging so the srcCanSee
+	// gate wiring is exercised directly.
+	t.Run("BlindAttacker_NoParticipantTally", func(t *testing.T) {
+		cleanup := seedAllRegistries()
+		defer cleanup()
+		roundTallies = newCombatTallies()
+
+		u1 := users.GetByUserId(1)
+		require.NotNil(t, u1)
+		u1.CombatVerbosity = "light"
+
+		// Move attacker into dark room 2 (cave biome).
+		room1 := rooms.LoadRoom(1)
+		room2 := rooms.LoadRoom(2)
+		require.NotNil(t, room1)
+		require.NotNil(t, room2)
+		room2.Biome = "cave"
+		room1.RemovePlayer(1)
+		room2.AddPlayer(1)
+		u1.Character.RoomId = 2
+
+		mob := mobs.GetInstance(100)
+		require.NotNil(t, mob)
+		atk := actions.NewUserActorInRoom(u1, room2)
+		def := actions.NewMobActorInRoom(mob, room2)
+
+		captured, capCleanup := captureMessages(t)
+		defer capCleanup()
+
+		dispatchCritAndMessaging(atk, def, vbLandingResult())
+		flushCombatTallies()
+		events.ProcessEvents()
+
+		// The tally would say "You strike Skeleton (…)" — confirm that
+		// text never arrives. Generic dark-room fallback messages are
+		// excluded because the attacker is in the combatant-exclude list.
+		texts := textsForUser(*captured, 1)
+		assert.Equal(t, 0, countContaining(texts, "Skeleton"),
+			"blind attacker must not receive a tally summary naming the target")
+	})
 }

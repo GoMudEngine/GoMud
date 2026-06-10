@@ -457,9 +457,9 @@ func recordCombatAnalytics(atk, def actions.Actor, res combat.AttackResult, roun
 //
 // Intentional divergences (spec §"Intentional Divergences"):
 //   - #1 Crit message routing:
-//       * Attacker text (MessagesToSource): only if atk.IsPlayer()
-//       * Defender text (MessagesToTarget): only if def.IsPlayer()
-//       * Room broadcasts: always, with text-receiving combatants excluded
+//   - Attacker text (MessagesToSource): only if atk.IsPlayer()
+//   - Defender text (MessagesToTarget): only if def.IsPlayer()
+//   - Room broadcasts: always, with text-receiving combatants excluded
 //   - Darkness replacement: only matters for player viewers.
 func dispatchCritAndMessaging(atk, def actions.Actor, res *combat.AttackResult) {
 	atkChar := atk.GetCharacter()
@@ -513,7 +513,10 @@ func dispatchCritAndMessaging(atk, def actions.Actor, res *combat.AttackResult) 
 		u := asUser(atk)
 		lvl := u.GetCombatVerbosity()
 		drainParticipantLines(u, res.MessagesToSource, lvl, false)
-		if lvl == messaging.VerbosityLight {
+		// Gate on srcCanSee: a blind attacker's prose was already
+		// darkness-substituted; the tally summary must not re-introduce
+		// the named information they couldn't read per-swing.
+		if lvl == messaging.VerbosityLight && srcCanSee {
 			recordTallyFor(u.UserId, atk, def, res)
 		}
 	}
@@ -521,7 +524,9 @@ func dispatchCritAndMessaging(atk, def actions.Actor, res *combat.AttackResult) 
 		u := asUser(def)
 		lvl := u.GetCombatVerbosity()
 		drainParticipantLines(u, res.MessagesToTarget, lvl, true)
-		if lvl == messaging.VerbosityLight {
+		// Same rationale: a blind defender's incoming text was already
+		// darkness-substituted; only record the tally when they can see.
+		if lvl == messaging.VerbosityLight && tgtCanSee {
 			recordTallyFor(u.UserId, atk, def, res)
 		}
 	}
@@ -547,9 +552,9 @@ func dispatchCritAndMessaging(atk, def actions.Actor, res *combat.AttackResult) 
 // Intentional divergences (spec §"Intentional Divergences"):
 //   - #6 TrackPlayerDamage only when both are players.
 //   - #8 Stat-gain room messages: MvP/MvM use mob-flavor text; PvM/PvP
-//        use player-side OnStatUse (no room broadcast historically).
+//     use player-side OnStatUse (no room broadcast historically).
 //   - The userId arg passed to OnSkillUse / OnStatUse / OnCritReceived
-//        is actor.GetUserId() (0 for mobs).
+//     is actor.GetUserId() (0 for mobs).
 //   - Player concentration break is checked only when defender is a player.
 func applyCombatProgression(atk, def actions.Actor, res *combat.AttackResult) {
 	atkChar := atk.GetCharacter()
@@ -670,11 +675,11 @@ func fireDefenderBehaviorTrigger(atk, def actions.Actor, res combat.AttackResult
 // Intentional divergences (spec §"Intentional Divergences"):
 //   - #3 Hostility groups (mobs.MakeHostile) only for player→mob.
 //   - #4 Mob-aggro-on-attack with exit-walk only when atk is player;
-//        mob attackers set Aggro directly (already in same room).
+//     mob attackers set Aggro directly (already in same room).
 //   - #5 Party auto-assist: gated on def.GetCharacter().PartyId, NOT on
-//        def.IsPlayer(). Today only players can form parties so this
-//        naturally no-ops for mob defenders, but the gate is structured
-//        so a future mob-party feature routes through the same path.
+//     def.IsPlayer(). Today only players can form parties so this
+//     naturally no-ops for mob defenders, but the gate is structured
+//     so a future mob-party feature routes through the same path.
 func handleAggroAndAssist(atk, def actions.Actor, cfg *configs.Config) {
 	atkChar := atk.GetCharacter()
 	defChar := def.GetCharacter()
@@ -780,7 +785,7 @@ func partyExistsFor(a actions.Actor) bool {
 //
 // Intentional divergence:
 //   - #9 Retarget-on-death "You turn your attention to..." only when the
-//        survivor is a player.
+//     survivor is a player.
 func resolveCombatRound(atk, def actions.Actor) {
 	atkChar := atk.GetCharacter()
 	defChar := def.GetCharacter()

@@ -252,12 +252,21 @@ func (ct *combatTallies) viewerIds() []int {
 // roundTallies is the per-round accumulator. Game-loop goroutine only.
 var roundTallies = newCombatTallies()
 
-// fighterRefFor builds a tally identity for an Actor.
+// fighterRefFor builds a tally identity for an Actor. For mobs the
+// display name is stamped with the room duplicate-index suffix (e.g.
+// "Skeleton #2") so same-named mobs produce distinct tally labels —
+// matching the disambiguation already applied to per-swing combat lines.
 func fighterRefFor(a actions.Actor) fighterRef {
 	if a.IsPlayer() {
 		return fighterRef{Key: fmt.Sprintf("u:%d", a.GetUserId()), Name: a.GetCharacter().Name, IsMob: false}
 	}
-	return fighterRef{Key: fmt.Sprintf("m:%d", a.GetMobInstanceId()), Name: a.GetCharacter().Name, IsMob: true}
+	name := a.GetCharacter().Name
+	if room := a.GetRoom(); room != nil {
+		if dupIdx := room.GetMobDuplicateIndex(a.GetMobInstanceId()); dupIdx > 0 {
+			name = fmt.Sprintf("%s #%d", name, dupIdx)
+		}
+	}
+	return fighterRef{Key: fmt.Sprintf("m:%d", a.GetMobInstanceId()), Name: name, IsMob: true}
 }
 
 // swingStatsFor extracts tally stats from an AttackResult. Rounds with
@@ -357,6 +366,14 @@ func recordSpectatorTallies(atkRoom, defRoom *rooms.Room, atk, def actions.Actor
 			seen[uid] = true
 			u := users.GetByUserId(uid)
 			if u == nil {
+				continue
+			}
+			// Sight gate: a spectator in darkness receives the generic
+			// sounds-of-fighting fallback but must not receive a named
+			// tally summary, which would leak combatant identities they
+			// cannot see. Shapes-only (infrared) viewers are treated the
+			// same as blind here — the named tally requires clear sight.
+			if !messaging.CanSeeClearly(u.Character, room) {
 				continue
 			}
 			if u.GetCombatVerbosity().OneStepLower() == messaging.VerbosityLight {
