@@ -1,5 +1,39 @@
 # DOGMud Patch Notes
 
+## 2026-06-09 — Creatures now fight like the creatures they are
+
+A top-to-bottom overhaul of non-human combat. Beasts no longer punch and wrestle
+like people:
+
+- **Natural weapons.** Unarmed creatures now strike with what they actually
+  have — wolves and rats *bite*, cats and bats *claw*, boars and (antlered) deer
+  *gore*, insects *sting* — instead of generic "punches". The flavor of every
+  hit reads true to the creature.
+- **No more wolves doing jiu-jitsu.** Four-legged beasts can't use human
+  technique moves (grappling, shield bashing, submission holds) — those need
+  hands and arms. Beasts instead get a logical moveset of their own:
+  - **Pounce** — a leaping opener that knocks prey to the ground.
+  - **Maul** — a savaging flurry that leaves deep, bleeding wounds (fanged
+    hunters like wolves).
+  - **Throttle** — a fanged predator clamps the throat: it saps your stamina,
+    bleeds you, and has a good chance to choke off a spell you're casting.
+  - **Rake** — a clawed slash that draws blood (cats, raptors, bats).
+  - **Gore** — a horned charge that knocks you back (boars, deer, antlered
+    beasts).
+  - **Hamstring** — a low strike to the legs from fanged or clawed hunters.
+- **Predators fight to type.** Wolves hunt as a pack of maulers, big cats stalk
+  and pounce, boars and bears are bruisers, vermin harry and dart, and snakes
+  strike and constrict (no leaping — they've no legs for it).
+- **Monsters that *are* humanoid still wrestle.** Goblins, skeletons, and the
+  like keep their grapples and weapon work — they have hands — so a feral
+  swarm still feels distinct from a wild beast.
+- **The hungry dead drain life.** Wraiths and spectres mostly hurl their spells
+  but will occasionally leech your vitality to mend themselves; vampires drain
+  more readily. Each drain bleeds the victim and heals the drainer.
+
+Targeting, basic attacks, and humanoid combat are unchanged — this only makes the
+*creatures* feel right.
+
 ## 2026-06-09 — Consistent capitalization for names & titles
 
 Names and titles now use one consistent, polished capitalization everywhere —
