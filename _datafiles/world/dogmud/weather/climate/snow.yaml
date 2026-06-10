@@ -1,0 +1,4 @@
+biome: snow
+weather: { clear: 2, overcast: 2, snow: 3, blizzard: 1 }
+influence: { intensityDelta: 0.02, moistureDelta: 0.0, movementResistance: 0.05 }
+spawnWeight: 1.1

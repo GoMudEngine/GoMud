@@ -1,0 +1,4 @@
+biome: cliffs
+weather: { clear: 3, overcast: 2, fog: 1, rain: 1, storm: 1 }
+influence: { intensityDelta: 0.0, moistureDelta: -0.02, movementResistance: 0.1 }
+spawnWeight: 0.8

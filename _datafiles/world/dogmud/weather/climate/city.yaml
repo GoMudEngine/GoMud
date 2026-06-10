@@ -1,0 +1,4 @@
+biome: city
+weather: { clear: 4, overcast: 2, rain: 2, fog: 1 }
+influence: { intensityDelta: -0.01, moistureDelta: 0.0, movementResistance: 0.05 }
+spawnWeight: 0.7

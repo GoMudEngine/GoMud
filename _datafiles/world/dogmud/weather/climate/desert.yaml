@@ -1,0 +1,4 @@
+biome: desert
+weather: { clear: 4, heatwave: 2, dust: 2, overcast: 1 }
+influence: { intensityDelta: -0.02, moistureDelta: -0.10, movementResistance: 0.0 }
+spawnWeight: 1.0

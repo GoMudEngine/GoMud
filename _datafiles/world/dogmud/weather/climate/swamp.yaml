@@ -1,0 +1,4 @@
+biome: swamp
+weather: { fog: 3, overcast: 2, rain: 2, clear: 1 }
+influence: { intensityDelta: 0.02, moistureDelta: 0.06, movementResistance: 0.15 }
+spawnWeight: 1.0
