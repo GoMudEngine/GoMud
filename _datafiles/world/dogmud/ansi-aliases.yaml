@@ -201,11 +201,12 @@ colors:
   parry: 143
   block: 71
 
-# Combat — grapple / submission / death
+# Combat — grapple / submission / death / summary
   grapple-flow: 94
   grapple-high: 130
   submission: 169
   death: 8
+  combat-summary: 248   # neutral gray — per-round compact tally (light verbosity)
 
 # Combat — special moves
   surprise: 9
