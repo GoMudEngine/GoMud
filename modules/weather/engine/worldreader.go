@@ -5,23 +5,14 @@ import (
 	"github.com/GoMudEngine/GoMud/modules/weather/crawler"
 )
 
-// indoorBiomes are biome ids treated as indoors/underground, so the crawler
-// records their zones as having no outdoor rooms. GoMud has no explicit
-// indoor/outdoor room flag, so this is a heuristic; a later milestone can make
-// the set configurable when weather presentation needs finer control.
-var indoorBiomes = map[string]bool{
-	"cave":        true,
-	"underground": true,
-	"dungeon":     true,
-	"indoor":      true,
-	"tunnel":      true,
-	"sewer":       true,
-}
-
-// isOutdoorBiome reports whether a biome id is considered outdoors. An unknown
-// or empty biome defaults to outdoors.
+// isOutdoorBiome reports whether a biome id is outdoors, per the engine's
+// biome registry (BiomeInfo.Indoor, set in biome YAML). Unknown or empty
+// biomes default to outdoors.
 func isOutdoorBiome(biomeID string) bool {
-	return !indoorBiomes[biomeID]
+	if b, ok := rooms.GetBiome(biomeID); ok && b != nil {
+		return !b.Indoor
+	}
+	return true
 }
 
 // WorldReader implements crawler.WorldReader over the live GoMud engine.

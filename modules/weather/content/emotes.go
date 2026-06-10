@@ -10,14 +10,28 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// StrongFeltThreshold is the felt-intensity at which weather becomes
+// perceptible indoors (drumming on roofs, wind in the eaves). Below it,
+// indoor rooms get the mild pool — usually empty, i.e. silence.
+const StrongFeltThreshold = 0.5
+
+// IndoorPool holds intensity-banded indoor lines for one biome key.
+// Mild plays below StrongFeltThreshold (usually empty: light weather
+// doesn't register through walls); Strong plays at/above it.
+type IndoorPool struct {
+	Mild   []string `yaml:"mild"`
+	Strong []string `yaml:"strong"`
+}
+
 // Table holds the ambient lines for one weather type, keyed by biome with a
-// "default" fallback, split outdoor/indoor (spec §9.4). Lines are uniform
-// random picks (the spec's per-line weights are an unneeded refinement for
-// shipped defaults; builders wanting bias can repeat a line).
+// "default" fallback, split outdoor/indoor (spec §9.4). Outdoor lines are
+// uniform random picks; indoor lines are intensity-banded (see IndoorPool).
+// The spec's per-line weights are an unneeded refinement for shipped defaults;
+// builders wanting bias can repeat a line.
 type Table struct {
-	Weather string              `yaml:"weather"`
-	Outdoor map[string][]string `yaml:"outdoor"`
-	Indoor  map[string][]string `yaml:"indoor"`
+	Weather string                `yaml:"weather"`
+	Outdoor map[string][]string   `yaml:"outdoor"`
+	Indoor  map[string]IndoorPool `yaml:"indoor"`
 }
 
 // Tables maps weather type -> emote table.
@@ -62,25 +76,36 @@ func LoadEmotes(fsys fs.FS, dir string) (Tables, error) {
 	return tables, nil
 }
 
-// Pick selects one ambient line for (weather, biome, indoor), or "" when
-// nothing matches. Fallbacks: exact biome -> "default" biome. Indoor never
-// falls back to outdoor — silence beats wrong prose. roll(n) must return a
-// value in [0,n); pass the engine's util.Rand (or a stub in tests) — NEVER the
-// sim RNG, which must stay isolated from presentation randomness.
-// An out-of-range roll result is clamped to the first line rather than panicking.
-func (ts Tables) Pick(weather sim.WeatherType, biome string, indoor bool, roll func(int) int) string {
+// Pick selects one ambient line for (weather, biome, indoor, felt), or ""
+// when nothing matches. Fallbacks: exact biome -> "default" biome. Indoor
+// never falls back to outdoor — silence beats wrong prose. Indoor pools are
+// intensity-banded: felt < StrongFeltThreshold picks Mild (usually empty),
+// otherwise Strong. roll(n) must return a value in [0,n); pass util.Rand —
+// NEVER the sim RNG. Out-of-range roll results clamp to the first line.
+func (ts Tables) Pick(weather sim.WeatherType, biome string, indoor bool, felt float64, roll func(int) int) string {
 	t, ok := ts[weather]
 	if !ok {
 		return ""
 	}
-	section := t.Outdoor
+
+	var lines []string
 	if indoor {
-		section = t.Indoor
+		pool, ok := t.Indoor[biome]
+		if !ok || (len(pool.Mild) == 0 && len(pool.Strong) == 0) {
+			pool = t.Indoor["default"]
+		}
+		if felt >= StrongFeltThreshold {
+			lines = pool.Strong
+		} else {
+			lines = pool.Mild
+		}
+	} else {
+		lines = t.Outdoor[biome]
+		if len(lines) == 0 {
+			lines = t.Outdoor["default"]
+		}
 	}
-	lines := section[biome]
-	if len(lines) == 0 {
-		lines = section["default"]
-	}
+
 	if len(lines) == 0 {
 		return ""
 	}
