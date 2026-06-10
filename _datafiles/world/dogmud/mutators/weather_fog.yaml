@@ -1,0 +1,11 @@
+mutatorid: weather-fog
+outdooronly: true
+namemodifier:
+  behavior: append
+  text: (fogbound)
+  colorpattern: gray
+descriptionmodifier:
+  behavior: append
+  text: A dense fog presses close, swallowing shapes more than a few paces out.
+  colorpattern: gray
+decayrate: 4 hours

@@ -1,0 +1,4 @@
+biome: land
+weather: { clear: 4, overcast: 2, rain: 1, fog: 1 }
+influence: { intensityDelta: 0.0, moistureDelta: 0.0, movementResistance: 0.0 }
+spawnWeight: 0.8

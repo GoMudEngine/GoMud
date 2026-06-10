@@ -1345,3 +1345,15 @@ Modules:
     SandboxZoneTag: ""
     DeathProtection: true
     Beacons: true
+  weather:
+    Enabled: true
+    Seed: 0
+    TickEveryGameHours: 1
+    MaxActiveFronts: 8
+    SpawnRateScale: 1.0
+    EmoteMode: module
+    EmoteEveryRounds: 20
+    BuffsEnabled: false
+    Persist: true
+    IncludeSecretExits: true
+    RebuildGraphOnBoot: false

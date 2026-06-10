@@ -1,0 +1,15 @@
+weather: fog
+outdoor:
+  default:
+    - "The fog drifts in slow banks, swallowing shapes a few paces out."
+    - "Sound arrives strangely through the murk — close, then suddenly far."
+    - "Beads of mist settle cold on your skin and hair."
+  swamp:
+    - "The fog lies thick on the water, moving only when something moves it."
+  city:
+    - "Lamplight and doorways become dim halos in the drifting murk."
+indoor:
+  default:
+    mild: []
+    strong:
+      - "Mist curls in at the threshold and thins to nothing in the warmth."

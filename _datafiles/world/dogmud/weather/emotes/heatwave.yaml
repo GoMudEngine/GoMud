@@ -1,0 +1,13 @@
+weather: heatwave
+outdoor:
+  default:
+    - "Heat shimmers up off the ground in wavering curtains."
+    - "Sweat dries to salt almost before it forms."
+    - "The air is an oven's breath; even the wind has given up."
+  city:
+    - "The stones radiate stored heat like a banked forge."
+indoor:
+  default:
+    mild: []
+    strong:
+      - "The trapped air hangs hot and motionless, thick as wool."

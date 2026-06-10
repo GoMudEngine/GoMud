@@ -1,0 +1,4 @@
+biome: house
+weather: { clear: 1 }
+influence: { intensityDelta: -0.04, moistureDelta: -0.04, movementResistance: 0.3 }
+spawnWeight: 0.0

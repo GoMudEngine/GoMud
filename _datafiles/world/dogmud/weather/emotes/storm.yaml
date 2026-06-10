@@ -1,0 +1,22 @@
+weather: storm
+outdoor:
+  default:
+    - "Thunder cracks close enough to feel in your teeth."
+    - "Wind-driven rain stings like flung gravel."
+    - "Lightning whitewashes the world for a heartbeat, then the dark slams back."
+    - "The wind leans on you like a shoulder, gusting and shoving."
+  forest:
+    - "The trees groan and thrash, shedding twigs and torn leaves."
+  city:
+    - "A loose shutter hammers somewhere down the street, slave to the wind."
+    - "Rain sheets off the rooflines in ragged silver curtains."
+  water:
+    - "The water heaves into whitecaps, spray mixing with the rain."
+indoor:
+  default:
+    mild:
+      - "Wind moans low around the eaves."
+    strong:
+      - "Thunder rolls through the walls, rattling anything not nailed down."
+      - "The storm hammers at the roof, wind worrying every joint and seam."
+      - "A flash from outside paints the room white for an instant."

@@ -1,0 +1,11 @@
+weather: overcast
+outdoor:
+  default:
+    - "The cloud ceiling hangs low and unbroken, gray from edge to edge."
+    - "A dull, even light flattens every shadow."
+    - "The air sits still and heavy, waiting on weather that hasn't decided."
+indoor:
+  default:
+    mild: []
+    strong:
+      - "The light through every crack and window is gray and listless."

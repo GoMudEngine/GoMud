@@ -1,0 +1,11 @@
+mutatorid: weather-overcast
+outdooronly: true
+namemodifier:
+  behavior: append
+  text: (overcast)
+  colorpattern: gray
+descriptionmodifier:
+  behavior: append
+  text: A flat gray ceiling of cloud hangs low overhead, dulling every color.
+  colorpattern: gray
+decayrate: 6 hours
