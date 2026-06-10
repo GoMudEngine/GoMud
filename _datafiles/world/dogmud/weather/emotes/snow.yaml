@@ -1,0 +1,13 @@
+weather: snow
+outdoor:
+  default:
+    - "Snow sifts down in fat, unhurried flakes."
+    - "The world's sounds arrive muffled, wrapped in falling snow."
+    - "Snow gathers in the creases of your clothes and melts to cold water."
+  forest:
+    - "Loaded boughs shed sudden sleeves of snow with a soft thump."
+indoor:
+  default:
+    mild: []
+    strong:
+      - "Snow whispers against the windows, piling soft in the corners outside."

@@ -1,0 +1,21 @@
+weather: rain
+outdoor:
+  default:
+    - "Rain patters down steadily, beading on every surface."
+    - "A cold runnel of rainwater finds its way down the back of your neck."
+    - "Puddles widen and merge underfoot."
+    - "The rain eases for a breath, then settles back into its steady rhythm."
+  forest:
+    - "Rain drips from leaf to leaf, a thousand small drumbeats overhead."
+    - "The canopy sheds fat, gathered drops long after each gust."
+  city:
+    - "Rainwater chuckles along the gutters and pools between the cobbles."
+    - "Awnings sag and drip; somewhere a shutter bangs against the wet."
+  swamp:
+    - "Rain stipples the standing water, setting the reeds nodding."
+indoor:
+  default:
+    mild: []
+    strong:
+      - "The sound of rain on the roof settles into a rhythmic, soothing patter."
+      - "Water trickles past outside; somewhere a slow drip finds its rhythm."

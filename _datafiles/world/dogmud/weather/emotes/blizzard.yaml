@@ -1,0 +1,13 @@
+weather: blizzard
+outdoor:
+  default:
+    - "The wind drives the snow level, scouring every exposed inch of skin."
+    - "The world whites out; up and down are a rumor."
+    - "Cold knifes through every seam in your clothing."
+indoor:
+  default:
+    mild:
+      - "Wind keens around the corners of the building."
+    strong:
+      - "The blizzard howls against the walls, packing snow into every crack."
+      - "Something on the roof strains and thrums with each long gust."

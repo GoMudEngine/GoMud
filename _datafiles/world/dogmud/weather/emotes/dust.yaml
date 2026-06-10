@@ -1,0 +1,12 @@
+weather: dust
+outdoor:
+  default:
+    - "Wind-borne grit rasps across everything, hissing like dry rain."
+    - "You squint against the stinging haze; the horizon is a brown smear."
+    - "Dust finds your teeth, your eyes, the inside of your collar."
+indoor:
+  default:
+    mild:
+      - "Fine dust sifts down from the rafters with each gust outside."
+    strong:
+      - "Grit hisses against the walls; the air inside tastes of dry earth."

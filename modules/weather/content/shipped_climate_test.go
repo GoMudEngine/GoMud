@@ -33,4 +33,22 @@ func TestShippedDogmudClimateProfiles(t *testing.T) {
 			t.Errorf("%s: indoor biome must have spawnWeight 0, got %v", indoor, w)
 		}
 	}
+
+	// Pin values that differ from the module's built-in defaults so a missing
+	// file can't silently fall back (forest/desert/swamp exist in defaults too).
+	// desert: DOGMud file adds overcast weight 1; DefaultClimate "desert" has none (0).
+	if climate["desert"].Weather["overcast"] != 1 {
+		t.Errorf("desert: expected overcast weight 1 from the DOGMud climate file, got %v",
+			climate["desert"].Weather["overcast"])
+	}
+	// swamp: DOGMud file has fog weight 3; DefaultClimate "swamp" has fog weight 5.
+	if climate["swamp"].Weather["fog"] != 3 {
+		t.Errorf("swamp: expected fog weight 3 from the DOGMud climate file, got %v",
+			climate["swamp"].Weather["fog"])
+	}
+	// forest: DOGMud file has spawnWeight 0.9; DefaultClimate "forest" has spawnWeight 1.0.
+	if climate["forest"].SpawnWeight != 0.9 {
+		t.Errorf("forest: expected spawnWeight 0.9 from the DOGMud climate file, got %v",
+			climate["forest"].SpawnWeight)
+	}
 }
