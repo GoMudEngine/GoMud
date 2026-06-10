@@ -12,6 +12,26 @@
 
 ---
 
+## Cooldown semantics (read this before Tasks 2 and 5)
+
+The special-move cooldown attaches to **reload**, never to fire:
+
+- `combat.ExecuteSkillMove` has NO cooldown logic — it is pure resolution.
+  Kick's cooldown lives in `ExecuteKick` before the resolution call.
+  `ExecuteFire` (Task 5) reuses the resolution machinery and deliberately
+  OMITS `Cooldowns.Try` — firing is gated only by `weapon.Loaded`.
+  Task 5's test #6 pins this: fire must not block a subsequent kick.
+- `ExecuteReload` (Task 2) is the ONLY ranged call site of
+  `Cooldowns.Try("special-move", ...)`. When the cooldown is busy it
+  returns `OnCooldown` and consumes NOTHING (no ammo, no loaded change).
+  Check ordering inside ExecuteReload: weapon present → already loaded →
+  ammo found → THEN `Try` — so a reload that would fail for no-ammo never
+  burns the cooldown.
+- Firing DOES consume the attacker's combat round (`RecordAndWait`, same
+  as kick) — one deliberate action per round. Round cost and cooldown
+  cost are separate resources: the cooldown throttles rate of fire
+  (reload), the round cost prevents shoot-plus-full-melee in one round.
+
 ## Verified API facts (do not re-derive)
 
 - **Immediate-attack model:** `combat.ExecuteSkillMove(p combat.SkillMoveParams) SkillMoveResult` (internal/combat/skill_moves.go:51) — opposed roll `(AttackSkill+AttackStat) vs (DefenseSkill+DefenseStat)` via `dice.OpposedRollStat`, damage `CalcRawDamage(DamageStat, SkillRank, DamagePercent, ChannelPhysical)` → `ApplyMitigation(…, GetPhysicalMitigation()×MitigationMultiplier, cap)` → `dice.RollStat`, applies HP loss + optional knockdown directly. `SkillMoveResult{Hit, Damage, KnockedDown, TargetMaxHP}`.
