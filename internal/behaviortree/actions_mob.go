@@ -2,7 +2,7 @@ package behaviortree
 
 // actions_mob.go — mob movement, spawning, and instance actions:
 // actSpawnMob, actSummonCompanion, actCommand, actCommandMob, actCommandBestOf,
-// actMove, actOpenInstancePortal, actCreateInstance
+// actTrySpecialMove, actMove, actOpenInstancePortal, actCreateInstance
 // helpers: splitTwo, parseIntStr
 
 import (
@@ -12,6 +12,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -162,6 +163,59 @@ func actCommandBestOf(params map[string]any, ctx *EvalContext) Result {
 		}
 	}
 	return Failure
+}
+
+// beastMoves is the set of special-move names that are anatomy/identity-gated
+// to true beasts (no-hands natural-weapon attackers). Humanoid mobs can never
+// satisfy those gates, so filtering on this set ensures the tactical cascade
+// (command_best_of bash/grapple/trip) still fires for humanoids.
+var beastMoves = map[string]bool{
+	"rake":      true,
+	"maul":      true,
+	"pounce":    true,
+	"gore":      true,
+	"throttle":  true,
+	"hamstring": true,
+	"drain":     true,
+}
+
+// actTrySpecialMove delegates to combat.SelectSpecialMove (the chance-gate-free
+// weighted selector) and issues the chosen command when it is a beast move.
+// Returns Success when a beast move was issued; Failure otherwise so the
+// existing tactical cascade (command_best_of) retains control.
+//
+// Beast moves are anatomy/identity-gated in their CanUse* functions, so a
+// humanoid mob's SelectSpecialMove will never return one — the filter only
+// costs a map lookup.
+func actTrySpecialMove(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil || mob.Character.Aggro == nil {
+		return Failure
+	}
+
+	// Resolve the aggro target's Character.
+	var target *characters.Character
+	if mob.Character.Aggro.UserId > 0 {
+		if u := users.GetByUserId(mob.Character.Aggro.UserId); u != nil {
+			target = u.Character
+		}
+	} else if mob.Character.Aggro.MobInstanceId > 0 {
+		if tm := mobs.GetInstance(mob.Character.Aggro.MobInstanceId); tm != nil {
+			target = &tm.Character
+		}
+	}
+	if target == nil {
+		return Failure
+	}
+
+	move := combat.SelectSpecialMove(mob, target)
+	if move == "" || !beastMoves[move] {
+		// Either no move available or a humanoid tactical move — let the
+		// existing command_best_of cascade handle it.
+		return Failure
+	}
+	mob.Command(move)
+	return Success
 }
 
 // actGoToCallerRoom resolves the event's caller mob (ctx.Event.MobId)
