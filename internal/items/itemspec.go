@@ -247,6 +247,8 @@ type ItemSpec struct {
 	SpellDamageMultiplier float64 `yaml:"spell_damage_multiplier,omitempty"` // Spell damage multiplier for caster weapons (wand/sceptre/staff)
 	ParryRating          int     `yaml:"parryrating,omitempty"`         // Weapon parry bonus (Stage 7.1)
 	BlockRating     int         `yaml:"blockrating,omitempty"`     // Shield block bonus (Stage 7.1)
+	AmmoTag         string      `yaml:"ammo_tag,omitempty"`        // Ranged weapons: ammo type required (arrows/bolts/shot). Ammo items: type provided.
+	MinStrength     int         `yaml:"min_strength,omitempty"`    // Minimum Strength to wield (heavy bows/arbalest)
 	WaitRounds      int         `yaml:"waitrounds,omitempty"`      // How many extra rounds each combat requires
 	StaminaCost     int         `yaml:"staminacost,omitempty"`     // Stamina cost per attack with this weapon
 	SpeedMultiplier float64     `yaml:"speedmultiplier,omitempty"` // Attack speed modifier (1.0 = unarmed baseline, <1.0 slower, >1.0 faster)
