@@ -76,6 +76,7 @@ var (
 		"pounce":         {Pounce, false},
 		"rake":           {Rake, false},
 		"rally":          {Rally, false},
+		"reload":         {Reload, false},
 		"remove":         {Remove, false},
 		"replyto":        {ReplyTo, true},
 		"salvage":        {Salvage, false},

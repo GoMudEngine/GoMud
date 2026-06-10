@@ -164,7 +164,7 @@ var (
 		`pounce`:          {Pounce, false, true, false},
 		`rake`:            {Rake, false, true, false},
 		`read`:            {Read, false, true, false},
-		`reload`:          {Reload, true, true, true},       // Admin only
+		`reload`:          {Reload, false, true, false},      // All: ranged-weapon reload; admin subcommands reload data files
 		`relationship`:    {Relationship, true, true, true}, // Admin only
 		`rep`:             {Report, true, true, false},
 		`reply`:           {Reply, true, true, false},
