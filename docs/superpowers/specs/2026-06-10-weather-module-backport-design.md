@@ -23,8 +23,8 @@ smoke-test, push to prod at end of day.
 |---|---|
 | Adaptation depth | Full DOGMud-native: climate profiles for all 17 DOGMud biomes, DOGMud-voiced emotes, indoor handling fixed |
 | Gameplay mechanics | **Presentation only.** No buffs this pass. Severe-weather `lightmod` is the only mechanical side effect (inherent to light) |
-| Data loading | Module Go code vendors into `modules/weather/`; all data files live in DOGMud's existing `_datafiles` tree. **Zero engine changes** |
-| Indoor model | Indoor rooms never show weather mutators; indoor emotes are intensity-gated (mild weather = silence, strong weather = muted sensory lines) |
+| Data loading | Module Go code vendors into `modules/weather/`; all data files live in DOGMud's existing `_datafiles` tree. Engine changes limited to two generic data-driven flags (see indoor model) |
+| Indoor model | Indoor rooms never show weather mutators (render-time filter via `BiomeInfo.Indoor` + `MutatorSpec.OutdoorOnly`); indoor emotes are intensity-gated (mild weather = silence, strong weather = muted sensory lines) |
 | Rollout | Normal pre-push SOP, prod at end of day |
 
 ## Architecture
@@ -87,20 +87,35 @@ upstream, fall back to flat YAML under `_datafiles/world/dogmud/weather/`
 
 Two changes, both in module code (no engine changes):
 
-### 1. Per-room mutator application, outdoor rooms only
+### 1. Render-time indoor filtering (REVISED 2026-06-10 during planning)
 
 The standalone module applies weather as a *zone* mutator, so indoor rooms
 render `(storm-wracked)` tags and "rain lashes the cobblestones" description
-lines. Instead, the adapter's reconciler applies weather mutators **per room**,
-skipping rooms whose biome is in the indoor set:
+lines. The originally-approved fix (apply mutators per room, outdoor rooms
+only) turned out to have two implementation problems discovered during
+planning: room-level mutators persist into `rooms.instances/` saves (the
+stale-instance-shadowing trap; prod doesn't deploy those saves), and per-room
+reconciliation means `LoadRoom`-ing every room in covered zones each tick,
+fighting the room-unload/perf system.
 
-> **Indoor biomes:** `cave`, `dungeon`, `house`, `fort`, `spiderweb`
+**Revised mechanism, same player-visible behavior:** weather stays a
+zone-level mutator (exactly like the source module — cheap, no room loading,
+nothing persisted per room), and indoor rooms are filtered at render time via
+two small, generic, data-driven engine additions:
+
+- `BiomeInfo.Indoor` (`indoor: true` in biome YAML) — set on `cave`,
+  `dungeon`, `house`, `fort`, `spiderweb`.
+- `MutatorSpec.OutdoorOnly` (`outdooronly: true` in mutator YAML) — set on
+  all 8 weather specs; reusable by existing mutators (`desert_sun`,
+  `forest_mist`) later.
+- `Room.ActiveMutators` skips outdoor-only mutators when the room's biome is
+  indoor — the single merge point all render paths (name/description/alert/
+  lightmod via GetDetails/GetVisibility) already flow through.
 
 Indoor rooms get no name tag, no weather description line, no alert, no
 lightmod. Their entire weather experience is the emote channel below. The
-reconciler's `weather-*` namespace enforcement moves with it: any stray
-`weather-*` room mutator not matching the simulation's view is removed within
-one tick.
+"zero engine changes" decision is amended to "two generic data-driven engine
+flags + one filter in ActiveMutators."
 
 ### 2. Intensity-gated indoor emotes
 
