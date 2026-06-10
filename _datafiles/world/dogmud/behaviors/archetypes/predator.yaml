@@ -59,6 +59,9 @@ tree:
     - type: selector
       event: mob_combat_round
       children:
+        - type: action
+          do: try_special_move
+
         - type: sequence
           children:
             - type: condition

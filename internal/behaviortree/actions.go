@@ -56,6 +56,9 @@ func init() {
 	actionRegistry["create_instance"] = actCreateInstance
 	actionRegistry["open_instance_portal"] = actOpenInstancePortal
 
+	// Beast special-move delegation (Phase 3/4 beast moves)
+	actionRegistry["try_special_move"] = actTrySpecialMove
+
 	// Pack tactics actions
 	actionRegistry["go_to_caller_room"] = actGoToCallerRoom
 

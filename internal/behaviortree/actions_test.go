@@ -18,6 +18,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -773,6 +774,110 @@ func TestCancelActivityBtreeAction_MissingMob(t *testing.T) {
 	ctx := &EvalContext{InstanceId: 99998} // never seeded
 	if result := fn(nil, ctx); result != Failure {
 		t.Errorf("expected Failure for missing mob, got %v", result)
+	}
+}
+
+// ─── try_special_move ────────────────────────────────────────────────────────
+
+// TestActTrySpecialMove_RegisteredInActionRegistry verifies the action is
+// present in the registry before any functional test runs.
+func TestActTrySpecialMove_RegisteredInActionRegistry(t *testing.T) {
+	if LookupAction("try_special_move") == nil {
+		t.Error("try_special_move must be registered in actionRegistry")
+	}
+}
+
+// TestActTrySpecialMove_BeastMobReturnsSuccess verifies that a fanged, legged,
+// no-hands beast mob (wolf) with a registered aggro target returns Success —
+// SelectSpecialMove picks a beast move and the action issues it.
+func TestActTrySpecialMove_BeastMobReturnsSuccess(t *testing.T) {
+	cleanupSp := species.SeedSpeciesForTest(map[int]*species.Species{
+		9910: {
+			SpeciesId:     9910,
+			Name:          "test_wolf",
+			BodyParts:     []string{"legs", "mouth"},
+			NaturalAttack: items.Bite,
+		},
+	})
+	defer cleanupSp()
+
+	// Target mob at InstanceId 201.
+	target := &mobs.Mob{MobId: 2, InstanceId: 201}
+	target.Character.Name = "Target"
+	target.Character.HealthMax.Value = 100
+	target.Character.Health = 100
+	mobs.SetInstanceForTest(target.InstanceId, target)
+	t.Cleanup(func() { mobs.SetInstanceForTest(target.InstanceId, nil) })
+
+	// Beast mob (InstanceId 100 via newTestMob): wolf, predator profile,
+	// aggro on target mob. Clear any leftover special-move cooldown.
+	mob := newTestMob(t)
+	mob.Character.SpeciesId = 9910
+	mob.Character.HealthMax.Value = 100
+	mob.Character.Health = 100
+	mob.AIProfile = "predator"
+	mob.Character.Cooldowns = characters.Cooldowns{}
+	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+
+	result := LookupAction("try_special_move")(nil, ctx)
+	if result != Success {
+		t.Errorf("expected Success for beast mob with viable beast moves, got %v", result)
+	}
+}
+
+// TestActTrySpecialMove_HumanoidMobReturnsFailure verifies that a humanoid mob
+// (has hands) returns Failure — SelectSpecialMove returns a non-beast move
+// (grapple/trip/kick), so the tactical cascade retains control.
+func TestActTrySpecialMove_HumanoidMobReturnsFailure(t *testing.T) {
+	cleanupSp := species.SeedSpeciesForTest(map[int]*species.Species{
+		9911: {
+			SpeciesId: 9911,
+			Name:      "test_humanoid",
+			BodyParts: []string{"arms", "hands", "legs", "mouth"},
+		},
+	})
+	defer cleanupSp()
+
+	// Target mob at InstanceId 202.
+	target := &mobs.Mob{MobId: 2, InstanceId: 202}
+	target.Character.Name = "Target"
+	target.Character.HealthMax.Value = 100
+	target.Character.Health = 100
+	mobs.SetInstanceForTest(target.InstanceId, target)
+	t.Cleanup(func() { mobs.SetInstanceForTest(target.InstanceId, nil) })
+
+	// Humanoid mob at InstanceId 203: hands → no beast moves available.
+	mob := &mobs.Mob{MobId: 1, InstanceId: 203}
+	mob.Character.Name = "HumanMob"
+	mob.Character.HealthMax.Value = 100
+	mob.Character.Health = 100
+	mob.Character.SpeciesId = 9911
+	mob.Character.Cooldowns = characters.Cooldowns{}
+	mob.Character.SetAggro(0, target.InstanceId, characters.DefaultAttack)
+	mobs.SetInstanceForTest(mob.InstanceId, mob)
+	t.Cleanup(func() { mobs.SetInstanceForTest(mob.InstanceId, nil) })
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+
+	result := LookupAction("try_special_move")(nil, ctx)
+	if result != Failure {
+		t.Errorf("expected Failure for humanoid mob (non-beast moves only), got %v", result)
+	}
+}
+
+// TestActTrySpecialMove_NoAggroReturnsFailure verifies that a mob without an
+// aggro target returns Failure immediately.
+func TestActTrySpecialMove_NoAggroReturnsFailure(t *testing.T) {
+	mob := newTestMob(t)
+	mob.Character.Aggro = nil
+
+	ctx := &EvalContext{InstanceId: mob.InstanceId}
+
+	result := LookupAction("try_special_move")(nil, ctx)
+	if result != Failure {
+		t.Errorf("expected Failure (no aggro), got %v", result)
 	}
 }
 

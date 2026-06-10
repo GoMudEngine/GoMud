@@ -83,6 +83,12 @@ tree:
           do: cast_best_in_category
           category: harm_single
 
+        # 5. Beast fallback: drain when no spell is castable (wraith/spectre).
+        #    try_special_move returns Failure for non-beast casters, so this
+        #    is a no-op for air elementals and other non-drain casters.
+        - type: action
+          do: try_special_move
+
     # chunk 4.4: strategic goal pursuit (after reflex/combat, before idle end)
     - type: action
       event: mob_idle
