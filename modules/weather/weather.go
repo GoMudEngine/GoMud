@@ -1,9 +1,8 @@
 package weather
 
 import (
-	"embed"
-
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -13,9 +12,6 @@ import (
 	"github.com/GoMudEngine/GoMud/modules/weather/engine"
 	"github.com/GoMudEngine/GoMud/modules/weather/sim"
 )
-
-//go:embed files/*
-var files embed.FS
 
 // weatherModule holds the plugin handle, resolved config, the geography graph,
 // and the live simulation (state/climate/emote tables/schedule). All fields are
@@ -39,9 +35,6 @@ var module weatherModule
 
 func init() {
 	module = weatherModule{plug: plugins.New(`weather`, `0.1.0`)}
-	if err := module.plug.AttachFileSystem(files); err != nil {
-		panic(err)
-	}
 	module.plug.Callbacks.SetOnLoad(module.onLoad)
 	// Command and exports are registered at init: plugins.Load() harvests the
 	// command map BEFORE invoking onLoad, so anything registered there is lost.
@@ -130,10 +123,8 @@ func (m *weatherModule) rebuildGraph() {
 	}
 }
 
-// sendLine writes one line to a user. It is the ONLY place this module calls the
-// engine's SendText, isolating the one upstream-vs-DOGMud divergence: upstream
-// GoMud uses SendText(text); the DOGMud fork uses SendText(category, text).
-// Backporting to DOGMud is a one-line change here.
+// sendLine writes one line to a user. It is the ONLY place this module calls
+// the engine's SendText. DOGMud's fork signature is SendText(category, text).
 func sendLine(user *users.UserRecord, text string) {
-	user.SendText(text)
+	user.SendText(messaging.CategorySystem, text)
 }

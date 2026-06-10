@@ -1,6 +1,9 @@
 package weather
 
 import (
+	"os"
+
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/GoMudEngine/GoMud/modules/weather/content"
@@ -35,16 +38,19 @@ func (m *weatherModule) startSim(round uint64) {
 	m.simReady = true
 }
 
-// loadContent loads climate overrides and emote tables from the module's
-// embedded files. Both fail soft: defaults / silence plus a warning.
+// loadContent loads climate profiles and emote tables from the world's
+// datafiles tree (_datafiles/world/dogmud/weather/...). Both fail soft:
+// defaults / silence plus a warning.
 func (m *weatherModule) loadContent() {
-	climate, err := content.LoadClimate(files, "files/datafiles/climate")
+	dataFS := os.DirFS(configs.GetFilePathsConfig().DataFiles.String())
+
+	climate, err := content.LoadClimate(dataFS, "weather/climate")
 	if err != nil {
-		mudlog.Warn("Weather: climate overrides failed to load; using defaults", "error", err)
+		mudlog.Warn("Weather: climate profiles failed to load; using defaults", "error", err)
 	}
 	m.climate = climate
 
-	tables, err := content.LoadEmotes(files, "files/datafiles/emotes")
+	tables, err := content.LoadEmotes(dataFS, "weather/emotes")
 	if err != nil {
 		mudlog.Warn("Weather: emote tables failed to load", "error", err)
 	}
