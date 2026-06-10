@@ -28,6 +28,7 @@ const (
 	// DOG combat & magic skills
 	WeaponCombat  SkillTag = `weapon-combat`  // Melee attack & defense with weapons
 	UnarmedCombat SkillTag = `unarmed-combat` // Fist/body attacks & defense, grappling
+	RangedCombat  SkillTag = `ranged-combat`  // Bows, crossbows, pistols — aimed shots (Perception)
 	Spellcasting  SkillTag = `spellcasting`   // All magic — offense & defense
 	Rhetoric      SkillTag = `rhetoric`       // Conviction attacks — taunt, demoralize (Stage 34)
 
@@ -52,6 +53,10 @@ var (
 		"warrior": {
 			WeaponCombat,
 			UnarmedCombat,
+		},
+		"hunter": {
+			RangedCombat,
+			Search,
 		},
 		"ranger": {
 			Search,
@@ -265,6 +270,7 @@ func GetTitle(owned map[string]int, allRanks map[string]int, s stats.Statistics)
 var SkillPrimaryStats = map[string]string{
 	"weapon-combat":  "dexterity",
 	"unarmed-combat": "dexterity",
+	"ranged-combat":  "perception",
 	"spellcasting":   "willpower",
 	"skullduggery":   "dexterity",
 	"search":         "perception",
@@ -293,6 +299,9 @@ var SkillProgressionMultipliers = map[SkillTag]float64{
 	// Combat skills — fire multiple times per round
 	WeaponCombat:  0.3,
 	UnarmedCombat: 0.3,
+	// Ranged combat — one aimed shot per action (reload on cooldown), so it
+	// fires less often than melee; moderate rate like the other per-action skills.
+	RangedCombat: 0.5,
 	// Magic skills — moderate frequency
 	Spellcasting: 0.5,
 	// Social combat — moderate frequency
@@ -368,7 +377,7 @@ func init() {
 
 	// Register all DOG skills directly (ensures any not in professions are included)
 	for _, sk := range []SkillTag{
-		WeaponCombat, UnarmedCombat, Spellcasting, Rhetoric,
+		WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting, Rhetoric,
 		Skullduggery, Search, Bartering,
 		Blacksmithing, Alchemy, Tailoring, Cooking, Jewelcrafting, Enchanting, Salvage,
 		Manifestation,

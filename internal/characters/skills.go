@@ -258,6 +258,9 @@ func CombatSkillTagForItem(weapon items.Item) skills.SkillTag {
 	if spec.Subtype == items.Claws || spec.Subtype == items.Fist {
 		return skills.UnarmedCombat
 	}
+	if spec.Subtype == items.Shooting {
+		return skills.RangedCombat
+	}
 	return skills.WeaponCombat
 }
 
