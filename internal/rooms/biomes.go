@@ -22,6 +22,7 @@ type BiomeInfo struct {
 	UsesItem       bool    `yaml:"usesitem"`
 	Burns          bool    `yaml:"burns"`
 	MovementCost   float64 `yaml:"movementcost"` // Terrain difficulty multiplier for stamina cost (1.0 = normal, 2.0 = rough)
+	Indoor         bool    `yaml:"indoor,omitempty"`       // Sheltered from weather; outdoor-only mutators don't render here
 
 	// Private fields for runtime use
 	symbolRune rune
