@@ -51,6 +51,7 @@ type UserRecord struct {
 	ScreenReader   bool                  `yaml:"screenreader,omitempty"` // Are they using a screen reader? (We should remove excess symbols)
 	AsciiMode      bool                  `yaml:"asciimode,omitempty"`    // Convert UTF-8 decorative chars to ASCII for legacy clients
 	LineWidth      int                   `yaml:"linewidth,omitempty"`    // Column width for line wrapping; 0 = default 80
+	CombatVerbosity string                `yaml:"combatverbosity,omitempty"` // Combat text level: ""/full, medium (hits only), light (round tally)
 	EmailAddress   string                `yaml:"emailaddress,omitempty"` // Email address (if provided)
 	TipsComplete   map[string]bool       `yaml:"tipscomplete,omitempty"` // Tips the user has followed/completed so they can be quiet
 	EventLog        UserLog               `yaml:"-"` // Do not retain in user file (for now)
@@ -445,6 +446,16 @@ func (u *UserRecord) GetLineWidth() int {
 		return 80
 	}
 	return u.LineWidth
+}
+
+// GetCombatVerbosity returns the user's combat-text verbosity, defaulting
+// to full for unset/unknown values and nil receivers. The combat round
+// hook reads this when draining attack narration.
+func (u *UserRecord) GetCombatVerbosity() messaging.Verbosity {
+	if u == nil {
+		return messaging.VerbosityFull
+	}
+	return messaging.ParseVerbosity(u.CombatVerbosity)
 }
 
 func (u *UserRecord) SendWebClientCommand(txt string) {
