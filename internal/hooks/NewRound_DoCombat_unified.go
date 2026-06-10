@@ -503,33 +503,34 @@ func dispatchCritAndMessaging(atk, def actions.Actor, res *combat.AttackResult) 
 		def.AddBuff(buffId, `combat`)
 	}
 
-	// Direct messages — Divergence #1.
-	// AttackResult.MessagesTo* carry per-line TaggedMessage data
-	// (Category + Text). The combat producer tags each line at the
-	// site that creates it: hit lines get CategoryHit{Melee,Blunt,
-	// NaturalSharp,Ranged,Caster,Unarmed} from the weapon subtype,
-	// defense lines get CategoryDodge/Parry/Block from the verb.
-	// Multi-weapon rounds emit heterogeneous categories per swing —
-	// the drain just preserves each line's tag.
+	// Direct messages — Divergence #1, now verbosity-gated (spec:
+	// 2026-06-10-combat-verbosity-design.md). AttackResult.MessagesTo*
+	// carry per-line TaggedMessage data (Category + Text); the gate
+	// suppresses by category per the viewer's setting. Floor rules:
+	// damage-to-viewer lines always pass; categories outside the
+	// suppress tables always pass.
 	if atk.IsPlayer() {
-		for _, msg := range res.MessagesToSource {
-			atk.SendText(msg.Category, msg.Text)
+		u := asUser(atk)
+		lvl := u.GetCombatVerbosity()
+		drainParticipantLines(u, res.MessagesToSource, lvl, false)
+		if lvl == messaging.VerbosityLight {
+			recordTallyFor(u.UserId, atk, def, res)
 		}
 	}
 	if def.IsPlayer() {
-		for _, msg := range res.MessagesToTarget {
-			def.SendText(msg.Category, msg.Text)
+		u := asUser(def)
+		lvl := u.GetCombatVerbosity()
+		drainParticipantLines(u, res.MessagesToTarget, lvl, true)
+		if lvl == messaging.VerbosityLight {
+			recordTallyFor(u.UserId, atk, def, res)
 		}
 	}
 
-	// Room broadcasts with player-receiver excludes.
+	// Room broadcasts, per-spectator gated one step below their setting.
 	excludes := playerExcludeIds(atk, def)
-	for _, msg := range res.MessagesToSourceRoom {
-		sendVisualRoomText(atkRoom, msg.Category, msg.Text, excludes...)
-	}
-	for _, msg := range res.MessagesToTargetRoom {
-		sendVisualRoomText(defRoom, msg.Category, msg.Text, excludes...)
-	}
+	drainSpectatorLines(atkRoom, res.MessagesToSourceRoom, excludes)
+	drainSpectatorLines(defRoom, res.MessagesToTargetRoom, excludes)
+	recordSpectatorTallies(atkRoom, defRoom, atk, def, res, excludes)
 	sendDarkRoomCombatFallback(atkRoom, excludes...)
 	if defRoom != atkRoom {
 		sendDarkRoomCombatFallback(defRoom, excludes...)

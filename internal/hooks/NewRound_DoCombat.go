@@ -73,6 +73,9 @@ func DoCombat(e events.Event) events.ListenerReturn {
 		}
 	}
 
+	// Light-verbosity round tallies (spec: combat-verbosity design).
+	flushCombatTallies()
+
 	return events.Continue
 }
 

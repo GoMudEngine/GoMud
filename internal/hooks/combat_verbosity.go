@@ -5,7 +5,11 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/combat"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
 // File: combat_verbosity.go
@@ -241,4 +245,140 @@ func (ct *combatTallies) viewerIds() []int {
 	}
 	sort.Ints(out)
 	return out
+}
+
+// ── Drain-side glue ────────────────────────────────────────────────────
+
+// roundTallies is the per-round accumulator. Game-loop goroutine only.
+var roundTallies = newCombatTallies()
+
+// fighterRefFor builds a tally identity for an Actor.
+func fighterRefFor(a actions.Actor) fighterRef {
+	if a.IsPlayer() {
+		return fighterRef{Key: fmt.Sprintf("u:%d", a.GetUserId()), Name: a.GetCharacter().Name, IsMob: false}
+	}
+	return fighterRef{Key: fmt.Sprintf("m:%d", a.GetMobInstanceId()), Name: a.GetCharacter().Name, IsMob: true}
+}
+
+// swingStatsFor extracts tally stats from an AttackResult. Rounds with
+// no per-swing analytics (defensive fallback) degrade to one synthetic
+// swing from the top-level Hit/DamageToTarget.
+func swingStatsFor(res *combat.AttackResult) []swingStat {
+	if len(res.SwingEvents) > 0 {
+		out := make([]swingStat, 0, len(res.SwingEvents))
+		for _, s := range res.SwingEvents {
+			out = append(out, swingStat{Hit: s.Hit, Damage: s.Damage})
+		}
+		return out
+	}
+	if res.DefenderWasAttacked || res.Hit {
+		return []swingStat{{Hit: res.Hit, Damage: res.DamageToTarget}}
+	}
+	return nil
+}
+
+// recordTallyFor records one AttackResult into a viewer's round tally.
+func recordTallyFor(viewerId int, atk, def actions.Actor, res *combat.AttackResult) {
+	swings := swingStatsFor(res)
+	if len(swings) == 0 {
+		return
+	}
+	roundTallies.record(viewerId, fighterRefFor(atk), fighterRefFor(def), swings,
+		def.GetCharacter().HealthMax.Value)
+}
+
+// drainParticipantLines sends a participant's combat lines subject to
+// their verbosity. incoming=true marks lines describing swings AGAINST
+// the viewer: landed hits there are floor-protected (always full prose,
+// any level); only defense/miss lines are suppressible.
+func drainParticipantLines(u *users.UserRecord, msgs []combat.TaggedMessage, lvl messaging.Verbosity, incoming bool) {
+	for _, msg := range msgs {
+		if incoming && isHitCategory(msg.Category) {
+			u.SendText(msg.Category, msg.Text) // floor: damage to you always shows
+			continue
+		}
+		if lvl.Suppresses(msg.Category) {
+			continue
+		}
+		u.SendText(msg.Category, msg.Text)
+	}
+}
+
+// isHitCategory reports whether a category is one of the CategoryHit*
+// damage bands.
+func isHitCategory(cat messaging.Category) bool {
+	switch cat {
+	case messaging.CategoryHitMelee, messaging.CategoryHitBlunt, messaging.CategoryHitNaturalSharp,
+		messaging.CategoryHitRanged, messaging.CategoryHitCaster, messaging.CategoryHitUnarmed:
+		return true
+	}
+	return false
+}
+
+// drainSpectatorLines delivers room combat lines per spectator at their
+// effective (one-step-lower) verbosity, preserving the sight gate via
+// SendTextVisualToUser. Excluded ids are the combatants (they got their
+// participant lines already).
+func drainSpectatorLines(room *rooms.Room, msgs []combat.TaggedMessage, excludeUserIds []int) {
+	if room == nil || len(msgs) == 0 {
+		return
+	}
+	for _, uid := range room.GetPlayers() {
+		if isExcludedUser(uid, excludeUserIds) {
+			continue
+		}
+		u := users.GetByUserId(uid)
+		if u == nil {
+			continue
+		}
+		lvl := u.GetCombatVerbosity().OneStepLower()
+		for _, msg := range msgs {
+			if lvl.Suppresses(msg.Category) {
+				continue
+			}
+			room.SendTextVisualToUser(u, msg.Category, msg.Text)
+		}
+	}
+}
+
+// recordSpectatorTallies records this AttackResult for every spectator
+// whose effective verbosity is Light. Called once per AttackResult
+// (NOT per message batch).
+func recordSpectatorTallies(atkRoom, defRoom *rooms.Room, atk, def actions.Actor, res *combat.AttackResult, excludeUserIds []int) {
+	seen := map[int]bool{}
+	for _, room := range []*rooms.Room{atkRoom, defRoom} {
+		if room == nil {
+			continue
+		}
+		for _, uid := range room.GetPlayers() {
+			if seen[uid] || isExcludedUser(uid, excludeUserIds) {
+				continue
+			}
+			seen[uid] = true
+			u := users.GetByUserId(uid)
+			if u == nil {
+				continue
+			}
+			if u.GetCombatVerbosity().OneStepLower() == messaging.VerbosityLight {
+				recordTallyFor(uid, atk, def, res)
+			}
+		}
+	}
+}
+
+// flushCombatTallies emits every pending tally line and clears the
+// accumulator. Called once at the end of DoCombat each round.
+func flushCombatTallies() {
+	for _, viewerId := range roundTallies.viewerIds() {
+		u := users.GetByUserId(viewerId)
+		if u == nil {
+			// Viewer logged off mid-round; drop their tallies.
+			roundTallies.flushForViewer(viewerId, "")
+			continue
+		}
+		viewerKey := fmt.Sprintf("u:%d", viewerId)
+		for _, line := range roundTallies.flushForViewer(viewerId, viewerKey) {
+			u.SendText(messaging.CategoryCombatSummary, line)
+		}
+	}
 }
