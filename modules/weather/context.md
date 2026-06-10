@@ -11,12 +11,13 @@ All fields of `weatherModule` are touched only from the single game-loop
 goroutine — no synchronization needed.
 
 ## Key Components
-- **weather.go**: the `files` embed.FS (`//go:embed files/*` — the config
-  overlay plus `datafiles/` mutator specs and emote tables; the engine loads
-  `mutators/*` from it via the plugin registry, `content` loaders read the
-  rest). `weatherModule` struct (plug, cfg, graph, started, simReady,
+- **weather.go**: no embedded FS — climate profiles and emote tables load at
+  runtime from `os.DirFS(configs.GetFilePathsConfig().DataFiles.String())` (i.e.
+  `_datafiles/world/dogmud/weather/{climate,emotes}/`); mutator specs live in
+  `_datafiles/world/dogmud/mutators/` and are loaded by the engine's own
+  mutator loader. `weatherModule` struct (plug, cfg, graph, started, simReady,
   simCfg, climate, tables, state, nextTick, nextEmote). `init()` → `plugins.New`
-  + `AttachFileSystem` + `SetOnLoad`, then registers the `weather` command as a
+  + `SetOnLoad`, then registers the `weather` command as a
   **player** command (not admin-only; admin subcommands are gated in-handler) and
   the exports. Command/export registration MUST happen in `init()`, not `onLoad`:
   `plugins.Load()` harvests the plugin's `userCommands` map into the engine
@@ -29,7 +30,8 @@ goroutine — no synchronization needed.
   `engine.Reconcile`. `sendLine` is the SOLE `user.SendText` call site.
 - **weather_tick.go**: `startSim` (idempotent; graceful degradation — logs once
   and stays idle when no graph exists). `loadContent` (climate overrides + emote
-  tables from the embedded FS, both fail-soft). `loadOrInitState` (restore from
+  tables from `os.DirFS(configs.GetFilePathsConfig().DataFiles.String())`,
+  both fail-soft). `loadOrInitState` (restore from
   `engine.DecodeState`, or `sim.NewState`/`sim.DeriveSeed` on a fresh start).
   `tick` (Step → `engine.Reconcile`; Reconcile rather than bare Apply so
   engine-side `decayrate` drift self-corrects within one tick). `persistState`
@@ -69,5 +71,7 @@ the in-checkout build and a boot smoke test (first-round build → state persist
 reload → tick).
 
 ## DOGMud backport
-Only `user.SendText` differs (DOGMud takes a message category). It is isolated in
-`sendLine` — a one-line change to backport. See CONTRIBUTING.md.
+This is the DOGMud-native copy of the weather module. Data loads at runtime from
+`os.DirFS` over the engine's datafiles path rather than an embedded FS.
+`sendLine` isolates the DOGMud-specific two-argument `SendText(category, text)`
+call (DOGMud's fork signature).

@@ -1,5 +1,34 @@
 # DOGMud Patch Notes
 
+## 2026-06-10 — Living weather
+
+The world now has weather — real weather that forms, travels, and dies on its
+own, shaped by the terrain it moves through.
+
+- **Named fronts ride the world.** Storms, rain, heatwaves, dust, snow, fog,
+  and blizzards spawn over the biomes that breed them (open water feeds storms;
+  deserts breed dust and heatwaves; mountains bleed fronts dry) and travel
+  zone-to-zone along the world's own connections. A front that drifts into
+  hostile terrain starves and fades; one that finds friendly ground intensifies.
+- **Rooms show it.** Step outside in a storm and the room name, description,
+  and ambient lines all reflect it — rain, thunder, howling wind, or the
+  oppressive stillness of deep fog. Severe weather dims the light. Step inside
+  and you're sheltered: light weather doesn't register through walls, but heavy
+  weather is heard and felt in muted form ("rain drums steadily on the roof",
+  "the storm rattles the shutters").
+- **`weather` command.** Type `weather` for local conditions including the
+  dominant front overhead. Admin and moderator subcommands (`weather status`,
+  `zones`, `fronts`, `spawn`, `clear`, `graph`, `rebuild`) let staff inspect
+  and steer the simulation.
+- **New engine flags.** Biomes can now declare `indoor: true` in their YAML
+  (used by weather and any future system that cares about shelter). Mutator
+  specs support `outdooronly: true` to skip indoor rooms at render time.
+- **Ops note.** The weather geography cache and simulation state persist under
+  the server's `plugin-data/` directory (gitignored, not deployed). Fresh
+  deploys or a wiped data directory rebuild the graph and reseed weather
+  automatically on first boot — this is by design and self-heals without
+  intervention.
+
 ## 2026-06-09 — Creatures now fight like the creatures they are
 
 A top-to-bottom overhaul of non-human combat. Beasts no longer punch and wrestle

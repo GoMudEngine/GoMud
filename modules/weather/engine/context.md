@@ -13,9 +13,9 @@ module portable across GoMud and DOGMud.
 - **worldreader.go**: `WorldReader` implements `crawler.WorldReader` over
   `internal/rooms` (`GetAllZoneNames`, `GetZoneBiome`, `GetAllZoneRoomsIds`,
   `LoadRoom`). `NewWorldReader()` returns it as the interface. `isOutdoorBiome`
-  derives a room's outdoor flag from its biome id (GoMud has no explicit
-  indoor/outdoor flag), using the `indoorBiomes` heuristic set. Also used by
-  `EmitAmbient` for the indoor-detection heuristic.
+  reads `rooms.GetBiome(biomeID).Indoor` — the biome YAML `indoor: true` flag —
+  to determine whether a room is indoors; unknown biomes default to outdoors.
+  Also used by `EmitAmbient`.
 - **cache.go**: `CacheIdentifier` (the plugin-storage key) and `DecodeCache`,
   a pure, version-checked decoder that returns ok=false for absent/empty/
   unparseable/stale data so the caller knows to rebuild.
@@ -42,11 +42,13 @@ module portable across GoMud and DOGMud.
   `gametime.AddPeriod` period string; values < 1 clamp to 1. `NextTickRound`
   returns the round number one period from now. `CurrentRound` exposes
   `util.GetRoundCount`.
-- **emotes.go**: `EmitAmbient(weather, tables, roll)` — sends one ambient line
-  into each occupied room whose zone has non-calm weather. Room biome drives
-  table variant; `isOutdoorBiome` determines the indoor/outdoor section.
-  `roll` is the presentation RNG (pass `util.Rand`) — NEVER the sim RNG.
-  Returns lines sent.
+- **emotes.go**: `EmitAmbient(graph, fronts, simCfg, weather, tables, roll)` —
+  sends one ambient line into each occupied room whose zone has non-calm
+  weather. Room biome drives table variant; `isOutdoorBiome` (reading biome
+  YAML `indoor: true`) gates indoor lines by felt intensity via
+  `content.StrongFeltThreshold`. Lines are sent with
+  `messaging.CategoryWeather`. `roll` is the presentation RNG (pass
+  `util.Rand`) — NEVER the sim RNG. Returns lines sent.
 
 ## Dependencies
 - `internal/rooms`, `internal/mutators`, `internal/gametime`, `internal/util`,
@@ -62,7 +64,7 @@ module portable across GoMud and DOGMud.
 
 ## Testing
 - `cache_test.go` covers `DecodeCache` (pure).
-- `worldreader_test.go` covers `isOutdoorBiome`.
+- `worldreader_test.go` covers `isOutdoorBiome` (reads biome YAML `indoor: true`).
 - `state_test.go` covers `EncodeState`/`DecodeState` (pure, in-checkout).
 - `apply_test.go` covers `MutatorIdFor`, `applyChange`, `reconcileZone` via
   a fake `mutatorSet` (in-checkout unit test).

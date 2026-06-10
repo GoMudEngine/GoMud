@@ -2,8 +2,9 @@
 
 ## Overview
 `content` is the pure data-loading layer for the weather module. It parses two
-kinds of module data files from an `fs.FS` (typically the module's embedded
-`files/` tree): climate profiles (YAML → `sim.Climate` merged over
+kinds of module data files from an `fs.FS` (in DOGMud: the runtime world
+datafiles tree — `weather/climate` and `weather/emotes` under the engine's
+configured data path): climate profiles (YAML → `sim.Climate` merged over
 `sim.DefaultClimate`) and ambient emote tables (YAML → `Tables` + `Pick`). No
 engine imports — purity enforced by `arch_test.go`. The only non-stdlib
 dependency is `gopkg.in/yaml.v2`, which the GoMud engine itself uses.
@@ -21,9 +22,11 @@ dependency is `gopkg.in/yaml.v2`, which the GoMud engine itself uses.
   wrong prose; out-of-range roll result clamped to index 0).
 - **arch_test.go**: purity guardrail — fails if any file imports a
   `GoMudEngine/GoMud/internal` path.
-- **moduledata_test.go**: validates the SHIPPED YAML files under
-  `files/datafiles/`. For emote tables: parseable, `filename == weather+".yaml"`,
-  at least one outdoor-default and one indoor-default line. For mutator specs:
+- **shipped_emotes_test.go**: validates the SHIPPED YAML files under
+  `_datafiles/world/dogmud/weather/emotes`. For emote tables: parseable,
+  8 tables (one per weather type), outdoor-default pools non-empty, severe
+  types have a non-empty strong indoor pool, lines ≤80 chars. Mutator spec
+  validation lives in `engine/shipped_specs_test.go`. For mutator specs:
   parseable, `mutatorid` is `weather-` namespaced, filename matches
   `fileNameFor(mutatorid)` (mirrors `util.ConvertForFilename`), `respawnrate`
   forbidden (would fight the orchestrator), `decayintoid` forbidden (upstream
@@ -34,10 +37,14 @@ dependency is `gopkg.in/yaml.v2`, which the GoMud engine itself uses.
 
 ### Key Types
 ```go
+type IndoorPool struct {
+    Mild   []string // plays when felt intensity < StrongFeltThreshold (0.5)
+    Strong []string // plays when felt intensity >= StrongFeltThreshold
+}
 type Table struct {
-    Weather string              // weather type this table covers
-    Outdoor map[string][]string // biome -> lines (outdoor section)
-    Indoor  map[string][]string // biome -> lines (indoor section)
+    Weather string                `yaml:"weather"`
+    Outdoor map[string][]string   // biome -> lines (outdoor section)
+    Indoor  map[string]IndoorPool // biome -> intensity-banded indoor pool
 }
 type Tables map[sim.WeatherType]Table
 ```
