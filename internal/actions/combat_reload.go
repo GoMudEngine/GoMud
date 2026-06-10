@@ -24,6 +24,10 @@ type ReloadResult struct {
 
 // findRangedWeaponSlot returns a pointer to the equipped ranged weapon
 // (main hand first, then offhand) so Loaded can be written back, or nil.
+// The returned pointer addresses an Equipment struct field — it is valid
+// only for immediate in-place mutation. Do not retain it across any
+// equip change (Wear/Remove overwrite the slot value, invalidating the
+// pointer).
 func findRangedWeaponSlot(actor Actor) *items.Item {
 	char := actor.GetCharacter()
 	if char.Equipment.Weapon.IsRangedWeapon() {

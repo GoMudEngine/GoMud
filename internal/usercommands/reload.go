@@ -51,8 +51,10 @@ func Reload(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			infoOutput, _ := templates.Process("admincommands/help/command.reload", nil, user.UserId)
 			user.SendText(messaging.CategorySystem, infoOutput)
 			return true, nil
+		default:
+			user.SendText(messaging.CategorySystem, `Unknown reload command. See <ansi fg="command">reload help</ansi>.`)
+			return true, nil
 		}
-		// Unrecognized admin subcommand falls through to the weapon reload.
 	}
 
 	// Player-facing ranged-weapon reload.
