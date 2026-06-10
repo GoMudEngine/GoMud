@@ -102,6 +102,10 @@ func (m *weatherModule) rebuildGraph() {
 	opts := crawler.DefaultOptions()
 	opts.IncludeSecretExits = m.cfg.IncludeSecretExits
 	opts.BuiltAtRound = util.GetRoundCount()
+	// DOGMud instance zones are named "Instance <Name>" (title case, space
+	// separator) — they don't match the default lowercase "instance_*" pattern.
+	// Exclude them so ephemeral clones never appear in the weather graph.
+	opts.ExcludeZonePatterns = append(opts.ExcludeZonePatterns, "Instance *")
 
 	g, err := crawler.Build(engine.NewWorldReader(), opts)
 	if err != nil {

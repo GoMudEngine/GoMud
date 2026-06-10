@@ -1,0 +1,15 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">weather</ansi>
+
+The <ansi fg="command">weather</ansi> command reports the current weather where you
+stand, including any weather system moving through the area.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">weather</ansi>   Report the local weather conditions.
+
+Weather moves across the world as fronts — a storm born over open
+water may roll inland, batter the coast, and spend itself against
+the mountains. Watch room descriptions, listen for it on the roof,
+and plan your travels accordingly.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help biome</ansi>

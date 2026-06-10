@@ -113,6 +113,7 @@ help:
       - look
       - online
       - species
+      - weather
       - who
     items:
       - drink

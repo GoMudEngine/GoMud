@@ -101,6 +101,41 @@ func TestBuild_ExcludeZonePatterns(t *testing.T) {
 	}
 }
 
+// TestBuild_ExcludeZonePatterns_TitleCase verifies that DOGMud-style instance
+// zone names ("Instance Arena", "Instance Jail Cell", "Instance Planar Oasis")
+// are excluded when the "Instance *" pattern is in the list.  The default
+// "instance_*" pattern does NOT match these names because path.Match is
+// case-sensitive and the separator differs (space vs underscore).
+func TestBuild_ExcludeZonePatterns_TitleCase(t *testing.T) {
+	instances := []string{
+		"Instance Arena",
+		"Instance Jail Cell",
+		"Instance Planar Oasis",
+	}
+	for i, zoneName := range instances {
+		f := newFakeReader()
+		f.addRoom("Town", "city", 1, true, ExitView{ToRoom: 2})
+		f.addRoom(zoneName, "city", 2, false, ExitView{ToRoom: 1})
+
+		g, err := Build(f, Options{
+			IncludeSecretExits:  true,
+			ExcludeZonePatterns: []string{"instance_*", "ephemeral_*", "Instance *"},
+		})
+		if err != nil {
+			t.Fatalf("[%d] %s: unexpected error: %v", i, zoneName, err)
+		}
+		if _, ok := g.Nodes[zoneName]; ok {
+			t.Errorf("[%d] %q should have been excluded but appears as a node", i, zoneName)
+		}
+		if len(g.Nodes) != 1 {
+			t.Errorf("[%d] want 1 node after exclusion, got %d", i, len(g.Nodes))
+		}
+		if len(g.Edges) != 0 {
+			t.Errorf("[%d] edge to excluded zone should be dropped, got %+v", i, g.Edges)
+		}
+	}
+}
+
 func TestBuild_NodeMetadata(t *testing.T) {
 	f := newFakeReader()
 	// Zone "Cavern": 2 rooms, both indoor -> hasOutdoor false.
