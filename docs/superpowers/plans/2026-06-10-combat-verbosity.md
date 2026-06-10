@@ -1135,10 +1135,22 @@ git commit -m "feat(hooks): verbosity-gated combat drain + light-mode round tall
 
 ---
 
-### Task 6: Smoke, PATCH_NOTES, merge
+### Task 6: context.md audit, smoke, PATCH_NOTES, merge
 
 **Files:**
 - Modify: `PATCH_NOTES.md`
+- Audit/modify: `internal/messaging/context.md`, `internal/hooks/context.md`, `internal/users/context.md`, `internal/usercommands/context.md` (whichever exist)
+
+- [ ] **Step 0: context.md sanity audit (touched packages)**
+
+For each package this branch modified (`internal/messaging`, `internal/users`, `internal/usercommands`, `internal/hooks`), check whether a `context.md` exists and read the sections describing what we changed. Update surgically wherever the doc is now stale or silent on something load-bearing:
+
+- `internal/messaging/context.md`: Category list/count if it enumerates categories (new `CategoryCombatSummary`); add a short note that verbosity primitives (`Verbosity`, `ParseVerbosity`, `Suppresses` allowlists) live in `verbosity.go` and that suppression is applied by the combat hooks, not the pipeline.
+- `internal/hooks/context.md`: the combat-round messaging description (it documents `DoCombat` and the drain) — note the verbosity gate in `dispatchCritAndMessaging`, the `combat_verbosity.go` tally aggregator, and the `flushCombatTallies()` call at the end of `DoCombat`.
+- `internal/users/context.md`: if it lists UserRecord settings fields (LineWidth etc.), add `CombatVerbosity`.
+- `internal/usercommands/context.md`: if it enumerates `set` subcommands, add `combatverbosity`.
+
+Keep edits minimal — correct what's wrong/missing, don't rewrite. Commit these with the PATCH_NOTES commit in Step 3.
 
 - [ ] **Step 1: Boot smoke**
 
