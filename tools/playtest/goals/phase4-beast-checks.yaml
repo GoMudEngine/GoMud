@@ -1,0 +1,77 @@
+# Phase 4 smoke: the "hands rule" + new profiles + retags (deer gore,
+# wraith/spectre/vampire drain). The tester (P2smoke) starts in Thornwall City
+# (Gate Ward), pre-equipped with the three raise spells + a high manifestation
+# skill so it can summon the spectral/vampiric drainers, and is near Ironwind
+# Steppe for the fanged-beast / horned-beast spot checks.
+
+session:
+  name: phase4-beast-checks
+  max_rounds: 320
+  notes: >
+    Verifying Phase 4. Beast natural-weapon moves (rake/maul/pounce/gore/
+    throttle/hamstring) now require the attacker to have NO hands, so tool-using
+    humanoids (goblins, skeletons, vampires) can't use them (they grapple/bash
+    instead) while true beasts (wolves, bears, boars, cats) can. drain is the
+    exception — it is flag-gated, so armed undead still drain. Report, per
+    creature, the exact combat lines you observe, and FLAG any anatomically
+    wrong move as a BUG.
+
+objectives:
+  - id: summon-and-watch-drain
+    desc: >
+      You know three summon spells (manifestation school): `cast raise-wraith`,
+      `cast raise-spectre`, `cast raise-vampire`. ALL THREE REQUIRE A CORPSE in
+      the room — so FIRST kill a creature (any nearby mob) to leave a corpse,
+      THEN `cast raise-wraith` (it consumes the corpse and binds a wraith
+      companion to you). Repeat with a fresh corpse for raise-spectre and
+      raise-vampire if you can. Once a wraith/spectre/vampire companion is at
+      your side, attack another enemy so your companion fights it, and WATCH the
+      companion: a wraith/spectre is a CASTER and should mostly cast spells
+      (mind-spike, conviction-spike, wards, heal) but OCCASIONALLY use `drain`
+      (a life-leech: the target bleeds and the companion heals); the vampire
+      drains more readily. Report the drain lines you see (e.g. the companion
+      sapping/leeching vitality and being restored). EXPECTED: drain appears
+      occasionally for the casters, more for the vampire; none of the three ever
+      "rake"/"pounce"/"maul" (they have hands).
+
+  - id: ironwind-fanged-and-horned
+    desc: >
+      Travel from Thornwall to IRONWIND STEPPE (head out through the gate / use
+      `map` and the exits; ask directions if stuck). Fight a Steppe Wolf or
+      Young/Alpha Wolf (FANGED beast) for several rounds — EXPECTED: it mauls,
+      may throttle/pounce/hamstring, and bites; it must NEVER grapple or bash.
+      Then fight a Steppe Boar or Tusked Boar (HORNED) — EXPECTED: it gores /
+      charges / knocks you down; never grapples. Report the exact special-move
+      lines from each.
+
+  - id: hands-rule-on-monster-humanoids
+    desc: >
+      Find a GOBLIN or a SKELETON (monster-humanoids — they have claws/hands).
+      Fight it. EXPECTED: it can GRAPPLE, bash, trip, or kick you (humanoid
+      technique moves) but must NEVER rake, pounce, or maul (the hands rule
+      blocks beast moves for tool-users), even though its basic attacks may read
+      as "claws". If you see a goblin/skeleton pounce or rake, that is a BUG —
+      report it loudly. (If none are reachable, say so.)
+
+  - id: small-and-legless-beasts
+    desc: >
+      Opportunistically, if you encounter them: a RAT/vermin (EXPECTED:
+      skirmisher — hamstrings/trips, light on heavy maul); a SNAKE/VIPER/serpent
+      (EXPECTED: maul/throttle but NEVER pounce/hamstring — it is legless); a
+      DEER (EXPECTED: gores with antlers when cornered). Report what each uses.
+
+  - id: player-side-hands-check
+    desc: >
+      You (P2smoke) are a plain humanoid with no claws/fangs. Once in combat,
+      try `pounce` and `rake` once each. EXPECTED: both are refused (you aren't a
+      clawed/fanged beast and you have hands). Confirm the refusal text. You CAN
+      grapple/trip/kick normally.
+
+report:
+  - Per creature/companion: name and the exact special-move / attack lines.
+  - Any monster-humanoid (goblin/skeleton/vampire) that used a beast move
+    (rake/maul/pounce/gore/throttle) — call it out explicitly as a BUG.
+  - Whether wraith/spectre preferred spells with occasional drain, and whether
+    the vampire drained.
+  - Whether the Ironwind wolves mauled and boars gored, with no grapple/bash.
+  - Overall combat stability: any errors, raw buff IDs, or odd text.
