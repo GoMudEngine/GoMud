@@ -635,17 +635,21 @@ The round driver reads Combat Phase state instead of legacy `Aggro`:
 ### Verbosity gating (combat_verbosity.go)
 
 Implements the player-configurable combat-text verbosity system (full /
-medium / light). Three touch-points in `NewRound_DoCombat.go`:
+medium / light). Three touch-points (gate in
+`NewRound_DoCombat_unified.go`, flush in `NewRound_DoCombat.go`):
 
-- **`dispatchCritAndMessaging`** — checks each room observer's effective
-  verbosity (`user.GetCombatVerbosity()`, one step lower for spectators)
-  before sending per-swing text. Medium suppresses dodge/parry/block
-  lines; Light suppresses all individual hit lines. The floor rule
-  (damage directed at the viewer always passes regardless of setting)
-  is enforced here.
-- **`recordSwingForTally`** — when a viewer's effective verbosity is
-  Light, the swing's AttackResult data is recorded into a per-viewer
-  `combatTally` accumulator instead of being sent immediately.
+- **`dispatchCritAndMessaging`** — drains participant lines via
+  `drainParticipantLines` (viewer's own level) and room lines via
+  `drainSpectatorLines` (one step lower per spectator,
+  `user.GetCombatVerbosity().OneStepLower()`). Medium suppresses
+  dodge/parry/block lines; Light suppresses all individual hit lines.
+  The floor rule (incoming hit-category lines always pass to the
+  defender regardless of setting) is enforced here. Tally recording is
+  sight-gated (`CanSeeClearly`) for both participants and spectators.
+- **`recordTallyFor` / `recordSpectatorTallies`** — when a viewer's
+  effective verbosity is Light, the AttackResult's swing data is
+  recorded into a per-viewer `combatTally` accumulator instead of
+  being sent immediately.
 - **`flushCombatTallies`** — called once at the end of `DoCombat` after
   all AttackResults for the round are processed. Renders and emits one
   compact summary line per fight pair per viewer.
