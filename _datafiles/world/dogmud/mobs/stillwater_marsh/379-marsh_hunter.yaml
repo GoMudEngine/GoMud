@@ -1,0 +1,50 @@
+mobid: 379
+zone: Stillwater Marsh
+behavior_archetype: archer
+archetype: fighting
+statpool: 130
+itemdropchance: 0
+hostile: true
+charm_immune: false
+maxwander: 3
+groups:
+  - humanoid
+  - hunter
+  - predator
+idlecommands:
+  - 'emote crouches in the reeds, an arrow already nocked and half-drawn'
+  - ''
+  - 'emote reads the mud for fresh tracks, head low and still'
+  - ''
+  - 'emote tests the bowstring against one weathered cheek'
+  - ''
+activitylevel: 22
+character:
+  name: Marsh Hunter
+  description: |
+    A lean figure in oiled leathers the color of bog water, all but
+    invisible among the reeds until movement betrays them. A laminated
+    recurve bow stays half-drawn at the slightest sound, and a quiver of
+    fletched arrows rides high on the back. These hunters claim the deep
+    marsh as their own and treat trespassers as just another quarry.
+  speciesid: 1
+  level: 4
+  gold: 5
+  equipment:
+    weapon:
+      itemid: 10041
+    body:
+      itemid: 20011
+    feet:
+      itemid: 20052
+  items:
+    - itemid: 30062
+  stats:
+    strength:
+      training: 10
+    dexterity:
+      training: 14
+    perception:
+      training: 16
+    vitality:
+      training: 10

@@ -1,0 +1,22 @@
+itemid: 10042
+name: Arbalest
+namesimple: arbalest
+description: A massive siege crossbow with a steel prod so stiff it must be cranked
+  back with a windlass. Slow to ready and brutally heavy to hold level, it punches
+  a squat bolt clean through shield and plate alike. A weapon for strong arms only.
+type: weapon
+hands: 2
+subtype: shooting
+weight: 8.0  # Heavy steel-prod siege crossbow
+speedmultiplier: 0.5  # Ranged weapon - slower attack rate due to reload/aim time
+grapplemodifier: 0.2  # Ranged weapon, awkward for close-quarters grappling
+ammo_tag: bolts
+min_strength: 110
+damage:
+  basedamage: 8
+  variance: 3
+damage_multiplier: 7.00
+parryrating: 2
+value: 900
+vendor_categories:
+- blacksmithing

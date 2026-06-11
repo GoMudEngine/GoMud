@@ -9,10 +9,11 @@ subtype: shooting
 weight: 3.0  # Lightweight bow
 speedmultiplier: 0.5  # Ranged weapon - slower attack rate due to reload/aim time
 grapplemodifier: 0.2  # Stage 8.7: Ranged weapon, awkward for close-quarters grappling
+ammo_tag: arrows
 damage:
   basedamage: 5
   variance: 2
-damage_multiplier: 0.30
+damage_multiplier: 4.00
 parryrating: 0
 vendor_categories:
 - blacksmithing

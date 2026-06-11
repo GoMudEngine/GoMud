@@ -1,0 +1,21 @@
+itemid: 10041
+name: Hunting Bow
+namesimple: bow
+description: A laminated recurve bow of horn and seasoned wood, its limbs flexing
+  with smooth, even tension. Built for the long patience of the hunt, it drives a
+  well-fletched arrow flat and true across open ground. A dependable mainstay.
+type: weapon
+hands: 2
+subtype: shooting
+weight: 2.5  # Light, well-balanced recurve
+speedmultiplier: 0.5  # Ranged weapon - slower attack rate due to reload/aim time
+grapplemodifier: 0.2  # Ranged weapon, awkward for close-quarters grappling
+ammo_tag: arrows
+damage:
+  basedamage: 6
+  variance: 2
+damage_multiplier: 5.50
+parryrating: 1
+value: 180
+vendor_categories:
+- blacksmithing

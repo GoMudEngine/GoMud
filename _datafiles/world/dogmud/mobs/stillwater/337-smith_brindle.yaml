@@ -102,3 +102,37 @@ character:
       quantity: 0
       quantitymax: 0
       price: 4
+    # Ranged weapons (ranged-combat rollout)
+    - itemid: 10038    # sling
+      quantity: 1
+      quantitymax: 2
+      price: 40
+    - itemid: 10039    # hand crossbow
+      quantity: 1
+      quantitymax: 2
+      price: 90
+    - itemid: 10040    # primitive pistol
+      quantity: 1
+      quantitymax: 1
+      price: 120
+    - itemid: 10041    # hunting bow
+      quantity: 1
+      quantitymax: 2
+      price: 180
+    - itemid: 10042    # arbalest
+      quantity: 1
+      quantitymax: 1
+      price: 900
+    # Ammo bundles
+    - itemid: 30062    # quiver of arrows
+      quantity: 3
+      quantitymax: 6
+      price: 60
+    - itemid: 30063    # case of bolts
+      quantity: 3
+      quantitymax: 6
+      price: 70
+    - itemid: 30064    # pouch of shot
+      quantity: 3
+      quantitymax: 6
+      price: 40
