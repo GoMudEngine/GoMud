@@ -277,6 +277,7 @@ command-aliases:
   equip:              ['wear', 'wield', 'hold']
   remove:             ['rem', 'unequip', 'unwear', 'unwield']
   attack:             ['a', 'k', 'kill', 'fight']
+  shoot:              ['fire']
   get:                ['g', 'take']
   command:            ['cmd']
   macros:             ['=?', 'macro']
