@@ -25,6 +25,17 @@ func Shoot(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	hit := result.MoveResult.Hit
+
+	// Cross-room reveal-on-hit (mirror melee's reveal-on-engage and the player
+	// shoot path): a hidden mob that LANDS a cross-room shot drops stealth.
+	// Same-room shots reveal through the combat round handler's
+	// CancelCombatBuffs once the target is aggroed; a cross-room shooter never
+	// enters that loop, so without this it would stay hidden forever. A clean
+	// cross-room miss stays hidden — the sniper gets exactly one free hit.
+	if result.CrossRoom && hit {
+		mob.Character.CancelCombatBuffs()
+	}
+
 	mobName := fmt.Sprintf(`<ansi fg="mobname">%s</ansi>`, mob.Character.Name)
 	weapon := fmt.Sprintf(`<ansi fg="itemname">%s</ansi>`, result.WeaponName)
 

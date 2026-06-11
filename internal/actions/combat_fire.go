@@ -47,6 +47,11 @@ type FireResult struct {
 func rangedDefenseScore(defender *characters.Character) float64 {
 	score := float64(defender.Stats.Dexterity.ValueAdj) + float64(defender.GetCombatSkillLevel())
 	if defender.Equipment.Offhand.ItemId > 0 {
+		// NOTE: Item.GetSpec() returns an ItemSpec by VALUE, not a pointer, so
+		// there is intentionally no nil check here (one would not even compile).
+		// A registry miss yields the zero-value ItemSpec, whose BlockRating is 0,
+		// so the guard below simply skips the shield bonus. This is safe by
+		// value semantics — please don't "fix" it by adding a nil check.
 		if spec := defender.Equipment.Offhand.GetSpec(); spec.BlockRating > 0 {
 			score += float64(configs.GetBalanceConfig().RangedShieldDefenseBonus)
 		}

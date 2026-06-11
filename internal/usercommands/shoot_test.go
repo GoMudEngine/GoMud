@@ -7,12 +7,14 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crimes"
 	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/opinions"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -210,6 +212,131 @@ enemies: []
 	assert.Equal(t, crimes.KindAssault, got[0].Kind)
 	assert.Equal(t, crimes.PerpPlayer, got[0].Perpetrator.Type)
 	assert.Equal(t, user.UserId, got[0].Perpetrator.Id)
+}
+
+// TestShoot_PvpDisabled_PreFireGate: shooting another player in a no-PvP world
+// is blocked BEFORE firing — the victim takes no damage, the weapon stays
+// loaded, and the shooter gains no aggro. (Issue 1 — the old post-fire PvP
+// check let the damage stick.)
+func TestShoot_PvpDisabled_PreFireGate(t *testing.T) {
+	cleanup := seedAllRegistries()
+	defer cleanup()
+	isolateOpinions(t)
+
+	// Disable PvP world-wide; restore to the default afterward so sibling
+	// tests still see PvP-permitting defaults.
+	if err := configs.AddOverlayOverrides(map[string]any{"GamePlay.PVP": "disabled"}); err != nil {
+		t.Fatalf("AddOverlayOverrides: %v", err)
+	}
+	defer configs.AddOverlayOverrides(map[string]any{"GamePlay.PVP": "enabled"})
+
+	user, room := getTestUserAndRoom(t)
+	user.Character.Stats.Perception.ValueAdj = 300
+	user.Character.Aggro = nil
+	equipBow(user.Character, true)
+
+	victim := users.GetByUserId(2)
+	require.NotNil(t, victim)
+	victim.Character.Health = 500
+	victim.Character.HealthMax.Value = 500
+	victim.Character.Aggro = nil
+
+	handled, err := Shoot("Bobrick", user, room, 0)
+	assert.True(t, handled)
+	assert.NoError(t, err)
+
+	assert.Equal(t, 500, victim.Character.Health, "a no-PvP shot must not damage the victim")
+	assert.Nil(t, user.Character.Aggro, "a blocked PvP shot must not set shooter aggro")
+	assert.True(t, user.Character.Equipment.Weapon.Loaded, "a blocked shot must not unload the weapon")
+}
+
+// TestShoot_OpeningShot_ChargesCombatRound: an out-of-combat same-room opener
+// sets the shooter's aggro BEFORE firing so RecordAndWait charges the combat
+// round (RoundsWaiting == 1). (Issue 2 — old ordering gave a free opening
+// shot + a full melee swing next round.)
+func TestShoot_OpeningShot_ChargesCombatRound(t *testing.T) {
+	cleanup := seedAllRegistries()
+	defer cleanup()
+	isolateOpinions(t)
+
+	user, room := getTestUserAndRoom(t)
+	user.Character.Stats.Perception.ValueAdj = 300
+	user.Character.Aggro = nil
+	equipBow(user.Character, true)
+
+	mob := mobs.GetInstance(100)
+	require.NotNil(t, mob)
+	mob.Character.Health = 100000
+	mob.Character.HealthMax.Value = 100000
+	mob.Character.Aggro = nil
+
+	handled, err := Shoot("skeleton", user, room, 0)
+	assert.True(t, handled)
+	assert.NoError(t, err)
+
+	require.NotNil(t, user.Character.Aggro, "opening same-room shot must set shooter aggro before firing")
+	assert.Equal(t, 1, user.Character.Aggro.RoundsWaiting, "opening shot must consume the attacker's combat round")
+}
+
+// TestShoot_RefusedNonCombatant_NoAggro: a refused shot (non-combatant target)
+// rolls the speculative opening-shot aggro back to nil and never fires.
+// (Issue 2 early-return path.)
+func TestShoot_RefusedNonCombatant_NoAggro(t *testing.T) {
+	cleanup := seedAllRegistries()
+	defer cleanup()
+	isolateOpinions(t)
+
+	user, room := getTestUserAndRoom(t)
+	user.Character.Stats.Perception.ValueAdj = 300
+	user.Character.Aggro = nil
+	equipBow(user.Character, true)
+
+	target := &mobs.Mob{
+		MobId:      2,
+		InstanceId: 420,
+		HomeRoomId: 1,
+		Character: characters.Character{
+			Name:         "Merchant",
+			RoomId:       1,
+			Health:       500,
+			NonCombatant: true,
+			Buffs:        buffs.New(),
+			Cooldowns:    map[string]int{},
+		},
+	}
+	target.Character.HealthMax.Value = 500
+	mobs.SetInstanceForTest(420, target)
+	defer mobs.SetInstanceForTest(420, nil)
+	room.AddMob(420)
+	defer room.RemoveMob(420)
+
+	handled, err := Shoot("merchant", user, room, 0)
+	assert.True(t, handled)
+	assert.NoError(t, err)
+
+	assert.Equal(t, 500, target.Character.Health, "a non-combatant must take no damage")
+	assert.Nil(t, user.Character.Aggro, "a refused shot must roll back the speculative opening-shot aggro")
+	assert.True(t, user.Character.Equipment.Weapon.Loaded, "a refused shot must not unload the weapon")
+}
+
+// TestShoot_SelfTarget_Blocked: a name lookup that resolves the shooter is
+// rejected before firing. (Issue 3.)
+func TestShoot_SelfTarget_Blocked(t *testing.T) {
+	cleanup := seedAllRegistries()
+	defer cleanup()
+	isolateOpinions(t)
+
+	user, room := getTestUserAndRoom(t)
+	user.Character.Stats.Perception.ValueAdj = 300
+	user.Character.Aggro = nil
+	equipBow(user.Character, true)
+
+	handled, err := Shoot("Aliceia", user, room, 0)
+	assert.True(t, handled)
+	assert.NoError(t, err)
+
+	assert.Nil(t, user.Character.Aggro, "shooting yourself must not start combat")
+	assert.True(t, user.Character.Equipment.Weapon.Loaded, "a self-target shot must not fire")
 }
 
 // TestShoot_NoWeapon_Message: with no ranged weapon equipped, the command

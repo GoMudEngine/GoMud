@@ -30,21 +30,72 @@ import (
 // round-loop auto-attack into the adjacent room.
 func Shoot(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
-	// --- Party friendly-fire guard (PRE-fire) ---
-	// ExecuteFire applies damage the moment it's called, so a post-hoc party
-	// check would be too late to prevent the hit. We cheaply re-resolve the
-	// would-be player target here and block before firing. The duplicated
-	// resolution is the deliberate price of safe friendly-fire prevention.
-	if partyInfo := parties.Get(user.UserId); partyInfo != nil {
-		if pId := wouldBeShootTargetUserId(room, rest); pId > 0 && partyInfo.IsMember(pId) {
-			if p := users.GetByUserId(pId); p != nil {
+	// --- Pre-fire target resolution & guards ---
+	// ExecuteFire applies damage the instant it is called, so every guard that
+	// must PREVENT a shot (friendly-fire, PvP legality, self-target) has to run
+	// here, before firing. We re-resolve the would-be target (mirroring
+	// ExecuteFire's parse) without applying damage. The duplicated resolution is
+	// the deliberate price of safe pre-fire gating.
+	tUserId, tMobId, tRoom, crossRoom := resolveShootTarget(room, rest)
+
+	// Issue 3 (self-target): room.FindByName can resolve the shooter.
+	if tUserId > 0 && tUserId == user.UserId {
+		user.SendText(messaging.CategorySystem, `You can't shoot yourself.`)
+		return true, nil
+	}
+
+	// Player-target guards: party friendly-fire + PvP legality.
+	if tUserId > 0 {
+		if p := users.GetByUserId(tUserId); p != nil {
+			if partyInfo := parties.Get(user.UserId); partyInfo != nil && partyInfo.IsMember(tUserId) {
 				user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> is in your party!`, p.Character.Name))
 				return true, nil
+			}
+			// Issue 1 (PvP bypass): gate BEFORE firing, exactly as melee's
+			// attack.go does via room.CanPvp. CanPvp's limited-mode branch keys
+			// off the RECEIVER room's IsPvp(), so for a cross-room shot we also
+			// require the TARGET's room to permit PvP — you must not be able to
+			// snipe into a sanctuary from a lawless room outside it.
+			if pvpErr := room.CanPvp(user, p); pvpErr != nil {
+				user.SendText(messaging.CategorySystem, pvpErr.Error())
+				return true, nil
+			}
+			if tRoom != nil && tRoom != room {
+				if pvpErr := tRoom.CanPvp(user, p); pvpErr != nil {
+					user.SendText(messaging.CategorySystem, pvpErr.Error())
+					return true, nil
+				}
 			}
 		}
 	}
 
+	// Issue 2 (free opening shot): RecordAndWait inside ExecuteFire only charges
+	// the attacker a combat round when Aggro != nil. Kick sets aggro BEFORE its
+	// core resolver for exactly this reason; shoot used to set it AFTER, so an
+	// out-of-combat opener consumed no round (free shot + a full melee swing the
+	// next round). Mirror kick: for a same-room opener, engage now so the round
+	// is charged. Cross-room stays aggro-free by design (the sniper isn't in the
+	// round loop). If ExecuteFire then refuses the shot (charm / non-combatant /
+	// no-target → !Executed) we roll the speculative aggro back below so a
+	// rejected shot never starts combat.
+	aggroPreset := false
+	if !crossRoom && user.Character.Aggro == nil {
+		if tMobId > 0 {
+			user.Character.SetAggro(0, tMobId, characters.DefaultAttack)
+			aggroPreset = true
+		} else if tUserId > 0 {
+			user.Character.SetAggro(tUserId, 0, characters.DefaultAttack)
+			aggroPreset = true
+		}
+	}
+
 	result := actions.ExecuteFire(&actions.UserActor{User: user, Room: room}, rest)
+
+	// Roll back the speculative opening-shot aggro if the shot was refused
+	// (any !Executed early return below: charm, non-combatant, no-target, etc.).
+	if aggroPreset && !result.Executed {
+		user.Character.EndAggro()
+	}
 
 	// --- Early exits (no shot fired) ---
 	if result.Crafting {
@@ -80,19 +131,6 @@ func Shoot(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
-	// PvP gate for player targets — resolved AFTER ExecuteFire (damage is
-	// already applied; the party guard above is the pre-fire protection).
-	// CanPvp is informational here; we still completed the shot.
-	if !result.IsTargetMob && result.TargetUserId > 0 {
-		if p := users.GetByUserId(result.TargetUserId); p != nil {
-			if pvpErr := room.CanPvp(user, p); pvpErr != nil {
-				user.SendText(messaging.CategorySystem, pvpErr.Error())
-				// Shot already fired; fall through to messaging/aggro so the
-				// world stays consistent.
-			}
-		}
-	}
-
 	if !result.Executed {
 		return true, nil
 	}
@@ -102,13 +140,15 @@ func Shoot(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	hit := result.MoveResult.Hit
 
-	// --- Shooter aggro (same-room only; cross-room is one-shot, no chase) ---
-	if !result.CrossRoom && user.Character.Aggro == nil {
-		if result.IsTargetMob {
-			user.Character.SetAggro(0, result.TargetMobInstanceId, characters.DefaultAttack)
-		} else if result.TargetUserId > 0 {
-			user.Character.SetAggro(result.TargetUserId, 0, characters.DefaultAttack)
-		}
+	// Issue 5 (cross-room hidden reveal): same-room shots reveal the shooter
+	// through the normal aggro→combat path (CancelCombatBuffs in the combat
+	// round handler, set up by the pre-fire aggro above). A cross-room shooter
+	// never enters that loop, so a hidden sniper would stay hidden forever.
+	// Mirror melee's reveal-on-engage: a cross-room shot that LANDS drops
+	// stealth. A clean cross-room miss stays hidden — one free hit, then you're
+	// exposed. (Same-room shooter aggro is set pre-fire; see Issue 2 above.)
+	if result.CrossRoom && hit {
+		user.Character.CancelCombatBuffs()
 	}
 
 	// --- Retaliation + crime (mob targets only) ---
@@ -242,32 +282,39 @@ func sendShootMessages(user *users.UserRecord, room *rooms.Room, result actions.
 	}
 }
 
-// wouldBeShootTargetUserId mirrors ExecuteFire's target parsing to find the
-// player (if any) a shoot command would hit, WITHOUT applying damage. Used
-// only for the pre-fire party friendly-fire guard. Returns 0 when the target
-// is a mob, absent, or unresolvable.
-func wouldBeShootTargetUserId(room *rooms.Room, rest string) int {
+// resolveShootTarget mirrors ExecuteFire's target parsing to determine what a
+// shoot command WOULD hit, without firing or applying damage. It powers the
+// pre-fire guards (self-target, party friendly-fire, PvP legality) and the
+// opening-shot aggro preset. Returns the resolved player id, mob instance id,
+// the room the target stands in, and whether the shot is cross-room. Any id may
+// be 0 when unresolved; targetRoom is the shooter's room for same-room / absent
+// targets.
+func resolveShootTarget(room *rooms.Room, rest string) (userId, mobInstanceId int, targetRoom *rooms.Room, crossRoom bool) {
 	if room == nil {
-		return 0
+		return 0, 0, nil, false
 	}
 	args := strings.Fields(rest)
 	if len(args) < 1 {
-		return 0
+		return 0, 0, room, false
 	}
-	targetRoom := room
+	targetRoom = room
 	targetWords := args
 	if len(args) >= 2 {
 		if name, roomId := room.FindExitByName(args[len(args)-1]); name != "" {
 			if adj := rooms.LoadRoom(roomId); adj != nil {
+				crossRoom = true
 				targetRoom = adj
 				targetWords = args[:len(args)-1]
 			}
 		}
 	}
-	uId, _ := targetRoom.FindByName(strings.Join(targetWords, " "))
-	if uId == 0 && targetRoom != room {
-		// Trailing word may have been part of the name; retry same-room.
-		uId, _ = room.FindByName(strings.Join(args, " "))
+	userId, mobInstanceId = targetRoom.FindByName(strings.Join(targetWords, " "))
+	if userId == 0 && mobInstanceId == 0 && crossRoom {
+		// The trailing word may have been part of the target name after all;
+		// retry as a same-room shot using the full argument string.
+		crossRoom = false
+		targetRoom = room
+		userId, mobInstanceId = room.FindByName(strings.Join(args, " "))
 	}
-	return uId
+	return userId, mobInstanceId, targetRoom, crossRoom
 }
