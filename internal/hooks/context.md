@@ -142,9 +142,11 @@ eval). An exception fires for kiting archer mobs: `archerReengageable(mob,
 room, round)` returns true when ALL of the following hold:
 
 1. The mob has an equipped ranged weapon (main or offhand).
-2. The mob has a live `CombatMemory` entry pointing at a valid target.
-3. The memory round is within `ArcherReengageWindow` rounds of the current
-   round (default window: prevents stale memories triggering indefinitely).
+2. `mob.CombatMemory` is non-nil.
+3. The memory has not expired per `CombatMemoryDuration` (Balance config,
+   default 300 rounds) — prevents stale memories triggering indefinitely.
+4. The remembered target's last-seen room is the mob's own room **or**
+   exactly one exit away (the bounded spatial engagement window).
 
 When true, the mob proceeds to its behavior tree even without Aggro, allowing
 a kiting archer that just retreated (clearing its Aggro) to `try_fire` on the
