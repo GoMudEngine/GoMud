@@ -186,38 +186,15 @@ func resolveCombatTarget(atk, def actions.Actor, roundNumber uint64) bool {
 
 	// Defender room mismatch.
 	if atkChar.RoomId != defChar.RoomId {
-		// Divergence #4 (PvP-only): allow cross-room chase when the
-		// player attacker's Aggro.ExitName resolves to the defender's
-		// room. Used when a defender flees through an exit and the
-		// pursuer has a queued chase swing.
-		if atk.IsPlayer() && def.IsPlayer() {
-			aggro := atkChar.Aggro
-			if aggro != nil && aggro.ExitName != `` {
-				if uRoom := atk.GetRoom(); uRoom != nil {
-					if _, exitRoomId := uRoom.FindExitByName(aggro.ExitName); exitRoomId == defChar.RoomId {
-						return true
-					}
-				}
-			}
+		// No cross-room pursuit. The old continuous remote-shoot path set
+		// Aggro.ExitName so the round loop could keep swinging at a target
+		// in an adjacent room; it has been retired in favor of the
+		// immediate loaded-weapon `fire` action, which holds no aggro.
+		// (Nothing writes Aggro.ExitName anymore.) Players get a notice;
+		// mobs have no connection so stay silent.
+		if atk.IsPlayer() {
 			atk.SendText(messaging.CategorySystem, `Your target can't be found.`)
-			atkChar.EndAggro()
-			return false
 		}
-		// PvM also supports an ExitName chase if the mob walked away.
-		if atk.IsPlayer() && !def.IsPlayer() {
-			aggro := atkChar.Aggro
-			if aggro != nil && aggro.ExitName != `` {
-				if uRoom := atk.GetRoom(); uRoom != nil {
-					if _, exitRoomId := uRoom.FindExitByName(aggro.ExitName); exitRoomId == defChar.RoomId {
-						return true
-					}
-				}
-			}
-			atk.SendText(messaging.CategorySystem, `Your target can't be found.`)
-			atkChar.EndAggro()
-			return false
-		}
-		// Mob attackers in any quadrant: no cross-room pursuit.
 		atkChar.EndAggro()
 		return false
 	}
