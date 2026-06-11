@@ -3,7 +3,7 @@ package planners
 import "testing"
 
 func TestSkillTrainingContextOf_CombatSkills(t *testing.T) {
-	for _, name := range []string{"weapon-combat", "unarmed-combat", "spellcasting", "manifestation"} {
+	for _, name := range []string{"weapon-combat", "unarmed-combat", "ranged-combat", "spellcasting", "manifestation"} {
 		if got := SkillTrainingContextOf(name); got != TrainingCombat {
 			t.Errorf("%s: got %v, want TrainingCombat", name, got)
 		}

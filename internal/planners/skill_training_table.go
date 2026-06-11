@@ -20,12 +20,14 @@ const (
 // Verified against internal/skills/skills.go at 4.4 authoring time.
 // If a new skill is added later, append a row here.
 //
-// Note: legacy skill names (ranged-combat, tanning, fletching, foraging)
-// do not exist in this codebase. ranged-combat is not yet implemented;
-// foraging/tracking were merged into the "search" skill.
+// Note: legacy skill names (tanning, fletching, foraging) do not exist
+// in this codebase; foraging/tracking were merged into the "search"
+// skill. ranged-combat was revived by the ranged-weapons feature and is
+// mapped to TrainingCombat alongside the other weapon skills.
 var skillTrainingTable = map[string]SkillTrainingContext{
 	"weapon-combat":  TrainingCombat,
 	"unarmed-combat": TrainingCombat,
+	"ranged-combat":  TrainingCombat,
 	"spellcasting":   TrainingCombat,
 	"manifestation":  TrainingCombat,
 	"rhetoric":       TrainingSocial,
