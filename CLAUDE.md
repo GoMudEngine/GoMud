@@ -219,7 +219,7 @@ party markers are web-only — the ASCII `map` command is unaffected.
 - All stats (Strength, Dexterity, Perception, Vitality, Willpower, Charisma) are centered at **100 = human baseline**
 - Stats improve via **use-based progression only** — `OnStatUse()` triggers probabilistic advancement. There is NO level-based or XP-based stat gain; levels and XP are being removed from the game entirely.
 - Soft cap: stats are linear up to `StatSoftCap` (default 150), then diminishing returns: `adjusted = softCap + (raw - softCap)^0.75 * multiplier` (default multiplier 2.0). `StatSoftCapThreshold` (105) is the floor below which no adjustment applies.
-- Skills (9 total) cap softly at 50 (`skillSoftCap`). They progress via `OnSkillUse()` → `CheckSkillProgression()`, probabilistically, every ~25 uses.
+- Skills (10 total) cap softly at 50 (`skillSoftCap`). They progress via `OnSkillUse()` → `CheckSkillProgression()`, probabilistically, every ~25 uses.
 
 ## Dice & Rolling System
 - **For all stat-based rolls use `dice.RollStat(mean)` or `dice.OpposedRollStat(atk, def)`** — no stdDev argument needed
@@ -253,6 +253,11 @@ Then `ApplyMitigation(raw, mitigation%, cap)` and `dice.RollStat(final)` for var
 | Physical | Strength | weapon/unarmed/ranged-combat | `damage_multiplier` (weapon) | `GetPhysicalMitigation()` |
 | Magical | Willpower | spellcasting | `damage_multiplier` (spell) | `GetMagicalMitigation()` |
 | Conviction | Charisma | rhetoric | 0.5 (taunt base) | `GetConvictionMitigation()` |
+
+> Note: the `shoot` command path (`ExecuteFire`) uses **Perception** for
+> both hit and damage rolls — aimed shots are deliberate-move actions, not
+> auto-attack swings. The Strength entry above applies to melee auto-attacks
+> and mob basic attacks only.
 
 ### Skill Multiplier Curve
 `mult = base + (max - base) × sqrt(rank / softCap)` — Config: `SkillMultiplierBase` (1.0), `SkillMultiplierMax` (3.0)

@@ -136,6 +136,9 @@ func GetMutationTier(owned map[string]int) string {
 
 // GetSkillTier returns the skill tier based on aggregate completion across all skills.
 func GetSkillTier(allRanks map[string]int) string {
+	// totalSkills is a tuning denominator for the title-threshold curve, not
+	// the actual skill count (currently 16 DOG skills). Raise it only when
+	// the curve needs rebalancing, not every time a skill is added.
 	const totalSkills = 17
 	const softCap = 50.0
 	maxTotal := totalSkills * softCap

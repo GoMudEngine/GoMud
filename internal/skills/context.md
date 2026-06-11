@@ -18,7 +18,7 @@ The DOGMud skills system provides a dual-layer character development framework c
 |-----------|--------|
 | `weapon-combat` | Melee attack & defense with weapons, parrying |
 | `unarmed-combat` | Fist/body attacks & defense, grappling |
-| `ranged-combat` | Bows, crossbows, thrown weapons |
+| `ranged-combat` | Bows, crossbows, pistols, slings — aimed shots (Perception) |
 | `spellcasting` | All magic — elemental, enhancement, vital schools |
 | `psionics` | Mental powers — telepathy, telekinesis, illusion |
 
@@ -56,10 +56,13 @@ type SkillTag string
 ```go
 func init() {
     // 1. Collect legacy skills from Professions map
-    // 2. Explicitly register all 10 DOG skills:
-    //    WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting, Psionics,
-    //    FirstAid, Stealth, Tracking, Bartering, Foraging
-    // Total: ~25 registered skills
+    // 2. Explicitly register all 16 current DOG skills:
+    //    WeaponCombat, UnarmedCombat, RangedCombat, Spellcasting, Rhetoric,
+    //    Skullduggery, Search, Bartering,
+    //    Blacksmithing, Alchemy, Tailoring, Cooking, Jewelcrafting,
+    //    Enchanting, Salvage, Manifestation
+    // RangedCombat is ACTIVE (revived in ranged-weapons feature).
+    // Total: ~29 registered skills (16 DOG + legacy GoMud skills)
 }
 ```
 

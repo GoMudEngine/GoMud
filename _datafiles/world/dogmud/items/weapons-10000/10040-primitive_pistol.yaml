@@ -8,7 +8,7 @@ type: weapon
 hands: 1
 subtype: shooting
 weight: 2.5  # Heavy iron barrel and grip
-speedmultiplier: 0.5  # Ranged weapon - slower attack rate due to reload/aim time
+speedmultiplier: 0.5  # Slower attack rate due to reload/aim
 grapplemodifier: 0.2  # Ranged weapon, awkward for close-quarters grappling
 ammo_tag: shot
 damage:

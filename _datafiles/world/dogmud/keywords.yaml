@@ -84,6 +84,7 @@ help:
       - pounce
       - rake
       - rally
+      - reload
       - shadow
       - shoot
       - sneak

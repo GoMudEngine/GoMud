@@ -1,10 +1,32 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">ranged-combat</ansi> skill
 
 The <ansi fg="skill">ranged-combat</ansi> skill governs your proficiency
-with ranged weapons — bows, crossbows, and thrown weapons.
+with ranged weapons — bows, crossbows, pistols, and slings.
 Higher ranks improve your hit chance and damage at range.
 
-Ranged-combat improves through use. Firing ranged weapons with
-the <ansi fg="command">shoot</ansi> command advances this skill.
+<ansi fg="yellow">━━━ Aimed Shots ━━━</ansi>
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help shoot</ansi>, <ansi fg="command">help skills</ansi>
+Ranged weapons fire with the <ansi fg="command">shoot</ansi> command. Every shot
+is a deliberate aimed action: accuracy and damage both scale
+with <ansi fg="stat">Perception</ansi>, not Strength. A keen eye matters
+more than raw muscle.
+
+Each weapon must be loaded before it fires. Use
+<ansi fg="command">reload</ansi> to ready it after each shot. Ammunition comes in
+bundles — arrows, bolts, or shot — carried in your pack.
+
+<ansi fg="yellow">━━━ Range ━━━</ansi>
+
+  - <ansi fg="stat">Same room:</ansi> <ansi fg="command">shoot <target></ansi>
+  - <ansi fg="stat">Adjacent room:</ansi> <ansi fg="command">shoot <target> <direction></ansi>
+      Cross-room fire does not pull you into melee. The target
+      must close the distance to engage in melee combat.
+
+<ansi fg="yellow">━━━ Progression ━━━</ansi>
+
+This skill improves through use:
+  - Landing shots with a ranged weapon
+  - Perception advances from aimed-shot attacks
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help shoot</ansi>, <ansi fg="command">help reload</ansi>,
+  <ansi fg="command">help skills</ansi>

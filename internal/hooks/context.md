@@ -135,6 +135,22 @@ func DoCombat(e events.Event) events.ListenerReturn {
 // - Combat state management
 ```
 
+### Archer Re-engagement Exemption (`archerReengageable`)
+
+Normally a mob with no active Aggro is skipped in the combat loop (no btree
+eval). An exception fires for kiting archer mobs: `archerReengageable(mob,
+room, round)` returns true when ALL of the following hold:
+
+1. The mob has an equipped ranged weapon (main or offhand).
+2. The mob has a live `CombatMemory` entry pointing at a valid target.
+3. The memory round is within `ArcherReengageWindow` rounds of the current
+   round (default window: prevents stale memories triggering indefinitely).
+
+When true, the mob proceeds to its behavior tree even without Aggro, allowing
+a kiting archer that just retreated (clearing its Aggro) to `try_fire` on the
+remembered target in the same round rather than standing inert for a full tick.
+Non-archer mobs are unaffected; the unconditional nil-aggro skip applies to them.
+
 ## Quest System Integration
 
 ### Quest Progress Handling

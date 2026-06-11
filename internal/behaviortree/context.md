@@ -394,6 +394,20 @@ are subject to perception-scaled reaction delays (see below).
 |--------|--------|-------------|
 | `try_store_excess` | `chest_room` (int, required) | Forager chest-deposit workflow. Multi-tick: each tick advances one step — pathto chest room → unlock lockbox → put items in lockbox → lock lockbox. Returns Failure if `chest_room` param is missing, satchel is empty, or the chest room has no lockbox container. Engine handles chest-full gracefully: failed puts are no-ops and items remain in satchel for the next cycle. |
 
+### Archer / Ranged — varied delays (ranged-weapons feature)
+
+| Action | Params | Description |
+|--------|--------|-------------|
+| `try_fire` | none | Fire the mob's loaded ranged weapon at its current Aggro target (or CombatMemory target if Aggro just cleared). Issues `shoot <targetName>` or `shoot <targetName> <direction>` for cross-room shots. Returns Failure if no loaded weapon, no valid target, or shot resolution fails. |
+| `try_reload` | none | Reload the mob's unloaded ranged weapon via `actions.ExecuteReload`. Draws one ammo bundle from the mob's pack. Returns Failure if no unloaded ranged weapon, no matching ammo, or reload cooldown active. |
+| `keep_distance` | `min_room_distance` (int, default 1) | Kiting action. If an enemy is in the mob's room and the mob is not already fleeing melee, retreats one exit (preferring exits away from the target). Returns Success on retreat, Failure if no usable exit found. |
+
+**Archer re-engagement exemption (DoCombat hook):** A mob with a loaded
+ranged weapon and a recent `CombatMemory` entry is allowed one extra btree
+eval even when it has no active Aggro. This lets a kiting archer that just
+retreated — clearing its Aggro — continue to fire on the remembered target
+without standing inert for a full round.
+
 ### Mutation Actives — instant (chunk 2.10 / 2.10-followups)
 
 | Action | Params | Description |
