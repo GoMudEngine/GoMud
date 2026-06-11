@@ -29,6 +29,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func init() {
@@ -36,15 +37,6 @@ func init() {
 	actionRegistry["try_reload"] = actTryReload
 	actionRegistry["keep_distance"] = actKeepDistance
 }
-
-// Breadcrumb keys (Character.MiscData) laid by keep_distance so try_fire's
-// cross-room branch can fire back through the reverse exit even if the target
-// has since stepped out of the immediately-adjacent room. try_fire primarily
-// trusts the target's LIVE room (more reliable); the breadcrumb is a fallback.
-const (
-	keyArcherFallbackFrom = "archer_fallback_from"
-	keyArcherFallbackExit = "archer_fallback_exit"
-)
 
 // loadedRangedWeapon returns the mob's equipped, LOADED ranged weapon (main
 // hand first, then offhand), or nil. Mirrors actions.findRangedWeaponSlot's
@@ -104,6 +96,43 @@ func archerTarget(char *characters.Character) (name string, roomId int, ok bool)
 	return "", 0, false
 }
 
+// archerMemoryTarget resolves the mob's CombatMemory into a display name and
+// the room the remembered target is CURRENTLY in. It is the fallback for when
+// the mob's live Aggro has been ended by the round driver's same-room validator
+// after a kiting retreat — the CombatMemory survives EndAggro and lets the
+// archer keep firing on the same foe. ok=false when there is no memory or the
+// target can no longer be resolved (left the world / despawned) — the firing
+// guard against shooting at someone who has left the area entirely.
+//
+// The target's LIVE room is preferred (it is authoritative); LastSeenRoomId is
+// only consulted when the target object is resolvable but reports no room.
+func archerMemoryTarget(mob *mobs.Mob) (name string, roomId int, ok bool) {
+	mem := mob.CombatMemory
+	if mem == nil {
+		return "", 0, false
+	}
+	// Mob target before player target, matching archerTarget's ordering.
+	if mem.TargetMobId > 0 {
+		if m := mobs.GetInstance(mem.TargetMobId); m != nil {
+			liveRoom := m.Character.RoomId
+			if liveRoom == 0 {
+				liveRoom = mem.LastSeenRoomId
+			}
+			return m.Character.Name, liveRoom, true
+		}
+	}
+	if mem.TargetUserId > 0 {
+		if u := users.GetByUserId(mem.TargetUserId); u != nil {
+			liveRoom := u.Character.RoomId
+			if liveRoom == 0 {
+				liveRoom = mem.LastSeenRoomId
+			}
+			return u.Character.Name, liveRoom, true
+		}
+	}
+	return "", 0, false
+}
+
 // archerMeleeEngaged reports whether the mob is pinned in melee — defined as:
 // its aggro target stands in the SAME room, OR some other actor in the room is
 // aggroed onto this mob. This is the simplest correct "toe-to-toe" check the
@@ -157,6 +186,12 @@ func hpPercent(char *characters.Character) float64 {
 // Returns Failure when there is nothing loaded, no target, or the target is not
 // reachable by a single shot — so the surrounding selector can try try_reload /
 // the melee fallback instead.
+//
+// Target resolution prefers the LIVE aggro target, then falls back to
+// CombatMemory: after keep_distance retreats the archer one exit, the round
+// driver's ValidateAggro ends its aggro (the target is no longer in the room),
+// so on the next tick the archer has NO aggro but a fresh CombatMemory pointing
+// at the same foe. That fallback is what keeps the kite-and-shoot loop alive.
 func actTryFire(params map[string]any, ctx *EvalContext) Result {
 	mob := mobs.GetInstance(ctx.InstanceId)
 	if mob == nil {
@@ -167,7 +202,14 @@ func actTryFire(params map[string]any, ctx *EvalContext) Result {
 	}
 	name, targetRoomId, ok := archerTarget(&mob.Character)
 	if !ok {
-		return Failure
+		// Live aggro gone (ended by ValidateAggro after a retreat) — fall
+		// back to the remembered target so the archer keeps firing on it.
+		// archerMemoryTarget refuses when the target has left the world,
+		// guarding against shooting at a foe that left the area entirely.
+		name, targetRoomId, ok = archerMemoryTarget(mob)
+		if !ok {
+			return Failure
+		}
 	}
 
 	// (a) Same-room target — fire straight away.
@@ -177,19 +219,13 @@ func actTryFire(params map[string]any, ctx *EvalContext) Result {
 	}
 
 	// (b) Cross-room target — fire through the exit that leads to its room,
-	// if it is exactly one exit away.
+	// if it is exactly one exit away. A target more than one exit off is not
+	// shootable this tick (and not pursued — bounded engagement window).
 	room := rooms.LoadRoom(mob.Character.RoomId)
 	if room == nil {
 		return Failure
 	}
 	dir := room.FindExitTo(targetRoomId)
-	if dir == "" {
-		// Fall back to the keep_distance breadcrumb: the room we fled from,
-		// where the pursuer most likely still stands.
-		if from := getMiscDataIntForager(mob, keyArcherFallbackFrom); from > 0 {
-			dir = room.FindExitTo(from)
-		}
-	}
 	if dir == "" {
 		return Failure // not adjacent — can't line up a shot this tick
 	}
@@ -233,9 +269,15 @@ func actTryReload(params map[string]any, ctx *EvalContext) Result {
 // actKeepDistance kites the mob away from melee. It fires only when the mob is
 // pinned in melee AND still healthy enough to choose flight over a desperate
 // stand (health above the `health_percent` arg, default 50). It picks a
-// passable exit — preferring the one toward home — moves through it, and lays a
-// MiscData breadcrumb (archer_fallback_from / archer_fallback_exit) so
-// try_fire's cross-room branch can shoot back through the reverse exit.
+// passable exit — preferring the one toward home — and moves through it.
+//
+// Before moving it refreshes the mob's CombatMemory to point at the current
+// aggro target, last seen in the room being retreated FROM (where the enemy
+// still stands). This is the linchpin of the kite-and-shoot loop: stepping out
+// of the room makes the next round's ValidateAggro end this mob's aggro, so the
+// CombatMemory is the ONLY surviving handle on the foe. The round driver's
+// ranged-mob exemption reads it to keep driving the btree, and try_fire reads
+// it to fire back through the reverse exit.
 func actKeepDistance(params map[string]any, ctx *EvalContext) Result {
 	mob := mobs.GetInstance(ctx.InstanceId)
 	if mob == nil {
@@ -257,9 +299,26 @@ func actKeepDistance(params map[string]any, ctx *EvalContext) Result {
 		return Failure // boxed in — stand and fight
 	}
 
-	// Breadcrumb so the next tick's try_fire can shoot back through the exit.
-	mob.Character.SetMiscData(keyArcherFallbackFrom, mob.Character.RoomId)
-	mob.Character.SetMiscData(keyArcherFallbackExit, dir)
+	// Refresh CombatMemory pointing at the current target, last seen in the
+	// room we're retreating FROM, so the engagement survives the imminent
+	// aggro loss (see doc comment above).
+	if mob.Character.Aggro != nil {
+		fromRoomId := mob.Character.RoomId
+		round := util.GetRoundCount()
+		if mob.CombatMemory == nil {
+			mob.CombatMemory = mobs.SetCombatMemory(
+				mob.Character.Aggro.UserId,
+				mob.Character.Aggro.MobInstanceId,
+				fromRoomId,
+				round,
+			)
+		} else {
+			mob.CombatMemory.TargetUserId = mob.Character.Aggro.UserId
+			mob.CombatMemory.TargetMobId = mob.Character.Aggro.MobInstanceId
+			mob.CombatMemory.Grudge = true
+			mobs.UpdateCombatMemoryLocation(mob.CombatMemory, fromRoomId, round)
+		}
+	}
 
 	mob.Command("go " + dir)
 	return Success
