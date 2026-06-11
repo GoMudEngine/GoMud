@@ -120,6 +120,11 @@ func archerMemoryTarget(mob *mobs.Mob) (name string, roomId int, ok bool) {
 			}
 			return m.Character.Name, liveRoom, true
 		}
+		// Mob target has left the world (despawned / killed) — clear memory
+		// immediately so the archer stops burning btree evals every round
+		// until the 300-round expiry.
+		mob.CombatMemory = nil
+		return "", 0, false
 	}
 	if mem.TargetUserId > 0 {
 		if u := users.GetByUserId(mem.TargetUserId); u != nil {
@@ -129,6 +134,10 @@ func archerMemoryTarget(mob *mobs.Mob) (name string, roomId int, ok bool) {
 			}
 			return u.Character.Name, liveRoom, true
 		}
+		// Player target has left the world (logged out / deleted) — clear
+		// memory immediately for the same idle-CPU reason.
+		mob.CombatMemory = nil
+		return "", 0, false
 	}
 	return "", 0, false
 }

@@ -437,6 +437,66 @@ func TestActKeepDistance_NotEngaged_Fails(t *testing.T) {
 	}
 }
 
+// ─── archerMemoryTarget — vanish / preserve memory ───────────────────────────
+
+// TestArcherMemoryTarget_VanishedMobTarget_ClearsMemory: when the remembered
+// mob target can no longer be resolved (despawned / never seeded), the function
+// must return ok=false AND clear mob.CombatMemory so the archer stops
+// re-evaluating an empty engagement every round until the 300-round expiry.
+func TestArcherMemoryTarget_VanishedMobTarget_ClearsMemory(t *testing.T) {
+	mob := newTestMob(t)
+	mob.CombatMemory = mobs.SetCombatMemory(0, 9999 /* not seeded */, 10, 1)
+
+	_, _, ok := archerMemoryTarget(mob)
+
+	if ok {
+		t.Error("archerMemoryTarget = ok, want false for vanished mob target")
+	}
+	if mob.CombatMemory != nil {
+		t.Error("CombatMemory must be cleared (set to nil) when mob target has vanished")
+	}
+}
+
+// TestArcherMemoryTarget_VanishedUserTarget_ClearsMemory: same guarantee for a
+// player-target memory whose user can no longer be resolved (logged out, etc.).
+func TestArcherMemoryTarget_VanishedUserTarget_ClearsMemory(t *testing.T) {
+	mob := newTestMob(t)
+	// TargetMobId == 0, TargetUserId == 9999 (no such user in test registry)
+	mob.CombatMemory = mobs.SetCombatMemory(9999 /* not seeded */, 0, 10, 1)
+
+	_, _, ok := archerMemoryTarget(mob)
+
+	if ok {
+		t.Error("archerMemoryTarget = ok, want false for vanished user target")
+	}
+	if mob.CombatMemory != nil {
+		t.Error("CombatMemory must be cleared (set to nil) when user target has vanished")
+	}
+}
+
+// TestArcherMemoryTarget_AliveTarget_MemoryPreserved: when the target IS
+// resolvable (alive, just not adjacent), archerMemoryTarget returns ok=true and
+// must NOT clear the CombatMemory.
+func TestArcherMemoryTarget_AliveTarget_MemoryPreserved(t *testing.T) {
+	const room = 42
+	target := seedTargetMob(t, 420, room) // alive and registered
+
+	mob := newTestMob(t)
+	mob.Character.RoomId = 99 // different room — "unreachable" but alive
+	mob.CombatMemory = mobs.SetCombatMemory(0, target.InstanceId, room, 1)
+
+	_, _, ok := archerMemoryTarget(mob)
+
+	if !ok {
+		t.Error("archerMemoryTarget = false, want true for alive (but non-adjacent) target")
+	}
+	if mob.CombatMemory == nil {
+		t.Error("CombatMemory must NOT be cleared when target is alive")
+	}
+}
+
+// ─── keep_distance (cont.) ────────────────────────────────────────────────────
+
 func TestActKeepDistance_Hurt_Fails(t *testing.T) {
 	const here = 10
 	cleanup := rooms.SeedRoomsForTest(map[int]*rooms.Room{
