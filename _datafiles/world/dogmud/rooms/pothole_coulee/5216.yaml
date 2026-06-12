@@ -40,6 +40,14 @@ nouns:
     water. Green weed and pale barnacle crust the lower legs at the
     tide-line. Between them you can see straight down to the clear shallow
     bottom, where small fish hang in the shade.
+  woman: The old netmender sits on the planks with a half-mended net across
+    her lap, a third slender arm steadying the twine while her other two
+    hands work the knots. Her skin is the soft grey of weathered bark. She
+    gives you the easy nod of a neighbor and bends back to her mending.
+  boy: A barefoot boy chases a brown dog up and down the boardwalk, the
+    pair of them delighted and going nowhere in particular. His eyes catch
+    the light with a flat gold shine, like a cat's in a doorway at dusk. He
+    grins at you in passing and is gone, the dog skidding after him.
 idlemessages:
 - A pot is scraped clean somewhere behind an open door, and a <ansi fg="itemname">song</ansi> trails off.
 - Glass floats knock together on the railing as the breeze shifts.
