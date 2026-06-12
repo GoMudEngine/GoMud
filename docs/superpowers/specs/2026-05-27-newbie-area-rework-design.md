@@ -1,8 +1,9 @@
 # Newbie Area Rework — Design Spec
 
-**Status:** Draft for review
-**Date:** 2026-05-27
-**Branch:** `feature/newbie-area-rework-spec`
+**Status:** Approved; amended 2026-06-12 (see Amendment Log, §15)
+**Date:** 2026-05-27 (amended 2026-06-12)
+**Branch:** `worktree-feature+newbie-area` (isolated build worktree; the whole
+zone is built and tested here, merging to master only at cutover)
 **Scope:** Architectural brushstrokes for a from-scratch newbie zone replacing
 Sanctum Basin. Detailed authoring lives in per-chunk sub-specs.
 **Comparable in size to:** the Mob Aliveness roadmap (multi-week, multi-chunk).
@@ -24,9 +25,18 @@ be built, tested, and connected independently of the others. Future systems
 (ranged weapons, etc.) drop in as new spokes without touching what already
 ships.
 
-Cutover is no-risk: the new zone goes live spoke-by-spoke alongside the old
-Sanctum Basin. Sanctum Basin is only deleted in the final chunk, after the
-new zone is fully polished and connected to the wider world.
+Cutover is no-risk: the entire zone is built and tested on an isolated
+feature branch (worktree), chunk by chunk, with per-chunk boot smokes and
+coordinate audits — but **nothing merges to master until the zone is
+complete**. Only at the final chunk does the branch land: the zone is
+connected to the wider world and Sanctum Basin is deleted in the same
+cutover. (Amended 2026-06-12: the original spec shipped spokes to the live
+game incrementally; the user directed a build-it-all-then-cut-over strategy
+instead. The chunk structure survives as branch-internal milestones.)
+
+Within every chunk, authoring follows a fixed task order (user directive,
+2026-06-12): **(1) rooms + room nouns → (2) mobs + items → (3) dialogue +
+quests.** Each phase of a chunk is reviewed before the next begins.
 
 ---
 
@@ -206,11 +216,13 @@ out of scope.
   out-of-scope for this zone. An NPC line, not a demonstration.
 - Stats centered around a human baseline — taught in-character ("you are
   slightly stronger than most" never "Str 112")
-- The skill roster — **15 skills total**, use-based growth (full
+- The skill roster — **16 skills total**, use-based growth (full
   list in `internal/skills/skills.go`: WeaponCombat, UnarmedCombat,
-  Spellcasting, Rhetoric, Skullduggery, Search, Bartering,
-  Blacksmithing, Alchemy, Tailoring, Cooking, Jewelcrafting,
-  Enchanting, Salvage, Manifestation)
+  RangedCombat, Spellcasting, Rhetoric, Skullduggery, Search,
+  Bartering, Blacksmithing, Alchemy, Tailoring, Cooking,
+  Jewelcrafting, Enchanting, Salvage, Manifestation) —
+  (amended 2026-06-12: ranged-combat revived with the ranged-weapons
+  system)
 - No XP, no levels — change comes from use
 
 **Movement & exploration**
@@ -323,8 +335,21 @@ out of scope.
 **Advanced combat**
 - `kick` (auto-routes to stomp/knee based on position)
 - `taunt`
+- `rally` and `warcry` (group/morale moves — folds in the old
+  tutorial-content-refresh backlog item)
 - Grapple basics: `takedown`, `escape`, `reversal`
 - Positions: standing / prone / grappled
+
+**Ranged combat** (amended 2026-06-12 — system shipped; taught in Spoke G)
+- `shoot <target>` / `shoot <target> <direction>` — the loaded-weapon
+  model: firing is instant and empties the weapon
+- `reload` — consumes the shared special-move cooldown + one use from a
+  matching ammo bundle (arrows / bolts / shot)
+- Ammo bundles as inventory items; buying refills
+- Perception governs aimed shots; ranged-combat is the trained skill
+- Melee with a ranged weapon is desperate clubbing (taught as a "don't
+  get cornered" lesson)
+- Cross-room shots provoke retaliation — the target comes for you
 
 **Skullduggery family** (the sneak/steal/utility skill cluster)
 - `search` — find hidden objects, passages, and creatures
@@ -430,7 +455,7 @@ regen multiplier for HP / SP / CP, so first-hour respite — wounds close,
 breath deepens, resolve returns — is automatic. Sanctum Basin used the
 same mutator on Academy Hall; the behavior carries over.
 
-### 6.3 Spoke roster — 6 active + 1 reserved
+### 6.3 Spoke roster — 7 active + 1 reserved (amended 2026-06-12)
 
 | Spoke | System(s) | Geographic flavor | Outer-ring landmark |
 |---|---|---|---|
@@ -440,7 +465,8 @@ same mutator on Academy Hall; the behavior carries over.
 | **D — Wilderness & Tracking** | Forage, track, hunt, sleep mechanics in field | Scrub steppe → predator territory | Apex pack-leader / scabland raptor |
 | **E — The Folding (magic)** | Cast, folding lore, willpower, concentration, channels | Observatory ruin → meditation grove → reality-thin scabland | "Unfolded" aberrant — a long-dead caster's escaped folds |
 | **F — Lore & Folk Tradition** | Faction tease, dialogue depth, social, schedules | Outlying farmstead → standing stones → old shrine | The Orbital Stone (no fight — quiet discovery) |
-| **G — *Future slot*** | TBD (ranged weapons / mounted / etc.) | TBD | TBD |
+| **G — Ranged & Marksmanship** *(amended 2026-06-12: was the reserved future slot — the ranged system shipped, so G is now an active spoke)* | Shoot/reload loop, ammo economy, cross-room shots, kiting awareness | Bluff-top shooting terraces → echoing box canyon → raider overlook | Kiting raider marksman on the overlook |
+| **H — *Future slot*** | TBD (mounted combat / whatever ships next) | TBD | TBD |
 
 Spoke F is the "soft" spoke — no boss, all social and discovery. It
 exists to ensure the player who only plays combat-y content still sees
@@ -464,10 +490,10 @@ rings, letting an explorer roam laterally without returning to the hub.
 | Region | Rooms |
 |---|---|
 | Hub town | 15–20 |
-| Each active spoke (6 × ~20) | ~120 |
+| Each active spoke (7 × ~20) | ~140 |
 | Lateral outer-ring connectors | ~10–15 |
-| Reserved future-spoke slot | 0 (placeholder rooms allowed at slot boundary) |
-| **Total** | **~150** |
+| Reserved future-spoke slot (H) | 0 (placeholder rooms allowed at slot boundary) |
+| **Total** | **~170** |
 
 Floor is 150; ceiling is whatever feels right per spoke during authoring.
 Some spokes (E — Folding, F — Lore) may end up larger; others (A —
@@ -501,6 +527,7 @@ time and walk away with whatever they've earned.
 | **D — Wilderness** | Tracking seeds, scout gear | Forage rank bump, slot-filler stamina gear, recipe | Perception bump, a wilderness garment, hunting kit |
 | **E — Folding** | Spellcasting seeds, focus item | Spellcasting rank bump, a basic spell granted | Willpower bump, a notable spell granted (e.g. a heal or a ward) |
 | **F — Lore** | Charisma seeds, a folk charm | Rhetoric rank bump, dialogue keywords unlocked, lore item | Charisma bump, a faction nod, a discovery moment (Orbital Stone) |
+| **G — Ranged** | Ranged seeds, a sling + shot pouch | Ranged-combat rank bump, a hand crossbow + bolts | Perception bump, a hunting bow, a generous ammo stockpile |
 
 A player who completes 3 spokes walks out with a functional kit. A player
 who completes all 6 walks out fully outfitted across most slots, with
@@ -583,15 +610,16 @@ The old Sanctum Basin only disappears in the final chunk.
 | Chunk | Scope | Approx new rooms | Sub-spec needed? |
 |---|---|---|---|
 | **0** | This spec; per-chunk specs sketched at outline level; **coordinate budget allocated** — a contiguous `(x, y, z)` region of the world map is reserved for the new zone (e.g., somewhere east of Ironwind Steppe). Documented in the zone-config or a coord-budget sidecar. Re-run the global coord scanner to confirm zero collisions with existing zones. | 0 | (this doc) |
-| **1** | **Hub town authored end-to-end.** Awakening site + rite. Portal mechanic. Veteran skip path works end-to-end. **All six active spokes stubbed** as single placeholder rooms with "under construction" flavor — playable, walkable, but no real content. (Spoke G — the reserved future slot — has *no exit* from the hub until a future-system chunk claims it; it does not get a stub.) School cleric, innkeeper, healer, banker, general-store merchant, folk-tradition NPC, hub-square crier all authored. | ~20 + 6 stubs | Yes |
+| **1** | **Hub town authored end-to-end.** Awakening site + rite. Portal mechanic. Veteran skip path works end-to-end. **All seven active spokes stubbed** as single placeholder rooms with "under construction" flavor — playable, walkable, but no real content. (Spoke H — the reserved future slot — has *no exit* from the hub until a future-system chunk claims it; it does not get a stub.) School cleric, innkeeper, healer, banker, general-store merchant, folk-tradition NPC, hub-square crier all authored. | ~20 + 7 stubs | Yes |
 | **2** | **Spoke A — Martial.** Full inner/middle/outer + boss + repeatable + cert rewards. Combat-system teaching beats. Replaces the Spoke A stub. | ~20 | Yes |
 | **3** | **Spoke B — Forge & Forge-Craft.** | ~20 | Yes |
 | **4** | **Spoke C — Herbalism & Alchemy.** | ~20 | Yes |
 | **5** | **Spoke D — Wilderness & Tracking.** | ~20 | Yes |
 | **6** | **Spoke E — The Folding.** Authoring of in-fiction folding lessons + Spoke-E reward chain. | ~20 | Yes |
-| **7** | **Spoke F — Lore & Folk Tradition.** Includes Orbital Stone discovery beat. Plus authoring of all lateral outer-ring connectors. | ~25 | Yes |
-| **8** | **Polish.** Cross-spoke balance pass on rewards. Repeatable-quest tuning. Hint-coverage audit (every triggerable thing is hinted). In-character no-numbers audit. Schedule integration for hub/outlying NPCs. NPC↔NPC conversations seeded. | 0 (tuning only) | Light |
-| **9** | **Cutover.** Connection to wider world (exit road from outer-ring exit point + portal destination). Sanctum Basin retired. Config `StartRoom` and `DeathRecoveryRoom` updated. Old Sanctum Basin rooms/mobs/quest deleted. PATCH_NOTES update. | ~5 (connection rooms) | Yes |
+| **7** | **Spoke F — Lore & Folk Tradition.** Includes Orbital Stone discovery beat. | ~25 | Yes |
+| **8** | **Spoke G — Ranged & Marksmanship** *(added 2026-06-12)*. Shoot/reload loop, ammo economy, cross-room shooting lesson, kiting-raider boss. Plus authoring of all lateral outer-ring connectors (moved here from chunk 7 as the last spoke closes the ring). | ~20 + connectors | Yes |
+| **9** | **Polish.** Cross-spoke balance pass on rewards. Repeatable-quest tuning. Hint-coverage audit (every triggerable thing is hinted). In-character no-numbers audit. Schedule integration for hub/outlying NPCs. NPC↔NPC conversations seeded. | 0 (tuning only) | Light |
+| **10** | **Cutover.** The build branch merges to master here and only here. Connection to wider world (exit road from outer-ring exit point + portal destination). Sanctum Basin retired. Config `StartRoom` and `DeathRecoveryRoom` updated. Old Sanctum Basin rooms/mobs/quest deleted. PATCH_NOTES update. | ~5 (connection rooms) | Yes |
 
 ### 10.1 Per-chunk acceptance criteria (sketch)
 
@@ -692,10 +720,10 @@ aliveness rollout.
 
 ### 11.7 Future-slot placeholder
 
-The reserved Spoke G slot — should the spec lock in *where* it attaches
-geographically (between which existing spokes)? Knowing the slot in
-advance helps Chunk 1 stub it; not knowing lets the future-system author
-choose.
+The reserved Spoke H slot (G became the active Ranged spoke, 2026-06-12) —
+should the spec lock in *where* it attaches geographically (between which
+existing spokes)? Knowing the slot in advance helps Chunk 1 stub it; not
+knowing lets the future-system author choose.
 
 Default: **leave un-located**. Future-system authoring decides geography.
 
@@ -740,7 +768,34 @@ Default: **leave un-located**. Future-system authoring decides geography.
 
 ## 14. Approvals
 
-- [ ] Spec reviewed by user
+- [x] Spec reviewed by user (approved 2026-06-12, with amendments below)
+- [ ] Chunk 0 executed (coordinate budget allocated)
 - [ ] Chunk 1 sub-spec authored (separate doc)
 - [ ] Implementation plan (writing-plans) generated
+
+---
+
+## 15. Amendment Log
+
+**2026-06-12 (user-directed, at build kickoff):**
+
+1. **Build strategy:** entire zone built and tested on an isolated feature
+   branch/worktree; merges to master only at the Chunk 10 cutover. The
+   original incremental-live-shipping language in §1/§10/§13 is superseded.
+2. **Per-chunk task order mandated:** rooms + room nouns → mobs + items →
+   dialogue + quests, with review between phases.
+3. **Spoke G activated as Ranged & Marksmanship** (the ranged-weapons
+   system shipped 2026-06-12); the reserved future slot is now Spoke H.
+   Room budget floor rises ~150 → ~170; chunk table gains a Spoke G chunk
+   (8) and renumbers polish/cutover to 9/10.
+4. **Staleness fixes:** skill roster is 16 (ranged-combat revived);
+   `weather` is now a live system (and a seasons upgrade is queued — the
+   Wilderness and Lore spokes may acknowledge weather in flavor text);
+   rally/warcry added to Tier 2 advanced combat (folding in the old
+   tutorial-content-refresh backlog).
+5. **Weather interaction note:** the new zone's outdoor biomes
+   automatically participate in the weather simulation (zone crawler picks
+   it up; run `weather rebuild` after the zone lands). Indoor rooms (school,
+   inn, mine, caves) must carry indoor biomes per the weather indoor-
+   filtering rules.
 
