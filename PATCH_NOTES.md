@@ -22,6 +22,10 @@ work.
 - **Archers keep their distance.** Ranged-focused mobs with loaded
   weapons prefer to back out of melee range, reload, and fire from
   cover rather than trading blows up close.
+- **Meet them in the wild.** A crossbow-armed watchman now holds the
+  Thornwall gate ward, and something with a hunting bow stalks the
+  deep marsh near the Black Pool. Improvised swings with a ranged
+  weapon now read as the desperate clubbing they are.
 
 ## 2026-06-10 — Living weather
 
