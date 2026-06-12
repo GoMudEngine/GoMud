@@ -44,57 +44,25 @@ character:
       training: 6
     willpower:
       training: 4
+  # Stock and pricing are engine-driven by the living economy: RestockQty
+  # and MaxStock come from each item's rarity tier, and the price is
+  # value × scarcity. Per-entry quantity/quantitymax/price are NOT read on
+  # this path, so the shop list is just the set of itemids Onna carries.
   shop:
     # Light + dry goods
     - itemid: 40038    # oil lantern
-      quantity: 3
-      quantitymax: 5
-      price: 1
     - itemid: 30021    # trail rations
-      quantity: 6
-      quantitymax: 10
-      price: 3
     - itemid: 30013    # fungal ration
-      quantity: 4
-      quantitymax: 8
-      price: 2
     # Healing basics
     - itemid: 30020    # cloth bandage
-      quantity: 5
-      quantitymax: 8
-      price: 5
     - itemid: 30001    # small red potion
-      quantity: 4
-      quantitymax: 6
-      price: 2
     # Starter armor
     - itemid: 20008    # cotton shirt
-      quantity: 3
-      quantitymax: 5
-      price: 1
     - itemid: 20007    # rusty pot
-      quantity: 3
-      quantitymax: 5
-      price: 1
     - itemid: 20004    # wooden shield
-      quantity: 2
-      quantitymax: 4
-      price: 2
     # Cheap melee
     - itemid: 10001    # sharp stick
-      quantity: 3
-      quantitymax: 5
-      price: 1
     - itemid: 10021    # crude short blade
-      quantity: 2
-      quantitymax: 4
-      price: 4
     # Ranged preview (Spoke-G)
     - itemid: 10038    # sling
-      quantity: 2
-      quantitymax: 4
-      price: 40
     - itemid: 30064    # pouch of shot
-      quantity: 4
-      quantitymax: 6
-      price: 40
