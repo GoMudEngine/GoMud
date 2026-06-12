@@ -1,0 +1,1624 @@
+========================================================================
+Pothole Coulee — Newbie C1 Phase-D Funnel Walkthrough (fresh character)
+========================================================================
+Captured : 2026-06-12 (evening session)
+Server   : dogmud-d.exe (worktree feature+newbie-area), quests loadedCount=23
+Method   : Fresh character 'Mossfoot' created via the new-player flow on
+           AI port 55555, then WALKED the full funnel (no teleports,
+           no admin): negative gates -> ask hadwen rite -> the rite ->
+           quest 31 (school/shop/lantern/turn-in) -> sethome -> bank ->
+           NPC lessons -> Esk portal to Thornwall 468.
+Note     : Main run below; BEATS T/U/V failed there due to a transcript
+           driver routing error (wrong room), re-run cleanly in the
+           FIXUP section at the bottom. Beat results all PASS.
+========================================================================
+
+===== LOGIN =====
+Z!!MUSIC(static/audio/music/intro.mp3 V=20 L=-1 C=1)
+
+      .    *      .       *    .           *      .       *    .     
+          *      .                   .          *                    
+   .          .       *        .          .            *        .    
+        *           .      *         *          .      *            
+             .            .      .         .              .     *    
+
+ ____   ___   ____ __  __           _ 
+|  _ \ / _ \ / ___|  \/  |_   _  __| |
+| | | | | | | |  _| |\/| | | | |/ _` |
+| |_| | |_| | |_| | |  | | |_| | (_| |
+|____/ \___/ \____|_|  |_|\__,_|\__,_|
+
+        D e l u s i o n s   o f   G r a n d e u r
+
+      *    .      *       .    *           .      *       .    *     
+
+.: Welcome to Delusions of Grandeur, a MUD set on the world of Gaius.
+                                                      The Chrysalis awaits.
+
+================================================================================
+Note: Some legacy clients (zMUD, etc.) are not supported.
+We recommend Mudlet or the web client for the best experience.
+
+This port is for AI clients. Human players, please connect on port 33333.
+
+AI players: connect on port 55555. Using this port as an AI risks a ban.
+username (or "new"): 
+>> Mossfoot
+
+password: 
+>> cooleetest123
+
+Z!!MUSIC(Off)
+Warning: This account is not flagged as AI but connected on the AI port.
+ ╔══════════════════════════════════════════════════════════════════════════════╗
+ ║  .:  M E S A G E   O F   T H E   D A Y                                    ║
+ ╠══════════════════════════════════════════════════════════════════════════════╣
+ ║ TAKE AIM — Bows, crossbows, and primitive pistols have arrived: fire      ║
+ ║ instantly with shoot, even into the next room, then reload from an ammo     ║
+ ║ bundle. The revived ranged-combat skill rewards a keen eye, and Smith       ║
+ ║ Brindle in Stillwater stocks the gear. Watch for archers who keep their     ║
+ ║ distance and shoot back as they retreat. (2026-06-12.)                      ║
+ ║ WEATHER HAS COME — Storms are born over open water, roll inland gathering ║
+ ║ strength, and die against the mountains. Step outside and feel it; shelter  ║
+ ║ indoors and hear heavy rain drum on the roof. Try the weather command.      ║
+ ║ (2026-06-10.)                                                               ║
+ ║ QUIETER FIGHTS, YOUR CALL — set combatverbosity full, medium, or light to ║
+ ║ choose how much combat text you see. You always see deaths, big moves, and  ║
+ ║ every blow that lands on you. (2026-06-10.)                                 ║
+ ║ Novel: https://github.com/pruuk/DOGMud/blob/master/what_the_moons_keep.md   ║
+ ║ Full patch notes:                                                           ║
+ ║ https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md                  ║
+ ╚══════════════════════════════════════════════════════════════════════════════╝
+.
+.: 1 user online
+╒══════════╕═══════════════════╕════════╕══════╕
+│ Name     │ Title             │ Online │ Role │
+└──────────┘───────────────────┘────────┘──────┘
+│ Mossfoot │ Novice Generalist │ 0s     │ user │
+└──────────┘───────────────────┘────────┘──────┘
+.
+You have 0 unread messages and 0 old messages. Type inbox to view your messages.
+
+.: [≈] The Awakening Pool [Pothole Coulee]
+The coulee floor opens here into a wide stone bowl, its walls worn       ╔═════╗
+smooth by ancient floods. Dark water fills the pool nearly to the rim,   ║~ ▼ ▼║
+flat and still as poured glass -- no ripple, no current, no sound. Far   ║│ │ │║
+below the surface, something glows with pale blue-green light, steady    ║~─@─~║
+and deep, like a coal that never burns out. The basalt rim is polished   ║│ │ │║
+where countless hands have gripped it. This is where the Opened come     ║~─•─⌂║
+back to themselves.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Cleric Hadwen (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT A: room check (expect 5200 Awakening Pool) =====
+
+>> look
+look
+
+.: [≈] The Awakening Pool [Pothole Coulee]
+The coulee floor opens here into a wide stone bowl, its walls worn       ╔═════╗
+smooth by ancient floods. Dark water fills the pool nearly to the rim,   ║~ ▼ ▼║
+flat and still as poured glass -- no ripple, no current, no sound. Far   ║│ │ │║
+below the surface, something glows with pale blue-green light, steady    ║~─@─~║
+and deep, like a coal that never burns out. The basalt rim is polished   ║│ │ │║
+where countless hands have gripped it. This is where the Opened come     ║~─•─⌂║
+back to themselves.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Cleric Hadwen (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> south
+south
+    >>> You head towards the south exit.
+
+
+.: [•] Hub Square [Pothole Coulee]
+The town's heart opens out here across flat basalt slabs, worn smooth by ╔═════╗
+more feet than anyone has bothered to count. A weathered notice-post     ║~─≈─~║
+stands square in the middle, its boards layered thick with the crier's   ║│ │ │║
+latest word and a hundred older ones gone soft beneath. Even with not a  ║~─@─⌂║
+soul about, the square does not feel empty -- it holds the kept-breath   ║  │  ║
+hum of a place where news breaks and gossip travels, where the day's     ║⌂─•─⌂║
+first word and its last both get spoken aloud. Ways run off in every     ╚═════╝
+direction: north toward the pool, south to the market, west along the
+stilt-walk, east to the squat strongbox-house. Stand here a spell and
+the town will find you on its own.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Crier Toke (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Crier Toke glances up as you enter.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT B: Toke pre-rite refusal (expect pool-first) =====
+
+>> ask toke footing
+ask toke footing
+  [Ask Hadwen about the rite at the Awakening Pool.]
+Crier Toke says, "Eager! I respect it. But the pool comes first -- that is not
+my rule, it is just the order the coulee works in. Cleric Hadwen, north side of
+the square. Come back Opened and I will put your feet to work."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> south
+south
+    >>> You head towards the south exit.
+
+
+.: [•] Market Row [Pothole Coulee]
+A short run of awnings and stall-fronts crowds the lane here, strung     ╔═════╗
+between the inn at the west end and the provisions store at the east.    ║~─•─⌂║
+The awnings are patched canvas and salvaged sailcloth, slung from the    ║  │  ║
+eaves to throw shade across the goods laid out beneath them, and they    ║⌂─@─⌂║
+snap and belly whenever the coulee breeze comes down the bowl. This is   ║  │  ║
+the town's barter-artery: the air carries the haggle-murmur of folk      ║  ⌂  ║
+talking prices, the clink of coin changing hands, the smell of smoked    ╚═════╝
+fish and tallow and sun-warmed dust. Even between customers the stalls
+hold their wares out hopeful, waiting for the next pair of boots to
+slow. South the lane runs on toward a humming arch the town keeps at its
+threshold.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> south
+south
+    >>> You head towards the south exit.
+
+
+.: [⌂] The Threshold House [Pothole Coulee]
+A low roof of weathered plank has been raised over this spot, less a     ╔═════╗
+house than a shelter built to keep weather off the thing it guards: a    ║⌂─•─⌂║
+free-standing arch of basalt, older than the town, older maybe than the  ║  │  ║
+town's oldest stories. The arch stands rooted in the rock floor, its     ║  @  ║
+stones fitted by no hand anyone remembers, and from somewhere in it      ║     ║
+comes a faint, steady hum -- felt in the teeth more than heard in the    ║     ║
+ear. Step near and the air goes thin and tingling, the way it does       ╚═════╝
+before a storm or a held note. A plain three-legged stool sits beside
+the arch where a warden keeps watch over comers and goers. There is no
+menace here, only the deep patient wonder of something that has waited a
+very long time and is in no hurry to stop.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Warden Esk (100%)
+
+Exits: north
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT C: Esk unopened refusal (expect 'arch answers the Opened') =====
+
+>> ask esk passage
+ask esk passage
+Warden Esk says, "The arch answers the Opened, and you are not yet. The pool
+comes first -- Cleric Hadwen keeps it, at the heart of town. There is no shame
+in arriving unready. Only in staying that way."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:[Tip] Your stats improve through use. Swing a sword enough and your Strength grows over time.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> north
+north
+    >>> You head towards the north exit.
+
+
+.: [•] Market Row [Pothole Coulee]
+A short run of awnings and stall-fronts crowds the lane here, strung     ╔═════╗
+between the inn at the west end and the provisions store at the east.    ║~─•─⌂║
+The awnings are patched canvas and salvaged sailcloth, slung from the    ║  │  ║
+eaves to throw shade across the goods laid out beneath them, and they    ║⌂─@─⌂║
+snap and belly whenever the coulee breeze comes down the bowl. This is   ║  │  ║
+the town's barter-artery: the air carries the haggle-murmur of folk      ║  ⌂  ║
+talking prices, the clink of coin changing hands, the smell of smoked    ╚═════╝
+fish and tallow and sun-warmed dust. Even between customers the stalls
+hold their wares out hopeful, waiting for the next pair of boots to
+slow. South the lane runs on toward a humming arch the town keeps at its
+threshold.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> north
+north
+    >>> You head towards the north exit.
+
+
+.: [•] Hub Square [Pothole Coulee]
+The town's heart opens out here across flat basalt slabs, worn smooth by ╔═════╗
+more feet than anyone has bothered to count. A weathered notice-post     ║~─≈─~║
+stands square in the middle, its boards layered thick with the crier's   ║│ │ │║
+latest word and a hundred older ones gone soft beneath. Even with not a  ║~─@─⌂║
+soul about, the square does not feel empty -- it holds the kept-breath   ║  │  ║
+hum of a place where news breaks and gossip travels, where the day's     ║⌂─•─⌂║
+first word and its last both get spoken aloud. Ways run off in every     ╚═════╝
+direction: north toward the pool, south to the market, west along the
+stilt-walk, east to the squat strongbox-house. Stand here a spell and
+the town will find you on its own.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Crier Toke (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Crier Toke glances up as you enter.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> north
+north
+    >>> You head towards the north exit.
+
+
+.: [≈] The Awakening Pool [Pothole Coulee]
+The coulee floor opens here into a wide stone bowl, its walls worn       ╔═════╗
+smooth by ancient floods. Dark water fills the pool nearly to the rim,   ║~ ▼ ▼║
+flat and still as poured glass -- no ripple, no current, no sound. Far   ║│ │ │║
+below the surface, something glows with pale blue-green light, steady    ║~─@─~║
+and deep, like a coal that never burns out. The basalt rim is polished   ║│ │ │║
+where countless hands have gripped it. This is where the Opened come     ║~─•─⌂║
+back to themselves.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Cleric Hadwen (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT D: quest journal before rite (expect The Awakening) =====
+
+>> quest
+quest
+ ┌─ .:Quests ( 1 out of 1 shown ) ──────────────────────────────────────────┐
+   The Awakening                             ████████████░░░░░░░░░░░░░ 50% 
+   Cleric Hadwen will open the pool for you when you say you are ready.
+ └──────────────────────────────────────────────────────────────────────────┘
+ 
+.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT E: THE RITE (paced ~35s) =====
+
+>> ask hadwen begin
+ask hadwen begin
+Cleric Hadwen says, "Then we begin. Step to the edge with me."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen wades into the shallows and turns. The pale plates along his jaw
+catch the light coming up off the water.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen says, "Gaius is made of belief. The land believes itself into
+shape. So does everything that lives on it. So will you."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen says, "Most worlds let you stay what you arrived as. This one will
+not. The body answers effort, conflict, fear, wanting -- it changes. We call the
+changes mutations, and none of them are a punishment, whatever they look like at
+first."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen turns his head to listen, the pale plates along his jaw catching
+the light
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen says, "The pool answers first. It is older than the town and more
+patient than I am. Look into the water."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen rests a hand on your shoulder. The pool's light rises to meet
+you, and for a moment you are somewhere else -- folded inside something vast and
+warm that is looking back at you with your own eyes.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen The light lets you go. The water is only water again, and the
+morning is just a morning, and something under your skin is newly, quietly
+awake.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen says, "It is done. You will feel it settle for a while. That is
+normal."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen says, "Type mutations whenever you want to see what the pool woke
+in you. It will not be the last -- the rest, you will earn the slow way."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen says, "If the name you carried here no longer fits the shape of
+you, renameself lets you choose truer. And help answers most questions with more
+patience than I have."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen says, "Walk the town. Crier Toke in the square keeps the day's
+word. And when you are ready to leave us, Warden Esk keeps the way out. The
+coulee will still be here."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT F: mutations after rite =====
+
+>> mutations
+mutations
+ .:. Your Mutations .:.
+  Keen Eyes (Level 1)
+    Your eyes develop a crystalline clarity. Perception sharpens dramatically, though coordination suffers.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT G: quest 30 complete? =====
+
+>> quest
+quest
+ ┌─ .:Quests ( 0 out of 1 shown ) ──────────────────────────────────────────┐
+ └──────────────────────────────────────────────────────────────────────────┘
+ To see all quests (including completed), use quests all
+ 
+.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> south
+south
+    >>> You head towards the south exit.
+
+
+.: [•] Hub Square [Pothole Coulee]
+The town's heart opens out here across flat basalt slabs, worn smooth by ╔═════╗
+more feet than anyone has bothered to count. A weathered notice-post     ║~─≈─~║
+stands square in the middle, its boards layered thick with the crier's   ║│ │ │║
+latest word and a hundred older ones gone soft beneath. Even with not a  ║~─@─⌂║
+soul about, the square does not feel empty -- it holds the kept-breath   ║  │  ║
+hum of a place where news breaks and gossip travels, where the day's     ║⌂─•─⌂║
+first word and its last both get spoken aloud. Ways run off in every     ╚═════╝
+direction: north toward the pool, south to the market, west along the
+stilt-walk, east to the squat strongbox-house. Stand here a spell and
+the town will find you on its own.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Crier Toke (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Crier Toke cocks his head at a far lane, both mouths going quiet at once to
+listen
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT H: Toke grants Find Your Footing =====
+
+>> ask toke footing
+ask toke footing
+  [Go north past the Awakening Pool and up the basalt stair to the school hall. Type quest any time to see your place.]
+
+*******************************************************************************
+
+ You have been given a new quest: Find Your Footing!
+ type quests to track your progress on quests.
+
+*******************************************************************************
+.
+Crier Toke says, "Newly Opened and nowhere to be? Perfect. Learn the town before
+the town has to learn you. Three stops: the Chrysalis School Hall up past the
+pool, Trader Onna's shelves at Coulee Provisions, and The Drowned Lantern -- the
+inn, best taps in the coulee. Walk them in that order and come tell me what you
+saw. I will hear about it anyway, but I like it firsthand."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Crier Toke glances up as you enter.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> quest
+quest
+ ┌─ .:Quests ( 1 out of 2 shown ) ──────────────────────────────────────────┐
+   Find Your Footing                         █████░░░░░░░░░░░░░░░░░░░░ 20% 
+   Crier Toke wants you to learn the town before the town has to learn
+   you. Start at the Chrysalis School Hall.
+ └──────────────────────────────────────────────────────────────────────────┘
+ To see all quests (including completed), use quests all
+ 
+.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> north
+north
+    >>> You head towards the north exit.
+
+
+.: [≈] The Awakening Pool [Pothole Coulee]
+The coulee floor opens here into a wide stone bowl, its walls worn       ╔═════╗
+smooth by ancient floods. Dark water fills the pool nearly to the rim,   ║~ ▼ ▼║
+flat and still as poured glass -- no ripple, no current, no sound. Far   ║│ │ │║
+below the surface, something glows with pale blue-green light, steady    ║~─@─~║
+and deep, like a coal that never burns out. The basalt rim is polished   ║│ │ │║
+where countless hands have gripped it. This is where the Opened come     ║~─•─⌂║
+back to themselves.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Cleric Hadwen (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> north
+north
+    >>> You head towards the north exit.
+
+
+.: [▼] Basalt Stair [Pothole Coulee]
+A switchback stair has been cut straight into the basalt of the bowl     ╔═════╗
+wall, each tread worn shallow in the middle by the long press of         ║▼ ▼ ,║
+climbing feet. Below, the pool sits dark and flat as poured glass;       ║│ │ │║
+above, the open shelf of the steppe shows a strip of washed-out sky.     ║~ @ ▼║
+Wind funnels up the cut, cool off the water, tugging at your clothes as  ║│ │ │║
+it passes. The basalt is dark grey-black and water-stained, and your     ║~─≈─~║
+hand finds old grips polished smooth by everyone who climbed here before ╚═════╝
+you.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: north, south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> north
+north
+    >>> You head towards the north exit.
+
+
+.: [▼] School Shelf [Pothole Coulee]
+The basalt shelf runs out flat and open above the pool, a natural        ╔═════╗
+landing of dark stone scoured bare by the weather. A few plank benches   ║⌂─⌂  ║
+sit in a rough half-ring near the lip, set out so a class can take its   ║  │  ║
+lessons under the open sky rather than cooped in the hall. From the edge ║▼ @ ,║
+the whole basin falls away below in one clear view -- the dark eye of    ║│ │ │║
+the water, the stilt-houses up on their long legs, the gravel paths      ║~ ▼ ▼║
+threading pale between them, all small and sharp as a thing seen in the  ╚═════╝
+bottom of a bowl. The wind comes steady off the steppe and snaps at
+loose pages and hair, carrying the cold breath of the water up from far
+down. It is a fine place to think and a hard place to drowse.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: north, south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT I: arrive school hall 5213 (31-school should fire) =====
+
+>> north
+north
+
+*******************************************************************************
+
+ You've made progress on the quest: Find Your Footing!
+ type quests to track your progress on quests.
+
+*******************************************************************************
+.
+    >>> You head towards the north exit.
+
+
+.: [⌂] Chrysalis School Hall [Pothole Coulee]
+One long room under a sound plank roof makes up the whole of the         ╔═════╗
+school, and the whole of it is given to learning. Slate boards in chalk- ║     ║
+dusted frames line the far wall, the slates half-wiped, ghosted with the ║     ║
+morning's letters and sums. Desks crowd the floor in mismatched rows --  ║⌂─@  ║
+no two the same height, scavenged and mended and handed down -- their    ║  │  ║
+lids scarred by generations of restless penknives. By the door stands    ║▼ ▼ ,║
+the notice-board, shingled deep with pinned cards and curling hand-      ╚═════╝
+bills, the busiest wall in the room. The air is warm and close and
+smells of chalk and lamp oil and the river-damp of children, an
+ordinary, patient, kindly sort of place for all its strange name.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> quest
+quest
+ ┌─ .:Quests ( 1 out of 2 shown ) ──────────────────────────────────────────┐
+   Find Your Footing                         ██████████░░░░░░░░░░░░░░░ 40% 
+   You found the school hall. Next, see what Trader Onna sells at Coulee
+   Provisions.
+ └──────────────────────────────────────────────────────────────────────────┘
+ To see all quests (including completed), use quests all
+ 
+.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> south
+south
+    >>> You head towards the south exit.
+
+
+.: [▼] School Shelf [Pothole Coulee]
+The basalt shelf runs out flat and open above the pool, a natural        ╔═════╗
+landing of dark stone scoured bare by the weather. A few plank benches   ║⌂─⌂  ║
+sit in a rough half-ring near the lip, set out so a class can take its   ║  │  ║
+lessons under the open sky rather than cooped in the hall. From the edge ║▼ @ ,║
+the whole basin falls away below in one clear view -- the dark eye of    ║│ │ │║
+the water, the stilt-houses up on their long legs, the gravel paths      ║~ ▼ ▼║
+threading pale between them, all small and sharp as a thing seen in the  ╚═════╝
+bottom of a bowl. The wind comes steady off the steppe and snaps at
+loose pages and hair, carrying the cold breath of the water up from far
+down. It is a fine place to think and a hard place to drowse.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: north, south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> south
+south
+    >>> You head towards the south exit.
+
+
+.: [▼] Basalt Stair [Pothole Coulee]
+A switchback stair has been cut straight into the basalt of the bowl     ╔═════╗
+wall, each tread worn shallow in the middle by the long press of         ║▼ ▼ ,║
+climbing feet. Below, the pool sits dark and flat as poured glass;       ║│ │ │║
+above, the open shelf of the steppe shows a strip of washed-out sky.     ║~ @ ▼║
+Wind funnels up the cut, cool off the water, tugging at your clothes as  ║│ │ │║
+it passes. The basalt is dark grey-black and water-stained, and your     ║~─≈─~║
+hand finds old grips polished smooth by everyone who climbed here before ╚═════╝
+you.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: north, south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> south
+south
+    >>> You head towards the south exit.
+
+
+.: [≈] The Awakening Pool [Pothole Coulee]
+The coulee floor opens here into a wide stone bowl, its walls worn       ╔═════╗
+smooth by ancient floods. Dark water fills the pool nearly to the rim,   ║~ ▼ ▼║
+flat and still as poured glass -- no ripple, no current, no sound. Far   ║│ │ │║
+below the surface, something glows with pale blue-green light, steady    ║~─@─~║
+and deep, like a coal that never burns out. The basalt rim is polished   ║│ │ │║
+where countless hands have gripped it. This is where the Opened come     ║~─•─⌂║
+back to themselves.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Cleric Hadwen (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> south
+south
+    >>> You head towards the south exit.
+
+
+.: [•] Hub Square [Pothole Coulee]
+The town's heart opens out here across flat basalt slabs, worn smooth by ╔═════╗
+more feet than anyone has bothered to count. A weathered notice-post     ║~─≈─~║
+stands square in the middle, its boards layered thick with the crier's   ║│ │ │║
+latest word and a hundred older ones gone soft beneath. Even with not a  ║~─@─⌂║
+soul about, the square does not feel empty -- it holds the kept-breath   ║  │  ║
+hum of a place where news breaks and gossip travels, where the day's     ║⌂─•─⌂║
+first word and its last both get spoken aloud. Ways run off in every     ╚═════╝
+direction: north toward the pool, south to the market, west along the
+stilt-walk, east to the squat strongbox-house. Stand here a spell and
+the town will find you on its own.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Crier Toke (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Crier Toke glances up as you enter.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> south
+south
+    >>> You head towards the south exit.
+
+
+.: [•] Market Row [Pothole Coulee]
+A short run of awnings and stall-fronts crowds the lane here, strung     ╔═════╗
+between the inn at the west end and the provisions store at the east.    ║~─•─⌂║
+The awnings are patched canvas and salvaged sailcloth, slung from the    ║  │  ║
+eaves to throw shade across the goods laid out beneath them, and they    ║⌂─@─⌂║
+snap and belly whenever the coulee breeze comes down the bowl. This is   ║  │  ║
+the town's barter-artery: the air carries the haggle-murmur of folk      ║  ⌂  ║
+talking prices, the clink of coin changing hands, the smell of smoked    ╚═════╝
+fish and tallow and sun-warmed dust. Even between customers the stalls
+hold their wares out hopeful, waiting for the next pair of boots to
+slow. South the lane runs on toward a humming arch the town keeps at its
+threshold.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> east
+east
+    >>> You head towards the east exit.
+
+
+.: [⌂] Coulee Provisions [Pothole Coulee]
+The store is one cramped room packed floor to rafter with everything a   ╔═════╗
+frontier body might need and a good deal it might only want. Shelves     ║•─⌂  ║
+climb the walls all the way to the ceiling, crammed with sacked grain,   ║│    ║
+coiled rope, tin lamps, jars of who-knows-what, and bundles hung         ║•─@─~║
+overhead just out of reach. The air is thick with the mingled smell of   ║│    ║
+hemp rope and rendered tallow and dry goods, a smell that means trade. A ║⌂    ║
+long counter worn pale and smooth fronts the back wall, its surface      ╚═════╝
+scuffed by years of coins and elbows and parcels slid across it. Whoever
+keeps this place clearly knows where every last thing sits in the
+glorious clutter, even if a stranger never could.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Trader Onna (100%|shop)
+
+Exits: east, west
+
+TIP: Type list to see what merchants have for sale.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Trader Onna nods in greeting from behind the counter.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT J: list at Onna (31-shop should fire; floor prices) =====
+
+>> list
+list
+
+.: Items available by Trader Onna
+╒═════╕═══════════════════╕═════════╕═══════╕
+│ Qty │ Name              │ Type    │ Price │
+└─────┘───────────────────┘─────────┘───────┘
+│ 20  │ Oil Lantern       │ object  │ 1     │
+│ 20  │ Trail Rations     │ food    │ 1     │
+│ 20  │ Fungal Ration     │ food    │ 1     │
+│ 20  │ Cloth Bandage     │ object  │ 2     │
+│ 20  │ Small Red Potion  │ potion  │ 1     │
+│ 20  │ Cotton Shirt      │ body    │ 1     │
+│ 20  │ Rusty Pot         │ head    │ 1     │
+│ 20  │ Wooden Shield     │ offhand │ 1     │
+│ 20  │ Sharp Stick       │ weapon  │ 1     │
+│ 20  │ Crude Short Blade │ weapon  │ 1     │
+│ 20  │ Sling             │ weapon  │ 10    │
+│ 20  │ Pouch of Shot     │ ammo    │ 10    │
+└─────┘───────────────────┘─────────┘───────┘.
+To buy something, type: buy [name]
+.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> buy trail rations
+buy trail rations
+Z!!SOUND(static/audio/sound/other/buy.mp3 T=other V=100)You purchase the Trail Rations from Trader Onna for 1 gold.
+
+*******************************************************************************
+
+ You've made progress on the quest: Find Your Footing!
+ type quests to track your progress on quests.
+
+*******************************************************************************
+.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT K: Onna sling flavor =====
+
+>> ask onna sling
+ask onna sling
+  [You could ask about her wares or about selling.]
+Trader Onna says, "The sling? Shepherd's weapon -- string, pocket, and a stone's
+honest opinion delivered at distance. Cheap to feed, light to carry, harder to
+master than it looks. Folk who take to it usually end up out past the far-hill
+mouth, where they teach the long shot properly. Pouch of shot goes with it"
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Trader Onna runs a thumb down the tally-book, reading prices nobody asked for
+yet
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> quest
+quest
+ ┌─ .:Quests ( 1 out of 2 shown ) ──────────────────────────────────────────┐
+   Find Your Footing                         ███████████████░░░░░░░░░░ 60% 
+   You know where the goods are. Now put your head into The Drowned
+   Lantern, the town's inn.
+ └──────────────────────────────────────────────────────────────────────────┘
+ To see all quests (including completed), use quests all
+ 
+.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> west
+west
+    >>> You head towards the west exit.
+
+
+.: [•] Market Row [Pothole Coulee]
+A short run of awnings and stall-fronts crowds the lane here, strung     ╔═════╗
+between the inn at the west end and the provisions store at the east.    ║~─•─⌂║
+The awnings are patched canvas and salvaged sailcloth, slung from the    ║  │  ║
+eaves to throw shade across the goods laid out beneath them, and they    ║⌂─@─⌂║
+snap and belly whenever the coulee breeze comes down the bowl. This is   ║  │  ║
+the town's barter-artery: the air carries the haggle-murmur of folk      ║  ⌂  ║
+talking prices, the clink of coin changing hands, the smell of smoked    ╚═════╝
+fish and tallow and sun-warmed dust. Even between customers the stalls
+hold their wares out hopeful, waiting for the next pair of boots to
+slow. South the lane runs on toward a humming arch the town keeps at its
+threshold.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT L: arrive Drowned Lantern 5205 (31-lantern should fire) =====
+
+>> west
+west
+
+*******************************************************************************
+
+ You've made progress on the quest: Find Your Footing!
+ type quests to track your progress on quests.
+
+*******************************************************************************
+.
+    >>> You head towards the west exit.
+
+
+.: [⌂] The Drowned Lantern [Pothole Coulee]
+The inn's common room wraps you in warmth the moment you step in out of  ╔═════╗
+the coulee air. Overhead the namesake hangs and glows: a salvaged        ║~─~─•║
+diving-bell of green-tarnished bronze, hauled up from some sunk wreck    ║    │║
+and re-rigged as a great lantern, its caged flame throwing a soft        ║  @─•║
+underwater light across the room. Long shared tables run the length of   ║    │║
+the floor, their tops scrubbed pale and scarred with the rings of a      ║    ⌂║
+thousand set-down cups. A peat fire mutters in the hearth, breathing out ╚═════╝
+that low brown smell of burning earth, and the whole place has the
+settled, well-used hush of a town's evening heart waiting for evening to
+come. Stairs climb up into the dark toward the sleeping loft; the lane
+lies back out east.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Innkeep Tally (100%)
+
+Exits: east, up
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> quest
+quest
+ ┌─ .:Quests ( 1 out of 2 shown ) ──────────────────────────────────────────┐
+   Find Your Footing                         ████████████████████░░░░░ 80% 
+   You have seen the school, the shop, and the inn. Report back to Crier
+   Toke in Hub Square.
+ └──────────────────────────────────────────────────────────────────────────┘
+ To see all quests (including completed), use quests all
+ 
+.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Innkeep Tally glances up as you enter.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT M: Tally sleep lesson =====
+
+>> ask tally sleep
+ask tally sleep
+  [The loft is up the stairs. Type sleep to rest and stand to wake. Light or noise can wake you early.]
+Innkeep Tally says, "The loft is up the stairs -- pallets, blankets, no charge
+while you are learning the town. Lie down and type sleep"
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> east
+east
+    >>> You head towards the east exit.
+
+
+.: [•] Market Row [Pothole Coulee]
+A short run of awnings and stall-fronts crowds the lane here, strung     ╔═════╗
+between the inn at the west end and the provisions store at the east.    ║~─•─⌂║
+The awnings are patched canvas and salvaged sailcloth, slung from the    ║  │  ║
+eaves to throw shade across the goods laid out beneath them, and they    ║⌂─@─⌂║
+snap and belly whenever the coulee breeze comes down the bowl. This is   ║  │  ║
+the town's barter-artery: the air carries the haggle-murmur of folk      ║  ⌂  ║
+talking prices, the clink of coin changing hands, the smell of smoked    ╚═════╝
+fish and tallow and sun-warmed dust. Even between customers the stalls
+hold their wares out hopeful, waiting for the next pair of boots to
+slow. South the lane runs on toward a humming arch the town keeps at its
+threshold.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> north
+north
+    >>> You head towards the north exit.
+
+
+.: [•] Hub Square [Pothole Coulee]
+The town's heart opens out here across flat basalt slabs, worn smooth by ╔═════╗
+more feet than anyone has bothered to count. A weathered notice-post     ║~─≈─~║
+stands square in the middle, its boards layered thick with the crier's   ║│ │ │║
+latest word and a hundred older ones gone soft beneath. Even with not a  ║~─@─⌂║
+soul about, the square does not feel empty -- it holds the kept-breath   ║  │  ║
+hum of a place where news breaks and gossip travels, where the day's     ║⌂─•─⌂║
+first word and its last both get spoken aloud. Ways run off in every     ╚═════╝
+direction: north toward the pool, south to the market, west along the
+stilt-walk, east to the squat strongbox-house. Stand here a spell and
+the town will find you on its own.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Crier Toke (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Crier Toke glances up as you enter.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT N: Toke turn-in (31-end + gold + seven mouths) =====
+
+>> ask toke footing
+ask toke footing
+  [Quest complete. You could ask about the seven mouths whenever you want the longer tour.]
+
+*******************************************************************************
+
+ You have completed the quest: Find Your Footing!
+ type quests to track your progress on quests.
+
+*******************************************************************************
+.
+You receive 20 gold!
+Crier Toke says, "And done! Slates, shelves, taps -- the whole hub in one walk.
+Here, for your trouble. Now listen, because this is the part I save for people
+who finish things: the coulee has seven mouths. Seven breaks in the rim, and
+past every one, somebody or something that will teach you what the town cannot.
+Fighters in one, forge-smoke in another, green stink of potions, wild country,
+the quiet arts, old stones that talk if you read them, and a far hill where they
+put things down at distance. When you are ready, pick a mouth. Any mouth."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Crier Toke cocks his head at a far lane, both mouths going quiet at once to
+listen
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> quest
+quest
+ ┌─ .:Quests ( 0 out of 2 shown ) ──────────────────────────────────────────┐
+ └──────────────────────────────────────────────────────────────────────────┘
+ To see all quests (including completed), use quests all
+ 
+.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT O: seven mouths node =====
+
+>> ask toke mouths
+ask toke mouths
+  [The mouths open off the edges of town. The map command shows what you have found so far.]
+Crier Toke says, "Seven breaks in the coulee rim, and a path through every one.
+I call them mouths because the town eats what they bring back. Fighting in one,
+smithing in another, brewing, the wilds, folding -- the quiet art, mind you --
+old lore, and the far hill where they teach the long shot. The paths are marked
+off the shore and the square. Walk any of them"
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT P: sethome coulee =====
+
+>> sethome coulee
+sethome coulee
+Home set to Pothole Coulee (The Mending Hut). You will return here when you die.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> sethome
+sethome
+Current home: Pothole Coulee (The Mending Hut)
+Available locations:.
+  sethome default - Sanctum Basin.
+  sethome thornwall - Thornwall City (Temple Interior)
+  sethome stillwater - Stillwater (Temple of Stillwater)
+  sethome coulee - Pothole Coulee (The Mending Hut) (current)
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Footsteps cross the empty square somewhere behind you and fade off into a side
+lane.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> east
+east
+    >>> You head towards the east exit.
+
+
+.: [⌂] Strongbox House [Pothole Coulee]
+This squat blockhouse is built of fitted basalt thicker than anywhere    ╔═════╗
+else in town, and the air inside it goes cool and still the moment the   ║≈─~─⌂║
+heavy door swings shut behind you. Iron-banded strongboxes line the      ║│ │  ║
+walls in stacked rows, each one studded and locked, holding the saved    ║•─@  ║
+coin and kept treasures of folk who would rather not carry such things   ║│    ║
+through a frontier. A ledger desk stands under the room's one shuttered  ║•─⌂─~║
+window, its great book closed and squared, an inkpot capped beside it.   ╚═════╝
+Nothing here is loud or bright; the place is quiet the way a vault is
+quiet, faintly forbidding in a manner that turns, once you understand
+it, into something close to comfort. Whatever you set down here will be
+here when you come back.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+    ┌───────────────────────────────────────────────────────────────────┐
+                This is a bank! Type bank to deposit/withdraw.
+    └───────────────────────────────────────────────────────────────────┘
+
+Also here: Ledger-Keeper Croup (100%)
+
+Exits: north, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Saving users...
+===== BEAT Q: bank at Counting House 5208 =====
+
+>> bank
+Done.
+Saving rooms...Done.
+Saving other...Done.
+bank
+Ledger-Keeper Croup glances up as you enter.
+You have 269 gold on hand and 100 gold in the bank.
+You can deposit to or withdraw from the bank.
+.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> bank deposit all
+bank deposit all
+You deposit 269 gold.
+You now have 0 gold on hand and 369 gold in the bank.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> bank withdraw 5
+bank withdraw 5
+You withdraw 5 gold.
+You now have 5 gold on hand and 364 gold in the bank.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT R: Croup bank lesson =====
+
+>> ask croup bank
+ask croup bank
+  [Type bank at the counter to see your balance. Deposits keep gold safe no matter what happens to you out there.]
+Ledger-Keeper Croup says, "Simple as stone. Type bank and I tell you what you
+carry and what you keep here. Type bank deposit all -- or a number, if you are
+sentimental about pocket money -- and it is in the ledger. bank withdraw works
+the same, the other direction. What sits in the ledger cannot be lost on a bad
+road or spent on a worse evening. I recommend the ledger."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> west
+west
+    >>> You head towards the west exit.
+
+
+.: [•] Hub Square [Pothole Coulee]
+The town's heart opens out here across flat basalt slabs, worn smooth by ╔═════╗
+more feet than anyone has bothered to count. A weathered notice-post     ║~─≈─~║
+stands square in the middle, its boards layered thick with the crier's   ║│ │ │║
+latest word and a hundred older ones gone soft beneath. Even with not a  ║~─@─⌂║
+soul about, the square does not feel empty -- it holds the kept-breath   ║  │  ║
+hum of a place where news breaks and gossip travels, where the day's     ║⌂─•─⌂║
+first word and its last both get spoken aloud. Ways run off in every     ╚═════╝
+direction: north toward the pool, south to the market, west along the
+stilt-walk, east to the squat strongbox-house. Stand here a spell and
+the town will find you on its own.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Crier Toke (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Crier Toke glances up as you enter.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> north
+north
+    >>> You head towards the north exit.
+
+
+.: [≈] The Awakening Pool [Pothole Coulee]
+The coulee floor opens here into a wide stone bowl, its walls worn       ╔═════╗
+smooth by ancient floods. Dark water fills the pool nearly to the rim,   ║~ ▼ ▼║
+flat and still as poured glass -- no ripple, no current, no sound. Far   ║│ │ │║
+below the surface, something glows with pale blue-green light, steady    ║~─@─~║
+and deep, like a coal that never burns out. The basalt rim is polished   ║│ │ │║
+where countless hands have gripped it. This is where the Opened come     ║~─•─⌂║
+back to themselves.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Cleric Hadwen (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> east
+east
+    >>> You head towards the east exit.
+
+
+.: [~] East Shore Path [Pothole Coulee]
+Gravel crunches along the east shore here, the same packed path as the   ╔═════╗
+far side but turned to other work. A drifting smell of crushed herbs     ║▼ ▼ ▼║
+rolls down from the Mending Hut eastward -- bitter-green and sharp, the  ║│ │ │║
+smell of poultices and steeped roots. North, an overlook crag shoulders  ║≈─@─⌂║
+up out of the bowl wall, dark basalt against a bleached sky. This is the ║│ │  ║
+working side of the water, where the hurt and the worn-down come to be   ║•─⌂  ║
+made whole again. The pool waits west, still and deep.                   ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> east
+east
+    >>> You head towards the east exit.
+
+
+.: [⌂] The Mending Hut [Pothole Coulee]
+The hut is low and warm and smells of green things drying, the kind of   ╔═════╗
+smell that loosens a clenched body before the mind catches up. Bunches   ║▼ ▼  ║
+of herbs hang head-down from every rafter -- bitter root, sweet leaf,    ║│ │  ║
+grey moss -- turning slow in the heat off a banked fire. A row of cots   ║~─@─~║
+stands made-up along the long wall, blankets squared and turned back,    ║│    ║
+each one ready for whoever the water gives back next. Clean bandages sit ║⌂    ║
+rolled in a basket within arm's reach, white and soft and smelling of    ╚═════╝
+lye soap. The healer is not at her bench just now, but a pestle of half-
+ground salve waits there and the kettle is still warm, so she will not
+be long. Nothing in this room can harm you; this is the place the Opened
+are carried to be made whole again.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Sala the Mender (100%)
+
+Exits: east, north, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Sala the Mender glances up as you enter.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT S: Sala sethome lesson (5209) =====
+
+>> ask sala home
+ask sala home
+  [Type sethome coulee to wake here when you fall. Type sethome alone to see every place that will have you.]
+Sala the Mender says, "Listen, because this is the most useful thing anyone in
+this town will tell you: make this hut your home while you learn. Type sethome
+coulee and mean it. Then, when the world knocks you all the way down -- and
+while you are learning, it will -- you wake up here, on a clean bed, with me
+nearby. Not in a ditch. Here."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> west
+west
+    >>> You head towards the west exit.
+
+
+.: [~] East Shore Path [Pothole Coulee]
+Gravel crunches along the east shore here, the same packed path as the   ╔═════╗
+far side but turned to other work. A drifting smell of crushed herbs     ║▼ ▼ ▼║
+rolls down from the Mending Hut eastward -- bitter-green and sharp, the  ║│ │ │║
+smell of poultices and steeped roots. North, an overlook crag shoulders  ║≈─@─⌂║
+up out of the bowl wall, dark basalt against a bleached sky. This is the ║│ │  ║
+working side of the water, where the hurt and the worn-down come to be   ║•─⌂  ║
+made whole again. The pool waits west, still and deep.                   ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> west
+west
+    >>> You head towards the west exit.
+
+
+.: [≈] The Awakening Pool [Pothole Coulee]
+The coulee floor opens here into a wide stone bowl, its walls worn       ╔═════╗
+smooth by ancient floods. Dark water fills the pool nearly to the rim,   ║~ ▼ ▼║
+flat and still as poured glass -- no ripple, no current, no sound. Far   ║│ │ │║
+below the surface, something glows with pale blue-green light, steady    ║~─@─~║
+and deep, like a coal that never burns out. The basalt rim is polished   ║│ │ │║
+where countless hands have gripped it. This is where the Opened come     ║~─•─⌂║
+back to themselves.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Cleric Hadwen (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> west
+west
+    >>> You head towards the west exit.
+
+
+.: [~] West Shore Path [Pothole Coulee]
+A packed-gravel path runs along the west shore, crunching underfoot      ╔═════╗
+where countless feet have pressed it flat. To the south, stilt-houses    ║  ~ ▼║
+perch on their long stilts over the shallows, washing strung between     ║  │ │║
+them and cookfire-smoke curling up. The reeds thicken to the north,      ║⌂─@─≈║
+green and rustling, hiding the jetty where the fishers tie up. This is   ║  │ │║
+the lived-in side of the bowl -- all cookpot-smell and the low murmur of ║~─~─•║
+folk who call the coulee home. The pool lies east, dark and patient      ╚═════╝
+behind you.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT T: Wicker old-way (5210) =====
+
+>> ask wicker old way
+ask wicker old way
+Ask who what?
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> east
+east
+    >>> You head towards the east exit.
+
+
+.: [≈] The Awakening Pool [Pothole Coulee]
+The coulee floor opens here into a wide stone bowl, its walls worn       ╔═════╗
+smooth by ancient floods. Dark water fills the pool nearly to the rim,   ║~ ▼ ▼║
+flat and still as poured glass -- no ripple, no current, no sound. Far   ║│ │ │║
+below the surface, something glows with pale blue-green light, steady    ║~─@─~║
+and deep, like a coal that never burns out. The basalt rim is polished   ║│ │ │║
+where countless hands have gripped it. This is where the Opened come     ║~─•─⌂║
+back to themselves.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Cleric Hadwen (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> east
+east
+    >>> You head towards the east exit.
+
+
+.: [~] East Shore Path [Pothole Coulee]
+Gravel crunches along the east shore here, the same packed path as the   ╔═════╗
+far side but turned to other work. A drifting smell of crushed herbs     ║▼ ▼ ▼║
+rolls down from the Mending Hut eastward -- bitter-green and sharp, the  ║│ │ │║
+smell of poultices and steeped roots. North, an overlook crag shoulders  ║≈─@─⌂║
+up out of the bowl wall, dark basalt against a bleached sky. This is the ║│ │  ║
+working side of the water, where the hurt and the worn-down come to be   ║•─⌂  ║
+made whole again. The pool waits west, still and deep.                   ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> south
+south
+    >>> You head towards the south exit.
+
+
+.: [⌂] Strongbox House [Pothole Coulee]
+This squat blockhouse is built of fitted basalt thicker than anywhere    ╔═════╗
+else in town, and the air inside it goes cool and still the moment the   ║≈─~─⌂║
+heavy door swings shut behind you. Iron-banded strongboxes line the      ║│ │  ║
+walls in stacked rows, each one studded and locked, holding the saved    ║•─@  ║
+coin and kept treasures of folk who would rather not carry such things   ║│    ║
+through a frontier. A ledger desk stands under the room's one shuttered  ║•─⌂─~║
+window, its great book closed and squared, an inkpot capped beside it.   ╚═════╝
+Nothing here is loud or bright; the place is quiet the way a vault is
+quiet, faintly forbidding in a manner that turns, once you understand
+it, into something close to comfort. Whatever you set down here will be
+here when you come back.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+    ┌───────────────────────────────────────────────────────────────────┐
+                This is a bank! Type bank to deposit/withdraw.
+    └───────────────────────────────────────────────────────────────────┘
+
+Also here: Ledger-Keeper Croup (100%)
+
+Exits: north, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> south
+south
+You're bumping into walls.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Ledger-Keeper Croup glances up as you enter.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+>> south
+south
+You're bumping into walls.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT U: Esk portal transit (teleport ~11s in) =====
+
+>> ask esk passage
+ask esk passage
+Ask who what?
+[☀️ HP:██████████ SP:██████████ CP:██████████]:[Tip] Recipes and new spells are discovered by using crafting skills and spellcasting in the game world.
+ ┌─────────────────────────────────────────────────────────────────────────┐
+
+                                  @@@@@@@@@               
+                               @@@@@@@@@@@@@@@            
+                             @@@@@@@@@@@@@@@@@@@          
+                   ~~~~~ ~~ ~~~ ~~~~~~ ~~~~~~ ~~~~ ~~ ~~~~
+                   ~    ~     ~~   ~  ~   ~~  ~~~~     ~~ 
+                     ~      ~~   ~   ~~ ~~  ~~  ~~ ~~ ~~~  
+                     ~  ~~     ~         ~       ~~  ~~  ~
+                                 The sun sets.          
+
+ └─────────────────────────────────────────────────────────────────────────┘
+ [☾ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT V: arrival room (expect Thornwall Temple Interior 468) =====
+
+>> look
+look
+
+.: [⌂] Strongbox House [Pothole Coulee]
+This squat blockhouse is built of fitted basalt thicker than anywhere    ╔═════╗
+else in town, and the air inside it goes cool and still the moment the   ║≈─~─⌂║
+heavy door swings shut behind you. Iron-banded strongboxes line the      ║│ │  ║
+walls in stacked rows, each one studded and locked, holding the saved    ║•─@  ║
+coin and kept treasures of folk who would rather not carry such things   ║│    ║
+through a frontier. A ledger desk stands under the room's one shuttered  ║•─⌂─~║
+window, its great book closed and squared, an inkpot capped beside it.   ╚═════╝
+Nothing here is loud or bright; the place is quiet the way a vault is
+quiet, faintly forbidding in a manner that turns, once you understand
+it, into something close to comfort. Whatever you set down here will be
+here when you come back.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+    ┌───────────────────────────────────────────────────────────────────┐
+                This is a bank! Type bank to deposit/withdraw.
+    └───────────────────────────────────────────────────────────────────┘
+
+Also here: Ledger-Keeper Croup (100%)
+
+Exits: north, west
+
+[☾ HP:██████████ SP:██████████ CP:██████████]:
+===== DONE =====
+
+========================================================================
+FIXUP RUN — Wicker old-way + Esk portal (correct routing)
+========================================================================
+===== LOGIN =====
+Z!!MUSIC(static/audio/music/intro.mp3 V=20 L=-1 C=1)
+
+      .    *      .       *    .           *      .       *    .     
+          *      .                   .          *                    
+   .          .       *        .          .            *        .    
+        *           .      *         *          .      *            
+             .            .      .         .              .     *    
+
+ ____   ___   ____ __  __           _ 
+|  _ \ / _ \ / ___|  \/  |_   _  __| |
+| | | | | | | |  _| |\/| | | | |/ _` |
+| |_| | |_| | |_| | |  | | |_| | (_| |
+|____/ \___/ \____|_|  |_|\__,_|\__,_|
+
+        D e l u s i o n s   o f   G r a n d e u r
+
+      *    .      *       .    *           .      *       .    *     
+
+.: Welcome to Delusions of Grandeur, a MUD set on the world of Gaius.
+                                                      The Chrysalis awaits.
+
+================================================================================
+Note: Some legacy clients (zMUD, etc.) are not supported.
+We recommend Mudlet or the web client for the best experience.
+
+This port is for AI clients. Human players, please connect on port 33333.
+
+AI players: connect on port 55555. Using this port as an AI risks a ban.
+username (or "new"): 
+>> Mossfoot
+
+password: 
+>> cooleetest123
+
+Z!!MUSIC(Off)
+Warning: This account is not flagged as AI but connected on the AI port.
+ ╔══════════════════════════════════════════════════════════════════════════════╗
+ ║  .:  M E S A G E   O F   T H E   D A Y                                    ║
+ ╠══════════════════════════════════════════════════════════════════════════════╣
+ ║ TAKE AIM — Bows, crossbows, and primitive pistols have arrived: fire      ║
+ ║ instantly with shoot, even into the next room, then reload from an ammo     ║
+ ║ bundle. The revived ranged-combat skill rewards a keen eye, and Smith       ║
+ ║ Brindle in Stillwater stocks the gear. Watch for archers who keep their     ║
+ ║ distance and shoot back as they retreat. (2026-06-12.)                      ║
+ ║ WEATHER HAS COME — Storms are born over open water, roll inland gathering ║
+ ║ strength, and die against the mountains. Step outside and feel it; shelter  ║
+ ║ indoors and hear heavy rain drum on the roof. Try the weather command.      ║
+ ║ (2026-06-10.)                                                               ║
+ ║ QUIETER FIGHTS, YOUR CALL — set combatverbosity full, medium, or light to ║
+ ║ choose how much combat text you see. You always see deaths, big moves, and  ║
+ ║ every blow that lands on you. (2026-06-10.)                                 ║
+ ║ Novel: https://github.com/pruuk/DOGMud/blob/master/what_the_moons_keep.md   ║
+ ║ Full patch notes:                                                           ║
+ ║ https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md                  ║
+ ╚══════════════════════════════════════════════════════════════════════════════╝
+.
+.: 1 user online
+╒══════════╕════════════════════════════╕════════╕══════╕
+│ Name     │ Title                      │ Online │ Role │
+└──────────┘────────────────────────────┘────────┘──────┘
+│ Mossfoot │ Awakened Novice Generalist │ 0s     │ user │
+└──────────┘────────────────────────────┘────────┘──────┘
+.
+You have 0 unread messages and 0 old messages. Type inbox to view your messages.
+
+.: [⌂] Strongbox House [Pothole Coulee]
+This squat blockhouse is built of fitted basalt thicker than anywhere    ╔═════╗
+else in town, and the air inside it goes cool and still the moment the   ║≈─~─⌂║
+heavy door swings shut behind you. Iron-banded strongboxes line the      ║│ │  ║
+walls in stacked rows, each one studded and locked, holding the saved    ║•─@  ║
+coin and kept treasures of folk who would rather not carry such things   ║│    ║
+through a frontier. A ledger desk stands under the room's one shuttered  ║•─⌂─~║
+window, its great book closed and squared, an inkpot capped beside it.   ╚═════╝
+Nothing here is loud or bright; the place is quiet the way a vault is
+quiet, faintly forbidding in a manner that turns, once you understand
+it, into something close to comfort. Whatever you set down here will be
+here when you come back.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+    ┌───────────────────────────────────────────────────────────────────┐
+                This is a bank! Type bank to deposit/withdraw.
+    └───────────────────────────────────────────────────────────────────┘
+
+Also here: Ledger-Keeper Croup (100%)
+
+Exits: north, west
+
+[☾ HP:██████████ SP:██████████ CP:██████████]:
+===== REORIENT: where did we end up =====
+
+>> look
+look
+
+.: [⌂] Strongbox House [Pothole Coulee]
+This squat blockhouse is built of fitted basalt thicker than anywhere    ╔═════╗
+else in town, and the air inside it goes cool and still the moment the   ║≈─~─⌂║
+heavy door swings shut behind you. Iron-banded strongboxes line the      ║│ │  ║
+walls in stacked rows, each one studded and locked, holding the saved    ║•─@  ║
+coin and kept treasures of folk who would rather not carry such things   ║│    ║
+through a frontier. A ledger desk stands under the room's one shuttered  ║•─⌂─~║
+window, its great book closed and squared, an inkpot capped beside it.   ╚═════╝
+Nothing here is loud or bright; the place is quiet the way a vault is
+quiet, faintly forbidding in a manner that turns, once you understand
+it, into something close to comfort. Whatever you set down here will be
+here when you come back.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+    ┌───────────────────────────────────────────────────────────────────┐
+                This is a bank! Type bank to deposit/withdraw.
+    └───────────────────────────────────────────────────────────────────┘
+
+Also here: Ledger-Keeper Croup (100%)
+
+Exits: north, west
+
+[☾ HP:██████████ SP:██████████ CP:██████████]:
+>> west
+west
+    >>> You head towards the west exit.
+
+
+.: [•] Hub Square [Pothole Coulee]
+The town's heart opens out here across flat basalt slabs, worn smooth by ╔═════╗
+more feet than anyone has bothered to count. A weathered notice-post     ║~─≈─~║
+stands square in the middle, its boards layered thick with the crier's   ║│ │ │║
+latest word and a hundred older ones gone soft beneath. Even with not a  ║~─@─⌂║
+soul about, the square does not feel empty -- it holds the kept-breath   ║  │  ║
+hum of a place where news breaks and gossip travels, where the day's     ║⌂─•─⌂║
+first word and its last both get spoken aloud. Ways run off in every     ╚═════╝
+direction: north toward the pool, south to the market, west along the
+stilt-walk, east to the squat strongbox-house. Stand here a spell and
+the town will find you on its own.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Crier Toke (100%)
+
+Exits: east, north, south, west
+
+[☾ HP:██████████ SP:██████████ CP:██████████]:Crier Toke glances up as you enter.
+[☾ HP:██████████ SP:██████████ CP:██████████]:Crier Toke calls the hour and the news in one breath while the throat-mouth hums
+the next line under it
+[☾ HP:██████████ SP:██████████ CP:██████████]:
+>> north
+north
+    >>> You head towards the north exit.
+
+
+.: [≈] The Awakening Pool [Pothole Coulee]
+The coulee floor opens here into a wide stone bowl, its walls worn       ╔═════╗
+smooth by ancient floods. Dark water fills the pool nearly to the rim,   ║~ ▼ ▼║
+flat and still as poured glass -- no ripple, no current, no sound. Far   ║│ │ │║
+below the surface, something glows with pale blue-green light, steady    ║~─@─~║
+and deep, like a coal that never burns out. The basalt rim is polished   ║│ │ │║
+where countless hands have gripped it. This is where the Opened come     ║~─•─⌂║
+back to themselves.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Cleric Hadwen (100%)
+
+Exits: east, north, south, west
+
+[☾ HP:██████████ SP:██████████ CP:██████████]:
+>> west
+west
+    >>> You head towards the west exit.
+
+
+.: [~] West Shore Path [Pothole Coulee]
+A packed-gravel path runs along the west shore, crunching underfoot      ╔═════╗
+where countless feet have pressed it flat. To the south, stilt-houses    ║  ~ ▼║
+perch on their long stilts over the shallows, washing strung between     ║  │ │║
+them and cookfire-smoke curling up. The reeds thicken to the north,      ║⌂─@─≈║
+green and rustling, hiding the jetty where the fishers tie up. This is   ║  │ │║
+the lived-in side of the bowl -- all cookpot-smell and the low murmur of ║~─~─•║
+folk who call the coulee home. The pool lies east, dark and patient      ╚═════╝
+behind you.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☾ HP:██████████ SP:██████████ CP:██████████]:
+>> west
+west
+    >>> You head towards the west exit.
+
+
+.: [⌂] Wickerwork Cottage [Pothole Coulee]
+The walls of this snug little cottage are woven, not built -- panels of  ╔═════╗
+silver willow wickerwork plaited tight and daubed at the seams, so the   ║    ~║
+whole place creaks soft and breathing-like when the wind leans on it. A  ║    │║
+low hearth glows at the heart of the room, its smoke curling up through  ║▼─@─~║
+a hole in the thatch and hanging the air with the smell of burning herb  ║    │║
+and old fat. Charms crowd every surface and dangle from every cross-     ║  ~─~║
+rod: knots of red yarn, holed stones, bird skulls, twists of straw --    ╚═════╝
+and scattered among them, here and there, the plain tin medallions of
+the Church, fewer by far and half-lost in the older company. A clutch of
+remedies that predate the school sits steeping in clay crocks along the
+sill. It is warm here, and welcoming, and just strange enough that the
+hair stirs on your arms without your knowing quite why.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Granny Wicker (100%)
+
+Exits: east, west
+
+[☾ HP:██████████ SP:██████████ CP:██████████]:Granny Wicker glances up as you enter.
+[☾ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT T2: at Wickerwork Cottage =====
+
+>> look
+look
+
+.: [⌂] Wickerwork Cottage [Pothole Coulee]
+The walls of this snug little cottage are woven, not built -- panels of  ╔═════╗
+silver willow wickerwork plaited tight and daubed at the seams, so the   ║    ~║
+whole place creaks soft and breathing-like when the wind leans on it. A  ║    │║
+low hearth glows at the heart of the room, its smoke curling up through  ║▼─@─~║
+a hole in the thatch and hanging the air with the smell of burning herb  ║    │║
+and old fat. Charms crowd every surface and dangle from every cross-     ║  ~─~║
+rod: knots of red yarn, holed stones, bird skulls, twists of straw --    ╚═════╝
+and scattered among them, here and there, the plain tin medallions of
+the Church, fewer by far and half-lost in the older company. A clutch of
+remedies that predate the school sits steeping in clay crocks along the
+sill. It is warm here, and welcoming, and just strange enough that the
+hair stirs on your arms without your knowing quite why.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Granny Wicker (100%)
+
+Exits: east, west
+
+[☾ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT T2: Wicker old-way node =====
+
+>> ask wicker old way
+ask wicker old way
+  [You could ask about the charms, or a remedy.]
+Granny Wicker says, "The pool was opening folk long before the Chrysalis raised
+a roof and put a word to it. Hadwen is a good man and his rite is true -- but it
+is a young coat on an old body, duck. The coulee remembers the first names of
+things. Walk it gently and it may tell you one or two."
+[☾ HP:██████████ SP:██████████ CP:██████████]:
+>> east
+east
+    >>> You head towards the east exit.
+
+
+.: [~] West Shore Path [Pothole Coulee]
+A packed-gravel path runs along the west shore, crunching underfoot      ╔═════╗
+where countless feet have pressed it flat. To the south, stilt-houses    ║  ~ ▼║
+perch on their long stilts over the shallows, washing strung between     ║  │ │║
+them and cookfire-smoke curling up. The reeds thicken to the north,      ║⌂─@─≈║
+green and rustling, hiding the jetty where the fishers tie up. This is   ║  │ │║
+the lived-in side of the bowl -- all cookpot-smell and the low murmur of ║~─~─•║
+folk who call the coulee home. The pool lies east, dark and patient      ╚═════╝
+behind you.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☾ HP:██████████ SP:██████████ CP:██████████]:
+>> east
+east
+    >>> You head towards the east exit.
+
+
+.: [≈] The Awakening Pool [Pothole Coulee]
+The coulee floor opens here into a wide stone bowl, its walls worn       ╔═════╗
+smooth by ancient floods. Dark water fills the pool nearly to the rim,   ║~ ▼ ▼║
+flat and still as poured glass -- no ripple, no current, no sound. Far   ║│ │ │║
+below the surface, something glows with pale blue-green light, steady    ║~─@─~║
+and deep, like a coal that never burns out. The basalt rim is polished   ║│ │ │║
+where countless hands have gripped it. This is where the Opened come     ║~─•─⌂║
+back to themselves.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Cleric Hadwen (100%)
+
+Exits: east, north, south, west
+
+[☾ HP:██████████ SP:██████████ CP:██████████]:
+>> south
+south
+    >>> You head towards the south exit.
+
+
+.: [•] Hub Square [Pothole Coulee]
+The town's heart opens out here across flat basalt slabs, worn smooth by ╔═════╗
+more feet than anyone has bothered to count. A weathered notice-post     ║~─≈─~║
+stands square in the middle, its boards layered thick with the crier's   ║│ │ │║
+latest word and a hundred older ones gone soft beneath. Even with not a  ║~─@─⌂║
+soul about, the square does not feel empty -- it holds the kept-breath   ║  │  ║
+hum of a place where news breaks and gossip travels, where the day's     ║⌂─•─⌂║
+first word and its last both get spoken aloud. Ways run off in every     ╚═════╝
+direction: north toward the pool, south to the market, west along the
+stilt-walk, east to the squat strongbox-house. Stand here a spell and
+the town will find you on its own.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Crier Toke (100%)
+
+Exits: east, north, south, west
+
+[☾ HP:██████████ SP:██████████ CP:██████████]:Crier Toke glances up as you enter.
+[☾ HP:██████████ SP:██████████ CP:██████████]:
+>> south
+south
+    >>> You head towards the south exit.
+
+
+.: [•] Market Row [Pothole Coulee]
+A short run of awnings and stall-fronts crowds the lane here, strung     ╔═════╗
+between the inn at the west end and the provisions store at the east.    ║~─•─⌂║
+The awnings are patched canvas and salvaged sailcloth, slung from the    ║  │  ║
+eaves to throw shade across the goods laid out beneath them, and they    ║⌂─@─⌂║
+snap and belly whenever the coulee breeze comes down the bowl. This is   ║  │  ║
+the town's barter-artery: the air carries the haggle-murmur of folk      ║  ⌂  ║
+talking prices, the clink of coin changing hands, the smell of smoked    ╚═════╝
+fish and tallow and sun-warmed dust. Even between customers the stalls
+hold their wares out hopeful, waiting for the next pair of boots to
+slow. South the lane runs on toward a humming arch the town keeps at its
+threshold.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☾ HP:██████████ SP:██████████ CP:██████████]:
+>> south
+south
+    >>> You head towards the south exit.
+
+
+.: [⌂] The Threshold House [Pothole Coulee]
+A low roof of weathered plank has been raised over this spot, less a     ╔═════╗
+house than a shelter built to keep weather off the thing it guards: a    ║⌂─•─⌂║
+free-standing arch of basalt, older than the town, older maybe than the  ║  │  ║
+town's oldest stories. The arch stands rooted in the rock floor, its     ║  @  ║
+stones fitted by no hand anyone remembers, and from somewhere in it      ║     ║
+comes a faint, steady hum -- felt in the teeth more than heard in the    ║     ║
+ear. Step near and the air goes thin and tingling, the way it does       ╚═════╝
+before a storm or a held note. A plain three-legged stool sits beside
+the arch where a warden keeps watch over comers and goers. There is no
+menace here, only the deep patient wonder of something that has waited a
+very long time and is in no hurry to stop.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Warden Esk (100%)
+
+Exits: north
+
+[☾ HP:██████████ SP:██████████ CP:██████████]:Warden Esk whittles a curl off the driftwood stick without ever looking down at
+his hands
+[☾ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT U2: at Threshold House =====
+
+>> look
+look
+
+.: [⌂] The Threshold House [Pothole Coulee]
+A low roof of weathered plank has been raised over this spot, less a     ╔═════╗
+house than a shelter built to keep weather off the thing it guards: a    ║⌂─•─⌂║
+free-standing arch of basalt, older than the town, older maybe than the  ║  │  ║
+town's oldest stories. The arch stands rooted in the rock floor, its     ║  @  ║
+stones fitted by no hand anyone remembers, and from somewhere in it      ║     ║
+comes a faint, steady hum -- felt in the teeth more than heard in the    ║     ║
+ear. Step near and the air goes thin and tingling, the way it does       ╚═════╝
+before a storm or a held note. A plain three-legged stool sits beside
+the arch where a warden keeps watch over comers and goers. There is no
+menace here, only the deep patient wonder of something that has waited a
+very long time and is in no hurry to stop.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Warden Esk (100%)
+
+Exits: north
+
+[☾ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT U2: Esk portal transit (teleport ~11s in) =====
+
+>> ask esk passage
+ask esk passage
+Warden Esk says, "So. The coulee has taught you what it can, for now."
+[☾ HP:██████████ SP:██████████ CP:██████████]:Warden Esk rises from the stool and sets one broad hand flat against the basalt
+arch. The ember-light behind his eyes brightens, banked coals breathed on.
+[☾ HP:██████████ SP:██████████ CP:██████████]:Warden Esk says, "Thornwall sits on the far side -- temple stone, city noise,
+more people than you have ever needed. Walk through. The arch keeps no count and
+no grudge"
+[☾ HP:██████████ SP:██████████ CP:██████████]:
+===== BEAT V2: arrival room (expect Thornwall Temple Interior) =====
+
+>> look
+look
+
+.: [•] Temple Interior (overcast) [Thornwall City]
+The interior of the temple is a single vaulted nave, its ceiling lost in ╔═════╗
+shadows above. Stone pillars line the walls, carved with figures whose   ║     ║
+features have been softened by centuries of touching hands. The floor is ║     ║
+paved with dark slate, worn to a mirror sheen in the aisles. Candles     ║  @  ║
+burn in iron stands along the walls, their light warm but insufficient   ║  │  ║
+to reach the upper darkness. At the far end, a simple stone altar holds  ║  • •║
+a brass bowl that smokes gently with incense. The temple serves no       ╚═════╝
+single deity -- it is a place for contemplation, community, and the
+management of tithes.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+A flat gray ceiling of cloud hangs low overhead, dulling every color.
+
+Exits: south, up
+
+[☾ HP:██████████ SP:██████████ CP:██████████]:
+===== DONE =====
