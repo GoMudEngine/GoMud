@@ -124,23 +124,22 @@ func registerCrafterTestRecipe() *crafting.RecipeSpec {
 // newShopWithIngredients returns a freshly-registered ShopInventory that
 // contains `qty` units of the test ingredient and is in the cache.
 //
-// RegisterShop seeds Current from RestockQty for supply-cart items and
-// zeros it for crafted items (RestockQty=0). To bypass that seeding we
-// register with RestockQty=qty (non-zero so RegisterShop seeds Current=qty),
-// then set RestockQty back to 0 to reflect crafter-item semantics.
+// RegisterShop seeds Current at the abundance level (not RestockQty), so we
+// register then force Current=qty and RestockQty=0 to reflect crafter-item
+// semantics (supply cart doesn't refill it, only crafting does).
 func newShopWithIngredients(qty int) *shops.ShopInventory {
 	shops.ClearCache()
 	inv := shops.RegisterShop("test_zone", 9999, 1, shops.ShopInventory{
 		Gold:         500,
 		StartingGold: 500,
 		Stock: []shops.StockEntry{
-			// Use RestockQty=qty so RegisterShop seeds Current=qty.
 			{ItemId: crafterTestIngredientID, RestockQty: qty, MaxStock: 20},
 		},
 	})
-	// Reset RestockQty to 0 so the entry behaves as a crafter-sourced item
-	// (supply cart doesn't refill it, only crafting does).
+	// Force the exact stock the test expects, then zero RestockQty so the
+	// entry behaves as a crafter-sourced item.
 	if e := inv.GetStock(crafterTestIngredientID); e != nil {
+		e.Current = qty
 		e.RestockQty = 0
 	}
 	return inv

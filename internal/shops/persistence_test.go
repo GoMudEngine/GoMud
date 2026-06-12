@@ -49,15 +49,41 @@ func TestRegisterShop_NoDisk_SeedsFromTemplate(t *testing.T) {
 	assert.Equal(t, 42, inv.MobId)
 	assert.Equal(t, 100, inv.RoomId)
 
-	// Stocked item initialised to RestockQty
+	// Stocked item seeded at abundance: ceil(RestockQty 5 × threshold 3.0) = 15,
+	// capped at MaxStock 15 → 15. A fresh shop opens fully provisioned, not at
+	// the restock-batch level (which made every fresh shop list at ~2.36x).
 	entry := inv.GetStock(10)
 	require.NotNil(t, entry)
-	assert.Equal(t, 5, entry.Current, "stocked item should be seeded to RestockQty")
+	assert.Equal(t, 15, entry.Current, "stocked item should be seeded at abundance")
 
 	// NPC-crafted item stays at 0
 	crafted := inv.GetStock(20)
 	require.NotNil(t, crafted)
 	assert.Equal(t, 0, crafted.Current, "crafted item should start at 0")
+}
+
+// TestRegisterShop_SeedsAtAbundance verifies the fresh-seed rule:
+// Current = min(MaxStock, ceil(RestockQty × AbundanceThreshold)); 0 when
+// RestockQty == 0. AbundanceThreshold default is 3.0.
+func TestRegisterShop_SeedsAtAbundance(t *testing.T) {
+	ClearCache()
+
+	tmpl := ShopInventory{
+		Gold:         200,
+		StartingGold: 200,
+		Stock: []StockEntry{
+			{ItemId: 10, RestockQty: 5, MaxStock: 20, Current: 0}, // 15 < 20 → 15
+			{ItemId: 20, RestockQty: 5, MaxStock: 8, Current: 0},  // 15 capped → 8
+			{ItemId: 30, RestockQty: 0, MaxStock: 8, Current: 0},  // crafted → 0
+		},
+	}
+
+	inv := RegisterShop("testzone", 7, 700, tmpl)
+	require.NotNil(t, inv)
+
+	assert.Equal(t, 15, inv.GetStock(10).Current, "RestockQty 5 / MaxStock 20 → 15")
+	assert.Equal(t, 8, inv.GetStock(20).Current, "RestockQty 5 / MaxStock 8 → capped at 8")
+	assert.Equal(t, 0, inv.GetStock(30).Current, "RestockQty 0 → 0")
 }
 
 func TestRegisterShop_ReturnsCachedOnSecondCall(t *testing.T) {
