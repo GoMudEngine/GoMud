@@ -14,6 +14,24 @@ import sys
 import yaml
 
 ROOMS_DIR = os.path.join("_datafiles", "world", "dogmud", "rooms", "pothole_coulee")
+MOBS_DIR = os.path.join("_datafiles", "world", "dogmud", "mobs", "pothole_coulee")
+
+# Pothole Coulee NPC roster (Phase M). Per mob:
+#   (expected_filename, name, host_room). All 8 are non-combatant, charm-immune,
+#   maxwander 0, groups {humanoid, coulee_folk}, zone "Pothole Coulee".
+# 9104 (Trader Onna) is additionally the shopkeeper and must carry a non-empty
+# character.shop list with itemid entries.
+NPC_MANIFEST = {
+    9100: ("9100-cleric_hadwen.yaml", "Cleric Hadwen", 5200),
+    9101: ("9101-innkeep_tally.yaml", "Innkeep Tally", 5205),
+    9102: ("9102-sala_the_mender.yaml", "Sala the Mender", 5209),
+    9103: ("9103-ledger_keeper_croup.yaml", "Ledger-Keeper Croup", 5208),
+    9104: ("9104-trader_onna.yaml", "Trader Onna", 5207),
+    9105: ("9105-granny_wicker.yaml", "Granny Wicker", 5210),
+    9106: ("9106-crier_toke.yaml", "Crier Toke", 5203),
+    9107: ("9107-warden_esk.yaml", "Warden Esk", 5215),
+}
+SHOPKEEPER_MOBID = 9104
 
 # (title, biome, (x,y,z), {dir: target}, min_nouns). biome None = not asserted (stubs).
 # Exit sets are the EXACT expected set incl. stub-attachment exits added to hosts.
@@ -81,6 +99,58 @@ def check_room(rid, spec):
     return fails
 
 
+def check_npc(mid, spec):
+    fname, name, host_room = spec
+    path = os.path.join(MOBS_DIR, fname)
+    fails = []
+    if not os.path.exists(path):
+        return [f"file missing: {path}"]
+    with open(path, encoding="utf-8") as fh:
+        m = yaml.safe_load(fh)
+    if m.get("mobid") != mid:
+        fails.append(f"mobid {m.get('mobid')!r} != {mid}")
+    if m.get("zone") != "Pothole Coulee":
+        fails.append(f"zone {m.get('zone')!r} != 'Pothole Coulee'")
+    if m.get("non_combatant") is not True:
+        fails.append(f"non_combatant {m.get('non_combatant')!r} != True")
+    if m.get("charm_immune") is not True:
+        fails.append(f"charm_immune {m.get('charm_immune')!r} != True")
+    if m.get("maxwander") != 0:
+        fails.append(f"maxwander {m.get('maxwander')!r} != 0")
+    groups = set(m.get("groups") or [])
+    for g in ("humanoid", "coulee_folk"):
+        if g not in groups:
+            fails.append(f"groups missing {g!r}")
+    char = m.get("character") or {}
+    if char.get("name") != name:
+        fails.append(f"name {char.get('name')!r} != {name!r}")
+
+    # Host room spawninfo must list this mobid.
+    rpath = os.path.join(ROOMS_DIR, f"{host_room}.yaml")
+    if not os.path.exists(rpath):
+        fails.append(f"host room file missing: {rpath}")
+    else:
+        with open(rpath, encoding="utf-8") as fh:
+            r = yaml.safe_load(fh)
+        spawn_ids = {s.get("mobid") for s in (r.get("spawninfo") or [])}
+        if mid not in spawn_ids:
+            fails.append(f"host room {host_room} spawninfo {spawn_ids} missing mobid {mid}")
+
+    # Shopkeeper must carry a non-empty shop with at least one itemid entry.
+    if mid == SHOPKEEPER_MOBID:
+        shop = char.get("shop") or []
+        item_entries = [s for s in shop if isinstance(s, dict) and s.get("itemid") is not None]
+        if not item_entries:
+            fails.append(f"shop empty or has no itemid entries ({len(shop)} rows)")
+
+    # No digits anywhere in the description body (player-facing immersion rule).
+    desc = char.get("description") or ""
+    if any(ch.isdigit() for ch in desc):
+        bad = sorted({ch for ch in desc if ch.isdigit()})
+        fails.append(f"description contains digit(s): {bad}")
+    return fails
+
+
 def main():
     print(f"{'ROOM':<6} {'RESULT':<6} DETAIL")
     print("-" * 70)
@@ -94,7 +164,22 @@ def main():
             print(f"{rid:<6} {'PASS':<6}")
     print("-" * 70)
     print(f"{len(MANIFEST)} rooms checked, {total_fail} FAIL")
-    return 1 if total_fail else 0
+
+    print()
+    print(f"{'NPC':<6} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    npc_fail = 0
+    for mid in sorted(NPC_MANIFEST):
+        fails = check_npc(mid, NPC_MANIFEST[mid])
+        if fails:
+            npc_fail += 1
+            print(f"{mid:<6} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{mid:<6} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(NPC_MANIFEST)} NPCs checked, {npc_fail} FAIL")
+
+    return 1 if (total_fail or npc_fail) else 0
 
 
 if __name__ == "__main__":

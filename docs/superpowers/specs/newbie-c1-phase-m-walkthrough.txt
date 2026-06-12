@@ -1,0 +1,787 @@
+========================================================================
+Pothole Coulee — Newbie C1 Phase-M NPC Review Walkthrough
+========================================================================
+Captured : 2026-06-12T14:44:11
+Server   : dogmud-m2.exe (worktree feature+newbie-area), mobs loadedCount=238
+Method   : AI port 55555 as smoketester; teleport-per-room (walking
+           desyncs), ~3s command pacing; ANSI/telnet stripped.
+NPCs     : 9100 Hadwen(5200) 9106 Toke(5203) 9101 Tally(5205)
+           9104 Onna(5207,+list) 9103 Croup(5208) 9102 Sala(5209)
+           9105 Wicker(5210) 9107 Esk(5215). Idle capture: 5203 + 5205.
+
+===== LOGIN =====
+      .    *      .       *    .           *      .       *    .     
+          *      .                   .          *                    
+   .          .       *        .          .            *        .    
+        *           .      *         *          .      *            
+             .            .      .         .              .     *    
+
+ ____   ___   ____ __  __           _ 
+|  _ \ / _ \ / ___|  \/  |_   _  __| |
+| | | | | | | |  _| |\/| | | | |/ _` |
+| |_| | |_| | |_| | |  | | |_| | (_| |
+|____/ \___/ \____|_|  |_|\__,_|\__,_|
+
+        D e l u s i o n s   o f   G r a n d e u r
+
+      *    .      *       .    *           .      *       .    *     
+
+.: Welcome to Delusions of Grandeur, a MUD set on the world of Gaius.
+                                                      The Chrysalis awaits.
+
+================================================================================
+Note: Some legacy clients (zMUD, etc.) are not supported.
+We recommend Mudlet or the web client for the best experience.
+
+This port is for AI clients. Human players, please connect on port 33333.
+
+AI players: connect on port 55555. Using this port as an AI risks a ban.
+username (or "new"): 
+password: 
+User is already connected. Kick them? [y/n]: 
+Reconnecting...
+ ╔══════════════════════════════════════════════════════════════════════════════╗
+ ║  .:  M E S A G E   O F   T H E   D A Y                                    ║
+ ╠══════════════════════════════════════════════════════════════════════════════╣
+ ║ TAKE AIM — Bows, crossbows, and primitive pistols have arrived: fire      ║
+ ║ instantly with shoot, even into the next room, then reload from an ammo     ║
+ ║ bundle. The revived ranged-combat skill rewards a keen eye, and Smith       ║
+ ║ Brindle in Stillwater stocks the gear. Watch for archers who keep their     ║
+ ║ distance and shoot back as they retreat. (2026-06-12.)                      ║
+ ║ WEATHER HAS COME — Storms are born over open water, roll inland gathering ║
+ ║ strength, and die against the mountains. Step outside and feel it; shelter  ║
+ ║ indoors and hear heavy rain drum on the roof. Try the weather command.      ║
+ ║ (2026-06-10.)                                                               ║
+ ║ QUIETER FIGHTS, YOUR CALL — set combatverbosity full, medium, or light to ║
+ ║ choose how much combat text you see. You always see deaths, big moves, and  ║
+ ║ every blow that lands on you. (2026-06-10.)                                 ║
+ ║ Novel: https://github.com/pruuk/DOGMud/blob/master/what_the_moons_keep.md   ║
+ ║ Full patch notes:                                                           ║
+ ║ https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md                  ║
+ ╚══════════════════════════════════════════════════════════════════════════════╝
+.
+.: 1 user online (0 human, 1 AI)
+╒════════╕══════════════════╕════════════════════════════╕════════╕═══════╕════════════════╕════════╕
+│ UserId │ Name             │ Title                      │ Online │ Role  │ Zone           │ RoomId │
+└────────┘──────────────────┘────────────────────────────┘────────┘───────┘────────────────┘────────┘
+│ 1      │ smoketester [AI] │ Awakened Novice Generalist │ 44s    │ admin │ Pothole Coulee │ 5200   │
+└────────┘──────────────────┘────────────────────────────┘────────┘───────┘────────────────┘────────┘
+.
+You have 0 unread messages and 0 old messages. Type inbox to view your messages.
+
+.: [≈] The Awakening Pool [Pothole Coulee]
+The coulee floor opens here into a wide stone bowl, its walls worn       ╔═════╗
+smooth by ancient floods. Dark water fills the pool nearly to the rim,   ║~ ▼ ▼║
+flat and still as poured glass -- no ripple, no current, no sound. Far   ║│ │ │║
+below the surface, something glows with pale blue-green light, steady    ║~─@─~║
+and deep, like a coal that never burns out. The basalt rim is polished   ║│ │ │║
+where countless hands have gripped it. This is where the Opened come     ║~─•─⌂║
+back to themselves.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Cleric Hadwen (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5200 — Cleric Hadwen =====
+teleport 5200
+Moved to room 5200.
+
+.: [≈] The Awakening Pool [Pothole Coulee]
+The coulee floor opens here into a wide stone bowl, its walls worn       ╔═════╗
+smooth by ancient floods. Dark water fills the pool nearly to the rim,   ║~ ▼ ▼║
+flat and still as poured glass -- no ripple, no current, no sound. Far   ║│ │ │║
+below the surface, something glows with pale blue-green light, steady    ║~─@─~║
+and deep, like a coal that never burns out. The basalt rim is polished   ║│ │ │║
+where countless hands have gripped it. This is where the Opened come     ║~─•─⌂║
+back to themselves.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Cleric Hadwen (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:look
+
+.: [≈] The Awakening Pool [Pothole Coulee]
+The coulee floor opens here into a wide stone bowl, its walls worn       ╔═════╗
+smooth by ancient floods. Dark water fills the pool nearly to the rim,   ║~ ▼ ▼║
+flat and still as poured glass -- no ripple, no current, no sound. Far   ║│ │ │║
+below the surface, something glows with pale blue-green light, steady    ║~─@─~║
+and deep, like a coal that never burns out. The basalt rim is polished   ║│ │ │║
+where countless hands have gripped it. This is where the Opened come     ║~─•─⌂║
+back to themselves.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Cleric Hadwen (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:look hadwen
+
+.: Cleric Hadwen
+ ┌─ .:Description ────────────────────────────────────────────────────────────┐
+   Hadwen tends the Awakening Pool the way other men tend a hearth fire,
+   quietly and without ever quite leaving it. He is broad and slow-moving,
+   his robe damp at the hem from a lifetime of kneeling at the water's edge
+   to draw the cold-blinking Opened back up into themselves. When he speaks
+   he does not hurry; he has explained this same small miracle a thousand
+   times, to a thousand frightened faces, and he still means every word as
+   if it were the first. Pale chitin plates run in a neat seam along the
+   line of his jaw, hard and faintly ridged, and he wears them as plainly
+   as a beard -- the water gave them to him the same year it gave him this
+   work. His patience is not weariness but a kind of deep, banked warmth,
+   the sort that outlasts whatever storm walks in the door. 
+   Cleric Hadwen is in perfect health.
+ └────────────────────────────────────────────────────────────────────────────┘
+
+┌─ .:Equipment ──────────────────────────────────────────────────────────────┐
+   Weapon:     -nothing-
+   Offhand:    -nothing-
+   Head:       -nothing-
+   Neck:       -nothing-
+   Shoulders:  -nothing-
+   Body:       -nothing-
+   Back:       -nothing-
+   Belt:       -nothing-
+   Wrist:      -nothing-
+   Wrist:      -nothing-
+   Gloves:     -nothing-
+   Ring:       -nothing-
+   Ring:       -nothing-
+   Legs:       -nothing-
+   Feet:       -nothing-
+   Components: -nothing-
+ └────────────────────────────────────────────────────────────────────────────┘
+ Carrying: no objects
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5203 — Crier Toke =====
+teleport 5203
+Moved to room 5203.
+
+.: [•] Hub Square [Pothole Coulee]
+The town's heart opens out here across flat basalt slabs, worn smooth by ╔═════╗
+more feet than anyone has bothered to count. A weathered notice-post     ║~─≈─~║
+stands square in the middle, its boards layered thick with the crier's   ║│ │ │║
+latest word and a hundred older ones gone soft beneath. Even with not a  ║~─@─⌂║
+soul about, the square does not feel empty -- it holds the kept-breath   ║  │  ║
+hum of a place where news breaks and gossip travels, where the day's     ║⌂─•─⌂║
+first word and its last both get spoken aloud. Ways run off in every     ╚═════╝
+direction: north toward the pool, south to the market, west along the
+stilt-walk, east to the squat strongbox-house. Stand here a spell and
+the town will find you on its own.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Crier Toke (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:look
+
+.: [•] Hub Square [Pothole Coulee]
+The town's heart opens out here across flat basalt slabs, worn smooth by ╔═════╗
+more feet than anyone has bothered to count. A weathered notice-post     ║~─≈─~║
+stands square in the middle, its boards layered thick with the crier's   ║│ │ │║
+latest word and a hundred older ones gone soft beneath. Even with not a  ║~─@─⌂║
+soul about, the square does not feel empty -- it holds the kept-breath   ║  │  ║
+hum of a place where news breaks and gossip travels, where the day's     ║⌂─•─⌂║
+first word and its last both get spoken aloud. Ways run off in every     ╚═════╝
+direction: north toward the pool, south to the market, west along the
+stilt-walk, east to the squat strongbox-house. Stand here a spell and
+the town will find you on its own.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Crier Toke (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:look toke
+
+.: Crier Toke
+ ┌─ .:Description ────────────────────────────────────────────────────────────┐
+   Toke is the town's voice, and he comes by the work honestly, for he was
+   born with twice the means to do it. He stands the square from first
+   light to last, reading the notice-post, gathering the day's word off
+   every traveler and gossip that crosses the slabs, and giving it all back
+   louder than he got it. Below his proper mouth sits a second, set low at
+   the throat, and it is the loud one -- it carries the call across the
+   square while the upper mouth shapes the smaller talk, so that he can
+   hail a newcomer and finish a sentence to someone else in the same
+   breath. He means no harm and keeps no secrets worth keeping; ask him
+   anything and he has likely already told three other people. He has news
+   for you before you have thought to want it, and a grin for the asking. 
+   Crier Toke is in perfect health.
+ └────────────────────────────────────────────────────────────────────────────┘
+
+┌─ .:Equipment ──────────────────────────────────────────────────────────────┐
+   Weapon:     -nothing-
+   Offhand:    -nothing-
+   Head:       -nothing-
+   Neck:       -nothing-
+   Shoulders:  -nothing-
+   Body:       -nothing-
+   Back:       -nothing-
+   Belt:       -nothing-
+   Wrist:      -nothing-
+   Wrist:      -nothing-
+   Gloves:     -nothing-
+   Ring:       -nothing-
+   Ring:       -nothing-
+   Legs:       -nothing-
+   Feet:       -nothing-
+   Components: -nothing-
+ └────────────────────────────────────────────────────────────────────────────┘
+ Carrying: no objects
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5205 — Innkeep Tally =====
+teleport 5205
+Moved to room 5205.
+
+.: [⌂] The Drowned Lantern [Pothole Coulee]
+The inn's common room wraps you in warmth the moment you step in out of  ╔═════╗
+the coulee air. Overhead the namesake hangs and glows: a salvaged        ║~─~─•║
+diving-bell of green-tarnished bronze, hauled up from some sunk wreck    ║    │║
+and re-rigged as a great lantern, its caged flame throwing a soft        ║  @─•║
+underwater light across the room. Long shared tables run the length of   ║    │║
+the floor, their tops scrubbed pale and scarred with the rings of a      ║    ⌂║
+thousand set-down cups. A peat fire mutters in the hearth, breathing out ╚═════╝
+that low brown smell of burning earth, and the whole place has the
+settled, well-used hush of a town's evening heart waiting for evening to
+come. Stairs climb up into the dark toward the sleeping loft; the lane
+lies back out east.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Innkeep Tally (100%)
+
+Exits: east, up
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:look
+
+.: [⌂] The Drowned Lantern [Pothole Coulee]
+The inn's common room wraps you in warmth the moment you step in out of  ╔═════╗
+the coulee air. Overhead the namesake hangs and glows: a salvaged        ║~─~─•║
+diving-bell of green-tarnished bronze, hauled up from some sunk wreck    ║    │║
+and re-rigged as a great lantern, its caged flame throwing a soft        ║  @─•║
+underwater light across the room. Long shared tables run the length of   ║    │║
+the floor, their tops scrubbed pale and scarred with the rings of a      ║    ⌂║
+thousand set-down cups. A peat fire mutters in the hearth, breathing out ╚═════╝
+that low brown smell of burning earth, and the whole place has the
+settled, well-used hush of a town's evening heart waiting for evening to
+come. Stairs climb up into the dark toward the sleeping loft; the lane
+lies back out east.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Innkeep Tally (100%)
+
+Exits: east, up
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:look tally
+
+.: Innkeep Tally
+ ┌─ .:Description ────────────────────────────────────────────────────────────┐
+   Tally runs the Drowned Lantern the way a good current runs a river --
+   you never see the work, only that everything arrives where it ought to.
+   She is small and quick and never still, moving table to hearth to
+   cellar-stair in a brisk warmth that makes a stranger feel expected
+   rather than tolerated. A ruff of soft gill-frills stands at her collar,
+   pale and faintly translucent, fluttering when she laughs or leans into
+   the steam off the kettle; she pays them no mind and neither, soon, will
+   you. She keeps the peat fed and the jugs full and somehow always knows
+   which newcomer hasn't eaten, steering a bowl their way before they think
+   to ask. There is iron under the welcome -- she will have no brawling
+   under her watery light -- but it shows only as a steadiness, the calm of
+   someone who has run this room so long it runs to her hand. 
+   Innkeep Tally is in perfect health.
+ └────────────────────────────────────────────────────────────────────────────┘
+
+┌─ .:Equipment ──────────────────────────────────────────────────────────────┐
+   Weapon:     -nothing-
+   Offhand:    -nothing-
+   Head:       -nothing-
+   Neck:       -nothing-
+   Shoulders:  -nothing-
+   Body:       -nothing-
+   Back:       -nothing-
+   Belt:       -nothing-
+   Wrist:      -nothing-
+   Wrist:      -nothing-
+   Gloves:     -nothing-
+   Ring:       -nothing-
+   Ring:       -nothing-
+   Legs:       -nothing-
+   Feet:       -nothing-
+   Components: -nothing-
+ └────────────────────────────────────────────────────────────────────────────┘
+ Carrying: no objects
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5207 — Trader Onna =====
+teleport 5207
+Moved to room 5207.
+
+.: [⌂] Coulee Provisions [Pothole Coulee]
+The store is one cramped room packed floor to rafter with everything a   ╔═════╗
+frontier body might need and a good deal it might only want. Shelves     ║•─⌂  ║
+climb the walls all the way to the ceiling, crammed with sacked grain,   ║│    ║
+coiled rope, tin lamps, jars of who-knows-what, and bundles hung         ║•─@─~║
+overhead just out of reach. The air is thick with the mingled smell of   ║│    ║
+hemp rope and rendered tallow and dry goods, a smell that means trade. A ║⌂    ║
+long counter worn pale and smooth fronts the back wall, its surface      ╚═════╝
+scuffed by years of coins and elbows and parcels slid across it. Whoever
+keeps this place clearly knows where every last thing sits in the
+glorious clutter, even if a stranger never could.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Trader Onna (100%|shop)
+
+Exits: east, west
+
+TIP: Type list to see what merchants have for sale.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:look
+
+.: [⌂] Coulee Provisions [Pothole Coulee]
+The store is one cramped room packed floor to rafter with everything a   ╔═════╗
+frontier body might need and a good deal it might only want. Shelves     ║•─⌂  ║
+climb the walls all the way to the ceiling, crammed with sacked grain,   ║│    ║
+coiled rope, tin lamps, jars of who-knows-what, and bundles hung         ║•─@─~║
+overhead just out of reach. The air is thick with the mingled smell of   ║│    ║
+hemp rope and rendered tallow and dry goods, a smell that means trade. A ║⌂    ║
+long counter worn pale and smooth fronts the back wall, its surface      ╚═════╝
+scuffed by years of coins and elbows and parcels slid across it. Whoever
+keeps this place clearly knows where every last thing sits in the
+glorious clutter, even if a stranger never could.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Trader Onna (100%|shop)
+
+Exits: east, west
+
+TIP: Type list to see what merchants have for sale.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:look onna
+
+.: Trader Onna
+ ┌─ .:Description ────────────────────────────────────────────────────────────┐
+   Onna keeps Coulee Provisions, and she keeps it the way a good net keeps
+   fish -- nothing gets past her that she means to hold. She is lean and
+   quick-eyed, perched behind a counter she could work blind, and she sizes
+   up a newcomer's purse and need in the time it takes them to clear the
+   door. Her dealing is sharp but never crooked; she will tell you plainly
+   what a thing is worth and why, and she remembers to the last copper what
+   you bought off her the time before. Her skin has a way of taking the
+   color and grain of whatever stands behind her -- the gray of the dry
+   goods, the brown of the rafters, the pale ripple of reed-shadow -- so
+   that a stranger glancing in sometimes misses her entirely until she
+   speaks. She wears the shifting like she wears her apron, without
+   remark, and uses it for nothing more sinister than a quiet laugh at folk
+   who jump. 
+   Trader Onna is in perfect health.
+ └────────────────────────────────────────────────────────────────────────────┘
+
+┌─ .:Equipment ──────────────────────────────────────────────────────────────┐
+   Weapon:     -nothing-
+   Offhand:    -nothing-
+   Head:       -nothing-
+   Neck:       -nothing-
+   Shoulders:  -nothing-
+   Body:       -nothing-
+   Back:       -nothing-
+   Belt:       -nothing-
+   Wrist:      -nothing-
+   Wrist:      -nothing-
+   Gloves:     -nothing-
+   Ring:       -nothing-
+   Ring:       -nothing-
+   Legs:       -nothing-
+   Feet:       -nothing-
+   Components: -nothing-
+ └────────────────────────────────────────────────────────────────────────────┘
+ Carrying: no objects
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:list
+
+.: Items available by Trader Onna
+╒═════╕═══════════════════╕═════════╕═══════╕
+│ Qty │ Name              │ Type    │ Price │
+└─────┘───────────────────┘─────────┘───────┘
+│ 5   │ Oil Lantern       │ object  │ 3     │
+│ 5   │ Trail Rations     │ food    │ 8     │
+│ 5   │ Fungal Ration     │ food    │ 5     │
+│ 5   │ Cloth Bandage     │ object  │ 12    │
+│ 5   │ Small Red Potion  │ potion  │ 5     │
+│ 5   │ Cotton Shirt      │ body    │ 3     │
+│ 5   │ Rusty Pot         │ head    │ 3     │
+│ 5   │ Wooden Shield     │ offhand │ 5     │
+│ 5   │ Sharp Stick       │ weapon  │ 3     │
+│ 5   │ Crude Short Blade │ weapon  │ 10    │
+│ 5   │ Sling             │ weapon  │ 95    │
+│ 5   │ Pouch of Shot     │ ammo    │ 95    │
+└─────┘───────────────────┘─────────┘───────┘.
+To buy something, type: buy [name]
+.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5208 — Ledger-Keeper Croup =====
+teleport 5208
+Moved to room 5208.
+
+.: [⌂] Strongbox House [Pothole Coulee]
+This squat blockhouse is built of fitted basalt thicker than anywhere    ╔═════╗
+else in town, and the air inside it goes cool and still the moment the   ║≈─~─⌂║
+heavy door swings shut behind you. Iron-banded strongboxes line the      ║│ │  ║
+walls in stacked rows, each one studded and locked, holding the saved    ║•─@  ║
+coin and kept treasures of folk who would rather not carry such things   ║│    ║
+through a frontier. A ledger desk stands under the room's one shuttered  ║•─⌂─~║
+window, its great book closed and squared, an inkpot capped beside it.   ╚═════╝
+Nothing here is loud or bright; the place is quiet the way a vault is
+quiet, faintly forbidding in a manner that turns, once you understand
+it, into something close to comfort. Whatever you set down here will be
+here when you come back.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Ledger-Keeper Croup (100%)
+
+Exits: north, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:look
+
+.: [⌂] Strongbox House [Pothole Coulee]
+This squat blockhouse is built of fitted basalt thicker than anywhere    ╔═════╗
+else in town, and the air inside it goes cool and still the moment the   ║≈─~─⌂║
+heavy door swings shut behind you. Iron-banded strongboxes line the      ║│ │  ║
+walls in stacked rows, each one studded and locked, holding the saved    ║•─@  ║
+coin and kept treasures of folk who would rather not carry such things   ║│    ║
+through a frontier. A ledger desk stands under the room's one shuttered  ║•─⌂─~║
+window, its great book closed and squared, an inkpot capped beside it.   ╚═════╝
+Nothing here is loud or bright; the place is quiet the way a vault is
+quiet, faintly forbidding in a manner that turns, once you understand
+it, into something close to comfort. Whatever you set down here will be
+here when you come back.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Ledger-Keeper Croup (100%)
+
+Exits: north, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:look croup
+
+.: Ledger-Keeper Croup
+ ┌─ .:Description ────────────────────────────────────────────────────────────┐
+   Croup keeps the Strongbox House and the great balanced book that runs
+   it, and he does both with a dry, exact care that strangers mistake for
+   coldness until they need him. He is spare and upright, economical with
+   words and with motion, never setting a thing down where it does not
+   belong nor an entry where it does not balance. His knuckles are capped
+   in polished horn, smooth amber ridges that click faintly against quill
+   and lockplate; he uses them to square a stack of coin or tap a tally
+   without ever seeming to notice they are not ordinary hands. Behind the
+   precision there is a kindness he would deny if asked -- he remembers
+   which newcomer arrived with nothing, and the figures in his book quietly
+   forgive more than they should. What you set in his keeping will be
+   there, to the last coin, when you come back for it. 
+   Ledger-Keeper Croup is in perfect health.
+ └────────────────────────────────────────────────────────────────────────────┘
+
+┌─ .:Equipment ──────────────────────────────────────────────────────────────┐
+   Weapon:     -nothing-
+   Offhand:    -nothing-
+   Head:       -nothing-
+   Neck:       -nothing-
+   Shoulders:  -nothing-
+   Body:       -nothing-
+   Back:       -nothing-
+   Belt:       -nothing-
+   Wrist:      -nothing-
+   Wrist:      -nothing-
+   Gloves:     -nothing-
+   Ring:       -nothing-
+   Ring:       -nothing-
+   Legs:       -nothing-
+   Feet:       -nothing-
+   Components: -nothing-
+ └────────────────────────────────────────────────────────────────────────────┘
+ Carrying: no objects
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5209 — Sala the Mender =====
+teleport 5209
+Moved to room 5209.
+
+.: [⌂] The Mending Hut [Pothole Coulee]
+The hut is low and warm and smells of green things drying, the kind of   ╔═════╗
+smell that loosens a clenched body before the mind catches up. Bunches   ║▼ ▼  ║
+of herbs hang head-down from every rafter -- bitter root, sweet leaf,    ║│ │  ║
+grey moss -- turning slow in the heat off a banked fire. A row of cots   ║~─@─~║
+stands made-up along the long wall, blankets squared and turned back,    ║│    ║
+each one ready for whoever the water gives back next. Clean bandages sit ║⌂    ║
+rolled in a basket within arm's reach, white and soft and smelling of    ╚═════╝
+lye soap. The healer is not at her bench just now, but a pestle of half-
+ground salve waits there and the kettle is still warm, so she will not
+be long. Nothing in this room can harm you; this is the place the Opened
+are carried to be made whole again.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Sala the Mender (100%)
+
+Exits: east, north, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:look
+
+.: [⌂] The Mending Hut [Pothole Coulee]
+The hut is low and warm and smells of green things drying, the kind of   ╔═════╗
+smell that loosens a clenched body before the mind catches up. Bunches   ║▼ ▼  ║
+of herbs hang head-down from every rafter -- bitter root, sweet leaf,    ║│ │  ║
+grey moss -- turning slow in the heat off a banked fire. A row of cots   ║~─@─~║
+stands made-up along the long wall, blankets squared and turned back,    ║│    ║
+each one ready for whoever the water gives back next. Clean bandages sit ║⌂    ║
+rolled in a basket within arm's reach, white and soft and smelling of    ╚═════╝
+lye soap. The healer is not at her bench just now, but a pestle of half-
+ground salve waits there and the kettle is still warm, so she will not
+be long. Nothing in this room can harm you; this is the place the Opened
+are carried to be made whole again.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Sala the Mender (100%)
+
+Exits: east, north, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:look sala
+
+.: Sala the Mender
+ ┌─ .:Description ────────────────────────────────────────────────────────────┐
+   Sala keeps the Mending Hut, where the cold-returned Opened are carried
+   to be made whole, and she works with the unhurried economy of someone
+   who has learned that haste is its own kind of wound. She moves between
+   cots and drying-racks and the pestle at her bench in a quiet that is
+   never idle, her hands sure on bandage and salve, her voice low and even
+   when she speaks at all. Above and between her two dark eyes sits a
+   third, set high on her brow, that blinks on its own slow rhythm and
+   seems to watch a patient even when the other two are bent to their
+   work. She speaks the way a healer takes a pulse -- a few words,
+   weighed, while most of her attention stays on the thing that matters.
+   Folk leave her hut calmer than they came, and could not always tell you
+   why. 
+   Sala the Mender is in perfect health.
+ └────────────────────────────────────────────────────────────────────────────┘
+
+┌─ .:Equipment ──────────────────────────────────────────────────────────────┐
+   Weapon:     -nothing-
+   Offhand:    -nothing-
+   Head:       -nothing-
+   Neck:       -nothing-
+   Shoulders:  -nothing-
+   Body:       -nothing-
+   Back:       -nothing-
+   Belt:       -nothing-
+   Wrist:      -nothing-
+   Wrist:      -nothing-
+   Gloves:     -nothing-
+   Ring:       -nothing-
+   Ring:       -nothing-
+   Legs:       -nothing-
+   Feet:       -nothing-
+   Components: -nothing-
+ └────────────────────────────────────────────────────────────────────────────┘
+ Carrying: no objects
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5210 — Granny Wicker =====
+teleport 5210
+Moved to room 5210.
+
+.: [⌂] Wickerwork Cottage [Pothole Coulee]
+The walls of this snug little cottage are woven, not built -- panels of  ╔═════╗
+silver willow wickerwork plaited tight and daubed at the seams, so the   ║    ~║
+whole place creaks soft and breathing-like when the wind leans on it. A  ║    │║
+low hearth glows at the heart of the room, its smoke curling up through  ║▼─@─~║
+a hole in the thatch and hanging the air with the smell of burning herb  ║    │║
+and old fat. Charms crowd every surface and dangle from every cross-     ║  ~─~║
+rod: knots of red yarn, holed stones, bird skulls, twists of straw --    ╚═════╝
+and scattered among them, here and there, the plain tin medallions of
+the Church, fewer by far and half-lost in the older company. A clutch of
+remedies that predate the school sits steeping in clay crocks along the
+sill. It is warm here, and welcoming, and just strange enough that the
+hair stirs on your arms without your knowing quite why.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Granny Wicker (100%)
+
+Exits: east, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Granny Wicker ties a knot of red yarn and hangs it among the charms, murmuring a
+little rhyme
+look
+
+.: [⌂] Wickerwork Cottage [Pothole Coulee]
+The walls of this snug little cottage are woven, not built -- panels of  ╔═════╗
+silver willow wickerwork plaited tight and daubed at the seams, so the   ║    ~║
+whole place creaks soft and breathing-like when the wind leans on it. A  ║    │║
+low hearth glows at the heart of the room, its smoke curling up through  ║▼─@─~║
+a hole in the thatch and hanging the air with the smell of burning herb  ║    │║
+and old fat. Charms crowd every surface and dangle from every cross-     ║  ~─~║
+rod: knots of red yarn, holed stones, bird skulls, twists of straw --    ╚═════╝
+and scattered among them, here and there, the plain tin medallions of
+the Church, fewer by far and half-lost in the older company. A clutch of
+remedies that predate the school sits steeping in clay crocks along the
+sill. It is warm here, and welcoming, and just strange enough that the
+hair stirs on your arms without your knowing quite why.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Granny Wicker (100%)
+
+Exits: east, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:look wicker
+
+.: Granny Wicker
+ ┌─ .:Description ────────────────────────────────────────────────────────────┐
+   Granny Wicker keeps the wickerwork cottage at the town's quiet edge, and
+   she keeps the older knowing along with it -- the cures and cautions that
+   were old before the Church ever raised a roof across the water. She is
+   small and bent and endlessly warm, the kind of old woman who answers a
+   question with a remedy and a remedy with a rhyme, so that you leave not
+   always certain what she told you but somehow easier for it. Her hair is
+   willow-green and fine as new withies, and it stirs and shifts on its own
+   without any wind to move it, curling toward a guest or settling like a
+   cat as the mood takes it. She speaks to the charms on their threads as
+   if they were slow children, and they tick and turn when she passes.
+   There is nothing fearful in her -- only the deep, patient strangeness of
+   the old way wearing a kind face, and a kettle always near the boil. 
+   Granny Wicker is in perfect health.
+ └────────────────────────────────────────────────────────────────────────────┘
+
+┌─ .:Equipment ──────────────────────────────────────────────────────────────┐
+   Weapon:     -nothing-
+   Offhand:    -nothing-
+   Head:       -nothing-
+   Neck:       -nothing-
+   Shoulders:  -nothing-
+   Body:       -nothing-
+   Back:       -nothing-
+   Belt:       -nothing-
+   Wrist:      -nothing-
+   Wrist:      -nothing-
+   Gloves:     -nothing-
+   Ring:       -nothing-
+   Ring:       -nothing-
+   Legs:       -nothing-
+   Feet:       -nothing-
+   Components: -nothing-
+ └────────────────────────────────────────────────────────────────────────────┘
+ Carrying: no objects
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5215 — Warden Esk =====
+teleport 5215
+Moved to room 5215.
+
+.: [⌂] The Threshold House [Pothole Coulee]
+A low roof of weathered plank has been raised over this spot, less a     ╔═════╗
+house than a shelter built to keep weather off the thing it guards: a    ║⌂─•─⌂║
+free-standing arch of basalt, older than the town, older maybe than the  ║  │  ║
+town's oldest stories. The arch stands rooted in the rock floor, its     ║  @  ║
+stones fitted by no hand anyone remembers, and from somewhere in it      ║     ║
+comes a faint, steady hum -- felt in the teeth more than heard in the    ║     ║
+ear. Step near and the air goes thin and tingling, the way it does       ╚═════╝
+before a storm or a held note. A plain three-legged stool sits beside
+the arch where a warden keeps watch over comers and goers. There is no
+menace here, only the deep patient wonder of something that has waited a
+very long time and is in no hurry to stop.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Warden Esk (100%)
+
+Exits: north
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:look
+
+.: [⌂] The Threshold House [Pothole Coulee]
+A low roof of weathered plank has been raised over this spot, less a     ╔═════╗
+house than a shelter built to keep weather off the thing it guards: a    ║⌂─•─⌂║
+free-standing arch of basalt, older than the town, older maybe than the  ║  │  ║
+town's oldest stories. The arch stands rooted in the rock floor, its     ║  @  ║
+stones fitted by no hand anyone remembers, and from somewhere in it      ║     ║
+comes a faint, steady hum -- felt in the teeth more than heard in the    ║     ║
+ear. Step near and the air goes thin and tingling, the way it does       ╚═════╝
+before a storm or a held note. A plain three-legged stool sits beside
+the arch where a warden keeps watch over comers and goers. There is no
+menace here, only the deep patient wonder of something that has waited a
+very long time and is in no hurry to stop.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Also here: Warden Esk (100%)
+
+Exits: north
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:look esk
+
+.: Warden Esk
+ ┌─ .:Description ────────────────────────────────────────────────────────────┐
+   Esk keeps the threshold -- the old basalt arch beneath its low plank
+   roof -- though anyone who watches him a while wonders what there is to
+   guard, for the arch has waited untroubled longer than the town has
+   stood. He is a big, unhurried man gone gray at the temples, and he holds
+   his watch with the deep calm of someone perfectly at ease with
+   stillness, rising only to greet a comer or steady a frightened one. His
+   eyes are the color of settled embers, a low banked red that brightens
+   when his attention sharpens and dims back to a coal-glow when it eases,
+   so that folk learn to read his mood off them like a hearth. He speaks
+   seldom and weighs each word, and what he says about the arch he says
+   plainly and without dread. There is no menace in his keeping -- only the
+   patient steadiness of a man set to mind a wonder, and content to do it. 
+   Warden Esk is in perfect health.
+ └────────────────────────────────────────────────────────────────────────────┘
+
+┌─ .:Equipment ──────────────────────────────────────────────────────────────┐
+   Weapon:     -nothing-
+   Offhand:    -nothing-
+   Head:       -nothing-
+   Neck:       -nothing-
+   Shoulders:  -nothing-
+   Body:       -nothing-
+   Back:       -nothing-
+   Belt:       -nothing-
+   Wrist:      -nothing-
+   Wrist:      -nothing-
+   Gloves:     -nothing-
+   Ring:       -nothing-
+   Ring:       -nothing-
+   Legs:       -nothing-
+   Feet:       -nothing-
+   Components: -nothing-
+ └────────────────────────────────────────────────────────────────────────────┘
+ Carrying: no objects
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5203 IDLE — Crier Toke (square, ~3 min) =====
+Crier Toke calls the hour and the news in one breath while the throat-mouth hums
+the next line under it
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Footsteps cross the empty square somewhere behind you and fade off into a side
+lane.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Crier Toke cocks his head at a far lane, both mouths going quiet at once to
+listen
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5205 IDLE — Innkeep Tally (inn, ~3 min) =====
+[Tip] Check the help command for a full list of topics. You might learn about mechanics you didn't know about.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Innkeep Tally tips back a jug to check the level, the gill-frills at her collar
+fluttering
+[☀️ HP:██████████ SP:██████████ CP:██████████]:The lantern sways a hand's width on its chain and the watery light slides across
+the tables.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Innkeep Tally casts an eye over the empty benches and nods, already planning the
+evening
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Innkeep Tally casts an eye over the empty benches and nods, already planning the
+evening
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Innkeep Tally casts an eye over the empty benches and nods, already planning the
+evening
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
