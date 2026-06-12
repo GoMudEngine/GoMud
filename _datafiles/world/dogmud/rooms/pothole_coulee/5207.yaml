@@ -22,6 +22,8 @@ mutators:
 exits:
   west:
     roomid: 5204
+  east:
+    roomid: 5222
 nouns:
   shelves: The shelves run from the worn floorboards clear up to the
     rafters, every plank sagging a little under its load. Sacks and tins

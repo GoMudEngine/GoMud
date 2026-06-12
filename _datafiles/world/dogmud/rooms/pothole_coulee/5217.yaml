@@ -20,6 +20,8 @@ mutators:
 exits:
   south:
     roomid: 5202
+  north:
+    roomid: 5225
 nouns:
   crag: The crag is a shelf of dark basalt thrust out over the north end
     of the pool, its lip worn round and smooth by the sitting of many

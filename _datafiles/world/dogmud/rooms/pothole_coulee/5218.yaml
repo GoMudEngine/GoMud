@@ -20,6 +20,8 @@ mutators:
 exits:
   south:
     roomid: 5201
+  north:
+    roomid: 5224
 nouns:
   jetty: The jetty is a narrow run of grey, weather-split planks set on
     posts driven into the shallows, reaching out past the reeds to where

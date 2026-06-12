@@ -1,0 +1,30 @@
+roomid: 5225
+zone: Pothole Coulee
+title: Old Field Track
+description: >
+  An old field track runs north over the rise, its cart ruts grown over
+  with grass but still plain in the dirt. Just beyond the crest a standing
+  stone shows its weathered head against the sky, too far yet to read. The
+  track has been cleared of brush a little way on, the cut ends raw where
+  the work has not reached the stone.
+biome: farmland
+coord:
+  x: 46
+  y: -2
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  south:
+    roomid: 5217
+nouns:
+  track: The track is an old farm road run north over the rise, its
+    wheel-ruts sunk deep and softened under a fur of grass, plain to the
+    eye where nothing else marks the steppe. Someone has lately scythed
+    the brush back along the near stretch of it, opening the way; past
+    that the grass closes in again, unworked.
+  stone: A standing stone lifts its weathered head over the crest of the
+    rise, grey and lichen-spotted, carved once with marks the years have
+    nearly worn smooth. From here you cannot make them out. It has the
+    look of something set to be read, by anyone who climbs near enough to
+    try.

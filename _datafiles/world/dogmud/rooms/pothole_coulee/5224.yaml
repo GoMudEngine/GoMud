@@ -1,0 +1,32 @@
+roomid: 5224
+zone: Pothole Coulee
+title: Stargazer Cut
+description: >
+  A narrow cut climbs north through the cliffs toward the steppe rim,
+  where a broken silhouette stands black against the sky -- a ruin, or the
+  bones of one. The air in the cut sits strange and heavy, folded somehow,
+  as though the distance had been pinched shorter than the eye allows.
+  Loose stone has been cleared from the path lately, the way still raw
+  where hands have widened it.
+biome: cliffs
+coord:
+  x: 44
+  y: -2
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  south:
+    roomid: 5218
+nouns:
+  cut: The cut is a narrow cleft worked up through the cliff toward the
+    rim, its walls close enough to touch on either hand. The stone here
+    has the raw, pale look of recent clearing, where blocks have been
+    levered out to widen the climb. The air in it hangs heavy and folded,
+    pressing at you in a way plain air does not.
+  ruin: Up on the steppe rim a broken shape stands against the sky, too
+    far and too weathered to read -- a ruin, leaning walls and a fallen
+    arch, the bones of something old. The fold in the air seems to gather
+    around it, as though the place bent the distance to itself.
+idlemessages:
+- For a breath the air in the <ansi fg="itemname">cut</ansi> seems to pull taut, then eases.

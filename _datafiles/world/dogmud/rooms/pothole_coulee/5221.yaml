@@ -1,0 +1,30 @@
+roomid: 5221
+zone: Pothole Coulee
+title: Talus Gap
+description: >
+  A long slope of broken talus piles up to the west, loose plates of dark
+  rock that shift and clink underfoot. A cold smell rides down off it --
+  iron and quenched coal and old ash, the breath of a forge somewhere up
+  beyond the scree. Stacked timbers wait beside a half-dug gap where
+  someone means to shore a way through the slide.
+biome: cliffs
+coord:
+  x: 42
+  y: 0
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  east:
+    roomid: 5210
+nouns:
+  talus: The talus is a steep apron of shattered rock fallen off the
+    cliffs above, dark plates and wedges heaped loose and treacherous. It
+    shifts and rings underfoot like cracked crockery. A cold forge-smell
+    of iron and coal comes down through the gaps in it, hinting at heat
+    and hammers somewhere above the slide.
+  timbers: A stack of fresh-cut timbers lies beside the half-dug gap,
+    pale and sticky with sap, brought in to shore the loose rock while a
+    way is cut through. Someone has begun the work and left it for the
+    day; the props lean ready against the talus, waiting for hands to set
+    them.

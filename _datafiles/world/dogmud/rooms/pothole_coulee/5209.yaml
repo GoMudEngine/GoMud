@@ -23,6 +23,10 @@ mutators:
 exits:
   west:
     roomid: 5202
+  east:
+    roomid: 5220
+  north:
+    roomid: 5226
 nouns:
   cots:
     A row of narrow cots stands against the long wall, frames of peeled

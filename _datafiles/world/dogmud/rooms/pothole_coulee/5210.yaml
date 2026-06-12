@@ -24,6 +24,8 @@ mutators:
 exits:
   east:
     roomid: 5201
+  west:
+    roomid: 5221
 nouns:
   charms:
     Charms hang from every rod and crowd every shelf -- red-yarn knots,

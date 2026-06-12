@@ -24,6 +24,8 @@ exits:
     roomid: 5201
   east:
     roomid: 5203
+  west:
+    roomid: 5223
 nouns:
   boardwalk: The boardwalk is a run of weathered planks laid across the
     stilt-house pilings, just wide enough for two to pass. It gives a
