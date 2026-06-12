@@ -1,0 +1,44 @@
+mobid: 9107
+zone: Pothole Coulee
+behavior_archetype: noncombat_questgiver
+statpool: 56
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 10
+idlecommands:
+  - 'emote sits the three-legged stool by the arch, still as the stone, and watches the empty air within it'
+  - ''
+  - 'emote whittles a curl off the driftwood stick without ever looking down at his hands'
+  - ''
+  - 'emote turns his head slowly, and the ember-light behind his eyes brightens and banks like coals breathed on'
+  - ''
+character:
+  name: Warden Esk
+  description: |
+    Esk keeps the threshold -- the old basalt arch beneath its low plank
+    roof -- though anyone who watches him a while wonders what there is to
+    guard, for the arch has waited untroubled longer than the town has
+    stood. He is a big, unhurried man gone gray at the temples, and he holds
+    his watch with the deep calm of someone perfectly at ease with stillness,
+    rising only to greet a comer or steady a frightened one. His eyes are the
+    color of settled embers, a low banked red that brightens when his
+    attention sharpens and dims back to a coal-glow when it eases, so that
+    folk learn to read his mood off them like a hearth. He speaks seldom and
+    weighs each word, and what he says about the arch he says plainly and
+    without dread. There is no menace in his keeping -- only the patient
+    steadiness of a man set to mind a wonder, and content to do it.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 8
+    willpower:
+      training: 7
+    charisma:
+      training: 4

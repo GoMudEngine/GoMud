@@ -44,5 +44,7 @@ nouns:
     the backs of traders down the coulee. Whatever a newcomer has
     forgotten to bring, the chances are good it waits somewhere on these
     shelves.
+spawninfo:
+- mobid: 9104
 idlemessages:
 - A bundle shifts on a high shelf and settles, and a fine drift of dust comes down through the lamplight.

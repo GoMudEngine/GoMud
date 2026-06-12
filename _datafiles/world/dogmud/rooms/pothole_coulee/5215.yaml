@@ -42,6 +42,8 @@ nouns:
     over its back and a half-whittled stick of driftwood leans against a
     leg, the small signs of someone who sits long watches here and has
     only just stepped away. The seat is still faintly warm.
+spawninfo:
+- mobid: 9107
 idlemessages:
 - The hum in the arch deepens for a breath, thrumming up through the floor, then eases back to its steady note.
 - The thin air near the arch tingles against your skin like the moment before a storm breaks.

@@ -1,0 +1,44 @@
+mobid: 9105
+zone: Pothole Coulee
+behavior_archetype: noncombat_questgiver
+statpool: 44
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 11
+idlecommands:
+  - 'emote stirs a clay crock at the hearth-lip and tastes the steam off the spoon'
+  - ''
+  - 'emote ties a knot of red yarn and hangs it among the charms, murmuring a little rhyme'
+  - ''
+  - 'emote tucks back a strand of green hair that has crept across her cheek of its own accord'
+  - ''
+character:
+  name: Granny Wicker
+  description: |
+    Granny Wicker keeps the wickerwork cottage at the town's quiet edge,
+    and she keeps the older knowing along with it -- the cures and cautions
+    that were old before the Church ever raised a roof across the water. She
+    is small and bent and endlessly warm, the kind of old woman who answers
+    a question with a remedy and a remedy with a rhyme, so that you leave
+    not always certain what she told you but somehow easier for it. Her hair
+    is willow-green and fine as new withies, and it stirs and shifts on its
+    own without any wind to move it, curling toward a guest or settling like
+    a cat as the mood takes it. She speaks to the charms on their threads as
+    if they were slow children, and they tick and turn when she passes. There
+    is nothing fearful in her -- only the deep, patient strangeness of the
+    old way wearing a kind face, and a kettle always near the boil.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    willpower:
+      training: 8
+    perception:
+      training: 6
+    charisma:
+      training: 4

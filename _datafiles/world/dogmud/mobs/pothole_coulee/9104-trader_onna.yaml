@@ -1,0 +1,100 @@
+mobid: 9104
+zone: Pothole Coulee
+craft_support: general
+behavior_archetype: noncombat_shopkeeper
+statpool: 40
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 13
+idlecommands:
+  - 'emote runs a thumb down the tally-book, reading prices nobody asked for yet'
+  - ''
+  - 'emote reaches a high shelf with the hooked pole and never once looks up at it'
+  - ''
+  - 'emote goes still against the goods, and for a breath her skin takes the gray of the reeds behind her'
+  - ''
+character:
+  name: Trader Onna
+  description: |
+    Onna keeps Coulee Provisions, and she keeps it the way a good net keeps
+    fish -- nothing gets past her that she means to hold. She is lean and
+    quick-eyed, perched behind a counter she could work blind, and she sizes
+    up a newcomer's purse and need in the time it takes them to clear the
+    door. Her dealing is sharp but never crooked; she will tell you plainly
+    what a thing is worth and why, and she remembers to the last copper what
+    you bought off her the time before. Her skin has a way of taking the
+    color and grain of whatever stands behind her -- the gray of the dry
+    goods, the brown of the rafters, the pale ripple of reed-shadow -- so
+    that a stranger glancing in sometimes misses her entirely until she
+    speaks. She wears the shifting like she wears her apron, without remark,
+    and uses it for nothing more sinister than a quiet laugh at folk who
+    jump.
+  speciesid: 1
+  level: 1
+  gold: 1000
+  stats:
+    perception:
+      training: 7
+    charisma:
+      training: 6
+    willpower:
+      training: 4
+  shop:
+    # Light + dry goods
+    - itemid: 40038    # oil lantern
+      quantity: 3
+      quantitymax: 5
+      price: 1
+    - itemid: 30021    # trail rations
+      quantity: 6
+      quantitymax: 10
+      price: 3
+    - itemid: 30013    # fungal ration
+      quantity: 4
+      quantitymax: 8
+      price: 2
+    # Healing basics
+    - itemid: 30020    # cloth bandage
+      quantity: 5
+      quantitymax: 8
+      price: 5
+    - itemid: 30001    # small red potion
+      quantity: 4
+      quantitymax: 6
+      price: 2
+    # Starter armor
+    - itemid: 20008    # cotton shirt
+      quantity: 3
+      quantitymax: 5
+      price: 1
+    - itemid: 20007    # rusty pot
+      quantity: 3
+      quantitymax: 5
+      price: 1
+    - itemid: 20004    # wooden shield
+      quantity: 2
+      quantitymax: 4
+      price: 2
+    # Cheap melee
+    - itemid: 10001    # sharp stick
+      quantity: 3
+      quantitymax: 5
+      price: 1
+    - itemid: 10021    # crude short blade
+      quantity: 2
+      quantitymax: 4
+      price: 4
+    # Ranged preview (Spoke-G)
+    - itemid: 10038    # sling
+      quantity: 2
+      quantitymax: 4
+      price: 40
+    - itemid: 30064    # pouch of shot
+      quantity: 4
+      quantitymax: 6
+      price: 40

@@ -51,6 +51,8 @@ nouns:
     warming at its lip, older cures than the school across the water ever
     learned to brew, and the heat of it reaches every corner of the snug
     little room.
+spawninfo:
+- mobid: 9105
 idlemessages:
 - The wickerwork walls creak and settle as the wind leans on the cottage, then ease.
 - A <ansi fg="itemname">charm</ansi> turns on its thread in the hearth-draft and taps softly against another.
