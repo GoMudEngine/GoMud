@@ -1,0 +1,45 @@
+roomid: 5216
+zone: Pothole Coulee
+title: Stilt-House Walk
+description: >
+  A plank boardwalk threads between the stilt-houses, bouncing gently
+  underfoot over the shallows on their long-legged supports. Nets hang
+  drying from the railings, and glass floats knock together in the breeze,
+  while the green water shows shallow and clear between the stilts below.
+  An old woman with bark-grey skin and a slender third arm mends a net
+  without looking up; a boy whose eyes shine like a cat's chases a dog
+  past your knees. Home-sounds drift from the open doors -- a pot scraped,
+  a song half-hummed, the plain noise of the Opened going about their day.
+  Nobody here spares a strange-shaped body a second glance; on this walk,
+  that is simply a body.
+biome: shore
+coord:
+  x: 44
+  y: 1
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  north:
+    roomid: 5201
+  east:
+    roomid: 5203
+nouns:
+  boardwalk: The boardwalk is a run of weathered planks laid across the
+    stilt-house pilings, just wide enough for two to pass. It gives a
+    little underfoot with every step, springing over the water. Knots and
+    nail-heads have worn proud of the soft grey wood where the grain sank
+    around them.
+  nets: Fishing nets hang from the railings and the house-eaves to dry,
+    knotted from twine and weighted with smooth holed stones. Some are
+    being mended where the water tore them; a half-finished one droops
+    from an old woman's three patient hands. The smell of weed and fish
+    clings to all of them.
+  stilts: The houses stand on stilts -- long timber legs driven into the
+    mud of the shallows, lifting each floor a body's height above the
+    water. Green weed and pale barnacle crust the lower legs at the
+    tide-line. Between them you can see straight down to the clear shallow
+    bottom, where small fish hang in the shade.
+idlemessages:
+- A pot is scraped clean somewhere behind an open door, and a <ansi fg="itemname">song</ansi> trails off.
+- Glass floats knock together on the railing as the breeze shifts.

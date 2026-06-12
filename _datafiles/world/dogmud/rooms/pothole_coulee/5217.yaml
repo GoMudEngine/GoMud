@@ -1,0 +1,37 @@
+roomid: 5217
+zone: Pothole Coulee
+title: North Shore Overlook
+description: >
+  The crag juts out over the water at the bowl's north edge, and from its
+  worn lip the pool shows clearest of all -- straight down into the dark,
+  where the deep light lies waiting far below. Up here the clatter of the
+  houses falls away, and there is only wind and water and the slow
+  patience of the depths. Folk come to this crag to sit and look and
+  think, and the polished stone says many have come before. The light does
+  not call to you, exactly. It simply waits, the way deep things do, and
+  you find yourself loath to break the quiet.
+biome: cliffs
+coord:
+  x: 46
+  y: -1
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  south:
+    roomid: 5202
+nouns:
+  crag: The crag is a shelf of dark basalt thrust out over the north end
+    of the pool, its lip worn round and smooth by the sitting of many
+    bodies. A short trail climbs to it from the shore below. There is room
+    for a few to perch, no more, and the view straight down the water is
+    the reason they climb.
+  depths: From this height the pool's depths open clear beneath you,
+    dark water going down further than the eye can follow. Somewhere far
+    below, the cold blue-green light rests, steadier seen from here than
+    from any shore. You cannot tell whether it is stone or water or
+    something living down there, only that it is patient, and that it has
+    been waiting a long time.
+idlemessages:
+- Far down in the depths, the light holds steady, neither brighter nor dimmer.
+- The wind drops, and for a moment the pool below is a sheet of black glass.

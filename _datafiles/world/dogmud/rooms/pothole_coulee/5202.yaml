@@ -1,0 +1,45 @@
+roomid: 5202
+zone: Pothole Coulee
+title: East Shore Path
+description: >
+  Gravel crunches along the east shore here, the same packed path as the
+  far side but turned to other work. A drifting smell of crushed herbs
+  rolls down from the Mending Hut eastward -- bitter-green and sharp, the
+  smell of poultices and steeped roots. North, an overlook crag shoulders
+  up out of the bowl wall, dark basalt against a bleached sky. This is the
+  working side of the water, where the hurt and the worn-down come to be
+  made whole again. The pool waits west, still and deep.
+biome: shore
+coord:
+  x: 46
+  y: 0
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  west:
+    roomid: 5200
+  east:
+    roomid: 5209
+  south:
+    roomid: 5208
+  north:
+    roomid: 5217
+nouns:
+  path: This stretch of path is the same raked gravel as the west shore,
+    but the feet that wear it here move slower -- folk leaning on each
+    other, or carrying baskets of cut greens up from the water. It runs
+    north and south between the pool and the workshops. The stones are
+    pale and dry where they are not splashed.
+  herbs: The smell of herbs comes and goes on the breeze from the east --
+    crushed leaf, bitter root, something steeped a long while over low
+    coals. It is the smell of a place where bodies get mended. Bundles of
+    drying greens hang from a line strung near the path, swaying and
+    shedding flakes when the wind picks up.
+  crag: To the north, a crag of dark basalt rises out of the bowl wall,
+    high enough to give a clear look down the whole pool. A worn trail
+    switches up its near face. Folk climb it to sit and think where the
+    noise of the workshops cannot follow.
+idlemessages:
+- A breath of wind carries crushed-<ansi fg="itemname">herb</ansi> smell down from the Mending Hut.
+- Drying greens shed a flake or two and the line sways, then settles.
