@@ -11,8 +11,8 @@ items → dialogue + quests, with user review between phases.
 
 The hub town of Pothole Coulee, authored end-to-end: ~19 hub rooms + 7
 spoke-mouth stubs, the Awakening Rite, the portal escape hatch, 8 NPCs, 2
-quests, and two small engine features (`teleport_player` btree action;
-zone death-recovery override). After this chunk, the veteran skip path
+quests, one small engine feature (`teleport_player` btree action), and a
+2-line home-location registration (`sethome coulee`). After this chunk, the veteran skip path
 works start-to-finish and every spoke mouth is walkable to an "under
 construction" stub.
 
@@ -172,7 +172,7 @@ JS scripting wherever possible — debugging JS costs more than it returns.
 (`actions_quest.go:47`): a small, unit-tested, engine-native Go action,
 reusable by any future ferryman/portal/fast-travel NPC.
 
-## 6. Engine touches (two)
+## 6. Engine touches (one feature + one registration)
 
 ### 6a. Btree action: `teleport_player`
 
@@ -187,20 +187,29 @@ nodes (same gating used elsewhere for quest-aware behavior — builder
 verifies the condition affordance during Phase D and reports). TDD: unit
 tests for the action (valid room, missing param, no triggering player).
 
-### 6b. Zone death-recovery override
+### 6b. Home location registration (sethome) — REVISED per user review
 
-Parent spec §11.2 default: deaths inside the newbie zone recover at the
-hub, not the global shrine. Today `DeathRecoveryRoom` is global-only
-(`configs.GetSpecialRoomsConfig().DeathRecoveryRoom`, consumed at
-`internal/hooks/NewRound_AutoHeal.go:37` and `internal/rooms/roommanager.go:280`).
+Death recovery is **player-controlled via the existing `sethome`
+command** (user correction, 2026-06-12) — no zone-override engine
+feature. `internal/characters/respawn_home.go` holds the registry:
+`HomeLocations` ("thornwall"→468, "stillwater"→4123, "default"→0 shown
+as "Sanctum Basin") + `HomeLocationNames`.
 
-Add an optional per-zone override: `death_recovery_room:` in
-zone-config.yaml; the two consumption sites prefer the override when the
-DYING character's zone declares one. Pothole Coulee sets it to **5209
-(The Mending Hut)** — waking under Sala's care. TDD: unit tests on the
-resolution helper (zone with override, zone without, character outside
-any zone). This lands in this chunk because middle-ring knockouts (chunks
-2+) depend on it for testing.
+Chunk 1 adds one entry to both maps: **`"coulee" → 5209 (The Mending
+Hut)`**, displayed "Pothole Coulee (The Mending Hut)" — waking under
+Sala's care. A 2-line map edit + a small test that the key resolves.
+
+Implications recorded for later chunks:
+- **Spoke testing (chunks 2+):** testers `sethome coulee` so middle-ring
+  knockouts return to the hub. Hadwen/Sala's dialogue teaches `sethome`
+  to new players for the same reason (see §7).
+- **Third veteran escape path (user note):** a veteran can `sethome
+  thornwall` (or anywhere) and simply die out of the zone. That's
+  legitimate; no countermeasure wanted.
+- **Cutover (chunk 10):** the `"default"` entry (currently labeled
+  "Sanctum Basin", value 0) is re-pointed/renamed to the new hub and any
+  Sanctum Basin option is pruned; new characters' effective default home
+  becomes the Mending Hut.
 
 ## 7. Lesson coverage (Tier 1 touch points owned by chunk 1)
 
@@ -213,6 +222,7 @@ any zone). This lands in this chunk because middle-ring knockouts (chunks
 | `list`/`buy` (+ multi-buy mention) | Trader Onna (Q31 beat) |
 | Bank deposit/withdraw | Ledger-Keeper Croup |
 | `sleep`/`stand` + sleep tradeoff | Innkeep Tally + the loft (5206) |
+| `sethome` (death returns you home) | Sala the Mender — "make this hut your home while you learn" |
 | `renameself` touch | Hadwen post-rite |
 | `set linewidth` QoL surface | school notice board noun text |
 | `quest`/`hint` flow | Q31 via Toke |
@@ -233,8 +243,9 @@ taught in the hub — the hub points outward.
    portal refuses before `30-end`, teleports to 468 after. Under 5
    minutes.
 4. Q31 completes; reward pays once.
-5. Death inside the zone recovers at 5209 (engine test + live check);
-   death outside the zone still uses the global room.
+5. `sethome` lists the new "coulee" option; with home set to coulee, a
+   death recovers at 5209 (live check). Default behavior for characters
+   who never sethome is unchanged until cutover.
 6. No-numbers audit: grep sweep of all new player-facing strings.
 7. Every dialogue trigger discoverable (hint/text/noun coverage per SOP);
    quest-granting nodes carry `quest`/`task` triggers and correct
