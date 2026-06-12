@@ -147,6 +147,10 @@ type ItemSpec struct {
     Hands               WeaponHands   // 1 or 2 handed weapon
     Element             Element       // Magical element type
 
+    // Ranged Weapon Properties (subtype: shooting)
+    AmmoTag     string  // Ammo bundle tag required to reload ("arrows","bolts","shot")
+    MinStrength int     // Minimum Strength to wield without penalty (0 = no gate)
+
     // Enhancement Properties
     StatMods        statmods.StatMods  // Stat modifications when worn
     BreakChance     uint8              // Chance to break on use (0-100)
@@ -154,6 +158,10 @@ type ItemSpec struct {
     KeyLockId       string             // Lock ID this key opens
 }
 ```
+
+Note: `Loaded bool` lives on the **`Item` instance struct** (not ItemSpec).
+`Item.Loaded = true` when a round is chambered/nocked; persists in instance
+saves and is cleared on fire.
 
 ### Damage System
 ```go

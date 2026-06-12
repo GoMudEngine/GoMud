@@ -57,6 +57,17 @@ func TestBalance_MobUpgradeDefaults(t *testing.T) {
 	}
 }
 
+func TestBalance_RangedDefaults(t *testing.T) {
+	b := &Balance{}
+	b.validateCombat()
+	if b.RangedShotScale != 1.0 {
+		t.Errorf("RangedShotScale default = %v, want 1.0", float64(b.RangedShotScale))
+	}
+	if b.RangedShieldDefenseBonus != 15 {
+		t.Errorf("RangedShieldDefenseBonus default = %d, want 15", int(b.RangedShieldDefenseBonus))
+	}
+}
+
 func TestBalanceConfig_ForagerDefaults(t *testing.T) {
 	cfg := &Balance{}
 	cfg.Validate()

@@ -59,6 +59,16 @@ func (b *Balance) validateCombat() {
 		b.TauntHoldRounds = 4
 	}
 
+	// ── RANGED ───────────────────────────────────────────────────────────────
+	if b.RangedShotScale <= 0 {
+		b.RangedShotScale = 1.0
+	}
+	// <= 0 mirrors SpecialMoveCooldown/GrappleStaminaCostPerRound convention:
+	// treat 0 as absent (a shield granting zero bonus makes no design sense).
+	if b.RangedShieldDefenseBonus <= 0 {
+		b.RangedShieldDefenseBonus = 15
+	}
+
 	// ── SKULLDUGGERY ─────────────────────────────────────────────────────────
 	if b.SneakFailCooldown < 0 {
 		b.SneakFailCooldown = 3

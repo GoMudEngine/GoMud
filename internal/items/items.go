@@ -42,6 +42,7 @@ type Item struct {
 	UUID          uuid.UUID      `yaml:"-"`                       // `yaml:"uuid,omitempty"`
 	Blob          string         `yaml:"blob,omitempty"`          // Does this item have a blob? Should be base64 encoded.
 	Uses          int            `yaml:"uses,omitempty"`          // How many uses it has left
+	Loaded        bool           `yaml:"loaded,omitempty"`        // Ranged weapons: projectile chambered/nocked
 	DropChance    int            `yaml:"dropchance,omitempty"`    // Per-instance drop chance 1-100 used by ShouldDrop. 0 = use caller's defaultChance.
 	LastUsedRound uint64         `yaml:"lastusedround,omitempty"` // Last round this item was used
 	CraftedRound     uint64         `yaml:"crafted_round,omitempty"`     // Round when this item was crafted
@@ -182,6 +183,16 @@ func (i *Item) HasChrysalisEnchantment() bool {
 
 func (i Item) IsDisabled() bool {
 	return i.ItemId < 0
+}
+
+// IsRangedWeapon reports whether this item is a shooting-subtype weapon
+// (bow, crossbow, pistol, sling).
+func (i *Item) IsRangedWeapon() bool {
+	if i.ItemId == 0 {
+		return false
+	}
+	spec := i.GetSpec()
+	return spec.Type == Weapon && spec.Subtype == Shooting
 }
 
 func (i *Item) Validate() {

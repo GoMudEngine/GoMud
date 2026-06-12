@@ -35,9 +35,11 @@ into all downstream consumers (stat values, mitigation, recovery, skills, spells
 - **Use-based progression**: Skills improve through gameplay use, not training points
 - **Exponential decay curve**: ~50% chance at rank 0, ~2.5% at soft cap (rank 50)
 - **Skill aliasing**: `skillNameMap` supports mapping legacy skill names to DOG equivalents
-- **10 core DOG skills**: 5 combat (weapon-combat, unarmed-combat, ranged-combat, spellcasting, psionics) + 5 non-combat (first-aid, stealth, tracking, bartering, foraging)
+- **16 core DOG skills**: combat (weapon-combat, unarmed-combat, ranged-combat, spellcasting, rhetoric) + non-combat (skullduggery, search, bartering, blacksmithing, alchemy, tailoring, cooking, jewelcrafting, enchanting, salvage, manifestation)
 - **15 legacy GoMud skills**: Still functional alongside DOG skills
-- **Combat skill routing**: `GetCombatSkillTag()` selects weapon-appropriate skill
+- **Combat skill routing**: `GetCombatSkillTag()` selects weapon-appropriate skill:
+  weapon → `weapon-combat`, unarmed/fists → `unarmed-combat`,
+  ranged (subtype `shooting`) → `ranged-combat`
 
 ### Difficulty-Scaled Progression
 `OnSkillUseScaled(skillName, userId, bonusMultiplier)` accepts a difficulty

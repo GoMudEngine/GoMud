@@ -565,6 +565,13 @@ func (c *Character) Wear(i items.Item) (returnItems []items.Item, newItemWorn bo
 		return returnItems, false, `That item cannot be equipped.`
 	}
 
+	// Min-Strength wield gate — heavy bows and arbalests require a minimum
+	// Strength to operate. Checked before HandsRequired so the rejection is
+	// immediate and consistent for all callers.
+	if spec.MinStrength > 0 && c.Stats.Strength.ValueAdj < spec.MinStrength {
+		return returnItems, false, `You aren't strong enough to handle ` + i.DisplayName() + `.`
+	}
+
 	iHandsRequired := c.HandsRequired(i)
 	if iHandsRequired > 2 {
 		return returnItems, false, `That requires too many hands.`

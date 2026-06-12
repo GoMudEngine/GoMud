@@ -76,13 +76,6 @@ func (c *Character) TrackPlayerDamage(userId int, damageAmt int) {
 
 }
 
-// SetAggroRemote sets aggro for ranged combat (shooting into an adjacent room).
-// The exitName identifies the direction the attack is coming from.
-func (c *Character) SetAggroRemote(exitName string, userId int, mobInstanceId int, aggroType AggroType, roundsWaitTime ...int) {
-	c.SetAggro(userId, mobInstanceId, aggroType, roundsWaitTime...)
-	c.Aggro.ExitName = exitName
-}
-
 // SetAggro sets the character's combat target and transitions Combat Phase to
 // Engaging. All writes to Aggro go through this method (dual-write to
 // CombatPhase for parity). Direct field reads of .Aggro remain valid.

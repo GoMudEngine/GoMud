@@ -596,6 +596,8 @@ the free supply-handoff paths — these are NOT routed through `actions.Sell`.
 | Shadow | actions | self→target | ShadowResult | varies | none |
 | Sneak | actions | self vs room | SneakResult | silent | shared |
 | Steal | actions | self vs mob/player/container | StealResult | varies | shared |
+| ExecuteFire | actions | self vs target (same/adjacent room) | FireResult | both | none |
+| ExecuteReload | actions | self (equip ranged weapon) | ReloadResult | both | shared (special-move) |
 | Sell | actions | self vs merchant | SellResult | player only | none |
 | Sleep | actions | self | SleepResult | varies | none |
 | Track | actions | self vs trail/target | TrackResult | user only | shared |

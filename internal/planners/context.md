@@ -170,7 +170,7 @@ of five context constants:
 
 | Context | Constant | Skills |
 |---------|----------|--------|
-| `"combat"` | `TrainingCombat` | weapon-combat, unarmed-combat, spellcasting, manifestation |
+| `"combat"` | `TrainingCombat` | weapon-combat, unarmed-combat, ranged-combat, spellcasting, manifestation |
 | `"crafting"` | `TrainingCrafting` | blacksmithing, alchemy, tailoring, cooking, jewelcrafting, enchanting, salvage |
 | `"foraging"` | `TrainingForaging` | search |
 | `"social"` | `TrainingSocial` | rhetoric, bartering |

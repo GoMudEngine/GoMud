@@ -283,7 +283,7 @@ func (c *Character) validateSkillMigrations() {
 	}
 
 	// Remove retired skills.
-	for _, dead := range []string{"cast", "ranged-combat", "first-aid"} {
+	for _, dead := range []string{"cast", "first-aid"} {
 		delete(c.Skills, dead)
 		if c.SkillUseCount != nil {
 			delete(c.SkillUseCount, dead)

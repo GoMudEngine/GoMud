@@ -548,3 +548,10 @@ full resolution flow and policy matrix.
 | `ConversationBaseChancePct` | 1.0 | Per-tick % chance a fully-idle NPC attempts to start an idle conversation. Chunk 3.6. |
 | `ConversationPlayerArrivalBoostPct` | 25 | On player arrival in a room with relateable, idle NPCs, % chance to start one. Chunk 3.6. |
 | `ConversationCooldownRounds` | 50 | Cooldown applied to both NPCs after a conversation completes. Chunk 3.6. |
+
+### Ranged Combat (ranged-weapons feature)
+
+| Knob | Default | Effect |
+|------|---------|--------|
+| `RangedShotScale` | 1.0 | Global multiplier on all ranged shot damage. Tune up/down to adjust ranged vs melee balance without touching individual weapon stats. |
+| `RangedShieldDefenseBonus` | 15 | Flat defense-score bonus added to a defender's ranged-defense roll when they have a shield equipped in their offhand. Shields are more useful against arrows/bolts than bare hands. |

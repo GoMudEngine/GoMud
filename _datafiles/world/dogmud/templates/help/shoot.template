@@ -1,11 +1,33 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">shoot</ansi>
 
-The <ansi fg="command">shoot</ansi> command fires a weapon into an adjacent room. 
+Fire a loaded ranged weapon at a target in your room or an
+adjacent room.
 
 <ansi fg="yellow">Usage: </ansi>
 
-  <ansi fg="command">shoot [target] [exit]</ansi>
-  This shoots at the target specified in the direction specified.
+  <ansi fg="command">shoot <target></ansi>
+      Fire at a target in the same room.
 
-  <ansi fg="red">Note:</ansi> This engages combat but will break combat if the space between you and the target
-  is not closed quickly.
+  <ansi fg="command">shoot <target> <direction></ansi>
+      Fire into the adjacent room in that direction and strike
+      a target there.
+
+The weapon must be loaded before it can fire. Use
+<ansi fg="command">reload</ansi> after each shot to ready it for the next one.
+Reloading draws one round of ammunition from a matching bundle
+in your pack (arrows for a bow, bolts for a crossbow, shot for
+a sling or pistol). When a bundle runs dry you will be told it
+was your last.
+
+Each shot uses your combat round. Cross-room fire does not
+automatically pull you into melee — the target must close the
+distance to engage.
+
+<ansi fg="yellow">━━━ Progression ━━━</ansi>
+
+Ranged-combat improves through use. Shots that connect have a
+chance to advance the skill. Perception governs aimed-shot
+accuracy and damage.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help reload</ansi>,
+  <ansi fg="command">help ranged-combat</ansi>, <ansi fg="command">help wield</ansi>

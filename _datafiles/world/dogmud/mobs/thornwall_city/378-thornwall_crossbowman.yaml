@@ -1,0 +1,56 @@
+mobid: 378
+zone: Thornwall City
+archetype: fighting
+behavior_archetype: archer
+statpool: 260
+itemdropchance: 0
+hostile: false
+charm_immune: true
+maxwander: 1
+groups:
+  - humanoid
+  - guard
+  - thornwall_guards
+  - thornwall_citizens
+idlecommands:
+  - 'emote sights down a quarrel at a distant rooftop, then eases off'
+  - 'emote cranks the windlass a half-turn and checks the string tension'
+  - ''
+  - 'emote scans the walltops and approaches with a level, watchful eye'
+  - ''
+activitylevel: 18
+character:
+  name: Thornwall Crossbowman
+  description: |
+    A guard of the Thornwall watch armed for range rather than the
+    close press of the gate. A compact crossbow rides easy in one hand,
+    a case of bolts at the hip, and the eyes above the scarf never stop
+    measuring distances. Posted to the walls and chokepoints, this is
+    someone who would rather end trouble before it ever reaches arm's length.
+  speciesid: 1
+  level: 1
+  gold: 5
+  equipment:
+    weapon:
+      itemid: 10039
+    body:
+      itemid: 20011
+    head:
+      itemid: 20047
+    legs:
+      itemid: 20050
+    feet:
+      itemid: 20052
+    gloves:
+      itemid: 20051
+  items:
+    - itemid: 30063
+  stats:
+    strength:
+      training: 8
+    dexterity:
+      training: 8
+    perception:
+      training: 10
+    vitality:
+      training: 5

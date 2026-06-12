@@ -23,7 +23,9 @@ The `internal/usercommands` package implements the complete command system for p
 - **Inventory**: `inventory`, `get`, `drop`, `give`, `put` - Item management
 
 #### **Combat Commands**
-- **Direct combat**: `attack`, `shoot`, `throw` - Offensive actions
+- **Direct combat**: `attack`, `shoot`, `reload`, `throw` - Offensive actions
+  (`shoot` fires a loaded ranged weapon; `reload` chambers the next round,
+  consuming one ammo bundle from the pack)
 - **Combat skills**: `disarm`, `tackle`, `backstab`, `recover` - Specialized combat techniques
 - **Defensive**: `flee`, `aid` - Escape and assistance mechanics
 - **Beast special moves (Phase 3)**: `rake`, `maul`, `pounce`, `gore`,

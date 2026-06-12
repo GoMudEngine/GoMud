@@ -22,6 +22,12 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
+// unloadedMeleeDamageCap is the maximum effective damage multiplier a ranged
+// (Shooting-subtype) weapon may contribute on the MELEE auto-attack swing path.
+// Ranged weapons keep their full multiplier on the deliberate SHOOT path; in
+// melee they are improvised clubs and clamp here.
+const unloadedMeleeDamageCap = 0.30
+
 // combatContext carries per-round environmental info into the combat engine.
 type combatContext struct {
 	sourceCanSee bool // source has nightvision OR room visibility >= 1
@@ -277,6 +283,14 @@ func buildWeaponSetup(sourceChar *characters.Character, targetChar *characters.C
 		// DamageMultiplier as the base and scales by radius/reach. The
 		// resulting effective multiplier is then further scaled by gearMul.
 		adjustedMult := CalcReachAdjustedItemMult(weapon, sourceChar)
+		// Ranged (Shooting-subtype) weapons reserve their full damage multiplier
+		// for the deliberate SHOOT path (actions.ExecuteFire). In the auto-attack
+		// MELEE swing path a bow/crossbow/pistol is just an awkward improvised
+		// club, so clamp the melee multiplier — otherwise a high-multiplier
+		// arbalest would club like a god-maul.
+		if itemSpec.Subtype == items.Shooting && adjustedMult > unloadedMeleeDamageCap {
+			adjustedMult = unloadedMeleeDamageCap
+		}
 		ws.weaponDmgMult = adjustedMult * gearMul
 		if ws.weaponDmgMult <= 0 {
 			ws.weaponDmgMult = float64(bal.UnarmedDamageMultiplier)

@@ -351,9 +351,8 @@ func TestValidate_SkillMapEnsured(t *testing.T) {
 		Buffs:     newTestBuffs(),
 		SpeciesId: 1,
 		Skills: map[string]int{
-			"cast":          5, // retired
-			"ranged-combat": 3, // retired
-			"first-aid":     2, // retired
+			"cast":      5, // retired
+			"first-aid": 2, // retired
 			// intentionally omitting most active skills
 		},
 	}
@@ -363,9 +362,6 @@ func TestValidate_SkillMapEnsured(t *testing.T) {
 	_, hasCast := c.Skills["cast"]
 	assert.False(t, hasCast, "retired skill 'cast' must be stripped by Validate")
 
-	_, hasRanged := c.Skills["ranged-combat"]
-	assert.False(t, hasRanged, "retired skill 'ranged-combat' must be stripped by Validate")
-
 	_, hasFirstAid := c.Skills["first-aid"]
 	assert.False(t, hasFirstAid, "retired skill 'first-aid' must be stripped by Validate")
 
@@ -373,6 +369,25 @@ func TestValidate_SkillMapEnsured(t *testing.T) {
 	for _, sk := range skills.GetAllSkillNames() {
 		assert.GreaterOrEqual(t, c.Skills[string(sk)], 1,
 			"active skill %q should be at rank >= 1 after ensureAllSkills", sk)
+	}
+}
+
+// TestValidate_RangedCombatSurvives verifies that ranged-combat (revived as the
+// 10th skill) is no longer stripped by Validate.
+func TestValidate_RangedCombatSurvives(t *testing.T) {
+	c := &Character{
+		Stats:     validStats(),
+		Buffs:     newTestBuffs(),
+		SpeciesId: 1,
+		Skills: map[string]int{
+			"ranged-combat": 5,
+		},
+	}
+
+	_ = c.Validate()
+
+	if _, ok := c.Skills["ranged-combat"]; !ok {
+		t.Error("ranged-combat must survive Validate (revived skill)")
 	}
 }
 

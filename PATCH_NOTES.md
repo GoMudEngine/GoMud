@@ -1,5 +1,28 @@
 # DOGMud Patch Notes
 
+## 2026-06-10 — Loaded-weapon ranged combat
+
+Bows, crossbows, pistols, and slings are now fully playable. The
+ranged-combat skill has been revived and governs all aimed-shot
+work.
+
+- **`shoot <target>` / `shoot <target> <direction>`** — fire a
+  loaded ranged weapon at a target in your room or an adjacent
+  room. Cross-room fire does not automatically draw you into melee.
+- **`reload`** — chamber or nock a fresh round from a matching ammo
+  bundle in your pack (arrows for bows, bolts for crossbows, shot
+  for slings and pistols). Reloading shares the special-move
+  cooldown, so plan your shots.
+- **Five new weapons** at the blacksmith: sling, hand crossbow,
+  primitive pistol, hunting bow, and arbalest (Strength-gated).
+  Matching ammo bundles available at the same vendor.
+- **Perception governs ranged shots** — aimed attacks use your
+  keen eye, not raw Strength. The ranged-combat skill scales
+  both hit chance and damage as it improves.
+- **Archers keep their distance.** Ranged-focused mobs with loaded
+  weapons prefer to back out of melee range, reload, and fire from
+  cover rather than trading blows up close.
+
 ## 2026-06-10 — Living weather
 
 The world now has weather — real weather that forms, travels, and dies on its

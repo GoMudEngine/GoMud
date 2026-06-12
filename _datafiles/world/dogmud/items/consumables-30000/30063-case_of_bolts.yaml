@@ -1,0 +1,11 @@
+itemid: 30063
+name: Case of Bolts
+namesimple: case
+description: A hard leather case of squat iron-tipped crossbow bolts.
+type: ammo
+ammo_tag: bolts
+uses: 20
+weight: 2.0
+value: 70
+vendor_categories:
+- blacksmithing

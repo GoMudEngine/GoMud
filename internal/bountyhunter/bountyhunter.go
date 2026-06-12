@@ -9,6 +9,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/factions"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/goals"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
@@ -86,7 +87,13 @@ func spawnHunter(targetUserId, bountyId, bountyGold int, issuerFaction string) i
 	for _, baseId := range hunter.LootPool {
 		affixed := items.GenerateAffixedItem(baseId, gg, scalar)
 		if affixed.ItemId > 0 {
-			hunter.Character.Wear(affixed)
+			if _, worn, reason := hunter.Character.Wear(affixed); !worn {
+				mudlog.Warn("bountyhunter.spawnHunter()",
+					"mobName", hunter.Character.Name,
+					"mobId", hunter.MobId,
+					"itemId", affixed.ItemId,
+					"reason", reason)
+			}
 		}
 	}
 

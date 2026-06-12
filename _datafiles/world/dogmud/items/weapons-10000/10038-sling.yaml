@@ -1,0 +1,22 @@
+itemid: 10038
+name: Sling
+namesimple: sling
+description: A humble loop of braided leather with a worn pouch at its center. A
+  shepherd's tool as much as a weapon, it whips a loaded stone outward with a
+  practiced snap of the wrist. Cheap, quiet, and forgiving of
+  the untrained hand.
+type: weapon
+hands: 1
+subtype: shooting
+weight: 0.5  # Little more than a strip of leather
+speedmultiplier: 0.5  # Slower attack rate due to reload/aim
+grapplemodifier: 0.2  # Ranged weapon, awkward for close-quarters grappling
+ammo_tag: shot
+damage:
+  basedamage: 3
+  variance: 1
+damage_multiplier: 2.00
+parryrating: 0
+value: 40
+vendor_categories:
+- blacksmithing

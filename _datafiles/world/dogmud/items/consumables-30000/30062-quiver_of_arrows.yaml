@@ -1,0 +1,11 @@
+itemid: 30062
+name: Quiver of Arrows
+namesimple: quiver
+description: Two dozen straight-shafted arrows, fletched and ready.
+type: ammo
+ammo_tag: arrows
+uses: 24
+weight: 1.5
+value: 60
+vendor_categories:
+- blacksmithing

@@ -173,6 +173,39 @@ func handlePlayerCombat(evt events.NewRound, sleepingUserIds map[int]bool, sleep
 	return affectedPlayerIds, affectedMobInstanceIds
 }
 
+// archerReengageable reports whether a nil-aggro ranged mob should still be
+// driven through its behavior tree this round, so a kiting archer that just
+// retreated (and had its aggro ended by ValidateAggro's same-room check) can
+// fire from range on the following round. True only when ALL of:
+//   - the mob has an equipped ranged weapon (main or off hand),
+//   - its CombatMemory is non-nil and not expired, and
+//   - the remembered target's last-seen room is the mob's own room or exactly
+//     one exit away (the bounded one-exit engagement window).
+//
+// Non-ranged mobs and stale/absent memories return false, preserving the
+// unconditional skip for every mob that isn't a live-memory archer.
+func archerReengageable(mob *mobs.Mob, room *rooms.Room, round uint64) bool {
+	if !mob.Character.Equipment.Weapon.IsRangedWeapon() &&
+		!mob.Character.Equipment.Offhand.IsRangedWeapon() {
+		return false
+	}
+	if mob.CombatMemory == nil {
+		return false
+	}
+	if mobs.CombatMemoryExpired(mob.CombatMemory, round,
+		int(configs.GetBalanceConfig().CombatMemoryDuration)) {
+		return false
+	}
+	if room == nil {
+		return false
+	}
+	lastSeen := mob.CombatMemory.LastSeenRoomId
+	if lastSeen == mob.Character.RoomId {
+		return true
+	}
+	return room.FindExitTo(lastSeen) != ""
+}
+
 func handleMobCombat(evt events.NewRound, sleepingUserIds map[int]bool, sleepingMobInstanceIds map[int]bool) (affectedPlayerIds []int, affectedMobInstanceIds []int) {
 
 	moonMod := float64(configs.GetBalanceConfig().MoonStatModMax)
@@ -286,7 +319,28 @@ func handleMobCombat(evt events.NewRound, sleepingUserIds map[int]bool, sleeping
 				continue
 			}
 		} else if mob.Character.Aggro == nil {
-			continue
+			// Ranged-mob bounded re-engagement window. A kiting archer ends
+			// each round having retreated one exit (keep_distance), which
+			// trips ValidateAggro's same-room check above and ENDS its aggro.
+			// Without an exemption the archer would stand inert the moment it
+			// broke melee contact — defeating the whole kite-and-shoot loop
+			// (this was the committed-AI "retreat once then go idle" defect).
+			//
+			// Let a mob with a loaded ranged weapon proceed to its behavior
+			// tree when its fresh CombatMemory points at a target in its own
+			// room or exactly one exit away. The btree's try_fire then fires
+			// via its CombatMemory fallback. This is a BOUNDED one-exit window
+			// keyed on the loaded-weapon model — NOT the old continuous
+			// remote-shoot: actual firing still routes through the one-shot
+			// `shoot` command + reload cooldowns, and the window closes as soon
+			// as CombatMemory expires or the target moves >1 exit from the mob.
+			//
+			// Note: aggro is already nil here, so ValidateAggro (run only in
+			// the Aggro != nil block above) does not apply to this path.
+			if !archerReengageable(mob, mobRoom, evt.RoundNumber) {
+				continue
+			}
+			// else: fall through to TryMobBehavior with nil aggro.
 		}
 
 		// Initialize CombatMemory on the first round of engagement so

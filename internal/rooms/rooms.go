@@ -17,6 +17,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutators"
 	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
 	"github.com/GoMudEngine/GoMud/internal/state"
@@ -847,7 +848,13 @@ func (r *Room) Prepare(checkAdjacentRooms bool) {
 						for _, baseItemId := range mob.LootPool {
 							affixedItem := items.GenerateAffixedItem(baseItemId, goldPaid, scalar)
 							if affixedItem.ItemId > 0 {
-								mob.Character.Wear(affixedItem)
+								if _, worn, reason := mob.Character.Wear(affixedItem); !worn {
+									mudlog.Warn("rooms.SpawnMob()",
+										"mobName", mob.Character.Name,
+										"mobId", mob.MobId,
+										"itemId", affixedItem.ItemId,
+										"reason", reason)
+								}
 							}
 						}
 					}

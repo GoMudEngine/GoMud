@@ -1,0 +1,120 @@
+# archer archetype
+#
+# A ranged skirmisher built around the ranged-weapons toolkit
+# (shoot / reload). Per mob_combat_round it kites and shoots before
+# it ever falls back to the humanoid melee cascade:
+#
+#   1. keep_distance — if a melee attacker has closed and the archer
+#      is still healthy, fall back through a passable exit (preferring
+#      home), laying a breadcrumb so the next tick can shoot back
+#      through the reverse exit. Short-circuits the round (retreat now,
+#      fire next tick from range).
+#   2. try_fire — fire a LOADED ranged weapon at the aggro target,
+#      same-room or one exit away (directional shot).
+#   3. try_reload — when UNLOADED, ammo on hand, and NOT pinned in
+#      melee, chamber a fresh projectile (slipping into cover first if
+#      skullduggery-capable).
+#   4-9. inherited humanoid combat cascade (try_special_move + the
+#      bash/kick/grapple/trip control toolkit) for when the archer is
+#      forced into melee with nothing ranged ready.
+#
+# Behaviorally distinguished from generic_fighter by the leading
+# keep_distance/try_fire/try_reload trio. Example users: bandit
+# archers, crossbow guards, hunters.
+#
+# Spec: ranged-weapons feature (Task 8 archer AI).
+
+tree:
+  type: selector
+  children:
+    # panic-flee at critical HP (same reflex as generic_fighter/predator).
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 25
+        - type: action
+          do: flee
+
+    # packmate_hurt: engage the attacker.
+    - type: action
+      event: packmate_hurt
+      do: attack
+
+    # heard_callforhelp: navigate toward an adjacent caller.
+    - type: action
+      event: heard_callforhelp
+      do: go_to_caller_room
+
+    # mob_combat_round: ranged kite-and-shoot, then the melee cascade.
+    - type: selector
+      event: mob_combat_round
+      children:
+        # Break melee contact while healthy so we can shoot from range.
+        - type: action
+          do: keep_distance
+          health_percent: 50
+
+        # Fire if we have a loaded weapon and a reachable target.
+        - type: action
+          do: try_fire
+
+        # Out of contact + unloaded → chamber a fresh projectile.
+        - type: action
+          do: try_reload
+
+        # ── inherited humanoid combat cascade (melee fallback) ──
+        - type: action
+          do: try_special_move
+
+        - type: sequence
+          children:
+            - type: condition
+              check: target_is_casting
+            - type: action
+              do: command_best_of
+              cmds: [bash, trip]
+
+        - type: sequence
+          children:
+            - type: condition
+              check: target_not_standing
+            - type: action
+              do: command_best_of
+              cmds: [kick]
+
+        - type: action
+          do: command_best_of
+          cmds: [bash]
+
+        - type: sequence
+          children:
+            - type: decorator
+              mod: invert
+              child:
+                type: condition
+                check: multiple_enemies
+            - type: action
+              do: command_best_of
+              cmds: [grapple]
+
+        - type: action
+          do: command_best_of
+          cmds: [trip]
+
+    # strategic goal pursuit (after reflex/combat, before idle end).
+    - type: action
+      event: mob_idle
+      do: try_goal_planner
+
+# Combat-forward strategic weighting: an archer drills its ranged skill
+# and seeks better weapons/ammo, and values staying alive (it kites).
+goal_weights:
+  mastery-skill: 2.0
+  upgrade-gear: 1.5
+  survival: 1.2
+
+default_goals:
+  - type: survival
+    priority: 80

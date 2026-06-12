@@ -56,7 +56,7 @@ mechanics:
     a ~4-second timer. Specials: kick/bash/taunt; `cast <spell>` for magic.
   progression: >-
     There are NO levels or XP. The six stats (Strength, Dexterity, Perception,
-    Vitality, Willpower, Charisma, centered at 100) and nine skills improve by
+    Vitality, Willpower, Charisma, centered at 100) and ten skills improve by
     USE, probabilistically. Don't look for an XP bar or level-ups.
 
 notes:

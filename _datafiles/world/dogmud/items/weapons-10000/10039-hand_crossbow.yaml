@@ -1,0 +1,21 @@
+itemid: 10039
+name: Hand Crossbow
+namesimple: crossbow
+description: A compact crossbow small enough to level with one hand. Its short
+  steel prod and tight string trade range for convenience, making it a favorite
+  of scouts and duelists who keep a blade ready in the other hand.
+type: weapon
+hands: 1
+subtype: shooting
+weight: 2.0  # Compact, offhand-friendly
+speedmultiplier: 0.5  # Slower attack rate due to reload/aim
+grapplemodifier: 0.2  # Ranged weapon, awkward for close-quarters grappling
+ammo_tag: bolts
+damage:
+  basedamage: 4
+  variance: 2
+damage_multiplier: 3.00
+parryrating: 1
+value: 90
+vendor_categories:
+- blacksmithing

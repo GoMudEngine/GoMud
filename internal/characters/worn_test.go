@@ -259,3 +259,64 @@ func TestGetAllSlotTypes(t *testing.T) {
 	got := GetAllSlotTypes()
 	assert.Equal(t, expected, got, "GetAllSlotTypes should return all slot types in correct order")
 }
+
+// ---------------------------------------------------------------------------
+// Wear min-strength gate tests
+// ---------------------------------------------------------------------------
+
+// newRangedWeapon builds a minimal shooting weapon with an optional MinStrength.
+// Uses Subtype=Shooting so HandsRequired() returns early without loading species data.
+func newRangedWeapon(id int, minStr int) items.Item {
+	return items.Item{
+		ItemId: id,
+		Spec: &items.ItemSpec{
+			ItemId:      id,
+			Name:        "heavy arbalest",
+			Type:        items.Weapon,
+			Subtype:     items.Shooting,
+			Hands:       2,
+			MinStrength: minStr,
+		},
+	}
+}
+
+// TestWear_MinStrength_Reject verifies that Wear() refuses a weapon whose
+// MinStrength exceeds the character's current Strength.ValueAdj.
+func TestWear_MinStrength_Reject(t *testing.T) {
+	c := New()
+	c.Stats.Strength.ValueAdj = 50 // well below the 100 requirement
+
+	bow := newRangedWeapon(9901, 100)
+	_, worn, reason := c.Wear(bow)
+
+	assert.False(t, worn, "should be rejected due to low strength")
+	assert.Contains(t, reason, "aren't strong enough", "failure reason should mention strength")
+	assert.Equal(t, items.Item{}, c.Equipment.Weapon, "weapon slot must stay empty")
+}
+
+// TestWear_MinStrength_Accept verifies that Wear() succeeds when the character
+// meets the MinStrength requirement exactly.
+func TestWear_MinStrength_Accept(t *testing.T) {
+	c := New()
+	c.Stats.Strength.ValueAdj = 100 // exactly meets the requirement
+
+	bow := newRangedWeapon(9902, 100)
+	_, worn, reason := c.Wear(bow)
+
+	assert.True(t, worn, "should succeed: strength meets minimum")
+	assert.Empty(t, reason, "no failure reason expected")
+	assert.Equal(t, bow.ItemId, c.Equipment.Weapon.ItemId, "weapon should be in weapon slot")
+}
+
+// TestWear_MinStrength_Zero verifies that a weapon with no MinStrength set (0)
+// is always equippable regardless of the character's strength.
+func TestWear_MinStrength_Zero(t *testing.T) {
+	c := New()
+	c.Stats.Strength.ValueAdj = 1 // extremely weak
+
+	bow := newRangedWeapon(9903, 0) // no minimum
+	_, worn, reason := c.Wear(bow)
+
+	assert.True(t, worn, "no MinStrength set — should always equip")
+	assert.Empty(t, reason, "no failure reason expected")
+}
