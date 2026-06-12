@@ -1,6 +1,6 @@
 # DOGMud Patch Notes
 
-## 2026-06-10 — Loaded-weapon ranged combat
+## 2026-06-12 — Loaded-weapon ranged combat
 
 Bows, crossbows, pistols, and slings are now fully playable. The
 ranged-combat skill has been revived and governs all aimed-shot
