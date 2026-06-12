@@ -1,0 +1,44 @@
+roomid: 5200
+zone: Pothole Coulee
+title: The Awakening Pool
+description: >
+  The coulee floor opens here into a wide stone bowl, its walls worn
+  smooth by ancient floods. Dark water fills the hollow nearly to the
+  rim, flat and still as poured glass -- no ripple, no current, no
+  sound. Far below the surface, something glows with pale blue-green
+  light, steady and deep, like a coal that never burns out. The basalt
+  rim is polished where countless hands have gripped it. This is where
+  the Opened come back to themselves.
+biome: water
+coord:
+  x: 45
+  y: 0
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  west:
+    roomid: 5201
+  east:
+    roomid: 5202
+  south:
+    roomid: 5203
+  north:
+    roomid: 5211
+nouns:
+  pool: Dark water fills the bowl to within a hand-span of the basalt
+    rim, unmoving in a way that running water never is. The cold comes
+    off it in waves even in the midday heat. Whatever feeds this pool
+    flows in and out somewhere far below the surface, unseen.
+  basalt: The stone walls of the bowl are dark grey-black, water-polished
+    to a near-gloss. Ancient floods carved this hollow out of the coulee
+    floor over ages, and the same currents smoothed every sharp edge until
+    the rock feels almost soft under the hand. Old scratch-marks near the
+    rim suggest the place has served as an anchor for generations.
+  light: Something gives off pale blue-green light from deep in the pool,
+    too far down to make out a source. It does not flicker the way
+    firelight does -- it simply is, steady and cold and patient. You
+    cannot tell if it is stone, water, or something living down there.
+idlemessages:
+- The <ansi fg="itemname">pool</ansi> surface barely moves, but a deep chill rises off the water.
+- The <ansi fg="itemname">light</ansi> below pulses once, faint and slow, then steadies.
