@@ -1,0 +1,48 @@
+roomid: 5205
+zone: Pothole Coulee
+title: The Drowned Lantern
+description: >
+  The inn's common room wraps you in warmth the moment you step in out of
+  the coulee air. Overhead the namesake hangs and glows: a salvaged
+  diving-bell of green-tarnished bronze, hauled up from some sunk wreck
+  and re-rigged as a great lantern, its caged flame throwing a soft
+  underwater light across the room. Long shared tables run the length of
+  the floor, their tops scrubbed pale and scarred with the rings of a
+  thousand set-down cups. A peat fire mutters in the hearth, breathing out
+  that low brown smell of burning earth, and the whole place has the
+  settled, well-used hush of a town's evening heart waiting for evening to
+  come. Stairs climb up into the dark toward the sleeping loft; the lane
+  lies back out east.
+biome: city
+coord:
+  x: 44
+  y: 2
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  east:
+    roomid: 5204
+  up:
+    roomid: 5206
+nouns:
+  lantern: The Drowned Lantern that names the house is no ordinary lamp
+    but a whole diving-bell, salvaged green and dented from the deep and
+    hung from the central beam on iron chain. A flame burns caged in its
+    throat, and the bronze throws the light back down strange and watery,
+    so the whole room seems lit from under a pond. Folk say the bell came
+    up from a wreck older than the town and chose to keep on shining.
+  tables: The long tables are the inn's whole seating, meant for
+    strangers to share elbows and a jug whether they came in together or
+    not. Their tops are scrubbed soft and pale, ringed and ringed again by
+    set-down cups, carved here and there with idle initials and a few
+    older marks nobody can read. By evening every bench will be full; for
+    now they wait, patient and worn.
+  fire: A peat fire burns low in the stone hearth, more glow than flame,
+    the cut bricks of earth crumbling slowly to ash. It gives off that
+    particular brown-sweet smell of burning bog, and a steady warmth that
+    fills the room without ever roaring. Someone keeps it fed -- the
+    basket of dried peat beside the hearth is freshly stacked.
+idlemessages:
+- The peat <ansi fg="itemname">fire</ansi> settles with a soft collapse and sends up a curl of brown smoke.
+- The <ansi fg="itemname">lantern</ansi> sways a hand's width on its chain and the watery light slides across the tables.

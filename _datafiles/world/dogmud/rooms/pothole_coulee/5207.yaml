@@ -1,0 +1,46 @@
+roomid: 5207
+zone: Pothole Coulee
+title: Coulee Provisions
+description: >
+  The store is one cramped room packed floor to rafter with everything a
+  frontier body might need and a good deal it might only want. Shelves
+  climb the walls all the way to the ceiling, crammed with sacked grain,
+  coiled rope, tin lamps, jars of who-knows-what, and bundles hung
+  overhead just out of reach. The air is thick with the mingled smell of
+  hemp rope and rendered tallow and dry goods, a smell that means trade.
+  A long counter worn pale and smooth fronts the back wall, its surface
+  scuffed by years of coins and elbows and parcels slid across it. Whoever
+  keeps this place clearly knows where every last thing sits in the
+  glorious clutter, even if a stranger never could.
+biome: city
+coord:
+  x: 46
+  y: 2
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  west:
+    roomid: 5204
+nouns:
+  shelves: The shelves run from the worn floorboards clear up to the
+    rafters, every plank sagging a little under its load. Sacks and tins
+    and crocks are stacked three deep, the high ones reached by a long
+    hooked pole leaned in the corner for the purpose. There is an order to
+    it that belongs to one mind only -- the keeper's -- and no map of it
+    posted for anyone else.
+  counter: The counter is a single slab of driftwood planed flat and set
+    on barrels, its top burnished pale by a long history of coins, elbows,
+    and parcels sliding across the grain. A set of brass scales and a
+    much-thumbed tally-book sit at one end, ready for the next sale.
+    Lean on it and you can feel how many bargains have been struck right
+    here.
+  goods: The goods are the plain wealth of a frontier town -- grain and
+    salt, rope and twine, lamp oil and candle-tallow, fish-hooks, nails,
+    needles, and a hundred small salvaged oddments besides. Some bear the
+    mud and barnacle of having come up out of the pools; others arrived on
+    the backs of traders down the coulee. Whatever a newcomer has
+    forgotten to bring, the chances are good it waits somewhere on these
+    shelves.
+idlemessages:
+- A bundle shifts on a high shelf and settles, and a fine drift of dust comes down through the lamplight.

@@ -1,0 +1,46 @@
+roomid: 5208
+zone: Pothole Coulee
+title: Strongbox House
+description: >
+  This squat blockhouse is built of fitted basalt thicker than anywhere
+  else in town, and the air inside it goes cool and still the moment the
+  heavy door swings shut behind you. Iron-banded strongboxes line the
+  walls in stacked rows, each one studded and locked, holding the saved
+  coin and kept treasures of folk who would rather not carry such things
+  through a frontier. A ledger desk stands under the room's one shuttered
+  window, its great book closed and squared, an inkpot capped beside it.
+  Nothing here is loud or bright; the place is quiet the way a vault is
+  quiet, faintly forbidding in a manner that turns, once you understand
+  it, into something close to comfort. Whatever you set down here will be
+  here when you come back.
+biome: city
+coord:
+  x: 46
+  y: 1
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  west:
+    roomid: 5203
+  north:
+    roomid: 5202
+nouns:
+  strongboxes: The strongboxes are squat chests of dark wood bound in
+    riveted iron, stacked along the walls in patient rows from floor to
+    waist. Each wears a heavy lock and a small tag, and not one of them
+    rattles when you pass -- whatever they hold is packed careful and
+    still. Between them they likely hold the larger part of the town's
+    saved wealth, trusted to stone and iron and a keeper's word.
+  ledger: The ledger is a thick book bound in worn hide, lying squared on
+    its desk beneath the window. Closed though it is, you can tell it
+    holds every coin in and coin out of this house set down in a careful
+    hand, page after page of accounts that balance. An inkpot, a trimmed
+    quill, and a stick of sealing-wax wait beside it for the next entry.
+  door: The door is a single slab of coulee oak faced with iron straps,
+    hung on hinges thick as your wrist and swinging shut on its own slow
+    weight. It seals with a deep, final sound that you feel in the floor
+    as much as hear. Shut behind you, it makes the room over into
+    somewhere apart from the town, hushed and held.
+idlemessages:
+- The heavy door settles a fraction on its hinges with a low groan of iron, and the cool air does not stir.
