@@ -63,6 +63,9 @@ nouns:
     water fast. The foragers know to kneel at the firmest
     point and reach with poles rather than leaning over the
     edge. The peat smells of deep time and cold water.
+spawninfo:
+- mobid: 379
+  cooldown: 2400 rounds
 idlemessages:
 - a single small bubble breaks the dark surface and is gone
 - ''

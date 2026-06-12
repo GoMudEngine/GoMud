@@ -30,6 +30,7 @@ nouns:
     walk past without stopping.
 spawninfo:
 - mobid: 106
+- mobid: 378
 idlemessages:
 - A porter shoulders past with a crate, muttering about delivery schedules.
 - The clatter of cart wheels on cobblestone echoes off the city wall.
