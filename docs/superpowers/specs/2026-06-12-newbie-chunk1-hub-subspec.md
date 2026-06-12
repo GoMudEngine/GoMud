@@ -75,7 +75,7 @@ cleared / a guide will open it soon; the only exit is back):
 | 5220 | Dry Coulee Mouth — East (stub) | (48,0,0) | 5209 E | A — Martial |
 | 5221 | Talus Gap — West (stub) | (42,0,0) | 5210 W | B — Forge |
 | 5222 | Reedwash Mouth — Southeast (stub) | (47,-2,0) | 5207 E | C — Alchemy |
-| 5223 | Scrub Draw — Southwest (stub) | (43,-2,0) | 5216 S* | D — Wilderness |
+| 5223 | Scrub Draw — Southwest (stub) | (43,-1,0) | 5216 W* | D — Wilderness |
 | 5224 | Stargazer Cut — Northwest (stub) | (44,2,0) | 5218 N | E — Folding |
 | 5225 | Old Field Track — North (stub) | (46,2,0) | 5217 N | F — Lore |
 | 5226 | Bluff Steps — Northeast (stub) | (47,1,0) | 5209 N* | G — Ranged |
