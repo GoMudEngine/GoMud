@@ -22,28 +22,19 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// bludgeonDisplaySubtype replicates the swap logic from buildAttackMessages
-// so the tests don't depend on the full combat message pipeline.
-//
-// The identical block lives in buildAttackMessages (combat_helpers.go).
-// If the logic there changes, update this mirror too.
+// bludgeonDisplaySubtype is a thin position-aware wrapper around the real
+// production function meleeDisplaySubtype (combat_helpers.go) so the tests
+// can exercise the swap logic without the full combat message pipeline.
 func bludgeonDisplaySubtype(
 	weaponSubType items.ItemSubType,
 	weaponReach float64,
 	pos *position.Machine,
 ) items.ItemSubType {
-	display := weaponSubType
 	posRadius := 0.0
 	if pos != nil {
 		posRadius = PositionReachRadius(pos.State())
 	}
-	if ShouldBludgeon(weaponReach, posRadius) {
-		switch display {
-		case items.Slashing, items.Cleaving, items.Stabbing, items.Shooting:
-			display = items.Bludgeoning
-		}
-	}
-	return display
+	return meleeDisplaySubtype(weaponSubType, weaponReach, posRadius)
 }
 
 // TestBludgeonSwap_BladedInMount_SelectsBludgeoning — sword (Slashing, 1.0m)
@@ -82,6 +73,18 @@ func TestBludgeonSwap_ShootingInMount_SelectsBludgeoning(t *testing.T) {
 	forceMount(attacker)
 	got := bludgeonDisplaySubtype(items.Shooting, 1.0, attacker.Position)
 	assert.Equal(t, items.Bludgeoning, got, "shooting weapon used as club in mount must use Bludgeoning")
+}
+
+// TestBludgeonSwap_ShootingStanding_AlwaysBludgeons — a ranged weapon swung in
+// a normal (non-grapple) Standing melee round must STILL narrate as Bludgeoning.
+// Unlike bladed weapons (which only swap inside a grapple), Shooting subtypes
+// swap unconditionally in the melee path: the auto-attack swing is always an
+// improvised club, never "fires/snipes/arrow". The deliberate SHOOT command has
+// its own message set and never routes through meleeDisplaySubtype.
+func TestBludgeonSwap_ShootingStanding_AlwaysBludgeons(t *testing.T) {
+	attacker := characters.New() // Standing → zero grapple radius
+	got := bludgeonDisplaySubtype(items.Shooting, 1.0, attacker.Position)
+	assert.Equal(t, items.Bludgeoning, got, "shooting weapon swung while standing must narrate as Bludgeoning")
 }
 
 // TestBludgeonSwap_DaggerFits_KeepsStabbing — dagger reach 0.3m exactly

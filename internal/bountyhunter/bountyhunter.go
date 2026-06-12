@@ -97,6 +97,10 @@ func spawnHunter(targetUserId, bountyId, bountyGold int, issuerFaction string) i
 		}
 	}
 
+	// A hunter who drew a ranged weapon should arrive ready to fire — load any
+	// equipped ranged weapon so its behavior tree opens with a shot.
+	hunter.Character.Equipment.LoadEquippedRangedWeapons()
+
 	// Stamp the per-hunter target on the hunter INSTANCE's MiscData so that
 	// the planner (which has the live instance) can read it. The goal itself
 	// is param-less — it is a template-level intent marker shared across all

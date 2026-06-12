@@ -976,6 +976,34 @@ func calcHitDamage(result *AttackResult, isCrit bool, backstab bool, sdp swingDa
 // swingDamageParamsWithCritBuffs is a type alias to carry critBuffs through calcHitDamage
 // critBuffs are stored via sdp so they pass through naturally.
 
+// meleeDisplaySubtype computes the subtype used to select AUTO-ATTACK melee
+// swing narration. Two rules apply, in order:
+//
+//  1. Shooting-subtype weapons (bows/crossbows/slings/guns) ALWAYS narrate as
+//     improvised Bludgeoning in the melee path — a swung bow is a club, never
+//     "fires/snipes/arrow". The deliberate SHOOT path (actions.ExecuteFire /
+//     combat_fire.go) has its own messages and never routes through here, so
+//     this is unconditional regardless of grapple position.
+//  2. Otherwise, when ShouldBludgeon fires (weapon reach exceeds the grapple
+//     radius of the attacker's position), bladed subtypes (Slashing, Cleaving,
+//     Stabbing) narrate as Bludgeoning — the fiction tracks the pommel/hilt
+//     strike that the reach damage penalty already reflects.
+//
+// Natural-blunt subtypes (Fist, Claws, Bite, Sting, Slam, Gore, Whipping) and
+// caster subtypes (Wand, Sceptre, Staff) keep their own vocabulary.
+func meleeDisplaySubtype(weaponSubType items.ItemSubType, weaponReach, posRadius float64) items.ItemSubType {
+	if weaponSubType == items.Shooting {
+		return items.Bludgeoning
+	}
+	if ShouldBludgeon(weaponReach, posRadius) {
+		switch weaponSubType {
+		case items.Slashing, items.Cleaving, items.Stabbing:
+			return items.Bludgeoning
+		}
+	}
+	return weaponSubType
+}
+
 // buildAttackMessages constructs and sends all combat messages for a swing.
 func buildAttackMessages(result *AttackResult, sourceChar *characters.Character, targetChar *characters.Character,
 	ws weaponSetup, sdp swingDamageParams, attackTargetDamage int, attackTargetReduction int,
@@ -989,11 +1017,7 @@ func buildAttackMessages(result *AttackResult, sourceChar *characters.Character,
 	}
 
 	// T4 (chunk 4c): compute the display subtype for attack-message selection.
-	// When ShouldBludgeon fires (weapon reach exceeds position grapple radius),
-	// bladed/ranged weapons narrate as Bludgeoning — the fiction tracks the
-	// pommel/hilt strike that the math already reflects (T3 damage penalty).
-	// Natural-blunt subtypes (Fist, Claws, Bite, Sting, Slam, Gore, Whipping)
-	// and caster subtypes (Wand, Sceptre, Staff) keep their own vocabulary.
+	// See meleeDisplaySubtype for the swap rules.
 	displaySubtype := ws.weaponSubType
 	{
 		var weaponReach float64
@@ -1007,15 +1031,7 @@ func buildAttackMessages(result *AttackResult, sourceChar *characters.Character,
 		if sourceChar.Position != nil {
 			posRadius = PositionReachRadius(sourceChar.Position.State())
 		}
-		if ShouldBludgeon(weaponReach, posRadius) {
-			switch displaySubtype {
-			case items.Slashing, items.Cleaving, items.Stabbing, items.Shooting:
-				displaySubtype = items.Bludgeoning
-			}
-			// Natural-blunt (Fist/Claws/Bite/Sting/Slam/Gore/Whipping) and
-			// caster (Wand/Sceptre/Staff) subtypes are intentionally excluded
-			// from the swap — their own vocabulary is already appropriate.
-		}
+		displaySubtype = meleeDisplaySubtype(ws.weaponSubType, weaponReach, posRadius)
 	}
 
 	// Use fumble messages when a fumble is detected

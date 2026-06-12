@@ -66,6 +66,20 @@ func (w *Worn) AllSlots() []WornSlot {
 	}
 }
 
+// LoadEquippedRangedWeapons chambers/nocks any ranged weapon already worn in
+// the main-hand or offhand slot (sets Item.Loaded = true). Called at mob spawn
+// so an archer on duty starts ready to fire — its behavior tree opens with a
+// shot instead of burning its first round on a reload. A player who loots such
+// a weapon inherits the loaded state (one free shot) — an accepted edge case.
+func (w *Worn) LoadEquippedRangedWeapons() {
+	if w.Weapon.IsRangedWeapon() {
+		w.Weapon.Loaded = true
+	}
+	if w.Offhand.IsRangedWeapon() {
+		w.Offhand.Loaded = true
+	}
+}
+
 // StatMod sums stat-mod contributions across every worn slot.
 //
 // NOTE: this deliberately keeps the explicit per-field sum rather than

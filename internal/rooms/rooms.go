@@ -862,6 +862,12 @@ func (r *Room) Prepare(checkAdjacentRooms bool) {
 
 				mob.Validate()
 
+				// An archer on duty keeps its weapon nocked/chambered: load any
+				// equipped ranged weapon (template gear or instance loot) so the
+				// behavior tree opens with a shot instead of burning its first
+				// round on a reload.
+				mob.Character.Equipment.LoadEquippedRangedWeapons()
+
 				// A schedule_id can have moved the mob to a different room
 				// inside NewMobById (applyScheduleSpawnOverride). List the
 				// instance in its ACTUAL room, not the spawn room, so the
