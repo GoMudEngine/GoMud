@@ -1,0 +1,51 @@
+roomid: 5209
+zone: Pothole Coulee
+title: The Mending Hut
+description: >
+  The hut is low and warm and smells of green things drying, the kind of
+  smell that loosens a clenched body before the mind catches up. Bunches
+  of herbs hang head-down from every rafter -- bitter root, sweet leaf,
+  grey moss -- turning slow in the heat off a banked fire. A row of cots
+  stands made-up along the long wall, blankets squared and turned back,
+  each one ready for whoever the water gives back next. Clean bandages
+  sit rolled in a basket within arm's reach, white and soft and smelling
+  of lye soap. The healer is not at her bench just now, but a pestle of
+  half-ground salve waits there and the kettle is still warm, so she will
+  not be long. Nothing in this room can harm you; this is the place the
+  Opened are carried to be made whole again.
+biome: house
+coord:
+  x: 47
+  y: 0
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  west:
+    roomid: 5202
+nouns:
+  cots:
+    A row of narrow cots stands against the long wall, frames of peeled
+    willow strung with rope and laid with straw ticks gone soft from use.
+    Each is made up and turned back, blankets squared at the corners the
+    way the healer keeps them -- ready, always, for the next body the
+    pool returns cold and blinking. Lie down on any one of them and the
+    whole hut seems to say that you are safe now, and that someone here
+    will sit your watch.
+  herbs:
+    Bundles of cut herbs hang head-down from the rafters and from lines
+    strung corner to corner, drying slow in the warm air. There is
+    bitter root and sweet leaf and a grey moss that smells of rain, and a
+    dozen more a stranger could not name, each tied off and labeled in a
+    cramped, careful hand. Brush against a low bunch and it sheds a
+    fragrant dust and sets the whole ceiling swaying.
+  bandages:
+    A deep basket by the bench holds clean bandages rolled tight and
+    even, white linen boiled soft and smelling faintly of lye soap. Beside
+    them sit folded pads, a coil of waxed thread, and a small horn of
+    salve, all set out plain where a shaking hand could find them in the
+    dark. Nothing here is hidden or hoarded; it is laid ready for whoever
+    walks in needing it.
+idlemessages:
+- The banked fire settles with a soft tick, and the hung <ansi fg="itemname">herbs</ansi> sway and go still.
+- Somewhere a kettle ticks as it cools, the only sound in the warm hush of the hut.

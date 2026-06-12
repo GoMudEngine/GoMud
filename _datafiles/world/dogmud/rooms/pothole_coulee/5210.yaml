@@ -1,0 +1,54 @@
+roomid: 5210
+zone: Pothole Coulee
+title: Wickerwork Cottage
+description: >
+  The walls of this snug little cottage are woven, not built -- panels of
+  silver willow wickerwork plaited tight and daubed at the seams, so the
+  whole place creaks soft and breathing-like when the wind leans on it. A
+  low hearth glows at the heart of the room, its smoke curling up through
+  a hole in the thatch and hanging the air with the smell of burning herb
+  and old fat. Charms crowd every surface and dangle from every cross-rod:
+  knots of red yarn, holed stones, bird skulls, twists of straw -- and
+  scattered among them, here and there, the plain tin medallions of the
+  Church, fewer by far and half-lost in the older company. A clutch of
+  remedies that predate the school sits steeping in clay crocks along the
+  sill. It is warm here, and welcoming, and just strange enough that the
+  hair stirs on your arms without your knowing quite why.
+biome: house
+coord:
+  x: 43
+  y: 0
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  east:
+    roomid: 5201
+nouns:
+  charms:
+    Charms hang from every rod and crowd every shelf -- red-yarn knots,
+    holed river stones threaded on gut, the small skulls of birds, plaited
+    straw figures with no faces. Among them, sparse and shy, hang the tin
+    medallions the Church hands out, but they are badly outnumbered here
+    and clearly the newcomers. The old woman who keeps this place trusts
+    the older work, and the charms turn and tick against one another in
+    the hearth-draft as though keeping their own slow count of you.
+  wickerwork:
+    The walls are wickerwork through and through, willow withies plaited
+    in close diamond courses and daubed with river clay where the weather
+    would otherwise whistle in. The whole shell of the cottage gives and
+    settles when the wind pushes on it, creaking like a thing half awake.
+    Run a hand along the weave and you feel the work of patient fingers in
+    every crossing, tighter and older than anything the town carpenters
+    raise.
+  hearth:
+    A low clay hearth burns at the center of the room, banked down to a
+    red glow that never seems to want feeding. Bundled herb smoulders
+    along the coals' edge, sweetening the smoke that drifts up and out
+    through a soot-rimmed gap in the thatch. Crocks of dark remedy sit
+    warming at its lip, older cures than the school across the water ever
+    learned to brew, and the heat of it reaches every corner of the snug
+    little room.
+idlemessages:
+- The wickerwork walls creak and settle as the wind leans on the cottage, then ease.
+- A <ansi fg="itemname">charm</ansi> turns on its thread in the hearth-draft and taps softly against another.

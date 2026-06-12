@@ -1,0 +1,52 @@
+roomid: 5214
+zone: Pothole Coulee
+title: Cleric's Study
+description: >
+  This small back room belongs to the cleric, and the cleric belongs to
+  his books. They are everywhere -- shelved, stacked, splayed open
+  face-down to hold a place, leaning in drifts against the legs of the
+  desk. A kettle sits on a trivet over a low brazier in the corner, gone
+  cold and forgotten more often than not while its owner reads. Across one
+  whole wall, pinned in careful rows, hang charcoal rubbings lifted off
+  some carved stone, all rings and curving arcs in soft smudged black. The
+  light comes thin and dusty through a single shutter, the room is close
+  with the smell of paper and old ink, and the quiet has the held,
+  thinking weight of a place where someone has sat a long while chasing a
+  thought he cannot put down.
+biome: house
+coord:
+  x: 44
+  y: -3
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  east:
+    roomid: 5213
+nouns:
+  books:
+    Books fill the study to bursting -- bound in cracked leather and limp
+    vellum, shelved two deep, stacked in towers on the floor, splayed open
+    face-down across the desk to keep a dozen places at once. Some are
+    sermons and ledgers and almanacs, the plain working stuff of a frontier
+    cleric; others are older, hand-copied, their margins crowded with his
+    own cramped questioning notes. The whole room smells of them, paper and
+    glue and slow patient dust.
+  rubbings:
+    Pinned in careful rows across one wall hang charcoal rubbings taken off
+    some carved stone, each one a nest of arcs set within arcs -- ring
+    inside ring inside ring, swung from centers that sit just slightly
+    apart. Follow any single curve with your eye and it never comes back to
+    meet itself; the arcs run on past where they ought to close and trail
+    away off the edge of the paper. The cleric has labeled none of them and
+    explained none of them. They simply hang there, patient and faintly
+    unsettling, like a question someone left half-asked on purpose.
+  kettle:
+    A dented copper kettle sits on an iron trivet over a brazier of low
+    coals in the corner, set there for tea and forgotten as often as not.
+    More times than not it has gone stone cold while its owner read on,
+    only to be shoved back over the heat with a sigh when he surfaces. A
+    single chipped cup waits beside it, ringed brown from long use.
+idlemessages:
+- A page turns somewhere in the stacks, though no one is there, and settles.
+- The brazier shifts with a soft hiss, and the pinned <ansi fg="itemname">rubbings</ansi> stir on the wall.
