@@ -785,3 +785,40 @@ evening
 [☀️ HP:██████████ SP:██████████ CP:██████████]:Innkeep Tally casts an eye over the empty benches and nods, already planning the
 evening
 [☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== ADDENDUM 2026-06-12: 5207 re-capture after shop pricing fix =====
+What changed & why: fresh shops used to seed Current = RestockQty, leaving the
+scarcity ratio at 1.0 (the curve's ~2.36x price), so Onna opened at inflated
+prices (e.g. Sling listed 95g on base 40) and paid ~1.18x value for player
+sells (fresh-shop arbitrage). RegisterShop now seeds Current at the abundance
+level (min(MaxStock, ceil(RestockQty x AbundanceThreshold))) — the long-run
+steady state of an established shop — so a brand-new vendor opens fully stocked
+at floor (0.25x) prices. Onna's YAML also had decorative quantity/quantitymax/
+price fields that the living-economy path ignores; those were stripped.
+Below: list now shows ~15 units at floor prices, and a buy charges exactly the
+listed price (note Trail Rations shows 14 — one was bought in a prior run of
+this same session; buying one more dropped it to 13 and nudged its price 1->2,
+confirming scarcity still responds).
+
+>>> list
+.: Items available by Trader Onna
+| Qty | Name              | Type    | Price |
+| 14  | Trail Rations     | food    | 1     |
+| 15  | Oil Lantern       | object  | 1     |
+| 15  | Fungal Ration     | food    | 1     |
+| 15  | Cloth Bandage     | object  | 2     |
+| 15  | Small Red Potion  | potion  | 1     |
+| 15  | Cotton Shirt      | body    | 1     |
+| 15  | Rusty Pot         | head    | 1     |
+| 15  | Wooden Shield     | offhand | 1     |
+| 15  | Sharp Stick       | weapon  | 1     |
+| 15  | Crude Short Blade | weapon  | 1     |
+| 15  | Sling             | weapon  | 10    |
+| 15  | Pouch of Shot     | ammo    | 10    |
+
+>>> buy trail rations
+You purchase the Trail Rations from Trader Onna for 1 gold.
+
+>>> list  (post-buy: Trail Rations 13, price 1->2; scarcity responds)
+| 13  | Trail Rations     | food    | 2     |
+(all other rows unchanged from above)
