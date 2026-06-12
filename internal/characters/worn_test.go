@@ -280,6 +280,39 @@ func newRangedWeapon(id int, minStr int) items.Item {
 	}
 }
 
+// TestLoadEquippedRangedWeapons_LoadsMainAndOffhand verifies that an equipped
+// ranged weapon (either hand) is marked Loaded, while a non-ranged item is left
+// untouched.
+func TestLoadEquippedRangedWeapons_LoadsMainAndOffhand(t *testing.T) {
+	c := New()
+	c.Equipment.Weapon = newRangedWeapon(9910, 0)
+	c.Equipment.Offhand = newRangedWeapon(9911, 0)
+
+	assert.False(t, c.Equipment.Weapon.Loaded, "precondition: starts unloaded")
+	assert.False(t, c.Equipment.Offhand.Loaded, "precondition: starts unloaded")
+
+	c.Equipment.LoadEquippedRangedWeapons()
+
+	assert.True(t, c.Equipment.Weapon.Loaded, "main-hand ranged weapon must be loaded")
+	assert.True(t, c.Equipment.Offhand.Loaded, "offhand ranged weapon must be loaded")
+}
+
+// TestLoadEquippedRangedWeapons_IgnoresMelee verifies a non-ranged weapon is
+// not given a (meaningless) Loaded flag and empty slots don't panic.
+func TestLoadEquippedRangedWeapons_IgnoresMelee(t *testing.T) {
+	c := New()
+	c.Equipment.Weapon = items.Item{
+		ItemId: 9920,
+		Spec: &items.ItemSpec{
+			ItemId: 9920, Name: "iron sword", Type: items.Weapon, Subtype: items.Slashing,
+		},
+	}
+
+	c.Equipment.LoadEquippedRangedWeapons() // empty offhand must not panic
+
+	assert.False(t, c.Equipment.Weapon.Loaded, "melee weapon must not be marked Loaded")
+}
+
 // TestWear_MinStrength_Reject verifies that Wear() refuses a weapon whose
 // MinStrength exceeds the character's current Strength.ValueAdj.
 func TestWear_MinStrength_Reject(t *testing.T) {

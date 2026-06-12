@@ -2557,7 +2557,7 @@ char.TickConditions() // Called once in round tick, decrements all durations
 6. Add `primary_stat` field to all spell YAML definitions
 
 **Files to Modify** (~8 files, ~150 lines):
-1. `internal/skills/skills.go` — Add PrimaryStat field, set for all 9 skills
+1. `internal/skills/skills.go` — Add PrimaryStat field, set for all 10 skills
 2. `internal/spells/spells.go` — Add PrimaryStat field
 3. `internal/characters/progression.go` — Auto-track PrimaryStat in CheckSkillProgression
 4. `internal/combat/calculations.go` — Read PrimaryStat from skill definition
@@ -2566,7 +2566,7 @@ char.TickConditions() // Called once in round tick, decrements all durations
 7. Test files
 
 **Testing**:
-- [ ] **Unit Tests**: PrimaryStat loaded correctly for all 9 skills
+- [ ] **Unit Tests**: PrimaryStat loaded correctly for all 10 skills
 - [ ] **Unit Tests**: CheckSkillProgression calls TrackStatUse with correct stat
 - [ ] **Manual Test**: Use each skill, verify its primary stat receives progression calls
 - [ ] **Regression Test**: `go test ./...` passes
@@ -2659,7 +2659,7 @@ char.TickConditions() // Called once in round tick, decrements all durations
 - [ ] **Regression Test**: All combat, movement, and progression still work
 
 **Acceptance Criteria**:
-- Exactly 9 skills remain: weapon-combat, unarmed-combat, ranged-combat, spellcasting, first-aid, stealth, tracking, bartering, foraging
+- Exactly 10 skills remain: weapon-combat, unarmed-combat, ranged-combat, spellcasting, first-aid, stealth, tracking, bartering, foraging, salvage
 - No references to removed skills in any .go files
 - Backstab applies for all three combat skill types when entering from stealth
 - Map/inspect/search work for all players regardless of skills
