@@ -1,0 +1,1821 @@
+================================================================================
+POTHOLE COULEE  --  NEWBIE CHUNK 1, PHASE R  --  REVIEW WALKTHROUGH TRANSCRIPT
+================================================================================
+
+Generated 2026-06-12 by the Phase-R audit task (Task 5).
+Sub-spec: docs/superpowers/specs/2026-06-12-newbie-chunk1-hub-subspec.md (section 3)
+
+This is the review artifact for the rooms + nouns phase of the hub town. It is a
+scripted AI-port session (smoketester, admin, ANSI-stripped) that visits all 26
+authored rooms (19 hub: 5200-5218 excl. 5219; 7 spoke-mouth stubs: 5220-5226).
+For each room it runs `look`, then `look <noun>` for EVERY noun key the room's
+YAML defines. Rooms are reached by `teleport <id>` for deterministic, in-sync
+capture (the AI port queues movement to the world tick, which desynced an earlier
+walked route); each room's own `look` output still prints its `Exits:` line, so
+connectivity is visible per room.
+
+------------------------------------------------------------------------------
+AUDIT SUMMARY (all green at time of capture)
+------------------------------------------------------------------------------
+- tools/coord_inventory.py        : 0 global collisions; 26 Pothole rooms in
+                                    x[42..48] y[-3..3] z[0..1] (inside budget
+                                    x[30..59] y[-15..14] z[-3..3]).
+- tools/newbie_manifest_check.py  : 26/26 PASS (title/biome/coord/exits/
+                                    sanctuary/noun-count/single-token noun keys/
+                                    noun-in-description). 4 rooms had noun keys
+                                    missing from their description body on first
+                                    run (5200 pool, 5201 stilts, 5206 beds+
+                                    blankets, 5213 slates) -- fixed with minimal
+                                    prose edits, re-checked clean.
+- No-numbers grep                 : 0 digits in player-facing prose.
+- Boot                            : zoneCount=23, loadedCount=549,
+                                    ValidateZoneConsistency errors=0 warnings=0
+                                    (mode=panic), zero panics.
+- cartcheck Pothole Coulee        : "Cartesian consistency: no findings. All
+                                    checked zones are clean."
+- Walkthrough stats               : 26/26 rooms captured in sync, 70/70 nouns
+                                    resolved to real text, 0 dropped commands,
+                                    0 unresolvable nouns.
+
+================================================================================
+TRANSCRIPT
+================================================================================
+
+>> teleport 5200
+teleport 5200
+Moved to room 5200.
+
+.: [≈] The Awakening Pool [Pothole Coulee]
+The coulee floor opens here into a wide stone bowl, its walls worn       ╔═════╗
+smooth by ancient floods. Dark water fills the pool nearly to the rim,   ║~ ▼ ▼║
+flat and still as poured glass -- no ripple, no current, no sound. Far   ║│ │ │║
+below the surface, something glows with pale blue-green light, steady    ║~─@─~║
+and deep, like a coal that never burns out. The basalt rim is polished   ║│ │ │║
+where countless hands have gripped it. This is where the Opened come     ║~─•─⌂║
+back to themselves.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5200: The Awakening Pool =====
+
+>> look
+look
+
+.: [≈] The Awakening Pool [Pothole Coulee]
+The coulee floor opens here into a wide stone bowl, its walls worn       ╔═════╗
+smooth by ancient floods. Dark water fills the pool nearly to the rim,   ║~ ▼ ▼║
+flat and still as poured glass -- no ripple, no current, no sound. Far   ║│ │ │║
+below the surface, something glows with pale blue-green light, steady    ║~─@─~║
+and deep, like a coal that never burns out. The basalt rim is polished   ║│ │ │║
+where countless hands have gripped it. This is where the Opened come     ║~─•─⌂║
+back to themselves.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look pool
+look pool
+You look at the pool:
+Dark water fills the bowl to within a hand-span of the basalt rim, unmoving in a
+way that running water never is. The cold comes off it in waves even in the
+midday heat. Whatever feeds this pool flows in and out somewhere far below the
+surface, unseen.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look basalt
+look basalt
+You look at the basalt:
+The stone walls of the bowl are dark grey-black, water-polished to a near-
+gloss. Ancient floods carved this hollow out of the coulee floor over ages, and
+the same currents smoothed every sharp edge until the rock feels almost soft
+under the hand. Old scratch-marks near the rim suggest the place has served as
+an anchor for generations.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look light
+look light
+You look at the light:
+Something gives off pale blue-green light from deep in the pool, too far down to
+make out a source. It does not flicker the way firelight does -- it simply is,
+steady and cold and patient. You cannot tell if it is stone, water, or something
+living down there.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5201
+teleport 5201
+Moved to room 5201.
+
+.: [~] West Shore Path [Pothole Coulee]
+A packed-gravel path runs along the west shore, crunching underfoot      ╔═════╗
+where countless feet have pressed it flat. To the south, stilt-houses    ║  ~ ▼║
+perch on their long stilts over the shallows, washing strung between     ║  │ │║
+them and cookfire-smoke curling up. The reeds thicken to the north,      ║⌂─@─≈║
+green and rustling, hiding the jetty where the fishers tie up. This is   ║  │ │║
+the lived-in side of the bowl -- all cookpot-smell and the low murmur of ║~─~─•║
+folk who call the coulee home. The pool lies east, dark and patient      ╚═════╝
+behind you.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:A reed bows, springs back, and the moorhens go quiet all at once.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5201: West Shore Path =====
+
+>> look
+look
+
+.: [~] West Shore Path [Pothole Coulee]
+A packed-gravel path runs along the west shore, crunching underfoot      ╔═════╗
+where countless feet have pressed it flat. To the south, stilt-houses    ║  ~ ▼║
+perch on their long stilts over the shallows, washing strung between     ║  │ │║
+them and cookfire-smoke curling up. The reeds thicken to the north,      ║⌂─@─≈║
+green and rustling, hiding the jetty where the fishers tie up. This is   ║  │ │║
+the lived-in side of the bowl -- all cookpot-smell and the low murmur of ║~─~─•║
+folk who call the coulee home. The pool lies east, dark and patient      ╚═════╝
+behind you.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look path
+look path
+You look at the path:
+The path is plain packed gravel, raked flat by years of coming and going between
+the houses and the water. It runs north and south along the shore, never far
+from the pool's edge. Small stones turn underfoot with a dry crunch that follows
+you the whole length of it.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look reeds
+look reeds
+You look at the reeds:
+Tall green reeds crowd the shallows to the north, dense enough to swallow a
+wading body to the waist. They rustle and bow when the wind comes off the steppe
+above. Somewhere in among them a moorhen clucks and goes quiet again.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look stilts
+look stilts
+You look at the stilts:
+South along the shore, the stilt-houses perch on long timber legs sunk into the
+mud of the shallows, lifting their floors clear of the water. Ropes and washing-
+lines sag between them, and a faint blue cookfire-smoke threads up from the
+gaps. The stilts have stood long enough that the tide-line on them has gone
+green with weed.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5202
+teleport 5202
+Moved to room 5202.
+
+.: [~] East Shore Path [Pothole Coulee]
+Gravel crunches along the east shore here, the same packed path as the   ╔═════╗
+far side but turned to other work. A drifting smell of crushed herbs     ║▼ ▼ ▼║
+rolls down from the Mending Hut eastward -- bitter-green and sharp, the  ║│ │ │║
+smell of poultices and steeped roots. North, an overlook crag shoulders  ║≈─@─⌂║
+up out of the bowl wall, dark basalt against a bleached sky. This is the ║│ │  ║
+working side of the water, where the hurt and the worn-down come to be   ║•─⌂  ║
+made whole again. The pool waits west, still and deep.                   ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5202: East Shore Path =====
+
+>> look
+look
+
+.: [~] East Shore Path [Pothole Coulee]
+Gravel crunches along the east shore here, the same packed path as the   ╔═════╗
+far side but turned to other work. A drifting smell of crushed herbs     ║▼ ▼ ▼║
+rolls down from the Mending Hut eastward -- bitter-green and sharp, the  ║│ │ │║
+smell of poultices and steeped roots. North, an overlook crag shoulders  ║≈─@─⌂║
+up out of the bowl wall, dark basalt against a bleached sky. This is the ║│ │  ║
+working side of the water, where the hurt and the worn-down come to be   ║•─⌂  ║
+made whole again. The pool waits west, still and deep.                   ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look path
+look path
+You look at the path:
+This stretch of path is the same raked gravel as the west shore, but the feet
+that wear it here move slower -- folk leaning on each other, or carrying baskets
+of cut greens up from the water. It runs north and south between the pool and
+the workshops. The stones are pale and dry where they are not splashed.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Drying greens shed a flake or two and the line sways, then settles.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look herbs
+look herbs
+You look at the herbs:
+The smell of herbs comes and goes on the breeze from the east -- crushed leaf,
+bitter root, something steeped a long while over low coals. It is the smell of a
+place where bodies get mended. Bundles of drying greens hang from a line strung
+near the path, swaying and shedding flakes when the wind picks up.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look crag
+look crag
+You look at the crag:
+To the north, a crag of dark basalt rises out of the bowl wall, high enough to
+give a clear look down the whole pool. A worn trail switches up its near face.
+Folk climb it to sit and think where the noise of the workshops cannot follow.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5203
+teleport 5203
+Moved to room 5203.
+
+.: [•] Hub Square [Pothole Coulee]
+The town's heart opens out here across flat basalt slabs, worn smooth by ╔═════╗
+more feet than anyone has bothered to count. A weathered notice-post     ║~─≈─~║
+stands square in the middle, its boards layered thick with the crier's   ║│ │ │║
+latest word and a hundred older ones gone soft beneath. Even with not a  ║~─@─⌂║
+soul about, the square does not feel empty -- it holds the kept-breath   ║  │  ║
+hum of a place where news breaks and gossip travels, where the day's     ║⌂─•─⌂║
+first word and its last both get spoken aloud. Ways run off in every     ╚═════╝
+direction: north toward the pool, south to the market, west along the
+stilt-walk, east to the squat strongbox-house. Stand here a spell and
+the town will find you on its own.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5203: Hub Square =====
+
+>> look
+look
+
+.: [•] Hub Square [Pothole Coulee]
+The town's heart opens out here across flat basalt slabs, worn smooth by ╔═════╗
+more feet than anyone has bothered to count. A weathered notice-post     ║~─≈─~║
+stands square in the middle, its boards layered thick with the crier's   ║│ │ │║
+latest word and a hundred older ones gone soft beneath. Even with not a  ║~─@─⌂║
+soul about, the square does not feel empty -- it holds the kept-breath   ║  │  ║
+hum of a place where news breaks and gossip travels, where the day's     ║⌂─•─⌂║
+first word and its last both get spoken aloud. Ways run off in every     ╚═════╝
+direction: north toward the pool, south to the market, west along the
+stilt-walk, east to the squat strongbox-house. Stand here a spell and
+the town will find you on its own.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look square
+look square
+You look at the square:
+The open square is the one flat, gathered place in a town otherwise pitched
+against the coulee walls. It is where folk drift to trade a rumor, settle an
+argument, or simply be seen. Something about the worn ground tells you feet have
+stood here, waiting and talking, far longer than the houses around it have
+stood.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look notice-post
+look notice-post
+You look at the notice-post:
+A stout post of grey driftwood stands at the square's center, its broad face
+crusted with notices nailed one atop another. The crier pins the fresh word
+here -- work wanted, strangers expected, a warning or a wedding -- and nobody
+troubles to pull the old ones, so the layers go down years deep. You could read
+the town's whole recent memory off it if you had the patience to peel.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look slabs
+look slabs
+You look at the slabs:
+The square is floored in great slabs of basalt, flood-laid and fitted close,
+their surfaces buffed to a dull shine by generations of passing feet. Rain pools
+in the shallow dishes worn into the busiest of them. Where the slabs meet, tough
+little weeds have found the seams and made a home.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5204
+teleport 5204
+Moved to room 5204.
+
+.: [•] Market Row [Pothole Coulee]
+A short run of awnings and stall-fronts crowds the lane here, strung     ╔═════╗
+between the inn at the west end and the provisions store at the east.    ║~─•─⌂║
+The awnings are patched canvas and salvaged sailcloth, slung from the    ║  │  ║
+eaves to throw shade across the goods laid out beneath them, and they    ║⌂─@─⌂║
+snap and belly whenever the coulee breeze comes down the bowl. This is   ║  │  ║
+the town's barter-artery: the air carries the haggle-murmur of folk      ║  ⌂  ║
+talking prices, the clink of coin changing hands, the smell of smoked    ╚═════╝
+fish and tallow and sun-warmed dust. Even between customers the stalls
+hold their wares out hopeful, waiting for the next pair of boots to
+slow. South the lane runs on toward a humming arch the town keeps at its
+threshold.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5204: Market Row =====
+
+>> look
+look
+
+.: [•] Market Row [Pothole Coulee]
+A short run of awnings and stall-fronts crowds the lane here, strung     ╔═════╗
+between the inn at the west end and the provisions store at the east.    ║~─•─⌂║
+The awnings are patched canvas and salvaged sailcloth, slung from the    ║  │  ║
+eaves to throw shade across the goods laid out beneath them, and they    ║⌂─@─⌂║
+snap and belly whenever the coulee breeze comes down the bowl. This is   ║  │  ║
+the town's barter-artery: the air carries the haggle-murmur of folk      ║  ⌂  ║
+talking prices, the clink of coin changing hands, the smell of smoked    ╚═════╝
+fish and tallow and sun-warmed dust. Even between customers the stalls
+hold their wares out hopeful, waiting for the next pair of boots to
+slow. South the lane runs on toward a humming arch the town keeps at its
+threshold.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look stalls
+look stalls
+You look at the stalls:
+The stalls are plank trestles and upturned crates, each one a small trader's
+whole livelihood set out for the day. One holds knapped tools and coils of
+cord, another smoked fish stacked like cordwood, a third odd salvage hauled up
+from the deep pools. Their keepers come and go, but the wares stay put under the
+awnings, minded by neighbors and the town's easy trust.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look awnings
+look awnings
+You look at the awnings:
+The awnings are a motley of patched canvas and faded sailcloth, lashed from the
+house-eaves out to leaning poles to keep sun and squall off the goods. They sag
+where the rain has pooled and belly out when the wind funnels down the coulee.
+Their shade falls in long bright-edged stripes across the lane.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5205
+teleport 5205
+Moved to room 5205.
+
+.: [⌂] The Drowned Lantern [Pothole Coulee]
+The inn's common room wraps you in warmth the moment you step in out of  ╔═════╗
+the coulee air. Overhead the namesake hangs and glows: a salvaged        ║~─~─•║
+diving-bell of green-tarnished bronze, hauled up from some sunk wreck    ║    │║
+and re-rigged as a great lantern, its caged flame throwing a soft        ║  @─•║
+underwater light across the room. Long shared tables run the length of   ║    │║
+the floor, their tops scrubbed pale and scarred with the rings of a      ║    ⌂║
+thousand set-down cups. A peat fire mutters in the hearth, breathing out ╚═════╝
+that low brown smell of burning earth, and the whole place has the
+settled, well-used hush of a town's evening heart waiting for evening to
+come. Stairs climb up into the dark toward the sleeping loft; the lane
+lies back out east.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, up
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5205: The Drowned Lantern =====
+
+>> look
+look
+
+.: [⌂] The Drowned Lantern [Pothole Coulee]
+The inn's common room wraps you in warmth the moment you step in out of  ╔═════╗
+the coulee air. Overhead the namesake hangs and glows: a salvaged        ║~─~─•║
+diving-bell of green-tarnished bronze, hauled up from some sunk wreck    ║    │║
+and re-rigged as a great lantern, its caged flame throwing a soft        ║  @─•║
+underwater light across the room. Long shared tables run the length of   ║    │║
+the floor, their tops scrubbed pale and scarred with the rings of a      ║    ⌂║
+thousand set-down cups. A peat fire mutters in the hearth, breathing out ╚═════╝
+that low brown smell of burning earth, and the whole place has the
+settled, well-used hush of a town's evening heart waiting for evening to
+come. Stairs climb up into the dark toward the sleeping loft; the lane
+lies back out east.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, up
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look lantern
+look lantern
+You look at the lantern:
+The Drowned Lantern that names the house is no ordinary lamp but a whole diving-
+bell, salvaged green and dented from the deep and hung from the central beam on
+iron chain. A flame burns caged in its throat, and the bronze throws the light
+back down strange and watery, so the whole room seems lit from under a pond.
+Folk say the bell came up from a wreck older than the town and chose to keep on
+shining.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look tables
+look tables
+You look at the tables:
+The long tables are the inn's whole seating, meant for strangers to share elbows
+and a jug whether they came in together or not. Their tops are scrubbed soft and
+pale, ringed and ringed again by set-down cups, carved here and there with idle
+initials and a few older marks nobody can read. By evening every bench will be
+full; for now they wait, patient and worn.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look fire
+look fire
+You look at the fire:
+A peat fire burns low in the stone hearth, more glow than flame, the cut bricks
+of earth crumbling slowly to ash. It gives off that particular brown-sweet smell
+of burning bog, and a steady warmth that fills the room without ever roaring.
+Someone keeps it fed -- the basket of dried peat beside the hearth is freshly
+stacked.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5206
+teleport 5206
+Moved to room 5206.
+
+.: [⌂] Lantern Sleeping Loft [Pothole Coulee]
+Up under the inn's roof the sleeping loft lies low and close, the heavy  ╔═════╗
+beams near enough overhead to brush with a raised hand. Rows of straw    ║     ║
+ticks rest along the floor, plumped and turned and laid with thick       ║     ║
+folded wool blankets, and the warm peat-smell of the common room seeps   ║  @  ║
+up faintly through the boards to settle here as something softer. The    ║     ║
+light is dim and gold and kind, and the only sound is the slow tick of   ║     ║
+the cooling roof and your own breathing. After the long open coulee and  ╚═════╝
+the noise below, every line of this room is an argument for lying down.
+Your legs feel the day all at once, and the nearest of the beds is a
+body's length away.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: down
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5206: Lantern Sleeping Loft =====
+
+>> look
+look
+
+.: [⌂] Lantern Sleeping Loft [Pothole Coulee]
+Up under the inn's roof the sleeping loft lies low and close, the heavy  ╔═════╗
+beams near enough overhead to brush with a raised hand. Rows of straw    ║     ║
+ticks rest along the floor, plumped and turned and laid with thick       ║     ║
+folded wool blankets, and the warm peat-smell of the common room seeps   ║  @  ║
+up faintly through the boards to settle here as something softer. The    ║     ║
+light is dim and gold and kind, and the only sound is the slow tick of   ║     ║
+the cooling roof and your own breathing. After the long open coulee and  ╚═════╝
+the noise below, every line of this room is an argument for lying down.
+Your legs feel the day all at once, and the nearest of the beds is a
+body's length away.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: down
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look beds
+look beds
+You look at the beds:
+The beds are simple straw ticks laid in rows on the plank floor, each one fat
+with fresh-stuffed straw and turned so the day's damp has aired out of it. They
+are not fine, but they are clean and dry and smell of cut grass, and the sight
+of them undoes something in the back of your knees. Lie down on one and the road
+would let go of you for a while.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look blankets
+look blankets
+You look at the blankets:
+Folded squares of grey wool wait at the foot of each tick, thick and slightly
+rough and smelling of lanolin and woodsmoke. They have been mended at the
+corners more than once with patient yarn. Pulled up to the chin, one of these
+would keep the loft's chill an arm's length off all night.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look beams
+look beams
+You look at the beams:
+The roof-beams run low across the loft, dark old timber pegged and notched
+without a nail in sight, close enough that a tall body learns to stoop. Bunches
+of dried herbs and a few glass floats hang from them on cord. They give the room
+the snug, held-in feeling of a boat's hull turned over for shelter.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5207
+teleport 5207
+Moved to room 5207.
+
+.: [⌂] Coulee Provisions [Pothole Coulee]
+The store is one cramped room packed floor to rafter with everything a   ╔═════╗
+frontier body might need and a good deal it might only want. Shelves     ║•─⌂  ║
+climb the walls all the way to the ceiling, crammed with sacked grain,   ║│    ║
+coiled rope, tin lamps, jars of who-knows-what, and bundles hung         ║•─@─~║
+overhead just out of reach. The air is thick with the mingled smell of   ║│    ║
+hemp rope and rendered tallow and dry goods, a smell that means trade. A ║⌂    ║
+long counter worn pale and smooth fronts the back wall, its surface      ╚═════╝
+scuffed by years of coins and elbows and parcels slid across it. Whoever
+keeps this place clearly knows where every last thing sits in the
+glorious clutter, even if a stranger never could.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5207: Coulee Provisions =====
+
+>> look
+look
+
+.: [⌂] Coulee Provisions [Pothole Coulee]
+The store is one cramped room packed floor to rafter with everything a   ╔═════╗
+frontier body might need and a good deal it might only want. Shelves     ║•─⌂  ║
+climb the walls all the way to the ceiling, crammed with sacked grain,   ║│    ║
+coiled rope, tin lamps, jars of who-knows-what, and bundles hung         ║•─@─~║
+overhead just out of reach. The air is thick with the mingled smell of   ║│    ║
+hemp rope and rendered tallow and dry goods, a smell that means trade. A ║⌂    ║
+long counter worn pale and smooth fronts the back wall, its surface      ╚═════╝
+scuffed by years of coins and elbows and parcels slid across it. Whoever
+keeps this place clearly knows where every last thing sits in the
+glorious clutter, even if a stranger never could.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look shelves
+look shelves
+You look at the shelves:
+The shelves run from the worn floorboards clear up to the rafters, every plank
+sagging a little under its load. Sacks and tins and crocks are stacked three
+deep, the high ones reached by a long hooked pole leaned in the corner for the
+purpose. There is an order to it that belongs to one mind only -- the keeper'
+s -- and no map of it posted for anyone else.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look counter
+look counter
+You look at the counter:
+The counter is a single slab of driftwood planed flat and set on barrels, its
+top burnished pale by a long history of coins, elbows, and parcels sliding
+across the grain. A set of brass scales and a much-thumbed tally-book sit at one
+end, ready for the next sale. Lean on it and you can feel how many bargains have
+been struck right here.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look goods
+look goods
+You look at the goods:
+The goods are the plain wealth of a frontier town -- grain and salt, rope and
+twine, lamp oil and candle-tallow, fish-hooks, nails, needles, and a hundred
+small salvaged oddments besides. Some bear the mud and barnacle of having come
+up out of the pools; others arrived on the backs of traders down the coulee.
+Whatever a newcomer has forgotten to bring, the chances are good it waits
+somewhere on these shelves.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5208
+teleport 5208
+Moved to room 5208.
+
+.: [⌂] Strongbox House [Pothole Coulee]
+This squat blockhouse is built of fitted basalt thicker than anywhere    ╔═════╗
+else in town, and the air inside it goes cool and still the moment the   ║≈─~─⌂║
+heavy door swings shut behind you. Iron-banded strongboxes line the      ║│ │  ║
+walls in stacked rows, each one studded and locked, holding the saved    ║•─@  ║
+coin and kept treasures of folk who would rather not carry such things   ║│    ║
+through a frontier. A ledger desk stands under the room's one shuttered  ║•─⌂─~║
+window, its great book closed and squared, an inkpot capped beside it.   ╚═════╝
+Nothing here is loud or bright; the place is quiet the way a vault is
+quiet, faintly forbidding in a manner that turns, once you understand
+it, into something close to comfort. Whatever you set down here will be
+here when you come back.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: north, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5208: Strongbox House =====
+
+>> look
+look
+
+.: [⌂] Strongbox House [Pothole Coulee]
+This squat blockhouse is built of fitted basalt thicker than anywhere    ╔═════╗
+else in town, and the air inside it goes cool and still the moment the   ║≈─~─⌂║
+heavy door swings shut behind you. Iron-banded strongboxes line the      ║│ │  ║
+walls in stacked rows, each one studded and locked, holding the saved    ║•─@  ║
+coin and kept treasures of folk who would rather not carry such things   ║│    ║
+through a frontier. A ledger desk stands under the room's one shuttered  ║•─⌂─~║
+window, its great book closed and squared, an inkpot capped beside it.   ╚═════╝
+Nothing here is loud or bright; the place is quiet the way a vault is
+quiet, faintly forbidding in a manner that turns, once you understand
+it, into something close to comfort. Whatever you set down here will be
+here when you come back.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: north, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look strongboxes
+look strongboxes
+You look at the strongboxes:
+The strongboxes are squat chests of dark wood bound in riveted iron, stacked
+along the walls in patient rows from floor to waist. Each wears a heavy lock and
+a small tag, and not one of them rattles when you pass -- whatever they hold is
+packed careful and still. Between them they likely hold the larger part of the
+town's saved wealth, trusted to stone and iron and a keeper's word.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look ledger
+look ledger
+You look at the ledger:
+The ledger is a thick book bound in worn hide, lying squared on its desk beneath
+the window. Closed though it is, you can tell it holds every coin in and coin
+out of this house set down in a careful hand, page after page of accounts that
+balance. An inkpot, a trimmed quill, and a stick of sealing-wax wait beside it
+for the next entry.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look door
+look door
+You look at the door:
+The door is a single slab of coulee oak faced with iron straps, hung on hinges
+thick as your wrist and swinging shut on its own slow weight. It seals with a
+deep, final sound that you feel in the floor as much as hear. Shut behind you,
+it makes the room over into somewhere apart from the town, hushed and held.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:The heavy door settles a fraction on its hinges with a low groan of iron, and
+the cool air does not stir.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5209
+teleport 5209
+Moved to room 5209.
+
+.: [⌂] The Mending Hut [Pothole Coulee]
+The hut is low and warm and smells of green things drying, the kind of   ╔═════╗
+smell that loosens a clenched body before the mind catches up. Bunches   ║▼ ▼  ║
+of herbs hang head-down from every rafter -- bitter root, sweet leaf,    ║│ │  ║
+grey moss -- turning slow in the heat off a banked fire. A row of cots   ║~─@─~║
+stands made-up along the long wall, blankets squared and turned back,    ║│    ║
+each one ready for whoever the water gives back next. Clean bandages sit ║⌂    ║
+rolled in a basket within arm's reach, white and soft and smelling of    ╚═════╝
+lye soap. The healer is not at her bench just now, but a pestle of half-
+ground salve waits there and the kettle is still warm, so she will not
+be long. Nothing in this room can harm you; this is the place the Opened
+are carried to be made whole again.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5209: The Mending Hut =====
+
+>> look
+look
+
+.: [⌂] The Mending Hut [Pothole Coulee]
+The hut is low and warm and smells of green things drying, the kind of   ╔═════╗
+smell that loosens a clenched body before the mind catches up. Bunches   ║▼ ▼  ║
+of herbs hang head-down from every rafter -- bitter root, sweet leaf,    ║│ │  ║
+grey moss -- turning slow in the heat off a banked fire. A row of cots   ║~─@─~║
+stands made-up along the long wall, blankets squared and turned back,    ║│    ║
+each one ready for whoever the water gives back next. Clean bandages sit ║⌂    ║
+rolled in a basket within arm's reach, white and soft and smelling of    ╚═════╝
+lye soap. The healer is not at her bench just now, but a pestle of half-
+ground salve waits there and the kettle is still warm, so she will not
+be long. Nothing in this room can harm you; this is the place the Opened
+are carried to be made whole again.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look cots
+look cots
+You look at the cots:
+A row of narrow cots stands against the long wall, frames of peeled willow
+strung with rope and laid with straw ticks gone soft from use. Each is made up
+and turned back, blankets squared at the corners the way the healer keeps
+them -- ready, always, for the next body the pool returns cold and blinking. Lie
+down on any one of them and the whole hut seems to say that you are safe now,
+and that someone here will sit your watch.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look herbs
+look herbs
+You look at the herbs:
+Bundles of cut herbs hang head-down from the rafters and from lines strung
+corner to corner, drying slow in the warm air. There is bitter root and sweet
+leaf and a grey moss that smells of rain, and a dozen more a stranger could not
+name, each tied off and labeled in a cramped, careful hand. Brush against a low
+bunch and it sheds a fragrant dust and sets the whole ceiling swaying.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look bandages
+look bandages
+You look at the bandages:
+A deep basket by the bench holds clean bandages rolled tight and even, white
+linen boiled soft and smelling faintly of lye soap. Beside them sit folded
+pads, a coil of waxed thread, and a small horn of salve, all set out plain where
+a shaking hand could find them in the dark. Nothing here is hidden or hoarded;
+it is laid ready for whoever walks in needing it.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5210
+teleport 5210
+Moved to room 5210.
+
+.: [⌂] Wickerwork Cottage [Pothole Coulee]
+The walls of this snug little cottage are woven, not built -- panels of  ╔═════╗
+silver willow wickerwork plaited tight and daubed at the seams, so the   ║    ~║
+whole place creaks soft and breathing-like when the wind leans on it. A  ║    │║
+low hearth glows at the heart of the room, its smoke curling up through  ║▼─@─~║
+a hole in the thatch and hanging the air with the smell of burning herb  ║    │║
+and old fat. Charms crowd every surface and dangle from every cross-     ║  ~─~║
+rod: knots of red yarn, holed stones, bird skulls, twists of straw --    ╚═════╝
+and scattered among them, here and there, the plain tin medallions of
+the Church, fewer by far and half-lost in the older company. A clutch of
+remedies that predate the school sits steeping in clay crocks along the
+sill. It is warm here, and welcoming, and just strange enough that the
+hair stirs on your arms without your knowing quite why.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5210: Wickerwork Cottage =====
+
+>> look
+look
+
+.: [⌂] Wickerwork Cottage [Pothole Coulee]
+The walls of this snug little cottage are woven, not built -- panels of  ╔═════╗
+silver willow wickerwork plaited tight and daubed at the seams, so the   ║    ~║
+whole place creaks soft and breathing-like when the wind leans on it. A  ║    │║
+low hearth glows at the heart of the room, its smoke curling up through  ║▼─@─~║
+a hole in the thatch and hanging the air with the smell of burning herb  ║    │║
+and old fat. Charms crowd every surface and dangle from every cross-     ║  ~─~║
+rod: knots of red yarn, holed stones, bird skulls, twists of straw --    ╚═════╝
+and scattered among them, here and there, the plain tin medallions of
+the Church, fewer by far and half-lost in the older company. A clutch of
+remedies that predate the school sits steeping in clay crocks along the
+sill. It is warm here, and welcoming, and just strange enough that the
+hair stirs on your arms without your knowing quite why.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look charms
+look charms
+You look at the charms:
+Charms hang from every rod and crowd every shelf -- red-yarn knots, holed river
+stones threaded on gut, the small skulls of birds, plaited straw figures with no
+faces. Among them, sparse and shy, hang the tin medallions the Church hands
+out, but they are badly outnumbered here and clearly the newcomers. The old
+woman who keeps this place trusts the older work, and the charms turn and tick
+against one another in the hearth-draft as though keeping their own slow count
+of you.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look wickerwork
+look wickerwork
+You look at the wickerwork:
+The walls are wickerwork through and through, willow withies plaited in close
+diamond courses and daubed with river clay where the weather would otherwise
+whistle in. The whole shell of the cottage gives and settles when the wind
+pushes on it, creaking like a thing half awake. Run a hand along the weave and
+you feel the work of patient fingers in every crossing, tighter and older than
+anything the town carpenters raise.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look hearth
+look hearth
+You look at the hearth:
+A low clay hearth burns at the center of the room, banked down to a red glow
+that never seems to want feeding. Bundled herb smoulders along the coals' edge,
+sweetening the smoke that drifts up and out through a soot-rimmed gap in the
+thatch. Crocks of dark remedy sit warming at its lip, older cures than the
+school across the water ever learned to brew, and the heat of it reaches every
+corner of the snug little room.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5211
+teleport 5211
+Moved to room 5211.
+
+.: [▼] Basalt Stair [Pothole Coulee]
+A switchback stair has been cut straight into the basalt of the bowl     ╔═════╗
+wall, each tread worn shallow in the middle by the long press of         ║▼ ▼ ,║
+climbing feet. Below, the pool sits dark and flat as poured glass;       ║│ │ │║
+above, the open shelf of the steppe shows a strip of washed-out sky.     ║~ @ ▼║
+Wind funnels up the cut, cool off the water, tugging at your clothes as  ║│ │ │║
+it passes. The basalt is dark grey-black and water-stained, and your     ║~─≈─~║
+hand finds old grips polished smooth by everyone who climbed here before ╚═════╝
+you.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: north, south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5211: Basalt Stair =====
+
+>> look
+look
+
+.: [▼] Basalt Stair [Pothole Coulee]
+A switchback stair has been cut straight into the basalt of the bowl     ╔═════╗
+wall, each tread worn shallow in the middle by the long press of         ║▼ ▼ ,║
+climbing feet. Below, the pool sits dark and flat as poured glass;       ║│ │ │║
+above, the open shelf of the steppe shows a strip of washed-out sky.     ║~ @ ▼║
+Wind funnels up the cut, cool off the water, tugging at your clothes as  ║│ │ │║
+it passes. The basalt is dark grey-black and water-stained, and your     ║~─≈─~║
+hand finds old grips polished smooth by everyone who climbed here before ╚═════╝
+you.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: north, south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look stair
+look stair
+You look at the stair:
+The stair is no mason's work but a rough switchback hacked and worn into the
+rock, doubling back on itself up the steep bowl wall. Each tread dips in the
+middle where countless feet have ground it hollow. Going down it leads to the
+pool; going up, to the open shelf and the world beyond.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look basalt
+look basalt
+You look at the basalt:
+The wall here is dark basalt, the same water-polished grey-black stone that
+lines the whole bowl. Ancient floods carved the coulee out of it and smoothed
+every edge they passed. Up close you can see the old chisel-scars where hands
+later cut the stair, softened now by weather and use.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5212
+teleport 5212
+Moved to room 5212.
+
+.: [▼] School Shelf [Pothole Coulee]
+The basalt shelf runs out flat and open above the pool, a natural        ╔═════╗
+landing of dark stone scoured bare by the weather. A few plank benches   ║⌂─⌂  ║
+sit in a rough half-ring near the lip, set out so a class can take its   ║  │  ║
+lessons under the open sky rather than cooped in the hall. From the edge ║▼ @ ,║
+the whole basin falls away below in one clear view -- the dark eye of    ║│ │ │║
+the water, the stilt-houses up on their long legs, the gravel paths      ║~ ▼ ▼║
+threading pale between them, all small and sharp as a thing seen in the  ╚═════╝
+bottom of a bowl. The wind comes steady off the steppe and snaps at
+loose pages and hair, carrying the cold breath of the water up from far
+down. It is a fine place to think and a hard place to drowse.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: north, south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5212: School Shelf =====
+
+>> look
+look
+
+.: [▼] School Shelf [Pothole Coulee]
+The basalt shelf runs out flat and open above the pool, a natural        ╔═════╗
+landing of dark stone scoured bare by the weather. A few plank benches   ║⌂─⌂  ║
+sit in a rough half-ring near the lip, set out so a class can take its   ║  │  ║
+lessons under the open sky rather than cooped in the hall. From the edge ║▼ @ ,║
+the whole basin falls away below in one clear view -- the dark eye of    ║│ │ │║
+the water, the stilt-houses up on their long legs, the gravel paths      ║~ ▼ ▼║
+threading pale between them, all small and sharp as a thing seen in the  ╚═════╝
+bottom of a bowl. The wind comes steady off the steppe and snaps at
+loose pages and hair, carrying the cold breath of the water up from far
+down. It is a fine place to think and a hard place to drowse.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: north, south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look benches
+look benches
+You look at the benches:
+Plain plank benches sit in a loose half-ring back from the edge, weathered
+silver-grey and bowed in the middle from long sitting. They are set to face
+outward over the basin, so that a teacher need only turn a row of children
+toward the world to make a lesson of it. Wind has worked the grain into soft
+ridges, and old jackknife letters mark the seats where bored hands have whiled
+away a dull morning.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look shelf
+look shelf
+You look at the shelf:
+The shelf is a broad tongue of basalt thrust out flat from the bowl's upper
+wall, swept clean of soil by the wind and stained dark by old water. It makes a
+natural platform, steady underfoot and open to the sky, high enough that the
+noise of the town below never quite reaches it. At its lip the stone simply
+ends, and the air opens out over the long drop to the pool.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look view
+look view
+You look at the view:
+From the edge the whole basin lies open below, near enough to read and far
+enough to hold all at once. The pool sits at the center, a flat dark eye; around
+it the stilt-houses stand on their legs, the paths run pale between the
+workshops, and the figures of the Opened move small and slow about their day.
+Seen from up here it all looks safe and whole, a single quiet place cupped in
+the broken land.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5213
+teleport 5213
+Moved to room 5213.
+
+.: [⌂] Chrysalis School Hall [Pothole Coulee]
+One long room under a sound plank roof makes up the whole of the         ╔═════╗
+school, and the whole of it is given to learning. Slate boards in chalk- ║     ║
+dusted frames line the far wall, the slates half-wiped, ghosted with the ║     ║
+morning's letters and sums. Desks crowd the floor in mismatched rows --  ║⌂─@  ║
+no two the same height, scavenged and mended and handed down -- their    ║  │  ║
+lids scarred by generations of restless penknives. By the door stands    ║▼ ▼ ,║
+the notice-board, shingled deep with pinned cards and curling hand-      ╚═════╝
+bills, the busiest wall in the room. The air is warm and close and
+smells of chalk and lamp oil and the river-damp of children, an
+ordinary, patient, kindly sort of place for all its strange name.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:[Tip] Your stats improve through use. Swing a sword enough and your Strength grows over time.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5213: Chrysalis School Hall =====
+
+>> look
+look
+
+.: [⌂] Chrysalis School Hall [Pothole Coulee]
+One long room under a sound plank roof makes up the whole of the         ╔═════╗
+school, and the whole of it is given to learning. Slate boards in chalk- ║     ║
+dusted frames line the far wall, the slates half-wiped, ghosted with the ║     ║
+morning's letters and sums. Desks crowd the floor in mismatched rows --  ║⌂─@  ║
+no two the same height, scavenged and mended and handed down -- their    ║  │  ║
+lids scarred by generations of restless penknives. By the door stands    ║▼ ▼ ,║
+the notice-board, shingled deep with pinned cards and curling hand-      ╚═════╝
+bills, the busiest wall in the room. The air is warm and close and
+smells of chalk and lamp oil and the river-damp of children, an
+ordinary, patient, kindly sort of place for all its strange name.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look notice-board
+look notice-board
+You look at the notice-board:
+A broad notice-board fills the wall beside the door, shingled deep with pinned
+notes, lesson-lists, and curling hand-bills. Pride of place goes to a single
+weathered card lettered in the schoolmaster's careful hand. It says that no
+question is too small or too strange, and that anyone wanting to know about a
+thing -- a word, a place, a beast, a craft, anything under the sky -- has only
+to put the question plainly to the world, and the world will answer what it
+knows. Below it, smaller and kindlier, a line for tired eyes -- should the
+written word ever sit crooked on the page, spilling past its edges or crowding
+itself too thin to read, you need only ask the world to fit its letters to your
+own sight, and it will lay them out clean and square again.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look desks
+look desks
+You look at the desks:
+The desks are a mismatched flock, no two of a height -- some squat benches for
+the small ones, some tall slope-lidded affairs scavenged from who knows where,
+all scarred and inked and mended at the joints. Lift a lid and you find the
+litter of school -- stubs of chalk, a forgotten apple core, names cut deep into
+the wood by hands long since grown and gone. They sit in crooked rows facing the
+slates, waiting on the next bell.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look slates
+look slates
+You look at the slates:
+A bank of slate boards lines the far wall in chalk-pale frames, the biggest set
+on an easel for the master and smaller hand-slates stacked beside it for the
+pupils. They are half-wiped and ghosted, the morning's letters and figures still
+faintly there under the smear of the cloth. A box of chalk nubs and a grey felt
+rag hang on a string within easy reach, ready for the next lesson to be written
+up.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5214
+teleport 5214
+Moved to room 5214.
+
+.: [⌂] Cleric's Study [Pothole Coulee]
+This small back room belongs to the cleric, and the cleric belongs to    ╔═════╗
+his books. They are everywhere -- shelved, stacked, splayed open face-   ║     ║
+down to hold a place, leaning in drifts against the legs of the desk. A  ║     ║
+kettle sits on a trivet over a low brazier in the corner, gone cold and  ║  @─⌂║
+forgotten more often than not while its owner reads. Across one whole    ║    │║
+wall, pinned in careful rows, hang charcoal rubbings lifted off some     ║  ▼ ▼║
+carved stone, all rings and curving arcs in soft smudged black. The      ╚═════╝
+light comes thin and dusty through a single shutter, the room is close
+with the smell of paper and old ink, and the quiet has the held,
+thinking weight of a place where someone has sat a long while chasing a
+thought he cannot put down.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5214: Cleric's Study =====
+
+>> look
+look
+
+.: [⌂] Cleric's Study [Pothole Coulee]
+This small back room belongs to the cleric, and the cleric belongs to    ╔═════╗
+his books. They are everywhere -- shelved, stacked, splayed open face-   ║     ║
+down to hold a place, leaning in drifts against the legs of the desk. A  ║     ║
+kettle sits on a trivet over a low brazier in the corner, gone cold and  ║  @─⌂║
+forgotten more often than not while its owner reads. Across one whole    ║    │║
+wall, pinned in careful rows, hang charcoal rubbings lifted off some     ║  ▼ ▼║
+carved stone, all rings and curving arcs in soft smudged black. The      ╚═════╝
+light comes thin and dusty through a single shutter, the room is close
+with the smell of paper and old ink, and the quiet has the held,
+thinking weight of a place where someone has sat a long while chasing a
+thought he cannot put down.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look books
+look books
+You look at the books:
+Books fill the study to bursting -- bound in cracked leather and limp vellum,
+shelved two deep, stacked in towers on the floor, splayed open face-down across
+the desk to keep a dozen places at once. Some are sermons and ledgers and
+almanacs, the plain working stuff of a frontier cleric; others are older, hand-
+copied, their margins crowded with his own cramped questioning notes. The whole
+room smells of them, paper and glue and slow patient dust.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look rubbings
+look rubbings
+You look at the rubbings:
+Pinned in careful rows across one wall hang charcoal rubbings taken off some
+carved stone, each one a nest of arcs set within arcs -- ring inside ring inside
+ring, swung from centers that sit just slightly apart. Follow any single curve
+with your eye and it never comes back to meet itself; the arcs run on past where
+they ought to close and trail away off the edge of the paper. The cleric has
+labeled none of them and explained none of them. They simply hang there, patient
+and faintly unsettling, like a question someone left half-asked on purpose.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look kettle
+look kettle
+You look at the kettle:
+A dented copper kettle sits on an iron trivet over a brazier of low coals in the
+corner, set there for tea and forgotten as often as not. More times than not it
+has gone stone cold while its owner read on, only to be shoved back over the
+heat with a sigh when he surfaces. A single chipped cup waits beside it, ringed
+brown from long use.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5215
+teleport 5215
+Moved to room 5215.
+
+.: [⌂] The Threshold House [Pothole Coulee]
+A low roof of weathered plank has been raised over this spot, less a     ╔═════╗
+house than a shelter built to keep weather off the thing it guards: a    ║⌂─•─⌂║
+free-standing arch of basalt, older than the town, older maybe than the  ║  │  ║
+town's oldest stories. The arch stands rooted in the rock floor, its     ║  @  ║
+stones fitted by no hand anyone remembers, and from somewhere in it      ║     ║
+comes a faint, steady hum -- felt in the teeth more than heard in the    ║     ║
+ear. Step near and the air goes thin and tingling, the way it does       ╚═════╝
+before a storm or a held note. A plain three-legged stool sits beside
+the arch where a warden keeps watch over comers and goers. There is no
+menace here, only the deep patient wonder of something that has waited a
+very long time and is in no hurry to stop.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: north
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5215: The Threshold House =====
+
+>> look
+look
+
+.: [⌂] The Threshold House [Pothole Coulee]
+A low roof of weathered plank has been raised over this spot, less a     ╔═════╗
+house than a shelter built to keep weather off the thing it guards: a    ║⌂─•─⌂║
+free-standing arch of basalt, older than the town, older maybe than the  ║  │  ║
+town's oldest stories. The arch stands rooted in the rock floor, its     ║  @  ║
+stones fitted by no hand anyone remembers, and from somewhere in it      ║     ║
+comes a faint, steady hum -- felt in the teeth more than heard in the    ║     ║
+ear. Step near and the air goes thin and tingling, the way it does       ╚═════╝
+before a storm or a held note. A plain three-legged stool sits beside
+the arch where a warden keeps watch over comers and goers. There is no
+menace here, only the deep patient wonder of something that has waited a
+very long time and is in no hurry to stop.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: north
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look arch
+look arch
+You look at the arch:
+The arch rises from the bare rock without seam or mortar, dark basalt curved
+into a doorway that frames nothing but the wall behind it -- and yet you cannot
+quite look at the empty space within it without your eye sliding off. Its stones
+are the same flood-black as the coulee, but smoother, as though shaped by water
+that ran in some other age. It has the unbothered stillness of the pool up the
+lane, the same sense of light kept patiently somewhere just out of sight.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look hum
+look hum
+You look at the hum:
+The hum lives in the arch and in the floor around it, a low note with no clear
+source, more a pressure than a sound. It sits at the bottom of your hearing and
+climbs into your jaw and the long bones of your arms if you stand too still too
+long. It does not rise or fall; it simply holds, the way the deep light holds in
+the pool, patient and without end.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look stool
+look stool
+You look at the stool:
+A plain three-legged stool stands worn-smooth beside the arch, set there for the
+warden who keeps the threshold. A folded cloak hangs over its back and a half-
+whittled stick of driftwood leans against a leg, the small signs of someone who
+sits long watches here and has only just stepped away. The seat is still faintly
+warm.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5216
+teleport 5216
+Moved to room 5216.
+
+.: [~] Stilt-House Walk [Pothole Coulee]
+A plank boardwalk threads between the stilt-houses, bouncing gently      ╔═════╗
+underfoot over the shallows on their long-legged supports. Nets hang     ║⌂─~─≈║
+drying from the railings, and glass floats knock together in the         ║  │ │║
+breeze, while the green water shows shallow and clear between the stilts ║~─@─•║
+below. An old woman with bark-grey skin and a slender third arm mends a  ║    │║
+net without looking up; a boy whose eyes shine like a cat's chases a dog ║  ⌂─•║
+past your knees. Home-sounds drift from the open doors -- a pot          ╚═════╝
+scraped, a song half-hummed, the plain noise of the Opened going about
+their day. Nobody here spares a strange-shaped body a second glance; on
+this walk, that is simply a body.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5216: Stilt-House Walk =====
+
+>> look
+look
+
+.: [~] Stilt-House Walk [Pothole Coulee]
+A plank boardwalk threads between the stilt-houses, bouncing gently      ╔═════╗
+underfoot over the shallows on their long-legged supports. Nets hang     ║⌂─~─≈║
+drying from the railings, and glass floats knock together in the         ║  │ │║
+breeze, while the green water shows shallow and clear between the stilts ║~─@─•║
+below. An old woman with bark-grey skin and a slender third arm mends a  ║    │║
+net without looking up; a boy whose eyes shine like a cat's chases a dog ║  ⌂─•║
+past your knees. Home-sounds drift from the open doors -- a pot          ╚═════╝
+scraped, a song half-hummed, the plain noise of the Opened going about
+their day. Nobody here spares a strange-shaped body a second glance; on
+this walk, that is simply a body.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look boardwalk
+look boardwalk
+You look at the boardwalk:
+The boardwalk is a run of weathered planks laid across the stilt-house pilings,
+just wide enough for two to pass. It gives a little underfoot with every step,
+springing over the water. Knots and nail-heads have worn proud of the soft grey
+wood where the grain sank around them.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look nets
+look nets
+You look at the nets:
+Fishing nets hang from the railings and the house-eaves to dry, knotted from
+twine and weighted with smooth holed stones. Some are being mended where the
+water tore them; a half-finished one droops from an old woman's three patient
+hands. The smell of weed and fish clings to all of them.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look stilts
+look stilts
+You look at the stilts:
+The houses stand on stilts -- long timber legs driven into the mud of the
+shallows, lifting each floor a body's height above the water. Green weed and
+pale barnacle crust the lower legs at the tide-line. Between them you can see
+straight down to the clear shallow bottom, where small fish hang in the shade.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look woman
+look woman
+You look at the woman:
+The old netmender sits on the planks with a half-mended net across her lap, a
+third slender arm steadying the twine while her other two hands work the knots.
+Her skin is the soft grey of weathered bark. She gives you the easy nod of a
+neighbor and bends back to her mending.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Glass floats knock together on the railing as the breeze shifts.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look boy
+look boy
+You look at the boy:
+A barefoot boy chases a brown dog up and down the boardwalk, the pair of them
+delighted and going nowhere in particular. His eyes catch the light with a flat
+gold shine, like a cat's in a doorway at dusk. He grins at you in passing and is
+gone, the dog skidding after him.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5217
+teleport 5217
+Moved to room 5217.
+
+.: [▼] North Shore Overlook [Pothole Coulee]
+The crag juts out over the water at the bowl's north edge, and from its  ╔═════╗
+worn lip the pool shows clearest of all -- straight down into the dark,  ║▼ ,  ║
+where the deep light lies waiting far below. Up here the clatter of the  ║│ │  ║
+houses falls away, and there is only wind and water and the slow         ║▼ @ ▼║
+patience of the depths. Folk come to this crag to sit and look and       ║│ │ │║
+think, and the polished stone says many have come before. The light does ║≈─~─⌂║
+not call to you, exactly. It simply waits, the way deep things do, and   ╚═════╝
+you find yourself loath to break the quiet.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: north, south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5217: North Shore Overlook =====
+
+>> look
+look
+
+.: [▼] North Shore Overlook [Pothole Coulee]
+The crag juts out over the water at the bowl's north edge, and from its  ╔═════╗
+worn lip the pool shows clearest of all -- straight down into the dark,  ║▼ ,  ║
+where the deep light lies waiting far below. Up here the clatter of the  ║│ │  ║
+houses falls away, and there is only wind and water and the slow         ║▼ @ ▼║
+patience of the depths. Folk come to this crag to sit and look and       ║│ │ │║
+think, and the polished stone says many have come before. The light does ║≈─~─⌂║
+not call to you, exactly. It simply waits, the way deep things do, and   ╚═════╝
+you find yourself loath to break the quiet.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: north, south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look crag
+look crag
+You look at the crag:
+The crag is a shelf of dark basalt thrust out over the north end of the pool,
+its lip worn round and smooth by the sitting of many bodies. A short trail
+climbs to it from the shore below. There is room for a few to perch, no more,
+and the view straight down the water is the reason they climb.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look depths
+look depths
+You look at the depths:
+From this height the pool's depths open clear beneath you, dark water going down
+further than the eye can follow. Somewhere far below, the cold blue-green light
+rests, steadier seen from here than from any shore. You cannot tell whether it
+is stone or water or something living down there, only that it is patient, and
+that it has been waiting a long time.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5218
+teleport 5218
+Moved to room 5218.
+
+.: [~] Reed Jetty [Pothole Coulee]
+A short fishing jetty pushes out through the reeds, its weathered planks ╔═════╗
+ending in open water where the green stalks thin and give way. A coracle ║  ▼ ▼║
+of hide and bent willow rides tied to the last post, bobbing whenever    ║  │ │║
+the water remembers to move. Dragonflies stitch the air above the        ║  @ ▼║
+reeds, blue and copper, in no particular hurry to be anywhere. Nothing   ║  │ │║
+happens here fast; the jetty is a place for waiting on a line and        ║⌂─~─≈║
+letting the afternoon go by. The reeds whisper around you, hiding the    ╚═════╝
+path back south.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: north, south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5218: Reed Jetty =====
+
+>> look
+look
+
+.: [~] Reed Jetty [Pothole Coulee]
+A short fishing jetty pushes out through the reeds, its weathered planks ╔═════╗
+ending in open water where the green stalks thin and give way. A coracle ║  ▼ ▼║
+of hide and bent willow rides tied to the last post, bobbing whenever    ║  │ │║
+the water remembers to move. Dragonflies stitch the air above the        ║  @ ▼║
+reeds, blue and copper, in no particular hurry to be anywhere. Nothing   ║  │ │║
+happens here fast; the jetty is a place for waiting on a line and        ║⌂─~─≈║
+letting the afternoon go by. The reeds whisper around you, hiding the    ╚═════╝
+path back south.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: north, south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look jetty
+look jetty
+You look at the jetty:
+The jetty is a narrow run of grey, weather-split planks set on posts driven into
+the shallows, reaching out past the reeds to where the fishing is good. It
+creaks and gives underfoot but holds. The far end is worn pale and smooth where
+folk sit with their lines in the water.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look coracle
+look coracle
+You look at the coracle:
+A small round coracle is tied to the last post -- a bowl of oiled hide stretched
+over bent willow ribs, light enough for one body to lift and carry. It rides
+high and bobs at the least motion of the water. A single short paddle lies
+across its seat, and a coil of line in the bottom.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look reeds
+look reeds
+You look at the reeds:
+The reeds crowd close on both sides of the jetty, tall and green and thick
+enough to hide a wading body. They whisper and lean when the wind comes down the
+coulee. Dragonflies rest on the upper stalks between their darting runs over the
+open water.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5220
+teleport 5220
+Moved to room 5220.
+
+.: [~] Dry Coulee Mouth [Pothole Coulee]
+The coulee floor runs out dry to the east, a wide gravel wash climbing   ╔═════╗
+away between bare stone shoulders. Far up the canyon a steady knocking   ║▼    ║
+carries down on the wind -- someone striking a post, over and over, with ║│    ║
+a fighter's slow patience. A crew has been digging at the fallen rock    ║⌂─@  ║
+that chokes the mouth, and the way through is nearly clear.              ║     ║
+                                                                         ║     ║
+                                                                         ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5220: Dry Coulee Mouth (stub) =====
+
+>> look
+look
+
+.: [~] Dry Coulee Mouth [Pothole Coulee]
+The coulee floor runs out dry to the east, a wide gravel wash climbing   ╔═════╗
+away between bare stone shoulders. Far up the canyon a steady knocking   ║▼    ║
+carries down on the wind -- someone striking a post, over and over, with ║│    ║
+a fighter's slow patience. A crew has been digging at the fallen rock    ║⌂─@  ║
+that chokes the mouth, and the way through is nearly clear.              ║     ║
+                                                                         ║     ║
+                                                                         ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look wash
+look wash
+You look at the wash:
+The dry wash climbs east between bare shoulders of stone, its gravel bed swept
+clean by floods that come only in the wet season. Half-cleared rockfall still
+narrows the throat of it, but a path has been picked through, and the canyon
+opens wide and inviting beyond.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look post
+look post
+You look at the post:
+You cannot see the post from here, only hear it -- a far, rhythmic knocking,
+wood on wood, somewhere up the wash. Someone is drilling at it the way fighters
+do, hour on patient hour, and the sound carries clean down the canyon to the
+mouth.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5221
+teleport 5221
+Moved to room 5221.
+
+.: [▼] Talus Gap [Pothole Coulee]
+A long slope of broken talus piles up to the west, loose plates of dark  ╔═════╗
+rock that shift and clink underfoot. A cold smell rides down off it --   ║     ║
+iron and quenched coal and old ash, the breath of a forge somewhere up   ║     ║
+beyond the scree. Stacked timbers wait beside a half-dug gap where       ║  @─⌂║
+someone means to shore a way through the slide.                          ║     ║
+                                                                         ║    ~║
+                                                                         ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5221: Talus Gap (stub) =====
+
+>> look
+look
+
+.: [▼] Talus Gap [Pothole Coulee]
+A long slope of broken talus piles up to the west, loose plates of dark  ╔═════╗
+rock that shift and clink underfoot. A cold smell rides down off it --   ║     ║
+iron and quenched coal and old ash, the breath of a forge somewhere up   ║     ║
+beyond the scree. Stacked timbers wait beside a half-dug gap where       ║  @─⌂║
+someone means to shore a way through the slide.                          ║     ║
+                                                                         ║    ~║
+                                                                         ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look talus
+look talus
+You look at the talus:
+The talus is a steep apron of shattered rock fallen off the cliffs above, dark
+plates and wedges heaped loose and treacherous. It shifts and rings underfoot
+like cracked crockery. A cold forge-smell of iron and coal comes down through
+the gaps in it, hinting at heat and hammers somewhere above the slide.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look timbers
+look timbers
+You look at the timbers:
+A stack of fresh-cut timbers lies beside the half-dug gap, pale and sticky with
+sap, brought in to shore the loose rock while a way is cut through. Someone has
+begun the work and left it for the day; the props lean ready against the talus,
+waiting for hands to set them.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5222
+teleport 5222
+Moved to room 5222.
+
+.: [~] Reedwash Mouth [Pothole Coulee]
+Reeds choke the wash where it bends away east, the water beneath them    ╔═════╗
+gone still and green and thick with the smell of sweet rot and some      ║⌂    ║
+sharp clean herb cutting under it. Flagged stakes march off into the     ║     ║
+growth, marking a line where someone is cutting a path through the       ║⌂─@  ║
+tangle. The work is half-done, the far stakes still lost in the reeds.   ║     ║
+                                                                         ║     ║
+                                                                         ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5222: Reedwash Mouth (stub) =====
+
+>> look
+look
+
+.: [~] Reedwash Mouth [Pothole Coulee]
+Reeds choke the wash where it bends away east, the water beneath them    ╔═════╗
+gone still and green and thick with the smell of sweet rot and some      ║⌂    ║
+sharp clean herb cutting under it. Flagged stakes march off into the     ║     ║
+growth, marking a line where someone is cutting a path through the       ║⌂─@  ║
+tangle. The work is half-done, the far stakes still lost in the reeds.   ║     ║
+                                                                         ║     ║
+                                                                         ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look reeds
+look reeds
+You look at the reeds:
+The reeds stand thick and head-high where the wash slows and pools, their roots
+in still green water that smells of sweet rot and, under it, a sharp clean herb-
+scent. Things grow in here that a careful hand could gather and steep. The
+tangle swallows the path a stone's throw on, where the cutting has not yet
+reached.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look stakes
+look stakes
+You look at the stakes:
+A line of flagged stakes has been driven into the muck, scraps of bright rag
+tied at their heads to show the way through the reeds. The near ones stand clear
+along a half-cut path; the far ones lean deep in the growth, marking ground
+still to be opened.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5223
+teleport 5223
+Moved to room 5223.
+
+.: [~] Scrub Draw [Pothole Coulee]
+The ground lifts west out of the shallows into dry scrub steppe, grey-   ╔═════╗
+green brush threaded with the braided trails of game. A hunter's cairn   ║▼─⌂─~║
+of stacked stones marks the draw's mouth, fresh rock heaped beside it    ║    │║
+where someone is building the marker higher. Beyond, the trails run off  ║  @─~║
+into country no map has caught up to yet.                                ║     ║
+                                                                         ║    ⌂║
+                                                                         ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5223: Scrub Draw (stub) =====
+
+>> look
+look
+
+.: [~] Scrub Draw [Pothole Coulee]
+The ground lifts west out of the shallows into dry scrub steppe, grey-   ╔═════╗
+green brush threaded with the braided trails of game. A hunter's cairn   ║▼─⌂─~║
+of stacked stones marks the draw's mouth, fresh rock heaped beside it    ║    │║
+where someone is building the marker higher. Beyond, the trails run off  ║  @─~║
+into country no map has caught up to yet.                                ║     ║
+                                                                         ║    ⌂║
+                                                                         ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look brush
+look brush
+You look at the brush:
+Dry grey-green brush covers the rising ground to the west, low and tough and
+smelling of dust and crushed sage. Game trails braid through it, beaten thin by
+deer and hare and whatever else moves out on the steppe. Follow any one with
+your eye and it loses itself in the wide rolling country beyond.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look cairn
+look cairn
+You look at the cairn:
+A hunter's cairn of flat stacked stones stands at the draw's mouth, the old way
+of marking a trailhead and a kill. Fresh rock lies heaped at its foot, half-
+set, where someone has lately set to building it taller -- a sign the way west
+is being opened to those who follow.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5224
+teleport 5224
+Moved to room 5224.
+
+.: [▼] Stargazer Cut [Pothole Coulee]
+A narrow cut climbs north through the cliffs toward the steppe rim,      ╔═════╗
+where a broken silhouette stands black against the sky -- a ruin, or the ║  ⌂─⌂║
+bones of one. The air in the cut sits strange and heavy, folded          ║    │║
+somehow, as though the distance had been pinched shorter than the eye    ║  @ ▼║
+allows. Loose stone has been cleared from the path lately, the way still ║  │ │║
+raw where hands have widened it.                                         ║  ~ ▼║
+                                                                         ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5224: Stargazer Cut (stub) =====
+
+>> look
+look
+
+.: [▼] Stargazer Cut [Pothole Coulee]
+A narrow cut climbs north through the cliffs toward the steppe rim,      ╔═════╗
+where a broken silhouette stands black against the sky -- a ruin, or the ║  ⌂─⌂║
+bones of one. The air in the cut sits strange and heavy, folded          ║    │║
+somehow, as though the distance had been pinched shorter than the eye    ║  @ ▼║
+allows. Loose stone has been cleared from the path lately, the way still ║  │ │║
+raw where hands have widened it.                                         ║  ~ ▼║
+                                                                         ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look cut
+look cut
+You look at the cut:
+The cut is a narrow cleft worked up through the cliff toward the rim, its walls
+close enough to touch on either hand. The stone here has the raw, pale look of
+recent clearing, where blocks have been levered out to widen the climb. The air
+in it hangs heavy and folded, pressing at you in a way plain air does not.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look ruin
+look ruin
+You look at the ruin:
+Up on the steppe rim a broken shape stands against the sky, too far and too
+weathered to read -- a ruin, leaning walls and a fallen arch, the bones of
+something old. The fold in the air seems to gather around it, as though the
+place bent the distance to itself.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5225
+teleport 5225
+Moved to room 5225.
+
+.: [,] Old Field Track [Pothole Coulee]
+An old field track runs north over the rise, its cart ruts grown over    ╔═════╗
+with grass but still plain in the dirt. Just beyond the crest a standing ║⌂    ║
+stone shows its weathered head against the sky, too far yet to read. The ║│    ║
+track has been cleared of brush a little way on, the cut ends raw where  ║▼ @  ║
+the work has not reached the stone.                                      ║│ │  ║
+                                                                         ║▼ ▼ ▼║
+                                                                         ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5225: Old Field Track (stub) =====
+
+>> look
+look
+
+.: [,] Old Field Track [Pothole Coulee]
+An old field track runs north over the rise, its cart ruts grown over    ╔═════╗
+with grass but still plain in the dirt. Just beyond the crest a standing ║⌂    ║
+stone shows its weathered head against the sky, too far yet to read. The ║│    ║
+track has been cleared of brush a little way on, the cut ends raw where  ║▼ @  ║
+the work has not reached the stone.                                      ║│ │  ║
+                                                                         ║▼ ▼ ▼║
+                                                                         ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look track
+look track
+You look at the track:
+The track is an old farm road run north over the rise, its wheel-ruts sunk deep
+and softened under a fur of grass, plain to the eye where nothing else marks the
+steppe. Someone has lately scythed the brush back along the near stretch of it,
+opening the way; past that the grass closes in again, unworked.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look stone
+look stone
+You look at the stone:
+A standing stone lifts its weathered head over the crest of the rise, grey and
+lichen-spotted, carved once with marks the years have nearly worn smooth. From
+here you cannot make them out. It has the look of something set to be read, by
+anyone who climbs near enough to try.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> teleport 5226
+teleport 5226
+Moved to room 5226.
+
+.: [▼] Bluff Steps [Pothole Coulee]
+Rough steps climb the bluff to the north, cut and stacked from flat      ╔═════╗
+slabs, rising toward terraces where the wind carries a faint snap of     ║,    ║
+loosed strings. Spent practice bolts lie scattered in the dirt at the    ║│    ║
+foot of the climb, fletching frayed and points gone dull. The upper      ║▼ @  ║
+steps are still being set, raw stone wedged and waiting where the stair  ║│ │  ║
+runs out.                                                                ║~─⌂─~║
+                                                                         ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+
+===== ROOM 5226: Bluff Steps (stub) =====
+
+>> look
+look
+
+.: [▼] Bluff Steps [Pothole Coulee]
+Rough steps climb the bluff to the north, cut and stacked from flat      ╔═════╗
+slabs, rising toward terraces where the wind carries a faint snap of     ║,    ║
+loosed strings. Spent practice bolts lie scattered in the dirt at the    ║│    ║
+foot of the climb, fletching frayed and points gone dull. The upper      ║▼ @  ║
+steps are still being set, raw stone wedged and waiting where the stair  ║│ │  ║
+runs out.                                                                ║~─⌂─~║
+                                                                         ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look steps
+look steps
+You look at the steps:
+The steps are flat slabs cut and stacked up the face of the bluff, climbing
+toward the shooting terraces above. The lower run is finished and firm; higher
+up the stair grows rough, raw blocks wedged and waiting where the work has not
+yet caught up. A snap of bowstrings drifts down from the terraces above.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+>> look bolts
+look bolts
+You look at the bolts:
+Spent practice bolts lie strewn in the dirt at the foot of the climb, gathered
+by the handful and dropped again -- shafts split, fletching frayed, iron points
+battered dull against the butts above. They are the leavings of long hours at
+the mark, swept down off the terraces where folk drill at their aim.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
