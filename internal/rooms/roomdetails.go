@@ -100,10 +100,13 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 	//
 	// End Room Alerts
 	//
-	renderNouns := user.HasRolePermission(`room.nouns`)
-	if user.Character.Pet.Exists() && user.Character.HasBuffFlag(buffs.SeeNouns) {
-		renderNouns = true
-	}
+	// Noun highlighting is universal (2026-06-12). It was formerly gated
+	// on the room.nouns role permission or a pet with the SeeNouns buff
+	// flag — but the default user role can never hold permissions and no
+	// dogmud-world buff carries see-nouns, so the gate made the feature
+	// admin-only by accident. Discoverability for everyone beats a
+	// vestigial perk.
+	renderNouns := true
 
 	if len(tinymap) > 0 {
 		desclineWidth := 80 - 7 // 7 is the width of the tinymap
