@@ -50,6 +50,8 @@ nouns:
     salve, all set out plain where a shaking hand could find them in the
     dark. Nothing here is hidden or hoarded; it is laid ready for whoever
     walks in needing it.
+spawninfo:
+- mobid: 9102
 idlemessages:
 - The banked fire settles with a soft tick, and the hung <ansi fg="itemname">herbs</ansi> sway and go still.
 - Somewhere a kettle ticks as it cools, the only sound in the warm hush of the hut.

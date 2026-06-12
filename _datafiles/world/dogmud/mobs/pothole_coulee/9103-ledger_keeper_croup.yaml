@@ -1,0 +1,44 @@
+mobid: 9103
+zone: Pothole Coulee
+behavior_archetype: noncombat_questgiver
+statpool: 36
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 10
+idlecommands:
+  - 'emote squares the great ledger to the desk-edge with one horned knuckle'
+  - ''
+  - 'emote dips the quill and sets down a figure in a small, exact hand'
+  - ''
+  - 'emote taps a strongbox tag, counts under his breath, and moves to the next'
+  - ''
+character:
+  name: Ledger-Keeper Croup
+  description: |
+    Croup keeps the Strongbox House and the great balanced book that runs
+    it, and he does both with a dry, exact care that strangers mistake for
+    coldness until they need him. He is spare and upright, economical with
+    words and with motion, never setting a thing down where it does not
+    belong nor an entry where it does not balance. His knuckles are capped
+    in polished horn, smooth amber ridges that click faintly against quill
+    and lockplate; he uses them to square a stack of coin or tap a tally
+    without ever seeming to notice they are not ordinary hands. Behind the
+    precision there is a kindness he would deny if asked -- he remembers
+    which newcomer arrived with nothing, and the figures in his book quietly
+    forgive more than they should. What you set in his keeping will be
+    there, to the last coin, when you come back for it.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 7
+    willpower:
+      training: 5
+    charisma:
+      training: 3

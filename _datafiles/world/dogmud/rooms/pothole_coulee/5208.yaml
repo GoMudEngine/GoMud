@@ -42,5 +42,7 @@ nouns:
     weight. It seals with a deep, final sound that you feel in the floor
     as much as hear. Shut behind you, it makes the room over into
     somewhere apart from the town, hushed and held.
+spawninfo:
+- mobid: 9103
 idlemessages:
 - The heavy door settles a fraction on its hinges with a low groan of iron, and the cool air does not stir.

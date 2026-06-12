@@ -1,0 +1,43 @@
+mobid: 9102
+zone: Pothole Coulee
+behavior_archetype: noncombat_questgiver
+statpool: 44
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 11
+idlecommands:
+  - 'emote grinds salve in the pestle, slow and even, listening to the room'
+  - ''
+  - 'emote lays the back of her hand to a cot blanket as if taking its temperature'
+  - ''
+  - 'emote pauses, and her third eye blinks slow while the other two keep working'
+  - ''
+character:
+  name: Sala the Mender
+  description: |
+    Sala keeps the Mending Hut, where the cold-returned Opened are carried
+    to be made whole, and she works with the unhurried economy of someone
+    who has learned that haste is its own kind of wound. She moves between
+    cots and drying-racks and the pestle at her bench in a quiet that is
+    never idle, her hands sure on bandage and salve, her voice low and even
+    when she speaks at all. Above and between her two dark eyes sits a
+    third, set high on her brow, that blinks on its own slow rhythm and
+    seems to watch a patient even when the other two are bent to their work.
+    She speaks the way a healer takes a pulse -- a few words, weighed, while
+    most of her attention stays on the thing that matters. Folk leave her
+    hut calmer than they came, and could not always tell you why.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 8
+    willpower:
+      training: 5
+    charisma:
+      training: 4

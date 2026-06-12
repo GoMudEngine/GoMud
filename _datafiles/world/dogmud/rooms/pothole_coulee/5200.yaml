@@ -39,6 +39,8 @@ nouns:
     too far down to make out a source. It does not flicker the way
     firelight does -- it simply is, steady and cold and patient. You
     cannot tell if it is stone, water, or something living down there.
+spawninfo:
+- mobid: 9100
 idlemessages:
 - The <ansi fg="itemname">pool</ansi> surface barely moves, but a deep chill rises off the water.
 - The <ansi fg="itemname">light</ansi> below pulses once, faint and slow, then steadies.

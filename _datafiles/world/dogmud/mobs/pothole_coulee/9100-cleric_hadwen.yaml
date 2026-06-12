@@ -1,0 +1,44 @@
+mobid: 9100
+zone: Pothole Coulee
+behavior_archetype: noncombat_questgiver
+statpool: 60
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 12
+idlecommands:
+  - 'emote kneels at the pool rim and trails two fingers in the cold water'
+  - ''
+  - 'emote turns his head to listen, the pale plates along his jaw catching the light'
+  - ''
+  - 'emote murmurs the welcome-words under his breath, the same ones, meaning them'
+  - ''
+character:
+  name: Cleric Hadwen
+  description: |
+    Hadwen tends the Awakening Pool the way other men tend a hearth fire,
+    quietly and without ever quite leaving it. He is broad and slow-moving,
+    his robe damp at the hem from a lifetime of kneeling at the water's
+    edge to draw the cold-blinking Opened back up into themselves. When he
+    speaks he does not hurry; he has explained this same small miracle a
+    thousand times, to a thousand frightened faces, and he still means
+    every word as if it were the first. Pale chitin plates run in a neat
+    seam along the line of his jaw, hard and faintly ridged, and he wears
+    them as plainly as a beard -- the water gave them to him the same year
+    it gave him this work. His patience is not weariness but a kind of
+    deep, banked warmth, the sort that outlasts whatever storm walks in
+    the door.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    charisma:
+      training: 8
+    willpower:
+      training: 6
+    perception:
+      training: 4
