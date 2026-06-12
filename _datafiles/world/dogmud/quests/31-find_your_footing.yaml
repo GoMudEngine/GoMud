@@ -1,0 +1,76 @@
+# Quest 31 — Find Your Footing (Pothole Coulee hub, optional orientation)
+#
+# Token flow:
+#   31-start   — granted by Crier Toke's dialogue (requires 30-end)
+#   31-school  — room_enter trigger, Chrysalis School Hall (5213)
+#   31-shop    — command trigger, list OR buy at Coulee Provisions (5207)
+#   31-lantern — room_enter trigger, The Drowned Lantern (5205)
+#   31-end     — granted by Toke's dialogue turn-in (requires 31-lantern)
+
+questid: 31
+name: Find Your Footing
+description: Walk the hub of Pothole Coulee and learn where everything lives.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: "Crier Toke wants you to learn the town before the town has to learn you. Start at the Chrysalis School Hall."
+    hint: "From Hub Square go north past the Awakening Pool and climb the basalt stair -- keep north to the school hall. Type map if you lose your way."
+  - id: school
+    description: "You found the school hall. Next, see what Trader Onna sells at Coulee Provisions."
+    hint: "Coulee Provisions is south of Hub Square -- go south to Market Row, then east. Type list at her counter to see her wares; buy something if anything suits you."
+  - id: shop
+    description: "You know where the goods are. Now put your head into The Drowned Lantern, the town's inn."
+    hint: "The Drowned Lantern is off Market Row -- from Coulee Provisions go west twice. Walking in is enough."
+  - id: lantern
+    description: "You have seen the school, the shop, and the inn. Report back to Crier Toke in Hub Square."
+    hint: "Toke is at the notice-post in Hub Square. Type ask toke footing to finish."
+  - id: end
+    description: "You know the hub now. Toke says the coulee mouths are next, whenever you are ready."
+    hint: "Ask any of the townsfolk about the coulee when you want to push outward."
+
+rewards:
+  gold: 20
+  player_message: >-
+    Toke presses a small purse into your palm with his upper mouth still
+    talking and the lower one already calling the next notice.
+
+triggers:
+  # ── SCHOOL HALL: arrive (room 5213) ─────────────────────
+  - event: room_enter
+    room: 5213
+    conditions:
+      has: [31-start]
+      missing: [31-school]
+    actions:
+      - grant: 31-school
+
+  # ── PROVISIONS: list the wares (room 5207) ──────────────
+  - event: command
+    command: list
+    room: 5207
+    conditions:
+      has: [31-school]
+      missing: [31-shop]
+    actions:
+      - grant: 31-shop
+
+  # ── PROVISIONS: buying also counts (room 5207) ──────────
+  - event: command
+    command: buy
+    room: 5207
+    conditions:
+      has: [31-school]
+      missing: [31-shop]
+    actions:
+      - grant: 31-shop
+
+  # ── THE DROWNED LANTERN: arrive (room 5205) ─────────────
+  - event: room_enter
+    room: 5205
+    conditions:
+      has: [31-shop]
+      missing: [31-lantern]
+    actions:
+      - grant: 31-lantern
