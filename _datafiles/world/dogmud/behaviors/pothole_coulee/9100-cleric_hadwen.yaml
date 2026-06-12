@@ -1,0 +1,118 @@
+# Cleric Hadwen (9100) — rite-keeper at the Awakening Pool (room 5200).
+#
+# Owns the Awakening Rite beat of quest 30:
+#   - dialogue (dialogue/pothole_coulee/9100.yaml) grants 30-start
+#   - this tree answers "ask hadwen begin/ready" while 30-start is held,
+#     plays the paced rite sequence, and fires grant_mutation + 30-end.
+# Token gating makes the rite single-shot: 30-end is granted at eval
+# time, so a re-ask falls through to dialogue (which has a gentle
+# refusal node). Pattern follows behaviors/rooms/sanctum_basin/113.yaml.
+
+tree:
+  type: selector
+  children:
+
+    # ── THE RITE: ask hadwen begin (30-start held, not yet opened) ──
+    - type: sequence
+      event: player_ask
+      children:
+        - type: condition
+          check: keyword_match
+          keywords: [begin, ready]
+        - type: condition
+          check: player_has_quest
+          quest: "30-start"
+        - type: condition
+          check: player_missing_quest
+          quest: "30-end"
+        - type: action
+          do: say
+          text: Then we begin. Step to the edge with me.
+          delay: 1.0
+        - type: action
+          do: emote
+          text: >-
+            wades into the shallows and turns. The pale plates along his
+            jaw catch the light coming up off the water.
+          delay: 3.0
+        - type: action
+          do: say
+          text: >-
+            Gaius is made of belief. The land believes itself into
+            shape. So does everything that lives on it. So will you.
+          delay: 6.0
+        - type: action
+          do: say
+          text: >-
+            Most worlds let you stay what you arrived as. This one will
+            not. The body answers effort, conflict, fear, wanting -- it
+            changes. We call the changes mutations, and none of them are
+            a punishment, whatever they look like at first.
+          delay: 9.5
+        - type: action
+          do: say
+          text: >-
+            The pool answers first. It is older than the town and more
+            patient than I am. Look into the water.
+          delay: 13.0
+        - type: action
+          do: emote
+          text: >-
+            rests a hand on your shoulder. The pool's light rises to
+            meet you, and for a moment you are somewhere else -- folded
+            inside something vast and warm that is looking back at you
+            with your own eyes.
+          delay: 16.0
+        - type: action
+          do: emote
+          text: >-
+            The light lets you go. The water is only water again, and
+            the morning is just a morning, and something under your
+            skin is newly, quietly awake.
+          delay: 20.0
+        - type: action
+          do: say
+          text: It is done. You will feel it settle for a while. That is normal.
+          delay: 23.0
+        - type: action
+          do: say
+          text: >-
+            Type <ansi fg="command">mutations</ansi> whenever you want
+            to see what the pool woke in you. It will not be the last --
+            the rest, you will earn the slow way.
+          delay: 26.0
+        - type: action
+          do: say
+          text: >-
+            If the name you carried here no longer fits the shape of
+            you, <ansi fg="command">renameself</ansi> lets you choose
+            truer. And <ansi fg="command">help</ansi> answers most
+            questions with more patience than I have.
+          delay: 29.5
+        - type: action
+          do: say
+          text: >-
+            Walk the town. Crier Toke in the square keeps the day's
+            word. And when you are ready to leave us, Warden Esk keeps
+            the way out. The coulee will still be here.
+          delay: 33.0
+        - type: action
+          do: grant_mutation
+        - type: action
+          do: grant_quest
+          quest: "30-end"
+
+    # ── GREETING: a stranger to the pool walks in ──
+    - type: sequence
+      event: player_enter
+      children:
+        - type: condition
+          check: player_missing_quest
+          quest: "30-start"
+        - type: action
+          do: say
+          text: >-
+            New to the coulee? I keep the pool. Ask me about the rite
+            when you have caught your breath -- <ansi fg="command">ask
+            hadwen rite</ansi> will do.
+          delay: 2.0

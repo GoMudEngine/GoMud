@@ -1,0 +1,154 @@
+# Crier Toke — town crier, Hub Square (5203). Grants and closes
+# quest 31 (Find Your Footing). The mid-quest beats are quest-engine
+# triggers (room_enter 5213/5205, list/buy at 5207) — see
+# quests/31-find_your_footing.yaml.
+
+mobid: 9106
+zone: Pothole Coulee
+defaultMood: friendly
+
+greetings:
+  - text: "Hoy! New face! I'd know -- faces are half my stock in trade."
+    moods: ["friendly", "neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "hoy"]
+    responses:
+      - "Hoy yourself! Stand close, the throat does the loud part."
+      - "Good day for news. Every day is, if you stand in the right square."
+
+  - keywords: [""]
+    responses:
+      - "Speak up or stand back, friend -- the next call is due."
+      - "Hm? The notice-post has anything I forgot to shout."
+
+tree:
+  root:
+    text: >-
+      Toke, town crier, both mouths at your service -- the top one for
+      talk, the low one for distance. Whatever happened in the coulee
+      today, I knew it yesterday.
+    hints: >-
+      You could ask about the news, the seven mouths of the coulee, or
+      a task to find your footing.
+    variants:
+      - questExcluded: ["30-end"]
+        text: >-
+          Hoy, unopened! No offense meant -- I can hear it in how you
+          walk, like the ground might disagree with you. See Cleric
+          Hadwen at the pool first. The town makes more sense from the
+          far side of the water.
+        hints: >-
+          You could ask Hadwen about the rite at the Awakening Pool,
+          north of the square.
+      - questRequired: ["31-start"]
+        questExcluded: ["31-lantern", "31-end"]
+        text: >-
+          Still walking the town? Good. The slates, the shelves, and
+          the taps -- in that order. Type
+          <ansi fg="command">quest</ansi> if you lose your place; I
+          will still be shouting when you get back.
+        hints: >-
+          Type quest to see your next stop.
+      - questRequired: ["31-lantern"]
+        questExcluded: ["31-end"]
+        text: >-
+          There you are! School, shop, and the Lantern's taps -- I had
+          word of you from all three before your boots cleared their
+          doorways. Say the word footing and we will call it done.
+        hints: >-
+          Type ask toke footing to finish the task.
+      - questRequired: ["31-end"]
+        text: >-
+          The town knows your face now -- I made sure of it. When you
+          want more than the hub, ask me about the mouths. The coulee
+          has seven of them, and every one leads somewhere that will
+          teach you something.
+        hints: >-
+          You could ask about the seven mouths, or the day's news.
+
+  nodes:
+    - id: footing_offer
+      triggers: ["footing", "task", "quest", "town", "around", "work"]
+      questRequired: ["30-end"]
+      questExcluded: ["31-start", "31-end"]
+      grantsQuest: "31-start"
+      text: >-
+        Newly Opened and nowhere to be? Perfect. Learn the town before
+        the town has to learn you. Three stops: the Chrysalis School
+        Hall up past the pool, Trader Onna's shelves at Coulee
+        Provisions, and The Drowned Lantern -- the inn, best taps in
+        the coulee. Walk them in that order and come tell me what you
+        saw. I will hear about it anyway, but I like it firsthand.
+      hints: >-
+        Go north past the Awakening Pool and up the basalt stair to
+        the school hall. Type quest any time to see your place.
+      moodChange: friendly
+
+    - id: footing_unopened
+      triggers: ["footing", "task", "quest", "work"]
+      questExcluded: ["30-end", "31-start", "31-end"]
+      text: >-
+        Eager! I respect it. But the pool comes first -- that is not
+        my rule, it is just the order the coulee works in. Cleric
+        Hadwen, north side of the square. Come back Opened and I will
+        put your feet to work.
+      hints: >-
+        Ask Hadwen about the rite at the Awakening Pool.
+
+    - id: footing_turnin
+      triggers: ["footing", "done", "finished", "quest", "task"]
+      questRequired: ["31-lantern"]
+      questExcluded: ["31-end"]
+      grantsQuest: "31-end"
+      text: >-
+        And done! Slates, shelves, taps -- the whole hub in one walk.
+        Here, for your trouble. Now listen, because this is the part I
+        save for people who finish things: the coulee has seven
+        mouths. Seven breaks in the rim, and past every one, somebody
+        or something that will teach you what the town cannot. Fighters
+        in one, forge-smoke in another, green stink of potions, wild
+        country, the quiet arts, old stones that talk if you read
+        them, and a far hill where they put things down at distance.
+        When you are ready, pick a mouth. Any mouth.
+      hints: >-
+        Quest complete. You could ask about the seven mouths whenever
+        you want the longer tour.
+      moodChange: friendly
+
+    - id: mouths
+      triggers: ["mouths", "mouth", "seven", "coulee", "rim", "spokes"]
+      text: >-
+        Seven breaks in the coulee rim, and a path through every one.
+        I call them mouths because the town eats what they bring back.
+        Fighting in one, smithing in another, brewing, the wilds,
+        folding -- the quiet art, mind you -- old lore, and the far
+        hill where they teach the long shot. The paths are marked off
+        the shore and the square. Walk any of them; walk all of them
+        if your boots hold.
+      hints: >-
+        The mouths open off the edges of town. The map command shows
+        what you have found so far.
+
+    - id: news
+      triggers: ["news", "word", "day", "notice", "happened"]
+      text: >-
+        Today's word: the pool is still patient, Onna's prices are
+        still fair, and Granny Wicker is still older than both. If you
+        want your own word carried, just speak --
+        <ansi fg="command">say</ansi> talks to the room you stand in,
+        <ansi fg="command">tell</ansi> reaches one ear further off,
+        and <ansi fg="command">emote</ansi> is for when words are too
+        small. I use all three before breakfast.
+      hints: >-
+        You could ask about the seven mouths or a task.
+
+    - id: voices
+      triggers: ["voices", "mouth", "throat", "loud", "shout"]
+      text: >-
+        Born with both, and glad of it. The low one carries across the
+        square; the top one does the thinking. They get along better
+        than most married couples. Folk stop noticing inside a week --
+        you will too.
+      hints: >-
+        You could ask about the news or the seven mouths.

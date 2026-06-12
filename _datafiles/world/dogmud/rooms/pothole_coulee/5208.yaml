@@ -14,6 +14,7 @@ description: >
   it, into something close to comfort. Whatever you set down here will be
   here when you come back.
 biome: house
+isbank: true
 coord:
   x: 46
   y: 1

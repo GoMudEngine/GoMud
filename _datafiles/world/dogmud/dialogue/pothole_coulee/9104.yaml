@@ -1,0 +1,92 @@
+# Trader Onna — shopkeeper, Coulee Provisions (5207). Owns the
+# list/buy/sell lessons (incl. multi-buy). The quest-31 shop beat is a
+# quest-engine command trigger, not dialogue.
+
+mobid: 9104
+zone: Pothole Coulee
+defaultMood: neutral
+
+greetings:
+  - text: "Shelves are stocked, prices are honest, and I remember faces. Look as long as you like."
+    moods: ["friendly", "neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Welcome in. Mind the reed-dust; it gets everywhere this season."
+      - "Hello. The good stock is at eye level and the better stock is behind me."
+
+  - keywords: [""]
+    responses:
+      - "Hm? If it is on a shelf, it has a price. If it has a price, we can talk."
+      - "Take your time. The shelves are patient and so am I."
+
+tree:
+  root:
+    text: >-
+      Onna. This is Coulee Provisions, and if the coulee needs it, I
+      stock it -- food for the road, cloth for your back, a blade or
+      a sling if your road needs one of those too. Fair dealing both
+      directions: I tell you what a thing is worth and why.
+    hints: >-
+      You could ask about her wares, about selling what you carry, or
+      about the sling on the back shelf.
+    variants:
+      - questExcluded: ["30-end"]
+        text: >-
+          New, and not yet through the pool. I will sell to you
+          either way -- coin is coin -- but the rite first is the
+          local custom, and customers who follow it tend to live
+          longer. Hadwen, at the water.
+        hints: >-
+          You could ask about her wares anyway, or see Hadwen about
+          the rite first.
+
+  nodes:
+    - id: wares
+      triggers: ["wares", "stock", "goods", "buy", "shop", "shelves", "sell-list"]
+      text: >-
+        Type <ansi fg="command">list</ansi> and the whole shop reads
+        itself out to you, prices and all. See something you want,
+        type <ansi fg="command">buy</ansi> and its name. Need five of
+        a thing, say so -- <ansi fg="command">buy 5 trail
+        rations</ansi> and I count them out in one go. Prices move
+        with my stock, mind: plenty on the shelf and you get a kind
+        price, last one in the coulee and the price says so.
+      hints: >-
+        Type list to see the stock. Buy works by name, and a number
+        in front buys that many.
+
+    - id: selling
+      triggers: ["selling", "sell", "trade", "offload", "junk"]
+      text: >-
+        I buy as well as sell -- type <ansi fg="command">sell</ansi>
+        and the thing's name, and I will name my price. It will be
+        less than I charge for the same thing; that gap is called a
+        roof over my head. Bring me what the coulee coughs up and we
+        will both do fine.
+      hints: >-
+        You could ask about her wares, or about the sling.
+
+    - id: sling
+      triggers: ["sling", "shot", "pouch", "ranged", "throw"]
+      text: >-
+        The sling? Shepherd's weapon -- string, pocket, and a stone's
+        honest opinion delivered at distance. Cheap to feed, light to
+        carry, harder to master than it looks. Folk who take to it
+        usually end up out past the far-hill mouth, where they teach
+        the long shot properly. Pouch of shot goes with it; do not
+        buy one without the other.
+      hints: >-
+        You could ask about her wares or about selling.
+
+    - id: remembers
+      triggers: ["remember", "faces", "bought", "last"]
+      text: >-
+        You are new, so your slate is clean -- but yes, I remember
+        what everyone buys. Not to pry. A shopkeeper who remembers
+        saves you the second conversation: I will know your size,
+        your salt, and your bad habits by the third visit. Cheaper
+        than writing it down and politer than asking twice.
+      hints: >-
+        You could ask about her wares or the sling.
