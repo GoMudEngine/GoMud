@@ -233,3 +233,36 @@ Every newbie-area chunk's coordinate-uniqueness audit (parent spec §10.1) is:
 
 **A chunk fails its coordinate audit if step 2 reports any collision, or step 3
 shows a new room outside the reserved box.**
+
+---
+
+## 6. Connector corridor reservation (added 2026-06-12, user note)
+
+The chunk-10 cutover attaches the zone to the wider world via the
+"long hike out." That hike must also be collision-free, so its corridor
+is reserved NOW, not improvised at cutover:
+
+- **Corridor reserve: x[19..29], y[-6..6], z[0..0]** (11 columns × 13
+  rows = 143 cells). Verified EMPTY at reservation time
+  (`coord_inventory.py --check-region 19 29 -6 6 0 0` → EMPTY; the entire
+  half-plane x>=19 holds nothing but the Pothole reserve).
+- **West end:** attaches to Ironwind Steppe's eastern rim (Ironwind spans
+  x[8..18], y[-14..11]; the cutover sub-spec picks the exact rim room and
+  may extend the corridor's y-band if the chosen room sits outside
+  y[-6..6] — extend the reservation FIRST, re-running the emptiness
+  check).
+- **East end:** enters Pothole Coulee through one badlands-edge room on
+  the zone's western boundary (a spoke-B/D outer-ring exterior room, or a
+  dedicated "Coulee Rim" room; chunk-10 decision).
+- **Shape:** deliberately winding (the spec wants the hike long and
+  arduous; a snake path through the corridor cells also leaves room to
+  dodge any content that lands east of Ironwind before cutover — though
+  this reservation makes that a collision the OTHER content would have to
+  avoid: this corridor + the Pothole box are reserved first).
+- **Rooms:** ~12–20 trail rooms, authored in chunk 10 (badlands/steppe
+  biomes, NOT sanctuary, real-world difficulty — this is the road OUT,
+  not part of the tutorial).
+
+Any future non-newbie content that wants coordinates at x>=19 must
+consult this document first; the newbie reservations take precedence
+until chunk 10 lands and converts reservations into real rooms.
