@@ -66,9 +66,9 @@ tree:
         - type: action
           do: emote
           text: >-
-            The light lets you go. The water is only water again, and
-            the morning is just a morning, and something under your
-            skin is newly, quietly awake.
+            lifts his hand away. The light lets you go -- the water is
+            only water again, the morning is just a morning, and
+            something under your skin is newly, quietly awake.
           delay: 20.0
         - type: action
           do: say

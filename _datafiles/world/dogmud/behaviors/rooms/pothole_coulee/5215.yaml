@@ -1,0 +1,60 @@
+# The Threshold House (5215) — the arch answers direct interaction.
+#
+# Esk says "Walk through" — so walking through must work. A naive
+# playtest (2026-06-12) showed players try `enter arch`; the only
+# transit path was the NPC-ask. This makes the arch itself a door:
+# enter/go/walk/touch + "arch" teleports the Opened (same destination
+# as Esk's transit, Thornwall Temple Interior 468) and refuses the
+# un-Opened with the same pool-first pointer Esk gives.
+
+tree:
+  type: selector
+  children:
+
+    # ── THE OPENED walk through ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [enter, go, walk, touch]
+        - type: condition
+          check: command_rest_contains
+          keywords: [arch, archway, door, threshold]
+        - type: condition
+          check: player_has_quest
+          quest: "30-end"
+        - type: action
+          do: send_user_text
+          text: >-
+            You step into the arch. The air goes taut around you, then
+            silvers -- a held breath, a long blink -- and the coulee is
+            gone: temple stone underfoot, candle-warmth, city sounds
+            beyond thick walls.
+        - type: action
+          do: move_player
+          room_id: 468
+        - type: action
+          do: intercept
+
+    # ── THE UN-OPENED are refused ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [enter, go, walk, touch]
+        - type: condition
+          check: command_rest_contains
+          keywords: [arch, archway, door, threshold]
+        - type: condition
+          check: player_missing_quest
+          quest: "30-end"
+        - type: action
+          do: send_user_text
+          text: >-
+            The air inside the arch stays only air. The arch answers
+            the Opened -- the pool comes first. Cleric Hadwen keeps it,
+            at the heart of town.
+        - type: action
+          do: intercept

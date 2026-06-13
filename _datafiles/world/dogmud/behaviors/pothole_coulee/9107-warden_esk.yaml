@@ -45,8 +45,8 @@ tree:
         - type: action
           do: emote
           text: >-
-            The empty air inside the arch goes taut, then silvers, like
-            deep water deciding to be a door.
+            steps back as the empty air inside the arch goes taut, then
+            silvers, like deep water deciding to be a door.
           delay: 9.0
         - type: action
           do: move_player
