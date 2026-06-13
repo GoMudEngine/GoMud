@@ -86,6 +86,7 @@ type ActionDef struct {
 	TeachSpell   string           `yaml:"teach_spell,omitempty"`
 	TrainSkill   *SkillDef        `yaml:"train_skill,omitempty"`
 	TrainStat    *StatDef         `yaml:"train_stat,omitempty"`
+	LearnRecipe  *RecipeDef       `yaml:"learn_recipe,omitempty"`
 	ApplyBuff    *BuffDef         `yaml:"apply_buff,omitempty"`
 	Teleport     int              `yaml:"teleport,omitempty"`
 	GiveMutation bool             `yaml:"give_mutation,omitempty"` // roll and grant a random mutation
@@ -160,6 +161,10 @@ type SkillDef struct {
 type StatDef struct {
 	Stat   string `yaml:"stat"`
 	Amount int    `yaml:"amount"`
+}
+
+type RecipeDef struct {
+	Recipe string `yaml:"recipe"`
 }
 
 type BuffDef struct {

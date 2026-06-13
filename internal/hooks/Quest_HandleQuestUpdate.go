@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -78,6 +79,25 @@ func parseStatGrants(statInfo string) []statGrant {
 		grants = append(grants, statGrant{stat: statName, amount: amount})
 	}
 	return grants
+}
+
+// parseRecipeGrants parses a quest's recipe_info reward into zero or more
+// recipe IDs. Format: a comma-separated list of recipe IDs, e.g.
+// "iron-dagger" or "iron-dagger,iron-buckler".
+// Empty entries (from trailing commas, double-commas, etc.) are skipped.
+func parseRecipeGrants(recipeInfo string) []string {
+	if recipeInfo == `` {
+		return nil
+	}
+	var ids []string
+	for _, entry := range strings.Split(recipeInfo, `,`) {
+		id := strings.TrimSpace(entry)
+		if id == `` {
+			continue
+		}
+		ids = append(ids, id)
+	}
+	return ids
 }
 
 // statGainDescriptions maps lowercase stat names to a flavourful gain phrase.
@@ -242,6 +262,19 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 			} else {
 				mudlog.Warn("Quest StatReward", "token", evt.QuestToken,
 					"stat", grant.stat, "error", "unknown stat name — skipped")
+			}
+		}
+		// Recipe reward? Grants each recipe ID to the player's KnownRecipes.
+		// Silently skips recipes the player already knows (idempotent).
+		for _, recipeId := range parseRecipeGrants(questInfo.Rewards.RecipeInfo) {
+			if questUser.Character.LearnRecipe(recipeId) {
+				name := recipeId // fallback: use the id if the recipe spec isn't found
+				if spec := crafting.GetRecipe(recipeId); spec != nil {
+					name = spec.Name
+				}
+				questUser.SendText(messaging.CategorySkillProgress, fmt.Sprintf(
+					`<ansi fg="cyan">You have learned the recipe for </ansi><ansi fg="itemname">%s</ansi><ansi fg="cyan">.</ansi>`,
+					name))
 			}
 		}
 		// Spell reward?

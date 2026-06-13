@@ -38,6 +38,7 @@ type mockActionContext struct {
 	sequences        []SequenceDef
 	bumpedRep        []BumpRepCall
 	increasedStats   []StatIncreaseCall
+	learnedRecipes   []string
 	userId           int
 }
 
@@ -63,6 +64,9 @@ func (m *mockActionContext) TeachSpell(spellId string) {
 func (m *mockActionContext) TrainSkill(skill string, level int) {}
 func (m *mockActionContext) IncreaseStat(stat string, amount int) {
 	m.increasedStats = append(m.increasedStats, StatIncreaseCall{Stat: stat, Amount: amount})
+}
+func (m *mockActionContext) LearnRecipe(recipe string) {
+	m.learnedRecipes = append(m.learnedRecipes, recipe)
 }
 func (m *mockActionContext) ApplyBuff(b BuffDef) { m.appliedBuffs = append(m.appliedBuffs, b) }
 func (m *mockActionContext) Teleport(roomId int)                { m.teleported = roomId }
@@ -189,4 +193,22 @@ func TestExecuteAction_TrainStat_Dexterity(t *testing.T) {
 	assert.Len(t, ctx.increasedStats, 1)
 	assert.Equal(t, "dexterity", ctx.increasedStats[0].Stat)
 	assert.Equal(t, 3, ctx.increasedStats[0].Amount)
+}
+
+func TestExecuteAction_LearnRecipe(t *testing.T) {
+	ctx := newMockActionContext(7)
+	a := ActionDef{LearnRecipe: &RecipeDef{Recipe: "iron-dagger"}}
+	err := ExecuteAction(a, ctx)
+	assert.NoError(t, err)
+	assert.Equal(t, []string{"iron-dagger"}, ctx.learnedRecipes)
+}
+
+func TestExecuteAction_LearnRecipe_MultipleRecipes(t *testing.T) {
+	ctx := newMockActionContext(7)
+	recipes := []string{"iron-dagger", "iron-buckler"}
+	for _, r := range recipes {
+		err := ExecuteAction(ActionDef{LearnRecipe: &RecipeDef{Recipe: r}}, ctx)
+		assert.NoError(t, err)
+	}
+	assert.Equal(t, recipes, ctx.learnedRecipes)
 }

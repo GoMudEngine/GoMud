@@ -225,6 +225,16 @@ func (b *GameBridge) IncreaseStat(stat string, amount int) {
 		fmt.Sprintf("<ansi fg=\"yellow-bold\">%s</ansi>", msg))
 }
 
+// LearnRecipe grants the player a new crafting recipe, notifying them if it
+// was newly learned. Silently skips recipes already in KnownRecipes.
+func (b *GameBridge) LearnRecipe(recipe string) {
+	if b.user.Character.LearnRecipe(recipe) {
+		b.user.SendText(messaging.CategorySkillProgress, fmt.Sprintf(
+			"<ansi fg=\"cyan\">You have learned the recipe for </ansi><ansi fg=\"itemname\">%s</ansi><ansi fg=\"cyan\">.</ansi>",
+			recipe))
+	}
+}
+
 // ApplyBuff adds the given buff to the player.
 func (b *GameBridge) ApplyBuff(bf BuffDef) {
 	if err := b.user.Character.AddBuff(bf.Buff, false); err != nil {

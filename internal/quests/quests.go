@@ -44,7 +44,8 @@ type QuestReward struct {
 	ItemId        int    // itemId to give; yaml key: itemid
 	BuffId        int    // buffId to apply; yaml key: buffid
 	SkillInfo     string // skill(s) to give, "skill:level[,skill:level]"; yaml key: skillinfo
-	StatInfo      string `yaml:"stat_info,omitempty"` // stat(s) to increase, "stat:amount[,...]"; yaml key: stat_info
+	StatInfo      string `yaml:"stat_info,omitempty"`    // stat(s) to increase, "stat:amount[,...]"; yaml key: stat_info
+	RecipeInfo    string `yaml:"recipe_info,omitempty"`  // recipe(s) to grant, comma-separated recipe IDs; yaml key: recipe_info
 	SpellId       string // spell to teach on completion; yaml key: spellid
 	PlayerMessage string // string to display to player; yaml key: playermessage
 	RoomMessage   string // string to display to room; yaml key: roommessage

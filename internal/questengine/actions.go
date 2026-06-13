@@ -24,6 +24,7 @@ type ActionContext interface {
 	TeachSpell(spellId string)
 	TrainSkill(skill string, level int)
 	IncreaseStat(stat string, amount int)
+	LearnRecipe(recipe string)
 	ApplyBuff(b BuffDef)
 	Teleport(roomId int)
 	LockExits(e ExitLock)
@@ -104,6 +105,11 @@ func ExecuteAction(a ActionDef, ctx ActionContext) error {
 	if a.TrainStat != nil {
 		LogVerboseF(ctx.GetUserId(), "train_stat %s +%d", a.TrainStat.Stat, a.TrainStat.Amount)
 		ctx.IncreaseStat(a.TrainStat.Stat, a.TrainStat.Amount)
+		return nil
+	}
+	if a.LearnRecipe != nil {
+		LogVerboseF(ctx.GetUserId(), "learn_recipe %s", a.LearnRecipe.Recipe)
+		ctx.LearnRecipe(a.LearnRecipe.Recipe)
 		return nil
 	}
 	if a.ApplyBuff != nil {
