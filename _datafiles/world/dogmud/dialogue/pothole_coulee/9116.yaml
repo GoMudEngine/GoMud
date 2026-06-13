@@ -1,0 +1,147 @@
+mobid: 9116
+zone: Pothole Coulee
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "hail"]
+    responses:
+      - "Rusk. I work iron. You need something, say it."
+      - "If you are here to buy, the stall is right there.
+          If you are here to learn, ask."
+
+  - keywords: ["forge", "craft", "smith", "iron", "make",
+      "dagger", "weapon", "learn", "teach", "quest", "task"]
+    responses:
+      - "The forge does the teaching. I just point you at it."
+      - "Iron ingot, leather strip, craft iron dagger at the
+          forge. That is the whole lesson the first time."
+
+  - keywords: ["arm", "forearm", "iron", "mutation", "opened"]
+    responses:
+      - "The Awakening left its mark. This one is useful --
+          iron does not blister it, and it does not tire. I
+          stopped minding it some years back."
+
+  - keywords: [""]
+    responses:
+      - "Say what you need."
+      - "I am not much for small talk. Ask something."
+      - "The forge is not going to tend itself."
+
+tree:
+  root:
+    text: "Rusk. Smith."
+    hints: "You could ask Rusk about smithing or your task."
+    variants:
+      # ── Not yet Opened (quest 30 incomplete) ─────────────
+      - questExcluded: ["30-end"]
+        text: "You are still green. Not forge-ready green -- raw-
+          stock green. The Awakening comes first. Cleric Hadwen
+          runs it at the reflecting pool south of the hub.
+          Complete the rite and come back."
+        hints: "Find Cleric Hadwen at the reflecting pool. Complete
+          the Awakening before returning to Smith Rusk."
+
+      # ── Opened, quest not yet started ────────────────────
+      - questRequired: ["30-end"]
+        questExcluded: ["35-start", "35-end"]
+        text: "You have been through the rite. Good. I teach the
+          forge if you want it -- iron work, the craft loop,
+          materials and what they become. Ask me about smithing
+          if you are interested."
+        hints: "Type ask rusk craft to learn the forge."
+
+      # ── Mid-quest: quest started, not yet crafted ─────────
+      - questRequired: ["35-start"]
+        questExcluded: ["35-craft", "35-end"]
+        text: "The stall is right there. Iron ingot, leather strip
+          -- buy both and take them to the forge. Type craft
+          iron dagger when you are standing at it. Come back
+          when you have something to show me."
+        hints: "Buy iron ingot and buy leather strip from the stall.
+          Then stand at the forge and type craft iron dagger."
+
+      # ── Crafted, not yet turned in ────────────────────────
+      - questRequired: ["35-craft"]
+        questExcluded: ["35-end"]
+        text: "You made something at the forge. Bring it here --
+          let me look at it."
+        hints: "Type ask rusk done to show Rusk what you made."
+
+      # ── Quest complete ────────────────────────────────────
+      - questRequired: ["35-end"]
+        text: "You are through here. West path, talus slope, find
+          Ovell -- the man pulled himself out of a cave-in and
+          has been sitting there since. He could use a hand.
+          Set your home first so you have somewhere to fall
+          back to if things go wrong out there."
+        hints: "Type sethome coulee to set your recall point.
+          Then head west to the talus slope and type ask ovell
+          to find out what the cave-in survivor needs."
+
+  nodes:
+    # ── OFFER CRAFT LESSON / QUEST START ──────────────────────
+    - id: craft_offer
+      triggers: ["craft", "learn", "smith", "forge", "teach",
+        "quest", "task"]
+      questRequired: ["30-end"]
+      questExcluded: ["35-start", "35-end"]
+      grantsQuest: "35-start"
+      text: "Right. The forge teaches faster than I do, but here
+        is the shape of it. Buy an iron ingot and a leather strip
+        off my stall -- list shows you what I stock and what it
+        costs. Take them to the forge here in the smithy and
+        type craft iron dagger. The iron and the leather disappear
+        and a blade appears. That is the whole trick the first
+        time. Once you have a feel for it, type craft list to see
+        everything you know how to make right now with what you
+        are carrying. Come back to me when you have made something."
+      hints: "Type list at the stall to browse Rusk's goods. Then
+        buy iron ingot and buy leather strip. Stand at the forge
+        and type craft iron dagger. Type craft list to see what
+        you can make right now. Come back to Rusk when you have a
+        finished blade."
+
+    # ── TURN-IN ───────────────────────────────────────────────
+    - id: craft_turnin
+      triggers: ["report", "done", "ready", "finished",
+        "quest", "task"]
+      questRequired: ["35-start", "35-craft"]
+      questExcluded: ["35-end"]
+      grantsQuest: "35-end"
+      text: "Let me see it. Straight seam. Weight is forward where
+        it belongs -- you did not rush the quench. This is a
+        working blade. Not fancy. Does not need to be. You
+        understand the loop now: raw stock in, finished piece
+        out. Apply that to anything the forge can make. West
+        path leads to the talus slope. There is a man out there
+        named Ovell who survived a cave-in and has been waiting
+        for someone to notice. Set your home here first -- you
+        will want a recall point."
+      hints: "Quest complete. Type sethome coulee to set your
+        recall point in Pothole Coulee. Then head west to the
+        talus slope and type ask ovell to find out what the
+        cave-in survivor needs."
+
+    # ── CRAFT MECHANICS HELP ──────────────────────────────────
+    - id: craft_help
+      triggers: ["recipes", "station", "materials", "components",
+        "sort", "help", "bag", "salvage"]
+      text: "Three things worth knowing. First: the forge here is
+        a station -- some recipes need to be made at a specific
+        station, and the craft command will tell you if you are
+        standing in the wrong place. Second: the component bag on
+        your belt is where crafting materials live. Pick up an
+        ingot and it routes there automatically. If you have loose
+        materials in your pack already, type sort and it migrates
+        them. Third: salvage breaks a worn or unwanted piece of
+        gear back into materials. You do not always get everything
+        back, but it is better than dropping it in the dirt. Type
+        salvage followed by the item name."
+      hints: "Some recipes require a forge or another crafting
+        station -- the craft command says where. Your component
+        bag auto-collects materials; type sort to move any loose
+        ones in. Type salvage on worn gear to recover materials."
+
+memory:
+  expiryPeriod: ""

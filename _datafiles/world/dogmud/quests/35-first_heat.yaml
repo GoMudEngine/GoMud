@@ -1,0 +1,58 @@
+questid: 35
+name: First Heat
+description: >-
+  Smith Rusk has offered to show you the forge. Buy an iron ingot
+  and a leather strip from his stall, work them at the forge into
+  an iron dagger, and bring the finished blade back to him.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: "Rusk has pointed you at the forge. Buy an iron
+      ingot and a leather strip from his stall, then type craft
+      iron dagger at the forge."
+    hint: "Type list at Rusk's stall to browse goods. Buy iron
+      ingot and buy leather strip, then type craft iron dagger
+      while standing at the forge."
+  - id: craft
+    description: "You worked iron at the forge for the first time
+      and turned raw materials into something that did not exist
+      before. Bring it back to Rusk."
+    hint: "Report to Smith Rusk -- type ask rusk done."
+  - id: end
+    description: "Rusk has looked the blade over and said nothing
+      that was not a compliment. The coulee is your range now --
+      head west to the talus slope and find Ovell."
+
+rewards:
+  skillinfo: "blacksmithing:1"
+  gold: 15
+  playermessage: >-
+    Rusk takes the dagger and turns it slowly, checking the edge
+    with one thumbnail. The grey forearm catches the forge light.
+    After a moment he sets it back on the anvil and looks at you
+    -- not at the blade, at you -- with the measuring expression
+    of a man deciding whether a piece of iron is worth tempering.
+    "Straight seam. Weight is forward where it belongs. You did
+    not rush the quench." He presses coins into your hand with
+    the finality of a door closing. "West path. Talus slope. Find
+    Ovell. He pulled himself out of a cave-in and has been waiting
+    for someone to notice. Do not make him wait longer."
+  roommessage: "Rusk examines the dagger briefly, nods once, and
+    presses a few coins into your hand."
+
+triggers:
+  # ── CRAFT AT THE FORGE (room 5245) ───────────────────────
+  - event: command
+    command: craft
+    room: 5245
+    conditions:
+      has: ["35-start"]
+      missing: ["35-craft"]
+    actions:
+      - grant: "35-craft"
+      - send_text: "The iron takes shape under the hammer and the
+          leather wraps the grip cleanly. There is a particular
+          satisfaction to the moment a thing becomes a thing --
+          raw stock in, finished blade out. Report to Rusk."

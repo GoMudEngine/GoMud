@@ -1,0 +1,152 @@
+# Quest 36 — Pick the Vein (Pothole Coulee, Forge spoke)
+#
+# Token flow:
+#   36-start      — granted by Survivor Ovell's dialogue (vein_offer node).
+#                   Requires 35-end (First Heat with Smith Rusk). Teaches:
+#                   real combat on the talus slope, gathering local ore via
+#                   forage, and the component bag mechanic.
+#   36-scavenger  — mob_death trigger on Scree Scavenger (9118). Requires
+#                   36-start. Scavengers crawl the lower scree and ore
+#                   pocket (rooms 5249/5250/5253).
+#   36-lurker     — mob_death trigger on Talus Lurker (9119). Requires
+#                   36-start. Lurkers wait in the ore pocket and the high
+#                   shoulder (rooms 5252/5253).
+#   36-ore        — command trigger on forage in rooms 5250 or 5252.
+#                   Requires 36-start. The basalt-iron vein shows where
+#                   the scree field meets the ore pocket.
+#   36-end        — granted by Ovell's dialogue (vein_turnin node) after
+#                   all three objectives are met.
+#
+# Design intent: the slope is more dangerous than the forge yard but less
+# than the wash. Scree Scavengers are fast; Talus Lurkers are durable.
+# Foraging the vein teaches the forage command and the component bag in
+# the same breath. Ovell's turn-in gifts the Component Pouch (item 30033)
+# so the lesson lands at the moment of reward.
+
+questid: 36
+name: Pick the Vein
+description: >-
+  Survivor Ovell pulled himself out of a cave-in on the talus slope.
+  His leg keeps him off the high scree, but the basalt-iron vein is
+  still there and so are the scavengers and lurkers that claimed it.
+  He has asked you to clear them out and bring back proof the vein
+  can be worked.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: >-
+      Ovell needs the slope cleared. A scree scavenger works the
+      lower rock field; a talus lurker waits in the ore pocket and
+      on the high shoulder. He also wants you to forage the vein
+      once the way is open.
+    hint: >-
+      Head up the talus slope from the Collapsed Cut. Type flee
+      if a fight turns against you -- you wake at the Mending Hut,
+      not in the rock. Find a scree scavenger on the lower scree
+      and a talus lurker in the ore pocket or on the high shoulder.
+      Then type forage on the scree field to pull basalt-iron from
+      the vein. Come back to Ovell when all three are done.
+  - id: scavenger
+    description: >-
+      One scree scavenger is down. The talus lurker still holds the
+      ore pocket and the high shoulder.
+    hint: >-
+      Push higher up the slope to find the talus lurker in the ore
+      pocket or on the high shoulder. Type flee if the fight turns.
+  - id: lurker
+    description: >-
+      The talus lurker is down. Forage the basalt-iron vein in the
+      scree field before reporting back to Ovell.
+    hint: >-
+      Type forage while standing on the scree field to pick
+      basalt-iron from the exposed vein. Then walk back down to
+      Ovell in the Collapsed Cut.
+  - id: ore
+    description: >-
+      You worked the basalt-iron vein and pulled ore from the rock --
+      the slope is cleared and the seam is proven. Report back to
+      Ovell in the Collapsed Cut.
+    hint: >-
+      Walk back down to Ovell in the Collapsed Cut and tell him the
+      slope is clear and the vein is worked -- type ask ovell report.
+  - id: end
+    description: >-
+      The slope is clear and you have worked the vein. Ovell
+      pressed a component pouch into your hands -- your crafting
+      materials now route into it automatically. The mine below
+      still holds something he would not name.
+    hint: >-
+      You have cleared Spoke B of the forge path. Ovell mentioned
+      the mine below the slope is pitch dark and something waits
+      in it. Make sure you can cast chrysalis-glow before you
+      go down.
+
+rewards:
+  skillinfo: "blacksmithing:1"
+  itemid: 30033
+  gold: 25
+  playermessage: >-
+    Ovell digs a worn leather pouch from his coat with the care of
+    someone parting with something that has been useful. The quartz
+    eye tracks you steadily while the other squints in the slope
+    light. "You cleared it. Pulled the ore. I did not know if you
+    would come back." He presses the component pouch into your hands
+    and curls your fingers around the strap. "Materials go in on
+    their own once you carry it. Sort if you have loose ones already.
+    And if you ever want to break a piece of kit back down --
+    salvage it. The slope gives back what you put into it, mostly."
+
+triggers:
+  # ── SCAVENGER: defeat a scree scavenger (mob 9118) ─────────────────
+  - event: mob_death
+    mob: 9118
+    conditions:
+      has: ["36-start"]
+      missing: ["36-scavenger"]
+    actions:
+      - grant: "36-scavenger"
+      - send_text: >-
+          The scree scavenger goes still on the rock. One threat
+          on the slope is done. Push higher for the lurker.
+
+  # ── LURKER: defeat a talus lurker (mob 9119) ────────────────────────
+  - event: mob_death
+    mob: 9119
+    conditions:
+      has: ["36-start"]
+      missing: ["36-lurker"]
+    actions:
+      - grant: "36-lurker"
+      - send_text: >-
+          The talus lurker drops back into the rock and does not
+          rise. The ore pocket is yours. Now work the vein.
+
+  # ── ORE: forage the basalt-iron vein (room 5250 — scree field) ──────
+  - event: command
+    command: forage
+    room: 5250
+    conditions:
+      has: ["36-start"]
+      missing: ["36-ore"]
+    actions:
+      - grant: "36-ore"
+      - send_text: >-
+          You pry a chunk of basalt-iron from the exposed vein.
+          The ore is dense and dark, shot through with a faint
+          rust-red seam. Bring it back to Ovell.
+
+  # ── ORE: forage the basalt-iron vein (room 5252 — ore pocket) ───────
+  - event: command
+    command: forage
+    room: 5252
+    conditions:
+      has: ["36-start"]
+      missing: ["36-ore"]
+    actions:
+      - grant: "36-ore"
+      - send_text: >-
+          You work a chunk of basalt-iron free from the vein where
+          it crosses the ore pocket. The rock resists, then gives.
+          Bring it back to Ovell.

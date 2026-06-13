@@ -1,0 +1,16 @@
+id: basalt-iron-blade
+name: Basalt-Iron Blade
+skill: blacksmithing
+skill_minimum: 5
+station: forge
+time_rounds: 4
+ingredients:
+  - item_tag: basalt-iron
+    quantity: 2
+  - item_tag: iron-ingot
+    quantity: 1
+output:
+  item_id: 10045
+  quantity: 1
+success_message: "You fold the dark basalt-iron through the billet and draw out a keen, grey-sheened edge. A basalt-iron blade!"
+failure_message: "The basalt-iron fights the heat, the billet cracks along a cold seam, and the work is lost."

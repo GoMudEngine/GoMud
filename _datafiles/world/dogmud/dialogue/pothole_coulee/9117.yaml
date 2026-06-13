@@ -1,0 +1,266 @@
+# Survivor Ovell — Collapsed Cut (5251), talus slope approach.
+# Prospector caught in a cave-in; dug himself halfway out before
+# the rock settled again. Bad leg keeps him off the high scree.
+# Quartz-white right eye (Opened) that reads the dark. Grants and
+# closes quest 36 (Pick the Vein). Non-combatant.
+#
+# Variant order (first match wins):
+#   1. Not Opened (no 30-end)              → redirect to Hadwen
+#   2. Opened, not forged (no 35-end)      → redirect to Smith Rusk
+#   3. Pre-offer, ready (no 36-start)      → prompt ask ovell vein
+#   4. Mid-quest (36-start, no 36-end)     → remind: clear + forage,
+#                                            flee is fine, Mending Hut
+#   5. Completed (36-end)                  → thanks + mine dark-hook
+#
+# Tree nodes:
+#   vein_offer   — grants 36-start; triggers include quest/task (SOP)
+#   vein_turnin  — grants 36-end; triggers include quest/task (SOP)
+#   bag_help     — component pouch / sort / salvage explainer
+#   dark_help    — mine darkness warning, chrysalis-glow reminder
+
+mobid: 9117
+zone: Pothole Coulee
+defaultMood: neutral
+
+greetings:
+  - text: >-
+      Hey. Careful on the scree -- loose up here. I am not going
+      anywhere fast so there is no rush.
+    moods: ["friendly", "neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Ovell. Was a prospector. Mostly I am a man in a pile of
+        rock now."
+      - "Still here. The slope keeps trying to fix that."
+
+  - keywords: [""]
+    responses:
+      - "I am listening. Not much else to do with a leg like this."
+      - "Go ahead. I have time."
+
+tree:
+  root:
+    text: >-
+      Ovell. Prospector -- was, anyway. Cave-in caught me three
+      days back, up where the ore pocket narrows. I dug myself
+      far enough out to breathe and then the leg gave and that
+      was that. The slope is still good rock -- basalt-iron, good
+      seam -- but the scavengers moved in after the noise of the
+      fall and the lurker claimed the pocket. I can see the vein
+      from here with this eye and I cannot reach it.
+    hints: >-
+      You could ask about the slope, the ore, or what he needs.
+      His right eye is a pale quartz-white that catches the dark
+      strangely -- you could ask about it.
+    variants:
+      - questExcluded: ["30-end"]
+        text: >-
+          You have not been through the pool yet -- I can tell by
+          the eyes. Cleric Hadwen at the water will sort that.
+          Come back after; the slope will keep and so will I.
+        hints: >-
+          Find Cleric Hadwen at the pool in Pothole Coulee and
+          go through the Awakening Rite before heading up the slope.
+      - questRequired: ["30-end"]
+        questExcluded: ["35-end"]
+        text: >-
+          Opened, good. But the slope is not a kind place to find
+          your footing for the first time. There is a smith at the
+          forge -- Rusk, east of the market -- who can put some
+          edge on your hands before you come up here. Work with
+          him first. Then come back.
+        hints: >-
+          Find Smith Rusk at the forge east of the market in
+          Pothole Coulee and complete his work before tackling
+          the talus slope.
+      - questRequired: ["35-end"]
+        questExcluded: ["36-start", "36-end"]
+        text: >-
+          Forged something already. Good -- the slope respects
+          that. The vein is still there; the company is not good.
+          If you want the work, I can point you at it.
+        hints: >-
+          Ask Ovell about the vein or the slope if you want the
+          full picture. Try ask ovell vein.
+      - questRequired: ["36-start"]
+        questExcluded: ["36-end"]
+        text: >-
+          Still out there? The scavengers run in the lower scree
+          and the lurker holds the pocket -- they will not give
+          ground easy. If it turns against you, flee and come
+          back down. The Mending Hut will have you if you fall;
+          that is the coulee's way of saying you are not done
+          just because you went down. And the vein -- you forage
+          it, same as anything else on the slope. Type forage
+          when you are standing on the scree.
+        hints: >-
+          Head up the slope from here. Type flee if a fight turns
+          against you -- you wake at the Mending Hut, not for
+          good. Clear a scree scavenger and a talus lurker, then
+          type forage on the scree field to pull the ore. Come
+          back when all three are done.
+      - questRequired: ["36-end"]
+        questExcluded: ["37-start", "37-end"]
+        text: >-
+          You cleared the slope and worked the vein -- you are not
+          the green thing that came up here three days ago. So I will
+          say the rest of it. Below us, where the old claim runs deep,
+          a beast has denned in the dark. Stone-blooded -- its hide
+          has fused with the rock until you cannot tell where one ends
+          -- and it has eaten men who went down armed and certain. It
+          is the reason the deep vein has sat untouched. Put it down
+          and the mine is yours. But hear me on the dark first, every
+          time: cast your glow before you descend. Go blind down there
+          and you will not come back up.
+        hints: >-
+          Ovell is offering the mine. Type ask ovell descend (or ask
+          ovell beast) for the full picture. Cast chrysalis-glow
+          before you go down -- the mine is pitch black.
+      - questRequired: ["37-start"]
+        questExcluded: ["37-end"]
+        text: >-
+          The beast is still down there in the deep dark. Light your
+          glow -- cast chrysalis-glow -- before you take the descent,
+          then fight your way down past the workings and put the thing
+          down in its den at the bottom. Flee back up if you must; the
+          Mending Hut holds, same as ever.
+        hints: >-
+          Type cast chrysalis-glow, then descend the mine mouth below
+          the slope. Fight down to the Den at the bottom and defeat
+          the stone-blooded beast. Type flee if a fight turns against
+          you.
+      - questRequired: ["37-end"]
+        text: >-
+          You took the mine. I felt the deep go quiet through the
+          rock -- this eye reads more than dark. Whatever that beast
+          was guarding is the coulee's now, and you walked out of the
+          dark carrying the deep vein at your back. You came up here
+          not knowing a hammer from your hand. Look at you.
+        hints: >-
+          You have cleared Spoke B. You carry the forged blade, the
+          strength the work put in your arms, and the recipe to make
+          more of the dark ore's edges.
+
+  nodes:
+    - id: vein_offer
+      triggers: ["vein", "slope", "ore", "help", "clear", "scavenger",
+                 "lurker", "forage", "basalt", "iron", "quest", "task"]
+      questRequired: ["35-end"]
+      questExcluded: ["36-start", "36-end"]
+      grantsQuest: "36-start"
+      text: >-
+        Right. Here is what I am asking. There is a scree scavenger
+        working the lower rock field -- you will hear it before you
+        see it. Higher up, where the slope opens into the ore pocket,
+        a talus lurker has settled in. It also ranges the high
+        shoulder when it is not in the pocket. Both of them need to
+        go before anyone can work that seam safely.
+        And I want you to pull the ore yourself -- not just clear
+        the way but actually work the vein. Type forage when you are
+        standing on the scree field. The rock will give up what it
+        has.
+        If a fight turns against you up there, flee. I mean it. You
+        wake at the Mending Hut if you go down; the slope does not
+        get to keep you. Come back, try again. The rock is patient.
+        Check what they drop and put it on if it fits -- armor is
+        armor up here.
+      hints: >-
+        Head up the talus slope from here. Kill a scree scavenger
+        on the lower scree and a talus lurker in the ore pocket or
+        on the high shoulder. Type forage on the scree field to
+        pull basalt-iron from the vein. Type flee if a fight turns
+        against you -- you will wake at the Mending Hut. Loot and
+        type wear on any armor you find.
+      moodChange: neutral
+
+    - id: vein_turnin
+      triggers: ["report", "done", "cleared", "finished", "ore",
+                 "back", "quest", "task", "both", "down"]
+      questRequired: ["36-scavenger", "36-lurker", "36-ore"]
+      questExcluded: ["36-end"]
+      grantsQuest: "36-end"
+      text: >-
+        You actually did it. The pocket is clear -- I can hear the
+        difference in how the wind moves up there. And you worked
+        the vein. The ore you pulled is better than it looks raw;
+        it forges dark and holds an edge longer than standard iron.
+        Take this. I carried it out of three claim sites and it
+        has never been empty long. Your materials will find it on
+        their own -- anything flagged as a component routes to it
+        when you pick it up. If you have loose materials already,
+        type sort and it gathers them in. And if you find yourself
+        with worn gear you cannot use: salvage it. Type salvage
+        and the name of the piece; the slope gives back what went
+        into making it, roughly. That is the work, more or less.
+      hints: >-
+        Quest complete. You receive a Component Pouch -- crafting
+        materials now auto-sort into it on pickup. Type sort to
+        gather loose ones already in your pack. Type salvage item
+        to break unwanted gear back into materials.
+      moodChange: friendly
+
+    - id: bag_help
+      triggers: ["pouch", "bag", "component", "sort", "salvage",
+                 "materials", "carry", "auto"]
+      text: >-
+        The pouch does the sorting for you -- any material you
+        pick up that is flagged as a crafting component routes
+        straight in. It saves a lot of rummaging. If you have
+        loose materials already sitting in your pack, type sort
+        and the pouch gathers them. Weight reduction on what is
+        inside, so it carries lighter than it looks.
+        Salvage is the other half. Type salvage and the name of
+        whatever you want to break down -- worn armor, a blade
+        you cannot use -- and the skill pulls the components back
+        out. You will not get everything, but you get enough to
+        matter. Perception drives how much comes back.
+      hints: >-
+        Your Component Pouch auto-routes materials on pickup.
+        Type sort to migrate loose ones from your pack. Type
+        salvage item-name to recover materials from worn gear.
+
+    - id: mine_offer
+      triggers: ["descend", "beast", "deep", "monster", "stone-blooded",
+                 "ready", "quest", "task"]
+      questRequired: ["36-end"]
+      questExcluded: ["37-start", "37-end"]
+      grantsQuest: "37-start"
+      text: >-
+        Then here it is. The mine mouth is at the head of the slope,
+        past the upper talus -- a black adit cut straight into the
+        basalt. Below the first landing there is no light at all, so
+        cast chrysalis-glow before you go down and keep it up. The
+        workings run deep and there are things in them that have never
+        seen the sun, but the one that matters is at the bottom, in
+        the Den -- the stone-blooded beast. End it. Bring back what
+        you learn down there, and the blade off the floor of that den
+        if it is worth carrying. The deep vein is the reward, and it
+        is a good one.
+      hints: >-
+        Cast chrysalis-glow, then descend the mine mouth at the head
+        of the slope. Fight down through the workings to the Den at
+        the bottom and defeat the stone-blooded beast. Keep your glow
+        up -- the dark will blind you without it.
+      moodChange: neutral
+
+    - id: dark_help
+      triggers: ["dark", "mine", "light", "glow", "black", "see",
+                 "down", "below", "blind", "dark", "pitch"]
+      text: >-
+        I am not joking about the dark down there. I spent six
+        hours in it during the cave-in before the eye adjusted,
+        and I was lucky to have the eye. You will not be. The
+        mine below the slope runs deep and there is no ambient
+        light past the first landing -- none. You need to make
+        your own before you go down. Type cast chrysalis-glow
+        before you take the descent. It will hold long enough
+        if you do not dawdle. Go in without light and you will
+        be blind in thirty steps, and whatever is in there will
+        know it before you do.
+      hints: >-
+        Type cast chrysalis-glow before entering the mine below
+        the slope. The mine is pitch dark and the glow spell is
+        the only reliable light source you have at this stage.
+        Do not go down without it.
