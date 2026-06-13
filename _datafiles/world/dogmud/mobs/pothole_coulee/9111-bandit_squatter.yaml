@@ -1,0 +1,50 @@
+mobid: 9111
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 40
+itemdropchance: 15
+hostile: true
+maxwander: 1
+groups:
+  - bandit
+  - humanoid
+activitylevel: 25
+idlecommands:
+  - 'emote roots through a cracked leather satchel, pulls something out,
+    squints at it, shoves it back in'
+  - ''
+  - 'emote gnaws the end of a strip of dried meat with single-minded focus'
+  - ''
+combatcommands:
+  - 'emote plants a foot and drives a heavy swing aimed at the shoulder'
+  - ''
+  - 'emote shoves hard with the off-hand, trying to open space'
+  - ''
+character:
+  name: Bandit Squatter
+  description: |
+    A heavyset figure who has made herself at home in the wash with the
+    comfortable arrogance of someone who has never been cleared out. The
+    squatter is not fast, but she is thick-limbed and hard to move, and
+    she fights with the uncomplicated aggression of someone who has won
+    more brawls by being stubborn than by being clever. The leather vest
+    she wears is too good for the rest of her kit -- well-sewn, lightly
+    reinforced at the shoulders -- and she fills it in a way that suggests
+    she did not come by it gently. The club at her belt is bone and
+    iron-banded, heavy enough to bruise through armor.
+  speciesid: 1
+  level: 1
+  gold: 10
+  equipment:
+    weapon:
+      itemid: 10010
+    body:
+      itemid: 20068
+  stats:
+    strength:
+      training: 8
+    vitality:
+      training: 8
+    dexterity:
+      training: 2

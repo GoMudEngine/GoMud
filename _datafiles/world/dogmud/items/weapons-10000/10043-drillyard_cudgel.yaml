@@ -1,0 +1,18 @@
+itemid: 10043
+name: Drillyard Cudgel
+vendor_categories:
+- blacksmithing
+namesimple: cudgel
+description: A plain, sturdy practice cudgel of seasoned hardwood, banded with
+  iron at the head. Worn smooth where a hundred recruits have gripped it before
+  you -- a first weapon, honest and forgiving.
+type: weapon
+hands: 1
+subtype: bludgeoning
+damage_multiplier: 0.65
+speedmultiplier: 1.0
+parryrating: 4
+staminacost: 5
+weight: 3.0
+rarity_tier: 15
+value: 12

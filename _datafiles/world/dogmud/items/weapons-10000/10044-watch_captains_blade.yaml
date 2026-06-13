@@ -1,0 +1,20 @@
+itemid: 10044
+name: Watch-Captain's Blade
+vendor_categories:
+- blacksmithing
+namesimple: blade
+description: A well-kept arming sword that once belonged to whoever the bandits
+  killed to take this tower. Plain steel, perfectly balanced, the grip re-wound
+  by a hand that knew its work. It has changed owners by violence more than
+  once. Now it is yours.
+type: weapon
+hands: 1
+subtype: slashing
+damage_multiplier: 1.05
+speedmultiplier: 0.9
+parryrating: 9
+staminacost: 6
+grapplemodifier: 0.8
+weight: 4.5
+rarity_tier: 55
+value: 0

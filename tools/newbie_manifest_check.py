@@ -130,6 +130,63 @@ OPPOSITE_DIR = {
     "up": "down", "down": "up",
 }
 
+# ---------------------------------------------------------------------------
+# Spoke A (Martial) — mobs 9108-9115 (Phase M). Per mob:
+#   mobid: (filename, name, [host_rooms], hostile, behavior_archetype, statpool)
+# Every mob must exist with the declared fields AND be listed in the
+# spawninfo of EACH of its declared host rooms. Descriptions carry no digits
+# (player-facing immersion rule). The two questgivers (Vorn, Garve) are
+# non_combatant; the dummy is combat_passive (attackable) but NOT hostile;
+# the rest are hostile fighters scaling inner->outer ring.
+SPOKE_A_MOBS = {
+    9108: ("9108-drillmaster_vorn.yaml",      "Drillmaster Vorn",    [5227],             False, "noncombat_questgiver", 44),
+    9109: ("9109-training_dummy.yaml",        "Training Dummy",      [5227, 5228],       False, "combat_passive",        3),
+    9110: ("9110-bandit_scout.yaml",          "Bandit Scout",        [5232, 5233, 5236, 5238], True, "generic_fighter",  18),
+    9111: ("9111-bandit_squatter.yaml",       "Bandit Squatter",     [5235, 5236],       True,  "generic_fighter",      40),
+    9112: ("9112-caravan_guard_garve.yaml",   "Caravan Guard Garve", [5234],             False, "noncombat_questgiver", 44),
+    9113: ("9113-bandit_bruiser.yaml",        "Bandit Bruiser",      [5238, 5239],       True,  "generic_fighter",      90),
+    9114: ("9114-bandit_lieutenant.yaml",     "Bandit Lieutenant",   [5239],             True,  "leader",              130),
+    9115: ("9115-bandit_captain.yaml",        "Bandit Captain",      [5242],             True,  "tank_taunter",        200),
+}
+
+
+def check_spoke_a_mob(mid, spec):
+    fname, name, host_rooms, hostile, archetype, statpool = spec
+    path = os.path.join(MOBS_DIR, fname)
+    fails = []
+    if not os.path.exists(path):
+        return [f"file missing: {path}"]
+    with open(path, encoding="utf-8") as fh:
+        m = yaml.safe_load(fh)
+    if m.get("mobid") != mid:
+        fails.append(f"mobid {m.get('mobid')!r} != {mid}")
+    if m.get("zone") != "Pothole Coulee":
+        fails.append(f"zone {m.get('zone')!r} != 'Pothole Coulee'")
+    if m.get("behavior_archetype") != archetype:
+        fails.append(f"behavior_archetype {m.get('behavior_archetype')!r} != {archetype!r}")
+    if bool(m.get("hostile")) != hostile:
+        fails.append(f"hostile {m.get('hostile')!r} != {hostile}")
+    if m.get("statpool") != statpool:
+        fails.append(f"statpool {m.get('statpool')!r} != {statpool}")
+    char = m.get("character") or {}
+    if char.get("name") != name:
+        fails.append(f"name {char.get('name')!r} != {name!r}")
+    # No digits in the description body (immersion rule).
+    desc = char.get("description") or ""
+    if any(ch.isdigit() for ch in desc):
+        bad = sorted({ch for ch in desc if ch.isdigit()})
+        fails.append(f"description contains digit(s): {bad}")
+    # Must be spawned by EACH declared host room.
+    for hr in host_rooms:
+        r, rpath = _load_room(hr)
+        if r is None:
+            fails.append(f"host room file missing: {rpath}")
+            continue
+        spawn_ids = {s.get("mobid") for s in (r.get("spawninfo") or [])}
+        if mid not in spawn_ids:
+            fails.append(f"host room {hr} spawninfo {spawn_ids} missing mobid {mid}")
+    return fails
+
 # Engine biome registry (internal/rooms biomes). Spoke A only uses a subset,
 # but assert against the full known set so a typo'd biome fails.
 KNOWN_BIOMES = {
@@ -344,7 +401,22 @@ def main():
     print("-" * 70)
     print(f"{len(SPOKE_A_EXIT_PAIRS)} Spoke A exit pairs checked, {pair_fail} FAIL")
 
-    return 1 if (total_fail or npc_fail or spoke_room_fail or pair_fail) else 0
+    # --- Spoke A (Martial) mobs ---------------------------------------------
+    print()
+    print(f"{'SPOKE-A MOB':<14} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    spoke_mob_fail = 0
+    for mid in sorted(SPOKE_A_MOBS):
+        fails = check_spoke_a_mob(mid, SPOKE_A_MOBS[mid])
+        if fails:
+            spoke_mob_fail += 1
+            print(f"{mid:<14} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{mid:<14} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_A_MOBS)} Spoke A mobs checked, {spoke_mob_fail} FAIL")
+
+    return 1 if (total_fail or npc_fail or spoke_room_fail or pair_fail or spoke_mob_fail) else 0
 
 
 if __name__ == "__main__":

@@ -38,5 +38,10 @@ nouns:
   ground: The earth is beaten so hard it rings faintly underfoot, scoured
     of every stone and weed. Old sweat and old blood have soaked it dark
     in patches near the post.
+spawninfo:
+- mobid: 9108
+- mobid: 9109
+  message: A fresh straw dummy is hauled out and set on the pivot, ready for work.
+  respawnrate: 1 real minute
 idlemessages:
 - A breath of wind sets the <ansi fg="itemname">dummy</ansi> turning slow on its pivot, then stills it again.

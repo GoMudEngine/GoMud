@@ -40,5 +40,7 @@ nouns:
   recess: The deep shadowed back of the hollow where the wall overhangs.
     The dark of it holds a stillness that is plainly not emptiness -- the
     quiet of someone forted up, watching the mouth, waiting you out.
+spawninfo:
+- mobid: 9112
 idlemessages:
 - Something shifts in the <ansi fg="itemname">recess</ansi> behind the wreckage, settles, and goes still again.

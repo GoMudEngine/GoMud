@@ -44,5 +44,12 @@ nouns:
     behind you in one long fall to the pale wash below. There is no line of
     retreat here but the climb you came up -- a thing the gate's keepers
     know as well as you do.
+spawninfo:
+- mobid: 9113
+  message: A hulking bandit bruiser plants himself in the broken gateway.
+  respawnrate: 5 real minutes
+- mobid: 9110
+  message: A scout scrambles up onto the rubble beside him, knife out.
+  respawnrate: 5 real minutes
 idlemessages:
 - Loose stone shifts somewhere in the slumped <ansi fg="itemname">gatehouse</ansi> and settles, and the quiet comes back heavier.

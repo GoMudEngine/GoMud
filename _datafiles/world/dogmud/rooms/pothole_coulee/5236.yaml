@@ -42,5 +42,12 @@ nouns:
   lean-to: A low shelter of brush and stripped branches gone grey and
     brittle with weather, leaned against a fallen slab. It has sheltered
     rough sleepers through more than one season and will again.
+spawninfo:
+- mobid: 9110
+  message: A bandit scout drops down into the upper wash, looking for trouble.
+  respawnrate: 5 real minutes
+- mobid: 9111
+  message: A bandit squatter shoulders into the open, spoiling for a fight.
+  respawnrate: 5 real minutes
 idlemessages:
 - Wind crosses the open <ansi fg="itemname">wash</ansi> and worries the grey brush of the lean-to with a dry rattle.

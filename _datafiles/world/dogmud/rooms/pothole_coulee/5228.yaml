@@ -32,5 +32,9 @@ nouns:
     rack. It keeps the worst of the sun off the borrowed arms.
   canvas: Sun-bleached canvas, patched and re-patched, lashed to the poles
     with knotted cord. It snaps softly when the canyon wind comes through.
+spawninfo:
+- mobid: 9109
+  message: A spare dummy is dragged off the rack and propped up under the lean-to.
+  respawnrate: 1 real minute
 idlemessages:
 - The canvas of the <ansi fg="itemname">lean-to</ansi> bellies and snaps once in the dry wind.

@@ -1,0 +1,48 @@
+mobid: 9112
+zone: Pothole Coulee
+behavior_archetype: noncombat_questgiver
+statpool: 44
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - traveler
+activitylevel: 11
+idlecommands:
+  - 'emote peels back the edge of the wrapping around his left forearm,
+    checks the wound beneath, and winds it back tight'
+  - ''
+  - 'emote leans out just far enough to see the bend in the wash, watches
+    it for a long moment, then settles back'
+  - ''
+  - 'emote rolls the shoulder slowly, testing the range, and stops with a
+    slight set to the jaw'
+  - ''
+character:
+  name: Caravan Guard Garve
+  description: |
+    Garve sits like a man who has done a careful accounting of what his
+    body will and will not do right now, and has made his peace with the
+    list. He is broad-shouldered and road-worn, built for the long work
+    of keeping merchant wagons moving through difficult country, and the
+    look he gives the bend in the wash is the look of a professional
+    calculating odds rather than a frightened man flinching from them.
+    His left arm is bound from wrist to elbow in strips of cloth
+    darkened at the center -- a clean cut, going by the wrapping, but
+    deep enough to take his sword arm out of the conversation for now.
+    His eyes catch the light the way an animal's do at the edge of
+    firelight, the irises briefly lambent before settling back to
+    ordinary brown -- a small change, the kind that happens to some folk
+    out on the open road, and one he has long stopped mentioning.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 8
+    vitality:
+      training: 8
+    perception:
+      training: 6

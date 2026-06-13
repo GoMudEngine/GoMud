@@ -1,0 +1,54 @@
+mobid: 9113
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 90
+itemdropchance: 18
+hostile: true
+maxwander: 0
+groups:
+  - bandit
+  - humanoid
+aiprofile: brawler
+activitylevel: 22
+idlecommands:
+  - 'emote rolls the neck until something pops, then rolls it back the
+    other way'
+  - ''
+  - 'emote leans against the wall with arms crossed, the club hanging
+    loose from one thick fist'
+  - ''
+combatcommands:
+  - 'emote steps in close and drives the club down in a punishing overhead
+    arc'
+  - ''
+  - 'emote absorbs a hit without much apparent notice and shoves back with
+    the full weight of the shoulder'
+  - ''
+character:
+  name: Bandit Bruiser
+  description: |
+    The bruiser is wide -- not tall, but built out in a way that makes
+    the corridor feel narrower when she is standing in it. Layers of hard
+    muscle have settled under a thick pad of scar tissue, and the whole
+    is wrapped in a coat of faded leather pieced together from at least
+    three different original garments. The bone club she carries is
+    old-fashioned and uncomplicated: heavy, dense, iron-banded at the
+    striking end, and clearly maintained with more care than the rest of
+    her kit combined. She does not look fast. She does not look like she
+    needs to be.
+  speciesid: 1
+  level: 1
+  gold: 15
+  equipment:
+    weapon:
+      itemid: 10010
+  stats:
+    strength:
+      training: 10
+    vitality:
+      training: 12
+    dexterity:
+      training: 2
+    perception:
+      training: 2

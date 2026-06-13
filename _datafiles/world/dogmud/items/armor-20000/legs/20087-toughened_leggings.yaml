@@ -1,0 +1,15 @@
+itemid: 20087
+name: Toughened Leggings
+vendor_categories:
+- tailoring
+namesimple: leggings
+description: Leggings of layered, hardened hide reinforced down the shins,
+  salvaged and re-stitched by someone who learned the hard way that the wash
+  bites back. Plain protection that does its job without complaint.
+type: legs
+subtype: wearable
+physical_mitigation: 5
+escapemodifier: 0.5
+weight: 4.0
+rarity_tier: 20
+value: 14

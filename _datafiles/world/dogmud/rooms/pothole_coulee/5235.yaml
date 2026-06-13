@@ -40,5 +40,9 @@ nouns:
   salt: The pale crust ringing the brackish pool, left where old water
     crept up the stone and dried. It crunches underfoot and tells how
     long this water has sat -- long enough that holding it became a habit.
+spawninfo:
+- mobid: 9111
+  message: A bandit squatter heaves up off her bedroll by the cistern, club in hand.
+  respawnrate: 5 real minutes
 idlemessages:
 - The brackish <ansi fg="itemname">water</ansi> shivers once where a drip falls from the cracked stone, then lies flat.

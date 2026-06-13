@@ -34,5 +34,12 @@ nouns:
   jut: The shoulder of broken stone the wash wraps around, blunt and
     weathered, blocking the sightline. It is the whole reason the bend is
     blind, and the obvious place for an unkind welcome to wait.
+spawninfo:
+- mobid: 9110
+  message: A bandit scout steps out from behind the bend, blade already drawn.
+  respawnrate: 5 real minutes
+- mobid: 9110
+  message: A second scout circles in from the gravel, cutting off your retreat.
+  respawnrate: 5 real minutes
 idlemessages:
 - Loose <ansi fg="itemname">scree</ansi> trickles down the inner wall with a dry whisper and settles again.

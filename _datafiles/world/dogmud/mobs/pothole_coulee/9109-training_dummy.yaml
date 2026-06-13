@@ -1,0 +1,39 @@
+mobid: 9109
+zone: Pothole Coulee
+behavior_archetype: combat_passive
+statpool: 3
+hostile: false
+maxwander: 0
+groups:
+  - construct
+activitylevel: 5
+idlecommands:
+  - 'emote sways slightly on its pivot, settling back to center'
+  - ''
+  - ''
+  - ''
+character:
+  name: Training Dummy
+  description: |
+    A man-shaped pell of tightly bound straw wrapped in treated leather,
+    mounted on a weighted post set deep in the yard's packed earth. The
+    pivot lets it swing and recover when struck. Charcoal lines mark the
+    leather at throat, chest, and ribs -- the target zones Vorn points to
+    without ever pointing at them directly. The face is a blank oval of
+    hide, featureless except for a dent above the brow that has never
+    quite come back out.
+  speciesid: 19
+  level: 1
+  gold: 0
+  stats:
+    # The dummy species (19) has base vitality 200 — a durable practice
+    # target. Spoke A's quest 32 requires DEFEATING it, so drop its
+    # effective vitality far down (200 - 185 = ~15) to make it a quick,
+    # satisfying kill. Strength/dexterity stay near-floor; species basedamage
+    # is 0, so it remains harmless (the player takes no real damage).
+    vitality:
+      training: -185
+    strength:
+      training: -3
+    dexterity:
+      training: -3

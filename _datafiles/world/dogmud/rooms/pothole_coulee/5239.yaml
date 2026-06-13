@@ -38,5 +38,12 @@ nouns:
     sleep, soaked years deep into stone that gets no wind. It is the smell
     of a place men live in but do not keep, and it tells you this crew has
     held the gate a long time.
+spawninfo:
+- mobid: 9114
+  message: A bandit lieutenant rises from the barracks wreckage, sword leveled.
+  respawnrate: 5 real minutes
+- mobid: 9113
+  message: A bruiser lumbers out of the shadows to back the lieutenant.
+  respawnrate: 5 real minutes
 idlemessages:
 - A draught off the gate stirs the <ansi fg="itemname">bedrolls</ansi> and carries the stale reek of the place a little thicker.

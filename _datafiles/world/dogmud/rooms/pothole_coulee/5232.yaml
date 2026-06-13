@@ -39,5 +39,9 @@ nouns:
   gear: The picked-over leavings of earlier passers -- a split pack, a
     frayed strap, a single worn boot. Whatever had worth is long gone.
     What remains is a quiet warning about how this wash treats strangers.
+spawninfo:
+- mobid: 9110
+  message: A bandit scout slips down from the rocks, eyeing you as easy pickings.
+  respawnrate: 5 real minutes
 idlemessages:
 - A pebble clicks loose somewhere up the <ansi fg="itemname">wash</ansi>, then nothing, as if something thought better of moving.
