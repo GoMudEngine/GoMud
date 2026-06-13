@@ -62,10 +62,14 @@ tree:
       questRequired: ["30-start"]
       questExcluded: ["30-end"]
       text: >-
-        Nothing has changed since you asked, except perhaps you. Say
-        the word when you are ready and we will begin.
+        Everyone who stays in Gaius is Opened, sooner or later -- the
+        world insists. The rite only makes the first change a kindness
+        instead of a surprise. You stand at the edge, I do the small
+        part I do, and the pool does the rest. It does not hurt. It
+        has never once hurt. Say the word when you are ready and we
+        will begin.
       hints: >-
-        Type ask hadwen begin when you are ready.
+        Type ask hadwen begin when you are ready. There is no hurry.
 
     - id: rite_done
       triggers: ["rite", "awakening", "again", "another", "quest", "task"]

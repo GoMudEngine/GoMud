@@ -102,17 +102,42 @@ tree:
           do: grant_quest
           quest: "30-end"
 
-    # ── GREETING: a stranger to the pool walks in ──
+    # ── GREETING: an un-Opened player arrives (incl. FIRST SPAWN —
+    #    HandleJoin emits player_enter once per brand-new character).
+    #    Gated on missing 30-end, not 30-start: the quest engine's
+    #    room_enter auto-grant runs before this fires, so new arrivals
+    #    already hold 30-start. ──
     - type: sequence
       event: player_enter
       children:
         - type: condition
           check: player_missing_quest
-          quest: "30-start"
+          quest: "30-end"
         - type: action
           do: say
           text: >-
-            New to the coulee? I keep the pool. Ask me about the rite
-            when you have caught your breath -- <ansi fg="command">ask
-            hadwen rite</ansi> will do.
+            New to the coulee? Welcome. I keep the pool, and the pool
+            is waiting for you. Ask me about the
+            <ansi fg="command">rite</ansi> if you want the why of it --
+            or simply tell me you are ready:
+            <ansi fg="command">ask hadwen begin</ansi> starts it.
           delay: 2.0
+
+    # ── AMBIENT BACKSTOP: every so often, repeat the invitation aloud.
+    #    No per-player gating exists on mob_idle (no triggering player),
+    #    so keep the cadence low and the line a standing offer. ──
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: condition
+          check: players_in_room
+        - type: condition
+          check: random_chance
+          percent: 4
+        - type: action
+          do: say
+          text: >-
+            If you are new to the coulee and not yet Opened, ask me
+            about the <ansi fg="command">rite</ansi> -- or say
+            <ansi fg="command">ask hadwen begin</ansi> when you are
+            ready. The pool is patient.

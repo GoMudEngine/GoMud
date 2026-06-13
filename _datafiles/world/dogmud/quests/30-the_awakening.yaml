@@ -1,11 +1,15 @@
 # Quest 30 — The Awakening (Pothole Coulee hub, mandatory beat)
 #
 # Token flow:
-#   30-start  — granted by Cleric Hadwen's dialogue (ask hadwen rite)
+#   30-start  — AUTO-GRANTED at the pool (room_enter trigger below).
+#               HandleJoin notifies the quest engine room_enter on every
+#               login/spawn, so a brand-new character gets the quest the
+#               moment they materialize at 5200 — zero input required.
+#               Cleric Hadwen's dialogue also grants it (ask hadwen
+#               rite) for veterans who walk in via the corridor.
 #   30-end    — granted by Hadwen's behavior tree at the close of the
 #               rite sequence (behaviors/pothole_coulee/9100-*.yaml),
 #               alongside grant_mutation.
-# No quest-engine triggers needed; dialogue + btree own the beats.
 
 questid: 30
 name: The Awakening
@@ -25,3 +29,14 @@ rewards:
   player_message: >-
     Something under your skin settles into place, the way silt settles
     in still water. You are not quite who you were when you arrived.
+
+triggers:
+  # ── THE POOL: arriving at 5200 starts the quest (incl. first spawn —
+  #    HandleJoin fires room_enter on login, so brand-new characters get
+  #    this with zero input). Conditions make it idempotent.
+  - event: room_enter
+    room: 5200
+    conditions:
+      missing: [30-start, 30-end]
+    actions:
+      - grant: 30-start
