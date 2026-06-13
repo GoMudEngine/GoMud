@@ -1,5 +1,29 @@
 # DOGMud Patch Notes
 
+## 2026-06-13 — Newbie-area rework: Spoke B (Forge) [branch-local, not yet live]
+
+Build progress on the Pothole Coulee newbie zone (replaces Sanctum Basin).
+This work lives on the `feature+newbie-area` branch and ships to players at
+the chunk-10 cutover, not before. Recorded here as a dated build log.
+
+- **Spoke B (Forge) complete** — the smithing/crafting tutorial spoke that
+  climbs west from the hub. Smith Rusk teaches the craft loop (buy stock,
+  forge an iron dagger); Survivor Ovell sends you up the talus slope to
+  clear it, forage basalt-iron, and learn the component bag and salvage;
+  the capstone descends a pitch-dark mine (cast your glow to see) to put
+  down a stone-blooded beast for a forged blade, a permanent strength gain,
+  and an advanced recipe. 18 rooms, 8 mobs, the basalt-iron material/blade,
+  and three quests, all verified end-to-end.
+- **Newbies are now taught the light spell.** Cleric Hadwen at the hub
+  explains the chrysalis-glow spell every character already carries and
+  warns that dark caves and mines blind you until you light one. Ovell
+  reinforces it at the mine mouth.
+- **Two reusable quest-reward engine features** (builder-facing): quests
+  can now grant a permanent stat increase (`stat_info` reward /
+  `train_stat` action) and teach a crafting recipe (`recipe_info` reward /
+  `learn_recipe` action), both persisted to the character. These back the
+  Forge spoke's rewards and are available to all future quest content.
+
 ## 2026-06-12 — Loaded-weapon ranged combat
 
 Bows, crossbows, pistols, and slings are now fully playable. The
