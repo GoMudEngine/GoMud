@@ -1,0 +1,57 @@
+mobid: 9122
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 130
+itemdropchance: 20
+hostile: true
+maxwander: 0
+groups:
+  - beast
+  - cave
+activitylevel: 22
+idlecommands:
+  - 'emote stands motionless at the mouth of the lower passage, so still
+    and textured it could be taken for a natural formation'
+  - ''
+  - 'emote shifts its weight from one crusted foreleg to the other with
+    the slow heaviness of a thing that is in no hurry at all'
+  - ''
+combatcommands:
+  - 'emote charges in low and fast, the crust on its flanks scraping the
+    tunnel wall and striking sparks'
+  - ''
+  - 'emote opens the wide jaws and drives in a snapping, crushing bite
+    backed by the full weight of the stone-plated neck'
+  - ''
+character:
+  name: Stone-Crusted Lurker
+  description: |
+    This is a talus lurker that has been in the deep part of the mine
+    longer than is normal for its kind, and the rock has begun to keep
+    it. The hide across the shoulders, haunches, and the top of the wide
+    skull has fused with the basalt deposit in the walls -- a slow
+    accretion of mineral, dark grey and rough-textured, that has built up
+    in overlapping plates thick enough to turn a blade. The creature is
+    still recognizable as what it was, broadly -- the same low-slung
+    build, the same wide ambush stance -- but it is heavier now, slower
+    to start and harder to stop. The eyes have gone completely pale,
+    white as quartz, and the ambient light of the drift does nothing to
+    them. It finds its targets through vibration and heat. Something
+    about the deepest part of the mine has agreed with it.
+  speciesid: 21
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: 34
+    strength:
+      training: 30
+    dexterity:
+      training: 30
+    perception:
+      training: 16
+    willpower:
+      training: 10
+    charisma:
+      training: 10

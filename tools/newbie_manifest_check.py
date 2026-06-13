@@ -181,6 +181,21 @@ SPOKE_B_EXIT_PAIRS = [
     (5260, "west", 5261),
 ]
 
+# Spoke B (Forge) mobs 9116-9123 (Phase M). Same shape as SPOKE_A_MOBS:
+#   mobid: (filename, name, [host_rooms], hostile, behavior_archetype, statpool)
+# 9116 Smith Rusk is the shopkeeper/crafter (craft_support blacksmithing).
+# The 6 foes are cave creatures (NOT humanoid -> no Opened requirement).
+SPOKE_B_MOBS = {
+    9116: ("9116-smith_rusk.yaml",            "Smith Rusk",           [5245],             False, "noncombat_questgiver", 44),
+    9117: ("9117-survivor_ovell.yaml",        "Survivor Ovell",       [5251],             False, "noncombat_questgiver", 44),
+    9118: ("9118-scree_scavenger.yaml",       "Scree Scavenger",      [5249, 5250, 5253], True,  "generic_fighter",      18),
+    9119: ("9119-talus_lurker.yaml",          "Talus Lurker",         [5252, 5253],       True,  "generic_fighter",      40),
+    9120: ("9120-mine_crawler.yaml",          "Mine Crawler",         [5255, 5256],       True,  "generic_fighter",      60),
+    9121: ("9121-tunnel_brute.yaml",          "Tunnel Brute",         [5256, 5257],       True,  "generic_fighter",      90),
+    9122: ("9122-stone_crusted_lurker.yaml",  "Stone-Crusted Lurker", [5258],             True,  "generic_fighter",     130),
+    9123: ("9123-stone_blooded_beast.yaml",   "Stone-Blooded Beast",  [5260],             True,  "tank_taunter",        200),
+}
+
 # ---------------------------------------------------------------------------
 # Spoke A (Martial) — mobs 9108-9115 (Phase M). Per mob:
 #   mobid: (filename, name, [host_rooms], hostile, behavior_archetype, statpool)
@@ -497,8 +512,24 @@ def main():
     print("-" * 70)
     print(f"{len(SPOKE_B_EXIT_PAIRS)} Spoke B exit pairs checked, {pair_b_fail} FAIL")
 
+    # --- Spoke B (Forge) mobs -----------------------------------------------
+    print()
+    print(f"{'SPOKE-B MOB':<14} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    spoke_b_mob_fail = 0
+    for mid in sorted(SPOKE_B_MOBS):
+        fails = check_spoke_a_mob(mid, SPOKE_B_MOBS[mid])  # generic mob check
+        if fails:
+            spoke_b_mob_fail += 1
+            print(f"{mid:<14} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{mid:<14} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_B_MOBS)} Spoke B mobs checked, {spoke_b_mob_fail} FAIL")
+
     return 1 if (total_fail or npc_fail or spoke_room_fail or pair_fail
-                 or spoke_mob_fail or spoke_b_room_fail or pair_b_fail) else 0
+                 or spoke_mob_fail or spoke_b_room_fail or pair_b_fail
+                 or spoke_b_mob_fail) else 0
 
 
 if __name__ == "__main__":

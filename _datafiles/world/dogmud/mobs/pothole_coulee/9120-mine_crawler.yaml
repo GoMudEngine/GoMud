@@ -1,0 +1,55 @@
+mobid: 9120
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 60
+itemdropchance: 18
+hostile: true
+maxwander: 1
+groups:
+  - beast
+  - cave
+activitylevel: 25
+idlecommands:
+  - 'emote moves along the ceiling of the drift with deliberate, adhesive
+    steps, investigating a crack in the rock'
+  - ''
+  - 'emote spreads the middle pair of legs wide and hangs still in the
+    dark, body pressed against the stone'
+  - ''
+combatcommands:
+  - 'emote drops from above and lands on multiple legs with uncanny accuracy'
+  - ''
+  - 'emote wraps two sets of forelegs around the target and drives in
+    with the mandibles'
+  - ''
+character:
+  name: Mine Crawler
+  description: |
+    The mine crawler is a pallid, many-legged thing that has found the
+    worked tunnels to its liking -- the dark, the damp, the confined
+    passages that limit what a prey animal can do when it runs. Its body
+    is long and segmented, white as old bone, with legs enough to cling
+    to ceiling or wall with equal ease. The eyes are gone, or nearly so,
+    reduced to pale smudges that may still sense light at the near-distance
+    but serve mostly as vestigial landmarks. Everything else has sharpened
+    in their place -- the antennae read vibration through stone, and it
+    can locate a walking target through the rock before the target has
+    any reason to suspect it is not alone in the tunnel. It is not fast
+    in a straight line. It does not need to be.
+  speciesid: 12
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 16
+    strength:
+      training: 14
+    vitality:
+      training: 16
+    perception:
+      training: 8
+    willpower:
+      training: 4
+    charisma:
+      training: 2

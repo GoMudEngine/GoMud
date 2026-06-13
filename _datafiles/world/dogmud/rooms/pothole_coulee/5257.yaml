@@ -34,6 +34,10 @@ nouns:
     down there is real enough -- but reaching it means going fully
     in, and staying in, in the cold and the dark with a guard
     that objects.
+spawninfo:
+- mobid: 9121
+  message: A tunnel brute rises from the black water's edge, guarding what glints beneath.
+  respawnrate: 5 real minutes
 idlemessages:
 - A single drop falls from the ceiling into the <ansi fg="itemname">sump</ansi> and the ripple crosses the whole surface before it dies.
 - The <ansi fg="itemname">water</ansi> stirs faintly, as if something below it shifted, and then goes still.

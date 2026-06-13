@@ -46,6 +46,13 @@ nouns:
     dark and cold to the touch. The mine mouth cuts through it at
     ground level. Above, the bluff runs up past sight without a seam
     or ledge worth attempting.
+spawninfo:
+- mobid: 9118
+  message: A scree scavenger picks its way across the high shoulder.
+  respawnrate: 5 real minutes
+- mobid: 9119
+  message: A talus lurker shoulders up out of the drift, hunting.
+  respawnrate: 5 real minutes
 idlemessages:
 - The cold <ansi fg="itemname">draft</ansi> off the mine mouth stirs the <ansi fg="itemname">drift</ansi> debris along the shoulder and raises the smell of deep stone.
 - A scavenger's iron pick lies wedged in the <ansi fg="itemname">shoulder</ansi> rocks -- left because the handle cracked, or because the one who left it did not come back.

@@ -34,6 +34,10 @@ nouns:
     ends. Past it the eye finds nothing it can use, only shapes
     suggested by the cold air moving. Whatever lives deeper in has
     lived in this a long time and can navigate it better than you.
+spawninfo:
+- mobid: 9120
+  message: A pale mine crawler pours out of a crack in the wall, too many legs finding purchase.
+  respawnrate: 5 real minutes
 idlemessages:
 - Somewhere west in the <ansi fg="itemname">dark</ansi>, something shifts its footing and the sound carries clean.
 - A slow drip falls from the shored timber above and rings off the wet <ansi fg="itemname">footing</ansi> like a struck note.

@@ -37,6 +37,10 @@ nouns:
     give no purchase for water or time to work on. They are the
     reason the mine goes where it goes -- the columns dictate the
     drift, not the other way around.
+spawninfo:
+- mobid: 9122
+  message: A stone-crusted lurker peels away from the basalt it had been mistaken for.
+  respawnrate: 5 real minutes
 idlemessages:
 - The air down here does not move; it simply sits against your skin, cold and old and without any memory of the surface.
 - Water has stained the <ansi fg="itemname">columns</ansi> to chest height and no higher -- the tidemark of a flood that came and went and left its record.

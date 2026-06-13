@@ -41,6 +41,10 @@ nouns:
     cracked and dark, the broken wall of the coulee rim above. The ore
     seam runs a ragged line across it, orange-stained below, and loose
     plates have calved from it in fans across the scree.
+spawninfo:
+- mobid: 9118
+  message: A scavenger drags itself up the ore vein, drawn by the disturbed rock.
+  respawnrate: 5 real minutes
 idlemessages:
 - A cluster of <ansi fg="itemname">rock</ansi> plates lets go somewhere to the south and the clatter echoes off the bluff before it dies.
 - Wind drives across the open field and the orange stain below the <ansi fg="itemname">vein</ansi> glitters with mica dust shaken loose.

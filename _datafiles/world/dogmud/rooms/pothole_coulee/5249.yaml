@@ -40,6 +40,10 @@ nouns:
     broken-handled tools heaped at the base of a frost-heaved slab.
     Whoever sorted through this took everything of worth. What remains
     is a lesson -- the talus gives up nothing for free.
+spawninfo:
+- mobid: 9118
+  message: A scree scavenger scuttles out from under a loose plate, mandibles working.
+  respawnrate: 5 real minutes
 idlemessages:
 - A plate of <ansi fg="itemname">scree</ansi> shifts somewhere below you and the clatter carries a long way down the slope before it stops.
 - Wind crosses the open <ansi fg="itemname">talus</ansi> face, picking up grit and the faint smell of heated iron from the smithy above.

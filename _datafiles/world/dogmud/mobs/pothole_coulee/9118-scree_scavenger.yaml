@@ -1,0 +1,47 @@
+mobid: 9118
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 18
+itemdropchance: 15
+hostile: true
+maxwander: 1
+groups:
+  - beast
+  - cave
+activitylevel: 25
+idlecommands:
+  - 'emote picks at a crack in the scree with quick, probing foreclaws'
+  - ''
+  - 'emote freezes flat against the rock and waits, difficult to distinguish
+    from the stone'
+  - ''
+combatcommands:
+  - 'emote skitters in fast and rakes with the foreclaws'
+  - ''
+  - 'emote snaps a low strike toward the nearest ankle'
+  - ''
+character:
+  name: Scree Scavenger
+  description: |
+    A flat-bodied creature the color of grey shale, no longer than a
+    forearm, that picks its way across the loose rock on six jointed
+    legs. The scree scavenger feeds on whatever the slope turns up --
+    crushed insects, mineral deposits, the organic residue of slower
+    things -- and it is very good at not being seen until it has decided
+    to be seen. The claws are small and sharp, the bite negligible on
+    its own, but there is rarely only one of them. It moves in the quick
+    darting shifts of something that has no individual courage and does
+    not need any.
+  speciesid: 12
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 8
+    strength:
+      training: 4
+    vitality:
+      training: 4
+    perception:
+      training: 2

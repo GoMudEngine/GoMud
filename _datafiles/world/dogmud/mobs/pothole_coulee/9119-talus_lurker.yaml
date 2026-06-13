@@ -1,0 +1,54 @@
+mobid: 9119
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 40
+itemdropchance: 15
+hostile: true
+maxwander: 1
+groups:
+  - beast
+  - cave
+activitylevel: 25
+idlecommands:
+  - 'emote holds perfectly still against the talus, limbs folded, waiting
+    for something to move within reach'
+  - ''
+  - 'emote lowers its wide head and tastes the air with a slow tongue'
+  - ''
+combatcommands:
+  - 'emote lunges from a standing stop with surprising speed, leading with
+    the weight of the shoulder'
+  - ''
+  - 'emote rears back and drives the full mass of the body into the attack'
+  - ''
+character:
+  name: Talus Lurker
+  description: |
+    The talus lurker is a patient thing, heavy-limbed and low-slung, built
+    for the ambush rather than the chase. It is the size of a large dog but
+    denser, its hide a mottled pattern of grey and brown that breaks its
+    outline against the broken rock in a way that seems almost deliberate.
+    It does not announce itself. It waits at the edge of a drop or behind
+    the shadow of an overhang until something warm passes within range, and
+    then it commits fully and without hesitation. Its jaws are wide and
+    its neck is thick, and it has learned through generations of cave living
+    that the best outcome comes from taking the target down fast and hard
+    before anything else in the dark decides to come and see what the noise
+    is about.
+  speciesid: 21
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 12
+    strength:
+      training: 10
+    vitality:
+      training: 10
+    perception:
+      training: 4
+    willpower:
+      training: 2
+    charisma:
+      training: 2

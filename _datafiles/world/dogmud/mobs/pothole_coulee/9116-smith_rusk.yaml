@@ -1,0 +1,73 @@
+mobid: 9116
+zone: Pothole Coulee
+craft_support: blacksmithing
+behavior_archetype: noncombat_questgiver
+statpool: 44
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 16
+crafter: true
+crafterskill: blacksmithing
+idlecommands:
+  - 'emote works the bellows with heavy, rhythmic pulls, building the heat
+    up from the coals'
+  - ''
+  - 'emote turns a half-shaped piece of iron on the anvil and drives three
+    short decisive blows into the shoulder of it'
+  - ''
+  - 'emote lifts a tray of rough stock and sorts it by grade with practiced
+    hands, not needing to look'
+  - ''
+character:
+  name: Smith Rusk
+  description: |
+    Rusk runs the Coulee Smithy the way a chisel runs a seam -- without
+    ceremony, following what the material gives. She is a broad, low-set
+    woman with soot worked so deep into the lines of her hands that it
+    reads as a second skin, and she moves between anvil and forge with
+    the unhurried economy of someone who learned long ago that haste
+    produces scrap. Her voice, when she uses it, comes out rasp-dry
+    from years of smoke. From her left wrist to the crook of her elbow
+    the skin has thickened and gone the grey-black of slag, as smooth
+    and hard as cooled iron -- a slow change she marks by the fact that
+    tongs no longer leave burns there. She does not explain it and does
+    not seem to consider it worth explaining. She will teach you what
+    she knows, but she will not hold your hand while she does it.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 14
+    vitality:
+      training: 10
+    dexterity:
+      training: 6
+    perception:
+      training: 6
+    willpower:
+      training: 4
+    charisma:
+      training: 4
+  shop:
+    - itemid: 40001    # iron ingot
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 40002    # leather strip
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40020    # coal dust
+      quantity: 0
+      quantitymax: 0
+      price: 4
+    - itemid: 40069    # basalt-iron ore
+      quantity: 0
+      quantitymax: 0
+      price: 4

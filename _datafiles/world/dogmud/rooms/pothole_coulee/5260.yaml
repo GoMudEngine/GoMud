@@ -38,6 +38,10 @@ nouns:
     haft, a boot heel, a helmet dome with the bowl bitten through --
     these were carried in by things that walked upright and did not
     walk out again.
+spawninfo:
+- mobid: 9123
+  message: The stone-blooded beast lifts its fused-stone head from the den floor and fixes on you.
+  respawnrate: 10 real minutes
 idlemessages:
 - The stink of the <ansi fg="itemname">den</ansi> thickens when the air stirs -- musk and old blood and something underneath that has no name.
 - One of the <ansi fg="itemname">bones</ansi> rocks under a shifting column section and cracks against the wall, and the sound of it travels back through the gallery.

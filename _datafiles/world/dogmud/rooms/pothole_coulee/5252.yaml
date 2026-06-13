@@ -44,6 +44,13 @@ nouns:
     its upper face scored and dimpled from repeated use. Someone found
     it useful long before you did. It is not made for fine work, but
     for cracking ore to workable size it does the job.
+spawninfo:
+- mobid: 9119
+  message: A talus lurker uncoils from the rubble where it was lying in wait.
+  respawnrate: 5 real minutes
+- itemid: 20022
+  message: A dead prospector's leather vest lies half-buried in the ore rubble, still wearable.
+  respawnrate: 10 real minutes
 idlemessages:
 - A loose plate in the <ansi fg="itemname">rubble</ansi> tips and resettles with a low grinding sound, then the pocket goes quiet.
 - The wind drops into the <ansi fg="itemname">pocket</ansi> and swirls, carrying the chalky mineral smell of fresh-broken <ansi fg="itemname">ore</ansi> up from the heap.

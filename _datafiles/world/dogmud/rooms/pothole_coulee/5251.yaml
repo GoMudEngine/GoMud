@@ -47,6 +47,8 @@ nouns:
     immediately ended. The walls are scored with pick marks, dark and
     damp, and the floor is covered in broken chips. The rest of the cut
     is behind the rubble, gone.
+spawninfo:
+- mobid: 9117
 idlemessages:
 - A settled creak moves through the <ansi fg="itemname">timbers</ansi> in the heap and a thin trickle of grit sifts down from above.
 - The <ansi fg="itemname">hand</ansi> shifts slightly in the rubble -- not a reach, not a signal, just the body reminding itself it is still there.

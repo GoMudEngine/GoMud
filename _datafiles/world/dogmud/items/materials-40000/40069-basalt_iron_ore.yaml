@@ -1,0 +1,15 @@
+itemid: 40069
+name: Basalt-Iron Ore
+namesimple: ore
+description: A dark, close-grained ore prised from the basalt of the coulee --
+  heavier than common iron, shot through with a faint grey sheen. Smiths who
+  can coax it properly get a harder edge than plain stock will ever give.
+type: object
+subtype: mundane
+component_tag: basalt-iron
+weight: 0.1
+value: 4
+rarity_tier: 45
+is_component: true
+vendor_categories:
+- blacksmithing

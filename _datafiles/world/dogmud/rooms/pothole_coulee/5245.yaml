@@ -41,6 +41,8 @@ nouns:
     nozzle aimed down into the charcoal bed. When it drives air
     through the coals the whole smithy brightens. The hide is stiff
     with heat and age.
+spawninfo:
+- mobid: 9116
 idlemessages:
 - The <ansi fg="itemname">forge</ansi> ticks and breathes, coals settling with a soft crunch.
 - Heat shimmer makes the rack of <ansi fg="itemname">tongs</ansi> and hammers ripple like a reflection in water.
