@@ -1,0 +1,44 @@
+roomid: 5241
+zone: Pothole Coulee
+title: Tower Stair
+description: >
+  The stair winds you up to a landing midway, a narrow shelf of stone
+  clinging to the curved wall where the climb pauses before it goes on.
+  Arrow-slits pierce the wall here, tall thin wounds cut for archers long
+  dead, and through them the wash shows far below in slivers -- the whole
+  climb you made, laid out small and pale and a very long way down. The
+  floor at the shaft's center has fallen clean through, leaving a black
+  ragged drop straight down the throat of the tower to the rubble at its
+  base; the stair skirts the edge of it on a span no wider than your boots.
+  This is the held breath of the climb -- past it, only the top remains.
+  The stair drops away below; it climbs on above toward the light.
+biome: fort
+coord:
+  x: 56
+  y: -2
+  z: 1
+exits:
+  down:
+    roomid: 5240
+  up:
+    roomid: 5242
+nouns:
+  stair: The winding stone stair at its midpoint, narrowed here to a span
+    that skirts the open drop on a ledge barely a boot wide. Below it falls
+    back to the base; above it climbs the last turns to the crown. There is
+    no rail and no margin -- the climb is all balance from here up.
+  slits: Tall thin slots cut through the curved wall, made for archers to
+    loose down on the wash without showing themselves. The dead left them
+    empty; through them the canyon shows in pale slivers, the whole long
+    climb small and far below. Anything posted here commands the approach
+    blind.
+  arrow-slits: The same narrow loopholes pierced in the wall for bowmen long
+    gone. They frame the wash in vertical slices of light and let the wind
+    through with a low steady whistle. A bow set in one of these covers the
+    climb and shows the archer to no one.
+  drop: The black ragged hole where the shaft's center floor has fallen
+    away, plunging straight down the throat of the tower to the broken stone
+    far below. The stair skirts its very lip. A misstep here ends the climb
+    the short way, and the dark gives back no bottom.
+idlemessages:
+- Wind moans low through the <ansi fg="itemname">slits</ansi> and the cold air off the drop pulls steadily at your back.

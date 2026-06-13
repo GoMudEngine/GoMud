@@ -1,0 +1,47 @@
+roomid: 5240
+zone: Pothole Coulee
+title: Tower Base
+description: >
+  Through the doorway the tower opens into its own hollow heart -- a round
+  shaft of grey stone climbing up into gloom, wide and empty at the floor.
+  A broken stair spirals the inner wall, cut from the same stone and
+  half-eaten by the years -- whole flights of it stand, then a span has
+  fallen clean away, then it picks up again higher, winding toward a pale
+  smudge of daylight far up the throat of the shaft. Loose stone shifts
+  underfoot across the whole floor, shed from the stair and the courses
+  above, treacherous and grinding -- there is no quiet way to cross it and
+  no sure footing on the climb. The gate lies back south; the stair winds
+  up into the dark.
+biome: fort
+coord:
+  x: 56
+  y: -2
+  z: 0
+exits:
+  south:
+    roomid: 5238
+  up:
+    roomid: 5241
+nouns:
+  stair:
+    A spiral of stone steps cut into the inner wall, winding up the shaft
+    toward the light. It is a ruin of a stair -- whole flights stand sound,
+    then a span is simply gone, fallen into the dark, and the climber must
+    trust the broken gap and the courses past it. Going up means going up
+    this, with no other way.
+  stone: Loose rubble drifted across the whole floor of the shaft, shed down
+    the years from the failing stair and the courses overhead. It turns and
+    grinds underfoot, sure of nothing -- there is no crossing this ground
+    quietly, and no firm place to set a foot on the first steps of the
+    climb. The way up is precarious from the very base.
+  base: The hollow heart of the tower, a round shaft of grey stone open
+    floor to broken crown. Empty at the foot, climbing into gloom above,
+    it funnels every sound up the throat of it -- a footfall here is heard
+    at the top, and whatever waits at the top knows you are coming.
+  shaft:
+    The round throat of the tower rising overhead, ringed by the winding
+    stair, narrowing to a far pale smudge of daylight where the broken crown
+    lets the sky in. The climb runs the whole height of it, exposed the
+    whole way to anything looking down.
+idlemessages:
+- A pebble works loose somewhere up the <ansi fg="itemname">stair</ansi> and rattles down through the dark to the floor.

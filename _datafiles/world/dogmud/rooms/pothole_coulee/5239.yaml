@@ -1,0 +1,42 @@
+roomid: 5239
+zone: Pothole Coulee
+title: Collapsed Barracks
+description: >
+  A side room opens off the gate, low and close and half-roofed, where the
+  crew that holds the tower beds down. It is a lived-in ruin -- the smell of
+  it hits first, woodsmoke and grease and unwashed sleep gone stale in
+  stone that never airs. Bedrolls lie scattered across the floor in their
+  own scuffed nests, a few flung straight as if their owners rose in a
+  hurry, the rest crumpled where they were left. Against the back wall a
+  battered strongbox squats, iron-cornered and scarred with pry-marks, the
+  crew's shared hoard of whatever they have taken off the wash. This is the
+  soft middle of the held line -- the gate keeps the door, and what sleeps
+  here trusts it to. The only way back out is west, through the gate.
+biome: fort
+coord:
+  x: 57
+  y: -1
+  z: 0
+exits:
+  west:
+    roomid: 5238
+nouns:
+  barracks: The crew's bunkroom, a half-roofed side chamber off the gate,
+    close and rank with long use. Whoever bars the threshold outside sleeps
+    here behind them -- which means a fight that gets past the gate finds
+    soft targets, and the crew knows it, and posts the gate the heavier for
+    knowing.
+  bedrolls: Scuffed nests of blanket and hide thrown down across the stone,
+    some kicked straight, most left crumpled. They mark out who beds where,
+    and how many -- more rolls than a small crew, fewer than an army. Enough
+    to hold a gate and no more.
+  strongbox: A battered iron-cornered chest against the back wall, its lid
+    scored with old pry-marks -- taken from someone, by the look of it, and
+    put to new use. It is the crew's common hoard, the gathered pickings of
+    every traveller who came up this wash and did not go back down.
+  smell: The stink of the held tower -- woodsmoke, rancid grease, and stale
+    sleep, soaked years deep into stone that gets no wind. It is the smell
+    of a place men live in but do not keep, and it tells you this crew has
+    held the gate a long time.
+idlemessages:
+- A draught off the gate stirs the <ansi fg="itemname">bedrolls</ansi> and carries the stale reek of the place a little thicker.

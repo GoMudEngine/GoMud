@@ -1,0 +1,58 @@
+roomid: 5242
+zone: Pothole Coulee
+title: The Watch Room
+description: >
+  The last turns of the stair bring you up into the tower's crown -- the
+  watch room, the highest held ground in the whole canyon. One wall has
+  burst clean open, a great ragged breach where stone gave way, and through
+  it the wash lies bare from end to end -- the gate below, the wide pan of
+  the climb, the throat of the lower canyon, every step a comer must take to
+  reach this height, all of it laid plain to a single watching eye. A heavy
+  table stands square in the room, its top scarred and scrawled over with a
+  rough map of the wash, stones and scratched marks set across it like a
+  reckoning of who holds what. A seat faces the breach -- the best seat, the
+  high seat, plainly the seat of whoever holds this ground. The air is still
+  and waiting up here, the way a room is when its keeper has only just
+  stood. There is no higher hold. The stair drops away below; a doorway
+  opens east onto the broken top.
+biome: fort
+coord:
+  x: 56
+  y: -2
+  z: 2
+exits:
+  down:
+    roomid: 5241
+  east:
+    roomid: 5243
+nouns:
+  table: A heavy timber table set square in the room, its scarred top
+    scrawled over with a crude map of the wash -- the canyon scratched out
+    in lines, with stones and chalked marks shifted across it like pieces in
+    a long game. Someone has been planning from up here, reading the whole
+    climb below and setting their crew against it. The marks are recent.
+  war-table: The same scarred table, used for war -- the wash mapped on its
+    top, the comings and goings of the canyon worked out in stones and
+    scratches. Whoever sits to it commands the gate and the climb and the
+    crew between, and means to go on doing so. A chair waits drawn up to it,
+    lately filled.
+  view: The whole canyon, taken in at a glance through the burst wall -- the
+    wash unrolled from the lower throat to the gate at the tower's foot,
+    pale and bare and every step of it visible. Nothing climbs this canyon
+    unseen from here. It is the reason the tower was raised, and the reason
+    it is still worth holding.
+  wall: The great ragged breach where one wall of the crown has fallen
+    away, stone torn open to the sky and the canyon beyond. It ruined the
+    tower as a fort and made it perfect as a watch -- there is no better
+    window on the wash than this wound, and the high seat is set to face
+    straight out through it.
+  breach: The same burst-open wall, a jagged mouth of broken courses
+    framing the whole canyon below. Wind pours through it steadily. Whatever
+    holds the high seat holds it looking out this gap, with the entire climb
+    spread bare beneath -- forewarned of every soul that starts up.
+  seat: A heavy chair drawn up facing the breach, set where the watcher can
+    take in the whole wash at once -- the high seat, the keeper's seat, the
+    won place of whoever holds this ground by force. It is empty for the
+    moment, and the air around it has not yet gone cold.
+idlemessages:
+- Wind pours through the <ansi fg="itemname">breach</ansi> and stirs the chalked stones on the table, nudging one a hair across the map.
