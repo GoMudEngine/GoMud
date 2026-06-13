@@ -56,7 +56,9 @@ MANIFEST = {
     5217: ("North Shore Overlook", "cliffs", (46, -1, 0), {"south":5202,"north":5225}, 2),
     5218: ("Reed Jetty", "shore", (44, -1, 0), {"south":5201,"north":5224}, 2),
     # Stubs: return-only, biome not asserted, >=1 noun.
-    5220: ("Dry Coulee Mouth", None, (48, 0, 0), {"west":5209}, 1),
+    # 5220 is the Spoke A (Martial) mouth: the hub stub plus the eastward
+    # attachment exit into the spoke's Drill Yard (5227), added in chunk 2.
+    5220: ("Dry Coulee Mouth", None, (48, 0, 0), {"west":5209, "east":5227}, 1),
     5221: ("Talus Gap", None, (42, 0, 0), {"east":5210}, 1),
     5222: ("Reedwash Mouth", None, (47, 2, 0), {"west":5207}, 1),
     5223: ("Scrub Draw", None, (43, 1, 0), {"east":5216}, 1),
@@ -64,6 +66,139 @@ MANIFEST = {
     5225: ("Old Field Track", None, (46, -2, 0), {"south":5217}, 1),
     5226: ("Bluff Steps", None, (47, -1, 0), {"south":5209}, 1),
 }
+
+
+# ---------------------------------------------------------------------------
+# Spoke A (Martial) — Pothole Coulee rooms 5227-5243.
+# Three concentric rings climbing the wash to the boss tower:
+#   inner (sanctuary):   5227-5231
+#   middle (NO sanct.):  5232-5237
+#   outer  (NO sanct.):  5238-5243
+# Each entry: (rid, title, sanctuary_expected). biome only checked non-empty +
+# in the engine's known set; title/description only checked non-empty.
+SPOKE_A_ROOMS = [
+    (5227, "The Drill Yard", True),
+    (5228, "Weapon Rack Lean-to", True),
+    (5229, "Sparring Circle", True),
+    (5230, "Yard Overlook", True),
+    (5231, "The Last Safe Step", True),
+    (5232, "Lower Wash", False),
+    (5233, "Gravel Bend", False),
+    (5234, "Squatter's Hollow", False),
+    (5235, "Cracked Cistern", False),
+    (5236, "Upper Wash", False),
+    (5237, "Tower Approach", False),
+    (5238, "Broken Gate", False),
+    (5239, "Collapsed Barracks", False),
+    (5240, "Tower Base", False),
+    (5241, "Tower Stair", False),
+    (5242, "The Watch Room", False),
+    (5243, "Tower Top", False),
+]
+
+# Reciprocal exit pairs (a, dir_a_to_b, b). The reverse exit on b must point
+# back at a in the opposite direction. dir_pairs below define the opposites.
+# Most edges are cardinal; the 5235<->5236 edge is intentionally diagonal
+# (NE/SW) because the all-cardinal loop was geometrically unclosable, and the
+# tower climb 5240->5241->5242 is vertical (up/down).
+SPOKE_A_EXIT_PAIRS = [
+    (5220, "east", 5227),
+    (5227, "east", 5228),
+    (5227, "north", 5229),
+    (5229, "east", 5230),
+    (5230, "east", 5231),
+    (5231, "east", 5232),
+    (5232, "east", 5233),
+    (5232, "south", 5234),
+    (5234, "east", 5235),
+    (5235, "northeast", 5236),   # diagonal-by-design edge
+    (5233, "east", 5236),
+    (5236, "east", 5237),
+    (5237, "east", 5238),
+    (5238, "east", 5239),
+    (5238, "north", 5240),
+    (5240, "up", 5241),          # vertical climb
+    (5241, "up", 5242),          # vertical climb
+    (5242, "east", 5243),
+]
+
+OPPOSITE_DIR = {
+    "north": "south", "south": "north",
+    "east": "west", "west": "east",
+    "northeast": "southwest", "southwest": "northeast",
+    "northwest": "southeast", "southeast": "northwest",
+    "up": "down", "down": "up",
+}
+
+# Engine biome registry (internal/rooms biomes). Spoke A only uses a subset,
+# but assert against the full known set so a typo'd biome fails.
+KNOWN_BIOMES = {
+    "water", "shore", "city", "house", "cliffs", "fort", "cave", "forest",
+    "swamp", "mountains", "desert", "plains", "underground", "road",
+}
+
+
+def _load_room(rid):
+    path = os.path.join(ROOMS_DIR, f"{rid}.yaml")
+    if not os.path.exists(path):
+        return None, path
+    with open(path, encoding="utf-8") as fh:
+        return yaml.safe_load(fh), path
+
+
+def check_spoke_a_room(rid, title, sanctuary_expected):
+    r, path = _load_room(rid)
+    fails = []
+    if r is None:
+        return [f"file missing: {path}"]
+    if r.get("roomid") != rid:
+        fails.append(f"roomid {r.get('roomid')!r} != {rid}")
+    if r.get("zone") != "Pothole Coulee":
+        fails.append(f"zone {r.get('zone')!r} != 'Pothole Coulee'")
+    if r.get("title") != title:
+        fails.append(f"title {r.get('title')!r} != {title!r}")
+    if not (r.get("description") or "").strip():
+        fails.append("empty/missing description")
+    biome = r.get("biome")
+    if not biome:
+        fails.append("empty/missing biome")
+    elif biome not in KNOWN_BIOMES:
+        fails.append(f"biome {biome!r} not a known biome")
+    muts = {m.get("mutatorid") for m in (r.get("mutators") or [])}
+    has_sanct = "sanctuary" in muts
+    if sanctuary_expected and not has_sanct:
+        fails.append("sanctuary mutator expected but ABSENT")
+    if not sanctuary_expected and has_sanct:
+        fails.append("sanctuary mutator present but should be ABSENT")
+    # Noun discoverability: every noun key is a single token AND appears
+    # (case-insensitive) somewhere in the description body — same rule the
+    # ch.1 hub check enforces.
+    desc = (r.get("description") or "").lower()
+    for key in (r.get("nouns") or {}):
+        if any(ch.isspace() for ch in key):
+            fails.append(f"noun key {key!r} is not a single token")
+        if key.lower() not in desc:
+            fails.append(f"noun key {key!r} absent from description body")
+    return fails
+
+
+def check_spoke_a_exit_pair(a, dir_ab, b):
+    """Confirm a has exit dir_ab->b AND b has the reverse exit back to a."""
+    fails = []
+    ra, pa = _load_room(a)
+    rb, pb = _load_room(b)
+    if ra is None:
+        return [f"file missing: {pa}"]
+    if rb is None:
+        return [f"file missing: {pb}"]
+    rev = OPPOSITE_DIR[dir_ab]
+    a_exits = {d: (v or {}).get("roomid") for d, v in (ra.get("exits") or {}).items()}
+    b_exits = {d: (v or {}).get("roomid") for d, v in (rb.get("exits") or {}).items()}
+    if a_exits.get(dir_ab) != b:
+        fails.append(f"{a}.{dir_ab} -> {a_exits.get(dir_ab)!r} (expected {b})")
+    if b_exits.get(rev) != a:
+        fails.append(f"{b}.{rev} -> {b_exits.get(rev)!r} (expected {a}; non-reciprocal)")
+    return fails
 
 
 def check_room(rid, spec):
@@ -179,7 +314,37 @@ def main():
     print("-" * 70)
     print(f"{len(NPC_MANIFEST)} NPCs checked, {npc_fail} FAIL")
 
-    return 1 if (total_fail or npc_fail) else 0
+    # --- Spoke A (Martial) rooms -------------------------------------------
+    print()
+    print(f"{'SPOKE-A':<8} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    spoke_room_fail = 0
+    for rid, title, sanct in SPOKE_A_ROOMS:
+        fails = check_spoke_a_room(rid, title, sanct)
+        if fails:
+            spoke_room_fail += 1
+            print(f"{rid:<8} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{rid:<8} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_A_ROOMS)} Spoke A rooms checked, {spoke_room_fail} FAIL")
+
+    print()
+    print(f"{'EXITPAIR':<14} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    pair_fail = 0
+    for a, dir_ab, b in SPOKE_A_EXIT_PAIRS:
+        fails = check_spoke_a_exit_pair(a, dir_ab, b)
+        label = f"{a}-{dir_ab[:2]}-{b}"
+        if fails:
+            pair_fail += 1
+            print(f"{label:<14} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{label:<14} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_A_EXIT_PAIRS)} Spoke A exit pairs checked, {pair_fail} FAIL")
+
+    return 1 if (total_fail or npc_fail or spoke_room_fail or pair_fail) else 0
 
 
 if __name__ == "__main__":
