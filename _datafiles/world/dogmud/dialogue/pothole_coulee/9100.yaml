@@ -44,7 +44,7 @@ tree:
         hints: >-
           Type ask toke footing in Hub Square to learn the town, or
           ask esk passage at the Threshold House to leave. You could
-          also ask Hadwen about mutations or your name.
+          also ask Hadwen about mutations, the glow, or your name.
 
   nodes:
     - id: rite_offer
@@ -96,7 +96,25 @@ tree:
         offer. Each one woke because of something you did or survived.
         Read them now and then. They are a better diary than most.
       hints: >-
-        You could ask about your name, or about the Chrysalis.
+        You could ask about your name, the glow, or the Chrysalis.
+
+    - id: glow
+      triggers: ["glow", "light", "dark", "darkness", "see", "blind",
+        "cave", "mine", "spell", "cast"]
+      questRequired: ["30-end"]
+      text: >-
+        Ah -- the Glow. Every Opened carries a few small gifts of the
+        Chrysalis, and that one is yours from the first day. It is the
+        Chrysalis Glow, a light you can call up out of your own self.
+        The world keeps dark places -- caves, deep mines, shuttered
+        rooms -- and the dark in them is no metaphor. It will blind you
+        until you make your own light. When you cannot see, speak the
+        glow and the spores will answer.
+      hints: >-
+        In any dark place, type cast chrysalis-glow to light it -- you
+        carry that spell already. Type spells to see everything you
+        know how to cast.
+      moodChange: friendly
 
     - id: rename
       triggers: ["name", "rename", "renameself", "truer"]
