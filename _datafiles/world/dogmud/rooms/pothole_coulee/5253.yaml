@@ -1,0 +1,51 @@
+roomid: 5253
+zone: Pothole Coulee
+title: Upper Talus
+description: >
+  The slope crests here at the high shoulder of the talus, the highest
+  ground the scree field offers before the bluffs take over and the
+  climbing becomes a different kind of work. The shoulder is a broad
+  irregular bench of broken basalt, some plates tilted up on their
+  edges like bad teeth and some laid flat and firm enough to stand on
+  without checking each step. This is the best scavenging on the face
+  -- wind and meltwater sweep debris up from below and pile it against
+  the bluff behind, and pickers work the shoulder's accumulated drift
+  for anything useful the talus has turned up. From here the whole
+  coulee is visible, the pale thread of the wash far below, the hub
+  smaller still, and the canyon walls running out to the sky. The cold
+  draft from the west is sharper up here, a steady exhalation from
+  somewhere deep in the dark ground ahead, smelling of wet stone and
+  old air. East drops back to the scree field; west is the mine mouth.
+biome: mountains
+coord:
+  x: 36
+  y: -1
+  z: 0
+exits:
+  east:
+    roomid: 5250
+  west:
+    roomid: 5254
+nouns:
+  shoulder: The broad bench at the top of the talus, the high point
+    of the scree field before the bluffs take over. Plates of basalt
+    sit in all positions here -- some upright like kicked-over boards,
+    some flat and firm, the whole bench the accumulated result of
+    seasons of freeze and thaw working the slope apart.
+  draft: A steady cold exhalation from the west, moving across the
+    shoulder in a constant low breath that smells of wet stone, clay,
+    and old air with no sun in it. It comes from underground, from
+    somewhere deeper than the talus, and it is noticeably colder than
+    the wind that crosses the open face below.
+  drift: A long windrow of accumulated debris heaped against the bluff
+    at the shoulder's back edge -- small ore fragments, lost tools,
+    rope ends, and the general shed material of a working mine above.
+    Pickers work it regularly. What remains is what no one has judged
+    worth lifting yet.
+  bluff: The basalt wall that ends the shoulder to the west, sheer and
+    dark and cold to the touch. The mine mouth cuts through it at
+    ground level. Above, the bluff runs up past sight without a seam
+    or ledge worth attempting.
+idlemessages:
+- The cold <ansi fg="itemname">draft</ansi> off the mine mouth stirs the <ansi fg="itemname">drift</ansi> debris along the shoulder and raises the smell of deep stone.
+- A scavenger's iron pick lies wedged in the <ansi fg="itemname">shoulder</ansi> rocks -- left because the handle cracked, or because the one who left it did not come back.

@@ -1,0 +1,46 @@
+roomid: 5250
+zone: Pothole Coulee
+title: Scree Field
+description: >
+  The slope opens here into a wide field of sliding rock, no wall on either
+  side to give a handhold, the whole face exposed to the sky and the canyon
+  wind. Grey basalt plates fan out in every direction, tilted and loose,
+  some the size of flagstones and some no bigger than a fist. Moving across
+  the field means choosing each step -- weight too far forward and a plate
+  noses down, too far back and the one behind you kicks away. In the face of
+  an exposed bluff to the north a seam of darker stone cuts a ragged diagonal
+  -- basalt-iron, the local ore, showing in a raw vein where frost has
+  prised the wall apart. The ore is close-grained and dark as bruised metal,
+  and it bleeds a faint orange stain down the rock below it. The scree field
+  runs east back toward the lower talus, and west the slope rises toward the
+  high shoulder. South the ground drops into a pocket of richer rubble.
+biome: mountains
+coord:
+  x: 37
+  y: -1
+  z: 0
+exits:
+  east:
+    roomid: 5249
+  west:
+    roomid: 5253
+  south:
+    roomid: 5252
+nouns:
+  vein: A ragged seam of basalt-iron cutting diagonally across the face
+    of the bluff, prised open by frost so that the raw ore is exposed
+    and close to hand. The rock here is close-grained and dark, heavier
+    than it looks, and it leaves an orange mineral stain on everything
+    below it. This is where the smithy gets its iron when the usual
+    supply runs short.
+  rock: Loose basalt plates spread across the open face in overlapping
+    fans, each one riding on the next, the whole field in slow uneasy
+    motion. Some plates are flagstone-wide and will bear weight; most
+    are not. Learning which is which is what the slope teaches.
+  bluff: The exposed stone face to the north where the vein shows, frost-
+    cracked and dark, the broken wall of the coulee rim above. The ore
+    seam runs a ragged line across it, orange-stained below, and loose
+    plates have calved from it in fans across the scree.
+idlemessages:
+- A cluster of <ansi fg="itemname">rock</ansi> plates lets go somewhere to the south and the clatter echoes off the bluff before it dies.
+- Wind drives across the open field and the orange stain below the <ansi fg="itemname">vein</ansi> glitters with mica dust shaken loose.

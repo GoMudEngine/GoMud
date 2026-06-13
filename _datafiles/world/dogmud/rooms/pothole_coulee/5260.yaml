@@ -1,0 +1,43 @@
+roomid: 5260
+zone: Pothole Coulee
+title: The Den
+description: >
+  The gallery closes into a wide chamber that stinks of something
+  animal -- musk and old meat and the iron trace of blood dried into
+  rock. The floor has been worked over: loose stone pushed to the
+  walls in rough piles, the center swept clean by dragging and
+  turning and the long slow occupation of a body too heavy for the
+  rock to shrug off. Bones are strewn across it, cracked and gnawed
+  flat by a jaw that treats basalt as a tenderizer. Not the bones of
+  prey alone -- there are tool hafts in the litter, a boot heel,
+  the flat disc of a helmet dome with the bowl bitten in. Whatever
+  holds this den has eaten things that arrived here armed and certain.
+  The den opens west toward something glinting in the deep rock; the
+  gallery lies back east and is the only way out if the den's keeper
+  is away.
+biome: cave
+coord:
+  x: 32
+  y: -1
+  z: -2
+exits:
+  east:
+    roomid: 5259
+  west:
+    roomid: 5261
+nouns:
+  den: The fouled inner chamber, swept clear at the center by the
+    body that sleeps and turns and sleeps here, walls ringed with
+    pushed rubble and the litter of many meals. It has the shape of
+    a lair -- a place organized by instinct over a long time into
+    something that serves the occupant perfectly and everything else
+    not at all.
+  bones: Cracked and gnawed across the den floor, the picked remains
+    of the beast's meals. Most are animal -- the long bones of
+    something hunted in the upper workings. But not all. A tool
+    haft, a boot heel, a helmet dome with the bowl bitten through --
+    these were carried in by things that walked upright and did not
+    walk out again.
+idlemessages:
+- The stink of the <ansi fg="itemname">den</ansi> thickens when the air stirs -- musk and old blood and something underneath that has no name.
+- One of the <ansi fg="itemname">bones</ansi> rocks under a shifting column section and cracks against the wall, and the sound of it travels back through the gallery.

@@ -1,0 +1,41 @@
+roomid: 5259
+zone: Pothole Coulee
+title: The Stone Gallery
+description: >
+  The drift gives way to a natural gallery where the basalt columns
+  failed and a broad void opened in the rock -- wide enough to lose
+  the walls in the dark, the ceiling higher here than anywhere else
+  in the mine, lost entirely above whatever light you carry. The
+  gallery has a floor of loose fractured column-sections, shed from
+  the ceiling over time, rough and unstable underfoot. And it has a
+  presence. Something large breathes in the dark ahead -- you cannot
+  see it but the gallery relays every sound as if it were a bell, and
+  what you hear west is not dripping water and settling stone. It is
+  slow and deep and deliberate, the respiration of something that
+  has made this space its own for a long time. The footing will not
+  let you move quietly and the dark will not let you see past twenty
+  feet. The gallery continues west; the lower drift lies back east.
+biome: cave
+coord:
+  x: 33
+  y: -1
+  z: -2
+exits:
+  east:
+    roomid: 5258
+  west:
+    roomid: 5260
+nouns:
+  gallery: The broad natural void opened in the basalt, wider than
+    any worked space in the mine, high enough at the center that the
+    ceiling is simply gone into the dark above. It amplifies every
+    sound and sends it back -- a quality that cuts both ways, because
+    whatever occupies the west end of it has the same advantage and
+    has been listening to this ground far longer than you have.
+  dark: The absolute black of the gallery beyond the edge of any
+    light you carry -- flat walls swallowed, ceiling gone, the
+    source of the breathing ahead unlocatable by sight. It is not
+    emptiness. Something in the dark knows exactly where you are.
+idlemessages:
+- The <ansi fg="itemname">gallery</ansi> catches a sound from the west -- slow, deep, and patient -- and sends it back to you changed into something larger.
+- In the <ansi fg="itemname">dark</ansi> ahead something shifts its weight and the fractured floor transmits it as a low grinding vibration under your feet.

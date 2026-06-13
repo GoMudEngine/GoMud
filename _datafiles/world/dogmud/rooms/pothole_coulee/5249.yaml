@@ -1,0 +1,45 @@
+roomid: 5249
+zone: Pothole Coulee
+title: Lower Talus
+description: >
+  The forge path drops you off the packed slag and onto loose stone, and
+  the difference is immediate. The scree shifts under every step, small
+  plates of grey basalt riding on one another with a sound like cracking
+  knuckles, the whole talus slope alive and unreliable. Above, the smithy
+  ledge is a black line against the pale sky; below, the slope steepens
+  and the coulee floor is still a long way down. Wind moves in gusts across
+  the open face, carrying grit and the faint iron smell of ore baking in
+  the sun. Someone has been through here already -- the scavenger's leavings
+  show as a tumbled pile at the base of a frost-heaved slab, old bones of
+  packs and bent tools, picked over and left to weather. There is no
+  comfortable footing anywhere on this face. West runs deeper into the scree;
+  south, the slope cuts down to where the old cuts begin.
+biome: mountains
+coord:
+  x: 38
+  y: -1
+  z: 0
+exits:
+  east:
+    roomid: 5248
+  west:
+    roomid: 5250
+  south:
+    roomid: 5251
+nouns:
+  scree: Loose plates of grey basalt stacked in shallow fans across the
+    slope, each plate riding on the next so that the whole face shifts
+    underfoot like a slow river of stone. A step placed wrong sends a
+    cascade clicking down below you, and the noise carries far in the
+    open air.
+  talus: The broken-rock apron below the smithy ledge, built up over
+    seasons of frost-heave and the forge's own discards -- clinker,
+    cinder, and pried-out gangue pitching down the face to mix with
+    the native rubble. It is neither safe nor stable, and it knows it.
+  leavings: A picked-over tumble of bent frames, frayed cordage, and
+    broken-handled tools heaped at the base of a frost-heaved slab.
+    Whoever sorted through this took everything of worth. What remains
+    is a lesson -- the talus gives up nothing for free.
+idlemessages:
+- A plate of <ansi fg="itemname">scree</ansi> shifts somewhere below you and the clatter carries a long way down the slope before it stops.
+- Wind crosses the open <ansi fg="itemname">talus</ansi> face, picking up grit and the faint smell of heated iron from the smithy above.

@@ -1,0 +1,38 @@
+roomid: 5244
+zone: Pothole Coulee
+title: Forge Path
+description: >
+  The talus draw narrows and steepens here, a worn path of slag-crusted
+  stone threading up through the scree. Old clinker and cinder have been
+  packed into the gaps between the plates, giving the footing more hold
+  than the loose rock below but turning the path an ugly, burnt black.
+  The smell sharpens with every step -- quenched coal and hot iron and
+  the dry bite of ash, rolling down from somewhere above the slide to
+  the west. A smudge of smoke rises against the sky ahead, close now.
+biome: mountains
+coord:
+  x: 41
+  y: 0
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  east:
+    roomid: 5221
+  west:
+    roomid: 5245
+nouns:
+  path: The path has been worked by patient hands -- slag and cinder
+    packed into every gap between the rock plates, giving solid footing
+    where the loose talus offered none. It climbs steadily toward the
+    smell of the forge.
+  slag: Dark clinker and glassy forge-waste packed tight between the
+    stone plates, turned underfoot to a crunching black gravel. It
+    holds the slope together and announces the smithy before you see
+    it.
+  smoke: A thin column of grey-white smoke rises from somewhere above
+    the talus, steady and deliberate -- not a fire out of control but
+    a forge kept burning. It bends west in the canyon draft and
+    vanishes.
+idlemessages:
+- A breath of forge-smoke drifts down the <ansi fg="itemname">path</ansi>, warm against the cold rock smell.

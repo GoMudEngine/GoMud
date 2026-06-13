@@ -1,0 +1,67 @@
+================================================================================
+NEWBIE REWORK — CHUNK 3 (SPOKE B / FORGE) — PHASE R ARTIFACT
+Rooms + nouns. Built + verified 2026-06-13.
+================================================================================
+
+18 rooms (5244-5261) climbing WEST from the already-built hub stub 5221 (Talus
+Gap), in three rings. The hub stub's west exit was wired to 5244.
+
+--------------------------------------------------------------------------------
+ROOM MANIFEST (all _datafiles/world/dogmud/rooms/pothole_coulee/)
+--------------------------------------------------------------------------------
+INNER — the smithy (sanctuary; biome fort/house/mountains):
+  5244 Forge Path (41,0,0)        E->5221  W->5245
+  5245 The Coulee Smithy (40,0,0) E->5244  W->5246  N->5247   [station: forge]
+  5246 Ore Stall (39,0,0)         E->5245
+  5247 Quench Shed (40,-1,0)      S->5245  W->5248             [station: forge]
+  5248 The Last Worked Stone (39,-1,0) E->5247  W->5249  (sanctuary ends here)
+MIDDLE — the talus slope (NO sanctuary; biome mountains):
+  5249 Lower Talus (38,-1,0)      E->5248  W->5250  S->5251
+  5250 Scree Field (37,-1,0)      E->5249  W->5253  S->5252    (basalt-iron vein noun)
+  5251 Collapsed Cut (38,0,0)     N->5249  W->5252             (cave-in survivor site)
+  5252 Ore Pocket (37,0,0)        E->5251  N->5250             (salvage/gather room)
+  5253 Upper Talus (36,-1,0)      E->5250  W->5254
+  5254 Mine Mouth (35,-1,0)       E->5253  D->5255             (descent begins)
+OUTER — the mine shaft (NO sanctuary; biome cave; descends z-1 then z-2):
+  5255 Mine Head (35,-1,-1)       U->5254  W->5256
+  5256 Timbered Drift (34,-1,-1)  E->5255  W->5257  D->5258
+  5257 Flooded Sump (33,-1,-1)    E->5256                       (dead-end pocket)
+  5258 Lower Drift (34,-1,-2)     U->5256  W->5259
+  5259 The Stone Gallery (33,-1,-2) E->5258  W->5260
+  5260 The Den (32,-1,-2)         E->5259  W->5261              (boss room: stone-blooded beast)
+  5261 Deep Vein (31,-1,-2)       E->5260                       (reward vista; future lateral connector hint)
+
+--------------------------------------------------------------------------------
+VERIFICATION — ALL PASS
+--------------------------------------------------------------------------------
+[PASS] coord_inventory.py: 0 global collisions. Pothole Coulee now 61 rooms,
+       bbox x[31..57] y[-3..3] z[-2..2]. Spoke B occupies x31-41 (existing rooms
+       are x42-57 — zero overlap).
+[PASS] newbie_manifest_check.py (EXTENDED with a Spoke-B section): 18 Spoke B
+       rooms PASS (title/biome/sanctuary/noun-token rule) + 19 Spoke B exit
+       pairs PASS (reciprocity). Full checker green: 26 hub + 8 NPC + 17 SpA
+       rooms + 18 SpA exits + 8 SpA mobs + 18 SpB rooms + 19 SpB exits, 0 FAIL.
+[PASS] Boot: rooms.loadAllRoomZones loadedCount 566 -> 584 (+18); 0 panics.
+[PASS] cartcheck (authoritative): config MapConsistencyEnforce=panic and
+       mapper.ValidateZoneConsistency reported errors=0 warnings=0 — the engine
+       itself confirms NO cartesian overlaps and NO exit inconsistencies.
+[PASS] Room-walk: smoketester teleported through all 18 rooms + the stub; every
+       room rendered with title + biome glyph + exits; zero "room not found" /
+       errors. (Throwaway driver tools/_c2b_roomwalk.py.)
+
+NOTE: a content subagent wrote three noun-value prose colons that broke YAML
+(a plain scalar can't contain `: ` or a trailing `:`); caught by the manifest
+checker's yaml.safe_load and fixed (5249 "a lesson:", 5254 "mine work:", 5256
+"fighting ground:", 5260 "bitten through:"). Lesson for future content: colons
+in NOUN/idlemessage values break the parser (description `>`-scalars are safe).
+
+--------------------------------------------------------------------------------
+NEXT (after this Phase-R review gate)
+--------------------------------------------------------------------------------
+Phase M — mobs+items: smith + cave-in-survivor NPCs (9116/9117), slope/mine
+foes + the stone-blooded beast boss (9123), the basalt-iron ore material, the
+component bag + forged reward items, spawninfo. (Difficulty untuned per the
+post-build-playtest tuning plan.)
+Phase D — dialogue+quests 35/36/37 INLINE, including the recipe-granting ENGINE
+feature (recipe_info reward + learn_recipe action — user-approved).
+================================================================================

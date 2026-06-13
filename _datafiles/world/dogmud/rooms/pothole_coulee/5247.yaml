@@ -1,0 +1,39 @@
+roomid: 5247
+zone: Pothole Coulee
+title: Quench Shed
+description: >
+  A low shed roofed with overlapping split shakes stretches behind the
+  main smithy, its ceiling close enough to make a tall person stoop.
+  A second small forge occupies the near corner, modest and workmanlike
+  -- less heat than the main, just enough for learning hands that do
+  not yet need the full bed. Beside it a deep quench-trough of dark
+  water runs the length of the back wall, iron-stained to a rust-brown
+  at the waterline. A plain workbench of heavy plank sits between them,
+  its surface gouged by chisels and marked by hammer-corners, every
+  scar an old lesson. The air smells of wet iron and old steam. The
+  smithy proper is to the south; a door leads west into the slope.
+biome: fort
+coord:
+  x: 40
+  y: -1
+  z: 0
+station: forge
+mutators:
+- mutatorid: sanctuary
+exits:
+  south:
+    roomid: 5245
+  west:
+    roomid: 5248
+nouns:
+  trough: A long stone-lined trough sunk into the floor, filled with
+    dark water that carries the color of iron rust. When hot metal
+    goes in, the hiss and steam fill the whole shed. The waterline is
+    stained a deep rust-brown at the iron mark.
+  workbench: A heavy plank bench bolted to the shed wall, its top
+    gouged and scorched and hammer-marked by years of apprentice work.
+    No one bothers to plane it smooth anymore -- the scars are part of
+    it now.
+idlemessages:
+- The surface of the <ansi fg="itemname">trough</ansi> shifts faintly, stirred by some unseen drip.
+- The shed timbers tick with heat, expanding in the warmth off the small <ansi fg="itemname">forge</ansi>.

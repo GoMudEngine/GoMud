@@ -1,0 +1,42 @@
+roomid: 5258
+zone: Pothole Coulee
+title: Lower Drift
+description: >
+  The shaft drops you into the lower level and the mine changes
+  register entirely. The worked drift up top still carried the memory
+  of the surface -- loose grit, borrowed light, air that moved. Here
+  there is none of that. The basalt closes in columnar and close, the
+  great hexagonal columns that make up the scabland bedrock showing
+  their jointing lines raw in the walls and ceiling, packed so tight
+  they look machined. The air is colder and older, untouched by any
+  surface breath, and it has a weight to it that the drift above
+  lacked. Watermarks stain the columns a darker shade at chest height,
+  the tideline of past floods long since receded. Sound behaves
+  differently here -- flat and near, swallowed at the walls. The
+  lower workings run west.
+biome: cave
+coord:
+  x: 34
+  y: -1
+  z: -2
+exits:
+  up:
+    roomid: 5256
+  west:
+    roomid: 5259
+nouns:
+  basalt: The native rock of this level, columnar and close-packed,
+    the hexagonal columns of the scabland bedrock exposed in their
+    raw jointing where the picks stripped the softer overburden away.
+    The faces are glassy where they fractured clean; the joints
+    between them are dark seams the width of a finger. This is old
+    rock and very hard, and the effort it took to open even this
+    small gallery shows in every chipped edge.
+  columns: The great hexagonal pillars locked together in the walls
+    and ceiling overhead, so tightly fitted they need no mortar and
+    give no purchase for water or time to work on. They are the
+    reason the mine goes where it goes -- the columns dictate the
+    drift, not the other way around.
+idlemessages:
+- The air down here does not move; it simply sits against your skin, cold and old and without any memory of the surface.
+- Water has stained the <ansi fg="itemname">columns</ansi> to chest height and no higher -- the tidemark of a flood that came and went and left its record.

@@ -1,0 +1,52 @@
+roomid: 5251
+zone: Pothole Coulee
+title: Collapsed Cut
+description: >
+  An old prospect cut has been driven into the hillside here and then given
+  up to the mountain. The shoring timbers that held the walls apart have
+  snapped and pivoted inward, and the ceiling came down behind them -- a
+  grey mass of broken basalt plates heaped from wall to wall, the cut
+  swallowed to half its depth and sealed. The air smells of clay and fresh
+  stone, the cold mineral breath of something that has never seen light. At
+  the near edge of the collapse, where the roof ran out of room to fall, a
+  hand reaches from under the rubble, palm up, still. Beside it a shoulder,
+  and the back of a head -- someone was in the cut when it closed, and the
+  mountain did not quite finish the job. The chest moves. Barely, but it
+  moves. Pried timber ends jut from the heap at odd angles, each one a
+  failure in the making of this trap. North leads back up to the talus;
+  west runs along the base of the slope toward a pocket of richer rubble.
+biome: mountains
+coord:
+  x: 38
+  y: 0
+  z: 0
+exits:
+  north:
+    roomid: 5249
+  west:
+    roomid: 5252
+nouns:
+  collapse: The mass of fallen basalt that swallowed the back half of the
+    prospect cut -- plates stacked on plates, grey and cold, the weight
+    of the hill carried on the broken backs of the timbers that failed
+    to hold it. The cut runs in only so far as the rock allows, and no
+    further. Past the heap is silence and dark and no air.
+  timbers: The shoring frames that were supposed to hold the cut open,
+    each one snapped at the knee and shoved inward by the weight of the
+    rock above. They jut from the collapse at useless angles, ends
+    splintered bright, the fresh wood pale against the grey stone. They
+    gave in order, one after another, and each failure made the next
+    certain.
+  hand: A hand reaching from the rubble, palm upward, fingers loosely
+    curled, the knuckles grey with stone dust. Beside it a shoulder, and
+    the back of a head. The chest underneath the heap rises and falls in
+    a slow, shallow rhythm. Whoever is in there is alive, for now, and
+    they cannot dig themselves out.
+  cut: The remnant of the prospect cut, the open portion that survived
+    the collapse -- a low tunnel driven into the hillside and then
+    immediately ended. The walls are scored with pick marks, dark and
+    damp, and the floor is covered in broken chips. The rest of the cut
+    is behind the rubble, gone.
+idlemessages:
+- A settled creak moves through the <ansi fg="itemname">timbers</ansi> in the heap and a thin trickle of grit sifts down from above.
+- The <ansi fg="itemname">hand</ansi> shifts slightly in the rubble -- not a reach, not a signal, just the body reminding itself it is still there.

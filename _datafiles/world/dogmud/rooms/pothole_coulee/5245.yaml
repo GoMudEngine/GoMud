@@ -1,0 +1,46 @@
+roomid: 5245
+zone: Pothole Coulee
+title: The Coulee Smithy
+description: >
+  Stone and timber close in tight here, where the talus has been cut
+  back and roofed with split logs to make a proper smithy. The forge
+  squats at the center of the back wall -- a thick stone box packed
+  with glowing charcoal, heat rippling off it in waves, a hide bellows
+  slung on a pivot overhead to drive the air down through the bed. The
+  anvil stands before it, its face scarred bright by uncountable
+  strikes, ringing still with some resonance all its own. Iron tongs
+  and hammers of three weights hang in order from a timber rack; a
+  barrel of quench-water sits nearby, its surface still, smelling of
+  iron and steam. Every surface is black with soot. This is a place
+  where things are made.
+biome: fort
+coord:
+  x: 40
+  y: 0
+  z: 0
+station: forge
+mutators:
+- mutatorid: sanctuary
+exits:
+  east:
+    roomid: 5244
+  west:
+    roomid: 5246
+  north:
+    roomid: 5247
+nouns:
+  forge: A squat stone box built into the back wall, its interior
+    banked with charcoal that glows orange-white at the heart. The
+    heat off it is serious and immediate. This is where iron becomes
+    something other than iron.
+  anvil: The anvil is massive, set on a round of hardwood sunk deep
+    in the floor. Its face is battered bright in a long oval where
+    the hammer lands, the edges dark with old scale. Strike it bare-
+    handed and it will sting you for a week.
+  bellows: A great hide bellows hung on a pivot above the forge, its
+    nozzle aimed down into the charcoal bed. When it drives air
+    through the coals the whole smithy brightens. The hide is stiff
+    with heat and age.
+idlemessages:
+- The <ansi fg="itemname">forge</ansi> ticks and breathes, coals settling with a soft crunch.
+- Heat shimmer makes the rack of <ansi fg="itemname">tongs</ansi> and hammers ripple like a reflection in water.

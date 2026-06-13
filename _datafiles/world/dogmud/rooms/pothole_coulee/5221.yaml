@@ -17,6 +17,8 @@ mutators:
 exits:
   east:
     roomid: 5210
+  west:
+    roomid: 5244
 nouns:
   talus: The talus is a steep apron of shattered rock fallen off the
     cliffs above, dark plates and wedges heaped loose and treacherous. It

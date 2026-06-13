@@ -59,7 +59,7 @@ MANIFEST = {
     # 5220 is the Spoke A (Martial) mouth: the hub stub plus the eastward
     # attachment exit into the spoke's Drill Yard (5227), added in chunk 2.
     5220: ("Dry Coulee Mouth", None, (48, 0, 0), {"west":5209, "east":5227}, 1),
-    5221: ("Talus Gap", None, (42, 0, 0), {"east":5210}, 1),
+    5221: ("Talus Gap", None, (42, 0, 0), {"east":5210, "west":5244}, 1),
     5222: ("Reedwash Mouth", None, (47, 2, 0), {"west":5207}, 1),
     5223: ("Scrub Draw", None, (43, 1, 0), {"east":5216}, 1),
     5224: ("Stargazer Cut", None, (44, -2, 0), {"south":5218}, 1),
@@ -129,6 +129,57 @@ OPPOSITE_DIR = {
     "northwest": "southeast", "southeast": "northwest",
     "up": "down", "down": "up",
 }
+
+# ---------------------------------------------------------------------------
+# Spoke B (Forge) — Pothole Coulee rooms 5244-5261. Climbs WEST from hub stub
+# 5221. Three rings: inner smithy (sanctuary, 5244-5248), middle talus slope
+# (NO sanct., 5249-5254), outer mine shaft (NO sanct., descends z-1/z-2,
+# 5255-5261). Same (rid, title, sanctuary_expected) shape as Spoke A.
+SPOKE_B_ROOMS = [
+    (5244, "Forge Path", True),
+    (5245, "The Coulee Smithy", True),
+    (5246, "Ore Stall", True),
+    (5247, "Quench Shed", True),
+    (5248, "The Last Worked Stone", True),
+    (5249, "Lower Talus", False),
+    (5250, "Scree Field", False),
+    (5251, "Collapsed Cut", False),
+    (5252, "Ore Pocket", False),
+    (5253, "Upper Talus", False),
+    (5254, "Mine Mouth", False),
+    (5255, "Mine Head", False),
+    (5256, "Timbered Drift", False),
+    (5257, "Flooded Sump", False),
+    (5258, "Lower Drift", False),
+    (5259, "The Stone Gallery", False),
+    (5260, "The Den", False),
+    (5261, "Deep Vein", False),
+]
+
+# Reciprocal exit edges (each listed once; the checker verifies both
+# directions). The mine descent 5254->5255 and 5256->5258 is vertical
+# (down/up); everything else is cardinal (the layout is all-cartesian).
+SPOKE_B_EXIT_PAIRS = [
+    (5221, "west", 5244),   # hub stub attachment
+    (5244, "west", 5245),
+    (5245, "west", 5246),
+    (5245, "north", 5247),
+    (5247, "west", 5248),
+    (5248, "west", 5249),
+    (5249, "west", 5250),
+    (5249, "south", 5251),
+    (5250, "west", 5253),
+    (5250, "south", 5252),
+    (5251, "west", 5252),
+    (5253, "west", 5254),
+    (5254, "down", 5255),   # descent into the mine
+    (5255, "west", 5256),
+    (5256, "west", 5257),
+    (5256, "down", 5258),   # descent to lower workings
+    (5258, "west", 5259),
+    (5259, "west", 5260),
+    (5260, "west", 5261),
+]
 
 # ---------------------------------------------------------------------------
 # Spoke A (Martial) — mobs 9108-9115 (Phase M). Per mob:
@@ -416,7 +467,38 @@ def main():
     print("-" * 70)
     print(f"{len(SPOKE_A_MOBS)} Spoke A mobs checked, {spoke_mob_fail} FAIL")
 
-    return 1 if (total_fail or npc_fail or spoke_room_fail or pair_fail or spoke_mob_fail) else 0
+    # --- Spoke B (Forge) rooms ----------------------------------------------
+    print()
+    print(f"{'SPOKE-B':<8} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    spoke_b_room_fail = 0
+    for rid, title, sanct in SPOKE_B_ROOMS:
+        fails = check_spoke_a_room(rid, title, sanct)  # generic room check
+        if fails:
+            spoke_b_room_fail += 1
+            print(f"{rid:<8} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{rid:<8} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_B_ROOMS)} Spoke B rooms checked, {spoke_b_room_fail} FAIL")
+
+    print()
+    print(f"{'EXITPAIR-B':<14} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    pair_b_fail = 0
+    for a, dir_ab, b in SPOKE_B_EXIT_PAIRS:
+        fails = check_spoke_a_exit_pair(a, dir_ab, b)  # generic exit-pair check
+        label = f"{a}-{dir_ab[:2]}-{b}"
+        if fails:
+            pair_b_fail += 1
+            print(f"{label:<14} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{label:<14} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_B_EXIT_PAIRS)} Spoke B exit pairs checked, {pair_b_fail} FAIL")
+
+    return 1 if (total_fail or npc_fail or spoke_room_fail or pair_fail
+                 or spoke_mob_fail or spoke_b_room_fail or pair_b_fail) else 0
 
 
 if __name__ == "__main__":

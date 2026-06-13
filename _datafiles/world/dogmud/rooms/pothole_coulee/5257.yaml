@@ -1,0 +1,39 @@
+roomid: 5257
+zone: Pothole Coulee
+title: Flooded Sump
+description: >
+  The drift ends in a pocket where the rock pinched shut against all
+  effort, leaving a dead-end chamber no bigger than a closet. The
+  floor has been eaten away by long seepage into a shallow sump, and
+  the black water that fills it reaches wall to wall -- there is no
+  dry way around it and no bottom you can see. It is cold on the
+  ankles and knees and colder still when you go in past that. Under
+  the surface, where the water distorts the little light that reaches
+  here, something glints in a crevice of the sump floor, dull but
+  unmistakable -- the glint of worked metal catching the dark. Getting
+  to it means going into the water and staying in it long enough to
+  pry the thing loose, and something in this pocket does not intend
+  for that to happen easily. The only way out is east.
+biome: cave
+coord:
+  x: 33
+  y: -1
+  z: -1
+exits:
+  east:
+    roomid: 5256
+nouns:
+  sump: The flooded dead end, a knee-deep pool of black water filling
+    the pocket wall to wall where the floor has dissolved away by
+    years of seepage. There is no dry crossing and no telling where
+    the bottom is past the near edge -- only the cold and the dark
+    below the surface, and whatever lies in it.
+  water: Black, still, and very cold, the sump pool carries no
+    reflection worth reading. Below its surface the rock crevices
+    are magnified and shifted and impossible to place. What glints
+    down there is real enough -- but reaching it means going fully
+    in, and staying in, in the cold and the dark with a guard
+    that objects.
+idlemessages:
+- A single drop falls from the ceiling into the <ansi fg="itemname">sump</ansi> and the ripple crosses the whole surface before it dies.
+- The <ansi fg="itemname">water</ansi> stirs faintly, as if something below it shifted, and then goes still.
