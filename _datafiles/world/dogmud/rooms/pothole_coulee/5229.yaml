@@ -1,0 +1,38 @@
+roomid: 5229
+zone: Pothole Coulee
+title: Sparring Circle
+description: >
+  A ring of half-buried stones marks out a sparring circle here, the
+  ground inside it scuffed to fine pale dust by shuffling feet. Old chalk
+  lines fan across the dirt -- guard marks, footwork tracks, the patient
+  geometry of learning where to stand and when to move. The dust still
+  holds the scuffs of the last pair to drill here, heel and toe and the
+  long drag of someone giving ground. The yard lies south; the wash
+  climbs on toward the east.
+biome: shore
+coord:
+  x: 49
+  y: -1
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  south:
+    roomid: 5227
+  east:
+    roomid: 5230
+nouns:
+  circle: A ring of stones set half into the earth, marking the bounds of
+    the sparring ground. Step inside it and the rule is plain -- footwork,
+    not flight. The dust within is beaten paler than the dirt around it.
+  chalk: Faint chalk lines fan across the packed dust, redrawn so many
+    times they ghost over each other. Guard stances, stride marks, the
+    angles of a turn -- the drillmaster's silent teaching, written in dust.
+  lines: The chalk lines trace where feet should fall -- a fan of strides
+    and pivots, the careful geometry of holding ground against someone who
+    means to take it from you.
+  stones: Smooth river stones, half-sunk and worn flat on top, ringing the
+    circle. Years of drilling feet have polished the ones along the
+    common paths.
+idlemessages:
+- A drift of pale dust settles slowly back across the chalk <ansi fg="itemname">lines</ansi>.

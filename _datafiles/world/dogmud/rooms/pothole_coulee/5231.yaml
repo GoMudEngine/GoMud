@@ -1,0 +1,39 @@
+roomid: 5231
+zone: Pothole Coulee
+title: The Last Safe Step
+description: >
+  The shelf narrows to a last firm ledge before the ground tips down into
+  the open wash. A weathered boundary stone stands planted at the lip,
+  its old carved mark worn nearly smooth, set here by whoever first claimed
+  this coulee for safe ground. Behind you the yard breathes easy -- swept
+  earth, blunted arms, the quiet of practice. Ahead the gravel falls away
+  east into country no drillmaster keeps. Out there the wash is held by
+  folk who fight back in earnest, and nothing wrapped in leather will
+  answer for you. This is the edge. Past it, you are on your own.
+biome: cliffs
+coord:
+  x: 51
+  y: -1
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  west:
+    roomid: 5230
+  east:
+    roomid: 5232
+nouns:
+  marker: The boundary stone reads as a marker more than a wall -- a single
+    upright slab planted at the lip of the safe ground. Whoever set it
+    meant it as a promise -- this far, the coulee keeps you. No further.
+  stone: A weathered upright slab, grey and lichen-spotted, its carved mark
+    rubbed nearly featureless by wind and reaching hands. It marks the last
+    safe footing before the open wash.
+  edge: The exact lip where swept training ground gives way to raw canyon
+    floor. One side is kept; the other is not. You can feel the difference
+    in the air, the way a held breath feels different from a let one.
+  wash: The gravel wash falls away east past the marker, climbing on toward
+    the distant tower through ground no one here will promise to keep you
+    safe in. Out there things fight back, and they do not pull the blow.
+idlemessages:
+- Wind off the open <ansi fg="itemname">wash</ansi> carries up cold and uncaring past the boundary stone.

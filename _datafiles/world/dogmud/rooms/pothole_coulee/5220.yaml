@@ -17,6 +17,8 @@ mutators:
 exits:
   west:
     roomid: 5209
+  east:
+    roomid: 5227
 nouns:
   wash: The dry wash climbs east between bare shoulders of stone, its
     gravel bed swept clean by floods that come only in the wet season.

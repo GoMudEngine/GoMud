@@ -1,0 +1,42 @@
+roomid: 5227
+zone: Pothole Coulee
+title: The Drill Yard
+description: >
+  The wash opens out into a beaten yard of packed earth, swept flat by
+  countless circling feet. A scarred practice post stands rooted at the
+  center, its top splintered pale where fist and stick have struck it raw
+  -- the steady knocking heard all the way down at the mouth. Beside it a
+  straw-and-leather dummy hangs on a weighted pivot, slumped and patient,
+  ready to swing back at whoever sets to it. The drillmaster's mark is on
+  everything here -- the swept ground, the worn lines, the quiet that
+  waits to be filled with work. The way climbs east and bends north.
+biome: shore
+coord:
+  x: 49
+  y: 0
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  west:
+    roomid: 5220
+  east:
+    roomid: 5228
+  north:
+    roomid: 5229
+nouns:
+  post: A stout practice post sunk deep in the packed earth, taller than a
+    man and worn smooth at striking height. The top is splintered pale and
+    soft, beaten near to pulp by years of patient drilling. This is the
+    knocking the whole canyon hears.
+  dummy: A practice dummy of straw bound in cracked leather, strung on a
+    weighted pivot so a hard blow spins it round to swing back at you. Its
+    stuffing leaks at every old gash. Strike it wrong and it will answer.
+  yard: A wide circle of packed earth, swept flat and hard by years of
+    drilling feet. Faint worn rings track where fighters have paced and
+    turned. Nothing grows here -- the ground is given over to the work.
+  ground: The earth is beaten so hard it rings faintly underfoot, scoured
+    of every stone and weed. Old sweat and old blood have soaked it dark
+    in patches near the post.
+idlemessages:
+- A breath of wind sets the <ansi fg="itemname">dummy</ansi> turning slow on its pivot, then stills it again.

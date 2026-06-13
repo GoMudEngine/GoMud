@@ -1,0 +1,36 @@
+roomid: 5228
+zone: Pothole Coulee
+title: Weapon Rack Lean-to
+description: >
+  A lean-to of weathered canvas slung from poles leans against the canyon
+  wall, throwing a band of shade across a long wooden rack. The rack holds
+  the yard's loaner arms -- carved wooden swords gone grey with handling,
+  blunted spears with their points wrapped in leather, staves bound in
+  fraying cloth so a hard rap stings but never breaks bone. Everything
+  here is meant to be borrowed, used hard, and racked again. The yard
+  lies back to the west.
+biome: shore
+coord:
+  x: 50
+  y: 0
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  west:
+    roomid: 5227
+nouns:
+  rack: A long wooden rack worn shiny at every notch, the loaner arms slung
+    in rows along it. Each weapon is plainly the yard's -- carved, blunted,
+    or wrapped, none of it meant to draw blood, all of it meant to teach.
+  weapons: Practice arms, every one of them tamed -- wooden swords sanded
+    grey, spears blunted and leather-capped, staves wound in cloth. They
+    are scarred from honest use but they will not cut you. Take one and
+    drill.
+  lean-to: A simple shelter of canvas stretched from leaning poles, its
+    cloth bleached and patched, throwing a long band of shade over the
+    rack. It keeps the worst of the sun off the borrowed arms.
+  canvas: Sun-bleached canvas, patched and re-patched, lashed to the poles
+    with knotted cord. It snaps softly when the canyon wind comes through.
+idlemessages:
+- The canvas of the <ansi fg="itemname">lean-to</ansi> bellies and snaps once in the dry wind.
