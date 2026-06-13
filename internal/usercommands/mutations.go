@@ -23,12 +23,13 @@ func Mutations(rest string, user *users.UserRecord, room *rooms.Room, flags even
 	user.SendText(messaging.CategorySystem, ``)
 
 	for mutId, level := range user.Character.Mutations {
+		depth := mutations.LevelDescription(level)
 		spec := mutations.GetMutation(mutId)
 		if spec == nil {
-			user.SendText(messaging.CategorySystem, fmt.Sprintf(`  <ansi fg="yellow">%s</ansi> (Level %d)  <ansi fg="red">[data missing]</ansi>`, mutId, level))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`  <ansi fg="yellow">%s</ansi> (%s)  <ansi fg="red">[data missing]</ansi>`, mutId, depth))
 			continue
 		}
-		user.SendText(messaging.CategorySystem, fmt.Sprintf(`  <ansi fg="yellow">%s</ansi> <ansi fg="magenta">(Level %d)</ansi>`, spec.Name, level))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`  <ansi fg="yellow">%s</ansi> <ansi fg="magenta">(%s)</ansi>`, spec.Name, depth))
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(`    <ansi fg="white">%s</ansi>`, spec.Description))
 	}
 

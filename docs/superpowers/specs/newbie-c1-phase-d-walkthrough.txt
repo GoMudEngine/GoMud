@@ -1849,3 +1849,259 @@ quest
 .
 [☾ HP:██████████ SP:██████████ CP:██████████]:
 ===== DONE =====
+
+========================================================================
+HANDHOLDING + MOVEMENT GATE RUN — character Gatecheck
+========================================================================
+User gate feedback (2026-06-12 review): mutations showed raw levels;
+players could wander off un-Opened; post-rite next step unclear;
+post-rite players still got the begin spiel. Fixes verified here:
+room behavior on 5200 intercepts ALL movement for the un-Opened and
+answers with the exact command; rite closes with explicit two roads
+(ask toke footing / ask esk passage), echoed in quest journal and
+Hadwen's post-rite dialogue; mutations shows descriptive depth
+(minor/moderate/major/extreme, shared with status template); ambient
+nudge now gated on an un-Opened player actually present (new btree
+condition player_in_room_missing_quest) — 80s post-rite silence
+window clean.
+========================================================================
+===== CREATION =====
+Z!!MUSIC(static/audio/music/intro.mp3 V=20 L=-1 C=1)
+
+      .    *      .       *    .           *      .       *    .     
+          *      .                   .          *                    
+   .          .       *        .          .            *        .    
+        *           .      *         *          .      *            
+             .            .      .         .              .     *    
+
+ ____   ___   ____ __  __           _ 
+|  _ \ / _ \ / ___|  \/  |_   _  __| |
+| | | | | | | |  _| |\/| | | | |/ _` |
+| |_| | |_| | |_| | |  | | |_| | (_| |
+|____/ \___/ \____|_|  |_|\__,_|\__,_|
+
+        D e l u s i o n s   o f   G r a n d e u r
+
+      *    .      *       .    *           .      *       .    *     
+
+.: Welcome to Delusions of Grandeur, a MUD set on the world of Gaius.
+                                                      The Chrysalis awaits.
+
+================================================================================
+Note: Some legacy clients (zMUD, etc.) are not supported.
+We recommend Mudlet or the web client for the best experience.
+
+This port is for AI clients. Human players, please connect on port 33333.
+
+AI players: connect on port 55555. Using this port as an AI risks a ban.
+username (or "new"): 
+>> new
+
+
+This will be both your login name and your character name.
+
+Choose your username: 
+>> Gatecheck
+
+Choose your password: 
+>> cooleetest123
+
+Repeat your password: 
+>> cooleetest123
+
+Email Address (optional): 
+>> 
+
+Are you using a screen reader? [y/n]: 
+>> n
+
+Would you like to create a new user/login named Gatecheck? [y/n]: 
+>> y
+
+Z!!MUSIC(Off)
+Warning: This account is not flagged as AI but connected on the AI port.
+
+*******************************************************************************
+
+ You have been given a new quest: The Awakening!
+ type quests to track your progress on quests.
+
+*******************************************************************************
+.
+ ╔══════════════════════════════════════════════════════════════════════════════╗
+ ║  .:  M E S A G E   O F   T H E   D A Y                                    ║
+ ╠══════════════════════════════════════════════════════════════════════════════╣
+ ║ TAKE AIM — Bows, crossbows, and primitive pistols have arrived: fire      ║
+ ║ instantly with shoot, even into the next room, then reload from an ammo     ║
+ ║ bundle. The revived ranged-combat skill rewards a keen eye, and Smith       ║
+ ║ Brindle in Stillwater stocks the gear. Watch for archers who keep their     ║
+ ║ distance and shoot back as they retreat. (2026-06-12.)                      ║
+ ║ WEATHER HAS COME — Storms are born over open water, roll inland gathering ║
+ ║ strength, and die against the mountains. Step outside and feel it; shelter  ║
+ ║ indoors and hear heavy rain drum on the roof. Try the weather command.      ║
+ ║ (2026-06-10.)                                                               ║
+ ║ QUIETER FIGHTS, YOUR CALL — set combatverbosity full, medium, or light to ║
+ ║ choose how much combat text you see. You always see deaths, big moves, and  ║
+ ║ every blow that lands on you. (2026-06-10.)                                 ║
+ ║ Novel: https://github.com/pruuk/DOGMud/blob/master/what_the_moons_keep.md   ║
+ ║ Full patch notes:                                                           ║
+ ║ https://github.com/pruuk/DOGMud/blob/master/PATCH_NOTES.md                  ║
+ ╚══════════════════════════════════════════════════════════════════════════════╝
+.
+.: 1 user online
+╒═══════════╕═══════════════════╕════════╕══════╕
+│ Name      │ Title             │ Online │ Role │
+└───────────┘───────────────────┘────────┘──────┘
+│ Gatecheck │ Novice Generalist │ 0s     │ user │
+└───────────┘───────────────────┘────────┘──────┘
+.
+You have 0 unread messages and 0 old messages. Type inbox to view your messages.
+
+.: [≈] The Awakening Pool (overcast) [Pothole Coulee]
+The coulee floor opens here into a wide stone bowl, its walls worn       ╔═════╗
+smooth by ancient floods. Dark water fills the pool nearly to the rim,   ║~ ▼ ▼║
+flat and still as poured glass -- no ripple, no current, no sound. Far   ║│ │ │║
+below the surface, something glows with pale blue-green light, steady    ║~─@─~║
+and deep, like a coal that never burns out. The basalt rim is polished   ║│ │ │║
+where countless hands have gripped it. This is where the Opened come     ║~─•─⌂║
+back to themselves.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+A flat gray ceiling of cloud hangs low overhead, dulling every color.
+
+Also here: Cleric Hadwen (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen says, "New to the coulee? Welcome. I keep the pool, and the pool
+is waiting for you. Ask me about the rite if you want the why of it -- or simply
+tell me you are ready: ask hadwen begin starts it."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== GATE 1: 'south' before rite (expect pool holds you + instruction) =====
+
+>> south
+south
+The pool's stillness holds you where you stand -- not unkindly, the way a hand on a shoulder holds. The rite comes first. Say ask hadwen begin when you are ready, and the whole coulee opens with you.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== GATE 2: 'north' before rite (expect same) =====
+
+>> north
+north
+The pool's stillness holds you where you stand -- not unkindly, the way a hand on a shoulder holds. The rite comes first. Say ask hadwen begin when you are ready, and the whole coulee opens with you.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== GATE 3: 'go east' before rite (expect same) =====
+
+>> go east
+go east
+The pool's stillness holds you where you stand -- not unkindly, the way a hand on a shoulder holds. The rite comes first. Say ask hadwen begin when you are ready, and the whole coulee opens with you.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:The cloud ceiling hangs low and unbroken, gray from edge to edge.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== RITE (now incl. two-roads closing lines) =====
+
+>> ask hadwen begin
+ask hadwen begin
+Cleric Hadwen says, "Then we begin. Step to the edge with me."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen wades into the shallows and turns. The pale plates along his jaw
+catch the light coming up off the water.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen says, "Gaius is made of belief. The land believes itself into
+shape. So does everything that lives on it. So will you."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen says, "Most worlds let you stay what you arrived as. This one will
+not. The body answers effort, conflict, fear, wanting -- it changes. We call the
+changes mutations, and none of them are a punishment, whatever they look like at
+first."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen says, "The pool answers first. It is older than the town and more
+patient than I am. Look into the water."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen rests a hand on your shoulder. The pool's light rises to meet
+you, and for a moment you are somewhere else -- folded inside something vast and
+warm that is looking back at you with your own eyes.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen The light lets you go. The water is only water again, and the
+morning is just a morning, and something under your skin is newly, quietly
+awake.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen says, "It is done. You will feel it settle for a while. That is
+normal."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen says, "Type mutations whenever you want to see what the pool woke
+in you. It will not be the last -- the rest, you will earn the slow way."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:The light below pulses once, faint and slow, then steadies.
+Cleric Hadwen says, "If the name you carried here no longer fits the shape of
+you, renameself lets you choose truer. And help answers most questions with more
+patience than I have."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen says, "Now -- two roads from here, and both are good ones. If
+Gaius is new to you, go south to the square and tell Crier Toke you need your
+footing: ask toke footing. He will walk you through the town properly."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen says, "And if you already know this world and only needed the
+pool, Warden Esk keeps the way out -- south through the market to the Threshold
+House, then ask esk passage. The coulee will still be here either way."
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== MUTATIONS (expect descriptive depth, no Level N) =====
+
+>> mutations
+mutations
+ .:. Your Mutations .:.
+  Adrenaline Surge (minor)
+    When near death, your body floods with impossible energy. Devastating when cornered, but the strain is immense.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== QUEST 30 end-step text (two roads) =====
+
+>> quest
+quest
+ ┌─ .:Quests ( 0 out of 1 shown ) ──────────────────────────────────────────┐
+ └──────────────────────────────────────────────────────────────────────────┘
+ To see all quests (including completed), use quests all
+ 
+.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== FREEDOM: 'south' after rite (expect Hub Square) =====
+
+>> south
+south
+    >>> You head towards the south exit.
+
+
+.: [•] Hub Square (overcast) [Pothole Coulee]
+The town's heart opens out here across flat basalt slabs, worn smooth by ╔═════╗
+more feet than anyone has bothered to count. A weathered notice-post     ║~─≈─~║
+stands square in the middle, its boards layered thick with the crier's   ║│ │ │║
+latest word and a hundred older ones gone soft beneath. Even with not a  ║~─@─⌂║
+soul about, the square does not feel empty -- it holds the kept-breath   ║  │  ║
+hum of a place where news breaks and gossip travels, where the day's     ║⌂─•─⌂║
+first word and its last both get spoken aloud. Ways run off in every     ╚═════╝
+direction: north toward the pool, south to the market, west along the
+stilt-walk, east to the squat strongbox-house. Stand here a spell and
+the town will find you on its own.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+A flat gray ceiling of cloud hangs low overhead, dulling every color.
+
+Also here: Crier Toke (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Crier Toke glances up as you enter.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== FREEDOM: back north to the pool =====
+
+>> north
+north
+    >>> You head towards the north exit.
+
+
+.: [≈] The Awakening Pool (overcast) [Pothole Coulee]
+The coulee floor opens here into a wide stone bowl, its walls worn       ╔═════╗
+smooth by ancient floods. Dark water fills the pool nearly to the rim,   ║~ ▼ ▼║
+flat and still as poured glass -- no ripple, no current, no sound. Far   ║│ │ │║
+below the surface, something glows with pale blue-green light, steady    ║~─@─~║
+and deep, like a coal that never burns out. The basalt rim is polished   ║│ │ │║
+where countless hands have gripped it. This is where the Opened come     ║~─•─⌂║
+back to themselves.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+A flat gray ceiling of cloud hangs low overhead, dulling every color.
+
+Also here: Cleric Hadwen (100%)
+
+Exits: east, north, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== POST-RITE SILENCE WINDOW (80s at pool, nudge must NOT fire) =====
+The air sits still and heavy, waiting on weather that hasn't decided.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Cleric Hadwen murmurs the welcome-words under his breath, the same ones, meaning
+them
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+===== DONE =====

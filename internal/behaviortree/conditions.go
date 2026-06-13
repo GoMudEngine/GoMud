@@ -21,6 +21,7 @@ func init() {
 	conditionRegistry["random_chance"] = condRandomChance
 	conditionRegistry["state_equals"] = condStateEquals
 	conditionRegistry["players_in_room"] = condPlayersInRoom
+	conditionRegistry["player_in_room_missing_quest"] = condPlayerInRoomMissingQuest
 	conditionRegistry["item_matches"] = condItemMatches
 	conditionRegistry["mob_has_buff"] = condMobHasBuff
 	conditionRegistry["player_has_spell"] = condPlayerHasSpell

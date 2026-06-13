@@ -22,8 +22,8 @@ steps:
     description: "Cleric Hadwen will open the pool for you when you say you are ready."
     hint: "Stand at the Awakening Pool and type ask hadwen begin when you are ready."
   - id: end
-    description: "The pool has opened you. The change is yours now."
-    hint: "Type mutations to see what the pool woke in you. Hadwen can tell you more."
+    description: "The pool has opened you. Two roads from here: learn the town with Crier Toke, or leave through Warden Esk's arch."
+    hint: "New to Gaius? Go south to Hub Square and type ask toke footing. Know your way already? The Threshold House is south through the market -- type ask esk passage there. Type mutations any time to see what the pool woke."
 
 rewards:
   player_message: >-

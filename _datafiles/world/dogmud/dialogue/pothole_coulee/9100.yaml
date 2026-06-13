@@ -38,9 +38,13 @@ tree:
         text: >-
           How does it sit, the new thing under your skin? Settling, I
           hope. The first one always argues a little before it agrees.
+          Remember: Crier Toke in the square south of here will walk
+          you through the town -- or Warden Esk opens the way out, at
+          the Threshold House south through the market.
         hints: >-
-          You could ask about mutations, your name, or the Chrysalis.
-          Crier Toke in the square knows what to do next.
+          Type ask toke footing in Hub Square to learn the town, or
+          ask esk passage at the Threshold House to leave. You could
+          also ask Hadwen about mutations or your name.
 
   nodes:
     - id: rite_offer

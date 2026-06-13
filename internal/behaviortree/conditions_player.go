@@ -118,6 +118,34 @@ func condPlayersInRoom(params map[string]any, ctx *EvalContext) Result {
 	return Failure
 }
 
+// condPlayerInRoomMissingQuest succeeds when ANY player in the mob's
+// room lacks the given quest token. Built for ambient/idle branches
+// (mob_idle has no triggering player, so per-player conditions like
+// player_missing_quest can't gate them) — e.g. the newbie-hub greeter
+// only repeats his invitation while an un-Opened player is actually
+// standing at the pool.
+// params: quest (string token)
+func condPlayerInRoomMissingQuest(params map[string]any, ctx *EvalContext) Result {
+	quest := getStringParam(params, "quest")
+	if quest == "" {
+		return Failure
+	}
+	room := rooms.LoadRoom(ctx.RoomId)
+	if room == nil {
+		return Failure
+	}
+	for _, userId := range room.GetPlayers() {
+		user := users.GetByUserId(userId)
+		if user == nil {
+			continue
+		}
+		if !user.Character.HasQuest(quest) {
+			return Success
+		}
+	}
+	return Failure
+}
+
 func condMultipleEnemies(params map[string]any, ctx *EvalContext) Result {
 	room := rooms.LoadRoom(ctx.RoomId)
 	if room == nil {

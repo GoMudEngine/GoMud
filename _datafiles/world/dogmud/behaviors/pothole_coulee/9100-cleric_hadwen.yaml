@@ -92,10 +92,21 @@ tree:
         - type: action
           do: say
           text: >-
-            Walk the town. Crier Toke in the square keeps the day's
-            word. And when you are ready to leave us, Warden Esk keeps
-            the way out. The coulee will still be here.
+            Now -- two roads from here, and both are good ones. If
+            Gaius is new to you, go south to the square and tell
+            Crier Toke you need your footing:
+            <ansi fg="command">ask toke footing</ansi>. He will walk
+            you through the town properly.
           delay: 33.0
+        - type: action
+          do: say
+          text: >-
+            And if you already know this world and only needed the
+            pool, Warden Esk keeps the way out -- south through the
+            market to the Threshold House, then
+            <ansi fg="command">ask esk passage</ansi>. The coulee will
+            still be here either way.
+          delay: 36.5
         - type: action
           do: grant_mutation
         - type: action
@@ -124,13 +135,16 @@ tree:
           delay: 2.0
 
     # ── AMBIENT BACKSTOP: every so often, repeat the invitation aloud.
-    #    No per-player gating exists on mob_idle (no triggering player),
-    #    so keep the cadence low and the line a standing offer. ──
+    #    Gated on an un-Opened player actually being present (custom
+    #    condition — mob_idle has no triggering player, so plain
+    #    player_missing_quest can't apply here). Opened players never
+    #    hear this again. ──
     - type: sequence
       event: mob_idle
       children:
         - type: condition
-          check: players_in_room
+          check: player_in_room_missing_quest
+          quest: "30-end"
         - type: condition
           check: random_chance
           percent: 4
