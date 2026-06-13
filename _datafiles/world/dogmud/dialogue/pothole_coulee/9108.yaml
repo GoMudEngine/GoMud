@@ -1,0 +1,155 @@
+mobid: 9108
+zone: Pothole Coulee
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "hail"]
+    responses:
+      - "You need something. Say it."
+      - "I train fighters, not talkers. You here to fight?"
+      - "Drillmaster Vorn. Keep walking or start listening --
+          your choice."
+
+  - keywords: ["train", "learn", "combat", "fight", "drill",
+      "practice", "quest", "task"]
+    responses:
+      - "That is what I am here for. Ask me properly -- not
+          at a shout."
+
+  - keywords: ["consider", "read", "assess", "size up", "size"]
+    responses:
+      - "Consider is how you stop guessing. Type consider on
+          a target before you swing. It tells you what you
+          are walking into -- their apparent toughness, how
+          dangerous they look. A moment of assessment is
+          worth three blind swings."
+
+  - keywords: ["combatverbosity", "verbosity", "combat output",
+      "verbose", "output"]
+    responses:
+      - "set combatverbosity full gives you every detail of every
+          exchange. medium is the working soldier's setting.
+          light is for veterans who already know the shape of
+          a fight and do not need to read it. Start on full.
+          Change it when you know what you are changing."
+
+  - keywords: [""]
+    responses:
+      - "State your business."
+      - "I do not have time for riddles. Ask something."
+      - "If you are here to train, say so."
+
+tree:
+  root:
+    text: "Vorn. Drillmaster. I run the Drill Yard."
+    hints: "You could ask Vorn about training or your task."
+    variants:
+      # ── Not yet Opened (quest 30 incomplete) ──────────
+      - questExcluded: ["30-end"]
+        text: "You are not ready for this yard. The rite of
+          Awakening comes first. Find Cleric Hadwen at the
+          reflecting pool -- north of the hub -- and complete
+          the rite. Then come back."
+        hints: "Find Cleric Hadwen at the reflecting pool
+          north of the hub. Complete the Awakening before
+          speaking with Vorn again."
+
+      # ── Opened, quest not yet started ─────────────────
+      - questRequired: ["30-end"]
+        questExcluded: ["32-start", "32-end"]
+        text: "You have been through the rite. Good. Now you
+          learn to use what the Awakening gave you. I run
+          combat training in this yard. If you want it, ask
+          me about training."
+        hints: "Type ask vorn train to begin combat training."
+
+      # ── Mid-quest: still working through the beats ────
+      - questRequired: ["32-start"]
+        questExcluded: ["32-end"]
+        text: "You are not done. Wield that cudgel and get
+          back on the dummy. Kick it or trip it once you have
+          beaten it down. Consider it before you engage so you
+          know what you are fighting. Then set combatverbosity
+          to your preference. When all four are done, come
+          back to me."
+        hints: "Still on the training checklist. Try: wield
+          cudgel; attack dummy; kick dummy or trip dummy;
+          consider dummy; set combatverbosity full. Then ask vorn
+          report."
+
+      # ── Quest complete ─────────────────────────────────
+      - questRequired: ["32-end"]
+        text: "You are through here. The wash is east. Find
+          Garve -- he is running caravan guard work out there.
+          That is where the real schooling starts. Set your
+          home first: sethome coulee. You will want a
+          fallback point."
+        hints: "Head east into the wash. Type sethome coulee
+          to set your recall point here first."
+
+  nodes:
+    # ── OFFER TRAINING / QUEST START ──────────────────────
+    - id: train_offer
+      triggers: ["train", "learn", "fight", "combat", "drill",
+        "teach", "quest", "task"]
+      questRequired: ["30-end"]
+      questExcluded: ["32-start", "32-end"]
+      grantsQuest: "32-start"
+      givesItem: 10043
+      text: "Right. Stand straight. Here is a cudgel -- nothing
+        fancy, nothing that will embarrass you in a real fight.
+        The training dummy is in this yard. Hit it until it stops
+        hitting back. After that: kick it or trip it once, to learn
+        that you have options beyond the basic swing. Then consider
+        it before you engage -- that tells you what you are walking
+        into. Last, set combatverbosity to your taste; it controls
+        how much combat detail you see. When all four are done, come
+        back to me and report."
+      hints: "You receive a Drillyard Cudgel from Vorn. Type wield
+        cudgel to equip it. Then: attack dummy to fight the training
+        dummy; kick dummy or trip dummy to use a special move;
+        consider dummy to size it up; set combatverbosity full (or medium
+        or light) to set your output. Type ask vorn report when
+        done."
+
+    # ── TURN-IN ───────────────────────────────────────────
+    - id: train_turnin
+      triggers: ["report", "done", "ready", "finished",
+        "quest", "task"]
+      questRequired: ["32-start", "32-strike", "32-special",
+        "32-consider", "32-verbosity"]
+      questExcluded: ["32-end"]
+      grantsQuest: "32-end"
+      text: "Good. You hit the dummy, used your feet, read your
+        opponent, and tuned your output. That is the checklist.
+        You are not a soldier yet, but you are not dead weight
+        either. Take the coin. Head east -- Garve is running
+        caravan guard work in the wash and he could use someone
+        who knows which end of a cudgel to hold. Set your home
+        here first so you have somewhere to fall back to."
+      hints: "Quest complete. Type sethome coulee to set your
+        recall point in Pothole Coulee. Then head east into the
+        wash and type ask garve to find out what Caravan Guard
+        Garve needs."
+
+    # ── COMBAT HELP: consider + combatverbosity ────────────
+    - id: combat_help
+      triggers: ["consider", "combatverbosity", "verbosity",
+        "moves", "help", "kick", "trip"]
+      text: "Consider tells you how dangerous something looks before
+        you commit to the fight. Type consider on a target and read
+        what it says -- that is how you stop walking into fights you
+        cannot win. Combatverbosity controls how much detail you see
+        during combat: full gives you everything, medium trims the
+        fat, light is bare-bones. Type set combatverbosity followed by
+        your choice. Special moves are kick and trip -- kick hits
+        harder when they are standing, trip puts them on the ground
+        so your next swing lands harder. Both cost stamina. Use them
+        when the moment calls for it, not every round."
+      hints: "Type consider dummy to read the training dummy.
+        Type set combatverbosity full, medium, or light to set your
+        output preference. Type kick dummy or trip dummy to try
+        a special move."
+
+memory:
+  expiryPeriod: ""

@@ -32,9 +32,21 @@ combat *systems* — every command used here already ships.
 |---|---|---|
 | Rooms | 5227 | **5227–5249** (≈17 used; rest spare for the spoke) |
 | Mobs | 9108 | **9108–9119** |
-| Items | 40069 | **41000–41019** (zone block reserved in ch.1) |
+| Items | per-range | weapons **10043, 10044**; armor/legs **20087** (see note) |
 | Quests | 32 | **32–34** (+ repeatables share the ids) |
 | Dialogue | (by mobid) | files `9108.yaml`+ keyed by mob id |
+
+> **ID-RANGE GOTCHA (found at Phase M boot, 2026-06-13):** item files are
+> placed by the engine's `ItemSpec.ItemFolder()`, which maps PURELY by id
+> range — `>=40000`→`materials-40000`, `>=30000`→`consumables-30000`,
+> `>=20000`→`armor-20000/<type>`, `>=10000`→`weapons-10000`. The original
+> plan's "items 41000+" block is the **materials** range, so weapons/armor
+> placed there panic at load (`filesystem path ... did not end in Filepath()
+> "materials-40000/..."`). The 41000+ reservation only works for crafting
+> materials. The three Spoke-A rewards are weapons + armor, so they took
+> next-free ids in their own type ranges: **Drillyard Cudgel = 10043**,
+> **Watch-Captain's Blade = 10044** (both `weapons-10000/`), **Toughened
+> Leggings = 20087** (`armor-20000/legs/`). Phase D quests grant THESE ids.
 
 Coordinate reserve: the spoke lays out east of the hub, **x 49–59,
 y −6…+6, z 0–1** (inside the Pothole reserve x[30..59]; clear of the hub

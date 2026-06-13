@@ -1,0 +1,99 @@
+# Quest 33 — Hold the Wash (Pothole Coulee, combat spoke)
+#
+# Token flow:
+#   33-start    — granted by Caravan Guard Garve's dialogue (wash_offer
+#                 node). Requires 32-end (First Blood). Teaches: real
+#                 combat against hostile foes, the flee command, and the
+#                 death-wake-at-Mending-Hut loop as a designed lesson.
+#   33-scout    — mob_death trigger on Bandit Scout (9110). Requires
+#                 33-start. Scouts hold the lower wash (rooms 5232/5233/
+#                 5236).
+#   33-squatter — mob_death trigger on Bandit Squatter (9111). Requires
+#                 33-start. Squatter camps deeper in the cistern
+#                 (rooms 5235/5236).
+#   33-end      — granted by Garve's dialogue (wash_turnin node) after
+#                 both 33-scout and 33-squatter are held.
+#
+# Design intent: the wash CAN kill a careless newbie. That is intentional.
+# The death loop (fall → wake at Mending Hut → walk back) is a taught
+# mechanic. Garve's offer text names flee and the wake location explicitly
+# so players are never surprised by either.
+
+questid: 33
+name: Hold the Wash
+description: >-
+  Caravan Guard Garve's convoy was ambushed in Squatter's Hollow. His
+  sword arm is out of action and he cannot clear the wash alone. He has
+  asked you to drive out a bandit scout and a bandit squatter so the
+  hollow is safe enough to hold. If the fight turns against you, flee --
+  and if you fall, you will wake at the Mending Hut, not in a grave.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: >-
+      Garve needs the wash cleared: a bandit scout and a bandit squatter.
+      He told you to flee if it turns against you, and that falling just
+      wakes you at the Mending Hut.
+    hint: >-
+      Head east from Squatter's Hollow into the lower wash to find a
+      scout. The squatter camps deeper in, toward the cistern. Type flee
+      to pull back if a fight goes badly -- you will wake at the Mending
+      Hut if you fall. Come back to Garve when both are down.
+  - id: scout
+    description: >-
+      One bandit scout is down. The squatter still camps deeper in the
+      wash, toward the cistern.
+    hint: >-
+      Push deeper east toward the cistern to find the bandit squatter.
+      Type flee to pull back if the fight turns against you.
+  - id: squatter
+    description: >-
+      The bandit squatter is down too. Report back to Garve in
+      Squatter's Hollow.
+    hint: >-
+      Walk back west to Squatter's Hollow and tell Garve the wash is
+      clear. Try ask garve report.
+  - id: end
+    description: >-
+      Garve can hold the wash now. He mentioned the bandits still hold
+      a tower further up -- come back when you are ready.
+    hint: >-
+      The wash behind you is clear. Garve hinted the bandit tower up
+      ahead may have more work waiting.
+
+rewards:
+  skillinfo: "weapon-combat:1"
+  itemid: 20087
+  gold: 25
+  playermessage: >-
+    Garve presses a purse into your hand and holds your gaze a moment
+    longer than is strictly necessary -- the look of someone revising
+    their estimate upward. The leggings he slides from the pack beside
+    him are well-made, cut for movement, and they fit.
+
+triggers:
+  # ── SCOUT: defeat a bandit scout (mob 9110) ─────────────────────────
+  - event: mob_death
+    mob: 9110
+    conditions:
+      has: ["33-start"]
+      missing: ["33-scout"]
+    actions:
+      - grant: "33-scout"
+      - send_text: >-
+          The bandit scout goes down. One threat in the wash is done.
+          Push deeper toward the cistern for the squatter.
+
+  # ── SQUATTER: defeat a bandit squatter (mob 9111) ───────────────────
+  - event: mob_death
+    mob: 9111
+    conditions:
+      has: ["33-start"]
+      missing: ["33-squatter"]
+    actions:
+      - grant: "33-squatter"
+      - send_text: >-
+          The bandit squatter drops. The wash is clear down to the
+          cistern. Walk back and give Garve the word.

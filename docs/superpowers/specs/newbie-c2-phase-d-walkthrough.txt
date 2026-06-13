@@ -1,0 +1,164 @@
+================================================================================
+NEWBIE REWORK — CHUNK 2 (SPOKE A / MARTIAL) — PHASE D ARTIFACT
+Dialogue + quests + engine stat-reward + default-home re-point.  Built 2026-06-13.
+================================================================================
+
+FORMAT NOTE
+-----------
+Static build record, NOT a live walkthrough. The user's Windows setup pops
+focus-stealing console windows on every server/test process spawn (hard stop;
+see memory feedback-no-console-popups-windows), so compile / `go test` / boot /
+playtest were NOT run here. They are batched into a user-run verification
+session (see DEFERRED VERIFICATION below). Everything verifiable WITHOUT a
+process spawn (struct/tag analysis via gopls + reads, SOP self-checks) was
+checked.
+
+--------------------------------------------------------------------------------
+1. WHAT WAS BUILT
+--------------------------------------------------------------------------------
+QUESTS (3) — _datafiles/world/dogmud/quests/
+  32-first_blood.yaml      Inner ring / cert. Drillmaster Vorn (9108) grants on
+                           `ask vorn train` (req 30-end). Beats: defeat the
+                           dummy (mob_death 9109), a special move (command
+                           kick|trip @5227), consider (@5227), combatverbosity
+                           (@5227). Turn-in `ask vorn report`. Reward: gold 10 +
+                           skillinfo weapon-combat:1. Cudgel (10043) handed at
+                           START via dialogue givesItem (player needs a weapon
+                           to train). Closes teaching `sethome coulee` + points
+                           east to Garve.
+  33-hold_the_wash.yaml    Middle ring / rank. Caravan Guard Garve (9112) grants
+                           on `ask garve wash` (req 32-end). Beats: defeat a
+                           scout (mob_death 9110) + a squatter (mob_death 9111).
+                           Quest text + Garve EXPLICITLY teach flee + the
+                           death->wake-at-Mending-Hut loop. Turn-in `ask garve
+                           report`. Reward: gold 25 + skillinfo weapon-combat:1
+                           + itemid 20087 (Toughened Leggings).
+  34-take_the_tower.yaml   Outer ring / capstone. Garve grants AFTER a boon
+                           choice (req 33-end). Player picks `ask garve might`
+                           or `ask garve finesse` -> sets quest flag 34-boon +
+                           grants 34-start. Defeat the Bandit Captain (9115);
+                           the flag-gated mob_death trigger grants 34-end and a
+                           PERMANENT stat via the new train_stat action
+                           (might -> Strength+3, finesse -> Dexterity+3). Reward
+                           on 34-end: gold 50 + itemid 10044 (Watch-Captain's
+                           Blade, now stat-neutral so the boon is the sole stat
+                           differentiator) + skillinfo "weapon-combat:1,
+                           unarmed-combat:1" (the multi-skill floor-raise added
+                           in chunk prep). Flag declared in the quest YAML
+                           (flags: boon [might, finesse]) — undeclared flag refs
+                           panic at boot, so this is required.
+
+DIALOGUE (2) — _datafiles/world/dogmud/dialogue/pothole_coulee/
+  9108.yaml (Drillmaster Vorn) — gruff drill-instructor. Root variants gate on
+    30-end / 32-start / 32-end. Nodes: train_offer (grants 32-start, givesItem
+    10043), train_turnin (grants 32-end, gated on all 4 mid-tokens), combat_help
+    (teaches consider / combatverbosity / kick / trip — discoverability).
+  9112.yaml (Caravan Guard Garve) — wary wounded guard. Root variants gate on
+    30-end / 32-end / 33-start / 33-end / 34-start / 34-end. Nodes: wash_offer
+    (33-start), wash_turnin (33-end), tower_offer (Q34 info), tower_might /
+    tower_finesse (set 34-boon flag + grant 34-start), plus lore (arm/ambush/
+    eyes/tower).
+
+ENGINE — stat-grant quest reward (reusable; user-requested "build it in the
+  engine, we'll need it later"):
+  - internal/characters/skills.go: IncreaseStat(stat, amount) ALREADY existed
+    (adds to .Training, re-Validates) — no new Character code.
+  - internal/questengine/types.go: new StatDef {Stat, Amount}; ActionDef gains
+    `train_stat` (yaml-tagged).
+  - internal/questengine/actions.go: ActionContext gains IncreaseStat(stat,
+    amount); ExecuteAction runs the train_stat branch.
+  - internal/questengine/bridge.go: GameBridge.IncreaseStat delegates to
+    Character.IncreaseStat + a descriptive, no-hard-numbers message.
+  - internal/hooks/Quest_HandleQuestUpdate.go: parseStatGrants + a rewards-block
+    `stat_info` application path (mirrors parseSkillGrants), via IncreaseStat.
+  - templates/character/statup.template; tests in actions_test.go,
+    engine_test.go (via embedding), Quest_StatGrants_test.go.
+  NOTE: Spoke A uses the train_stat ACTION (flag-gated) for Q34's choice; the
+  stat_info rewards field is the parallel convenience surface for future
+  fixed-stat rewards.
+
+ENGINE — default-home re-point (approved, pulled forward from C10):
+  internal/characters/respawn_home.go: HomeLocations["default"] 0 -> 5209 (The
+  Mending Hut), display name updated. So a player who dies before running
+  `sethome` now wakes in the coulee, making the Spoke A death lesson testable.
+  Sanctum Basin (room 0) is being retired by the rework.
+
+--------------------------------------------------------------------------------
+2. TWO LATENT BUGS FOUND & HANDLED (would have silently broken rewards)
+--------------------------------------------------------------------------------
+A. REWARD-KEY LOADER GOTCHA (quests.QuestReward).
+   The quest loader uses gopkg.in/yaml.v2, which binds a TAG-LESS struct field
+   to its lowercased name with NO underscore handling. The reward hook
+   (Quest_HandleQuestUpdate.go) reads quests.GetQuest(...).Rewards — the legacy
+   tag-less QuestReward. So reward-block fields load ONLY from no-underscore
+   keys: itemid, skillinfo, buffid, playermessage, roommessage, roomid, spellid.
+   snake_case (item_id, skill_info, player_message) silently DOES NOT load.
+   - Older quests (3-20) correctly use no-underscore -> work.
+   - A few newer quests (1 skill_info:map:1; 30/31 player_message) mistakenly
+     use snake_case -> those reward fields silently no-op. (Pre-existing; NOT
+     fixed here — flagged as a separate latent cleanup. Quest 1 is the retiring
+     Sanctum trials; 30/31's are flavor player_messages.)
+   - FIX APPLIED: my quests 32/33/34 use the working no-underscore keys
+     (skillinfo/itemid/playermessage/roommessage). I briefly added snake_case
+     yaml tags to the struct but REVERTED — that would have broken all ~18
+     older no-underscore quests. The struct is back to tag-less (plus the
+     pre-existing stat_info/rep_* tags) with a loud explanatory comment.
+   - Trigger ACTIONS / CONDITIONS are unaffected: the questengine TriggerDef/
+     Conditions/ActionDef ARE properly snake_case-tagged (verified has_flag,
+     send_text, give_item, set_flag, train_stat all load), so my triggers'
+     snake_case keys are correct.
+
+B. STRAY .clone/ DIRECTORY.
+   A content subagent mistyped the worktree path (.clone instead of .claude) and
+   wrote quest 32 + dialogue 9108 there. Recovered both into the real worktree;
+   deleted the entire stray c:/Users/Calabe Davis/workspace/DOGMud/.clone tree
+   (also held a duplicate 9114 mob — the real one was already correct).
+
+--------------------------------------------------------------------------------
+3. STATIC SOP SELF-CHECK (all pass)
+--------------------------------------------------------------------------------
+[x] Re-grant SOP: every grantsQuest node lists the quest's -end token in
+    questExcluded (train_offer [32-start,32-end]; train_turnin [32-end];
+    wash_offer [33-start,33-end]; wash_turnin [33-end]; tower_might/finesse
+    [34-start,34-end]).
+[x] Discoverability SOP: every grantsQuest node's triggers include quest + task.
+[x] Voice: NPC text first-person; hints narrator/second-person.
+[x] Flag declared: quest 34 declares flag `boon` [might, finesse]; refs use
+    34-boon with matching values (undeclared refs would panic at boot).
+[x] Token flow consistency: 32 (start->strike/special/consider/verbosity->end),
+    33 (start->scout/squatter->end), 34 (choose boon=start -> kill 9115=end).
+[x] Reward keys: no-underscore in all three rewards blocks (grep-confirmed).
+[x] No hard numbers in player-facing text; 80-col wrap.
+
+--------------------------------------------------------------------------------
+4. DEFERRED VERIFICATION (run in a popup-tolerant / user-run session)
+--------------------------------------------------------------------------------
+Run from the worktree root (user launches; assistant must not spawn these):
+  1. go build ./...        — compile the engine changes (gopls reports them
+                             consistent; the earlier "missing IncreaseStat"
+                             diagnostics were a stale mid-edit snapshot resolved
+                             by *mockActionContext embedding + GameBridge impl).
+  2. go test ./internal/questengine/... ./internal/hooks/...
+                           — run the new train_stat + parseStatGrants tests.
+  3. nuke instance saves, then boot — confirm clean load: quests.LoadDataFiles
+                             loadedCount 23 -> 26 (+3); no panic; the 34-boon
+                             flag validates.
+  4. NAIVE FEEL-TESTER PLAYTEST (fresh char, zero goal-coaching,
+     goals/newbie-naive.yaml) — the chunk-complete gate AND the deferred Phase M
+     combat spot-check. Verify end-to-end: hub -> Q32 on the dummy (dummy
+     harmless) -> wash combat (scout winnable; can KO) -> DELIBERATE death ->
+     wake at the Mending Hut (5209) -> Q33 -> gear up -> choose a boon -> climb
+     -> beat the captain (beatable with the granted gear/ranks) -> confirm ON
+     THE CHARACTER SHEET: cudgel, leggings, Watch-Captain's Blade, weapon-combat
+     + unarmed-combat ranks, and the +3 Str/Dex boon all landed.
+
+--------------------------------------------------------------------------------
+5. CHUNK-10 CUTOVER REMINDERS (accrued)
+--------------------------------------------------------------------------------
+- Migration: grant 30-end to all existing characters (the 5200 movement gate).
+- respawn_home default is now 5209 on the build branch — already the C10 intent;
+  ensure it ships and old Sanctum Basin (room 0) is retired/deleted.
+- Optional latent cleanup: migrate quests 1/30/31's snake_case reward keys to
+  no-underscore (or properly tag + migrate the whole QuestReward struct) so
+  their currently-silent rewards/messages fire.
+================================================================================
