@@ -120,24 +120,33 @@ filler). + a repeatable bandit-bounty (kill-count) keyed off 9110/9111.
 
 **Quest 34 — "Take the Tower" (outer, cert).** Granted on entering the
 outer ring / from the Guard after 33. Culminates in defeating the Bandit
-Captain (9115). Reward: **Str or Dex bump** + a **notable weapon** +
-weapon-combat rank (the "special-move proficiency" of §7.2 rendered as a
-rank bump — special moves are commands available to all, gated by
-stamina/skill, so the reward deepens skill rather than unlocking a verb;
-**flagged for review**).
+Captain (9115). Reward (user-approved 2026-06-13): **Str or Dex bump** +
+a **notable weapon** + **a rank of BOTH weapon-combat and unarmed-combat**
+(`skill_info: "weapon-combat:1,unarmed-combat:1"` — see §6, the reward
+engine was extended to grant multiple skills with a floor-raise guard).
+This replaces the vaguer "special-move proficiency" of §7.2 — special
+moves are commands available to all, so the reward deepens skill rather
+than unlocking a verb.
 
 Inner repeatable: "spar" with the dummy (skill-use, no gold). Middle
 repeatable: bandit bounty. No re-grant bugs — every `grantsQuest` node
 carries the `{id}-end` token in `questExcluded` (SOP).
 
-## 6. Engine touches — expected NONE
+## 6. Engine touches — one small, done up front
 
 Combat is fully shipped: `attack`, `consider`, `flee`, `kick`/`stomp`/
 `knee`, `trip`/`tailsweep`, `taunt`, `combatverbosity` all exist; defense
 best-of-all and the smooth-resource penalties are live; death→respawn via
-`ResolveRespawnRoom` works. This chunk should be **pure content** (YAML +
-dialogue + btrees-from-archetypes). Contrast ch.1, which needed the
-spawn-event fix.
+`ResolveRespawnRoom` works. The spoke is otherwise **pure content**.
+
+**DONE (this chunk, committed before Phase R):** the quest `skill_info`
+reward now accepts a comma-separated list of `skill:level` entries
+(`parseSkillGrants` in `Quest_HandleQuestUpdate.go`), reusing the existing
+`currentLevel < level` floor-raise guard so it never downgrades a veteran.
+Needed for Q34's two-skill reward; the single `train_skill` quest-trigger
+action routes through `SetSkill` (absolute, would downgrade) so it was
+NOT usable. Backward-compatible (no comma = legacy single skill); tested
+(`Quest_SkillGrants_test.go`).
 
 **One build-branch prep (pull forward from C10):** re-point the
 `"default"` HomeLocations key from room 0 to **5209 (The Mending Hut)** so
@@ -192,16 +201,17 @@ taught here — a player who does Spoke A leaves combat-literate.
   quests 32–34 + repeatables, the default-home re-point, any boss btree
   beat. Naive playtest verification → **REVIEW gate (= chunk complete).**
 
-## 10. Open questions (answer at/before build)
+## 10. Resolutions & remaining build-time checks
 
-1. **"Special-move proficiency" reward (§7.2):** confirm it's a
-   weapon-combat rank bump (proposed) vs. something more concrete — there
-   is no per-verb unlock for kick/trip/taunt in the engine.
-2. **Default-home re-point timing:** do it now on the build branch
-   (proposed, makes the death lesson testable) or defer wholly to C10?
-3. **NPC names:** Drillmaster + Caravan Guard names must clear the novel
-   (`what_the_moons_keep.md`) and the live mob roster at build (the
-   Maren/Pell rule). Placeholders above are TBD.
-4. **Boss difficulty knob:** the captain must be beatable by a player
-   carrying only what Spoke A handed out — tune statpool against the
-   granted weapon/ranks during the Phase M combat spot-check.
+1. **Outer reward — RESOLVED (user 2026-06-13):** a rank of BOTH
+   weapon-combat and unarmed-combat (+ Str/Dex bump + notable weapon).
+   Engine extended to support it (§6).
+2. **Default-home re-point — RESOLVED (approved):** do it now on the
+   build branch — `"default"` HomeLocations → 5209 — so the death lesson
+   is testable. (Still also a C10 cutover item for prod.)
+3. **NPC names (build-time check):** Drillmaster + Caravan Guard names
+   must clear the novel (`what_the_moons_keep.md`) and the live mob
+   roster (the Maren/Pell rule). Placeholders are TBD; pick at Phase M.
+4. **Boss difficulty knob (Phase M spot-check):** the captain must be
+   beatable by a player carrying only what Spoke A handed out — tune
+   statpool against the granted weapon/ranks during the combat spot-check.

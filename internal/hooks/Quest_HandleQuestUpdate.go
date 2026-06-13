@@ -18,6 +18,36 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
+// skillGrant is one parsed skill reward (skill tag + target level).
+type skillGrant struct {
+	skill string
+	level int
+}
+
+// parseSkillGrants parses a quest's skill_info reward into zero or more
+// grants. Format: a comma-separated list of "skill:level" entries, e.g.
+// "weapon-combat:1,unarmed-combat:1" or the legacy single "map:1".
+// Malformed entries (no colon, unparseable level) are skipped.
+func parseSkillGrants(skillInfo string) []skillGrant {
+	if skillInfo == `` {
+		return nil
+	}
+	var grants []skillGrant
+	for _, entry := range strings.Split(skillInfo, `,`) {
+		details := strings.Split(strings.TrimSpace(entry), `:`)
+		if len(details) <= 1 {
+			continue
+		}
+		skillName := strings.ToLower(strings.TrimSpace(details[0]))
+		level, err := strconv.Atoi(strings.TrimSpace(details[1]))
+		if err != nil || skillName == `` {
+			continue
+		}
+		grants = append(grants, skillGrant{skill: skillName, level: level})
+	}
+	return grants
+}
+
 //
 // Handles quest progress
 //
@@ -134,28 +164,23 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 			questUser.AddBuff(questInfo.Rewards.BuffId, `quest`)
 		}
 		// Stage 3.5: XP rewards removed. Progression is skill-based.
-		// Skill reward?
-		if questInfo.Rewards.SkillInfo != `` {
-			details := strings.Split(questInfo.Rewards.SkillInfo, `:`)
-			if len(details) > 1 {
-				skillName := strings.ToLower(details[0])
-				skillLevel, _ := strconv.Atoi(details[1])
-				currentLevel := questUser.Character.GetSkillLevel(skills.SkillTag(skillName))
+		// Skill reward? Supports one OR several skills (see parseSkillGrants).
+		// Each grant is a floor-raise — it never downgrades a player already
+		// above the target (so a veteran replaying a newbie spoke keeps rank).
+		for _, grant := range parseSkillGrants(questInfo.Rewards.SkillInfo) {
+			currentLevel := questUser.Character.GetSkillLevel(skills.SkillTag(grant.skill))
+			if currentLevel < grant.level {
+				newLevel := questUser.Character.TrainSkill(grant.skill, grant.level)
 
-				if currentLevel < skillLevel {
-					newLevel := questUser.Character.TrainSkill(skillName, skillLevel)
-
-					skillData := struct {
-						SkillName  string
-						SkillLevel int
-					}{
-						SkillName:  skillName,
-						SkillLevel: newLevel,
-					}
-					skillUpTxt, _ := templates.Process("character/skillup", skillData, questUser.UserId)
-					questUser.SendText(messaging.CategorySkillProgress, skillUpTxt)
+				skillData := struct {
+					SkillName  string
+					SkillLevel int
+				}{
+					SkillName:  grant.skill,
+					SkillLevel: newLevel,
 				}
-
+				skillUpTxt, _ := templates.Process("character/skillup", skillData, questUser.UserId)
+				questUser.SendText(messaging.CategorySkillProgress, skillUpTxt)
 			}
 		}
 		// Spell reward?
