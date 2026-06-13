@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -237,6 +238,14 @@ func Kick(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		}
 		room.SendTextVisual(messaging.CategoryKick, fmt.Sprintf(missRoomMsgs[util.Rand(len(missRoomMsgs))], user.Character.Name, targetName), user.UserId, res.Target.UserId)
 	}
+
+	// Quest engine: command notification
+	bridge := questengine.NewGameBridge(user, room.RoomId)
+	questengine.GetEngine().Notify("command", questengine.EventDetails{
+		UserId:  user.UserId,
+		RoomId:  room.RoomId,
+		Command: "kick",
+	}, bridge, bridge)
 
 	return true, nil
 }

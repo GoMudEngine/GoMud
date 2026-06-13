@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -528,6 +529,16 @@ func cmdSetCombatVerbosity(user *users.UserRecord, args []string) (bool, error) 
 		UserId: user.UserId,
 		Name:   `combatverbosity`,
 	})
+
+	// Quest engine: command notification (logical command "combatverbosity",
+	// even though it is reached via `set combatverbosity`). Lets combat
+	// tutorials gate on the player tuning their output.
+	bridge := questengine.NewGameBridge(user, user.Character.RoomId)
+	questengine.GetEngine().Notify("command", questengine.EventDetails{
+		UserId:  user.UserId,
+		RoomId:  user.Character.RoomId,
+		Command: "combatverbosity",
+	}, bridge, bridge)
 
 	return true, nil
 }

@@ -48,6 +48,49 @@ func parseSkillGrants(skillInfo string) []skillGrant {
 	return grants
 }
 
+// statGrant is one parsed stat reward (stat name + additive amount).
+type statGrant struct {
+	stat   string
+	amount int
+}
+
+// parseStatGrants parses a quest's stat_info reward into zero or more
+// grants. Format: a comma-separated list of "stat:amount" entries, e.g.
+// "strength:5" or "strength:3,vitality:2".
+// Valid stat names (lowercase): strength, dexterity, perception,
+// vitality, willpower, charisma.
+// Malformed entries (no colon, unparseable amount, empty name) are skipped.
+func parseStatGrants(statInfo string) []statGrant {
+	if statInfo == `` {
+		return nil
+	}
+	var grants []statGrant
+	for _, entry := range strings.Split(statInfo, `,`) {
+		details := strings.Split(strings.TrimSpace(entry), `:`)
+		if len(details) <= 1 {
+			continue
+		}
+		statName := strings.ToLower(strings.TrimSpace(details[0]))
+		amount, err := strconv.Atoi(strings.TrimSpace(details[1]))
+		if err != nil || statName == `` {
+			continue
+		}
+		grants = append(grants, statGrant{stat: statName, amount: amount})
+	}
+	return grants
+}
+
+// statGainDescriptions maps lowercase stat names to a flavourful gain phrase.
+// No hard numbers — per the project no-hard-numbers rule.
+var statGainDescriptions = map[string]string{
+	"strength":   "You feel notably stronger — your muscles carry a new permanence.",
+	"dexterity":  "Your movements sharpen; a new quickness settles into your limbs.",
+	"perception": "The world comes into slightly sharper focus, details you once missed now clear.",
+	"vitality":   "A deep resilience takes root — your body feels more enduring than before.",
+	"willpower":  "Your mind firms, a quiet resolve that wasn't there before now anchoring you.",
+	"charisma":   "Something in your bearing shifts; others may find you more compelling.",
+}
+
 //
 // Handles quest progress
 //
@@ -181,6 +224,24 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 				}
 				skillUpTxt, _ := templates.Process("character/skillup", skillData, questUser.UserId)
 				questUser.SendText(messaging.CategorySkillProgress, skillUpTxt)
+			}
+		}
+		// Stat reward? Additive — permanently increases the named stat's
+		// Training value. Supports one OR several stats (see parseStatGrants).
+		// Unlike skill grants these are NOT floor-raises; each grant always
+		// adds its amount (quests are one-shot linear, so re-grant isn't
+		// a concern).
+		for _, grant := range parseStatGrants(questInfo.Rewards.StatInfo) {
+			if questUser.Character.IncreaseStat(grant.stat, grant.amount) {
+				msg, ok := statGainDescriptions[grant.stat]
+				if !ok {
+					msg = "You feel a subtle but permanent improvement wash over you."
+				}
+				statUpTxt, _ := templates.Process("character/statup", msg, questUser.UserId)
+				questUser.SendText(messaging.CategorySkillProgress, statUpTxt)
+			} else {
+				mudlog.Warn("Quest StatReward", "token", evt.QuestToken,
+					"stat", grant.stat, "error", "unknown stat name — skipped")
 			}
 		}
 		// Spell reward?

@@ -31,6 +31,7 @@ type QuestRewards struct {
 	BuffId        int    `yaml:"buff_id,omitempty"`
 	SpellId       string `yaml:"spell_id,omitempty"`
 	SkillInfo     string `yaml:"skill_info,omitempty"`
+	StatInfo      string `yaml:"stat_info,omitempty"`
 	PlayerMessage string `yaml:"player_message,omitempty"`
 	RoomMessage   string `yaml:"room_message,omitempty"`
 	RoomId        int    `yaml:"room_id,omitempty"`
@@ -84,6 +85,7 @@ type ActionDef struct {
 	UnlockExits  *ExitLock        `yaml:"unlock_exits,omitempty"`
 	TeachSpell   string           `yaml:"teach_spell,omitempty"`
 	TrainSkill   *SkillDef        `yaml:"train_skill,omitempty"`
+	TrainStat    *StatDef         `yaml:"train_stat,omitempty"`
 	ApplyBuff    *BuffDef         `yaml:"apply_buff,omitempty"`
 	Teleport     int              `yaml:"teleport,omitempty"`
 	GiveMutation bool             `yaml:"give_mutation,omitempty"` // roll and grant a random mutation
@@ -153,6 +155,11 @@ type ExitLock struct {
 type SkillDef struct {
 	Skill string `yaml:"skill"`
 	Level int    `yaml:"level"`
+}
+
+type StatDef struct {
+	Stat   string `yaml:"stat"`
+	Amount int    `yaml:"amount"`
 }
 
 type BuffDef struct {

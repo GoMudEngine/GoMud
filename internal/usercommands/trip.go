@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -148,12 +149,20 @@ func Trip(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			if targetChar != nil {
 				targetChar.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to trip you, but you avoid it!`, user.Character.Name))
 			}
-			room.SendTextVisual(messaging.CategoryTrip, 
+			room.SendTextVisual(messaging.CategoryTrip,
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> attempts to trip <ansi fg="mobname">%s</ansi>, but misses!`, user.Character.Name, targetName),
 				user.UserId, targetPlayerId,
 			)
 		}
 	}
+
+	// Quest engine: command notification
+	bridge := questengine.NewGameBridge(user, room.RoomId)
+	questengine.GetEngine().Notify("command", questengine.EventDetails{
+		UserId:  user.UserId,
+		RoomId:  room.RoomId,
+		Command: "trip",
+	}, bridge, bridge)
 
 	return true, nil
 }

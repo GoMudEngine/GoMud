@@ -194,6 +194,37 @@ func (b *GameBridge) TrainSkill(skill string, level int) {
 	b.user.Character.SetSkill(skill, level)
 }
 
+// statGainMessages maps lowercase stat names to a flavourful gain phrase
+// shown when a quest permanently increases that stat. No hard numbers.
+var statGainMessages = map[string]string{
+	"strength":   "You feel notably stronger — your muscles carry a new permanence.",
+	"dexterity":  "Your movements sharpen; a new quickness settles into your limbs.",
+	"perception": "The world comes into slightly sharper focus, details you once missed now clear.",
+	"vitality":   "A deep resilience takes root — your body feels more enduring than before.",
+	"willpower":  "Your mind firms, a quiet resolve that wasn't there before now anchoring you.",
+	"charisma":   "Something in your bearing shifts; others may find you more compelling.",
+}
+
+// IncreaseStat permanently adds the given amount to the named stat's Training
+// and notifies the player with a descriptive message.
+func (b *GameBridge) IncreaseStat(stat string, amount int) {
+	if amount <= 0 {
+		return
+	}
+	if !b.user.Character.IncreaseStat(stat, amount) {
+		mudlog.Error("GameBridge.IncreaseStat",
+			"stat", stat, "amount", amount,
+			"error", "unknown stat name — no change applied")
+		return
+	}
+	msg, ok := statGainMessages[stat]
+	if !ok {
+		msg = "You feel a subtle but permanent improvement wash over you."
+	}
+	b.user.SendText(messaging.CategorySkillProgress,
+		fmt.Sprintf("<ansi fg=\"yellow-bold\">%s</ansi>", msg))
+}
+
 // ApplyBuff adds the given buff to the player.
 func (b *GameBridge) ApplyBuff(bf BuffDef) {
 	if err := b.user.Character.AddBuff(bf.Buff, false); err != nil {
