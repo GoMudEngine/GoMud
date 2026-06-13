@@ -1,0 +1,44 @@
+roomid: 5237
+zone: Pothole Coulee
+title: Tower Approach
+description: >
+  The wash narrows again and tilts up, the gravel giving way to a steeper
+  pitch of bare rock and rubble that climbs toward the head of the canyon.
+  The walls crowd in to a throat, and beyond them, close now and looming,
+  the bluff lifts the ruined watchtower into the light. This is the
+  Pothole Watch, the broken tooth seen from the safe overlook far below --
+  near enough at last to read the slumped flank, the crown burst open to
+  the sky, the empty sockets where windows watched the wash. Whatever
+  holds the high ground holds it from up there, and it has surely already
+  marked you climbing. The pitch eases back west toward the open wash; the
+  rubble climbs east toward the foot of the tower.
+biome: cliffs
+coord:
+  x: 55
+  y: -1
+  z: 0
+exits:
+  west:
+    roomid: 5236
+  east:
+    roomid: 5238
+nouns:
+  tower: The Pothole Watch up close at last -- a squat ruined watchtower on
+    the bluff ahead, its crown split open and one flank sloughed away,
+    still standing over the canyon it was raised to guard. Whatever holds
+    this wash holds it from that height. The last climb runs straight up
+    to its foot.
+  watchtower: The same ruin, the Pothole Watch, named back at the overlook
+    below. From here you can count its broken courses and the dark empty
+    windows that face down the whole length of the wash you just climbed.
+  bluff: The shoulder of stone the tower stands on, where the canyon draws
+    to a throat and the ground heaves up. Nothing reaches the tower except
+    over this last steep pitch -- and anything above can watch you take it.
+  climb: The steepening pitch of bare rock and loose rubble that lifts the
+    wash toward the tower's foot. It is hands-and-feet ground in places,
+    slow and exposed, with the high windows watching every step of it.
+  rubble: Broken stone shed from the bluff and the ruin above, drifted
+    across the climb in loose treacherous slides. It turns underfoot and
+    grinds, and it makes the last approach as loud as it is steep.
+idlemessages:
+- Light shifts in a dark window of the <ansi fg="itemname">tower</ansi> above, there and then gone, like something turning away.

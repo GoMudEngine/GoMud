@@ -1,0 +1,46 @@
+roomid: 5236
+zone: Pothole Coulee
+title: Upper Wash
+description: >
+  The canyon shoulders draw apart and the wash opens wide, a broad pan of
+  gravel where the high walls fall back and the sky comes down. This is
+  trodden ground -- the most-used squatter haunt on the whole climb.
+  Trails are beaten into the gravel from every side, worn pale by feet
+  going to water, to the hollow, to the tower above, the threads of them
+  crossing and recrossing in the open. Camp-signs litter the ground --
+  more cold fire-rings, picked bones, a lean-to of brush gone grey, a notched
+  post where someone has been keeping a tally of something. It is the
+  busiest, and so the most watched, stretch of the wash. Lower ground lies
+  west; the cistern sits below to the southwest; the climb to the tower
+  goes on east.
+biome: cliffs
+coord:
+  x: 54
+  y: -1
+  z: 0
+exits:
+  west:
+    roomid: 5233
+  southwest:
+    roomid: 5235
+  east:
+    roomid: 5237
+nouns:
+  wash: The broad open pan of gravel where the canyon widens, the hub of
+    all the foot-traffic on the climb. Everything the squatters do crosses
+    this ground, which makes it the worst place to be caught alone.
+  trails: Footworn threads beaten pale into the gravel, running off toward
+    water and hollow and tower and back. They cross and tangle in the
+    open -- a map of comings and goings, all of them belonging to people
+    who would rather you were not reading it.
+  camp-signs: The scattered marks of long use -- cold fire-rings, gnawed
+    bones, a grey brush lean-to, a notched tally-post. None of it is fresh,
+    and all of it says the same thing -- this ground is lived on and held.
+  post: A weathered stake driven into the gravel, its side scored with a
+    row of cut notches. Someone has been counting something here -- days,
+    or kills, or comers who never left. The tally is not short.
+  lean-to: A low shelter of brush and stripped branches gone grey and
+    brittle with weather, leaned against a fallen slab. It has sheltered
+    rough sleepers through more than one season and will again.
+idlemessages:
+- Wind crosses the open <ansi fg="itemname">wash</ansi> and worries the grey brush of the lean-to with a dry rattle.

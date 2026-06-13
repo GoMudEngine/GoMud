@@ -1,0 +1,44 @@
+roomid: 5235
+zone: Pothole Coulee
+title: Cracked Cistern
+description: >
+  An old flood-cistern squats half-buried in the canyon floor, a great
+  drum of mortared stone built by some forgotten hand to hoard the wet
+  season's water. The years have split it. A long crack runs the curve of
+  its wall, and through the breach a shallow pool of brackish water sits
+  dark and unmoving, skinned with scum, ringed by a crust of pale salt.
+  The bandits favor this corner -- and it is easy to see why. The cistern
+  drum walls one flank, the canyon wall the other, and a body forted in
+  the angle between them can only be come at from straight ahead. It is a
+  hard place to attack and an easy one to hold, a lesson written in stone.
+  The hollow lies back west; the wash climbs away to the northeast.
+biome: cliffs
+coord:
+  x: 53
+  y: 0
+  z: 0
+exits:
+  west:
+    roomid: 5234
+  northeast:
+    roomid: 5236
+nouns:
+  cistern: A squat drum of old mortared stone sunk into the canyon floor, a
+    catch-basin built to hold floodwater through the dry. Its bulk makes a
+    wall as good as the canyon's own -- which is why the folk who hold this
+    wash like to fight with their backs to it.
+  water: A shallow pool of brackish water standing dark in the cistern's
+    breach, skinned with green scum and ringed by a crust of salt. It is
+    foul to look at and worse to drink, but it has not gone dry, and in
+    this country that is reason enough to fight over.
+  crack: A long split running the curve of the cistern wall, wide enough at
+    its mouth to step through. The break that ruined the basin also opened
+    the sheltered angle the squatters fort up in -- a flaw turned to use.
+  angle: The defensible corner where the cistern's curve meets the canyon
+    wall. A fighter wedged in here shows only their front and cannot be
+    flanked -- the whole point of the spot, plain as a drillmaster's lesson.
+  salt: The pale crust ringing the brackish pool, left where old water
+    crept up the stone and dried. It crunches underfoot and tells how
+    long this water has sat -- long enough that holding it became a habit.
+idlemessages:
+- The brackish <ansi fg="itemname">water</ansi> shivers once where a drip falls from the cracked stone, then lies flat.

@@ -1,0 +1,38 @@
+roomid: 5233
+zone: Pothole Coulee
+title: Gravel Bend
+description: >
+  Here the wash kinks hard, the gravel channel doubling back on itself
+  around a jut of broken stone so that you cannot see what waits on the
+  far side until you are already in it. It is a blind bend, the kind any
+  fighter learns to mistrust -- a place built for an ambush by no hand at
+  all, just water and time. Loose scree spills down the inner wall in a
+  fan of rattling stone, ready to give underfoot and pitch a careless step
+  onto its face. The walls press close and high, throwing the bend into
+  shadow even at midday. The gravel runs back west the way you came and
+  bends on east toward open ground.
+biome: cliffs
+coord:
+  x: 53
+  y: -1
+  z: 0
+exits:
+  west:
+    roomid: 5232
+  east:
+    roomid: 5236
+nouns:
+  bend: The sharp doubling-back of the wash around a shoulder of rock. You
+    cannot see past it until you have stepped into it, and whoever knows
+    this ground would wait for a stranger to do exactly that.
+  scree: A fan of loose broken stone spilled down the inner wall, fine
+    gravel over fist-sized rubble. It shifts and rattles under any weight
+    -- treacherous footing for a fight, and loud enough to give you away.
+  walls: The canyon sides draw in close at the bend, leaning high and grey
+    overhead, hoarding the shadow. They funnel every sound and pen anyone
+    caught here between rock and rock.
+  jut: The shoulder of broken stone the wash wraps around, blunt and
+    weathered, blocking the sightline. It is the whole reason the bend is
+    blind, and the obvious place for an unkind welcome to wait.
+idlemessages:
+- Loose <ansi fg="itemname">scree</ansi> trickles down the inner wall with a dry whisper and settles again.
