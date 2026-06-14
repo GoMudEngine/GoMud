@@ -1,0 +1,54 @@
+mobid: 9136
+zone: Pothole Coulee
+behavior_archetype: noncombat_questgiver
+statpool: 44
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 12
+idlecommands:
+  - 'emote shields his eyes and sweeps a long gaze across the scabland to the
+    south'
+  - ''
+  - 'emote crouches low and brushes a finger across a faint mark pressed into
+    the pale dust'
+  - ''
+  - 'emote lifts his chin and turns his face into the wind, holding very still'
+  - ''
+  - 'emote draws a small knife and notches a waist-high stem of dry grass at
+    the trail edge'
+  - ''
+character:
+  name: Scout Tarn
+  description: |
+    Tarn is lean the way drought-wood is lean, stripped of anything the steppe
+    does not require. His clothing is the grey-brown of the coulee soil itself,
+    stitched in flat seams that catch no light. Sun and wind have worked his
+    skin to the texture of cured leather, and old scar tissue traces a diagonal
+    line across the left side of his jaw.
+    His eyes are the detail that stops you. The irises have gone a deep,
+    unbroken amber, the precise colour of a hawk's, and they do not track the
+    way a person's eyes ordinarily track — they catch motion at the edge of
+    sight before the motion has quite resolved into a shape. When he watches
+    the open ground, he sees things there that you do not.
+    He does not waste words.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 14
+    dexterity:
+      training: 10
+    vitality:
+      training: 8
+    strength:
+      training: 4
+    willpower:
+      training: 4
+    charisma:
+      training: 4

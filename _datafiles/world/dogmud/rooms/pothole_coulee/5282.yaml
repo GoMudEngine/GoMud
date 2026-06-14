@@ -1,0 +1,33 @@
+roomid: 5282
+zone: Pothole Coulee
+title: Scrub Mouth
+description: >
+  The coulee walls fall back here and the sky opens wide without warning.
+  What was close and channeled becomes vast: rolling sage-flats running
+  south to the horizon, grey-green and silver under the light, broken
+  only by low swells of ground and the dark drift of cloud shadow. A
+  path runs out from the draw's mouth into the grass and keeps going,
+  thin and honest, worn by boots and hooves and the slow seasons.
+biome: land
+coord:
+  x: 43
+  y: 2
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  north:
+    roomid: 5223
+  south:
+    roomid: 5283
+nouns:
+  sage: The sage comes in low mounds, silver-grey and tough, filling every
+    hollow between the grass clumps. Step near and the smell comes up sharp
+    and clean, the smell of dry country. It stretches south farther than
+    you want to walk without a reason.
+  path: A track pressed into the earth by enough foot-traffic to matter,
+    running south from the draw's mouth out across the flats. The dust is
+    pale and fine. Whatever uses this way, uses it often.
+idlemessages:
+- A cloud shadow sweeps across the <ansi fg="itemname">sage</ansi> and moves on south.
+- Wind comes off the flats carrying the smell of dry <ansi fg="itemname">grass</ansi> and distance.

@@ -1,0 +1,34 @@
+roomid: 5287
+zone: Pothole Coulee
+title: Brokenground
+description: >
+  The steppe buckles here into a maze of shallow draws choked with
+  thornbrush, the ground heaved up and dropped in rough plates. Cover
+  is everywhere — ledges too low to stand under, brush too thick to
+  push through cleanly. Something moves through the draws with
+  purpose. Tracks cut the clay in long, unhurried strides.
+biome: land
+coord:
+  x: 43
+  y: 6
+  z: 0
+exits:
+  north:
+    roomid: 5286
+  south:
+    roomid: 5288
+  west:
+    roomid: 5289
+spawninfo:
+- mobid: 9140
+nouns:
+  draws: Shallow gullies cut by old runoff, choked now with thornbrush
+    and shadowed enough to hide something large.
+  thornbrush: Stiff, grey-thorned stems that tear at cloth and skin with
+    equal indifference.
+  tracks: Long strides pressed into the clay — a single animal, big,
+    and not hurrying.
+idlemessages:
+- Something shifts in the draws below — a sound between a step and
+  a slide, then nothing.
+- The thornbrush rattles once, sharply, with no wind to account for it.

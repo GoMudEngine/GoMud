@@ -1,0 +1,18 @@
+id: scab-hide-jerkin
+name: Scab-Hide Jerkin
+skill: tailoring
+skill_minimum: 8
+station: loom
+time_rounds: 5
+ingredients:
+  - item_tag: pack-hide
+    quantity: 2
+  - item_tag: thread-spool
+    quantity: 1
+  - item_tag: bone-needle
+    quantity: 1
+output:
+  item_id: 20088
+  quantity: 1
+success_message: "You scrape the pelts down, cut the panels, and stitch the tough hide into a fitted jerkin. A scab-hide jerkin!"
+failure_message: "The hide is too green and the seams pull apart. The materials are wasted."

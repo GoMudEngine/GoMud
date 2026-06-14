@@ -1,0 +1,80 @@
+mobid: 9143
+zone: Pothole Coulee
+behavior_archetype: tank_taunter
+archetype: fighting
+statpool: 200
+itemdropchance: 25
+hostile: true
+maxwander: 0
+groups:
+  - beast
+  - pack
+aiprofile: predator
+activitylevel: 22
+items:
+  - 40070   # pack-hide pelt — carried, always drops
+idlecommands:
+  - 'emote moves through the den in a slow, deliberate circuit, the
+    great head low, reading the scent-record of every animal that has
+    passed through here in the last several days'
+  - ''
+  - 'emote settles into the center of the den and watches the entrance
+    with the patient absolute attention of something that has never
+    needed to hurry'
+  - ''
+  - 'emote vocalizes once, low and resonant, and something in the
+    coulee above shifts position in response -- felt rather than heard'
+  - ''
+combatcommands:
+  - 'emote does not move immediately. It watches. It is reading you
+    the way a hunter reads a trail, and when it has seen what it needs
+    to see it will act, and not before'
+  - ''
+  - 'emote plants wide and drives forward with the full mass of the
+    body behind the charge, not fast -- it does not need to be fast --
+    just inevitable'
+  - ''
+  - 'emote wheels and places itself between you and the den entrance
+    without apparent urgency, rerouting the fight on its own terms'
+  - ''
+  - 'emote drops the massive head and presses straight in, giving no
+    ground, absorbing what lands and continuing forward anyway'
+  - ''
+character:
+  name: Alpha Pack-Leader
+  description: |
+    The alpha is old. That is the first thing you understand about it,
+    before the size registers, before the scars, before the quality of
+    its attention settles on you like a weight -- it is old, and
+    everything in the coulee that was going to challenge that is gone.
+    The body is enormous even for its kind, the chest barrel-wide, the
+    shoulders heavy with muscle layered over years of use, the coat
+    gone dark at the muzzle and silvered along the spine in a way that
+    reads less as age than as rank. The scarring is total and ancient:
+    this animal has been hit by everything the coulee offers and has
+    made decisions about each of those encounters and arrived here as
+    a result of those decisions. It rules the den not by fighting
+    constantly but by being the thing the pack orients around the way
+    a compass orients around true north -- the fixed point that
+    determines all the other points. When you enter the den, the alpha
+    does not react with alarm or aggression. It turns its attention
+    to you with the calm certainty of something that already knows how
+    this goes. The pack is the alpha's instrument. The coulee is the
+    alpha's ground. You have come here, and the alpha was already
+    waiting.
+  speciesid: 2
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: 60
+    strength:
+      training: 55
+    dexterity:
+      training: 50
+    perception:
+      training: 18
+    willpower:
+      training: 10
+    charisma:
+      training: 7

@@ -2,7 +2,7 @@ roomid: 5223
 zone: Pothole Coulee
 title: Scrub Draw
 description: >
-  The ground lifts west out of the shallows into dry scrub steppe,
+  The ground lifts south out of the shallows into dry scrub steppe,
   grey-green brush threaded with the braided trails of game. A hunter's
   cairn of stacked stones marks the draw's mouth, fresh rock heaped beside
   it where someone is building the marker higher. Beyond, the trails run
@@ -17,8 +17,10 @@ mutators:
 exits:
   east:
     roomid: 5216
+  south:
+    roomid: 5282
 nouns:
-  brush: Dry grey-green brush covers the rising ground to the west, low
+  brush: Dry grey-green brush covers the rising ground to the south, low
     and tough and smelling of dust and crushed sage. Game trails braid
     through it, beaten thin by deer and hare and whatever else moves out
     on the steppe. Follow any one with your eye and it loses itself in the
@@ -26,4 +28,4 @@ nouns:
   cairn: A hunter's cairn of flat stacked stones stands at the draw's
     mouth, the old way of marking a trailhead and a kill. Fresh rock lies
     heaped at its foot, half-set, where someone has lately set to building
-    it taller -- a sign the way west is being opened to those who follow.
+    it taller -- a sign the way south is being opened to those who follow.

@@ -63,7 +63,9 @@ MANIFEST = {
     # 5222 is the Spoke C (Alchemy) mouth: the hub stub plus the southward
     # attachment exit into the spoke's Reedwash Descent (5264), added in chunk 4.
     5222: ("Reedwash Mouth", None, (47, 2, 0), {"west":5207, "south":5264}, 1),
-    5223: ("Scrub Draw", None, (43, 1, 0), {"east":5216}, 1),
+    # 5223 is the Spoke D (Wilderness) mouth: the hub stub plus the southward
+    # attachment exit into the spoke's Scrub Mouth (5282), added in chunk 5.
+    5223: ("Scrub Draw", None, (43, 1, 0), {"east":5216, "south":5282}, 1),
     5224: ("Stargazer Cut", None, (44, -2, 0), {"south":5218}, 1),
     5225: ("Old Field Track", None, (46, -2, 0), {"south":5217}, 1),
     5226: ("Bluff Steps", None, (47, -1, 0), {"south":5209}, 1),
@@ -264,6 +266,78 @@ SPOKE_C_MOBS = {
     9135: ("9135-spirit_of_the_swamp.yaml",   "Spirit of the Swamp",  [5280],             True,  "tank_taunter",        200),
 }
 
+# Spoke D (Wilderness & Tracking) — Pothole Coulee rooms 5282-5301. Runs SOUTH
+# from hub stub 5223. Three rings: inner scrub steppe (sanctuary, 5282-5286),
+# middle predator fringe (NO sanct., 5287-5293), outer predator territory/den
+# (NO sanct., pack fights + alpha boss, 5294-5301). Same (rid, title,
+# sanctuary_expected) shape as the other spokes.
+SPOKE_D_ROOMS = [
+    (5282, "Scrub Mouth", True),
+    (5283, "Steppe Edge", True),
+    (5285, "Sage Flat", True),
+    (5284, "Open Steppe", True),
+    (5286, "Steppe Fringe", True),
+    (5287, "Brokenground", False),
+    (5288, "Game Trail", False),
+    (5289, "Thornbrake", False),
+    (5290, "Hunter's Hollow", False),
+    (5291, "Carrion Flat", False),
+    (5292, "Predator Sign", False),
+    (5293, "Den Approach", False),
+    (5294, "Killing Ground", False),
+    (5295, "Bone Field", False),
+    (5296, "Scrub Tangle", False),
+    (5297, "Lair Approach", False),
+    (5298, "The Den", False),
+    (5299, "Wolfwater Spring", False),
+    (5300, "Outwash", False),
+    (5301, "Carcass Pit", False),
+]
+
+# Reciprocal exit edges (each listed once; the checker verifies both
+# directions). Fully cardinal (all-cartesian layout); no vertical exits.
+SPOKE_D_EXIT_PAIRS = [
+    (5223, "south", 5282),   # hub stub attachment
+    (5282, "south", 5283),
+    (5283, "south", 5284),
+    (5283, "west", 5285),
+    (5284, "south", 5286),
+    (5286, "south", 5287),
+    (5287, "south", 5288),
+    (5287, "west", 5289),
+    (5289, "south", 5290),
+    (5290, "east", 5288),
+    (5288, "south", 5291),
+    (5291, "south", 5292),
+    (5292, "south", 5293),
+    (5293, "south", 5294),
+    (5294, "south", 5295),
+    (5294, "west", 5296),
+    (5294, "east", 5300),
+    (5296, "south", 5297),
+    (5297, "east", 5295),
+    (5295, "south", 5298),
+    (5298, "south", 5299),
+    (5298, "east", 5301),
+]
+
+# Spoke D (Wilderness) mobs 9136-9143 (Phase M). Same shape as the other spokes:
+#   mobid: (filename, name, [host_rooms], hostile, behavior_archetype, statpool)
+# Two Opened NPCs (Tarn/Delk), two non-hostile prey (hare/pronghorn), and the
+# four-tier canine pack ending in the alpha boss. Pack mobs are listed in
+# multiple host rooms (some rooms list a hound twice for pack density — the
+# membership check only needs the mobid present once).
+SPOKE_D_MOBS = {
+    9136: ("9136-scout_tarn.yaml",          "Scout Tarn",         [5283],                                  False, "noncombat_questgiver", 44),
+    9137: ("9137-hunter_delk.yaml",         "Hunter Delk",        [5290],                                  False, "noncombat_questgiver", 44),
+    9138: ("9138-steppe_hare.yaml",         "Steppe Hare",        [5284, 5285],                            False, "generic_fighter",       8),
+    9139: ("9139-pronghorn.yaml",           "Pronghorn",          [5289, 5291],                            False, "generic_fighter",      25),
+    9140: ("9140-scab_hound.yaml",          "Scab-Hound",         [5287, 5292, 5294, 5295, 5296, 5298, 5300], True, "predator",          25),
+    9141: ("9141-pack_hound.yaml",          "Pack-Hound",         [5292, 5294, 5295],                      True,  "predator",             50),
+    9142: ("9142-scarred_outrider.yaml",    "Scarred Outrider",   [5296],                                  True,  "leader",              130),
+    9143: ("9143-alpha_pack_leader.yaml",   "Alpha Pack-Leader",  [5298],                                  True,  "tank_taunter",        200),
+}
+
 # ---------------------------------------------------------------------------
 # Spoke A (Martial) — mobs 9108-9115 (Phase M). Per mob:
 #   mobid: (filename, name, [host_rooms], hostile, behavior_archetype, statpool)
@@ -324,8 +398,10 @@ def check_spoke_a_mob(mid, spec):
 # Engine biome registry (internal/rooms biomes). Spoke A only uses a subset,
 # but assert against the full known set so a typo'd biome fails.
 KNOWN_BIOMES = {
-    "water", "shore", "city", "house", "cliffs", "fort", "cave", "forest",
-    "swamp", "mountains", "desert", "plains", "underground", "road",
+    # Mirrors the engine biome registry (_datafiles/world/dogmud/biomes/).
+    "cave", "city", "cliffs", "desert", "dungeon", "farmland", "forest",
+    "fort", "house", "land", "mountains", "road", "shore", "snow",
+    "spiderweb", "swamp", "water",
 }
 
 
@@ -640,10 +716,56 @@ def main():
     print("-" * 70)
     print(f"{len(SPOKE_C_MOBS)} Spoke C mobs checked, {spoke_c_mob_fail} FAIL")
 
+    # --- Spoke D (Wilderness) rooms -----------------------------------------
+    print()
+    print(f"{'SPOKE-D':<8} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    spoke_d_room_fail = 0
+    for rid, title, sanct in SPOKE_D_ROOMS:
+        fails = check_spoke_a_room(rid, title, sanct)  # generic room check
+        if fails:
+            spoke_d_room_fail += 1
+            print(f"{rid:<8} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{rid:<8} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_D_ROOMS)} Spoke D rooms checked, {spoke_d_room_fail} FAIL")
+
+    print()
+    print(f"{'EXITPAIR-D':<14} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    pair_d_fail = 0
+    for a, dir_ab, b in SPOKE_D_EXIT_PAIRS:
+        fails = check_spoke_a_exit_pair(a, dir_ab, b)  # generic exit-pair check
+        label = f"{a}-{dir_ab[:2]}-{b}"
+        if fails:
+            pair_d_fail += 1
+            print(f"{label:<14} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{label:<14} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_D_EXIT_PAIRS)} Spoke D exit pairs checked, {pair_d_fail} FAIL")
+
+    # --- Spoke D (Wilderness) mobs ------------------------------------------
+    print()
+    print(f"{'SPOKE-D MOB':<14} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    spoke_d_mob_fail = 0
+    for mid in sorted(SPOKE_D_MOBS):
+        fails = check_spoke_a_mob(mid, SPOKE_D_MOBS[mid])  # generic mob check
+        if fails:
+            spoke_d_mob_fail += 1
+            print(f"{mid:<14} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{mid:<14} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_D_MOBS)} Spoke D mobs checked, {spoke_d_mob_fail} FAIL")
+
     return 1 if (total_fail or npc_fail or spoke_room_fail or pair_fail
                  or spoke_mob_fail or spoke_b_room_fail or pair_b_fail
                  or spoke_b_mob_fail or spoke_c_room_fail or pair_c_fail
-                 or spoke_c_mob_fail) else 0
+                 or spoke_c_mob_fail or spoke_d_room_fail or pair_d_fail
+                 or spoke_d_mob_fail) else 0
 
 
 if __name__ == "__main__":

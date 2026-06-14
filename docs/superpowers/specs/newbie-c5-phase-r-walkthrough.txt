@@ -1,0 +1,79 @@
+================================================================================
+NEWBIE REWORK — CHUNK 5 (Spoke D, Wilderness & Tracking) — PHASE R WALKTHROUGH
+Rooms + nouns build record. 2026-06-14.
+Sub-spec: docs/superpowers/specs/2026-06-14-newbie-chunk5-spoke-d-wilderness-subspec.md
+================================================================================
+
+20 rooms 5282-5301 running SOUTH from hub stub 5223 (Scrub Draw, (43,1,0)).
+Three rings: inner scrub steppe (sanctuary, 5282-5286), middle predator fringe
+(no sanct., 5287-5293), outer predator territory/den (no sanct., pack + alpha
+boss, 5294-5301). Built by 3 ring subagents (file-only). All biome `land`
+(forageable steppe/fringe) except the den rooms `forest` (cover) and 5299 `land`
+(opens out post-boss). 5223 wired SOUTH->5282 (its prose re-oriented west->south
+to match the layout).
+
+--------------------------------------------------------------------------------
+ROOMS (id | title | coord | biome | sanct | exits)
+--------------------------------------------------------------------------------
+INNER — scrub steppe (sanctuary):
+ 5282 Scrub Mouth    (43,2,0) land S  N>5223 S>5283
+ 5283 Steppe Edge    (43,3,0) land S  N>5282 S>5284 W>5285   [Scout Tarn, Q41]
+ 5285 Sage Flat      (42,3,0) land S  E>5283                 [forage]
+ 5284 Open Steppe    (43,4,0) land S  N>5283 S>5286          [track-the-hare]
+ 5286 Steppe Fringe  (43,5,0) land S  N>5284 S>5287          [sanctuary ends]
+MIDDLE — predator fringe (no sanctuary):
+ 5287 Brokenground   (43,6,0) land    N>5286 S>5288 W>5289
+ 5289 Thornbrake     (42,6,0) land    E>5287 S>5290
+ 5290 Hunter's Hollow(42,7,0) land    N>5289 E>5288  [Hunter Delk, Q42, sleep/cook]
+ 5288 Game Trail     (43,7,0) land    N>5287 S>5291 W>5290
+ 5291 Carrion Flat   (43,8,0) land    N>5288 S>5292
+ 5292 Predator Sign  (43,9,0) land    N>5291 S>5293
+ 5293 Den Approach   (43,10,0) forest N>5292 S>5294
+OUTER — predator territory / den (no sanctuary; pack fights):
+ 5294 Killing Ground (43,11,0) forest N>5293 S>5295 W>5296 E>5300  [pack]
+ 5300 Outwash        (44,11,0) forest W>5294                       [side pack]
+ 5296 Scrub Tangle   (42,11,0) forest E>5294 S>5297               [outrider mini-boss]
+ 5297 Lair Approach  (42,12,0) forest N>5296 E>5295
+ 5295 Bone Field     (43,12,0) forest N>5294 W>5297 S>5298         [pack, tension]
+ 5298 The Den        (43,13,0) forest N>5295 S>5299 E>5301         [ALPHA boss]
+ 5301 Carcass Pit    (44,13,0) forest W>5298                       [loot]
+ 5299 Wolfwater Spring(43,14,0) land  N>5298                       [reward vista; W trail flavor, no exit]
+
+22 reciprocal edges (incl. stub), all cardinal (no verticals/diagonals). Middle
+diamond loop 5287-5289-5290-5288. 5300/5301 are den-side pack pockets. 5299
+return-only terminus.
+
+--------------------------------------------------------------------------------
+AUDITS — ALL RUN + PASS (popup-tolerant window, 2026-06-14)
+--------------------------------------------------------------------------------
+ [x] coord_inventory.py     -> Global collisions: 0; Pothole Coulee now 99 rooms,
+                              bbox x[31..57] y[-3..14] z[-2..2]. (Lane x42-44
+                              y2-14 hand-picked to thread between B/A/hub/C.)
+ [x] newbie_manifest_check.py -> Spoke D 20/20 rooms PASS, 22/22 exit pairs PASS;
+                              0 FAIL across the whole check. Also fixed the
+                              checker's KNOWN_BIOMES to mirror the real engine
+                              biome registry (it lacked `land`; had bogus
+                              `plains`/`underground`).
+ [x] go build .             -> exit 0.
+ [x] boot (MapConsistency=panic) -> rooms.loadAllRoomZones loadedCount=622 (+20);
+                              ValidateZoneConsistency errors=0 warnings=0 mode=panic
+                              (= cartcheck clean); Server Ready, 0 panics.
+
+--------------------------------------------------------------------------------
+BUGS CAUGHT + FIXED THIS PHASE
+--------------------------------------------------------------------------------
+1. Middle-ring subagent named its 7 files `5287-brokenground.yaml` (title suffix)
+   instead of bare `5287.yaml` — rooms must be bare <roomid>.yaml (loader +
+   checker). Renamed all 7.
+2. Colon-in-plain-scalar YAML breakage (recurring) in two noun values: 5288
+   ("margins: hoof") and 5300 ("used for: driving") -> changed ": " to " -- ".
+   (Description `>` folded scalars with colons are safe; plain noun scalars
+   are not.)
+3. Noun-token misses: 5297/5298 used key `lair` but their bodies say "den"/
+   "hollow" -> renamed keys to den/hollow.
+
+PHASE R content-complete + machine-verified. NEXT after the gate: Phase M (mobs
+9136-9151: Scout Tarn, Hunter Delk, prey, the pack + alpha; the garment + pelt
+material; spawninfo with pack density), then Phase D (quests 41-43 + the sleep
+Notify engine touch + tailoring/cooking recipe grants).
+================================================================================

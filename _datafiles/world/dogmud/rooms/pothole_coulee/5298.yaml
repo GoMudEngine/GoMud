@@ -1,0 +1,46 @@
+roomid: 5298
+zone: Pothole Coulee
+title: The Den
+description: >
+  The ground drops under a low thorn-choked bank and opens into a
+  dug-out hollow, the earth packed so hard by years of pacing that
+  it has the quality of stone. The bank overhead is threaded with
+  roots that have been worn smooth where they hang low enough to
+  brush a passing back. The air is close and heavy with musk and old
+  blood, a smell that has been built up over seasons into something
+  physical. The walls of the hollow show the marks of digging — long
+  furrows raked into the clay by something that enlarged this space
+  over time and made it its own. The floor is littered with the
+  compressed remnants of old kills. This is where the alpha lives.
+  It has the feel of an occupied place.
+biome: forest
+coord:
+  x: 43
+  y: 13
+  z: 0
+exits:
+  north:
+    roomid: 5295
+  south:
+    roomid: 5299
+  east:
+    roomid: 5301
+spawninfo:
+- mobid: 9143
+- mobid: 9140
+nouns:
+  hollow: A dug-out hollow under a thorn-choked bank, expanded over
+    seasons by something that needed more room and took it. The walls
+    are raked clay, the floor packed to near-stone hardness by
+    constant use. Every surface carries the marks and the smell of
+    long habitation. This is not an empty place.
+  musk: The smell is layered — old blood beneath, musk above, both
+    built up over seasons into something that settles on the tongue
+    as much as the nose. It is the smell of something that sleeps
+    here, eats here, and has done so for a very long time. The den
+    is saturated with it.
+idlemessages:
+- The clay walls carry long furrows where something raked them flat
+  and smooth over seasons of use.
+- The compressed remnants on the den floor tell you what has been
+  eaten here, and how much, and for how long.

@@ -1,0 +1,40 @@
+mobid: 9139
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 25
+itemdropchance: 15
+hostile: false
+maxwander: 2
+groups:
+  - beast
+  - steppe
+items:
+  - 40014   # raw meat (drops on death)
+character:
+  name: Pronghorn
+  description: |
+    A pronghorn of the high steppe, rust-and-cream against the pale rock, with
+    hollow pronged horns and eyes set wide on the skull to catch movement in
+    nearly a full circle. It stands very still when uncertain — not the frozen
+    stillness of hiding, but the alert stillness of something already calculating
+    its exit — and when it decides to go it goes fast, faster than anything
+    that size has a right to be, in a smooth ground-eating stride that opens
+    the distance between itself and a threat with quiet efficiency.
+    The meat is good. Getting close enough to take a clean shot is the work.
+  speciesid: 7
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 12
+    vitality:
+      training: 8
+    perception:
+      training: 5
+    strength:
+      training: 0
+    willpower:
+      training: 0
+    charisma:
+      training: 0

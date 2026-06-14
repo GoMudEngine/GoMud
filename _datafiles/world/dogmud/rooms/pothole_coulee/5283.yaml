@@ -1,0 +1,39 @@
+roomid: 5283
+zone: Pothole Coulee
+title: Steppe Edge
+description: >
+  A low rise lifts the ground here just enough to change what you can
+  see. The steppe lays itself out to every side: pale grass and sage
+  rolling away west into the flats, broken country beginning south where
+  the ground starts to fold. Animal trails braid through the bunchgrass
+  below the rise, pressed thin and clear by whatever moves across this
+  country when no one is watching. It is a good place to stand and read
+  the land before committing to it.
+biome: land
+coord:
+  x: 43
+  y: 3
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  north:
+    roomid: 5282
+  south:
+    roomid: 5284
+  west:
+    roomid: 5285
+spawninfo:
+- mobid: 9136
+nouns:
+  rise: A gentle swell of ground, barely knee-high above the surrounding
+    flat, but enough. The top is scoured bare by wind, the soil pale and
+    hard-packed. Standing here, the steppe makes sense — the folds and
+    rolls of it, the way the trails thread between them.
+  trails: Thin lines pressed through the bunchgrass below, each one worn
+    by the same small feet taking the same small routes, day after day.
+    Hare, mostly, by the width and the way they jink. Some cross; some
+    run arrow-straight toward the sage flat to the west.
+idlemessages:
+- A raptor hangs above the <ansi fg="itemname">rise</ansi>, riding the updraft without moving its wings.
+- The <ansi fg="itemname">trails</ansi> below shift in the wind as the grass leans, then settle again.

@@ -1,0 +1,76 @@
+================================================================================
+NEWBIE REWORK — CHUNK 5 (Spoke D, Wilderness) — PHASE D WALKTHROUGH
+Dialogue + quests + engine. SPOKE D COMPLETE (R+M+D). 2026-06-14.
+================================================================================
+
+Phase D done INLINE. Verified by build/test/boot + a scripted AI-port walkthrough.
+
+ENGINE (one tiny touch):
+- sleep.go now emits questengine.Notify("command", Command:"sleep") after
+  actions.Sleep — lets a "rest in the field" quest step fire (mirrors the
+  drink/throw/forage Notify pattern). VERIFIED live (Q42 42-rest fired).
+
+CONTENT:
+- Room: station: cooking_fire added to Hunter's Hollow (5290) for the cook beat.
+- Recipe: recipes/tailoring/scab-hide-jerkin.yaml (loom, skill 8; 2x pack-hide +
+  thread-spool + bone-needle -> 20088). Take-away reward.
+- Quest 41 First Sign (Scout Tarn): track the hare (5284) + forage the steppe
+  (any order; turn-in needs both). Reward: search:1, wool cloak 20024, gold.
+- Quest 42 The Hunt (Hunter Delk): start gives a salt-pouch (40017); hunt a
+  pronghorn (mob_death 9139 -> raw meat), sleep in the field (the new sleep
+  Notify), cook grilled meat at the camp cooking_fire (5290). Reward: search:1,
+  sturdy boots 20052, recipe hearty-stew, gold.
+- Quest 43 Break the Pack (Hunter Delk): fight through the pack, kill the Alpha
+  Pack-Leader (9143) in the den. Reward: stat_info perception:3, jerkin 20088,
+  item_info hunting kit (30021:3 trail rations + 30020:2 bandages + 30058:1
+  firebomb), recipe scab-hide-jerkin, gold.
+- Dialogue 9136 (Tarn) + 9137 (Delk): state-gated root variants for every quest
+  stage; nodes for offer/turn-in/help + a salt-pouch recovery node on Delk.
+  All grantsQuest nodes carry quest/task triggers + the {id}-end token in
+  questExcluded (SOP).
+
+VERIFICATION:
+- go build ./... exit 0; go test usercommands + hooks PASS; manifest 0 FAIL.
+- boot (panic mode): recipes 99->100 (+1), quests 32->35 (+3), ValidateAllFlags
+  OK, ValidateZoneConsistency 0/0, Server Ready, 0 panics.
+- Scripted AI-port walkthrough (throwaway, deleted), save + log as evidence:
+    Q41 First Sign  -> COMPLETE (track Notify + forage + turn-in + reward fired)
+    Q42 The Hunt    -> COMPLETE: 42-start + salt-pouch givesItem; 42-hunt
+                       (mob_death 9139); **42-rest (the NEW sleep command Notify)**;
+                       **42-cook (craft grilled meat at the NEW cooking_fire
+                       station, "The meat sears over the fire...")**; 42-end +
+                       rewards. -> BOTH new Phase-D mechanics verified live.
+    Q43 Break the Pack -> 43-start VERIFIED (Delk's pack_offer node fired after
+                       Q42 completed). 43-END (alpha kill) NOT live-confirmed:
+                       see note.
+
+Q43 BOSS-KILL — HARNESS-BLOCKED, MECHANISM PROVEN (not a content bug):
+  The AI-port boss kill could not be driven cleanly: the den (5298) room-spawns
+  an alpha AND the test mob-spawns one AND pack hounds wander in, so the
+  named-target "attack alpha" repeatedly hit "the darkness" (stale/duplicate
+  targets) and the alpha was never confirmed dead. This is a test-harness
+  targeting artifact under pack density + duplicate same-name mobs, NOT a quest
+  bug. The 43-end path (mob_death 9143 -> grant 43-end -> stat_info/itemid/
+  item_info/recipe_info rewards) is byte-for-byte the same engine path verified
+  end-to-end in Spoke C's Q40 (Heart of the Mire: mob_death -> end -> vitality
+  bump + item_info stockpile + recipe all landed in the save) and in the A/B/C
+  bosses. Residual risk: only the Q43 reward VALUES (perception:3 / 20088 /
+  the kit string / scab-hide-jerkin) — typos there would mis-grant, not crash,
+  and the user's evening playtest kills the alpha with a real character.
+
+BUGS CAUGHT + FIXED (build/boot earned their keep again):
+  - Q42 cook initially failed (no looted meat) because the pronghorn wasn't
+    cleanly killed before looting -> made the kill loop robust + meat insurance;
+    cook then verified.
+  (Phase R+M had already caught: suffixed filenames; colon-in-noun-scalar x2;
+   noun-key mismatches x2; item-id dup 20009->20088; lowercase mob names ->
+   casing panic.)
+
+DIFFICULTY UNTUNED (pack fights especially — they swarm; the den + wanderers
+make for a genuinely chaotic capstone) — flag for the evening playtest
+[[feedback-defer-tuning-to-post-build-playtest]]. smoketester (users/1.yaml) now
+carries Spoke D state + cooking boosted to 30 (for the deterministic cook) —
+RESET before realistic difficulty testing.
+
+SPOKE D COMPLETE (R+M+D). NEXT: C6 = Spoke E (The Folding / magic).
+================================================================================

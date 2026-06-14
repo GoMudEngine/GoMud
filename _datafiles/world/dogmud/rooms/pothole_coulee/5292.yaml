@@ -1,0 +1,35 @@
+roomid: 5292
+zone: Pothole Coulee
+title: Predator Sign
+description: >
+  The sign turns heavy and unmistakably fresh. Overlapping prints
+  of broad paws cut the soft ground in every direction, some
+  pressed so deep the toes show clearly. Scat lies in deliberate
+  mounds. A carcass has been dragged and left half-eaten, the
+  ribcage sprung and emptied, the hide peeled back and already
+  going stiff. Many animals moved through here recently, and
+  the sign says they will be back. The air is sharp and rank
+  with their marking.
+biome: land
+coord:
+  x: 43
+  y: 9
+  z: 0
+exits:
+  north:
+    roomid: 5291
+  south:
+    roomid: 5293
+spawninfo:
+- mobid: 9140
+- mobid: 9141
+nouns:
+  prints: Broad paw-prints pressed deep into the soft ground, clear
+    enough to count the toes — and there are many of them, overlapping.
+  carcass: A half-eaten body dragged here and left; the ribcage
+    sprung and emptied, the hide peeled to the limits of patience.
+idlemessages:
+- A long, low sound carries from somewhere close — not a howl,
+  not yet, but the breath before one.
+- The prints in the soft ground are wet-edged still, pressed
+  within the last hour.

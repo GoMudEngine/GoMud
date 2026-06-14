@@ -1,0 +1,36 @@
+roomid: 5291
+zone: Pothole Coulee
+title: Carrion Flat
+description: >
+  An open flat of bare, sun-bleached ground where kills are dragged
+  and stripped. Old bones litter the earth in scattered arcs,
+  gnawed clean and beginning to whiten. Feathers in clumps mark
+  where birds came down and were taken in turn. The carrion smell
+  is not subtle — it is a weight in the air that coats the back
+  of the throat. Scavengers work the edges; larger shapes move
+  at the margins, unhurried, watching the flat the way a landlord
+  watches his property.
+biome: land
+coord:
+  x: 43
+  y: 8
+  z: 0
+exits:
+  north:
+    roomid: 5288
+  south:
+    roomid: 5292
+spawninfo:
+- mobid: 9139
+nouns:
+  bones: Old, gnawed bones scattered in arcs across the flat, some
+    still articulated, most long since scattered by competing mouths.
+  feathers: Loose clumps pressed into the dust where birds came down
+    to feed and did not leave again.
+  carrion: The reek of old kills, thick and particular, that marks
+    this flat as something's private table.
+idlemessages:
+- A dark shape drops from the sky, lands at the far edge of the
+  flat, and begins to feed without looking up.
+- The carrion smell thickens for a moment on a gust, then
+  settles back to its usual weight.

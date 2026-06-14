@@ -1,0 +1,31 @@
+roomid: 5293
+zone: Pothole Coulee
+title: Den Approach
+description: >
+  The brush thickens to a tangle here, stems interlocked above
+  head height, the ground dropping away as the slope steepens
+  toward the hollow below. Cover closes overhead and on both
+  sides, narrowing the way forward into a corridor of branch
+  and shadow. This is the last open ground before the land
+  belongs to something else entirely. The tangle is full of
+  sound — movement, breathing — that does not stop when you do.
+biome: forest
+coord:
+  x: 43
+  y: 10
+  z: 0
+exits:
+  north:
+    roomid: 5292
+  south:
+    roomid: 5294
+nouns:
+  brush: Stems grown too dense to see through, interlocked overhead,
+    pressing in from both sides as the trail narrows.
+  tangle: The interlocked canopy of brush and branch that closes
+    this corridor into shadow — cover for what waits below.
+idlemessages:
+- The tangle shifts on both sides without wind — a slow, deliberate
+  movement that tracks your progress.
+- Somewhere below, in the dark of the hollow, something exhales
+  in a long, even breath.

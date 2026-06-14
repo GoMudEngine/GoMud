@@ -1,0 +1,15 @@
+itemid: 40070
+name: Pack-Hide Pelt
+namesimple: pelt
+description: A thick pelt stripped from a scab-hound, the fur coarse and grey
+  and still carrying the rank musk of the pack. Cured and worked, it makes a
+  hide tough enough to turn a thorn or a fang.
+type: object
+subtype: mundane
+component_tag: pack-hide
+weight: 0.4
+value: 5
+rarity_tier: 45
+is_component: true
+vendor_categories:
+- tailoring

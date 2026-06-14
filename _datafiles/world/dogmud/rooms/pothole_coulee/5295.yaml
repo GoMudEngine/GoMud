@@ -1,0 +1,46 @@
+roomid: 5295
+zone: Pothole Coulee
+title: Bone Field
+description: >
+  The field is white with bones. Not scattered — laid down over years
+  in a long accumulation, rib arches standing clear of the grass,
+  skulls tilted at angles where they settled, long bones crossing in
+  every direction. The ground crunches underfoot with the debris of
+  the smaller pieces. This is the pack's long midden, the leavings
+  of seasons of kills dragged back here and stripped and left. To the
+  south the ground drops toward a dark gap under a thorn-choked bank
+  — the den mouth. The field is a threshold. Stepping further into it
+  means something.
+biome: forest
+coord:
+  x: 43
+  y: 12
+  z: 0
+exits:
+  north:
+    roomid: 5294
+  west:
+    roomid: 5297
+  south:
+    roomid: 5298
+spawninfo:
+- mobid: 9140
+- mobid: 9141
+nouns:
+  bones: Not a scatter but an accumulation — years of kills stripped
+    and left in the same field until the bones have built up into a
+    layer. Ribs standing, skulls tilted, long bones crossing. The
+    ground crunches where the smaller pieces have broken down. You
+    are standing inside the pack's larder and its record.
+  field: Wide open ground turned white by years of the pack's
+    leavings. There is no way through it that does not announce your
+    presence — the bones crunch with every step, and the smell makes
+    clear you are now inside the territory's heart. The den mouth
+    gapes to the south.
+  skulls: They face in every direction, tilted at the angles they
+    settled into when the flesh was finally gone. Some are large.
+    Some are not. None of them belong to the thing that brought them
+    here.
+idlemessages:
+- The field crunches with each step. There is no quiet way to cross it.
+- The den mouth to the south is dark, and the darkness in it is not empty.

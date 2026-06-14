@@ -1,0 +1,36 @@
+roomid: 5299
+zone: Pothole Coulee
+title: Wolfwater Spring
+description: >
+  The bank gives way and the ground opens past the thorn into wide
+  steppe, the sky unobstructed, the air moving freely again. A
+  spring rises from the base of a limestone shelf at the edge of the
+  open ground — clear water welling up into a shallow pool before it
+  runs off into the grass. The oppression of the den country is gone
+  as cleanly as if someone cut it with a blade. The steppe runs out
+  in every direction, unheld and unhunted, and a faint trail runs off
+  westward into ground not yet opened, where the grass bends in the
+  wind without anything running through it. Just ground. Just air.
+biome: land
+coord:
+  x: 43
+  y: 14
+  z: 0
+exits:
+  north:
+    roomid: 5298
+nouns:
+  spring: Clear water rising from the base of a limestone shelf,
+    welling up cold and clean into a shallow pool that drains away
+    into the grass. It has been here long before the pack and will
+    be here after. The water is good. It tastes like nothing, which
+    means it tastes like nothing is wrong.
+  trail: A faint path worn into the steppe grass heading westward,
+    too faint to say what made it or how long ago. It leads toward
+    ground that has not been mapped yet, open and unheld, bending in
+    the wind with nothing running through it.
+idlemessages:
+- The spring makes a small sound where the water meets the pool. It
+  is the only sound here and it is a good one.
+- The wind off the steppe carries nothing. No musk, no blood. Just
+  grass and distance.

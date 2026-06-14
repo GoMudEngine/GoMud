@@ -1,0 +1,40 @@
+mobid: 9138
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 8
+itemdropchance: 15
+hostile: false
+maxwander: 2
+groups:
+  - beast
+  - steppe
+items:
+  - 40064   # wild hare meat (drops on death)
+character:
+  name: Steppe Hare
+  description: |
+    A dust-coloured hare of the open scabland, all outsized ears and coiled
+    haunches, crouched against the pale ground in a stillness that it can
+    abandon in an instant. The fur is a mottled grey-brown that reads as
+    gravel from a dozen paces, and it holds that posture — rigid, listening
+    — until the moment it decides the threat is too close. Then it is gone,
+    a low streak of motion cutting hard angles across the rock until it
+    vanishes into a fold of earth.
+    Following one is the first lesson the steppe teaches about patience.
+  speciesid: 10
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 6
+    vitality:
+      training: 1
+    perception:
+      training: 1
+    strength:
+      training: 0
+    willpower:
+      training: 0
+    charisma:
+      training: 0
