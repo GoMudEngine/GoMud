@@ -100,6 +100,46 @@ func parseRecipeGrants(recipeInfo string) []string {
 	return ids
 }
 
+// itemGrant is one parsed item-stockpile reward (item id + quantity).
+type itemGrant struct {
+	itemId int
+	qty    int
+}
+
+// parseItemGrants parses a quest's item_info reward into zero or more item
+// grants. Format: a comma-separated list of "itemid[:qty]" entries, e.g.
+// "30036:3,30028:2,30058" (three healing salves, two antidotes, one firebomb).
+// A bare itemid with no colon defaults to a quantity of one. Malformed entries
+// (unparseable id, non-positive qty) are skipped. This backs multi-item
+// "starter kit / stockpile" rewards, mirroring parseSkillGrants/parseStatGrants.
+func parseItemGrants(itemInfo string) []itemGrant {
+	if itemInfo == `` {
+		return nil
+	}
+	var grants []itemGrant
+	for _, entry := range strings.Split(itemInfo, `,`) {
+		entry = strings.TrimSpace(entry)
+		if entry == `` {
+			continue
+		}
+		details := strings.Split(entry, `:`)
+		itemId, err := strconv.Atoi(strings.TrimSpace(details[0]))
+		if err != nil || itemId <= 0 {
+			continue
+		}
+		qty := 1
+		if len(details) > 1 {
+			q, qErr := strconv.Atoi(strings.TrimSpace(details[1]))
+			if qErr != nil || q <= 0 {
+				continue
+			}
+			qty = q
+		}
+		grants = append(grants, itemGrant{itemId: itemId, qty: qty})
+	}
+	return grants
+}
+
 // statGainDescriptions maps lowercase stat names to a flavourful gain phrase.
 // No hard numbers — per the project no-hard-numbers rule.
 var statGainDescriptions = map[string]string{
@@ -220,6 +260,33 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 					QuestToken: iSpec.QuestToken,
 				})
 
+			}
+		}
+		// Item-stockpile reward? Grants N of each listed item (see
+		// parseItemGrants). Routes through StoreItem so potions auto-fill a
+		// bandolier, components a component bag, etc. Reusable "starter kit"
+		// reward, mirroring the skill/stat/recipe multi-grants above.
+		for _, grant := range parseItemGrants(questInfo.Rewards.ItemInfo) {
+			var firstName string
+			granted := 0
+			for i := 0; i < grant.qty; i++ {
+				newItm := items.New(grant.itemId)
+				if newItm.ItemId == 0 {
+					break // unknown item id — skip the whole grant
+				}
+				firstName = newItm.NameSimple()
+				questUser.Character.StoreItem(newItm)
+				granted++
+			}
+			if granted == 0 {
+				mudlog.Warn("Quest ItemReward", "token", evt.QuestToken,
+					"itemId", grant.itemId, "error", "unknown item id — skipped")
+				continue
+			}
+			if granted > 1 {
+				questUser.SendText(messaging.CategoryLoot, fmt.Sprintf(`You receive <ansi fg="itemname">%s</ansi> (x%d)!`, firstName, granted))
+			} else {
+				questUser.SendText(messaging.CategoryLoot, fmt.Sprintf(`You receive <ansi fg="itemname">%s</ansi>!`, firstName))
 			}
 		}
 		// Buff reward?
