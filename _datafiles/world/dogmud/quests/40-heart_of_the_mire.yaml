@@ -1,0 +1,76 @@
+# Quest 40 — Heart of the Mire (Pothole Coulee, Spoke C / Alchemy outer ring,
+# capstone). Granted by Fenwalker Falv (9129) after quest 39 (Wade the Marsh).
+# The player descends the poison swamp past the miasma edge, down into the
+# sunken mire (z-1), and defeats the Spirit of the Swamp (9135) at the Heart of
+# the Mire.
+#
+# Token flow:
+#   40-start  — granted by Falv's mire_offer dialogue node.
+#   40-end    — granted by the boss-kill trigger below (mob_death 9135). The
+#               rewards fire on 40-end: a permanent Vitality gain (stat_info), a
+#               granted potion stockpile (item_info -- the multi-item reward
+#               engine feature added this chunk), the advanced Mire Renewal
+#               Draught recipe (recipe_info), and gold.
+#
+# Design: the boss is a straight combat fight (alchemy is strong prep -- bring
+# brewed salves and firepots -- but not mechanically required). Turn-in is
+# automatic on the kill so the player is rewarded at the boss, no backtrack.
+
+questid: 40
+name: Heart of the Mire
+description: >-
+  Past the miasma edge the marsh turns to poison swamp, and the ground
+  sinks into a sunken mire where the water itself seems to watch. Falv
+  says something old has gathered at the heart of it. Brew your kit, fill
+  your bandolier, and go put it down.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: >-
+      Falv has set you on the mire. Descend the poison swamp past the
+      miasma edge, drop into the sunken hollow, and defeat the spirit of
+      the swamp at the heart of the mire.
+    hint: >-
+      Brew salves and firepots and carry them before you go -- the boss
+      is a hard fight. Head south past the miasma edge into the poison
+      swamp, take the sinkhole down into the sunken hollow, and fight
+      through to the Heart of the Mire. Type consider on a foe to size
+      it up, and flee if a fight turns against you.
+  - id: end
+    description: >-
+      The spirit of the swamp is broken and the mire runs clear. You came
+      to the pool not knowing one herb from another. You leave a brewer,
+      with the marsh's own renewal recipe in your head.
+
+rewards:
+  stat_info: "vitality:3"
+  item_info: "30036:3,30028:2,30058:2"
+  recipe_info: "mire-renewal-draught"
+  gold: 50
+  playermessage: >-
+    The spirit comes apart all at once -- not blood, but a slow collapse,
+    mud and black water and rot falling still and ordinary. Behind where
+    it stood, a spring breaks clear through the rock, and the poison
+    drains out of the air. You feel the long labor of the marsh settle
+    into your body as a lasting toughness, and the shape of its best brew
+    settles into your head: willow-bark and mint and root, the mire's own
+    renewal. Falv was right about the firepots -- and right that you would
+    need them. You carry a brewer's stock out with you, and the recipe to
+    make more.
+  roommessage: ""
+
+triggers:
+  # ── BOSS KILL: defeat the Spirit of the Swamp -> complete + rewards ──
+  - event: mob_death
+    mob: 9135
+    conditions:
+      has: ["40-start"]
+      missing: ["40-end"]
+    actions:
+      - grant: "40-end"
+      - send_text: >-
+          The spirit of the swamp shudders, loses its shape, and sinks
+          back into the mire it came from. The water goes still and, for
+          the first time, clean.

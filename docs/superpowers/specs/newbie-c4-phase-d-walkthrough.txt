@@ -1,0 +1,99 @@
+================================================================================
+NEWBIE REWORK — CHUNK 4 (Spoke C, Alchemy) — PHASE D WALKTHROUGH
+Dialogue + quests + engine. SPOKE C COMPLETE (R+M+D). 2026-06-14.
+Sub-spec: docs/superpowers/specs/2026-06-14-newbie-chunk4-spoke-c-alchemy-subspec.md
+================================================================================
+
+Phase D done INLINE (per user mandate — the trickiest phase). Verified end-to-end
+by a scripted AI-port walkthrough driving the stat-boosted smoketester through
+all three quests; ground truth confirmed by reading the resulting save.
+
+--------------------------------------------------------------------------------
+ENGINE — multi-item `item_info` reward (the chunk's build) + command Notify
+--------------------------------------------------------------------------------
+- NEW reusable reward: `ItemInfo string yaml:"item_info"` on quests.QuestReward
+  (internal/quests/quests.go) + parseItemGrants + grant loop in
+  internal/hooks/Quest_HandleQuestUpdate.go. Format "itemid[:qty][,...]"
+  (e.g. "30036:3,30028:2,30058:2"). Routes through StoreItem (auto-routes potions
+  to a bandolier, components to a component bag). Mirrors the stat_info/recipe_info
+  precedent exactly. Unit tests: internal/hooks/Quest_ItemGrants_test.go (6 cases).
+- Command Notify added to drink.go + throw.go (mirroring consider/forage/craft):
+  successful drink/throw now emit questengine.Notify("command", ...). craft +
+  forage already had it. This is what lets Q38's drink step and Q39's throw step
+  fire — the same class of gap Spoke A patched for consider/kick/trip/set.
+
+--------------------------------------------------------------------------------
+CONTENT — recipe + 3 quests + 2 dialogue files
+--------------------------------------------------------------------------------
+- Recipe recipes/alchemy/mire-renewal-draught.yaml (skill_minimum 6, alchemy_bench,
+  marsh-willow-bark + lake-mint + healers-root + bottle -> 30065). Spoke-unique
+  capstone (reuses Renewal buff 60, no new buff).
+- Quest 38 First Brew (Birna): buy vial + 2 roots -> craft healing salve at the
+  bench -> drink it. Rewards: alchemy:1, recipe_info minor-antidote, item_info
+  40006:2 (two spare vials), gold 15.
+- Quest 39 Wade the Marsh (Falv): kill a marsh leech + throw the granted firebomb
+  in combat (the shared-cooldown lesson) + forage swamp herbs (any order; turn-in
+  needs all three). Rewards: alchemy:1, itemid 20059 bandolier, recipe_info
+  ironhide-brew,firebomb, gold 25. Falv hands the firebomb (givesItem 30058) and
+  has a firebomb-recovery node.
+- Quest 40 Heart of the Mire (Falv): descend, kill the Spirit of the Swamp (9135).
+  Boss mob_death -> 40-end + rewards: stat_info vitality:3, item_info
+  30036:3,30028:2,30058:2 (the granted potion stockpile), recipe_info
+  mire-renewal-draught, gold 50.
+- Dialogue 9128 (Birna: shop + Q38 + brew_help) and 9129 (Falv: Q39+Q40, the
+  throw/cooldown + bandolier teaching, firebomb recovery). State-gated root
+  variants for every quest stage. All grantsQuest nodes carry quest/task triggers
+  + the {id}-end token in questExcluded (SOP).
+
+--------------------------------------------------------------------------------
+VERIFICATION — build/test/boot + scripted end-to-end (save = ground truth)
+--------------------------------------------------------------------------------
+- go build ./... : exit 0.
+- go test internal/{hooks,quests,questengine,characters,crafting,usercommands}:
+  ALL PASS (incl. the 6 new parseItemGrants cases).
+- boot (MapConsistencyEnforce=panic): recipes 98->99, quests 29->32,
+  questengine 29->32, ValidateAllFlags OK, ValidateZoneConsistency errors=0
+  warnings=0, Server Ready, 0 panics.
+- Scripted AI-port walkthrough (throwaway, deleted) drove smoketester through all
+  three quests via REAL commands (buy/craft/drink/attack/throw/forage/mob_death/
+  ask). SAVE confirms:
+    questprogress: 38:end, 39:end, 40:end                       (all complete)
+    knownrecipes:  minor-antidote, ironhide-brew, firebomb, mire-renewal-draught
+                                                                (recipe_info x4 OK)
+    vitality training: 3                                        (stat_info OK)
+    inventory:     bandolier 20059 (Q39); healing-salve x3 + minor-antidote x2 +
+                   firebomb x2 (Q40 item_info stockpile) + glass vial x2 (Q38
+                   item_info)                                   (item_info NEW OK)
+    -> the new drink Notify (38-drink) and throw Notify (39-throw) both fired
+       (their turn-ins require those steps).
+
+--------------------------------------------------------------------------------
+TWO REAL BUGS THE WALKTHROUGH CAUGHT + FIXED (the reason to run it)
+--------------------------------------------------------------------------------
+1. Q38 craft needs TWO healer's roots (healing-salve = 2x healers-root + bottle),
+   but the dialogue/quest guidance said "a healer's root" -> a real newbie would
+   fail the craft and waste materials. Fixed: Birna + quest 38 now say "two
+   healer's roots" / "buy 2 healers root".
+2. Falv called the grenade a "firepot" everywhere, but item 30058 is named
+   "Firebomb" -> `throw firepot` finds nothing. Fixed: all "firepot" -> "firebomb"
+   in Falv's dialogue + quest 39 (command now matches the item).
+
+--------------------------------------------------------------------------------
+KNOWN / DEFERRED
+--------------------------------------------------------------------------------
+- DIFFICULTY UNVERIFIED (per [[feedback-defer-tuning-to-post-build-playtest]]):
+  the run used a god-tier smoketester with alchemy temporarily boosted to 30 so
+  the craft would succeed deterministically. A REAL newbie (alchemy 0-1) has a
+  genuine healing-salve craft FAILURE chance and will find the boss fight's true
+  difficulty untested. Flag for the evening playtest tuning pass.
+- smoketester (users/1.yaml, gitignored) now carries Spoke C quest state + a
+  boosted alchemy skill (30) + leftover stockpile items + base stats 280 — RESET
+  before any realistic difficulty test.
+- Local config.yaml still has LogToFile:true + MapConsistencyEnforce:panic (dev
+  settings) — reset LogToFile:false before any prod push. NOT part of the C4 commit.
+- Repeatable quests: not authored as separate files (matches Spoke B). The
+  bankroll loop is the inherent forage->brew->sell + respawning-foe economy,
+  surfaced in Birna/Falv dialogue. Add formal repeatables later if desired.
+
+NEXT: C5 = Spoke D (Wilderness & Tracking) — sub-spec not yet written.
+================================================================================

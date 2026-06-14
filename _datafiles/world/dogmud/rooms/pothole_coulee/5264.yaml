@@ -1,0 +1,39 @@
+roomid: 5264
+zone: Pothole Coulee
+title: Reedwash Descent
+description: >
+  The cut path drops away here, flagged stakes planted at intervals to
+  mark the way where the reeds crowd in thick on either side. Trampled
+  grass gives out to bare earth, then to soft mud that holds the shape
+  of every boot that has passed before yours. The air shifts as you
+  descend -- the raw smell of the wash above softening into something
+  greener, cooler, threaded through with a faint herb-scent rising from
+  the hollow below. The path bends south, worn smooth by use, and
+  somewhere below the reeds the low murmur of still water waits.
+biome: swamp
+coord:
+  x: 47
+  y: 3
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  north:
+    roomid: 5222
+  south:
+    roomid: 5265
+nouns:
+  stakes: Lengths of pale wood driven into the soft earth at arm-span
+    intervals, each one knotted at the top with a rag of faded cloth to
+    mark the path through the reeds. Someone has kept them up for a long
+    time.
+  path: A track of bare, foot-packed earth that cuts through the reed
+    beds, descending steadily into the hollow below. The mud at its
+    center is soft and dark, pressed into gentle ridges by countless
+    passing boots.
+  reeds: Dense stands of tall, hollow-stemmed reed crowd the path on
+    both sides, their seed-heads brushing together overhead in a dry
+    whisper. Somewhere among them, water sits quiet and dark.
+idlemessages:
+- The <ansi fg="itemname">reeds</ansi> shiver along the path as a breath of cool air rises from the hollow below.
+- Something moves softly in the reed beds -- a rustle, then stillness.

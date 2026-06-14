@@ -1,0 +1,106 @@
+================================================================================
+NEWBIE REWORK — CHUNK 4 (Spoke C, Alchemy) — PHASE M WALKTHROUGH
+Mobs + items build record. 2026-06-14.
+Sub-spec: docs/superpowers/specs/2026-06-14-newbie-chunk4-spoke-c-alchemy-subspec.md
+Phase R: newbie-c4-phase-r-walkthrough.txt (done + user-approved).
+================================================================================
+
+Static build record. Authoritative audits (manifest checker, go build, boot)
+were run in a popup-tolerant window — results at the bottom.
+
+--------------------------------------------------------------------------------
+MOBS — 8 new (9128-9135), mobs/pothole_coulee/
+--------------------------------------------------------------------------------
+NPCs (Opened humanoids, noncombat_questgiver, non_combatant, charm_immune,
+statpool 44, speciesid 1):
+ 9128 Herbalist Birna   host 5265 (The Sheltered Pool)
+        SHOPKEEPER: craft_support alchemy, crafter:true, crafterskill:alchemy.
+        Shop: glass vial 40006 (3g), healer's root 40004 (3g), bitter thistle
+        40005 (2g), dustwalk herb 40009 (4g). Opened mutation: green-gold veining
+        under the skin of her hands that brightens when she handles living plants.
+        groups [humanoid, coulee_folk]. Grants Q38 (Phase D).
+ 9129 Fenwalker Falv    host 5271 (Cattail Stand)
+        Marsh recluse; NOT a shop. Opened mutation: oilskin water-shedding hands.
+        Idle flavor hints he lobs firepots at things — sets up the Q39 grenade
+        lesson (Phase D). groups [humanoid].
+
+Foes (generic_fighter unless noted; archetype fighting; groups [beast, swamp];
+hostile; physical-weighted stats; statpools UNTUNED per the defer-tuning rule):
+ 9130 Marsh Leech        sp 18  species 18 (worm)       hosts 5269, 5273   maxw 1
+ 9131 Reed Lurker        sp 40  species 8 (serpent)     host 5272          maxw 1
+        CARRIES item 20052 Sturdy Leather Boots -> always-drops (loot lesson).
+        This is the foe the player throws a granted firepot at in Q39.
+ 9132 Bog Stalker        sp 60  species 21 (reptile)    hosts 5275, 5276   maxw 1
+ 9133 Mire Brute         sp 90  species 4 (troll)       hosts 5276, 5277   maxw 1
+ 9134 Fen-Touched Lurker sp 130 species 23 (aberration) host 5278          maxw 0  (mini-boss)
+ 9135 Spirit of the Swamp sp 200 species 23 (aberration) host 5280  maxw 0  BOSS
+        behavior_archetype tank_taunter, aiprofile aggressive, itemdropchance 25.
+
+All foe + NPC descriptions are DIGIT-FREE (immersion rule, checker-enforced).
+NPCs each carry exactly one understated visible Opened mutation (canon).
+
+--------------------------------------------------------------------------------
+ITEM — 1 new (the capstone potion)
+--------------------------------------------------------------------------------
+ 30065 Mire-Renewal Draught  (consumables-30000/30065-mire_renewal_draught.yaml)
+        type potion / subtype drinkable / uses 1 / buffids [60] (the all-pool
+        Renewal regen — REUSED, no new buff) / value 22 / toxicity 18 / aging
+        block. vendor_categories [alchemy]. The Phase-D advanced recipe (a
+        low-skill swamp brew from marsh-willow + lake-mint) outputs this; it's
+        also a candidate for the Q40 stockpile.
+ NOTE: originally drafted as 30060; boot caught a DUPLICATE (30060 = the existing
+ "Lake Tonic of Steady Hand"). Reassigned to 30065 (consumables max was 30064).
+ LESSON: run id_inventory.py BEFORE picking an item id, don't assume the range.
+
+--------------------------------------------------------------------------------
+REUSED (no new files) — confirmed to exist
+--------------------------------------------------------------------------------
+ - Potion bandolier: 20059 Leather Bandolier (Q39 middle reward).
+ - Grenades: 30057 flashbang / 30058 firebomb / 30059 toxic flask (Q39 lesson;
+   draft grants firebomb 30058).
+ - Forage herbs (ALL already in the swamp/water biome tables — zero forage-table
+   work): healer's root 40004, bitter thistle 40005, cattail down 40055, marsh
+   willow bark 40056, lake mint 40057; clams 40058 / lake-iron 40059 (water).
+ - Bottles: glass vial 40006 (+ clay/sealed/crystalline tiers exist).
+ - Starter recipes (Phase D recipe_info grants): healing-salve, minor-antidote,
+   firebomb — all exist (station alchemy_bench).
+
+--------------------------------------------------------------------------------
+SPAWNINFO — wired on 10 host rooms
+--------------------------------------------------------------------------------
+ 5265:9128 | 5269:9130 | 5271:9129 | 5272:9131 | 5273:9130 | 5275:9132 |
+ 5276:9132+9133 | 5277:9133 | 5278:9134 | 5280:9135
+ Intentionally EMPTY (no spawn): 5264, 5266, 5267 (stall), 5268 (forage), 5270
+ (forage), 5274 (threshold), 5279 (tension approach), 5281 (reward vista).
+
+--------------------------------------------------------------------------------
+MANIFEST CHECKER — extended (tools/newbie_manifest_check.py)
+--------------------------------------------------------------------------------
+ Added SPOKE_C_MOBS (8 mobs: filename/name/host-rooms/hostile/archetype/statpool)
+ + the SPOKE-C MOB print block + return-code fold. The generic check_spoke_a_mob
+ verifies: mobid/zone/archetype/hostile/statpool/name, digit-free description,
+ AND that each mob is listed in EACH declared host room's spawninfo.
+
+--------------------------------------------------------------------------------
+AUTHORITATIVE AUDITS — ALL RUN + PASS (popup-tolerant window, 2026-06-14)
+--------------------------------------------------------------------------------
+ [x] newbie_manifest_check.py -> Spoke C MOBS 8/8 PASS; 0 FAIL across the WHOLE
+                                 check (hub 26 + NPC 8 + A rooms/exits/mobs +
+                                 B rooms/exits/mobs + C rooms 18 + C exits 19 +
+                                 C mobs 8). EXIT 0.
+ [x] go build -o /tmp/...      -> exit 0.
+ [x] boot (MapConsistency=panic, instances wiped first):
+        mobs.LoadDataFiles loadedCount = 262  (254 -> +8)  OK
+        itemspec.LoadDataFiles itemLoadedCount = 275 (274 -> +1)  OK
+        rooms loadedCount = 602 (unchanged from Phase R)  OK
+        mapper.ValidateZoneConsistency errors=0 warnings=0 mode=panic  OK
+        ShopMobTags: NO panic -> Birna's alchemy shop validated  OK
+        Server Ready, 0 panics.  (First boot caught the 30060 dup; fixed -> clean.)
+        Server killed + temp binary removed after.
+
+PHASE M is content-complete and machine-verified. Difficulty/statpools are
+UNTUNED by design ([[feedback-defer-tuning-to-post-build-playtest]]). NEXT after
+the gate: Phase D (INLINE) — Birna + Falv dialogue, quests 38-40 + repeatables,
+the multi-item `item_info` reward engine build, the advanced swamp recipe
+(outputs 30065), and the grenade/cooldown + bandolier teaching.
+================================================================================

@@ -1,0 +1,43 @@
+roomid: 5266
+zone: Pothole Coulee
+title: Mossy Verge
+description: >
+  The sheltered ground of the hollow gives out here at a ragged verge
+  where the moss takes over, spreading thick and slick across stones
+  that the spring-water has been working loose for longer than anyone
+  can say. Southward the ground sags and darkens and the smell of sweet
+  rot overwhelms the herb-scent of the pool behind you; the marsh does
+  not wait long before it reasserts itself. At the edge of the moss a
+  flat-topped marker stone has been set upright in the earth, its face
+  worn smooth by weather and by hands. Travelers have used it for years
+  as a place to fix a bedroll and take stock before pressing on or
+  turning back.
+biome: swamp
+coord:
+  x: 47
+  y: 5
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  north:
+    roomid: 5265
+  south:
+    roomid: 5269
+nouns:
+  moss: A broad carpet of deep, wet moss covers the stones here,
+    intensely green and cold to the touch. It gives slightly underfoot
+    with a soft squelch, and the water it holds seeps up around the
+    edges of your boots if you stand still too long.
+  marker: A knee-high stone of dark basalt set upright in the earth at
+    the edge of the moss, its top face worn to a shallow bowl by rain
+    and use. Scratches in its surface might be old way-marks, or might
+    just be the work of weather -- it is impossible to say which.
+  verge: The line where the sheltered ground ends and the open marsh
+    begins is sharp here -- on one side, moss and cool herb-scent; on
+    the other, dark water and the smell of slow rot. It is the kind of
+    threshold that feels deliberate, as though the hollow itself drew a
+    boundary and dared the marsh to cross it.
+idlemessages:
+- The <ansi fg="itemname">moss</ansi> breathes out a faint cold smell as the air shifts down from the pool.
+- Somewhere past the <ansi fg="itemname">verge</ansi>, something moves through standing water -- a soft, patient sound.

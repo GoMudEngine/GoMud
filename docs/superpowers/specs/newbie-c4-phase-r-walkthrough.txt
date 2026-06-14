@@ -1,0 +1,155 @@
+================================================================================
+NEWBIE REWORK — CHUNK 4 (Spoke C, Herbalism & Alchemy) — PHASE R WALKTHROUGH
+Rooms + nouns build record. 2026-06-14.
+Sub-spec: docs/superpowers/specs/2026-06-14-newbie-chunk4-spoke-c-alchemy-subspec.md
+================================================================================
+
+This is a STATIC build record (not a live AI-port walk). Authoritative automated
+audits (coord_inventory.py, cartcheck, manifest checker, go build, boot) are
+DEFERRED to a popup-tolerant window per the no-console-popup constraint
+([[feedback-no-console-popups-windows]]); the checklist is at the bottom.
+
+--------------------------------------------------------------------------------
+SCOPE
+--------------------------------------------------------------------------------
+18 rooms, 5264-5281, descending SOUTH from the already-built hub stub 5222
+(Reedwash Mouth, (47,2,0)). Three concentric rings:
+  - Inner  (sanctuary)  5264-5268  the sheltered plunge pool — where you brew
+  - Middle (no sanct.)  5269-5274  the reedy marsh — forage + (Phase D) grenades
+  - Outer  (no sanct.)  5275-5281  the poison swamp, descends to z-1 — the boss
+Hub stub 5222 wired SOUTH -> 5264 (its only new exit; west->5207 unchanged).
+
+--------------------------------------------------------------------------------
+ROOM-BY-ROOM (id | title | coord | biome | sanct | station | exits | nouns)
+--------------------------------------------------------------------------------
+INNER RING — the sheltered plunge pool (all sanctuary):
+ 5264 Reedwash Descent  (47,3,0)  swamp  S  -        N>5222 S>5265
+        nouns: stakes, path, reeds
+ 5265 The Sheltered Pool(47,4,0)  water  S  alchemy_bench
+        N>5264 S>5266 W>5267 E>5268        nouns: pool, bench, reeds
+ 5266 Mossy Verge       (47,5,0)  swamp  S  -        N>5265 S>5269
+        nouns: moss, marker, verge   (sanctuary ENDS south of here; sethome beat)
+ 5267 Drying Racks      (46,4,0)  swamp  S  alchemy_bench
+        E>5265                            nouns: racks, bottles, baskets
+        (herbalist's stall: bottles + healer's-root/bitter-thistle; 2nd bench)
+ 5268 Still Shallows    (48,4,0)  water  S  -        W>5265
+        nouns: shallows, silt, clams, mint   (water-biome forage variety)
+
+MIDDLE RING — the reedy marsh (no sanctuary; can KO):
+ 5269 Reed Beds         (47,6,0)  swamp  -  -  N>5266 S>5270 E>5271
+        nouns: reeds, water        (first live foe, Phase M)
+ 5270 Sunken Path       (47,7,0)  swamp  -  -  N>5269 E>5272 S>5273
+        nouns: causeway, cattails  (forage cattail-down)
+ 5271 Cattail Stand     (48,6,0)  swamp  -  -  W>5269 S>5272
+        nouns: cattails, hummock, camp  (middle quest NPC + grenade lesson, Ph D)
+ 5272 Mudflat           (48,7,0)  swamp  -  -  N>5271 W>5270
+        nouns: mudflat, gear       (grenade-lesson foe + armor/loot drop, Ph M)
+ 5273 Black Pool        (47,8,0)  swamp  -  -  N>5270 S>5274
+        nouns: pool, willows       (richest forage hub: marsh-willow, lake-mint)
+ 5274 The Miasma Edge   (47,9,0)  swamp  -  -  N>5273 S>5275
+        nouns: water, reek, reeds  (last clean ground; poison swamp begins)
+
+OUTER RING — the poison swamp (no sanctuary; descends z-1; boss):
+ 5275 Fenrot Approach   (47,10,0) swamp  -  -  N>5274 S>5276
+        nouns: trees, water        (first poison denizen; toxicity = FLAVOR only)
+ 5276 Sulphur Flats     (47,11,0) swamp  -  -  N>5275 S>5277 D>5278
+        nouns: crust, vents, sinkhole   (crew fight; sinkhole DOWN to sunken pocket)
+ 5277 Drowned Thicket   (47,12,0) swamp  -  -  N>5276   (dead-end)
+        nouns: thicket, roots, branches (loot in the roots + a tougher foe)
+ 5278 Sunken Hollow     (47,11,-1)swamp  -  -  U>5276 S>5279
+        nouns: hollow, air, murk   (z-1; lieutenant-tier denizen)
+ 5279 The Black Mere    (47,12,-1)swamp  -  -  N>5278 S>5280
+        nouns: mere, water, surface     (approach to boss; tension)
+ 5280 Heart of the Mire (47,13,-1)swamp  -  -  N>5279 S>5281
+        nouns: water, mire         (BOSS lair: Spirit of the Swamp, Phase M)
+ 5281 Clearwater Spring (47,14,-1)water  -  -  N>5280
+        nouns: spring, water, trail (post-boss reward vista; W game-trail =
+        FLAVOR ONLY, no exit — lateral connector to Spoke D added at a later chunk)
+
+--------------------------------------------------------------------------------
+EXIT GRAPH — 19 reciprocal edges (hand-traced, all reciprocal)
+--------------------------------------------------------------------------------
+5222-S-5264 (hub stub)  5264-S-5265  5265-S-5266  5265-W-5267  5265-E-5268
+5266-S-5269  5269-S-5270  5269-E-5271  5270-E-5272  5270-S-5273  5271-S-5272
+5273-S-5274  5274-S-5275  5275-S-5276  5276-S-5277  5276-D-5278 (descent)
+5278-S-5279  5279-S-5280  5280-S-5281
+Middle ring forms a diamond loop 5269-5271-5272-5270 (no diagonal edges; the
+forge ring needed one, this one is fully cardinal). 5277 is an intentional
+dead-end loot pocket. 5281 is the return-only terminus.
+
+--------------------------------------------------------------------------------
+COORD COLLISION HAND-CHECK (authoritative coord_inventory.py run DEFERRED)
+--------------------------------------------------------------------------------
+Spoke C coord set (all 18 unique):
+ (47,3,0)(47,4,0)(47,5,0)(46,4,0)(48,4,0)            inner
+ (47,6,0)(47,7,0)(48,6,0)(48,7,0)(47,8,0)(47,9,0)    middle
+ (47,10,0)(47,11,0)(47,12,0)(47,11,-1)(47,12,-1)(47,13,-1)(47,14,-1)  outer
+BBox: x[46..48] y[3..14] z[-1..0] — inside the Pothole reserve x[30..59]
+y[-15..14] z[-3..3]. Checked against EVERY existing room in the x45-49 band
+(extracted from the live YAMLs): nearest neighbours are 5222 (47,2,0) directly
+north of the entry, hub 5215 (45,3,0), and Spoke A at x49 (5227/5229, y-1..0).
+Spoke A occupies y-3..3; Spoke C starts at y3 but only at x47 where A has no
+room (A's y-3..3 rooms at x47 are y-1/0/2 only). ZERO overlaps found by hand.
+
+--------------------------------------------------------------------------------
+PHANTOM-PATH NOTE (recurring subagent bug — caught + fixed)
+--------------------------------------------------------------------------------
+The middle-ring subagent mistyped the worktree path and wrote 5272.yaml to a
+stray `.claire/` tree (a typo of `.claude/`). Caught by a repo-wide find;
+`.claire/` deleted; the real 5272.yaml in `.claude/worktrees/.../pothole_coulee/`
+is intact. (Same class of bug as the `.clone/` strays in Spokes B/C M-phases.
+Lesson stands: always verify content landed in the real worktree after a
+subagent dispatch.)
+
+--------------------------------------------------------------------------------
+MANIFEST CHECKER — extended (tools/newbie_manifest_check.py)
+--------------------------------------------------------------------------------
+ - 5222 MANIFEST entry updated: exits now {"west":5207, "south":5264}.
+ - Added SPOKE_C_ROOMS (18 rooms, sanctuary flags) + SPOKE_C_EXIT_PAIRS (19).
+ - main() prints SPOKE-C rooms + EXITPAIR-C blocks; return code folds in
+   spoke_c_room_fail + pair_c_fail.
+ - Reuses the generic check_spoke_a_room / check_spoke_a_exit_pair helpers
+   (roomid/zone/title/description/biome/sanctuary + single-token nouns that
+   appear in the description body + reciprocal exits).
+
+--------------------------------------------------------------------------------
+CONTENT QUALITY (hand-reviewed; automated checker confirms at the deferred run)
+--------------------------------------------------------------------------------
+ - Every noun key is a single token AND appears (case-insensitive) in its room's
+   description body — hand-verified across all 18 rooms.
+ - No digit characters in any player-facing text (numbers spelled out / feel
+   described) — immersion rule.
+ - Descriptions are folded scalars hard-wrapped ~78 chars; voice matches the
+   existing zone (terse, sensory, present-tense). 2-4 nouns/room; 1-2
+   idlemessages/room with <ansi fg="itemname"> highlighting.
+ - Biomes are all known-registry values (swamp/water). station: alchemy_bench
+   on 5265 + 5267 (the two craft rooms). sanctuary mutator on the 5 inner rooms
+   only.
+
+--------------------------------------------------------------------------------
+AUTHORITATIVE AUDITS — ALL RUN + PASS (popup-tolerant window, 2026-06-14)
+--------------------------------------------------------------------------------
+ [x] python tools/coord_inventory.py     -> Global collisions: 0 (exit 0); Pothole
+                                            Coulee now 79 rooms, bbox x[31..57]
+                                            y[-3..14] z[-2..2].
+ [x] python tools/newbie_manifest_check.py -> Spoke C rooms 18/18 PASS,
+                                            EXITPAIR-C 19/19 PASS, 0 FAIL overall.
+                                            (Caught + fixed one real miss: 5268
+                                            noun key 'shallows' vs body word
+                                            'shallow' — body reworded to "These
+                                            shallows are a quiet spot...".)
+ [x] go build -o /tmp/gomud_c4.exe .       -> exit 0 (no Go changes this phase;
+                                            confirms tree sound).
+ [x] boot (MapConsistencyEnforce=panic)   -> rooms.loadAllRoomZones loadedCount
+                                            =602 (+18); mapper.ValidateZoneConsi
+                                            errors=0 warnings=0 mode="panic" (=
+                                            authoritative cartcheck, CLEAN); Server
+                                            Ready, 0 panics. Instances wiped first
+                                            per SOP; server killed + temp binary
+                                            removed after.
+
+PHASE R is content-complete, hand-verified, AND machine-verified. Ready for the
+user content-review gate. NEXT after the gate: Phase M
+(mobs 9128-9139 + the 1 new capstone potion item + spawninfo), then Phase D
+(dialogue + quests 38-40 + the multi-item-reward engine build).
+================================================================================

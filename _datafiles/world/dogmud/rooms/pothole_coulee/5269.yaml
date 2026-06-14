@@ -1,0 +1,36 @@
+roomid: 5269
+zone: Pothole Coulee
+title: Reed Beds
+description: >
+  Tall reeds press in from every side, their feathered heads closing
+  overhead until the sky is just a pale smear between the stalks. The
+  ground underfoot is soft and yields with a sucking pull at each step,
+  mud welling up around your boots. Out in the dark water something
+  disturbs the surface — a slow ripple spreading wide and then gone.
+  The marsh proper begins here, and the air is thick with the smell of
+  green rot and standing water.
+biome: swamp
+coord:
+  x: 47
+  y: 6
+  z: 0
+exits:
+  north:
+    roomid: 5266
+  south:
+    roomid: 5270
+  east:
+    roomid: 5271
+spawninfo:
+- mobid: 9130
+nouns:
+  reeds: Tall marsh reeds packed shoulder-to-shoulder, their stems pale
+    gold at the base and darkening to deep green higher up. The feathered
+    seed-heads brush your face when the wind stirs.
+  water: Dark and still between the reed stems, the water here shows no
+    bottom. The surface is faintly iridescent with a thin oil of decay.
+idlemessages:
+- Something disturbs the <ansi fg="itemname">water</ansi> out among the
+  <ansi fg="itemname">reeds</ansi> — a slow ripple, and then silence.
+- A frog calls once from deep in the <ansi fg="itemname">reeds</ansi> and
+  falls abruptly quiet.

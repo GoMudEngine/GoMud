@@ -1,0 +1,60 @@
+mobid: 9134
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 130
+itemdropchance: 15
+hostile: true
+maxwander: 0
+groups:
+  - beast
+  - swamp
+activitylevel: 22
+idlecommands:
+  - 'emote circles the edge of the sunken hollow in a tight irregular
+    orbit, pausing at odd intervals that do not correspond to anything
+    visible'
+  - ''
+  - 'emote tips the head at a wrong angle and holds it there, attending
+    to something that is not sound in any ordinary sense'
+  - ''
+combatcommands:
+  - 'emote moves at a speed that is wrong for its size, covering ground
+    without any apparent transition between stillness and arrival'
+  - ''
+  - 'emote strikes low and lateral, using limbs in a configuration that
+    does not quite map to any single animal'
+  - ''
+  - 'emote circles wide and fast, looking for a flank, the eyes never
+    fixing on a single point but tracking everything at once'
+  - ''
+character:
+  name: Fen-Touched Lurker
+  description: |
+    Whatever this was before the poison swamp finished with it, the
+    record has been thoroughly revised. The fen-touched lurker is wet
+    in the way that things found at the bottom of still water are wet
+    -- not wet from rain or crossing, but wet as a condition of being.
+    The shape is animal but the proportions are not; the limbs are
+    too numerous or too few depending on how you count them, and the
+    way it carries its weight shifts mid-motion as though something
+    inside is rearranging. The skin -- hide -- whatever the correct
+    word is -- has gone the color of deep-water algae, a green so dark
+    it reads as black in poor light. It does not bleed visibly. It
+    guards the approach to the sunken hollow with a focused territorial
+    attention that suggests something worth guarding waits beyond.
+    It is fast. It is faster than it looks, and it already looks fast.
+  speciesid: 23
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 44
+    strength:
+      training: 38
+    vitality:
+      training: 32
+    perception:
+      training: 10
+    willpower:
+      training: 6

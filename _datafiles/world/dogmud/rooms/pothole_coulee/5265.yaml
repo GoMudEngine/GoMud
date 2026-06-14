@@ -1,0 +1,48 @@
+roomid: 5265
+zone: Pothole Coulee
+title: The Sheltered Pool
+description: >
+  A cold, clear pool fills the heart of the hollow, spring-fed from
+  somewhere below the pale silt bottom, its surface barely moving. Reeds
+  ring it close on three sides, pressing in tall and dark and still, and
+  the air here is cooler than anywhere above -- damp and clean, carrying
+  a faint sweetness from the herbs that dry on the racks to the west.
+  At the water's edge a flat slab of stone has been dressed level and
+  set up as a bench: a mortar and pestle sit at one end, rows of glass
+  bottles at the other, and between them, bundles of dried root and
+  leaf and bark wait in careful order. This is a place for patient work.
+biome: water
+coord:
+  x: 47
+  y: 4
+  z: 0
+station: alchemy_bench
+mutators:
+- mutatorid: sanctuary
+exits:
+  north:
+    roomid: 5264
+  south:
+    roomid: 5266
+  west:
+    roomid: 5267
+  east:
+    roomid: 5268
+spawninfo:
+- mobid: 9128
+nouns:
+  pool: The spring-fed pool is perhaps a dozen paces across, its water
+    clear enough to show every grain of pale silt on the bottom. It is
+    cold enough to ache -- the kind of cold that only comes from deep
+    underground.
+  bench: A flat slab of stone set level at the water's edge and dressed
+    smooth on its upper face. Worn edges and old stains in the stone
+    suggest it has been in use for a very long time. A mortar and pestle
+    sit at one end; glass bottles line the other.
+  reeds: Dense reeds press in around three sides of the pool, their
+    stalks thick and dark at the waterline, seed-heads brushing together
+    overhead in a faint dry whisper. They make the hollow feel enclosed
+    and private, cut off from the wider marsh.
+idlemessages:
+- The <ansi fg="itemname">pool</ansi> surface catches a slant of light and throws it across the reeds in a pale trembling web.
+- Glass <ansi fg="itemname">bottles</ansi> on the bench chime softly against one another as the air stirs.

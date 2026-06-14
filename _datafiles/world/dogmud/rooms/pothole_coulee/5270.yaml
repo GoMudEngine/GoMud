@@ -1,0 +1,35 @@
+roomid: 5270
+zone: Pothole Coulee
+title: Sunken Path
+description: >
+  A causeway of old waterlogged logs threads through the marsh, half-
+  swallowed by mud and years of neglect. Each log shifts slightly when
+  you step on it, and the dark water presses up between them. Cattails
+  crowd both edges in dense ranks, their brown seed-cylinders splitting
+  apart and releasing slow drifts of white down. The air smells of mud
+  and something faintly sweet — wild herbs somewhere close, where the
+  ground is firmer.
+biome: swamp
+coord:
+  x: 47
+  y: 7
+  z: 0
+exits:
+  north:
+    roomid: 5269
+  east:
+    roomid: 5272
+  south:
+    roomid: 5273
+nouns:
+  causeway: Rotted logs lashed together with rope long since gone green
+    with algae, the whole thing sinking unevenly into the marsh. In places
+    the wood has gone spongy and gives dangerously underfoot.
+  cattails: Brown-headed marsh reeds packed thick along the water's edge,
+    their velvet seed-heads bursting open at the top. The white down
+    catches in your clothes when you brush against them.
+idlemessages:
+- A drift of white <ansi fg="itemname">cattail</ansi> down floats past
+  on a breath of air and settles on the water.
+- One of the logs in the <ansi fg="itemname">causeway</ansi> shifts and
+  settles with a wet groan.

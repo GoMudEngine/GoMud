@@ -1,0 +1,39 @@
+roomid: 5277
+zone: Pothole Coulee
+title: Drowned Thicket
+description: >
+  The thicket here is half-drowned, black water standing at the height
+  of a man's knee among the stems, the branches overhead clawing
+  together into a low canopy that shuts out what grey light the swamp
+  allows. Dead wood leans against dead wood. Among the roots, where
+  the tangle of old growth meets the waterline, something has caught
+  -- a darker shape, still, threaded through by pale roots that have
+  grown around and through it over the slow years. The water between
+  the stems is deep and does not move.
+biome: swamp
+coord:
+  x: 47
+  y: 12
+  z: 0
+exits:
+  north:
+    roomid: 5276
+spawninfo:
+- mobid: 9133
+nouns:
+  thicket: A close press of dead growth, stems and branches locked
+    together, the whole mass leaning over the standing water below.
+    The footing between them is treacherous -- root, mud, and soft
+    rot where solid ground ought to be.
+  roots: Old root-mass, pale where the bark has gone, threaded
+    through by newer growth that has had years to work. Something is
+    caught there, held close to the waterline where the roots are
+    thickest.
+  branches: Bare and clawing, interlocked overhead into a canopy
+    that lets nothing through cleanly. They creak in no wind, just
+    the slow settlement of dead wood under its own weight.
+idlemessages:
+- Something moves in the water between the <ansi fg="itemname">roots</ansi>,
+  slow and without ripple.
+- The <ansi fg="itemname">branches</ansi> shift with a dry creak, though
+  there is no wind here.

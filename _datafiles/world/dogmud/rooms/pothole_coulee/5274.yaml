@@ -1,0 +1,37 @@
+roomid: 5274
+zone: Pothole Coulee
+title: The Miasma Edge
+description: >
+  The clean ground ends here. The water ahead has gone the color of
+  old bronze, filmed with an iridescent slick that catches the light
+  wrong, and a reek of something between sulphur and rot lifts off it
+  in faint wisps. The reeds along the bank are dying: the green has
+  leached out of them, leaving grey stalks that rattle dryly in the
+  wind. Nothing calls from the water. Nothing moves. The marsh south
+  of this point smells of poison and old death, and the ground there
+  cannot be trusted.
+biome: swamp
+coord:
+  x: 47
+  y: 9
+  z: 0
+exits:
+  north:
+    roomid: 5273
+  south:
+    roomid: 5275
+nouns:
+  water: The surface here is wrong — a metallic sheen floats on it
+    and the color beneath is too dark, too still. No insects touch it.
+    No frogs call from its banks.
+  reek: An underlying sulphur smell that rises in waves when the air
+    is still. It sits at the back of the throat and does not leave
+    quickly once you have breathed it.
+  reeds: Grey-stalked and hollow, the reeds here have given up. They
+    rattle against one another in the wind like dry bones, their
+    seed-heads long since gone to nothing.
+idlemessages:
+- The <ansi fg="itemname">reek</ansi> rises stronger for a moment and
+  then settles.
+- One of the grey <ansi fg="itemname">reeds</ansi> snaps at the waterline
+  and falls into the foul <ansi fg="itemname">water</ansi> without a sound.

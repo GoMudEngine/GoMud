@@ -1,0 +1,53 @@
+mobid: 9129
+zone: Pothole Coulee
+behavior_archetype: noncombat_questgiver
+statpool: 44
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+activitylevel: 12
+idlecommands:
+  - 'emote draws a flat stone along the edge of a hide stretched over his
+    knee, scraping in short even strokes toward the frame'
+  - ''
+  - 'emote checks the row of ceramic firepots racked along the hummock edge,
+    tapping each one with a knuckle, listening for the hollow note of a
+    cracked seal'
+  - ''
+  - 'emote watches the reed-line without moving, eyes tracking something in
+    the water that has not yet decided to announce itself'
+  - ''
+character:
+  name: Fenwalker Falv
+  description: |
+    Falv lives on a raised hummock at the edge of the deep marsh and does
+    not appear to consider this unusual. He is a rough, weathered man who
+    moves through boggy ground with the low, unhurried confidence of
+    someone who has stopped misjudging it. His camp is spare: a lean-to,
+    a fire-ring ringed with flat stones, and a rack of ceramic firepots
+    along the near edge that he checks the way another man might check a
+    fence line. When something gets too close from the water side he lobs
+    one. This is his primary social strategy. Across both hands the skin
+    has gone faintly smooth and shed-proof, pale where it stretches over
+    the knuckles, and it turns water cleanly the way oilskin does -- a
+    change he has accommodated by never mentioning it. He knows the marsh
+    better than he knows people and considers this an improvement.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 12
+    dexterity:
+      training: 10
+    vitality:
+      training: 8
+    strength:
+      training: 6
+    willpower:
+      training: 4
+    charisma:
+      training: 4

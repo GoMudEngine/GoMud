@@ -60,7 +60,9 @@ MANIFEST = {
     # attachment exit into the spoke's Drill Yard (5227), added in chunk 2.
     5220: ("Dry Coulee Mouth", None, (48, 0, 0), {"west":5209, "east":5227}, 1),
     5221: ("Talus Gap", None, (42, 0, 0), {"east":5210, "west":5244}, 1),
-    5222: ("Reedwash Mouth", None, (47, 2, 0), {"west":5207}, 1),
+    # 5222 is the Spoke C (Alchemy) mouth: the hub stub plus the southward
+    # attachment exit into the spoke's Reedwash Descent (5264), added in chunk 4.
+    5222: ("Reedwash Mouth", None, (47, 2, 0), {"west":5207, "south":5264}, 1),
     5223: ("Scrub Draw", None, (43, 1, 0), {"east":5216}, 1),
     5224: ("Stargazer Cut", None, (44, -2, 0), {"south":5218}, 1),
     5225: ("Old Field Track", None, (46, -2, 0), {"south":5217}, 1),
@@ -194,6 +196,72 @@ SPOKE_B_MOBS = {
     9121: ("9121-tunnel_brute.yaml",          "Tunnel Brute",         [5256, 5257],       True,  "generic_fighter",      90),
     9122: ("9122-stone_crusted_lurker.yaml",  "Stone-Crusted Lurker", [5258],             True,  "generic_fighter",     130),
     9123: ("9123-stone_blooded_beast.yaml",   "Stone-Blooded Beast",  [5260],             True,  "tank_taunter",        200),
+}
+
+# Spoke C (Alchemy) — Pothole Coulee rooms 5264-5281. Descends SOUTH from hub
+# stub 5222. Three rings: inner sheltered plunge pool (sanctuary, 5264-5268,
+# two alchemy_bench stations), middle reedy marsh (NO sanct., 5269-5274), outer
+# poison swamp (NO sanct., descends z-1, 5275-5281). Same (rid, title,
+# sanctuary_expected) shape as Spokes A/B.
+SPOKE_C_ROOMS = [
+    (5264, "Reedwash Descent", True),
+    (5265, "The Sheltered Pool", True),
+    (5266, "Mossy Verge", True),
+    (5267, "Drying Racks", True),
+    (5268, "Still Shallows", True),
+    (5269, "Reed Beds", False),
+    (5270, "Sunken Path", False),
+    (5271, "Cattail Stand", False),
+    (5272, "Mudflat", False),
+    (5273, "Black Pool", False),
+    (5274, "The Miasma Edge", False),
+    (5275, "Fenrot Approach", False),
+    (5276, "Sulphur Flats", False),
+    (5277, "Drowned Thicket", False),
+    (5278, "Sunken Hollow", False),
+    (5279, "The Black Mere", False),
+    (5280, "Heart of the Mire", False),
+    (5281, "Clearwater Spring", False),
+]
+
+# Reciprocal exit edges (each listed once; the checker verifies both
+# directions). The mire descent 5276->5278 is vertical (down/up); everything
+# else is cardinal (the layout is all-cartesian).
+SPOKE_C_EXIT_PAIRS = [
+    (5222, "south", 5264),   # hub stub attachment
+    (5264, "south", 5265),
+    (5265, "south", 5266),
+    (5265, "west", 5267),
+    (5265, "east", 5268),
+    (5266, "south", 5269),
+    (5269, "south", 5270),
+    (5269, "east", 5271),
+    (5270, "east", 5272),
+    (5270, "south", 5273),
+    (5271, "south", 5272),
+    (5273, "south", 5274),
+    (5274, "south", 5275),
+    (5275, "south", 5276),
+    (5276, "south", 5277),
+    (5276, "down", 5278),    # descent into the sunken mire
+    (5278, "south", 5279),
+    (5279, "south", 5280),
+    (5280, "south", 5281),
+]
+
+# Spoke C (Alchemy) mobs 9128-9135 (Phase M). Same shape as SPOKE_A/B_MOBS:
+#   mobid: (filename, name, [host_rooms], hostile, behavior_archetype, statpool)
+# 9128 Herbalist Birna is the shopkeeper/crafter (craft_support alchemy). The two
+# NPCs are Opened humanoids; the 6 foes are swamp creatures (NOT humanoid).
+SPOKE_C_MOBS = {
+    9128: ("9128-herbalist_birna.yaml",       "Herbalist Birna",      [5265],             False, "noncombat_questgiver", 44),
+    9129: ("9129-fenwalker_falv.yaml",        "Fenwalker Falv",       [5271],             False, "noncombat_questgiver", 44),
+    9130: ("9130-marsh_leech.yaml",           "Marsh Leech",          [5269, 5273],       True,  "generic_fighter",      18),
+    9131: ("9131-reed_lurker.yaml",           "Reed Lurker",          [5272],             True,  "generic_fighter",      40),
+    9132: ("9132-bog_stalker.yaml",           "Bog Stalker",          [5275, 5276],       True,  "generic_fighter",      60),
+    9133: ("9133-mire_brute.yaml",            "Mire Brute",           [5276, 5277],       True,  "generic_fighter",      90),
+    9134: ("9134-fen_touched_lurker.yaml",    "Fen-Touched Lurker",   [5278],             True,  "generic_fighter",     130),
+    9135: ("9135-spirit_of_the_swamp.yaml",   "Spirit of the Swamp",  [5280],             True,  "tank_taunter",        200),
 }
 
 # ---------------------------------------------------------------------------
@@ -527,9 +595,55 @@ def main():
     print("-" * 70)
     print(f"{len(SPOKE_B_MOBS)} Spoke B mobs checked, {spoke_b_mob_fail} FAIL")
 
+    # --- Spoke C (Alchemy) rooms --------------------------------------------
+    print()
+    print(f"{'SPOKE-C':<8} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    spoke_c_room_fail = 0
+    for rid, title, sanct in SPOKE_C_ROOMS:
+        fails = check_spoke_a_room(rid, title, sanct)  # generic room check
+        if fails:
+            spoke_c_room_fail += 1
+            print(f"{rid:<8} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{rid:<8} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_C_ROOMS)} Spoke C rooms checked, {spoke_c_room_fail} FAIL")
+
+    print()
+    print(f"{'EXITPAIR-C':<14} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    pair_c_fail = 0
+    for a, dir_ab, b in SPOKE_C_EXIT_PAIRS:
+        fails = check_spoke_a_exit_pair(a, dir_ab, b)  # generic exit-pair check
+        label = f"{a}-{dir_ab[:2]}-{b}"
+        if fails:
+            pair_c_fail += 1
+            print(f"{label:<14} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{label:<14} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_C_EXIT_PAIRS)} Spoke C exit pairs checked, {pair_c_fail} FAIL")
+
+    # --- Spoke C (Alchemy) mobs ---------------------------------------------
+    print()
+    print(f"{'SPOKE-C MOB':<14} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    spoke_c_mob_fail = 0
+    for mid in sorted(SPOKE_C_MOBS):
+        fails = check_spoke_a_mob(mid, SPOKE_C_MOBS[mid])  # generic mob check
+        if fails:
+            spoke_c_mob_fail += 1
+            print(f"{mid:<14} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{mid:<14} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_C_MOBS)} Spoke C mobs checked, {spoke_c_mob_fail} FAIL")
+
     return 1 if (total_fail or npc_fail or spoke_room_fail or pair_fail
                  or spoke_mob_fail or spoke_b_room_fail or pair_b_fail
-                 or spoke_b_mob_fail) else 0
+                 or spoke_b_mob_fail or spoke_c_room_fail or pair_c_fail
+                 or spoke_c_mob_fail) else 0
 
 
 if __name__ == "__main__":

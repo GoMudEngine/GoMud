@@ -1,0 +1,42 @@
+roomid: 5276
+zone: Pothole Coulee
+title: Sulphur Flats
+description: >
+  A pale crust covers the ground here, sulphur dried over black mud
+  that shows through wherever a foot has broken the surface, wet and
+  dark as an open wound. Vents split the crust at intervals, breathing
+  out small hisses of foul gas and rings of discolored foam. To one
+  side a sinkhole breaks the flat entirely, its edges crumbled and
+  slick, dropping away into a sunken hollow below where the air goes
+  green and close. The stench is sharp enough to sting the back of the
+  throat.
+biome: swamp
+coord:
+  x: 47
+  y: 11
+  z: 0
+exits:
+  north:
+    roomid: 5275
+  south:
+    roomid: 5277
+  down:
+    roomid: 5278
+spawninfo:
+- mobid: 9132
+- mobid: 9133
+nouns:
+  crust: Sulphur dried to a pale mineral skin over the black mud
+    beneath. It cracks underfoot with a sound like thin ice, and the
+    mud that shows through is the color of something long dead.
+  vents: Splits and holes in the crust where the ground exhales.
+    Each one breathes a thin hiss and a reek that gets into the eyes.
+    The foam they leave behind is pale yellow and does not last long.
+  sinkhole: A ragged hole where the crust gave way entirely, its
+    edges slick with seep-water. The drop below is short but the
+    hollow it opens into smells of foul air and standing water.
+idlemessages:
+- One of the <ansi fg="itemname">vents</ansi> lets out a long hiss and
+  goes briefly quiet, as though catching a breath.
+- The <ansi fg="itemname">crust</ansi> groans beneath your weight, and
+  a crack runs an arm's length toward the sinkhole.

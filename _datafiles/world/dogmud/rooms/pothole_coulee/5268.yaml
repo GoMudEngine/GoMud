@@ -1,0 +1,44 @@
+roomid: 5268
+zone: Pothole Coulee
+title: Still Shallows
+description: >
+  The pool spreads into a quiet arm here, shallow enough to wade without
+  wetting your knees, its bottom a pale silt that holds no print for
+  long. The water is glass-still in this sheltered corner, barely a
+  tremor on its surface, and through it the silt glows faintly pale
+  in the filtered light. Freshwater clams work themselves slowly into
+  the mud along the margin, their shells the color of old ivory. At the
+  waterline, mint has taken hold between the stones, growing in flat
+  mats that release their smell the moment you brush them -- sharp and
+  cool and immediate, cutting through the broader green weight of the
+  marsh. These shallows are a quiet spot, easy to overlook, good for
+  learning to look carefully at small things.
+biome: water
+coord:
+  x: 48
+  y: 4
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  west:
+    roomid: 5265
+nouns:
+  shallows: The water here barely reaches ankle-deep over pale silt, so
+    clear that every grain of the bottom is visible. Where the shallows
+    meet the deeper pool to the west, the color shifts from near-white
+    to a cold, translucent blue-grey.
+  silt: The pale silt bottom is undisturbed except where clams have
+    worked their way into it, leaving small raised mounds and the faint
+    trails of their passage. It clouds in slow white billows if you step
+    too quickly.
+  clams: Small freshwater clams half-buried in the silt, their shells
+    pale ivory touched with brown at the hinge. They are unhurried and
+    patient, doing what clams have always done.
+  mint: Dense mats of mint grow flat between the waterline stones,
+    dark green and glossy, impossible to walk past without releasing a
+    sharp, clean smell that lingers on your fingers long after you have
+    moved on.
+idlemessages:
+- The <ansi fg="itemname">shallows</ansi> hold so still that the reflection of the reeds above is perfect and unbroken.
+- A clam shifts slightly in the <ansi fg="itemname">silt</ansi>, sending a slow curl of white clouding toward the deeper water.
