@@ -1,5 +1,37 @@
 # DOGMud Patch Notes
 
+## 2026-06-14 — Newbie-area rework: Spokes C, D & E [branch-local, not yet live]
+
+More build progress on the Pothole Coulee newbie zone. Lives on the
+`feature+newbie-area` branch; ships to players at the chunk-10 cutover, not
+before. Recorded here as a dated build log.
+
+- **Spoke C (Alchemy) complete** — the herbalism/brewing tutorial spoke,
+  descending south into a marsh. Herbalist Birna teaches the brew loop
+  (buy or forage herbs, craft a healing salve at the alchemy bench, drink
+  it); Fenwalker Falv teaches throwing an alchemical firebomb — and that
+  throwing, casting, and special moves all share one cooldown — plus the
+  potion bandolier; the capstone wades a poison swamp to break the Spirit
+  of the Swamp for a permanent vitality gain, a stocked kit of brewed
+  supplies, and an advanced recipe. Eighteen rooms, eight mobs, a capstone
+  potion, and three quests, verified end-to-end.
+- **Spoke D (Wilderness & Tracking) complete** — the fieldcraft spoke on
+  the open steppe. Scout Tarn teaches reading sign (track a hare, forage
+  the scrub); Hunter Delk teaches the hunter's loop — bring down a
+  pronghorn for meat, rest rough in the field to recover, and cook the kill
+  at a campfire; the capstone breaks a predator pack and its alpha for a
+  permanent perception gain, a crafted hide garment, and a hunting kit.
+  Twenty rooms, eight mobs (a full canine pack), and three quests.
+- **Spoke E (The Folding / magic) underway** — the magic spoke is built
+  out structurally: a ruined hilltop observatory, a veil-thin meditation
+  grove, and reality-torn scabland where an "Unfolded" aberrant waits. It
+  will teach casting, the three channels, willpower, and concentration, and
+  grant a first area spell and a heal. Rooms in; NPCs and quests next.
+- **Two more reusable quest-reward engine features** (builder-facing):
+  quests can now grant a stockpile of items in one reward (`item_info`),
+  and the `sleep` verb advances "rest in the field" quest steps. These back
+  the Alchemy and Wilderness spokes and are open to all future content.
+
 ## 2026-06-13 — Newbie-area rework: Spoke B (Forge) [branch-local, not yet live]
 
 Build progress on the Pothole Coulee newbie zone (replaces Sanctum Basin).
