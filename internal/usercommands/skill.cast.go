@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -341,6 +342,16 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	room.SendTextVisual(messaging.CategorySpellFold, fmt.Sprintf(
 		`<ansi fg="username">%s</ansi> closes their eyes in concentration.`,
 		user.Character.Name), user.UserId)
+
+	// Quest engine: command notification — the cast successfully initiated.
+	// Lets quests gate a step on the `cast` command (the newbie Folding
+	// spoke's "cast at the practice mark" beat). Mirrors forage/drink/throw.
+	bridge := questengine.NewGameBridge(user, room.RoomId)
+	questengine.GetEngine().Notify("command", questengine.EventDetails{
+		UserId:  user.UserId,
+		RoomId:  room.RoomId,
+		Command: "cast",
+	}, bridge, bridge)
 
 	return true, nil
 }
