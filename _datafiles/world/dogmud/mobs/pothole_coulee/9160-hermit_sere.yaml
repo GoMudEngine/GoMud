@@ -1,0 +1,59 @@
+mobid: 9160
+zone: Pothole Coulee
+behavior_archetype: noncombat_questgiver
+statpool: 44
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 10
+idlecommands:
+  - 'emote sweeps the same patch of shrine floor it has swept a thousand
+    times, slow and without impatience'
+  - ''
+  - 'emote sets a hand flat against the cracked altar and waits, as
+    though listening for an answer through the stone'
+  - ''
+  - 'emote looks up through the broken roof at the sky for a long moment,
+    then back down at the work'
+  - ''
+  - 'emote murmurs to the empty niches in a language that is mostly
+    breath and worn-smooth syllables'
+  - ''
+character:
+  name: Hermit Sere
+  description: |
+    No one sent Sere to keep the old shrine. The hermit simply stayed,
+    long enough ago that the farmstead folk speak of the shrine and the
+    hermit as one thing. Sere tends a place older than the standing
+    stones, older than the tradition Hale sings, and seems to feel the
+    weight of that without being crushed by it -- the steady, worn calm
+    of someone who has made peace with not understanding.
+    The skin at Sere's temples has gone faintly translucent, the pale
+    shape of the skull showing through like a lamp behind oiled paper.
+    It is worst here, near the shrine; the folk say the thin old place
+    works on whoever stays in it, and the hermit is what staying looks
+    like. Sere does not mind being looked at. Sere has been looking at
+    much stranger things.
+    The hermit knows the shrine holds something it does not understand,
+    and will point a patient seeker toward it without pretending to know
+    what it is.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 14
+    willpower:
+      training: 12
+    charisma:
+      training: 8
+    vitality:
+      training: 6
+    strength:
+      training: 2
+    dexterity:
+      training: 2

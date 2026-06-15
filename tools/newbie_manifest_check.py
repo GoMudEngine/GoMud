@@ -69,7 +69,9 @@ MANIFEST = {
     # 5224 is the Spoke E (Folding) mouth: the hub stub plus the UP attachment
     # exit into the spoke's Observatory Base (5302), added in chunk 6.
     5224: ("Stargazer Cut", None, (44, -2, 0), {"south":5218, "up":5302}, 1),
-    5225: ("Old Field Track", None, (46, -2, 0), {"south":5217}, 1),
+    # 5225 is the Spoke F (Lore) mouth: the hub stub plus the northward
+    # attachment exit into the spoke's Cartway (5322), added in chunk 7.
+    5225: ("Old Field Track", None, (46, -2, 0), {"south":5217, "north":5322}, 1),
     5226: ("Bluff Steps", None, (47, -1, 0), {"south":5209}, 1),
 }
 
@@ -409,6 +411,89 @@ SPOKE_E_MOBS = {
     9150: ("9150-riven_stalker.yaml",   "Riven Stalker",  [5317, 5318],       True,  "generic_fighter",      95),
     9151: ("9151-unbound_fold.yaml",    "Unbound Fold",   [5319],             True,  "pure_caster",         130),
     9152: ("9152-the_unfolded.yaml",    "The Unfolded",   [5320],             True,  "pure_caster",         200),
+}
+
+# Spoke F (Lore & Folk Tradition) — Pothole Coulee rooms 5322-5346. Runs N/NW
+# from hub stub 5225 (Old Field Track). The SOFT spoke: no boss. Three rings —
+# inner farmstead (sanctuary, 5322-5329), middle standing stones (NO sanct.,
+# 5330-5338), outer old shrine (NO sanct., +z1 rise, 5339-5346; the Orbital
+# Stone discovery lives in the Reliquary 5343). Same (rid, title, sanct) shape.
+SPOKE_F_ROOMS = [
+    (5322, "The Cartway", True),
+    (5323, "Farmstead Gate", True),
+    (5324, "The Commons Yard", True),
+    (5325, "The Longhouse", True),
+    (5326, "The Barn", True),
+    (5327, "Kitchen Garden", True),
+    (5328, "The Well", True),
+    (5329, "Farmstead's Edge", True),
+    (5330, "Stone Road", False),
+    (5331, "The Outer Ring", False),
+    (5332, "Scrub Verge", False),
+    (5333, "The Stone Circle", False),
+    (5334, "Fallen Menhir", False),
+    (5335, "The Mustering Green", False),
+    (5336, "Windward Stones", False),
+    (5337, "The Tall Stone", False),
+    (5338, "Stones' End", False),
+    (5339, "Shrine Approach", False),
+    (5340, "Mossy Steps", False),
+    (5341, "The Old Shrine", False),
+    (5342, "Collapsed Nave", False),
+    (5343, "The Reliquary", False),
+    (5344, "Buried Vault", False),
+    (5345, "Shrine Loft", False),
+    (5346, "Clearstone Rise", False),
+]
+
+# Reciprocal exit edges (each listed once). The shrine loft climb 5341->5345 is
+# vertical (up/down); everything else is cardinal (all-cartesian layout).
+SPOKE_F_EXIT_PAIRS = [
+    (5225, "north", 5322),   # hub stub attachment
+    (5322, "north", 5323),
+    (5323, "north", 5324),
+    (5324, "north", 5327),
+    (5324, "west", 5325),
+    (5324, "east", 5326),
+    (5327, "west", 5328),
+    (5328, "north", 5329),
+    (5329, "north", 5330),
+    (5330, "north", 5331),
+    (5330, "west", 5332),
+    (5331, "west", 5333),
+    (5332, "north", 5333),
+    (5333, "west", 5334),
+    (5333, "north", 5335),
+    (5335, "west", 5336),
+    (5335, "north", 5337),
+    (5337, "west", 5338),
+    (5338, "north", 5339),
+    (5339, "west", 5340),
+    (5339, "north", 5341),
+    (5340, "north", 5342),
+    (5341, "west", 5342),
+    (5341, "up", 5345),      # climb to the shrine loft
+    (5342, "north", 5343),
+    (5343, "west", 5344),
+    (5345, "north", 5346),
+]
+
+# Spoke F (Lore) mobs 9153-9160 (Phase M). Same shape as the other spokes:
+#   mobid: (filename, name, [host_rooms], hostile, behavior_archetype, statpool)
+# The SOFT spoke — all NON-COMBAT. Three Opened questgivers (Wenna/Hale/Sere),
+# three stationary scheduled-in-spirit farm folk (Bram/Senna/Maeve, role emotes;
+# true schedule_id routines deferred to chunk 9 polish), the aggrieved disputant
+# Ferd, and the ONE attackable mob: belligerent Sullen Garrow (the taunt target,
+# NOT non_combatant, hostile:false so the player initiates). All hostile:false.
+SPOKE_F_MOBS = {
+    9153: ("9153-elder_wenna.yaml",          "Elder Wenna",         [5324], False, "noncombat_questgiver", 44),
+    9154: ("9154-farmhand_bram.yaml",        "Farmhand Bram",       [5326], False, "noncombat_passive",    30),
+    9155: ("9155-gardener_senna.yaml",       "Gardener Senna",      [5327], False, "noncombat_passive",    30),
+    9156: ("9156-hearth_keeper_maeve.yaml",  "Hearth-Keeper Maeve", [5325], False, "noncombat_passive",    30),
+    9157: ("9157-loresinger_hale.yaml",      "Loresinger Hale",     [5333], False, "noncombat_questgiver", 44),
+    9158: ("9158-sullen_garrow.yaml",        "Sullen Garrow",       [5335], False, "combat_passive",       25),
+    9159: ("9159-farmer_ferd.yaml",          "Farmer Ferd",         [5335], False, "noncombat_passive",    30),
+    9160: ("9160-hermit_sere.yaml",          "Hermit Sere",         [5341], False, "noncombat_questgiver", 44),
 }
 
 # ---------------------------------------------------------------------------
@@ -879,12 +964,58 @@ def main():
     print("-" * 70)
     print(f"{len(SPOKE_E_MOBS)} Spoke E mobs checked, {spoke_e_mob_fail} FAIL")
 
+    # --- Spoke F (Lore) rooms -----------------------------------------------
+    print()
+    print(f"{'SPOKE-F':<8} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    spoke_f_room_fail = 0
+    for rid, title, sanct in SPOKE_F_ROOMS:
+        fails = check_spoke_a_room(rid, title, sanct)  # generic room check
+        if fails:
+            spoke_f_room_fail += 1
+            print(f"{rid:<8} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{rid:<8} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_F_ROOMS)} Spoke F rooms checked, {spoke_f_room_fail} FAIL")
+
+    print()
+    print(f"{'EXITPAIR-F':<14} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    pair_f_fail = 0
+    for a, dir_ab, b in SPOKE_F_EXIT_PAIRS:
+        fails = check_spoke_a_exit_pair(a, dir_ab, b)  # generic exit-pair check
+        label = f"{a}-{dir_ab[:2]}-{b}"
+        if fails:
+            pair_f_fail += 1
+            print(f"{label:<14} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{label:<14} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_F_EXIT_PAIRS)} Spoke F exit pairs checked, {pair_f_fail} FAIL")
+
+    # --- Spoke F (Lore) mobs ------------------------------------------------
+    print()
+    print(f"{'SPOKE-F MOB':<14} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    spoke_f_mob_fail = 0
+    for mid in sorted(SPOKE_F_MOBS):
+        fails = check_spoke_a_mob(mid, SPOKE_F_MOBS[mid])  # generic mob check
+        if fails:
+            spoke_f_mob_fail += 1
+            print(f"{mid:<14} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{mid:<14} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_F_MOBS)} Spoke F mobs checked, {spoke_f_mob_fail} FAIL")
+
     return 1 if (total_fail or npc_fail or spoke_room_fail or pair_fail
                  or spoke_mob_fail or spoke_b_room_fail or pair_b_fail
                  or spoke_b_mob_fail or spoke_c_room_fail or pair_c_fail
                  or spoke_c_mob_fail or spoke_d_room_fail or pair_d_fail
                  or spoke_d_mob_fail or spoke_e_room_fail or pair_e_fail
-                 or spoke_e_mob_fail) else 0
+                 or spoke_e_mob_fail or spoke_f_room_fail or pair_f_fail
+                 or spoke_f_mob_fail) else 0
 
 
 if __name__ == "__main__":

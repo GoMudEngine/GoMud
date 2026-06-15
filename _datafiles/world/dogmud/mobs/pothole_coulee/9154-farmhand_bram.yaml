@@ -1,0 +1,48 @@
+mobid: 9154
+zone: Pothole Coulee
+behavior_archetype: noncombat_passive
+statpool: 30
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 13
+idlecommands:
+  - 'emote forks soiled straw out of a stall and spreads fresh, working
+    steady and unhurried'
+  - ''
+  - 'emote checks a length of harness for cracks, running it through his
+    hands a hand-span at a time'
+  - ''
+  - 'emote leans a moment on the pitchfork and lets out a breath, then
+    bends back to it'
+  - ''
+character:
+  name: Farmhand Bram
+  description: |
+    Bram does the heavy work of the farmstead and does not resent it --
+    a broad, easy young man who measures a good day by what got done and
+    sleeps the sleep of someone who earned it. He is friendly in the
+    uncomplicated way of people who have never had much reason not to be.
+    A second row of small blunt ridges runs down the back of his neck and
+    along his spine, visible when he stoops to the work -- knobs of bone
+    under the skin, even and deliberate as a row of seed. The Awakening
+    left them. He says they ache before rain and are good for nothing
+    else, and goes back to forking straw.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: 12
+    strength:
+      training: 10
+    perception:
+      training: 4
+    charisma:
+      training: 2
+    dexterity:
+      training: 2

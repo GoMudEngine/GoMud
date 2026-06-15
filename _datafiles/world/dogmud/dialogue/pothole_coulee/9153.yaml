@@ -1,0 +1,133 @@
+mobid: 9153
+zone: Pothole Coulee
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "hail"]
+    responses:
+      - "Wenna. I keep this farmstead and most of what goes on under its roof.
+          Sit, if you like. You have the look of someone fresh up out of the
+          pool."
+      - "Come in past the gate, then. The folk here don't bite, whatever the
+          town says of us."
+
+  - keywords: ["ways", "folk", "learn", "teach", "tradition", "quest", "task"]
+    responses:
+      - "The way of the folk is mostly the way of asking. You want to know a
+          thing, you ask the one who keeps it, and you listen to the whole
+          answer. Ask me, and I will set you on it."
+      - "We are an old people in a small place, and what we have we have because
+          we remember it and pass it on. Ask, and I will pass you some."
+
+  - keywords: ["eyes", "gold", "mutation", "opened", "sight"]
+    responses:
+      - "My eyes? The Awakening came to me late, and it came to my eyes -- they
+          shine like an animal's at dusk now. Caught the whole household off
+          guard the first evening. You get used to a thing if you live with it
+          long enough."
+
+  - keywords: ["stones", "circle", "hale", "loresinger"]
+    responses:
+      - "West and north of here the old stones stand in their ring. Hale keeps
+          them, and the whole story of us carved into them. When you have your
+          feet under you, go and ask him the old tale -- he has been waiting on
+          a good listener a long while."
+
+  - keywords: ["help", "reference"]
+    responses:
+      - "When your own remembering fails you -- and it will -- type help. It is
+          the surest reckoning there is, more patient than any person, and
+          always to hand. We keep our lore in stone for the same reason: so it
+          outlasts us. Go on, try it."
+
+  - keywords: [""]
+    responses:
+      - "Ask, and I will answer."
+      - "The yard keeps. Take your time."
+      - "Say what you came to say."
+
+tree:
+  root:
+    text: "Wenna. Elder of the farmstead, for my sins and my years."
+    hints: "You could ask Elder Wenna about the folk and their ways, or your task."
+    variants:
+      # ── Not yet Opened ───────────────────────────────────
+      - questExcluded: ["30-end"]
+        text: "You have not been through the Awakening yet, have you. No matter
+          to me, but the pool comes first -- it is how a body becomes a part of
+          this place. Cleric Hadwen keeps it, south at the reflecting pool. Be
+          Opened, then come back and I will teach you the folk."
+        hints: "Find Cleric Hadwen at the reflecting pool and complete the
+          Awakening, then return to Elder Wenna."
+
+      # ── Opened, not started ──────────────────────────────
+      - questRequired: ["30-end"]
+        questExcluded: ["47-start", "47-end"]
+        text: "The rite is on you. Good. Then there is something here worth your
+          while -- the way of the folk, which is the way of asking and of
+          knowing where to look a thing up. Ask me about our ways when you mean
+          to learn."
+        hints: "Type ask wenna ways to learn the way of the folk."
+
+      # ── Mid quest 47 ─────────────────────────────────────
+      - questRequired: ["47-start"]
+        questExcluded: ["47-end"]
+        text: "Still learning. Ask me about the folk, the ways, the stones --
+          whatever you like; that is the lesson. And type help to open the
+          in-game reckoning, the one that outlasts your memory. Come back when
+          you have."
+        hints: "Ask Wenna about the folk/ways/stones; type help to open the
+          in-game reference. Then ask wenna done."
+
+      # ── Quest 47 complete ────────────────────────────────
+      - questRequired: ["47-end"]
+        text: "A friend of the folk, now, and wearing the sign of it. Good. The
+          stones are west and north -- go and ask Hale the old story when you
+          are ready. He keeps the deep part of us, the part even I only half
+          recall."
+        hints: "Head to the standing stones (west and north) and type ask hale
+          to find Loresinger Hale."
+
+  nodes:
+    # ── QUEST 47 OFFER ────────────────────────────────────────
+    - id: words_offer
+      triggers: ["ways", "folk", "learn", "teach", "tradition", "begin",
+        "quest", "task"]
+      questRequired: ["30-end"]
+      questExcluded: ["47-start", "47-end"]
+      grantsQuest: "47-start"
+      text: "Then here is the first of it, and the whole of it: learn to ask,
+        and learn where to look. Ask me about the folk and our ways -- the
+        stones, the tradition, whatever takes you -- and listen to the answers.
+        And when your own memory fails, type help: it is the in-game reckoning,
+        more patient than I am and always to hand. Do both, and come back to
+        me."
+      hints: "Ask Wenna about the folk/ways/stones to hear her out. Type help to
+        open the in-game reference. Then return -- ask wenna done."
+
+    # ── QUEST 47 TURN-IN ──────────────────────────────────────
+    - id: words_turnin
+      triggers: ["report", "done", "ready", "finished", "quest", "task"]
+      questRequired: ["47-help"]
+      questExcluded: ["47-end"]
+      grantsQuest: "47-end"
+      text: "You asked, and you listened, and you found the help that outlasts
+        the asking. That is the whole way of the folk -- the rest is only more
+        of it. Take this charm; wear it where it shows, and ours will know you
+        for a friend. Now -- the stones, west and north. Hale keeps the deep
+        story. Go and let him tell it."
+      hints: "Quest complete. Head to the standing stones and type ask hale to
+        find Loresinger Hale."
+
+    # ── HELP EXPLANATION ──────────────────────────────────────
+    - id: help_node
+      triggers: ["help", "reference", "remember", "how"]
+      text: "When you cannot hold a thing in your head -- a command, a custom, a
+        name -- type help and the in-game reckoning will hold it for you. It is
+        the surest reference there is, and it never tires of being asked. We
+        keep our own lore in carved stone for the same reason. Go on and try
+        it."
+      hints: "Type help to open the in-game reference."
+
+memory:
+  expiryPeriod: ""

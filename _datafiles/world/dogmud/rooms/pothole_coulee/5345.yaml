@@ -1,0 +1,47 @@
+roomid: 5345
+zone: Pothole Coulee
+title: Shrine Loft
+description: >
+  A stub of stair -- six broad steps of surviving stone -- climbs from
+  the main floor to a ledge that runs along the shrine's east wall,
+  open to the outside air through a gap where the upper course of
+  masonry has long since fallen away. The ledge is wide enough for two
+  people to stand abreast and look out. From here the standing-stone
+  ring below is visible in its entirety, the stones casting long
+  shadows at the right hours, the low coulee floor spreading out
+  beyond them toward the steppe. The hermit comes up here, clearly --
+  there is a worn place on the ledge's edge where hands have rested,
+  and the gap in the masonry has been left clear of debris. A good
+  place to see the whole of the land that the shrine overlooks. A
+  short stair on the north wall climbs toward the open crown of
+  the rise.
+biome: fort
+coord:
+  x: 43
+  y: -13
+  z: 1
+exits:
+  down:
+    roomid: 5341
+  north:
+    roomid: 5346
+nouns:
+  ledge: The ledge is sound -- the wall below it is the intact section
+    of the shrine, and the stone underfoot is solid. The worn patch at
+    the edge has been smoothed by years of hands resting there, looking
+    out. It is a comfortable place to stand and look at a large
+    amount of sky.
+  stair: Six steps, broad and low, climbing from the main floor. The
+    treads are worn but not dangerously so. The stone handrail on the
+    south side is intact; the north rail is gone, leaving the stair
+    open on that side.
+idlemessages:
+- From the <ansi fg="cyan">ledge</ansi>, the stone ring below resolves into its full
+  shape -- the arrangement becomes clear in a way it isn't from
+  inside the circle.
+- Wind arrives here unobstructed and stays for a moment before
+  moving on toward the open rise to the north.
+- The worn spot at the <ansi fg="cyan">ledge</ansi> edge is warm, as though recently
+  occupied, though you are alone.
+- A hawk crosses the sky above the coulee at eye level from here,
+  close enough to see the tilt of its head.

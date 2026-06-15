@@ -1,0 +1,93 @@
+# Quest 49 — The Old Shrine (Pothole Coulee, Spoke F / Lore outer ring, capstone)
+#
+# Token flow:
+#   49-start — granted by Hermit Sere's shrine_offer node (requires 48-end).
+#   49-find  — command trigger on `search` in the Reliquary (5343). Searching
+#              reveals the hidden `disc` noun (the Orbital Stone) AND fires the
+#              beat; the beat's send_text also delivers the core discovery, so
+#              the capstone reads even if the hidden-noun roll lags. The
+#              search-command Notify was added this chunk.
+#   49-end   — granted by Sere's shrine_turnin node (needs 49-find).
+#
+# Design: the quiet-discovery capstone -- NO boss, NO fight (the soft spoke).
+# Search out the half-buried disc under the Reliquary floor (the sci-fi tease,
+# deliberately NOT understood), study it, and bring word back. Reward: a Charisma
+# bump + the folk's recognition (a narrative faction nod). The disc stays in the
+# world.
+
+questid: 49
+name: The Old Shrine
+description: >-
+  Hermit Sere keeps a shrine older than the standing stones, older than the folk
+  who half-remember it. Something lies under the cracked floor of its innermost
+  chamber -- the reckoning-bone points at it, and Sere has waited a long time for
+  a patient hand to bring it to light.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: >-
+      Sere wants you to find what lies beneath the shrine. In the Reliquary, the
+      deepest back-chamber, the flagstone floor has cracked and heaved over
+      something. Search it out.
+    hint: >-
+      Go up through the shrine to the Reliquary (the deepest back-chamber). Type
+      search to work at the disturbed floor and uncover what lies beneath --
+      search again if the first try turns up nothing. Then look at what you find,
+      and return to Sere -- ask sere done.
+  - id: find
+    description: >-
+      You worked a disc of pale, impossible metal free of the floor -- a thing
+      older than the folk, marked with a sign even the loresingers cannot read.
+      Study the disc, then bring word to Sere.
+    hint: >-
+      Return to Hermit Sere and tell her what you found -- ask sere done.
+  - id: end
+    description: >-
+      You have seen the thing under the shrine and brought word of it back. You
+      do not understand it. Neither does Sere, nor Hale, nor the oldest reckoning
+      the folk keep. But you have seen it -- and the coulee folk will not forget
+      that you were the one who did.
+
+rewards:
+  stat_info: "charisma:3"
+  gold: 40
+  playermessage: >-
+    Sere listens to your account with the stillness of someone who has waited a
+    long time to hear it, the pale shape of her skull faintly lit from within.
+    "So it is real," she says at last, very quietly. "I have felt it under the
+    floor for thirty years and never had the hands or the right to lift it. You
+    did." She does not ask you to bring it to her; she seems to understand it is
+    not a thing to be owned. "Leave it where the light can reach it. Some things
+    are meant to be found more than once." Then, with a gravity that settles over
+    you like a mantle: "You came to us a stranger. You leave a friend of the
+    coulee folk -- and the only living soul who has looked on the thing beneath
+    the shrine and carried the wondering back out. Carry it well. One day,
+    somewhere, it may come to mean more than either of us can see from here."
+  roommessage: ""
+
+triggers:
+  # ── SEARCH: uncover the buried disc in the Reliquary (5343) ────────────
+  - event: command
+    command: search
+    room: 5343
+    conditions:
+      has: ["49-start"]
+      missing: ["49-find"]
+    actions:
+      - grant: "49-find"
+      - send_text: >-
+          Your fingers find the lifted edge of a flagstone, and under it
+          something that is not stone -- cool, smooth, regular. You work it free:
+          a disc of pale grey metal the size of a spread hand, and nothing about
+          it belongs here. It is neither cast nor forged nor any process the folk
+          have a word for, its face made smooth the way still water is smooth.
+          Fine raised lines branch and rejoin across it with a cold regularity,
+          threading inward toward a single mark pressed deep at the center -- a
+          ring with a line struck through it, the very mark the reckoning-bone
+          carries at its oldest, deepest end. It stays cool in your warm hands.
+          You do not understand it, and you are fairly certain no one in the
+          coulee does. It feels less like something the folk made and lost than
+          like something that was already here when they came, waiting under the
+          floor for a hand to lift it. Now yours has. Bring word of it to Sere.

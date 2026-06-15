@@ -1,0 +1,122 @@
+mobid: 9160
+zone: Pothole Coulee
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "hail"]
+    responses:
+      - "You found your way up here. Few do. I am Sere; I keep the shrine, or
+          the shrine keeps me -- after this long it is hard to say which."
+      - "Speak softly. The old places hear better than the new ones, and this
+          is the oldest of all."
+
+  - keywords: ["shrine", "old", "place", "lore", "learn", "keep", "quest",
+      "task"]
+    responses:
+      - "This shrine is older than the stones Hale sings, older than the folk
+          who built the ring below. Someone raised it before any of us, and
+          left -- and left something behind. Ask me, if you have come to help
+          me find out what."
+      - "I have tended this place a long time on the strength of a feeling. Ask,
+          and I will tell you what the feeling is."
+
+  - keywords: ["skull", "translucent", "temples", "mutation", "opened"]
+    responses:
+      - "The thinning shows through me, yes -- the bone of my skull, pale under
+          the skin at the temples. The old place does it to whoever stays in
+          it. I stayed longest. I have made my peace; the shrine and I have
+          worn into the same shape."
+
+  - keywords: ["beneath", "under", "floor", "disc", "stone", "buried"]
+    responses:
+      - "Something lies under the floor of the innermost chamber -- the
+          Reliquary, the deepest room. I have felt it there for thirty years,
+          under the cracked flags, and never had the hands or the right to lift
+          it. Perhaps you do. Ask me to send you, if you would look."
+
+  - keywords: [""]
+    responses:
+      - "Ask. I have little else to offer but answers."
+      - "The shrine keeps. So do I. Take your time."
+      - "Speak, and I will listen as the old places listen."
+
+tree:
+  root:
+    text: "Sere. Keeper of the old shrine -- or its longest guest."
+    hints: "You could ask Hermit Sere about the shrine, or about what lies
+      beneath it, or your task."
+    variants:
+      # ── Not ready (Hale's task unfinished) ───────────────
+      - questExcluded: ["48-end"]
+        text: "You have come up out of order. The stones come before the shrine
+          -- go down to Hale, learn the folk's story and settle what needs
+          settling, and come back when he has named you sound. What lies here is
+          not for the unready, and I have waited this long; I can wait a little
+          more."
+        hints: "Return to Loresinger Hale at the standing stones and finish his
+          task before coming to Hermit Sere."
+
+      # ── Ready for quest 49 ───────────────────────────────
+      - questRequired: ["48-end"]
+        questExcluded: ["49-start", "49-end"]
+        text: "Hale sent you, and the reckoning-bone is on you -- so you have
+          seen the mark it carries at its oldest end. I have felt that same mark
+          under my floor for thirty years. Ask me about what lies beneath, when
+          you are ready to bring it to light."
+        hints: "Type ask sere beneath to take on the shrine's task."
+
+      # ── Mid quest 49 ─────────────────────────────────────
+      - questRequired: ["49-start"]
+        questExcluded: ["49-end"]
+        text: "It is still down there, under the Reliquary floor -- the deepest
+          chamber, where the flags have cracked and heaved. Search it out with
+          your hands; search again if the first try finds only stone. Look on
+          what you uncover, then come and tell me it is real."
+        hints: "Go to the Reliquary (deepest chamber). Type search to uncover
+          what lies beneath the floor -- search again if the first try finds
+          only stone. Then ask sere done."
+
+      # ── Quest 49 complete ────────────────────────────────
+      - questRequired: ["49-end"]
+        text: "You looked on it, and you came back, and you carry the wondering
+          the way I have carried it -- lightly, because there is nothing else to
+          do with it. You are a friend of the folk now, and the only soul living
+          who has seen the thing beneath the shrine. That is no small thing to
+          be. Go well, and come back if the world ever tells you what it was."
+        hints: "You have cleared the Lore spoke. Well done."
+
+  nodes:
+    # ── QUEST 49 OFFER ────────────────────────────────────────
+    - id: shrine_offer
+      triggers: ["beneath", "under", "floor", "disc", "buried", "search",
+        "look", "quest", "task"]
+      questRequired: ["48-end"]
+      questExcluded: ["49-start", "49-end"]
+      grantsQuest: "49-start"
+      text: "Then I will send you where I cannot go on my own account. The
+        Reliquary is the deepest chamber of the shrine -- up through here and
+        back. Its flagstone floor has cracked and lifted over something that has
+        wanted lifting a long time. Search the floor with your hands -- more
+        than once, if it hides from you -- and bring out what is under it. Look
+        on it well. Then come and tell me what you saw."
+      hints: "Go to the Reliquary (the deepest back-chamber of the shrine). Type
+        search to uncover what lies beneath the floor. Then return and tell Sere
+        -- ask sere done."
+
+    # ── QUEST 49 TURN-IN ──────────────────────────────────────
+    - id: shrine_turnin
+      triggers: ["report", "done", "ready", "finished", "real", "quest", "task"]
+      questRequired: ["49-find"]
+      questExcluded: ["49-end"]
+      grantsQuest: "49-end"
+      text: "So it is real. I have felt it under the floor for thirty years and
+        never had the hands to lift it -- and you did, in an afternoon. Leave it
+        where the light can reach it; some things are meant to be found more
+        than once. You came to us a stranger, and you leave the one soul living
+        who has looked on the thing beneath the shrine and carried the wondering
+        back out. Carry it well. The world may tell you what it was, one day,
+        somewhere far from here."
+      hints: "Quest complete. You have cleared the Lore spoke."
+
+memory:
+  expiryPeriod: ""

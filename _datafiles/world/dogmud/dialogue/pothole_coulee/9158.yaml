@@ -1,0 +1,36 @@
+mobid: 9158
+zone: Pothole Coulee
+defaultMood: hostile
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "hail"]
+    responses:
+      - "What. Come to gawp like the rest? Move along."
+      - "I have got nothing to say to you, and less to anyone Ferd sent."
+
+  - keywords: ["ferd", "dispute", "quarrel", "stone", "boundary", "old"]
+    responses:
+      - "That old crook moved the boundary stone a full pace onto my ground and
+          calls ME the liar for saying so. I will stand on this green till the
+          moons fall before I let it lie."
+      - "It is the principle. You understand? A man gives one pace, he gives the
+          whole field. I am not giving the pace."
+
+  - keywords: ["back", "down", "leave", "peace", "stop", "enough"]
+    responses:
+      - "Back down? Not while there is breath in me and a wrong on the ground.
+          Save your soft words -- I have had a bellyful of soft words."
+
+  - keywords: [""]
+    responses:
+      - "Hmf."
+      - "Say your piece or leave me to mine."
+      - "I am not moving."
+
+tree:
+  root:
+    text: "Garrow plants himself square on the green and glares."
+    hints: "Garrow is in no mood to talk. Soft words have failed here -- it may
+      take a harder one. You could taunt him."
+memory:
+  expiryPeriod: ""

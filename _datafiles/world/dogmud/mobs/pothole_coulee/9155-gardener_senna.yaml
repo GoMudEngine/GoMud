@@ -1,0 +1,49 @@
+mobid: 9155
+zone: Pothole Coulee
+behavior_archetype: noncombat_passive
+statpool: 30
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 13
+idlecommands:
+  - 'emote works down a row of beans on her knees, thinning the weak
+    seedlings to give the strong ones room'
+  - ''
+  - 'emote pinches a leaf, rubs it between finger and thumb, and breathes
+    the smell of it with her eyes half-closed'
+  - ''
+  - 'emote presses a hand flat to the turned soil and goes still, as
+    though listening to something growing'
+  - ''
+character:
+  name: Gardener Senna
+  description: |
+    Senna keeps the kitchen garden, and the garden keeps the farmstead --
+    herbs and roots and the green things that turn a hard season
+    survivable. She is quiet and quick-fingered and happiest with soil
+    under her nails, and she talks to the plants more readily than to
+    most people, without embarrassment.
+    Where her bare skin touches the earth, faint green traceries spread
+    beneath it like frost forming in reverse -- a brief delicate webbing
+    up the backs of her hands that fades when she lifts them away. The
+    Awakening gave her that, and her growing things have never been
+    better for it. She does not question the bargain.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 12
+    vitality:
+      training: 10
+    dexterity:
+      training: 4
+    charisma:
+      training: 2
+    strength:
+      training: 2

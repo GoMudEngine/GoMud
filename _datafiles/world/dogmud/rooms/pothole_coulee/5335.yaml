@@ -1,0 +1,48 @@
+roomid: 5335
+zone: Pothole Coulee
+title: The Mustering Green
+description: >
+  Inside the northern arc of the stone ring, a flat grassy green opens
+  up -- trampled turf worn short and uneven by generations of gatherings.
+  This is where the coulee folk come together for moots and seasonal
+  markets, for the announcing of births and the settling of disputes, for
+  the communal meals that happen when the harvest is in and there is
+  something to celebrate. The evidence of those gatherings is everywhere:
+  cold ash from old fires in a ring of blackened stones, the ghost of a
+  worn path from the circle's heart south toward the track, bare patches
+  where stalls or tents have stood often enough to discourage the grass.
+  Empty now, the green holds the quiet of a place that knows it will be
+  full again before long.
+biome: land
+coord:
+  x: 44
+  y: -10
+  z: 0
+exits:
+  south:
+    roomid: 5333
+  west:
+    roomid: 5336
+  north:
+    roomid: 5337
+spawninfo:
+- mobid: 9158
+- mobid: 9159
+nouns:
+  green: The mustering green is not quite level -- the southwest corner
+    rises a hand's breadth above the rest, high enough to stand on and
+    be seen. Over time this small elevation has become the speaking-place,
+    the spot where announcements are made and arguments are put to the
+    group.
+  ash: The ring of fire-blackened stones at the green's center holds
+    ash from the most recent gathering -- not yet rained away, which
+    means it was not long ago. The char smell is faint but present,
+    mixing with the scrub and the cold wind.
+idlemessages:
+- The bare patches on the <ansi fg="cyan">green</ansi> where stalls have stood so
+  often are shaped by habit -- each one exactly the size of a thing
+  people have brought here many times.
+- Wind crosses the open <ansi fg="cyan">green</ansi> without obstruction and stirs
+  the cold <ansi fg="cyan">ash</ansi> in the central fire ring into a brief small spiral.
+- The ground here holds the sound of the stone circle differently --
+  voices would carry clearly across this space.

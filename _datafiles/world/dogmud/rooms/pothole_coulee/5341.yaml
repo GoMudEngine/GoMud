@@ -1,0 +1,49 @@
+roomid: 5341
+zone: Pothole Coulee
+title: The Old Shrine
+description: >
+  The shrine's main floor is open to the sky where the roof has
+  surrendered in sections, leaving great patches of cloud and light
+  between the surviving rafters. Stone walls stand intact on three sides;
+  the fourth has been patched with stacked rubble, inexpertly but with
+  evident devotion. At the center a broad altar of pale stone bears
+  the stains of long use -- wax, oil, ash, water -- layered into a
+  patina that no cleaning would reach. The altar bears no inscription
+  now; if one was carved here it has been worn past legibility by
+  weather coming through the open roof. An old hermit moves quietly
+  about the space, tending to the altar and to things only she seems
+  to perceive. She does not startle. She has been here long enough
+  that the shrine has shaped itself around her presence.
+biome: fort
+coord:
+  x: 43
+  y: -13
+  z: 0
+exits:
+  south:
+    roomid: 5339
+  west:
+    roomid: 5342
+  up:
+    roomid: 5345
+spawninfo:
+- mobid: 9160
+nouns:
+  altar: The altar is a single slab of pale stone, thick as a man's
+    torso is wide, its surface worn smooth except at the edges where
+    centuries of hands have gripped and released. The layered stains
+    read like rings in wood -- a record of use without legible names.
+  roof: Where the roof has fallen the sky comes in at an angle. The
+    surviving sections of rafter are dark with age and hung with
+    nothing, stripped of whatever ornamentation once dressed them.
+    The open patches let in weather and light equally.
+idlemessages:
+- The hermit moves to the <ansi fg="cyan">altar</ansi> and adjusts something
+  on its surface -- you cannot quite see what -- then steps back and
+  regards it for a moment.
+- Light falls through the open <ansi fg="cyan">roof</ansi> in a slow-moving bar,
+  crossing the altar face and continuing to the far wall.
+- Wind moves through the shrine with more direction than it should
+  have, as though the walls are guiding it somewhere specific.
+- The hermit pauses her work and lifts her head, listening to
+  something you cannot hear.

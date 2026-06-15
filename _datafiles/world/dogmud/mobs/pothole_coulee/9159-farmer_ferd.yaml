@@ -1,0 +1,50 @@
+mobid: 9159
+zone: Pothole Coulee
+behavior_archetype: noncombat_passive
+statpool: 30
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 11
+idlecommands:
+  - 'emote stands his ground a careful few paces from the young man,
+    weathered and stubborn and unwilling to be the one who walks away'
+  - ''
+  - 'emote spreads his hands as though explaining the matter for the
+    hundredth time to anyone who will hear it'
+  - ''
+  - 'emote shakes his head slowly at the whole sorry business and looks
+    to the stones as if they might rule on it'
+  - ''
+character:
+  name: Farmer Ferd
+  description: |
+    Ferd is old enough to know better and stubborn enough not to act on
+    it. The quarrel with young Garrow is half his fault and he knows it,
+    but knowing a thing and giving way on it are different muscles, and
+    his have stiffened with age. He would take a graceful way out if one
+    were offered -- he is tired of standing on the green being glared at --
+    but he will not be the first to bend.
+    One of his eyes has clouded to a flat milky white, and he sees through
+    it better than through the clear one -- shapes at distance, movement
+    in the dark, the things a farmer's good eye misses. The Awakening's
+    doing. He keeps the clouded eye turned toward whatever matters most,
+    which today is the young fool across the green.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 12
+    vitality:
+      training: 10
+    charisma:
+      training: 4
+    willpower:
+      training: 2
+    strength:
+      training: 2

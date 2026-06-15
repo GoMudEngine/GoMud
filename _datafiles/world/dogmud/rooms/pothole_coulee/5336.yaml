@@ -1,0 +1,43 @@
+roomid: 5336
+zone: Pothole Coulee
+title: Windward Stones
+description: >
+  On the windward western edge of the ring, the stones face the prevailing
+  weather directly and show it. Their outer faces are pitted and streaked,
+  the stone surface eroded back in layers to expose the grain beneath.
+  Their inner faces are carved with a different vocabulary than the eastern
+  stones -- older marks, some scholars claim, though the coulee has no
+  scholars and the tradition-keeper calls them simply the weather-marks,
+  the signs of where the folk came from before the coulee. Interspersed
+  with the weather-marks are older symbols again, half-eroded, suggesting
+  a wider world and older migrations: a range of mountains rendered in
+  a dozen strokes, ships, a sun with rays that do not look like any local
+  sun-sign. The stones here remember something further away than the
+  coulee, and they are not entirely silent about it.
+biome: land
+coord:
+  x: 43
+  y: -10
+  z: 0
+exits:
+  east:
+    roomid: 5335
+nouns:
+  stones: The windward stones are rougher than their eastern counterparts,
+    their surfaces pitted into a texture that catches the fingertips.
+    Whatever they were intended to look like when placed, the weather
+    has had centuries to offer its own revision.
+  marks: The marks on the inner faces here come in two distinct layers --
+    newer weather-signs in a clear local tradition, and beneath them,
+    at a different depth and angle, older symbols that predate the folk's
+    memory of themselves. The boundary between the two layers is not
+    always clean.
+idlemessages:
+- The wind strikes the outer faces of the <ansi fg="cyan">stones</ansi> and makes a
+  low sound that carries into the ring, lower than the gaps in the
+  eastern stones produce.
+- Tracing the older <ansi fg="cyan">marks</ansi> with a finger, you find they run
+  in a continuous line around the stone's girth -- not interrupted
+  by the newer symbols but woven between them.
+- One of the <ansi fg="cyan">stones</ansi> here leans more than the others, enough
+  that its shadow at midday falls across the altar-stone to the east.

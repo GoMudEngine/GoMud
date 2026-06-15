@@ -1,0 +1,71 @@
+# Quest 47 — First Words (Pothole Coulee, Spoke F / Lore inner ring, cert)
+#
+# Token flow:
+#   47-start — granted by Elder Wenna's words_offer node (requires 30-end).
+#   47-help  — command trigger on `help` (the in-game help system; Tier-1
+#              reinforcement). The help-command Notify was added this chunk.
+#   47-end   — granted by Wenna's words_turnin node (needs 47-help).
+#
+# Design: teach ask-depth dialogue + the in-game `help` reference, then hand the
+# folk charm + a touch of charisma. No combat (the soft spoke).
+
+questid: 47
+name: First Words
+description: >-
+  Elder Wenna runs the outlying farmstead north of the coulee town. She has
+  offered to teach a newcomer the way of the folk -- which is mostly the way of
+  asking, of listening, and of knowing where to look a thing up.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: >-
+      Wenna wants you to learn by asking. Hear her out about the folk and their
+      ways, and learn to use the in-game help -- type help to open it.
+    hint: >-
+      Talk to Elder Wenna -- type ask wenna ways (or folk, or stones) to hear
+      her out. Then type help to open the in-game reference. Return to Wenna
+      afterward -- ask wenna done.
+  - id: help
+    description: >-
+      You opened the help reference -- your surest guide when memory fails.
+      Return to Wenna.
+    hint: >-
+      Report back to Elder Wenna -- type ask wenna done.
+  - id: end
+    description: >-
+      Wenna has named you a friend of the folk. West and north the standing
+      stones ring the old ground; the loresinger Hale keeps them, and the
+      deeper story with them.
+
+rewards:
+  stat_info: "charisma:1"
+  itemid: 20089
+  gold: 15
+  playermessage: >-
+    Wenna watches you a moment with those flat gold eyes, then nods as though
+    settling something. "You ask straight and you listen straight. That is most
+    of getting on with people, and all of getting on with us." She knots a small
+    charm of plaited grass and polished bone and presses it into your hand. "Wear
+    it where it shows. The folk will know the sign and treat you the kindlier for
+    it." A little of her unhurried certainty seems to stay with you as she turns
+    back to the yard. "The stones are west and north of here. Hale keeps them.
+    Ask him the old story -- he has been waiting a long time to tell it to
+    someone who will sit still for it."
+  roommessage: "Wenna presses a small plaited charm into the newcomer's hand."
+
+triggers:
+  # ── HELP: consult the in-game help reference ──────────────────────────
+  - event: command
+    command: help
+    conditions:
+      has: ["47-start"]
+      missing: ["47-help"]
+    actions:
+      - grant: "47-help"
+      - send_text: >-
+          That is the in-game help -- your long-term reference, more patient
+          than any person and always to hand. The folk set their lore in stone
+          for the same reason: so it outlasts the remembering. Return to Wenna
+          when you are ready.

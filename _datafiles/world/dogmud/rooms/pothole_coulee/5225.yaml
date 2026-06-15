@@ -17,6 +17,8 @@ mutators:
 exits:
   south:
     roomid: 5217
+  north:
+    roomid: 5322
 nouns:
   track: The track is an old farm road run north over the rise, its
     wheel-ruts sunk deep and softened under a fur of grass, plain to the

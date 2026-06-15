@@ -1,0 +1,39 @@
+roomid: 5339
+zone: Pothole Coulee
+title: Shrine Approach
+description: >
+  A moss-grown path climbs the low rise from the standing stones below,
+  narrowing as the ground steepens. At the top of the rise two gateposts
+  have fallen -- one toppled entirely, one listing at a precarious angle
+  -- and the lintel that once joined them lies across the path in two
+  pieces, its carved face pressed into the earth. Whoever set these stones
+  here did so with care; whoever knocked them down left without tidying.
+  Beyond the broken gate the path continues toward a weathered structure
+  whose roof shows open sky through its gaps. The place smells of old
+  stone and wet grass and something faintly mineral, the way deep wells
+  smell in dry seasons.
+biome: land
+coord:
+  x: 43
+  y: -12
+  z: 0
+exits:
+  south:
+    roomid: 5338
+  west:
+    roomid: 5340
+  north:
+    roomid: 5341
+nouns:
+  path: Moss-covered and worn smooth at its center, the path shows long
+    use. The stones beneath the moss are fitted, not random -- someone
+    laid this way deliberately, and the earth has been slow to reclaim it.
+  lintel: The carved face of the lintel presses into the turf, its
+    inscription hidden from view. The edges of the break are old, weathered
+    round. Whatever felled the gate did so long before living memory.
+idlemessages:
+- A grass-stem bends in the wind across the broken <ansi fg="cyan">lintel</ansi>,
+  catches, and holds there.
+- The <ansi fg="cyan">path</ansi> draws the eye upward toward the open gap where a
+  roof should be.
+- Wind moves through the fallen gateposts with a low, toneless hum.

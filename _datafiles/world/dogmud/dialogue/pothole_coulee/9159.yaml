@@ -1,0 +1,49 @@
+mobid: 9159
+zone: Pothole Coulee
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "hail"]
+    responses:
+      - "Evening. Or morning. I have stood here long enough to lose track,
+          waiting on that young fool to see sense."
+      - "Mind the green. There is a quarrel parked on it, and I am the older
+          half of it."
+
+  - keywords: ["garrow", "dispute", "quarrel", "stone", "boundary"]
+    responses:
+      - "The boundary stone. I will own I may have set it a hand's-breadth
+          wide, years back -- but the lad has made a war of a hand's-breadth,
+          and now neither of us can step back without looking the fool. I am
+          too old to care how I look. He is too young."
+      - "I would let it go this moment if a way were offered that did not cost
+          me my dignity. He will not offer it, and I will not beg it. So we
+          stand."
+
+  - keywords: ["help", "settle", "peace", "end"]
+    responses:
+      - "If someone could shake the bluster out of him -- not me, he has stopped
+          his ears to me -- I would shake hands and go home glad. It would take
+          a harder word than I have left in me."
+
+  - keywords: [""]
+    responses:
+      - "Mm."
+      - "Say on."
+      - "I am listening, which is more than the boy does."
+
+tree:
+  root:
+    text: "Ferd stands his weary ground a careful distance from the young man."
+    hints: "You could ask Farmer Ferd about the quarrel."
+    variants:
+      # ── After the standoff is defused ────────────────────
+      - questRequired: ["48-taunt"]
+        text: "Stars and stone, you actually did it -- shook the wind right out
+          of him. I have not seen Garrow walk off that green in a month. Bless
+          you for it; I can go home now, and so can he, and the boundary stone
+          can rot where it stands for all I care. You have my thanks, and that
+          is not a thing I give cheap."
+        hints: "The quarrel is settled. Ferd is grateful."
+memory:
+  expiryPeriod: ""

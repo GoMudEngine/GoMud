@@ -1,0 +1,42 @@
+roomid: 5328
+zone: Pothole Coulee
+title: The Well
+description: >
+  A stone well-head stands at the corner where the garden path meets
+  the homestead's western edge, its coping worn smooth by the hands of
+  everyone who has ever drawn water here. The bucket hangs on a rope of
+  plaited hemp, darkened with use, the knot at the bail worn to a flat
+  mat. When the bucket descends it takes a long moment before the sound
+  of water rises back -- the well is deep, and cold. This is the
+  gathering spot of the homestead, the place people naturally stop and
+  linger. A word exchanged at the well is a word exchanged in full view
+  of the yard, unhurried, with something useful to show for the time.
+  Folk arrive here singly for water and leave in pairs having solved
+  something, and the stones around the base have absorbed something
+  of all those conversations over all those years.
+biome: farmland
+coord:
+  x: 45
+  y: -6
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  east:
+    roomid: 5327
+  north:
+    roomid: 5329
+nouns:
+  well: The well is old work, the coping stones fitted close and sealed
+    with a mortar that has weathered to the color of the stones
+    themselves. It holds cold clean water year round without fail.
+  bucket: The bucket is worn smooth on its staves where wet hands have
+    gripped it, the rope darkened and stiff with use. It descends
+    the shaft with a familiar creak and comes back full.
+idlemessages:
+- The <ansi fg="yellow">bucket</ansi> turns slowly on its rope in a light air, the
+  dripping from its last use long since dried.
+- The stones of the <ansi fg="yellow">well</ansi> are warm on the sunny side, cool
+  on the shaded side, in the way of things that have stood a long time.
+- Voices carry clearly from the yard when someone calls, the
+  well-corner open enough to catch sound from all directions.

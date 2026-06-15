@@ -1,0 +1,42 @@
+roomid: 5326
+zone: Pothole Coulee
+title: The Barn
+description: >
+  The barn is larger inside than the yard suggests -- a high-ceilinged
+  space smelling of dry hay, animal warmth, and old timber. Four stalls
+  run along the near wall, each swept clean, the mangers filled and the
+  bedding fresh. A loft occupies the upper third of the building, reached
+  by a fixed ladder nailed to the wall, bales stacked to the rafters
+  above. Tack hangs on iron pegs along the opposite wall -- harness,
+  rope, a few tools cleaned and racked with the same economy of motion
+  that marks all the work here. Light falls through gaps in the siding
+  in bright horizontal bars, moving slowly across the floor as the day
+  progresses. A farmhand's daily work happens in this room -- the kind
+  of repetitive, necessary labor that keeps everything else possible --
+  and the barn holds the comfortable smell of that work done well.
+biome: house
+coord:
+  x: 47
+  y: -5
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  west:
+    roomid: 5324
+spawninfo:
+- mobid: 9154
+nouns:
+  stalls: The four stalls are swept and freshly bedded, the mangers
+    filled with hay. They have the neat, purposeful look of a space
+    that is cleaned and reset every morning without fail.
+  loft: The loft is deep with baled hay, the bales stacked in
+    interlocking rows that will not shift. The ladder to it is fixed
+    and steady, worn smooth on the rungs from long use.
+idlemessages:
+- A shaft of light crosses the barn floor slowly, marking the hour
+  as it moves from one wall toward the other.
+- The <ansi fg="yellow">stalls</ansi> are quiet now, the animals out in the yard
+  or the near field.
+- Something moves in the <ansi fg="yellow">loft</ansi> overhead -- hay settling,
+  or a small creature going about its business.

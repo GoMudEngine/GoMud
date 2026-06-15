@@ -1,0 +1,38 @@
+roomid: 5330
+zone: Pothole Coulee
+title: Stone Road
+description: >
+  A track worn smooth by generations of feet runs between the first outlying
+  megaliths, the ground packed to near-clay hardness where pilgrims and
+  neighbours alike have walked for longer than any living person can recall.
+  The great stone circle looms ahead to the north, its tallest menhirs
+  visible above the scrub like shoulders hunched against the wind. To either
+  side the land opens into windblown grassland, thin and dry. The stones
+  nearest the track are not carved -- or if they were, the weather has
+  taken the detail -- but they lean with a deliberateness that suggests
+  something more than settling. You are entering old ground.
+biome: land
+coord:
+  x: 45
+  y: -8
+  z: 0
+exits:
+  south:
+    roomid: 5329
+  north:
+    roomid: 5331
+  west:
+    roomid: 5332
+nouns:
+  track: Worn to near-clay hardness by countless crossings, the track
+    shows no single maker -- it belongs to all the feet that ever came
+    this way and intends to outlast them all.
+  megaliths: The first outlying stones stand at an irregular spacing
+    that feels deliberate without being precise, like the spacing of
+    old trees that remember when the land around them was young.
+idlemessages:
+- The <ansi fg="cyan">track</ansi> stretches north toward the ring, faint with old use.
+- Wind moves through the scrub grass on both sides of the path and
+  briefly the grass bends inward, toward the <ansi fg="cyan">track</ansi>, in unison.
+- One of the nearer <ansi fg="cyan">megaliths</ansi> catches the light at an angle that
+  makes it seem, for a moment, taller than it is.

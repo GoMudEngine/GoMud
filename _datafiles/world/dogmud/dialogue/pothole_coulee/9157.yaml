@@ -1,0 +1,129 @@
+mobid: 9157
+zone: Pothole Coulee
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "hail"]
+    responses:
+      - "Hale. I keep the stones, and the story in them. You have come a long
+          way up from the town to stand in a circle of rock -- so you are
+          either lost or curious. I prefer curious."
+      - "Stand where you like. The stones have stood through worse than a
+          stranger."
+
+  - keywords: ["stones", "story", "lore", "learn", "teach", "tale", "quest",
+      "task"]
+    responses:
+      - "Every stone in this ring is a page, and I am the one who still reads
+          them. Ask, and I will read you some -- or set you a task that earns
+          the deeper telling."
+      - "The story is long and most of it is true. Ask me the old tale when you
+          have the patience to stand and hear it."
+
+  - keywords: ["voice", "doubled", "mutation", "opened", "sing"]
+    responses:
+      - "You hear the second voice. The Awakening put it in me -- when I sing
+          the old lines they come out doubled, a lower tone under the first. I
+          made it part of the craft. The stones were always meant to be sung,
+          and now I sing them in two voices at once."
+
+  - keywords: ["dispute", "quarrel", "garrow", "ferd", "green", "standoff"]
+    responses:
+      - "There is a sourness on the mustering green just now -- young Garrow
+          squared up against old Ferd over a boundary stone, and neither will
+          give. Soft words have only hardened them. It wants a harder word. Ask
+          me about it if you have the nerve to be that word."
+
+  - keywords: ["origins", "came", "before", "old", "carvings", "world"]
+    responses:
+      - "Where did the folk come from? The carvings say plainly that we came
+          from somewhere -- they do not say where. The oldest marks, up where
+          the weather has been at them longest, are not our script at all.
+          Another hand. Something older and wider than the coulee, that we have
+          only the edge of. I have given my life to those marks and I am no
+          nearer the middle of them."
+
+  - keywords: [""]
+    responses:
+      - "Ask. The stones are patient and so am I."
+      - "Speak. I have stood here longer than you have been alive."
+      - "Say it, and I will tell you what the stones know of it."
+
+tree:
+  root:
+    text: "Hale. Loresinger, keeper of the ring."
+    hints: "You could ask Loresinger Hale about the stones and the old story, or
+      your task."
+    variants:
+      # ── Not ready (Wenna's lesson unfinished) ────────────
+      - questExcluded: ["47-end"]
+        text: "You came up here before you sat with Wenna, I think. The story
+          starts at the farmstead, not the stones -- go and learn the way of
+          the folk from her first, and come back when she names you a friend.
+          The deep telling is not for strangers."
+        hints: "Return to Elder Wenna at the farmstead and finish her lesson
+          before coming to Loresinger Hale."
+
+      # ── Ready for quest 48 ───────────────────────────────
+      - questRequired: ["47-end"]
+        questExcluded: ["48-start", "48-end"]
+        text: "Wenna's charm on you -- so you are one of ours now. Good. Then I
+          can use you, and you can earn the deeper story in the doing. There is
+          a quarrel souring the green that wants settling. Ask me about the
+          stones, or about the dispute, when you are ready to be of use."
+        hints: "Type ask hale stones to take on the loresinger's task, or ask
+          hale dispute about the quarrel on the green."
+
+      # ── Mid quest 48 ─────────────────────────────────────
+      - questRequired: ["48-start"]
+        questExcluded: ["48-end"]
+        text: "The green is still sour. Young Garrow will not be reasoned down,
+          so do not reason -- go and taunt him, put a hard true word on him,
+          and break the standoff. Come back when the green is quiet again."
+        hints: "Go to the Mustering Green and type taunt garrow to face him
+          down. Then ask hale done."
+
+      # ── Quest 48 complete ────────────────────────────────
+      - questRequired: ["48-end"]
+        text: "You quieted the green with a handful of words. Ferd has not
+          stopped thanking the stones for it. You have the reckoning-bone now --
+          read it when you can, though the oldest end will baffle you as it
+          baffles me. North and up is the shrine. Sere keeps the thing the bone
+          only points at. Go on."
+        hints: "Head north and up to the old shrine and type ask sere to find
+          Hermit Sere."
+
+  nodes:
+    # ── QUEST 48 OFFER ────────────────────────────────────────
+    - id: stones_offer
+      triggers: ["stones", "story", "lore", "tale", "learn", "teach", "dispute",
+        "quarrel", "garrow", "quest", "task"]
+      questRequired: ["47-end"]
+      questExcluded: ["48-start", "48-end"]
+      grantsQuest: "48-start"
+      text: "Then earn the telling. Down on the mustering green, young Garrow
+        has squared up against old Ferd and dug in past all reason -- a boundary
+        quarrel swollen out of all sense. Gentle words have only fed it. So do
+        not be gentle. Go and taunt him -- land one hard, true word where his
+        bluster is thinnest -- and break his nerve. Settle the green, and the
+        deep story is yours."
+      hints: "Go to the Mustering Green within the ring. Type taunt garrow to
+        face the belligerent farmhand down. Then return -- ask hale done."
+
+    # ── QUEST 48 TURN-IN ──────────────────────────────────────
+    - id: stones_turnin
+      triggers: ["report", "done", "ready", "finished", "quest", "task"]
+      questRequired: ["48-taunt"]
+      questExcluded: ["48-end"]
+      grantsQuest: "48-end"
+      text: "I felt it from here -- the moment his nerve gave. That is the craft
+        of the true word, and you have the beginnings of it. Take the
+        reckoning-bone; it carries the whole story of us in the old script. And
+        carry this with it: the oldest marks on it are not ours. The folk came
+        from somewhere we no longer name. Sere keeps the proof of it, north at
+        the shrine -- go and look on the thing the bone only points at."
+      hints: "Quest complete. You received the reckoning-bone. Head north to the
+        old shrine and type ask sere to find Hermit Sere."
+
+memory:
+  expiryPeriod: ""

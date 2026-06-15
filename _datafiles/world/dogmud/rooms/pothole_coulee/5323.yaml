@@ -1,0 +1,40 @@
+roomid: 5323
+zone: Pothole Coulee
+title: Farmstead Gate
+description: >
+  A broad timber gate is set into the drystone wall where the cartway
+  meets the homestead boundary. The gate is well-made but much used --
+  the latch worn smooth from ten thousand lifts of the same hand, the
+  lower rail dark with the polish of animals brushing past. Beyond it,
+  the packed earth of the yard opens wide, and the smell of the place
+  comes through without impediment -- hay and woodsmoke and turned soil,
+  the warm compound smell of a place where people have been working for
+  a long time. The wall stretches to either side, low enough to see over
+  but substantial enough to mean something. Crossing this threshold feels
+  like being let in rather than simply walking through.
+biome: farmland
+coord:
+  x: 46
+  y: -4
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  south:
+    roomid: 5322
+  north:
+    roomid: 5324
+nouns:
+  gate: The gate hangs true on its hinges and swings without resistance.
+    Someone keeps it in good repair -- the timber is oiled, the iron
+    fittings free of rust. It stands open during the day.
+  wall: The drystone wall is old work, fitted without mortar, each stone
+    chosen to lock against its neighbors. It has settled into itself
+    over many years and does not shift or lean.
+idlemessages:
+- The <ansi fg="yellow">gate</ansi> stands open to the yard beyond, the latch resting
+  easy in its keep.
+- Wind comes over the <ansi fg="yellow">wall</ansi> carrying the smell of hay and
+  something baking at a distance.
+- From beyond the gate comes the sound of someone moving steadily
+  through familiar work.

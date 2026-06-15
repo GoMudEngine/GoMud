@@ -1,0 +1,17 @@
+itemid: 20089
+name: Folk Charm
+namesimple: charm
+description: A small charm of plaited dry grass bound around a knuckle of
+  polished bone, the kind the coulee folk knot for a child's first journey
+  or a neighbor they have decided to keep. It smells faintly of woodsmoke
+  and the longhouse hearth. Worn at the throat, it marks you -- to anyone
+  who knows the sign -- as someone the folk have taken a liking to, and a
+  little of their easy confidence seems to rub off on the wearer.
+type: neck
+subtype: wearable
+vendor_categories:
+- jewelcrafting
+value: 15
+weight: 0.2
+statmods:
+  charisma: 3

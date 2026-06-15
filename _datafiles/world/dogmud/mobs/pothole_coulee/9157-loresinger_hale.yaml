@@ -1,0 +1,57 @@
+mobid: 9157
+zone: Pothole Coulee
+behavior_archetype: noncombat_questgiver
+statpool: 44
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 11
+idlecommands:
+  - 'emote walks the inner faces of the stones with one hand trailing
+    along the carvings, reading them by touch'
+  - ''
+  - 'emote hums a long slow line of melody, then stops, listening to the
+    way the circle holds the sound'
+  - ''
+  - 'emote crouches at the altar-stone and clears a little windblown grit
+    from a worn groove with a thumb'
+  - ''
+  - 'emote stands very still at the circle''s center with eyes closed, as
+    though taking attendance of something unseen'
+  - ''
+character:
+  name: Loresinger Hale
+  description: |
+    Hale keeps the stones the way Wenna keeps the farmstead -- by knowing
+    them. He is the coulee folk's rememberer, the one who carries the
+    carvings as song so the meaning survives even when the weather takes
+    the marks. He is lean and weathered and patient past the point most
+    people can follow, and he speaks the way he sings: slowly, leaving
+    room around the words.
+    When he sings the old lines his voice doubles faintly -- a second,
+    lower tone running beneath the first, harmonizing with itself. The
+    Awakening folded that into him, and he has made it part of the craft,
+    so the songs come out of him already in two voices. It unsettles
+    strangers. He no longer notices.
+    Ask him about the stones, the folk, or the things the carvings half-
+    remember, and he will give you as much as you have patience to take.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    charisma:
+      training: 14
+    perception:
+      training: 12
+    willpower:
+      training: 8
+    vitality:
+      training: 6
+    strength:
+      training: 2
+    dexterity:
+      training: 2
