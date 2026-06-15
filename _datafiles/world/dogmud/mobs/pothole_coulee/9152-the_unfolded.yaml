@@ -1,0 +1,67 @@
+mobid: 9152
+zone: Pothole Coulee
+behavior_archetype: pure_caster
+archetype: casting
+statpool: 200
+itemdropchance: 25
+hostile: true
+aiprofile: aggressive
+maxwander: 0
+groups:
+  - aberration
+  - folded
+activitylevel: 22
+idlecommands:
+  - 'emote occupies the thinnest place without filling it, present in the
+    way a held breath is present, the gap leaning toward it'
+  - ''
+  - 'emote unfolds a fraction wider, and for a moment the room shows two of
+    everything before it settles back to one'
+  - ''
+combatcommands:
+  - 'emote reaches into the space around the target and folds it shut,
+    bringing the harm from every direction at once'
+  - ''
+  - 'emote speaks a word that arrives before it is said, and the air along
+    its path comes apart in a clean bright seam'
+  - ''
+  - 'emote turns the target inside the fold, so that for an instant up is
+    toward it and there is nowhere to step that is away'
+  - ''
+character:
+  name: The Unfolded
+  description: |
+    Long ago an adept of this house reached too far into a thin place and
+    did not come all the way back. What returned was not the adept. It was
+    the shape the reaching left behind -- the folds a living mind makes when
+    it presses against the edge of the world, peeled loose and left standing
+    after the mind that made them was gone. The Unfolded is that print given
+    appetite. It has no body to speak of, only a region of space that has
+    been thought about too hard and never allowed to relax: a tall absence
+    that the eye slides off, ringed by the constant fraying and reknitting
+    of a world it no longer fits inside. It still knows how to cast. That
+    knowledge is most of what is left of it, and it spends that knowledge
+    the only way it remembers how -- by reaching into whatever stands before
+    it and folding it shut. It is not cruel. It is a habit that outlived its
+    owner, repeating in the one place thin enough to let it.
+  speciesid: 23
+  level: 1
+  gold: 0
+  stats:
+    willpower:
+      training: 70
+    vitality:
+      training: 55
+    perception:
+      training: 35
+    charisma:
+      training: 18
+    dexterity:
+      training: 14
+    strength:
+      training: 8
+  skills:
+    spellcasting: 14
+  spellbook:
+    mind-spike: 50
+    nerve-disruption: 50

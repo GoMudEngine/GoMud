@@ -1,0 +1,41 @@
+roomid: 5304
+zone: Pothole Coulee
+title: Fallen Orrery
+description: >
+  A side chamber off the main hall, and nearly the whole of it is taken
+  up by the ruin of a great brass orrery that has come down from its
+  mounting and lies in a tangle across the floor. Rings of every size --
+  some wider than your outstretched arms, some no bigger than a bracelet
+  -- nest and cross and lean against one another at impossible angles,
+  and between them the spheres that once marked the turning heavens rest
+  wherever they rolled and stopped. Brass the color of old honey, green
+  at the joints where the metal has bloomed. The room is strangely peaceful
+  for all the wreckage; there is something in the sprawl of rings and
+  spheres that invites you to sit and simply look.
+biome: fort
+coord:
+  x: 43
+  y: -2
+  z: 2
+mutators:
+- mutatorid: sanctuary
+exits:
+  east:
+    roomid: 5303
+nouns:
+  orrery: The whole of the device must have stood taller than two men
+    when it was whole. Even fallen, you can trace the logic of it --
+    ring inside ring inside ring, each one tracking some body in the sky,
+    the whole assembly meant to show the heavens turning in their courses.
+  rings: Dozens of brass rings lie nested and crossed across the floor,
+    each one engraved along its inner edge with a track of tiny script.
+    The writing is too small to read standing, but the curves of it are
+    very deliberate.
+  spheres: Small brass spheres, some no bigger than a fist, some as wide
+    as a pot, are scattered where they rolled when the orrery fell. Each
+    one is etched with a pattern of lines -- a map of something, or a symbol
+    of something, worn smooth at the poles from being handled.
+idlemessages:
+- One of the brass <ansi fg="yellow">rings</ansi> shifts a finger's width across the floor with a low metallic sigh.
+- The silence here has a quality to it -- full, like a held breath, like something waiting to be understood.
+- Light from the hall catches the <ansi fg="yellow">orrery</ansi>'s fallen curves and runs along them in a slow gleam.

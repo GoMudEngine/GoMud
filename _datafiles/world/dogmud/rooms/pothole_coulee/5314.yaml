@@ -1,0 +1,40 @@
+roomid: 5314
+zone: Pothole Coulee
+title: Veil Tear
+description: >
+  The grove ends here at the edge of a tear in the world itself -- a seam of
+  light that does not come from any sky, rising from the earth at an angle
+  that has no name in ordinary geometry. The light at the tear's edge is wrong
+  in color, neither warm nor cool but both at once, and it shifts without
+  settling as though it cannot decide what it is meant to illuminate. The seam
+  is perhaps a hand-width wide and taller than a standing person, and through
+  it you can see something that is not the grove continued -- a scabland of
+  exposed stone and thin air, reality-thin, where the Folding has bitten through
+  entirely. The way up lies along the tear's edge, where the ground has heaved
+  into a rough natural stair.
+biome: forest
+coord:
+  x: 41
+  y: -8
+  z: 2
+exits:
+  east:
+    roomid: 5313
+  up:
+    roomid: 5315
+nouns:
+  tear: The seam in reality -- a vertical split in the air, taller than a
+    person, glowing with light that has no proper source. The edges of the
+    tear are crisp as cut cloth, and the air around them is colder than
+    anything else in the grove.
+  seam: Running from the earth upward at an angle that bends the eye,
+    the seam marks where the Folding has finally broken through. Old
+    scorch marks ring its base, evidence of what happened the last time
+    someone stood too close without preparation.
+idlemessages:
+- The <ansi fg="cyan">tear</ansi> pulses once, light bleeding out and pulling back, like a slow
+  and patient breath.
+- Something moves in the other side of the <ansi fg="cyan">seam</ansi> -- too distant to name,
+  too deliberate to be wind.
+- The ground near the tear's base is warm despite the cold, faintly, as
+  though what lies beyond runs hot.

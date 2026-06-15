@@ -1,0 +1,60 @@
+mobid: 9151
+zone: Pothole Coulee
+behavior_archetype: pure_caster
+archetype: casting
+statpool: 130
+itemdropchance: 20
+hostile: true
+aiprofile: aggressive
+maxwander: 0
+groups:
+  - aberration
+  - folded
+activitylevel: 22
+idlecommands:
+  - 'emote hangs above the riven ground with its arms half-raised, fingers
+    tracing slow folds in the air that linger after the hands move on'
+  - ''
+  - 'emote turns the unraveling over in front of itself like a problem it
+    is close to solving, and does not like the answer'
+  - ''
+combatcommands:
+  - 'emote draws a fold tight between its hands and looses it, a ripple of
+    bent space leaping toward the target'
+  - ''
+  - 'emote opens a seam in the air with a gesture and lets the wrongness
+    behind it spill through'
+  - ''
+character:
+  name: Unbound Fold
+  description: |
+    Closer to the thinnest place, the folds stop being scenery and start
+    being will. The unbound fold is a knot of the thinning that has
+    gathered enough coherence to act on purpose -- a standing crease in the
+    world, vaguely upright, its surface a slow churn of angles that refuse
+    to resolve. It does not strike with limbs. It strikes with the place
+    itself, folding the space between you until the harm arrives without
+    anything seeming to cross the gap. It guards the approach to the
+    Unfolded the way a lesser flame guards a greater one: not out of
+    loyalty, but because it is made of the same thing, and is drawn to
+    stand near it.
+  speciesid: 23
+  level: 1
+  gold: 0
+  stats:
+    willpower:
+      training: 64
+    perception:
+      training: 24
+    vitality:
+      training: 22
+    charisma:
+      training: 12
+    dexterity:
+      training: 5
+    strength:
+      training: 3
+  skills:
+    spellcasting: 8
+  spellbook:
+    mind-spike: 40

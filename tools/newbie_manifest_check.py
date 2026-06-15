@@ -66,7 +66,9 @@ MANIFEST = {
     # 5223 is the Spoke D (Wilderness) mouth: the hub stub plus the southward
     # attachment exit into the spoke's Scrub Mouth (5282), added in chunk 5.
     5223: ("Scrub Draw", None, (43, 1, 0), {"east":5216, "south":5282}, 1),
-    5224: ("Stargazer Cut", None, (44, -2, 0), {"south":5218}, 1),
+    # 5224 is the Spoke E (Folding) mouth: the hub stub plus the UP attachment
+    # exit into the spoke's Observatory Base (5302), added in chunk 6.
+    5224: ("Stargazer Cut", None, (44, -2, 0), {"south":5218, "up":5302}, 1),
     5225: ("Old Field Track", None, (46, -2, 0), {"south":5217}, 1),
     5226: ("Bluff Steps", None, (47, -1, 0), {"south":5209}, 1),
 }
@@ -336,6 +338,77 @@ SPOKE_D_MOBS = {
     9141: ("9141-pack_hound.yaml",          "Pack-Hound",         [5292, 5294, 5295],                      True,  "predator",             50),
     9142: ("9142-scarred_outrider.yaml",    "Scarred Outrider",   [5296],                                  True,  "leader",              130),
     9143: ("9143-alpha_pack_leader.yaml",   "Alpha Pack-Leader",  [5298],                                  True,  "tank_taunter",        200),
+}
+
+# Spoke E (The Folding / magic) — Pothole Coulee rooms 5302-5321. ASCENDS from
+# hub stub 5224 (up the observatory): inner observatory ruin (sanctuary, fort,
+# z1-2, 5302-5307), middle meditation grove (NO sanct., forest, z2, 5308-5314),
+# outer reality-thin scabland (NO sanct., cliffs, z3, boss, 5315-5321).
+SPOKE_E_ROOMS = [
+    (5302, "Observatory Base", True),
+    (5303, "Observatory Hall", True),
+    (5304, "Fallen Orrery", True),
+    (5305, "Star Chamber", True),
+    (5306, "Cracked Dome", True),
+    (5307, "The High Rim", True),
+    (5308, "Grove Edge", False),
+    (5309, "Whispering Grove", False),
+    (5310, "Sunken Path", False),
+    (5311, "Veil Hollow", False),
+    (5312, "Thinning Wood", False),
+    (5313, "Grove Heart", False),
+    (5314, "Veil Tear", False),
+    (5315, "Riven Ground", False),
+    (5316, "Folded Distance", False),
+    (5317, "Floating Stone", False),
+    (5318, "Stuttering Space", False),
+    (5319, "The Unraveling", False),
+    (5320, "The Thinnest Place", False),
+    (5321, "Refolded Calm", False),
+]
+
+# Reciprocal exit edges (each listed once). The spoke climbs the z-axis, so
+# several exits are vertical (up/down); the rest are cardinal.
+SPOKE_E_EXIT_PAIRS = [
+    (5224, "up", 5302),     # hub stub attachment (climb into the observatory)
+    (5302, "up", 5303),
+    (5303, "west", 5304),
+    (5303, "north", 5305),
+    (5305, "west", 5306),
+    (5306, "north", 5307),
+    (5307, "north", 5308),
+    (5308, "north", 5309),
+    (5308, "west", 5310),
+    (5309, "west", 5311),
+    (5310, "north", 5311),
+    (5311, "north", 5312),
+    (5312, "north", 5313),
+    (5313, "west", 5314),
+    (5314, "up", 5315),     # tear up into the reality-thin scabland
+    (5315, "north", 5316),
+    (5316, "west", 5317),
+    (5316, "east", 5318),
+    (5317, "north", 5319),
+    (5319, "east", 5320),
+    (5320, "north", 5321),
+]
+
+# Spoke E (Folding) mobs 9144-9152 (Phase M). Same shape as the other spokes:
+#   mobid: (filename, name, [host_rooms], hostile, behavior_archetype, statpool)
+# Two Opened humanoid NPCs (Grieve/Orrin), one inert practice target (the mote,
+# combat_passive, NOT hostile), four warped fighters scaling inner->outer, and
+# two casters (pure_caster): the Unbound Fold mini and the Unfolded boss. The
+# casters carry a harm-only spellbook so they duel rather than self-heal-stall.
+SPOKE_E_MOBS = {
+    9144: ("9144-adept_grieve.yaml",    "Adept Grieve",   [5303],             False, "noncombat_questgiver", 44),
+    9145: ("9145-keeper_orrin.yaml",    "Keeper Orrin",   [5309],             False, "noncombat_questgiver", 44),
+    9146: ("9146-practice_mote.yaml",   "Practice Mote",  [5305],             False, "combat_passive",        3),
+    9147: ("9147-drift_wisp.yaml",      "Drift-Wisp",     [5308, 5310, 5312], True,  "generic_fighter",      22),
+    9148: ("9148-grove_revenant.yaml",  "Grove Revenant", [5311, 5312, 5313], True,  "generic_fighter",      45),
+    9149: ("9149-fold_echo.yaml",       "Fold-Echo",      [5315, 5316],       True,  "generic_fighter",      65),
+    9150: ("9150-riven_stalker.yaml",   "Riven Stalker",  [5317, 5318],       True,  "generic_fighter",      95),
+    9151: ("9151-unbound_fold.yaml",    "Unbound Fold",   [5319],             True,  "pure_caster",         130),
+    9152: ("9152-the_unfolded.yaml",    "The Unfolded",   [5320],             True,  "pure_caster",         200),
 }
 
 # ---------------------------------------------------------------------------
@@ -761,11 +834,57 @@ def main():
     print("-" * 70)
     print(f"{len(SPOKE_D_MOBS)} Spoke D mobs checked, {spoke_d_mob_fail} FAIL")
 
+    # --- Spoke E (Folding) rooms --------------------------------------------
+    print()
+    print(f"{'SPOKE-E':<8} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    spoke_e_room_fail = 0
+    for rid, title, sanct in SPOKE_E_ROOMS:
+        fails = check_spoke_a_room(rid, title, sanct)  # generic room check
+        if fails:
+            spoke_e_room_fail += 1
+            print(f"{rid:<8} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{rid:<8} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_E_ROOMS)} Spoke E rooms checked, {spoke_e_room_fail} FAIL")
+
+    print()
+    print(f"{'EXITPAIR-E':<14} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    pair_e_fail = 0
+    for a, dir_ab, b in SPOKE_E_EXIT_PAIRS:
+        fails = check_spoke_a_exit_pair(a, dir_ab, b)  # generic exit-pair check
+        label = f"{a}-{dir_ab[:2]}-{b}"
+        if fails:
+            pair_e_fail += 1
+            print(f"{label:<14} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{label:<14} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_E_EXIT_PAIRS)} Spoke E exit pairs checked, {pair_e_fail} FAIL")
+
+    # --- Spoke E (Folding) mobs ---------------------------------------------
+    print()
+    print(f"{'SPOKE-E MOB':<14} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    spoke_e_mob_fail = 0
+    for mid in sorted(SPOKE_E_MOBS):
+        fails = check_spoke_a_mob(mid, SPOKE_E_MOBS[mid])  # generic mob check
+        if fails:
+            spoke_e_mob_fail += 1
+            print(f"{mid:<14} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{mid:<14} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_E_MOBS)} Spoke E mobs checked, {spoke_e_mob_fail} FAIL")
+
     return 1 if (total_fail or npc_fail or spoke_room_fail or pair_fail
                  or spoke_mob_fail or spoke_b_room_fail or pair_b_fail
                  or spoke_b_mob_fail or spoke_c_room_fail or pair_c_fail
                  or spoke_c_mob_fail or spoke_d_room_fail or pair_d_fail
-                 or spoke_d_mob_fail) else 0
+                 or spoke_d_mob_fail or spoke_e_room_fail or pair_e_fail
+                 or spoke_e_mob_fail) else 0
 
 
 if __name__ == "__main__":

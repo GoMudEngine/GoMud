@@ -1,0 +1,43 @@
+roomid: 5305
+zone: Pothole Coulee
+title: Star Chamber
+description: >
+  A round chamber, its walls curved smooth as the inside of a bowl, and
+  in the center of the floor a practice mark has been scribed directly
+  into the stone -- a circle within a circle, runes pressed into the inner
+  ring at the cardinal points. The mark was made to stand in, and the
+  stone inside it has been worn to a different shade by those who did.
+  Around the outer ring, the floor tells the history of the place in small
+  damage -- scorch shadows where something very hot passed close, a rind
+  of frost still clinging in the northern quarter, a branching crack where
+  lightning or something like it once skipped across the floor. A thousand
+  practiced spells have left their signatures here.
+biome: fort
+coord:
+  x: 44
+  y: -3
+  z: 2
+mutators:
+- mutatorid: sanctuary
+exits:
+  south:
+    roomid: 5303
+  west:
+    roomid: 5306
+spawninfo:
+- mobid: 9146
+nouns:
+  mark: The scribed circle is broad enough that you could stand in it
+    with your arms spread wide. The stone inside the inner ring is lighter
+    than the surrounding floor -- worn by the pressure of feet, season
+    after season, student after student standing here and reaching for
+    something that isn't quite in the world.
+  chamber: The curved walls catch and return sound in a way that flat
+    walls don't -- your own breath comes back to you half a beat after
+    you take it. The chamber was built to hold focus, to let nothing
+    scatter outward.
+idlemessages:
+- The air inside the <ansi fg="cyan">mark</ansi> is a degree cooler than the rest of the chamber.
+- A faint crackle runs along the frost in the northern quarter and goes still again.
+- The <ansi fg="cyan">chamber</ansi> holds a hush that feels less like absence and more like attention.
+- Scorch and frost and the old branching of a lightning-crack -- the floor is a record of work done here.

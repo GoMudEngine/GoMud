@@ -1,0 +1,46 @@
+roomid: 5306
+zone: Pothole Coulee
+title: Cracked Dome
+description: >
+  The observatory's dome still stands, but only just -- a long jagged
+  crack splits it from near the apex to the lip, and through that gap
+  the sky enters, a bright wound across the stone ceiling. The floor
+  beneath the crack is pale with years of rainwash. Dominating the room
+  is a great telescope that came off its mount long ago and lies on its
+  side, its barrel as wide as a man's shoulders and running nearly the
+  full width of the chamber. Copper and bronze fittings have gone green
+  with age, and the lens at the far end -- cracked but still seated -- is
+  glazed with a fine fur of oxidation. The air here is very still,
+  insulated from the wind outside by those thick walls and the dome above.
+biome: fort
+coord:
+  x: 43
+  y: -3
+  z: 2
+mutators:
+- mutatorid: sanctuary
+exits:
+  east:
+    roomid: 5305
+  north:
+    roomid: 5307
+nouns:
+  dome: The dome overhead is a remarkable thing even in its current state
+    -- great slabs of stone fitted to a curve, each one cut to angle just
+    so, holding the arch by press and weight alone. The crack that runs
+    through it is ragged at the edges and has shed fragments onto the floor,
+    but the dome has not moved since.
+  telescope: Fallen on its side, the telescope is still an impressive
+    object -- brass rings along its length, a rotating mount at the base
+    now bent and useless, a barrel that narrows toward the cracked lens
+    end in careful graduated steps. It smells of old metal and something
+    faintly like lamp oil.
+  crack: The crack in the dome cuts a crooked line from somewhere above
+    the center all the way to the rim, letting in a strip of sky that
+    moves from dark to bright as the sun travels. At night, you could
+    lie on the floor and watch a thin river of stars drift slowly past.
+idlemessages:
+- Wind passes over the <ansi fg="cyan">crack</ansi> in the dome and makes a low, hollow note.
+- A fragment of stone the size of a thumbnail lets go of the dome's edge and clicks across the floor.
+- The strip of sky visible through the <ansi fg="cyan">dome</ansi>'s crack shifts from pale gray to a clearer blue.
+- The fallen <ansi fg="yellow">telescope</ansi> creaks once, very faintly, as the structure settles around it.

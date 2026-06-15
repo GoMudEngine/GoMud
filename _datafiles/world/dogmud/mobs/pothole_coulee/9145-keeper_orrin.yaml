@@ -1,0 +1,58 @@
+mobid: 9145
+zone: Pothole Coulee
+behavior_archetype: noncombat_questgiver
+statpool: 44
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 11
+idlecommands:
+  - 'emote sweeps a flat hand a finger-width above the moss, not touching
+    it, as if smoothing something only he can feel'
+  - ''
+  - 'emote sits cross-legged at the centre of the grove and breathes slowly,
+    counting the breaths against the swaying of the canopy'
+  - ''
+  - 'emote presses an ear to the trunk of a leaning tree and holds there,
+    listening to something below the wood'
+  - ''
+  - 'emote gathers a fallen leaf, turns it over twice, and sets it back down
+    exactly where it lay'
+  - ''
+character:
+  name: Keeper Orrin
+  description: |
+    Orrin tends the grove the way a nurse tends a fevered sleeper -- gently,
+    watchfully, ready for the moment the patient turns. The trees here grow
+    at the edge of a thinning, where the veil between the ordinary world and
+    whatever lies behind it has worn translucent, and Orrin has spent years
+    learning to keep his footing in a place that does not always agree to
+    stay one place.
+    His outline lags. When he moves, the edges of him arrive a heartbeat
+    late -- a faint smear in the air at the wake of every gesture, gone the
+    instant he goes still. He does not seem troubled by it. He says the
+    grove does it to everyone who stays long enough, and that the trick is
+    not to fight the lag but to move slowly enough that it cannot matter.
+    He teaches concentration -- holding a thought steady while the world
+    tries to knock it loose -- and he is patient with those who fail at it,
+    because everyone does, at first.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    willpower:
+      training: 14
+    perception:
+      training: 12
+    vitality:
+      training: 10
+    charisma:
+      training: 4
+    dexterity:
+      training: 2
+    strength:
+      training: 2

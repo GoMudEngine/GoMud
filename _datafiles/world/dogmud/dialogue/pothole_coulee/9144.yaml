@@ -1,0 +1,136 @@
+mobid: 9144
+zone: Pothole Coulee
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "hail"]
+    responses:
+      - "Grieve. I keep what is left of the observatory. You have the look of
+          someone the Awakening has touched -- come to learn the rest of it?"
+      - "Speak slowly. There is no hurry here that the hurrying ever helped."
+
+  - keywords: ["cast", "spell", "casting", "magic", "learn", "teach",
+      "quest", "task"]
+    responses:
+      - "Casting is not force. It is letting go of a shaped intention at the
+          right moment. Ask me and I will set you to the first of it."
+      - "You already carry the spark of it -- the Awakening leaves everyone a
+          little open to the Folding. I only teach the aiming."
+
+  - keywords: ["eyes", "mutation", "opened", "sight", "look"]
+    responses:
+      - "My eyes. Yes. The Folding got into them -- each one settles on a
+          slightly different world, and I have stopped insisting they agree.
+          It is not a burden. It is only a way of seeing twice."
+
+  - keywords: ["channels", "channel", "three", "willpower", "will"]
+    responses:
+      - "Three channels carry every working: the body's force, the mind's
+          will, the heart's conviction. The spike you woke with is conviction
+          -- the heart's channel. Willpower is the stat that shapes a casting,
+          whichever channel it runs in. Carry more of it and the fold comes
+          cleaner."
+
+  - keywords: ["folding", "fold", "veil", "thin"]
+    responses:
+      - "The Folding is the place behind the world, where the ordinary rules
+          go soft. Adepts read it once, from this very ruin. Where it presses
+          close -- a thin place -- a steady mind can reach in and shape
+          something. Most of magic is learning to do that without losing
+          yourself in the reaching."
+
+  - keywords: [""]
+    responses:
+      - "Say what you came to say."
+      - "The charts will keep. I am listening."
+      - "Take your time."
+
+tree:
+  root:
+    text: "Grieve. Adept, once; caretaker, now."
+    hints: "You could ask Grieve about casting or your task."
+    variants:
+      # ── Not yet Opened ───────────────────────────────────
+      - questExcluded: ["30-end"]
+        text: "You have not been through the Awakening. The mind has to be
+          opened before it can be aimed -- there is nothing here for you to
+          hold onto yet. Cleric Hadwen runs the rite at the reflecting pool
+          below. Be Opened, then come back, and I will teach you to cast."
+        hints: "Find Cleric Hadwen at the reflecting pool and complete the
+          Awakening, then return to Adept Grieve."
+
+      # ── Opened, not started ──────────────────────────────
+      - questRequired: ["30-end"]
+        questExcluded: ["44-start", "44-end"]
+        text: "The rite is on you. Good -- then there is something to teach.
+          I show the first turning of the mind: how to shape a spell you
+          already carry and let it go at a mark. Ask me about casting when
+          you mean to begin."
+        hints: "Type ask grieve cast to learn the first casting."
+
+      # ── Mid quest 44 ─────────────────────────────────────
+      - questRequired: ["44-start"]
+        questExcluded: ["44-end"]
+        text: "You have not loosed it yet. North, into the Star Chamber --
+          the practice mote hangs at the mark. Type cast conviction-spike
+          mote and let the spell go at it. Then come back and tell me."
+        hints: "Go north to the Star Chamber. Type cast conviction-spike
+          mote. Then ask grieve done."
+
+      # ── Quest 44 complete ────────────────────────────────
+      - questRequired: ["44-end"]
+        text: "You can cast now -- the first and smallest sort, but the door
+          is open and it does not close again. North, through the ruin, the
+          grove begins. Keeper Orrin tends it. He will teach you to hold a
+          casting while something is trying to kill you, which is the part
+          that matters."
+        hints: "Head north through the observatory into the grove and type
+          ask orrin to find Keeper Orrin."
+
+  nodes:
+    # ── QUEST 44 OFFER ────────────────────────────────────────
+    - id: cast_offer
+      triggers: ["cast", "spell", "casting", "magic", "learn", "teach",
+        "begin", "quest", "task"]
+      questRequired: ["30-end"]
+      questExcluded: ["44-start", "44-end"]
+      grantsQuest: "44-start"
+      text: "Then here is the first turning. North of here is the Star
+        Chamber, and at its center a practice mark with a mote of folded
+        light hanging over it -- I conjure them for students; you cannot harm
+        it. Stand at the mark and cast a spell you already know at the mote.
+        The spike you woke with will do -- type cast conviction-spike mote.
+        Do not force it. Shape it, and let it go. Then come back to me."
+      hints: "Go north into the Star Chamber. Type cast conviction-spike mote
+        to loose your starting spell at the practice mote. Then return and
+        type ask grieve done."
+
+    # ── QUEST 44 TURN-IN ──────────────────────────────────────
+    - id: cast_turnin
+      triggers: ["report", "done", "ready", "finished", "quest", "task"]
+      questRequired: ["44-cast"]
+      questExcluded: ["44-end"]
+      grantsQuest: "44-end"
+      text: "You let it go instead of throwing it. I felt the fold from here.
+        That is the whole foundation -- everything else is only larger folds
+        and steadier nerves. Take this staff; oak, a focus, it will steady
+        your castings without ever casting for you. North now, to the grove.
+        Orrin will teach you to hold a working together while the world tries
+        to break it."
+      hints: "Quest complete. Head north into the grove and type ask orrin
+        to find Keeper Orrin."
+
+    # ── CASTING / CHANNELS HELP ───────────────────────────────
+    - id: cast_help
+      triggers: ["mote", "mark", "practice", "how", "channels", "willpower",
+        "help"]
+      text: "Casting is one command: type cast, then the spell, then what you
+        aim it at -- cast conviction-spike mote at the practice mark in the
+        Star Chamber north of here. As for the working itself: three channels
+        carry it -- force, will, conviction -- and willpower shapes them all.
+        The more willpower you carry, the cleaner the fold holds."
+      hints: "In the Star Chamber, type cast conviction-spike mote. Willpower
+        is the stat that shapes every casting."
+
+memory:
+  expiryPeriod: ""

@@ -1,0 +1,45 @@
+roomid: 5307
+zone: Pothole Coulee
+title: The High Rim
+description: >
+  The ruin opens at its northern face and you step out onto the coulee
+  rim, the tower's broken wall at your back and the open coulee dropping
+  away below. Wind comes up off the rock in slow rolling surges here,
+  carrying the smell of sage and distance, and the sky is very large --
+  the kind of sky that makes you aware of how much of the world there is.
+  To the north a grove of pale-barked trees crowds the rim's edge, their
+  canopy grown close and tangled, and even at this distance the air
+  between their trunks looks different from ordinary shadow -- thicker,
+  quieter, the wrong shade. The sanctuary ends here. Whatever waits in
+  that grove, it waits just past its edge.
+biome: fort
+coord:
+  x: 43
+  y: -4
+  z: 2
+mutators:
+- mutatorid: sanctuary
+exits:
+  south:
+    roomid: 5306
+  north:
+    roomid: 5308
+nouns:
+  rim: The coulee rim is bare rock here, the edge crumbling in places
+    where frost has worked into the joints over many winters. Looking
+    out over the coulee from this height, you can trace the pale thread
+    of the road far below and the dark smear of the marsh beyond.
+  wind: The wind up here is not the same as the wind below -- it moves
+    in long slow pulses rather than gusts, as though the coulee is
+    breathing. It carries cold in it, even in mild weather, drawn up
+    from the rock face.
+  grove: The grove stands just to the north, pale trunks close-set and
+    the canopy woven tight overhead. Something about the quality of the
+    light inside it is wrong in a way that is hard to name -- not darker
+    exactly, but less distinct, as if the grove exists at a slight angle
+    to the rest of the world.
+idlemessages:
+- The <ansi fg="green">wind</ansi> surges up from the coulee below, warm for just a moment, then cold again.
+- Somewhere in the <ansi fg="green">grove</ansi> to the north, a branch moves without any wind to explain it.
+- The view from the <ansi fg="cyan">rim</ansi> is very wide -- you can see the shadow of cloud moving across the marsh far below.
+- The light inside the grove does something at the edge of your vision that it doesn't do when you look directly at it.

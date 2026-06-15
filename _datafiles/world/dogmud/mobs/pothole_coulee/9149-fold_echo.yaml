@@ -1,0 +1,53 @@
+mobid: 9149
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 65
+itemdropchance: 15
+hostile: true
+maxwander: 1
+groups:
+  - aberration
+  - folded
+activitylevel: 21
+idlecommands:
+  - 'emote repeats a single short motion over and over -- a half-step and
+    a turn -- like a phrase of speech with the meaning worn off'
+  - ''
+  - 'emote splits briefly into two overlapping outlines that drift apart
+    and then snap back into one'
+  - ''
+combatcommands:
+  - 'emote strikes from the after-image an instant before the body that
+    cast it arrives'
+  - ''
+  - 'emote collapses the distance between you in a single fold, closing a
+    span it should not be able to cross'
+  - ''
+character:
+  name: Fold-Echo
+  description: |
+    Out on the reality-thin scabland, where the world comes apart in
+    earnest, even violence leaves a residue. A fold-echo is the print of
+    something that happened here and refuses to finish happening -- a death,
+    a struggle, a crossing -- folded back on itself until it stands up and
+    repeats. It is more solid than the grove-things, because the scabland
+    has more of itself to spare, but it is no more whole: an outline that
+    keeps a half-step of after-image trailing behind it, an attack that
+    lands a beat before the blow. Striking it feels less like fighting a
+    creature than like interrupting a memory that does not want to be
+    interrupted.
+  speciesid: 23
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: 20
+    strength:
+      training: 18
+    dexterity:
+      training: 16
+    perception:
+      training: 6
+    willpower:
+      training: 5

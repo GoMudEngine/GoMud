@@ -1,0 +1,41 @@
+roomid: 5321
+zone: Pothole Coulee
+title: Refolded Calm
+description: >
+  The world has knitted itself back together here. The slabs have settled --
+  not descended to ordinary ground, but steadied, as though they have chosen
+  to stay where they are rather than drift. Light arrives on time, landing
+  where it is aimed, behaving like light. The air is still. Whatever held
+  this place open has been undone, and the calm that has filled the gap is
+  deep and real -- not the numb quiet of emptiness but the exhaled quiet of
+  something resolved. At the far edge, where the scabland fades into a
+  pale horizon, a faint seam runs along the stone -- a place where the
+  Folding once ran and has now been closed, healed over like scar tissue,
+  a mark that will last longer than the memory of what made it.
+biome: cliffs
+coord:
+  x: 41
+  y: -11
+  z: 3
+exits:
+  south:
+    roomid: 5320
+nouns:
+  calm: It is not silence -- the wind still moves, stone still creaks
+    at the cold -- but the quality of the air has changed. Something
+    that was taut has released. The calm is the kind that follows
+    a long effort, the absence of pressure rather than the absence
+    of sound.
+  seam: A thin line in the stone at the horizon's edge where the world
+    was once open and has been closed again. The rock along it is
+    smooth and slightly brighter than the stone to either side, as
+    though the closing left a trace of warmth that has not yet fully
+    faded.
+idlemessages:
+- The <ansi fg="cyan">calm</ansi> deepens for a moment -- a settling, like a house after a
+  long storm -- and then holds.
+- Light falls across the <ansi fg="cyan">seam</ansi> at the horizon and runs along it in a
+  thin bright line, then fades.
+- The slabs around you drift not at all. The stillness here has a
+  quality of intention -- as though the place is resting, and resting
+  well.

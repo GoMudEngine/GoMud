@@ -1,0 +1,133 @@
+# Quest 45 — The Unquiet Grove (Pothole Coulee, Spoke E / Folding middle ring)
+#
+# Token flow:
+#   45-start — granted by Keeper Orrin's grove_offer node (requires 44-end).
+#   45-kill  — mob_death of a veil-warped grove foe (Drift-Wisp 9147 OR Grove
+#              Revenant 9148); two triggers, either grants it.
+#   45-cast  — command trigger on `cast` in a grove combat room (5311/5312/
+#              5313) — casting while a real fight is on you (concentration).
+#   45-end   — granted by Orrin's grove_turnin node (needs 45-kill + 45-cast).
+#
+# Design: teach casting in a live fight + concentration (damage/movement can
+# break a cast — push through it). Reward grants the player's first AoE spell,
+# sparks (Conviction Sparks), via the spellid reward field. Two objectives,
+# any order; the turn-in needs both.
+
+questid: 45
+name: The Unquiet Grove
+description: >-
+  Keeper Orrin tends the meditation grove, where the veil between the world
+  and the Folding has worn thin and the things on the far side bleed through.
+  He will teach you to cast with a fight on you -- to hold a thought steady
+  while the world tries to knock it loose.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: >-
+      Orrin wants you to fight in the grove and cast while you do it. Put
+      down a veil-warped creature, and loose a spell in the thick of the
+      grove where the foes are.
+    hint: >-
+      Head north into the grove. Fight a veil-warped creature (a drift-wisp
+      or a grove revenant) and defeat it. While a fight is on you, type cast
+      conviction-spike to loose a spell mid-combat -- a hit can break the
+      casting, so push through. Then report to Orrin -- type ask orrin done.
+  - id: kill
+    description: >-
+      You put down a veil-warped creature. Cast in the thick of the grove if
+      you have not yet.
+    hint: >-
+      While fighting in the grove (the Veil Hollow, the Thinning Wood, or the
+      Grove Heart), type cast conviction-spike to loose a spell mid-fight.
+      Then report to Keeper Orrin -- type ask orrin done.
+  - id: cast
+    description: >-
+      You held a casting together while the grove worked at you. Put down a
+      veil-warped creature if you have not yet.
+    hint: >-
+      Defeat a drift-wisp or a grove revenant in the grove, then report to
+      Keeper Orrin -- type ask orrin done.
+  - id: end
+    description: >-
+      Orrin has named your concentration sound. East and up, the scabland
+      waits, where the world comes apart and the thing that unmade it still
+      casts in the thinnest place.
+
+rewards:
+  skillinfo: "spellcasting:1"
+  spellid: sparks
+  gold: 25
+  playermessage: >-
+    Orrin's late-arriving outline catches up to him as he goes still. "You
+    were hit, and the fold held anyway. That is concentration -- not the
+    absence of disturbance, but the holding-on through it." He turns a palm
+    up, and a scatter of weightless sparks gathers above it and disperses.
+    "Here is a wider working, then -- sparks. It is the weakest of the area
+    spells, which is to say it is the first one you can trust yourself with:
+    it touches everything in front of you at once. You loosed it from the
+    same conviction you woke with. Go up and east when you are ready. The
+    scabland is where the grove's trouble comes from -- and where it ends."
+  roommessage: ""
+
+triggers:
+  # ── KILL: defeat a veil-warped grove foe (either grants 45-kill) ───────
+  - event: mob_death
+    mob: 9147
+    conditions:
+      has: ["45-start"]
+      missing: ["45-kill"]
+    actions:
+      - grant: "45-kill"
+      - send_text: >-
+          The drift-wisp comes apart into the motes it was made of and does
+          not gather again. Cast in the grove if you have not, then see Orrin.
+  - event: mob_death
+    mob: 9148
+    conditions:
+      has: ["45-start"]
+      missing: ["45-kill"]
+    actions:
+      - grant: "45-kill"
+      - send_text: >-
+          The grove revenant folds down and is still. Cast in the grove if
+          you have not, then see Orrin.
+
+  # ── CAST: loose a spell mid-fight in the grove (5311 / 5312 / 5313) ────
+  - event: command
+    command: cast
+    room: 5311
+    conditions:
+      has: ["45-start"]
+      missing: ["45-cast"]
+    actions:
+      - grant: "45-cast"
+      - send_text: >-
+          You shape the fold with the fight pressing on you, and it holds.
+          That is concentration. Put down a veil-warped creature if you have
+          not, then report to Orrin.
+  - event: command
+    command: cast
+    room: 5312
+    conditions:
+      has: ["45-start"]
+      missing: ["45-cast"]
+    actions:
+      - grant: "45-cast"
+      - send_text: >-
+          You shape the fold with the fight pressing on you, and it holds.
+          That is concentration. Put down a veil-warped creature if you have
+          not, then report to Orrin.
+  - event: command
+    command: cast
+    room: 5313
+    conditions:
+      has: ["45-start"]
+      missing: ["45-cast"]
+    actions:
+      - grant: "45-cast"
+      - send_text: >-
+          You shape the fold with the fight pressing on you, and it holds.
+          That is concentration. Put down a veil-warped creature if you have
+          not, then report to Orrin.

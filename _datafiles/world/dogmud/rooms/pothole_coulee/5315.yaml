@@ -1,0 +1,38 @@
+roomid: 5315
+zone: Pothole Coulee
+title: Riven Ground
+description: >
+  The ground here has come apart. Stone slabs the size of barn floors float
+  at varying heights, some tilted, some perfectly level, each one drifting
+  with a slowness that seems deliberate. The gaps between them do not show
+  earth -- they open onto sky, the same pale sky that is above you, as
+  though the world has simply been cut loose from itself here and is
+  rearranging the pieces. You came up from a tear in the grove below; the
+  way back is still there, below your feet, but the ground you stand on
+  is barely ground at all.
+biome: cliffs
+coord:
+  x: 41
+  y: -8
+  z: 3
+exits:
+  down:
+    roomid: 5314
+  north:
+    roomid: 5316
+spawninfo:
+- mobid: 9149
+nouns:
+  slabs: Each slab moves on no current you can feel, rotating fractions
+    of a degree and drifting sideways by thumb-widths. The stone is
+    pale and finely grained -- clifftop limestone, or something that
+    was limestone before this place unmade the ordinary rules.
+  gaps: The gaps between the slabs should show soil, or the tops of
+    trees, or rock face -- anything grounded. Instead they open onto
+    a sky identical to the one above, as though cutting through the
+    stone dropped you out the other side of the world.
+idlemessages:
+- One of the <ansi fg="cyan">slabs</ansi> shifts a hand's width to the left with no sound at all.
+- Light arrives through the <ansi fg="cyan">gaps</ansi> from below, matching the light above perfectly.
+- The stone underfoot tilts one degree, corrects, tilts again -- you widen
+  your stance without meaning to.

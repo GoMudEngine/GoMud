@@ -1,0 +1,69 @@
+# Quest 46 — The Unfolded (Pothole Coulee, Spoke E / Folding outer ring, capstone)
+#
+# Token flow:
+#   46-start — granted by Keeper Orrin's scab_offer node (after quest 45).
+#   46-end   — granted by the boss-kill trigger (mob_death 9152, The Unfolded).
+#              Rewards fire on 46-end: a Willpower bump (stat_info), the heal
+#              spell (Mend Flesh, via spellid), and gold. Turn-in is automatic
+#              on the kill, like the other spoke capstones.
+#
+# Design: a solo spell-duel against the Unfolded -- a long-dead caster's
+# escaped folds that casts harm at the player (mind-spike / nerve-disruption,
+# harm-only spellbook so it duels rather than self-heal-stalls). The takeaway
+# is the player's first heal, making a caster self-sufficient.
+
+questid: 46
+name: The Unfolded
+description: >-
+  Keeper Orrin says the grove's trouble has a source: out on the reality-thin
+  scabland, in the thinnest place of all, something that was once a Folding-
+  adept still casts. It is called the Unfolded. Orrin says it cannot be
+  reasoned with and cannot be left -- it has to be out-cast.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: >-
+      Orrin has set you against the Unfolded. Cross the scabland east and
+      up, through the warped and the unraveling ground, and defeat the
+      Unfolded in the thinnest place.
+    hint: >-
+      Go up from the Grove Heart into the scabland, then east through the
+      folded distance and the unraveling to the thinnest place. The Unfolded
+      casts at range -- cast back, and heal yourself if you learn how. Defeat
+      it in the thinnest place.
+  - id: end
+    description: >-
+      The Unfolded is undone, and the thinnest place is quiet for the first
+      time in a long age. You crossed a scabland that did not want crossing,
+      out-cast a thing made of nothing but casting, and came back able to
+      mend your own wounds with a thought.
+
+rewards:
+  stat_info: "willpower:3"
+  spellid: heal
+  gold: 50
+  playermessage: >-
+    The Unfolded comes apart the way it has always been coming apart, except
+    that this time nothing rises to replace what is lost, and the standing
+    fold sighs out of the world. The thinnest place loosens, the fraying
+    slows, and the air settles to ordinary air. You feel the long strain of
+    holding castings together in the open settle into you as a deeper
+    steadiness of will. And in the quiet, the shape of a new working comes
+    clear -- how to fold not harm but mending, and turn it on your own
+    wounds. You leave the scabland knowing how to heal.
+  roommessage: ""
+
+triggers:
+  # ── BOSS KILL: defeat the Unfolded -> complete + rewards ───────────────
+  - event: mob_death
+    mob: 9152
+    conditions:
+      has: ["46-start"]
+      missing: ["46-end"]
+    actions:
+      - grant: "46-end"
+      - send_text: >-
+          The Unfolded unravels a final time and does not refold. The
+          thinnest place falls quiet around you.

@@ -1,0 +1,33 @@
+mobid: 9146
+zone: Pothole Coulee
+behavior_archetype: combat_passive
+statpool: 3
+hostile: false
+maxwander: 0
+groups:
+  - construct
+activitylevel: 5
+idlecommands:
+  - 'emote turns slowly in place, its folds catching the light and letting
+    it go'
+  - ''
+  - ''
+  - ''
+character:
+  name: Practice Mote
+  description: |
+    A knot of folded light hangs at the practice mark, roughly the size of
+    a clenched fist, turning slowly on no axis you can name. Grieve conjures
+    these for students: a scrap of the thin place pinned in the air and held
+    open, a thing made of nothing but bent attention, durable enough to take
+    a spell and shrug it off. When a cast strikes it the mote flares, draws
+    inward, and reknits -- absorbing the working the way still water absorbs
+    a thrown stone. It cannot hurt you. It exists to be aimed at.
+  speciesid: 19
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: -3
+    dexterity:
+      training: -3

@@ -1,0 +1,41 @@
+roomid: 5317
+zone: Pothole Coulee
+title: Floating Stone
+description: >
+  This slab is wider than the others -- wide enough to walk the length of
+  without reaching the edge, if you do not look down. It floats free of
+  everything, rotating at a pace so gradual you only notice by watching
+  the stars at the edge of the sky turn past the horizon. There is nothing
+  beneath it. No chain, no column, no logic. The slab simply is here,
+  adrift at height, and being here requires a particular quality of trust
+  in the ground to remain ground. The stars that wheel past the edge as
+  the slab turns are not stars you know the names of.
+biome: cliffs
+coord:
+  x: 40
+  y: -9
+  z: 3
+exits:
+  east:
+    roomid: 5316
+  north:
+    roomid: 5319
+spawninfo:
+- mobid: 9150
+nouns:
+  slab: Pale limestone, broad and smooth, with faint markings near its
+    center that might be old etchings or might be the way the rock
+    fractured. The surface is level; whatever force holds it here also
+    holds it upright. The edges are sharp and clean, as though cut.
+  stars: At the slab's edge, where sky meets the turning horizon, unfamiliar
+    stars drift past in slow procession. They are too bright for day and
+    too steady for night. They have been there since before you arrived,
+    and they will be there after, turning with the stone on some axis
+    neither of you chose.
+idlemessages:
+- The <ansi fg="cyan">slab</ansi> completes a slow fraction of its rotation and new sky appears
+  at the western edge.
+- You glance over the edge, see nothing below, and look back at the center
+  of the stone instead.
+- One of the <ansi fg="cyan">stars</ansi> at the horizon brightens briefly, then steadies, as
+  though something passed between it and you.

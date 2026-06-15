@@ -1,0 +1,52 @@
+mobid: 9148
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 45
+itemdropchance: 15
+hostile: true
+maxwander: 1
+groups:
+  - aberration
+  - folded
+activitylevel: 21
+idlecommands:
+  - 'emote walks a slow circuit of the clearing on legs that bend a beat
+    after they should, as if remembering how'
+  - ''
+  - 'emote turns its head to follow a sound that has not happened yet'
+  - ''
+combatcommands:
+  - 'emote lunges with a reach longer than its arm should allow, the limb
+    arriving before the body commits to it'
+  - ''
+  - 'emote rakes downward, the motion smearing slightly so it seems to
+    strike twice from one blow'
+  - ''
+character:
+  name: Grove Revenant
+  description: |
+    Something walked into the grove once and did not leave so much as stop
+    leaving. The grove revenant keeps the shape of whatever it was -- a
+    traveller, a forager, the proportions are human enough -- but the
+    thinning has been working on it for a long time, and the edits show.
+    It moves a half-beat out of time with itself, the body and its
+    intentions never quite synchronised, so that watching it is like
+    watching a reflection in disturbed water. Its face is turned away no
+    matter where you stand. It guards the deep grove with a dull, looping
+    persistence, as though it has been told to do this and can no longer
+    remember by whom, and cannot stop.
+  speciesid: 23
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: 14
+    strength:
+      training: 12
+    dexterity:
+      training: 11
+    perception:
+      training: 4
+    willpower:
+      training: 4
