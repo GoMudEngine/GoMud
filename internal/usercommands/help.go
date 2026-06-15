@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -90,6 +91,16 @@ func Help(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	user.SendText(messaging.CategorySystem, helpTxt)
+
+	// Quest engine: command notification — the newbie Lore spoke reinforces the
+	// in-game help system (Tier-1 teaching beat). Fires on a successful help
+	// display. Mirrors forage/drink/throw/cast.
+	bridge := questengine.NewGameBridge(user, room.RoomId)
+	questengine.GetEngine().Notify("command", questengine.EventDetails{
+		UserId:  user.UserId,
+		RoomId:  room.RoomId,
+		Command: "help",
+	}, bridge, bridge)
 
 	return true, nil
 }
