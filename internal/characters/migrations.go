@@ -260,3 +260,31 @@ func (c *Character) MigrateRecipeDisciplineShuffle() {
 
 	c.SetMiscData(migrationKey, "1")
 }
+
+// MigrateNewbieAwakening grants quest-30 "end" to pre-Pothole veteran
+// characters so the hub movement gate (room 5200, gated on 30-end) never
+// traps them. Run-once via MiscData.
+//
+// Guard logic — grant only when ALL of these hold:
+//   - no prior run (MiscData key absent)
+//   - QuestProgress is non-empty (veteran has done something)
+//   - quest 30 has no entry at all (not mid-rite, not already done)
+//
+// A brand-new character has empty QuestProgress → skipped, so it still
+// does the Awakening rite. A character mid-rite (30:"start") has a q30
+// entry → skipped, so it is not short-circuited. Errs toward NOT
+// granting: a stray veteran is merely redirected by the gate NPC; a
+// skipped rite would be worse.
+func (c *Character) MigrateNewbieAwakening() {
+	const migrationKey = "migration-newbie-awakening-done"
+	if c.GetMiscData(migrationKey) != nil {
+		return
+	}
+	if c.QuestProgress == nil {
+		c.QuestProgress = make(map[int]string)
+	}
+	if _, hasQ30 := c.QuestProgress[30]; !hasQ30 && len(c.QuestProgress) > 0 {
+		c.QuestProgress[30] = "end"
+	}
+	c.SetMiscData(migrationKey, "1")
+}
