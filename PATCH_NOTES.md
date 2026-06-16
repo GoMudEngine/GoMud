@@ -1,6 +1,6 @@
 # DOGMud Patch Notes
 
-## 2026-06-16 — Newbie-area rework: CUTOVER — Pothole Coulee goes live; Sanctum Basin retired [branch-local → master]
+## 2026-06-16 — Newbie-area rework: CUTOVER — Pothole Coulee goes live; Sanctum Basin retired [merged to master — local; not yet pushed to prod]
 
 The new newbie experience is complete and connected to the world. New
 characters now begin in Pothole Coulee (the Awakening Pool); the old Sanctum
