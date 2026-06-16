@@ -16,6 +16,8 @@ coord:
 exits:
   west:
     roomid: 3073
+  east:
+    roomid: 3122
 nouns:
   slope: A broad slope of mixed stone and earth, descending
     southeast toward lower terrain. The footing is uncertain,

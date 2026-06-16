@@ -1,0 +1,38 @@
+roomid: 3117
+zone: Ironwind Steppe
+title: Badlands Descent
+description: >-
+  The ground drops here in a long, uneven shelf -- not a cliff but a
+  series of natural steps, each a short scramble of loose stone and
+  compacted silt. The descent faces northwest, and the wind comes up
+  the slope full in the face at every step. Sparse dry grass grows
+  in the sheltered angle of each step, brown and stiff, anchored by
+  roots that look too small for the job. Below, the terrain continues
+  to roll and break, revealing nothing of what lies further on.
+  Behind you to the south the badlands flatten briefly before rising
+  back toward the coulee country. To the west the shelf drops away
+  to the next stretch of broken ground.
+biome: cliffs
+coord:
+  x: 30
+  y: -5
+  z: 0
+exits:
+  south:
+    roomid: 3116
+  west:
+    roomid: 3118
+nouns:
+  shelf: The natural terracing of the slope, each step a compressed
+    layer of different stone -- volcanic above, sandstone and pale
+    silt below. The edges are crumbly and the faces are wind-polished
+    smooth. Negotiating them requires care -- the drop between each
+    step is easy enough to misjudge.
+  grass: Short, wire-stiff stalks of brown steppe grass, dormant or
+    simply resigned to the conditions here. The root masses that hold
+    them in are disproportionately large, the visible part of a system
+    that reaches deep in search of moisture.
+idlemessages:
+- Gravel skitters away underfoot and bounces down the step below.
+- The wind comes hard up the slope, driving grit against your shins.
+- The horizon to the west shows nothing but more broken country.

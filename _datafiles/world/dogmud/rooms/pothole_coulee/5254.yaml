@@ -16,7 +16,8 @@ description: >
   and unresting, the breath of the ground. Torchlight from somewhere
   below catches the near wall of the adit and throws shifting orange
   across the shoring's inner face. The only way on is down. East runs
-  back to the high shoulder of the talus.
+  back to the high shoulder of the talus; west, a rough trail crests
+  the coulee rim and drops into open badland country.
 biome: mountains
 coord:
   x: 35
@@ -25,6 +26,8 @@ coord:
 exits:
   east:
     roomid: 5253
+  west:
+    roomid: 5371
   down:
     roomid: 5255
 nouns:

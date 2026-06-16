@@ -1,0 +1,41 @@
+roomid: 3120
+zone: Ironwind Steppe
+title: Stone Bench Overlook
+description: >-
+  A wide ledge of flat volcanic rock protrudes from the hillside here,
+  a natural bench several paces wide and nearly as deep, its surface
+  scoured clean by wind and age. The view from the bench is long and
+  westward -- open steppe rolling away to a low horizon, the land's
+  character shifting from the broken badland fringe here to the broader
+  grassland and coulee country beyond. From this height the distances
+  are honest: there is still a great deal of empty ground between this
+  place and anywhere. The bench itself is clear of brush and offers a
+  moment of flat footing after the scrambled terrain below. Descent
+  continues north toward lower ground; east the way climbs back into
+  the wash country.
+biome: cliffs
+coord:
+  x: 22
+  y: -8
+  z: 0
+exits:
+  east:
+    roomid: 3119
+  north:
+    roomid: 3121
+nouns:
+  bench: The flat protrusion of volcanic rock, worn smooth on the upper
+    surface and rough-fractured on its underside where it broke away
+    from the hillside. It is solid underfoot -- a rare thing on this
+    stretch of trail -- and wide enough to rest on without risk of a
+    footing mistake. The surface is warm from the sun and holds the
+    heat long after shade falls.
+  steppe: The broad grassland and coulee country visible to the west
+    from the bench -- a wide, rolling distance that shows the land's
+    true scale. From here the separate elements resolve into a single
+    thing -- a large, dry, open country that takes time to cross.
+idlemessages:
+- The wind is stronger on the exposed bench, coming level and steady.
+- Looking west, the steppe seems to breathe -- grass and scrub moving
+  in slow waves.
+- The footing here is solid, a relief after miles of loose stone.

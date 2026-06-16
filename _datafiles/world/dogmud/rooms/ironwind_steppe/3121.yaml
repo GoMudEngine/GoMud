@@ -1,0 +1,39 @@
+roomid: 3121
+zone: Ironwind Steppe
+title: Coulee Approach
+description: >-
+  The badland terrain begins to moderate here as the eroded fringe gives
+  way to longer, more stable slopes of packed earth and coarse grass.
+  The rock formations are still present but lower and more worn, embedded
+  in the hillside rather than standing free, the angles softer. The path
+  is more legible now -- a compressed line in the sparse vegetation,
+  joining a faint game trail that runs roughly west. The coulee country
+  proper, where channels cut predictable routes through the steppe, is
+  near enough that its character is already apparent in the way the land
+  begins to fold. East climbs back up toward the stone bench; west the
+  trail descends toward the first definable coulee edge.
+biome: land
+coord:
+  x: 22
+  y: -10
+  z: 0
+exits:
+  south:
+    roomid: 3120
+  west:
+    roomid: 3122
+nouns:
+  game trail: A compressed line in the coarse steppe grass, worn down
+    by the passage of ungulates and predators that follow the coulee
+    drainages for reliable water and cover. It is not cut deep -- the
+    steppe does not hold impressions well -- but it reads clearly as
+    the path of least resistance and that is enough.
+  slopes: The long, moderate rises of packed earth and embedded stone
+    that replace the sharp badland terrain. The grass here has a better
+    hold -- longer roots, denser cover -- and the ground is firmer
+    underfoot. The landscape is becoming country rather than terrain.
+idlemessages:
+- The game trail bends west, following the subtle draw of lower ground.
+- A hawk circles overhead, riding the updraft off the warming slope.
+- The grass here holds actual green in the low places where moisture
+  lingers.

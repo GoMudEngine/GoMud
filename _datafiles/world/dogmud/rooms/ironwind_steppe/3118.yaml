@@ -1,0 +1,41 @@
+roomid: 3118
+zone: Ironwind Steppe
+title: Eroded Flats
+description: >-
+  The rough descent levels here into a brief flat of cracked caliche and
+  pale hardpan, the surface patterned with deep shrinkage cracks that
+  form rough polygons underfoot. Rain has pooled here in the past and
+  evaporated, leaving rings of mineral deposit and a chalky crust that
+  yields slightly underfoot like thin plaster over hollow ground.
+  Nothing grows on the hardpan itself, but scraggly creosote and dry-
+  land shrubs cluster at its edges where some soil accumulates. The
+  flat is exposed in every direction; there is no cover and no shelter
+  from the steppe wind. The slope you descended stands east, and the
+  terrain begins to break up again to the north.
+biome: land
+coord:
+  x: 26
+  y: -5
+  z: 0
+exits:
+  east:
+    roomid: 3117
+  north:
+    roomid: 3119
+nouns:
+  hardpan: The cracked caliche surface of the flat, pale and faintly
+    chalky underfoot. The shrinkage cracks run several inches deep and
+    are filled with wind-deposited silt. Pressing on the surface between
+    the cracks produces a faint hollow tap, as if there is empty space
+    beneath -- there may be. The mineral rings left by evaporated
+    pooling describe the absent water's maximum extent.
+  creosote: Low, widely-spaced shrubs clinging to the perimeter of
+    the hardpan where a little soil accumulates. Their small leaves
+    are coated in sticky aromatic resin -- in the heat of the day they
+    release a sharp, medicinal smell. They are the first plants willing
+    to live here, and nearly the last.
+idlemessages:
+- The hardpan crunches under your weight, each step ringing slightly
+  hollow.
+- The steppe wind crosses the flat with nothing to slow it.
+- Dust lifts off the cracked surface in pale ribbons.
