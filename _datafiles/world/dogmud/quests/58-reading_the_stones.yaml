@@ -31,7 +31,7 @@ steps:
       you when the shrine is ready to give them.
 
 rewards:
-  gold: 5
+  gold: 6
   skillinfo: "rhetoric:1"
   playermessage: >-
     Sere listens in her unhurried way as you describe what the stones

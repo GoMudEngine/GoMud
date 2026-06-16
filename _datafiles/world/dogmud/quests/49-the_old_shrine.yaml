@@ -52,7 +52,7 @@ steps:
 
 rewards:
   stat_info: "charisma:3"
-  gold: 40
+  gold: 50
   playermessage: >-
     Sere listens to your account with the stillness of someone who has waited a
     long time to hear it, the pale shape of her skull faintly lit from within.

@@ -36,7 +36,7 @@ steps:
       and find Caravan Guard Garve."
 
 rewards:
-  gold: 10
+  gold: 15
   skillinfo: "weapon-combat:1"
   playermessage: >-
     Vorn turns your performance over in his head for a long moment,
