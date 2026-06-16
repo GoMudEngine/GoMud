@@ -1,6 +1,33 @@
 # DOGMud Patch Notes
 
-## 2026-06-15 — Newbie-area rework: Spokes F & G (all seven done) + a combat crash fix [branch-local]
+## 2026-06-16 — Newbie-area rework: CUTOVER — Pothole Coulee goes live; Sanctum Basin retired [branch-local → master]
+
+The new newbie experience is complete and connected to the world. New
+characters now begin in Pothole Coulee (the Awakening Pool); the old Sanctum
+Basin tutorial zone has been retired.
+
+- **C9 Polish (shipped this cutover):**
+  - **Repeatable quests** — a new engine capability (`repeatable` + a per-quest
+    cooldown). Each spoke's trainer now offers a small repeatable practice loop
+    (cull the wash, brew again, run game, and so on) — modest pay, capped by a
+    cooldown, with the real reward being the skill you build doing it.
+  - **A living hub** — the eight hub folk now keep daily rhythms: working their
+    posts by day, gathering at the Drowned Lantern of an evening, and sleeping
+    at night. Overheard conversations pass between the regulars. The cleric and
+    the trader keep their posts around the clock so newcomers are never stranded.
+  - **Reward + discoverability polish** across the new questlines.
+- **C10 Cutover:**
+  - **The road out** — a long hike-out trail now descends from the western rim
+    of the coulee, across open badlands, into the eastern reaches of Ironwind
+    Steppe. The coulee is no longer a closed cradle.
+  - **Sanctum Basin retired** — the old tutorial zone, its NPCs, and its trial
+    quests are gone. Death now returns you to the Mending Hut in the coulee.
+  - **The Low Tunnels endure** — the labyrinth (and the Warren Compact) keep a
+    new entrance: a crack in the basalt at the edge of the Northern Road.
+  - **Returning travelers** are quietly recognized as already Awakened, so the
+    coulee's threshold never bars a veteran.
+
+
 
 The Pothole Coulee newbie zone now has all seven spokes built and verified.
 Branch-local (`feature+newbie-area`); ships to players at the chunk-10 cutover.
