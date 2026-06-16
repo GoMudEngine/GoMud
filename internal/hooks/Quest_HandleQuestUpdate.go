@@ -186,6 +186,20 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 		questUser.Character.ClearQuestToken(evt.QuestToken)
 		return events.Continue
 	}
+
+	// Repeatable-quest cooldown gate: refuse to (re)start a repeatable quest
+	// whose post-completion cooldown has not yet elapsed. Parse the step
+	// up-front so we can check before advancing the token.
+	{
+		_, incomingStep := quests.TokenToParts(evt.QuestToken)
+		if incomingStep == `start` && questInfo.Repeatable &&
+			questUser.Character.QuestCooldownActive(questInfo.QuestId) {
+			questUser.SendText(messaging.CategorySystem,
+				`You have put in the work recently. Rest a while before taking this on again.`)
+			return events.Continue
+		}
+	}
+
 	// Try to advance the quest. If it fails, check whether the quest engine
 	// already set this token (GrantQuest sets it synchronously for chain
 	// evaluation, then fires this event for rewards). In that case, proceed
@@ -367,6 +381,14 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 		// Faction reputation reward?
 		if questInfo.Rewards.RepFaction != "" && questInfo.Rewards.RepAmount != 0 {
 			factions.BumpRep(questInfo.Rewards.RepFaction, questUser.UserId, questInfo.Rewards.RepAmount)
+		}
+
+		// Repeatable quest: reset progress so it can be taken again, and stamp
+		// a cooldown so it cannot be farmed back-to-back. (Non-repeatable
+		// quests are unaffected — Repeatable defaults false.)
+		if questInfo.Repeatable {
+			questUser.Character.ClearQuestToken(evt.QuestToken)
+			questUser.Character.SetQuestCooldown(questInfo.QuestId, uint64(questInfo.CooldownRounds))
 		}
 	} else {
 		if !questInfo.Secret {

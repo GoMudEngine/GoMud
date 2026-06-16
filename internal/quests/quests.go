@@ -56,13 +56,15 @@ type QuestReward struct {
 }
 
 type Quest struct {
-	QuestId     int
-	Name        string
-	Description string
-	Secret      bool           // Secret quests are useful for marking some progress without making it known to the player
-	Steps       []QuestStep    // String identifiers for each step required to complete the quest
-	Rewards     QuestReward
-	Flags       []QuestFlagDef `yaml:"flags,omitempty"`
+	QuestId        int
+	Name           string
+	Description    string
+	Secret         bool        // Secret quests are useful for marking some progress without making it known to the player
+	Steps          []QuestStep // String identifiers for each step required to complete the quest
+	Rewards        QuestReward
+	Flags          []QuestFlagDef `yaml:"flags,omitempty"`
+	Repeatable     bool           `yaml:"repeatable,omitempty"`      // if true, completing the quest clears its progress so it can be taken again (after CooldownRounds)
+	CooldownRounds int            `yaml:"cooldown_rounds,omitempty"` // rounds that must pass after completion before a repeatable quest can be re-taken
 }
 
 type QuestStep struct {
