@@ -1,0 +1,26 @@
+id: pothole_sala
+description: "Sala the Mender works her hut by day and evening, tends the cots, then sleeps there through the night. Never wanders; the hut is always her world."
+segments:
+  - start: 6
+    end: 18
+    target_room: 5209
+    activity: ""
+    idlecommands:
+      - emote grinds salve in the pestle, slow and even, listening to the room.
+      - emote lays the back of her hand to a cot blanket as if taking its temperature.
+      - say Rest a moment. You look like you have been carrying that a while.
+      - emote pauses and her third eye blinks slow while the other two keep working.
+  - start: 18
+    end: 22
+    target_room: 5209
+    activity: ""
+    idlecommands:
+      - emote hangs fresh bundles of dried herb on the rack above the window.
+      - say Evening is a good time for mending. Quiet makes the work easier.
+      - emote moves between cots and bench in the lamplight, checking, adjusting.
+  - start: 22
+    end: 6
+    target_room: 5209
+    activity: sleeping
+    idlecommands:
+      - emote rests on the low cot near the door, breathing even, all three eyes closed.

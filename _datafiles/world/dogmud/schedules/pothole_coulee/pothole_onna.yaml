@@ -1,0 +1,34 @@
+id: pothole_onna
+description: "Trader Onna keeps Coulee Provisions around the clock -- opening checks, brisk day trade, quieter evening sales, late-night frontier stall. Never closes; goods are always moving."
+segments:
+  - start: 5
+    end: 9
+    target_room: 5207
+    activity: ""
+    idlecommands:
+      - emote runs a thumb down the tally-book, reading prices nobody asked for yet.
+      - emote counts last night's take and notes it in a small, neat hand.
+      - say Early light, early trade. What do you need?
+  - start: 9
+    end: 18
+    target_room: 5207
+    activity: ""
+    idlecommands:
+      - emote reaches a high shelf with the hooked pole and never once looks up at it.
+      - emote catches a new arrival with a sharp eye and sizes up their pack without comment.
+      - say I remember what you bought last time. Come to restock?
+  - start: 18
+    end: 22
+    target_room: 5207
+    activity: ""
+    idlecommands:
+      - emote tidies the counter shelves in the lamplight, everything squared.
+      - say Evening trade is quieter. Usually means someone needs something urgent.
+      - emote goes still against the goods and for a breath her skin takes the gray of the reeds behind her.
+  - start: 22
+    end: 5
+    target_room: 5207
+    activity: ""
+    idlecommands:
+      - emote keeps the stall by lantern-light, unhurried, watching the lane.
+      - say The coulee does its living at odd hours. I keep mine open to match.

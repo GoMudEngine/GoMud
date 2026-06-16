@@ -1,5 +1,6 @@
 mobid: 9107
 zone: Pothole Coulee
+schedule_id: pothole_esk
 behavior_archetype: noncombat_questgiver
 statpool: 56
 hostile: false

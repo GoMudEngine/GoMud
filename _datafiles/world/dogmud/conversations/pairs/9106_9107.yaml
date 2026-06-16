@@ -1,0 +1,34 @@
+id: toke_and_esk
+mob_a: 9106
+mob_b: 9107
+exchanges:
+  - lines:
+      - speaker: A
+        text: "Saw three strangers through the arch before midday."
+      - speaker: B
+        text: "I know. I counted."
+      - speaker: A
+        text: "Anything to worry about?"
+      - speaker: B
+        text: "Not yet."
+  - lines:
+      - speaker: B
+        text: "That one with the long coat -- you recognize the face?"
+      - speaker: A
+        text: "New to the coulee. Road-worn, but not trouble-worn. Not yet."
+      - speaker: B
+        text: "Keep an ear on it."
+  - lines:
+      - speaker: A
+        text: "You ever get tired of watching the same arch all day?"
+      - speaker: B
+        text: "You ever get tired of talking?"
+      - speaker: A
+        text: "Fair point. We both do what we're for."
+  - lines:
+      - speaker: B
+        text: "Quiet evening."
+      - speaker: A
+        text: "Don't jinx it."
+      - speaker: B
+        text: "It's an observation. Not a prediction."

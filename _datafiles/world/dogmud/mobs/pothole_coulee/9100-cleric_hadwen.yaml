@@ -1,5 +1,6 @@
 mobid: 9100
 zone: Pothole Coulee
+schedule_id: pothole_hadwen
 behavior_archetype: noncombat_questgiver
 statpool: 60
 hostile: false

@@ -1,5 +1,6 @@
 mobid: 9101
 zone: Pothole Coulee
+schedule_id: pothole_tally
 behavior_archetype: noncombat_questgiver
 statpool: 40
 hostile: false
@@ -42,3 +43,8 @@ character:
       training: 5
     willpower:
       training: 3
+relationships:
+  - to: 9103
+    type: friend
+  - to: 9106
+    type: friend

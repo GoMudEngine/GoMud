@@ -1,0 +1,32 @@
+id: tally_and_toke
+mob_a: 9101
+mob_b: 9106
+exchanges:
+  - lines:
+      - speaker: A
+        text: "Any news worth pouring a drink over?"
+      - speaker: B
+        text: "Wash road's quiet for once. I'll take quiet."
+      - speaker: A
+        text: "Quiet's good for the coulee. Bad for your trade."
+  - lines:
+      - speaker: A
+        text: "Another new face came through the pool today."
+      - speaker: B
+        text: "Saw them. Green as spring reed. They always are."
+      - speaker: A
+        text: "We were too, once. Pour 'em a small one on me."
+  - lines:
+      - speaker: A
+        text: "You shout all day. Doesn't your throat give out?"
+      - speaker: B
+        text: "That's what your back room and your ale are for."
+  - lines:
+      - speaker: B
+        text: "Heard a caravan's coming in before the week's out."
+      - speaker: A
+        text: "I'll need more peat and a barrel of the dark, then."
+      - speaker: B
+        text: "I'll call it the moment they clear the ridge."
+      - speaker: A
+        text: "That's why I keep you fed."

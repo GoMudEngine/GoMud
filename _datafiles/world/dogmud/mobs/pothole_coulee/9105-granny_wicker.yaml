@@ -1,5 +1,6 @@
 mobid: 9105
 zone: Pothole Coulee
+schedule_id: pothole_wicker
 behavior_archetype: noncombat_questgiver
 statpool: 44
 hostile: false
@@ -42,3 +43,6 @@ character:
       training: 6
     charisma:
       training: 4
+relationships:
+  - to: 9106
+    type: friend

@@ -1,0 +1,34 @@
+id: pothole_hadwen
+description: "Cleric Hadwen keeps the Awakening Pool around the clock -- dawn devotions, day tending, evening hush, night vigil. Never leaves; the rite is always available."
+segments:
+  - start: 5
+    end: 9
+    target_room: 5200
+    activity: ""
+    idlecommands:
+      - emote kneels at the water's edge and murmurs the dawn devotion.
+      - emote skims a fallen leaf from the still surface with two fingers.
+      - say The pool keeps its own hours. So do I.
+  - start: 9
+    end: 18
+    target_room: 5200
+    activity: ""
+    idlecommands:
+      - emote tends the lanterns ringing the pool with unhurried care.
+      - emote trails a hand through the water, eyes half-closed and listening.
+      - say When you are ready to be Opened, come to the water.
+  - start: 18
+    end: 22
+    target_room: 5200
+    activity: ""
+    idlecommands:
+      - emote lowers the nearest lantern wick to an evening glow.
+      - say The coulee quiets at dusk. The water does not.
+      - emote murmurs the welcome-words under his breath, meaning every one.
+  - start: 22
+    end: 5
+    target_room: 5200
+    activity: ""
+    idlecommands:
+      - emote keeps a slow vigil beside the dark water, eyes half-closed.
+      - emote turns his head to listen, the pale plates along his jaw catching the light.

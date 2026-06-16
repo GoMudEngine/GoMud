@@ -1,5 +1,6 @@
 mobid: 9104
 zone: Pothole Coulee
+schedule_id: pothole_onna
 craft_support: general
 behavior_archetype: noncombat_shopkeeper
 statpool: 40

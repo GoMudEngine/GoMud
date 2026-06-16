@@ -1,5 +1,6 @@
 mobid: 9103
 zone: Pothole Coulee
+schedule_id: pothole_croup
 behavior_archetype: noncombat_questgiver
 statpool: 36
 hostile: false
@@ -42,3 +43,6 @@ character:
       training: 5
     charisma:
       training: 3
+relationships:
+  - to: 9105
+    type: friend

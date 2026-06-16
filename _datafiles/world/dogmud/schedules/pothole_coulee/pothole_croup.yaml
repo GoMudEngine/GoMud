@@ -1,0 +1,26 @@
+id: pothole_croup
+description: "Ledger-Keeper Croup works the Strongbox House by day, takes his evening rest at the Drowned Lantern with the rest of the town, then sleeps at the Strongbox House."
+segments:
+  - start: 6
+    end: 18
+    target_room: 5208
+    activity: ""
+    idlecommands:
+      - emote squares the great ledger to the desk-edge with one horned knuckle.
+      - emote dips the quill and sets down a figure in a small, exact hand.
+      - say What you set in my keeping will be there, to the last coin, when you return.
+      - emote taps a strongbox tag, counts under his breath, and moves to the next.
+  - start: 18
+    end: 22
+    target_room: 5205
+    activity: ""
+    idlecommands:
+      - emote takes a corner seat at the Lantern and unfolds a column of figures.
+      - say A ledger-keeper's evening looks much like his day. But the ale is warmer.
+      - emote clicks his horned knuckles quietly against the tabletop, thinking.
+  - start: 22
+    end: 6
+    target_room: 5208
+    activity: sleeping
+    idlecommands:
+      - emote sleeps upright in the desk chair, both hands flat on the closed ledger.
