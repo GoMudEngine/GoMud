@@ -1,5 +1,22 @@
 # DOGMud Patch Notes
 
+## 2026-06-16 — Pothole Coulee onboarding polish (two feel-test fixes) [local; not yet pushed to prod]
+
+Found by the parallel newbie/veteran feel-test of the merged Pothole Coulee zone.
+
+- **"Find Your Footing" now credits browsing, not just buying.** The shop step
+  ("see what Trader Onna sells") advanced only when you *bought* something —
+  typing `list` (which shows exactly what she sells) did nothing, because the
+  `list` command never told the quest engine it had run. `list` now notifies the
+  quest engine on a successful merchant listing (the way `buy` already did), so
+  browsing a merchant's wares counts. Buying still counts too.
+- **`track` no longer says "you don't see any tracks" about a creature standing
+  right in front of you.** If the thing you name is in the room with you, `track`
+  now gives a clean read of its sign before the skill roll (so Scout Tarn's
+  "First Sign" tutorial no longer pairs a failure line with its success
+  narration). Matching is keyword-based, so `track hare` finds the "Steppe Hare."
+  The tutorial's narration was reworded to read naturally alongside it.
+
 ## 2026-06-16 — Newbie-area rework: CUTOVER — Pothole Coulee goes live; Sanctum Basin retired [merged to master — local; not yet pushed to prod]
 
 The new newbie experience is complete and connected to the world. New

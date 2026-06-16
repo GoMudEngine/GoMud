@@ -72,9 +72,9 @@ triggers:
     actions:
       - grant: "41-track"
       - send_text: >-
-          You crouch to the dust, find the hare's line in the scuffed
-          ground, and follow it with your eye across the steppe. That is
-          tracking. Forage the scrub if you have not, then see Tarn.
+          That is tracking -- reading what passed and where it went. The
+          skill sharpens every time you use it, so keep at it. Forage the
+          scrub if you have not yet, then see Tarn.
 
   # ── FORAGE: gather on the steppe (5284 / 5285) ──────────────────────
   - event: command

@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/pets"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/species"
@@ -76,7 +77,19 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	if !listedSomething {
 		user.SendText(messaging.CategorySystem, "Visit a merchant to list and buy objects.")
+		return true, nil
 	}
+
+	// Quest engine: viewing a merchant's wares counts as a "list" command, so
+	// quests can credit browsing a shop and not only purchasing (mirrors the
+	// "buy" notification in actions.Buy). Gated on having actually listed a
+	// merchant so a no-op `list` in an empty room doesn't fire.
+	bridge := questengine.NewGameBridge(user, room.RoomId)
+	questengine.GetEngine().Notify("command", questengine.EventDetails{
+		UserId:  user.UserId,
+		RoomId:  room.RoomId,
+		Command: "list",
+	}, bridge, bridge)
 
 	return true, nil
 }
