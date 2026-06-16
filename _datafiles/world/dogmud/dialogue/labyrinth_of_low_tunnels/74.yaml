@@ -119,7 +119,7 @@ tree:
       questExcluded: ["2-start", "2-end"]
       grantsQuest: "2-start"
       text: "Bring a healing salve. The kind your alchemists make. We know the recipe but lack the surface herbs. Bring one here, to me, and I will carry it to the Eldest as proof that a surface-walker chose to help rather than to take."
-      hints: "Obtain a healing salve from Alchemist Yenna in Sanctum Basin and bring it to the shaman."
+      hints: "Obtain a healing salve -- alchemists and herbalists craft them -- and bring it to the shaman."
       moodChange: friendly
 
     - id: salve_delivery
