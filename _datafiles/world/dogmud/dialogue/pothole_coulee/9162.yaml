@@ -182,5 +182,16 @@ tree:
       hints: "Cross-room shot: shoot <target> <direction>. Against a
         kiter, out-shoot it or close fast, and reload constantly."
 
+    # ── REPEATABLE RANGE PRACTICE OFFER ──────────────────────
+    - id: range_loop_offer
+      triggers: ["work", "again", "more", "practice", "job", "quest", "task"]
+      questRequired: "52-end"
+      grantsQuest: "59-start"
+      questExcluded: ["59-start", "59-shoot", "59-end"]
+      text: "The eye drifts if you stop using it. Put a shot through the
+        slot and finish what charges you. Same drill. Come back when
+        it is done."
+      hints: "You could run the range drill again -- type ask bryn work."
+
 memory:
   expiryPeriod: ""

@@ -198,5 +198,15 @@ tree:
         special moves share one cooldown -- you get one such action
         every few breaths."
 
+    # ── REPEATABLE BREW LOOP OFFER ────────────────────────────
+    - id: brew_loop_offer
+      triggers: ["work", "again", "more", "brew", "job", "quest", "task"]
+      questRequired: "40-end"
+      grantsQuest: "55-start"
+      questExcluded: ["55-start", "55-brew", "55-end"]
+      text: "The marsh does not care when you last brewed. Get back to
+        the bench, make something, drink it. Come find me after."
+      hints: "You could take on another brew run -- type ask falv work."
+
 memory:
   expiryPeriod: ""

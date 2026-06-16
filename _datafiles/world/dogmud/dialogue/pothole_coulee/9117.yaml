@@ -264,3 +264,17 @@ tree:
         the slope. The mine is pitch dark and the glow spell is
         the only reliable light source you have at this stage.
         Do not go down without it.
+
+    - id: forge_loop_offer
+      triggers: ["work", "again", "more", "forge", "job", "quest", "task"]
+      questRequired: "37-end"
+      grantsQuest: "54-start"
+      questExcluded: ["54-start", "54-end"]
+      text: >-
+        The vein does not stop giving just because you stopped
+        swinging. Go back to the forge and put something through
+        the fire -- I want to know the skill is still sharp in
+        you. Come back when you have.
+      hints: >-
+        You could head back to the forge for another run -- type
+        ask ovell work.

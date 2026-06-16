@@ -118,5 +118,18 @@ tree:
         somewhere far from here."
       hints: "Quest complete. You have cleared the Lore spoke."
 
+    # ── REPEATABLE STONES READING OFFER ──────────────────────
+    - id: stones_loop_offer
+      triggers: ["work", "again", "more", "stones", "shrine", "quest", "task"]
+      questRequired: "49-end"
+      grantsQuest: "58-start"
+      questExcluded: ["58-start", "58-end"]
+      text: "The shrine speaks differently each time. If you have the
+        patience to go back to the Reliquary and read the stones again,
+        I would like to hear what they say to you now."
+      hints: >-
+        You could return to the Reliquary and read the stones again --
+        type ask sere work.
+
 memory:
   expiryPeriod: ""

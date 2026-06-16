@@ -297,3 +297,16 @@ tree:
       hints: >-
         Clear the wash first. Garve may have more to offer
         about the tower when you come back.
+
+    - id: cull_offer
+      triggers: ["work", "again", "more", "job", "quest", "task"]
+      questRequired: "34-end"
+      grantsQuest: "53-start"
+      questExcluded: ["53-start", "53-firstkill", "53-end"]
+      text: >-
+        There is always more work in the wash. Thin the squatters
+        out -- scout and squatter, same as before -- and come back
+        to me when it is done. The coins are the same.
+      hints: >-
+        You could take on another run in the wash -- type ask garve
+        work.

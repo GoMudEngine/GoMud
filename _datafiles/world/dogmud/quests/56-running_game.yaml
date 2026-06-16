@@ -1,0 +1,73 @@
+# Quest 56 — Running Game (Pothole Coulee, Spoke D repeatable)
+#
+# Token flow:
+#   56-start — granted by Hunter Delk's dialogue (game_loop_offer node).
+#              Requires 43-end (Break the Pack). Repeatable with cooldown.
+#   56-hunt  — mob_death trigger on Fringe Pronghorn (9139). Requires 56-start.
+#   56-end   — command trigger on forage in the fringe camp room (5284).
+#              Requires 56-hunt. Auto-grants reward + clears for repeat.
+
+questid: 56
+name: Running Game
+description: >-
+  Delk keeps a close eye on what moves through the fringe. He wants
+  you to bring down a pronghorn and forage the country before you
+  let the land get strange on you.
+secret: false
+repeatable: true
+cooldown_rounds: 300
+
+steps:
+  - id: start
+    description: >-
+      Delk wants you to bring down a pronghorn and forage the fringe
+      before you lose the feel for the country.
+    hint: >-
+      Head out onto the fringe and hunt a pronghorn. After the kill,
+      type forage at the camp to finish. Come back to Delk when
+      both are done.
+  - id: hunt
+    description: >-
+      One pronghorn down. Now forage the fringe at the camp to
+      finish what Delk sent you out for.
+    hint: >-
+      Type forage at the fringe camp to pull what the country gives
+      up. Then come back to Delk.
+  - id: end
+    description: >-
+      You took game and worked the land. Delk will have another run
+      waiting before long.
+
+rewards:
+  gold: 6
+  skillinfo: "search:1"
+  playermessage: >-
+    Delk takes a look at what you brought back and gives a short nod.
+    "Good run. Clean kill, eyes open. The fringe teaches you different
+    things each pass -- come back when you are ready to listen again."
+  roommessage: "Delk inspects your haul with a hunter's brief, approving eye."
+
+triggers:
+  - event: mob_death
+    mob: 9139
+    conditions:
+      has: ["56-start"]
+      missing: ["56-hunt"]
+    actions:
+      - grant: "56-hunt"
+      - send_text: >-
+          The pronghorn goes down clean. Now forage the camp --
+          the fringe always gives something to a patient hand.
+
+  - event: command
+    command: forage
+    room: 5284
+    conditions:
+      has: ["56-hunt"]
+      missing: ["56-end"]
+    actions:
+      - grant: "56-end"
+      - send_text: >-
+          You pull what the fringe was holding -- root, bark, and
+          something the morning left. That is what Delk meant.
+          Head back to him.

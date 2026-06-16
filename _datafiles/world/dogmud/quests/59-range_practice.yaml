@@ -1,0 +1,72 @@
+# Quest 59 — Range Practice (Pothole Coulee, Spoke G repeatable)
+#
+# Token flow:
+#   59-start — granted by Scout Bryn's dialogue (range_loop_offer node).
+#              Requires 52-end (The Overlook). Repeatable with cooldown.
+#   59-shoot — command trigger on shoot in the range room (5354).
+#              Requires 59-start.
+#   59-end   — mob_death trigger on Canyon Scout (9165). Requires 59-shoot.
+#              Auto-grants reward + clears for repeat.
+
+questid: 59
+name: Range Practice
+description: >-
+  Bryn never stops drilling. She wants you to put a shot through the
+  canyon slot and then finish what charges you -- the same lesson,
+  kept sharp.
+secret: false
+repeatable: true
+cooldown_rounds: 300
+
+steps:
+  - id: start
+    description: >-
+      Bryn has sent you to put a cross-canyon shot through the slot
+      and then bring down whatever comes charging.
+    hint: >-
+      Go to the range and type shoot at a target across the exit.
+      Finish the scout when it charges. Come back to Bryn when
+      it is done.
+  - id: shoot
+    description: >-
+      The shot crossed the slot. Stand your ground and finish the
+      target when it reaches you.
+    hint: >-
+      The target is coming. Finish it, then come back to Bryn.
+  - id: end
+    description: >-
+      Shot placed, target finished. Bryn will have another run in
+      the canyon ready when you are.
+
+rewards:
+  gold: 6
+  skillinfo: "ranged-combat:1"
+  playermessage: >-
+    Bryn watches the range go quiet without moving from her position.
+    "Good reach. Stood when it came. Come back when the eye starts to
+    drift -- it always drifts."
+  roommessage: "Bryn's gaze moves back to the bluffs. The compliment was in the coins."
+
+triggers:
+  - event: command
+    command: shoot
+    room: 5354
+    conditions:
+      has: ["59-start"]
+      missing: ["59-shoot"]
+    actions:
+      - grant: "59-shoot"
+      - send_text: >-
+          The shot crosses the slot and bites. Now it will come at you
+          -- stand your ground and finish it.
+
+  - event: mob_death
+    mob: 9165
+    conditions:
+      has: ["59-shoot"]
+      missing: ["59-end"]
+    actions:
+      - grant: "59-end"
+      - send_text: >-
+          The target drops. Shot placed, fight finished -- that is the
+          whole drill. Come back and tell Bryn.

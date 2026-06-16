@@ -1,0 +1,68 @@
+# Quest 55 — Another Brew (Pothole Coulee, Spoke C repeatable)
+#
+# Token flow:
+#   55-start — granted by Falv's dialogue (brew_loop_offer node).
+#              Requires 40-end (Heart of the Mire). Repeatable with cooldown.
+#   55-brew  — command trigger on craft in the alchemy bench room (5265).
+#   55-end   — command trigger on drink (anywhere, no room). Auto-grants
+#              reward + clears for repeat.
+
+questid: 55
+name: Another Brew
+description: >-
+  Falv figures anyone worth keeping alive stays current with their
+  kit. Brew something at the alchemy bench and drink it down -- then
+  come back and tell him it held.
+secret: false
+repeatable: true
+cooldown_rounds: 300
+
+steps:
+  - id: start
+    description: >-
+      Falv wants you to brew at the alchemy bench and drink what you
+      make.
+    hint: >-
+      Go to the alchemy bench and type craft to make a brew. Then type
+      drink to take it. Come back to Falv when you are done.
+  - id: brew
+    description: >-
+      You made the brew. Now drink it down before you report back.
+    hint: "Type drink to drink what you just brewed."
+  - id: end
+    description: >-
+      The brew held. Falv will send you back to the bench before long.
+
+rewards:
+  gold: 6
+  skillinfo: "alchemy:1"
+  playermessage: >-
+    Falv flicks a look your way and holds out a hand for the empty
+    vessel. "Still brewing. Good. The marsh does not care how long
+    ago you learned -- only whether your salve is fresh. Come back
+    when the stock runs thin."
+  roommessage: "Falv checks the empty vessel and pockets it without comment."
+
+triggers:
+  - event: command
+    command: craft
+    room: 5265
+    conditions:
+      has: ["55-start"]
+      missing: ["55-brew"]
+    actions:
+      - grant: "55-brew"
+      - send_text: >-
+          The brew takes shape on the bench -- clean steep, right color.
+          Now drink it down.
+
+  - event: command
+    command: drink
+    conditions:
+      has: ["55-brew"]
+      missing: ["55-end"]
+    actions:
+      - grant: "55-end"
+      - send_text: >-
+          The brew does what it promised. That is what Falv wanted to
+          know. Report back to him.

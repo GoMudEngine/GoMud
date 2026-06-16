@@ -171,5 +171,17 @@ tree:
       hints: "Type sleep to rest (stand to wake). At a cooking fire type
         craft grilled meat (needs raw meat + salt)."
 
+    # ── REPEATABLE HUNT LOOP OFFER ────────────────────────────
+    - id: game_loop_offer
+      triggers: ["work", "again", "more", "hunt", "job", "quest", "task"]
+      questRequired: "43-end"
+      grantsQuest: "56-start"
+      questExcluded: ["56-start", "56-hunt", "56-end"]
+      text: "The fringe is always running game. Go out and bring one
+        down, then forage the camp -- keep your hand in. Come back
+        when it is done."
+      hints: "You could take another run through the fringe -- type
+        ask delk work."
+
 memory:
   expiryPeriod: ""

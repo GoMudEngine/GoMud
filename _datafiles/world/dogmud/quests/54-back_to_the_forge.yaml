@@ -1,0 +1,51 @@
+# Quest 54 — Back to the Forge (Pothole Coulee, Spoke B repeatable)
+#
+# Token flow:
+#   54-start — granted by Survivor Ovell's dialogue (forge_loop_offer node).
+#              Requires 37-end (Into the Vein). Repeatable with cooldown.
+#   54-end   — command trigger on craft in the forge room (5245). Auto-grants
+#              reward + clears for repeat.
+
+questid: 54
+name: Back to the Forge
+description: >-
+  Ovell wants to see you keep your hand in at the forge. Head back to the
+  smith's fire and turn out another piece of work.
+secret: false
+repeatable: true
+cooldown_rounds: 300
+
+steps:
+  - id: start
+    description: >-
+      Ovell has asked you to return to the forge and put your
+      blacksmithing to work once more.
+    hint: >-
+      Go to the forge in the coulee and type craft to make something at
+      the anvil. Come back to Ovell when you are done.
+  - id: end
+    description: >-
+      You put good work through the forge again. Ovell will have another
+      reason to send you back before long.
+
+rewards:
+  gold: 6
+  skillinfo: "blacksmithing:1"
+  playermessage: >-
+    Ovell nods from his slope, that quartz eye catching the forge-light
+    through the distance. "Still sharp. The iron knows a practiced hand.
+    Come back when you want to keep it that way."
+  roommessage: "Ovell raises a hand from the talus -- a slow, approving gesture."
+
+triggers:
+  - event: command
+    command: craft
+    room: 5245
+    conditions:
+      has: ["54-start"]
+      missing: ["54-end"]
+    actions:
+      - grant: "54-end"
+      - send_text: >-
+          The work rings clean off the anvil. That is what Ovell wanted
+          to know -- that the forge is still yours. Report back to him.

@@ -1,0 +1,54 @@
+# Quest 57 — Tending the Grove (Pothole Coulee, Spoke E repeatable)
+#
+# Token flow:
+#   57-start — granted by Keeper Orrin's dialogue (grove_loop_offer node).
+#              Requires 46-end (The Unfolded). Repeatable with cooldown.
+#   57-end   — mob_death trigger on Drift-Wisp (9147). Player kills it by
+#              casting. Auto-grants reward + clears for repeat.
+
+questid: 57
+name: Tending the Grove
+description: >-
+  Orrin says the grove needs tending -- warped things drift back in
+  whenever the watch slips. Go clear one out; the practice is as
+  important as the clearing.
+secret: false
+repeatable: true
+cooldown_rounds: 300
+
+steps:
+  - id: start
+    description: >-
+      Orrin has asked you to go into the grove and put down one of
+      the veil-warped things that wanders back in.
+    hint: >-
+      Head into the grove and cast to bring down a drift-wisp. Come
+      back to Orrin when it is done.
+  - id: end
+    description: >-
+      The grove is quiet again for now. Orrin will ask you back when
+      the watch slips.
+
+rewards:
+  gold: 6
+  skillinfo: "spellcasting:1"
+  playermessage: >-
+    Orrin's edge arrives a half-step behind him, as always, when he
+    turns to you. "The fold held clean. The grove is quieter when
+    the work is done properly -- come back when it needs doing again.
+    It always needs doing again."
+  roommessage: >-
+    Orrin's outline catches up with him slowly, as if the grove
+    approves of the stillness.
+
+triggers:
+  - event: mob_death
+    mob: 9147
+    conditions:
+      has: ["57-start"]
+      missing: ["57-end"]
+    actions:
+      - grant: "57-end"
+      - send_text: >-
+          The drift-wisp unravels and is gone. The grove is a little
+          quieter. Go back and tell Orrin it is done.
