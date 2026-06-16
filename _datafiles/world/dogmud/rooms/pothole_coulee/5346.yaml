@@ -14,7 +14,9 @@ description: >
   weather has left legible, but it was placed by someone who wanted
   a thing marked and permanent on this high ground. It looks toward
   country that lies beyond the coulee's edge -- toward paths not
-  yet walked, distances not yet measured. Standing beside it is
+  yet walked, distances not yet measured. One such path is plain
+  from here: a faint crest-trail runs the rim east toward a broken
+  watchtower on the far height. Standing beside it is
   enough to feel that the accounting of this place is not yet
   finished.
 biome: land
@@ -25,6 +27,9 @@ coord:
 exits:
   south:
     roomid: 5345
+  # Lateral connector (chunk 8): non-spatial rim-walk to Spoke A's Tower Top.
+  watchtower:
+    roomid: 5243
 nouns:
   rise: The crown of the rise is perhaps twenty paces across, its
     surface close-cropped grass and exposed stone in roughly equal

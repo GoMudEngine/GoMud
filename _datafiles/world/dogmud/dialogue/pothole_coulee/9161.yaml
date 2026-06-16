@@ -1,0 +1,156 @@
+mobid: 9161
+zone: Pothole Coulee
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "hail"]
+    responses:
+      - "Eyes up. You walk like the canyon floor -- heavy. Up here we
+          learn to be still. What do you need?"
+      - "Mind the chalk-marks; those are distances. Speak."
+
+  - keywords: ["shoot", "sling", "bow", "range", "learn", "teach", "quest", "task"]
+    responses:
+      - "Shooting is the eye, not the arm. Ask me and I will put a sling
+          in your hand and set you to the butt."
+      - "Reach out and touch a thing from across the open. That is the
+          whole craft. Ask."
+
+  - keywords: ["eye", "eyes", "opened", "mutation", "awakening"]
+    responses:
+      - "The Awakening did something to my eyes -- when I look far off,
+          the distance seems to fold shorter than it should. Out here
+          they call it a good eye and leave it at that. So do I."
+
+  - keywords: ["reload", "ammo", "shot", "equip", "load"]
+    responses:
+      - "A ranged weapon is empty the moment it speaks. Type equip and
+          the weapon's name to ready it, reload to chamber a round from
+          your pouch, and shoot to loose it. Out of shot? Ask me."
+
+  - keywords: ["perception", "stat", "eyesight"]
+    responses:
+      - "Ranged work runs on Perception -- the keen eye, the read of
+          wind and distance. Shoot enough and it sharpens on its own."
+
+  - keywords: [""]
+    responses:
+      - "Say it plain."
+      - "I am watching the range. Talk."
+      - "Out with it."
+
+tree:
+  root:
+    text: "Marksman Iden. I keep the terraces."
+    hints: "You could ask Iden about shooting or your task."
+    variants:
+      # ── Not Opened (the rite is unfinished) ──────────────
+      - questExcluded: ["30-end"]
+        text: "You have not been Opened yet -- I can see it in how you
+          hold still, which is to say you do not. Go down to the cleric
+          in the hub and walk the rite first. The eye I teach needs a
+          mind that has been woken. Come back when it has."
+        hints: "Return to the hub and complete the Awakening rite with
+          Cleric Hadwen before training with Marksman Iden."
+
+      # ── Ready for quest 50 ───────────────────────────────
+      - questRequired: ["30-end"]
+        questExcluded: ["50-start", "50-end"]
+        text: "Opened, and steady enough. Good. The terraces are where
+          the coulee learns to reach past arm's length. Ask me for the
+          sling when you are ready to put a stone in the straw."
+        hints: "Type ask iden shoot to take up the sling and the lesson."
+
+      # ── Mid quest 50 ─────────────────────────────────────
+      - questRequired: ["50-start"]
+        questExcluded: ["50-end"]
+        text: "Still at it. Equip the sling, get shot for it from me if
+          you need, and reload to chamber a stone. Then take it east to
+          the Long Terrace and shoot butt to drop the target down-range.
+          Work both the reload and the shot, and come back."
+        hints: "Type equip sling. If you need ammo, ask iden shot. Reload,
+          then go east to the Long Terrace and shoot butt. Then return and
+          ask iden done."
+
+      # ── Quest 50 complete ────────────────────────────────
+      - questRequired: ["50-end"]
+        text: "You have the eye. I knew it when your first stone found
+          the straw and you did not flinch at the noise. North, to the
+          canyon -- Bryn holds the slot, and he will teach you the part
+          I cannot from a safe terrace: shooting a thing that shoots
+          back."
+        hints: "Head north into the canyon and find Scout Bryn."
+
+  nodes:
+    # ── QUEST 50 OFFER (hands the sling) ──────────────────────
+    - id: shoot_offer
+      triggers: ["shoot", "sling", "learn", "teach", "range", "quest", "task"]
+      questRequired: ["30-end"]
+      questExcluded: ["50-start", "50-end"]
+      grantsQuest: "50-start"
+      givesItem: 10038
+      text: "Here -- a sling, plaited cord and a leather cradle, cheap
+        and honest. It is yours. Now ask me for a pouch of shot to feed
+        it. Then this: type equip sling to ready it, and reload to seat a
+        stone. Walk east to the Long Terrace, where the butts stand
+        down-range, and shoot butt to drop one. The weapon empties with
+        every shot, so you will reload again -- that is the rhythm of it.
+        Work both and come tell me."
+      hints: "You received a sling. Type ask iden shot for ammunition,
+        then equip sling and reload. Go east to the Long Terrace and type
+        shoot butt to drop the practice butt down-range, then return west
+        and ask iden done."
+
+    # ── SHOT SUPPLY / RECOVERY ────────────────────────────────
+    - id: shot_supply
+      triggers: ["shot", "ammo", "pouch", "supply", "more", "ammunition"]
+      questRequired: ["50-start"]
+      questExcluded: ["50-end"]
+      givesItem: 30064
+      text: "Shot for the sling -- a pouch of smooth river stones. Take
+        it. Reload pulls a stone from your pouch into the cradle; when
+        the pouch runs dry, ask me and I will spare more. No one learns
+        the eye on an empty sling."
+      hints: "You received a pouch of shot. Type reload to chamber a
+        stone, then go east to the Long Terrace and shoot butt. Run dry?
+        Ask iden shot again."
+
+    # ── SLING RECOVERY (lost the weapon) ──────────────────────
+    - id: sling_recovery
+      triggers: ["lost", "another", "replace", "broke", "broken"]
+      questRequired: ["50-start"]
+      questExcluded: ["50-end"]
+      givesItem: 10038
+      text: "Lost your sling already? It happens to the heavy-handed.
+        Here is another -- mind it this time. Equip it, feed it shot,
+        and get to the butt."
+      hints: "You received a sling. Type equip sling, ask iden shot for
+        ammo, then reload and shoot butt."
+
+    # ── RELOAD / EQUIP HELP ───────────────────────────────────
+    - id: shoot_help
+      triggers: ["reload", "equip", "load", "help", "how"]
+      text: "Three motions. Equip: type equip and the weapon's name to
+        ready it in hand. Reload: type reload to seat a round from your
+        pouch -- a ranged weapon is empty until you do. Shoot: type
+        shoot and the target to loose it. Shoot empties the weapon, so
+        reload, and shoot again. That trade never changes."
+      hints: "Type equip sling, then reload. Go east to the Long Terrace
+        and shoot butt. Reload after every shot."
+
+    # ── QUEST 50 TURN-IN ──────────────────────────────────────
+    - id: shoot_turnin
+      triggers: ["done", "report", "ready", "finished", "quest", "task"]
+      questRequired: ["50-reload", "50-shoot"]
+      questExcluded: ["50-end"]
+      grantsQuest: "50-end"
+      text: "Reloaded and loosed, both, and the straw has your mark in
+        it. That is the rhythm -- you will keep it the rest of your life
+        now. The sling and the shot are yours; the eye is yours too,
+        though it will want feeding. North to the canyon when you are
+        ready. Bryn will teach you the rest."
+      hints: "Quest complete. Head north into the canyon and find Scout
+        Bryn."
+
+memory:
+  expiryPeriod: ""

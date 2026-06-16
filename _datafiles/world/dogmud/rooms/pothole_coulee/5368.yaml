@@ -1,0 +1,34 @@
+roomid: 5368
+zone: Pothole Coulee
+title: The South Rim
+description: >
+  The trail tops a low rise and the whole southern edge of the coulee opens
+  out, a long rim of pale broken rock dividing the wet country behind from
+  the dry country ahead. To the south the ground falls away into haze; to
+  the north the coulee's bowl holds its tangle of mire and stone and stand.
+  The wind moves freely here for the first time in a long while, carrying
+  grass-smell from somewhere west. Two waters rise along this rim within an
+  easy walk of each other, though few have ever had cause to walk between
+  them. You are walking it now.
+biome: land
+coord:
+  x: 45
+  y: 14
+  z: -1
+exits:
+  east:
+    roomid: 5367
+  west:
+    roomid: 5369
+nouns:
+  rim: The southern rim of the coulee, a long spine of weathered pale rock
+    that holds the wet country apart from the dry. It runs east and west
+    further than the eye follows, low and broken and old.
+  wind: It comes off the open south with nothing to break it, steady and
+    clean, carrying the smell of grass from country the coulee folk rarely
+    cross into.
+idlemessages:
+- The <ansi fg="cyan">wind</ansi> crosses the <ansi fg="cyan">rim</ansi> in a long unbroken push, bending the dry
+  grass all one way.
+- From up here the mire and the steppe look like two different worlds with
+  a single thin trail stitched between them.

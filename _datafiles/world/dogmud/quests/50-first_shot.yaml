@@ -1,0 +1,102 @@
+# Quest 50 — First Shot (Pothole Coulee, Spoke G / Ranged inner ring, cert)
+#
+# Token flow:
+#   50-start  — granted by Marksman Iden's shoot_offer node (requires 30-end);
+#               also hands the player a sling (givesItem 10038). A separate
+#               supply node hands the pouch of shot (30064).
+#   50-reload — command trigger on `reload` at the Firing Range (5350): chamber
+#               a stone from the pouch.
+#   50-shoot  — command trigger on `shoot` at the Firing Range (5350): loose the
+#               chambered stone at the practice butt (9163).
+#   50-end    — granted by Iden's shoot_turnin node (needs 50-reload + 50-shoot).
+#
+# Design: teach the ranged loop — equip a ranged weapon, reload it (chamber
+# ammo from a bundle in your pack), shoot. The `shoot`/`reload` command Notifies
+# (added to shoot.go + reload.go this chunk) fire the beats. The practice butt
+# is durable and harmless, so the player can practice the loop freely. ranged-
+# combat is a Perception skill; the cert seeds the first rank.
+
+questid: 50
+name: First Shot
+description: >-
+  Marksman Iden keeps the shooting terraces above the coulee, where the
+  bluff-folk learn to reach out and touch a thing from across a distance.
+  She has offered you a sling and a lesson: ready it, and put a stone into
+  the straw butt at the end of the range.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: >-
+      Iden has given you a sling and wants you to learn to shoot it. Get a
+      pouch of shot from her, equip the sling, reload it, and loose a stone
+      at the practice butt down-range on the Long Terrace.
+    hint: >-
+      Type ask iden shot to get ammunition. Type equip sling to ready it,
+      and reload to chamber a stone. Then go east to the Long Terrace and
+      type shoot butt to drop the practice butt. Return west to Marksman
+      Iden -- type ask iden done.
+  - id: reload
+    description: >-
+      You chambered a stone. Now loose it at the practice butt down-range if
+      you have not yet.
+    hint: >-
+      Go east to the Long Terrace and type shoot butt to drop the practice
+      butt with your chambered stone. Then report to Marksman Iden -- type
+      ask iden done.
+  - id: shoot
+    description: >-
+      You put a stone into the butt. Make sure you have worked the reload
+      too -- a ranged weapon is empty after every shot.
+    hint: >-
+      Type reload to chamber a fresh stone (a ranged weapon empties after
+      each shot). Then report to Marksman Iden -- type ask iden done.
+  - id: end
+    description: >-
+      Iden has named your eye sound. North, the canyon opens, where a scout
+      named Bryn will teach you to shoot a thing you cannot reach with your
+      hands.
+
+rewards:
+  skillinfo: "ranged-combat:1"
+  gold: 15
+  playermessage: >-
+    Iden watches the stone bury itself in the straw and gives a single nod.
+    "There. A ranged weapon is empty the moment it speaks -- so the trade is
+    always the same: shoot, then reload, shoot, then reload, and never let
+    yourself be caught between the two with something coming at you. The eye
+    is the thing that matters now. Not the arm -- the eye. Keep the sling and
+    the shot; they are yours." She tips her head north, toward the canyon
+    mouth. "Bryn holds the slot below the raider bluffs. He will show you the
+    next part -- how to put a shot into something a whole room away, before it
+    ever knows you are there."
+  roommessage: "Marksman Iden nods as the newcomer's shot finds the straw."
+
+triggers:
+  # ── RELOAD: chamber a stone (roomless — reloading anywhere counts) ─────
+  - event: command
+    command: reload
+    conditions:
+      has: ["50-start"]
+      missing: ["50-reload"]
+    actions:
+      - grant: "50-reload"
+      - send_text: >-
+          You seat a stone in the sling's cradle -- the weapon is loaded and
+          ready. Now go to the Long Terrace and shoot the practice butt
+          down-range.
+
+  # ── SHOOT: loose a stone at the practice butt down-range (5351) ────────
+  - event: command
+    command: shoot
+    room: 5351
+    conditions:
+      has: ["50-start"]
+      missing: ["50-shoot"]
+    actions:
+      - grant: "50-shoot"
+      - send_text: >-
+          The stone leaves the sling and strikes the straw with a solid
+          thud. That is a shot -- and now the sling is empty. Type reload to
+          ready another, and when you have worked both, see Iden.

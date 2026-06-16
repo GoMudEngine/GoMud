@@ -1,0 +1,35 @@
+roomid: 5370
+zone: Pothole Coulee
+title: Steppe Edge Trail
+description: >
+  The trail tops out onto open steppe, the coulee's rim dropping away
+  behind and the grass running wide and unhindered to every horizon. The
+  change in the air is total -- dry, moving, smelling of sun-warmed grass
+  instead of cold stone or fouled water. Just west the ground dips to where
+  a spring wells up at the foot of a limestone shelf, its pool catching the
+  sky; that is Wolfwater, and the open steppe the wolves once ran. Behind
+  and east, the thin trail you walked drops back toward the mire and the
+  other, clearer spring. The two waters and their two countries, joined by
+  one quiet path along the rim.
+biome: land
+coord:
+  x: 44
+  y: 14
+  z: 0
+exits:
+  down:
+    roomid: 5369
+  west:
+    roomid: 5299
+nouns:
+  steppe: Open grassland running flat and wide to the horizon, the same
+    high dry country the pack once hunted, quiet now and unheld. The wind
+    owns it; nothing else moves on it that you can see.
+  trail: The quiet path along the southern rim, dropping east behind you
+    toward the mire and Clearwater Spring, climbing west ahead toward
+    Wolfwater. Few have walked it; the grass closes over it between users.
+idlemessages:
+- The <ansi fg="cyan">steppe</ansi> wind takes the last of the coulee's damp off your skin and
+  replaces it with sun.
+- Westward the Wolfwater pool throws back a coin of bright sky, close
+  enough to reach before the light shifts.

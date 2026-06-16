@@ -1,0 +1,61 @@
+mobid: 9168
+zone: Pothole Coulee
+behavior_archetype: archer
+archetype: fighting
+statpool: 130
+itemdropchance: 0
+hostile: true
+maxwander: 1
+groups:
+  - humanoid
+  - bluff_raiders
+activitylevel: 26
+idlecommands:
+  - 'emote sights along a nocked arrow at a hawk riding the updraft, tracks
+    it a moment, then eases the string'
+  - ''
+  - 'emote sets a row of arrows point-down in the stone within easy reach and
+    settles behind the windbreak'
+  - ''
+combatcommands:
+  - 'emote drifts back along the rim with maddening ease, putting a fresh
+    arrow on the string at the top of every step'
+  - ''
+character:
+  name: Raider Sharpshooter
+  description: |
+    The best bow in the band short of the bowmaster, posted to the high stands
+    where the wind is tricky and the shots are long. A full-length hunting bow,
+    a quiver kept deliberately full, and the long-sighted patience of someone
+    who has made the canyon a killing field many times over. Where the lesser
+    raiders sting and run on instinct, this one does it as craft -- reading
+    the wind, choosing the ground, opening the distance exactly as fast as you
+    try to close it. A real test of whether you have learned to fight a kiter
+    instead of merely chasing one.
+  speciesid: 1
+  level: 3
+  gold: 14
+  equipment:
+    weapon:
+      itemid: 10041
+    body:
+      itemid: 20011
+    head:
+      itemid: 20047
+    feet:
+      itemid: 20052
+  items:
+    - itemid: 30062
+  stats:
+    perception:
+      training: 38
+    dexterity:
+      training: 30
+    vitality:
+      training: 24
+    strength:
+      training: 18
+    willpower:
+      training: 12
+    charisma:
+      training: 8

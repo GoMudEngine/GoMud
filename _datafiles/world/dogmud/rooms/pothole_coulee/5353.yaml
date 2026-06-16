@@ -1,0 +1,45 @@
+roomid: 5353
+zone: Pothole Coulee
+title: Canyon Mouth
+description: >
+  The open terraces fall away and the world narrows. Stone walls close in
+  from both sides, squeezing the path down to a slot barely wide enough
+  for two abreast, and the wind that moved freely above now funnels into
+  a low moan that runs ahead of you into the dark. The canyon takes your
+  footsteps and doubles them, returning each one a half-beat later from
+  the far walls. A range-warden posts here at the mouth, watching the
+  slot with the particular stillness of someone who knows that anything
+  moving in the canyon ahead will be audible long before it is visible.
+  The passage north opens into the first chamber -- a straight run of
+  pale stone where the echo doubles every sound that enters it.
+biome: cliffs
+coord:
+  x: 49
+  y: -4
+  z: 2
+exits:
+  south:
+    roomid: 5352
+  north:
+    roomid: 5354
+  east:
+    roomid: 5355
+spawninfo:
+- mobid: 9162
+nouns:
+  walls: The canyon walls are pale limestone scoured smooth by old water
+    and older wind. Up close the stone shows horizontal strata in bands
+    of cream and grey, each layer compressed thinner than the last as
+    you look upward. Sound leaves marks on nothing, but these walls carry
+    it -- every word bounces back at you trimmed of its softer edges.
+  echo: Not a single echo but a cascade of them, each repetition arriving
+    from a slightly different angle as the sound finds new surfaces to
+    return from. Voices gain a hollow authority in here. Footsteps become
+    a crowd.
+idlemessages:
+- The <ansi fg="cyan">walls</ansi> send back the sound of your breathing, half a beat delayed.
+- The range-warden tilts her head, listening to something deeper in the
+  slot. After a moment she is still again.
+- A faint <ansi fg="cyan">echo</ansi> moves through from north to south -- something disturbed
+  the air up the canyon.
+- The moan in the slot rises a note, then drops back to its low drone.

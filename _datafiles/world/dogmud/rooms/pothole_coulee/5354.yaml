@@ -1,0 +1,44 @@
+roomid: 5354
+zone: Pothole Coulee
+title: Echoing Narrows
+description: >
+  The canyon pinches here to its tightest point. The walls are close
+  enough to touch on both sides simultaneously, and the sightline that
+  opens to the north is startlingly clear -- a straight run of open
+  floor all the way into the next chamber, pale stone and compressed
+  shadow, a hundred feet of unobstructed kill-ground. Something moves
+  in that far chamber. You can see it the way you see things at the edge
+  of attention: a shift of silhouette, a quality of stillness that is
+  not quite stillness. The narrows funnels every sound to a point. A
+  whisper here becomes a shout at the chamber's far end. A bowstring
+  loosed here would carry clean and true down the whole length of the
+  slot -- and whatever is in that northern room would hear the draw long
+  before the arrow arrived.
+biome: cliffs
+coord:
+  x: 49
+  y: -5
+  z: 2
+exits:
+  south:
+    roomid: 5353
+  north:
+    roomid: 5356
+nouns:
+  sightline: A long clean line of open floor running north through the
+    narrowest part of the canyon. The walls converge here and then open
+    slightly beyond, but the corridor is straight and unbroken. A patient
+    shooter with a clear eye could reach the far end of it without moving
+    a step.
+  narrows: The walls press in to arm's reach on each side. The stone is
+    cold and slightly damp, sweating in the shadow. This is the tightest
+    point in the whole canyon -- a chokepoint that anyone moving south
+    must pass through, single-file, exposed.
+idlemessages:
+- The <ansi fg="cyan">narrows</ansi> carry sound in both directions without losing any of it.
+- Something shifts at the far end of the <ansi fg="cyan">sightline</ansi> -- a shadow adjusting
+  its weight from one foot to the other.
+- Your own heartbeat returns to you from the stone walls, measured and
+  unhurried.
+- The slot amplifies a distant scrape of boot leather into something that
+  sounds almost like a warning.

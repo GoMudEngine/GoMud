@@ -1,0 +1,59 @@
+mobid: 9167
+zone: Pothole Coulee
+behavior_archetype: archer
+archetype: fighting
+statpool: 80
+itemdropchance: 0
+hostile: true
+maxwander: 1
+groups:
+  - humanoid
+  - bluff_raiders
+activitylevel: 24
+idlecommands:
+  - 'emote cranks the little crossbow to full and rests it across one knee,
+    bolt seated, watching the stair'
+  - ''
+  - 'emote thumbs three bolts loose in their case so the next reload comes
+    fast'
+  - ''
+combatcommands:
+  - 'emote gives ground a step at a time, loosing on each pause, never
+    letting you set your feet'
+  - ''
+character:
+  name: Bluff Marksman
+  description: |
+    One of the band's true shooters, holding the perches that ring the upper
+    overlook. A compact crossbow, well kept and oiled, and a case of bolts
+    worn at the hip where the hand finds it without looking. This one has
+    learned the lesson the whole band lives by: never let the fight come to
+    you. He shoots, steps back, shoots again, trading ground for distance,
+    and counts on a closing enemy to tire and bleed before the gap ever
+    closes. Pinning him means out-shooting him, or being quick enough to make
+    the retreat cost more than it buys.
+  speciesid: 1
+  level: 2
+  gold: 8
+  equipment:
+    weapon:
+      itemid: 10039
+    body:
+      itemid: 20011
+    feet:
+      itemid: 20052
+  items:
+    - itemid: 30063
+  stats:
+    perception:
+      training: 24
+    dexterity:
+      training: 18
+    vitality:
+      training: 14
+    strength:
+      training: 10
+    willpower:
+      training: 8
+    charisma:
+      training: 6

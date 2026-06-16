@@ -1,0 +1,42 @@
+roomid: 5349
+zone: Pothole Coulee
+title: Terrace Stair
+description: >
+  The last steep pitch of the climb. Stone-cut steps rise directly here
+  without switchback, narrow and close to the bluff face, angled sharply
+  enough that you lean into the stone with your hands for the final
+  stretch. The steps are well-maintained -- someone keeps the crumbling
+  edges patched with mortared rubble -- and each one is scored across its
+  face with a shallow groove for grip. Above you, the edge of the first
+  terrace is a hard line against open sky. Below, the whole climb falls
+  away to the coulee floor. The wind comes over the terrace lip and hits
+  you directly, steady and purposeful.
+biome: cliffs
+coord:
+  x: 47
+  y: -3
+  z: 1
+mutators:
+- mutatorid: sanctuary
+exits:
+  south:
+    roomid: 5348
+  up:
+    roomid: 5350
+nouns:
+  steps: Each step is scored across its face with a shallow transverse
+    groove cut deliberately for footing. The mortar patching the
+    crumbled outer corners is newer than the stone -- someone tends
+    these regularly.
+  pitch: The pitch is steep enough that the step above is at chest
+    height when you are standing on the one below. The bluff face
+    is close enough to press your palm against, and it is warm
+    from the day's sun.
+idlemessages:
+- The terrace edge above is a clean line against sky, close now.
+- Wind crests the <ansi fg="cyan">pitch</ansi> and arrives at your face in a steady
+  push, smelling of stone and open grass.
+- The scored grooves in the <ansi fg="cyan">steps</ansi> are filled with pale dust
+  from the bluff face.
+- From here the coulee lake is a bright mirror set into the green
+  below, the town reduced to its rooftops.

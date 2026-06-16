@@ -1,0 +1,42 @@
+roomid: 5363
+zone: Pothole Coulee
+title: Windward Nest
+description: >
+  The rock on the bluff's eastern face has split and heaved into a
+  rough hollow -- not deep enough to be a cave, but sheltered enough
+  to be worth something. The windward side catches and deflects the
+  prevailing gusts, leaving the interior almost calm while the rest
+  of the bluff roars. It is a sniper's roost, tucked out of the
+  direct sightlines from below, with a narrow opening that looks
+  back across the perch and down the eastern face of the coulee.
+  The floor of the nest is worn smooth. Whoever used this spot used
+  it often, and alone, and did not want to be found here.
+biome: cliffs
+coord:
+  x: 50
+  y: -9
+  z: 3
+exits:
+  west:
+    roomid: 5361
+spawninfo:
+- mobid: 9167
+nouns:
+  nest: The nest is a natural hollow improved by use. The floor is
+    worn smooth by boots and waiting. The opening angle was chosen
+    deliberately -- whoever settled here could observe the perch and
+    the eastern approaches without being visible from below or from
+    the main line of travel across the bluff.
+  rock: The split rock that forms the nest's walls is old work --
+    frost and time, not tools. But the person who found it recognized
+    what it offered. The stone is dark on one face where a small fire
+    burned, once or many times, cupped from the wind by the hollow.
+idlemessages:
+- The <ansi fg="white">nest</ansi> holds a pocket of calm. Outside the opening the wind
+  runs hard across the bluff; in here it barely whispers.
+- The <ansi fg="yellow">rock</ansi> at the nest's back is faintly warm, sun-soaked stone
+  that holds heat longer than the exposed face outside.
+- Through the narrow opening the eastern face of the coulee is a
+  long pale drop, every ledge and crack visible from this height.
+- The worn floor and the fire-stain on the back wall are a record
+  of someone's patient hours. They waited here a long time.

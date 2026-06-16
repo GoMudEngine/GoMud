@@ -1,0 +1,72 @@
+# Quest 52 — The Overlook (Pothole Coulee, Spoke G / Ranged outer ring, capstone)
+#
+# Token flow:
+#   52-start — granted by Scout Bryn's overlook_offer node (after quest 51).
+#   52-end   — granted by the boss-kill trigger (mob_death 9169, Bowmaster
+#              Skell). Rewards fire on 52-end: a Perception bump (stat_info), a
+#              hunting bow (itemid), a generous ammo stockpile (item_info), and
+#              gold. Turn-in is automatic on the kill, like the other capstones.
+#
+# Design: the ranged capstone — and the capstone of the whole newbie area. The
+# boss is a kiting archer (the `archer` archetype: shoots, gives ground, opens
+# the distance as you close). The lesson it embodies: out-shoot a kiter, or
+# close the gap faster than it can open it. Bring ammo.
+
+questid: 52
+name: The Overlook
+description: >-
+  Bowmaster Skell holds the raider overlook above the canyon, and through it
+  the whole climb. Scout Bryn says there is no passing the bluffs while Skell
+  shoots from the high ground -- he is the reason the band can tax everything
+  that moves below. He fights the way you have just learned to: at range, on
+  the move. Bring him down.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: >-
+      Bryn has set you against Bowmaster Skell. Climb the chimney at the
+      canyon's head to the raider overlook, fight up through the raider
+      shooters, and bring down the bowmaster on the highest stand.
+    hint: >-
+      Carry plenty of ammo before you go. Go up from the Canyon Head to the
+      overlook, then north through the raider perches to the highest stand.
+      Skell keeps his distance and shoots -- out-shoot him or close fast.
+      Defeat Bowmaster Skell on the Overlook.
+  - id: end
+    description: >-
+      Skell is down and the overlook is taken. The bluff band has lost the
+      high ground that let it rule the canyon -- and you have learned the
+      last tool the coulee had to teach you. The country beyond the rim is
+      open now, and you are ready for it.
+
+rewards:
+  stat_info: "perception:3"
+  itemid: 10041
+  item_info: "30062:3,30063:2,30064:2"
+  gold: 50
+  playermessage: >-
+    Skell gives ground one step too many and your shot takes him at the lip
+    of the overlook; he goes off the high stand without a sound, and the
+    high ground is yours. You feel the long work of the terraces and the
+    canyon settle into you as a keenness of eye -- distances come quicker
+    now, and the right instant to loose is just there when you reach for it.
+    From the raider cache you take a full hunting bow and ammunition enough
+    to keep it fed. The overlook is quiet. Below, the whole coulee lies
+    open, every spoke of it walked and won -- and past the rim, the wider
+    scablands wait for whatever you have become.
+  roommessage: ""
+
+triggers:
+  # ── BOSS KILL: defeat Bowmaster Skell -> complete + rewards ────────────
+  - event: mob_death
+    mob: 9169
+    conditions:
+      has: ["52-start"]
+      missing: ["52-end"]
+    actions:
+      - grant: "52-end"
+      - send_text: >-
+          Bowmaster Skell goes off the overlook and does not rise. The high
+          ground is yours, and the canyon below falls quiet.

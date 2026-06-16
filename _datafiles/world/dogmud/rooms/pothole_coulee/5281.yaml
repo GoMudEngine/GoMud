@@ -19,6 +19,8 @@ coord:
 exits:
   north:
     roomid: 5280
+  west:
+    roomid: 5367
 nouns:
   spring: Clean water welling from a crack in pale stone, cold and
     quick, running over gravel in a sound that is simply itself --

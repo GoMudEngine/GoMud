@@ -1,0 +1,44 @@
+roomid: 5366
+zone: Pothole Coulee
+title: Sniper's Roost
+description: >
+  A tucked stone roost beside the overlook, angled east and slightly
+  below the crest -- invisible from the main bluff line until you
+  are already standing in it. The single shooting-line from here
+  is exceptional: it runs east and down at a precise angle that
+  covers a long stretch of the coulee floor that no other position
+  on the bluff can reach. A raider who knew this spot would not
+  share it. The footing is solid and narrow, the rock curved at
+  the back to deflect wind away from the shooter's position. This
+  is not a place you find by accident. This is a place you protect.
+biome: cliffs
+coord:
+  x: 50
+  y: -11
+  z: 3
+exits:
+  west:
+    roomid: 5364
+spawninfo:
+- mobid: 9168
+nouns:
+  roost: The roost is a secret within a secret -- even someone who
+    held the overlook might not look east and find it. The stone
+    curves at just the right angle to shelter a shooter from
+    wind and from sight both, while leaving the line east and down
+    completely clear. It is one of the best positions on the
+    bluff. Whoever claimed it told no one.
+  line: The shooting-line from the roost is the finest on the bluff.
+    It runs east and low at an angle that covers ground the perch
+    and the overlook cannot see. From this position a marksman
+    reaches things that seemed unreachable from every other vantage.
+    The line is the reason the roost exists.
+idlemessages:
+- The <ansi fg="white">roost</ansi> is tight but well-chosen. The curved stone at your back
+  cuts the wind and keeps you off the skyline from the west.
+- The shooting <ansi fg="cyan">line</ansi> east is clean and long. Nothing on the coulee
+  floor below is out of reach from this position.
+- Standing here you understand why someone kept this spot quiet.
+  It is too good to share and too good to give up.
+- Wind moves around the curved stone with a low sound, a breath
+  held and released, and the roost stays still inside it.

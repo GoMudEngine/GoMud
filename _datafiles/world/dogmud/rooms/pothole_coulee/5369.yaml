@@ -1,0 +1,33 @@
+roomid: 5369
+zone: Pothole Coulee
+title: Rimrock Rise
+description: >
+  Here the rim steepens and the trail climbs a short stony pitch toward the
+  open steppe above. Slabs of pale rock step up out of the dry grass, worn
+  to easy footing by weather if not by traffic, and the country ahead lifts
+  clear of the coulee's edge entirely. The last of the mire's damp is gone
+  from the air. Above the pitch the grass runs flat and unbroken to a far
+  pale line of distance, and somewhere up there a second spring feeds the
+  steppe the way the first one fed the swamp.
+biome: land
+coord:
+  x: 44
+  y: 14
+  z: -1
+exits:
+  east:
+    roomid: 5368
+  up:
+    roomid: 5370
+nouns:
+  pitch: A short steep step in the rock where the rim climbs to meet the
+    steppe, the slabs laddered and worn enough to climb without trouble.
+    It is the last hard ground before the country goes flat and open.
+  slabs: Pale weathered slabs of rimrock stepping up out of the grass,
+    stacked by nothing but time, firm underfoot. They mark the seam where
+    the low wet country ends and the high dry one begins.
+idlemessages:
+- Wind pours down the <ansi fg="cyan">pitch</ansi> from the steppe above, dry and steady and
+  smelling of grass.
+- A lizard suns itself on one of the warm <ansi fg="cyan">slabs</ansi> and does not stir as you
+  pass.

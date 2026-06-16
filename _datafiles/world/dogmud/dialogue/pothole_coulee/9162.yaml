@@ -1,0 +1,186 @@
+mobid: 9162
+zone: Pothole Coulee
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "hail"]
+    responses:
+      - "Keep your voice down. Sound runs in this canyon, and the bluffs
+          above us are listening. Iden sent you? Speak low."
+      - "Stay off the open floor unless you mean to be seen. What is it?"
+
+  - keywords: ["canyon", "cross", "shoot", "scout", "learn", "teach", "quest", "task"]
+    responses:
+      - "The trick here is the cross-canyon shot -- reach a thing a
+          chamber away before it reaches you. Ask and I will set you to
+          it."
+      - "Shoot what you cannot touch, then stand when it comes. Ask me."
+
+  - keywords: ["outline", "double", "opened", "mutation", "awakening"]
+    responses:
+      - "The Awakening left me a half-step behind myself -- turn quick
+          and my outline doubles, a second me still catching up. It has
+          fooled more than one raider's aim. I do not complain."
+
+  - keywords: ["overlook", "skell", "bowmaster", "raiders", "band"]
+    responses:
+      - "The bluff band holds the overlook above us, and Bowmaster Skell
+          holds them. He shoots from the high ground and gives ground
+          when you climb -- a kiter. That is the last fight here, and not
+          one to take before you are ready."
+
+  - keywords: ["reload", "ammo", "bolts", "kite", "kiting"]
+    responses:
+      - "Carry more ammo than you think you need -- a kiter makes a long
+          fight of it. Reload the moment you have a breath. Out of bolts
+          before the overlook? Ask me and I will spare some."
+
+  - keywords: [""]
+    responses:
+      - "Say it plain, and quiet."
+      - "I am watching the bluffs. Talk."
+      - "Out with it."
+
+tree:
+  root:
+    text: "Bryn. I hold the canyon."
+    hints: "You could ask Bryn about the canyon or your task."
+    variants:
+      # ── Not ready (Iden's lesson unfinished) ─────────────
+      - questExcluded: ["50-end"]
+        text: "You have not been to the terraces yet -- you are carrying
+          that sling like it might bite you, if you are carrying one at
+          all. Go up to Iden first and learn which end the stone comes
+          out of. The canyon is no place to learn the basics."
+        hints: "Return to Marksman Iden on the terraces and finish the
+          shooting lesson before coming to Scout Bryn."
+
+      # ── Ready for quest 51 ───────────────────────────────
+      - questRequired: ["50-end"]
+        questExcluded: ["51-start", "51-end"]
+        text: "Iden's eye, then. Good enough for the slot. Here you learn
+          the thing the raiders use on us -- the shot that crosses a
+          chamber and lands before the target knows you are there. Ask me
+          about the canyon when you are ready."
+        hints: "Type ask bryn canyon to take on the cross-canyon lesson."
+
+      # ── Mid quest 51 ─────────────────────────────────────
+      - questRequired: ["51-start"]
+        questExcluded: ["51-end"]
+        text: "Still at it. The scout holds the sounding floor, one
+          chamber north of the Narrows. Stand in the Narrows and shoot it
+          across the exit -- shoot scout north. It will charge; stand and
+          finish it. Come back when it is down."
+        hints: "Go north to the Echoing Narrows. Type shoot scout north
+          to fire across the exit, then finish the scout when it charges.
+          Then ask bryn done."
+
+      # ── Ready for quest 52 ───────────────────────────────
+      - questRequired: ["51-end"]
+        questExcluded: ["52-start", "52-end"]
+        text: "You can reach across the canyon now and stand when the
+          fight comes to you. That is everything but the last of it. The
+          last of it is Skell, on the overlook. Ask me about it when your
+          nerve is up -- and carry ammo."
+        hints: "Type ask bryn overlook when you are ready for the final
+          task."
+
+      # ── Mid quest 52 ─────────────────────────────────────
+      - questRequired: ["52-start"]
+        questExcluded: ["52-end"]
+        text: "He is still up there. Up the chimney at the canyon's head,
+          through the perches, to the high stand. Skell gives ground and
+          shoots -- out-shoot him or close fast, and do not run dry. Out
+          of ammo? Ask me before you climb."
+        hints: "Go up from the Canyon Head through the raider perches to
+          the Overlook; defeat Bowmaster Skell. Low on ammo? ask bryn
+          ammo."
+
+      # ── Quest 52 complete ────────────────────────────────
+      - questRequired: ["52-end"]
+        text: "Skell is off the overlook and the high ground is ours. I
+          have watched that band tax this canyon for years and never had
+          the hand to break it. You did. The coulee has nothing left to
+          teach you -- past the rim is the wider country, and you are
+          ready for it. Go well."
+        hints: "You have cleared the Ranged spoke -- and the whole newbie
+          area. Well done."
+
+  nodes:
+    # ── QUEST 51 OFFER ────────────────────────────────────────
+    - id: canyon_offer
+      triggers: ["canyon", "cross", "scout", "learn", "teach", "quest", "task"]
+      questRequired: ["50-end"]
+      questExcluded: ["51-start", "51-end"]
+      grantsQuest: "51-start"
+      text: "The canyon scout, then. It holds the sounding floor -- the
+        open stretch one chamber north of the Echoing Narrows. Here is
+        the lesson: do not walk up and trade blows. Stand in the Narrows
+        and shoot it across the exit -- type shoot scout north. The shot
+        will cross the gap and bite, and then it will come straight up
+        the slot at you, because a shot thing always does. Stand your
+        ground and finish it. That is the cross-canyon shot, and the
+        price of it. Go."
+      hints: "Go north to the Echoing Narrows. Type shoot scout north to
+        fire into the next chamber; the scout will charge -- stand and
+        finish it. Then ask bryn done."
+
+    # ── QUEST 51 TURN-IN ──────────────────────────────────────
+    - id: canyon_turnin
+      triggers: ["done", "report", "ready", "finished", "quest", "task"]
+      questRequired: ["51-shoot", "51-kill"]
+      questExcluded: ["51-end"]
+      grantsQuest: "51-end"
+      text: "Reached across the slot and stood when it came. That is the
+        canyon, learned. Take this -- a hand crossbow and a case of
+        bolts; heavier than the sling and it hits like it. You will want
+        it above. Skell is on the overlook, and he is the last of it.
+        Ask me about the overlook when your nerve is up."
+      hints: "Quest complete. Type ask bryn overlook when you are ready
+        for the final task."
+
+    # ── QUEST 52 OFFER ────────────────────────────────────────
+    - id: overlook_offer
+      triggers: ["overlook", "skell", "bowmaster", "boss", "quest", "task"]
+      questRequired: ["51-end"]
+      questExcluded: ["52-start", "52-end"]
+      grantsQuest: "52-start"
+      text: "Skell, then. He holds the overlook above the canyon's head,
+        and from up there he has made the whole slot a killing field. He
+        fights the way you have just learned to -- at range, on the move,
+        giving ground a step at a time and making you pay for every yard
+        you take back. Climb the chimney at the Canyon Head, fight up
+        through his shooters, and bring him down on the high stand. Carry
+        all the ammo you can, and reload every breath you get. Go, and
+        come back having done it."
+      hints: "Carry plenty of ammo. Go up from the Canyon Head through
+        the raider perches to the Overlook; defeat Bowmaster Skell. Low
+        on ammo? ask bryn ammo."
+
+    # ── AMMO RESUPPLY (for the boss climb) ────────────────────
+    - id: ammo_resupply
+      triggers: ["ammo", "bolts", "shot", "supply", "resupply", "more"]
+      questRequired: ["51-end"]
+      questExcluded: ["52-end"]
+      givesItem: 30063
+      text: "A case of bolts. Take it -- a kiter makes a long fight, and
+        an empty weapon on the overlook is a dead climber. Run dry up
+        there and you will wish you had asked twice. Come back for more
+        if you need it."
+      hints: "You received a case of bolts. Reload often against Skell.
+        Ask bryn ammo again if you run low."
+
+    # ── CROSS-SHOT / KITING HELP ──────────────────────────────
+    - id: cross_help
+      triggers: ["shot", "kite", "kiting", "reload", "help", "how"]
+      text: "Two things the canyon teaches. The cross-shot: stand in one
+        chamber and type shoot, the target, and the direction -- shoot
+        scout north -- to fire through the exit into the next room. And
+        kiting: a foe that shoots and backs away, opening the range as
+        you close. Beat it by out-shooting it, or by closing faster than
+        it can retreat. Always reload the moment you get a breath."
+      hints: "Cross-room shot: shoot <target> <direction>. Against a
+        kiter, out-shoot it or close fast, and reload constantly."
+
+memory:
+  expiryPeriod: ""

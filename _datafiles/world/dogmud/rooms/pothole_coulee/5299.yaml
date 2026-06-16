@@ -19,6 +19,8 @@ coord:
 exits:
   north:
     roomid: 5298
+  east:
+    roomid: 5370
 nouns:
   spring: Clear water rising from the base of a limestone shelf,
     welling up cold and clean into a shallow pool that drains away

@@ -18,6 +18,8 @@ mutators:
 exits:
   south:
     roomid: 5209
+  up:
+    roomid: 5347
 nouns:
   steps: The steps are flat slabs cut and stacked up the face of the
     bluff, climbing toward the shooting terraces above. The lower run is

@@ -1,5 +1,39 @@
 # DOGMud Patch Notes
 
+## 2026-06-15 — Newbie-area rework: Spokes F & G (all seven done) + a combat crash fix [branch-local]
+
+The Pothole Coulee newbie zone now has all seven spokes built and verified.
+Branch-local (`feature+newbie-area`); ships to players at the chunk-10 cutover.
+The combat crash fix below is prod-relevant and can be cherry-picked ahead of
+the cutover.
+
+- **Spoke G (Ranged & Marksmanship) complete** — the final spoke, on the
+  wind-scoured bluffs above the coulee. Marksman Iden teaches the ranged loop:
+  take up a sling, reload it, and put a stone into a practice butt down-range.
+  Scout Bryn teaches the cross-canyon shot — firing into the next chamber, and
+  the rule that a shot target charges you — and hands over a hand crossbow. The
+  capstone climbs to a raider overlook and brings down a kiting bowmaster who
+  fights the way you now can: at range, on the move. Rewards a permanent
+  Perception gain, a hunting bow, and an ammunition stockpile. Twenty rooms
+  (plus lateral connector trails that close the outer exploration ring), nine
+  mobs, and three quests, verified end-to-end. No new items — it reuses the
+  existing ranged-weapon gear.
+- **Spoke F (Lore & Folk Tradition) complete** — the social/discovery spoke:
+  an outlying farmstead, a ring of standing stones, and an old shrine. Quests
+  progress by talking, helping, and searching rather than fighting (with one
+  light taunt-to-defuse encounter), and the capstone uncovers a hidden relic
+  that hints at a wider, stranger world. Twenty-five rooms, eight NPCs, two new
+  items.
+- **Combat crash fix (prod-relevant).** Fixed a nil-pointer panic that could
+  crash the whole server during combat: a kiting archer whose target leaves the
+  room (clearing the archer's aggro) could reach the mob-AI decision step with
+  no aggro set and dereference nil. This affects any ranged/archer mob, not just
+  the new zone — it is independent of the newbie rework. Guarded and
+  regression-tested.
+- **Quest engine (builder-facing).** The `shoot` and `reload` commands now
+  notify the quest engine, so quests can gate a step on firing or reloading a
+  ranged weapon (matching the existing forage/drink/throw/cast hooks).
+
 ## 2026-06-14 — Newbie-area rework: Spokes C, D & E [branch-local, not yet live]
 
 More build progress on the Pothole Coulee newbie zone. Lives on the

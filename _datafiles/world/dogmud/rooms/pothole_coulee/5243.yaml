@@ -12,7 +12,10 @@ description: >
   thread. And out along the rim of the world the other canyon mouths show
   themselves -- dark notches cut into the stone walls, each a throat opening
   away to ground you have not walked yet, ways out into the wider scablands.
-  It is quiet up here, won quiet, the high ground taken and the long view
+  Two of those crests can be walked from here -- a rim-trail running off
+  toward a lone marker-stone on a distant shrine-rise, and another north
+  along the bluffs to a raider's overlook. It is quiet up here, won quiet,
+  the high ground taken and the long view
   earned. The watch room lies back west, down out of the wind.
 biome: cliffs
 coord:
@@ -22,10 +25,13 @@ coord:
 exits:
   west:
     roomid: 5242
-  # future: lateral connector east to the adjacent spoke when that spoke is
-  # built (parent spec section 6.1 -- the rim-walk between spoke crowns).
-  # Reserved only; do NOT add a live/dangling exit here until the neighbor
-  # room exists.
+  # Lateral outer-ring connectors (chunk 8): named, non-spatial "rim-walk"
+  # exits between the spoke crowns (parent spec 6.1). Non-compass keys are
+  # exempt from the cartesian consistency check.
+  shrine:
+    roomid: 5346
+  overlook:
+    roomid: 5365
 nouns:
   crown: The shattered top of the tower, courses fallen to a low broken rim,
     the floor cracked and sloping but firm enough to stand on. It is ruin

@@ -1,0 +1,45 @@
+roomid: 5362
+zone: Pothole Coulee
+title: The High Stand
+description: >
+  Open ground, exposed on every side. The bluff-top widens here
+  into a flat stretch with no cover and no feature to shelter behind
+  -- nothing but pale stone and sky and wind working at you from
+  every quarter. It is the kind of ground a marksman loves and a
+  melee fighter hates: no walls, no shadows, no closing the distance
+  without being seen and shot at the whole way. The angles from
+  here are merciless. North and south both run straight and clear.
+  Whatever holds this ground owns the approaches to both ends of
+  the bluff, and it knows it.
+biome: cliffs
+coord:
+  x: 49
+  y: -10
+  z: 3
+exits:
+  south:
+    roomid: 5361
+  north:
+    roomid: 5364
+spawninfo:
+- mobid: 9168
+nouns:
+  ground: The high stand is not flat by accident -- the stone has
+    been worked here, chips cleared from the surface, a deliberate
+    leveling that improved the footing and widened the field of
+    fire. Someone prepared this position. The work is old but the
+    intention is plain.
+  angles: Every direction from this stand offers a clean line of
+    sight. North to the overlook, south to the perch, down to the
+    coulee floor on both flanks. A marksman here commands every
+    approach to the upper bluff. The angles are the point.
+idlemessages:
+- There is nowhere to hide on this <ansi fg="white">ground</ansi>. The wind reminds you of
+  it constantly, moving around you without obstruction in any
+  direction.
+- The <ansi fg="cyan">angles</ansi> are clean. You can see south to the rise and north to
+  where the bluff crests. Nothing moves on either approach.
+- A high thin sound crosses the stand -- wind finding the edge of
+  something, a stone lip or a crack in the bluff face -- and fades.
+- The stone underfoot is pale and featureless, warm from sun and
+  scoured smooth by years of exposure.

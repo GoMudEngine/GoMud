@@ -1,0 +1,52 @@
+mobid: 9162
+zone: Pothole Coulee
+behavior_archetype: noncombat_questgiver
+statpool: 44
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 12
+idlecommands:
+  - 'emote tips his head and listens to the canyon, where a dropped pebble
+    answers back twice from the walls'
+  - ''
+  - 'emote checks the fletching on a single arrow, turning it against the
+    light to find the bent vane'
+  - ''
+  - 'emote crouches at the slot mouth and watches the upper overlook for the
+    glint of a raider lookout'
+  - ''
+character:
+  name: Scout Bryn
+  description: |
+    Bryn keeps to the canyon the way some people keep to a doorway -- half in,
+    half ready to be gone. He is wiry and weathered, dressed in the dust-grey
+    of the bluffs, and he speaks low even when there is no one to overhear,
+    because in the box canyon sound carries and he has learned to give it
+    nothing.
+    His mutation shows only when he turns his head sharply: for a held breath
+    his outline blurs and doubles, as though a second Bryn a step behind is
+    still catching up to the first. He has used it to live through more raider
+    ambushes than he will admit. He watches the upper overlook with the flat,
+    measuring patience of a man who has decided the band up there will have to
+    be answered, and is only waiting on the right hand to do it.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 16
+    dexterity:
+      training: 11
+    vitality:
+      training: 6
+    willpower:
+      training: 4
+    strength:
+      training: 4
+    charisma:
+      training: 3

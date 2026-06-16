@@ -1,0 +1,50 @@
+roomid: 5364
+zone: Pothole Coulee
+title: The Overlook
+description: >
+  The highest point of the bluff, and it announces itself. The stone
+  here has a quality of finality -- the bluff does not rise further,
+  the ground does not press higher, this is where it stops. From
+  this overlook the sightlines run in every direction without
+  obstruction:
+  north to the far lip, south along the whole length of the bluff
+  face, east and west to the coulee walls and the country beyond.
+  It is a commanding stand, the kind of position an experienced
+  marksman takes and does not give up easily. The wind at this
+  height is a different thing entirely -- steadier, colder, with a
+  resonance to it that the gusts below don't carry.
+biome: cliffs
+coord:
+  x: 49
+  y: -11
+  z: 3
+exits:
+  south:
+    roomid: 5362
+  north:
+    roomid: 5365
+  east:
+    roomid: 5366
+spawninfo:
+- mobid: 9169
+nouns:
+  overlook: The overlook is the bluff's summit, the place where the
+    ground runs out and the sky takes over. Standing here you are
+    the highest thing on this stretch of country. The position is
+    obvious and deliberate -- whoever holds this ground controls
+    everything below, and they know it.
+  stand: A marksman's stand in the truest sense -- open to every
+    direction, no higher ground nearby to be shot from, every
+    approach exposed. Taking this position means committing to it.
+    Giving it up means crossing open ground under fire. It is not
+    a position you abandon lightly.
+idlemessages:
+- The <ansi fg="cyan">overlook</ansi> gives you everything at once -- the whole coulee, the
+  far walls, the country beyond. It is a great deal of world to
+  hold in one view.
+- The wind at this height has a low resonance, a vibration in the
+  stone itself, as though the bluff is aware of the pressure.
+- Nothing moves on any of the approaches. From the <ansi fg="white">stand</ansi> you would
+  see it long before it reached you.
+- The cold here is sharper than below, a dry clean cold that has
+  nothing to do with shade. It is simply the cold of altitude.

@@ -1,0 +1,47 @@
+roomid: 5361
+zone: Pothole Coulee
+title: Raider Perch
+description: >
+  Someone chose this spot with care. A low windbreak of stacked
+  stone runs along the north face -- not neat work, but deliberate,
+  the stones wedged and fitted to shed wind and drop a shooter below
+  the skyline. Spent arrow shafts lie scattered across the rock, a
+  dozen at least, some snapped, some merely dropped after the quiver
+  ran dry. The angles from here are exceptional: south covers the
+  rise and the chimney approach, east covers the long traverse below,
+  and north holds clear sight of the high ground ahead. Whoever
+  built this perch understood the bluff and meant to hold it.
+biome: cliffs
+coord:
+  x: 49
+  y: -9
+  z: 3
+exits:
+  south:
+    roomid: 5360
+  north:
+    roomid: 5362
+  east:
+    roomid: 5363
+spawninfo:
+- mobid: 9167
+nouns:
+  perch: The perch is a shooter's position, constructed and occupied
+    by someone who knew their business. The windbreak drops you below
+    the skyline -- you become difficult to see from below while the
+    approaches below remain visible to you. It is a good position.
+    It has been used.
+  windbreak: Three courses of flat stone wedged into a low wall along
+    the bluff's north face. The work is rough but the logic is sound
+    -- the break cuts the constant lateral wind without blocking the
+    sightlines to the south and east. Someone spent an hour on this.
+    More than one arrow has been shot from behind it.
+idlemessages:
+- The <ansi fg="yellow">windbreak</ansi> cuts the worst of the gusts here. Behind it the air
+  is almost still, a pocket of quiet in all the exposure.
+- A spent shaft rolls against your boot -- light wood, grey fletching,
+  the head snapped off at the neck.
+- From the <ansi fg="white">perch</ansi> the approaches below are a clear map. Nothing reaches
+  this height without crossing open ground first.
+- Wind moves over the top of the windbreak and curls down behind it,
+  carrying a faint smell of old fire and leather.

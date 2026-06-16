@@ -1,0 +1,49 @@
+mobid: 9164
+zone: Pothole Coulee
+behavior_archetype: archer
+archetype: fighting
+statpool: 25
+itemdropchance: 0
+hostile: true
+maxwander: 1
+groups:
+  - humanoid
+  - bluff_raiders
+activitylevel: 22
+idlecommands:
+  - 'emote whirls a loaded sling once at its side, testing the weight, then
+    lets it hang'
+  - ''
+  - 'emote scans the canyon floor from the lip of the ledge, looking for
+    something worth a stone'
+  - ''
+combatcommands:
+  - 'emote skips back a pace and whips the sling overhead, keeping the
+    distance open'
+  - ''
+character:
+  name: Raider Slinger
+  description: |
+    A scrawny outrider from the band that holds the upper bluffs, posted low
+    to pick off anything that wanders into the canyon. The sling is a length
+    of plaited cord and a worn leather cradle, cheap and deadly in a practiced
+    hand, and this one has clearly thrown a great many stones. He keeps to
+    the ledges and the high ground, content to sting from a distance and slip
+    away before anything can close -- a coward's craft, and an effective one.
+  speciesid: 1
+  level: 1
+  gold: 3
+  equipment:
+    weapon:
+      itemid: 10038
+  items:
+    - itemid: 30064
+  stats:
+    perception:
+      training: 10
+    dexterity:
+      training: 8
+    vitality:
+      training: 4
+    strength:
+      training: 3

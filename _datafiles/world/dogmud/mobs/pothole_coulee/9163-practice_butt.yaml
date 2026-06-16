@@ -1,0 +1,44 @@
+mobid: 9163
+zone: Pothole Coulee
+behavior_archetype: combat_passive
+statpool: 3
+hostile: false
+maxwander: 0
+groups:
+  - construct
+activitylevel: 5
+idlecommands:
+  - 'emote sways a finger-width on its peg and settles, straw whispering'
+  - ''
+  - ''
+  - ''
+character:
+  name: Practice Butt
+  description: |
+    A barrel-thick bundle of bound straw lashed to a leaning post and faced
+    with a disc of cracked hide, set out at the end of the firing range where
+    the chalked distance-marks begin. Concentric rings are burned into the
+    hide, paling outward from a scorched black center that has been struck
+    and re-struck until the straw beneath shows through. Older bolts and a
+    snapped arrow-shaft still bristle from its flank where no one bothered to
+    pull them. It is built to be shot at all day and stand for the next
+    student -- a target, nothing more, and it asks nothing of you but a
+    steady hand.
+  speciesid: 19
+  level: 1
+  gold: 0
+  stats:
+    # Species 19 (base vitality 200) dropped far down so the butt is a quick,
+    # satisfying kill (~12 effective HP) — Q50's beats are the `reload`/`shoot`
+    # COMMANDS, which fire before the butt falls, but the butt must DIE so a
+    # same-room shot's combat-lock releases and the student can walk back to
+    # Iden to turn in. (A durable butt would trap the player in an unkillable
+    # fight; see the Spoke A training-dummy precedent.) It respawns for the
+    # next student. Strength/dexterity near floor + species basedamage 0 keep
+    # it harmless — it never deals real damage.
+    vitality:
+      training: -188
+    strength:
+      training: -3
+    dexterity:
+      training: -3

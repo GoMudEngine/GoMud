@@ -72,7 +72,9 @@ MANIFEST = {
     # 5225 is the Spoke F (Lore) mouth: the hub stub plus the northward
     # attachment exit into the spoke's Cartway (5322), added in chunk 7.
     5225: ("Old Field Track", None, (46, -2, 0), {"south":5217, "north":5322}, 1),
-    5226: ("Bluff Steps", None, (47, -1, 0), {"south":5209}, 1),
+    # 5226 is the Spoke G (Ranged) mouth: the hub stub plus the UP attachment
+    # exit into the spoke's Bluff Foot (5347), added in chunk 8.
+    5226: ("Bluff Steps", None, (47, -1, 0), {"south":5209, "up":5347}, 1),
 }
 
 
@@ -496,6 +498,79 @@ SPOKE_F_MOBS = {
     9160: ("9160-hermit_sere.yaml",          "Hermit Sere",         [5341], False, "noncombat_questgiver", 44),
 }
 
+# Spoke G (Ranged & Marksmanship) — Pothole Coulee rooms 5347-5366. ASCENDS
+# NE/N from hub stub 5226 onto the bluffs (climbs z1->z3, kept at y<=-1 north of
+# Spoke A). Three rings: inner bluff-climb + shooting terraces (sanctuary,
+# cliffs, 5347-5352), middle echoing box canyon (NO sanct., 5353-5359), outer
+# raider overlook (NO sanct., z3, kiting boss, 5360-5366).
+SPOKE_G_ROOMS = [
+    (5347, "Bluff Foot", True),
+    (5348, "Bluffside Climb", True),
+    (5349, "Terrace Stair", True),
+    (5350, "The Firing Range", True),
+    (5351, "The Long Terrace", True),
+    (5352, "High Terrace", True),
+    (5353, "Canyon Mouth", False),
+    (5354, "Echoing Narrows", False),
+    (5355, "Side Ledge", False),
+    (5356, "The Sounding Floor", False),
+    (5357, "Rockfall Bend", False),
+    (5358, "Canyon Head", False),
+    (5359, "Cracked Spur", False),
+    (5360, "Overlook Rise", False),
+    (5361, "Raider Perch", False),
+    (5362, "The High Stand", False),
+    (5363, "Windward Nest", False),
+    (5364, "The Overlook", False),
+    (5365, "Eagle's Reach", False),
+    (5366, "Sniper's Roost", False),
+]
+
+# Reciprocal exit edges (each listed once). The bluff climbs the z-axis, so
+# several exits are vertical (up/down); the rest are cardinal.
+SPOKE_G_EXIT_PAIRS = [
+    (5226, "up", 5347),      # hub stub attachment (climb onto the bluff)
+    (5347, "north", 5348),
+    (5348, "north", 5349),
+    (5349, "up", 5350),      # climb to the terraces
+    (5350, "east", 5351),
+    (5351, "east", 5352),
+    (5352, "north", 5353),
+    (5353, "north", 5354),
+    (5353, "east", 5355),
+    (5354, "north", 5356),
+    (5356, "north", 5357),
+    (5357, "north", 5358),
+    (5357, "east", 5359),
+    (5358, "up", 5360),      # chimney up to the overlook
+    (5360, "north", 5361),
+    (5361, "north", 5362),
+    (5361, "east", 5363),
+    (5362, "north", 5364),
+    (5364, "north", 5365),
+    (5364, "east", 5366),
+]
+
+# Lateral outer-ring connectors (chunk 8). The C<->D connector: a south-rim
+# trail (4 bridge rooms 5367-5370) linking Clearwater Spring (C outer 5281) to
+# Wolfwater Spring (D outer 5299), the two southern "spring" reward-vistas which
+# converge near each other (the only outer pair geographically close enough for
+# a short bridge; F<->A and A<->G diverge to opposite corners — deferred).
+CONNECTOR_ROOMS = [
+    (5367, "Springhead Trail", False),
+    (5368, "The South Rim", False),
+    (5369, "Rimrock Rise", False),
+    (5370, "Steppe Edge Trail", False),
+]
+
+CONNECTOR_EXIT_PAIRS = [
+    (5281, "west", 5367),    # C outer (Clearwater Spring) attachment
+    (5367, "west", 5368),
+    (5368, "west", 5369),
+    (5369, "up", 5370),      # climb from the mire-edge up onto the steppe
+    (5370, "west", 5299),    # D outer (Wolfwater Spring) attachment
+]
+
 # ---------------------------------------------------------------------------
 # Spoke A (Martial) — mobs 9108-9115 (Phase M). Per mob:
 #   mobid: (filename, name, [host_rooms], hostile, behavior_archetype, statpool)
@@ -513,6 +588,23 @@ SPOKE_A_MOBS = {
     9113: ("9113-bandit_bruiser.yaml",        "Bandit Bruiser",      [5238, 5239],       True,  "generic_fighter",      90),
     9114: ("9114-bandit_lieutenant.yaml",     "Bandit Lieutenant",   [5239],             True,  "leader",              130),
     9115: ("9115-bandit_captain.yaml",        "Bandit Captain",      [5242],             True,  "tank_taunter",        200),
+}
+
+# Spoke G (Ranged & Marksmanship) — mobs 9161-9169 (Phase M). Two Opened
+# questgivers (Marksman Iden inner, Scout Bryn middle/outer); a durable harmless
+# Practice Butt (combat_passive, the shoot/reload target); raider foes scaling
+# inner->outer. Several foes use the `archer` archetype (kite + shoot) so the
+# player learns ranged from the other side; the capstone is a kiting archer boss.
+SPOKE_G_MOBS = {
+    9161: ("9161-marksman_iden.yaml",         "Marksman Iden",       [5350],       False, "noncombat_questgiver", 44),
+    9162: ("9162-scout_bryn.yaml",            "Scout Bryn",          [5353],       False, "noncombat_questgiver", 44),
+    9163: ("9163-practice_butt.yaml",         "Practice Butt",       [5351],       False, "combat_passive",        3),
+    9164: ("9164-raider_slinger.yaml",        "Raider Slinger",      [5355],       True,  "archer",               25),
+    9165: ("9165-canyon_scout.yaml",          "Canyon Scout",        [5356],       True,  "generic_fighter",      45),
+    9166: ("9166-box_canyon_raider.yaml",     "Box Canyon Raider",   [5359],       True,  "generic_fighter",      60),
+    9167: ("9167-bluff_marksman.yaml",        "Bluff Marksman",      [5361, 5363], True,  "archer",               80),
+    9168: ("9168-raider_sharpshooter.yaml",   "Raider Sharpshooter", [5362, 5366], True,  "archer",              130),
+    9169: ("9169-bowmaster_skell.yaml",       "Bowmaster Skell",     [5364],       True,  "archer",              200),
 }
 
 
@@ -1009,13 +1101,85 @@ def main():
     print("-" * 70)
     print(f"{len(SPOKE_F_MOBS)} Spoke F mobs checked, {spoke_f_mob_fail} FAIL")
 
-    return 1 if (total_fail or npc_fail or spoke_room_fail or pair_fail
+    # --- Spoke G (Ranged) rooms ---------------------------------------------
+    print()
+    print(f"{'SPOKE-G':<8} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    spoke_g_room_fail = 0
+    for rid, title, sanct in SPOKE_G_ROOMS:
+        fails = check_spoke_a_room(rid, title, sanct)  # generic room check
+        if fails:
+            spoke_g_room_fail += 1
+            print(f"{rid:<8} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{rid:<8} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_G_ROOMS)} Spoke G rooms checked, {spoke_g_room_fail} FAIL")
+
+    print()
+    print(f"{'EXITPAIR-G':<14} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    pair_g_fail = 0
+    for a, dir_ab, b in SPOKE_G_EXIT_PAIRS:
+        fails = check_spoke_a_exit_pair(a, dir_ab, b)  # generic exit-pair check
+        label = f"{a}-{dir_ab[:2]}-{b}"
+        if fails:
+            pair_g_fail += 1
+            print(f"{label:<14} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{label:<14} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_G_EXIT_PAIRS)} Spoke G exit pairs checked, {pair_g_fail} FAIL")
+
+    # --- Spoke G (Ranged) mobs ----------------------------------------------
+    print()
+    print(f"{'SPOKE-G MOB':<14} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    spoke_g_mob_fail = 0
+    for mid in sorted(SPOKE_G_MOBS):
+        fails = check_spoke_a_mob(mid, SPOKE_G_MOBS[mid])  # generic mob check
+        if fails:
+            spoke_g_mob_fail += 1
+            print(f"{mid:<14} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{mid:<14} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(SPOKE_G_MOBS)} Spoke G mobs checked, {spoke_g_mob_fail} FAIL")
+
+    # --- Lateral connectors (C<->D bridge) ----------------------------------
+    print()
+    print(f"{'CONNECTOR':<10} {'RESULT':<6} DETAIL")
+    print("-" * 70)
+    conn_room_fail = 0
+    for rid, title, sanct in CONNECTOR_ROOMS:
+        fails = check_spoke_a_room(rid, title, sanct)  # generic room check
+        if fails:
+            conn_room_fail += 1
+            print(f"{rid:<10} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{rid:<10} {'PASS':<6}")
+    conn_pair_fail = 0
+    for a, dir_ab, b in CONNECTOR_EXIT_PAIRS:
+        fails = check_spoke_a_exit_pair(a, dir_ab, b)
+        label = f"{a}-{dir_ab[:2]}-{b}"
+        if fails:
+            conn_pair_fail += 1
+            print(f"{label:<10} {'FAIL':<6} {'; '.join(fails)}")
+        else:
+            print(f"{label:<10} {'PASS':<6}")
+    print("-" * 70)
+    print(f"{len(CONNECTOR_ROOMS)} connector rooms + {len(CONNECTOR_EXIT_PAIRS)} "
+          f"exit pairs checked, {conn_room_fail + conn_pair_fail} FAIL")
+
+    return 1 if (conn_room_fail or conn_pair_fail
+                 or total_fail or npc_fail or spoke_room_fail or pair_fail
                  or spoke_mob_fail or spoke_b_room_fail or pair_b_fail
                  or spoke_b_mob_fail or spoke_c_room_fail or pair_c_fail
                  or spoke_c_mob_fail or spoke_d_room_fail or pair_d_fail
                  or spoke_d_mob_fail or spoke_e_room_fail or pair_e_fail
                  or spoke_e_mob_fail or spoke_f_room_fail or pair_f_fail
-                 or spoke_f_mob_fail) else 0
+                 or spoke_f_mob_fail or spoke_g_room_fail or pair_g_fail
+                 or spoke_g_mob_fail) else 0
 
 
 if __name__ == "__main__":

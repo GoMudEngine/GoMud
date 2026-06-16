@@ -1,0 +1,33 @@
+roomid: 5367
+zone: Pothole Coulee
+title: Springhead Trail
+description: >
+  The faint game trail that leaves Clearwater Spring runs west along the
+  foot of the risen rock, the foul air of the mire falling away behind with
+  every step. Cold seep-water threads down the stone in bright little runs,
+  feeding the spring back the way you came. Ahead the ground begins to open
+  and lift, the green murk of the swamp giving over to bare pale stone and
+  the first clean light. It is the kind of trail that knows where it is
+  going even when you do not.
+biome: land
+coord:
+  x: 46
+  y: 14
+  z: -1
+exits:
+  east:
+    roomid: 5281
+  west:
+    roomid: 5368
+nouns:
+  trail: The track is faint but sure, worn by animals or by older feet,
+    running west along the base of the rock away from the mire. It is
+    narrow and unhurried and it does not double back.
+  seep: Thin runs of cold seep-water thread down the pale stone, catching
+    the light, feeding back toward the spring. They are clean -- the first
+    clean water the south country offers.
+idlemessages:
+- The <ansi fg="cyan">seep</ansi> ticks down the rock in a dozen small voices, all of them
+  saying the same patient thing.
+- Behind you the mire-smell thins to nothing; ahead the air is only stone
+  and cold water and distance.
