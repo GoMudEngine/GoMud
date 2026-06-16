@@ -97,6 +97,25 @@ func Track(actor Actor, opts TrackOptions) TrackResult {
 	// this action only consumes TargetNoun.
 	targetNoun := opts.TargetNoun
 
+	// If the named target is right here in the room, there is nothing to track
+	// down -- you can see it. Report a clean positive read before the skill
+	// roll, so a tracker who would otherwise fail the roll is not told "you
+	// don't see any tracks" about a creature standing in front of them.
+	if targetNoun != "" {
+		if name, isMob, found := findPresentTargetByNoun(room, targetNoun, actor.GetUserId()); found {
+			result.ActiveTargetName = name
+			if actor.IsPlayer() {
+				nameTag := "username"
+				if isMob {
+					nameTag = "mobname"
+				}
+				actor.SendText(messaging.CategorySystem,
+					fmt.Sprintf(`You read <ansi fg="%s">%s</ansi>'s sign in the scuffed ground -- close, here in the open with you.`, nameTag, name))
+			}
+			return result
+		}
+	}
+
 	// Roll the Perception+Search score.
 	searchScore := CalcSearchScore(char)
 	roll := dice.RollStat(searchScore)
@@ -326,6 +345,44 @@ func findMobInRoomByName(room *rooms.Room, name string) *mobs.Mob {
 		}
 	}
 	return nil
+}
+
+// findPresentTargetByNoun looks for a mob or user currently in the room whose
+// name matches the noun via keyword match (like combat targeting, so "hare"
+// matches "Steppe Hare" -- broader than the prefix match above). Mobs are
+// checked before users. Returns the matched display name, whether it is a mob,
+// and whether anything matched.
+func findPresentTargetByNoun(room *rooms.Room, noun string, excludeUserId int) (name string, isMob bool, found bool) {
+	mobNames := []string{}
+	for _, mId := range room.GetMobs() {
+		if m := mobs.GetInstance(mId); m != nil {
+			mobNames = append(mobNames, m.Character.Name)
+		}
+	}
+	if match, closeMatch := util.FindMatchIn(noun, mobNames...); match != "" || closeMatch != "" {
+		if match != "" {
+			return match, true, true
+		}
+		return closeMatch, true, true
+	}
+
+	userNames := []string{}
+	for _, uId := range room.GetPlayers() {
+		if uId == excludeUserId {
+			continue
+		}
+		if u := users.GetByUserId(uId); u != nil {
+			userNames = append(userNames, u.Character.Name)
+		}
+	}
+	if match, closeMatch := util.FindMatchIn(noun, userNames...); match != "" || closeMatch != "" {
+		if match != "" {
+			return match, false, true
+		}
+		return closeMatch, false, true
+	}
+
+	return "", false, false
 }
 
 // lookupAdjacentTrail searches the current room's visitor log for a target
