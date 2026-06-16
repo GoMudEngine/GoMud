@@ -1,0 +1,52 @@
+roomid: 5333
+zone: Pothole Coulee
+title: The Stone Circle
+description: >
+  The heart of the megalith ring opens around you -- a space both
+  enclosed and exposed, roofed only by sky, walled by tall carved
+  stones that stand in a near-perfect circle perhaps forty paces
+  across. Each stone bears carvings along its inner face: spirals,
+  stacked chevrons, handprints, and longer sequences of marks that
+  suggest a system without yielding its meaning. At the circle's
+  center stands the altar-stone, a weathered slab at waist height,
+  its surface worn convex from generations of hands placed flat upon
+  it. Fresh offerings rest there now -- dried flowers, a folded cloth,
+  a small clay bowl with ash at its rim. Somewhere between the old
+  rites this place was built for and the newer customs the coulee folk
+  have folded into it, the circle has become simply where memory lives.
+biome: land
+coord:
+  x: 44
+  y: -9
+  z: 0
+exits:
+  south:
+    roomid: 5332
+  east:
+    roomid: 5331
+  west:
+    roomid: 5334
+  north:
+    roomid: 5335
+spawninfo:
+- mobid: 9157
+nouns:
+  circle: The ring of standing stones forms a near-perfect circle, each
+    stone placed with a precision that implies long planning or surveying
+    tools or both. The inner faces all carry carvings; the outer faces are
+    comparatively plain, as if the circle was meant to be read from inside.
+  altar: The altar-stone at the center is neither the largest nor the most
+    decorated of the circle's stones, but everything in the arrangement
+    points toward it. The worn convex surface holds the faint impressions
+    of countless hands -- not carved, but pressed in over centuries.
+idlemessages:
+- The <ansi fg="cyan">circle</ansi> is quieter than the open land around it -- sound
+  arrives here slightly shortened, as though the stones are keeping it.
+- A breath of wind moves through the ring and stirs the offerings on
+  the <ansi fg="cyan">altar</ansi>, lifting the edge of the folded cloth before setting
+  it back down.
+- The carvings on the inner faces of the stones catch the light at a
+  low angle and resolve for a moment into a sequence before fading back
+  to pattern.
+- Somewhere in the arrangement of the <ansi fg="cyan">circle</ansi>, something is
+  aligned -- sun or star or season -- that you cannot quite name.

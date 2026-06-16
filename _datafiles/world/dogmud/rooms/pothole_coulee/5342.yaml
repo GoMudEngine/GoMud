@@ -1,0 +1,46 @@
+roomid: 5342
+zone: Pothole Coulee
+title: Collapsed Nave
+description: >
+  A side-hall of the shrine has given up most of its ceiling to time.
+  The rubble of what fell lies where it landed, cushioned now by
+  decades of drifted earth that has softened the edges of the stone
+  into low mounds. Dust hangs in the air here even without wind to
+  stir it -- the hall produces its own slow circulation, drawing
+  from the open nave to the east and releasing it in a faint
+  exhalation through gaps in the north wall. Niches cut into the
+  walls stand empty, their edges worn where offerings were set and
+  later removed or simply fell to the drift. The niches go deep.
+  Some of them, if you pressed your hand to the back, might reveal
+  a gap, a seam, a hollow that the rubble and dust have not
+  entirely filled. The kind of place where things wait.
+biome: fort
+coord:
+  x: 42
+  y: -13
+  z: 0
+exits:
+  east:
+    roomid: 5341
+  south:
+    roomid: 5340
+  north:
+    roomid: 5343
+nouns:
+  rubble: The rubble is mixed -- ceiling stone, fallen mortar, the
+    occasional timber rotted to a soft dark mass. It has settled into
+    the hall over a very long time and the drift of earth between the
+    pieces makes the floor uneven and yielding in places.
+  niches: Cut into the wall at regular intervals, the niches are
+    roughly palm-width and deep enough to have held something
+    significant. Their floors are dusted with grit and old ash.
+    The deepest ones are shadowed enough that the back wall
+    is not clearly visible from a standing position.
+idlemessages:
+- Dust shifts in the air above the <ansi fg="cyan">rubble</ansi>, moving against no
+  visible current.
+- One of the <ansi fg="cyan">niches</ansi> exhales a faint, cool breath, as though
+  connected to something deeper than the wall's thickness suggests.
+- A piece of the ceiling mortar drops from a surviving section
+  and disappears into a gap between two stones.
+- The dust settles. Then, slowly, it rises again.

@@ -1,0 +1,40 @@
+roomid: 5312
+zone: Pothole Coulee
+title: Thinning Wood
+description: >
+  The forest grows sparse here, trunks spaced further apart than they should
+  be for the density of canopy that still somehow remains. The trunks themselves
+  bend wrong -- not with the slow lean of trees seeking light, but sharply,
+  at angles that pull the eye to follow and leave it confused about direction.
+  Several curve back on themselves in tight arcs that should be impossible for
+  living wood. The hum is louder now, resonant, filling the space between the
+  sparse trees with a pressure that sits behind the ears. The light is thinner
+  too, not dim exactly, but stretched, as though the grove is using light as a
+  material and has nearly run out.
+biome: forest
+coord:
+  x: 42
+  y: -7
+  z: 2
+exits:
+  south:
+    roomid: 5311
+  north:
+    roomid: 5313
+spawninfo:
+- mobid: 9147
+- mobid: 9148
+nouns:
+  trunks: Bent and wrong-angled, the trunks of these trees have grown in
+    directions that deny the physics of wood and weight. Following one curve
+    with your eye produces a faint nausea -- the geometry offends something
+    deep and instinctive.
+  hum: Louder here than at the grove's edge, it has taken on a resonant
+    quality, vibrating in the chest cavity. It does not feel like a natural
+    sound. It feels like something calling attention to itself.
+idlemessages:
+- The <ansi fg="cyan">hum</ansi> swells briefly, then subsides, as though the grove drew breath.
+- One of the bent <ansi fg="cyan">trunks</ansi> creaks without wind -- a dry, internal sound,
+  like settling bone.
+- The light between the trees stretches and snaps back, a blink of strange
+  geometry that leaves an afterimage.

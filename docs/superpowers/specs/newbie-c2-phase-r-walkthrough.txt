@@ -1,0 +1,1514 @@
+==============================================================================
+Pothole Coulee — Spoke A (Martial) — Phase R Walkthrough
+==============================================================================
+Date   : 2026-06-13T08:21:11
+Build  : dogmud-c2r6.exe (master worktree feature+newbie-area)
+Method : AI port 55555 as smoketester; cartcheck + teleport tour of
+         rooms 5227-5243 (look + look <noun> each); explicit vertical
+         climb 5240->5241->5242->down; sanctuary boundary cross
+         5231 east -> 5232. ANSI-stripped raw server output.
+==============================================================================
+
+===== cartcheck Pothole Coulee =====
+cartcheck Pothole Coulee
+Cartesian consistency: no findings. All checked zones are clean.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5227 — The Drill Yard =====
+
+--- teleport ---
+teleport 5227
+Moved to room 5227.
+
+.: [~] The Drill Yard [Pothole Coulee]
+The wash opens out into a beaten yard of packed earth, swept flat by     ╔═════╗
+countless circling feet. A scarred practice post stands rooted at the    ║  ~─▼║
+center, its top splintered pale where fist and stick have struck it      ║  │  ║
+raw -- the steady knocking heard all the way down at the mouth. Beside   ║~─@─~║
+it a straw-and-leather dummy hangs on a weighted pivot, slumped and      ║     ║
+patient, ready to swing back at whoever sets to it. The drillmaster's    ║     ║
+mark is on everything here -- the swept ground, the worn lines, the      ╚═════╝
+quiet that waits to be filled with work. The way climbs east and bends
+north.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look ---
+look
+
+.: [~] The Drill Yard [Pothole Coulee]
+The wash opens out into a beaten yard of packed earth, swept flat by     ╔═════╗
+countless circling feet. A scarred practice post stands rooted at the    ║  ~─▼║
+center, its top splintered pale where fist and stick have struck it      ║  │  ║
+raw -- the steady knocking heard all the way down at the mouth. Beside   ║~─@─~║
+it a straw-and-leather dummy hangs on a weighted pivot, slumped and      ║     ║
+patient, ready to swing back at whoever sets to it. The drillmaster's    ║     ║
+mark is on everything here -- the swept ground, the worn lines, the      ╚═════╝
+quiet that waits to be filled with work. The way climbs east and bends
+north.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, north, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look post ---
+look post
+You look at the post:
+A stout practice post sunk deep in the packed earth, taller than a man and worn
+smooth at striking height. The top is splintered pale and soft, beaten near to
+pulp by years of patient drilling. This is the knocking the whole canyon hears.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look dummy ---
+look dummy
+You look at the dummy:
+A practice dummy of straw bound in cracked leather, strung on a weighted pivot
+so a hard blow spins it round to swing back at you. Its stuffing leaks at every
+old gash. Strike it wrong and it will answer.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look yard ---
+look yard
+You look at the yard:
+A wide circle of packed earth, swept flat and hard by years of drilling feet.
+Faint worn rings track where fighters have paced and turned. Nothing grows
+here -- the ground is given over to the work.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look ground ---
+look ground
+You look at the ground:
+The earth is beaten so hard it rings faintly underfoot, scoured of every stone
+and weed. Old sweat and old blood have soaked it dark in patches near the post.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5228 — Weapon Rack Lean-to =====
+
+--- teleport ---
+teleport 5228
+Moved to room 5228.
+
+.: [~] Weapon Rack Lean-to [Pothole Coulee]
+A lean-to of weathered canvas slung from poles leans against the canyon  ╔═════╗
+wall, throwing a band of shade across a long wooden rack. The rack holds ║~─▼─▼║
+the yard's loaner weapons -- carved wooden swords gone grey with         ║│    ║
+handling, blunted spears with their points wrapped in leather, staves    ║~─@  ║
+bound in fraying cloth so a hard rap stings but never breaks bone.       ║     ║
+Everything here is meant to be borrowed, used hard, and racked again.    ║     ║
+The yard lies back to the west.                                          ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look ---
+look
+
+.: [~] Weapon Rack Lean-to [Pothole Coulee]
+A lean-to of weathered canvas slung from poles leans against the canyon  ╔═════╗
+wall, throwing a band of shade across a long wooden rack. The rack holds ║~─▼─▼║
+the yard's loaner weapons -- carved wooden swords gone grey with         ║│    ║
+handling, blunted spears with their points wrapped in leather, staves    ║~─@  ║
+bound in fraying cloth so a hard rap stings but never breaks bone.       ║     ║
+Everything here is meant to be borrowed, used hard, and racked again.    ║     ║
+The yard lies back to the west.                                          ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look rack ---
+look rack
+You look at the rack:
+A long wooden rack worn shiny at every notch, the loaner arms slung in rows
+along it. Each weapon is plainly the yard's -- carved, blunted, or wrapped, none
+of it meant to draw blood, all of it meant to teach.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look weapons ---
+look weapons
+You look at the weapons:
+Practice arms, every one of them tamed -- wooden swords sanded grey, spears
+blunted and leather-capped, staves wound in cloth. They are scarred from honest
+use but they will not cut you. Take one and drill.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look lean-to ---
+look lean-to
+You look at the lean-to:
+A simple shelter of canvas stretched from leaning poles, its cloth bleached and
+patched, throwing a long band of shade over the rack. It keeps the worst of the
+sun off the borrowed arms.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look canvas ---
+look canvas
+You look at the canvas:
+Sun-bleached canvas, patched and re-patched, lashed to the poles with knotted
+cord. It snaps softly when the canyon wind comes through.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5229 — Sparring Circle =====
+
+--- teleport ---
+teleport 5229
+Moved to room 5229.
+
+.: [~] Sparring Circle [Pothole Coulee]
+A ring of half-buried stones marks out a sparring circle here, the       ╔═════╗
+ground inside it scuffed to fine pale dust by shuffling feet. Old chalk  ║     ║
+lines fan across the dirt -- guard marks, footwork tracks, the patient   ║     ║
+geometry of learning where to stand and when to move. The dust still     ║  @─▼║
+holds the scuffs of the last pair to drill here, heel and toe and the    ║  │  ║
+long drag of someone giving ground. The yard lies south; the wash climbs ║~─~─~║
+on toward the east.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look ---
+look
+
+.: [~] Sparring Circle [Pothole Coulee]
+A ring of half-buried stones marks out a sparring circle here, the       ╔═════╗
+ground inside it scuffed to fine pale dust by shuffling feet. Old chalk  ║     ║
+lines fan across the dirt -- guard marks, footwork tracks, the patient   ║     ║
+geometry of learning where to stand and when to move. The dust still     ║  @─▼║
+holds the scuffs of the last pair to drill here, heel and toe and the    ║  │  ║
+long drag of someone giving ground. The yard lies south; the wash climbs ║~─~─~║
+on toward the east.                                                      ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, south
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look circle ---
+look circle
+You look at the circle:
+A ring of stones set half into the earth, marking the bounds of the sparring
+ground. Step inside it and the rule is plain -- footwork, not flight. The dust
+within is beaten paler than the dirt around it.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look chalk ---
+look chalk
+You look at the chalk:
+Faint chalk lines fan across the packed dust, redrawn so many times they ghost
+over each other. Guard stances, stride marks, the angles of a turn -- the
+drillmaster's silent teaching, written in dust.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look lines ---
+look lines
+You look at the lines:
+The chalk lines trace where feet should fall -- a fan of strides and pivots, the
+careful geometry of holding ground against someone who means to take it from
+you.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look stones ---
+look stones
+You look at the stones:
+Smooth river stones, half-sunk and worn flat on top, ringing the circle. Years
+of drilling feet have polished the ones along the common paths.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5230 — Yard Overlook =====
+
+--- teleport ---
+teleport 5230
+Moved to room 5230.
+
+.: [▼] Yard Overlook [Pothole Coulee]
+A few worn steps cut into the canyon wall lift you clear of the yard     ╔═════╗
+dust to a shelf of bare rock. From here the whole wash lies open to the  ║     ║
+east, a pale gravel river climbing away between rising stone shoulders.  ║     ║
+Far up at its head, on a bluff that crowds the canyon shut, stands the   ║~─@─▼║
+ruin of an old watchtower -- the Pothole Watch, its crown broken open to ║│    ║
+the sky, leaning against the light. Whatever holds that ground now, it   ║~─~  ║
+is a long hard climb from this safe step. The circle lies west.          ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Light shifts across the far tower, and for a moment its broken crown seems to
+lean.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look ---
+look
+
+.: [▼] Yard Overlook [Pothole Coulee]
+A few worn steps cut into the canyon wall lift you clear of the yard     ╔═════╗
+dust to a shelf of bare rock. From here the whole wash lies open to the  ║     ║
+east, a pale gravel river climbing away between rising stone shoulders.  ║     ║
+Far up at its head, on a bluff that crowds the canyon shut, stands the   ║~─@─▼║
+ruin of an old watchtower -- the Pothole Watch, its crown broken open to ║│    ║
+the sky, leaning against the light. Whatever holds that ground now, it   ║~─~  ║
+is a long hard climb from this safe step. The circle lies west.          ╚═════╝
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look tower ---
+look tower
+You look at the tower:
+The Pothole Watch -- a squat ruined watchtower far up the canyon, set on a bluff
+where the walls draw in tight. Its top is broken open and one flank has sloughed
+away, but it still commands the whole wash. Something keeps that high ground.
+The climb to it looks long and mean.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look watchtower ---
+look watchtower
+You look at the watchtower:
+The same old ruin at the canyon's head, the Pothole Watch. From this distance it
+is a grey broken tooth against the sky, but a watcher up there would see every
+soul moving on the wash below.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look wash ---
+look wash
+Command dropped — AI rate limit (2/round). Wait for the next round.
+
+--- look bluff ---
+look bluff
+You look at the bluff:
+A shoulder of stone where the canyon narrows to a throat, lifting the ruined 
+tower above the wash. Nothing reaches that height without a hard scramble up the
+climbing ground.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5231 — The Last Safe Step =====
+
+--- teleport ---
+teleport 5231
+Moved to room 5231.
+
+.: [▼] The Last Safe Step [Pothole Coulee]
+The shelf narrows to a last firm ledge before the ground tips down into  ╔═════╗
+the open wash. A weathered boundary stone stands planted at the lip, its ║     ║
+old carved mark worn nearly smooth, a marker set here by whoever first   ║     ║
+claimed this coulee for safe ground. Behind you the yard breathes        ║▼─@─▼║
+easy -- swept earth, blunted arms, the quiet of practice. Ahead the      ║    │║
+gravel falls away east into country no drillmaster keeps. Out there the  ║~   ▼║
+wash is held by folk who fight back in earnest, and nothing wrapped in   ╚═════╝
+leather will answer for you. This is the edge. Past it, you are on your
+own.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look ---
+look
+
+.: [▼] The Last Safe Step [Pothole Coulee]
+The shelf narrows to a last firm ledge before the ground tips down into  ╔═════╗
+the open wash. A weathered boundary stone stands planted at the lip, its ║     ║
+old carved mark worn nearly smooth, a marker set here by whoever first   ║     ║
+claimed this coulee for safe ground. Behind you the yard breathes        ║▼─@─▼║
+easy -- swept earth, blunted arms, the quiet of practice. Ahead the      ║    │║
+gravel falls away east into country no drillmaster keeps. Out there the  ║~   ▼║
+wash is held by folk who fight back in earnest, and nothing wrapped in   ╚═════╝
+leather will answer for you. This is the edge. Past it, you are on your
+own.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+
+Exits: east, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look marker ---
+look marker
+You look at the marker:
+The boundary stone reads as a marker more than a wall -- a single upright slab
+planted at the lip of the safe ground. Whoever set it meant it as a promise --
+this far, the coulee keeps you. No further.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look stone ---
+look stone
+You look at the stone:
+A weathered upright slab, grey and lichen-spotted, its carved mark rubbed nearly
+featureless by wind and reaching hands. It marks the last safe footing before
+the open wash.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look edge ---
+look edge
+You look at the edge:
+The exact lip where swept training ground gives way to raw canyon floor. One
+side is kept; the other is not. You can feel the difference in the air, the way
+a held breath feels different from a let one.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look wash ---
+look wash
+You look at the wash:
+The gravel wash falls away east past the marker, climbing on toward the distant
+tower through ground no one here will promise to keep you safe in. Out there
+things fight back, and they do not pull the blow.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5232 — Lower Wash =====
+
+--- teleport ---
+teleport 5232
+Moved to room 5232.
+
+.: [▼] Lower Wash [Pothole Coulee]
+The ground tips down and the safe shelf is behind you now. Underfoot the ╔═════╗
+wash is a dry river of grey gravel, ground smooth by floods that come    ║     ║
+only in the wet, and the canyon walls lean up on either hand to close    ║     ║
+out half the sky. Off to one side a fire-pit sits cold, a ring of        ║▼─@─▼║
+blackened stones banked with old ash and a gnawed bone or two. Picked-   ║  │  ║
+over gear lies scattered past it -- a split pack, a strap, a boot with   ║  ▼─▼║
+no mate -- the leavings of folk who took what was worth taking and left  ╚═════╝
+the rest. Nothing moves, and that is the wrong kind of quiet. Somewhere
+up the wash, someone has marked you stepping onto their ground. The
+gravel runs east and forks south; safe footing lies back west.
+
+Exits: east, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look ---
+look
+
+.: [▼] Lower Wash [Pothole Coulee]
+The ground tips down and the safe shelf is behind you now. Underfoot the ╔═════╗
+wash is a dry river of grey gravel, ground smooth by floods that come    ║     ║
+only in the wet, and the canyon walls lean up on either hand to close    ║     ║
+out half the sky. Off to one side a fire-pit sits cold, a ring of        ║▼─@─▼║
+blackened stones banked with old ash and a gnawed bone or two. Picked-   ║  │  ║
+over gear lies scattered past it -- a split pack, a strap, a boot with   ║  ▼─▼║
+no mate -- the leavings of folk who took what was worth taking and left  ╚═════╝
+the rest. Nothing moves, and that is the wrong kind of quiet. Somewhere
+up the wash, someone has marked you stepping onto their ground. The
+gravel runs east and forks south; safe footing lies back west.
+
+Exits: east, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look wash ---
+look wash
+You look at the wash:
+A wide floor of dry grey gravel running the length of the canyon, swept smooth
+by floodwater that comes only in the wet season. It is the road up to the
+tower, and it is held by people who do not welcome company.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look gravel ---
+look gravel
+You look at the gravel:
+Rounded stones the size of knuckles and fists, packed and shifting underfoot.
+Every step grinds and announces you -- there is no walking this ground in
+silence, and whoever holds the wash knows it.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look fire-pit ---
+look fire-pit
+You look at the fire-pit:
+A ring of fire-blackened stones banked with cold ash. Someone cooked and slept
+here not long ago. The ash is dead now, but the camp was not abandoned in a
+hurry -- they left because they meant to come back.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look gear ---
+look gear
+You look at the gear:
+The picked-over leavings of earlier passers -- a split pack, a frayed strap, a
+single worn boot. Whatever had worth is long gone. What remains is a quiet
+warning about how this wash treats strangers.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5233 — Gravel Bend =====
+
+--- teleport ---
+teleport 5233
+Moved to room 5233.
+
+.: [▼] Gravel Bend [Pothole Coulee]
+Here the wash kinks hard, the gravel channel doubling back on itself     ╔═════╗
+around a jut of broken stone so that you cannot see what waits on the    ║     ║
+far side until you are already in it. It is a blind bend, the kind any   ║     ║
+fighter learns to mistrust -- a place built for an ambush by no hand at  ║▼─@─▼║
+all, just water and time. Loose scree spills down the inner wall in a    ║│  ╱ ║
+fan of rattling stone, ready to give underfoot and pitch a careless step ║▼─▼  ║
+onto its face. The walls press close and high, throwing the bend into    ╚═════╝
+shadow even at midday. The gravel runs back west the way you came and
+bends on east toward open ground.
+
+Exits: east, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look ---
+look
+
+.: [▼] Gravel Bend [Pothole Coulee]
+Here the wash kinks hard, the gravel channel doubling back on itself     ╔═════╗
+around a jut of broken stone so that you cannot see what waits on the    ║     ║
+far side until you are already in it. It is a blind bend, the kind any   ║     ║
+fighter learns to mistrust -- a place built for an ambush by no hand at  ║▼─@─▼║
+all, just water and time. Loose scree spills down the inner wall in a    ║│  ╱ ║
+fan of rattling stone, ready to give underfoot and pitch a careless step ║▼─▼  ║
+onto its face. The walls press close and high, throwing the bend into    ╚═════╝
+shadow even at midday. The gravel runs back west the way you came and
+bends on east toward open ground.
+
+Exits: east, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look bend ---
+look bend
+You look at the bend:
+The sharp doubling-back of the wash around a shoulder of rock. You cannot see
+past it until you have stepped into it, and whoever knows this ground would wait
+for a stranger to do exactly that.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look scree ---
+look scree
+You look at the scree:
+A fan of loose broken stone spilled down the inner wall, fine gravel over fist-
+sized rubble. It shifts and rattles under any weight -- treacherous footing for
+a fight, and loud enough to give you away.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look walls ---
+look walls
+You look at the walls:
+The canyon sides draw in close at the bend, leaning high and grey overhead,
+hoarding the shadow. They funnel every sound and pen anyone caught here between
+rock and rock.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look jut ---
+look jut
+You look at the jut:
+The shoulder of broken stone the wash wraps around, blunt and weathered,
+blocking the sightline. It is the whole reason the bend is blind, and the
+obvious place for an unkind welcome to wait.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5234 — Squatter's Hollow =====
+
+--- teleport ---
+teleport 5234
+Moved to room 5234.
+
+.: [▼] Squatter's Hollow [Pothole Coulee]
+A scoured pocket opens off the south side of the wash, a sheltered       ╔═════╗
+hollow where the canyon wall has caved back to leave a half-roofed       ║▼─▼─▼║
+recess out of the wind and the sightlines. Someone has made a fort of    ║  │  ║
+it. A barricade of wreckage walls the mouth -- a smashed cart laid on    ║  @─▼║
+its side, axles up, the gaps stuffed with stone and splintered           ║     ║
+planking, scarred deep where blades have tested it and not gotten        ║     ║
+through. Behind the wreckage the dark of the recess holds a              ╚═════╝
+watchfulness; a battered shield is propped where a hand could reach it
+fast, and the ground is scuffed by someone who has held this spot a long
+time and does not mean to be moved. The wash lies back north; broken
+ground runs east.
+
+Exits: east, north
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look ---
+look
+
+.: [▼] Squatter's Hollow [Pothole Coulee]
+A scoured pocket opens off the south side of the wash, a sheltered       ╔═════╗
+hollow where the canyon wall has caved back to leave a half-roofed       ║▼─▼─▼║
+recess out of the wind and the sightlines. Someone has made a fort of    ║  │  ║
+it. A barricade of wreckage walls the mouth -- a smashed cart laid on    ║  @─▼║
+its side, axles up, the gaps stuffed with stone and splintered           ║     ║
+planking, scarred deep where blades have tested it and not gotten        ║     ║
+through. Behind the wreckage the dark of the recess holds a              ╚═════╝
+watchfulness; a battered shield is propped where a hand could reach it
+fast, and the ground is scuffed by someone who has held this spot a long
+time and does not mean to be moved. The wash lies back north; broken
+ground runs east.
+
+Exits: east, north
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look hollow ---
+look hollow
+You look at the hollow:
+A half-roofed pocket scoured back into the south wall, out of the wind and out
+of the wash's sightlines. It is the kind of place a cornered fighter picks to
+make a stand -- one way in, walls at the back, and time to see anyone coming.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look wreckage ---
+look wreckage
+You look at the wreckage:
+A smashed cart heaved onto its side to wall the hollow's mouth, axles jutting,
+the gaps packed with rubble and broken planking. The wood is hacked and scarred
+where someone tried to break in and learned better. It was a caravan once,
+before this canyon ate it.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look barricade ---
+look barricade
+You look at the barricade:
+The line of the wreckage read as a defense rather than a ruin -- low enough to
+fight over, high enough to break a charge, every gap plugged by a careful hand.
+Someone built this to keep the wash out.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look shield ---
+look shield
+You look at the shield:
+A battered round shield propped within easy reach in the recess, its boss
+dented, its rim notched, the paint long scoured away. Whoever holds the hollow
+keeps it close. They are still in this fight.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look recess ---
+look recess
+You look at the recess:
+The deep shadowed back of the hollow where the wall overhangs. The dark of it
+holds a stillness that is plainly not emptiness -- the quiet of someone forted
+up, watching the mouth, waiting you out.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Something shifts in the recess behind the wreckage, settles, and goes still
+again.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5235 — Cracked Cistern =====
+
+--- teleport ---
+teleport 5235
+Moved to room 5235.
+
+.: [▼] Cracked Cistern [Pothole Coulee]
+An old flood-cistern squats half-buried in the canyon floor, a great     ╔═════╗
+drum of mortared stone built by some forgotten hand to hoard the wet     ║▼─▼─▼║
+season's water. The years have split it. A long crack runs the curve of  ║│  ╱ ║
+its wall, and through the breach a shallow pool of brackish water sits   ║▼─@  ║
+dark and unmoving, skinned with scum, ringed by a crust of pale salt.    ║     ║
+The bandits favor this corner -- and it is easy to see why. The cistern  ║     ║
+drum walls one flank, the canyon wall the other, and a body forted in    ╚═════╝
+the angle between them can only be come at from straight ahead. It is a
+hard place to attack and an easy one to hold, a lesson written in
+stone. The hollow lies back west; the wash climbs away to the northeast.
+
+Exits: northeast, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look ---
+look
+
+.: [▼] Cracked Cistern [Pothole Coulee]
+An old flood-cistern squats half-buried in the canyon floor, a great     ╔═════╗
+drum of mortared stone built by some forgotten hand to hoard the wet     ║▼─▼─▼║
+season's water. The years have split it. A long crack runs the curve of  ║│  ╱ ║
+its wall, and through the breach a shallow pool of brackish water sits   ║▼─@  ║
+dark and unmoving, skinned with scum, ringed by a crust of pale salt.    ║     ║
+The bandits favor this corner -- and it is easy to see why. The cistern  ║     ║
+drum walls one flank, the canyon wall the other, and a body forted in    ╚═════╝
+the angle between them can only be come at from straight ahead. It is a
+hard place to attack and an easy one to hold, a lesson written in
+stone. The hollow lies back west; the wash climbs away to the northeast.
+
+Exits: northeast, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look cistern ---
+look cistern
+You look at the cistern:
+A squat drum of old mortared stone sunk into the canyon floor, a catch-basin
+built to hold floodwater through the dry. Its bulk makes a wall as good as the
+canyon's own -- which is why the folk who hold this wash like to fight with
+their backs to it.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look water ---
+look water
+You look at the water:
+A shallow pool of brackish water standing dark in the cistern's breach, skinned
+with green scum and ringed by a crust of salt. It is foul to look at and worse
+to drink, but it has not gone dry, and in this country that is reason enough to
+fight over.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look crack ---
+look crack
+You look at the crack:
+A long split running the curve of the cistern wall, wide enough at its mouth to
+step through. The break that ruined the basin also opened the sheltered angle
+the squatters fort up in -- a flaw turned to use.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look angle ---
+look angle
+You look at the angle:
+The defensible corner where the cistern's curve meets the canyon wall. A fighter
+wedged in here shows only their front and cannot be flanked -- the whole point
+of the spot, plain as a drillmaster's lesson.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look salt ---
+look salt
+You look at the salt:
+The pale crust ringing the brackish pool, left where old water crept up the
+stone and dried. It crunches underfoot and tells how long this water has sat --
+long enough that holding it became a habit.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5236 — Upper Wash =====
+
+--- teleport ---
+teleport 5236
+Moved to room 5236.
+
+.: [▼] Upper Wash [Pothole Coulee]
+The canyon shoulders draw apart and the wash opens wide, a broad pan of  ╔═════╗
+gravel where the high walls fall back and the sky comes down. This is    ║     ║
+trodden ground -- the most-used squatter haunt on the whole climb.       ║     ║
+Trails are beaten into the gravel from every side, worn pale by feet     ║▼─@─▼║
+going to water, to the hollow, to the tower above, the threads of them   ║ ╱   ║
+crossing and recrossing in the open. Camp-signs litter the ground --     ║▼    ║
+more cold fire-rings, picked bones, a lean-to of brush gone grey, a      ╚═════╝
+notched post where someone has been keeping a tally of something. It is
+the busiest, and so the most watched, stretch of the wash. Lower ground
+lies west; the cistern sits below to the southwest; the climb to the
+tower goes on east.
+
+Exits: east, southwest, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look ---
+look
+
+.: [▼] Upper Wash [Pothole Coulee]
+The canyon shoulders draw apart and the wash opens wide, a broad pan of  ╔═════╗
+gravel where the high walls fall back and the sky comes down. This is    ║     ║
+trodden ground -- the most-used squatter haunt on the whole climb.       ║     ║
+Trails are beaten into the gravel from every side, worn pale by feet     ║▼─@─▼║
+going to water, to the hollow, to the tower above, the threads of them   ║ ╱   ║
+crossing and recrossing in the open. Camp-signs litter the ground --     ║▼    ║
+more cold fire-rings, picked bones, a lean-to of brush gone grey, a      ╚═════╝
+notched post where someone has been keeping a tally of something. It is
+the busiest, and so the most watched, stretch of the wash. Lower ground
+lies west; the cistern sits below to the southwest; the climb to the
+tower goes on east.
+
+Exits: east, southwest, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look wash ---
+look wash
+You look at the wash:
+The broad open pan of gravel where the canyon widens, the hub of all the foot-
+traffic on the climb. Everything the squatters do crosses this ground, which
+makes it the worst place to be caught alone.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look trails ---
+look trails
+You look at the trails:
+Footworn threads beaten pale into the gravel, running off toward water and
+hollow and tower and back. They cross and tangle in the open -- a map of comings
+and goings, all of them belonging to people who would rather you were not
+reading it.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look camp-signs ---
+look camp-signs
+You look at the camp-signs:
+The scattered marks of long use -- cold fire-rings, gnawed bones, a grey brush 
+lean-to, a notched tally-post. None of it is fresh, and all of it says the same
+thing -- this ground is lived on and held.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look post ---
+look post
+You look at the post:
+A weathered stake driven into the gravel, its side scored with a row of cut
+notches. Someone has been counting something here -- days, or kills, or comers
+who never left. The tally is not short.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look lean-to ---
+look lean-to
+You look at the lean-to:
+A low shelter of brush and stripped branches gone grey and brittle with
+weather, leaned against a fallen slab. It has sheltered rough sleepers through
+more than one season and will again.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5237 — Tower Approach =====
+
+--- teleport ---
+teleport 5237
+Moved to room 5237.
+
+.: [▼] Tower Approach [Pothole Coulee]
+The wash narrows again and tilts up, the gravel giving way to a steeper  ╔═════╗
+pitch of bare rock and rubble that climbs toward the head of the         ║    •║
+canyon. The walls crowd in to a throat, and beyond them, close now and   ║    │║
+looming, the bluff lifts the ruined watchtower into the light. This is   ║▼─@─▼║
+the Pothole Watch, the broken tooth seen from the safe overlook far      ║     ║
+below -- near enough at last to read the slumped flank, the crown burst  ║     ║
+open to the sky, the empty sockets where windows watched the wash.       ╚═════╝
+Whatever holds the high ground holds it from up there, and it has surely
+already marked you climbing. The pitch eases back west toward the open
+wash; the rubble climbs east toward the foot of the tower.
+
+Exits: east, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look ---
+look
+
+.: [▼] Tower Approach [Pothole Coulee]
+The wash narrows again and tilts up, the gravel giving way to a steeper  ╔═════╗
+pitch of bare rock and rubble that climbs toward the head of the         ║    •║
+canyon. The walls crowd in to a throat, and beyond them, close now and   ║    │║
+looming, the bluff lifts the ruined watchtower into the light. This is   ║▼─@─▼║
+the Pothole Watch, the broken tooth seen from the safe overlook far      ║     ║
+below -- near enough at last to read the slumped flank, the crown burst  ║     ║
+open to the sky, the empty sockets where windows watched the wash.       ╚═════╝
+Whatever holds the high ground holds it from up there, and it has surely
+already marked you climbing. The pitch eases back west toward the open
+wash; the rubble climbs east toward the foot of the tower.
+
+Exits: east, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look tower ---
+look tower
+You look at the tower:
+The Pothole Watch up close at last -- a squat ruined watchtower on the bluff
+ahead, its crown split open and one flank sloughed away, still standing over the
+canyon it was raised to guard. Whatever holds this wash holds it from that
+height. The last climb runs straight up to its foot.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look watchtower ---
+look watchtower
+You look at the watchtower:
+The same ruin, the Pothole Watch, named back at the overlook below. From here
+you can count its broken courses and the dark empty windows that face down the
+whole length of the wash you just climbed.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look bluff ---
+look bluff
+You look at the bluff:
+The shoulder of stone the tower stands on, where the canyon draws to a throat
+and the ground heaves up. Nothing reaches the tower except over this last steep
+pitch -- and anything above can watch you take it.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look climb ---
+look climb
+You look at the climb:
+The steepening pitch of bare rock and loose rubble that lifts the wash toward
+the tower's foot. It is hands-and-feet ground in places, slow and exposed, with
+the high windows watching every step of it.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look rubble ---
+look rubble
+You look at the rubble:
+Broken stone shed from the bluff and the ruin above, drifted across the climb in
+loose treacherous slides. It turns underfoot and grinds, and it makes the last
+approach as loud as it is steep.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5238 — Broken Gate =====
+
+--- teleport ---
+teleport 5238
+Moved to room 5238.
+
+.: [▼] Broken Gate [Pothole Coulee]
+The climb ends at the foot of the Pothole Watch, where a collapsed       ╔═════╗
+gatehouse once barred the way. The arch has slumped, half its courses    ║  •  ║
+shed into a tongue of rubble that spills down the bluff, and the gate    ║  │  ║
+itself -- a slab of grey weathered timber bound in rust -- hangs forced  ║▼─@─•║
+open on one twisted hinge. This is the threshold of whatever holds the   ║     ║
+tower, and it is plainly the held line -- the rubble is shifted into low ║     ║
+walls a body can crouch behind, the dust beaten flat by boots that come  ╚═════╝
+and go. The bluff falls away sheer behind you to the wash far below.
+Whoever keeps this ground keeps it here first, at the broken gate. The
+pitch drops back west; the gatehouse stands open east; a black doorway
+in the ruin leads north into the tower's base.
+
+Exits: east, north, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look ---
+look
+
+.: [▼] Broken Gate [Pothole Coulee]
+The climb ends at the foot of the Pothole Watch, where a collapsed       ╔═════╗
+gatehouse once barred the way. The arch has slumped, half its courses    ║  •  ║
+shed into a tongue of rubble that spills down the bluff, and the gate    ║  │  ║
+itself -- a slab of grey weathered timber bound in rust -- hangs forced  ║▼─@─•║
+open on one twisted hinge. This is the threshold of whatever holds the   ║     ║
+tower, and it is plainly the held line -- the rubble is shifted into low ║     ║
+walls a body can crouch behind, the dust beaten flat by boots that come  ╚═════╝
+and go. The bluff falls away sheer behind you to the wash far below.
+Whoever keeps this ground keeps it here first, at the broken gate. The
+pitch drops back west; the gatehouse stands open east; a black doorway
+in the ruin leads north into the tower's base.
+
+Exits: east, north, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look gate ---
+look gate
+You look at the gate:
+A slab of grey weathered timber, bound and studded with rusted iron, forced open
+long ago and left hanging askew on one wrenched hinge. It will never close
+again. It does not need to -- what holds this tower stands its line in the open
+mouth of the arch, not behind a door.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look rubble ---
+look rubble
+You look at the rubble:
+Shed courses of the slumped arch, drifted down the bluff in a long tongue of
+broken stone. Someone has dragged the larger blocks into low crouching walls
+that flank the gap -- cover for a fight, set facing out at anyone climbing the
+last pitch. The flat-beaten dust between them is the worst ground to be caught
+on.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:[Tip] Having trouble finding quests? Try ask [npc-name] quest at any quest giver.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look gatehouse ---
+look gatehouse
+You look at the gatehouse:
+The collapsed stub of the gate-tower, half its height sloughed away, the rest
+standing open and roofless to the sky. It was raised to bar this throat and it
+failed, and now it shelters the ones who broke it. Beyond its ragged mouth the
+tower's base waits east and north.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look bluff ---
+look bluff
+You look at the bluff:
+The sheer shoulder of stone the tower stands on, dropping away behind you in one
+long fall to the pale wash below. There is no line of retreat here but the climb
+you came up -- a thing the gate's keepers know as well as you do.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5239 — Collapsed Barracks =====
+
+--- teleport ---
+teleport 5239
+Moved to room 5239.
+
+.: [•] Collapsed Barracks [Pothole Coulee]
+A barracks room opens off the gate, low and close and half-roofed, where ╔═════╗
+the crew that holds the tower beds down. It is a lived-in ruin -- the    ║•    ║
+smell of it hits first, woodsmoke and grease and unwashed sleep gone     ║│    ║
+stale in stone that never airs. Bedrolls lie scattered across the floor  ║▼─@  ║
+in their own scuffed nests, a few flung straight as if their owners rose ║     ║
+in a hurry, the rest crumpled where they were left. Against the back     ║     ║
+wall a battered strongbox squats, iron-cornered and scarred with pry-    ╚═════╝
+marks, the crew's shared hoard of whatever they have taken off the
+wash. This is the soft middle of the held line -- the gate keeps the
+door, and what sleeps here trusts it to. The only way back out is west,
+through the gate.
+
+Exits: west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look ---
+look
+
+.: [•] Collapsed Barracks [Pothole Coulee]
+A barracks room opens off the gate, low and close and half-roofed, where ╔═════╗
+the crew that holds the tower beds down. It is a lived-in ruin -- the    ║•    ║
+smell of it hits first, woodsmoke and grease and unwashed sleep gone     ║│    ║
+stale in stone that never airs. Bedrolls lie scattered across the floor  ║▼─@  ║
+in their own scuffed nests, a few flung straight as if their owners rose ║     ║
+in a hurry, the rest crumpled where they were left. Against the back     ║     ║
+wall a battered strongbox squats, iron-cornered and scarred with pry-    ╚═════╝
+marks, the crew's shared hoard of whatever they have taken off the
+wash. This is the soft middle of the held line -- the gate keeps the
+door, and what sleeps here trusts it to. The only way back out is west,
+through the gate.
+
+Exits: west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look barracks ---
+look barracks
+You look at the barracks:
+The crew's bunkroom, a half-roofed side chamber off the gate, close and rank
+with long use. Whoever bars the threshold outside sleeps here behind them --
+which means a fight that gets past the gate finds soft targets, and the crew
+knows it, and posts the gate the heavier for knowing.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:A draught off the gate stirs the bedrolls and carries the stale reek of the
+place a little thicker.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look bedrolls ---
+look bedrolls
+You look at the bedrolls:
+Scuffed nests of blanket and hide thrown down across the stone, some kicked
+straight, most left crumpled. They mark out who beds where, and how many -- more
+rolls than a small crew, fewer than an army. Enough to hold a gate and no more.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look strongbox ---
+look strongbox
+You look at the strongbox:
+A battered iron-cornered chest against the back wall, its lid scored with old
+pry-marks -- taken from someone, by the look of it, and put to new use. It is
+the crew's common hoard, the gathered pickings of every traveller who came up
+this wash and did not go back down.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look smell ---
+look smell
+You look at the smell:
+The stink of the held tower -- woodsmoke, rancid grease, and stale sleep, soaked
+years deep into stone that gets no wind. It is the smell of a place men live in
+but do not keep, and it tells you this crew has held the gate a long time.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5240 — Tower Base =====
+
+--- teleport ---
+teleport 5240
+Moved to room 5240.
+
+.: [•] Tower Base [Pothole Coulee]
+Through the doorway the tower's base opens into its hollow heart -- a    ╔═════╗
+round shaft of grey stone climbing up into gloom, wide and empty at the  ║     ║
+floor. A broken stair spirals the inner wall, cut from the same stone    ║     ║
+and half-eaten by the years -- whole flights of it stand, then a span    ║  @  ║
+has fallen clean away, then it picks up again higher, winding toward a   ║  │  ║
+pale smudge of daylight far up the throat of the shaft. Loose stone      ║▼─▼─•║
+shifts underfoot across the whole floor, shed from the stair and the     ╚═════╝
+courses above, treacherous and grinding -- there is no quiet way to
+cross it and no sure footing on the climb. The gate lies back south; the
+stair winds up into the dark.
+
+Exits: south, up
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look ---
+look
+
+.: [•] Tower Base [Pothole Coulee]
+Through the doorway the tower's base opens into its hollow heart -- a    ╔═════╗
+round shaft of grey stone climbing up into gloom, wide and empty at the  ║     ║
+floor. A broken stair spirals the inner wall, cut from the same stone    ║     ║
+and half-eaten by the years -- whole flights of it stand, then a span    ║  @  ║
+has fallen clean away, then it picks up again higher, winding toward a   ║  │  ║
+pale smudge of daylight far up the throat of the shaft. Loose stone      ║▼─▼─•║
+shifts underfoot across the whole floor, shed from the stair and the     ╚═════╝
+courses above, treacherous and grinding -- there is no quiet way to
+cross it and no sure footing on the climb. The gate lies back south; the
+stair winds up into the dark.
+
+Exits: south, up
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look stair ---
+look stair
+You look at the stair:
+A spiral of stone steps cut into the inner wall, winding up the shaft toward the
+light. It is a ruin of a stair -- whole flights stand sound, then a span is
+simply gone, fallen into the dark, and the climber must trust the broken gap and
+the courses past it. Going up means going up this, with no other way.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look stone ---
+look stone
+You look at the stone:
+Loose rubble drifted across the whole floor of the shaft, shed down the years
+from the failing stair and the courses overhead. It turns and grinds underfoot,
+sure of nothing -- there is no crossing this ground quietly, and no firm place
+to set a foot on the first steps of the climb. The way up is precarious from the
+very base.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look base ---
+look base
+You look at the base:
+The hollow heart of the tower, a round shaft of grey stone open floor to broken
+crown. Empty at the foot, climbing into gloom above, it funnels every sound up
+the throat of it -- a footfall here is heard at the top, and whatever waits at
+the top knows you are coming.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look shaft ---
+look shaft
+You look at the shaft:
+The round throat of the tower rising overhead, ringed by the winding stair,
+narrowing to a far pale smudge of daylight where the broken crown lets the sky
+in. The climb runs the whole height of it, exposed the whole way to anything
+looking down.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5241 — Tower Stair =====
+
+--- teleport ---
+teleport 5241
+Moved to room 5241.
+
+.: [•] Tower Stair [Pothole Coulee]
+The stair winds you up to a landing midway, a narrow shelf of stone      ╔═════╗
+clinging to the curved wall where the climb pauses before it goes on.    ║     ║
+Arrow-slits pierce the wall here, tall thin wounds cut for archers long  ║     ║
+dead, and through them the wash shows far below in slivers -- the whole  ║  @  ║
+climb you made, laid out small and pale and a very long way down. The    ║     ║
+floor at the shaft's center has fallen clean through, leaving a black    ║     ║
+ragged drop straight down the throat of the tower to the rubble at its   ╚═════╝
+base; the stair skirts the edge of it on a span no wider than your
+boots. This is the held breath of the climb -- past it, only the top
+remains. The stair drops away below; it climbs on above toward the
+light.
+
+Exits: down, up
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look ---
+look
+
+.: [•] Tower Stair [Pothole Coulee]
+The stair winds you up to a landing midway, a narrow shelf of stone      ╔═════╗
+clinging to the curved wall where the climb pauses before it goes on.    ║     ║
+Arrow-slits pierce the wall here, tall thin wounds cut for archers long  ║     ║
+dead, and through them the wash shows far below in slivers -- the whole  ║  @  ║
+climb you made, laid out small and pale and a very long way down. The    ║     ║
+floor at the shaft's center has fallen clean through, leaving a black    ║     ║
+ragged drop straight down the throat of the tower to the rubble at its   ╚═════╝
+base; the stair skirts the edge of it on a span no wider than your
+boots. This is the held breath of the climb -- past it, only the top
+remains. The stair drops away below; it climbs on above toward the
+light.
+
+Exits: down, up
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look stair ---
+look stair
+You look at the stair:
+The winding stone stair at its midpoint, narrowed here to a span that skirts the
+open drop on a ledge barely a boot wide. Below it falls back to the base; above
+it climbs the last turns to the crown. There is no rail and no margin -- the
+climb is all balance from here up.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look slits ---
+look slits
+You look at the slits:
+Tall thin slots cut through the curved wall, made for archers to loose down on
+the wash without showing themselves. The dead left them empty; through them the
+canyon shows in pale slivers, the whole long climb small and far below. Anything
+posted here commands the approach blind.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look arrow-slits ---
+look arrow-slits
+You look at the arrow-slits:
+The same narrow loopholes pierced in the wall for bowmen long gone. They frame
+the wash in vertical slices of light and let the wind through with a low steady
+whistle. A bow set in one of these covers the climb and shows the archer to no
+one.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look drop ---
+look drop
+You look at the drop:
+The black ragged hole where the shaft's center floor has fallen away, plunging
+straight down the throat of the tower to the broken stone far below. The stair
+skirts its very lip. A misstep here ends the climb the short way, and the dark
+gives back no bottom.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5242 — The Watch Room =====
+
+--- teleport ---
+teleport 5242
+Moved to room 5242.
+
+.: [•] The Watch Room [Pothole Coulee]
+The last turns of the stair bring you up into the tower's crown -- the   ╔═════╗
+watch room, the highest held ground in the whole canyon. One wall has    ║     ║
+burst clean open, a great ragged breach where stone gave way, and        ║     ║
+through it the view lies bare from end to end -- the gate below, the     ║  @─▼║
+wide pan of the climb, the throat of the lower canyon, every step a      ║     ║
+comer must take to reach this height, all of it laid plain to a single   ║     ║
+watching eye. A heavy war-table stands square in the room, its top       ╚═════╝
+scarred and scrawled over with a rough map of the wash, stones and
+scratched marks set across it like a reckoning of who holds what. A seat
+faces the breach -- the best seat, the high seat, plainly the seat of
+whoever holds this ground. The air is still and waiting up here, the way
+a room is when its keeper has only just stood. There is no higher hold.
+The stair drops away below; a doorway opens east onto the broken top.
+
+Exits: down, east
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look ---
+look
+
+.: [•] The Watch Room [Pothole Coulee]
+The last turns of the stair bring you up into the tower's crown -- the   ╔═════╗
+watch room, the highest held ground in the whole canyon. One wall has    ║     ║
+burst clean open, a great ragged breach where stone gave way, and        ║     ║
+through it the view lies bare from end to end -- the gate below, the     ║  @─▼║
+wide pan of the climb, the throat of the lower canyon, every step a      ║     ║
+comer must take to reach this height, all of it laid plain to a single   ║     ║
+watching eye. A heavy war-table stands square in the room, its top       ╚═════╝
+scarred and scrawled over with a rough map of the wash, stones and
+scratched marks set across it like a reckoning of who holds what. A seat
+faces the breach -- the best seat, the high seat, plainly the seat of
+whoever holds this ground. The air is still and waiting up here, the way
+a room is when its keeper has only just stood. There is no higher hold.
+The stair drops away below; a doorway opens east onto the broken top.
+
+Exits: down, east
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look table ---
+look table
+You look at the table:
+A heavy timber table set square in the room, its scarred top scrawled over with
+a crude map of the wash -- the canyon scratched out in lines, with stones and
+chalked marks shifted across it like pieces in a long game. Someone has been
+planning from up here, reading the whole climb below and setting their crew
+against it. The marks are recent.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look war-table ---
+look war-table
+You look at the war-table:
+The same scarred table, used for war -- the wash mapped on its top, the comings
+and goings of the canyon worked out in stones and scratches. Whoever sits to it
+commands the gate and the climb and the crew between, and means to go on doing
+so. A chair waits drawn up to it, lately filled.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look view ---
+look view
+You look at the view:
+The whole canyon, taken in at a glance through the burst wall -- the wash
+unrolled from the lower throat to the gate at the tower's foot, pale and bare
+and every step of it visible. Nothing climbs this canyon unseen from here. It is
+the reason the tower was raised, and the reason it is still worth holding.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look wall ---
+look wall
+You look at the wall:
+The great ragged breach where one wall of the crown has fallen away, stone torn
+open to the sky and the canyon beyond. It ruined the tower as a fort and made it
+perfect as a watch -- there is no better window on the wash than this wound, and
+the high seat is set to face straight out through it.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look breach ---
+look breach
+You look at the breach:
+The same burst-open wall, a jagged mouth of broken courses framing the whole
+canyon below. Wind pours through it steadily. Whatever holds the high seat holds
+it looking out this gap, with the entire climb spread bare beneath -- forewarned
+of every soul that starts up.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look seat ---
+look seat
+You look at the seat:
+A heavy chair drawn up facing the breach, set where the watcher can take in the
+whole wash at once -- the high seat, the keeper's seat, the won place of whoever
+holds this ground by force. It is empty for the moment, and the air around it
+has not yet gone cold.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== 5243 — Tower Top =====
+
+--- teleport ---
+teleport 5243
+Moved to room 5243.
+
+.: [▼] Tower Top (overcast) [Pothole Coulee]
+A doorway off the watch room lets you out onto the broken crown of the   ╔═════╗
+tower, open to the whole wide sky. The top is shattered -- courses       ║     ║
+fallen away to a low jagged rim a body could sit on, the floor sloped    ║     ║
+and cracked but sound enough to stand and breathe. And the breathing is  ║•─@  ║
+the point of it, because the vista from here stops you. The whole coulee ║     ║
+lies unrolled below, the wash threading pale all the way down to where   ║     ║
+the hub sits tiny and far off at the canyon's foot, the long climb you   ╚═════╝
+made shrunk to a thread. And out along the rim of the world the other
+canyon mouths show themselves -- dark notches cut into the stone walls,
+each a throat opening away to ground you have not walked yet, ways out
+into the wider scablands. It is quiet up here, won quiet, the high
+ground taken and the long view earned. The watch room lies back west,
+down out of the wind.
+A flat gray ceiling of cloud hangs low overhead, dulling every color.
+
+Exits: west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look ---
+look
+
+.: [▼] Tower Top (overcast) [Pothole Coulee]
+A doorway off the watch room lets you out onto the broken crown of the   ╔═════╗
+tower, open to the whole wide sky. The top is shattered -- courses       ║     ║
+fallen away to a low jagged rim a body could sit on, the floor sloped    ║     ║
+and cracked but sound enough to stand and breathe. And the breathing is  ║•─@  ║
+the point of it, because the vista from here stops you. The whole coulee ║     ║
+lies unrolled below, the wash threading pale all the way down to where   ║     ║
+the hub sits tiny and far off at the canyon's foot, the long climb you   ╚═════╝
+made shrunk to a thread. And out along the rim of the world the other
+canyon mouths show themselves -- dark notches cut into the stone walls,
+each a throat opening away to ground you have not walked yet, ways out
+into the wider scablands. It is quiet up here, won quiet, the high
+ground taken and the long view earned. The watch room lies back west,
+down out of the wind.
+A flat gray ceiling of cloud hangs low overhead, dulling every color.
+
+Exits: west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look crown ---
+look crown
+You look at the crown:
+The shattered top of the tower, courses fallen to a low broken rim, the floor
+cracked and sloping but firm enough to stand on. It is ruin made into a
+perch -- the highest place on the whole climb, with nothing above it but sky and
+nothing around it the eye cannot reach.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look top ---
+look top
+You look at the top:
+The same broken crown, open to the weather, the wind unbroken across it. Whoever
+stands here stands over the entire canyon, the long fight up finished and the
+ground held. There is a stillness to it that the rooms below, packed with held
+breath and old smoke, never have.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look vista ---
+look vista
+You look at the vista:
+The whole coulee laid out below in one long look -- the wash threading pale down
+the canyon to the hub sitting tiny and far at its foot, the climb you made
+dwindled to a thread. It is the reward of the height, the thing the watchtower
+was built to take and the thing you have just taken from it.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look rim ---
+look rim
+You look at the rim:
+The low jagged ring of fallen courses bounding the broken top, worn enough to
+sit on, looking out over the drop on every side. Past it the eye runs clean to
+the far walls of the world, where the other canyon mouths cut their dark
+notches.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- look mouths ---
+look mouths
+You look at the mouths:
+Dark notches cut into the far stone walls of the scablands, each the throat of
+another canyon opening away to ground not yet walked. From this height they show
+plain, ways out into the wider country, every one of them a road still to take
+when the time comes.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:Wind crosses the broken crown clean and cold, and far off a hawk hangs over one
+of the distant canyon mouths.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== MOVEMENT: vertical climb 5240 -> 5241 -> 5242 and back =====
+
+--- teleport 5240 ---
+teleport 5240
+Moved to room 5240.
+
+.: [•] Tower Base [Pothole Coulee]
+Through the doorway the tower's base opens into its hollow heart -- a    ╔═════╗
+round shaft of grey stone climbing up into gloom, wide and empty at the  ║     ║
+floor. A broken stair spirals the inner wall, cut from the same stone    ║     ║
+and half-eaten by the years -- whole flights of it stand, then a span    ║  @  ║
+has fallen clean away, then it picks up again higher, winding toward a   ║  │  ║
+pale smudge of daylight far up the throat of the shaft. Loose stone      ║▼─▼─•║
+shifts underfoot across the whole floor, shed from the stair and the     ╚═════╝
+courses above, treacherous and grinding -- there is no quiet way to
+cross it and no sure footing on the climb. The gate lies back south; the
+stair winds up into the dark.
+
+Exits: south, up
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- up (-> 5241) ---
+up
+    >>> You head towards the up exit.
+
+
+.: [•] Tower Stair [Pothole Coulee]
+The stair winds you up to a landing midway, a narrow shelf of stone      ╔═════╗
+clinging to the curved wall where the climb pauses before it goes on.    ║     ║
+Arrow-slits pierce the wall here, tall thin wounds cut for archers long  ║     ║
+dead, and through them the wash shows far below in slivers -- the whole  ║  @  ║
+climb you made, laid out small and pale and a very long way down. The    ║     ║
+floor at the shaft's center has fallen clean through, leaving a black    ║     ║
+ragged drop straight down the throat of the tower to the rubble at its   ╚═════╝
+base; the stair skirts the edge of it on a span no wider than your
+boots. This is the held breath of the climb -- past it, only the top
+remains. The stair drops away below; it climbs on above toward the
+light.
+
+Exits: down, up
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- up (-> 5242) ---
+up
+    >>> You head towards the up exit.
+
+
+.: [•] The Watch Room [Pothole Coulee]
+The last turns of the stair bring you up into the tower's crown -- the   ╔═════╗
+watch room, the highest held ground in the whole canyon. One wall has    ║     ║
+burst clean open, a great ragged breach where stone gave way, and        ║     ║
+through it the view lies bare from end to end -- the gate below, the     ║  @─▼║
+wide pan of the climb, the throat of the lower canyon, every step a      ║     ║
+comer must take to reach this height, all of it laid plain to a single   ║     ║
+watching eye. A heavy war-table stands square in the room, its top       ╚═════╝
+scarred and scrawled over with a rough map of the wash, stones and
+scratched marks set across it like a reckoning of who holds what. A seat
+faces the breach -- the best seat, the high seat, plainly the seat of
+whoever holds this ground. The air is still and waiting up here, the way
+a room is when its keeper has only just stood. There is no higher hold.
+The stair drops away below; a doorway opens east onto the broken top.
+
+Exits: down, east
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- down (-> 5241) ---
+down
+    >>> You head towards the down exit.
+
+
+.: [•] Tower Stair [Pothole Coulee]
+The stair winds you up to a landing midway, a narrow shelf of stone      ╔═════╗
+clinging to the curved wall where the climb pauses before it goes on.    ║     ║
+Arrow-slits pierce the wall here, tall thin wounds cut for archers long  ║     ║
+dead, and through them the wash shows far below in slivers -- the whole  ║  @  ║
+climb you made, laid out small and pale and a very long way down. The    ║     ║
+floor at the shaft's center has fallen clean through, leaving a black    ║     ║
+ragged drop straight down the throat of the tower to the rubble at its   ╚═════╝
+base; the stair skirts the edge of it on a span no wider than your
+boots. This is the held breath of the climb -- past it, only the top
+remains. The stair drops away below; it climbs on above toward the
+light.
+
+Exits: down, up
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:The light through every crack and window is gray and listless.
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- down (-> 5240) ---
+down
+    >>> You head towards the down exit.
+
+
+.: [•] Tower Base [Pothole Coulee]
+Through the doorway the tower's base opens into its hollow heart -- a    ╔═════╗
+round shaft of grey stone climbing up into gloom, wide and empty at the  ║     ║
+floor. A broken stair spirals the inner wall, cut from the same stone    ║     ║
+and half-eaten by the years -- whole flights of it stand, then a span    ║  @  ║
+has fallen clean away, then it picks up again higher, winding toward a   ║  │  ║
+pale smudge of daylight far up the throat of the shaft. Loose stone      ║▼─▼─•║
+shifts underfoot across the whole floor, shed from the stair and the     ╚═════╝
+courses above, treacherous and grinding -- there is no quiet way to
+cross it and no sure footing on the climb. The gate lies back south; the
+stair winds up into the dark.
+
+Exits: south, up
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+===== MOVEMENT: sanctuary boundary cross 5231 east -> 5232 =====
+
+--- teleport 5231 (sanctuary) ---
+teleport 5231
+Moved to room 5231.
+
+.: [▼] The Last Safe Step (overcast) [Pothole Coulee]
+The shelf narrows to a last firm ledge before the ground tips down into  ╔═════╗
+the open wash. A weathered boundary stone stands planted at the lip, its ║     ║
+old carved mark worn nearly smooth, a marker set here by whoever first   ║     ║
+claimed this coulee for safe ground. Behind you the yard breathes        ║▼─@─▼║
+easy -- swept earth, blunted arms, the quiet of practice. Ahead the      ║    │║
+gravel falls away east into country no drillmaster keeps. Out there the  ║~   ▼║
+wash is held by folk who fight back in earnest, and nothing wrapped in   ╚═════╝
+leather will answer for you. This is the edge. Past it, you are on your
+own.
+A peace older than the stones themselves settles over you here. Wounds close more easily and breath comes more deeply.
+A flat gray ceiling of cloud hangs low overhead, dulling every color.
+
+Exits: east, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:
+
+--- east (-> 5232, leaving sanctuary) ---
+east
+    >>> You head towards the east exit.
+
+
+.: [▼] Lower Wash (overcast) [Pothole Coulee]
+The ground tips down and the safe shelf is behind you now. Underfoot the ╔═════╗
+wash is a dry river of grey gravel, ground smooth by floods that come    ║     ║
+only in the wet, and the canyon walls lean up on either hand to close    ║     ║
+out half the sky. Off to one side a fire-pit sits cold, a ring of        ║▼─@─▼║
+blackened stones banked with old ash and a gnawed bone or two. Picked-   ║  │  ║
+over gear lies scattered past it -- a split pack, a strap, a boot with   ║  ▼─▼║
+no mate -- the leavings of folk who took what was worth taking and left  ╚═════╝
+the rest. Nothing moves, and that is the wrong kind of quiet. Somewhere
+up the wash, someone has marked you stepping onto their ground. The
+gravel runs east and forks south; safe footing lies back west.
+A flat gray ceiling of cloud hangs low overhead, dulling every color.
+
+Exits: east, south, west
+
+[☀️ HP:██████████ SP:██████████ CP:██████████]:

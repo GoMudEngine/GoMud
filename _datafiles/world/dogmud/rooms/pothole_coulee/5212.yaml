@@ -1,0 +1,51 @@
+roomid: 5212
+zone: Pothole Coulee
+title: School Shelf
+description: >
+  The basalt shelf runs out flat and open above the pool, a natural
+  landing of dark stone scoured bare by the weather. A few plank benches
+  sit in a rough half-ring near the lip, set out so a class can take its
+  lessons under the open sky rather than cooped in the hall. From the edge
+  the whole basin falls away below in one clear view -- the dark eye of
+  the water, the stilt-houses up on their long legs, the gravel paths
+  threading pale between them, all small and sharp as a thing seen in the
+  bottom of a bowl. The wind comes steady off the steppe and snaps at
+  loose pages and hair, carrying the cold breath of the water up from far
+  down. It is a fine place to think and a hard place to drowse.
+biome: cliffs
+coord:
+  x: 45
+  y: -2
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  south:
+    roomid: 5211
+  north:
+    roomid: 5213
+nouns:
+  benches:
+    Plain plank benches sit in a loose half-ring back from the edge,
+    weathered silver-grey and bowed in the middle from long sitting. They
+    are set to face outward over the basin, so that a teacher need only
+    turn a row of children toward the world to make a lesson of it. Wind
+    has worked the grain into soft ridges, and old jackknife letters mark
+    the seats where bored hands have whiled away a dull morning.
+  shelf:
+    The shelf is a broad tongue of basalt thrust out flat from the bowl's
+    upper wall, swept clean of soil by the wind and stained dark by old
+    water. It makes a natural platform, steady underfoot and open to the
+    sky, high enough that the noise of the town below never quite reaches
+    it. At its lip the stone simply ends, and the air opens out over the
+    long drop to the pool.
+  view:
+    From the edge the whole basin lies open below, near enough to read and
+    far enough to hold all at once. The pool sits at the center, a flat
+    dark eye; around it the stilt-houses stand on their legs, the paths
+    run pale between the workshops, and the figures of the Opened move
+    small and slow about their day. Seen from up here it all looks safe
+    and whole, a single quiet place cupped in the broken land.
+idlemessages:
+- The wind gusts across the <ansi fg="itemname">shelf</ansi> and snatches at the empty benches.
+- Far below, the basin lies spread and small, the pool a dark and unblinking eye.

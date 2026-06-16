@@ -13,9 +13,9 @@ coord:
   y: 7
   z: 0
 exits:
-  east:
-    roomid: 121
-    zone: Sanctum Basin
+  out:
+    roomid: 2001
+    zone: World Road
   down:
     roomid: 301
 spawninfo:

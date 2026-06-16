@@ -1,0 +1,312 @@
+# Caravan Guard Garve — Squatter's Hollow (5234). Wary, weary caravan
+# guard; convoy was ambushed, left arm out of commission. Grants and
+# closes quest 33 (Hold the Wash). No combat; non_combatant is true.
+# Animal-lambent eyes (Opened). Mid-ring foe context: Bandit Scout
+# (9110, rooms 5232/5233/5236), Bandit Squatter (9111, rooms 5235/5236,
+# drops a body vest). Reward armor: Toughened Leggings (item 20087).
+#
+# Variant order (first match wins):
+#   1. Not Opened (no 30-end)            → redirect to Hadwen
+#   2. Opened, not trained (no 32-end)   → redirect to Drillmaster Vorn
+#   3. Trained, pre-offer (no 33-start)  → prompt ask garve wash
+#   4. Mid-quest (33-start, no 33-end)   → remind to clear / flee / wake
+#   5. Completed (33-end)                → thanks + tower forward hook
+#
+# Tree nodes:
+#   wash_offer   — grants 33-start; triggers include quest/task (SOP)
+#   wash_turnin  — grants 33-end; triggers include quest/task (SOP)
+
+mobid: 9112
+zone: Pothole Coulee
+defaultMood: neutral
+
+greetings:
+  - text: >-
+      You are not one of theirs. Good. Sit if you need to; I am not
+      going anywhere on this arm.
+    moods: ["friendly", "neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Garve. Caravan guard, temporarily short one good arm."
+      - "Still here. The wash has not gotten worse -- that is something."
+
+  - keywords: [""]
+    responses:
+      - "I am listening. Not much else I can do from this alcove."
+      - "Say what you came to say. Time moves the same for wounded men."
+
+tree:
+  root:
+    text: >-
+      Garve. Road guard -- was road guard, until the ambush. My convoy
+      made Squatter's Hollow two nights back and the bandits were
+      waiting in the wash. Most of the caravan pushed through. I did
+      not. This arm says I hold the hollow; it does not say I clear
+      the wash alone.
+    hints: >-
+      You could ask about the wash, the ambush, or what he needs. His
+      eyes catch the light strangely -- you could ask about them.
+    variants:
+      - questExcluded: ["30-end"]
+        text: >-
+          You have the look of someone who has not been through the
+          pool yet. I will talk to anyone who sits still, but the
+          folk in this coulee will take you more seriously once you
+          are Opened. Cleric Hadwen, at the water -- you cannot miss
+          it. Come back after.
+        hints: >-
+          Ask Hadwen about the Awakening Rite at the pool before
+          pushing out into the wash.
+      - questRequired: ["30-end"]
+        questExcluded: ["32-end"]
+        text: >-
+          Opened, good. But you are still carrying yourself like
+          someone who has not put that to work yet. The wash is not
+          a forgiving place to find out for the first time. There is
+          a drillmaster in the yard -- Vorn, west side of the
+          coulee, just past the market. He turns raw into ready.
+          Come back when you have worked with him.
+        hints: >-
+          Find Drillmaster Vorn in the drill yard west of the market
+          and train with him before heading into the wash.
+      - questRequired: ["32-end"]
+        questExcluded: ["33-start", "33-end"]
+        text: >-
+          Trained and still standing. Then maybe we can do each other
+          some good. The wash east of here has at least one scout
+          watching the bend and a squatter dug into the cistern
+          further back. I cannot move on this arm. You might be able
+          to move on their heads.
+        hints: >-
+          Ask Garve about the wash if you want the full picture.
+      - questRequired: ["33-start"]
+        questExcluded: ["33-end"]
+        text: >-
+          Still in the field. Good. Scout first, squatter second --
+          the scout holds the bend and the squatter is back by the
+          cistern. If a fight turns on you, flee -- I mean it, not
+          as advice but as the correct move. Fall and you wake at
+          the Mending Hut; that is how the coulee works, not the
+          end of anything.
+        hints: >-
+          Head east into the wash. Type flee if a fight goes badly.
+          You will wake at the Mending Hut if you fall -- not dead
+          for good. Come back when both are down.
+      - questRequired: ["33-end"]
+        questExcluded: ["34-start", "34-end"]
+        text: >-
+          You held the wash. I will not forget that. Now I will ask
+          for the hard one. The bandits have a tower at the head of
+          the wash, past the cistern -- old stone, not their work --
+          and a captain holding the watch room at the top. She is the
+          reason the rest of them have spine. Break her and you break
+          the whole nest. Before you go, tell me how you fight, and I
+          will drill you toward it while you climb: toward might, or
+          toward finesse.
+        hints: >-
+          Garve is offering the tower. Choose your edge first: type
+          ask garve might to be honed toward Strength, or ask garve
+          finesse to be honed toward quickness. Ask garve tower for
+          the full picture.
+      - questRequired: ["34-start"]
+        questExcluded: ["34-end"]
+        text: >-
+          Still down here? The captain is still up there. Climb the
+          wash to the broken gate, take the tower stairs, and put her
+          down in the watch room at the top. Mind the crew on the way
+          -- there is a bruiser and a lieutenant between you and her.
+          Flee and come back if you have to. The Mending Hut still
+          has your name.
+        hints: >-
+          Head east up the wash to the broken gate, climb the tower
+          stairs, and defeat the bandit captain in the watch room.
+          Type flee if a fight turns against you.
+      - questRequired: ["34-end"]
+        text: >-
+          You took the tower. I heard it go quiet up there and I knew.
+          Whatever the captain was guarding is the coulee's problem
+          now, not just mine -- and that is a better class of problem.
+          You came in raw this morning. You are not raw anymore. The
+          road out runs east when you want it; until then, the coulee
+          is glad to have you.
+        hints: >-
+          You have cleared Spoke A. The way deeper into the world runs
+          east when you are ready.
+
+  nodes:
+    - id: wash_offer
+      triggers: ["wash", "help", "clear", "bandits", "quest", "task",
+                 "ambush", "convoy", "work"]
+      questRequired: ["32-end"]
+      questExcluded: ["33-start", "33-end"]
+      grantsQuest: "33-start"
+      text: >-
+        Here is what I am asking. There is a scout holding the
+        bend east of here -- where the wash narrows. Deeper in,
+        past the drop, a squatter has claimed the old cistern.
+        Between them they own the lower wash and I cannot push
+        them without this arm. You can. Put them both down and
+        come back to me.
+        One piece of advice that is not optional: if a fight
+        turns against you, use flee. The wash will kill a
+        careless fighter, and dead is not what either of us
+        needs right now. And if you do go down -- if the worst
+        happens -- you wake at the Mending Hut on the west side
+        of the hollow. Not in a ditch. Not gone. You walk back
+        and try again. That is how the coulee works.
+      hints: >-
+        Head east from here into the lower wash to find the
+        scout. The squatter camps deeper in by the cistern.
+        Type flee to pull out if a fight turns against you --
+        you will wake at the Mending Hut if you fall, not dead
+        for good. Look for armor the bandits drop and type wear
+        to put it on. Type sethome coulee if you have not set
+        your wake point yet.
+      moodChange: neutral
+
+    - id: wash_turnin
+      triggers: ["report", "done", "cleared", "clear", "finished",
+                 "quest", "task", "both", "down"]
+      questRequired: ["33-scout", "33-squatter"]
+      questExcluded: ["33-end"]
+      grantsQuest: "33-end"
+      text: >-
+        Both of them. You actually did it. I watched the bend
+        all morning and nothing moved on it -- I just did not
+        let myself believe yet. The hollow is holdable now.
+        Take this -- it came off the last guard the convoy lost
+        and it fits better on legs that are still moving. The
+        coin is mine; I can spare it.
+        The tower further up the wash still stands. I will have
+        a clearer read on it once I can think past this arm.
+        Come back when you want to look in that direction.
+      hints: >-
+        Quest complete. You receive leggings and a sharper
+        edge in a fight. The bandit tower further up the wash
+        may have more work waiting -- come back to Garve when
+        you are ready.
+      moodChange: friendly
+
+    - id: tower_offer
+      triggers: ["tower", "captain", "take", "assault", "watchtower",
+                 "quest", "task"]
+      questRequired: ["33-end"]
+      questExcluded: ["34-start", "34-end"]
+      text: >-
+        The tower is the last of it. Stone walls at the head of the
+        wash, a crew dug in -- a bruiser, a lieutenant -- and above
+        them a captain who has held the watch room long enough to
+        call it hers. Take her down and the rest scatter. But go in
+        honed. Tell me your edge: might, if you mean to overpower her,
+        or finesse, if you mean to outpace her. Choose, and I will
+        drill it into you on your way up.
+      hints: >-
+        Choose your boon before you climb: type ask garve might to be
+        honed toward Strength, or ask garve finesse to be honed toward
+        quickness. The choice is permanent for this climb.
+      moodChange: neutral
+
+    - id: tower_might
+      triggers: ["might", "strength", "strong", "power", "force",
+                 "quest", "task"]
+      questRequired: ["33-end"]
+      questExcluded: ["34-start", "34-end"]
+      setsQuestFlag: {key: "34-boon", value: "might"}
+      grantsQuest: "34-start"
+      text: >-
+        Might it is. Then we build the swing -- shoulder and back and
+        the will to close the distance and end it. Climb the wash to
+        the broken gate, take the stairs, and break her in the watch
+        room. Come back stronger or do not come back small.
+      hints: >-
+        You have chosen the path of might (Strength). Head east up the
+        wash to the broken gate, climb the tower stairs, and defeat
+        the bandit captain in the watch room at the top.
+      moodChange: neutral
+
+    - id: tower_finesse
+      triggers: ["finesse", "quickness", "dexterity", "fast", "speed",
+                 "agile", "quest", "task"]
+      questRequired: ["33-end"]
+      questExcluded: ["34-start", "34-end"]
+      setsQuestFlag: {key: "34-boon", value: "finesse"}
+      grantsQuest: "34-start"
+      text: >-
+        Finesse, then. Good for fighting someone bigger than you, and
+        she will be. We sharpen the feet and the timing -- be where
+        the blow is not, and put yours where she is. Climb to the
+        watch room and outpace her. Then come tell me how it went.
+      hints: >-
+        You have chosen the path of finesse (Dexterity). Head east up
+        the wash to the broken gate, climb the tower stairs, and
+        defeat the bandit captain in the watch room at the top.
+      moodChange: neutral
+
+    - id: arm_wound
+      triggers: ["arm", "wound", "wrapped", "hurt", "injury",
+                 "bandage", "cut"]
+      text: >-
+        Clean cut, deep enough to count. One of theirs got the
+        angle on me when the wagon block went wrong. It will
+        hold -- Sala at the Mending Hut wrapped it right -- but
+        sword work is out until the sinew knits. A guard without
+        a sword arm is a lookout, and I am a very good lookout
+        from this alcove.
+      hints: >-
+        You could ask about the ambush, the wash, or his eyes.
+
+    - id: ambush_lore
+      triggers: ["ambush", "convoy", "caravan", "night", "wagon",
+                 "attack", "attacked"]
+      text: >-
+        Two nights back. We were moving through after dark --
+        foolish, but the schedule was tight -- and the bandits
+        had the bend already. Four wagons. Three pushed through;
+        one did not. I was riding the tailgate of the third
+        when the block happened. I covered the gap; the wagons
+        made it. I did not make it far.
+      hints: >-
+        You could ask about the wash, the arm, or his eyes.
+
+    - id: eyes_lambent
+      triggers: ["eyes", "lambent", "glow", "light", "animal",
+                 "cat", "reflection"]
+      text: >-
+        The road. Years of it -- out past the settlements, past
+        the lamplight, where the dark is serious about itself.
+        Things shift in people who spend enough time in the real
+        dark. My eyes started catching the light differently
+        about four years in. I stopped mentioning it when I
+        stopped being surprised by it.
+      hints: >-
+        You could ask about the convoy or the wash.
+
+    - id: tower_hint
+      triggers: ["tower", "further", "beyond", "deeper", "up",
+                 "what", "next"]
+      text: >-
+        There is a structure up the wash, past the cistern.
+        Stone walls -- old work, not something the bandits
+        built. They are using it, which means they did not just
+        camp here by chance. What they are waiting for, or who
+        they answer to, I cannot tell you yet. Once this arm
+        lets me think about something other than this arm, I
+        will have a better answer.
+      hints: >-
+        Clear the wash first. Garve may have more to offer
+        about the tower when you come back.
+
+    - id: cull_offer
+      triggers: ["work", "again", "more", "job", "quest", "task"]
+      questRequired: "34-end"
+      grantsQuest: "53-start"
+      questExcluded: ["53-start", "53-firstkill", "53-end"]
+      text: >-
+        There is always more work in the wash. Thin the squatters
+        out -- scout and squatter, same as before -- and come back
+        to me when it is done. The coins are the same.
+      hints: >-
+        You could take on another run in the wash -- type ask garve
+        work.

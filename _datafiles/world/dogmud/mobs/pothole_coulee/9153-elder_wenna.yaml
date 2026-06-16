@@ -1,0 +1,58 @@
+mobid: 9153
+zone: Pothole Coulee
+behavior_archetype: noncombat_questgiver
+statpool: 44
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 11
+idlecommands:
+  - 'emote turns a clay cup slowly in both hands, watching the yard the
+    way a shepherd watches a hillside'
+  - ''
+  - 'emote calls a greeting to someone passing the gate, naming them
+    without looking up'
+  - ''
+  - 'emote draws a slow line in the dust with the toe of one boot, some
+    old reckoning only she still keeps'
+  - ''
+  - 'emote settles onto the bench by the door and lets the afternoon sit
+    on her shoulders'
+  - ''
+character:
+  name: Elder Wenna
+  description: |
+    Wenna is the kind of old that has stopped counting and started
+    keeping. She runs the outlying farmstead the way she has run it for
+    forty years -- by knowing every soul under its roof and most of those
+    beyond it, by remembering what was promised and what was owed, by
+    being the still point the whole household turns around. She is small
+    and unhurried and entirely unbothered by anything a stranger might
+    think of her.
+    Her eyes have gone the pale gold of dried grass, and they catch the
+    low light the way an animal's do at dusk -- a flat bright shine that
+    is gone when she turns her head. The Awakening did that, late in her
+    life, and she treats it as she treats the weather: a thing that
+    happened, neither boasted of nor hidden.
+    She will talk to anyone who sits and listens, and she knows the old
+    ways of the coulee better than the carved stones do.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    charisma:
+      training: 14
+    perception:
+      training: 12
+    willpower:
+      training: 8
+    vitality:
+      training: 6
+    strength:
+      training: 2
+    dexterity:
+      training: 2

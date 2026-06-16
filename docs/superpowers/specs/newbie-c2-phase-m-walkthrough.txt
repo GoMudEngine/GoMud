@@ -1,0 +1,121 @@
+================================================================================
+NEWBIE REWORK — CHUNK 2 (SPOKE A / MARTIAL) — PHASE M ARTIFACT
+Mobs + reward items + spawn wiring.  Built 2026-06-13.
+================================================================================
+
+NOTE ON FORMAT
+--------------
+Earlier phases produced a live-walked transcript. This Phase M artifact is a
+STATIC build + verification record instead: the user's Windows setup pops
+focus-stealing console windows for every server/client process spawn (a hard
+stop — see memory feedback-no-console-popups-windows), so the live combat
+spot-check was NOT run here. Live combat feel is deferred to the Phase D
+naive playtest, which must run live anyway and is the only place captain
+beatability can be tested with the Q32/Q33 gear in hand. Everything that can
+be verified WITHOUT a running server was verified (boot was confirmed clean
+once, before the no-popup constraint was set).
+
+--------------------------------------------------------------------------------
+1. MOBS CREATED (8) — _datafiles/world/dogmud/mobs/pothole_coulee/
+--------------------------------------------------------------------------------
+id    name                  archetype(behavior)   archetype(stats) statpool host room(s)
+9108  Drillmaster Vorn      noncombat_questgiver   -                 44      5227
+9109  Training Dummy        combat_passive         -                  3      5227, 5228
+9110  Bandit Scout          generic_fighter        fighting          18      5232,5233,5236,5238
+9111  Bandit Squatter       generic_fighter        fighting          40      5235, 5236
+9112  Caravan Guard Garve   noncombat_questgiver   -                 44      5234
+9113  Bandit Bruiser        generic_fighter        fighting          90      5238, 5239
+9114  Bandit Lieutenant     leader                 fighting         130      5239
+9115  Bandit Captain        tank_taunter           fighting         200      5242
+
+Tuning intent (statpool = bonus stat points distributed; players sit ~100/stat):
+  - Dummy (3): combat_passive, NOT non_combatant so it is attackable, but
+    effectively harmless — the risk-free first-blood target.
+  - Scout (18): first live foe; a fresh newbie wins cleanly, can KO a careless
+    one. Carries crude short blade 10021.
+  - Squatter (40): can KO an inattentive newbie; THE armor-drop foe — equips
+    body 20068 (Bandit's Leather Vest) which ALWAYS drops (carried equipment
+    bypasses itemdropchance), powering the loot-and-equip lesson. Club 10010.
+  - Bruiser (90) / Lieutenant (130): outer-ring escalation. Lieutenant uses
+    `leader` (rallies/warcries the crew). Weapons 10010 / 10014.
+  - Captain (200): the boss. tank_taunter (taunt + kick-prone + rally + warcry
+    + bash cascade, calls for help <20% HP, never flees). "Velk-lite" — Velk
+    is statpool 300; 200 is a real fight meant to be beatable by a newbie
+    carrying ONLY the spoke's granted gear. Carries bandit's longsword 10026.
+    FINAL beatability tuning is a Phase D playtest task (needs Q32/Q33 gear).
+
+Both questgivers (Vorn, Garve) are Opened per canon, each with one understated
+visible mutation woven into the description (Vorn: slate-grey stone-hard skin on
+hands/forearms; Garve: animal-lambent eyes that briefly catch the light).
+
+--------------------------------------------------------------------------------
+2. REWARD ITEMS CREATED (3) — quest-granted in Phase D, NOT mob drops
+--------------------------------------------------------------------------------
+10043  Drillyard Cudgel        weapon/bludgeoning  dmg_mult 0.65  weapons-10000/
+       -> Q32 (First Blood) reward; the drillmaster's starter weapon.
+20087  Toughened Leggings      legs/wearable       phys_mit 5     armor-20000/legs/
+       -> Q33 (Hold the Wash) reward; slot-filler armor (legs; squatter drops
+          the body vest, so this builds out a different slot).
+10044  Watch-Captain's Blade   weapon/slashing     dmg_mult 1.05  weapons-10000/
+       statmods: strength +2, rarity_tier 55
+       -> Q34 (Take the Tower) reward; the notable boss weapon.
+
+IDs reassigned from the plan's 41000+ block — see the ID-RANGE GOTCHA in the
+sub-spec. The engine's ItemFolder() maps id ranges to directories: 41000+ is
+the MATERIALS range, so weapons/armor placed there panic at load. Correct
+ranges: weapons 10000-19999, armor 20000-29999. Boot confirmed clean after fix.
+
+--------------------------------------------------------------------------------
+3. SPAWN WIRING — top-level spawninfo: blocks added to 10 rooms
+--------------------------------------------------------------------------------
+5227 Drill Yard         : 9108 Vorn (bare) + 9109 dummy (respawn 1m)
+5228 Weapon Rack Lean-to: 9109 dummy (respawn 1m)
+5232 Lower Wash         : 9110 scout (respawn 5m)
+5233 Gravel Bend        : 9110 x2 — scout pair (respawn 5m each)
+5234 Squatter's Hollow  : 9112 Garve (bare)
+5235 Cracked Cistern    : 9111 squatter (respawn 5m)
+5236 Upper Wash         : 9110 + 9111 — bounty hub (respawn 5m each)
+5238 Broken Gate        : 9113 bruiser + 9110 scout — outer crew (respawn 5m)
+5239 Collapsed Barracks : 9114 lieutenant + 9113 bruiser (respawn 5m)
+5242 The Watch Room     : 9115 captain (respawn 10m)
+
+Intentionally EMPTY (pure transition / tension rooms): 5237 Tower Approach,
+5240 Tower Base, 5241 Tower Stair, 5243 Tower Top. Each bandit spawn carries a
+flavor arrival message.
+
+--------------------------------------------------------------------------------
+4. VERIFICATION RESULTS
+--------------------------------------------------------------------------------
+[PASS] Boot (prebuilt binary): 0 PANIC; mobs.LoadDataFiles 238 -> 246 (+8 new);
+       itemspec itemLoadedCount +3 (272); rooms 566; server reached LISTENING.
+       (First boot caught the 41000+ item-range panic; fixed; re-boot clean.)
+[PASS] coord_inventory.py: 0 global collisions. Pothole Coulee bbox x[42..57]
+       y[-3..3] z[0..2] — inside the reserve, clear of hub + corridor.
+[PASS] newbie_manifest_check.py: extended with a SPOKE-A MOB section asserting
+       all 8 mobs (id/zone/name/behavior_archetype/hostile/statpool, no-digit
+       descriptions, and that each is listed in EACH declared host room's
+       spawninfo). 26 hub rooms + 8 hub NPCs + 17 spoke rooms + 18 exit pairs +
+       8 spoke mobs — ALL PASS, 0 FAIL.
+[PASS] cartcheck (implicit): config GamePlay.MapConsistencyEnforce = panic, and
+       the server booted past zone validation without panicking => Pothole
+       Coulee is cartesian-consistent.
+[DEFERRED] Live combat spot-check (dummy harmless / scout winnable / captain
+       beatable) -> rolled into the Phase D naive playtest (no-popup constraint;
+       captain tuning needs the Q32/Q33 gear that Phase D builds anyway).
+
+--------------------------------------------------------------------------------
+5. STILL TO DO (Phase D — dialogue + quests, INLINE)
+--------------------------------------------------------------------------------
+- Drillmaster Vorn dialogue + Quest 32 "First Blood" (dummy beats, consider,
+  kick/trip, combatverbosity; reward cudgel 10043 + combat-skill seeds; teaches
+  sethome coulee + points east).
+- Caravan Guard Garve dialogue + Quest 33 "Hold the Wash" (clear N bandits,
+  flee/death-loop lesson; reward weapon-combat rank + leggings 20087; +
+  repeatable bandit bounty off 9110/9111).
+- Quest 34 "Take the Tower" (defeat captain 9115; reward Str OR Dex bump +
+  blade 10044 + weapon-combat:1,unarmed-combat:1 via the extended multi-skill
+  skill_info reward).
+- Default-home re-point ("default" HomeLocations -> 5209) so the death lesson
+  is testable.
+- Naive feel-tester playtest (fresh char, zero goal-coaching) = chunk verify.
+================================================================================

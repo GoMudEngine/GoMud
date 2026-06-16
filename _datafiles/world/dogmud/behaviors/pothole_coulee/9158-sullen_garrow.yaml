@@ -1,0 +1,31 @@
+# Sullen Garrow (9158) — the belligerent farmhand on the Mustering Green (5335).
+#
+# Owns the "yield" half of quest 48's taunt beat. Garrow is combat_passive
+# (he never attacks), and the instant he is actually confronted -- the sting
+# of a taunt, registering as mob_hurt -- the bluster collapses and he storms
+# off the green. This keeps the encounter strictly non-lethal: a newbie can
+# never end up killing a farmhand over a property quarrel. The quest's
+# command:taunt trigger (room 5335) fires the beat; this tree is the visible
+# defusal. Pattern follows behaviors/pothole_coulee/9100-cleric_hadwen.yaml.
+
+tree:
+  type: selector
+  children:
+
+    # ── YIELD: the moment a real confrontation starts, his nerve breaks.
+    #    Fires on mob_combat_round (not mob_hurt): a taunt deals conviction
+    #    damage, not HP, so it never registers as "hurt" -- but it does set
+    #    aggro and start combat, and this fires on the first round of it. ──
+    - type: sequence
+      event: mob_combat_round
+      children:
+        - type: action
+          do: say
+          text: All right! Enough -- have it your way.
+        - type: action
+          do: emote
+          text: >-
+            shoulders off the green without looking back, the fight gone out
+            of him all at once.
+        - type: action
+          do: flee

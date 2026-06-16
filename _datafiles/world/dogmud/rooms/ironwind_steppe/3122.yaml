@@ -1,0 +1,40 @@
+roomid: 3122
+zone: Ironwind Steppe
+title: Coulee Entrance
+description: >-
+  The coulee system begins here -- the first clear channel, shallow but
+  definite, running roughly north-south and lined with coarser grass and
+  the low, dense brush that follows seasonal water. The basalt that
+  defines the deeper coulees is still absent; the walls here are packed
+  earth and exposed sandstone, no taller than a person at their highest
+  point. But the pattern is established: the land has begun to cut
+  itself into channels, and travel will follow those channels from here
+  on. The eastern approach trail arrives from the broken badland country
+  and reaches the coulee floor here. To the west the coulee becomes the
+  Eastern Coulee Edge, where the channel meets more defined volcanic
+  terrain.
+biome: land
+coord:
+  x: 19
+  y: -10
+  z: 0
+exits:
+  east:
+    roomid: 3121
+  west:
+    roomid: 3074
+nouns:
+  channel: The first definite coulee channel -- shallow compared to the
+    deep basalt-walled coulees further west, but unmistakably a drainage
+    cut into the steppe by persistent seasonal flow. The floor is packed
+    silt over sandstone, damp in the shade and cracked in the open.
+    The walls are low but vertical, the edges undercut slightly by runoff.
+  brush: Dense, low brush colonizing the channel margins where seasonal
+    moisture concentrates -- thorn-armed, close-branched, the kind that
+    makes passage difficult if you leave the trail. Game paths thread
+    through it at intervals, narrow and low.
+idlemessages:
+- The coulee air is cooler and damper than the open steppe above.
+- Brush rustles along the channel margin as something small moves
+  through it.
+- The sandstone walls tick softly as the temperature shifts.

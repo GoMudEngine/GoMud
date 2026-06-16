@@ -1,0 +1,50 @@
+roomid: 5338
+zone: Pothole Coulee
+title: Stones' End
+description: >
+  At the northern edge of the ring the megaliths thin out -- three
+  remaining stones, then two, then a gap where a fourth must have
+  stood before it fell or was taken, and beyond that open rising ground.
+  The turf here is rougher than the green to the south, less tended,
+  and the sense of the circle's enclosure fades into something more
+  exposed. At the top of the rise the ground levels briefly before
+  dropping away, and there, half-collapsed into a confusion of fallen
+  blocks, stands a ruin older than the stone ring itself. It is
+  a shrine of some kind -- or was. Roofless, its lintel fallen across
+  two remaining uprights, its interior open to the sky and filled with
+  years of blown debris. The stone it is built from is different from
+  the ring stones: darker, finer-grained, worked smooth in a way the
+  megalith carvers did not work. Whoever built it is not remembered
+  even in the tradition-keeper's deepest knowledge.
+biome: land
+coord:
+  x: 43
+  y: -11
+  z: 0
+exits:
+  east:
+    roomid: 5337
+  north:
+    roomid: 5339
+nouns:
+  ruin: The shrine ruin predates the stone ring and possibly the coulee
+    folk entirely. Its stones are shaped with a precision the megaliths
+    do not share -- fitted rather than placed, the joints still close
+    despite centuries of settling. Something was very carefully built
+    here, and the care outlasted whoever intended it.
+  rise: The ground rises steadily from the ring toward the ruin,
+    the slope gentle but consistent. Standing at its top with the ring
+    at your back, you can see a long way across the coulee -- south
+    to the track, east toward the deeper coulee lands, west to the
+    horizon. Whoever chose this site for a shrine chose the sightlines
+    deliberately.
+idlemessages:
+- Looking back from the <ansi fg="cyan">rise</ansi>, the stone ring below resolves
+  into its full shape -- a near-perfect circle, unmistakable from
+  this angle in a way it is not from inside.
+- The <ansi fg="cyan">ruin</ansi> at the top of the rise holds a silence that is
+  different from the circle's -- older, more complete, less
+  expectant.
+- Wind moves through the fallen blocks of the <ansi fg="cyan">ruin</ansi> and makes
+  no sound at all, as though the structure still knows how to
+  hold the air.

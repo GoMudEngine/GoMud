@@ -86,13 +86,21 @@ func actAddTempExit(params map[string]any, ctx *EvalContext) Result {
 }
 
 // actMovePlayer teleports the triggering player to a target room.
+// Failure (not Success) on a bad destination or missing player keeps
+// btree sequences honest: portal NPCs sequence say-lines before this
+// action, and a Failure stops anything wired after the teleport.
 // params: room_id (int)
 func actMovePlayer(params map[string]any, ctx *EvalContext) Result {
+	if ctx.Event.UserId <= 0 {
+		return Failure
+	}
 	roomId := getIntParam(params, "room_id")
 	if roomId == 0 {
 		return Failure
 	}
-	rooms.MoveToRoom(ctx.Event.UserId, roomId)
+	if err := rooms.MoveToRoom(ctx.Event.UserId, roomId); err != nil {
+		return Failure
+	}
 	return Success
 }
 

@@ -1,0 +1,20 @@
+itemid: 10045
+name: Basalt-Iron Blade
+vendor_categories:
+- blacksmithing
+namesimple: blade
+description: A blade forged from basalt-iron, its surface dark and faintly grey-
+  sheened where the ore worked into the steel. Heavier than it looks and slow
+  to dull -- the coulee's own stone made into an edge. A smith's proof that
+  the deep mine gives back as well as it takes.
+type: weapon
+hands: 1
+subtype: slashing
+damage_multiplier: 1.05
+speedmultiplier: 0.9
+parryrating: 9
+staminacost: 6
+grapplemodifier: 0.8
+weight: 4.8
+rarity_tier: 55
+value: 0

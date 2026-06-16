@@ -1,0 +1,39 @@
+roomid: 3116
+zone: Ironwind Steppe
+title: Badlands Crossing
+description: >-
+  The rim above is already behind you, lost behind a fold of broken
+  ground. You are in open badlands now, the coulee's shelter stripped
+  away, and the difference is immediate: the wind comes from every
+  direction at once, or seems to, deflecting off low rock ridges and
+  spilling down raw earth banks. The terrain is broken without pattern
+  -- not the orderly ravine system of the deep steppe but the chaotic
+  fringe where erosion has left standing fins of soft rock, shallow
+  basins, and channels that drain to nowhere. A rough track threads
+  east back toward the coulee rim. To the north the ground rises
+  slightly before dropping again out of sight.
+biome: cliffs
+coord:
+  x: 30
+  y: -1
+  z: 0
+exits:
+  east:
+    roomid: 5371
+    zone: Pothole Coulee
+  north:
+    roomid: 3117
+nouns:
+  fins: Narrow standing blades of soft sandstone and clay, carved by
+    wind and water into irregular plates, some no thicker than a hand
+    at the top. They cast hard-edged shadows across the basin floor and
+    crumble at the edges when touched, leaving pale dust on the fingers.
+  track: A faint line in the dust and gravel, barely wide enough to
+    call a trail -- the compressed mark of those who have passed this
+    way before. It fades in and out as the wind works on it, but the
+    general direction holds.
+idlemessages:
+- Wind funnels through the rock fins with a low, hollow moan.
+- A dust-devil spins up from a bare patch, climbs to knee height, then
+  collapses.
+- The coulee rim is visible behind you, already seeming far away.

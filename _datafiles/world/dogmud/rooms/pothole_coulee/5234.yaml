@@ -1,0 +1,46 @@
+roomid: 5234
+zone: Pothole Coulee
+title: Squatter's Hollow
+description: >
+  A scoured pocket opens off the south side of the wash, a sheltered
+  hollow where the canyon wall has caved back to leave a half-roofed
+  recess out of the wind and the sightlines. Someone has made a fort of
+  it. A barricade of wreckage walls the mouth -- a smashed cart laid on
+  its side, axles up, the gaps stuffed with stone and splintered planking,
+  scarred deep where blades have tested it and not gotten through.
+  Behind the wreckage the dark of the recess holds a watchfulness; a
+  battered shield is propped where a hand could reach it fast, and the
+  ground is scuffed by someone who has held this spot a long time and does
+  not mean to be moved. The wash lies back north; broken ground runs east.
+biome: cliffs
+coord:
+  x: 52
+  y: 0
+  z: 0
+exits:
+  north:
+    roomid: 5232
+  east:
+    roomid: 5235
+nouns:
+  hollow: A half-roofed pocket scoured back into the south wall, out of the
+    wind and out of the wash's sightlines. It is the kind of place a
+    cornered fighter picks to make a stand -- one way in, walls at the
+    back, and time to see anyone coming.
+  wreckage: A smashed cart heaved onto its side to wall the hollow's mouth,
+    axles jutting, the gaps packed with rubble and broken planking. The
+    wood is hacked and scarred where someone tried to break in and learned
+    better. It was a caravan once, before this canyon ate it.
+  barricade: The line of the wreckage read as a defense rather than a ruin
+    -- low enough to fight over, high enough to break a charge, every gap
+    plugged by a careful hand. Someone built this to keep the wash out.
+  shield: A battered round shield propped within easy reach in the recess,
+    its boss dented, its rim notched, the paint long scoured away. Whoever
+    holds the hollow keeps it close. They are still in this fight.
+  recess: The deep shadowed back of the hollow where the wall overhangs.
+    The dark of it holds a stillness that is plainly not emptiness -- the
+    quiet of someone forted up, watching the mouth, waiting you out.
+spawninfo:
+- mobid: 9112
+idlemessages:
+- Something shifts in the <ansi fg="itemname">recess</ansi> behind the wreckage, settles, and goes still again.

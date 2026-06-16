@@ -1,0 +1,36 @@
+roomid: 5286
+zone: Pothole Coulee
+title: Steppe Fringe
+description: >
+  The easy ground runs out here where the steppe begins to roughen and
+  fold. The grass thins, the soil goes rocky underfoot, and the sign
+  changes character. A gnawed bone lies at the fringe of the last sage
+  clump, the ends cracked open for marrow and left where the feeding
+  stopped. Larger prints press into a patch of bare earth nearby,
+  broader than a hare, deeper than a fox. South, the ground breaks into
+  cut country where the scrub grows dense and low and predators have the
+  advantage. This is the last sheltered ground for a good while.
+biome: land
+coord:
+  x: 43
+  y: 5
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  north:
+    roomid: 5284
+  south:
+    roomid: 5287
+nouns:
+  bone: A long bone, cracked along the shaft where something has levered
+    it open with its teeth. The marrow has been taken cleanly. No scraps
+    of hide or fur remain — whatever fed here was thorough. The bone is
+    dry but not weathered. This was not old work.
+  fringe: The ragged edge where the open steppe ends and the rough
+    country begins. The grass pulls back, the sage grows lower and
+    sparser, and the rocks start to show through. The transition is not
+    a line so much as a slow loosening of the safe ground underfoot.
+idlemessages:
+- The <ansi fg="itemname">fringe</ansi> is quiet, but the quiet has a different quality than the open steppe behind you.
+- Wind moves through the low scrub to the south, setting it rustling in a way the <ansi fg="itemname">bone</ansi> at your feet cannot account for.

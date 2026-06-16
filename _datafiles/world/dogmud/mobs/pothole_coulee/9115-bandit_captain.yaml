@@ -1,0 +1,58 @@
+mobid: 9115
+zone: Pothole Coulee
+behavior_archetype: tank_taunter
+archetype: fighting
+statpool: 200
+itemdropchance: 25
+hostile: true
+maxwander: 0
+groups:
+  - bandit
+  - humanoid
+aiprofile: aggressive
+activitylevel: 22
+idlecommands:
+  - 'emote stands at the arrow loop with arms crossed, looking out over
+    the wash like a lord surveying his holdings'
+  - ''
+  - 'emote turns a coin across the knuckles, one hand to the other, and
+    does not look up'
+  - ''
+combatcommands:
+  - 'emote sets the feet wide and raises the longsword in a deliberate
+    guard, unhurried and contemptuous'
+  - ''
+  - 'emote shouts a sharp command, voice carrying over the noise of the
+    fight with practiced authority'
+  - ''
+character:
+  name: Bandit Captain
+  description: |
+    The captain holds the watch room at the top of the tower and has
+    held it long enough that she has stopped thinking of it as theft and
+    started thinking of it as administration. She is a tall, heavy-boned
+    woman in layered traveling leathers, and she moves through the room
+    with the settled authority of someone who has not had to prove a
+    point in years because the last person who required proof did not
+    recover well. The longsword at her hip is the only piece of her kit
+    that is maintained to a professional standard -- the rest is
+    practical and well-worn, the armor of someone who values function
+    over impression. Her voice carries without effort and her orders
+    arrive already settled rather than issued. She is not interested in
+    your reasons for being here. She is interested in whether you are a
+    problem, and she has already decided you are.
+  speciesid: 1
+  level: 1
+  gold: 50
+  equipment:
+    weapon:
+      itemid: 10026
+  stats:
+    strength:
+      training: 14
+    vitality:
+      training: 14
+    dexterity:
+      training: 8
+    perception:
+      training: 6

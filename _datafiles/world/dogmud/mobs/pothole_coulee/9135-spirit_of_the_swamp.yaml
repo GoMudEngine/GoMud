@@ -1,0 +1,74 @@
+mobid: 9135
+zone: Pothole Coulee
+behavior_archetype: tank_taunter
+archetype: fighting
+statpool: 200
+itemdropchance: 25
+hostile: true
+maxwander: 0
+groups:
+  - beast
+  - swamp
+aiprofile: aggressive
+activitylevel: 22
+idlecommands:
+  - 'emote rises and falls with the slow rhythm of the swamp itself,
+    the boundary between its body and the surrounding water shifting
+    and resettling like something breathing'
+  - ''
+  - 'emote sends a ripple outward across the Heart of the Mire without
+    moving, a pulse that carries through the water and the mud and the
+    roots beneath'
+  - ''
+combatcommands:
+  - 'emote surges upward and outward, filling the hollow with sudden
+    mass and presence, mud and black water cascading from a form that
+    the swamp is still deciding the shape of'
+  - ''
+  - 'emote drives a column of consolidated mire directly at the target,
+    reforming the arm that delivered it before the motion is finished'
+  - ''
+  - 'emote pulls apart along a seam that should be fatal and is not,
+    the halves rejoining around whatever struck it with a wet sucking
+    sound'
+  - ''
+  - 'emote draws the water of the hollow upward through its body and
+    expands, the outline growing larger and less defined as it takes
+    more of the swamp into itself'
+  - ''
+character:
+  name: Spirit of the Swamp
+  description: |
+    At the Heart of the Mire, where the poison swamp has had the longest
+    time to work, the water does not merely sit. It has gathered. Over
+    years and decades and longer, every death in the marsh has
+    contributed -- the rot, the dissolution, the slow return of organic
+    matter to the common pool -- until something in that pool began to
+    cohere. The spirit of the swamp is not a creature that lives in the
+    water. It is the water, given a direction it does not need eyes or
+    breath to follow. The form it takes is approximate and unstable:
+    upright where upright is useful, vast where vast is useful, always
+    dripping and always reforming, the surface of the body a continuous
+    slow collapse that never reaches the ground because new material is
+    always rising to replace it. Striking it feels like striking deep
+    water. It does not bleed so much as come apart and reassemble around
+    the wound. The malice it carries is not personal. It is older than
+    the idea of persons. It rules this hollow and the approaches to it
+    in the way a tide rules the shore: without awareness of anything
+    resisting, and without any expectation that resistance will matter.
+  speciesid: 23
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: 70
+    strength:
+      training: 55
+    dexterity:
+      training: 40
+    willpower:
+      training: 15
+    perception:
+      training: 10
+    charisma:
+      training: 10

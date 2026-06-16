@@ -1,0 +1,45 @@
+roomid: 5355
+zone: Pothole Coulee
+title: Side Ledge
+description: >
+  A broken shelf of limestone juts from the canyon's east wall, elevated
+  just enough to grant a clean angle back over the canyon mouth to the
+  west. The ledge is a dead end -- the rock above is sheer and offers
+  nothing to climb -- but as a perch it is nearly ideal. A shooter here
+  has the canyon mouth laid out below and can loose into the slot with
+  the wall at their back. The cover is genuine: a tilted slab on the
+  ledge's north edge is thick enough to kneel behind, and the shadow it
+  casts in the afternoon sun falls across anyone crouching here. Someone
+  has used this spot before. There are scuff marks on the stone that
+  suggest long hours of patient waiting, and a clear field of view west
+  into the canyon mouth that a careful eye could use to great advantage.
+biome: cliffs
+coord:
+  x: 50
+  y: -4
+  z: 2
+exits:
+  west:
+    roomid: 5353
+spawninfo:
+- mobid: 9164
+nouns:
+  ledge: A natural shelf of limestone, fractured away from the main wall
+    and tilted slightly outward. It is wide enough to stand on comfortably
+    and long enough to lie prone along. The stone underfoot is rough and
+    offers solid purchase -- this is a platform built by accident and
+    useful by design.
+  cover: The tilted slab on the ledge's north edge is easily chest-high
+    when you kneel. It is old stone, dense and unmoved by anything short
+    of a siege weapon. The angle it creates means you can see west into
+    the canyon mouth while presenting very little of yourself to anything
+    coming from that direction.
+idlemessages:
+- From the <ansi fg="cyan">ledge</ansi>, the canyon mouth spreads out to the west -- every
+  approach visible, nothing hidden.
+- The <ansi fg="cyan">cover</ansi> casts a long shadow across the shelf. Someone crouching
+  here would be very difficult to spot from below.
+- Wind moves along the canyon wall and eddies around the slab, carrying
+  sound up from the slot below.
+- The scuff marks on the stone are old but unmistakable -- this vantage
+  has been used, and used deliberately.

@@ -1,0 +1,122 @@
+mobid: 9136
+zone: Pothole Coulee
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "hail"]
+    responses:
+      - "Tarn. I watch the steppe. You want to learn to read it, or you
+          just passing through?"
+      - "Keep your voice down and your eyes moving. The steppe talks if
+          you let it."
+
+  - keywords: ["track", "sign", "trail", "scout", "learn", "teach",
+      "read", "quest", "task"]
+    responses:
+      - "Tracking is just paying attention on purpose. Ask me and I will
+          set you a trail to follow."
+      - "Every animal leaves a line. Learn to see it and the steppe
+          stops being empty."
+
+  - keywords: ["eyes", "amber", "mutation", "opened", "sight"]
+    responses:
+      - "The Awakening went to my eyes. I catch movement a long way off
+          now, and the world holds a little more gold than it used to. I
+          do not complain about it."
+
+  - keywords: ["forage", "plants", "steppe", "scrub"]
+    responses:
+      - "The scrub looks dead and is not. Sage, roots, the right herbs if
+          you know them -- type forage and see what your hands turn up."
+
+  - keywords: [""]
+    responses:
+      - "Say what you need."
+      - "The horizon is not going to watch itself."
+      - "Speak, or let me work."
+
+tree:
+  root:
+    text: "Tarn. Scout."
+    hints: "You could ask Tarn about tracking or your task."
+    variants:
+      # ── Not yet Opened ───────────────────────────────────
+      - questExcluded: ["30-end"]
+        text: "You have not been through the rite. The steppe is no place
+          to learn that lesson. Cleric Hadwen runs the Awakening at the
+          reflecting pool north of here. Go be Opened, then come back and
+          I will teach you the ground."
+        hints: "Find Cleric Hadwen at the reflecting pool and complete the
+          Awakening before returning to Scout Tarn."
+
+      # ── Opened, not started ──────────────────────────────
+      - questRequired: ["30-end"]
+        questExcluded: ["41-start", "41-end"]
+        text: "You have the rite on you. Good. I teach the ground -- how
+          to cut a trail and follow it, what the scrub will feed you. Ask
+          me about tracking if you mean to learn."
+        hints: "Type ask tarn track to learn to read the ground."
+
+      # ── Mid quest 41 ─────────────────────────────────────
+      - questRequired: ["41-start"]
+        questExcluded: ["41-end"]
+        text: "Still learning. Track a hare across the Open Steppe -- type
+          track hare and follow the line. Forage the scrub while you are
+          out. Come back when you have done both."
+        hints: "On the Open Steppe type track hare; type forage on the
+          steppe to gather plants. Then ask tarn done."
+
+      # ── Quest 41 complete ────────────────────────────────
+      - questRequired: ["41-end"]
+        text: "You can read ground now. That will keep you alive longer
+          than a sharp knife will. South, then -- the fringe, where the
+          predators range. Hunter Delk keeps a camp out there. Tell him
+          Tarn sent you."
+        hints: "Head south into the predator fringe and type ask delk to
+          find Hunter Delk."
+
+  nodes:
+    # ── QUEST 41 OFFER ────────────────────────────────────────
+    - id: sign_offer
+      triggers: ["track", "sign", "learn", "teach", "scout", "read",
+        "quest", "task"]
+      questRequired: ["30-end"]
+      questExcluded: ["41-start", "41-end"]
+      grantsQuest: "41-start"
+      text: "Right. Here is the first of it. Out on the Open Steppe a hare
+        has left a trail -- type track hare and you will pick up its line
+        and follow it across the ground. That is tracking: you read what
+        passed and where it went. While you are out there, type forage on
+        the steppe -- the scrub feeds those who know how to ask. Do both
+        and come back to me."
+      hints: "Go to the Open Steppe. Type track hare to follow its trail.
+        Type forage on the steppe (or the Sage Flat) to gather plants.
+        Come back to Tarn when you have done both -- ask tarn done."
+
+    # ── QUEST 41 TURN-IN ──────────────────────────────────────
+    - id: sign_turnin
+      triggers: ["report", "done", "ready", "finished", "quest", "task"]
+      questRequired: ["41-track", "41-forage"]
+      questExcluded: ["41-end"]
+      grantsQuest: "41-end"
+      text: "You followed the line and you worked the scrub. That is the
+        whole foundation -- everything else out here builds on reading
+        ground. Take this cloak; the wind has teeth after dark. South now,
+        to the fringe. Delk hunts it, and he can use a pair of eyes that
+        know what they are looking at."
+      hints: "Quest complete. Head south into the fringe and type ask delk
+        to find Hunter Delk."
+
+    # ── TRACK / FORAGE HELP ───────────────────────────────────
+    - id: sign_help
+      triggers: ["hare", "forage", "plants", "help", "follow"]
+      text: "Two things. Tracking: type track and a creature's name to
+        pick up its trail -- track hare out on the open ground. Foraging:
+        type forage where things grow, and your hands and your luck decide
+        what you turn up. Both get better the more you do them -- it is
+        all the same skill, the same paying-attention."
+      hints: "Type track hare on the Open Steppe. Type forage on the
+        steppe to gather. Both train the same skill."
+
+memory:
+  expiryPeriod: ""

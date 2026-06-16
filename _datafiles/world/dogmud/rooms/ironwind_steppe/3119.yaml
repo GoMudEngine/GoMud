@@ -1,0 +1,39 @@
+roomid: 3119
+zone: Ironwind Steppe
+title: Dry Wash
+description: >-
+  The terrain here is cut through by a shallow wash -- a dry channel
+  carved by seasonal runoff, its bed smooth-worn stone and bleached
+  gravel, its banks two to three feet of exposed earth and root. The
+  wash runs roughly north-to-south and the trail crosses it at the
+  lowest point, where the banks have worn down to a shallow ford.
+  Crossing is easy in the dry season; the waterline stains on the
+  banks tell a different story when rain comes. Deadwood has caught
+  in the bed upstream -- branches and root masses stripped from the
+  banks in some past flood -- and now bleaches grey in the sun.
+  The south bank leads back toward the hardpan flat; the west bank
+  continues toward denser badland country.
+biome: land
+coord:
+  x: 26
+  y: -8
+  z: 0
+exits:
+  south:
+    roomid: 3118
+  west:
+    roomid: 3120
+nouns:
+  wash: The dry channel itself -- smooth-polished stone bed, undercut
+    banks, and the ghost of a current marked in waterline stains and
+    deposited gravel fans. It holds water only briefly after hard rain
+    but what water comes moves fast and with enough force to shift the
+    deadwood and cut the banks a little deeper with each passing year.
+  deadwood: A tangle of bleached branches and root masses lodged against
+    the upstream bank, deposited by some past flood and dried to grey
+    bone in the sun. The wood is light and brittle, the bark long gone,
+    the grain raised and split by sun and cold.
+idlemessages:
+- Your boot finds a loose stone in the wash bed and sends it skittering.
+- The bleached deadwood pops faintly in the afternoon heat.
+- The wash bed is cool underfoot compared to the open ground above.

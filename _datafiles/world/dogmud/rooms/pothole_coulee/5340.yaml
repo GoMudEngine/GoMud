@@ -1,0 +1,41 @@
+roomid: 5340
+zone: Pothole Coulee
+title: Mossy Steps
+description: >
+  Broad stone steps climb the south face of the shrine mound, each tread
+  thick with moss that has softened their edges to gentle curves. They are
+  slick underfoot in the way of things that never fully dry -- the mound
+  holds moisture the way old graves do, releasing it slowly into the air.
+  At the turn of the steps a carved post leans outward at a worrying angle,
+  its base undercut by seasons of runoff. The carving on the post is a
+  repeated figure -- a circle crossed by three lines -- worn nearly flush
+  with the stone by weather and by hands that have touched it in passing
+  for longer than anyone now living can account for. The steppe opens wide
+  to the south, and to the north the shrine waits above.
+biome: land
+coord:
+  x: 42
+  y: -12
+  z: 0
+exits:
+  east:
+    roomid: 5339
+  north:
+    roomid: 5342
+nouns:
+  steps: The stone steps are fitted work, old enough that the joints
+    between them have grown nearly invisible under the moss. Each tread
+    is worn slightly concave at its center by the accumulated passage
+    of feet over what must be many generations.
+  moss: The moss is a deep, almost black green here, thriving on the
+    steady seep of moisture through the mound. It gives a little under
+    a boot heel and springs back slowly, like something half-asleep.
+idlemessages:
+- Water collects in the hollow of a <ansi fg="cyan">moss</ansi>-filled step and holds
+  there, perfectly still.
+- The carved post shifts almost imperceptibly in a gust -- the lean
+  at its base has gone a long way.
+- The <ansi fg="cyan">steps</ansi> seem to absorb sound. Your footfall comes back
+  muffled, softer than it should.
+- A small beetle crosses the face of the carved post, following
+  the groove of one of the three lines as though tracing a map.

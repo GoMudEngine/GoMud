@@ -1,0 +1,53 @@
+mobid: 9158
+zone: Pothole Coulee
+behavior_archetype: combat_passive
+archetype: fighting
+statpool: 25
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 14
+idlecommands:
+  - 'emote stands square in the middle of the green with his arms
+    crossed, jaw set, daring the day to cross him'
+  - ''
+  - 'emote mutters something low and bitter in the direction of the old
+    farmer, then looks away first'
+  - ''
+  - 'emote works his over-heavy knuckles one at a time, the joints
+    popping like green wood'
+  - ''
+character:
+  name: Sullen Garrow
+  description: |
+    Garrow is young and angry and convinced the anger is the same thing
+    as being right. The quarrel is an old one and small -- a boundary
+    stone, a debt of labour, a slight that has swollen in the retelling --
+    but he has decided to stand on the mustering green and be immovable
+    about it, and no one has yet been able to talk him down. He is not a
+    bad sort. He is a stuck one.
+    The Awakening went to his hands: the knuckles have grown heavy and
+    over-large, the bone thickened beneath the skin until his fists look
+    borrowed from someone twice his size. He is proud of them in the way
+    of someone who has not yet learned what they are for, and he holds
+    them ready now, as though the argument might at last become the kind
+    he could win.
+    Someone with a steady voice and the nerve to use it could likely face
+    him down -- a hard word landed well might do what soft ones have not.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 9
+    dexterity:
+      training: 6
+    vitality:
+      training: 6
+    perception:
+      training: 2
+    willpower:
+      training: 2

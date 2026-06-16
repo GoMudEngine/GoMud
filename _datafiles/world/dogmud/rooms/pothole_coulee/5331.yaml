@@ -1,0 +1,41 @@
+roomid: 5331
+zone: Pothole Coulee
+title: The Outer Ring
+description: >
+  The outermost megaliths of the great ring stand here in a wide arc,
+  lichen-grey and leaning slightly inward as though pressed by centuries
+  of the same west wind. Each stone is roughly twice the height of a
+  person, their bases sunk deep, their upper faces pitted and streaked
+  with pale lichen in patterns that the eye keeps trying to read as
+  script. They are spaced like sentinels -- far enough apart to pass
+  between freely, close enough that stepping through any gap has the
+  unmistakable quality of a threshold. The scrubland ends here. Inside
+  the ring the turf is different -- shorter, darker, faintly damp even
+  in dry weather -- as though the stones have been tending it.
+biome: land
+coord:
+  x: 45
+  y: -9
+  z: 0
+exits:
+  south:
+    roomid: 5330
+  west:
+    roomid: 5333
+nouns:
+  megaliths: Each outer megalith is a distinct block of local stone --
+    no two quite the same colour or grain -- yet they share a quality of
+    purpose, of having been placed rather than found here, and placed by
+    someone who intended them to outlast themselves by a long margin.
+  lichen: The lichen on the outer face of each stone grows in layered
+    patches that suggest great age. Up close the patterns almost resolve
+    into repeating motifs -- circles, spirals, angles -- before the eye
+    loses the thread again.
+idlemessages:
+- The wind passes through the gaps between the <ansi fg="cyan">megaliths</ansi> and
+  shifts pitch slightly as it does, a low note that fades as quickly
+  as it arrives.
+- A patch of <ansi fg="cyan">lichen</ansi> on the nearest stone seems a different colour
+  than it was a moment ago -- though the light has not changed.
+- Standing at the threshold between the outer stones, you feel the air
+  inside the ring press back very slightly against you.

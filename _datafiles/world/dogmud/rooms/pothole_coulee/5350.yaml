@@ -1,0 +1,48 @@
+roomid: 5350
+zone: Pothole Coulee
+title: The Firing Range
+description: >
+  The first terrace is broad and flat, the stone worn smooth by long use.
+  Down-range, a row of straw butts stands on timber frames, each one
+  bristling with spent shafts that were never pulled. Distance-marks are
+  scored into the terrace stone in a line from your feet toward the
+  targets -- one mark, two marks, three, each interval denoting a
+  meaningful step in the discipline of the bow. A rack of practice
+  arrows leans against the bluff wall, their fletching ragged but their
+  points still true. The lake and the town are fully visible below, laid
+  out small and distinct. This is where newcomers are brought to learn
+  the bow -- the range is safe, the marks are clear, and the wind here
+  at the terrace lip is honest about what it intends.
+biome: cliffs
+coord:
+  x: 47
+  y: -3
+  z: 2
+mutators:
+- mutatorid: sanctuary
+exits:
+  down:
+    roomid: 5349
+  east:
+    roomid: 5351
+spawninfo:
+- mobid: 9161
+nouns:
+  butts: The straw butts are packed tight and mounted on timber frames
+    driven into gaps in the terrace stone. Each one is dense with
+    practice shafts that were left in rather than pulled -- the outer
+    ring of each target is the most heavily used, the center cleaner
+    than it ought to be.
+  range: The range is oriented to shoot east toward the terrace's far
+    end, the distance-marks scored into the stone at measured
+    intervals. Someone has painted the marks with red ochre so they
+    read clearly even in flat light.
+idlemessages:
+- A spent shaft in one of the straw <ansi fg="cyan">butts</ansi> shifts in the wind and
+  then is still.
+- The distance-marks on the <ansi fg="cyan">range</ansi> floor catch the afternoon light
+  at an angle that makes them easy to read.
+- The lake below is still and bright, the town's rooftops catching
+  the sun.
+- Wind arrives across the terrace in a steady, readable line from
+  the west -- useful to know.

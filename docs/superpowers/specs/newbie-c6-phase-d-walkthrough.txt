@@ -1,0 +1,70 @@
+================================================================================
+NEWBIE REWORK — CHUNK 6 (Spoke E, The Folding / magic) — PHASE D WALKTHROUGH
+Dialogue + quests (inline) + engine touch. Scripted end-to-end VERIFIED. 2026-06-15.
+Sub-spec: docs/superpowers/specs/2026-06-14-newbie-chunk6-spoke-e-folding-subspec.md
+================================================================================
+
+ENGINE (1 touch): internal/usercommands/skill.cast.go now calls
+  questengine.Notify("command", {Command:"cast"}) on successful cast initiation
+  (mirrors forage/drink/throw). Lets quests gate a step on `cast`. Verified fresh
+  chars can cast cold: character.New() seeds conviction-spike + initAllSkills()
+  sets every skill to rank 1. go build exit 0.
+
+QUESTS (44-46):
+  44 First Casting (Grieve, 9144) — cast at the Practice Mote (9146) in the Star
+     Chamber (command:cast trigger room 5305). Reward: Oak Staff 10018 (itemid) +
+     spellcasting:1 (skillinfo) + 15g. Steps start/cast/end.
+  45 The Unquiet Grove (Orrin, 9145) — kill a grove foe (mob_death 9147|9148) +
+     cast in the grove (command:cast rooms 5311/5312/5313). Reward: sparks
+     (spellid) + spellcasting:1 + 25g. Steps start/kill/cast/end.
+  46 The Unfolded (Orrin, 9145) — boss kill (mob_death 9152). Reward: willpower:3
+     (stat_info) + heal/Mend Flesh (spellid) + 50g. Steps start/end (auto-turnin).
+  Reward keys: itemid/skillinfo/spellid no-underscore (tag-less); stat_info tagged.
+  All grantsQuest nodes carry the {id}-end token in questExcluded + quest/task
+  triggers (SOPs). No quest flags (linear, no branching).
+
+DIALOGUE: 9144 Grieve (single-quest, Tarn pattern) + 9145 Orrin (two-quest +
+  mob_death capstone, Delk pattern). Both Opened (Folding-lore / three-channels /
+  concentration teaching), Opened-gated on 30-end, questRequired (not requires).
+
+VERIFICATION:
+ [x] go build ./... exit 0.
+ [x] boot (instances wiped, panic mode): quests 35->38 (+3), ValidateAllFlags
+     "all validated", questengine 38, recipes 100 / mobs 279 / rooms 642 / items
+     277 unchanged (correct — no new items/recipes/mobs), ValidateZoneConsistency
+     0/0 panic, Server Ready 0 panics.
+ [x] SCRIPTED AI-PORT WALKTHROUGH (smoketester, admin/AI, Opened, spokes A-D done,
+     clean Spoke-E slate). Transcript = ground truth (the in-game quest/reward
+     messages); NOTE `quit` only meditates (no disconnect) so the SAVE is NOT
+     flushed — do not read users/1.yaml for this, read the transcript.
+       Q44: "given a new quest: First Casting" -> `cast conviction-spike mote`
+         fired "progress on the quest" (cast->Notify WORKS) + struck the durable
+         mote -> "completed ... First Casting", "You receive staff!" (Oak Staff in
+         inventory) + 15g.
+       Q45: "given ... The Unquiet Grove" -> killed Grove Revenant + Drift-Wisp,
+         `cast chrysalis-glow` in 5312 fired the cast beat -> "completed", "You
+         have learned the spell: Conviction Sparks" + 25g (sparks in spell list).
+       Q46: "given ... The Unfolded" -> boss kill -> "completed", "Your mind
+         firms" (willpower stat_info) + "You have learned the spell: Mend Flesh"
+         + 50g (status: Willpower -> remarkable).
+ [x] BOSS-CASTING CONFIRMED (focused de-weaponed single-boss test): "The Unfolded
+     begins weaving a spell" + "The Unfolded's Nerve Disruption takes effect on
+     you!" repeatedly. pure_caster + harm-only spellbook fires as designed. It
+     failed to cast in the main run ONLY because the god-tier smoketester one-shot
+     it before a casting round (in real play the duel lasts and it casts).
+
+NUANCES FOUND (not bugs):
+ - admin/AI chars appear aggro-immune: the boss never auto-aggroed on idle, only
+   reactively after being attacked.
+ - groups:[aberration,folded] -> pack-flee/scatter on packmate death; multi-spawn
+   bosses flee. Irrelevant to the SOLO quest boss (no packmates; pure_caster has
+   no panic-flee branch -> the real capstone stands and casts).
+
+DEFERRED: difficulty untuned (god-tier run) — the evening naive playtest is the
+  difficulty + feel pass (and will naturally exercise the boss spell-duel). Reset
+  the smoketester before that (it now carries Spoke-E state; users/1.yaml is
+  gitignored).
+
+NEXT: chunk-complete gate -> COMMIT C6 (engine skill.cast.go + Spoke E R+M+D
+  content; exclude config.yaml dev settings + runtime YAMLs) -> C7 (Spoke F Lore).
+================================================================================

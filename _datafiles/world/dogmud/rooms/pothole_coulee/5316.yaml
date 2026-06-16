@@ -1,0 +1,44 @@
+roomid: 5316
+zone: Pothole Coulee
+title: Folded Distance
+description: >
+  Something is wrong with the distance here. The path ahead looks a stone's
+  throw away, and the path behind looks the same, but walking forward takes
+  you sideways, and walking sideways sometimes brings you closer to where
+  you started. Far things appear near -- you could swear you see the details
+  of the ground a hundred paces north as clearly as your own boots -- while
+  near things feel remote, behind a gauze you cannot name. The ground itself
+  seems reluctant to cooperate, each step landing somewhere slightly other
+  than where you intended. You get the impression the Folding has crumpled
+  this particular stretch of space like a map stuffed back into a pocket.
+biome: cliffs
+coord:
+  x: 41
+  y: -9
+  z: 3
+exits:
+  south:
+    roomid: 5315
+  west:
+    roomid: 5317
+  east:
+    roomid: 5318
+spawninfo:
+- mobid: 9149
+nouns:
+  distance: The sensation is acute and disorienting -- the far looks near,
+    the near recedes. You reach for a handhold and your arm falls short;
+    you glance back and the way you came appears smaller than it should,
+    already far away. Distance here is a suggestion the place is not
+    committed to.
+  ground: The ground is ordinary stone -- pale, cracked, the same floating
+    scabland as before -- but it refuses to respond predictably to your
+    weight. Each footfall lands and holds, but the next step does not
+    follow in the direction you stepped.
+idlemessages:
+- Something at the far edge of your vision appears to be close enough to
+  touch. It is not.
+- Your shadow falls at the wrong angle, pointing toward the <ansi fg="cyan">distance</ansi>
+  rather than away from the light.
+- The <ansi fg="cyan">ground</ansi> beneath one foot briefly feels very far below you, then solid
+  again, without moving.

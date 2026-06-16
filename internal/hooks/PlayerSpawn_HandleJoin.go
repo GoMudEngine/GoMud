@@ -3,6 +3,7 @@ package hooks
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -164,6 +165,36 @@ func compHasEquipment(comp *characters.CompanionInfo) bool {
 // Execute on join commands
 //
 
+// firstSpawnMiscKey marks a character as having completed their first
+// world entry. Set once by emitFirstSpawnMobEvents and never cleared.
+const firstSpawnMiscKey = "first_spawn_done"
+
+// emitFirstSpawnMobEvents fires player_enter behavior-tree events for
+// every mob in the room, exactly once per character (first spawn ever).
+// Spawning into a room IS entering it — without this, btree greeters in
+// the start room never see brand-new characters. The MiscData gate also
+// covers pre-existing characters: their next login is treated as the
+// one-time emission, which is harmless for non-hostile trees and skipped
+// thereafter.
+func emitFirstSpawnMobEvents(user *users.UserRecord, room *rooms.Room) {
+	if user.Character.GetMiscData(firstSpawnMiscKey) != nil {
+		return
+	}
+	user.Character.SetMiscData(firstSpawnMiscKey, "1")
+
+	for _, mobInstId := range room.GetMobs(rooms.FindAll) {
+		mob := mobs.GetInstance(mobInstId)
+		if mob == nil || mob.Character.IsCharmed() {
+			continue
+		}
+		behaviortree.TryMobBehavior(mobInstId, behaviortree.EventContext{
+			EventType: "player_enter",
+			UserId:    user.UserId,
+			RoomId:    room.RoomId,
+		})
+	}
+}
+
 func HandleJoin(e events.Event) events.ListenerReturn {
 
 	evt, typeOk := e.(events.PlayerSpawn)
@@ -230,6 +261,14 @@ func HandleJoin(e events.Event) events.ListenerReturn {
 			UserId: user.UserId,
 			RoomId: user.Character.RoomId,
 		}, bridge, bridge)
+
+		// First spawn only: a brand-new character materializing in the
+		// start room never "walked in", so mob player_enter btrees (e.g.
+		// the newbie-hub greeter) would otherwise never fire for the one
+		// player who needs them most. Scoped to first spawn — NOT every
+		// login — so mobs with hostile player_enter handlers (ambusher,
+		// thief) can't trigger on someone who logged out beside them.
+		emitFirstSpawnMobEvents(user, room)
 
 		user.CommandFlagged(`look`, events.CmdSecretly) // Do a secret look.
 	}

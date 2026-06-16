@@ -1,0 +1,45 @@
+roomid: 5352
+zone: Pothole Coulee
+title: High Terrace
+description: >
+  The terrace reaches its eastern end here, where the bluff top gives
+  way to a canyon lip that drops sharply to the north. The range ends:
+  there are no more targets beyond this point, no more distance-marks
+  in the stone. The lip of the canyon is close, and the drop beyond it
+  is significant -- the canyon cuts north from here into rougher country,
+  and the bottom is not visible from where you stand. The sanctuary of
+  the terraces ends at this edge. The wind is strongest here, coming up
+  from the canyon below and mixing with the northern flow in a way that
+  makes it harder to read than the wind further back along the shelf.
+  The lake and the town are still visible to the southwest, very small
+  now, the whole settled world of the coulee reduced to a view.
+biome: cliffs
+coord:
+  x: 49
+  y: -3
+  z: 2
+mutators:
+- mutatorid: sanctuary
+exits:
+  west:
+    roomid: 5351
+  north:
+    roomid: 5353
+nouns:
+  lip: The canyon lip is a clean break in the bluff top -- stone one
+    step, open air the next. The edge is not crumbling; it is simply
+    where the rock stops. Looking down into the canyon from here
+    shows only shadow and the pale canyon walls dropping away.
+  canyon: The canyon runs north from this lip, cutting through the
+    bluff in a slot that is narrower at the top than it appears
+    from a distance. Wind rises out of it in irregular pulses,
+    warm and carrying the smell of dry stone from deep below.
+idlemessages:
+- Wind rises from the <ansi fg="cyan">canyon</ansi> below in a warm pulse and crosses
+  the terrace, carrying dust.
+- The <ansi fg="cyan">lip</ansi> is very close. The bottom of the canyon is not visible
+  from here.
+- Southwest, the coulee lake is a thumb-nail of brightness set
+  in the long green of the valley floor.
+- The terrace range ends here. Whatever lies beyond the lip is
+  outside its reach.

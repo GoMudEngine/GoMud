@@ -1,0 +1,119 @@
+# Quest 42 — The Hunt (Pothole Coulee, Spoke D / Wilderness middle ring)
+#
+# Token flow:
+#   42-start  — granted by Hunter Delk's hunt_offer node (requires 41-end). The
+#               SAME node hands the player a salt-pouch (givesItem 40017) so they
+#               can cook.
+#   42-hunt   — mob_death on a Pronghorn (9139); the kill drops raw meat (40014).
+#   42-rest   — command trigger on `sleep` (the new sleep command Notify, this
+#               chunk's engine touch); rest in the field for fast regen.
+#   42-cook   — command trigger on `craft` at the camp cooking_fire (5290);
+#               cook grilled meat (raw-meat + salt-pouch, a born-known recipe).
+#   42-end    — granted by Delk's hunt_turnin node (needs hunt + rest + cook).
+#
+# Design: the field loop — hunt, rest rough, cook the kill. Three objectives in
+# any order (each gates on 42-start); turn-in needs all. Reward: search rank +
+# stamina boots + the hearty-stew recipe (skill 5, a real meal to grow into).
+
+questid: 42
+name: The Hunt
+description: >-
+  Hunter Delk works the predator fringe out of a rough camp. He has put
+  a salt-pouch in your hand and set you to the hunter's loop: bring down
+  a pronghorn for its meat, rest rough in the field to keep your strength,
+  and cook what you killed over his fire.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: >-
+      Delk has given you salt and set you hunting. Bring down a
+      pronghorn on the fringe, sleep in the field to recover, and cook
+      grilled meat at his camp fire.
+    hint: >-
+      Hunt a pronghorn (track and attack one on the fringe) -- it drops
+      raw meat; pick it up. Type sleep anywhere safe to rest and recover
+      fast (stand to wake). At Delk's camp fire, type craft grilled meat
+      (you carry the salt; the meat comes off the kill). Do all three,
+      then report to Delk.
+  - id: hunt
+    description: >-
+      You brought a pronghorn down and took its meat. Rest in the field
+      and cook if you have not.
+    hint: >-
+      Type sleep to rest in the field; type craft grilled meat at Delk's
+      camp fire. Then report -- ask delk report.
+  - id: rest
+    description: >-
+      You slept rough and woke stronger -- the field's own medicine.
+      Hunt and cook if you have not.
+    hint: >-
+      Hunt a pronghorn for meat; type craft grilled meat at the camp
+      fire. Then report to Delk -- ask delk report.
+  - id: cook
+    description: >-
+      You cooked the kill over the fire. Hunt and rest if you have not.
+    hint: >-
+      Hunt a pronghorn; type sleep to rest in the field. Then report to
+      Delk -- ask delk report.
+  - id: end
+    description: >-
+      Delk has named you a hunter, near enough. Deeper south the pack
+      rules its own country -- and an alpha rules the pack.
+
+rewards:
+  skillinfo: "search:1"
+  itemid: 20052
+  recipe_info: "hearty-stew"
+  gold: 25
+  playermessage: >-
+    Delk turns the cooked meat once, judges it, and grunts -- which from
+    him is praise. The shed-proof skin of his hands shows pale as he
+    pulls the strips apart. "Killed clean, rested rough, ate what you
+    took. That is the whole of it." He pushes a pair of worn field boots
+    across the stone and a scrap of waxed paper after them. "Stew recipe
+    -- a hot meal does more than cold meat. Now the bad work. South, the
+    pack. They run that country in numbers and the alpha runs them. Come
+    back about the pack when your nerve is up."
+  roommessage: "Delk tastes the cooked meat, nods, and hands across a
+    pair of field boots."
+
+triggers:
+  # ── HUNT: bring down a pronghorn (mob 9139) ─────────────────────────
+  - event: mob_death
+    mob: 9139
+    conditions:
+      has: ["42-start"]
+      missing: ["42-hunt"]
+    actions:
+      - grant: "42-hunt"
+      - send_text: >-
+          The pronghorn drops. Take its meat from the carcass -- type
+          get meat -- and you have what you need to cook.
+
+  # ── REST: sleep in the field (new sleep command Notify) ─────────────
+  - event: command
+    command: sleep
+    conditions:
+      has: ["42-start"]
+      missing: ["42-rest"]
+    actions:
+      - grant: "42-rest"
+      - send_text: >-
+          You bed down rough and the field does its slow work -- rest
+          mends a body faster than walking does. Type stand when you
+          mean to rise.
+
+  # ── COOK: craft grilled meat at the camp fire (room 5290) ───────────
+  - event: command
+    command: craft
+    room: 5290
+    conditions:
+      has: ["42-start"]
+      missing: ["42-cook"]
+    actions:
+      - grant: "42-cook"
+      - send_text: >-
+          The meat sears over the fire, salt and smoke and fat. A hot
+          meal in the field is its own small victory. Report to Delk.

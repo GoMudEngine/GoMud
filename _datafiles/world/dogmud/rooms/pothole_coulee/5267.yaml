@@ -1,0 +1,41 @@
+roomid: 5267
+zone: Pothole Coulee
+title: Drying Racks
+description: >
+  A cluster of wooden racks occupies this open arm of the hollow, their
+  crossbars strung with root and stem and leaf hung in careful bundles
+  to dry in the moving air. Healer's root, bitter thistle, marsh sedge,
+  grey-cap mushroom -- the smell of them together is medicinal and dense
+  and not entirely pleasant until you breathe it long enough for the
+  individual notes to separate. Against the near wall a row of shelves
+  holds empty bottles in graduated sizes, stopped with wax or cork,
+  waiting to be filled. A second flat-stone worktable has been arranged
+  here for practice, its surface stained with old tincture-work in rings
+  of green and brown. Baskets on the ground hold the day's harvest,
+  unsorted.
+biome: swamp
+coord:
+  x: 46
+  y: 4
+  z: 0
+station: alchemy_bench
+mutators:
+- mutatorid: sanctuary
+exits:
+  east:
+    roomid: 5265
+nouns:
+  racks: Rough-hewn wooden frames, knee-high to overhead, their crossbars
+    lashed with cord from which dozens of herb bundles hang at intervals.
+    The wood is dark with age and fragrant from years of contact with
+    what has dried on it.
+  bottles: Ranks of glass bottles on the shelves range from thumb-sized
+    vials to broad-bellied flasks, each one stoppered and waiting. A few
+    are already faintly tinted -- green, amber, pale violet -- from
+    whatever was last stored in them.
+  baskets: Wide, low-sided baskets woven from split reed rest on the
+    ground below the racks, heaped with the day's gathered roots and
+    leaves. They smell of fresh-cut plant and dark earth.
+idlemessages:
+- A breeze stirs through the hollow and the herb bundles on the <ansi fg="itemname">racks</ansi> sway together, releasing a sharp green smell.
+- One of the <ansi fg="itemname">bottles</ansi> catches the light at an angle, throwing a small amber patch across the stone wall.

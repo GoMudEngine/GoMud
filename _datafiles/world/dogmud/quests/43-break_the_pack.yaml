@@ -1,0 +1,72 @@
+# Quest 43 — Break the Pack (Pothole Coulee, Spoke D / Wilderness outer ring,
+# capstone). Granted by Hunter Delk (9137) after quest 42. The player presses
+# into the pack's territory, fights through the pack (multiple predators per
+# room), and kills the Alpha Pack-Leader (9143) in the den.
+#
+# Token flow:
+#   43-start  — granted by Delk's pack_offer node.
+#   43-end    — granted by the boss-kill trigger (mob_death 9143). Rewards fire on
+#               43-end: a Perception bump (stat_info), the Scab-Hide Jerkin
+#               (itemid 20088), a hunting kit (item_info multi — trail rations,
+#               bandages, a firebomb), the jerkin's tailoring recipe (recipe_info),
+#               and gold.
+#
+# Design: straight pack-combat capstone — bring brewed/cooked supplies, fight
+# through the hounds, take the alpha. Turn-in is automatic on the kill.
+
+questid: 43
+name: Break the Pack
+description: >-
+  The predator pack runs the country south of the fringe and the alpha
+  runs the pack. Hunter Delk says there is no living alongside it -- the
+  pack has to be broken at its head. Track it to the den, fight through
+  the hounds, and put the alpha down.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: >-
+      Delk has set you on the pack. Press south into their territory,
+      fight through the hounds, and defeat the alpha pack-leader in the
+      den.
+    hint: >-
+      Cook a meal and carry it before you go -- the pack comes at you in
+      numbers. Head south through the killing ground and the bone field
+      to the den. Type consider on a foe to size it up; type flee if a
+      fight turns against you. Defeat the alpha pack-leader in the den.
+  - id: end
+    description: >-
+      The alpha is dead and the pack is broken. You came to the steppe
+      not knowing a hare's track from a hound's. You leave a hunter, and
+      you leave wearing the pack that tried to take you.
+
+rewards:
+  stat_info: "perception:3"
+  itemid: 20088
+  item_info: "30021:3,30020:2,30058:1"
+  recipe_info: "scab-hide-jerkin"
+  gold: 50
+  playermessage: >-
+    The alpha goes down hard and final, and with it the will that bound
+    the pack -- the hounds that survive scatter and do not re-form. You
+    feel the long work of the steppe settle into you as a hunter's
+    sharpness, eyes and instinct quicker than they were. From the pelts
+    you took, a jerkin; in your pack, the makings to keep yourself in the
+    field; and in your head, the cut of the hide and how to sew more.
+    Delk was right -- the pack had to be broken at its head, and you were
+    the one who did it.
+  roommessage: ""
+
+triggers:
+  # ── BOSS KILL: defeat the Alpha Pack-Leader -> complete + rewards ────
+  - event: mob_death
+    mob: 9143
+    conditions:
+      has: ["43-start"]
+      missing: ["43-end"]
+    actions:
+      - grant: "43-end"
+      - send_text: >-
+          The alpha pack-leader shudders and goes down, and the den falls
+          silent. The pack that ran this country is broken.

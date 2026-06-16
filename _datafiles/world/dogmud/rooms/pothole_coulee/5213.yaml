@@ -1,0 +1,58 @@
+roomid: 5213
+zone: Pothole Coulee
+title: Chrysalis School Hall
+description: >
+  One long room under a sound plank roof makes up the whole of the school,
+  and the whole of it is given to learning. Slate boards in chalk-dusted
+  frames line the far wall, the slates half-wiped, ghosted with the
+  morning's letters and sums. Desks crowd the floor in mismatched rows -- no two the
+  same height, scavenged and mended and handed down -- their lids scarred
+  by generations of restless penknives. By the door stands the
+  notice-board, shingled deep with pinned cards and curling hand-bills,
+  the busiest wall in the room. The air is warm and close and smells of
+  chalk and lamp oil and the river-damp of children, an ordinary,
+  patient, kindly sort of place for all its strange name.
+biome: house
+coord:
+  x: 45
+  y: -3
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  south:
+    roomid: 5212
+  west:
+    roomid: 5214
+nouns:
+  notice-board:
+    A broad notice-board fills the wall beside the door, shingled deep
+    with pinned notes, lesson-lists, and curling hand-bills. Pride of
+    place goes to a single weathered card lettered in the schoolmaster's
+    careful hand. It says that no question is too small or too strange,
+    and that anyone wanting to know about a thing -- a word, a place, a
+    beast, a craft, anything under the sky -- has only to put the question
+    plainly to the world, and the world will answer what it knows. Below
+    it, smaller and kindlier, a line for tired eyes -- should the written
+    word ever sit crooked on the page, spilling past its edges or crowding
+    itself too thin to read, you need only ask the world to fit its
+    letters to your own sight, and it will lay them out clean and square
+    again.
+  desks:
+    The desks are a mismatched flock, no two of a height -- some squat
+    benches for the small ones, some tall slope-lidded affairs scavenged
+    from who knows where, all scarred and inked and mended at the joints.
+    Lift a lid and you find the litter of school -- stubs of chalk, a
+    forgotten apple core, names cut deep into the wood by hands long since
+    grown and gone. They sit in crooked rows facing the slates, waiting on
+    the next bell.
+  slates:
+    A bank of slate boards lines the far wall in chalk-pale frames, the
+    biggest set on an easel for the master and smaller hand-slates stacked
+    beside it for the pupils. They are half-wiped and ghosted, the morning's
+    letters and figures still faintly there under the smear of the cloth.
+    A box of chalk nubs and a grey felt rag hang on a string within easy
+    reach, ready for the next lesson to be written up.
+idlemessages:
+- A loose hand-bill lifts on a draft from the door and settles again on the notice-board.
+- Chalk dust drifts in a bar of light, and the empty desks tick faintly as the room warms.

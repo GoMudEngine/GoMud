@@ -1,0 +1,48 @@
+roomid: 5256
+zone: Pothole Coulee
+title: Timbered Drift
+description: >
+  The tunnel opens into a horizontal drift, wide enough here that two
+  men could pass or a full fight could play out without wedging
+  against the walls. A grid of old timbers shores the ceiling -- squat
+  posts with cross-beams laid between them, the wood black with age
+  and glistening where the rock seeps. They groan at intervals, a
+  slow deep sound that travels the whole drift and comes back changed.
+  The floor has been leveled by old work, a strip of reasonably flat
+  stone down the center where the carts once ran, though the rails are
+  long gone. The drift runs west to where it pinches back to a tunnel,
+  and a side-branch drops away into the lower workings. East the way
+  back up is still open.
+biome: cave
+coord:
+  x: 34
+  y: -1
+  z: -1
+exits:
+  east:
+    roomid: 5255
+  west:
+    roomid: 5257
+  down:
+    roomid: 5258
+nouns:
+  timbers: The old shoring grid, posts and cross-beams, black with
+    age and sweating where the rock breathes through them. They hold
+    -- or have held -- but the groan they make when the mountain
+    settles is the sound of something under load for too long. Each
+    one is the only thing between the roof and your head.
+  drift: The worked horizontal gallery, wider than the access tunnel
+    east of it -- a proper working space once, where crews swung
+    picks and ran carts down a rail now vanished. The flat center
+    strip is the fighting ground -- wide enough to move in, the
+    shoring posts spacing it into thirds that can be used for cover.
+spawninfo:
+- mobid: 9120
+  message: A mine crawler skitters along the shoring overhead.
+  respawnrate: 5 real minutes
+- mobid: 9121
+  message: A tunnel brute hauls itself upright in the drift, stone-knuckled and slow.
+  respawnrate: 5 real minutes
+idlemessages:
+- The <ansi fg="itemname">timbers</ansi> groan once, low and settling, and a thin rain of grit sifts down from the joints.
+- Cold air rises out of the shaft below, carrying the smell of wet stone from the lower workings.

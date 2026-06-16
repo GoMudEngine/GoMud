@@ -1,0 +1,41 @@
+roomid: 5332
+zone: Pothole Coulee
+title: Scrub Verge
+description: >
+  Open windblown scrub marks the western edge of the stone ring's
+  influence, the land here neither quite inside the circle nor fully
+  free of it. Bent grass covers the ground in low mats, each clump
+  angled away from the prevailing wind with the weary expertise of
+  long habit. A single fallen stone lies here, half-sunk in the turf,
+  its upper face still faintly smooth where once it stood upright and
+  weather struck it flat-on. Whatever it was carved with is gone now --
+  erosion or deliberate removal, impossible to say. The ring's nearest
+  standing stones are visible to the east, and the pale sky above the
+  coulee stretches wide and unobstructed in every other direction.
+biome: land
+coord:
+  x: 44
+  y: -8
+  z: 0
+exits:
+  east:
+    roomid: 5330
+  north:
+    roomid: 5333
+nouns:
+  scrub: The scrub here grows in low dense mats, each one a knot of
+    stems bent in the same direction -- a record of prevailing wind
+    written in living material, patient and illegible to anyone who
+    has not stood here long enough to read the pattern.
+  grass: Clumps of bent grass cover the ground between patches of bare
+    earth. At the roots the soil is darker, almost black, rich with
+    old organic matter -- this ground has been undisturbed for a very
+    long time.
+idlemessages:
+- The wind crosses the open <ansi fg="cyan">scrub</ansi> and bends the grass in a long
+  wave moving east, toward the ring.
+- The fallen stone's smooth face catches the light and for a moment
+  you think you see an outline in it -- a curve, a mark -- and then
+  the angle changes and it is blank again.
+- A small bird lands on the edge of the fallen stone, studies the
+  <ansi fg="grass">grass</ansi> nearby, and departs without explanation.

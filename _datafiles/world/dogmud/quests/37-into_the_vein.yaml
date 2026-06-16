@@ -1,0 +1,56 @@
+# Quest 37 — Into the Vein (Pothole Coulee, Spoke B / Forge outer ring,
+# capstone). Granted by Survivor Ovell (9117) after quest 36 (Pick the Vein).
+# The player descends the DARK basalt mine (they must cast chrysalis-glow to
+# see -- taught in the hub + reinforced by Ovell's dark_help node) and defeats
+# the Stone-Blooded Beast (9123) in the Den at the bottom.
+#
+# Token flow:
+#   37-start  — granted by Ovell's mine_offer dialogue node.
+#   37-end    — granted by the boss-kill trigger below (mob_death 9123). The
+#               rewards block fires on 37-end: the forged blade (10045), a
+#               blacksmithing rank, a permanent Strength gain (stat_info), and
+#               the advanced basalt-iron recipe (recipe_info -- the recipe-grant
+#               engine feature added this chunk; the player can then forge their
+#               own basalt-iron blades).
+
+questid: 37
+name: Into the Vein
+description: >-
+  A stone-blooded beast has denned at the bottom of the basalt mine below the
+  slope. The mine is pitch dark -- cast your glow before you descend -- and the
+  beast is the worst thing in it. Take it, and the deep vein is yours.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: "Survivor Ovell has set you on the mine. Cast chrysalis-glow to light the dark, descend past the workings, and defeat the stone-blooded beast in the Den at the bottom."
+    hint: "Head down the mine mouth. The deep workings are pitch black -- type cast chrysalis-glow to see. Fight your way down to the Den and defeat the stone-blooded beast. Type consider on a foe first to size it up."
+  - id: end
+    description: "The beast is dead and the deep vein is open. You came in not knowing which end of a hammer to hold. You leave a smith."
+    hint: "You have taken the mine. Speak with Ovell on the slope if you want to hear what it means."
+
+rewards:
+  itemid: 10045
+  skillinfo: "blacksmithing:1"
+  stat_info: "strength:3"
+  recipe_info: "basalt-iron-blade"
+  gold: 50
+  playermessage: >-
+    The Den goes still. The beast's fused-stone hide cools under your hand, and
+    the deep vein beyond it catches your light -- a seam of basalt-iron running
+    on into rock no one has worked. You feel the labor of the spoke settle into
+    your arms as a lasting strength, and the shape of a harder recipe settles
+    into your head: you know now how to fold this dark ore into an edge of your
+    own. The blade you carry out is the first of them.
+
+triggers:
+  # ── BOSS KILL: defeat the Stone-Blooded Beast -> complete + rewards ──
+  - event: mob_death
+    mob: 9123
+    conditions:
+      has: ["37-start"]
+      missing: ["37-end"]
+    actions:
+      - grant: "37-end"
+      - send_text: "The stone-blooded beast shudders, its fused hide cracking like cooling slag, and goes down for the last time. The deep mine is quiet."

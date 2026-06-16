@@ -1,0 +1,32 @@
+roomid: 5288
+zone: Pothole Coulee
+title: Game Trail
+description: >
+  A worn trail cuts through the brush, beaten flat by generations
+  of animals coming down to water. The path is narrow but clear,
+  the ground to either side scuffed and tracked where things pause
+  or turn. Tracks of every size cross and overlay — hoof, pad,
+  claw. The brush crowds the edges, high enough to shelter a waiting
+  shape. The trail is a gift and a trap in equal measure.
+biome: land
+coord:
+  x: 43
+  y: 7
+  z: 0
+exits:
+  north:
+    roomid: 5287
+  south:
+    roomid: 5291
+  west:
+    roomid: 5290
+nouns:
+  trail: A hard-packed strip worn down by hooves, pads, and claws
+    over many seasons — the easiest path, and the most watched.
+  tracks: Prints of every shape and size pressed into the soft
+    margins -- hoof, pad, claw, overlapping without order.
+idlemessages:
+- Fresh tracks press into the soft margin of the trail — large,
+  evenly spaced, and recent.
+- Something unseen moves parallel to the trail through the brush,
+  keeping pace without showing itself.

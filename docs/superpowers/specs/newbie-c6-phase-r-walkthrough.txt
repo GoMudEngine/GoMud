@@ -1,0 +1,57 @@
+================================================================================
+NEWBIE REWORK — CHUNK 6 (Spoke E, The Folding / magic) — PHASE R WALKTHROUGH
+Rooms + nouns build record. 2026-06-14.
+Sub-spec: docs/superpowers/specs/2026-06-14-newbie-chunk6-spoke-e-folding-subspec.md
+================================================================================
+
+20 rooms 5302-5321 ASCENDING from hub stub 5224 (Stargazer Cut, (44,-2,0)). The
+spoke climbs the z-axis (z1->z3) to thread above the crowded NW corner (Spoke A +
+the Chrysalis School at z0). Built by 3 ring subagents — FIRST-TRY CLEAN (the
+C4/C5 lessons held: bare filenames, no colon-in-noun-scalars, noun-token rule).
+
+RINGS (id | title | coord | biome | sanct):
+ INNER — observatory ruin (sanctuary, fort), z1-2:
+  5302 Observatory Base  (44,-2,1)  D>5224 U>5303
+  5303 Observatory Hall  (44,-2,2)  D>5302 W>5304 N>5305   [adept teacher, Q44]
+  5304 Fallen Orrery     (43,-2,2)  E>5303                 [channels/lore]
+  5305 Star Chamber      (44,-3,2)  S>5303 W>5306          [practice mark / cast]
+  5306 Cracked Dome      (43,-3,2)  E>5305 N>5307
+  5307 The High Rim      (43,-4,2)  S>5306 N>5308          [sanctuary ends]
+ MIDDLE — meditation grove (no sanct, forest), z2:
+  5308 Grove Edge        (43,-5,2)  S>5307 N>5309 W>5310
+  5309 Whispering Grove  (43,-6,2)  S>5308 W>5311          [warden, Q45]
+  5310 Sunken Path       (42,-5,2)  E>5308 N>5311
+  5311 Veil Hollow       (42,-6,2)  E>5309 S>5310 N>5312
+  5312 Thinning Wood     (42,-7,2)  S>5311 N>5313
+  5313 Grove Heart       (42,-8,2)  S>5312 W>5314          [concentration beat]
+  5314 Veil Tear         (41,-8,2)  E>5313 U>5315          [grove ends; ascend]
+ OUTER — reality-thin scabland (no sanct, cliffs), z3:
+  5315 Riven Ground      (41,-8,3)  D>5314 N>5316
+  5316 Folded Distance   (41,-9,3)  S>5315 W>5317 E>5318
+  5317 Floating Stone    (40,-9,3)  E>5316 N>5319
+  5318 Stuttering Space  (42,-9,3)  W>5316                 [dead-end foe pocket]
+  5319 The Unraveling    (40,-10,3) S>5317 E>5320
+  5320 The Thinnest Place(41,-10,3) W>5319 N>5321          [UNFOLDED boss]
+  5321 Refolded Calm     (41,-11,3) S>5320                 [reward vista]
+
+21 reciprocal edges (incl. stub). Vertical exits: 5224>U>5302, 5302>U>5303,
+5314>U>5315 (the observatory + tear climbs). All others cardinal. Footprint
+x40-44 y-2..-11 z1-3 — entirely empty before this chunk (existing z>=1 rooms are
+Spoke A's watchtower at x56-57 + hub loft at (44,2,1), all clear of this lane).
+
+AUDITS — ALL PASS first try (popup window, 2026-06-14):
+ [x] coord_inventory.py     -> 0 collisions; Pothole Coulee 119 rooms, bbox
+                               x[31..57] y[-11..14] z[-2..3].
+ [x] newbie_manifest_check.py -> Spoke E 20/20 rooms + 21/21 exit pairs PASS;
+                               0 FAIL whole-check. (5224 MANIFEST entry gained the
+                               up:5302 attachment.)
+ [x] go build . -> exit 0.
+ [x] boot (MapConsistencyEnforce=panic) -> rooms 622->642 (+20);
+     ValidateZoneConsistency errors=0 warnings=0 mode=panic (= cartcheck clean,
+     incl. the 3D vertical exits); Server Ready, 0 panics.
+
+No bugs this phase (clean run). NEXT after the gate: Phase M (mobs 9144-9159:
+the Folding-adept + grove warden, grove/scabland foes, the Unfolded boss made to
+CAST; NO new items — Oak Staff reused), then Phase D (quests 44-46 granting
+sparks + heal via spellid; cast/concentration teaching; dialogue).
+================================================================================

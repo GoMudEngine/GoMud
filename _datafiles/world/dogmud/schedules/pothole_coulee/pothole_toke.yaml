@@ -1,0 +1,26 @@
+id: pothole_toke
+description: "Crier Toke works Hub Square by day, joins the evening crowd at the Drowned Lantern, and sleeps off the square at night."
+segments:
+  - start: 6
+    end: 18
+    target_room: 5203
+    activity: ""
+    idlecommands:
+      - emote plants himself in the middle of the square and clears his throat.
+      - say Fresh from the coulee -- mind the wash road after dark!
+      - emote nods to a passerby and files the face away for later.
+      - emote calls the hour and the news in one breath while the throat-mouth hums the next.
+  - start: 18
+    end: 22
+    target_room: 5205
+    activity: ""
+    idlecommands:
+      - emote settles onto a bench at the Lantern with a satisfied grunt.
+      - say A crier's throat earns its rest by lamplight.
+      - emote leans to a neighbor and shares today's choicest bit in a stage whisper.
+  - start: 22
+    end: 6
+    target_room: 5203
+    activity: sleeping
+    idlecommands:
+      - emote dozes on the bench at the edge of the square, hat tipped over both mouths.

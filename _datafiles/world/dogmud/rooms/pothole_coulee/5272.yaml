@@ -1,0 +1,36 @@
+roomid: 5272
+zone: Pothole Coulee
+title: Mudflat
+description: >
+  The reeds fall back here and the marsh opens into bare mudflat, the
+  exposed ground dark and treacherous underfoot — each step produces a
+  liquid sucking sound and leaves a boot-shaped hole that slowly fills
+  with black water. Nothing grows on the mudflat itself; even the reeds
+  keep their distance. Near the center, a piece of old gear juts from
+  the mud at an angle: a leather pack with its straps rotted away, the
+  buckles gone green with verdigris. Whatever the mud swallowed, it
+  keeps.
+biome: swamp
+coord:
+  x: 48
+  y: 7
+  z: 0
+exits:
+  north:
+    roomid: 5271
+  west:
+    roomid: 5270
+spawninfo:
+- mobid: 9131
+nouns:
+  mudflat: Exposed dark mud, slick and with no purchase underfoot. The
+    surface cracks in a mosaic pattern where it has dried at the edges,
+    but the center is still wet and gives beneath your weight.
+  gear: The remains of a leather pack, half-buried and listing sideways
+    from the mud. The leather has gone black and stiff; the buckles are
+    corroded beyond use. Whatever was inside is long gone.
+idlemessages:
+- The <ansi fg="itemname">mudflat</ansi> shifts and bubbles softly where
+  something passes beneath the surface.
+- A slow gas bubble rises through the mud near the sunken
+  <ansi fg="itemname">gear</ansi> and breaks with a faint sulphur hiss.

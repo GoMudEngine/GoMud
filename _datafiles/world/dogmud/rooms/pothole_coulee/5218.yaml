@@ -1,0 +1,42 @@
+roomid: 5218
+zone: Pothole Coulee
+title: Reed Jetty
+description: >
+  A short fishing jetty pushes out through the reeds, its weathered planks
+  ending in open water where the green stalks thin and give way. A coracle
+  of hide and bent willow rides tied to the last post, bobbing whenever
+  the water remembers to move. Dragonflies stitch the air above the reeds,
+  blue and copper, in no particular hurry to be anywhere. Nothing happens
+  here fast; the jetty is a place for waiting on a line and letting the
+  afternoon go by. The reeds whisper around you, hiding the path back
+  south.
+biome: shore
+coord:
+  x: 44
+  y: -1
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  south:
+    roomid: 5201
+  north:
+    roomid: 5224
+nouns:
+  jetty: The jetty is a narrow run of grey, weather-split planks set on
+    posts driven into the shallows, reaching out past the reeds to where
+    the fishing is good. It creaks and gives underfoot but holds. The far
+    end is worn pale and smooth where folk sit with their lines in the
+    water.
+  coracle: A small round coracle is tied to the last post -- a bowl of
+    oiled hide stretched over bent willow ribs, light enough for one body
+    to lift and carry. It rides high and bobs at the least motion of the
+    water. A single short paddle lies across its seat, and a coil of line
+    in the bottom.
+  reeds: The reeds crowd close on both sides of the jetty, tall and green
+    and thick enough to hide a wading body. They whisper and lean when the
+    wind comes down the coulee. Dragonflies rest on the upper stalks
+    between their darting runs over the open water.
+idlemessages:
+- A dragonfly lands on a reed-tip, holds dead still, then flicks away.
+- The tied coracle knocks once against its post and goes quiet.

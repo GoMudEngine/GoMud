@@ -1,0 +1,88 @@
+# Sala the Mender — healer, The Mending Hut (5209). Owns the sethome
+# lesson: "coulee" resolves to this room (respawn_home.go), so a
+# knocked-down learner wakes under her care.
+
+mobid: 9102
+zone: Pothole Coulee
+defaultMood: friendly
+
+greetings:
+  - text: "Come in. Sit if you need to. Most people need to."
+    moods: ["friendly", "neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Breathe out before you talk -- it always comes out truer."
+      - "Welcome. Nothing in this hut bites, including me."
+
+  - keywords: [""]
+    responses:
+      - "Take your time. The kettle is not going anywhere."
+      - "Mm. When you find the words, I am here."
+
+tree:
+  root:
+    text: >-
+      I am Sala. I mend what the coulee dents -- cuts, breaks, bad
+      nights, worse mornings. The beds are clean and the questions
+      stay small.
+    hints: >-
+      You could ask about making this place your home, about healing,
+      or about her third eye.
+    variants:
+      - questExcluded: ["30-end"]
+        text: >-
+          New, and not yet Opened -- I can tell; the unopened hold
+          their shoulders like they are still carrying the old world.
+          See Hadwen at the pool when you are ready. Then come back
+          and we will talk about keeping you in one piece.
+        hints: >-
+          You could ask Hadwen about the rite at the Awakening Pool.
+
+  nodes:
+    - id: home
+      triggers: ["home", "sethome", "rest", "stay", "return", "wake"]
+      text: >-
+        Listen, because this is the most useful thing anyone in this
+        town will tell you: make this hut your home while you learn.
+        Type <ansi fg="command">sethome coulee</ansi> and mean it.
+        Then, when the world knocks you all the way down -- and while
+        you are learning, it will -- you wake up here, on a clean bed,
+        with me nearby. Not in a ditch. Here.
+      hints: >-
+        Type sethome coulee to wake here when you fall. Type sethome
+        alone to see every place that will have you.
+
+    - id: healing
+      triggers: ["healing", "heal", "hurt", "wounds", "mend", "mending"]
+      text: >-
+        Rest mends most things -- food, sleep, patience. Sleep
+        especially: the body does its best work when you stop
+        supervising it. For the rest, there are salves and potions,
+        and Onna stocks the simple ones. If something is wrong that
+        none of that touches, come to me and point at where it hurts.
+      hints: >-
+        You could ask Innkeep Tally about sleeping at the Lantern, or
+        ask about making this hut your home.
+
+    - id: eye
+      triggers: ["eye", "third", "blink", "see"]
+      text: >-
+        It opened the year I started mending, which I have always
+        taken as the work approving of me. It sees slow things -- the
+        mend under a scab, the fever before the heat. It blinks when
+        it is thinking. Pay it no mind; it has seen worse than you.
+      hints: >-
+        You could ask about healing or about making this place home.
+
+    - id: hut
+      triggers: ["hut", "beds", "care", "place"]
+      text: >-
+        Stilts under us because the pool floods gentle in the wet
+        season, blankets because mending is half warmth, and the door
+        is never barred. People wake here confused sometimes, after a
+        bad fall somewhere far off. I keep the kettle on for exactly
+        that confusion.
+      hints: >-
+        You could ask about making this place your home.

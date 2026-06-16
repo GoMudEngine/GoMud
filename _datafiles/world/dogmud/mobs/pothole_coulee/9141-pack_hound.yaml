@@ -1,0 +1,63 @@
+mobid: 9141
+zone: Pothole Coulee
+behavior_archetype: predator
+archetype: fighting
+statpool: 50
+itemdropchance: 15
+hostile: true
+maxwander: 2
+groups:
+  - beast
+  - pack
+aiprofile: predator
+activitylevel: 25
+items:
+  - 40070   # pack-hide pelt — carried, always drops
+idlecommands:
+  - 'emote trots the perimeter of the coulee mouth at a loose, easy
+    gait, head up and ears forward, reading the wind'
+  - ''
+  - 'emote stops and stands broadside across the trail, watching, not
+    moving, making itself seen on purpose'
+  - ''
+combatcommands:
+  - 'emote charges straight in at a flat run, leading with the heavy
+    chest, shoulder aimed at the target'
+  - ''
+  - 'emote drives through and past and wheels hard, already coming back
+    before the impact has settled'
+  - ''
+  - 'emote drops the head and presses the attack from below, working
+    the center while the flankers circle'
+  - ''
+character:
+  name: Pack-Hound
+  description: |
+    The pack-hound is bigger than the common scab-hound by a head and
+    broader across the chest, its coat a darker grey that has a slight
+    coarseness to it, like wire brushed the wrong way. The scarring on
+    this one is older and thicker -- a record of engagements it pressed
+    rather than avoided. It runs at the front of the pack not because it
+    was put there but because it is the kind of animal that moves toward
+    things rather than away from them, and that tendency has been
+    reinforced by the pack organizing itself around it. While the
+    scab-hounds work the edges and cut off the exits, the pack-hound
+    hammers the center of attention and keeps it there. It is not
+    subtle. It does not need to be. The flankers will close while you
+    are focused on this one, and this one knows it.
+  speciesid: 2
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 16
+    strength:
+      training: 15
+    vitality:
+      training: 12
+    perception:
+      training: 4
+    willpower:
+      training: 2
+    charisma:
+      training: 1

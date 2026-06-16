@@ -1,0 +1,59 @@
+mobid: 9137
+zone: Pothole Coulee
+behavior_archetype: noncombat_questgiver
+statpool: 44
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 11
+idlecommands:
+  - 'emote drags a bone-handled scraper across the stretched hide on the frame,
+    working from the centre outward'
+  - ''
+  - 'emote crouches at the fire ring and pushes a coal back toward the centre
+    with a green stick'
+  - ''
+  - 'emote lifts a snare loop from the pile beside him and checks each twist
+    of the cordage with his thumbnail'
+  - ''
+  - 'emote draws a narrow-bladed knife slowly along a whetstone, counting
+    the strokes under his breath'
+  - ''
+  - 'emote turns his head and watches the tree-line along the eastern ridge
+    for a long moment without moving'
+  - ''
+character:
+  name: Hunter Delk
+  description: |
+    Delk is built like the steppe wants people built — not tall, not heavy,
+    just durable. His camp is the rough kind: a low frame-tent of stitched
+    hides, a fire ring circled with flat stones, a curing rack stretched with
+    a recent kill. Everything in it has a use and is in its place.
+    His hands are the first thing you notice. The skin across the backs of
+    them has gone thick and almost waxy, the kind of hide that sheds a briar
+    scratch the way bark sheds rain. The same texture runs up his forearms
+    to the elbow. He does not seem aware of it. He works with those hands
+    without pause — scraping, tying, sharpening — and the tools in them look
+    like extensions of the fingers rather than separate objects.
+    He will teach what he knows to someone who asks straight and listens
+    straight. He does not teach twice.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 12
+    dexterity:
+      training: 12
+    vitality:
+      training: 10
+    strength:
+      training: 6
+    willpower:
+      training: 2
+    charisma:
+      training: 2

@@ -1,0 +1,34 @@
+roomid: 5285
+zone: Pothole Coulee
+title: Sage Flat
+description: >
+  The flat spreads broad and unhurried, thick with sage grown tall
+  enough to brush your hip. Silver-green in the light, blue-grey in
+  shadow, it runs wall to wall across this hollow in the steppe with
+  only the occasional pale clump of bunchgrass breaking the pattern.
+  Bees work the flat steadily, dropping from bloom to bloom, loud in
+  the windless air. The smell of crushed sage rises from every footstep,
+  clean and sharp, and the ground beneath is soft with years of leaf-fall.
+biome: land
+coord:
+  x: 42
+  y: 3
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  east:
+    roomid: 5283
+spawninfo:
+- mobid: 9138
+nouns:
+  sage: Sage stands thick and deliberate across the flat, each shrub
+    rounded by wind into a low grey-green mound. The leaves are small
+    and pale, coated in fine hair that holds the oils. Crush a sprig
+    between your fingers and the smell is the whole steppe at once.
+  bees: Fat, slow, heavy with pollen, the bees move through the sage
+    without any hurry. They have been working this flat longer than the
+    trail to the east has existed. They pay you no attention at all.
+idlemessages:
+- The <ansi fg="itemname">bees</ansi> drone on, indifferent to the sun moving overhead.
+- A breath of wind crosses the <ansi fg="itemname">sage</ansi> and the whole flat exhales its scent.

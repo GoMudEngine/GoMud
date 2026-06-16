@@ -1,0 +1,44 @@
+roomid: 5327
+zone: Pothole Coulee
+title: Kitchen Garden
+description: >
+  Behind a low fence of split palings, the kitchen garden runs in tidy
+  rows from the yard's north edge to a low hedgerow. Root vegetables
+  fill the inner beds -- turnip and carrot and parsnip, their feathery
+  tops marking straight lines across the dark soil. Herbs crowd the
+  border in a less orderly arrangement, each plant chosen for use rather
+  than appearance. The soil between the rows has been turned recently,
+  still loose and dark, and the smell of it is clean and mineral. Bees
+  work the flowering herb border with a low, steady sound. Someone tends
+  this garden every day -- the evidence is in the absence of weeds, the
+  evenness of the rows, the way nothing has been allowed to sprawl or
+  run to seed without intention. The well lies to the west, a short
+  walk along the garden's edge.
+biome: farmland
+coord:
+  x: 46
+  y: -6
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  south:
+    roomid: 5324
+  west:
+    roomid: 5328
+spawninfo:
+- mobid: 9155
+nouns:
+  rows: The planting rows are straight and evenly spaced, marked by
+    a taut cord run between short stakes at either end. The work of
+    keeping them this way is quiet and daily and never quite done.
+  beds: The herb beds at the border are the one place in the garden
+    where order yields to abundance -- plants crowding into each other,
+    flowering at their own pace, kept only by regular harvest.
+idlemessages:
+- The <ansi fg="yellow">beds</ansi> hum with bees working the herb flowers in long
+  looping passes.
+- A row of carrot-tops trembles where something small moves along
+  the soil between the <ansi fg="yellow">rows</ansi>.
+- The smell of turned earth and growing things is strong here in
+  the warm part of the afternoon.

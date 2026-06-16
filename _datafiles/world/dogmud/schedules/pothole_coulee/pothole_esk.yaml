@@ -1,0 +1,26 @@
+id: pothole_esk
+description: "Warden Esk keeps his watch at the Threshold House by day, takes a quiet evening at the Drowned Lantern, then sleeps back at the threshold through the night."
+segments:
+  - start: 6
+    end: 18
+    target_room: 5215
+    activity: ""
+    idlecommands:
+      - emote sits the three-legged stool by the arch, still as the stone, and watches the empty air within it.
+      - emote whittles a curl off the driftwood stick without ever looking down at his hands.
+      - say The arch has stood longer than this town. It will stand after.
+      - emote turns his head slowly, ember-light behind his eyes brightening, then banking.
+  - start: 18
+    end: 22
+    target_room: 5205
+    activity: ""
+    idlecommands:
+      - emote takes an unhurried seat at the Lantern, back to the wall, watching the room.
+      - say A warden who never rests misses what matters. I take my evening.
+      - emote nods once to a familiar face across the room, eyes steady and calm.
+  - start: 22
+    end: 6
+    target_room: 5215
+    activity: sleeping
+    idlecommands:
+      - emote sleeps on the low bench beside the arch, one hand loose at his side, ember-eyes dimmed to coals.

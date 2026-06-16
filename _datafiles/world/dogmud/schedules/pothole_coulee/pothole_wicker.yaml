@@ -1,0 +1,26 @@
+id: pothole_wicker
+description: "Granny Wicker tends her cottage and charms by day, joins the evening gathering at the Lantern, then sleeps home at the cottage through the night."
+segments:
+  - start: 6
+    end: 18
+    target_room: 5210
+    activity: ""
+    idlecommands:
+      - emote stirs a clay crock at the hearth-lip and tastes the steam off the spoon.
+      - emote ties a knot of red yarn and hangs it among the charms, murmuring a rhyme.
+      - say The old ways are patient. They do not mind if you come to them slowly.
+      - emote tucks back a strand of green hair that has crept across her cheek.
+  - start: 18
+    end: 22
+    target_room: 5205
+    activity: ""
+    idlecommands:
+      - emote settles into the warmest corner of the Lantern and wraps her hands around a cup.
+      - say A body needs company as much as remedy, some evenings.
+      - emote speaks quietly to the charms on her belt; they tick and spin in reply.
+  - start: 22
+    end: 6
+    target_room: 5210
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the big chair by the cold hearth, green hair curled about her like a shawl.

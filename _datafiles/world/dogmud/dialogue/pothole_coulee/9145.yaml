@@ -1,0 +1,183 @@
+mobid: 9145
+zone: Pothole Coulee
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "hail"]
+    responses:
+      - "Orrin. I keep the grove. Grieve sent you up, or you would not have
+          found the path quiet -- it does not stay put for the unready."
+      - "Move slowly here. The grove takes the difference out on the hasty."
+
+  - keywords: ["cast", "concentration", "combat", "learn", "teach", "grove",
+      "quest", "task"]
+    responses:
+      - "Anyone can cast standing still in a quiet room. The grove teaches the
+          other thing -- holding the fold together while you are being hit.
+          Ask me and I will set you to it."
+      - "Concentration is not a calm room. It is the holding-on when the room
+          is anything but. Ask, when you want to learn it."
+
+  - keywords: ["outline", "lag", "smear", "mutation", "opened", "shadow"]
+    responses:
+      - "You have noticed the lag. The grove does it to everyone who stays --
+          the edges of me arrive a beat behind the rest. The Awakening opened
+          me to this place and the place keeps the difference. The trick is to
+          move slow enough that the lag cannot matter."
+
+  - keywords: ["hold", "focus", "break", "interrupt"]
+    responses:
+      - "A hit can break a casting. So can bolting across the room mid-fold.
+          The answer is not to avoid the blow -- out here you cannot -- but to
+          keep shaping the fold through it. Get hit, and hold anyway. That is
+          the whole lesson."
+
+  - keywords: ["scabland", "scab", "unfolded", "unraveling"]
+    responses:
+      - "East and up, past the grove, the ground stops agreeing to be ground.
+          That is the scabland. The thing that thinned all of this is out
+          there in the worst of it, still casting. The Unfolded. It is a
+          fight you take when your nerve and your folds are steady, not before."
+
+  - keywords: [""]
+    responses:
+      - "Say it plainly."
+      - "The grove is listening. So am I."
+      - "Speak, or sit a while."
+
+tree:
+  root:
+    text: "Orrin. Keeper of the grove."
+    hints: "You could ask Orrin about casting in combat or your task."
+    variants:
+      # ── Not ready (Grieve's lesson unfinished) ───────────
+      - questExcluded: ["44-end"]
+        text: "You have not learned to cast yet. There is no holding a fold
+          under pressure before you can shape one at all. Go back down to
+          Adept Grieve in the observatory and learn the first casting. Come
+          to me when your hands know the shape of it."
+        hints: "Return south to the observatory and finish Adept Grieve's
+          casting lesson before coming to Keeper Orrin."
+
+      # ── Ready for quest 45 ───────────────────────────────
+      - questRequired: ["44-end"]
+        questExcluded: ["45-start", "45-end"]
+        text: "Grieve's mark on you, then. Good. Now the harder half: casting
+          with a fight on you. The grove is full of things the thinning has
+          warped -- fight one, and cast while you do. Ask me about it when you
+          are ready to be hit."
+        hints: "Type ask orrin cast to take on the grove's lesson."
+
+      # ── Mid quest 45 ─────────────────────────────────────
+      - questRequired: ["45-start"]
+        questExcluded: ["45-end"]
+        text: "Still at it. Put down a veil-warped creature -- a drift-wisp or
+          a revenant -- and loose a spell while a fight is on you, deeper in
+          the grove. Get hit and hold the fold anyway. Come back when you have
+          done both."
+        hints: "Defeat a drift-wisp or grove revenant; while fighting in the
+          grove type cast conviction-spike. Then ask orrin done."
+
+      # ── Ready for quest 46 ───────────────────────────────
+      - questRequired: ["45-end"]
+        questExcluded: ["46-start", "46-end"]
+        text: "You hold a casting under fire now. That is the skill that keeps
+          a caster breathing. There is one thing left, and it is the hard one
+          -- the Unfolded, out on the scabland. Ask me about it when your
+          nerve is up."
+        hints: "Type ask orrin scabland when you are ready for the final task."
+
+      # ── Mid quest 46 ─────────────────────────────────────
+      - questRequired: ["46-start"]
+        questExcluded: ["46-end"]
+        text: "It is still out there, in the thinnest place. East and up,
+          through the folded ground and the unraveling. It casts at range --
+          cast back, and mend yourself if you can. Do not let the strange
+          ground turn you around. Put it down."
+        hints: "Go up into the scabland and east through the folded distance
+          and the unraveling to the thinnest place; defeat the Unfolded."
+
+      # ── Quest 46 complete ────────────────────────────────
+      - questRequired: ["46-end"]
+        text: "You undid the Unfolded. The grove has been quieter since --
+          the thinning is closing, slow, the way a wound closes. I have kept
+          this place a long time and never thought to see that. You came up
+          here barely able to cast. You leave able to mend yourself. Go well."
+        hints: "You have cleared the Folding spoke. Well done."
+
+  nodes:
+    # ── QUEST 45 OFFER ────────────────────────────────────────
+    - id: grove_offer
+      triggers: ["cast", "concentration", "combat", "grove", "learn",
+        "teach", "quest", "task"]
+      questRequired: ["44-end"]
+      questExcluded: ["45-start", "45-end"]
+      grantsQuest: "45-start"
+      text: "Right. Here is the work. Deeper in the grove the veil-warped
+        things gather -- drift-wisps, and the revenants of those who came
+        before and never left. Fight one and put it down. And while a fight
+        is on you, loose a spell -- type cast conviction-spike. You will be
+        hit mid-fold; the fold will shudder. Hold it through. Do both and
+        come back to me."
+      hints: "Head north into the grove. Defeat a drift-wisp or grove
+        revenant. While fighting, type cast conviction-spike to cast under
+        pressure. Then ask orrin done."
+
+    # ── QUEST 45 TURN-IN ──────────────────────────────────────
+    - id: grove_turnin
+      triggers: ["report", "done", "ready", "finished", "quest", "task"]
+      questRequired: ["45-kill", "45-cast"]
+      questExcluded: ["45-end"]
+      grantsQuest: "45-end"
+      text: "You were hit and the fold held. That is concentration -- not
+        calm, but holding-on. Here is a wider working for it: sparks. The
+        weakest of the area spells, which is the same as saying the first you
+        can trust yourself with -- it touches everything before you at once.
+        Now the last task, when you are ready. The Unfolded, on the scabland.
+        Ask me."
+      hints: "Quest complete. You learned sparks. Type ask orrin scabland
+        when you are ready for the final task."
+
+    # ── QUEST 46 OFFER ────────────────────────────────────────
+    - id: scab_offer
+      triggers: ["scabland", "scab", "unfolded", "unraveling", "final",
+        "quest", "task"]
+      questRequired: ["45-end"]
+      questExcluded: ["46-start", "46-end"]
+      grantsQuest: "46-start"
+      text: "The Unfolded, then. Long ago an adept of Grieve's house reached
+        too far into a thin place and did not come all the way back. What
+        stayed is the shape the reaching left -- a thing made of nothing but
+        casting, and it has been casting at the world ever since. East and up,
+        through the scabland to the thinnest place. It will throw foldings at
+        you from across the room; cast back, hold your concentration, mend
+        yourself when you must. Out-cast it. There is no other way past it."
+      hints: "Go up into the scabland and east through the folded distance and
+        the unraveling to the thinnest place. Defeat the Unfolded in a
+        spell-duel."
+
+    # ── CONCENTRATION / COMBAT-CAST HELP ──────────────────────
+    - id: grove_help
+      triggers: ["hold", "focus", "interrupt", "break", "help"]
+      text: "Two things make a combat caster. First, cast while fighting:
+        type cast and the spell, the same as standing still, but expect the
+        blow to come mid-fold. Second, concentration: a hit can shake a
+        casting loose, and the answer is to keep shaping it through the hit
+        rather than flinch off it. Get struck, and hold the fold anyway. The
+        grove will give you plenty of chances to practice being struck."
+      hints: "While fighting in the grove, type cast conviction-spike. Push
+        the casting through the hits you take."
+
+    # ── REPEATABLE GROVE TENDING OFFER ────────────────────────
+    - id: grove_loop_offer
+      triggers: ["work", "again", "more", "tend", "job", "quest", "task"]
+      questRequired: "46-end"
+      grantsQuest: "57-start"
+      questExcluded: ["57-start", "57-end"]
+      text: "The warped things drift back in. That is the nature of a
+        thin place -- it keeps leaking. Go into the grove and put one
+        down. The practice matters as much as the clearing."
+      hints: "You could tend the grove again -- type ask orrin work."
+
+memory:
+  expiryPeriod: ""

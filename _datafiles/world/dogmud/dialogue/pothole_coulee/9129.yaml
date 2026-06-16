@@ -1,0 +1,212 @@
+mobid: 9129
+zone: Pothole Coulee
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "hail"]
+    responses:
+      - "Falv. You came in from the pool side, so Birna sent you, so
+          you are not entirely useless. What do you want?"
+      - "Mind the water side. I throw at things that come from the
+          water side."
+
+  - keywords: ["marsh", "throw", "firebomb", "fight", "learn", "teach",
+      "quest", "task"]
+    responses:
+      - "The marsh teaches faster than I do. Ask me for a firebomb and
+          a task if you mean to learn it."
+      - "Leeches in the water, a serpent in the cattails. The marsh
+          will blood you if you let it. Ask."
+
+  - keywords: ["hands", "skin", "oilskin", "mutation", "opened",
+      "knuckles"]
+    responses:
+      - "The Awakening took to my hands. Water runs off them like off
+          a duck's back now. Useful, out here. I do not talk about it
+          and neither should you."
+
+  - keywords: ["cooldown", "cast", "special", "recover", "again"]
+    responses:
+      - "A thrown firebomb, a cast spell, a special move -- they all
+          pull from the same well. Use one and you wait a few breaths
+          before the next. Plan around it. People who forget that get
+          their teeth kicked in."
+
+  - keywords: ["bandolier", "potion", "carry"]
+    responses:
+      - "A bandolier holds your brews ready to hand -- they drop into
+          it on their own, and you drink the oldest first. Clear the
+          marsh and one is yours."
+
+  - keywords: [""]
+    responses:
+      - "Say it plain."
+      - "I am watching the water. Talk."
+      - "Out with it."
+
+tree:
+  root:
+    text: "Falv. Watch the water side."
+    hints: "You could ask Falv about the marsh or your task."
+    variants:
+      # ── Hasn't finished Birna's brew lesson ───────────────
+      - questExcluded: ["38-end"]
+        text: "You are not ready for the marsh. Go back to Birna at
+          the pool and learn to brew first -- out here a salve in your
+          pack is the difference between walking home and not. Come
+          find me when you can make one."
+        hints: "Return north to Herbalist Birna at the sheltered pool
+          and complete her brewing lesson before coming to Falv."
+
+      # ── Ready for quest 39 ────────────────────────────────
+      - questRequired: ["38-end"]
+        questExcluded: ["39-start", "39-end"]
+        text: "Birna's brewer, then. Good enough. The marsh past my
+          fire will teach you the rest -- combat, and how to throw a
+          firebomb without losing a hand. Ask me for the task when you
+          are ready to wade in."
+        hints: "Type ask falv marsh to take on the marsh."
+
+      # ── Mid quest 39 ──────────────────────────────────────
+      - questRequired: ["39-start"]
+        questExcluded: ["39-end"]
+        text: "Still wading. Put a leech down, throw the firebomb at
+          something in a fight -- remember, one trick every few
+          breaths -- and forage the herbs while you are out there.
+          Come back when it is done."
+        hints: "Kill a marsh leech, then type throw firebomb while in a
+          fight, then type forage in the marsh. If you lost the
+          firebomb, type ask falv firebomb. Then type ask falv report."
+
+      # ── Ready for quest 40 ────────────────────────────────
+      - questRequired: ["39-end"]
+        questExcluded: ["40-start", "40-end"]
+        text: "You wear the bandolier well enough. There is one thing
+          left, and it is the bad one -- past the miasma edge the
+          water turns poison, and something old has settled at the
+          heart of it. Ask me about the mire when you are ready to
+          finish this."
+        hints: "Type ask falv mire when you are ready for the final
+          task."
+
+      # ── Mid quest 40 ──────────────────────────────────────
+      - questRequired: ["40-start"]
+        questExcluded: ["40-end"]
+        text: "It is still down there. Brew your kit, fill the
+          bandolier, and go put the spirit of the swamp down. South
+          past the miasma, then the sinkhole takes you under."
+        hints: "Head south past the miasma edge, take the sinkhole
+          down, and defeat the spirit of the swamp at the heart of the
+          mire."
+
+      # ── Quest 40 complete ─────────────────────────────────
+      - questRequired: ["40-end"]
+        text: "You broke it. The water runs clean off the spring now
+          -- first time in a long time. You came in a pool-brewer and
+          you walk out something the marsh respects. That is rarer
+          than you know. Go on, then. The world is bigger than this
+          mud."
+        hints: "You have cleared the marsh and the mire. The Alchemy
+          spoke is done."
+
+  nodes:
+    # ── QUEST 39 OFFER (hands the firebomb) ────────────────────
+    - id: marsh_offer
+      triggers: ["marsh", "task", "learn", "teach", "wade", "fight",
+        "quest"]
+      questRequired: ["38-end"]
+      questExcluded: ["39-start", "39-end"]
+      grantsQuest: "39-start"
+      givesItem: 30058
+      text: "Right. Here -- take this firebomb. Ceramic, packed tight;
+        it bursts into flame where it lands. You throw it in a fight:
+        type throw firebomb while you are in combat. But mind this --
+        a thrown firebomb, a cast spell, and a special move all pull
+        from the same well. Use one and you wait a few breaths before
+        the next. So make it count. Now go wade in: put a marsh leech
+        down to learn the water, throw the firebomb at something in a
+        fight, and forage the herbs while you are out there. Type
+        flee if a fight turns -- you wake at the Mending Hut, not in
+        the mud. Lost the firebomb before you threw it? Ask me for
+        another."
+      hints: "You received a firebomb. Attack a marsh leech and kill it,
+        then -- in a fight -- type throw firebomb (throw, cast, and
+        special moves share one cooldown). Type forage in the marsh to
+        gather herbs. If you lose the firebomb, type ask falv firebomb.
+        Then type ask falv report."
+
+    # ── FIREPOT RECOVERY (replace a lost grenade) ─────────────
+    - id: firebomb_recovery
+      triggers: ["firebomb", "grenade", "lost", "another", "replace"]
+      questRequired: ["39-start"]
+      questExcluded: ["39-throw"]
+      givesItem: 30058
+      text: "Lost it already? Here. Last one I am giving free. Throw
+        this one -- type throw firebomb while you are in a fight. Do
+        not just carry it around."
+      hints: "You received another firebomb. Get into a fight and type
+        throw firebomb."
+
+    # ── QUEST 39 TURN-IN ──────────────────────────────────────
+    - id: marsh_turnin
+      triggers: ["report", "done", "ready", "finished", "quest",
+        "task"]
+      questRequired: ["39-leech", "39-throw", "39-forage"]
+      questExcluded: ["39-end"]
+      grantsQuest: "39-end"
+      text: "Leech down, firebomb thrown, herbs in your pack. That is
+        the marsh, near enough. Here -- a bandolier. Your brews drop
+        into it on their own and you drink the oldest first, so
+        nothing sits long enough to turn. You will want it for what is
+        next. Past the miasma edge the water goes poison, and
+        something rules it. Ask me about the mire when your nerve is
+        up."
+      hints: "Quest complete. Type ask falv mire when you are ready for
+        the final task."
+
+    # ── QUEST 40 OFFER ────────────────────────────────────────
+    - id: mire_offer
+      triggers: ["mire", "heart", "spirit", "swamp", "poison",
+        "quest", "task"]
+      questRequired: ["39-end"]
+      questExcluded: ["40-start", "40-end"]
+      grantsQuest: "40-start"
+      text: "The bad one, then. Past the miasma edge the marsh turns
+        to poison swamp -- the air alone will turn your stomach. The
+        ground sinks down into a sunken mire, and at the heart of it
+        the water has gathered into something with a will. A spirit,
+        an aberration, I do not have the word. It is the worst thing
+        in this country. Brew your salves, fill the bandolier, carry
+        firebombs. Go south, take the sinkhole down, and put it down.
+        Do not go in light."
+      hints: "Head south past the miasma edge into the poison swamp,
+        take the sinkhole down into the sunken hollow, and defeat the
+        spirit of the swamp at the heart of the mire. Brew and carry
+        salves and firebombs first."
+
+    # ── THROW / COOLDOWN HELP ─────────────────────────────────
+    - id: cooldown_help
+      triggers: ["throw", "cooldown", "cast", "special", "recover",
+        "help"]
+      text: "Throwing a firebomb is simple -- type throw firebomb in a
+        fight. The catch is the well it draws from. A thrown firebomb,
+        a cast spell, a special move like a kick or a taunt -- they
+        all share one timer. Spend it and you wait a few breaths
+        before you can spend it again. Out here that pause can get you
+        killed, so do not waste a trick on the wrong moment."
+      hints: "Type throw firebomb in combat. Throwing, casting, and
+        special moves share one cooldown -- you get one such action
+        every few breaths."
+
+    # ── REPEATABLE BREW LOOP OFFER ────────────────────────────
+    - id: brew_loop_offer
+      triggers: ["work", "again", "more", "brew", "job", "quest", "task"]
+      questRequired: "40-end"
+      grantsQuest: "55-start"
+      questExcluded: ["55-start", "55-brew", "55-end"]
+      text: "The marsh does not care when you last brewed. Get back to
+        the bench, make something, drink it. Come find me after."
+      hints: "You could take on another brew run -- type ask falv work."
+
+memory:
+  expiryPeriod: ""

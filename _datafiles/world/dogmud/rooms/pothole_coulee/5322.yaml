@@ -1,0 +1,39 @@
+roomid: 5322
+zone: Pothole Coulee
+title: The Cartway
+description: >
+  A cleared track climbs the low rise from the edge of town toward the
+  farmstead on the hill, its deep grass-grown ruts marking seasons of
+  cartloads hauled up this same slope. The verge has been freshly
+  scythed back to shoulder width, the cut grass lying pale and fragrant
+  in the sun. Ahead, the drystone wall of the homestead comes into view
+  above the rise, and beyond it the thatched rooflines of the longhouse
+  and barn sit solid against the sky. The track itself is soft going --
+  packed earth giving slightly underfoot, the kind of road that has been
+  walked so long it has worn itself comfortable.
+biome: farmland
+coord:
+  x: 46
+  y: -3
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  south:
+    roomid: 5225
+  north:
+    roomid: 5323
+nouns:
+  track: Wheel ruts run in two parallel channels the length of the slope,
+    worn deep enough that grass has rooted in their centers. The track
+    knows where it is going and has for a long time.
+  ruts: The ruts are old -- deepened over many seasons by cartloads
+    of hay and grain and timber. Grass grows between them in a low
+    green ridge, undisturbed by recent wheels.
+idlemessages:
+- A breeze moves up the <ansi fg="yellow">track</ansi> from town, carrying the smell of cut
+  grass and warm earth.
+- The <ansi fg="yellow">ruts</ansi> here are soft with summer growth, the cartway quiet
+  between loads.
+- The rooflines of the farmstead are close now, solid and unchanged
+  against the afternoon sky.

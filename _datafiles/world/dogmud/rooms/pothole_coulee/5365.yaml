@@ -1,0 +1,45 @@
+roomid: 5365
+zone: Pothole Coulee
+title: Eagle's Reach
+description: >
+  The far lip of the bluff, and beyond it the world. The stone ends
+  here at a clean edge, not crumbled or stepped but cut by long
+  erosion into something almost deliberate, and past that edge there
+  is nothing but sky and the deep quiet that follows a hard thing
+  done. The coulee is behind you, the perch cleared, the overlook
+  taken. From the lip the country beyond opens in every direction
+  -- long pale distances, the broken watchtower on the next height a
+  faint smudge against the horizon where a trail-stub runs off along
+  the rim toward it. The wind here does not press. It lifts.
+biome: cliffs
+coord:
+  x: 49
+  y: -12
+  z: 3
+exits:
+  south:
+    roomid: 5364
+  # Lateral connector (chunk 8): non-spatial rim-walk to Spoke A's Tower Top.
+  watchtower:
+    roomid: 5243
+nouns:
+  lip: The lip is the bluff's terminus, the clean edge where stone
+    becomes sky. Standing at it you look out over a country that
+    has no immediate claim on you. The rock here is slightly warm,
+    catching afternoon light along its flat top, and the edge drops
+    away in a long pale face below.
+  sky: Past the lip the sky is enormous. Not merely big but present,
+    a thing with weight and dimension, the kind of sky that only
+    opens when there is nothing left to obstruct it. It is the
+    reward at the end of the climb, and it is sufficient.
+idlemessages:
+- The <ansi fg="cyan">sky</ansi> past the <ansi fg="white">lip</ansi> is very large and very quiet. The wind
+  lifts here rather than pushes, and carries nothing but altitude.
+- On the horizon the next watch-post height is a dark smudge, a
+  trail-stub running toward it and vanishing into uncertain ground.
+- The silence here is the silence after effort -- not empty but
+  earned, the kind that settles into a place once the hard thing
+  is done.
+- Light runs along the edge of the lip in a thin bright line and
+  fades as the sun shifts. The stone holds the warmth a long while
+  after.

@@ -1,0 +1,71 @@
+mobid: 9169
+zone: Pothole Coulee
+behavior_archetype: archer
+archetype: fighting
+statpool: 200
+itemdropchance: 0
+hostile: true
+maxwander: 0
+groups:
+  - humanoid
+  - bluff_raiders
+activitylevel: 28
+idlecommands:
+  - 'emote stands easy at the very lip of the overlook, an arrow held loose
+    against the bow, the whole canyon laid out below for his choosing'
+  - ''
+  - 'emote rolls a black-fletched arrow between two fingers and watches the
+    stair, perfectly unhurried'
+  - ''
+combatcommands:
+  - 'emote gives ground without ever turning his back, each step opening the
+    range, each pause buying another aimed shot'
+  - ''
+  - 'emote reads your rush, drifts wide along the rim, and makes you cross
+    open stone for every stride you steal back'
+  - ''
+character:
+  name: Bowmaster Skell
+  description: |
+    The man who holds the overlook, and through it the whole climb. Skell is
+    long and spare, dressed in layered bluff-grey that breaks his outline
+    against the stone, and he carries a tall, dark hunting bow as though it
+    weighs nothing. He is the reason the bluff band can sit above the coulee
+    and tax everything that moves through it: nothing reaches the top of the
+    stair that he has not already had three clean shots at.
+    He does not boast and he does not hurry. He fights the way the whole band
+    aspires to and only he has mastered -- always moving, always at distance,
+    trading the high ground stride by stride and making you pay in blood and
+    breath for every yard you take back. To beat him you must do the thing the
+    terraces have been teaching since the first straw butt: reach out across
+    the gap and put a shot exactly where it has to go, before he opens the
+    distance again.
+  speciesid: 1
+  level: 4
+  gold: 40
+  equipment:
+    weapon:
+      itemid: 10041
+    body:
+      itemid: 20011
+    head:
+      itemid: 20047
+    legs:
+      itemid: 20050
+    feet:
+      itemid: 20052
+  items:
+    - itemid: 30062
+  stats:
+    perception:
+      training: 58
+    dexterity:
+      training: 46
+    vitality:
+      training: 38
+    strength:
+      training: 28
+    willpower:
+      training: 18
+    charisma:
+      training: 12

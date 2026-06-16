@@ -1,0 +1,34 @@
+id: croup_and_wicker
+mob_a: 9103
+mob_b: 9105
+exchanges:
+  - lines:
+      - speaker: A
+        text: "The season's running dear. Third entry this week at a loss."
+      - speaker: B
+        text: "The cold came early. Everything's dear when the cold comes early."
+      - speaker: A
+        text: "So it is. I'll write that in the margin."
+  - lines:
+      - speaker: B
+        text: "You ever sleep, or do you just balance the book all night?"
+      - speaker: A
+        text: "The book doesn't balance itself."
+      - speaker: B
+        text: "No. Neither does a body. Think on that."
+  - lines:
+      - speaker: A
+        text: "The young ones passing through -- they spend before they think."
+      - speaker: B
+        text: "That's the young ones for you. They've time to learn it."
+      - speaker: A
+        text: "The book forgives once. After that it's arithmetic."
+  - lines:
+      - speaker: B
+        text: "Storm's in the roots this morning. Couple of days, I'd say."
+      - speaker: A
+        text: "The road will be mud by the weekend."
+      - speaker: B
+        text: "Always is."
+      - speaker: A
+        text: "I'll note it against the expected deliveries."

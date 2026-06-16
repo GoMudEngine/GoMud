@@ -1,0 +1,22 @@
+itemid: 30066
+name: Reckoning Bone
+namesimple: bone
+description: |
+  A flat strip of ox-bone the length of a forearm, worn satin-smooth and
+  carved end to end with the close-packed marks the loresingers read. It
+  is a reckoning -- a folk-record kept in stone-language, the same script
+  the standing stones wear, scaled small enough to carry.
+  Reading it is slow work, but the shape of it comes clear: generations of
+  the coulee folk, named and counted, floods and famines and good years
+  set down in sequence. And older than any of that, at the worn top end
+  where the carving is deepest and least understood, a different hand: a
+  mark that is not a name or a number but a symbol, repeated -- a ring with
+  a line struck through it -- beside figures the loresingers copy faithfully
+  without knowing their meaning. The folk came from somewhere, the bone
+  says plainly. It does not say where, and the part that might have is the
+  part no one alive can read.
+type: scroll
+subtype: readable
+not_salable: true
+value: 10
+weight: 0.4

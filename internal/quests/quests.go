@@ -28,28 +28,43 @@ type QuestFlagDef struct {
 	Description string   `yaml:"description,omitempty"`
 }
 
+// QuestReward — LOADER GOTCHA: the quest loader uses gopkg.in/yaml.v2, which
+// binds a TAG-LESS field to its lowercased name with NO underscore handling.
+// So the tag-less fields below load ONLY from no-underscore yaml keys in a
+// quest's `rewards:` block: use `itemid`, `skillinfo`, `buffid`,
+// `playermessage`, `roommessage`, `roomid`, `spellid`, `questid`. snake_case
+// keys (item_id, skill_info, player_message, ...) silently DO NOT load into
+// these fields. Older quests follow the no-underscore convention; a few newer
+// quests mistakenly used snake_case in their rewards block and those reward
+// fields silently no-op (latent cleanup, tracked separately). Tagged
+// exceptions DO take their snake_case key: stat_info, rep_faction, rep_amount.
 type QuestReward struct {
-	QuestId       string // new questId to give ( {id}-{step} format )
-	Gold          int    // zero or more gold to give.
-	ItemId        int    // itemId to give
-	BuffId        int    // buffId to apply
-	SkillInfo     string // skill to give, format: skillId:skillLevel such as "map:1"
-	SpellId       string // spell to teach on quest completion
-	PlayerMessage string // string to display to player
-	RoomMessage   string // string to display to room
-	RoomId        int    // roomId to move player to
+	QuestId       string // new questId to give ( {id}-{step} format ); yaml key: questid
+	Gold          int    // zero or more gold to give; yaml key: gold
+	ItemId        int    // itemId to give; yaml key: itemid
+	BuffId        int    // buffId to apply; yaml key: buffid
+	SkillInfo     string // skill(s) to give, "skill:level[,skill:level]"; yaml key: skillinfo
+	StatInfo      string `yaml:"stat_info,omitempty"`    // stat(s) to increase, "stat:amount[,...]"; yaml key: stat_info
+	RecipeInfo    string `yaml:"recipe_info,omitempty"`  // recipe(s) to grant, comma-separated recipe IDs; yaml key: recipe_info
+	ItemInfo      string `yaml:"item_info,omitempty"`    // item stockpile to grant, "itemid[:qty][,itemid[:qty]]"; yaml key: item_info
+	SpellId       string // spell to teach on completion; yaml key: spellid
+	PlayerMessage string // string to display to player; yaml key: playermessage
+	RoomMessage   string // string to display to room; yaml key: roommessage
+	RoomId        int    // roomId to move player to; yaml key: roomid
 	RepFaction    string `yaml:"rep_faction"` // faction slug bumped on completion
 	RepAmount     int    `yaml:"rep_amount"`  // rep delta applied on completion
 }
 
 type Quest struct {
-	QuestId     int
-	Name        string
-	Description string
-	Secret      bool           // Secret quests are useful for marking some progress without making it known to the player
-	Steps       []QuestStep    // String identifiers for each step required to complete the quest
-	Rewards     QuestReward
-	Flags       []QuestFlagDef `yaml:"flags,omitempty"`
+	QuestId        int
+	Name           string
+	Description    string
+	Secret         bool        // Secret quests are useful for marking some progress without making it known to the player
+	Steps          []QuestStep // String identifiers for each step required to complete the quest
+	Rewards        QuestReward
+	Flags          []QuestFlagDef `yaml:"flags,omitempty"`
+	Repeatable     bool           `yaml:"repeatable,omitempty"`      // if true, completing the quest clears its progress so it can be taken again (after CooldownRounds)
+	CooldownRounds int            `yaml:"cooldown_rounds,omitempty"` // rounds that must pass after completion before a repeatable quest can be re-taken
 }
 
 type QuestStep struct {

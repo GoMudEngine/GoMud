@@ -1,0 +1,87 @@
+# Granny Wicker — folk healer, Wickerwork Cottage (5210). The old way
+# wearing a kind face. Flavor and foreshadowing; no command lessons —
+# her teaching is the coulee itself.
+
+mobid: 9105
+zone: Pothole Coulee
+defaultMood: friendly
+
+greetings:
+  - text: "Come in, come in. Mind the charms -- they mind you back."
+    moods: ["friendly", "neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello, duck. Kettle's near the boil, it always is."
+      - "Come in out of the weather, whichever weather it is doing."
+
+  - keywords: [""]
+    responses:
+      - "Ask plain, duck. Riddles are my job, not yours."
+      - "Hm? Speak up. The charms are loud today."
+
+tree:
+  root:
+    text: >-
+      They call me Granny Wicker, and I was old when that was a
+      compliment. I keep the remedies the Church forgot and the
+      knowing it never had. Sit. Ask. The kettle does the rest.
+    hints: >-
+      You could ask about a remedy, the old way, or the charms on
+      their threads.
+    variants:
+      - questExcluded: ["30-end"]
+        text: >-
+          Not yet dipped, are you, duck? I can smell the old world on
+          you still -- dust and hurry. Go and let the pool have its
+          look. 'First the water, then the wandering,' as we say. As
+          I say, anyhow. I am mostly who 'we' is by now.
+        hints: >-
+          You could ask Hadwen about the rite, or ask Granny about
+          the old way first.
+
+  nodes:
+    - id: remedy
+      triggers: ["remedy", "remedies", "cure", "sick", "tonic", "tea"]
+      text: >-
+        For a hurt body: rest, broth, and Sala, in that order. For a
+        hurt heart: the Lantern's stew and somebody to eat it beside.
+        For everything else there is a tea, and I have it. 'Bitter on
+        the tongue, better in the bones,' duck -- the ones that taste
+        kind do the least.
+      hints: >-
+        You could ask about the old way or the charms.
+
+    - id: old_way
+      triggers: ["old", "way", "before", "church", "knowing"]
+      text: >-
+        The pool was opening folk long before the Chrysalis raised a
+        roof and put a word to it. Hadwen is a good man and his rite
+        is true -- but it is a young coat on an old body, duck. The
+        coulee remembers the first names of things. Walk it gently
+        and it may tell you one or two.
+      hints: >-
+        You could ask about the charms, or a remedy.
+
+    - id: charms
+      triggers: ["charms", "charm", "threads", "willow", "hair"]
+      text: >-
+        Knots and reeds and river-glass, each one a small promise the
+        cottage keeps for somebody. They turn when the weather
+        changes its mind, and they tick when something new walks the
+        coulee. They ticked when you came in, duck. That is not a bad
+        sign. It is just the cottage taking your measure.
+      hints: >-
+        You could ask about the old way or a remedy.
+
+    - id: forage_tease
+      triggers: ["herbs", "plants", "gather", "forage", "green"]
+      text: >-
+        The coulee feeds those who learn its shelves -- marsh-green,
+        rim-root, the mosses that only grow where the basalt sweats.
+        Out past the wild mouth there is a body who teaches the
+        gathering proper. My knees retired from it the same year the
+        Church arrived, and only one of those was a loss.
+      hints: >-
+        You could ask about a remedy or the old way.

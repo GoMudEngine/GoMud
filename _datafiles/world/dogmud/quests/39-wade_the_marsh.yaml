@@ -1,0 +1,143 @@
+# Quest 39 — Wade the Marsh (Pothole Coulee, Spoke C / Alchemy middle ring)
+#
+# Token flow:
+#   39-start  — granted by Fenwalker Falv's marsh_offer dialogue node (requires
+#               38-end). The SAME node hands the player a firebomb (givesItem
+#               30058) and teaches the throw command + the shared special-move
+#               cooldown (throw / cast / special moves all share one timer).
+#   39-leech  — mob_death on a Marsh Leech (9130). The combat beat.
+#   39-throw  — command trigger on throw (in combat). The grenade/cooldown beat.
+#   39-forage — command trigger on forage in the marsh (rooms 5270 / 5273).
+#   39-end    — granted by Falv's marsh_turnin dialogue node.
+#
+# Design: this is Spoke C's owner of the parent-spec "shared cooldown + grenade"
+# Tier-2 lesson. Falv gives one firebomb so the player can throw without first
+# being able to brew one (firebomb is a skill_minimum 25 recipe). The reward is
+# the potion bandolier (item 20059) + a usable mid recipe (ironhide-brew, skill
+# 8) and the firebomb formula to grow into. Falv has a firebomb recovery node in
+# case the player loses the grenade before throwing it.
+
+questid: 39
+name: Wade the Marsh
+description: >-
+  Fenwalker Falv keeps a camp on a hummock in the reeds. The marsh past
+  his fire is no sanctuary -- leeches in the water, a serpent lurking in
+  the cattails. He has handed you a firebomb and asked you to blood
+  yourself on the marsh: put a leech down, learn to throw the firebomb in
+  a fight, and forage the good herbs while you are at it.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: >-
+      Falv has handed you a firebomb and set you loose in the marsh. Put
+      down a marsh leech, throw the firebomb at something in a fight, and
+      forage the marsh herbs.
+    hint: >-
+      Head south into the reeds. Attack a marsh leech to start a fight
+      (type attack leech), and put it down. Then -- while you are IN a
+      fight -- type throw firebomb to hurl it. Remember a thrown firebomb,
+      a cast spell, and a special move all share one cooldown, so you
+      get one such trick every few breaths. Type forage in the marsh to
+      gather herbs. If the fight turns bad, type flee -- you wake at the
+      Mending Hut, not in the mud.
+  - id: leech
+    description: >-
+      One marsh leech is down. Now learn the firebomb: get into a fight
+      and throw it.
+    hint: >-
+      Find another foe -- the reed lurker waits in the cattails on the
+      mudflat. Get into the fight, then type throw firebomb. (Throw,
+      cast, and special moves share one cooldown.)
+  - id: throw
+    description: >-
+      The firebomb burst exactly where you wanted it. Now forage the
+      marsh herbs Falv asked for.
+    hint: >-
+      Type forage while standing in the marsh -- the sunken path and the
+      black pool grow the best herbs -- to gather cattail, willow-bark,
+      and mint.
+  - id: forage
+    description: >-
+      You have blooded yourself, thrown the firebomb, and worked the
+      marsh for herbs. Report back to Falv at his camp.
+    hint: >-
+      Walk back to Fenwalker Falv at the cattail stand -- type ask falv
+      report.
+  - id: end
+    description: >-
+      Falv has named you marsh-worthy and given you a bandolier for your
+      brews. The poison swamp lies south past the miasma edge -- and
+      something old has gathered at its heart.
+
+rewards:
+  skillinfo: "alchemy:1"
+  itemid: 20059
+  recipe_info: "ironhide-brew,firebomb"
+  gold: 25
+  playermessage: >-
+    Falv works a leather bandolier off a peg by his fire and tosses it
+    to you underhand, the loops already supple from years of use. The
+    shed-proof skin of his hands pales over the knuckles as he grips.
+    "Wear it.
+    Potions you carry drop into it on their own, and when you drink, the
+    oldest one goes first -- so your brews never sit long enough to turn.
+    You threw clean. You did not blow your own hand off. That is more
+    than most." He nods south, where the reeds go grey. "Past the miasma
+    the water is poison and something rules it. The firebomb formula is
+    yours now, and a tougher brew besides. Make your own pots. You will
+    need them down there."
+
+triggers:
+  # ── LEECH: defeat a marsh leech (mob 9130) ──────────────────────────
+  - event: mob_death
+    mob: 9130
+    conditions:
+      has: ["39-start"]
+      missing: ["39-leech"]
+    actions:
+      - grant: "39-leech"
+      - send_text: >-
+          The marsh leech goes limp in the water. First blood in the
+          marsh. Now the firebomb -- get into a fight and throw it.
+
+  # ── THROW: hurl the firebomb in combat ───────────────────────────────
+  # Gated only on 39-start (not 39-leech) so throwing the firebomb AT the
+  # leech during the first fight still counts — the three objectives
+  # (leech / throw / forage) complete in any order; the turn-in needs all.
+  - event: command
+    command: throw
+    conditions:
+      has: ["39-start"]
+      missing: ["39-throw"]
+    actions:
+      - grant: "39-throw"
+      - send_text: >-
+          The firebomb bursts in a gout of flame right where you aimed it.
+          Now you feel the cost -- no second trick for a few breaths.
+          That cooldown is shared by spells and special moves too.
+
+  # ── FORAGE: gather marsh herbs (rooms 5270 / 5273) ──────────────────
+  - event: command
+    command: forage
+    room: 5270
+    conditions:
+      has: ["39-start"]
+      missing: ["39-forage"]
+    actions:
+      - grant: "39-forage"
+      - send_text: >-
+          You work cattail and herb free of the marsh. Good brewing
+          stock. Report back to Falv at his camp.
+  - event: command
+    command: forage
+    room: 5273
+    conditions:
+      has: ["39-start"]
+      missing: ["39-forage"]
+    actions:
+      - grant: "39-forage"
+      - send_text: >-
+          The black pool grows the best of it -- willow-bark and mint,
+          thick at the waterline. Report back to Falv at his camp.

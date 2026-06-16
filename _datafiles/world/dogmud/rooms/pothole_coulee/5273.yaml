@@ -1,0 +1,36 @@
+roomid: 5273
+zone: Pothole Coulee
+title: Black Pool
+description: >
+  A deep pool opens between the willows, the water so dark it might be
+  stained with tannin or might have no bottom at all. The willows lean
+  in from the bank, trailing their narrow leaves across the surface,
+  and beneath them the richest herbs in the marsh grow thick along
+  the waterline: marsh-mint in pale green mats, willow-bark peeling in
+  long papery strips, water-hemlock keeping its distance in the shallows
+  while safer plants crowd the verge. The air smells of green things and
+  cold water, and it is very quiet here.
+biome: swamp
+coord:
+  x: 47
+  y: 8
+  z: 0
+exits:
+  north:
+    roomid: 5270
+  south:
+    roomid: 5274
+spawninfo:
+- mobid: 9130
+nouns:
+  pool: The water is perfectly still and very dark, the color of old tea.
+    The bottom, if there is one, is not visible. The surface reflects the
+    willows above like hammered iron.
+  willows: Old trees with bark gone silver-grey and branches that droop
+    low enough to trail in the pool. Their narrow leaves are pale on the
+    underside and catch the light when the wind moves them.
+idlemessages:
+- A leaf drops from the <ansi fg="itemname">willows</ansi> and drifts
+  on the <ansi fg="itemname">pool</ansi> without sinking.
+- Something rises briefly in the dark <ansi fg="itemname">pool</ansi>
+  — a bubble, or an eye — and is gone before you are sure of it.

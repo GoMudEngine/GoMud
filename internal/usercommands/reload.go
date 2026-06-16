@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/language"
 	"github.com/GoMudEngine/GoMud/internal/mapper"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -98,6 +99,16 @@ func Reload(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> readies their <ansi fg="itemname">%s</ansi>.`,
 			user.Character.Name, res.WeaponName),
 		user.UserId)
+
+	// Notify the quest engine of a successful `reload` so quests can gate a step
+	// on it (Spoke G's "reload when the pouch runs low" beat). Mirrors
+	// forage/drink/throw/cast/shoot.
+	bridge := questengine.NewGameBridge(user, room.RoomId)
+	questengine.GetEngine().Notify("command", questengine.EventDetails{
+		UserId:  user.UserId,
+		RoomId:  room.RoomId,
+		Command: "reload",
+	}, bridge, bridge)
 
 	return true, nil
 }

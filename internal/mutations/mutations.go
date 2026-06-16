@@ -281,6 +281,25 @@ func LevelMultiplier(level int) float64 {
 	}
 }
 
+// LevelDescription renders a mutation depth as descriptive language —
+// player-facing text never shows raw level numbers (no-hard-numbers
+// rule). Single source of truth for the status template's
+// mutationLevel helper and the mutations command.
+func LevelDescription(level int) string {
+	switch level {
+	case 1:
+		return "minor"
+	case 2:
+		return "moderate"
+	case 3:
+		return "major"
+	case 4:
+		return "extreme"
+	default:
+		return "unknown"
+	}
+}
+
 // TotalMutationEvents returns the sum of all mutation levels owned.
 // Kept for backward compatibility; GetMutationLoad is preferred for acquisition.
 func TotalMutationEvents(owned map[string]int) int {

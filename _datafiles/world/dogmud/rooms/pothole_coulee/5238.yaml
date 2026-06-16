@@ -1,0 +1,55 @@
+roomid: 5238
+zone: Pothole Coulee
+title: Broken Gate
+description: >
+  The climb ends at the foot of the Pothole Watch, where a collapsed
+  gatehouse once barred the way. The arch has slumped, half its courses
+  shed into a tongue of rubble that spills down the bluff, and the gate
+  itself -- a slab of grey weathered timber bound in rust -- hangs forced
+  open on one twisted hinge. This is the threshold of whatever holds the
+  tower, and it is plainly the held line -- the rubble is shifted into low
+  walls a body can crouch behind, the dust beaten flat by boots that come
+  and go. The bluff falls away sheer behind you to the wash far below.
+  Whoever keeps this ground keeps it here first, at the broken gate. The
+  pitch drops back west; the gatehouse stands open east; a black doorway
+  in the ruin leads north into the tower's base.
+biome: cliffs
+coord:
+  x: 56
+  y: -1
+  z: 0
+exits:
+  west:
+    roomid: 5237
+  east:
+    roomid: 5239
+  north:
+    roomid: 5240
+nouns:
+  gate: A slab of grey weathered timber, bound and studded with rusted
+    iron, forced open long ago and left hanging askew on one wrenched
+    hinge. It will never close again. It does not need to -- what holds
+    this tower stands its line in the open mouth of the arch, not behind a
+    door.
+  rubble: Shed courses of the slumped arch, drifted down the bluff in a
+    long tongue of broken stone. Someone has dragged the larger blocks into
+    low crouching walls that flank the gap -- cover for a fight, set facing
+    out at anyone climbing the last pitch. The flat-beaten dust between them
+    is the worst ground to be caught on.
+  gatehouse: The collapsed stub of the gate-tower, half its height sloughed
+    away, the rest standing open and roofless to the sky. It was raised to
+    bar this throat and it failed, and now it shelters the ones who broke
+    it. Beyond its ragged mouth the tower's base waits east and north.
+  bluff: The sheer shoulder of stone the tower stands on, dropping away
+    behind you in one long fall to the pale wash below. There is no line of
+    retreat here but the climb you came up -- a thing the gate's keepers
+    know as well as you do.
+spawninfo:
+- mobid: 9113
+  message: A hulking bandit bruiser plants himself in the broken gateway.
+  respawnrate: 5 real minutes
+- mobid: 9110
+  message: A scout scrambles up onto the rubble beside him, knife out.
+  respawnrate: 5 real minutes
+idlemessages:
+- Loose stone shifts somewhere in the slumped <ansi fg="itemname">gatehouse</ansi> and settles, and the quiet comes back heavier.

@@ -1,0 +1,35 @@
+roomid: 5300
+zone: Pothole Coulee
+title: Outwash
+description: >
+  The ground drops away to the east into a narrow gully scoured out
+  by old floodwater, the banks undercut and steep, the floor packed
+  smooth at the bottom. It dead-ends against a raw clay wall where
+  the earth gave way and never recovered. Remains litter the gully
+  floor in a long windrow — fur and bone and the odd hoof, things
+  driven in here and not given room to turn around. The smell is
+  thick. There is no way out but back the way you came.
+biome: forest
+coord:
+  x: 44
+  y: 11
+  z: 0
+exits:
+  west:
+    roomid: 5294
+spawninfo:
+- mobid: 9140
+- mobid: 9140
+nouns:
+  gully: A flood-scoured pocket with undercut banks and a dead end.
+    The smooth clay floor and the remains pressed against the far
+    wall tell you what this place is used for -- driving prey in and
+    finishing them where they cannot turn. You are standing at the
+    only exit.
+  remains: A long windrow of fur, bone, and scattered debris pressed
+    against the dead end of the gully. Whatever came in here did not
+    leave. Some of it is old; some of it is not.
+idlemessages:
+- The clay walls show deep gouges where something scrabbled for
+  purchase it never found.
+- The gully holds the smell in. There is no wind to carry it away.

@@ -1,0 +1,59 @@
+mobid: 9131
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 40
+itemdropchance: 15
+hostile: true
+maxwander: 1
+groups:
+  - beast
+  - swamp
+activitylevel: 22
+items:
+  - 20052   # Sturdy Leather Boots — loot-lesson drop
+idlecommands:
+  - 'emote hangs motionless in the shallows, only the faint drift of the
+    current distinguishing it from a submerged branch'
+  - ''
+  - 'emote lets a slow exhalation of bubbles rise from beneath the surface,
+    then stills again'
+  - ''
+combatcommands:
+  - 'emote surges from the reeds in a flat explosive lunge, jaws already
+    open at the apex of the strike'
+  - ''
+  - 'emote coils the body around the target and drives downward, using its
+    weight to drag toward the water'
+  - ''
+  - 'emote thrashes laterally, tearing rather than holding, and resets
+    for another pass'
+  - ''
+character:
+  name: Reed Lurker
+  description: |
+    In still water, among reeds that move in the same slow rhythm, the
+    reed lurker is invisible. The banded olive-and-black scales were made
+    for this -- not evolved for it in any natural sense, but arrived at
+    over many generations of the marsh selecting for the things that
+    survived. It is long, heavier than it looks, and it strikes without
+    any preliminary tension or warning posture that a person could learn
+    to read. The strike is simply there, where no strike was a moment
+    before. A pair of waterlogged boots on the bank nearby suggests that
+    something that came through here before you did not finish the
+    crossing, or at least not with both boots on. The water here is
+    shallow enough to stand in. The reed lurker does not particularly care.
+  speciesid: 8
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 14
+    strength:
+      training: 12
+    vitality:
+      training: 10
+    perception:
+      training: 4
+    willpower:
+      training: 2

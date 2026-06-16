@@ -1,0 +1,44 @@
+roomid: 5325
+zone: Pothole Coulee
+title: The Longhouse
+description: >
+  The longhouse is a single long room with a central hearth running its
+  length, the smoke rising through a ridge-vent that has darkened the
+  rafters to deep amber over many years. Benches line both walls --
+  plain timber, worn smooth at the seat -- and between them a low table
+  holds the working materials of whoever last sat here. On a wide shelf
+  near the far end, the folk-elder keeps the homestead's records -- a
+  row of tally-sticks bundled in cord, a few worn ledger-books, and
+  some loose sheets covered in a careful hand. These are the things
+  worth remembering and the tools for doing it. The hearth is banked
+  low but warm, ticking quietly in its stone surround. The room is the
+  kind of place that makes it easy to sit down and think, and difficult
+  to leave in a hurry. When you need to recall what you have learned,
+  the records here and the help command are your surest references.
+biome: house
+coord:
+  x: 45
+  y: -5
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  east:
+    roomid: 5324
+spawninfo:
+- mobid: 9156
+nouns:
+  hearth: The hearth is long and low, built for warmth over many hours
+    rather than a quick cook-fire. The stones at its edges are dark
+    with use and faintly warm to the touch even when the fire is banked.
+  records: The records on the shelf are a working archive -- tally-sticks
+    for counts and trade, ledger-books for the seasons, loose sheets
+    for things that did not fit neatly into either. They are worn but
+    legible, consulted often and carefully maintained.
+idlemessages:
+- The <ansi fg="yellow">hearth</ansi> ticks as the banked coals settle, radiating a
+  steady and unhurried warmth.
+- One of the <ansi fg="yellow">records</ansi> on the shelf has been left open, a tally-stick
+  resting across the page as a marker.
+- The rafter-beams overhead are dark with old smoke, smooth where
+  hands have steadied against them over the years.

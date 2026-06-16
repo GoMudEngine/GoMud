@@ -1,0 +1,35 @@
+roomid: 5302
+zone: Pothole Coulee
+title: Observatory Base
+description: >
+  A spiral of broken steps rises into the guts of a ruined tower, each
+  tread worn smooth by generations of feet and slick now with cold damp.
+  The stone underfoot is black with old copper stain, and the air carries
+  that mineral smell -- the breath of a building that has sat sealed and
+  still for a very long time. Somewhere above, the structure opens; light
+  falls down the stairwell in a pale column. Thick walls rise around you,
+  mortared with care by hands that believed this place mattered.
+biome: fort
+coord:
+  x: 44
+  y: -2
+  z: 1
+mutators:
+- mutatorid: sanctuary
+exits:
+  down:
+    roomid: 5224
+  up:
+    roomid: 5303
+nouns:
+  steps: Broad and spiraling, the steps were carved from the same pale
+    limestone as the tower walls. Each one bears the shallow groove of
+    long use -- a path worn deep by those who once climbed here with
+    purpose.
+  stone: The walls are dressed stone fitted without mortar at the joints,
+    dark with age and stained by copper runoff from the instruments that
+    once hung here. They radiate a cold that seeps through wool.
+idlemessages:
+- A distant wind moves through the tower above, a low moan that rises and fades.
+- Dust motes drift down from somewhere overhead, catching the pale column of light.
+- The <ansi fg="cyan">stone</ansi> beneath your feet holds a faint chill, as though the cold is very old.

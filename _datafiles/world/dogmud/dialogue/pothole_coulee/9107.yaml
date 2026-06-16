@@ -1,0 +1,90 @@
+# Warden Esk — portal warden, The Threshold House (5215).
+# IMPORTANT: the words passage/portal/arch/thornwall/through are
+# consumed by his behavior tree (player_ask fires before dialogue) —
+# both the transit and the not-yet-Opened refusal live there. This
+# file must NOT use those words as node triggers; it covers lore and
+# points players at "ask esk passage".
+
+mobid: 9107
+zone: Pothole Coulee
+defaultMood: neutral
+
+greetings:
+  - text: "Mind the arch. Or don't -- it has never once minded back."
+    moods: ["friendly", "neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hm. Welcome to the Threshold House."
+      - "Hello. The stool is taken. The floor is not."
+
+  - keywords: [""]
+    responses:
+      - "Words cost nothing here. Take your time finding the right ones."
+      - "The arch and I are both listening, for what that is worth."
+
+tree:
+  root:
+    text: >-
+      Esk. I keep the threshold -- the arch behind me, and whatever
+      comes and goes by it. Mostly it is quiet work. The coulee likes
+      its wonders patient, and this is the most patient one we have.
+    hints: >-
+      When you are ready to leave the coulee, ask Esk for passage.
+      You could also ask what he watches for, or about the door.
+    variants:
+      - questExcluded: ["30-end"]
+        text: >-
+          You have the look of someone who has not met the pool yet.
+          The arch will still be here after -- it has outwaited
+          everything else. Hadwen first. Then we will talk about the
+          far side.
+        hints: >-
+          You could ask Hadwen about the rite at the Awakening Pool,
+          or ask Esk what he watches for.
+      - questRequired: ["30-end"]
+        text: >-
+          Opened, and standing at my door. Then you know what to ask.
+          The far side is Thornwall -- city stone, city noise, and
+          every road in the Marches eventually. Say the word and the
+          arch will say the rest.
+        hints: >-
+          Type ask esk passage when you are ready to cross. The way
+          back is the long road, so go provisioned.
+
+  nodes:
+    - id: watching
+      triggers: ["watch", "watches", "watching", "guard", "waiting", "why"]
+      text: >-
+        Folk ask what there is to guard, since the arch has stood
+        untroubled longer than the town. The honest answer: I do not
+        guard the arch from people. I sit here so that nobody crosses
+        alone -- frightened, or hurt, or too young to know what the
+        far side asks of them. A door this old deserves a doorman.
+        That is the whole of it.
+      hints: >-
+        You could ask about the door itself, or his eyes.
+
+    - id: door_lore
+      triggers: ["door", "stone", "basalt", "old", "built"]
+      text: >-
+        Nobody built it -- that is the first thing to know. The
+        basalt came up folded this way, or was folded this way before
+        anyone was keeping account. The Church says the world
+        believes the arch into working. Granny Wicker says the arch
+        believed first. I say it works, it has always worked, and it
+        has never asked anything of anyone. That is better behavior
+        than most doors.
+      hints: >-
+        You could ask what he watches for. When you are ready to
+        cross, ask for passage.
+
+    - id: eyes
+      triggers: ["eyes", "embers", "ember", "glow"]
+      text: >-
+        They brighten when I am paying attention, which makes me a
+        poor card player and an honest warden. People learn to read
+        them faster than they learn my words. Saves everyone time.
+      hints: >-
+        You could ask about the door, or what he watches for.

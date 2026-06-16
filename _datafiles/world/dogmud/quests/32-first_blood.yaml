@@ -1,0 +1,103 @@
+questid: 32
+name: First Blood
+description: Drillmaster Vorn has handed you a cudgel and pointed you at
+  the training dummy. Learn the four pillars of combat in the Drill Yard
+  before you take your bruises somewhere they can kill you.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: "Drillmaster Vorn has given you a cudgel and set you
+      loose on the training dummy in the Drill Yard. Learn by doing."
+    hint: "Type wield cudgel, then attack dummy to start your first
+      fight."
+  - id: strike
+    description: "You have traded blows with the training dummy and
+      lived to tell it. The dummy did not fare as well."
+    hint: "Now try a special move -- type kick dummy or trip dummy."
+  - id: special
+    description: "You landed a special move on the dummy. Kicks and
+      trips are tools, not tricks -- use them when the moment is right."
+    hint: "Type consider dummy to read your opponent before the next
+      round."
+  - id: consider
+    description: "You sized up the training dummy. Consider tells you
+      what you are walking into before you commit."
+    hint: "Tune your combat output -- type set combatverbosity full,
+      medium, or light."
+  - id: verbosity
+    description: "You have tuned your combat output. The Drill Yard
+      has taught you what it can. Report to Vorn."
+    hint: "Ask Vorn you are done -- type ask vorn report."
+  - id: end
+    description: "Drillmaster Vorn has signed off on your first bout.
+      The cudgel has earned its first notch. Head east into the wash
+      and find Caravan Guard Garve."
+
+rewards:
+  gold: 15
+  skillinfo: "weapon-combat:1"
+  playermessage: >-
+    Vorn turns your performance over in his head for a long moment,
+    the way a smith eyes a finished blade for flaws. Then he nods --
+    once, short, like it costs him something. "Passable. You did not
+    freeze, you did not panic, and you remembered to think between
+    swings. That is more than most manage on the first day." He
+    presses a few coins into your hand. "Take the east path into
+    the wash. Find Garve. He will put that edge to use."
+  roommessage: "Vorn nods at you with a gruff, brief approval."
+
+triggers:
+  # ── DUMMY DEFEATED (mob 9109) ─────────────────────────
+  - event: mob_death
+    mob: 9109
+    conditions:
+      has: ["32-start"]
+      missing: ["32-strike"]
+    actions:
+      - grant: "32-strike"
+      - send_text: "The training dummy shudders and goes still. Your
+          arms remember the rhythm of it -- weight, angle, follow
+          through. Now try something more deliberate: kick dummy or
+          trip dummy."
+
+  # ── SPECIAL MOVE: kick (room 5227) ────────────────────
+  - event: command
+    command: kick
+    room: 5227
+    conditions:
+      has: ["32-start"]
+      missing: ["32-special"]
+    actions:
+      - grant: "32-special"
+
+  # ── SPECIAL MOVE: trip (room 5227) ────────────────────
+  - event: command
+    command: trip
+    room: 5227
+    conditions:
+      has: ["32-start"]
+      missing: ["32-special"]
+    actions:
+      - grant: "32-special"
+
+  # ── CONSIDER (room 5227) ──────────────────────────────
+  - event: command
+    command: consider
+    room: 5227
+    conditions:
+      has: ["32-start"]
+      missing: ["32-consider"]
+    actions:
+      - grant: "32-consider"
+
+  # ── COMBATVERBOSITY (room 5227) ───────────────────────
+  - event: command
+    command: combatverbosity
+    room: 5227
+    conditions:
+      has: ["32-start"]
+      missing: ["32-verbosity"]
+    actions:
+      - grant: "32-verbosity"

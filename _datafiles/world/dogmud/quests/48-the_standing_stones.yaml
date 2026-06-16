@@ -1,0 +1,76 @@
+# Quest 48 — The Standing Stones (Pothole Coulee, Spoke F / Lore middle ring)
+#
+# Token flow:
+#   48-start — granted by Loresinger Hale's stones_offer node (requires 47-end).
+#   48-taunt — command trigger on `taunt` in the Mustering Green (5335), where
+#              the belligerent Garrow (9158) stands. The taunt-command Notify was
+#              added this chunk; Garrow's btree makes him fold and flee on the
+#              sting, keeping it non-lethal.
+#   48-end   — granted by Hale's stones_turnin node (needs 48-taunt).
+#
+# Design: the folk/faction lore tease (dialogue) + the spoke's one rhetoric beat
+# -- taunt a belligerent farmhand to defuse a standoff that soft words have only
+# hardened. Reward: a rhetoric rank + the reckoning-bone lore relic.
+
+questid: 48
+name: The Standing Stones
+description: >-
+  Loresinger Hale keeps the ring of standing stones and the deep story the folk
+  carved into them. He has a use for someone with a steady tongue: a quarrel on
+  the mustering green that gentle words have only made worse.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: >-
+      Hale wants the standoff on the mustering green broken. Young Garrow has
+      squared up against old Ferd and will not be reasoned down -- so do not
+      reason. Put a hard word on him: taunt him, and break his nerve.
+    hint: >-
+      Go to the Mustering Green within the stone ring. Type taunt garrow to face
+      the belligerent farmhand down with words alone. Then return to Loresinger
+      Hale at the stone circle -- ask hale done.
+  - id: taunt
+    description: >-
+      Your words did what reason could not -- Garrow's bluster broke and he quit
+      the green. Return to Hale.
+    hint: >-
+      Report back to Loresinger Hale at the stone circle -- ask hale done.
+  - id: end
+    description: >-
+      Hale has taken your measure and found it sound. North, past the ring, the
+      old shrine stands -- older than the stones, older than the folk who
+      half-remember it. The hermit Sere keeps it.
+
+rewards:
+  skillinfo: "rhetoric:1"
+  itemid: 30066
+  gold: 25
+  playermessage: >-
+    Hale's doubled voice settles to a single tone as he regards you. "I felt
+    that from here -- the moment his nerve went. That is rhetoric: not the loud
+    word, but the true one, landed where it weighs most. You have the beginnings
+    of it." He lifts a flat strip of carved bone from among the stones and sets
+    it in your hands. "A reckoning -- the folk's whole story in the old script,
+    small enough to carry. Read it when you have the patience. The oldest end is
+    the part none of us can, any longer." He looks north, to where the ground
+    rises past the ring. "There is a thing the bone only points at. Sere keeps
+    it, at the old shrine. Go up and see."
+  roommessage: ""
+
+triggers:
+  # ── TAUNT: face down the belligerent Garrow (Mustering Green, 5335) ────
+  - event: command
+    command: taunt
+    room: 5335
+    conditions:
+      has: ["48-start"]
+      missing: ["48-taunt"]
+    actions:
+      - grant: "48-taunt"
+      - send_text: >-
+          Your words find the gap in his bluster and go straight through it. The
+          fight goes out of Garrow all at once -- he throws up his heavy hands,
+          mutters a surrender, and quits the green. Old Ferd lets out a breath he
+          has been holding for days. Return to Hale; it is done.

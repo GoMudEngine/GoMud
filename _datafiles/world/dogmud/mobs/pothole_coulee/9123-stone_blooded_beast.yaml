@@ -1,0 +1,64 @@
+mobid: 9123
+zone: Pothole Coulee
+behavior_archetype: tank_taunter
+archetype: fighting
+statpool: 200
+itemdropchance: 25
+hostile: true
+maxwander: 0
+groups:
+  - beast
+  - cave
+aiprofile: aggressive
+activitylevel: 22
+idlecommands:
+  - 'emote moves through the den in a slow circuit, the stone-fused hide
+    grinding against the walls and leaving long pale scratches'
+  - ''
+  - 'emote lowers the massive head and breathes out a long shuddering
+    exhalation that carries a faint mineral heat'
+  - ''
+combatcommands:
+  - 'emote plants the forelimbs wide, bracing against the floor, and
+    bellows -- the sound filling the den and pressing against the rock'
+  - ''
+  - 'emote pivots the whole stone-armored body and drives a sweeping
+    foreleg blow that scrapes sparks from the passage floor'
+  - ''
+  - 'emote lowers the skull and charges, the basalt plates on the crown
+    taking the impact of whatever is in the way'
+  - ''
+character:
+  name: Stone-Blooded Beast
+  description: |
+    At the bottom of the mine, past the drifts and the rubble and the
+    ordinary dark, something has made a den. The stone-blooded beast is
+    not what it was when it first came down here -- that thing, whatever
+    cave creature it began as, has been subsumed by a slow and total
+    transformation that the miners may have started and certainly did not
+    intend. The basalt has grown into it as much as onto it. The hide is
+    no longer visible under the mineral crust; what shows instead is a
+    living geology, dark grey-black plates jointed by seams of dull
+    amber, thick as flagstone at the shoulder and brow, thinning toward
+    the joints to allow movement at the cost of looking wrong. The eyes
+    are gone. The mass of the creature fills the den passage wall to wall.
+    Its breathing is audible through the rock before you see it, a slow
+    grinding rhythm like a millstone turning. It does not react to pain
+    in any normal way. It reacts to the presence of a threat by becoming
+    very, very focused on removing it.
+  speciesid: 23
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: 60
+    strength:
+      training: 40
+    dexterity:
+      training: 30
+    willpower:
+      training: 30
+    perception:
+      training: 20
+    charisma:
+      training: 20

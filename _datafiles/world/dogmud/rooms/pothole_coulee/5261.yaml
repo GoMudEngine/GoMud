@@ -1,0 +1,43 @@
+roomid: 5261
+zone: Pothole Coulee
+title: Deep Vein
+description: >
+  Past the den the mine opens one last time into a working face where
+  the deepest gallery was cut before the ore ran out -- or rather,
+  before it ran in, because this is where it ran. A broad seam of
+  basalt-iron bisects the far wall at a diagonal, the vein dark and
+  heavy and thick with locked mineral, glinting in a dozen shades
+  where the crystals in it catch light. The picks left it half-won
+  -- tools are still rusted into cracks where the last crew dropped
+  them and did not come back for them. The ore is rich enough to see
+  plain and dense enough to feel through the boot where it threads
+  the floor. Beyond the working face the seam runs on into unbroken
+  rock heading west, the vein continuing through stone that no pick
+  has touched yet, into ground that waits on whoever drives the next
+  gallery to meet it. The den lies back east; west is solid rock,
+  for now.
+biome: cave
+coord:
+  x: 31
+  y: -1
+  z: -2
+exits:
+  east:
+    roomid: 5260
+nouns:
+  vein: The broad seam of basalt-iron running diagonally across the
+    working face, dark and dense and spangled with mineral crystal
+    where the picks broke the surface open. It is thick -- a hand
+    spread across it covers less than a third of its width -- and
+    the ore quality shows at a glance in the weight of the color.
+    The working face is only the near edge of it; the seam runs
+    on west into untouched rock as far as any tool has probed.
+  seam: The same mineral deposit followed from the first strike
+    through the rock to this, the deepest gallery cut. It threads
+    the floor and climbs the wall and exits through the ceiling
+    to the west, going on into ground no one has opened yet. The
+    rusted tools still wedged in its cracks are the record of the
+    last crew to work it; the work they left unfinished is plain.
+idlemessages:
+- The <ansi fg="itemname">vein</ansi> catches whatever faint light reaches it and throws back a slow glitter, color shifting as the shadows move.
+- Somewhere in the unbroken rock west of the working face the <ansi fg="itemname">seam</ansi> pops once -- thermal stress, or pressure, or the mountain settling into itself.

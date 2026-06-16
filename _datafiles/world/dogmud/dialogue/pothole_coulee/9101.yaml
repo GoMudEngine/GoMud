@@ -1,0 +1,91 @@
+# Innkeep Tally — The Drowned Lantern (5205). Owns the sleep/stand
+# lesson (the loft upstairs, 5206) including the tradeoff: deep regen,
+# but a sleeper caught is a sleeper soft.
+
+mobid: 9101
+zone: Pothole Coulee
+defaultMood: friendly
+
+greetings:
+  - text: "Find a bench, friend -- they all lean, but they all hold."
+    moods: ["friendly", "neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Welcome to the Lantern. Wet boots are the house rule, not a problem."
+      - "Hello! Benches hold, taps pour, loft is up the stairs."
+
+  - keywords: [""]
+    responses:
+      - "If it is about food, drink, or a bed, you are in the right room."
+      - "Speak up, love, the room eats words when it is busy."
+
+tree:
+  root:
+    text: >-
+      Tally. I keep the Drowned Lantern -- taps, stew, and the loft
+      upstairs. Whatever the coulee took out of you today, one of
+      those three puts most of it back.
+    hints: >-
+      You could ask about sleeping in the loft, the food and drink,
+      or how the inn got its name.
+    variants:
+      - questExcluded: ["30-end"]
+        text: >-
+          New off the road and not yet through the pool? You are
+          welcome at a bench all the same, but do Hadwen the courtesy
+          before long. Folk rest easier Opened, in my experience.
+        hints: >-
+          You could ask Hadwen about the rite at the Awakening Pool,
+          or ask about sleeping here anyway.
+
+  nodes:
+    - id: sleep_lesson
+      triggers: ["sleep", "sleeping", "bed", "beds", "loft", "rest", "room"]
+      text: >-
+        The loft is up the stairs -- pallets, blankets, no charge
+        while you are learning the town. Lie down and type
+        <ansi fg="command">sleep</ansi>; the body mends itself faster
+        asleep than any salve can manage, and
+        <ansi fg="command">stand</ansi> wakes you when you have had
+        enough. One honest warning, love: a sleeper is soft. Anything
+        that catches you sleeping catches you undefended, so sleep
+        where it is safe -- up there, or anywhere the town wraps
+        around you. Out in the wilds, sleep is a wager.
+      hints: >-
+        The loft is up the stairs. Type sleep to rest and stand to
+        wake. Light or noise can wake you early.
+
+    - id: food_drink
+      triggers: ["food", "drink", "stew", "taps", "eat", "hungry"]
+      text: >-
+        Stew is whatever the coulee gave us this week, and the taps
+        pour fair. Eating keeps your strength honest -- a hungry body
+        mends slow and swings slower. Onna sells trail rations for
+        the road; my stew is for the table, and the table is better
+        company.
+      hints: >-
+        You could ask about sleeping in the loft, or the inn's name.
+
+    - id: name_lore
+      triggers: ["lantern", "drowned", "name", "sign"]
+      text: >-
+        The first keeper hung a lantern out in the wet season and the
+        pool rose right over it -- light still burning, so they say,
+        a foot under water and not a flicker of complaint. The pool
+        gave it back in the dry. We have hung it inside ever since,
+        and named the house for its patience.
+      hints: >-
+        You could ask about the food, or about sleeping in the loft.
+
+    - id: gills
+      triggers: ["gills", "frills", "collar", "water"]
+      text: >-
+        Came up from my grandmother's side, the frills -- half this
+        town has a little of the pool in the blood. Useful in the wet
+        season, when the cellar floods and somebody has to fetch the
+        good barrels up. That somebody is always me, and I have
+        stopped pretending to mind.
+      hints: >-
+        You could ask how the inn got its name.

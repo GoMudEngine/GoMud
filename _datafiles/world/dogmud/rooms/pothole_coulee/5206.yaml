@@ -1,0 +1,43 @@
+roomid: 5206
+zone: Pothole Coulee
+title: Lantern Sleeping Loft
+description: >
+  Up under the inn's roof the sleeping loft lies low and close, the heavy
+  beams near enough overhead to brush with a raised hand. Rows of straw
+  ticks rest along the floor, plumped and turned and laid with thick
+  folded wool blankets, and the warm peat-smell of the common room seeps up
+  faintly through the boards to settle here as something softer. The light
+  is dim and gold and kind, and the only sound is the slow tick of the
+  cooling roof and your own breathing. After the long open coulee and the
+  noise below, every line of this room is an argument for lying down. Your
+  legs feel the day all at once, and the nearest of the beds is a body's
+  length away.
+biome: house
+coord:
+  x: 44
+  y: 2
+  z: 1
+mutators:
+- mutatorid: sanctuary
+exits:
+  down:
+    roomid: 5205
+nouns:
+  beds: The beds are simple straw ticks laid in rows on the plank floor,
+    each one fat with fresh-stuffed straw and turned so the day's damp has
+    aired out of it. They are not fine, but they are clean and dry and
+    smell of cut grass, and the sight of them undoes something in the back
+    of your knees. Lie down on one and the road would let go of you for a
+    while.
+  blankets: Folded squares of grey wool wait at the foot of each tick,
+    thick and slightly rough and smelling of lanolin and woodsmoke. They
+    have been mended at the corners more than once with patient yarn.
+    Pulled up to the chin, one of these would keep the loft's chill an
+    arm's length off all night.
+  beams: The roof-beams run low across the loft, dark old timber pegged
+    and notched without a nail in sight, close enough that a tall body
+    learns to stoop. Bunches of dried herbs and a few glass floats hang
+    from them on cord. They give the room the snug, held-in feeling of a
+    boat's hull turned over for shelter.
+idlemessages:
+- The cooling roof ticks softly overhead, and the warm peat-smell drifts up through the boards.

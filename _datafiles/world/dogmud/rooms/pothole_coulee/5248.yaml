@@ -1,0 +1,38 @@
+roomid: 5248
+zone: Pothole Coulee
+title: The Last Worked Stone
+description: >
+  The dressed ground of the smithy gives out here at a single boundary-
+  stone, a dressed block of dark basalt set firm and deliberate at the
+  edge of the safe ground -- the last mark of someone's deliberate
+  work before the talus goes loose and unworked again. Beyond the
+  stone the slope falls away sharply, raw and unstable, shale plates
+  tilted at angles that offer nothing solid. Further down the slope
+  to the west, a low dark opening is cut into the hillside, timbers
+  shoring its mouth -- a mine entrance, unlit, waiting. This ground
+  is still held and safe, but the stone is a plain notice: past here,
+  you are on your own.
+biome: mountains
+coord:
+  x: 39
+  y: -1
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  east:
+    roomid: 5247
+  west:
+    roomid: 5249
+nouns:
+  stone: A single block of dressed basalt set deep and level into the
+    top of the slope, its faces cut square and its top worn smooth by
+    hands and weather. It marks the edge of the smithy's kept ground.
+    Past it, no one has done the work of making the slope safe.
+  slope: Below the boundary-stone the talus falls away in loose,
+    tilted shale, nothing cut or packed or shored. A foot placed wrong
+    will shift three plates and you will go down fast. The mine mouth
+    is visible lower on the slope to the west, its timbers the only
+    worked thing down there.
+idlemessages:
+- A loose pebble cracks free on the <ansi fg="itemname">slope</ansi> below and skitters down out of sight.

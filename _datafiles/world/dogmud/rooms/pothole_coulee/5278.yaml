@@ -1,0 +1,40 @@
+roomid: 5278
+zone: Pothole Coulee
+title: Sunken Hollow
+description: >
+  The hollow sits below the level of the flats above, and daylight
+  does not reach it cleanly -- what filters down turns green in the
+  thick air, a murk that sits on the eyes like a film. The walls of
+  the hollow are slick with seep and dark moss, and the ground is
+  not quite ground but soft yielding mire that holds a boot and
+  releases it with a sound like a slow exhale. The air here is
+  close, foul, and still. The mire deepens further south, where
+  the hollow opens toward something worse.
+biome: swamp
+coord:
+  x: 47
+  y: 11
+  z: -1
+exits:
+  up:
+    roomid: 5276
+  south:
+    roomid: 5279
+spawninfo:
+- mobid: 9134
+nouns:
+  hollow: A bowl sunk below the surrounding flats, its walls seeping
+    and dark with old growth. The drop from above is short but the
+    change in the air is immediate -- close, green-lit, and wrong
+    in a way that takes a moment to name.
+  air: Thick and foul, it sits in the hollow without moving.
+    Breathing it is a decision the nose protests. The green murk
+    of it turns the light strange and makes distances hard to read.
+  murk: The light that filters down from the sinkhole above goes
+    green and dim in the hollow's air, filling the space with a
+    haze that is not quite fog but behaves like one.
+idlemessages:
+- The <ansi fg="itemname">air</ansi> presses close, and the smell of
+  sweet rot deepens without warning.
+- From somewhere in the <ansi fg="itemname">hollow</ansi>, a slow
+  bubble of gas breaks the surface of the mire and is gone.

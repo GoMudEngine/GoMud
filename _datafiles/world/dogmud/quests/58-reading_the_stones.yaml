@@ -1,0 +1,58 @@
+# Quest 58 — Reading the Stones (Pothole Coulee, Spoke F repeatable)
+#
+# Token flow:
+#   58-start — granted by Hermit Sere's dialogue (stones_loop_offer node).
+#              Requires 49-end (The Old Shrine). Repeatable with cooldown.
+#   58-end   — command trigger on search in the Reliquary room (5343).
+#              Requires 58-start. Auto-grants reward + clears for repeat.
+
+questid: 58
+name: Reading the Stones
+description: >-
+  Sere believes the shrine still has things to teach anyone patient
+  enough to listen. She wants you to go back to the Reliquary and
+  read what the stones have to say.
+secret: false
+repeatable: true
+cooldown_rounds: 300
+
+steps:
+  - id: start
+    description: >-
+      Sere has asked you to return to the Reliquary and search the
+      old stones again.
+    hint: >-
+      Go to the Reliquary at the back of the shrine and type search
+      to read what the stones hold. Come back to Sere when you
+      have looked.
+  - id: end
+    description: >-
+      You read the stones again. Sere will have more questions for
+      you when the shrine is ready to give them.
+
+rewards:
+  gold: 6
+  skillinfo: "rhetoric:1"
+  playermessage: >-
+    Sere listens in her unhurried way as you describe what the stones
+    showed you this time. "It changes," she says. "That is the thing
+    about very old places -- they keep speaking, and the words shift
+    with the listener. Come again when you have patience for it."
+  roommessage: >-
+    Sere folds her hands and listens with the patience of someone
+    who has been listening a very long time.
+
+triggers:
+  - event: command
+    command: search
+    room: 5343
+    conditions:
+      has: ["58-start"]
+      missing: ["58-end"]
+    actions:
+      - grant: "58-end"
+      - send_text: >-
+          The stones give up a little more than they did before --
+          not much, but something. The mark at the center of the
+          disc catches your eye again, unchanged and patient.
+          Bring word of it to Sere.

@@ -1,0 +1,40 @@
+roomid: 5281
+zone: Pothole Coulee
+title: Clearwater Spring
+description: >
+  Here the rock rises clear of the mire and a spring wells up from a
+  crack in the stone, water running cold and bright over a bed of pale
+  gravel, sweet-smelling where moments ago the air was foul. The
+  change is abrupt enough to feel like stepping through a door. The
+  light reaches the ground without the green murk of the hollow above,
+  and the sound of the spring is the first clean sound the swamp has
+  offered. A faint game trail winds away to the west through ground
+  not yet trodden, cutting into country that waits beyond the opened
+  rock.
+biome: water
+coord:
+  x: 47
+  y: 14
+  z: -1
+exits:
+  north:
+    roomid: 5280
+  west:
+    roomid: 5367
+nouns:
+  spring: Clean water welling from a crack in pale stone, cold and
+    quick, running over gravel in a sound that is simply itself --
+    no weight to it, no intent. After the hollow, it is startling
+    how good water can smell.
+  water: Bright and cold, nothing like the black mere behind you.
+    It catches what light filters down and gives it back honestly,
+    running clear over the gravel bed with no film, no stillness,
+    no watching.
+  trail: A faint track worn through the growth to the west, animal
+    or older, leading into country not yet opened. It is narrow and
+    unhurried, and whatever made it knew where it was going.
+idlemessages:
+- The <ansi fg="itemname">spring</ansi> runs on, cold and indifferent
+  to what the swamp to the north has been doing.
+- The <ansi fg="itemname">water</ansi> catches a glint of light and
+  throws it across the pale stone, easy and clean.

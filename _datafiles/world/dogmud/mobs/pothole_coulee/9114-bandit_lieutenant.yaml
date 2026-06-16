@@ -1,0 +1,53 @@
+mobid: 9114
+zone: Pothole Coulee
+behavior_archetype: leader
+archetype: fighting
+statpool: 130
+itemdropchance: 20
+hostile: true
+maxwander: 0
+groups:
+  - bandit
+  - humanoid
+activitylevel: 22
+idlecommands:
+  - 'emote stands at the top of the approach with one boot up on a rock,
+    surveying the wash below with proprietorial ease'
+  - ''
+  - 'emote turns and says something short and flat to no one in
+    particular, and no one in particular argues with it'
+  - ''
+combatcommands:
+  - 'emote steps forward and draws the short sword in a single easy
+    motion, already looking past the blade at where the real problem is'
+  - ''
+  - 'emote calls out a command over the shoulder without taking eyes off
+    the fight'
+  - ''
+character:
+  name: Bandit Lieutenant
+  description: |
+    The lieutenant does not look like the biggest threat in the room, and
+    that has served her well for years. She is lean and deliberate, with
+    the kind of stillness that comes from never wasting motion on
+    something that does not need doing. The short sword at her hip is
+    kept sharper than anything else in the crew's possession, and she
+    wears it like it is part of her kit rather than a statement. She
+    speaks to the crew in short, flat sentences that end discussions
+    rather than beginning them. The captain trusts her to hold the upper
+    wash because she has not lost it yet.
+  speciesid: 1
+  level: 1
+  gold: 25
+  equipment:
+    weapon:
+      itemid: 10014
+  stats:
+    strength:
+      training: 10
+    dexterity:
+      training: 10
+    vitality:
+      training: 8
+    perception:
+      training: 6

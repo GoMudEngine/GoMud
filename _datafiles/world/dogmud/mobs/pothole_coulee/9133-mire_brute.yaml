@@ -1,0 +1,64 @@
+mobid: 9133
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 90
+itemdropchance: 15
+hostile: true
+maxwander: 1
+groups:
+  - beast
+  - swamp
+activitylevel: 18
+idlecommands:
+  - 'emote stands knee-deep in the black water, perfectly motionless,
+    the weed and mud caked across its shoulders beginning to look like
+    a feature of the landscape'
+  - ''
+  - 'emote submerges the broad face into the mire and holds it there
+    for a long, unhurried moment before lifting it again, trailing black
+    ropes of marsh water'
+  - ''
+combatcommands:
+  - 'emote heaves the whole body forward in a single overwhelming shove,
+    arms wide, using mass and momentum as the weapon'
+  - ''
+  - 'emote brings both fists down in a hammering overhead blow that makes
+    the ground shake and throws up a spray of mud'
+  - ''
+  - 'emote grabs and squeezes, not with any precision but with a
+    grinding sustained pressure that makes the outcome a question of
+    endurance'
+  - ''
+character:
+  name: Mire Brute
+  description: |
+    Something that was once a troll has been in the mire long enough
+    that the distinction is becoming academic. The mire brute stands
+    a full head taller than a large man and twice as wide at the
+    shoulders, caked in a continuous layer of swamp mud that has dried
+    and cracked and been rewet so many times it has become structural --
+    part of the body rather than a covering. Weed and root-tangles are
+    woven through the matted hair. The eyes are small and set deep under
+    a shelf of brow, but they track movement with an intelligence that
+    is mostly focused and entirely hostile. It heals. Wounds that would
+    end a fight close over as you watch, the bog-troll constitution
+    pulling itself back together with the methodical stubbornness of
+    something that has learned injury is temporary. Winning quickly is
+    not optional so much as advisable.
+  speciesid: 4
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: 34
+    strength:
+      training: 30
+    dexterity:
+      training: 12
+    perception:
+      training: 6
+    willpower:
+      training: 4
+    charisma:
+      training: 4

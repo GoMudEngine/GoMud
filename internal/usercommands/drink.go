@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -119,6 +120,15 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if itemSpec.Toxicity > 0 {
 		user.Character.Toxicity += float64(itemSpec.Toxicity)
 	}
+
+	// Quest engine: command notification — a successful drink advances
+	// "drink a potion" quest steps (e.g. the Spoke C alchemy cert).
+	questBridge := questengine.NewGameBridge(user, room.RoomId)
+	questengine.GetEngine().Notify("command", questengine.EventDetails{
+		UserId:  user.UserId,
+		RoomId:  room.RoomId,
+		Command: "drink",
+	}, questBridge, questBridge)
 
 	user.SendText(messaging.CategorySystem, fmt.Sprintf(
 		`You drink the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()))

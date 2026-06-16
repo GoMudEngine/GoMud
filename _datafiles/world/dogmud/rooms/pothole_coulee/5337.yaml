@@ -1,0 +1,47 @@
+roomid: 5337
+zone: Pothole Coulee
+title: The Tall Stone
+description: >
+  The tallest menhir of the ring stands here at the circle's northern
+  focal point, rising perhaps five times the height of a standing person,
+  its upper reaches tapering to a point that the wind has blunted but
+  not entirely taken. Its shadow in the mornings falls northeast across
+  the mustering green; in the afternoons it falls northwest across the
+  fallen menhir beyond the circle's heart. The shadow-path it traces
+  through the day is itself a kind of calendar, and the coulee folk have
+  been reading it for as long as anyone has been recording. The carvings
+  on this stone are the most complete in the ring -- spirals give way to
+  figures give way to what reads as a continuous narrative running from
+  ground level to as high as a person can reach, the rest lost to height
+  and weather but the visible portion the most legible stone-record in
+  the entire coulee.
+biome: land
+coord:
+  x: 44
+  y: -11
+  z: 0
+exits:
+  south:
+    roomid: 5335
+  west:
+    roomid: 5338
+nouns:
+  shadow: The tall stone's shadow is not quite where the sun would
+    place it if the stone were perfectly vertical -- the slight lean
+    of the menhir shifts it by a hand's breadth, enough to have been
+    corrected for over the generations. Whether the lean was always
+    there or has accumulated with time, nobody knows for certain.
+  carvings: The carvings on the tall stone read from the ground up --
+    earliest at the base, most recent at reach-height, the upper
+    portion lost to weathering and distance. The narrative they tell
+    is dense and detailed enough that the tradition-keeper spends time
+    here most days, still learning it.
+idlemessages:
+- The <ansi fg="cyan">shadow</ansi> of the tall stone stretches north across the green
+  and marks, briefly, the exact center of the mustering space.
+- Running a hand along the lowest <ansi fg="cyan">carvings</ansi>, you feel the depth
+  of the cuts -- these were made deliberately, meant to last, and
+  they have.
+- The wind at the base of the tall stone eddies in a tight circle,
+  stirring dust and a few dry grass stems into a brief spiral before
+  releasing them.

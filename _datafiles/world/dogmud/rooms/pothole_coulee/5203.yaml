@@ -1,0 +1,52 @@
+roomid: 5203
+zone: Pothole Coulee
+title: Hub Square
+description: >
+  The town's heart opens out here across flat basalt slabs, worn smooth
+  by more feet than anyone has bothered to count. A weathered notice-post
+  stands square in the middle, its boards layered thick with the crier's
+  latest word and a hundred older ones gone soft beneath. Even with not a
+  soul about, the square does not feel empty -- it holds the kept-breath
+  hum of a place where news breaks and gossip travels, where the day's
+  first word and its last both get spoken aloud. Ways run off in every
+  direction: north toward the pool, south to the market, west along the
+  stilt-walk, east to the squat strongbox-house. Stand here a spell and
+  the town will find you on its own.
+biome: city
+coord:
+  x: 45
+  y: 1
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  north:
+    roomid: 5200
+  south:
+    roomid: 5204
+  west:
+    roomid: 5216
+  east:
+    roomid: 5208
+nouns:
+  square: The open square is the one flat, gathered place in a town
+    otherwise pitched against the coulee walls. It is where folk drift to
+    trade a rumor, settle an argument, or simply be seen. Something about
+    the worn ground tells you feet have stood here, waiting and talking,
+    far longer than the houses around it have stood.
+  notice-post: A stout post of grey driftwood stands at the square's
+    center, its broad face crusted with notices nailed one atop another.
+    The crier pins the fresh word here -- work wanted, strangers expected,
+    a warning or a wedding -- and nobody troubles to pull the old ones, so
+    the layers go down years deep. You could read the town's whole recent
+    memory off it if you had the patience to peel.
+  slabs: The square is floored in great slabs of basalt, flood-laid and
+    fitted close, their surfaces buffed to a dull shine by generations of
+    passing feet. Rain pools in the shallow dishes worn into the busiest of
+    them. Where the slabs meet, tough little weeds have found the seams and
+    made a home.
+spawninfo:
+- mobid: 9106
+idlemessages:
+- A loose notice lifts and flutters against the <ansi fg="itemname">notice-post</ansi>, then settles.
+- Footsteps cross the empty <ansi fg="itemname">square</ansi> somewhere behind you and fade off into a side lane.

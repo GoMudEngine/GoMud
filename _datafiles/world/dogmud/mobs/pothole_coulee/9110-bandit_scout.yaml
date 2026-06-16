@@ -1,0 +1,51 @@
+mobid: 9110
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 18
+itemdropchance: 15
+hostile: true
+maxwander: 1
+groups:
+  - bandit
+  - humanoid
+activitylevel: 25
+idlecommands:
+  - 'emote crouches at the lip of the wash, watching the trail below with
+    quick, restless eyes'
+  - ''
+  - 'emote flips the knife end-over-end once, catches it by the handle,
+    and tucks it back against the wrist'
+  - ''
+combatcommands:
+  - 'emote darts in fast and low, blade angled for the ribs'
+  - ''
+  - 'emote backpedals a step, reading for an opening, weight on the balls
+    of the feet'
+  - ''
+character:
+  name: Bandit Scout
+  description: |
+    A wiry figure in travel-stained clothes that were chosen more for
+    color than warmth -- dull browns and greys that read as shadow
+    against the wash rock. The scout keeps low and moves in quick,
+    birdlike shifts, always facing out, never putting its back to a
+    drop. The short blade at the wrist is plain and well-used, edge
+    kept up even if the rest of the kit is not. This one watches more
+    than it fights, but it has learned that watching long enough
+    usually leads to the same place.
+  speciesid: 1
+  level: 1
+  gold: 8
+  equipment:
+    weapon:
+      itemid: 10021
+  stats:
+    strength:
+      training: 4
+    dexterity:
+      training: 8
+    perception:
+      training: 4
+    vitality:
+      training: 2

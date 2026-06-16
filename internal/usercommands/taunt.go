@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -144,6 +145,16 @@ func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		sendTauntMessages(combat.TauntMiss, "", sourceName, targetName,
 			"username", targetType, user, targetPlayer, room, result.Target.UserId)
 	}
+
+	// Quest engine: command notification — the player executed a taunt (the
+	// newbie Lore spoke's "talk down the belligerent" rhetoric beat). Fires
+	// after a real taunt (past the cooldown/no-target guards). Mirrors cast.
+	bridge := questengine.NewGameBridge(user, room.RoomId)
+	questengine.GetEngine().Notify("command", questengine.EventDetails{
+		UserId:  user.UserId,
+		RoomId:  room.RoomId,
+		Command: "taunt",
+	}, bridge, bridge)
 
 	return true, nil
 }

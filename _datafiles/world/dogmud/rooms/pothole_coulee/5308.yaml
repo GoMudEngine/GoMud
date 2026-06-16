@@ -1,0 +1,37 @@
+roomid: 5308
+zone: Pothole Coulee
+title: Grove Edge
+description: >
+  The observatory rim drops behind you and the forest begins here, but wrong --
+  trees that lean inward at angles the wind does not explain, bark pale and
+  smooth as stripped bone. A low hum arrives at the edge of hearing, sourceless,
+  steady, like a note held on a string wound too tight. Light filters through
+  the canopy a half-breath behind where it should be, landing soft and slightly
+  late, as though the grove remembers sunlight rather than receiving it.
+biome: forest
+coord:
+  x: 43
+  y: -5
+  z: 2
+exits:
+  south:
+    roomid: 5307
+  north:
+    roomid: 5309
+  west:
+    roomid: 5310
+spawninfo:
+- mobid: 9147
+nouns:
+  trees: Pale-barked and leaning without cause, they press closer than
+    ordinary forest timber. The grain spirals in directions that make
+    the eye slide away -- something about the pattern refuses to resolve.
+  hum: Sourceless and low, it sits just below the threshold of sound you
+    can name. Standing still, you notice it rises and falls on no wind,
+    no breath -- as though the grove itself is sustaining a long exhalation.
+idlemessages:
+- The <ansi fg="cyan">hum</ansi> rises a half-step, then settles, as though acknowledging you.
+- Light drifts down through the canopy a moment too late, pooling where you
+  stood a breath before.
+- One of the <ansi fg="cyan">trees</ansi> near the path's edge shifts almost imperceptibly, bark
+  catching no wind.

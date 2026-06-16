@@ -1,0 +1,187 @@
+mobid: 9137
+zone: Pothole Coulee
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "hail"]
+    responses:
+      - "Delk. I hunt. Tarn sent you, or you would not have made it this
+          far quiet. What do you want?"
+      - "Keep downwind and keep still. The fringe is listening."
+
+  - keywords: ["hunt", "kill", "prey", "learn", "teach", "quest", "task"]
+    responses:
+      - "Hunting is patience and one clean kill. Ask me and I will set
+          you to it."
+      - "Bring down meat, rest rough, eat what you took. That is living
+          out here. Ask."
+
+  - keywords: ["hands", "skin", "weatherproof", "mutation", "opened"]
+    responses:
+      - "The Awakening toughened my hands -- skin like waxed bark now,
+          turns cold and thorn and wet. Out here it is a gift. I do not
+          dwell on it."
+
+  - keywords: ["sleep", "rest", "cook", "fire", "meat"]
+    responses:
+      - "Rest mends you faster than walking does -- type sleep when you
+          are safe, stand to rise. Cook your kill at my fire: type craft
+          and the meal's name. A hot meal carries you further than cold
+          meat ever will."
+
+  - keywords: ["pack", "alpha", "wolves", "den"]
+    responses:
+      - "The pack runs the country south of here, and the alpha runs the
+          pack. They come at you in numbers. That is a fight you take
+          when you are ready, not before."
+
+  - keywords: [""]
+    responses:
+      - "Say it plain."
+      - "I am watching the tree-line. Talk."
+      - "Out with it."
+
+tree:
+  root:
+    text: "Delk. Hunter."
+    hints: "You could ask Delk about hunting or your task."
+    variants:
+      # ── Not ready (Tarn's lesson unfinished) ─────────────
+      - questExcluded: ["41-end"]
+        text: "You are not ready for the fringe. Go back to Tarn on the
+          steppe and learn to read ground first -- out here, not seeing
+          the sign is how you become the kill. Come find me when she
+          says you can track."
+        hints: "Return north to Scout Tarn and finish her tracking lesson
+          before coming to Hunter Delk."
+
+      # ── Ready for quest 42 ───────────────────────────────
+      - questRequired: ["41-end"]
+        questExcluded: ["42-start", "42-end"]
+        text: "Tarn's eyes, then. Good enough. The fringe will teach you
+          the rest -- how to take meat, rest rough, and cook a kill. Ask
+          me for the hunt when you are ready to work."
+        hints: "Type ask delk hunt to take on the hunter's loop."
+
+      # ── Mid quest 42 ─────────────────────────────────────
+      - questRequired: ["42-start"]
+        questExcluded: ["42-end"]
+        text: "Still at it. Bring down a pronghorn for its meat, sleep
+          rough to keep your strength, and cook grilled meat at my fire.
+          Lost the salt I gave you? Ask. Come back when it is done."
+        hints: "Hunt a pronghorn (it drops meat -- pick it up); type sleep
+          to rest; type craft grilled meat at the camp fire. If you lost
+          the salt, ask delk salt. Then ask delk report."
+
+      # ── Ready for quest 43 ───────────────────────────────
+      - questRequired: ["42-end"]
+        questExcluded: ["43-start", "43-end"]
+        text: "You hunt well enough to feed yourself. Now the hard work --
+          the pack, south, and the alpha at the head of it. Ask me about
+          the pack when your nerve is up."
+        hints: "Type ask delk pack when you are ready for the final task."
+
+      # ── Mid quest 43 ─────────────────────────────────────
+      - questRequired: ["43-start"]
+        questExcluded: ["43-end"]
+        text: "It is still out there. Carry food, fight through the
+          hounds, and take the alpha in its den. Do not let them get
+          behind you. South, through the killing ground."
+        hints: "Head south through the killing ground and bone field to
+          the den; fight through the pack and defeat the alpha
+          pack-leader."
+
+      # ── Quest 43 complete ────────────────────────────────
+      - questRequired: ["43-end"]
+        text: "You broke the pack. I have hunted this fringe for years
+          and never managed that. The country south is quieter now, and
+          you walk it wearing the hide of the thing that ruled it. Go on.
+          You have the steppe in you."
+        hints: "You have cleared the Wilderness spoke. Well done."
+
+  nodes:
+    # ── QUEST 42 OFFER (hands the salt) ───────────────────────
+    - id: hunt_offer
+      triggers: ["hunt", "learn", "teach", "work", "quest", "task"]
+      questRequired: ["41-end"]
+      questExcluded: ["42-start", "42-end"]
+      grantsQuest: "42-start"
+      givesItem: 40017
+      text: "Right. Here -- a salt-pouch; you will want it for the fire.
+        The loop is this. First, take meat: track and kill a pronghorn
+        out on the fringe -- it drops raw meat, so pick it up. Second,
+        rest rough: type sleep where it is safe and the field mends you
+        faster than walking does; type stand to rise. Third, cook it: at
+        my fire here, type craft grilled meat -- the meat and the salt
+        become a meal. Do all three and come back."
+      hints: "You received a salt-pouch. Hunt a pronghorn (get the meat it
+        drops). Type sleep to rest in the field. At Delk's camp fire type
+        craft grilled meat. Then ask delk report."
+
+    # ── SALT RECOVERY ─────────────────────────────────────────
+    - id: salt_recovery
+      triggers: ["salt", "lost", "another", "pouch"]
+      questRequired: ["42-start"]
+      questExcluded: ["42-cook"]
+      givesItem: 40017
+      text: "Lost your salt? Here. Last pinch I am sparing. You need it
+        and raw meat to cook grilled meat at the fire -- do not lose this
+        one."
+      hints: "You received a salt-pouch. With raw meat, type craft grilled
+        meat at the camp fire."
+
+    # ── QUEST 42 TURN-IN ──────────────────────────────────────
+    - id: hunt_turnin
+      triggers: ["report", "done", "ready", "finished", "quest", "task"]
+      questRequired: ["42-hunt", "42-rest", "42-cook"]
+      questExcluded: ["42-end"]
+      grantsQuest: "42-end"
+      text: "Killed clean, rested rough, ate what you took. That is the
+        whole of being a hunter, and you did it without me holding your
+        hand. Take these boots -- broken in, good for long ground -- and
+        the stew recipe; a hot meal does more than fill you. Now the bad
+        work, when you are ready. The pack. Ask me about it."
+      hints: "Quest complete. Type ask delk pack when you are ready for
+        the final task."
+
+    # ── QUEST 43 OFFER ────────────────────────────────────────
+    - id: pack_offer
+      triggers: ["pack", "alpha", "den", "wolves", "quest", "task"]
+      questRequired: ["42-end"]
+      questExcluded: ["43-start", "43-end"]
+      grantsQuest: "43-start"
+      text: "The pack, then. South of the fringe is their country, and
+        they do not share it. They will come at you two and three at a
+        time -- that is how a pack kills, and it is how this one will try
+        to kill you. Cook a meal and carry it. Fight through the hounds,
+        keep your back clear, and do not stop until you reach the den.
+        The alpha is in there. Put it down and the pack comes apart. Go."
+      hints: "Cook and carry food first. Head south through the killing
+        ground and bone field to the den; fight through the pack and
+        defeat the alpha pack-leader."
+
+    # ── SLEEP / COOK HELP ─────────────────────────────────────
+    - id: hunt_help
+      triggers: ["sleep", "rest", "cook", "fire", "help"]
+      text: "Two field skills. Rest: type sleep where it is safe and your
+        body mends fast -- type stand to wake, and know any harm wakes you
+        the hard way. Cooking: stand at my fire and type craft followed by
+        the meal -- craft grilled meat with raw meat and salt. A rested,
+        fed hunter outlasts a stronger one who is neither."
+      hints: "Type sleep to rest (stand to wake). At a cooking fire type
+        craft grilled meat (needs raw meat + salt)."
+
+    # ── REPEATABLE HUNT LOOP OFFER ────────────────────────────
+    - id: game_loop_offer
+      triggers: ["work", "again", "more", "hunt", "job", "quest", "task"]
+      questRequired: "43-end"
+      grantsQuest: "56-start"
+      questExcluded: ["56-start", "56-hunt", "56-end"]
+      text: "The fringe is always running game. Go out and bring one
+        down, then forage the camp -- keep your hand in. Come back
+        when it is done."
+      hints: "You could take another run through the fringe -- type
+        ask delk work."
+
+memory:
+  expiryPeriod: ""

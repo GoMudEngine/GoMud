@@ -1,0 +1,60 @@
+mobid: 9132
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 60
+itemdropchance: 15
+hostile: true
+maxwander: 1
+groups:
+  - beast
+  - swamp
+activitylevel: 20
+idlecommands:
+  - 'emote crouches at the water-line, belly plates flush with the mud,
+    and watches the far bank with an unblinking patience that has no
+    particular object'
+  - ''
+  - 'emote draws a slow breath through flared nostrils and does not move,
+    tasting the air at the edge of the poisoned water'
+  - ''
+combatcommands:
+  - 'emote accelerates from standstill with a low scrabbling burst, closing
+    the distance before the posture has any right to mean attack'
+  - ''
+  - 'emote drives the armored snout into the target like a wedge and twists,
+    using leverage instead of raw force'
+  - ''
+  - 'emote whips the heavy tail in a flat arc that catches anything standing
+    too close to the flank'
+  - ''
+character:
+  name: Bog Stalker
+  description: |
+    Low and wide, built for ground the way a stone is built for ground --
+    the bog stalker moves across the poison-swamp margin on thick-muscled
+    legs set wide at the shoulder, belly near enough the mud that its
+    passage leaves a shallow trough. The hide is a mottled green-brown
+    under a crust of actual bog material: dead plant matter, mineral
+    staining, the dried remains of things it has eaten worked into the
+    crevices of the dorsal scale ridges. It is heavier than it looks and
+    faster than anything that heavy should be over the first few body
+    lengths. The eyes are amber and wide-set, calibrated for movement.
+    It does not pursue, generally. It waits for the ground between you
+    and safety to run out.
+  speciesid: 21
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: 20
+    strength:
+      training: 18
+    dexterity:
+      training: 14
+    perception:
+      training: 4
+    willpower:
+      training: 2
+    charisma:
+      training: 2

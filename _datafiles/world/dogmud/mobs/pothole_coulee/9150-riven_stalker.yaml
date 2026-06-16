@@ -1,0 +1,53 @@
+mobid: 9150
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 95
+itemdropchance: 20
+hostile: true
+maxwander: 1
+groups:
+  - aberration
+  - folded
+activitylevel: 22
+idlecommands:
+  - 'emote prowls the broken ground on too many joints, testing each
+    fragment of floating stone before trusting its weight to it'
+  - ''
+  - 'emote freezes mid-stride and holds the pose far past the point of
+    balance, defying the fall it should have taken'
+  - ''
+combatcommands:
+  - 'emote pours across the gap between the floating stones without
+    seeming to leap, arriving inside your guard'
+  - ''
+  - 'emote lashes out with a limb that folds at a joint no limb has,
+    striking from an angle that should not exist'
+  - ''
+character:
+  name: Riven Stalker
+  description: |
+    Of all the things the thinning has made out here, the riven stalker is
+    the one that hunts. Whatever animal it began as has been refolded past
+    recognition: the limbs are too many and hinge the wrong way, the spine
+    runs at an angle the eye keeps trying to correct, and it moves across
+    the floating, fractured ground with a horrible sureness, as though the
+    broken geometry of the scabland is the only place it has ever felt at
+    home. It tracks by something other than sight -- it has no eyes that
+    hold still long enough to be sure -- and it is patient, and it is fast,
+    and it has learned that prey on this ground tends to fall through the
+    gaps if you only wait.
+  speciesid: 23
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 30
+    strength:
+      training: 26
+    vitality:
+      training: 26
+    perception:
+      training: 7
+    willpower:
+      training: 6

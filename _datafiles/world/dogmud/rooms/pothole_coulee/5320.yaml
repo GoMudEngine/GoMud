@@ -1,0 +1,44 @@
+roomid: 5320
+zone: Pothole Coulee
+title: The Thinnest Place
+description: >
+  The Folding stands wide open here. The gap is not a gap in the stone --
+  it is a gap in the world, a place where whatever separates the ordinary
+  from the unordinary has worn through entirely. Light passes through it
+  in colors that have no names. Air moves through it in directions that
+  air does not move. The place is barely holding itself together -- the
+  ground vibrates underfoot with the effort of remaining ground, and the
+  edges of things fray and reseal and fray again in constant stuttering
+  negotiation with stability. Something old has claimed this thinness for
+  itself. You cannot see it directly, but the place knows it is here --
+  the gap leans toward it, the fraying accelerates near it, the air
+  draws back from where it rests.
+biome: cliffs
+coord:
+  x: 41
+  y: -10
+  z: 3
+exits:
+  west:
+    roomid: 5319
+  north:
+    roomid: 5321
+spawninfo:
+- mobid: 9152
+nouns:
+  gap: Not an absence but a presence -- the gap is a thing in itself,
+    a fold held permanently open, edges cycling between fraying and
+    resealing. Light passes through it that carries no heat. The air
+    that moves through it carries no smell. It is the thinnest place
+    in the world, and something has been living in the thinness.
+  place: The place exerts a kind of gravity that has nothing to do
+    with weight. You are pulled toward the center of it without moving
+    -- the attention, the awareness, the sense that the place is also
+    aware of you and has been for longer than you have been aware of it.
+idlemessages:
+- The <ansi fg="cyan">gap</ansi> pulses once, a slow contraction and release, like breathing.
+- The ground at the center of this <ansi fg="cyan">place</ansi> frays for a moment --
+  threads of it lifting free -- then knits back with a sound like
+  cloth tearing in reverse.
+- Light of a color you have no name for crosses the room from west to
+  east at shoulder height and is gone.

@@ -1,0 +1,48 @@
+roomid: 5358
+zone: Pothole Coulee
+title: Canyon Head
+description: >
+  The canyon ends here. The walls close in and rise, sheering upward into
+  a chimney of stacked limestone that climbs thirty feet to the bluff-top
+  above. Natural handholds mark the chimney's face -- worn smooth by use,
+  spaced for someone who knows the route, impassable for someone who does
+  not. The floor at the base is a tight half-circle of bare stone, the
+  walls on three sides vertical and unyielding. There is nowhere else to
+  go except up, or back south the way you came. The acoustic here is
+  strange and total: sound rises into the chimney and is amplified rather
+  than scattered, returning from above as though the bluff-top is
+  listening. The whole canyon leads here. Every echo that the slot
+  generates eventually arrives at this chamber and climbs the chimney
+  into open sky. It is the head of the slot, and it feels like it -- a
+  terminus that the rock built without planning and the raiders found
+  without looking.
+biome: cliffs
+coord:
+  x: 49
+  y: -8
+  z: 2
+exits:
+  south:
+    roomid: 5357
+  up:
+    roomid: 5360
+nouns:
+  chimney: A natural shaft in the rock, barely wide enough for a person
+    carrying a pack. The handholds are worn and reliable -- someone has
+    climbed this route many times. Looking up into it, you can see a
+    disk of sky at the top, bright against the dark stone. The climb
+    is steep but not technical; the danger is being caught halfway up
+    by something that can still reach you from below.
+  head: The end of the canyon is not a dramatic terminus -- just a
+    narrowing, a rising of walls, a closure. The rock here has a
+    finality to it. The whole slot funneled toward this point and the
+    point goes nowhere except up.
+idlemessages:
+- Sound rises up the <ansi fg="cyan">chimney</ansi> and comes back down changed, pitched
+  higher, stripped of its lower registers.
+- The disk of sky at the top of the chimney shifts -- clouds moving fast
+  above the bluff-top, invisible from down here.
+- The <ansi fg="cyan">head</ansi> of the canyon is very quiet. The rockfall behind you
+  absorbs the sounds that travel up from the slot below.
+- Dust falls from somewhere high in the chimney and drifts slowly to
+  the floor, catching the last of the light.

@@ -1,0 +1,53 @@
+mobid: 9161
+zone: Pothole Coulee
+behavior_archetype: noncombat_questgiver
+statpool: 44
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 12
+idlecommands:
+  - 'emote sets a fresh straw butt on its peg and steps off the distance with
+    long, even paces'
+  - ''
+  - 'emote draws a sling slow through one hand, feeling the leather for wear
+    before it goes back on the rack'
+  - ''
+  - 'emote squints down the range at a chalked mark, lips moving as she counts
+    the wind'
+  - ''
+character:
+  name: Marksman Iden
+  description: |
+    Iden has the stillness of someone who has spent a life learning to wait
+    for the right instant and then not waste it. She is not large, and there
+    is nothing martial in how she stands -- weight even, hands quiet -- but
+    her eyes never settle for long, flicking out to the canyon mouth, the
+    far terrace, the chalked distance-marks, reading the range the way other
+    people read a familiar page.
+    The mutation on her is small and easy to miss: when she looks at a thing
+    far off, both her eyes track it true, but they arrive a fraction before
+    your own do, as though the distance has already folded shorter for her
+    than for you. She does not remark on it. On the terraces it is simply
+    called a good eye, and the bluff-folk send their young here to learn
+    what she has.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 16
+    dexterity:
+      training: 10
+    vitality:
+      training: 6
+    willpower:
+      training: 5
+    strength:
+      training: 4
+    charisma:
+      training: 3

@@ -1,0 +1,48 @@
+mobid: 9130
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 18
+itemdropchance: 15
+hostile: true
+maxwander: 1
+groups:
+  - beast
+  - swamp
+activitylevel: 20
+idlecommands:
+  - 'emote pulses against the dark water, a slow deliberate ripple moving
+    through the body from tail to head'
+  - ''
+  - 'emote lies still against the reed-bed mud, indistinguishable from a
+    rotting stem'
+  - ''
+combatcommands:
+  - 'emote latches on with a cold grinding grip and does not let go'
+  - ''
+  - 'emote writhes and pulls, working the attachment deeper'
+  - ''
+character:
+  name: Marsh Leech
+  description: |
+    A fat, glistening thing the length of a hand, the color of old bruise --
+    purple-black along the dorsal ridge fading to a wet grey-pink at the
+    belly. The marsh leech moves through the water in a slow wavelike
+    contraction, blind and utterly certain, following warmth and the faint
+    electrical trace of a living body the way water follows a crack. Its
+    mouth is a circular rasp ringed with small recurved hooks, designed to
+    hold as much as to bite. Alone it is more alarming than dangerous, a
+    nuisance that leaves a weeping mark where it feeds. The reed beds of
+    Pothole Coulee are not known for hosting only one.
+  speciesid: 18
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: 6
+    strength:
+      training: 4
+    dexterity:
+      training: 4
+    perception:
+      training: 2

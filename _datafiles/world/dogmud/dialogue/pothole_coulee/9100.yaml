@@ -1,0 +1,151 @@
+# Cleric Hadwen — rite-keeper, The Awakening Pool (5200).
+# No greetings block: his behavior tree owns the room-entry greet
+# (behaviors/pothole_coulee/9100-cleric_hadwen.yaml) — a dialogue
+# greeting here would double-speak on every entry.
+# The rite itself fires from the btree on "ask hadwen begin".
+
+mobid: 9100
+zone: Pothole Coulee
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Welcome to the coulee. I keep the pool."
+      - "Peace. The water is patient, and so am I."
+
+  - keywords: [""]
+    responses:
+      - "Ask, if there is something you want to know. I am not going anywhere."
+      - "The pool and I are both still here."
+
+tree:
+  root:
+    text: >-
+      I am Hadwen. I keep the Awakening Pool -- I have opened more
+      people than I can count, and I have never once been bored by it.
+    hints: >-
+      You could ask about the rite, the pool, or the Chrysalis.
+    variants:
+      - questRequired: ["30-start"]
+        questExcluded: ["30-end"]
+        text: >-
+          The pool is ready when you are. There is no hurry in it --
+          but there is also nothing left to wait for.
+        hints: >-
+          When you are ready, type ask hadwen begin.
+      - questRequired: ["30-end"]
+        text: >-
+          How does it sit, the new thing under your skin? Settling, I
+          hope. The first one always argues a little before it agrees.
+          Remember: Crier Toke in the square south of here will walk
+          you through the town -- or Warden Esk opens the way out, at
+          the Threshold House south through the market.
+        hints: >-
+          Type ask toke footing in Hub Square to learn the town, or
+          ask esk passage at the Threshold House to leave. You could
+          also ask Hadwen about mutations, the glow, or your name.
+
+  nodes:
+    - id: rite_offer
+      triggers: ["rite", "awakening", "pool", "opened", "quest", "task"]
+      questExcluded: ["30-start", "30-end"]
+      grantsQuest: "30-start"
+      text: >-
+        Everyone who stays in Gaius is Opened, sooner or later -- the
+        world insists. The rite only makes the first change a kindness
+        instead of a surprise. You stand at the edge, I do the small
+        part I do, and the pool does the rest. It does not hurt. It
+        has never once hurt. Tell me when you are ready to begin.
+      hints: >-
+        When you are ready, type ask hadwen begin. There is no hurry.
+      moodChange: friendly
+
+    - id: rite_waiting
+      triggers: ["rite", "awakening", "pool", "quest", "task"]
+      questRequired: ["30-start"]
+      questExcluded: ["30-end"]
+      text: >-
+        Everyone who stays in Gaius is Opened, sooner or later -- the
+        world insists. The rite only makes the first change a kindness
+        instead of a surprise. You stand at the edge, I do the small
+        part I do, and the pool does the rest. It does not hurt. It
+        has never once hurt. Say the word when you are ready and we
+        will begin.
+      hints: >-
+        Type ask hadwen begin when you are ready. There is no hurry.
+
+    - id: rite_done
+      triggers: ["rite", "awakening", "again", "another", "quest", "task"]
+      questRequired: ["30-end"]
+      text: >-
+        The pool opens a person once. After that, the opening is yours
+        to continue -- effort, conflict, wanting. The body remembers
+        all of it, and in time it answers. You do not need me for the
+        second change, or the tenth.
+      hints: >-
+        You could ask about mutations or the Chrysalis. Crier Toke in
+        the square has work for newly Opened feet.
+
+    - id: mutations
+      triggers: ["mutations", "mutation", "change", "changed", "woke"]
+      questRequired: ["30-end"]
+      text: >-
+        Type <ansi fg="command">mutations</ansi> and the truth of
+        yourself is listed plainly -- which is more than most worlds
+        offer. Each one woke because of something you did or survived.
+        Read them now and then. They are a better diary than most.
+      hints: >-
+        You could ask about your name, the glow, or the Chrysalis.
+
+    - id: glow
+      triggers: ["glow", "light", "dark", "darkness", "see", "blind",
+        "cave", "mine", "spell", "cast"]
+      questRequired: ["30-end"]
+      text: >-
+        Ah -- the Glow. Every Opened carries a few small gifts of the
+        Chrysalis, and that one is yours from the first day. It is the
+        Chrysalis Glow, a light you can call up out of your own self.
+        The world keeps dark places -- caves, deep mines, shuttered
+        rooms -- and the dark in them is no metaphor. It will blind you
+        until you make your own light. When you cannot see, speak the
+        glow and the spores will answer.
+      hints: >-
+        In any dark place, type cast chrysalis-glow to light it -- you
+        carry that spell already. Type spells to see everything you
+        know how to cast.
+      moodChange: friendly
+
+    - id: rename
+      triggers: ["name", "rename", "renameself", "truer"]
+      questRequired: ["30-end"]
+      text: >-
+        Some people walk out of the pool and their old name still
+        fits. Some find it hangs on them like a borrowed coat. If
+        yours no longer fits the shape of you, type
+        <ansi fg="command">renameself</ansi> and choose truer. The
+        coulee will learn the new one fast enough.
+      hints: >-
+        You could ask about mutations or the Chrysalis.
+
+    - id: chrysalis
+      triggers: ["chrysalis", "belief", "gaius", "world", "faith"]
+      text: >-
+        The Chrysalis is the form between what was and what will be.
+        Gaius is made of belief -- the land believes itself into
+        shape, and so does everything living on it. We are not a faith
+        of dogma. We are a faith of becoming, and the pool is the
+        oldest becoming in this valley.
+      hints: >-
+        You could ask about the rite, or about the old way -- though
+        Granny Wicker tells that one better than I do.
+
+    - id: help_literacy
+      triggers: ["help", "commands", "learn", "stuck", "lost"]
+      text: >-
+        When I do not know a thing, I ask the water. When you do not
+        know a thing, type <ansi fg="command">help</ansi> -- it is
+        patient, thorough, and never tired of the question. Add a
+        word to narrow it, like <ansi fg="command">help sleep</ansi>.
+      hints: >-
+        You could ask about the rite or the Chrysalis.

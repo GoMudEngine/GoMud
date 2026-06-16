@@ -1,0 +1,42 @@
+roomid: 5334
+zone: Pothole Coulee
+title: Fallen Menhir
+description: >
+  A great toppled menhir lies here face-up, its length running
+  west to east, longer than three people end to end. It fell long ago --
+  the turf has grown up around its sides and moss covers its base where
+  it meets the earth -- but the fall did something the standing centuries
+  could not: it exposed the carved face to direct light. The carvings cut
+  into the stone -- spirals and figures both -- are legible here in a way
+  the upright stones are not, sheltered from the worst of the weather by the
+  ground. Folk histories in stone: hunting scenes, floods, the sun in
+  different positions, figures gathered around a central shape that might
+  be this circle itself. Anyone who takes the time to study them finds
+  the coulee's deep past laid out in careful, patient sequence.
+biome: land
+coord:
+  x: 43
+  y: -9
+  z: 0
+exits:
+  east:
+    roomid: 5333
+nouns:
+  menhir: The fallen menhir is of a stone type not found in the
+    immediate coulee -- it was brought here from elsewhere, at
+    considerable effort, by people who wanted this particular stone in
+    this particular place. The effort is legible in the scale of the
+    thing. Whatever it meant to them, it meant enough.
+  carvings: The carvings on the fallen stone's upper face were cut deep
+    and have weathered less than the uprights' inner faces. Spirals
+    connect to chevrons connect to figurative scenes in a sequence that
+    reads left to right -- or possibly right to left -- covering what
+    looks like several generations of the coulee folk's story.
+idlemessages:
+- Kneeling beside the fallen <ansi fg="cyan">menhir</ansi>, you notice a detail in
+  the <ansi fg="cyan">carvings</ansi> that you missed at first -- a small figure
+  standing apart from the others, watching.
+- The moss along the menhir's base is thick and green even in dry
+  weather, as though the stone seeps moisture from somewhere deep.
+- Wind moves across the fallen stone's face and makes a faint sound
+  in the deeper-cut channels of the <ansi fg="cyan">carvings</ansi>.

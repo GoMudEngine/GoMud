@@ -1,0 +1,48 @@
+roomid: 5356
+zone: Pothole Coulee
+title: The Sounding Floor
+description: >
+  The canyon opens here into a wider chamber and the floor levels out
+  to a stretch of bare pale stone worn smooth by the passage of water
+  that no longer comes. Every sound in this chamber finds the walls and
+  comes back changed -- a single footstep returns as four or five, the
+  source confused, the direction scrambled. The sightline south through
+  the narrows is open and long: the mouth of the canyon is a bright
+  slot at the end of it, and anything entering from that direction will
+  be visible the moment they clear the pinch. The sightline north is
+  nearly as long, reaching toward the bend where the slot curves and
+  the rockfall starts. A raider holds the center of this floor with the
+  relaxed authority of someone who has already measured every angle. The
+  chamber offers no good cover -- only the walls themselves, and reaching
+  them means crossing open ground that carries every sound you make.
+biome: cliffs
+coord:
+  x: 49
+  y: -6
+  z: 2
+exits:
+  south:
+    roomid: 5354
+  north:
+    roomid: 5357
+spawninfo:
+- mobid: 9165
+nouns:
+  floor: The stone floor is smooth and pale, worn by old water into a
+    nearly flat surface that tilts perhaps two degrees south. It is clean
+    of debris -- anything dropped here would be immediately visible, and
+    any sound made here would ring off it and find the walls in every
+    direction.
+  slot: The canyon here is a box with two long axes -- south toward the
+    narrows, north toward the bend. Both directions are open and clear,
+    which means you are visible from both directions simultaneously. The
+    slot is a shooting gallery and you are standing in the middle of it.
+idlemessages:
+- A loose stone somewhere in the canyon produces a single tap. The
+  <ansi fg="cyan">floor</ansi> sends back five versions of it from five different angles.
+- The raider shifts position -- two steps left -- and the sound of it
+  fills the chamber entirely before dying away.
+- The <ansi fg="cyan">slot</ansi> carries a breath of air from the south, cool and clean,
+  moving fast through the narrows and dispersing here.
+- Your own shadow pools at your feet in the open floor, nowhere to go,
+  nothing to hide behind.

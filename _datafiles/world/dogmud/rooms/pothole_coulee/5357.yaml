@@ -1,0 +1,50 @@
+roomid: 5357
+zone: Pothole Coulee
+title: Rockfall Bend
+description: >
+  The canyon bends here and the floor is choked with old rockfall --
+  boulders the size of wagons, slabs tilted against one another at steep
+  angles, smaller rubble filling the gaps. The clean sightlines of the
+  slot behind you end at this bend; the rockfall breaks them into a dozen
+  shorter angles, each one covering only a wedge of the available space.
+  Cover is everywhere and nearly useless, because every piece of it
+  can be flanked from three directions. An east-facing spur of rock juts
+  out beyond the main fall, offering a narrow view back down the slot
+  toward the sounding floor. The canyon continues north through a gap
+  between two of the largest boulders, tight but passable, leading
+  toward the head of the canyon where the walls begin to rise and the
+  light shifts. The bend is the most tactically complex stretch of the
+  whole slot: nothing is certain here, and the rockfall makes every
+  movement a decision.
+biome: cliffs
+coord:
+  x: 49
+  y: -7
+  z: 2
+exits:
+  south:
+    roomid: 5356
+  north:
+    roomid: 5358
+  east:
+    roomid: 5359
+nouns:
+  rockfall: The boulders are old -- their edges have been rounded by
+    decades of freeze and thaw, and the smaller rubble between them is
+    half-buried by accumulated dust and grit. They fell from the canyon
+    rim in some past collapse and have been here long enough to seem
+    permanent. Some of the gaps between them are wide enough to step
+    through. None of them are wide enough to sprint through.
+  bend: The canyon changes direction here by perhaps forty degrees,
+    enough to break the long sightlines from the south and create a
+    shadow zone that neither end can fully cover. It is the kind of
+    bend that benefits whoever knows it better.
+idlemessages:
+- Loose grit shifts somewhere in the <ansi fg="cyan">rockfall</ansi> -- weight redistributing
+  through the settled mass of stone.
+- The <ansi fg="cyan">bend</ansi> catches a current of air from the north and redirects it,
+  hitting you from an unexpected angle.
+- A small rock skips down the far side of a boulder and comes to rest
+  without a sound.
+- The acoustics here are muddled -- sounds arrive with no clear direction,
+  reflected by too many surfaces at once.

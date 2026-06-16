@@ -1,0 +1,78 @@
+# Ledger-Keeper Croup — banker, The Counting House (5208, isbank).
+# Owns the bank lesson: bank / bank deposit / bank withdraw.
+
+mobid: 9103
+zone: Pothole Coulee
+defaultMood: neutral
+
+greetings:
+  - text: "The Counting House is open. It is nearly always open. Money does not sleep, so neither does the ledger."
+    moods: ["friendly", "neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Good day. State your business or browse the silence -- both are free."
+      - "Hello. The ledger and I are listening."
+
+  - keywords: [""]
+    responses:
+      - "Take your time. Arithmetic rewards patience."
+      - "Mm. The ledger is in no hurry, and neither am I."
+
+tree:
+  root:
+    text: >-
+      Croup. Ledger-keeper. I mind the coulee's gold, which mostly
+      means minding the people attached to it. Yours is welcome here
+      -- it will be exactly as you left it, which is more than can be
+      said for gold in a pocket.
+    hints: >-
+      You could ask about the bank, about keeping your gold safe, or
+      about the ledger.
+    variants:
+      - questExcluded: ["30-end"]
+        text: >-
+          Not yet Opened, I see. The ledger takes no position on that,
+          but the town does -- the pool first, then commerce. Cleric
+          Hadwen, at the water. Your account will keep.
+        hints: >-
+          You could ask Hadwen about the rite, or ask about the bank
+          anyway. Gold has no prerequisites.
+
+  nodes:
+    - id: bank_lesson
+      triggers: ["bank", "gold", "deposit", "withdraw", "safe", "keep", "money"]
+      text: >-
+        Simple as stone. Type <ansi fg="command">bank</ansi> and I
+        tell you what you carry and what you keep here. Type
+        <ansi fg="command">bank deposit all</ansi> -- or a number, if
+        you are sentimental about pocket money -- and it is in the
+        ledger. <ansi fg="command">bank withdraw</ansi> works the
+        same, the other direction. What sits in the ledger cannot be
+        lost on a bad road or spent on a worse evening. I recommend
+        the ledger.
+      hints: >-
+        Type bank at the counter to see your balance. Deposits keep
+        gold safe no matter what happens to you out there.
+
+    - id: ledger
+      triggers: ["ledger", "counting", "house", "records"]
+      text: >-
+        Forty years of the coulee's arithmetic, in one hand -- mine.
+        Every loan, every season's haul, every promise anyone was
+        foolish enough to put a number on. People think a town runs
+        on water or faith. It runs on somebody writing things down.
+      hints: >-
+        You could ask about the bank, or about his knuckles.
+
+    - id: knuckles
+      triggers: ["knuckles", "horn", "hands", "polished"]
+      text: >-
+        Horn came in slow, year by year, same as the sums. I polish
+        them on the desk edge when I am thinking, which the desk has
+        opinions about. They are good for rapping the counter when a
+        clever person tries clever arithmetic on me. One rap usually
+        settles it.
+      hints: >-
+        You could ask about the ledger or the bank.

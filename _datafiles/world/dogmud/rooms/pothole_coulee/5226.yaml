@@ -1,0 +1,33 @@
+roomid: 5226
+zone: Pothole Coulee
+title: Bluff Steps
+description: >
+  Rough steps climb the bluff to the north, cut and stacked from flat
+  slabs, rising toward terraces where the wind carries a faint snap of
+  loosed strings. Spent practice bolts lie scattered in the dirt at the
+  foot of the climb, fletching frayed and points gone dull. The upper
+  steps are still being set, raw stone wedged and waiting where the stair
+  runs out.
+biome: cliffs
+coord:
+  x: 47
+  y: -1
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  south:
+    roomid: 5209
+  up:
+    roomid: 5347
+nouns:
+  steps: The steps are flat slabs cut and stacked up the face of the
+    bluff, climbing toward the shooting terraces above. The lower run is
+    finished and firm; higher up the stair grows rough, raw blocks wedged
+    and waiting where the work has not yet caught up. A snap of bowstrings
+    drifts down from the terraces above.
+  bolts: Spent practice bolts lie strewn in the dirt at the foot of the
+    climb, gathered by the handful and dropped again -- shafts split,
+    fletching frayed, iron points battered dull against the butts above.
+    They are the leavings of long hours at the mark, swept down off the
+    terraces where folk drill at their aim.

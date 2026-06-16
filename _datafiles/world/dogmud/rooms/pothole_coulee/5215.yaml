@@ -1,0 +1,49 @@
+roomid: 5215
+zone: Pothole Coulee
+title: The Threshold House
+description: >
+  A low roof of weathered plank has been raised over this spot, less a
+  house than a shelter built to keep weather off the thing it guards: a
+  free-standing arch of basalt, older than the town, older maybe than the
+  town's oldest stories. The arch stands rooted in the rock floor, its
+  stones fitted by no hand anyone remembers, and from somewhere in it
+  comes a faint, steady hum -- felt in the teeth more than heard in the
+  ear. Step near and the air goes thin and tingling, the way it does
+  before a storm or a held note. A plain three-legged stool sits beside
+  the arch where a warden keeps watch over comers and goers. There is no
+  menace here, only the deep patient wonder of something that has waited a
+  very long time and is in no hurry to stop.
+biome: house
+coord:
+  x: 45
+  y: 3
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  north:
+    roomid: 5204
+nouns:
+  arch: The arch rises from the bare rock without seam or mortar, dark
+    basalt curved into a doorway that frames nothing but the wall behind
+    it -- and yet you cannot quite look at the empty space within it
+    without your eye sliding off. Its stones are the same flood-black as
+    the coulee, but smoother, as though shaped by water that ran in some
+    other age. It has the unbothered stillness of the pool up the lane,
+    the same sense of light kept patiently somewhere just out of sight.
+  hum: The hum lives in the arch and in the floor around it, a low note
+    with no clear source, more a pressure than a sound. It sits at the
+    bottom of your hearing and climbs into your jaw and the long bones of
+    your arms if you stand too still too long. It does not rise or fall;
+    it simply holds, the way the deep light holds in the pool, patient and
+    without end.
+  stool: A plain three-legged stool stands worn-smooth beside the arch,
+    set there for the warden who keeps the threshold. A folded cloak hangs
+    over its back and a half-whittled stick of driftwood leans against a
+    leg, the small signs of someone who sits long watches here and has
+    only just stepped away. The seat is still faintly warm.
+spawninfo:
+- mobid: 9107
+idlemessages:
+- The hum in the arch deepens for a breath, thrumming up through the floor, then eases back to its steady note.
+- The thin air near the arch tingles against your skin like the moment before a storm breaks.

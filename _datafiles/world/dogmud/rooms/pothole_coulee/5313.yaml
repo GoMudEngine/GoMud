@@ -1,0 +1,40 @@
+roomid: 5313
+zone: Pothole Coulee
+title: Grove Heart
+description: >
+  The trees stop at the edge of a rough circle of old stones, each one
+  waist-high and carved with the same close-packed spirals that appear
+  throughout the grove, though here they are deeper, cut by someone who
+  meant to make them permanent. At the center of the ring the ground is
+  bare packed earth, worn flat and hard by long practice. This is where the
+  adepts came to test their focus -- to sit or stand in the grove's heart
+  while the thinning world worked at the edges of their concentration, and
+  hold. The silence here is not restful. Thoughts fray at their edges, and
+  the familiar sense of where you stand in the world loosens a degree more
+  with each passing breath.
+biome: forest
+coord:
+  x: 42
+  y: -8
+  z: 2
+exits:
+  south:
+    roomid: 5312
+  west:
+    roomid: 5314
+spawninfo:
+- mobid: 9148
+nouns:
+  stones: Rough and waist-high, the stones of the ring are older than the
+    grove's other carvings. Their spirals are deep-cut and filled with a
+    dark mineral residue -- old incense, possibly, or something that burned
+    here a very long time ago.
+  center: The bare patch of packed earth at the ring's heart. Something about
+    standing on it makes the edges of your thoughts feel slightly less
+    anchored, like a knot worked loose but not yet untied.
+idlemessages:
+- The carved <ansi fg="cyan">stones</ansi> seem to hum in sympathy with the grove's note, a
+  resonance felt in the teeth.
+- At the <ansi fg="cyan">center</ansi> of the ring, the air shivers once and stills.
+- A thought arrives fully formed and not quite yours, then dissolves before
+  you can examine it.

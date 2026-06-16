@@ -1,0 +1,11 @@
+# Naive new-player run — Pothole Coulee newbie hub (chunk 1 validation).
+# DELIBERATELY MINIMAL: the test is whether the game itself carries a
+# brand-new player through, with no goals-file coaching. Do not add
+# route hints or command lists here.
+goals:
+  - >-
+    You have never played a MUD before. Create a brand-new character
+    and play whatever the game puts in front of you, relying only on
+    what the game itself tells you. Follow your curiosity. If you feel
+    finished, or you genuinely cannot tell what to do next, say so and
+    stop — being lost is itself a finding.

@@ -1,0 +1,42 @@
+roomid: 5319
+zone: Pothole Coulee
+title: The Unraveling
+description: >
+  The world is coming undone here. Not collapsing -- unraveling, slowly,
+  like a cloth whose thread has been caught and pulled. Threads of light
+  and matter lift free at the edges of things -- the stone, the air, the
+  boundary where sky meets ground -- and drift upward in long slow spirals
+  before vanishing at a height you cannot judge. The unraveling is not
+  violent; it is patient, the way erosion is patient, the way a long
+  slow exhalation is patient. You are watching the world breathe itself
+  apart. Ahead, the process is further along. The light there arrives
+  from directions that should not exist, and the ground thins toward
+  something that is barely ground at all.
+biome: cliffs
+coord:
+  x: 40
+  y: -10
+  z: 3
+exits:
+  south:
+    roomid: 5317
+  east:
+    roomid: 5320
+spawninfo:
+- mobid: 9151
+nouns:
+  threads: Long filaments of light and substance, pulled loose from the
+    fabric of the place and drifting upward in spirals. They are warm
+    to the sight if not the hand -- you do not reach for them, some
+    instinct says do not touch what is coming free of the world.
+  unraveling: The process is active but unhurried. Edges fray, threads
+    lift, the air between solid things grows thin and uncertain. It
+    is not destruction -- nothing is gone yet -- but the structure of
+    the place is slowly becoming optional.
+idlemessages:
+- A new <ansi fg="cyan">thread</ansi> lifts free of the stone near your feet and spirals slowly
+  upward, fading before it reaches eye height.
+- The <ansi fg="cyan">unraveling</ansi> at the far edge intensifies for a moment -- more threads,
+  brighter -- then settles back to its patient pace.
+- The air between you and the east passage briefly goes transparent, a
+  window into something that is not air.

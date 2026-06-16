@@ -1,0 +1,15 @@
+itemid: 20088
+name: Scab-Hide Jerkin
+vendor_categories:
+- tailoring
+namesimple: jerkin
+description: A rugged jerkin sewn from cured pack-hide, the grey fur turned
+  inward for warmth and the tough outer hide stitched in overlapping plates.
+  It carries the faint musk of the steppe wolves and the easy give of gear
+  made for long days afield.
+type: body
+subtype: wearable
+value: 14
+damagereduction: 5
+physical_mitigation: 5
+escapemodifier: 0.5

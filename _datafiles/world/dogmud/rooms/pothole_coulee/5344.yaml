@@ -1,0 +1,46 @@
+roomid: 5344
+zone: Pothole Coulee
+title: Buried Vault
+description: >
+  The passage narrows and the ceiling drops before opening into a
+  chamber that is more earth than stone now -- fallen soil has filled
+  the vault to roughly waist height at its deepest corner, leaving
+  only a cramped corridor of open air along the east wall. What
+  remains visible of the original stonework is the oldest in the
+  shrine. The cutting is different here, tighter, the joints between
+  blocks so fine that the seams are hard to trace by touch. The
+  builder of this vault was not the builder of the hall above. The
+  blocks are also older -- their surface has a texture that the
+  upper shrine lacks, a faint crystalline grain that catches light
+  at angles the eye does not expect. The vault goes no further west.
+  Whatever was stored or sealed here is either still present beneath
+  the fallen earth, or was removed so long ago that the earth has
+  had centuries to forget the shape of its absence.
+biome: fort
+coord:
+  x: 41
+  y: -14
+  z: 0
+exits:
+  east:
+    roomid: 5343
+nouns:
+  vault: The vault's visible walls taper toward one another in a
+    slight inward lean, as though the whole chamber was designed to
+    resist pressure from outside. It has worked. The stonework is
+    intact under the accumulated earth. The original ceiling, where
+    it shows above the soil line, is a single continuous arch.
+  stonework: The crystalline grain in the stone catches light
+    unexpectedly -- a flicker at the edge of vision when you move
+    the angle of your head. The material is similar to the rest of
+    the shrine's stone but not identical. Whoever quarried this knew
+    what they were looking for.
+idlemessages:
+- The silence in the <ansi fg="cyan">vault</ansi> is complete. Sound stops at the
+  threshold and does not resume.
+- The <ansi fg="cyan">stonework</ansi> flickers faintly at the edge of sight as
+  you shift your weight -- the grain catching, releasing.
+- A thin trickle of earth slides down the fill slope and settles
+  with a sound like a whisper.
+- The air here is unchanged by the seasons. It has no smell.
+  It is simply old.

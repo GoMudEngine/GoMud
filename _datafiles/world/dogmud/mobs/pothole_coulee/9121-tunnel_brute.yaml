@@ -1,0 +1,58 @@
+mobid: 9121
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 90
+itemdropchance: 18
+hostile: true
+maxwander: 0
+groups:
+  - beast
+  - cave
+aiprofile: brawler
+activitylevel: 22
+idlecommands:
+  - 'emote drags the back of one heavy knuckle along the tunnel wall,
+    leaving a long scored groove in the rock'
+  - ''
+  - 'emote sits on its haunches in the dark and breathes, slow and loud
+    as a working bellows'
+  - ''
+combatcommands:
+  - 'emote drops to all fours and drives forward in a low bull-rush, stone
+    knuckles scraping sparks from the floor'
+  - ''
+  - 'emote rears up to full height and brings both fists down in a
+    crushing overhead slam'
+  - ''
+character:
+  name: Tunnel Brute
+  description: |
+    The tunnel brute fills this part of the mine the way a boulder fills
+    a doorway -- it is not so much standing in the passage as occupying
+    it. It is roughly humanoid in silhouette, heavily built through the
+    chest and shoulders, with forelimbs that knuckle-walk when it lowers
+    itself to charge. The knuckles themselves have hardened over time
+    into dense, stone-grey callus -- the skin there has fused with a
+    mineral deposit and become something harder than hide, leaving the
+    striking surface of each hand as rough and dense as shaped basalt.
+    It does not communicate in any recognizable way. It holds the tunnel
+    because the tunnel is where it is, and it attacks because something
+    has entered the tunnel, and those are the only two facts that appear
+    to matter to it.
+  speciesid: 23
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: 24
+    strength:
+      training: 20
+    dexterity:
+      training: 16
+    perception:
+      training: 10
+    willpower:
+      training: 10
+    charisma:
+      training: 10

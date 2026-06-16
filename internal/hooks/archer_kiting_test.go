@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -14,6 +15,28 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+// TestHandleMobAIDecision_NilAggro_NoPanic guards the nil-Aggro crash on the
+// fall-through path: when a mob's behavior tree does NOT handle the combat round
+// (returns false) and the mob's aggro has already been cleared (e.g. a kiting
+// archer whose target left the room), the round loop calls handleMobAIDecision
+// with a nil Aggro. It must return false rather than deref nil and panic the
+// whole server. (The sibling end-to-end test only covers the happy path where
+// the archer btree fires and short-circuits before handleMobAIDecision.)
+func TestHandleMobAIDecision_NilAggro_NoPanic(t *testing.T) {
+	mob := &mobs.Mob{
+		Character: characters.Character{
+			Name:  "Kiting Archer",
+			Buffs: buffs.New(),
+		},
+	}
+	mob.Character.Aggro = nil // target left the room; aggro cleared mid-round
+
+	require.NotPanics(t, func() {
+		got := handleMobAIDecision(mob, configs.Config{})
+		assert.False(t, got, "no aggro -> no AI decision; must return false")
+	})
+}
 
 const archerArchetypeYAML = "../../_datafiles/world/dogmud/behaviors/archetypes/archer.yaml"
 

@@ -1,0 +1,52 @@
+mobid: 9147
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 22
+itemdropchance: 15
+hostile: true
+maxwander: 1
+groups:
+  - aberration
+  - folded
+activitylevel: 20
+idlecommands:
+  - 'emote drifts a hand-span above the moss and stops, hanging there
+    against all sense, then drifts on'
+  - ''
+  - 'emote flickers -- here, then a step left, then here again -- without
+    crossing the space between'
+  - ''
+combatcommands:
+  - 'emote folds inward to a point and snaps open against the target,
+    edges first'
+  - ''
+  - 'emote stutters around to the flank between one blink and the next'
+  - ''
+character:
+  name: Drift-Wisp
+  description: |
+    A loose handful of the grove that has come unstuck from itself. The
+    drift-wisp is barely a body -- a smear of dim light and drifting motes,
+    roughly person-high, that holds together out of habit rather than
+    structure. Where the veil has thinned the most, small pieces of the
+    world stop agreeing to stay put, and this is what that looks like once
+    it has gathered enough of itself to move. It does not seem to want
+    anything. It drifts toward warmth and movement the way smoke leans
+    toward a draught, and where it touches, the skin goes briefly numb and
+    strange, as if that part of you had also forgotten where it was meant
+    to be.
+  speciesid: 23
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 9
+    vitality:
+      training: 6
+    strength:
+      training: 3
+    perception:
+      training: 2
+    willpower:
+      training: 2

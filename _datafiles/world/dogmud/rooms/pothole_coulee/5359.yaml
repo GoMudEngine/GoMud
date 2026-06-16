@@ -1,0 +1,48 @@
+roomid: 5359
+zone: Pothole Coulee
+title: Cracked Spur
+description: >
+  A spur of rock juts east from the main canyon wall at the bend, cracked
+  nearly through along a diagonal fault that has been slowly separating
+  for longer than anyone has been watching. The crack runs the full height
+  of the spur and widens as it goes, letting in a blade of sky and a
+  narrow view back west along the bend below. This is a sniper's dead
+  end: you cannot go further, the spur offers no exit and no retreat, but
+  the angle it provides over the rockfall bend is nearly unmatched. From
+  the edge of the spur you can see the whole spread of the bend laid out
+  below and to the west -- every boulder, every gap, every approach. A
+  patient archer here can reach the sounding floor to the southwest and
+  the chimney corridor to the northwest without moving, picking angles
+  through the rockfall that close off one position at a time. The spur
+  rewards patience and punishes anything that comes up from the bend
+  without knowing it is occupied.
+biome: cliffs
+coord:
+  x: 50
+  y: -7
+  z: 2
+exits:
+  west:
+    roomid: 5357
+spawninfo:
+- mobid: 9166
+nouns:
+  spur: The spur extends perhaps fifteen feet east from the canyon wall,
+    ending in a blunt face of fractured limestone. It is solid underfoot
+    despite the crack running through it -- the fault is old and has
+    stopped moving. The surface is rough and angled slightly downward,
+    toward the bend below.
+  crack: The diagonal fault runs from the spur's base to its top, widening
+    as it climbs. At head height the gap is two fingers wide. Through it
+    you can see a thin strip of the canyon beyond -- not enough to matter
+    for cover, but enough to feel the wind from the far side of the
+    stone, and to hear anything moving there.
+idlemessages:
+- The <ansi fg="cyan">crack</ansi> in the spur carries a thin whistle of wind from the
+  east face of the canyon wall.
+- From the edge of the <ansi fg="cyan">spur</ansi>, the full spread of the bend below is
+  visible -- every approach, every piece of cover, every gap.
+- The fault in the rock shifts a fraction under your weight, then holds.
+  It has been holding for a long time.
+- A shadow moves briefly across the sounding floor far below, visible
+  through the gaps in the rockfall bend.

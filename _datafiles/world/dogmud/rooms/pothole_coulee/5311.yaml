@@ -1,0 +1,41 @@
+roomid: 5311
+zone: Pothole Coulee
+title: Veil Hollow
+description: >
+  The hollow sits where the veil between this world and the Folding has worn
+  to something you could almost push a hand through. Cold air hangs here
+  without drifting -- the kind of cold that does not come from wind or shade
+  but from absence, from the fact that something on the far side of the veil
+  draws warmth out of the air like a wick. The air itself ripples at the hollow's
+  edge, slow distortions like heat-haze above summer stones, though the ground
+  beneath your boots holds no heat at all. Shapes move in the corner of the
+  eye -- dark suggestions that vanish when you turn, leaving only the still air
+  and the faint impression that something turned with you.
+biome: forest
+coord:
+  x: 42
+  y: -6
+  z: 2
+exits:
+  east:
+    roomid: 5309
+  south:
+    roomid: 5310
+  north:
+    roomid: 5312
+spawninfo:
+- mobid: 9148
+nouns:
+  veil: Invisible but palpable -- the thinning between worlds that the old
+    adepts sought out deliberately, believing it sharpened focus to work
+    in a place where the Folding pressed close. Here it presses very close.
+  hollow: A natural depression in the grove floor, the hollow holds its
+    cold and its rippling air independent of weather. The earth at the
+    center is bare -- nothing grows in the space where the veil thins most.
+idlemessages:
+- The <ansi fg="cyan">air</ansi> at the <ansi fg="cyan">hollow</ansi>'s center ripples, slow and cold, then
+  smooths again.
+- Something dark shifts at the very edge of sight and is gone before
+  you can name its shape.
+- The <ansi fg="cyan">veil</ansi> here makes a sound, just below the hum -- a sound like
+  very old paper under enormous pressure.

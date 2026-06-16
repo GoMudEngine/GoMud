@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -80,6 +81,15 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			Gained: false,
 		})
 	}
+
+	// Quest engine: command notification — a successful throw advances
+	// "throw a grenade" quest steps (e.g. the Spoke C grenade lesson).
+	questBridge := questengine.NewGameBridge(user, room.RoomId)
+	questengine.GetEngine().Notify("command", questengine.EventDetails{
+		UserId:  user.UserId,
+		RoomId:  room.RoomId,
+		Command: "throw",
+	}, questBridge, questBridge)
 
 	// AoE resolution: opposed roll per hostile mob in room
 	skillWeight := float64(cfg.SkillWeight)

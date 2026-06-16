@@ -1,0 +1,157 @@
+# Cleric Hadwen (9100) — rite-keeper at the Awakening Pool (room 5200).
+#
+# Owns the Awakening Rite beat of quest 30:
+#   - dialogue (dialogue/pothole_coulee/9100.yaml) grants 30-start
+#   - this tree answers "ask hadwen begin/ready" while 30-start is held,
+#     plays the paced rite sequence, and fires grant_mutation + 30-end.
+# Token gating makes the rite single-shot: 30-end is granted at eval
+# time, so a re-ask falls through to dialogue (which has a gentle
+# refusal node). Pattern follows behaviors/rooms/sanctum_basin/113.yaml.
+
+tree:
+  type: selector
+  children:
+
+    # ── THE RITE: ask hadwen begin (30-start held, not yet opened) ──
+    - type: sequence
+      event: player_ask
+      children:
+        - type: condition
+          check: keyword_match
+          keywords: [begin, ready]
+        - type: condition
+          check: player_has_quest
+          quest: "30-start"
+        - type: condition
+          check: player_missing_quest
+          quest: "30-end"
+        - type: action
+          do: say
+          text: Then we begin. Step to the edge with me.
+          delay: 1.0
+        - type: action
+          do: emote
+          text: >-
+            wades into the shallows and turns. The pale plates along his
+            jaw catch the light coming up off the water.
+          delay: 3.0
+        - type: action
+          do: say
+          text: >-
+            Gaius is made of belief. The land believes itself into
+            shape. So does everything that lives on it. So will you.
+          delay: 6.0
+        - type: action
+          do: say
+          text: >-
+            Most worlds let you stay what you arrived as. This one will
+            not. The body answers effort, conflict, fear, wanting -- it
+            changes. We call the changes mutations, and none of them are
+            a punishment, whatever they look like at first.
+          delay: 9.5
+        - type: action
+          do: say
+          text: >-
+            The pool answers first. It is older than the town and more
+            patient than I am. Look into the water.
+          delay: 13.0
+        - type: action
+          do: emote
+          text: >-
+            rests a hand on your shoulder. The pool's light rises to
+            meet you, and for a moment you are somewhere else -- folded
+            inside something vast and warm that is looking back at you
+            with your own eyes.
+          delay: 16.0
+        - type: action
+          do: emote
+          text: >-
+            lifts his hand away. The light lets you go -- the water is
+            only water again, the morning is just a morning, and
+            something under your skin is newly, quietly awake.
+          delay: 20.0
+        - type: action
+          do: say
+          text: It is done. You will feel it settle for a while. That is normal.
+          delay: 23.0
+        - type: action
+          do: say
+          text: >-
+            Type <ansi fg="command">mutations</ansi> whenever you want
+            to see what the pool woke in you. It will not be the last --
+            the rest, you will earn the slow way.
+          delay: 26.0
+        - type: action
+          do: say
+          text: >-
+            If the name you carried here no longer fits the shape of
+            you, <ansi fg="command">renameself</ansi> lets you choose
+            truer. And <ansi fg="command">help</ansi> answers most
+            questions with more patience than I have.
+          delay: 29.5
+        - type: action
+          do: say
+          text: >-
+            Now -- two roads from here, and both are good ones. If
+            Gaius is new to you, go south to the square and tell
+            Crier Toke you need your footing:
+            <ansi fg="command">ask toke footing</ansi>. He will walk
+            you through the town properly.
+          delay: 33.0
+        - type: action
+          do: say
+          text: >-
+            And if you already know this world and only needed the
+            pool, Warden Esk keeps the way out -- south through the
+            market to the Threshold House, then
+            <ansi fg="command">ask esk passage</ansi>. The coulee will
+            still be here either way.
+          delay: 36.5
+        - type: action
+          do: grant_mutation
+        - type: action
+          do: grant_quest
+          quest: "30-end"
+
+    # ── GREETING: an un-Opened player arrives (incl. FIRST SPAWN —
+    #    HandleJoin emits player_enter once per brand-new character).
+    #    Gated on missing 30-end, not 30-start: the quest engine's
+    #    room_enter auto-grant runs before this fires, so new arrivals
+    #    already hold 30-start. ──
+    - type: sequence
+      event: player_enter
+      children:
+        - type: condition
+          check: player_missing_quest
+          quest: "30-end"
+        - type: action
+          do: say
+          text: >-
+            New to the coulee? Welcome. I keep the pool, and the pool
+            is waiting for you. Ask me about the
+            <ansi fg="command">rite</ansi> if you want the why of it --
+            or simply tell me you are ready:
+            <ansi fg="command">ask hadwen begin</ansi> starts it.
+          delay: 2.0
+
+    # ── AMBIENT BACKSTOP: every so often, repeat the invitation aloud.
+    #    Gated on an un-Opened player actually being present (custom
+    #    condition — mob_idle has no triggering player, so plain
+    #    player_missing_quest can't apply here). Opened players never
+    #    hear this again. ──
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: condition
+          check: player_in_room_missing_quest
+          quest: "30-end"
+        - type: condition
+          check: random_chance
+          percent: 4
+        - type: action
+          do: say
+          text: >-
+            If you are new to the coulee and not yet Opened, ask me
+            about the <ansi fg="command">rite</ansi> -- or say
+            <ansi fg="command">ask hadwen begin</ansi> when you are
+            ready. The pool is patient.

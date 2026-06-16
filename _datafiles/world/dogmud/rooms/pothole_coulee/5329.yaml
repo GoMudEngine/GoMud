@@ -1,0 +1,44 @@
+roomid: 5329
+zone: Pothole Coulee
+title: Farmstead's Edge
+description: >
+  The drystone wall comes to its far corner here, where the cultivated
+  ground gives out entirely to windblown scrub and open sky. The grass
+  inside the wall is kept; the grass outside is not, and the difference
+  is stark at this boundary -- close-grazed earth on one side, knee-high
+  stems and seedheads bending in the same wind that does not reach the
+  yard. The wall itself is lower here at the corner, the topstones less
+  carefully maintained, some shifted by frost over the winters. To the
+  north, the land opens into rougher ground, and above the near rise
+  the heads of distant standing stones are just visible against the
+  sky -- old markers, older than the homestead by many lifetimes.
+  You are still within the warmth and safety of the homestead's reach
+  here, but the world beyond the wall has begun making its presence
+  felt. The scrub to the north is country that asks something of you
+  before it gives anything back.
+biome: land
+coord:
+  x: 45
+  y: -7
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  south:
+    roomid: 5328
+  north:
+    roomid: 5330
+nouns:
+  wall: The wall's far corner has settled and shifted slightly, a few
+    topstones knocked free by frost and not yet reset. It still
+    holds its line, but this end has been left to manage for itself.
+  scrub: The scrub beyond the wall is open and windswept, a mix of
+    dried grass and low thorny growth that shows no sign of tending.
+    It stretches north toward the standing stones on the ridge.
+idlemessages:
+- The <ansi fg="yellow">scrub</ansi> north of the <ansi fg="yellow">wall</ansi> bends in a gust, then
+  rights itself, indifferent to the direction.
+- The heads of the standing stones to the north catch the light
+  for a moment as the clouds shift, then fall back into shadow.
+- At this corner of the wall the wind gets in from the north,
+  carrying the smell of open ground and something older than grass.

@@ -1,0 +1,41 @@
+roomid: 5301
+zone: Pothole Coulee
+title: Carcass Pit
+description: >
+  A pit has been opened in the ground beside the den, the earth
+  thrown up in a rim around it, and into it the pack has dropped
+  everything it could not finish — carcasses in various states of
+  decay, bones stripped or not, a reeking heap that has been building
+  for a long time. The smell is extraordinary. And yet there is a
+  glint somewhere in the heap — something catches what light reaches
+  this place and throws it back wrong, the way metal does. Someone
+  came here before you, with gear, and did not take it back with
+  them. Whatever they had is buried in the carcasses now, waiting.
+biome: forest
+coord:
+  x: 44
+  y: 13
+  z: 0
+exits:
+  west:
+    roomid: 5298
+nouns:
+  pit: A deliberate excavation beside the den, rimmed with thrown
+    earth, filled over time with what the pack dragged here and could
+    not use. It is deep enough that the bottom is not visible. The
+    smell from it is a physical force. Something glints from
+    somewhere inside the heap.
+  carcasses: A mass of stripped and partial remains, old and new
+    layered together. The pit has been a dump site for long enough
+    that the oldest layer at the bottom has compacted into something
+    nearly solid. The glint of gear is somewhere in the middle of it,
+    close enough to reach if you are willing to dig.
+  gear: A flash of metal from somewhere in the carcass heap. Something
+    a previous hunter carried into this territory. It went into the
+    pit with everything else when the pack was done with them. It has
+    been waiting here since.
+idlemessages:
+- The smell from the pit is remarkable. It carries a long way on
+  still air.
+- Something at the bottom of the heap shifts and settles with a soft
+  sound. Decay, most likely.

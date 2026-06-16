@@ -1,0 +1,53 @@
+mobid: 9166
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 60
+itemdropchance: 15
+hostile: true
+maxwander: 1
+groups:
+  - humanoid
+  - bluff_raiders
+activitylevel: 22
+idlecommands:
+  - 'emote works a whetstone down the longsword in slow, deliberate strokes,
+    eyes on the canyon mouth'
+  - ''
+  - 'emote kicks a loose stone off the spur and listens to it clatter the
+    long way down'
+  - ''
+combatcommands:
+  - 'emote drives in behind a heavy overhand, trusting weight and reach to
+    end it quickly'
+  - ''
+character:
+  name: Box Canyon Raider
+  description: |
+    A seasoned member of the bluff band, left to anchor the deep canyon where
+    the slot narrows toward the climb. This is no skirmisher: a long, notched
+    blade, a scarred leather harness, and the unhurried confidence of someone
+    who has held this ground a while and buried the ones who tried to take it.
+    He lets the slingers do the stinging out front; his job is to make sure
+    nothing that gets past them reaches the overlook stair on its feet.
+  speciesid: 1
+  level: 2
+  gold: 6
+  equipment:
+    weapon:
+      itemid: 10026
+    body:
+      itemid: 20011
+  stats:
+    strength:
+      training: 16
+    vitality:
+      training: 16
+    dexterity:
+      training: 13
+    perception:
+      training: 8
+    willpower:
+      training: 4
+    charisma:
+      training: 3

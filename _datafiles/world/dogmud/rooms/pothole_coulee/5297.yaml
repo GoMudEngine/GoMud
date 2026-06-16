@@ -1,0 +1,37 @@
+roomid: 5297
+zone: Pothole Coulee
+title: Lair Approach
+description: >
+  The ground here has been beaten smooth by the passage of many paws
+  over many seasons, the path worn into a shallow trough that funnels
+  inward from the north and bends east toward what lies beyond. Bones
+  have been pressed into the earth along the edges of the approach,
+  half-sunk by the traffic above them, a border that was never
+  arranged by intention but has become one regardless. The smell
+  thickens as the path runs on — musk and old meat and the particular
+  closeness of a den. Whatever you are walking toward knows this
+  ground better than you do.
+biome: forest
+coord:
+  x: 42
+  y: 12
+  z: 0
+exits:
+  north:
+    roomid: 5296
+  east:
+    roomid: 5295
+nouns:
+  approach: A worn trough of packed earth, the ground compacted hard
+    by seasons of paws moving along the same line. It funnels toward
+    the den with the purposeful geometry of a thing that has been
+    walked the same way ten thousand times. You are on the approach
+    now, moving toward something that lives at the end of it.
+  den: The smell comes from the east — musk and old blood and the
+    deep animal closeness of an occupied place. Whatever made this
+    approach lives at its end, and it has lived there long enough to
+    wear a road to its own door.
+idlemessages:
+- The bones pressed into the path edges are from many different
+  animals. None of them walked out.
+- The smell on the air is stronger here. You are getting closer.

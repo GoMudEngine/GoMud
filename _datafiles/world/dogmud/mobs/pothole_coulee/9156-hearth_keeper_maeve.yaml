@@ -1,0 +1,49 @@
+mobid: 9156
+zone: Pothole Coulee
+behavior_archetype: noncombat_passive
+statpool: 30
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 12
+idlecommands:
+  - 'emote banks the hearth-coals with her bare hands, raking them into a
+    glowing heap without flinching'
+  - ''
+  - 'emote turns a row of drying herbs hung from the rafter, checking each
+    bundle for damp'
+  - ''
+  - 'emote sets another mark on the tally-stick by the door, keeping the
+    household''s small accounts'
+  - ''
+character:
+  name: Hearth-Keeper Maeve
+  description: |
+    Maeve keeps the longhouse -- the fire, the food, the small daily
+    accounts of who is owed and who is fed. She is brisk and warm in
+    roughly equal measure, the sort who will press a bowl into your hands
+    before she has decided whether she trusts you, and decide afterward.
+    The fire holds no fear for her, because the Awakening took her sense
+    of heat entirely. She banks the coals bare-handed, lifts pots off the
+    flame without a cloth, tests the oven by reaching into it. The skin of
+    her hands is unmarked -- whatever the change did, it did inward, and
+    she has turned a frightening thing into simply the reason she is best
+    suited to the hearth.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: 10
+    charisma:
+      training: 8
+    perception:
+      training: 6
+    willpower:
+      training: 4
+    dexterity:
+      training: 2

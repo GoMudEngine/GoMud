@@ -1,0 +1,54 @@
+================================================================================
+NEWBIE REWORK — CHUNK 5 (Spoke D, Wilderness) — PHASE M WALKTHROUGH
+Mobs + items build record. 2026-06-14.
+================================================================================
+
+8 mobs 9136-9143 + 2 new items + spawninfo on 13 rooms.
+
+MOBS (mobs/pothole_coulee/):
+ NPCs (Opened, noncombat_questgiver, sp44, speciesid 1):
+  9136 Scout Tarn   host 5283  (teaches track/forage; mutation: raptor-amber eyes)
+  9137 Hunter Delk  host 5290  (teaches hunt/sleep/cook; mutation: weatherproof hide hands)
+ Prey (non-hostile generic_fighter; carried meat drops):
+  9138 Steppe Hare  sp8   hosts 5284,5285  drops 40064 wild-hare-meat  (track quarry)
+  9139 Pronghorn    sp25  hosts 5289,5291  drops 40014 raw-meat        (hunt quarry)
+ Pack (canine sp2, aiprofile predator, each drops 40070 pack-hide pelt):
+  9140 Scab-Hound       predator      sp25  hosts 5287,5292,5294,5295,5296,5298,5300
+  9141 Pack-Hound       predator      sp50  hosts 5292,5294,5295
+  9142 Scarred Outrider leader        sp130 host 5296   (mini-boss)
+  9143 Alpha Pack-Leader tank_taunter sp200 host 5298   (BOSS)
+ All descriptions digit-free; NPCs each carry one understated Opened mutation.
+
+ITEMS (2 new):
+ 40070 Pack-Hide Pelt   (material, component_tag pack-hide; pack drop; tailoring ingredient)
+ 20088 Scab-Hide Jerkin (body armor; the Q43 "wilderness garment" + tailoring recipe output)
+ REUSED for other rewards: 20024 wool cloak (scout gear, Q41), 20052 sturdy boots
+ (stamina gear, Q42), raw-meat 40014 / wild-hare-meat 40064 (prey drops + hearty-stew).
+
+SPAWNINFO — 13 rooms; pack density in the outer ring:
+ 5283:9136 | 5284:9138 | 5285:9138 | 5287:9140 | 5289:9139 | 5290:9137 | 5291:9139
+ 5292:9140+9141 | 5294:9140+9140+9141 (3-hound pack) | 5295:9140+9141 | 5296:9142+9140
+ (outrider+hound) | 5298:9143+9140 (alpha+hound) | 5300:9140+9140
+ Empty (transitions/loot/vista): 5282,5286,5288,5293,5297,5299,5301.
+
+MANIFEST CHECKER: added SPOKE_D_MOBS (8) + the SPOKE-D MOB print block + return fold.
+
+AUDITS — ALL PASS (popup window, 2026-06-14):
+ [x] newbie_manifest_check.py -> Spoke D 8/8 mobs + 20/20 rooms + 22/22 exits PASS;
+     0 FAIL whole-check.
+ [x] go build . -> exit 0.
+ [x] boot (panic mode) -> itemspec 275->277 (+2), mobs 262->270 (+8),
+     ValidateZoneConsistency errors=0 warnings=0, Server Ready, 0 panics.
+
+BUGS CAUGHT + FIXED THIS PHASE (the boot/checker earned their keep again):
+ 1. Jerkin drafted at 20009 -> DUPLICATE (20009 = existing cloth_belt; id_inventory's
+    per-slot "next free" is NOT a global check). Moved to 20088 (past armor max).
+ 2. Prey names written lowercase ("steppe hare"/"pronghorn") -> engine
+    casing.AssertCanonical PANIC; requires Title Case. Fixed to "Steppe Hare"/
+    "Pronghorn" (and reverted a mistaken checker edit). LESSON: mob names MUST be
+    canonical Title Case.
+
+DIFFICULTY UNTUNED (pack fights especially) — defer to playtest. NEXT: Phase D
+(quests 41-43 + the sleep command Notify engine touch + tailoring garment recipe +
+grant hearty-stew; dialogue 9136/9137).
+================================================================================

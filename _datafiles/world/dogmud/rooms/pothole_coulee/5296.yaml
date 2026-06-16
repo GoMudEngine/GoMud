@@ -1,0 +1,41 @@
+roomid: 5296
+zone: Pothole Coulee
+title: Scrub Tangle
+description: >
+  The brush here has grown into a near-solid wall of thorn and
+  deadfall, old timber collapsed across living growth until the two
+  have locked together into something you cannot push through and
+  cannot see past. Sight lines collapse to a few paces in any
+  direction. The tangle is threaded with narrow runs worn into the
+  undergrowth at low height — passages sized for something that moves
+  on four legs and knows exactly where it is going. The ground is
+  soft enough here to hold a print. Something works the edge of this
+  tangle, and it has been doing so for a long time.
+biome: forest
+coord:
+  x: 42
+  y: 11
+  z: 0
+exits:
+  east:
+    roomid: 5294
+  south:
+    roomid: 5297
+spawninfo:
+- mobid: 9142
+- mobid: 9140
+nouns:
+  tangle: Thorn and deadfall grown into each other over years until
+    neither is separable from the other. A barrier that stops a
+    person cold but means nothing to something low and fast that
+    knows its own runs through it. The runs are worn smooth by
+    repeated passage — this is a working edge, not wild growth.
+  deadfall: Old timber down across living thorn, the bark long since
+    gone, the wood silver-gray and interlocked. It holds the tangle
+    up where gravity would otherwise collapse it, and it makes the
+    whole mass impenetrable to anything that can't go under it.
+idlemessages:
+- Something moves in the tangle just out of sight. You hear it
+  before it stops.
+- The narrow runs through the brush are at knee height. Whatever
+  made them is watching from somewhere you cannot see.

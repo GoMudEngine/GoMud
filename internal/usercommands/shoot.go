@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/opinions"
 	"github.com/GoMudEngine/GoMud/internal/parties"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -201,6 +202,18 @@ func Shoot(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if hit {
 		user.Character.OnSkillUse(string(skills.RangedCombat), user.UserId)
 	}
+
+	// Notify the quest engine of the `shoot` command so quests can gate a step
+	// on the act of shooting (Spoke G's "shoot the practice butt" / "shoot the
+	// foe across the canyon" beats). Mirrors forage/drink/throw/cast. RoomId is
+	// the SHOOTER's room — for a cross-room shot the quest gates on the room the
+	// player shoots FROM, not the target's room.
+	bridge := questengine.NewGameBridge(user, room.RoomId)
+	questengine.GetEngine().Notify("command", questengine.EventDetails{
+		UserId:  user.UserId,
+		RoomId:  room.RoomId,
+		Command: "shoot",
+	}, bridge, bridge)
 
 	return true, nil
 }

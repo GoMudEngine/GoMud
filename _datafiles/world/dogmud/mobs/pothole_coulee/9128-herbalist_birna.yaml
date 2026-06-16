@@ -1,0 +1,72 @@
+mobid: 9128
+zone: Pothole Coulee
+craft_support: alchemy
+behavior_archetype: noncombat_questgiver
+statpool: 44
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 14
+crafter: true
+crafterskill: alchemy
+idlecommands:
+  - 'emote works a dried root against the mortar with slow, deliberate circles,
+    reducing it to a coarse green-brown powder'
+  - ''
+  - 'emote lifts a stoppered vial to the light and tilts it, watching the
+    color settle before setting it back on the rack'
+  - ''
+  - 'emote ties off a bundle of marsh-weed and hangs it from the drying pole
+    with the rest, spacing it so air can move between'
+  - ''
+character:
+  name: Herbalist Birna
+  description: |
+    Birna runs the drying-racks and the brewing corner with the patient
+    economy of someone who has learned that rushing a reduction ruins the
+    batch. She is a lean, quiet woman who smells of dried fennel and
+    mineral pitch, and she has a habit of reading a plant before she
+    touches it -- tilting her head, going still, as if listening to
+    something beneath the smell. The backs of her hands and forearms carry
+    a faint tracery of green-gold veining just under the skin, branching
+    like pressed leaves, and the color brightens slightly when she cups
+    a living cutting or runs a thumb along a fresh-pulled root. She does
+    not comment on it. She will teach you what the marsh gives and what
+    it withholds, and she will not pretend the work is simpler than it is.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    perception:
+      training: 12
+    willpower:
+      training: 10
+    vitality:
+      training: 8
+    dexterity:
+      training: 6
+    charisma:
+      training: 4
+    strength:
+      training: 4
+  shop:
+    - itemid: 40006    # glass vial
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 40004    # healer's root
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 40005    # bitter thistle
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40009    # dustwalk herb
+      quantity: 0
+      quantitymax: 0
+      price: 4

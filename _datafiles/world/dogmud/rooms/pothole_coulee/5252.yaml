@@ -1,0 +1,56 @@
+roomid: 5252
+zone: Pothole Coulee
+title: Ore Pocket
+description: >
+  The slope bends into itself here, a natural hollow where the hillside has
+  caught and held what the talus gives up. The pocket is a chest-deep bowl
+  of rubble -- broken plates of basalt-iron ore mixed with native scree and
+  the spalled edges of the old cuts above, all pitched and tumbled together
+  into a dense heap that shifts if you step into the middle of it. The ore
+  in the rubble is richer than the loose scree above; chunks the size of
+  a fist show the dark close-grained texture of workable iron, and the faint
+  orange blush of oxide marks the better pieces. Salvagers work this pocket
+  between proper mining runs, pulling out what the slope has already broken
+  free. At the near edge of the bowl a flat plate makes a natural anvil
+  stone, scored with the marks of work already done here. East is the
+  collapsed cut; north climbs back to the scree field.
+biome: mountains
+coord:
+  x: 37
+  y: 0
+  z: 0
+exits:
+  east:
+    roomid: 5251
+  north:
+    roomid: 5250
+nouns:
+  rubble: A chest-deep bowl of mixed ore and native scree filling the
+    natural hollow -- basalt-iron fragments, spalled cut-edges, loose
+    plates, all tumbled together. The heap shifts underfoot, but the
+    richer chunks sit on top where the lighter waste has settled around
+    them. There is workable iron here for anyone willing to pick through.
+  pocket: The hollow itself, the bend of the hillside that caught and
+    held everything the slope discarded. It runs no more than a dozen
+    paces across, but in that space the ore accumulates so that a short
+    hour of picking fills a sack where the open scree above would take
+    a day.
+  ore: Dark, close-grained chunks of basalt-iron scattered through the
+    rubble, heavier than the surrounding scree and distinguished from it
+    by a faint orange oxide blush on the freshly broken faces. The best
+    pieces are fist-sized and nearly black, the iron concentrated where
+    the vein ran richest before the frost pulled it apart.
+  anvil: A wide flat plate of basalt laid naturally at the pocket's edge,
+    its upper face scored and dimpled from repeated use. Someone found
+    it useful long before you did. It is not made for fine work, but
+    for cracking ore to workable size it does the job.
+spawninfo:
+- mobid: 9119
+  message: A talus lurker uncoils from the rubble where it was lying in wait.
+  respawnrate: 5 real minutes
+- itemid: 20022
+  message: A dead prospector's leather vest lies half-buried in the ore rubble, still wearable.
+  respawnrate: 10 real minutes
+idlemessages:
+- A loose plate in the <ansi fg="itemname">rubble</ansi> tips and resettles with a low grinding sound, then the pocket goes quiet.
+- The wind drops into the <ansi fg="itemname">pocket</ansi> and swirls, carrying the chalky mineral smell of fresh-broken <ansi fg="itemname">ore</ansi> up from the heap.

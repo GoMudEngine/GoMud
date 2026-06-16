@@ -1,0 +1,57 @@
+mobid: 9144
+zone: Pothole Coulee
+behavior_archetype: noncombat_questgiver
+statpool: 44
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 11
+idlecommands:
+  - 'emote unrolls a star-chart across a tilted table and weights its
+    corners with chips of fallen masonry'
+  - ''
+  - 'emote folds a strip of paper in half, then half again, watching the
+    creases rather than the paper'
+  - ''
+  - 'emote holds two fingers a hand-span apart and slowly closes the gap,
+    studying the air between them as though it resists'
+  - ''
+  - 'emote sits very still beneath the broken dome and lets the dust settle
+    on his shoulders without brushing it away'
+  - ''
+character:
+  name: Adept Grieve
+  description: |
+    Grieve keeps the ruin the way a caretaker keeps a grave that still
+    matters to someone. He is old in the way of people who decided long
+    ago not to hurry: deliberate, unstartled, his voice pitched low enough
+    that you lean in without meaning to. The observatory was a Folding-house
+    once, where adepts read the thin places the way others read weather, and
+    he is the last of them who stayed.
+    His eyes do not quite agree on where to look. It is not a squint or a
+    wandering eye -- it is a faint, constant disagreement, as though each
+    eye tracks a slightly different version of the room and he has long
+    since stopped trying to reconcile them. When he fixes on you, both
+    settle at once, and the attention is total.
+    He will teach the first turning of the mind to anyone who asks plainly.
+    He does not pretend it is safe, and he does not pretend it is hard.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    willpower:
+      training: 16
+    perception:
+      training: 12
+    charisma:
+      training: 6
+    vitality:
+      training: 6
+    dexterity:
+      training: 2
+    strength:
+      training: 2

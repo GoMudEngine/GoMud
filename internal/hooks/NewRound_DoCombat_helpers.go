@@ -714,6 +714,14 @@ func handlePlayerConcentrationBreak(defUser *users.UserRecord, roundResult comba
 // handleMobAIDecision processes mob AI decisions (spell casting, special moves, combat commands).
 // Returns true if the mob executed an AI action and should skip normal combat.
 func handleMobAIDecision(mob *mobs.Mob, c configs.Config) bool {
+	// Aggro can be cleared mid-round before this AI pass runs — e.g. a kiting
+	// archer whose target left the room (keep_distance repositions it, and the
+	// unified combat handler drops a mob's aggro when its target isn't present).
+	// The unified dispatch below guards on Aggro != nil; mirror that here so we
+	// never deref a nil Aggro (was a server-crashing nil-pointer panic).
+	if mob.Character.Aggro == nil {
+		return false
+	}
 	if mob.Character.Aggro.Type != characters.DefaultAttack {
 		return false
 	}

@@ -1,0 +1,31 @@
+roomid: 5289
+zone: Pothole Coulee
+title: Thornbrake
+description: >
+  A dense thornbrake fills the hollow, stems woven into a wall that
+  neither wind nor larger animals push through cleanly. Small game
+  has made a world of it — runs pressed low through the base of the
+  thorns, pellets, tufts of fur snagged on barbs. The thorns catch
+  at sleeves and skin as you press through, drawing thin lines of red.
+biome: land
+coord:
+  x: 42
+  y: 6
+  z: 0
+exits:
+  east:
+    roomid: 5287
+  south:
+    roomid: 5290
+spawninfo:
+- mobid: 9139
+nouns:
+  thorns: Stiff, hooked barbs that catch on anything soft and hold it,
+    patient as a trap.
+  game: Signs of small animals everywhere — runs, pellets, tufts of
+    fur, the pressed-flat shapes of resting bodies.
+idlemessages:
+- Something small bolts through the brake just below sight — a
+  brief thrashing, then silence.
+- A thorn-barb catches and pulls free, leaving a thin scratch along
+  your arm.

@@ -1,0 +1,26 @@
+id: pothole_tally
+description: "Innkeep Tally runs the Drowned Lantern all day and into the evening, then sleeps in the inn when the last guest settles. The gathering place never truly closes."
+segments:
+  - start: 6
+    end: 18
+    target_room: 5205
+    activity: ""
+    idlecommands:
+      - emote wipes down a stretch of table without breaking stride.
+      - emote tips back a jug to check the level, the gill-frills at her collar fluttering.
+      - say The peat's on and the kettle's full. Sit down and catch your breath.
+      - emote casts an eye over the room and nods, already planning the evening.
+  - start: 18
+    end: 22
+    target_room: 5205
+    activity: ""
+    idlecommands:
+      - emote moves table to hearth to cellar-stair in a brisk warmth, never still.
+      - say Evening is when the Lantern earns its name. Pull up a bench.
+      - emote steers a bowl toward a newcomer before they think to ask.
+  - start: 22
+    end: 6
+    target_room: 5205
+    activity: sleeping
+    idlecommands:
+      - emote rests on the settle near the banked hearth, light and ready as ever.

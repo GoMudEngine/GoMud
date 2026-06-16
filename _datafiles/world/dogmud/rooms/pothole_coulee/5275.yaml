@@ -1,0 +1,35 @@
+roomid: 5275
+zone: Pothole Coulee
+title: Fenrot Approach
+description: >
+  The path narrows between stands of dead trees, their bark peeled back
+  to grey wood, their roots sucking at water the color of old bruises.
+  An oily film rides the surface of every pool, catching light in sick
+  rainbows that die before they reach the eye. The air here has
+  substance -- rot-stink thick enough to taste, sweet in a way that
+  turns the stomach. South the land flattens and the trees give out,
+  and the poison swamp opens wide.
+biome: swamp
+coord:
+  x: 47
+  y: 10
+  z: 0
+exits:
+  north:
+    roomid: 5274
+  south:
+    roomid: 5276
+spawninfo:
+- mobid: 9132
+nouns:
+  trees: Grey and bare, stripped of bark by something slow and wet.
+    They lean at angles the living wood would not allow, as though the
+    swamp has been pulling them down for years and has nearly won.
+  water: Every low hollow holds a pool of it, still and the color of
+    an old bruise, with an oily film riding the surface that catches
+    the light wrong.
+idlemessages:
+- Something drips in the <ansi fg="itemname">trees</ansi> with a sound
+  too wet and deliberate for rain.
+- The <ansi fg="itemname">water</ansi> in the nearest pool shifts, slow
+  and thick, though nothing visible disturbs it.

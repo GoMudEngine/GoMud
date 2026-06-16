@@ -1,0 +1,44 @@
+roomid: 5294
+zone: Pothole Coulee
+title: Killing Ground
+description: >
+  The tree line pulls back here and the ground opens into a wide
+  clearing — wide enough that a dozen things could come at you from
+  every angle before you could reach cover. The grass has been
+  flattened in broad arcs by something that runs in circles, and
+  the earth is churned dark where it turns. Bones scatter the
+  clearing floor in no particular order: ribs, long bones, things
+  that are no longer identifiable. The smell of old blood has soaked
+  into the ground. There is no safe way to stand still here; every
+  direction offers line of sight and no cover.
+biome: forest
+coord:
+  x: 43
+  y: 11
+  z: 0
+exits:
+  north:
+    roomid: 5293
+  south:
+    roomid: 5295
+  west:
+    roomid: 5296
+  east:
+    roomid: 5300
+spawninfo:
+- mobid: 9140
+- mobid: 9140
+- mobid: 9141
+nouns:
+  bones: Scattered across the clearing floor — ribs, long bones,
+    fragments past recognition. None of them belong to anything that
+    won a fight here. The oldest are pale and dry; the newest still
+    carry a faint dark stain where they meet the earth.
+  clearing: Wide open ground with nothing to break a charge. The
+    flattened arcs in the grass tell you what uses this space and
+    how it moves — circling, cutting off retreat, running prey down
+    from every angle. This is where hunts end.
+idlemessages:
+- Something has passed through here recently. The turned earth at the
+  clearing's edge is still moist.
+- The silence here is the silence of a place where things stop moving.

@@ -1,0 +1,37 @@
+roomid: 5271
+zone: Pothole Coulee
+title: Cattail Stand
+description: >
+  A hummock of firmer ground rises just above the waterline, thick with
+  cattails growing so dense they form a wall on three sides. Someone has
+  made use of the shelter: a low frame of bent willow withes leans
+  against the cattails, a rusted iron pot hangs from a tripod of sticks,
+  and bundles of dried marsh-herbs are bound to the frame with strips of
+  bark. The camp is cold and has been for some time, but the dried herbs
+  still hold their sharp green smell.
+biome: swamp
+coord:
+  x: 48
+  y: 6
+  z: 0
+exits:
+  west:
+    roomid: 5269
+  south:
+    roomid: 5272
+spawninfo:
+- mobid: 9129
+nouns:
+  cattails: A dense stand packed tightly around the hummock's edge,
+    growing taller here than anywhere nearby — chest-high at least, their
+    brown heads level with your face when you push through.
+  hummock: A raised pad of matted root and peat that sits a hand's-width
+    above the surrounding water. Firm underfoot, the ground here holds
+    your weight without sucking.
+  camp: A rough arrangement of bent-willow frames, a hanging pot, and
+    bundles of dried marsh herbs. Whoever made it knew their plants;
+    the herb bundles are sorted and carefully tied.
+idlemessages:
+- The dried <ansi fg="itemname">camp</ansi> herbs rustle when the breeze
+  moves through the <ansi fg="itemname">cattails</ansi>.
+- A dragonfly settles briefly on the hanging pot and is gone.

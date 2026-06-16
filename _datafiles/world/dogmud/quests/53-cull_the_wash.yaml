@@ -1,0 +1,62 @@
+# Quest 53 — Cull the Wash (Pothole Coulee, Spoke A repeatable)
+#
+# Token flow:
+#   53-start     — granted by Caravan Guard Garve's dialogue (cull_offer node).
+#                  Requires 34-end (Take the Tower). Repeatable with cooldown.
+#   53-firstkill — mob_death trigger on Bandit Scout (9110). Requires 53-start.
+#   53-end       — mob_death trigger on Bandit Squatter (9111). Requires
+#                  53-firstkill. Auto-grants reward + clears for repeat.
+
+questid: 53
+name: Cull the Wash
+description: >-
+  Garve always has more work clearing squatters out of the wash. Thin
+  them out and report back when you have the stomach for it.
+secret: false
+repeatable: true
+cooldown_rounds: 300
+
+steps:
+  - id: start
+    description: >-
+      Garve has asked you to thin out the squatters in the wash again.
+    hint: >-
+      Head east into the wash. Put down a bandit scout and a bandit
+      squatter, then come back to Garve.
+  - id: firstkill
+    description: "One squatter down. One more should satisfy Garve."
+    hint: "Find and kill one more bandit in the wash."
+  - id: end
+    description: >-
+      You thinned the wash again. Garve will have more work next time.
+
+rewards:
+  gold: 6
+  skillinfo: "weapon-combat:1"
+  playermessage: >-
+    Garve counts your tally with a grunt and flips you a few coins.
+    "Good. They breed faster than I can swing. Come back when you have
+    the stomach for more."
+  roommessage: "Garve gives you a short, approving nod."
+
+triggers:
+  - event: mob_death
+    mob: 9110
+    conditions:
+      has: ["53-start"]
+      missing: ["53-firstkill"]
+    actions:
+      - grant: "53-firstkill"
+      - send_text: >-
+          One down. One more should satisfy Garve.
+
+  - event: mob_death
+    mob: 9111
+    conditions:
+      has: ["53-firstkill"]
+      missing: ["53-end"]
+    actions:
+      - grant: "53-end"
+      - send_text: >-
+          The second squatter drops. The wash is clear for now.
+          Garve will have more work when you are ready for it.

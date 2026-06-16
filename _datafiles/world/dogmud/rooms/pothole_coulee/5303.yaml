@@ -1,0 +1,43 @@
+roomid: 5303
+zone: Pothole Coulee
+title: Observatory Hall
+description: >
+  The stairwell opens into a broad hall where the ruin holds its breath.
+  Shelves of cracked limestone line three walls, and on them, rolled and
+  stacked and pinned flat under fragments of broken lens, are star-charts
+  yellowed to amber at their edges. A workbench salvaged from the rubble
+  sits near the center of the room beneath a lamp of steady green flame;
+  scattered across it, instruments of brass and bone catch that odd light
+  and throw back glints. Someone has been at work here, patient and long.
+  The hall smells of old paper, beeswax, and something faintly electric,
+  like the air before a storm.
+biome: fort
+coord:
+  x: 44
+  y: -2
+  z: 2
+mutators:
+- mutatorid: sanctuary
+exits:
+  down:
+    roomid: 5302
+  west:
+    roomid: 5304
+  north:
+    roomid: 5305
+spawninfo:
+- mobid: 9144
+nouns:
+  charts: Dozens of star-charts cover the shelves, their edges curling
+    and brown. The ink has faded to rust on the oldest, but a few near
+    the workbench look fresher -- traced over, re-inked, annotated in a
+    cramped careful hand.
+  instruments: Brass calipers, a bone sighting-rod, a pair of dividers
+    whose tips have been filed to near-invisibility -- each instrument
+    rests exactly where it was last set down, waiting in the green light
+    to be picked up again.
+idlemessages:
+- The green lamp flame bends slightly, though there is no draft to explain it.
+- A loose <ansi fg="yellow">chart</ansi> at the edge of the workbench shifts and resettles with a dry whisper.
+- The hall is very quiet -- the kind of quiet that has been tended, kept deliberately.
+- One of the brass <ansi fg="yellow">instruments</ansi> catches the lamplight and sends a slow arc across the wall.

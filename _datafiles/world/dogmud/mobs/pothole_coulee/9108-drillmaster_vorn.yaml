@@ -1,0 +1,49 @@
+mobid: 9108
+zone: Pothole Coulee
+behavior_archetype: noncombat_questgiver
+statpool: 44
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 11
+idlecommands:
+  - 'emote steps behind an invisible recruit and adjusts the angle of their
+    sword arm with two fingers, then steps back without a word'
+  - ''
+  - 'emote drives a short, sharp strike into the face of the practice post,
+    checks his knuckles, and does it again'
+  - ''
+  - 'emote stands at the edge of the yard, watching the wash uphill with
+    the patient attention of a man who has learned to read ground'
+  - ''
+character:
+  name: Drillmaster Vorn
+  description: |
+    Vorn runs the drill yard the way a whetstone runs a blade: without
+    ceremony, without encouragement, and with exactly as much pressure as
+    the steel requires. He is a compact, weathered man built along lines
+    that suggest more scar tissue than fat, and he moves through the yard
+    with a precision that has long since stopped being deliberate and
+    become simply how he occupies space. His voice is low and carries
+    further than it has any right to. The skin of his hands and forearms
+    has gone the grey of old slate, hard and close-grained as river stone,
+    so that the knuckles look carved rather than grown -- the kind of
+    change that happens slow enough that the man himself hardly noticed
+    until strangers started to. He does not explain the mutation, and no
+    one who trains under him thinks to ask twice.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 8
+    dexterity:
+      training: 6
+    perception:
+      training: 6
+    vitality:
+      training: 2

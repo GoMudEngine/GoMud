@@ -1,0 +1,39 @@
+roomid: 5309
+zone: Pothole Coulee
+title: Whispering Grove
+description: >
+  The trees thin and a clearing opens, floored with close-cropped moss and
+  ringed by standing stones, each carved with a spiral that matches no script
+  you have seen. At the clearing's center a circle of flat stones has been
+  set in the earth with deliberate care -- the meditation circle of those who
+  came before. The trees at the edge seem to lean in and murmur, syllables
+  just shy of sense, as though they have been repeating something for so long
+  it has worn smooth. The hum is quieter here, pressed down by the weight of
+  what the clearing expects of anyone who stands at its center.
+biome: forest
+coord:
+  x: 43
+  y: -6
+  z: 2
+exits:
+  south:
+    roomid: 5308
+  west:
+    roomid: 5311
+spawninfo:
+- mobid: 9145
+nouns:
+  clearing: Open and mossy, the clearing holds a stillness that does not
+    feel natural. Sound arrives slightly muffled here, as though the grove
+    is listening harder than it lets on.
+  circle: The meditation circle -- flat stones set flush with the earth in
+    a ring no wider than a person lying outstretched. The center stone is
+    worn concave, smooth from long use by those who knelt here to focus
+    while the world worked against them.
+idlemessages:
+- The <ansi fg="cyan">trees</ansi> at the <ansi fg="cyan">clearing</ansi> edge lean together, and for a moment
+  something almost resolves in the murmur.
+- The moss at the center of the <ansi fg="cyan">circle</ansi> trembles faintly, though you feel
+  no breeze.
+- A spiral carved into one of the standing stones catches the light and
+  seems, briefly, to move.

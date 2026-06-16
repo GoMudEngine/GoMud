@@ -1,8 +1,11 @@
 package characters
 
 import (
+	"fmt"
+
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/quests"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func (c *Character) GetMemoryCapacity() int {
@@ -146,4 +149,54 @@ func (c *Character) ClearQuestFlag(key string) {
 		return
 	}
 	delete(c.QuestFlags, key)
+}
+
+// questCooldownKey is the MiscData key under which a repeatable quest's
+// "available again at round N" timestamp is stored.
+func questCooldownKey(questId int) string {
+	return fmt.Sprintf("questcd-%d", questId)
+}
+
+// SetQuestCooldown records that quest questId may not be re-taken until
+// cooldownRounds rounds from now. Stored in persisted MiscData so the
+// cooldown survives logout.
+func (c *Character) SetQuestCooldown(questId int, cooldownRounds uint64) {
+	c.SetMiscData(questCooldownKey(questId), util.GetRoundCount()+cooldownRounds)
+}
+
+// QuestCooldownActive reports whether quest questId is still inside its
+// post-completion cooldown window (current round < stored "available at").
+func (c *Character) QuestCooldownActive(questId int) bool {
+	v := c.GetMiscData(questCooldownKey(questId))
+	if v == nil {
+		return false
+	}
+	return util.GetRoundCount() < miscDataToUint64(v)
+}
+
+// miscDataToUint64 coerces a MiscData value to uint64. MiscData stores any,
+// and an integer written as uint64 may return from YAML reload as int,
+// int64, or float64 — handle all of them; anything else yields 0.
+func miscDataToUint64(v any) uint64 {
+	switch n := v.(type) {
+	case uint64:
+		return n
+	case int:
+		if n < 0 {
+			return 0
+		}
+		return uint64(n)
+	case int64:
+		if n < 0 {
+			return 0
+		}
+		return uint64(n)
+	case float64:
+		if n < 0 {
+			return 0
+		}
+		return uint64(n)
+	default:
+		return 0
+	}
 }

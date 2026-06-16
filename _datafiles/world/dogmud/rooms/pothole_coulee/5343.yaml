@@ -1,0 +1,66 @@
+roomid: 5343
+zone: Pothole Coulee
+title: The Reliquary
+description: >
+  A small back-chamber, probably the oldest part of the structure.
+  The wall-niches here are deeper than those in the nave and have been
+  emptied with care -- no debris, no scatter of ash. Whatever stood
+  in them was removed deliberately, taken or relocated. The ceiling
+  is intact, which makes the room feel sealed, expectant. The
+  flagstone floor is the thing that holds the eye. Several flags
+  near the room's center have cracked and heaved upward as though
+  something beneath them pushed, or settled unevenly, or simply
+  shifted across a very long time. The disturbed section has been
+  scratched clean of the grime that covers the rest of the floor --
+  recently, or often, as though someone has been checking it. Press
+  the stones or search the floor carefully and you might learn
+  whether the disturbance has a cause that can be touched.
+biome: fort
+coord:
+  x: 42
+  y: -14
+  z: 0
+exits:
+  south:
+    roomid: 5342
+  west:
+    roomid: 5344
+nouns:
+  floor: The flagstones are large, close-fitted, and generally buried
+    under a century of grime -- except at the center, where they have
+    cracked and heaved and been scratched clean as though by repeated
+    examination. The gap between two of the lifted flags is just wide
+    enough to admit a finger.
+  niches: The reliquary niches are the widest in the shrine, their
+    interior surfaces dressed to a careful smoothness. They hold nothing
+    now. The emptiness feels intentional -- a deliberate clearing rather
+    than simple loss.
+hidden_nouns:
+  disc:
+    description: |
+      It is a disc of pale grey metal, the size of a spread hand, and
+      nothing about it belongs here. The folk work in stone and bone and
+      fired clay; this is neither cast nor forged nor any process you have
+      a word for. Its face is too smooth -- not polished, made smooth, the
+      way still water is smooth -- and across it run fine raised lines in a
+      pattern that is plainly not decoration. They branch and rejoin with a
+      cold regularity, threading inward toward a single mark pressed deep at
+      the center: a ring with a line struck through it -- the same mark the
+      reckoning-bone carries at its oldest, deepest end. The disc stays cool
+      even where the stone around it has gone warm, and when you tilt it the
+      raised lines seem to hold the light a half-instant longer than they
+      should. You do not understand it. You are fairly certain no one in the
+      coulee does. It does not feel like something the folk made and lost --
+      it feels like something that was already here when they came, waiting
+      under the floor for a hand to lift it. Now yours has.
+    hidden_description: |
+      A disc of pale metal lies worked free of the cracked floor, too smooth
+      and too regular to be anything the folk made.
+idlemessages:
+- The room is very quiet. Sound from the nave does not carry here.
+- The cracked section of <ansi fg="cyan">floor</ansi> settles with a faint tick,
+  stone shifting on whatever lies beneath.
+- The empty <ansi fg="cyan">niches</ansi> hold shadows that don't quite move when
+  the light in the room changes.
+- A thin line of pale dust sifts down through the crack in the
+  floor and disappears.

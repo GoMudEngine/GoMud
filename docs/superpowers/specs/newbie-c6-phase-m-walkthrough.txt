@@ -1,0 +1,80 @@
+================================================================================
+NEWBIE REWORK — CHUNK 6 (Spoke E, The Folding / magic) — PHASE M WALKTHROUGH
+Mobs + spawninfo build record (static — live combat deferred). 2026-06-15.
+Sub-spec: docs/superpowers/specs/2026-06-14-newbie-chunk6-spoke-e-folding-subspec.md
+================================================================================
+
+9 mobs 9144-9152, authored INLINE (no subagents -> no phantom-path risk; all 9
+confirmed in the real .claude worktree, zero .clone/.claire leaks). NO new items
+or recipes (Oak Staff 10018 reused as the Q44 reward; spell grants come in
+Phase D via the spellid reward field).
+
+MOB ROSTER (id | name | host rooms | hostile | behavior_archetype | statpool):
+ NPCs (Opened humanoids, speciesid 1, noncombat_questgiver, sp44):
+  9144 Adept Grieve   5303            no   noncombat_questgiver  44   [Q44 giver]
+  9145 Keeper Orrin   5309            no   noncombat_questgiver  44   [Q45+Q46]
+ Practice target (inert, durable, harmless):
+  9146 Practice Mote  5305            no   combat_passive         3   [cast target]
+ Grove foes (species 23 aberration, generic_fighter, fighting):
+  9147 Drift-Wisp     5308,5310,5312  yes  generic_fighter       22
+  9148 Grove Revenant 5311,5312,5313  yes  generic_fighter       45
+ Scabland foes (species 23):
+  9149 Fold-Echo      5315,5316       yes  generic_fighter       65
+  9150 Riven Stalker  5317,5318       yes  generic_fighter       95
+ Casters (species 23, pure_caster + archetype: casting, harm-only spellbook):
+  9151 Unbound Fold   5319            yes  pure_caster          130  [mini, mind-spike]
+  9152 The Unfolded   5320            yes  pure_caster          200  [BOSS]
+
+KEY DECISIONS:
+ - The boss CASTS. pure_caster runs cast_best_in_category from the mob's
+   spellbook (proven by wraith/spectre/285-bandit_caster). The Unfolded's
+   spellbook is HARM-ONLY (mind-spike:50 + nerve-disruption:50, spellcasting 14)
+   so the self_heal / self_defense branches find nothing and fall through -- it
+   duels rather than self-heal-stalling into an unkillable wall. Mini-caster
+   9151 same pattern (mind-spike:40, spellcasting 8).
+ - Casting escalation by ring: MIDDLE grove = the player casts at plain
+   fighters (gentle first combat-cast lesson, Q45); OUTER scabland = enemies
+   cast BACK (mini 9151 -> boss 9152). Clean progression.
+ - Practice Mote (9146) gives Q44's `cast conviction-spike` a target (mirrors
+   Spoke A's training dummy 9109). species 19 = durable + harmless (basedamage
+   0), no negative-vit reduction so it survives repeated practice casts.
+ - Both NPCs are Opened with ONE understated visible mutation in the
+   description (canon): Grieve's eyes "don't agree where to look"; Orrin's
+   outline "arrives a heartbeat late."
+ - Names cleared vs novel STORY_BIBLE + live roster. "Keeper" Orrin avoids the
+   zone's existing "Warden Esk" role-word.
+
+SPAWNINFO: 14 rooms wired (5303,5305,5308,5309,5310,5311,5312[x2],5313,5315,
+ 5316,5317,5318,5319,5320). Empty by design: 5302 (entry), 5304 (lore/orrery),
+ 5306, 5307 (sanctuary ends), 5314 (grove ends/ascend), 5321 (reward vista).
+
+AUDITS — ALL PASS (popup window, 2026-06-15):
+ [x] newbie_manifest_check.py -> 0 FAIL whole-check; Spoke E 9/9 mobs PASS,
+     20/20 rooms PASS, 21/21 exit pairs PASS. (SPOKE_E_MOBS section added.)
+ [x] go build ./... -> exit 0.
+ [x] boot (instances wiped, MapConsistencyEnforce=panic):
+       mobs.LoadDataFiles loadedCount 270 -> 279 (+9)
+       rooms 642 / itemspec 277 / recipes 100 / quests 35 (all unchanged = no
+       new items/recipes/quests this phase, correct)
+       mapper.ValidateZoneConsistency errors=0 warnings=0 mode=panic
+       Server Ready, 0 panics.
+     Temp binary + log cleaned; server killed.
+
+DEFERRED (flagged, not gates):
+ - DIFFICULTY untuned (reasonable curve only) per
+   feedback-defer-tuning-to-post-build-playtest. WATCH the boss: it's a
+   MAGICAL-channel caster (willpower 70, ChannelScale 1.0) -- can hit harder
+   than the melee bosses of A/B/C/D. Evening playtest call.
+ - LIVE combat / does-the-boss-actually-cast: NOT live-confirmed (no-popup
+   constraint limited this to a static build record + boot). Phase D's scripted
+   walkthrough is where the cast-duel gets exercised end-to-end.
+ - Phase D engine check: confirm cast.go calls questengine.Notify("command",..)
+   so Q44's `cast` beat fires (same check as forage/drink/throw in C4/C5); add
+   the 1-liner if missing.
+
+NEXT: Phase M REVIEW gate -> Phase D (INLINE): Grieve + Orrin dialogue
+ (cast/channels/willpower/concentration teaching), quests 44 (cast at the mote,
+ reward Oak Staff 10018 + spellcasting:1) / 45 (combat-cast + concentration,
+ reward sparks via spellid + spellcasting:1) / 46 (beat the Unfolded, reward
+ willpower:3 via stat_info + heal via spellid), scripted walkthrough.
+================================================================================

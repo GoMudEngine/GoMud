@@ -2,6 +2,7 @@ package shops
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -89,16 +90,36 @@ func RegisterShop(zone string, mobId int, roomId int, template ShopInventory) *S
 	inv := loadFromDisk(zone, mobId, roomId)
 	needsCraftMigration := false
 	if inv == nil {
-		// Seed from template: set Current to RestockQty for stocked items.
+		// Seed from template at the ABUNDANCE level, not the restock-batch
+		// level. A newly opened merchant is fully provisioned: floor-priced
+		// (0.25x) abundant stock is the long-run steady state of every
+		// established shop (restock ticks accumulate toward MaxStock), so a
+		// fresh shop should start there too.
+		//
+		// The old behaviour seeded Current = RestockQty, which left the
+		// scarcity ratio (Current/RestockQty) at exactly 1.0 — the curve's
+		// ~2.36x price. That made every fresh shop open at ~2.36x list prices
+		// AND pay ~1.18x value when players sold to it (the fresh-shop
+		// arbitrage). Seeding at abundance skips that misleading transient.
+		//
+		// Current = min(MaxStock, ceil(RestockQty × AbundanceThreshold)) for
+		// stocked entries; 0 for crafted entries (RestockQty == 0), which the
+		// NPC produces over time.
+		cfg := PricingConfigFromBalance()
 		seeded := template // copy
 		seeded.Stock = make([]StockEntry, len(template.Stock))
 		copy(seeded.Stock, template.Stock)
 		for i := range seeded.Stock {
-			if seeded.Stock[i].RestockQty > 0 {
-				seeded.Stock[i].Current = seeded.Stock[i].RestockQty
-			} else {
+			rq := seeded.Stock[i].RestockQty
+			if rq <= 0 {
 				seeded.Stock[i].Current = 0
+				continue
 			}
+			abundant := int(math.Ceil(float64(rq) * cfg.AbundanceThreshold))
+			if ms := seeded.Stock[i].MaxStock; ms > 0 && abundant > ms {
+				abundant = ms
+			}
+			seeded.Stock[i].Current = abundant
 		}
 		inv = &seeded
 	} else if inv.CraftSupport == "" && template.CraftSupport != "" {

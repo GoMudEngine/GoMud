@@ -1,0 +1,20 @@
+id: mire-renewal-draught
+name: Mire Renewal Draught
+skill: alchemy
+skill_minimum: 6
+station: alchemy_bench
+time_rounds: 4
+ingredients:
+  - item_tag: marsh-willow-bark
+    quantity: 1
+  - item_tag: lake-mint
+    quantity: 1
+  - item_tag: healers-root
+    quantity: 1
+  - item_tag: bottle
+    quantity: 1
+output:
+  item_id: 30065
+  quantity: 1
+success_message: "You steep the willow-bark and mint together, fold in the root, and seal the peat-dark tonic in the bottle. A mire renewal draught!"
+failure_message: "The willow-bark turns the brew bitter and it clouds over. The materials are wasted."

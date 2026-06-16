@@ -1215,12 +1215,12 @@ SpecialRooms:
   #   This is the default starting room for the game. It only matters when there
   #   is code that explicitely tries to send the player to the "starting room"
   #   The default of 1 is Town Square
-  StartRoom: 113
+  StartRoom: 5200
   # - DeathRecoveryRoom -
   #   This is the room players are sent to when they die.
   #   This should have some way of healing them and (eventually)
   #   sending them back into the main world.
-  DeathRecoveryRoom: 75
+  DeathRecoveryRoom: 5209
   # - TutorialRooms -
   #   This should be an array of all room id's for the pre-start tutorial.
   #   The first one on the list is the room they will be placed in when beginning

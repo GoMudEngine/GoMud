@@ -1,0 +1,42 @@
+roomid: 5347
+zone: Pothole Coulee
+title: Bluff Foot
+description: >
+  The bluff rises sharply here, its pale face cut by a stone stair that
+  climbs in long switchbacks toward the shooting terraces above. You are
+  one level up from the coulee floor -- the hub's broad steps are just
+  below -- and already the perspective opens: the lake glitters in the
+  middle distance, the town beyond it small and orderly, the whole of
+  the coulee spread beneath a wide sky. The stair ahead is worn smooth
+  by generations of feet. Chalked marks on the bluff face note distances
+  measured from the terrace above -- numbers that mean nothing yet but
+  will.
+biome: cliffs
+coord:
+  x: 47
+  y: -1
+  z: 1
+mutators:
+- mutatorid: sanctuary
+exits:
+  down:
+    roomid: 5226
+  north:
+    roomid: 5348
+nouns:
+  stair: The stair is cut directly into the bluff face, each step worn
+    to a gentle hollow by the passage of many feet. Chalked distance
+    marks run alongside it, painted by whoever last maintained the
+    range above.
+  bluff: The bluff face is pale limestone, streaked with iron-brown
+    where water has run down it over the years. Up close it smells
+    faintly of dust and dry stone, warm from the afternoon sun.
+idlemessages:
+- The <ansi fg="cyan">stair</ansi> above disappears into a switchback, the top hidden from
+  here.
+- Wind carries the faint snap of a bowstring from somewhere above,
+  then silence.
+- The lake catches the light and throws it back in a long white line
+  across the water.
+- A chalked distance-mark on the <ansi fg="cyan">bluff</ansi> face has been partially
+  worn away and carefully redrawn over the old ghost.

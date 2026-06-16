@@ -500,6 +500,7 @@ func LoadUser(username string, skipValidation ...bool) (*UserRecord, error) {
 	loadedUser.Character.MigrateEnchantments()
 	loadedUser.Character.MigrateChrysalisAidRemoved()
 	loadedUser.Character.MigrateRecipeDisciplineShuffle()
+	loadedUser.Character.MigrateNewbieAwakening()
 	loadedUser.ItemStorage.MigrateStorageSlots()
 
 	if loadedUser.Joined.IsZero() {

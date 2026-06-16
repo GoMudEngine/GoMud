@@ -1,0 +1,58 @@
+mobid: 9140
+zone: Pothole Coulee
+behavior_archetype: predator
+archetype: fighting
+statpool: 25
+itemdropchance: 15
+hostile: true
+maxwander: 2
+groups:
+  - beast
+  - pack
+aiprofile: predator
+activitylevel: 25
+items:
+  - 40070   # pack-hide pelt — carried, always drops
+idlecommands:
+  - 'emote pads in a wide circle, nose low to the ground, testing the
+    air in each direction before it completes the loop'
+  - ''
+  - 'emote sits back on its haunches and watches the coulee floor with
+    pale, patient eyes that do not blink'
+  - ''
+combatcommands:
+  - 'emote lunges low for the hamstring, driving off the hindquarters
+    with everything it has'
+  - ''
+  - 'emote breaks left and cuts back fast, looking for the flank while
+    its pack-mates press the front'
+  - ''
+character:
+  name: Scab-Hound
+  description: |
+    A lean grey dog, ribs visible under a coat gone dull and rough at
+    the edges, scarred across the muzzle and shoulder from fights it
+    survived by being faster than what hit it. The scab-hound is not
+    large enough to be frightening on its own -- that is precisely the
+    point. It operates as one note in a chord, working the flanks while
+    others press the center, circling wide to cut off retreat while the
+    pack reads the target's attention and finds the moment no one is
+    watching the edges. The eyes are pale amber and very calm. It has
+    done this many times. It will keep circling until something gives,
+    and it has learned that something always does.
+  speciesid: 2
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 8
+    strength:
+      training: 7
+    vitality:
+      training: 6
+    perception:
+      training: 2
+    willpower:
+      training: 1
+    charisma:
+      training: 1

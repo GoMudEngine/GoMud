@@ -1,0 +1,73 @@
+# Warden Esk (9107) — portal warden at the Threshold House (room 5215).
+#
+# The permanent way out of Pothole Coulee (and back in, by walking the
+# long way -- the arch is one-way outbound). Gated on quest token
+# 30-end: only the Opened may cross. The teleport rides the hardened
+# move_player action with a static delay so the transit lines land
+# first. Destination: Thornwall Temple Interior (room 468) -- the same
+# room the "thornwall" sethome key resolves to.
+# Selector order matters: the Opened branch is tried first; the
+# not-yet-opened branch catches the same keywords below it.
+
+tree:
+  type: selector
+  children:
+
+    # ── PASSAGE: an Opened player asks to cross ──
+    - type: sequence
+      event: player_ask
+      children:
+        - type: condition
+          check: keyword_match
+          keywords: [passage, portal, arch, thornwall, through]
+        - type: condition
+          check: player_has_quest
+          quest: "30-end"
+        - type: action
+          do: say
+          text: So. The coulee has taught you what it can, for now.
+          delay: 1.0
+        - type: action
+          do: emote
+          text: >-
+            rises from the stool and sets one broad hand flat against
+            the basalt arch. The ember-light behind his eyes brightens,
+            banked coals breathed on.
+          delay: 3.0
+        - type: action
+          do: say
+          text: >-
+            Thornwall sits on the far side -- temple stone, city noise,
+            more people than you have ever needed. Walk through. The
+            arch keeps no count and no grudge; come back whenever you
+            please, by the long road or not at all.
+          delay: 5.5
+        - type: action
+          do: emote
+          text: >-
+            steps back as the empty air inside the arch goes taut, then
+            silvers, like deep water deciding to be a door.
+          delay: 9.0
+        - type: action
+          do: move_player
+          room_id: 468
+          delay: 11.0
+
+    # ── NOT YET: an unopened player asks to cross ──
+    - type: sequence
+      event: player_ask
+      children:
+        - type: condition
+          check: keyword_match
+          keywords: [passage, portal, arch, thornwall, through]
+        - type: condition
+          check: player_missing_quest
+          quest: "30-end"
+        - type: action
+          do: say
+          text: >-
+            The arch answers the Opened, and you are not yet. The pool
+            comes first -- Cleric Hadwen keeps it, at the heart of
+            town. There is no shame in arriving unready. Only in
+            staying that way.
+          delay: 1.0

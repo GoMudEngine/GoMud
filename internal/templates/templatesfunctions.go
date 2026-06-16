@@ -15,6 +15,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/language"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -347,21 +348,8 @@ var (
 			}
 			return prefix + " your " + statName
 		},
-		"mutationLevel": func(level int) string {
-			switch level {
-			case 1:
-				return "minor"
-			case 2:
-				return "moderate"
-			case 3:
-				return "major"
-			case 4:
-				return "extreme"
-			default:
-				return "unknown"
-			}
-		},
-		"skillRank": skills.GetSkillRankDescription,
+		"mutationLevel": mutations.LevelDescription,
+		"skillRank":     skills.GetSkillRankDescription,
 		"durationQuality": func(rounds int) string {
 			switch {
 			case rounds <= 0:

@@ -1,0 +1,50 @@
+mobid: 9101
+zone: Pothole Coulee
+schedule_id: pothole_tally
+behavior_archetype: noncombat_questgiver
+statpool: 40
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 14
+idlecommands:
+  - 'emote wipes down a stretch of table without breaking stride'
+  - ''
+  - 'emote tips back a jug to check the level, the gill-frills at her collar fluttering'
+  - ''
+  - 'emote casts an eye over the empty benches and nods, already planning the evening'
+  - ''
+character:
+  name: Innkeep Tally
+  description: |
+    Tally runs the Drowned Lantern the way a good current runs a river --
+    you never see the work, only that everything arrives where it ought to.
+    She is small and quick and never still, moving table to hearth to
+    cellar-stair in a brisk warmth that makes a stranger feel expected
+    rather than tolerated. A ruff of soft gill-frills stands at her collar,
+    pale and faintly translucent, fluttering when she laughs or leans into
+    the steam off the kettle; she pays them no mind and neither, soon, will
+    you. She keeps the peat fed and the jugs full and somehow always knows
+    which newcomer hasn't eaten, steering a bowl their way before they think
+    to ask. There is iron under the welcome -- she will have no brawling
+    under her watery light -- but it shows only as a steadiness, the calm
+    of someone who has run this room so long it runs to her hand.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    charisma:
+      training: 8
+    perception:
+      training: 5
+    willpower:
+      training: 3
+relationships:
+  - to: 9103
+    type: friend
+  - to: 9106
+    type: friend

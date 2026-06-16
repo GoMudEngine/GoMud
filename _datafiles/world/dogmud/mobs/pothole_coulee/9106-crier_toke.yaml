@@ -1,0 +1,47 @@
+mobid: 9106
+zone: Pothole Coulee
+schedule_id: pothole_toke
+behavior_archetype: noncombat_questgiver
+statpool: 38
+hostile: false
+non_combatant: true
+charm_immune: true
+maxwander: 0
+groups:
+  - humanoid
+  - coulee_folk
+activitylevel: 14
+idlecommands:
+  - 'emote pins a fresh notice to the post, smoothing it flat with the heel of his hand'
+  - ''
+  - 'emote calls the hour and the news in one breath while the throat-mouth hums the next line under it'
+  - ''
+  - 'emote cocks his head at a far lane, both mouths going quiet at once to listen'
+  - ''
+character:
+  name: Crier Toke
+  description: |
+    Toke is the town's voice, and he comes by the work honestly, for he was
+    born with twice the means to do it. He stands the square from first light
+    to last, reading the notice-post, gathering the day's word off every
+    traveler and gossip that crosses the slabs, and giving it all back louder
+    than he got it. Below his proper mouth sits a second, set low at the
+    throat, and it is the loud one -- it carries the call across the square
+    while the upper mouth shapes the smaller talk, so that he can hail a
+    newcomer and finish a sentence to someone else in the same breath. He
+    means no harm and keeps no secrets worth keeping; ask him anything and he
+    has likely already told three other people. He has news for you before
+    you have thought to want it, and a grin for the asking.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    charisma:
+      training: 8
+    perception:
+      training: 5
+    willpower:
+      training: 4
+relationships:
+  - to: 9107
+    type: friend

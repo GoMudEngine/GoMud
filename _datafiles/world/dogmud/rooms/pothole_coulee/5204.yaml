@@ -1,0 +1,46 @@
+roomid: 5204
+zone: Pothole Coulee
+title: Market Row
+description: >
+  A short run of awnings and stall-fronts crowds the lane here, strung
+  between the inn at the west end and the provisions store at the east.
+  The awnings are patched canvas and salvaged sailcloth, slung from the
+  eaves to throw shade across the goods laid out beneath them, and they
+  snap and belly whenever the coulee breeze comes down the bowl. This is
+  the town's barter-artery: the air carries the haggle-murmur of folk
+  talking prices, the clink of coin changing hands, the smell of smoked
+  fish and tallow and sun-warmed dust. Even between customers the stalls
+  hold their wares out hopeful, waiting for the next pair of boots to
+  slow. South the lane runs on toward a humming arch the town keeps at
+  its threshold.
+biome: city
+coord:
+  x: 45
+  y: 2
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  north:
+    roomid: 5203
+  west:
+    roomid: 5205
+  east:
+    roomid: 5207
+  south:
+    roomid: 5215
+nouns:
+  stalls: The stalls are plank trestles and upturned crates, each one a
+    small trader's whole livelihood set out for the day. One holds
+    knapped tools and coils of cord, another smoked fish stacked like
+    cordwood, a third odd salvage hauled up from the deep pools. Their
+    keepers come and go, but the wares stay put under the awnings,
+    minded by neighbors and the town's easy trust.
+  awnings: The awnings are a motley of patched canvas and faded
+    sailcloth, lashed from the house-eaves out to leaning poles to keep
+    sun and squall off the goods. They sag where the rain has pooled and
+    belly out when the wind funnels down the coulee. Their shade falls in
+    long bright-edged stripes across the lane.
+idlemessages:
+- An awning bellies and snaps overhead as the breeze gusts down the bowl.
+- Somewhere down the row two voices fall into the easy back-and-forth of haggling.

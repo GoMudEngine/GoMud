@@ -1,0 +1,58 @@
+roomid: 5243
+zone: Pothole Coulee
+title: Tower Top
+description: >
+  A doorway off the watch room lets you out onto the broken crown of the
+  tower, open to the whole wide sky. The top is shattered -- courses fallen
+  away to a low jagged rim a body could sit on, the floor sloped and cracked
+  but sound enough to stand and breathe. And the breathing is the point of
+  it, because the vista from here stops you. The whole coulee lies unrolled
+  below, the wash threading pale all the way down to where the hub sits tiny
+  and far off at the canyon's foot, the long climb you made shrunk to a
+  thread. And out along the rim of the world the other canyon mouths show
+  themselves -- dark notches cut into the stone walls, each a throat opening
+  away to ground you have not walked yet, ways out into the wider scablands.
+  Two of those crests can be walked from here -- a rim-trail running off
+  toward a lone marker-stone on a distant shrine-rise, and another north
+  along the bluffs to a raider's overlook. It is quiet up here, won quiet,
+  the high ground taken and the long view
+  earned. The watch room lies back west, down out of the wind.
+biome: cliffs
+coord:
+  x: 57
+  y: -2
+  z: 2
+exits:
+  west:
+    roomid: 5242
+  # Lateral outer-ring connectors (chunk 8): named, non-spatial "rim-walk"
+  # exits between the spoke crowns (parent spec 6.1). Non-compass keys are
+  # exempt from the cartesian consistency check.
+  shrine:
+    roomid: 5346
+  overlook:
+    roomid: 5365
+nouns:
+  crown: The shattered top of the tower, courses fallen to a low broken rim,
+    the floor cracked and sloping but firm enough to stand on. It is ruin
+    made into a perch -- the highest place on the whole climb, with nothing
+    above it but sky and nothing around it the eye cannot reach.
+  top: The same broken crown, open to the weather, the wind unbroken across
+    it. Whoever stands here stands over the entire canyon, the long fight up
+    finished and the ground held. There is a stillness to it that the rooms
+    below, packed with held breath and old smoke, never have.
+  vista: The whole coulee laid out below in one long look -- the wash
+    threading pale down the canyon to the hub sitting tiny and far at its
+    foot, the climb you made dwindled to a thread. It is the reward of the
+    height, the thing the watchtower was built to take and the thing you
+    have just taken from it.
+  rim: The low jagged ring of fallen courses bounding the broken top, worn
+    enough to sit on, looking out over the drop on every side. Past it the
+    eye runs clean to the far walls of the world, where the other canyon
+    mouths cut their dark notches.
+  mouths: Dark notches cut into the far stone walls of the scablands, each
+    the throat of another canyon opening away to ground not yet walked.
+    From this height they show plain, ways out into the wider country, every
+    one of them a road still to take when the time comes.
+idlemessages:
+- Wind crosses the broken <ansi fg="itemname">crown</ansi> clean and cold, and far off a hawk hangs over one of the distant canyon mouths.

@@ -1,0 +1,41 @@
+roomid: 5318
+zone: Pothole Coulee
+title: Stuttering Space
+description: >
+  Space stutters here. You see yourself a half-step behind yourself, a
+  ghost of your own motion lagging just out of reach -- your echo moving
+  a breath after you move, wearing your face. The pocket of ground is
+  small, a hollow among the floating slabs, and the walls of it are not
+  walls but folds, places where the Folding has turned back on itself and
+  pressed close. The air is thick with something you cannot name -- not
+  smell, not sound, but a quality of wrongness the body recognizes before
+  the mind does. This place does not want to be visited. It has been
+  folded into itself for a long time, and something has been living
+  comfortably in the repetition.
+biome: cliffs
+coord:
+  x: 42
+  y: -9
+  z: 3
+exits:
+  west:
+    roomid: 5316
+spawninfo:
+- mobid: 9150
+nouns:
+  echo: The lagging image of yourself is not quite a reflection -- it
+    moves with your gestures but the timing is wrong, delayed by a
+    half-breath. When you raise your hand it raises its hand, when
+    you step it steps, but always a beat behind, and its expression
+    is not quite yours.
+  space: The pocket here folds back on itself at the edges -- you
+    cannot see where the walls are, only that walking toward them
+    brings you no closer. Space has been compressed into a loop and
+    the loop has been here long enough to wear grooves into the air.
+idlemessages:
+- Your <ansi fg="cyan">echo</ansi> pauses when you pause, its hands at its sides, watching you
+  with your own eyes.
+- The <ansi fg="cyan">space</ansi> near the west fold flickers -- for a moment there are two
+  of everything, then one again.
+- Something shifts in the corner of your sight. When you turn, only
+  your echo is there, a half-step behind.

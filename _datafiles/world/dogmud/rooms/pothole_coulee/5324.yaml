@@ -1,0 +1,49 @@
+roomid: 5324
+zone: Pothole Coulee
+title: The Commons Yard
+description: >
+  The heart of the homestead is a wide yard of packed earth, worn to
+  a smooth hardness by years of daily crossing. The longhouse stands
+  to the west, its timber walls dark with age, smoke-stained at the
+  roofline where the central hearth breathes. The barn to the east is
+  larger than it looks from the gate, its doors folded wide in the
+  working hours. Ahead to the north a kitchen garden rows up neatly
+  behind a low fence. The yard itself is neither tidy nor neglected --
+  it has the settled appearance of a place where things are always
+  in use and always exactly where they belong. The folk-elder of the
+  homestead works from this yard most mornings, greeting those who
+  come to learn or to trade or simply to ask after the old ways.
+biome: farmland
+coord:
+  x: 46
+  y: -5
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  south:
+    roomid: 5323
+  north:
+    roomid: 5327
+  west:
+    roomid: 5325
+  east:
+    roomid: 5326
+spawninfo:
+- mobid: 9153
+nouns:
+  yard: The yard has the density of long use underfoot -- not mud,
+    not stone, but earth compressed to something close to either.
+    Everything flows through here and leaves a trace of itself.
+  longhouse: The longhouse is the oldest structure on the homestead,
+    its roof-ridge bowed slightly with age but sound, the timbers
+    well-jointed and maintained. A warm light shows at the door.
+idlemessages:
+- The <ansi fg="yellow">yard</ansi> holds the midday quiet between tasks, the air
+  smelling of dry earth and recent work.
+- From the <ansi fg="yellow">longhouse</ansi> to the west comes a low sound -- someone
+  reading aloud, or recalling something to themselves.
+- A crow lands at the center of the yard, considers its options,
+  and departs again with evident purpose.
+- The folk-elder moves through the yard on some unhurried errand,
+  pausing to straighten a tool leaning against the wall.

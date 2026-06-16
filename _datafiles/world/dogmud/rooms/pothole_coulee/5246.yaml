@@ -1,0 +1,38 @@
+roomid: 5246
+zone: Pothole Coulee
+title: Ore Stall
+description: >
+  A lean-to of lashed poles and split planks runs along the western
+  face of the smithy, open to the air on two sides, its sheltered
+  interior given over entirely to raw materials. Stacked crates hold
+  iron ingots in grey rows, each one stamped with a count-mark on the
+  end. A row of burlap sacks bulges with coal, fine dust sifting from
+  the seams onto the floor. Coils of leather strip hang from wooden
+  pegs driven into the uprights -- cut and cured, ready for handle-
+  wrapping, bellows-work, or strapping of any kind. Stacked planks of
+  rough-cut timber fill the back. The air here is cool and dry, held
+  against the forge-heat by the overhang above.
+biome: house
+coord:
+  x: 39
+  y: 0
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  east:
+    roomid: 5245
+nouns:
+  ingots: Grey bars of iron, each one the same rough weight, stamped
+    with a tally-mark cut by whatever forge cast them. They are cold
+    and heavy and smell of the dark inside a furnace. Stack them; the
+    work starts with these.
+  coal: Burlap sacks of smithing coal, the chunks ranging from fist-
+    sized to dust. The fine sift of it covers everything nearby in
+    black powder and gets into every crease. Good fuel, patient fuel
+    -- it holds heat better than wood and burns longer.
+  leather: Coils of cured leather strip, pliable and dark, smelling
+    of tannin and old grease. This is the kind used for handle-wrap
+    and bellows-patch -- narrow, strong, and clean.
+idlemessages:
+- A bit of <ansi fg="itemname">coal</ansi> dust shifts and settles off the nearest sack in the still air.

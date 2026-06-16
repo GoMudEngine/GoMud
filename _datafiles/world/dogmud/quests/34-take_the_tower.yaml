@@ -1,0 +1,82 @@
+# Quest 34 — Take the Tower (Pothole Coulee, Spoke A / Martial outer ring,
+# capstone). Granted by Caravan Guard Garve (9112) AFTER quest 33 (Hold the
+# Wash) is complete, and ONLY once the player has chosen a boon path:
+#
+#   34-boon flag (set by Garve's dialogue when the player chooses):
+#     might   -> a permanent Strength gain on the kill
+#     finesse -> a permanent Dexterity gain on the kill
+#
+# Token flow:
+#   34-start  — granted by Garve's tower_might / tower_finesse dialogue node,
+#               which ALSO sets the 34-boon flag (choice made up front).
+#   34-end    — granted by the boss-kill trigger below. The flag decides which
+#               stat the kill grants (train_stat action, see triggers). The
+#               rewards block (weapon + both combat-skill ranks + gold) fires
+#               on 34-end regardless of branch.
+#
+# The Str-vs-Dex stat grant uses the engine's quest stat-reward primitive
+# added this chunk: the `train_stat` trigger action (and the parallel
+# `stat_info` rewards field). Stats are otherwise use-based only, so this is
+# the first guaranteed stat gain in the game — a deliberate capstone payoff.
+
+questid: 34
+name: Take the Tower
+description: >-
+  The bandits hold a ruined watchtower at the head of the wash, and their
+  captain holds the watch room at the top of it. Choose how Garve hones you,
+  climb the tower, and put the captain down.
+secret: false
+linear: true
+
+flags:
+  - key: boon
+    values: [might, finesse]
+    description: "Capstone boon path chosen at Garve: might raises Strength, finesse raises Dexterity."
+
+steps:
+  - id: start
+    description: "Garve has set you on the tower. Climb the wash to the ruined watchtower and defeat the bandit captain in the watch room at the top."
+    hint: "Head east up the wash past the cistern to the broken gate, then climb the tower stairs to the watch room. Defeat the bandit captain. Type consider on a foe first if you want to size it up."
+  - id: end
+    description: "The captain has fallen and the tower is yours. The coulee is a harder place for bandits than it was this morning."
+    hint: "You have taken the tower. Speak with Garve in the hollow if you want to hear what it means -- and the road onward."
+
+rewards:
+  itemid: 10044
+  skillinfo: "weapon-combat:1,unarmed-combat:1"
+  gold: 50
+  playermessage: >-
+    The watch room goes quiet. Whatever the captain was holding this tower
+    for, it is your question now, not theirs. The captain's own blade comes
+    away clean in your hand -- well-kept, perfectly balanced, the only thing
+    in this ruin that was ever cared for. It has changed owners by violence
+    before. It does so again.
+
+triggers:
+  # ── BOSS KILL, might path: permanent Strength gain + complete ──
+  - event: mob_death
+    mob: 9115
+    conditions:
+      has: ["34-start"]
+      missing: ["34-end"]
+      has_flag: {"34-boon": "might"}
+    actions:
+      - grant: "34-end"
+      - train_stat:
+          stat: strength
+          amount: 3
+      - send_text: "The fight leaves something behind in your arms and back -- a settled, permanent strength, earned the hard way at the top of a tower."
+
+  # ── BOSS KILL, finesse path: permanent Dexterity gain + complete ──
+  - event: mob_death
+    mob: 9115
+    conditions:
+      has: ["34-start"]
+      missing: ["34-end"]
+      has_flag: {"34-boon": "finesse"}
+    actions:
+      - grant: "34-end"
+      - train_stat:
+          stat: dexterity
+          amount: 3
+      - send_text: "The fight leaves something behind in your hands and feet -- a settled, permanent quickness, earned the hard way at the top of a tower."

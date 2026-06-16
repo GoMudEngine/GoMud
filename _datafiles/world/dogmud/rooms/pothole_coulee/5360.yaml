@@ -1,0 +1,43 @@
+roomid: 5360
+zone: Pothole Coulee
+title: Overlook Rise
+description: >
+  The chimney delivers you onto the bluff-top with an abruptness that
+  steals the breath. Wind arrives from every direction at once, a
+  flat unbroken pressure that has nothing to push against up here --
+  no trees, no walls, nothing between you and the sky in any
+  direction. The coulee opens below in a long curved scar, every
+  room of it visible from this height, every approach laid bare.
+  The stone underfoot is pale and wind-scoured, stripped of anything
+  loose by years of exposure. To the north the bluff continues its
+  rise toward what looks like the highest ground on this whole
+  stretch of country.
+biome: cliffs
+coord:
+  x: 49
+  y: -8
+  z: 3
+exits:
+  down:
+    roomid: 5358
+  north:
+    roomid: 5361
+nouns:
+  wind: The wind up here is not a gust but a fact -- a constant
+    lateral pressure that leans against you and does not stop. It
+    carries grit and the smell of dry stone and something faintly
+    metallic, the smell of altitude itself. It has been doing this
+    for a long time.
+  rise: The rise is the bluff-top's entry point, the place where the
+    chimney delivers you from the coulee floor to the exposed height
+    above. The stone here is pale and clean, scoured down to bare
+    rock by wind that has had centuries to work.
+idlemessages:
+- The <ansi fg="yellow">wind</ansi> shifts a degree and presses harder against your left side,
+  then settles back to its constant bearing.
+- From here the whole coulee is a map. You can see every approach,
+  every hollow, every place something might shelter or hide.
+- A loose chip of pale stone skitters across the <ansi fg="white">rise</ansi> and drops off
+  the eastern edge without a sound.
+- The gusts carry faint sounds up from below -- distance blurs them
+  into something indistinct, neither voice nor wind.

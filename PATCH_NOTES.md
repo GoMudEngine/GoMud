@@ -1,5 +1,122 @@
 # DOGMud Patch Notes
 
+## 2026-06-16 — Newbie-area rework: CUTOVER — Pothole Coulee goes live; Sanctum Basin retired [branch-local → master]
+
+The new newbie experience is complete and connected to the world. New
+characters now begin in Pothole Coulee (the Awakening Pool); the old Sanctum
+Basin tutorial zone has been retired.
+
+- **C9 Polish (shipped this cutover):**
+  - **Repeatable quests** — a new engine capability (`repeatable` + a per-quest
+    cooldown). Each spoke's trainer now offers a small repeatable practice loop
+    (cull the wash, brew again, run game, and so on) — modest pay, capped by a
+    cooldown, with the real reward being the skill you build doing it.
+  - **A living hub** — the eight hub folk now keep daily rhythms: working their
+    posts by day, gathering at the Drowned Lantern of an evening, and sleeping
+    at night. Overheard conversations pass between the regulars. The cleric and
+    the trader keep their posts around the clock so newcomers are never stranded.
+  - **Reward + discoverability polish** across the new questlines.
+- **C10 Cutover:**
+  - **The road out** — a long hike-out trail now descends from the western rim
+    of the coulee, across open badlands, into the eastern reaches of Ironwind
+    Steppe. The coulee is no longer a closed cradle.
+  - **Sanctum Basin retired** — the old tutorial zone, its NPCs, and its trial
+    quests are gone. Death now returns you to the Mending Hut in the coulee.
+  - **The Low Tunnels endure** — the labyrinth (and the Warren Compact) keep a
+    new entrance: a crack in the basalt at the edge of the Northern Road.
+  - **Returning travelers** are quietly recognized as already Awakened, so the
+    coulee's threshold never bars a veteran.
+
+
+
+The Pothole Coulee newbie zone now has all seven spokes built and verified.
+Branch-local (`feature+newbie-area`); ships to players at the chunk-10 cutover.
+The combat crash fix below is prod-relevant and can be cherry-picked ahead of
+the cutover.
+
+- **Spoke G (Ranged & Marksmanship) complete** — the final spoke, on the
+  wind-scoured bluffs above the coulee. Marksman Iden teaches the ranged loop:
+  take up a sling, reload it, and put a stone into a practice butt down-range.
+  Scout Bryn teaches the cross-canyon shot — firing into the next chamber, and
+  the rule that a shot target charges you — and hands over a hand crossbow. The
+  capstone climbs to a raider overlook and brings down a kiting bowmaster who
+  fights the way you now can: at range, on the move. Rewards a permanent
+  Perception gain, a hunting bow, and an ammunition stockpile. Twenty rooms
+  (plus lateral connector trails that close the outer exploration ring), nine
+  mobs, and three quests, verified end-to-end. No new items — it reuses the
+  existing ranged-weapon gear.
+- **Spoke F (Lore & Folk Tradition) complete** — the social/discovery spoke:
+  an outlying farmstead, a ring of standing stones, and an old shrine. Quests
+  progress by talking, helping, and searching rather than fighting (with one
+  light taunt-to-defuse encounter), and the capstone uncovers a hidden relic
+  that hints at a wider, stranger world. Twenty-five rooms, eight NPCs, two new
+  items.
+- **Combat crash fix (prod-relevant).** Fixed a nil-pointer panic that could
+  crash the whole server during combat: a kiting archer whose target leaves the
+  room (clearing the archer's aggro) could reach the mob-AI decision step with
+  no aggro set and dereference nil. This affects any ranged/archer mob, not just
+  the new zone — it is independent of the newbie rework. Guarded and
+  regression-tested.
+- **Quest engine (builder-facing).** The `shoot` and `reload` commands now
+  notify the quest engine, so quests can gate a step on firing or reloading a
+  ranged weapon (matching the existing forage/drink/throw/cast hooks).
+
+## 2026-06-14 — Newbie-area rework: Spokes C, D & E [branch-local, not yet live]
+
+More build progress on the Pothole Coulee newbie zone. Lives on the
+`feature+newbie-area` branch; ships to players at the chunk-10 cutover, not
+before. Recorded here as a dated build log.
+
+- **Spoke C (Alchemy) complete** — the herbalism/brewing tutorial spoke,
+  descending south into a marsh. Herbalist Birna teaches the brew loop
+  (buy or forage herbs, craft a healing salve at the alchemy bench, drink
+  it); Fenwalker Falv teaches throwing an alchemical firebomb — and that
+  throwing, casting, and special moves all share one cooldown — plus the
+  potion bandolier; the capstone wades a poison swamp to break the Spirit
+  of the Swamp for a permanent vitality gain, a stocked kit of brewed
+  supplies, and an advanced recipe. Eighteen rooms, eight mobs, a capstone
+  potion, and three quests, verified end-to-end.
+- **Spoke D (Wilderness & Tracking) complete** — the fieldcraft spoke on
+  the open steppe. Scout Tarn teaches reading sign (track a hare, forage
+  the scrub); Hunter Delk teaches the hunter's loop — bring down a
+  pronghorn for meat, rest rough in the field to recover, and cook the kill
+  at a campfire; the capstone breaks a predator pack and its alpha for a
+  permanent perception gain, a crafted hide garment, and a hunting kit.
+  Twenty rooms, eight mobs (a full canine pack), and three quests.
+- **Spoke E (The Folding / magic) underway** — the magic spoke is built
+  out structurally: a ruined hilltop observatory, a veil-thin meditation
+  grove, and reality-torn scabland where an "Unfolded" aberrant waits. It
+  will teach casting, the three channels, willpower, and concentration, and
+  grant a first area spell and a heal. Rooms in; NPCs and quests next.
+- **Two more reusable quest-reward engine features** (builder-facing):
+  quests can now grant a stockpile of items in one reward (`item_info`),
+  and the `sleep` verb advances "rest in the field" quest steps. These back
+  the Alchemy and Wilderness spokes and are open to all future content.
+
+## 2026-06-13 — Newbie-area rework: Spoke B (Forge) [branch-local, not yet live]
+
+Build progress on the Pothole Coulee newbie zone (replaces Sanctum Basin).
+This work lives on the `feature+newbie-area` branch and ships to players at
+the chunk-10 cutover, not before. Recorded here as a dated build log.
+
+- **Spoke B (Forge) complete** — the smithing/crafting tutorial spoke that
+  climbs west from the hub. Smith Rusk teaches the craft loop (buy stock,
+  forge an iron dagger); Survivor Ovell sends you up the talus slope to
+  clear it, forage basalt-iron, and learn the component bag and salvage;
+  the capstone descends a pitch-dark mine (cast your glow to see) to put
+  down a stone-blooded beast for a forged blade, a permanent strength gain,
+  and an advanced recipe. 18 rooms, 8 mobs, the basalt-iron material/blade,
+  and three quests, all verified end-to-end.
+- **Newbies are now taught the light spell.** Cleric Hadwen at the hub
+  explains the chrysalis-glow spell every character already carries and
+  warns that dark caves and mines blind you until you light one. Ovell
+  reinforces it at the mine mouth.
+- **Two reusable quest-reward engine features** (builder-facing): quests
+  can now grant a permanent stat increase (`stat_info` reward /
+  `train_stat` action) and teach a crafting recipe (`recipe_info` reward /
+  `learn_recipe` action), both persisted to the character. These back the
+  Forge spoke's rewards and are available to all future quest content.
+
 ## 2026-06-12 — Loaded-weapon ranged combat
 
 Bows, crossbows, pistols, and slings are now fully playable. The

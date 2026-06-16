@@ -1,0 +1,38 @@
+roomid: 5211
+zone: Pothole Coulee
+title: Basalt Stair
+description: >
+  A switchback stair has been cut straight into the basalt of the bowl
+  wall, each tread worn shallow in the middle by the long press of
+  climbing feet. Below, the pool sits dark and flat as poured glass;
+  above, the open shelf of the steppe shows a strip of washed-out sky.
+  Wind funnels up the cut, cool off the water, tugging at your clothes as
+  it passes. The basalt is dark grey-black and water-stained, and your
+  hand finds old grips polished smooth by everyone who climbed here before
+  you.
+biome: cliffs
+coord:
+  x: 45
+  y: -1
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  south:
+    roomid: 5200
+  north:
+    roomid: 5212
+nouns:
+  stair: The stair is no mason's work but a rough switchback hacked and
+    worn into the rock, doubling back on itself up the steep bowl wall.
+    Each tread dips in the middle where countless feet have ground it
+    hollow. Going down it leads to the pool; going up, to the open shelf
+    and the world beyond.
+  basalt: The wall here is dark basalt, the same water-polished grey-black
+    stone that lines the whole bowl. Ancient floods carved the coulee out
+    of it and smoothed every edge they passed. Up close you can see the
+    old chisel-scars where hands later cut the stair, softened now by
+    weather and use.
+idlemessages:
+- Wind funnels up the cut stair with a low, hollow moan.
+- A loose pebble skitters down a tread and ticks away into the water below.

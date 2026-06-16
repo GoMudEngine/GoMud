@@ -1,0 +1,32 @@
+roomid: 5220
+zone: Pothole Coulee
+title: Dry Coulee Mouth
+description: >
+  The coulee floor runs out dry to the east, a wide gravel wash climbing
+  away between bare stone shoulders. Far up the canyon a steady knocking
+  carries down on the wind -- someone striking a post, over and over, with
+  a fighter's slow patience. A crew has been digging at the fallen rock
+  that chokes the mouth, and the way through is nearly clear.
+biome: shore
+coord:
+  x: 48
+  y: 0
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  west:
+    roomid: 5209
+  east:
+    roomid: 5227
+nouns:
+  wash: The dry wash climbs east between bare shoulders of stone, its
+    gravel bed swept clean by floods that come only in the wet season.
+    Half-cleared rockfall still narrows the throat of it, but a path has
+    been picked through, and the canyon opens wide and inviting beyond.
+  post: You cannot see the post from here, only hear it -- a far,
+    rhythmic knocking, wood on wood, somewhere up the wash. Someone is
+    drilling at it the way fighters do, hour on patient hour, and the
+    sound carries clean down the canyon to the mouth.
+idlemessages:
+- Far up the wash, the steady knocking of fist on <ansi fg="itemname">post</ansi> carries down and fades.

@@ -1,0 +1,71 @@
+mobid: 9142
+zone: Pothole Coulee
+behavior_archetype: leader
+archetype: fighting
+statpool: 130
+itemdropchance: 20
+hostile: true
+maxwander: 1
+groups:
+  - beast
+  - pack
+aiprofile: predator
+activitylevel: 22
+items:
+  - 40070   # pack-hide pelt — carried, always drops
+idlecommands:
+  - 'emote ranges the far edge of the coulee in a slow, unhurried
+    patrol, pausing at each vantage to read the ground below'
+  - ''
+  - 'emote lifts the great scarred head and vocalizes once -- a low,
+    rolling sound that carries down the coulee floor -- then listens'
+  - ''
+  - 'emote sits at the ridgeline and watches the approaches with the
+    focused attention of something that has learned to track a dozen
+    things at once'
+  - ''
+combatcommands:
+  - 'emote drives in hard and pulls off at the last instant, circling
+    wide -- a testing lunge designed to read how you move'
+  - ''
+  - 'emote lets out a sharp bark and the scab-hounds shift position,
+    tightening the ring'
+  - ''
+  - 'emote reads the opening and commits, closing the distance in a
+    long flat rush that comes in lower than expected'
+  - ''
+character:
+  name: Scarred Outrider
+  description: |
+    The outrider ranges the territory's edge alone, and has been doing
+    it long enough that the coulee's geography is printed into its
+    movement the way familiarity makes all motion more certain. It is
+    large -- larger than the pack-hound, broad-shouldered and deep-
+    chested, the muzzle gone grey with age but the body still carrying
+    the easy readiness of a thing that has fought its way to the far
+    edge of the pack hierarchy and intends to stay there. The scarring
+    on this one is not random damage. It records specific decisions:
+    a long diagonal across the flank from a blade, a notch out of the
+    left ear, a ridge across the nose that healed wrong and gives the
+    face a permanent slight asymmetry. The outrider does not merely
+    patrol. It is the pack's early warning, its rallying voice, the
+    mind that coordinates the hounds before the alpha is involved. When
+    it vocalizes, the pack reshapes itself around the sound. Meeting it
+    alone at the territory's edge means the pack already knows you are
+    here.
+  speciesid: 2
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 40
+    strength:
+      training: 36
+    vitality:
+      training: 32
+    perception:
+      training: 12
+    willpower:
+      training: 6
+    charisma:
+      training: 4

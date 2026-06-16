@@ -13,25 +13,33 @@ type BumpRepCall struct {
 	Delta   int
 }
 
+// StatIncreaseCall records a single IncreaseStat call for test assertions.
+type StatIncreaseCall struct {
+	Stat   string
+	Amount int
+}
+
 // mockActionContext tracks all actions executed for test assertions.
 type mockActionContext struct {
-	granted       []string
-	consumedItems []int
-	givenItems    []int
-	givenGold     int
-	sentTexts     []string
-	roomTexts     []string
-	spawnedMobs   []SpawnDef
-	spawnedItems  []SpawnDef
-	taughtSpells  []string
-	appliedBuffs  []BuffDef
-	teleported    int
-	lockedExits   []ExitLock
-	unlockedExits []ExitLock
-	npcSays       []NpcSayDef
-	sequences     []SequenceDef
-	bumpedRep     []BumpRepCall
-	userId        int
+	granted          []string
+	consumedItems    []int
+	givenItems       []int
+	givenGold        int
+	sentTexts        []string
+	roomTexts        []string
+	spawnedMobs      []SpawnDef
+	spawnedItems     []SpawnDef
+	taughtSpells     []string
+	appliedBuffs     []BuffDef
+	teleported       int
+	lockedExits      []ExitLock
+	unlockedExits    []ExitLock
+	npcSays          []NpcSayDef
+	sequences        []SequenceDef
+	bumpedRep        []BumpRepCall
+	increasedStats   []StatIncreaseCall
+	learnedRecipes   []string
+	userId           int
 }
 
 func newMockActionContext(userId int) *mockActionContext {
@@ -54,7 +62,13 @@ func (m *mockActionContext) TeachSpell(spellId string) {
 	m.taughtSpells = append(m.taughtSpells, spellId)
 }
 func (m *mockActionContext) TrainSkill(skill string, level int) {}
-func (m *mockActionContext) ApplyBuff(b BuffDef)                { m.appliedBuffs = append(m.appliedBuffs, b) }
+func (m *mockActionContext) IncreaseStat(stat string, amount int) {
+	m.increasedStats = append(m.increasedStats, StatIncreaseCall{Stat: stat, Amount: amount})
+}
+func (m *mockActionContext) LearnRecipe(recipe string) {
+	m.learnedRecipes = append(m.learnedRecipes, recipe)
+}
+func (m *mockActionContext) ApplyBuff(b BuffDef) { m.appliedBuffs = append(m.appliedBuffs, b) }
 func (m *mockActionContext) Teleport(roomId int)                { m.teleported = roomId }
 func (m *mockActionContext) LockExits(e ExitLock)               { m.lockedExits = append(m.lockedExits, e) }
 func (m *mockActionContext) UnlockExits(e ExitLock)             { m.unlockedExits = append(m.unlockedExits, e) }
@@ -161,4 +175,40 @@ func TestExecuteAction_BumpRep(t *testing.T) {
 	err := ExecuteAction(a, ctx)
 	assert.NoError(t, err)
 	assert.Equal(t, []BumpRepCall{{Faction: "warren", Delta: 30}}, ctx.bumpedRep)
+}
+
+func TestExecuteAction_TrainStat(t *testing.T) {
+	ctx := newMockActionContext(5)
+	a := ActionDef{TrainStat: &StatDef{Stat: "strength", Amount: 5}}
+	err := ExecuteAction(a, ctx)
+	assert.NoError(t, err)
+	assert.Equal(t, []StatIncreaseCall{{Stat: "strength", Amount: 5}}, ctx.increasedStats)
+}
+
+func TestExecuteAction_TrainStat_Dexterity(t *testing.T) {
+	ctx := newMockActionContext(5)
+	a := ActionDef{TrainStat: &StatDef{Stat: "dexterity", Amount: 3}}
+	err := ExecuteAction(a, ctx)
+	assert.NoError(t, err)
+	assert.Len(t, ctx.increasedStats, 1)
+	assert.Equal(t, "dexterity", ctx.increasedStats[0].Stat)
+	assert.Equal(t, 3, ctx.increasedStats[0].Amount)
+}
+
+func TestExecuteAction_LearnRecipe(t *testing.T) {
+	ctx := newMockActionContext(7)
+	a := ActionDef{LearnRecipe: &RecipeDef{Recipe: "iron-dagger"}}
+	err := ExecuteAction(a, ctx)
+	assert.NoError(t, err)
+	assert.Equal(t, []string{"iron-dagger"}, ctx.learnedRecipes)
+}
+
+func TestExecuteAction_LearnRecipe_MultipleRecipes(t *testing.T) {
+	ctx := newMockActionContext(7)
+	recipes := []string{"iron-dagger", "iron-buckler"}
+	for _, r := range recipes {
+		err := ExecuteAction(ActionDef{LearnRecipe: &RecipeDef{Recipe: r}}, ctx)
+		assert.NoError(t, err)
+	}
+	assert.Equal(t, recipes, ctx.learnedRecipes)
 }

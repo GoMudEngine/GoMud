@@ -1,0 +1,54 @@
+roomid: 5346
+zone: Pothole Coulee
+title: Clearstone Rise
+description: >
+  The crown of the rise opens out of the stair into clear sky and
+  wide view. The coulee spreads below in every direction -- the stone
+  ring small and complete to the south, the shrine roof patchwork
+  and open below your feet, the steppe rolling out in long grass
+  toward distances that the eye is glad to have. The wind up here
+  is steadier than anywhere on the approach, arriving without the
+  interruptions of walls and stones. At the rise's highest point
+  a single marker stone stands, clean-cut and pale, facing outward
+  to the north and west. It bears no carving now, or none that the
+  weather has left legible, but it was placed by someone who wanted
+  a thing marked and permanent on this high ground. It looks toward
+  country that lies beyond the coulee's edge -- toward paths not
+  yet walked, distances not yet measured. One such path is plain
+  from here: a faint crest-trail runs the rim east toward a broken
+  watchtower on the far height. Standing beside it is
+  enough to feel that the accounting of this place is not yet
+  finished.
+biome: land
+coord:
+  x: 43
+  y: -14
+  z: 1
+exits:
+  south:
+    roomid: 5345
+  # Lateral connector (chunk 8): non-spatial rim-walk to Spoke A's Tower Top.
+  watchtower:
+    roomid: 5243
+nouns:
+  rise: The crown of the rise is perhaps twenty paces across, its
+    surface close-cropped grass and exposed stone in roughly equal
+    measure. Nothing grows tall here; the wind keeps everything low
+    and honest. The edges fall away gradually in all directions,
+    giving a sense of height that is greater than the actual
+    elevation.
+  marker: The marker stone is waist-high, set deep enough that it
+    does not shift in the wind. Its cut faces are weathered smooth.
+    Whatever was on it -- text, symbol, figure -- is gone. It
+    stands facing northwest as though it is still watching for
+    something that was expected to come from that direction.
+idlemessages:
+- The wind on the <ansi fg="cyan">rise</ansi> arrives from the northwest and holds
+  steady. It carries nothing particular -- just space.
+- The <ansi fg="cyan">marker</ansi> casts a short shadow at this hour, pointing
+  back toward the shrine below as though indicating a direction.
+- Far below, the coulee floor catches the light differently than
+  the steppe beyond -- something in the soil, or the way the
+  grass grows in the low ground.
+- The sky up here feels closer. The horizon looks like a promise
+  of something the land has not yet delivered.

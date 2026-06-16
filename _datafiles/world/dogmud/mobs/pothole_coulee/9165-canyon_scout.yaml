@@ -1,0 +1,53 @@
+mobid: 9165
+zone: Pothole Coulee
+behavior_archetype: generic_fighter
+archetype: fighting
+statpool: 45
+itemdropchance: 15
+hostile: true
+maxwander: 0
+groups:
+  - humanoid
+  - bluff_raiders
+activitylevel: 20
+idlecommands:
+  - 'emote leans on a spear at the center of the open floor, watching the
+    south pinch where sound comes through'
+  - ''
+  - 'emote rolls a shoulder and spits, bored with the watch but not careless
+    about it'
+  - ''
+combatcommands:
+  - 'emote closes hard and fast, trying to crowd in past the reach of any
+    bow before it can speak again'
+  - ''
+character:
+  name: Canyon Scout
+  description: |
+    A raider posted to hold the sounding floor, the open stretch of canyon
+    where every footfall and bowstring carries from wall to wall. Unlike the
+    slingers on the ledges, this one is built to close: a short spear, a
+    battered iron blade at the belt, and the heavy shoulders of someone who
+    settles fights at arm's length. He knows the floor is a shooting gallery
+    and he hates it -- the moment a shot comes at him from down the slot he
+    will come straight up it after whoever loosed it, fast, to make the
+    distance stop mattering.
+  speciesid: 1
+  level: 1
+  gold: 4
+  equipment:
+    weapon:
+      itemid: 10014
+  stats:
+    strength:
+      training: 12
+    dexterity:
+      training: 10
+    vitality:
+      training: 12
+    perception:
+      training: 6
+    willpower:
+      training: 3
+    charisma:
+      training: 2

@@ -1,0 +1,82 @@
+================================================================================
+NEWBIE REWORK — CHUNK 7 (Spoke F, Lore & Folk Tradition) — PHASE D WALKTHROUGH
+Dialogue + quests (inline) + engine touches. Scripted-verified. 2026-06-15.
+Sub-spec: docs/superpowers/specs/2026-06-15-newbie-chunk7-spoke-f-lore-subspec.md
+================================================================================
+
+THE SOFT SPOKE — no boss. Quest progress comes from ask/help/taunt/search beats,
+not kills. The capstone is a quiet discovery (the Orbital Stone), not a fight.
+
+ENGINE (3 touches — all the cast/forage 1-liner pattern; go build exit 0):
+  - internal/usercommands/help.go        -> Notify("command", help)   [Q47 beat]
+  - internal/usercommands/taunt.go       -> Notify("command", taunt)  [Q48 beat]
+  - internal/usercommands/skill.search.go-> Notify("command", search) [Q49 beat]
+  All three command handlers LACKED the quest Notify; added it (verified each
+  fires its quest beat in the walkthrough).
+
+ORBITAL STONE: engine `hidden_nouns` field on room 5343 (the Reliquary) — a
+  `disc` of impossible pale metal bearing a ring-with-a-line-struck-through mark,
+  the same mark the Reckoning Bone carries (the §4.2 sci-fi tease; a quiet tie to
+  the novel's father's-disc). NOT understood, by design. The FULL tease is
+  delivered in the guaranteed 49-find `search` send_text (the hidden_noun is a
+  bonus re-read for a lucky search roll — see bug #2).
+
+QUESTS (47-49, NO kill beats):
+  47 First Words (Wenna 9153 @5324) — ask + `help` -> Folk Charm 20089 +
+     charisma:1 (stat_info) + gold. Steps start/help/end.
+  48 The Standing Stones (Hale 9157 @5333) — folk/faction lore + `taunt` the
+     belligerent Garrow (9158) on the green (5335) to defuse the dispute ->
+     rhetoric:1 (skillinfo) + Reckoning Bone 30066 + gold. Steps start/taunt/end.
+  49 The Old Shrine (Sere 9160 @5341) — `search` the Reliquary (5343) to uncover
+     the disc -> charisma:3 (stat_info) + narrative faction nod + gold. Steps
+     start/find/end.
+  Reward keys: itemid/skillinfo no-underscore, stat_info tagged. No quest flags.
+  All grantsQuest nodes carry the {id}-end token in questExcluded + quest/task.
+
+DIALOGUE: 9153 Wenna (Q47, ask-depth + help lesson) / 9157 Hale (Q48, deep lore +
+  the dispute) / 9160 Sere (Q49, the shrine + the search) — all Opened, gated
+  30-end -> 47 -> 48 -> 49. Dispute pair: 9158 Garrow (belligerent, fold-to-taunt)
+  + 9159 Ferd (weary; thanks you after 48-taunt). Garrow btree
+  (behaviors/pothole_coulee/9158-): combat_passive + mob_combat_round ->
+  say/emote/flee.
+
+VERIFICATION (scripted AI-port walkthrough, smoketester; throwaways deleted):
+ [x] go build exit 0.
+ [x] manifest 0 FAIL (Spoke F 25 rooms + 27 exits + 8 mobs).
+ [x] boot CLEAN: quests 38->41 (+3), ValidateAllFlags "all validated",
+     questengine 41, ValidateZoneConsistency 0/0 panic, Server Ready 0 panic.
+ [x] Q47: "new quest: First Words" -> `help` fired "progress" (help->Notify
+     WORKS) -> `ask wenna done` "completed" + "You receive charm!" (Folk Charm in
+     inv) + charisma ("others may find you more compelling") + 15g.
+ [x] Q48: "new quest" -> `taunt garrow` fired "progress" (taunt->Notify WORKS) +
+     the defusal send_text -> `ask hale done` "completed" + "You receive bone!"
+     (Reckoning Bone in inv) + rhetoric (silent skillinfo) + 25g.
+ [x] Q49: "new quest" -> `search` (Reliquary) fired "progress" (search->Notify
+     WORKS) + the full Orbital-Stone tease send_text -> `ask sere done`
+     "completed" + charisma:3 (status: Charisma -> remarkable) + 40g.
+ [x] Garrow yield btree FIRES: "Sullen Garrow says, 'All right! Enough -- have it
+     your way.'" + "shoulders off the green..." + flee.
+
+2 BUGS caught + fixed mid-verification:
+ (1) Garrow's flee was on mob_hurt, but a taunt deals CONVICTION damage (to
+     confidence), not HP -> mob_hurt never fired. Switched the btree to
+     mob_combat_round (fires when the taunt starts combat, regardless of damage
+     type). Re-tested: he now yields + flees.
+ (2) `look disc` returned "Look at what???" — the `search` skill-roll did not
+     reveal the hidden_noun on a single try. Moved the FULL Orbital-Stone tease
+     into the guaranteed 49-find `search` send_text and dropped the "look disc"
+     promise from the quest/dialogue hints (the hidden_noun stays as a bonus
+     re-read for a successful search roll). The discovery + tease now land
+     guaranteed on the search.
+
+KNOWN — god-tier test artifact (flag for the evening playtest, NOT a content
+  bug): a STRONG character that sits in 5335 auto-attacking after the taunt can
+  block Garrow's flee and beat him to ~4% HP. In normal newbie flow the taunt
+  fires the beat, the player is told Garrow yielded and leaves for Hale, and
+  Garrow (combat_passive — he never attacks) flees barely scratched. Difficulty/
+  feel deferred per feedback-defer-tuning-to-post-build-playtest.
+
+NEXT: chunk-complete gate -> COMMIT C7 (engine 3 Notifies + Spoke F R+M+D
+  content; exclude config.yaml dev settings + runtime YAMLs) -> C8 = Spoke G
+  (Ranged) + lateral outer-ring connectors.
+================================================================================

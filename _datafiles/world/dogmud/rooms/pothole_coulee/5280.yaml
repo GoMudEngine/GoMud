@@ -1,0 +1,38 @@
+roomid: 5280
+zone: Pothole Coulee
+title: Heart of the Mire
+description: >
+  The mire is deepest here, and the water itself seems to gather
+  rather than merely collect -- to arrive, as though called. The
+  ground does not hold footfall so much as absorb it, and the slow
+  pulse of the mire against boot-leather has the rhythm of something
+  breathing. The air tastes of iron and sweetness together, wrong in
+  a way the body recognizes before the mind does. Everything here
+  leans inward, as though the heart of this place is a gravity of
+  its own, patient and certain and very old. The silence has weight.
+biome: swamp
+coord:
+  x: 47
+  y: 13
+  z: -1
+exits:
+  north:
+    roomid: 5279
+  south:
+    roomid: 5281
+spawninfo:
+- mobid: 9135
+nouns:
+  water: It gathers here as though drawn, pooling thick and dark
+    around every low point, slow to move and reluctant to leave.
+    The surface holds an oily sheen that shifts without wind, and
+    the smell rising off it is both sweet and wrong.
+  mire: The ground is more mire than earth at the heart, soft and
+    deep and certain to swallow anything left still for long. It
+    breathes in its slow way, and the rhythm of it is unsettling
+    once noticed.
+idlemessages:
+- The <ansi fg="itemname">mire</ansi> exhales a long slow bubble that
+  breaks the surface in silence and leaves a dark ring spreading.
+- The <ansi fg="itemname">water</ansi> around your feet shifts without
+  cause, as though something below has turned to regard you.

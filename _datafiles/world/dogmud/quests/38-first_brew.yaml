@@ -1,0 +1,108 @@
+# Quest 38 — First Brew (Pothole Coulee, Spoke C / Alchemy inner ring, cert)
+#
+# Token flow:
+#   38-start  — granted by Herbalist Birna's brew_offer dialogue node. Requires
+#               30-end (Awakening). Teaches the brew loop: buy a bottle + herb
+#               from Birna's stall, craft a healing salve at the alchemy bench,
+#               then drink it.
+#   38-brew   — command trigger on craft in the bench rooms (5265 or 5267).
+#   38-drink  — command trigger on drink (anywhere). Teaches the drink command.
+#   38-end    — granted by Birna's brew_turnin dialogue node.
+#
+# Design: healing-salve is a skill_minimum 0 recipe (every character knows it),
+# so the lesson is the LOOP (buy/forage -> craft at a station -> drink), not the
+# recipe. The reward grants the minor-antidote recipe (skill 8 -- a real new
+# recipe to grow into) plus a couple of spare vials (item_info) to keep brewing.
+
+questid: 38
+name: First Brew
+description: >-
+  Herbalist Birna keeps the drying-racks at the sheltered pool. She has
+  offered to teach you the first brew: buy a glass vial and a pair of
+  healer's roots from her stall, grind and steep them at the alchemy
+  bench into a healing salve, then drink it down.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: >-
+      Birna has pointed you at the bench. Buy a glass vial and two
+      healer's roots from her stall, then craft a healing salve at the
+      alchemy bench.
+    hint: >-
+      Type list at Birna's pool to browse her stock. A healing salve
+      takes two roots and a vial -- type buy glass vial, then buy 2
+      healers root. Stand at the alchemy bench and type craft healing
+      salve. (Type craft list to see what you can make right now.)
+  - id: brew
+    description: >-
+      You ground the root, steeped it, and sealed a healing salve in the
+      vial. Now drink it -- a brew is only worth what it does.
+    hint: >-
+      Type drink healing salve to drink down what you just made.
+  - id: drink
+    description: >-
+      The salve went to work, warm and steady. Tell Birna how it felt.
+    hint: >-
+      Report to Herbalist Birna -- type ask birna done.
+  - id: end
+    description: >-
+      Birna has named you brewer enough to leave the pool. The marsh
+      lies south; a fenwalker named Falv keeps a camp in the reeds.
+
+rewards:
+  skillinfo: "alchemy:1"
+  recipe_info: "minor-antidote"
+  item_info: "40006:2"
+  gold: 15
+  playermessage: >-
+    Birna takes the empty vial back and turns it to the light, checking
+    the film the salve left behind. The green-gold veining in her hands
+    catches the same light. "Clean steep. You did not scorch the root --
+    most do, the first time." She tucks a pair of empty vials into your
+    pack and presses a folded scrap of waxed paper after them. "The
+    antidote formula. You will want it before the marsh teaches you why.
+    Falv keeps a camp south in the reeds -- he is rough, but he knows the
+    water. Set your home here first so you have somewhere to wake."
+  roommessage: "Birna inspects the empty vial, nods, and tucks a few
+    things into the newcomer's pack."
+
+triggers:
+  # ── BREW: craft at an alchemy bench (rooms 5265 / 5267) ──────────────
+  - event: command
+    command: craft
+    room: 5265
+    conditions:
+      has: ["38-start"]
+      missing: ["38-brew"]
+    actions:
+      - grant: "38-brew"
+      - send_text: >-
+          The root grinds to paste, the water draws it green, and the
+          salve seals clean in the vial. Now drink it -- type drink
+          healing salve.
+  - event: command
+    command: craft
+    room: 5267
+    conditions:
+      has: ["38-start"]
+      missing: ["38-brew"]
+    actions:
+      - grant: "38-brew"
+      - send_text: >-
+          The root grinds to paste, the water draws it green, and the
+          salve seals clean in the vial. Now drink it -- type drink
+          healing salve.
+
+  # ── DRINK: drink the salve (anywhere) ───────────────────────────────
+  - event: command
+    command: drink
+    conditions:
+      has: ["38-brew"]
+      missing: ["38-drink"]
+    actions:
+      - grant: "38-drink"
+      - send_text: >-
+          The salve spreads warm through you, a slow steady mending.
+          That is what a brew is for. Tell Birna how it went.

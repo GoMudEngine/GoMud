@@ -1,23 +1,24 @@
 roomid: 2001
 zone: World Road
 title: The Northern Road
-description: A weathered track of packed basalt dust stretches away in both directions.
-  To the north, the plateau of Sanctum Basin rises against the pale sky -- the iron
-  gate of the World Gate visible as a glint high above. To the south and east, the
-  land descends into the wider world of Gaius -- untamed, unmapped, and waiting.
+description: A weathered track of packed basalt dust runs south and east, descending
+  into the wider world of Gaius -- untamed, unmapped, and waiting. To the north, dry
+  badlands climb toward distant heights, trackless and pale. A narrow crack splits
+  the basalt at the road's edge, breathing cold, damp air up from somewhere below.
 biome: desert
 coord:
   x: -10
   y: 6
   z: 0
 exits:
-  north:
-    roomid: 103
-    zone: Sanctum Basin
   south:
     roomid: 400
     zone: Dustwalk Road
+  crack:
+    roomid: 300
+    zone: Labyrinth of Low Tunnels
 idlemessages:
 - The road south disappears into the haze of the desert below.
-- The <ansi fg="itemname">plateau</ansi> of Sanctum Basin looms high overhead to the north.
+- Dry badlands climb away to the north, trackless and pale.
 - A dry wind comes down from the heights, carrying dust and the smell of sage.
+- Cold, damp air seeps from the crack in the basalt, out of place in the dry heat.

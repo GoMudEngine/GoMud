@@ -1,0 +1,31 @@
+roomid: 5222
+zone: Pothole Coulee
+title: Reedwash Mouth
+description: >
+  Reeds choke the wash where it bends away east, the water beneath them
+  gone still and green and thick with the smell of sweet rot and some
+  sharp clean herb cutting under it. Flagged stakes march off into the
+  growth, marking a line where someone is cutting a path through the
+  tangle. The work is half-done, the far stakes still lost in the reeds.
+biome: shore
+coord:
+  x: 47
+  y: 2
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  west:
+    roomid: 5207
+  south:
+    roomid: 5264
+nouns:
+  reeds: The reeds stand thick and head-high where the wash slows and
+    pools, their roots in still green water that smells of sweet rot and,
+    under it, a sharp clean herb-scent. Things grow in here that a careful
+    hand could gather and steep. The tangle swallows the path a stone's
+    throw on, where the cutting has not yet reached.
+  stakes: A line of flagged stakes has been driven into the muck, scraps
+    of bright rag tied at their heads to show the way through the reeds.
+    The near ones stand clear along a half-cut path; the far ones lean
+    deep in the growth, marking ground still to be opened.

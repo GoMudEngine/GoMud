@@ -1,0 +1,38 @@
+roomid: 5284
+zone: Pothole Coulee
+title: Open Steppe
+description: >
+  The ground levels out here into open steppe where nothing obscures
+  anything, and the animal sign comes into its own. Tracks press clear
+  into the dust: the twin-punch of hare, the splayed pad of something
+  heavier cutting diagonally across, the minute stippling of mice running
+  the same route they always run. A line of tracks leads south, distinct
+  and deliberate, pressed deep where the dust is finest. The steppe is
+  full of stories written in this dirt. You just have to know how to read.
+biome: land
+coord:
+  x: 43
+  y: 4
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  north:
+    roomid: 5283
+  south:
+    roomid: 5286
+spawninfo:
+- mobid: 9138
+nouns:
+  tracks: Pressed into the pale dust in overlapping generations, each
+    set a small record of something passing through. Hare prints go in
+    pairs, the hindfeet landing ahead of the front. The heavier prints
+    are older, edges soft, but the stride is long — a fox, most likely,
+    or something close to it. The line leading south is freshest.
+  dust: Fine and pale, the dust here holds every impression without
+    apology. Wind smooths old tracks overnight, leaving the new ones
+    standing sharp in the morning light. Rain would wash it all clean,
+    but rain has not come lately.
+idlemessages:
+- Something moved through here recently — the <ansi fg="itemname">tracks</ansi> still have sharp edges.
+- A gust skims the <ansi fg="itemname">dust</ansi>, softening the older prints at the margins.

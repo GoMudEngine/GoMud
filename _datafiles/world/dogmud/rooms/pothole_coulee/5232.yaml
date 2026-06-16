@@ -1,0 +1,47 @@
+roomid: 5232
+zone: Pothole Coulee
+title: Lower Wash
+description: >
+  The ground tips down and the safe shelf is behind you now. Underfoot the
+  wash is a dry river of grey gravel, ground smooth by floods that come
+  only in the wet, and the canyon walls lean up on either hand to close
+  out half the sky. Off to one side a fire-pit sits cold, a ring of
+  blackened stones banked with old ash and a gnawed bone or two. Picked-
+  over gear lies scattered past it -- a split pack, a strap, a boot with
+  no mate -- the leavings of folk who took what was worth taking and left
+  the rest. Nothing moves, and that is the wrong kind of quiet. Somewhere
+  up the wash, someone has marked you stepping onto their ground. The
+  gravel runs east and forks south; safe footing lies back west.
+biome: cliffs
+coord:
+  x: 52
+  y: -1
+  z: 0
+exits:
+  west:
+    roomid: 5231
+  east:
+    roomid: 5233
+  south:
+    roomid: 5234
+nouns:
+  wash: A wide floor of dry grey gravel running the length of the canyon,
+    swept smooth by floodwater that comes only in the wet season. It is
+    the road up to the tower, and it is held by people who do not welcome
+    company.
+  gravel: Rounded stones the size of knuckles and fists, packed and shifting
+    underfoot. Every step grinds and announces you -- there is no walking
+    this ground in silence, and whoever holds the wash knows it.
+  fire-pit: A ring of fire-blackened stones banked with cold ash. Someone
+    cooked and slept here not long ago. The ash is dead now, but the camp
+    was not abandoned in a hurry -- they left because they meant to come
+    back.
+  gear: The picked-over leavings of earlier passers -- a split pack, a
+    frayed strap, a single worn boot. Whatever had worth is long gone.
+    What remains is a quiet warning about how this wash treats strangers.
+spawninfo:
+- mobid: 9110
+  message: A bandit scout slips down from the rocks, eyeing you as easy pickings.
+  respawnrate: 5 real minutes
+idlemessages:
+- A pebble clicks loose somewhere up the <ansi fg="itemname">wash</ansi>, then nothing, as if something thought better of moving.
