@@ -39,6 +39,15 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 		return events.Cancel
 	}
 
+	// A sleeping mob (a scheduled "sleeping" segment, or one knocked out via
+	// the sleep mechanic) stays dormant: no idle flavor, shop/craft restock
+	// ticks, gossip, floor-loot grabs, goal pursuit, or behavior-tree idle
+	// emotes. The schedule executor and damage/wake events own the wake
+	// transition — not this idle handler.
+	if mob.Character.HasBuffFlag(buffs.Sleeping) {
+		return events.Continue
+	}
+
 	isCharmed := mob.Character.IsCharmed()
 
 	// if a mob shouldn't be allowed to leave their area (via wandering)

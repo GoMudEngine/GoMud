@@ -7,6 +7,7 @@ package behaviortree
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -57,6 +58,10 @@ func actSay(params map[string]any, ctx *EvalContext) Result {
 	if mob == nil {
 		return Failure
 	}
+	// A sleeping mob stays silent — no ambient or player-triggered chatter.
+	if mob.Character.HasBuffFlag(buffs.Sleeping) {
+		return Success
+	}
 	text := getStringParam(params, "text")
 	if text == "" {
 		return Failure
@@ -69,6 +74,11 @@ func actEmote(params map[string]any, ctx *EvalContext) Result {
 	mob := mobs.GetInstance(ctx.InstanceId)
 	if mob == nil {
 		return Failure
+	}
+	// A sleeping mob doesn't emote — suppress idle flavor and the
+	// player_enter greetings that fire from the noncombat archetypes.
+	if mob.Character.HasBuffFlag(buffs.Sleeping) {
+		return Success
 	}
 	text := getStringParam(params, "text")
 	if text == "" {
