@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -78,3 +79,50 @@ func TestActionReadinessDrift(t *testing.T) {
 		})
 	}
 }
+
+// ---------------------------------------------------------------------------
+// Cast readiness tests (Task 2)
+// ---------------------------------------------------------------------------
+
+// TestCastReadiness_UnknownSpell_Rejected verifies that "cast <nonexistent>"
+// yields ActionRejected immediately — wrong spell name is a structural error.
+func TestCastReadiness_UnknownSpell_Rejected(t *testing.T) {
+	actor, _, _ := newCastActor()
+	result := ActionReadiness(actor, "cast notaspell_xyzzy_ar")
+	assert.Equal(t, ActionRejected, result.Status)
+	assert.Equal(t, "unknown spell", result.Reason)
+}
+
+// TestCastReadiness_NoCP_Deferred verifies that a caster who knows the spell
+// but has zero Conviction gets ActionDeferred ("insufficient conviction").
+// Conviction = 0 by default from characters.New(); seedTestSpell sets Cost=5.
+func TestCastReadiness_NoCP_Deferred(t *testing.T) {
+	sd, cleanup := seedTestSpell("test-ar-nocp", spells.HelpSingle, 4)
+	defer cleanup()
+
+	actor, char, _ := newCastActor()
+	// Grant the spell — characters.New() initialises SpellBook with starters
+	// but not test spells; set directly as HasSpell checks SpellBook[id] > 0.
+	char.SpellBook[sd.SpellId] = 1
+	// char.Conviction is 0 (Go zero value) — below the spell's Cost of 5.
+
+	result := ActionReadiness(actor, "cast test-ar-nocp")
+	assert.Equal(t, ActionDeferred, result.Status)
+	assert.Equal(t, "insufficient conviction", result.Reason)
+}
+
+// TestCastReadiness_Affordable_Ready verifies that a caster who knows the
+// spell, has ample Conviction, is not casting/busy, and has no cooldowns
+// gets ActionReady.
+func TestCastReadiness_Affordable_Ready(t *testing.T) {
+	sd, cleanup := seedTestSpell("test-ar-affordable", spells.HelpSingle, 4)
+	defer cleanup()
+
+	actor, char, _ := newCastActor()
+	char.SpellBook[sd.SpellId] = 1 // character knows the spell
+	char.Conviction = 1000         // well above the spell's Cost of 5
+
+	result := ActionReadiness(actor, "cast test-ar-affordable")
+	assert.Equal(t, ActionReady, result.Status)
+}
+
