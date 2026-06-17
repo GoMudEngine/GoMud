@@ -2869,11 +2869,21 @@
                     }
                 }
 
-                // Drop (always, separator before it)
+                // Drop (always, separator before it). The server's `drop` only
+                // searches the backpack, so a worn item must be unequipped first.
+                // For worn items, chain remove → drop so one click drops equipped
+                // gear (the item keeps its handle across the unequip).
                 var sepDrop = document.createElement("div");
                 sepDrop.className = "ctx-sep";
                 menu.appendChild(sepDrop);
-                menu.appendChild(makeRow("Drop", false, function() { send("drop"); }));
+                if (collection === "worn") {
+                    menu.appendChild(makeRow("Drop", false, function() {
+                        SendData("remove @" + handle);
+                        SendData("drop @" + handle);
+                    }));
+                } else {
+                    menu.appendChild(makeRow("Drop", false, function() { send("drop"); }));
+                }
 
                 // Position: clamp to viewport
                 menu.style.display = "block";
