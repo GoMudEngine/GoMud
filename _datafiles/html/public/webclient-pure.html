@@ -666,6 +666,10 @@
             },
             "Commands.State": function() {
                 checkDeathClearsQueue();
+                // First per-round push after login → the connection has settled and
+                // player state is loaded; release the queue's login-burst hold.
+                queueLoginSettled = true;
+                if (queueSettleTimer) { clearTimeout(queueSettleTimer); queueSettleTimer = null; }
                 // Smart action queue: retry a deferred head once per round, and
                 // expire a stale interruption-rearm candidate.
                 if (queueRearm) { queueRearmAge++; if (queueRearmAge >= QUEUE_STALENESS_ROUNDS) { queueRearm = null; } }
@@ -1271,6 +1275,8 @@
         var queueInFlight = null;       // entry awaiting a Char.Action.Result
         var queueRearm = null;          // { triggerId, spell, attempts } — fired cast eligible for interruption re-arm
         var queueRearmAge = 0;          // rounds since the rearm candidate fired (cleared when stale)
+        var queueLoginSettled = false;  // hold draining until the login burst settles (see drainQueue)
+        var queueSettleTimer = null;    // fallback so the queue never holds forever if no round push arrives
 
         // Resolve $1..$9 captures into a command string (same logic as fireTriggerCommands).
         function substituteCaptures(cmds, caps) {
@@ -1304,6 +1310,18 @@
         // round (Commands.State tick), rejected→dequeue silently. Staleness window
         // (QUEUE_STALENESS_ROUNDS) drops a permanently-deferred entry after N rounds.
         function drainQueue() {
+            if (!queueLoginSettled) {
+                // A trigger that fires during the login text burst (e.g. on the
+                // initial room description) must not act before the player's state
+                // and input pipeline are ready on the server — otherwise the Try is
+                // mis-resolved and the entry vanishes without casting. Hold until the
+                // first per-round Commands.State marks us settled; a timer fallback
+                // guarantees we never hold forever (e.g. if that push lags).
+                if (!queueSettleTimer) {
+                    queueSettleTimer = setTimeout(function(){ queueLoginSettled = true; queueSettleTimer = null; drainQueue(); }, 2500);
+                }
+                return;
+            }
             if (queueInFlight) return;      // awaiting a Char.Action.Result
             if (!actionQueue.length) return;
             var entry = actionQueue[0];
