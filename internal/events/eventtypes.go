@@ -494,3 +494,13 @@ type GiftAccepted struct {
 }
 
 func (g GiftAccepted) Type() string { return "GiftAccepted" }
+
+// CastInterrupted fires when a player's in-progress spellcast is cancelled by
+// an outside force (active interrupt, damage-broken concentration). Consumed by
+// the GMCP layer so the web-client action queue can re-arm the cast.
+type CastInterrupted struct {
+	UserId  int
+	SpellId string
+}
+
+func (c CastInterrupted) Type() string { return `CastInterrupted` }

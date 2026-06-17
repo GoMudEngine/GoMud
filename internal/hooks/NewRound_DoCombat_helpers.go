@@ -208,10 +208,19 @@ func handlePlayerFoldCasting(user *users.UserRecord, userId int) bool {
 	if user.Character.IsDisabled() {
 		recordConcentrationFailure(combat.User, combat.Mob, user.Character, castingTargetChar(csBeforeProcess))
 		clearCastingActivity(user.Character, activity.TriggerConcentrationBreak)
+		events.AddToQueue(events.CastInterrupted{UserId: user.UserId, SpellId: csBeforeProcess.SpellId})
 		return true
 	}
 
 	result := processFoldRound(user.Character)
+
+	// Emit CastInterrupted for outside-force position breaks (prone/grapple from
+	// combat) so the web-client action queue can re-arm the cast. CastComplete
+	// and StillCasting are not interruptions; TargetGone / InsufficientConviction
+	// are not re-armable external forces.
+	if result.ProneBroke || result.GrappleBroke {
+		events.AddToQueue(events.CastInterrupted{UserId: user.UserId, SpellId: csBeforeProcess.SpellId})
+	}
 
 	switch {
 	case result.ProneBroke:
@@ -704,6 +713,7 @@ func handlePlayerConcentrationBreak(defUser *users.UserRecord, roundResult comba
 		csSnap, _ := defUser.Character.Activity.CastingData()
 		recordConcentrationFailure(combat.User, combat.Mob, defUser.Character, castingTargetChar(csSnap))
 		clearCastingActivity(defUser.Character, activity.TriggerConcentrationBreak)
+		events.AddToQueue(events.CastInterrupted{UserId: defUser.UserId, SpellId: csSnap.SpellId})
 		defUser.SendText(messaging.CategorySpellDisruption, `<ansi fg="red">The pain shatters your concentration!</ansi>`)
 		defRoom.SendText(messaging.CategorySpellDisruption, fmt.Sprintf(
 			`<ansi fg="username">%s</ansi>'s concentration breaks.`,
