@@ -1,6 +1,6 @@
 # DOGMud Patch Notes
 
-## 2026-06-17 — Smart action queue: queued actions wait their turn automatically [feature branch; not yet merged]
+## 2026-06-17 — Smart action queue: queued actions wait their turn automatically [merged to local master; not yet pushed to prod]
 
 Web-client triggers can queue an action ("queue at back/front") to fire when
 you're able. The queue is now smart about *why* you can't act yet: if you're on
@@ -11,6 +11,17 @@ gives up rather than firing stale. Out-of-conviction and interrupted casts are
 handled silently (no failure spam); an interrupted cast is re-attempted once.
 Trigger conditions are now reserved for genuine choices — HP/SP/CP thresholds,
 target, captures — not "can I act right now."
+
+## 2026-06-17 — Pre-push polish (equipment drop + sleeping NPCs) [local; not yet pushed to prod]
+
+- **Drop equipped gear in one click.** In the web client's equipment panel,
+  choosing Drop on a worn item now unequips it and drops it in a single action.
+  Previously it silently did nothing, because dropping only ever looked in your
+  backpack — you had to remove the item first.
+- **Sleeping townsfolk stay asleep.** NPCs in the sleeping segment of their
+  daily schedule no longer emote idle flavor, gossip, fuss with their shop, or
+  greet you as you walk in while they're abed. They rest quietly until their
+  schedule (or a disturbance — damage, a shout, light) wakes them.
 
 ## 2026-06-16 — Pothole Coulee onboarding polish (two feel-test fixes) [local; not yet pushed to prod]
 
