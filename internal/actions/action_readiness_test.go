@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/stretchr/testify/assert"
 )
@@ -124,5 +125,52 @@ func TestCastReadiness_Affordable_Ready(t *testing.T) {
 
 	result := ActionReadiness(actor, "cast test-ar-affordable")
 	assert.Equal(t, ActionReady, result.Status)
+}
+
+// TestCastReadinessDrift guards castReadiness against drifting out of sync with
+// the player cast pre-checks in skill.cast.go (which it deliberately mirrors,
+// read-only). Each case builds a fully-castable caster, then trips exactly one
+// gate and asserts the resulting classification + reason. If a gate in
+// castReadiness is added/removed/reclassified without matching skill.cast.go,
+// the corresponding case fails.
+func TestCastReadinessDrift(t *testing.T) {
+	cases := []struct {
+		name     string
+		mutate   func(c *characters.Character, sd *spells.SpellData)
+		expected ReadyStatus
+		reason   string
+	}{
+		{"cast-init-cooldown", func(c *characters.Character, sd *spells.SpellData) {
+			c.Cooldowns = characters.Cooldowns{"cast-init": 3}
+		}, ActionDeferred, "cast-init cooldown"},
+		{"special-move-cooldown", func(c *characters.Character, sd *spells.SpellData) {
+			c.Cooldowns = characters.Cooldowns{"special-move": 3}
+		}, ActionDeferred, "special-move cooldown"},
+		{"spell-not-known", func(c *characters.Character, sd *spells.SpellData) {
+			delete(c.SpellBook, sd.SpellId)
+		}, ActionRejected, "spell not known"},
+		{"no-skill", func(c *characters.Character, sd *spells.SpellData) {
+			c.Skills[string(skills.Spellcasting)] = 0
+		}, ActionRejected, "no skill"},
+		{"missing-component", func(c *characters.Character, sd *spells.SpellData) {
+			sd.ComponentTag = "test-ar-drift-component"
+		}, ActionRejected, "missing component"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			sd, cleanup := seedTestSpell("test-ar-drift", spells.HelpSingle, 4)
+			defer cleanup()
+
+			actor, char, _ := newCastActor()
+			char.SpellBook[sd.SpellId] = 1 // knows the spell
+			char.Conviction = 1000         // ample CP (Cost is 5)
+			tc.mutate(char, sd)
+
+			result := ActionReadiness(actor, "cast test-ar-drift")
+			assert.Equal(t, tc.expected, result.Status, "status")
+			assert.Equal(t, tc.reason, result.Reason, "reason")
+		})
+	}
 }
 
