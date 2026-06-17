@@ -8,10 +8,12 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/term"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	lru "github.com/hashicorp/golang-lru/v2"
@@ -412,6 +414,36 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 						}
 					}
 				}
+			}
+
+		case `Char.Action.Try`:
+			var req struct {
+				Id  int    `json:"id"`
+				Cmd string `json:"cmd"`
+			}
+			if err := json.Unmarshal(payload, &req); err != nil {
+				break
+			}
+			uid := userIdForConnection(connectionId)
+			if uid <= 0 {
+				break
+			}
+			u := users.GetByUserId(uid)
+			if u == nil {
+				break
+			}
+			room := rooms.LoadRoom(u.Character.RoomId)
+			actor := actions.NewUserActorInRoom(u, room)
+			result := actions.ActionReadiness(actor, req.Cmd)
+			switch result.Status {
+			case actions.ActionReady:
+				u.Command(req.Cmd)
+				sendActionResult(uid, req.Id, "fired", "")
+			case actions.ActionDeferred:
+				sendActionResult(uid, req.Id, "deferred", result.Reason)
+			case actions.ActionRejected:
+				u.Command(req.Cmd) // run normally so the player sees the real error message
+				sendActionResult(uid, req.Id, "rejected", result.Reason)
 			}
 
 		// Handle Discord-related messages
