@@ -1,5 +1,17 @@
 # DOGMud Patch Notes
 
+## 2026-06-17 — Smart action queue: queued actions wait their turn automatically [feature branch; not yet merged]
+
+Web-client triggers can queue an action ("queue at back/front") to fire when
+you're able. The queue is now smart about *why* you can't act yet: if you're on
+cooldown, mid-cast, out of conviction, or your cast just got interrupted, the
+queued action waits and fires the moment it can — you no longer hand-build
+trigger conditions for any of that. If it stays blocked too long it quietly
+gives up rather than firing stale. Out-of-conviction and interrupted casts are
+handled silently (no failure spam); an interrupted cast is re-attempted once.
+Trigger conditions are now reserved for genuine choices — HP/SP/CP thresholds,
+target, captures — not "can I act right now."
+
 ## 2026-06-16 — Pothole Coulee onboarding polish (two feel-test fixes) [local; not yet pushed to prod]
 
 Found by the parallel newbie/veteran feel-test of the merged Pothole Coulee zone.

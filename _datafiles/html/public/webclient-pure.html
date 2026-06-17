@@ -665,8 +665,64 @@
                 checkDeathClearsQueue();
             },
             "Commands.State": function() {
-                drainQueue();
                 checkDeathClearsQueue();
+                // First per-round push after login → the connection has settled and
+                // player state is loaded; release the queue's login-burst hold.
+                queueLoginSettled = true;
+                if (queueSettleTimer) { clearTimeout(queueSettleTimer); queueSettleTimer = null; }
+                // Smart action queue: retry a deferred head once per round, and
+                // expire a stale interruption-rearm candidate.
+                if (queueRearm) { queueRearmAge++; if (queueRearmAge >= QUEUE_STALENESS_ROUNDS) { queueRearm = null; } }
+                drainQueue();
+            },
+            // Server replied to a Char.Action.Try: fire→dequeue, deferred→increment attempts,
+            // rejected→dequeue silently. Re-arm interrupted casts for automatic retry.
+            "Char.Action.Result": function() {
+                var r = ((GMCPStructs["Char"] || {}).Action || {}).Result || {};
+                if (!queueInFlight || r.id !== queueInFlight.triggerId) return;
+                var entry = queueInFlight;
+                queueInFlight = null;
+                if (r.status === "fired") {
+                    actionQueue.shift();
+                    if (entry.isCast) {
+                        queueRearm = { triggerId: entry.triggerId, spell: entry.spell, attempts: entry.attempts };
+                        queueRearmAge = 0;
+                    }
+                    renderAutomation();
+                    drainQueue();
+                } else if (r.status === "rejected") {
+                    actionQueue.shift();          // server already showed the real error once
+                    renderAutomation();
+                    drainQueue();
+                } else {                          // "deferred" — transiently blocked, retry next round
+                    entry.attempts++;
+                    if (entry.attempts >= QUEUE_STALENESS_ROUNDS) {
+                        actionQueue.shift();      // give up quietly after staleness window
+                        console.log("[queue] dropped (staleness):", entry.name);
+                    }
+                    renderAutomation();
+                    // do not re-send now; Commands.State per-round tick re-drains
+                }
+            },
+            // Server reports a cast was interrupted — re-enqueue the spell at the front
+            // for one automatic retry, provided we still have a rearm candidate and budget.
+            "Char.Action.Interrupted": function() {
+                var inp = ((GMCPStructs["Char"] || {}).Action || {}).Interrupted || {};
+                if (!queueRearm) return;
+                // Strict match: an empty/absent interrupted-spell must NOT re-arm an
+                // unrelated queued cast (loose && would short-circuit and re-arm any).
+                if (String(inp.spell || "").toLowerCase() !== String(queueRearm.spell || "").toLowerCase()) return;
+                if (queueRearm.attempts >= QUEUE_STALENESS_ROUNDS) { queueRearm = null; return; }
+                actionQueue.unshift({
+                    triggerId: queueRearm.triggerId,
+                    name: "(re-cast " + queueRearm.spell + ")",
+                    commands: "cast " + queueRearm.spell,
+                    attempts: queueRearm.attempts,
+                    _front: true,
+                });
+                queueRearm = null;
+                renderAutomation();
+                drainQueue();
             },
         };
 
@@ -1011,7 +1067,7 @@
 
                     var qcd = document.createElement("span");
                     qcd.className = "auto-qcd";
-                    qcd.textContent = cooldownReady() ? "ready" : "cooling…";
+                    qcd.textContent = queueInFlight ? "in-flight…" : "ready";
                     qbar.appendChild(qcd);
 
                     var qclear = document.createElement("button");
@@ -1215,6 +1271,12 @@
 
         var actionQueue = []; // entries: { triggerId, name, commands, _front }
         var QUEUE_CAP = 10;
+        var QUEUE_STALENESS_ROUNDS = 6; // give up on a blocked queued action after this many rounds
+        var queueInFlight = null;       // entry awaiting a Char.Action.Result
+        var queueRearm = null;          // { triggerId, spell, attempts } — fired cast eligible for interruption re-arm
+        var queueRearmAge = 0;          // rounds since the rearm candidate fired (cleared when stale)
+        var queueLoginSettled = false;  // hold draining until the login burst settles (see drainQueue)
+        var queueSettleTimer = null;    // fallback so the queue never holds forever if no round push arrives
 
         // Resolve $1..$9 captures into a command string (same logic as fireTriggerCommands).
         function substituteCaptures(cmds, caps) {
@@ -1242,57 +1304,41 @@
             drainQueue();
         }
 
-        // Queue processor — drains ONE action per special-move cooldown CYCLE.
-        // Edge-triggered: after firing, we don't fire the next action until we've
-        // observed the shared special-move cooldown go ACTIVE (registered) and then
-        // CLEAR again. This replaces a fragile "wait 800ms then re-check" heuristic
-        // that raced the server's cooldown push — out of combat the push could lag
-        // past the gap, so the queue read a stale "ready" and drained instantly.
-        // Commands.State is now pushed every round (server), so the active→clear
-        // transition is observed reliably. A timeout fallback keeps a command that
-        // sets no cooldown from stalling the queue forever.
-        var QUEUE_REGISTER_TIMEOUT_MS = 4000;
-        var lastQueueFireAt = 0;
-        var queueWaiting = false;     // true between firing an action and its cooldown completing
-        var queueSawCooldown = false; // observed special-move go ACTIVE since the last fire
-
-        function cooldownReady() {
-            var cds = (((GMCPStructs["Commands"] || {}).State) || {}).cooldowns || {};
-            return !cds["special-move"];
-        }
-
+        // Drain: send the head entry to the server's try-or-defer endpoint. One
+        // action in flight at a time so the server's per-action gating is respected.
+        // Char.Action.Result drives progression: fired→dequeue, deferred→retry next
+        // round (Commands.State tick), rejected→dequeue silently. Staleness window
+        // (QUEUE_STALENESS_ROUNDS) drops a permanently-deferred entry after N rounds.
         function drainQueue() {
-            if (!actionQueue.length) { queueWaiting = false; return; }
-
-            if (queueWaiting) {
-                if (!cooldownReady()) {
-                    queueSawCooldown = true; // the fired action's cooldown registered — wait for it to clear
-                    return;
+            if (!queueLoginSettled) {
+                // A trigger that fires during the login text burst (e.g. on the
+                // initial room description) must not act before the player's state
+                // and input pipeline are ready on the server — otherwise the Try is
+                // mis-resolved and the entry vanishes without casting. Hold until the
+                // first per-round Commands.State marks us settled; a timer fallback
+                // guarantees we never hold forever (e.g. if that push lags).
+                if (!queueSettleTimer) {
+                    queueSettleTimer = setTimeout(function(){ queueLoginSettled = true; queueSettleTimer = null; drainQueue(); }, 2500);
                 }
-                // Cooldown currently reads ready.
-                if (queueSawCooldown) {
-                    queueWaiting = false;    // saw it active, now clear → cooldown cycle complete
-                } else if (Date.now() - lastQueueFireAt < QUEUE_REGISTER_TIMEOUT_MS) {
-                    return;                  // cooldown may still be in flight (registers next round) — keep waiting
-                } else {
-                    queueWaiting = false;    // timeout: command set no special-move cooldown → don't stall
-                }
+                return;
             }
-
-            // Armed: only fire when the cooldown is actually ready.
-            if (!cooldownReady()) return;
-
-            var entry = actionQueue.shift();
-            lastQueueFireAt = Date.now();
-            queueWaiting = true;
-            queueSawCooldown = false;
-            String(entry.commands || "").split(";").forEach(function(c){ c = c.trim(); if (c) SendData(c); });
-            renderAutomation();
+            if (queueInFlight) return;      // awaiting a Char.Action.Result
+            if (!actionQueue.length) return;
+            var entry = actionQueue[0];
+            entry.attempts = entry.attempts || 0;
+            var cmd = String(entry.commands || "").split(";")[0].trim(); // one command per queued action
+            entry.isCast = /^cast\b/i.test(cmd);
+            entry.spell  = entry.isCast ? cmd.replace(/^cast\s+/i, "").split(" ")[0].toLowerCase() : "";
+            queueInFlight = entry;
+            SendGMCP("Char.Action.Try", { id: entry.triggerId, cmd: cmd });
         }
 
         // Clear the entire action queue (manual Clear button + death signal).
+        // Also resets in-flight + rearm state so the queue doesn't stall after a clear.
         function clearActionQueue() {
             actionQueue = [];
+            queueInFlight = null;
+            queueRearm = null;
             renderAutomation();
         }
 

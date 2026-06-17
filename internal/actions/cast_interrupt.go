@@ -2,6 +2,7 @@ package actions
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
 )
@@ -15,7 +16,9 @@ func InterruptTargetCast(target *characters.Character, by state.ActorRef) bool {
 	if a == nil || !a.IsCasting() {
 		return false
 	}
+	spellId := ""
 	if d, ok := a.CastingData(); ok {
+		spellId = d.SpellId
 		unspent := d.TotalConvictionCost - d.ConvictionSpent
 		if unspent > 0 {
 			target.Conviction += unspent / 2
@@ -28,5 +31,8 @@ func InterruptTargetCast(target *characters.Character, by state.ActorRef) bool {
 		Trigger: activity.TriggerCastCancel,
 		Actor:   by,
 	})
+	if uid := target.GetUserId(); uid > 0 {
+		events.AddToQueue(events.CastInterrupted{UserId: uid, SpellId: spellId})
+	}
 	return true
 }

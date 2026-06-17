@@ -33,6 +33,8 @@ func init() {
 	// Re-push once on the round following spawn so the initial login push lands
 	// reliably even if the very first GMCP frame raced the connection setup.
 	events.RegisterListener(events.NewRound{}, g.newRoundHandler)
+	// Forward cast-interruption events to the web client so it can re-arm queued casts.
+	events.RegisterListener(events.CastInterrupted{}, g.castInterruptedHandler)
 }
 
 type GMCPAutomationModule struct {
