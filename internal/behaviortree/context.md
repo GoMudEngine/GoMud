@@ -147,7 +147,7 @@ tree:
 
 | Event | Trigger | Notable Context |
 |-------|---------|-----------------|
-| `player_ask` | Player sends a `say` or `ask` to the mob | `Text` = spoken text |
+| `player_ask` | Player uses `ask <mob> ...` (the `ask` command only — a plain `say` does NOT fire this) | `Text` = spoken text |
 | `player_give` | Player gives an item to the mob | `ItemId` = item given |
 | `mob_idle` | Mob's periodic idle tick fires | No player context |
 | `mob_hurt` | Mob takes damage in combat | `UserId` = attacker |

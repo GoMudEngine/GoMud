@@ -117,7 +117,7 @@ tree:
       moodChange: friendly
 
     - id: mouths
-      triggers: ["mouths", "mouth", "seven", "coulee", "rim", "spokes"]
+      triggers: ["mouths", "mouth", "seven", "coulee", "rim", "spokes", "trails", "trials", "paths", "path"]
       text: >-
         Seven breaks in the coulee rim, and a path through every one.
         I call them mouths because the town eats what they bring back.
