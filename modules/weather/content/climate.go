@@ -22,6 +22,7 @@ type climateFile struct {
 		MovementResistance float64 `yaml:"movementResistance"`
 	} `yaml:"influence"`
 	SpawnWeight float64 `yaml:"spawnWeight"`
+	Track       string  `yaml:"track"`
 }
 
 // ParseClimate parses one climate profile file into its biome id and profile.
@@ -41,6 +42,7 @@ func ParseClimate(b []byte) (string, sim.ClimateProfile, error) {
 			MovementResistance: cf.Influence.MovementResistance,
 		},
 		SpawnWeight: cf.SpawnWeight,
+		Track:       cf.Track,
 	}
 	for k, v := range cf.Weather {
 		p.Weather[sim.WeatherType(k)] = v
