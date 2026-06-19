@@ -11,15 +11,15 @@ groups:
   - traveller
 idlecommands:
   - 'emote rolls his shoulders and adjusts the straps of his enormous
-    pack, face briefly pained'
+    pack, face briefly pained.'
   - ''
   - 'emote cups his hands and calls out -- "Rope! Tinder! Good
     pilgrim charms! -- reasonable prices!"'
   - ''
   - 'emote pulls a leather strap from his pack and works a loose
-    buckle back into shape with steady, practiced thumbs'
+    buckle back into shape with steady, practiced thumbs.'
   - 'emote waves cheerfully at a passing cart and shouts something
-    that sounds like an inquiry about road conditions'
+    that sounds like an inquiry about road conditions.'
   - ''
 activitylevel: 14
 craft_support: general

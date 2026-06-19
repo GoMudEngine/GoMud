@@ -1,0 +1,14 @@
+itemid: 40075
+name: Harness Oil
+namesimple: oil
+description: A stoppered clay bottle of dark, faintly rancid oil pressed
+  for working leather -- tack, traces, harness, and boot. A coaching town
+  runs on the stuff. Rubbed in, it keeps strap-leather supple through wet
+  weather and stops a trace cracking at the worst possible moment on the
+  road.
+type: object
+subtype: mundane
+weight: 0.5
+value: 3
+vendor_categories:
+- tailoring

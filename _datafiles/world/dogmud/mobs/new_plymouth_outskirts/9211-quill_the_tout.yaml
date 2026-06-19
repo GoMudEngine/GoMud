@@ -9,16 +9,16 @@ groups:
   - humanoid
 idlecommands:
   - 'emote falls into step beside a traveller in the gate queue,
-    close enough to be heard without raising his voice'
+    close enough to be heard without raising his voice.'
   - ''
   - 'emote draws something from inside his coat and tilts it so
-    the light catches a pressed-wax seal just so'
+    the light catches a pressed-wax seal just so.'
   - ''
   - 'emote glances once toward the guard post, then back, and
-    lowers his voice another notch'
+    lowers his voice another notch.'
   - ''
   - 'emote shrugs with the practiced sorrow of a man selling what
-    he himself has no room to keep'
+    he himself has no room to keep.'
   - ''
 activitylevel: 14
 character:

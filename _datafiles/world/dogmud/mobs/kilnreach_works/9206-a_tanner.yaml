@@ -10,15 +10,15 @@ groups:
   - works_folk
 idlecommands:
   - 'emote turns a hide half-submerged in a black pit with a long pole,
-    arms out for balance over the edge'
+    arms out for balance over the edge.'
   - ''
   - 'emote hauls a dripping skin from the pit and flings it over a wooden
-    rack with practised ease'
+    rack with practised ease.'
   - 'emote draws a blunt scraper the full length of a stretched hide,
-    leaning his weight into each stroke'
+    leaning his weight into each stroke.'
   - ''
   - 'emote takes a slow, deliberate breath through his mouth instead of
-    his nose, and keeps working'
+    his nose, and keeps working.'
 activitylevel: 9
 character:
   name: A Tanner

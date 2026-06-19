@@ -12,15 +12,15 @@ groups:
   - new_plymouth_outskirts_folk
 idlecommands:
   - 'emote holds out a hand for the night-coin without looking at whoever
-    is offering it'
+    is offering it.'
   - ''
   - 'emote drives the toe of his boot into the side of a sleeping figure
-    and waits to see if it moves'
+    and waits to see if it moves.'
   - ''
-  - 'emote stands at the door with both arms folded, watching the lane'
+  - 'emote stands at the door with both arms folded, watching the lane.'
   - ''
   - 'emote works a splinter of wood between his back teeth and stares at
-    nothing in particular'
+    nothing in particular.'
 activitylevel: 9
 character:
   name: Hatch the Doss-Keeper

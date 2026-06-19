@@ -12,16 +12,16 @@ groups:
   - new_plymouth_outskirts_folk
 idlecommands:
   - 'emote watches the ford crossing from the shadow of the reed-bank,
-    arms loose at his sides'
+    arms loose at his sides.'
   - ''
   - 'emote lets out a low two-note whistle and waits for an answer that
-    may or may not come'
+    may or may not come.'
   - ''
   - 'emote crouches and shifts aside a mat of river-grass, checks something
-    beneath it, and covers it again'
+    beneath it, and covers it again.'
   - ''
   - 'emote steps backward into the reed-shadow and becomes very difficult
-    to see'
+    to see.'
 activitylevel: 8
 character:
   name: A River-Road Smuggler

@@ -13,13 +13,13 @@ groups:
   - pack
 aiprofile: predator
 idlecommands:
-  - 'emote lifts its narrow muzzle and tests the dry air'
+  - 'emote lifts its narrow muzzle and tests the dry air.'
   - ''
-  - 'emote slinks low through the scrub, watching'
+  - 'emote slinks low through the scrub, watching.'
   - ''
-  - 'emote fixes you with pale, calculating eyes from a safe distance'
+  - 'emote fixes you with pale, calculating eyes from a safe distance.'
   - ''
-  - 'emote rumbles a low growl, barely audible'
+  - 'emote rumbles a low growl, barely audible.'
 character:
   name: Lean Coyote
   description: |

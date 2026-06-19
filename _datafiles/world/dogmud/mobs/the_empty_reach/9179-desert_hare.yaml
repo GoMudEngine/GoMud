@@ -9,13 +9,13 @@ itemdropchance: 20
 groups:
   - animal
 idlecommands:
-  - 'emote freezes utterly still, ears laid flat, watching'
+  - 'emote freezes utterly still, ears laid flat, watching.'
   - ''
-  - 'emote nibbles at a low sprig of sage, nose twitching'
+  - 'emote nibbles at a low sprig of sage, nose twitching.'
   - ''
-  - 'emote washes its face with quick, nervous strokes'
+  - 'emote washes its face with quick, nervous strokes.'
   - ''
-  - 'emote bolts three yards in a single bound and freezes again'
+  - 'emote bolts three yards in a single bound and freezes again.'
 character:
   name: Desert Hare
   description: |

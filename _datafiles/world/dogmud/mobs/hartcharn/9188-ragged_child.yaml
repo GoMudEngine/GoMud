@@ -12,16 +12,16 @@ groups:
   - hartcharn_folk
 idlecommands:
   - 'emote sends a wooden hoop rattling along the lane and sprints after
-    it'
+    it.'
   - ''
   - 'emote scuffs through a drift of dust with one bare foot, watching
-    what surfaces'
+    what surfaces.'
   - ''
   - 'emote stops dead and stares at a traveller with open, unabashed
-    curiosity'
+    curiosity.'
   - ''
   - 'emote spots something across the square and darts off without
-    explanation'
+    explanation.'
   - ''
 activitylevel: 16
 character:

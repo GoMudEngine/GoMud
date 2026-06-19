@@ -13,14 +13,14 @@ groups:
 activitylevel: 12
 idlecommands:
   - 'emote lies coiled in the reed stems, indistinguishable from knotted
-    roots'
+    roots.'
   - ''
-  - 'emote flickers its tongue in a slow, deliberate test of the air'
+  - 'emote flickers its tongue in a slow, deliberate test of the air.'
   - ''
-  - 'emote slides between sedge clumps with a dry papery rustle'
+  - 'emote slides between sedge clumps with a dry papery rustle.'
   - ''
   - 'emote finds a warm flat stone and arranges its coils across it in
-    unhurried loops'
+    unhurried loops.'
 character:
   name: A Marsh Adder
   description: |

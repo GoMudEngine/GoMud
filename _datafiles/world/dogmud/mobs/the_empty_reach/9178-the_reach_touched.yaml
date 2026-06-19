@@ -11,13 +11,13 @@ groups:
   - humanoid
 aiprofile: ambush_predator
 idlecommands:
-  - 'emote mutters rapidly to the empty air, head tilted as if listening'
+  - 'emote mutters rapidly to the empty air, head tilted as if listening.'
   - ''
-  - 'emote crouches and scratches a pattern of lines into the dry dirt'
+  - 'emote crouches and scratches a pattern of lines into the dry dirt.'
   - ''
-  - 'emote stares through you at something far beyond'
+  - 'emote stares through you at something far beyond.'
   - ''
-  - 'emote fingers the edge of a crude, notched blade with practiced ease'
+  - 'emote fingers the edge of a crude, notched blade with practiced ease.'
 character:
   name: The Reach-Touched
   description: |

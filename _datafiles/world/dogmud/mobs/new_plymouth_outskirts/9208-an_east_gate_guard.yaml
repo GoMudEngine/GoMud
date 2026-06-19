@@ -12,15 +12,15 @@ groups:
   - guard
 idlecommands:
   - 'emote holds out a hand to a merchant in the queue, waiting in
-    silence until the man produces his travel-papers and unfolds them'
+    silence until the man produces his travel-papers and unfolds them.'
   - ''
   - 'emote waves a loaded cart through the gate with a slow, deliberate
-    sweep of one arm, already looking past it at the next in line'
+    sweep of one arm, already looking past it at the next in line.'
   - ''
   - 'emote leans the halberd against the gatehouse wall and rolls one
-    shoulder with a grinding crack'
+    shoulder with a grinding crack.'
   - ''
-  - 'emote scans the waiting queue from end to end, expression unchanged'
+  - 'emote scans the waiting queue from end to end, expression unchanged.'
   - ''
 activitylevel: 12
 character:

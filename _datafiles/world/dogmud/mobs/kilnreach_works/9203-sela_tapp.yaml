@@ -11,15 +11,15 @@ groups:
   - works_folk
 idlecommands:
   - 'emote slams a tankard down on the bar so hard the dregs jump, then
-    slides it to the far end without looking up'
+    slides it to the far end without looking up.'
   - ''
   - 'emote drags a grey rag across the bar top in three hard strokes and
-    flings it back over her shoulder'
+    flings it back over her shoulder.'
   - ''
   - 'emote says three flat words to two men who are just starting to shove
-    each other, and they stop'
+    each other, and they stop.'
   - 'emote draws ale in a long, practised pull without spilling a drop and
-    sets it down before anyone has asked'
+    sets it down before anyone has asked.'
 activitylevel: 12
 craft_support: general
 character:
@@ -50,3 +50,5 @@ character:
     - itemid: 30023
     - itemid: 30022
     - itemid: 30037
+    - itemid: 40077
+    - itemid: 40078

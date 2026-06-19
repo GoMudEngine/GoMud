@@ -10,22 +10,22 @@ groups:
   - humanoid
   - bandit
 idlecommands:
-  - 'emote watches the road through a gap in the hedgerow, motionless'
+  - 'emote watches the road through a gap in the hedgerow, motionless.'
   - ''
   - ''
   - 'emote fingers the notched edge of a blade with his thumb,
-    not quite looking at it'
+    not quite looking at it.'
   - ''
   - 'emote spits into the mud and settles back into the shadow of
-    the hedge'
+    the hedge.'
   - ''
 combatcommands:
-  - 'emote surges out of cover with sudden, practiced violence'
+  - 'emote surges out of cover with sudden, practiced violence.'
   - ''
   - 'emote drives a shoulder forward and tries to get inside the
-    reach of a weapon'
+    reach of a weapon.'
   - ''
-  - 'emote snarls and swings low, going for the legs'
+  - 'emote snarls and swings low, going for the legs.'
   - ''
 activitylevel: 12
 character:

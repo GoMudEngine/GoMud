@@ -11,14 +11,14 @@ groups:
   - humanoid
 activitylevel: 10
 idlecommands:
-  - 'emote uncoils a length of rope and works it into a neat figure-eight'
+  - 'emote uncoils a length of rope and works it into a neat figure-eight.'
   - ''
-  - 'emote eyes the current from the bank, lips pressed in quiet calculation'
+  - 'emote eyes the current from the bank, lips pressed in quiet calculation.'
   - ''
-  - 'emote sets the pole across the gunwale and spits in the water'
+  - 'emote sets the pole across the gunwale and spits in the water.'
   - ''
   - 'emote leans on the tiller, watching the ford with the stillness of
-    someone who knows what she is looking at'
+    someone who knows what she is looking at.'
 craft_support: general
 character:
   name: Tamsin Reed

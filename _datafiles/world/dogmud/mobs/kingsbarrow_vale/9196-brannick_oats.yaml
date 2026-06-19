@@ -11,16 +11,16 @@ groups:
   - kingsbarrow_folk
 idlecommands:
   - 'emote draws a pull of ale from the tap and sets the mug on the bar
-    with the easy assurance of someone who has done it ten thousand times'
+    with the easy assurance of someone who has done it ten thousand times.'
   - ''
   - 'emote slides a round loaf from the oven with a folded cloth, taps
-    the crust, and nods with quiet satisfaction'
+    the crust, and nods with quiet satisfaction.'
   - ''
   - 'emote wipes down the nearest table in broad, unhurried circles, eyes
-    moving around the room as he works'
+    moving around the room as he works.'
   - ''
   - 'emote lifts his chin and calls a greeting to someone near the door,
-    face creasing into a grin that takes years off him'
+    face creasing into a grin that takes years off him.'
 activitylevel: 10
 craft_support: general
 character:

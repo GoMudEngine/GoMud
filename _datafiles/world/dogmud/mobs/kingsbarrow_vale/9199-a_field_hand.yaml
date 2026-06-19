@@ -11,16 +11,16 @@ groups:
   - kingsbarrow_folk
 idlecommands:
   - 'emote bends at the waist along the crop-row, pulling with both
-    hands at something near the base of the stalks'
+    hands at something near the base of the stalks.'
   - ''
   - 'emote leans on a long-handled hoe and stares at nothing across the
-    field for a moment, then straightens and gets back to work'
+    field for a moment, then straightens and gets back to work.'
   - ''
   - 'emote drags the back of a wrist across his forehead and squints at
-    the angle of the sun'
+    the angle of the sun.'
   - ''
   - 'emote lifts a clay jug from a fence-post, drinks in three long
-    pulls, and stoppers it again'
+    pulls, and stoppers it again.'
 activitylevel: 8
 character:
   name: A Field Hand

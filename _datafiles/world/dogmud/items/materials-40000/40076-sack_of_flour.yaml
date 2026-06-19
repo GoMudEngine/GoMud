@@ -1,0 +1,14 @@
+itemid: 40076
+name: Sack of Flour
+namesimple: flour
+description: A stout linen sack of stone-ground wheat flour, the mouth
+  folded and tied with twine, a fine pale dust worked into every fibre of
+  the cloth. It is heavy for its size and gives slightly when pressed --
+  the milled wealth of the vale, bound for kitchens and the capital's
+  ovens alike.
+type: object
+subtype: mundane
+weight: 2.0
+value: 2
+vendor_categories:
+- cooking

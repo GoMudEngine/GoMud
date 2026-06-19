@@ -12,15 +12,15 @@ groups:
 activitylevel: 12
 idlecommands:
   - 'emote draws a net across one knee and works through it for tears,
-    fingers moving without hurry'
+    fingers moving without hurry.'
   - ''
   - 'emote leans over the bank to check an eel-trap looped around a
-    submerged stake'
+    submerged stake.'
   - ''
-  - 'emote watches a float with a patience that seems geological'
+  - 'emote watches a float with a patience that seems geological.'
   - ''
   - 'emote draws a reed-knife and shears a bundle of reeds at the
-    waterline with a single stroke'
+    waterline with a single stroke.'
 character:
   name: A Marsh Fisher
   description: |

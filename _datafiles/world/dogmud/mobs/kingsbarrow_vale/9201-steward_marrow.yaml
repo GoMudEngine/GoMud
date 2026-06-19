@@ -11,17 +11,17 @@ groups:
   - kingsbarrow_folk
 idlecommands:
   - 'emote runs a finger down the tally-board and makes a correction
-    with the flat of his thumbnail, jaw set'
+    with the flat of his thumbnail, jaw set.'
   - ''
   - 'emote steps to the yard entrance and flags down a carter with a
-    short, precise gesture that expects to be obeyed'
+    short, precise gesture that expects to be obeyed.'
   - ''
   - 'emote walks the rick-line with his hands clasped behind him,
-    pressing the nearest rick with a thumb to check the set of the hay'
+    pressing the nearest rick with a thumb to check the set of the hay.'
   - ''
   - 'emote draws a key from his breast pocket, considers it a moment,
     and pockets it again with the air of someone who has just decided
-    something'
+    something.'
 activitylevel: 10
 character:
   name: Steward Marrow

@@ -11,16 +11,16 @@ groups:
   - hartcharn_folk
 idlecommands:
   - 'emote draws a cup of ale and slides it down the bar without
-    looking'
+    looking.'
   - ''
   - 'emote wipes the bar with a cloth that is doing none of the work
-    it was designed to do'
+    it was designed to do.'
   - ''
   - 'emote glances toward the far table with an expression that says
-    the occupants have exactly one warning left'
+    the occupants have exactly one warning left.'
   - ''
   - 'emote leans both hands on the bar and listens to the room with
-    the focused stillness of someone who hears more than he lets on'
+    the focused stillness of someone who hears more than he lets on.'
 activitylevel: 10
 craft_support: general
 character:

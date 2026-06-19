@@ -12,16 +12,16 @@ groups:
   - new_plymouth_outskirts_folk
 idlecommands:
   - 'emote stirs a clay pot of thin broth and watches the surface with
-    a careful patience'
+    a careful patience.'
   - ''
   - 'emote pulls a knotted bundle a little closer, tightening both arms
-    around it'
+    around it.'
   - ''
   - 'emote stares at the city gate with an expression that has stopped
-    expecting anything'
+    expecting anything.'
   - ''
   - 'emote bends over something low and murmurs in a voice too quiet
-    to carry'
+    to carry.'
 activitylevel: 9
 character:
   name: A Wall-Camp Refugee

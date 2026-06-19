@@ -10,15 +10,15 @@ groups:
   - works_folk
 idlecommands:
   - 'emote swings a short-handled hammer in a ringing arc, driving a wedge
-    deep into a seam of pale stone'
+    deep into a seam of pale stone.'
   - ''
   - 'emote hauls on a chain with both hands, boots sliding in the grey
-    dust, jaw set hard'
+    dust, jaw set hard.'
   - ''
   - 'emote drags the back of his wrist across his eyes to clear a smear of
-    rock-dust and squints at the seam again'
+    rock-dust and squints at the seam again.'
   - 'emote crouches over a split block, runs a grey-caked finger along the
-    break, and grunts once'
+    break, and grunts once.'
 activitylevel: 10
 character:
   name: A Quarryman

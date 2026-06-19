@@ -10,15 +10,15 @@ groups:
   - works_folk
 idlecommands:
   - 'emote bellows across the yard at a flagging worker, voice cracking
-    like a thrown stone'
+    like a thrown stone.'
   - ''
   - 'emote runs a scarred thumb down a column of figures in a battered
-    ledger, lips pressed flat'
+    ledger, lips pressed flat.'
   - ''
   - 'emote turns a slow gaze on a man he does not like the look of and
-    lets the silence do the work'
+    lets the silence do the work.'
   - 'emote spits in the dust at his feet and wipes his mouth with the back
-    of his wrist'
+    of his wrist.'
 activitylevel: 10
 character:
   name: Foreman Grizzel

@@ -10,16 +10,16 @@ groups:
   - thief
 idlecommands:
   - 'emote drifts through the market crowd with the ease of someone who
-    has nowhere particular to be'
+    has nowhere particular to be.'
   - ''
   - 'emote lets his gaze rest on a well-stuffed belt pouch for a moment
-    too long'
+    too long.'
   - ''
   - 'emote leans over a stall of dried goods, feigning interest while his
-    eyes track the crowd'
+    eyes track the crowd.'
   - ''
   - 'emote makes a small, unhurried motion near someone passing close
-    and keeps walking'
+    and keeps walking.'
   - ''
 activitylevel: 14
 character:

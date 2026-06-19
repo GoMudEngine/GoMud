@@ -11,18 +11,18 @@ groups:
   - hartcharn_folk
 idlecommands:
   - 'emote rules a careful line across the page of his ledger with a
-    wooden straightedge'
+    wooden straightedge.'
   - ''
   - 'emote lifts a ticket stamp, taps it on the inkpad, and brings it
-    down on a fare-slip with a crisp thud'
+    down on a fare-slip with a crisp thud.'
   - ''
   - 'emote squints at the route board, checking posted departure times
-    against a notation in his ledger'
+    against a notation in his ledger.'
   - 'emote says, to no one in particular, "Next packet Stillwater to
     New Plymouth departs the fifth bell."'
   - ''
   - 'emote folds a completed fare-slip into thirds with geometrically
-    exact creases and files it in the leftmost stack'
+    exact creases and files it in the leftmost stack.'
 activitylevel: 11
 craft_support: general
 character:

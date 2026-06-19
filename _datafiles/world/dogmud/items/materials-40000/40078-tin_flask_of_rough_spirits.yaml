@@ -1,0 +1,13 @@
+itemid: 40078
+name: Tin Flask of Rough Spirits
+namesimple: flask
+description: A dented tin flask, its screw-cap worn bright with handling,
+  holding a finger or two of raw grain spirit fierce enough to strip a
+  throat. The kind of thing a works-hand keeps in a pocket against the
+  cold and the noise of the foundry. It sloshes when you tilt it.
+type: object
+subtype: mundane
+weight: 0.4
+value: 4
+vendor_categories:
+- alchemy

@@ -10,18 +10,18 @@ groups:
   - traveller
 idlecommands:
   - 'emote leans heavily on his long staff and stares at nothing in
-    particular'
+    particular.'
   - ''
   - 'emote glances back over his shoulder at the beasts resting on
-    the verge, counting them under his breath'
+    the verge, counting them under his breath.'
   - ''
   - 'emote tucks a dry straw between his teeth and chews it with slow
-    deliberation'
+    deliberation.'
   - 'emote tilts his head back and eyes the sky with the practiced
-    look of a man reading weather'
+    look of a man reading weather.'
   - ''
   - 'emote shifts his weight from foot to foot and spits neatly past
-    the edge of the road'
+    the edge of the road.'
 activitylevel: 8
 character:
   name: A Weary Drover

@@ -11,16 +11,16 @@ groups:
   - humanoid
   - hartcharn_folk
 idlecommands:
-  - 'emote forks hay into the nearest stall with slow, practiced strokes'
+  - 'emote forks hay into the nearest stall with slow, practiced strokes.'
   - ''
   - 'emote leads a fresh team out to the yard, murmuring steadily to
-    settle them'
+    settle them.'
   - ''
   - 'emote crouches, lifts a near foreleg, and presses at the hoof with
-    his thumb'
+    his thumb.'
   - ''
   - 'emote lays a hand along a grey mare''s neck until she stops shifting
-    in the traces'
+    in the traces.'
   - ''
 activitylevel: 10
 character:

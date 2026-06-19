@@ -11,16 +11,16 @@ groups:
   - hartcharn_folk
 idlecommands:
   - 'emote leans his spear against the gatehouse wall and rolls his
-    shoulders with a slow crack'
+    shoulders with a slow crack.'
   - ''
   - 'emote shades his eyes against the road and watches a cart raise
-    dust in the distance'
+    dust in the distance.'
   - ''
   - 'emote exchanges a nod and a few words with a carter passing out
-    through the gate'
+    through the gate.'
   - ''
   - 'emote shifts his weight from foot to foot, resettles the
-    magistrate''s badge on its cord, and goes back to watching the road'
+    magistrate''s badge on its cord, and goes back to watching the road.'
 activitylevel: 9
 character:
   name: Bors Edel

@@ -11,16 +11,16 @@ groups:
   - hartcharn_folk
 idlecommands:
   - 'emote moves briskly behind the counter, signing off on a page of
-    the guest ledger without breaking stride'
+    the guest ledger without breaking stride.'
   - ''
   - 'emote calls toward the kitchen door -- "Coach from the south
     before midday -- six plates, ready!"'
   - ''
   - 'emote draws a measure of ale from the tap, checks the head with
-    a critical eye, and sets it waiting on the pass-shelf'
+    a critical eye, and sets it waiting on the pass-shelf.'
   - ''
   - 'emote straightens the key-board behind her, confirming each hook
-    is properly labelled, then moves on to the next task'
+    is properly labelled, then moves on to the next task.'
 activitylevel: 15
 craft_support: general
 character:

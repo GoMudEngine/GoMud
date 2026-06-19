@@ -9,18 +9,18 @@ groups:
   - humanoid
 idlecommands:
   - 'emote heaves on the counterweight rope and raises the barrier-pole
-    with a creak'
+    with a creak.'
   - ''
   - 'emote drags the pole back down and secures the rope around the
-    bollard cleat'
+    bollard cleat.'
   - ''
   - 'emote squints at his toll-board and taps a chalk mark with one
-    stubby finger'
+    stubby finger.'
   - 'emote digs in his apron pocket and sorts a handful of coppers,
-    lips moving'
+    lips moving.'
   - ''
   - 'emote leans on the pole and stares down the road, looking as if
-    he is waiting for something to annoy him'
+    he is waiting for something to annoy him.'
 activitylevel: 10
 character:
   name: Toller Garrick

@@ -10,16 +10,18 @@ groups:
   - humanoid
 idlecommands:
   - 'emote cracks his knuckles in a slow sequence, one joint at a time,
-    and rolls his neck until something pops'
+    and rolls his neck until something pops.'
   - ''
   - 'emote tracks a newcomer with a flat, unhurried look from across the
-    room'
+    room.'
   - 'emote lifts a battered cup and drinks deep, eyes still working the
-    room over the rim'
+    room over the rim.'
   - ''
   - 'emote flexes his right fist once, slowly, and watches it with the air
-    of a man who is satisfied with a tool'
+    of a man who is satisfied with a tool.'
 activitylevel: 12
+items:
+  - itemid: 40078
 character:
   name: A Works Tough
   description: |

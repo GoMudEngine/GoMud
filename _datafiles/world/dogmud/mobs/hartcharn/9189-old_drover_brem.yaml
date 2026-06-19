@@ -12,14 +12,14 @@ groups:
   - hartcharn_folk
 idlecommands:
   - 'emote works a straw from one corner of his mouth to the other and
-    leaves it there'
+    leaves it there.'
   - ''
-  - 'emote tilts his head back and reads the sky with narrowed eyes'
+  - 'emote tilts his head back and reads the sky with narrowed eyes.'
   - ''
-  - 'emote counts something off on blunt fingers, lips moving faintly'
+  - 'emote counts something off on blunt fingers, lips moving faintly.'
   - ''
   - 'emote spits into the dust, considers the result, and resettles
-    against the wagon wheel'
+    against the wagon wheel.'
   - ''
 activitylevel: 10
 character:

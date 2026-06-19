@@ -10,19 +10,19 @@ groups:
   - humanoid
   - innkeeper
 idlecommands:
-  - 'emote drags a damp cloth across the bar in brisk, practiced arcs'
+  - 'emote drags a damp cloth across the bar in brisk, practiced arcs.'
   - ''
   - 'emote ladles stew from the iron pot into a bowl, taps the ladle
-    on the rim twice, and sets it on the pass-shelf'
+    on the rim twice, and sets it on the pass-shelf.'
   - 'emote calls toward the back room -- "Nold! More bread, now, not
     later!"'
   - ''
   - 'emote draws a measure of ale, checks the head with a critical eye,
-    and slides the cup down the bar'
+    and slides the cup down the bar.'
   - ''
   - 'emote straightens a row of cups with the air of someone who has
     straightened them ten thousand times and will straighten them ten
-    thousand more'
+    thousand more.'
 activitylevel: 15
 craft_support: general
 character:

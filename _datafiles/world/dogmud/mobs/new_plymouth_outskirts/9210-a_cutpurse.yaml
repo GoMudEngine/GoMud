@@ -10,16 +10,16 @@ groups:
   - thief
 idlecommands:
   - 'emote drifts into the press of the crowd moving toward the gate,
-    unhurried, close to no one in particular'
+    unhurried, close to no one in particular.'
   - ''
   - 'emote lets the gaze drop to a merchant''s belt for half a beat,
-    then slides it away as if reading a sign overhead'
+    then slides it away as if reading a sign overhead.'
   - ''
   - 'emote catches a boot-edge on the cobble and stumbles gracefully
-    into a stranger, a hand steadying on the man''s coat'
+    into a stranger, a hand steadying on the man''s coat.'
   - ''
   - 'emote slips sideways between two carts and is briefly not
-    where you thought they were'
+    where you thought they were.'
   - ''
 activitylevel: 14
 character:

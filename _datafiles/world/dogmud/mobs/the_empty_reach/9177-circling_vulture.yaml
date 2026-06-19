@@ -10,14 +10,14 @@ groups:
   - animal
   - bird
 idlecommands:
-  - 'emote wheels overhead on a long, slow thermal, barely moving its wings'
+  - 'emote wheels overhead on a long, slow thermal, barely moving its wings.'
   - ''
   - ''
-  - 'emote drops from a rock and settles hunched on a low basalt shelf'
+  - 'emote drops from a rock and settles hunched on a low basalt shelf.'
   - ''
-  - 'emote jabs its hooked beak at something on the ground'
+  - 'emote jabs its hooked beak at something on the ground.'
   - ''
-  - 'emote flaps heavily aloft, gaining altitude with labored beats'
+  - 'emote flaps heavily aloft, gaining altitude with labored beats.'
 character:
   name: Circling Vulture
   description: |

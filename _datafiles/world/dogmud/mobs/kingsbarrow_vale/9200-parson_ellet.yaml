@@ -11,16 +11,16 @@ groups:
   - kingsbarrow_folk
 idlecommands:
   - 'emote trims a tallow candle with small, careful snips, letting the
-    wick-ends fall into his cupped palm'
+    wick-ends fall into his cupped palm.'
   - ''
   - 'emote straightens the sheaves on the harvest altar with both hands,
-    humming something tuneless and half-heard'
+    humming something tuneless and half-heard.'
   - ''
   - 'emote stands with head bowed at the back of the nave, lips moving
-    in what might be a blessing or might be a list'
+    in what might be a blessing or might be a list.'
   - ''
   - 'emote sweeps the porch step with a worn-bristle broom, moving the
-    same dust back and forth with comfortable futility'
+    same dust back and forth with comfortable futility.'
 activitylevel: 8
 character:
   name: Parson Ellet

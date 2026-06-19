@@ -13,16 +13,16 @@ groups:
 activitylevel: 10
 idlecommands:
   - 'emote makes a precise notation in the open ledger, blotting it before
-    moving to the next line'
+    moving to the next line.'
   - ''
   - 'emote turns a traveller''s papers over and examines the reverse as if
-    expecting a forgery on the back'
+    expecting a forgery on the back.'
   - ''
   - 'emote adjusts the survey marker post by a careful half-inch and steps
-    back to check the alignment'
+    back to check the alignment.'
   - ''
   - 'emote stamps a chit with a heavy seal and sets it in the outgoing
-    stack without looking up'
+    stack without looking up.'
 character:
   name: Warden Holt
   description: |

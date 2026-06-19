@@ -11,16 +11,16 @@ groups:
 activitylevel: 9
 idlecommands:
   - 'emote stands motionless at the water''s edge, one leg raised, watching
-    the shallows below'
+    the shallows below.'
   - ''
   - 'emote stabs the water with a sudden dart of its bill and straightens,
-    gulping'
+    gulping.'
   - ''
   - 'emote spreads its great wings and lifts on slow, measured strokes
-    across the marsh'
+    across the marsh.'
   - ''
   - 'emote settles on one leg at the edge of the reeds, pulls its neck
-    into its shoulders, and becomes a post'
+    into its shoulders, and becomes a post.'
 character:
   name: A Grey Heron
   description: |

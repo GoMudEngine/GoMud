@@ -11,18 +11,18 @@ groups:
   - hartcharn_folk
 idlecommands:
   - 'emote works the bellows in slow, rhythmic pulls, watching the
-    forge-bed brighten from dull red toward orange'
+    forge-bed brighten from dull red toward orange.'
   - ''
   - 'emote lifts a length of iron bar with his tongs and turns it in
-    the coals, judging the color with a half-squint'
+    the coals, judging the color with a half-squint.'
   - 'emote strikes the iron on the anvil -- once, twice, three ringing
-    blows -- then turns it and strikes again'
+    blows -- then turns it and strikes again.'
   - ''
   - 'emote plunges the worked iron into the quench trough; steam
-    billows up and he watches it dissipate without blinking'
+    billows up and he watches it dissipate without blinking.'
   - ''
   - 'emote wipes the back of his wrist across his forehead and turns
-    back to the forge without ceremony'
+    back to the forge without ceremony.'
 activitylevel: 10
 craft_support: blacksmithing
 character:
@@ -54,3 +54,4 @@ character:
     - itemid: 20004
     - itemid: 20007
     - itemid: 20008
+    - itemid: 40075

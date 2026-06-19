@@ -14,16 +14,16 @@ groups:
   - shopkeepers
 idlecommands:
   - 'emote counts a stack of coppers into columns with the tip of one finger,
-    lips moving in a private arithmetic'
+    lips moving in a private arithmetic.'
   - ''
   - 'emote tracks a newcomer from the door to the corner with a slow unhurried
-    look that takes in everything before settling'
+    look that takes in everything before settling.'
   - ''
   - 'emote ladles thin broth from the pot behind her into a clay bowl and sets
-    it on the counter without ceremony'
+    it on the counter without ceremony.'
   - ''
   - 'emote holds a level stare on a troublemaker until he reconsiders his
-    evening'
+    evening.'
 activitylevel: 12
 craft_support: general
 character:

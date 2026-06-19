@@ -12,16 +12,16 @@ groups:
   - hartcharn_folk
 idlecommands:
   - 'emote shifts a laden basket from one hip to the other and picks up
-    her pace'
+    her pace.'
   - ''
   - 'emote pegs a length of linen to the line with brisk, habitual
-    efficiency'
+    efficiency.'
   - ''
   - 'emote leans in a doorway exchanging a low word with whoever lives
-    there'
+    there.'
   - ''
   - 'emote flaps an apron at a goose that has wandered into the lane and
-    shoos it off'
+    shoos it off.'
   - ''
 activitylevel: 12
 character:

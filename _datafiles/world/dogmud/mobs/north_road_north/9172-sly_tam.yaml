@@ -10,15 +10,15 @@ groups:
   - thief
 idlecommands:
   - 'emote leans against the wall with his arms folded, eyes tracing
-    the room at belt height'
+    the room at belt height.'
   - ''
   - 'emote edges half a step closer to a nearby traveler, expression
-    perfectly bland'
+    perfectly bland.'
   - ''
   - 'emote fakes a wide yawn and stretches, hand passing briefly over
-    a neighboring stool'
+    a neighboring stool.'
   - 'emote turns to examine the ceiling with apparent fascination, one
-    hand hanging loose at his side'
+    hand hanging loose at his side.'
   - ''
 activitylevel: 20
 character:

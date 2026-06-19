@@ -11,17 +11,17 @@ groups:
   - kingsbarrow_folk
 idlecommands:
   - 'emote heaves a grain-sack onto his shoulder with a grunt and carries
-    it to the hopper without breaking stride'
+    it to the hopper without breaking stride.'
   - ''
   - 'emote crouches beside the millstone housing and adjusts a wooden
     shim with the careful focus of a man who has done this a hundred
-    times and still does not rush it'
+    times and still does not rush it.'
   - ''
   - 'emote brushes flour from his forearms in two brisk swipes, adding
-    the cloud to the general haze already hanging in the mill'
+    the cloud to the general haze already hanging in the mill.'
   - ''
   - 'emote leans toward you and raises his voice over the wheel-noise,
-    apparently unaware he does not need to'
+    apparently unaware he does not need to.'
 activitylevel: 11
 craft_support: cooking
 character:
@@ -53,3 +53,4 @@ character:
     - itemid: 30026
     - itemid: 30021
     - itemid: 30013
+    - itemid: 40076

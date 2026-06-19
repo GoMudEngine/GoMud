@@ -11,16 +11,16 @@ groups:
   - kingsbarrow_folk
 idlecommands:
   - 'emote lifts a grain-sack by the knotted top, hefts it once, and
-    tallies a mark in the ledger without expression'
+    tallies a mark in the ledger without expression.'
   - ''
   - 'emote draws a long, perfectly straight line across the page with a
-    steel-edged ruler and examines the result'
+    steel-edged ruler and examines the result.'
   - ''
   - 'emote holds a cartage seal up to the light, turns it twice, and
     sets it back on the pile with the deliberateness of someone who has
-    found a discrepancy'
+    found a discrepancy.'
   - 'emote frowns at a column of figures, taps the page twice with one
-    finger, and makes a small correction in red ink'
+    finger, and makes a small correction in red ink.'
   - ''
 activitylevel: 9
 character:

@@ -11,16 +11,16 @@ groups:
   - hartcharn_folk
 idlecommands:
   - 'emote passes a soft cloth along a row of jars, resettling each
-    one after it is dusted'
+    one after it is dusted.'
   - ''
   - 'emote lifts a spool of waxed thread, checks the remaining length
-    with a practised eye, and marks a note in her tally book'
+    with a practised eye, and marks a note in her tally book.'
   - ''
   - 'emote sets a small package on the scale, waits for it to settle,
-    then shifts the counterweight by a fraction'
+    then shifts the counterweight by a fraction.'
   - ''
   - 'emote climbs two rungs of the step-ladder and reaches a jar of
-    road-salve down from the upper shelf'
+    road-salve down from the upper shelf.'
 activitylevel: 12
 craft_support: general
 character:
@@ -54,4 +54,5 @@ character:
     - itemid: 30020
     - itemid: 30001
     - itemid: 20008
-    - itemid: 10001
+    - itemid: 40075
+    - itemid: 40077
