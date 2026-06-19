@@ -1,0 +1,25 @@
+# Four-season cycle for the stock 12-month calendar. Months are 1-based; a
+# season's blend window (transitionDays) sits at its START, interpolating the
+# multipliers from the previous season's values.
+track: temperate
+seasons:
+  - name: winter
+    months: [12, 1, 2]
+    transitionDays: 6
+    weatherWeightMultipliers: { snow: 3.0, blizzard: 2.0, rain: 0.4, storm: 0.6, heatwave: 0.0 }
+    spawnWeightMultiplier: 0.9
+    influence: { intensityDelta: -0.02 }
+  - name: spring
+    months: [3, 4, 5]
+    transitionDays: 6
+    weatherWeightMultipliers: { rain: 1.5, fog: 1.3, snow: 0.3, blizzard: 0.0 }
+    spawnWeightMultiplier: 1.1
+  - name: summer
+    months: [6, 7, 8]
+    transitionDays: 6
+    weatherWeightMultipliers: { storm: 1.4, heatwave: 1.5, snow: 0.0, blizzard: 0.0 }
+    influence: { intensityDelta: 0.01 }
+  - name: autumn
+    months: [9, 10, 11]
+    transitionDays: 6
+    weatherWeightMultipliers: { fog: 1.6, overcast: 1.3, heatwave: 0.3 }
