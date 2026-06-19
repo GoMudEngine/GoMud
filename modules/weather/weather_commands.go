@@ -13,7 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/modules/weather/sim"
 )
 
-const adminUsage = "Weather admin subcommands: zones | fronts | spawn <type> <zone> [intensity 0..1] | clear [zone] | graph [zone] | rebuild | status"
+const adminUsage = "Weather admin subcommands: zones | fronts | spawn <type> <zone> [intensity 0..1] | clear [zone] | graph [zone] | rebuild | status | seasons"
 
 // cmdWeather is the weather command. Bare `weather` shows local conditions to
 // any player; everything else is admin/mod gated (HasRolePermission: admins
@@ -60,6 +60,8 @@ func (m *weatherModule) cmdWeather(rest string, user *users.UserRecord, room *ro
 			len(m.graph.Nodes), len(m.graph.Edges), m.graph.Components))
 	case "status":
 		m.printStatus(user)
+	case "seasons":
+		m.printSeasons(user)
 	default:
 		sendLine(user, adminUsage)
 	}
@@ -77,6 +79,11 @@ func (m *weatherModule) printLocalWeather(user *users.UserRecord, room *rooms.Ro
 		w = sim.Clear
 	}
 	sendLine(user, fmt.Sprintf("The weather in %s is %s.", room.Zone, w))
+	if m.seasonsOn {
+		if zs, ok := m.zoneSeasons[room.Zone]; ok {
+			sendLine(user, fmt.Sprintf("The season here is %s.", zs.Season))
+		}
+	}
 	if covers := sim.Covering(m.graph, m.state.Fronts, m.simCfg, room.Zone); len(covers) > 0 {
 		c := covers[0]
 		where := "centered here"
@@ -193,6 +200,36 @@ func (m *weatherModule) printStatus(user *users.UserRecord) {
 		len(m.state.Fronts), m.state.Round, m.nextTick, m.cfg.TickEveryGameHours))
 	sendLine(user, fmt.Sprintf("Emotes: mode=%s every ~%d rounds; buffs=%v; persist=%v.",
 		m.cfg.EmoteMode, m.cfg.EmoteEveryRounds, m.cfg.BuffsEnabled, m.cfg.Persist))
+	if m.seasonsOn {
+		sendLine(user, fmt.Sprintf("Seasons: ON — %d track(s), %d zone(s) seasonal.",
+			len(m.tracks), len(m.zoneSeasons)))
+	} else {
+		sendLine(user, "Seasons: off.")
+	}
+}
+
+// printSeasons lists the loaded tracks and where each stands on the calendar.
+func (m *weatherModule) printSeasons(user *users.UserRecord) {
+	if !m.seasonsOn {
+		sendLine(user, "Weather: seasons are off.")
+		return
+	}
+	pos := engine.CalendarNow()
+	sendLine(user, fmt.Sprintf("Seasons active: %d track(s); %d zone(s) seasonal (day %d/%d).",
+		len(m.tracks), len(m.zoneSeasons), pos.DayOfYear, pos.DaysPerYear))
+	names := make([]string, 0, len(m.tracks))
+	for name := range m.tracks {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	for _, name := range names {
+		cur, prev, blend := m.tracks[name].Resolve(pos.DayOfYear)
+		if blend >= 1 || cur == prev {
+			sendLine(user, fmt.Sprintf("  %-12s %s", name, cur))
+		} else {
+			sendLine(user, fmt.Sprintf("  %-12s %s (blending from %s, %.0f%%)", name, cur, prev, blend*100))
+		}
+	}
 }
 
 // printGraphForZone prints a zone's neighbors (crawler spot-check). NOTE: the
