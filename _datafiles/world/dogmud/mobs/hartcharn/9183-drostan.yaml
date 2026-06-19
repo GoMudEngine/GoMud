@@ -24,6 +24,7 @@ idlecommands:
   - 'emote wipes the back of his wrist across his forehead and turns
     back to the forge without ceremony'
 activitylevel: 10
+craft_support: blacksmithing
 character:
   name: Drostan
   description: |
@@ -48,3 +49,8 @@ character:
       training: 8
     perception:
       training: 4
+  shop:
+    - itemid: 10021
+    - itemid: 20004
+    - itemid: 20007
+    - itemid: 20008

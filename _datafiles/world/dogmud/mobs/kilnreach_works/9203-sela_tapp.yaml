@@ -21,6 +21,7 @@ idlecommands:
   - 'emote draws ale in a long, practised pull without spilling a drop and
     sets it down before anyone has asked'
 activitylevel: 12
+craft_support: general
 character:
   name: Sela Tapp
   description: |
@@ -44,3 +45,8 @@ character:
       training: 10
     dexterity:
       training: 6
+  shop:
+    - itemid: 30025
+    - itemid: 30023
+    - itemid: 30022
+    - itemid: 30037

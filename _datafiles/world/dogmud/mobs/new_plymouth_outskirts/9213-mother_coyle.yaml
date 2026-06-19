@@ -25,6 +25,7 @@ idlecommands:
   - 'emote holds a level stare on a troublemaker until he reconsiders his
     evening'
 activitylevel: 12
+craft_support: general
 character:
   name: Mother Coyle
   description: |
@@ -52,3 +53,7 @@ character:
       training: 8
     strength:
       training: 4
+  shop:
+    - itemid: 30023
+    - itemid: 30022
+    - itemid: 30025

@@ -22,6 +22,7 @@ idlecommands:
   - 'emote leans both hands on the bar and listens to the room with
     the focused stillness of someone who hears more than he lets on'
 activitylevel: 10
+craft_support: general
 character:
   name: Wick Orrel
   description: |
@@ -49,3 +50,8 @@ character:
       training: 8
     willpower:
       training: 5
+  shop:
+    - itemid: 30025
+    - itemid: 30024
+    - itemid: 30023
+    - itemid: 30022

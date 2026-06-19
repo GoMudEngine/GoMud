@@ -22,6 +22,7 @@ idlecommands:
     that sounds like an inquiry about road conditions'
   - ''
 activitylevel: 14
+craft_support: general
 character:
   name: Old Mabbot
   description: |
@@ -50,3 +51,9 @@ character:
       training: 5
     willpower:
       training: 3
+  shop:
+    - itemid: 40038
+    - itemid: 30021
+    - itemid: 30020
+    - itemid: 30001
+    - itemid: 30037

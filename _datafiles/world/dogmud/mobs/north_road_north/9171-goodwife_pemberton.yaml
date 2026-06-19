@@ -24,6 +24,7 @@ idlecommands:
     straightened them ten thousand times and will straighten them ten
     thousand more'
 activitylevel: 15
+craft_support: general
 character:
   name: Goodwife Pemberton
   description: |
@@ -53,3 +54,10 @@ character:
       training: 5
     vitality:
       training: 4
+  shop:
+    - itemid: 30023
+    - itemid: 30022
+    - itemid: 30026
+    - itemid: 30025
+    - itemid: 30024
+    - itemid: 30037

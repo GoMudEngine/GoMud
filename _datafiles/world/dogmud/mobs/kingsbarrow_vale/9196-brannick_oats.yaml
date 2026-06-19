@@ -22,6 +22,7 @@ idlecommands:
   - 'emote lifts his chin and calls a greeting to someone near the door,
     face creasing into a grin that takes years off him'
 activitylevel: 10
+craft_support: general
 character:
   name: Brannick Oats
   description: |
@@ -47,3 +48,9 @@ character:
       training: 8
     willpower:
       training: 4
+  shop:
+    - itemid: 30026
+    - itemid: 30023
+    - itemid: 30022
+    - itemid: 30025
+    - itemid: 30037

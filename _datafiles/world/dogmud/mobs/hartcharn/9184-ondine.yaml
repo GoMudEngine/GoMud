@@ -22,6 +22,7 @@ idlecommands:
   - 'emote climbs two rungs of the step-ladder and reaches a jar of
     road-salve down from the upper shelf'
 activitylevel: 12
+craft_support: general
 character:
   name: Ondine
   description: |
@@ -47,3 +48,10 @@ character:
       training: 7
     willpower:
       training: 5
+  shop:
+    - itemid: 40038
+    - itemid: 30021
+    - itemid: 30020
+    - itemid: 30001
+    - itemid: 20008
+    - itemid: 10001
