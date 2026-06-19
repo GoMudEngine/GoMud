@@ -1,0 +1,60 @@
+roomid: 5405
+zone: Hartcharn
+title: The Coachman's Rest
+description: >
+  The Coachman's Rest fills the whole north side of the market
+  square — three storeys of heavy timber framing and whitewashed
+  render, the upper floors cantilevered out on stout oak brackets
+  above the entrance. A painted <ansi fg="itemname">sign</ansi> hangs
+  from a wrought-iron arm over the arched doorway — a coach-wheel in
+  gold leaf on deep green, the inn's name scrolled beneath in bold
+  lettering. Brass lamp-brackets flank the broad door, each holding
+  a glass-paned lantern whose flame keeps the threshold warm against
+  the road-dust settling off the square. The deep murmur of voices
+  and the scrape of benches press faintly through the walls. To the
+  west, the coaching yard rings with iron-shod wheels on cobblestone
+  and the calls of ostlers working teams free of their traces. The
+  door east leads into the inn proper.
+biome: city
+coord:
+  x: -18
+  y: 37
+  z: 0
+exits:
+  south:
+    roomid: 5404
+  east:
+    roomid: 5406
+  west:
+    roomid: 5408
+nouns:
+  sign: A large painted board hung from a wrought-iron arm bolted
+    into the timber fascia — a coach-wheel in gold leaf on dark
+    green, its spokes picked out in ochre and black. The name
+    "The Coachman's Rest" is lettered beneath in a steady hand,
+    the paint well kept and retouched often enough that older
+    layers show through at the worn edges. A landmark on the road
+    that no traveler arriving from the south will miss.
+  door: A broad door of close-planked timber set into a stone
+    archway, its lintel carved in low relief with horses in
+    traces. The wood has been rubbed to a near-gloss by years
+    of hands pushing through. Brass lamp-brackets flank it on
+    either side, flames burning steady behind polished glass
+    that throws warm amber light across the step and the square.
+  yard: The coaching yard opens west through a broad stone arch —
+    iron wheels grinding over cobblestone, teams coming off the
+    road while others are readied to leave, ostlers calling
+    numbers back and forth. The Coachman's Rest handles more
+    traffic than any other stop on the road for many miles, and
+    the yard is rarely still for long.
+idlemessages:
+- A coach swings in from the west, iron wheels cracking hard over
+  cobblestone, and two ostlers hurry out to take the traces.
+- The painted <ansi fg="itemname">sign</ansi> sways on its iron arm
+  as a gust cuts across the square, then hangs still.
+- A traveler pushes through the entrance door heading east, pack
+  heavy on both shoulders, boots thick with road dust.
+- The lamps flanking the door hold steady in the crosswind, their
+  flames tucked behind polished glass panes.
+- From the coaching yard west, a horse stamps hard and blows, and
+  a harness jingles as it is lifted free of the collar.

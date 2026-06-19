@@ -1,0 +1,62 @@
+roomid: 5402
+zone: Hartcharn
+title: Hartcharn, South Gate
+description: >
+  Woodsmoke reaches you before the gate does — rich and resinous,
+  laced with something fatty on a fire and the warm yeast of bread.
+  After the empty scrub-country, the smell alone is enough to loosen
+  a knot you forgot you were carrying. The south gate of Hartcharn
+  stands open in its mortared fieldstone arch, a low wall of fitted
+  stone running east and west — not much of a fortification, just a
+  line that means you have arrived somewhere real. Voices drift down
+  from the streets above, and the creak of a laden coach carries from
+  further in the town. To one side of the arch a gatekeeper's post
+  holds a burning lantern. Beside it, a pine
+  <ansi fg="itemname">toll board</ansi> is chalked with rates for
+  carts, livestock, and trade goods. The <ansi fg="itemname">road</ansi>
+  south falls away fast into the pale flat scrublands — you can still
+  see the empty country you came through, already looking farther than
+  it felt.
+biome: city
+coord:
+  x: -18
+  y: 34
+  z: 0
+exits:
+  north:
+    roomid: 5403
+  south:
+    roomid: 5401
+    zone: The Empty Reach
+nouns:
+  gate: A mortared arch of grey fieldstone, the jambs worn smooth
+    where the gate's timber frame once swung — the hinges are still
+    there, iron pintles sunk into the stone, but the doors themselves
+    were long since taken for something else. The arch is low enough
+    that a rider must duck. Lantern hooks flank it on both sides;
+    one holds a burning lamp, the other is empty, its hook bright
+    from handling.
+  toll board: Wide pine boards nailed to a frame beside the gate,
+    their surface chalked over and re-chalked until the wood has gone
+    pale with ghost letters. The current hand is neat and deliberate
+    — rates for two-wheel carts, four-wheel wains, and loose livestock
+    by the head, with a line at the bottom for trade goods and sundry.
+    Above the rates, older notices are tacked in layers — a lost grey
+    mare from three weeks back, a note about road repairs north of
+    town, and one small card that reads simply "New Plymouth — inquire
+    within."
+  road: Looking south through the gate arch, the road dwindles fast
+    into the scrublands — a pale chalk line across pale flat earth,
+    no trees, no shade, the horizon utterly empty. The town sounds
+    fade the further your eye travels. You came a long way to get here.
+idlemessages:
+- A wagon rolls through the gate from the south, its axle groaning
+  under a load of bundled hides.
+- The lantern at the gatekeeper's post flickers as a breeze funnels
+  through the arch.
+- A dog noses at the base of the gate arch, then trots north into
+  town without looking back.
+- Voices from the streets above swell for a moment — someone calling
+  a name, someone answering — then settle.
+- A traveler passes through heading south, pack high and hat pulled
+  low against the wind.

@@ -1,0 +1,42 @@
+roomid: 5410
+zone: Hartcharn
+title: The Smithy
+description: >
+  Heat reaches you first — rolling from the <ansi fg="itemname">forge</ansi>
+  in the back wall, coals banked high and glowing red-orange. The smithy
+  is a wide, low-roofed building just off the east side of the square,
+  its walls smoke-blackened from years of hard use. The ring of hammer on
+  <ansi fg="itemname">anvil</ansi> fills the room and bounces off stone
+  and rafters alike — sharp, repetitive, steady as a working clock. Coal
+  smoke hangs in the air. A <ansi fg="itemname">slack tub</ansi>
+  beside the forge steams faintly when hot metal enters it. A timber rack
+  along the near wall holds finished work awaiting collection — horseshoes,
+  wheel strakes, and wagon bolts ready for the road.
+biome: city
+coord:
+  x: -17
+  y: 36
+  z: 0
+station: forge
+exits:
+  west:
+    roomid: 5404
+nouns:
+  forge: A wide stone forge built into the back wall, its firepot sunk
+    deep to hold a long working heat. The bellows frame stands to one
+    side, its leather worn supple from daily use. Coals glow red at the
+    centre and orange at the edges, and the heat coming off them is
+    enough to make the air shimmer an inch from the firepot wall.
+  anvil: A heavy anvil set on an oak stump, its face worn flat and bright
+    from long use. Hammer marks ring the horn and heel where hot iron
+    gets its final shaping. The working surface is smooth as glass at
+    the centre; the edges show the chips and dents of a working life.
+  slack tub: A wide iron tub half-full of water beside the forge, its
+    surface dark with scale and quench dust. When hot iron enters it,
+    the hiss of steam carries across the yard.
+idlemessages:
+- The ring of hammer on iron fills the smithy and echoes off stone.
+- Sparks scatter across the floor as hot metal meets the anvil.
+- The bellows exhales and the forge coals surge briefly brighter.
+- The slack tub hisses as hot iron is plunged in, a curl of steam rising.
+- A finished horseshoe is held to the light and turned slowly, checked.

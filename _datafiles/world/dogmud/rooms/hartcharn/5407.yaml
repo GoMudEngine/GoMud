@@ -1,0 +1,57 @@
+roomid: 5407
+zone: Hartcharn
+title: The Coachman's Rest, Lodging Wing
+description: >
+  Beyond the common room door, the noise drops to a murmur and then
+  to almost nothing. The lodging wing runs east in a corridor of low
+  ceilings and bare boards, a strip of worn runner-cloth down the
+  center muffling footsteps. Numbered doors line both walls at close
+  intervals — each one solid planked timber with a plain iron latch.
+  The air holds clean linen and tallow wax, with an undersmell of
+  sawdust and old rope that no amount of scrubbing quite shifts. A
+  single lamp at the corridor's far end keeps the last few doors in
+  soft amber half-dark. A <ansi fg="itemname">washstand</ansi> sits in
+  the alcove beside the stairhead, its basin and ewer in plain white
+  ceramic. A small <ansi fg="itemname">window</ansi> at the hall's end
+  looks out over the coaching yard below.
+biome: city
+coord:
+  x: -16
+  y: 37
+  z: 0
+exits:
+  west:
+    roomid: 5406
+mutators:
+- mutatorid: sanctuary
+nouns:
+  washstand: A solid piece of furniture — a shelf of dark wood on
+    heavy turned legs, holding a wide ceramic basin and a matching
+    ewer filled with water. A strip of linen hangs folded over one
+    side. The basin's interior is stained with use around the
+    drain-hole, but the outside has been wiped clean. A hollow
+    shelf below holds space for boots or a bag, and a small iron
+    hook on the side takes a cloak or a belt.
+  doors: The corridor doors are close-planked timber, each one
+    numbered in chalk on a small slate fixed to the wall beside
+    the latch. No two quite match — different wood, different
+    ironwork, replaced over the years as tenants and time wore
+    them out. Most stand closed. Behind at least one, the low
+    creak of a rope-strung bed settles under a sleeper's weight.
+  window: A small casement at the far end of the corridor, its
+    glass slightly bowed with age, looking down over the rooftops
+    and into the coaching yard below. The yard is visible in
+    miniature — coaches and horses and the figures of ostlers
+    going about their work. A latch holds the window shut; the
+    glass rattles faintly when the wind finds the gap in the frame.
+idlemessages:
+- From somewhere behind the nearest door, a rope-strung bed creaks
+  under shifting weight and then goes quiet.
+- The corridor lamp flickers as a draft finds the stairhead, then
+  settles back to its steady burn.
+- A burst of laughter rises faintly from the common room below,
+  travels up through the floorboards, and fades.
+- Boots on the staircase — heavy and slow — someone climbing to their
+  room, done with the noise below.
+- The <ansi fg="itemname">washstand</ansi> ewer catches the lamplight;
+  the water inside has gone still and clear.

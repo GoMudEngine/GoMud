@@ -1,0 +1,74 @@
+roomid: 5404
+zone: Hartcharn
+title: Market Square
+description: >
+  The square opens after the pinch of the street like a breath
+  let out — cobblestones worn smooth by ten thousand wheels and
+  twice that many boots, and above it a sky unbroken by rooflines
+  for the width of a city block. This is Hartcharn's heart, the
+  place everything converges. A stone <ansi fg="itemname">well</ansi>
+  stands at the center, its capped lip polished bright by the lean
+  of hauling arms, and it draws a slow steady traffic of townsfolk,
+  drovers, and travelers filling cups, casks, and horse-troughs.
+  The coaching inn stands to the north, its broad door propped open
+  and a lamp burning in the noon window — the road's end for anyone
+  who made it this far on foot. East, the ring of a smithy carries
+  across the cobbles in measured triplets. West, a narrow door bears
+  a painted coach-wheel above its lintel. Between the well and the
+  north road, a heavy iron-posted
+  <ansi fg="itemname">notice board</ansi> is papered and chalked
+  with the business of the town.
+biome: city
+coord:
+  x: -18
+  y: 36
+  z: 0
+exits:
+  south:
+    roomid: 5403
+  north:
+    roomid: 5405
+  east:
+    roomid: 5410
+  west:
+    roomid: 5409
+nouns:
+  well: A circular well of mortared river-stone, chest-high, the
+    cap worn into two smooth crescents where generations have leaned
+    to work the rope. The bucket is of oak banded in iron — heavy
+    enough not to wander — and a long-handled iron dipper hangs from
+    a peg on the south face for anyone who needs only a drink.
+    Looking down the shaft, the water is dark and still and closer
+    than you expect.
+  notice board: A broad frame of weathered pine on an iron post,
+    its surface a palimpsest of chalked schedules, tacked notices,
+    and cards pinned with small nails. A chalk column lists the coach
+    departure times north toward New Plymouth and south toward the
+    road into the empty country — updated each morning and amended
+    through the day in a different hand. Below it, a wages column
+    — road gangs, farm crews, a drover outfit short two hands.
+    At the corner, a town notice warns of wolves seen on the north
+    approach. One small card stands apart in a cleaner hand — passage
+    rates to New Plymouth, with a room number at the coaching inn.
+  coaching inn: The inn faces the square from the north end — a
+    two-storey timber-and-stone building, wide as it is solid, with
+    a painted sign above the broad door and a lamp burning in both
+    front windows even at midday. A hitching post runs along its
+    southern face. The smell of smoke and cooked meat drifts from
+    the open door even at this distance.
+  smithy: The source of the steady ringing from the east — a low
+    stone building with wide doors thrown open to the square, the
+    interior warm and orange with forge-glow. The hammering comes
+    in triplets — two light, one heavy — then a pause, then again.
+    Even at this distance you can feel the heat when the wind shifts.
+idlemessages:
+- A coach team swings into the square from the north road, its
+  iron-shod wheels cracking loud on the cobbles.
+- Someone at the well lets the bucket drop a little too fast — a
+  crack of rope on stone, and water sloshes over the lip.
+- The smithy's hammer rings east in three measured beats, then falls
+  quiet for a long moment, then starts again.
+- Two travelers stand at the notice board, one tracing a line with
+  a finger while the other makes a note on a scrap of paper.
+- A drover fills a leather cask at the well trough, talking to his
+  horse in a low and steady murmur.

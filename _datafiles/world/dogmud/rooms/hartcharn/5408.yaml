@@ -1,0 +1,41 @@
+roomid: 5408
+zone: Hartcharn
+title: The Posting Yard
+description: >
+  The smell of horse and harness hits before anything else — warm and
+  dense, laced with straw and the honest reek of dung. The posting yard
+  stretches west of the coaching inn, its packed-dirt floor churned into
+  ruts by iron-shod wheels and heavy hooves. Stabling lines the north
+  wall, team horses standing in fresh bedding, heads low and still.
+  Two heavy <ansi fg="itemname">coaches</ansi> sit idle beneath the lean-to,
+  panels road-filmed, wheel-rims thick with mud from the last run south.
+  Ostlers move without hurry, hauling water and checking cinches. A long
+  <ansi fg="itemname">tack rack</ansi> by the stable door holds collars,
+  traces, and spare leatherwork for the next team out.
+biome: city
+coord:
+  x: -19
+  y: 37
+  z: 0
+exits:
+  east:
+    roomid: 5405
+  south:
+    roomid: 5409
+nouns:
+  coaches: Two heavy road coaches built for distance rather than comfort,
+    their bodies banded iron over seasoned timber, roof racks lashed with
+    oilcloth. A chalk board nailed to the lean-to post lists the next run
+    northbound — through six posting villages to New Plymouth, departing
+    at first light. Mud cakes the running boards from the road south.
+  tack rack: A long timber rack hung with working harness in various
+    states of readiness. Horse collars stuffed fat with fresh padding sit
+    beside traces dark with neatsfoot oil, spare bridles coiled on their
+    pegs in order of size. A hook at the far end holds a folded canvas
+    tarpaulin for wet weather. Most pegs are full; a few hang bare.
+idlemessages:
+- An ostler leads a fresh team through the yard gate, the horses blowing.
+- Harness brass jingles as a collar is buckled tight for the road ahead.
+- Straw rustles as a horse shifts weight in the stabling, snorting softly.
+- A driver climbs to the box seat and gathers the reins, sizing up the team.
+- The creak of wheels and hoofbeats — a coach rolls in from the road, muddy.

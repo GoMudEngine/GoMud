@@ -1,0 +1,43 @@
+roomid: 5411
+zone: Hartcharn
+title: The General Store
+description: >
+  The mingled smell of the store hits at the threshold — rope, lamp oil,
+  dried herbs, beeswax, and smoked meat all pressed together in a space
+  too small for everything it holds. Bowed <ansi fg="itemname">shelves</ansi>
+  line every wall from floor to rafter, creaking under the weight of
+  crates, bundles, crocks, and sacks. A <ansi fg="itemname">barrel</ansi>
+  beside the door holds salted fish under a weighted lid. A worn counter
+  spans the far end of the room, and brass <ansi fg="itemname">scales</ansi>
+  at the centre handle dry goods sold by measure — salt, beans, and
+  grain weighed out to order.
+biome: city
+coord:
+  x: -17
+  y: 35
+  z: 0
+exits:
+  west:
+    roomid: 5403
+nouns:
+  shelves: Shelves run floor to rafter on three walls, their boards thick
+    and rough-cut, bowed in the middle from the weight they carry. What
+    is stocked covers the full range of road needs — rope in coils from
+    light cord to heavy hawser, lamp oil in clay jugs, dried beans and
+    salt fish, tallow candles in bundles, oilcloth folded flat, wheel
+    grease in small crocks, and the iron hardware a wagon-driver cannot
+    do without. The storekeeper knows where everything is; the logic is
+    not obvious to anyone else.
+  barrel: A wide cooperage barrel near the door, its staves well-seasoned
+    and its iron bands tight. A weighted wooden lid keeps the salted fish
+    inside. The brine smell is strong enough to notice from a step away.
+  scales: A set of brass pan scales at the counter, well-balanced and
+    polished to a dull gleam. The weight set beside them runs from a
+    quarter-ounce to two pounds. Dry goods sold by measure are weighed
+    here — salt, dried beans, grain flour, and the like.
+idlemessages:
+- Something shifts on the shelves with a soft wooden knock, settling.
+- The smell of lamp oil and rope drifts through the room in waves.
+- Dust motes drift through the light from the front window, undisturbed.
+- The weighted lid on the fish barrel lifts briefly, then settles back.
+- The brass scales swing faintly on their pivot, finding their level.

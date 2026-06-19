@@ -1,0 +1,66 @@
+roomid: 5403
+zone: Hartcharn
+title: Lower Market Street
+description: >
+  The street finds you by sound before you find it — a hawker
+  calling prices over cart-noise and cobbles, the steady knock
+  of a cooper's mallet from somewhere behind the shopfronts, and
+  under it all the low constant murmur of a place that has its own
+  business and does not need yours. Lower Market Street climbs
+  north from the gate toward the square, a moderate pitch with a
+  central gutter worn by rain and runoff. Canvas awnings shade
+  trestle tables on either side — cured meats, dried pulses, rope,
+  nails, cooking pottery, and the kind of rough clothing a traveler
+  ruins in the first week and must replace. To the east, a painted
+  sign marks the general store. A battered
+  <ansi fg="itemname">handcart</ansi> sits against the wall to one
+  side, its plank bed stacked with crated goods that still want
+  unloading; the <ansi fg="itemname">stalls</ansi> on either side
+  run on up the slope toward the square.
+biome: city
+coord:
+  x: -18
+  y: 35
+  z: 0
+exits:
+  south:
+    roomid: 5402
+  north:
+    roomid: 5404
+  east:
+    roomid: 5411
+nouns:
+  stalls: Trestle tables with canvas awnings, set close enough
+    together that two people sidling past must turn sideways.
+    The goods are a traveler's inventory of need — cured sausage
+    and hard cheese in wax, sacks of dried peas and lentils, iron
+    nails sold by the pound, rope in coils, clay pots and iron
+    pans, and a rack of plain linen shirts in three sizes. Prices
+    are chalked on small boards tucked against each stack, and the
+    merchants watch you with the alert patience of people who do
+    this every day.
+  handcart: A two-wheel handcart, its frame scarred and patched
+    with iron strap-work, its plank bed stacked with five wooden
+    crates stencilled with a merchant's mark — a circle with a
+    diagonal bar. The crates are strapped down with rope, the
+    lashing tight and professional. Whoever left it here did not
+    leave it long — the load is still cinched for travel, not for
+    unpacking.
+  shopfronts: The shops behind the stalls are a mix of purpose-
+    built and converted — some with proper carved signboards, some
+    with just a chalked word above the door. A chandler, a cobbler's
+    bench visible through a low window, a narrow assay office with
+    a brass balance etched on the glass, and to the east the general
+    store with its wide door and the smell of tallow and dried herbs
+    drifting from inside.
+idlemessages:
+- A hawker holds up a rope of dried sausages and calls their price
+  to the street in general.
+- A mule team pushes through from north to south, its driver
+  cursing softly at anyone not quick enough to give way.
+- A child darts between two stalls and vanishes into a narrow gap
+  between the shopfronts.
+- The smell of roasted grain drifts from a cookshop's awning
+  somewhere above.
+- Two merchants haggle at a trestle table, voices too low to follow,
+  hands emphatic.

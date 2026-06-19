@@ -1,0 +1,63 @@
+roomid: 5406
+zone: Hartcharn
+title: The Coachman's Rest, Common Room
+description: >
+  The smell arrives before your eyes adjust — woodsmoke and rendered
+  tallow and the deep savour of something long on the boil, all of
+  it worked so far into the beams overhead that it would take an age
+  to air out. Long trestle tables fill the room in two close rows,
+  every bench crowded with travelers, carters, and road-worn locals
+  comparing the road south with the last place they slept. A great
+  stone <ansi fg="itemname">hearth</ansi> dominates the far wall, its
+  fire built high and hot, iron pots hanging on a spit-arm above the
+  flames, grease dripping into the coals with a steady hiss. Behind
+  a worn timber counter, an innkeeper moves without pause — filling
+  cups, settling accounts, cutting bread from a long loaf with a
+  blade worn smooth from use. A <ansi fg="itemname">board</ansi> is
+  pinned to the pillar nearest the counter, thick with folded papers,
+  road notices, and messages left for travelers passing through.
+  The door east leads to the lodging wing.
+biome: city
+coord:
+  x: -17
+  y: 37
+  z: 0
+exits:
+  west:
+    roomid: 5405
+  east:
+    roomid: 5407
+nouns:
+  hearth: A deep stone fireplace running most of the width of the
+    end wall, its mantel blackened by decades of smoke and heat.
+    Two iron pots hang above the flames on a hinged spit-arm —
+    the larger smells of salt pork and root vegetables, the
+    smaller of something richer and harder to name. The
+    hearthstone is cracked across the middle where a heavy pot
+    once split it, the break mortared over so many times it has
+    become part of the design.
+  board: A flat board fixed to the pillar nearest the counter,
+    layered with pinned and overlapping papers — route changes,
+    road warnings, a reward notice with the corner torn away,
+    and a row of wooden pegs along the bottom edge where folded
+    messages have been left for travelers passing through. The
+    innkeeper clears it every few days; it fills again just as
+    quickly.
+  counter: A long plank of close-grained timber worn nearly
+    smooth by years of elbows and mugs set down hard. The
+    innkeeper works behind it without pause — cups refilled,
+    coins counted, bread passed across without looking up. A
+    row of clay jugs lines the back wall, each stoppered with
+    a twist of cloth. Below the counter, a locked chest holds
+    the day's takings out of sight.
+idlemessages:
+- A roar of laughter goes up from one of the long tables and fades
+  back into the general din before you can catch the reason for it.
+- The innkeeper slides a filled cup across the counter without looking
+  up, takes the coin, and is already reaching for the jug again.
+- Grease drips into the <ansi fg="itemname">hearth</ansi> coals with a
+  sharp hiss and the smell of cooking thickens for a moment.
+- Someone pins a new paper to the <ansi fg="itemname">board</ansi> and
+  steps back to read it, blocking the view of the next person behind.
+- A wiry man with a fiddle tucked under his arm works his way between
+  the tables, playing something quick that nobody is quite listening to.

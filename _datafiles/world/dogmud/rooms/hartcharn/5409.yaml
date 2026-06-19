@@ -1,0 +1,44 @@
+roomid: 5409
+zone: Hartcharn
+title: The Ferry and Coach Agent
+description: >
+  After the noise and smell of the posting yard, the agent's office is
+  startlingly quiet. The room is small and low-ceilinged, its walls
+  panelled in dark timber that has absorbed years of pipe smoke. The
+  <ansi fg="itemname">routes board</ansi> covers most of the back wall
+  — ink on aged linen, pinned flat with brass tacks, its columns recording
+  fares and travel times in a small and precise hand. Below the window,
+  a broad desk is heaped with <ansi fg="itemname">ledgers</ansi> and
+  red-taped correspondence, the paper edges worn soft with handling. An
+  iron strongbox sits padlocked to the floorboards beneath the desk,
+  square and going nowhere.
+biome: city
+coord:
+  x: -19
+  y: 36
+  z: 0
+exits:
+  north:
+    roomid: 5408
+  east:
+    roomid: 5404
+nouns:
+  routes board: The routes board stretches the full width of the back
+    wall, aged linen inked in fine, close columns. Two main routes are
+    listed. The overland coach runs from Hartcharn north through six
+    posting villages to New Plymouth — seven days by express, eleven by
+    the ordinary. The ferry packet runs the other way — south by road
+    to Stillwater, then by river-and-lake packet to the capital, four
+    days in fair weather. Fares for both classes are chalked in a column
+    to the right, subject to seasonal correction.
+  ledgers: A stack of ledgers in worn covers, their spines labelled by
+    season and year in the same hand as the routes board. Passenger
+    manifests, freight bookings, and letters from the capital coach
+    authority fill their pages. The current ledger lies open at the
+    desk, the most recent entries still fresh.
+idlemessages:
+- A pen scratches quietly at the desk, adding figures to a manifest.
+- The routes board shifts faintly in the draft when the north door opens.
+- Pages turn as a ledger is flipped back to find an earlier booking.
+- Yard sounds carry through the wall — horses, harness, a coach wheel.
+- The strongbox sits on the floorboards and says nothing at all.
