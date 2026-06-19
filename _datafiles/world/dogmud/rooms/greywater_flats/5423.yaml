@@ -11,7 +11,7 @@ description: >
   birds. A <ansi fg="itemname">half-sunk punt</ansi> lies abandoned at the
   road's edge where a wildfowler left it; the <ansi fg="itemname">reeds</ansi>
   shift and part with the movement of things you cannot see.
-biome: swamp
+biome: shore
 coord:
   x: -18
   y: 43
