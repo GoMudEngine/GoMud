@@ -1,0 +1,58 @@
+roomid: 5397
+zone: The Empty Reach
+title: The Lookout Rise
+description: >
+  The track climbs onto the one high point for miles — a low
+  basalt shoulder that lifts you above the scrub and the broken
+  ground below. What opens from the top is not comforting.
+
+  The Empty Reach rolls out to every horizon, brown and grey and
+  pale under a sky that accounts for more of the world than the
+  land does. The <ansi fg="itemname">road</ansi> north is a pale
+  thread across the scrub that the distance swallows before it
+  reaches anything. You cannot see New Plymouth. You cannot see
+  anything ahead but more of the same vast patience, laid out flat
+  and unhurried between you and wherever it ends.
+
+  At the summit, a rough <ansi fg="itemname">cairn</ansi> of
+  stacked stones marks what travellers have agreed to call the
+  high point. The <ansi fg="itemname">view</ansi> south shows how
+  far you have come. Neither distance is encouraging.
+biome: land
+coord:
+  x: -18
+  y: 29
+  z: 0
+exits:
+  south:
+    roomid: 5396
+  north:
+    roomid: 5398
+nouns:
+  cairn: A heap of stones stacked by travellers over many years —
+    each one added by someone who climbed this rise and felt the
+    need to mark the moment. A few are scratched with initials or
+    dates, the oldest mostly weathered past reading. Wedged into
+    the base, wrapped tight in oilcloth, is a small tin box.
+    Inside are folded notes, a stub of candle, one worn coin, and
+    something small wrapped in cloth that clinks when the box
+    shifts. Travellers keeping company with other travellers they
+    will never meet.
+  road: From up here the road is a pale thread laid across the
+    scrubland with deliberate straightness — curving only where
+    the terrain forced it. It runs north until the horizon and
+    the haze conspire to end it. You cannot see what it leads to.
+    You cannot see anything ahead but the scale of what remains
+    between you and the capital.
+  view: From the high point you can see the full breadth of the
+    Empty Reach in every direction — scrubland and badland rolling
+    out to the curved edge of the world. No smoke, no movement,
+    no sign of anything built except the road. The sky accounts
+    for more of the world than the land does. Standing here you
+    understand why some travellers do not make this crossing twice.
+idlemessages:
+- The wind has nothing to break against up here. It passes straight through you.
+- A hawk rides thermals high to the west, banking without apparent effort.
+- The road north fades into haze long before it reaches anything.
+- The cairn stones are warm from the sun and cool in their own shadow.
+- The silence up here is wider than below — more sky in it.

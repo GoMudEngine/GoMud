@@ -29,6 +29,9 @@ coord:
 exits:
   south:
     roomid: 5388
+  north:
+    roomid: 5390
+    zone: The Empty Reach
 nouns:
   boundary stone: A squared block of grey-black basalt set
     into the verge with deliberate care, its face carved in

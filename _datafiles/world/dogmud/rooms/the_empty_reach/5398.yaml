@@ -1,0 +1,63 @@
+roomid: 5398
+zone: The Empty Reach
+title: The Alkali Pan
+description: >
+  The road drops into a wide flat basin — an ancient lakebed, dry
+  for longer than anyone's reckoning. The alkali pan stretches
+  white and blinding in every direction, its dead bottom cracked
+  into irregular plates that crunch underfoot like thin ice over
+  hollow ground. The surface is pale as new bone. Boots break
+  through in places, punching into soft grey mud that smells of
+  minerals and very old standing water.
+
+  At the pan's far edges, a <ansi fg="itemname">mirage</ansi> of
+  false water glimmers on the horizon in every direction — flat
+  and perfectly convincing, retreating at exactly the pace you
+  approach. Heat reflects off the white crust in a second wave
+  from below. The air is hot from both directions at once.
+  Nothing lives here. Nothing has for a long time.
+
+  Near the northern edge, a <ansi fg="itemname">wagon</ansi> lists
+  half-sunk in the pan — an axle snapped, a frame bleached and
+  splitting. The <ansi fg="itemname">crust</ansi> underfoot shows
+  where the pan is thinnest, the salt plates lifting at their
+  edges like something trying to peel away.
+biome: land
+coord:
+  x: -18
+  y: 30
+  z: 0
+exits:
+  south:
+    roomid: 5397
+  north:
+    roomid: 5399
+nouns:
+  wagon: The frame of a freight wagon, the wood bleached white
+    and splitting along the grain. One wheel sank through the
+    crust and pulled the bed down at an angle — the axle sheared
+    at the hub, and whoever was driving never came back to fix
+    it. Among the ruin are rusted barrel hoops, a tarpaulin gone
+    stiff with salt, and under the tilted bed, sheltered from the
+    worst of the sun, a leather satchel that has outlasted
+    everything else here. It is not empty.
+  crust: The alkali surface is thinner here, the plates lifting
+    at their edges like peeling skin. Step too hard and your boot
+    breaks through to soft grey mud beneath — cold, mineral-
+    smelling, unsettling underfoot. The crust's edge is sharp
+    enough to cut. Put your tongue to it if you want — intensely,
+    immediately, unpleasantly salt. You will not want to do it
+    twice.
+  mirage: False water glimmers at the pan's edges in every
+    direction, perhaps two hundred paces away — flat and clear
+    and entirely convincing until you watch it move. It retreats
+    at exactly the pace you advance. It has no depth and no
+    source. It is bent light and a hot pale surface lying to your
+    eyes, the same trick it has played on every traveller who
+    crossed this pan and looked toward the edges hoping for water.
+idlemessages:
+- The alkali crust crunches and settles under your weight as you stand still.
+- False water glimmers at the pan's edge, always the same distance away.
+- Heat rises from the white crust below and falls from the sky above — both at once.
+- A gust crosses the flats, carrying salt crystals that sting where they land.
+- Nothing here casts a shadow worth having.

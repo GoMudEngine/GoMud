@@ -1,0 +1,69 @@
+roomid: 5391
+zone: The Empty Reach
+title: The Wayside Shrine
+description: >
+  A waystone stands at the track's edge, half the height of
+  a person and older than the road that passes it — rough-
+  dressed granite worn smooth where uncounted hands have
+  touched it before committing to the empty country ahead.
+  The shrine leans slightly east, as if years of prevailing
+  wind have nudged it, and its carved face is too worn to
+  read with certainty. Scrub crowds close on three sides,
+  the sage gray-green and knee-high, and beyond it the land
+  opens into the same spare silence that has attended every
+  step since the road gave out. There is no sound of water.
+  No voice from any direction. Only the wind moving through
+  the bunchgrass with the sound of something passing
+  without stopping. The <ansi fg="itemname">shrine</ansi>
+  carries the weight of every traveler who touched it and
+  moved on — its stone face dark with handling, the deep
+  niche at its base holding the small offerings of cautious
+  hands. The <ansi fg="itemname">open scrub</ansi> to
+  either side is the whole of the landscape — dry, vast,
+  and complete in its indifference.
+biome: land
+coord:
+  x: -18
+  y: 23
+  z: 0
+exits:
+  south:
+    roomid: 5390
+  north:
+    roomid: 5392
+nouns:
+  shrine: A rough-dressed column of grey granite, knee-high
+    and square, its surface worn smooth by the kind of
+    handling that only long use achieves. The face turned
+    to the track is carved with a symbol — a circle with a
+    bar through it, or perhaps a wheel, worn past easy
+    reading. Below the symbol a deep niche has been cut
+    into the stone. The niche holds what travelers have
+    left — a scatter of copper coins, dry husks of flowers
+    pressed flat, a strip of cloth knotted around a
+    splinter of bone, and at the back a small clay figure
+    of uncertain subject, its features smoothed away by
+    years of damp and handling. No name on the stone. No
+    god named. Whatever this was for, the travelers who
+    used it seemed to know without being told.
+  open scrub: Beyond the track the scrub runs to the horizon
+    without interruption — sage and bunchgrass and bare
+    basalt, gray-green and pale-gold in turns, no taller
+    than the knee, no denser than seems necessary. The
+    emptiness is not hostile. It is simply the absence of
+    everything except land and sky. No fence, no ruin,
+    no path diverging from the track. A person who stepped
+    into this scrub would vanish within twenty paces,
+    swallowed by the dips and the low growth and the light,
+    and no one on the track would know they had gone.
+idlemessages:
+- The wind passes through the shrine's niche and makes no
+  sound worth naming — only a breath, then nothing.
+- A dry stem of sage taps the shrine's stone face once.
+  The wind shifts and it stops.
+- The coins in the niche catch no light. The cloth does
+  not stir. The silence remains undisturbed.
+- Far to the east, a shape that might be a bird or might
+  be a seed pod crosses the scrub line and is gone.
+- The shrine has been here long enough that the land has
+  grown indifferent to it. Only travelers still notice.

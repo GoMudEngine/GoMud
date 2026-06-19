@@ -1,0 +1,68 @@
+roomid: 5390
+zone: The Empty Reach
+title: Where the Road Gives Out
+description: >
+  The eye reaches north and finds nothing worth calling a
+  landmark — gravel gives out within a few strides, replaced
+  by pale earth pressed flat by passage, and the road stops
+  being a road and becomes only the fact of having been
+  walked. Sage and bunchgrass and bare basalt spread out on
+  both sides; the sky is enormous overhead; no building, no
+  smoke, no fence line in any direction. The rain-shadow
+  country spreads itself fully here — dry, still, and
+  indifferent, the silence the complete kind that has no
+  held breath in it. This is where civilization ends its
+  pretense. The last maintained surface is behind you;
+  north is only open. At the edge of the old verge a low
+  <ansi fg="itemname">boundary cairn</ansi> of stacked
+  basalt slabs marks the threshold, built by travelers
+  who needed to leave something at the edge of the empty.
+  The <ansi fg="itemname">bare track</ansi> runs on
+  northward into the Empty Reach, the last waymark behind
+  you, the next nowhere visible.
+biome: land
+coord:
+  x: -18
+  y: 22
+  z: 0
+exits:
+  south:
+    roomid: 5389
+    zone: North Road North
+  north:
+    roomid: 5391
+nouns:
+  boundary cairn: A stack of flat basalt slabs at the verge's
+    edge — not an official marker, but the accumulated work
+    of travelers who paused here long enough to add a stone.
+    The cairn stands knee-high, each layer set with careful
+    hands that are long gone. At its base the earth has
+    been hollowed by repeated kneeling into a shallow bowl;
+    in that hollow someone has left small things — a corroded
+    copper coin, a twist of dried sage, a scrap of cloth
+    knotted once. The cloth is faded to no particular color.
+    The sage has crumbled to dust. The coin bears a profile
+    worn smooth past recognition. The stones balance; the
+    offerings remain; no name has been carved anywhere.
+  bare track: Where the gravel ends the earth takes over —
+    pale and hardpacked, carrying the pressure of enough
+    passage to make itself a road without anyone's help.
+    The track runs due north, wide enough for a single cart,
+    its surface cracked in the dry season into small plates
+    that shift faintly underfoot. No drainage. No grading.
+    No marker naming the distance to the next thing. Just
+    the land shaped by use, running on into a country that
+    offers nothing except more of itself — and, somewhere
+    past the visible horizon, the distant capital waiting
+    without urgency.
+idlemessages:
+- A hawk circles once above the track's first bend, drops
+  a wing to look, and drifts south without descending.
+- The wind moves through the sage — dry, faintly mineral,
+  the smell of stone and open distance.
+- Nothing moves in any direction. The silence holds without
+  effort.
+- The scrub on both sides stands still. No shadow crosses
+  the pale ground between here and the horizon.
+- A lizard appears on the cairn's top stone, considers the
+  open country, and slips back into the basalt rubble.

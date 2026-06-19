@@ -1,0 +1,54 @@
+roomid: 5393
+zone: The Empty Reach
+title: Coyote Ground
+description: >
+  Something moves at the edge of hearing — a dry crackle in the
+  chamisa, then a stillness that comes down too fast, the way
+  stillness comes when it is chosen. The track narrows here
+  through a press of sage and stiff bunchgrass, and the sense
+  that you are being watched arrives the moment you do.
+
+  Pale <ansi fg="itemname">bones</ansi> are scattered through the
+  grass at the road's edge — sun-bleached, gnawed, and dropped
+  without ceremony. A worn <ansi fg="itemname">trail</ansi> cuts
+  across the track at a shallow angle, pressed into red clay by
+  years of paws and hooves, heading from brush to brush with quiet
+  authority. You have walked into someone else's country. The
+  yellow-gray scrub to the east holds its breath. Something in it
+  holds the same.
+
+  Examine the <ansi fg="itemname">brush</ansi> if you want, though
+  it will tell you nothing useful.
+biome: land
+coord:
+  x: -18
+  y: 25
+  z: 0
+exits:
+  south:
+    roomid: 5392
+  north:
+    roomid: 5394
+nouns:
+  bones: The bones are old and dry, bleached pale gray by years of
+    sun. A long femur shows deep gnaw-marks at both ends. Smaller
+    bones are scattered farther out, as though the meal was
+    interrupted and pieces dragged off in several directions.
+    Sifting through them you find a clump of dark coarse fur
+    snagged on a sharp edge — not ancient at all. Something feeds
+    here, and not long past.
+  trail: A narrow path worn into red clay by years of animal use,
+    cutting across the road on a shallow diagonal. The prints in
+    the soft shoulder are layered — cloven deer, round coyote,
+    something larger with blunt claws. The freshest set is on top.
+    This crossing gets used every night.
+  brush: The chamisa and sage press close and look perfectly still,
+    but the stillness has a quality — alert rather than empty. The
+    shadows between the stems are deep enough to hold a crouching
+    shape. Nothing is visible. That is not especially reassuring.
+idlemessages:
+- Something shifts in the brush to the east. Then nothing.
+- A fly makes slow circles above the nearest scatter of bones.
+- The sage stands absolutely still. Nothing stirs it.
+- Far out in the scrub, something exhales — dry and unhurried.
+- Fresh tracks cross the road. They were not there before.

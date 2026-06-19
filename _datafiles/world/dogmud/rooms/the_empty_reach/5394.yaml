@@ -1,0 +1,49 @@
+roomid: 5394
+zone: The Empty Reach
+title: The Long Flat
+description: >
+  The land opens here into something that takes a moment to fully
+  see — a vast flat of grey-green scrub spreading to every horizon,
+  bunchgrass and sage rolling out under a sky that is enormous and
+  pale and everywhere. The track becomes a thin pale scar running
+  north into a shimmer of risen heat, and then it is simply gone.
+  The scale of it presses against you. There is very far yet to go.
+
+  A lone <ansi fg="itemname">fencepost</ansi> stands at the road's
+  edge — old, silvered by weather, tilting eastward. A strand of
+  rusted wire loops from it into the scrub and vanishes. The
+  <ansi fg="itemname">track</ansi> ahead dissolves into the heat-
+  shimmer without ceremony, as though distance is simply what this
+  land is made of. Somewhere northward the flat must end. You
+  cannot see where.
+biome: land
+coord:
+  x: -18
+  y: 26
+  z: 0
+exits:
+  south:
+    roomid: 5393
+  north:
+    roomid: 5395
+nouns:
+  fencepost: A post of weathered wood, bleached silver-gray by long
+    sun. It lists eastward, its base rotted soft. A single strand
+    of rusted wire runs from a staple near the top, trailing out
+    into the scrub at knee height before vanishing into the sage.
+    The land it once fenced is indistinguishable from the land it
+    did not. Wedged in the split top is a small rusted tin with a
+    crimped lid — left there by someone, for someone, or perhaps
+    simply left.
+  track: The road ahead is little more than a pair of ruts pressed
+    into pale clay, hardened over many years of use. It runs north
+    into the heat-shimmer and becomes impossible to follow with the
+    eye. You know it continues — you can see a faint scar in the
+    scrub on the far side of the shimmer — but the distance between
+    here and there has a discouraging quality to it.
+idlemessages:
+- The heat-shimmer ripples along the track like standing water.
+- A dust-devil spins up in the scrub, travels thirty feet, and dies.
+- Nothing moves. The sky is a flat, pale blue from edge to edge.
+- Wind crosses the flat in a long hiss through the bunchgrass.
+- The horizon does not get closer. It does not intend to.

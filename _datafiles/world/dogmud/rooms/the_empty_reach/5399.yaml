@@ -1,0 +1,68 @@
+roomid: 5399
+zone: The Empty Reach
+title: Scrub's Return
+description: >
+  The smell arrives before the eye makes sense of it — green
+  and resinous and alive, sage-oil and something sweeter
+  beneath it, the scent of plants with actual water at their
+  roots. After the empty pan, it hits like a correction.
+
+  The brush has thickened. Shoulder-high <ansi
+  fg="itemname">sage</ansi> crowds the verge from both sides;
+  off the east edge, where the slope drops into a shallow
+  <ansi fg="itemname">draw</ansi>, a cluster of
+  <ansi fg="itemname">stunted junipers</ansi> marks where
+  runoff collects and lingers long enough to matter. The land
+  is not lush by any honest measure. But it has stopped being
+  punishing — the scrub is alive, the soil darker between the
+  plants, the sky a fraction smaller than it was a mile back.
+  The track runs on through the thickening brush.
+biome: land
+coord:
+  x: -18
+  y: 31
+  z: 0
+exits:
+  south:
+    roomid: 5398
+  north:
+    roomid: 5400
+nouns:
+  sage: The sage here is older than what stood out on the open
+    flats — the stems are woody and deeply furrowed at the
+    base, branches spreading wide enough to brush a walker's
+    sleeves from both sides at once. The leaves are small and
+    dense, coated in fine silver hairs that trap and hold the
+    volatile oil giving the whole air its medicinal edge. Snap
+    a branch and the scent doubles — sharp and clean. This
+    sage has simply had more water close by and grown to fill
+    the available space. Nothing planted it. It is simply here.
+  stunted junipers: Three junipers growing close together where
+    the draw shallows at the east verge — low and wind-shaped,
+    crowns flattened into a single eastward lean. The bark peels
+    into long fibrous strips, red-brown beneath the grey outer
+    layer; the berries are hard and dusty blue-green, small as
+    peppercorns. Juniper this far into the high desert marks
+    water with reasonable confidence. The largest of the three
+    shows fresh scoring low on the trunk — pale sapwood, recent
+    claw-marks. Whatever made them is not here now.
+  draw: A shallow cut in the slope east of the track, its bottom
+    lined with gravel and a fringe of dry sedge. The soil is
+    darkest at the lowest point, still holding moisture from the
+    last rain. A flat stone has been laid across the channel
+    near the upstream end — not natural, placed with clear
+    intent. Behind it, a shallow pool has gathered in the gravel
+    hollow, perhaps a handspan deep and clear to the bottom.
+    Someone laid that stone to catch what the draw offered. The
+    water is cold and clean.
+idlemessages:
+- A wren moves through the sage below the east verge — visible
+  for a moment between two grey branches, and then simply part
+  of the brush again.
+- The sage smell sharpens as the afternoon sun crosses the
+  scrub at its full angle, the air above the tallest plants
+  shimmering faintly with released oil.
+- Something small moves in the junipers. The branch stills.
+  Nothing shows itself in the open.
+- The draw carries a low sound — water threading through
+  gravel, the quietest thing the empty country has offered.

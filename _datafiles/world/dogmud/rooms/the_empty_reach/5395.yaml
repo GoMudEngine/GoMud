@@ -1,0 +1,51 @@
+roomid: 5395
+zone: The Empty Reach
+title: The Abandoned Camp
+description: >
+  The smell finds you first — old ash and something beneath it,
+  damp canvas and rot, the particular vacancy of a place that was
+  once inhabited and no longer is. A ring of fire-blackened stones
+  sits in a cleared patch of ground a few steps off the road, the
+  ash in the center long since gone cold and gray.
+
+  A <ansi fg="itemname">campsite</ansi> in its aftermath — the
+  fire-ring, a scatter of stones arranged with quiet intention,
+  a rusted tin left weighted with a flat rock. Some distance away,
+  the remains of a <ansi fg="itemname">lean-to</ansi> have
+  collapsed inward, the frame rotten at the lashing-points, a
+  strip of mildewed canvas draped over the wreckage like a shroud.
+  Someone stayed here long enough to build shelter. They did not
+  stay long enough for the shelter to outlast them.
+biome: land
+coord:
+  x: -18
+  y: 27
+  z: 0
+exits:
+  south:
+    roomid: 5394
+  north:
+    roomid: 5396
+nouns:
+  campsite: The fire-ring is old — the stones heat-blackened and
+    lichen already reclaiming their edges. The ash bed inside is
+    deep for a single stay, many fires' worth laid down in layers.
+    Someone camped here more than one night. Beside the ring,
+    weighted with a flat stone, is a small rusted tin with a
+    crimped lid. Inside, still dry, you find a folded scrap of
+    paper — part of a rough-drawn map, showing a route north and
+    a notation that might be a distance marker or a date. The
+    land it sketches is unmistakably this land. The route
+    continues north.
+  lean-to: Three poles lashed with cord, two of them snapped at
+    the joint and collapsed inward. A strip of canvas — once waxed,
+    now mildewed and stiff — covers the top of the wreckage. The
+    frame is rotten enough that the whole thing would crumble at a
+    touch. It was a decent shelter once, built with some care. It
+    has been empty a very long time.
+idlemessages:
+- Cold ash sits in the fire-ring. No warmth left in it at all.
+- The lean-to canvas stirs in a breath of wind, then falls still.
+- Something about the camp feels unfinished. Like a sentence cut short.
+- A ground-squirrel appears at the fire-ring's edge, then vanishes.
+- The basalt around the camp holds the day's heat long past sundown.

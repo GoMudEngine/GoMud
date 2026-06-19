@@ -1,0 +1,68 @@
+roomid: 5392
+zone: The Empty Reach
+title: The Dry Wash
+description: >
+  The track drops into a gully and the world closes in —
+  steep earth banks on both sides, near enough to feel
+  confining after the open country above. Loose stones
+  shift underfoot with the particular sound of ground that
+  does not hold, and the wind, funneled hard between the
+  cut banks, arrives here with a direction and a voice it
+  lacked on the flats. This is a dry streambed, scoured by
+  flash floods that come perhaps once a year and in those
+  hours can kill the unwary. Now it is bone-dry — cracked
+  pale mud, water-smoothed stones sorted by the violence
+  that shaped them, the air carrying mineral earth and the
+  cold memory of water. High on the east bank, well above
+  the flood line, a mass of <ansi fg="itemname">flood
+  debris</ansi> is wedged in the exposed roots — grey
+  driftwood and smaller things the water brought and left.
+  Below, the <ansi fg="itemname">dry streambed</ansi>
+  floor shows its history plainly in cracked mud and
+  water-cut walls and the patient accumulation of seasons.
+biome: land
+coord:
+  x: -18
+  y: 24
+  z: 0
+exits:
+  south:
+    roomid: 5391
+  north:
+    roomid: 5393
+nouns:
+  flood debris: A tangle of driftwood lodged high on the
+    east bank — grey and sun-bleached, stripped of bark by
+    the water that brought it, wedged against exposed roots
+    far above the current channel. The tangle marks the
+    high-water line of the last flood with the accuracy of
+    a survey. Smaller objects are caught within it — a
+    length of rope with its fibers stiffened by sun and
+    dry air; a flat-sided wooden box, split along one edge
+    but largely intact, wedged between two larger branches;
+    a scatter of cloth scraps pressed flat and bleached to
+    a uniform pale color. The box's split seam still holds.
+    Whatever the flood took from somewhere upstream, some
+    of it rode this far and stopped here, unclaimed.
+  dry streambed: The channel floor is a record of the water
+    that shaped it — cracked mud plates each the width of
+    a hand, lifting at their edges in the heat; water-
+    smoothed stones sorted by size and laid in the clean
+    patterns that only moving water makes. The walls are
+    cut steep and close, showing the layers of the land in
+    thin pale strata. A groove worn into the east wall at
+    knee height marks where the flood runs deepest each
+    season. Between floods the channel holds nothing but
+    dust and heat and wind and the slow expansion of its
+    own cracks.
+idlemessages:
+- The wind runs down the gully between the cut banks and
+  arrives with more force than it had on the flats above.
+- A stone shifts somewhere underfoot and the sound of it
+  carries hard in the narrow cut, then is gone.
+- The debris on the east bank holds its position. The
+  rope in it does not move. Nothing moves.
+- A small lizard crosses the cracked mud in quick dashes,
+  pausing between each one, and vanishes under a stone.
+- The gully is quiet except for the wind. The wind is the
+  only thing here with somewhere to be.

@@ -1,0 +1,79 @@
+roomid: 5401
+zone: The Empty Reach
+title: The Reach's End
+description: >
+  The first <ansi fg="itemname">fence</ansi> appears without
+  ceremony — three weathered posts and a run of rusted wire
+  at the track's right hand, the kind of boundary set when
+  worked land meets land not yet worked. Nothing more than
+  that quiet declaration, but it changes how the road feels
+  beneath the boots. The empty country is behind you. This
+  land belongs to someone.
+
+  The track has widened and smoothed, the ruts deeper and
+  more regular — daily use, both directions, more than one
+  kind of wheel. A <ansi fg="itemname">marker stone</ansi>
+  stands at the west verge where the fence line begins,
+  carrying the district seal and the name of the road
+  authority. Beyond the wire, the ground of the first
+  <ansi fg="itemname">worked field</ansi> has been turned at
+  some point and left to recover — darker soil, different
+  weeds, the pattern of cultivation still visible in its
+  fallow state. The road runs north through a gap in the
+  fence line, toward Hartcharn, still out of sight beyond
+  the next low ground. The wilds are over.
+biome: land
+coord:
+  x: -18
+  y: 33
+  z: 0
+exits:
+  south:
+    roomid: 5400
+nouns:
+  fence: Old but maintained — the posts are hand-split timber,
+    grey on the surface but sound, carrying three strands of
+    rusted wire retensioned in a few places, the staples newer
+    than the rest, the old sags pulled back out by someone who
+    cared enough to return and fix them. This is a working
+    boundary, not an abandoned edge. Past the wire the scrub
+    has been cleared for thirty feet and the soil turned —
+    not deeply, but enough to show that the land on the far
+    side belongs to someone who intends to keep coming back.
+  marker stone: Pale limestone, squared, set into the west
+    verge where the fence begins — older than the fence,
+    probably older than this stretch of road. The face carries
+    a shield device and a line of administrative lettering
+    naming the road authority and district boundary, cut by
+    a mason who expected the stone to outlast the authority
+    that commissioned it. It has. Below the official text a
+    narrow shelf has been cut into the south face — just wide
+    and deep enough to hold a folded paper out of the rain.
+    The shelf is not empty. A scrap of waxed cloth sits in
+    the hollow, folded twice against the weather. Inside, a
+    single line in a plain traveler's hand — Hartcharn lies
+    three miles north, the west gate open until third bell.
+    The wax has kept it dry. Someone left it for whoever
+    follows.
+  worked field: Turned within the last few seasons and left
+    fallow — the soil is loose and dark where the plow cut
+    it, the weeds that came back the annual kind that follow
+    cultivation rather than the deep-rooted scrub of untouched
+    ground. Someone has used this land and will use it again.
+    At the near corner a rough cairn of flat stones marks what
+    is probably a buried corner post — no mortar, no mason,
+    just the boundary marker of someone who did the work with
+    their own hands.
+idlemessages:
+- A crow lands on the nearest fence post, considers things,
+  and flies north without visible concern.
+- The field beyond the wire holds the faint smell of turned
+  earth — older than this season, distinct from the dry scrub
+  smell of the country behind you.
+- Far ahead, carried on still air — a bell strikes twice in
+  a clean tone and goes quiet. A town bell. Someone is
+  marking the hour.
+- The road underfoot is firmer here, the gravel fresh within
+  the last season. Someone has been keeping it.
+- A thread of woodsmoke reaches the road — a cook-fire or
+  a forge somewhere ahead, invisible still but present.

@@ -1,0 +1,73 @@
+roomid: 5400
+zone: The Empty Reach
+title: Distant Smoke
+description: >
+  The track lifts over a low fold in the ground — barely a
+  rise, barely worth naming — and at the crest the view to the
+  north opens. There, far out at the edge of the visible world,
+  a thread of grey <ansi fg="itemname">smoke</ansi> rises
+  against the pale sky in a line so thin it might be a scratch
+  on glass. It climbs, bends once where a high wind catches it,
+  and disperses. A second thread follows.
+
+  A hearth. A chimney. People who lit a fire this morning and
+  will light another tonight. After the empty country the sight
+  lands like a promise — a half-day on still, further than it
+  looks, but real. The coaching town has not yet shown itself,
+  but it is burning wood. The <ansi fg="itemname">track</ansi>
+  here shows more use than it did a mile back — the ruts
+  fresher, the verge more worn. At the fold's crest an old
+  <ansi fg="itemname">milestone</ansi> stands tilted at the
+  road's west side, its face worn but readable.
+biome: land
+coord:
+  x: -18
+  y: 32
+  z: 0
+exits:
+  south:
+    roomid: 5399
+  north:
+    roomid: 5401
+nouns:
+  smoke: At this distance, a thin vertical thread against pale
+    sky — distorted by high wind and reformed at intervals,
+    impossible to be certain of but too consistent to dismiss.
+    It rises from a point north and slightly west of the road's
+    bearing, which is consistent with a coaching town on this
+    route. A traveler who has crossed the empty country finds it
+    difficult to look at that thread without feeling something
+    out of proportion to what smoke actually means. It means
+    someone is there. They are warm. They will be there when
+    you arrive.
+  milestone: Old sandstone, knee-high, tilted off plumb by
+    ground movement and never re-set. The face carries angular
+    lettering — a distance and cardinal bearing, legible at close
+    range in the regional hand of an earlier generation of road
+    surveyors. Below the official text, a tally of cruder marks
+    cut by a later hand — a traveler recording days rather than
+    miles. At the stone's base the earth has pulled away on the
+    south side, and the gap has been packed with flat rocks laid
+    deliberately — a cache, the kind of thing people make in
+    empty country. Wedged between stone and shale inside the
+    gap, a strip of cured hide folded twice against the weather.
+    Smoothed flat it shows two lines in two different hands —
+    one careful, one rough. The careful one says the road north
+    is sound. The rough one adds that the inn keeps a good fire.
+  track: The road surface has improved noticeably at this fold —
+    the ruts deeper and more consistent than a mile back,
+    the gravel maintained within the last season, the verge
+    tramped down by regular traffic going both directions.
+    Shod-hoof prints mark the ground near the verge. The road
+    is used daily here. What comes next is a real road again.
+idlemessages:
+- The smoke thread rises, bends at altitude, disperses.
+  A second follows. Someone is keeping that fire going.
+- A pair of ravens pass overhead heading north, low enough
+  to hear the air moving through their feathers.
+- A breath of wind at the fold's crest carries something
+  faint beneath the scrub smell — woodsmoke at the very
+  edge of perception.
+- A wagon track branches west off the road for fifty paces
+  and ends at a low pile of stone that was once a wall.
+  Nothing remains to explain what it held.

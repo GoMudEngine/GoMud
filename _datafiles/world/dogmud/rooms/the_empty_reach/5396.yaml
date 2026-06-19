@@ -1,0 +1,56 @@
+roomid: 5396
+zone: The Empty Reach
+title: Basalt Badlands
+description: >
+  The track runs into old lava country — shattered basalt heaved
+  up in black ridges, edges sharp enough to part boot leather or
+  the skin beneath it. The rock soaks heat through the morning
+  and gives it back in slow waves off the stone faces, baking the
+  air above the flow field into something that wavers and stings.
+
+  Nothing grows here. The land has been stripped to its bones, and
+  those bones are volcanic and indifferent to passage. Every step
+  off the track risks a turned ankle in the broken slabs. The
+  silence is the silence of a place that burned out its sound a
+  long time ago and never needed it back.
+
+  Two <ansi fg="itemname">columns</ansi> of fractured basalt flank
+  the track ahead, dark as cooled iron. At your feet, a long
+  <ansi fg="itemname">fissure</ansi> cleaves the flow field — cool
+  air rising from the dark below. The <ansi fg="itemname">track</ansi>
+  picks its way through the worst of the broken slabs by long habit.
+biome: land
+coord:
+  x: -18
+  y: 28
+  z: 0
+exits:
+  south:
+    roomid: 5395
+  north:
+    roomid: 5397
+nouns:
+  columns: Two pillars of columnar basalt, roughly hexagonal in
+    cross-section where the ancient lava cooled at its own slow
+    pace. They stand twice your height, surfaces blackened and
+    glassy except where later fractures exposed the interior —
+    paler, coarser, still faintly warm to the touch even in the
+    early morning before the sun has had time to add to it.
+  fissure: A crack in the flow field, a hand's width at the lip
+    and widening below. Cool air rises from the dark with a
+    mineral smell — stone and deep earth and something older than
+    water. A pale shape lodges three feet down, out of easy reach.
+    A bone, or a smooth pale rock, or something else left by
+    someone who also stopped here to look. The dark below it
+    offers no answer.
+  track: The path threads through the worst of the broken slabs
+    by a route worn into habit by many careful feet. Boot-scrapes
+    on the rock edges and a thin scatter of ground grit mark
+    where others have stepped. There is no margin for wandering —
+    the field on either side promises a turned ankle at best.
+idlemessages:
+- The basalt clicks faintly, releasing the afternoon's stored heat.
+- A dry wind crosses the rock field, carrying grit and nothing else.
+- The silence here is total — no birds, no insects, only stone.
+- Far to the east, a column of dust rises and disperses without direction.
+- Your footsteps sound too loud among the black and broken rock.
