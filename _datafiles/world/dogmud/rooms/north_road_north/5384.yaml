@@ -1,0 +1,72 @@
+roomid: 5384
+zone: North Road North
+title: The Old Waystone
+description: >
+  The road runs straight here, a pale ribbon across open
+  scrubland, and the eye catches on the waystone before anything
+  else — it is the only vertical thing for half a mile in any
+  direction. The stone stands at the road's east verge, waist-
+  high and tilted slightly toward the south as though the earth
+  beneath has been slowly shifting for centuries. Its surface
+  is basalt-grey, its carvings worn nearly smooth by weather
+  and hand-touch — symbols older than the road, their meaning
+  lost, their outlines surviving only as shallow grooves traced
+  more by feel than sight. Travelers have been leaving things
+  at its base for as long as the stone has stood — a scatter
+  of small <ansi fg="itemname">offerings</ansi> sits tucked
+  against the stone's foot, smooth river pebbles and a
+  tarnished coin and a stub of wax candle and a folded scrap
+  of cloth with something written inside. Names and rough
+  scratches crowd the lower face where the carvings end.
+  Examine the <ansi fg="itemname">waystone</ansi> itself and
+  the country around it stretches sage and still to every
+  horizon.
+biome: land
+coord:
+  x: -18
+  y: 16
+  z: 0
+exits:
+  south:
+    roomid: 5383
+  north:
+    roomid: 5385
+nouns:
+  waystone: The stone is older than the road by a wide margin —
+    basalt, worked into a rough column shape by hands that left
+    no clear signature in their tools. The carvings began as
+    symbols — a row of shallow chevrons near the top, a series
+    of cup-marks below that, paired curved lines that might have
+    been anything. All of it has been worn nearly smooth by
+    centuries of weather and by every traveler who stopped to
+    run their fingers across the marks. The lower portion is
+    dense with scratched names and initials, some cut deep enough
+    to outlast the rain, others already nearly gone. Who put it
+    here, and why, is not recorded anywhere.
+  offerings: Tucked against the stone's base and accumulated
+    over years of travelers passing through — a half-dozen
+    smooth river pebbles arranged with some care, a tarnished
+    copper coin face-down in the dirt, a wax candle stub burned
+    nearly to the wick and never relit, a folded square of cloth
+    with something written on the inside in cramped lettering
+    too faded now to read. Nothing here has market value. The
+    custom of leaving something is old enough that it requires
+    no explanation — you understand it or you do not.
+  road: Out here the road is thinner and less maintained than
+    the stretch south of the last farmstead. The gravel has
+    spread, the drainage ditch along the east side has silted
+    up and vanished, the verge has gone to sage and bunchgrass
+    with no one to cut it back. There is no one on the road in
+    either direction. No sound of a cart. No smoke on the
+    horizon. This is the edge of the maintained world.
+idlemessages:
+- A hawk hangs motionless over the scrubland to the east,
+  then slides sideways on the wind and is gone.
+- Nothing moves on the road in either direction. The silence
+  out here has weight to it — not absence but presence.
+- A gust stirs the sage and passes through, carrying dust and
+  the dry smell of warmed stone.
+- The waystone casts a thin shadow across the road's edge in
+  the afternoon light, pointing north.
+- Somewhere out in the scrub a small animal moves through the
+  brush, invisible, unhurried.

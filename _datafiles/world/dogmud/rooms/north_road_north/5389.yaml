@@ -1,0 +1,66 @@
+roomid: 5389
+zone: North Road North
+title: Edge of the Empty Reach
+description: >
+  The road arrives here at the edge of what has been kept. The
+  maintained gravel gives out and a beaten earth track takes its
+  place, running northward into a country so open and dry that
+  the eye follows it for what must be miles before losing it in
+  the haze. There is nothing out there in any direction — no
+  building, no smoke, no movement, no mark of deliberate human
+  passage except the track itself pressed into the earth by
+  whoever went before. The scrub thins to scattered saltbush
+  and bare ground; the sky is enormous overhead; somewhere at
+  the edge of the visible world a dark ridge sits on the
+  horizon, far enough away that it might be stone or might be
+  weather. This is where the road stops being maintained and
+  starts being remembered. At the western edge of the verge a
+  <ansi fg="itemname">boundary stone</ansi> stands with the
+  air of something placed here to mean something — its face
+  carved with a warning, or perhaps a benediction, for those
+  who continue north. The <ansi fg="itemname">track</ansi>
+  stretches away into the empty country, the last waymark
+  behind you, the next one nowhere visible ahead.
+biome: land
+coord:
+  x: -18
+  y: 21
+  z: 0
+exits:
+  south:
+    roomid: 5388
+nouns:
+  boundary stone: A squared block of grey-black basalt set
+    into the verge with deliberate care, its face carved in
+    letters a generation older than the road itself — slightly
+    angular, the regional hand of a previous administration.
+    The inscription reads ROAD'S END — BEYOND HERE NO WRIT
+    RUNS. Below it a later hand has cut a single short line in
+    cruder lettering, worn smooth enough now to read as much
+    benediction as warning. The stone's flat upper surface has
+    been hollowed by weathering into a shallow bowl, and in the
+    bowl a careful traveler has stacked four flat stones into a
+    small cairn — balanced with the precision of someone who
+    had a reason to be precise. The cairn is still there.
+    Whether it is a blessing sent ahead or a mark to help find
+    the way back is not stated.
+  track: The maintained road ends where the gravel gives out,
+    and what continues is a beaten earth track — wide enough
+    for a single cart, the ground compressed by passage but
+    never shaped, drained, or graded. The track bends slightly
+    west after the first long straight and disappears from
+    sight, no waymark pointing along it, no distance carved
+    anywhere. The only evidence it leads anywhere at all is
+    the fact of its having been used — the earth compacted by
+    enough passage to carry the weight of the claim. What came
+    back from the Empty Reach, and what did not, is not
+    recorded here.
+idlemessages:
+- The wind comes off the empty country to the north, dry and
+  without the smell of anything that grows or lives nearby.
+- A hawk hangs above the track's first bend, motionless in the
+  updraft, then slides back south without having descended.
+- The silence here is not the quiet of a sleeping place. It is
+  the quiet of somewhere no one has ever lived.
+- Dust lifts from the track's far end and disperses without
+  having been disturbed by anything visible from the road.

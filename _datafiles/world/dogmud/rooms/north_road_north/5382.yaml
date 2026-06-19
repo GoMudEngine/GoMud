@@ -1,0 +1,80 @@
+roomid: 5382
+zone: North Road North
+title: Where the Green Ends
+description: >
+  The wind finds the traveler here with a frankness it
+  could not manage in the hedged country to the south —
+  coming low and steady off the open north with nothing
+  left to check it. The cause is plain in a single glance
+  — on the south side the last rye runs up to a low bank
+  of green <ansi fg="itemname">grass</ansi> that marks
+  where cultivation ends; on the north side of that line,
+  barely a step away, the ground shifts to pale dry earth
+  and the first loose clumps of
+  <ansi fg="itemname">sagebrush</ansi> push up between
+  the stones. The change is sharp enough to seem deliberate
+  — a boundary drawn in the soil itself, not on any map.
+  The <ansi fg="itemname">sky</ansi> above opens wide, the
+  cloud layer high and thin, the blue to the north clear
+  and pale and carrying no promise of rain. The road
+  continues north into the scrub, the gravel narrowing as
+  the managed verges give out and dry bunchgrass takes
+  their place.
+biome: farmland
+coord:
+  x: -18
+  y: 14
+  z: 0
+exits:
+  south:
+    roomid: 5381
+  north:
+    roomid: 5383
+nouns:
+  grass: The final strip of managed pasture that marks
+    where the neighboring farms' reach ends — a low,
+    close-cropped mix of rye and clover, root-thick and
+    dark-soiled, grazed and kept for years. On the
+    immediate north side of this strip the earth
+    lightens to a dry ochre and the grass gives out
+    almost to the stalk. The division is not perfectly
+    straight — it bows and curves with the terrain —
+    but from road-height it looks near enough to a
+    rule-line that the effect is uncanny. This is
+    where someone's labor ended and the land simply
+    stopped responding.
+  sagebrush: The first scrub north of the green strip
+    amounts to a few low mounds of silver-green sage,
+    knee-high and spreading, rooted in pale dry ground
+    between the stones. The leaves are small and waxy,
+    heavily aromatic — crushing one between the fingers
+    releases a sharp resinous scent, dry and medicinal,
+    nothing like the green smell of the fields behind.
+    More sage follows north of here, the clumps growing
+    denser as the soil thins further. This is the
+    beginning of a plant community that will be
+    everywhere in the country ahead.
+  sky: Beyond the last hedgerow the sky opens wide in
+    a way it has not since the lake plain. The cloud
+    layer is high and thin here, western moisture
+    having spent itself on higher ground to the south.
+    The north and northeast are clear to the horizon,
+    a pale bright blue that promises no rain. The wind
+    moves across it from the northwest, cold and
+    unimpeded, carrying the dry mineral smell of
+    country that has not seen water in weeks. A long
+    way north the dark line of a ridgeline breaks the
+    horizon — the first suggestion that the scrubland
+    ends somewhere.
+idlemessages:
+- The wind finds the gap between collar and neck and
+  settles there. South of here it was a breeze; here
+  it is simply the weather.
+- On the south side of the line a meadowlark sings
+  from a fence post; on the north side, only wind.
+- The last rye field shudders at the traveler's back,
+  a long dry rustle, then stillness.
+- The road ahead runs out into open scrub without a
+  visible end, the pale track fading into distance.
+- The smell shifts at the boundary — the earthy warmth
+  of farmland gives way to something drier and sharper.

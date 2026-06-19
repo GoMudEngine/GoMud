@@ -1,0 +1,69 @@
+roomid: 5387
+zone: North Road North
+title: Basalt Shoulder
+description: >
+  The road climbs a bare shoulder where old basalt has pushed
+  through the thin soil in slabs and columns, shouldering the
+  verge back on both sides. The stone is black and sharp-edged —
+  columnar-fractured, volcanic, old enough that the joints have
+  opened into blade-thin seams — and nothing grows on it but a
+  pale crust of lichen, ash-grey on the windward faces and rust-
+  orange where moisture clings. Run a hand across the outcrop
+  and it holds the sun's heat long after the air cools; meet
+  an edge carelessly and it will find your skin before you find
+  it. The land here has shed its pretense at soil altogether;
+  for miles in every direction the scrub grows thin over more
+  of the same stone, and this shoulder is simply a place where
+  the covering gave out entirely. A deep
+  <ansi fg="itemname">crevice</ansi> splits the outcrop's
+  tallest slab, running back into the rock further than the
+  darkness shows, its floor dry and littered with windblown
+  grit and small pale bones. The <ansi fg="itemname">road</ansi>
+  threads through on the west side, the gravel thinning where
+  it crosses not good compacted earth but the basalt's own
+  broken chips.
+biome: land
+coord:
+  x: -18
+  y: 19
+  z: 0
+exits:
+  south:
+    roomid: 5386
+  north:
+    roomid: 5388
+nouns:
+  crevice: A vertical crack splitting the tallest face of the
+    outcrop, running from knee height to well above the head,
+    its walls pressed close enough that a hand fits inside but
+    barely an arm. The interior widens slightly a foot in from
+    the entrance, and the floor there is dry — sheltered by
+    the overhang of the upper stone — and soft with windblown
+    grit accumulated over seasons. The small pale bones inside
+    belonged to something that found this shelter and did not
+    find its way back out. The crack goes deeper than the
+    darkness shows. Its walls are chalky with old lichen and
+    smooth in the middle section where animals, or perhaps
+    travelers, have pressed themselves in against them. The
+    space at the back is large enough to tuck something away
+    and have it stay dry and out of the weather.
+  road: The gravel surface narrows and thins visibly as it
+    crosses the basalt shoulder, laid on the rock's own broken
+    chips where the builders ran out of good compacted earth.
+    The individual stones are larger and sharper-edged than
+    those further south — angular fragments of the same basalt
+    rather than river-worn gravel. The road's margins are
+    defined not by cut verges but by the outcrop itself, two
+    thrusting slabs of stone channeling the path through the
+    gap between them. Beyond the shoulder, north, the gravel
+    reasserts itself briefly, but the road has declared itself
+    already — what comes next will be thinner country.
+idlemessages:
+- A hawk circles high over the basalt shoulder, riding the
+  thermal off the hot stone, and does not come down.
+- Wind threads through the columnar joints in the outcrop with
+  a low hollow note — almost musical, almost not.
+- A lizard emerges from the crevice's lower edge, considers
+  the road with flat eyes, and withdraws into the dark.
+- The stone radiates its stored heat into the cooling air —
+  the warmth of something with no living source.

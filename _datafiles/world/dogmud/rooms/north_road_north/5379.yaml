@@ -31,6 +31,8 @@ exits:
     roomid: 5377
   east:
     roomid: 5380
+  north:
+    roomid: 5381
 nouns:
   waymarker: A waist-high block of unworked granite, older than
     the road itself — the stone's face is weathered past any

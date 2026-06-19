@@ -1,0 +1,66 @@
+roomid: 5388
+zone: North Road North
+title: The Lonely Mile
+description: >
+  No roof, no fence line, no thread of smoke in any quarter of
+  the sky — the country here empties itself of everything except
+  scrub, wind, and the road running through it. The farmsteads
+  that marked the way south have thinned and disappeared; what
+  remains is open rain-shadow land, the ground too thin and dry
+  for anything but coarse grass and scattered sage, the sky
+  filling the upper three-quarters of the world with pale
+  overcast. The silence is entire — not the silence of something
+  held back, but of something simply absent. A breath of wind
+  moves through the dry stems beside the road and that is the
+  whole of the sound. There is no human voice or movement in
+  any direction. A lone <ansi fg="itemname">milestone</ansi>
+  stands in the east verge, leaning slightly north, its carved
+  face turned toward anyone still coming up from the south. The
+  <ansi fg="itemname">verge</ansi> on both sides is stripped
+  bare — no shelter, no shade, the pale earth cracking in the
+  dry season, the grass retreating to whatever patches it can
+  still find a grip.
+biome: land
+coord:
+  x: -18
+  y: 20
+  z: 0
+exits:
+  south:
+    roomid: 5387
+  north:
+    roomid: 5389
+nouns:
+  milestone: A dressed block of grey limestone, knee-high and
+    slightly wider at the base, its face carved with letters
+    still legible despite the weathering. The inscription reads
+    NEW PLYMOUTH — 21 LEAGUES. Below the official text a
+    traveler has cut a tally into the stone with a knife-point —
+    close-spaced marks, far too many to count at a glance, a
+    private record of days or crossings or some other measure
+    of the distance that the carver did not bother to name. The
+    stone's upper face has weathered into a shallow basin where
+    rain collects; a flattened copper token rests in the basin,
+    left there by a hand that came this way before. The
+    milestone leans slightly north, as if it has spent years
+    straining toward the place it names.
+  verge: The road's verge here is all the landscape offers — a
+    strip of bare pale earth on both sides, the grass reduced to
+    patchy clumps where it has managed to hold on against the
+    wind and dry. The surface is cracked in the dry season, the
+    cracks running parallel and close, each plate the width of
+    a hand. No shade anywhere along it. No landmark in either
+    direction — just the road threading on through the scrub,
+    north and south, until both ends vanish into the same
+    undifferentiated distance. There is a feeling, standing
+    here, that the world has very quietly declined to accompany
+    you any further.
+idlemessages:
+- The wind crosses open country from the north without having
+  encountered anything to warm it, and arrives cold and direct.
+- A single bird calls from somewhere in the scrub to the east.
+  It does not call again.
+- The road runs north and south to the same empty distance.
+  There is no visible difference between the two directions.
+- The milestone stands in its faint grass ring and records
+  a number that gets no smaller for the looking.

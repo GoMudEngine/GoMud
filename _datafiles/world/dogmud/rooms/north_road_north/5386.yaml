@@ -1,0 +1,67 @@
+roomid: 5386
+zone: North Road North
+title: The Wind's Reach
+description: >
+  The wind hits here without warning and without end — a steady
+  pressure against the chest, cold-edged despite the season,
+  coming from the north across miles of unbroken country with
+  nothing to slow it. It tugs at clothing and pulls at loose
+  edges and fills the ears with a constant low tone that makes
+  conversation difficult. The road crosses an exposed rise here,
+  flat-topped and bare, the last of the sage thinned to
+  knee-height by the wind-scour and the
+  <ansi fg="itemname">basalt</ansi> showing through the thin
+  soil in long grey shelves. A <ansi fg="itemname">marker
+  post</ansi> leans at the road's edge, weathered down to bare
+  grey wood, whatever painted sign it once held long since
+  stripped by the wind and the freeze-thaw of high-country
+  winters. There is no shelter here. There is no company. The
+  road runs north and disappears into the wind.
+biome: land
+coord:
+  x: -18
+  y: 18
+  z: 0
+exits:
+  south:
+    roomid: 5385
+  north:
+    roomid: 5387
+nouns:
+  marker post: A post of old hardwood, grey and surface-checked
+    from years of wind and freezing, leaning slightly south as
+    though pressed there by the prevailing north wind. Whatever
+    information it once carried has been stripped away — no
+    paint, no lettering survives on the weathered grain. The
+    post is anchored well, the ground-level wood rotted but the
+    core still holding; it will stand another generation before
+    it goes. Someone has looped a length of faded rope around
+    it at head-height, the ends trailing, purpose unclear. The
+    wind worries at the rope ends constantly.
+  basalt: Long shelves of bare basalt push through the thin
+    soil here, grey and lichen-patched, their surfaces broken
+    into plates by generations of freeze-thaw. The wind blows
+    clean across the exposed shelves, lifting a fine grit and
+    carrying it south. In a wet year the cracks would hold
+    moss; now they are dry and gritty, their edges sharp enough
+    to cut. The south-facing surfaces carry a reddish iron
+    staining, old as the basalt itself — the rock has always
+    looked this way out here.
+  wind: The wind here comes from the north across dozens of
+    miles of open country before it reaches this road, unbroken
+    and unslowed. It carries the cold of higher ground and the
+    dry mineral smell of distance — dust and nothing, the scent
+    of country no one lives in. It is not a gust; it does not
+    stop between gusts. It is a constant steady pressure, the
+    defining fact of this stretch of road. Travelers lean into
+    it instinctively and correct their posture when they stop.
+idlemessages:
+- The wind rises for a moment, colder off the north country,
+  then settles back to its constant baseline pressure.
+- A piece of grit hits the face, sharp and brief, carried
+  here from somewhere much further north.
+- The rope ends on the marker post thresh back and forth in
+  steady rhythm, driven by a wind that will not tire.
+- A dust-devil spins up from the basalt shelf to the east,
+  travels thirty feet, and collapses.
+- Silence is not available here. The wind sees to that.

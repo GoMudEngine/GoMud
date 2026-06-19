@@ -1,0 +1,82 @@
+roomid: 5381
+zone: North Road North
+title: The Last Furlongs
+description: >
+  The fields on either side run thin here — the furrows
+  shorter, the soil showing a paler shade of ochre where
+  it breaks through the rows, the land giving quiet notice
+  that its generosity is nearly spent. A lone
+  <ansi fg="itemname">farmstead</ansi> sits back from the
+  road on the western side, its yard still, a cart with a
+  broken axle sagging beside the barn. The gravel is sparse
+  in places and the verges have gone rough; the
+  <ansi fg="itemname">fence</ansi> along the eastern field
+  leans at intervals where posts have softened in the
+  ground and never been replaced. A low
+  <ansi fg="itemname">cairn</ansi> of flat pale stones
+  marks the road's eastern shoulder — three deliberate
+  tiers, their meaning private or long forgotten. To the
+  north the green of the fields loses conviction fast, rows
+  thinning to stubble and then to bare dry ground at the
+  edge of sight.
+biome: farmland
+coord:
+  x: -18
+  y: 13
+  z: 0
+exits:
+  south:
+    roomid: 5379
+  north:
+    roomid: 5382
+nouns:
+  farmstead: A low-roofed stone farmhouse set back from
+    the road behind a yard of beaten earth, its
+    outbuildings close and practical — a barn with half
+    its shingles gone dark with moss, a small henhouse,
+    a woodpile under a warped lean-to. The cart beside
+    the barn has a splayed wheel with weeds growing
+    through the spokes, the repair deferred a season
+    at least. Smoke rises from the chimney in a thin
+    thread, and somewhere behind the house a dog has
+    started barking at nothing in particular. The farm
+    has the feel of a place hanging on at the edge of
+    what the soil will give — not failing, not
+    flourishing, just enduring.
+  cairn: Three tiers of flat pale fieldstones stacked
+    on the road's eastern shoulder with evident care,
+    the kind of marker travelers raise at the limit of
+    managed country. No inscription survives the
+    weathering, if there ever was one. A few dried
+    grass stems are tucked between the upper stones,
+    brittle and pale, placed by someone who passed
+    here before the dry season closed in. Whether the
+    cairn marks a boundary, a death, or simply the
+    habit of a long-gone traveler is impossible to
+    say now.
+  fence: A post-and-rail fence along the road's
+    eastern edge where a field of late rye gives way
+    to the verge. Most posts stand straight enough,
+    but every third or fourth has shifted with the
+    frost heave of the years, the rail it carries
+    sagging between its neighbors. Repairs never quite
+    catch up with the lean, and the fence has settled
+    into a gentle permanent wave. At the field's far
+    corner the rails have been stacked rather than
+    fixed — a temporary measure long since become
+    permanent.
+idlemessages:
+- The dog behind the farmstead barks twice and goes
+  quiet, the silence after it somehow larger than
+  before.
+- Smoke from the farmhouse chimney bends north in the
+  wind — the only sign of habitation visible from
+  the road.
+- The road gravel crunches underfoot, but only just —
+  the surface is thinner here than it was an hour
+  south.
+- The rye beyond the fence moves in a long slow wave
+  as the wind crosses it, the dry heads whispering
+  against each other.
+- Two crows pick over the verge ahead, indifferent to
+  approaching footsteps until the very last moment.

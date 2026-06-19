@@ -1,0 +1,68 @@
+roomid: 5385
+zone: North Road North
+title: Sage Flats
+description: >
+  The smell arrives before anything else — sun-warmed sage,
+  sharp and medicinal and clean, the defining scent of dry
+  country, thick enough to taste when the wind is still. The
+  road narrows to a pale scratch across an enormous flat of
+  silver-green <ansi fg="itemname">sagebrush</ansi> and
+  bunchgrass stretching to every horizon; the sky above takes
+  up more of the world here than the land does, pale and wide
+  and utterly cloudless. A person can walk this road and feel
+  the particular loneliness of being fully visible — no hedges,
+  no trees, no fold in the earth to step behind. The
+  <ansi fg="itemname">horizon</ansi> is so flat and far in
+  every direction that the eye keeps expecting something to
+  appear at its edge, and nothing ever does. The bunchgrass
+  moves in the wind in long slow rolls, like shallow water.
+biome: land
+coord:
+  x: -18
+  y: 17
+  z: 0
+exits:
+  south:
+    roomid: 5384
+  north:
+    roomid: 5386
+nouns:
+  sagebrush: The silver-green of the sagebrush runs in every
+    direction without a break — acres of it, close and dense,
+    each plant grey-barked and brittle-looking but surprisingly
+    tough, each branch ending in tight clusters of small oval
+    leaves coated in fine silver hairs that trap and hold the
+    scent. Break a stem and the oil comes out, the smell
+    doubling — sharp and medicinal, unmistakably itself. The
+    plant is low, knee-high at most, giving the whole flat a
+    uniform horizon-to-horizon texture broken only by the pale
+    stalks of dried bunchgrass and the occasional bare basalt
+    shelf pushing through the thin soil.
+  horizon: The horizon here is a clean line all the way around —
+    flat land meeting pale sky in an unbroken circle, nothing
+    rising above it within sight. At midday the distance
+    shimmers in the heat until the line between land and sky
+    becomes uncertain. Standing on the road you can see perhaps
+    five miles in any direction and will find nothing that moves
+    except the brush and, occasionally, a hawk tracing long slow
+    arcs against the blue. The country extends beyond sight in
+    every direction with equal indifference.
+  road: Out here the road is more suggestion than surface — a
+    line of gravel pressed into the soil, the verges no longer
+    distinguishable from the surrounding scrubland now that
+    maintenance has stopped. The gravel has thinned and spread.
+    Wagon ruts still cross it but spaced far apart, fewer
+    travelers having come this way in recent seasons. The road
+    is still the fastest path through the sage flats, but it no
+    longer pretends to be more than what it is.
+idlemessages:
+- A jackrabbit sits motionless in the sage twenty paces off
+  the road, watching, then simply vanishes into the brush.
+- The sage smell intensifies as the afternoon sun hits the flat
+  face-on, the air above the scrub going shimmery with heat.
+- A redtail hawk traces a wide arc overhead without effort,
+  reading the updrafts, looking for anything that moves.
+- The wind moves through the sage in a long slow wave from
+  north to south, and the whole flat whispers at once.
+- Nothing on the road in either direction. No cart. No smoke
+  on the horizon. Just the sage and the sky.
