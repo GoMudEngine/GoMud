@@ -1,0 +1,47 @@
+roomid: 5475
+zone: New Plymouth Outskirts
+title: The Broken Gate
+description: >
+  The smell finds you before your eyes have adjusted — cheap ale,
+  old smoke, and the close press of too many bodies in a room with
+  low beams and no ventilation worth mentioning. The common room of
+  the Broken Gate resolves out of the dimness as a low-ceilinged
+  space of rough tables, mismatched stools, and a <ansi fg="itemname">bar</ansi> of raw
+  timber spanning one end. A <ansi fg="itemname">board</ansi> beside the door is thick
+  with pinned notices in several hands. The <ansi fg="itemname">corners</ansi> are
+  already occupied by those who paid for a spot on the floor and
+  the right to sleep on it without questions. A copper buys a night
+  here, and no questions asked is part of the arrangement.
+biome: city
+coord:
+  x: -19
+  y: 74
+  z: 0
+exits:
+  east:
+    roomid: 5468
+nouns:
+  bar: Raw timber spanning the width of one end of the room, its
+    surface dark with spilled ale and worn where elbows have rested
+    over the years. Clay cups and unmatched flagons stand behind it.
+    The tapster moves between them without expression, with the
+    economy of someone who has done this long enough that the work
+    runs itself. The ale is cheap, the cups are clean enough, and
+    no one is asked their business.
+  board: A plank of weathered wood nailed to the wall beside the
+    door, layered over with notices — small papers pinned over older
+    papers, most of them handwritten. Work offered, mostly unskilled.
+    Rooms available in the outskirts. Goods sought at prices that
+    expect the seller has no better option. A few are unsigned.
+    One says only a name and a date.
+  corners: The room's four corners and the space under the tables
+    serve as the inn's paid accommodations — a spot of floor, your
+    own coat for a blanket, no cot provided. Those who paid are
+    already arranged there, coats pulled close, faces to the wall.
+    The company does not invite scrutiny and offers none.
+idlemessages:
+- The tapster refills a cup without being asked and sets it back on the bar.
+- Someone near the wall shifts in their sleep and goes still again.
+- A figure studies the <ansi fg="itemname">board</ansi>, copies something onto a scrap, and leaves.
+- Two drinkers at a table converse in voices that don't carry past them.
+- The ale-smell thickens when the tap is opened and lingers long after.

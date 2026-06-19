@@ -30,6 +30,9 @@ coord:
 exits:
   south:
     roomid: 5456
+  north:
+    roomid: 5466
+    zone: New Plymouth Outskirts
 nouns:
   boundary stone: A stout column of pale granite, road-set
     and deliberate — not a wayside mile-marker but the formal

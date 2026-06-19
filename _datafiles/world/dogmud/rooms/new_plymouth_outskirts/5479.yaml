@@ -1,0 +1,47 @@
+roomid: 5479
+zone: New Plymouth Outskirts
+title: The Ford
+description: >
+  You hear the ford before you see it — a shallowing rush of water
+  over flat stone, the river spreading wide and going quiet. The
+  crossing is knee-deep at most, the riverbed a litter of flat grey
+  slabs gone slippery with weed. The banks on both sides are churned
+  dark, and the <ansi fg="itemname">ford</ansi> itself bears the
+  traffic of those who would rather cross cold than present themselves
+  at the gate. The city wall looms close on the far bank, looking
+  nowhere in particular. Under a leaning willow on the near side, a
+  <ansi fg="itemname">skiff</ansi> is moored and a man sits wrapped
+  in a heavy coat, watching the crossing without appearing to. He
+  will ferry the wet-shy for a coin and ask nothing about the rest.
+biome: city
+coord:
+  x: -17
+  y: 77
+  z: 0
+exits:
+  south:
+    roomid: 5478
+  north:
+    roomid: 5480
+nouns:
+  ford: A river crossing shallow enough that most wade it without
+    trouble — cold water to the knee, a slippery bottom of flat
+    weed-covered stone, and no checkpoint on either bank. The wear
+    on the mud is old and deep. This crossing has served as a
+    gate-bypass for as long as the gate has had a fee. The city
+    does not officially acknowledge it exists.
+  skiff: A flat-bottomed river skiff moored to a willow root with
+    a length of rope — small, unpainted, showing the scars of heavy
+    use. The boatman makes no pitch and asks no questions. The fare
+    is whatever he names. He names it once.
+  marker: A notch cut into the willow's bark at eye level — a
+    cross-stroke inside a circle, no bigger than a thumbnail. Below
+    it, someone has pushed a small oilskin packet into the gap
+    between root and bank, sealed with wax. For those who know what
+    the mark means, there may be something inside worth finding.
+idlemessages:
+- The river moves over the ford stones in a low, constant sound.
+- A boot-print fills with river water at the bank's edge and slowly levels.
+- The boatman turns a coin over in his fingers without looking at it.
+- Someone crosses the ford ahead — steady, unhurried, not looking back.
+- A heron stands knee-deep in the shallows upstream, perfectly still.

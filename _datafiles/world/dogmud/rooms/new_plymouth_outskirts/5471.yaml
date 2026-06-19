@@ -1,0 +1,41 @@
+roomid: 5471
+zone: New Plymouth Outskirts
+title: The East Gate
+description: >
+  The gate-tunnel is ten paces of dressed stone, its ceiling lost in
+  shadow, the iron teeth of the <ansi fg="portcullis">portcullis</ansi>
+  raised overhead on chains as thick as your arm. Guards in the
+  bloodline's livery flank both ends of the passage and work the middle
+  of it — stopping every person, checking every paper and parcel, waving
+  the approved through and turning back the rest with a brevity that
+  admits no appeal. You are not yet through. Beyond the far mouth of the
+  tunnel the city reveals itself in glimpses — packed streets, smoke
+  rising from a hundred hearths, a tower above the roofline, and the
+  <ansi fg="guardpost">guardpost</ansi> hut where the duty sergeant sits
+  with a stamp and a heavy ledger. Behind it all comes the sound, felt as
+  much as heard — the low continuous roar of a hundred thousand lives,
+  pressing right up to the wall from the inside.
+biome: city
+coord:
+  x: -18
+  y: 77
+  z: 0
+exits:
+  south:
+    roomid: 5470
+nouns:
+  portcullis: Iron bars thicker than a man's wrist, latticed and secured
+    in their grooves by chains running into the wall's machinery above.
+    Decades of grime and rust-streaks mark the iron, but the mechanism
+    is evidently maintained — the chains are oiled, the grooves clear.
+    Something in the towers above can drop the whole assembly in seconds.
+  guardpost: A low stone hutch at the tunnel's inner mouth, its counter
+    window facing the gate traffic. A duty sergeant sits behind a ledger
+    and a stamp. Papers go in; a mark goes on them; people go through.
+    The ledger is very thick. Each entry in it is someone's crossing.
+idlemessages:
+- A guard holds out a hand — papers, not a greeting.
+- A traveller argues at the checkpoint, then accepts the answer and steps aside.
+- From beyond the tunnel the city exhales — noise, smoke, a thousand voices.
+- A pigeon sails out of the tunnel mouth, indifferent to the queue behind it.
+- The portcullis chains groan in a draught that finds the tunnel mouth.

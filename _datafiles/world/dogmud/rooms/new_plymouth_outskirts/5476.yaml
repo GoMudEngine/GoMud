@@ -1,0 +1,46 @@
+roomid: 5476
+zone: New Plymouth Outskirts
+title: The Refugee Camp
+description: >
+  Smoke from a dozen cookfires hangs low and acrid, carrying the
+  smell of burned bone-broth, damp wool, and bodies pressed too
+  close together. The strip of ground between the city wall and the
+  outer track is claimed entirely by <ansi fg="itemname">lean-tos</ansi>
+  of bent timber and salvaged sacking — close-packed, canvas sides
+  touching. Small families squat at fires too little for the cold.
+  The old and the sick lie near the wall on spread cloth, and
+  children move between the shelters with the quiet, pinched look
+  of those who have learned not to ask. These people reached the
+  city and found it shut. They wait at the wall because they have
+  nowhere else to wait — and the gate has not opened for them yet.
+biome: city
+coord:
+  x: -17
+  y: 75
+  z: 0
+exits:
+  west:
+    roomid: 5469
+nouns:
+  lean-tos: Bent branches and salvaged timber draped with sacking
+    and torn canvas, pressed close for warmth. Each shelter is
+    barely high enough to sit upright in. Inside, rolled bundles
+    line the back wall — a dented pot, a tied cloth of belongings,
+    items carried from somewhere far to here and no further. A
+    smell of packed damp and old smoke rolls from each one.
+  alms-bowl: A clay bowl set on a flat stone at the camp's margin,
+    holding a scatter of copper pieces and a few crusts of bread.
+    A rough wooden ladle rests across it. Whoever tends the bowl
+    does so without ceremony — it is passed between the fires at
+    mealtimes. There is not much in it. There is never much in it.
+  families: Mothers with children folded against them for warmth.
+    Old men who stare at the gate with the look of those measuring
+    a diminishing chance. Younger men who take care not to draw
+    notice from the wall guards. Every face carries the same
+    arithmetic — tired and waiting and not yet done waiting.
+idlemessages:
+- A child reaches toward a cookfire and is pulled back by a quiet hand.
+- Smoke shifts in the wind and stings the eyes before drifting on.
+- A man near the wall coughs at length and then is silent.
+- Low voices carry from inside a lean-to — too quiet to make out, too steady for argument.
+- A crow drops from overhead, takes something small from the ground, and lifts away before anyone stirs.

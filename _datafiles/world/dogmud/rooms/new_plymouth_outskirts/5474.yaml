@@ -1,0 +1,49 @@
+roomid: 5474
+zone: New Plymouth Outskirts
+title: The Hawkers' Yard
+description: >
+  Dust and noise together — that is the first impression the yard
+  gives, a packed-earth clearing where a dozen <ansi fg="itemname">barrows</ansi>
+  and loaded trays have mustered at odd angles, all of them talking
+  at once. The goods on offer have a look about them, an uncertainty
+  of origin that the sellers do not invite questions about. Against
+  the back wall a knot of men occupies a narrow space where a
+  different sort of trade runs quiet and quick at the <ansi fg="itemname">corner</ansi>.
+  Threaded through the whole scene a shifting cluster of
+  <ansi fg="itemname">children</ansi> from roughly seven to roughly fourteen carry
+  messages, run parcels, and occasionally carry something else that
+  did not belong to them a moment before.
+biome: city
+coord:
+  x: -17
+  y: 74
+  z: 0
+exits:
+  west:
+    roomid: 5468
+nouns:
+  barrows: A mixed fleet of market carts and handbarrows, ranging
+    from heavy two-wheel pushers to improvised trays on salvaged
+    wheels, all loaded with goods of uncertain provenance — handled
+    glassware, used tools, cloth of no clear origin, stoppered
+    bottles without labels, and wrapped bundles that shift and
+    clink when touched. A buyer who pays attention to which
+    questions go unanswered will be better placed than one who
+    asks where the goods came from.
+  corner: Not a shop and not a seller, exactly. A man stands in
+    the back-wall corner with no visible goods and no tray, but
+    a steady traffic of brief exchanges, hand meeting hand and
+    separating again with practised speed. He watches the yard
+    between transactions with the patience of someone who has no
+    pressing reason to be anywhere else.
+  children: A loose and shifting group ranging from perhaps seven
+    to perhaps fourteen, some visibly employed in carrying messages
+    or small parcels, others apparently employed in nothing visible
+    at all. All move with the particular alertness of those whose
+    income depends on noticing things before being noticed.
+idlemessages:
+- A hawker adjusts a cloth over his barrow as a nearby hand lingers too long.
+- A knot of <ansi fg="itemname">children</ansi> scatter from the corner and reform two stalls over.
+- Two men transact something at the <ansi fg="itemname">corner</ansi> too quickly to follow.
+- A woman at a loaded tray names a price that sounds too low to be honest.
+- Dust rises from the yard's packed earth as a barrow is wheeled to a new spot.

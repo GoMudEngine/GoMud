@@ -1,0 +1,46 @@
+roomid: 5481
+zone: New Plymouth Outskirts
+title: The Doss-House
+description: >
+  The smell greets you before the door does — unwashed bodies, old
+  straw, tallow smoke, and the particular sour sweetness of too many
+  people sleeping in too small a space. The <ansi fg="itemname">rope-beds</ansi>
+  run in rows across the low room, most of them occupied by shapes
+  beneath thin blankets. Between the rows, others have paid for
+  floor-space only and lie wrapped in their own coats. The turnover
+  is brisk and the linen is not changed between tenants. At a raised
+  desk near the door, the keeper sits behind a
+  <ansi fg="itemname">lockbox</ansi> and a ledger, watching the room
+  with the flat attention of someone who has heard every story and
+  trusts none of them. This is where those who cannot afford to wait
+  outside, and cannot get further in, sleep.
+biome: city
+coord:
+  x: -19
+  y: 76
+  z: 0
+exits:
+  east:
+    roomid: 5470
+nouns:
+  rope-beds: A lashed grid of twisted cord over a bare wooden frame —
+    barely wide enough for one person, narrow enough that the elbows
+    hang off the sides. The blanket on top is thin and someone
+    else's. The fee covers the bed and nothing else. Floor-space
+    is cheaper.
+  lockbox: A flat iron chest with two hasps and a heavy lock, bolted
+    to the desk where the keeper sits. It holds the night's receipts
+    and nothing that the lodgers here could afford to steal. The
+    keeper's hand rests near it without quite touching it — a habit
+    worn smooth by long practice.
+  lodgers: A cross-section of the gate-district's least fortunate —
+    day-workers between jobs, travellers whose funds ran short, men
+    and women who have been here longer than they planned. The
+    floor-space sleepers have the look of those who arrived with
+    nothing and are still accounting for it.
+idlemessages:
+- A sleeper turns over and the rope-bed creaks under the shift.
+- Someone coughs in the dark and no one else stirs.
+- The keeper turns a ledger page, writes something short, and closes it.
+- A smell of tallow from the single candle near the desk shifts when the door opens.
+- Two men near the far wall speak in low voices — an exchange of information, finished quickly.

@@ -1,0 +1,47 @@
+roomid: 5480
+zone: New Plymouth Outskirts
+title: River Road
+description: >
+  Brine and tar reach you first — salt and pitch and the cold
+  mud-smell of a working river growing stronger as the dock-basin
+  draws nearer. A rough track follows the city wall north along the
+  water's edge, the riverway widening and darkening as the current
+  slows. Above the wall-top, <ansi fg="itemname">masts</ansi> show
+  against the sky — bare spars and rigging that tell you the city's
+  trading heart is close on the other side of the stone. The
+  <ansi fg="itemname">river road</ansi> runs on toward the docks,
+  unpaved and rarely inspected, the route for goods that travel
+  without declaring themselves. The dock quarter and the Temple
+  District lie beyond the wall — reachable this way, but not yet open.
+biome: city
+coord:
+  x: -17
+  y: 78
+  z: 0
+exits:
+  south:
+    roomid: 5479
+nouns:
+  river road: A working track worn into the riverbank mud — unpaved,
+    undrained, showing wheel-ruts and boot-scour. It connects the
+    ford crossing to the dock district without passing through any
+    checkpoint. The city maintains it by ignoring it. The people
+    who use it appreciate the arrangement.
+  masts: The upper rigging of ships moored in the dock-basin shows
+    above the wall — bare spars, furled canvas, the tangle of rope
+    and tackle that means active trade. How many ships, and what
+    they carry, cannot be seen from here. The smell of tar and rope
+    and brine can.
+  stash: A flat stone near the base of the wall, different from its
+    neighbors by the way it sits slightly proud of the ground —
+    moved and replaced enough times to settle in a groove.
+    Underneath, a shallow scrape holds a folded oilskin and a hollow
+    reed sealed with a wax plug. The reed contains a small rolled
+    note, and the note contains instructions in a hand that takes
+    care to stay anonymous.
+idlemessages:
+- The tar-smell sharpens when the wind comes off the water.
+- A rope coil lies at the path's edge — recent, dry, left in a hurry.
+- Gulls call from somewhere above the wall, over the dock-basin.
+- The masts above the wall shift slightly in a river-wind that does not reach the road.
+- Somewhere ahead, water slaps against a hull in a slow, patient rhythm.

@@ -1,0 +1,47 @@
+roomid: 5472
+zone: New Plymouth Outskirts
+title: Stalls Row East
+description: >
+  The sellers' cries run together here into a solid wall of noise —
+  price on price, pitch layered over pitch, the whole row speaking
+  at once until the words lose their meaning and what remains is
+  pure market. A double rank of stalls fills the lane, their canvas
+  awnings sun-bleached and re-patched, loaded with bolts of cheap
+  cloth, stacked clay pots, tin trinkets, smoked fish, and spice
+  bundles. At the lane's far end a food-seller tends an iron
+  <ansi fg="itemname">grill</ansi>, smoke hanging low and drawing flies to the meat.
+  The <ansi fg="itemname">stalls</ansi> press so close that the crowd must turn sideways
+  to pass between them — a shuffling press of householders, workers,
+  and sharpers, every second exchange a price and every third a counteroffer.
+biome: city
+coord:
+  x: -17
+  y: 73
+  z: 0
+exits:
+  west:
+    roomid: 5467
+nouns:
+  stalls: The stalls are plank-and-sawhorse affairs, draped in
+    oilcloth and piled with goods — cloth in rough bolts, clay pots,
+    tin cups, bundles of dried herbs, strings of smoked fish, pastry
+    in waxed leaves, and at the busier trestles a tray of cheap
+    trinkets kept under the seller's eye. Each vendor has arranged
+    their wares as tightly as the space allows, and everything
+    touches everything else.
+  grill: A flat iron grill on a bed of banked coals at the row's
+    far end, thick with grease and scarred from years of service.
+    A seller turns skewers of meat and onion with a long fork,
+    calling prices to anyone who slows. Fat drips into the coals
+    and the smoke that rises is part advertisement, part hazard.
+  crowd: A slow press of buyers filling the lane between the stalls —
+    householders stretching a copper further than it wants to go,
+    workers spending a fragment of a day's pay, and the occasional
+    sharper turning a margin between two sellers who don't know
+    each other's prices. Everyone moves slowly. Everyone argues.
+idlemessages:
+- A seller calls a price; the woman across the lane calls back half.
+- The <ansi fg="itemname">grill</ansi> smoke drifts low under the awnings, smelling of fat and char.
+- A child weaves through the crowd at shin height, too fast for honest work.
+- Two sellers lean across stalls, arguing in voices that join the general din.
+- A woman rattles a lidded crock, demonstrating the seal to a skeptical buyer.

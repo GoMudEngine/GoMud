@@ -1,0 +1,47 @@
+roomid: 5473
+zone: New Plymouth Outskirts
+title: Stalls Row West
+description: >
+  Your eye catches the western row before anything else — heaps and
+  tangles of second-hand goods piled without sorting on every flat
+  surface, overflow spilling from crates to the ground. This is the
+  shabby end of the outer market, where the desperate sell and the
+  careful poor buy. A knife-grinder works his stone wheel at one
+  corner, sparks falling in a steady drizzle of orange light. A
+  charm-seller has spread his <ansi fg="itemname">tray</ansi> with knotted amulets and
+  dried-herb bunches of dubious curative worth. The bulk of the row
+  is the rag-and-bone trade — a long <ansi fg="itemname">salvage</ansi> heap of bent
+  metal, cracked leather, old fabric, and broken tools, presided over
+  by a seller who will name a price for anything a hand touches.
+biome: city
+coord:
+  x: -19
+  y: 73
+  z: 0
+exits:
+  east:
+    roomid: 5467
+nouns:
+  salvage: A sprawling heap of second-hand goods with no visible
+    order — bent pots alongside cracked leather, mismatched tools,
+    and at the bottom of the pile the denser mass of items that
+    have been here long enough nobody recalls why they were kept.
+    A seller watches from a stool, ready to name a price for
+    anything a hand lifts from the heap.
+  tray: A wooden tray on a strap around the seller's neck, crowded
+    with small objects arranged with more care than anything else in
+    the row — knotted cord amulets, small bone carvings, herb
+    pouches, and a few glass beads catching the light. Whether the
+    cures cure and the charms charm is a separate question from
+    whether they are priced well.
+  grinder: A foot-pedal grinding wheel set up on a folded blanket,
+    the stone worn slightly concave from years of use. The grinder
+    takes a blade, checks the edge with a thumbnail, and sets it
+    to the wheel — a thin shriek of steel on stone that cuts through
+    even the market noise.
+idlemessages:
+- The <ansi fg="itemname">grinder</ansi>'s wheel raises a shriek of steel on stone, then quiets.
+- A thin man lifts something from the <ansi fg="itemname">salvage</ansi> heap, turns it over, sets it back.
+- The charm-seller addresses the crowd; the crowd addresses itself elsewhere.
+- A child tugs at a coat sleeve, releases it, and vanishes into the crowd.
+- The smell of rancid grease drifts from a bundle of old rags at the row's end.

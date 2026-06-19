@@ -1,0 +1,47 @@
+roomid: 5477
+zone: New Plymouth Outskirts
+title: Workshop Warren
+description: >
+  The reek of solvent and hot metal and something sulfurous drifts
+  out of the narrow gap between buildings — this is a working warren
+  tucked against the wall where the inspectors do not reliably come.
+  <ansi fg="itemname">Workshops</ansi> crowd shoulder to shoulder — a
+  back-street smith hammering behind a half-shut door, a still
+  bubbling in an open lean-to, a counterfeiter's establishment
+  presenting only a nailed-shut shutter and a smell of wax and acid.
+  A <ansi fg="itemname">crate</ansi> of goods with no shipper's mark
+  stands wedged against the nearest door. The trades here pay no
+  guild-dues and answer no summons — they work in the margin between
+  the city's attention and its indifference, and the margin is narrow
+  enough to keep them alert.
+biome: city
+coord:
+  x: -19
+  y: 75
+  z: 0
+exits:
+  east:
+    roomid: 5469
+nouns:
+  workshops: The trades here work at the edge of legality and
+    sometimes beyond it. Through a half-open door, a smith shapes
+    iron into something that is not quite the pattern the guild
+    registers — close enough to deny, not close enough to sell
+    openly. There is no signboard. There is no sign of any kind.
+  crate: A wooden crate wedged against one of the workshop doors,
+    marked with no shipper's mark and closed with a barrel-bolt
+    rather than a lock. The wood smells of sawdust and something
+    underneath — spirits, maybe, or rendered fat, or something that
+    shares a smell with both. It has clearly been opened and closed
+    many times.
+  shuttered door: A heavy door flush into the narrowest building in
+    the warren — bare planks, no window, no sign. Iron bolts show
+    it can be secured from inside. The smell seeping around the
+    frame is sharp and chemical, with an undercut of hot metal.
+    Someone is working behind it and does not want to be interrupted.
+idlemessages:
+- A rhythmic hammering sounds from behind a half-shut door, then stops abruptly.
+- Someone drags a heavy crate across stone — a scraping that echoes and then cuts off.
+- A chemical smell sharpens briefly on the wind and fades.
+- A figure steps from a doorway, checks the lane in both directions, and goes back inside.
+- Voices from behind a shuttered window — short, low, ending in what sounds like an agreement.

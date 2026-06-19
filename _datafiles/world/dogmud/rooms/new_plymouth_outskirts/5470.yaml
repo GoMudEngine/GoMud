@@ -1,0 +1,47 @@
+roomid: 5470
+zone: New Plymouth Outskirts
+title: Gate Approach
+description: >
+  The lane breaks open onto a wide cobbled apron and you see it at last —
+  the east gate of New Plymouth, two towers of dressed stone flanking a
+  deep archway, the portcullis raised, the city wall running away on both
+  sides as far as you can see. Filling the apron between gate and lane is
+  a <ansi fg="queue">queue</ansi> — a slow press of travellers, carts,
+  merchants with manifests and families with everything they own on their
+  backs, all inching forward as the guards process each in turn. Hawkers
+  and beggars and touts work the waiting crowd from the margins without
+  sentiment. Near the gate arch, a <ansi fg="noticeboard">noticeboard</ansi>
+  fixed to a heavy post displays gate rules, tariff schedules, and a
+  column of wanted notices. The wall above makes everything here feel low
+  and watched.
+biome: city
+coord:
+  x: -18
+  y: 76
+  z: 0
+exits:
+  south:
+    roomid: 5469
+  north:
+    roomid: 5471
+  east:
+    roomid: 5478
+  west:
+    roomid: 5481
+nouns:
+  queue: A slow shuffle toward the gate arch — merchants with manifests,
+    farm families with handcarts, lone travellers with papers already
+    out. The mood is patient resignation laced with low anxiety. The
+    guards move the line when they feel like it, and the line has learned
+    to wait.
+  noticeboard: A board on a heavy post set into the cobbles, covered in
+    layers of posted paper. Gate regulations sit at the top, then tariff
+    schedules for commercial goods, then a column of wanted notices with
+    rough descriptions and offered rewards. Someone has added a small
+    caricature at the bottom that no one officially acknowledges.
+idlemessages:
+- A guard waves a cart out of the line for a closer inspection.
+- A tout presses a folded pamphlet into the hand of anyone who slows.
+- A child runs the length of the queue selling water from a clay jug.
+- A family counts coins quietly at the back of the line, heads together.
+- The gate bell rings once — the line shuffles forward three steps.

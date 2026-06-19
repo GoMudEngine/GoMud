@@ -1,0 +1,61 @@
+roomid: 5467
+zone: New Plymouth Outskirts
+title: The Outer Market
+description: >
+  The noise hits before the stalls do — a wall of sound built
+  from a thousand simultaneous transactions. Hawkers cry prices
+  over each other. Bargainers argue in half a dozen tongues.
+  Somewhere close a drum marks a showman's pitch with a steady
+  beat. The Outer Market fills the broad ground outside the
+  walls where no licence is required and no toll is paid —
+  rows of <ansi fg="itemname">market stalls</ansi> running
+  east and west in rough corridors, selling everything the
+  city sells inside but cheaper and without the pretense of
+  care. A food-seller's <ansi fg="itemname">cookpot</ansi>
+  breathes its steam into the foot traffic nearby, a copper
+  a bowl, contents unspecified. The smell is extraordinary —
+  spice and grease and wet canvas and the sweet rot of
+  vegetable refuse trodden underfoot. Everything is for sale
+  and everyone here knows it.
+biome: city
+coord:
+  x: -18
+  y: 73
+  z: 0
+exits:
+  south:
+    roomid: 5466
+  north:
+    roomid: 5468
+  east:
+    roomid: 5472
+  west:
+    roomid: 5473
+nouns:
+  market stalls: The stalls run east and west in rough lanes,
+    selling everything the city sells inside but cheaper —
+    bolts of rough cloth, trays of second-hand tools, jars of
+    unidentified preserved goods, herbs and spices of uncertain
+    provenance. The quality varies wildly between neighbours.
+    Prices are chalked on boards and change mid-conversation.
+    The press of buyers is constant and the sellers work the
+    crowd hard without pause or apology.
+  cookpot: A wide iron pot hangs over a fire-basket at the
+    food-seller's pitch — whatever is in it has been cooking
+    for a long time, its smell somewhere between stew and
+    something older and richer. The seller ladles portions into
+    rough clay bowls for a copper each. The pot is deep and its
+    contents shift under the ladle in ways that suggest more
+    than is visible. A wooden box beside the fire holds the
+    day's supply of bowls and a tin of coarse salt.
+idlemessages:
+- A hawker climbs onto a barrel and shouts about his imported
+  spices, drawing a ring of curious onlookers around his pitch.
+- A quick hand moves through the press near the food stalls —
+  a purse is gone before the owner turns to look.
+- Two stallholders argue across the gap between their pitches,
+  grievances escalating through two languages at once.
+- A child ducks under a stall counter and emerges on the far
+  side holding an apple, already sprinting for the crowd.
+- The showman's drum stops mid-beat, then restarts at a faster
+  tempo — the pitch is building to something.

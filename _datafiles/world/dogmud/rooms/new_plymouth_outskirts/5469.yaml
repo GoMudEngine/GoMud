@@ -1,0 +1,46 @@
+roomid: 5469
+zone: New Plymouth Outskirts
+title: The Shambles
+description: >
+  The smell reaches you before the sight does — tallow-fat, woodsmoke,
+  and beneath those the sour reek of a tannery working somewhere to the
+  west without licence or ventilation. The lane ahead is a warren of
+  <ansi fg="tenements">tenements</ansi> pressed so tightly against one
+  another that their upper storeys lean across the way, washing lines
+  strung at every height and heavy with patched linen and children's
+  things. The city wall closes the north end of the lane — massive, grey,
+  indifferent to everything heaped against its base. Wedged beside a
+  doorstep, a <ansi fg="handcart">handcart</ansi> piled with salvage and
+  dry goods holds up the passage while its keeper haggles through an open
+  door, oblivious to the press of bodies edging around it.
+biome: city
+coord:
+  x: -18
+  y: 75
+  z: 0
+exits:
+  south:
+    roomid: 5468
+  north:
+    roomid: 5470
+  east:
+    roomid: 5476
+  west:
+    roomid: 5477
+nouns:
+  tenements: Buildings jammed against the city wall and one another, their
+    timbers bowed outward with decades of settlement. Upper floors are
+    reached by external stairs bolted on as afterthoughts. Every flat
+    surface holds something — a flower pot, a rope coil, a candle burning
+    in a cracked pane. They list slightly toward the lane as though the
+    wall behind them is pushing gently forward.
+  handcart: A two-wheeled cart heaped with salvage — cracked timber, a
+    coil of rope, sealed clay jars, rags bundled by type. It is the
+    Shambles rendered in miniature, everything useful that no one else
+    wanted. Something worth having may well be buried in the pile.
+idlemessages:
+- A child darts between adult legs and vanishes through a ground-floor door.
+- From above, two neighbours shout at each other about a shared wall.
+- The irregular ring of an unlicensed hammer carries on the close air.
+- A thin dog works the gutter with systematic hope.
+- Somewhere overhead, something fries — the smell lasts a moment, then is gone.

@@ -1,0 +1,48 @@
+roomid: 5478
+zone: New Plymouth Outskirts
+title: Riverside Path
+description: >
+  The smell of river-mud and reed-rot comes first — a grey, cold,
+  mineral smell that tells you the gate-apron is behind you and the
+  river is ahead. A rough track branches from the approach road and
+  runs north along the base of the city wall, following the waterway.
+  The <ansi fg="itemname">path</ansi> is unpaved and shows its traffic —
+  packed mud, boot-prints, a groove worn by something dragged
+  repeatedly. The wall rises on the right hand, tall and close and
+  unwatched from this angle. Reeds and scrub press in on the left.
+  This is the way taken by those who would rather not be counted at
+  the gate — and the path does not judge.
+biome: city
+coord:
+  x: -17
+  y: 76
+  z: 0
+exits:
+  west:
+    roomid: 5470
+  north:
+    roomid: 5479
+nouns:
+  path: A narrow track worn into the riverbank mud — unpaved,
+    unmarked, connecting nowhere official to nowhere official. The
+    boot-prints in the soft ground come in all sizes, and none of
+    them are a guard's boots. Whoever keeps this route does so
+    without declaring it a route — it is just a path, if the wrong
+    person asks.
+  cache: A bundle of oilcloth wedged between the reeds and the
+    base of the wall, pushed just far enough under the water's edge
+    to vanish in a quick glance. Empty now, or recently emptied —
+    but the fold-marks show it has been used and used again.
+    Someone checks this regularly and does not want to be observed
+    doing so.
+  wall: The city wall runs north here — close and featureless, no
+    postern, no guard-walk visible from below. From the river side
+    the wall is simply a fact. Someone has scored a mark into the
+    stone at shoulder height — four lines and a cross-stroke, the
+    kind left by those who need to know where they are without asking.
+idlemessages:
+- The river sounds closer here — a low, patient moving.
+- A heron lifts from the reeds without sound and goes upstream.
+- Water moves around something ahead — a log, a mooring-post, or a boot.
+- The city wall shows no movement above — no watch, no light.
+- A figure comes around the bend, clocks you, and slows slightly before continuing on.
