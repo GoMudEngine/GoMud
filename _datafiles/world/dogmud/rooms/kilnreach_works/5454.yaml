@@ -1,0 +1,82 @@
+roomid: 5454
+zone: Kilnreach Works
+title: Foundry Lane
+description: >
+  Cinders crunch underfoot — the lane-floor is black with them,
+  decades of ash-fall compacted under boot-traffic until it gives
+  like something between gravel and soot, gritty and permanent,
+  recording every footfall in a faint grey print that will not
+  wash clean. The timber yard's saws cut from the east, a high
+  bright note riding over the foundry-clang below, and from the
+  west, through the planked door of the Furnace and Flagon, a low
+  warm smell of spilled beer and woodsmoke reaches the lane along
+  with the blurred sound of voices in low argument. The Furnace
+  and Flagon is the works tavern — wedged between two of the
+  foundry's outbuildings by the logic of wherever a building could
+  go, not wherever a builder would want one. The lane itself is
+  tight and shadowed, the outbuildings pressing close on the south
+  side, the timber yard's plank fence making the north side a
+  grey-split wall. A stack of cast
+  <ansi fg="itemname">ironwork</ansi> leans against that fence —
+  grilles, mounting brackets, and pipe-lengths fresh from the
+  mould, chalked with collection dates, bound for the wagons at
+  the crossroads south. Between shifts the lane is where the
+  workers of Kilnreach come to exist for a moment outside the din,
+  smoking short pipes and exchanging words they would not bother
+  with on the floor.
+biome: city
+coord:
+  x: -18
+  y: 68
+  z: 0
+exits:
+  south:
+    roomid: 5453
+  north:
+    roomid: 5455
+  east:
+    roomid: 5462
+  west:
+    roomid: 5465
+nouns:
+  ironwork: A stack of recently cast iron pieces propped against
+    the yard fence, still faintly warm where the thicker sections
+    have not yet fully cooled. Flat grilles with a standard bolt
+    pattern, right-angle mounting brackets for heavy timber beams,
+    and a run of pipe-lengths in two bore-sizes, each piece chalked
+    with a collection reference — a date, a mark, a short
+    destination code — and stacked in rough order of collection
+    sequence. Some pieces are still rough from the sand-mould and
+    will need dressing before they can be fitted. All of them are
+    bound for somewhere that is not Kilnreach Works.
+  cinder ground: The lane-floor is built entirely from compacted
+    cinder — ash from the foundry's furnaces, falling day after
+    day and year after year until the original earth beneath is a
+    distant memory. It is soft in a dead way, compressing under
+    weight without offering traction, and where wagon-wheels have
+    cut through it the compressed cinder has been pressed nearly
+    solid in parallel black grooves. The cinder marks everything
+    it touches with a faint grey-black print — boots, hems,
+    barrow-legs — and in a narrow strip along the fence where the
+    wind is blocked, it has drifted to ankle depth.
+  sign: A battered length of timber hung above the western door
+    on two short chains, rotating very slightly even when the air
+    is still. The painted image of a furnace-grate beneath a flagon
+    is mostly weather-stripped to bare wood now, but the carved
+    lettering below — Furnace and Flagon — is still clear, cut deep
+    enough that lime-dust and cinder-grime cannot entirely fill it.
+    The sign has not been repainted in some time. Nobody who drinks
+    at the Furnace and Flagon required a cleaner sign to find the
+    place.
+idlemessages:
+- The timber yard's saws rise to a shriek, bite through something
+  thick, and go briefly quiet before starting again.
+- A group of workers pushes through the lane between shifts,
+  exchanging no words, making no eye contact, cinders crunching.
+- Laughter from inside the Furnace and Flagon — short, rough,
+  stopping as quickly as it started.
+- A boy hauls a handcart loaded with sand-moulds through the lane,
+  his wheels cutting fresh tracks in the
+  <ansi fg="itemname">cinder ground</ansi>.
+- The foundry-clang sharpens, and a wave of heat rolls down the
+  lane from the east a moment later.

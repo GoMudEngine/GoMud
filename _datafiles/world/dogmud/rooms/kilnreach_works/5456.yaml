@@ -1,0 +1,84 @@
+roomid: 5456
+zone: Kilnreach Works
+title: North Works Road
+description: >
+  The reek lifts with the gradient — coal-smoke and lime-dust
+  dropping away below as the road climbs, until only a faint
+  industrial memory of it reaches the nose when the wind turns
+  south. Up here the air is clear enough for birdsong again,
+  and the sky broadens where the slope breaks the works' low
+  haze open. Behind, the smoke-columns of the kilns and the
+  brick-dust pall mark the works district as plainly as a map
+  — a dense, self-sustaining weather of their own making,
+  staining everything south of the road's crest to a uniform
+  grey-brown. Ahead, and far north, the horizon carries a
+  different darkness altogether — a vast, slow-spreading smear
+  of haze that is not storm-cloud, not hill-shadow, but the
+  collective smoke of a hundred thousand hearths burning at
+  once. New Plymouth. The <ansi fg="itemname">city haze</ansi>
+  covers the whole northern sky-edge in a low amber-tinged
+  layer, and a road-worn <ansi fg="itemname">milestone</ansi>
+  at the verge confirms the leagues remaining, the number cut
+  there now grown small.
+biome: land
+coord:
+  x: -18
+  y: 70
+  z: 0
+exits:
+  south:
+    roomid: 5455
+  north:
+    roomid: 5457
+nouns:
+  milestone: A column of dressed limestone at the road's
+    right-hand verge, waist-high and stained at the base with
+    the iron-orange run-off of the slope. The carved face gives
+    two lines — the capital's name in the road-builder's
+    abbreviated convention above, and a figure of leagues below
+    it in a plain, practised hand. The figure is small. The
+    stone's base has been hollowed at some point — whether by
+    the builders or by a traveller looking for a cache — and
+    the hollow now holds a pinch of road-grit and a smooth
+    river-pebble placed there by someone for a reason they took
+    with them. The north face carries no carving. It points the
+    way; that is the whole of what it says.
+  city haze: The darkness sitting on the northern horizon is
+    not weather — no natural cloud presses this close to the
+    ground or holds this wide without thinning at its edges.
+    It is smoke and suspended heat, the collected combustion
+    of a city that cannot stop burning — tanneries and forges
+    and glass-works and the hundred thousand household hearths
+    adding their share to the general pall above them. Beneath
+    that amber layer New Plymouth waits, enormous and alive.
+    The road leads straight into it. You have been travelling
+    toward this since Thornwall, and it is no longer a rumour.
+  road: From this slight height the road reads in both
+    directions — south into the works-haze, the flagging
+    vanishing into the brown smoke-line; north toward the
+    city-darkness on the horizon, the surface dropping into
+    lower ground before the first outskirts begin. The verge
+    is thin here, a margin of coarse grass and road-weeds
+    returning now that the works' grip on the land has begun
+    to ease. A few thorn-scrub stems at the verge-ditch, the
+    first suggestion of country reasserting itself on a strip
+    too thin to matter. The straightest road in the long run
+    from Thornwall, and nearly at its end.
+idlemessages:
+- The wind shifts from the north and brings it briefly —
+  coal-smoke first, then something organic and close, the
+  smell of a very large number of people living in a small
+  space. Then the wind drops and it is gone.
+- From down the slope behind you the low percussion of the
+  works carries up the road — a kiln-door, some heavy
+  machinery whose name does not arrive with its sound.
+  Faint here, and getting fainter.
+- A cart bound south passes at a steady pace, its flatbed
+  carrying empty timber frames being returned from the works.
+  The driver watches the road and does not look up.
+- The milestone shadow swings a degree further across the
+  verge as the sun moves. The road north looks the same
+  as it did a quarter-hour ago.
+- The air up here smells of nothing much — road-dust and
+  dry grass and the clean indifference of open ground.
+  The works scent is almost entirely gone.

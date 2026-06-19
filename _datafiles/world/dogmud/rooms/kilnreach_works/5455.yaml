@@ -1,0 +1,87 @@
+roomid: 5455
+zone: Kilnreach Works
+title: The Brickfields
+description: >
+  Open ground spreads in every direction, covered from north to
+  south in rank upon rank of raw brick laid out to dry on wooden
+  pallets — clay-yellow where the sun reaches, darker where morning
+  damp still clings to the lower courses. The scale of it is not
+  immediately apparent and then suddenly is — there are thousands,
+  and the kilns to the west are making thousands more, and this
+  has been the condition of this field for as long as anyone in
+  Kilnreach can remember. The
+  <ansi fg="itemname">brick kilns</ansi> to the west breathe
+  grey-white smoke into the low sky in a column that smells of
+  scorched clay and mineral heat, and the ground between the
+  pallet-rows is churned to red-brown mud where the clay-workers
+  have wheeled their barrows back and forth until every trace of
+  grass is long gone. At the field's northern edge the finished
+  work accumulates — mountains of
+  <ansi fg="itemname">drying brick</ansi> stacked chest-high,
+  stamped with the Kilnreach mark, roped at intervals for transit,
+  and tallied in chalk on the lead brick of each column. The
+  <ansi fg="itemname">clay pits</ansi> are visible as raw gouges
+  to the west of the pallets — open wounds in the red earth,
+  surrounded by spoil-heaps and the deep parallel tracks of loaded
+  barrows heading east. The raw material of New Plymouth's walls
+  sits here drying under an open sky, unremarkable to everyone
+  who made it.
+biome: land
+coord:
+  x: -18
+  y: 69
+  z: 0
+exits:
+  south:
+    roomid: 5454
+  north:
+    roomid: 5456
+  west:
+    roomid: 5463
+nouns:
+  drying brick: The stacked brick at the field's northern edge is
+    the finished product of the Kilnreach cycle — clay quarried from
+    the pits, shaped in timber moulds, dried here on the pallets,
+    kiln-fired to the west, then stacked and counted again before
+    the wagons take them north. Each brick bears the Kilnreach stamp,
+    a shallow impression of an anvil over a flame pressed into the
+    wet clay before it hardened. The stacks are heavy and dense,
+    the local clay firing harder than most. Chalk tallies on the
+    lead bricks of each column track weight, count, and destination,
+    the notations in three different hands, updated at intervals
+    through the day.
+  brick kilns: The kilns to the west are low, broad, dome-topped
+    structures of fired brick, each large enough to drive a laden
+    cart inside with room to spare. Their fire-mouths glow amber
+    where the fuel feeds the burn, and the heat that rolls from them
+    is felt clearly even at the distance of the pallet rows.
+    Clay-workers tend them in the short efficient bursts of people
+    who have learned not to linger near the fire-mouths — stoking,
+    checking the draw, retreating. Each kiln runs a full firing
+    cycle through the day without pause, and the column of smoke
+    they produce is visible from the main road north of the Works
+    as a steady grey landmark in every season.
+  clay pits: The pits are open cuts in the red earth west of the
+    pallets, their sides sheer where the clay-workers have undercut
+    the banks in layers. Each pit is ringed by a spoil-heap of
+    exhausted clay and overburden, and the deep parallel grooves of
+    loaded barrows run from pit edge to pallet row in tracks worn
+    nearly permanent. The clay inside the active pits is wet and
+    red, gleaming where it has been freshly cut. In a few places
+    along the pit edges the ground is soft enough to swallow a boot
+    to the ankle, and the workers seem to know exactly where those
+    places are without looking.
+idlemessages:
+- A clay-worker tips a barrow of fresh-pressed
+  <ansi fg="itemname">drying brick</ansi> onto an empty pallet and
+  slaps each brick flat with a wooden bat before moving on.
+- The kiln-smoke thickens to the west and rolls down across the
+  brickfields in a flat grey sheet before the wind carries it off.
+- Among the pallet rows, a stack shifts with a dry sharp clack and
+  a clay-worker calls out a warning without looking up.
+- A wagon backs in from the north road and a loading crew begins
+  heaving finished brick into it, calling counts to each other in
+  the shorthand of people who have done this many times before.
+- The ground squelches near the
+  <ansi fg="itemname">clay pits</ansi> where quench-water has run
+  between the rows and pooled in the red mud.

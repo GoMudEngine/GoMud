@@ -30,6 +30,9 @@ coord:
 exits:
   south:
     roomid: 5442
+  north:
+    roomid: 5450
+    zone: Kilnreach Works
 nouns:
   march stone: A boundary marker of dressed local stone,
     waist-high and square-sectioned, set at the road's

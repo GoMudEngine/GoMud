@@ -1,0 +1,73 @@
+roomid: 5464
+zone: Kilnreach Works
+title: Slag Lane
+description: >
+  The lane is narrow enough to touch both walls at once — a
+  cramped close of back-to-back
+  <ansi fg="itemname">cottages</ansi> built from the works'
+  own brick and roofed with its own tile, the brick long since
+  gone grey with lime-wash and smoke. The smell here is
+  overlaid — coal smoke above, boiled greens and wet mortar
+  beneath, and under both the close animal warmth of too many
+  people in too little space. Lines of
+  <ansi fg="itemname">washing</ansi> hang between the upper
+  windows on both sides, gone grey-white from the kilns'
+  smoke and heavy enough with damp to drip on the lane below.
+  At the midpoint, a cast-iron
+  <ansi fg="itemname">standpipe</ansi> serves the whole row —
+  the cobbles around its base mossy and worn hollow by the
+  feet of the water-carriers. Doors are packed close together,
+  each with its shallow step and its collection of boots and
+  tools kept out of adult space. The works built this lane.
+  The works uses the people who live in it.
+biome: city
+coord:
+  x: -17
+  y: 66
+  z: 0
+exits:
+  west:
+    roomid: 5452
+nouns:
+  cottages: Back-to-back rows of brick cottages, two rooms
+    up and two down — the front room shared between cooking
+    and everything else, the back room a yard common with
+    the row behind. The brick is the works' own seconds,
+    softer than it should be and already spalling at the
+    corners. The roof-tiles are sound but the mortar courses
+    between them are thin and some of the pointing has gone.
+    Three or four families to a row is common; two families
+    to a house not unusual. Every surface inside, you would
+    guess, carries the same grey film of lime and smoke
+    that covers everything out here — the cottages' own
+    kilns face them across Kiln Row, close enough to
+    talk to through a window.
+  standpipe: A cast-iron standpipe set in the lane's
+    cobblestones, fed from the works' water supply by a
+    buried pipe. The handle is worn bright by daily use —
+    every household on the lane draws from it, morning
+    and when they return from shift. The cobbles around
+    the base are mossy and worn hollow by generations of
+    water-carriers. A dented tin bucket hangs from the
+    pipe's neck on a bent iron hook; it is understood to
+    belong to no one in particular and is used by anyone
+    who comes without one.
+  washing: Lines of washing strung between the upper
+    windows on both sides of the lane — work-clothes and
+    sheets gone grey-white from the smoke of the kilns and
+    forges. Much of it is damp from the lane's close air
+    rather than genuinely clean. Some of the rope is cut
+    too short for a sheet, so it hangs doubled and folded,
+    unable to fully dry. The drip from the nearest line
+    has worn a small channel in the cobblestones below.
+idlemessages:
+- Someone thumps a wall from the inside and a voice goes
+  quiet on the other side of it.
+- A cat threads between the cottage doorsteps and drops
+  into shadow under the nearest one.
+- The smell of boiled turnip and coal smoke leaks from a
+  ground-floor window.
+- Two workers squeeze past each other in the lane's narrow
+  point without a word or a look.
+- A line of washing swings as a door opens beneath it and
+  a drip falls onto the cobblestones.

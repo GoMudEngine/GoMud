@@ -1,0 +1,89 @@
+roomid: 5453
+zone: Kilnreach Works
+title: Kilnreach
+description: >
+  The foundry's roar hits first — not a sound so much as a
+  pressure, a low iron bellow from the east felt through the soles
+  of your boots before it registers as noise. Cinder-reek and
+  forge-heat come with it, soaking into cloth and hair within
+  moments of arrival. From the west the tannery asserts itself in
+  a different register entirely — lime and rendered fat and wet
+  hide in a slow inescapable combination, settling over the
+  crossroads like weather. Between those two extremes lies the wide
+  muddy way at the heart of the Works, broad enough for two
+  ore-wagons abreast and churned by the passage of ten thousand
+  such loads into a grey-brown mire that is neither road nor field
+  but something rawer than either. The
+  <ansi fg="itemname">work sheds</ansi> crowd the way on both
+  sides, squat timber-and-iron structures with their doors flung
+  wide against the heat, smoke and noise spilling out in roughly
+  equal measure. A
+  <ansi fg="itemname">notice board</ansi> stands nailed to the
+  frame of the nearest shed — its surface thick with wage sheets,
+  hazard warnings in red ink, and a foreman's handwritten orders
+  from this morning, the edges of older notices curling away
+  beneath the new. The
+  <ansi fg="itemname">ore wagons</ansi> come and go without pause,
+  their wheels sinking hub-deep in the worst of the mud, their
+  teamsters driving them with the grim purpose of men who have made
+  this same crossing ten thousand times. Hard-bitten labourers fill
+  the gaps between them, loading, hauling, shouting over the din.
+  This is not a place built to be pleasant. It exists to make
+  things for a city.
+biome: city
+coord:
+  x: -18
+  y: 67
+  z: 0
+exits:
+  south:
+    roomid: 5452
+  north:
+    roomid: 5454
+  east:
+    roomid: 5460
+  west:
+    roomid: 5461
+nouns:
+  notice board: A heavy timber board nailed to the shed-frame at
+    eye height, its surface dense with papers — this week's wage
+    sheet in the upper corner, below it a notice concerning the
+    lime-slake pits and the rules for working near them, a list of
+    missing hand-tools that someone clearly expects returned, and a
+    foreman's handwritten orders from this morning, the ink still
+    dark. Below those, the edges of older notices curl away from the
+    wood, a palimpsest of the works' daily life stretching back
+    months. The board itself is stained grey-brown with the general
+    atmosphere of Kilnreach and leans slightly off plumb, which
+    nobody has bothered to correct.
+  ore wagons: The ore-wagons grinding through the muddy way are
+    heavy, low-slung timber frames on iron-tyred wheels, built for
+    weight rather than speed. They carry quarried stone from the
+    north, pig-iron from the foundry yard, and raw timber in loads
+    lashed down with rope and sheeting. Their wheels sink to the
+    axle in the worst of the mire, and the teamsters work them free
+    with a combination of whip, voice, and long experience. Every
+    wagon that passes sends a slow ripple through the mud underfoot.
+  work sheds: The sheds that line the muddy way are built for
+    function and not an inch beyond it — heavy timber frames,
+    corrugated iron roofing where the original thatch caught and
+    burned, doors wide as barn-gates and thrown open on all but the
+    worst weather. Through those open doors the individual trades of
+    the Works are audible — hammering in one, the hiss of a
+    quench-tank in the next, the grinding of a dressed wheel in
+    the third. The walls of each shed are dark with smoke and age,
+    and every surface within reach of a passing hand has been worn
+    smooth by years of it.
+idlemessages:
+- One of the <ansi fg="itemname">ore wagons</ansi> grinds hub-deep
+  into the mud, and the teamster drops from the seat to dig the
+  wheel free with a broad-bladed spade.
+- The foundry-roar to the east rises sharply for a moment — a new
+  pour going in — then drops back to its usual bone-deep note.
+- A labourer pushes through with a barrow of coal slack, not
+  looking up, not slowing, leaving a black trail in the mud.
+- Someone has pinned a new sheet to the
+  <ansi fg="itemname">notice board</ansi> and is reading an old
+  one as they walk away.
+- The tannery-stench rolls across the crossroads as the wind turns,
+  heavy and close, then passes as the air shifts back.

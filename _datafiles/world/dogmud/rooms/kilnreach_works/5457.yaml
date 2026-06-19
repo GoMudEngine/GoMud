@@ -1,0 +1,85 @@
+roomid: 5457
+zone: Kilnreach Works
+title: Works' End
+description: >
+  The northern sky is not blue here — it is a low amber-brown,
+  pressed close to the horizon by the heat and smoke of a vast
+  city, the collective exhaust of a hundred thousand hearths
+  hanging in a slow permanent layer that gives the northern air
+  its particular indoor colour. The industrial country ends at
+  this point — kilns and grinding-sheds and brick-yards dropping
+  behind you into their own haze, and ahead no tollgate, no wall,
+  no declared edge, only the moment when the raw worked land of
+  the works dissolves into the first thin scatter of city
+  buildings pressing north — low sheds and soot-dark yards and
+  rough-built bothies crowding up against the road as if the
+  city is still deciding where to stop. You have crossed the
+  whole long road, wilds and towns and flats and fields and
+  works, and the city is no longer ahead of you but around you,
+  beginning. The road runs north without hesitation, straight
+  into all of it, and at the right-hand verge a
+  <ansi fg="itemname">boundary stone</ansi> names the ground
+  ahead in full, without abbreviation, the
+  <ansi fg="itemname">city outskirts</ansi> already visible
+  beyond it pressing up beneath the smoke-heavy sky.
+biome: land
+coord:
+  x: -18
+  y: 71
+  z: 0
+exits:
+  south:
+    roomid: 5456
+nouns:
+  boundary stone: A stout column of pale granite, road-set
+    and deliberate — not a wayside mile-marker but the formal
+    language of a city's administered boundary, the kind a
+    surveyor sets and a registry records. The face reads
+    "New Plymouth" in full, the lettering deep and well-cut,
+    and below it a founding-year date and a single engraved
+    line marking the official limit of the city's jurisdiction.
+    The stone has a broad flat top worn smooth by decades of
+    passing hands. At its base a wooden panel covers a recess
+    — a traveller's cache in the old road-warden tradition —
+    found to hold a stub of candle, a folded scrap of cloth
+    bearing a city address in faded ink, and nothing else.
+    Someone has scratched a small arrow below the founding
+    date, pointing north. It was not put there by the city.
+  city outskirts: Beyond the road's edge the first buildings
+    of New Plymouth's outer margin press against the sky —
+    low and irregular, their profiles the unsupervised growth
+    of industry and shelter finding cheap land at the edge.
+    Soot-black sheds, the stacked silhouettes of render-yards,
+    thin chimney-pipes adding their white threads to the darker
+    general haze above. Figures move between the buildings in
+    the middle distance, working, paying no attention to the
+    road. The city has already begun and does not know it is
+    being watched.
+  road: The road continues north without suggesting any reason
+    to stop — the same flagged surface, the same thin verge,
+    but what lines it is changing. Behind, the scarred banks
+    and slag-tips of the works-land. Ahead, the first raw
+    buildings of the city's outer skin, close enough now to
+    read their function — a lime-burner, a hide-yard, carts
+    ranked at a yard-gate. The road leads on into all of it
+    and does not look back. The long journey from the south
+    ends here in the simplest possible way, by walking into
+    the city without being asked permission.
+idlemessages:
+- A stone-laden wagon from the quarry road comes down and
+  turns north, its team working steadily, the dressed blocks
+  chained and straw-padded on the flatbed. The driver does
+  not look at the boundary stone as he passes it.
+- From the outskirts north comes a flat percussion — something
+  working hot metal, regular and low — barely separated from
+  the general noise of the city's edge pressing in from that
+  direction.
+- The amber layer above the northern sky shifts in some high
+  wind the road does not feel, thinning for a breath almost
+  to blue before the smoke closes again.
+- Another traveller reaches the boundary stone, reads it
+  for a moment, then walks north without further ceremony.
+- The air here carries both things at once — the spent reek
+  of the works from behind and the city-smell from ahead,
+  tallow and chimney-tar and the close warmth of a great many
+  people, layered in the still air between.

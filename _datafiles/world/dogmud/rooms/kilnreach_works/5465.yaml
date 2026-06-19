@@ -1,0 +1,74 @@
+roomid: 5465
+zone: Kilnreach Works
+title: The Furnace and Flagon
+description: >
+  The noise hits before the door is half-open — a packed roar
+  of voices, the clatter of tin cups, boots on a stone floor,
+  all of it bound under a ceiling low enough to feel like a
+  hand pressed down. The air is dense — pipe-smoke above, the
+  sharp smell of spilled ale below, and under both the close
+  and honest smell of working bodies after a long shift. The
+  <ansi fg="itemname">bar</ansi> runs the full width of the
+  far wall, a slab of scarred timber on brick piers, two iron
+  taps and a row of tin cups turned face-down on the counter
+  when not in use. Above the door on the left, a battered
+  <ansi fg="itemname">notice board</ansi> holds a press of
+  papers — work-gang rosters, shift schedules, and columns of
+  names against numbers that look like the settling of wages
+  and debts in written form. The
+  <ansi fg="itemname">drinkers</ansi> at the benches are the
+  hands of the Works — lime-dusted and red-fingered, drinking
+  hard and fast to get ahead of the exhaustion. Rough here,
+  but warm, and a traveller can find a drink and plain talk
+  without much difficulty.
+biome: city
+coord:
+  x: -19
+  y: 68
+  z: 0
+exits:
+  east:
+    roomid: 5454
+nouns:
+  bar: A long slab of heavy timber across the room's far
+    wall, resting on brick piers set straight into the floor.
+    The surface is scarred and stained — a generation of
+    cups and spills and elbows. Two iron taps are fixed to
+    a barrel-frame behind the bar; a third tap is capped
+    with a wooden bung. Tin cups hang on nails or sit
+    face-down on the bar-top in a row, and a clay bowl of
+    coarse salt sits beside the nearest tap, the purpose
+    of which is not obvious to an outsider. The barkeep
+    moves quickly and does not linger over any single order.
+  notice board: A square of river-planking hung above the
+    door on two iron nails, the surface covered with papers
+    pinned and tacked in overlapping layers. The current
+    visible sheet is a work-gang roster — rows of names,
+    each with a shift-number beside it. Beneath it the edge
+    of an older paper shows a column of totals. Other sheets
+    carry the marks of the Works authority — official stamps,
+    duty notices, a rate-card for tonnage bonuses. The board
+    belongs to no one in particular. Things get pinned to it
+    and are sometimes not taken down for years; the oldest
+    papers at the bottom of the stack are held by rust and
+    habit rather than by pins.
+  drinkers: The working hands of the kilns, pits, and
+    sheds — lime-dusted coats, red-caked boots, faces and
+    arms carrying the grey-brown colour of long work in
+    brick-dust. They drink fast and do not look up when
+    someone enters. The talk runs low and steady, cut by
+    short sharp laughs and the occasional silence that does
+    not invite itself. Hard people, not unfriendly, but not
+    waiting for company either — they are here to spend the
+    edge off the shift, not to be sociable.
+idlemessages:
+- A tin cup slams on the bar and a voice calls for another
+  without looking up from the table.
+- The air thickens briefly near the door as a drinker draws
+  on a long-stemmed pipe and breathes out slow.
+- A boot scrapes on the stone floor as a worker shifts
+  weight on a bench, changing position.
+- Two workers at the far end talk in low, tired voices —
+  not arguing, just too exhausted for much volume.
+- Someone laughs — loud, short, cut off as quickly as
+  it started, and the room settles back to its baseline.

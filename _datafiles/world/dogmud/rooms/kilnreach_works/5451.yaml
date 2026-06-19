@@ -1,0 +1,92 @@
+roomid: 5451
+zone: Kilnreach Works
+title: The Quarry Road
+description: >
+  The quarry announces itself before it comes into view — a deep
+  concussive boom from the east, stone splitting at the bottom
+  of a worked face, followed by the grinding crash of rubble
+  falling and the rapid flat percussion of hammer-and-drill
+  work resuming almost without pause. The ground underfoot
+  transmits a faint resonance from it. When the road crests
+  the slight rise the full extent of the workings opens to
+  the east — a great open cut dropping tier by tier into
+  pale stone, its floor busy with figures no larger than
+  fingers at this distance, the shouting from the bottom
+  levels barely rising to the rim. Above them
+  <ansi fg="itemname">quarry wagons</ansi> move on
+  iron-railed tracks set into the stone of the upper levels,
+  loaded with rubble and ore and pushed by teams working
+  without pause, tipped at the rim and returned empty in
+  an unbroken rotation. The road itself is white — the
+  rock-dust from the workings covers the surface in a fine
+  layer that puffs softly at every footfall and settles
+  on skin and cloth alike. A heavy plank
+  <ansi fg="itemname">site board</ansi> has been spiked
+  into the earth at the quarry's road-side entrance, facing
+  the road at eye level, its lettering stamped and painted
+  to outlast the weather. The dust here has no smell of
+  grain or green in it. It is dry and mineral and faintly
+  metallic, and it coats the back of the throat.
+biome: land
+coord:
+  x: -18
+  y: 65
+  z: 0
+exits:
+  south:
+    roomid: 5450
+  north:
+    roomid: 5452
+  east:
+    roomid: 5458
+nouns:
+  quarry wagons: The wagons are heavy timber-and-iron
+    constructions, their beds reinforced with iron plate on
+    the floor and lower sides where the rubble loads bear
+    hardest. Each runs on four flanged wheels set to the
+    iron-railed gauge of the quarry's internal tramway and
+    tips rearward on a pivot for emptying. The nearest
+    wagon at the rim is tipped and standing empty — its
+    bed is rough with abrasion and stained in the pale
+    grey-brown of limestone dust, with darker patches of
+    iron-bearing ore worked into the grain of the wood.
+    A residue of crushed stone grit fills the corners
+    where the tipping left it. The wagon's frame carries
+    a painted number and a tare weight stencilled in black
+    on the forward stanchion, and a chain-brake on the
+    downslope wheel is locked and padlocked — standard
+    precaution at a rim where losing a wagon on a slope
+    would be catastrophic.
+  site board: A thick plank of hardwood, twice arm's-length
+    across, spiked into a pair of stout posts at the quarry
+    entrance where the works road meets the main road.
+    The board carries the claim authority in large stamped
+    letters at the top — KILNREACH NORTH QUARRY, CROWN
+    WORKS AUTHORITY, LESSEE BOUNDED AND LICENSED — and
+    below that a column of numbered orders. Workers must
+    report injuries before leaving the site. No fire
+    within the marked bounds except at the forges on the
+    third level. Powder charges are to be drilled and set
+    by licensed hands only, not by day-labourers. At the
+    board's base a smaller notice has been nailed more
+    recently, hand-written and unvarnished — it names
+    three men and instructs that they are not to be
+    rehired in any capacity without the site overseer's
+    written approval. No reason is given. The names are
+    still legible.
+idlemessages:
+- A heavy boom rolls up from the quarry floor to the east,
+  rattling the dust from the road verge — a charge going
+  off somewhere in the deep levels.
+- A gang of workers moves past heading for the quarry
+  entrance, tools on shoulders, talking in low voices
+  that stop when they reach the site board.
+- The grinding of iron wheels on iron rails carries up
+  from the quarry's upper level as a loaded wagon is
+  pushed toward the rim for tipping.
+- Fine rock-dust sifts down from the quarry lip on the
+  east side, catching the light in a pale curtain before
+  settling slowly onto the road.
+- From deep in the quarry cut a voice shouts a sharp
+  warning, then a moment later the crash of loosened
+  stone follows — muffled by depth, but heavy.

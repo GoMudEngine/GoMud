@@ -1,0 +1,73 @@
+roomid: 5460
+zone: Kilnreach Works
+title: The Foundry
+description: >
+  The light registers first — the white-hot glow of the great
+  <ansi fg="itemname">furnace</ansi> at the chamber's far wall,
+  its brightness washing out shadow and colour alike, reducing
+  everything near it to a trembling dazzle. The air shimmers
+  in visible layers above the casting-sand, wavering with a
+  heat so intense that breathing costs something, the weight
+  of it pressing on every exposed surface of skin. Molten iron
+  runs in glowing rivers from the tap-hole into clay-lined
+  channels cut through the sand, pouring into prepared moulds
+  with a fierce steady brilliance — sparks fountaining where
+  the flow meets the mould-edge, scattering bright points
+  across the floor. The clangour of the work is near-constant
+  — hammers striking castings free, the shunt and scrape of
+  blowpipes, the hiss of steam rising from cooling metal. A
+  rack of finished <ansi fg="itemname">castings</ansi> stands
+  to one side, cooled pieces in rough grey iron — axle-hubs,
+  wheel-flanges, flat bar-stock — stacked on a heavy timber
+  frame. The founders work without pause, blackened to the
+  eyes, moving in the heat as though it were the only air
+  they have ever known.
+biome: city
+coord:
+  x: -17
+  y: 67
+  z: 0
+exits:
+  west:
+    roomid: 5453
+nouns:
+  furnace: The furnace dominates the far wall — a squat drum
+    of refractory brick perhaps six feet across, its throat
+    lined with fired clay that has been replaced in sections
+    and patched in others over long service. At operating
+    temperature the interior is not visible without eye-shields;
+    the radiant glow at the tap-hole forces a squint at ten
+    yards. A water-cooled trough at the base carries away the
+    slag that floats above the melt — greenish and viscous,
+    bled off continuously to keep the iron beneath clean.
+    Founders approach only to work the tap or rake the slag,
+    staying as briefly as the task allows and retreating fast.
+    The heat at two paces is sufficient to blister skin through
+    light cloth without any further invitation.
+  castings: A heavy timber rack holds the day's finished work
+    — pieces pulled from the moulds once the pour has set and
+    cooled enough to handle without tongs. Axle-hubs and
+    wheel-flanges in grey cast iron, surfaces rough with
+    casting-sand trace and still faintly warm to the touch.
+    Flat bar-stock in lengths of three feet, bound with iron
+    wire, stacked five deep. A set of plough-shares heavier
+    than they look, their undersides carrying the rough shape
+    that finishing work will sharpen. Most of it is bound for
+    New Plymouth by the end of the week — a growing city
+    swallows iron without pause, and the foundry obliges it.
+idlemessages:
+- Sparks burst from the nearest casting channel as the iron
+  meets a cool spot in the mould, scattering bright points
+  across the sand and dying there.
+- The tap-hole opens with a low roar and molten iron pours
+  from it in a brief brilliant column before being caught
+  and directed into the waiting channels below.
+- A founder signals to his partner with a raised fist; the
+  second crosses to the furnace's near side and swings the
+  blowpipe clear without a word spoken between them.
+- The heat in the chamber sharpens as a new charge drops
+  through the furnace top — a dull concussive thud, the
+  glow brightening briefly and then steadying.
+- A finished casting hits the timber rack with a ringing
+  clang, still too hot to grip bare-handed, steam rising
+  from the rough pores of the cooling metal.

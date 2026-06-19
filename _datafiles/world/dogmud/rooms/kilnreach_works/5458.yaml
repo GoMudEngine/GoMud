@@ -1,0 +1,92 @@
+roomid: 5458
+zone: Kilnreach Works
+title: The Great Quarry
+description: >
+  The quarry rim opens without warning — you stand at its edge
+  and the scale of the pit below arrests the eye before any
+  other sense has a turn. The drop is sheer and enormous, the
+  walls descending in broad terraced steps of pale grey limestone,
+  each tier a working ledge wide enough to hold teams and
+  equipment, the raw stone face exposed in horizontal bands of
+  pale and darker material going down — and down — until the
+  floor of the pit is far enough below that the rubble-wagons
+  crawling across it look no larger than beetles and the workers
+  between them are dots. The continuous noise of it rises from
+  below in waves — the chinking of iron on stone, the deep
+  periodic boom of charges splitting the rock face, the groan
+  of the <ansi fg="itemname">cranes</ansi> at the rim as loaded
+  stone-nets swing toward the ramp road. A low
+  <ansi fg="itemname">powder store</ansi> stands back from the
+  edge behind you, thick-walled and locked, and the open
+  <ansi fg="itemname">quarry</ansi> drops away in front —
+  an open wound in the land, dug for the capital's walls and
+  roads, one detonation at a time.
+biome: cliffs
+coord:
+  x: -17
+  y: 65
+  z: 0
+exits:
+  west:
+    roomid: 5451
+nouns:
+  quarry: Leaning out over the rim you can read the full
+    depth — the terraces stepping down in broad horizontal
+    cuts of dressed limestone, each face showing the raw
+    material where charges and wedge-work have freed it. The
+    lowest tier sits perhaps thirty feet below the one above
+    it; four or five of them compose the whole depth, so the
+    quarry floor lies far below the surrounding land — a world
+    of its own, white with stone dust, littered with the
+    wreckage of split blocks awaiting the rubble-wagons. The
+    main ramp rises along the far wall in a broad zigzag of
+    packed earth and timber planking, wide enough for two
+    loaded wagons to pass side by side. The whole apparatus
+    is in continuous motion — the teams hauling, the cranes
+    turning, the wedge-gangs working the face — and the noise
+    of it comes up in waves, busy and indifferent to watchers.
+  powder store: A low building set back from the quarry's
+    rim — thick rubble-stone walls, a roof of close-laid
+    timber dressed with clay render, a single iron-bound door
+    fitted with two separate locks. A painted board above the
+    door reads "POWDER — AUTHORISED ENTRY ONLY" in large
+    block capitals, renewed often enough to stay legible. No
+    windows. A shallow drainage channel runs around the base
+    to carry surface water away from the walls, and the
+    ground around it is swept bare — no dry material near the
+    store. The door is firmly shut. The building has the
+    particular stillness of something that knows what it
+    contains.
+  cranes: Two timber cranes stand at the quarry's rim, their
+    jibs swung out over the drop, chains running down into
+    the pit to nets on the working terraces below. Both are
+    in use — the near one lowering an empty net on a slow
+    controlled descent, the farther one hauling a loaded net
+    of rough-cut blocks upward, the frame creaking in a
+    steady cycle as the winch-team walks their circuit. The
+    mechanisms are simple and enormous, maintained every day
+    because the alternative — a failure above several hundred
+    feet of open drop onto the workforce — is not something
+    the quarry can afford. Stone dust coats the timber above
+    the axle-line, pale and fine, settling and never clearing.
+idlemessages:
+- A low concussive boom rises from the pit — stone splitting
+  somewhere on the lower tiers — followed by a long rushing
+  sound of falling rubble and then a brief silence before the
+  percussion of iron on stone begins again below.
+- The near crane takes the weight and the whole frame shudders,
+  the timber groaning once as the winch-team leans into their
+  circuit and the loaded net begins its slow rise from the
+  terraces far below.
+- A rubble-wagon reaches the top of the main ramp and rolls
+  past at a heavy walk, its flatbed heaped with rough stone
+  chips, the team sweat-dark and disinterested. It turns west
+  on the road without stopping.
+- From far below, at the quarry floor, voices carry upward
+  — something called across the stone dust, a short answer,
+  then silence again beneath the general percussion of the
+  working face.
+- A permanent thin haze of white stone dust hangs in the air
+  above the rim — drawn up from the terraces by the working
+  heat of the day, settling so slowly it is almost invisible
+  unless you watch it drift against the sky.

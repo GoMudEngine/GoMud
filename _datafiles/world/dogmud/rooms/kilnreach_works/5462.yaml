@@ -1,0 +1,69 @@
+roomid: 5462
+zone: Kilnreach Works
+title: The Timber Yard
+description: >
+  The pit-saws reach you before the gate does — a high raw
+  shriek of steel biting into wet hardwood, and beneath it the
+  thick resinous smell of fresh-sawn timber, clean and green
+  and nothing like the rest of the Works. Inside, sawdust and
+  wood-chip cover the ground to the ankle. Ranked rows of
+  <ansi fg="itemname">timber stacks</ansi> fill the yard in
+  both directions — sawn plank and hewn beam sorted by grade
+  and seasoning, each course wedged and pegged, the end-grain
+  chalked with a tally-mark and the inspector's mark. Along
+  the far wall, open <ansi fg="itemname">sawpits</ansi> cut
+  straight down into the earth, the long two-man saws hanging
+  idle on their pegs above the drop when no shift is running.
+  At the loading apron near the gate, heavy
+  <ansi fg="itemname">drays</ansi> take on bound timber for
+  the city's framers and builders — a tally-clerk marks each
+  load off against a board nailed to the gate-post.
+biome: city
+coord:
+  x: -17
+  y: 68
+  z: 0
+exits:
+  west:
+    roomid: 5454
+nouns:
+  timber stacks: The stacks run the full length of the yard in
+    ranked rows, sorted by grade — rough-hewn round-stock on
+    the outer runs, sawn plank nearer the centre, dressed
+    joinery timber closest to the loading apron. Each course
+    is wedged and pegged, the top layer covered with a strip
+    of oilcloth lashed tight against the weather. The end-grain
+    of every plank carries a chalk tally-mark recording its
+    grade and the inspector's initial. A tally-book hangs on
+    a nail at the stack's corner, its pages swollen with damp.
+    There is timber here for a season of building in a city —
+    all of it already spoken for and bound for the builders'
+    yards of New Plymouth.
+  sawpits: Long rectangular cuts in the packed-earth floor,
+    each one three spans deep, the walls shored with rough
+    plank. A heavy log lies across each pit's top on iron
+    rests, scored across with a hundred saw-cuts. The long
+    pit-saw hangs on its peg above — a great two-handed tool,
+    the lower handle wrapped in worn leather. Sawdust fills
+    the pit floor in a pale drift deep enough to muffle a
+    footfall. The under-sawyer works down there all shift,
+    in the dust and the dark below the log, pulling the long
+    blade down on every stroke.
+  drays: Heavy four-wheeled wagons with iron-tyred wheels and
+    thick timber flatbeds, built to carry a full load of sawn
+    stock without flexing under the weight. The nearest is
+    half-loaded — a course of beams laid and lashed at both
+    ends with rope. A chalked board propped against the wheel
+    records the load's destination and the levy due at the
+    city gate, countersigned by the yard-clerk.
+idlemessages:
+- A pit-saw starts with a rising shriek and settles into its
+  long back-and-forth rhythm.
+- Sawdust sifts from the top of a high stack as a hand walks
+  the planks above, checking the tally.
+- A dray-horse stamps twice on the loading apron and blows
+  a long breath through its nose.
+- A worker shouts a measurement across the yard, the words
+  half-lost in the noise from the running saw.
+- A kicked plank skitters across the sawdust floor, chips
+  scattering wide ahead of it.

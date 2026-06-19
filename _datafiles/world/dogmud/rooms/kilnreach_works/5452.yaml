@@ -1,0 +1,102 @@
+roomid: 5452
+zone: Kilnreach Works
+title: Kiln Row
+description: >
+  The air on Kiln Row is bitter and alkaline — not the soft
+  woodsmoke of a hearth or the clean smoke of a cooking fire,
+  but the pungent mineral burn of lime-kilns at full draw,
+  permanent and inescapable, coating the inside of the mouth
+  with the faint taste of chalk. The eye confirms what the
+  nose has already given up on arguing with — everything is
+  grey. The buildings are grey with it, the workers are grey
+  with it, and the street surface carries a continuous fine
+  pale powder that records every footfall and rises in slow
+  drifts when the wind sets from the west. On that western
+  side the kilns stand in a row — four great stone-built
+  chambers, their arched fire-mouths glowing amber-white in
+  the permanent controlled burn, their stacks sending grey
+  columns straight up in the still intervals between gusts.
+  Workers move on the access road beside them without pause,
+  tending the fire-mouths and shifting fuel from the stacked
+  wood-yard behind, checking draw and temperature by methods
+  that look more like instinct than instrument. When the
+  wind comes from the west the heat from that side is a
+  dry wall across the full width of the street. Across the
+  narrow way, on the eastern side, the rough
+  <ansi fg="itemname">workers' cottages</ansi> of Slag Lane
+  crowd close — low-walled, practical, their washing greyed
+  before it dries and their window-shutters facing the kilns
+  with a long, unsurprised familiarity. Between the two sides
+  the street is barely wide enough for a laden cart to pass.
+  Hard against the near kiln a
+  <ansi fg="itemname">tally shed</ansi> has been built of
+  reclaimed stone — squat, solid, a sliding shutter over
+  its counter-window standing open, a lantern burning inside
+  despite the daylight, visible through the gap.
+biome: city
+coord:
+  x: -18
+  y: 66
+  z: 0
+exits:
+  south:
+    roomid: 5451
+  north:
+    roomid: 5453
+  west:
+    roomid: 5459
+  east:
+    roomid: 5464
+nouns:
+  tally shed: A low stone shed built into the gap between the
+    first and second kilns, its walls thick enough that the
+    heat from either side does not make it uninhabitable —
+    only uncomfortably warm. The sliding shutter over the
+    counter-window faces the street, and through it the
+    interior is visible — a lantern on a hook, shelves of
+    bound ledgers black with handling along their spines,
+    and a row of wooden pegs holding delivery tickets on
+    cords, each peg labelled in chalk on a small board
+    above it. A stack of tally sticks lies on the counter
+    inside, and a set of iron weights sits on a shelf at
+    the back alongside a balance beam hung level. The shed
+    is where the lime output is recorded, weighed, allocated
+    by destination, and entered into the Crown Works ledgers.
+    The ledgers on the nearest shelf are marked by year and
+    quarter. The current one is very thick. Outside the shed,
+    nailed to the frame above the shutter, a handwritten note
+    in a clipped administrative hand reads — and here the
+    lime-dust has obscured the first word — all disputed
+    short-weights must be re-weighed before the cart leaves
+    the row. Non-compliant loads will not be cleared.
+  workers' cottages: The cottages on the east side of Kiln
+    Row are plain single-storey buildings, their stone the
+    same pale grey as everything else in this quarter, though
+    whether that is their natural colour or the lime-smoke's
+    work is impossible to say. They stand close-packed with
+    shared walls, each fronted by a low wall and a strip of
+    yard just wide enough for a rain-barrel and a stack of
+    fuel. Washing hangs between the upper windows on lines
+    strung between iron hooks — grey-white and heavy in the
+    still air, not drying quickly. The doors are solid and
+    plain, mostly shut. From behind one of them a child's
+    voice carries briefly through the street noise, then
+    stops. The cottages' windows facing the kilns are small
+    and set high — a practical choice, whether against the
+    heat or the glare.
+idlemessages:
+- The wind backs from the west and the full weight of the
+  kiln-heat comes across the street at once — dry and close,
+  lasting only a moment before the air shifts again.
+- A kiln-worker moves along the fire-mouth row tapping each
+  arch-stone with a long iron rod, listening to what the
+  sound tells him about the draw.
+- From one of the cottages on the east side the smell of
+  cooking crosses briefly through the lime-smoke — onions
+  and something heavier — then the wind takes it again.
+- A cart loaded with sacked lime creaks away to the north
+  from the kiln yard, the driver's face and coat the same
+  grey-white as his load.
+- One of the kiln stacks pulses a thick grey-white gust as
+  the fireman below opens a vent, then the draw settles
+  and the column thins and steadies.

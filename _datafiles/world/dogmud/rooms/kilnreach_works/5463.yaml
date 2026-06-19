@@ -1,0 +1,79 @@
+roomid: 5463
+zone: Kilnreach Works
+title: The Brickworks
+description: >
+  Red is the colour before anything else — dust on every flat
+  surface, weathered streaks on every wall, the raw churned
+  earth where the ground has been worked and walked to nothing.
+  It settles on the tongue and the back of the throat before
+  you have taken ten steps. The great
+  <ansi fg="itemname">brick-kilns</ansi> stand at the north
+  edge — squat round towers of their own fired product, each
+  breathing pale smoke from its vents in a slow steady
+  exhalation, the heat off them a physical weight from three
+  paces. Between the kilns and the road, long open
+  <ansi fg="itemname">moulding-sheds</ansi> run east to west,
+  the rhythmic slap of clay against board carrying from within.
+  Beyond them, <ansi fg="itemname">clay-pits</ansi> open in
+  the earth — wide and red and wet, their walls shored with
+  timbers, ochre water standing in the pit floors. In the open
+  ground between the sheds and the kilns,
+  <ansi fg="itemname">drying racks</ansi> carry hundreds of
+  freshly-struck green bricks set on edge, waiting for the
+  kilns to clear.
+biome: land
+coord:
+  x: -19
+  y: 69
+  z: 0
+exits:
+  east:
+    roomid: 5455
+nouns:
+  brick-kilns: Squat round towers twelve feet across and twice
+    as high, built from the bricks they make — the walls thick
+    enough to hold a week's heat of firing. Iron vent-doors
+    ring the base for raking and drawing; at the crown a clay
+    cap allows the smoke its slow release. The heat off the
+    near kiln is a physical thing — you feel it on the face
+    from three paces, and from two it starts to dry the eyes.
+    A single firing fills a dray and more. The product of a
+    season fills city walls.
+  moulding-sheds: Long timber-roofed sheds open on the
+    working side — no walls, just roof and posts and the long
+    row of moulding-boards running the shed's length. Each
+    board is wet and red, an iron mould-frame stacked beside
+    it. Clay is thrown into the frame by hand, struck level
+    with a wire, and the green brick slid free in a single
+    motion. The pace inside is relentless and the floor is
+    ankle-deep in red clay-slip. The smell here is wet earth
+    and closed air and the particular close warmth of bodies
+    doing piece-work.
+  drying racks: Rows of long open racks set between the sheds
+    and the kilns, each one carrying freshly-struck green bricks
+    set on edge so the air can reach all faces. They are not
+    yet fired — press a thumb to one and it marks easily,
+    still as yielding as the clay it came from. A chalked
+    number on each rack-end records the count, the moulding
+    date, and the intended firing-sequence. A fired brick will
+    bear a man's weight; these will not — not until the kilns
+    have them.
+  clay-pits: Wide open cuts in the red earth, their walls
+    shored with heavy planking against collapse. Ochre-red
+    water stands in the pit floors — seep from the surrounding
+    clay, kept down as far as buckets allow. The smell from
+    the pits is mineral and cold, the smell of deep earth,
+    quite different from the red dust above. Rope rigs at the
+    pit-rim haul the filled corves up to the moulding-sheds
+    in a continuous slow chain.
+idlemessages:
+- A kiln vents a slow billow of pale smoke and the wind
+  carries it flat across the yard.
+- Red brick-dust settles on everything set down for more
+  than a moment.
+- The slap of clay against a moulding-board carries from
+  inside the shed — steady, unresting, without variation.
+- A moulder shifts a rack of drying bricks and steadies
+  the course with one hand as it rocks.
+- The clay-pits give off a cold mineral smell when the
+  wind drops — deep earth, not surface.

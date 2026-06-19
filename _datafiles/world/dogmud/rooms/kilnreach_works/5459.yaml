@@ -1,0 +1,66 @@
+roomid: 5459
+zone: Kilnreach Works
+title: The Lime Kilns
+description: >
+  The heat reaches you before the kilns do — a dry searing
+  wall of it pressing against the face, stripping the air of
+  moisture, carrying with it a caustic bitterness that settles
+  in the throat and whitens the lips over time. A row of great
+  stone <ansi fg="itemname">kilns</ansi> occupies the yard
+  in a close line, their domed crowns black with soot, their
+  burning throats fed without cease — limestone and charcoal
+  tumbling in from above as lean-armed men work the loading
+  ramps, the combustion roaring through the stonework, felt
+  in the chest as much as heard. Lime-smoke drifts in thin
+  white ribbons from the draw-holes, settling on skin and
+  clothes and graying everything it touches, the caustic tang
+  sharp enough to taste at the back of the throat. Along the
+  yard's far wall a rough <ansi fg="itemname">tool-shed</ansi>
+  leans against the kiln fence, its open shelves crowded with
+  iron lime-rakes, long-handled shovels, and padded gauntlets
+  blackened from long use. A man who works the kilns for a
+  season looks a decade older than his years.
+biome: city
+coord:
+  x: -19
+  y: 66
+  z: 0
+exits:
+  east:
+    roomid: 5452
+nouns:
+  kilns: The kilns stand close and massive — each a drum of
+    dressed stone perhaps twelve feet across and twenty high,
+    their interiors burning at temperatures that give limestone
+    no peace. A loading port at each crown receives the fuel
+    and feed; draw-holes at the base allow burned lime to be
+    raked out when the cycle completes, though the kiln runs
+    continuously, one section cooling while the rest burn.
+    The heat radiating from the nearest kiln keeps anyone at
+    arm's length without instruction. A fresh-burned load sits
+    cooling in the nearest draw-bay — the lime white and fierce,
+    still hot enough to blister, smouldering faintly at the
+    edges where unburned stone gives way to the finished product.
+  tool-shed: A lean-to built against the kiln fence, its
+    shelves running from the ground to the rafter-plate and
+    crowded with the implements of the trade. Iron lime-rakes
+    with their long ash handles, padded gauntlets for handling
+    hot product, heavy canvas covers for the cooling draw-bays,
+    a crate of marking chalk for batch tallies, spare loading
+    poles bundled in the corner with cord. Everything is filmed
+    with pale lime-dust — a white coating that settles into
+    every crevice and sits there. The door has no latch; there
+    is nothing here worth locking against a thief who would not
+    rather have the gauntlets than anything else in the shed.
+idlemessages:
+- A man raking the nearest draw-bay pauses to wipe his face
+  with a rag, then leans back into the heat without comment.
+- A thin white ribbon of lime-smoke drifts across the yard
+  and catches the light briefly before dispersing to nothing.
+- The roar from the nearest kiln rises a note as a new charge
+  of charcoal catches inside — a brief bright intensity, then
+  settling back into its baseline thunder.
+- Limestone dust settles on every flat surface — the tool
+  ledges, the loading ramps, the back of an unguarded hand.
+- A worker at the loading ramp swings a heavy canvas cover
+  over the nearest draw-bay and ties it off without looking up.

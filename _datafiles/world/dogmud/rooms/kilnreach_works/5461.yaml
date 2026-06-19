@@ -1,0 +1,74 @@
+roomid: 5461
+zone: Kilnreach Works
+title: The Tannery
+description: >
+  The smell announces the tannery before the gate does —
+  a thick compound reek of ammonia and rotting hide and
+  souring bark-liquor that presses into the nostrils and
+  sits there, coating the back of the throat and bringing
+  the eyes to water before a step has been taken inside.
+  The yard is a grid of sunken <ansi fg="itemname">tan-pits</ansi>
+  set into the earth, each brimming with brown steaming
+  liquor, hides submerged at various stages of the long
+  cure — some pale and swollen from the lime-rinse, some
+  darkening through the tan, some near-finished and heavy
+  with it. Tanners work the hides with long poles, keeping
+  out of the liquor, their clothes and lower legs long ago
+  surrendered to the stain, their faces set against the
+  smell in the particular way of men who have stopped
+  noticing it. Dressed hides hang dripping from timber
+  frames at the yard's far end, slick and dark and reeking
+  close up. A low stone building at the yard's near edge
+  is the <ansi fg="itemname">bark-store</ansi> — its door
+  propped wide for the next delivery, the resinous smell
+  of ground bark cutting briefly through even the yard's
+  general reek before the reek reasserts itself.
+biome: city
+coord:
+  x: -19
+  y: 67
+  z: 0
+exits:
+  east:
+    roomid: 5453
+nouns:
+  tan-pits: The pits are cut deep into the earth — eight feet
+    or more, their walls timber-lined to hold the liquor, each
+    a different stage in the long cure. The first pits hold
+    lime-water, pale and acrid, the hides in them swollen and
+    bleached, the hair and surface fat stripped clean away.
+    Further in, the tan-liquor takes over — a brown extract of
+    oak-bark and sumac and other things less easily named, the
+    hides hanging heavy through it for weeks, sometimes months.
+    The smell at close range is acute enough to make the eyes
+    run freely; tanners work it by familiarity rather than by
+    anything resembling tolerance. A long pole propped at the
+    nearest pit edge serves for turning hides without direct
+    contact with the liquor below.
+  bark-store: A low stone outbuilding at the tannery's near
+    edge, its door left open for the cart deliveries that come
+    twice weekly from the bark-strippers working the managed
+    oak-stands north of the city. Inside, heaps of ground
+    oak-bark fill sacking bags stacked floor to ceiling, their
+    sharp resinous smell cutting through even the yard's
+    general stench. Sumac, hemlock-bark, and quebracho sit in
+    separate bales along the inner wall — each a different
+    tanning agent for different grades of hide. The store is
+    cool and relatively dry, which keeps the mould off the
+    product. It is the only part of the tannery that does not
+    make a visitor wish to leave immediately.
+idlemessages:
+- A tanner works a hide across the nearest pit with slow
+  heavy strokes of the pole, the liquor barely disturbed,
+  the smell rising fresh with each movement.
+- Flies gather above the nearest pit in a slow unhurried
+  cloud, adjusting their orbit as the surface below shifts.
+- The dripping from the frames at the yard's far end forms
+  a slow irregular tick on the earth beneath — patient
+  and continuous.
+- A delivery cart pauses at the bark-store entrance; two men
+  unload sacking bags with the efficient boredom of a job
+  done twice a week without variation.
+- The reek shifts and thickens as the wind turns, pressing
+  it back into the yard rather than carrying it clear, and
+  every person in the space leans slightly into their work.
