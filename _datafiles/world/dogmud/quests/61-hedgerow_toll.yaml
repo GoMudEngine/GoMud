@@ -1,0 +1,82 @@
+questid: 61
+name: Hedgerow Toll
+description: >-
+  Goodwife Pemberton's trade at the Lake & Ladle is bleeding -- her
+  lodgers and the road's travellers are being robbed and beaten on the
+  stretch north. She has asked you to put down the two that work it: a
+  hedgerow bandit on the road, and a Reach-touched thing out in the
+  Empty Reach beyond.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: >-
+      Goodwife Pemberton asked you to clear the two preying on the road
+      north: a hedgerow bandit that works the hedges, and a Reach-Touched
+      out in the Empty Reach beyond.
+    hint: >-
+      Head north up the road. Kill the hedgerow bandit that works the
+      hedges, and the Reach-Touched out in the Empty Reach beyond. Come
+      back and tell Pemberton at the Lake & Ladle when both are down.
+  - id: bandit
+    description: >-
+      The hedgerow bandit that worked the road north is dead. The
+      Reach-Touched still haunts the Empty Reach beyond.
+    hint: >-
+      Push on north into the Empty Reach and put down the Reach-Touched,
+      then report to Pemberton.
+  - id: reach
+    description: >-
+      The Reach-Touched is down. Both road-preyers are dead -- report
+      back to Pemberton at the Lake & Ladle.
+    hint: >-
+      Return south to the Lake & Ladle in North Road North and tell
+      Pemberton the road is clear. Try ask pemberton report.
+  - id: end
+    description: >-
+      Pemberton can promise her lodgers a safe road again. The toll the
+      hedgerows took is paid off.
+
+rewards:
+  gold: 40
+  itemid: 30036
+  skillinfo: "weapon-combat:1"
+  playermessage: >-
+    Pemberton listens to the whole of it, then lets out a breath she
+    seems to have been holding for a week. "Both of them. Then I can
+    tell my lodgers the road north is walkable again and not be lying."
+    She counts coin from the strongbox without haggling for once, and
+    presses a salve into your hand on top of it. "For the next set of
+    bruises. You will have them, doing work like this. Bed and board
+    here are yours at a friend's rate from now on."
+  roommessage: >-
+    Goodwife Pemberton settles a purse into the traveller's hand with
+    the air of a woman whose trade just started breathing again.
+
+triggers:
+  # ── HEDGEROW BANDIT defeated (mob 9173, North Road North) ───────────
+  - event: mob_death
+    mob: 9173
+    conditions:
+      has: ["61-start"]
+      missing: ["61-bandit"]
+    actions:
+      - grant: "61-bandit"
+      - send_text: >-
+          The hedgerow bandit folds into the ditch he ambushed from and
+          does not get up. One of the road's two is done. The
+          Reach-Touched still haunts the Empty Reach to the north.
+
+  # ── REACH-TOUCHED defeated (mob 9178, The Empty Reach) ──────────────
+  - event: mob_death
+    mob: 9178
+    conditions:
+      has: ["61-start"]
+      missing: ["61-reach"]
+    actions:
+      - grant: "61-reach"
+      - send_text: >-
+          The Reach-Touched shudders, goes still, and is just a body on
+          the stones. The road north is clear of both now. Carry the
+          word back to Pemberton at the Lake & Ladle.

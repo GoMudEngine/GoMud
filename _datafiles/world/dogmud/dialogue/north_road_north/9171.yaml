@@ -1,0 +1,64 @@
+mobid: 9171
+zone: North Road North
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "morning"]
+    responses:
+      - "Sit where you like. Stew's on, ale's cold, road's outside where it belongs."
+      - "Welcome to the Lake & Ladle. You look like the road's been at you."
+  - keywords: ["quest", "task", "work", "job", "trouble"]
+    responses:
+      - "There is trouble on the road north, if you are asking. Ask me about the bandits."
+  - keywords: ["buy", "sell", "trade", "shop", "wares", "food", "drink", "list"]
+    responses:
+      - "Kitchen's open -- stew, bread, a drop of wine. Have a look at what's set out."
+  - keywords: ["gossip", "news", "rumor", "rumors"]
+    responses:
+      - "All my news walks in the door and complains about the road. Lately it is the bandits."
+  - keywords: [""]
+    responses:
+      - "Something you need, traveller?"
+
+tree:
+  root:
+    text: "I am Goodwife Pemberton -- I keep the Lake & Ladle, and I would keep it a deal better if the road outside were not robbing my custom blind. Half my lodgers come in bruised, the other half do not come in at all."
+    hints: "You could ask Pemberton about a quest or task, the bandits on the road, or her kitchen."
+
+  nodes:
+    - id: quest_start
+      triggers: ["quest", "task", "bandits", "bandit", "trouble", "help", "work", "problem"]
+      questExcluded: ["61-start", "61-end"]
+      grantsQuest: "61-start"
+      text: "Two of them work the stretch north, and between them they are strangling my trade. One is a hedgerow bandit -- a brute who lies up in the hedges along the road and takes travellers as they pass. The other is worse: a Reach-Touched thing, out in the Empty Reach beyond, that the Chrysalis has hollowed into something that hunts. Put them both down and the road is walkable again. Do that, and you will not pay for a bed or a meal here while I keep the place."
+      hints: "Head north up the road. Kill the hedgerow bandit that works the hedges, and the Reach-Touched out in the Empty Reach beyond. Come back and tell Pemberton when both are down."
+      moodChange: friendly
+
+    - id: quest_turnin
+      triggers: ["report", "done", "cleared", "clear", "finished", "quest", "task", "bandits", "both", "dead"]
+      questRequired: ["61-start", "61-bandit", "61-reach"]
+      questExcluded: ["61-end"]
+      grantsQuest: "61-end"
+      text: "Both of them, then. I watched the road all morning and nobody came in nursing a split lip for the first time in a season. You have given me my trade back, traveller, and I do not forget that."
+      hints: "Quest complete. Pemberton now offers you a bed and board at a friend's rate."
+      moodChange: friendly
+
+    - id: quest_active
+      triggers: ["quest", "task", "bandits", "bandit", "report", "done"]
+      questRequired: ["61-start"]
+      questExcluded: ["61-end"]
+      text: "Not finished yet -- I would know it on my custom if you were. The hedgerow bandit lies up along the road north; the Reach-Touched is further on, out in the Empty Reach. Both have to go down. Come and tell me when they have."
+      hints: "Kill both the hedgerow bandit (on the road north) and the Reach-Touched (in the Empty Reach), then return and tell Pemberton."
+
+    - id: quest_done
+      triggers: ["quest", "task", "bandits", "road"]
+      questRequired: ["61-end"]
+      text: "The road's been quiet since you cleared it -- my lodgers come in whole and stay the night. Your bed and board here are settled, as I said. You are always welcome at the Ladle."
+
+    - id: road_talk
+      triggers: ["road", "north", "travel", "reach", "empty"]
+      text: "The road runs north from here through the Empty Reach -- a long dry nothing of a stretch -- and on toward Hartcharn and the capital beyond. It is a good road when it is not being worked by thieves. Mostly it is being worked by thieves."
+      hints: "You could ask about a quest or task."
+
+memory:
+  expiryPeriod: ""
