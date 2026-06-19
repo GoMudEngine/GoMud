@@ -1,0 +1,10 @@
+track: temperate
+season: spring
+outdoor:
+  default:
+    - "Meltwater chuckles somewhere out of sight."
+    - "New green pushes up through last year's mat of leaves."
+indoor:
+  default:
+    strong:
+      - "The smell of wet, waking earth drifts in from outside."

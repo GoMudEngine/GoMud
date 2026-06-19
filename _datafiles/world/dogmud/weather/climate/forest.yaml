@@ -2,3 +2,4 @@ biome: forest
 weather: { clear: 3, overcast: 2, rain: 2, fog: 1, storm: 1 }
 influence: { intensityDelta: 0.0, moistureDelta: 0.02, movementResistance: 0.1 }
 spawnWeight: 0.9
+track: temperate

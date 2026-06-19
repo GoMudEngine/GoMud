@@ -1,0 +1,7 @@
+mutatorid: season-temperate-summer
+outdooronly: true
+descriptionmodifier:
+  behavior: append
+  text: High summer lies heavy here, the air thick and warm.
+  colorpattern: gold
+decayrate: 24 hours

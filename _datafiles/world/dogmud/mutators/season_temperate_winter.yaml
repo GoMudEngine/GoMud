@@ -1,0 +1,10 @@
+# Seasonal ambience layer: description-only by design — room titles already
+# carry weather tags (spec S-R2). outdooronly keeps the line out of sheltered
+# rooms (DOGMud indoor gating). Buffs/exits are builder seams.
+mutatorid: season-temperate-winter
+outdooronly: true
+descriptionmodifier:
+  behavior: append
+  text: Winter holds the land; frost rims every edge and breath hangs in the air.
+  colorpattern: frost
+decayrate: 24 hours

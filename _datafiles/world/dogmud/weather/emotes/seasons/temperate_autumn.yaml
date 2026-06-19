@@ -1,0 +1,10 @@
+track: temperate
+season: autumn
+outdoor:
+  default:
+    - "Dry leaves scrape past on a chill gust."
+    - "The light has gone thin and slanted with the turning year."
+indoor:
+  default:
+    strong:
+      - "A draft carries the cold smell of leaf-rot and coming frost."

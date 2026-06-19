@@ -2,3 +2,4 @@ biome: mountains
 weather: { clear: 3, overcast: 2, snow: 2, storm: 1 }
 influence: { intensityDelta: -0.08, moistureDelta: -0.08, movementResistance: 0.4 }
 spawnWeight: 0.7
+track: temperate

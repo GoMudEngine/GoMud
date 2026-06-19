@@ -1,0 +1,10 @@
+track: monsoon
+season: dry
+outdoor:
+  default:
+    - "Dust devils twist across the cracked hardpan."
+    - "The dry wind rasps like something thirsty."
+indoor:
+  default:
+    strong:
+      - "Fine dry dust films every surface, fresh as fast as it's wiped."

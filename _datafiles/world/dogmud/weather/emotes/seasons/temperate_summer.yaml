@@ -1,0 +1,10 @@
+track: temperate
+season: summer
+outdoor:
+  default:
+    - "Insects drone in the heavy summer air."
+    - "Heat shimmer wobbles above every sunlit surface."
+indoor:
+  default:
+    strong:
+      - "The summer air inside is close and still."
