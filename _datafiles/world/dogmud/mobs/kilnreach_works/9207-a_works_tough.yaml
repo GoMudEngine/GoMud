@@ -4,7 +4,7 @@ behavior_archetype: generic_fighter
 archetype: fighting
 hostile: false
 statpool: 46
-itemdropchance: 40
+itemdropchance: 100
 maxwander: 1
 groups:
   - humanoid
