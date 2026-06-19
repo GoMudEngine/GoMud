@@ -9,6 +9,15 @@ type WeatherType string
 
 const Clear WeatherType = "clear"
 
+// KnownWeatherTypes is the canonical list of weather types the module ships
+// content for: Clear plus the eight mutator-backed types. WeatherType stays
+// open (climate data may introduce more), but per-type config surfaces
+// enumerate exactly this list. A climate test pins it as a superset of every
+// DefaultClimate profile.
+var KnownWeatherTypes = []WeatherType{
+	"blizzard", Clear, "dust", "fog", "heatwave", "overcast", "rain", "snow", "storm",
+}
+
 // FrontId uniquely identifies a weather front within a run.
 type FrontId uint64
 
