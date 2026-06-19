@@ -4,10 +4,12 @@ import (
 	"os"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/GoMudEngine/GoMud/modules/weather/content"
 	"github.com/GoMudEngine/GoMud/modules/weather/engine"
+	"github.com/GoMudEngine/GoMud/modules/weather/seasons"
 	"github.com/GoMudEngine/GoMud/modules/weather/sim"
 )
 
@@ -27,6 +29,7 @@ func (m *weatherModule) startSim(round uint64) {
 	}
 	m.simCfg = m.cfg.simConfig()
 	m.loadContent()
+	m.loadSeasons()
 	if !m.cfg.BuffsEnabled {
 		n := engine.StripBuffs()
 		mudlog.Info("Weather: buffs disabled by config", "specsStripped", n)
@@ -55,6 +58,62 @@ func (m *weatherModule) loadContent() {
 		mudlog.Warn("Weather: emote tables failed to load", "error", err)
 	}
 	m.tables = tables
+
+	seasonalTables, err := content.LoadSeasonalEmotes(dataFS, "weather/emotes/seasons")
+	if err != nil {
+		mudlog.Warn("Weather: seasonal emote tables failed to load", "error", err)
+	}
+	m.seasonalTables = seasonalTables
+}
+
+// loadSeasons loads season tracks and establishes the baseline per-zone season
+// map. Fail-soft ladder (design spec §7): disabled by config, no usable
+// calendar, or no/invalid track files => m.seasonsOn stays false and weather
+// runs exactly as v1. Loads from DOGMud's os.DirFS datafiles tree.
+func (m *weatherModule) loadSeasons() {
+	m.seasonsOn = false
+	if !m.cfg.SeasonsEnabled {
+		return
+	}
+	months, days := engine.CalendarShape()
+	if months < 1 || days < 1 {
+		mudlog.Warn("Weather: no usable calendar; seasons disabled")
+		return
+	}
+	dataFS := os.DirFS(configs.GetFilePathsConfig().DataFiles.String())
+	tracks, errs := seasons.Load(dataFS, "weather/seasons", months, days)
+	for _, err := range errs {
+		mudlog.Warn("Weather: season track rejected", "error", err)
+	}
+	if len(tracks) == 0 {
+		mudlog.Warn("Weather: no season tracks loaded; seasons disabled")
+		return
+	}
+	m.tracks = tracks
+	m.seasonsOn = true
+	// Baseline resolution establishes zoneSeasons WITHOUT emitting events, so
+	// reboots never replay a flood of season changes.
+	m.zoneSeasons = seasons.ZoneSeasons(m.graph, m.climate, m.tracks, engine.CalendarNow())
+	engine.ReconcileSeasons(m.graph, m.zoneSeasons) // assert season mutators at boot
+	mudlog.Info("Weather: seasons active", "tracks", len(tracks),
+		"seasonalZones", len(m.zoneSeasons))
+}
+
+// resolveSeasons re-resolves every zone's season and queues a
+// WeatherSeasonChanged event for each calendar flip since the previous tick.
+// Cross-track changes (a zone's biome reassigned by a rebuild) are not flips
+// and emit nothing — listeners may assume From/To share a track.
+func (m *weatherModule) resolveSeasons() {
+	zs := seasons.ZoneSeasons(m.graph, m.climate, m.tracks, engine.CalendarNow())
+	for zone, cur := range zs {
+		if prev, ok := m.zoneSeasons[zone]; ok && prev.Track == cur.Track && prev.Season != cur.Season {
+			events.AddToQueue(WeatherSeasonChanged{
+				Zone: zone, Track: cur.Track, From: prev.Season, To: cur.Season,
+			})
+		}
+	}
+	m.zoneSeasons = zs
+	engine.ReconcileSeasons(m.graph, zs)
 }
 
 // loadOrInitState restores persisted simulation state, or seeds a fresh run
@@ -82,10 +141,19 @@ func (m *weatherModule) loadOrInitState(round uint64) {
 // diff-apply) re-asserts any mutator the specs' decayrate safety net dropped
 // between ticks, so engine-side decay drift self-corrects within one tick.
 func (m *weatherModule) tick(round uint64) {
-	next, diff := sim.Step(m.state, m.graph, m.climate, m.simCfg, sim.Clock{Round: round})
+	climate := m.climate
+	if m.seasonsOn {
+		// Season-adjusted odds: a pure transform on the climate table; sim.Step
+		// is unchanged and agnostic to the table varying tick-to-tick.
+		climate = seasons.EffectiveClimate(m.climate, m.tracks, engine.CalendarNow())
+	}
+	next, diff := sim.Step(m.state, m.graph, climate, m.simCfg, sim.Clock{Round: round})
 	m.state = next
 	_ = diff // per-zone changes are implied by the reconcile below
 	engine.Reconcile(m.state.Weather)
+	if m.seasonsOn {
+		m.resolveSeasons()
+	}
 	m.persistState()
 	m.nextTick = engine.NextTickRound(engine.TickPeriod(m.cfg.TickEveryGameHours))
 }

@@ -1,0 +1,7 @@
+mutatorid: season-temperate-spring
+outdooronly: true
+descriptionmodifier:
+  behavior: append
+  text: Spring is underway; green shoots and meltwater are everywhere.
+  colorpattern: mute-green
+decayrate: 24 hours

@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/modules/weather/content"
 	"github.com/GoMudEngine/GoMud/modules/weather/crawler"
 	"github.com/GoMudEngine/GoMud/modules/weather/engine"
+	"github.com/GoMudEngine/GoMud/modules/weather/seasons"
 	"github.com/GoMudEngine/GoMud/modules/weather/sim"
 )
 
@@ -29,12 +30,18 @@ type weatherModule struct {
 	state     sim.State
 	nextTick  uint64 // round number when the next weather tick fires
 	nextEmote uint64 // round number when the next ambient emote pass fires
+
+	// Seasons (design spec): derivable from the round, never persisted.
+	seasonsOn      bool
+	tracks         seasons.Tracks
+	zoneSeasons    map[sim.ZoneId]seasons.ZoneSeason
+	seasonalTables content.SeasonalTables
 }
 
 var module weatherModule
 
 func init() {
-	module = weatherModule{plug: plugins.New(`weather`, `0.1.0`)}
+	module = weatherModule{plug: plugins.New(`weather`, `0.2.0`)}
 	module.plug.Callbacks.SetOnLoad(module.onLoad)
 	// Command and exports are registered at init: plugins.Load() harvests the
 	// command map BEFORE invoking onLoad, so anything registered there is lost.
@@ -72,7 +79,7 @@ func (m *weatherModule) onNewRound(e events.Event) events.ListenerReturn {
 		return events.Continue
 	}
 	if m.cfg.EmoteMode == EmoteModeModule && evt.RoundNumber >= m.nextEmote {
-		engine.EmitAmbient(m.graph, m.state.Fronts, m.simCfg, m.state.Weather, m.tables, util.Rand)
+		engine.EmitAmbient(m.graph, m.state.Fronts, m.simCfg, m.state.Weather, m.zoneSeasons, m.tables, m.seasonalTables, util.Rand)
 		m.scheduleEmote(evt.RoundNumber)
 	}
 	if evt.RoundNumber >= m.nextTick {

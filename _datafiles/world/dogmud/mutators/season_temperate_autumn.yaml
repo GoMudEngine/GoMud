@@ -1,0 +1,7 @@
+mutatorid: season-temperate-autumn
+outdooronly: true
+descriptionmodifier:
+  behavior: append
+  text: Autumn has turned the land to rust and amber; the air carries a chill edge.
+  colorpattern: rust
+decayrate: 24 hours

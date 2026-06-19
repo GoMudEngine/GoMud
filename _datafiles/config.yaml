@@ -1363,3 +1363,4 @@ Modules:
     Persist: true
     IncludeSecretExits: true
     RebuildGraphOnBoot: false
+    SeasonsEnabled: true

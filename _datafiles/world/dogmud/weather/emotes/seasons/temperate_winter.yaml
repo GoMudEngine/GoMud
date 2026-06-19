@@ -1,0 +1,15 @@
+track: temperate
+season: winter
+outdoor:
+  default:
+    - "A skin of ice creaks at the edges of still water."
+    - "Your breath plumes white and hangs in the frozen air."
+  forest:
+    - "Snow slides from a burdened bough with a soft thump."
+  city:
+    - "Icicles hang fanged from every eave along the street."
+    - "Chimney smoke rises arrow-straight into the cold above the rooftops."
+indoor:
+  default:
+    strong:
+      - "Deep-winter cold seeps through the walls despite the shelter."

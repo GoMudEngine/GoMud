@@ -31,6 +31,7 @@ type Config struct {
 	EmoteEveryRounds   int     // ambient emote cadence in rounds (jittered ±25%, >= 5)
 	BuffsEnabled       bool    // false strips buff ids from weather mutator specs
 	Persist            bool    // save/restore fronts + RNG across reboots
+	SeasonsEnabled     bool    // false runs exactly as v1 weather (no season layer)
 }
 
 // getter abstracts plugin.Config.Get for testability.
@@ -105,6 +106,7 @@ func buildConfig(get getter) Config {
 		EmoteEveryRounds:   intOr(get("EmoteEveryRounds"), 20),
 		BuffsEnabled:       boolOr(get("BuffsEnabled"), true),
 		Persist:            boolOr(get("Persist"), true),
+		SeasonsEnabled:     boolOr(get("SeasonsEnabled"), true),
 	}
 	if c.TickEveryGameHours < 1 {
 		c.TickEveryGameHours = 1

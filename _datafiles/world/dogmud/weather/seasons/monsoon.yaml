@@ -1,0 +1,16 @@
+# Two-season wet/dry cycle (equatorial/jungle worlds). No standard biome binds
+# to it by default — builders bind via 'track: monsoon' in a climate file.
+track: monsoon
+seasons:
+  - name: wet
+    months: [5, 6, 7, 8, 9, 10]
+    transitionDays: 10
+    weatherWeightMultipliers: { rain: 2.5, storm: 2.0, fog: 1.3, clear: 0.4, dust: 0.0 }
+    spawnWeightMultiplier: 1.4
+    influence: { moistureDelta: 0.03 }
+  - name: dry
+    months: [11, 12, 1, 2, 3, 4]
+    transitionDays: 10
+    weatherWeightMultipliers: { rain: 0.2, storm: 0.3, clear: 1.6, heatwave: 1.4, dust: 1.5 }
+    spawnWeightMultiplier: 0.8
+    influence: { moistureDelta: -0.03 }
